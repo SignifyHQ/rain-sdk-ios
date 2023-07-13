@@ -1,0 +1,49 @@
+import Foundation
+import Factory
+import OnboardingDomain
+import LFNetwork
+import OnboardingData
+import LFAccountOnboarding
+import DataUtilities
+
+@MainActor
+extension Container {
+  
+  // Network
+  var onboardingAPI: Factory<OnboardingAPIProtocol> {
+    self {
+      LFNetwork<OnboardingRoute>()
+    }
+  }
+  
+  // ViewModels
+  var signingUpPhoneViewModel: Factory<SigningUpPhoneViewModel> {
+    self {
+      SigningUpPhoneViewModel(
+        requestOtpUserCase: self.requestOtpUseCase.callAsFunction(),
+        loginUserCase: self.loginUseCase.callAsFunction()
+      )
+    }
+  }
+  
+  // Repositories
+  var onboardingRepository: Factory<OnboardingRepositoryProtocol> {
+    self {
+      OnboardingRepository(onboardingAPI: self.onboardingAPI.callAsFunction())
+    }
+  }
+
+  // UseCases
+  var loginUseCase: Factory<LoginUseCaseProtocol> {
+    self {
+      LoginUseCase(repository: self.onboardingRepository.callAsFunction())
+    }
+  }
+  
+  var requestOtpUseCase: Factory<RequestOTPUseCaseProtocol> {
+    self {
+      RequestOTPUseCase(repository: self.onboardingRepository.callAsFunction())
+    }
+  }
+  
+}

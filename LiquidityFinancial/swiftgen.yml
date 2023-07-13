@@ -1,0 +1,42 @@
+
+## Generate constants for Assets Catalogs, including constants for images, colors
+xcassets:
+  - inputs:
+      - LiquidityFinancial/Avalanche/Resources/Assets/Colors.xcassets
+    outputs:
+      - templateName: swift5
+        params:
+          enumName: Colors
+          forceProvidesNamespaces: true
+          publicAccess: false
+        output: LiquidityFinancial/Avalanche/Resources/Generated/Colors.swift
+
+  - inputs:
+      - LiquidityFinancial/Avalanche/Resources/Assets/Images.xcassets
+    outputs:
+      - templateName: swift5
+        params:
+          enumName: Images
+          forceProvidesNamespaces: true
+          publicAccess: false
+        output: LiquidityFinancial/Avalanche/Resources/Generated/Images.swift
+        
+  - inputs:
+      - LiquidityFinancial/Cardano/Resources/Assets/Colors.xcassets
+    outputs:
+      - templateName: swift5
+        params:
+          enumName: Colors
+          forceProvidesNamespaces: true
+          publicAccess: false
+        output: LiquidityFinancial/Cardano/Resources/Generated/Colors.swift
+
+  - inputs:
+      - LiquidityFinancial/Cardano/Resources/Assets/Images.xcassets
+    outputs:
+      - templateName: swift5
+        params:
+          enumName: Images
+          forceProvidesNamespaces: true
+          publicAccess: false
+        output: LiquidityFinancial/Cardano/Resources/Generated/Images.swift
