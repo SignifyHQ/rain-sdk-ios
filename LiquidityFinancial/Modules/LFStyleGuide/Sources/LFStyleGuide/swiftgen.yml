@@ -4,6 +4,8 @@ output_dir: ${DERIVED_SOURCES_DIR}
 ## Generate constants for Assets Catalogs, including constants for images, colors
 xcassets:
   - inputs:
+      - Assets/Avalanche/AvalancheColors.xcassets
+      - Assets/Cardano/CardanoColors.xcassets
       - Assets/Colors.xcassets
     outputs:
       - templateName: swift5
@@ -14,6 +16,8 @@ xcassets:
         output: Colors.swift
 
   - inputs:
+      - Assets/Avalanche/AvalancheImages.xcassets
+      - Assets/Cardano/CardanoImages.xcassets
       - Assets/Images.xcassets
     outputs:
       - templateName: swift5

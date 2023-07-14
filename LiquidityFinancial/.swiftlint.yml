@@ -82,6 +82,7 @@ identifier_name:
   excluded:
     - id
 line_length:
+  warning: 165
   ignores_function_declarations: true
   ignores_comments: true
 modifier_order:

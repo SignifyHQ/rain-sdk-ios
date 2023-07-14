@@ -2,6 +2,7 @@ import SwiftUI
 import Factory
 import LFAccountOnboarding
 import LFStyleGuide
+import AvalancheAccountOnboarding
 
 struct AppView: View {
   
@@ -27,7 +28,8 @@ struct AppView: View {
         .padding()
         
         NavigationLink("", isActive: $onSignupPhone) {
-          SigningUpPhoneViews(viewModel: Container.shared.signingUpPhoneViewModel.callAsFunction())
+          AvalancheAccountOnboardingView()
+//          SigningUpPhoneViews(viewModel: Container.shared.signingUpPhoneViewModel.callAsFunction())
         }
       }
     }

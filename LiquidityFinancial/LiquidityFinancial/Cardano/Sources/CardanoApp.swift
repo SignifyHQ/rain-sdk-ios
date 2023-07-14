@@ -1,4 +1,6 @@
 import SwiftUI
+import LFAccountOnboarding
+import CardanoAccountOnboarding
 
 @main
 struct AvalancheApp: App {
