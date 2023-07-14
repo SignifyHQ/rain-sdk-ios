@@ -68,6 +68,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		A94F71F32A614E04002ADB34 /* LFLocalizable */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = LFLocalizable; path = Modules/LFLocalizable; sourceTree = "<group>"; };
 		A953545E2A5DD86A008B0FAB /* swiftgen.yml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.yaml; path = swiftgen.yml; sourceTree = "<group>"; };
 		A95354782A5E4F3D008B0FAB /* Images.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Images.swift; sourceTree = "<group>"; };
 		A95354792A5E4F3D008B0FAB /* Colors.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Colors.swift; sourceTree = "<group>"; };
@@ -311,6 +312,7 @@
 		A97BF80D2A5D980200B8F5CA /* Utilities */ = {
 			isa = PBXGroup;
 			children = (
+				A94F71F32A614E04002ADB34 /* LFLocalizable */,
 				A97BF8132A5D9CC300B8F5CA /* LFUtilities */,
 				A97BF80E2A5D982500B8F5CA /* LFStyleGuide */,
 			);
