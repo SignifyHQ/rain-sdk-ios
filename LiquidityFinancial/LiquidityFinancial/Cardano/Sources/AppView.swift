@@ -2,6 +2,7 @@ import SwiftUI
 import LFStyleGuide
 import LFAccountOnboarding
 import CardanoAccountOnboarding
+
 struct AppView: View {
   
   @State var onSignupPhone: Bool = false
@@ -14,21 +15,26 @@ struct AppView: View {
     NavigationView {
       ZStack {
         VStack {
-          Image("ic_avalanche_logo")
+          Images.icLogo.swiftUIImage
             .resizable()
             .frame(width: 100, height: 100)
           Text("Hello, world! \(appName ?? "Unknow")")
           Button("Sign up Phone") {
             onSignupPhone.toggle()
-          }.buttonStyle(GrowingButton())
+          }
+          .buttonStyle(GrowingButton())
+          .background(Colors.buttons.swiftUIColor)
         }
-        .foregroundColor(Color("bg_black_app"))
+        .foregroundColor(Color.white)
         .padding()
         
         NavigationLink("", isActive: $onSignupPhone) {
-          CardanoAccountOnboardingView()
+          SigningUpPhoneViews()
         }
       }
+      .frame(maxWidth: .infinity)
+      .frame(maxHeight: .infinity)
+      .background(Colors.background.swiftUIColor)
     }
   }
 }

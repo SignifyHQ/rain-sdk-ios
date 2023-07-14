@@ -9,4 +9,5 @@ strings:
       params:
         enumName: LFLocalizable
         publicAccess: true
+        bundle: Bundle.main
       output: Strings.swift

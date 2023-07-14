@@ -23,10 +23,11 @@ let package = Package(
     dependencies: [
       .package(name: "LFUtilities", path: "../LFUtilities"),
       .package(name: "LFStyleGuide", path: "../LFStyleGuide"),
-      .package(name: "OnboardingDomain", path: "../LFDomain")
+      .package(name: "OnboardingDomain", path: "../LFDomain"),
+      .package(name: "LFLocalizable", path: "../LFLocalizable"),
     ],
     targets: [
-        .target(name: "LFAccountOnboarding", dependencies: ["LFUtilities", "OnboardingDomain", "LFStyleGuide"]),
+        .target(name: "LFAccountOnboarding", dependencies: ["LFUtilities", "OnboardingDomain", "LFStyleGuide", "LFLocalizable"]),
         .target(name: "AvalancheAccountOnboarding", dependencies: ["LFAccountOnboarding"]),
         .target(name: "CardanoAccountOnboarding", dependencies: ["LFAccountOnboarding"]),
         .testTarget(

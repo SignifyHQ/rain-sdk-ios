@@ -1,11 +1,9 @@
 input_dir: Resources
-output_dir: ${DERIVED_SOURCES_DIR}
+#output_dir: ${DERIVED_SOURCES_DIR}
 
 ## Generate constants for Assets Catalogs, including constants for images, colors
 xcassets:
   - inputs:
-      - Assets/Avalanche/AvalancheColors.xcassets
-      - Assets/Cardano/CardanoColors.xcassets
       - Assets/Colors.xcassets
     outputs:
       - templateName: swift5
@@ -13,11 +11,10 @@ xcassets:
           enumName: Colors
           forceProvidesNamespaces: true
           publicAccess: true
+          bundle: Bundle.main
         output: Colors.swift
 
   - inputs:
-      - Assets/Avalanche/AvalancheImages.xcassets
-      - Assets/Cardano/CardanoImages.xcassets
       - Assets/Images.xcassets
     outputs:
       - templateName: swift5
@@ -25,6 +22,7 @@ xcassets:
           enumName: Images
           forceProvidesNamespaces: true
           publicAccess: true
+          bundle: Bundle.main
         output: Images.swift
 
 

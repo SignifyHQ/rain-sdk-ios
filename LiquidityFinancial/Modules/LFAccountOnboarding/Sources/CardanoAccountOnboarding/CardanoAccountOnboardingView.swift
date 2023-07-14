@@ -12,7 +12,7 @@ public struct CardanoAccountOnboardingView: View {
     NavigationView {
       ZStack {
         VStack {
-          LFStyleGuideImages.iconLogo
+          Images.icLogo.swiftUIImage
             .resizable()
             .frame(width: 100, height: 100)
         }
@@ -25,8 +25,7 @@ public struct CardanoAccountOnboardingView: View {
       }
       .frame(maxWidth: .infinity)
       .frame(maxHeight: .infinity)
-      .background(LFStyleGuideColors.backgroundColor)
+      .background(Colors.background.swiftUIColor)
     }
   }
 }
-

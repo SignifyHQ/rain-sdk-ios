@@ -12,7 +12,7 @@ public struct AvalancheAccountOnboardingView: View {
     NavigationView {
       ZStack {
         VStack {
-          LFStyleGuideImages.iconLogo
+          Images.icLogo.swiftUIImage
             .resizable()
             .frame(width: 100, height: 100)
         }
@@ -25,7 +25,7 @@ public struct AvalancheAccountOnboardingView: View {
       }
       .frame(maxWidth: .infinity)
       .frame(maxHeight: .infinity)
-      .background(LFStyleGuideColors.backgroundColor)
+      .background(Colors.background.swiftUIColor)
     }
   }
 }
