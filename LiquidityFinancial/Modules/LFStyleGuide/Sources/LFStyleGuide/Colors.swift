@@ -27,6 +27,7 @@ public enum Colors {
   public static let darkText = ColorAsset(name: "darkText")
   public static let error = ColorAsset(name: "error")
   public static let green = ColorAsset(name: "green")
+  public static let label = ColorAsset(name: "label")
   public static let pending = ColorAsset(name: "pending")
   public static let primary = ColorAsset(name: "primary")
   public static let secondaryBackground = ColorAsset(name: "secondaryBackground")
