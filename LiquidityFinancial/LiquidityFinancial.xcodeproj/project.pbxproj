@@ -7,6 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		06D40BF82A625F5400EADB75 /* LoadingMix.json in Resources */ = {isa = PBXBuildFile; fileRef = 06D40BF72A625F5400EADB75 /* LoadingMix.json */; };
+		06D40BFC2A6260B300EADB75 /* LoadingContrast.json in Resources */ = {isa = PBXBuildFile; fileRef = 06D40BFB2A6260B300EADB75 /* LoadingContrast.json */; };
+		06D40BFE2A6261A700EADB75 /* LoadingPrimary.json in Resources */ = {isa = PBXBuildFile; fileRef = 06D40BFD2A6261A700EADB75 /* LoadingPrimary.json */; };
 		A94F71EE2A610E65002ADB34 /* LFAccountOnboarding in Frameworks */ = {isa = PBXBuildFile; productRef = A94F71ED2A610E65002ADB34 /* LFAccountOnboarding */; };
 		A94F71F02A610E9F002ADB34 /* CardanoAccountOnboarding in Frameworks */ = {isa = PBXBuildFile; productRef = A94F71EF2A610E9F002ADB34 /* CardanoAccountOnboarding */; };
 		A94F71F22A612C62002ADB34 /* AvalancheAccountOnboarding in Frameworks */ = {isa = PBXBuildFile; productRef = A94F71F12A612C62002ADB34 /* AvalancheAccountOnboarding */; };
@@ -67,6 +70,9 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		06D40BF72A625F5400EADB75 /* LoadingMix.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = LoadingMix.json; sourceTree = "<group>"; };
+		06D40BFB2A6260B300EADB75 /* LoadingContrast.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = LoadingContrast.json; sourceTree = "<group>"; };
+		06D40BFD2A6261A700EADB75 /* LoadingPrimary.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; name = LoadingPrimary.json; path = ../../../../../../Downloads/LoadingPrimary.json; sourceTree = "<group>"; };
 		A94F71F32A614E04002ADB34 /* LFLocalizable */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = LFLocalizable; path = Modules/LFLocalizable; sourceTree = "<group>"; };
 		A95354972A5E55B2008B0FAB /* Cardano.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Cardano.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		A953549B2A5E571D008B0FAB /* CardanoConfig.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = CardanoConfig.xcconfig; sourceTree = "<group>"; };
@@ -156,6 +162,16 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		06D40BF42A625E9100EADB75 /* Lottie */ = {
+			isa = PBXGroup;
+			children = (
+				06D40BFD2A6261A700EADB75 /* LoadingPrimary.json */,
+				06D40BFB2A6260B300EADB75 /* LoadingContrast.json */,
+				06D40BF72A625F5400EADB75 /* LoadingMix.json */,
+			);
+			path = Lottie;
+			sourceTree = "<group>";
+		};
 		A953545B2A5DD7F4008B0FAB /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
@@ -248,7 +264,6 @@
 				A97BF8102A5D989100B8F5CA /* Avalanche */,
 				A97BF80F2A5D986C00B8F5CA /* Sources */,
 				A97BF8122A5D98EA00B8F5CA /* Configurations */,
-				A97BF8112A5D98DA00B8F5CA /* Resources */,
 			);
 			path = LiquidityFinancial;
 			sourceTree = "<group>";
@@ -314,13 +329,6 @@
 			path = Avalanche;
 			sourceTree = "<group>";
 		};
-		A97BF8112A5D98DA00B8F5CA /* Resources */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = Resources;
-			sourceTree = "<group>";
-		};
 		A97BF8122A5D98EA00B8F5CA /* Configurations */ = {
 			isa = PBXGroup;
 			children = (
@@ -346,6 +354,7 @@
 				A97BF8392A5DA4DA00B8F5CA /* Avalanche-Info.plist */,
 				A9D6C4A72A5E5FE00038D0BB /* Localizable.strings */,
 				A95354602A5DD91A008B0FAB /* Assets */,
+				06D40BF42A625E9100EADB75 /* Lottie */,
 				A9D6C4B12A5E91DF0038D0BB /* LaunchScreen.storyboard */,
 			);
 			path = Resources;
@@ -562,9 +571,12 @@
 			buildActionMask = 2147483647;
 			files = (
 				A97BF83E2A5DBCF200B8F5CA /* Images.xcassets in Resources */,
+				06D40BFC2A6260B300EADB75 /* LoadingContrast.json in Resources */,
 				A9D6C4B22A5E91DF0038D0BB /* LaunchScreen.storyboard in Resources */,
+				06D40BFE2A6261A700EADB75 /* LoadingPrimary.json in Resources */,
 				A9D6C4A52A5E5FE00038D0BB /* Localizable.strings in Resources */,
 				A97BF8402A5DC13000B8F5CA /* Colors.xcassets in Resources */,
+				06D40BF82A625F5400EADB75 /* LoadingMix.json in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

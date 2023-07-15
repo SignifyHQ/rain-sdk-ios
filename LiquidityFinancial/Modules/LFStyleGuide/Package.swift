@@ -12,7 +12,8 @@ let package = Package(
             targets: ["LFStyleGuide"])
     ],
     dependencies: [
-      .package(url: "https://github.com/SwiftGen/SwiftGenPlugin", from: "6.6.2")
+      .package(url: "https://github.com/SwiftGen/SwiftGenPlugin", from: "6.6.2"),
+      .package(url: "https://github.com/airbnb/lottie-ios.git", from: "4.2.0")
     ],
     targets: [
         .target(
@@ -22,7 +23,8 @@ let package = Package(
               .process("Resources")
             ],
             plugins: [
-              .plugin(name: "SwiftGenPlugin", package: "SwiftGenPlugin")
+              .plugin(name: "SwiftGenPlugin", package: "SwiftGenPlugin"),
+              .plugin(name: "Lottie", package: "Lottie"),
             ]
         ),
         .testTarget(
