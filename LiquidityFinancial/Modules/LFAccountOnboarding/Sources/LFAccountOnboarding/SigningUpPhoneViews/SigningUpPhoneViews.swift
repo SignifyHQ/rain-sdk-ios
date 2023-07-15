@@ -5,13 +5,12 @@ import LFStyleGuide
 import LFLocalizable
 
 public struct SigningUpPhoneViews: View {
-//  @Injected(.)
-//  let viewModel: SigningUpPhoneViewModel
-//
-//  public init(viewModel: SigningUpPhoneViewModel) {
-//    self.viewModel = viewModel
-//  }
-  public init() {}
+
+  let viewModel: SigningUpPhoneViewModel
+
+  public init(viewModel: SigningUpPhoneViewModel) {
+    self.viewModel = viewModel
+  }
   
   @State var phoneText: String = ""
   @State var otpText: String = ""
@@ -20,31 +19,29 @@ public struct SigningUpPhoneViews: View {
     VStack(spacing: 16) {
       Text(LFLocalizable.Screen.Title.text)
       Text("Signing up Phone: \(phoneText)")
-      TextField("Input Phone", text: $phoneText) { _ in
-        
-      }
-      .border(.blue)
+      TextField("Input Phone", text: $phoneText)
+        .border(.blue)
       Button("Get OTP") {
-        
+        viewModel.performGetOTP(phone: phoneText)
       }
-      TextField("Input OTP", text: $otpText) { _ in
-        
-      }.border(.blue)
+      TextField("Input OTP", text: $otpText)
+        .border(.blue)
       Button("Submit OTP") {
-        
+        viewModel.performLogin(phone: phoneText, code: otpText)
       }
-    }.padding()
+    }
+    .padding()
   }
   
 }
 
 #if DEBUG
-struct SigningUpPhoneViews_Previews: PreviewProvider {
-
-  static var previews: some View {
-    Preview {
-      SigningUpPhoneViews()
-    }
-  }
-}
+//struct SigningUpPhoneViews_Previews: PreviewProvider {
+//
+//  static var previews: some View {
+//    Preview {
+//      SigningUpPhoneViews()
+//    }
+//  }
+//}
 #endif

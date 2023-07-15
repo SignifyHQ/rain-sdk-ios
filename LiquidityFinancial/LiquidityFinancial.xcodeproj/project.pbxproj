@@ -12,6 +12,7 @@
 		A94F71F22A612C62002ADB34 /* AvalancheAccountOnboarding in Frameworks */ = {isa = PBXBuildFile; productRef = A94F71F12A612C62002ADB34 /* AvalancheAccountOnboarding */; };
 		A94F71F52A61CAC6002ADB34 /* LFLocalizable in Frameworks */ = {isa = PBXBuildFile; productRef = A94F71F42A61CAC6002ADB34 /* LFLocalizable */; };
 		A94F71F72A61CACF002ADB34 /* LFLocalizable in Frameworks */ = {isa = PBXBuildFile; productRef = A94F71F62A61CACF002ADB34 /* LFLocalizable */; };
+		A94F71FF2A6266D0002ADB34 /* AuthorizationManager in Frameworks */ = {isa = PBXBuildFile; productRef = A94F71FE2A6266D0002ADB34 /* AuthorizationManager */; };
 		A953545D2A5DD7F4008B0FAB /* LFStyleGuide in Frameworks */ = {isa = PBXBuildFile; productRef = A953545C2A5DD7F4008B0FAB /* LFStyleGuide */; };
 		A95354852A5E55B2008B0FAB /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = A97BF8192A5D9E6B00B8F5CA /* AppDelegate.swift */; };
 		A95354892A5E55B2008B0FAB /* LFConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = A97BF8412A5DC57600B8F5CA /* LFConfiguration.swift */; };
@@ -127,6 +128,7 @@
 				A980DF712A5FA252000B3C09 /* OnboardingData in Frameworks */,
 				A980DF6F2A5FA252000B3C09 /* DataUtilities in Frameworks */,
 				A953545D2A5DD7F4008B0FAB /* LFStyleGuide in Frameworks */,
+				A94F71FF2A6266D0002ADB34 /* AuthorizationManager in Frameworks */,
 				A980DF772A5FA26E000B3C09 /* LFUtilities in Frameworks */,
 				A97BF7EE2A5D719000B8F5CA /* Lottie in Frameworks */,
 				A980DF732A5FA25A000B3C09 /* LFNetwork in Frameworks */,
@@ -452,6 +454,7 @@
 				A980DF762A5FA26E000B3C09 /* LFUtilities */,
 				A94F71F12A612C62002ADB34 /* AvalancheAccountOnboarding */,
 				A94F71F42A61CAC6002ADB34 /* LFLocalizable */,
+				A94F71FE2A6266D0002ADB34 /* AuthorizationManager */,
 			);
 			productName = LiquidityFinancial;
 			productReference = A97BF7BC2A5C602D00B8F5CA /* Avalanche.app */;
@@ -1174,6 +1177,10 @@
 		A94F71F62A61CACF002ADB34 /* LFLocalizable */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = LFLocalizable;
+		};
+		A94F71FE2A6266D0002ADB34 /* AuthorizationManager */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = AuthorizationManager;
 		};
 		A953545C2A5DD7F4008B0FAB /* LFStyleGuide */ = {
 			isa = XCSwiftPackageProductDependency;

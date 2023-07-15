@@ -1,11 +1,12 @@
 import Foundation
+import DataUtilities
 import LFNetwork
 
 extension LFNetwork: OnboardingAPIProtocol where R == OnboardingRoute {
   
   public func login(phoneNumber: String, code: String) async throws -> APIAccessTokens {
     return try await request(
-      OnboardingRoute.login(LoginParameters(phoneNumber: phoneNumber, code: code)),
+      OnboardingRoute.login(LoginParameters(phoneNumber: phoneNumber, code: code, productName: APIConstants.productNameDefault)),
       target: APIAccessTokens.self,
       decoder: .apiDecoder
     )

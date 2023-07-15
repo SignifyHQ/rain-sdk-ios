@@ -1,20 +1,25 @@
 import Foundation
 
 public struct APIAccessTokens: Decodable, Equatable {
+  public let accessToken: String
+  public let tokenType: String
+  public let refreshToken: String
+  public let expiresIn: Int
   
-  public enum AccessTokenConstants {
-      // Anticipate expiration by 5 minute to avoid race condition with network.
-    static let expiryAnticipation = Double(60 * 5)
+  private var requestedAt = Date()
+  
+  enum CodingKeys: String, CodingKey {
+    case accessToken = "access_token"
+    case refreshToken = "refresh_token"
+    case tokenType = "token_type"
+    case expiresIn = "expires_in"
   }
   
-  public let accessToken: String
-  public let refreshToken: String?
-  public let expiresIn: Date
+  public var expiresAt: Date {
+    Calendar.current.date(byAdding: .second, value: expiresIn, to: requestedAt) ?? Date()
+  }
   
-  public var requiresRefresh: Bool {
-    if expiresIn > Date() {
-      return false
-    }
-    return true
+  public var bearerAccessToken: String {
+    "\(tokenType) \(accessToken)"
   }
 }

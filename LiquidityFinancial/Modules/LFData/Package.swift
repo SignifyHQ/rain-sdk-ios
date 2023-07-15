@@ -12,19 +12,26 @@ let package = Package(
       targets: ["OnboardingData"]),
     .library(
       name: "DataUtilities",
-      targets: ["DataUtilities"])
+      targets: ["DataUtilities"]),
+    .library(
+      name: "AuthorizationManager",
+      targets: ["AuthorizationManager"])
   ],
   dependencies: [
     .package(name: "OnboardingDomain", path: "../LFDomain"),
-    .package(name: "LFNetwork", path: "../LFNetwork")
+    .package(name: "LFNetwork", path: "../LFNetwork"),
+    .package(name: "LFUtilities", path: "../LFUtilities")
   ],
   targets: [
     .target(
       name: "OnboardingData",
-      dependencies: ["DataUtilities", "LFNetwork", "OnboardingDomain"]),
+      dependencies: ["DataUtilities", "LFNetwork", "OnboardingDomain", "AuthorizationManager"]),
     .target(
       name: "DataUtilities",
       dependencies: ["LFNetwork"]),
+    .target(
+      name: "AuthorizationManager",
+      dependencies: ["DataUtilities", "OnboardingDomain", "LFUtilities"]),
     .testTarget(
       name: "OnboardingDataTests",
       dependencies: ["OnboardingData"])

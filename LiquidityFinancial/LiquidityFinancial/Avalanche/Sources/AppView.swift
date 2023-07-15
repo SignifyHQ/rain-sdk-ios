@@ -29,8 +29,7 @@ struct AppView: View {
         .padding()
         
         NavigationLink("", isActive: $onSignupPhone) {
-//          AvalancheAccountOnboardingView()
-          SigningUpPhoneViews()
+          SigningUpPhoneViews(viewModel: Container.shared.signingUpPhoneViewModel.callAsFunction())
         }
       }
       .frame(maxWidth: .infinity)

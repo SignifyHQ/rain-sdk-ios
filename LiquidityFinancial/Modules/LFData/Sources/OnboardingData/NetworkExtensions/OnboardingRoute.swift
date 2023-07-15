@@ -28,7 +28,10 @@ extension OnboardingRoute: LFRoute {
   }
   
   public var httpHeaders: HttpHeaders {
-    ["Content-Type": "application/json"]
+    [
+      "Content-Type": "application/json",
+      "productName": APIConstants.productNameDefault
+    ]
   }
   
   public var parameters: Parameters? {

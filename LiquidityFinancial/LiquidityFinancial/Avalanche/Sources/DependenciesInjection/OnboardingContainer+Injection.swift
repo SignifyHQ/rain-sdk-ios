@@ -5,9 +5,16 @@ import LFNetwork
 import OnboardingData
 import LFAccountOnboarding
 import DataUtilities
+import AuthorizationManager
 
 @MainActor
 extension Container {
+  // Network
+  var authorizationManager: Factory<AuthorizationManagerProtocol> {
+    self {
+      AuthorizationManager()
+    }
+  }
   
   // Network
   var onboardingAPI: Factory<OnboardingAPIProtocol> {
@@ -29,7 +36,7 @@ extension Container {
   // Repositories
   var onboardingRepository: Factory<OnboardingRepositoryProtocol> {
     self {
-      OnboardingRepository(onboardingAPI: self.onboardingAPI.callAsFunction())
+      OnboardingRepository(onboardingAPI: self.onboardingAPI.callAsFunction(), auth: self.authorizationManager.callAsFunction())
     }
   }
 
