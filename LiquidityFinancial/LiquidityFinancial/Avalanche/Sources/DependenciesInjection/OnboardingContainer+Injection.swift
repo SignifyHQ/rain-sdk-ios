@@ -32,6 +32,13 @@ extension Container {
       )
     }
   }
+  var phoneNumberViewModel: Factory<PhoneNumberViewModel> {
+    self {
+      PhoneNumberViewModel(
+        requestOtpUserCase: self.requestOtpUseCase.callAsFunction()
+      )
+    }
+  }
   
   // Repositories
   var onboardingRepository: Factory<OnboardingRepositoryProtocol> {

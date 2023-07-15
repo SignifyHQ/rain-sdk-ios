@@ -28,9 +28,6 @@ struct AppView: View {
         .foregroundColor(Color.white)
         .padding()
         
-        NavigationLink("", isActive: $onSignupPhone) {
-          SigningUpPhoneViews()
-        }
       }
       .frame(maxWidth: .infinity)
       .frame(maxHeight: .infinity)

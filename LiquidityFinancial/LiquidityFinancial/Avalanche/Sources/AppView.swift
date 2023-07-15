@@ -2,11 +2,13 @@ import SwiftUI
 import Factory
 import LFAccountOnboarding
 import LFStyleGuide
+import LFUtilities
 import AvalancheAccountOnboarding
 
 struct AppView: View {
   
   @State var onSignupPhone: Bool = false
+  let environmentManager = EnvironmentManager()
   
   var appName: String? {
     try? LFConfiguration.value(for: "APP_NAME")
@@ -29,7 +31,8 @@ struct AppView: View {
         .padding()
         
         NavigationLink("", isActive: $onSignupPhone) {
-          SigningUpPhoneViews(viewModel: Container.shared.signingUpPhoneViewModel.callAsFunction())
+          PhoneNumberView(viewModel: Container.shared.phoneNumberViewModel.callAsFunction())
+            .environmentObject(environmentManager)
         }
       }
       .frame(maxWidth: .infinity)

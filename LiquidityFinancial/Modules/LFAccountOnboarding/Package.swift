@@ -21,13 +21,20 @@ let package = Package(
         )
     ],
     dependencies: [
+      .package(url: "https://github.com/MojtabaHs/iPhoneNumberField.git", from: "0.10.1"),
       .package(name: "LFUtilities", path: "../LFUtilities"),
       .package(name: "LFStyleGuide", path: "../LFStyleGuide"),
       .package(name: "OnboardingDomain", path: "../LFDomain"),
       .package(name: "LFLocalizable", path: "../LFLocalizable"),
     ],
     targets: [
-        .target(name: "LFAccountOnboarding", dependencies: ["LFUtilities", "OnboardingDomain", "LFStyleGuide", "LFLocalizable"]),
+        .target(
+          name: "LFAccountOnboarding",
+          dependencies: ["LFUtilities", "OnboardingDomain", "LFStyleGuide", "LFLocalizable"],
+          plugins: [
+            .plugin(name: "iPhoneNumberField", package: "iPhoneNumberField"),
+          ]
+        ),
         .target(name: "AvalancheAccountOnboarding", dependencies: ["LFAccountOnboarding"]),
         .target(name: "CardanoAccountOnboarding", dependencies: ["LFAccountOnboarding"]),
         .testTarget(

@@ -1,1 +1,20 @@
 "screen.title.text" = "Hello i am Cardano";
+
+// MARK: - Screens
+
+// PhoneNumber Screen
+"phoneNumber.textField.title" = "Phone Number";
+"phoneNumber.textField.description" = "Phone Number";
+"phoneNumber.environment.title" = "Environment";
+
+// MARK: - Common
+
+// Terms
+"term.privacyPolicy.description" = "By tapping ‘Continue’, you agree to our Terms, E-sign consent and Privacy Policy.";
+"term.termsVoip.description" = "Using VOIP or Google Voice numbers can result in onboarding delays. We NEVER share your phone number with third parties for marketing, per our Privacy Policy.";
+"term.privacyPolicy.attributeText" = "Privacy Policy";
+"term.esignConsent.attributeText" = "E-sign consent";
+"term.terms.attributeText" = "Terms";
+
+// Button Title
+"button.continue.title" = "Continue";

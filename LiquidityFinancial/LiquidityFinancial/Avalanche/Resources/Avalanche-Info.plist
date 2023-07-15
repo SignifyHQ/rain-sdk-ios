@@ -28,6 +28,8 @@
 			</dict>
 		</dict>
 	</dict>
+	<key>CONSENT_URL</key>
+	<string>$(CONSENT_URL)</string>
 	<key>PRIVACY_URL</key>
 	<string>$(PRIVACY_URL)</string>
 	<key>TERMS_URL</key>

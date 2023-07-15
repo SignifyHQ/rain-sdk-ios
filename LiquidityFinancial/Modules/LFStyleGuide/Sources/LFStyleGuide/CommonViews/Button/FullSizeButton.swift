@@ -61,11 +61,10 @@ private extension FullSizeButton {
       Text(title)
         .font(Fonts.Inter.bold.swiftUIFont(fixedSize: fontSize))
         .foregroundColor(textColor ?? buttonTextColor)
-        .frame(height: height)
         .padding(.horizontal, 16)
-        .padding(.vertical, 8)
         .frame(maxWidth: .infinity)
     }
+    .frame(height: height)
     .applyIf(showGradientBackground) {
       $0.background(
         LinearGradient(
