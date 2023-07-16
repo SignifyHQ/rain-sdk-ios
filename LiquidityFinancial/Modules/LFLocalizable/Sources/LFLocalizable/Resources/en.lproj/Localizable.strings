@@ -18,6 +18,13 @@
 "wellcome.how_it_works.item3" = "Give more by rounding up your purchases.";
 "wellcome.button.order_card" = "Order Card";
 
+// VerificationCode Screen
+"verificationCode.enterCode.screenTitle" = "ENTER VERIFICATION CODE";
+"verificationCode.sendTo.textFieldTitle" = "Code sent to %@";
+"verificationCode.enterCode.textFieldPlaceholder" = "Enter Code";
+"verificationCode.resend.buttonTitle" = "Resend Code";
+"verificationCode.otpSent.toastMessage" = "New code sent";
+
 // MARK: - Common
 
 // Terms

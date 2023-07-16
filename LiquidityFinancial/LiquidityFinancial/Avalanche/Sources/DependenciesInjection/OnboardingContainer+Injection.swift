@@ -27,7 +27,8 @@ extension Container {
   var phoneNumberViewModel: Factory<PhoneNumberViewModel> {
     self {
       PhoneNumberViewModel(
-        requestOtpUserCase: self.requestOtpUseCase.callAsFunction()
+        requestOtpUserCase: self.requestOtpUseCase.callAsFunction(),
+        loginUseCase: self.loginUseCase.callAsFunction()
       )
     }
   }

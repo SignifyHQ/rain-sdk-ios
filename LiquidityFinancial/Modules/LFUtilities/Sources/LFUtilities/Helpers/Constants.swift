@@ -114,5 +114,6 @@ public extension Constants {
   enum Default: String {
     case region = "US"
     case regionCode = "+1"
+    case numberCharacters = "0123456789"
   }
 }

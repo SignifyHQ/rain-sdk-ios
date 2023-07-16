@@ -50,8 +50,11 @@ public struct PhoneNumberView: View {
     // TODO: Will be updated later
     // .track(name: String(describing: type(of: self)))
     .navigationLink(isActive: $viewModel.isPushToVertificationView) {
-      // VertificationCode
-      WelcomeView(viewModel: WelcomeViewModel())
+      VerificationCodeView(
+        phoneNumber: viewModel.phoneNumber,
+        requestOTPUseCase: viewModel.requestOtpUserCase,
+        loginUseCase: viewModel.loginUseCase
+      )
     }
     .popup(item: $viewModel.toastMessage, style: .toast) {
       ToastView(toastMessage: $0)

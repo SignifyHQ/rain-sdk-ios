@@ -14,21 +14,21 @@ public struct TextFieldWrapper<Content: View>: View {
   @Binding var errorValue: String?
   
   public var body: some View {
-    VStack(spacing: 12) {
+    VStack(spacing: 16) {
       HStack {
         content
         GenImages.Images.icError.swiftUIImage
           .hidden(errorValue == nil)
       }
-    }
-    Divider()
-      .background(errorValue == nil ? Colors.label.swiftUIColor.opacity(0.25) : Colors.error.swiftUIColor)
-      .frame(height: 1.5, alignment: .center)
-    if let errorValue {
-      Text(errorValue)
-        .font(Fonts.Inter.regular.swiftUIFont(size: Constants.FontSize.ultraSmall.value))
-        .foregroundColor(Colors.error.swiftUIColor)
-        .frame(maxWidth: .infinity, alignment: .leading)
+      Divider()
+        .background(errorValue == nil ? Colors.label.swiftUIColor.opacity(0.25) : Colors.error.swiftUIColor)
+        .frame(height: 1, alignment: .center)
+      if let errorValue {
+        Text(errorValue)
+          .font(Fonts.Inter.regular.swiftUIFont(size: Constants.FontSize.ultraSmall.value))
+          .foregroundColor(Colors.error.swiftUIColor)
+          .frame(maxWidth: .infinity, alignment: .leading)
+      }
     }
   }
 }
