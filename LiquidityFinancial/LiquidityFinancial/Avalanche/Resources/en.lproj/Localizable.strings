@@ -18,3 +18,1131 @@
 
 // Button Title
 "button.continue.title" = "Continue";
+"button.title.text" = "Trade Now and Get\nYour Life";
+
+"back" = "Back";
+"yes" = "Yes";
+"notnow" = "Not now";
+"no" = "No";
+"generic_ErrorMessage" = "Something went wrong, please try again.";
+"pasteboard_copy" = "Copied to clipboard";
+"refresh_control" = "Pull to refresh";
+
+// Initial view
+"initial_view.title" = "CauseCard";
+
+//...MOBILE NUMBER...
+"phone_number_title" = "PHONE NUMBER";
+"terms_privacyPolicy" = "By tapping ‘Continue’, you agree to our Terms, E-sign consent and Privacy Policy.";
+"terms" = "Terms";
+"termsandcondition" = "Terms and Conditions";
+"Esign_consent" = "E-sign consent";
+"privacy_policy" = "Privacy Policy";
+"terms_voip" = "Using VOIP or Google Voice numbers can result in onboarding delays. We NEVER share your phone number with third parties for marketing, per our Privacy Policy.";
+
+//...CODE VERIFICATION...
+"enter_verificationCode" = "ENTER VERIFICATION CODE";
+"code_sentTo %@" = "Code sent to %@";
+"resend_code" = "Resend Code";
+"otp_sent" = "New code sent";
+
+// Home
+"home.title.cash" = "Cash";
+"home.title.crypto" = "Doge";
+"home.title.rewards" = "Rewards";
+"home.title.causes" = "Causes";
+"home.title.account" = "Accounts";
+
+//...DASHBOARD...
+"cash" = "CASH";
+"currency_type" = "DOGE";
+"currency_type_cash" = "USD";
+"no_accounts" = "No transactions have been made yet";
+"create_account" = "Create Account";
+"backTo_guestMode" = "Back to Guest Mode";
+"cancel" = "Cancel";
+"crypto_currency" = "Doge";
+"transfer_crypto_balance" = "YOU DON'T HAVE ANY DOGE TO TRANSFER AT THIS TIME.";
+
+//.. DASHBOARD...
+"create_cardanoAccount" = "CREATE ACCOUNT";
+"create_cardanoAccount_info" = "In order to use all of the features, please create an account";
+"continue" = "Continue";
+"order_card" = "Order Card";
+"cash_balance" = "Balance";
+"inReview_popUp_title" = "YOUR ACCOUNT IS IN REVIEW";
+"inReview_popUp_sub_text" = "Your account is currently in review and we we’ll get back to you as soon as possible.  In the meantime, you can check status below.";
+"inReview_popUp_buttonTitle" = "Check Status";
+"check_account_status" = "Check Account Status";
+
+// Dashboard Cash
+"dashboard_cash.add_money" = "Deposit";
+"dashboard_cash.send_money" = "Withdraw";
+"dashboard_cash.ways_to_add" = "More ways to deposit";
+"dashboard_cash.last_transactions" = "Latest Transactions";
+"dashboard_cash.bank_statements" = "Bank Statements";
+"dashboard_cash.see_all" = "See all";
+
+// Dashboard Crypto
+"dashboard_crypto.buy" = "Buy";
+"dashboard_crypto.sell" = "Sell";
+"dashboard_crypto.transfer" = "Transfer";
+"dashboard_crypto.wallet_address" = "Wallet address";
+"dashboard_crypto.last_transactions" = "Latest Transactions";
+"dashboard_crypto.see_all" = "See all";
+"dashboard_crypto.disclosure" = "Cryptocurrency services powered by Zero Hash";
+"dashboard_crypto.buy_balance_popup.title" = "PLEASE ADD TO YOUR CASH BALANCE TO BUY DOGE.";
+"dashboard_crypto.buy_balance_popup.primary" = "Add Money";
+"dashboard_crypto.buy_balance_popup.secondary" = "Not now";
+"dashboard_crypto.sell_balance_popup.title" = "YOU DON'T HAVE ANY DOGE TO SELL AT THIS TIME.";
+"dashboard_crypto.today" = "Today";
+"dashboard_crypto.change" = "Change";
+"dashboard_crypto.open" = "Open";
+"dashboard_crypto.close" = "Close";
+"dashboard_crypto.high" = "High";
+"dashboard_crypto.low" = "Low";
+"dashboard_crypto.volume" = "Volume";
+
+// Accounts
+"accounts.navigation_title" = "Accounts";
+"accounts.connected_accounts" = "Connected Accounts";
+"accounts.connect_new_accounts" = "Connect New Accounts";
+"accounts.limits" = "Limits";
+"accounts.deposit_limits" = "Deposit Limits";
+"accounts.card_account_details" = "CauseCard Account";
+
+// Add funds
+
+"add_funds.direct_deposit.title" = "Direct Deposit";
+"add_funds.direct_deposit.subtitle" = "Get paid up to 2 days faster";
+"add_funds.debit_deposits.title" = "Debit Deposits";
+"add_funds.debit_deposits.subtitle" = "Add money from your Debit Card";
+"add_funds.one_time_transfers.title" = "One-time Bank Transfers";
+"add_funds.one_time_transfers.subtitle" = "Good for small amounts";
+"add_funds.bank_transfers.title" = "Bank Transfers";
+"add_funds.bank_transfers.subtitle" = "Send from your bank to %@";
+"add_funds.short.debit_deposits.title" = "Debit Card";
+"add_funds.short.debit_deposits.subtitle" = "Connect your bank with a Debit Card";
+"add_funds.short.one_time_transfers.title" = "Bank to Bank";
+"add_funds.short.one_time_transfers.subtitle" = "Connect your bank with Plaid";
+
+// Deposit limits
+
+"deposit_limits.title" = "Deposit Limits";
+"deposit_limits.direct_deposit" = "Direct Deposit";
+"deposit_limits.wire_bank" = "Wire or Bank Transfer";
+"deposit_limits.debit_card_deposit" = "Debit Card Deposit";
+"deposit_limits.ach_deposit" = "ACH Deposit";
+"deposit_limits.unlimited" = "Unlimited";
+"deposit_limits.daily" = "Daily:";
+"deposit_limits.monthly" = "Monthly:";
+"deposit_limits.increase_options" = "Ways to increase limits";
+"deposit_limits.direct_deposit_option" = "Set up Direct Deposit";
+"deposit_limits.transfer_option" = "Transfer from your bank";
+"deposit_limits.plaid_option" = "Verify your account with Plaid";
+"deposit_limits.chat_option" = "Request limit increase with support";
+"deposit_limits.plaid_success.title" = "Congratulations!";
+"deposit_limits.plaid_success.message" = "You have successfully verified your account";
+"deposit_limits.plaid_success.button" = "Ok";
+
+// Money general
+"add_money" = "Deposit";
+"send_money" = "Withdraw";
+"connected_accounts" = "Connected Accounts";
+"deposit_check" = "Deposit check";
+"routing_number" = "Routing Number";
+"account_number" = "Account Number";
+"card_number" = "Card number";
+"expires" = "Expires";
+"add_bank_using_debit" = "ADD A BANK USING YOUR DEBIT CARD";
+"add_account" = "Add bank or card";
+
+//...REWARDS...
+"rewards" = "Rewards";
+"total_rewards" = "Total rewards";
+"cryptocurrency_services_info" = "Cryptocurrency services powered by Zero Hash";
+"sell_rewards" = "Sell Rewards";
+"transfer_rewards" = "Transfer Rewards";
+"rewards.no_rewards" = "No rewards yet";
+
+//...SHORTCUTS/PROFILE...
+"shortcuts" = "Shortcuts";
+"move_money" = "Move Money";
+"more" = "More";
+"help_support" = "Help & Support";
+"settings" = "Settings";
+"legal" = "Legal";
+"profile" = "Profile";
+"address" = "Address";
+"phoneNumber" = "Phone number";
+"logout" = "Log Out";
+"disabled_cash_title" = "WE ARE SORRY";
+"disabled_cash_subtitle" = "Your checking account was deactivated";
+"account_error_message" = "We could not load your account at this time. Please contact support, or try again later.";
+
+//...KYC/PERSONAL INFO..
+"add_personalInfo" = "ADD PERSONAL INFORMATION";
+"name_exceed_message" = "First name and Last name should not be more than 23 characters";
+"first_name" = "Legal first name";
+"enter_firstName" = "Enter legal first name";
+"last_name" = "Legal last name";
+"enter_lastName" = "Enter legal last name";
+"email" = "Email";
+"enter_emailAddress" = "Enter email address";
+"dob" = "Date of birth";
+"dob_format"= "dd / mm / yyyy";
+"address_title" = "WHERE TO SEND YOUR %@ CARD?";
+"addressLine1_title" = "Address line 1 ";
+"addressLine2_title" = "Address line 2";
+"enter_address" = "Enter address";
+"city" = "City";
+"enter_city" = "Enter city";
+"state" = "State";
+"enter_state" = "Enter state";
+"zipcode" = "Zip code";
+"enter_zipcode" = "Enter zip code";
+"account_update" = "ACCOUNT UPDATE";
+"waitlist_message" = "Hello, %@.  We are very sorry, but due to regulations regarding Doge, we are currently unable to open accounts for residents of New York and Hawaii.   We are currently working with regulators to resolve this.  In the meantime, we will contact you as soon as we can open your account.";
+"join_waitlist" = "Join waitlist";
+"cancel_account" = "Cancel account";
+"waitlist_joined_title" = "WAITLIST JOINED";
+"waitlist_joined_message" = "You are now on the waitlist. We will email you when we can operate in your state.";
+"address.disclosure.text" = "By tapping 'Continue', you consent to our %@ and %@.";
+"address.disclosure.agreement" = "CauseCard Agreement";
+"address.disclosure.privacy" = "Privacy Policy";
+
+// KYC Status
+
+"kyc_status.in_review.title" = "VERIFYING ACCOUNT DETAILS";
+"kyc_status.in_review.message" = "Hi %@, we are still verifying your account details. This is common when VOIP or Google voice phone numbers are used, or addresses / emails change. Please contact support and we will help verify the details. Thank you for your patience.";
+"kyc_status.in_review.primary" = "Check Account Status";
+"kyc_status.in_review.secondary" = "Contact Support";
+"kyc_status.declined.title" = "WE'RE SORRY";
+"kyc_status.declined.message" = "Based on the information you entered, we were unable to create a Depository account at this time. We will be in touch via email.";
+"kyc_status.declined.primary" = "Done";
+"kyc_status.idv.title" = "DRIVER’S LICENSE, ID OR PASSPORT";
+"kyc_status.idv.message" = "Please verify your identity with a valid Driver’s License, ID or Passport.";
+"kyc_status.idv.primary" = "Continue";
+
+//... SSN...
+"SSN_Title" = "Last 4 digits of Social Security Number";
+"SSN_Heading_New_login" = "SECURITY CHECK: ENTER LAST 4 OF SSN";
+"SSN_Title_New_login" = "Last 4 digits of Social Security Number/Passport";
+"SSN_encrypt_info" = "Encrypted using 256-BIT SSL";
+"SSN_noCreditCheck_info" = "No credit checks";
+"no_SSN" = "No SSN? Click here to enter your Passport Number";
+
+// Enter SSN
+"enter_ssn.title" = "PLEASE ENTER SSN";
+"enter_ssn.placeholder" = "Enter Full Social Security Number";
+"enter_ssn.bullet_one" = "Encrypted using 256-BIT SSL";
+"enter_ssn.bullet_two" = "No credit checks, doesn't impact credit score";
+"enter_ssn.why" = "Why do we need SSN?";
+"enter_ssn.no_ssn" = "No SSN? Tap here";
+"enter_ssn.continue" = "Continue";
+"enter_ssn.alert.title" = "WHY DO WE NEED SSN?";
+"enter_ssn.alert.message" = "A valid SSN or Passport is required by our bank, Evolve Bank and Trust, to create a FDIC insured checking account. Your SSN is only stored with the bank and not accessible through CauseCard.";
+"enter_ssn.alert.ok" = "Ok";
+
+//... PASSPORT...
+"passport_heading" = "ENTER PASSPORT NUMBER";
+"passport_placeholder" = "Passport number";
+"passport_encrypt_info" = "Encrypted using 256-BIT SSL";
+"passport_noCreditCheck_info" = "No credit checks";
+"passport_requiredToCreate_info" = "Required to create %@";
+"passport_type_international" = "International Passport";
+"passport_type_us" = "US Passport";
+
+//...SET UP WALLET...
+"create_cardanoWallet_title" = "CREATE YOUR DOGE WALLET";
+"create_cardanoWallet_info" = "CauseCard has partnered with ZeroHash, a world leader in Crypto custody and settlement.";
+"create_cardanoWallet_termsAndCondition" = "I agree to the Zero Hash and Zero Hash Liquidity Services User Agreement, and I have read and understand the Zero Hash Privacy Policy and Regulatory Disclosures. I understand that the value of any cryptocurrency, including digital assets pegged to fiat currency, commodities, or any other asset, may go to zero.";
+"risk_disclosure" = "The value of any cryptocurrency, including digital assets pegged to fiat currency, commodities, or any other asset, may go to zero.";
+"userAgreement" = "User Agreement";
+"solid_privacyPolicy" = "Privacy Policy";
+"regulatory_disclosures" = "Regulatory Disclosures";
+"wallet_useragreement" = "Zero Hash and Zero Hash Liquidity Services User Agreement";
+
+//...CHECK DEPOSIT...
+"payor_name" = "Payor name";
+"enter_payor_name" = "Enter payor name";
+"amount" = "Amount";
+"enter_amount" = "Enter amount";
+"add_check_images" = "ADD CHECK IMAGES";
+"place_solid_surface" = "Place on a solid surface";
+"ensure_lighting" = "Ensure good lighting";
+"avoid_shadows" = "Avoid shadows";
+"front_check" = "Front of check";
+"back_check" = "Back of check";
+"upload" = "Upload";
+"take_photo" = "Take photo";
+"check_submitted" = "YOUR CHECK HAS BEEN RECEIVED.";
+"ok" = "Ok";
+"Next" = "Next";
+"front_take_photo" = "take photo of front of check";
+"back_take_photo" = "take photo of back of check";
+
+//...DIRECT DEPOSIT...
+"direct_depositForm_title" = "DIRECT DEPOSIT FORM";
+"direct_depositForm_info" = "Receive paychecks up to two days early by completing this form and sharing it with your employer’s payroll department. \n \n \nYou can also save the completed form to share with your employer later.";
+"direct_deposit_employerName_heading" = "ENTER THE NAME OF YOUR EMPLOYER";
+"direct_deposit_employerName_title" = "Employer name";
+"direct_deposit_employerName_field" = "Enter employer name";
+"direct_deposit_optoinsTitle" = "HOW MUCH OF PAYCHECK YOU WANT TO DEPOSIT?";
+"direct_deposit_option1" = "Full Paycheck";
+"direct_deposit_option2" = "Enter Percentage";
+"direct_deposit_option3" = "Enter Amount";
+"direct_deposit" = "Direct Deposit";
+"direct_deposit_AddSignature_title" = "ADD YOUR SIGNATURE";
+"direct_deposit_AddSignature_message" = "Sign the form on the next page to authorize Direct Deposit enrollment.";
+"direct_deposit_AddSignature_buttonTitle" = "Add Signature";
+"direct_deposit_successTitle" = "YOUR DIRECT DEPOSIT FORM IS READY";
+"direct_deposit_successMessage" = "Share this form with your employer's payroll team to authorize direct deposits to your CauseCard";
+"direct_deposit_success_buttonEmail" = "Email Form";
+"direct_deposit_success_buttonView" = "View Form";
+
+// Transaction Detail
+"transaction_detail.balance_cash" = "Balance: %@";
+"transaction_detail.balance_crypto" = "Balance: %@ DOGE";
+"transaction_detail.total_donated" = "Total Donated: %@";
+"transaction_detail.current_rewards" = "Current rewards";
+
+//TRANSACTION
+"cardano_reward_title" = "Doge Deals";
+"receipt" = "Receipt";
+"share_fundraiser" = "Share Fundraiser";
+"transactionreceipt_line1" = "doge@zerohash.com | 855-744-7333 \n\n\n\n Zero Hash LLC 327 N Aberdeen St Chicago, IL 60607 \n\n www.zerohash.com";
+
+
+"transactionreceipt_line2" = "The value of any cryptocurrency, including digital assets pegged to fiat currency, commodities, or any other asset, may go to zero.\n\n Cancellation Policy \n\n All transactions are final. You are responsible for reviewing this receipt for accuracy land for notifying Zero Hash LLC of any suspected errors via email at support@zerohash.com within 24 hours of the trade. \n\n\n\n Liability for Non-Delivery or Delayed Delivery \n\n Zero Hash LLC's or Zero Hash Liquidity Services LLC's aggregate liability, including for non-delivery or delayed delivery, is limited to losses resulting solely from the gross negligence, intentional misconduct or fraud of Zero Hash or Zero Hash Liquidity Services, their affiliates or any of their officers, directors, managers, partners, employees or independent agents or contractors, as determined by a court of competent jurisdiction or arbitration panel in accordance with the terms of the User Agreement \n\n\n\n Beware of Fraud \n\n Cryptocurrencies and money transfer services arecommonly targeted by hackers and criminals who commitfraud. For more information on how to protect againstfraud, visit the Consumer Financial Protection Bureau'swebsite at https://www.consumerfinance.gov/consumer-tools/fraud \n\n\n\n Illinois Customers \n\n In the event of an unresolved complaint, please contactthe Illinois Department of Financial Institutions at 1-888-473-4858 or submit an online complaint at https://www.idfpr.com/admin/dfi/dficomplaint.asp \n\n\n\n Maine Customers \n\n In the event of a dispute, please contact the Bureau of Consumer Credit Protection at 1-800-332-8529 or at www.credit.maine.gov \n\n\n\n Minnesota Customers \n\n If you believe you are a victim of fraud, please contact us at 1-800-674-2975. For more information about how to protect against fraud, visit https://mn.gov/commerce/consumers/your-money/inves tor-education/cryptocurrency.jsp. \n\n\n\n Texas Customers \n\n If you have a complaint, first contact the consumer assistance division of Zero Hash LLC at 1 (855) 744-7333, if you still have an unresolved complaint regarding the company's money transmission activity, please direct your complaint to: Texas Department of Banking, 2601 North Lamar Boulevard, Austin, Texas 78705, 1-877-276-5554 (toll free), www.dob.texas.gov." ;
+
+"cancellation_policy" = "Cancellation Policy \n";
+"cancellation_desc" = "All transactions are final. You are responsible for reviewing this receipt for accuracy land for notifying Zero Hash LLC of any suspected errors via email at support@zerohash.com within 24 hours of the trade. \n\n";
+"liability_text" = "Liability for Non-Delivery or Delayed Delivery \n";
+"liability_desc" = "Zero Hash LLC's or Zero Hash Liquidity Services LLC's aggregate liability, including for non-delivery or delayed delivery, is limited to losses resulting solely from the gross negligence, intentional misconduct or fraud of Zero Hash or Zero Hash Liquidity Services, their affiliates or any of their officers, directors, managers, partners, employees or independent agents or contractors, as determined by a court of competent jurisdiction or arbitration panel in accordance with the terms of the User Agreement \n\n";
+"beware_text" = "Beware of Fraud \n";
+"beware_desc" = "Beware of Fraud \n\n Cryptocurrencies and money transfer services arecommonly targeted by hackers and criminals who commitfraud. For more information on how to protect againstfraud, visit the Consumer Financial Protection Bureau'swebsite at \n https://www.consumerfinance.gov/consumer-tools/fraud";
+"illinois_text" = "Illinois Customers \n";
+"illinois_desc" = "In the event of an unresolved complaint, please contactthe Illinois Department of Financial Institutions at 1-888-473-4858 or submit an online complaint at \n https://www.idfpr.com/admin/dfi/dficomplaint.asp \n\n";
+"maine_customers_text" = "Maine Customers \n";
+"maine_customers_desc" = "In the event of a dispute, please contact the Bureau ofConsumer Credit Protection at 1-800-332-8529 or at www.credit.maine.gov";
+"minnesota_customers_text" = "Minnesota Customers \n";
+"texas_customers_text" = "Texas Customers \n";
+
+"consumer_tools" = "https://www.consumerfinance.gov/consumer-tools/fraud";
+"illinois_customer" = "https://www.idfpr.com/admin/dfi/dficomplaint.asp";
+"maine_customer" = " www.credit.maine.gov";
+"minnesota_customer" = "https://mn.gov/commerce/consumers/your-money/inves tor-education/cryptocurrency.jsp";
+"texas_customer" = "www.dob.texas.gov.";
+
+"cardano_link" = "doge@zerohash.com";
+"zerohash_link" = "www.zerohash.com";
+"phonenumber" = "855-744-7333";
+
+
+"consumer_tools" = "https://www.consumerfinance.gov/consumer-tools/fraud";
+"illinois_customer" = "https://www.idfpr.com/admin/dfi/dficomplaint.asp";
+"maine_customer" = " www.credit.maine.gov";
+"cardano_link" = "doge@zerohash.com";
+"zerohash_link" = "www.zerohash.com";
+"phonenumber" = "855-744-7333";
+
+"transferstarted" = "Deposit STARTED";
+"transferstartedtext" = "Deposit started";
+"transfercompletedtext" = "Deposit completed";
+
+//...CARDS...
+"activateCard_title" = "ACTIVATE CARD";
+"activate" = "Activate";
+"notifyMe" = "Notify me";
+"notifyMe_info" = "When this card is charged";
+"replaceCard" = "Replace card";
+"setATM_PIN_popupTitle" = "SET UP ATM PIN";
+"setATM_PIN_popupInfo" = "Your card is active. Would you like to use your card at ATMs?";
+"setCardano_PIN_popupTitle" = "SET UP CARD PIN";
+"setCardano_PIN_popupInfo" = "Your card is active. Would you like to set a card PIN?";
+"card_last4" = "Last 4 digits on your card";
+"card_last4_placeholder" = "Enter last 4 digits";
+"card_expiryDate" = "Expire date";
+"card_exp" = "Exp";
+"card_cvv" = "CVV";
+
+// Set Card Pin
+"set_card_pin.title" = "SET CARD PIN";
+"set_card_pin.message" = "This PIN can be used at ATMs and for purchases, and is not used to get access to the app.";
+"set_card_pin.success.title" = "CARD PIN SET";
+"set_card_pin.success.message" = "Your card's PIN is now set. Use it for purchases and at ATMs.";
+
+//LEGAL
+"legal_title" = "Legal & Privacy";
+"rewards_terms" = "Rewards Terms";
+"terms_of_service" = "Terms of service";
+"legal_privacy_policy" = "Privacy Policy";
+
+//CRYPTO
+"available_transfer_crypto" = "%@ DOGE available";
+"tranfer_fee" = "%@ estimated network fee";
+
+"transfer_disclaimer" = "The estimated network fee is an approximation and the actual network fee applied on a withdrawal may differ";
+"crypto_transfer" = "DOGE TRANSFER";
+"crypto_transfer_send_receive" = "You can send to or receive from other Doge wallets. To send, you will need to know the wallet address or have a QR code. To receive, you will be able to show your wallet QR code or copy and share wallet address";
+"transfer_doge" = "TRANSFER DOGE";
+"send" = "Send";
+"receive" = "Receive";
+"send_to_wallet" = "Send to Wallet";
+"crypto_wallet_address" = "Doge Wallet Address";
+"crypto_lost_fund" = "Sending to a non - Doge wallet will result in lost funds";
+"crypto_wallet_name" = "Wallet name";
+"enter_wallet_name" = "Enter Wallet Name";
+"crypto_send.title" = "SEND DOGE";
+"crypto_send_annotation.description" = "You currently have %@ Dogecoin available to send. Doge Rewards are not available to send until 48 hours after they are earned.";
+"crypto_send_confirmation" = "ARE YOU SURE YOU WANT TO SEND %@ DOGE?";
+"crypto_send" = "%@ DOGE SENT";
+"share" = "Share";
+"wallet" = "Wallet";
+"copy_text" = "Copied!";
+"insufficient_funds" = "Insufficient funds";
+"crypto_minimum_balance" = "Minimum amount should be $0.10";
+
+// Saved Wallet Address
+"saved_wallet_address.textField_placeholder" = "Name, or Wallet Address";
+"saved_wallet_address.delete_popup.title" = "Delete Saved wallet address";
+"saved_wallet_address.delete_popup.message" = "Would you like to delete saved wallet: %@?";
+"saved_wallet_address.delete_popup.primary_button" = "Delete";
+"saved_wallet_address.save_success.message" = "Wallet address saved";
+"saved_wallet_address.delete_success.message" = "Wallet address deleted";
+
+// Enter nickname of wallet
+"enter_nickname_of_wallet.save_title" = "SAVE WALLET ADDRESS";
+"enter_nickname_of_wallet.create_nickname" = "Create a name for %@";
+"enter_nickname_of_wallet.placeholder" = "Enter name";
+"enter_nickname_of_wallet.textField_title" = "Wallet address name";
+"enter_nickname_of_wallet.disclosures" = "You can change it at any time";
+"enter_nickname_of_wallet.save_button" = "Save";
+"enter_nickname_of_wallet.name_exits.inline_error" = "This wallet address name already exists";
+
+// Edit nickname of wallet
+"edit_nickname_of_wallet.title" = "EDIT WALLET ADDRESS";
+"edit_nickname_of_wallet.create_nickname" = "Create new name for %@";
+"edit_nickname_of_wallet.textField_title" = "Wallet address name";
+"edit_nickname_of_wallet.placeholder" = "Enter name";
+"edit_nickname_of_wallet.disclosures" = "You can change it at any time";
+"edit_nickname_of_wallet.save_button" = "Save";
+"edit_nickname_of_wallet.name_exits.inline_error" = "This wallet address name already exists";
+
+// Confirmation Crypto Send
+"confirmation_crypto_send.title" = "Confirm Transfer";
+"confirmation_crypto_send.amount" = "Amount";
+"confirmation_crypto_send.to" = "To";
+"confirmation_crypto_send.wallet_address" = "Wallet address";
+"confirmation_crypto_send.confirm.button" = "Confirm";
+
+//BANK STATEMENT
+"bank_statement_title" = "Bank Statements";
+"bank_statement_emptyTitle" = "NO STATEMENTS";
+"bank_statement_emptyInfo" = "There are currently no bank statements";
+"bank_statement_created" = "Created %@";
+
+//SUPPORT
+"support_title" = "Support";
+
+//MAPS
+"set_atm_pin" = "Set ATM PIN";
+"directions" = "Directions";
+"no_atms" = "NO ATM AVAILABLE";
+
+"balance" = "Balance";
+"no_transactions" = "No transactions";
+"connect_debitCard_accounts" = "Connect a debit dard";
+"connect_bank_accounts" = "Connect a bank";
+"connect_accounts_info" = "plug account info to transfer funds from another bank";
+
+//Security
+"location_access" = "Location access";
+"face_id" = "Face ID";
+"touch_id" = "Touch ID";
+"mail_alert" =  "Mail app is not configured";
+"signature_alert" =  "Please add your signature";
+
+//PLAID ERROR
+"plaid_error_description" = "We’re unable to link your bank account via Plaid.";
+"plaid_ok_button" = "OK";
+"plaid_details_have_changed_error" = "The login details for your bank have changed, please reconnect to your bank via Plaid or add Debit Card.";
+"plaid_reconnect_button" = "Re-connect bank account";
+"plaid_connect_via_debit_card_button" = "Connect via Debit Card";
+"plaid_link_bank_via_debid_card_button" = "Link Bank via Debit Card";
+"Zero_hash_transactiondetail" = "Cryptocurrency services powered by Zero Hash";
+
+"insufficient_balance" = "insufficient balance";
+"insuficient_balance_title" = "We’re Sorry";
+"insuficientBalance_error" = "We were unable to add money due to insufficient funds. Please try again or contact us.";
+"insuficient_balance_button" = "Ok";
+"contact_us" = "Contact us";
+"learn_about_limits" = "Learn about deposit limits";
+"deposit_limit.transaction.title_generic" = "Transaction Limit";
+"deposit_limit.transaction.title_specific" = "%@ Transaction Limit";
+"deposit_limit.title" = "DEPOSIT LIMIT REACHED";
+"deposit_limit.daily.message" = "We're sorry, your deposit crossed your daily limits. Please contact support to increase your limits.";
+"deposit_limit.monthly.message" = "We're sorry, your deposit crossed your monthly limits. Please contact support to increase your limits.";
+"deposit_limit.daily" = "You have reached your daily deposit limit.";
+"deposit_limit.monthly" = "You have reached your monthly deposit limit.";
+"deposit_limit.debit_card" = "We currently have a %@ per transaction limit, please try again by depositing %@ or under.";
+"deposit_limit.bank" = "This deposit was blocked because it is over your bank's current withdraw limit. Please contact your bank to raise the limit.";
+"deposit_limit.learn" = "Learn about limits";
+"deposit_limit.close" = "Close";
+"deposit_denied.title" = "DEPOSIT DENIED";
+"deposit_denied.debit_card.message" = "This deposit has been blocked by your bank. Please contact them to enable your debit card.";
+
+//PDF
+"pdfstring1" = "I,";
+"pdfstring2" = "authorize,";
+"pdfstring3" = "to directly deposit my wages";
+"pdfstring4" = "less lawful withholdings and deductions), or earnings, as applicable, to my CauseCard account, including employer receives written notification from me of its termination of my employment or enagement";
+"pdfstring5" = "\n This authorization replaces any previous direct deposit authorization and shall remain in effect until my employer receives written notification from me of its termination. The information for my CauseCard account is provided above";
+"pdfstring6" = "I wish to deposit";
+"pdf_email" = "help@CauseCard.co";
+
+"buy_Cardano_title" = "Doge Purchase";
+"buy_Cardano_description" = "USD->DOGE";
+"price" = "Price";
+
+"sell_Cardano_title" = "Doge Sale";
+"sell_Cardano_description" = "DOGE->USD";
+"instant_transfer" = "Instant transfer";
+"3to4days" = "3 to 4 days";
+
+//App update
+"appUpdate_buttonUpdate" = "Update";
+"appUpdate_Title" = "App Update Available";
+"appUpdate_Message" = "There is a new and improved version of CauseCard available on the App Store. Update your app to make sure you have the best possible experience.";
+
+"wallet_alreadyadded_message" = "This card is already added in Wallet";
+"wallet_addcard_message" = "It will add this card to Apple Wallet";
+"activate_card_buttontitle" = "Tap to Activate Card";
+
+//Activate Card
+"card_activated_title"  = "Card activated!";
+"activate_card_buttontitle" = "Tap to Activate Card";
+
+"card_activated_card_description" = "Your %@ is now active, and can be used anywhere Visa is accepted. Please set your PIN for added security.";
+"not_now" = "Not now";
+"add_to_wallet" = "Add to wallet";
+"copycardtext" = "Card number copied to clipboard";
+"card_transaction" = "Purchase";
+"setupwallet_terms" = "I agree to Zero Hash and Zero Hash Liquidity Services User Agreement, and I have read and understand the Zero Hash Privacy Policy and Regulatory Disclosures. I understand that the value of any cryptocurrency, including digital assets pegged to fiat currency, commodities, or any other asset, may go to zero.";
+"termsofservice_text" = "By tapping ‘Continue’, you agree to Solid Terms of service. Each time you initiate a transaction using your card, your Dogecoin is converted to fiat at the time of the transaction and you are responsible for any taxes under terms of the agreement.";
+"termsofservice" = "Solid Terms of service.";
+
+// Reward Terms
+
+"enroll_title" = "ENROLL FOR DOGECOIN REWARDS";
+"amount_title" = "Transaction Amount";
+"amount_description" = "up to 8% purchase of transaction";
+"fees_title" = "Fees";
+"fees_description" = "$0";
+"fee_title" = "Fee";
+"network_fee" = "Network Fee";
+"exchange_rate_title" = "Exchange Rate";
+"exchange_rate_description" = "Varies, the current prevaling price as determined by Zero Hash Liquidity Services LLC at the point of transaction.";
+"enroll_cta" = "Enroll now";
+"disclosures_title" = "Exchange Rate";
+"disclosures_first" = "By selecting to enroll in the crypto rewards program, you understand and agree that eligible rewards transactions will also trigger your authorization to invest in crypto once your action or card transaction is complete.  Transactions may take time in certain cases.";
+"disclosures_second" = "Orders may not be canceled or reversed once submitted by you. By submitting a withdrawal request, you are requesting an on-chain transaction that is not reversible or recallable. You are responsible for reviewing the recipient address and ensuring it is the correct address for the selected asset for withdrawal";
+"disclosures_third" = "Zero Hash does not offer the ability to set up pre-authorized, automatic, or recurring Orders (“Pre-Authorized Orders”) in your Account; (b) any such Pre-Authorized Order feature (if available) is under the exclusive control of CauseCard ; (c) you must contact CauseCard in order to stop a Pre-Authorized Order before execution or to turn off such a feature in your Account; and (d) Zero Hash and ZHLS are not liable for the placement and execution of any Pre-Authorized order.";
+"disclosures_fourth" = "Maximum reward amount may vary, and can depend on your level of participation in crypto rewards. Specific terms and condition may apply.";
+
+// Notify Alert
+
+"notify_alert_title" = "WOULD YOU LIKE TO BE NOTIFIED?";
+"notify_alert_subtitle" = "Would you like to be notified about the status of your account or if your card has been charged?";
+"notify_alert_action" = "Yes";
+"notify_alert_dismiss" = "Not now";
+"notifications_enable" = "Enable Notifications";
+
+// Donations
+
+"round_up_purchases" = "Round up purchases";
+"total_donations" = "Total donations";
+"charities_supported" = "Charities supported";
+"explore_funds" = "Explore Abortion Funds";
+"charities_category" = "Reproductive Rights Charities";
+"currently_supporting" = "Currently supporting";
+"featured_funds" = "Featured Funds";
+"all_charities" = "All Charities";
+
+// Actions
+
+"view" = "View";
+"learn_more" = "Learn more";
+"select" = "Select";
+
+// Welcome
+"welcome.title" = "Welcome!";
+"welcome.subtitle" = "The AvalancheCard is an easy way to earn Avalanche with everyday purchases.  You can also buy, sell and spend Avalanche with the AvalancheCard app.";
+"welcome.how_it_works" = "HOW IT WORKS:";
+"welcome.item1" = "Create a AvalancheCard account";
+"welcome.item2" = "Use your AvalancheCard for everyday purchases";
+"welcome.item3" = "Give more by rounding up your purchases.";
+"welcome.order_card" = "Continue";
+"welcome.explore_app" = "Explore App";
+
+// Donations
+
+"donations.select_fundraiser" = "Select a Cause";
+"donations.user_donations" = "My Donations";
+"donations.fundraiser_donations" = "Latest";
+"donations.no_donations" = "No donations yet";
+
+// Fundraiser Detail
+
+"fundraiser_detail.tags" = "Tags";
+"fundraiser_detail.confidence" = "Give with confidence";
+"fundraiser_detail.details" = "Charity details";
+"fundraiser_detail.status" = "501c3 Status";
+"fundraiser_detail.active" = "Active";
+"fundraiser_detail.ein" = "EIN";
+"fundraiser_detail.address" = "Address";
+"fundraiser_detail.website" = "Website";
+"fundraiser_detail.navigator" = "Charity Navigator";
+"fundraiser_detail.latest_donations" = "Latest Donations";
+"fundraiser_detail.select" = "Select Cause";
+"fundraiser_detail.success.title" = "THANK YOU!";
+"fundraiser_detail.error.title" = "We're Sorry";
+"fundraiser_detail.error.geocode" = "We aren't able to open the Charity address right now.";
+"fundraiser_detail.error.select" = "We weren't able to select this Fundraiser. Please try again.";
+
+// Donation Thanks
+
+"donation_thanks.title" = "THANK YOU FOR YOUR DONATION!";
+"donation_thanks.subtitle" = "Every donation counts as a step closer.";
+"donation_thanks.invite" = "Invite your friends and family to fight for Reproductive Rights by signing up for CauseCard.";
+"donation_thanks.share" = "Share fundraiser";
+
+// Bank Transfers
+
+"bank_transfers.title" = "BANK TRANSFERS";
+"bank_transfers.how_to" = "How to transfer money from your bank to %@:";
+"bank_transfers.bullet_one" = "Login to your bank, and find the transfers section of your bank’s app or website";
+"bank_transfers.bullet_two" = "If it’s your first transfer, you’ll need to add your CauseCard as an external account. Enter you routing and account number, and select Checking as account type.";
+"bank_transfers.bullet_three" = "Select CauseCard as the recipient and transfer up to $25k at a time.";
+"bank_transfers.disclosure" = "Some banks require a one-time test deposit to verify your account. If so, check your CauseCard transactions after 1-2 days, and enter the test deposit amounts in the bank’s app or website.";
+"bank_transfers.done" = "Done";
+
+// Wire Transfers
+"wire_transfers.title" = "WIRE TRANSFERS";
+"wire_transfers.account_name" = "Account Name:";
+"wire_transfers.account_number" = "Account Number:";
+"wire_transfers.routing_number" = "Routing Number:";
+"wire_transfers.account_type" = "Account Type";
+"wire_transfers.bank_name" = "Bank Name:";
+"wire_transfers.bank_address" = "Bank Address:";
+
+// Buy Sell Input
+
+"buy_sell_input.buy_crypto.title" = "BUY DOGE";
+"available_balance.subtitle" = "%@ available";
+"buy_sell_input.sell_crypto.title" = "SELL DOGE";
+"buy_sell_input.sell_crypto.subtitle" = "%@ available to sell";
+"buy_sell_input.buy_donation.title" = "Donation";
+"buy_sell_input.continue" = "Continue";
+"buy_sell_input.buy_annotation.description" = "You currently have %@ available to buy Dogecoin. If this amount is less than expected, please contact support.";
+"buy_sell_input.sell_annotation.description" = "You currently have %@ Dogecoin available to sell. Doge Rewards are not available to sell until 48 hours after they are earned.";
+"buy_sell_input.buy_donation_annotation.description" = "You currently have %@ available to make a donation. If this amount is less than expected, please contact support.";
+
+// Buy Sell Detail
+
+"buy_sell_detail.buy_crypto.title" = "CONFIRM YOUR DOGE PURCHASE OF %@";
+"buy_sell_detail.sell_crypto.title" = "SELL %@ OF DOGE";
+"buy_sell_detail.buy_donation.title" = "CONFIRM YOUR DONATION OF %@";
+"buy_sell_detail.amount.title" = "Amount";
+"buy_sell_detail.amount.value_crypto" = "%.2f %@";
+"buy_sell_detail.amount.value_cash" = "$%.2f";
+"buy_sell_detail.price.title" = "Price";
+"buy_sell_detail.price.value" = "$%.3f";
+"buy_sell_detail.symbol.title" = "Symbol";
+"buy_sell_detail.fee.title" = "Fees";
+"buy_sell_detail.total.title" = "Total";
+"buy_sell_detail.total.value" = "$%.2f";
+"buy_sell_detail.disclosure.crypto" = "Orders may not be canceled or reversed once submitted by you. By submitting a withdrawal request, you are requesting an on-chain transaction that is not reversible or recallable. You are responsible for reviewing the recipient address and ensuring it is the correct address for the selected asset for withdrawal";
+"buy_sell_detail.disclosure.donation" = "100%% of funds are tax deductible and granted to designated nonprofit: %@. EIN: %@.\n\nDonations made to ShoppingGives Foundation\nEIN: 83-1352270";
+"buy_sell_detail.confirm" = "Confirm";
+"buy_sell_detail.buy_crypto.api_title" = "Doge Purchase";
+"buy_sell_detail.buy_crypto.api_description" = "USD->DOGE";
+"buy_sell_detail.sell_crypto.api_title" = "Doge Sale";
+"buy_sell_detail.sell_crypto.api_description" = "DOGE->USD";
+"buy_sell_detail.buy_donation.api_title" = "Donation";
+"buy_sell_detail.buy_donation.api_description" = "One-time Donation";
+"buy_sell_detail.insuficientBalance_error.message" = "We were unable to buy crypto due to insufficient funds. Please try again or contact us.";
+
+// Buy Sell Amount
+
+"buy_sell_amount.buy_crypto.title" = "HOW MUCH DOGE DO YOU WANT TO BUY";
+"buy_sell_amount.sell_crypto.title" = "HOW MUCH OF YOUR DOGE DO YOU WANT TO SELL";
+"buy_sell_amount.buy_donation.title" = "HOW MUCH WOULD YOU LIKE TO DONATE";
+"buy_sell_amount.continue" = "Continue";
+"buy_sell_amount.minimum_cash" = "Minimum amount should be $0.10";
+
+// Buy Sell Cash
+
+"buy_sell_cash.balance" = "Cash Balance";
+"buy_sell_cash.add_money" = "+ Add Money";
+
+// Transactions
+
+"transactions.title" = "Transactions";
+
+// Transaction
+
+"transaction_row.pending" = "Pending";
+"transaction_row.fundraiser_donation.user" = "Donation by %@";
+"transaction_row.fundraiser_donation.generic" = "Donation";
+
+// Card details
+
+"cards_detail.security" = "Security";
+"cards_detail.show_card_number" = "Show card number";
+"cards_detail.lock_card.title" = "Lock card";
+"cards_detail.lock_card.subtitle" = "Stop card from being used";
+"cards_detail.change_pin" = "Change PIN";
+"cards_detail.donations" = "Donations";
+"cards_detail.round_up" = "Round up purchases";
+"cards_detail.activate_card.title" = "Activate Card";
+"cards_detail.activate_card.message" = "To start using your card, please activate it now";
+"cards_detail.activate_card.primary" = "Activate Card";
+"cards_detail.activate_card.secondary" = "Not now";
+"cards_detail.round_up.title" = "ROUND UP";
+"cards_detail.deals.title" = "Deals";
+"cards_detail.deals.value" = "Donate up to 8% of purchase";
+
+// Profile
+
+"profile.title" = "Profile";
+"profile.total_donations" = "Total donations";
+"profile.total_donated" = "Total donated";
+"profile.stickers" = "Stickers";
+"profile.account_settings" = "Account & Settings";
+"profile.phone_number" = "Phone Number";
+"profile.email" = "Email";
+"profile.address" = "Address";
+"profile.deposit_limits" = "Deposit Limits";
+"profile.help" = "Help & support";
+"profile.rewards" = "Current Rewards";
+"profile.atm" = "ATM's Nearby";
+"profile.taxes" = "Taxes";
+"profile.or" = "OR";
+"profile.delete_account" = "Delete Account";
+"profile.version" = "Version %@";
+"profile.notifications" = "Notifications";
+"profile.contribution_toast" = "Failed to load your donations";
+"profile.delete_account.title" = "Are you sure you want to delete your account?";
+"profile.delete_account.primary" = "No";
+"profile.delete_account.secondary" = "Yes";
+"profile.bank_statements" = "Bank Statements";
+
+// Referrals
+
+"referrals.title" = "MAKE DONATIONS WITH FRIENDS";
+"referrals.info" = "Send your invite link to a friend, and we will match their donations for the first %@, or up to %@. This is tax deductable donations in your name.";
+"referrals.example.title" = "HOW IT WORKS";
+"referrals.example.donation" = "If your friend donates %@ in the first %@, we will donate %@ to your selected cause. The donation will be made in your name and is tax deductable.";
+"referrals.example.crypto" = "If the friend you invited earns 500 Doge in a week, you will also get 500 Doge. Your bonus will be paid each Friday to your DogeCard wallet within the first %@.";
+"referrals.send" = "Send invite link";
+"referrals.copy" = "Copy invite link";
+"referrals.error" = "We are unable to fetch the referral campaigns now. Please try again.";
+"referrals.retry" = "Retry";
+"referrals.toast_message" = "Invite link copied to clipboard.";
+
+// Referrals Row
+
+"referrals_row.title" = "Invite Friends";
+"referrals_row.message" = "Make donations";
+
+// Referral Campaign
+
+"referral_campaign.day" = "%d days";
+"referral_campaign.week" = "%d weeks";
+
+// Transfer
+
+"transfer.credit" = "Deposit";
+"transfer.debit" = "Withdraw";
+"transfer.credit_started" = "Deposit started";
+"transfer.credit_completed" = "Deposit completed";
+"transfer.debit_started" = "Withdraw started";
+"transfer.debit_completed" = "Withdraw completed";
+"transfer.debit_card" = "Debit Card **** %@";
+"transfer.checking" = "Checking **** %@";
+"transfer.saving" = "Savings **** %@";
+"transfer.limits_reached" = "Limits reached";
+"transfer.withdraw_annotation.description" = "You currently have %@ available to withdraw. Rewards are not available to withdraw until 48 hours after they are earned.";
+
+// Transfer Status
+
+"transfer_status.deposit.started" = "Deposit started";
+"transfer_status.deposit.completed" = "Deposit completed";
+"transfer_status.withdraw.started" = "Withdraw started";
+"transfer_status.withdraw.completed" = "Withdraw completed";
+"transfer_status.reward.started" = "Reward pending";
+"transfer_status.reward.completed" = "Reward completed";
+
+// Transfer debit suggestion
+"transfer_debit_suggestion.title" = "Get Faster Deposits";
+"transfer_debit_suggestion.body" = "For instant deposits, connect and deposit with your Debit Card";
+"transfer_debit_suggestion.connect" = "Connect Debit Card";
+
+// Cancel Transfer
+
+"cancel_transfer.title" = "Cancel Deposit";
+"cancel_transfer.fail.title" = "Something went wrong";
+"cancel_transfer.fail.message" = "We were unable to cancel your deposit. Please try again or contact support.";
+"cancel_transfer.success.title" = "Success!";
+"cancel_transfer.success.message" = "Your deposit has been successfully cancelled.";
+"cancel_transfer.ok" = "Ok";
+
+// Causes List
+
+"causes_list.error.title" = "We're Sorry";
+"causes_list.error.message" = "We aren't able to select this Cause right now.";
+
+// Fundraiser Status
+
+"fundraiser_status.raised" = "raised";
+"fundraiser_status.donations" = "%@ donations";
+
+// Skip Fundraiser
+
+"skip_fundraiser.title" = "Skip";
+
+// Causes Filter
+
+"causes_filter.title" = "SELECT A CAUSE";
+"causes_filter.subtitle" = "Select categories you are interested in";
+"causes_filter.continue" = "Continue";
+
+// Selecte Cause
+"select_cause.title" = "Causes to support";
+"select_cause.subtitle" = "Select cause you are interested in";
+"select_cause.continue" = "Continue";
+
+// Select Fundraiser
+
+"select_fundraiser.title" = "SELECT A CAUSE";
+"select_fundraiser.subtitle" = "You can change your cause anytime";
+"select_fundraiser.causes" = "%@ CAUSES";
+"select_fundraiser.select" = "Select";
+"select_fundraiser.success.title" = "THANK YOU!";
+"select_fundraiser.success.primary" = "Continue";
+"select_fundraiser.error" = "Unable to select Fundraiser, please try again.";
+
+// Fundraiser Selection
+
+"fundraiser_selection.allowed" = "Thank you for supporting %@ (you can always change later).";
+"fundraiser_selection.allowed_before_account_creation" = "Thank you for supporting %@ (you can always change later). Next, please create your account.";
+
+// Causes
+
+"causes.trending" = "Trending";
+"causes.explore" = "Explore";
+"causes.new" = "New";
+"causes.error" = "We were unable to load the Causes right now.\nPlease try again.";
+"causes.retry" = "Retry";
+
+// More ways to support
+
+"more_ways_to_support.title" = "More ways to support";
+"more_ways_to_support.share.title" = "SHARE";
+"more_ways_to_support.share.friends" = "Invite friends";
+"more_ways_to_support.share.cause" = "Share cause";
+"more_ways_to_support.photo.title" = "PROFILE PHOTO";
+"more_ways_to_support.photo.message" = "Update your profile photo on Social Media";
+"more_ways_to_support.photo.success" = "Image saved to Library!";
+"more_ways_to_support.photo.error" = "Failed to save image";
+"more_ways_to_support.news.title" = "NEWS AND UPDATES";
+"more_ways_to_support.news.message" = "Get news and updates from %@";
+"more_ways_to_support.employer.title" = "EMPLOYER MATCH PROGRAM";
+"more_ways_to_support.employer.message" = "Does your employer have a matching program?\nDouble your impact with a simple email";
+"more_ways_to_support.employer.action" = "Get taxable donations";
+
+// Fund Card
+
+"fund_card.title" = "FUND YOUR CAUSECARD";
+"fund_card.message" = "CauseCard is a Pre-paid Debit Card, which means there are no credit checks, interest payments or overdrafts. However, you have to deposit money to your account before you can use. Start by connecting your bank:";
+"fund_card.skip" = "Skip";
+
+// Card Name
+
+"card_name.title" = "CUSTOMIZE CARD %@";
+"card_name.optional" = "(OPTIONAL)";
+"card_name.message" = "If you would like, we can print your chosen name or nickname on your CauseCard instead of your legal name.";
+"card_name.placeholder" = "Enter nickname or chosen name";
+"card_name.name_length" = "Chosen  should not be more than 23 characters";
+"card_name.continue" = "Continue";
+"card_name.user_legal_name" = "Use my Legal Name";
+
+// Transaction Detail
+
+"transaction_detail.title" = "Title";
+"transaction_detail.source" = "Source";
+"transaction_detail.merchant" = "Vendor";
+"transaction_detail.transaction_id" = "Transaction Id";
+"transaction_detail.paid_to" = "Paid To";
+"transaction_detail.description" = "Description";
+"transaction_detail.received_from" = "Received From";
+"transaction_detail.transaction_type" = "Transaction Type";
+"transaction_detail.transaction_status" = "Status";
+"transaction_detail.reward" = "Reward";
+"transaction_detail.donation" = "Donation";
+"transaction_detail.save_wallet_popup.title" = "SAVE WALLET ADDRESS";
+"transaction_detail.save_wallet_popup.description" = "Would you like to save this wallet address to use again?";
+"transaction_detail.save_wallet_popup.button" = "Save wallet address";
+
+// Transaction Receipt
+
+"transaction_receipt.transaction_id" = "Transaction number";
+"transaction_receipt.trading_pair" = "Trading Pair";
+"transaction_receipt.order_type" = "Order Type";
+"transaction_receipt.quantity" = "Quantity";
+"transaction_receipt.account_id" = "Account ID";
+"transaction_receipt.date_time" = "Date and Time";
+"transaction_receipt.fee" = "Fee";
+"transaction_receipt.price" = "Price";
+"transaction_receipt.transaction_value" = "Transaction value";
+"transaction_receipt.rewards_donation" = "Rewards donation";
+"transaction_receipt.round_up_donation" = "Round up donation";
+"transaction_receipt.tax_deductible_donation" = "Tax deductible donation";
+"transaction_receipt.one_time_donation" = "One time donation";
+"transaction_receipt.cashback" = "Cashback";
+
+// Fundraiser receipt
+
+"fundraiser_receipt.fundraiser" = "100%% of funds are tax deductible and granted to designated nonprofit: %@.";
+"fundraiser_receipt.charity" = "Donations made to %@. EIN: %@";
+"fundraiser_receipt.terms" = "Terms & Conditions";
+"fundraiser_receipt.privacy" = "Privacy Policy";
+
+// Account Activated
+
+"account_activated.title" = "ADD TO APPLE PAY";
+"account_activated.message" = "Your CauseCard account is activated! Next, add CauseCard to your Apple Pay wallet for fast and easy payments.";
+"account_activated.skip" = "Skip";
+
+// Apple Wallet
+"add_to_apple_wallet.title" = "Add To Apple Wallet";
+
+// Round up
+
+"round_up.title" = "ROUND UPS";
+"round_up.message" = "Round up spare change to the nearest dollar when you use your %@. It's easy way to make a big impact over time.";
+"round_up.item_one" = "Select a cause you'd like to support. You can change anytime.";
+"round_up.item_two" = "Spend with your CauseCard.";
+"round_up.item_three" = "Your spare change will be donated to your selected cause.";
+"round_up.continue" = "Continue";
+"round_up.skip" = "Skip";
+
+// Fundraiser Actions
+
+"fundraiser_actions.share" = "Share";
+"fundraiser_actions.donate" = "Donate";
+"fundraiser_actions.more" = "More";
+
+// Share
+
+"share.navigation_title" = "Share";
+"share.card.fundraiser" = "I'm using CauseCard to support %@ by making passive donations through my everyday purchases.";
+"share.include_donations" = "Include donations";
+"share.email" = "Email";
+"share.facebook" = "Facebook";
+"share.instagram" = "Instagram";
+"share.messages" = "Messages";
+"share.snapchat" = "Snapchat";
+"share.tikTok" = "TikTok";
+"share.twitter" = "Twitter";
+"share.whatsapp" = "WhatsApp";
+"share.more" = "More";
+"share.cancel" = "Cancel";
+"share.failure" = "Failed to share on %@";
+
+// Donations Disclosure
+
+"donations_disclosure.text" = "100% of the donations you make are tax deductible and go to charity. ";
+"donations_disclosure.alert.title" = "DONATIONS";
+"donations_disclosure.alert.powered_by" = "Powered by ShoppingGives ";
+
+// Alert Attributed Text
+
+"alert_attributed_text.tax_deductions" = "Donations made to ShoppingGives Foundation EIN: %@.\n100%% of funds granted to designated nonprofit - %@ and %@.";
+"alert_attributed_text.round_up" = "Round up spare change to the nearest dollar when you use your CauseCard. It's an easy way to make a big impact over time.\n\nRound up donations made to ShoppingGives Foundation EIN: %@. 100%% of funds granted to designated nonprofit - %@ and %@.";
+"alert_attributed_text.ein" = "83-01252270";
+"alert_attributed_text.terms" = "Terms & Conditions";
+"alert_attributed_text.privacy" = "Privacy Policy";
+
+// Suggest Cause
+
+"suggest_cause.title" = "Suggest a Cause";
+"suggest_cause.tell_more" = "Please tell us more";
+"suggest_cause.placeholder" = "Enter text";
+"suggest_cause.max_characters" = "1000 characters max";
+"suggest_cause.submit" = "Submit";
+"suggest_cause.alert.title" = "THANK YOU";
+"suggest_cause.alert.message" = "Thank you for suggesting a cause. Our team will review and follow up.";
+
+// KYC Wait
+
+"kyc_wait.title" = "Thank you for waiting";
+"kyc_wait.message" = "We're confiming your account details. This could take up to 30 seconds.";
+
+// Logout
+
+"logout.title" = "Log Out";
+"logout.alert.title" = "Are you sure you want to log out?";
+"logout.alert.primary" = "No";
+"logout.alert.secondary" = "Yes";
+
+// Link Direct Deposit
+
+"link_direct_deposit.navigation_title" = "Direct Deposit";
+"link_direct_deposit.all_benefits" = "See all the benefits";
+"link_direct_deposit.automatic.header" = "Automatic Setup";
+"link_direct_deposit.automatic.title" = "FIND YOUR EMPLOYER";
+"link_direct_deposit.automatic.message" = "Tell us who pays you, and we'll help you get set up.";
+"link_direct_deposit.automatic.cta" = "Get Started";
+"link_direct_deposit.manual.header" = "Manual Setup";
+"link_direct_deposit.manual.title" = "USE ACCOUNT DETAILS";
+"link_direct_deposit.manual.message" = "Give these to your employer and they'll handle the rest.";
+"link_direct_deposit.manual.routing" = "Routing number";
+"link_direct_deposit.manual.account" = "Account number";
+"link_direct_deposit.manual.cta" = "Fill out a form";
+
+// Direct Deposit Benefits
+
+"direct_deposit_benefits.title" = "BENEFITS OF DIRECT DEPOSIT WITH CAUSECARD";
+"direct_deposit_benefits.item_one" = "Payday up to 2 days early";
+"direct_deposit_benefits.item_two" = "FDIC-insured through Evolve Bank and Trust";
+"direct_deposit_benefits.done" = "Done";
+
+// Transaction Card
+
+"card.title.crypto" = "Doge Earned";
+"card.title.donation" = "Donation";
+"card.title.cashback" = "Cashback";
+"card.message.crypto" = "I earned %@ by making a %@ purchase with CauseCard.";
+"card.message.donation" = "Supporting %@ - %@.";
+"card.message.share_donation.amount" = "I donated %@ to %@ using CauseCard. Join us in supporting %@.";
+"card.message.share_donation.generic" = "We're raising money for %@ using CauseCard. Join us in supporting %@.";
+"card.share" = "Share";
+"card.share.crypto" = "I earned %@ by using my Visa CauseCard. Get one here: %@";
+"card.share.cashback" = "I earned %@ back by using my Visa CauseCard. Get one here: %@";
+
+// Push Notification
+
+"push_notification.error" = "We were unable to load the notification right now.\nPlease try again.";
+"push_notification.retry" = "Retry";
+
+// Taxes
+
+"taxes.navigation_title" = "Taxes";
+"taxes.error" = "We were unable to load Taxes right now.\nPlease try again.";
+"taxes.retry" = "Retry";
+"taxes.empty.title" = "NO TAXES";
+"taxes.empty.message" = "There are currently no taxes";
+"taxes.value" = "Created %@";
+
+// Search Causes
+
+"search_causes.navigation_title" = "Search charities";
+"search_causes.no_results" = "No results found";
+
+// Reward Types
+
+"reward_types.navigation_title" = "Current Rewards";
+"reward_types.card.title" = "Pay your Credit Card Bill with DogeCard";
+"reward_types.card.subtitle" = "Earn about 1 Doge for every $10 of Credit Card bill paid. Watch this how-to video.";
+"reward_types.card.cta" = "Watch how to video";
+"reward_types.error" = "We were unable to load your rewards right now.\nPlease try again.";
+"reward_types.retry" = "Retry";
+
+// Location
+
+"location.denied.message" = "Please grant location access to find ATMs nearby.";
+"location.denied.cta" = "Open Settings";
+"location.details.distance" = " %.2f mi";
+"location.details.cta" = "Directions";
+"location.navigation.apple" = "Open in Apple Maps";
+"location.navigation.google" = "Open in Google Maps";
+"location.navigation.cancel" = "Cancel";
+
+// Select Rewards
+
+"select_rewards.title" = "Select Rewards";
+"select_rewards.subtitle" = "Welcome to %@, please select your rewards. You can change anytime.";
+"select_rewards.continue" = "Continue";
+
+// User Reward Type
+
+"user_reward_type.cashback.title" = "Instant Cashback";
+"user_reward_type.cashback.subtitle" = "0.75% on every qualifying purchase";
+"user_reward_type.donation.title" = "Donate to Charity";
+"user_reward_type.donation.subtitle" = "0.75% donated to a charity you choose";
+
+// Unspecified Rewards
+
+"unspecified_rewards.title" = "You can choose between";
+"unspecified_rewards.cta" = "Select a reward";
+
+// Cashback
+
+"cashback.latest" = "Latest rewards";
+"cashback.see_all" = "See all";
+
+// Transaction Rewards Status
+"transaction_rewards_status.pending" = "Pending";
+"transaction_rewards_status.completed" = "Completed";
+
+// Edit Rewards
+
+"edit_rewards.navigation_title" = "Change rewards";
+"edit_rewards.title" = "Please select your rewards";
+
+// Popup
+
+"popup.we_are_sorry.title" = "WE ARE SORRY";
+"popup.error.title" = "ERROR";
+"popup.ok.button" = "OK";
+"popup.okay.button" = "Okay";
+"popup.contact_support.button" = "Contact Support";
+"popup.retry.button" = "Retry";
+"popup.try_again.button" = "Try again";
+"popup.close.button" = "Close";
+
+// Balance Alert
+
+"balance_alert.low.title" = "Low Balance Alert";
+"balance_alert.low.message" = "Your balance is below %@";
+"balance_alert.negative.title" = "Negative Balance";
+"balance_alert.negative.message.cash" = "Please deposit cash";
+"balance_alert.negative.message.crypto" = "Please deposit Doge";
+"balance_alert.cta" = "Deposit";
+
+// Add Bank - Card
+
+"add_bank.add_debit_card.title" = "ADD A DEBIT CARD";
+"add_bank.add_debit_card.error_message" = "We're sorry, but we're not able to link your Debit Card.";
+"add_bank.card_does_not_exist.title" = "CARD DOESN’T EXIST";
+"add_bank.card_does_not_exist.error_message" = "This card does not exist. Please check that the entered card details are correct.";
+
+// Grid Value
+
+"grid_value.crypto" = "%@ DOGE";
+"grid_value.all" = "All";
+
+// Forced Upgrade
+"update_app.title" = "UPDATE APP";
+"update_app.message" = "You’re on an older version of the %@ app. Please update to the latest version.";
+
+// Charts
+"cryptoChart.filter.live" = "Live";
+"cryptoChart.filter.day" = "1D";
+"cryptoChart.filter.week" = "1W";
+"cryptoChart.filter.month" = "1M";
+"cryptoChart.filter.year" = "1Y";
+"cryptoChart.filter.all" = "All";

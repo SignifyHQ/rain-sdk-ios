@@ -5,7 +5,7 @@ public struct TextTappable: UIViewRepresentable {
   public init(
     text: String,
     textAlignment: NSTextAlignment = .natural,
-    fontSize: CGFloat = Constants.FontSize.small.value,
+    fontSize: CGFloat = 14,
     links: [String],
     openLink: @escaping (String) -> Void)
   {

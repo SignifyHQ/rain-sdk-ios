@@ -31,8 +31,10 @@ struct AppView: View {
         .padding()
         
         NavigationLink("", isActive: $onSignupPhone) {
-          PhoneNumberView(viewModel: Container.shared.phoneNumberViewModel.callAsFunction())
-            .environmentObject(environmentManager)
+          /*
+          //PhoneNumberView(viewModel: Container.shared.phoneNumberViewModel.callAsFunction())
+            //.environmentObject(environmentManager)*/
+          WelcomeView(viewModel: WelcomeViewModel())
         }
       }
       .frame(maxWidth: .infinity)

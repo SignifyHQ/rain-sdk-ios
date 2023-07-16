@@ -73,7 +73,6 @@
 /* Begin PBXFileReference section */
 		06D40BF72A625F5400EADB75 /* LoadingMix.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = LoadingMix.json; sourceTree = "<group>"; };
 		06D40BFB2A6260B300EADB75 /* LoadingContrast.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = LoadingContrast.json; sourceTree = "<group>"; };
-		06D40BFD2A6261A700EADB75 /* LoadingPrimary.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; name = LoadingPrimary.json; path = ../../../../../../Downloads/LoadingPrimary.json; sourceTree = "<group>"; };
 		A94F71F32A614E04002ADB34 /* LFLocalizable */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = LFLocalizable; path = Modules/LFLocalizable; sourceTree = "<group>"; };
 		A95354972A5E55B2008B0FAB /* Cardano.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Cardano.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		A953549B2A5E571D008B0FAB /* CardanoConfig.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = CardanoConfig.xcconfig; sourceTree = "<group>"; };
@@ -167,7 +166,6 @@
 		06D40BF42A625E9100EADB75 /* Lottie */ = {
 			isa = PBXGroup;
 			children = (
-				06D40BFD2A6261A700EADB75 /* LoadingPrimary.json */,
 				06D40BFB2A6260B300EADB75 /* LoadingContrast.json */,
 				06D40BF72A625F5400EADB75 /* LoadingMix.json */,
 			);
@@ -577,7 +575,6 @@
 				A97BF83E2A5DBCF200B8F5CA /* Images.xcassets in Resources */,
 				06D40BFC2A6260B300EADB75 /* LoadingContrast.json in Resources */,
 				A9D6C4B22A5E91DF0038D0BB /* LaunchScreen.storyboard in Resources */,
-				06D40BFE2A6261A700EADB75 /* LoadingPrimary.json in Resources */,
 				A9D6C4A52A5E5FE00038D0BB /* Localizable.strings in Resources */,
 				A97BF8402A5DC13000B8F5CA /* Colors.xcassets in Resources */,
 				06D40BF82A625F5400EADB75 /* LoadingMix.json in Resources */,

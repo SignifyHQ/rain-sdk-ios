@@ -1,0 +1,12 @@
+{
+  "images" : [
+    {
+      "filename" : "shareWhatsapp.pdf",
+      "idiom" : "universal"
+    }
+  ],
+  "info" : {
+    "author" : "xcode",
+    "version" : 1
+  }
+}
