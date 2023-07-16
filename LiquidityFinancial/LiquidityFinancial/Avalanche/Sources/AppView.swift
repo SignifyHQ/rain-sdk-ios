@@ -16,24 +16,21 @@ struct AppView: View {
   
   var body: some View {
     NavigationView {
-      ZStack {
-        VStack {
-          GenImages.Images.icLogo.swiftUIImage
-            .resizable()
-            .frame(width: 100, height: 100)
-          Text("Hello, world! \(appName ?? "Unknow")")
-          Button("Sign up Phone") {
-            onSignupPhone.toggle()
-          }
-          .buttonStyle(GrowingButton())
+      VStack {
+        GenImages.Images.icLogo.swiftUIImage
+          .resizable()
+          .frame(width: 100, height: 100)
+        Text("Hello, world! \(appName ?? "Unknow")")
+        Button("Sign up Phone") {
+          onSignupPhone.toggle()
         }
-        .foregroundColor(Color.white)
-        .padding()
-        
-        NavigationLink("", isActive: $onSignupPhone) {
-          PhoneNumberView(viewModel: Container.shared.phoneNumberViewModel.callAsFunction())
-            .environmentObject(environmentManager)
-        }
+        .buttonStyle(GrowingButton())
+      }
+      .foregroundColor(Color.white)
+      .padding()
+      .navigationLink(isActive: $onSignupPhone) {
+        PhoneNumberView(viewModel: Container.shared.phoneNumberViewModel.callAsFunction())
+          .environmentObject(environmentManager)
       }
       .frame(maxWidth: .infinity)
       .frame(maxHeight: .infinity)

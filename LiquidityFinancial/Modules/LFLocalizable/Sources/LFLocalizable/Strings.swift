@@ -59,6 +59,28 @@ public enum LFLocalizable {
       public static let description = LFLocalizable.tr("Localizable", "term.termsVoip.description", fallback: "Using VOIP or Google Voice numbers can result in onboarding delays. We NEVER share your phone number with third parties for marketing, per our Privacy Policy.")
     }
   }
+  public enum VerificationCode {
+    public enum EnterCode {
+      /// ENTER VERIFICATION CODE
+      public static let screenTitle = LFLocalizable.tr("Localizable", "verificationCode.enterCode.screenTitle", fallback: "ENTER VERIFICATION CODE")
+      /// Enter Code
+      public static let textFieldPlaceholder = LFLocalizable.tr("Localizable", "verificationCode.enterCode.textFieldPlaceholder", fallback: "Enter Code")
+    }
+    public enum OtpSent {
+      /// New code sent
+      public static let toastMessage = LFLocalizable.tr("Localizable", "verificationCode.otpSent.toastMessage", fallback: "New code sent")
+    }
+    public enum Resend {
+      /// Resend Code
+      public static let buttonTitle = LFLocalizable.tr("Localizable", "verificationCode.resend.buttonTitle", fallback: "Resend Code")
+    }
+    public enum SendTo {
+      /// Code sent to %@
+      public static func textFieldTitle(_ p1: Any) -> String {
+        return LFLocalizable.tr("Localizable", "verificationCode.sendTo.textFieldTitle", String(describing: p1), fallback: "Code sent to %@")
+      }
+    }
+  }
   public enum Wellcome {
     /// HOW IT WORKS:
     public static let howItWorks = LFLocalizable.tr("Localizable", "wellcome.how_it_works", fallback: "HOW IT WORKS:")

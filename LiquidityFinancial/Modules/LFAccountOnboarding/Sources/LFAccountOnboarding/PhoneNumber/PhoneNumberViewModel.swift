@@ -15,12 +15,14 @@ public final class PhoneNumberViewModel: ObservableObject {
   @Published var toastMessage: String?
   
   let requestOtpUserCase: RequestOTPUseCaseProtocol
+  let loginUseCase: LoginUseCaseProtocol
   let terms = LFLocalizable.Term.Terms.attributeText
   let esignConsent = LFLocalizable.Term.EsignConsent.attributeText
   let privacyPolicy = LFLocalizable.Term.PrivacyPolicy.attributeText
   
-  public init(requestOtpUserCase: RequestOTPUseCaseProtocol) {
+  public init(requestOtpUserCase: RequestOTPUseCaseProtocol, loginUseCase: LoginUseCaseProtocol) {
     self.requestOtpUserCase = requestOtpUserCase
+    self.loginUseCase = loginUseCase
   }
 }
 

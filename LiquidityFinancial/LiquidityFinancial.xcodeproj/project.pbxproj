@@ -10,9 +10,9 @@
 		06D40BF82A625F5400EADB75 /* LoadingMix.json in Resources */ = {isa = PBXBuildFile; fileRef = 06D40BF72A625F5400EADB75 /* LoadingMix.json */; };
 		06D40BFC2A6260B300EADB75 /* LoadingContrast.json in Resources */ = {isa = PBXBuildFile; fileRef = 06D40BFB2A6260B300EADB75 /* LoadingContrast.json */; };
 		06D40C012A62AE3700EADB75 /* iPhoneNumberField in Frameworks */ = {isa = PBXBuildFile; productRef = 06D40C002A62AE3700EADB75 /* iPhoneNumberField */; };
+		06D40C032A63DEB300EADB75 /* LoadingPrimary.json in Resources */ = {isa = PBXBuildFile; fileRef = 06D40C022A63DEB300EADB75 /* LoadingPrimary.json */; };
 		A938373C2A63BAAC009EB1DE /* LFUtilities in Frameworks */ = {isa = PBXBuildFile; productRef = A938373B2A63BAAC009EB1DE /* LFUtilities */; };
 		A938373E2A63BB20009EB1DE /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = A938373D2A63BB20009EB1DE /* LaunchScreen.storyboard */; };
-		A93837402A63D05D009EB1DE /* LoadingPrimary.json in Resources */ = {isa = PBXBuildFile; fileRef = A938373F2A63D05D009EB1DE /* LoadingPrimary.json */; };
 		A93837442A63D7AD009EB1DE /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A93837432A63D7AD009EB1DE /* Images.xcassets */; };
 		A93837452A63D7AF009EB1DE /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A93837432A63D7AD009EB1DE /* Images.xcassets */; };
 		A94F71EE2A610E65002ADB34 /* LFAccountOnboarding in Frameworks */ = {isa = PBXBuildFile; productRef = A94F71ED2A610E65002ADB34 /* LFAccountOnboarding */; };
@@ -75,8 +75,8 @@
 /* Begin PBXFileReference section */
 		06D40BF72A625F5400EADB75 /* LoadingMix.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = LoadingMix.json; sourceTree = "<group>"; };
 		06D40BFB2A6260B300EADB75 /* LoadingContrast.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = LoadingContrast.json; sourceTree = "<group>"; };
+		06D40C022A63DEB300EADB75 /* LoadingPrimary.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = LoadingPrimary.json; sourceTree = "<group>"; };
 		A938373D2A63BB20009EB1DE /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = LaunchScreen.storyboard; sourceTree = "<group>"; };
-		A938373F2A63D05D009EB1DE /* LoadingPrimary.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = LoadingPrimary.json; sourceTree = "<group>"; };
 		A93837432A63D7AD009EB1DE /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
 		A94F71F32A614E04002ADB34 /* LFLocalizable */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = LFLocalizable; path = Modules/LFLocalizable; sourceTree = "<group>"; };
 		A95354972A5E55B2008B0FAB /* Cardano.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Cardano.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -171,7 +171,7 @@
 		06D40BF42A625E9100EADB75 /* Lottie */ = {
 			isa = PBXGroup;
 			children = (
-				A938373F2A63D05D009EB1DE /* LoadingPrimary.json */,
+				06D40C022A63DEB300EADB75 /* LoadingPrimary.json */,
 				06D40BFB2A6260B300EADB75 /* LoadingContrast.json */,
 				06D40BF72A625F5400EADB75 /* LoadingMix.json */,
 			);
@@ -595,8 +595,8 @@
 				A93837442A63D7AD009EB1DE /* Images.xcassets in Resources */,
 				06D40BFC2A6260B300EADB75 /* LoadingContrast.json in Resources */,
 				A9D6C4B22A5E91DF0038D0BB /* LaunchScreen.storyboard in Resources */,
-				A93837402A63D05D009EB1DE /* LoadingPrimary.json in Resources */,
 				A9D6C4A52A5E5FE00038D0BB /* Localizable.strings in Resources */,
+				06D40C032A63DEB300EADB75 /* LoadingPrimary.json in Resources */,
 				A97BF8402A5DC13000B8F5CA /* Colors.xcassets in Resources */,
 				06D40BF82A625F5400EADB75 /* LoadingMix.json in Resources */,
 			);
