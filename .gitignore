@@ -19,9 +19,9 @@ DerivedData
 .hmap
 .ipa
 .xcuserstate
-ios/Liquidity.xcodeproj/xcshareddata/xcschemes/Liquidity-tvOS.xcscheme
 ios/Index/
-ios/Liquidity.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/Package.resolved
+Package.resolved
+.swiftpm
 
 # VSCode
 .vscode/
@@ -48,5 +48,4 @@ simulatorCaptures/
 
 loc-export
 
-ios/Pods
 
