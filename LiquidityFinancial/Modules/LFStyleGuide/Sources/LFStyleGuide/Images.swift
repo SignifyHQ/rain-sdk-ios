@@ -23,6 +23,7 @@ public typealias AssetImageTypeAlias = ImageAsset.Image
 // swiftlint:disable identifier_name line_length nesting type_body_length type_name
 public enum GenImages {
   public enum CommonImages {
+    public static let calendar = ImageAsset(name: "calendar")
     public static let dash = ImageAsset(name: "dash")
     public static let icWellcome1 = ImageAsset(name: "ic_wellcome_1")
     public static let icWellcome2 = ImageAsset(name: "ic_wellcome_2")

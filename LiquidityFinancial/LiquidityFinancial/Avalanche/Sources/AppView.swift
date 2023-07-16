@@ -11,8 +11,9 @@ struct AppView: View {
   
   var body: some View {
     Group {
-      PhoneNumberView(viewModel: Container.shared.phoneNumberViewModel.callAsFunction())
-        .environmentObject(environmentManager)
+      //PhoneNumberView(viewModel: Container.shared.phoneNumberViewModel.callAsFunction())
+      //  .environmentObject(environmentManager)
+      PersonalInformationView(isAppView: true)
     }
     .embedInNavigation()
   }

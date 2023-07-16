@@ -10,6 +10,28 @@ import Foundation
 // swiftlint:disable explicit_type_interface function_parameter_count identifier_name line_length
 // swiftlint:disable nesting type_body_length type_name vertical_whitespace_opening_braces
 public enum LFLocalizable {
+  /// Date of birth
+  public static let dob = LFLocalizable.tr("Localizable", "dob", fallback: "Date of birth")
+  /// dd / mm / yyyy
+  public static let dobFormat = LFLocalizable.tr("Localizable", "dob_format", fallback: "dd / mm / yyyy")
+  /// Email
+  public static let email = LFLocalizable.tr("Localizable", "email", fallback: "Email")
+  /// Enter email address
+  public static let enterEmailAddress = LFLocalizable.tr("Localizable", "enter_emailAddress", fallback: "Enter email address")
+  /// Enter legal first name
+  public static let enterFirstName = LFLocalizable.tr("Localizable", "enter_firstName", fallback: "Enter legal first name")
+  /// Enter legal last name
+  public static let enterLastName = LFLocalizable.tr("Localizable", "enter_lastName", fallback: "Enter legal last name")
+  /// Legal first name
+  public static let firstName = LFLocalizable.tr("Localizable", "first_name", fallback: "Legal first name")
+  /// Legal last name
+  public static let lastName = LFLocalizable.tr("Localizable", "last_name", fallback: "Legal last name")
+  /// First name and Last name should not be more than 23 characters
+  public static let nameExceedMessage = LFLocalizable.tr("Localizable", "name_exceed_message", fallback: "First name and Last name should not be more than 23 characters")
+  public enum AddPersonalInformation {
+    /// Add personal information
+    public static let title = LFLocalizable.tr("Localizable", "addPersonalInformation.title", fallback: "Add personal information")
+  }
   public enum Button {
     public enum Continue {
       /// Continue
@@ -81,26 +103,26 @@ public enum LFLocalizable {
       }
     }
   }
-  public enum Wellcome {
+  public enum Welcome {
     /// HOW IT WORKS:
-    public static let howItWorks = LFLocalizable.tr("Localizable", "wellcome.how_it_works", fallback: "HOW IT WORKS:")
+    public static let howItWorks = LFLocalizable.tr("Localizable", "welcome.how_it_works", fallback: "HOW IT WORKS:")
     public enum Button {
       /// Order Card
-      public static let orderCard = LFLocalizable.tr("Localizable", "wellcome.button.order_card", fallback: "Order Card")
+      public static let orderCard = LFLocalizable.tr("Localizable", "welcome.button.order_card", fallback: "Order Card")
     }
     public enum Header {
       /// The AvalancheCard is an easy way to earn Avalanche with everyday purchases.  You can also buy, sell and spend Avalanche with the AvalancheCard app.
-      public static let desc = LFLocalizable.tr("Localizable", "wellcome.header.desc", fallback: "The AvalancheCard is an easy way to earn Avalanche with everyday purchases.  You can also buy, sell and spend Avalanche with the AvalancheCard app.")
-      /// WELLCOME!
-      public static let title = LFLocalizable.tr("Localizable", "wellcome.header.title", fallback: "WELLCOME!")
+      public static let desc = LFLocalizable.tr("Localizable", "welcome.header.desc", fallback: "The AvalancheCard is an easy way to earn Avalanche with everyday purchases.  You can also buy, sell and spend Avalanche with the AvalancheCard app.")
+      /// WELCOME!
+      public static let title = LFLocalizable.tr("Localizable", "welcome.header.title", fallback: "WELCOME!")
     }
     public enum HowItWorks {
       /// Create a AvalancheCard account
-      public static let item1 = LFLocalizable.tr("Localizable", "wellcome.how_it_works.item1", fallback: "Create a AvalancheCard account")
+      public static let item1 = LFLocalizable.tr("Localizable", "welcome.how_it_works.item1", fallback: "Create a AvalancheCard account")
       /// Use your AvalancheCard for everyday purchases
-      public static let item2 = LFLocalizable.tr("Localizable", "wellcome.how_it_works.item2", fallback: "Use your AvalancheCard for everyday purchases")
+      public static let item2 = LFLocalizable.tr("Localizable", "welcome.how_it_works.item2", fallback: "Use your AvalancheCard for everyday purchases")
       /// Give more by rounding up your purchases.
-      public static let item3 = LFLocalizable.tr("Localizable", "wellcome.how_it_works.item3", fallback: "Give more by rounding up your purchases.")
+      public static let item3 = LFLocalizable.tr("Localizable", "welcome.how_it_works.item3", fallback: "Give more by rounding up your purchases.")
     }
   }
 }

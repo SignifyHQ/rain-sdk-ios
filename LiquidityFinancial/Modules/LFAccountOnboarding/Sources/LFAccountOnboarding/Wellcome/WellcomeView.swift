@@ -21,7 +21,7 @@ public struct WelcomeView: View {
       ScrollView(showsIndicators: true) {
         VStack(spacing: 24) {
           HStack {
-            Text(LFLocalizable.Wellcome.howItWorks)
+            Text(LFLocalizable.Welcome.howItWorks)
               .font(Fonts.Inter.regular.swiftUIFont(size: 16))
               .foregroundColor(Colors.label.swiftUIColor)
             Spacer()
@@ -46,14 +46,14 @@ public struct WelcomeView: View {
     VStack(spacing: 12) {
       GenImages.Images.icLogo.swiftUIImage
       
-      Text(LFLocalizable.Wellcome.Header.title)
+      Text(LFLocalizable.Welcome.Header.title)
         .font(Fonts.Inter.regular.swiftUIFont(fixedSize: 24))
         .foregroundColor(Colors.label.swiftUIColor)
         .fixedSize(horizontal: false, vertical: true)
         .multilineTextAlignment(.center)
         .padding(.horizontal, 30)
       
-      Text(LFLocalizable.Wellcome.Header.desc)
+      Text(LFLocalizable.Welcome.Header.desc)
         .font(Fonts.Inter.regular.swiftUIFont(fixedSize: 16))
         .foregroundColor(Colors.label.swiftUIColor.opacity(0.75))
         .fixedSize(horizontal: false, vertical: true)
@@ -82,7 +82,7 @@ public struct WelcomeView: View {
   private var buttons: some View {
     VStack(spacing: 10) {
       FullSizeButton(
-        title: LFLocalizable.Wellcome.Button.orderCard,
+        title: LFLocalizable.Welcome.Button.orderCard,
         isDisable: false,
         isLoading: $viewModel.isLoading
       ) {
@@ -93,11 +93,11 @@ public struct WelcomeView: View {
   
   private var items: some View {
     VStack(spacing: 20) {
-      item(image: GenImages.CommonImages.icWellcome1.swiftUIImage, text: LFLocalizable.Wellcome.HowItWorks.item1)
+      item(image: GenImages.CommonImages.icWellcome1.swiftUIImage, text: LFLocalizable.Welcome.HowItWorks.item1)
       
-      item(image: GenImages.CommonImages.icWellcome2.swiftUIImage, text: LFLocalizable.Wellcome.HowItWorks.item2)
+      item(image: GenImages.CommonImages.icWellcome2.swiftUIImage, text: LFLocalizable.Welcome.HowItWorks.item2)
       
-      item(image: GenImages.CommonImages.icWellcome3.swiftUIImage, text: LFLocalizable.Wellcome.HowItWorks.item3)
+      item(image: GenImages.CommonImages.icWellcome3.swiftUIImage, text: LFLocalizable.Welcome.HowItWorks.item3)
     }
   }
 }

@@ -10,13 +10,13 @@
 "phoneNumber.environment.title" = "Environment";
 
 // Wellcome Screen
-"wellcome.header.title" = "WELLCOME!";
-"wellcome.header.desc" = "The AvalancheCard is an easy way to earn Avalanche with everyday purchases.  You can also buy, sell and spend Avalanche with the AvalancheCard app.";
-"wellcome.how_it_works" = "HOW IT WORKS:";
-"wellcome.how_it_works.item1" = "Create a AvalancheCard account";
-"wellcome.how_it_works.item2" = "Use your AvalancheCard for everyday purchases";
-"wellcome.how_it_works.item3" = "Give more by rounding up your purchases.";
-"wellcome.button.order_card" = "Order Card";
+"welcome.header.title" = "WELCOME!";
+"welcome.header.desc" = "The AvalancheCard is an easy way to earn Avalanche with everyday purchases.  You can also buy, sell and spend Avalanche with the AvalancheCard app.";
+"welcome.how_it_works" = "HOW IT WORKS:";
+"welcome.how_it_works.item1" = "Create a AvalancheCard account";
+"welcome.how_it_works.item2" = "Use your AvalancheCard for everyday purchases";
+"welcome.how_it_works.item3" = "Give more by rounding up your purchases.";
+"welcome.button.order_card" = "Order Card";
 
 // VerificationCode Screen
 "verificationCode.enterCode.screenTitle" = "ENTER VERIFICATION CODE";
@@ -24,6 +24,18 @@
 "verificationCode.enterCode.textFieldPlaceholder" = "Enter Code";
 "verificationCode.resend.buttonTitle" = "Resend Code";
 "verificationCode.otpSent.toastMessage" = "New code sent";
+
+// Personal information
+"addPersonalInformation.title" = "Add personal information";
+"name_exceed_message" = "First name and Last name should not be more than 23 characters";
+"first_name" = "Legal first name";
+"enter_firstName" = "Enter legal first name";
+"last_name" = "Legal last name";
+"enter_lastName" = "Enter legal last name";
+"email" = "Email";
+"enter_emailAddress" = "Enter email address";
+"dob" = "Date of birth";
+"dob_format"= "dd / mm / yyyy";
 
 // MARK: - Common
 
