@@ -40,7 +40,7 @@ struct VerificationCodeView: View {
         Button {
           viewModel.openIntercom()
         } label: {
-          GenImages.Images.icChat.swiftUIImage
+          GenImages.CommonImages.icChat.swiftUIImage
             .foregroundColor(Colors.label.swiftUIColor)
         }
       }
@@ -58,8 +58,7 @@ struct VerificationCodeView: View {
     // TODO: Will be implemented later
     // .track(name: String(describing: type(of: self)))
     .navigationLink(isActive: $viewModel.isPushToSSNView) {
-      // SSNView()
-      EmptyView()
+      SecurityCheckView()
     }
   }
 }

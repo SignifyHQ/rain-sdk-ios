@@ -37,6 +37,10 @@ public enum LFLocalizable {
       /// Continue
       public static let title = LFLocalizable.tr("Localizable", "button.continue.title", fallback: "Continue")
     }
+    public enum Logout {
+      /// Log Out
+      public static let title = LFLocalizable.tr("Localizable", "button.logout.title", fallback: "Log Out")
+    }
     public enum Title {
       /// Trade Now and Get
       /// Your Life
@@ -55,10 +59,36 @@ public enum LFLocalizable {
       public static let title = LFLocalizable.tr("Localizable", "phoneNumber.textField.title", fallback: "Phone Number")
     }
   }
+  public enum Popup {
+    public enum Logout {
+      /// No
+      public static let primaryTitle = LFLocalizable.tr("Localizable", "popup.logout.primaryTitle", fallback: "No")
+      /// Yes
+      public static let secondaryTitle = LFLocalizable.tr("Localizable", "popup.logout.secondaryTitle", fallback: "Yes")
+      /// Are you sure you want to log out?
+      public static let title = LFLocalizable.tr("Localizable", "popup.logout.title", fallback: "Are you sure you want to log out?")
+    }
+  }
   public enum Screen {
     public enum Title {
       /// Hello i live in Package LFLocalizable
       public static let text = LFLocalizable.tr("Localizable", "screen.title.text", fallback: "Hello i live in Package LFLocalizable")
+    }
+  }
+  public enum SecurityCheck {
+    public enum Encrypt {
+      /// Encrypted using 256-BIT SSL
+      public static let cellText = LFLocalizable.tr("Localizable", "securityCheck.encrypt.cellText", fallback: "Encrypted using 256-BIT SSL")
+    }
+    public enum Last4SSN {
+      /// SECURITY CHECK: ENTER LAST 4 OF SSN
+      public static let screenTitle = LFLocalizable.tr("Localizable", "securityCheck.last4SSN.screenTitle", fallback: "SECURITY CHECK: ENTER LAST 4 OF SSN")
+      /// Last 4 digits of Social Security Number/Passport
+      public static let textFieldTitle = LFLocalizable.tr("Localizable", "securityCheck.last4SSN.textFieldTitle", fallback: "Last 4 digits of Social Security Number/Passport")
+    }
+    public enum NoCreditCheck {
+      /// No credit checks
+      public static let cellText = LFLocalizable.tr("Localizable", "securityCheck.noCreditCheck.cellText", fallback: "No credit checks")
     }
   }
   public enum Term {

@@ -42,7 +42,7 @@ public struct PhoneNumberView: View {
         Button {
           viewModel.openIntercom()
         } label: {
-          GenImages.Images.icChat.swiftUIImage
+          GenImages.CommonImages.icChat.swiftUIImage
             .foregroundColor(Colors.label.swiftUIColor)
         }
       }

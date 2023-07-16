@@ -35,6 +35,19 @@
 "dob" = "Date of birth";
 "dob_format"= "dd / mm / yyyy";
 
+// SecurityCheck Screen
+"securityCheck.last4SSN.screenTitle" = "SECURITY CHECK: ENTER LAST 4 OF SSN";
+"securityCheck.last4SSN.textFieldTitle" = "Last 4 digits of Social Security Number/Passport";
+"securityCheck.encrypt.cellText" = "Encrypted using 256-BIT SSL";
+"securityCheck.noCreditCheck.cellText" = "No credit checks";
+
+// MARK: - Popup
+
+// Logout
+"popup.logout.title" = "Are you sure you want to log out?";
+"popup.logout.primaryTitle" = "No";
+"popup.logout.secondaryTitle" = "Yes";
+
 // MARK: - Common
 
 // Terms
@@ -46,3 +59,4 @@
 
 // Button Title
 "button.continue.title" = "Continue";
+"button.logout.title" = "Log Out";

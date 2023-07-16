@@ -17,7 +17,7 @@ extension AppDelegate {
     appearance.backgroundColor = Colors.background.color
     appearance.shadowColor = .clear
     
-    let image = GenImages.Images.icBack.image.withRenderingMode(.alwaysOriginal)
+    let image = GenImages.CommonImages.icBack.image.withRenderingMode(.alwaysOriginal)
     appearance.setBackIndicatorImage(image, transitionMaskImage: image)
     
     UINavigationBar.appearance().standardAppearance = appearance

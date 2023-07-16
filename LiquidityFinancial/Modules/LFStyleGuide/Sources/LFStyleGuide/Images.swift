@@ -25,15 +25,17 @@ public enum GenImages {
   public enum CommonImages {
     public static let calendar = ImageAsset(name: "calendar")
     public static let dash = ImageAsset(name: "dash")
+    public static let icBack = ImageAsset(name: "ic_back")
+    public static let icChat = ImageAsset(name: "ic_chat")
+    public static let icError = ImageAsset(name: "ic_error")
+    public static let icLock = ImageAsset(name: "ic_lock")
+    public static let icTicketCircle = ImageAsset(name: "ic_ticketCircle")
     public static let icWellcome1 = ImageAsset(name: "ic_wellcome_1")
     public static let icWellcome2 = ImageAsset(name: "ic_wellcome_2")
     public static let icWellcome3 = ImageAsset(name: "ic_wellcome_3")
     public static let icXError = ImageAsset(name: "ic_x_error")
   }
   public enum Images {
-    public static let icBack = ImageAsset(name: "ic_back")
-    public static let icChat = ImageAsset(name: "ic_chat")
-    public static let icError = ImageAsset(name: "ic_error")
     public static let icLogo = ImageAsset(name: "ic_logo")
   }
 }
