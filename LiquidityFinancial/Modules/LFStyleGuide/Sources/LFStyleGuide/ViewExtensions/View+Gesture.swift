@@ -1,6 +1,6 @@
 import SwiftUI
 
-public extension View {
+extension View {
   func onTapGestureIf(_ condition: Bool, perform action: @escaping () -> Void) -> some View {
     applyIf(condition) {
       $0.onTapGesture(simultaneous: true, perform: action)
@@ -8,7 +8,7 @@ public extension View {
   }
   
   @ViewBuilder
-  func onTapGesture(count: Int = 1, simultaneous: Bool, perform action: @escaping () -> Void) -> some View {
+  public func onTapGesture(count: Int = 1, simultaneous: Bool, perform action: @escaping () -> Void) -> some View {
 #if os(tvOS)
     // `TapGesture` isn't supported on tvOS.
     self

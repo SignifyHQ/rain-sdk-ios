@@ -16,7 +16,7 @@ public extension View {
   func frame(_ size: CGSize, alignment: Alignment = .center) -> some View {
     frame(width: size.width, height: size.height, alignment: alignment)
   }
-
+  
   /// Positions this view within an invisible frame having the specified size
   /// constraints.
   ///
@@ -28,7 +28,7 @@ public extension View {
   func frame(max: CGFloat?, alignment: Alignment = .center) -> some View {
     frame(maxWidth: max, maxHeight: max, alignment: alignment)
   }
-
+  
   /// Positions this view within an invisible frame having the specified size
   /// constraints.
   ///

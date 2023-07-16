@@ -1,6 +1,5 @@
 import UIKit
 
-// swiftlint:disable force_try
 public enum Utility {
   public static var personaCallback = "https://personacallback"
   public static var termsURL: String = try! Configuration.value(for: "TERMS_URL")
