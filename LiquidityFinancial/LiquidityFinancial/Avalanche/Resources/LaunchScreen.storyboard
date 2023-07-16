@@ -17,7 +17,7 @@
                         <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="ic_avalanche_logo" translatesAutoresizingMaskIntoConstraints="NO" id="jZu-Ih-ek9">
+                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="ic_logo" translatesAutoresizingMaskIntoConstraints="NO" id="jZu-Ih-ek9">
                                 <rect key="frame" x="133.66666666666666" y="331.66666666666669" width="125.99999999999997" height="126"/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="126" id="Mx0-Wu-5A3"/>
@@ -25,7 +25,7 @@
                                 </constraints>
                             </imageView>
                             <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="AvalancheCard" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumFontSize="9" translatesAutoresizingMaskIntoConstraints="NO" id="obG-Y5-kRd">
-                                <rect key="frame" x="109.66666666666669" y="473.66666666666669" width="173.66666666666663" height="34"/>
+                                <rect key="frame" x="109.66666666666667" y="473.66666666666669" width="173.66666666666663" height="34"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="34" id="69J-Ah-d9H"/>
                                 </constraints>
@@ -50,7 +50,7 @@
         </scene>
     </scenes>
     <resources>
-        <image name="ic_avalanche_logo" width="500" height="500"/>
+        <image name="ic_logo" width="124" height="124"/>
         <namedColor name="bg_black_app">
             <color red="0.12999999523162842" green="0.11999999731779099" blue="0.12999999523162842" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </namedColor>

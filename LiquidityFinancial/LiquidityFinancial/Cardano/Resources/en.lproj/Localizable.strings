@@ -7,6 +7,15 @@
 "phoneNumber.textField.description" = "Phone Number";
 "phoneNumber.environment.title" = "Environment";
 
+// Wellcome Screen
+"wellcome.header.title" = "WELLCOME!";
+"wellcome.header.desc" = "The Cardano is an easy way to earn Cardano with everyday purchases.  You can also buy, sell and spend Cardano with the CardanoCard app.";
+"wellcome.how_it_works" = "HOW IT WORKS:";
+"wellcome.how_it_works.item1" = "Create a AvalancheCard account";
+"wellcome.how_it_works.item2" = "Use your AvalancheCard for everyday purchases";
+"wellcome.how_it_works.item3" = "Give more by rounding up your purchases.";
+"wellcome.button.order_card" = "Order Card";
+
 // MARK: - Common
 
 // Terms

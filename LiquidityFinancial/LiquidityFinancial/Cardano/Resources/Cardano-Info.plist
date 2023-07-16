@@ -8,6 +8,8 @@
 	<string>$(APP_BUNDLE_ID)</string>
 	<key>APP_NAME</key>
 	<string>$(APP_NAME)</string>
+	<key>CONSENT_URL</key>
+	<string>$(CONSENT_URL)</string>
 	<key>NSAppTransportSecurity</key>
 	<dict>
 		<key>NSExceptionDomains</key>
@@ -28,8 +30,6 @@
 			</dict>
 		</dict>
 	</dict>
-	<key>CONSENT_URL</key>
-	<string>$(CONSENT_URL)</string>
 	<key>PRIVACY_URL</key>
 	<string>$(PRIVACY_URL)</string>
 	<key>TERMS_URL</key>

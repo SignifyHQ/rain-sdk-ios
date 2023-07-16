@@ -20,11 +20,11 @@ let package = Package(
             name: "LFStyleGuide",
             dependencies: [],
             resources: [
-              .process("Resources")
+              .process("XResources")
             ],
             plugins: [
               .plugin(name: "SwiftGenPlugin", package: "SwiftGenPlugin"),
-              .plugin(name: "Lottie", package: "Lottie"),
+              .plugin(name: "Lottie", package: "Lottie")
             ]
         ),
         .testTarget(

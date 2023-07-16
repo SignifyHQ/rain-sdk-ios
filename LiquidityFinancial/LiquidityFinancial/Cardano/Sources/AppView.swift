@@ -1,4 +1,5 @@
 import SwiftUI
+import LFUtilities
 import LFStyleGuide
 import LFAccountOnboarding
 import CardanoAccountOnboarding
@@ -15,7 +16,7 @@ struct AppView: View {
     NavigationView {
       ZStack {
         VStack {
-          Images.icLogo.swiftUIImage
+          GenImages.Images.icLogo.swiftUIImage
             .resizable()
             .frame(width: 100, height: 100)
           Text("Hello, world! \(appName ?? "Unknow")")

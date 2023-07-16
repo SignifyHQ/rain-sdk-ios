@@ -5,9 +5,12 @@ import LFUtilities
 import LFLocalizable
 
 public struct PhoneNumberView: View {
-  @EnvironmentObject var environmentManager: EnvironmentManager
-  @Environment(\.openURL) var openURL
-  @Environment(\.presentationMode) var presentation
+  @EnvironmentObject
+  var environmentManager: EnvironmentManager
+  @Environment(\.openURL)
+  var openURL
+  @Environment(\.presentationMode)
+  var presentation
   
   @StateObject private var viewModel: PhoneNumberViewModel
   @FocusState private var keyboardFocus: Field?
@@ -18,7 +21,7 @@ public struct PhoneNumberView: View {
   
   public var body: some View {
     VStack(spacing: 16) {
-      Images.icLogo.swiftUIImage
+      GenImages.Images.icLogo.swiftUIImage
         .resizable()
         .scaledToFit()
         .frame(width: 120, height: 120)
@@ -39,7 +42,7 @@ public struct PhoneNumberView: View {
         Button {
           viewModel.openIntercom()
         } label: {
-          Images.icChat.swiftUIImage
+          GenImages.Images.icChat.swiftUIImage
             .foregroundColor(Colors.label.swiftUIColor)
         }
       }
@@ -48,7 +51,7 @@ public struct PhoneNumberView: View {
     // .track(name: String(describing: type(of: self)))
     .navigationLink(isActive: $viewModel.isPushToVertificationView) {
       // VertificationCode
-      EmptyView()
+      WelcomeView(viewModel: WelcomeViewModel())
     }
     .popup(item: $viewModel.toastMessage, style: .toast) {
       ToastView(toastMessage: $0)
@@ -151,7 +154,7 @@ private extension PhoneNumberView {
       fontSize: Constants.FontSize.ultraSmall.value,
       links: [LFLocalizable.Term.PrivacyPolicy.attributeText]
     ) { _ in
-      guard let url = URL(string: Utility.privacyURL) else { return }
+      guard let url = URL(string: LFUtility.privacyURL) else { return }
       openURL(url)
     }
     .frame(maxHeight: 90)
@@ -160,7 +163,7 @@ private extension PhoneNumberView {
 
 // MARK: View Constants
 private extension PhoneNumberView {
-  struct ViewConstant {
+  enum ViewConstant {
     static let maxDigits = 10
     static let magicTapCount = 5
   }

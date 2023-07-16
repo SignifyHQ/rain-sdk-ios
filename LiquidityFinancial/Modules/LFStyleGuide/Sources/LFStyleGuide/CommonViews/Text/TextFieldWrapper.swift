@@ -17,7 +17,7 @@ public struct TextFieldWrapper<Content: View>: View {
     VStack(spacing: 12) {
       HStack {
         content
-        Images.icError.swiftUIImage
+        GenImages.Images.icError.swiftUIImage
           .hidden(errorValue == nil)
       }
     }

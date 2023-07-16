@@ -24,14 +24,6 @@ extension Container {
   }
   
   // ViewModels
-  var signingUpPhoneViewModel: Factory<SigningUpPhoneViewModel> {
-    self {
-      SigningUpPhoneViewModel(
-        requestOtpUserCase: self.requestOtpUseCase.callAsFunction(),
-        loginUserCase: self.loginUseCase.callAsFunction()
-      )
-    }
-  }
   var phoneNumberViewModel: Factory<PhoneNumberViewModel> {
     self {
       PhoneNumberViewModel(

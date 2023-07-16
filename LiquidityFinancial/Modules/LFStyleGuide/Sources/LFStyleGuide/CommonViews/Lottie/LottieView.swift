@@ -37,7 +37,7 @@ struct LottieView: UIViewRepresentable {
   func updateUIView(_: UIViewType, context _: Context) {}
 }
 
-// MARK: - Types
+  // MARK: - Types
 
 extension LottieView {
   enum Loading {
@@ -48,14 +48,14 @@ extension LottieView {
     
     var fileName: String {
       switch self {
-        case .primary:
-          return "LoadingPrimary"
-        case .mix:
-          return "LoadingMix"
-        case .contrast:
-          return "LoadingContrast"
-        case .heart:
-          return "LoadingHeart"
+      case .primary:
+        return "LoadingPrimary"
+      case .mix:
+        return "LoadingMix"
+      case .contrast:
+        return "LoadingContrast"
+      case .heart:
+        return "LoadingHeart"
       }
     }
   }
@@ -67,12 +67,12 @@ extension LottieView {
     
     var fileName: String {
       switch self {
-        case .sides:
-          return "TwinkleSides"
-        case .circle:
-          return "TwinkleCircle"
-        case .contrast:
-          return "TwinkleContrast"
+      case .sides:
+        return "TwinkleSides"
+      case .circle:
+        return "TwinkleCircle"
+      case .contrast:
+        return "TwinkleContrast"
       }
     }
   }
@@ -83,10 +83,10 @@ extension LottieView {
     
     var fileName: String {
       switch self {
-        case .welcome:
-          return "Welcome"
-        case .applePay:
-          return "ApplePay"
+      case .welcome:
+        return "Welcome"
+      case .applePay:
+        return "ApplePay"
       }
     }
   }

@@ -9,7 +9,6 @@ excluded:
 
 opt_in_rules:
   - array_init
-  - attributes
   - closure_body_length
   - closure_end_indentation
   - closure_spacing
@@ -71,18 +70,15 @@ disabled_rules:
   - file_name
   - untyped_error_in_catch
   - type_name
-  - multiline_collection_one_per_line
   - type_contents_order
   - comment_spacing
+  - file_types_order
   
-attributes:
-  always_on_same_line:
-    - '@objc'
 identifier_name:
   excluded:
     - id
 line_length:
-  warning: 165
+  warning: 170
   ignores_function_declarations: true
   ignores_comments: true
 modifier_order:
@@ -110,19 +106,9 @@ implicit_return:
     - closure
     - getter
 
-closure_body_length: 40
+closure_body_length: 50
 
 custom_rules:
-  multiline_collection_one_per_line:
-    name: 'Multiline Collection One Per Line'
-    message: 'Collection should be either on the same line, or one per line.'
-    regex: '\[\n([^\[\(])*(,([^\n\r])*[\w]+)([^\[])*\n(\s)*]'
-    severity: warning
-  multiline_arguments_one_per_line:
-    name: 'Multiline Arguments One Per Line'
-    message: 'Arguments should be either on the same line, or one per line.'
-    regex: '[^\n\r]\(\n([^\(<])*([^\n\r],([^\n\r])*[\w]+)([^\)])*\n(\s)*\)'
-    severity: warning
 
   print_expression:
     name: "Unexpected print expression"

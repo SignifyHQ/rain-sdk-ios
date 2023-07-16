@@ -7,13 +7,12 @@ public struct TextTappable: UIViewRepresentable {
     textAlignment: NSTextAlignment = .natural,
     fontSize: CGFloat = Constants.FontSize.small.value,
     links: [String],
-    openLink: @escaping (String) -> Void)
-  {
-    attributedText = Self.buildAttributedText(text: text, textAlignment: textAlignment, fontSize: fontSize)
-    linkTextAttributes = Self.buildLinkTextAttributes(fontSize: fontSize)
-    self.links = links
-    self.openLink = openLink
-  }
+    openLink: @escaping (String) -> Void) {
+      attributedText = Self.buildAttributedText(text: text, textAlignment: textAlignment, fontSize: fontSize)
+      linkTextAttributes = Self.buildLinkTextAttributes(fontSize: fontSize)
+      self.links = links
+      self.openLink = openLink
+    }
   
   public init(
     attributedText: NSAttributedString,
@@ -77,7 +76,7 @@ public struct TextTappable: UIViewRepresentable {
     let regularAttributes: [NSAttributedString.Key: Any] = [
       .font: Fonts.Inter.regular.font(size: fontSize),
       .foregroundColor: Colors.label.color,
-      .paragraphStyle: titleParagraphStyle,
+      .paragraphStyle: titleParagraphStyle
     ]
     return NSMutableAttributedString(string: text, attributes: regularAttributes)
   }
@@ -85,20 +84,20 @@ public struct TextTappable: UIViewRepresentable {
   private static func buildLinkTextAttributes(fontSize: CGFloat) -> [NSAttributedString.Key: Any] {
     [
       .font: Fonts.Inter.bold.font(size: fontSize),
-      .foregroundColor: Colors.primary.color,
+      .foregroundColor: Colors.primary.color
     ]
   }
 }
 
-// MARK: - Coordinator
+  // MARK: - Coordinator
 extension TextTappable {
   public class Coordinator: NSObject, UITextViewDelegate {
     public var parent: TextTappable
-
+    
     public init(parent: TextTappable) {
       self.parent = parent
     }
-
+    
     public func textView(_: UITextView, shouldInteractWith URL: URL, in _: NSRange, interaction _: UITextItemInteraction) -> Bool {
       let strPlain = URL.absoluteString.replacingOccurrences(of: "https://", with: "").replacingOccurrences(of: "_", with: " ")
       if parent.links.contains(strPlain) {

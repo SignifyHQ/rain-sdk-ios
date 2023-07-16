@@ -59,6 +59,28 @@ public enum LFLocalizable {
       public static let description = LFLocalizable.tr("Localizable", "term.termsVoip.description", fallback: "Using VOIP or Google Voice numbers can result in onboarding delays. We NEVER share your phone number with third parties for marketing, per our Privacy Policy.")
     }
   }
+  public enum Wellcome {
+    /// HOW IT WORKS:
+    public static let howItWorks = LFLocalizable.tr("Localizable", "wellcome.how_it_works", fallback: "HOW IT WORKS:")
+    public enum Button {
+      /// Order Card
+      public static let orderCard = LFLocalizable.tr("Localizable", "wellcome.button.order_card", fallback: "Order Card")
+    }
+    public enum Header {
+      /// The AvalancheCard is an easy way to earn Avalanche with everyday purchases.  You can also buy, sell and spend Avalanche with the AvalancheCard app.
+      public static let desc = LFLocalizable.tr("Localizable", "wellcome.header.desc", fallback: "The AvalancheCard is an easy way to earn Avalanche with everyday purchases.  You can also buy, sell and spend Avalanche with the AvalancheCard app.")
+      /// WELLCOME!
+      public static let title = LFLocalizable.tr("Localizable", "wellcome.header.title", fallback: "WELLCOME!")
+    }
+    public enum HowItWorks {
+      /// Create a AvalancheCard account
+      public static let item1 = LFLocalizable.tr("Localizable", "wellcome.how_it_works.item1", fallback: "Create a AvalancheCard account")
+      /// Use your AvalancheCard for everyday purchases
+      public static let item2 = LFLocalizable.tr("Localizable", "wellcome.how_it_works.item2", fallback: "Use your AvalancheCard for everyday purchases")
+      /// Give more by rounding up your purchases.
+      public static let item3 = LFLocalizable.tr("Localizable", "wellcome.how_it_works.item3", fallback: "Give more by rounding up your purchases.")
+    }
+  }
 }
 // swiftlint:enable explicit_type_interface function_parameter_count identifier_name line_length
 // swiftlint:enable nesting type_body_length type_name vertical_whitespace_opening_braces

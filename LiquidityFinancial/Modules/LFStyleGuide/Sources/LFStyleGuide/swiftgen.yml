@@ -1,4 +1,4 @@
-input_dir: Resources
+input_dir: XResources
 #output_dir: ${DERIVED_SOURCES_DIR}
 
 ## Generate constants for Assets Catalogs, including constants for images, colors
@@ -16,15 +16,15 @@ xcassets:
 
   - inputs:
       - Assets/Images.xcassets
+      - Assets/CommonImages.xcassets
     outputs:
       - templateName: swift5
         params:
-          enumName: Images
+          enumName: GenImages
           forceProvidesNamespaces: true
           publicAccess: true
           bundle: Bundle.main
         output: Images.swift
-
 
 ## Generate constants for custom fonts
 fonts:

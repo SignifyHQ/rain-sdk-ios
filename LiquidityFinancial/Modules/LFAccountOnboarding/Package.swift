@@ -25,14 +25,17 @@ let package = Package(
       .package(name: "LFUtilities", path: "../LFUtilities"),
       .package(name: "LFStyleGuide", path: "../LFStyleGuide"),
       .package(name: "OnboardingDomain", path: "../LFDomain"),
-      .package(name: "LFLocalizable", path: "../LFLocalizable"),
+      .package(name: "LFLocalizable", path: "../LFLocalizable")
     ],
     targets: [
         .target(
           name: "LFAccountOnboarding",
           dependencies: ["LFUtilities", "OnboardingDomain", "LFStyleGuide", "LFLocalizable"],
+          resources: [
+            .process("ZResources")
+          ],
           plugins: [
-            .plugin(name: "iPhoneNumberField", package: "iPhoneNumberField"),
+            .plugin(name: "iPhoneNumberField", package: "iPhoneNumberField")
           ]
         ),
         .target(name: "AvalancheAccountOnboarding", dependencies: ["LFAccountOnboarding"]),

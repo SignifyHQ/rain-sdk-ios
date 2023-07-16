@@ -11,7 +11,7 @@ public struct FullSizeButton: View {
   let textColor: Color?
   let backgroundColor: Color?
   let action: () -> Void
-
+  
   public init(
     title: String,
     isDisable: Bool,
@@ -35,7 +35,7 @@ public struct FullSizeButton: View {
     self.action = action
     _isLoading = isLoading
   }
-
+  
   public var body: some View {
     ZStack {
       lottieAnimation
@@ -45,7 +45,7 @@ public struct FullSizeButton: View {
   }
 }
 
-// MARK: - View Components
+  // MARK: - View Components
 private extension FullSizeButton {
   var lottieAnimation: some View {
     Group {
@@ -55,7 +55,7 @@ private extension FullSizeButton {
     .frame(height: height)
     .hidden(!isLoading)
   }
-
+  
   var buttonView: some View {
     Button(action: action) {
       Text(title)
@@ -84,47 +84,47 @@ private extension FullSizeButton {
   }
 }
 
-// MARK: - Private Variables
+  // MARK: - Private Variables
 private extension FullSizeButton {
   var buttonTextColor: Color {
     switch type {
-      case .primary:
-        return Colors.label.swiftUIColor
-      case .secondary, .tertiary:
-        return Colors.label.swiftUIColor
-      case .destructive:
-        return Colors.error.swiftUIColor
-      case .contrast:
-        return Colors.primary.swiftUIColor
-      case .white:
-        return Colors.background.swiftUIColor
+    case .primary:
+      return Colors.label.swiftUIColor
+    case .secondary, .tertiary:
+      return Colors.label.swiftUIColor
+    case .destructive:
+      return Colors.error.swiftUIColor
+    case .contrast:
+      return Colors.primary.swiftUIColor
+    case .white:
+      return Colors.background.swiftUIColor
     }
   }
-
+  
   var showGradientBackground: Bool {
     switch type {
-      case .primary:
-        return true
-      case .contrast, .destructive, .secondary, .tertiary, .white:
-        return false
+    case .primary:
+      return true
+    case .contrast, .destructive, .secondary, .tertiary, .white:
+      return false
     }
   }
-
+  
   var colorBackground: Color {
     switch type {
-      case .destructive, .secondary:
-        return Colors.buttons.swiftUIColor
-      case .tertiary:
-        return Colors.secondaryBackground.swiftUIColor
-      case .contrast:
-        return Colors.buttons.swiftUIColor
-      case .primary:
-        return .clear
-      case .white:
-        return Colors.label.swiftUIColor
+    case .destructive, .secondary:
+      return Colors.buttons.swiftUIColor
+    case .tertiary:
+      return Colors.secondaryBackground.swiftUIColor
+    case .contrast:
+      return Colors.buttons.swiftUIColor
+    case .primary:
+      return .clear
+    case .white:
+      return Colors.label.swiftUIColor
     }
   }
-
+  
   var linearGradientColor: [Color] {
     guard let backgroundColor else {
       return [Colors.primary.swiftUIColor]
@@ -133,7 +133,7 @@ private extension FullSizeButton {
   }
 }
 
-// MARK: - Types
+  // MARK: - Types
 public extension FullSizeButton {
   enum Kind {
     case primary

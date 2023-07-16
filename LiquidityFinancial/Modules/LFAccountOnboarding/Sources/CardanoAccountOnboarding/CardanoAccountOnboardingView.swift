@@ -9,23 +9,6 @@ public struct CardanoAccountOnboardingView: View {
   @State var onSignupPhone: Bool = false
   
   public var body: some View {
-    NavigationView {
-      ZStack {
-        VStack {
-          Images.icLogo.swiftUIImage
-            .resizable()
-            .frame(width: 100, height: 100)
-        }
-        .foregroundColor(Color("bg_black_app"))
-        .padding()
-        
-        NavigationLink("", isActive: $onSignupPhone) {
-          
-        }
-      }
-      .frame(maxWidth: .infinity)
-      .frame(maxHeight: .infinity)
-      .background(Colors.background.swiftUIColor)
-    }
+    Text("Cardano")
   }
 }

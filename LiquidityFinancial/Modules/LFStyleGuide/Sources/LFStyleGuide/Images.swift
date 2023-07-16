@@ -21,11 +21,19 @@ public typealias AssetImageTypeAlias = ImageAsset.Image
 // MARK: - Asset Catalogs
 
 // swiftlint:disable identifier_name line_length nesting type_body_length type_name
-public enum Images {
-  public static let icChat = ImageAsset(name: "ic_chat")
-  public static let icError = ImageAsset(name: "ic_error")
-  public static let icLogo = ImageAsset(name: "ic_logo")
-  public static let icPaperplaneFill = ImageAsset(name: "ic_paperplane.fill")
+public enum GenImages {
+  public enum CommonImages {
+    public static let dash = ImageAsset(name: "dash")
+    public static let icWellcome1 = ImageAsset(name: "ic_wellcome_1")
+    public static let icWellcome2 = ImageAsset(name: "ic_wellcome_2")
+    public static let icWellcome3 = ImageAsset(name: "ic_wellcome_3")
+    public static let icXError = ImageAsset(name: "ic_x_error")
+  }
+  public enum Images {
+    public static let icChat = ImageAsset(name: "ic_chat")
+    public static let icError = ImageAsset(name: "ic_error")
+    public static let icLogo = ImageAsset(name: "ic_logo")
+  }
 }
 // swiftlint:enable identifier_name line_length nesting type_body_length type_name
 
