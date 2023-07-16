@@ -1,6 +1,6 @@
 import SwiftUI
 
-// MARK: -
+// MARK: - PrimaryFieldStyle
 
 public struct PrimaryFieldStyle: ViewModifier {
   public func body(content: Content) -> some View {
