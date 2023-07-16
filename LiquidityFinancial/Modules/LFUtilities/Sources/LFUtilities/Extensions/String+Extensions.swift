@@ -8,8 +8,8 @@ public extension String {
   
   var plainPhoneString: String {
     let numbersOnly = CharacterSet(charactersIn: Constants.Default.numberCharacters.rawValue)
-    let filteredPhone = filter { c -> Bool in
-      c.unicodeScalars.contains(where: { numbersOnly.contains($0) })
+    let filteredPhone = filter { char -> Bool in
+      char.unicodeScalars.contains(where: { numbersOnly.contains($0) })
     }
     return filteredPhone
   }

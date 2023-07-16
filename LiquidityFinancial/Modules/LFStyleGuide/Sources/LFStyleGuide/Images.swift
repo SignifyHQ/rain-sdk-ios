@@ -30,6 +30,7 @@ public enum GenImages {
     public static let icXError = ImageAsset(name: "ic_x_error")
   }
   public enum Images {
+    public static let icBack = ImageAsset(name: "ic_back")
     public static let icChat = ImageAsset(name: "ic_chat")
     public static let icError = ImageAsset(name: "ic_error")
     public static let icLogo = ImageAsset(name: "ic_logo")

@@ -31,7 +31,7 @@ extension PhoneNumberViewModel {
   func performGetOTP() {
     Task {
       do {
-        let formatPhone = "+1\(phoneNumber)"
+        let formatPhone = Constants.Default.regionCode.rawValue + phoneNumber
         let otpResponse = try await requestOtpUserCase.execute(phoneNumber: formatPhone)
         isLoading = false
         handleAfterGetOTP(isSuccess: otpResponse.success)

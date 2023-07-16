@@ -15,6 +15,8 @@
 		A938373E2A63BB20009EB1DE /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = A938373D2A63BB20009EB1DE /* LaunchScreen.storyboard */; };
 		A93837442A63D7AD009EB1DE /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A93837432A63D7AD009EB1DE /* Images.xcassets */; };
 		A93837452A63D7AF009EB1DE /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A93837432A63D7AD009EB1DE /* Images.xcassets */; };
+		A93837472A63DDFD009EB1DE /* AppDelegate+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = A93837462A63DDFD009EB1DE /* AppDelegate+Extensions.swift */; };
+		A93837482A63DDFF009EB1DE /* AppDelegate+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = A93837462A63DDFD009EB1DE /* AppDelegate+Extensions.swift */; };
 		A94F71EE2A610E65002ADB34 /* LFAccountOnboarding in Frameworks */ = {isa = PBXBuildFile; productRef = A94F71ED2A610E65002ADB34 /* LFAccountOnboarding */; };
 		A94F71F02A610E9F002ADB34 /* CardanoAccountOnboarding in Frameworks */ = {isa = PBXBuildFile; productRef = A94F71EF2A610E9F002ADB34 /* CardanoAccountOnboarding */; };
 		A94F71F22A612C62002ADB34 /* AvalancheAccountOnboarding in Frameworks */ = {isa = PBXBuildFile; productRef = A94F71F12A612C62002ADB34 /* AvalancheAccountOnboarding */; };
@@ -78,6 +80,7 @@
 		06D40C022A63DEB300EADB75 /* LoadingPrimary.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = LoadingPrimary.json; sourceTree = "<group>"; };
 		A938373D2A63BB20009EB1DE /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = LaunchScreen.storyboard; sourceTree = "<group>"; };
 		A93837432A63D7AD009EB1DE /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
+		A93837462A63DDFD009EB1DE /* AppDelegate+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AppDelegate+Extensions.swift"; sourceTree = "<group>"; };
 		A94F71F32A614E04002ADB34 /* LFLocalizable */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = LFLocalizable; path = Modules/LFLocalizable; sourceTree = "<group>"; };
 		A95354972A5E55B2008B0FAB /* Cardano.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Cardano.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		A953549B2A5E571D008B0FAB /* CardanoConfig.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = CardanoConfig.xcconfig; sourceTree = "<group>"; };
@@ -332,6 +335,7 @@
 			isa = PBXGroup;
 			children = (
 				A97BF8192A5D9E6B00B8F5CA /* AppDelegate.swift */,
+				A93837462A63DDFD009EB1DE /* AppDelegate+Extensions.swift */,
 			);
 			path = Sources;
 			sourceTree = "<group>";
@@ -666,6 +670,7 @@
 			files = (
 				A95354AD2A5E571D008B0FAB /* AppView.swift in Sources */,
 				A95354AE2A5E571D008B0FAB /* CardanoApp.swift in Sources */,
+				A93837482A63DDFF009EB1DE /* AppDelegate+Extensions.swift in Sources */,
 				A95354852A5E55B2008B0FAB /* AppDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -674,6 +679,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A93837472A63DDFD009EB1DE /* AppDelegate+Extensions.swift in Sources */,
 				A97BF81A2A5D9E6B00B8F5CA /* AppDelegate.swift in Sources */,
 				A97BF7C22A5C602D00B8F5CA /* AppView.swift in Sources */,
 				A9D6C4BC2A5FA1740038D0BB /* OnboardingContainer+Injection.swift in Sources */,

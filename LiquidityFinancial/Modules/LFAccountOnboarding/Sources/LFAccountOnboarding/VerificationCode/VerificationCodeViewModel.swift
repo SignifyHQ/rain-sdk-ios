@@ -30,17 +30,30 @@ final class VerificationCodeViewModel: ObservableObject {
 
 // MARK: API
 extension VerificationCodeViewModel {
-  func performVerifyOTPCode() {
+  func performVerifyOTPCode(formatPhoneNumber: String, code: String) {
     guard !isShowLoading else { return }
     isShowLoading = true
     Task {
       do {
-        let accessTokens = try await loginUserCase.execute(phoneNumber: formatPhoneNumber, code: otpCode)
+        let accessTokens = try await loginUserCase.execute(phoneNumber: formatPhoneNumber, code: code)
         isShowLoading = false
         print("Debug - \(accessTokens)")
       } catch {
         isShowLoading = false
+        toastMessage = error.localizedDescription
         print("Debug - \(error)")
+      }
+    }
+  }
+  
+  func performGetOTP(formatPhoneNumber: String) {
+    Task {
+      do {
+        let otpResponse = try await requestOtpUserCase.execute(phoneNumber: formatPhoneNumber)
+        isShowLoading = false
+      } catch {
+        isShowLoading = false
+        toastMessage = error.localizedDescription
       }
     }
   }
@@ -54,7 +67,11 @@ extension VerificationCodeViewModel {
   
   func onChangedOTPCode() {
     if otpCode.count == Constants.MaxCharacterLimit.verificationLimit.value {
-      performVerifyOTPCode()
+      performVerifyOTPCode(formatPhoneNumber: formatPhoneNumber, code: otpCode)
     }
+  }
+  
+  func resendOTP() {
+    performGetOTP(formatPhoneNumber: formatPhoneNumber)
   }
 }

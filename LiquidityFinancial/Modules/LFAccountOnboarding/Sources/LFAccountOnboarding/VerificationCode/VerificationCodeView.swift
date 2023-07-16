@@ -119,7 +119,7 @@ private extension VerificationCodeView {
       isLoading: $viewModel.isShowLoading,
       type: .secondary
     ) {
-      // viewModel.sendOTP()
+       viewModel.resendOTP()
     }
   }
 }

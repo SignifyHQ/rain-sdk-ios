@@ -6,36 +6,15 @@ import LFUtilities
 import AvalancheAccountOnboarding
 
 struct AppView: View {
-  
-  @State var onSignupPhone: Bool = false
+
   let environmentManager = EnvironmentManager()
   
-  var appName: String? {
-    try? LFConfiguration.value(for: "APP_NAME")
-  }
-  
   var body: some View {
-    NavigationView {
-      VStack {
-        GenImages.Images.icLogo.swiftUIImage
-          .resizable()
-          .frame(width: 100, height: 100)
-        Text("Hello, world! \(appName ?? "Unknow")")
-        Button("Sign up Phone") {
-          onSignupPhone.toggle()
-        }
-        .buttonStyle(GrowingButton())
-      }
-      .foregroundColor(Color.white)
-      .padding()
-      .navigationLink(isActive: $onSignupPhone) {
-        PhoneNumberView(viewModel: Container.shared.phoneNumberViewModel.callAsFunction())
-          .environmentObject(environmentManager)
-      }
-      .frame(maxWidth: .infinity)
-      .frame(maxHeight: .infinity)
-      .background(Colors.background.swiftUIColor)
+    Group {
+      PhoneNumberView(viewModel: Container.shared.phoneNumberViewModel.callAsFunction())
+        .environmentObject(environmentManager)
     }
+    .embedInNavigation()
   }
 }
 
