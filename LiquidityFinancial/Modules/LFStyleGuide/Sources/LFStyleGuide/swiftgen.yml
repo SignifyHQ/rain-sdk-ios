@@ -11,7 +11,7 @@ xcassets:
           enumName: Colors
           forceProvidesNamespaces: true
           publicAccess: true
-          bundle: Bundle.main
+#          bundle: Bundle.main
         output: Colors.swift
 
   - inputs:
@@ -23,7 +23,7 @@ xcassets:
           enumName: GenImages
           forceProvidesNamespaces: true
           publicAccess: true
-          bundle: Bundle.main
+#          bundle: Bundle.main
         output: Images.swift
 
 ## Generate constants for custom fonts

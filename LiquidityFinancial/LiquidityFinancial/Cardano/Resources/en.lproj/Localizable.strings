@@ -63,6 +63,10 @@
 "passport_type_international" = "International Passport";
 "passport_type_us" = "US Passport";
 
+// KYC Questions Screen
+"kyc.question.title" = "Additional Security Questions";
+"kyc.question.desc" = "Please answer the following questions to help us verify your information.";
+
 // MARK: - Popup
 
 // Logout

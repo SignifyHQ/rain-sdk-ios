@@ -13,18 +13,21 @@ let package = Package(
     ],
     dependencies: [
       .package(url: "https://github.com/SwiftGen/SwiftGenPlugin", from: "6.6.2"),
-      .package(url: "https://github.com/airbnb/lottie-ios.git", from: "4.2.0")
+      .package(url: "https://github.com/airbnb/lottie-ios.git", from: "4.2.0"),
+      .package(name: "LFUtilities", path: "../LFUtilities")
     ],
     targets: [
         .target(
             name: "LFStyleGuide",
-            dependencies: [],
+            dependencies: [
+              "LFUtilities",
+              .product(name: "Lottie", package: "lottie-ios")
+            ],
             resources: [
               .process("XResources")
             ],
             plugins: [
-              .plugin(name: "SwiftGenPlugin", package: "SwiftGenPlugin"),
-              .plugin(name: "Lottie", package: "Lottie")
+              .plugin(name: "SwiftGenPlugin", package: "SwiftGenPlugin")
             ]
         ),
         .testTarget(

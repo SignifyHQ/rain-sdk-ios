@@ -57,7 +57,7 @@ public final class ColorAsset {
   #if os(iOS) || os(tvOS)
   @available(iOS 11.0, tvOS 11.0, *)
   public func color(compatibleWith traitCollection: UITraitCollection) -> Color {
-    let bundle = Bundle.main
+    let bundle = BundleToken.bundle
     guard let color = Color(named: name, in: bundle, compatibleWith: traitCollection) else {
       fatalError("Unable to load color asset named \(name).")
     }
@@ -80,7 +80,7 @@ public final class ColorAsset {
 public extension ColorAsset.Color {
   @available(iOS 11.0, tvOS 11.0, watchOS 4.0, macOS 10.13, *)
   convenience init?(asset: ColorAsset) {
-    let bundle = Bundle.main
+    let bundle = BundleToken.bundle
     #if os(iOS) || os(tvOS)
     self.init(named: asset.name, in: bundle, compatibleWith: nil)
     #elseif os(macOS)
@@ -95,8 +95,20 @@ public extension ColorAsset.Color {
 @available(iOS 13.0, tvOS 13.0, watchOS 6.0, macOS 10.15, *)
 public extension SwiftUI.Color {
   init(asset: ColorAsset) {
-    let bundle = Bundle.main
+    let bundle = BundleToken.bundle
     self.init(asset.name, bundle: bundle)
   }
 }
 #endif
+
+// swiftlint:disable convenience_type
+private final class BundleToken {
+  static let bundle: Bundle = {
+    #if SWIFT_PACKAGE
+    return Bundle.module
+    #else
+    return Bundle(for: BundleToken.self)
+    #endif
+  }()
+}
+// swiftlint:enable convenience_type

@@ -39,7 +39,6 @@
 		A97BF7DD2A5C602F00B8F5CA /* LiquidityFinancialUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A97BF7DC2A5C602F00B8F5CA /* LiquidityFinancialUITestsLaunchTests.swift */; };
 		A97BF7EB2A5D70C500B8F5CA /* Factory in Frameworks */ = {isa = PBXBuildFile; productRef = A97BF7EA2A5D70C500B8F5CA /* Factory */; };
 		A97BF7EE2A5D719000B8F5CA /* Lottie in Frameworks */ = {isa = PBXBuildFile; productRef = A97BF7ED2A5D719000B8F5CA /* Lottie */; };
-		A97BF7F12A5D72BB00B8F5CA /* SwiftyBeaver in Frameworks */ = {isa = PBXBuildFile; productRef = A97BF7F02A5D72BB00B8F5CA /* SwiftyBeaver */; };
 		A97BF8182A5D9DE200B8F5CA /* AvalancheApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = A97BF8172A5D9DE200B8F5CA /* AvalancheApp.swift */; };
 		A97BF81A2A5D9E6B00B8F5CA /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = A97BF8192A5D9E6B00B8F5CA /* AppDelegate.swift */; };
 		A97BF83E2A5DBCF200B8F5CA /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A97BF83D2A5DBCF200B8F5CA /* Images.xcassets */; };
@@ -149,7 +148,6 @@
 				A980DF732A5FA25A000B3C09 /* LFNetwork in Frameworks */,
 				A94F71F22A612C62002ADB34 /* AvalancheAccountOnboarding in Frameworks */,
 				A980DF752A5FA265000B3C09 /* LFServices in Frameworks */,
-				A97BF7F12A5D72BB00B8F5CA /* SwiftyBeaver in Frameworks */,
 				A94F71F52A61CAC6002ADB34 /* LFLocalizable in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -473,7 +471,6 @@
 			packageProductDependencies = (
 				A97BF7EA2A5D70C500B8F5CA /* Factory */,
 				A97BF7ED2A5D719000B8F5CA /* Lottie */,
-				A97BF7F02A5D72BB00B8F5CA /* SwiftyBeaver */,
 				A953545C2A5DD7F4008B0FAB /* LFStyleGuide */,
 				A980DF6A2A5FA23D000B3C09 /* LFAccountOnboarding */,
 				A980DF6C2A5FA249000B3C09 /* OnboardingDomain */,
@@ -562,7 +559,6 @@
 			packageReferences = (
 				A97BF7E92A5D70C400B8F5CA /* XCRemoteSwiftPackageReference "Factory" */,
 				A97BF7EC2A5D719000B8F5CA /* XCRemoteSwiftPackageReference "lottie-ios" */,
-				A97BF7EF2A5D72BB00B8F5CA /* XCRemoteSwiftPackageReference "SwiftyBeaver" */,
 				A9E6B1CD2A5DD1A2008ED988 /* XCRemoteSwiftPackageReference "SwiftGenPlugin" */,
 				06D40BFF2A62AE3700EADB75 /* XCRemoteSwiftPackageReference "iPhoneNumberField" */,
 			);
@@ -1187,14 +1183,6 @@
 				minimumVersion = 4.2.0;
 			};
 		};
-		A97BF7EF2A5D72BB00B8F5CA /* XCRemoteSwiftPackageReference "SwiftyBeaver" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/SwiftyBeaver/SwiftyBeaver";
-			requirement = {
-				kind = upToNextMinorVersion;
-				minimumVersion = 2.0.0;
-			};
-		};
 		A9E6B1CD2A5DD1A2008ED988 /* XCRemoteSwiftPackageReference "SwiftGenPlugin" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/SwiftGen/SwiftGenPlugin";
@@ -1271,11 +1259,6 @@
 			isa = XCSwiftPackageProductDependency;
 			package = A97BF7EC2A5D719000B8F5CA /* XCRemoteSwiftPackageReference "lottie-ios" */;
 			productName = Lottie;
-		};
-		A97BF7F02A5D72BB00B8F5CA /* SwiftyBeaver */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = A97BF7EF2A5D72BB00B8F5CA /* XCRemoteSwiftPackageReference "SwiftyBeaver" */;
-			productName = SwiftyBeaver;
 		};
 		A980DF6A2A5FA23D000B3C09 /* LFAccountOnboarding */ = {
 			isa = XCSwiftPackageProductDependency;
