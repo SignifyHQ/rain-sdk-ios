@@ -29,6 +29,12 @@ struct UploadDocumentView: View {
     .padding(.top, 30)
     .padding(.horizontal, 30)
     .background(Colors.background.swiftUIColor)
+    .popup(isPresented: $viewModel.isShowDocumentUploadedPopup) {
+      documentUploadedPopup
+    }
+    .popup(item: $viewModel.toastMessage, style: .toast) {
+      ToastView(toastMessage: $0)
+    }
   }
 }
 
@@ -70,7 +76,7 @@ private extension UploadDocumentView {
         Text(LFLocalizable.UploadDocument.Upload.actionTitle)
           .font(Fonts.Inter.medium.swiftUIFont(size: Constants.FontSize.ultraSmall.value))
           .foregroundColor(Colors.label.swiftUIColor)
-        Text(LFLocalizable.UploadDocument.MaxSize.description(Constants.Default.capacity.rawValue))
+        Text(LFLocalizable.UploadDocument.MaxSize.description(Constants.Default.maxSize.rawValue))
           .font(Fonts.Inter.regular.swiftUIFont(size: Constants.FontSize.ultraSmall.value))
           .foregroundColor(Colors.label.swiftUIColor.opacity(0.75))
       }
@@ -93,8 +99,9 @@ private extension UploadDocumentView {
   var uploadButton: some View {
     FullSizeButton(
       title: LFLocalizable.UploadDocument.Button.title,
-      isDisable: viewModel.documents.isEmpty
+      isDisable: viewModel.isDisableButton
     ) {
+      viewModel.onUploadDocument()
     }
     .padding(.bottom, 16)
   }
@@ -130,4 +137,14 @@ private extension UploadDocumentView {
     .frame(height: 56)
     .background(Colors.secondaryBackground.swiftUIColor.cornerRadius(9))
   }
+  
+    var documentUploadedPopup: some View {
+      LiquidityAlert(
+        title: LFLocalizable.Popup.UploadDocument.title,
+        message: LFLocalizable.Popup.UploadDocument.description,
+        primary: .init(text: LFLocalizable.Button.Ok.title) {
+          viewModel.onClickedDocumentUploadedPrimaryButton()
+        }
+      )
+    }
 }

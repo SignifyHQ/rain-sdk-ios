@@ -1,10 +1,20 @@
 import Foundation
+import LFUtilities
 
 @MainActor
 final class UploadDocumentViewModel: ObservableObject {
   @Published var isOpenFileImporter: Bool = false
-  @Published var documents = [Document]()
-
+  @Published var isShowDocumentUploadedPopup: Bool = false
+  @Published var isDisableButton: Bool = true
+  @Published var toastMessage: String?
+  @Published var documents = [Document]() {
+    didSet {
+      checkDocumentMaxSize()
+    }
+  }
+  
+  private let maxSize = Double(Constants.Default.maxSize.rawValue) ?? 20
+  
   init() {}
 }
 
@@ -16,7 +26,7 @@ extension UploadDocumentViewModel {
         let document = Document(filePath: fileURL, fileSize: fileURL.size)
         documents.append(document)
       case let .failure(error):
-        print("error reading file \(error.localizedDescription)")
+        toastMessage = error.localizedDescription
     }
   }
   
@@ -28,5 +38,24 @@ extension UploadDocumentViewModel {
   
   func openFileImporter() {
     isOpenFileImporter = true
+  }
+  
+  func onClickedDocumentUploadedPrimaryButton() {
+    isShowDocumentUploadedPopup = false
+  }
+  
+  func onUploadDocument() {
+    // Handle logic upload document here
+    isShowDocumentUploadedPopup = true
+  }
+}
+
+// MARK: Private Functions
+private extension UploadDocumentViewModel {
+  func checkDocumentMaxSize() {
+    let documentsSize = documents.reduce(0) { currentValue, document in
+      currentValue + document.fileSize
+    }
+    isDisableButton = documentsSize > maxSize || documents.isEmpty
   }
 }

@@ -84,6 +84,10 @@
 "popup.logout.primaryTitle" = "No";
 "popup.logout.secondaryTitle" = "Yes";
 
+// UploadDocuments
+"popup.uploadDocument.title" = "DOCUMENTS UPLOADED";
+"popup.uploadDocument.description" = "Thank you, we have received your document";
+
 // MARK: - Common
 
 // Terms
@@ -96,3 +100,4 @@
 // Button Title
 "button.continue.title" = "Continue";
 "button.logout.title" = "Log Out";
+"button.ok.title" = "OK";

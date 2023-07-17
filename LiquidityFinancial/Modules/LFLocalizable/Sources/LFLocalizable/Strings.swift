@@ -57,6 +57,10 @@ public enum LFLocalizable {
       /// Log Out
       public static let title = LFLocalizable.tr("Localizable", "button.logout.title", fallback: "Log Out")
     }
+    public enum Ok {
+      /// OK
+      public static let title = LFLocalizable.tr("Localizable", "button.ok.title", fallback: "OK")
+    }
     public enum Title {
       /// Trade Now and Get
       /// Your Life
@@ -117,6 +121,12 @@ public enum LFLocalizable {
       public static let secondaryTitle = LFLocalizable.tr("Localizable", "popup.logout.secondaryTitle", fallback: "Yes")
       /// Are you sure you want to log out?
       public static let title = LFLocalizable.tr("Localizable", "popup.logout.title", fallback: "Are you sure you want to log out?")
+    }
+    public enum UploadDocument {
+      /// Thank you, we have received your document
+      public static let description = LFLocalizable.tr("Localizable", "popup.uploadDocument.description", fallback: "Thank you, we have received your document")
+      /// DOCUMENTS UPLOADED
+      public static let title = LFLocalizable.tr("Localizable", "popup.uploadDocument.title", fallback: "DOCUMENTS UPLOADED")
     }
   }
   public enum Screen {
