@@ -47,6 +47,32 @@ public enum LFLocalizable {
       public static let text = LFLocalizable.tr("Localizable", "button.title.text", fallback: "Trade Now and Get\nYour Life")
     }
   }
+  public enum EnterSsn {
+    /// Encrypted using 256-BIT SSL
+    public static let bulletOne = LFLocalizable.tr("Localizable", "enter_ssn.bullet_one", fallback: "Encrypted using 256-BIT SSL")
+    /// Required to create AvalancheCard
+    public static let bulletThree = LFLocalizable.tr("Localizable", "enter_ssn.bullet_three", fallback: "Required to create AvalancheCard")
+    /// No credit checks, doesn't impact credit score
+    public static let bulletTwo = LFLocalizable.tr("Localizable", "enter_ssn.bullet_two", fallback: "No credit checks, doesn't impact credit score")
+    /// Continue
+    public static let `continue` = LFLocalizable.tr("Localizable", "enter_ssn.continue", fallback: "Continue")
+    /// No SSN? Tap here
+    public static let noSsn = LFLocalizable.tr("Localizable", "enter_ssn.no_ssn", fallback: "No SSN? Tap here")
+    /// Enter Social Security Number
+    public static let placeholder = LFLocalizable.tr("Localizable", "enter_ssn.placeholder", fallback: "Enter Social Security Number")
+    /// PLEASE ENTER YOUR SSN
+    public static let title = LFLocalizable.tr("Localizable", "enter_ssn.title", fallback: "PLEASE ENTER YOUR SSN")
+    /// Why do we need SSN?
+    public static let why = LFLocalizable.tr("Localizable", "enter_ssn.why", fallback: "Why do we need SSN?")
+    public enum Alert {
+      /// A valid SSN or Passport is required by our bank, Evolve Bank and Trust, to create a FDIC insured checking account. Your SSN is only stored with the bank and not accessible through AvalancheCard.
+      public static let message = LFLocalizable.tr("Localizable", "enter_ssn.alert.message", fallback: "A valid SSN or Passport is required by our bank, Evolve Bank and Trust, to create a FDIC insured checking account. Your SSN is only stored with the bank and not accessible through AvalancheCard.")
+      /// Ok
+      public static let ok = LFLocalizable.tr("Localizable", "enter_ssn.alert.ok", fallback: "Ok")
+      /// WHY DO WE NEED SSN?
+      public static let title = LFLocalizable.tr("Localizable", "enter_ssn.alert.title", fallback: "WHY DO WE NEED SSN?")
+    }
+  }
   public enum PhoneNumber {
     public enum Environment {
       /// Environment

@@ -13,7 +13,7 @@ struct AppView: View {
     Group {
       //PhoneNumberView(viewModel: Container.shared.phoneNumberViewModel.callAsFunction())
       //  .environmentObject(environmentManager)
-      PersonalInformationView(isAppView: true)
+      EnterSSNView()
     }
     .embedInNavigation()
   }

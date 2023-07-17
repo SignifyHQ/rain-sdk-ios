@@ -1,0 +1,181 @@
+import SwiftUI
+import LFLocalizable
+import LFStyleGuide
+import LFUtilities
+
+public struct EnterSSNView: View {
+  @StateObject private var ssnViewModel = EnterSSNViewModel(isVerifySSN: true)
+
+  @State private var showIndicator = false
+  @State private var navigation: Navigation?
+  @State private var toastMessage: String?
+  @State private var showPopup = false
+  @FocusState private var keyboardFocus: Bool
+  
+  public init() {
+    
+  }
+
+  public var body: some View {
+    VStack {
+      VStack(alignment: .leading) {
+        Text(LFLocalizable.EnterSsn.title)
+          .foregroundColor(Colors.label.swiftUIColor)
+          .font(Fonts.Inter.regular.swiftUIFont(size: 18))
+          .padding(.vertical, 12)
+
+        secureField
+        infoBullets
+      }
+      Spacer()
+      buttons
+    }
+    .padding(.horizontal, 30)
+    .background(Colors.background.swiftUIColor)
+    .navigationTitle("")
+    .toolbar {
+      ToolbarItem(placement: .navigationBarTrailing) {
+        Button {
+          //intercomService.openIntercom()
+        } label: {
+          GenImages.CommonImages.icChat.swiftUIImage
+            .foregroundColor(Colors.label.swiftUIColor)
+        }
+      }
+    }
+    .popup(item: $toastMessage, style: .toast) {
+      ToastView(toastMessage: $0)
+    }
+    .popup(isPresented: $showPopup) {
+      infoPopup
+    }
+    .navigationLink(item: $navigation) { item in
+      // TODO: Will implement passport view and addressview later
+      /*
+      switch item {
+      case .passport:
+        PassportView()
+      case .address:
+        AddressView()
+      }*/
+    }
+    //.track(name: String(describing: type(of: self)))
+    .onAppear {
+      //analyticsService.track(event: Event(name: .viewsInReviewSSN))
+    }
+  }
+
+  private var secureField: some View {
+    TextFieldWrapper(errorValue: $ssnViewModel.errorMessage) {
+      SecureField("", text: $ssnViewModel.ssn)
+        .focused($keyboardFocus)
+        .primaryFieldStyle()
+        .keyboardType(.numberPad)
+        .limitInputLength(
+          value: $ssnViewModel.ssn,
+          length: Constants.MaxCharacterLimit.fullSSNLength.value
+        )
+        .modifier(
+          PlaceholderStyle(
+            showPlaceHolder: ssnViewModel.ssn.isEmpty,
+            placeholder: LFLocalizable.EnterSsn.placeholder
+          )
+        )
+        .onAppear {
+          DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+            keyboardFocus = true
+          }
+        }
+    }
+  }
+
+  private var infoBullets: some View {
+    VStack(alignment: .leading) {
+      HStack(alignment: .center) {
+        GenImages.CommonImages.icLock.swiftUIImage
+          .frame(width: 24, height: 24)
+          .foregroundColor(Colors.label.swiftUIColor)
+        Text(LFLocalizable.EnterSsn.bulletOne)
+          .font(Fonts.Inter.regular.swiftUIFont(size: Constants.FontSize.ultraSmall.value))
+          .foregroundColor(Colors.label.swiftUIColor)
+          .opacity(0.75)
+      }
+      HStack(alignment: .center) {
+        GenImages.CommonImages.icTicketCircle.swiftUIImage
+          .frame(width: 24, height: 24)
+          .foregroundColor(Colors.label.swiftUIColor)
+        Text(LFLocalizable.EnterSsn.bulletTwo)
+          .font(Fonts.Inter.regular.swiftUIFont(size: Constants.FontSize.ultraSmall.value))
+          .foregroundColor(Colors.label.swiftUIColor)
+          .opacity(0.75)
+      }
+      HStack(alignment: .center) {
+        GenImages.CommonImages.icHome.swiftUIImage
+          .frame(width: 24, height: 24)
+          .foregroundColor(Colors.label.swiftUIColor)
+        Text(LFLocalizable.EnterSsn.bulletThree)
+          .font(Fonts.Inter.regular.swiftUIFont(size: Constants.FontSize.ultraSmall.value))
+          .foregroundColor(Colors.label.swiftUIColor)
+          .opacity(0.75)
+      }
+    }
+    .foregroundColor(Colors.label.swiftUIColor.opacity(0.5))
+    .padding(.top, 12)
+  }
+
+  private var buttons: some View {
+    VStack(spacing: 24) {
+      Button {
+        showPopup = true
+      } label: {
+        HStack(spacing: 4) {
+          Text(LFLocalizable.EnterSsn.why)
+          GenImages.CommonImages.info.swiftUIImage
+        }
+        .font(Fonts.Inter.regular.swiftUIFont(size: 12))
+        .foregroundColor(Colors.label.swiftUIColor.opacity(0.75))
+      }
+
+      VStack(spacing: 10) {
+        FullSizeButton(
+          title: LFLocalizable.EnterSsn.noSsn,
+          isDisable: false,
+          type: .secondary
+        ) {
+          navigation = .passport
+        }
+        
+        FullSizeButton(
+          title: LFLocalizable.EnterSsn.continue,
+          isDisable: !ssnViewModel.isActionAllowed,
+          isLoading: $showIndicator,
+          type: .primary
+        ) {
+          callUpdateUserAPI()
+        }
+      }
+    }
+    .ignoresSafeArea(.keyboard, edges: .bottom)
+    .padding(.bottom, 12)
+  }
+
+  private var infoPopup: some View {
+    LiquidityAlert(
+      title: LFLocalizable.EnterSsn.Alert.title,
+      message: LFLocalizable.EnterSsn.Alert.message,
+      primary: .init(text: LFLocalizable.EnterSsn.Alert.ok) { showPopup = false },
+      secondary: nil
+    )
+  }
+
+  private func callUpdateUserAPI() {
+  }
+}
+
+extension EnterSSNView {
+  enum Navigation {
+    case passport
+    case address
+  }
+}
+

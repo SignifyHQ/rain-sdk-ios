@@ -41,6 +41,19 @@
 "securityCheck.encrypt.cellText" = "Encrypted using 256-BIT SSL";
 "securityCheck.noCreditCheck.cellText" = "No credit checks";
 
+// Enter SSN
+"enter_ssn.title" = "PLEASE ENTER YOUR SSN";
+"enter_ssn.placeholder" = "Enter Social Security Number";
+"enter_ssn.bullet_one" = "Encrypted using 256-BIT SSL";
+"enter_ssn.bullet_two" = "No credit checks, doesn't impact credit score";
+"enter_ssn.bullet_three" = "Required to create AvalancheCard";
+"enter_ssn.why" = "Why do we need SSN?";
+"enter_ssn.no_ssn" = "No SSN? Tap here";
+"enter_ssn.continue" = "Continue";
+"enter_ssn.alert.title" = "WHY DO WE NEED SSN?";
+"enter_ssn.alert.message" = "A valid SSN or Passport is required by our bank, Evolve Bank and Trust, to create a FDIC insured checking account. Your SSN is only stored with the bank and not accessible through AvalancheCard.";
+"enter_ssn.alert.ok" = "Ok";
+
 // MARK: - Popup
 
 // Logout

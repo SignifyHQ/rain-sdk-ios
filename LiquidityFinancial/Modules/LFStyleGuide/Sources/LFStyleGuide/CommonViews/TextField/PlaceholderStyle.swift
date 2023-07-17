@@ -14,7 +14,8 @@ public struct PlaceholderStyle: ViewModifier {
       if showPlaceHolder {
         Text(placeholder)
           .font(Fonts.Inter.regular.swiftUIFont(size: 16))
-          .foregroundColor(Colors.label.swiftUIColor).opacity(0.25)
+          .foregroundColor(Colors.label.swiftUIColor)
+          .opacity(0.25)
       }
       content
     }
