@@ -28,6 +28,22 @@ public enum LFLocalizable {
   public static let lastName = LFLocalizable.tr("Localizable", "last_name", fallback: "Legal last name")
   /// First name and Last name should not be more than 23 characters
   public static let nameExceedMessage = LFLocalizable.tr("Localizable", "name_exceed_message", fallback: "First name and Last name should not be more than 23 characters")
+  /// Encrypted using 256-BIT SSL
+  public static let passportEncryptInfo = LFLocalizable.tr("Localizable", "passport_encrypt_info", fallback: "Encrypted using 256-BIT SSL")
+  /// ENTER PASSPORT NUMBER
+  public static let passportHeading = LFLocalizable.tr("Localizable", "passport_heading", fallback: "ENTER PASSPORT NUMBER")
+  /// No credit checks
+  public static let passportNoCreditCheckInfo = LFLocalizable.tr("Localizable", "passport_noCreditCheck_info", fallback: "No credit checks")
+  /// Passport number
+  public static let passportPlaceholder = LFLocalizable.tr("Localizable", "passport_placeholder", fallback: "Passport number")
+  /// Required to create %@
+  public static func passportRequiredToCreateInfo(_ p1: Any) -> String {
+    return LFLocalizable.tr("Localizable", "passport_requiredToCreate_info", String(describing: p1), fallback: "Required to create %@")
+  }
+  /// International Passport
+  public static let passportTypeInternational = LFLocalizable.tr("Localizable", "passport_type_international", fallback: "International Passport")
+  /// US Passport
+  public static let passportTypeUs = LFLocalizable.tr("Localizable", "passport_type_us", fallback: "US Passport")
   public enum AddPersonalInformation {
     /// Add personal information
     public static let title = LFLocalizable.tr("Localizable", "addPersonalInformation.title", fallback: "Add personal information")

@@ -56,6 +56,15 @@
 "enter_ssn.alert.message" = "A valid SSN or Passport is required by our bank, Evolve Bank and Trust, to create a FDIC insured checking account. Your SSN is only stored with the bank and not accessible through AvalancheCard.";
 "enter_ssn.alert.ok" = "Ok";
 
+//... PASSPORT...
+"passport_heading" = "ENTER PASSPORT NUMBER";
+"passport_placeholder" = "Passport number";
+"passport_encrypt_info" = "Encrypted using 256-BIT SSL";
+"passport_noCreditCheck_info" = "No credit checks";
+"passport_requiredToCreate_info" = "Required to create %@";
+"passport_type_international" = "International Passport";
+"passport_type_us" = "US Passport";
+
 // MARK: - Popup
 
 // Logout
