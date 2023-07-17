@@ -1,5 +1,20 @@
 import SwiftUI
 
+// MARK: - Transform Extension
+public extension String {
+  func trimWhitespacesAndNewlines() -> String {
+    trimmingCharacters(in: .whitespacesAndNewlines)
+  }
+  
+  var plainPhoneString: String {
+    let numbersOnly = CharacterSet(charactersIn: Constants.Default.numberCharacters.rawValue)
+    let filteredPhone = filter { char -> Bool in
+      char.unicodeScalars.contains(where: { numbersOnly.contains($0) })
+    }
+    return filteredPhone
+  }
+}
+
 public extension String {
   func withQuotes() -> String {
     "\"\(self)\""

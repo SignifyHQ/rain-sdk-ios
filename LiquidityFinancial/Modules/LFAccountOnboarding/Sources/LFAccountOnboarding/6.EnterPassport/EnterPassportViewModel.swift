@@ -1,20 +1,21 @@
 import SwiftUI
+import LFLocalizable
 
+@MainActor
 final class EnterPassportViewModel: ObservableObject {
-  @Published var errorMessage: String?
   @Published var isActionAllowed: Bool = false
   @Published var showPassportTypes: Bool = false
   @Published var selectedPassport: PassportType = .international
-  
-  @State var selection: Int?
-  @State var showIndicator = false
-  @State var toastMessage: String?
-  @FocusState var keyboardFocus: Bool
-
+  @Published var selection: Int?
   @Published var passport: String = "" {
     didSet {
       isAllDataFilled()
+      validatePassport()
     }
+  }
+  
+  func validatePassport() {
+    isActionAllowed = isValidPassport(passport)
   }
 }
 
@@ -22,33 +23,21 @@ private extension EnterPassportViewModel {
   func isAllDataFilled() {
     isActionAllowed = (!passport.trimWhitespacesAndNewlines().isEmpty)
   }
-}
-
-extension EnterPassportViewModel {
-  func updateUserDetails() {
-    // TODO: Will implement later
-    /*
-    if userManager.user != nil {
-      if let idvTypeCheck = userManager.user?.idType {
-        if idvTypeCheck == idvType.Passport.rawValue {
-          if let ssnData = userManager.user?.idNumber {
-            passport = ssnData
-          }
-        }
-      }
-    }*/
+  
+  func isValidPassport(_ passport: String) -> Bool {
+    let passportRegEx = "^(?!^0+$)[a-zA-Z0-9]{4,20}$"
+    return passport.range(of: passportRegEx, options: .regularExpression, range: nil, locale: nil) != nil
   }
 }
 
 // MARK: UI Helpers
-
 extension EnterPassportViewModel {
   func getPassportTypeTitle(type: PassportType) -> String {
     switch type {
     case .international:
-      return "passport_type_international".localizedString
+      return LFLocalizable.passportTypeInternational.localizedString
     case .us:
-      return "passport_type_us".localizedString
+      return LFLocalizable.passportTypeUs.localizedString
     }
   }
 
@@ -65,18 +54,7 @@ extension EnterPassportViewModel {
 // MARK: Types
 
 extension EnterPassportViewModel {
-  enum SSNInfoError: Error, LocalizedError {
-    case invalidSSN
-
-    /// API related custom error title
-    var errorDescription: String? {
-      switch self {
-      case .invalidSSN:
-        return "Invalid SSN"
-      }
-    }
-  }
-
+  // swiftlint:disable identifier_name
   enum PassportType: String {
     case international = "non_us_passport"
     case us = "us_passport"

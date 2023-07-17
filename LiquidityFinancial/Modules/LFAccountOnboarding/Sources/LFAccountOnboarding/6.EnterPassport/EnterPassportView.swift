@@ -4,88 +4,97 @@ import LFStyleGuide
 import LFUtilities
 
 // MARK: - PassportView
-
-struct EnterPassportView: View {
-  @StateObject private var viewModel = EnterPassportViewModel()
-
-  @Environment(\.presentationMode) var presentation
+public struct EnterPassportView: View {
   
-  func callUpdateUserAPI() {
-    viewModel.showIndicator = true
-  }
+  @StateObject private var viewModel = EnterPassportViewModel()
+  @FocusState var keyboardFocus: Bool
+  
+  public init() {}
 
-  var body: some View {
+  public var body: some View {
     VStack {
-      // TODO: Will add AddressView later
-      // NavigationLink(destination: AddressView(), tag: 1, selection: $selection) {}
-      
       ScrollView {
         VStack(alignment: .leading) {
+          
           Text(LFLocalizable.passportHeading)
             .foregroundColor(Colors.label.swiftUIColor)
             .font(Fonts.Inter.regular.swiftUIFont(size: Constants.FontSize.main.value))
             .padding(.vertical, 12)
-
+          
           passportTextfield
-
+          
           bulletList
-        }.padding(.horizontal, 32)
-      }
-
-      VStack {
-        FullSizeButton(
-          title: LFLocalizable.Button.Continue.title,
-          isDisable: !viewModel.isActionAllowed,
-          isLoading: $viewModel.showIndicator
-        ) {
-          callUpdateUserAPI()
         }
       }
-      .ignoresSafeArea(.keyboard, edges: .bottom)
-      .padding(.bottom, 24)
       .padding(.horizontal, 32)
+      
+      Spacer()
+      
+      continueButton
+        .padding(.horizontal, 32)
     }
-    .background(
-      Colors.background.swiftUIColor
-        .onTapGesture {
-          viewModel.hidePassportTypes()
-        }
-    )
+    .frame(max: .infinity)
+    .background(Colors.background.swiftUIColor)
+    .onTapGesture {
+      viewModel.hidePassportTypes()
+    }
     .toolbar {
       ToolbarItem(placement: .navigationBarTrailing) {
         Button {
-          //intercomService.openIntercom()
+            //intercomService.openIntercom()
         } label: {
-          GenImages.CommonImages.icChat.swiftUIImage
+          GenImages
+            .CommonImages
+            .icChat.swiftUIImage
             .foregroundColor(Colors.label.swiftUIColor)
         }
       }
     }
-    .onAppear {
-      viewModel.updateUserDetails()
-    }
-    .popup(item: $viewModel.toastMessage, style: .toast) {
-      ToastView(toastMessage: $0)
-    }
   }
 }
 
+// MARK: ViewBuilder
 private extension EnterPassportView {
-  func infoBullet(image: Image, description: String) -> some View {
-    HStack {
-      image.foregroundColor(Colors.label.swiftUIColor)
-      Text(description)
-        .font(Fonts.Inter.regular.swiftUIFont(size: Constants.FontSize.ultraSmall.value))
-        .foregroundColor(Colors.label.swiftUIColor.opacity(0.5))
+  @ViewBuilder
+  var bulletList: some View {
+    VStack(alignment: .leading) {
+      infoBullet(
+        image: GenImages.CommonImages.icLock.swiftUIImage,
+        description: LFLocalizable.passportEncryptInfo
+      )
+      infoBullet(
+        image: GenImages.CommonImages.icTicketCircle.swiftUIImage,
+        description: LFLocalizable.passportNoCreditCheckInfo
+      )
+      infoBullet(
+        image: GenImages.CommonImages.icHome.swiftUIImage,
+        description: String(format: LFLocalizable.passportRequiredToCreateInfo(Bundle.main.appName ?? ""))
+      )
+    }
+    .padding(.top, 20)
+  }
+  
+  @ViewBuilder
+  var passportTypes: some View {
+    if viewModel.showPassportTypes {
+      VStack(alignment: .leading, spacing: 12) {
+        passportTypeItem(item: .us)
+        passportTypeItem(item: .international)
+      }
+      .frame(width: 190)
+      .padding(12)
+      .background(Colors.secondaryBackground.swiftUIColor.cornerRadius(8))
+      .offset(y: 22)
     }
   }
   
-  @ViewBuilder var passportTextfield: some View {
+  @ViewBuilder
+  var passportTextfield: some View {
     VStack(alignment: .leading, spacing: 12) {
-      TextFieldWrapper(errorValue: $viewModel.errorMessage) {
+      TextFieldWrapper {
         TextField("", text: $viewModel.passport)
           .primaryFieldStyle()
-          .focused(viewModel.$keyboardFocus)
+          .focused($keyboardFocus)
           .keyboardType(.default)
           .limitInputLength(
             value: $viewModel.passport,
@@ -98,8 +107,9 @@ private extension EnterPassportView {
             )
           )
           .onAppear {
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.25) {
-              viewModel.keyboardFocus = true
+            Task {// Delay the task by 1 second:
+              try await Task.sleep(nanoseconds: 250_000_000)
+              keyboardFocus = true
             }
           }
       }
@@ -107,37 +117,18 @@ private extension EnterPassportView {
     .overlay(passportTypes, alignment: .bottomLeading)
   }
   
-  @ViewBuilder var bulletList: some View {
-    VStack(alignment: .leading) {
-      infoBullet(
-        image: GenImages.CommonImages.icLock.swiftUIImage,
-        description: LFLocalizable.passportEncryptInfo
-      )
-      infoBullet(
-        image: GenImages.CommonImages.icTicketCircle.swiftUIImage,
-        description: LFLocalizable.passportNoCreditCheckInfo
-      )
-      infoBullet(
-        image: GenImages.CommonImages.icHome.swiftUIImage,
-        description: String(format: LFLocalizable.passportRequiredToCreateInfo(LFUtility.appName))
-      )
-    }
-    .padding(.top, 20)
-  }
+}
 
-  @ViewBuilder var passportTypes: some View {
-    if viewModel.showPassportTypes {
-      VStack(alignment: .leading, spacing: 12) {
-        passportTypeItem(item: .us)
-        passportTypeItem(item: .international)
-      }
-      .frame(width: 190)
-      .padding(12)
-      .background(Colors.secondaryBackground.swiftUIColor.cornerRadius(8))
-      .offset(y: 22)
+private extension EnterPassportView {
+  func infoBullet(image: Image, description: String) -> some View {
+    HStack {
+      image.foregroundColor(Colors.label.swiftUIColor)
+      Text(description)
+        .font(Fonts.Inter.regular.swiftUIFont(size: Constants.FontSize.ultraSmall.value))
+        .foregroundColor(Colors.label.swiftUIColor.opacity(0.5))
     }
   }
-
+  
   func passportTypeItem(item: EnterPassportViewModel.PassportType) -> some View {
     Button {
       viewModel.onSelectedPassportType(type: item)
@@ -153,7 +144,7 @@ private extension EnterPassportView {
       }
     }
   }
-
+  
   var passportTypeDropdown: some View {
     Button {
       viewModel.showPassportTypes.toggle()
@@ -171,4 +162,23 @@ private extension EnterPassportView {
     .padding(.horizontal, 12)
     .background(Colors.secondaryBackground.swiftUIColor.cornerRadius(8))
   }
+  
+  var continueButton: some View {
+    VStack {
+      FullSizeButton(title: LFLocalizable.Button.Continue.title,
+                     isDisable: !viewModel.isActionAllowed) {
+        
+      }
+    }
+    .ignoresSafeArea(.keyboard, edges: .bottom)
+    .padding(.bottom, 16)
+  }
 }
+
+#if DEBUG
+struct EnterPassportView_Previews: PreviewProvider {
+  static var previews: some View {
+    EnterPassportView()
+  }
+}
+#endif

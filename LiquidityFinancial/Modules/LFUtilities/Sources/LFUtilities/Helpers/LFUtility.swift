@@ -36,7 +36,7 @@ public enum LFConfiguration {
     case let value as T:
       return value
     case let string as String:
-      guard let value = T(string) else { fatalError("Required configuration should match") }
+      guard let value = T(string) else { fallthrough }
       return value
     default:
       throw Error.invalidValue
