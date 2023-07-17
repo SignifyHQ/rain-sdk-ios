@@ -116,5 +116,7 @@ public extension Constants {
     case regionCode = "+1"
     case numberCharacters = "0123456789"
     case ssnPlaceholder = "* * * *"
+    case capacity = "20"
+    case capacityUnit = "Mb"
   }
 }

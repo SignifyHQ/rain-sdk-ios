@@ -67,6 +67,15 @@
 "kyc.question.title" = "Additional Security Questions";
 "kyc.question.desc" = "Please answer the following questions to help us verify your information.";
 
+// Upload KYC Document
+"uploadDocument.screen.title" = "SET UP YOUR ACCOUNT";
+"uploadDocument.screen.description" = "%@ has partnered with NetSpend and Pathward Bank, a trusted partner in banking.";
+"uploadDocument.upload.title" = "UPLOAD DOCUMENTS";
+"uploadDocument.upload.description" = "Please Upload documents to help us verify your account";
+"uploadDocument.upload.actionTitle" = "Upload Documents";
+"uploadDocument.maxSize.description" = "%@ MB max size";
+"uploadDocument.button.title" = "Upload Documents";
+
 // MARK: - Popup
 
 // Logout

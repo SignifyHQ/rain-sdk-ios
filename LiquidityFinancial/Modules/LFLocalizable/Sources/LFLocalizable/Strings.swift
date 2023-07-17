@@ -28,6 +28,22 @@ public enum LFLocalizable {
   public static let lastName = LFLocalizable.tr("Localizable", "last_name", fallback: "Legal last name")
   /// First name and Last name should not be more than 23 characters
   public static let nameExceedMessage = LFLocalizable.tr("Localizable", "name_exceed_message", fallback: "First name and Last name should not be more than 23 characters")
+  /// Encrypted using 256-BIT SSL
+  public static let passportEncryptInfo = LFLocalizable.tr("Localizable", "passport_encrypt_info", fallback: "Encrypted using 256-BIT SSL")
+  /// ENTER PASSPORT NUMBER
+  public static let passportHeading = LFLocalizable.tr("Localizable", "passport_heading", fallback: "ENTER PASSPORT NUMBER")
+  /// No credit checks
+  public static let passportNoCreditCheckInfo = LFLocalizable.tr("Localizable", "passport_noCreditCheck_info", fallback: "No credit checks")
+  /// Passport number
+  public static let passportPlaceholder = LFLocalizable.tr("Localizable", "passport_placeholder", fallback: "Passport number")
+  /// Required to create %@
+  public static func passportRequiredToCreateInfo(_ p1: Any) -> String {
+    return LFLocalizable.tr("Localizable", "passport_requiredToCreate_info", String(describing: p1), fallback: "Required to create %@")
+  }
+  /// International Passport
+  public static let passportTypeInternational = LFLocalizable.tr("Localizable", "passport_type_international", fallback: "International Passport")
+  /// US Passport
+  public static let passportTypeUs = LFLocalizable.tr("Localizable", "passport_type_us", fallback: "US Passport")
   public enum AddPersonalInformation {
     /// Add personal information
     public static let title = LFLocalizable.tr("Localizable", "addPersonalInformation.title", fallback: "Add personal information")
@@ -45,6 +61,32 @@ public enum LFLocalizable {
       /// Trade Now and Get
       /// Your Life
       public static let text = LFLocalizable.tr("Localizable", "button.title.text", fallback: "Trade Now and Get\nYour Life")
+    }
+  }
+  public enum EnterSsn {
+    /// Encrypted using 256-BIT SSL
+    public static let bulletOne = LFLocalizable.tr("Localizable", "enter_ssn.bullet_one", fallback: "Encrypted using 256-BIT SSL")
+    /// Required to create AvalancheCard
+    public static let bulletThree = LFLocalizable.tr("Localizable", "enter_ssn.bullet_three", fallback: "Required to create AvalancheCard")
+    /// No credit checks, doesn't impact credit score
+    public static let bulletTwo = LFLocalizable.tr("Localizable", "enter_ssn.bullet_two", fallback: "No credit checks, doesn't impact credit score")
+    /// Continue
+    public static let `continue` = LFLocalizable.tr("Localizable", "enter_ssn.continue", fallback: "Continue")
+    /// No SSN? Tap here
+    public static let noSsn = LFLocalizable.tr("Localizable", "enter_ssn.no_ssn", fallback: "No SSN? Tap here")
+    /// Enter Social Security Number
+    public static let placeholder = LFLocalizable.tr("Localizable", "enter_ssn.placeholder", fallback: "Enter Social Security Number")
+    /// PLEASE ENTER YOUR SSN
+    public static let title = LFLocalizable.tr("Localizable", "enter_ssn.title", fallback: "PLEASE ENTER YOUR SSN")
+    /// Why do we need SSN?
+    public static let why = LFLocalizable.tr("Localizable", "enter_ssn.why", fallback: "Why do we need SSN?")
+    public enum Alert {
+      /// A valid SSN or Passport is required by our bank, Evolve Bank and Trust, to create a FDIC insured checking account. Your SSN is only stored with the bank and not accessible through AvalancheCard.
+      public static let message = LFLocalizable.tr("Localizable", "enter_ssn.alert.message", fallback: "A valid SSN or Passport is required by our bank, Evolve Bank and Trust, to create a FDIC insured checking account. Your SSN is only stored with the bank and not accessible through AvalancheCard.")
+      /// Ok
+      public static let ok = LFLocalizable.tr("Localizable", "enter_ssn.alert.ok", fallback: "Ok")
+      /// WHY DO WE NEED SSN?
+      public static let title = LFLocalizable.tr("Localizable", "enter_ssn.alert.title", fallback: "WHY DO WE NEED SSN?")
     }
   }
   public enum Kyc {
@@ -117,6 +159,34 @@ public enum LFLocalizable {
     public enum TermsVoip {
       /// Using VOIP or Google Voice numbers can result in onboarding delays. We NEVER share your phone number with third parties for marketing, per our Privacy Policy.
       public static let description = LFLocalizable.tr("Localizable", "term.termsVoip.description", fallback: "Using VOIP or Google Voice numbers can result in onboarding delays. We NEVER share your phone number with third parties for marketing, per our Privacy Policy.")
+    }
+  }
+  public enum UploadDocument {
+    public enum Button {
+      /// Upload Documents
+      public static let title = LFLocalizable.tr("Localizable", "uploadDocument.button.title", fallback: "Upload Documents")
+    }
+    public enum MaxSize {
+      /// %@ MB max size
+      public static func description(_ p1: Any) -> String {
+        return LFLocalizable.tr("Localizable", "uploadDocument.maxSize.description", String(describing: p1), fallback: "%@ MB max size")
+      }
+    }
+    public enum Screen {
+      /// %@ has partnered with NetSpend and Pathward Bank, a trusted partner in banking.
+      public static func description(_ p1: Any) -> String {
+        return LFLocalizable.tr("Localizable", "uploadDocument.screen.description", String(describing: p1), fallback: "%@ has partnered with NetSpend and Pathward Bank, a trusted partner in banking.")
+      }
+      /// SET UP YOUR ACCOUNT
+      public static let title = LFLocalizable.tr("Localizable", "uploadDocument.screen.title", fallback: "SET UP YOUR ACCOUNT")
+    }
+    public enum Upload {
+      /// Upload Documents
+      public static let actionTitle = LFLocalizable.tr("Localizable", "uploadDocument.upload.actionTitle", fallback: "Upload Documents")
+      /// Please Upload documents to help us verify your account
+      public static let description = LFLocalizable.tr("Localizable", "uploadDocument.upload.description", fallback: "Please Upload documents to help us verify your account")
+      /// UPLOAD DOCUMENTS
+      public static let title = LFLocalizable.tr("Localizable", "uploadDocument.upload.title", fallback: "UPLOAD DOCUMENTS")
     }
   }
   public enum VerificationCode {
