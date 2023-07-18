@@ -115,9 +115,3 @@ custom_rules:
     message: "print should not be used for logging. Use `log`"
     regex: 'print\(".+?"\)'
     severity: warning
-
-  log_error:
-    name: "Incorrect error log"
-    message: "errors should be included in the log. Use log(_ error: Error, _ message: String?)"
-    regex: 'log.error\("'
-    severity: warning

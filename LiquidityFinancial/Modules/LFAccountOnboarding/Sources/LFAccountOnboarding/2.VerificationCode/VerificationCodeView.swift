@@ -54,6 +54,11 @@ struct VerificationCodeView: View {
     }
     .onAppear {
       viewModel.isResendButonTimerOn = false
+      Task {
+        // Delay the task by 1 second:
+        try await Task.sleep(nanoseconds: 1_000_000_000)
+        viewModel.performAutoGetTwilioMessagesIfNeccessary()
+      }
     }
     // TODO: Will be implemented later
     // .track(name: String(describing: type(of: self)))

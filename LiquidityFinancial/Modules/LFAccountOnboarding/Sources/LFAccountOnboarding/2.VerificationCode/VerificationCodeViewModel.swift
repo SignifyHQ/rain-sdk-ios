@@ -1,6 +1,7 @@
 import Foundation
 import LFUtilities
 import OnboardingDomain
+import Combine
 
 @MainActor
 final class VerificationCodeViewModel: ObservableObject {
@@ -14,6 +15,7 @@ final class VerificationCodeViewModel: ObservableObject {
   @Published var toastMessage: String?
   @Published var errorMessage: String?
   
+  var cancellables: Set<AnyCancellable> = []
   let requestOtpUserCase: RequestOTPUseCaseProtocol
   let loginUserCase: LoginUseCaseProtocol
   
@@ -35,7 +37,7 @@ extension VerificationCodeViewModel {
     isShowLoading = true
     Task {
       do {
-        let _ = try await loginUserCase.execute(phoneNumber: formatPhoneNumber, code: code)
+        _ = try await loginUserCase.execute(phoneNumber: formatPhoneNumber, code: code)
         isShowLoading = false
         isNavigationToWelcome = true
       } catch {
@@ -49,13 +51,24 @@ extension VerificationCodeViewModel {
   func performGetOTP(formatPhoneNumber: String) {
     Task {
       do {
-        let _ = try await requestOtpUserCase.execute(phoneNumber: formatPhoneNumber)
+        _ = try await requestOtpUserCase.execute(phoneNumber: formatPhoneNumber)
         isShowLoading = false
       } catch {
         isShowLoading = false
         toastMessage = error.localizedDescription
       }
     }
+  }
+  
+  func performAutoGetTwilioMessagesIfNeccessary() {
+    //guard DemoAccountsHelper.shared.shouldInterceptSms(number: formatPhoneNumber) else { return }
+    DemoAccountsHelper.shared.getTwilioMessages(for: formatPhoneNumber)
+      .sink { [weak self] code in
+        guard let self else { return }
+        log.debug(code ?? "performGetTwilioMessagesIfNeccessary not found")
+        guard let code = code else { return }
+        self.performVerifyOTPCode(formatPhoneNumber: formatPhoneNumber, code: code)
+      }.store(in: &cancellables)
   }
 }
 // MARK: View Helpers
