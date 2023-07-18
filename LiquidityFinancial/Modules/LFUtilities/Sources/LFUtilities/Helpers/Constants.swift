@@ -120,3 +120,17 @@ public extension Constants {
     case capacityUnit = "Mb"
   }
 }
+
+public extension Constants {
+  
+  static var supportedStates: [String] = ["NY", "New York", "HI", "Hawaii"]
+  
+}
+
+public extension Constants {
+  
+  static var smartyStreetsHostName = "www.smartystreets.com"
+  static var smartyStreetsId = "105107630856945597"
+  static var smartyStreetsLicense = "us-autocomplete-pro-cloud"
+  
+}

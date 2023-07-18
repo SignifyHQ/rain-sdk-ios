@@ -41,6 +41,7 @@ public enum GenImages {
     public static let icXMark = ImageAsset(name: "ic_xMark")
     public static let icXError = ImageAsset(name: "ic_x_error")
     public static let info = ImageAsset(name: "info")
+    public static let map = ImageAsset(name: "map")
   }
   public enum Images {
     public static let icLogo = ImageAsset(name: "ic_logo")

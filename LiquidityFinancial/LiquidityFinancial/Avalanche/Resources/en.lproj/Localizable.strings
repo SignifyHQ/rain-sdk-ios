@@ -77,6 +77,27 @@
 "uploadDocument.maxSize.description" = "%@ MB max size";
 "uploadDocument.button.title" = "Upload Documents";
 
+// Address View
+"address_title" = "WHERE TO SEND YOUR %@ CARD?";
+"addressLine1_title" = "Address line 1 ";
+"addressLine2_title" = "Address line 2";
+"enter_address" = "Enter address";
+"city" = "City";
+"enter_city" = "Enter city";
+"state" = "State";
+"enter_state" = "Enter state";
+"zipcode" = "Zip code";
+"enter_zipcode" = "Enter zip code";
+"address.disclosure.text" = "By tapping 'Continue', you consent to our %@ and %@.";
+"address.disclosure.agreement" = "CauseCard Agreement";
+"address.disclosure.privacy" = "Privacy Policy";
+"account_update" = "ACCOUNT UPDATE";
+"waitlist_message" = "Hello, %@.  We are very sorry, but due to regulations regarding Doge, we are currently unable to open accounts for residents of New York and Hawaii.   We are currently working with regulators to resolve this.  In the meantime, we will contact you as soon as we can open your account.";
+"join_waitlist" = "Join waitlist";
+"cancel_account" = "Cancel account";
+"waitlist_joined_title" = "WAITLIST JOINED";
+"waitlist_joined_message" = "You are now on the waitlist. We will email you when we can operate in your state.";
+
 // MARK: - Popup
 
 // Logout

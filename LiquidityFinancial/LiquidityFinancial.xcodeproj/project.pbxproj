@@ -11,6 +11,7 @@
 		06D40BFC2A6260B300EADB75 /* LoadingContrast.json in Resources */ = {isa = PBXBuildFile; fileRef = 06D40BFB2A6260B300EADB75 /* LoadingContrast.json */; };
 		06D40C012A62AE3700EADB75 /* iPhoneNumberField in Frameworks */ = {isa = PBXBuildFile; productRef = 06D40C002A62AE3700EADB75 /* iPhoneNumberField */; };
 		06D40C032A63DEB300EADB75 /* LoadingPrimary.json in Resources */ = {isa = PBXBuildFile; fileRef = 06D40C022A63DEB300EADB75 /* LoadingPrimary.json */; };
+		749091172A6584C300071B41 /* SmartyStreets in Frameworks */ = {isa = PBXBuildFile; productRef = 749091162A6584C300071B41 /* SmartyStreets */; };
 		A938373C2A63BAAC009EB1DE /* LFUtilities in Frameworks */ = {isa = PBXBuildFile; productRef = A938373B2A63BAAC009EB1DE /* LFUtilities */; };
 		A938373E2A63BB20009EB1DE /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = A938373D2A63BB20009EB1DE /* LaunchScreen.storyboard */; };
 		A93837442A63D7AD009EB1DE /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A93837432A63D7AD009EB1DE /* Images.xcassets */; };
@@ -149,6 +150,7 @@
 				A94F71F22A612C62002ADB34 /* AvalancheAccountOnboarding in Frameworks */,
 				A980DF752A5FA265000B3C09 /* LFServices in Frameworks */,
 				A94F71F52A61CAC6002ADB34 /* LFLocalizable in Frameworks */,
+				749091172A6584C300071B41 /* SmartyStreets in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -483,6 +485,7 @@
 				A94F71F42A61CAC6002ADB34 /* LFLocalizable */,
 				A94F71FE2A6266D0002ADB34 /* AuthorizationManager */,
 				06D40C002A62AE3700EADB75 /* iPhoneNumberField */,
+				749091162A6584C300071B41 /* SmartyStreets */,
 			);
 			productName = LiquidityFinancial;
 			productReference = A97BF7BC2A5C602D00B8F5CA /* Avalanche.app */;
@@ -561,6 +564,7 @@
 				A97BF7EC2A5D719000B8F5CA /* XCRemoteSwiftPackageReference "lottie-ios" */,
 				A9E6B1CD2A5DD1A2008ED988 /* XCRemoteSwiftPackageReference "SwiftGenPlugin" */,
 				06D40BFF2A62AE3700EADB75 /* XCRemoteSwiftPackageReference "iPhoneNumberField" */,
+				749091152A6584C300071B41 /* XCRemoteSwiftPackageReference "smartystreets-ios-sdk" */,
 			);
 			productRefGroup = A97BF7BD2A5C602D00B8F5CA /* Products */;
 			projectDirPath = "";
@@ -1143,6 +1147,14 @@
 				minimumVersion = 0.10.1;
 			};
 		};
+		749091152A6584C300071B41 /* XCRemoteSwiftPackageReference "smartystreets-ios-sdk" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/smartystreets/smartystreets-ios-sdk";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 8.0.0;
+			};
+		};
 		A953547E2A5E55B2008B0FAB /* XCRemoteSwiftPackageReference "Factory" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/hmlongco/Factory";
@@ -1198,6 +1210,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 06D40BFF2A62AE3700EADB75 /* XCRemoteSwiftPackageReference "iPhoneNumberField" */;
 			productName = iPhoneNumberField;
+		};
+		749091162A6584C300071B41 /* SmartyStreets */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 749091152A6584C300071B41 /* XCRemoteSwiftPackageReference "smartystreets-ios-sdk" */;
+			productName = SmartyStreets;
 		};
 		A938373B2A63BAAC009EB1DE /* LFUtilities */ = {
 			isa = XCSwiftPackageProductDependency;

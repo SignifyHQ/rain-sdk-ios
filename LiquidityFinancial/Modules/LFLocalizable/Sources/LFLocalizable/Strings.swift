@@ -10,20 +10,44 @@ import Foundation
 // swiftlint:disable explicit_type_interface function_parameter_count identifier_name line_length
 // swiftlint:disable nesting type_body_length type_name vertical_whitespace_opening_braces
 public enum LFLocalizable {
+  /// ACCOUNT UPDATE
+  public static let accountUpdate = LFLocalizable.tr("Localizable", "account_update", fallback: "ACCOUNT UPDATE")
+  /// WHERE TO SEND YOUR %@ CARD?
+  public static func addressTitle(_ p1: Any) -> String {
+    return LFLocalizable.tr("Localizable", "address_title", String(describing: p1), fallback: "WHERE TO SEND YOUR %@ CARD?")
+  }
+  /// Address line 1 
+  public static let addressLine1Title = LFLocalizable.tr("Localizable", "addressLine1_title", fallback: "Address line 1 ")
+  /// Address line 2
+  public static let addressLine2Title = LFLocalizable.tr("Localizable", "addressLine2_title", fallback: "Address line 2")
+  /// Cancel account
+  public static let cancelAccount = LFLocalizable.tr("Localizable", "cancel_account", fallback: "Cancel account")
+  /// City
+  public static let city = LFLocalizable.tr("Localizable", "city", fallback: "City")
   /// Date of birth
   public static let dob = LFLocalizable.tr("Localizable", "dob", fallback: "Date of birth")
   /// dd / mm / yyyy
   public static let dobFormat = LFLocalizable.tr("Localizable", "dob_format", fallback: "dd / mm / yyyy")
   /// Email
   public static let email = LFLocalizable.tr("Localizable", "email", fallback: "Email")
+  /// Enter address
+  public static let enterAddress = LFLocalizable.tr("Localizable", "enter_address", fallback: "Enter address")
+  /// Enter city
+  public static let enterCity = LFLocalizable.tr("Localizable", "enter_city", fallback: "Enter city")
   /// Enter email address
   public static let enterEmailAddress = LFLocalizable.tr("Localizable", "enter_emailAddress", fallback: "Enter email address")
   /// Enter legal first name
   public static let enterFirstName = LFLocalizable.tr("Localizable", "enter_firstName", fallback: "Enter legal first name")
   /// Enter legal last name
   public static let enterLastName = LFLocalizable.tr("Localizable", "enter_lastName", fallback: "Enter legal last name")
+  /// Enter state
+  public static let enterState = LFLocalizable.tr("Localizable", "enter_state", fallback: "Enter state")
+  /// Enter zip code
+  public static let enterZipcode = LFLocalizable.tr("Localizable", "enter_zipcode", fallback: "Enter zip code")
   /// Legal first name
   public static let firstName = LFLocalizable.tr("Localizable", "first_name", fallback: "Legal first name")
+  /// Join waitlist
+  public static let joinWaitlist = LFLocalizable.tr("Localizable", "join_waitlist", fallback: "Join waitlist")
   /// Legal last name
   public static let lastName = LFLocalizable.tr("Localizable", "last_name", fallback: "Legal last name")
   /// First name and Last name should not be more than 23 characters
@@ -44,9 +68,33 @@ public enum LFLocalizable {
   public static let passportTypeInternational = LFLocalizable.tr("Localizable", "passport_type_international", fallback: "International Passport")
   /// US Passport
   public static let passportTypeUs = LFLocalizable.tr("Localizable", "passport_type_us", fallback: "US Passport")
+  /// State
+  public static let state = LFLocalizable.tr("Localizable", "state", fallback: "State")
+  /// You are now on the waitlist. We will email you when we can operate in your state.
+  public static let waitlistJoinedMessage = LFLocalizable.tr("Localizable", "waitlist_joined_message", fallback: "You are now on the waitlist. We will email you when we can operate in your state.")
+  /// WAITLIST JOINED
+  public static let waitlistJoinedTitle = LFLocalizable.tr("Localizable", "waitlist_joined_title", fallback: "WAITLIST JOINED")
+  /// Hello, %@.  We are very sorry, but due to regulations regarding Doge, we are currently unable to open accounts for residents of New York and Hawaii.   We are currently working with regulators to resolve this.  In the meantime, we will contact you as soon as we can open your account.
+  public static func waitlistMessage(_ p1: Any) -> String {
+    return LFLocalizable.tr("Localizable", "waitlist_message", String(describing: p1), fallback: "Hello, %@.  We are very sorry, but due to regulations regarding Doge, we are currently unable to open accounts for residents of New York and Hawaii.   We are currently working with regulators to resolve this.  In the meantime, we will contact you as soon as we can open your account.")
+  }
+  /// Zip code
+  public static let zipcode = LFLocalizable.tr("Localizable", "zipcode", fallback: "Zip code")
   public enum AddPersonalInformation {
     /// Add personal information
     public static let title = LFLocalizable.tr("Localizable", "addPersonalInformation.title", fallback: "Add personal information")
+  }
+  public enum Address {
+    public enum Disclosure {
+      /// CauseCard Agreement
+      public static let agreement = LFLocalizable.tr("Localizable", "address.disclosure.agreement", fallback: "CauseCard Agreement")
+      /// Privacy Policy
+      public static let privacy = LFLocalizable.tr("Localizable", "address.disclosure.privacy", fallback: "Privacy Policy")
+      /// By tapping 'Continue', you consent to our %@ and %@.
+      public static func text(_ p1: Any, _ p2: Any) -> String {
+        return LFLocalizable.tr("Localizable", "address.disclosure.text", String(describing: p1), String(describing: p2), fallback: "By tapping 'Continue', you consent to our %@ and %@.")
+      }
+    }
   }
   public enum Button {
     public enum Continue {
