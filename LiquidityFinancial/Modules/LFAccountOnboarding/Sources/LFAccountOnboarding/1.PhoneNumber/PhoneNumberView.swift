@@ -49,7 +49,7 @@ public struct PhoneNumberView: View {
     }
     // TODO: Will be updated later
     // .track(name: String(describing: type(of: self)))
-    .navigationLink(isActive: $viewModel.isPushToVertificationView) {
+    .navigationLink(isActive: $viewModel.isNavigationToVertificationView) {
       VerificationCodeView(
         phoneNumber: viewModel.phoneNumber,
         requestOTPUseCase: viewModel.requestOtpUserCase,

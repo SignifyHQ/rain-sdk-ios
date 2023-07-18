@@ -9,7 +9,6 @@ struct EnterPassportView: View {
   @StateObject private var viewModel = EnterPassportViewModel()
   @FocusState var keyboardFocus: Bool
 
-
   public var body: some View {
     VStack {
       ScrollView {
@@ -48,6 +47,9 @@ struct EnterPassportView: View {
             .foregroundColor(Colors.label.swiftUIColor)
         }
       }
+    }
+    .navigationLink(isActive: $viewModel.isNavigationToAddressView) {
+      AddressView()
     }
   }
 }
@@ -166,7 +168,7 @@ private extension EnterPassportView {
     VStack {
       FullSizeButton(title: LFLocalizable.Button.Continue.title,
                      isDisable: !viewModel.isActionAllowed) {
-        
+        viewModel.isNavigationToAddressView = true
       }
     }
     .ignoresSafeArea(.keyboard, edges: .bottom)

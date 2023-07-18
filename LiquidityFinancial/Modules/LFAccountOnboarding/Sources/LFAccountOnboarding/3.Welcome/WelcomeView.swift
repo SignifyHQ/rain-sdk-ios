@@ -3,14 +3,11 @@ import SwiftUI
 import LFStyleGuide
 import LFLocalizable
 
-public struct WelcomeView: View {
-  @StateObject private var viewModel: WelcomeViewModel
+struct WelcomeView: View {
+
+  @State var isPushPersonalInformation: Bool = false
   
-  public init(viewModel: WelcomeViewModel) {
-    _viewModel = .init(wrappedValue: viewModel)
-  }
-  
-  public var body: some View {
+  var body: some View {
     VStack(spacing: 12) {
       staticTop
       
@@ -39,6 +36,9 @@ public struct WelcomeView: View {
     .onAppear {
         // TODO: Add analytics later
         // analyticsService.track(event: Event(name: .viewsWelcome))
+    }
+    .navigationLink(isActive: $isPushPersonalInformation) {
+      PersonalInformationView()
     }
   }
   
@@ -83,10 +83,9 @@ public struct WelcomeView: View {
     VStack(spacing: 10) {
       FullSizeButton(
         title: LFLocalizable.Welcome.Button.orderCard,
-        isDisable: false,
-        isLoading: $viewModel.isLoading
+        isDisable: false
       ) {
-        viewModel.orderCardTapped()
+        isPushPersonalInformation = true
       }
     }
   }

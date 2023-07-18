@@ -8,9 +8,6 @@ public enum OnboardingRoute {
 }
 
 extension OnboardingRoute: LFRoute {
-  public var baseURL: URL {
-    APIConstants.baseURL
-  }
   
   public var path: String {
     switch self {
@@ -25,13 +22,6 @@ extension OnboardingRoute: LFRoute {
     switch self {
     case .login, .otp: return HttpMethod.POST
     }
-  }
-  
-  public var httpHeaders: HttpHeaders {
-    [
-      "Content-Type": "application/json",
-      "productName": APIConstants.productNameDefault
-    ]
   }
   
   public var parameters: Parameters? {

@@ -3,6 +3,8 @@ import LFLocalizable
 
 @MainActor
 final class EnterPassportViewModel: ObservableObject {
+  
+  @Published var isNavigationToAddressView: Bool = false
   @Published var isActionAllowed: Bool = false
   @Published var showPassportTypes: Bool = false
   @Published var selectedPassport: PassportType = .international

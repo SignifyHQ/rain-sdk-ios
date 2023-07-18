@@ -57,8 +57,8 @@ struct VerificationCodeView: View {
     }
     // TODO: Will be implemented later
     // .track(name: String(describing: type(of: self)))
-    .navigationLink(isActive: $viewModel.isPushToSSNView) {
-      SecurityCheckView()
+    .navigationLink(isActive: $viewModel.isNavigationToWelcome) {
+      WelcomeView()
     }
   }
 }

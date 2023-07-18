@@ -4,7 +4,7 @@ import OnboardingDomain
 
 @MainActor
 final class VerificationCodeViewModel: ObservableObject {
-  @Published var isPushToSSNView: Bool = false
+  @Published var isNavigationToWelcome: Bool = false
   @Published var isResendButonTimerOn = false
   @Published var isShowText: Bool = true
   @Published var isShowLoading: Bool = false
@@ -35,13 +35,13 @@ extension VerificationCodeViewModel {
     isShowLoading = true
     Task {
       do {
-        let accessTokens = try await loginUserCase.execute(phoneNumber: formatPhoneNumber, code: code)
+        let _ = try await loginUserCase.execute(phoneNumber: formatPhoneNumber, code: code)
         isShowLoading = false
-        print("Debug - \(accessTokens)")
+        isNavigationToWelcome = true
       } catch {
         isShowLoading = false
         toastMessage = error.localizedDescription
-        print("Debug - \(error)")
+        log.error(error)
       }
     }
   }
@@ -49,7 +49,7 @@ extension VerificationCodeViewModel {
   func performGetOTP(formatPhoneNumber: String) {
     Task {
       do {
-        let otpResponse = try await requestOtpUserCase.execute(phoneNumber: formatPhoneNumber)
+        let _ = try await requestOtpUserCase.execute(phoneNumber: formatPhoneNumber)
         isShowLoading = false
       } catch {
         isShowLoading = false

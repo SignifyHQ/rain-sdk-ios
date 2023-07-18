@@ -3,20 +3,15 @@ import LFLocalizable
 import LFStyleGuide
 import LFUtilities
 
-public struct EnterSSNView: View {
-  @StateObject private var ssnViewModel = EnterSSNViewModel(isVerifySSN: true)
+struct EnterSSNView: View {
+  @StateObject private var viewModel = EnterSSNViewModel(isVerifySSN: true)
 
-  @State private var showIndicator = false
   @State private var navigation: Navigation?
   @State private var toastMessage: String?
   @State private var showPopup = false
   @FocusState private var keyboardFocus: Bool
-  
-  public init() {
-    
-  }
 
-  public var body: some View {
+  var body: some View {
     VStack {
       VStack(alignment: .leading) {
         Text(LFLocalizable.EnterSsn.title)
@@ -36,7 +31,7 @@ public struct EnterSSNView: View {
     .toolbar {
       ToolbarItem(placement: .navigationBarTrailing) {
         Button {
-          //intercomService.openIntercom()
+          viewModel.openIntercom()
         } label: {
           GenImages.CommonImages.icChat.swiftUIImage
             .foregroundColor(Colors.label.swiftUIColor)
@@ -50,14 +45,12 @@ public struct EnterSSNView: View {
       infoPopup
     }
     .navigationLink(item: $navigation) { item in
-      // TODO: Will implement passport view and addressview later
-      /*
       switch item {
       case .passport:
-        PassportView()
+        EnterPassportView()
       case .address:
         AddressView()
-      }*/
+      }
     }
     //.track(name: String(describing: type(of: self)))
     .onAppear {
@@ -66,18 +59,18 @@ public struct EnterSSNView: View {
   }
 
   private var secureField: some View {
-    TextFieldWrapper(errorValue: $ssnViewModel.errorMessage) {
-      SecureField("", text: $ssnViewModel.ssn)
+    TextFieldWrapper(errorValue: $viewModel.errorMessage) {
+      SecureField("", text: $viewModel.ssn)
         .focused($keyboardFocus)
         .primaryFieldStyle()
         .keyboardType(.numberPad)
         .limitInputLength(
-          value: $ssnViewModel.ssn,
+          value: $viewModel.ssn,
           length: Constants.MaxCharacterLimit.fullSSNLength.value
         )
         .modifier(
           PlaceholderStyle(
-            showPlaceHolder: ssnViewModel.ssn.isEmpty,
+            showPlaceHolder: viewModel.ssn.isEmpty,
             placeholder: LFLocalizable.EnterSsn.placeholder
           )
         )
@@ -147,11 +140,10 @@ public struct EnterSSNView: View {
         
         FullSizeButton(
           title: LFLocalizable.EnterSsn.continue,
-          isDisable: !ssnViewModel.isActionAllowed,
-          isLoading: $showIndicator,
+          isDisable: !viewModel.isActionAllowed,
           type: .primary
         ) {
-          callUpdateUserAPI()
+          navigation = .address
         }
       }
     }
@@ -168,8 +160,6 @@ public struct EnterSSNView: View {
     )
   }
 
-  private func callUpdateUserAPI() {
-  }
 }
 
 extension EnterSSNView {
@@ -178,4 +168,3 @@ extension EnterSSNView {
     case address
   }
 }
-

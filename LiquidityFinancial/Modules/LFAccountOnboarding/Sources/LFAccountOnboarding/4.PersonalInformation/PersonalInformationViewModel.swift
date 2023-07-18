@@ -22,8 +22,7 @@ class PersonalInformationViewModel: ObservableObject {
     }
   }
 
-  @Published var isPresented: Bool = false
-  @Published var errorMessage: String = ""
+  @Published var isNavigationToSSNView: Bool = false
   @Published var isActionAllowed: Bool = false
   @Published var errorObj: Error?
 
@@ -55,6 +54,11 @@ class PersonalInformationViewModel: ObservableObject {
     didSet {
       isAllDataFilled()
     }
+  }
+  
+  func openIntercom() {
+      // TODO: Will be implemented later
+      // intercomService.openIntercom()
   }
 }
 

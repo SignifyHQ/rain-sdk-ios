@@ -9,7 +9,7 @@ public final class PhoneNumberViewModel: ObservableObject {
   @Published var isSecretMode: Bool = false
   @Published var isLoading: Bool = false
   @Published var isDisableButton: Bool = true
-  @Published var isPushToVertificationView: Bool = false
+  @Published var isNavigationToVertificationView: Bool = false
   @Published var isShowConditions: Bool = false
   @Published var phoneNumber: String = ""
   @Published var toastMessage: String?
@@ -84,6 +84,6 @@ extension PhoneNumberViewModel {
   }
   
   func navigateToOTPVerification() {
-    isPushToVertificationView = true
+    isNavigationToVertificationView = true
   }
 }

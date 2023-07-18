@@ -22,6 +22,7 @@ let package = Package(
     ],
     dependencies: [
       .package(url: "https://github.com/MojtabaHs/iPhoneNumberField.git", from: "0.10.1"),
+      .package(url: "https://github.com/smartystreets/smartystreets-ios-sdk", branch: "master"),
       .package(name: "LFUtilities", path: "../LFUtilities"),
       .package(name: "LFStyleGuide", path: "../LFStyleGuide"),
       .package(name: "OnboardingDomain", path: "../LFDomain"),
@@ -30,7 +31,10 @@ let package = Package(
     targets: [
         .target(
           name: "LFAccountOnboarding",
-          dependencies: ["LFUtilities", "OnboardingDomain", "LFStyleGuide", "LFLocalizable"],
+          dependencies: [
+            "LFUtilities", "OnboardingDomain", "LFStyleGuide", "LFLocalizable",
+            .product(name: "SmartyStreets", package: "smartystreets-ios-sdk")
+          ],
           resources: [
             .process("ZResources")
           ],
