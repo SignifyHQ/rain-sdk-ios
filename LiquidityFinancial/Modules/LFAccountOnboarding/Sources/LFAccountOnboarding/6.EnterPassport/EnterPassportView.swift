@@ -4,12 +4,11 @@ import LFStyleGuide
 import LFUtilities
 
 // MARK: - PassportView
-public struct EnterPassportView: View {
+struct EnterPassportView: View {
   
   @StateObject private var viewModel = EnterPassportViewModel()
   @FocusState var keyboardFocus: Bool
-  
-  public init() {}
+
 
   public var body: some View {
     VStack {
@@ -55,7 +54,7 @@ public struct EnterPassportView: View {
 
 // MARK: ViewBuilder
 private extension EnterPassportView {
-  @ViewBuilder
+
   var bulletList: some View {
     VStack(alignment: .leading) {
       infoBullet(
