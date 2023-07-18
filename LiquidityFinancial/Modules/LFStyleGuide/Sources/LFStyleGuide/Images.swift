@@ -23,6 +23,7 @@ public typealias AssetImageTypeAlias = ImageAsset.Image
 // swiftlint:disable identifier_name line_length nesting type_body_length type_name
 public enum GenImages {
   public enum CommonImages {
+    public static let zerohash = ImageAsset(name: "Zerohash")
     public static let calendar = ImageAsset(name: "calendar")
     public static let dash = ImageAsset(name: "dash")
     public static let icBack = ImageAsset(name: "ic_back")
@@ -42,6 +43,8 @@ public enum GenImages {
     public static let icXError = ImageAsset(name: "ic_x_error")
     public static let info = ImageAsset(name: "info")
     public static let map = ImageAsset(name: "map")
+    public static let termsCheckboxDeselected = ImageAsset(name: "termsCheckboxDeselected")
+    public static let termsCheckboxSelected = ImageAsset(name: "termsCheckboxSelected")
   }
   public enum Images {
     public static let icLogo = ImageAsset(name: "ic_logo")

@@ -78,6 +78,8 @@ public enum LFLocalizable {
   public static func waitlistMessage(_ p1: Any) -> String {
     return LFLocalizable.tr("Localizable", "waitlist_message", String(describing: p1), fallback: "Hello, %@.  We are very sorry, but due to regulations regarding Doge, we are currently unable to open accounts for residents of New York and Hawaii.   We are currently working with regulators to resolve this.  In the meantime, we will contact you as soon as we can open your account.")
   }
+  /// Cryptocurrency services powered by Zero Hash
+  public static let zeroHashTransactiondetail = LFLocalizable.tr("Localizable", "Zero_hash_transactiondetail", fallback: "Cryptocurrency services powered by Zero Hash")
   /// Zip code
   public static let zipcode = LFLocalizable.tr("Localizable", "zipcode", fallback: "Zip code")
   public enum AddPersonalInformation {
@@ -198,6 +200,24 @@ public enum LFLocalizable {
       /// No credit checks
       public static let cellText = LFLocalizable.tr("Localizable", "securityCheck.noCreditCheck.cellText", fallback: "No credit checks")
     }
+  }
+  public enum SetUpWallet {
+    /// AvalancheCard has partnered with ZeroHash, a trusted partner in crypto and ZeroHash,a crypto storage and liquidity provider.
+    public static let info = LFLocalizable.tr("Localizable", "setUpWallet.info", fallback: "AvalancheCard has partnered with ZeroHash, a trusted partner in crypto and ZeroHash,a crypto storage and liquidity provider.")
+    /// Regulatory Disclosures
+    public static let regulatoryDisclosures = LFLocalizable.tr("Localizable", "setUpWallet.regulatory_disclosures", fallback: "Regulatory Disclosures")
+    /// The value of any cryptocurrency, including digital assets pegged to fiat currency, commodities, or any other asset, may go to zero.
+    public static let riskDisclosure = LFLocalizable.tr("Localizable", "setUpWallet.risk_disclosure", fallback: "The value of any cryptocurrency, including digital assets pegged to fiat currency, commodities, or any other asset, may go to zero.")
+    /// Privacy Policy
+    public static let solidPrivacyPolicy = LFLocalizable.tr("Localizable", "setUpWallet.solid_privacyPolicy", fallback: "Privacy Policy")
+    /// I agree to the Zero Hash and Zero Hash Liquidity Services User Agreement, and I have read and understand the Zero Hash Privacy Policy and Regulatory Disclosures. I understand that the value of any cryptocurrency, including digital assets pegged to fiat currency, commodities, or any other asset, may go to zero.
+    public static let termsAndCondition = LFLocalizable.tr("Localizable", "setUpWallet.termsAndCondition", fallback: "I agree to the Zero Hash and Zero Hash Liquidity Services User Agreement, and I have read and understand the Zero Hash Privacy Policy and Regulatory Disclosures. I understand that the value of any cryptocurrency, including digital assets pegged to fiat currency, commodities, or any other asset, may go to zero.")
+    /// CREATE YOUR WALLET
+    public static let title = LFLocalizable.tr("Localizable", "setUpWallet.title", fallback: "CREATE YOUR WALLET")
+    /// User Agreement
+    public static let userAgreement = LFLocalizable.tr("Localizable", "setUpWallet.userAgreement", fallback: "User Agreement")
+    /// Zero Hash and Zero Hash Liquidity Services User Agreement
+    public static let walletUseragreement = LFLocalizable.tr("Localizable", "setUpWallet.wallet_useragreement", fallback: "Zero Hash and Zero Hash Liquidity Services User Agreement")
   }
   public enum Term {
     public enum EsignConsent {

@@ -98,6 +98,16 @@
 "waitlist_joined_title" = "WAITLIST JOINED";
 "waitlist_joined_message" = "You are now on the waitlist. We will email you when we can operate in your state.";
 
+//...SET UP WALLET...
+"setUpWallet.title" = "CREATE YOUR WALLET";
+"setUpWallet.info" = "AvalancheCard has partnered with ZeroHash, a trusted partner in crypto and ZeroHash,a crypto storage and liquidity provider.";
+"setUpWallet.termsAndCondition" = "I agree to the Zero Hash and Zero Hash Liquidity Services User Agreement, and I have read and understand the Zero Hash Privacy Policy and Regulatory Disclosures. I understand that the value of any cryptocurrency, including digital assets pegged to fiat currency, commodities, or any other asset, may go to zero.";
+"setUpWallet.risk_disclosure" = "The value of any cryptocurrency, including digital assets pegged to fiat currency, commodities, or any other asset, may go to zero.";
+"setUpWallet.userAgreement" = "User Agreement";
+"setUpWallet.solid_privacyPolicy" = "Privacy Policy";
+"setUpWallet.regulatory_disclosures" = "Regulatory Disclosures";
+"setUpWallet.wallet_useragreement" = "Zero Hash and Zero Hash Liquidity Services User Agreement";
+
 // MARK: - Popup
 
 // Logout
@@ -117,6 +127,9 @@
 "term.privacyPolicy.attributeText" = "Privacy Policy";
 "term.esignConsent.attributeText" = "E-sign consent";
 "term.terms.attributeText" = "Terms";
+
+// Zero hash
+"Zero_hash_transactiondetail" = "Cryptocurrency services powered by Zero Hash";
 
 // Button Title
 "button.continue.title" = "Continue";
