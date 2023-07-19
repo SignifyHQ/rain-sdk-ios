@@ -2,6 +2,10 @@ import Foundation
 import LFUtilities
 import OnboardingDomain
 import Combine
+import SwiftUI
+import NetSpendData
+import Factory
+import NetspendSdk
 
 @MainActor
 final class VerificationCodeViewModel: ObservableObject {
@@ -18,15 +22,18 @@ final class VerificationCodeViewModel: ObservableObject {
   var cancellables: Set<AnyCancellable> = []
   let requestOtpUserCase: RequestOTPUseCaseProtocol
   let loginUserCase: LoginUseCaseProtocol
+  let netspendRepository: NetSpendRepositoryProtocol
   
   init(
     phoneNumber: String,
     requestOtpUserCase: RequestOTPUseCaseProtocol,
-    loginUserCase: LoginUseCaseProtocol
+    loginUserCase: LoginUseCaseProtocol,
+    netspendRepository: NetSpendRepositoryProtocol
   ) {
     formatPhoneNumber = Constants.Default.regionCode.rawValue + phoneNumber
     self.requestOtpUserCase = requestOtpUserCase
     self.loginUserCase = loginUserCase
+    self.netspendRepository = netspendRepository
   }
 }
 
@@ -68,7 +75,21 @@ extension VerificationCodeViewModel {
         log.debug(code ?? "performGetTwilioMessagesIfNeccessary not found")
         guard let code = code else { return }
         self.performVerifyOTPCode(formatPhoneNumber: formatPhoneNumber, code: code)
-      }.store(in: &cancellables)
+      }
+      .store(in: &cancellables)
+  }
+  
+  func createAccountAndPerson() async {
+    do {
+      let token = try await netspendRepository.clientSessionInit()
+      let sessionConnectWithJWT = await netspendRepository.establishingSessionWithJWKSet(jwtToken: token)
+      guard let deviceData = sessionConnectWithJWT?.deviceData else { return }
+      let establishPersonSession = try await netspendRepository.establishPersonSession(deviceData: EstablishSessionParameters(encryptedData: deviceData))
+      let userSessionAnonymous = try sessionConnectWithJWT?.createUserSession(userSessionEncryptedData: establishPersonSession.encryptedData)
+      log.debug("sessionConnectWithJWT: \(sessionConnectWithJWT) \n userSessionAnonymous:\(userSessionAnonymous) \n establishPersonSession:\(establishPersonSession)")
+    } catch {
+      log.error(error)
+    }
   }
 }
 // MARK: View Helpers

@@ -53,7 +53,8 @@ public struct PhoneNumberView: View {
       VerificationCodeView(
         phoneNumber: viewModel.phoneNumber,
         requestOTPUseCase: viewModel.requestOtpUserCase,
-        loginUseCase: viewModel.loginUseCase
+        loginUseCase: viewModel.loginUseCase,
+        netspendRepository: viewModel.netspendRepository
       )
     }
     .popup(item: $viewModel.toastMessage, style: .toast) {

@@ -4,6 +4,7 @@ import LFStyleGuide
 import LFUtilities
 import LFLocalizable
 import OnboardingDomain
+import NetSpendData
 
 struct VerificationCodeView: View {
   @StateObject private var viewModel: VerificationCodeViewModel
@@ -12,13 +13,15 @@ struct VerificationCodeView: View {
   init(
     phoneNumber: String,
     requestOTPUseCase: RequestOTPUseCaseProtocol,
-    loginUseCase: LoginUseCaseProtocol
+    loginUseCase: LoginUseCaseProtocol,
+    netspendRepository: NetSpendRepositoryProtocol
   ) {
     _viewModel = .init(
       wrappedValue: VerificationCodeViewModel(
         phoneNumber: phoneNumber,
         requestOtpUserCase: requestOTPUseCase,
-        loginUserCase: loginUseCase
+        loginUserCase: loginUseCase,
+        netspendRepository: netspendRepository
       )
     )
   }
@@ -56,8 +59,9 @@ struct VerificationCodeView: View {
       viewModel.isResendButonTimerOn = false
       Task {
         // Delay the task by 1 second:
-        try await Task.sleep(nanoseconds: 1_000_000_000)
-        viewModel.performAutoGetTwilioMessagesIfNeccessary()
+        try await Task.sleep(seconds: 1)
+        await viewModel.createAccountAndPerson()
+        //viewModel.performAutoGetTwilioMessagesIfNeccessary()
       }
     }
     // TODO: Will be implemented later

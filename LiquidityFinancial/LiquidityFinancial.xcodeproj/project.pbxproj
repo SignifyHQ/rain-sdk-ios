@@ -34,6 +34,7 @@
 		A95354AC2A5E571D008B0FAB /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A95354A32A5E571D008B0FAB /* Images.xcassets */; };
 		A95354AD2A5E571D008B0FAB /* AppView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A95354A52A5E571D008B0FAB /* AppView.swift */; };
 		A95354AE2A5E571D008B0FAB /* CardanoApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = A95354A62A5E571D008B0FAB /* CardanoApp.swift */; };
+		A963D3FB2A67081D006B9A54 /* NetSpendData in Frameworks */ = {isa = PBXBuildFile; productRef = A963D3FA2A67081D006B9A54 /* NetSpendData */; };
 		A97BF7C22A5C602D00B8F5CA /* AppView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A97BF7C12A5C602D00B8F5CA /* AppView.swift */; };
 		A97BF7D12A5C602F00B8F5CA /* LiquidityFinancialTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A97BF7D02A5C602F00B8F5CA /* LiquidityFinancialTests.swift */; };
 		A97BF7DB2A5C602F00B8F5CA /* LiquidityFinancialUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A97BF7DA2A5C602F00B8F5CA /* LiquidityFinancialUITests.swift */; };
@@ -143,6 +144,7 @@
 				A980DF6F2A5FA252000B3C09 /* DataUtilities in Frameworks */,
 				A953545D2A5DD7F4008B0FAB /* LFStyleGuide in Frameworks */,
 				A94F71FF2A6266D0002ADB34 /* AuthorizationManager in Frameworks */,
+				A963D3FB2A67081D006B9A54 /* NetSpendData in Frameworks */,
 				A980DF772A5FA26E000B3C09 /* LFUtilities in Frameworks */,
 				06D40C012A62AE3700EADB75 /* iPhoneNumberField in Frameworks */,
 				A97BF7EE2A5D719000B8F5CA /* Lottie in Frameworks */,
@@ -408,8 +410,8 @@
 		A9D6C4B72A5F03180038D0BB /* LFModules */ = {
 			isa = PBXGroup;
 			children = (
-				A9D6C4AE2A5E62F40038D0BB /* Services */,
 				A97BF80D2A5D980200B8F5CA /* Utilities */,
+				A9D6C4AE2A5E62F40038D0BB /* Services */,
 				A97BF8062A5D971400B8F5CA /* Presentation */,
 				A9D6C4B52A5E989C0038D0BB /* Data */,
 				A97BF8052A5D970E00B8F5CA /* Domain */,
@@ -486,6 +488,7 @@
 				A94F71FE2A6266D0002ADB34 /* AuthorizationManager */,
 				06D40C002A62AE3700EADB75 /* iPhoneNumberField */,
 				749091162A6584C300071B41 /* SmartyStreets */,
+				A963D3FA2A67081D006B9A54 /* NetSpendData */,
 			);
 			productName = LiquidityFinancial;
 			productReference = A97BF7BC2A5C602D00B8F5CA /* Avalanche.app */;
@@ -1266,6 +1269,10 @@
 		A95354832A5E55B2008B0FAB /* LFStyleGuide */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = LFStyleGuide;
+		};
+		A963D3FA2A67081D006B9A54 /* NetSpendData */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = NetSpendData;
 		};
 		A97BF7EA2A5D70C500B8F5CA /* Factory */ = {
 			isa = XCSwiftPackageProductDependency;

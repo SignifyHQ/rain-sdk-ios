@@ -15,12 +15,16 @@ let package = Package(
       targets: ["DataUtilities"]),
     .library(
       name: "AuthorizationManager",
-      targets: ["AuthorizationManager"])
+      targets: ["AuthorizationManager"]),
+    .library(
+      name: "NetSpendData",
+      targets: ["NetSpendData"])
   ],
   dependencies: [
     .package(name: "OnboardingDomain", path: "../LFDomain"),
     .package(name: "LFNetwork", path: "../LFNetwork"),
-    .package(name: "LFUtilities", path: "../LFUtilities")
+    .package(name: "LFUtilities", path: "../LFUtilities"),
+    .package(name: "LFServices", path: "../LFServices")
   ],
   targets: [
     .target(
@@ -32,6 +36,9 @@ let package = Package(
     .target(
       name: "AuthorizationManager",
       dependencies: ["DataUtilities", "OnboardingDomain", "LFUtilities"]),
+    .target(
+      name: "NetSpendData",
+      dependencies: ["LFNetwork", "LFServices", "DataUtilities", "LFUtilities"]),
     .testTarget(
       name: "OnboardingDataTests",
       dependencies: ["OnboardingData"])

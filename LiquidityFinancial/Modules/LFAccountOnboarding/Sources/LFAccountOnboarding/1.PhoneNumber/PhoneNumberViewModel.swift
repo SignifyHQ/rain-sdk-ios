@@ -3,6 +3,7 @@ import LFUtilities
 import LFLocalizable
 import SwiftUI
 import OnboardingDomain
+import NetSpendData
 
 @MainActor
 public final class PhoneNumberViewModel: ObservableObject {
@@ -19,10 +20,12 @@ public final class PhoneNumberViewModel: ObservableObject {
   let terms = LFLocalizable.Term.Terms.attributeText
   let esignConsent = LFLocalizable.Term.EsignConsent.attributeText
   let privacyPolicy = LFLocalizable.Term.PrivacyPolicy.attributeText
+  let netspendRepository: NetSpendRepositoryProtocol
   
-  public init(requestOtpUserCase: RequestOTPUseCaseProtocol, loginUseCase: LoginUseCaseProtocol) {
+  public init(requestOtpUserCase: RequestOTPUseCaseProtocol, loginUseCase: LoginUseCaseProtocol, netspendRepository: NetSpendRepositoryProtocol) {
     self.requestOtpUserCase = requestOtpUserCase
     self.loginUseCase = loginUseCase
+    self.netspendRepository = netspendRepository
   }
 }
 

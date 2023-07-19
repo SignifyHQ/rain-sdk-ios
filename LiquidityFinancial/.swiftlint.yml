@@ -73,6 +73,7 @@ disabled_rules:
   - type_contents_order
   - comment_spacing
   - file_types_order
+  - lower_acl_than_parent
   
 identifier_name:
   excluded:

@@ -109,7 +109,7 @@ private extension EnterPassportView {
           )
           .onAppear {
             Task {// Delay the task by 1 second:
-              try await Task.sleep(nanoseconds: 250_000_000)
+              try await Task.sleep(seconds: 0.25)
               keyboardFocus = true
             }
           }

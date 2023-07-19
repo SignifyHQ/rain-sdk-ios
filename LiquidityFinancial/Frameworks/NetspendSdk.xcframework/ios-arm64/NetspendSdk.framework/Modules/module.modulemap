@@ -1,0 +1,4 @@
+framework module NetspendSdk {
+  header "NetspendSdk-Swift.h"
+  requires objc
+}

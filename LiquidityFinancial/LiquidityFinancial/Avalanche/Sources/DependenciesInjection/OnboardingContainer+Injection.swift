@@ -6,6 +6,7 @@ import OnboardingData
 import LFAccountOnboarding
 import DataUtilities
 import AuthorizationManager
+import NetSpendData
 
 @MainActor
 extension Container {
@@ -23,12 +24,19 @@ extension Container {
     }
   }
   
+  var netspendAPI: Factory<NetSpendAPIProtocol> {
+    self {
+      LFNetwork<NetSpendRoute>()
+    }
+  }
+  
   // ViewModels
   var phoneNumberViewModel: Factory<PhoneNumberViewModel> {
     self {
       PhoneNumberViewModel(
         requestOtpUserCase: self.requestOtpUseCase.callAsFunction(),
-        loginUseCase: self.loginUseCase.callAsFunction()
+        loginUseCase: self.loginUseCase.callAsFunction(),
+        netspendRepository: self.netspendRepository.callAsFunction()
       )
     }
   }
@@ -37,6 +45,12 @@ extension Container {
   var onboardingRepository: Factory<OnboardingRepositoryProtocol> {
     self {
       OnboardingRepository(onboardingAPI: self.onboardingAPI.callAsFunction(), auth: self.authorizationManager.callAsFunction())
+    }
+  }
+  
+  var netspendRepository: Factory<NetSpendRepositoryProtocol> {
+    self {
+      NetSpendRepository(netSpendAPI: self.netspendAPI.callAsFunction())
     }
   }
 

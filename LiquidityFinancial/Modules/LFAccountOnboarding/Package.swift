@@ -23,16 +23,18 @@ let package = Package(
     dependencies: [
       .package(url: "https://github.com/MojtabaHs/iPhoneNumberField.git", from: "0.10.1"),
       .package(url: "https://github.com/smartystreets/smartystreets-ios-sdk", branch: "master"),
+      .package(url: "https://github.com/hmlongco/Factory", from: "2.2.0"),
       .package(name: "LFUtilities", path: "../LFUtilities"),
       .package(name: "LFStyleGuide", path: "../LFStyleGuide"),
       .package(name: "OnboardingDomain", path: "../LFDomain"),
+      .package(name: "NetSpendData", path: "../LFData"),
       .package(name: "LFLocalizable", path: "../LFLocalizable")
     ],
     targets: [
         .target(
           name: "LFAccountOnboarding",
           dependencies: [
-            "LFUtilities", "OnboardingDomain", "LFStyleGuide", "LFLocalizable",
+            "LFUtilities", "OnboardingDomain", "LFStyleGuide", "LFLocalizable", "NetSpendData", "Factory",
             .product(name: "SmartyStreets", package: "smartystreets-ios-sdk")
           ],
           resources: [
