@@ -7,9 +7,10 @@ public struct TextTappable: UIViewRepresentable {
     textAlignment: NSTextAlignment = .natural,
     fontSize: CGFloat = Constants.FontSize.small.value,
     links: [String],
+    style: AttributeStyle = .fillColor,
     openLink: @escaping (String) -> Void) {
       attributedText = Self.buildAttributedText(text: text, textAlignment: textAlignment, fontSize: fontSize)
-      linkTextAttributes = Self.buildLinkTextAttributes(fontSize: fontSize)
+      linkTextAttributes = Self.buildLinkTextAttributes(fontSize: fontSize, style: style)
       self.links = links
       self.openLink = openLink
     }
@@ -17,10 +18,11 @@ public struct TextTappable: UIViewRepresentable {
   public init(
     attributedText: NSAttributedString,
     links: [String],
+    style: AttributeStyle = .fillColor,
     openLink: @escaping (String) -> Void
   ) {
     self.attributedText = attributedText
-    linkTextAttributes = Self.buildLinkTextAttributes(fontSize: 14)
+    linkTextAttributes = Self.buildLinkTextAttributes(fontSize: 14, style: style)
     self.links = links
     self.openLink = openLink
   }
@@ -81,10 +83,11 @@ public struct TextTappable: UIViewRepresentable {
     return NSMutableAttributedString(string: text, attributes: regularAttributes)
   }
   
-  private static func buildLinkTextAttributes(fontSize: CGFloat) -> [NSAttributedString.Key: Any] {
+  private static func buildLinkTextAttributes(fontSize: CGFloat, style: AttributeStyle) -> [NSAttributedString.Key: Any] {
     [
-      .font: Fonts.Inter.bold.font(size: fontSize),
-      .foregroundColor: Colors.primary.color
+      .underlineStyle: style == .fillColor ? 0 : 1,
+      .font: style == .fillColor ? Fonts.Inter.bold.font(size: fontSize) : Fonts.Inter.regular.font(size: fontSize),
+      .foregroundColor: style == .fillColor ? Colors.primary.color : Colors.label.color
     ]
   }
 }
@@ -105,5 +108,13 @@ extension TextTappable {
       }
       return false
     }
+  }
+}
+
+  // MARK: AttributeStyle
+extension TextTappable {
+  public enum AttributeStyle {
+    case fillColor
+    case underlined
   }
 }

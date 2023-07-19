@@ -43,6 +43,7 @@ public enum GenImages {
     public static let icXError = ImageAsset(name: "ic_x_error")
     public static let info = ImageAsset(name: "info")
     public static let map = ImageAsset(name: "map")
+    public static let netspend = ImageAsset(name: "netspend")
     public static let termsCheckboxDeselected = ImageAsset(name: "termsCheckboxDeselected")
     public static let termsCheckboxSelected = ImageAsset(name: "termsCheckboxSelected")
   }

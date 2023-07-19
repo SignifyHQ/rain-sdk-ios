@@ -1,4 +1,5 @@
 import Foundation
+import LFLocalizable
 
   // MARK: - MaxCharacterLimit
 public enum Constants {
@@ -125,6 +126,17 @@ public extension Constants {
   
   static var supportedStates: [String] = ["NY", "New York", "HI", "Hawaii"]
   
+  static let netspendAttributeInformation = [
+    LFLocalizable.SetUpAccount.NetpendCondition.userAgreement: LFUtility.netspendUserAgreement,
+    LFLocalizable.SetUpAccount.NetpendCondition.privacyPolicy: LFUtility.netspendPrivacyPolicy,
+    LFLocalizable.SetUpAccount.NetpendCondition.regulatoryDisclosures: LFUtility.netspendRegulatoryDisclosure
+  ]
+  
+  static let pathwardAttributeInformation = [
+    LFLocalizable.SetUpAccount.PathwardCondition.userAgreement: LFUtility.pathwardUserAgreement,
+    LFLocalizable.SetUpAccount.PathwardCondition.privacyPolicy: LFUtility.pathwardPrivacyPolicy,
+    LFLocalizable.SetUpAccount.PathwardCondition.regulatoryDisclosures: LFUtility.pathwardRegulatoryDisclosure
+  ]
 }
 
 public extension Constants {

@@ -117,7 +117,8 @@ extension SetupWalletView {
 
       TextTappable(
         text: strMessage,
-        links: [strUserAgreement, strPrivacy, strDiscloures]
+        links: [strUserAgreement, strPrivacy, strDiscloures],
+        style: .underlined
       ) { tappedString in
         if tappedString == strUserAgreement {
           if let url = URL(string: LFUtility.zerohashURL) {

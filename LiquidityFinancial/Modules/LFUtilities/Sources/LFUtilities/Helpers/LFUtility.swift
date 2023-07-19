@@ -20,6 +20,12 @@ public enum LFUtility {
   public static var charityEnabled: Bool = try! LFConfiguration.value(for: "CHARITY_ENABLED")
   public static var cryptoCurrency: String = try! LFConfiguration.value(for: "CRYPTO_CURRENCY")
   public static var cryptoFractionDigits: Int = try! LFConfiguration.value(for: "CRYPTO_FRACTION_DIGITS")
+  public static var netspendUserAgreement: String = try! LFConfiguration.value(for: "NETSPEND_USER_URL")
+  public static var netspendPrivacyPolicy: String = try! LFConfiguration.value(for: "NETSPEND_PRIVACY_URL")
+  public static var netspendRegulatoryDisclosure: String = try! LFConfiguration.value(for: "NETSPEND_DISCLOSURE_URL")
+  public static var pathwardUserAgreement: String = try! LFConfiguration.value(for: "PATHWARD_USER_URL")
+  public static var pathwardPrivacyPolicy: String = try! LFConfiguration.value(for: "PATHWARD_PRIVACY_URL")
+  public static var pathwardRegulatoryDisclosure: String = try! LFConfiguration.value(for: "PATHWARD_DISCLOSURE_URL")
 }
 
 public enum LFConfiguration {
