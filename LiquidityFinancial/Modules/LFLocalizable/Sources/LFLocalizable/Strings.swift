@@ -24,6 +24,8 @@ public enum LFLocalizable {
   public static let cancelAccount = LFLocalizable.tr("Localizable", "cancel_account", fallback: "Cancel account")
   /// City
   public static let city = LFLocalizable.tr("Localizable", "city", fallback: "City")
+  /// Cryptocurrency services powered by Zero Hash
+  public static let cryptocurrencyServicesInfo = LFLocalizable.tr("Localizable", "cryptocurrency_services_info", fallback: "Cryptocurrency services powered by Zero Hash")
   /// Date of birth
   public static let dob = LFLocalizable.tr("Localizable", "dob", fallback: "Date of birth")
   /// dd / mm / yyyy
@@ -68,8 +70,16 @@ public enum LFLocalizable {
   public static let passportTypeInternational = LFLocalizable.tr("Localizable", "passport_type_international", fallback: "International Passport")
   /// US Passport
   public static let passportTypeUs = LFLocalizable.tr("Localizable", "passport_type_us", fallback: "US Passport")
+  /// Rewards
+  public static let rewards = LFLocalizable.tr("Localizable", "rewards", fallback: "Rewards")
+  /// Sell Rewards
+  public static let sellRewards = LFLocalizable.tr("Localizable", "sell_rewards", fallback: "Sell Rewards")
   /// State
   public static let state = LFLocalizable.tr("Localizable", "state", fallback: "State")
+  /// Total rewards
+  public static let totalRewards = LFLocalizable.tr("Localizable", "total_rewards", fallback: "Total rewards")
+  /// Transfer Rewards
+  public static let transferRewards = LFLocalizable.tr("Localizable", "transfer_rewards", fallback: "Transfer Rewards")
   /// You are now on the waitlist. We will email you when we can operate in your state.
   public static let waitlistJoinedMessage = LFLocalizable.tr("Localizable", "waitlist_joined_message", fallback: "You are now on the waitlist. We will email you when we can operate in your state.")
   /// WAITLIST JOINED
@@ -210,6 +220,42 @@ public enum LFLocalizable {
       /// DOCUMENTS UPLOADED
       public static let title = LFLocalizable.tr("Localizable", "popup.uploadDocument.title", fallback: "DOCUMENTS UPLOADED")
     }
+  }
+  public enum RewardTerms {
+    /// up to 8'%' purchase of transaction
+    public static let amountDescription = LFLocalizable.tr("Localizable", "rewardTerms.amount_description", fallback: "up to 8'%' purchase of transaction")
+    /// Transaction Amount
+    public static let amountTitle = LFLocalizable.tr("Localizable", "rewardTerms.amount_title", fallback: "Transaction Amount")
+    /// By selecting to enroll in the crypto rewards program, you understand and agree that eligible rewards transactions will also trigger your authorization to invest in crypto once your action or card transaction is complete.  Transactions may take time in certain cases.
+    public static let disclosuresFirst = LFLocalizable.tr("Localizable", "rewardTerms.disclosures_first", fallback: "By selecting to enroll in the crypto rewards program, you understand and agree that eligible rewards transactions will also trigger your authorization to invest in crypto once your action or card transaction is complete.  Transactions may take time in certain cases.")
+    /// Maximum reward amount may vary, and can depend on your level of participation in crypto rewards. Specific terms and condition may apply.
+    public static let disclosuresFourth = LFLocalizable.tr("Localizable", "rewardTerms.disclosures_fourth", fallback: "Maximum reward amount may vary, and can depend on your level of participation in crypto rewards. Specific terms and condition may apply.")
+    /// Orders may not be canceled or reversed once submitted by you. By submitting a withdrawal request, you are requesting an on-chain transaction that is not reversible or recallable. You are responsible for reviewing the recipient address and ensuring it is the correct address for the selected asset for withdrawal
+    public static let disclosuresSecond = LFLocalizable.tr("Localizable", "rewardTerms.disclosures_second", fallback: "Orders may not be canceled or reversed once submitted by you. By submitting a withdrawal request, you are requesting an on-chain transaction that is not reversible or recallable. You are responsible for reviewing the recipient address and ensuring it is the correct address for the selected asset for withdrawal")
+    /// Zero Hash does not offer the ability to set up pre-authorized, automatic, or recurring Orders (“Pre-Authorized Orders”) in your Account; (b) any such Pre-Authorized Order feature (if available) is under the exclusive control of CauseCard ; (c) you must contact CauseCard in order to stop a Pre-Authorized Order before execution or to turn off such a feature in your Account; and (d) Zero Hash and ZHLS are not liable for the placement and execution of any Pre-Authorized order.
+    public static let disclosuresThird = LFLocalizable.tr("Localizable", "rewardTerms.disclosures_third", fallback: "Zero Hash does not offer the ability to set up pre-authorized, automatic, or recurring Orders (“Pre-Authorized Orders”) in your Account; (b) any such Pre-Authorized Order feature (if available) is under the exclusive control of CauseCard ; (c) you must contact CauseCard in order to stop a Pre-Authorized Order before execution or to turn off such a feature in your Account; and (d) Zero Hash and ZHLS are not liable for the placement and execution of any Pre-Authorized order.")
+    /// Exchange Rate
+    public static let disclosuresTitle = LFLocalizable.tr("Localizable", "rewardTerms.disclosures_title", fallback: "Exchange Rate")
+    /// Enroll now
+    public static let enrollCta = LFLocalizable.tr("Localizable", "rewardTerms.enroll_cta", fallback: "Enroll now")
+    /// ENROLL FOR AVALANCHECARD REWARDS
+    public static let enrollTitle = LFLocalizable.tr("Localizable", "rewardTerms.enroll_title", fallback: "ENROLL FOR AVALANCHECARD REWARDS")
+    /// Varies, the current prevaling price as determined by Zero Hash Liquidity Services LLC at the point of transaction.
+    public static let exchangeRateDescription = LFLocalizable.tr("Localizable", "rewardTerms.exchange_rate_description", fallback: "Varies, the current prevaling price as determined by Zero Hash Liquidity Services LLC at the point of transaction.")
+    /// Exchange Rate
+    public static let exchangeRateTitle = LFLocalizable.tr("Localizable", "rewardTerms.exchange_rate_title", fallback: "Exchange Rate")
+    /// Fee
+    public static let feeTitle = LFLocalizable.tr("Localizable", "rewardTerms.fee_title", fallback: "Fee")
+    /// $0
+    public static let feesDescription = LFLocalizable.tr("Localizable", "rewardTerms.fees_description", fallback: "$0")
+    /// Fees
+    public static let feesTitle = LFLocalizable.tr("Localizable", "rewardTerms.fees_title", fallback: "Fees")
+    /// Network Fee
+    public static let networkFee = LFLocalizable.tr("Localizable", "rewardTerms.network_fee", fallback: "Network Fee")
+  }
+  public enum Rewards {
+    /// No rewards yet
+    public static let noRewards = LFLocalizable.tr("Localizable", "rewards.no_rewards", fallback: "No rewards yet")
   }
   public enum Screen {
     public enum Title {
