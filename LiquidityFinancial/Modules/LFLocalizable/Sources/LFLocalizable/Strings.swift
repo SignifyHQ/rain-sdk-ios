@@ -151,6 +151,38 @@ public enum LFLocalizable {
       public static let title = LFLocalizable.tr("Localizable", "kyc.question.title", fallback: "Additional Security Questions")
     }
   }
+  public enum KycStatus {
+    public enum Fail {
+      /// Based on the information you entered, we were unable to create a Depository account at this time.  We will be in touch via email.
+      public static let message = LFLocalizable.tr("Localizable", "kycStatus.fail.message", fallback: "Based on the information you entered, we were unable to create a Depository account at this time.  We will be in touch via email.")
+      /// WE’RE SORRY
+      public static let title = LFLocalizable.tr("Localizable", "kycStatus.fail.title", fallback: "WE’RE SORRY")
+    }
+    public enum IdentityVerification {
+      /// Please verify your identity with a valid Driver’s License, ID or Passport. 
+      public static let message = LFLocalizable.tr("Localizable", "kycStatus.identityVerification.message", fallback: "Please verify your identity with a valid Driver’s License, ID or Passport. ")
+      /// DRIVER’s LICENSE, ID OR PASSPORT
+      public static let title = LFLocalizable.tr("Localizable", "kycStatus.identityVerification.title", fallback: "DRIVER’s LICENSE, ID OR PASSPORT")
+    }
+    public enum InReview {
+      /// Hi %@, we are still verifying your account details. This is common when phone numbers, addresses or emails change. Please contact support and we will help verify the details. Thank you for your patience.
+      public static func message(_ p1: Any) -> String {
+        return LFLocalizable.tr("Localizable", "kycStatus.inReview.message", String(describing: p1), fallback: "Hi %@, we are still verifying your account details. This is common when phone numbers, addresses or emails change. Please contact support and we will help verify the details. Thank you for your patience.")
+      }
+      /// Check Status
+      public static let primaryTitle = LFLocalizable.tr("Localizable", "kycStatus.inReview.primaryTitle", fallback: "Check Status")
+      /// Contact Support
+      public static let secondaryTitle = LFLocalizable.tr("Localizable", "kycStatus.inReview.secondaryTitle", fallback: "Contact Support")
+      /// VERIFYING ACCOUNT DETAILS
+      public static let title = LFLocalizable.tr("Localizable", "kycStatus.inReview.title", fallback: "VERIFYING ACCOUNT DETAILS")
+    }
+    public enum WaitingVerification {
+      /// We’re confiming your account details. This could take up to 30 seconds
+      public static let message = LFLocalizable.tr("Localizable", "kycStatus.waitingVerification.message", fallback: "We’re confiming your account details. This could take up to 30 seconds")
+      /// THANK YOU FOR WAITING
+      public static let title = LFLocalizable.tr("Localizable", "kycStatus.waitingVerification.title", fallback: "THANK YOU FOR WAITING")
+    }
+  }
   public enum PhoneNumber {
     public enum Environment {
       /// Environment

@@ -121,6 +121,18 @@
 "setUpAccount.pathwardCondition.privacyPolicy" = "Pathward Privacy Policy";
 "setUpAccount.pathwardCondition.regulatoryDisclosures" = "Regulatory Disclosures";
 
+// KYC Status
+"kycStatus.identityVerification.title" = "DRIVER’s LICENSE, ID OR PASSPORT";
+"kycStatus.identityVerification.message" = "Please verify your identity with a valid Driver’s License, ID or Passport. ";
+"kycStatus.waitingVerification.title" = "THANK YOU FOR WAITING";
+"kycStatus.waitingVerification.message" = "We’re confiming your account details. This could take up to 30 seconds";
+"kycStatus.fail.title" = "WE’RE SORRY";
+"kycStatus.fail.message" = "Based on the information you entered, we were unable to create a Depository account at this time.  We will be in touch via email.";
+"kycStatus.inReview.title" = "VERIFYING ACCOUNT DETAILS";
+"kycStatus.inReview.message" = "Hi %@, we are still verifying your account details. This is common when phone numbers, addresses or emails change. Please contact support and we will help verify the details. Thank you for your patience.";
+"kycStatus.inReview.secondaryTitle" = "Contact Support";
+"kycStatus.inReview.primaryTitle" = "Check Status";
+
 // MARK: - Popup
 
 // Logout
