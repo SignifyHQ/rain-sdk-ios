@@ -127,6 +127,44 @@ public enum LFLocalizable {
       public static let text = LFLocalizable.tr("Localizable", "button.title.text", fallback: "Trade Now and Get\nYour Life")
     }
   }
+  public enum DocumentType {
+    public enum BottomSheet {
+      /// DOCUMENT TYPE
+      public static let title = LFLocalizable.tr("Localizable", "documentType.bottomSheet.title", fallback: "DOCUMENT TYPE")
+    }
+    public enum Button {
+      /// Choose Document Type
+      public static let title = LFLocalizable.tr("Localizable", "documentType.button.title", fallback: "Choose Document Type")
+    }
+    public enum ForeignID {
+      /// Foreign ID
+      public static let title = LFLocalizable.tr("Localizable", "documentType.foreignID.title", fallback: "Foreign ID")
+    }
+    public enum Other {
+      /// Other
+      public static let title = LFLocalizable.tr("Localizable", "documentType.other.title", fallback: "Other")
+    }
+    public enum Passport {
+      /// Passport
+      public static let title = LFLocalizable.tr("Localizable", "documentType.passport.title", fallback: "Passport")
+    }
+    public enum PayStub {
+      /// Pay Stub dated within 30 days
+      public static let title = LFLocalizable.tr("Localizable", "documentType.payStub.title", fallback: "Pay Stub dated within 30 days")
+    }
+    public enum SocialSecurityCard {
+      /// Social Security Card
+      public static let title = LFLocalizable.tr("Localizable", "documentType.socialSecurityCard.title", fallback: "Social Security Card")
+    }
+    public enum StateID {
+      /// State issued photo id
+      public static let title = LFLocalizable.tr("Localizable", "documentType.stateID.title", fallback: "State issued photo id")
+    }
+    public enum UtilityBill {
+      /// Utility Bill
+      public static let title = LFLocalizable.tr("Localizable", "documentType.utilityBill.title", fallback: "Utility Bill")
+    }
+  }
   public enum EnterSsn {
     /// Encrypted using 256-BIT SSL
     public static let bulletOne = LFLocalizable.tr("Localizable", "enter_ssn.bullet_one", fallback: "Encrypted using 256-BIT SSL")
@@ -348,15 +386,67 @@ public enum LFLocalizable {
     }
   }
   public enum UploadDocument {
+    public enum AddressRequirement {
+      /// 401 statement
+      public static let _401Statement = LFLocalizable.tr("Localizable", "uploadDocument.addressRequirement.401Statement", fallback: "401 statement")
+      /// Bank Statement
+      public static let bankStatement = LFLocalizable.tr("Localizable", "uploadDocument.addressRequirement.bankStatement", fallback: "Bank Statement")
+      /// ID with matching address
+      public static let idMatching = LFLocalizable.tr("Localizable", "uploadDocument.addressRequirement.idMatching", fallback: "ID with matching address")
+      /// Mortgae document
+      public static let mortgae = LFLocalizable.tr("Localizable", "uploadDocument.addressRequirement.mortgae", fallback: "Mortgae document")
+      /// Pay Stub
+      public static let payStub = LFLocalizable.tr("Localizable", "uploadDocument.addressRequirement.payStub", fallback: "Pay Stub")
+      /// Address Verification - Any ID with a matching address
+      public static let title = LFLocalizable.tr("Localizable", "uploadDocument.addressRequirement.title", fallback: "Address Verification - Any ID with a matching address")
+      /// Utility bill
+      public static let utility = LFLocalizable.tr("Localizable", "uploadDocument.addressRequirement.utility", fallback: "Utility bill")
+    }
     public enum Button {
       /// Upload Documents
       public static let title = LFLocalizable.tr("Localizable", "uploadDocument.button.title", fallback: "Upload Documents")
+    }
+    public enum IdentifyRequirement {
+      /// Driver's license
+      public static let driverLicense = LFLocalizable.tr("Localizable", "uploadDocument.identifyRequirement.driverLicense", fallback: "Driver's license")
+      /// Foreign Passpost
+      public static let foreignPassport = LFLocalizable.tr("Localizable", "uploadDocument.identifyRequirement.foreignPassport", fallback: "Foreign Passpost")
+      /// Government/military card
+      public static let govermentOrMilitaryCard = LFLocalizable.tr("Localizable", "uploadDocument.identifyRequirement.govermentOrMilitaryCard", fallback: "Government/military card")
+      /// Permanent US-Resident card for foreign-born, non-citizens (green card)
+      public static let greenCard = LFLocalizable.tr("Localizable", "uploadDocument.identifyRequirement.greenCard", fallback: "Permanent US-Resident card for foreign-born, non-citizens (green card)")
+      /// State issued ID Card
+      public static let idCard = LFLocalizable.tr("Localizable", "uploadDocument.identifyRequirement.idCard", fallback: "State issued ID Card")
+      /// Matricula Consular
+      public static let matriculaConsular = LFLocalizable.tr("Localizable", "uploadDocument.identifyRequirement.matriculaConsular", fallback: "Matricula Consular")
+      /// Identity Verification
+      public static let title = LFLocalizable.tr("Localizable", "uploadDocument.identifyRequirement.title", fallback: "Identity Verification")
+      /// US Passport
+      public static let usPassport = LFLocalizable.tr("Localizable", "uploadDocument.identifyRequirement.usPassport", fallback: "US Passport")
+      /// Visa
+      public static let visa = LFLocalizable.tr("Localizable", "uploadDocument.identifyRequirement.visa", fallback: "Visa")
     }
     public enum MaxSize {
       /// %@ MB max size
       public static func description(_ p1: Any) -> String {
         return LFLocalizable.tr("Localizable", "uploadDocument.maxSize.description", String(describing: p1), fallback: "%@ MB max size")
       }
+    }
+    public enum ProofRequirement {
+      /// Driver's license with the new name
+      public static let newLicense = LFLocalizable.tr("Localizable", "uploadDocument.proofRequirement.newLicense", fallback: "Driver's license with the new name")
+      /// State ID with the new name
+      public static let newStateID = LFLocalizable.tr("Localizable", "uploadDocument.proofRequirement.newStateID", fallback: "State ID with the new name")
+      /// Driver's license with the old name
+      public static let oldLicense = LFLocalizable.tr("Localizable", "uploadDocument.proofRequirement.oldLicense", fallback: "Driver's license with the old name")
+      /// State ID with the old name
+      public static let oldStateID = LFLocalizable.tr("Localizable", "uploadDocument.proofRequirement.oldStateID", fallback: "State ID with the old name")
+      /// Proof of name change
+      public static let title = LFLocalizable.tr("Localizable", "uploadDocument.proofRequirement.title", fallback: "Proof of name change")
+    }
+    public enum Requirement {
+      /// DOCUMENTS MUST CONTAIN:
+      public static let title = LFLocalizable.tr("Localizable", "uploadDocument.requirement.title", fallback: "DOCUMENTS MUST CONTAIN:")
     }
     public enum Screen {
       /// %@ has partnered with NetSpend and Pathward Bank, a trusted partner in banking.
@@ -365,6 +455,40 @@ public enum LFLocalizable {
       }
       /// SET UP YOUR ACCOUNT
       public static let title = LFLocalizable.tr("Localizable", "uploadDocument.screen.title", fallback: "SET UP YOUR ACCOUNT")
+    }
+    public enum SecondaryRequirement {
+      /// 401 statement
+      public static let _401Statement = LFLocalizable.tr("Localizable", "uploadDocument.secondaryRequirement.401Statement", fallback: "401 statement")
+      /// Bank Statement
+      public static let bankStatement = LFLocalizable.tr("Localizable", "uploadDocument.secondaryRequirement.bankStatement", fallback: "Bank Statement")
+      /// Cell phone bill
+      public static let cellPhone = LFLocalizable.tr("Localizable", "uploadDocument.secondaryRequirement.cellPhone", fallback: "Cell phone bill")
+      /// Collections letter
+      public static let collectionsLetter = LFLocalizable.tr("Localizable", "uploadDocument.secondaryRequirement.collectionsLetter", fallback: "Collections letter")
+      /// Credit card bill
+      public static let creditCard = LFLocalizable.tr("Localizable", "uploadDocument.secondaryRequirement.creditCard", fallback: "Credit card bill")
+      /// Earnings Statement
+      public static let earnings = LFLocalizable.tr("Localizable", "uploadDocument.secondaryRequirement.earnings", fallback: "Earnings Statement")
+      /// Insurance bill
+      public static let insurance = LFLocalizable.tr("Localizable", "uploadDocument.secondaryRequirement.insurance", fallback: "Insurance bill")
+      /// Medicaid letter
+      public static let medicaid = LFLocalizable.tr("Localizable", "uploadDocument.secondaryRequirement.medicaid", fallback: "Medicaid letter")
+      /// Medical bill
+      public static let medical = LFLocalizable.tr("Localizable", "uploadDocument.secondaryRequirement.medical", fallback: "Medical bill")
+      /// Mortgage Statement
+      public static let mortgae = LFLocalizable.tr("Localizable", "uploadDocument.secondaryRequirement.mortgae", fallback: "Mortgage Statement")
+      /// School records
+      public static let schoolRecords = LFLocalizable.tr("Localizable", "uploadDocument.secondaryRequirement.schoolRecords", fallback: "School records")
+      /// Secondary Document - Any document that can be used as secondary verification document
+      public static let title = LFLocalizable.tr("Localizable", "uploadDocument.secondaryRequirement.title", fallback: "Secondary Document - Any document that can be used as secondary verification document")
+      /// Utility bill
+      public static let utility = LFLocalizable.tr("Localizable", "uploadDocument.secondaryRequirement.utility", fallback: "Utility bill")
+    }
+    public enum SsnRequirement {
+      /// Social Security card
+      public static let socialSecurity = LFLocalizable.tr("Localizable", "uploadDocument.ssnRequirement.socialSecurity", fallback: "Social Security card")
+      /// SSN document
+      public static let title = LFLocalizable.tr("Localizable", "uploadDocument.ssnRequirement.title", fallback: "SSN document")
     }
     public enum Upload {
       /// Upload Documents

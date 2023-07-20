@@ -119,6 +119,7 @@ public extension Constants {
     case ssnPlaceholder = "* * * *"
     case maxSize = "20"
     case capacityUnit = "Mb"
+    case dotSymbol = "•"
   }
 }
 
@@ -136,6 +137,52 @@ public extension Constants {
     LFLocalizable.SetUpAccount.PathwardCondition.userAgreement: LFUtility.pathwardUserAgreement,
     LFLocalizable.SetUpAccount.PathwardCondition.privacyPolicy: LFUtility.pathwardPrivacyPolicy,
     LFLocalizable.SetUpAccount.PathwardCondition.regulatoryDisclosures: LFUtility.pathwardRegulatoryDisclosure
+  ]
+  
+  static let identifyVerification = [
+    LFLocalizable.UploadDocument.IdentifyRequirement.idCard,
+    LFLocalizable.UploadDocument.IdentifyRequirement.greenCard,
+    LFLocalizable.UploadDocument.IdentifyRequirement.usPassport,
+    LFLocalizable.UploadDocument.IdentifyRequirement.driverLicense,
+    LFLocalizable.UploadDocument.IdentifyRequirement.govermentOrMilitaryCard,
+    LFLocalizable.UploadDocument.IdentifyRequirement.foreignPassport,
+    LFLocalizable.UploadDocument.IdentifyRequirement.visa,
+    LFLocalizable.UploadDocument.IdentifyRequirement.matriculaConsular
+  ]
+  
+  static let addressVerification = [
+    LFLocalizable.UploadDocument.AddressRequirement.utility,
+    LFLocalizable.UploadDocument.AddressRequirement.payStub,
+    LFLocalizable.UploadDocument.AddressRequirement.bankStatement,
+    LFLocalizable.UploadDocument.AddressRequirement.idMatching,
+    LFLocalizable.UploadDocument.AddressRequirement._401Statement,
+    LFLocalizable.UploadDocument.AddressRequirement.mortgae
+  ]
+  
+  static let secondaryDocument = [
+    LFLocalizable.UploadDocument.SecondaryRequirement.utility,
+    LFLocalizable.UploadDocument.SecondaryRequirement.earnings,
+    LFLocalizable.UploadDocument.SecondaryRequirement.cellPhone,
+    LFLocalizable.UploadDocument.SecondaryRequirement.creditCard,
+    LFLocalizable.UploadDocument.SecondaryRequirement.bankStatement,
+    LFLocalizable.UploadDocument.SecondaryRequirement.collectionsLetter,
+    LFLocalizable.UploadDocument.SecondaryRequirement.schoolRecords,
+    LFLocalizable.UploadDocument.SecondaryRequirement.insurance,
+    LFLocalizable.UploadDocument.SecondaryRequirement.medical,
+    LFLocalizable.UploadDocument.SecondaryRequirement.mortgae,
+    LFLocalizable.UploadDocument.SecondaryRequirement._401Statement,
+    LFLocalizable.UploadDocument.SecondaryRequirement.medicaid
+  ]
+  
+  static let proofOfNameChange = [
+    LFLocalizable.UploadDocument.ProofRequirement.oldLicense,
+    LFLocalizable.UploadDocument.ProofRequirement.newStateID,
+    LFLocalizable.UploadDocument.ProofRequirement.oldLicense,
+    LFLocalizable.UploadDocument.ProofRequirement.newLicense
+  ]
+  
+  static let ssnDocument = [
+    LFLocalizable.UploadDocument.SsnRequirement.socialSecurity
   ]
 }
 

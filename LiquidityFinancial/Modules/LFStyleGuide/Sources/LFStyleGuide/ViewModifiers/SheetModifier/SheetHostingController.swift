@@ -1,0 +1,23 @@
+#if os(iOS)
+
+import SwiftUI
+
+final class SheetHostingController<Content: View>: UIHostingController<Content> {
+  var detents: [UISheetPresentationController.Detent] = []
+
+  override public func viewWillAppear(_ animated: Bool) {
+    super.viewWillAppear(animated)
+    if let controller = sheetPresentationController {
+      controller.detents = detents
+    }
+  }
+}
+
+extension SheetHostingController {
+  convenience init(rootView: Content, detents: [UISheetPresentationController.Detent]) {
+    self.init(rootView: rootView)
+    self.detents = detents
+  }
+}
+
+#endif

@@ -1,17 +1,46 @@
 import Foundation
 import LFUtilities
+import LFLocalizable
 
 @MainActor
 final class UploadDocumentViewModel: ObservableObject {
   @Published var isOpenFileImporter: Bool = false
   @Published var isShowDocumentUploadedPopup: Bool = false
   @Published var isDisableButton: Bool = true
+  @Published var isShowBottomSheet: Bool = false
   @Published var toastMessage: String?
+  @Published var documentTypeSelected: DocumentType = .socialSecurityCard
   @Published var documents = [Document]() {
     didSet {
       checkDocumentMaxSize()
     }
   }
+  
+  let documentRequirements: [DocumentRequirement] = [
+    DocumentRequirement(
+      title: LFLocalizable.UploadDocument.IdentifyRequirement.title,
+      details: Constants.identifyVerification
+    ),
+    DocumentRequirement(
+      title: LFLocalizable.UploadDocument.AddressRequirement.title,
+      details: Constants.addressVerification
+    ),
+    DocumentRequirement(
+      title: LFLocalizable.UploadDocument.SecondaryRequirement.title,
+      details: Constants.secondaryDocument
+    ),
+    DocumentRequirement(
+      title: LFLocalizable.UploadDocument.ProofRequirement.title,
+      details: Constants.proofOfNameChange
+    ),
+    DocumentRequirement(
+      title: LFLocalizable.UploadDocument.SsnRequirement.title,
+      details: Constants.ssnDocument
+    )
+  ]
+  let documentTypes: [DocumentType] = [
+    .foreignID, .other, .passport, .payStub, .socialSecurityCard, .stateID, .utilityBill
+  ]
   
   private let maxSize = Double(Constants.Default.maxSize.rawValue) ?? 20
   
@@ -47,6 +76,14 @@ extension UploadDocumentViewModel {
   func onUploadDocument() {
     // Handle logic upload document here
     isShowDocumentUploadedPopup = true
+  }
+  
+  func showDocumentTypeSheet() {
+    isShowBottomSheet = true
+  }
+  
+  func hideDocumentTypeSheet() {
+    isShowBottomSheet = false
   }
 }
 

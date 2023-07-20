@@ -25,6 +25,7 @@ public enum GenImages {
   public enum CommonImages {
     public static let zerohash = ImageAsset(name: "Zerohash")
     public static let calendar = ImageAsset(name: "calendar")
+    public static let checkmark = ImageAsset(name: "checkmark")
     public static let dash = ImageAsset(name: "dash")
     public static let icBack = ImageAsset(name: "ic_back")
     public static let icChat = ImageAsset(name: "ic_chat")

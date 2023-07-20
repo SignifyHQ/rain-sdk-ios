@@ -78,6 +78,59 @@
 "uploadDocument.maxSize.description" = "%@ MB max size";
 "uploadDocument.button.title" = "Upload Documents";
 
+"uploadDocument.requirement.title" = "DOCUMENTS MUST CONTAIN:";
+"uploadDocument.identifyRequirement.title" = "Identity Verification";
+"uploadDocument.identifyRequirement.idCard" = "State issued ID Card";
+"uploadDocument.identifyRequirement.greenCard" = "Permanent US-Resident card for foreign-born, non-citizens (green card)";
+"uploadDocument.identifyRequirement.usPassport" = "US Passport";
+"uploadDocument.identifyRequirement.driverLicense" = "Driver's license";
+"uploadDocument.identifyRequirement.govermentOrMilitaryCard" = "Government/military card";
+"uploadDocument.identifyRequirement.foreignPassport" = "Foreign Passpost";
+"uploadDocument.identifyRequirement.visa" = "Visa";
+"uploadDocument.identifyRequirement.matriculaConsular" = "Matricula Consular";
+
+"uploadDocument.addressRequirement.title" = "Address Verification - Any ID with a matching address";
+"uploadDocument.addressRequirement.utility" = "Utility bill";
+"uploadDocument.addressRequirement.payStub" = "Pay Stub";
+"uploadDocument.addressRequirement.bankStatement" = "Bank Statement";
+"uploadDocument.addressRequirement.idMatching" = "ID with matching address";
+"uploadDocument.addressRequirement.401Statement" = "401 statement";
+"uploadDocument.addressRequirement.mortgae" = "Mortgae document";
+
+"uploadDocument.secondaryRequirement.title" = "Secondary Document - Any document that can be used as secondary verification document";
+"uploadDocument.secondaryRequirement.utility" = "Utility bill";
+"uploadDocument.secondaryRequirement.earnings" = "Earnings Statement";
+"uploadDocument.secondaryRequirement.cellPhone" = "Cell phone bill";
+"uploadDocument.secondaryRequirement.creditCard" = "Credit card bill";
+"uploadDocument.secondaryRequirement.bankStatement" = "Bank Statement";
+"uploadDocument.secondaryRequirement.collectionsLetter" = "Collections letter";
+"uploadDocument.secondaryRequirement.schoolRecords" = "School records";
+"uploadDocument.secondaryRequirement.insurance" = "Insurance bill";
+"uploadDocument.secondaryRequirement.medical" = "Medical bill";
+"uploadDocument.secondaryRequirement.mortgae" = "Mortgage Statement";
+"uploadDocument.secondaryRequirement.401Statement" = "401 statement";
+"uploadDocument.secondaryRequirement.medicaid" = "Medicaid letter";
+
+"uploadDocument.proofRequirement.title" = "Proof of name change";
+"uploadDocument.proofRequirement.oldStateID" = "State ID with the old name";
+"uploadDocument.proofRequirement.newStateID" = "State ID with the new name";
+"uploadDocument.proofRequirement.oldLicense" = "Driver's license with the old name";
+"uploadDocument.proofRequirement.newLicense" = "Driver's license with the new name";
+
+"uploadDocument.ssnRequirement.title" = "SSN document";
+"uploadDocument.ssnRequirement.socialSecurity" = "Social Security card";
+
+// DocumentType
+"documentType.button.title" = "Choose Document Type";
+"documentType.bottomSheet.title" = "DOCUMENT TYPE";
+"documentType.foreignID.title" = "Foreign ID";
+"documentType.other.title" = "Other";
+"documentType.passport.title" = "Passport";
+"documentType.payStub.title" = "Pay Stub dated within 30 days";
+"documentType.socialSecurityCard.title" = "Social Security Card";
+"documentType.stateID.title" = "State issued photo id";
+"documentType.utilityBill.title" = "Utility Bill";
+
 // Address View
 "address_title" = "WHERE TO SEND YOUR %@ CARD?";
 "addressLine1_title" = "Address line 1 ";

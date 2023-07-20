@@ -15,10 +15,21 @@ struct UploadDocumentView: View {
             .foregroundColor(Colors.label.swiftUIColor.opacity(0.75))
           uploadDocumentView
           importFilesList
+          documentRequirementView
         }
       }
       Spacer()
       uploadButton
+    }
+    .blur(radius: viewModel.isShowBottomSheet ? 16 : 0)
+    .sheet(isPresented: $viewModel.isShowBottomSheet) {
+      DocumentTypeView(
+        selectedType: $viewModel.documentTypeSelected,
+        documentTypes: viewModel.documentTypes
+      ) {
+        viewModel.hideDocumentTypeSheet()
+      }
+        .customPresentationDetents(height: 552)
     }
     .fileImporter(
       isPresented: $viewModel.isOpenFileImporter,
@@ -69,20 +80,23 @@ private extension UploadDocumentView {
   var uploadDocumentArea: some View {
     HStack {
       Spacer()
-      VStack(spacing: 4) {
+      VStack(spacing: 12) {
+        socialSecurityCardButton
+          .padding(.bottom, 4)
         GenImages.CommonImages.icDocument.swiftUIImage
           .foregroundColor(Colors.primary.swiftUIColor)
-          .padding(.bottom, 6)
-        Text(LFLocalizable.UploadDocument.Upload.actionTitle)
-          .font(Fonts.Inter.medium.swiftUIFont(size: Constants.FontSize.ultraSmall.value))
-          .foregroundColor(Colors.label.swiftUIColor)
-        Text(LFLocalizable.UploadDocument.MaxSize.description(Constants.Default.maxSize.rawValue))
-          .font(Fonts.Inter.regular.swiftUIFont(size: Constants.FontSize.ultraSmall.value))
-          .foregroundColor(Colors.label.swiftUIColor.opacity(0.75))
+        VStack(spacing: 4) {
+          Text(LFLocalizable.UploadDocument.Upload.actionTitle)
+            .font(Fonts.Inter.medium.swiftUIFont(size: Constants.FontSize.ultraSmall.value))
+            .foregroundColor(Colors.label.swiftUIColor)
+          Text(LFLocalizable.UploadDocument.MaxSize.description(Constants.Default.maxSize.rawValue))
+            .font(Fonts.Inter.regular.swiftUIFont(size: Constants.FontSize.ultraSmall.value))
+            .foregroundColor(Colors.label.swiftUIColor.opacity(0.75))
+        }
       }
       Spacer()
     }
-    .frame(height: 128)
+    .frame(height: 170)
     .overlay(
       RoundedRectangle(cornerRadius: 10)
         .stroke(
@@ -138,13 +152,62 @@ private extension UploadDocumentView {
     .background(Colors.secondaryBackground.swiftUIColor.cornerRadius(9))
   }
   
-    var documentUploadedPopup: some View {
-      LiquidityAlert(
-        title: LFLocalizable.Popup.UploadDocument.title,
-        message: LFLocalizable.Popup.UploadDocument.description,
-        primary: .init(text: LFLocalizable.Button.Ok.title) {
-          viewModel.onClickedDocumentUploadedPrimaryButton()
-        }
-      )
+  var documentUploadedPopup: some View {
+    LiquidityAlert(
+      title: LFLocalizable.Popup.UploadDocument.title,
+      message: LFLocalizable.Popup.UploadDocument.description,
+      primary: .init(text: LFLocalizable.Button.Ok.title) {
+        viewModel.onClickedDocumentUploadedPrimaryButton()
+      }
+    )
+  }
+  
+  var socialSecurityCardButton: some View {
+    Button {
+      viewModel.showDocumentTypeSheet()
+    } label: {
+      HStack(spacing: 4) {
+        Text(viewModel.documentTypeSelected.title)
+          .font(Fonts.Inter.semiBold.swiftUIFont(size: Constants.FontSize.small.value))
+        Image(systemName: "chevron.right")
+          .font(Fonts.Inter.semiBold.swiftUIFont(size: Constants.FontSize.ultraSmall.value))
+      }
+      .padding(.horizontal, 12)
+      .frame(height: 36)
     }
+    .foregroundColor(Colors.label.swiftUIColor)
+    .background(Colors.secondaryBackground.swiftUIColor.cornerRadius(8))
+  }
+  
+  var documentRequirementView: some View {
+    VStack(alignment: .leading, spacing: 16) {
+      Text(LFLocalizable.UploadDocument.Requirement.title)
+        .font(Fonts.Inter.regular.swiftUIFont(size: Constants.FontSize.main.value))
+        .foregroundColor(Colors.label.swiftUIColor)
+      VStack(alignment: .leading, spacing: 24) {
+        ForEach(viewModel.documentRequirements) { requirement in
+          documentRequirementSection(documentRequirement: requirement)
+        }
+      }
+      .padding(.bottom, 32)
+    }
+    .padding(.top, 8)
+  }
+  
+  func documentRequirementSection(documentRequirement: DocumentRequirement) -> some View {
+    VStack(alignment: .leading, spacing: 12) {
+      Text(documentRequirement.title)
+        .font(Fonts.Inter.regular.swiftUIFont(size: Constants.FontSize.medium.value))
+        .foregroundColor(Colors.label.swiftUIColor.opacity(0.75))
+      ForEach(documentRequirement.details, id: \.self) { item in
+        HStack(spacing: 8) {
+          Text(Constants.Default.dotSymbol.rawValue)
+            .foregroundColor(Colors.primary.swiftUIColor)
+          Text(item)
+            .foregroundColor(Colors.label.swiftUIColor.opacity(0.75))
+        }
+        .font(Fonts.Inter.regular.swiftUIFont(size: Constants.FontSize.ultraSmall.value))
+      }
+    }
+  }
 }
