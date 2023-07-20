@@ -80,6 +80,7 @@ public extension Constants {
     case small
     case ultraSmall
     case large
+    case navigationBar
     case textFieldHeader
     case buttonTextSize
     case regular
@@ -99,6 +100,8 @@ public extension Constants {
         return 12
       case .buttonTextSize:
         return 16
+      case .navigationBar:
+        return 20
       case .large:
         return 24
       case .regular:
@@ -110,6 +113,12 @@ public extension Constants {
   }
 }
 
+  // MARK: - Currency Unit
+public extension Constants {
+  enum CurrencyUnit: String {
+    case usd = "$"
+  }
+}
   // MARK: - Default
 public extension Constants {
   enum Default: String {

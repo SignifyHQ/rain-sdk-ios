@@ -11,6 +11,9 @@
 		06D40BFC2A6260B300EADB75 /* LoadingContrast.json in Resources */ = {isa = PBXBuildFile; fileRef = 06D40BFB2A6260B300EADB75 /* LoadingContrast.json */; };
 		06D40C012A62AE3700EADB75 /* iPhoneNumberField in Frameworks */ = {isa = PBXBuildFile; productRef = 06D40C002A62AE3700EADB75 /* iPhoneNumberField */; };
 		06D40C032A63DEB300EADB75 /* LoadingPrimary.json in Resources */ = {isa = PBXBuildFile; fileRef = 06D40C022A63DEB300EADB75 /* LoadingPrimary.json */; };
+		06EBE2012A69390700157B32 /* DashboardContainer+Injection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06EBE2002A69390700157B32 /* DashboardContainer+Injection.swift */; };
+		06EBE2032A693C7800157B32 /* LFDashboard in Frameworks */ = {isa = PBXBuildFile; productRef = 06EBE2022A693C7800157B32 /* LFDashboard */; };
+		06EBE2052A693C8100157B32 /* LFDashboard in Frameworks */ = {isa = PBXBuildFile; productRef = 06EBE2042A693C8100157B32 /* LFDashboard */; };
 		749091172A6584C300071B41 /* SmartyStreets in Frameworks */ = {isa = PBXBuildFile; productRef = 749091162A6584C300071B41 /* SmartyStreets */; };
 		A938373C2A63BAAC009EB1DE /* LFUtilities in Frameworks */ = {isa = PBXBuildFile; productRef = A938373B2A63BAAC009EB1DE /* LFUtilities */; };
 		A938373E2A63BB20009EB1DE /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = A938373D2A63BB20009EB1DE /* LaunchScreen.storyboard */; };
@@ -81,6 +84,8 @@
 		06D40BF72A625F5400EADB75 /* LoadingMix.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = LoadingMix.json; sourceTree = "<group>"; };
 		06D40BFB2A6260B300EADB75 /* LoadingContrast.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = LoadingContrast.json; sourceTree = "<group>"; };
 		06D40C022A63DEB300EADB75 /* LoadingPrimary.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = LoadingPrimary.json; sourceTree = "<group>"; };
+		06EBE1FF2A6924E900157B32 /* LFDashboard */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = LFDashboard; path = Modules/LFDashboard; sourceTree = "<group>"; };
+		06EBE2002A69390700157B32 /* DashboardContainer+Injection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DashboardContainer+Injection.swift"; sourceTree = "<group>"; };
 		A938373D2A63BB20009EB1DE /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = LaunchScreen.storyboard; sourceTree = "<group>"; };
 		A93837432A63D7AD009EB1DE /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
 		A93837462A63DDFD009EB1DE /* AppDelegate+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AppDelegate+Extensions.swift"; sourceTree = "<group>"; };
@@ -132,6 +137,7 @@
 				A94F71F02A610E9F002ADB34 /* CardanoAccountOnboarding in Frameworks */,
 				A94F71F72A61CACF002ADB34 /* LFLocalizable in Frameworks */,
 				A953548D2A5E55B2008B0FAB /* LFStyleGuide in Frameworks */,
+				06EBE2052A693C8100157B32 /* LFDashboard in Frameworks */,
 				A953548E2A5E55B2008B0FAB /* Lottie in Frameworks */,
 				A953548F2A5E55B2008B0FAB /* SwiftyBeaver in Frameworks */,
 			);
@@ -146,6 +152,7 @@
 				A97BF7EB2A5D70C500B8F5CA /* Factory in Frameworks */,
 				A980DF712A5FA252000B3C09 /* OnboardingData in Frameworks */,
 				A980DF6F2A5FA252000B3C09 /* DataUtilities in Frameworks */,
+				06EBE2032A693C7800157B32 /* LFDashboard in Frameworks */,
 				A953545D2A5DD7F4008B0FAB /* LFStyleGuide in Frameworks */,
 				A94F71FF2A6266D0002ADB34 /* AuthorizationManager in Frameworks */,
 				A963D3FB2A67081D006B9A54 /* NetSpendData in Frameworks */,
@@ -339,6 +346,7 @@
 		A97BF8062A5D971400B8F5CA /* Presentation */ = {
 			isa = PBXGroup;
 			children = (
+				06EBE1FF2A6924E900157B32 /* LFDashboard */,
 				A97BF8072A5D975900B8F5CA /* LFAccountOnboarding */,
 			);
 			name = Presentation;
@@ -445,6 +453,7 @@
 			isa = PBXGroup;
 			children = (
 				A9D6C4BB2A5FA1740038D0BB /* OnboardingContainer+Injection.swift */,
+				06EBE2002A69390700157B32 /* DashboardContainer+Injection.swift */,
 			);
 			path = DependenciesInjection;
 			sourceTree = "<group>";
@@ -475,6 +484,7 @@
 				A94F71EF2A610E9F002ADB34 /* CardanoAccountOnboarding */,
 				A94F71F62A61CACF002ADB34 /* LFLocalizable */,
 				A938373B2A63BAAC009EB1DE /* LFUtilities */,
+				06EBE2042A693C8100157B32 /* LFDashboard */,
 			);
 			productName = LiquidityFinancial;
 			productReference = A95354972A5E55B2008B0FAB /* Cardano.app */;
@@ -511,6 +521,7 @@
 				06D40C002A62AE3700EADB75 /* iPhoneNumberField */,
 				749091162A6584C300071B41 /* SmartyStreets */,
 				A963D3FA2A67081D006B9A54 /* NetSpendData */,
+				06EBE2022A693C7800157B32 /* LFDashboard */,
 			);
 			productName = LiquidityFinancial;
 			productReference = A97BF7BC2A5C602D00B8F5CA /* Avalanche.app */;
@@ -705,6 +716,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				A963D4092A67F491006B9A54 /* AppCoordinator.swift in Sources */,
+				06EBE2012A69390700157B32 /* DashboardContainer+Injection.swift in Sources */,
 				A93837472A63DDFD009EB1DE /* AppDelegate+Extensions.swift in Sources */,
 				A963D40B2A67F7FD006B9A54 /* AppViewModel.swift in Sources */,
 				A97BF81A2A5D9E6B00B8F5CA /* AppDelegate.swift in Sources */,
@@ -1233,6 +1245,14 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 06D40BFF2A62AE3700EADB75 /* XCRemoteSwiftPackageReference "iPhoneNumberField" */;
 			productName = iPhoneNumberField;
+		};
+		06EBE2022A693C7800157B32 /* LFDashboard */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = LFDashboard;
+		};
+		06EBE2042A693C8100157B32 /* LFDashboard */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = LFDashboard;
 		};
 		749091162A6584C300071B41 /* SmartyStreets */ = {
 			isa = XCSwiftPackageProductDependency;

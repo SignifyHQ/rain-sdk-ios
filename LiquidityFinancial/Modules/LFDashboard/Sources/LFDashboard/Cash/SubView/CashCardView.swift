@@ -1,0 +1,116 @@
+import SwiftUI
+import LFUtilities
+import LFStyleGuide
+import LFLocalizable
+
+struct CashCardView: View {
+  @Binding var cardDetails: CardModel
+  @State private var openDetailsView = false
+  @State private var cardActivated: CardModel?
+  @State private var isInReview: Bool = true
+  let isPOFlow: Bool
+  let showLoadingIndicator: Bool
+  let cashBalance: Double
+  let assetType: AssetType
+  let orderCardAction: () -> Void
+  
+  private var isCardAvailable: Bool {
+    isPOFlow
+  }
+  private var cardImageAsset: ImageAsset {
+    isCardAvailable ? GenImages.Images.availableCard : GenImages.Images.unavailableCard
+  }
+
+
+  init(
+    isPOFlow: Bool,
+    showLoadingIndicator: Bool,
+    cashBalance: Double,
+    assetType: AssetType,
+    cardDetails: Binding<CardModel>,
+    orderCardAction: @escaping () -> Void
+  ) {
+    self.isPOFlow = isPOFlow
+    self.cashBalance = cashBalance
+    self.assetType = assetType
+    self.showLoadingIndicator = showLoadingIndicator
+    _cardDetails = cardDetails
+    self.orderCardAction = orderCardAction
+  }
+  
+  var body: some View {
+    ZStack(alignment: .bottom) {
+      ZStack(alignment: .topTrailing) {
+        cardImageAsset.swiftUIImage
+          .resizable()
+          .background(Color.clear)
+          .clipped()
+          .aspectRatio(contentMode: .fit)
+        
+        if cardDetails.cardStatus == .pendingActivation {
+          activateCard
+        }
+      }
+      if isPOFlow {
+        balance
+      }
+    }
+    .fixedSize(horizontal: false, vertical: true)
+    .onTapGesture {
+      if isPOFlow {
+        if cardDetails.cardStatus == .pendingActivation {
+          // activateCardAction()
+        } else {
+          // openDetailsView.toggle()
+        }
+      }
+    }
+    //    .fullScreenCover(item: $cardActivated) { card in
+    //      CardActivatedView(card: card)
+    //        .embedInNavigation()
+    //    }
+    //    .sheet(isPresented: $openDetailsView) {
+    //      CardsDetailView(viewModel: .init())
+    //        .embedInNavigation()
+    //    }
+  }
+
+  private var activateCard: some View {
+    FullSizeButton(
+      title: LFLocalizable.CashTab.ActiveVirtualCard.buttonTitle,
+      isDisable: false,
+      type: .contrast,
+      fontSize: Constants.FontSize.ultraSmall.value,
+      height: 25,
+      cornerRadius: 5,
+      textColor: Colors.label.swiftUIColor,
+      backgroundColor: Colors.buttons.swiftUIColor,
+      action: {}
+    )
+    .padding([.horizontal, .top], 15)
+  }
+  
+  private var balance: some View {
+    HStack {
+      VStack(alignment: .leading, spacing: 2) {
+        Text(LFLocalizable.CashCard.Balance.title(assetType.title))
+          .foregroundColor(Colors.label.swiftUIColor)
+          .font(Fonts.Inter.regular.swiftUIFont(size: Constants.FontSize.ultraSmall.value))
+        
+        ZStack(alignment: .bottomLeading) {
+          LottieView(loading: .contrast)
+            .frame(width: 30, height: 20, alignment: .leading)
+            .hidden(!showLoadingIndicator)
+          Text(
+            cashBalance.formattedAmount(prefix: Constants.CurrencyUnit.usd.rawValue, minFractionDigits: 2)
+          )
+            .foregroundColor(Colors.label.swiftUIColor)
+            .font(Fonts.Inter.bold.swiftUIFont(size: 22))
+            .hidden(showLoadingIndicator)
+        }
+      }
+      .padding([.leading, .bottom], 16)
+      Spacer()
+    }
+  }
+}

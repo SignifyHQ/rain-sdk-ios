@@ -1,23 +1,23 @@
 import Lottie
 import SwiftUI
 
-struct LottieView: UIViewRepresentable {
+public struct LottieView: UIViewRepresentable {
   private let fileName: String
   private let animationView = LottieAnimationView()
   
-  init(loading: Loading) {
+  public init(loading: Loading) {
     fileName = loading.fileName
   }
   
-  init(twinkle: Twinkle) {
+  public init(twinkle: Twinkle) {
     fileName = twinkle.fileName
   }
   
-  init(tutorial: Tutorial) {
+  public init(tutorial: Tutorial) {
     fileName = tutorial.fileName
   }
   
-  func makeUIView(context _: Context) -> some UIView {
+  public func makeUIView(context _: Context) -> some UIView {
     let view = UIView(frame: .zero)
     
     animationView.animation = LottieAnimation.named(fileName)
@@ -34,12 +34,12 @@ struct LottieView: UIViewRepresentable {
     return view
   }
   
-  func updateUIView(_: UIViewType, context _: Context) {}
+  public func updateUIView(_: UIViewType, context _: Context) {}
 }
 
   // MARK: - Types
 
-extension LottieView {
+public extension LottieView {
   enum Loading {
     case primary
     case mix

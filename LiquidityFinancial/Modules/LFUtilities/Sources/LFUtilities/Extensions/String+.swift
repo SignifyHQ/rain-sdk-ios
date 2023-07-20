@@ -16,6 +16,20 @@ public extension String {
 }
 
 public extension String {
+  func formattedAmount(
+    prefix: String? = nil,
+    minFractionDigits: Int = 0,
+    maxFractionDigits: Int = 2,
+    absoluteValue: Bool = false
+  ) -> String {
+    asDouble?.formattedAmount(
+      prefix: prefix,
+      minFractionDigits: minFractionDigits,
+      maxFractionDigits: maxFractionDigits,
+      absoluteValue: absoluteValue
+    ) ?? ""
+  }
+  
   func withQuotes() -> String {
     "\"\(self)\""
   }

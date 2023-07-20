@@ -211,6 +211,27 @@
 "transfer_rewards" = "Transfer Rewards";
 "rewards.no_rewards" = "No rewards yet";
 
+// Home
+"home.cashTab.title" = "Cash";
+"home.rewardsTab.title" = "Rewards";
+"home.assetsTab.title" = "Assets";
+"home.accountTab.title" = "Account";
+
+// CashView
+"cashTab.deActiveError.message" = "Your checking account was deactivated";
+"cashTab.activeVirtualCard.buttonTitle" = "Tap to Activate Virtual Card";
+"cashTab.seeAll.title" = "See all";
+"cashTab.changeAsset.buttonTitle" = "Change";
+"cashTab.lastestTransaction.title" = "Latest Transactions";
+"cashTab.noTransactionYet.title" = "No transactions yet";
+
+// CashCardView
+"cashCard.balance.title" = "%@ Balance";
+
+// ChangeAssetView
+"changeAsset.screen.title" = "Change asset";
+"changeAsset.screen.message" = "Please select the asset to spend.";
+
 // MARK: - Popup
 
 // Logout
@@ -230,6 +251,9 @@
 "term.privacyPolicy.attributeText" = "Privacy Policy";
 "term.esignConsent.attributeText" = "E-sign consent";
 "term.terms.attributeText" = "Terms";
+
+// Title
+"error.weAreSorry.title" = "WE’RE SORRY";
 
 // Zero hash
 "Zero_hash_transactiondetail" = "Cryptocurrency services powered by Zero Hash";

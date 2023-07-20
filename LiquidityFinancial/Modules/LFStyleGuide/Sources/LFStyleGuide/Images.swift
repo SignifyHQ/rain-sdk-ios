@@ -27,16 +27,27 @@ public enum GenImages {
     public static let calendar = ImageAsset(name: "calendar")
     public static let checkmark = ImageAsset(name: "checkmark")
     public static let dash = ImageAsset(name: "dash")
+    public static let icAccount = ImageAsset(name: "ic_account")
+    public static let icAssets = ImageAsset(name: "ic_assets")
+    public static let icAvax = ImageAsset(name: "ic_avax")
     public static let icBack = ImageAsset(name: "ic_back")
+    public static let icCash = ImageAsset(name: "ic_cash")
     public static let icChat = ImageAsset(name: "ic_chat")
     public static let icDocument = ImageAsset(name: "ic_document")
     public static let icError = ImageAsset(name: "ic_error")
+    public static let icGear = ImageAsset(name: "ic_gear")
     public static let icHome = ImageAsset(name: "ic_home")
     public static let icKycQuestion = ImageAsset(name: "ic_kyc_question_?")
     public static let icKycQuestionCheck = ImageAsset(name: "ic_kyc_question_check")
     public static let icLock = ImageAsset(name: "ic_lock")
+    public static let icProfile = ImageAsset(name: "ic_profile")
+    public static let icRewards = ImageAsset(name: "ic_rewards")
+    public static let icRightArrow = ImageAsset(name: "ic_rightArrow")
+    public static let icSearch = ImageAsset(name: "ic_search")
     public static let icTicketCircle = ImageAsset(name: "ic_ticketCircle")
     public static let icTrash = ImageAsset(name: "ic_trash")
+    public static let icUsd = ImageAsset(name: "ic_usd")
+    public static let icUsdc = ImageAsset(name: "ic_usdc")
     public static let icWellcome1 = ImageAsset(name: "ic_wellcome_1")
     public static let icWellcome2 = ImageAsset(name: "ic_wellcome_2")
     public static let icWellcome3 = ImageAsset(name: "ic_wellcome_3")
@@ -49,7 +60,9 @@ public enum GenImages {
     public static let termsCheckboxSelected = ImageAsset(name: "termsCheckboxSelected")
   }
   public enum Images {
+    public static let availableCard = ImageAsset(name: "availableCard")
     public static let icLogo = ImageAsset(name: "ic_logo")
+    public static let unavailableCard = ImageAsset(name: "unavailableCard")
   }
 }
 // swiftlint:enable identifier_name line_length nesting type_body_length type_name

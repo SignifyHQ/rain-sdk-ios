@@ -127,6 +127,48 @@ public enum LFLocalizable {
       public static let text = LFLocalizable.tr("Localizable", "button.title.text", fallback: "Trade Now and Get\nYour Life")
     }
   }
+  public enum CashCard {
+    public enum Balance {
+      /// %@ Balance
+      public static func title(_ p1: Any) -> String {
+        return LFLocalizable.tr("Localizable", "cashCard.balance.title", String(describing: p1), fallback: "%@ Balance")
+      }
+    }
+  }
+  public enum CashTab {
+    public enum ActiveVirtualCard {
+      /// Tap to Activate Virtual Card
+      public static let buttonTitle = LFLocalizable.tr("Localizable", "cashTab.activeVirtualCard.buttonTitle", fallback: "Tap to Activate Virtual Card")
+    }
+    public enum ChangeAsset {
+      /// Change
+      public static let buttonTitle = LFLocalizable.tr("Localizable", "cashTab.changeAsset.buttonTitle", fallback: "Change")
+    }
+    public enum DeActiveError {
+      /// Your checking account was deactivated
+      public static let message = LFLocalizable.tr("Localizable", "cashTab.deActiveError.message", fallback: "Your checking account was deactivated")
+    }
+    public enum LastestTransaction {
+      /// Latest Transactions
+      public static let title = LFLocalizable.tr("Localizable", "cashTab.lastestTransaction.title", fallback: "Latest Transactions")
+    }
+    public enum NoTransactionYet {
+      /// No transactions yet
+      public static let title = LFLocalizable.tr("Localizable", "cashTab.noTransactionYet.title", fallback: "No transactions yet")
+    }
+    public enum SeeAll {
+      /// See all
+      public static let title = LFLocalizable.tr("Localizable", "cashTab.seeAll.title", fallback: "See all")
+    }
+  }
+  public enum ChangeAsset {
+    public enum Screen {
+      /// Please select the asset to spend.
+      public static let message = LFLocalizable.tr("Localizable", "changeAsset.screen.message", fallback: "Please select the asset to spend.")
+      /// Change asset
+      public static let title = LFLocalizable.tr("Localizable", "changeAsset.screen.title", fallback: "Change asset")
+    }
+  }
   public enum DocumentType {
     public enum BottomSheet {
       /// DOCUMENT TYPE
@@ -189,6 +231,30 @@ public enum LFLocalizable {
       public static let ok = LFLocalizable.tr("Localizable", "enter_ssn.alert.ok", fallback: "Ok")
       /// WHY DO WE NEED SSN?
       public static let title = LFLocalizable.tr("Localizable", "enter_ssn.alert.title", fallback: "WHY DO WE NEED SSN?")
+    }
+  }
+  public enum Error {
+    public enum WeAreSorry {
+      /// WE’RE SORRY
+      public static let title = LFLocalizable.tr("Localizable", "error.weAreSorry.title", fallback: "WE’RE SORRY")
+    }
+  }
+  public enum Home {
+    public enum AccountTab {
+      /// Account
+      public static let title = LFLocalizable.tr("Localizable", "home.accountTab.title", fallback: "Account")
+    }
+    public enum AssetsTab {
+      /// Assets
+      public static let title = LFLocalizable.tr("Localizable", "home.assetsTab.title", fallback: "Assets")
+    }
+    public enum CashTab {
+      /// Cash
+      public static let title = LFLocalizable.tr("Localizable", "home.cashTab.title", fallback: "Cash")
+    }
+    public enum RewardsTab {
+      /// Rewards
+      public static let title = LFLocalizable.tr("Localizable", "home.rewardsTab.title", fallback: "Rewards")
     }
   }
   public enum Kyc {

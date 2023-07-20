@@ -45,21 +45,7 @@ private extension DocumentTypeView {
               .font(Fonts.Inter.regular.swiftUIFont(size: Constants.FontSize.small.value))
               .foregroundColor(Colors.label.swiftUIColor)
             Spacer()
-            Circle()
-              .stroke(Colors.label.swiftUIColor.opacity(0.25), lineWidth: 1)
-              .background(
-                ZStack {
-                  if selectedType == type {
-                    Circle()
-                      .fill(Colors.primary.swiftUIColor)
-                      .overlay {
-                        GenImages.CommonImages.checkmark.swiftUIImage
-                          .foregroundColor(Colors.label.swiftUIColor)
-                      }
-                  }
-                }
-              )
-              .frame(20)
+            CircleSelected(isSelected: selectedType == type)
           }
           .padding(16)
           .frame(height: 48)
