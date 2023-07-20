@@ -2,9 +2,12 @@ import Foundation
 import LFUtilities
 import LFLocalizable
 import SwiftUI
+import NetSpendData
 
 @MainActor
-final class SetupAccountViewModel: ObservableObject {
+final class AgreementViewModel: ObservableObject {
+  
+  @Published var isNavigationPersonalInformation: Bool = false
   @Published var isDisableButton: Bool = true
   @Published var isAgreedNetSpendCondition: Bool = false {
     didSet {
@@ -18,19 +21,17 @@ final class SetupAccountViewModel: ObservableObject {
   }
   
   let netspendCondition = ServiceCondition(
-    message: LFLocalizable.SetUpAccount.NetpendCondition.description,
+    message: LFLocalizable.Question.NetpendCondition.description,
     attributeInformation: Constants.netspendAttributeInformation
   )
   let pathwardCondition = ServiceCondition(
-    message: LFLocalizable.SetUpAccount.PathwardCondition.description,
+    message: LFLocalizable.Question.PathwardCondition.description,
     attributeInformation: Constants.pathwardAttributeInformation
   )
-  
-  init() {}
 }
 
 // MARK: View Helpers
-extension SetupAccountViewModel {
+extension AgreementViewModel {
   func openIntercom() {
     // TODO: Will be implemented later
     // intercomService.openIntercom()
@@ -42,8 +43,8 @@ extension SetupAccountViewModel {
 }
 
 // MARK: Private Functions
-private extension SetupAccountViewModel {
+private extension AgreementViewModel {
   func isEnableButton() {
-    isDisableButton = !(isAgreedNetSpendCondition && isAgreedPathwardCondition)
+    isDisableButton = !isAgreedNetSpendCondition//!(isAgreedNetSpendCondition && isAgreedPathwardCondition)
   }
 }

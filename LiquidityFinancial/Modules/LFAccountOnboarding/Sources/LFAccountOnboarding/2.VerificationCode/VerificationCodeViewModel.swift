@@ -9,6 +9,7 @@ import NetspendSdk
 
 @MainActor
 final class VerificationCodeViewModel: ObservableObject {
+  @Injected(\Container.userDataManager) var userDataManager
   @Published var isNavigationToWelcome: Bool = false
   @Published var isResendButonTimerOn = false
   @Published var isShowText: Bool = true
@@ -22,18 +23,15 @@ final class VerificationCodeViewModel: ObservableObject {
   var cancellables: Set<AnyCancellable> = []
   let requestOtpUserCase: RequestOTPUseCaseProtocol
   let loginUserCase: LoginUseCaseProtocol
-  let netspendRepository: NetSpendRepositoryProtocol
   
   init(
     phoneNumber: String,
     requestOtpUserCase: RequestOTPUseCaseProtocol,
-    loginUserCase: LoginUseCaseProtocol,
-    netspendRepository: NetSpendRepositoryProtocol
+    loginUserCase: LoginUseCaseProtocol
   ) {
     formatPhoneNumber = Constants.Default.regionCode.rawValue + phoneNumber
     self.requestOtpUserCase = requestOtpUserCase
     self.loginUserCase = loginUserCase
-    self.netspendRepository = netspendRepository
   }
 }
 
@@ -45,6 +43,14 @@ extension VerificationCodeViewModel {
     Task {
       do {
         _ = try await loginUserCase.execute(phoneNumber: formatPhoneNumber, code: code)
+        let pnumber = formatPhoneNumber
+          .replace(string: " ", replacement: "")
+          .replace(string: "(", replacement: "")
+          .replace(string: ")", replacement: "")
+          .replace(string: "-", replacement: "")
+          .trimWhitespacesAndNewlines()
+        UserDefaults.phoneNumber = pnumber
+        userDataManager.update(phone: pnumber)
         isShowLoading = false
         isNavigationToWelcome = true
       } catch {
@@ -68,7 +74,7 @@ extension VerificationCodeViewModel {
   }
   
   func performAutoGetTwilioMessagesIfNeccessary() {
-    //guard DemoAccountsHelper.shared.shouldInterceptSms(number: formatPhoneNumber) else { return }
+      //guard DemoAccountsHelper.shared.shouldInterceptSms(number: formatPhoneNumber) else { return }
     DemoAccountsHelper.shared.getTwilioMessages(for: formatPhoneNumber)
       .sink { [weak self] code in
         guard let self else { return }
@@ -77,19 +83,6 @@ extension VerificationCodeViewModel {
         self.performVerifyOTPCode(formatPhoneNumber: formatPhoneNumber, code: code)
       }
       .store(in: &cancellables)
-  }
-  
-  func createAccountAndPerson() async {
-    do {
-      let token = try await netspendRepository.clientSessionInit()
-      let sessionConnectWithJWT = await netspendRepository.establishingSessionWithJWKSet(jwtToken: token)
-      guard let deviceData = sessionConnectWithJWT?.deviceData else { return }
-      let establishPersonSession = try await netspendRepository.establishPersonSession(deviceData: EstablishSessionParameters(encryptedData: deviceData))
-      let userSessionAnonymous = try sessionConnectWithJWT?.createUserSession(userSessionEncryptedData: establishPersonSession.encryptedData)
-      log.debug("sessionConnectWithJWT: \(sessionConnectWithJWT) \n userSessionAnonymous:\(userSessionAnonymous) \n establishPersonSession:\(establishPersonSession)")
-    } catch {
-      log.error(error)
-    }
   }
 }
 // MARK: View Helpers

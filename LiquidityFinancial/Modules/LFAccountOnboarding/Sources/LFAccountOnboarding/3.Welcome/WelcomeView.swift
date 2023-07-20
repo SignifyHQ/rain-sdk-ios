@@ -3,17 +3,19 @@ import SwiftUI
 import LFStyleGuide
 import LFLocalizable
 
-struct WelcomeView: View {
+public struct WelcomeView: View {
 
-  @State var isPushPersonalInformation: Bool = false
+  @StateObject var viewModel = WelcomeViewModel()
   
-  var body: some View {
+  public init() {}
+  
+  public var body: some View {
     VStack(spacing: 12) {
       staticTop
       
       GenImages.CommonImages.dash.swiftUIImage
         .foregroundColor(Colors.label.swiftUIColor)
-        .padding(.vertical, 12)
+        .padding(.vertical, 12) 
       
       ScrollView(showsIndicators: true) {
         VStack(spacing: 24) {
@@ -28,7 +30,7 @@ struct WelcomeView: View {
         }
         .padding(.horizontal, 30)
       }
-      
+       
       buttons
         .padding(.horizontal, 30)
     }
@@ -37,8 +39,8 @@ struct WelcomeView: View {
         // TODO: Add analytics later
         // analyticsService.track(event: Event(name: .viewsWelcome))
     }
-    .navigationLink(isActive: $isPushPersonalInformation) {
-      PersonalInformationView()
+    .navigationLink(isActive: $viewModel.isPushToAgreementView) {
+      AgreementView()
     }
   }
   
@@ -83,9 +85,12 @@ struct WelcomeView: View {
     VStack(spacing: 10) {
       FullSizeButton(
         title: LFLocalizable.Welcome.Button.orderCard,
-        isDisable: false
+        isDisable: viewModel.isLoading,
+        isLoading: $viewModel.isLoading
       ) {
-        isPushPersonalInformation = true
+        Task {
+          await viewModel.perfromInitialAccount()
+        }
       }
     }
   }

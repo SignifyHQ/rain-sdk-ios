@@ -74,12 +74,13 @@ disabled_rules:
   - comment_spacing
   - file_types_order
   - lower_acl_than_parent
+  - let_var_whitespace
   
 identifier_name:
   excluded:
     - id
 line_length:
-  warning: 170
+  warning: 230
   ignores_function_declarations: true
   ignores_comments: true
 modifier_order:

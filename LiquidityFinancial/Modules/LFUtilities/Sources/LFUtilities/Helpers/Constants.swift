@@ -128,15 +128,15 @@ public extension Constants {
   static var supportedStates: [String] = ["NY", "New York", "HI", "Hawaii"]
   
   static let netspendAttributeInformation = [
-    LFLocalizable.SetUpAccount.NetpendCondition.userAgreement: LFUtility.netspendUserAgreement,
-    LFLocalizable.SetUpAccount.NetpendCondition.privacyPolicy: LFUtility.netspendPrivacyPolicy,
-    LFLocalizable.SetUpAccount.NetpendCondition.regulatoryDisclosures: LFUtility.netspendRegulatoryDisclosure
+    LFLocalizable.Question.NetpendCondition.userAgreement: LFUtility.netspendUserAgreement,
+    LFLocalizable.Question.NetpendCondition.privacyPolicy: LFUtility.netspendPrivacyPolicy,
+    LFLocalizable.Question.NetpendCondition.regulatoryDisclosures: LFUtility.netspendRegulatoryDisclosure
   ]
   
   static let pathwardAttributeInformation = [
-    LFLocalizable.SetUpAccount.PathwardCondition.userAgreement: LFUtility.pathwardUserAgreement,
-    LFLocalizable.SetUpAccount.PathwardCondition.privacyPolicy: LFUtility.pathwardPrivacyPolicy,
-    LFLocalizable.SetUpAccount.PathwardCondition.regulatoryDisclosures: LFUtility.pathwardRegulatoryDisclosure
+    LFLocalizable.Question.PathwardCondition.userAgreement: LFUtility.pathwardUserAgreement,
+    LFLocalizable.Question.PathwardCondition.privacyPolicy: LFUtility.pathwardPrivacyPolicy,
+    LFLocalizable.Question.PathwardCondition.regulatoryDisclosures: LFUtility.pathwardRegulatoryDisclosure
   ]
   
   static let identifyVerification = [

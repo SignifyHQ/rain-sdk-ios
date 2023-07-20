@@ -1,4 +1,7 @@
 import SwiftUI
+import Factory
+import OnboardingData
+import LFUtilities
 
 class PersonalInformationViewModel: ObservableObject {
   enum PersonalInfoError: Error, LocalizedError {
@@ -22,8 +25,21 @@ class PersonalInformationViewModel: ObservableObject {
     }
   }
 
+  @Injected(\Container.userDataManager) var userDataManager
+  
   @Published var isNavigationToSSNView: Bool = false
-  @Published var isActionAllowed: Bool = false
+  @Published var isActionAllowed: Bool = false {
+    didSet {
+      guard isActionAllowed else { return }
+      userDataManager.update(email: email)
+      userDataManager.update(firstName: firstName)
+      userDataManager.update(lastName: lastName)
+      userDataManager.update(dateOfBirth: dateCheck?.netspendDate())
+      if userDataManager.userInfomationData.phone == nil {
+        userDataManager.update(phone: UserDefaults.phoneNumber)
+      }
+    }
+  }
   @Published var errorObj: Error?
 
   @Published var firstName: String = "" {

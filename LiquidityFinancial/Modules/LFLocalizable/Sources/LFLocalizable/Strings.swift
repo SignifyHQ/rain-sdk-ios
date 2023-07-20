@@ -259,6 +259,36 @@ public enum LFLocalizable {
       public static let title = LFLocalizable.tr("Localizable", "popup.uploadDocument.title", fallback: "DOCUMENTS UPLOADED")
     }
   }
+  public enum Question {
+    public enum NetpendCondition {
+      /// I agree to the Netspend User Agreement, and I have read and understand the NetSpend Privacy Policy and Regulatory Disclosures.
+      public static let description = LFLocalizable.tr("Localizable", "question.netpendCondition.description", fallback: "I agree to the Netspend User Agreement, and I have read and understand the NetSpend Privacy Policy and Regulatory Disclosures.")
+      /// NetSpend Privacy Policy
+      public static let privacyPolicy = LFLocalizable.tr("Localizable", "question.netpendCondition.privacyPolicy", fallback: "NetSpend Privacy Policy")
+      /// Regulatory Disclosures
+      public static let regulatoryDisclosures = LFLocalizable.tr("Localizable", "question.netpendCondition.regulatoryDisclosures", fallback: "Regulatory Disclosures")
+      /// Netspend User Agreement
+      public static let userAgreement = LFLocalizable.tr("Localizable", "question.netpendCondition.userAgreement", fallback: "Netspend User Agreement")
+    }
+    public enum PathwardCondition {
+      /// I agree to the Pathward Bank User Agreement, and I have read and understand the Pathward Privacy Policy and Regulatory Disclosures.
+      public static let description = LFLocalizable.tr("Localizable", "question.pathwardCondition.description", fallback: "I agree to the Pathward Bank User Agreement, and I have read and understand the Pathward Privacy Policy and Regulatory Disclosures.")
+      /// Pathward Privacy Policy
+      public static let privacyPolicy = LFLocalizable.tr("Localizable", "question.pathwardCondition.privacyPolicy", fallback: "Pathward Privacy Policy")
+      /// Regulatory Disclosures
+      public static let regulatoryDisclosures = LFLocalizable.tr("Localizable", "question.pathwardCondition.regulatoryDisclosures", fallback: "Regulatory Disclosures")
+      /// Pathward Bank User Agreement
+      public static let userAgreement = LFLocalizable.tr("Localizable", "question.pathwardCondition.userAgreement", fallback: "Pathward Bank User Agreement")
+    }
+    public enum Screen {
+      /// %@Card has partnered with NetSpend and Pathward Bank, a trusted partner in banking.
+      public static func description(_ p1: Any) -> String {
+        return LFLocalizable.tr("Localizable", "question.screen.description", String(describing: p1), fallback: "%@Card has partnered with NetSpend and Pathward Bank, a trusted partner in banking.")
+      }
+      /// Set up your account
+      public static let title = LFLocalizable.tr("Localizable", "question.screen.title", fallback: "Set up your account")
+    }
+  }
   public enum RewardTerms {
     /// up to 8'%' purchase of transaction
     public static let amountDescription = LFLocalizable.tr("Localizable", "rewardTerms.amount_description", fallback: "up to 8'%' purchase of transaction")
@@ -315,36 +345,6 @@ public enum LFLocalizable {
     public enum NoCreditCheck {
       /// No credit checks
       public static let cellText = LFLocalizable.tr("Localizable", "securityCheck.noCreditCheck.cellText", fallback: "No credit checks")
-    }
-  }
-  public enum SetUpAccount {
-    public enum NetpendCondition {
-      /// I agree to the Netspend User Agreement, and I have read and understand the NetSpend Privacy Policy and Regulatory Disclosures.
-      public static let description = LFLocalizable.tr("Localizable", "setUpAccount.netpendCondition.description", fallback: "I agree to the Netspend User Agreement, and I have read and understand the NetSpend Privacy Policy and Regulatory Disclosures.")
-      /// NetSpend Privacy Policy
-      public static let privacyPolicy = LFLocalizable.tr("Localizable", "setUpAccount.netpendCondition.privacyPolicy", fallback: "NetSpend Privacy Policy")
-      /// Regulatory Disclosures
-      public static let regulatoryDisclosures = LFLocalizable.tr("Localizable", "setUpAccount.netpendCondition.regulatoryDisclosures", fallback: "Regulatory Disclosures")
-      /// Netspend User Agreement
-      public static let userAgreement = LFLocalizable.tr("Localizable", "setUpAccount.netpendCondition.userAgreement", fallback: "Netspend User Agreement")
-    }
-    public enum PathwardCondition {
-      /// I agree to the Pathward Bank User Agreement, and I have read and understand the Pathward Privacy Policy and Regulatory Disclosures.
-      public static let description = LFLocalizable.tr("Localizable", "setUpAccount.pathwardCondition.description", fallback: "I agree to the Pathward Bank User Agreement, and I have read and understand the Pathward Privacy Policy and Regulatory Disclosures.")
-      /// Pathward Privacy Policy
-      public static let privacyPolicy = LFLocalizable.tr("Localizable", "setUpAccount.pathwardCondition.privacyPolicy", fallback: "Pathward Privacy Policy")
-      /// Regulatory Disclosures
-      public static let regulatoryDisclosures = LFLocalizable.tr("Localizable", "setUpAccount.pathwardCondition.regulatoryDisclosures", fallback: "Regulatory Disclosures")
-      /// Pathward Bank User Agreement
-      public static let userAgreement = LFLocalizable.tr("Localizable", "setUpAccount.pathwardCondition.userAgreement", fallback: "Pathward Bank User Agreement")
-    }
-    public enum Screen {
-      /// %@Card has partnered with NetSpend and Pathward Bank, a trusted partner in banking.
-      public static func description(_ p1: Any) -> String {
-        return LFLocalizable.tr("Localizable", "setUpAccount.screen.description", String(describing: p1), fallback: "%@Card has partnered with NetSpend and Pathward Bank, a trusted partner in banking.")
-      }
-      /// Set up your account
-      public static let title = LFLocalizable.tr("Localizable", "setUpAccount.screen.title", fallback: "Set up your account")
     }
   }
   public enum SetUpWallet {

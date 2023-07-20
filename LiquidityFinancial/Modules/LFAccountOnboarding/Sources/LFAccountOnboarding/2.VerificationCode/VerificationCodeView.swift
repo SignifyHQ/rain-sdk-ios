@@ -13,15 +13,13 @@ struct VerificationCodeView: View {
   init(
     phoneNumber: String,
     requestOTPUseCase: RequestOTPUseCaseProtocol,
-    loginUseCase: LoginUseCaseProtocol,
-    netspendRepository: NetSpendRepositoryProtocol
+    loginUseCase: LoginUseCaseProtocol
   ) {
     _viewModel = .init(
       wrappedValue: VerificationCodeViewModel(
         phoneNumber: phoneNumber,
         requestOtpUserCase: requestOTPUseCase,
-        loginUserCase: loginUseCase,
-        netspendRepository: netspendRepository
+        loginUserCase: loginUseCase
       )
     )
   }
@@ -59,9 +57,8 @@ struct VerificationCodeView: View {
       viewModel.isResendButonTimerOn = false
       Task {
         // Delay the task by 1 second:
-        try await Task.sleep(seconds: 1)
-        await viewModel.createAccountAndPerson()
-        //viewModel.performAutoGetTwilioMessagesIfNeccessary()
+        try await Task.sleep(seconds: 0.3)
+        viewModel.performAutoGetTwilioMessagesIfNeccessary()
       }
     }
     // TODO: Will be implemented later

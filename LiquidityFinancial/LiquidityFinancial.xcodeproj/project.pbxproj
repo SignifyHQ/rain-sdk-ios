@@ -35,6 +35,8 @@
 		A95354AD2A5E571D008B0FAB /* AppView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A95354A52A5E571D008B0FAB /* AppView.swift */; };
 		A95354AE2A5E571D008B0FAB /* CardanoApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = A95354A62A5E571D008B0FAB /* CardanoApp.swift */; };
 		A963D3FB2A67081D006B9A54 /* NetSpendData in Frameworks */ = {isa = PBXBuildFile; productRef = A963D3FA2A67081D006B9A54 /* NetSpendData */; };
+		A963D4092A67F491006B9A54 /* AppCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = A963D4082A67F491006B9A54 /* AppCoordinator.swift */; };
+		A963D40B2A67F7FD006B9A54 /* AppViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A963D40A2A67F7FD006B9A54 /* AppViewModel.swift */; };
 		A97BF7C22A5C602D00B8F5CA /* AppView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A97BF7C12A5C602D00B8F5CA /* AppView.swift */; };
 		A97BF7D12A5C602F00B8F5CA /* LiquidityFinancialTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A97BF7D02A5C602F00B8F5CA /* LiquidityFinancialTests.swift */; };
 		A97BF7DB2A5C602F00B8F5CA /* LiquidityFinancialUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A97BF7DA2A5C602F00B8F5CA /* LiquidityFinancialUITests.swift */; };
@@ -90,6 +92,8 @@
 		A95354A32A5E571D008B0FAB /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
 		A95354A52A5E571D008B0FAB /* AppView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppView.swift; sourceTree = "<group>"; };
 		A95354A62A5E571D008B0FAB /* CardanoApp.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CardanoApp.swift; sourceTree = "<group>"; };
+		A963D4082A67F491006B9A54 /* AppCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppCoordinator.swift; sourceTree = "<group>"; };
+		A963D40A2A67F7FD006B9A54 /* AppViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppViewModel.swift; sourceTree = "<group>"; };
 		A97BF7BC2A5C602D00B8F5CA /* Avalanche.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Avalanche.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		A97BF7C12A5C602D00B8F5CA /* AppView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppView.swift; sourceTree = "<group>"; };
 		A97BF7CC2A5C602F00B8F5CA /* LiquidityFinancialTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = LiquidityFinancialTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -190,6 +194,23 @@
 			);
 			name = Resources;
 			path = "Réources";
+			sourceTree = "<group>";
+		};
+		A94EFFC02A67FD0600DD0395 /* AppView */ = {
+			isa = PBXGroup;
+			children = (
+				A97BF7C12A5C602D00B8F5CA /* AppView.swift */,
+				A963D40A2A67F7FD006B9A54 /* AppViewModel.swift */,
+			);
+			path = AppView;
+			sourceTree = "<group>";
+		};
+		A94EFFC12A67FD1D00DD0395 /* AppCoordinator */ = {
+			isa = PBXGroup;
+			children = (
+				A963D4082A67F491006B9A54 /* AppCoordinator.swift */,
+			);
+			path = AppCoordinator;
 			sourceTree = "<group>";
 		};
 		A953545B2A5DD7F4008B0FAB /* Frameworks */ = {
@@ -363,9 +384,10 @@
 		A97BF8142A5D9D2900B8F5CA /* Sources */ = {
 			isa = PBXGroup;
 			children = (
-				A9D6C4BA2A5FA1570038D0BB /* DependenciesInjection */,
 				A97BF8172A5D9DE200B8F5CA /* AvalancheApp.swift */,
-				A97BF7C12A5C602D00B8F5CA /* AppView.swift */,
+				A94EFFC12A67FD1D00DD0395 /* AppCoordinator */,
+				A94EFFC02A67FD0600DD0395 /* AppView */,
+				A9D6C4BA2A5FA1570038D0BB /* DependenciesInjection */,
 			);
 			path = Sources;
 			sourceTree = "<group>";
@@ -682,7 +704,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A963D4092A67F491006B9A54 /* AppCoordinator.swift in Sources */,
 				A93837472A63DDFD009EB1DE /* AppDelegate+Extensions.swift in Sources */,
+				A963D40B2A67F7FD006B9A54 /* AppViewModel.swift in Sources */,
 				A97BF81A2A5D9E6B00B8F5CA /* AppDelegate.swift in Sources */,
 				A97BF7C22A5C602D00B8F5CA /* AppView.swift in Sources */,
 				A9D6C4BC2A5FA1740038D0BB /* OnboardingContainer+Injection.swift in Sources */,

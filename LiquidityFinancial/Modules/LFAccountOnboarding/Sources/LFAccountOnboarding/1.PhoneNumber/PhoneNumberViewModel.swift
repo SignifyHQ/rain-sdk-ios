@@ -20,12 +20,10 @@ public final class PhoneNumberViewModel: ObservableObject {
   let terms = LFLocalizable.Term.Terms.attributeText
   let esignConsent = LFLocalizable.Term.EsignConsent.attributeText
   let privacyPolicy = LFLocalizable.Term.PrivacyPolicy.attributeText
-  let netspendRepository: NetSpendRepositoryProtocol
   
-  public init(requestOtpUserCase: RequestOTPUseCaseProtocol, loginUseCase: LoginUseCaseProtocol, netspendRepository: NetSpendRepositoryProtocol) {
+  public init(requestOtpUserCase: RequestOTPUseCaseProtocol, loginUseCase: LoginUseCaseProtocol) {
     self.requestOtpUserCase = requestOtpUserCase
     self.loginUseCase = loginUseCase
-    self.netspendRepository = netspendRepository
   }
 }
 

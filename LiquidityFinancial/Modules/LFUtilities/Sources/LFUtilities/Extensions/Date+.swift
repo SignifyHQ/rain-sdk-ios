@@ -8,6 +8,10 @@ public extension Date {
   var asServerDate: String {
     DateFormatter.server.string(from: self)
   }
+  
+  func netspendDate() -> String {
+    DateFormatter.yearDayMonth.string(from: self)
+  }
 }
 
 public extension DateFormatter {
@@ -40,6 +44,14 @@ public extension DateFormatter {
   static var yearMonthDay: DateFormatter = {
     let formatter = DateFormatter()
     formatter.dateFormat = "yyyy-MM-dd"
+    return formatter
+  }()
+  
+  /// A formatter used to represent dates with the numeric representation of its year, month and day.
+  /// Example: `2022-10-20`.
+  static var yearDayMonth: DateFormatter = {
+    let formatter = DateFormatter()
+    formatter.dateFormat = "yyyy-dd-MM"
     return formatter
   }()
 

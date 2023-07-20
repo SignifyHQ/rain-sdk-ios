@@ -1,11 +1,20 @@
 import SwiftUI
 import LFUtilities
+import Factory
+import OnboardingData
 
+@MainActor
 class EnterSSNViewModel: ObservableObject {
-
-  @Published var errorMessage: String?
-  @Published var isActionAllowed: Bool = false
   
+  @Injected(\Container.userDataManager) var userDataManager
+  
+  @Published var errorMessage: String?
+  @Published var isActionAllowed: Bool = false {
+    didSet {
+      guard isActionAllowed else { return }
+      userDataManager.update(ssn: ssn)
+    }
+  }
   @Published var ssn: String = "" {
     didSet {
       isAllDataFilled()

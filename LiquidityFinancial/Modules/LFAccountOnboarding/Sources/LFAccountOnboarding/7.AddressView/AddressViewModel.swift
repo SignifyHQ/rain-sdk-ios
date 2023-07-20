@@ -3,9 +3,68 @@ import SmartyStreets
 import PhoneNumberKit
 import SwiftUI
 import LFUtilities
+import Factory
+import OnboardingData
+import NetSpendData
 
 @MainActor
 final class AddressViewModel: ObservableObject {
+  enum Navigation {
+    case question
+    case document
+  }
+  
+  @Injected(\.userDataManager) var userDataManager
+  @Injected(\.netspendRepository) var netspendRepository
+  @Injected(\.netspendDataManager) var netspendDataManager
+  
+  @Published var isLoading: Bool = false
+  @Published var toastMessage: String?
+  @Published var displaySuggestions: Bool = false
+  @Published var navigation: Navigation?
+  @Published var addressList: [AddressData] = []
+  @Published var isActionAllowed: Bool = false {
+    didSet {
+      guard isActionAllowed else { return }
+      userDataManager.update(addressLine1: addressLine1)
+      userDataManager.update(addressLine2: addressLine2)
+      userDataManager.update(city: city)
+      userDataManager.update(state: state)
+      userDataManager.update(postalCode: zipCode)
+      userDataManager.update(country: "US")
+    }
+  }
+  
+  @Published var addressLine1: String = "" {
+    didSet {
+      isAllDataFilled()
+    }
+  }
+  
+  @Published var addressLine2: String = "" {
+    didSet {
+      isAllDataFilled()
+    }
+  }
+  
+  @Published var city: String = "" {
+    didSet {
+      isAllDataFilled()
+    }
+  }
+  
+  @Published var state: String = "" {
+    didSet {
+      isAllDataFilled()
+    }
+  }
+  
+  @Published var zipCode: String = "" {
+    didSet {
+      isAllDataFilled()
+    }
+  }
+  
   private var subscriptions = Set<AnyCancellable>()
   private var pauseAutocomplete = false
   private var isSuggesionTapped: Bool = false
@@ -26,46 +85,6 @@ final class AddressViewModel: ObservableObject {
       .store(in: &subscriptions)
   }
 
-  enum Navigation {
-    case kyc
-    case cardName
-  }
-
-  @Published var isActionAllowed: Bool = false
-  @Published var displaySuggestions: Bool = false
-  @Published var navigation: Navigation?
-  @Published var addressList: [AddressData] = []
-
-  @Published var addressLine1: String = "" {
-    didSet {
-      isAllDataFilled()
-    }
-  }
-
-  @Published var addressLine2: String = "" {
-    didSet {
-      isAllDataFilled()
-    }
-  }
-
-  @Published var city: String = "" {
-    didSet {
-      isAllDataFilled()
-    }
-  }
-
-  @Published var state: String = "" {
-    didSet {
-      isAllDataFilled()
-    }
-  }
-
-  @Published var zipCode: String = "" {
-    didSet {
-      isAllDataFilled()
-    }
-  }
-
   func stopSuggestions() {
     displaySuggestions = false
   }
@@ -79,7 +98,52 @@ final class AddressViewModel: ObservableObject {
     displaySuggestions = false
   }
 
-  func action() {
+  func actionContinue() {
+    Task { @MainActor in
+      defer { isLoading = false }
+      isLoading = true
+      do {
+        var governmentID: String = ""
+        var type: String = ""
+        if let ssn = userDataManager.userInfomationData.ssn {
+          type = "ssn"
+          governmentID = ssn
+        } else if let passport = userDataManager.userInfomationData.passport {
+          type = "passport"
+          governmentID = passport
+        }
+        let agreementIDS = netspendDataManager.agreement?.agreements.compactMap { $0.id } ?? []
+        let encryptedData = try netspendDataManager.userSession?.encryptWithJWKSet(value: [
+          "date_of_birth": userDataManager.userInfomationData.dateOfBirth ?? "",
+          "government_id": [
+            "type": type,
+            "value": governmentID
+          ]
+        ])
+        let param = AccountPersonParameters(
+          firstName: userDataManager.userInfomationData.firstName ?? "",
+          lastName: userDataManager.userInfomationData.lastName ?? "",
+          middleName: userDataManager.userInfomationData.fullName ?? "",
+          agreementIDS: agreementIDS,
+          phone: userDataManager.userInfomationData.phone ?? "",
+          email: userDataManager.userInfomationData.email ?? "",
+          fullName: userDataManager.userInfomationData.fullName ?? "",
+          dateOfBirth: userDataManager.userInfomationData.dateOfBirth ?? "",
+          addressLine1: userDataManager.userInfomationData.addressLine1 ?? "",
+          addressLine2: userDataManager.userInfomationData.addressLine2 ?? "",
+          city: userDataManager.userInfomationData.city ?? "",
+          state: userDataManager.userInfomationData.state ?? "",
+          country: userDataManager.userInfomationData.country ?? "",
+          postalCode: userDataManager.userInfomationData.postalCode ?? "",
+          encryptedData: encryptedData ?? ""
+        )
+        let person = try await netspendRepository.createAccountPerson(personInfo: param, sessionId: netspendDataManager.userSession?.sessionId ?? "")
+        log.debug(person)
+      } catch {
+        log.error(error)
+        toastMessage = error.localizedDescription
+      }
+    }
   }
 
   private var isStateValid: Bool {

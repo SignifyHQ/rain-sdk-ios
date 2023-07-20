@@ -14,4 +14,7 @@ public extension UserDefaults {
   @LFUserDefault(key: Key.environmentSelection, defaultValue: "")
   static var environmentSelection: String
   
+  @LFUserDefault(key: Key.phoneNumber, defaultValue: "")
+  static var phoneNumber: String
+  
 }

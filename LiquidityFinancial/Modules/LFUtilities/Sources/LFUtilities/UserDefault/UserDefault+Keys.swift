@@ -5,4 +5,5 @@ public extension Key {
   static let accessTokenExpiresAt: Key = "accessTokenExpiresAt"
   static let bearerAccessToken: Key = "bearerAccessToken"
   static let environmentSelection: Key = "EnvironmentSelection"
+  static let phoneNumber: Key = "UserPhoneNumber"
 }

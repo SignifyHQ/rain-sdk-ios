@@ -4,13 +4,11 @@ public protocol Parameterable: Encodable {}
 
 public extension Parameterable {
   
-  func encoded(encoder: JSONEncoder = .requestEncoder) -> [String: String] {
+  func encoded(encoder: JSONEncoder = .requestEncoder) -> [String: Any] {
     guard let dictionary = try? JSONSerialization.jsonObject(
-      with: encoder.encode(self), options: .allowFragments
-    ) as? [String: Any] else {
+      with: encoder.encode(self), options: []) as? [String: Any] else {
       return [:]
     }
-    
-    return dictionary.mapValues { "\($0)" }
+    return dictionary
   }
 }

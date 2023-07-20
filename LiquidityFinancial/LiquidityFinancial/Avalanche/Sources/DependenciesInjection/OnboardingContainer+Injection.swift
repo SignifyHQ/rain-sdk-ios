@@ -10,23 +10,17 @@ import NetSpendData
 
 @MainActor
 extension Container {
-  // Network
-  var authorizationManager: Factory<AuthorizationManagerProtocol> {
+  
+  //Coordinator
+  var coordinator: Factory<AppCoordinatorProtocol> {
     self {
-      AuthorizationManager()
+      AppCoordinator()
     }
   }
-  
   // Network
   var onboardingAPI: Factory<OnboardingAPIProtocol> {
     self {
       LFNetwork<OnboardingRoute>()
-    }
-  }
-  
-  var netspendAPI: Factory<NetSpendAPIProtocol> {
-    self {
-      LFNetwork<NetSpendRoute>()
     }
   }
   
@@ -35,8 +29,7 @@ extension Container {
     self {
       PhoneNumberViewModel(
         requestOtpUserCase: self.requestOtpUseCase.callAsFunction(),
-        loginUseCase: self.loginUseCase.callAsFunction(),
-        netspendRepository: self.netspendRepository.callAsFunction()
+        loginUseCase: self.loginUseCase.callAsFunction()
       )
     }
   }
@@ -45,12 +38,6 @@ extension Container {
   var onboardingRepository: Factory<OnboardingRepositoryProtocol> {
     self {
       OnboardingRepository(onboardingAPI: self.onboardingAPI.callAsFunction(), auth: self.authorizationManager.callAsFunction())
-    }
-  }
-  
-  var netspendRepository: Factory<NetSpendRepositoryProtocol> {
-    self {
-      NetSpendRepository(netSpendAPI: self.netspendAPI.callAsFunction())
     }
   }
 

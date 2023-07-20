@@ -74,6 +74,9 @@ struct AddressView: View {
         }
       }
     }
+    .popup(item: $viewModel.toastMessage, style: .toast) {
+      ToastView(toastMessage: $0)
+    }
     .onAppear {
       //analyticsService.track(event: Event(name: .viewedAddress))
     }
@@ -238,7 +241,7 @@ struct AddressView: View {
         title: LFLocalizable.Button.Continue.title,
         isDisable: !viewModel.isActionAllowed
       ) {
-        viewModel.action()
+        viewModel.actionContinue()
         keyboardFocus = nil
       }
     }

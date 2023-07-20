@@ -1,13 +1,12 @@
 import Foundation
+import NetSpendData
 
-class KYCQuestion {
+class QuestionsEntity {
   let id: UUID = UUID()
   var questions: [AnswerOptions]
-  var requiredAnswers: Int
  
-  init(questions: [AnswerOptions], requiredAnswers: Int) {
+  init(questions: [AnswerOptions]) {
     self.questions = questions
-    self.requiredAnswers = requiredAnswers
   }
   
   class AnswerOptions {
@@ -38,7 +37,17 @@ class KYCQuestion {
     }
   }
   
-  static var mockKYCQuestion = KYCQuestion(
+  static func mapObj(_ obj: NetSpendQuestionDataDecode) -> QuestionsEntity {
+    var questions: [AnswerOptions] = []
+    obj.questions.forEach { question in
+      questions.append(
+        AnswerOptions(id: question.id, question: question.question, answer: question.answerOptions.compactMap { Answer(answerId: $0.answerId, text: $0.text) })
+      )
+    }
+    return QuestionsEntity(questions: questions)
+  }
+  
+  static var mockKYCQuestion = QuestionsEntity(
     questions: [
       AnswerOptions(id: "340b1782-4c49-4697-bde1-d84f9dc159d5", question: "From whom did you purchase the property at 222333 PEACHTREE PLACE?", answer: [
         Answer(isSelect: true, answerId: "9a02ebb0-7686-4b96-af09-dd896c856240", text: "CHRIS THOMAS"),
@@ -58,7 +67,6 @@ class KYCQuestion {
         Answer(answerId: "8bf6dd1e-fd24-49ee-857a-e47715dfff04", text: "Apartment"),
         Answer(answerId: "898cde6c-910f-4394-81d5-f5c97e386197", text: "None of the above")
       ])
-    ],
-    requiredAnswers: 3
+    ]
   )
 }

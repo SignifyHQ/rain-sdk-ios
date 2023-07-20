@@ -3,13 +3,13 @@ import LFStyleGuide
 import LFUtilities
 import LFLocalizable
 
-public struct KycQuestionsView: View {
+public struct QuestionsView: View {
   
   @State var offsetChange: CGPoint = .zero
   
-  @StateObject var viewModel: KYCQuestionsViewModel
+  @StateObject var viewModel: QuestionsViewModel
   
-  public init(viewModel: KYCQuestionsViewModel) {
+  public init(viewModel: QuestionsViewModel) {
     _viewModel = .init(wrappedValue: viewModel)
   }
   
@@ -19,7 +19,7 @@ public struct KycQuestionsView: View {
       
       OffsetObservingScrollView(offset: $offsetChange) {
         ForEach($viewModel.questionList.questions, id: \.id) { question in
-          KYCAnswerQuestionView(answerOption: question) { _, id in
+          AnswerQuestionView(answerOption: question) { _, id in
             viewModel.updateAnswerSelect(questionID: question.wrappedValue.id, answerID: id)
           }
         }
@@ -83,13 +83,13 @@ public struct KycQuestionsView: View {
 #if DEBUG
 struct KycQuestionsView_Previews: PreviewProvider {
   static var previews: some View {
-    KycQuestionsView(viewModel: KYCQuestionsViewModel())
+    QuestionsView(viewModel: QuestionsViewModel())
   }
 }
 #endif
 
-private struct KYCAnswerQuestionView: View {
-  @Binding var answerOption: KYCQuestion.AnswerOptions
+private struct AnswerQuestionView: View {
+  @Binding var answerOption: QuestionsEntity.AnswerOptions
   let onChange: (_ isChecked: Bool, _ id: String) -> Void
   
   var body: some View {
@@ -103,7 +103,7 @@ private struct KYCAnswerQuestionView: View {
         Spacer()
       }
       ForEach($answerOption.answer, id: \.answerId) { result in
-        KYCAnswerButton(answer: result) { isChecked, id in
+        AnswerButton(answer: result) { isChecked, id in
           onChange(isChecked, id)
         }
       }
@@ -111,8 +111,8 @@ private struct KYCAnswerQuestionView: View {
   }
 }
 
-private struct KYCAnswerButton: View {
-  @Binding var answer: KYCQuestion.Answer
+private struct AnswerButton: View {
+  @Binding var answer: QuestionsEntity.Answer
   let onChange: (_ isChecked: Bool, _ id: String) -> Void
 
   var body: some View {

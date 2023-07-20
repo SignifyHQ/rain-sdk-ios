@@ -1,5 +1,6 @@
 import Foundation
 
+// swiftlint:disable all
 extension URLRequest {
   
   init(route: LFRoute) {

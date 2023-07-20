@@ -1,9 +1,9 @@
 import SwiftUI
 
 @MainActor
-public final class KYCQuestionsViewModel: ObservableObject {
+public final class QuestionsViewModel: ObservableObject {
 
-  @Published var questionList: KYCQuestion = KYCQuestion.mockKYCQuestion
+  @Published var questionList: QuestionsEntity = QuestionsEntity.mockKYCQuestion
   
   public init() {}
   

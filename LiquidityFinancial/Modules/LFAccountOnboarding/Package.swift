@@ -27,21 +27,20 @@ let package = Package(
       .package(name: "LFUtilities", path: "../LFUtilities"),
       .package(name: "LFStyleGuide", path: "../LFStyleGuide"),
       .package(name: "OnboardingDomain", path: "../LFDomain"),
-      .package(name: "NetSpendData", path: "../LFData"),
+      .package(name: "LFData", path: "../LFData"),
       .package(name: "LFLocalizable", path: "../LFLocalizable")
     ],
     targets: [
         .target(
           name: "LFAccountOnboarding",
           dependencies: [
-            "LFUtilities", "OnboardingDomain", "LFStyleGuide", "LFLocalizable", "NetSpendData", "Factory",
+            "LFUtilities", "OnboardingDomain", "LFStyleGuide", "LFLocalizable", "Factory", "iPhoneNumberField",
+            .product(name: "OnboardingData", package: "LFData"),
+            .product(name: "NetSpendData", package: "LFData"),
             .product(name: "SmartyStreets", package: "smartystreets-ios-sdk")
           ],
           resources: [
             .process("ZResources")
-          ],
-          plugins: [
-            .plugin(name: "iPhoneNumberField", package: "iPhoneNumberField")
           ]
         ),
         .target(name: "AvalancheAccountOnboarding", dependencies: ["LFAccountOnboarding"]),

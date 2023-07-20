@@ -4,10 +4,10 @@ import LFUtilities
 import LFLocalizable
 import OnboardingDomain
 
-struct SetupAccountView: View {
+struct AgreementView: View {
   @Environment(\.openURL)
   var openURL
-  @StateObject private var viewModel = SetupAccountViewModel()
+  @StateObject private var viewModel = AgreementViewModel()
   
   var body: some View {
     VStack(spacing: 24) {
@@ -21,10 +21,10 @@ struct SetupAccountView: View {
           isSelected: $viewModel.isAgreedNetSpendCondition,
           condition: viewModel.netspendCondition
         )
-        conditionCell(
-          isSelected: $viewModel.isAgreedPathwardCondition,
-          condition: viewModel.pathwardCondition
-        )
+//        conditionCell(
+//          isSelected: $viewModel.isAgreedPathwardCondition,
+//          condition: viewModel.pathwardCondition
+//        )
       }
       continueButton
     }
@@ -42,18 +42,21 @@ struct SetupAccountView: View {
       }
     }
     .background(Colors.background.swiftUIColor)
+    .navigationLink(isActive: $viewModel.isNavigationPersonalInformation) {
+      PersonalInformationView()
+    }
   }
 }
 
 // MARK: View Components
-private extension SetupAccountView {
+private extension AgreementView {
   var headerTitle: some View {
     VStack(alignment: .leading, spacing: 12) {
-      Text(LFLocalizable.SetUpAccount.Screen.title.uppercased())
+      Text(LFLocalizable.Question.Screen.title.uppercased())
         .foregroundColor(Colors.label.swiftUIColor)
         .font(Fonts.Inter.regular.swiftUIFont(size: Constants.FontSize.main.value))
       Text(
-        LFLocalizable.SetUpAccount.Screen.description(LFUtility.appName)
+        LFLocalizable.Question.Screen.description(LFUtility.appName)
       )
       .foregroundColor(Colors.label.swiftUIColor.opacity(0.75))
       .font(Fonts.Inter.regular.swiftUIFont(size: Constants.FontSize.medium.value))
@@ -96,6 +99,7 @@ private extension SetupAccountView {
       title: LFLocalizable.Button.Continue.title,
       isDisable: viewModel.isDisableButton
     ) {
+      viewModel.isNavigationPersonalInformation = true
     }
   }
 }

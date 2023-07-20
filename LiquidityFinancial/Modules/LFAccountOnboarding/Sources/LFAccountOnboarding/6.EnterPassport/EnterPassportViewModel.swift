@@ -1,11 +1,12 @@
 import SwiftUI
 import LFLocalizable
+import Factory
+import OnboardingData
 
 @MainActor
 final class EnterPassportViewModel: ObservableObject {
-  
+  @Injected(\Container.userDataManager) var userDataManager
   @Published var isNavigationToAddressView: Bool = false
-  @Published var isActionAllowed: Bool = false
   @Published var showPassportTypes: Bool = false
   @Published var selectedPassport: PassportType = .international
   @Published var selection: Int?
@@ -15,7 +16,11 @@ final class EnterPassportViewModel: ObservableObject {
       validatePassport()
     }
   }
-  
+  @Published var isActionAllowed: Bool = false {
+    didSet {
+      userDataManager.update(passport: passport)
+    }
+  }
   func validatePassport() {
     isActionAllowed = isValidPassport(passport)
   }

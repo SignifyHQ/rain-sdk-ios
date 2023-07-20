@@ -161,16 +161,16 @@
 "setUpWallet.wallet_useragreement" = "Zero Hash and Zero Hash Liquidity Services User Agreement";
 
 // Set Up Account
-"setUpAccount.screen.title" = "Set up your account";
-"setUpAccount.screen.description" = "%@Card has partnered with NetSpend and Pathward Bank, a trusted partner in banking.";
-"setUpAccount.netpendCondition.description" = "I agree to the Netspend User Agreement, and I have read and understand the NetSpend Privacy Policy and Regulatory Disclosures.";
-"setUpAccount.pathwardCondition.description" = "I agree to the Pathward Bank User Agreement, and I have read and understand the Pathward Privacy Policy and Regulatory Disclosures.";
-"setUpAccount.netpendCondition.userAgreement" = "Netspend User Agreement";
-"setUpAccount.netpendCondition.privacyPolicy" = "NetSpend Privacy Policy";
-"setUpAccount.netpendCondition.regulatoryDisclosures" = "Regulatory Disclosures";
-"setUpAccount.pathwardCondition.userAgreement" = "Pathward Bank User Agreement";
-"setUpAccount.pathwardCondition.privacyPolicy" = "Pathward Privacy Policy";
-"setUpAccount.pathwardCondition.regulatoryDisclosures" = "Regulatory Disclosures";
+"question.screen.title" = "Set up your account";
+"question.screen.description" = "%@Card has partnered with NetSpend and Pathward Bank, a trusted partner in banking.";
+"question.netpendCondition.description" = "I agree to the Netspend User Agreement, and I have read and understand the NetSpend Privacy Policy and Regulatory Disclosures.";
+"question.pathwardCondition.description" = "I agree to the Pathward Bank User Agreement, and I have read and understand the Pathward Privacy Policy and Regulatory Disclosures.";
+"question.netpendCondition.userAgreement" = "Netspend User Agreement";
+"question.netpendCondition.privacyPolicy" = "NetSpend Privacy Policy";
+"question.netpendCondition.regulatoryDisclosures" = "Regulatory Disclosures";
+"question.pathwardCondition.userAgreement" = "Pathward Bank User Agreement";
+"question.pathwardCondition.privacyPolicy" = "Pathward Privacy Policy";
+"question.pathwardCondition.regulatoryDisclosures" = "Regulatory Disclosures";
 
 // KYC Status
 "kycStatus.identityVerification.title" = "DRIVER’s LICENSE, ID OR PASSPORT";

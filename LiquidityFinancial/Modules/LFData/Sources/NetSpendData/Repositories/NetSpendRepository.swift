@@ -8,6 +8,11 @@ public protocol NetSpendRepositoryProtocol {
   func clientSessionInit() async throws -> NetSpendJwkToken
   func establishingSessionWithJWKSet(jwtToken: NetSpendJwkToken) async -> NetspendSdkUserSessionConnectionJWKSet!
   func establishPersonSession(deviceData: EstablishSessionParameters) async throws -> NetSpendSessionData
+  func createUserSession(establishingSession: NetspendSdkUserSessionConnectionJWKSet?, encryptedData: String) throws -> NetspendSdkUserSession?
+  func getAgreement() async throws -> NetSpendAgreementData
+  func createAccountPerson(personInfo: AccountPersonParameters, sessionId: String) async throws -> NetSpendAccountPersonData
+  func getQuestion(sessionId: String) async throws -> NetSpendQuestionData
+  func putQuestion(sessionId: String, encryptedData: String) async throws -> NetSpendAnswerQuestionData
 }
 
 public class NetSpendRepository: NetSpendRepositoryProtocol {
@@ -35,5 +40,25 @@ public class NetSpendRepository: NetSpendRepositoryProtocol {
   
   public func establishPersonSession(deviceData: EstablishSessionParameters) async throws -> NetSpendSessionData {
     return try await netSpendAPI.establishSession(deviceData: deviceData)
+  }
+  
+  public func getAgreement() async throws -> NetSpendAgreementData {
+    return try await netSpendAPI.getAgreement()
+  }
+  
+  public func createUserSession(establishingSession: NetspendSdkUserSessionConnectionJWKSet?, encryptedData: String) throws -> NetspendSdkUserSession? {
+    return try establishingSession?.createUserSession(userSessionEncryptedData: encryptedData)
+  }
+  
+  public func createAccountPerson(personInfo: AccountPersonParameters, sessionId: String) async throws -> NetSpendAccountPersonData {
+    return try await netSpendAPI.createAccountPerson(personInfo: personInfo, sessionId: sessionId)
+  }
+  
+  public func getQuestion(sessionId: String) async throws -> NetSpendQuestionData {
+    return try await netSpendAPI.getQuestion(sessionId: sessionId)
+  }
+  
+  public func putQuestion(sessionId: String, encryptedData: String) async throws -> NetSpendAnswerQuestionData {
+    return try await netSpendAPI.putQuestion(sessionId: sessionId, encryptedData: encryptedData)
   }
 }

@@ -24,21 +24,22 @@ let package = Package(
     .package(name: "OnboardingDomain", path: "../LFDomain"),
     .package(name: "LFNetwork", path: "../LFNetwork"),
     .package(name: "LFUtilities", path: "../LFUtilities"),
-    .package(name: "LFServices", path: "../LFServices")
+    .package(name: "LFServices", path: "../LFServices"),
+    .package(url: "https://github.com/hmlongco/Factory", from: "2.2.0")
   ],
   targets: [
     .target(
       name: "OnboardingData",
-      dependencies: ["DataUtilities", "LFNetwork", "OnboardingDomain", "AuthorizationManager"]),
+      dependencies: ["DataUtilities", "LFNetwork", "OnboardingDomain", "AuthorizationManager", "Factory"]),
     .target(
       name: "DataUtilities",
       dependencies: ["LFNetwork"]),
     .target(
       name: "AuthorizationManager",
-      dependencies: ["DataUtilities", "OnboardingDomain", "LFUtilities"]),
+      dependencies: ["DataUtilities", "OnboardingDomain", "LFUtilities", "Factory"]),
     .target(
       name: "NetSpendData",
-      dependencies: ["LFNetwork", "LFServices", "DataUtilities", "LFUtilities"]),
+      dependencies: ["LFNetwork", "LFServices", "DataUtilities", "LFUtilities", "Factory", "AuthorizationManager"]),
     .testTarget(
       name: "OnboardingDataTests",
       dependencies: ["OnboardingData"])
