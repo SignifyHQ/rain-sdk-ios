@@ -9,7 +9,6 @@ extension LFRoute {
   public var httpHeaders: HttpHeaders {
     [
       "Content-Type": "application/json",
-      "productName": APIConstants.productNameDefault,
       "productId": APIConstants.productID
     ]
   }

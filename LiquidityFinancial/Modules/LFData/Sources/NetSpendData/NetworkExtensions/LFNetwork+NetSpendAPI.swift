@@ -23,6 +23,18 @@ extension LFNetwork: NetSpendAPIProtocol where R == NetSpendRoute {
   }
   
   public func putQuestion(sessionId: String, encryptedData: String) async throws -> NetSpendAnswerQuestionData {
-    return try await request(NetSpendRoute.putQuestions(sessionId: sessionId), target: NetSpendAnswerQuestionData.self, decoder: .apiDecoder)
+    return try await request(NetSpendRoute.putQuestions(sessionId: sessionId, encryptData: encryptedData), target: NetSpendAnswerQuestionData.self, decoder: .apiDecoder)
+  }
+  
+  public func getWorkflows() async throws -> NetSpendWorkflowsData {
+    return try await request(NetSpendRoute.getWorkflows, target: NetSpendWorkflowsData.self, decoder: .apiDecoder)
+  }
+  
+  public func getDocuments(sessionId: String) async throws -> NetSpendDocumentData {
+    return try await request(NetSpendRoute.getDocuments(sessionId: sessionId), target: NetSpendDocumentData.self, decoder: .apiDecoder)
+  }
+  
+  public func postDocuments(sessionId: String, documentID: String) async throws -> NetSpendDocumentData {
+    return try await request(NetSpendRoute.postDocuments(sessionId: sessionId, documentId: documentID), target: NetSpendDocumentData.self, decoder: .apiDecoder)
   }
 }

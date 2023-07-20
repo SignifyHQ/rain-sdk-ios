@@ -81,14 +81,12 @@ struct AddressView: View {
       //analyticsService.track(event: Event(name: .viewedAddress))
     }
     .navigationLink(item: $viewModel.navigation) { navigation in
-      // TODO: Will implement this later
-      /*
       switch navigation {
-      case .kyc:
-        KYCStatusView()
-      case .cardName:
-        CardNameView()
-      }*/
+      case .question(let questionsEntity):
+        QuestionsView(viewModel: QuestionsViewModel(questionList: questionsEntity))
+      case .document:
+        UploadDocumentView()
+      }
     }
   }
 
@@ -239,7 +237,9 @@ struct AddressView: View {
     VStack(spacing: 0) {
       FullSizeButton(
         title: LFLocalizable.Button.Continue.title,
-        isDisable: !viewModel.isActionAllowed
+        isDisable: !viewModel.isActionAllowed,
+        isLoading: $viewModel.isLoading,
+        type: .primary
       ) {
         viewModel.actionContinue()
         keyboardFocus = nil

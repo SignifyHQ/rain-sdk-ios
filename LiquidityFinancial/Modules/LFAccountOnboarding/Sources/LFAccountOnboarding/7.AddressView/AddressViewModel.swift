@@ -10,7 +10,7 @@ import NetSpendData
 @MainActor
 final class AddressViewModel: ObservableObject {
   enum Navigation {
-    case question
+    case question(QuestionsEntity)
     case document
   }
   
@@ -138,7 +138,38 @@ final class AddressViewModel: ObservableObject {
           encryptedData: encryptedData ?? ""
         )
         let person = try await netspendRepository.createAccountPerson(personInfo: param, sessionId: netspendDataManager.userSession?.sessionId ?? "")
-        log.debug(person)
+        netspendDataManager.update(accountPersonData: person)
+        
+        let workflows = try await self.netspendRepository.getWorkflows()
+        
+        if let steps = workflows.steps.first {
+          for stepIndex in 0...(steps.steps.count - 1) {
+            let step = steps.steps[stepIndex]
+            switch step.missingStep {
+            case .identityQuestions:
+              let questionsEncrypt = try await netspendRepository.getQuestion(sessionId: userDataManager.sessionID)
+              if let usersession = netspendDataManager.userSession, let questionsDecode = questionsEncrypt.decodeData(session: usersession) {
+                let questionsEntity = QuestionsEntity.mapObj(questionsDecode)
+                navigation = .question(questionsEntity)
+              }
+            case .provideDocuments:
+              let documents = try await netspendRepository.getDocuments(sessionId: userDataManager.sessionID)
+              log.debug(documents)
+              navigation = .document
+            case .primaryPersonKYCApprove:
+              break
+            case .KYCData:
+              break
+            case .acceptAgreement:
+              break
+            case .expectedUse:
+              break
+            case .identityScan:
+              break
+            }
+          }
+        }
+
       } catch {
         log.error(error)
         toastMessage = error.localizedDescription

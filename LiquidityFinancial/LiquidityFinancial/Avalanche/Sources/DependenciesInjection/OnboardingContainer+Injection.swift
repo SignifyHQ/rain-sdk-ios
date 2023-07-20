@@ -18,11 +18,6 @@ extension Container {
     }
   }
   // Network
-  var onboardingAPI: Factory<OnboardingAPIProtocol> {
-    self {
-      LFNetwork<OnboardingRoute>()
-    }
-  }
   
   // ViewModels
   var phoneNumberViewModel: Factory<PhoneNumberViewModel> {
@@ -31,13 +26,6 @@ extension Container {
         requestOtpUserCase: self.requestOtpUseCase.callAsFunction(),
         loginUseCase: self.loginUseCase.callAsFunction()
       )
-    }
-  }
-  
-  // Repositories
-  var onboardingRepository: Factory<OnboardingRepositoryProtocol> {
-    self {
-      OnboardingRepository(onboardingAPI: self.onboardingAPI.callAsFunction(), auth: self.authorizationManager.callAsFunction())
     }
   }
 

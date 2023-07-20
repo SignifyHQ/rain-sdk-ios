@@ -49,8 +49,8 @@ extension VerificationCodeViewModel {
           .replace(string: ")", replacement: "")
           .replace(string: "-", replacement: "")
           .trimWhitespacesAndNewlines()
-        UserDefaults.phoneNumber = pnumber
         userDataManager.update(phone: pnumber)
+        userDataManager.stored(phone: pnumber)
         isShowLoading = false
         isNavigationToWelcome = true
       } catch {

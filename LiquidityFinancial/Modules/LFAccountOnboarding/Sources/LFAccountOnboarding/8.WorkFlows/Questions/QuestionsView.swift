@@ -3,7 +3,7 @@ import LFStyleGuide
 import LFUtilities
 import LFLocalizable
 
-public struct QuestionsView: View {
+struct QuestionsView: View {
   
   @State var offsetChange: CGPoint = .zero
   
@@ -38,10 +38,11 @@ public struct QuestionsView: View {
       
       FullSizeButton(
         title: LFLocalizable.Button.Continue.title,
-        isDisable: false,
+        isDisable: !viewModel.isEnableContinue,
+        isLoading: $viewModel.isLoading,
         type: .primary
       ) {
-       
+        viewModel.actionContinue()
       }
       .padding(.horizontal, 20)
       .padding(.bottom, 8)
@@ -50,7 +51,9 @@ public struct QuestionsView: View {
     }
     .frame(max: .infinity)
     .background(Colors.background.swiftUIColor)
-    
+    .popup(item: $viewModel.toastMessage, style: .toast) {
+      ToastView(toastMessage: $0)
+    }
   }
   
   private var headerView: some View {
@@ -79,14 +82,6 @@ public struct QuestionsView: View {
   }
   
 }
-
-#if DEBUG
-struct KycQuestionsView_Previews: PreviewProvider {
-  static var previews: some View {
-    QuestionsView(viewModel: QuestionsViewModel())
-  }
-}
-#endif
 
 private struct AnswerQuestionView: View {
   @Binding var answerOption: QuestionsEntity.AnswerOptions

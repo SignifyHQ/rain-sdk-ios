@@ -7,4 +7,7 @@ public protocol NetSpendAPIProtocol {
   func createAccountPerson(personInfo: AccountPersonParameters, sessionId: String) async throws -> NetSpendAccountPersonData
   func getQuestion(sessionId: String) async throws -> NetSpendQuestionData
   func putQuestion(sessionId: String, encryptedData: String) async throws -> NetSpendAnswerQuestionData
+  func getWorkflows() async throws -> NetSpendWorkflowsData
+  func getDocuments(sessionId: String) async throws -> NetSpendDocumentData
+  func postDocuments(sessionId: String, documentID: String) async throws -> NetSpendDocumentData
 }

@@ -2,6 +2,8 @@ import Foundation
 
 public protocol UserDataManagerProtocol {
   var userInfomationData: UserInfomationData { get }
+  var phoneNumber: String { get }
+  var sessionID: String { get }
   func update(firstName: String?)
   func update(lastName: String?)
   func update(phone: String?)
@@ -17,9 +19,19 @@ public protocol UserDataManagerProtocol {
   func update(state: String?)
   func update(postalCode: String?)
   func update(country: String?)
+  func stored(phone: String)
+  func stored(sessionID: String)
 }
 
 public class UserDataManager: UserDataManagerProtocol {
+  public var phoneNumber: String {
+    UserDefaults.phoneNumber
+  }
+  
+  public var sessionID: String {
+    UserDefaults.userSessionID
+  }
+  
   public private(set) var userInfomationData = UserInfomationData()
   
   public func update(firstName: String?) {
@@ -80,5 +92,13 @@ public class UserDataManager: UserDataManagerProtocol {
   
   public func update(passport: String?) {
     self.userInfomationData.passport = passport
+  }
+  
+  public func stored(phone: String) {
+    UserDefaults.phoneNumber = phone
+  }
+  
+  public func stored(sessionID: String) {
+    UserDefaults.userSessionID = sessionID
   }
 }

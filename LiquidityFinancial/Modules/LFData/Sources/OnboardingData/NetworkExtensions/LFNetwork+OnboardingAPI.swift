@@ -17,4 +17,7 @@ extension LFNetwork: OnboardingAPIProtocol where R == OnboardingRoute {
     return result.httpResponse?.statusCode == 200 ? APIOtp(success: true) : APIOtp(success: false)
   }
   
+  public func getOnboardingState(sessionId: String) async throws -> APIOnboardingState {
+    return try await request(OnboardingRoute.onboardingState(sessionId: sessionId), target: APIOnboardingState.self, decoder: .apiDecoder)
+  }
 }

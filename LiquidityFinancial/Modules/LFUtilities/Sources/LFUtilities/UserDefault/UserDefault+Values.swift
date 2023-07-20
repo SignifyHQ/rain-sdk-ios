@@ -17,4 +17,6 @@ public extension UserDefaults {
   @LFUserDefault(key: Key.phoneNumber, defaultValue: "")
   static var phoneNumber: String
   
+  @LFUserDefault(key: Key.userSessionID, defaultValue: "")
+  static var userSessionID: String
 }

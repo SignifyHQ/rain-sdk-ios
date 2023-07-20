@@ -13,6 +13,9 @@ public protocol NetSpendRepositoryProtocol {
   func createAccountPerson(personInfo: AccountPersonParameters, sessionId: String) async throws -> NetSpendAccountPersonData
   func getQuestion(sessionId: String) async throws -> NetSpendQuestionData
   func putQuestion(sessionId: String, encryptedData: String) async throws -> NetSpendAnswerQuestionData
+  func getWorkflows() async throws -> NetSpendWorkflowsData
+  func getDocuments(sessionId: String) async throws -> NetSpendDocumentData
+  func postDocuments(sessionId: String, documentID: String) async throws -> NetSpendDocumentData
 }
 
 public class NetSpendRepository: NetSpendRepositoryProtocol {
@@ -60,5 +63,17 @@ public class NetSpendRepository: NetSpendRepositoryProtocol {
   
   public func putQuestion(sessionId: String, encryptedData: String) async throws -> NetSpendAnswerQuestionData {
     return try await netSpendAPI.putQuestion(sessionId: sessionId, encryptedData: encryptedData)
+  }
+  
+  public func getWorkflows() async throws -> NetSpendWorkflowsData {
+    return try await netSpendAPI.getWorkflows()
+  }
+  
+  public func getDocuments(sessionId: String) async throws -> NetSpendDocumentData {
+    return try await netSpendAPI.getDocuments(sessionId: sessionId)
+  }
+  
+  public func postDocuments(sessionId: String, documentID: String) async throws -> NetSpendDocumentData {
+    return try await netSpendAPI.postDocuments(sessionId: sessionId, documentID: documentID)
   }
 }
