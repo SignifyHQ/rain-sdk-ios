@@ -21,7 +21,7 @@ public struct InitialView: View {
         .resizable()
         .frame(width: 120, height: 120)
       
-      Text(title)
+      Text(title + "Card")
         .font(Fonts.Inter.bold.swiftUIFont(size: 24))
         .foregroundColor(Colors.label.swiftUIColor)
       Spacer()
