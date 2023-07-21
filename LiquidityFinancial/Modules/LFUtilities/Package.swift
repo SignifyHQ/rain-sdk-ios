@@ -12,12 +12,13 @@ let package = Package(
             targets: ["LFUtilities"])
     ],
     dependencies: [
+      .package(name: "LFLocalizable", path: "../LFLocalizable"),
       .package(url: "https://github.com/SwiftyBeaver/SwiftyBeaver.git", .upToNextMajor(from: "2.0.0"))
     ],
     targets: [
         .target(
             name: "LFUtilities",
-            dependencies: ["SwiftyBeaver"]),
+            dependencies: ["SwiftyBeaver", "LFLocalizable"]),
         .testTarget(
             name: "LFUtilitiesTests",
             dependencies: ["LFUtilities"])
