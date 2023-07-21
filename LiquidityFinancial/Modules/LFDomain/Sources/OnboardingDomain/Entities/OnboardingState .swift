@@ -1,5 +1,5 @@
 import Foundation
 
-public protocol OnboardingState {
+public protocol OnboardingState  {
   var missingSteps: [String] { get }
 }

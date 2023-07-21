@@ -4,6 +4,7 @@ public protocol UserDataManagerProtocol {
   var userInfomationData: UserInfomationData { get }
   var phoneNumber: String { get }
   var sessionID: String { get }
+  var userNameDisplay: String { get set }
   func update(firstName: String?)
   func update(lastName: String?)
   func update(phone: String?)
@@ -24,6 +25,15 @@ public protocol UserDataManagerProtocol {
 }
 
 public class UserDataManager: UserDataManagerProtocol {
+  public var userNameDisplay: String {
+    get {
+      UserDefaults.userNameDisplay
+    }
+    set {
+      UserDefaults.userNameDisplay = newValue
+    }
+  }
+  
   public var phoneNumber: String {
     UserDefaults.phoneNumber
   }

@@ -54,6 +54,14 @@ struct QuestionsView: View {
     .popup(item: $viewModel.toastMessage, style: .toast) {
       ToastView(toastMessage: $0)
     }
+    .navigationLink(item: $viewModel.navigation) { item in
+      switch item {
+      case .kycReview:
+        KYCStatusView(viewModel: KYCStatusViewModel(state: .inReview(viewModel.userDataManager.userNameDisplay)))
+      case .uploadDocument:
+        UploadDocumentView()
+      }
+    }
   }
   
   private var headerView: some View {

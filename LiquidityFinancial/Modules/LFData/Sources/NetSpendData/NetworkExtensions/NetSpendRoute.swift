@@ -12,7 +12,7 @@ public enum NetSpendRoute {
   case putQuestions(sessionId: String, encryptData: String)
   case getWorkflows
   case getDocuments(sessionId: String)
-  case postDocuments(sessionId: String, documentId: String)
+  case uploadDocuments(path: PathDocumentParameters, documentData: DocumentParameters)
 }
 
 extension NetSpendRoute: LFRoute {
@@ -40,8 +40,8 @@ extension NetSpendRoute: LFRoute {
       return "/v1/netspend/persons/workflows"
     case .getDocuments:
       return "/v1/netspend/persons/document-requests"
-    case .postDocuments(_, documentId: let documentId):
-      return "/v1/netspend/persons/document-requests/\(documentId)"
+    case .uploadDocuments(let path, _):
+      return "/v1/netspend/persons/document-requests/\(path.documentID)"
     }
   }
   
@@ -67,8 +67,8 @@ extension NetSpendRoute: LFRoute {
     case .getDocuments(sessionId: let sessionID):
       base["netspendSessionId"] = sessionID
       return base
-    case .postDocuments(sessionId: let sessionID, _):
-      base["netspendSessionId"] = sessionID
+    case .uploadDocuments(let path, _):
+      base["netspendSessionId"] = path.sessionId
       return base
     }
   }
@@ -77,16 +77,18 @@ extension NetSpendRoute: LFRoute {
     switch self {
     case .sessionInit, .getAgreements, .getQuestions, .getWorkflows, .getDocuments:
       return .GET
-    case .establishSession, .createAccountPerson, .postDocuments:
+    case .establishSession, .createAccountPerson:
       return .POST
     case .putQuestions:
       return .PUT
+    case .uploadDocuments(let path, _):
+      return path.isUpdate ? .PUT : .POST
     }
   }
   
   public var parameters: Parameters? {
     switch self {
-    case .sessionInit, .getAgreements, .getQuestions, .getWorkflows, .getDocuments, .postDocuments:
+    case .sessionInit, .getAgreements, .getQuestions, .getWorkflows, .getDocuments:
       return nil
     case .establishSession(let parameters):
       return parameters.encoded()
@@ -96,14 +98,16 @@ extension NetSpendRoute: LFRoute {
       var parametersData: [String: Any] = [:]
       parametersData["encryptedData"] = encryptData
       return parametersData
+    case .uploadDocuments(_, let documentData):
+      return documentData.encoded()
     }
   }
   
   public var parameterEncoding: ParameterEncoding? {
     switch self {
-    case .sessionInit, .getAgreements, .getQuestions, .getWorkflows, .getDocuments, .postDocuments:
+    case .sessionInit, .getAgreements, .getQuestions, .getWorkflows, .getDocuments:
       return nil
-    case .establishSession, .createAccountPerson, .putQuestions:
+    case .establishSession, .createAccountPerson, .putQuestions, .uploadDocuments:
       return .json
     }
   }

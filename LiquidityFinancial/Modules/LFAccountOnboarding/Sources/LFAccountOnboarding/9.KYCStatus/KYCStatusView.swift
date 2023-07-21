@@ -3,17 +3,22 @@ import LFUtilities
 import LFStyleGuide
 import LFLocalizable
 
-struct KYCStatusView: View {
-  @StateObject private var viewModel = KYCStatusViewModel()
+public struct KYCStatusView: View {
+  @StateObject var viewModel: KYCStatusViewModel
   
-  var body: some View {
+  public init(viewModel: KYCStatusViewModel) {
+    _viewModel = .init(wrappedValue: viewModel)
+  }
+  
+  public var body: some View {
     makeContentView(with: viewModel.state)
       .background(Colors.background.swiftUIColor)
       .navigationBarBackButtonHidden()
-    // .track(name: String(describing: type(of: self))) TODO: Will be implemented later
+      // .track(name: String(describing: type(of: self))) TODO: Will be implemented later
       .toolbar {
         ToolbarItem(placement: .navigationBarTrailing) {
           Button {
+            
           } label: {
             GenImages.CommonImages.icChat.swiftUIImage
               .foregroundColor(Colors.label.swiftUIColor)
@@ -22,26 +27,26 @@ struct KYCStatusView: View {
       }
       .fullScreenCover(item: $viewModel.presentation) { item in
         switch item {
-          case let .idv(url):
-            IdentityVerificationView(url: url) {
-              viewModel.idvComplete()
-            }
+        case let .idv(url):
+          IdentityVerificationView(url: url) {
+            viewModel.idvComplete()
+          }
         }
       }
   }
 }
 
-// MARK: - View Components
+  // MARK: - View Components
 private extension KYCStatusView {
   @ViewBuilder
   func makeContentView(with state: KYCState) -> some View {
     switch state {
-      case .idle:
-        loadingView
-      case .inVerify:
-        kycWaitView
-      case .declined, .pendingIDV, .inReview:
-        informationView(info: state.kycInformation)
+    case .idle:
+      loadingView
+    case .inVerify:
+      kycWaitView
+    case .declined, .pendingIDV, .inReview:
+      informationView(info: state.kycInformation)
     }
   }
   
@@ -101,7 +106,7 @@ private extension KYCStatusView {
           viewModel.secondaryAction()
         }
       }
-      FullSizeButton(title: info.primary, isDisable: false) {
+      FullSizeButton(title: info.primary, isDisable: false, isLoading: $viewModel.isLoading) {
         viewModel.primaryAction()
       }
     }

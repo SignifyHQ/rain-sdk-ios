@@ -8,6 +8,7 @@ import AvalancheAccountOnboarding
 struct AppView: View {
 
   @StateObject var viewModel = AppViewModel()
+  @Injected(\.userDataManager) var userDataManager
   
   let environmentManager = EnvironmentManager()
   
@@ -28,6 +29,8 @@ struct AppView: View {
         .environmentObject(environmentManager)
       case .welcome:
         WelcomeView()
+      case .onKYCReview:
+        KYCStatusView(viewModel: KYCStatusViewModel(state: .inReview(userDataManager.userNameDisplay)))
       }
     }
     .embedInNavigation()

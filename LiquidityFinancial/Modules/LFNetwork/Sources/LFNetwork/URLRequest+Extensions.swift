@@ -12,7 +12,6 @@ extension URLRequest {
       switch parameterEncoding {
       case .json:
         if let data = try? JSONSerialization.data(withJSONObject: parameters) {
-          headers["Content-Type"] = "application/json"
           body = data
         }
       case .url:

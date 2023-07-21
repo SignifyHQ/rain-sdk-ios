@@ -32,7 +32,7 @@ struct UploadDocumentView: View {
         .customPresentationDetents(height: 552)
     }
     .fileImporter(
-      isPresented: $viewModel.isOpenFileImporter,
+      isPresented: $viewModel.isOpenFileImporterFront,
       allowedContentTypes: [.content, .pdf, .gif, .jpeg, .png, .bmp]
     ) { result in
       viewModel.handleImportedFile(result: result)
@@ -45,6 +45,14 @@ struct UploadDocumentView: View {
     }
     .popup(item: $viewModel.toastMessage, style: .toast) {
       ToastView(toastMessage: $0)
+    }
+    .navigationLink(item: $viewModel.navigation) { item in
+      switch item {
+      case .kycReview:
+        KYCStatusView(viewModel: KYCStatusViewModel(state: .inReview(viewModel.userDataManager.userNameDisplay)))
+      case .home:
+        EmptyView()
+      }
     }
   }
 }
@@ -77,21 +85,67 @@ private extension UploadDocumentView {
     }
   }
   
+  var frontUploadDocument: some View {
+    VStack(spacing: 4) {
+      GenImages.CommonImages.icDocument.swiftUIImage
+        .foregroundColor(Colors.primary.swiftUIColor)
+      Text("Front of the Document")
+        .font(Fonts.Inter.medium.swiftUIFont(size: Constants.FontSize.ultraSmall.value))
+        .foregroundColor(Colors.label.swiftUIColor)
+      Text(LFLocalizable.UploadDocument.MaxSize.description(Constants.Default.maxSize.rawValue))
+        .font(Fonts.Inter.regular.swiftUIFont(size: Constants.FontSize.ultraSmall.value))
+        .foregroundColor(Colors.label.swiftUIColor.opacity(0.75))
+    }
+    .tag(10)
+  }
+  
+  var backUploadDocument: some View {
+    VStack(spacing: 4) {
+      GenImages.CommonImages.icDocument.swiftUIImage
+        .foregroundColor(Colors.primary.swiftUIColor)
+      Text("Back of the Document")
+        .font(Fonts.Inter.medium.swiftUIFont(size: Constants.FontSize.ultraSmall.value))
+        .foregroundColor(Colors.label.swiftUIColor)
+      Text(LFLocalizable.UploadDocument.MaxSize.description(Constants.Default.maxSize.rawValue))
+        .font(Fonts.Inter.regular.swiftUIFont(size: Constants.FontSize.ultraSmall.value))
+        .foregroundColor(Colors.label.swiftUIColor.opacity(0.75))
+    }
+    .tag(20)
+  }
+  
+  @ViewBuilder
   var uploadDocumentArea: some View {
     HStack {
       Spacer()
       VStack(spacing: 12) {
         socialSecurityCardButton
-          .padding(.bottom, 4)
-        GenImages.CommonImages.icDocument.swiftUIImage
-          .foregroundColor(Colors.primary.swiftUIColor)
-        VStack(spacing: 4) {
-          Text(LFLocalizable.UploadDocument.Upload.actionTitle)
-            .font(Fonts.Inter.medium.swiftUIFont(size: Constants.FontSize.ultraSmall.value))
-            .foregroundColor(Colors.label.swiftUIColor)
-          Text(LFLocalizable.UploadDocument.MaxSize.description(Constants.Default.maxSize.rawValue))
-            .font(Fonts.Inter.regular.swiftUIFont(size: Constants.FontSize.ultraSmall.value))
-            .foregroundColor(Colors.label.swiftUIColor.opacity(0.75))
+          .padding(.bottom, 10)
+        switch viewModel.documentTypeSelected.displayTypes {
+        case .all:
+          HStack {
+            frontUploadDocument
+              .onTapGesture {
+                viewModel.openFileImporter(displayType: .front)
+              }
+            Spacer()
+            backUploadDocument
+              .onTapGesture {
+                viewModel.openFileImporter(displayType: .back)
+              }
+          }
+          .padding(.horizontal, 20)
+        case .front:
+          frontUploadDocument
+            .onTapGesture {
+              viewModel.openFileImporter(displayType: .front)
+            }
+        case .back:
+          backUploadDocument
+            .onTapGesture {
+              viewModel.openFileImporter(displayType: .back)
+            }
+        case .none:
+          EmptyView()
         }
       }
       Spacer()
@@ -105,15 +159,13 @@ private extension UploadDocumentView {
         )
     )
     .contentShape(Rectangle())
-    .onTapGesture {
-      viewModel.openFileImporter()
-    }
   }
   
   var uploadButton: some View {
     FullSizeButton(
       title: LFLocalizable.UploadDocument.Button.title,
-      isDisable: viewModel.isDisableButton
+      isDisable: viewModel.isDisableButton,
+      isLoading: $viewModel.isLoading
     ) {
       viewModel.onUploadDocument()
     }
@@ -136,7 +188,7 @@ private extension UploadDocumentView {
         Text(document.fileName)
           .font(Fonts.Inter.regular.swiftUIFont(size: Constants.FontSize.ultraSmall.value))
           .foregroundColor(Colors.label.swiftUIColor)
-        Text(document.formartFizeSize)
+        Text("\(document.fileType.title) -> \(document.documentDisplayType.title)")
           .font(Fonts.Inter.regular.swiftUIFont(size: Constants.FontSize.ultraSmall.value))
           .foregroundColor(Colors.label.swiftUIColor.opacity(0.75))
       }

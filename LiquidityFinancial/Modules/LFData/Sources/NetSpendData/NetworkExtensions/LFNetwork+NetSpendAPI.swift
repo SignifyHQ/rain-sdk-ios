@@ -34,7 +34,7 @@ extension LFNetwork: NetSpendAPIProtocol where R == NetSpendRoute {
     return try await request(NetSpendRoute.getDocuments(sessionId: sessionId), target: NetSpendDocumentData.self, decoder: .apiDecoder)
   }
   
-  public func postDocuments(sessionId: String, documentID: String) async throws -> NetSpendDocumentData {
-    return try await request(NetSpendRoute.postDocuments(sessionId: sessionId, documentId: documentID), target: NetSpendDocumentData.self, decoder: .apiDecoder)
+  public func uploadDocuments(path: PathDocumentParameters, documentData: DocumentParameters) async throws -> NetSpendDocumentData.RequestedDocument {
+    return try await request(NetSpendRoute.uploadDocuments(path: path, documentData: documentData), target: NetSpendDocumentData.RequestedDocument.self, decoder: .apiDecoder)
   }
 }

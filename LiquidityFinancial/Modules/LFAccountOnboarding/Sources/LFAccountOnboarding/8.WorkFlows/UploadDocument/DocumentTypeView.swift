@@ -2,10 +2,11 @@ import SwiftUI
 import LFLocalizable
 import LFStyleGuide
 import LFUtilities
+import NetSpendData
 
 struct DocumentTypeView: View {
-  @Binding var selectedType: DocumentType
-  let documentTypes: [DocumentType]
+  @Binding var selectedType: NetSpendDocumentType
+  let documentTypes: [NetSpendDocumentType]
   let action: () -> Void
   
   var body: some View {

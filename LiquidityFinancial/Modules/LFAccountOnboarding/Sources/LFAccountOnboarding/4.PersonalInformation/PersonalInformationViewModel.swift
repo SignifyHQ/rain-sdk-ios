@@ -35,6 +35,7 @@ class PersonalInformationViewModel: ObservableObject {
       userDataManager.update(firstName: firstName)
       userDataManager.update(lastName: lastName)
       userDataManager.update(dateOfBirth: dateCheck?.netspendDate())
+      userDataManager.userNameDisplay = firstName
       if userDataManager.userInfomationData.phone == nil {
         userDataManager.update(phone: UserDefaults.phoneNumber)
       }

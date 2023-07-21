@@ -7,11 +7,16 @@ import Factory
 import OnboardingData
 import NetSpendData
 
+// swiftlint:disable all
 @MainActor
 final class AddressViewModel: ObservableObject {
   enum Navigation {
     case question(QuestionsEntity)
     case document
+    case pendingIDV
+    case declined
+    case inReview
+    case home
   }
   
   @Injected(\.userDataManager) var userDataManager
@@ -65,6 +70,15 @@ final class AddressViewModel: ObservableObject {
     }
   }
   
+  var userNameDisplay: String {
+    get {
+      UserDefaults.userNameDisplay
+    }
+    set {
+      UserDefaults.userNameDisplay = newValue
+    }
+  }
+  
   private var subscriptions = Set<AnyCancellable>()
   private var pauseAutocomplete = false
   private var isSuggesionTapped: Bool = false
@@ -113,7 +127,7 @@ final class AddressViewModel: ObservableObject {
           governmentID = passport
         }
         let agreementIDS = netspendDataManager.agreement?.agreements.compactMap { $0.id } ?? []
-        let encryptedData = try netspendDataManager.userSession?.encryptWithJWKSet(value: [
+        let encryptedData = try netspendDataManager.sdkSession?.encryptWithJWKSet(value: [
           "date_of_birth": userDataManager.userInfomationData.dateOfBirth ?? "",
           "government_id": [
             "type": type,
@@ -137,7 +151,7 @@ final class AddressViewModel: ObservableObject {
           postalCode: userDataManager.userInfomationData.postalCode ?? "",
           encryptedData: encryptedData ?? ""
         )
-        let person = try await netspendRepository.createAccountPerson(personInfo: param, sessionId: netspendDataManager.userSession?.sessionId ?? "")
+        let person = try await netspendRepository.createAccountPerson(personInfo: param, sessionId: netspendDataManager.serverSession?.id ?? "")
         netspendDataManager.update(accountPersonData: person)
         
         let workflows = try await self.netspendRepository.getWorkflows()
@@ -148,24 +162,24 @@ final class AddressViewModel: ObservableObject {
             switch step.missingStep {
             case .identityQuestions:
               let questionsEncrypt = try await netspendRepository.getQuestion(sessionId: userDataManager.sessionID)
-              if let usersession = netspendDataManager.userSession, let questionsDecode = questionsEncrypt.decodeData(session: usersession) {
+              if let usersession = netspendDataManager.sdkSession, let questionsDecode = questionsEncrypt.decodeData(session: usersession) {
                 let questionsEntity = QuestionsEntity.mapObj(questionsDecode)
                 navigation = .question(questionsEntity)
               }
             case .provideDocuments:
               let documents = try await netspendRepository.getDocuments(sessionId: userDataManager.sessionID)
-              log.debug(documents)
+              netspendDataManager.update(documentData: documents)
               navigation = .document
             case .primaryPersonKYCApprove:
-              break
+              navigation = .home
             case .KYCData:
-              break
+              navigation = .pendingIDV
             case .acceptAgreement:
               break
             case .expectedUse:
               break
             case .identityScan:
-              break
+              navigation = .pendingIDV
             }
           }
         }

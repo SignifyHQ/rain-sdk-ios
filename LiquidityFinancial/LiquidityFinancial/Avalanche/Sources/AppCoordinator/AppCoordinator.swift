@@ -3,6 +3,11 @@ import Combine
 import Factory
 import AuthorizationManager
 import LFUtilities
+import LFAccountOnboarding
+import OnboardingDomain
+import OnboardingData
+import NetSpendData
+import SwiftUI
 
 // swiftlint:disable let_var_whitespace
 protocol AppCoordinatorProtocol {
@@ -14,10 +19,16 @@ protocol AppCoordinatorProtocol {
 
 class AppCoordinator: AppCoordinatorProtocol {
   
+  @Injected(\.netspendRepository) var netspendRepository
+  @Injected(\.netspendDataManager) var netspendDataManager
+  @Injected(\.userDataManager) var userDataManager
+  @Injected(\.onboardingRepository) var onboardingRepository
+  
   enum Route {
     case initial
     case onboarding
     case welcome
+    case onKYCReview
   }
   
   let routeSubject: CurrentValueSubject<Route, Never>
@@ -35,10 +46,34 @@ class AppCoordinator: AppCoordinatorProtocol {
   
   func routeUser() {
     if authorizationManager.isTokenValid() {
-      routeSubject.value = .welcome
+      getCurrentState()
     } else {
       routeSubject.value = .onboarding
     }
   }
   
+}
+
+extension AppCoordinator {
+  func getCurrentState() {
+    Task { @MainActor in
+      do {
+        let onboardingState = try await onboardingRepository.getOnboardingState(sessionId: userDataManager.sessionID)
+        if onboardingState.missingSteps.isEmpty {
+          routeSubject.value = .welcome
+        } else {
+          let state = onboardingState.missingSteps.contains(where: { item in
+            item == "primary_person_kyc_approve" || item == "provide_documents"
+          })
+          if state {
+            routeSubject.value = .onKYCReview
+          } else {
+            routeSubject.value = .welcome
+          }
+        }
+      } catch {
+        log.error(error.localizedDescription)
+      }
+    }
+  }
 }

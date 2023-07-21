@@ -7,4 +7,5 @@ public extension Key {
   static let environmentSelection: Key = "EnvironmentSelection"
   static let phoneNumber: Key = "UserPhoneNumber"
   static let userSessionID: Key = "UserSessionID"
+  static let userNameDisplay: Key = "userNameDisplay"
 }

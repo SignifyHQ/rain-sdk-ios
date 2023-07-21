@@ -86,6 +86,14 @@ struct AddressView: View {
         QuestionsView(viewModel: QuestionsViewModel(questionList: questionsEntity))
       case .document:
         UploadDocumentView()
+      case .pendingIDV:
+        KYCStatusView(viewModel: KYCStatusViewModel(state: .pendingIDV))
+      case .declined:
+        KYCStatusView(viewModel: KYCStatusViewModel(state: .declined))
+      case .inReview:
+        KYCStatusView(viewModel: KYCStatusViewModel(state: .inReview(viewModel.userNameDisplay)))
+      case .home:
+        EmptyView()
       }
     }
   }

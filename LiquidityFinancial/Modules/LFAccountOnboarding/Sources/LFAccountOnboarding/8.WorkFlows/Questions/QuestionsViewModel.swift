@@ -2,9 +2,15 @@ import SwiftUI
 import NetSpendData
 import Factory
 import LFUtilities
+import OnboardingDomain
+import OnboardingData
 
 @MainActor
 final class QuestionsViewModel: ObservableObject {
+  enum Navigation {
+    case kycReview
+    case uploadDocument
+  }
   
   @Injected(\.netspendDataManager) var netspendDataManager
   @Injected(\.userDataManager) var userDataManager
@@ -15,6 +21,7 @@ final class QuestionsViewModel: ObservableObject {
   @Published var isEnableContinue: Bool = false
   @Published var toastMessage: String?
   @Published var questionList: QuestionsEntity
+  @Published var navigation: Navigation?
   
   init(questionList: QuestionsEntity) {
     _questionList = .init(initialValue: questionList)
@@ -32,7 +39,7 @@ final class QuestionsViewModel: ObservableObject {
   func isValidAnswerQuestion() {
     var hasAllAnswerCount = 0
     questionList.questions.forEach { answerQuestion in
-      if let _ = answerQuestion.answer.first(where: { $0.isSelect == true }) {
+      if answerQuestion.answer.first(where: { $0.isSelect == true }) != nil {
         hasAllAnswerCount += 1
       }
     }
@@ -46,7 +53,7 @@ final class QuestionsViewModel: ObservableObject {
         answers.append(AnswerQuestionParameters.Answers(questionId: answerQuestion.id, answerId: answer.answerId))
       }
     }
-    guard let session = netspendDataManager.userSession else { return }
+    guard let session = netspendDataManager.sdkSession else { return }
     let answerQuestionParameters = AnswerQuestionParameters(answers: answers)
     let encryptedData = answerQuestionParameters.encodeObj(session: session)
     
@@ -55,7 +62,18 @@ final class QuestionsViewModel: ObservableObject {
       isLoading = true
       do {
         _ = try await netspendRepository.putQuestion(sessionId: session.sessionId, encryptedData: encryptedData)
-        _ = try await onboardingRepository.getOnboardingState(sessionId:  session.sessionId)
+        if let onboardingState = try await onboardingRepository.getOnboardingState(sessionId: userDataManager.sessionID) as? APIOnboardingState {
+          let listEnumState = onboardingState.mapToEnum()
+          if listEnumState.isEmpty {
+              //Go Home Screen
+          } else {
+            if listEnumState.contains(where: { $0 == .primaryPersonKYCApprove }) {
+              navigation = .kycReview
+            } else if listEnumState.contains(where: { $0 == .provideDocuments }) {
+              navigation = .uploadDocument
+            }
+          }
+        }
       } catch {
         log.error(error)
         toastMessage = error.localizedDescription

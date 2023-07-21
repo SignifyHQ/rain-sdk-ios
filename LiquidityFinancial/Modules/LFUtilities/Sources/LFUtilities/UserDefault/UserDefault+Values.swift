@@ -19,4 +19,8 @@ public extension UserDefaults {
   
   @LFUserDefault(key: Key.userSessionID, defaultValue: "")
   static var userSessionID: String
+  
+  @LFUserDefault(key: Key.userNameDisplay, defaultValue: "")
+  static var userNameDisplay: String
+  
 }

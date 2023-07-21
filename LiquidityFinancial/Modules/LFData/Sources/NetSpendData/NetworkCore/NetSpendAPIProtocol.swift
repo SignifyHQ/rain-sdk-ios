@@ -9,5 +9,5 @@ public protocol NetSpendAPIProtocol {
   func putQuestion(sessionId: String, encryptedData: String) async throws -> NetSpendAnswerQuestionData
   func getWorkflows() async throws -> NetSpendWorkflowsData
   func getDocuments(sessionId: String) async throws -> NetSpendDocumentData
-  func postDocuments(sessionId: String, documentID: String) async throws -> NetSpendDocumentData
+  func uploadDocuments(path: PathDocumentParameters, documentData: DocumentParameters) async throws -> NetSpendDocumentData.RequestedDocument
 }

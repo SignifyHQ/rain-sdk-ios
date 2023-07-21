@@ -4,7 +4,7 @@ import LFStyleGuide
 import LFLocalizable
 
 public struct WelcomeView: View {
-
+  
   @StateObject var viewModel = WelcomeViewModel()
   
   public init() {}
@@ -15,7 +15,7 @@ public struct WelcomeView: View {
       
       GenImages.CommonImages.dash.swiftUIImage
         .foregroundColor(Colors.label.swiftUIColor)
-        .padding(.vertical, 12) 
+        .padding(.vertical, 12)
       
       ScrollView(showsIndicators: true) {
         VStack(spacing: 24) {
@@ -30,7 +30,7 @@ public struct WelcomeView: View {
         }
         .padding(.horizontal, 30)
       }
-       
+      
       buttons
         .padding(.horizontal, 30)
     }

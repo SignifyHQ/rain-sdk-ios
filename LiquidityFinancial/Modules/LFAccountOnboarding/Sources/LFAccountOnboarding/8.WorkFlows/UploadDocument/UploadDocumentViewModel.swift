@@ -1,20 +1,40 @@
 import Foundation
 import LFUtilities
 import LFLocalizable
+import Factory
+import NetSpendData
+import OnboardingData
+import SwiftUI
+import UIKit
 
+// swiftlint:disable all
 @MainActor
 final class UploadDocumentViewModel: ObservableObject {
-  @Published var isOpenFileImporter: Bool = false
+  enum Navigation {
+    case kycReview
+    case home
+  }
+  
+  @Injected(\.netspendDataManager) var netspendDataManager
+  @Injected(\.userDataManager) var userDataManager
+  @Injected(\.netspendRepository) var netspendRepository
+  @Injected(\.onboardingRepository) var onboardingRepository
+  
+  @Published var navigation: Navigation?
+  @Published var isLoading: Bool = false
+  @Published var isOpenFileImporterFront: Bool = false
   @Published var isShowDocumentUploadedPopup: Bool = false
   @Published var isDisableButton: Bool = true
   @Published var isShowBottomSheet: Bool = false
   @Published var toastMessage: String?
-  @Published var documentTypeSelected: DocumentType = .socialSecurityCard
+  @Published var documentTypeSelected: NetSpendDocumentType = .socialSecurityCard
   @Published var documents = [Document]() {
     didSet {
       checkDocumentMaxSize()
     }
   }
+  
+  var isOpenningDocumentDisplayType: DocumentDisplayType = .none
   
   let documentRequirements: [DocumentRequirement] = [
     DocumentRequirement(
@@ -38,8 +58,8 @@ final class UploadDocumentViewModel: ObservableObject {
       details: Constants.ssnDocument
     )
   ]
-  let documentTypes: [DocumentType] = [
-    .foreignID, .other, .passport, .payStub, .socialSecurityCard, .stateID, .utilityBill
+  let documentTypes: [NetSpendDocumentType] = [
+    .foreignId, .other, .passport, .payStubDatedWithin30Days, .socialSecurityCard, .stateIssuedPhotoId, .utilityBill
   ]
   
   private let maxSize = Double(Constants.Default.maxSize.rawValue) ?? 20
@@ -47,35 +67,139 @@ final class UploadDocumentViewModel: ObservableObject {
   init() {}
 }
 
-// MARK: View Helpers
+  // MARK: Upload document
 extension UploadDocumentViewModel {
+  private func createDocument(document: Document) -> DocumentEncryptedData {
+    var documentEncryptedData = DocumentEncryptedData()
+    if document.documentDisplayType == .front {
+      documentEncryptedData.frontImageContentType = document.fileType.documentType
+      if let datastr = try? Data(contentsOf: document.filePath).base64EncodedString() {
+        documentEncryptedData.frontImage = datastr
+      }
+    } else if document.documentDisplayType == .back {
+      documentEncryptedData.backImageContentType = document.fileType.documentType
+      if let datastr = try? Data(contentsOf: document.filePath).base64EncodedString() {
+        documentEncryptedData.backImage = datastr
+      }
+    }
+    return documentEncryptedData
+  }
+  
+  func pushDocument(onSuccess: @escaping () -> Void) {
+    Task { @MainActor in
+      defer { isLoading = false }
+      isLoading = true
+      do {
+        var documentEncryptedData = DocumentEncryptedData()
+        if documents.count == 2 {
+          let firstDocumentEncrypted = createDocument(document: documents.first!)
+          let lastDocumentEncrypted = createDocument(document: documents.last!)
+          documentEncryptedData.frontImageContentType = firstDocumentEncrypted.frontImageContentType
+          documentEncryptedData.frontImage = firstDocumentEncrypted.frontImage
+          documentEncryptedData.backImageContentType = lastDocumentEncrypted.backImageContentType
+          documentEncryptedData.backImage = lastDocumentEncrypted.backImage
+        } else if documents.count == 1 {
+          let firstDocumentEncrypted = createDocument(document: documents.first!)
+          documentEncryptedData.frontImageContentType = firstDocumentEncrypted.frontImageContentType
+          documentEncryptedData.frontImage = firstDocumentEncrypted.frontImage
+          documentEncryptedData.backImageContentType = firstDocumentEncrypted.backImageContentType
+          documentEncryptedData.backImage = firstDocumentEncrypted.backImage
+        }
+        
+        let encryptedData = try netspendDataManager.sdkSession?.encryptWithJWKSet(value: documentEncryptedData.encoded())
+        let purpose = netspendDataManager.documentData?.requestedDocuments.first?.workflow ?? ""
+        let sessionId = netspendDataManager.serverSession?.id ?? ""
+        let documentId = netspendDataManager.documentData?.requestedDocuments.first?.documentRequestId ?? ""
+        var isUpdateDocument = false
+        if let status = netspendDataManager.documentData?.requestedDocuments.first?.status {
+          if status != .open { isUpdateDocument = true }
+        }
+        let documentData = DocumentParameters(purpose: purpose, documents: [
+          DocumentParameters.Document(documentType: documentTypeSelected.rawValue, country: "US", encryptedData: encryptedData ?? "")
+        ])
+        let path = PathDocumentParameters(sessionId: sessionId, documentID: documentId, isUpdate: isUpdateDocument)
+        let postDocument = try await netspendRepository.uploadDocuments(path: path, documentData: documentData)
+        
+        netspendDataManager.documentData?.update(status: postDocument.status, fromID: postDocument.documentRequestId)
+       
+        onSuccess()
+      } catch {
+        log.error(error.localizedDescription)
+        toastMessage = error.localizedDescription
+      }
+    }
+  }
+}
+
+  // MARK: View Helpers
+extension UploadDocumentViewModel {
+  
   func handleImportedFile(result: Result<URL, Error>) {
     switch result {
-      case let .success(fileURL):
-        let document = Document(filePath: fileURL, fileSize: fileURL.size)
-        documents.append(document)
-      case let .failure(error):
-        toastMessage = error.localizedDescription
+    case let .success(fileURL):
+      let document = Document(filePath: fileURL, fileSize: fileURL.size, fileType: documentTypeSelected, documentDisplayType: isOpenningDocumentDisplayType)
+      switch document.documentDisplayType {
+      case .all, .none: break
+      case .front:
+        documents.removeAll(where: { $0.documentDisplayType == .front })
+        if documents.count == 1 {
+          documents.insert(document, at: 0)
+        } else if documents.isEmpty {
+          documents.append(document)
+        }
+      case .back:
+        documents.removeAll(where: { $0.documentDisplayType == .back })
+        if documents.count == 1 {
+          documents.insert(document, at: 1)
+        } else if documents.isEmpty {
+          documents.append(document)
+        }
+      }
+    case let .failure(error):
+      toastMessage = error.localizedDescription
     }
   }
   
   func removeFile(index: Int) {
     if documents.indices.contains(index) {
       documents.remove(at: index)
+      checkDocumentMaxSize()
     }
   }
   
-  func openFileImporter() {
-    isOpenFileImporter = true
+  func openFileImporter(displayType: DocumentDisplayType) {
+    switch displayType {
+    case .front:
+      log.debug("is import front")
+      isOpenningDocumentDisplayType = .front
+    case .back:
+      log.debug("is import back")
+      isOpenningDocumentDisplayType = .back
+    case .all:
+      isOpenningDocumentDisplayType = .all
+    case .none:
+      isOpenningDocumentDisplayType = .none
+    }
+    isOpenFileImporterFront = true
   }
   
   func onClickedDocumentUploadedPrimaryButton() {
     isShowDocumentUploadedPopup = false
+    guard let status = netspendDataManager.documentData?.requestedDocuments.first?.status else { return }
+    if status == .reviewInProgress {
+      navigation = .kycReview
+    } else if status == .open {
+      //Do not thing
+    } else if status == .complete {
+      navigation = .home
+    }
   }
   
   func onUploadDocument() {
-    // Handle logic upload document here
-    isShowDocumentUploadedPopup = true
+    pushDocument(onSuccess: {
+      self.documents.removeAll() //reset document selected
+      self.isShowDocumentUploadedPopup = true
+    })
   }
   
   func showDocumentTypeSheet() {
@@ -87,7 +211,7 @@ extension UploadDocumentViewModel {
   }
 }
 
-// MARK: Private Functions
+  // MARK: Private Functions
 private extension UploadDocumentViewModel {
   func checkDocumentMaxSize() {
     let documentsSize = documents.reduce(0) { currentValue, document in

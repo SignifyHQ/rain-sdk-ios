@@ -1,6 +1,7 @@
 import Foundation
+import LFUtilities
 
-public struct UserInfomationData {
+public struct UserInfomationData: Codable {
   public var firstName, lastName, middleName: String?
   public var agreementIDS: [String] = []
   public var phone, email, fullName, dateOfBirth: String?
