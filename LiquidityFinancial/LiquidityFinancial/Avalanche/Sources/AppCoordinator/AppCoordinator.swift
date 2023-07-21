@@ -72,6 +72,7 @@ extension AppCoordinator {
           }
         }
       } catch {
+        routeSubject.value = .onboarding
         log.error(error.localizedDescription)
       }
     }

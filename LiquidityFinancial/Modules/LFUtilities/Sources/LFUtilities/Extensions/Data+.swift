@@ -1,10 +1,3 @@
-//
-//  File.swift
-//  
-//
-//  Created by Tran Minh Luan on 16/07/2023.
-//
-
 import Foundation
 
 extension Data {

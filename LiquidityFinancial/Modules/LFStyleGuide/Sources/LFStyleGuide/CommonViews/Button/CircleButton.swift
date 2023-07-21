@@ -13,22 +13,22 @@ public struct CircleButton: View {
         .fill(Colors.buttons.swiftUIColor)
         .frame(32.0)
       switch style {
-        case .right, .delete, .plus, .xmark:
-          if let imageAsset = style.imageAsset {
-            imageAsset.swiftUIImage
-              .foregroundColor(Colors.label.swiftUIColor)
-              .frame(24.0)
-          }
-        default:
-          Image(systemName: style.rawValue)
-            .imageScale(.small)
+      case .right, .delete, .plus, .xmark:
+        if let imageAsset = style.imageAsset {
+          imageAsset.swiftUIImage
             .foregroundColor(Colors.label.swiftUIColor)
+            .frame(24.0)
+        }
+      default:
+        Image(systemName: style.rawValue)
+          .imageScale(.small)
+          .foregroundColor(Colors.label.swiftUIColor)
       }
     }
   }
 }
 
-// MARK: - Style
+  // MARK: - Style
 
 public extension CircleButton {
   enum Style: String, CaseIterable {
@@ -45,12 +45,12 @@ public extension CircleButton {
     
     var imageAsset: ImageAsset? {
       switch self {
-        case .xmark:
-          return GenImages.CommonImages.icXMark
-        case .delete:
-          return GenImages.CommonImages.icTrash
-        default:
-          return nil
+      case .xmark:
+        return GenImages.CommonImages.icXMark
+      case .delete:
+        return GenImages.CommonImages.icTrash
+      default:
+        return nil
       }
     }
   }

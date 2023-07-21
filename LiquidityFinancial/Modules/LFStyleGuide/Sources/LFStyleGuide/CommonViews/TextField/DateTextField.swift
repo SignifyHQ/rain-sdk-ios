@@ -1,5 +1,6 @@
 import SwiftUI
 
+// swiftlint:disable force_unwrapping
 public struct DateTextField: UIViewRepresentable {
   private let textField = UITextField()
   private let datePicker = UIDatePicker()

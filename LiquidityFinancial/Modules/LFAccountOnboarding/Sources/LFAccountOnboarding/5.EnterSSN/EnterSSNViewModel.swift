@@ -33,7 +33,6 @@ class EnterSSNViewModel: ObservableObject {
   }
 }
 
-
 private extension EnterSSNViewModel {
   func isAllDataFilled() {
     let ssnLength = isVerifySSN ? Constants.MaxCharacterLimit.fullSSNLength.value : Constants.MaxCharacterLimit.ssnLength.value

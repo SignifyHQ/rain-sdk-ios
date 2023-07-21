@@ -10,4 +10,3 @@ public let log: SwiftyBeaver.Type = {
   
   return log
 }()
-

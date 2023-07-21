@@ -5,7 +5,7 @@ extension URLRequest {
   
   init(route: LFRoute) {
     var url = route.url
-    var headers = route.httpHeaders
+    let headers = route.httpHeaders
     var body: Data?
     
     if let parameters = route.parameters, let parameterEncoding = route.parameterEncoding {

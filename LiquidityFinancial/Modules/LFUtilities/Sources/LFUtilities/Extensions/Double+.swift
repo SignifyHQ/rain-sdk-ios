@@ -1,10 +1,3 @@
-//
-//  File.swift
-//  
-//
-//  Created by Nguyen Nhat Minh on 20/07/2023.
-//
-
 import Foundation
 
 public extension Double {

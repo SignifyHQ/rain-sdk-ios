@@ -47,5 +47,4 @@ class QuestionsEntity {
     return QuestionsEntity(questions: questions)
   }
   
-  
 }

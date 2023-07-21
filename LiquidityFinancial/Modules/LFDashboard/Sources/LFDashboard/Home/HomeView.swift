@@ -7,7 +7,7 @@ public struct HomeView: View {
   @StateObject private var viewModel: HomeViewModel
   let tabOptions: [TabOption]
   
-  public init(viewModel: HomeViewModel , tabOptions: [TabOption]) {
+  public init(viewModel: HomeViewModel, tabOptions: [TabOption]) {
     _viewModel = .init(wrappedValue: viewModel)
     self.tabOptions = tabOptions
   }

@@ -3,10 +3,10 @@ import SwiftUI
 import LFUtilities
 import Combine
 
-/// AppStore reviewers and journalists need to log in into the app without the need of receiving an SMS.
-/// Therefore, we are providing them with a set of numbers they can use to log in, which will already have an account set up.
-/// If the app detects that one of these numbers has been used, it will manually call Twillio API to check the messages sent
-/// and obtain the SMS code from there.
+// AppStore reviewers and journalists need to log in into the app without the need of receiving an SMS.
+// Therefore, we are providing them with a set of numbers they can use to log in, which will already have an account set up.
+// If the app detects that one of these numbers has been used, it will manually call Twillio API to check the messages sent
+// and obtain the SMS code from there.
 // swiftlint:disable all
 class DemoAccountsHelper {
   @EnvironmentObject

@@ -21,7 +21,6 @@ struct CashCardView: View {
     isCardAvailable ? GenImages.Images.availableCard : GenImages.Images.unavailableCard
   }
 
-
   init(
     isPOFlow: Bool,
     showLoadingIndicator: Bool,

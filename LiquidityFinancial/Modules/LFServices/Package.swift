@@ -10,7 +10,7 @@ let package = Package(
         .library(name: "LFServices", targets: ["LFServices", "NetspendSdk", "LinkKit", "FraudForce"])
     ],
     dependencies: [
-      .package(name: "LFUtilities", path: "../LFUtilities"),
+      .package(name: "LFUtilities", path: "../LFUtilities")
     ],
     targets: [
         .target(

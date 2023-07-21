@@ -23,36 +23,36 @@ struct CashView: View {
     .background(Colors.background.swiftUIColor)
     .navigationLink(item: $viewModel.navigation) { navigation in
       switch navigation {
-        case .bankStatements:
-          EmptyView()
+      case .bankStatements:
+        EmptyView()
           // BankStatementsListView()
-        case .changeAsset:
-          ChangeAssetView(
-            selectedAsset: $viewModel.selectedAsset,
-            balance: viewModel.cashBalanceValue,
-            assets: [.usd, .avax, .usdc]
-          )
-        case .transactions:
-          EmptyView()
+      case .changeAsset:
+        ChangeAssetView(
+          selectedAsset: $viewModel.selectedAsset,
+          balance: viewModel.cashBalanceValue,
+          assets: [.usd, .avax, .usdc]
+        )
+      case .transactions:
+        EmptyView()
           // TransactionListView(type: .cash)
       }
     }
-    //    .sheet(item: $viewModel.sheetPresentation) { item in
-    //      switch item {
-    //        case let .transaction(trx):
-    //          TransactionDetailView(transaction: trx, type: .cash)
-    //            .embedInNavigation()
-    //      }
-    //    }
-    //    .fullScreenCover(item: $viewModel.fullScreen) { item in
-    //      switch item {
-    //        case .fundCard:
-    //          FundCardView {
-    //            viewModel.fullScreen = nil
-    //          }
-    //          .embedInNavigation()
-    //      }
-    //    }
+      //    .sheet(item: $viewModel.sheetPresentation) { item in
+      //      switch item {
+      //        case let .transaction(trx):
+      //          TransactionDetailView(transaction: trx, type: .cash)
+      //            .embedInNavigation()
+      //      }
+      //    }
+      //    .fullScreenCover(item: $viewModel.fullScreen) { item in
+      //      switch item {
+      //        case .fundCard:
+      //          FundCardView {
+      //            viewModel.fullScreen = nil
+      //          }
+      //          .embedInNavigation()
+      //      }
+      //    }
   }
 }
 
@@ -106,23 +106,23 @@ private extension CashView {
       .refreshable {
         await viewModel.refresh()
       }
-      // .track(name: String(describing: type(of: self))) TODO: Will be implemented later
+        // .track(name: String(describing: type(of: self))) TODO: Will be implemented later
     }
   }
   
   func activity(size: CGSize) -> some View {
     Group {
       switch viewModel.activity {
-        case .loading:
-          LottieView(loading: .mix)
-            .frame(width: 30, height: 20)
-            .padding(.top, 8)
-        case .transactions:
-          transactionsView(size: size)
+      case .loading:
+        LottieView(loading: .mix)
+          .frame(width: 30, height: 20)
+          .padding(.top, 8)
+      case .transactions:
+        transactionsView(size: size)
       }
     }
   }
-    
+  
   var seeAllTransactions: some View {
     Button {
       viewModel.onClickedSeeAllButton()
@@ -165,12 +165,12 @@ private extension CashView {
         noTransactionsYetView(height: size.height)
       } else {
         EmptyView()
-        // TODO: Will be implemented later
-        //      ForEach(items) { transaction in
-        //        TransactionRowView(item: transaction, type: .cash) {
-        //          viewModel.transactionItemTapped(transaction)
-        //        }
-        //      }
+          // TODO: Will be implemented later
+          //      ForEach(items) { transaction in
+          //        TransactionRowView(item: transaction, type: .cash) {
+          //          viewModel.transactionItemTapped(transaction)
+          //        }
+          //      }
       }
     }
   }

@@ -39,7 +39,7 @@ final class QuestionsViewModel: ObservableObject {
   func isValidAnswerQuestion() {
     var hasAllAnswerCount = 0
     questionList.questions.forEach { answerQuestion in
-      if answerQuestion.answer.first(where: { $0.isSelect == true }) != nil {
+      if answerQuestion.answer.contains(where: { $0.isSelect == true }) {
         hasAllAnswerCount += 1
       }
     }

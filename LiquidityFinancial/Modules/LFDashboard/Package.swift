@@ -9,7 +9,7 @@ let package = Package(
   products: [
     .library(
       name: "LFDashboard",
-      targets: ["LFDashboard"]),
+      targets: ["LFDashboard"])
   ],
   dependencies: [
     .package(name: "LFUtilities", path: "../LFUtilities"),
@@ -20,7 +20,7 @@ let package = Package(
     .target(
       name: "LFDashboard",
       dependencies: [
-        "LFUtilities", "LFStyleGuide", "LFLocalizable",
+        "LFUtilities", "LFStyleGuide", "LFLocalizable"
       ],
       resources: [
         .process("ZResources")
@@ -28,6 +28,6 @@ let package = Package(
     ),
     .testTarget(
       name: "LFDashboardTests",
-      dependencies: ["LFDashboard"]),
+      dependencies: ["LFDashboard"])
   ]
 )

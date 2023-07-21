@@ -1,6 +1,6 @@
 import UIKit
 
-// swiftlint: disable force_try
+// swiftlint: disable force_try fallthrough
 public enum LFUtility {
   public static var personaCallback = "https://personacallback"
   public static var termsURL: String = try! LFConfiguration.value(for: "TERMS_URL")
