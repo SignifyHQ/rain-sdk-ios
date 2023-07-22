@@ -66,6 +66,7 @@ struct VerificationCodeView: View {
     .navigationLink(isActive: $viewModel.isNavigationToWelcome) {
       WelcomeView()
     }
+    .navigationBarBackButtonHidden(viewModel.isShowLoading)
   }
 }
 

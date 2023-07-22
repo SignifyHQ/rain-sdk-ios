@@ -37,8 +37,6 @@ public enum GenImages {
     public static let icError = ImageAsset(name: "ic_error")
     public static let icGear = ImageAsset(name: "ic_gear")
     public static let icHome = ImageAsset(name: "ic_home")
-    public static let icKycQuestion = ImageAsset(name: "ic_kyc_question_?")
-    public static let icKycQuestionCheck = ImageAsset(name: "ic_kyc_question_check")
     public static let icLock = ImageAsset(name: "ic_lock")
     public static let icProfile = ImageAsset(name: "ic_profile")
     public static let icRewards = ImageAsset(name: "ic_rewards")
@@ -56,11 +54,14 @@ public enum GenImages {
     public static let info = ImageAsset(name: "info")
     public static let map = ImageAsset(name: "map")
     public static let netspend = ImageAsset(name: "netspend")
+    public static let netspendLogo = ImageAsset(name: "netspend_logo")
     public static let termsCheckboxDeselected = ImageAsset(name: "termsCheckboxDeselected")
     public static let termsCheckboxSelected = ImageAsset(name: "termsCheckboxSelected")
   }
   public enum Images {
     public static let availableCard = ImageAsset(name: "availableCard")
+    public static let icKycQuestion = ImageAsset(name: "ic_kyc_question_?")
+    public static let icKycQuestionCheck = ImageAsset(name: "ic_kyc_question_check")
     public static let icLogo = ImageAsset(name: "ic_logo")
     public static let unavailableCard = ImageAsset(name: "unavailableCard")
   }
@@ -80,7 +81,7 @@ public struct ImageAsset {
 
   @available(iOS 8.0, tvOS 9.0, watchOS 2.0, macOS 10.7, *)
   public var image: Image {
-    let bundle = BundleToken.bundle
+    let bundle = Bundle.main
     #if os(iOS) || os(tvOS)
     let image = Image(named: name, in: bundle, compatibleWith: nil)
     #elseif os(macOS)
@@ -98,7 +99,7 @@ public struct ImageAsset {
   #if os(iOS) || os(tvOS)
   @available(iOS 8.0, tvOS 9.0, *)
   public func image(compatibleWith traitCollection: UITraitCollection) -> Image {
-    let bundle = BundleToken.bundle
+    let bundle = Bundle.main
     guard let result = Image(named: name, in: bundle, compatibleWith: traitCollection) else {
       fatalError("Unable to load image asset named \(name).")
     }
@@ -120,7 +121,7 @@ public extension ImageAsset.Image {
     message: "This initializer is unsafe on macOS, please use the ImageAsset.image property")
   convenience init?(asset: ImageAsset) {
     #if os(iOS) || os(tvOS)
-    let bundle = BundleToken.bundle
+    let bundle = Bundle.main
     self.init(named: asset.name, in: bundle, compatibleWith: nil)
     #elseif os(macOS)
     self.init(named: NSImage.Name(asset.name))
@@ -134,30 +135,18 @@ public extension ImageAsset.Image {
 @available(iOS 13.0, tvOS 13.0, watchOS 6.0, macOS 10.15, *)
 public extension SwiftUI.Image {
   init(asset: ImageAsset) {
-    let bundle = BundleToken.bundle
+    let bundle = Bundle.main
     self.init(asset.name, bundle: bundle)
   }
 
   init(asset: ImageAsset, label: Text) {
-    let bundle = BundleToken.bundle
+    let bundle = Bundle.main
     self.init(asset.name, bundle: bundle, label: label)
   }
 
   init(decorative asset: ImageAsset) {
-    let bundle = BundleToken.bundle
+    let bundle = Bundle.main
     self.init(decorative: asset.name, bundle: bundle)
   }
 }
 #endif
-
-// swiftlint:disable convenience_type
-private final class BundleToken {
-  static let bundle: Bundle = {
-    #if SWIFT_PACKAGE
-    return Bundle.module
-    #else
-    return Bundle(for: BundleToken.self)
-    #endif
-  }()
-}
-// swiftlint:enable convenience_type

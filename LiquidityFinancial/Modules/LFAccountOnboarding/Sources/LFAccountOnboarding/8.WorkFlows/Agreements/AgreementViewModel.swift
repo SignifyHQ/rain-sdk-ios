@@ -45,6 +45,6 @@ extension AgreementViewModel {
 // MARK: Private Functions
 private extension AgreementViewModel {
   func isEnableButton() {
-    isDisableButton = !isAgreedNetSpendCondition//!(isAgreedNetSpendCondition && isAgreedPathwardCondition)
+    isDisableButton = !(isAgreedNetSpendCondition && isAgreedPathwardCondition)
   }
 }

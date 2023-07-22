@@ -15,6 +15,7 @@ public struct ErrorView: View {
       Spacer()
       GenImages.Images.icLogo.swiftUIImage
         .resizable()
+        .scaledToFit()
         .frame(120)
       Text(LFLocalizable.Error.WeAreSorry.title)
         .padding()

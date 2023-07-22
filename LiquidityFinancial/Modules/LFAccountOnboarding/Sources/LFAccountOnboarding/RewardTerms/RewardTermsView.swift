@@ -71,6 +71,7 @@ extension RewardTermsView {
       VStack {
         GenImages.Images.icLogo.swiftUIImage
           .resizable()
+          .scaledToFit()
           .frame(width: 80, height: 80, alignment: .center)
         Spacer()
       }

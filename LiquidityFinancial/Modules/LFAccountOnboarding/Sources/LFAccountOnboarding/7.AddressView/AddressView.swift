@@ -96,6 +96,7 @@ struct AddressView: View {
         EmptyView()
       }
     }
+    .navigationBarBackButtonHidden(viewModel.isLoading)
   }
 
   private func listView() -> some View {

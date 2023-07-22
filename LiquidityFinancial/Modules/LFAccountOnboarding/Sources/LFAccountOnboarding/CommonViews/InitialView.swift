@@ -16,9 +16,11 @@ public struct InitialView: View {
   public var body: some View {
     VStack(spacing: 32) {
       Spacer()
-      ProgressView().progressViewStyle(.circular).tint(Colors.primary.swiftUIColor)
+      ProgressView().progressViewStyle(.circular)
+        .tint(Colors.Buttons.highlightButton.swiftUIColor)
       GenImages.Images.icLogo.swiftUIImage
         .resizable()
+        .scaledToFit()
         .frame(width: 120, height: 120)
       
       Text(title + "Card")

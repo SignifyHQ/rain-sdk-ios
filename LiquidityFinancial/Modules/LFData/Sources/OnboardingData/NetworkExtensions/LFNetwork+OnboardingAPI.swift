@@ -8,6 +8,7 @@ extension LFNetwork: OnboardingAPIProtocol where R == OnboardingRoute {
     return try await request(
       OnboardingRoute.login(LoginParameters(phoneNumber: phoneNumber, code: code, productName: APIConstants.productNameDefault)),
       target: APIAccessTokens.self,
+      failure: LFErrorObject.self,
       decoder: .apiDecoder
     )
   }
@@ -18,6 +19,6 @@ extension LFNetwork: OnboardingAPIProtocol where R == OnboardingRoute {
   }
   
   public func getOnboardingState(sessionId: String) async throws -> APIOnboardingState {
-    return try await request(OnboardingRoute.onboardingState(sessionId: sessionId), target: APIOnboardingState.self, decoder: .apiDecoder)
+    return try await request(OnboardingRoute.onboardingState(sessionId: sessionId), target: APIOnboardingState.self, failure: LFErrorObject.self, decoder: .apiDecoder)
   }
 }

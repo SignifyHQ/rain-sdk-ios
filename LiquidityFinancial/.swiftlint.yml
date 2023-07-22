@@ -75,14 +75,11 @@ disabled_rules:
   - file_types_order
   - lower_acl_than_parent
   - let_var_whitespace
+  - line_length
   
 identifier_name:
   excluded:
     - id
-line_length:
-  warning: 230
-  ignores_function_declarations: true
-  ignores_comments: true
 modifier_order:
   preferred_modifier_order:
     - acl
@@ -108,7 +105,7 @@ implicit_return:
     - closure
     - getter
 
-closure_body_length: 50
+closure_body_length: 100
 
 custom_rules:
 

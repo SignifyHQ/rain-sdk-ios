@@ -47,7 +47,7 @@ struct SetupWalletView: View {
               HStack {
                 GenImages.Images.icLogo.swiftUIImage
                   .resizable()
-                  .scaledToFill()
+                  .scaledToFit()
                   .padding(.leading, 45)
                   .frame(width: 80.0, height: 80.0)
                   .gesture(tap)

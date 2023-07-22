@@ -10,6 +10,14 @@
 	<string>$(APP_NAME)</string>
 	<key>CONSENT_URL</key>
 	<string>$(CONSENT_URL)</string>
+	<key>ITSAppUsesNonExemptEncryption</key>
+	<false/>
+	<key>NETSPEND_DISCLOSURE_URL</key>
+	<string>$(NETSPEND_DISCLOSURE_URL)</string>
+	<key>NETSPEND_PRIVACY_URL</key>
+	<string>$(NETSPEND_PRIVACY_URL)</string>
+	<key>NETSPEND_USER_URL</key>
+	<string>$(NETSPEND_USER_URL)</string>
 	<key>NSAppTransportSecurity</key>
 	<dict>
 		<key>NSExceptionDomains</key>
@@ -30,18 +38,12 @@
 			</dict>
 		</dict>
 	</dict>
-	<key>NETSPEND_USER_URL</key>
-	<string>$(NETSPEND_USER_URL)</string>
-	<key>NETSPEND_PRIVACY_URL</key>
-	<string>$(NETSPEND_PRIVACY_URL)</string>
-	<key>NETSPEND_DISCLOSURE_URL</key>
-	<string>$(NETSPEND_DISCLOSURE_URL)</string>
-	<key>PATHWARD_USER_URL</key>
-	<string>$(PATHWARD_USER_URL)</string>
-	<key>PATHWARD_PRIVACY_URL</key>
-	<string>PATHWARD_PRIVACY_URL</string>
 	<key>PATHWARD_DISCLOSURE_URL</key>
 	<string>$(PATHWARD_DISCLOSURE_URL)</string>
+	<key>PATHWARD_PRIVACY_URL</key>
+	<string>$(PATHWARD_PRIVACY_URL)</string>
+	<key>PATHWARD_USER_URL</key>
+	<string>$(PATHWARD_USER_URL)</string>
 	<key>PRIVACY_URL</key>
 	<string>$(PRIVACY_URL)</string>
 	<key>TERMS_URL</key>
@@ -51,5 +53,7 @@
 		<string>fetch</string>
 		<string>remote-notification</string>
 	</array>
+	<key>UIViewControllerBasedStatusBarAppearance</key>
+	<false/>
 </dict>
 </plist>

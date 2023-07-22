@@ -71,6 +71,7 @@ private extension KYCStatusView {
         Spacer()
         GenImages.Images.icLogo.swiftUIImage
           .resizable()
+          .scaledToFit()
           .frame(width: 124, height: 124)
           .onTapGesture(count: 5) {
             viewModel.magicTapToLogout()

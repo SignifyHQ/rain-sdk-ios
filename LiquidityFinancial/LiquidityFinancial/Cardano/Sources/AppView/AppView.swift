@@ -1,0 +1,43 @@
+import SwiftUI
+import Factory
+import LFAccountOnboarding
+import LFStyleGuide
+import LFUtilities
+
+struct AppView: View {
+  
+  @StateObject var viewModel = AppViewModel()
+  @Injected(\.userDataManager) var userDataManager
+  
+  let environmentManager = EnvironmentManager()
+  
+  var body: some View {
+    buildContent(for: viewModel.route)
+  }
+  
+  @ViewBuilder
+  private func buildContent(for route: AppCoordinator.Route) -> some View {
+    Group {
+      switch route {
+      case .initial:
+        InitialView()
+      case .onboarding:
+        PhoneNumberView(
+          viewModel: Container.shared.phoneNumberViewModel.callAsFunction()
+        )
+        .environmentObject(environmentManager)
+      case .welcome:
+        WelcomeView()
+      case .onKYCReview:
+        KYCStatusView(viewModel: KYCStatusViewModel(state: .inReview(userDataManager.userNameDisplay)))
+      }
+    }
+    .embedInNavigation()
+  }
+}
+
+struct ContentView_Previews: PreviewProvider {
+  static var previews: some View {
+    AppView()
+  }
+}

@@ -32,7 +32,6 @@
 		A953548C2A5E55B2008B0FAB /* Factory in Frameworks */ = {isa = PBXBuildFile; productRef = A953547D2A5E55B2008B0FAB /* Factory */; };
 		A953548D2A5E55B2008B0FAB /* LFStyleGuide in Frameworks */ = {isa = PBXBuildFile; productRef = A95354832A5E55B2008B0FAB /* LFStyleGuide */; };
 		A953548E2A5E55B2008B0FAB /* Lottie in Frameworks */ = {isa = PBXBuildFile; productRef = A953547F2A5E55B2008B0FAB /* Lottie */; };
-		A953548F2A5E55B2008B0FAB /* SwiftyBeaver in Frameworks */ = {isa = PBXBuildFile; productRef = A95354812A5E55B2008B0FAB /* SwiftyBeaver */; };
 		A95354AB2A5E571D008B0FAB /* Colors.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A95354A22A5E571D008B0FAB /* Colors.xcassets */; };
 		A95354AC2A5E571D008B0FAB /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A95354A32A5E571D008B0FAB /* Images.xcassets */; };
 		A95354AD2A5E571D008B0FAB /* AppView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A95354A52A5E571D008B0FAB /* AppView.swift */; };
@@ -57,10 +56,26 @@
 		A980DF732A5FA25A000B3C09 /* LFNetwork in Frameworks */ = {isa = PBXBuildFile; productRef = A980DF722A5FA25A000B3C09 /* LFNetwork */; };
 		A980DF752A5FA265000B3C09 /* LFServices in Frameworks */ = {isa = PBXBuildFile; productRef = A980DF742A5FA265000B3C09 /* LFServices */; };
 		A980DF772A5FA26E000B3C09 /* LFUtilities in Frameworks */ = {isa = PBXBuildFile; productRef = A980DF762A5FA26E000B3C09 /* LFUtilities */; };
+		A9B912D12A6B86A800ABD87B /* LoadingPrimary.json in Resources */ = {isa = PBXBuildFile; fileRef = A9B912CE2A6B86A800ABD87B /* LoadingPrimary.json */; };
+		A9B912D22A6B86A800ABD87B /* LoadingContrast.json in Resources */ = {isa = PBXBuildFile; fileRef = A9B912CF2A6B86A800ABD87B /* LoadingContrast.json */; };
+		A9B912D32A6B86A800ABD87B /* LoadingMix.json in Resources */ = {isa = PBXBuildFile; fileRef = A9B912D02A6B86A800ABD87B /* LoadingMix.json */; };
+		A9B912D82A6B86ED00ABD87B /* AppViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9B912D72A6B86ED00ABD87B /* AppViewModel.swift */; };
+		A9B912DC2A6B871300ABD87B /* DashboardContainer+Injection.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9B912DB2A6B871300ABD87B /* DashboardContainer+Injection.swift */; };
+		A9B912DE2A6B876300ABD87B /* AuthorizationManager in Frameworks */ = {isa = PBXBuildFile; productRef = A9B912DD2A6B876300ABD87B /* AuthorizationManager */; };
+		A9B912E02A6B876300ABD87B /* NetSpendData in Frameworks */ = {isa = PBXBuildFile; productRef = A9B912DF2A6B876300ABD87B /* NetSpendData */; };
+		A9B912E22A6B876300ABD87B /* OnboardingData in Frameworks */ = {isa = PBXBuildFile; productRef = A9B912E12A6B876300ABD87B /* OnboardingData */; };
+		A9B912E42A6B876300ABD87B /* OnboardingDomain in Frameworks */ = {isa = PBXBuildFile; productRef = A9B912E32A6B876300ABD87B /* OnboardingDomain */; };
+		A9B912E62A6B876300ABD87B /* LFNetwork in Frameworks */ = {isa = PBXBuildFile; productRef = A9B912E52A6B876300ABD87B /* LFNetwork */; };
+		A9B912E82A6B876300ABD87B /* LFServices in Frameworks */ = {isa = PBXBuildFile; productRef = A9B912E72A6B876300ABD87B /* LFServices */; };
+		A9B912EA2A6B881100ABD87B /* DataUtilities in Frameworks */ = {isa = PBXBuildFile; productRef = A9B912E92A6B881100ABD87B /* DataUtilities */; };
+		A9B912EC2A6B881100ABD87B /* iPhoneNumberField in Frameworks */ = {isa = PBXBuildFile; productRef = A9B912EB2A6B881100ABD87B /* iPhoneNumberField */; };
+		A9B912EE2A6B881100ABD87B /* SmartyStreets in Frameworks */ = {isa = PBXBuildFile; productRef = A9B912ED2A6B881100ABD87B /* SmartyStreets */; };
+		A9B912F02A6B891000ABD87B /* AppCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9B912EF2A6B891000ABD87B /* AppCoordinator.swift */; };
+		A9B912F32A6B898C00ABD87B /* OnboardingContainer+Injection.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9B912F22A6B898C00ABD87B /* OnboardingContainer+Injection.swift */; };
+		A9B912F42A6B898C00ABD87B /* OnboardingContainer+Injection.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9B912F22A6B898C00ABD87B /* OnboardingContainer+Injection.swift */; };
 		A9D6C4A52A5E5FE00038D0BB /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = A9D6C4A72A5E5FE00038D0BB /* Localizable.strings */; };
 		A9D6C4AA2A5E60850038D0BB /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = A9D6C4AC2A5E60850038D0BB /* Localizable.strings */; };
 		A9D6C4B22A5E91DF0038D0BB /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = A9D6C4B12A5E91DF0038D0BB /* LaunchScreen.storyboard */; };
-		A9D6C4BC2A5FA1740038D0BB /* OnboardingContainer+Injection.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9D6C4BB2A5FA1740038D0BB /* OnboardingContainer+Injection.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -116,6 +131,13 @@
 		A97BF83C2A5DA8A900B8F5CA /* LiquidityFinancialConfig.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = LiquidityFinancialConfig.xcconfig; sourceTree = "<group>"; };
 		A97BF83D2A5DBCF200B8F5CA /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
 		A97BF83F2A5DC13000B8F5CA /* Colors.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Colors.xcassets; sourceTree = "<group>"; };
+		A9B912CE2A6B86A800ABD87B /* LoadingPrimary.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = LoadingPrimary.json; sourceTree = "<group>"; };
+		A9B912CF2A6B86A800ABD87B /* LoadingContrast.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = LoadingContrast.json; sourceTree = "<group>"; };
+		A9B912D02A6B86A800ABD87B /* LoadingMix.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = LoadingMix.json; sourceTree = "<group>"; };
+		A9B912D72A6B86ED00ABD87B /* AppViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppViewModel.swift; sourceTree = "<group>"; };
+		A9B912DB2A6B871300ABD87B /* DashboardContainer+Injection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DashboardContainer+Injection.swift"; sourceTree = "<group>"; };
+		A9B912EF2A6B891000ABD87B /* AppCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppCoordinator.swift; sourceTree = "<group>"; };
+		A9B912F22A6B898C00ABD87B /* OnboardingContainer+Injection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "OnboardingContainer+Injection.swift"; sourceTree = "<group>"; };
 		A9D6C4A62A5E5FE00038D0BB /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
 		A9D6C4AB2A5E60850038D0BB /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
 		A9D6C4AF2A5E63470038D0BB /* LFServices */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = LFServices; path = Modules/LFServices; sourceTree = "<group>"; };
@@ -123,7 +145,6 @@
 		A9D6C4B12A5E91DF0038D0BB /* LaunchScreen.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = LaunchScreen.storyboard; sourceTree = "<group>"; };
 		A9D6C4B82A5F07470038D0BB /* LFData */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = LFData; path = Modules/LFData; sourceTree = "<group>"; };
 		A9D6C4B92A5F07CF0038D0BB /* LFDomain */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = LFDomain; path = Modules/LFDomain; sourceTree = "<group>"; };
-		A9D6C4BB2A5FA1740038D0BB /* OnboardingContainer+Injection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "OnboardingContainer+Injection.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -131,15 +152,23 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A9B912EC2A6B881100ABD87B /* iPhoneNumberField in Frameworks */,
 				A94F71EE2A610E65002ADB34 /* LFAccountOnboarding in Frameworks */,
 				A938373C2A63BAAC009EB1DE /* LFUtilities in Frameworks */,
+				A9B912E42A6B876300ABD87B /* OnboardingDomain in Frameworks */,
+				A9B912EA2A6B881100ABD87B /* DataUtilities in Frameworks */,
+				A9B912EE2A6B881100ABD87B /* SmartyStreets in Frameworks */,
 				A953548C2A5E55B2008B0FAB /* Factory in Frameworks */,
 				A94F71F02A610E9F002ADB34 /* CardanoAccountOnboarding in Frameworks */,
 				A94F71F72A61CACF002ADB34 /* LFLocalizable in Frameworks */,
 				A953548D2A5E55B2008B0FAB /* LFStyleGuide in Frameworks */,
 				06EBE2052A693C8100157B32 /* LFDashboard in Frameworks */,
+				A9B912E22A6B876300ABD87B /* OnboardingData in Frameworks */,
+				A9B912E62A6B876300ABD87B /* LFNetwork in Frameworks */,
+				A9B912E02A6B876300ABD87B /* NetSpendData in Frameworks */,
 				A953548E2A5E55B2008B0FAB /* Lottie in Frameworks */,
-				A953548F2A5E55B2008B0FAB /* SwiftyBeaver in Frameworks */,
+				A9B912DE2A6B876300ABD87B /* AuthorizationManager in Frameworks */,
+				A9B912E82A6B876300ABD87B /* LFServices in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -257,10 +286,11 @@
 		A953549C2A5E571D008B0FAB /* Resources */ = {
 			isa = PBXGroup;
 			children = (
-				A938373D2A63BB20009EB1DE /* LaunchScreen.storyboard */,
 				A95354A02A5E571D008B0FAB /* Cardano-Info.plist */,
-				A9D6C4AC2A5E60850038D0BB /* Localizable.strings */,
+				A938373D2A63BB20009EB1DE /* LaunchScreen.storyboard */,
 				A95354A12A5E571D008B0FAB /* Assets */,
+				A9D6C4AC2A5E60850038D0BB /* Localizable.strings */,
+				A9B912CD2A6B86A800ABD87B /* Lottie */,
 			);
 			path = Resources;
 			sourceTree = "<group>";
@@ -277,7 +307,9 @@
 		A95354A42A5E571D008B0FAB /* Sources */ = {
 			isa = PBXGroup;
 			children = (
-				A95354A52A5E571D008B0FAB /* AppView.swift */,
+				A9B912D52A6B86BC00ABD87B /* DependenciesInjection */,
+				A9B912D42A6B86B700ABD87B /* AppCoordinator */,
+				A9B912D62A6B86D700ABD87B /* AppView */,
 				A95354A62A5E571D008B0FAB /* CardanoApp.swift */,
 			);
 			path = Sources;
@@ -367,6 +399,7 @@
 			children = (
 				A97BF8192A5D9E6B00B8F5CA /* AppDelegate.swift */,
 				A93837462A63DDFD009EB1DE /* AppDelegate+Extensions.swift */,
+				A9B912F12A6B897100ABD87B /* DependenciesInjection */,
 			);
 			path = Sources;
 			sourceTree = "<group>";
@@ -405,8 +438,8 @@
 			children = (
 				A97BF8392A5DA4DA00B8F5CA /* Avalanche-Info.plist */,
 				A9D6C4B12A5E91DF0038D0BB /* LaunchScreen.storyboard */,
-				A9D6C4A72A5E5FE00038D0BB /* Localizable.strings */,
 				A95354602A5DD91A008B0FAB /* Assets */,
+				A9D6C4A72A5E5FE00038D0BB /* Localizable.strings */,
 				06D40BF42A625E9100EADB75 /* Lottie */,
 			);
 			path = Resources;
@@ -418,6 +451,49 @@
 				A97BF83A2A5DA86000B8F5CA /* AvalancheConfig.xcconfig */,
 			);
 			path = Configurations;
+			sourceTree = "<group>";
+		};
+		A9B912CD2A6B86A800ABD87B /* Lottie */ = {
+			isa = PBXGroup;
+			children = (
+				A9B912CE2A6B86A800ABD87B /* LoadingPrimary.json */,
+				A9B912CF2A6B86A800ABD87B /* LoadingContrast.json */,
+				A9B912D02A6B86A800ABD87B /* LoadingMix.json */,
+			);
+			path = Lottie;
+			sourceTree = "<group>";
+		};
+		A9B912D42A6B86B700ABD87B /* AppCoordinator */ = {
+			isa = PBXGroup;
+			children = (
+				A9B912EF2A6B891000ABD87B /* AppCoordinator.swift */,
+			);
+			path = AppCoordinator;
+			sourceTree = "<group>";
+		};
+		A9B912D52A6B86BC00ABD87B /* DependenciesInjection */ = {
+			isa = PBXGroup;
+			children = (
+				A9B912DB2A6B871300ABD87B /* DashboardContainer+Injection.swift */,
+			);
+			path = DependenciesInjection;
+			sourceTree = "<group>";
+		};
+		A9B912D62A6B86D700ABD87B /* AppView */ = {
+			isa = PBXGroup;
+			children = (
+				A95354A52A5E571D008B0FAB /* AppView.swift */,
+				A9B912D72A6B86ED00ABD87B /* AppViewModel.swift */,
+			);
+			path = AppView;
+			sourceTree = "<group>";
+		};
+		A9B912F12A6B897100ABD87B /* DependenciesInjection */ = {
+			isa = PBXGroup;
+			children = (
+				A9B912F22A6B898C00ABD87B /* OnboardingContainer+Injection.swift */,
+			);
+			path = DependenciesInjection;
 			sourceTree = "<group>";
 		};
 		A9D6C4AE2A5E62F40038D0BB /* Services */ = {
@@ -452,7 +528,6 @@
 		A9D6C4BA2A5FA1570038D0BB /* DependenciesInjection */ = {
 			isa = PBXGroup;
 			children = (
-				A9D6C4BB2A5FA1740038D0BB /* OnboardingContainer+Injection.swift */,
 				06EBE2002A69390700157B32 /* DashboardContainer+Injection.swift */,
 			);
 			path = DependenciesInjection;
@@ -478,13 +553,21 @@
 			packageProductDependencies = (
 				A953547D2A5E55B2008B0FAB /* Factory */,
 				A953547F2A5E55B2008B0FAB /* Lottie */,
-				A95354812A5E55B2008B0FAB /* SwiftyBeaver */,
 				A95354832A5E55B2008B0FAB /* LFStyleGuide */,
 				A94F71ED2A610E65002ADB34 /* LFAccountOnboarding */,
 				A94F71EF2A610E9F002ADB34 /* CardanoAccountOnboarding */,
 				A94F71F62A61CACF002ADB34 /* LFLocalizable */,
 				A938373B2A63BAAC009EB1DE /* LFUtilities */,
 				06EBE2042A693C8100157B32 /* LFDashboard */,
+				A9B912DD2A6B876300ABD87B /* AuthorizationManager */,
+				A9B912DF2A6B876300ABD87B /* NetSpendData */,
+				A9B912E12A6B876300ABD87B /* OnboardingData */,
+				A9B912E32A6B876300ABD87B /* OnboardingDomain */,
+				A9B912E52A6B876300ABD87B /* LFNetwork */,
+				A9B912E72A6B876300ABD87B /* LFServices */,
+				A9B912E92A6B881100ABD87B /* DataUtilities */,
+				A9B912EB2A6B881100ABD87B /* iPhoneNumberField */,
+				A9B912ED2A6B881100ABD87B /* SmartyStreets */,
 			);
 			productName = LiquidityFinancial;
 			productReference = A95354972A5E55B2008B0FAB /* Cardano.app */;
@@ -620,6 +703,9 @@
 			buildActionMask = 2147483647;
 			files = (
 				A95354AB2A5E571D008B0FAB /* Colors.xcassets in Resources */,
+				A9B912D12A6B86A800ABD87B /* LoadingPrimary.json in Resources */,
+				A9B912D22A6B86A800ABD87B /* LoadingContrast.json in Resources */,
+				A9B912D32A6B86A800ABD87B /* LoadingMix.json in Resources */,
 				A93837452A63D7AF009EB1DE /* Images.xcassets in Resources */,
 				A938373E2A63BB20009EB1DE /* LaunchScreen.storyboard in Resources */,
 				A9D6C4AA2A5E60850038D0BB /* Localizable.strings in Resources */,
@@ -695,7 +781,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 1;
 			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/BuildScripts/swiftlint.sh\"\n";
+			shellScript = "if [[ \"$(uname -m)\" == arm64 ]]; then\n    export PATH=\"/opt/homebrew/bin:$PATH\"\nfi\n\nif which swiftlint > /dev/null; then\n  swiftlint\nelse\n  echo \"warning: SwiftLint not installed, download from https://github.com/realm/SwiftLint\"\nfi\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -704,8 +790,12 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A9B912F42A6B898C00ABD87B /* OnboardingContainer+Injection.swift in Sources */,
+				A9B912D82A6B86ED00ABD87B /* AppViewModel.swift in Sources */,
 				A95354AD2A5E571D008B0FAB /* AppView.swift in Sources */,
 				A95354AE2A5E571D008B0FAB /* CardanoApp.swift in Sources */,
+				A9B912F02A6B891000ABD87B /* AppCoordinator.swift in Sources */,
+				A9B912DC2A6B871300ABD87B /* DashboardContainer+Injection.swift in Sources */,
 				A93837482A63DDFF009EB1DE /* AppDelegate+Extensions.swift in Sources */,
 				A95354852A5E55B2008B0FAB /* AppDelegate.swift in Sources */,
 			);
@@ -715,13 +805,13 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A9B912F32A6B898C00ABD87B /* OnboardingContainer+Injection.swift in Sources */,
 				A963D4092A67F491006B9A54 /* AppCoordinator.swift in Sources */,
 				06EBE2012A69390700157B32 /* DashboardContainer+Injection.swift in Sources */,
 				A93837472A63DDFD009EB1DE /* AppDelegate+Extensions.swift in Sources */,
 				A963D40B2A67F7FD006B9A54 /* AppViewModel.swift in Sources */,
 				A97BF81A2A5D9E6B00B8F5CA /* AppDelegate.swift in Sources */,
 				A97BF7C22A5C602D00B8F5CA /* AppView.swift in Sources */,
-				A9D6C4BC2A5FA1740038D0BB /* OnboardingContainer+Injection.swift in Sources */,
 				A97BF8182A5D9DE200B8F5CA /* AvalancheApp.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -786,7 +876,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = NO;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 0;
+				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "";
 				DEVELOPMENT_TEAM = TX9PJZUNWS;
 				ENABLE_PREVIEWS = YES;
@@ -798,6 +888,7 @@
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen.storyboard;
 				INFOPLIST_KEY_UIStatusBarHidden = NO;
+				INFOPLIST_KEY_UIStatusBarStyle = UIStatusBarStyleLightContent;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
 				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -805,7 +896,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.liquidity.cardano;
+				PRODUCT_BUNDLE_IDENTIFIER = com.liquidityfinancial.cardano;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
 				SUPPORTS_MACCATALYST = NO;
@@ -824,7 +915,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = NO;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 0;
+				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "";
 				DEVELOPMENT_TEAM = TX9PJZUNWS;
 				ENABLE_PREVIEWS = YES;
@@ -836,6 +927,7 @@
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen.storyboard;
 				INFOPLIST_KEY_UIStatusBarHidden = NO;
+				INFOPLIST_KEY_UIStatusBarStyle = UIStatusBarStyleLightContent;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
 				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -843,7 +935,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.liquidity.cardano;
+				PRODUCT_BUNDLE_IDENTIFIER = com.liquidityfinancial.cardano;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
 				SUPPORTS_MACCATALYST = NO;
@@ -1206,14 +1298,6 @@
 				minimumVersion = 4.2.0;
 			};
 		};
-		A95354822A5E55B2008B0FAB /* XCRemoteSwiftPackageReference "SwiftyBeaver" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/SwiftyBeaver/SwiftyBeaver";
-			requirement = {
-				kind = upToNextMinorVersion;
-				minimumVersion = 2.0.0;
-			};
-		};
 		A97BF7E92A5D70C400B8F5CA /* XCRemoteSwiftPackageReference "Factory" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/hmlongco/Factory";
@@ -1301,11 +1385,6 @@
 			package = A95354802A5E55B2008B0FAB /* XCRemoteSwiftPackageReference "lottie-ios" */;
 			productName = Lottie;
 		};
-		A95354812A5E55B2008B0FAB /* SwiftyBeaver */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = A95354822A5E55B2008B0FAB /* XCRemoteSwiftPackageReference "SwiftyBeaver" */;
-			productName = SwiftyBeaver;
-		};
 		A95354832A5E55B2008B0FAB /* LFStyleGuide */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = LFStyleGuide;
@@ -1351,6 +1430,44 @@
 		A980DF762A5FA26E000B3C09 /* LFUtilities */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = LFUtilities;
+		};
+		A9B912DD2A6B876300ABD87B /* AuthorizationManager */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = AuthorizationManager;
+		};
+		A9B912DF2A6B876300ABD87B /* NetSpendData */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = NetSpendData;
+		};
+		A9B912E12A6B876300ABD87B /* OnboardingData */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = OnboardingData;
+		};
+		A9B912E32A6B876300ABD87B /* OnboardingDomain */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = OnboardingDomain;
+		};
+		A9B912E52A6B876300ABD87B /* LFNetwork */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = LFNetwork;
+		};
+		A9B912E72A6B876300ABD87B /* LFServices */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = LFServices;
+		};
+		A9B912E92A6B881100ABD87B /* DataUtilities */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = DataUtilities;
+		};
+		A9B912EB2A6B881100ABD87B /* iPhoneNumberField */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 06D40BFF2A62AE3700EADB75 /* XCRemoteSwiftPackageReference "iPhoneNumberField" */;
+			productName = iPhoneNumberField;
+		};
+		A9B912ED2A6B881100ABD87B /* SmartyStreets */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 749091152A6584C300071B41 /* XCRemoteSwiftPackageReference "smartystreets-ios-sdk" */;
+			productName = SmartyStreets;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

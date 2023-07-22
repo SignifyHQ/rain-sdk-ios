@@ -4,7 +4,6 @@
     <dependencies>
         <deployment identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="21678"/>
-        <capability name="Named colors" minToolsVersion="9.0"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
@@ -24,8 +23,8 @@
                                     <constraint firstAttribute="height" constant="126" id="t42-Gx-MhD"/>
                                 </constraints>
                             </imageView>
-                            <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="AvalancheCard" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumFontSize="9" translatesAutoresizingMaskIntoConstraints="NO" id="obG-Y5-kRd">
-                                <rect key="frame" x="109.66666666666667" y="473.66666666666669" width="173.66666666666663" height="34"/>
+                            <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="CardanoCard" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumFontSize="9" translatesAutoresizingMaskIntoConstraints="NO" id="obG-Y5-kRd">
+                                <rect key="frame" x="120" y="473.66666666666669" width="153" height="34"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="34" id="69J-Ah-d9H"/>
                                 </constraints>
@@ -35,7 +34,7 @@
                             </label>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="Bcu-3y-fUS"/>
-                        <color key="backgroundColor" name="bg_black_app"/>
+                        <color key="backgroundColor" red="0.027450980392156862" green="0.10980392156862745" blue="0.23529411764705882" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <constraints>
                             <constraint firstItem="jZu-Ih-ek9" firstAttribute="centerX" secondItem="Bcu-3y-fUS" secondAttribute="centerX" id="UZ8-Ho-ji3"/>
                             <constraint firstItem="obG-Y5-kRd" firstAttribute="top" secondItem="jZu-Ih-ek9" secondAttribute="bottom" constant="16" id="cfU-dv-y8i"/>
@@ -50,9 +49,6 @@
         </scene>
     </scenes>
     <resources>
-        <image name="ic_logo" width="500" height="500"/>
-        <namedColor name="bg_black_app">
-            <color red="0.12999999523162842" green="0.11999999731779099" blue="0.12999999523162842" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-        </namedColor>
+        <image name="ic_logo" width="124" height="124"/>
     </resources>
 </document>

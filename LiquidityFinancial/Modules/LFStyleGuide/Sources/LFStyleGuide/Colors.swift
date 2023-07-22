@@ -22,6 +22,10 @@ public typealias AssetColorTypeAlias = ColorAsset.Color
 
 // swiftlint:disable identifier_name line_length nesting type_body_length type_name
 public enum Colors {
+  public enum Buttons {
+    public static let highlightButton = ColorAsset(name: "highlight_button")
+    public static let unhighlightButton = ColorAsset(name: "unhighlight_button")
+  }
   public static let background = ColorAsset(name: "background")
   public static let buttons = ColorAsset(name: "buttons")
   public static let darkText = ColorAsset(name: "darkText")
@@ -57,7 +61,7 @@ public final class ColorAsset {
   #if os(iOS) || os(tvOS)
   @available(iOS 11.0, tvOS 11.0, *)
   public func color(compatibleWith traitCollection: UITraitCollection) -> Color {
-    let bundle = BundleToken.bundle
+    let bundle = Bundle.main
     guard let color = Color(named: name, in: bundle, compatibleWith: traitCollection) else {
       fatalError("Unable to load color asset named \(name).")
     }
@@ -80,7 +84,7 @@ public final class ColorAsset {
 public extension ColorAsset.Color {
   @available(iOS 11.0, tvOS 11.0, watchOS 4.0, macOS 10.13, *)
   convenience init?(asset: ColorAsset) {
-    let bundle = BundleToken.bundle
+    let bundle = Bundle.main
     #if os(iOS) || os(tvOS)
     self.init(named: asset.name, in: bundle, compatibleWith: nil)
     #elseif os(macOS)
@@ -95,20 +99,8 @@ public extension ColorAsset.Color {
 @available(iOS 13.0, tvOS 13.0, watchOS 6.0, macOS 10.15, *)
 public extension SwiftUI.Color {
   init(asset: ColorAsset) {
-    let bundle = BundleToken.bundle
+    let bundle = Bundle.main
     self.init(asset.name, bundle: bundle)
   }
 }
 #endif
-
-// swiftlint:disable convenience_type
-private final class BundleToken {
-  static let bundle: Bundle = {
-    #if SWIFT_PACKAGE
-    return Bundle.module
-    #else
-    return Bundle(for: BundleToken.self)
-    #endif
-  }()
-}
-// swiftlint:enable convenience_type

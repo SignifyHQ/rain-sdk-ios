@@ -54,6 +54,7 @@ struct UploadDocumentView: View {
         EmptyView()
       }
     }
+    .navigationBarBackButtonHidden(viewModel.isLoading)
   }
 }
 
@@ -88,7 +89,7 @@ private extension UploadDocumentView {
   var frontUploadDocument: some View {
     VStack(spacing: 4) {
       GenImages.CommonImages.icDocument.swiftUIImage
-        .foregroundColor(Colors.primary.swiftUIColor)
+        .foregroundColor(Colors.Buttons.highlightButton.swiftUIColor)
       Text("Front of the Document")
         .font(Fonts.Inter.medium.swiftUIFont(size: Constants.FontSize.ultraSmall.value))
         .foregroundColor(Colors.label.swiftUIColor)
@@ -102,7 +103,7 @@ private extension UploadDocumentView {
   var backUploadDocument: some View {
     VStack(spacing: 4) {
       GenImages.CommonImages.icDocument.swiftUIImage
-        .foregroundColor(Colors.primary.swiftUIColor)
+        .foregroundColor(Colors.Buttons.highlightButton.swiftUIColor)
       Text("Back of the Document")
         .font(Fonts.Inter.medium.swiftUIFont(size: Constants.FontSize.ultraSmall.value))
         .foregroundColor(Colors.label.swiftUIColor)

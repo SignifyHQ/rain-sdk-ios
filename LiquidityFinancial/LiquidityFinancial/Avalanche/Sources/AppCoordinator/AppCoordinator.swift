@@ -63,7 +63,9 @@ extension AppCoordinator {
           routeSubject.value = .welcome
         } else {
           let state = onboardingState.missingSteps.contains(where: { item in
-            item == "primary_person_kyc_approve" || item == "provide_documents"
+            item == WorkflowsMissingStep.primaryPersonKYCApprove.rawValue ||
+            item == WorkflowsMissingStep.identityQuestions.rawValue ||
+            item == WorkflowsMissingStep.provideDocuments.rawValue
           })
           if state {
             routeSubject.value = .onKYCReview

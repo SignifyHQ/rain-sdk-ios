@@ -9,11 +9,11 @@ struct QuestionsView: View {
   
   @StateObject var viewModel: QuestionsViewModel
   
-  public init(viewModel: QuestionsViewModel) {
+  init(viewModel: QuestionsViewModel) {
     _viewModel = .init(wrappedValue: viewModel)
   }
   
-  public var body: some View {
+  var body: some View {
     VStack {
       headerView
       
@@ -62,6 +62,7 @@ struct QuestionsView: View {
         UploadDocumentView()
       }
     }
+    .navigationBarBackButtonHidden(viewModel.isLoading)
   }
   
   private var headerView: some View {
@@ -82,7 +83,8 @@ struct QuestionsView: View {
         .padding(.vertical, 12)
       
       HStack {
-        GenImages.CommonImages.icKycQuestion.swiftUIImage
+        GenImages.Images.icKycQuestion.swiftUIImage
+        
         Spacer()
       }
       .padding(.horizontal, 20)
@@ -126,7 +128,7 @@ private struct AnswerButton: View {
         Rectangle()
           .foregroundColor(.clear)
           .frame(height: 56)
-          .background(Color(red: 0.18, green: 0.17, blue: 0.19))
+          .background(Colors.secondaryBackground.swiftUIColor)
           .cornerRadius(9)
           .offset(x: 0, y: 0)
         
@@ -139,7 +141,7 @@ private struct AnswerButton: View {
           Spacer()
           
           if answer.isSelect {
-            GenImages.CommonImages.icKycQuestionCheck.swiftUIImage
+            GenImages.Images.icKycQuestionCheck.swiftUIImage
               .scaledToFit()
               .frame(width: 20, height: 20)
               .padding(.trailing, 20)

@@ -42,6 +42,7 @@ public struct WelcomeView: View {
     .navigationLink(isActive: $viewModel.isPushToAgreementView) {
       AgreementView()
     }
+    .navigationBarBackButtonHidden(viewModel.isLoading)
   }
   
   private var staticTop: some View {

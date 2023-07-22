@@ -4,27 +4,46 @@ import LFUtilities
 import LFLocalizable
 import OnboardingDomain
 
-struct AgreementView: View {
+public struct AgreementView: View {
   @Environment(\.openURL)
   var openURL
   @StateObject private var viewModel = AgreementViewModel()
   
-  var body: some View {
+  public init() {}
+  
+  public var body: some View {
     VStack(spacing: 24) {
       headerTitle
-      GenImages.CommonImages.netspend.swiftUIImage
-        .scaledToFit()
+
+      ZStack {
+        HStack() {
+          GenImages.Images.icLogo.swiftUIImage
+            .resizable()
+            .scaledToFit()
+            .frame(width: 80, height: 80)
+          Spacer()
+          GenImages.CommonImages.netspendLogo.swiftUIImage
+            .scaledToFit()
+            .frame(width: 173, height: 87)
+        }
+        .padding(.horizontal, 20)
         .frame(height: 112)
+        .frame(maxWidth: 600)
+      }
+      .foregroundColor(.clear)
+      .background(Colors.secondaryBackground.swiftUIColor)
+      .cornerRadius(12)
+      
       Spacer()
-      VStack(alignment: .leading, spacing: 16) {
+      VStack(alignment: .leading, spacing: 0) {
         conditionCell(
           isSelected: $viewModel.isAgreedNetSpendCondition,
           condition: viewModel.netspendCondition
         )
-//        conditionCell(
-//          isSelected: $viewModel.isAgreedPathwardCondition,
-//          condition: viewModel.pathwardCondition
-//        )
+        conditionCell(
+          isSelected: $viewModel.isAgreedPathwardCondition,
+          condition: viewModel.pathwardCondition
+        )
       }
       continueButton
     }
@@ -71,9 +90,10 @@ private extension AgreementView {
         Group {
           if isSelected.wrappedValue {
             GenImages.CommonImages.termsCheckboxSelected.swiftUIImage
-              .foregroundColor(Colors.primary.swiftUIColor)
+              .foregroundColor(Colors.Buttons.highlightButton.swiftUIColor)
           } else {
             GenImages.CommonImages.termsCheckboxDeselected.swiftUIImage
+              .foregroundColor(Colors.Buttons.unhighlightButton.swiftUIColor)
           }
         }
       }

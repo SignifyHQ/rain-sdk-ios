@@ -12,11 +12,11 @@ let package = Package(
             targets: ["LFNetwork"])
     ],
     dependencies: [
-
+      .package(name: "LFUtilities", path: "../LFUtilities")
     ],
     targets: [
         .target(
             name: "LFNetwork",
-            dependencies: [])
+            dependencies: ["LFUtilities"])
     ]
 )
