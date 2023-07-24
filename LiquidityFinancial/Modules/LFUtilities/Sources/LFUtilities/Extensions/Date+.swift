@@ -12,6 +12,10 @@ public extension Date {
   func netspendDate() -> String {
     DateFormatter.yearDayMonth.string(from: self)
   }
+  
+  var displayDate: String {
+    DateFormatter.monthDayDisplay.string(from: self)
+  }
 }
 
 public extension DateFormatter {

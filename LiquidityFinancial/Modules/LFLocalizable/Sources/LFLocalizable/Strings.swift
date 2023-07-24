@@ -451,6 +451,92 @@ public enum LFLocalizable {
       public static let description = LFLocalizable.tr("Localizable", "term.termsVoip.description", fallback: "Using VOIP or Google Voice numbers can result in onboarding delays. We NEVER share your phone number with third parties for marketing, per our Privacy Policy.")
     }
   }
+  public enum TransferView {
+    /// Checking **** %@
+    public static func checking(_ p1: Any) -> String {
+      return LFLocalizable.tr("Localizable", "transferView.checking", String(describing: p1), fallback: "Checking **** %@")
+    }
+    /// Deposit
+    public static let credit = LFLocalizable.tr("Localizable", "transferView.credit", fallback: "Deposit")
+    /// Deposit completed
+    public static let creditCompleted = LFLocalizable.tr("Localizable", "transferView.credit_completed", fallback: "Deposit completed")
+    /// Deposit started
+    public static let creditStarted = LFLocalizable.tr("Localizable", "transferView.credit_started", fallback: "Deposit started")
+    /// Withdraw
+    public static let debit = LFLocalizable.tr("Localizable", "transferView.debit", fallback: "Withdraw")
+    /// Debit Card **** %@
+    public static func debitCard(_ p1: Any) -> String {
+      return LFLocalizable.tr("Localizable", "transferView.debit_card", String(describing: p1), fallback: "Debit Card **** %@")
+    }
+    /// Withdraw completed
+    public static let debitCompleted = LFLocalizable.tr("Localizable", "transferView.debit_completed", fallback: "Withdraw completed")
+    /// Withdraw started
+    public static let debitStarted = LFLocalizable.tr("Localizable", "transferView.debit_started", fallback: "Withdraw started")
+    /// Limits reached
+    public static let limitsReached = LFLocalizable.tr("Localizable", "transferView.limits_reached", fallback: "Limits reached")
+    /// Savings **** %@
+    public static func saving(_ p1: Any) -> String {
+      return LFLocalizable.tr("Localizable", "transferView.saving", String(describing: p1), fallback: "Savings **** %@")
+    }
+    public enum DebitSuggestion {
+      /// For instant deposits, connect and deposit with your Debit Card
+      public static let body = LFLocalizable.tr("Localizable", "transferView.debit_suggestion.body", fallback: "For instant deposits, connect and deposit with your Debit Card")
+      /// Connect Debit Card
+      public static let connect = LFLocalizable.tr("Localizable", "transferView.debit_suggestion.connect", fallback: "Connect Debit Card")
+      /// Get Faster Deposits
+      public static let title = LFLocalizable.tr("Localizable", "transferView.debit_suggestion.title", fallback: "Get Faster Deposits")
+    }
+    public enum RewardType {
+      public enum Cashback {
+        /// 0.75% on every qualifying purchase
+        public static func subtitle(_ p1: Int) -> String {
+          return LFLocalizable.tr("Localizable", "transferView.reward_type.cashback.subtitle", p1, fallback: "0.75% on every qualifying purchase")
+        }
+        /// Instant Cashback
+        public static let title = LFLocalizable.tr("Localizable", "transferView.reward_type.cashback.title", fallback: "Instant Cashback")
+      }
+      public enum Donation {
+        /// 0.75% donated to a charity you choose
+        public static func subtitle(_ p1: Int) -> String {
+          return LFLocalizable.tr("Localizable", "transferView.reward_type.donation.subtitle", p1, fallback: "0.75% donated to a charity you choose")
+        }
+        /// Donate to Charity
+        public static let title = LFLocalizable.tr("Localizable", "transferView.reward_type.donation.title", fallback: "Donate to Charity")
+      }
+    }
+    public enum RewardsStatus {
+      /// Completed
+      public static let completed = LFLocalizable.tr("Localizable", "transferView.rewards_status.completed", fallback: "Completed")
+      /// Pending
+      public static let pending = LFLocalizable.tr("Localizable", "transferView.rewards_status.pending", fallback: "Pending")
+    }
+    public enum Status {
+      public enum Deposit {
+        /// Deposit completed
+        public static let completed = LFLocalizable.tr("Localizable", "transferView.status.deposit.completed", fallback: "Deposit completed")
+        /// Deposit started
+        public static let started = LFLocalizable.tr("Localizable", "transferView.status.deposit.started", fallback: "Deposit started")
+      }
+      public enum Reward {
+        /// Reward completed
+        public static let completed = LFLocalizable.tr("Localizable", "transferView.status.reward.completed", fallback: "Reward completed")
+        /// Reward pending
+        public static let started = LFLocalizable.tr("Localizable", "transferView.status.reward.started", fallback: "Reward pending")
+      }
+      public enum Withdraw {
+        /// Withdraw completed
+        public static let completed = LFLocalizable.tr("Localizable", "transferView.status.withdraw.completed", fallback: "Withdraw completed")
+        /// Withdraw started
+        public static let started = LFLocalizable.tr("Localizable", "transferView.status.withdraw.started", fallback: "Withdraw started")
+      }
+    }
+    public enum WithdrawAnnotation {
+      /// You currently have %@ available to withdraw. Rewards are not available to withdraw until 48 hours after they are earned.
+      public static func description(_ p1: Any) -> String {
+        return LFLocalizable.tr("Localizable", "transferView.withdraw_annotation.description", String(describing: p1), fallback: "You currently have %@ available to withdraw. Rewards are not available to withdraw until 48 hours after they are earned.")
+      }
+    }
+  }
   public enum UploadDocument {
     public enum AddressRequirement {
       /// 401 statement

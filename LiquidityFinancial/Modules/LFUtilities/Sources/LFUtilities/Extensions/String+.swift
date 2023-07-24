@@ -190,3 +190,20 @@ public extension String {
     return String(dropLast(prefix.count))
   }
 }
+
+public extension String {
+  func serverToTransactionDisplay(includeYear: Bool = false) -> String {
+    guard let dt = DateFormatter.server.date(from: self) else {
+      return self
+    }
+    return includeYear ? DateFormatter.transactionDisplayFull.string(from: dt) : DateFormatter.transactionDisplayShort.string(from: dt)
+  }
+  
+  var displayDate: String? {
+    guard let date = DateFormatter.server.date(from: self) else {
+      return nil
+    }
+    return DateFormatter.monthDayDisplay.string(from: date)
+  }
+  
+}

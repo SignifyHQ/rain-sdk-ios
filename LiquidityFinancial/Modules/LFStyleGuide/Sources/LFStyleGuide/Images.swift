@@ -55,6 +55,8 @@ public enum GenImages {
     public static let map = ImageAsset(name: "map")
     public static let netspend = ImageAsset(name: "netspend")
     public static let netspendLogo = ImageAsset(name: "netspend_logo")
+    public static let rewardsCashback = ImageAsset(name: "rewardsCashback")
+    public static let rewardsDonation = ImageAsset(name: "rewardsDonation")
     public static let termsCheckboxDeselected = ImageAsset(name: "termsCheckboxDeselected")
     public static let termsCheckboxSelected = ImageAsset(name: "termsCheckboxSelected")
   }
@@ -63,6 +65,8 @@ public enum GenImages {
     public static let icKycQuestion = ImageAsset(name: "ic_kyc_question_?")
     public static let icKycQuestionCheck = ImageAsset(name: "ic_kyc_question_check")
     public static let icLogo = ImageAsset(name: "ic_logo")
+    public static let statusCompleted = ImageAsset(name: "statusCompleted")
+    public static let statusPending = ImageAsset(name: "statusPending")
     public static let unavailableCard = ImageAsset(name: "unavailableCard")
   }
 }

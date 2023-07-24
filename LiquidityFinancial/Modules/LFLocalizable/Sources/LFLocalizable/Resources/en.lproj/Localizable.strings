@@ -243,6 +243,43 @@
 "popup.uploadDocument.title" = "DOCUMENTS UPLOADED";
 "popup.uploadDocument.description" = "Thank you, we have received your document";
 
+// Transfer
+"transferView.credit" = "Deposit";
+"transferView.debit" = "Withdraw";
+"transferView.credit_started" = "Deposit started";
+"transferView.credit_completed" = "Deposit completed";
+"transferView.debit_started" = "Withdraw started";
+"transferView.debit_completed" = "Withdraw completed";
+"transferView.debit_card" = "Debit Card **** %@";
+"transferView.checking" = "Checking **** %@";
+"transferView.saving" = "Savings **** %@";
+"transferView.limits_reached" = "Limits reached";
+"transferView.withdraw_annotation.description" = "You currently have %@ available to withdraw. Rewards are not available to withdraw until 48 hours after they are earned.";
+
+// Transfer Status
+
+"transferView.status.deposit.started" = "Deposit started";
+"transferView.status.deposit.completed" = "Deposit completed";
+"transferView.status.withdraw.started" = "Withdraw started";
+"transferView.status.withdraw.completed" = "Withdraw completed";
+"transferView.status.reward.started" = "Reward pending";
+"transferView.status.reward.completed" = "Reward completed";
+
+// Transfer debit suggestion
+"transferView.debit_suggestion.title" = "Get Faster Deposits";
+"transferView.debit_suggestion.body" = "For instant deposits, connect and deposit with your Debit Card";
+"transferView.debit_suggestion.connect" = "Connect Debit Card";
+
+// Transaction Rewards Status
+"transferView.rewards_status.pending" = "Pending";
+"transferView.rewards_status.completed" = "Completed";
+
+// User Reward Type
+"transferView.reward_type.cashback.title" = "Instant Cashback";
+"transferView.reward_type.cashback.subtitle" = "0.75% on every qualifying purchase";
+"transferView.reward_type.donation.title" = "Donate to Charity";
+"transferView.reward_type.donation.subtitle" = "0.75% donated to a charity you choose";
+
 // MARK: - Common
 
 // Terms

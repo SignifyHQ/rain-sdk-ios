@@ -21,9 +21,6 @@ let package = Package(
       name: "LFDashboard",
       dependencies: [
         "LFUtilities", "LFStyleGuide", "LFLocalizable"
-      ],
-      resources: [
-        .process("ZResources")
       ]
     ),
     .testTarget(
