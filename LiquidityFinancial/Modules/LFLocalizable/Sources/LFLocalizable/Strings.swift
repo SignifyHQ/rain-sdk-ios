@@ -96,6 +96,18 @@ public enum LFLocalizable {
     /// Add personal information
     public static let title = LFLocalizable.tr("Localizable", "addPersonalInformation.title", fallback: "Add personal information")
   }
+  public enum AddToWallet {
+    public enum ApplePay {
+      /// Your %@ account is activated! Next, add %@ to your Apple Pay wallet for fast and easy payments.
+      public static func description(_ p1: Any, _ p2: Any) -> String {
+        return LFLocalizable.tr("Localizable", "addToWallet.applePay.description", String(describing: p1), String(describing: p2), fallback: "Your %@ account is activated! Next, add %@ to your Apple Pay wallet for fast and easy payments.")
+      }
+      /// It will add this card to Apple Wallet
+      public static let message = LFLocalizable.tr("Localizable", "addToWallet.applePay.message", fallback: "It will add this card to Apple Wallet")
+      /// ADD TO APPLE PAY
+      public static let title = LFLocalizable.tr("Localizable", "addToWallet.applePay.title", fallback: "ADD TO APPLE PAY")
+    }
+  }
   public enum Address {
     public enum Disclosure {
       /// CauseCard Agreement
@@ -121,10 +133,24 @@ public enum LFLocalizable {
       /// OK
       public static let title = LFLocalizable.tr("Localizable", "button.ok.title", fallback: "OK")
     }
+    public enum Skip {
+      /// Skip
+      public static let title = LFLocalizable.tr("Localizable", "button.skip.title", fallback: "Skip")
+    }
     public enum Title {
       /// Trade Now and Get
       /// Your Life
       public static let text = LFLocalizable.tr("Localizable", "button.title.text", fallback: "Trade Now and Get\nYour Life")
+    }
+  }
+  public enum CardActivated {
+    public enum CardActived {
+      /// Your %@ is now active, nd can be used anywhere Visa is accepted.
+      public static func description(_ p1: Any) -> String {
+        return LFLocalizable.tr("Localizable", "cardActivated.cardActived.description", String(describing: p1), fallback: "Your %@ is now active, nd can be used anywhere Visa is accepted.")
+      }
+      /// CARD ACTIVED!
+      public static let title = LFLocalizable.tr("Localizable", "cardActivated.cardActived.title", fallback: "CARD ACTIVED!")
     }
   }
   public enum CashCard {
@@ -411,6 +437,20 @@ public enum LFLocalizable {
     public enum NoCreditCheck {
       /// No credit checks
       public static let cellText = LFLocalizable.tr("Localizable", "securityCheck.noCreditCheck.cellText", fallback: "No credit checks")
+    }
+  }
+  public enum SetCardPin {
+    public enum Popup {
+      /// Your card's PIN is now set. Use it for purchases and at ATMs.
+      public static let successMessage = LFLocalizable.tr("Localizable", "setCardPin.popup.successMessage", fallback: "Your card's PIN is now set. Use it for purchases and at ATMs.")
+      /// CARD PIN SET
+      public static let title = LFLocalizable.tr("Localizable", "setCardPin.popup.title", fallback: "CARD PIN SET")
+    }
+    public enum Screen {
+      /// This PIN can be used at ATMs and for purchases, and is not used to get access to the app.
+      public static let description = LFLocalizable.tr("Localizable", "setCardPin.screen.description", fallback: "This PIN can be used at ATMs and for purchases, and is not used to get access to the app.")
+      /// SET CARD PIN
+      public static let title = LFLocalizable.tr("Localizable", "setCardPin.screen.title", fallback: "SET CARD PIN")
     }
   }
   public enum SetUpWallet {

@@ -4,10 +4,8 @@ import LFStyleGuide
 import LFLocalizable
 
 struct CashCardView: View {
+  @StateObject private var viewModel: CashCardViewModel
   @Binding var cardDetails: CardModel
-  @State private var openDetailsView = false
-  @State private var cardActivated: CardModel?
-  @State private var isInReview: Bool = true
   let isPOFlow: Bool
   let showLoadingIndicator: Bool
   let cashBalance: Double
@@ -35,6 +33,7 @@ struct CashCardView: View {
     self.showLoadingIndicator = showLoadingIndicator
     _cardDetails = cardDetails
     self.orderCardAction = orderCardAction
+    _viewModel = .init(wrappedValue: CashCardViewModel(cardDetails: cardDetails.wrappedValue))
   }
   
   var body: some View {
@@ -58,20 +57,21 @@ struct CashCardView: View {
     .onTapGesture {
       if isPOFlow {
         if cardDetails.cardStatus == .pendingActivation {
-          // activateCardAction()
+          viewModel.activeCard()
         } else {
-          // openDetailsView.toggle()
+          viewModel.isShowCardDetail.toggle()
         }
       }
     }
-    //    .fullScreenCover(item: $cardActivated) { card in
-    //      CardActivatedView(card: card)
-    //        .embedInNavigation()
-    //    }
-    //    .sheet(isPresented: $openDetailsView) {
-    //      CardsDetailView(viewModel: .init())
-    //        .embedInNavigation()
-    //    }
+    .fullScreenCover(item: $viewModel.cardActivated) { card in
+      CardActivatedView(card: card)
+        .embedInNavigation()
+    }
+    .sheet(isPresented: $viewModel.isShowCardDetail) {
+      EmptyView()
+      //      CardsDetailView(viewModel: .init())
+      //        .embedInNavigation()
+    }
   }
 
   private var activateCard: some View {
@@ -83,9 +83,10 @@ struct CashCardView: View {
       height: 25,
       cornerRadius: 5,
       textColor: Colors.label.swiftUIColor,
-      backgroundColor: Colors.buttons.swiftUIColor,
-      action: {}
-    )
+      backgroundColor: Colors.buttons.swiftUIColor
+    ) {
+      viewModel.activeCard()
+    }
     .padding([.horizontal, .top], 15)
   }
   

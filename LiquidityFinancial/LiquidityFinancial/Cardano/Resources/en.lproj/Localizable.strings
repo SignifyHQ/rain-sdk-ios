@@ -230,6 +230,21 @@
 "changeAsset.screen.title" = "Change asset";
 "changeAsset.screen.message" = "Please select the asset to spend.";
 
+// CARD ACTIVED
+"cardActivated.cardActived.title" = "CARD ACTIVED!";
+"cardActivated.cardActived.description" = "Your %@ is now active, nd can be used anywhere Visa is accepted.";
+
+// ADD TO WALLET
+"addToWallet.applePay.title" = "ADD TO APPLE PAY";
+"addToWallet.applePay.description" = "Your %@ account is activated! Next, add %@ to your Apple Pay wallet for fast and easy payments.";
+"addToWallet.applePay.message" = "It will add this card to Apple Wallet";
+
+// SET CARD PIN
+"setCardPin.screen.title" = "SET CARD PIN";
+"setCardPin.screen.description" = "This PIN can be used at ATMs and for purchases, and is not used to get access to the app.";
+"setCardPin.popup.title" = "CARD PIN SET";
+"setCardPin.popup.successMessage" = "Your card's PIN is now set. Use it for purchases and at ATMs.";
+
 // MARK: - Popup
 
 // Logout
@@ -297,3 +312,4 @@
 "button.continue.title" = "Continue";
 "button.logout.title" = "Log Out";
 "button.ok.title" = "OK";
+"button.skip.title" = "Skip";

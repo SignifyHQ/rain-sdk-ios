@@ -61,7 +61,9 @@ public enum GenImages {
     public static let termsCheckboxSelected = ImageAsset(name: "termsCheckboxSelected")
   }
   public enum Images {
+    public static let activedCard = ImageAsset(name: "activedCard")
     public static let availableCard = ImageAsset(name: "availableCard")
+    public static let connectedAppleWallet = ImageAsset(name: "connectedAppleWallet")
     public static let icKycQuestion = ImageAsset(name: "ic_kyc_question_?")
     public static let icKycQuestionCheck = ImageAsset(name: "ic_kyc_question_check")
     public static let icLogo = ImageAsset(name: "ic_logo")

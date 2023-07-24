@@ -129,6 +129,7 @@ public extension Constants {
     case maxSize = "20"
     case capacityUnit = "Mb"
     case dotSymbol = "•"
+    case pinCodeDigits = "4"
   }
 }
 
