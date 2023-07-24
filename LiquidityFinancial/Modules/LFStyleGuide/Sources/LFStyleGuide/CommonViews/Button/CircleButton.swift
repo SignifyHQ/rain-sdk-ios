@@ -34,7 +34,7 @@ public extension CircleButton {
   enum Style: String, CaseIterable {
     case right = "rightArrowSmall"
     case left = "chevron.left"
-    case up = "chevron.up"
+    case chevronUp = "chevron.up"
     case down = "chevron.down"
     case camera
     case xmark

@@ -3,15 +3,14 @@ import LFStyleGuide
 import LFLocalizable
 import LFUtilities
 
-// swiftlint:disable closure_body_length
-public struct PersonalInformationView: View {
-
+struct PersonalInformationView: View {
+  
   @State var toastMessage: String?
   @FocusState var keyboardFocus: Focus?
-
+  
   @StateObject private var viewModel = PersonalInformationViewModel()
 
-  public var body: some View {
+  var body: some View {
     VStack {
       ScrollViewReader { proxy in
         ScrollView {
@@ -55,13 +54,13 @@ public struct PersonalInformationView: View {
     .navigationLink(isActive: $viewModel.isNavigationToSSNView) {
       EnterSSNView()
     }
-      // TODO: Add track event
-//    .onAppear {
-//      analyticsService.track(event: Event(name: EventName.viewedPersonalInfo.rawValue))
-//    }
-//    .track(name: String(describing: type(of: self)))
+    // TODO: Add track event
+    //    .onAppear {
+    //      analyticsService.track(event: Event(name: EventName.viewedPersonalInfo.rawValue))
+    //    }
+    //    .track(name: String(describing: type(of: self)))
   }
-
+  
   @ViewBuilder
   private func textField(
     placeholder: String,
@@ -89,7 +88,7 @@ public struct PersonalInformationView: View {
         }
     }
   }
-
+  
   private var contentView: some View {
     VStack(alignment: .leading) {
       Text(LFLocalizable.AddPersonalInformation.title)
@@ -101,7 +100,6 @@ public struct PersonalInformationView: View {
         .font(Fonts.Inter.regular.swiftUIFont(size: 12))
         .foregroundColor(Colors.label.swiftUIColor)
         .opacity(0.75)
-      
       textField(
         placeholder: LFLocalizable.enterFirstName,
         value: $viewModel.firstName,
@@ -120,7 +118,6 @@ public struct PersonalInformationView: View {
         .foregroundColor(Colors.label.swiftUIColor)
         .opacity(0.75)
         .padding(.top, 24)
-      
       textField(
         placeholder: LFLocalizable.enterLastName,
         value: $viewModel.lastName,
@@ -130,24 +127,11 @@ public struct PersonalInformationView: View {
         nextFocus: .email
       )
       
-      Text(LFLocalizable.dob)
-        .font(Fonts.Inter.regular.swiftUIFont(size: 12))
-        .foregroundColor(Colors.label.swiftUIColor)
-        .opacity(0.75)
-        .padding(.top, 24)
-      
-      DatePickerTextField(
-        placeHolderText: LFLocalizable.dobFormat,
-        value: $viewModel.dateCheck,
-        dateValue: $viewModel.dob
-      ).focused($keyboardFocus, equals: .dob)
-      
       Text(LFLocalizable.email)
         .font(Fonts.Inter.regular.swiftUIFont(size: 12))
         .foregroundColor(Colors.label.swiftUIColor)
         .opacity(0.75)
         .padding(.top, 24)
-      
       textField(
         placeholder: LFLocalizable.enterEmailAddress,
         value: $viewModel.email,
@@ -156,6 +140,17 @@ public struct PersonalInformationView: View {
         nextFocus: .dob,
         textInputAutocapitalization: .never
       )
+      
+      Text(LFLocalizable.dob)
+        .font(Fonts.Inter.regular.swiftUIFont(size: 12))
+        .foregroundColor(Colors.label.swiftUIColor)
+        .opacity(0.75)
+        .padding(.top, 24)
+      DatePickerTextField(
+        placeHolderText: LFLocalizable.dobFormat,
+        value: $viewModel.dateCheck,
+        dateValue: $viewModel.dob
+      ).focused($keyboardFocus, equals: .dob)
     }
   }
 }

@@ -75,10 +75,8 @@ extension KYCStatusViewModel {
         if onboardingState.mapToEnum().isEmpty {
             //Go Home Screen
         } else {
-          for state in onboardingState.mapToEnum() {
-            if state == .primaryPersonKYCApprove {
-                //do nothing
-            }
+          for state in onboardingState.mapToEnum() where state == .primaryPersonKYCApprove {
+            // Do nothing
           }
         }
       } catch {

@@ -20,7 +20,7 @@ public struct PhoneNumberView: View {
   }
   
   public var body: some View {
-    VStack(spacing: 16) {
+    VStack {
       GenImages.Images.icLogo.swiftUIImage
         .resizable()
         .scaledToFit()
@@ -47,8 +47,7 @@ public struct PhoneNumberView: View {
         }
       }
     }
-    // TODO: Will be updated later
-    // .track(name: String(describing: type(of: self)))
+    // .track(name: String(describing: type(of: self))) TODO: Will be implemented later
     .navigationLink(isActive: $viewModel.isNavigationToVertificationView) {
       VerificationCodeView(
         phoneNumber: viewModel.phoneNumber,

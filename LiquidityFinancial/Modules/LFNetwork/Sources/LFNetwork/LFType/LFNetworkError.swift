@@ -47,4 +47,3 @@ extension Error {
     self as? LFErrorObject
   }
 }
-

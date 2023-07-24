@@ -9,7 +9,7 @@ struct SetupWalletView: View {
 
   var body: some View {
     LoadingIndicatorView(isShowing: $viewModel.showIndicator) {
-      GeometryReader { gr in
+      GeometryReader { geo in
         Colors.background.swiftUIColor.edgesIgnoringSafeArea(.all)
         VStack {
           HStack {
@@ -24,7 +24,7 @@ struct SetupWalletView: View {
             }
           }
           .padding(.horizontal, 20)
-          .frame(width: gr.size.width, alignment: .trailing)
+          .frame(width: geo.size.width, alignment: .trailing)
 
           VStack {
             VStack {
@@ -32,7 +32,7 @@ struct SetupWalletView: View {
                 .foregroundColor(Colors.label.swiftUIColor)
                 .font(Fonts.Inter.regular.swiftUIFont(size: Constants.FontSize.main.value))
                 .padding(.horizontal, 35)
-                .frame(width: gr.size.width, alignment: .leading)
+                .frame(width: geo.size.width, alignment: .leading)
                 .padding(.bottom, 20)
                 .padding(.top, 15)
 
@@ -41,7 +41,7 @@ struct SetupWalletView: View {
                 .opacity(0.75)
                 .font(Fonts.Inter.regular.swiftUIFont(size: Constants.FontSize.medium.value))
                 .padding(.horizontal, 35)
-                .frame(width: gr.size.width, alignment: .leading)
+                .frame(width: geo.size.width, alignment: .leading)
                 .padding(.bottom, 25)
 
               HStack {
@@ -58,7 +58,7 @@ struct SetupWalletView: View {
                   .padding(.trailing, 45)
               }
               .frame(
-                width: abs(gr.size.width - 60),
+                width: abs(geo.size.width - 60),
                 height: 130,
                 alignment: .center
               )

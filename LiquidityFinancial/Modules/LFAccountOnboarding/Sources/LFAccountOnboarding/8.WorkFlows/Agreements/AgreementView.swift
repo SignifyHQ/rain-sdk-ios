@@ -16,7 +16,7 @@ public struct AgreementView: View {
       headerTitle
 
       ZStack {
-        HStack() {
+        HStack {
           GenImages.Images.icLogo.swiftUIImage
             .resizable()
             .scaledToFit()

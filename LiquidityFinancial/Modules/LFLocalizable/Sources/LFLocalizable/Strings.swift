@@ -38,20 +38,20 @@ public enum LFLocalizable {
   public static let enterCity = LFLocalizable.tr("Localizable", "enter_city", fallback: "Enter city")
   /// Enter email address
   public static let enterEmailAddress = LFLocalizable.tr("Localizable", "enter_emailAddress", fallback: "Enter email address")
-  /// Enter legal first name
-  public static let enterFirstName = LFLocalizable.tr("Localizable", "enter_firstName", fallback: "Enter legal first name")
-  /// Enter legal last name
-  public static let enterLastName = LFLocalizable.tr("Localizable", "enter_lastName", fallback: "Enter legal last name")
+  /// Enter first name
+  public static let enterFirstName = LFLocalizable.tr("Localizable", "enter_firstName", fallback: "Enter first name")
+  /// Enter last name
+  public static let enterLastName = LFLocalizable.tr("Localizable", "enter_lastName", fallback: "Enter last name")
   /// Enter state
   public static let enterState = LFLocalizable.tr("Localizable", "enter_state", fallback: "Enter state")
   /// Enter zip code
   public static let enterZipcode = LFLocalizable.tr("Localizable", "enter_zipcode", fallback: "Enter zip code")
-  /// Legal first name
-  public static let firstName = LFLocalizable.tr("Localizable", "first_name", fallback: "Legal first name")
+  /// First name
+  public static let firstName = LFLocalizable.tr("Localizable", "first_name", fallback: "First name")
   /// Join waitlist
   public static let joinWaitlist = LFLocalizable.tr("Localizable", "join_waitlist", fallback: "Join waitlist")
-  /// Legal last name
-  public static let lastName = LFLocalizable.tr("Localizable", "last_name", fallback: "Legal last name")
+  /// Last name
+  public static let lastName = LFLocalizable.tr("Localizable", "last_name", fallback: "Last name")
   /// First name and Last name should not be more than 23 characters
   public static let nameExceedMessage = LFLocalizable.tr("Localizable", "name_exceed_message", fallback: "First name and Last name should not be more than 23 characters")
   /// Encrypted using 256-BIT SSL
@@ -84,9 +84,9 @@ public enum LFLocalizable {
   public static let waitlistJoinedMessage = LFLocalizable.tr("Localizable", "waitlist_joined_message", fallback: "You are now on the waitlist. We will email you when we can operate in your state.")
   /// WAITLIST JOINED
   public static let waitlistJoinedTitle = LFLocalizable.tr("Localizable", "waitlist_joined_title", fallback: "WAITLIST JOINED")
-  /// Hello, %@.  We are very sorry, but due to regulations regarding Doge, we are currently unable to open accounts for residents of New York and Hawaii.   We are currently working with regulators to resolve this.  In the meantime, we will contact you as soon as we can open your account.
+  /// Hello, %@. We are very sorry, but due to regulations regarding Doge, we are currently unable to open accounts for residents of New York and Hawaii. We are currently working with regulators to resolve this. In the meantime, we will contact you as soon as we can open your account.
   public static func waitlistMessage(_ p1: Any) -> String {
-    return LFLocalizable.tr("Localizable", "waitlist_message", String(describing: p1), fallback: "Hello, %@.  We are very sorry, but due to regulations regarding Doge, we are currently unable to open accounts for residents of New York and Hawaii.   We are currently working with regulators to resolve this.  In the meantime, we will contact you as soon as we can open your account.")
+    return LFLocalizable.tr("Localizable", "waitlist_message", String(describing: p1), fallback: "Hello, %@. We are very sorry, but due to regulations regarding Doge, we are currently unable to open accounts for residents of New York and Hawaii. We are currently working with regulators to resolve this. In the meantime, we will contact you as soon as we can open your account.")
   }
   /// Cryptocurrency services powered by Zero Hash
   public static let zeroHashTransactiondetail = LFLocalizable.tr("Localizable", "Zero_hash_transactiondetail", fallback: "Cryptocurrency services powered by Zero Hash")
@@ -267,8 +267,8 @@ public enum LFLocalizable {
   }
   public enum KycStatus {
     public enum Fail {
-      /// Based on the information you entered, we were unable to create a Depository account at this time.  We will be in touch via email.
-      public static let message = LFLocalizable.tr("Localizable", "kycStatus.fail.message", fallback: "Based on the information you entered, we were unable to create a Depository account at this time.  We will be in touch via email.")
+      /// Based on the information you entered, we were unable to create a Depository account at this time. We will be in touch via email.
+      public static let message = LFLocalizable.tr("Localizable", "kycStatus.fail.message", fallback: "Based on the information you entered, we were unable to create a Depository account at this time. We will be in touch via email.")
       /// WE’RE SORRY
       public static let title = LFLocalizable.tr("Localizable", "kycStatus.fail.title", fallback: "WE’RE SORRY")
     }
@@ -360,8 +360,8 @@ public enum LFLocalizable {
     public static let amountDescription = LFLocalizable.tr("Localizable", "rewardTerms.amount_description", fallback: "up to 8'%' purchase of transaction")
     /// Transaction Amount
     public static let amountTitle = LFLocalizable.tr("Localizable", "rewardTerms.amount_title", fallback: "Transaction Amount")
-    /// By selecting to enroll in the crypto rewards program, you understand and agree that eligible rewards transactions will also trigger your authorization to invest in crypto once your action or card transaction is complete.  Transactions may take time in certain cases.
-    public static let disclosuresFirst = LFLocalizable.tr("Localizable", "rewardTerms.disclosures_first", fallback: "By selecting to enroll in the crypto rewards program, you understand and agree that eligible rewards transactions will also trigger your authorization to invest in crypto once your action or card transaction is complete.  Transactions may take time in certain cases.")
+    /// By selecting to enroll in the crypto rewards program, you understand and agree that eligible rewards transactions will also trigger your authorization to invest in crypto once your action or card transaction is complete. Transactions may take time in certain cases.
+    public static let disclosuresFirst = LFLocalizable.tr("Localizable", "rewardTerms.disclosures_first", fallback: "By selecting to enroll in the crypto rewards program, you understand and agree that eligible rewards transactions will also trigger your authorization to invest in crypto once your action or card transaction is complete. Transactions may take time in certain cases.")
     /// Maximum reward amount may vary, and can depend on your level of participation in crypto rewards. Specific terms and condition may apply.
     public static let disclosuresFourth = LFLocalizable.tr("Localizable", "rewardTerms.disclosures_fourth", fallback: "Maximum reward amount may vary, and can depend on your level of participation in crypto rewards. Specific terms and condition may apply.")
     /// Orders may not be canceled or reversed once submitted by you. By submitting a withdrawal request, you are requesting an on-chain transaction that is not reversible or recallable. You are responsible for reviewing the recipient address and ensuring it is the correct address for the selected asset for withdrawal
@@ -595,8 +595,8 @@ public enum LFLocalizable {
       public static let orderCard = LFLocalizable.tr("Localizable", "welcome.button.order_card", fallback: "Order Card")
     }
     public enum Header {
-      /// The AvalancheCard is an easy way to earn Avalanche with everyday purchases.  You can also buy, sell and spend Avalanche with the AvalancheCard app.
-      public static let desc = LFLocalizable.tr("Localizable", "welcome.header.desc", fallback: "The AvalancheCard is an easy way to earn Avalanche with everyday purchases.  You can also buy, sell and spend Avalanche with the AvalancheCard app.")
+      /// The AvalancheCard is an easy way to earn Avalanche with everyday purchases. You can also buy, sell and spend Avalanche with the AvalancheCard app.
+      public static let desc = LFLocalizable.tr("Localizable", "welcome.header.desc", fallback: "The AvalancheCard is an easy way to earn Avalanche with everyday purchases. You can also buy, sell and spend Avalanche with the AvalancheCard app.")
       /// WELCOME!
       public static let title = LFLocalizable.tr("Localizable", "welcome.header.title", fallback: "WELCOME!")
     }

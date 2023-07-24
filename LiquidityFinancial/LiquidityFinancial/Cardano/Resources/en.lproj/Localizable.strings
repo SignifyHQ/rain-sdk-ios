@@ -9,7 +9,7 @@
 
 // Wellcome Screen
 "welcome.header.title" = "WELCOME!";
-"welcome.header.desc" = "The AvalancheCard is an easy way to earn Avalanche with everyday purchases.  You can also buy, sell and spend Avalanche with the AvalancheCard app.";
+"welcome.header.desc" = "The AvalancheCard is an easy way to earn Avalanche with everyday purchases. You can also buy, sell and spend Avalanche with the AvalancheCard app.";
 "welcome.how_it_works" = "HOW IT WORKS:";
 "welcome.how_it_works.item1" = "Create a AvalancheCard account";
 "welcome.how_it_works.item2" = "Use your AvalancheCard for everyday purchases";
@@ -26,10 +26,10 @@
 // Personal information
 "addPersonalInformation.title" = "ADD PERSONAL INFORMATION";
 "name_exceed_message" = "First name and Last name should not be more than 23 characters";
-"first_name" = "Legal first name";
-"enter_firstName" = "Enter legal first name";
-"last_name" = "Legal last name";
-"enter_lastName" = "Enter legal last name";
+"first_name" = "First name";
+"enter_firstName" = "Enter first name";
+"last_name" = "Last name";
+"enter_lastName" = "Enter last name";
 "email" = "Email";
 "enter_emailAddress" = "Enter email address";
 "dob" = "Date of birth";
@@ -144,7 +144,7 @@
 "address.disclosure.agreement" = "CauseCard Agreement";
 "address.disclosure.privacy" = "Privacy Policy";
 "account_update" = "ACCOUNT UPDATE";
-"waitlist_message" = "Hello, %@.  We are very sorry, but due to regulations regarding Doge, we are currently unable to open accounts for residents of New York and Hawaii.   We are currently working with regulators to resolve this.  In the meantime, we will contact you as soon as we can open your account.";
+"waitlist_message" = "Hello, %@. We are very sorry, but due to regulations regarding Doge, we are currently unable to open accounts for residents of New York and Hawaii. We are currently working with regulators to resolve this. In the meantime, we will contact you as soon as we can open your account.";
 "join_waitlist" = "Join waitlist";
 "cancel_account" = "Cancel account";
 "waitlist_joined_title" = "WAITLIST JOINED";
@@ -178,7 +178,7 @@
 "kycStatus.waitingVerification.title" = "THANK YOU FOR WAITING";
 "kycStatus.waitingVerification.message" = "We’re confiming your account details. This could take up to 30 seconds";
 "kycStatus.fail.title" = "WE’RE SORRY";
-"kycStatus.fail.message" = "Based on the information you entered, we were unable to create a Depository account at this time.  We will be in touch via email.";
+"kycStatus.fail.message" = "Based on the information you entered, we were unable to create a Depository account at this time. We will be in touch via email.";
 "kycStatus.inReview.title" = "VERIFYING ACCOUNT DETAILS";
 "kycStatus.inReview.message" = "Hi %@, we are still verifying your account details. This is common when phone numbers, addresses or emails change. Please contact support and we will help verify the details. Thank you for your patience.";
 "kycStatus.inReview.secondaryTitle" = "Contact Support";
@@ -196,7 +196,7 @@
 "rewardTerms.exchange_rate_description" = "Varies, the current prevaling price as determined by Zero Hash Liquidity Services LLC at the point of transaction.";
 "rewardTerms.enroll_cta" = "Enroll now";
 "rewardTerms.disclosures_title" = "Exchange Rate";
-"rewardTerms.disclosures_first" = "By selecting to enroll in the crypto rewards program, you understand and agree that eligible rewards transactions will also trigger your authorization to invest in crypto once your action or card transaction is complete.  Transactions may take time in certain cases.";
+"rewardTerms.disclosures_first" = "By selecting to enroll in the crypto rewards program, you understand and agree that eligible rewards transactions will also trigger your authorization to invest in crypto once your action or card transaction is complete. Transactions may take time in certain cases.";
 "rewardTerms.disclosures_second" = "Orders may not be canceled or reversed once submitted by you. By submitting a withdrawal request, you are requesting an on-chain transaction that is not reversible or recallable. You are responsible for reviewing the recipient address and ensuring it is the correct address for the selected asset for withdrawal";
 "rewardTerms.disclosures_third" = "Zero Hash does not offer the ability to set up pre-authorized, automatic, or recurring Orders (“Pre-Authorized Orders”) in your Account; (b) any such Pre-Authorized Order feature (if available) is under the exclusive control of CauseCard ; (c) you must contact CauseCard in order to stop a Pre-Authorized Order before execution or to turn off such a feature in your Account; and (d) Zero Hash and ZHLS are not liable for the placement and execution of any Pre-Authorized order.";
 "rewardTerms.disclosures_fourth" = "Maximum reward amount may vary, and can depend on your level of participation in crypto rewards. Specific terms and condition may apply.";

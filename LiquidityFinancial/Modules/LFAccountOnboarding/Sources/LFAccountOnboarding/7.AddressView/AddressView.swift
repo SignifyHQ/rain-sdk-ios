@@ -98,8 +98,10 @@ struct AddressView: View {
     }
     .navigationBarBackButtonHidden(viewModel.isLoading)
   }
+}
 
-  private func listView() -> some View {
+private extension AddressView {
+  func listView() -> some View {
     List(viewModel.addressList, id: \.id) { item in
       HStack(alignment: .top) {
         GenImages.CommonImages.map.swiftUIImage
@@ -136,7 +138,7 @@ struct AddressView: View {
     .floatingShadow()
   }
   
-  private var title: some View {
+  var title: some View {
     Text(
       LFLocalizable.addressTitle(LFUtility.appName.uppercased())
     )
@@ -145,14 +147,14 @@ struct AddressView: View {
     .padding(.vertical, 16)
   }
   
-  private var addressLine1: some View {
+  var addressLine1: some View {
     VStack(alignment: .leading) {
       Text(LFLocalizable.addressLine1Title)
         .font(Fonts.Inter.regular.swiftUIFont(size: Constants.FontSize.textFieldHeader.value))
         .foregroundColor(Colors.label.swiftUIColor)
         .opacity(0.75)
         .padding(.leading, 4)
-
+      
       textField(
         placeholder: LFLocalizable.enterAddress,
         value: $viewModel.addressLine1,
@@ -167,7 +169,7 @@ struct AddressView: View {
     }
   }
   
-  private var addressLine2: some View {
+  var addressLine2: some View {
     VStack(alignment: .leading) {
       Text(LFLocalizable.addressLine2Title)
         .font(Fonts.Inter.regular.swiftUIFont(size: Constants.FontSize.textFieldHeader.value))
@@ -175,7 +177,7 @@ struct AddressView: View {
         .opacity(0.75)
         .padding(.top, 16)
         .padding(.leading, 4)
-
+      
       textField(
         placeholder: LFLocalizable.enterAddress,
         value: $viewModel.addressLine2,
@@ -185,7 +187,7 @@ struct AddressView: View {
     }
   }
   
-  private var city: some View {
+  var city: some View {
     VStack(alignment: .leading) {
       Text(LFLocalizable.city)
         .font(Fonts.Inter.regular.swiftUIFont(size: Constants.FontSize.textFieldHeader.value))
@@ -193,7 +195,7 @@ struct AddressView: View {
         .opacity(0.75)
         .padding(.top, 16)
         .padding(.leading, 4)
-
+      
       textField(
         placeholder: LFLocalizable.enterCity,
         value: $viewModel.city,
@@ -203,7 +205,7 @@ struct AddressView: View {
     }
   }
   
-  private var state: some View {
+  var state: some View {
     VStack(alignment: .leading) {
       Text(LFLocalizable.state)
         .font(Fonts.Inter.regular.swiftUIFont(size: Constants.FontSize.textFieldHeader.value))
@@ -211,7 +213,7 @@ struct AddressView: View {
         .opacity(0.75)
         .multilineTextAlignment(.leading)
         .padding(.leading, 4)
-
+      
       textField(
         placeholder: LFLocalizable.enterState,
         value: $viewModel.state,
@@ -223,7 +225,7 @@ struct AddressView: View {
     }
   }
   
-  private var zipCode: some View {
+  var zipCode: some View {
     VStack(alignment: .leading) {
       Text(LFLocalizable.zipcode)
         .font(Fonts.Inter.regular.swiftUIFont(size: Constants.FontSize.textFieldHeader.value))
@@ -231,7 +233,7 @@ struct AddressView: View {
         .opacity(0.75)
         .multilineTextAlignment(.leading)
         .padding(.leading, 4)
-
+      
       textField(
         placeholder: LFLocalizable.enterZipcode,
         value: $viewModel.zipCode,
@@ -241,8 +243,8 @@ struct AddressView: View {
       )
     }
   }
-
-  private var bottom: some View {
+  
+  var bottom: some View {
     VStack(spacing: 0) {
       FullSizeButton(
         title: LFLocalizable.Button.Continue.title,
@@ -257,9 +259,9 @@ struct AddressView: View {
     .padding(.horizontal, 30)
     .padding(.bottom, 12)
   }
-
+  
   @ViewBuilder
-  private func textField(
+  func textField(
     placeholder: String,
     value: Binding<String>,
     limit: Int = 200,
