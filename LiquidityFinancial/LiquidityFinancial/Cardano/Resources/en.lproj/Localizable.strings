@@ -293,6 +293,13 @@
 "transferView.reward_type.donation.title" = "Donate to Charity";
 "transferView.reward_type.donation.subtitle" = "0.75% donated to a charity you choose";
 
+// MoveMoney
+"moveMoney.withdraw.annotation" = "You currently have %@ available to withdraw. Rewards are not available to withdraw until 48 hours after they are earned.";
+"moveMoney.add_account" = "Add bank or card";
+"moveMoney.deposit.title" = "DEPOSIT";
+"moveMoney.withdraw.title" = "WITHDRAW";
+"moveMoney.available_balance.subtitle" = "%@ available";
+
 // MARK: - Common
 
 // Terms
@@ -313,3 +320,7 @@
 "button.logout.title" = "Log Out";
 "button.ok.title" = "OK";
 "button.skip.title" = "Skip";
+
+// Grid Value
+"grid_value.crypto" = "%@ AVAX";
+"grid_value.all" = "All";

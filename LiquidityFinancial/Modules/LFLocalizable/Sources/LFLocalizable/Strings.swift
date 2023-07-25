@@ -265,6 +265,14 @@ public enum LFLocalizable {
       public static let title = LFLocalizable.tr("Localizable", "error.weAreSorry.title", fallback: "WE’RE SORRY")
     }
   }
+  public enum GridValue {
+    /// All
+    public static let all = LFLocalizable.tr("Localizable", "grid_value.all", fallback: "All")
+    /// %@ AVAX
+    public static func crypto(_ p1: Any) -> String {
+      return LFLocalizable.tr("Localizable", "grid_value.crypto", String(describing: p1), fallback: "%@ AVAX")
+    }
+  }
   public enum Home {
     public enum AccountTab {
       /// Account
@@ -321,6 +329,28 @@ public enum LFLocalizable {
       public static let message = LFLocalizable.tr("Localizable", "kycStatus.waitingVerification.message", fallback: "We’re confiming your account details. This could take up to 30 seconds")
       /// THANK YOU FOR WAITING
       public static let title = LFLocalizable.tr("Localizable", "kycStatus.waitingVerification.title", fallback: "THANK YOU FOR WAITING")
+    }
+  }
+  public enum MoveMoney {
+    /// Add bank or card
+    public static let addAccount = LFLocalizable.tr("Localizable", "moveMoney.add_account", fallback: "Add bank or card")
+    public enum AvailableBalance {
+      /// %@ available
+      public static func subtitle(_ p1: Any) -> String {
+        return LFLocalizable.tr("Localizable", "moveMoney.available_balance.subtitle", String(describing: p1), fallback: "%@ available")
+      }
+    }
+    public enum Deposit {
+      /// DEPOSIT
+      public static let title = LFLocalizable.tr("Localizable", "moveMoney.deposit.title", fallback: "DEPOSIT")
+    }
+    public enum Withdraw {
+      /// You currently have %@ available to withdraw. Rewards are not available to withdraw until 48 hours after they are earned.
+      public static func annotation(_ p1: Any) -> String {
+        return LFLocalizable.tr("Localizable", "moveMoney.withdraw.annotation", String(describing: p1), fallback: "You currently have %@ available to withdraw. Rewards are not available to withdraw until 48 hours after they are earned.")
+      }
+      /// WITHDRAW
+      public static let title = LFLocalizable.tr("Localizable", "moveMoney.withdraw.title", fallback: "WITHDRAW")
     }
   }
   public enum PhoneNumber {

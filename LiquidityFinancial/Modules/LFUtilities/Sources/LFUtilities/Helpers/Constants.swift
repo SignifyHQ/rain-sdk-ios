@@ -117,6 +117,17 @@ public extension Constants {
 public extension Constants {
   enum CurrencyUnit: String {
     case usd = "$"
+    
+    public var symbol: String {
+      rawValue
+    }
+    
+    public var maxFractionDigits: Int {
+      switch self {
+      case .usd:
+        return 2
+      }
+    }
   }
 }
   // MARK: - Default
@@ -130,6 +141,7 @@ public extension Constants {
     case capacityUnit = "Mb"
     case dotSymbol = "•"
     case pinCodeDigits = "4"
+    case zeroAmount = "0"
   }
 }
 

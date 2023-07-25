@@ -59,6 +59,7 @@ public enum GenImages {
     public static let rewardsDonation = ImageAsset(name: "rewardsDonation")
     public static let termsCheckboxDeselected = ImageAsset(name: "termsCheckboxDeselected")
     public static let termsCheckboxSelected = ImageAsset(name: "termsCheckboxSelected")
+    public static let usdSymbol = ImageAsset(name: "usdSymbol")
   }
   public enum Images {
     public static let activedCard = ImageAsset(name: "activedCard")
