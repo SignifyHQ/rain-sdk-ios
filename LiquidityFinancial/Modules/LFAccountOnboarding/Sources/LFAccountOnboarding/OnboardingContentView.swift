@@ -1,0 +1,41 @@
+import SwiftUI
+import Factory
+import LFUtilities
+import LFStyleGuide
+
+public struct OnboardingContentView: View {
+  
+  @StateObject
+  var viewModel = OnboardingContentViewModel()
+  
+  @Injected(\.userDataManager)
+  var userDataManager
+  
+  let environmentManager = EnvironmentManager()
+  
+  public init() {}
+  
+  public var body: some View {
+    buildContent(for: viewModel.route)
+  }
+  
+  @ViewBuilder
+  private func buildContent(for route: OnboardingFlowCoordinator.Route) -> some View {
+    Group {
+      switch route {
+      case .initial:
+        InitialView()
+      case .phone:
+        PhoneNumberView()
+        .environmentObject(environmentManager)
+      case .welcome:
+        WelcomeView()
+      case .kycReview:
+        KYCStatusView(viewModel: KYCStatusViewModel(state: .inReview(userDataManager.userNameDisplay)))
+      case .dashboard:
+        EmptyView()
+      }
+    }
+    .embedInNavigation()
+  }
+}

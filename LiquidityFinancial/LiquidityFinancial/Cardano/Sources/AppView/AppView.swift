@@ -3,6 +3,7 @@ import Factory
 import LFAccountOnboarding
 import LFStyleGuide
 import LFUtilities
+import LFDashboard
 
 struct AppView: View {
   
@@ -19,17 +20,10 @@ struct AppView: View {
   private func buildContent(for route: AppCoordinator.Route) -> some View {
     Group {
       switch route {
-      case .initial:
-        InitialView()
       case .onboarding:
-        PhoneNumberView(
-          viewModel: Container.shared.phoneNumberViewModel.callAsFunction()
-        )
-        .environmentObject(environmentManager)
-      case .welcome:
-        WelcomeView()
-      case .onKYCReview:
-        KYCStatusView(viewModel: KYCStatusViewModel(state: .inReview(userDataManager.userNameDisplay)))
+        OnboardingContentView()
+      case .dashboard:
+        HomeView(viewModel: HomeViewModel(), tabOptions: TabOption.allCases)
       }
     }
     .embedInNavigation()

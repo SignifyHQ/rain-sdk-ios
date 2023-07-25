@@ -4,16 +4,14 @@ import LFStyleGuide
 import LFLocalizable
 import LFUtilities
 
-public struct InitialView: View {
-  
-  public init() {}
+struct InitialView: View {
   
   var title: String {
     let appName = Bundle.main.object(forInfoDictionaryKey: "CFBundleName") as? String ?? ""
     return appName
   }
   
-  public var body: some View {
+  var body: some View {
     VStack(spacing: 32) {
       Spacer()
       ProgressView().progressViewStyle(.circular)

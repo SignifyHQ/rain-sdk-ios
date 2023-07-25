@@ -3,11 +3,9 @@ import SwiftUI
 import LFStyleGuide
 import LFLocalizable
 
-public struct WelcomeView: View {
+struct WelcomeView: View {
   
   @StateObject var viewModel = WelcomeViewModel()
-  
-  public init() {}
   
   public var body: some View {
     VStack(spacing: 12) {
@@ -42,7 +40,7 @@ public struct WelcomeView: View {
     .navigationLink(isActive: $viewModel.isPushToAgreementView) {
       AgreementView()
     }
-    .navigationBarBackButtonHidden(viewModel.isLoading)
+    .navigationBarBackButtonHidden(true)
   }
   
   private var staticTop: some View {

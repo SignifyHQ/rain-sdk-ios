@@ -12,10 +12,11 @@ final class QuestionsViewModel: ObservableObject {
     case uploadDocument
   }
   
-  @Injected(\.netspendDataManager) var netspendDataManager
-  @Injected(\.userDataManager) var userDataManager
-  @Injected(\.netspendRepository) var netspendRepository
-  @Injected(\.onboardingRepository) var onboardingRepository
+  @LazyInjected(\.netspendDataManager) var netspendDataManager
+  @LazyInjected(\.userDataManager) var userDataManager
+  @LazyInjected(\.netspendRepository) var netspendRepository
+  @LazyInjected(\.onboardingRepository) var onboardingRepository
+  @LazyInjected(\.onboardingFlowCoordinator) var onboardingFlowCoordinator
   
   @Published var isLoading: Bool = false
   @Published var isEnableContinue: Bool = false
@@ -62,15 +63,30 @@ final class QuestionsViewModel: ObservableObject {
       isLoading = true
       do {
         _ = try await netspendRepository.putQuestion(sessionId: session.sessionId, encryptedData: encryptedData)
-        if let onboardingState = try await onboardingRepository.getOnboardingState(sessionId: userDataManager.sessionID) as? APIOnboardingState {
-          let listEnumState = onboardingState.mapToEnum()
-          if listEnumState.isEmpty {
-              //Go Home Screen
-          } else {
-            if listEnumState.contains(where: { $0 == .primaryPersonKYCApprove }) {
-              navigation = .kycReview
-            } else if listEnumState.contains(where: { $0 == .provideDocuments }) {
+       
+        let workflows = try await self.netspendRepository.getWorkflows()
+        
+        if workflows.steps.isEmpty {
+          navigation = .kycReview
+          return
+        }
+      
+        if let steps = workflows.steps.first {
+          for stepIndex in 0...(steps.steps.count - 1) {
+            let step = steps.steps[stepIndex]
+            switch step.missingStep {
+            case .identityQuestions:
+              onboardingFlowCoordinator.set(route: .welcome)
+            case .provideDocuments:
+              let documents = try await netspendRepository.getDocuments(sessionId: userDataManager.sessionID)
+              netspendDataManager.update(documentData: documents)
               navigation = .uploadDocument
+            case .primaryPersonKYCApprove, .KYCData, .identityScan:
+              navigation = .kycReview
+            case .acceptAgreement:
+              break
+            case .expectedUse:
+              break
             }
           }
         }

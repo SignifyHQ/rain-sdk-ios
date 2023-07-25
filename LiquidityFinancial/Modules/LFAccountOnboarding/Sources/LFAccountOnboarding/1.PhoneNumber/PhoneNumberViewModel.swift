@@ -4,9 +4,10 @@ import LFLocalizable
 import SwiftUI
 import OnboardingDomain
 import NetSpendData
+import Factory
 
 @MainActor
-public final class PhoneNumberViewModel: ObservableObject {
+final class PhoneNumberViewModel: ObservableObject {
   @Published var isSecretMode: Bool = false
   @Published var isLoading: Bool = false
   @Published var isDisableButton: Bool = true
@@ -15,16 +16,18 @@ public final class PhoneNumberViewModel: ObservableObject {
   @Published var phoneNumber: String = ""
   @Published var toastMessage: String?
   
-  let requestOtpUserCase: RequestOTPUseCaseProtocol
-  let loginUseCase: LoginUseCaseProtocol
+  @Injected(\.onboardingRepository) var onboardingRepository
+  
   let terms = LFLocalizable.Term.Terms.attributeText
   let esignConsent = LFLocalizable.Term.EsignConsent.attributeText
   let privacyPolicy = LFLocalizable.Term.PrivacyPolicy.attributeText
   
-  public init(requestOtpUserCase: RequestOTPUseCaseProtocol, loginUseCase: LoginUseCaseProtocol) {
-    self.requestOtpUserCase = requestOtpUserCase
-    self.loginUseCase = loginUseCase
-  }
+  lazy var requestOtpUseCase: RequestOTPUseCaseProtocol = {
+    RequestOTPUseCase(repository: onboardingRepository)
+  }()
+  lazy var loginUseCase: LoginUseCaseProtocol = {
+    LoginUseCase(repository: onboardingRepository)
+  }()
 }
 
 // MARK: - API
@@ -33,7 +36,7 @@ extension PhoneNumberViewModel {
     Task {
       do {
         let formatPhone = Constants.Default.regionCode.rawValue + phoneNumber
-        let otpResponse = try await requestOtpUserCase.execute(phoneNumber: formatPhone)
+        let otpResponse = try await requestOtpUseCase.execute(phoneNumber: formatPhone)
         isLoading = false
         handleAfterGetOTP(isSuccess: otpResponse.success)
       } catch {

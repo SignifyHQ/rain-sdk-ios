@@ -8,7 +8,7 @@ class AppViewModel: ObservableObject {
   
   @Injected(\.coordinator) var coordinator
   
-  @Published var route = AppCoordinator.Route.initial
+  @Published var route = AppCoordinator.Route.onboarding
   
   private var subscribers: Set<AnyCancellable> = []
   

@@ -15,10 +15,11 @@ final class UploadDocumentViewModel: ObservableObject {
     case home
   }
   
-  @Injected(\.netspendDataManager) var netspendDataManager
-  @Injected(\.userDataManager) var userDataManager
-  @Injected(\.netspendRepository) var netspendRepository
-  @Injected(\.onboardingRepository) var onboardingRepository
+  @LazyInjected(\.netspendDataManager) var netspendDataManager
+  @LazyInjected(\.userDataManager) var userDataManager
+  @LazyInjected(\.netspendRepository) var netspendRepository
+  @LazyInjected(\.onboardingRepository) var onboardingRepository
+  @LazyInjected(\.onboardingFlowCoordinator) var onboardingFlowCoordinator
   
   @Published var navigation: Navigation?
   @Published var isLoading: Bool = false
@@ -189,9 +190,9 @@ extension UploadDocumentViewModel {
     if status == .reviewInProgress {
       navigation = .kycReview
     } else if status == .open {
-      //Do not thing
+      navigation = .kycReview
     } else if status == .complete {
-      navigation = .home
+      onboardingFlowCoordinator.set(route: .dashboard)
     }
   }
   

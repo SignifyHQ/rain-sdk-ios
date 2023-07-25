@@ -4,7 +4,7 @@ import LFStyleGuide
 import LFUtilities
 import LFLocalizable
 
-public struct PhoneNumberView: View {
+struct PhoneNumberView: View {
   @EnvironmentObject
   var environmentManager: EnvironmentManager
   @Environment(\.openURL)
@@ -12,15 +12,12 @@ public struct PhoneNumberView: View {
   @Environment(\.presentationMode)
   var presentation
   
-  @StateObject private var viewModel: PhoneNumberViewModel
+  @StateObject private var viewModel = PhoneNumberViewModel()
+  
   @FocusState private var keyboardFocus: Field?
-  
-  public init(viewModel: PhoneNumberViewModel) {
-    _viewModel = .init(wrappedValue: viewModel)
-  }
-  
-  public var body: some View {
-    VStack {
+
+  var body: some View {
+    VStack(spacing: 16) {
       GenImages.Images.icLogo.swiftUIImage
         .resizable()
         .scaledToFit()
@@ -49,11 +46,7 @@ public struct PhoneNumberView: View {
     }
     // .track(name: String(describing: type(of: self))) TODO: Will be implemented later
     .navigationLink(isActive: $viewModel.isNavigationToVertificationView) {
-      VerificationCodeView(
-        phoneNumber: viewModel.phoneNumber,
-        requestOTPUseCase: viewModel.requestOtpUserCase,
-        loginUseCase: viewModel.loginUseCase
-      )
+      VerificationCodeView(phoneNumber: viewModel.phoneNumber)
     }
     .popup(item: $viewModel.toastMessage, style: .toast) {
       ToastView(toastMessage: $0)

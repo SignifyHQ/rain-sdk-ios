@@ -3,10 +3,10 @@ import LFUtilities
 import LFStyleGuide
 import LFLocalizable
 
-public struct KYCStatusView: View {
+struct KYCStatusView: View {
   @StateObject var viewModel: KYCStatusViewModel
   
-  public init(viewModel: KYCStatusViewModel) {
+  init(viewModel: KYCStatusViewModel) {
     _viewModel = .init(wrappedValue: viewModel)
   }
   

@@ -19,9 +19,10 @@ final class AddressViewModel: ObservableObject {
     case home
   }
   
-  @Injected(\.userDataManager) var userDataManager
-  @Injected(\.netspendRepository) var netspendRepository
-  @Injected(\.netspendDataManager) var netspendDataManager
+  @LazyInjected(\.userDataManager) var userDataManager
+  @LazyInjected(\.netspendRepository) var netspendRepository
+  @LazyInjected(\.netspendDataManager) var netspendDataManager
+  @LazyInjected(\.onboardingFlowCoordinator) var onboardingFlowCoordinator
   
   @Published var isLoading: Bool = false
   @Published var toastMessage: String?
@@ -156,6 +157,11 @@ final class AddressViewModel: ObservableObject {
         
         let workflows = try await self.netspendRepository.getWorkflows()
         
+        if workflows.steps.isEmpty {
+          navigation = .inReview
+          return
+        }
+        
         if let steps = workflows.steps.first {
           for stepIndex in 0...(steps.steps.count - 1) {
             let step = steps.steps[stepIndex]
@@ -171,15 +177,15 @@ final class AddressViewModel: ObservableObject {
               netspendDataManager.update(documentData: documents)
               navigation = .document
             case .primaryPersonKYCApprove:
-              navigation = .home
+              navigation = .inReview
             case .KYCData:
-              navigation = .pendingIDV
+              navigation = .inReview
             case .acceptAgreement:
               break
             case .expectedUse:
               break
             case .identityScan:
-              navigation = .pendingIDV
+              navigation = .inReview
             }
           }
         }

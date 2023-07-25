@@ -3,9 +3,10 @@ import Factory
 import NetSpendData
 import LFUtilities
 import OnboardingData
+import OnboardingDomain
 
 @MainActor
-public final class KYCStatusViewModel: ObservableObject {
+final class KYCStatusViewModel: ObservableObject {
   enum Navigation {
     case passport
     case address
@@ -21,14 +22,14 @@ public final class KYCStatusViewModel: ObservableObject {
   @Injected(\.netspendDataManager) var netspendDataManager
   @Injected(\.userDataManager) var userDataManager
   @Injected(\.onboardingRepository) var onboardingRepository
-  
+  @LazyInjected(\.onboardingFlowCoordinator) var onboardingFlowCoordinator
   var username: String {
     userDataManager.userNameDisplay
   }
   private var fetchCount = 0
   private var autoRefreshTimer: Timer?
   
-  public init(state: KYCState) {
+  init(state: KYCState) {
     _state = .init(initialValue: state)
   }
 }
@@ -71,19 +72,40 @@ extension KYCStatusViewModel {
       defer { isLoading = false }
       isLoading = true
       do {
-        guard let onboardingState = try await onboardingRepository.getOnboardingState(sessionId: userDataManager.sessionID) as? APIOnboardingState else { return }
-        if onboardingState.mapToEnum().isEmpty {
-            //Go Home Screen
+        let onboardingState = try await onboardingRepository.getOnboardingState(sessionId: userDataManager.sessionID)
+        if onboardingState.missingSteps.isEmpty {
+          onboardingFlowCoordinator.set(route: .dashboard)
         } else {
-          for state in onboardingState.mapToEnum() where state == .primaryPersonKYCApprove {
-            // Do nothing
+          let states = onboardingState.mapToEnum()
+          if states.isEmpty {
+            let workflowsMissingStep = WorkflowsMissingStep.allCases.map { $0.rawValue }
+            if (onboardingState.missingSteps.first(where: { workflowsMissingStep.contains($0) }) != nil) {
+              return
+            } else {
+              //TODO: Tony need review
+              onboardingFlowCoordinator.set(route: .dashboard)
+            }
+          } else {
+            if states.contains(OnboardingMissingStep.netSpendCreateAccount) {
+              onboardingFlowCoordinator.set(route: .welcome)
+            } else if states.contains(OnboardingMissingStep.dashboardReview) {
+              onboardingFlowCoordinator.set(route: .kycReview)
+            } else if states.contains(OnboardingMissingStep.zeroHashAccount) {
+                //TODO: Tony review it
+            } else if states.contains(OnboardingMissingStep.cardProvision) {
+                //TODO: Tony review it
+            }
           }
         }
       } catch {
+        onboardingFlowCoordinator.set(route: .welcome)
         log.error(error.localizedDescription)
-        toastMessage = error.localizedDescription
       }
     }
+  }
+  
+  func checkOnboardingState(onCompletion: @escaping () -> Void) {
+    
   }
 }
 

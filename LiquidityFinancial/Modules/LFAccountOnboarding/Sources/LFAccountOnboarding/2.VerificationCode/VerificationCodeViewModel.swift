@@ -10,6 +10,9 @@ import NetspendSdk
 @MainActor
 final class VerificationCodeViewModel: ObservableObject {
   @Injected(\Container.userDataManager) var userDataManager
+  @Injected(\.onboardingRepository) var onboardingRepository
+  @LazyInjected(\.onboardingFlowCoordinator) var onboardingFlowCoordinator
+  
   @Published var isNavigationToWelcome: Bool = false
   @Published var isResendButonTimerOn = false
   @Published var isShowText: Bool = true
@@ -21,17 +24,15 @@ final class VerificationCodeViewModel: ObservableObject {
   @Published var errorMessage: String?
   
   var cancellables: Set<AnyCancellable> = []
-  let requestOtpUserCase: RequestOTPUseCaseProtocol
-  let loginUserCase: LoginUseCaseProtocol
+  lazy var requestOtpUseCase: RequestOTPUseCaseProtocol = {
+    RequestOTPUseCase(repository: onboardingRepository)
+  }()
+  lazy var loginUseCase: LoginUseCaseProtocol = {
+    LoginUseCase(repository: onboardingRepository)
+  }()
   
-  init(
-    phoneNumber: String,
-    requestOtpUserCase: RequestOTPUseCaseProtocol,
-    loginUserCase: LoginUseCaseProtocol
-  ) {
+  init(phoneNumber: String) {
     formatPhoneNumber = Constants.Default.regionCode.rawValue + phoneNumber
-    self.requestOtpUserCase = requestOtpUserCase
-    self.loginUserCase = loginUserCase
   }
 }
 
@@ -42,7 +43,7 @@ extension VerificationCodeViewModel {
     isShowLoading = true
     Task {
       do {
-        _ = try await loginUserCase.execute(phoneNumber: formatPhoneNumber, code: code)
+        _ = try await loginUseCase.execute(phoneNumber: formatPhoneNumber, code: code)
         let pnumber = formatPhoneNumber
           .replace(string: " ", replacement: "")
           .replace(string: "(", replacement: "")
@@ -51,10 +52,11 @@ extension VerificationCodeViewModel {
           .trimWhitespacesAndNewlines()
         userDataManager.update(phone: pnumber)
         userDataManager.stored(phone: pnumber)
-        isShowLoading = false
-        isNavigationToWelcome = true
+        checkOnboardingState {
+          self.isShowLoading = false
+        }
       } catch {
-        isShowLoading = false
+        self.isShowLoading = false
         toastMessage = error.localizedDescription
         log.error(error)
       }
@@ -64,7 +66,7 @@ extension VerificationCodeViewModel {
   func performGetOTP(formatPhoneNumber: String) {
     Task {
       do {
-        _ = try await requestOtpUserCase.execute(phoneNumber: formatPhoneNumber)
+        _ = try await requestOtpUseCase.execute(phoneNumber: formatPhoneNumber)
         isShowLoading = false
       } catch {
         isShowLoading = false
@@ -83,6 +85,42 @@ extension VerificationCodeViewModel {
         self.performVerifyOTPCode(formatPhoneNumber: formatPhoneNumber, code: code)
       }
       .store(in: &cancellables)
+  }
+  
+  func checkOnboardingState(onCompletion: @escaping () -> Void) {
+    Task { @MainActor in
+      defer { onCompletion() }
+      do {
+        let onboardingState = try await onboardingRepository.getOnboardingState(sessionId: userDataManager.sessionID)
+        if onboardingState.missingSteps.isEmpty {
+          onboardingFlowCoordinator.set(route: .dashboard)
+        } else {
+          let states = onboardingState.mapToEnum()
+          if states.isEmpty {
+            let workflowsMissingStep = WorkflowsMissingStep.allCases.map { $0.rawValue }
+            if (onboardingState.missingSteps.first(where: { workflowsMissingStep.contains($0) }) != nil) {
+              onboardingFlowCoordinator.set(route: .kycReview)
+            } else {
+              //TODO: Tony need review
+              onboardingFlowCoordinator.set(route: .dashboard)
+            }
+          } else {
+            if states.contains(OnboardingMissingStep.netSpendCreateAccount) {
+              isNavigationToWelcome = true
+            } else if states.contains(OnboardingMissingStep.dashboardReview) {
+              onboardingFlowCoordinator.set(route: .kycReview)
+            } else if states.contains(OnboardingMissingStep.zeroHashAccount) {
+                //TODO: Tony review it
+            } else if states.contains(OnboardingMissingStep.cardProvision) {
+                //TODO: Tony review it
+            }
+          }
+        }
+      } catch {
+        isNavigationToWelcome = true
+        log.error(error.localizedDescription)
+      }
+    }
   }
 }
 // MARK: View Helpers

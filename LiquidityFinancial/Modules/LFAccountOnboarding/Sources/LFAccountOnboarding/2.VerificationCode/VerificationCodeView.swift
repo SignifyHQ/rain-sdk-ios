@@ -10,18 +10,8 @@ struct VerificationCodeView: View {
   @StateObject private var viewModel: VerificationCodeViewModel
   @FocusState private var keyboardFocus: Bool
     
-  init(
-    phoneNumber: String,
-    requestOTPUseCase: RequestOTPUseCaseProtocol,
-    loginUseCase: LoginUseCaseProtocol
-  ) {
-    _viewModel = .init(
-      wrappedValue: VerificationCodeViewModel(
-        phoneNumber: phoneNumber,
-        requestOtpUserCase: requestOTPUseCase,
-        loginUserCase: loginUseCase
-      )
-    )
+  init(phoneNumber: String) {
+    _viewModel = .init(wrappedValue: VerificationCodeViewModel(phoneNumber: phoneNumber))
   }
   
   var body: some View {

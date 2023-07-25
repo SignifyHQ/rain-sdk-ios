@@ -1,5 +1,20 @@
 import Foundation
 
+public enum OnboardingMissingStep: String, Codable {
+  case netSpendCreateAccount = "NET_SPEND_CREATE_ACCOUNT"
+  case dashboardReview = "DASHBOARD_REVIEW"
+  case cardProvision = "CARD_PROVISION"
+  case zeroHashAccount = "ZERO_HASH_ACCOUNT"
+}
+
 public protocol OnboardingState {
   var missingSteps: [String] { get }
+}
+
+public extension OnboardingState {
+  func mapToEnum() -> [OnboardingMissingStep] {
+    var steps = [OnboardingMissingStep]()
+    steps = missingSteps.compactMap { OnboardingMissingStep(rawValue: $0) }
+    return steps
+  }
 }

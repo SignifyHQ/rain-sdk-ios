@@ -92,7 +92,7 @@ struct AddressView: View {
         KYCStatusView(viewModel: KYCStatusViewModel(state: .declined))
       case .inReview:
         KYCStatusView(viewModel: KYCStatusViewModel(state: .inReview(viewModel.userNameDisplay)))
-      case .home:
+      default:
         EmptyView()
       }
     }

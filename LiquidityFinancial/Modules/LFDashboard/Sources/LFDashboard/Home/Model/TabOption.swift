@@ -2,7 +2,7 @@ import SwiftUI
 import LFStyleGuide
 import LFLocalizable
 
-public enum TabOption: String {
+public enum TabOption: String, CaseIterable {
   case cash
   case rewards
   case assets

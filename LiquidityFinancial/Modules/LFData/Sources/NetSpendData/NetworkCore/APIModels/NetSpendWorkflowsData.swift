@@ -1,6 +1,6 @@
 import Foundation
 
-public enum WorkflowsMissingStep: String, Codable {
+public enum WorkflowsMissingStep: String, Codable, CaseIterable {
   case identityQuestions = "identity_questions"
   case provideDocuments = "provide_documents"
   case primaryPersonKYCApprove = "primary_person_kyc_approve"

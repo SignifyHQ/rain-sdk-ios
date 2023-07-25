@@ -11,35 +11,11 @@ import NetSpendData
 @MainActor
 extension Container {
   
-    //Coordinator
+  //Coordinator
   var coordinator: Factory<AppCoordinatorProtocol> {
     self {
       AppCoordinator()
     }
   }
-    // Network
-  
-    // ViewModels
-  var phoneNumberViewModel: Factory<PhoneNumberViewModel> {
-    self {
-      PhoneNumberViewModel(
-        requestOtpUserCase: self.requestOtpUseCase.callAsFunction(),
-        loginUseCase: self.loginUseCase.callAsFunction()
-      )
-    }
-  }
-  
-    // UseCases
-  var loginUseCase: Factory<LoginUseCaseProtocol> {
-    self {
-      LoginUseCase(repository: self.onboardingRepository.callAsFunction())
-    }
-  }
-  
-  var requestOtpUseCase: Factory<RequestOTPUseCaseProtocol> {
-    self {
-      RequestOTPUseCase(repository: self.onboardingRepository.callAsFunction())
-    }
-  }
-  
+
 }
