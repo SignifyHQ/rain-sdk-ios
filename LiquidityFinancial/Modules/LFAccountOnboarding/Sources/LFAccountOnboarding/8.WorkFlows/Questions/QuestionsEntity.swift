@@ -1,7 +1,7 @@
 import Foundation
 import NetSpendData
 
-class QuestionsEntity {
+public class QuestionsEntity {
   let id: UUID = UUID()
   var questions: [AnswerOptions]
  

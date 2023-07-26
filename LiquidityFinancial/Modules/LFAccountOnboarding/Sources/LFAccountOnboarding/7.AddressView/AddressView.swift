@@ -65,8 +65,7 @@ struct AddressView: View {
       viewModel.stopSuggestions()
     }
     .defaultToolBar(icon: .intercom, openIntercom: {
-      // TODO: Will be implemeted later
-      // intercomService.openIntercom()
+      viewModel.openIntercom()
     })
     .popup(item: $viewModel.toastMessage, style: .toast) {
       ToastView(toastMessage: $0)

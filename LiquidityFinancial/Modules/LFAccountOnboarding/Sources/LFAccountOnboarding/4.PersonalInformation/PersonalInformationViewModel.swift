@@ -72,6 +72,29 @@ class PersonalInformationViewModel: ObservableObject {
       isAllDataFilled()
     }
   }
+  
+  #if DEBUG
+  var countGenerateUser: Int = 0
+  #endif
+  
+  func openIntercom() {
+    
+    magicFillAccount()
+  }
+  
+  private func magicFillAccount() {
+#if DEBUG
+    countGenerateUser += 1
+    if countGenerateUser >= 3 {
+      let userMock = UserMockManager.mockUser(countTap: countGenerateUser)
+      firstName = userMock.firstName
+      lastName = userMock.lastName
+      email = userMock.email
+      dateCheck = DateFormatter.yearDayMonth.date(from: userMock.dob)
+      if countGenerateUser >= 5 { countGenerateUser = 0 }
+    }
+#endif
+  }
 }
 
 private extension PersonalInformationViewModel {

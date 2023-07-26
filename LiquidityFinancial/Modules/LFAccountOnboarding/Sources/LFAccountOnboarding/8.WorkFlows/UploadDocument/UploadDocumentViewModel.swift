@@ -109,7 +109,7 @@ extension UploadDocumentViewModel {
         
         let encryptedData = try netspendDataManager.sdkSession?.encryptWithJWKSet(value: documentEncryptedData.encoded())
         let purpose = netspendDataManager.documentData?.requestedDocuments.first?.workflow ?? ""
-        let sessionId = netspendDataManager.serverSession?.id ?? ""
+        let sessionId = userDataManager.sessionID
         let documentId = netspendDataManager.documentData?.requestedDocuments.first?.documentRequestId ?? ""
         var isUpdateDocument = false
         if let status = netspendDataManager.documentData?.requestedDocuments.first?.status {

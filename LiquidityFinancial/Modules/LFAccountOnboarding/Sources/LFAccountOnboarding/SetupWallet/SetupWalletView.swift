@@ -48,8 +48,8 @@ struct SetupWalletView: View {
                 GenImages.Images.icLogo.swiftUIImage
                   .resizable()
                   .scaledToFit()
+                  .frame(width: 80, height: 80)
                   .padding(.leading, 45)
-                  .frame(width: 80.0, height: 80.0)
                   .gesture(tap)
                 Spacer()
 
@@ -101,11 +101,13 @@ extension SetupWalletView {
       Button {
         viewModel.isTermsAgreed.toggle()
       } label: {
-        let image = viewModel.isTermsAgreed ?
-        GenImages.CommonImages.termsCheckboxSelected.swiftUIImage :
-        GenImages.CommonImages.termsCheckboxDeselected.swiftUIImage
-        
-        image.foregroundColor(Colors.primary.swiftUIColor)
+        if viewModel.isTermsAgreed {
+          GenImages.CommonImages.termsCheckboxSelected.swiftUIImage
+            .foregroundColor(Colors.Buttons.highlightButton.swiftUIColor)
+        } else {
+          GenImages.CommonImages.termsCheckboxDeselected.swiftUIImage
+            .foregroundColor(Colors.Buttons.unhighlightButton.swiftUIColor)
+        }
       }
       .padding(.leading, 20)
       .padding(.bottom, 130)
@@ -146,7 +148,7 @@ extension SetupWalletView {
         title: LFLocalizable.Button.Continue.title,
         isDisable: !viewModel.isTermsAgreed
       ) {
-        // CreateCryptoAccount()
+        viewModel.createZeroHashAccount()
       }
 
       Text(LFLocalizable.zeroHashTransactiondetail)

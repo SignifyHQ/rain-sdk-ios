@@ -2,9 +2,12 @@ import Foundation
 import Combine
 import SwiftUI
 import Factory
+import OnboardingData
+import NetSpendData
+import LFUtilities
 
 class OnboardingContentViewModel: ObservableObject {
-  @Injected(\.onboardingFlowCoordinator) var onboardingFlowCoordinator
+  @LazyInjected(\.onboardingFlowCoordinator) var onboardingFlowCoordinator
   
   @Published var route = OnboardingFlowCoordinator.Route.initial
   

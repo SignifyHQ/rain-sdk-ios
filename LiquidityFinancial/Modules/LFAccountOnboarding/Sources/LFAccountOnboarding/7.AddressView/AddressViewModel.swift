@@ -119,19 +119,19 @@ final class AddressViewModel: ObservableObject {
       isLoading = true
       do {
         var governmentID: String = ""
-        var type: String = ""
+        var typeGovernmentID: String = ""
         if let ssn = userDataManager.userInfomationData.ssn {
-          type = "ssn"
+          typeGovernmentID = IdNumberType.ssn.rawValue
           governmentID = ssn
         } else if let passport = userDataManager.userInfomationData.passport {
-          type = "passport"
+          typeGovernmentID = IdNumberType.passport.rawValue
           governmentID = passport
         }
         let agreementIDS = netspendDataManager.agreement?.agreements.compactMap { $0.id } ?? []
         let encryptedData = try netspendDataManager.sdkSession?.encryptWithJWKSet(value: [
           "date_of_birth": userDataManager.userInfomationData.dateOfBirth ?? "",
           "government_id": [
-            "type": type,
+            "type": typeGovernmentID,
             "value": governmentID
           ]
         ])
@@ -150,9 +150,11 @@ final class AddressViewModel: ObservableObject {
           state: userDataManager.userInfomationData.state ?? "",
           country: userDataManager.userInfomationData.country ?? "",
           postalCode: userDataManager.userInfomationData.postalCode ?? "",
-          encryptedData: encryptedData ?? ""
+          encryptedData: encryptedData ?? "",
+          idNumber: governmentID,
+          idNumberType: typeGovernmentID
         )
-        let person = try await netspendRepository.createAccountPerson(personInfo: param, sessionId: netspendDataManager.serverSession?.id ?? "")
+        let person = try await netspendRepository.createAccountPerson(personInfo: param, sessionId: userDataManager.sessionID)
         netspendDataManager.update(accountPersonData: person)
         
         let workflows = try await self.netspendRepository.getWorkflows()
@@ -197,6 +199,30 @@ final class AddressViewModel: ObservableObject {
     }
   }
 
+#if DEBUG
+  var countGenerateUser: Int = 0
+#endif
+  
+  func openIntercom() {
+      // TODO: Will be implemented later
+      // intercomService.openIntercom()
+    magicFillAccount()
+  }
+  
+  private func magicFillAccount() {
+#if DEBUG
+    countGenerateUser += 1
+    if countGenerateUser >= 3 {
+      let userMock = UserMockManager.mockUser(countTap: countGenerateUser)
+      addressLine1 = userMock.line1
+      city = userMock.city
+      state = userMock.state
+      zipCode = userMock.zipCode
+      if countGenerateUser >= 5 { countGenerateUser = 0 }
+    }
+#endif
+  }
+  
   private var isStateValid: Bool {
     if LFUtility.cryptoEnabled {
       return !Constants.supportedStates.contains(state.uppercased())

@@ -26,6 +26,27 @@ class EnterSSNViewModel: ObservableObject {
   init(isVerifySSN: Bool) {
     self.isVerifySSN = isVerifySSN
   }
+
+  #if DEBUG
+  var countGenerateUser: Int = 0
+  #endif
+  
+  func openIntercom() {
+      // TODO: Will be implemented later
+      // intercomService.openIntercom()
+    magicFillAccount()
+  }
+  
+  private func magicFillAccount() {
+#if DEBUG
+    countGenerateUser += 1
+    if countGenerateUser >= 3 {
+      let userMock = UserMockManager.mockUser(countTap: countGenerateUser)
+      ssn = userMock.ssn
+      if countGenerateUser >= 5 { countGenerateUser = 0 }
+    }
+#endif
+  }
 }
 
 private extension EnterSSNViewModel {

@@ -34,8 +34,13 @@ public struct OnboardingContentView: View {
         KYCStatusView(viewModel: KYCStatusViewModel(state: .inReview(userDataManager.userNameDisplay)))
       case .dashboard:
         EmptyView()
+      case .question(let questions):
+        QuestionsView(viewModel: QuestionsViewModel(questionList: questions))
+      case .document:
+        UploadDocumentView()
+      case .zeroHash:
+        SetupWalletView()
       }
     }
-    .embedInNavigation()
   }
 }

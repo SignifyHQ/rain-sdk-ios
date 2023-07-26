@@ -9,9 +9,11 @@ import NetspendSdk
 
 @MainActor
 final class VerificationCodeViewModel: ObservableObject {
-  @Injected(\Container.userDataManager) var userDataManager
-  @Injected(\.onboardingRepository) var onboardingRepository
+  @LazyInjected(\.userDataManager) var userDataManager
+  @LazyInjected(\.onboardingRepository) var onboardingRepository
   @LazyInjected(\.onboardingFlowCoordinator) var onboardingFlowCoordinator
+  @LazyInjected(\.netspendRepository) var netspendRepository
+  @LazyInjected(\.netspendDataManager) var netspendDataManager
   
   @Published var isNavigationToWelcome: Bool = false
   @Published var isResendButonTimerOn = false
@@ -44,17 +46,34 @@ extension VerificationCodeViewModel {
     Task {
       do {
         _ = try await loginUseCase.execute(phoneNumber: formatPhoneNumber, code: code)
-        let pnumber = formatPhoneNumber
-          .replace(string: " ", replacement: "")
-          .replace(string: "(", replacement: "")
-          .replace(string: ")", replacement: "")
-          .replace(string: "-", replacement: "")
-          .trimWhitespacesAndNewlines()
-        userDataManager.update(phone: pnumber)
-        userDataManager.stored(phone: pnumber)
-        checkOnboardingState {
-          self.isShowLoading = false
+        userDataManager.update(phone: formatPhoneNumber)
+        userDataManager.stored(phone: formatPhoneNumber)
+        
+        //Login handle for case login with phone have create account on Netspend
+        if userDataManager.sessionID.isEmpty {
+          
+          let token = try await netspendRepository.clientSessionInit()
+          netspendDataManager.update(jwkToken: token)
+          
+          let sessionConnectWithJWT = await netspendRepository.establishingSessionWithJWKSet(jwtToken: token)
+          
+          guard let deviceData = sessionConnectWithJWT?.deviceData else { return }
+          
+          let establishPersonSession = try await netspendRepository.establishPersonSession(deviceData: EstablishSessionParameters(encryptedData: deviceData))
+          netspendDataManager.update(session: establishPersonSession)
+          userDataManager.stored(sessionID: establishPersonSession.id)
+          
+          let userSessionAnonymous = try netspendRepository.createUserSession(establishingSession: sessionConnectWithJWT, encryptedData: establishPersonSession.encryptedData)
+          netspendDataManager.update(userSession: userSessionAnonymous)
+          
+          checkOnboardingState { self.isShowLoading = false }
+          
+        } else {
+          
+          checkOnboardingState { self.isShowLoading = false }
+          
         }
+        
       } catch {
         self.isShowLoading = false
         toastMessage = error.localizedDescription
@@ -87,7 +106,7 @@ extension VerificationCodeViewModel {
       .store(in: &cancellables)
   }
   
-  func checkOnboardingState(onCompletion: @escaping () -> Void) {
+  private func checkOnboardingState(onCompletion: @escaping () -> Void) {
     Task { @MainActor in
       defer { onCompletion() }
       do {
@@ -97,12 +116,18 @@ extension VerificationCodeViewModel {
         } else {
           let states = onboardingState.mapToEnum()
           if states.isEmpty {
-            let workflowsMissingStep = WorkflowsMissingStep.allCases.map { $0.rawValue }
-            if (onboardingState.missingSteps.first(where: { workflowsMissingStep.contains($0) }) != nil) {
-              onboardingFlowCoordinator.set(route: .kycReview)
+            if onboardingState.missingSteps.count == 1 {
+              if onboardingState.missingSteps.contains(WorkflowsMissingStep.provideDocuments.rawValue) {
+                await handleUpDocumentCase()
+              } else if onboardingState.missingSteps.contains(WorkflowsMissingStep.identityQuestions.rawValue) {
+                await handleQuestionCase()
+              } else {
+                //TODO: Tony need review after
+                onboardingFlowCoordinator.set(route: .kycReview)
+              }
             } else {
-              //TODO: Tony need review
-              onboardingFlowCoordinator.set(route: .dashboard)
+              //TODO: Tony need review after
+              onboardingFlowCoordinator.set(route: .kycReview)
             }
           } else {
             if states.contains(OnboardingMissingStep.netSpendCreateAccount) {
@@ -110,7 +135,7 @@ extension VerificationCodeViewModel {
             } else if states.contains(OnboardingMissingStep.dashboardReview) {
               onboardingFlowCoordinator.set(route: .kycReview)
             } else if states.contains(OnboardingMissingStep.zeroHashAccount) {
-                //TODO: Tony review it
+              onboardingFlowCoordinator.set(route: .zeroHash)
             } else if states.contains(OnboardingMissingStep.cardProvision) {
                 //TODO: Tony review it
             }
@@ -120,6 +145,32 @@ extension VerificationCodeViewModel {
         isNavigationToWelcome = true
         log.error(error.localizedDescription)
       }
+    }
+  }
+  
+  private func handleQuestionCase() async {
+    do {
+      let questionsEncrypt = try await netspendRepository.getQuestion(sessionId: userDataManager.sessionID)
+      if let usersession = netspendDataManager.sdkSession, let questionsDecode = questionsEncrypt.decodeData(session: usersession) {
+        let questionsEntity = QuestionsEntity.mapObj(questionsDecode)
+        onboardingFlowCoordinator.set(route: .question(questionsEntity))
+      } else {
+        onboardingFlowCoordinator.set(route: .kycReview)
+      }
+    } catch {
+      onboardingFlowCoordinator.set(route: .kycReview)
+      log.debug(error)
+    }
+  }
+  
+  private func handleUpDocumentCase() async {
+    do {
+      let documents = try await netspendRepository.getDocuments(sessionId: userDataManager.sessionID)
+      netspendDataManager.update(documentData: documents)
+      onboardingFlowCoordinator.set(route: .document)
+    } catch {
+      onboardingFlowCoordinator.set(route: .kycReview)
+      log.debug(error)
     }
   }
 }

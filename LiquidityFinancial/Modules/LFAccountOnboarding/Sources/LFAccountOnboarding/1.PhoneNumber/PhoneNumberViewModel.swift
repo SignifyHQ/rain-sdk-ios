@@ -36,7 +36,7 @@ extension PhoneNumberViewModel {
     Task {
       do {
         let formatPhone = Constants.Default.regionCode.rawValue + phoneNumber
-        let otpResponse = try await requestOtpUseCase.execute(phoneNumber: formatPhone)
+        let otpResponse = try await requestOtpUseCase.execute(phoneNumber: formatPhone.reformatPhone)
         isLoading = false
         handleAfterGetOTP(isSuccess: otpResponse.success)
       } catch {
@@ -85,5 +85,16 @@ extension PhoneNumberViewModel {
   
   func navigateToOTPVerification() {
     isNavigationToVertificationView = true
+  }
+}
+
+extension String {
+  var reformatPhone: String {
+    self
+      .replace(string: " ", replacement: "")
+      .replace(string: "(", replacement: "")
+      .replace(string: ")", replacement: "")
+      .replace(string: "-", replacement: "")
+      .trimWhitespacesAndNewlines()
   }
 }

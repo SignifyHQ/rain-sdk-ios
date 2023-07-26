@@ -7,6 +7,8 @@ public enum OnboardingRoute {
   case otp(OTPParameters)
   case login(LoginParameters)
   case onboardingState(sessionId: String)
+  case createZeroHashAccount
+  case getUser(deviceId: String)
 }
 
 extension OnboardingRoute: LFRoute {
@@ -24,13 +26,17 @@ extension OnboardingRoute: LFRoute {
       return "/v1/password-less/login"
     case .onboardingState:
       return "/v1/app/onboarding-state"
+    case .createZeroHashAccount:
+      return "/v1/zerohash/accounts"
+    case .getUser:
+      return "/v1/user"
     }
   }
   
   public var httpMethod: HttpMethod {
     switch self {
-    case .login, .otp: return .POST
-    case .onboardingState: return .GET
+    case .login, .otp, .createZeroHashAccount: return .POST
+    case .onboardingState, .getUser: return .GET
     }
   }
   
@@ -47,6 +53,15 @@ extension OnboardingRoute: LFRoute {
       base["Authorization"] = authorization
       base["netspendSessionId"] = sessionId
       return base
+    case .createZeroHashAccount:
+      base["Accept"] = "application/json"
+      base["Authorization"] = authorization
+      return base
+    case .getUser(let deviceId):
+      base["Accept"] = "application/json"
+      base["Authorization"] = authorization
+      base["ld-device-id"] = deviceId
+      return base
     }
   }
   
@@ -58,13 +73,17 @@ extension OnboardingRoute: LFRoute {
       return loginParameters.encoded()
     case .onboardingState:
       return nil
+    case .createZeroHashAccount:
+      return nil
+    case .getUser:
+      return nil
     }
   }
   
   public var parameterEncoding: ParameterEncoding? {
     switch self {
     case .login, .otp: return .json
-    case .onboardingState: return nil
+    case .onboardingState, .createZeroHashAccount, .getUser: return nil
     }
   }
   

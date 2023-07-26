@@ -27,7 +27,7 @@ extension LFNetworkError: LocalizedError {
 }
 
 public struct LFErrorObject: Codable, LocalizedError {
-  let requestId: String
+  let requestId: String?
   let message: String
   let key: String?
   let sysMessage: String?
@@ -36,9 +36,9 @@ public struct LFErrorObject: Codable, LocalizedError {
   
   public var errorDescription: String? {
     if message.isEmpty {
-      return "\(sysMessage ?? ""), reqId: \(requestId)"
+      return "\(sysMessage ?? ""), code: \(code ?? "")"
     }
-    return "\(message) , reqId: \(requestId)"
+    return "\(message) , code: \(code ?? "")"
   }
 }
 

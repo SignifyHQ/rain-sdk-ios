@@ -22,6 +22,7 @@ public protocol UserDataManagerProtocol {
   func update(country: String?)
   func stored(phone: String)
   func stored(sessionID: String)
+  func clearUserSession()
 }
 
 public class UserDataManager: UserDataManagerProtocol {
@@ -110,5 +111,10 @@ public class UserDataManager: UserDataManagerProtocol {
   
   public func stored(sessionID: String) {
     UserDefaults.userSessionID = sessionID
+  }
+  
+  public func clearUserSession() {
+    UserDefaults.userSessionID = ""
+    UserDefaults.phoneNumber = ""
   }
 }

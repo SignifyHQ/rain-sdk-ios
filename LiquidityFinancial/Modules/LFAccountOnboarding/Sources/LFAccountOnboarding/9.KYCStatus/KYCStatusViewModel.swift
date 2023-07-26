@@ -4,6 +4,7 @@ import NetSpendData
 import LFUtilities
 import OnboardingData
 import OnboardingDomain
+import UIKit
 
 @MainActor
 final class KYCStatusViewModel: ObservableObject {
@@ -11,6 +12,10 @@ final class KYCStatusViewModel: ObservableObject {
     case passport
     case address
   }
+  
+#if DEBUG
+  var countApprovedUser: Int = 0
+#endif
   
   @Published var state: KYCState = .idle
   @Published var presentation: Presentation?
@@ -32,10 +37,43 @@ final class KYCStatusViewModel: ObservableObject {
   init(state: KYCState) {
     _state = .init(initialValue: state)
   }
+  
 }
 
-  // MARK: - View Helpers
-extension KYCStatusViewModel {  
+extension KYCStatusViewModel {
+  
+  func openIntercom() {
+      // intercomService.openIntercom()
+    
+    magicPassKYC()
+  }
+  
+    //MAGIC PASS KYC DASHBOARD
+  func magicPassKYC() {
+#if DEBUG
+    countApprovedUser += 1
+    if countApprovedUser >= 5 {
+      countApprovedUser = 0
+      Task {
+        do {
+          let user = try await onboardingRepository.getUser(deviceId: UIDevice.current.identifierForVendor?.uuidString ?? "")
+          var request = URLRequest(url: URL(string: "https://api-crypto.dev.liquidity.cc/v1/admin/users/\(user.userID)/approve")!)
+          request.httpMethod = "POST"
+          URLSession.shared.dataTask(with: request) { _, response, error in
+            let httpResponse = response as? HTTPURLResponse
+            log.debug("approved dashboard state: \(httpResponse?.statusCode ?? 000)")
+            if let error = error {
+              log.error(error.localizedDescription)
+            }
+          }.resume()
+        } catch {
+          log.error(error.localizedDescription)
+        }
+      }
+    }
+#endif
+  }
+  
   func magicTapToLogout() {
       // userManager.logout()
   }
@@ -87,7 +125,7 @@ extension KYCStatusViewModel {
             } else if states.contains(OnboardingMissingStep.dashboardReview) {
               onboardingFlowCoordinator.set(route: .kycReview)
             } else if states.contains(OnboardingMissingStep.zeroHashAccount) {
-                //TODO: Tony review it
+              onboardingFlowCoordinator.set(route: .zeroHash)
             } else if states.contains(OnboardingMissingStep.cardProvision) {
                 //TODO: Tony review it
             }

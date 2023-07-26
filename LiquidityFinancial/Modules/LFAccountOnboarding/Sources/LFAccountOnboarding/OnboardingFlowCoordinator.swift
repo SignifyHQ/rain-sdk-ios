@@ -13,17 +13,42 @@ public protocol OnboardingFlowCoordinatorProtocol {
 }
 
 public class OnboardingFlowCoordinator: OnboardingFlowCoordinatorProtocol {
-  public enum Route: Int {
+  
+  public enum Route: Hashable, Identifiable {
+    
+    public static func == (lhs: OnboardingFlowCoordinator.Route, rhs: OnboardingFlowCoordinator.Route) -> Bool {
+      return lhs.hashValue == rhs.hashValue
+    }
+    
     case initial
     case phone
     case welcome
     case kycReview
     case dashboard
+    case question(QuestionsEntity)
+    case document
+    case zeroHash
+    
+    public var id: String {
+      String(describing: self)
+    }
+    
+    public func hash(into hasher: inout Hasher) {
+      switch self {
+      case .question(let question):
+        hasher.combine(question.id)
+        hasher.combine(id)
+      default:
+        hasher.combine(id)
+      }
+    }
   }
   
-  @Injected(\.authorizationManager) var authorizationManager
-  @Injected(\.userDataManager) var userDataManager
-  @Injected(\.onboardingRepository) var onboardingRepository
+  @LazyInjected(\.authorizationManager) var authorizationManager
+  @LazyInjected(\.userDataManager) var userDataManager
+  @LazyInjected(\.onboardingRepository) var onboardingRepository
+  @LazyInjected(\.netspendRepository) var netspendRepository
+  @LazyInjected(\.netspendDataManager) var netspendDataManager
   
   public let routeSubject: CurrentValueSubject<Route, Never>
   
@@ -38,11 +63,14 @@ public class OnboardingFlowCoordinator: OnboardingFlowCoordinatorProtocol {
   }
   
   public func routeUser() {
-    if authorizationManager.isTokenValid() {
-      getCurrentState()
-    } else {
-      routeSubject.value = .phone
-    }
+    getCurrentState()
+    //TODO: Tony implement after have refresh token
+//    if authorizationManager.isTokenValid() {
+//      getCurrentState()
+//    } else {
+//      userDataManager.clearUserSession()
+//      routeSubject.value = .phone
+//    }
   }
 
   func getCurrentState() {
@@ -54,12 +82,18 @@ public class OnboardingFlowCoordinator: OnboardingFlowCoordinatorProtocol {
         } else {
           let states = onboardingState.mapToEnum()
           if states.isEmpty {
-            let workflowsMissingStep = WorkflowsMissingStep.allCases.map { $0.rawValue }
-            if (onboardingState.missingSteps.first(where: { workflowsMissingStep.contains($0) }) != nil) {
-              routeSubject.value = .kycReview
+            if onboardingState.missingSteps.count == 1 {
+              if onboardingState.missingSteps.contains(WorkflowsMissingStep.provideDocuments.rawValue) {
+                await handleUpDocumentCase()
+              } else if onboardingState.missingSteps.contains(WorkflowsMissingStep.identityQuestions.rawValue) {
+                await handleQuestionCase()
+              } else {
+                //TODO: Tony need review after
+                routeSubject.value = .kycReview
+              }
             } else {
-              //TODO: Tony need review
-              routeSubject.value = .dashboard
+              //TODO: Tony need review after
+              routeSubject.value = .kycReview
             }
           } else {
             if states.contains(OnboardingMissingStep.netSpendCreateAccount) {
@@ -67,9 +101,9 @@ public class OnboardingFlowCoordinator: OnboardingFlowCoordinatorProtocol {
             } else if states.contains(OnboardingMissingStep.dashboardReview) {
               routeSubject.value = .kycReview
             } else if states.contains(OnboardingMissingStep.zeroHashAccount) {
-                //TODO:Tony
+              routeSubject.value = .zeroHash
             } else if states.contains(OnboardingMissingStep.cardProvision) {
-                //TODO:Tony
+              //TODO: Tony need review after
             }
           }
         }
@@ -80,4 +114,29 @@ public class OnboardingFlowCoordinator: OnboardingFlowCoordinatorProtocol {
     }
   }
   
+  private func handleQuestionCase() async {
+    do {
+      let questionsEncrypt = try await netspendRepository.getQuestion(sessionId: userDataManager.sessionID)
+      if let usersession = netspendDataManager.sdkSession, let questionsDecode = questionsEncrypt.decodeData(session: usersession) {
+        let questionsEntity = QuestionsEntity.mapObj(questionsDecode)
+        routeSubject.value = .question(questionsEntity)
+      } else {
+        routeSubject.value = .kycReview
+      }
+    } catch {
+      routeSubject.value = .kycReview
+      log.debug(error)
+    }
+  }
+  
+  private func handleUpDocumentCase() async {
+    do {
+      let documents = try await netspendRepository.getDocuments(sessionId: userDataManager.sessionID)
+      netspendDataManager.update(documentData: documents)
+      routeSubject.value = .document
+    } catch {
+      routeSubject.value = .kycReview
+      log.debug(error)
+    }
+  }
 }

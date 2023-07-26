@@ -16,8 +16,7 @@ struct KYCStatusView: View {
       .navigationBarBackButtonHidden()
       // .track(name: String(describing: type(of: self))) TODO: Will be implemented later
       .defaultToolBar(icon: .intercom, openIntercom: {
-        // TODO: Will be implemeted later
-        // intercomService.openIntercom()
+        viewModel.openIntercom()
       })
       .fullScreenCover(item: $viewModel.presentation) { item in
         switch item {
