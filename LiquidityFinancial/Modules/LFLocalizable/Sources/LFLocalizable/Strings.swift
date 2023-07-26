@@ -92,6 +92,22 @@ public enum LFLocalizable {
   public static let zeroHashTransactiondetail = LFLocalizable.tr("Localizable", "Zero_hash_transactiondetail", fallback: "Cryptocurrency services powered by Zero Hash")
   /// Zip code
   public static let zipcode = LFLocalizable.tr("Localizable", "zipcode", fallback: "Zip code")
+  public enum AddBankWithDebit {
+    /// Card number
+    public static let cardNumber = LFLocalizable.tr("Localizable", "addBankWithDebit.card_number", fallback: "Card number")
+    /// 1234 5678 9012 3456
+    public static let cardNumberPlaceholder = LFLocalizable.tr("Localizable", "addBankWithDebit.card_number_placeholder", fallback: "1234 5678 9012 3456")
+    /// CVV
+    public static let cvv = LFLocalizable.tr("Localizable", "addBankWithDebit.cvv", fallback: "CVV")
+    /// Enter CVV
+    public static let cvvPlaceholder = LFLocalizable.tr("Localizable", "addBankWithDebit.cvv_placeholder", fallback: "Enter CVV")
+    /// Expires
+    public static let expires = LFLocalizable.tr("Localizable", "addBankWithDebit.expires", fallback: "Expires")
+    /// MM / YY
+    public static let expiresPlaceholder = LFLocalizable.tr("Localizable", "addBankWithDebit.expires_placeholder", fallback: "MM / YY")
+    /// ADD A BANK USING YOUR DEBIT CARD
+    public static let title = LFLocalizable.tr("Localizable", "addBankWithDebit.title", fallback: "ADD A BANK USING YOUR DEBIT CARD")
+  }
   public enum AddPersonalInformation {
     /// Add personal information
     public static let title = LFLocalizable.tr("Localizable", "addPersonalInformation.title", fallback: "Add personal information")

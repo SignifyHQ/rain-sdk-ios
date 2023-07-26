@@ -207,3 +207,20 @@ public extension String {
   }
   
 }
+
+extension Collection {
+  func unfoldSubSequences(limitedTo maxLength: Int) -> UnfoldSequence<SubSequence, Index> {
+    sequence(state: startIndex) { start in
+      guard start < endIndex else { return nil }
+      let end = index(start, offsetBy: maxLength, limitedBy: endIndex) ?? endIndex
+      defer { start = end }
+      return self[start ..< end]
+    }
+  }
+}
+
+public extension StringProtocol where Self: RangeReplaceableCollection {
+  func inserting<S: StringProtocol>(separator: S, every count: Int) -> Self {
+    .init(unfoldSubSequences(limitedTo: count).joined(separator: separator))
+  }
+}

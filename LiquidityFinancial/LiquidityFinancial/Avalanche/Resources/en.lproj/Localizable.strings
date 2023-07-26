@@ -301,6 +301,15 @@
 "moveMoney.withdraw.title" = "WITHDRAW";
 "moveMoney.available_balance.subtitle" = "%@ available";
 
+// Add bank with debit
+"addBankWithDebit.title" = "ADD A BANK USING YOUR DEBIT CARD";
+"addBankWithDebit.card_number" = "Card number";
+"addBankWithDebit.card_number_placeholder" = "1234 5678 9012 3456";
+"addBankWithDebit.expires" = "Expires";
+"addBankWithDebit.expires_placeholder" = "MM / YY";
+"addBankWithDebit.cvv" = "CVV";
+"addBankWithDebit.cvv_placeholder" = "Enter CVV";
+
 // MARK: - Common
 
 // Terms
