@@ -11,15 +11,7 @@ struct IdentityVerificationView: View {
   
   var body: some View {
     PersonaView(hostedURL: url, successCallback: succcessCallback)
-      .toolbar {
-        ToolbarItem(placement: .navigationBarLeading) {
-          Button {
-            dismiss()
-          } label: {
-            CircleButton(style: .xmark)
-          }
-        }
-      }
+      .defaultToolBar(icon: .xMark)
       .embedInNavigation()
   }
 }

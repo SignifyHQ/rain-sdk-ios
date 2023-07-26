@@ -38,16 +38,10 @@ struct PersonalInformationView: View {
     }
     .background(Colors.background.swiftUIColor)
     .navigationTitle("")
-    .toolbar {
-      ToolbarItem(placement: .navigationBarTrailing) {
-        Button {
-          viewModel.openIntercom()
-        } label: {
-          GenImages.CommonImages.icChat.swiftUIImage
-            .foregroundColor(Colors.label.swiftUIColor)
-        }
-      }
-    }
+    .defaultToolBar(icon: .intercom, openIntercom: {
+      // TODO: Will be implemeted later
+      // intercomService.openIntercom()
+    })
     .popup(item: $toastMessage, style: .toast) {
       ToastView(toastMessage: $0)
     }

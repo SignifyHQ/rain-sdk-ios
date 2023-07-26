@@ -26,11 +26,6 @@ class EnterSSNViewModel: ObservableObject {
   init(isVerifySSN: Bool) {
     self.isVerifySSN = isVerifySSN
   }
-
-  func openIntercom() {
-      // TODO: Will be implemented later
-      // intercomService.openIntercom()
-  }
 }
 
 private extension EnterSSNViewModel {

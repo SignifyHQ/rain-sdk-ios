@@ -44,7 +44,7 @@ extension ApplePayController {
       //      let certificateLeaf = certificates[0].base64EncodedString()
       //      let nonceString = nonce.base64EncodedString()
       //      let nonceSignatureVal = nonceSignature.base64EncodedString()
-      //      let paymentPassRequest = PKAddPaymentPassRequest()      
+      //      let paymentPassRequest = PKAddPaymentPassRequest()
       //      let aPay = Applepay(deviceCert: certificateLeaf, nonceSignature: nonceSignatureVal, nonce: nonceString)
       //      let postBody = CardWalletRequestBody(wallet: "applePay", applePay: aPay)
       //

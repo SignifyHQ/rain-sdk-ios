@@ -16,16 +16,10 @@ struct SetCardPinView: View {
   var body: some View {
     content
       .background(Colors.background.swiftUIColor)
-      .toolbar {
-        ToolbarItem(placement: .navigationBarLeading) {
-          Button {
-            viewModel.closeAction {
-              hideKeyboard()
-              dismiss()
-            }
-          } label: {
-            CircleButton(style: .xmark)
-          }
+      .defaultToolBar(icon: .xMark) {
+        viewModel.closeAction {
+          hideKeyboard()
+          dismiss()
         }
       }
       .onAppear {

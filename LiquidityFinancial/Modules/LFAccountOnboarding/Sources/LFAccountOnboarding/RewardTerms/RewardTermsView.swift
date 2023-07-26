@@ -34,21 +34,10 @@ struct RewardTermsView: View {
     }
     .navigationBarBackButtonHidden(true)
     .navigationBarTitleDisplayMode(.inline)
-    .toolbar {
-      ToolbarItem(placement: .navigationBarLeading) {
-        Button {
-        } label: {
-          CircleButton(style: .xmark)
-        }
-      }
-      ToolbarItem(placement: .navigationBarTrailing) {
-        Button {
-        } label: {
-          GenImages.CommonImages.icChat.swiftUIImage
-            .foregroundColor(Colors.label.swiftUIColor)
-        }
-      }
-    }
+    .defaultToolBar(icon: .both, openIntercom: {
+      // TODO: Will be implemeted later
+      // intercomService.openIntercom()
+    })
   }
 
   private func buildRow(title: String, subtitle: String) -> some View {

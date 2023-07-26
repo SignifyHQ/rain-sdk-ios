@@ -72,11 +72,6 @@ class PersonalInformationViewModel: ObservableObject {
       isAllDataFilled()
     }
   }
-  
-  func openIntercom() {
-      // TODO: Will be implemented later
-      // intercomService.openIntercom()
-  }
 }
 
 private extension PersonalInformationViewModel {

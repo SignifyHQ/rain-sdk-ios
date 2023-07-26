@@ -23,13 +23,7 @@ struct ChangeAssetView: View {
     .padding(.top, 24)
     .padding(.horizontal, 30)
     .background(Colors.background.swiftUIColor)
-    .toolbar {
-      ToolbarItem(placement: .principal) {
-        Text(LFLocalizable.ChangeAsset.Screen.title)
-          .foregroundColor(Colors.label.swiftUIColor)
-          .font(Fonts.Inter.regular.swiftUIFont(size: Constants.FontSize.medium.value))
-      }
-    }
+    .defaultToolBar(navigationTitle: LFLocalizable.ChangeAsset.Screen.title)
   }
 }
 

@@ -34,16 +34,10 @@ struct SecurityCheckView: View {
     .popup(isPresented: $viewModel.isShowLogoutPopup) {
       logoutPopup
     }
-    .toolbar {
-      ToolbarItem(placement: .navigationBarTrailing) {
-        Button {
-          viewModel.openIntercom()
-        } label: {
-          GenImages.CommonImages.icChat.swiftUIImage
-            .foregroundColor(Colors.label.swiftUIColor)
-        }
-      }
-    }
+    .defaultToolBar(icon: .intercom, openIntercom: {
+      // TODO: Will be implemeted later
+      // intercomService.openIntercom()
+    })
     // TODO: Will be implemented later
     // .track(name: String(describing: type(of: self)))
   }

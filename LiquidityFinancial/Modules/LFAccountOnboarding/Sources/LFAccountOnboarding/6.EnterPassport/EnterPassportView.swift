@@ -36,18 +36,10 @@ struct EnterPassportView: View {
     .onTapGesture {
       viewModel.hidePassportTypes()
     }
-    .toolbar {
-      ToolbarItem(placement: .navigationBarTrailing) {
-        Button {
-            //intercomService.openIntercom()
-        } label: {
-          GenImages
-            .CommonImages
-            .icChat.swiftUIImage
-            .foregroundColor(Colors.label.swiftUIColor)
-        }
-      }
-    }
+    .defaultToolBar(icon: .intercom, openIntercom: {
+      // TODO: Will be implemeted later
+      // intercomService.openIntercom()
+    })
     .navigationLink(isActive: $viewModel.isNavigationToAddressView) {
       AddressView()
     }

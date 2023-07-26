@@ -72,10 +72,6 @@ extension PhoneNumberViewModel {
     isSecretMode = true
   }
   
-  func openIntercom() {
-    // intercomService.openIntercom()
-  }
-  
   func onChangedPhoneNumber(newValue: String) {
     let isPhoneNumber = newValue.trimWhitespacesAndNewlines().count == Constants.MaxCharacterLimit.phoneNumber.value
     let isAllowed = !newValue.trimWhitespacesAndNewlines().isEmpty && isPhoneNumber

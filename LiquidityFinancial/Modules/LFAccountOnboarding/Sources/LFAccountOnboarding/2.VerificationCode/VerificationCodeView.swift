@@ -26,16 +26,10 @@ struct VerificationCodeView: View {
     .padding(.bottom, 16)
     .padding(.top, 30)
     .padding(.horizontal, 30)
-    .toolbar {
-      ToolbarItem(placement: .navigationBarTrailing) {
-        Button {
-          viewModel.openIntercom()
-        } label: {
-          GenImages.CommonImages.icChat.swiftUIImage
-            .foregroundColor(Colors.label.swiftUIColor)
-        }
-      }
-    }
+    .defaultToolBar(icon: .intercom, openIntercom: {
+      // TODO: Will be implemeted later
+      // intercomService.openIntercom()
+    })
     .background(Colors.background.swiftUIColor)
     .popup(item: $viewModel.toastMessage, style: .toast) {
       ToastView(toastMessage: $0)

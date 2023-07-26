@@ -124,12 +124,7 @@ extension VerificationCodeViewModel {
   }
 }
 // MARK: View Helpers
-extension VerificationCodeViewModel {
-  func openIntercom() {
-    // TODO: Will be implemented later
-    // intercomService.openIntercom()
-  }
-  
+extension VerificationCodeViewModel {  
   func onChangedOTPCode() {
     if otpCode.count == Constants.MaxCharacterLimit.verificationLimit.value {
       performVerifyOTPCode(formatPhoneNumber: formatPhoneNumber, code: otpCode)

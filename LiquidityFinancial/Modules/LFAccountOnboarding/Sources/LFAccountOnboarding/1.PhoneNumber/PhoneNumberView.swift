@@ -34,16 +34,10 @@ struct PhoneNumberView: View {
     .onChange(of: viewModel.phoneNumber, perform: viewModel.onChangedPhoneNumber)
     .background(Colors.background.swiftUIColor)
     .navigationBarBackButtonHidden()
-    .toolbar {
-      ToolbarItem(placement: .navigationBarTrailing) {
-        Button {
-          viewModel.openIntercom()
-        } label: {
-          GenImages.CommonImages.icChat.swiftUIImage
-            .foregroundColor(Colors.label.swiftUIColor)
-        }
-      }
-    }
+    .defaultToolBar(icon: .intercom, openIntercom: {
+      // TODO: Will be implemeted later
+      // intercomService.openIntercom()
+    })
     // .track(name: String(describing: type(of: self))) TODO: Will be implemented later
     .navigationLink(isActive: $viewModel.isNavigationToVertificationView) {
       VerificationCodeView(phoneNumber: viewModel.phoneNumber)

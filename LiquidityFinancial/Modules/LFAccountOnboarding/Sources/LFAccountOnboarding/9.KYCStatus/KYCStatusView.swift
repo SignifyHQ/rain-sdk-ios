@@ -15,16 +15,10 @@ struct KYCStatusView: View {
       .background(Colors.background.swiftUIColor)
       .navigationBarBackButtonHidden()
       // .track(name: String(describing: type(of: self))) TODO: Will be implemented later
-      .toolbar {
-        ToolbarItem(placement: .navigationBarTrailing) {
-          Button {
-            
-          } label: {
-            GenImages.CommonImages.icChat.swiftUIImage
-              .foregroundColor(Colors.label.swiftUIColor)
-          }
-        }
-      }
+      .defaultToolBar(icon: .intercom, openIntercom: {
+        // TODO: Will be implemeted later
+        // intercomService.openIntercom()
+      })
       .fullScreenCover(item: $viewModel.presentation) { item in
         switch item {
         case let .idv(url):

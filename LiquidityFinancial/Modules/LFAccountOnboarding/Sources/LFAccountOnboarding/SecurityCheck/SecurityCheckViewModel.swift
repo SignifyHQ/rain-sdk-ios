@@ -68,11 +68,7 @@ extension SecurityCheckViewModel {
 }
 
 // MARK: - View Helpers
-extension SecurityCheckViewModel {
-  func openIntercom() {
-    // intercomService.openIntercom()
-  }
-  
+extension SecurityCheckViewModel {  
   func showLogoutPopup() {
     isShowLogoutPopup = true
   }

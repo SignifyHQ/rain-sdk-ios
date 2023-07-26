@@ -20,15 +20,7 @@ private extension CardActivatedView {
     switch activeContent {
     case .activeCard:
       activedCardView
-          .toolbar {
-            ToolbarItem(placement: .navigationBarLeading) {
-              Button {
-                dismiss()
-              } label: {
-                CircleButton(style: .xmark)
-              }
-            }
-          }
+          .defaultToolBar(icon: .xMark)
     case .setCardPin:
         SetCardPinView {
           activeContent = .addAppleWallet

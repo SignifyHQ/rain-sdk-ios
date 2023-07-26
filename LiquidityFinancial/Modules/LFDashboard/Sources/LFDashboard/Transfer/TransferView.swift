@@ -15,9 +15,10 @@ struct TransferView: View {
   var body: some View {
     content
       .background(Colors.background.swiftUIColor)
-      .toolbar {
-        toolbar
-      }
+      .defaultToolBar(icon: .both, navigationTitle: viewModel.navigationTitle, openIntercom: {
+        // TODO: Will be implemeted later
+        // intercomService.openIntercom()
+      })
       .navigationBarBackButtonHidden(true)
   }
 
@@ -70,31 +71,5 @@ struct TransferView: View {
       .padding(.bottom, 16)
     }
     .scrollOnOverflow()
-  }
-
-  private var toolbar: some ToolbarContent {
-    Group {
-      ToolbarItem(placement: .navigationBarLeading) {
-        Button {
-          dismiss()
-        } label: {
-          CircleButton(style: .xmark)
-        }
-      }
-      ToolbarItem(placement: .principal) {
-        Text(viewModel.navigationTitle)
-          .foregroundColor(Colors.label.swiftUIColor)
-          .font(Fonts.Inter.regular.swiftUIFont(size: Constants.FontSize.medium.value))
-      }
-      ToolbarItem(placement: .navigationBarTrailing) {
-        Button {
-          // intercomService.openIntercom()
-        } label: {
-          GenImages.CommonImages.icChat.swiftUIImage
-            .foregroundColor(Colors.label.swiftUIColor)
-            .frame(width: 50, height: 50)
-        }
-      }
-    }
   }
 }

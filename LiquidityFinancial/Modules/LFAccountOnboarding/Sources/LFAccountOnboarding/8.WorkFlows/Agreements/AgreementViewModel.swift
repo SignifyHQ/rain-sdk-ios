@@ -32,11 +32,6 @@ final class AgreementViewModel: ObservableObject {
 
 // MARK: View Helpers
 extension AgreementViewModel {
-  func openIntercom() {
-    // TODO: Will be implemented later
-    // intercomService.openIntercom()
-  }
-  
   func getURL(tappedString: String) -> String {
     Constants.netspendAttributeInformation[tappedString] ?? Constants.pathwardAttributeInformation[tappedString] ?? ""
   }

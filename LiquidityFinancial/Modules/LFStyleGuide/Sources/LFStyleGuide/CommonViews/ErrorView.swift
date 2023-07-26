@@ -42,16 +42,10 @@ public struct ErrorView: View {
     .padding(30)
     .background(Colors.background.swiftUIColor, ignoresSafeAreaEdges: .all)
     .navigationBarTitleDisplayMode(.inline)
-    .toolbar {
-      ToolbarItem(placement: .navigationBarTrailing) {
-        Button {
-          // intercomService.openIntercom()
-        } label: {
-          GenImages.CommonImages.icChat.swiftUIImage
-            .foregroundColor(Colors.label.swiftUIColor)
-        }
-      }
-    }
+    .defaultToolBar(icon: .intercom, openIntercom: {
+      // TODO: Will be implemeted later
+      // intercomService.openIntercom()
+    })
     // .track(name: String(describing: type(of: self))) TODO: Will be implemented later
   }
 }

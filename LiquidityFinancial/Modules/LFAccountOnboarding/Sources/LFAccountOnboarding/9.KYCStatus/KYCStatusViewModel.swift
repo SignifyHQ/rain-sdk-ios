@@ -35,11 +35,7 @@ final class KYCStatusViewModel: ObservableObject {
 }
 
   // MARK: - View Helpers
-extension KYCStatusViewModel {
-  func openIntercom() {
-      // intercomService.openIntercom()
-  }
-  
+extension KYCStatusViewModel {  
   func magicTapToLogout() {
       // userManager.logout()
   }
