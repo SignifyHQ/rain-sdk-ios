@@ -621,6 +621,28 @@ public enum LFLocalizable {
       public static let description = LFLocalizable.tr("Localizable", "term.termsVoip.description", fallback: "Using VOIP or Google Voice numbers can result in onboarding delays. We NEVER share your phone number with third parties for marketing, per our Privacy Policy.")
     }
   }
+  public enum Textfield {
+    public enum Search {
+      /// Search...
+      public static let placeholder = LFLocalizable.tr("Localizable", "textfield.search.placeholder", fallback: "Search...")
+    }
+  }
+  public enum TransactionList {
+    /// Transactions
+    public static let title = LFLocalizable.tr("Localizable", "transactionList.title", fallback: "Transactions")
+  }
+  public enum TransactionRow {
+    /// Pending
+    public static let pending = LFLocalizable.tr("Localizable", "transactionRow.pending", fallback: "Pending")
+    public enum FundraiserDonation {
+      /// Donation
+      public static let generic = LFLocalizable.tr("Localizable", "transactionRow.fundraiser_donation.generic", fallback: "Donation")
+      /// Donation by %@
+      public static func user(_ p1: Any) -> String {
+        return LFLocalizable.tr("Localizable", "transactionRow.fundraiser_donation.user", String(describing: p1), fallback: "Donation by %@")
+      }
+    }
+  }
   public enum TransferView {
     /// Checking **** %@
     public static func checking(_ p1: Any) -> String {

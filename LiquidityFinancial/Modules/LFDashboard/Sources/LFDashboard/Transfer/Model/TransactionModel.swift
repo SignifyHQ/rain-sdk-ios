@@ -96,6 +96,52 @@ struct TransactionModel: Codable, Identifiable, Equatable {
   }
 }
 
+extension TransactionModel {
+  
+  // TODO: Fake data only
+  static func generateTestData() -> TransactionModel {
+    let txnType: TransactionType = {
+      switch Int.random(in: 0...5) {
+      case 0:
+        return .cashback
+      case 1:
+        return .credit
+      case 2:
+        return .debit
+      case 3:
+        return .donation
+      case 4:
+        return .reward
+      default:
+        return .unknown
+      }
+    }()
+    let transferType: TransferType = {
+      switch Int.random(in: 0...5) {
+      case 0:
+        return .buy
+      case 1:
+        return .receive
+      case 2:
+        return .sell
+      case 3:
+        return .check
+      case 4:
+        return .send
+      default:
+        return .card
+      }
+    }()
+    return TransactionModel(
+      id: UUID().uuidString,
+      txnType: txnType,
+      title: "Transaction number #\(Int.random(in: 0...10))",
+      amount: "\(Int.random(in: 1...123))",
+      transferType: transferType
+    )
+  }
+}
+
 // MARK: - Types
 
 extension TransactionModel {

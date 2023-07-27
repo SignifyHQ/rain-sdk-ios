@@ -64,6 +64,22 @@ public enum GenImages {
     public static let usdSymbol = ImageAsset(name: "usdSymbol")
   }
   public enum Images {
+    public enum Transactions {
+      public static let txCardPurchase = ImageAsset(name: "txCardPurchase")
+      public static let txCardRefund = ImageAsset(name: "txCardRefund")
+      public static let txCashDeposit = ImageAsset(name: "txCashDeposit")
+      public static let txCashWithdrawal = ImageAsset(name: "txCashWithdrawal")
+      public static let txCashback = ImageAsset(name: "txCashback")
+      public static let txCryptoBuy = ImageAsset(name: "txCryptoBuy")
+      public static let txCryptoDeposit = ImageAsset(name: "txCryptoDeposit")
+      public static let txCryptoReward = ImageAsset(name: "txCryptoReward")
+      public static let txCryptoSell = ImageAsset(name: "txCryptoSell")
+      public static let txCryptoWithdrawal = ImageAsset(name: "txCryptoWithdrawal")
+      public static let txDonation = ImageAsset(name: "txDonation")
+      public static let txFees = ImageAsset(name: "txFees")
+      public static let txOther = ImageAsset(name: "txOther")
+    }
+    public static let activedCard = ImageAsset(name: "activedCard")
     public static let availableCard = ImageAsset(name: "availableCard")
     public static let connectedAppleWallet = ImageAsset(name: "connectedAppleWallet")
     public static let emptyCard = ImageAsset(name: "emptyCard")

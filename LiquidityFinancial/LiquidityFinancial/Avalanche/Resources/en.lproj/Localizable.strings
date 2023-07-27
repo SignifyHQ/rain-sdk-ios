@@ -336,6 +336,13 @@
 "addBankWithDebit.cvv" = "CVV";
 "addBankWithDebit.cvv_placeholder" = "Enter CVV";
 
+// Transaction
+"transactionList.title" = "Transactions";
+
+"transactionRow.pending" = "Pending";
+"transactionRow.fundraiser_donation.user" = "Donation by %@";
+"transactionRow.fundraiser_donation.generic" = "Donation";
+
 // MARK: - Common
 
 // Terms
@@ -361,3 +368,6 @@
 // Grid Value
 "grid_value.crypto" = "%@ ADA";
 "grid_value.all" = "All";
+
+// Textfield
+"textfield.search.placeholder" = "Search...";
