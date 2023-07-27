@@ -246,6 +246,28 @@
 "setCardPin.popup.title" = "CARD PIN SET";
 "setCardPin.popup.successMessage" = "Your card's PIN is now set. Use it for purchases and at ATMs.";
 
+// LIST CARD
+"listCard.security.title" = "Security";
+"listCard.showCardNumber.title" = "Show card number";
+"listCard.lockCard.title" = "Lock card";
+"listCard.lockCard.description" = "Stop card from being used";
+"listCard.changePin.title" = "Change PIN";
+"listCard.orderPhysicalCard.title" = "Order Physical Card";
+"listCard.activateCard.buttonTitle" = "Activate %@ Card";
+"listCard.deals.title" = "Deals";
+"listCard.deals.description" = "up to 8% back in %@";
+"listCard.activateCard.title" = "Activate Card";
+"listCard.activateCard.message" = "To start using your card, please activate it now";
+"listCard.activateCard.primary" = "Activate Card";
+
+// CARD
+"card.virtual.title" = "Virtual";
+"card.physical.title" = "Physical";
+"card.cardNumber.title" = "Card number";
+"card.exp.title" = "Exp";
+"card.cvv.title" = "CVV";
+"card.copyToClipboard.title" = "Card number copied to clipboard";
+
 // MARK: - Popup
 
 // Logout
@@ -330,6 +352,7 @@
 "button.logout.title" = "Log Out";
 "button.ok.title" = "OK";
 "button.skip.title" = "Skip";
+"button.notNow.title" = "Not now";
 
 // Grid Value
 "grid_value.crypto" = "%@ ADA";

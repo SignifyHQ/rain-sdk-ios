@@ -1,0 +1,222 @@
+import SwiftUI
+import LFLocalizable
+import LFUtilities
+import LFStyleGuide
+
+struct ListCardsView: View {
+  @Environment(\.dismiss) private var dismiss
+  @StateObject var viewModel = ListCardsViewModel()
+  
+  var body: some View {
+    ZStack(alignment: .top) {
+      cardDetails
+      pageIndicator
+    }
+    .padding(.horizontal, 30)
+    .padding(.bottom, 16)
+    .background(Colors.background.swiftUIColor)
+    .defaultToolBar(icon: .intercom, openIntercom: {
+      // TODO: Will be implemented later
+      // intercomService.openIntercom()
+    })
+    // .track(name: String(describing: type(of: self))) TODO: Will be implemented later
+    .sheet(item: $viewModel.present) { item in
+      switch item {
+      case .setCardPin:
+        SetCardPinView()
+          .embedInNavigation()
+      case let .addAppleWallet(cardModel):
+        AddAppleWalletView(card: cardModel, onFinish: {})
+          .embedInNavigation()
+      case let .applePay(cardModel):
+        ApplePayController(cardModel: cardModel)
+      }
+    }
+    .popup(item: $viewModel.toastMessage, style: .toast) {
+      ToastView(toastMessage: $0)
+    }
+    .popup(item: $viewModel.popup) { popup in
+      switch popup {
+      case .activateCard:
+        activateCardPopup
+      }
+    }
+  }
+}
+
+// MARK: - View Components
+private extension ListCardsView {
+  var cardDetails: some View {
+    VStack(spacing: 16) {
+      cardView
+      dealsButton
+      rows
+      Spacer()
+      buttonGroup
+    }
+    .padding(.bottom, 10)
+  }
+  
+  var dealsButton: some View {
+    ArrowButton(
+      image: GenImages.CommonImages.icDeals,
+      title: LFLocalizable.ListCard.Deals.title,
+      value: LFLocalizable.ListCard.Deals.description(LFUtility.appName)
+    ) {
+      viewModel.dealsAction()
+    }
+  }
+  
+  var cardView: some View {
+    TabView(selection: $viewModel.currentCard) {
+      ForEach(viewModel.cardsList) { item in
+        CardView(card: item, isShowCardNumber: $viewModel.isShowCardNumber)
+          .tag(item)
+      }
+    }
+    .onChange(of: viewModel.currentCard) { _ in
+      viewModel.onChangeCurrentCard()
+    }
+    .tabViewStyle(.page(indexDisplayMode: .never))
+    .padding(.top, 10)
+    .frame(maxHeight: 220)
+  }
+  
+  @ViewBuilder var pageIndicator: some View {
+    if viewModel.cardsList.count > 1 {
+      HStack(spacing: 12) {
+        ForEach(viewModel.cardsList) { card in
+          Circle()
+            .fill(
+              Colors.label.swiftUIColor.opacity(viewModel.currentCard == card ? 1 : 0.3)
+            )
+            .frame(5)
+        }
+      }
+      .padding(.top, 35)
+    }
+  }
+  
+  var rows: some View {
+    VStack(alignment: .leading, spacing: 18) {
+      Text(LFLocalizable.ListCard.Security.title)
+        .font(Fonts.Inter.regular.swiftUIFont(size: Constants.FontSize.ultraSmall.value))
+        .foregroundColor(Colors.label.swiftUIColor.opacity(0.75))
+      VStack(spacing: 16) {
+        row(
+          title: LFLocalizable.ListCard.ShowCardNumber.title.localizedString,
+          subtitle: nil,
+          isSwitchOn: $viewModel.isShowCardNumber,
+          onChange: nil
+        )
+        GenImages.CommonImages.dash.swiftUIImage
+          .foregroundColor(Colors.label.swiftUIColor)
+        row(
+          title: LFLocalizable.ListCard.LockCard.title,
+          subtitle: LFLocalizable.ListCard.LockCard.description,
+          isSwitchOn: $viewModel.isCardLocked
+        ) { _ in
+          viewModel.lockCardToggled()
+        }
+        if viewModel.isActive {
+          GenImages.CommonImages.dash.swiftUIImage
+            .foregroundColor(Colors.label.swiftUIColor)
+          row(title: LFLocalizable.ListCard.ChangePin.title) {
+            viewModel.onClickedChangePinButton()
+          }
+        }
+      }
+    }
+    .padding(.top, 8)
+  }
+  
+  func row(title: String, subtitle: String?, isSwitchOn: Binding<Bool>, onChange: ((Bool) -> Void)?) -> some View {
+    HStack {
+      VStack(alignment: .leading, spacing: 2) {
+        Text(title)
+          .font(Fonts.Inter.regular.swiftUIFont(size: Constants.FontSize.medium.value))
+          .foregroundColor(Colors.label.swiftUIColor)
+        if let subtitle {
+          Text(subtitle)
+            .font(Fonts.Inter.regular.swiftUIFont(size: Constants.FontSize.ultraSmall.value))
+            .foregroundColor(Colors.label.swiftUIColor.opacity(0.75))
+        }
+      }
+      Spacer()
+      Toggle("", isOn: isSwitchOn)
+        .toggleStyle(
+          SwitchToggleStyle(tint: Colors.primary.swiftUIColor)
+        )
+        .onChange(of: isSwitchOn.wrappedValue) { value in
+          onChange?(value)
+        }
+    }
+  }
+  
+  func row(title: String, onTap: @escaping () -> Void) -> some View {
+    Button(action: onTap) {
+      HStack {
+        Text(title)
+          .font(Fonts.Inter.regular.swiftUIFont(size: Constants.FontSize.medium.value))
+          .foregroundColor(Colors.label.swiftUIColor)
+        Spacer()
+        GenImages.CommonImages.icRightArrow.swiftUIImage
+          .foregroundColor(Colors.label.swiftUIColor)
+          .padding(.trailing, 4)
+      }
+    }
+  }
+  
+  @ViewBuilder var buttonGroup: some View {
+    if viewModel.isActive {
+      VStack(spacing: 14) {
+        applePay
+        if !viewModel.isHasPhysicalCard {
+          FullSizeButton(
+            title: LFLocalizable.ListCard.OrderPhysicalCard.title,
+            isDisable: false
+          ) {
+            viewModel.onClickedOrderPhysicalCard()
+          }
+        }
+      }
+    } else {
+      activeCardButton
+    }
+  }
+  
+  var applePay: some View {
+    Button {
+      viewModel.onClickedAddToApplePay()
+    } label: {
+      ApplePayButton()
+        .frame(height: 40)
+        .cornerRadius(10)
+        .overlay(
+          RoundedRectangle(cornerRadius: 10)
+            .stroke(Colors.label.swiftUIColor, lineWidth: 1)
+        )
+    }
+  }
+  
+  var activeCardButton: some View {
+    FullSizeButton(
+      title: LFLocalizable.ListCard.ActivateCard.buttonTitle(LFUtility.appName),
+      isDisable: false
+    ) {
+      viewModel.onClickedActiveCard()
+    }
+  }
+  
+  var activateCardPopup: some View {
+    LiquidityAlert(
+      title: LFLocalizable.ListCard.ActivateCard.title.uppercased(),
+      message: LFLocalizable.ListCard.ActivateCard.message,
+      primary: .init(text: LFLocalizable.ListCard.ActivateCard.primary) { viewModel.activationAction()
+      },
+      secondary: .init(text: LFLocalizable.Button.NotNow.title) {
+        viewModel.dismissPopup()
+      }
+    )
+  }
+}

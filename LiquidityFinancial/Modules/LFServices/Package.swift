@@ -10,13 +10,15 @@ let package = Package(
         .library(name: "LFServices", targets: ["LFServices", "NetspendSdk", "LinkKit", "FraudForce"])
     ],
     dependencies: [
+      .package(url: "https://github.com/verygoodsecurity/vgs-show-ios.git", from: "1.1.6"),
       .package(name: "LFUtilities", path: "../LFUtilities")
     ],
     targets: [
         .target(
             name: "LFServices",
             dependencies: [
-              "LFUtilities"
+              "LFUtilities",
+              .product(name: "VGSShowSDK", package: "vgs-show-ios")
             ]),
         .binaryTarget(
           name: "NetspendSdk",

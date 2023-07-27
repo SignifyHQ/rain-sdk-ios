@@ -142,6 +142,9 @@ public extension Constants {
     case dotSymbol = "•"
     case pinCodeDigits = "4"
     case zeroAmount = "0"
+    case vgsExpirationDate = "••/••"
+    case vgsCardNumber = "•••• •••• •••• ••••"
+    case vgsCVV = "•••"
   }
 }
 

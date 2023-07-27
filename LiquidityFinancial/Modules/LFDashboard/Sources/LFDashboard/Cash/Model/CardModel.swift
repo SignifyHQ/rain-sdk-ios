@@ -1,7 +1,9 @@
 import Foundation
+import LFLocalizable
 
-struct CardModel: Identifiable {
+struct CardModel: Identifiable, Hashable {
   let id: String
+  let cardType: CardType
   let cardholderName: String?
   let currency: String?
   let expiryMonth: String?
@@ -12,12 +14,13 @@ struct CardModel: Identifiable {
   
   static let `default` = CardModel(
     id: "",
+    cardType: .virtual,
     cardholderName: nil,
     currency: nil,
     expiryMonth: "09",
     expiryYear: "2023",
     last4: "1891",
-    cardStatus: .pendingActivation,
+    cardStatus: .active,
     roundUpPurchases: true
   )
 }
@@ -28,4 +31,18 @@ enum CardStatus: String {
   case inactive
   case canceled
   case unknown
+}
+
+enum CardType {
+  case virtual
+  case physical
+  
+  var title: String {
+    switch self {
+    case .virtual:
+      return LFLocalizable.Card.Virtual.title
+    case .physical:
+      return LFLocalizable.Card.Physical.title
+    }
+  }
 }

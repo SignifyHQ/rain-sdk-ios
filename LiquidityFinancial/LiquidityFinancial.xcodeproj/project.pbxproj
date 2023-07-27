@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		0603BD712A71191B00347DB2 /* VGSShowSDK in Frameworks */ = {isa = PBXBuildFile; productRef = 0603BD702A71191B00347DB2 /* VGSShowSDK */; };
 		06D40BF82A625F5400EADB75 /* LoadingMix.json in Resources */ = {isa = PBXBuildFile; fileRef = 06D40BF72A625F5400EADB75 /* LoadingMix.json */; };
 		06D40BFC2A6260B300EADB75 /* LoadingContrast.json in Resources */ = {isa = PBXBuildFile; fileRef = 06D40BFB2A6260B300EADB75 /* LoadingContrast.json */; };
 		06D40C012A62AE3700EADB75 /* iPhoneNumberField in Frameworks */ = {isa = PBXBuildFile; productRef = 06D40C002A62AE3700EADB75 /* iPhoneNumberField */; };
@@ -189,6 +190,7 @@
 				A963D3FB2A67081D006B9A54 /* NetSpendData in Frameworks */,
 				A980DF772A5FA26E000B3C09 /* LFUtilities in Frameworks */,
 				06D40C012A62AE3700EADB75 /* iPhoneNumberField in Frameworks */,
+				0603BD712A71191B00347DB2 /* VGSShowSDK in Frameworks */,
 				A97BF7EE2A5D719000B8F5CA /* Lottie in Frameworks */,
 				A980DF732A5FA25A000B3C09 /* LFNetwork in Frameworks */,
 				A94F71F22A612C62002ADB34 /* AvalancheAccountOnboarding in Frameworks */,
@@ -609,6 +611,7 @@
 				749091162A6584C300071B41 /* SmartyStreets */,
 				A963D3FA2A67081D006B9A54 /* NetSpendData */,
 				06EBE2022A693C7800157B32 /* LFDashboard */,
+				0603BD702A71191B00347DB2 /* VGSShowSDK */,
 			);
 			productName = LiquidityFinancial;
 			productReference = A97BF7BC2A5C602D00B8F5CA /* Avalanche.app */;
@@ -688,6 +691,7 @@
 				A9E6B1CD2A5DD1A2008ED988 /* XCRemoteSwiftPackageReference "SwiftGenPlugin" */,
 				06D40BFF2A62AE3700EADB75 /* XCRemoteSwiftPackageReference "iPhoneNumberField" */,
 				749091152A6584C300071B41 /* XCRemoteSwiftPackageReference "smartystreets-ios-sdk" */,
+				0603BD6F2A71191B00347DB2 /* XCRemoteSwiftPackageReference "vgs-show-ios" */,
 			);
 			productRefGroup = A97BF7BD2A5C602D00B8F5CA /* Products */;
 			projectDirPath = "";
@@ -1274,6 +1278,14 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
+		0603BD6F2A71191B00347DB2 /* XCRemoteSwiftPackageReference "vgs-show-ios" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/verygoodsecurity/vgs-show-ios.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.0.0;
+			};
+		};
 		06D40BFF2A62AE3700EADB75 /* XCRemoteSwiftPackageReference "iPhoneNumberField" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/MojtabaHs/iPhoneNumberField.git";
@@ -1333,6 +1345,11 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		0603BD702A71191B00347DB2 /* VGSShowSDK */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 0603BD6F2A71191B00347DB2 /* XCRemoteSwiftPackageReference "vgs-show-ios" */;
+			productName = VGSShowSDK;
+		};
 		06D40C002A62AE3700EADB75 /* iPhoneNumberField */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 06D40BFF2A62AE3700EADB75 /* XCRemoteSwiftPackageReference "iPhoneNumberField" */;

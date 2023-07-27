@@ -145,6 +145,10 @@ public enum LFLocalizable {
       /// Log Out
       public static let title = LFLocalizable.tr("Localizable", "button.logout.title", fallback: "Log Out")
     }
+    public enum NotNow {
+      /// Not now
+      public static let title = LFLocalizable.tr("Localizable", "button.notNow.title", fallback: "Not now")
+    }
     public enum Ok {
       /// OK
       public static let title = LFLocalizable.tr("Localizable", "button.ok.title", fallback: "OK")
@@ -157,6 +161,32 @@ public enum LFLocalizable {
       /// Trade Now and Get
       /// Your Life
       public static let text = LFLocalizable.tr("Localizable", "button.title.text", fallback: "Trade Now and Get\nYour Life")
+    }
+  }
+  public enum Card {
+    public enum CardNumber {
+      /// Card number
+      public static let title = LFLocalizable.tr("Localizable", "card.cardNumber.title", fallback: "Card number")
+    }
+    public enum CopyToClipboard {
+      /// Card number copied to clipboard
+      public static let title = LFLocalizable.tr("Localizable", "card.copyToClipboard.title", fallback: "Card number copied to clipboard")
+    }
+    public enum Cvv {
+      /// CVV
+      public static let title = LFLocalizable.tr("Localizable", "card.cvv.title", fallback: "CVV")
+    }
+    public enum Exp {
+      /// Exp
+      public static let title = LFLocalizable.tr("Localizable", "card.exp.title", fallback: "Exp")
+    }
+    public enum Physical {
+      /// Physical
+      public static let title = LFLocalizable.tr("Localizable", "card.physical.title", fallback: "Physical")
+    }
+    public enum Virtual {
+      /// Virtual
+      public static let title = LFLocalizable.tr("Localizable", "card.virtual.title", fallback: "Virtual")
     }
   }
   public enum CardActivated {
@@ -345,6 +375,50 @@ public enum LFLocalizable {
       public static let message = LFLocalizable.tr("Localizable", "kycStatus.waitingVerification.message", fallback: "We’re confiming your account details. This could take up to 30 seconds")
       /// THANK YOU FOR WAITING
       public static let title = LFLocalizable.tr("Localizable", "kycStatus.waitingVerification.title", fallback: "THANK YOU FOR WAITING")
+    }
+  }
+  public enum ListCard {
+    public enum ActivateCard {
+      /// Activate %@ Card
+      public static func buttonTitle(_ p1: Any) -> String {
+        return LFLocalizable.tr("Localizable", "listCard.activateCard.buttonTitle", String(describing: p1), fallback: "Activate %@ Card")
+      }
+      /// To start using your card, please activate it now
+      public static let message = LFLocalizable.tr("Localizable", "listCard.activateCard.message", fallback: "To start using your card, please activate it now")
+      /// Activate Card
+      public static let primary = LFLocalizable.tr("Localizable", "listCard.activateCard.primary", fallback: "Activate Card")
+      /// Activate Card
+      public static let title = LFLocalizable.tr("Localizable", "listCard.activateCard.title", fallback: "Activate Card")
+    }
+    public enum ChangePin {
+      /// Change PIN
+      public static let title = LFLocalizable.tr("Localizable", "listCard.changePin.title", fallback: "Change PIN")
+    }
+    public enum Deals {
+      /// up to 8% back in %@
+      public static func description(_ p1: Any) -> String {
+        return LFLocalizable.tr("Localizable", "listCard.deals.description", String(describing: p1), fallback: "up to 8% back in %@")
+      }
+      /// Deals
+      public static let title = LFLocalizable.tr("Localizable", "listCard.deals.title", fallback: "Deals")
+    }
+    public enum LockCard {
+      /// Stop card from being used
+      public static let description = LFLocalizable.tr("Localizable", "listCard.lockCard.description", fallback: "Stop card from being used")
+      /// Lock card
+      public static let title = LFLocalizable.tr("Localizable", "listCard.lockCard.title", fallback: "Lock card")
+    }
+    public enum OrderPhysicalCard {
+      /// Order Physical Card
+      public static let title = LFLocalizable.tr("Localizable", "listCard.orderPhysicalCard.title", fallback: "Order Physical Card")
+    }
+    public enum Security {
+      /// Security
+      public static let title = LFLocalizable.tr("Localizable", "listCard.security.title", fallback: "Security")
+    }
+    public enum ShowCardNumber {
+      /// Show card number
+      public static let title = LFLocalizable.tr("Localizable", "listCard.showCardNumber.title", fallback: "Show card number")
     }
   }
   public enum MoveMoney {

@@ -16,12 +16,12 @@ struct SetCardPinView: View {
   var body: some View {
     content
       .background(Colors.background.swiftUIColor)
-      .defaultToolBar(icon: .xMark) {
+      .defaultToolBar(icon: .xMark, onDismiss: {
         viewModel.closeAction {
           hideKeyboard()
           dismiss()
         }
-      }
+      })
       .onAppear {
         // analyticsService.track(event: Event(name: .viewedSetATMPin)) TODO: Will be implemented later
       }

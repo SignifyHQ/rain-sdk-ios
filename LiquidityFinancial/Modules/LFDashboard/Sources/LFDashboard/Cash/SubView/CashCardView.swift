@@ -67,10 +67,8 @@ struct CashCardView: View {
       CardActivatedView(card: card)
         .embedInNavigation()
     }
-    .sheet(isPresented: $viewModel.isShowCardDetail) {
-      EmptyView()
-      //      CardsDetailView(viewModel: .init())
-      //        .embedInNavigation()
+    .navigationLink(isActive: $viewModel.isShowCardDetail) {
+      ListCardsView()
     }
   }
 

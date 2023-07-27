@@ -14,13 +14,14 @@ let package = Package(
   dependencies: [
     .package(name: "LFUtilities", path: "../LFUtilities"),
     .package(name: "LFStyleGuide", path: "../LFStyleGuide"),
-    .package(name: "LFLocalizable", path: "../LFLocalizable")
+    .package(name: "LFLocalizable", path: "../LFLocalizable"),
+    .package(name: "LFServices", path: "../LFServices"),
   ],
   targets: [
     .target(
       name: "LFDashboard",
       dependencies: [
-        "LFUtilities", "LFStyleGuide", "LFLocalizable"
+        "LFUtilities", "LFStyleGuide", "LFLocalizable", "LFServices"
       ]
     ),
     .testTarget(

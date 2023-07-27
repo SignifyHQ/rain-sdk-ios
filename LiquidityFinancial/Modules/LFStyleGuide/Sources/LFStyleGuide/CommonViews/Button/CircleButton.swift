@@ -32,7 +32,7 @@ public struct CircleButton: View {
 
 public extension CircleButton {
   enum Style: String, CaseIterable {
-    case right = "rightArrowSmall"
+    case right
     case left = "chevron.left"
     case chevronUp = "chevron.up"
     case down = "chevron.down"
@@ -45,6 +45,8 @@ public extension CircleButton {
     
     var imageAsset: ImageAsset? {
       switch self {
+      case .right:
+        return GenImages.CommonImages.icRightArrow
       case .xmark:
         return GenImages.CommonImages.icXMark
       case .delete:
