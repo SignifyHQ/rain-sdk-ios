@@ -64,16 +64,17 @@ public enum GenImages {
     public static let usdSymbol = ImageAsset(name: "usdSymbol")
   }
   public enum Images {
-    public static let activedCard = ImageAsset(name: "activedCard")
     public static let availableCard = ImageAsset(name: "availableCard")
     public static let connectedAppleWallet = ImageAsset(name: "connectedAppleWallet")
     public static let emptyCard = ImageAsset(name: "emptyCard")
     public static let icKycQuestion = ImageAsset(name: "ic_kyc_question_?")
     public static let icKycQuestionCheck = ImageAsset(name: "ic_kyc_question_check")
     public static let icLogo = ImageAsset(name: "ic_logo")
+    public static let physicalCard = ImageAsset(name: "physicalCard")
     public static let statusCompleted = ImageAsset(name: "statusCompleted")
     public static let statusPending = ImageAsset(name: "statusPending")
     public static let unavailableCard = ImageAsset(name: "unavailableCard")
+    public static let virtualCard = ImageAsset(name: "virtualCard")
   }
 }
 // swiftlint:enable identifier_name line_length nesting type_body_length type_name

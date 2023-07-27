@@ -4,29 +4,27 @@
 import PackageDescription
 
 let package = Package(
-  name: "LFDashboard",
+  name: "LFCard",
   platforms: [.iOS(.v15)],
   products: [
     .library(
-      name: "LFDashboard",
-      targets: ["LFDashboard"])
+      name: "LFCard",
+      targets: ["LFCard"]),
   ],
   dependencies: [
     .package(name: "LFUtilities", path: "../LFUtilities"),
     .package(name: "LFStyleGuide", path: "../LFStyleGuide"),
     .package(name: "LFLocalizable", path: "../LFLocalizable"),
-    .package(name: "LFServices", path: "../LFServices"),
-    .package(name: "LFCard", path: "../LFCard")
+    .package(name: "LFServices", path: "../LFServices")
   ],
   targets: [
     .target(
-      name: "LFDashboard",
+      name: "LFCard",
       dependencies: [
-        "LFUtilities", "LFStyleGuide", "LFLocalizable", "LFServices", "LFCard"
-      ]
-    ),
+        "LFUtilities", "LFStyleGuide", "LFLocalizable", "LFServices"
+      ]),
     .testTarget(
-      name: "LFDashboardTests",
-      dependencies: ["LFDashboard"])
+      name: "LFCardTests",
+      dependencies: ["LFCard"]),
   ]
 )

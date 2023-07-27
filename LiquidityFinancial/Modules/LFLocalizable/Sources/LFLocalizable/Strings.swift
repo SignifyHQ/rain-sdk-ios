@@ -92,6 +92,14 @@ public enum LFLocalizable {
   public static let zeroHashTransactiondetail = LFLocalizable.tr("Localizable", "Zero_hash_transactiondetail", fallback: "Cryptocurrency services powered by Zero Hash")
   /// Zip code
   public static let zipcode = LFLocalizable.tr("Localizable", "zipcode", fallback: "Zip code")
+  public enum ActivatePhysicalCard {
+    public enum Screen {
+      /// Enter the 3-digit CVV code of your card
+      public static let description = LFLocalizable.tr("Localizable", "activatePhysicalCard.screen.description", fallback: "Enter the 3-digit CVV code of your card")
+      /// ACTIVATE PHYSICAL CARD
+      public static let title = LFLocalizable.tr("Localizable", "activatePhysicalCard.screen.title", fallback: "ACTIVATE PHYSICAL CARD")
+    }
+  }
   public enum AddBankWithDebit {
     /// Card number
     public static let cardNumber = LFLocalizable.tr("Localizable", "addBankWithDebit.card_number", fallback: "Card number")
@@ -208,9 +216,11 @@ public enum LFLocalizable {
     }
   }
   public enum CashTab {
-    public enum ActiveVirtualCard {
-      /// Tap to Activate Virtual Card
-      public static let buttonTitle = LFLocalizable.tr("Localizable", "cashTab.activeVirtualCard.buttonTitle", fallback: "Tap to Activate Virtual Card")
+    public enum ActiveCard {
+      /// Tap to Activate %@ Card
+      public static func buttonTitle(_ p1: Any) -> String {
+        return LFLocalizable.tr("Localizable", "cashTab.activeCard.buttonTitle", String(describing: p1), fallback: "Tap to Activate %@ Card")
+      }
     }
     public enum ChangeAsset {
       /// Change

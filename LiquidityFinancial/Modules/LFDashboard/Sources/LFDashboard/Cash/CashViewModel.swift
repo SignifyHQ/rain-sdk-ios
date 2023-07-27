@@ -1,4 +1,5 @@
 import Foundation
+import LFCard
 
 @MainActor
 final class CashViewModel: ObservableObject {
@@ -6,7 +7,7 @@ final class CashViewModel: ObservableObject {
   @Published var isLoading: Bool = true
   @Published var cashBalanceValue: Double = 0
   @Published var activity = Activity.loading
-  @Published var cashCardDetails = CardModel.default // MOCK DATA
+  @Published var cashCardDetails = CardModel.virtualDefault // MOCK DATA
   @Published var selectedAsset: AssetType = .usdc
   @Published var transactions: [String] = [] // FAKE TYPE -> TransactionModel
   @Published var navigation: Navigation?

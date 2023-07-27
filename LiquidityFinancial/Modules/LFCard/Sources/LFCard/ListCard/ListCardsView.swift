@@ -3,11 +3,13 @@ import LFLocalizable
 import LFUtilities
 import LFStyleGuide
 
-struct ListCardsView: View {
+public struct ListCardsView: View {
   @Environment(\.dismiss) private var dismiss
   @StateObject var viewModel = ListCardsViewModel()
   
-  var body: some View {
+  public init() {}
+  
+  public var body: some View {
     ZStack(alignment: .top) {
       cardDetails
       pageIndicator
@@ -30,16 +32,16 @@ struct ListCardsView: View {
           .embedInNavigation()
       case let .applePay(cardModel):
         ApplePayController(cardModel: cardModel)
+      case let .activateVirtualCard(cardModel):
+        ActivateVirtualCardView(card: cardModel)
+          .embedInNavigation()
+      case let .activatePhysicalCard(cardModel):
+        ActivatePhysicalCardView(card: cardModel)
+          .embedInNavigation()
       }
     }
     .popup(item: $viewModel.toastMessage, style: .toast) {
       ToastView(toastMessage: $0)
-    }
-    .popup(item: $viewModel.popup) { popup in
-      switch popup {
-      case .activateCard:
-        activateCardPopup
-      }
     }
   }
 }
@@ -111,12 +113,14 @@ private extension ListCardsView {
         )
         GenImages.CommonImages.dash.swiftUIImage
           .foregroundColor(Colors.label.swiftUIColor)
-        row(
-          title: LFLocalizable.ListCard.LockCard.title,
-          subtitle: LFLocalizable.ListCard.LockCard.description,
-          isSwitchOn: $viewModel.isCardLocked
-        ) { _ in
-          viewModel.lockCardToggled()
+        if viewModel.currentCard.cardStatus != .unactivated {
+          row(
+            title: LFLocalizable.ListCard.LockCard.title,
+            subtitle: LFLocalizable.ListCard.LockCard.description,
+            isSwitchOn: $viewModel.isCardLocked
+          ) { _ in
+            viewModel.lockCardToggled()
+          }
         }
         if viewModel.isActive {
           GenImages.CommonImages.dash.swiftUIImage
@@ -180,7 +184,7 @@ private extension ListCardsView {
           }
         }
       }
-    } else {
+    } else if viewModel.currentCard.cardStatus == .unactivated {
       activeCardButton
     }
   }
@@ -201,22 +205,10 @@ private extension ListCardsView {
   
   var activeCardButton: some View {
     FullSizeButton(
-      title: LFLocalizable.ListCard.ActivateCard.buttonTitle(LFUtility.appName),
+      title: LFLocalizable.ListCard.ActivateCard.buttonTitle(viewModel.currentCard.cardType.title),
       isDisable: false
     ) {
       viewModel.onClickedActiveCard()
     }
-  }
-  
-  var activateCardPopup: some View {
-    LiquidityAlert(
-      title: LFLocalizable.ListCard.ActivateCard.title.uppercased(),
-      message: LFLocalizable.ListCard.ActivateCard.message,
-      primary: .init(text: LFLocalizable.ListCard.ActivateCard.primary) { viewModel.activationAction()
-      },
-      secondary: .init(text: LFLocalizable.Button.NotNow.title) {
-        viewModel.dismissPopup()
-      }
-    )
   }
 }

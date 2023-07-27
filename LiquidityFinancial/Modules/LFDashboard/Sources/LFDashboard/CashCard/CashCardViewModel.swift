@@ -1,5 +1,6 @@
 import LFUtilities
 import Foundation
+import LFCard
 
 @MainActor
 final class CashCardViewModel: ObservableObject {

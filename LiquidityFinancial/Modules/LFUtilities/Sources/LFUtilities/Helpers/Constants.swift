@@ -141,6 +141,7 @@ public extension Constants {
     case capacityUnit = "Mb"
     case dotSymbol = "•"
     case pinCodeDigits = "4"
+    case cvvCodeDigits = "3"
     case zeroAmount = "0"
     case vgsExpirationDate = "••/••"
     case vgsCardNumber = "•••• •••• •••• ••••"

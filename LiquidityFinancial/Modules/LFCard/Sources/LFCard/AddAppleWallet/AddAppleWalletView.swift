@@ -4,7 +4,6 @@ import LFUtilities
 import LFStyleGuide
 
 struct AddAppleWalletView: View {
-  @Environment(\.dismiss) private var dismiss
   @StateObject private var viewModel: AddAppleWalletViewModel
   
   init(card: CardModel, onFinish: @escaping () -> Void) {
@@ -24,14 +23,7 @@ struct AddAppleWalletView: View {
           viewModel.onFinish()
         }
       }
-      .overlay(alignment: .topLeading) {
-        Button {
-          dismiss()
-        } label: {
-          CircleButton(style: .xmark)
-        }
-        .padding(.leading, 16)
-      }
+      .defaultToolBar(icon: .xMark)
   }
 }
 

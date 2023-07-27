@@ -1,19 +1,17 @@
 import Foundation
+import Combine
 
 @MainActor
 final class ListCardsViewModel: ObservableObject {
   @Published var cardsList: [CardModel] = []
-  @Published var currentCard: CardModel = .default
+  @Published var currentCard: CardModel = .virtualDefault
   @Published var toastMessage: String?
   @Published var isShowCardNumber: Bool = false
   @Published var isCardLocked: Bool = false
   @Published var present: Presentation?
-  @Published var popup: Popup?
-
-  var isActive: Bool {
-    currentCard.cardStatus == .active
-  }
+  @Published var isActive: Bool = false
   
+  private var bag = Set<AnyCancellable>()
   var isHasPhysicalCard: Bool {
     cardsList.contains { card in
       card.cardType == .physical
@@ -22,39 +20,43 @@ final class ListCardsViewModel: ObservableObject {
   
   init() {
     getListCard()
+    $currentCard.sink { [weak self] card in
+      guard let self = self else { return }
+      self.isActive = card.cardStatus == .active
+      self.isCardLocked = card.cardStatus == .disabled
+    }
+    .store(in: &bag)
   }
 }
 
 // MARK: - API
-extension ListCardsViewModel {
-  private func callLockCardAPI() {
+private extension ListCardsViewModel {
+  func callLockCardAPI() {
     // TODO: Will be implemented later
+    // Success
+    updateCardLock(status: .disabled, id: currentCard.id) // FAKE API
+  }
+  
+  func callUnLockCardAPI() {
+    // TODO: Will be implemented later
+    // Success
+    updateCardLock(status: .active, id: currentCard.id) // FAKE API
   }
   
   func getListCard() {
     // FAKEDATA
     cardsList = [
-      CardModel.default,
-      CardModel(
-        id: "12",
-        cardType: .physical,
-        cardholderName: "Fake name",
-        currency: "222",
-        expiryMonth: "2",
-        expiryYear: "25",
-        last4: "2222",
-        cardStatus: .inactive,
-        roundUpPurchases: true
-      )
+      CardModel.virtualDefault,
+      CardModel.physicalDefault
     ]
-    currentCard = cardsList.first ?? CardModel.default
-    isCardLocked = currentCard.cardStatus == .inactive
+    currentCard = cardsList.first ?? CardModel.virtualDefault
   }
   
   func updateCardLock(status: CardStatus, id: String) {
     guard id == currentCard.id else { return }
     currentCard.cardStatus = status
-    isCardLocked = status == .inactive
+    isCardLocked = status == .disabled
+    isActive = status == .active
   }
 }
 
@@ -67,10 +69,10 @@ extension ListCardsViewModel {
   
   func lockCardToggled() {
     switch currentCard.cardStatus {
-    case .pendingActivation:
-      popup = .activateCard
-    case .active, .inactive:
+    case .active:
       callLockCardAPI()
+    case .disabled:
+      callUnLockCardAPI()
     default:
       break
     }
@@ -80,7 +82,7 @@ extension ListCardsViewModel {
     if currentCard.cardStatus == .active {
       present = .setCardPin(currentCard)
     } else {
-      present = .addAppleWallet(currentCard)
+      presentActivateCardView()
     }
   }
   
@@ -91,24 +93,28 @@ extension ListCardsViewModel {
     present = .applePay(currentCard)
   }
   
-  func activationAction() {
-    popup = nil
-    present = .addAppleWallet(currentCard)
-  }
-  
-  func dismissPopup() {
-    popup = nil
-  }
-  
   func onChangeCurrentCard() {
     isShowCardNumber = false
-    isCardLocked = currentCard.cardStatus == .inactive
+    isCardLocked = currentCard.cardStatus == .disabled
   }
   
   func onClickedOrderPhysicalCard() {
   }
   
   func onClickedActiveCard() {
+    presentActivateCardView()
+  }
+}
+
+// MARK: - Private Functions
+private extension ListCardsViewModel {
+  func presentActivateCardView() {
+    switch currentCard.cardType {
+    case .physical:
+      present = .activatePhysicalCard(currentCard)
+    case .virtual:
+      present = .activateVirtualCard(currentCard)
+    }
   }
 }
 
@@ -118,6 +124,8 @@ extension ListCardsViewModel {
     case setCardPin(CardModel)
     case addAppleWallet(CardModel)
     case applePay(CardModel)
+    case activateVirtualCard(CardModel)
+    case activatePhysicalCard(CardModel)
     
     var id: String {
       switch self {
@@ -127,11 +135,11 @@ extension ListCardsViewModel {
         return "addAppleWallet"
       case .applePay:
         return "applePay"
+      case .activatePhysicalCard:
+        return "activatePhysicalCard"
+      case .activateVirtualCard:
+        return "activateVirtualCard"
       }
     }
-  }
-  
-  enum Popup {
-    case activateCard
   }
 }

@@ -16,12 +16,6 @@ struct SetCardPinView: View {
   var body: some View {
     content
       .background(Colors.background.swiftUIColor)
-      .defaultToolBar(icon: .xMark, onDismiss: {
-        viewModel.closeAction {
-          hideKeyboard()
-          dismiss()
-        }
-      })
       .onAppear {
         // analyticsService.track(event: Event(name: .viewedSetATMPin)) TODO: Will be implemented later
       }
@@ -34,6 +28,10 @@ struct SetCardPinView: View {
       .navigationBarTitleDisplayMode(.inline)
       // .track(name: String(describing: type(of: self))) TODO: Will be implemented later
       .adaptToKeyboard()
+      .ignoresSafeArea(edges: .bottom)
+      .defaultToolBar(icon: .xMark, onDismiss: {
+        hideKeyboard()
+      })
   }
 }
 
@@ -64,8 +62,7 @@ private extension SetCardPinView {
         viewModel.getSetPINTokenAPI()
       }
     }
-    .padding(.horizontal, 30)
-    .padding(.bottom, 16)
+    .padding([.horizontal, .bottom], 30)
   }
   
   var pinView: some View {

@@ -2,6 +2,7 @@ import SwiftUI
 import LFUtilities
 import LFStyleGuide
 import LFLocalizable
+import LFCard
 
 struct CashCardView: View {
   @StateObject private var viewModel: CashCardViewModel
@@ -45,7 +46,7 @@ struct CashCardView: View {
           .clipped()
           .aspectRatio(contentMode: .fit)
         
-        if cardDetails.cardStatus == .pendingActivation {
+        if cardDetails.cardStatus == .unactivated {
           activateCard
         }
       }
@@ -56,7 +57,7 @@ struct CashCardView: View {
     .fixedSize(horizontal: false, vertical: true)
     .onTapGesture {
       if isPOFlow {
-        if cardDetails.cardStatus == .pendingActivation {
+        if cardDetails.cardStatus == .unactivated {
           viewModel.activeCard()
         } else {
           viewModel.isShowCardDetail.toggle()
@@ -64,8 +65,14 @@ struct CashCardView: View {
       }
     }
     .fullScreenCover(item: $viewModel.cardActivated) { card in
-      CardActivatedView(card: card)
-        .embedInNavigation()
+      switch card.cardType {
+      case .physical:
+        ActivatePhysicalCardView(card: card)
+          .embedInNavigation()
+      case .virtual:
+        ActivateVirtualCardView(card: card)
+          .embedInNavigation()
+      }
     }
     .navigationLink(isActive: $viewModel.isShowCardDetail) {
       ListCardsView()
@@ -74,7 +81,7 @@ struct CashCardView: View {
 
   private var activateCard: some View {
     FullSizeButton(
-      title: LFLocalizable.CashTab.ActiveVirtualCard.buttonTitle,
+      title: LFLocalizable.CashTab.ActiveCard.buttonTitle(cardDetails.cardType.title),
       isDisable: false,
       type: .contrast,
       fontSize: Constants.FontSize.ultraSmall.value,

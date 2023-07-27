@@ -53,8 +53,8 @@ private struct ToolBarModifier: ViewModifier {
         ToolbarItem(placement: .navigationBarLeading) {
           if icon == .xMark || icon == .both {
             Button {
-              dismiss() // Default dismiss of sheetView
               onDismiss?()
+              dismiss() // Default dismiss of sheetView
             } label: {
               CircleButton(style: .xmark)
             }
