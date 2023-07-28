@@ -40,6 +40,7 @@ public enum GenImages {
     public static let icGear = ImageAsset(name: "ic_gear")
     public static let icHome = ImageAsset(name: "ic_home")
     public static let icLock = ImageAsset(name: "ic_lock")
+    public static let icMap = ImageAsset(name: "ic_map")
     public static let icProfile = ImageAsset(name: "ic_profile")
     public static let icRewards = ImageAsset(name: "ic_rewards")
     public static let icRightArrow = ImageAsset(name: "ic_rightArrow")

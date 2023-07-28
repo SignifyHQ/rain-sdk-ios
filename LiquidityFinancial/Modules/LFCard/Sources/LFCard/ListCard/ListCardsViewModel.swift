@@ -9,6 +9,7 @@ final class ListCardsViewModel: ObservableObject {
   @Published var isShowCardNumber: Bool = false
   @Published var isCardLocked: Bool = false
   @Published var present: Presentation?
+  @Published var navigation: Navigation?
   @Published var isActive: Bool = false
   
   private var bag = Set<AnyCancellable>()
@@ -99,6 +100,7 @@ extension ListCardsViewModel {
   }
   
   func onClickedOrderPhysicalCard() {
+    navigation = .orderPhysicalCard
   }
   
   func onClickedActiveCard() {
@@ -141,5 +143,9 @@ extension ListCardsViewModel {
         return "activateVirtualCard"
       }
     }
+  }
+  
+  enum Navigation {
+    case orderPhysicalCard
   }
 }

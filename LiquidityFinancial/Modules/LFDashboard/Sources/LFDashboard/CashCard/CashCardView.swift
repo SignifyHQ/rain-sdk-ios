@@ -65,17 +65,17 @@ struct CashCardView: View {
       }
     }
     .fullScreenCover(item: $viewModel.cardActivated) { card in
-      switch card.cardType {
-      case .physical:
-        ActivatePhysicalCardView(card: card)
-          .embedInNavigation()
-      case .virtual:
-        ActivateVirtualCardView(card: card)
-          .embedInNavigation()
-      }
+      activateCard(card: card)
     }
     .navigationLink(isActive: $viewModel.isShowCardDetail) {
       ListCardsView()
+    }
+  }
+  
+  @ViewBuilder func activateCard(card: CardModel) -> some View {
+    if card.cardType == .physical {
+      ActivatePhysicalCardView(card: card)
+        .embedInNavigation()
     }
   }
 

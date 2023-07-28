@@ -20,7 +20,7 @@ struct CardView: View {
     ZStack(alignment: .bottom) {
       ZStack(alignment: .topLeading) {
         GenImages.Images.emptyCard.swiftUIImage
-          .scaleEffect(1.06)
+          .resizable()
         Text(viewModel.cardModel.cardType.title)
           .font(Fonts.Inter.semiBold.swiftUIFont(size: Constants.FontSize.small.value))
           .foregroundColor(Colors.label.swiftUIColor)

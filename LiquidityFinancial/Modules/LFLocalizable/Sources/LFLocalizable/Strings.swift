@@ -451,6 +451,34 @@ public enum LFLocalizable {
       public static let title = LFLocalizable.tr("Localizable", "moveMoney.withdraw.title", fallback: "WITHDRAW")
     }
   }
+  public enum OrderPhysicalCard {
+    public enum Address {
+      /// THE CARD WILL BE SHIPPED TO:
+      public static let title = LFLocalizable.tr("Localizable", "orderPhysicalCard.address.title", fallback: "THE CARD WILL BE SHIPPED TO:")
+    }
+    public enum EditAddress {
+      /// Edit address
+      public static let buttonTitle = LFLocalizable.tr("Localizable", "orderPhysicalCard.editAddress.buttonTitle", fallback: "Edit address")
+    }
+    public enum Fees {
+      /// Fees
+      public static let title = LFLocalizable.tr("Localizable", "orderPhysicalCard.fees.title", fallback: "Fees")
+    }
+    public enum Order {
+      /// Order Physical Card
+      public static let buttonTitle = LFLocalizable.tr("Localizable", "orderPhysicalCard.order.buttonTitle", fallback: "Order Physical Card")
+    }
+    public enum OrderedSuccess {
+      /// Thank you, your physical card was ordered. It will arrive in 7-14 business days. After it arrives, please come back to activate your card.
+      public static let message = LFLocalizable.tr("Localizable", "orderPhysicalCard.orderedSuccess.message", fallback: "Thank you, your physical card was ordered. It will arrive in 7-14 business days. After it arrives, please come back to activate your card.")
+      /// PHYSICAL CARD ORDERED
+      public static let title = LFLocalizable.tr("Localizable", "orderPhysicalCard.orderedSuccess.title", fallback: "PHYSICAL CARD ORDERED")
+    }
+    public enum PhysicalCard {
+      /// PHYSICAL CARD
+      public static let title = LFLocalizable.tr("Localizable", "orderPhysicalCard.physicalCard.title", fallback: "PHYSICAL CARD")
+    }
+  }
   public enum PhoneNumber {
     public enum Environment {
       /// Environment
@@ -598,6 +626,48 @@ public enum LFLocalizable {
     public static let userAgreement = LFLocalizable.tr("Localizable", "setUpWallet.userAgreement", fallback: "User Agreement")
     /// Zero Hash and Zero Hash Liquidity Services User Agreement
     public static let walletUseragreement = LFLocalizable.tr("Localizable", "setUpWallet.wallet_useragreement", fallback: "Zero Hash and Zero Hash Liquidity Services User Agreement")
+  }
+  public enum ShippingAddress {
+    public enum Address {
+      /// Enter address
+      public static let placeholder = LFLocalizable.tr("Localizable", "shippingAddress.address.placeholder", fallback: "Enter address")
+    }
+    public enum City {
+      /// Enter city
+      public static let placeholder = LFLocalizable.tr("Localizable", "shippingAddress.city.placeholder", fallback: "Enter city")
+      /// City
+      public static let title = LFLocalizable.tr("Localizable", "shippingAddress.city.title", fallback: "City")
+    }
+    public enum Confirm {
+      /// Confirm Address
+      public static let buttonTitle = LFLocalizable.tr("Localizable", "shippingAddress.confirm.buttonTitle", fallback: "Confirm Address")
+    }
+    public enum MainAddress {
+      /// Address line 1 
+      public static let title = LFLocalizable.tr("Localizable", "shippingAddress.mainAddress.title", fallback: "Address line 1 ")
+    }
+    public enum Screen {
+      /// WHERE TO SEND YOUR %@ CARD?
+      public static func title(_ p1: Any) -> String {
+        return LFLocalizable.tr("Localizable", "shippingAddress.screen.title", String(describing: p1), fallback: "WHERE TO SEND YOUR %@ CARD?")
+      }
+    }
+    public enum State {
+      /// Enter state
+      public static let placeholder = LFLocalizable.tr("Localizable", "shippingAddress.state.placeholder", fallback: "Enter state")
+      /// State
+      public static let title = LFLocalizable.tr("Localizable", "shippingAddress.state.title", fallback: "State")
+    }
+    public enum SubAddress {
+      /// Address line 2 (optional)
+      public static let title = LFLocalizable.tr("Localizable", "shippingAddress.subAddress.title", fallback: "Address line 2 (optional)")
+    }
+    public enum ZipCode {
+      /// Enter zip code
+      public static let placeholder = LFLocalizable.tr("Localizable", "shippingAddress.zipCode.placeholder", fallback: "Enter zip code")
+      /// Zip Code
+      public static let title = LFLocalizable.tr("Localizable", "shippingAddress.zipCode.title", fallback: "Zip Code")
+    }
   }
   public enum Term {
     public enum EsignConsent {

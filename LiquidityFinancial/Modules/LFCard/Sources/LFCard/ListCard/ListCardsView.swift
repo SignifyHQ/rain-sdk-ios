@@ -40,6 +40,12 @@ public struct ListCardsView: View {
           .embedInNavigation()
       }
     }
+    .navigationLink(item: $viewModel.navigation) { navigation in
+      switch navigation {
+      case .orderPhysicalCard:
+        OrderPhysicalCardView()
+      }
+    }
     .popup(item: $viewModel.toastMessage, style: .toast) {
       ToastView(toastMessage: $0)
     }
@@ -122,7 +128,7 @@ private extension ListCardsView {
             viewModel.lockCardToggled()
           }
         }
-        if viewModel.isActive {
+        if viewModel.isActive && viewModel.currentCard.cardType != .virtual {
           GenImages.CommonImages.dash.swiftUIImage
             .foregroundColor(Colors.label.swiftUIColor)
           row(title: LFLocalizable.ListCard.ChangePin.title) {
