@@ -13,7 +13,7 @@ struct PersonalInformationView: View {
   var body: some View {
     VStack {
       ScrollViewReader { proxy in
-        ScrollView {
+        ScrollView(showsIndicators: false) {
           contentView
         }
         .onChange(of: keyboardFocus) {
@@ -39,8 +39,7 @@ struct PersonalInformationView: View {
     .background(Colors.background.swiftUIColor)
     .navigationTitle("")
     .defaultToolBar(icon: .intercom, openIntercom: {
-      // TODO: Will be implemeted later
-      // intercomService.openIntercom()
+      viewModel.openIntercom()
     })
     .popup(item: $toastMessage, style: .toast) {
       ToastView(toastMessage: $0)
@@ -64,7 +63,7 @@ struct PersonalInformationView: View {
     keyboardType: UIKeyboardType = .alphabet,
     focus: Focus,
     nextFocus: Focus? = nil,
-    textInputAutocapitalization: TextInputAutocapitalization = .characters
+    textInputAutocapitalization: TextInputAutocapitalization = .sentences
   ) -> some View {
     TextFieldWrapper {
       TextField("", text: value)
@@ -85,10 +84,13 @@ struct PersonalInformationView: View {
   
   private var contentView: some View {
     VStack(alignment: .leading) {
-      Text(LFLocalizable.AddPersonalInformation.title)
+      Text(LFLocalizable.AddPersonalInformation.title.uppercased())
         .font(Fonts.Inter.regular.swiftUIFont(size: 18))
         .foregroundColor(Colors.label.swiftUIColor)
         .padding(.vertical, 16)
+        .onTapGesture {
+          viewModel.magicFillAccount()
+        }
       
       Text(LFLocalizable.firstName)
         .font(Fonts.Inter.regular.swiftUIFont(size: 12))
@@ -159,3 +161,13 @@ extension PersonalInformationView {
     case dob
   }
 }
+
+#if DEBUG
+struct PersonalInformationView_Previews: PreviewProvider {
+  static var previews: some View {
+    PersonalInformationView()
+      .previewLayout(PreviewLayout.sizeThatFits)
+      .previewDisplayName("Default preview")
+  }
+}
+#endif

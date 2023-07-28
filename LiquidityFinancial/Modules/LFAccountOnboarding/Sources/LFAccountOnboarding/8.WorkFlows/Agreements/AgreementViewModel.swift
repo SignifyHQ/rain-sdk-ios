@@ -3,10 +3,12 @@ import LFUtilities
 import LFLocalizable
 import SwiftUI
 import NetSpendData
+import LFServices
+import Factory
 
 @MainActor
 final class AgreementViewModel: ObservableObject {
-  
+  @LazyInjected(\.intercomService) var intercomService
   @Published var isNavigationPersonalInformation: Bool = false
   @Published var isDisableButton: Bool = true
   @Published var isAgreedNetSpendCondition: Bool = false {
@@ -28,6 +30,10 @@ final class AgreementViewModel: ObservableObject {
     message: LFLocalizable.Question.PathwardCondition.description,
     attributeInformation: Constants.pathwardAttributeInformation
   )
+  
+  func openIntercom() {
+    intercomService.openIntercom()
+  }
 }
 
 // MARK: View Helpers

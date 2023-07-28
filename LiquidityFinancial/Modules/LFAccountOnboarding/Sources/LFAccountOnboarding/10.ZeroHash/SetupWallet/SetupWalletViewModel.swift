@@ -3,7 +3,7 @@ import Factory
 import NetSpendData
 import OnboardingData
 import LFUtilities
-
+import LFServices
 // MARK: - SetupWalletViewModel
 
 class SetupWalletViewModel: ObservableObject {
@@ -13,11 +13,9 @@ class SetupWalletViewModel: ObservableObject {
   @Published var selection: Int?
   @Published var isTermsAgreed = false
   
-  @LazyInjected(\.netspendDataManager) var netspendDataManager
-  @LazyInjected(\.userDataManager) var userDataManager
-  @LazyInjected(\.netspendRepository) var netspendRepository
   @LazyInjected(\.onboardingRepository) var onboardingRepository
   @LazyInjected(\.onboardingFlowCoordinator) var onboardingFlowCoordinator
+  @LazyInjected(\.intercomService) var intercomService
   
   func createZeroHashAccount() {
     Task { @MainActor in
@@ -26,10 +24,14 @@ class SetupWalletViewModel: ObservableObject {
       do {
         let zeroHashAccount = try await onboardingRepository.createZeroHashAccount()
         onboardingFlowCoordinator.set(route: .dashboard)
+        log.debug(zeroHashAccount)
       } catch {
         log.error(error.localizedDescription)
       }
     }
   }
   
+  func openIntercom() {
+    intercomService.openIntercom()
+  }
 }

@@ -5,6 +5,7 @@ import SwiftUI
 import OnboardingDomain
 import NetSpendData
 import Factory
+import LFServices
 
 @MainActor
 final class PhoneNumberViewModel: ObservableObject {
@@ -16,7 +17,8 @@ final class PhoneNumberViewModel: ObservableObject {
   @Published var phoneNumber: String = ""
   @Published var toastMessage: String?
   
-  @Injected(\.onboardingRepository) var onboardingRepository
+  @LazyInjected(\.onboardingRepository) var onboardingRepository
+  @LazyInjected(\.intercomService) var intercomService
   
   let terms = LFLocalizable.Term.Terms.attributeText
   let esignConsent = LFLocalizable.Term.EsignConsent.attributeText
@@ -28,6 +30,10 @@ final class PhoneNumberViewModel: ObservableObject {
   lazy var loginUseCase: LoginUseCaseProtocol = {
     LoginUseCase(repository: onboardingRepository)
   }()
+  
+  init() {
+    intercomService.loginUnidentifiedUser()
+  }
 }
 
 // MARK: - API
@@ -44,6 +50,10 @@ extension PhoneNumberViewModel {
         toastMessage = error.localizedDescription
       }
     }
+  }
+  
+  func openIntercom() {
+    intercomService.openIntercom()
   }
 }
 

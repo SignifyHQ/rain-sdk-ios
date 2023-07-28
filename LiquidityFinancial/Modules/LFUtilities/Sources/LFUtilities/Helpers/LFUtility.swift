@@ -1,6 +1,6 @@
 import UIKit
 
-// swiftlint: disable force_try fallthrough
+// swiftlint: disable force_try fallthrough force_cast
 public enum LFUtility {
   public static var personaCallback = "https://personacallback"
   public static var termsURL: String = try! LFConfiguration.value(for: "TERMS_URL")
@@ -34,18 +34,27 @@ public enum LFConfiguration {
     case invalidValue
   }
   
+  //IT SUPPORT FOR RUN CODE UI IN PREVIEWS
+  static var isPreview: Bool {
+    ProcessInfo.processInfo.environment["XCODE_RUNNING_FOR_PREVIEWS"] == "1"
+  }
+  
   public static func value<T>(for key: String) throws -> T where T: LosslessStringConvertible {
-    guard let object = Bundle.main.object(forInfoDictionaryKey: key) else {
-      throw Error.missingKey
-    }
-    switch object {
-    case let value as T:
-      return value
-    case let string as String:
-      guard let value = T(string) else { fallthrough }
-      return value
-    default:
-      throw Error.invalidValue
+    if LFConfiguration.isPreview {
+      return String(describing: "XCODE_PREVIEWS") as! T
+    } else {
+      guard let object = Bundle.main.object(forInfoDictionaryKey: key) else {
+        throw Error.missingKey
+      }
+      switch object {
+      case let value as T:
+        return value
+      case let string as String:
+        guard let value = T(string) else { fallthrough }
+        return value
+      default:
+        throw Error.invalidValue
+      }
     }
   }
 }

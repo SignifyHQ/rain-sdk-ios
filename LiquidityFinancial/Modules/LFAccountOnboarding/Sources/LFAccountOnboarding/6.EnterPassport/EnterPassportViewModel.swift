@@ -2,10 +2,13 @@ import SwiftUI
 import LFLocalizable
 import Factory
 import OnboardingData
+import LFServices
 
 @MainActor
 final class EnterPassportViewModel: ObservableObject {
-  @Injected(\Container.userDataManager) var userDataManager
+  @LazyInjected(\Container.userDataManager) var userDataManager
+  @LazyInjected(\.intercomService) var intercomService
+  
   @Published var isNavigationToAddressView: Bool = false
   @Published var showPassportTypes: Bool = false
   @Published var selectedPassport: PassportType = .international
@@ -21,8 +24,13 @@ final class EnterPassportViewModel: ObservableObject {
       userDataManager.update(passport: passport)
     }
   }
+  
   func validatePassport() {
     isActionAllowed = isValidPassport(passport)
+  }
+  
+  func openIntercom() {
+    intercomService.openIntercom()
   }
 }
 

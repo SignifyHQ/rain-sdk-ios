@@ -5,6 +5,7 @@ import LFUtilities
 import OnboardingDomain
 import OnboardingData
 
+//swiftlint:disable superfluous_disable_command
 @MainActor
 final class QuestionsViewModel: ObservableObject {
   enum Navigation {
@@ -64,32 +65,8 @@ final class QuestionsViewModel: ObservableObject {
       do {
         _ = try await netspendRepository.putQuestion(sessionId: session.sessionId, encryptedData: encryptedData)
        
-        let workflows = try await self.netspendRepository.getWorkflows()
+        try await handleWorkflows()
         
-        if workflows.steps.isEmpty {
-          navigation = .kycReview
-          return
-        }
-      
-        if let steps = workflows.steps.first {
-          for stepIndex in 0...(steps.steps.count - 1) {
-            let step = steps.steps[stepIndex]
-            switch step.missingStep {
-            case .identityQuestions:
-              onboardingFlowCoordinator.set(route: .welcome)
-            case .provideDocuments:
-              let documents = try await netspendRepository.getDocuments(sessionId: userDataManager.sessionID)
-              netspendDataManager.update(documentData: documents)
-              navigation = .uploadDocument
-            case .primaryPersonKYCApprove, .KYCData, .identityScan:
-              navigation = .kycReview
-            case .acceptAgreement:
-              break
-            case .expectedUse:
-              break
-            }
-          }
-        }
       } catch {
         log.error(error)
         toastMessage = error.localizedDescription
@@ -97,4 +74,32 @@ final class QuestionsViewModel: ObservableObject {
     }
   }
   
+  private func handleWorkflows() async throws {
+    let workflows = try await self.netspendRepository.getWorkflows()
+    
+    if workflows.steps.isEmpty {
+      navigation = .kycReview
+      return
+    }
+    
+    if let steps = workflows.steps.first {
+      for stepIndex in 0...(steps.steps.count - 1) {
+        let step = steps.steps[stepIndex]
+        switch step.missingStep {
+        case .identityQuestions:
+          onboardingFlowCoordinator.set(route: .welcome)
+        case .provideDocuments:
+          let documents = try await netspendRepository.getDocuments(sessionId: userDataManager.sessionID)
+          netspendDataManager.update(documentData: documents)
+          navigation = .uploadDocument
+        case .primaryPersonKYCApprove, .KYCData, .identityScan:
+          navigation = .kycReview
+        case .acceptAgreement:
+          break
+        case .expectedUse:
+          break
+        }
+      }
+    }
+  }
 }

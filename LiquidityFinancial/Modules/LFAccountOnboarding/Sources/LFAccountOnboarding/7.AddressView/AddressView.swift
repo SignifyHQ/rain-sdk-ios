@@ -31,6 +31,10 @@ struct AddressView: View {
           ZStack {
             VStack(alignment: .leading) {
               title
+                .onTapGesture {
+                  viewModel.magicFillAccount()
+                }
+              
               addressLine1
               addressLine2
               city
@@ -279,3 +283,13 @@ private extension AddressView {
     }
   }
 }
+
+#if DEBUG
+struct AddressView_Previews: PreviewProvider {
+  static var previews: some View {
+    AddressView()
+      .previewLayout(PreviewLayout.sizeThatFits)
+      .previewDisplayName("Default preview")
+  }
+}
+#endif

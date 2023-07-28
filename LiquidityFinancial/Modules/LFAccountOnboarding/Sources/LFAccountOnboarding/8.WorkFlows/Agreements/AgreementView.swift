@@ -51,8 +51,7 @@ public struct AgreementView: View {
     .padding(.top, 30)
     .padding(.horizontal, 30)
     .defaultToolBar(icon: .intercom, openIntercom: {
-      // TODO: Will be implemeted later
-      // intercomService.openIntercom()
+      viewModel.openIntercom()
     })
     .background(Colors.background.swiftUIColor)
     .navigationLink(isActive: $viewModel.isNavigationPersonalInformation) {

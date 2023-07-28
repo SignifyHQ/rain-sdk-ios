@@ -9,11 +9,11 @@
 
 // Wellcome Screen
 "welcome.header.title" = "WELCOME!";
-"welcome.header.desc" = "The AvalancheCard is an easy way to earn Avalanche with everyday purchases. You can also buy, sell and spend Avalanche with the AvalancheCard app.";
+"welcome.header.desc" = "The AvalancheCard is an easy way to spend your crypto assets to earn rewards.  You can also buy, sell and spend Avalanche assets with the AvalancheCard app.";
 "welcome.how_it_works" = "HOW IT WORKS:";
 "welcome.how_it_works.item1" = "Create a AvalancheCard account";
 "welcome.how_it_works.item2" = "Use your AvalancheCard for everyday purchases";
-"welcome.how_it_works.item3" = "Give more by rounding up your purchases.";
+"welcome.how_it_works.item3" = "Spend AVAX, USDC, USD and earn rewards.";
 "welcome.button.order_card" = "Order Card";
 
 // VerificationCode Screen
@@ -46,13 +46,12 @@
 "enter_ssn.title" = "PLEASE ENTER YOUR SSN";
 "enter_ssn.placeholder" = "Enter Social Security Number";
 "enter_ssn.bullet_one" = "Encrypted using 256-BIT SSL";
-"enter_ssn.bullet_two" = "No credit checks, doesn't impact credit score";
-"enter_ssn.bullet_three" = "Required to create AvalancheCard";
+"enter_ssn.bullet_two" = "No credit checks";
 "enter_ssn.why" = "Why do we need SSN?";
 "enter_ssn.no_ssn" = "No SSN? Tap here";
 "enter_ssn.continue" = "Continue";
 "enter_ssn.alert.title" = "WHY DO WE NEED SSN?";
-"enter_ssn.alert.message" = "A valid SSN or Passport is required by our bank, Evolve Bank and Trust, to create a FDIC insured checking account. Your SSN is only stored with the bank and not accessible through AvalancheCard.";
+"enter_ssn.alert.message" = "A valid SSN or Passport is required by our bank, Pathward. Your SSN is only stored with the bank and not accessible through AvalancheCard.";
 "enter_ssn.alert.ok" = "Ok";
 
 //... PASSPORT...

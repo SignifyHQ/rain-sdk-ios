@@ -292,10 +292,8 @@ public enum LFLocalizable {
   public enum EnterSsn {
     /// Encrypted using 256-BIT SSL
     public static let bulletOne = LFLocalizable.tr("Localizable", "enter_ssn.bullet_one", fallback: "Encrypted using 256-BIT SSL")
-    /// Required to create AvalancheCard
-    public static let bulletThree = LFLocalizable.tr("Localizable", "enter_ssn.bullet_three", fallback: "Required to create AvalancheCard")
-    /// No credit checks, doesn't impact credit score
-    public static let bulletTwo = LFLocalizable.tr("Localizable", "enter_ssn.bullet_two", fallback: "No credit checks, doesn't impact credit score")
+    /// No credit checks
+    public static let bulletTwo = LFLocalizable.tr("Localizable", "enter_ssn.bullet_two", fallback: "No credit checks")
     /// Continue
     public static let `continue` = LFLocalizable.tr("Localizable", "enter_ssn.continue", fallback: "Continue")
     /// No SSN? Tap here
@@ -307,8 +305,8 @@ public enum LFLocalizable {
     /// Why do we need SSN?
     public static let why = LFLocalizable.tr("Localizable", "enter_ssn.why", fallback: "Why do we need SSN?")
     public enum Alert {
-      /// A valid SSN or Passport is required by our bank, Evolve Bank and Trust, to create a FDIC insured checking account. Your SSN is only stored with the bank and not accessible through AvalancheCard.
-      public static let message = LFLocalizable.tr("Localizable", "enter_ssn.alert.message", fallback: "A valid SSN or Passport is required by our bank, Evolve Bank and Trust, to create a FDIC insured checking account. Your SSN is only stored with the bank and not accessible through AvalancheCard.")
+      /// A valid SSN or Passport is required by our bank, Pathward. Your SSN is only stored with the bank and not accessible through AvalancheCard.
+      public static let message = LFLocalizable.tr("Localizable", "enter_ssn.alert.message", fallback: "A valid SSN or Passport is required by our bank, Pathward. Your SSN is only stored with the bank and not accessible through AvalancheCard.")
       /// Ok
       public static let ok = LFLocalizable.tr("Localizable", "enter_ssn.alert.ok", fallback: "Ok")
       /// WHY DO WE NEED SSN?
@@ -873,8 +871,8 @@ public enum LFLocalizable {
       public static let orderCard = LFLocalizable.tr("Localizable", "welcome.button.order_card", fallback: "Order Card")
     }
     public enum Header {
-      /// The AvalancheCard is an easy way to earn Avalanche with everyday purchases. You can also buy, sell and spend Avalanche with the AvalancheCard app.
-      public static let desc = LFLocalizable.tr("Localizable", "welcome.header.desc", fallback: "The AvalancheCard is an easy way to earn Avalanche with everyday purchases. You can also buy, sell and spend Avalanche with the AvalancheCard app.")
+      /// The AvalancheCard is an easy way to spend your crypto assets to earn rewards.  You can also buy, sell and spend Avalanche assets with the AvalancheCard app.
+      public static let desc = LFLocalizable.tr("Localizable", "welcome.header.desc", fallback: "The AvalancheCard is an easy way to spend your crypto assets to earn rewards.  You can also buy, sell and spend Avalanche assets with the AvalancheCard app.")
       /// WELCOME!
       public static let title = LFLocalizable.tr("Localizable", "welcome.header.title", fallback: "WELCOME!")
     }
@@ -883,8 +881,8 @@ public enum LFLocalizable {
       public static let item1 = LFLocalizable.tr("Localizable", "welcome.how_it_works.item1", fallback: "Create a AvalancheCard account")
       /// Use your AvalancheCard for everyday purchases
       public static let item2 = LFLocalizable.tr("Localizable", "welcome.how_it_works.item2", fallback: "Use your AvalancheCard for everyday purchases")
-      /// Give more by rounding up your purchases.
-      public static let item3 = LFLocalizable.tr("Localizable", "welcome.how_it_works.item3", fallback: "Give more by rounding up your purchases.")
+      /// Spend AVAX, USDC, USD and earn rewards.
+      public static let item3 = LFLocalizable.tr("Localizable", "welcome.how_it_works.item3", fallback: "Spend AVAX, USDC, USD and earn rewards.")
     }
   }
 }

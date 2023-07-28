@@ -9,7 +9,7 @@ let package = Package(
   products: [
     .library(
       name: "LFCard",
-      targets: ["LFCard"]),
+      targets: ["LFCard"])
   ],
   dependencies: [
     .package(name: "LFUtilities", path: "../LFUtilities"),
@@ -25,6 +25,6 @@ let package = Package(
       ]),
     .testTarget(
       name: "LFCardTests",
-      dependencies: ["LFCard"]),
+      dependencies: ["LFCard"])
   ]
 )

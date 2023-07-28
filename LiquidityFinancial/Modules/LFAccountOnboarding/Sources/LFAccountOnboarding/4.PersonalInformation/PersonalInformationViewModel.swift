@@ -2,6 +2,7 @@ import SwiftUI
 import Factory
 import OnboardingData
 import LFUtilities
+import LFServices
 
 class PersonalInformationViewModel: ObservableObject {
   enum PersonalInfoError: Error, LocalizedError {
@@ -9,8 +10,8 @@ class PersonalInformationViewModel: ObservableObject {
     case invalidLastName
     case invalidEmail
     case invalidDob
-
-    /// API related custom error title
+    
+      /// API related custom error title
     var errorDescription: String? {
       switch self {
       case .invalidFirstName:
@@ -24,8 +25,9 @@ class PersonalInformationViewModel: ObservableObject {
       }
     }
   }
-
-  @Injected(\Container.userDataManager) var userDataManager
+  
+  @LazyInjected(\Container.userDataManager) var userDataManager
+  @LazyInjected(\.intercomService) var intercomService
   
   @Published var isNavigationToSSNView: Bool = false
   @Published var isActionAllowed: Bool = false {
@@ -34,56 +36,56 @@ class PersonalInformationViewModel: ObservableObject {
       userDataManager.update(email: email)
       userDataManager.update(firstName: firstName)
       userDataManager.update(lastName: lastName)
-      userDataManager.update(dateOfBirth: dateCheck?.netspendDate())
+      userDataManager.update(dateOfBirth: dateCheck?.getDateString())
       userDataManager.userNameDisplay = firstName
+      userDataManager.userEmail = email
       if userDataManager.userInfomationData.phone == nil {
         userDataManager.update(phone: UserDefaults.phoneNumber)
       }
     }
   }
   @Published var errorObj: Error?
-
+  
   @Published var firstName: String = "" {
     didSet {
       isAllDataFilled()
     }
   }
-
+  
   @Published var lastName: String = "" {
     didSet {
       isAllDataFilled()
     }
   }
-
+  
   @Published var email: String = "" {
     didSet {
       isAllDataFilled()
     }
   }
-
+  
   @Published var dob: String = "" {
     didSet {
       isAllDataFilled()
     }
   }
-
+  
   @Published var dateCheck: Date? {
     didSet {
       isAllDataFilled()
     }
   }
   
-  #if DEBUG
+#if DEBUG
   var countGenerateUser: Int = 0
-  #endif
+#endif
   
   func openIntercom() {
-    
-    magicFillAccount()
+    intercomService.openIntercom()
   }
   
-  private func magicFillAccount() {
 #if DEBUG
+  func magicFillAccount() {
     countGenerateUser += 1
     if countGenerateUser >= 3 {
       let userMock = UserMockManager.mockUser(countTap: countGenerateUser)
@@ -93,18 +95,18 @@ class PersonalInformationViewModel: ObservableObject {
       dateCheck = DateFormatter.yearDayMonth.date(from: userMock.dob)
       if countGenerateUser >= 5 { countGenerateUser = 0 }
     }
-#endif
   }
+#endif
 }
 
 private extension PersonalInformationViewModel {
   func isAllDataFilled() {
     isActionAllowed = (!firstName.trimWhitespacesAndNewlines().isEmpty &&
-      !lastName.trimWhitespacesAndNewlines().isEmpty &&
-      !email.trimWhitespacesAndNewlines().isEmpty &&
-      dateCheck != nil) && email.trimWhitespacesAndNewlines().isValidEmail()
+                       !lastName.trimWhitespacesAndNewlines().isEmpty &&
+                       !email.trimWhitespacesAndNewlines().isEmpty &&
+                       dateCheck != nil) && email.trimWhitespacesAndNewlines().isValidEmail()
   }
-
+  
   func validate(_ completion: @escaping (Result<Bool, PersonalInfoError>) -> Void) {
     if firstName.trimWhitespacesAndNewlines().isEmpty {
       completion(.failure(.invalidFirstName))

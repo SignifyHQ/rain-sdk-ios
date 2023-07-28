@@ -1,6 +1,7 @@
 import Foundation
 import DataUtilities
 import LFNetwork
+import LFUtilities
 
 extension LFNetwork: OnboardingAPIProtocol where R == OnboardingRoute {
   public func getUser(deviceId: String) async throws -> APIUser {

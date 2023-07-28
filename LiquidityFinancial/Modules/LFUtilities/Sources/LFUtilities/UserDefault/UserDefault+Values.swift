@@ -23,4 +23,7 @@ public extension UserDefaults {
   @LFUserDefault(key: Key.userNameDisplay, defaultValue: "")
   static var userNameDisplay: String
   
+  @LFUserDefault(key: Key.userEmail, defaultValue: "")
+  static var userEmail: String
+  
 }

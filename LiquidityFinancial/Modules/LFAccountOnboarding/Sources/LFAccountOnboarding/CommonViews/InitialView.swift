@@ -12,21 +12,24 @@ struct InitialView: View {
   }
   
   var body: some View {
-    VStack(spacing: 32) {
-      Spacer()
-      ProgressView().progressViewStyle(.circular)
-        .tint(Colors.Buttons.highlightButton.swiftUIColor)
+    VStack(spacing: 8) {
+
       GenImages.Images.icLogo.swiftUIImage
         .resizable()
         .scaledToFit()
-        .frame(width: 120, height: 120)
+        .frame(width: 126, height: 126)
       
       Text(title + "Card")
         .font(Fonts.Inter.bold.swiftUIFont(size: 24))
         .foregroundColor(Colors.label.swiftUIColor)
-      Spacer()
+        .frame(height: 34)
+
+      ProgressView().progressViewStyle(.circular)
+        .tint(Colors.Buttons.highlightButton.swiftUIColor)
+
     }
     .frame(maxWidth: .infinity)
+    .frame(maxHeight: .infinity)
     //.track(name: String(describing: type(of: self)))
     .background(Colors.background.swiftUIColor)
   }

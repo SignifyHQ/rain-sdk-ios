@@ -6,6 +6,7 @@ import LFUtilities
 import Factory
 import OnboardingData
 import NetSpendData
+import LFServices
 
 // swiftlint:disable all
 @MainActor
@@ -19,10 +20,15 @@ final class AddressViewModel: ObservableObject {
     case home
   }
   
+#if DEBUG
+  var countGenerateUser: Int = 0
+#endif
+  
   @LazyInjected(\.userDataManager) var userDataManager
   @LazyInjected(\.netspendRepository) var netspendRepository
   @LazyInjected(\.netspendDataManager) var netspendDataManager
   @LazyInjected(\.onboardingFlowCoordinator) var onboardingFlowCoordinator
+  @LazyInjected(\.intercomService) var intercomService
   
   @Published var isLoading: Bool = false
   @Published var toastMessage: String?
@@ -118,79 +124,14 @@ final class AddressViewModel: ObservableObject {
       defer { isLoading = false }
       isLoading = true
       do {
-        var governmentID: String = ""
-        var typeGovernmentID: String = ""
-        if let ssn = userDataManager.userInfomationData.ssn {
-          typeGovernmentID = IdNumberType.ssn.rawValue
-          governmentID = ssn
-        } else if let passport = userDataManager.userInfomationData.passport {
-          typeGovernmentID = IdNumberType.passport.rawValue
-          governmentID = passport
-        }
-        let agreementIDS = netspendDataManager.agreement?.agreements.compactMap { $0.id } ?? []
-        let encryptedData = try netspendDataManager.sdkSession?.encryptWithJWKSet(value: [
-          "date_of_birth": userDataManager.userInfomationData.dateOfBirth ?? "",
-          "government_id": [
-            "type": typeGovernmentID,
-            "value": governmentID
-          ]
-        ])
-        let param = AccountPersonParameters(
-          firstName: userDataManager.userInfomationData.firstName ?? "",
-          lastName: userDataManager.userInfomationData.lastName ?? "",
-          middleName: userDataManager.userInfomationData.fullName ?? "",
-          agreementIDS: agreementIDS,
-          phone: userDataManager.userInfomationData.phone ?? "",
-          email: userDataManager.userInfomationData.email ?? "",
-          fullName: userDataManager.userInfomationData.fullName ?? "",
-          dateOfBirth: userDataManager.userInfomationData.dateOfBirth ?? "",
-          addressLine1: userDataManager.userInfomationData.addressLine1 ?? "",
-          addressLine2: userDataManager.userInfomationData.addressLine2 ?? "",
-          city: userDataManager.userInfomationData.city ?? "",
-          state: userDataManager.userInfomationData.state ?? "",
-          country: userDataManager.userInfomationData.country ?? "",
-          postalCode: userDataManager.userInfomationData.postalCode ?? "",
-          encryptedData: encryptedData ?? "",
-          idNumber: governmentID,
-          idNumberType: typeGovernmentID
-        )
+        let param = try createAccountPersonParameters()
         let person = try await netspendRepository.createAccountPerson(personInfo: param, sessionId: userDataManager.sessionID)
         netspendDataManager.update(accountPersonData: person)
         
-        let workflows = try await self.netspendRepository.getWorkflows()
+        let userAttributes = IntercomService.UserAttributes(phone: userDataManager.phoneNumber, email: param.email)
+        intercomService.loginIdentifiedUser(userAttributes: userAttributes)
         
-        if workflows.steps.isEmpty {
-          navigation = .inReview
-          return
-        }
-        
-        if let steps = workflows.steps.first {
-          for stepIndex in 0...(steps.steps.count - 1) {
-            let step = steps.steps[stepIndex]
-            switch step.missingStep {
-            case .identityQuestions:
-              let questionsEncrypt = try await netspendRepository.getQuestion(sessionId: userDataManager.sessionID)
-              if let usersession = netspendDataManager.sdkSession, let questionsDecode = questionsEncrypt.decodeData(session: usersession) {
-                let questionsEntity = QuestionsEntity.mapObj(questionsDecode)
-                navigation = .question(questionsEntity)
-              }
-            case .provideDocuments:
-              let documents = try await netspendRepository.getDocuments(sessionId: userDataManager.sessionID)
-              netspendDataManager.update(documentData: documents)
-              navigation = .document
-            case .primaryPersonKYCApprove:
-              navigation = .inReview
-            case .KYCData:
-              navigation = .inReview
-            case .acceptAgreement:
-              break
-            case .expectedUse:
-              break
-            case .identityScan:
-              navigation = .inReview
-            }
-          }
-        }
+        try await handleWorkflows()
 
       } catch {
         log.error(error)
@@ -198,19 +139,13 @@ final class AddressViewModel: ObservableObject {
       }
     }
   }
-
-#if DEBUG
-  var countGenerateUser: Int = 0
-#endif
   
   func openIntercom() {
-      // TODO: Will be implemented later
-      // intercomService.openIntercom()
-    magicFillAccount()
+    intercomService.openIntercom()
   }
   
-  private func magicFillAccount() {
 #if DEBUG
+  func magicFillAccount() {
     countGenerateUser += 1
     if countGenerateUser >= 3 {
       let userMock = UserMockManager.mockUser(countTap: countGenerateUser)
@@ -220,14 +155,91 @@ final class AddressViewModel: ObservableObject {
       zipCode = userMock.zipCode
       if countGenerateUser >= 5 { countGenerateUser = 0 }
     }
-#endif
   }
+#endif
   
   private var isStateValid: Bool {
     if LFUtility.cryptoEnabled {
       return !Constants.supportedStates.contains(state.uppercased())
     } else {
       return true
+    }
+  }
+  
+  private func createAccountPersonParameters() throws -> AccountPersonParameters {
+    var governmentID: String = ""
+    var typeGovernmentID: String = ""
+    if let ssn = userDataManager.userInfomationData.ssn {
+      typeGovernmentID = IdNumberType.ssn.rawValue
+      governmentID = ssn
+    } else if let passport = userDataManager.userInfomationData.passport {
+      typeGovernmentID = IdNumberType.passport.rawValue
+      governmentID = passport
+    }
+    let agreementIDS = netspendDataManager.agreement?.agreements.compactMap { $0.id } ?? []
+    let encryptedData = try netspendDataManager.sdkSession?.encryptWithJWKSet(value: [
+      "date_of_birth": userDataManager.userInfomationData.dateOfBirth ?? "",
+      "government_id": [
+        "type": typeGovernmentID,
+        "value": governmentID
+      ]
+    ])
+    let param = AccountPersonParameters(
+      firstName: userDataManager.userInfomationData.firstName ?? "",
+      lastName: userDataManager.userInfomationData.lastName ?? "",
+      middleName: userDataManager.userInfomationData.fullName ?? "",
+      agreementIDS: agreementIDS,
+      phone: userDataManager.userInfomationData.phone ?? "",
+      email: userDataManager.userInfomationData.email ?? "",
+      fullName: userDataManager.userInfomationData.fullName ?? "",
+      dateOfBirth: userDataManager.userInfomationData.dateOfBirth ?? "",
+      addressLine1: userDataManager.userInfomationData.addressLine1 ?? "",
+      addressLine2: userDataManager.userInfomationData.addressLine2 ?? "",
+      city: userDataManager.userInfomationData.city ?? "",
+      state: userDataManager.userInfomationData.state ?? "",
+      country: userDataManager.userInfomationData.country ?? "",
+      postalCode: userDataManager.userInfomationData.postalCode ?? "",
+      encryptedData: encryptedData ?? "",
+      idNumber: governmentID,
+      idNumberType: typeGovernmentID
+    )
+    return param
+  }
+  
+  private func handleWorkflows() async throws {
+    let workflows = try await self.netspendRepository.getWorkflows()
+    
+    if workflows.steps.isEmpty {
+      navigation = .inReview
+      return
+    }
+    
+    if let steps = workflows.steps.first {
+      for stepIndex in 0...(steps.steps.count - 1) {
+        let step = steps.steps[stepIndex]
+        switch step.missingStep {
+        case .identityQuestions:
+          let questionsEncrypt = try await netspendRepository.getQuestion(sessionId: userDataManager.sessionID)
+          if let usersession = netspendDataManager.sdkSession, let questionsDecode = questionsEncrypt.decodeData(session: usersession) {
+            let questionsEntity = QuestionsEntity.mapObj(questionsDecode)
+            navigation = .question(questionsEntity)
+          }
+        case .provideDocuments:
+          let documents = try await netspendRepository.getDocuments(sessionId: userDataManager.sessionID)
+          netspendDataManager.update(documentData: documents)
+          navigation = .document
+        case .primaryPersonKYCApprove:
+          navigation = .inReview
+        case .KYCData:
+          navigation = .inReview
+        case .acceptAgreement:
+          break
+        case .expectedUse:
+          break
+        case .identityScan:
+          navigation = .inReview
+        }
+      }
     }
   }
 }

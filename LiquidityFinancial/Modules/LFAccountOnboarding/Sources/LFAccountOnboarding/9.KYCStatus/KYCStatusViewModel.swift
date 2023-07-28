@@ -5,6 +5,7 @@ import LFUtilities
 import OnboardingData
 import OnboardingDomain
 import UIKit
+import LFServices
 
 @MainActor
 final class KYCStatusViewModel: ObservableObject {
@@ -13,21 +14,19 @@ final class KYCStatusViewModel: ObservableObject {
     case address
   }
   
-#if DEBUG
-  var countApprovedUser: Int = 0
-#endif
-  
   @Published var state: KYCState = .idle
   @Published var presentation: Presentation?
   @Published var isLoading: Bool = false
   @Published var toastMessage: String?
   @Published var navigation: Navigation?
   
-  @Injected(\.netspendRepository) var netspendRepository
-  @Injected(\.netspendDataManager) var netspendDataManager
-  @Injected(\.userDataManager) var userDataManager
-  @Injected(\.onboardingRepository) var onboardingRepository
+  @LazyInjected(\.netspendRepository) var netspendRepository
+  @LazyInjected(\.netspendDataManager) var netspendDataManager
+  @LazyInjected(\.userDataManager) var userDataManager
+  @LazyInjected(\.onboardingRepository) var onboardingRepository
   @LazyInjected(\.onboardingFlowCoordinator) var onboardingFlowCoordinator
+  @LazyInjected(\.intercomService) var intercomService
+  
   var username: String {
     userDataManager.userNameDisplay
   }
@@ -43,39 +42,35 @@ final class KYCStatusViewModel: ObservableObject {
 extension KYCStatusViewModel {
   
   func openIntercom() {
-      // intercomService.openIntercom()
-    
-    magicPassKYC()
+    intercomService.openIntercom()
   }
   
-    //MAGIC PASS KYC DASHBOARD
-  func magicPassKYC() {
+  //MAGIC PASS KYC DASHBOARD
 #if DEBUG
-    countApprovedUser += 1
-    if countApprovedUser >= 5 {
-      countApprovedUser = 0
-      Task {
-        do {
-          let user = try await onboardingRepository.getUser(deviceId: UIDevice.current.identifierForVendor?.uuidString ?? "")
-          var request = URLRequest(url: URL(string: "https://api-crypto.dev.liquidity.cc/v1/admin/users/\(user.userID)/approve")!)
-          request.httpMethod = "POST"
-          URLSession.shared.dataTask(with: request) { _, response, error in
-            let httpResponse = response as? HTTPURLResponse
-            log.debug("approved dashboard state: \(httpResponse?.statusCode ?? 000)")
-            if let error = error {
-              log.error(error.localizedDescription)
-            }
-          }.resume()
-        } catch {
-          log.error(error.localizedDescription)
+  // swiftlint:disable force_unwrapping
+  func magicPassKYC() {
+    Task {
+      do {
+        let user = try await onboardingRepository.getUser(deviceId: UIDevice.current.identifierForVendor?.uuidString ?? "")
+        var request = URLRequest(url: URL(string: "https://api-crypto.dev.liquidity.cc/v1/admin/users/\(user.userID)/approve")!)
+        request.httpMethod = "POST"
+        URLSession.shared.dataTask(with: request) { _, response, error in
+          let httpResponse = response as? HTTPURLResponse
+          log.debug("approved dashboard state: \(httpResponse?.statusCode ?? 000)")
+          if let error = error {
+            log.error(error.localizedDescription)
+          }
         }
+        .resume()
+      } catch {
+        log.error(error.localizedDescription)
       }
     }
-#endif
   }
+#endif
   
   func magicTapToLogout() {
-      // userManager.logout()
+    magicPassKYC()
   }
   
   func primaryAction() {

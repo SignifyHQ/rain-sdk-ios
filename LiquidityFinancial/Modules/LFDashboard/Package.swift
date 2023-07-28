@@ -16,13 +16,16 @@ let package = Package(
     .package(name: "LFStyleGuide", path: "../LFStyleGuide"),
     .package(name: "LFLocalizable", path: "../LFLocalizable"),
     .package(name: "LFServices", path: "../LFServices"),
-    .package(name: "LFCard", path: "../LFCard")
+    .package(name: "LFCard", path: "../LFCard"),
+    .package(name: "LFData", path: "../LFData")
   ],
   targets: [
     .target(
       name: "LFDashboard",
       dependencies: [
-        "LFUtilities", "LFStyleGuide", "LFLocalizable", "LFServices", "LFCard"
+        "LFUtilities", "LFStyleGuide", "LFLocalizable", "LFServices", "LFCard",
+        .product(name: "OnboardingData", package: "LFData"),
+        .product(name: "NetSpendData", package: "LFData")
       ]
     ),
     .testTarget(

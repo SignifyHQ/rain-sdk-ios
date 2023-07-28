@@ -12,8 +12,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     return true
   }
   
-  func application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
+  func applicationDidBecomeActive(_ application: UIApplication) {
     
+  }
+  
+  func application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
+    KickoffService.application(application, didRegisterForRemoteNotificationsWithDeviceToken: deviceToken)
   }
   
   func application(_ application: UIApplication, didFailToRegisterForRemoteNotificationsWithError error: Error) {

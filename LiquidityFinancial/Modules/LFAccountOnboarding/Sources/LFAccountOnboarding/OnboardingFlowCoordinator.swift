@@ -6,6 +6,7 @@ import NetSpendData
 import OnboardingData
 import OnboardingDomain
 
+//swiftlint:disable cyclomatic_complexity
 public protocol OnboardingFlowCoordinatorProtocol {
   var routeSubject: CurrentValueSubject<OnboardingFlowCoordinator.Route, Never> { get }
   func routeUser()
@@ -63,14 +64,12 @@ public class OnboardingFlowCoordinator: OnboardingFlowCoordinatorProtocol {
   }
   
   public func routeUser() {
-    getCurrentState()
-    //TODO: Tony implement after have refresh token
-//    if authorizationManager.isTokenValid() {
-//      getCurrentState()
-//    } else {
-//      userDataManager.clearUserSession()
-//      routeSubject.value = .phone
-//    }
+    if authorizationManager.isTokenValid() {
+      getCurrentState()
+    } else {
+      clearUserData()
+      routeSubject.value = .phone
+    }
   }
 
   func getCurrentState() {
@@ -108,6 +107,9 @@ public class OnboardingFlowCoordinator: OnboardingFlowCoordinatorProtocol {
           }
         }
       } catch {
+        if let error = error.asErrorObject, let code = error.code, code == "user_not_authorized" {
+          clearUserData()
+        }
         routeSubject.value = .phone
         log.error(error.localizedDescription)
       }
@@ -138,5 +140,10 @@ public class OnboardingFlowCoordinator: OnboardingFlowCoordinatorProtocol {
       routeSubject.value = .kycReview
       log.debug(error)
     }
+  }
+  
+  private func clearUserData() {
+    userDataManager.clearUserSession()
+    authorizationManager.clearToken()
   }
 }

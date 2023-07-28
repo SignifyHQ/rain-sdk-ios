@@ -10,15 +10,17 @@ let package = Package(
         .library(name: "LFServices", targets: ["LFServices", "NetspendSdk", "LinkKit", "FraudForce"])
     ],
     dependencies: [
+      .package(name: "LFUtilities", path: "../LFUtilities"),
       .package(url: "https://github.com/verygoodsecurity/vgs-show-ios.git", from: "1.1.6"),
-      .package(name: "LFUtilities", path: "../LFUtilities")
+      .package(url: "https://github.com/intercom/intercom-ios", from: "15.1.3")
     ],
     targets: [
         .target(
             name: "LFServices",
             dependencies: [
               "LFUtilities",
-              .product(name: "VGSShowSDK", package: "vgs-show-ios")
+              .product(name: "VGSShowSDK", package: "vgs-show-ios"),
+              .product(name: "Intercom", package: "intercom-ios")
             ]),
         .binaryTarget(
           name: "NetspendSdk",

@@ -8,81 +8,80 @@ struct SetupWalletView: View {
   @StateObject private var viewModel = SetupWalletViewModel()
 
   var body: some View {
-    LoadingIndicatorView(isShowing: $viewModel.showIndicator) {
-      GeometryReader { geo in
-        Colors.background.swiftUIColor.edgesIgnoringSafeArea(.all)
+    GeometryReader { geo in
+      Colors.background.swiftUIColor.edgesIgnoringSafeArea(.all)
+      VStack {
+        HStack {
+          Spacer()
+          
+          Button {
+            viewModel.openIntercom()
+          } label: {
+            GenImages.CommonImages.icChat.swiftUIImage
+              .foregroundColor(Colors.label.swiftUIColor)
+              .frame(width: 50, height: 50)
+          }
+        }
+        .padding(.horizontal, 20)
+        .frame(width: geo.size.width, alignment: .trailing)
+        
         VStack {
-          HStack {
-            Spacer()
-
-            Button {
-              //intercomService.openIntercom()
-            } label: {
-              GenImages.CommonImages.icChat.swiftUIImage
-                .foregroundColor(Colors.label.swiftUIColor)
-                .frame(width: 50, height: 50)
-            }
-          }
-          .padding(.horizontal, 20)
-          .frame(width: geo.size.width, alignment: .trailing)
-
           VStack {
-            VStack {
-              Text(LFLocalizable.SetUpWallet.title)
-                .foregroundColor(Colors.label.swiftUIColor)
-                .font(Fonts.Inter.regular.swiftUIFont(size: Constants.FontSize.main.value))
-                .padding(.horizontal, 35)
-                .frame(width: geo.size.width, alignment: .leading)
-                .padding(.bottom, 20)
-                .padding(.top, 15)
-
-              Text(LFLocalizable.SetUpWallet.info)
-                .foregroundColor(Colors.label.swiftUIColor)
-                .opacity(0.75)
-                .font(Fonts.Inter.regular.swiftUIFont(size: Constants.FontSize.medium.value))
-                .padding(.horizontal, 35)
-                .frame(width: geo.size.width, alignment: .leading)
-                .padding(.bottom, 25)
-
-              HStack {
-                GenImages.Images.icLogo.swiftUIImage
-                  .resizable()
-                  .scaledToFit()
-                  .frame(width: 80, height: 80)
-                  .padding(.leading, 45)
-                  .gesture(tap)
-                Spacer()
-
-                GenImages.CommonImages.zerohash.swiftUIImage
-                  .foregroundColor(Colors.green.swiftUIColor)
-                  .padding(.trailing, 45)
-              }
-              .frame(
-                width: abs(geo.size.width - 60),
-                height: 130,
-                alignment: .center
-              )
-              .background(Colors.secondaryBackground.swiftUIColor)
-              .cornerRadius(10)
-              .shadow(radius: 10.0)
+            Text(LFLocalizable.SetUpWallet.title)
+              .foregroundColor(Colors.label.swiftUIColor)
+              .font(Fonts.Inter.regular.swiftUIFont(size: Constants.FontSize.main.value))
+              .padding(.horizontal, 35)
+              .frame(width: geo.size.width, alignment: .leading)
+              .padding(.bottom, 20)
+              .padding(.top, 15)
+            
+            Text(LFLocalizable.SetUpWallet.info)
+              .foregroundColor(Colors.label.swiftUIColor)
+              .opacity(0.75)
+              .font(Fonts.Inter.regular.swiftUIFont(size: Constants.FontSize.medium.value))
+              .padding(.horizontal, 35)
+              .frame(width: geo.size.width, alignment: .leading)
+              .padding(.bottom, 25)
+            
+            HStack {
+              GenImages.Images.icLogo.swiftUIImage
+                .resizable()
+                .scaledToFit()
+                .frame(width: 80, height: 80)
+                .padding(.leading, 45)
+                .gesture(tap)
+              Spacer()
+              
+              GenImages.CommonImages.zerohash.swiftUIImage
+                .foregroundColor(Colors.green.swiftUIColor)
+                .padding(.trailing, 45)
             }
-
-            Spacer()
-
-            terms
-
-            bottom
+            .frame(
+              width: abs(geo.size.width - 60),
+              height: 130,
+              alignment: .center
+            )
+            .background(Colors.secondaryBackground.swiftUIColor)
+            .cornerRadius(10)
+            .shadow(radius: 10.0)
           }
-        }
-        .popup(item: $viewModel.toastMessage, style: .toast) {
-          ToastView(toastMessage: $0)
-        }
-        .onAppear {
-          //analyticsService.track(event: Event(name: .viewsWalletSetup))
+          
+          Spacer()
+          
+          terms
+          
+          bottom
         }
       }
-      .navigationBarHidden(true)
+      .popup(item: $viewModel.toastMessage, style: .toast) {
+        ToastView(toastMessage: $0)
+      }
+      .onAppear {
+          //analyticsService.track(event: Event(name: .viewsWalletSetup))
+      }
     }
+    .navigationBarHidden(true)
+    .navigationBarBackButtonHidden(viewModel.showIndicator)
   }
 
   private var tap: some Gesture {
@@ -146,7 +145,8 @@ extension SetupWalletView {
     VStack {
       FullSizeButton(
         title: LFLocalizable.Button.Continue.title,
-        isDisable: !viewModel.isTermsAgreed
+        isDisable: !viewModel.isTermsAgreed,
+        isLoading: $viewModel.showIndicator
       ) {
         viewModel.createZeroHashAccount()
       }

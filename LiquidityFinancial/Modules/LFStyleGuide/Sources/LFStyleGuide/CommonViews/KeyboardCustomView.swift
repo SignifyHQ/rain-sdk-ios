@@ -10,21 +10,20 @@ public struct KeyboardCustomView: View {
   private let action: (() -> Void)?
   private let columns: [GridItem] = .init(repeating: GridItem(.flexible()), count: 3)
   private let maxIntegerDigits: Int = Constants.MaxCharacterLimit.amountLimit.value
-
+  
   public init(value: Binding<String>,
-       action: @escaping (() -> Void),
-       maxFractionDigits: Int = 2,
-       disable: Bool = false)
-  {
-    _value = value
-    self.action = action
-    self.maxFractionDigits = maxFractionDigits
-    self.disable = disable
+              action: @escaping (() -> Void),
+              maxFractionDigits: Int = 2,
+              disable: Bool = false) {
+  _value = value
+  self.action = action
+  self.maxFractionDigits = maxFractionDigits
+  self.disable = disable
   }
-
+  
   public var body: some View {
     LazyVGrid(columns: columns, spacing: 28) {
-      ForEach(Array(Const.KeyPad.enumerated()), id: \.offset) { offset, key in
+      ForEach(Array(Const.KeyPad.enumerated()), id: \.offset) { _, key in
         Button {
           onPressedKeyPad(key)
         } label: {
@@ -48,7 +47,7 @@ public struct KeyboardCustomView: View {
   }
 }
 
-// MARK: - Private UI Helpers Function
+  // MARK: - Private UI Helpers Function
 
 private extension KeyboardCustomView {
   func onPressedKeyPad(_ key: String) {
@@ -57,14 +56,13 @@ private extension KeyboardCustomView {
     let fractionDigits = hasDecimalSeparator ? numberSeparation.last?.count ?? 0 : 0
     let integerDigits = numberSeparation.first?.count ?? 0
     let isNaN = key == Const.backArrowKey || key == Const.decimalSeparator
-    if (integerDigits < maxIntegerDigits && !hasDecimalSeparator)
-      || (fractionDigits < maxFractionDigits && hasDecimalSeparator)
-      || isNaN
-    {
+    if (integerDigits < maxIntegerDigits && !hasDecimalSeparator) ||
+        (fractionDigits < maxFractionDigits && hasDecimalSeparator) ||
+        isNaN {
       handleKeyWasPressed(key)
     }
   }
-
+  
   func handleKeyWasPressed(_ key: String) {
     switch key {
     case Const.decimalSeparator where hasDecimalSeparator: break
@@ -79,7 +77,7 @@ private extension KeyboardCustomView {
       formatValue(with: key)
     }
   }
-
+  
   func formatValue(with key: String) {
     if key != Const.decimalSeparator {
       let formattedValue = value
@@ -91,7 +89,7 @@ private extension KeyboardCustomView {
   }
 }
 
-// MARK: - Keyboard Constant
+  // MARK: - Keyboard Constant
 
 private extension KeyboardCustomView {
   enum Const {

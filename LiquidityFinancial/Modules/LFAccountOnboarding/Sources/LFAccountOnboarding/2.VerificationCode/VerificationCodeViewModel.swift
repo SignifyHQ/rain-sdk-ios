@@ -6,6 +6,7 @@ import SwiftUI
 import NetSpendData
 import Factory
 import NetspendSdk
+import LFServices
 
 @MainActor
 final class VerificationCodeViewModel: ObservableObject {
@@ -14,6 +15,7 @@ final class VerificationCodeViewModel: ObservableObject {
   @LazyInjected(\.onboardingFlowCoordinator) var onboardingFlowCoordinator
   @LazyInjected(\.netspendRepository) var netspendRepository
   @LazyInjected(\.netspendDataManager) var netspendDataManager
+  @LazyInjected(\.intercomService) var intercomService
   
   @Published var isNavigationToWelcome: Bool = false
   @Published var isResendButonTimerOn = false
@@ -49,30 +51,23 @@ extension VerificationCodeViewModel {
         userDataManager.update(phone: formatPhoneNumber)
         userDataManager.stored(phone: formatPhoneNumber)
         
-        //Login handle for case login with phone have create account on Netspend
-        if userDataManager.sessionID.isEmpty {
-          
-          let token = try await netspendRepository.clientSessionInit()
-          netspendDataManager.update(jwkToken: token)
-          
-          let sessionConnectWithJWT = await netspendRepository.establishingSessionWithJWKSet(jwtToken: token)
-          
-          guard let deviceData = sessionConnectWithJWT?.deviceData else { return }
-          
-          let establishPersonSession = try await netspendRepository.establishPersonSession(deviceData: EstablishSessionParameters(encryptedData: deviceData))
-          netspendDataManager.update(session: establishPersonSession)
-          userDataManager.stored(sessionID: establishPersonSession.id)
-          
-          let userSessionAnonymous = try netspendRepository.createUserSession(establishingSession: sessionConnectWithJWT, encryptedData: establishPersonSession.encryptedData)
-          netspendDataManager.update(userSession: userSessionAnonymous)
-          
-          checkOnboardingState { self.isShowLoading = false }
-          
-        } else {
-          
-          checkOnboardingState { self.isShowLoading = false }
-          
-        }
+        intercomService.loginIdentifiedUser(userAttributes: IntercomService.UserAttributes(phone: formatPhoneNumber))
+        
+        let token = try await netspendRepository.clientSessionInit()
+        netspendDataManager.update(jwkToken: token)
+        
+        let sessionConnectWithJWT = await netspendRepository.establishingSessionWithJWKSet(jwtToken: token)
+        
+        guard let deviceData = sessionConnectWithJWT?.deviceData else { return }
+        
+        let establishPersonSession = try await netspendRepository.establishPersonSession(deviceData: EstablishSessionParameters(encryptedData: deviceData))
+        netspendDataManager.update(session: establishPersonSession)
+        userDataManager.stored(sessionID: establishPersonSession.id)
+        
+        let userSessionAnonymous = try netspendRepository.createUserSession(establishingSession: sessionConnectWithJWT, encryptedData: establishPersonSession.encryptedData)
+        netspendDataManager.update(userSession: userSessionAnonymous)
+        
+        checkOnboardingState { self.isShowLoading = false }
         
       } catch {
         self.isShowLoading = false
@@ -106,6 +101,26 @@ extension VerificationCodeViewModel {
       .store(in: &cancellables)
   }
   
+  func openIntercom() {
+    intercomService.openIntercom()
+  }
+}
+
+// MARK: View Helpers
+extension VerificationCodeViewModel {  
+  func onChangedOTPCode() {
+    if otpCode.count == Constants.MaxCharacterLimit.verificationLimit.value {
+      performVerifyOTPCode(formatPhoneNumber: formatPhoneNumber, code: otpCode)
+    }
+  }
+  
+  func resendOTP() {
+    performGetOTP(formatPhoneNumber: formatPhoneNumber)
+  }
+}
+
+// MARK: Private
+extension VerificationCodeViewModel {
   private func checkOnboardingState(onCompletion: @escaping () -> Void) {
     Task { @MainActor in
       defer { onCompletion() }
@@ -122,11 +137,11 @@ extension VerificationCodeViewModel {
               } else if onboardingState.missingSteps.contains(WorkflowsMissingStep.identityQuestions.rawValue) {
                 await handleQuestionCase()
               } else {
-                //TODO: Tony need review after
+                  //TODO: Tony need review after
                 onboardingFlowCoordinator.set(route: .kycReview)
               }
             } else {
-              //TODO: Tony need review after
+                //TODO: Tony need review after
               onboardingFlowCoordinator.set(route: .kycReview)
             }
           } else {
@@ -172,17 +187,5 @@ extension VerificationCodeViewModel {
       onboardingFlowCoordinator.set(route: .kycReview)
       log.debug(error)
     }
-  }
-}
-// MARK: View Helpers
-extension VerificationCodeViewModel {  
-  func onChangedOTPCode() {
-    if otpCode.count == Constants.MaxCharacterLimit.verificationLimit.value {
-      performVerifyOTPCode(formatPhoneNumber: formatPhoneNumber, code: otpCode)
-    }
-  }
-  
-  func resendOTP() {
-    performGetOTP(formatPhoneNumber: formatPhoneNumber)
   }
 }

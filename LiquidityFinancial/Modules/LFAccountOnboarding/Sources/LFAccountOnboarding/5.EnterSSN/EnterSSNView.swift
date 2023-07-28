@@ -18,7 +18,9 @@ struct EnterSSNView: View {
           .foregroundColor(Colors.label.swiftUIColor)
           .font(Fonts.Inter.regular.swiftUIFont(size: 18))
           .padding(.vertical, 12)
-
+          .onTapGesture {
+            viewModel.magicFillAccount()
+          }
         secureField
         infoBullets
       }
@@ -29,8 +31,7 @@ struct EnterSSNView: View {
     .background(Colors.background.swiftUIColor)
     .navigationTitle("")
     .defaultToolBar(icon: .intercom, openIntercom: {
-      // TODO: Will be implemeted later
-      // intercomService.openIntercom()
+      viewModel.openIntercom()
     })
     .popup(item: $toastMessage, style: .toast) {
       ToastView(toastMessage: $0)
@@ -96,15 +97,6 @@ struct EnterSSNView: View {
           .foregroundColor(Colors.label.swiftUIColor)
           .opacity(0.75)
       }
-      HStack(alignment: .center) {
-        GenImages.CommonImages.icHome.swiftUIImage
-          .frame(width: 24, height: 24)
-          .foregroundColor(Colors.label.swiftUIColor)
-        Text(LFLocalizable.EnterSsn.bulletThree)
-          .font(Fonts.Inter.regular.swiftUIFont(size: Constants.FontSize.ultraSmall.value))
-          .foregroundColor(Colors.label.swiftUIColor)
-          .opacity(0.75)
-      }
     }
     .foregroundColor(Colors.label.swiftUIColor.opacity(0.5))
     .padding(.top, 12)
@@ -162,3 +154,13 @@ extension EnterSSNView {
     case address
   }
 }
+
+#if DEBUG
+struct EnterSSNView_Previews: PreviewProvider {
+  static var previews: some View {
+    EnterSSNView()
+      .previewLayout(PreviewLayout.sizeThatFits)
+      .previewDisplayName("Default preview")
+  }
+}
+#endif

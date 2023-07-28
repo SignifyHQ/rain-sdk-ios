@@ -2,11 +2,13 @@ import SwiftUI
 import LFUtilities
 import Factory
 import OnboardingData
+import LFServices
 
 @MainActor
 class EnterSSNViewModel: ObservableObject {
   
-  @Injected(\Container.userDataManager) var userDataManager
+  @LazyInjected(\Container.userDataManager) var userDataManager
+  @LazyInjected(\.intercomService) var intercomService
   
   @Published var errorMessage: String?
   @Published var isActionAllowed: Bool = false {
@@ -32,21 +34,19 @@ class EnterSSNViewModel: ObservableObject {
   #endif
   
   func openIntercom() {
-      // TODO: Will be implemented later
-      // intercomService.openIntercom()
-    magicFillAccount()
+    intercomService.openIntercom()
   }
   
-  private func magicFillAccount() {
 #if DEBUG
+  func magicFillAccount() {
     countGenerateUser += 1
     if countGenerateUser >= 3 {
       let userMock = UserMockManager.mockUser(countTap: countGenerateUser)
       ssn = userMock.ssn
       if countGenerateUser >= 5 { countGenerateUser = 0 }
     }
-#endif
   }
+#endif
 }
 
 private extension EnterSSNViewModel {

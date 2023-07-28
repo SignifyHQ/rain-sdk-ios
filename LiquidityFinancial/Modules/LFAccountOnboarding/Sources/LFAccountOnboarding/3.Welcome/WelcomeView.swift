@@ -10,7 +10,7 @@ struct WelcomeView: View {
   public var body: some View {
     VStack(spacing: 12) {
       staticTop
-      
+        .padding(.top, 20)
       GenImages.CommonImages.dash.swiftUIImage
         .foregroundColor(Colors.label.swiftUIColor)
         .padding(.vertical, 12)
@@ -19,7 +19,7 @@ struct WelcomeView: View {
         VStack(spacing: 24) {
           HStack {
             Text(LFLocalizable.Welcome.howItWorks)
-              .font(Fonts.Inter.regular.swiftUIFont(size: 16))
+              .font(Fonts.Inter.regular.swiftUIFont(size: 18))
               .foregroundColor(Colors.label.swiftUIColor)
             Spacer()
           }
@@ -46,6 +46,10 @@ struct WelcomeView: View {
   private var staticTop: some View {
     VStack(spacing: 12) {
       GenImages.Images.icLogo.swiftUIImage
+        .resizable()
+        .scaledToFit()
+        .frame(110)
+        .padding(.bottom, 10)
       
       Text(LFLocalizable.Welcome.Header.title)
         .font(Fonts.Inter.regular.swiftUIFont(fixedSize: 24))
@@ -71,7 +75,7 @@ struct WelcomeView: View {
         .frame(width: 24, height: 24)
         .padding(.top, 4)
       Text(text)
-        .font(Fonts.Inter.regular.swiftUIFont(fixedSize: 16))
+        .font(Fonts.Inter.regular.swiftUIFont(fixedSize: 17))
         .foregroundColor(Colors.label.swiftUIColor.opacity(0.75))
         .fixedSize(horizontal: false, vertical: true)
       Spacer()
@@ -95,7 +99,7 @@ struct WelcomeView: View {
   }
   
   private var items: some View {
-    VStack(spacing: 20) {
+    VStack(spacing: 25) {
       item(image: GenImages.CommonImages.icWellcome1.swiftUIImage, text: LFLocalizable.Welcome.HowItWorks.item1)
       
       item(image: GenImages.CommonImages.icWellcome2.swiftUIImage, text: LFLocalizable.Welcome.HowItWorks.item2)
@@ -104,3 +108,13 @@ struct WelcomeView: View {
     }
   }
 }
+
+#if DEBUG
+struct WelcomeView_Previews: PreviewProvider {
+  static var previews: some View {
+    WelcomeView()
+      .previewLayout(PreviewLayout.sizeThatFits)
+      .previewDisplayName("Default preview")
+  }
+}
+#endif

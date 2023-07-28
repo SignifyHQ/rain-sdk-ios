@@ -7,6 +7,7 @@ public protocol AuthorizationManagerProtocol {
   func isTokenValid() -> Bool
   func fetchToken() -> String
   func refreshWith(apiToken: AccessTokens)
+  func clearToken()
 }
 
 public class AuthorizationManager {
@@ -41,6 +42,10 @@ extension AuthorizationManager: AuthorizationManagerProtocol {
     self.expiresAt = expiresAt
     self.accessToken = token
   }
+  
+  public func clearToken() {
+    clear()
+  }
 }
 
   // MARK: - Token Expiration
@@ -61,5 +66,10 @@ private extension AuthorizationManager {
   func update() {
     accessToken = getToken()
     expiresAt = getExpirationDate()
+  }
+  
+  func clear() {
+    UserDefaults.accessTokenExpiresAt = 0
+    UserDefaults.bearerAccessToken = ""
   }
 }

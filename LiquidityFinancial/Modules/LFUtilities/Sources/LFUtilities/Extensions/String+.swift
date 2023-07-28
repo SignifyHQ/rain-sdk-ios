@@ -193,10 +193,10 @@ public extension String {
 
 public extension String {
   func serverToTransactionDisplay(includeYear: Bool = false) -> String {
-    guard let dt = DateFormatter.server.date(from: self) else {
+    guard let date = DateFormatter.server.date(from: self) else {
       return self
     }
-    return includeYear ? DateFormatter.transactionDisplayFull.string(from: dt) : DateFormatter.transactionDisplayShort.string(from: dt)
+    return includeYear ? DateFormatter.transactionDisplayFull.string(from: date) : DateFormatter.transactionDisplayShort.string(from: date)
   }
   
   var displayDate: String? {

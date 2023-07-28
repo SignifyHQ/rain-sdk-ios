@@ -6,6 +6,7 @@ public extension Key {
   static let bearerAccessToken: Key = "bearerAccessToken"
   static let environmentSelection: Key = "EnvironmentSelection"
   static let phoneNumber: Key = "UserPhoneNumber"
+  static let userEmail: Key = "UserEmail"
   static let userSessionID: Key = "UserSessionID"
   static let userNameDisplay: Key = "userNameDisplay"
 }

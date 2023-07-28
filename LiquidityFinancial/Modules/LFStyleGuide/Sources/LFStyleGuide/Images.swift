@@ -79,7 +79,6 @@ public enum GenImages {
       public static let txFees = ImageAsset(name: "txFees")
       public static let txOther = ImageAsset(name: "txOther")
     }
-    public static let activedCard = ImageAsset(name: "activedCard")
     public static let availableCard = ImageAsset(name: "availableCard")
     public static let connectedAppleWallet = ImageAsset(name: "connectedAppleWallet")
     public static let emptyCard = ImageAsset(name: "emptyCard")
