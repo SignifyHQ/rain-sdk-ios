@@ -2,6 +2,10 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>Used to surface nearby ATMs for the user</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>Used to process images for KYC purposes</string>
 	<key>AGREEMENT_URL</key>
 	<string>$(AGREEMENT_URL)</string>
 	<key>APP_BUNDLE_ID</key>

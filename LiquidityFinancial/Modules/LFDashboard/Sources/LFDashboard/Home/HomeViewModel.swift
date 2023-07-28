@@ -24,10 +24,7 @@ extension HomeViewModel {
   }
   
   func onClickedProfileButton() {
-    
-#if DEBUG
     logout()
-#endif
   }
   
   func onClickedGearButton() {
@@ -37,11 +34,14 @@ extension HomeViewModel {
 
 private extension HomeViewModel {
   func logout() {
+#if DEBUG
     countMangicLogout += 1
     if countMangicLogout >= 5 {
       countMangicLogout = 0
       authorizationManager.clearToken()
       userDataManager.clearUserSession()
     }
+#endif
   }
+
 }

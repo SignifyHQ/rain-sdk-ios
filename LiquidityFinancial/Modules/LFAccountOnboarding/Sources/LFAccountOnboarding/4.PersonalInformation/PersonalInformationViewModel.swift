@@ -84,8 +84,9 @@ class PersonalInformationViewModel: ObservableObject {
     intercomService.openIntercom()
   }
   
-#if DEBUG
+
   func magicFillAccount() {
+#if DEBUG
     countGenerateUser += 1
     if countGenerateUser >= 3 {
       let userMock = UserMockManager.mockUser(countTap: countGenerateUser)
@@ -95,8 +96,8 @@ class PersonalInformationViewModel: ObservableObject {
       dateCheck = DateFormatter.yearDayMonth.date(from: userMock.dob)
       if countGenerateUser >= 5 { countGenerateUser = 0 }
     }
-  }
 #endif
+  }
 }
 
 private extension PersonalInformationViewModel {

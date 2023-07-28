@@ -67,6 +67,10 @@
 			</dict>
 		</dict>
 	</dict>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>Used to process images for KYC purposes</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>Used to surface nearby ATMs for the user</string>
 	<key>PATHWARD_DISCLOSURE_URL</key>
 	<string>$(PATHWARD_DISCLOSURE_URL)</string>
 	<key>PATHWARD_PRIVACY_URL</key>

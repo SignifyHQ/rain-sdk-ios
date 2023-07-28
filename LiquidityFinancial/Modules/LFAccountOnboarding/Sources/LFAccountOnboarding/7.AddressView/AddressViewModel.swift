@@ -144,8 +144,8 @@ final class AddressViewModel: ObservableObject {
     intercomService.openIntercom()
   }
   
-#if DEBUG
   func magicFillAccount() {
+#if DEBUG
     countGenerateUser += 1
     if countGenerateUser >= 3 {
       let userMock = UserMockManager.mockUser(countTap: countGenerateUser)
@@ -155,8 +155,8 @@ final class AddressViewModel: ObservableObject {
       zipCode = userMock.zipCode
       if countGenerateUser >= 5 { countGenerateUser = 0 }
     }
-  }
 #endif
+  }
   
   private var isStateValid: Bool {
     if LFUtility.cryptoEnabled {
