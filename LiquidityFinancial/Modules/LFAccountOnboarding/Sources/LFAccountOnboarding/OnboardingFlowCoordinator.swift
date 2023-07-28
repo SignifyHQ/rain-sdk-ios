@@ -6,7 +6,7 @@ import NetSpendData
 import OnboardingData
 import OnboardingDomain
 
-//swiftlint:disable cyclomatic_complexity
+// swiftlint:disable cyclomatic_complexity
 public protocol OnboardingFlowCoordinatorProtocol {
   var routeSubject: CurrentValueSubject<OnboardingFlowCoordinator.Route, Never> { get }
   func routeUser()

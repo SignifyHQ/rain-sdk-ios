@@ -5,7 +5,7 @@ import LFUtilities
 import OnboardingDomain
 import OnboardingData
 
-//swiftlint:disable superfluous_disable_command
+// swiftlint:disable superfluous_disable_command
 @MainActor
 final class QuestionsViewModel: ObservableObject {
   enum Navigation {

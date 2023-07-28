@@ -68,7 +68,7 @@ extension SecurityCheckViewModel {
 }
 
 // MARK: - View Helpers
-extension SecurityCheckViewModel {  
+extension SecurityCheckViewModel {
   func showLogoutPopup() {
     isShowLogoutPopup = true
   }

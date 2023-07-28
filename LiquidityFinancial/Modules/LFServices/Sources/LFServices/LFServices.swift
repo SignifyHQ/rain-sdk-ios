@@ -1,7 +1,7 @@
 import Foundation
 import VGSShowSDK
 
-//swiftlint:disable convenience_type
+// swiftlint:disable convenience_type
 public class LFServices {
   
   public static let vgsShowSandBox: VGSShow = {

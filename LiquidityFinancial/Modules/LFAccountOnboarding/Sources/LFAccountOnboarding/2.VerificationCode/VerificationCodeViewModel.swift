@@ -40,7 +40,7 @@ final class VerificationCodeViewModel: ObservableObject {
   }
 }
 
-// MARK: API
+  // MARK: API
 extension VerificationCodeViewModel {
   func performVerifyOTPCode(formatPhoneNumber: String, code: String) {
     guard !isShowLoading else { return }
@@ -106,8 +106,8 @@ extension VerificationCodeViewModel {
   }
 }
 
-// MARK: View Helpers
-extension VerificationCodeViewModel {  
+  // MARK: View Helpers
+extension VerificationCodeViewModel {
   func onChangedOTPCode() {
     if otpCode.count == Constants.MaxCharacterLimit.verificationLimit.value {
       performVerifyOTPCode(formatPhoneNumber: formatPhoneNumber, code: otpCode)
@@ -119,7 +119,7 @@ extension VerificationCodeViewModel {
   }
 }
 
-// MARK: Private
+  // MARK: Private
 extension VerificationCodeViewModel {
   private func checkOnboardingState(onCompletion: @escaping () -> Void) {
     Task { @MainActor in

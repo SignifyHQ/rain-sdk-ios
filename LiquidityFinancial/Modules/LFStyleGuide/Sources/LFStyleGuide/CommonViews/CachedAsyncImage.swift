@@ -5,7 +5,7 @@ import SwiftUI
 /// A view that asynchronously loads, cache and displays an image.
 /// Adapted version from https://github.com/lorenzofiamingo/swiftui-cached-async-image, that defaults cache
 /// to `imageCache`.
-//swiftlint:disable all
+// swiftlint:disable all
 @available(iOS 15.0, macOS 12.0, tvOS 15.0, watchOS 8.0, *)
 public struct CachedAsyncImage<Content>: View where Content: View {
   @State private var phase: AsyncImagePhase

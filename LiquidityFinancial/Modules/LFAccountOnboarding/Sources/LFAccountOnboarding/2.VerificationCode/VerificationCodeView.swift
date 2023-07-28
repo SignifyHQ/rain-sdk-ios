@@ -60,11 +60,18 @@ private extension VerificationCodeView {
       Text(LFLocalizable.VerificationCode.EnterCode.screenTitle)
         .foregroundColor(Colors.label.swiftUIColor)
         .font(Fonts.Inter.regular.swiftUIFont(size: Constants.FontSize.main.value))
-      Text(
-        LFLocalizable.VerificationCode.SendTo.textFieldTitle(viewModel.formatPhoneNumber)
-      )
+      HStack(spacing: 4) {
+        Text(
+          LFLocalizable.VerificationCode.SendTo.textFieldTitle("+1")
+        )
         .foregroundColor(Colors.label.swiftUIColor.opacity(0.75))
         .font(Fonts.Inter.regular.swiftUIFont(size: Constants.FontSize.medium.value))
+        iPhoneNumberField("", text: $viewModel.formatPhoneNumber)
+          .flagHidden(true)
+          .foregroundColor(Colors.label.swiftUIColor.opacity(0.75))
+          .disabled(true)
+        Spacer()
+      }
     }
   }
   
@@ -112,3 +119,13 @@ private extension VerificationCodeView {
     }
   }
 }
+
+#if DEBUG
+struct VerificationCodeView_Previews: PreviewProvider {
+  static var previews: some View {
+    VerificationCodeView(phoneNumber: "2345678888")
+      .previewLayout(PreviewLayout.sizeThatFits)
+      .previewDisplayName("Default preview")
+  }
+}
+#endif
