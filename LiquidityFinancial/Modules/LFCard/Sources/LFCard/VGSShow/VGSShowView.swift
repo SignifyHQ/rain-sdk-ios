@@ -54,10 +54,8 @@ class VGSShowUIView: UIView {
     cardCVVVGSLabel.isSecureText = !showCardNumber
     
     if showCardNumber {
-      if let aMonth = cardData.expiryMonth, let aYear = cardData.expiryYear {
-        let dtStr = aYear.count > 2 ? String(aYear.suffix(2)) : aYear
-        cardExpirationDateVGSLabel.text = "\(aMonth)/\(dtStr)"
-      }
+      let dtStr = cardData.expiryMonth.count > 2 ? String(cardData.expiryYear.suffix(2)) : cardData.expiryYear
+      cardExpirationDateVGSLabel.text = "\(cardData.expiryMonth)/\(dtStr)"
     } else {
       cardExpirationDateVGSLabel.text = Constants.Default.vgsExpirationDate.rawValue
     }

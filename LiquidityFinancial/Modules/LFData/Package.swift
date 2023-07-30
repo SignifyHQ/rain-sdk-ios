@@ -18,10 +18,13 @@ let package = Package(
       targets: ["AuthorizationManager"]),
     .library(
       name: "NetSpendData",
-      targets: ["NetSpendData"])
+      targets: ["NetSpendData"]),
+    .library(
+      name: "CardData",
+      targets: ["CardData"])
   ],
   dependencies: [
-    .package(name: "OnboardingDomain", path: "../LFDomain"),
+    .package(name: "LFDomain", path: "../LFDomain"),
     .package(name: "LFNetwork", path: "../LFNetwork"),
     .package(name: "LFUtilities", path: "../LFUtilities"),
     .package(name: "LFServices", path: "../LFServices"),
@@ -30,16 +33,31 @@ let package = Package(
   targets: [
     .target(
       name: "OnboardingData",
-      dependencies: ["DataUtilities", "LFNetwork", "OnboardingDomain", "AuthorizationManager", "Factory"]),
+      dependencies: [
+        "DataUtilities", "LFNetwork", "AuthorizationManager", "Factory",
+        .product(name: "OnboardingDomain", package: "LFDomain")
+      ]
+    ),
     .target(
       name: "DataUtilities",
       dependencies: ["LFNetwork"]),
     .target(
       name: "AuthorizationManager",
-      dependencies: ["DataUtilities", "OnboardingDomain", "LFUtilities", "Factory"]),
+      dependencies: [
+        "DataUtilities", "LFUtilities", "Factory",
+        .product(name: "OnboardingDomain", package: "LFDomain")
+      ]
+    ),
     .target(
       name: "NetSpendData",
       dependencies: ["LFNetwork", "LFServices", "DataUtilities", "LFUtilities", "Factory", "AuthorizationManager"]),
+    .target(
+      name: "CardData",
+      dependencies: [
+        "DataUtilities", "LFNetwork", "Factory", "AuthorizationManager",
+        .product(name: "CardDomain", package: "LFDomain")
+      ]
+    ),
     .testTarget(
       name: "OnboardingDataTests",
       dependencies: ["OnboardingData"])

@@ -11,15 +11,18 @@ public struct ListCardsView: View {
   
   public var body: some View {
     ZStack(alignment: .top) {
-      cardDetails
-      pageIndicator
+      if viewModel.isLoading {
+        loadingView
+      } else {
+        cardDetails
+        pageIndicator
+      }
     }
     .padding(.horizontal, 30)
     .padding(.bottom, 16)
     .background(Colors.background.swiftUIColor)
     .defaultToolBar(icon: .intercom, openIntercom: {
-      // TODO: Will be implemented later
-      // intercomService.openIntercom()
+      viewModel.openIntercom()
     })
     // .track(name: String(describing: type(of: self))) TODO: Will be implemented later
     .sheet(item: $viewModel.present) { item in
@@ -54,6 +57,16 @@ public struct ListCardsView: View {
 
 // MARK: - View Components
 private extension ListCardsView {
+  var loadingView: some View {
+    VStack {
+      Spacer()
+      LottieView(loading: .primary)
+        .frame(width: 30, height: 20)
+      Spacer()
+    }
+    .frame(max: .infinity)
+  }
+
   var cardDetails: some View {
     VStack(spacing: 16) {
       cardView

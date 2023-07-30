@@ -1,16 +1,27 @@
 import Foundation
 import Combine
+import Factory
+import CardDomain
+import CardData
+import LFUtilities
 
 @MainActor
 final class ListCardsViewModel: ObservableObject {
+  @LazyInjected(\.intercomService) var intercomService
+  @LazyInjected(\.cardRepository) var cardRepository
   @Published var cardsList: [CardModel] = []
   @Published var currentCard: CardModel = .virtualDefault
   @Published var toastMessage: String?
+  @Published var isLoading: Bool = false
   @Published var isShowCardNumber: Bool = false
   @Published var isCardLocked: Bool = false
+  @Published var isActive: Bool = false
   @Published var present: Presentation?
   @Published var navigation: Navigation?
-  @Published var isActive: Bool = false
+  
+  lazy var cardUseCase: CardUseCaseProtocol = {
+    CardUseCase(repository: cardRepository)
+  }()
   
   private var bag = Set<AnyCancellable>()
   var isHasPhysicalCard: Bool {
@@ -45,12 +56,18 @@ private extension ListCardsViewModel {
   }
   
   func getListCard() {
-    // FAKEDATA
-    cardsList = [
-      CardModel.virtualDefault,
-      CardModel.physicalDefault
-    ]
-    currentCard = cardsList.first ?? CardModel.virtualDefault
+    isLoading = true
+    Task {
+      do {
+        let cards = try await cardUseCase.getListCard()
+        isLoading = false
+        cardsList = mapToCardModel(cards: cards)
+        currentCard = cardsList.first ?? CardModel.virtualDefault
+      } catch {
+        isLoading = false
+        toastMessage = error.localizedDescription
+      }
+    }
   }
   
   func updateCardLock(status: CardStatus, id: String) {
@@ -63,6 +80,9 @@ private extension ListCardsViewModel {
 
 // MARK: - View Helpers
 extension ListCardsViewModel {
+  func openIntercom() {
+    intercomService.openIntercom()
+  }
   func dealsAction() {
     // TODO: Will be implemented later
     // doshManager.showRewards()
@@ -110,6 +130,19 @@ extension ListCardsViewModel {
 
 // MARK: - Private Functions
 private extension ListCardsViewModel {
+  func mapToCardModel(cards: [CardEntity]) -> [CardModel] {
+    cards.map { card in
+      CardModel(
+        id: card.id,
+        cardType: CardType(rawValue: card.type) ?? .virtual,
+        cardholderName: nil,
+        expiryMonth: "\(card.expirationMonth)",
+        expiryYear: "\(card.expirationYear)",
+        last4: card.panLast4,
+        cardStatus: CardStatus(rawValue: card.status) ?? .unactivated
+      )
+    }
+  }
   func presentActivateCardView() {
     switch currentCard.cardType {
     case .physical:

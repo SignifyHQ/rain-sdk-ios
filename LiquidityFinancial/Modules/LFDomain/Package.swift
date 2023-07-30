@@ -9,7 +9,10 @@ let package = Package(
     products: [
         .library(
             name: "OnboardingDomain",
-            targets: ["OnboardingDomain"])
+            targets: ["OnboardingDomain"]),
+        .library(
+          name: "CardDomain",
+          targets: ["CardDomain"])
     ],
     dependencies: [
 
@@ -18,6 +21,9 @@ let package = Package(
         .target(
             name: "OnboardingDomain",
             dependencies: []),
+        .target(
+          name: "CardDomain",
+          dependencies: []),
         .testTarget(
             name: "OnboardingDomainTests",
             dependencies: ["OnboardingDomain"])

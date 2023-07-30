@@ -12,16 +12,20 @@ let package = Package(
       targets: ["LFCard"])
   ],
   dependencies: [
+    .package(url: "https://github.com/hmlongco/Factory", from: "2.2.0"),
+    .package(name: "CardDomain", path: "../LFDomain"),
     .package(name: "LFUtilities", path: "../LFUtilities"),
     .package(name: "LFStyleGuide", path: "../LFStyleGuide"),
     .package(name: "LFLocalizable", path: "../LFLocalizable"),
-    .package(name: "LFServices", path: "../LFServices")
+    .package(name: "LFServices", path: "../LFServices"),
+    .package(name: "LFData", path: "../LFData")
   ],
   targets: [
     .target(
       name: "LFCard",
       dependencies: [
-        "LFUtilities", "LFStyleGuide", "LFLocalizable", "LFServices"
+        "LFUtilities", "LFStyleGuide", "LFLocalizable", "LFServices", "CardDomain", "Factory",
+        .product(name: "CardData", package: "LFData")
       ]),
     .testTarget(
       name: "LFCardTests",

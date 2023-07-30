@@ -5,36 +5,19 @@ public struct CardModel: Identifiable, Hashable {
   public let id: String
   public let cardType: CardType
   public let cardholderName: String?
-  public  let currency: String?
-  public let expiryMonth: String?
-  public let expiryYear: String?
-  public let last4: String?
-  public var cardStatus: CardStatus?
-  public var roundUpPurchases: Bool
+  public let expiryMonth: String
+  public let expiryYear: String
+  public let last4: String
+  public var cardStatus: CardStatus
   
   public static let virtualDefault = CardModel(
     id: "",
     cardType: .virtual,
     cardholderName: nil,
-    currency: nil,
     expiryMonth: "09",
     expiryYear: "2023",
     last4: "1891",
-    cardStatus: .active, // Default this card is activated
-    roundUpPurchases: true
-  )
-  
-  // TODO: Will be removed after intergrate with API
-  public static let physicalDefault = CardModel(
-    id: "12",
-    cardType: .physical,
-    cardholderName: "Fake name",
-    currency: "222",
-    expiryMonth: "2",
-    expiryYear: "25",
-    last4: "2222",
-    cardStatus: .unactivated,
-    roundUpPurchases: true
+    cardStatus: .active
   )
 }
 
@@ -43,11 +26,31 @@ public enum CardStatus: String {
   case closed
   case disabled
   case unactivated
+  
+  public init?(rawValue: String) {
+    switch rawValue {
+      case "active": self = .active
+      case "closed": self = .closed
+      case "disabled": self = .disabled
+      case "unactivated": self = .unactivated
+      default:
+        self = .unactivated
+    }
+  }
 }
 
 public enum CardType {
   case virtual
   case physical
+  
+  public init?(rawValue: String) {
+    switch rawValue {
+    case "virtual": self = .virtual
+    case "physical": self = .physical
+    default:
+      self = .virtual
+    }
+  }
   
   public var title: String {
     switch self {
