@@ -4,15 +4,17 @@ import Factory
 import CardDomain
 import CardData
 import LFUtilities
+import OnboardingData
 
 @MainActor
 final class ListCardsViewModel: ObservableObject {
   @LazyInjected(\.intercomService) var intercomService
+  @LazyInjected(\.userDataManager) var userDataManager
   @LazyInjected(\.cardRepository) var cardRepository
   @Published var cardsList: [CardModel] = []
   @Published var currentCard: CardModel = .virtualDefault
   @Published var toastMessage: String?
-  @Published var isLoading: Bool = false
+  @Published var isInit: Bool = false
   @Published var isShowCardNumber: Bool = false
   @Published var isCardLocked: Bool = false
   @Published var isActive: Bool = false
@@ -44,27 +46,37 @@ final class ListCardsViewModel: ObservableObject {
 // MARK: - API
 private extension ListCardsViewModel {
   func callLockCardAPI() {
-    // TODO: Will be implemented later
-    // Success
-    updateCardLock(status: .disabled, id: currentCard.id) // FAKE API
+    Task {
+      do {
+        let card = try await cardUseCase.lockCard(cardID: currentCard.id, sessionID: userDataManager.sessionID)
+        updateCardLock(status: .disabled, id: card.id)
+      } catch {
+        toastMessage = error.localizedDescription
+      }
+    }
   }
   
   func callUnLockCardAPI() {
-    // TODO: Will be implemented later
-    // Success
-    updateCardLock(status: .active, id: currentCard.id) // FAKE API
+    Task {
+      do {
+        let card = try await cardUseCase.unlockCard(cardID: currentCard.id, sessionID: userDataManager.sessionID)
+        updateCardLock(status: .active, id: card.id)
+      } catch {
+        toastMessage = error.localizedDescription
+      }
+    }
   }
   
   func getListCard() {
-    isLoading = true
+    isInit = true
     Task {
       do {
         let cards = try await cardUseCase.getListCard()
-        isLoading = false
+        isInit = false
         cardsList = mapToCardModel(cards: cards)
         currentCard = cardsList.first ?? CardModel.virtualDefault
       } catch {
-        isLoading = false
+        isInit = false
         toastMessage = error.localizedDescription
       }
     }

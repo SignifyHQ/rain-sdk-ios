@@ -109,7 +109,7 @@ extension KYCStatusViewModel {
           let states = onboardingState.mapToEnum()
           if states.isEmpty {
             let workflowsMissingStep = WorkflowsMissingStep.allCases.map { $0.rawValue }
-            if (onboardingState.missingSteps.first(where: { workflowsMissingStep.contains($0) }) != nil) {
+            if onboardingState.missingSteps.contains(where: { workflowsMissingStep.contains($0) }) {
               return
             } else {
               //TODO: Tony need review

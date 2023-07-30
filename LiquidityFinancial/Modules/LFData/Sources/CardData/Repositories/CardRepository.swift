@@ -9,7 +9,15 @@ public class CardRepository: CardRepositoryProtocol {
   }
   
   public func getListCard() async throws -> [CardEntity] {
-    return try await cardAPI.getListCard()
+    try await cardAPI.getListCard()
+  }
+  
+  public func lockCard(cardID: String, sessionID: String) async throws -> CardEntity {
+    try await cardAPI.lockCard(cardID: cardID, sessionID: sessionID)
+  }
+  
+  public func unlockCard(cardID: String, sessionID: String) async throws -> CardEntity {
+    try await cardAPI.unlockCard(cardID: cardID, sessionID: sessionID)
   }
 }
 

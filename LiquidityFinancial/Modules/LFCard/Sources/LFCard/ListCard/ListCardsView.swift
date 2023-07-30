@@ -11,7 +11,7 @@ public struct ListCardsView: View {
   
   public var body: some View {
     ZStack(alignment: .top) {
-      if viewModel.isLoading {
+      if viewModel.isInit {
         loadingView
       } else {
         cardDetails
@@ -191,20 +191,20 @@ private extension ListCardsView {
   }
   
   @ViewBuilder var buttonGroup: some View {
-    if viewModel.isActive {
-      VStack(spacing: 14) {
+    VStack(spacing: 14) {
+      if viewModel.isActive {
         applePay
-        if !viewModel.isHasPhysicalCard {
-          FullSizeButton(
-            title: LFLocalizable.ListCard.OrderPhysicalCard.title,
-            isDisable: false
-          ) {
-            viewModel.onClickedOrderPhysicalCard()
-          }
+      } else if viewModel.currentCard.cardStatus == .unactivated {
+        activeCardButton
+      }
+      if !viewModel.isHasPhysicalCard {
+        FullSizeButton(
+          title: LFLocalizable.ListCard.OrderPhysicalCard.title,
+          isDisable: false
+        ) {
+          viewModel.onClickedOrderPhysicalCard()
         }
       }
-    } else if viewModel.currentCard.cardStatus == .unactivated {
-      activeCardButton
     }
   }
   

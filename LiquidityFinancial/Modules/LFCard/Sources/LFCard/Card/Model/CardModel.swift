@@ -29,12 +29,16 @@ public enum CardStatus: String {
   
   public init?(rawValue: String) {
     switch rawValue {
-      case "active": self = .active
-      case "closed": self = .closed
-      case "disabled": self = .disabled
-      case "unactivated": self = .unactivated
-      default:
-        self = .unactivated
+    case "active":
+      self = .active
+    case "closed":
+      self = .closed
+    case "disabled":
+      self = .disabled
+    case "unactivated":
+      self = .unactivated
+    default:
+      self = .unactivated
     }
   }
 }

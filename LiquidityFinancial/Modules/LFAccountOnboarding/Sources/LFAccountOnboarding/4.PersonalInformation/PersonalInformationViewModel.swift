@@ -84,7 +84,6 @@ class PersonalInformationViewModel: ObservableObject {
     intercomService.openIntercom()
   }
   
-
   func magicFillAccount() {
 #if DEBUG
     countGenerateUser += 1

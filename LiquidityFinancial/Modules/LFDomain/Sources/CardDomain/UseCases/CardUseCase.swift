@@ -1,7 +1,6 @@
 import Foundation
-
-public class CardUseCase: CardUseCaseProtocol {
   
+public class CardUseCase: CardUseCaseProtocol {
   private let repository: CardRepositoryProtocol
   
   public init(repository: CardRepositoryProtocol) {
@@ -9,7 +8,15 @@ public class CardUseCase: CardUseCaseProtocol {
   }
   
   public func getListCard() async throws -> [CardEntity] {
-    return try await repository.getListCard()
+    try await repository.getListCard()
+  }
+  
+  public func lockCard(cardID: String, sessionID: String) async throws -> CardEntity {
+    try await repository.lockCard(cardID: cardID, sessionID: sessionID)
+  }
+  
+  public func unlockCard(cardID: String, sessionID: String) async throws -> CardEntity {
+    try await repository.unlockCard(cardID: cardID, sessionID: sessionID)
   }
   
 }
