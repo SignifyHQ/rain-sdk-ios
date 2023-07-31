@@ -25,7 +25,9 @@ let package = Package(
       name: "LFCard",
       dependencies: [
         "LFUtilities", "LFStyleGuide", "LFLocalizable", "LFServices", "CardDomain", "Factory",
-        .product(name: "CardData", package: "LFData")
+        .product(name: "CardData", package: "LFData"),
+        .product(name: "OnboardingData", package: "LFData"),
+        .product(name: "NetSpendData", package: "LFData"),
       ]),
     .testTarget(
       name: "LFCardTests",

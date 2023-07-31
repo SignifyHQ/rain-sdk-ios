@@ -14,6 +14,15 @@ extension LFNetwork: CardAPIProtocol where R == CardRoute {
     )
   }
   
+  public func getCard(cardID: String, sessionID: String) async throws -> APICard {
+    try await request(
+      CardRoute.card(cardID, sessionID),
+      target: APICard.self,
+      failure: LFErrorObject.self,
+      decoder: .apiDecoder
+    )
+  }
+  
   public func lockCard(cardID: String, sessionID: String) async throws -> APICard {
     try await request(
       CardRoute.lock(cardID, sessionID),

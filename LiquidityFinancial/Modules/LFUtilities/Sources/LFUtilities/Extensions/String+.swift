@@ -13,6 +13,16 @@ public extension String {
     }
     return filteredPhone
   }
+  
+  func insertSpaces(afterEvery count: Int) -> String {
+    stride(from: 0, to: self.count, by: count)
+      .map { index -> String in
+        let startIndex = self.index(self.startIndex, offsetBy: index)
+        let endIndex = self.index(startIndex, offsetBy: count, limitedBy: self.endIndex) ?? self.endIndex
+        return String(self[startIndex..<endIndex])
+      }
+      .joined(separator: " ")
+  }
 }
 
 public extension String {

@@ -18,6 +18,9 @@ public struct ListCardsView: View {
         pageIndicator
       }
     }
+    .onChange(of: viewModel.currentCard) { _ in
+      viewModel.onChangeCurrentCard()
+    }
     .padding(.horizontal, 30)
     .padding(.bottom, 16)
     .background(Colors.background.swiftUIColor)
@@ -75,6 +78,13 @@ private extension ListCardsView {
       Spacer()
       buttonGroup
     }
+    .overlay {
+      if viewModel.isLoading {
+        ProgressView().progressViewStyle(.circular)
+          .tint(Colors.Buttons.highlightButton.swiftUIColor)
+      }
+    }
+    .disabled(viewModel.isLoading)
     .padding(.bottom, 10)
   }
   
@@ -90,13 +100,15 @@ private extension ListCardsView {
   
   var cardView: some View {
     TabView(selection: $viewModel.currentCard) {
-      ForEach(viewModel.cardsList) { item in
-        CardView(card: item, isShowCardNumber: $viewModel.isShowCardNumber)
+      ForEach(Array(viewModel.cardsList.enumerated()), id: \.offset) { offset, item in
+        CardView(
+          card: item,
+          cardMetaData: $viewModel.cardMetaDatas[offset],
+          isShowCardNumber: $viewModel.isShowCardNumber,
+          isLoading: $viewModel.isInit
+        )
           .tag(item)
       }
-    }
-    .onChange(of: viewModel.currentCard) { _ in
-      viewModel.onChangeCurrentCard()
     }
     .tabViewStyle(.page(indexDisplayMode: .never))
     .padding(.top, 10)

@@ -12,6 +12,10 @@ public class CardUseCase: CardUseCaseProtocol {
     try await repository.getListCard()
   }
   
+  public func getCard(cardID: String, sessionID: String) async throws -> CardEntity {
+    try await repository.getCard(cardID: cardID, sessionID: sessionID)
+  }
+  
   public func lockCard(cardID: String, sessionID: String) async throws -> CardEntity {
     try await repository.lockCard(cardID: cardID, sessionID: sessionID)
   }

@@ -5,6 +5,7 @@ import AuthorizationManager
 
 public enum CardRoute {
   case listCard
+  case card(String, String)
   case lock(String, String)
   case unlock(String, String)
   case orderPhysicalCard(OrderPhysicalCardParameters, String)
@@ -21,6 +22,8 @@ extension CardRoute: LFRoute {
     switch self {
     case .listCard:
       return "/v1/netspend/cards"
+    case let .card(cardID, _):
+      return "/v1/netspend/cards/\(cardID)"
     case let .lock(cardID, _):
       return "/v1/netspend/cards/\(cardID)/lock"
     case let .unlock(cardID, _):
@@ -32,7 +35,7 @@ extension CardRoute: LFRoute {
   
   public var httpMethod: HttpMethod {
     switch self {
-    case .listCard: return .GET
+    case .listCard, .card: return .GET
     case .lock, .unlock, .orderPhysicalCard: return .POST
     }
   }
@@ -46,9 +49,11 @@ extension CardRoute: LFRoute {
     switch self {
     case .listCard:
       break
-    case let .lock(_, sessionId),
-      let .unlock(_, sessionId),
-      let .orderPhysicalCard(_, sessionId):
+    case let .card(_, sessionId),
+        let .lock(_, sessionId),
+        let .unlock(_, sessionId),
+        let .orderPhysicalCard(_, sessionId):
+      base["Authorization"] = authorization
       base["netspendSessionId"] = sessionId
     }
     return base
@@ -56,7 +61,7 @@ extension CardRoute: LFRoute {
   
   public var parameters: Parameters? {
     switch self {
-    case .listCard, .lock, .unlock:
+    case .listCard, .card, .lock, .unlock:
       return nil
     case let .orderPhysicalCard(parameters, _):
       let acde = parameters.encoded()
@@ -66,7 +71,7 @@ extension CardRoute: LFRoute {
   
   public var parameterEncoding: ParameterEncoding? {
     switch self {
-    case .listCard, .lock, .unlock: return nil
+    case .listCard, .card, .lock, .unlock: return nil
     case .orderPhysicalCard:
       return .json
     }

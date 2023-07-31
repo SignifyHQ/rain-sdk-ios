@@ -1,4 +1,5 @@
 import Foundation
+import NetspendSdk
 
 public protocol CardEntity {
   var id: String { get }
@@ -12,6 +13,7 @@ public protocol CardEntity {
   var lockStatus: String { get }
   var unlockTime: String? { get }
   var shippingAddressEntity: ShippingAddressEntity? { get }
+  func decodeData<T: CardEncryptedEntity>(session: NetspendSdkUserSession) -> T?
 }
 
 public protocol ShippingAddressEntity {
@@ -20,4 +22,9 @@ public protocol ShippingAddressEntity {
   var estimatedArrivalDate: String? { get }
   var trackingNumber: String? { get }
   var shippingVendor: String { get }
+}
+
+public protocol CardEncryptedEntity {
+  var pan: String { get }
+  var cvv2: String { get }
 }

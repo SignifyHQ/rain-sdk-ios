@@ -5,17 +5,23 @@ public struct CardModel: Identifiable, Hashable {
   public let id: String
   public let cardType: CardType
   public let cardholderName: String?
-  public let expiryMonth: String
-  public let expiryYear: String
+  public let expiryMonth: Int
+  public let expiryYear: Int
   public let last4: String
   public var cardStatus: CardStatus
+  
+  public var expiryTime: String {
+    let expiryMonthFormated = expiryMonth < 10 ? "0\(expiryMonth)" : "\(expiryMonth)"
+    let expiryYearFormated = "\(expiryYear)".suffix(2)
+    return "\(expiryMonthFormated)/\(expiryYearFormated)"
+  }
   
   public static let virtualDefault = CardModel(
     id: "",
     cardType: .virtual,
     cardholderName: nil,
-    expiryMonth: "09",
-    expiryYear: "2023",
+    expiryMonth: 9,
+    expiryYear: 2_023,
     last4: "1891",
     cardStatus: .active
   )
