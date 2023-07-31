@@ -39,7 +39,7 @@ private extension OrderPhysicalCardView {
     VStack(spacing: 36) {
       GenImages.Images.physicalCard.swiftUIImage
       Text(LFLocalizable.OrderPhysicalCard.PhysicalCard.title)
-        .font(Fonts.Inter.regular.swiftUIFont(size: Constants.FontSize.large.value))
+        .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.large.value))
         .foregroundColor(Colors.label.swiftUIColor)
     }
   }
@@ -47,14 +47,14 @@ private extension OrderPhysicalCardView {
   var cardReceivingAddress: some View {
     VStack(alignment: .leading, spacing: 20) {
       Text(LFLocalizable.OrderPhysicalCard.Address.title)
-        .font(Fonts.Inter.regular.swiftUIFont(size: Constants.FontSize.main.value))
+        .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.main.value))
         .foregroundColor(Colors.label.swiftUIColor)
       HStack(alignment: .top, spacing: 12) {
         GenImages.CommonImages.icMap.swiftUIImage
           .frame(20)
           .foregroundColor(Colors.label.swiftUIColor)
         Text(viewModel.shippingAddress.description)
-          .font(Fonts.Inter.regular.swiftUIFont(size: Constants.FontSize.medium.value))
+          .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.medium.value))
           .foregroundColor(Colors.label.swiftUIColor.opacity(0.75))
           .multilineTextAlignment(.leading)
           .lineLimit(3)
@@ -67,11 +67,11 @@ private extension OrderPhysicalCardView {
   var feesCell: some View {
     HStack {
       Text(LFLocalizable.OrderPhysicalCard.Fees.title)
-        .font(Fonts.Inter.regular.swiftUIFont(size: Constants.FontSize.medium.value))
+        .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.medium.value))
         .foregroundColor(Colors.label.swiftUIColor.opacity(0.75))
       Spacer()
       Text(viewModel.fees.formattedAmount(prefix: Constants.CurrencyUnit.usd.symbol))
-        .font(Fonts.Inter.bold.swiftUIFont(size: Constants.FontSize.medium.value))
+        .font(Fonts.bold.swiftUIFont(size: Constants.FontSize.medium.value))
         .foregroundColor(Colors.label.swiftUIColor)
     }
   }

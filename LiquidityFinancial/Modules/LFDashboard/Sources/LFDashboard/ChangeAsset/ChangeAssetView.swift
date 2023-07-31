@@ -12,7 +12,7 @@ struct ChangeAssetView: View {
     VStack(alignment: .leading, spacing: 20) {
       Text(LFLocalizable.ChangeAsset.Screen.message)
         .foregroundColor(Colors.label.swiftUIColor.opacity(0.75))
-        .font(Fonts.Inter.regular.swiftUIFont(size: Constants.FontSize.medium.value))
+        .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.medium.value))
       VStack(spacing: 10) {
         ForEach(assets, id: \.self) { asset in
           assetCell(asset: asset)
@@ -37,16 +37,16 @@ private extension ChangeAssetView {
         asset.image
         Text(asset.title)
           .foregroundColor(Colors.label.swiftUIColor)
-          .font(Fonts.Inter.regular.swiftUIFont(size: Constants.FontSize.medium.value))
+          .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.medium.value))
         Spacer()
         VStack(alignment: .trailing, spacing: 2) {
           Text(asset.getBalance(balance: balance).0)
             .foregroundColor(Colors.label.swiftUIColor)
-            .font(Fonts.Inter.black.swiftUIFont(size: Constants.FontSize.medium.value))
+            .font(Fonts.black.swiftUIFont(size: Constants.FontSize.medium.value))
           if let bottomBalance = asset.getBalance(balance: balance).1 {
             Text(bottomBalance)
               .foregroundColor(Colors.label.swiftUIColor)
-              .font(Fonts.Inter.regular.swiftUIFont(size: Constants.FontSize.ultraSmall.value))
+              .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.ultraSmall.value))
           }
         }
         .padding(.trailing, 8)

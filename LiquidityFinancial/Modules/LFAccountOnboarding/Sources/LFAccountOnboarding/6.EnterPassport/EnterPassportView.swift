@@ -16,7 +16,7 @@ struct EnterPassportView: View {
           
           Text(LFLocalizable.passportHeading)
             .foregroundColor(Colors.label.swiftUIColor)
-            .font(Fonts.Inter.regular.swiftUIFont(size: Constants.FontSize.main.value))
+            .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.main.value))
             .padding(.vertical, 12)
           
           passportTextfield
@@ -116,7 +116,7 @@ private extension EnterPassportView {
     HStack {
       image.foregroundColor(Colors.label.swiftUIColor)
       Text(description)
-        .font(Fonts.Inter.regular.swiftUIFont(size: Constants.FontSize.ultraSmall.value))
+        .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.ultraSmall.value))
         .foregroundColor(Colors.label.swiftUIColor.opacity(0.5))
     }
   }
@@ -127,11 +127,11 @@ private extension EnterPassportView {
     } label: {
       HStack {
         Text(viewModel.getPassportTypeTitle(type: item))
-          .font(Fonts.Inter.medium.swiftUIFont(size: 14))
+          .font(Fonts.medium.swiftUIFont(size: 14))
           .foregroundColor(Colors.label.swiftUIColor)
         Spacer()
         Image(systemName: "checkmark")
-          .font(Fonts.Inter.regular.swiftUIFont(size: 16))
+          .font(Fonts.regular.swiftUIFont(size: 16))
           .foregroundColor(viewModel.selectedPassport == item ? Colors.primary.swiftUIColor : .clear)
       }
     }
@@ -143,10 +143,10 @@ private extension EnterPassportView {
     } label: {
       HStack {
         Text(viewModel.getPassportTypeTitle(type: viewModel.selectedPassport))
-          .font(Fonts.Inter.medium.swiftUIFont(size: 14))
+          .font(Fonts.medium.swiftUIFont(size: 14))
         Spacer()
         Image(systemName: viewModel.showPassportTypes ? "chevron.up" : "chevron.down")
-          .font(Fonts.Inter.regular.swiftUIFont(size: 16))
+          .font(Fonts.regular.swiftUIFont(size: 16))
       }
       .foregroundColor(Colors.label.swiftUIColor)
       .frame(width: 190, height: 40)

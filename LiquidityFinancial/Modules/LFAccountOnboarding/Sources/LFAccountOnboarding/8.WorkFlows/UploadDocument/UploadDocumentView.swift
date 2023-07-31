@@ -63,10 +63,10 @@ private extension UploadDocumentView {
   var headerTitle: some View {
     VStack(spacing: 16) {
       Text(LFLocalizable.UploadDocument.Screen.title)
-        .font(Fonts.Inter.regular.swiftUIFont(size: Constants.FontSize.large.value))
+        .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.large.value))
         .foregroundColor(Colors.label.swiftUIColor)
       Text(LFLocalizable.UploadDocument.Screen.description(LFUtility.appName))
-        .font(Fonts.Inter.regular.swiftUIFont(size: Constants.FontSize.medium.value))
+        .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.medium.value))
         .multilineTextAlignment(.center)
         .foregroundColor(Colors.label.swiftUIColor.opacity(0.75))
     }
@@ -76,10 +76,10 @@ private extension UploadDocumentView {
     VStack(spacing: 32) {
       VStack(alignment: .leading, spacing: 12) {
         Text(LFLocalizable.UploadDocument.Upload.title)
-          .font(Fonts.Inter.regular.swiftUIFont(size: Constants.FontSize.main.value))
+          .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.main.value))
           .foregroundColor(Colors.label.swiftUIColor)
         Text(LFLocalizable.UploadDocument.Upload.description)
-          .font(Fonts.Inter.regular.swiftUIFont(size: Constants.FontSize.medium.value))
+          .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.medium.value))
           .foregroundColor(Colors.label.swiftUIColor.opacity(0.75))
       }
       uploadDocumentArea
@@ -91,10 +91,10 @@ private extension UploadDocumentView {
       GenImages.CommonImages.icDocument.swiftUIImage
         .foregroundColor(Colors.Buttons.highlightButton.swiftUIColor)
       Text("Front of the Document")
-        .font(Fonts.Inter.medium.swiftUIFont(size: Constants.FontSize.ultraSmall.value))
+        .font(Fonts.medium.swiftUIFont(size: Constants.FontSize.ultraSmall.value))
         .foregroundColor(Colors.label.swiftUIColor)
       Text(LFLocalizable.UploadDocument.MaxSize.description(Constants.Default.maxSize.rawValue))
-        .font(Fonts.Inter.regular.swiftUIFont(size: Constants.FontSize.ultraSmall.value))
+        .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.ultraSmall.value))
         .foregroundColor(Colors.label.swiftUIColor.opacity(0.75))
     }
     .tag(10)
@@ -105,10 +105,10 @@ private extension UploadDocumentView {
       GenImages.CommonImages.icDocument.swiftUIImage
         .foregroundColor(Colors.Buttons.highlightButton.swiftUIColor)
       Text("Back of the Document")
-        .font(Fonts.Inter.medium.swiftUIFont(size: Constants.FontSize.ultraSmall.value))
+        .font(Fonts.medium.swiftUIFont(size: Constants.FontSize.ultraSmall.value))
         .foregroundColor(Colors.label.swiftUIColor)
       Text(LFLocalizable.UploadDocument.MaxSize.description(Constants.Default.maxSize.rawValue))
-        .font(Fonts.Inter.regular.swiftUIFont(size: Constants.FontSize.ultraSmall.value))
+        .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.ultraSmall.value))
         .foregroundColor(Colors.label.swiftUIColor.opacity(0.75))
     }
     .tag(20)
@@ -187,10 +187,10 @@ private extension UploadDocumentView {
         .foregroundColor(Colors.label.swiftUIColor)
       VStack(alignment: .leading) {
         Text(document.fileName)
-          .font(Fonts.Inter.regular.swiftUIFont(size: Constants.FontSize.ultraSmall.value))
+          .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.ultraSmall.value))
           .foregroundColor(Colors.label.swiftUIColor)
         Text("\(document.fileType.title) -> \(document.documentDisplayType.title)")
-          .font(Fonts.Inter.regular.swiftUIFont(size: Constants.FontSize.ultraSmall.value))
+          .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.ultraSmall.value))
           .foregroundColor(Colors.label.swiftUIColor.opacity(0.75))
       }
       Spacer()
@@ -221,9 +221,9 @@ private extension UploadDocumentView {
     } label: {
       HStack(spacing: 4) {
         Text(viewModel.documentTypeSelected.title)
-          .font(Fonts.Inter.semiBold.swiftUIFont(size: Constants.FontSize.small.value))
+          .font(Fonts.semiBold.swiftUIFont(size: Constants.FontSize.small.value))
         Image(systemName: "chevron.right")
-          .font(Fonts.Inter.semiBold.swiftUIFont(size: Constants.FontSize.ultraSmall.value))
+          .font(Fonts.semiBold.swiftUIFont(size: Constants.FontSize.ultraSmall.value))
       }
       .padding(.horizontal, 12)
       .frame(height: 36)
@@ -235,7 +235,7 @@ private extension UploadDocumentView {
   var documentRequirementView: some View {
     VStack(alignment: .leading, spacing: 16) {
       Text(LFLocalizable.UploadDocument.Requirement.title)
-        .font(Fonts.Inter.regular.swiftUIFont(size: Constants.FontSize.main.value))
+        .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.main.value))
         .foregroundColor(Colors.label.swiftUIColor)
       VStack(alignment: .leading, spacing: 24) {
         ForEach(viewModel.documentRequirements) { requirement in
@@ -250,7 +250,7 @@ private extension UploadDocumentView {
   func documentRequirementSection(documentRequirement: DocumentRequirement) -> some View {
     VStack(alignment: .leading, spacing: 12) {
       Text(documentRequirement.title)
-        .font(Fonts.Inter.regular.swiftUIFont(size: Constants.FontSize.medium.value))
+        .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.medium.value))
         .foregroundColor(Colors.label.swiftUIColor.opacity(0.75))
       ForEach(documentRequirement.details, id: \.self) { item in
         HStack(spacing: 8) {
@@ -259,7 +259,7 @@ private extension UploadDocumentView {
           Text(item)
             .foregroundColor(Colors.label.swiftUIColor.opacity(0.75))
         }
-        .font(Fonts.Inter.regular.swiftUIFont(size: Constants.FontSize.ultraSmall.value))
+        .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.ultraSmall.value))
       }
     }
   }

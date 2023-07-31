@@ -77,11 +77,11 @@ class VGSShowUIView: UIView {
     label.translatesAutoresizingMaskIntoConstraints = false
     label.placeholder = Constants.Default.vgsCardNumber.rawValue
     label.secureTextSymbol = Constants.Default.dotSymbol.rawValue
-    label.font = Fonts.Inter.bold.font(size: 13)
+    label.font = Fonts.bold.font(size: 13)
     label.placeholderStyle.color = labelColor
     label.textColor = labelColor
     label.placeholderStyle.textAlignment = .left
-    label.placeholderStyle.font = Fonts.Inter.bold.font(size: 13)
+    label.placeholderStyle.font = Fonts.bold.font(size: 13)
     label.textAlignment = .left
     label.delegate = self
     label.contentPath = "cardNumber"
@@ -106,7 +106,7 @@ class VGSShowUIView: UIView {
   private lazy var cardExpirationDateVGSLabel: UILabel = {
     let label = UILabel()
     label.translatesAutoresizingMaskIntoConstraints = false
-    label.font = Fonts.Inter.bold.font(size: 13)
+    label.font = Fonts.bold.font(size: 13)
     label.text = Constants.Default.vgsExpirationDate.rawValue
     label.textColor = labelColor
     label.textAlignment = .center
@@ -119,9 +119,9 @@ class VGSShowUIView: UIView {
     label.translatesAutoresizingMaskIntoConstraints = false
     label.placeholder = Constants.Default.vgsCVV.rawValue
     label.secureTextSymbol = Constants.Default.dotSymbol.rawValue
-    label.font = Fonts.Inter.bold.font(size: 13)
+    label.font = Fonts.bold.font(size: 13)
     label.placeholderStyle.color = labelColor
-    label.placeholderStyle.font = Fonts.Inter.bold.font(size: 13)
+    label.placeholderStyle.font = Fonts.bold.font(size: 13)
     label.textColor = labelColor
     label.placeholderStyle.textAlignment = .right
     label.textAlignment = .right

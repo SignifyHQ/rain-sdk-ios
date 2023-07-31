@@ -85,7 +85,7 @@ struct PersonalInformationView: View {
   private var contentView: some View {
     VStack(alignment: .leading) {
       Text(LFLocalizable.AddPersonalInformation.title.uppercased())
-        .font(Fonts.Inter.regular.swiftUIFont(size: 18))
+        .font(Fonts.regular.swiftUIFont(size: 18))
         .foregroundColor(Colors.label.swiftUIColor)
         .padding(.vertical, 16)
         .onTapGesture {
@@ -93,7 +93,7 @@ struct PersonalInformationView: View {
         }
       
       Text(LFLocalizable.firstName)
-        .font(Fonts.Inter.regular.swiftUIFont(size: 12))
+        .font(Fonts.regular.swiftUIFont(size: 12))
         .foregroundColor(Colors.label.swiftUIColor)
         .opacity(0.75)
       textField(
@@ -110,7 +110,7 @@ struct PersonalInformationView: View {
       }
       
       Text(LFLocalizable.lastName)
-        .font(Fonts.Inter.regular.swiftUIFont(size: 12))
+        .font(Fonts.regular.swiftUIFont(size: 12))
         .foregroundColor(Colors.label.swiftUIColor)
         .opacity(0.75)
         .padding(.top, 24)
@@ -124,7 +124,7 @@ struct PersonalInformationView: View {
       )
       
       Text(LFLocalizable.email)
-        .font(Fonts.Inter.regular.swiftUIFont(size: 12))
+        .font(Fonts.regular.swiftUIFont(size: 12))
         .foregroundColor(Colors.label.swiftUIColor)
         .opacity(0.75)
         .padding(.top, 24)
@@ -138,7 +138,7 @@ struct PersonalInformationView: View {
       )
       
       Text(LFLocalizable.dob)
-        .font(Fonts.Inter.regular.swiftUIFont(size: 12))
+        .font(Fonts.regular.swiftUIFont(size: 12))
         .foregroundColor(Colors.label.swiftUIColor)
         .opacity(0.75)
         .padding(.top, 24)

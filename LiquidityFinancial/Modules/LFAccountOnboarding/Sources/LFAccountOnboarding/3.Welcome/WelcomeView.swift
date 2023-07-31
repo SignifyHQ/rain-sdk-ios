@@ -19,7 +19,7 @@ struct WelcomeView: View {
         VStack(spacing: 24) {
           HStack {
             Text(LFLocalizable.Welcome.howItWorks)
-              .font(Fonts.Inter.regular.swiftUIFont(size: 18))
+              .font(Fonts.regular.swiftUIFont(size: 18))
               .foregroundColor(Colors.label.swiftUIColor)
             Spacer()
           }
@@ -52,14 +52,14 @@ struct WelcomeView: View {
         .padding(.bottom, 10)
       
       Text(LFLocalizable.Welcome.Header.title)
-        .font(Fonts.Inter.regular.swiftUIFont(fixedSize: 24))
+        .font(Fonts.regular.swiftUIFont(fixedSize: 24))
         .foregroundColor(Colors.label.swiftUIColor)
         .fixedSize(horizontal: false, vertical: true)
         .multilineTextAlignment(.center)
         .padding(.horizontal, 30)
       
       Text(LFLocalizable.Welcome.Header.desc)
-        .font(Fonts.Inter.regular.swiftUIFont(fixedSize: 16))
+        .font(Fonts.regular.swiftUIFont(fixedSize: 16))
         .foregroundColor(Colors.label.swiftUIColor.opacity(0.75))
         .fixedSize(horizontal: false, vertical: true)
         .multilineTextAlignment(.center)
@@ -75,7 +75,7 @@ struct WelcomeView: View {
         .frame(width: 24, height: 24)
         .padding(.top, 4)
       Text(text)
-        .font(Fonts.Inter.regular.swiftUIFont(fixedSize: 17))
+        .font(Fonts.regular.swiftUIFont(fixedSize: 17))
         .foregroundColor(Colors.label.swiftUIColor.opacity(0.75))
         .fixedSize(horizontal: false, vertical: true)
       Spacer()

@@ -63,7 +63,7 @@ private struct ToolBarModifier: ViewModifier {
         ToolbarItem(placement: .principal) {
           Text(navigationTitle)
             .foregroundColor(Colors.label.swiftUIColor)
-            .font(Fonts.Inter.regular.swiftUIFont(size: Constants.FontSize.medium.value))
+            .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.medium.value))
         }
         ToolbarItem(placement: .navigationBarTrailing) {
           if icon == .intercom || icon == .both {

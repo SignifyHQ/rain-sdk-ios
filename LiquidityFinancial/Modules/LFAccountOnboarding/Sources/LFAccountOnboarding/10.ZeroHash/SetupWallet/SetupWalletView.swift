@@ -29,7 +29,7 @@ struct SetupWalletView: View {
           VStack {
             Text(LFLocalizable.SetUpWallet.title)
               .foregroundColor(Colors.label.swiftUIColor)
-              .font(Fonts.Inter.regular.swiftUIFont(size: Constants.FontSize.main.value))
+              .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.main.value))
               .padding(.horizontal, 35)
               .frame(width: geo.size.width, alignment: .leading)
               .padding(.bottom, 20)
@@ -38,7 +38,7 @@ struct SetupWalletView: View {
             Text(LFLocalizable.SetUpWallet.info)
               .foregroundColor(Colors.label.swiftUIColor)
               .opacity(0.75)
-              .font(Fonts.Inter.regular.swiftUIFont(size: Constants.FontSize.medium.value))
+              .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.medium.value))
               .padding(.horizontal, 35)
               .frame(width: geo.size.width, alignment: .leading)
               .padding(.bottom, 25)
@@ -152,7 +152,7 @@ extension SetupWalletView {
       }
 
       Text(LFLocalizable.zeroHashTransactiondetail)
-        .font(Fonts.Inter.regular.swiftUIFont(size: 10))
+        .font(Fonts.regular.swiftUIFont(size: 10))
         .foregroundColor(Colors.label.swiftUIColor.opacity(0.50))
         .padding(.horizontal, 10)
         .padding(.top, 10)

@@ -12,7 +12,7 @@ public struct AnnotationView: View {
 
   public var body: some View {
     Text(description)
-      .font(Fonts.Inter.regular.swiftUIFont(size: Constants.FontSize.small.value))
+      .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.small.value))
       .foregroundColor(Colors.label.swiftUIColor.opacity(0.8))
       .lineSpacing(6)
       .multilineTextAlignment(.leading)

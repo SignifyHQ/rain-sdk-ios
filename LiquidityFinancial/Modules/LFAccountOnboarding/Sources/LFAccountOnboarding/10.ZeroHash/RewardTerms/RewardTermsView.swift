@@ -14,7 +14,7 @@ struct RewardTermsView: View {
           Spacer(minLength: 8)
           Text(LFLocalizable.RewardTerms.enrollTitle)
             .foregroundColor(Colors.label.swiftUIColor)
-            .font(Fonts.Inter.regular.swiftUIFont(size: Constants.FontSize.main.value))
+            .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.main.value))
           
           rewardDetails
           
@@ -45,10 +45,10 @@ struct RewardTermsView: View {
       Text(title)
         .foregroundColor(Colors.label.swiftUIColor)
         .opacity(0.75)
-        .font(Fonts.Inter.regular.swiftUIFont(size: Constants.FontSize.regular.value))
+        .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.regular.value))
       Text(subtitle)
         .foregroundColor(Colors.label.swiftUIColor)
-        .font(Fonts.Inter.regular.swiftUIFont(size: Constants.FontSize.regular.value))
+        .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.regular.value))
     }
   }
 }
@@ -89,10 +89,10 @@ extension RewardTermsView {
     VStack(alignment: .leading, spacing: 8) {
       Text(LFLocalizable.RewardTerms.disclosuresTitle)
         .foregroundColor(Colors.label.swiftUIColor.opacity(0.75))
-        .font(Fonts.Inter.regular.swiftUIFont(size: Constants.FontSize.ultraSmall.value))
+        .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.ultraSmall.value))
       Text(viewModel.disclaimerText)
         .foregroundColor(Colors.label.swiftUIColor.opacity(0.75))
-        .font(Fonts.Inter.regular.swiftUIFont(size: Constants.FontSize.ultraSmall.value))
+        .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.ultraSmall.value))
     }
   }
 }

@@ -13,7 +13,7 @@ public struct PlaceholderStyle: ViewModifier {
     ZStack(alignment: .leading) {
       if showPlaceHolder {
         Text(placeholder)
-          .font(Fonts.Inter.regular.swiftUIFont(size: 16))
+          .font(Fonts.regular.swiftUIFont(size: 16))
           .foregroundColor(Colors.label.swiftUIColor)
           .opacity(0.25)
       }

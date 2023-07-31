@@ -38,7 +38,7 @@ public struct DateTextField: UIViewRepresentable {
     textField.placeholder = placeholder
     textField.inputView = datePicker
     textField.textColor = UIColor(Colors.label.swiftUIColor)
-    textField.font = UIFont(name: Fonts.Inter.regular.name, size: 16)
+    textField.font = UIFont(name: Fonts.regular.name, size: 16)
     textField.attributedPlaceholder = NSAttributedString(
       string: placeholder,
       attributes: [

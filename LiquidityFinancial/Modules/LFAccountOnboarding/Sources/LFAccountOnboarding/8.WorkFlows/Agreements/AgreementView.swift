@@ -66,12 +66,12 @@ private extension AgreementView {
     VStack(alignment: .leading, spacing: 12) {
       Text(LFLocalizable.Question.Screen.title.uppercased())
         .foregroundColor(Colors.label.swiftUIColor)
-        .font(Fonts.Inter.regular.swiftUIFont(size: Constants.FontSize.main.value))
+        .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.main.value))
       Text(
         LFLocalizable.Question.Screen.description(LFUtility.appName)
       )
       .foregroundColor(Colors.label.swiftUIColor.opacity(0.75))
-      .font(Fonts.Inter.regular.swiftUIFont(size: Constants.FontSize.medium.value))
+      .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.medium.value))
     }
   }
   

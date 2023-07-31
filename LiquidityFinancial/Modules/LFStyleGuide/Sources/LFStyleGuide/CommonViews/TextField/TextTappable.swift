@@ -76,7 +76,7 @@ public struct TextTappable: UIViewRepresentable {
     titleParagraphStyle.alignment = textAlignment
     
     let regularAttributes: [NSAttributedString.Key: Any] = [
-      .font: Fonts.Inter.regular.font(size: fontSize),
+      .font: Fonts.regular.font(size: fontSize),
       .foregroundColor: Colors.label.color,
       .paragraphStyle: titleParagraphStyle
     ]
@@ -86,7 +86,7 @@ public struct TextTappable: UIViewRepresentable {
   private static func buildLinkTextAttributes(fontSize: CGFloat, style: AttributeStyle) -> [NSAttributedString.Key: Any] {
     [
       .underlineStyle: style == .fillColor ? 0 : 1,
-      .font: style == .fillColor ? Fonts.Inter.bold.font(size: fontSize) : Fonts.Inter.regular.font(size: fontSize),
+      .font: style == .fillColor ? Fonts.bold.font(size: fontSize) : Fonts.regular.font(size: fontSize),
       .foregroundColor: style == .fillColor ? Colors.primary.color : Colors.label.color
     ]
   }

@@ -13,20 +13,20 @@ struct TransferStatusView: View {
       HStack {
         VStack(spacing: 2) {
           Text(startedText)
-            .font(Fonts.Inter.regular.swiftUIFont(size: Constants.FontSize.medium.value))
+            .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.medium.value))
             .foregroundColor(Colors.label.swiftUIColor)
           Text(data.startedDate ?? "-")
-            .font(Fonts.Inter.regular.swiftUIFont(size: Constants.FontSize.ultraSmall.value))
+            .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.ultraSmall.value))
             .foregroundColor(Colors.label.swiftUIColor.opacity(0.6))
         }
         .frame(maxWidth: .infinity)
 
         VStack(spacing: 2) {
           Text(completedText)
-            .font(Fonts.Inter.regular.swiftUIFont(size: Constants.FontSize.medium.value))
+            .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.medium.value))
             .foregroundColor(Colors.label.swiftUIColor.opacity(data.isPending ? 0.25 : 1.0))
           Text(data.completedDate ?? "-")
-            .font(Fonts.Inter.regular.swiftUIFont(size: Constants.FontSize.ultraSmall.value))
+            .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.ultraSmall.value))
             .foregroundColor(Colors.label.swiftUIColor.opacity(data.isPending ? 0.25 : 0.6))
         }
         .frame(maxWidth: .infinity)

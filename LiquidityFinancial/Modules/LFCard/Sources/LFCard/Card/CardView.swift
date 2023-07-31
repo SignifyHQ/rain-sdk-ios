@@ -22,7 +22,7 @@ struct CardView: View {
         GenImages.Images.emptyCard.swiftUIImage
           .resizable()
         Text(viewModel.cardModel.cardType.title)
-          .font(Fonts.Inter.semiBold.swiftUIFont(size: Constants.FontSize.small.value))
+          .font(Fonts.semiBold.swiftUIFont(size: Constants.FontSize.small.value))
           .foregroundColor(Colors.label.swiftUIColor)
           .padding(.top, 15)
           .padding(.leading, 10)
@@ -68,7 +68,7 @@ private extension CardView {
     HStack {
       HStack(spacing: 8) {
         Text(LFLocalizable.Card.CardNumber.title)
-          .font(Fonts.Inter.regular.swiftUIFont(size: Constants.FontSize.ultraSmall.value))
+          .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.ultraSmall.value))
         GenImages.CommonImages.icCopy.swiftUIImage
           .foregroundColor(Colors.label.swiftUIColor)
           .onTapGesture {
@@ -82,7 +82,7 @@ private extension CardView {
         Text(LFLocalizable.Card.Cvv.title)
       }
       .padding(.trailing, 10)
-      .font(Fonts.Inter.regular.swiftUIFont(size: Constants.FontSize.ultraSmall.value))
+      .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.ultraSmall.value))
     }
     .foregroundColor(Colors.label.swiftUIColor.opacity(0.75))
     .padding(.top, -58)
@@ -92,7 +92,7 @@ private extension CardView {
   @ViewBuilder var cardCopyMessageView: some View {
     if viewModel.isShowCardCopyMessage {
       Text(LFLocalizable.Card.CopyToClipboard.title)
-        .font(Fonts.Inter.regular.swiftUIFont(size: Constants.FontSize.ultraSmall.value))
+        .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.ultraSmall.value))
         .foregroundColor(Colors.label.swiftUIColor)
         .frame(maxWidth: .infinity)
         .frame(height: 20, alignment: .center)

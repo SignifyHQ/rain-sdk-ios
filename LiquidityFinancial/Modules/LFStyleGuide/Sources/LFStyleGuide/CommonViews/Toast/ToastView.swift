@@ -13,7 +13,7 @@ public struct ToastView: View {
     VStack {
       Text(toastMessage)
         .lineLimit(4)
-        .font(Fonts.Inter.regular.swiftUIFont(size: Constants.FontSize.small.value))
+        .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.small.value))
         .foregroundColor(Colors.label.swiftUIColor)
         .padding(16)
         .multilineTextAlignment(.center)

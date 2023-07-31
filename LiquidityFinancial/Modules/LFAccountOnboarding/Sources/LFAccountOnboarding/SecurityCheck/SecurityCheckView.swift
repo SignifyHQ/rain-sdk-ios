@@ -14,7 +14,7 @@ struct SecurityCheckView: View {
     VStack(alignment: .leading, spacing: 20) {
       Text(LFLocalizable.SecurityCheck.Last4SSN.screenTitle)
         .foregroundColor(Colors.label.swiftUIColor)
-        .font(Fonts.Inter.regular.swiftUIFont(size: Constants.FontSize.main.value))
+        .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.main.value))
         .padding(.vertical, 12)
       ssnTextField
       informationView
@@ -48,7 +48,7 @@ private extension SecurityCheckView {
   var ssnTextField: some View {
     VStack(alignment: .leading, spacing: 12) {
       Text(LFLocalizable.SecurityCheck.Last4SSN.textFieldTitle)
-        .font(Fonts.Inter.regular.swiftUIFont(size: Constants.FontSize.textFieldHeader.value))
+        .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.textFieldHeader.value))
         .foregroundColor(Colors.label.swiftUIColor.opacity(0.75))
       TextFieldWrapper(errorValue: $viewModel.errorMessage) {
         SecureField("", text: $viewModel.ssn)
@@ -77,7 +77,7 @@ private extension SecurityCheckView {
       imageAsset.swiftUIImage
         .foregroundColor(Colors.label.swiftUIColor)
       Text(description)
-        .font(Fonts.Inter.regular.swiftUIFont(size: Constants.FontSize.ultraSmall.value))
+        .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.ultraSmall.value))
         .foregroundColor(Colors.label.swiftUIColor.opacity(0.5))
     }
   }

@@ -52,11 +52,11 @@ private extension ArrowButton {
       }
       VStack(alignment: .leading, spacing: 2) {
         Text(title)
-          .font(Fonts.Inter.regular.swiftUIFont(size: Constants.FontSize.ultraSmall.value))
+          .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.ultraSmall.value))
           .foregroundColor(Colors.label.swiftUIColor)
         if let value {
           Text(value)
-            .font(Fonts.Inter.regular.swiftUIFont(size: 10))
+            .font(Fonts.regular.swiftUIFont(size: 10))
             .foregroundColor(Colors.label.swiftUIColor.opacity(0.75))
             .lineLimit(1)
         }

@@ -68,12 +68,12 @@ struct QuestionsView: View {
   private var headerView: some View {
     Group {
       Text(LFLocalizable.Kyc.Question.title.uppercased())
-        .font(Fonts.Inter.regular.swiftUIFont(size: 20))
+        .font(Fonts.regular.swiftUIFont(size: 20))
         .foregroundColor(.white)
         .padding(.horizontal, 20)
         .padding(.vertical, 0)
       Text(LFLocalizable.Kyc.Question.desc)
-        .font(Fonts.Inter.regular.swiftUIFont(size: 16))
+        .font(Fonts.regular.swiftUIFont(size: 16))
         .foregroundColor(.white)
         .padding(.top, 2)
         .padding(.horizontal, 20)
@@ -101,7 +101,7 @@ private struct AnswerQuestionView: View {
     Group {
       HStack {
         Text(answerOption.question)
-          .font(Fonts.Inter.regular.swiftUIFont(size: 16))
+          .font(Fonts.regular.swiftUIFont(size: 16))
           .foregroundColor(.white)
           .padding(.horizontal, 20)
           .padding(.vertical, 12)
@@ -134,7 +134,7 @@ private struct AnswerButton: View {
         
         HStack {
           Text(answer.text)
-            .font(Fonts.Inter.regular.swiftUIFont(size: 16))
+            .font(Fonts.regular.swiftUIFont(size: 16))
             .foregroundColor(.white)
             .padding(.leading, 20)
           

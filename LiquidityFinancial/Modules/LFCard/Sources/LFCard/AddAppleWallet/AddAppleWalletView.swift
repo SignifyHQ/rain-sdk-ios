@@ -44,10 +44,10 @@ private extension AddAppleWalletView {
   var information: some View {
     VStack(spacing: 22) {
       Text(LFLocalizable.AddToWallet.ApplePay.title)
-        .font(Fonts.Inter.regular.swiftUIFont(size: Constants.FontSize.large.value))
+        .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.large.value))
         .foregroundColor(Colors.label.swiftUIColor)
       Text(LFLocalizable.AddToWallet.ApplePay.description(LFUtility.appName, LFUtility.appName))
-        .font(Fonts.Inter.regular.swiftUIFont(size: Constants.FontSize.medium.value))
+        .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.medium.value))
         .foregroundColor(Colors.label.swiftUIColor.opacity(0.75))
         .multilineTextAlignment(.center)
         .lineSpacing(4)

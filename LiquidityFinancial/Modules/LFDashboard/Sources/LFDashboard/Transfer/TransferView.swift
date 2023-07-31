@@ -25,24 +25,24 @@ struct TransferView: View {
   private var content: some View {
     VStack(spacing: 0) {
       Text(viewModel.title)
-        .font(Fonts.Inter.regular.swiftUIFont(size: Constants.FontSize.main.value))
+        .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.main.value))
         .foregroundColor(Colors.label.swiftUIColor)
         .padding(.top, 44)
 
       Text(viewModel.transfer.transactionDateInLocalZone)
-        .font(Fonts.Inter.regular.swiftUIFont(size: Constants.FontSize.ultraSmall.value))
+        .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.ultraSmall.value))
         .foregroundColor(Colors.label.swiftUIColor.opacity(0.60))
         .padding(.top, 16)
         .frame(maxWidth: .infinity, alignment: .center)
 
       Text(viewModel.amount)
-        .font(Fonts.Inter.bold.swiftUIFont(size: 50))
+        .font(Fonts.bold.swiftUIFont(size: 50))
         .foregroundColor(viewModel.amountColor)
         .padding(.top, 24)
         .frame(maxWidth: .infinity, alignment: .center)
 
       Text(viewModel.subtitle)
-        .font(Fonts.Inter.regular.swiftUIFont(size: Constants.FontSize.ultraSmall.value))
+        .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.ultraSmall.value))
         .foregroundColor(Colors.label.swiftUIColor.opacity(0.60))
         .padding(.top, 8)
         .frame(maxWidth: .infinity, alignment: .center)
@@ -65,7 +65,7 @@ struct TransferView: View {
           viewModel.isPending ? TransactionStatus.pending.localizedDescription() :
             TransactionStatus.completed.localizedDescription()
         )
-        .font(Fonts.Inter.medium.swiftUIFont(size: 14))
+        .font(Fonts.medium.swiftUIFont(size: 14))
         .foregroundColor(Colors.label.swiftUIColor)
       }
       .padding(.bottom, 16)

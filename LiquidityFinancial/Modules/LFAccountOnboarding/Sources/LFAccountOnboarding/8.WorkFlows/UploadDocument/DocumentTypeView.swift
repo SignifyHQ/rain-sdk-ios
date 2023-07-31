@@ -19,7 +19,7 @@ struct DocumentTypeView: View {
           .frame(width: 32, height: 4)
           .padding(.top, 6)
         Text(LFLocalizable.DocumentType.BottomSheet.title)
-          .font(Fonts.Inter.regular.swiftUIFont(size: Constants.FontSize.main.value))
+          .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.main.value))
           .foregroundColor(Colors.label.swiftUIColor)
         documentTypeList
         FullSizeButton(title: LFLocalizable.DocumentType.Button.title, isDisable: false) {
@@ -42,7 +42,7 @@ private extension DocumentTypeView {
         } label: {
           HStack {
             Text(type.title)
-              .font(Fonts.Inter.regular.swiftUIFont(size: Constants.FontSize.small.value))
+              .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.small.value))
               .foregroundColor(Colors.label.swiftUIColor)
             Spacer()
             CircleSelected(isSelected: selectedType == type)

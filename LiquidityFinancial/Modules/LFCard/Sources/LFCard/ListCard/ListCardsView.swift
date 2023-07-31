@@ -121,7 +121,7 @@ private extension ListCardsView {
   var rows: some View {
     VStack(alignment: .leading, spacing: 18) {
       Text(LFLocalizable.ListCard.Security.title)
-        .font(Fonts.Inter.regular.swiftUIFont(size: Constants.FontSize.ultraSmall.value))
+        .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.ultraSmall.value))
         .foregroundColor(Colors.label.swiftUIColor.opacity(0.75))
       VStack(spacing: 16) {
         row(
@@ -157,11 +157,11 @@ private extension ListCardsView {
     HStack {
       VStack(alignment: .leading, spacing: 2) {
         Text(title)
-          .font(Fonts.Inter.regular.swiftUIFont(size: Constants.FontSize.medium.value))
+          .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.medium.value))
           .foregroundColor(Colors.label.swiftUIColor)
         if let subtitle {
           Text(subtitle)
-            .font(Fonts.Inter.regular.swiftUIFont(size: Constants.FontSize.ultraSmall.value))
+            .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.ultraSmall.value))
             .foregroundColor(Colors.label.swiftUIColor.opacity(0.75))
         }
       }
@@ -180,7 +180,7 @@ private extension ListCardsView {
     Button(action: onTap) {
       HStack {
         Text(title)
-          .font(Fonts.Inter.regular.swiftUIFont(size: Constants.FontSize.medium.value))
+          .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.medium.value))
           .foregroundColor(Colors.label.swiftUIColor)
         Spacer()
         GenImages.CommonImages.icRightArrow.swiftUIImage

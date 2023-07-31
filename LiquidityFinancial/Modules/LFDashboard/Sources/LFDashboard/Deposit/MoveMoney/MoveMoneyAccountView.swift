@@ -73,12 +73,12 @@ private extension MoveMoneyAccountView {
       Spacer()
       VStack(spacing: 10) {
         Text(title)
-          .font(Fonts.Inter.regular.swiftUIFont(size: Constants.FontSize.main.value))
+          .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.main.value))
           .foregroundColor(Colors.label.swiftUIColor)
         if viewModel.kind == .send {
           HStack(spacing: 4) {
             Text(viewModel.subtitle)
-              .font(Fonts.Inter.regular.swiftUIFont(size: Constants.FontSize.ultraSmall.value))
+              .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.ultraSmall.value))
               .foregroundColor(Colors.label.swiftUIColor.opacity(0.5))
             GenImages.CommonImages.info.swiftUIImage
               .foregroundColor(Colors.label.swiftUIColor)
@@ -104,12 +104,12 @@ private extension MoveMoneyAccountView {
         Text(
           selectedCard
         )
-        .font(Fonts.Inter.medium.swiftUIFont(size: Constants.FontSize.small.value))
+        .font(Fonts.medium.swiftUIFont(size: Constants.FontSize.small.value))
         .foregroundColor(Colors.label.swiftUIColor)
         Spacer()
         Image(systemName: showListView ? "chevron.up" : "chevron.down")
           .foregroundColor(Colors.label.swiftUIColor)
-          .font(Fonts.Inter.medium.swiftUIFont(size: Constants.FontSize.medium.value))
+          .font(Fonts.medium.swiftUIFont(size: Constants.FontSize.medium.value))
       }
       .frame(width: screenSize.width * 0.46, height: 40)
     }
@@ -138,11 +138,11 @@ private extension MoveMoneyAccountView {
         ForEach(contactCards, id: \.self) { item in
           HStack {
             Text(item)
-              .font(Fonts.Inter.medium.swiftUIFont(size: Constants.FontSize.small.value))
+              .font(Fonts.medium.swiftUIFont(size: Constants.FontSize.small.value))
               .foregroundColor(Colors.label.swiftUIColor)
             Spacer()
             Image(systemName: "checkmark")
-              .font(Fonts.Inter.medium.swiftUIFont(size: Constants.FontSize.medium.value))
+              .font(Fonts.medium.swiftUIFont(size: Constants.FontSize.medium.value))
               .foregroundColor(
                 selectedCard == item ?
                 Colors.primary.swiftUIColor : .clear
@@ -168,13 +168,13 @@ private extension MoveMoneyAccountView {
           .frame(width: 19, height: 38)
           .offset(y: 6)
         Text(viewModel.amountInput)
-          .font(Fonts.Inter.bold.swiftUIFont(size: 50))
+          .font(Fonts.bold.swiftUIFont(size: 50))
           .frame(height: 60)
       }
       .foregroundColor(Colors.label.swiftUIColor)
       .shakeAnimation(with: viewModel.numberOfShakes)
       Text(viewModel.inlineError ?? String.empty)
-        .font(Fonts.Inter.regular.swiftUIFont(size: Constants.FontSize.small.value))
+        .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.small.value))
         .foregroundColor(Colors.error.swiftUIColor)
         .multilineTextAlignment(.center)
         .fixedSize(horizontal: false, vertical: true)
@@ -216,7 +216,7 @@ private extension MoveMoneyAccountView {
     } label: {
       Text(LFLocalizable.MoveMoney.addAccount)
         .frame(height: 40)
-        .font(Fonts.Inter.medium.swiftUIFont(size: Constants.FontSize.small.value))
+        .font(Fonts.medium.swiftUIFont(size: Constants.FontSize.small.value))
         .foregroundColor(Colors.label.swiftUIColor)
     }
     .frame(maxWidth: .infinity)

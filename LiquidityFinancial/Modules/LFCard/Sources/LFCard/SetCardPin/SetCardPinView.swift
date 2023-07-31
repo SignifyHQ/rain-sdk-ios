@@ -41,12 +41,12 @@ private extension SetCardPinView {
     VStack(alignment: .leading, spacing: 50) {
       Text(LFLocalizable.SetCardPin.Screen.title)
         .foregroundColor(Colors.label.swiftUIColor)
-        .font(Fonts.Inter.regular.swiftUIFont(size: Constants.FontSize.main.value))
+        .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.main.value))
         .padding(.top, 16)
       VStack(spacing: 20) {
         pinView
         Text(LFLocalizable.SetCardPin.Screen.description)
-          .font(Fonts.Inter.regular.swiftUIFont(size: Constants.FontSize.textFieldHeader.value))
+          .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.textFieldHeader.value))
           .foregroundColor(Colors.label.swiftUIColor.opacity(0.5))
           .padding(.horizontal, 20)
           .lineSpacing(1.7)

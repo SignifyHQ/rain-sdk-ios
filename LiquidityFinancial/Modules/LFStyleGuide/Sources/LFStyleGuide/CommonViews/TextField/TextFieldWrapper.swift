@@ -25,7 +25,7 @@ public struct TextFieldWrapper<Content: View>: View {
         .frame(height: 1, alignment: .center)
       if let errorValue {
         Text(errorValue)
-          .font(Fonts.Inter.regular.swiftUIFont(size: Constants.FontSize.ultraSmall.value))
+          .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.ultraSmall.value))
           .foregroundColor(Colors.error.swiftUIColor)
           .frame(maxWidth: .infinity, alignment: .leading)
       }

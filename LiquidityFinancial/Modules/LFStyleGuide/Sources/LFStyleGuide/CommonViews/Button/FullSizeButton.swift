@@ -59,7 +59,7 @@ private extension FullSizeButton {
   var buttonView: some View {
     Button(action: action) {
       Text(title)
-        .font(Fonts.Inter.bold.swiftUIFont(fixedSize: fontSize))
+        .font(Fonts.bold.swiftUIFont(fixedSize: fontSize))
         .foregroundColor(textColor ?? buttonTextColor)
         .padding(.horizontal, 16)
         .frame(maxWidth: .infinity)

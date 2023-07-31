@@ -54,7 +54,7 @@ private extension AddBankWithDebitView {
   var title: some View {
     Text(LFLocalizable.AddBankWithDebit.title)
       .foregroundColor(Colors.label.swiftUIColor)
-      .font(Fonts.Inter.regular.swiftUIFont(size: Constants.FontSize.main.value))
+      .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.main.value))
       .padding(.vertical, 15)
   }
   
@@ -120,7 +120,7 @@ private extension AddBankWithDebitView {
   @ViewBuilder
   private func header(text: String) -> some View {
     Text(text)
-      .font(Fonts.Inter.regular.swiftUIFont(size: Constants.FontSize.textFieldHeader.value))
+      .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.textFieldHeader.value))
       .foregroundColor(Colors.label.swiftUIColor)
       .opacity(0.75)
   }

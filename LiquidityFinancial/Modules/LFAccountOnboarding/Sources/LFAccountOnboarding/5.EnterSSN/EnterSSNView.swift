@@ -16,7 +16,7 @@ struct EnterSSNView: View {
       VStack(alignment: .leading) {
         Text(LFLocalizable.EnterSsn.title)
           .foregroundColor(Colors.label.swiftUIColor)
-          .font(Fonts.Inter.regular.swiftUIFont(size: 18))
+          .font(Fonts.regular.swiftUIFont(size: 18))
           .padding(.vertical, 12)
           .onTapGesture {
             viewModel.magicFillAccount()
@@ -84,7 +84,7 @@ struct EnterSSNView: View {
           .frame(width: 24, height: 24)
           .foregroundColor(Colors.label.swiftUIColor)
         Text(LFLocalizable.EnterSsn.bulletOne)
-          .font(Fonts.Inter.regular.swiftUIFont(size: Constants.FontSize.ultraSmall.value))
+          .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.ultraSmall.value))
           .foregroundColor(Colors.label.swiftUIColor)
           .opacity(0.75)
       }
@@ -93,7 +93,7 @@ struct EnterSSNView: View {
           .frame(width: 24, height: 24)
           .foregroundColor(Colors.label.swiftUIColor)
         Text(LFLocalizable.EnterSsn.bulletTwo)
-          .font(Fonts.Inter.regular.swiftUIFont(size: Constants.FontSize.ultraSmall.value))
+          .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.ultraSmall.value))
           .foregroundColor(Colors.label.swiftUIColor)
           .opacity(0.75)
       }
@@ -111,7 +111,7 @@ struct EnterSSNView: View {
           Text(LFLocalizable.EnterSsn.why)
           GenImages.CommonImages.info.swiftUIImage
         }
-        .font(Fonts.Inter.regular.swiftUIFont(size: 12))
+        .font(Fonts.regular.swiftUIFont(size: 12))
         .foregroundColor(Colors.label.swiftUIColor.opacity(0.75))
       }
 

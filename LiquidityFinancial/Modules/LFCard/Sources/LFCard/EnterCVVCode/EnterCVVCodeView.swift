@@ -38,9 +38,9 @@ private extension EnterCVVCodeView {
       VStack(alignment: .leading, spacing: 12) {
         Text(LFLocalizable.ActivatePhysicalCard.Screen.title)
           .foregroundColor(Colors.label.swiftUIColor)
-          .font(Fonts.Inter.regular.swiftUIFont(size: Constants.FontSize.main.value))
+          .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.main.value))
         Text(LFLocalizable.ActivatePhysicalCard.Screen.description)
-          .font(Fonts.Inter.regular.swiftUIFont(size: Constants.FontSize.medium.value))
+          .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.medium.value))
           .foregroundColor(Colors.label.swiftUIColor.opacity(0.75))
       }
       .padding(.top, 16)

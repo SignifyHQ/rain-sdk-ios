@@ -62,14 +62,14 @@ private extension CashView {
       viewModel.selectedAsset.image
       Text(viewModel.selectedAsset.title)
         .foregroundColor(Colors.label.swiftUIColor)
-        .font(Fonts.Inter.regular.swiftUIFont(size: Constants.FontSize.medium.value))
+        .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.medium.value))
       Spacer()
       Button {
         viewModel.onClickedChangeAssetButton()
       } label: {
         Text(LFLocalizable.CashTab.ChangeAsset.buttonTitle)
           .foregroundColor(Colors.label.swiftUIColor)
-          .font(Fonts.Inter.bold.swiftUIFont(size: Constants.FontSize.ultraSmall.value))
+          .font(Fonts.bold.swiftUIFont(size: Constants.FontSize.ultraSmall.value))
           .frame(width: 100, height: 40)
           .background(Colors.buttons.swiftUIColor.cornerRadius(8))
       }
@@ -130,7 +130,7 @@ private extension CashView {
       HStack(spacing: 8) {
         Text(LFLocalizable.CashTab.SeeAll.title)
           .foregroundColor(Colors.label.swiftUIColor)
-          .font(Fonts.Inter.regular.swiftUIFont(size: Constants.FontSize.ultraSmall.value))
+          .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.ultraSmall.value))
         GenImages.CommonImages.icRightArrow.swiftUIImage
       }
       .foregroundColor(Colors.label.swiftUIColor)
@@ -142,7 +142,7 @@ private extension CashView {
       HStack(spacing: 8) {
         Image(image)
         Text(title)
-          .font(Fonts.Inter.bold.swiftUIFont(size: Constants.FontSize.ultraSmall.value))
+          .font(Fonts.bold.swiftUIFont(size: Constants.FontSize.ultraSmall.value))
       }
       .foregroundColor(Colors.label.swiftUIColor)
       .padding(.vertical, 12)
@@ -159,7 +159,7 @@ private extension CashView {
         Spacer()
         seeAllTransactions
       }
-      .font(Fonts.Inter.regular.swiftUIFont(size: Constants.FontSize.ultraSmall.value))
+      .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.ultraSmall.value))
       .foregroundColor(Colors.label.swiftUIColor.opacity(0.75))
       if viewModel.transactions.isEmpty {
         noTransactionsYetView(height: size.height)
@@ -182,7 +182,7 @@ private extension CashView {
         GenImages.CommonImages.icSearch.swiftUIImage
           .foregroundColor(Colors.label.swiftUIColor)
         Text(LFLocalizable.CashTab.NoTransactionYet.title)
-          .font(Fonts.Inter.regular.swiftUIFont(size: Constants.FontSize.ultraSmall.value))
+          .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.ultraSmall.value))
           .foregroundColor(Colors.label.swiftUIColor.opacity(0.75))
       }
       Spacer()

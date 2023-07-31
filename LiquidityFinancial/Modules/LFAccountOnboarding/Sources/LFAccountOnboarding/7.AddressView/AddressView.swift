@@ -107,7 +107,7 @@ private extension AddressView {
           .foregroundColor(Colors.label.swiftUIColor)
           .opacity(0.75)
           .font(
-            Fonts.Inter.regular.swiftUIFont(
+            Fonts.regular.swiftUIFont(
               size: Constants.FontSize.small.value
             )
           )
@@ -140,14 +140,14 @@ private extension AddressView {
       LFLocalizable.addressTitle(LFUtility.appName.uppercased())
     )
     .foregroundColor(Colors.label.swiftUIColor)
-    .font(Fonts.Inter.regular.swiftUIFont(size: Constants.FontSize.main.value))
+    .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.main.value))
     .padding(.vertical, 16)
   }
   
   var addressLine1: some View {
     VStack(alignment: .leading) {
       Text(LFLocalizable.addressLine1Title)
-        .font(Fonts.Inter.regular.swiftUIFont(size: Constants.FontSize.textFieldHeader.value))
+        .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.textFieldHeader.value))
         .foregroundColor(Colors.label.swiftUIColor)
         .opacity(0.75)
         .padding(.leading, 4)
@@ -169,7 +169,7 @@ private extension AddressView {
   var addressLine2: some View {
     VStack(alignment: .leading) {
       Text(LFLocalizable.addressLine2Title)
-        .font(Fonts.Inter.regular.swiftUIFont(size: Constants.FontSize.textFieldHeader.value))
+        .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.textFieldHeader.value))
         .foregroundColor(Colors.label.swiftUIColor)
         .opacity(0.75)
         .padding(.top, 16)
@@ -187,7 +187,7 @@ private extension AddressView {
   var city: some View {
     VStack(alignment: .leading) {
       Text(LFLocalizable.city)
-        .font(Fonts.Inter.regular.swiftUIFont(size: Constants.FontSize.textFieldHeader.value))
+        .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.textFieldHeader.value))
         .foregroundColor(Colors.label.swiftUIColor)
         .opacity(0.75)
         .padding(.top, 16)
@@ -205,7 +205,7 @@ private extension AddressView {
   var state: some View {
     VStack(alignment: .leading) {
       Text(LFLocalizable.state)
-        .font(Fonts.Inter.regular.swiftUIFont(size: Constants.FontSize.textFieldHeader.value))
+        .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.textFieldHeader.value))
         .foregroundColor(Colors.label.swiftUIColor)
         .opacity(0.75)
         .multilineTextAlignment(.leading)
@@ -225,7 +225,7 @@ private extension AddressView {
   var zipCode: some View {
     VStack(alignment: .leading) {
       Text(LFLocalizable.zipcode)
-        .font(Fonts.Inter.regular.swiftUIFont(size: Constants.FontSize.textFieldHeader.value))
+        .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.textFieldHeader.value))
         .foregroundColor(Colors.label.swiftUIColor)
         .opacity(0.75)
         .multilineTextAlignment(.leading)

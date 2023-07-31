@@ -14,7 +14,7 @@ public struct DatePickerTextField: View {
   public var body: some View {
     TextFieldWrapper {
       DateTextField(placeholder: "mm / dd / yyyy", date: $value)
-        .font(Fonts.Inter.regular.swiftUIFont(size: 16))
+        .font(Fonts.regular.swiftUIFont(size: 16))
     }
   }
 }

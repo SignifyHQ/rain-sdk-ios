@@ -100,7 +100,7 @@ struct CashCardView: View {
       VStack(alignment: .leading, spacing: 2) {
         Text(LFLocalizable.CashCard.Balance.title(assetType.title))
           .foregroundColor(Colors.label.swiftUIColor)
-          .font(Fonts.Inter.regular.swiftUIFont(size: Constants.FontSize.ultraSmall.value))
+          .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.ultraSmall.value))
         
         ZStack(alignment: .bottomLeading) {
           LottieView(loading: .contrast)
@@ -110,7 +110,7 @@ struct CashCardView: View {
             cashBalance.formattedAmount(prefix: Constants.CurrencyUnit.usd.rawValue, minFractionDigits: 2)
           )
             .foregroundColor(Colors.label.swiftUIColor)
-            .font(Fonts.Inter.bold.swiftUIFont(size: 22))
+            .font(Fonts.bold.swiftUIFont(size: 22))
             .hidden(showLoadingIndicator)
         }
       }

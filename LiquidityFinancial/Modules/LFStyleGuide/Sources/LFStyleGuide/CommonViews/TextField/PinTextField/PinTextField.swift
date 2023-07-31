@@ -23,7 +23,7 @@ public struct PinTextField: UIViewRepresentable {
     let textField = BackPressTextField(frame: .zero)
     textField.isSecureTextEntry = false
     textField.keyboardType = .numberPad
-    textField.font = Fonts.Inter.bold.font(size: 32)
+    textField.font = Fonts.bold.font(size: 32)
     textField.delegate = context.coordinator
     textField.autocorrectionType = .no
     textField.textAlignment = .center

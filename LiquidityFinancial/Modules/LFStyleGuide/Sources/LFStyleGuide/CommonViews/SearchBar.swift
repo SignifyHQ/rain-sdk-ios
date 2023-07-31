@@ -15,7 +15,7 @@ public struct SearchBar: View {
         TextField("", text: $searchText)
           .modifier(PlaceholderStyle(showPlaceHolder: searchText.isEmpty, placeholder: LFLocalizable.Textfield.Search.placeholder))
           .foregroundColor(Colors.label.swiftUIColor)
-          .font(Fonts.Inter.regular.swiftUIFont(size: Constants.FontSize.medium.value))
+          .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.medium.value))
           .autocapitalization(.none)
           .keyboardType(.alphabet)
           .disableAutocorrection(true)

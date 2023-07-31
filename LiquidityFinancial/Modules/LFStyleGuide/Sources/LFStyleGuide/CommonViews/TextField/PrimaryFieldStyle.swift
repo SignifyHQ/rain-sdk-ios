@@ -6,7 +6,7 @@ public struct PrimaryFieldStyle: ViewModifier {
   public func body(content: Content) -> some View {
     content
       .foregroundColor(Colors.label.swiftUIColor)
-      .font(Fonts.Inter.regular.swiftUIFont(size: 16))
+      .font(Fonts.regular.swiftUIFont(size: 16))
   }
 }
 

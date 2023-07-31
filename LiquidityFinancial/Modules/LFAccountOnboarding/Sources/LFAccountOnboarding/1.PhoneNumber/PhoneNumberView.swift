@@ -101,7 +101,7 @@ private extension PhoneNumberView {
     TextFieldWrapper {
       HStack {
         Text(Constants.Default.regionCode.rawValue)
-          .font(Fonts.Inter.regular.swiftUIFont(size: Constants.FontSize.main.value))
+          .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.main.value))
           .foregroundColor(Colors.label.swiftUIColor)
           .frame(height: 32)
           .padding(.horizontal, 8)
@@ -132,7 +132,7 @@ private extension PhoneNumberView {
   var phoneNumberView: some View {
     VStack(alignment: .leading, spacing: 12) {
       Text(LFLocalizable.PhoneNumber.TextField.title.uppercased())
-        .font(Fonts.Inter.regular.swiftUIFont(size: Constants.FontSize.main.value))
+        .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.main.value))
         .foregroundColor(Colors.label.swiftUIColor)
       phoneNumberTextField
     }

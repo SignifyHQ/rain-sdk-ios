@@ -59,13 +59,13 @@ private extension VerificationCodeView {
     VStack(alignment: .leading, spacing: 12) {
       Text(LFLocalizable.VerificationCode.EnterCode.screenTitle)
         .foregroundColor(Colors.label.swiftUIColor)
-        .font(Fonts.Inter.regular.swiftUIFont(size: Constants.FontSize.main.value))
+        .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.main.value))
       HStack(spacing: 4) {
         Text(
           LFLocalizable.VerificationCode.SendTo.textFieldTitle("+1")
         )
         .foregroundColor(Colors.label.swiftUIColor.opacity(0.75))
-        .font(Fonts.Inter.regular.swiftUIFont(size: Constants.FontSize.medium.value))
+        .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.medium.value))
         iPhoneNumberField("", text: $viewModel.formatPhoneNumber)
           .flagHidden(true)
           .foregroundColor(Colors.label.swiftUIColor.opacity(0.75))
@@ -99,7 +99,7 @@ private extension VerificationCodeView {
       VStack {
         if viewModel.isResendButonTimerOn {
           Text(viewModel.timeString)
-            .font(Fonts.Inter.bold.swiftUIFont(size: Constants.FontSize.small.value))
+            .font(Fonts.bold.swiftUIFont(size: Constants.FontSize.small.value))
             .foregroundColor(Colors.error.swiftUIColor)
             .frame(minWidth: 0, maxWidth: .infinity, alignment: .leading)
             .padding(.leading, 30)

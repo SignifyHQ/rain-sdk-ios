@@ -53,7 +53,7 @@ private extension TransactionRowView {
   var center: some View {
     VStack(alignment: .leading, spacing: 4) {
       Text(title ?? "")
-        .font(Fonts.Inter.regular.swiftUIFont(size: Constants.FontSize.medium.value))
+        .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.medium.value))
         .foregroundColor(Colors.label.swiftUIColor)
         .multilineTextAlignment(.leading)
         .minimumScaleFactor(minimumScaleFactor)
@@ -61,7 +61,7 @@ private extension TransactionRowView {
         .lineLimit(2)
 
       Text(subtitle)
-        .font(Fonts.Inter.regular.swiftUIFont(size: Constants.FontSize.ultraSmall.value))
+        .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.ultraSmall.value))
         .foregroundColor(Colors.label.swiftUIColor.opacity(0.6))
         .lineLimit(1)
     }
@@ -70,14 +70,14 @@ private extension TransactionRowView {
   var trailing: some View {
     VStack(alignment: .trailing, spacing: 4) {
       Text(item.formattedAmmount ?? "")
-        .font(Fonts.Inter.regular.swiftUIFont(size: Constants.FontSize.medium.value))
+        .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.medium.value))
         .foregroundColor(amountColor)
         .minimumScaleFactor(minimumScaleFactor)
         .allowsTightening(true)
         .lineLimit(1)
 
       Text(trailingSubtitle ?? "")
-        .font(Fonts.Inter.regular.swiftUIFont(size: 10))
+        .font(Fonts.regular.swiftUIFont(size: 10))
         .foregroundColor(Colors.label.swiftUIColor.opacity(0.6))
     }
   }

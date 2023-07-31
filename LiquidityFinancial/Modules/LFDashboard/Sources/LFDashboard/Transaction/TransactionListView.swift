@@ -16,7 +16,7 @@ struct TransactionListView: View {
       .toolbar {
         ToolbarItem(placement: .principal) {
           Text(LFLocalizable.TransactionList.title)
-            .font(Fonts.Inter.regular.swiftUIFont(size: Constants.FontSize.medium.value))
+            .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.medium.value))
             .foregroundColor(Colors.label.swiftUIColor)
         }
       }

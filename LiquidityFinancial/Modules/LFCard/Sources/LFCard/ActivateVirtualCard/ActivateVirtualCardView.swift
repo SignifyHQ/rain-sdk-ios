@@ -45,11 +45,11 @@ private extension ActivateVirtualCardView {
         GenImages.Images.virtualCard.swiftUIImage
         VStack(spacing: 16) {
           Text(LFLocalizable.CardActivated.CardActived.title)
-            .font(Fonts.Inter.regular.swiftUIFont(size: Constants.FontSize.large.value))
+            .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.large.value))
             .foregroundColor(Colors.label.swiftUIColor)
             .multilineTextAlignment(.center)
           Text(LFLocalizable.CardActivated.CardActived.description(LFUtility.appName))
-            .font(Fonts.Inter.regular.swiftUIFont(size: Constants.FontSize.medium.value))
+            .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.medium.value))
             .foregroundColor(Colors.label.swiftUIColor.opacity(0.75))
             .multilineTextAlignment(.center)
             .lineLimit(3)

@@ -8,6 +8,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
   
   func application(_ application: UIApplication, didFinishLaunchingWithOptions options: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
     setUpAppearence()
+    setupConfigs()
     KickoffService.kickoff(application: application, launchingOptions: options)
     return true
   }

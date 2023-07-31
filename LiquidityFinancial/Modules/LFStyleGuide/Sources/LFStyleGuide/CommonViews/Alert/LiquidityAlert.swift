@@ -48,12 +48,12 @@ private extension LiquidityAlert {
   var contextView: some View {
     VStack(spacing: 20) {
       Text(title)
-        .font(Fonts.Inter.regular.swiftUIFont(size: Constants.FontSize.main.value))
+        .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.main.value))
         .foregroundColor(Colors.label.swiftUIColor)
         .multilineTextAlignment(.center)
       if let message {
         Text(message)
-          .font(Fonts.Inter.regular.swiftUIFont(size: Constants.FontSize.medium.value))
+          .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.medium.value))
           .foregroundColor(Colors.label.swiftUIColor.opacity(0.75))
           .multilineTextAlignment(.center)
           .lineSpacing(1.33)

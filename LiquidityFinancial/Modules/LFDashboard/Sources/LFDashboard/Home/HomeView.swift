@@ -56,7 +56,7 @@ public struct HomeView: View {
 private extension HomeView {
   var leadingNavigationBarView: some View {
     Text(viewModel.tabSelected.title)
-      .font(Fonts.Inter.bold.swiftUIFont(size: Constants.FontSize.navigationBar.value))
+      .font(Fonts.bold.swiftUIFont(size: Constants.FontSize.navigationBar.value))
       .foregroundColor(Colors.label.swiftUIColor)
       .padding(.leading, 12)
   }
@@ -86,7 +86,7 @@ private extension HomeView {
         .foregroundColor(
           option == viewModel.tabSelected ? Colors.label.swiftUIColor : Colors.label.swiftUIColor.opacity(0.75)
         )
-        .font(Fonts.Inter.regular.swiftUIFont(size: Constants.FontSize.small.value))
+        .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.small.value))
     }
     .onTapGesture {
       viewModel.onSelectedTab(tab: option)

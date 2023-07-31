@@ -20,7 +20,7 @@ struct InitialView: View {
         .frame(width: 126, height: 126)
       
       Text(title + "Card")
-        .font(Fonts.Inter.bold.swiftUIFont(size: 24))
+        .font(Fonts.bold.swiftUIFont(size: 24))
         .foregroundColor(Colors.label.swiftUIColor)
         .frame(height: 34)
 

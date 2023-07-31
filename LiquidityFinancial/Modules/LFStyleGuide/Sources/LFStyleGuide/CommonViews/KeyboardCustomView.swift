@@ -29,10 +29,10 @@ public struct KeyboardCustomView: View {
         } label: {
           if key == Const.backArrowKey {
             Image(systemName: "arrow.backward")
-              .font(Fonts.Inter.regular.swiftUIFont(size: 20))
+              .font(Fonts.regular.swiftUIFont(size: 20))
           } else {
             Text(key)
-              .font(Fonts.Inter.bold.swiftUIFont(size: 28))
+              .font(Fonts.bold.swiftUIFont(size: 28))
           }
         }
         .frame(width: 32)

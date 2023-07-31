@@ -25,7 +25,7 @@ struct PreFilledGridView: View {
             .cornerRadius(10)
             .padding(selectedValue == recommendValue ? -1 : 2)
           Text(recommendValue.display)
-            .font(Fonts.Inter.regular.swiftUIFont(size: Constants.FontSize.small.value))
+            .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.small.value))
             .foregroundColor(Colors.label.swiftUIColor)
             .frame(height: 56)
             .frame(maxWidth: .infinity)

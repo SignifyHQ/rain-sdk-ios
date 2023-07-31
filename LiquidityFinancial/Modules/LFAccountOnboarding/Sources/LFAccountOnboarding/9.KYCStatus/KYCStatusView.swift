@@ -83,11 +83,11 @@ private extension KYCStatusView {
       Text(info.title)
         .padding()
         .foregroundColor(Colors.label.swiftUIColor)
-        .font(Fonts.Inter.regular.swiftUIFont(size: Constants.FontSize.large.value))
+        .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.large.value))
         .multilineTextAlignment(.center)
       Text(info.message)
         .foregroundColor(Colors.label.swiftUIColor.opacity(0.75))
-        .font(Fonts.Inter.regular.swiftUIFont(size: Constants.FontSize.medium.value))
+        .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.medium.value))
         .multilineTextAlignment(.center)
     }
     .lineSpacing(1.17)
@@ -125,11 +125,11 @@ private extension KYCStatusView {
         
         VStack(spacing: 12) {
           Text(LFLocalizable.KycStatus.WaitingVerification.title)
-            .font(Fonts.Inter.regular.swiftUIFont(size: Constants.FontSize.main.value))
+            .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.main.value))
             .foregroundColor(Colors.label.swiftUIColor)
           
           Text(LFLocalizable.KycStatus.WaitingVerification.message)
-            .font(Fonts.Inter.regular.swiftUIFont(size: Constants.FontSize.medium.value))
+            .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.medium.value))
             .foregroundColor(Colors.label.swiftUIColor.opacity(0.75))
             .lineSpacing(1.7)
         }

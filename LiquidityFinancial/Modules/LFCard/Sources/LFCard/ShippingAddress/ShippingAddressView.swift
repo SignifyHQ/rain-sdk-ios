@@ -51,7 +51,7 @@ private extension ShippingAddressView {
         LFLocalizable.ShippingAddress.Screen.title(LFUtility.appName.uppercased())
       )
       .foregroundColor(Colors.label.swiftUIColor)
-      .font(Fonts.Inter.regular.swiftUIFont(size: Constants.FontSize.main.value))
+      .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.main.value))
       .multilineTextAlignment(.leading)
       .fixedSize(horizontal: false, vertical: true)
       enterAddressView
@@ -74,7 +74,7 @@ private extension ShippingAddressView {
   var mainAddressTextField: some View {
     VStack(alignment: .leading) {
       Text(LFLocalizable.addressLine1Title)
-        .font(Fonts.Inter.regular.swiftUIFont(size: Constants.FontSize.textFieldHeader.value))
+        .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.textFieldHeader.value))
         .foregroundColor(Colors.label.swiftUIColor)
         .opacity(0.75)
         .padding(.leading, 4)
@@ -96,7 +96,7 @@ private extension ShippingAddressView {
   var subAddressTextField: some View {
     VStack(alignment: .leading) {
       Text(LFLocalizable.addressLine2Title)
-        .font(Fonts.Inter.regular.swiftUIFont(size: Constants.FontSize.textFieldHeader.value))
+        .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.textFieldHeader.value))
         .foregroundColor(Colors.label.swiftUIColor)
         .opacity(0.75)
         .padding(.top, 16)
@@ -114,7 +114,7 @@ private extension ShippingAddressView {
   var cityTextField: some View {
     VStack(alignment: .leading) {
       Text(LFLocalizable.city)
-        .font(Fonts.Inter.regular.swiftUIFont(size: Constants.FontSize.textFieldHeader.value))
+        .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.textFieldHeader.value))
         .foregroundColor(Colors.label.swiftUIColor)
         .opacity(0.75)
         .padding(.top, 16)
@@ -132,7 +132,7 @@ private extension ShippingAddressView {
   var stateTextField: some View {
     VStack(alignment: .leading) {
       Text(LFLocalizable.state)
-        .font(Fonts.Inter.regular.swiftUIFont(size: Constants.FontSize.textFieldHeader.value))
+        .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.textFieldHeader.value))
         .foregroundColor(Colors.label.swiftUIColor)
         .opacity(0.75)
         .multilineTextAlignment(.leading)
@@ -152,7 +152,7 @@ private extension ShippingAddressView {
   var zipCodeTextField: some View {
     VStack(alignment: .leading) {
       Text(LFLocalizable.zipcode)
-        .font(Fonts.Inter.regular.swiftUIFont(size: Constants.FontSize.textFieldHeader.value))
+        .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.textFieldHeader.value))
         .foregroundColor(Colors.label.swiftUIColor)
         .opacity(0.75)
         .multilineTextAlignment(.leading)
