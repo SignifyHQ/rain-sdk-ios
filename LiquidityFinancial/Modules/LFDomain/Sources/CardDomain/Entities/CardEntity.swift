@@ -18,6 +18,6 @@ public protocol ShippingAddressEntity {
   var shippingStatus: String { get }
   var shipmentDate: String? { get }
   var estimatedArrivalDate: String? { get }
-  var trackingNumber: String { get }
-  var shippingvendor: String { get }
+  var trackingNumber: String? { get }
+  var shippingVendor: String { get }
 }

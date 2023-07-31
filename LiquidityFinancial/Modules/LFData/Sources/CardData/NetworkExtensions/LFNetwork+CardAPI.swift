@@ -1,4 +1,5 @@
 import Foundation
+import OnboardingData
 import DataUtilities
 import LFNetwork
 import LFUtilities
@@ -25,6 +26,16 @@ extension LFNetwork: CardAPIProtocol where R == CardRoute {
   public func unlockCard(cardID: String, sessionID: String) async throws -> APICard {
     try await request(
       CardRoute.unlock(cardID, sessionID),
+      target: APICard.self,
+      failure: LFErrorObject.self,
+      decoder: .apiDecoder
+    )
+  }
+  
+  public func orderPhysicalCard(address: APIAddress, sessionID: String) async throws -> APICard {
+    let parameters = OrderPhysicalCardParameters(shippingAddress: address)
+    return try await request(
+      CardRoute.orderPhysicalCard(parameters, sessionID),
       target: APICard.self,
       failure: LFErrorObject.self,
       decoder: .apiDecoder

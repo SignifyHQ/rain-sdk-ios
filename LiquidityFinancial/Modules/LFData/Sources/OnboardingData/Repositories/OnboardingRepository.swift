@@ -1,4 +1,5 @@
 import Foundation
+import CommonDomain
 import OnboardingDomain
 import AuthorizationManager
 
@@ -31,4 +32,3 @@ extension APIAccessTokens: AccessTokens {}
 extension APIOtp: OtpEntity {}
 
 extension APIOnboardingState: OnboardingState {}
-

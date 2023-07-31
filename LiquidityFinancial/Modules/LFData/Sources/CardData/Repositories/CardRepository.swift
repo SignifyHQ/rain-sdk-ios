@@ -1,5 +1,7 @@
 import Foundation
+import OnboardingData
 import CardDomain
+import CommonDomain
 
 public class CardRepository: CardRepositoryProtocol {
   private let cardAPI: CardAPIProtocol
@@ -18,6 +20,11 @@ public class CardRepository: CardRepositoryProtocol {
   
   public func unlockCard(cardID: String, sessionID: String) async throws -> CardEntity {
     try await cardAPI.unlockCard(cardID: cardID, sessionID: sessionID)
+  }
+  
+  public func orderPhysicalCard(address: AddressEntity, sessionID: String) async throws -> CardEntity {
+    let address = APIAddress(entity: address)
+    return try await cardAPI.orderPhysicalCard(address: address, sessionID: sessionID)
   }
 }
 

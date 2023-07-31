@@ -6,17 +6,8 @@ import LFUtilities
 
 struct ShippingAddressView: View {
   @Environment(\.dismiss) private var dismiss
+  @StateObject private var viewModel: ShippingAddressViewModel
   @FocusState var keyboardFocus: Focus?
-  @Binding var shippingAddress: ShippingAddress
-  @State private var mainAddress: String = ""
-  @State private var subAddress: String = ""
-  @State private var city: String = ""
-  @State private var state: String = ""
-  @State private var zipCode: String = ""
-  
-  var isDisableButton: Bool {
-    mainAddress.isEmpty || city.isEmpty || state.isEmpty || zipCode.isEmpty
-  }
   
   enum Focus: Int, Hashable {
     case address1
@@ -24,6 +15,10 @@ struct ShippingAddressView: View {
     case city
     case state
     case zip
+  }
+  
+  init(shippingAddress: Binding<ShippingAddress?>) {
+    _viewModel = .init(wrappedValue: ShippingAddressViewModel(shippingAddress: shippingAddress))
   }
   
   var body: some View {
@@ -81,7 +76,7 @@ private extension ShippingAddressView {
       
       textField(
         placeholder: LFLocalizable.enterAddress,
-        value: $mainAddress,
+        value: $viewModel.mainAddress,
         focus: .address1,
         nextFocus: .address2
       )
@@ -104,7 +99,7 @@ private extension ShippingAddressView {
       
       textField(
         placeholder: LFLocalizable.enterAddress,
-        value: $subAddress,
+        value: $viewModel.subAddress,
         focus: .address2,
         nextFocus: .city
       )
@@ -122,7 +117,7 @@ private extension ShippingAddressView {
       
       textField(
         placeholder: LFLocalizable.enterCity,
-        value: $city,
+        value: $viewModel.city,
         focus: .city,
         nextFocus: .state
       )
@@ -140,7 +135,7 @@ private extension ShippingAddressView {
       
       textField(
         placeholder: LFLocalizable.enterState,
-        value: $state,
+        value: $viewModel.state,
         limit: 2,
         restriction: .alphabets,
         focus: .state,
@@ -160,7 +155,7 @@ private extension ShippingAddressView {
       
       textField(
         placeholder: LFLocalizable.enterZipcode,
-        value: $zipCode,
+        value: $viewModel.zipCode,
         limit: 11,
         keyboardType: .numberPad,
         focus: .zip
@@ -171,16 +166,10 @@ private extension ShippingAddressView {
   var button: some View {
     FullSizeButton(
       title: LFLocalizable.ShippingAddress.Confirm.buttonTitle,
-      isDisable: isDisableButton
+      isDisable: viewModel.isDisableButton
     ) {
       keyboardFocus = nil
-      shippingAddress = ShippingAddress(
-        line1: mainAddress,
-        line2: subAddress.isEmpty ? shippingAddress.line2 : subAddress,
-        city: city,
-        stateOrRegion: state,
-        postalCode: zipCode
-      )
+      viewModel.saveAddress()
       dismiss()
     }
     .padding(.bottom, 16)

@@ -25,10 +25,4 @@ public class AccountRepository: AccountRepositoryProtocol {
   }
 }
 
-extension APIUser: LFUser {
-  public var userID: String {
-    id ?? ""
-  }
-}
-
 extension APIAccount: LFAccount {}

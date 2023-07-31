@@ -19,6 +19,6 @@ public struct APIShippingAddress: Decodable, ShippingAddressEntity {
   public let shippingStatus: String
   public let shipmentDate: String?
   public let estimatedArrivalDate: String?
-  public let trackingNumber: String
-  public let shippingvendor: String
+  public let trackingNumber: String?
+  public let shippingVendor: String
 }

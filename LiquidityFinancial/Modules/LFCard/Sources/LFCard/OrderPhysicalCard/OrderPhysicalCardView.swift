@@ -30,6 +30,9 @@ struct OrderPhysicalCardView: View {
     .popup(isPresented: $viewModel.isShowOrderSuccessPopup) {
       orderPhysicalCardSuccessPopup
     }
+    .popup(item: $viewModel.toastMessage, style: .toast) {
+      ToastView(toastMessage: $0)
+    }
   }
 }
 
@@ -53,7 +56,7 @@ private extension OrderPhysicalCardView {
         GenImages.CommonImages.icMap.swiftUIImage
           .frame(20)
           .foregroundColor(Colors.label.swiftUIColor)
-        Text(viewModel.shippingAddress.description)
+        Text(viewModel.shippingAddress?.description ?? "")
           .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.medium.value))
           .foregroundColor(Colors.label.swiftUIColor.opacity(0.75))
           .multilineTextAlignment(.leading)

@@ -15,7 +15,10 @@ let package = Package(
           targets: ["CardDomain"]),
         .library(
           name: "AccountDomain",
-          targets: ["AccountDomain"])
+          targets: ["AccountDomain"]),
+        .library(
+          name: "CommonDomain",
+          targets: ["CommonDomain"])
     ],
     dependencies: [
       .package(name: "LFServices", path: "../LFServices"),
@@ -23,8 +26,11 @@ let package = Package(
     ],
     targets: [
         .target(
+          name: "CommonDomain",
+          dependencies: []),
+        .target(
             name: "OnboardingDomain",
-            dependencies: []),
+            dependencies: ["CommonDomain"]),
         .target(
           name: "CardDomain",
           dependencies: []),

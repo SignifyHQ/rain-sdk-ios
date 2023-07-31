@@ -7,6 +7,7 @@ public enum CardRoute {
   case listCard
   case lock(String, String)
   case unlock(String, String)
+  case orderPhysicalCard(OrderPhysicalCardParameters, String)
 }
 
 extension CardRoute: LFRoute {
@@ -24,13 +25,15 @@ extension CardRoute: LFRoute {
       return "/v1/netspend/cards/\(cardID)/lock"
     case let .unlock(cardID, _):
       return "/v1/netspend/cards/\(cardID)/unlock"
+    case .orderPhysicalCard:
+      return "/v1/netspend/cards/physical-card"
     }
   }
   
   public var httpMethod: HttpMethod {
     switch self {
     case .listCard: return .GET
-    case .lock, .unlock: return .POST
+    case .lock, .unlock, .orderPhysicalCard: return .POST
     }
   }
   
@@ -39,28 +42,34 @@ extension CardRoute: LFRoute {
       "Content-Type": "application/json",
       "productId": APIConstants.productID
     ]
+    base["Authorization"] = authorization
     switch self {
     case .listCard:
-      base["Authorization"] = authorization
-      return base
-    case let .lock(_, sessionId), let .unlock(_, sessionId):
-      base["Authorization"] = authorization
+      break
+    case let .lock(_, sessionId),
+      let .unlock(_, sessionId),
+      let .orderPhysicalCard(_, sessionId):
       base["netspendSessionId"] = sessionId
-      return base
     }
+    return base
   }
   
   public var parameters: Parameters? {
     switch self {
     case .listCard, .lock, .unlock:
       return nil
+    case let .orderPhysicalCard(parameters, _):
+      let acde = parameters.encoded()
+      return acde
     }
   }
   
   public var parameterEncoding: ParameterEncoding? {
-  switch self {
-  case .listCard, .lock, .unlock: return nil
-  }
+    switch self {
+    case .listCard, .lock, .unlock: return nil
+    case .orderPhysicalCard:
+      return .json
+    }
   }
   
 }
