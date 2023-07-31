@@ -1,5 +1,4 @@
 import Foundation
-import CommonDomain
   
 public class CardUseCase: CardUseCaseProtocol {
   private let repository: CardRepositoryProtocol
@@ -24,7 +23,7 @@ public class CardUseCase: CardUseCaseProtocol {
     try await repository.unlockCard(cardID: cardID, sessionID: sessionID)
   }
   
-  public func orderPhysicalCard(address: AddressEntity, sessionID: String) async throws -> CardEntity {
+  public func orderPhysicalCard(address: PhysicalCardAddressEntity, sessionID: String) async throws -> CardEntity {
     try await repository.orderPhysicalCard(address: address, sessionID: sessionID)
   }
 }

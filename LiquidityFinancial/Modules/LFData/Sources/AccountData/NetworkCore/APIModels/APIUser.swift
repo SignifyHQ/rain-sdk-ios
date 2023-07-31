@@ -1,9 +1,5 @@
 import Foundation
 import AccountDomain
-import OnboardingData
-import OnboardingDomain
-import CardDomain
-import CommonDomain
 
 // swiftlint:disable discouraged_optional_boolean
 public struct APIUser: Decodable {
@@ -25,7 +21,10 @@ public struct APIUser: Decodable {
   public let referralLink, userRewardType, userAccessLevel: String?
 }
 
+extension APIAddress: AddressEntity {}
+
 extension APIUser: LFUser {
+  
   public var userID: String {
     id ?? ""
   }

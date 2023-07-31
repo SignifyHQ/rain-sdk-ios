@@ -2,13 +2,14 @@ import Foundation
 import LFNetwork
 import DataUtilities
 import AuthorizationManager
+import CardDomain
 
 public enum CardRoute {
   case listCard
   case card(String, String)
   case lock(String, String)
   case unlock(String, String)
-  case orderPhysicalCard(OrderPhysicalCardParameters, String)
+  case orderPhysicalCard(PhysicalCardAddressEntity, String)
 }
 
 extension CardRoute: LFRoute {

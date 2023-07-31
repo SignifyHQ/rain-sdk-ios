@@ -42,7 +42,7 @@ extension OrderPhysicalCardViewModel {
           deviceId: UIDevice.current.identifierForVendor?.uuidString ?? ""
         )
         if let addressEntity = user.addressEntity {
-          shippingAddress = .init(addressEntity: addressEntity)
+          shippingAddress = ShippingAddress(line1: addressEntity.line1 ?? "", line2: addressEntity.line2, city: addressEntity.city ?? "", state: addressEntity.state ?? "", postalCode: addressEntity.postalCode ?? "", country: addressEntity.country)
         }
       } catch {
         log.error(error.localizedDescription)
@@ -57,7 +57,7 @@ extension OrderPhysicalCardViewModel {
     isOrderingCard = true
     Task {
       do {
-        let address = APIAddress(
+        let address = PhysicalCardAddressEntity(
           line1: shippingAddress.line1,
           line2: shippingAddress.line2,
           city: shippingAddress.city,

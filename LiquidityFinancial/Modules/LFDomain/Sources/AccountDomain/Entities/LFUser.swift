@@ -1,5 +1,4 @@
 import Foundation
-import CommonDomain
 
 public protocol LFUser {
   var userID: String { get }

@@ -1,7 +1,5 @@
 import Foundation
-import OnboardingData
 import CardDomain
-import CommonDomain
 import NetspendSdk
 
 public class CardRepository: CardRepositoryProtocol {
@@ -27,8 +25,7 @@ public class CardRepository: CardRepositoryProtocol {
     try await cardAPI.unlockCard(cardID: cardID, sessionID: sessionID)
   }
   
-  public func orderPhysicalCard(address: AddressEntity, sessionID: String) async throws -> CardEntity {
-    let address = APIAddress(entity: address)
+  public func orderPhysicalCard(address: PhysicalCardAddressEntity, sessionID: String) async throws -> CardEntity {
     return try await cardAPI.orderPhysicalCard(address: address, sessionID: sessionID)
   }
 }

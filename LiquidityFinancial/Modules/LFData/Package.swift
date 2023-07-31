@@ -61,7 +61,8 @@ let package = Package(
       name: "CardData",
       dependencies: [
         "DataUtilities", "LFNetwork", "Factory", "AuthorizationManager",
-        .product(name: "CardDomain", package: "LFDomain")
+        .product(name: "CardDomain", package: "LFDomain"),
+        .product(name: "AccountDomain", package: "LFDomain")
       ]
     ),
     .target(

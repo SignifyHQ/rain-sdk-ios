@@ -1,6 +1,5 @@
 import Foundation
-import OnboardingData
-import CommonDomain
+import CardDomain
 
 struct ShippingAddress {
   let line1: String
@@ -12,17 +11,5 @@ struct ShippingAddress {
   
   var description: String {
     "\(line1) \(line2 ?? ""), \(city), \(state) - \(postalCode)"
-  }
-}
-
-extension ShippingAddress {
-  
-  init(addressEntity: AddressEntity) {
-    self.line1 = addressEntity.line1 ?? ""
-    self.line2 = addressEntity.line2
-    self.city = addressEntity.city ?? ""
-    self.state = addressEntity.state ?? ""
-    self.postalCode = addressEntity.postalCode ?? ""
-    self.country = addressEntity.country
   }
 }
