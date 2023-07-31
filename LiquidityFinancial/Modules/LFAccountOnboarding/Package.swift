@@ -36,6 +36,7 @@ let package = Package(
           dependencies: [
             "LFUtilities", "OnboardingDomain", "LFStyleGuide", "LFLocalizable", "Factory", "iPhoneNumberField",
             .product(name: "OnboardingData", package: "LFData"),
+            .product(name: "AccountData", package: "LFData"),
             .product(name: "NetSpendData", package: "LFData"),
             .product(name: "SmartyStreets", package: "smartystreets-ios-sdk")
           ],

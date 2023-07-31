@@ -24,14 +24,6 @@ public class OnboardingRepository: OnboardingRepositoryProtocol {
   public func getOnboardingState(sessionId: String) async throws -> OnboardingState {
     return try await onboardingAPI.getOnboardingState(sessionId: sessionId)
   }
-  
-  public func createZeroHashAccount() async throws -> ZeroHashAccount {
-    return try await onboardingAPI.createZeroHashAccount()
-  }
-  
-  public func getUser(deviceId: String) async throws -> LFUser {
-    return try await onboardingAPI.getUser(deviceId: deviceId)
-  }
 }
 
 extension APIAccessTokens: AccessTokens {}
@@ -40,8 +32,3 @@ extension APIOtp: OtpEntity {}
 
 extension APIOnboardingState: OnboardingState {}
 
-extension APIUser: LFUser {
-  public var userID: String {
-    id ?? ""
-  }
-}

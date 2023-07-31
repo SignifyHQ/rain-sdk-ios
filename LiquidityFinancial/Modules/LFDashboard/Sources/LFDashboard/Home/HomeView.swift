@@ -33,6 +33,9 @@ public struct HomeView: View {
         leadingNavigationBarView
       }
     }
+    .onAppear {
+      viewModel.getAccountInfomation()
+    }
     //    .navigationLink(item: $viewModel.navigation) { item in
     //      switch item {
     //        case let .searchCauses(vm):

@@ -2,9 +2,9 @@ import Foundation
 
 public class ZeroHashUserCase: ZeroHashUseCaseProtocol {
   
-  private let repository: OnboardingRepositoryProtocol
+  private let repository: AccountRepositoryProtocol
   
-  public init(repository: OnboardingRepositoryProtocol) {
+  public init(repository: AccountRepositoryProtocol) {
     self.repository = repository
   }
   

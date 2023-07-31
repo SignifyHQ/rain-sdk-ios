@@ -5,6 +5,7 @@ import SwiftUI
 import LFUtilities
 import Factory
 import OnboardingData
+import AccountData
 import NetSpendData
 import LFServices
 
@@ -24,7 +25,7 @@ final class AddressViewModel: ObservableObject {
   var countGenerateUser: Int = 0
 #endif
   
-  @LazyInjected(\.userDataManager) var userDataManager
+  @LazyInjected(\.accountDataManager) var accountDataManager
   @LazyInjected(\.netspendRepository) var netspendRepository
   @LazyInjected(\.netspendDataManager) var netspendDataManager
   @LazyInjected(\.onboardingFlowCoordinator) var onboardingFlowCoordinator
@@ -38,12 +39,12 @@ final class AddressViewModel: ObservableObject {
   @Published var isActionAllowed: Bool = false {
     didSet {
       guard isActionAllowed else { return }
-      userDataManager.update(addressLine1: addressLine1)
-      userDataManager.update(addressLine2: addressLine2)
-      userDataManager.update(city: city)
-      userDataManager.update(state: state)
-      userDataManager.update(postalCode: zipCode)
-      userDataManager.update(country: "US")
+      accountDataManager.update(addressLine1: addressLine1)
+      accountDataManager.update(addressLine2: addressLine2)
+      accountDataManager.update(city: city)
+      accountDataManager.update(state: state)
+      accountDataManager.update(postalCode: zipCode)
+      accountDataManager.update(country: "US")
     }
   }
   
@@ -125,10 +126,10 @@ final class AddressViewModel: ObservableObject {
       isLoading = true
       do {
         let param = try createAccountPersonParameters()
-        let person = try await netspendRepository.createAccountPerson(personInfo: param, sessionId: userDataManager.sessionID)
+        let person = try await netspendRepository.createAccountPerson(personInfo: param, sessionId: accountDataManager.sessionID)
         netspendDataManager.update(accountPersonData: person)
         
-        let userAttributes = IntercomService.UserAttributes(phone: userDataManager.phoneNumber, email: param.email)
+        let userAttributes = IntercomService.UserAttributes(phone: accountDataManager.phoneNumber, email: param.email)
         intercomService.loginIdentifiedUser(userAttributes: userAttributes)
         
         try await handleWorkflows()
@@ -169,36 +170,36 @@ final class AddressViewModel: ObservableObject {
   private func createAccountPersonParameters() throws -> AccountPersonParameters {
     var governmentID: String = ""
     var typeGovernmentID: String = ""
-    if let ssn = userDataManager.userInfomationData.ssn {
+    if let ssn = accountDataManager.userInfomationData.ssn {
       typeGovernmentID = IdNumberType.ssn.rawValue
       governmentID = ssn
-    } else if let passport = userDataManager.userInfomationData.passport {
+    } else if let passport = accountDataManager.userInfomationData.passport {
       typeGovernmentID = IdNumberType.passport.rawValue
       governmentID = passport
     }
     let agreementIDS = netspendDataManager.agreement?.agreements.compactMap { $0.id } ?? []
     let encryptedData = try netspendDataManager.sdkSession?.encryptWithJWKSet(value: [
-      "date_of_birth": userDataManager.userInfomationData.dateOfBirth ?? "",
+      "date_of_birth": accountDataManager.userInfomationData.dateOfBirth ?? "",
       "government_id": [
         "type": typeGovernmentID,
         "value": governmentID
       ]
     ])
     let param = AccountPersonParameters(
-      firstName: userDataManager.userInfomationData.firstName ?? "",
-      lastName: userDataManager.userInfomationData.lastName ?? "",
-      middleName: userDataManager.userInfomationData.fullName ?? "",
+      firstName: accountDataManager.userInfomationData.firstName ?? "",
+      lastName: accountDataManager.userInfomationData.lastName ?? "",
+      middleName: accountDataManager.userInfomationData.fullName ?? "",
       agreementIDS: agreementIDS,
-      phone: userDataManager.userInfomationData.phone ?? "",
-      email: userDataManager.userInfomationData.email ?? "",
-      fullName: userDataManager.userInfomationData.fullName ?? "",
-      dateOfBirth: userDataManager.userInfomationData.dateOfBirth ?? "",
-      addressLine1: userDataManager.userInfomationData.addressLine1 ?? "",
-      addressLine2: userDataManager.userInfomationData.addressLine2 ?? "",
-      city: userDataManager.userInfomationData.city ?? "",
-      state: userDataManager.userInfomationData.state ?? "",
-      country: userDataManager.userInfomationData.country ?? "",
-      postalCode: userDataManager.userInfomationData.postalCode ?? "",
+      phone: accountDataManager.userInfomationData.phone ?? "",
+      email: accountDataManager.userInfomationData.email ?? "",
+      fullName: accountDataManager.userInfomationData.fullName ?? "",
+      dateOfBirth: accountDataManager.userInfomationData.dateOfBirth ?? "",
+      addressLine1: accountDataManager.userInfomationData.addressLine1 ?? "",
+      addressLine2: accountDataManager.userInfomationData.addressLine2 ?? "",
+      city: accountDataManager.userInfomationData.city ?? "",
+      state: accountDataManager.userInfomationData.state ?? "",
+      country: accountDataManager.userInfomationData.country ?? "",
+      postalCode: accountDataManager.userInfomationData.postalCode ?? "",
       encryptedData: encryptedData ?? "",
       idNumber: governmentID,
       idNumberType: typeGovernmentID
@@ -219,13 +220,13 @@ final class AddressViewModel: ObservableObject {
         let step = steps.steps[stepIndex]
         switch step.missingStep {
         case .identityQuestions:
-          let questionsEncrypt = try await netspendRepository.getQuestion(sessionId: userDataManager.sessionID)
+          let questionsEncrypt = try await netspendRepository.getQuestion(sessionId: accountDataManager.sessionID)
           if let usersession = netspendDataManager.sdkSession, let questionsDecode = questionsEncrypt.decodeData(session: usersession) {
             let questionsEntity = QuestionsEntity.mapObj(questionsDecode)
             navigation = .question(questionsEntity)
           }
         case .provideDocuments:
-          let documents = try await netspendRepository.getDocuments(sessionId: userDataManager.sessionID)
+          let documents = try await netspendRepository.getDocuments(sessionId: accountDataManager.sessionID)
           netspendDataManager.update(documentData: documents)
           navigation = .document
         case .primaryPersonKYCApprove:

@@ -4,6 +4,7 @@ import Combine
 import Factory
 import NetSpendData
 import OnboardingData
+import AccountData
 import OnboardingDomain
 
 // swiftlint:disable cyclomatic_complexity
@@ -46,7 +47,7 @@ public class OnboardingFlowCoordinator: OnboardingFlowCoordinatorProtocol {
   }
   
   @LazyInjected(\.authorizationManager) var authorizationManager
-  @LazyInjected(\.userDataManager) var userDataManager
+  @LazyInjected(\.accountDataManager) var accountDataManager
   @LazyInjected(\.onboardingRepository) var onboardingRepository
   @LazyInjected(\.netspendRepository) var netspendRepository
   @LazyInjected(\.netspendDataManager) var netspendDataManager
@@ -75,10 +76,16 @@ public class OnboardingFlowCoordinator: OnboardingFlowCoordinatorProtocol {
   func getCurrentState() {
     Task { @MainActor in
       do {
-        let onboardingState = try await onboardingRepository.getOnboardingState(sessionId: userDataManager.sessionID)
+        
+        let onboardingState = try await onboardingRepository.getOnboardingState(sessionId: accountDataManager.sessionID)
+        
         if onboardingState.missingSteps.isEmpty {
+          
+          try await refreshNetSpendSession()
           routeSubject.value = .dashboard
+          
         } else {
+          
           let states = onboardingState.mapToEnum()
           if states.isEmpty {
             if onboardingState.missingSteps.count == 1 {
@@ -105,6 +112,7 @@ public class OnboardingFlowCoordinator: OnboardingFlowCoordinatorProtocol {
               //TODO: Tony need review after
             }
           }
+          
         }
       } catch {
         if let error = error.asErrorObject, let code = error.code, code == "user_not_authorized" {
@@ -118,7 +126,7 @@ public class OnboardingFlowCoordinator: OnboardingFlowCoordinatorProtocol {
   
   private func handleQuestionCase() async {
     do {
-      let questionsEncrypt = try await netspendRepository.getQuestion(sessionId: userDataManager.sessionID)
+      let questionsEncrypt = try await netspendRepository.getQuestion(sessionId: accountDataManager.sessionID)
       if let usersession = netspendDataManager.sdkSession, let questionsDecode = questionsEncrypt.decodeData(session: usersession) {
         let questionsEntity = QuestionsEntity.mapObj(questionsDecode)
         routeSubject.value = .question(questionsEntity)
@@ -133,7 +141,7 @@ public class OnboardingFlowCoordinator: OnboardingFlowCoordinatorProtocol {
   
   private func handleUpDocumentCase() async {
     do {
-      let documents = try await netspendRepository.getDocuments(sessionId: userDataManager.sessionID)
+      let documents = try await netspendRepository.getDocuments(sessionId: accountDataManager.sessionID)
       netspendDataManager.update(documentData: documents)
       routeSubject.value = .document
     } catch {
@@ -143,7 +151,24 @@ public class OnboardingFlowCoordinator: OnboardingFlowCoordinatorProtocol {
   }
   
   private func clearUserData() {
-    userDataManager.clearUserSession()
+    accountDataManager.clearUserSession()
     authorizationManager.clearToken()
+  }
+  
+  private func refreshNetSpendSession() async throws {
+    log.info("<<<<<<<<<<<<<< Refresh NetSpend Session >>>>>>>>>>>>>>>")
+    let token = try await netspendRepository.clientSessionInit()
+    netspendDataManager.update(jwkToken: token)
+    
+    let sessionConnectWithJWT = await netspendRepository.establishingSessionWithJWKSet(jwtToken: token)
+    
+    guard let deviceData = sessionConnectWithJWT?.deviceData else { return }
+    
+    let establishPersonSession = try await netspendRepository.establishPersonSession(deviceData: EstablishSessionParameters(encryptedData: deviceData))
+    netspendDataManager.update(serverSession: establishPersonSession)
+    accountDataManager.stored(sessionID: establishPersonSession.id)
+    
+    let userSessionAnonymous = try netspendRepository.createUserSession(establishingSession: sessionConnectWithJWT, encryptedData: establishPersonSession.encryptedData)
+    netspendDataManager.update(sdkSession: userSessionAnonymous)
   }
 }

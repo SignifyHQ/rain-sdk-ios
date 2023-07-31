@@ -1,7 +1,8 @@
 import Foundation
 import LFUtilities
+import AccountDomain
 
-public struct UserInfomationData: Codable {
+public struct UserInfomationData: Codable, UserInfomationDataProtocol {
   public var firstName, lastName, middleName: String?
   public var agreementIDS: [String] = []
   public var phone, email, fullName, dateOfBirth: String?

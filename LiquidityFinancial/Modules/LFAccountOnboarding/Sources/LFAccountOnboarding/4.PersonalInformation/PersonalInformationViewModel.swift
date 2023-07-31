@@ -1,6 +1,7 @@
 import SwiftUI
 import Factory
 import OnboardingData
+import AccountData
 import LFUtilities
 import LFServices
 
@@ -26,21 +27,21 @@ class PersonalInformationViewModel: ObservableObject {
     }
   }
   
-  @LazyInjected(\Container.userDataManager) var userDataManager
+  @LazyInjected(\.accountDataManager) var accountDataManager
   @LazyInjected(\.intercomService) var intercomService
   
   @Published var isNavigationToSSNView: Bool = false
   @Published var isActionAllowed: Bool = false {
     didSet {
       guard isActionAllowed else { return }
-      userDataManager.update(email: email)
-      userDataManager.update(firstName: firstName)
-      userDataManager.update(lastName: lastName)
-      userDataManager.update(dateOfBirth: dateCheck?.getDateString())
-      userDataManager.userNameDisplay = firstName
-      userDataManager.userEmail = email
-      if userDataManager.userInfomationData.phone == nil {
-        userDataManager.update(phone: UserDefaults.phoneNumber)
+      accountDataManager.update(email: email)
+      accountDataManager.update(firstName: firstName)
+      accountDataManager.update(lastName: lastName)
+      accountDataManager.update(dateOfBirth: dateCheck?.getDateString())
+      accountDataManager.userNameDisplay = firstName
+      accountDataManager.userEmail = email
+      if accountDataManager.userInfomationData.phone == nil {
+        accountDataManager.update(phone: UserDefaults.phoneNumber)
       }
     }
   }

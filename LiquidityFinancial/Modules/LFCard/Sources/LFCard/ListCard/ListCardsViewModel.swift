@@ -5,11 +5,12 @@ import CardDomain
 import CardData
 import LFUtilities
 import OnboardingData
+import AccountData
 
 @MainActor
 final class ListCardsViewModel: ObservableObject {
   @LazyInjected(\.intercomService) var intercomService
-  @LazyInjected(\.userDataManager) var userDataManager
+  @LazyInjected(\.accountDataManager) var accountDataManager
   @LazyInjected(\.cardRepository) var cardRepository
   @Published var cardsList: [CardModel] = []
   @Published var currentCard: CardModel = .virtualDefault
@@ -48,7 +49,7 @@ private extension ListCardsViewModel {
   func callLockCardAPI() {
     Task {
       do {
-        let card = try await cardUseCase.lockCard(cardID: currentCard.id, sessionID: userDataManager.sessionID)
+        let card = try await cardUseCase.lockCard(cardID: currentCard.id, sessionID: accountDataManager.sessionID)
         updateCardLock(status: .disabled, id: card.id)
       } catch {
         toastMessage = error.localizedDescription
@@ -59,7 +60,7 @@ private extension ListCardsViewModel {
   func callUnLockCardAPI() {
     Task {
       do {
-        let card = try await cardUseCase.unlockCard(cardID: currentCard.id, sessionID: userDataManager.sessionID)
+        let card = try await cardUseCase.unlockCard(cardID: currentCard.id, sessionID: accountDataManager.sessionID)
         updateCardLock(status: .active, id: card.id)
       } catch {
         toastMessage = error.localizedDescription

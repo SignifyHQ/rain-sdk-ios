@@ -1,0 +1,8 @@
+import Foundation
+
+public protocol LFAccount {
+  var id: String { get }
+  var externalAccountId: String? { get }
+  var currency: String { get }
+  var availableBalance: Double { get }
+}

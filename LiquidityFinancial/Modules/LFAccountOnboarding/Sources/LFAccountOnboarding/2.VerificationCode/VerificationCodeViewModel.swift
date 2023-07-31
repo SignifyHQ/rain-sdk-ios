@@ -7,10 +7,11 @@ import NetSpendData
 import Factory
 import NetspendSdk
 import LFServices
+import AccountData
 
 @MainActor
 final class VerificationCodeViewModel: ObservableObject {
-  @LazyInjected(\.userDataManager) var userDataManager
+  @LazyInjected(\.accountDataManager) var accountDataManager
   @LazyInjected(\.onboardingRepository) var onboardingRepository
   @LazyInjected(\.onboardingFlowCoordinator) var onboardingFlowCoordinator
   @LazyInjected(\.netspendRepository) var netspendRepository
@@ -48,8 +49,8 @@ extension VerificationCodeViewModel {
     Task {
       do {
         _ = try await loginUseCase.execute(phoneNumber: formatPhoneNumber, code: code)
-        userDataManager.update(phone: formatPhoneNumber)
-        userDataManager.stored(phone: formatPhoneNumber)
+        accountDataManager.update(phone: formatPhoneNumber)
+        accountDataManager.stored(phone: formatPhoneNumber)
         
         intercomService.loginIdentifiedUser(userAttributes: IntercomService.UserAttributes(phone: formatPhoneNumber))
         
@@ -61,11 +62,11 @@ extension VerificationCodeViewModel {
         guard let deviceData = sessionConnectWithJWT?.deviceData else { return }
         
         let establishPersonSession = try await netspendRepository.establishPersonSession(deviceData: EstablishSessionParameters(encryptedData: deviceData))
-        netspendDataManager.update(session: establishPersonSession)
-        userDataManager.stored(sessionID: establishPersonSession.id)
+        netspendDataManager.update(serverSession: establishPersonSession)
+        accountDataManager.stored(sessionID: establishPersonSession.id)
         
         let userSessionAnonymous = try netspendRepository.createUserSession(establishingSession: sessionConnectWithJWT, encryptedData: establishPersonSession.encryptedData)
-        netspendDataManager.update(userSession: userSessionAnonymous)
+        netspendDataManager.update(sdkSession: userSessionAnonymous)
         
         checkOnboardingState { self.isShowLoading = false }
         
@@ -125,7 +126,7 @@ extension VerificationCodeViewModel {
     Task { @MainActor in
       defer { onCompletion() }
       do {
-        let onboardingState = try await onboardingRepository.getOnboardingState(sessionId: userDataManager.sessionID)
+        let onboardingState = try await onboardingRepository.getOnboardingState(sessionId: accountDataManager.sessionID)
         if onboardingState.missingSteps.isEmpty {
           onboardingFlowCoordinator.set(route: .dashboard)
         } else {
@@ -165,7 +166,7 @@ extension VerificationCodeViewModel {
   
   private func handleQuestionCase() async {
     do {
-      let questionsEncrypt = try await netspendRepository.getQuestion(sessionId: userDataManager.sessionID)
+      let questionsEncrypt = try await netspendRepository.getQuestion(sessionId: accountDataManager.sessionID)
       if let usersession = netspendDataManager.sdkSession, let questionsDecode = questionsEncrypt.decodeData(session: usersession) {
         let questionsEntity = QuestionsEntity.mapObj(questionsDecode)
         onboardingFlowCoordinator.set(route: .question(questionsEntity))
@@ -180,7 +181,7 @@ extension VerificationCodeViewModel {
   
   private func handleUpDocumentCase() async {
     do {
-      let documents = try await netspendRepository.getDocuments(sessionId: userDataManager.sessionID)
+      let documents = try await netspendRepository.getDocuments(sessionId: accountDataManager.sessionID)
       netspendDataManager.update(documentData: documents)
       onboardingFlowCoordinator.set(route: .document)
     } catch {

@@ -2,11 +2,12 @@ import SwiftUI
 import LFLocalizable
 import Factory
 import OnboardingData
+import AccountData
 import LFServices
 
 @MainActor
 final class EnterPassportViewModel: ObservableObject {
-  @LazyInjected(\Container.userDataManager) var userDataManager
+  @LazyInjected(\.accountDataManager) var accountDataManager
   @LazyInjected(\.intercomService) var intercomService
   
   @Published var isNavigationToAddressView: Bool = false
@@ -21,7 +22,7 @@ final class EnterPassportViewModel: ObservableObject {
   }
   @Published var isActionAllowed: Bool = false {
     didSet {
-      userDataManager.update(passport: passport)
+      accountDataManager.update(passport: passport)
     }
   }
   

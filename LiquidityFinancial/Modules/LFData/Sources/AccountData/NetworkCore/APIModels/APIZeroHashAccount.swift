@@ -1,5 +1,5 @@
 import Foundation
-import OnboardingDomain
+import AccountDomain
 
 public struct APIZeroHashAccount: ZeroHashAccount, Decodable {
   public var externalAccountId: String?

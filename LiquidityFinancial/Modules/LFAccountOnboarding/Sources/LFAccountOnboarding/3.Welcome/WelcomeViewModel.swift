@@ -12,7 +12,6 @@ class WelcomeViewModel: ObservableObject {
   
   @Injected(\.netspendRepository) var netspendRepository
   @Injected(\.netspendDataManager) var netspendDataManager
-  @Injected(\.userDataManager) var userDataManager
   @Injected(\.onboardingRepository) var onboardingRepository
   
   @Published var isPushToAgreementView: Bool = false

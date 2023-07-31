@@ -10,9 +10,9 @@ public protocol NetSpendDataManagerProtocol {
   var documentData: NetSpendDocumentData? { get set }
   func clear()
   func update(jwkToken: NetSpendJwkToken?)
-  func update(session: NetSpendSessionData?)
+  func update(serverSession: NetSpendSessionData?)
   func update(agreement: NetSpendAgreementData?)
-  func update(userSession: NetspendSdkUserSession?)
+  func update(sdkSession: NetspendSdkUserSession?)
   func update(accountPersonData: NetSpendAccountPersonData?)
   func update(documentData: NetSpendDocumentData?)
 }
@@ -29,16 +29,16 @@ public class NetSpendDataManager: NetSpendDataManagerProtocol {
     self.jwkToken = jwkToken
   }
   
-  public func update(session: NetSpendSessionData?) {
-    self.serverSession = session
+  public func update(serverSession: NetSpendSessionData?) {
+    self.serverSession = serverSession
   }
   
   public func update(agreement: NetSpendAgreementData?) {
     self.agreement = agreement
   }
   
-  public func update(userSession: NetspendSdkUserSession?) {
-    self.sdkSession = userSession
+  public func update(sdkSession: NetspendSdkUserSession?) {
+    self.sdkSession = sdkSession
   }
   
   public func update(accountPersonData: NetSpendAccountPersonData?) {

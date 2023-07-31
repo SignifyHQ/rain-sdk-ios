@@ -2,14 +2,14 @@ import SwiftUI
 import Factory
 import LFUtilities
 import LFStyleGuide
+import AccountData
 
 public struct OnboardingContentView: View {
   
   @StateObject
   var viewModel = OnboardingContentViewModel()
   
-  @Injected(\.userDataManager)
-  var userDataManager
+  @Injected(\.accountDataManager) var accountDataManager
   
   let environmentManager = EnvironmentManager()
   
@@ -31,7 +31,7 @@ public struct OnboardingContentView: View {
       case .welcome:
         WelcomeView()
       case .kycReview:
-        KYCStatusView(viewModel: KYCStatusViewModel(state: .inReview(userDataManager.userNameDisplay)))
+        KYCStatusView(viewModel: KYCStatusViewModel(state: .inReview(accountDataManager.userNameDisplay)))
       case .dashboard:
         EmptyView()
       case .question(let questions):

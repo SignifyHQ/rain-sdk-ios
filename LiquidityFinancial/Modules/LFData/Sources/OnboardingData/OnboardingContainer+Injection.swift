@@ -5,10 +5,6 @@ import LFNetwork
 import AuthorizationManager
 
 extension Container {
-  public var userDataManager: Factory<UserDataManagerProtocol> {
-    self { UserDataManager() }.singleton
-  }
-  
   public var onboardingAPI: Factory<OnboardingAPIProtocol> {
     self {
       LFNetwork<OnboardingRoute>()

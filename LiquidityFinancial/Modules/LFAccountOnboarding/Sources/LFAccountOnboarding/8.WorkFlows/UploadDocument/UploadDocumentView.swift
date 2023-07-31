@@ -49,7 +49,7 @@ struct UploadDocumentView: View {
     .navigationLink(item: $viewModel.navigation) { item in
       switch item {
       case .kycReview:
-        KYCStatusView(viewModel: KYCStatusViewModel(state: .inReview(viewModel.userDataManager.userNameDisplay)))
+        KYCStatusView(viewModel: KYCStatusViewModel(state: .inReview(viewModel.accountDataManager.userNameDisplay)))
       case .home:
         EmptyView()
       }

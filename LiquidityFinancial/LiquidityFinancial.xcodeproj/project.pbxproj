@@ -16,6 +16,7 @@
 		06EBE2032A693C7800157B32 /* LFDashboard in Frameworks */ = {isa = PBXBuildFile; productRef = 06EBE2022A693C7800157B32 /* LFDashboard */; };
 		06EBE2052A693C8100157B32 /* LFDashboard in Frameworks */ = {isa = PBXBuildFile; productRef = 06EBE2042A693C8100157B32 /* LFDashboard */; };
 		749091172A6584C300071B41 /* SmartyStreets in Frameworks */ = {isa = PBXBuildFile; productRef = 749091162A6584C300071B41 /* SmartyStreets */; };
+		A918D76E2A77B116001AD849 /* AccountData in Frameworks */ = {isa = PBXBuildFile; productRef = A918D76D2A77B116001AD849 /* AccountData */; };
 		A938373C2A63BAAC009EB1DE /* LFUtilities in Frameworks */ = {isa = PBXBuildFile; productRef = A938373B2A63BAAC009EB1DE /* LFUtilities */; };
 		A938373E2A63BB20009EB1DE /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = A938373D2A63BB20009EB1DE /* LaunchScreen.storyboard */; };
 		A93837442A63D7AD009EB1DE /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A93837432A63D7AD009EB1DE /* Images.xcassets */; };
@@ -240,6 +241,7 @@
 				A980DF6B2A5FA23D000B3C09 /* LFAccountOnboarding in Frameworks */,
 				A980DF6D2A5FA249000B3C09 /* OnboardingDomain in Frameworks */,
 				A97BF7EB2A5D70C500B8F5CA /* Factory in Frameworks */,
+				A918D76E2A77B116001AD849 /* AccountData in Frameworks */,
 				A980DF712A5FA252000B3C09 /* OnboardingData in Frameworks */,
 				A980DF6F2A5FA252000B3C09 /* DataUtilities in Frameworks */,
 				06EBE2032A693C7800157B32 /* LFDashboard in Frameworks */,
@@ -715,6 +717,7 @@
 				A963D3FA2A67081D006B9A54 /* NetSpendData */,
 				06EBE2022A693C7800157B32 /* LFDashboard */,
 				0603BD702A71191B00347DB2 /* VGSShowSDK */,
+				A918D76D2A77B116001AD849 /* AccountData */,
 			);
 			productName = LiquidityFinancial;
 			productReference = A97BF7BC2A5C602D00B8F5CA /* Avalanche.app */;
@@ -1518,6 +1521,10 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 749091152A6584C300071B41 /* XCRemoteSwiftPackageReference "smartystreets-ios-sdk" */;
 			productName = SmartyStreets;
+		};
+		A918D76D2A77B116001AD849 /* AccountData */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = AccountData;
 		};
 		A938373B2A63BAAC009EB1DE /* LFUtilities */ = {
 			isa = XCSwiftPackageProductDependency;

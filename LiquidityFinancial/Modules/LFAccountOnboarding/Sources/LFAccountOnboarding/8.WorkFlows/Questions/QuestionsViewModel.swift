@@ -2,7 +2,7 @@ import SwiftUI
 import NetSpendData
 import Factory
 import LFUtilities
-import OnboardingDomain
+import AccountData
 import OnboardingData
 
 // swiftlint:disable superfluous_disable_command
@@ -14,7 +14,7 @@ final class QuestionsViewModel: ObservableObject {
   }
   
   @LazyInjected(\.netspendDataManager) var netspendDataManager
-  @LazyInjected(\.userDataManager) var userDataManager
+  @LazyInjected(\.accountDataManager) var accountDataManager
   @LazyInjected(\.netspendRepository) var netspendRepository
   @LazyInjected(\.onboardingRepository) var onboardingRepository
   @LazyInjected(\.onboardingFlowCoordinator) var onboardingFlowCoordinator
@@ -89,7 +89,7 @@ final class QuestionsViewModel: ObservableObject {
         case .identityQuestions:
           onboardingFlowCoordinator.set(route: .welcome)
         case .provideDocuments:
-          let documents = try await netspendRepository.getDocuments(sessionId: userDataManager.sessionID)
+          let documents = try await netspendRepository.getDocuments(sessionId: accountDataManager.sessionID)
           netspendDataManager.update(documentData: documents)
           navigation = .uploadDocument
         case .primaryPersonKYCApprove, .KYCData, .identityScan:

@@ -4,6 +4,7 @@ import LFLocalizable
 import Factory
 import NetSpendData
 import OnboardingData
+import AccountData
 import SwiftUI
 import UIKit
 
@@ -16,7 +17,7 @@ final class UploadDocumentViewModel: ObservableObject {
   }
   
   @LazyInjected(\.netspendDataManager) var netspendDataManager
-  @LazyInjected(\.userDataManager) var userDataManager
+  @LazyInjected(\.accountDataManager) var accountDataManager
   @LazyInjected(\.netspendRepository) var netspendRepository
   @LazyInjected(\.onboardingRepository) var onboardingRepository
   @LazyInjected(\.onboardingFlowCoordinator) var onboardingFlowCoordinator
@@ -109,7 +110,7 @@ extension UploadDocumentViewModel {
         
         let encryptedData = try netspendDataManager.sdkSession?.encryptWithJWKSet(value: documentEncryptedData.encoded())
         let purpose = netspendDataManager.documentData?.requestedDocuments.first?.workflow ?? ""
-        let sessionId = userDataManager.sessionID
+        let sessionId = accountDataManager.sessionID
         let documentId = netspendDataManager.documentData?.requestedDocuments.first?.documentRequestId ?? ""
         var isUpdateDocument = false
         if let status = netspendDataManager.documentData?.requestedDocuments.first?.status {

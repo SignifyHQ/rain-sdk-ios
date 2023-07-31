@@ -8,7 +8,7 @@ import LFDashboard
 struct AppView: View {
   
   @StateObject var viewModel = AppViewModel()
-  @Injected(\.userDataManager) var userDataManager
+  @Injected(\.accountDataManager) var accountDataManager
   
   let environmentManager = EnvironmentManager()
   

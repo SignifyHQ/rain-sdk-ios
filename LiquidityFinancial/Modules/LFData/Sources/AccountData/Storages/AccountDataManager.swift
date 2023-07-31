@@ -1,32 +1,7 @@
 import Foundation
+import AccountDomain
 
-public protocol UserDataManagerProtocol {
-  var userInfomationData: UserInfomationData { get }
-  var phoneNumber: String { get }
-  var sessionID: String { get }
-  var userNameDisplay: String { get set }
-  var userEmail: String { get set }
-  func update(firstName: String?)
-  func update(lastName: String?)
-  func update(phone: String?)
-  func update(email: String?)
-  func update(fullName: String?)
-  func update(dateOfBirth: String?)
-  func update(addressLine1: String?)
-  func update(addressLine2: String?)
-  func update(encryptedData: String?)
-  func update(ssn: String?)
-  func update(passport: String?)
-  func update(city: String?)
-  func update(state: String?)
-  func update(postalCode: String?)
-  func update(country: String?)
-  func stored(phone: String)
-  func stored(sessionID: String)
-  func clearUserSession()
-}
-
-public class UserDataManager: UserDataManagerProtocol {
+public class AccountDataManager: AccountDataStorageProtocol {
   public var userNameDisplay: String {
     get {
       UserDefaults.userNameDisplay
@@ -53,7 +28,7 @@ public class UserDataManager: UserDataManagerProtocol {
     UserDefaults.userSessionID
   }
   
-  public private(set) var userInfomationData = UserInfomationData()
+  public private(set) var userInfomationData: UserInfomationDataProtocol = UserInfomationData()
   
   public func update(firstName: String?) {
     self.userInfomationData.firstName = firstName

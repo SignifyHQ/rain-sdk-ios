@@ -3,6 +3,7 @@ import Factory
 import NetSpendData
 import LFUtilities
 import OnboardingData
+import AccountData
 import OnboardingDomain
 import UIKit
 import LFServices
@@ -22,13 +23,14 @@ final class KYCStatusViewModel: ObservableObject {
   
   @LazyInjected(\.netspendRepository) var netspendRepository
   @LazyInjected(\.netspendDataManager) var netspendDataManager
-  @LazyInjected(\.userDataManager) var userDataManager
+  @LazyInjected(\.accountDataManager) var accountDataManager
   @LazyInjected(\.onboardingRepository) var onboardingRepository
+  @LazyInjected(\.accountRepository) var accountRepository
   @LazyInjected(\.onboardingFlowCoordinator) var onboardingFlowCoordinator
   @LazyInjected(\.intercomService) var intercomService
   
   var username: String {
-    userDataManager.userNameDisplay
+    accountDataManager.userNameDisplay
   }
   private var fetchCount = 0
   private var autoRefreshTimer: Timer?
@@ -52,7 +54,7 @@ extension KYCStatusViewModel {
 #if DEBUG
     Task {
       do {
-        let user = try await onboardingRepository.getUser(deviceId: UIDevice.current.identifierForVendor?.uuidString ?? "")
+        let user = try await accountRepository.getUser(deviceId: UIDevice.current.identifierForVendor?.uuidString ?? "")
         var request = URLRequest(url: URL(string: "https://api-crypto.dev.liquidity.cc/v1/admin/users/\(user.userID)/approve")!)
         request.httpMethod = "POST"
         URLSession.shared.dataTask(with: request) { _, response, error in
@@ -102,7 +104,7 @@ extension KYCStatusViewModel {
       defer { isLoading = false }
       isLoading = true
       do {
-        let onboardingState = try await onboardingRepository.getOnboardingState(sessionId: userDataManager.sessionID)
+        let onboardingState = try await onboardingRepository.getOnboardingState(sessionId: accountDataManager.sessionID)
         if onboardingState.missingSteps.isEmpty {
           onboardingFlowCoordinator.set(route: .dashboard)
         } else {

@@ -12,10 +12,14 @@ let package = Package(
             targets: ["OnboardingDomain"]),
         .library(
           name: "CardDomain",
-          targets: ["CardDomain"])
+          targets: ["CardDomain"]),
+        .library(
+          name: "AccountDomain",
+          targets: ["AccountDomain"])
     ],
     dependencies: [
-
+      .package(name: "LFServices", path: "../LFServices"),
+      .package(url: "https://github.com/hmlongco/Factory", from: "2.2.0")
     ],
     targets: [
         .target(
@@ -24,6 +28,12 @@ let package = Package(
         .target(
           name: "CardDomain",
           dependencies: []),
+        .target(
+          name: "AccountDomain",
+          dependencies: [
+            "LFServices", "Factory"
+          ]
+        ),
         .testTarget(
             name: "OnboardingDomainTests",
             dependencies: ["OnboardingDomain"])

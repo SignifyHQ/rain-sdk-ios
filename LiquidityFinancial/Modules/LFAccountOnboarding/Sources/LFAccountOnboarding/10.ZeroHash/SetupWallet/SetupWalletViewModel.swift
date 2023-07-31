@@ -1,7 +1,7 @@
 import SwiftUI
 import Factory
 import NetSpendData
-import OnboardingData
+import AccountData
 import LFUtilities
 import LFServices
 // MARK: - SetupWalletViewModel
@@ -13,7 +13,7 @@ class SetupWalletViewModel: ObservableObject {
   @Published var selection: Int?
   @Published var isTermsAgreed = false
   
-  @LazyInjected(\.onboardingRepository) var onboardingRepository
+  @LazyInjected(\.accountRepository) var accountRepository
   @LazyInjected(\.onboardingFlowCoordinator) var onboardingFlowCoordinator
   @LazyInjected(\.intercomService) var intercomService
   
@@ -22,7 +22,7 @@ class SetupWalletViewModel: ObservableObject {
       defer { showIndicator = false }
       showIndicator = true
       do {
-        let zeroHashAccount = try await onboardingRepository.createZeroHashAccount()
+        let zeroHashAccount = try await accountRepository.createZeroHashAccount()
         onboardingFlowCoordinator.set(route: .dashboard)
         log.debug(zeroHashAccount)
       } catch {

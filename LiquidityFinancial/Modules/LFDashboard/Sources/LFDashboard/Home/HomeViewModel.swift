@@ -1,6 +1,8 @@
 import Foundation
 import Factory
 import OnboardingData
+import AccountData
+import LFUtilities
 import AuthorizationManager
 
 @MainActor
@@ -8,7 +10,8 @@ public final class HomeViewModel: ObservableObject {
   @Published var tabSelected: TabOption = .cash
   @Published var isShowGearButton: Bool = false
   @LazyInjected(\.authorizationManager) var authorizationManager
-  @LazyInjected(\.userDataManager) var userDataManager
+  @LazyInjected(\.accountDataManager) var accountDataManager
+  @LazyInjected(\.accountRepository) var accountRepository
   
 #if DEBUG
   var countMangicLogout: Int = 0
@@ -30,6 +33,17 @@ extension HomeViewModel {
   func onClickedGearButton() {
     
   }
+  
+  func getAccountInfomation() {
+    Task {
+      do {
+        let account = try await accountRepository.getAccount(currencyType: "FIAT")
+        log.info(account)
+      } catch {
+        log.error(error.localizedDescription)
+      }
+    }
+  }
 }
 
 private extension HomeViewModel {
@@ -39,9 +53,8 @@ private extension HomeViewModel {
     if countMangicLogout >= 5 {
       countMangicLogout = 0
       authorizationManager.clearToken()
-      userDataManager.clearUserSession()
+      accountDataManager.clearUserSession()
     }
 #endif
   }
-
 }

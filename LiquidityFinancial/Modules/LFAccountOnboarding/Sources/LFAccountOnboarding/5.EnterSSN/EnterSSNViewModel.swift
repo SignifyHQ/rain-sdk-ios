@@ -2,19 +2,20 @@ import SwiftUI
 import LFUtilities
 import Factory
 import OnboardingData
+import AccountData
 import LFServices
 
 @MainActor
 class EnterSSNViewModel: ObservableObject {
   
-  @LazyInjected(\Container.userDataManager) var userDataManager
+  @LazyInjected(\.accountDataManager) var accountDataManager
   @LazyInjected(\.intercomService) var intercomService
   
   @Published var errorMessage: String?
   @Published var isActionAllowed: Bool = false {
     didSet {
       guard isActionAllowed else { return }
-      userDataManager.update(ssn: ssn)
+      accountDataManager.update(ssn: ssn)
     }
   }
   @Published var ssn: String = "" {
