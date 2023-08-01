@@ -38,7 +38,7 @@ public struct ListCardsView: View {
         AddAppleWalletView(card: cardModel, onFinish: {})
           .embedInNavigation()
       case let .applePay(cardModel):
-        ApplePayController(cardModel: cardModel)
+        ApplePayViewController(card: cardModel)
       case let .activatePhysicalCard(cardModel):
         ActivatePhysicalCardView(card: cardModel)
           .embedInNavigation()

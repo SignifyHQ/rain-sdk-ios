@@ -159,13 +159,13 @@ extension LFNetwork {
   
   private static func debugLog(info: String) {
 #if DEBUG
-    print("[Pilot][INFO] \(info)")
+    log.info("[Pilot][INFO] \(info)")
 #endif
   }
   
   private static func debugLog(error: Error) {
 #if DEBUG
-    print("[Pilot][ERROR] \(error.localizedDescription)")
+    log.error("[Pilot][ERROR] \(error.localizedDescription)")
 #endif
   }
 }

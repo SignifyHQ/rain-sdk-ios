@@ -15,6 +15,10 @@ public class AuthorizationManager {
   private var accessToken: String?
   private var expiresAt = Date()
   
+  private var currentDate: Date {
+    Date()
+  }
+  
   public init() {
     update()
   }
@@ -24,7 +28,7 @@ public class AuthorizationManager {
 extension AuthorizationManager: AuthorizationManagerProtocol {
   public func isTokenValid() -> Bool {
     update()
-    return accessToken != nil && expiresAt.compare(Date()) == .orderedDescending
+    return accessToken != nil && expiresAt > currentDate
   }
   
   public func fetchToken() -> String {

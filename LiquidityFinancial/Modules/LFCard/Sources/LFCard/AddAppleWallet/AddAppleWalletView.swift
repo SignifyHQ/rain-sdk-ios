@@ -19,7 +19,7 @@ struct AddAppleWalletView: View {
         viewModel.onViewAppear()
       }
       .sheet(isPresented: $viewModel.isShowApplePay) {
-        ApplePayController(cardModel: viewModel.cardModel) {
+        ApplePayViewController(card: viewModel.cardModel) {
           viewModel.onFinish()
         }
       }

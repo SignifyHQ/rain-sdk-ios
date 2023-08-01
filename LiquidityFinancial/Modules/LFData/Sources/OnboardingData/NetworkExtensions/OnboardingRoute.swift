@@ -37,7 +37,7 @@ extension OnboardingRoute: LFRoute {
   public var httpHeaders: HttpHeaders {
     var base = [
       "Content-Type": "application/json",
-      "productId": APIConstants.productID
+      "productId": self.productID
     ]
     switch self {
     case .otp, .login:

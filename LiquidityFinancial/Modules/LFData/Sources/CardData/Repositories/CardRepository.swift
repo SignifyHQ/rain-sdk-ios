@@ -45,6 +45,14 @@ public class CardRepository: CardRepositoryProtocol {
     let apiRequest = APISetPinRequest(verifyId: requestParam.verifyId, encryptedData: requestParam.encryptedData)
     return try await cardAPI.setPin(requestParam: apiRequest, cardID: cardID, sessionID: sessionID)
   }
+  
+  public func getApplePayToken(sessionId: String, cardId: String) async throws -> any GetApplePayTokenEntity {
+    return try await cardAPI.getApplePayToken(sessionId: sessionId, cardId: cardId)
+  }
+  
+  public func postApplePayToken(sessionId: String, cardId: String, bodyData: [String : Any]) async throws -> PostApplePayTokenEntity {
+    return try await cardAPI.postApplePayToken(sessionId: sessionId, cardId: cardId, bodyData: bodyData)
+  }
 }
 
 extension APICard: CardEntity {

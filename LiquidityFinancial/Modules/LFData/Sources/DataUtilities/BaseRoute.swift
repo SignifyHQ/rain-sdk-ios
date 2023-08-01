@@ -6,10 +6,14 @@ extension LFRoute {
     APIConstants.baseURL
   }
   
+  public var productID: String {
+    DataUtilities.target == .Avalanche ? APIConstants.avalencheID : APIConstants.cardanoID
+  }
+  
   public var httpHeaders: HttpHeaders {
     [
       "Content-Type": "application/json",
-      "productId": APIConstants.productID
+      "productId": productID
     ]
   }
 }

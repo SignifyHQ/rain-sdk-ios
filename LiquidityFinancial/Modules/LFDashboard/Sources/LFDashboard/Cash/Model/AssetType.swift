@@ -2,20 +2,13 @@ import SwiftUI
 import LFStyleGuide
 import LFUtilities
 
-enum AssetType {
-  case usd
-  case usdc
-  case avax
+enum AssetType: String {
+  case usd = "USD"
+  case usdc = "USDC"
+  case avax = "AVAX"
   
   var title: String {
-    switch self {
-    case .usd:
-      return "USD"
-    case .usdc:
-      return "USDC"
-    case .avax:
-      return "AVAX"
-    }
+    self.rawValue
   }
   
   var image: Image {

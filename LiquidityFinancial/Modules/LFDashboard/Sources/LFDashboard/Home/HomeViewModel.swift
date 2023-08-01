@@ -11,7 +11,6 @@ public final class HomeViewModel: ObservableObject {
   @Published var isShowGearButton: Bool = false
   @LazyInjected(\.authorizationManager) var authorizationManager
   @LazyInjected(\.accountDataManager) var accountDataManager
-  @LazyInjected(\.accountRepository) var accountRepository
   
 #if DEBUG
   var countMangicLogout: Int = 0
@@ -32,17 +31,6 @@ extension HomeViewModel {
   
   func onClickedGearButton() {
     
-  }
-  
-  func getAccountInfomation() {
-    Task {
-      do {
-        let account = try await accountRepository.getAccount(currencyType: "FIAT")
-        log.info(account)
-      } catch {
-        log.error(error.localizedDescription)
-      }
-    }
   }
 }
 

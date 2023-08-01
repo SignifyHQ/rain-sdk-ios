@@ -33,9 +33,6 @@ public struct HomeView: View {
         leadingNavigationBarView
       }
     }
-    .onAppear {
-      viewModel.getAccountInfomation()
-    }
     //    .navigationLink(item: $viewModel.navigation) { item in
     //      switch item {
     //        case let .searchCauses(vm):
@@ -74,8 +71,8 @@ private extension HomeView {
       }
     }
     .padding(.horizontal, 32)
-    .padding(.bottom, 2)
-    .padding(.top, 4)
+    .padding(.bottom, 0)
+    .padding(.top, 8)
     .background(Colors.secondaryBackground.swiftUIColor)
   }
   
@@ -89,7 +86,7 @@ private extension HomeView {
         .foregroundColor(
           option == viewModel.tabSelected ? Colors.label.swiftUIColor : Colors.label.swiftUIColor.opacity(0.75)
         )
-        .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.small.value))
+        .font(Fonts.medium.swiftUIFont(size: Constants.FontSize.small.value))
     }
     .onTapGesture {
       viewModel.onSelectedTab(tab: option)

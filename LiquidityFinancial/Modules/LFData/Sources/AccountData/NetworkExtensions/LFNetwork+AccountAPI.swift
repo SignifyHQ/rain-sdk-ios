@@ -4,8 +4,8 @@ import LFNetwork
 import LFUtilities
 
 extension LFNetwork: AccountAPIProtocol where R == AccountRoute {
-  public func getAccount(currencyType: String) async throws -> APIAccount {
-    return try await request(AccountRoute.getAccount(currencyType: currencyType), target: APIAccount.self, failure: LFErrorObject.self, decoder: .apiDecoder)
+  public func getAccount(currencyType: String) async throws -> [APIAccount] {
+    return try await request(AccountRoute.getAccount(currencyType: currencyType), target: [APIAccount].self, failure: LFErrorObject.self, decoder: .apiDecoder)
   }
   
   public func getUser(deviceId: String) async throws -> APIUser {

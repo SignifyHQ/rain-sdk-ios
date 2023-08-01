@@ -58,6 +58,8 @@
 		A980DF732A5FA25A000B3C09 /* LFNetwork in Frameworks */ = {isa = PBXBuildFile; productRef = A980DF722A5FA25A000B3C09 /* LFNetwork */; };
 		A980DF752A5FA265000B3C09 /* LFServices in Frameworks */ = {isa = PBXBuildFile; productRef = A980DF742A5FA265000B3C09 /* LFServices */; };
 		A980DF772A5FA26E000B3C09 /* LFUtilities in Frameworks */ = {isa = PBXBuildFile; productRef = A980DF762A5FA26E000B3C09 /* LFUtilities */; };
+		A9AE68AE2A78FFF900F01936 /* CardData in Frameworks */ = {isa = PBXBuildFile; productRef = A9AE68AD2A78FFF900F01936 /* CardData */; };
+		A9AE68B02A78FFF900F01936 /* CardDomain in Frameworks */ = {isa = PBXBuildFile; productRef = A9AE68AF2A78FFF900F01936 /* CardDomain */; };
 		A9B912D12A6B86A800ABD87B /* LoadingPrimary.json in Resources */ = {isa = PBXBuildFile; fileRef = A9B912CE2A6B86A800ABD87B /* LoadingPrimary.json */; };
 		A9B912D22A6B86A800ABD87B /* LoadingContrast.json in Resources */ = {isa = PBXBuildFile; fileRef = A9B912CF2A6B86A800ABD87B /* LoadingContrast.json */; };
 		A9B912D32A6B86A800ABD87B /* LoadingMix.json in Resources */ = {isa = PBXBuildFile; fileRef = A9B912D02A6B86A800ABD87B /* LoadingMix.json */; };
@@ -222,8 +224,10 @@
 				A9B912EE2A6B881100ABD87B /* SmartyStreets in Frameworks */,
 				A953548C2A5E55B2008B0FAB /* Factory in Frameworks */,
 				A94F71F02A610E9F002ADB34 /* CardanoAccountOnboarding in Frameworks */,
+				A9AE68AE2A78FFF900F01936 /* CardData in Frameworks */,
 				A94F71F72A61CACF002ADB34 /* LFLocalizable in Frameworks */,
 				A953548D2A5E55B2008B0FAB /* LFStyleGuide in Frameworks */,
+				A9AE68B02A78FFF900F01936 /* CardDomain in Frameworks */,
 				06EBE2052A693C8100157B32 /* LFDashboard in Frameworks */,
 				A9B912E22A6B876300ABD87B /* OnboardingData in Frameworks */,
 				A9B912E62A6B876300ABD87B /* LFNetwork in Frameworks */,
@@ -679,6 +683,8 @@
 				A9B912E92A6B881100ABD87B /* DataUtilities */,
 				A9B912EB2A6B881100ABD87B /* iPhoneNumberField */,
 				A9B912ED2A6B881100ABD87B /* SmartyStreets */,
+				A9AE68AD2A78FFF900F01936 /* CardData */,
+				A9AE68AF2A78FFF900F01936 /* CardDomain */,
 			);
 			productName = LiquidityFinancial;
 			productReference = A95354972A5E55B2008B0FAB /* Cardano.app */;
@@ -1224,12 +1230,10 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = "${SRCROOT}/LiquidityFinancial/Avalanche/Resources/Avalanche.entitlements";
-				CODE_SIGN_IDENTITY = "Apple Distribution";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution";
 				CODE_SIGN_STYLE = Manual;
 				CURRENT_PROJECT_VERSION = $BITRISE_BUILD_NUMBER;
 				DEVELOPMENT_ASSET_PATHS = "";
-				DEVELOPMENT_TEAM = TX9PJZUNWS;
 				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = TX9PJZUNWS;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = NO;
@@ -1250,7 +1254,6 @@
 				MARKETING_VERSION = 1.0.1;
 				PRODUCT_BUNDLE_IDENTIFIER = com.liquidityfinancial.avalanche;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE_SPECIFIER = "Apple Distribution AvalancheCard";
 				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = "Apple Distribution AvalancheCard";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
 				SUPPORTS_MACCATALYST = NO;
@@ -1268,12 +1271,10 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = "${SRCROOT}/LiquidityFinancial/Avalanche/Resources/Avalanche.entitlements";
-				CODE_SIGN_IDENTITY = "Apple Distribution";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution";
 				CODE_SIGN_STYLE = Manual;
 				CURRENT_PROJECT_VERSION = $BITRISE_BUILD_NUMBER;
 				DEVELOPMENT_ASSET_PATHS = "";
-				DEVELOPMENT_TEAM = TX9PJZUNWS;
 				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = TX9PJZUNWS;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = NO;
@@ -1294,7 +1295,6 @@
 				MARKETING_VERSION = 1.0.1;
 				PRODUCT_BUNDLE_IDENTIFIER = com.liquidityfinancial.avalanche;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE_SPECIFIER = "Apple Distribution AvalancheCard";
 				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = "Apple Distribution AvalancheCard";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
 				SUPPORTS_MACCATALYST = NO;
@@ -1613,6 +1613,14 @@
 		A980DF762A5FA26E000B3C09 /* LFUtilities */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = LFUtilities;
+		};
+		A9AE68AD2A78FFF900F01936 /* CardData */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = CardData;
+		};
+		A9AE68AF2A78FFF900F01936 /* CardDomain */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = CardDomain;
 		};
 		A9B912DD2A6B876300ABD87B /* AuthorizationManager */ = {
 			isa = XCSwiftPackageProductDependency;

@@ -38,4 +38,12 @@ public class CardUseCase: CardUseCaseProtocol {
   public func setPin(requestParam: SetPinRequestEntity, cardID: String, sessionID: String) async throws -> CardEntity {
     try await repository.setPin(requestParam: requestParam, cardID: cardID, sessionID: sessionID)
   }
+
+  public func getApplePayToken(sessionId: String, cardId: String) async throws -> any GetApplePayTokenEntity {
+    try await repository.getApplePayToken(sessionId: sessionId, cardId: cardId)
+  }
+  
+  public func postApplePayToken(sessionId: String, cardId: String, bodyData: [String: Any]) async throws -> PostApplePayTokenEntity {
+    try await repository.postApplePayToken(sessionId: sessionId, cardId: cardId, bodyData: bodyData)
+  }
 }

@@ -7,6 +7,7 @@ import LFUtilities
 import OnboardingData
 import AccountData
 import NetSpendData
+import PassKit
 
 @MainActor
 final class ListCardsViewModel: ObservableObject {

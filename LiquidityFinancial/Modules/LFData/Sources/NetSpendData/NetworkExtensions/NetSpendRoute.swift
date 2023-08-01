@@ -50,7 +50,7 @@ extension NetSpendRoute: LFRoute {
       "Content-Type": "application/json",
       "Accept": "application/json",
       "Authorization": authorization,
-      "productId": APIConstants.productID
+      "productId": self.productID
     ]
     switch self {
     case .sessionInit, .getAgreements, .establishSession, .getWorkflows:

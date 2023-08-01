@@ -9,4 +9,6 @@ public protocol CardAPIProtocol {
   func orderPhysicalCard(address: PhysicalCardAddressEntity, sessionID: String) async throws -> APICard
   func verifyCVVCode(verifyRequest: APIVerifyCVVRequest, cardID: String, sessionID: String) async throws -> APIVerifyCVVResponse
   func setPin(requestParam: APISetPinRequest, cardID: String, sessionID: String) async throws -> APICard
+  func getApplePayToken(sessionId: String, cardId: String) async throws -> APIGetApplePayToken
+  func postApplePayToken(sessionId: String, cardId: String, bodyData: [String: Any]) async throws -> APIPostApplePayToken
 }

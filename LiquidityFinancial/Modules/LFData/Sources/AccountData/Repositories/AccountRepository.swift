@@ -20,7 +20,7 @@ public class AccountRepository: AccountRepositoryProtocol {
     return try await accountAPI.getUser(deviceId: deviceId)
   }
   
-  public func getAccount(currencyType: String) async throws -> LFAccount {
+  public func getAccount(currencyType: String) async throws -> [LFAccount] {
     return try await accountAPI.getAccount(currencyType: currencyType)
   }
 }

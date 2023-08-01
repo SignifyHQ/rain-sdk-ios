@@ -4,36 +4,28 @@ import CardData
 import Factory
 
 @MainActor
-final class AddAppleWalletViewModel: ObservableObject {
+final class ApplePayViewModel: ObservableObject {
   @LazyInjected(\.cardRepository) var cardRepository
   @LazyInjected(\.netspendDataManager) var netspendDataManager
   @LazyInjected(\.intercomService) var intercomService
   @LazyInjected(\.accountDataManager) var accountDataManager
-  
-  @Published var isShowApplePay: Bool = false
-  
+
   private lazy var userCase: CardUseCase? = { [weak self] in
     guard let self else { return nil }
     return CardUseCase(repository: self.cardRepository)
   }()
   
   let cardModel: CardModel
-  let onFinish: () -> Void
-
-  init(cardModel: CardModel, onFinish: @escaping () -> Void) {
+  
+  init(cardModel: CardModel) {
     self.cardModel = cardModel
-    self.onFinish = onFinish
   }
 }
 
-// MARK: - View Helpers
-extension AddAppleWalletViewModel {
+  // MARK: - View Helpers
+extension ApplePayViewModel {
   func onViewAppear() {
     
-  }
-  
-  func onClickedAddToApplePay() {
-    isShowApplePay = true
   }
   
   func callEnrollWalletAPI(bodyData: [String: Any]) async throws -> PostApplePayTokenEntity? {
