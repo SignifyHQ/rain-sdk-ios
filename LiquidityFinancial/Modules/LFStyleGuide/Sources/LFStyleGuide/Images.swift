@@ -23,6 +23,21 @@ public typealias AssetImageTypeAlias = ImageAsset.Image
 // swiftlint:disable identifier_name line_length nesting type_body_length type_name
 public enum GenImages {
   public enum CommonImages {
+    public enum Accounts {
+      public static let atm = ImageAsset(name: "atm")
+      public static let bankStatements = ImageAsset(name: "bankStatements")
+      public static let bankTransfers = ImageAsset(name: "bankTransfers")
+      public static let connectedAccounts = ImageAsset(name: "connectedAccounts")
+      public static let debitDeposit = ImageAsset(name: "debitDeposit")
+      public static let directDeposit = ImageAsset(name: "directDeposit")
+      public static let help = ImageAsset(name: "help")
+      public static let legal = ImageAsset(name: "legal")
+      public static let limits = ImageAsset(name: "limits")
+      public static let oneTime = ImageAsset(name: "oneTime")
+      public static let tax = ImageAsset(name: "tax")
+      public static let verification = ImageAsset(name: "verification")
+      public static let walletAddress = ImageAsset(name: "walletAddress")
+    }
     public static let zerohash = ImageAsset(name: "Zerohash")
     public static let calendar = ImageAsset(name: "calendar")
     public static let checkmark = ImageAsset(name: "checkmark")

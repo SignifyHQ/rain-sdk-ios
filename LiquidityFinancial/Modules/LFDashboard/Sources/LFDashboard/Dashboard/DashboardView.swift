@@ -24,7 +24,7 @@ struct DashboardView: View {
       case .assets:
         EmptyView()
       case .account:
-        EmptyView()
+        AccountsView()
       }
     }
     .popup(item: $viewModel.toastMessage, style: .toast) {

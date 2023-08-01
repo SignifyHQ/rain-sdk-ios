@@ -92,6 +92,58 @@ public enum LFLocalizable {
   public static let zeroHashTransactiondetail = LFLocalizable.tr("Localizable", "Zero_hash_transactiondetail", fallback: "Cryptocurrency services powered by Zero Hash")
   /// Zip code
   public static let zipcode = LFLocalizable.tr("Localizable", "zipcode", fallback: "Zip code")
+  public enum AccountView {
+    /// Free ATMs
+    public static let atm = LFLocalizable.tr("Localizable", "accountView.atm", fallback: "Free ATMs")
+    /// Bank statements
+    public static let bankStatements = LFLocalizable.tr("Localizable", "accountView.bank_statements", fallback: "Bank statements")
+    /// %@ Account
+    public static func cardAccountDetails(_ p1: Any) -> String {
+      return LFLocalizable.tr("Localizable", "accountView.card_account_details", String(describing: p1), fallback: "%@ Account")
+    }
+    /// Connect New Accounts
+    public static let connectNewAccounts = LFLocalizable.tr("Localizable", "accountView.connect_new_accounts", fallback: "Connect New Accounts")
+    /// Connected Accounts
+    public static let connectedAccounts = LFLocalizable.tr("Localizable", "accountView.connected_accounts", fallback: "Connected Accounts")
+    /// Deposit Limits
+    public static let depositLimits = LFLocalizable.tr("Localizable", "accountView.deposit_limits", fallback: "Deposit Limits")
+    /// Help & Support
+    public static let helpSupport = LFLocalizable.tr("Localizable", "accountView.help_support", fallback: "Help & Support")
+    /// Legal
+    public static let legal = LFLocalizable.tr("Localizable", "accountView.legal", fallback: "Legal")
+    /// Limits
+    public static let limits = LFLocalizable.tr("Localizable", "accountView.limits", fallback: "Limits")
+    /// Current Rewards
+    public static let rewards = LFLocalizable.tr("Localizable", "accountView.rewards", fallback: "Current Rewards")
+    /// Shortcuts
+    public static let shortcuts = LFLocalizable.tr("Localizable", "accountView.shortcuts", fallback: "Shortcuts")
+    /// Taxes
+    public static let taxes = LFLocalizable.tr("Localizable", "accountView.taxes", fallback: "Taxes")
+    public enum BankTransfers {
+      /// Send from your bank to AvalancheCard
+      public static let subtitle = LFLocalizable.tr("Localizable", "accountView.bank_transfers.subtitle", fallback: "Send from your bank to AvalancheCard")
+      /// Bank Transfers
+      public static let title = LFLocalizable.tr("Localizable", "accountView.bank_transfers.title", fallback: "Bank Transfers")
+    }
+    public enum DebitDeposits {
+      /// Add money from your Debit Card
+      public static let subtitle = LFLocalizable.tr("Localizable", "accountView.debit_deposits.subtitle", fallback: "Add money from your Debit Card")
+      /// Debit Deposits
+      public static let title = LFLocalizable.tr("Localizable", "accountView.debit_deposits.title", fallback: "Debit Deposits")
+    }
+    public enum DirectDeposit {
+      /// Get paid up to 2 days faster
+      public static let subtitle = LFLocalizable.tr("Localizable", "accountView.direct_deposit.subtitle", fallback: "Get paid up to 2 days faster")
+      /// Direct Deposit
+      public static let title = LFLocalizable.tr("Localizable", "accountView.direct_deposit.title", fallback: "Direct Deposit")
+    }
+    public enum OneTimeTransfers {
+      /// Good for small amounts
+      public static let subtitle = LFLocalizable.tr("Localizable", "accountView.one_time_transfers.subtitle", fallback: "Good for small amounts")
+      /// One-time Bank Transfers
+      public static let title = LFLocalizable.tr("Localizable", "accountView.one_time_transfers.title", fallback: "One-time Bank Transfers")
+    }
+  }
   public enum ActivatePhysicalCard {
     public enum Screen {
       /// Enter the 3-digit CVV code of your card
