@@ -11,7 +11,7 @@
 
 // Wellcome Screen
 "welcome.header.title" = "WELCOME!";
-"welcome.header.desc" = "The AvalancheCard is an easy way to spend your crypto assets to earn rewards.  You can also buy, sell and spend Avalanche assets with the AvalancheCard app.";
+"welcome.header.desc" = "The AvalancheCard is an easy way to spend your crypto assets to earn rewards. You can also buy, sell and spend Avalanche assets with the AvalancheCard app.";
 "welcome.how_it_works" = "HOW IT WORKS:";
 "welcome.how_it_works.item1" = "Create a AvalancheCard account";
 "welcome.how_it_works.item2" = "Use your AvalancheCard for everyday purchases";

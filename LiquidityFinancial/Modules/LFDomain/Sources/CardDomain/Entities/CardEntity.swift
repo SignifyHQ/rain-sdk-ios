@@ -21,7 +21,7 @@ public protocol ShippingAddressEntity {
   var shipmentDate: String? { get }
   var estimatedArrivalDate: String? { get }
   var trackingNumber: String? { get }
-  var shippingVendor: String { get }
+  var shippingVendor: String? { get }
 }
 
 public protocol CardEncryptedEntity {

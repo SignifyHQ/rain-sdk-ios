@@ -941,8 +941,8 @@ public enum LFLocalizable {
       public static let orderCard = LFLocalizable.tr("Localizable", "welcome.button.order_card", fallback: "Order Card")
     }
     public enum Header {
-      /// The AvalancheCard is an easy way to spend your crypto assets to earn rewards.  You can also buy, sell and spend Avalanche assets with the AvalancheCard app.
-      public static let desc = LFLocalizable.tr("Localizable", "welcome.header.desc", fallback: "The AvalancheCard is an easy way to spend your crypto assets to earn rewards.  You can also buy, sell and spend Avalanche assets with the AvalancheCard app.")
+      /// The AvalancheCard is an easy way to spend your crypto assets to earn rewards. You can also buy, sell and spend Avalanche assets with the AvalancheCard app.
+      public static let desc = LFLocalizable.tr("Localizable", "welcome.header.desc", fallback: "The AvalancheCard is an easy way to spend your crypto assets to earn rewards. You can also buy, sell and spend Avalanche assets with the AvalancheCard app.")
       /// WELCOME!
       public static let title = LFLocalizable.tr("Localizable", "welcome.header.title", fallback: "WELCOME!")
     }

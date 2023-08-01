@@ -50,7 +50,7 @@ extension SetCardPinViewModel {
       do {
         guard let session = netspendDataManager.sdkSession else { return }
         let encryptedData = try session.encryptWithJWKSet(
-          value: [Constants.NetSpendKey.verificationValue.rawValue: pinValue]
+          value: [Constants.NetSpendKey.pin.rawValue: pinValue]
         )
         let request = APISetPinRequest(verifyId: verifyID, encryptedData: encryptedData)
         _ = try await cardUseCase.setPin(
