@@ -28,13 +28,13 @@ final class SetCardPinViewModel: ObservableObject {
   private(set) var pinViewItems: [PinTextFieldViewItem] = .init()
   let verifyID: String
   let cardID: String
-  let onFinish: (() -> Void)?
+  let onFinish: ((String) -> Void)?
   
   lazy var cardUseCase: CardUseCaseProtocol = {
     CardUseCase(repository: cardRepository)
   }()
   
-  init(verifyID: String, cardID: String, onFinish: (() -> Void)? = nil) {
+  init(verifyID: String, cardID: String, onFinish: ((String) -> Void)? = nil) {
     self.verifyID = verifyID
     self.cardID = cardID
     self.onFinish = onFinish
@@ -78,7 +78,7 @@ extension SetCardPinViewModel {
   
   func closeAction(dismissScreen: () -> Void) {
     if let onFinish {
-      onFinish()
+      onFinish(cardID)
     } else {
       dismissScreen()
     }

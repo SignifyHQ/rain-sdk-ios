@@ -40,14 +40,19 @@ public struct ListCardsView: View {
       case let .applePay(cardModel):
         ApplePayViewController(card: cardModel)
       case let .activatePhysicalCard(cardModel):
-        ActivatePhysicalCardView(card: cardModel)
-          .embedInNavigation()
+        ActivatePhysicalCardView(card: cardModel) { cardID in
+          viewModel.activePhysicalSuccess(id: cardID)
+        }
+        .embedInNavigation()
       }
     }
+    .ignoresSafeArea(.keyboard, edges: .bottom)
     .navigationLink(item: $viewModel.navigation) { navigation in
       switch navigation {
       case .orderPhysicalCard:
-        OrderPhysicalCardView()
+        OrderPhysicalCardView { card in
+          viewModel.orderPhysicalSuccess(card: card)
+        }
       }
     }
     .popup(item: $viewModel.toastMessage, style: .toast) {
@@ -114,7 +119,7 @@ private extension ListCardsView {
       ForEach(Array(viewModel.cardsList.enumerated()), id: \.offset) { offset, item in
         CardView(
           card: item,
-          cardMetaData: $viewModel.cardMetaDatas[offset],
+          cardMetaData: viewModel.cardMetaDatas.count > offset ? $viewModel.cardMetaDatas[offset] : .constant(nil),
           isShowCardNumber: $viewModel.isShowCardNumber,
           isLoading: $viewModel.isInit
         )

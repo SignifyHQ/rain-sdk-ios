@@ -7,5 +7,4 @@ public struct APIAccount: Codable {
   public let currency: String
   public let availableBalance: Double
   
-  
 }

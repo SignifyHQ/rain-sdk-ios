@@ -82,7 +82,7 @@ extension LFNetwork: CardAPIProtocol where R == CardRoute {
     )
   }
   
-  public func postApplePayToken(sessionId: String, cardId: String, bodyData: [String : Any]) async throws -> APIPostApplePayToken {
+  public func postApplePayToken(sessionId: String, cardId: String, bodyData: [String: Any]) async throws -> APIPostApplePayToken {
     return try await request(
       CardRoute.postApplyPayToken(cardId: cardId, sessionId: sessionId, bodyData: bodyData),
       target: APIPostApplePayToken.self,

@@ -115,6 +115,19 @@ private extension ListCardsViewModel {
 
 // MARK: - View Helpers
 extension ListCardsViewModel {
+  func orderPhysicalSuccess(card: CardModel) {
+    cardMetaDatas.append(nil)
+    cardsList.append(card)
+  }
+  
+  func activePhysicalSuccess(id: String) {
+    guard id == currentCard.id, let index = cardsList.firstIndex(where: { $0.id == id
+    }) else { return }
+    currentCard.cardStatus = .active
+    cardsList[index].cardStatus = .active
+    isActive = true
+  }
+  
   func openIntercom() {
     intercomService.openIntercom()
   }

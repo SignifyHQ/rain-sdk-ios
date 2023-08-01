@@ -5,11 +5,13 @@ import LFStyleGuide
 
 public struct ActivatePhysicalCardView: View {
   @Environment(\.dismiss) private var dismiss
-  let card: CardModel
   @State private var activeContent: ActiveContent = .cvvCode
+  let card: CardModel
+  let onSuccess: ((String) -> Void)?
   
-  public init(card: CardModel) {
+  public init(card: CardModel, onSuccess: ((String) -> Void)? = nil) {
     self.card = card
+    self.onSuccess = onSuccess
   }
   
   public var body: some View {
@@ -27,8 +29,9 @@ private extension ActivatePhysicalCardView {
           activeContent = .setCardPin(verifyID)
       }
     case let .setCardPin(verifyID):
-      SetCardPinView(verifyID: verifyID, cardID: card.id) {
+      SetCardPinView(verifyID: verifyID, cardID: card.id) { cardID in
         activeContent = .activedCard
+        onSuccess?(cardID)
       }
     case .activedCard:
       activedCardView

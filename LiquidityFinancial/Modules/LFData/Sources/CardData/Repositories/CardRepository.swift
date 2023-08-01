@@ -50,7 +50,7 @@ public class CardRepository: CardRepositoryProtocol {
     return try await cardAPI.getApplePayToken(sessionId: sessionId, cardId: cardId)
   }
   
-  public func postApplePayToken(sessionId: String, cardId: String, bodyData: [String : Any]) async throws -> PostApplePayTokenEntity {
+  public func postApplePayToken(sessionId: String, cardId: String, bodyData: [String: Any]) async throws -> PostApplePayTokenEntity {
     return try await cardAPI.postApplePayToken(sessionId: sessionId, cardId: cardId, bodyData: bodyData)
   }
 }

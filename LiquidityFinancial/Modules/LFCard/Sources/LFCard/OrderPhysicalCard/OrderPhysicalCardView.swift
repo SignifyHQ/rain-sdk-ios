@@ -4,7 +4,11 @@ import LFUtilities
 import LFStyleGuide
 
 struct OrderPhysicalCardView: View {
-  @StateObject private var viewModel = OrderPhysicalCardViewModel()
+  @StateObject private var viewModel: OrderPhysicalCardViewModel
+  
+  init(onSuccess: ((CardModel) -> Void)? = nil) {
+    _viewModel = .init(wrappedValue: OrderPhysicalCardViewModel(onOrderSuccess: onSuccess))
+  }
   
   var body: some View {
     VStack(spacing: 16) {

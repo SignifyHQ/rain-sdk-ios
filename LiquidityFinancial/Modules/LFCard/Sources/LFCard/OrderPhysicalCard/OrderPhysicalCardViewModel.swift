@@ -23,11 +23,13 @@ final class OrderPhysicalCardViewModel: ObservableObject {
   @Published var shippingAddress: ShippingAddress?
   @Published var toastMessage: String?
   
+  let onOrderSuccess: ((CardModel) -> Void)?
   lazy var cardUseCase: CardUseCaseProtocol = {
     CardUseCase(repository: cardRepository)
   }()
   
-  init() {
+  init(onOrderSuccess: ((CardModel) -> Void)?) {
+    self.onOrderSuccess = onOrderSuccess
     getUser()
   }
 }
@@ -65,9 +67,12 @@ extension OrderPhysicalCardViewModel {
           country: shippingAddress.country,
           postalCode: shippingAddress.postalCode
         )
-        _ = try await cardUseCase.orderPhysicalCard(
+        let response = try await cardUseCase.orderPhysicalCard(
           address: address,
           sessionID: accountDataManager.sessionID
+        )
+        self.onOrderSuccess?(
+          mapToCardModel(entity: response)
         )
         self.isOrderingCard = false
         self.isShowOrderSuccessPopup = true
@@ -88,6 +93,21 @@ extension OrderPhysicalCardViewModel {
   
   func primaryOrderSuccessAction() {
     isShowOrderSuccessPopup = false
+  }
+}
+
+// MARK: - Private Functions
+private extension OrderPhysicalCardViewModel {
+  func mapToCardModel(entity: CardEntity) -> CardModel {
+    CardModel(
+      id: entity.id,
+      cardType: CardType(rawValue: entity.type) ?? .virtual,
+      cardholderName: nil,
+      expiryMonth: entity.expirationMonth,
+      expiryYear: entity.expirationYear,
+      last4: entity.panLast4,
+      cardStatus: CardStatus(rawValue: entity.status) ?? .unactivated
+    )
   }
 }
 

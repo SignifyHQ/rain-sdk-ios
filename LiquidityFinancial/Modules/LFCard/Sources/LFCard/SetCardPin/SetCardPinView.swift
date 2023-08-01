@@ -7,7 +7,7 @@ struct SetCardPinView: View {
   @Environment(\.dismiss) private var dismiss
   @StateObject private var viewModel: SetCardPinViewModel
     
-  init(verifyID: String, cardID: String, onFinish: (() -> Void)? = nil) {
+  init(verifyID: String, cardID: String, onFinish: ((String) -> Void)? = nil) {
     _viewModel = .init(
       wrappedValue: SetCardPinViewModel(verifyID: verifyID, cardID: cardID, onFinish: onFinish)
     )
