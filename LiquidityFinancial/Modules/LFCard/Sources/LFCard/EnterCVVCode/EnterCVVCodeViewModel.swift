@@ -3,9 +3,18 @@ import Foundation
 import UIKit
 import LFStyleGuide
 import LFUtilities
+import CardDomain
+import CardData
+import Factory
+import NetSpendData
+import AccountData
 
 @MainActor
 final class EnterCVVCodeViewModel: ObservableObject {
+  @LazyInjected(\.netspendDataManager) var netspendDataManager
+  @LazyInjected(\.accountDataManager) var accountDataManager
+  @LazyInjected(\.cardRepository) var cardRepository
+
   @Published var isShowSetPinSuccessPopup: Bool = false
   @Published var isShown: Bool = true
   @Published var isShowIndicator: Bool = false
@@ -15,23 +24,44 @@ final class EnterCVVCodeViewModel: ObservableObject {
   @Published var cvvCodeValue: String = ""
   @Published var toastMessage: String?
   
+  let cardID: String
   let cvvCodeDigits = Int(Constants.Default.cvvCodeDigits.rawValue) ?? 3
   private(set) var pinViewItems: [PinTextFieldViewItem] = .init()
   
-  init() {
+  lazy var cardUseCase: CardUseCaseProtocol = {
+    CardUseCase(repository: cardRepository)
+  }()
+  
+  init(cardID: String) {
+    self.cardID = cardID
     createTextFields()
   }
 }
 
 // MARK: - API Handle
 extension EnterCVVCodeViewModel {
-  func verifyCVVCode(completion: @escaping () -> Void) {
-    isShowIndicator = true
-    // isVerifyCVVCodeSuccess
-    // FAKE CALL API
-    DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
-      self.isShowIndicator = false
-      completion()
+  func verifyCVVCode(completion: @escaping (String) -> Void) {
+    Task {
+      isShowIndicator = true
+      do {
+        guard let session = netspendDataManager.sdkSession else { return }
+        let encryptedData = try session.encryptWithJWKSet(
+          value: [Constants.NetSpendKey.verificationValue.rawValue: cvvCodeValue]
+        )
+        let request = APIVerifyCVVRequest(
+          verificationType: Constants.NetSpendKey.cvc.rawValue, encryptedData: encryptedData
+        )
+        let response = try await cardUseCase.verifyCVVCode(
+          requestParam: request,
+          cardID: cardID,
+          sessionID: accountDataManager.sessionID
+        )
+        isShowIndicator = false
+        completion(response.id)
+      } catch {
+        isShowIndicator = false
+        toastMessage = error.localizedDescription
+      }
     }
   }
 }

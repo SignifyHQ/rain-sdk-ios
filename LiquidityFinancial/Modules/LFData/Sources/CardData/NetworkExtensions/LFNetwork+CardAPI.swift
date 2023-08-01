@@ -49,4 +49,27 @@ extension LFNetwork: CardAPIProtocol where R == CardRoute {
       decoder: .apiDecoder
     )
   }
+  
+  public func verifyCVVCode(verifyRequest: APIVerifyCVVRequest, cardID: String, sessionID: String) async throws -> APIVerifyCVVResponse {
+    let parameters = VerifyCVVCodeParameters(
+      verificationType: verifyRequest.verificationType,
+      encryptedData: verifyRequest.encryptedData
+    )
+    return try await request(
+      CardRoute.verifyCVVCode(parameters, cardID, sessionID),
+      target: APIVerifyCVVResponse.self,
+      failure: LFErrorObject.self,
+      decoder: .apiDecoder
+    )
+  }
+  
+  public func setPin(requestParam: APISetPinRequest, cardID: String, sessionID: String) async throws -> APICard {
+    let parameters = SetPinParameters(verifyId: requestParam.verifyId, encryptedData: requestParam.encryptedData)
+    return try await request(
+      CardRoute.setPin(parameters, cardID, sessionID),
+      target: APICard.self,
+      failure: LFErrorObject.self,
+      decoder: .apiDecoder
+    )
+  }
 }

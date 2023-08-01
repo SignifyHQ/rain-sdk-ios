@@ -149,6 +149,15 @@ public extension Constants {
   }
 }
 
+// MARK: - NetSpendKey
+public extension Constants {
+  enum NetSpendKey: String {
+    case verificationValue = "verification_value"
+    case cvc = "cvc"
+    case pin = "pin"
+  }
+}
+
 public extension Constants {
   
   static var supportedStates: [String] = ["NY", "New York", "HI", "Hawaii"]

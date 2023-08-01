@@ -28,6 +28,23 @@ public class CardRepository: CardRepositoryProtocol {
   public func orderPhysicalCard(address: PhysicalCardAddressEntity, sessionID: String) async throws -> CardEntity {
     return try await cardAPI.orderPhysicalCard(address: address, sessionID: sessionID)
   }
+  
+  public func verifyCVVCode(
+    verifyRequest: VerifyCVVCodeRequestEntity,
+    cardID: String,
+    sessionID: String
+  ) async throws -> VerifyCVVCodeResponseEntity {
+    let verifyAPIRequest = APIVerifyCVVRequest(
+      verificationType: verifyRequest.verificationType,
+      encryptedData: verifyRequest.encryptedData
+    )
+    return try await cardAPI.verifyCVVCode(verifyRequest: verifyAPIRequest, cardID: cardID, sessionID: sessionID)
+  }
+  
+  public func setPin(requestParam: SetPinRequestEntity, cardID: String, sessionID: String) async throws -> CardEntity {
+    let apiRequest = APISetPinRequest(verifyId: requestParam.verifyId, encryptedData: requestParam.encryptedData)
+    return try await cardAPI.setPin(requestParam: apiRequest, cardID: cardID, sessionID: sessionID)
+  }
 }
 
 extension APICard: CardEntity {

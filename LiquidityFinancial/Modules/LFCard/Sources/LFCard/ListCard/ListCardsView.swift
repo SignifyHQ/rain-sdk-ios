@@ -6,6 +6,7 @@ import LFStyleGuide
 public struct ListCardsView: View {
   @Environment(\.dismiss) private var dismiss
   @StateObject var viewModel = ListCardsViewModel()
+  @State private var activeContent: ActiveContent = .verifyCvv
   
   public init() {}
   
@@ -30,17 +31,14 @@ public struct ListCardsView: View {
     // .track(name: String(describing: type(of: self))) TODO: Will be implemented later
     .sheet(item: $viewModel.present) { item in
       switch item {
-      case .setCardPin:
-        SetCardPinView()
+      case let .changePin(card):
+        changePinContent(cardID: card.id)
           .embedInNavigation()
       case let .addAppleWallet(cardModel):
         AddAppleWalletView(card: cardModel, onFinish: {})
           .embedInNavigation()
       case let .applePay(cardModel):
         ApplePayController(cardModel: cardModel)
-      case let .activateVirtualCard(cardModel):
-        ActivateVirtualCardView(card: cardModel)
-          .embedInNavigation()
       case let .activatePhysicalCard(cardModel):
         ActivatePhysicalCardView(card: cardModel)
           .embedInNavigation()
@@ -60,6 +58,19 @@ public struct ListCardsView: View {
 
 // MARK: - View Components
 private extension ListCardsView {
+  func changePinContent(cardID: String) -> some View {
+    Group {
+      switch activeContent {
+      case .verifyCvv:
+        EnterCVVCodeView(cardID: cardID) { verifyID in
+          activeContent = .changePin(verifyID)
+        }
+      case let .changePin(verifyID):
+        SetCardPinView(verifyID: verifyID, cardID: cardID)
+      }
+    }
+  }
+  
   var loadingView: some View {
     VStack {
       Spacer()
@@ -241,5 +252,13 @@ private extension ListCardsView {
     ) {
       viewModel.onClickedActiveCard()
     }
+  }
+}
+
+// MARK: - View Types
+private extension ListCardsView {
+  enum ActiveContent {
+    case verifyCvv
+    case changePin(String)
   }
 }

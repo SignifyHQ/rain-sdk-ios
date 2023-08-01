@@ -132,7 +132,7 @@ extension ListCardsViewModel {
   
   func onClickedChangePinButton() {
     if currentCard.cardStatus == .active {
-      present = .setCardPin(currentCard)
+      present = .changePin(currentCard)
     } else {
       presentActivateCardView()
     }
@@ -178,8 +178,8 @@ private extension ListCardsViewModel {
     switch currentCard.cardType {
     case .physical:
       present = .activatePhysicalCard(currentCard)
-    case .virtual:
-      present = .activateVirtualCard(currentCard)
+    default:
+      break
     }
   }
   
@@ -196,24 +196,21 @@ private extension ListCardsViewModel {
 // MARK: - Types
 extension ListCardsViewModel {
   enum Presentation: Identifiable {
-    case setCardPin(CardModel)
+    case changePin(CardModel)
     case addAppleWallet(CardModel)
     case applePay(CardModel)
-    case activateVirtualCard(CardModel)
     case activatePhysicalCard(CardModel)
     
     var id: String {
       switch self {
-      case .setCardPin:
-        return "setCardPin"
+      case .changePin:
+        return "changePin"
       case .addAppleWallet:
         return "addAppleWallet"
       case .applePay:
         return "applePay"
       case .activatePhysicalCard:
         return "activatePhysicalCard"
-      case .activateVirtualCard:
-        return "activateVirtualCard"
       }
     }
   }

@@ -28,6 +28,7 @@ let package = Package(
         .product(name: "CardData", package: "LFData"),
         .product(name: "OnboardingData", package: "LFData"),
         .product(name: "NetSpendData", package: "LFData"),
+        .product(name: "AccountData", package: "LFData")
       ]),
     .testTarget(
       name: "LFCardTests",

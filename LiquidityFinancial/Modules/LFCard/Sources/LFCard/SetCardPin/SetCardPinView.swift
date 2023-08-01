@@ -7,9 +7,9 @@ struct SetCardPinView: View {
   @Environment(\.dismiss) private var dismiss
   @StateObject private var viewModel: SetCardPinViewModel
     
-  init(onFinish: (() -> Void)? = nil) {
+  init(verifyID: String, cardID: String, onFinish: (() -> Void)? = nil) {
     _viewModel = .init(
-      wrappedValue: SetCardPinViewModel(onFinish: onFinish)
+      wrappedValue: SetCardPinViewModel(verifyID: verifyID, cardID: cardID, onFinish: onFinish)
     )
   }
   
@@ -59,7 +59,7 @@ private extension SetCardPinView {
         isLoading: $viewModel.isShowIndicator
       ) {
         hideKeyboard()
-        viewModel.getSetPINTokenAPI()
+        viewModel.setCardPIN()
       }
     }
     .padding([.horizontal, .bottom], 30)

@@ -5,11 +5,12 @@ import LFStyleGuide
 
 struct EnterCVVCodeView: View {
   @Environment(\.dismiss) private var dismiss
-  @StateObject private var viewModel = EnterCVVCodeViewModel()
-  @Binding private var activeContent: ActivatePhysicalCardView.ActiveContent
+  @StateObject private var viewModel: EnterCVVCodeViewModel
+  let onDissmiss: ((String) -> Void)?
   
-  init(activeContent: Binding<ActivatePhysicalCardView.ActiveContent>) {
-    _activeContent = activeContent
+  init(cardID: String, onDissmiss: @escaping (String) -> Void) {
+    self.onDissmiss = onDissmiss
+    _viewModel = .init(wrappedValue: EnterCVVCodeViewModel(cardID: cardID))
   }
   
   var body: some View {
@@ -56,8 +57,8 @@ private extension EnterCVVCodeView {
         isLoading: $viewModel.isShowIndicator
       ) {
         hideKeyboard()
-        viewModel.verifyCVVCode {
-          activeContent = .setCardPin
+        viewModel.verifyCVVCode { verifyID in
+          onDissmiss?(verifyID)
         }
       }
     }

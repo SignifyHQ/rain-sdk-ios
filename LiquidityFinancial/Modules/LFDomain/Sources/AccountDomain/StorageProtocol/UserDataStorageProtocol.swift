@@ -28,7 +28,7 @@ public protocol AccountDataStorageProtocol {
 }
 
 public protocol UserInfomationDataProtocol {
-  var firstName : String? { get set }
+  var firstName: String? { get set }
   var lastName: String? { get set }
   var middleName: String? { get set }
   var agreementIDS: [String] { get set }

@@ -3,9 +3,18 @@ import Foundation
 import UIKit
 import LFStyleGuide
 import LFUtilities
+import CardDomain
+import CardData
+import Factory
+import NetSpendData
+import AccountData
 
 @MainActor
 final class SetCardPinViewModel: ObservableObject {
+  @LazyInjected(\.netspendDataManager) var netspendDataManager
+  @LazyInjected(\.accountDataManager) var accountDataManager
+  @LazyInjected(\.cardRepository) var cardRepository
+  
   @Published var isShowSetPinSuccessPopup: Bool = false
   @Published var isShown: Bool = true
   @Published var isShowIndicator: Bool = false
@@ -17,9 +26,17 @@ final class SetCardPinViewModel: ObservableObject {
   
   let pinCodeDigits = Int(Constants.Default.pinCodeDigits.rawValue) ?? 4
   private(set) var pinViewItems: [PinTextFieldViewItem] = .init()
+  let verifyID: String
+  let cardID: String
   let onFinish: (() -> Void)?
   
-  init(onFinish: (() -> Void)? = nil) {
+  lazy var cardUseCase: CardUseCaseProtocol = {
+    CardUseCase(repository: cardRepository)
+  }()
+  
+  init(verifyID: String, cardID: String, onFinish: (() -> Void)? = nil) {
+    self.verifyID = verifyID
+    self.cardID = cardID
     self.onFinish = onFinish
     createTextFields()
   }
@@ -27,14 +44,27 @@ final class SetCardPinViewModel: ObservableObject {
 
 // MARK: - API Handle
 extension SetCardPinViewModel {
-  func getSetPINTokenAPI() {
-    // isShowIndicator = true
-    setCardPIN()
-  }
-  
   func setCardPIN() {
-    // isShowIndicator = true
-    isShowSetPinSuccessPopup = true
+    Task {
+      isShowIndicator = true
+      do {
+        guard let session = netspendDataManager.sdkSession else { return }
+        let encryptedData = try session.encryptWithJWKSet(
+          value: [Constants.NetSpendKey.verificationValue.rawValue: pinValue]
+        )
+        let request = APISetPinRequest(verifyId: verifyID, encryptedData: encryptedData)
+        _ = try await cardUseCase.setPin(
+          requestParam: request,
+          cardID: cardID,
+          sessionID: accountDataManager.sessionID
+        )
+        isShowIndicator = false
+        isShowSetPinSuccessPopup = true
+      } catch {
+        isShowIndicator = false
+        toastMessage = error.localizedDescription
+      }
+    }
   }
 }
 

@@ -23,9 +23,11 @@ private extension ActivatePhysicalCardView {
   var content: some View {
     switch activeContent {
     case .cvvCode:
-      EnterCVVCodeView(activeContent: $activeContent)
-    case .setCardPin:
-      SetCardPinView {
+      EnterCVVCodeView(cardID: card.id) { verifyID in
+          activeContent = .setCardPin(verifyID)
+      }
+    case let .setCardPin(verifyID):
+      SetCardPinView(verifyID: verifyID, cardID: card.id) {
         activeContent = .activedCard
       }
     case .activedCard:
@@ -85,7 +87,7 @@ private extension ActivatePhysicalCardView {
 extension ActivatePhysicalCardView {
   enum ActiveContent {
     case cvvCode
-    case setCardPin
+    case setCardPin(String)
     case activedCard
     case addAppleWallet
   }
