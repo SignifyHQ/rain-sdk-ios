@@ -293,6 +293,24 @@
 "shippingAddress.state.placeholder" = "Enter state";
 "shippingAddress.zipCode.placeholder" = "Enter zip code";
 
+// DirectDeposit
+"directDeposit.screen.title" = "Direct Deposit";
+"directDeposit.seeAllBenefits.buttonTitle" = "See all the benefits";
+"directDeposit.automationSetup.title" = "Automatic Setup";
+"directDeposit.findYourEmployer.title" = "FIND YOUR EMPLOYER";
+"directDeposit.automationSetup.description" = "Tell us who pays you, and we’ll help you get set up.";
+"directDeposit.getStarted.buttonTitle" = "Get Started";
+"directDeposit.manualSetup.title" = "Manual Setup";
+"directDeposit.useAccountDetails.title" = "USE ACCOUNT DETAILS";
+"directDeposit.manualSetup.description" = "Give these to your employer and they’ll handle the rest.";
+"directDeposit.routingNumber.title" = "Routing Number";
+"directDeposit.accountNumber.title" = "AccountNumber";
+"directDeposit.fillOutForm.buttonTitle" = "Fill out a form";
+"directDeposit.benefits.bottomSheetTitle" = "BENEFITS OF DIRECT DEPOSIT";
+"directDeposit.firstBenefit.title" = "Payday up to 2 days early";
+"directDeposit.secondBenefit.title" = "3 ATM fees covered each month you direct deposit $300+";
+"directDeposit.copied.message" = "Copied to clipboard";
+
 // MARK: - Popup
 
 // Logout
@@ -409,6 +427,7 @@
 "button.ok.title" = "OK";
 "button.skip.title" = "Skip";
 "button.notNow.title" = "Not now";
+"button.done.title" = "Done";
 
 // Grid Value
 "grid_value.crypto" = "%@ AVAX";

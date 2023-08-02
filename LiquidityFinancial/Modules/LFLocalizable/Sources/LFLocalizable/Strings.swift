@@ -193,6 +193,10 @@ public enum LFLocalizable {
       /// Continue
       public static let title = LFLocalizable.tr("Localizable", "button.continue.title", fallback: "Continue")
     }
+    public enum Done {
+      /// Done
+      public static let title = LFLocalizable.tr("Localizable", "button.done.title", fallback: "Done")
+    }
     public enum Logout {
       /// Log Out
       public static let title = LFLocalizable.tr("Localizable", "button.logout.title", fallback: "Log Out")
@@ -293,6 +297,68 @@ public enum LFLocalizable {
       public static let message = LFLocalizable.tr("Localizable", "changeAsset.screen.message", fallback: "Please select the asset to spend.")
       /// Change asset
       public static let title = LFLocalizable.tr("Localizable", "changeAsset.screen.title", fallback: "Change asset")
+    }
+  }
+  public enum DirectDeposit {
+    public enum AccountNumber {
+      /// AccountNumber
+      public static let title = LFLocalizable.tr("Localizable", "directDeposit.accountNumber.title", fallback: "AccountNumber")
+    }
+    public enum AutomationSetup {
+      /// Tell us who pays you, and we’ll help you get set up.
+      public static let description = LFLocalizable.tr("Localizable", "directDeposit.automationSetup.description", fallback: "Tell us who pays you, and we’ll help you get set up.")
+      /// Automatic Setup
+      public static let title = LFLocalizable.tr("Localizable", "directDeposit.automationSetup.title", fallback: "Automatic Setup")
+    }
+    public enum Benefits {
+      /// BENEFITS OF DIRECT DEPOSIT
+      public static let bottomSheetTitle = LFLocalizable.tr("Localizable", "directDeposit.benefits.bottomSheetTitle", fallback: "BENEFITS OF DIRECT DEPOSIT")
+    }
+    public enum Copied {
+      /// Copied to clipboard
+      public static let message = LFLocalizable.tr("Localizable", "directDeposit.copied.message", fallback: "Copied to clipboard")
+    }
+    public enum FillOutForm {
+      /// Fill out a form
+      public static let buttonTitle = LFLocalizable.tr("Localizable", "directDeposit.fillOutForm.buttonTitle", fallback: "Fill out a form")
+    }
+    public enum FindYourEmployer {
+      /// FIND YOUR EMPLOYER
+      public static let title = LFLocalizable.tr("Localizable", "directDeposit.findYourEmployer.title", fallback: "FIND YOUR EMPLOYER")
+    }
+    public enum FirstBenefit {
+      /// Payday up to 2 days early
+      public static let title = LFLocalizable.tr("Localizable", "directDeposit.firstBenefit.title", fallback: "Payday up to 2 days early")
+    }
+    public enum GetStarted {
+      /// Get Started
+      public static let buttonTitle = LFLocalizable.tr("Localizable", "directDeposit.getStarted.buttonTitle", fallback: "Get Started")
+    }
+    public enum ManualSetup {
+      /// Give these to your employer and they’ll handle the rest.
+      public static let description = LFLocalizable.tr("Localizable", "directDeposit.manualSetup.description", fallback: "Give these to your employer and they’ll handle the rest.")
+      /// Manual Setup
+      public static let title = LFLocalizable.tr("Localizable", "directDeposit.manualSetup.title", fallback: "Manual Setup")
+    }
+    public enum RoutingNumber {
+      /// Routing Number
+      public static let title = LFLocalizable.tr("Localizable", "directDeposit.routingNumber.title", fallback: "Routing Number")
+    }
+    public enum Screen {
+      /// Direct Deposit
+      public static let title = LFLocalizable.tr("Localizable", "directDeposit.screen.title", fallback: "Direct Deposit")
+    }
+    public enum SecondBenefit {
+      /// 3 ATM fees covered each month you direct deposit $300+
+      public static let title = LFLocalizable.tr("Localizable", "directDeposit.secondBenefit.title", fallback: "3 ATM fees covered each month you direct deposit $300+")
+    }
+    public enum SeeAllBenefits {
+      /// See all the benefits
+      public static let buttonTitle = LFLocalizable.tr("Localizable", "directDeposit.seeAllBenefits.buttonTitle", fallback: "See all the benefits")
+    }
+    public enum UseAccountDetails {
+      /// USE ACCOUNT DETAILS
+      public static let title = LFLocalizable.tr("Localizable", "directDeposit.useAccountDetails.title", fallback: "USE ACCOUNT DETAILS")
     }
   }
   public enum DocumentType {
