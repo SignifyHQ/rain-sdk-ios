@@ -67,7 +67,7 @@ private extension ListCardsView {
     Group {
       switch activeContent {
       case .verifyCvv:
-        EnterCVVCodeView(cardID: cardID) { verifyID in
+        EnterCVVCodeView(cardID: cardID, screenTitle: LFLocalizable.EnterCVVCode.SetCardPin.title) { verifyID in
           activeContent = .changePin(verifyID)
         }
       case let .changePin(verifyID):

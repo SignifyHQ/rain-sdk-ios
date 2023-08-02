@@ -25,7 +25,7 @@ private extension ActivatePhysicalCardView {
   var content: some View {
     switch activeContent {
     case .cvvCode:
-      EnterCVVCodeView(cardID: card.id) { verifyID in
+      EnterCVVCodeView(cardID: card.id, screenTitle: LFLocalizable.EnterCVVCode.ActiveCard.title) { verifyID in
           activeContent = .setCardPin(verifyID)
       }
     case let .setCardPin(verifyID):

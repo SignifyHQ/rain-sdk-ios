@@ -144,14 +144,6 @@ public enum LFLocalizable {
       public static let title = LFLocalizable.tr("Localizable", "accountView.one_time_transfers.title", fallback: "One-time Bank Transfers")
     }
   }
-  public enum ActivatePhysicalCard {
-    public enum Screen {
-      /// Enter the 3-digit CVV code of your card
-      public static let description = LFLocalizable.tr("Localizable", "activatePhysicalCard.screen.description", fallback: "Enter the 3-digit CVV code of your card")
-      /// ACTIVATE PHYSICAL CARD
-      public static let title = LFLocalizable.tr("Localizable", "activatePhysicalCard.screen.title", fallback: "ACTIVATE PHYSICAL CARD")
-    }
-  }
   public enum AddBankWithDebit {
     /// Card number
     public static let cardNumber = LFLocalizable.tr("Localizable", "addBankWithDebit.card_number", fallback: "Card number")
@@ -339,6 +331,20 @@ public enum LFLocalizable {
     public enum UtilityBill {
       /// Utility Bill
       public static let title = LFLocalizable.tr("Localizable", "documentType.utilityBill.title", fallback: "Utility Bill")
+    }
+  }
+  public enum EnterCVVCode {
+    public enum ActiveCard {
+      /// ACTIVATE PHYSICAL CARD
+      public static let title = LFLocalizable.tr("Localizable", "enterCVVCode.activeCard.title", fallback: "ACTIVATE PHYSICAL CARD")
+    }
+    public enum Screen {
+      /// Enter the 3-digit CVV code of your card
+      public static let description = LFLocalizable.tr("Localizable", "enterCVVCode.screen.description", fallback: "Enter the 3-digit CVV code of your card")
+    }
+    public enum SetCardPin {
+      /// ENTER CVV TO SET CARD PIN
+      public static let title = LFLocalizable.tr("Localizable", "enterCVVCode.setCardPin.title", fallback: "ENTER CVV TO SET CARD PIN")
     }
   }
   public enum EnterSsn {

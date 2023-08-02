@@ -6,9 +6,11 @@ import LFStyleGuide
 struct EnterCVVCodeView: View {
   @Environment(\.dismiss) private var dismiss
   @StateObject private var viewModel: EnterCVVCodeViewModel
+  let screenTitle: String
   let onDissmiss: ((String) -> Void)?
   
-  init(cardID: String, onDissmiss: @escaping (String) -> Void) {
+  init(cardID: String, screenTitle: String, onDissmiss: @escaping (String) -> Void) {
+    self.screenTitle = screenTitle
     self.onDissmiss = onDissmiss
     _viewModel = .init(wrappedValue: EnterCVVCodeViewModel(cardID: cardID))
   }
@@ -37,10 +39,10 @@ private extension EnterCVVCodeView {
   var content: some View {
     VStack(alignment: .leading, spacing: 50) {
       VStack(alignment: .leading, spacing: 12) {
-        Text(LFLocalizable.ActivatePhysicalCard.Screen.title)
+        Text(screenTitle)
           .foregroundColor(Colors.label.swiftUIColor)
           .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.main.value))
-        Text(LFLocalizable.ActivatePhysicalCard.Screen.description)
+        Text(LFLocalizable.EnterCVVCode.Screen.description)
           .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.medium.value))
           .foregroundColor(Colors.label.swiftUIColor.opacity(0.75))
       }

@@ -266,9 +266,10 @@
 "card.cvv.title" = "CVV";
 "card.copyToClipboard.title" = "Card number copied to clipboard";
 
-// Activate PhysicalCard
-"activatePhysicalCard.screen.title" = "ACTIVATE PHYSICAL CARD";
-"activatePhysicalCard.screen.description" = "Enter the 3-digit CVV code of your card";
+// EnterCVVCode
+"enterCVVCode.setCardPin.title" = "ENTER CVV TO SET CARD PIN";
+"enterCVVCode.activeCard.title" = "ACTIVATE PHYSICAL CARD";
+"enterCVVCode.screen.description" = "Enter the 3-digit CVV code of your card";
 
 // Order PhysicalCard
 "orderPhysicalCard.physicalCard.title" = "PHYSICAL CARD";
