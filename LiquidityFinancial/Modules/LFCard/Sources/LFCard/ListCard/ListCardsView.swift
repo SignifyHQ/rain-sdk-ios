@@ -148,18 +148,22 @@ private extension ListCardsView {
   
   var rows: some View {
     VStack(alignment: .leading, spacing: 18) {
-      Text(LFLocalizable.ListCard.Security.title)
-        .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.ultraSmall.value))
-        .foregroundColor(Colors.label.swiftUIColor.opacity(0.75))
+      if viewModel.currentCard.cardType != .physical || viewModel.currentCard.cardStatus != .unactivated {
+        Text(LFLocalizable.ListCard.Security.title)
+          .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.ultraSmall.value))
+          .foregroundColor(Colors.label.swiftUIColor.opacity(0.75))
+      }
       VStack(spacing: 16) {
-        row(
-          title: LFLocalizable.ListCard.ShowCardNumber.title.localizedString,
-          subtitle: nil,
-          isSwitchOn: $viewModel.isShowCardNumber,
-          onChange: nil
-        )
-        GenImages.CommonImages.dash.swiftUIImage
-          .foregroundColor(Colors.label.swiftUIColor)
+        if viewModel.currentCard.cardType != .physical {
+          row(
+            title: LFLocalizable.ListCard.ShowCardNumber.title.localizedString,
+            subtitle: nil,
+            isSwitchOn: $viewModel.isShowCardNumber,
+            onChange: nil
+          )
+          GenImages.CommonImages.dash.swiftUIImage
+            .foregroundColor(Colors.label.swiftUIColor)
+        }
         if viewModel.currentCard.cardStatus != .unactivated {
           row(
             title: LFLocalizable.ListCard.LockCard.title,

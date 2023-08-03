@@ -232,8 +232,8 @@
 "changeAsset.screen.message" = "Please select the asset to spend.";
 
 // CARD ACTIVED
-"cardActivated.cardActived.title" = "CARD ACTIVED!";
-"cardActivated.cardActived.description" = "Your %@ is now active, nd can be used anywhere Visa is accepted.";
+"cardActivated.cardActived.title" = "CARD ACTIVATED!";
+"cardActivated.cardActived.description" = "Your %@ is now active, and can be used anywhere Visa is accepted.";
 
 // ADD TO WALLET
 "addToWallet.applePay.title" = "ADD TO APPLE PAY";

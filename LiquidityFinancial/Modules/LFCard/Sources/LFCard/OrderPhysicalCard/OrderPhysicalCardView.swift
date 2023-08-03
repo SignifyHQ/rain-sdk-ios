@@ -11,19 +11,20 @@ struct OrderPhysicalCardView: View {
   }
   
   var body: some View {
-    VStack(spacing: 16) {
-      physicalCardView
-      VStack(alignment: .leading, spacing: 24) {
-        feesCell
-        GenImages.CommonImages.dash.swiftUIImage
-          .foregroundColor(Colors.label.swiftUIColor)
-        cardReceivingAddress
+    ScrollView(showsIndicators: false) {
+      VStack(spacing: 16) {
+        physicalCardView
+        VStack(alignment: .leading, spacing: 24) {
+          feesCell
+          GenImages.CommonImages.dash.swiftUIImage
+            .foregroundColor(Colors.label.swiftUIColor)
+          cardReceivingAddress
+        }
+        Spacer()
+        buttonGroup
       }
-      Spacer()
-      buttonGroup
+      .padding(.horizontal, 30)
     }
-    .padding(.horizontal, 30)
-    .scrollOnOverflow()
     .background(Colors.background.swiftUIColor)
     .navigationLink(item: $viewModel.navigation) { navigation in
       switch navigation {

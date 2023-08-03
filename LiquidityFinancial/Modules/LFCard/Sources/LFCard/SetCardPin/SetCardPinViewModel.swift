@@ -58,8 +58,7 @@ extension SetCardPinViewModel {
           cardID: cardID,
           sessionID: accountDataManager.sessionID
         )
-        isShowIndicator = false
-        isShowSetPinSuccessPopup = true
+        onSetPinSuccess()
       } catch {
         isShowIndicator = false
         toastMessage = error.localizedDescription
@@ -73,15 +72,7 @@ extension SetCardPinViewModel {
   func handleSuccessPrimaryAction(dismissScreen: @escaping () -> Void) {
     isShowSetPinSuccessPopup = false
     isShown = false
-    closeAction(dismissScreen: dismissScreen)
-  }
-  
-  func closeAction(dismissScreen: () -> Void) {
-    if let onFinish {
-      onFinish(cardID)
-    } else {
-      dismissScreen()
-    }
+    dismissScreen()
   }
   
   func onReceivedPinCode(pinCode: String) {
@@ -118,6 +109,15 @@ extension SetCardPinViewModel {
 
 // MARK: Private Functions
 private extension SetCardPinViewModel {
+  func onSetPinSuccess() {
+    isShowIndicator = false
+    if let onFinish {
+      onFinish(cardID)
+    } else {
+      isShowSetPinSuccessPopup = true
+    }
+  }
+  
   func createTextFields() {
     for index in 0 ..< pinCodeDigits {
       let viewItem = PinTextFieldViewItem(

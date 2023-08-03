@@ -53,10 +53,10 @@ class NetSpendService {
         //            "reloadPin": iconDataURL,
         "integrationPartnerName": "Liquidity",
         "highlightPartnerName": "Avalanche",
-        "displayHighlightPartnerWithdrawalLocations": true,
+        "displayHighlightPartnerWithdrawalLocations": true
         //            "highlightPartnerReloadPin": iconDataURL,
         //            "highlightPartnerWithdrawalPin": iconDataURL
-      ] as [String : Any]
+      ] as [String: Any]
     ]
     return data
   }

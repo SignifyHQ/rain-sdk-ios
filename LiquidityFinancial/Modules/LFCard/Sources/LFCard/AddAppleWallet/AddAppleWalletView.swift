@@ -30,19 +30,21 @@ struct AddAppleWalletView: View {
 // MARK: - View Components
 private extension AddAppleWalletView {
   var content: some View {
-    VStack {
-      Spacer()
-      GenImages.Images.connectedAppleWallet.swiftUIImage
-      Spacer()
-      information
-      Spacer()
-      buttons
+    ScrollView(showsIndicators: false) {
+      VStack {
+        GenImages.Images.connectedAppleWallet.swiftUIImage
+          .padding(.vertical, 36)
+        information
+        Spacer()
+          .frame(minHeight: 36)
+        buttons
+      }
+      .padding(.horizontal, 30)
     }
-    .padding(.horizontal, 30)
   }
   
   var information: some View {
-    VStack(spacing: 22) {
+    VStack(spacing: 16) {
       Text(LFLocalizable.AddToWallet.ApplePay.title)
         .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.large.value))
         .foregroundColor(Colors.label.swiftUIColor)
@@ -52,6 +54,7 @@ private extension AddAppleWalletView {
         .multilineTextAlignment(.center)
         .lineSpacing(4)
         .padding(.horizontal, 12)
+        .fixedSize(horizontal: false, vertical: true)
     }
     .multilineTextAlignment(.center)
   }

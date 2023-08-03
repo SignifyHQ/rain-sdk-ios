@@ -249,12 +249,12 @@ public enum LFLocalizable {
   }
   public enum CardActivated {
     public enum CardActived {
-      /// Your %@ is now active, nd can be used anywhere Visa is accepted.
+      /// Your %@ is now active, and can be used anywhere Visa is accepted.
       public static func description(_ p1: Any) -> String {
-        return LFLocalizable.tr("Localizable", "cardActivated.cardActived.description", String(describing: p1), fallback: "Your %@ is now active, nd can be used anywhere Visa is accepted.")
+        return LFLocalizable.tr("Localizable", "cardActivated.cardActived.description", String(describing: p1), fallback: "Your %@ is now active, and can be used anywhere Visa is accepted.")
       }
-      /// CARD ACTIVED!
-      public static let title = LFLocalizable.tr("Localizable", "cardActivated.cardActived.title", fallback: "CARD ACTIVED!")
+      /// CARD ACTIVATED!
+      public static let title = LFLocalizable.tr("Localizable", "cardActivated.cardActived.title", fallback: "CARD ACTIVATED!")
     }
   }
   public enum CashCard {
