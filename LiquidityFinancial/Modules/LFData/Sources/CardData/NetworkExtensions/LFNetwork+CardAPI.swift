@@ -50,14 +50,10 @@ extension LFNetwork: CardAPIProtocol where R == CardRoute {
     )
   }
   
-  public func verifyCVVCode(verifyRequest: VerifyCVVParameters, cardID: String, sessionID: String) async throws -> APIVerifyCVVResponse {
-    let parameters = VerifyCVVCodeParameters(
-      verificationType: verifyRequest.verificationType,
-      encryptedData: verifyRequest.encryptedData
-    )
+  public func verifyCVVCode(verifyRequest: VerifyCVVCodeParameters, cardID: String, sessionID: String) async throws -> APIVerifyCVVCode {
     return try await request(
-      CardRoute.verifyCVVCode(parameters, cardID, sessionID),
-      target: APIVerifyCVVResponse.self,
+      CardRoute.verifyCVVCode(verifyRequest, cardID, sessionID),
+      target: APIVerifyCVVCode.self,
       failure: LFErrorObject.self,
       decoder: .apiDecoder
     )
