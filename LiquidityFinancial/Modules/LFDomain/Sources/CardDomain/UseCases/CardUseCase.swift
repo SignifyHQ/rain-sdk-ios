@@ -23,15 +23,15 @@ public class CardUseCase: CardUseCaseProtocol {
     try await repository.unlockCard(cardID: cardID, sessionID: sessionID)
   }
   
-  public func orderPhysicalCard(address: PhysicalCardAddressEntity, sessionID: String) async throws -> CardEntity {
+  public func orderPhysicalCard(address: AddressCardParametersEntity, sessionID: String) async throws -> CardEntity {
     try await repository.orderPhysicalCard(address: address, sessionID: sessionID)
   }
   
   public func verifyCVVCode(
-    requestParam: VerifyCVVCodeRequestEntity,
+    requestParam: VerifyCVVCodeParametersEntity,
     cardID: String,
     sessionID: String
-  ) async throws -> VerifyCVVCodeResponseEntity {
+  ) async throws -> VerifyCVVCodeEntity {
     try await repository.verifyCVVCode(verifyRequest: requestParam, cardID: cardID, sessionID: sessionID)
   }
   

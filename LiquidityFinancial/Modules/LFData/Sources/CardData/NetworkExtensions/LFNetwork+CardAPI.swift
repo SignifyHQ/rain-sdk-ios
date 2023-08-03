@@ -41,7 +41,7 @@ extension LFNetwork: CardAPIProtocol where R == CardRoute {
     )
   }
   
-  public func orderPhysicalCard(address: PhysicalCardAddressEntity, sessionID: String) async throws -> APICard {
+  public func orderPhysicalCard(address: AddressCardParameters, sessionID: String) async throws -> APICard {
     return try await request(
       CardRoute.orderPhysicalCard(address, sessionID),
       target: APICard.self,
@@ -50,7 +50,7 @@ extension LFNetwork: CardAPIProtocol where R == CardRoute {
     )
   }
   
-  public func verifyCVVCode(verifyRequest: APIVerifyCVVRequest, cardID: String, sessionID: String) async throws -> APIVerifyCVVResponse {
+  public func verifyCVVCode(verifyRequest: VerifyCVVParameters, cardID: String, sessionID: String) async throws -> APIVerifyCVVResponse {
     let parameters = VerifyCVVCodeParameters(
       verificationType: verifyRequest.verificationType,
       encryptedData: verifyRequest.encryptedData

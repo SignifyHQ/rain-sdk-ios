@@ -48,7 +48,7 @@ extension EnterCVVCodeViewModel {
         let encryptedData = try session.encryptWithJWKSet(
           value: [Constants.NetSpendKey.verificationValue.rawValue: cvvCodeValue]
         )
-        let request = APIVerifyCVVRequest(
+        let request = VerifyCVVParameters(
           verificationType: Constants.NetSpendKey.cvc.rawValue, encryptedData: encryptedData
         )
         let response = try await cardUseCase.verifyCVVCode(

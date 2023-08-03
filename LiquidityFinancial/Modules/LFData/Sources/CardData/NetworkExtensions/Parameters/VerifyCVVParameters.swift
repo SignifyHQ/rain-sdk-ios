@@ -1,11 +1,7 @@
 import Foundation
 import CardDomain
 
-public struct APIVerifyCVVResponse: VerifyCVVCodeResponseEntity {
-  public let id: String
-}
-
-public struct APIVerifyCVVRequest: VerifyCVVCodeRequestEntity {
+public struct VerifyCVVParameters: VerifyCVVCodeParametersEntity {
   public let verificationType: String
   public let encryptedData: String
   

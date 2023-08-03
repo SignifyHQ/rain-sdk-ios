@@ -27,7 +27,7 @@ struct ApplePayViewController: UIViewControllerRepresentable {
     // analyticsService.track(event: Event(name: .viewsAddApplePay))
     
     let request = PKAddPaymentPassRequestConfiguration(encryptionScheme: .ECC_V2)
-    request?.cardholderName = "Tony Dang"//viewModel.cardModel.cardholderName
+    request?.cardholderName = viewModel.cardModel.cardholderName
     request?.primaryAccountSuffix = viewModel.cardModel.last4
     request?.localizedDescription = LFLocalizable.AddToWallet.ApplePay.message
     request?.primaryAccountIdentifier = viewModel.cardModel.id

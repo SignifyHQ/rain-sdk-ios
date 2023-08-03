@@ -2,6 +2,7 @@ import Foundation
 import CardDomain
 import NetspendSdk
 
+// swiftlint: disable force_cast
 public class CardRepository: CardRepositoryProtocol {
   private let cardAPI: CardAPIProtocol
   
@@ -25,16 +26,16 @@ public class CardRepository: CardRepositoryProtocol {
     try await cardAPI.unlockCard(cardID: cardID, sessionID: sessionID)
   }
   
-  public func orderPhysicalCard(address: PhysicalCardAddressEntity, sessionID: String) async throws -> CardEntity {
-    return try await cardAPI.orderPhysicalCard(address: address, sessionID: sessionID)
+  public func orderPhysicalCard(address: AddressCardParametersEntity, sessionID: String) async throws -> CardEntity {
+    return try await cardAPI.orderPhysicalCard(address: address as! AddressCardParameters, sessionID: sessionID)
   }
   
   public func verifyCVVCode(
-    verifyRequest: VerifyCVVCodeRequestEntity,
+    verifyRequest: VerifyCVVCodeParametersEntity,
     cardID: String,
     sessionID: String
-  ) async throws -> VerifyCVVCodeResponseEntity {
-    let verifyAPIRequest = APIVerifyCVVRequest(
+  ) async throws -> VerifyCVVCodeEntity {
+    let verifyAPIRequest = VerifyCVVParameters(
       verificationType: verifyRequest.verificationType,
       encryptedData: verifyRequest.encryptedData
     )

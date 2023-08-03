@@ -1,6 +1,8 @@
 import Foundation
+import CardDomain
+import DataUtilities
 
-public struct PhysicalCardAddressEntity: Encodable {
+public struct AddressCardParameters: Parameterable, AddressCardParametersEntity {
   public let line1: String?
   public let line2: String?
   public let city: String?

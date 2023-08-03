@@ -9,7 +9,7 @@ public enum CardRoute {
   case card(String, String)
   case lock(String, String)
   case unlock(String, String)
-  case orderPhysicalCard(PhysicalCardAddressEntity, String)
+  case orderPhysicalCard(AddressCardParameters, String)
   case verifyCVVCode(VerifyCVVCodeParameters, String, String)
   case setPin(SetPinParameters, String, String)
   case getApplyPayToken(cardId: String, sessionId: String)

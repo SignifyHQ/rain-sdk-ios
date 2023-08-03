@@ -1,7 +1,7 @@
 import Foundation
 
   // MARK: - WelcomeElement
-public struct APIAccount: Codable {
+public struct APIAccount: Decodable {
   public let id: String
   public let externalAccountId: String?
   public let currency: String

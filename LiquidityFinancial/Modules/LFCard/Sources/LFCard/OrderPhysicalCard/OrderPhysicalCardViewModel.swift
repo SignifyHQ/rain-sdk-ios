@@ -1,5 +1,6 @@
 import Combine
 import CardDomain
+import CardData
 import Foundation
 import UIKit
 import LFStyleGuide
@@ -59,7 +60,7 @@ extension OrderPhysicalCardViewModel {
     isOrderingCard = true
     Task {
       do {
-        let address = PhysicalCardAddressEntity(
+        let address = AddressCardParameters(
           line1: shippingAddress.line1,
           line2: shippingAddress.line2,
           city: shippingAddress.city,
