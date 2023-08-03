@@ -155,6 +155,8 @@ public extension Constants {
     case verificationValue = "verification_value"
     case cvc = "cvc"
     case pin = "pin"
+    case cvv2 = "cvv2"
+    case pan = "pan"
   }
 }
 

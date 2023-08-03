@@ -9,6 +9,25 @@ struct AccountsView: View {
   
   var body: some View {
     content
+      .navigationLink(item: $viewModel.navigation) { item in
+        switch item {
+        case .bankTransfers:
+          EmptyView()
+        case .addBankDebit:
+          AddBankWithDebitView()
+        case .addMoney:
+          EmptyView()
+        case .directDeposit:
+          EmptyView()
+        case .debugMenu:
+          DBAdminMenuView(environment: viewModel.networkEnvironment.title)
+        case .atmLocation(let authorizationCode):
+          NetspendLocationViewController(withPasscode: authorizationCode, onClose: {
+            viewModel.navigation = nil
+          })
+          .navigationTitle(LFLocalizable.AccountView.atmLocationTitle)
+        }
+      }
       .background(Colors.background.swiftUIColor)
   }
 }
@@ -35,17 +54,6 @@ extension AccountsView {
       .padding(.top, 20)
       .padding(.bottom, 12)
       .padding(.horizontal, 30.0)
-      .navigationLink(item: $viewModel.navigation, destination: { navigation in
-        switch navigation {
-        case .debugMenu:
-          DBAdminMenuView(environment: viewModel.networkEnvironment.title)
-        case .atmLocation(let authorizationCode):
-          NetspendLocationViewController(withPasscode: authorizationCode, onClose: {
-            viewModel.navigation = nil
-          })
-          .navigationTitle(LFLocalizable.AccountView.atmLocationTitle)
-        }
-      })
     }
   }
 
@@ -96,7 +104,7 @@ extension AccountsView {
         title: LFLocalizable.AccountView.DebitDeposits.title,
         value: LFLocalizable.AccountView.DebitDeposits.subtitle
       ) {
-        // TODO: Will do later
+        viewModel.selectedAddOption(navigation: .addBankDebit)
       }
       ArrowButton(
         image: GenImages.CommonImages.Accounts.oneTime,

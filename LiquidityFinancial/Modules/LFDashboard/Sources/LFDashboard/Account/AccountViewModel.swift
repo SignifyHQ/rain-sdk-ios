@@ -10,6 +10,10 @@ class AccountViewModel: ObservableObject {
   enum Navigation {
     case debugMenu
     case atmLocation(String)
+    case bankTransfers
+    case addBankDebit
+    case addMoney
+    case directDeposit
   }
   
   var networkEnvironment: NetworkEnvironment {
@@ -39,5 +43,9 @@ class AccountViewModel: ObservableObject {
         log.error(error)
       }
     }
+  }
+  
+  func selectedAddOption(navigation: Navigation) {
+    self.navigation = navigation
   }
 }

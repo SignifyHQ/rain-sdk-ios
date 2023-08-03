@@ -24,7 +24,10 @@ let package = Package(
       targets: ["CardData"]),
     .library(
       name: "AccountData",
-      targets: ["AccountData"])
+      targets: ["AccountData"]),
+    .library(
+      name: "ExternalFundingData",
+      targets: ["ExternalFundingData"])
   ],
   dependencies: [
     .package(name: "LFDomain", path: "../LFDomain"),
@@ -69,6 +72,14 @@ let package = Package(
       name: "AccountData",
       dependencies: [
         "DataUtilities", "LFNetwork", "Factory", "AuthorizationManager", "OnboardingData",
+        .product(name: "AccountDomain", package: "LFDomain")
+      ]
+    ),
+    .target(
+      name: "ExternalFundingData",
+      dependencies: [
+        "DataUtilities", "LFNetwork", "Factory", "AuthorizationManager",
+        .product(name: "ExternalFundingDomain", package: "LFDomain"),
         .product(name: "AccountDomain", package: "LFDomain")
       ]
     ),

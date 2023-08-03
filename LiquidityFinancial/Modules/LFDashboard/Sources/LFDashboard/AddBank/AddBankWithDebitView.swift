@@ -37,7 +37,8 @@ struct AddBankWithDebitView: View {
       
       FullSizeButton(
         title: LFLocalizable.Button.Continue.title,
-        isDisable: !viewModel.actionEnabled
+        isDisable: !viewModel.actionEnabled,
+        isLoading: $viewModel.loading
       ) {
         viewModel.performAction()
       }
@@ -45,6 +46,9 @@ struct AddBankWithDebitView: View {
       .padding(.horizontal, 30)
     }
     .background(Colors.background.swiftUIColor)
+    .popup(item: $viewModel.toastMessage, style: .toast) {
+      ToastView(toastMessage: $0)
+    }
   }
   
 }
