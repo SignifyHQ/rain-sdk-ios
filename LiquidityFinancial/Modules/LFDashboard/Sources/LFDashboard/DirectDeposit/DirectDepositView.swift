@@ -2,6 +2,7 @@ import SwiftUI
 import LFStyleGuide
 import LFLocalizable
 import LFUtilities
+import LFServices
 
 struct DirectDepositView: View {
   @StateObject var viewModel = DirectDepositViewModel()
@@ -40,9 +41,9 @@ struct DirectDepositView: View {
       EmptyView()
       //          DirectDepositFormView()
     }
-//    .fullScreenCover(item: $viewModel.pinWheelData) { data in
-//      PinWheelController(data: data)
-//    }
+    .fullScreenCover(item: $viewModel.pinWheelData) { data in
+      PinWheelViewController(data: data)
+    }
     .popup(isPresented: $viewModel.isShowAllBenefits, style: .sheet) {
       benefitBottomSheet
     }
@@ -177,12 +178,20 @@ private extension DirectDepositView {
           .foregroundColor(Colors.label.swiftUIColor.opacity(0.5))
       }
       HStack {
-        Text(value)
-          .font(Fonts.bold.swiftUIFont(size: 13))
-          .tracking(3)
+        if viewModel.isLoading {
+          LottieView(loading: .primary)
+            .frame(width: 28, height: 16)
+            .padding(.leading, 4)
+        } else {
+          Text(value)
+            .font(Fonts.bold.swiftUIFont(size: 13))
+            .tracking(3)
+        }
         Spacer()
         GenImages.CommonImages.icCopy.swiftUIImage
+          .resizable()
           .frame(20)
+          .scaledToFit()
       }
       .foregroundColor(Colors.primary.swiftUIColor)
     }

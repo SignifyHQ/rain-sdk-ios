@@ -12,6 +12,7 @@ let package = Package(
     dependencies: [
       .package(name: "LFUtilities", path: "../LFUtilities"),
       .package(url: "https://github.com/verygoodsecurity/vgs-show-ios.git", from: "1.1.6"),
+      .package(url: "https://github.com/underdog-tech/pinwheel-ios-sdk.git", from: "2.3.15"),
       .package(url: "https://github.com/intercom/intercom-ios", from: "15.1.3")
     ],
     targets: [
@@ -20,6 +21,7 @@ let package = Package(
             dependencies: [
               "LFUtilities",
               .product(name: "VGSShowSDK", package: "vgs-show-ios"),
+              .product(name: "PinwheelSDK", package: "pinwheel-ios-sdk"),
               .product(name: "Intercom", package: "intercom-ios")
             ],
             resources: [

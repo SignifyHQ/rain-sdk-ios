@@ -1,5 +1,5 @@
 import Foundation
 
-public protocol ExternalCardEntity: Codable {
+public protocol ExternalCardEntity {
   var cardId: String { get }
 }

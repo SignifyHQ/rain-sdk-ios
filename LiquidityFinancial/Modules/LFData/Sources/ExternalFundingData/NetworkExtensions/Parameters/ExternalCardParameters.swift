@@ -14,7 +14,7 @@ public struct ExternalCardExpiration: ExternalCardExpirationEntity {
 
 public struct ExternalCardParameters: Parameterable, ExternalCardParametersEntity {
   public var expiration: ExternalCardExpirationEntity {
-    return ExternalCardExpiration(month: month, year: year)
+    ExternalCardExpiration(month: month, year: year)
   }
   
   public var month: String

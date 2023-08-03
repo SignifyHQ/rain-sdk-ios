@@ -15,6 +15,7 @@
 		06EBE2012A69390700157B32 /* DashboardContainer+Injection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06EBE2002A69390700157B32 /* DashboardContainer+Injection.swift */; };
 		06EBE2032A693C7800157B32 /* LFDashboard in Frameworks */ = {isa = PBXBuildFile; productRef = 06EBE2022A693C7800157B32 /* LFDashboard */; };
 		06EBE2052A693C8100157B32 /* LFDashboard in Frameworks */ = {isa = PBXBuildFile; productRef = 06EBE2042A693C8100157B32 /* LFDashboard */; };
+		06FB47082A7AAE430050304C /* PinwheelSDK in Frameworks */ = {isa = PBXBuildFile; productRef = 06FB47072A7AAE430050304C /* PinwheelSDK */; };
 		749091172A6584C300071B41 /* SmartyStreets in Frameworks */ = {isa = PBXBuildFile; productRef = 749091162A6584C300071B41 /* SmartyStreets */; };
 		A918D76E2A77B116001AD849 /* AccountData in Frameworks */ = {isa = PBXBuildFile; productRef = A918D76D2A77B116001AD849 /* AccountData */; };
 		A938373C2A63BAAC009EB1DE /* LFUtilities in Frameworks */ = {isa = PBXBuildFile; productRef = A938373B2A63BAAC009EB1DE /* LFUtilities */; };
@@ -259,6 +260,7 @@
 				A980DF732A5FA25A000B3C09 /* LFNetwork in Frameworks */,
 				A94F71F22A612C62002ADB34 /* AvalancheAccountOnboarding in Frameworks */,
 				A980DF752A5FA265000B3C09 /* LFServices in Frameworks */,
+				06FB47082A7AAE430050304C /* PinwheelSDK in Frameworks */,
 				A94F71F52A61CAC6002ADB34 /* LFLocalizable in Frameworks */,
 				749091172A6584C300071B41 /* SmartyStreets in Frameworks */,
 			);
@@ -724,6 +726,7 @@
 				06EBE2022A693C7800157B32 /* LFDashboard */,
 				0603BD702A71191B00347DB2 /* VGSShowSDK */,
 				A918D76D2A77B116001AD849 /* AccountData */,
+				06FB47072A7AAE430050304C /* PinwheelSDK */,
 			);
 			productName = LiquidityFinancial;
 			productReference = A97BF7BC2A5C602D00B8F5CA /* Avalanche.app */;
@@ -804,6 +807,7 @@
 				06D40BFF2A62AE3700EADB75 /* XCRemoteSwiftPackageReference "iPhoneNumberField" */,
 				749091152A6584C300071B41 /* XCRemoteSwiftPackageReference "smartystreets-ios-sdk" */,
 				0603BD6F2A71191B00347DB2 /* XCRemoteSwiftPackageReference "vgs-show-ios" */,
+				06FB47062A7AAE430050304C /* XCRemoteSwiftPackageReference "pinwheel-ios-sdk" */,
 			);
 			productRefGroup = A97BF7BD2A5C602D00B8F5CA /* Products */;
 			projectDirPath = "";
@@ -1448,6 +1452,14 @@
 				minimumVersion = 0.10.1;
 			};
 		};
+		06FB47062A7AAE430050304C /* XCRemoteSwiftPackageReference "pinwheel-ios-sdk" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/underdog-tech/pinwheel-ios-sdk.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 2.0.0;
+			};
+		};
 		749091152A6584C300071B41 /* XCRemoteSwiftPackageReference "smartystreets-ios-sdk" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/smartystreets/smartystreets-ios-sdk";
@@ -1516,6 +1528,11 @@
 		06EBE2042A693C8100157B32 /* LFDashboard */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = LFDashboard;
+		};
+		06FB47072A7AAE430050304C /* PinwheelSDK */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 06FB47062A7AAE430050304C /* XCRemoteSwiftPackageReference "pinwheel-ios-sdk" */;
+			productName = PinwheelSDK;
 		};
 		749091162A6584C300071B41 /* SmartyStreets */ = {
 			isa = XCSwiftPackageProductDependency;

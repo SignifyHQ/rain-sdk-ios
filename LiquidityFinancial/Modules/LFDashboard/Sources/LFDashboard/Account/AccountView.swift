@@ -18,7 +18,7 @@ struct AccountsView: View {
         case .addMoney:
           EmptyView()
         case .directDeposit:
-          EmptyView()
+          DirectDepositView()
         case .debugMenu:
           DBAdminMenuView(environment: viewModel.networkEnvironment.title)
         case .atmLocation(let authorizationCode):
@@ -90,7 +90,7 @@ extension AccountsView {
         title: LFLocalizable.AccountView.DirectDeposit.title,
         value: LFLocalizable.AccountView.DirectDeposit.subtitle
       ) {
-        // TODO: Will do later
+        viewModel.selectedAddOption(navigation: .directDeposit)
       }
       ArrowButton(
         image: GenImages.CommonImages.Accounts.bankTransfers,

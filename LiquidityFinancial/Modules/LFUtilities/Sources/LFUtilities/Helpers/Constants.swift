@@ -133,6 +133,7 @@ public extension Constants {
   // MARK: - Default
 public extension Constants {
   enum Default: String {
+    case undefined = "Undefined"
     case region = "US"
     case regionCode = "+1"
     case numberCharacters = "0123456789"

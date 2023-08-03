@@ -10,4 +10,12 @@ public class ExternalFundingUseCase: ExternalFundingUseCaseProtocol {
   public func set(request: ExternalCardParametersEntity, sessionID: String) async throws -> ExternalCardEntity {
     try await repository.set(request: request, sessionID: sessionID)
   }
+  
+  public func getPinWheelToken(sessionID: String) async throws -> PinWheelTokenEntity {
+    try await repository.getPinWheelToken(sessionID: sessionID)
+  }
+  
+  public func getACHInfo(sessionID: String) async throws -> ACHInfoEntity {
+    try await repository.getACHInfo(sessionID: sessionID)
+  }
 }

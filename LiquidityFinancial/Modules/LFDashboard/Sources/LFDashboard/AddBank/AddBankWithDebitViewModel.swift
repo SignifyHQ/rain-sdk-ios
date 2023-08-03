@@ -83,7 +83,7 @@ class AddBankWithDebitViewModel: ObservableObject {
           postalCode: postalCode,
           encryptedData: encryptedData
         )
-        let id = try await externalFundingUseCase.set(
+        _ = try await externalFundingUseCase.set(
           request: request,
           sessionID: accountDataManager.sessionID
         )

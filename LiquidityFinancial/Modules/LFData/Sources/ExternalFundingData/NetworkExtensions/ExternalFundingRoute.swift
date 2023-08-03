@@ -6,6 +6,8 @@ import CardDomain
 
 public enum ExternalFundingRoute {
   case set(ExternalCardParameters, String)
+  case pinWheelToken(String)
+  case getACHInfo(String)
 }
 
 extension ExternalFundingRoute: LFRoute {
@@ -19,12 +21,18 @@ extension ExternalFundingRoute: LFRoute {
     switch self {
     case .set:
       return "/v1/netspend/external-funding/external-card"
+    case .pinWheelToken:
+      return "/v1/netspend/external-funding/pinwheel-token"
+    case .getACHInfo:
+      return "/v1/netspend/external-funding/ach-info"
     }
   }
   
   public var httpMethod: HttpMethod {
     switch self {
-    case .set:
+    case .getACHInfo:
+      return .GET
+    case .set, .pinWheelToken:
       return .POST
     }
   }
@@ -36,7 +44,9 @@ extension ExternalFundingRoute: LFRoute {
     ]
     base["Authorization"] = authorization
     switch self {
-    case let .set(_, sessionId):
+    case let .set(_, sessionId),
+        let .pinWheelToken(sessionId),
+        let .getACHInfo(sessionId):
       base["netspendSessionId"] = sessionId
     }
     return base
@@ -46,6 +56,8 @@ extension ExternalFundingRoute: LFRoute {
     switch self {
     case let .set(parameters, _):
       return parameters.encoded()
+    case .getACHInfo, .pinWheelToken:
+      return nil
     }
   }
   
@@ -53,6 +65,8 @@ extension ExternalFundingRoute: LFRoute {
     switch self {
     case .set:
       return .json
+    case .getACHInfo, .pinWheelToken:
+      return .url
     }
   }
   

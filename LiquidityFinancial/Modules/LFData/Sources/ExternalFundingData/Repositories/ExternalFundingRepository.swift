@@ -20,4 +20,12 @@ public class ExternalFundingRepository: ExternalFundingRepositoryProtocol {
     )
     return try await externalFundingAPI.set(request: request, sessionID: sessionID)
   }
+  
+  public func getPinWheelToken(sessionID: String) async throws -> PinWheelTokenEntity {
+    try await externalFundingAPI.getPinWheelToken(sessionID: sessionID)
+  }
+  
+  public func getACHInfo(sessionID: String) async throws -> ExternalFundingDomain.ACHInfoEntity {
+    try await externalFundingAPI.getACHInfo(sessionID: sessionID)
+  }
 }

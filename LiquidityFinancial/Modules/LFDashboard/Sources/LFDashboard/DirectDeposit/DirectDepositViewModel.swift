@@ -2,21 +2,32 @@ import Foundation
 import UIKit
 import LFLocalizable
 import LFUtilities
+import LFServices
+import Factory
+import ExternalFundingData
+import ExternalFundingDomain
 
 @MainActor
 final class DirectDepositViewModel: ObservableObject {
-  @Published var toastMessage: String?
+  @LazyInjected(\.accountDataManager) var accountDataManager
+  @LazyInjected(\.externalFundingRepository) var externalFundingRepository
+
   @Published var directDepositLoading: Bool = false
   @Published var isShowAllBenefits: Bool = false
+  @Published var isLoading: Bool = false
   @Published var isNavigateToDirectDepositForm: Bool = false
+  @Published var toastMessage: String?
+  @Published var pinWheelData: PinWheelViewController.PinWheelData?
+  @Published var accountNumber: String = ""
+  @Published var routingNumber: String = ""
   
-  let accountNumber: String
-  let routingNumber: String
+  private lazy var pinWheelService = PinWheelService()
+  private lazy var externalFundingUseCase: ExternalFundingUseCaseProtocol = {
+    ExternalFundingUseCase(repository: externalFundingRepository)
+  }()
   
   init() {
-    //TODO: Will be updated later
-    accountNumber = "939383401273847"
-    routingNumber = "121124125"
+    getACHInfo()
   }
 }
 
@@ -46,6 +57,47 @@ extension DirectDepositViewModel {
 
 // MARK: - Private Functions
 private extension DirectDepositViewModel {
+  func getACHInfo() {
+    isLoading = true
+    Task {
+      do {
+        let achResponse = try await externalFundingUseCase.getACHInfo(sessionID: accountDataManager.sessionID)
+        accountNumber = achResponse.accountNumber ?? Constants.Default.undefined.rawValue
+        routingNumber = achResponse.routingNumber ?? Constants.Default.undefined.rawValue
+        isLoading = false
+      } catch {
+        isLoading = false
+        toastMessage = error.localizedDescription
+      }
+    }
+  }
+  
+  func generatePinWheelData() async {
+    do {
+      let pinwheelResponse = try await externalFundingUseCase.getPinWheelToken(
+        sessionID: accountDataManager.sessionID
+      )
+      pinWheelData = PinWheelViewController.PinWheelData(
+        delegate: pinWheelService,
+        token: pinwheelResponse.token
+      )
+    } catch {
+      toastMessage = error.localizedDescription
+    }
+  }
+  
   func loadPinWheel() async {
+    directDepositLoading = true
+    pinWheelService.onDismiss = { [weak self] value in
+      self?.pinWheelData = nil
+      if let value = value {
+        self?.toastMessage = value
+      }
+    }
+    pinWheelService.onSuccess = {
+      self.pinWheelData = nil
+    }
+    await generatePinWheelData()
+    directDepositLoading = false
   }
 }
