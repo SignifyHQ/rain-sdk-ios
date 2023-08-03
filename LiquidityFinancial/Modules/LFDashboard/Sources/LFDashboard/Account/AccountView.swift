@@ -2,10 +2,11 @@ import SwiftUI
 import LFUtilities
 import LFStyleGuide
 import LFLocalizable
+import LFServices
 
 struct AccountsView: View {
   @StateObject private var viewModel = AccountViewModel()
-
+  
   var body: some View {
     content
       .background(Colors.background.swiftUIColor)
@@ -34,6 +35,17 @@ extension AccountsView {
       .padding(.top, 20)
       .padding(.bottom, 12)
       .padding(.horizontal, 30.0)
+      .navigationLink(item: $viewModel.navigation, destination: { navigation in
+        switch navigation {
+        case .debugMenu:
+          DBAdminMenuView(environment: viewModel.networkEnvironment.title)
+        case .atmLocation(let authorizationCode):
+          NetspendLocationViewController(withPasscode: authorizationCode, onClose: {
+            viewModel.navigation = nil
+          })
+          .navigationTitle(LFLocalizable.AccountView.atmLocationTitle)
+        }
+      })
     }
   }
 
@@ -108,9 +120,10 @@ extension AccountsView {
       ArrowButton(
         image: GenImages.CommonImages.Accounts.atm,
         title: LFLocalizable.AccountView.atm,
-        value: nil
+        value: nil,
+        isLoading: $viewModel.isLoading
       ) {
-        // TODO: Will do later
+        viewModel.getATMAuthorizationCode()
       }
       ArrowButton(
         image: GenImages.CommonImages.Accounts.bankStatements,
@@ -139,6 +152,13 @@ extension AccountsView {
         value: nil
       ) {
         // TODO: Will do later
+      }
+      ArrowButton(
+        image: GenImages.CommonImages.personAndBackgroundDotted,
+        title: "ADMIN MENU",
+        value: nil
+      ) {
+        viewModel.navigation = .debugMenu
       }
     }
   }

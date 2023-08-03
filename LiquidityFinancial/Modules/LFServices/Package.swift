@@ -21,7 +21,11 @@ let package = Package(
               "LFUtilities",
               .product(name: "VGSShowSDK", package: "vgs-show-ios"),
               .product(name: "Intercom", package: "intercom-ios")
-            ]),
+            ],
+            resources: [
+              .process("Resources")
+            ]
+        ),
         .binaryTarget(
           name: "NetspendSdk",
           path: "../../Frameworks/NetspendSdk.xcframework"

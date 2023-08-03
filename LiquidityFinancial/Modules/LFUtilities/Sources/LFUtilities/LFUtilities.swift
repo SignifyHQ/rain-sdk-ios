@@ -1,7 +1,7 @@
 import Foundation
 // swiftlint:disable convenience_type identifier_name
 
-public final class LFStyleGuide {
+public final class LFUtilities {
   
   static var target: Configs.Target!
   
@@ -15,12 +15,12 @@ public final class LFStyleGuide {
   
 }
 
-extension LFStyleGuide {
+extension LFUtilities {
   
   struct Configs {
     enum Target: String {
-    case Avalanche
-    case Cardano
+      case Avalanche
+      case Cardano
     }
   }
   

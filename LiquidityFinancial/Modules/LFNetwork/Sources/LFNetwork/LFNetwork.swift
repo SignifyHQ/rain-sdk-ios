@@ -8,9 +8,10 @@ public struct LFNetwork<R: LFRoute>: NetworkType {
     session.configuration
   }
   
-  private let session: URLSession
+  public let session: URLSession
   
   public init(configuration: URLSessionConfiguration = .default) {
+    URLSessionConfiguration.mockingswizzleDefaultSessionConfiguration()
     self.session = URLSession(configuration: configuration)
   }
 }

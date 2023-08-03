@@ -404,7 +404,7 @@
 "accountView.help_support" = "Help & Support";
 "accountView.legal" = "Legal";
 "accountView.deposit_limits" = "Deposit Limits";
-
+"accountView.atm_location_title" = "ATM Locations";
 
 
 // MARK: - Common

@@ -6,7 +6,7 @@ excluded:
   - "**/generated"
   - "**/.build"
   - "**/*Tests.swift"
-
+  - "**/NetworkDebugTool"
 opt_in_rules:
   - array_init
   - closure_body_length

@@ -38,4 +38,8 @@ extension LFNetwork: NetSpendAPIProtocol where R == NetSpendRoute {
   public func uploadDocuments(path: PathDocumentParameters, documentData: DocumentParameters) async throws -> NetSpendDocumentData.RequestedDocument {
     return try await request(NetSpendRoute.uploadDocuments(path: path, documentData: documentData), target: NetSpendDocumentData.RequestedDocument.self, failure: LFErrorObject.self, decoder: .apiDecoder)
   }
+  
+  public func getAuthorizationCode(sessionId: String) async throws -> NetSpendAuthorizationCode {
+    return try await request(NetSpendRoute.getAuthorizationCode(sessionId: sessionId), target: NetSpendAuthorizationCode.self, failure: LFErrorObject.self, decoder: .apiDecoder)
+  }
 }

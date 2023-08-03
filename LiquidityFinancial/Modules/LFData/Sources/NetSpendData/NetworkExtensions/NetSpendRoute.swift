@@ -13,6 +13,7 @@ public enum NetSpendRoute {
   case getWorkflows
   case getDocuments(sessionId: String)
   case uploadDocuments(path: PathDocumentParameters, documentData: DocumentParameters)
+  case getAuthorizationCode(sessionId: String)
 }
 
 extension NetSpendRoute: LFRoute {
@@ -42,6 +43,8 @@ extension NetSpendRoute: LFRoute {
       return "/v1/netspend/persons/document-requests"
     case .uploadDocuments(let path, _):
       return "/v1/netspend/persons/document-requests/\(path.documentID)"
+    case .getAuthorizationCode:
+      return "/v1/netspend/client-sdk/authorization-codes"
     }
   }
   
@@ -70,6 +73,9 @@ extension NetSpendRoute: LFRoute {
     case .uploadDocuments(let path, _):
       base["netspendSessionId"] = path.sessionId
       return base
+    case .getAuthorizationCode(let sessionID):
+      base["netspendSessionId"] = sessionID
+      return base
     }
   }
   
@@ -77,7 +83,7 @@ extension NetSpendRoute: LFRoute {
     switch self {
     case .sessionInit, .getAgreements, .getQuestions, .getWorkflows, .getDocuments:
       return .GET
-    case .establishSession, .createAccountPerson:
+    case .establishSession, .createAccountPerson, .getAuthorizationCode:
       return .POST
     case .putQuestions:
       return .PUT
@@ -88,7 +94,7 @@ extension NetSpendRoute: LFRoute {
   
   public var parameters: Parameters? {
     switch self {
-    case .sessionInit, .getAgreements, .getQuestions, .getWorkflows, .getDocuments:
+    case .sessionInit, .getAgreements, .getQuestions, .getWorkflows, .getDocuments, .getAuthorizationCode:
       return nil
     case .establishSession(let parameters):
       return parameters.encoded()
@@ -105,7 +111,7 @@ extension NetSpendRoute: LFRoute {
   
   public var parameterEncoding: ParameterEncoding? {
     switch self {
-    case .sessionInit, .getAgreements, .getQuestions, .getWorkflows, .getDocuments:
+    case .sessionInit, .getAgreements, .getQuestions, .getWorkflows, .getDocuments, .getAuthorizationCode:
       return nil
     case .establishSession, .createAccountPerson, .putQuestions, .uploadDocuments:
       return .json

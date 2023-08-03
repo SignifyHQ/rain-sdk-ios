@@ -37,38 +37,6 @@ extension KickoffService {
 // MARK: NetSpend
 extension KickoffService {
   static func kickoffNetspend() {
-    let netspendSdkColorGroup = NetspendSdkColorGroup(
-      color50: "",
-      color100: "",
-      color200: "",
-      color300: "",
-      color400: "",
-      color500: "",
-      color600: "",
-      color700: "",
-      color800: "",
-      color900: ""
-    )
-    let netspendSdkTheme = NetspendSdkTheme(
-      neutralColor: netspendSdkColorGroup,
-      defaultColor: netspendSdkColorGroup,
-      accentColor: netspendSdkColorGroup,
-      positiveColor: netspendSdkColorGroup,
-      negativeColor: netspendSdkColorGroup,
-      specialColor: netspendSdkColorGroup
-    )
-    
-    let apiKey = networkEnvironment == .productionTest ? Configs.NetSpend.sdkIdCert : Configs.NetSpend.sdkIdProd
-    
-    do {
-      try NetspendSdk.shared.initialize(
-        sdkId: apiKey,
-        theme: netspendSdkTheme,
-        branding: [:],
-        iovationToken: FraudForce.blackbox()
-      )
-    } catch {
-      log.error("kickoffNetspend is error: \(error)")
-    }
+    NetSpendService.kickoffNetspend(networkEnvironment: networkEnvironment)
   }
 }

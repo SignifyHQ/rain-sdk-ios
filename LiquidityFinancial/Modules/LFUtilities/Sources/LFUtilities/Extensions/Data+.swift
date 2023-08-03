@@ -1,6 +1,6 @@
 import Foundation
 
-extension Data {
+public extension Data {
   func convertToJsonDictionary() -> [String: Any]? {
     do {
       let decoded = try JSONSerialization.jsonObject(with: self, options: .allowFragments) as? [String: Any]

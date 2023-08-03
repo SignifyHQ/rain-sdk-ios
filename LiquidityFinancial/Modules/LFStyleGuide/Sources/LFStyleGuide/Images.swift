@@ -85,6 +85,7 @@ public enum GenImages {
     public static let map = ImageAsset(name: "map")
     public static let netspend = ImageAsset(name: "netspend")
     public static let netspendLogo = ImageAsset(name: "netspend_logo")
+    public static let personAndBackgroundDotted = ImageAsset(name: "person.and.background.dotted")
     public static let rewardsCashback = ImageAsset(name: "rewardsCashback")
     public static let rewardsDonation = ImageAsset(name: "rewardsDonation")
     public static let termsCheckboxDeselected = ImageAsset(name: "termsCheckboxDeselected")
