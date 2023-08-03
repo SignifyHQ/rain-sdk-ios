@@ -9,7 +9,7 @@ public class ExternalFundingRepository: ExternalFundingRepositoryProtocol {
     self.externalFundingAPI = externalFundingAPI
   }
   
-  public func set(request: ExternalCardParametersEntity, sessionID: String) async throws -> ExternalCardResponseEntity {
+  public func set(request: ExternalCardParametersEntity, sessionID: String) async throws -> ExternalCardEntity {
     let request = ExternalCardParameters(
       month: request.expiration.month,
       year: request.expiration.year,

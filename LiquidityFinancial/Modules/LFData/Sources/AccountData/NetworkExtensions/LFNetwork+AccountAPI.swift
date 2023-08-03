@@ -15,4 +15,9 @@ extension LFNetwork: AccountAPIProtocol where R == AccountRoute {
   public func createZeroHashAccount() async throws -> APIZeroHashAccount {
     return try await request(AccountRoute.createZeroHashAccount, target: APIZeroHashAccount.self, failure: LFErrorObject.self, decoder: .apiDecoder)
   }
+  
+  public func getTransactions(accountId: String, currencyType: String, limit: Int, offset: Int) async throws -> [APITransaction] {
+    let listItem = try await request(AccountRoute.getTransactions(accountId: accountId, currencyType: currencyType, limit: limit, offset: offset), target: APIListObject<APITransaction>.self, failure: LFErrorObject.self, decoder: .apiDecoder)
+    return listItem.data
+  }
 }

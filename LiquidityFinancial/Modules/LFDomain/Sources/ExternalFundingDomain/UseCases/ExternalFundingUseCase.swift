@@ -7,7 +7,7 @@ public class ExternalFundingUseCase: ExternalFundingUseCaseProtocol {
     self.repository = repository
   }
   
-  public func set(request: ExternalCardParametersEntity, sessionID: String) async throws -> ExternalCardResponseEntity {
+  public func set(request: ExternalCardParametersEntity, sessionID: String) async throws -> ExternalCardEntity {
     try await repository.set(request: request, sessionID: sessionID)
   }
 }

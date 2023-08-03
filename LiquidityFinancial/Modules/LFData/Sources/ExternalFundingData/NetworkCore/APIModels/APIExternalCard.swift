@@ -1,6 +1,6 @@
 import Foundation
 import ExternalFundingDomain
 
-public struct APIExternalCardResponse: ExternalCardResponseEntity {
+public struct APIExternalCard: ExternalCardEntity {
   public var cardId: String
 }

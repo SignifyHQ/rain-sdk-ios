@@ -18,6 +18,10 @@ final class CashViewModel: ObservableObject {
 
   @LazyInjected(\.accountRepository) var accountRepository
   
+  var currencyType: String {
+    "FIAT"
+  }
+  
   private let guestHandler: () -> Void
   
   init(guestHandler: @escaping () -> Void) {
@@ -36,7 +40,7 @@ extension CashViewModel {
   func refresh() async {
     await withTaskGroup(of: Void.self) { group in
       group.addTask {
-        // await self.accountManager.refreshAccounts(loadCards: false)
+          // await self.accountManager.refreshAccounts(loadCards: false)
       }
       group.addTask {
         await self.loadTransactions()
@@ -65,15 +69,25 @@ extension CashViewModel {
       defer { isLoading = false }
       isLoading = true
       do {
-        let accounts = try await accountRepository.getAccount(currencyType: "FIAT")
+        let accounts = try await accountRepository.getAccount(currencyType: currencyType)
         if let account = accounts.first { // TODO: Just get one
           self.cashBalanceValue = account.availableBalance
           self.selectedAsset = AssetType(rawValue: account.currency) ?? .usd
+          await self.getTransactions(accountId: account.id)
         }
         log.info(accounts)
       } catch {
         log.error(error.localizedDescription)
       }
+    }
+  }
+  
+  func getTransactions(accountId: String) async {
+    do {
+      let transactions = try await accountRepository.getTransactions(accountId: accountId, currencyType: currencyType, limit: 10, offset: 1)
+      log.info(transactions)
+    } catch {
+      log.error(error.localizedDescription)
     }
   }
 }
