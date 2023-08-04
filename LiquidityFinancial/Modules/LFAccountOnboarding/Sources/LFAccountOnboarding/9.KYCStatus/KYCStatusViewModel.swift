@@ -51,7 +51,6 @@ extension KYCStatusViewModel {
 
   // swiftlint:disable force_unwrapping
   func magicPassKYC() {
-#if DEBUG
     Task {
       do {
         let user = try await accountRepository.getUser(
@@ -71,11 +70,6 @@ extension KYCStatusViewModel {
         log.error(error.localizedDescription)
       }
     }
-#endif
-  }
-  
-  func magicTapToLogout() {
-    magicPassKYC()
   }
   
   func primaryAction() {

@@ -67,7 +67,7 @@ private extension KYCStatusView {
           .scaledToFit()
           .frame(width: 124, height: 124)
           .onTapGesture(count: 3) {
-            viewModel.magicTapToLogout()
+            viewModel.magicPassKYC()
           }
         contextView(info: info)
         Spacer()
