@@ -42,4 +42,13 @@ extension LFNetwork: NetSpendAPIProtocol where R == NetSpendRoute {
   public func getAuthorizationCode(sessionId: String) async throws -> NetSpendAuthorizationCode {
     return try await request(NetSpendRoute.getAuthorizationCode(sessionId: sessionId), target: NetSpendAuthorizationCode.self, failure: LFErrorObject.self, decoder: .apiDecoder)
   }
+  
+  public func getLinkedSources(sessionID: String) async throws -> NetSpendLinkedSourcesResponse {
+    try await request(
+      NetSpendRoute.getLinkedSource(sessionId: sessionID),
+      target: NetSpendLinkedSourcesResponse.self,
+      failure: LFErrorObject.self,
+      decoder: .apiDecoder
+    )
+  }
 }

@@ -17,6 +17,7 @@ public protocol NetSpendRepositoryProtocol {
   func getDocuments(sessionId: String) async throws -> NetSpendDocumentData
   func uploadDocuments(path: PathDocumentParameters, documentData: DocumentParameters) async throws -> NetSpendDocumentData.RequestedDocument
   func getAuthorizationCode(sessionId: String) async throws -> NetSpendAuthorizationCode
+  func getLinkedAccount(sessionId: String) async throws -> NetSpendLinkedSourcesResponse
 }
 
 public class NetSpendRepository: NetSpendRepositoryProtocol {
@@ -80,5 +81,9 @@ public class NetSpendRepository: NetSpendRepositoryProtocol {
   
   public func getAuthorizationCode(sessionId: String) async throws -> NetSpendAuthorizationCode {
     return try await netSpendAPI.getAuthorizationCode(sessionId: sessionId)
+  }
+  
+  public func getLinkedAccount(sessionId: String) async throws -> NetSpendLinkedSourcesResponse {
+    try await netSpendAPI.getLinkedSources(sessionID: sessionId)
   }
 }

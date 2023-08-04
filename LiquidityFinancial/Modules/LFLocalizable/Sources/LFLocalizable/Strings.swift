@@ -301,6 +301,20 @@ public enum LFLocalizable {
       public static let title = LFLocalizable.tr("Localizable", "changeAsset.screen.title", fallback: "Change asset")
     }
   }
+  public enum ConnectedView {
+    /// Checking or Savings Accounts
+    public static let title = LFLocalizable.tr("Localizable", "connectedView.title", fallback: "Checking or Savings Accounts")
+    public enum Row {
+      /// %@ **** %@
+      public static func externalBank(_ p1: Any, _ p2: Any) -> String {
+        return LFLocalizable.tr("Localizable", "connectedView.row.externalBank", String(describing: p1), String(describing: p2), fallback: "%@ **** %@")
+      }
+      /// Debit Card **** %@
+      public static func externalCard(_ p1: Any) -> String {
+        return LFLocalizable.tr("Localizable", "connectedView.row.externalCard", String(describing: p1), fallback: "Debit Card **** %@")
+      }
+    }
+  }
   public enum DirectDeposit {
     public enum AccountNumber {
       /// AccountNumber

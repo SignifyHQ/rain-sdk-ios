@@ -411,6 +411,11 @@
 "plaidLink.connectViaDebitCard.title" = "Link Bank via Debit Card";
 "plaidLink.contactSupport.title" = "Contact Support";
 
+// ConnectedView
+"connectedView.title" = "Checking or Savings Accounts";
+"connectedView.row.debitCard" = "Debit Card **** %@";
+"connectedView.row.externalBank" = "%@ **** %@";
+
 // MARK: - Common
 
 // Terms

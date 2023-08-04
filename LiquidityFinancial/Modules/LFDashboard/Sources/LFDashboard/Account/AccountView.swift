@@ -28,6 +28,8 @@ struct AccountsView: View {
             viewModel.navigation = nil
           })
           .navigationTitle(LFLocalizable.AccountView.atmLocationTitle)
+        case .connectedAccounts:
+          ConnectedAccountsView(linkedAccount: viewModel.linkedAccount)
         }
       }
       .popup(item: $viewModel.popup) { item in
@@ -37,6 +39,9 @@ struct AccountsView: View {
         }
       }
       .background(Colors.background.swiftUIColor)
+      .onAppear {
+        viewModel.onAppear()
+      }
   }
 }
 
@@ -82,15 +87,14 @@ private extension AccountsView {
 
   var connectedAccountsSection: some View {
     Group {
-      // TODO: Will implementation later, display when have account
-      if true {
+      if !viewModel.linkedAccount.isEmpty {
         section(title: LFLocalizable.AccountView.connectedAccounts) {
           ArrowButton(
             image: GenImages.CommonImages.Accounts.connectedAccounts,
             title: LFLocalizable.AccountView.connectedAccounts,
             value: nil
           ) {
-            // TODO: Will do later
+            viewModel.connectedAccountsTapped()
           }
         }
       }

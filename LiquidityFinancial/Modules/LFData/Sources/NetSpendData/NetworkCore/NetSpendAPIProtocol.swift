@@ -11,4 +11,5 @@ public protocol NetSpendAPIProtocol {
   func getDocuments(sessionId: String) async throws -> NetSpendDocumentData
   func uploadDocuments(path: PathDocumentParameters, documentData: DocumentParameters) async throws -> NetSpendDocumentData.RequestedDocument
   func getAuthorizationCode(sessionId: String) async throws -> NetSpendAuthorizationCode
+  func getLinkedSources(sessionID: String) async throws -> NetSpendLinkedSourcesResponse
 }

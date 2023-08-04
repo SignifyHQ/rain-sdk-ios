@@ -50,6 +50,7 @@ public enum GenImages {
     public static let calendar = ImageAsset(name: "calendar")
     public static let checkmark = ImageAsset(name: "checkmark")
     public static let dash = ImageAsset(name: "dash")
+    public static let icPlus = ImageAsset(name: "ic-plus")
     public static let icAccount = ImageAsset(name: "ic_account")
     public static let icAccountNumber = ImageAsset(name: "ic_accountNumber")
     public static let icAssets = ImageAsset(name: "ic_assets")

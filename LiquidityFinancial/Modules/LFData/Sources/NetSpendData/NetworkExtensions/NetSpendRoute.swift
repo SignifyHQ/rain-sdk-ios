@@ -14,6 +14,7 @@ public enum NetSpendRoute {
   case getDocuments(sessionId: String)
   case uploadDocuments(path: PathDocumentParameters, documentData: DocumentParameters)
   case getAuthorizationCode(sessionId: String)
+  case getLinkedSource(sessionId: String)
 }
 
 extension NetSpendRoute: LFRoute {
@@ -45,6 +46,8 @@ extension NetSpendRoute: LFRoute {
       return "/v1/netspend/persons/document-requests/\(path.documentID)"
     case .getAuthorizationCode:
       return "/v1/netspend/client-sdk/authorization-codes"
+    case .getLinkedSource:
+      return "/v1/netspend/external-funding"
     }
   }
   
@@ -76,12 +79,15 @@ extension NetSpendRoute: LFRoute {
     case .getAuthorizationCode(let sessionID):
       base["netspendSessionId"] = sessionID
       return base
+    case .getLinkedSource(let sessionId):
+      base["netspendSessionId"] = sessionId
+      return base
     }
   }
   
   public var httpMethod: HttpMethod {
     switch self {
-    case .sessionInit, .getAgreements, .getQuestions, .getWorkflows, .getDocuments:
+    case .sessionInit, .getAgreements, .getQuestions, .getWorkflows, .getDocuments, .getLinkedSource:
       return .GET
     case .establishSession, .createAccountPerson, .getAuthorizationCode:
       return .POST
@@ -94,7 +100,7 @@ extension NetSpendRoute: LFRoute {
   
   public var parameters: Parameters? {
     switch self {
-    case .sessionInit, .getAgreements, .getQuestions, .getWorkflows, .getDocuments, .getAuthorizationCode:
+    case .sessionInit, .getAgreements, .getQuestions, .getWorkflows, .getDocuments, .getAuthorizationCode, .getLinkedSource:
       return nil
     case .establishSession(let parameters):
       return parameters.encoded()
@@ -111,7 +117,7 @@ extension NetSpendRoute: LFRoute {
   
   public var parameterEncoding: ParameterEncoding? {
     switch self {
-    case .sessionInit, .getAgreements, .getQuestions, .getWorkflows, .getDocuments, .getAuthorizationCode:
+    case .sessionInit, .getAgreements, .getQuestions, .getWorkflows, .getDocuments, .getAuthorizationCode, .getLinkedSource:
       return nil
     case .establishSession, .createAccountPerson, .putQuestions, .uploadDocuments:
       return .json

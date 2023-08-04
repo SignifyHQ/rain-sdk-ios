@@ -51,6 +51,8 @@ public extension CircleButton {
         return GenImages.CommonImages.icXMark
       case .delete:
         return GenImages.CommonImages.icTrash
+      case .plus:
+        return GenImages.CommonImages.icPlus
       default:
         return nil
       }

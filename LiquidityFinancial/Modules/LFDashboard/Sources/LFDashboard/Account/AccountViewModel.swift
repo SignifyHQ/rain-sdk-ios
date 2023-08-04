@@ -24,6 +24,7 @@ class AccountViewModel: ObservableObject {
   @Published var isOpeningPlaidView: Bool = false
   @Published var netspendController: NetspendSdkViewController?
   @Published var toastMessage: String?
+  @Published var linkedAccount: [NetSpendLinkedSourceData] = []
 }
 
 // MARK: - View Helpers
@@ -49,6 +50,18 @@ extension AccountViewModel {
         navigation = .atmLocation(code.authorizationCode)
       } catch {
         toastMessage = error.localizedDescription
+      }
+    }
+  }
+  
+  func getListConnectedAccount() {
+    Task {
+      do {
+        let sessionID = accountDataManager.sessionID
+        let response = try await netspendRepository.getLinkedAccount(sessionId: sessionID)
+        self.linkedAccount = response.linkedSources
+      } catch {
+        log.error(error)
       }
     }
   }
@@ -100,6 +113,10 @@ extension AccountViewModel {
     popup = nil
     intercomService.openIntercom()
   }
+  
+  func connectedAccountsTapped() {
+    navigation = .connectedAccounts
+  }
 }
 
 // MARK: - Types
@@ -111,9 +128,17 @@ extension AccountViewModel {
     case addBankDebit
     case addMoney
     case directDeposit
+    case connectedAccounts
   }
   
   enum Popup {
     case plaidLinkError
+  }
+}
+
+extension AccountViewModel {
+  
+  func onAppear() {
+    getListConnectedAccount()
   }
 }
