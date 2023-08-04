@@ -617,6 +617,22 @@ public enum LFLocalizable {
       public static let title = LFLocalizable.tr("Localizable", "phoneNumber.textField.title", fallback: "Phone Number")
     }
   }
+  public enum PlaidLink {
+    public enum ConnectViaDebitCard {
+      /// Link Bank via Debit Card
+      public static let title = LFLocalizable.tr("Localizable", "plaidLink.connectViaDebitCard.title", fallback: "Link Bank via Debit Card")
+    }
+    public enum ContactSupport {
+      /// Contact Support
+      public static let title = LFLocalizable.tr("Localizable", "plaidLink.contactSupport.title", fallback: "Contact Support")
+    }
+    public enum Popup {
+      /// We’re unable to link your bank account via Plaid.
+      public static let description = LFLocalizable.tr("Localizable", "plaidLink.popup.description", fallback: "We’re unable to link your bank account via Plaid.")
+      /// WE’RE SORRY
+      public static let title = LFLocalizable.tr("Localizable", "plaidLink.popup.title", fallback: "WE’RE SORRY")
+    }
+  }
   public enum Popup {
     public enum Logout {
       /// No

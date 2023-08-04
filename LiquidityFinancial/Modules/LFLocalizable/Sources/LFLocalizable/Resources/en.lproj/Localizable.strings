@@ -407,6 +407,11 @@
 "accountView.deposit_limits" = "Deposit Limits";
 "accountView.atm_location_title" = "ATM Locations";
 
+// PlaidLink Popup
+"plaidLink.popup.title" = "WE’RE SORRY";
+"plaidLink.popup.description" = "We’re unable to link your bank account via Plaid.";
+"plaidLink.connectViaDebitCard.title" = "Link Bank via Debit Card";
+"plaidLink.contactSupport.title" = "Contact Support";
 
 // MARK: - Common
 

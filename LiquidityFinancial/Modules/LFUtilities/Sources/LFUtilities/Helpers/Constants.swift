@@ -165,6 +165,8 @@ public extension Constants {
   
   static var supportedStates: [String] = ["NY", "New York", "HI", "Hawaii"]
   
+  static let netSpendSDKLinkBankErrors = ["error", "failedToLinkBank", "externalLinkBankError"]
+  
   static let netspendAttributeInformation = [
     LFLocalizable.Question.NetpendCondition.userAgreement: LFUtility.netspendUserAgreement,
     LFLocalizable.Question.NetpendCondition.privacyPolicy: LFUtility.netspendPrivacyPolicy,
