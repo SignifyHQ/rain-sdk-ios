@@ -3,13 +3,13 @@ import Foundation
 
 public final class LFUtilities {
   
-  static var target: Configs.Target!
+  public private(set) static var target: Configs.Target!
   
   public static func initial(target: String) {
     if let target = Configs.Target(rawValue: target) {
       self.target = target
     } else {
-      fatalError("Wrong the target name. It must right for setup the module")
+      fatalError("Wrong the target name \(target). It must right for setup the module")
     }
   }
   
@@ -17,10 +17,13 @@ public final class LFUtilities {
 
 extension LFUtilities {
   
-  struct Configs {
-    enum Target: String {
+  public struct Configs {
+    public enum Target: String {
       case Avalanche
       case Cardano
+      case DogeCard
+      case CauseCard
+      case PrideCard
     }
   }
   

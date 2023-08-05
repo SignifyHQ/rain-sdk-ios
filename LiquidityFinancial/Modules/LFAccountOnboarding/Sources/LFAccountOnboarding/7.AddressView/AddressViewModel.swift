@@ -18,6 +18,7 @@ final class AddressViewModel: ObservableObject {
     case pendingIDV
     case declined
     case inReview
+    case missingInfo
     case home
   }
   
@@ -229,9 +230,9 @@ final class AddressViewModel: ObservableObject {
           let documents = try await netspendRepository.getDocuments(sessionId: accountDataManager.sessionID)
           netspendDataManager.update(documentData: documents)
           navigation = .document
-        case .primaryPersonKYCApprove:
-          navigation = .inReview
         case .KYCData:
+          navigation = .missingInfo
+        case .primaryPersonKYCApprove:
           navigation = .inReview
         case .acceptAgreement:
           break

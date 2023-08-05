@@ -9,8 +9,6 @@
 		<string>applinks:dev-app.xyz.com/link-bank</string>
 		<string>applinks:app.xyz.com/link-bank</string>
 	</array>
-	<key>com.apple.developer.networking.wifi-info</key>
-	<true/>
 	<key>com.apple.developer.pass-type-identifiers</key>
 	<array>
 		<string>$(TeamIdentifierPrefix)*</string>

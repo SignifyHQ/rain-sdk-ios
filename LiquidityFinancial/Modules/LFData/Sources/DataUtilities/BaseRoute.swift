@@ -7,7 +7,15 @@ extension LFRoute {
   }
   
   public var productID: String {
-    DataUtilities.target == .Avalanche ? APIConstants.avalencheID : APIConstants.cardanoID
+    switch DataUtilities.target {
+    case .Avalanche: return APIConstants.avalencheID
+    case .Cardano: return APIConstants.cardanoID
+    case .DogeCard: return APIConstants.dogeCard
+    case .CauseCard: return APIConstants.causeCard
+    case .PrideCard: return APIConstants.prideCard
+    case .none:
+      fatalError("Wrong the target name. It must right for setup the API")
+    }
   }
   
   public var httpHeaders: HttpHeaders {

@@ -76,6 +76,9 @@ extension KYCStatusViewModel {
     switch state {
     case .inReview:
       fetchNewStatus()
+    case .missingInfo:
+      // TODO: Tony Review handle after
+      break
     default:
       break
     }

@@ -46,8 +46,8 @@ struct UploadDocumentView: View {
     .popup(item: $viewModel.toastMessage, style: .toast) {
       ToastView(toastMessage: $0)
     }
-    .navigationLink(item: $viewModel.navigation) { item in
-      switch item {
+    .navigationLink(item: $viewModel.navigation) { navigation in
+      switch navigation {
       case .kycReview:
         KYCStatusView(viewModel: KYCStatusViewModel(state: .inReview(viewModel.accountDataManager.userNameDisplay)))
       case .home:

@@ -89,7 +89,7 @@ private extension FullSizeButton {
   var buttonTextColor: Color {
     switch type {
     case .primary:
-      return Colors.label.swiftUIColor
+      return Colors.buttonText.swiftUIColor
     case .secondary, .tertiary:
       return Colors.label.swiftUIColor
     case .destructive:

@@ -58,6 +58,8 @@ struct QuestionsView: View {
       switch item {
       case .kycReview:
         KYCStatusView(viewModel: KYCStatusViewModel(state: .inReview(viewModel.accountDataManager.userNameDisplay)))
+      case .missingInfo:
+        KYCStatusView(viewModel: KYCStatusViewModel(state: .missingInfo))
       case .uploadDocument:
         UploadDocumentView()
       }

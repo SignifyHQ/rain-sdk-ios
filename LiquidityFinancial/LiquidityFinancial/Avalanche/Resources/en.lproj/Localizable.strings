@@ -162,7 +162,7 @@
 
 // Set Up Account
 "question.screen.title" = "Set up your account";
-"question.screen.description" = "%@Card has partnered with NetSpend and Pathward Bank, a trusted partner in banking.";
+"question.screen.description" = "%@ Card has partnered with NetSpend and Pathward Bank, a trusted partner in banking.";
 "question.netpendCondition.description" = "I agree to the Netspend User Agreement, and I have read and understand the NetSpend Privacy Policy and Regulatory Disclosures.";
 "question.pathwardCondition.description" = "I agree to the Pathward Bank User Agreement, and I have read and understand the Pathward Privacy Policy and Regulatory Disclosures.";
 "question.netpendCondition.userAgreement" = "Netspend User Agreement";
@@ -173,6 +173,7 @@
 "question.pathwardCondition.regulatoryDisclosures" = "Regulatory Disclosures";
 
 // KYC Status
+"kycStatus.missingInfo.message" = "The information you have entered is not complete, you need to contact us via email to add some necessary information.";
 "kycStatus.identityVerification.title" = "DRIVER’s LICENSE, ID OR PASSPORT";
 "kycStatus.identityVerification.message" = "Please verify your identity with a valid Driver’s License, ID or Passport. ";
 "kycStatus.waitingVerification.title" = "THANK YOU FOR WAITING";

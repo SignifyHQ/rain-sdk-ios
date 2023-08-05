@@ -12,12 +12,8 @@ let package = Package(
             targets: ["LFAccountOnboarding"]
         ),
         .library(
-          name: "AvalancheAccountOnboarding",
-          targets: ["AvalancheAccountOnboarding"]
-        ),
-        .library(
-          name: "CardanoAccountOnboarding",
-          targets: ["CardanoAccountOnboarding"]
+          name: "DogeOnboarding",
+          targets: ["DogeOnboarding"]
         )
     ],
     dependencies: [
@@ -35,6 +31,7 @@ let package = Package(
           name: "LFAccountOnboarding",
           dependencies: [
             "LFUtilities", "OnboardingDomain", "LFStyleGuide", "LFLocalizable", "Factory", "iPhoneNumberField",
+            "DogeOnboarding",
             .product(name: "OnboardingData", package: "LFData"),
             .product(name: "AccountData", package: "LFData"),
             .product(name: "NetSpendData", package: "LFData"),
@@ -44,8 +41,16 @@ let package = Package(
             .process("ZResources")
           ]
         ),
-        .target(name: "AvalancheAccountOnboarding", dependencies: ["LFAccountOnboarding"]),
-        .target(name: "CardanoAccountOnboarding", dependencies: ["LFAccountOnboarding"]),
+        .target(
+          name: "DogeOnboarding",
+          dependencies: [
+            "LFUtilities", "LFStyleGuide", "LFLocalizable", "Factory",
+            .product(name: "NetSpendData", package: "LFData"),
+          ],
+          resources: [
+            .process("ZResources")
+          ]
+        ),
         .testTarget(
             name: "LFAccountOnboardingTests",
             dependencies: ["LFAccountOnboarding"])

@@ -26,7 +26,7 @@ xcassets:
           bundle: Bundle.main
         output: Images.swift
 
-## Generate constants for custom fonts
+# Generate constants for custom fonts
 #fonts:
 #  inputs:
 #    - Fonts
@@ -36,5 +36,5 @@ xcassets:
 #        enumName: Fonts
 #        forceProvidesNamespaces: true
 #        publicAccess: true
-#        bundle: Bundle.main
+##        bundle: Bundle.main
 #      output: Fonts.swift

@@ -11,6 +11,7 @@ final class QuestionsViewModel: ObservableObject {
   enum Navigation {
     case kycReview
     case uploadDocument
+    case missingInfo
   }
   
   @LazyInjected(\.netspendDataManager) var netspendDataManager
@@ -92,7 +93,9 @@ final class QuestionsViewModel: ObservableObject {
           let documents = try await netspendRepository.getDocuments(sessionId: accountDataManager.sessionID)
           netspendDataManager.update(documentData: documents)
           navigation = .uploadDocument
-        case .primaryPersonKYCApprove, .KYCData, .identityScan:
+        case .KYCData:
+          navigation = .missingInfo
+        case .primaryPersonKYCApprove, .identityScan:
           navigation = .kycReview
         case .acceptAgreement:
           break

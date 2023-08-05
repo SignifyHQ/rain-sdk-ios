@@ -3,6 +3,7 @@ import Factory
 import LFUtilities
 import LFStyleGuide
 import AccountData
+import DogeOnboarding
 
 public struct OnboardingContentView: View {
   
@@ -29,7 +30,12 @@ public struct OnboardingContentView: View {
         PhoneNumberView()
         .environmentObject(environmentManager)
       case .welcome:
-        WelcomeView()
+        switch LFUtilities.target {
+        case .DogeCard:
+          DogeCardWelcomeView(destination: AnyView(AgreementView()))
+        default:
+          WelcomeView()
+        }
       case .kycReview:
         KYCStatusView(viewModel: KYCStatusViewModel(state: .inReview(accountDataManager.userNameDisplay)))
       case .dashboard:

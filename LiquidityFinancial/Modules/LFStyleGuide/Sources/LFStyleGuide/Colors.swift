@@ -27,6 +27,7 @@ public enum Colors {
     public static let unhighlightButton = ColorAsset(name: "unhighlight_button")
   }
   public static let background = ColorAsset(name: "background")
+  public static let buttonText = ColorAsset(name: "buttonText")
   public static let buttons = ColorAsset(name: "buttons")
   public static let darkText = ColorAsset(name: "darkText")
   public static let error = ColorAsset(name: "error")

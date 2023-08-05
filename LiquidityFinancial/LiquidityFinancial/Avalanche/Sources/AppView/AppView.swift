@@ -3,7 +3,6 @@ import Factory
 import LFAccountOnboarding
 import LFStyleGuide
 import LFUtilities
-import AvalancheAccountOnboarding
 import LFDashboard
 
 struct AppView: View {

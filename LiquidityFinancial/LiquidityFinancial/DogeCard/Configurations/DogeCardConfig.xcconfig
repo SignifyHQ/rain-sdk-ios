@@ -1,0 +1,18 @@
+// Configuration settings file format documentation can be found at:
+// https://help.apple.com/xcode/#/dev745c5c974
+
+#include "LiquidityFinancial/Configurations/LiquidityFinancialConfig.xcconfig"
+
+APP_NAME = DogeCard
+APP_BUNDLE_ID = com.liquidityfinancial.dogeking
+
+TERMS_URL = https:/$()/dogecard.co/legal
+AGREEMENT_URL = https:/$()/dogecard.co/legal#consumer-account
+PRIVACY_URL = https:/$()/dogecard.co/legal#privacy-policy
+CONSENT_URL = https:/$()/dogecard.co/legal#e-sign-consent
+NETSPEND_USER_URL = https:/$()/dogecard.co/legal#privacy-policy
+NETSPEND_PRIVACY_URL = https:/$()/dogecard.co/legal#privacy-policy
+NETSPEND_DISCLOSURE_URL = https:/$()/dogecard.co/legal#privacy-policy
+PATHWARD_USER_URL = https:/$()/dogecard.co/legal#privacy-policy
+PATHWARD_PRIVACY_URL = https:/$()/dogecard.co/legal#privacy-policy
+PATHWARD_DISCLOSURE_URL = https:/$()/dogecard.co/legal#privacy-policy

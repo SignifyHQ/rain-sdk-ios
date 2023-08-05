@@ -19,8 +19,11 @@ extension LFStyleGuide {
   
   struct Configs {
     enum Target: String {
-    case Avalanche
-    case Cardano
+      case Avalanche
+      case Cardano
+      case DogeCard
+      case CauseCard
+      case PrideCard
     }
   }
   

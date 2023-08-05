@@ -1,7 +1,7 @@
 import SwiftUI
 
 @main
-struct AvalancheApp: App {
+struct CardanoApp: App {
   @UIApplicationDelegateAdaptor(AppDelegate.self)
   var appDelegate
   

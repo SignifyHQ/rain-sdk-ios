@@ -5,6 +5,7 @@ import LFUtilities
 import LFLocalizable
 import OnboardingDomain
 import NetSpendData
+import DogeOnboarding
 
 struct VerificationCodeView: View {
   @StateObject private var viewModel: VerificationCodeViewModel
@@ -47,7 +48,12 @@ struct VerificationCodeView: View {
     // TODO: Will be implemented later
     // .track(name: String(describing: type(of: self)))
     .navigationLink(isActive: $viewModel.isNavigationToWelcome) {
-      WelcomeView()
+      switch LFUtilities.target {
+      case .DogeCard:
+        DogeCardWelcomeView(destination: AnyView(AgreementView()))
+      default:
+        WelcomeView()
+      }
     }
     .navigationBarBackButtonHidden(viewModel.isShowLoading)
   }

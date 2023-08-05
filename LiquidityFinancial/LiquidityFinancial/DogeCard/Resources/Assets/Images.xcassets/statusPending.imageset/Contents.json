@@ -1,0 +1,12 @@
+{
+  "images" : [
+    {
+      "filename" : "statusPending.pdf",
+      "idiom" : "universal"
+    }
+  ],
+  "info" : {
+    "author" : "xcode",
+    "version" : 1
+  }
+}

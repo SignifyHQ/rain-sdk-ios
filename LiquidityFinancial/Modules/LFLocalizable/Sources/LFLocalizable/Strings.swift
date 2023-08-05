@@ -518,6 +518,10 @@ public enum LFLocalizable {
       /// VERIFYING ACCOUNT DETAILS
       public static let title = LFLocalizable.tr("Localizable", "kycStatus.inReview.title", fallback: "VERIFYING ACCOUNT DETAILS")
     }
+    public enum MissingInfo {
+      /// The information you have entered is not complete, you need to contact us via email to add some necessary information.
+      public static let message = LFLocalizable.tr("Localizable", "kycStatus.missingInfo.message", fallback: "The information you have entered is not complete, you need to contact us via email to add some necessary information.")
+    }
     public enum WaitingVerification {
       /// We’re confiming your account details. This could take up to 30 seconds
       public static let message = LFLocalizable.tr("Localizable", "kycStatus.waitingVerification.message", fallback: "We’re confiming your account details. This could take up to 30 seconds")
@@ -685,9 +689,9 @@ public enum LFLocalizable {
       public static let userAgreement = LFLocalizable.tr("Localizable", "question.pathwardCondition.userAgreement", fallback: "Pathward Bank User Agreement")
     }
     public enum Screen {
-      /// %@Card has partnered with NetSpend and Pathward Bank, a trusted partner in banking.
+      /// %@ Card has partnered with NetSpend and Pathward Bank, a trusted partner in banking.
       public static func description(_ p1: Any) -> String {
-        return LFLocalizable.tr("Localizable", "question.screen.description", String(describing: p1), fallback: "%@Card has partnered with NetSpend and Pathward Bank, a trusted partner in banking.")
+        return LFLocalizable.tr("Localizable", "question.screen.description", String(describing: p1), fallback: "%@ Card has partnered with NetSpend and Pathward Bank, a trusted partner in banking.")
       }
       /// Set up your account
       public static let title = LFLocalizable.tr("Localizable", "question.screen.title", fallback: "Set up your account")

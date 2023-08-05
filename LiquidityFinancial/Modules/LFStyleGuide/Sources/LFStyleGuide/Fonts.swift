@@ -21,67 +21,159 @@ public typealias Font = FontConvertible.Font
 // swiftlint:disable identifier_name line_length type_body_length
 public enum Fonts {
   
-  static var interFont: Bool {
-    LFStyleGuide.target == .Avalanche ? true : false
+  static var cardanoFont: Bool {
+    LFStyleGuide.target == .Cardano ? true : false
   }
   
-  public static let black = interFont ? Inter.black : Chivo.black
-  public static let bold = interFont ? Inter.bold : Chivo.bold
-  public static let extraBold = interFont ? Inter.extraBold : Chivo.extraBold
-  public static let extraLight = interFont ? Inter.extraLight : Chivo.extraLight
-  public static let light = interFont ? Inter.light : Chivo.light
-  public static let medium = interFont ? Inter.medium : Chivo.medium
-  public static let regular = interFont ? Inter.regular : Chivo.regular
-  public static let semiBold = interFont ? Inter.semiBold : Chivo.semiBold
-  public static let thin = interFont ? Inter.thin : Chivo.thin
+  static var dogeFont: Bool {
+    LFStyleGuide.target == .DogeCard ? true : false
+  }
+  
+  public static var black: FontConvertible {
+    switch LFStyleGuide.target {
+    case .Avalanche: return Inter.black
+    case .Cardano: return Chivo.black
+    case .DogeCard: return Lato.black
+    default : return Inter.black
+    }
+  }
+  public static var bold: FontConvertible {
+    switch LFStyleGuide.target {
+    case .Avalanche: return Inter.bold
+    case .Cardano: return Chivo.bold
+    case .DogeCard: return Lato.bold
+    default : return Inter.bold
+    }
+  }
+  public static var extraBold: FontConvertible {
+    switch LFStyleGuide.target {
+    case .Avalanche: return Inter.extraBold
+    case .Cardano: return Chivo.extraBold
+    case .DogeCard: return Lato.bold
+    default : return Inter.extraBold
+    }
+  }
+  public static var extraLight: FontConvertible {
+    switch LFStyleGuide.target {
+    case .Avalanche: return Inter.extraLight
+    case .Cardano: return Chivo.extraLight
+    case .DogeCard: return Lato.light
+    default : return Inter.extraLight
+    }
+  }
+  public static var light: FontConvertible {
+    switch LFStyleGuide.target {
+    case .Avalanche: return Inter.light
+    case .Cardano: return Chivo.light
+    case .DogeCard: return Lato.light
+    default : return Inter.light
+    }
+  }
+  public static var medium: FontConvertible {
+    switch LFStyleGuide.target {
+    case .Avalanche: return Inter.medium
+    case .Cardano: return Chivo.medium
+    case .DogeCard: return Lato.medium
+    default : return Inter.medium
+    }
+  }
+  public static var regular: FontConvertible {
+    switch LFStyleGuide.target {
+    case .Avalanche: return Inter.regular
+    case .Cardano: return Chivo.regular
+    case .DogeCard: return Lato.regular
+    default : return Inter.regular
+    }
+  }
+  public static var semiBold: FontConvertible {
+    switch LFStyleGuide.target {
+    case .Avalanche: return Inter.semiBold
+    case .Cardano: return Chivo.semiBold
+    case .DogeCard: return Lato.bold
+    default : return Inter.semiBold
+    }
+  }
+  public static var thin: FontConvertible {
+    switch LFStyleGuide.target {
+    case .Avalanche: return Inter.thin
+    case .Cardano: return Chivo.thin
+    case .DogeCard: return Lato.light
+    default : return Inter.thin
+    }
+  }
   
   /// This is font just active for Cardano App
   /// so should call it on correct the located.
   public static var blackItalic: FontConvertible {
-    if !interFont {
+    if cardanoFont {
       return FontConvertible(name: "Chivo-BlackItalic", family: "Chivo", path: "Chivo-BlackItalic.ttf")
     }
     fatalError("The target not support the font.")
   }
   public static var boldItalic: FontConvertible {
-    if !interFont {
+    if cardanoFont {
       return FontConvertible(name: "Chivo-BoldItalic", family: "Chivo", path: "Chivo-BoldItalic.ttf")
     }
     fatalError("The target not support the font.")
   }
   public static var extraBoldItalic: FontConvertible {
-    if !interFont {
+    if cardanoFont {
       return FontConvertible(name: "Chivo-ExtraBoldItalic", family: "Chivo", path: "Chivo-ExtraBoldItalic.ttf")
     }
     fatalError("The target not support the font.")
   }
   public static var extraLightItalic: FontConvertible {
-    if !interFont {
+    if cardanoFont {
       return FontConvertible(name: "Chivo-ExtraLightItalic", family: "Chivo", path: "Chivo-ExtraLightItalic.ttf")
     }
     fatalError("The target not support the font.")
   }
   public static var lightItalic: FontConvertible {
-    if !interFont {
+    if cardanoFont {
       return FontConvertible(name: "Chivo-LightItalic", family: "Chivo", path: "Chivo-LightItalic.ttf")
     }
     fatalError("The target not support the font.")
   }
   public static var mediumItalic: FontConvertible {
-    if !interFont {
+    if cardanoFont {
       return FontConvertible(name: "Chivo-MediumItalic", family: "Chivo", path: "Chivo-MediumItalic.ttf")
     }
     fatalError("The target not support the font.")
   }
   public static var semiBoldItalic: FontConvertible {
-    if !interFont {
+    if cardanoFont {
       return FontConvertible(name: "Chivo-SemiBoldItalic", family: "Chivo", path: "Chivo-SemiBoldItalic.ttf")
     }
     fatalError("The target not support the font.")
   }
   public static var thinItalic: FontConvertible {
-    if !interFont {
+    if cardanoFont {
       return FontConvertible(name: "Chivo-ThinItalic", family: "Chivo", path: "Chivo-ThinItalic.ttf")
+    }
+    fatalError("The target not support the font.")
+  }
+  
+  public static var montserratBlack: FontConvertible {
+    if dogeFont {
+      return FontConvertible(name: "Montserrat-Black", family: "Montserrat", path: "Montserrat-Black.ttf")
+    }
+    fatalError("The target not support the font.")
+  }
+  public static var montserratMedium: FontConvertible {
+    if dogeFont {
+      return FontConvertible(name: "Montserrat-Medium", family: "Montserrat", path: "Montserrat-Medium.ttf")
+    }
+    fatalError("The target not support the font.")
+  }
+  public static var orbitronBold: FontConvertible {
+    if dogeFont {
+      return FontConvertible(name: "Orbitron-Bold", family: "Orbitron", path: "Orbitron-Bold.ttf")
+    }
+    fatalError("The target not support the font.")
+  }
+  public static var orbitronMedium: FontConvertible {
+    if dogeFont {
+      return FontConvertible(name: "Orbitron-Medium", family: "Orbitron", path: "Orbitron-Medium.ttf")
     }
     fatalError("The target not support the font.")
   }
@@ -119,10 +211,40 @@ public enum Fonts {
     public static let thin = FontConvertible(name: "Inter-Thin", family: "Inter", path: "Inter-Thin.ttf")
     public static let all: [FontConvertible] = [black, bold, extraBold, extraLight, light, medium, regular, semiBold, thin]
   }
-  
-  public static var allCustomFonts: [FontConvertible] = interFont ? Inter.all : Chivo.all
+  public enum Lato {
+    public static let black = FontConvertible(name: "Lato-Black", family: "Lato", path: "Lato-Black.ttf")
+    public static let blackItalic = FontConvertible(name: "Lato-BlackItalic", family: "Lato", path: "Lato-BlackItalic.ttf")
+    public static let bold = FontConvertible(name: "Lato-Bold", family: "Lato", path: "Lato-Bold.ttf")
+    public static let boldItalic = FontConvertible(name: "Lato-BoldItalic", family: "Lato", path: "Lato-BoldItalic.ttf")
+    public static let hairline = FontConvertible(name: "Lato-Hairline", family: "Lato", path: "Lato-Thin.ttf")
+    public static let hairlineItalic = FontConvertible(name: "Lato-HairlineItalic", family: "Lato", path: "Lato-ThinItalic.ttf")
+    public static let italic = FontConvertible(name: "Lato-Italic", family: "Lato", path: "Lato-Italic.ttf")
+    public static let light = FontConvertible(name: "Lato-Light", family: "Lato", path: "Lato-Light.ttf")
+    public static let lightItalic = FontConvertible(name: "Lato-LightItalic", family: "Lato", path: "Lato-LightItalic.ttf")
+    public static let medium = FontConvertible(name: "Lato-Medium", family: "Lato", path: "Lato-Medium.ttf")
+    public static let mediumItalic = FontConvertible(name: "Lato-MediumItalic", family: "Lato", path: "Lato-MediumItalic.ttf")
+    public static let regular = FontConvertible(name: "Lato-Regular", family: "Lato", path: "Lato-Regular.ttf")
+    public static let all: [FontConvertible] = [black, blackItalic, bold, boldItalic, hairline, hairlineItalic, italic, light, lightItalic, medium, mediumItalic, regular]
+  }
+  public enum Montserrat {
+    public static let black = FontConvertible(name: "Montserrat-Black", family: "Montserrat", path: "Montserrat-Black.ttf")
+    public static let medium = FontConvertible(name: "Montserrat-Medium", family: "Montserrat", path: "Montserrat-Medium.ttf")
+    public static let all: [FontConvertible] = [black, medium]
+  }
+  public enum Orbitron {
+    public static let bold = FontConvertible(name: "Orbitron-Bold", family: "Orbitron", path: "Orbitron-Bold.ttf")
+    public static let medium = FontConvertible(name: "Orbitron-Medium", family: "Orbitron", path: "Orbitron-Medium.ttf")
+    public static let all: [FontConvertible] = [bold, medium]
+  }
 
   public static func registerAllCustomFonts() {
+    var allCustomFonts: [FontConvertible] = []
+    switch LFStyleGuide.target {
+    case .Avalanche: allCustomFonts.append(contentsOf: Inter.all)
+    case .Cardano: allCustomFonts.append(contentsOf: Chivo.all)
+    case .DogeCard: allCustomFonts.append(contentsOf: Lato.all + Montserrat.all + Orbitron.all)
+    default : allCustomFonts.append(contentsOf: Inter.all)
+    }
     allCustomFonts.forEach { $0.register() }
   }
 }
@@ -185,7 +307,7 @@ public struct FontConvertible {
 
   fileprivate var url: URL? {
     // swiftlint:disable:next implicit_return
-    return Bundle.main.url(forResource: path, withExtension: nil)
+    return BundleToken.bundle.url(forResource: path, withExtension: nil)
   }
 }
 
@@ -199,30 +321,17 @@ public extension FontConvertible.Font {
 #if canImport(SwiftUI)
 @available(iOS 13.0, tvOS 13.0, watchOS 6.0, macOS 10.15, *)
 public extension SwiftUI.Font {
-    //IT SUPPORT FOR RUN CODE UI IN PREVIEWS
-  static var isPreview: Bool {
-    ProcessInfo.processInfo.environment["XCODE_RUNNING_FOR_PREVIEWS"] == "1"
-  }
-  
   static func custom(_ font: FontConvertible, size: CGFloat) -> SwiftUI.Font {
-    if isPreview {
-      return SwiftUI.Font.custom("SF-Pro", size: size)
-    } else {
-      font.registerIfNeeded()
-      return custom(font.name, size: size)
-    }
+    font.registerIfNeeded()
+    return custom(font.name, size: size)
   }
 }
 
 @available(iOS 14.0, tvOS 14.0, watchOS 7.0, macOS 11.0, *)
 public extension SwiftUI.Font {
   static func custom(_ font: FontConvertible, fixedSize: CGFloat) -> SwiftUI.Font {
-    if isPreview {
-      return SwiftUI.Font.custom("SF-Pro", fixedSize: fixedSize)
-    } else {
-      font.registerIfNeeded()
-      return custom(font.name, fixedSize: fixedSize)
-    }
+    font.registerIfNeeded()
+    return custom(font.name, fixedSize: fixedSize)
   }
 
   static func custom(
@@ -230,12 +339,20 @@ public extension SwiftUI.Font {
     size: CGFloat,
     relativeTo textStyle: SwiftUI.Font.TextStyle
   ) -> SwiftUI.Font {
-    if isPreview {
-      return SwiftUI.Font.custom("SF-Pro", size: size, relativeTo: textStyle)
-    } else {
-      font.registerIfNeeded()
-      return custom(font.name, size: size, relativeTo: textStyle)
-    }
+    font.registerIfNeeded()
+    return custom(font.name, size: size, relativeTo: textStyle)
   }
 }
 #endif
+
+// swiftlint:disable convenience_type
+private final class BundleToken {
+  static let bundle: Bundle = {
+    #if SWIFT_PACKAGE
+    return Bundle.module
+    #else
+    return Bundle(for: BundleToken.self)
+    #endif
+  }()
+}
+// swiftlint:enable convenience_type

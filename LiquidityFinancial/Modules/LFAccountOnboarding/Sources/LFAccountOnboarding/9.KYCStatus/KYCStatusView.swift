@@ -38,7 +38,7 @@ private extension KYCStatusView {
       loadingView
     case .inVerify:
       kycWaitView
-    case .declined, .pendingIDV, .inReview:
+    case .declined, .pendingIDV, .inReview, .missingInfo:
       informationView(info: state.kycInformation)
     }
   }

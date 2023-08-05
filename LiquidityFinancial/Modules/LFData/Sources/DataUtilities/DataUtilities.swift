@@ -22,6 +22,9 @@ extension DataUtilities {
     enum Target: String {
       case Avalanche
       case Cardano
+      case DogeCard
+      case CauseCard
+      case PrideCard
     }
   }
   

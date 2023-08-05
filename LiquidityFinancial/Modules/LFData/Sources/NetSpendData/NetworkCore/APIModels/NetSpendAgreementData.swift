@@ -7,6 +7,7 @@ public struct NetSpendAgreementData: Decodable {
   public struct Agreement: Codable {
     public let id, type: String
     public let documents: [NetSpendAgreementData.Document]
+    public let description: String
   }
   
     // MARK: - Document

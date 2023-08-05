@@ -35,15 +35,16 @@ public struct AgreementView: View {
       .cornerRadius(12)
       
       Spacer()
+      
       VStack(alignment: .leading, spacing: 0) {
-        conditionCell(
-          isSelected: $viewModel.isAgreedNetSpendCondition,
-          condition: viewModel.netspendCondition
-        )
-        conditionCell(
-          isSelected: $viewModel.isAgreedPathwardCondition,
-          condition: viewModel.pathwardCondition
-        )
+        ScrollViewReader { _ in
+          ForEach($viewModel.agreements) { agreement in
+            conditionCell(
+              condition: agreement.wrappedValue
+            )
+          }
+        }
+        .padding(0)
       }
       continueButton
     }
@@ -75,13 +76,13 @@ private extension AgreementView {
     }
   }
   
-  func conditionCell(isSelected: Binding<Bool>, condition: ServiceCondition) -> some View {
+  func conditionCell(condition: ServiceConditionModel) -> some View {
     HStack(alignment: .top, spacing: 12) {
       Button {
-        isSelected.wrappedValue.toggle()
+        viewModel.updateSelectedAgreementItem(agreementID: condition.id, selected: !condition.selected)
       } label: {
         Group {
-          if isSelected.wrappedValue {
+          if condition.selected {
             GenImages.CommonImages.termsCheckboxSelected.swiftUIImage
               .foregroundColor(Colors.Buttons.highlightButton.swiftUIColor)
           } else {

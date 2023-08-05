@@ -4,6 +4,7 @@ import LFLocalizable
 public enum KYCState {
   case idle
   case inVerify
+  case missingInfo
   case pendingIDV
   case declined
   case inReview(String)
@@ -20,6 +21,12 @@ public enum KYCState {
       return KYCInformation(
         title: LFLocalizable.KycStatus.Fail.title,
         message: LFLocalizable.KycStatus.Fail.message,
+        primary: LFLocalizable.Button.Continue.title
+      )
+    case .missingInfo:
+      return KYCInformation(
+        title: LFLocalizable.KycStatus.Fail.title,
+        message: LFLocalizable.KycStatus.MissingInfo.message,
         primary: LFLocalizable.Button.Continue.title
       )
     case let .inReview(username):

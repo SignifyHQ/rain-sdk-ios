@@ -193,7 +193,8 @@ extension UploadDocumentViewModel {
     } else if status == .open {
       navigation = .kycReview
     } else if status == .complete {
-      onboardingFlowCoordinator.set(route: .dashboard)
+      navigation = .kycReview
+      //onboardingFlowCoordinator.set(route: .dashboard)
     }
   }
   
