@@ -147,6 +147,13 @@ public extension Constants {
     case expirationDatePlaceholder = "••/••"
     case cardNumberPlaceholder = "••••  ••••  ••••  "
     case cvvPlaceholder = "•••"
+    case decimalSeparator = "."
+    case percentage = "%"
+    case currencyDefaultAmount = "$0.00"
+    case companyInformation = "10573 West Pico Blvd. #186, Los Angeles, CA 90064 \n Questions? Contact"
+    case accountCardSecurity = "XXXXXXXXXX XXXXXXXXX XXX"
+    case currencyDescription = "Dollars"
+    case documentName = "document.pdf"
   }
 }
 

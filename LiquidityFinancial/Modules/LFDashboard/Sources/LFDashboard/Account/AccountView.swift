@@ -14,13 +14,13 @@ struct AccountsView: View {
       .navigationLink(item: $viewModel.navigation) { item in
         switch item {
         case .bankTransfers:
-          EmptyView()
+          BankTransfersView(achInformation: $viewModel.achInformation)
         case .addBankDebit:
           AddBankWithDebitView()
         case .addMoney:
           MoveMoneyAccountView(kind: .receive)
         case .directDeposit:
-          DirectDepositView()
+          DirectDepositView(achInformation: $viewModel.achInformation)
         case .debugMenu:
           DBAdminMenuView(environment: viewModel.networkEnvironment.title)
         case .atmLocation(let authorizationCode):
@@ -70,7 +70,7 @@ private extension AccountsView {
             depositLimits
           }
           section(title: LFLocalizable.AccountView.cardAccountDetails(LFUtility.appName)) {
-            // TODO: Will implementation later
+            accountDetailView
           }
           section(title: LFLocalizable.AccountView.shortcuts) {
             shortcutSection
@@ -84,7 +84,45 @@ private extension AccountsView {
       externalLinkBank(controller: viewModel.netspendController)
     }
   }
-
+  
+  var accountDetailView: some View {
+    VStack(spacing: 10) {
+      accountDetailCell(
+        image: GenImages.CommonImages.icRoutingNumber,
+        title: LFLocalizable.AccountView.RoutingNumber.title,
+        value: viewModel.achInformation.routingNumber
+      )
+      accountDetailCell(
+        image: GenImages.CommonImages.icAccountNumber,
+        title: LFLocalizable.AccountView.AccountNumber.title,
+        value: viewModel.achInformation.accountNumber
+      )
+    }
+    .foregroundColor(Colors.label.swiftUIColor)
+  }
+  
+  func accountDetailCell(image: ImageAsset, title: String, value: String) -> some View {
+    HStack(spacing: 12) {
+      image.swiftUIImage
+      Text(title)
+        .font(Fonts.regular.swiftUIFont(size: 13))
+      Spacer()
+      if viewModel.isLoadingACH {
+        LottieView(loading: .primary)
+          .frame(width: 28, height: 16)
+          .padding(.leading, 4)
+      } else {
+        Text(value)
+          .font(Fonts.bold.swiftUIFont(size: Constants.FontSize.ultraSmall.value))
+      }
+    }
+    .padding(.leading, 16)
+    .padding(.trailing, 12)
+    .frame(height: 56)
+    .background(Colors.secondaryBackground.swiftUIColor)
+    .cornerRadius(10)
+  }
+  
   var connectedAccountsSection: some View {
     Group {
       if !viewModel.linkedAccount.isEmpty {
@@ -124,7 +162,7 @@ private extension AccountsView {
         title: LFLocalizable.AccountView.BankTransfers.title,
         value: LFLocalizable.AccountView.BankTransfers.subtitle
       ) {
-        // TODO: Will do later
+        viewModel.selectedAddOption(navigation: .bankTransfers)
       }
       ArrowButton(
         image: GenImages.CommonImages.Accounts.debitDeposit,

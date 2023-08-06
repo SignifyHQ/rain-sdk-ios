@@ -6,6 +6,7 @@ import LFServices
 
 struct DirectDepositView: View {
   @StateObject var viewModel = DirectDepositViewModel()
+  @Binding var achInformation: ACHModel
   private let companyLogos = [
     GenImages.CommonImages.CompanyLogo.companyLogo1,
     GenImages.CommonImages.CompanyLogo.companyLogo2,
@@ -38,8 +39,7 @@ struct DirectDepositView: View {
       }
     }
     .navigationLink(isActive: $viewModel.isNavigateToDirectDepositForm) {
-      EmptyView()
-      //          DirectDepositFormView()
+      DirectDepositFormView(achInformation: $achInformation)
     }
     .fullScreenCover(item: $viewModel.pinWheelData) { data in
       PinWheelViewController(data: data)
@@ -126,19 +126,19 @@ private extension DirectDepositView {
           icon: GenImages.CommonImages.icRoutingNumber,
           iconDescription: LFLocalizable.DirectDeposit.RoutingNumber.title,
           title: LFLocalizable.DirectDeposit.RoutingNumber.title,
-          value: viewModel.routingNumber
+          value: achInformation.routingNumber
         )
         .onTapGesture {
-          viewModel.copy(text: viewModel.routingNumber)
+          viewModel.copy(text: achInformation.routingNumber)
         }
         numberCell(
           icon: GenImages.CommonImages.icAccountNumber,
           iconDescription: LFLocalizable.DirectDeposit.AccountNumber.title,
           title: LFLocalizable.DirectDeposit.AccountNumber.title,
-          value: viewModel.accountNumber
+          value: achInformation.accountNumber
         )
         .onTapGesture {
-          viewModel.copy(text: viewModel.accountNumber)
+          viewModel.copy(text: achInformation.accountNumber)
         }
       }
       .padding(.bottom, 24)
@@ -178,15 +178,9 @@ private extension DirectDepositView {
           .foregroundColor(Colors.label.swiftUIColor.opacity(0.5))
       }
       HStack {
-        if viewModel.isLoading {
-          LottieView(loading: .primary)
-            .frame(width: 28, height: 16)
-            .padding(.leading, 4)
-        } else {
-          Text(value)
-            .font(Fonts.bold.swiftUIFont(size: 13))
-            .tracking(3)
-        }
+        Text(value)
+          .font(Fonts.bold.swiftUIFont(size: 13))
+          .tracking(3)
         Spacer()
         GenImages.CommonImages.icCopy.swiftUIImage
           .resizable()

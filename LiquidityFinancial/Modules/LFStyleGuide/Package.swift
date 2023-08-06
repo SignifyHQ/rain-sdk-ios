@@ -14,13 +14,15 @@ let package = Package(
     dependencies: [
       .package(url: "https://github.com/SwiftGen/SwiftGenPlugin", from: "6.6.2"),
       .package(url: "https://github.com/airbnb/lottie-ios.git", from: "4.2.0"),
-      .package(name: "LFUtilities", path: "../LFUtilities")
+      .package(name: "LFUtilities", path: "../LFUtilities"),
+      .package(name: "LFServices", path: "../LFServices")
     ],
     targets: [
         .target(
             name: "LFStyleGuide",
             dependencies: [
               "LFUtilities",
+              "LFServices",
               .product(name: "Lottie", package: "lottie-ios")
             ],
             resources: [

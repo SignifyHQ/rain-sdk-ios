@@ -407,6 +407,8 @@
 "accountView.legal" = "Legal";
 "accountView.deposit_limits" = "Deposit Limits";
 "accountView.atm_location_title" = "ATM Locations";
+"accountView.routingNumber.title" = "Rounting number";
+"accountView.accountNumber.title" = "Account number";
 
 // PlaidLink Popup
 "plaidLink.popup.title" = "WE’RE SORRY";
@@ -418,6 +420,52 @@
 "connectedView.title" = "Checking or Savings Accounts";
 "connectedView.row.externalCard" = "Debit Card **** %@";
 "connectedView.row.externalBank" = "%@ **** %@";
+
+// ManualSetup DirectDeposit
+"directDeposit.form.title" = "DIRECT DEPOSIT FORM";
+"directDeposit.form.description" = "Receive paychecks up to two days early by completing this form and sharing it with your employer’s payroll department. \n \n \nYou can also save the completed form to share with your employer later.";
+"directDeposit.employerName.title" = "ENTER THE NAME OF YOUR EMPLOYER";
+"directDeposit.employerName.textFieldTitle" = "Employer name";
+"directDeposit.employerName.textFieldPlaceholder" = "Enter employer name";
+"directDeposit.paycheck.title" = "HOW MUCH OF PAYCHECK YOU WANT TO DEPOSIT?";
+"directDeposit.paycheck.full" = "Full Paycheck";
+"directDeposit.paycheck.enterPercentage" = "Enter Percentage";
+"directDeposit.paycheck.enterAmount" = "Enter Amount";
+"directDeposit.addSignature.title" = "ADD YOUR SIGNATURE";
+"directDeposit.addSignature.description" = "Sign the form on the next page to authorize Direct Deposit enrollment.";
+"directDeposit.addSignature.buttonTitle" = "Add Signature";
+"directDeposit.addSignature.placeholder" = "Signature";
+"directDeposit.manualSetup.successTitle" = "YOUR DIRECT DEPOSIT FORM IS READY";
+"directDeposit.manualSetup.successMessage" = "Share this form with your employer's payroll team to authorize direct deposits to your %@Card";
+"directDeposit.emailForm.buttonTitle" = "Email Form";
+"directDeposit.viewForm.buttonTitle" = "View Form";
+"directDeposit.toolbal.title" = "Direct Deposit";
+"directDeposit.mail.toastMessage" = "Mail app is not configured";
+"directDeposit.signature.toastMessage" = "Please add your signature";
+"directDeposit.pdf.emailText" = "help@%@Card.co";
+"directDeposit.pdf.formText" = "Direct Deposit Form";
+"directDeposit.pdf.customName" = "Customer name";
+"directDeposit.pdf.payTo" = "Pay \n to the order of";
+"directDeposit.pdf.authorization" ="AUTHORIZATION";
+"directDeposit.pdf.firstDescription" = "I,";
+"directDeposit.pdf.secondDescription" = "authorize,";
+"directDeposit.pdf.thirdDescription" = "to directly deposit my wages";
+"directDeposit.pdf.fourthDescription" = "less lawful withholdings and deductions), or earnings, as applicable, to my CauseCard account, including employer receives written notification from me of its termination of my employment or enagement";
+"directDeposit.pdf.fifthDescription" = "\n This authorization replaces any previous direct deposit authorization and shall remain in effect until my employer receives written notification from me of its termination. The information for my %@Card account is provided above";
+"directDeposit.pdf.sixthDescription" = "I wish to deposit";
+"directDeposit.pdf.signature" = "Signature";
+"directDeposit.pdf.date" = "Date";
+"directDeposit.pdf.entirePaycheck" = "Entire Paycheck";
+
+// BankTransfer
+"bankTransfers.screen.title" = "BANK TRANSFERS";
+"bankTransfers.howTo.title" = "How to transfer money from your bank to %@Card:";
+"bankTransfers.bulletOne.title" = "Login to your bank, and find the transfers section of your bank’s app or website";
+"bankTransfers.bulletTwo.title" = "If it’s your first transfer, you’ll need to add your CauseCard as an external account. Enter you routing and account number, and select Checking as account type.";
+"bankTransfers.bulletThree.title" = "Select CauseCard as the recipient and transfer up to $25k at a time.";
+"bankTransfers.routingNumber.title" = "Rounting number";
+"bankTransfers.accountNumber.title" = "Account number";
+"bankTransfers.disclosure.message" = "Some banks require a one-time test deposit to verify your account. If so, check your %@Card transactions after 1-2 days, and enter the test deposit amounts in the bank’s app or website.";
 
 // MARK: - Common
 
@@ -441,6 +489,7 @@
 "button.skip.title" = "Skip";
 "button.notNow.title" = "Not now";
 "button.done.title" = "Done";
+"button.back.title" = "Back";
 
 // Grid Value
 "grid_value.crypto" = "%@ AVAX";
@@ -448,3 +497,6 @@
 
 // Textfield
 "textfield.search.placeholder" = "Search...";
+
+// Toast
+"toast.copy.message" = "Copied to clipboard";

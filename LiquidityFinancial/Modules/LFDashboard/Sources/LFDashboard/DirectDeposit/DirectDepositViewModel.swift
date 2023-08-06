@@ -14,21 +14,14 @@ final class DirectDepositViewModel: ObservableObject {
 
   @Published var directDepositLoading: Bool = false
   @Published var isShowAllBenefits: Bool = false
-  @Published var isLoading: Bool = false
   @Published var isNavigateToDirectDepositForm: Bool = false
   @Published var toastMessage: String?
   @Published var pinWheelData: PinWheelViewController.PinWheelData?
-  @Published var accountNumber: String = ""
-  @Published var routingNumber: String = ""
   
   private lazy var pinWheelService = PinWheelService()
   private lazy var externalFundingUseCase: NSExternalFundingUseCaseProtocol = {
     NSExternalFundingUseCase(repository: externalFundingRepository)
   }()
-  
-  init() {
-    getACHInfo()
-  }
 }
 
 // MARK: - View Helpers
@@ -57,21 +50,6 @@ extension DirectDepositViewModel {
 
 // MARK: - Private Functions
 private extension DirectDepositViewModel {
-  func getACHInfo() {
-    isLoading = true
-    Task {
-      do {
-        let achResponse = try await externalFundingUseCase.getACHInfo(sessionID: accountDataManager.sessionID)
-        accountNumber = achResponse.accountNumber ?? Constants.Default.undefined.rawValue
-        routingNumber = achResponse.routingNumber ?? Constants.Default.undefined.rawValue
-        isLoading = false
-      } catch {
-        isLoading = false
-        toastMessage = error.localizedDescription
-      }
-    }
-  }
-  
   func generatePinWheelData() async {
     do {
       let pinwheelResponse = try await externalFundingUseCase.getPinWheelToken(

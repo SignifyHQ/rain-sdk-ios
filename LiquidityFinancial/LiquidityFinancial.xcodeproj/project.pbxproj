@@ -8,6 +8,8 @@
 
 /* Begin PBXBuildFile section */
 		0603BD712A71191B00347DB2 /* VGSShowSDK in Frameworks */ = {isa = PBXBuildFile; productRef = 0603BD702A71191B00347DB2 /* VGSShowSDK */; };
+		069FBA382A7E47CD00D53A7A /* CurrencyFormatter in Frameworks */ = {isa = PBXBuildFile; productRef = 069FBA372A7E47CD00D53A7A /* CurrencyFormatter */; };
+		069FBA3A2A7E47CD00D53A7A /* CurrencyTextSwiftUI in Frameworks */ = {isa = PBXBuildFile; productRef = 069FBA392A7E47CD00D53A7A /* CurrencyTextSwiftUI */; };
 		06D40BF82A625F5400EADB75 /* LoadingMix.json in Resources */ = {isa = PBXBuildFile; fileRef = 06D40BF72A625F5400EADB75 /* LoadingMix.json */; };
 		06D40BFC2A6260B300EADB75 /* LoadingContrast.json in Resources */ = {isa = PBXBuildFile; fileRef = 06D40BFB2A6260B300EADB75 /* LoadingContrast.json */; };
 		06D40C012A62AE3700EADB75 /* iPhoneNumberField in Frameworks */ = {isa = PBXBuildFile; productRef = 06D40C002A62AE3700EADB75 /* iPhoneNumberField */; };
@@ -319,6 +321,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				069FBA3A2A7E47CD00D53A7A /* CurrencyTextSwiftUI in Frameworks */,
+				069FBA382A7E47CD00D53A7A /* CurrencyFormatter in Frameworks */,
 				A980DF6B2A5FA23D000B3C09 /* LFAccountOnboarding in Frameworks */,
 				A980DF6D2A5FA249000B3C09 /* OnboardingDomain in Frameworks */,
 				A97BF7EB2A5D70C500B8F5CA /* Factory in Frameworks */,
@@ -934,6 +938,8 @@
 				0603BD702A71191B00347DB2 /* VGSShowSDK */,
 				A918D76D2A77B116001AD849 /* AccountData */,
 				06FB47072A7AAE430050304C /* PinwheelSDK */,
+				069FBA372A7E47CD00D53A7A /* CurrencyFormatter */,
+				069FBA392A7E47CD00D53A7A /* CurrencyTextSwiftUI */,
 			);
 			productName = LiquidityFinancial;
 			productReference = A97BF7BC2A5C602D00B8F5CA /* Avalanche.app */;
@@ -1052,6 +1058,7 @@
 				749091152A6584C300071B41 /* XCRemoteSwiftPackageReference "smartystreets-ios-sdk" */,
 				0603BD6F2A71191B00347DB2 /* XCRemoteSwiftPackageReference "vgs-show-ios" */,
 				06FB47062A7AAE430050304C /* XCRemoteSwiftPackageReference "pinwheel-ios-sdk" */,
+				069FBA362A7E47CD00D53A7A /* XCRemoteSwiftPackageReference "CurrencyText" */,
 			);
 			productRefGroup = A97BF7BD2A5C602D00B8F5CA /* Products */;
 			projectDirPath = "";
@@ -1856,6 +1863,14 @@
 				minimumVersion = 1.0.0;
 			};
 		};
+		069FBA362A7E47CD00D53A7A /* XCRemoteSwiftPackageReference "CurrencyText" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/marinofelipe/CurrencyText.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 3.0.0;
+			};
+		};
 		06D40BFF2A62AE3700EADB75 /* XCRemoteSwiftPackageReference "iPhoneNumberField" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/MojtabaHs/iPhoneNumberField.git";
@@ -1959,6 +1974,16 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 0603BD6F2A71191B00347DB2 /* XCRemoteSwiftPackageReference "vgs-show-ios" */;
 			productName = VGSShowSDK;
+		};
+		069FBA372A7E47CD00D53A7A /* CurrencyFormatter */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 069FBA362A7E47CD00D53A7A /* XCRemoteSwiftPackageReference "CurrencyText" */;
+			productName = CurrencyFormatter;
+		};
+		069FBA392A7E47CD00D53A7A /* CurrencyTextSwiftUI */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 069FBA362A7E47CD00D53A7A /* XCRemoteSwiftPackageReference "CurrencyText" */;
+			productName = CurrencyTextSwiftUI;
 		};
 		06D40C002A62AE3700EADB75 /* iPhoneNumberField */ = {
 			isa = XCSwiftPackageProductDependency;

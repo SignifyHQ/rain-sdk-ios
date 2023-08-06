@@ -33,9 +33,11 @@ public enum Colors {
   public static let error = ColorAsset(name: "error")
   public static let green = ColorAsset(name: "green")
   public static let label = ColorAsset(name: "label")
+  public static let pdfTitleBold = ColorAsset(name: "pdfTitleBold")
   public static let pending = ColorAsset(name: "pending")
   public static let primary = ColorAsset(name: "primary")
   public static let secondaryBackground = ColorAsset(name: "secondaryBackground")
+  public static let separator = ColorAsset(name: "separator")
   public static let whiteText = ColorAsset(name: "whiteText")
 }
 // swiftlint:enable identifier_name line_length nesting type_body_length type_name
