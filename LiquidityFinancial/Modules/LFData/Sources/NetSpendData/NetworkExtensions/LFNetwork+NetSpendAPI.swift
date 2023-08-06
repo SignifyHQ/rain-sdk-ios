@@ -51,4 +51,10 @@ extension LFNetwork: NetSpendAPIProtocol where R == NetSpendRoute {
       decoder: .apiDecoder
     )
   }
+  
+  public func deleteLinkedSource(sessionId: String, sourceId: String) async throws -> NetspendUnlinkBankResponse {
+    let result = try await request(NetSpendRoute.deleteLinkedSource(sessionId: sessionId, sourceId: sourceId))
+    let statusCode = result.httpResponse?.statusCode
+    return NetspendUnlinkBankResponse(success: statusCode == 200 || statusCode == 204)
+  }
 }

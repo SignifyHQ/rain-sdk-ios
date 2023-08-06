@@ -1,4 +1,5 @@
 import Foundation
+import LFNetwork
 
 public protocol NetSpendAPIProtocol {
   func sessionInit() async throws -> NetSpendJwkToken
@@ -12,4 +13,5 @@ public protocol NetSpendAPIProtocol {
   func uploadDocuments(path: PathDocumentParameters, documentData: DocumentParameters) async throws -> NetSpendDocumentData.RequestedDocument
   func getAuthorizationCode(sessionId: String) async throws -> NetSpendAuthorizationCode
   func getLinkedSources(sessionID: String) async throws -> NetSpendLinkedSourcesResponse
+  func deleteLinkedSource(sessionId: String, sourceId: String) async throws -> NetspendUnlinkBankResponse
 }

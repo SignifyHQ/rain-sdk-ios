@@ -32,6 +32,7 @@ class AddBankWithDebitViewModel: ObservableObject {
   @Published var actionEnabled: Bool = false
   @Published var dateError: String?
   @Published var toastMessage: String?
+  @Published var navigation: Navigation?
   
   @Published var cardNumber: String = "" {
     didSet {
@@ -54,7 +55,7 @@ class AddBankWithDebitViewModel: ObservableObject {
 
   func performAction() {
     loading = true
-    Task {
+    Task { @MainActor in
       do {
         guard let session = netspendDataManager.sdkSession else { return }
         let encryptedData = try session.encryptWithJWKSet(
@@ -88,7 +89,7 @@ class AddBankWithDebitViewModel: ObservableObject {
           sessionID: accountDataManager.sessionID
         )
         self.loading = false
-        // TODO: Will need to navigation the move money screen after successful
+        self.navigation = .moveMoney
       } catch {
         self.loading = false
         log.error(error.localizedDescription)
@@ -160,5 +161,11 @@ class AddBankWithDebitViewModel: ObservableObject {
 
   private func checkAction() {
     actionEnabled = validCard && validCVV && validDate
+  }
+}
+
+extension AddBankWithDebitViewModel {
+  enum Navigation {
+    case moveMoney
   }
 }

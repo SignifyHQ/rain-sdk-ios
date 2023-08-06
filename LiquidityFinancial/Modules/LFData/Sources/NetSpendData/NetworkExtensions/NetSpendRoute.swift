@@ -15,6 +15,7 @@ public enum NetSpendRoute {
   case uploadDocuments(path: PathDocumentParameters, documentData: DocumentParameters)
   case getAuthorizationCode(sessionId: String)
   case getLinkedSource(sessionId: String)
+  case deleteLinkedSource(sessionId: String, sourceId: String)
 }
 
 extension NetSpendRoute: LFRoute {
@@ -48,6 +49,8 @@ extension NetSpendRoute: LFRoute {
       return "/v1/netspend/client-sdk/authorization-codes"
     case .getLinkedSource:
       return "/v1/netspend/external-funding"
+    case .deleteLinkedSource(_, let sourceId):
+      return "/v1/netspend/external-funding/external-card/\(sourceId)"
     }
   }
   
@@ -82,6 +85,9 @@ extension NetSpendRoute: LFRoute {
     case .getLinkedSource(let sessionId):
       base["netspendSessionId"] = sessionId
       return base
+    case .deleteLinkedSource(let sessionId, _):
+      base["netspendSessionId"] = sessionId
+      return base
     }
   }
   
@@ -95,12 +101,14 @@ extension NetSpendRoute: LFRoute {
       return .PUT
     case .uploadDocuments(let path, _):
       return path.isUpdate ? .PUT : .POST
+    case .deleteLinkedSource:
+      return .DELETE
     }
   }
   
   public var parameters: Parameters? {
     switch self {
-    case .sessionInit, .getAgreements, .getQuestions, .getWorkflows, .getDocuments, .getAuthorizationCode, .getLinkedSource:
+    case .sessionInit, .getAgreements, .getQuestions, .getWorkflows, .getDocuments, .getAuthorizationCode, .getLinkedSource, .deleteLinkedSource:
       return nil
     case .establishSession(let parameters):
       return parameters.encoded()
@@ -117,7 +125,7 @@ extension NetSpendRoute: LFRoute {
   
   public var parameterEncoding: ParameterEncoding? {
     switch self {
-    case .sessionInit, .getAgreements, .getQuestions, .getWorkflows, .getDocuments, .getAuthorizationCode, .getLinkedSource:
+    case .sessionInit, .getAgreements, .getQuestions, .getWorkflows, .getDocuments, .getAuthorizationCode, .getLinkedSource, .deleteLinkedSource:
       return nil
     case .establishSession, .createAccountPerson, .putQuestions, .uploadDocuments:
       return .json

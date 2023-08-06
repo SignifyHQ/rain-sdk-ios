@@ -11,8 +11,8 @@ public class ExternalFundingRepository: ExternalFundingRepositoryProtocol {
   
   public func set(request: ExternalCardParametersEntity, sessionID: String) async throws -> ExternalCardEntity {
     let request = ExternalCardParameters(
-      month: request.expiration.month,
-      year: request.expiration.year,
+      month: request.expirationEntity.month,
+      year: request.expirationEntity.year,
       nameOnCard: request.nameOnCard,
       nickname: request.nickname,
       postalCode: request.postalCode,

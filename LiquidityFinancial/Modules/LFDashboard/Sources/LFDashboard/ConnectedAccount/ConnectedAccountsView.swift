@@ -41,13 +41,26 @@ struct ConnectedAccountsView: View {
 
   private var content: some View {
     VStack(spacing: 10) {
-      contacts
+      if viewModel.isLoading {
+        loading
+      } else {
+        contacts
+      }
       Spacer()
         .frame(maxWidth: .infinity)
     }
     .padding(.horizontal, 30)
     .padding(.vertical, 20)
     .background(Colors.background.swiftUIColor)
+  }
+  
+  private var loading: some View {
+    Group {
+      LottieView(loading: .primary)
+        .frame(width: 30, height: 25)
+        .padding(.top, 20)
+    }
+    .frame(maxWidth: .infinity)
   }
 
   private var contacts: some View {
@@ -58,7 +71,7 @@ struct ConnectedAccountsView: View {
           title: viewModel.title(for: item),
           style: .delete
         ) {
-          viewModel.deleteAccount(id: "")
+          viewModel.deleteAccount(id: item.sourceId)
         }
       }
     }

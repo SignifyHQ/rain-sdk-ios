@@ -46,6 +46,12 @@ struct AddBankWithDebitView: View {
       .padding(.horizontal, 30)
     }
     .background(Colors.background.swiftUIColor)
+    .navigationLink(item: $viewModel.navigation) { item in
+      switch item {
+      case .moveMoney:
+        MoveMoneyAccountView(kind: .receive)
+      }
+    }
     .popup(item: $viewModel.toastMessage, style: .toast) {
       ToastView(toastMessage: $0)
     }

@@ -17,6 +17,7 @@ class ConnectedAccountsViewModel: ObservableObject {
   @LazyInjected(\.accountDataManager) var accountDataManager
   
   @Published var linkedAccount: [NetSpendLinkedSourceData] = []
+  @Published var isLoading = false
   
   init(linkedAccount: [NetSpendLinkedSourceData]) {
     self.linkedAccount = linkedAccount
@@ -36,6 +37,21 @@ extension ConnectedAccountsViewModel {
   }
   
   func deleteAccount(id: String) {
+    self.isLoading = true
+    Task { @MainActor in
+      defer { isLoading = false }
+      do {
+        let sessionID = accountDataManager.sessionID
+        let response = try await netspendRepository.deleteLinkedAccount(sessionId: sessionID, sourceId: id)
+        if response.success {
+          self.linkedAccount.removeAll(where: {
+            $0.sourceId == id
+          })
+        }
+      } catch {
+        log.error(error)
+      }
+    }
   }
   
 }

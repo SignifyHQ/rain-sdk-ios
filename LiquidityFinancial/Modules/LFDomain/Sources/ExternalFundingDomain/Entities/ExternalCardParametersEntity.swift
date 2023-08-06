@@ -7,7 +7,7 @@ public protocol ExternalCardExpirationEntity: Codable {
 
 public protocol ExternalCardParametersEntity: Codable {
   var encryptedData: String { get }
-  var expiration: ExternalCardExpirationEntity { get }
+  var expirationEntity: ExternalCardExpirationEntity { get }
   var nameOnCard: String { get }
   var nickname: String { get }
   var postalCode: String { get }

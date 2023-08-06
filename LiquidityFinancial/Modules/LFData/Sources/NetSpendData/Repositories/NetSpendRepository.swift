@@ -1,4 +1,5 @@
 import Foundation
+import LFNetwork
 import LFServices
 import NetspendSdk
 import FraudForce
@@ -18,6 +19,7 @@ public protocol NetSpendRepositoryProtocol {
   func uploadDocuments(path: PathDocumentParameters, documentData: DocumentParameters) async throws -> NetSpendDocumentData.RequestedDocument
   func getAuthorizationCode(sessionId: String) async throws -> NetSpendAuthorizationCode
   func getLinkedAccount(sessionId: String) async throws -> NetSpendLinkedSourcesResponse
+  func deleteLinkedAccount(sessionId: String, sourceId: String) async throws -> NetspendUnlinkBankResponse
 }
 
 public class NetSpendRepository: NetSpendRepositoryProtocol {
@@ -85,5 +87,9 @@ public class NetSpendRepository: NetSpendRepositoryProtocol {
   
   public func getLinkedAccount(sessionId: String) async throws -> NetSpendLinkedSourcesResponse {
     try await netSpendAPI.getLinkedSources(sessionID: sessionId)
+  }
+  
+  public func deleteLinkedAccount(sessionId: String, sourceId: String) async throws -> NetspendUnlinkBankResponse {
+    try await netSpendAPI.deleteLinkedSource(sessionId: sessionId, sourceId: sourceId)
   }
 }
