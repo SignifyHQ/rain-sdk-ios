@@ -25,8 +25,7 @@ let package = Package(
       dependencies: [
         "LFUtilities", "LFStyleGuide", "LFLocalizable", "LFServices", "LFCard",
         .product(name: "OnboardingData", package: "LFData"),
-        .product(name: "NetSpendData", package: "LFData"),
-        .product(name: "ExternalFundingData", package: "LFData")
+        .product(name: "NetSpendData", package: "LFData")
       ]
     ),
     .testTarget(

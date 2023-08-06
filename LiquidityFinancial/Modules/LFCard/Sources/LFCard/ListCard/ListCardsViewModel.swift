@@ -1,8 +1,8 @@
 import Foundation
 import Combine
 import Factory
-import CardDomain
-import CardData
+import NetSpendData
+import NetSpendDomain
 import LFUtilities
 import OnboardingData
 import AccountData
@@ -28,8 +28,8 @@ final class ListCardsViewModel: ObservableObject {
   @Published var navigation: Navigation?
   @Published var toastMessage: String?
   
-  lazy var cardUseCase: CardUseCaseProtocol = {
-    CardUseCase(repository: cardRepository)
+  lazy var cardUseCase: NSCardUseCaseProtocol = {
+    NSCardUseCase(repository: cardRepository)
   }()
   
   private var bag = Set<AnyCancellable>()

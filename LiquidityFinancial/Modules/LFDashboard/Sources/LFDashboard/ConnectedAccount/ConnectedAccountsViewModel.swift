@@ -12,14 +12,14 @@ class ConnectedAccountsViewModel: ObservableObject {
     EnvironmentManager().networkEnvironment
   }
   
-  @LazyInjected(\.netspendRepository) var netspendRepository
+  @LazyInjected(\.externalFundingRepository) var externalFundingRepository
   @LazyInjected(\.netspendDataManager) var netspendDataManager
   @LazyInjected(\.accountDataManager) var accountDataManager
   
-  @Published var linkedAccount: [NetSpendLinkedSourceData] = []
+  @Published var linkedAccount: [APILinkedSourceData] = []
   @Published var isLoading = false
   
-  init(linkedAccount: [NetSpendLinkedSourceData]) {
+  init(linkedAccount: [APILinkedSourceData]) {
     self.linkedAccount = linkedAccount
   }
   
@@ -27,7 +27,7 @@ class ConnectedAccountsViewModel: ObservableObject {
 
 extension ConnectedAccountsViewModel {
 
-  func title(for account: NetSpendLinkedSourceData) -> String {
+  func title(for account: APILinkedSourceData) -> String {
     switch account.sourceType {
     case .externalCard:
       return LFLocalizable.ConnectedView.Row.externalCard(account.last4)
@@ -42,7 +42,7 @@ extension ConnectedAccountsViewModel {
       defer { isLoading = false }
       do {
         let sessionID = accountDataManager.sessionID
-        let response = try await netspendRepository.deleteLinkedAccount(sessionId: sessionID, sourceId: id)
+        let response = try await externalFundingRepository.deleteLinkedAccount(sessionId: sessionID, sourceId: id)
         if response.success {
           self.linkedAccount.removeAll(where: {
             $0.sourceId == id

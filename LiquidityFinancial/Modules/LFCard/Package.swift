@@ -13,7 +13,7 @@ let package = Package(
   ],
   dependencies: [
     .package(url: "https://github.com/hmlongco/Factory", from: "2.2.0"),
-    .package(name: "CardDomain", path: "../LFDomain"),
+    .package(name: "LFDomain", path: "../LFDomain"),
     .package(name: "LFUtilities", path: "../LFUtilities"),
     .package(name: "LFStyleGuide", path: "../LFStyleGuide"),
     .package(name: "LFLocalizable", path: "../LFLocalizable"),
@@ -24,11 +24,11 @@ let package = Package(
     .target(
       name: "LFCard",
       dependencies: [
-        "LFUtilities", "LFStyleGuide", "LFLocalizable", "LFServices", "CardDomain", "Factory",
-        .product(name: "CardData", package: "LFData"),
+        "LFUtilities", "LFStyleGuide", "LFLocalizable", "LFServices", "Factory",
         .product(name: "OnboardingData", package: "LFData"),
         .product(name: "NetSpendData", package: "LFData"),
-        .product(name: "AccountData", package: "LFData")
+        .product(name: "AccountData", package: "LFData"),
+        .product(name: "NetSpendDomain", package: "LFDomain")
       ]),
     .testTarget(
       name: "LFCardTests",

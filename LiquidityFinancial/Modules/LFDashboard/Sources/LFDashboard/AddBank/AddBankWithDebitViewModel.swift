@@ -3,15 +3,14 @@ import LFNetwork
 import Factory
 import LFUtilities
 import Combine
-import CardDomain
 import UIKit
 import LFStyleGuide
 import LFServices
 import SwiftUI
 import OnboardingData
 import AccountData
-import ExternalFundingData
-import ExternalFundingDomain
+import NetSpendData
+import NetSpendDomain
 
 @MainActor
 class AddBankWithDebitViewModel: ObservableObject {
@@ -20,8 +19,8 @@ class AddBankWithDebitViewModel: ObservableObject {
   @LazyInjected(\.accountRepository) var accountRepository
   @LazyInjected(\.netspendDataManager) var netspendDataManager
   
-  lazy var externalFundingUseCase: ExternalFundingUseCaseProtocol = {
-    ExternalFundingUseCase(repository: externalFundingRepository)
+  lazy var externalFundingUseCase: NSExternalFundingUseCaseProtocol = {
+    NSExternalFundingUseCase(repository: externalFundingRepository)
   }()
   
   init() {

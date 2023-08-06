@@ -1,6 +1,6 @@
 import Foundation
-import CardDomain
-import CardData
+import NetSpendData
+import NetSpendDomain
 import Factory
 
 @MainActor
@@ -10,9 +10,9 @@ final class ApplePayViewModel: ObservableObject {
   @LazyInjected(\.intercomService) var intercomService
   @LazyInjected(\.accountDataManager) var accountDataManager
 
-  private lazy var userCase: CardUseCase? = { [weak self] in
+  private lazy var userCase: NSCardUseCase? = { [weak self] in
     guard let self else { return nil }
-    return CardUseCase(repository: self.cardRepository)
+    return NSCardUseCase(repository: self.cardRepository)
   }()
   
   let cardModel: CardModel

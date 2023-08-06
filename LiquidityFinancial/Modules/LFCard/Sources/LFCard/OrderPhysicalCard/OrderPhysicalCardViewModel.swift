@@ -1,6 +1,6 @@
 import Combine
-import CardDomain
-import CardData
+import NetSpendData
+import NetSpendDomain
 import Foundation
 import UIKit
 import LFStyleGuide
@@ -25,8 +25,8 @@ final class OrderPhysicalCardViewModel: ObservableObject {
   @Published var toastMessage: String?
   
   let onOrderSuccess: ((CardModel) -> Void)?
-  lazy var cardUseCase: CardUseCaseProtocol = {
-    CardUseCase(repository: cardRepository)
+  lazy var cardUseCase: NSCardUseCaseProtocol = {
+    NSCardUseCase(repository: cardRepository)
   }()
   
   init(onOrderSuccess: ((CardModel) -> Void)?) {

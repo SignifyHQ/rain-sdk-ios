@@ -4,8 +4,8 @@ import LFLocalizable
 import LFUtilities
 import LFServices
 import Factory
-import ExternalFundingData
-import ExternalFundingDomain
+import NetSpendData
+import NetSpendDomain
 
 @MainActor
 final class DirectDepositViewModel: ObservableObject {
@@ -22,8 +22,8 @@ final class DirectDepositViewModel: ObservableObject {
   @Published var routingNumber: String = ""
   
   private lazy var pinWheelService = PinWheelService()
-  private lazy var externalFundingUseCase: ExternalFundingUseCaseProtocol = {
-    ExternalFundingUseCase(repository: externalFundingRepository)
+  private lazy var externalFundingUseCase: NSExternalFundingUseCaseProtocol = {
+    NSExternalFundingUseCase(repository: externalFundingRepository)
   }()
   
   init() {

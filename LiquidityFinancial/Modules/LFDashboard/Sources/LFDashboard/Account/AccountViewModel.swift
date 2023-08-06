@@ -4,6 +4,7 @@ import UIKit
 import LFUtilities
 import Factory
 import NetSpendData
+import NetSpendDomain
 import NetspendSdk
 
 @MainActor
@@ -13,6 +14,7 @@ class AccountViewModel: ObservableObject {
   }
   
   @LazyInjected(\.netspendRepository) var netspendRepository
+  @LazyInjected(\.externalFundingRepository) var externalFundingRepository
   @LazyInjected(\.netspendDataManager) var netspendDataManager
   @LazyInjected(\.accountDataManager) var accountDataManager
   @LazyInjected(\.intercomService) var intercomService
@@ -24,7 +26,7 @@ class AccountViewModel: ObservableObject {
   @Published var isOpeningPlaidView: Bool = false
   @Published var netspendController: NetspendSdkViewController?
   @Published var toastMessage: String?
-  @Published var linkedAccount: [NetSpendLinkedSourceData] = []
+  @Published var linkedAccount: [APILinkedSourceData] = []
 }
 
 // MARK: - View Helpers
@@ -58,8 +60,9 @@ extension AccountViewModel {
     Task {
       do {
         let sessionID = accountDataManager.sessionID
-        let response = try await netspendRepository.getLinkedAccount(sessionId: sessionID)
-        self.linkedAccount = response.linkedSources
+        let response = try await externalFundingRepository.getLinkedAccount(sessionId: sessionID)
+        let linkedAccount = response.linkedSources.compactMap({ APILinkedSourceData(last4: $0.last4, sourceType: APILinkSourceType(rawValue: $0.sourceType.rawString), sourceId: $0.sourceId) })
+        self.linkedAccount = linkedAccount
       } catch {
         log.error(error)
       }

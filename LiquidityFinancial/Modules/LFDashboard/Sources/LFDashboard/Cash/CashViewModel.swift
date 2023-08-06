@@ -1,8 +1,8 @@
 import Foundation
 import LFCard
 import Factory
-import CardData
-import CardDomain
+import NetSpendData
+import NetSpendDomain
 import LFUtilities
 
 @MainActor

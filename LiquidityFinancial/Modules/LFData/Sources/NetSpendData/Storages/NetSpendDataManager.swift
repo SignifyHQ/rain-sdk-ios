@@ -2,38 +2,38 @@ import Foundation
 import NetspendSdk
 
 public protocol NetSpendDataManagerProtocol {
-  var jwkToken: NetSpendJwkToken? { get }
-  var serverSession: NetSpendSessionData? { get }
+  var jwkToken: APINSJwkToken? { get }
+  var serverSession: APISessionData? { get }
   var sdkSession: NetspendSdkUserSession? { get }
-  var agreement: NetSpendAgreementData? { get }
-  var accountPersonData: NetSpendAccountPersonData? { get }
-  var documentData: NetSpendDocumentData? { get set }
+  var agreement: APIAgreementData? { get }
+  var accountPersonData: APIAccountPersonData? { get }
+  var documentData: APIDocumentData? { get set }
   func clear()
-  func update(jwkToken: NetSpendJwkToken?)
-  func update(serverSession: NetSpendSessionData?)
-  func update(agreement: NetSpendAgreementData?)
+  func update(jwkToken: APINSJwkToken?)
+  func update(serverSession: APISessionData?)
+  func update(agreement: APIAgreementData?)
   func update(sdkSession: NetspendSdkUserSession?)
-  func update(accountPersonData: NetSpendAccountPersonData?)
-  func update(documentData: NetSpendDocumentData?)
+  func update(accountPersonData: APIAccountPersonData?)
+  func update(documentData: APIDocumentData?)
 }
 
 public class NetSpendDataManager: NetSpendDataManagerProtocol {
-  public var documentData: NetSpendDocumentData?
-  public private(set) var jwkToken: NetSpendJwkToken?
-  public private(set) var serverSession: NetSpendSessionData?
-  public private(set) var agreement: NetSpendAgreementData?
+  public var documentData: APIDocumentData?
+  public private(set) var jwkToken: APINSJwkToken?
+  public private(set) var serverSession: APISessionData?
+  public private(set) var agreement: APIAgreementData?
   public private(set) var sdkSession: NetspendSdkUserSession?
-  public private(set) var accountPersonData: NetSpendAccountPersonData?
+  public private(set) var accountPersonData: APIAccountPersonData?
   
-  public func update(jwkToken: NetSpendJwkToken?) {
+  public func update(jwkToken: APINSJwkToken?) {
     self.jwkToken = jwkToken
   }
   
-  public func update(serverSession: NetSpendSessionData?) {
+  public func update(serverSession: APISessionData?) {
     self.serverSession = serverSession
   }
   
-  public func update(agreement: NetSpendAgreementData?) {
+  public func update(agreement: APIAgreementData?) {
     self.agreement = agreement
   }
   
@@ -41,11 +41,11 @@ public class NetSpendDataManager: NetSpendDataManagerProtocol {
     self.sdkSession = sdkSession
   }
   
-  public func update(accountPersonData: NetSpendAccountPersonData?) {
+  public func update(accountPersonData: APIAccountPersonData?) {
     self.accountPersonData = accountPersonData
   }
   
-  public func update(documentData: NetSpendDocumentData?) {
+  public func update(documentData: APIDocumentData?) {
     self.documentData = documentData
   }
   

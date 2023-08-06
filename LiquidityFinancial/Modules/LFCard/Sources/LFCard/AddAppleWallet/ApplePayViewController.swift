@@ -2,8 +2,8 @@ import Foundation
 import PassKit
 import SwiftUI
 import LFLocalizable
-import CardData
-import CardDomain
+import NetSpendData
+import NetSpendDomain
 import Factory
 import LFUtilities
 

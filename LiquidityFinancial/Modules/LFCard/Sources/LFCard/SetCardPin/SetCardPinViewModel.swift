@@ -3,8 +3,8 @@ import Foundation
 import UIKit
 import LFStyleGuide
 import LFUtilities
-import CardDomain
-import CardData
+import NetSpendData
+import NetSpendDomain
 import Factory
 import NetSpendData
 import AccountData
@@ -30,8 +30,8 @@ final class SetCardPinViewModel: ObservableObject {
   let cardID: String
   let onFinish: ((String) -> Void)?
   
-  lazy var cardUseCase: CardUseCaseProtocol = {
-    CardUseCase(repository: cardRepository)
+  lazy var cardUseCase: NSCardUseCaseProtocol = {
+    NSCardUseCase(repository: cardRepository)
   }()
   
   init(verifyID: String, cardID: String, onFinish: ((String) -> Void)? = nil) {

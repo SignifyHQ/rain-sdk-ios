@@ -8,7 +8,7 @@ struct ConnectedAccountsView: View {
   @StateObject private var viewModel: ConnectedAccountsViewModel
   @State private var showDebitView = false
   
-  init(linkedAccount: [NetSpendLinkedSourceData]) {
+  init(linkedAccount: [APILinkedSourceData]) {
     _viewModel = .init(
       wrappedValue: ConnectedAccountsViewModel(linkedAccount: linkedAccount)
     )

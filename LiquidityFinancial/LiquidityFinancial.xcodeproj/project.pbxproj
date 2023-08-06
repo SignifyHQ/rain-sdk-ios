@@ -52,8 +52,6 @@
 		A980DF732A5FA25A000B3C09 /* LFNetwork in Frameworks */ = {isa = PBXBuildFile; productRef = A980DF722A5FA25A000B3C09 /* LFNetwork */; };
 		A980DF752A5FA265000B3C09 /* LFServices in Frameworks */ = {isa = PBXBuildFile; productRef = A980DF742A5FA265000B3C09 /* LFServices */; };
 		A980DF772A5FA26E000B3C09 /* LFUtilities in Frameworks */ = {isa = PBXBuildFile; productRef = A980DF762A5FA26E000B3C09 /* LFUtilities */; };
-		A9AE68AE2A78FFF900F01936 /* CardData in Frameworks */ = {isa = PBXBuildFile; productRef = A9AE68AD2A78FFF900F01936 /* CardData */; };
-		A9AE68B02A78FFF900F01936 /* CardDomain in Frameworks */ = {isa = PBXBuildFile; productRef = A9AE68AF2A78FFF900F01936 /* CardDomain */; };
 		A9B4B9382A7C0C76000ED67A /* AppDelegate+Configs.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9BC804C2A774F5D00E4A1A0 /* AppDelegate+Configs.swift */; };
 		A9B4B9392A7C0C76000ED67A /* OnboardingContainer+Injection.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9B912F22A6B898C00ABD87B /* OnboardingContainer+Injection.swift */; };
 		A9B4B93F2A7C0C76000ED67A /* AppDelegate+Appearance.swift in Sources */ = {isa = PBXBuildFile; fileRef = A93837462A63DDFD009EB1DE /* AppDelegate+Appearance.swift */; };
@@ -65,10 +63,8 @@
 		A9B4B9462A7C0C76000ED67A /* DataUtilities in Frameworks */ = {isa = PBXBuildFile; productRef = A9B4B9302A7C0C76000ED67A /* DataUtilities */; };
 		A9B4B9472A7C0C76000ED67A /* SmartyStreets in Frameworks */ = {isa = PBXBuildFile; productRef = A9B4B9332A7C0C76000ED67A /* SmartyStreets */; };
 		A9B4B9482A7C0C76000ED67A /* Factory in Frameworks */ = {isa = PBXBuildFile; productRef = A9B4B9202A7C0C76000ED67A /* Factory */; };
-		A9B4B94A2A7C0C76000ED67A /* CardData in Frameworks */ = {isa = PBXBuildFile; productRef = A9B4B9352A7C0C76000ED67A /* CardData */; };
 		A9B4B94B2A7C0C76000ED67A /* LFLocalizable in Frameworks */ = {isa = PBXBuildFile; productRef = A9B4B9272A7C0C76000ED67A /* LFLocalizable */; };
 		A9B4B94C2A7C0C76000ED67A /* LFStyleGuide in Frameworks */ = {isa = PBXBuildFile; productRef = A9B4B9242A7C0C76000ED67A /* LFStyleGuide */; };
-		A9B4B94D2A7C0C76000ED67A /* CardDomain in Frameworks */ = {isa = PBXBuildFile; productRef = A9B4B9362A7C0C76000ED67A /* CardDomain */; };
 		A9B4B94E2A7C0C76000ED67A /* LFDashboard in Frameworks */ = {isa = PBXBuildFile; productRef = A9B4B9292A7C0C76000ED67A /* LFDashboard */; };
 		A9B4B94F2A7C0C76000ED67A /* OnboardingData in Frameworks */ = {isa = PBXBuildFile; productRef = A9B4B92C2A7C0C76000ED67A /* OnboardingData */; };
 		A9B4B9502A7C0C76000ED67A /* LFNetwork in Frameworks */ = {isa = PBXBuildFile; productRef = A9B4B92E2A7C0C76000ED67A /* LFNetwork */; };
@@ -180,6 +176,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		06CFE6B72A7263B400B494A2 /* LFCard */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = LFCard; path = Modules/LFCard; sourceTree = "<group>"; };
 		06D40BF72A625F5400EADB75 /* LoadingMix.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = LoadingMix.json; sourceTree = "<group>"; };
 		06D40BFB2A6260B300EADB75 /* LoadingContrast.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = LoadingContrast.json; sourceTree = "<group>"; };
 		06D40C022A63DEB300EADB75 /* LoadingPrimary.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = LoadingPrimary.json; sourceTree = "<group>"; };
@@ -306,10 +303,8 @@
 				A9B912EA2A6B881100ABD87B /* DataUtilities in Frameworks */,
 				A9B912EE2A6B881100ABD87B /* SmartyStreets in Frameworks */,
 				A953548C2A5E55B2008B0FAB /* Factory in Frameworks */,
-				A9AE68AE2A78FFF900F01936 /* CardData in Frameworks */,
 				A94F71F72A61CACF002ADB34 /* LFLocalizable in Frameworks */,
 				A953548D2A5E55B2008B0FAB /* LFStyleGuide in Frameworks */,
-				A9AE68B02A78FFF900F01936 /* CardDomain in Frameworks */,
 				06EBE2052A693C8100157B32 /* LFDashboard in Frameworks */,
 				A9B912E22A6B876300ABD87B /* OnboardingData in Frameworks */,
 				A9B912E62A6B876300ABD87B /* LFNetwork in Frameworks */,
@@ -372,10 +367,8 @@
 				A9B4B9462A7C0C76000ED67A /* DataUtilities in Frameworks */,
 				A9B4B9472A7C0C76000ED67A /* SmartyStreets in Frameworks */,
 				A9B4B9482A7C0C76000ED67A /* Factory in Frameworks */,
-				A9B4B94A2A7C0C76000ED67A /* CardData in Frameworks */,
 				A9B4B94B2A7C0C76000ED67A /* LFLocalizable in Frameworks */,
 				A9B4B94C2A7C0C76000ED67A /* LFStyleGuide in Frameworks */,
-				A9B4B94D2A7C0C76000ED67A /* CardDomain in Frameworks */,
 				A9B4B94E2A7C0C76000ED67A /* LFDashboard in Frameworks */,
 				A9B4B94F2A7C0C76000ED67A /* OnboardingData in Frameworks */,
 				A9B4B9502A7C0C76000ED67A /* LFNetwork in Frameworks */,
@@ -550,6 +543,7 @@
 		A97BF8062A5D971400B8F5CA /* Presentation */ = {
 			isa = PBXGroup;
 			children = (
+				06CFE6B72A7263B400B494A2 /* LFCard */,
 				06EBE1FF2A6924E900157B32 /* LFDashboard */,
 				A97BF8072A5D975900B8F5CA /* LFAccountOnboarding */,
 			);
@@ -901,8 +895,6 @@
 				A9B912E92A6B881100ABD87B /* DataUtilities */,
 				A9B912EB2A6B881100ABD87B /* iPhoneNumberField */,
 				A9B912ED2A6B881100ABD87B /* SmartyStreets */,
-				A9AE68AD2A78FFF900F01936 /* CardData */,
-				A9AE68AF2A78FFF900F01936 /* CardDomain */,
 			);
 			productName = LiquidityFinancial;
 			productReference = A95354972A5E55B2008B0FAB /* Cardano.app */;
@@ -1014,8 +1006,6 @@
 				A9B4B9302A7C0C76000ED67A /* DataUtilities */,
 				A9B4B9312A7C0C76000ED67A /* iPhoneNumberField */,
 				A9B4B9332A7C0C76000ED67A /* SmartyStreets */,
-				A9B4B9352A7C0C76000ED67A /* CardData */,
-				A9B4B9362A7C0C76000ED67A /* CardDomain */,
 				A9E46E992A7D68B800D1BE6F /* DogeOnboarding */,
 			);
 			productName = LiquidityFinancial;
@@ -2077,14 +2067,6 @@
 			isa = XCSwiftPackageProductDependency;
 			productName = LFUtilities;
 		};
-		A9AE68AD2A78FFF900F01936 /* CardData */ = {
-			isa = XCSwiftPackageProductDependency;
-			productName = CardData;
-		};
-		A9AE68AF2A78FFF900F01936 /* CardDomain */ = {
-			isa = XCSwiftPackageProductDependency;
-			productName = CardDomain;
-		};
 		A9B4B9202A7C0C76000ED67A /* Factory */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = A9B4B9212A7C0C76000ED67A /* XCRemoteSwiftPackageReference "Factory" */;
@@ -2152,14 +2134,6 @@
 			isa = XCSwiftPackageProductDependency;
 			package = A9B4B9342A7C0C76000ED67A /* XCRemoteSwiftPackageReference "smartystreets-ios-sdk" */;
 			productName = SmartyStreets;
-		};
-		A9B4B9352A7C0C76000ED67A /* CardData */ = {
-			isa = XCSwiftPackageProductDependency;
-			productName = CardData;
-		};
-		A9B4B9362A7C0C76000ED67A /* CardDomain */ = {
-			isa = XCSwiftPackageProductDependency;
-			productName = CardDomain;
 		};
 		A9B912DD2A6B876300ABD87B /* AuthorizationManager */ = {
 			isa = XCSwiftPackageProductDependency;

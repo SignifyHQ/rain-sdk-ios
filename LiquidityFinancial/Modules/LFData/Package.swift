@@ -20,14 +20,8 @@ let package = Package(
       name: "NetSpendData",
       targets: ["NetSpendData"]),
     .library(
-      name: "CardData",
-      targets: ["CardData"]),
-    .library(
       name: "AccountData",
       targets: ["AccountData"]),
-    .library(
-      name: "ExternalFundingData",
-      targets: ["ExternalFundingData"])
   ],
   dependencies: [
     .package(name: "LFDomain", path: "../LFDomain"),
@@ -57,29 +51,14 @@ let package = Package(
     .target(
       name: "NetSpendData",
       dependencies: [
-        "LFNetwork", "LFServices", "DataUtilities", "LFUtilities", "Factory", "AuthorizationManager"
-      ]
-    ),
-    .target(
-      name: "CardData",
-      dependencies: [
-        "DataUtilities", "LFNetwork", "Factory", "AuthorizationManager",
-        .product(name: "CardDomain", package: "LFDomain"),
-        .product(name: "AccountDomain", package: "LFDomain")
+        "LFNetwork", "LFServices", "DataUtilities", "LFUtilities", "Factory", "AuthorizationManager",
+        .product(name: "NetSpendDomain", package: "LFDomain")
       ]
     ),
     .target(
       name: "AccountData",
       dependencies: [
         "DataUtilities", "LFNetwork", "Factory", "AuthorizationManager", "OnboardingData", "LFUtilities",
-        .product(name: "AccountDomain", package: "LFDomain")
-      ]
-    ),
-    .target(
-      name: "ExternalFundingData",
-      dependencies: [
-        "DataUtilities", "LFNetwork", "Factory", "AuthorizationManager",
-        .product(name: "ExternalFundingDomain", package: "LFDomain"),
         .product(name: "AccountDomain", package: "LFDomain")
       ]
     ),

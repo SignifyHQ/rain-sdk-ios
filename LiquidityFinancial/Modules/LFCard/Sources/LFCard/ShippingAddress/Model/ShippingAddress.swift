@@ -1,5 +1,5 @@
 import Foundation
-import CardDomain
+import NetSpendDomain
 
 struct ShippingAddress {
   let line1: String

@@ -3,8 +3,8 @@ import Foundation
 import UIKit
 import LFStyleGuide
 import LFUtilities
-import CardDomain
-import CardData
+import NetSpendData
+import NetSpendDomain
 import Factory
 import NetSpendData
 import AccountData
@@ -28,8 +28,8 @@ final class EnterCVVCodeViewModel: ObservableObject {
   let cvvCodeDigits = Int(Constants.Default.cvvCodeDigits.rawValue) ?? 3
   private(set) var pinViewItems: [PinTextFieldViewItem] = .init()
   
-  lazy var cardUseCase: CardUseCaseProtocol = {
-    CardUseCase(repository: cardRepository)
+  lazy var cardUseCase: NSCardUseCaseProtocol = {
+    NSCardUseCase(repository: cardRepository)
   }()
   
   init(cardID: String) {
