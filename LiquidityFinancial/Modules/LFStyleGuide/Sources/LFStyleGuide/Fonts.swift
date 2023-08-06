@@ -240,10 +240,14 @@ public enum Fonts {
   public static func registerAllCustomFonts() {
     var allCustomFonts: [FontConvertible] = []
     switch LFStyleGuide.target {
-    case .Avalanche: allCustomFonts.append(contentsOf: Inter.all)
-    case .Cardano: allCustomFonts.append(contentsOf: Chivo.all)
-    case .DogeCard: allCustomFonts.append(contentsOf: Lato.all + Montserrat.all + Orbitron.all)
-    default : allCustomFonts.append(contentsOf: Inter.all)
+    case .Avalanche:
+      allCustomFonts.append(contentsOf: Inter.all)
+    case .Cardano:
+      allCustomFonts.append(contentsOf: Chivo.all)
+    case .DogeCard:
+      allCustomFonts.append(contentsOf: Lato.all + Montserrat.all + Orbitron.all)
+    default :
+      allCustomFonts.append(contentsOf: Inter.all)
     }
     allCustomFonts.forEach { $0.register() }
   }
@@ -307,7 +311,7 @@ public struct FontConvertible {
 
   fileprivate var url: URL? {
     // swiftlint:disable:next implicit_return
-    return BundleToken.bundle.url(forResource: path, withExtension: nil)
+    return Bundle.main.url(forResource: path, withExtension: nil)
   }
 }
 
@@ -344,15 +348,3 @@ public extension SwiftUI.Font {
   }
 }
 #endif
-
-// swiftlint:disable convenience_type
-private final class BundleToken {
-  static let bundle: Bundle = {
-    #if SWIFT_PACKAGE
-    return Bundle.module
-    #else
-    return Bundle(for: BundleToken.self)
-    #endif
-  }()
-}
-// swiftlint:enable convenience_type
