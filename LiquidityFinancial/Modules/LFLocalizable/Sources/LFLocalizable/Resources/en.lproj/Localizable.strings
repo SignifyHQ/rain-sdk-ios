@@ -227,6 +227,8 @@
 "cashTab.changeAsset.buttonTitle" = "Change";
 "cashTab.lastestTransaction.title" = "Latest Transactions";
 "cashTab.noTransactionYet.title" = "No transactions yet";
+"cashTab.deposit.title" = "Deposit";
+"cashTab.withdraw.title" = "Withdraw";
 
 // CashCardView
 "cashCard.balance.title" = "%@ Balance";
@@ -371,6 +373,7 @@
 "moveMoney.deposit.title" = "DEPOSIT";
 "moveMoney.withdraw.title" = "WITHDRAW";
 "moveMoney.available_balance.subtitle" = "%@ available";
+"moveMoney.error.noContact" = "no contact selected";
 
 // Add bank with debit
 "addBankWithDebit.title" = "ADD A BANK USING YOUR DEBIT CARD";

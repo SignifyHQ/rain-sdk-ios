@@ -10,6 +10,7 @@ public enum NSExternalFundingRoute {
   case getACHInfo(String)
   case getLinkedSource(sessionId: String)
   case deleteLinkedSource(sessionId: String, sourceId: String)
+  case deposit(DepositParameters, String)
 }
 
 extension NSExternalFundingRoute: LFRoute {
@@ -31,6 +32,8 @@ extension NSExternalFundingRoute: LFRoute {
       return "/v1/netspend/external-funding"
     case .deleteLinkedSource(_, let sourceId):
       return "/v1/netspend/external-funding/external-card/\(sourceId)"
+    case .deposit:
+      return "/v1/netspend/external-funding/withdraw"
     }
   }
   
@@ -42,6 +45,8 @@ extension NSExternalFundingRoute: LFRoute {
       return .POST
     case .deleteLinkedSource:
       return .DELETE
+    case .deposit:
+      return .POST
     }
   }
   
@@ -60,6 +65,8 @@ extension NSExternalFundingRoute: LFRoute {
       base["netspendSessionId"] = sessionId
     case .deleteLinkedSource(let sessionId, _):
       base["netspendSessionId"] = sessionId
+    case .deposit(_, let sessionId):
+      base["netspendSessionId"] = sessionId
     }
     return base
   }
@@ -70,6 +77,8 @@ extension NSExternalFundingRoute: LFRoute {
       return parameters.encoded()
     case .getACHInfo, .pinWheelToken, .getLinkedSource, .deleteLinkedSource:
       return nil
+    case let .deposit(parameters, _):
+      return parameters.encoded()
     }
   }
   
@@ -81,6 +90,8 @@ extension NSExternalFundingRoute: LFRoute {
       return .json
     case .getACHInfo, .pinWheelToken:
       return .url
+    case .deposit:
+      return .json
     }
   }
   

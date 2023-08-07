@@ -1,7 +1,7 @@
 import Foundation
 import NetSpendDomain
 
-public struct APILinkedSourcesResponse: Decodable, LinkedSourcesEntity {
+public struct APILinkedSourcesResponse: Codable, LinkedSourcesEntity {
   public typealias SourceData = APILinkedSourceData
   public var linkedSources: [SourceData]
   
@@ -10,16 +10,14 @@ public struct APILinkedSourcesResponse: Decodable, LinkedSourcesEntity {
   }
 }
 
-public struct APILinkedSourceData: Decodable, LinkedSourceDataEntity {
-  public var bankName: String?
+public struct APILinkedSourceData: Codable, LinkedSourceDataEntity {
   public var name: String?
   public var last4: String
   public var sourceType: APILinkSourceType
   public var sourceId: String
   
-  public init?(bankName: String? = nil, name: String? = nil, last4: String, sourceType: APILinkSourceType?, sourceId: String) {
+  public init?(name: String?, last4: String, sourceType: APILinkSourceType?, sourceId: String) {
     guard let sourceType = sourceType else { return nil }
-    self.bankName = bankName
     self.name = name
     self.last4 = last4
     self.sourceType = sourceType
@@ -27,7 +25,7 @@ public struct APILinkedSourceData: Decodable, LinkedSourceDataEntity {
   }
 }
 
-public enum APILinkSourceType: String, Decodable, LinkedSourceTypeEntity {
+public enum APILinkSourceType: String, Codable, LinkedSourceTypeEntity {
   public var rawString: String {
     self.rawValue
   }
@@ -36,4 +34,3 @@ public enum APILinkSourceType: String, Decodable, LinkedSourceTypeEntity {
   case externalCard = "EXTERNAL_CARD"
   
 }
-

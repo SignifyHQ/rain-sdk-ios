@@ -35,28 +35,31 @@ struct CashView: View {
       case .transactions:
         EmptyView()
           // TransactionListView(type: .cash)
+      case .addMoney:
+        MoveMoneyAccountView(kind: .receive)
       }
     }
-      //    .sheet(item: $viewModel.sheetPresentation) { item in
-      //      switch item {
-      //        case let .transaction(trx):
-      //          TransactionDetailView(transaction: trx, type: .cash)
-      //            .embedInNavigation()
-      //      }
-      //    }
-      //    .fullScreenCover(item: $viewModel.fullScreen) { item in
-      //      switch item {
-      //        case .fundCard:
-      //          FundCardView {
-      //            viewModel.fullScreen = nil
-      //          }
-      //          .embedInNavigation()
-      //      }
-      //    }
   }
 }
 
 private extension CashView {
+  private var moveMoney: some View {
+    HStack(spacing: 6) {
+      iconTextButton(
+        title: LFLocalizable.CashTab.Deposit.title,
+        image: GenImages.CommonImages.addMoney
+      ) {
+        viewModel.addMoneyTapped()
+      }
+      iconTextButton(
+        title: LFLocalizable.CashTab.Withdraw.title,
+        image: GenImages.CommonImages.sendMoney
+      ) {
+        viewModel.sendMoneyTapped()
+      }
+    }
+  }
+  
   var changeAssetButton: some View {
     HStack(spacing: 8) {
       viewModel.selectedAsset.image
@@ -94,6 +97,7 @@ private extension CashView {
             viewModel.guestCardTapped()
           }
           changeAssetButton
+          moveMoney
           activity(size: geo.size)
         }
         .padding(.horizontal, 30)
@@ -137,10 +141,10 @@ private extension CashView {
     }
   }
   
-  func iconTextButton(title: String, image: String, action: @escaping () -> Void) -> some View {
+  func iconTextButton(title: String, image: ImageAsset, action: @escaping () -> Void) -> some View {
     Button(action: action) {
       HStack(spacing: 8) {
-        Image(image)
+        image.swiftUIImage
         Text(title)
           .font(Fonts.bold.swiftUIFont(size: Constants.FontSize.ultraSmall.value))
       }

@@ -67,7 +67,14 @@ extension AccountViewModel {
       do {
         let sessionID = accountDataManager.sessionID
         let response = try await externalFundingRepository.getLinkedAccount(sessionId: sessionID)
-        let linkedAccount = response.linkedSources.compactMap({ APILinkedSourceData(last4: $0.last4, sourceType: APILinkSourceType(rawValue: $0.sourceType.rawString), sourceId: $0.sourceId) })
+        let linkedAccount = response.linkedSources.compactMap({
+          APILinkedSourceData(
+            name: $0.name,
+            last4: $0.last4,
+            sourceType: APILinkSourceType(rawValue: $0.sourceType.rawString),
+            sourceId: $0.sourceId
+          )
+        })
         self.linkedAccount = linkedAccount
       } catch {
         log.error(error)

@@ -21,6 +21,9 @@ struct MoveMoneyAccountView: View {
       .readGeometry { geo in
         screenSize = geo.size
       }
+      .onAppear {
+        viewModel.appearOperations()
+      }
       .onChange(of: viewModel.amountInput) { _ in
         viewModel.validateAmountInput()
       }
@@ -31,6 +34,14 @@ struct MoveMoneyAccountView: View {
       .navigationBarTitleDisplayMode(.inline)
       .popup(item: $viewModel.toastMessage, style: .toast) {
         ToastView(toastMessage: $0)
+      }
+      .navigationLink(item: $viewModel.navigation) { navigation in
+        switch navigation {
+        case .transfer:
+          EmptyView()
+        case .addBankDebit:
+          AddBankWithDebitView()
+        }
       }
   }
 }
@@ -92,20 +103,17 @@ private extension MoveMoneyAccountView {
       Spacer()
     }
   }
-
+  
   @ViewBuilder var accountsDropdown: some View {
-    // TODO: Will show selected card later
-    let selectedCard = "Debit card **** 7424"
-    
     Button {
       showListView.toggle()
     } label: {
       HStack {
-        Text(
-          selectedCard
-        )
-        .font(Fonts.medium.swiftUIFont(size: Constants.FontSize.small.value))
-        .foregroundColor(Colors.label.swiftUIColor)
+        if let account = viewModel.selectedLinkedAccount {
+          Text(viewModel.title(for: account))
+            .font(Fonts.medium.swiftUIFont(size: Constants.FontSize.small.value))
+            .foregroundColor(Colors.label.swiftUIColor)
+        }
         Spacer()
         Image(systemName: showListView ? "chevron.up" : "chevron.down")
           .foregroundColor(Colors.label.swiftUIColor)
@@ -126,29 +134,23 @@ private extension MoveMoneyAccountView {
   }
 
   @ViewBuilder var accountsList: some View {
-    // TODO: Will update it later
-    let contactCards = [
-      "Debit card **** 1234",
-      "Debit card **** 2222",
-      "Debit card **** 3333"
-    ]
-    let selectedCard = "Debit card **** 2222"
     if showListView {
       VStack(alignment: .leading, spacing: 12) {
-        ForEach(contactCards, id: \.self) { item in
+        ForEach(viewModel.linkedAccount, id: \.sourceId) { item in
           HStack {
-            Text(item)
+            Text(viewModel.title(for: item))
               .font(Fonts.medium.swiftUIFont(size: Constants.FontSize.small.value))
               .foregroundColor(Colors.label.swiftUIColor)
             Spacer()
             Image(systemName: "checkmark")
               .font(Fonts.medium.swiftUIFont(size: Constants.FontSize.medium.value))
               .foregroundColor(
-                selectedCard == item ?
+                viewModel.selectedLinkedAccount?.sourceId == item.sourceId ?
                 Colors.primary.swiftUIColor : .clear
               )
           }
           .onTapGesture {
+            viewModel.selectedLinkedAccount = item
             showListView.toggle()
           }
         }
@@ -187,8 +189,7 @@ private extension MoveMoneyAccountView {
       title: LFLocalizable.Button.Continue.title,
       isDisable: !viewModel.isAmountActionAllowed
     ) {
-      // TODO: Will implementation later
-      // callBioMetric()
+      viewModel.callTransferAPI()
     }
   }
 
@@ -211,8 +212,7 @@ private extension MoveMoneyAccountView {
 
   var addAccountButton: some View {
     Button {
-      // TODO: Will navigate to account view
-      // viewModel.navigateToAccountView()
+      viewModel.navigateAddAccount()
     } label: {
       Text(LFLocalizable.MoveMoney.addAccount)
         .frame(height: 40)

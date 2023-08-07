@@ -1,8 +1,10 @@
 import Combine
+import NetSpendData
 import Foundation
 import SwiftUI
 import LFLocalizable
 import LFUtilities
+import Factory
 
 @MainActor
 class MoveMoneyAccountViewModel: ObservableObject {
@@ -14,30 +16,120 @@ class MoveMoneyAccountViewModel: ObservableObject {
     .fixed(amount: 100, currency: .usd)
   ]
   
+  @Published var navigation: Navigation?
   @Published var amountInput: String = Constants.Default.zeroAmount.rawValue
   @Published var cashBalanceValue: String = Constants.Default.zeroAmount.rawValue
   @Published var showIndicator: Bool = false
   @Published var toastMessage: String?
   @Published var inlineError: String?
   @Published var numberOfShakes = 0
-  
+  @Published var linkedAccount: [APILinkedSourceData] = []
+  @Published var selectedLinkedAccount: APILinkedSourceData?
   @Published var selectedValue: GridValue?
+  
+  @LazyInjected(\.accountRepository) var accountRepository
+  @LazyInjected(\.accountDataManager) var accountDataManager
+  @LazyInjected(\.externalFundingRepository) var externalFundingRepository
 
   init(kind: Kind) {
     self.kind = kind
   }
 }
 
+// MARK: Enum
 extension MoveMoneyAccountViewModel {
   enum Kind {
     case send
     case receive
   }
+  
+  enum Navigation {
+    case transfer
+    case addBankDebit
+  }
+}
+
+extension MoveMoneyAccountViewModel {
+  func appearOperations() {
+    Task {
+      await refresh()
+    }
+  }
+  
+  func refresh() async {
+    await withTaskGroup(of: Void.self) { group in
+      group.addTask {
+        await self.getListConnectedAccount()
+      }
+    }
+  }
+  
+  func getListConnectedAccount() {
+    Task { @MainActor in
+      do {
+        let sessionID = self.accountDataManager.sessionID
+        let response = try await self.externalFundingRepository.getLinkedAccount(sessionId: sessionID)
+        let linkedAccount = response.linkedSources.compactMap({
+          APILinkedSourceData(
+            name: $0.name,
+            last4: $0.last4,
+            sourceType: APILinkSourceType(rawValue: $0.sourceType.rawString),
+            sourceId: $0.sourceId
+          )
+        })
+        self.linkedAccount = linkedAccount
+        self.selectedLinkedAccount = linkedAccount.first
+      } catch {
+        log.error(error)
+      }
+    }
+  }
+  
+  func callTransferAPI() {
+    guard let linkedAccount = selectedLinkedAccount, let amount = self.amount.asDouble else {
+      toastMessage = LFLocalizable.MoveMoney.Error.noContact
+      return
+    }
+    showIndicator = true
+    Task { @MainActor in
+      defer {
+        showIndicator = false
+      }
+      do {
+        let sessionID = self.accountDataManager.sessionID
+        let parameters = DepositParameters(
+          amount: amount,
+          sourceId: linkedAccount.sourceId,
+          sourceType: linkedAccount.sourceType.rawValue
+        )
+        let response = try await self.externalFundingRepository.deposit(
+          parameters: parameters,
+          sessionId: sessionID
+        )
+        log.info("Deposit \(response)")
+        navigation = .transfer
+      } catch {
+        log.error(error.localizedDescription)
+      }
+    }
+  }
 }
 
 // MARK: UI Helpers
-
 extension MoveMoneyAccountViewModel {
+  func navigateAddAccount() {
+    navigation = .addBankDebit
+  }
+  
+  func title(for account: APILinkedSourceData) -> String {
+    switch account.sourceType {
+    case .externalCard:
+      return LFLocalizable.ConnectedView.Row.externalCard(account.last4)
+    case .externalBank:
+      return LFLocalizable.ConnectedView.Row.externalBank(account.name ?? "", account.last4)
+    }
+  }
+  
   var subtitle: String {
     LFLocalizable.MoveMoney.AvailableBalance.subtitle(
       cashBalanceValue.formattedAmount(prefix: Constants.CurrencyUnit.usd.rawValue)

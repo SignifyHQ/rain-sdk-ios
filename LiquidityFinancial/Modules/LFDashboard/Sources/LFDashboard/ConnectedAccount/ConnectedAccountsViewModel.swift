@@ -32,7 +32,7 @@ extension ConnectedAccountsViewModel {
     case .externalCard:
       return LFLocalizable.ConnectedView.Row.externalCard(account.last4)
     case .externalBank:
-      return LFLocalizable.ConnectedView.Row.externalBank(account.bankName ?? "", account.last4)
+      return LFLocalizable.ConnectedView.Row.externalBank(account.name ?? "", account.last4)
     }
   }
   

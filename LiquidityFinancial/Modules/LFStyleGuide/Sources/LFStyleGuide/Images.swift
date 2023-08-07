@@ -47,6 +47,7 @@ public enum GenImages {
       public static let companyLogo6 = ImageAsset(name: "company-logo-6")
     }
     public static let zerohash = ImageAsset(name: "Zerohash")
+    public static let addMoney = ImageAsset(name: "addMoney")
     public static let calendar = ImageAsset(name: "calendar")
     public static let checkmark = ImageAsset(name: "checkmark")
     public static let dash = ImageAsset(name: "dash")
@@ -91,6 +92,7 @@ public enum GenImages {
     public static let personAndBackgroundDotted = ImageAsset(name: "person.and.background.dotted")
     public static let rewardsCashback = ImageAsset(name: "rewardsCashback")
     public static let rewardsDonation = ImageAsset(name: "rewardsDonation")
+    public static let sendMoney = ImageAsset(name: "sendMoney")
     public static let termsCheckboxDeselected = ImageAsset(name: "termsCheckboxDeselected")
     public static let termsCheckboxSelected = ImageAsset(name: "termsCheckboxSelected")
     public static let usdSymbol = ImageAsset(name: "usdSymbol")

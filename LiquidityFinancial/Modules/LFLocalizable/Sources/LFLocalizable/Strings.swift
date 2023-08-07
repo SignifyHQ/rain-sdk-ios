@@ -330,6 +330,10 @@ public enum LFLocalizable {
       /// Your checking account was deactivated
       public static let message = LFLocalizable.tr("Localizable", "cashTab.deActiveError.message", fallback: "Your checking account was deactivated")
     }
+    public enum Deposit {
+      /// Deposit
+      public static let title = LFLocalizable.tr("Localizable", "cashTab.deposit.title", fallback: "Deposit")
+    }
     public enum LastestTransaction {
       /// Latest Transactions
       public static let title = LFLocalizable.tr("Localizable", "cashTab.lastestTransaction.title", fallback: "Latest Transactions")
@@ -341,6 +345,10 @@ public enum LFLocalizable {
     public enum SeeAll {
       /// See all
       public static let title = LFLocalizable.tr("Localizable", "cashTab.seeAll.title", fallback: "See all")
+    }
+    public enum Withdraw {
+      /// Withdraw
+      public static let title = LFLocalizable.tr("Localizable", "cashTab.withdraw.title", fallback: "Withdraw")
     }
   }
   public enum ChangeAsset {
@@ -742,6 +750,10 @@ public enum LFLocalizable {
     public enum Deposit {
       /// DEPOSIT
       public static let title = LFLocalizable.tr("Localizable", "moveMoney.deposit.title", fallback: "DEPOSIT")
+    }
+    public enum Error {
+      /// no contact selected
+      public static let noContact = LFLocalizable.tr("Localizable", "moveMoney.error.noContact", fallback: "no contact selected")
     }
     public enum Withdraw {
       /// You currently have %@ available to withdraw. Rewards are not available to withdraw until 48 hours after they are earned.

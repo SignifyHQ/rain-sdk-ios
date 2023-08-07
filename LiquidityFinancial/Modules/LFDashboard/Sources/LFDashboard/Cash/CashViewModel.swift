@@ -15,8 +15,11 @@ final class CashViewModel: ObservableObject {
   @Published var selectedAsset: AssetType = .usdc
   @Published var transactions: [String] = [] // FAKE TYPE -> TransactionModel
   @Published var navigation: Navigation?
+  @Published var linkedAccount: [APILinkedSourceData] = []
 
   @LazyInjected(\.accountRepository) var accountRepository
+  @LazyInjected(\.accountDataManager) var accountDataManager
+  @LazyInjected(\.externalFundingRepository) var externalFundingRepository
   
   var currencyType: String {
     "FIAT"
@@ -45,11 +48,34 @@ extension CashViewModel {
       group.addTask {
         await self.loadTransactions()
       }
+      group.addTask {
+        await self.getListConnectedAccount()
+      }
     }
   }
   
   func loadTransactions() async {
     activity = .transactions
+  }
+  
+  func getListConnectedAccount() {
+    Task { @MainActor in
+      do {
+        let sessionID = self.accountDataManager.sessionID
+        let response = try await self.externalFundingRepository.getLinkedAccount(sessionId: sessionID)
+        let linkedAccount = response.linkedSources.compactMap({
+          APILinkedSourceData(
+            name: $0.name,
+            last4: $0.last4,
+            sourceType: APILinkSourceType(rawValue: $0.sourceType.rawString),
+            sourceId: $0.sourceId
+          )
+        })
+        self.linkedAccount = linkedAccount
+      } catch {
+        log.error(error)
+      }
+    }
   }
   
   func onClickedSeeAllButton() {
@@ -90,6 +116,19 @@ extension CashViewModel {
       log.error(error.localizedDescription)
     }
   }
+  
+  func addMoneyTapped() {
+    Haptic.impact(.light).generate()
+    if linkedAccount.isEmpty {
+      // fullScreen = .fundCard
+      // TODO: Will implement later
+    } else {
+      navigation = .addMoney
+    }
+  }
+  
+  func sendMoneyTapped() {
+  }
 }
 
 // MARK: - Types
@@ -103,5 +142,6 @@ extension CashViewModel {
     case bankStatements
     case changeAsset
     case transactions
+    case addMoney
   }
 }

@@ -7,7 +7,6 @@ public protocol LinkedSourcesEntity {
 
 public protocol LinkedSourceDataEntity {
   associatedtype APILinkedSourceTypeEntity: LinkedSourceTypeEntity
-  var bankName: String? { get }
   var name: String? { get }
   var last4: String { get }
   var sourceType: APILinkedSourceTypeEntity { get }

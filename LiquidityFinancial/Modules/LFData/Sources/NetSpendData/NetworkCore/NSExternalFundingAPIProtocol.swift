@@ -6,4 +6,5 @@ public protocol NSExternalFundingAPIProtocol {
   func getACHInfo(sessionID: String) async throws -> APIACHInfo
   func getLinkedSources(sessionID: String) async throws -> APILinkedSourcesResponse
   func deleteLinkedSource(sessionId: String, sourceId: String) async throws -> APIUnlinkBankResponse
+  func deposit(parameters: DepositParameters, sessionId: String) async throws -> APIDepositResponse
 }

@@ -1,4 +1,5 @@
 import Foundation
+import NetSpendData
 import SwiftUI
 import LFStyleGuide
 import LFLocalizable
