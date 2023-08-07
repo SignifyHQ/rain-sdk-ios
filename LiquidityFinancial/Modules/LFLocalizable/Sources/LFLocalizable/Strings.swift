@@ -634,6 +634,14 @@ public enum LFLocalizable {
       public static let title = LFLocalizable.tr("Localizable", "home.rewardsTab.title", fallback: "Rewards")
     }
   }
+  public enum Initial {
+    public enum Label {
+      /// %@ Card
+      public static func title(_ p1: Any) -> String {
+        return LFLocalizable.tr("Localizable", "initial.label.title", String(describing: p1), fallback: "%@ Card")
+      }
+    }
+  }
   public enum Kyc {
     public enum Question {
       /// Please answer the following questions to help us verify your information.

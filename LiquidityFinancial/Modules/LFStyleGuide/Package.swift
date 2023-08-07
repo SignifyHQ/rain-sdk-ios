@@ -15,7 +15,8 @@ let package = Package(
       .package(url: "https://github.com/SwiftGen/SwiftGenPlugin", from: "6.6.2"),
       .package(url: "https://github.com/airbnb/lottie-ios.git", from: "4.2.0"),
       .package(name: "LFUtilities", path: "../LFUtilities"),
-      .package(name: "LFServices", path: "../LFServices")
+      .package(name: "LFServices", path: "../LFServices"),
+      .package(url: "https://github.com/marinofelipe/CurrencyText.git", from: "3.0.0")
     ],
     targets: [
         .target(
@@ -23,7 +24,8 @@ let package = Package(
             dependencies: [
               "LFUtilities",
               "LFServices",
-              .product(name: "Lottie", package: "lottie-ios")
+              .product(name: "Lottie", package: "lottie-ios"),
+              .product(name: "CurrencyTextSwiftUI", package: "CurrencyText")
             ],
             resources: [
               .process("XResources")

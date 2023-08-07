@@ -39,6 +39,7 @@ public enum Colors {
   public static let secondaryBackground = ColorAsset(name: "secondaryBackground")
   public static let separator = ColorAsset(name: "separator")
   public static let whiteText = ColorAsset(name: "whiteText")
+  public static let zerohash = ColorAsset(name: "zerohash")
 }
 // swiftlint:enable identifier_name line_length nesting type_body_length type_name
 

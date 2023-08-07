@@ -2,6 +2,9 @@
 
 // MARK: - Screens
 
+// Initial Screen
+"initial.label.title" = "%@";
+
 // PhoneNumber Screen
 "phoneNumber.textField.title" = "Phone Number";
 "phoneNumber.textField.description" = "Phone Number";

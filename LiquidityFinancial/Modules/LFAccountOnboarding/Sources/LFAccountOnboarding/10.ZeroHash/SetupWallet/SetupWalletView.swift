@@ -53,7 +53,7 @@ struct SetupWalletView: View {
               Spacer()
               
               GenImages.CommonImages.zerohash.swiftUIImage
-                .foregroundColor(Colors.green.swiftUIColor)
+                .foregroundColor(Colors.zerohash.swiftUIColor)
                 .padding(.trailing, 45)
             }
             .frame(

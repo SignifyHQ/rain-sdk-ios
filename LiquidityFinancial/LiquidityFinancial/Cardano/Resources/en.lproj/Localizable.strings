@@ -2,6 +2,9 @@
 
 // MARK: - Screens
 
+// Initial Screen
+"initial.label.title" = "%@";
+
 // PhoneNumber Screen
 "phoneNumber.textField.title" = "Phone Number";
 "phoneNumber.textField.description" = "Phone Number";
@@ -151,7 +154,7 @@
 
 //...SET UP WALLET...
 "setUpWallet.title" = "CREATE YOUR WALLET";
-"setUpWallet.info" = "AvalancheCard has partnered with ZeroHash, a trusted partner in crypto and ZeroHash,a crypto storage and liquidity provider.";
+"setUpWallet.info" = "CardanoCard has partnered with ZeroHash, a trusted partner in crypto and ZeroHash,a crypto storage and liquidity provider.";
 "setUpWallet.termsAndCondition" = "I agree to the Zero Hash and Zero Hash Liquidity Services User Agreement, and I have read and understand the Zero Hash Privacy Policy and Regulatory Disclosures. I understand that the value of any cryptocurrency, including digital assets pegged to fiat currency, commodities, or any other asset, may go to zero.";
 "setUpWallet.risk_disclosure" = "The value of any cryptocurrency, including digital assets pegged to fiat currency, commodities, or any other asset, may go to zero.";
 "setUpWallet.userAgreement" = "User Agreement";
