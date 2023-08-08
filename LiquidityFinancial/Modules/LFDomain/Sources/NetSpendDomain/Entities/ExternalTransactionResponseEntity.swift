@@ -1,5 +1,5 @@
 import Foundation
 
-public protocol DepositResponseEntity {
+public protocol ExternalTransactionResponseEntity {
   var transactionId: String { get }
 }

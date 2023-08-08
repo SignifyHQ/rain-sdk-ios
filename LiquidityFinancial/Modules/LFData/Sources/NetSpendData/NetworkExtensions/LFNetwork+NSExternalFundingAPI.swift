@@ -47,10 +47,10 @@ extension LFNetwork: NSExternalFundingAPIProtocol where R == NSExternalFundingRo
     return APIUnlinkBankResponse(success: statusCode == 200 || statusCode == 204)
   }
   
-  public func deposit(parameters: DepositParameters, sessionId: String) async throws -> APIDepositResponse {
+  public func newTransaction(parameters: ExternalTransactionParameters, type: ExternalTransactionType, sessionId: String) async throws -> APIExternalTransactionResponse {
     return try await self.request(
-      NSExternalFundingRoute.deposit(parameters, sessionId),
-      target: APIDepositResponse.self,
+      NSExternalFundingRoute.newTransaction(parameters, type, sessionId),
+      target: APIExternalTransactionResponse.self,
       decoder: .apiDecoder
     )
   }

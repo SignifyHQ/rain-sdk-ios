@@ -37,6 +37,8 @@ struct CashView: View {
           // TransactionListView(type: .cash)
       case .addMoney:
         MoveMoneyAccountView(kind: .receive)
+      case .sendMoney:
+        MoveMoneyAccountView(kind: .send)
       }
     }
   }

@@ -97,13 +97,15 @@ extension MoveMoneyAccountViewModel {
       }
       do {
         let sessionID = self.accountDataManager.sessionID
-        let parameters = DepositParameters(
+        let parameters = ExternalTransactionParameters(
           amount: amount,
           sourceId: linkedAccount.sourceId,
           sourceType: linkedAccount.sourceType.rawValue
         )
-        let response = try await self.externalFundingRepository.deposit(
+        let type: ExternalTransactionType = kind == .receive ? .deposit : .withdraw
+        let response = try await self.externalFundingRepository.newExternalTransaction(
           parameters: parameters,
+          type: type,
           sessionId: sessionID
         )
         log.info("Deposit \(response)")

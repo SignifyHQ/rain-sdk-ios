@@ -128,6 +128,13 @@ extension CashViewModel {
   }
   
   func sendMoneyTapped() {
+    Haptic.impact(.light).generate()
+    if linkedAccount.isEmpty {
+      // fullScreen = .fundCard
+      // TODO: Will implement later
+    } else {
+      navigation = .sendMoney
+    }
   }
 }
 
@@ -143,5 +150,6 @@ extension CashViewModel {
     case changeAsset
     case transactions
     case addMoney
+    case sendMoney
   }
 }

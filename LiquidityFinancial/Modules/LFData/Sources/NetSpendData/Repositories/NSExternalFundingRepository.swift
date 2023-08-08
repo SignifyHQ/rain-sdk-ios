@@ -38,13 +38,22 @@ public class NSExternalFundingRepository: NSExternalFundingRepositoryProtocol {
     try await externalFundingAPI.deleteLinkedSource(sessionId: sessionId, sourceId: sourceId)
   }
   
-  public func deposit(parameters: DepositParametersEntity, sessionId: String) async throws -> DepositResponseEntity {
-    let depositParameters = DepositParameters(
+  public func newExternalTransaction(
+    parameters: ExternalTransactionParametersEntity,
+    type: ExternalTransactionTypeEntity,
+    sessionId: String
+  ) async throws -> ExternalTransactionResponseEntity {
+    let transactionParameters = ExternalTransactionParameters(
       amount: parameters.amount,
       sourceId: parameters.sourceId,
       sourceType: parameters.sourceType
     )
-    return try await externalFundingAPI.deposit(parameters: depositParameters, sessionId: sessionId)
+    let transactionType = ExternalTransactionType(rawValue: type.rawString) ?? .deposit
+    return try await externalFundingAPI.newTransaction(
+      parameters: transactionParameters,
+      type: transactionType,
+      sessionId: sessionId
+    )
   }
 }
 

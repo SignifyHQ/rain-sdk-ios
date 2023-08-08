@@ -6,5 +6,9 @@ public protocol NSExternalFundingRepositoryProtocol {
   func getACHInfo(sessionID: String) async throws -> ACHInfoEntity
   func getLinkedAccount(sessionId: String) async throws -> any LinkedSourcesEntity
   func deleteLinkedAccount(sessionId: String, sourceId: String) async throws -> UnlinkBankEntity
-  func deposit(parameters: DepositParametersEntity, sessionId: String) async throws -> DepositResponseEntity
+  func newExternalTransaction(
+    parameters: ExternalTransactionParametersEntity,
+    type: ExternalTransactionTypeEntity,
+    sessionId: String
+  ) async throws -> ExternalTransactionResponseEntity
 }
