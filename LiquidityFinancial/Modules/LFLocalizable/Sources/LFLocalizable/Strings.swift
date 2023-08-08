@@ -253,6 +253,10 @@ public enum LFLocalizable {
       /// Log Out
       public static let title = LFLocalizable.tr("Localizable", "button.logout.title", fallback: "Log Out")
     }
+    public enum No {
+      /// No
+      public static let title = LFLocalizable.tr("Localizable", "button.no.title", fallback: "No")
+    }
     public enum NotNow {
       /// Not now
       public static let title = LFLocalizable.tr("Localizable", "button.notNow.title", fallback: "Not now")
@@ -269,6 +273,10 @@ public enum LFLocalizable {
       /// Trade Now and Get
       /// Your Life
       public static let text = LFLocalizable.tr("Localizable", "button.title.text", fallback: "Trade Now and Get\nYour Life")
+    }
+    public enum Yes {
+      /// Yes
+      public static let title = LFLocalizable.tr("Localizable", "button.yes.title", fallback: "Yes")
     }
   }
   public enum Card {
@@ -834,6 +842,96 @@ public enum LFLocalizable {
       public static let description = LFLocalizable.tr("Localizable", "popup.uploadDocument.description", fallback: "Thank you, we have received your document")
       /// DOCUMENTS UPLOADED
       public static let title = LFLocalizable.tr("Localizable", "popup.uploadDocument.title", fallback: "DOCUMENTS UPLOADED")
+    }
+  }
+  public enum Profile {
+    public enum Accountsettings {
+      /// Account & Settings
+      public static let title = LFLocalizable.tr("Localizable", "profile.accountsettings.title", fallback: "Account & Settings")
+    }
+    public enum Address {
+      /// Address
+      public static let title = LFLocalizable.tr("Localizable", "profile.address.title", fallback: "Address")
+    }
+    public enum Atm {
+      /// ATM's Nearby
+      public static let title = LFLocalizable.tr("Localizable", "profile.atm.title", fallback: "ATM's Nearby")
+    }
+    public enum ContributionToast {
+      /// Failed to load your donations
+      public static let message = LFLocalizable.tr("Localizable", "profile.contributionToast.message", fallback: "Failed to load your donations")
+    }
+    public enum DeleteAccount {
+      /// Are you sure you want to delete your account?
+      public static let message = LFLocalizable.tr("Localizable", "profile.deleteAccount.message", fallback: "Are you sure you want to delete your account?")
+      /// Delete Account
+      public static let title = LFLocalizable.tr("Localizable", "profile.deleteAccount.title", fallback: "Delete Account")
+    }
+    public enum DepositLimits {
+      /// Deposit Limits
+      public static let title = LFLocalizable.tr("Localizable", "profile.depositLimits.title", fallback: "Deposit Limits")
+    }
+    public enum Email {
+      /// Email
+      public static let title = LFLocalizable.tr("Localizable", "profile.email.title", fallback: "Email")
+    }
+    public enum Help {
+      /// Help & support
+      public static let title = LFLocalizable.tr("Localizable", "profile.help.title", fallback: "Help & support")
+    }
+    public enum Logout {
+      /// Are you sure you want to log out?
+      public static let message = LFLocalizable.tr("Localizable", "profile.logout.message", fallback: "Are you sure you want to log out?")
+      /// Log Out
+      public static let title = LFLocalizable.tr("Localizable", "profile.logout.title", fallback: "Log Out")
+    }
+    public enum Notifications {
+      /// Notifications
+      public static let title = LFLocalizable.tr("Localizable", "profile.notifications.title", fallback: "Notifications")
+    }
+    public enum Or {
+      /// OR
+      public static let title = LFLocalizable.tr("Localizable", "profile.or.title", fallback: "OR")
+    }
+    public enum PhoneNumber {
+      /// Phone Number
+      public static let title = LFLocalizable.tr("Localizable", "profile.phoneNumber.title", fallback: "Phone Number")
+    }
+    public enum Referrals {
+      /// Earn Doge with Friends
+      public static let message = LFLocalizable.tr("Localizable", "profile.referrals.message", fallback: "Earn Doge with Friends")
+      /// Invite Friends
+      public static let title = LFLocalizable.tr("Localizable", "profile.referrals.title", fallback: "Invite Friends")
+    }
+    public enum Rewards {
+      /// Current Rewards
+      public static let title = LFLocalizable.tr("Localizable", "profile.rewards.title", fallback: "Current Rewards")
+    }
+    public enum Stickers {
+      /// Stickers
+      public static let title = LFLocalizable.tr("Localizable", "profile.stickers.title", fallback: "Stickers")
+    }
+    public enum Taxes {
+      /// Taxes
+      public static let title = LFLocalizable.tr("Localizable", "profile.taxes.title", fallback: "Taxes")
+    }
+    public enum Toolbar {
+      /// Profile
+      public static let title = LFLocalizable.tr("Localizable", "profile.toolbar.title", fallback: "Profile")
+    }
+    public enum TotalDonated {
+      /// Total donated
+      public static let title = LFLocalizable.tr("Localizable", "profile.totalDonated.title", fallback: "Total donated")
+    }
+    public enum TotalDonations {
+      /// Total donations
+      public static let title = LFLocalizable.tr("Localizable", "profile.totalDonations.title", fallback: "Total donations")
+    }
+    public enum Version {
+      /// Version %@
+      public static func title(_ p1: Any) -> String {
+        return LFLocalizable.tr("Localizable", "profile.version.title", String(describing: p1), fallback: "Version %@")
+      }
     }
   }
   public enum Question {

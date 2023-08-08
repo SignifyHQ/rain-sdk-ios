@@ -40,6 +40,31 @@ public extension String {
     ) ?? ""
   }
   
+  func substring(start: Int, end: Int) -> String {
+    if start < 0 || end > count {
+      return ""
+    }
+    let start = index(startIndex, offsetBy: start)
+    let end = index(startIndex, offsetBy: end)
+    let range = start ..< end
+    return String(self[range])
+  }
+
+  func formattedUSPhoneNumber() -> String {
+    let trimmed = replacingOccurrences(of: Constants.Default.regionCode.rawValue, with: "")
+    var str = trimmed.numberString
+    str = str.count > Constants.MaxCharacterLimit.phoneNumber.value ? str.substring(start: 0, end: Constants.MaxCharacterLimit.phoneNumber.value) : str
+    
+    if str.count > 6 {
+      let firstSubString = str.substring(start: 0, end: 3)
+      let secondSubString = str.substring(start: 3, end: 6)
+      let thirdSubString = str.substring(start: 6, end: str.count)
+      let num = "(\(firstSubString)) -\(secondSubString)-\(thirdSubString)"
+      return num
+    }
+    return str
+  }
+  
   func withQuotes() -> String {
     "\"\(self)\""
   }
@@ -146,6 +171,11 @@ public extension String {
 }
 
 public extension String {
+  var numberString: String {
+    let okayChars = Set("1234567890")
+    return filter { okayChars.contains($0) }
+  }
+
   var asDouble: Double? {
     Double(self)
   }

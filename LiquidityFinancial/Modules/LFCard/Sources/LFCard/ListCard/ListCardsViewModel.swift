@@ -6,7 +6,6 @@ import NetSpendDomain
 import LFUtilities
 import OnboardingData
 import AccountData
-import NetSpendData
 import PassKit
 
 @MainActor

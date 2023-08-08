@@ -16,3 +16,4 @@ NETSPEND_DISCLOSURE_URL = https:/$()/dogecard.co/legal#privacy-policy
 PATHWARD_USER_URL = https:/$()/dogecard.co/legal#privacy-policy
 PATHWARD_PRIVACY_URL = https:/$()/dogecard.co/legal#privacy-policy
 PATHWARD_DISCLOSURE_URL = https:/$()/dogecard.co/legal#privacy-policy
+CHARITY_ENABLED = false

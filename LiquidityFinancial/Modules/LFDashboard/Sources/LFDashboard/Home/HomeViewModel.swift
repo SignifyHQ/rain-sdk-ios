@@ -1,22 +1,49 @@
+import UIKit
 import Foundation
 import Factory
 import OnboardingData
 import AccountData
 import LFUtilities
-import AuthorizationManager
 
 @MainActor
 public final class HomeViewModel: ObservableObject {
-  @Published var tabSelected: TabOption = .cash
-  @Published var isShowGearButton: Bool = false
-  @LazyInjected(\.authorizationManager) var authorizationManager
+  @LazyInjected(\.accountRepository) var accountRepository
   @LazyInjected(\.accountDataManager) var accountDataManager
+  
+  @Published var isShowGearButton: Bool = false
+  @Published var tabSelected: TabOption = .cash
+  @Published var navigation: Navigation?
   
 #if DEBUG
   var countMangicLogout: Int = 0
 #endif
   
-  public init() { }
+  public init() {
+    getUser()
+  }
+}
+
+// MARK: - API
+extension HomeViewModel {
+  private func getUser() {
+    Task {
+      do {
+        let user = try await accountRepository.getUser(
+          deviceId: UIDevice.current.identifierForVendor?.uuidString ?? ""
+        )
+        accountDataManager.update(email: user.email)
+        accountDataManager.update(phone: user.phone)
+        accountDataManager.update(firstName: user.firstName)
+        accountDataManager.update(lastName: user.lastName)
+        accountDataManager.update(addressEntity: user.addressEntity)
+        if let firstName = user.firstName, let lastName = user.lastName {
+          accountDataManager.update(fullName: firstName + " " + lastName)
+        }
+      } catch {
+        log.error(error.localizedDescription)
+      }
+    }
+  }
 }
 
 // MARK: - View Helpers
@@ -26,7 +53,7 @@ extension HomeViewModel {
   }
   
   func onClickedProfileButton() {
-    logout()
+    navigation = .profile
   }
   
   func onClickedGearButton() {
@@ -34,15 +61,11 @@ extension HomeViewModel {
   }
 }
 
-private extension HomeViewModel {
-  func logout() {
-#if DEBUG
-    countMangicLogout += 1
-    if countMangicLogout >= 5 {
-      countMangicLogout = 0
-      authorizationManager.clearToken()
-      accountDataManager.clearUserSession()
-    }
-#endif
+// MARK: - Types
+extension HomeViewModel {
+  enum Navigation {
+    case searchCauses
+    case editRewards
+    case profile
   }
 }

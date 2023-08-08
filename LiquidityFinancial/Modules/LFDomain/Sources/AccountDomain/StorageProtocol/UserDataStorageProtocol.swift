@@ -6,12 +6,14 @@ public protocol AccountDataStorageProtocol {
   var sessionID: String { get }
   var userNameDisplay: String { get set }
   var userEmail: String { get set }
+  var addressDetail: String { get }
   
   func update(firstName: String?)
   func update(lastName: String?)
   func update(phone: String?)
   func update(email: String?)
   func update(fullName: String?)
+  func update(addressEntity: AddressEntity?)
   func update(dateOfBirth: String?)
   func update(addressLine1: String?)
   func update(addressLine2: String?)

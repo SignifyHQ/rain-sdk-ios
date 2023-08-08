@@ -26,6 +26,10 @@ public enum LFUtility {
   public static var pathwardUserAgreement: String = try! LFConfiguration.value(for: "PATHWARD_USER_URL")
   public static var pathwardPrivacyPolicy: String = try! LFConfiguration.value(for: "PATHWARD_PRIVACY_URL")
   public static var pathwardRegulatoryDisclosure: String = try! LFConfiguration.value(for: "PATHWARD_DISCLOSURE_URL")
+  public static let marketingVersion = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "0.0.0"
+  public static let bundleVersion = Bundle.main.infoDictionary?["CFBundleVersion"] as? String ?? "unknown"
+  public static let bundleName = Bundle.main.infoDictionary?["CFBundleName"] as? String ?? "unkwnown"
+
 }
 
 public enum LFConfiguration {

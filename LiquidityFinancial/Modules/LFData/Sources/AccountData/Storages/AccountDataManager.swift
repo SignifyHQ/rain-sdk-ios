@@ -2,6 +2,15 @@ import Foundation
 import AccountDomain
 
 public class AccountDataManager: AccountDataStorageProtocol {
+  public func update(addressEntity: AddressEntity?) {
+    update(addressLine1: addressEntity?.line1)
+    update(addressLine2: addressEntity?.line2)
+    update(city: addressEntity?.city)
+    update(state: addressEntity?.state)
+    update(country: addressEntity?.country)
+    update(postalCode: addressEntity?.postalCode)
+  }
+  
   public var userNameDisplay: String {
     get {
       UserDefaults.userNameDisplay
@@ -26,6 +35,16 @@ public class AccountDataManager: AccountDataStorageProtocol {
   
   public var sessionID: String {
     UserDefaults.userSessionID
+  }
+  
+  public var addressDetail: String {
+    let userData = self.userInfomationData
+    let stateCode = "\(userData.state ?? "") - \(userData.postalCode ?? "")"
+    let addressDetails = [userData.addressLine1, userData.addressLine2, userData.city, stateCode, userData.country]
+    return addressDetails
+      .compactMap { $0 }
+      .filter { !$0.isEmpty }
+      .joined(separator: ", ")
   }
   
   public private(set) var userInfomationData: UserInfomationDataProtocol = UserInfomationData()

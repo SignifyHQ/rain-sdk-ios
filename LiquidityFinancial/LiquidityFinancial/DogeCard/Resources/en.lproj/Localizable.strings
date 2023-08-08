@@ -471,6 +471,31 @@
 "bankTransfers.accountNumber.title" = "Account number";
 "bankTransfers.disclosure.message" = "Some banks require a one-time test deposit to verify your account. If so, check your %@Card transactions after 1-2 days, and enter the test deposit amounts in the bank’s app or website.";
 
+// Profile
+"profile.toolbar.title" = "Profile";
+"profile.totalDonations.title" = "Total donations";
+"profile.totalDonated.title" = "Total donated";
+"profile.stickers.title" = "Stickers";
+"profile.accountsettings.title" = "Account & Settings";
+"profile.phoneNumber.title" = "Phone Number";
+"profile.email.title" = "Email";
+"profile.address.title" = "Address";
+"profile.depositLimits.title" = "Deposit Limits";
+"profile.help.title" = "Help & support";
+"profile.rewards.title" = "Current Rewards";
+"profile.atm.title" = "ATM's Nearby";
+"profile.taxes.title" = "Taxes";
+"profile.or.title" = "OR";
+"profile.deleteAccount.title" = "Delete Account";
+"profile.version.title" = "Version %@";
+"profile.notifications.title" = "Notifications";
+"profile.contributionToast.message" = "Failed to load your donations";
+"profile.deleteAccount.message" = "Are you sure you want to delete your account?";
+"profile.referrals.title" = "Invite Friends";
+"profile.referrals.message" = "Earn Doge with Friends";
+"profile.logout.title" = "Log Out";
+"profile.logout.message" = "Are you sure you want to log out?";
+
 // MARK: - Common
 
 // Terms
@@ -494,6 +519,8 @@
 "button.notNow.title" = "Not now";
 "button.done.title" = "Done";
 "button.back.title" = "Back";
+"button.no.title" = "No";
+"button.yes.title" = "Yes";
 
 // Grid Value
 "grid_value.crypto" = "%@ AVAX";

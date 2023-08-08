@@ -30,6 +30,8 @@
 	<string>$BITRISE_BUILD_NUMBER</string>
 	<key>CONSENT_URL</key>
 	<string>$(CONSENT_URL)</string>
+	<key>CHARITY_ENABLED</key>
+	<string>$(CHARITY_ENABLED)</string>
 	<key>DISCLOSURE_URL</key>
 	<string>$(DISCLOSURE_URL)</string>
 	<key>ITSAppUsesNonExemptEncryption</key>

@@ -33,16 +33,16 @@ public struct HomeView: View {
         leadingNavigationBarView
       }
     }
-    //    .navigationLink(item: $viewModel.navigation) { item in
-    //      switch item {
-    //        case let .searchCauses(vm):
-    //          SearchCausesView(viewModel: vm)
-    //        case let .editRewards(vm):
-    //          EditRewardsView(viewModel: vm)
-    //        case .profile:
-    //          ProfileView()
-    //      }
-    //    }
+    .navigationLink(item: $viewModel.navigation) { item in
+      switch item {
+      case .searchCauses:
+        EmptyView() // TODO: - Will be implemented later
+      case .editRewards:
+        EmptyView() // TODO: - Will be implemented later
+      case .profile:
+        ProfileView()
+      }
+    }
     //    .fullScreenCover(item: $viewModel.fullScreen) { item in
     //      switch item {
     //        case let .newUser(viewModel):
