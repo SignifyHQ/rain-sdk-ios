@@ -6,7 +6,7 @@ class ServiceConditionModel: Identifiable {
   let message: String
   let attributeInformation: [String: String]
   
-  init(id: String, message: String, attributeInformation: [String : String], selected: Bool = false) {
+  init(id: String, message: String, attributeInformation: [String: String], selected: Bool = false) {
     self.id = id
     self.selected = selected
     self.message = message

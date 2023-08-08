@@ -43,7 +43,7 @@ struct ProfileView: View {
       case .depositLimits:
         EmptyView() // TODO: Will be implemented later
       case .referrals:
-        EmptyView() // TODO: Will be implemented later
+        ReferralsView()
       }
     }
     .popup(item: $viewModel.popup) { popup in

@@ -18,8 +18,7 @@ final class AgreementViewModel: ObservableObject {
   init() {
     mapToServiceCondition()
   }
-  
-  
+    
   func openIntercom() {
     intercomService.openIntercom()
   }
@@ -42,7 +41,7 @@ extension AgreementViewModel {
 // MARK: Private Functions
 private extension AgreementViewModel {
   func isEnableButton() {
-    isDisableButton = agreements.first(where: { $0.selected == false }) != nil
+    isDisableButton = agreements.contains(where: { $0.selected == false })
   }
   
   func mapToServiceCondition() {
@@ -57,7 +56,7 @@ private extension AgreementViewModel {
         let condition = ServiceConditionModel(
           id: item.id,
           message: message,
-          attributeInformation: [key : link]
+          attributeInformation: [key: link]
         )
         agreementList.append(condition)
       }

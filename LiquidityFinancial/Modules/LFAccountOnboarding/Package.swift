@@ -45,7 +45,7 @@ let package = Package(
           name: "DogeOnboarding",
           dependencies: [
             "LFUtilities", "LFStyleGuide", "LFLocalizable", "Factory",
-            .product(name: "NetSpendData", package: "LFData"),
+            .product(name: "NetSpendData", package: "LFData")
           ],
           resources: [
             .process("ZResources")

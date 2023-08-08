@@ -129,6 +129,7 @@ public enum GenImages {
     public static let icKycQuestionCheck = ImageAsset(name: "ic_kyc_question_check")
     public static let icLogo = ImageAsset(name: "ic_logo")
     public static let physicalCard = ImageAsset(name: "physicalCard")
+    public static let referralsInbox = ImageAsset(name: "referralsInbox")
     public static let statusCompleted = ImageAsset(name: "statusCompleted")
     public static let statusPending = ImageAsset(name: "statusPending")
     public static let unavailableCard = ImageAsset(name: "unavailableCard")

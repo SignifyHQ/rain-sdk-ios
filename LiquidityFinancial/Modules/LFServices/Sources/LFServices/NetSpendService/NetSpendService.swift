@@ -3,7 +3,8 @@ import NetspendSdk
 import FraudForce
 import LFUtilities
 
-class NetSpendService {
+// swiftlint:disable force_unwrapping
+enum NetSpendService {
   
   static func kickoffNetspend(networkEnvironment: NetworkEnvironment) {
     let netspendSdkColorGroup = NetspendSdkColorGroup(
@@ -66,3 +67,4 @@ class NetSpendService {
   }
   
 }
+// swiftlint:enable force_unwrapping

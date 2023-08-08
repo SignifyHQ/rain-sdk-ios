@@ -6,7 +6,7 @@ public class EmailHelper: NSObject, MFMailComposeViewControllerDelegate {
   public static let shared = EmailHelper()
   private override init() {}
   
-  public func sendEmail(subject:String, body:String, to:String) -> Bool {
+  public func sendEmail(subject: String, body: String, toSubject: String) -> Bool {
     if !MFMailComposeViewController.canSendMail() {
       log.error("No mail account found, Please setup a mail account")
       return false
@@ -16,7 +16,7 @@ public class EmailHelper: NSObject, MFMailComposeViewControllerDelegate {
     
     picker.setSubject(subject)
     picker.setMessageBody(body, isHTML: true)
-    picker.setToRecipients([to])
+    picker.setToRecipients([toSubject])
     picker.mailComposeDelegate = self
     
     EmailHelper.getRootViewController()?.present(picker, animated: true, completion: nil)
@@ -39,8 +39,7 @@ extension UIApplication {
       .map { $0 as? UIWindowScene }
       .compactMap { $0 }
       .first?.windows
-      .filter { $0.isKeyWindow }
-      .first
+      .first(where: { $0.isKeyWindow })
   }
   
   var rootViewController: UIViewController? {

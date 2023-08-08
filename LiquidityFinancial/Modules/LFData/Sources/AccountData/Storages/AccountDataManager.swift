@@ -49,6 +49,10 @@ public class AccountDataManager: AccountDataStorageProtocol {
   
   public private(set) var userInfomationData: UserInfomationDataProtocol = UserInfomationData()
   
+  public func update(userID: String?) {
+    self.userInfomationData.userID = userID
+  }
+  
   public func update(firstName: String?) {
     self.userInfomationData.firstName = firstName
   }
@@ -107,6 +111,10 @@ public class AccountDataManager: AccountDataStorageProtocol {
   
   public func update(passport: String?) {
     self.userInfomationData.passport = passport
+  }
+  
+  public func update(referralLink: String?) {
+    self.userInfomationData.referralLink = referralLink
   }
   
   public func stored(phone: String) {

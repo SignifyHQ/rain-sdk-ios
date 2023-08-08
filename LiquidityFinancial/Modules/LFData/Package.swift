@@ -21,7 +21,7 @@ let package = Package(
       targets: ["NetSpendData"]),
     .library(
       name: "AccountData",
-      targets: ["AccountData"]),
+      targets: ["AccountData"])
   ],
   dependencies: [
     .package(name: "LFDomain", path: "../LFDomain"),

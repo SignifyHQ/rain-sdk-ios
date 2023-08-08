@@ -496,6 +496,19 @@
 "profile.logout.title" = "Log Out";
 "profile.logout.message" = "Are you sure you want to log out?";
 
+// Referral
+"referral.screen.title" = "MAKE DONATIONS WITH FRIENDS";
+"referral.info.message" = "Send your invite link to a friend, and we will match their donations for the first %@, or up to %@. This is tax deductable donations in your name.";
+"referral.example.crypto" = "If the friend you invited earns 500 %@ in a week, you will also get 500 Doge. Your bonus will be paid each Friday to your %@Card wallet.";
+"referral.example.donation" = "If your friend donates %@ in the first %@, we will donate %@ to your selected cause. The donation will be made in your name and is tax deductable.";
+"referral.example.title" = "HOW IT WORKS";
+"referral.campaign.day" = "%d days";
+"referral.campaign.week" = "%d weeks";
+"referral.error.message" = "We are unable to fetch the referral campaigns now. Please try again.";
+"referral.send.buttonTitle" = "Send invite link";
+"referral.copy.buttonTitle" = "Copy invite link";
+"referral.toast.message" = "Invite link copied to clipboard.";
+
 // MARK: - Common
 
 // Terms
@@ -521,6 +534,7 @@
 "button.back.title" = "Back";
 "button.no.title" = "No";
 "button.yes.title" = "Yes";
+"button.retry.title" = "Retry";
 
 // Grid Value
 "grid_value.crypto" = "%@ AVAX";

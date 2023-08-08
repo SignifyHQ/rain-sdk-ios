@@ -61,9 +61,9 @@ extension ManualSetupViewModel {
           afterDecimal = String(afterDecimal.prefix(2))
         }
         if Int(afterDecimal) == nil {
-          paycheckPercentage = "\(preDecimal)\(Locale.current.decimalSeparator)"
+          paycheckPercentage = "\(preDecimal)\(String(describing: Locale.current.decimalSeparator))"
         } else {
-          paycheckPercentage = "\(preDecimal)\(Locale.current.decimalSeparator)\(afterDecimal)"
+          paycheckPercentage = "\(preDecimal)\(String(describing: Locale.current.decimalSeparator))\(afterDecimal)"
         }
       }
     }

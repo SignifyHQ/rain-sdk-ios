@@ -8,4 +8,5 @@ public protocol LFUser {
   var phone: String? { get }
   var email: String? { get }
   var addressEntity: AddressEntity? { get }
+  var referralLink: String? { get }
 }

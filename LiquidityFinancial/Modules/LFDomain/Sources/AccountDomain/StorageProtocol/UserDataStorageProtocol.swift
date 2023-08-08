@@ -24,12 +24,15 @@ public protocol AccountDataStorageProtocol {
   func update(state: String?)
   func update(postalCode: String?)
   func update(country: String?)
+  func update(userID: String?)
+  func update(referralLink: String?)
   func stored(phone: String)
   func stored(sessionID: String)
   func clearUserSession()
 }
 
 public protocol UserInfomationDataProtocol {
+  var userID: String? { get set }
   var firstName: String? { get set }
   var lastName: String? { get set }
   var middleName: String? { get set }
@@ -47,4 +50,5 @@ public protocol UserInfomationDataProtocol {
   var encryptedData: String? { get set }
   var ssn: String? { get set }
   var passport: String? { get set }
+  var referralLink: String? { get set }
 }

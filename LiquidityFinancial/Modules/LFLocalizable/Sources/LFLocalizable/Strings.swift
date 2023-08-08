@@ -265,6 +265,10 @@ public enum LFLocalizable {
       /// OK
       public static let title = LFLocalizable.tr("Localizable", "button.ok.title", fallback: "OK")
     }
+    public enum Retry {
+      /// Retry
+      public static let title = LFLocalizable.tr("Localizable", "button.retry.title", fallback: "Retry")
+    }
     public enum Skip {
       /// Skip
       public static let title = LFLocalizable.tr("Localizable", "button.skip.title", fallback: "Skip")
@@ -962,6 +966,56 @@ public enum LFLocalizable {
       }
       /// Set up your account
       public static let title = LFLocalizable.tr("Localizable", "question.screen.title", fallback: "Set up your account")
+    }
+  }
+  public enum Referral {
+    public enum Campaign {
+      /// %d days
+      public static func day(_ p1: Int) -> String {
+        return LFLocalizable.tr("Localizable", "referral.campaign.day", p1, fallback: "%d days")
+      }
+      /// %d weeks
+      public static func week(_ p1: Int) -> String {
+        return LFLocalizable.tr("Localizable", "referral.campaign.week", p1, fallback: "%d weeks")
+      }
+    }
+    public enum Copy {
+      /// Copy invite link
+      public static let buttonTitle = LFLocalizable.tr("Localizable", "referral.copy.buttonTitle", fallback: "Copy invite link")
+    }
+    public enum Error {
+      /// We are unable to fetch the referral campaigns now. Please try again.
+      public static let message = LFLocalizable.tr("Localizable", "referral.error.message", fallback: "We are unable to fetch the referral campaigns now. Please try again.")
+    }
+    public enum Example {
+      /// If the friend you invited earns 500 %@ in a week, you will also get 500 AVAX. Your bonus will be paid each Friday to your %@Card wallet.
+      public static func crypto(_ p1: Any, _ p2: Any) -> String {
+        return LFLocalizable.tr("Localizable", "referral.example.crypto", String(describing: p1), String(describing: p2), fallback: "If the friend you invited earns 500 %@ in a week, you will also get 500 AVAX. Your bonus will be paid each Friday to your %@Card wallet.")
+      }
+      /// If your friend donates %@ in the first %@, we will donate %@ to your selected cause. The donation will be made in your name and is tax deductable.
+      public static func donation(_ p1: Any, _ p2: Any, _ p3: Any) -> String {
+        return LFLocalizable.tr("Localizable", "referral.example.donation", String(describing: p1), String(describing: p2), String(describing: p3), fallback: "If your friend donates %@ in the first %@, we will donate %@ to your selected cause. The donation will be made in your name and is tax deductable.")
+      }
+      /// HOW IT WORKS
+      public static let title = LFLocalizable.tr("Localizable", "referral.example.title", fallback: "HOW IT WORKS")
+    }
+    public enum Info {
+      /// Send your invite link to a friend, and we will match their donations for the first %@, or up to %@. This is tax deductable donations in your name.
+      public static func message(_ p1: Any, _ p2: Any) -> String {
+        return LFLocalizable.tr("Localizable", "referral.info.message", String(describing: p1), String(describing: p2), fallback: "Send your invite link to a friend, and we will match their donations for the first %@, or up to %@. This is tax deductable donations in your name.")
+      }
+    }
+    public enum Screen {
+      /// MAKE DONATIONS WITH FRIENDS
+      public static let title = LFLocalizable.tr("Localizable", "referral.screen.title", fallback: "MAKE DONATIONS WITH FRIENDS")
+    }
+    public enum Send {
+      /// Send invite link
+      public static let buttonTitle = LFLocalizable.tr("Localizable", "referral.send.buttonTitle", fallback: "Send invite link")
+    }
+    public enum Toast {
+      /// Invite link copied to clipboard.
+      public static let message = LFLocalizable.tr("Localizable", "referral.toast.message", fallback: "Invite link copied to clipboard.")
     }
   }
   public enum RewardTerms {

@@ -5,7 +5,6 @@ import NetSpendData
 import LFUtilities
 import Combine
 
-
 class DogeCardWelcomeViewModel: ObservableObject {
   
   @Injected(\.netspendRepository) var netspendRepository
