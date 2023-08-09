@@ -517,6 +517,9 @@
 "assetView.today" = "Today";
 "assetView.disclosure" = "Cryptocurrency services powered by Zero Hash";
 "assetView.see_all" = "See all";
+"assetView.transfer_popup.title" = "TRANSFER CARDANO";
+"assetView.send.title" = "Send";
+"assetView.receive.title" = "Receive";
 
 // MARK: - Common
 

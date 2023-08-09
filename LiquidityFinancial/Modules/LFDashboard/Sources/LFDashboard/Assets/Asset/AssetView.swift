@@ -15,6 +15,12 @@ struct AssetView: View {
 
   var body: some View {
     content
+      .blur(radius: viewModel.showTransferSheet ? 16 : 0)
+      .sheet(isPresented: $viewModel.showTransferSheet) {
+        cryptoTransfer
+          .customPresentationDetents(height: 228)
+          .ignoresSafeArea(edges: .bottom)
+      }
       .background(Colors.background.swiftUIColor)
   }
 
@@ -24,14 +30,23 @@ struct AssetView: View {
         balance
         priceView
         HStack(spacing: 10) {
-          iconTextButton(title: LFLocalizable.AssetView.Buy.title, image: GenImages.CommonImages.buy) {
+          iconTextButton(
+            title: LFLocalizable.AssetView.Buy.title,
+            image: GenImages.CommonImages.buy
+          ) {
             // TODO: buy crypto
           }
-          iconTextButton(title: LFLocalizable.AssetView.Sell.title, image: GenImages.CommonImages.sell) {
+          iconTextButton(
+            title: LFLocalizable.AssetView.Sell.title,
+            image: GenImages.CommonImages.sell
+          ) {
             // TODO: sell crypto
           }
-          iconTextButton(title: LFLocalizable.AssetView.Transfer.title, image: GenImages.CommonImages.transfer) {
-            // TODO: Transfer
+          iconTextButton(
+            title: LFLocalizable.AssetView.Transfer.title,
+            image: GenImages.CommonImages.transfer
+          ) {
+            viewModel.transferButtonTapped()
           }
         }
         .padding(.top, 6)
@@ -151,4 +166,52 @@ struct AssetView: View {
     .cornerRadius(10)
   }
 
+}
+
+private extension AssetView {
+  
+  private var cryptoTransfer: some View {
+    VStack(spacing: 10) {
+      RoundedRectangle(cornerRadius: 4)
+        .foregroundColor(Colors.label.swiftUIColor.opacity(0.75))
+        .frame(width: 32, height: 4)
+        .padding(.top, 6)
+      Text(LFLocalizable.AssetView.TransferPopup.title)
+        .foregroundColor(Colors.label.swiftUIColor)
+        .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.main.value))
+        .padding(.vertical, 14)
+      transferCell(
+        with: GenImages.CommonImages.sell,
+        and: LFLocalizable.AssetView.Send.title
+      ) {
+        // TODO: send button tapped
+      }
+      transferCell(
+        with: GenImages.CommonImages.buy,
+        and: LFLocalizable.AssetView.Receive.title
+      ) {
+        // TODO: Receive button tapped
+      }
+      Spacer()
+    }
+    .padding(.horizontal, 30)
+    .background(Colors.secondaryBackground.swiftUIColor)
+  }
+  
+  private func transferCell(with image: ImageAsset, and title: String, action: @escaping () -> Void) -> some View {
+    Button(action: action) {
+      HStack(spacing: 12) {
+        image.swiftUIImage
+        Text(title)
+          .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.regular.value))
+        Spacer()
+        GenImages.Images.forwardButton.swiftUIImage
+      }
+      .foregroundColor(Colors.label.swiftUIColor)
+      .frame(height: 56)
+      .padding(.horizontal, 16)
+      .background(Colors.buttons.swiftUIColor)
+      .cornerRadius(9)
+    }
+  }
 }

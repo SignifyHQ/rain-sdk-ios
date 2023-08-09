@@ -211,13 +211,25 @@ public enum LFLocalizable {
       /// Buy
       public static let title = LFLocalizable.tr("Localizable", "assetView.buy.title", fallback: "Buy")
     }
+    public enum Receive {
+      /// Receive
+      public static let title = LFLocalizable.tr("Localizable", "assetView.receive.title", fallback: "Receive")
+    }
     public enum Sell {
       /// Sell
       public static let title = LFLocalizable.tr("Localizable", "assetView.sell.title", fallback: "Sell")
     }
+    public enum Send {
+      /// Send
+      public static let title = LFLocalizable.tr("Localizable", "assetView.send.title", fallback: "Send")
+    }
     public enum Transfer {
       /// Transfer
       public static let title = LFLocalizable.tr("Localizable", "assetView.transfer.title", fallback: "Transfer")
+    }
+    public enum TransferPopup {
+      /// TRANSFER DOGE
+      public static let title = LFLocalizable.tr("Localizable", "assetView.transfer_popup.title", fallback: "TRANSFER DOGE")
     }
   }
   public enum BankTransfers {
