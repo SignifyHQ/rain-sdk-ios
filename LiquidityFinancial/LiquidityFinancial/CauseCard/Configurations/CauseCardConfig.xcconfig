@@ -1,0 +1,26 @@
+// Configuration settings file format documentation can be found at:
+// https://help.apple.com/xcode/#/dev745c5c974
+
+#include "LiquidityFinancial/Configurations/LiquidityFinancialConfig.xcconfig"
+
+APP_NAME = CauseCard
+APP_BUNDLE_ID = com.liquidityfinancial.causecard
+
+TERMS_URL = https:/$()/getcausecard.com/legal
+AGREEMENT_URL = https:/$()/getcausecard.com/legal#consumer-account
+PRIVACY_URL = https:/$()/getcausecard.com/legal#privacy-policy
+CONSENT_URL = https:/$()/getcausecard.com/legal#e-sign-consent
+WALLET_PRIVACY_URL = https:/$()/seedcx.zendesk.com/hc/en-us/articles/360009900494-Privacy-Policy-
+
+PATHWARD_USER_URL = https:/$()/getcausecard.com/legal#privacy-policy
+PATHWARD_PRIVACY_URL = https:/$()/getcausecard.com/legal#privacy-policy
+PATHWARD_DISCLOSURE_URL = https:/$()/getcausecard.com/legal#privacy-policy
+
+BANK_TRUST_CONSUMER_URL = https:/$()/getcausecard.com/legal#bank-trust-consumer
+BANK_TRUST_POLICY_URL = https:/$()/getcausecard.com/legal#bank-trust-policy
+APPSTORE_URL = https:/$()/apps.apple.com/us/app/causecard/id6444664550
+SHARE_APP_URL = https:/$()/causecard.co/app
+REWARDS_VIDEO_URL = https:/$()twitter.com/TheDogeCard/status/1611066507957571747
+
+CHARITY_ENABLED = false
+CRYPTO_ENABLED = true

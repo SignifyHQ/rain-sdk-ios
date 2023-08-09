@@ -176,12 +176,6 @@ public extension Constants {
   
   static let netSpendSDKLinkBankErrors = ["error", "failedToLinkBank", "externalLinkBankError"]
   
-  static let netspendAttributeInformation = [
-    LFLocalizable.Question.NetpendCondition.userAgreement: LFUtility.netspendUserAgreement,
-    LFLocalizable.Question.NetpendCondition.privacyPolicy: LFUtility.netspendPrivacyPolicy,
-    LFLocalizable.Question.NetpendCondition.regulatoryDisclosures: LFUtility.netspendRegulatoryDisclosure
-  ]
-  
   static let pathwardAttributeInformation = [
     LFLocalizable.Question.PathwardCondition.userAgreement: LFUtility.pathwardUserAgreement,
     LFLocalizable.Question.PathwardCondition.privacyPolicy: LFUtility.pathwardPrivacyPolicy,

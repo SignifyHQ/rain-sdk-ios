@@ -25,15 +25,19 @@ public enum Fonts {
     LFStyleGuide.target == .Cardano ? true : false
   }
   
-  static var dogeFont: Bool {
-    LFStyleGuide.target == .DogeCard ? true : false
+  static var montserratFont: Bool {
+    (LFStyleGuide.target == .DogeCard || LFStyleGuide.target == .CauseCard ) ? true : false
+  }
+  
+  static var orbitroFont: Bool {
+    (LFStyleGuide.target == .DogeCard || LFStyleGuide.target == .CauseCard ) ? true : false
   }
   
   public static var black: FontConvertible {
     switch LFStyleGuide.target {
     case .Avalanche: return Inter.black
     case .Cardano: return Chivo.black
-    case .DogeCard: return Lato.black
+    case .DogeCard, .CauseCard: return Lato.black
     default : return Inter.black
     }
   }
@@ -41,7 +45,7 @@ public enum Fonts {
     switch LFStyleGuide.target {
     case .Avalanche: return Inter.bold
     case .Cardano: return Chivo.bold
-    case .DogeCard: return Lato.bold
+    case .DogeCard, .CauseCard: return Lato.bold
     default : return Inter.bold
     }
   }
@@ -49,7 +53,7 @@ public enum Fonts {
     switch LFStyleGuide.target {
     case .Avalanche: return Inter.extraBold
     case .Cardano: return Chivo.extraBold
-    case .DogeCard: return Lato.bold
+    case .DogeCard, .CauseCard: return Lato.bold
     default : return Inter.extraBold
     }
   }
@@ -57,7 +61,7 @@ public enum Fonts {
     switch LFStyleGuide.target {
     case .Avalanche: return Inter.extraLight
     case .Cardano: return Chivo.extraLight
-    case .DogeCard: return Lato.light
+    case .DogeCard, .CauseCard: return Lato.light
     default : return Inter.extraLight
     }
   }
@@ -65,7 +69,7 @@ public enum Fonts {
     switch LFStyleGuide.target {
     case .Avalanche: return Inter.light
     case .Cardano: return Chivo.light
-    case .DogeCard: return Lato.light
+    case .DogeCard, .CauseCard: return Lato.light
     default : return Inter.light
     }
   }
@@ -73,7 +77,7 @@ public enum Fonts {
     switch LFStyleGuide.target {
     case .Avalanche: return Inter.medium
     case .Cardano: return Chivo.medium
-    case .DogeCard: return Lato.medium
+    case .DogeCard, .CauseCard: return Lato.medium
     default : return Inter.medium
     }
   }
@@ -81,7 +85,7 @@ public enum Fonts {
     switch LFStyleGuide.target {
     case .Avalanche: return Inter.regular
     case .Cardano: return Chivo.regular
-    case .DogeCard: return Lato.regular
+    case .DogeCard, .CauseCard: return Lato.regular
     default : return Inter.regular
     }
   }
@@ -89,7 +93,7 @@ public enum Fonts {
     switch LFStyleGuide.target {
     case .Avalanche: return Inter.semiBold
     case .Cardano: return Chivo.semiBold
-    case .DogeCard: return Lato.bold
+    case .DogeCard, .CauseCard: return Lato.bold
     default : return Inter.semiBold
     }
   }
@@ -97,7 +101,7 @@ public enum Fonts {
     switch LFStyleGuide.target {
     case .Avalanche: return Inter.thin
     case .Cardano: return Chivo.thin
-    case .DogeCard: return Lato.light
+    case .DogeCard, .CauseCard: return Lato.light
     default : return Inter.thin
     }
   }
@@ -154,25 +158,25 @@ public enum Fonts {
   }
   
   public static var montserratBlack: FontConvertible {
-    if dogeFont {
+    if montserratFont {
       return FontConvertible(name: "Montserrat-Black", family: "Montserrat", path: "Montserrat-Black.ttf")
     }
     fatalError("The target not support the font.")
   }
   public static var montserratMedium: FontConvertible {
-    if dogeFont {
+    if montserratFont {
       return FontConvertible(name: "Montserrat-Medium", family: "Montserrat", path: "Montserrat-Medium.ttf")
     }
     fatalError("The target not support the font.")
   }
   public static var orbitronBold: FontConvertible {
-    if dogeFont {
+    if orbitroFont {
       return FontConvertible(name: "Orbitron-Bold", family: "Orbitron", path: "Orbitron-Bold.ttf")
     }
     fatalError("The target not support the font.")
   }
   public static var orbitronMedium: FontConvertible {
-    if dogeFont {
+    if orbitroFont {
       return FontConvertible(name: "Orbitron-Medium", family: "Orbitron", path: "Orbitron-Medium.ttf")
     }
     fatalError("The target not support the font.")
@@ -244,7 +248,7 @@ public enum Fonts {
       allCustomFonts.append(contentsOf: Inter.all)
     case .Cardano:
       allCustomFonts.append(contentsOf: Chivo.all)
-    case .DogeCard:
+    case .DogeCard, .CauseCard:
       allCustomFonts.append(contentsOf: Lato.all + Montserrat.all + Orbitron.all)
     default :
       allCustomFonts.append(contentsOf: Inter.all)

@@ -10,11 +10,10 @@ TERMS_URL = https:/$()/dogecard.co/legal
 AGREEMENT_URL = https:/$()/dogecard.co/legal#consumer-account
 PRIVACY_URL = https:/$()/dogecard.co/legal#privacy-policy
 CONSENT_URL = https:/$()/dogecard.co/legal#e-sign-consent
-NETSPEND_USER_URL = https:/$()/dogecard.co/legal#privacy-policy
-NETSPEND_PRIVACY_URL = https:/$()/dogecard.co/legal#privacy-policy
-NETSPEND_DISCLOSURE_URL = https:/$()/dogecard.co/legal#privacy-policy
+
 PATHWARD_USER_URL = https:/$()/dogecard.co/legal#privacy-policy
 PATHWARD_PRIVACY_URL = https:/$()/dogecard.co/legal#privacy-policy
 PATHWARD_DISCLOSURE_URL = https:/$()/dogecard.co/legal#privacy-policy
+
 CHARITY_ENABLED = false
 CRYPTO_ENABLED = true

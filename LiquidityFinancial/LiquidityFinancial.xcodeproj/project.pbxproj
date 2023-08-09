@@ -52,6 +52,65 @@
 		A980DF732A5FA25A000B3C09 /* LFNetwork in Frameworks */ = {isa = PBXBuildFile; productRef = A980DF722A5FA25A000B3C09 /* LFNetwork */; };
 		A980DF752A5FA265000B3C09 /* LFServices in Frameworks */ = {isa = PBXBuildFile; productRef = A980DF742A5FA265000B3C09 /* LFServices */; };
 		A980DF772A5FA26E000B3C09 /* LFUtilities in Frameworks */ = {isa = PBXBuildFile; productRef = A980DF762A5FA26E000B3C09 /* LFUtilities */; };
+		A9B448BD2A8389B90029944C /* AppDelegate+Configs.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9BC804C2A774F5D00E4A1A0 /* AppDelegate+Configs.swift */; };
+		A9B448BE2A8389B90029944C /* OnboardingContainer+Injection.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9B912F22A6B898C00ABD87B /* OnboardingContainer+Injection.swift */; };
+		A9B448C12A8389B90029944C /* AppDelegate+Appearance.swift in Sources */ = {isa = PBXBuildFile; fileRef = A93837462A63DDFD009EB1DE /* AppDelegate+Appearance.swift */; };
+		A9B448C32A8389B90029944C /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = A97BF8192A5D9E6B00B8F5CA /* AppDelegate.swift */; };
+		A9B448C72A8389B90029944C /* LFAccountOnboarding in Frameworks */ = {isa = PBXBuildFile; productRef = A9B448A82A8389B90029944C /* LFAccountOnboarding */; };
+		A9B448C82A8389B90029944C /* OnboardingDomain in Frameworks */ = {isa = PBXBuildFile; productRef = A9B448A92A8389B90029944C /* OnboardingDomain */; };
+		A9B448C92A8389B90029944C /* Factory in Frameworks */ = {isa = PBXBuildFile; productRef = A9B448A32A8389B90029944C /* Factory */; };
+		A9B448CA2A8389B90029944C /* AccountData in Frameworks */ = {isa = PBXBuildFile; productRef = A9B448B92A8389B90029944C /* AccountData */; };
+		A9B448CB2A8389B90029944C /* OnboardingData in Frameworks */ = {isa = PBXBuildFile; productRef = A9B448AB2A8389B90029944C /* OnboardingData */; };
+		A9B448CC2A8389B90029944C /* DataUtilities in Frameworks */ = {isa = PBXBuildFile; productRef = A9B448AA2A8389B90029944C /* DataUtilities */; };
+		A9B448CD2A8389B90029944C /* LFDashboard in Frameworks */ = {isa = PBXBuildFile; productRef = A9B448B62A8389B90029944C /* LFDashboard */; };
+		A9B448CE2A8389B90029944C /* LFStyleGuide in Frameworks */ = {isa = PBXBuildFile; productRef = A9B448A72A8389B90029944C /* LFStyleGuide */; };
+		A9B448CF2A8389B90029944C /* AuthorizationManager in Frameworks */ = {isa = PBXBuildFile; productRef = A9B448B02A8389B90029944C /* AuthorizationManager */; };
+		A9B448D02A8389B90029944C /* NetSpendData in Frameworks */ = {isa = PBXBuildFile; productRef = A9B448B52A8389B90029944C /* NetSpendData */; };
+		A9B448D12A8389B90029944C /* LFUtilities in Frameworks */ = {isa = PBXBuildFile; productRef = A9B448AE2A8389B90029944C /* LFUtilities */; };
+		A9B448D22A8389B90029944C /* iPhoneNumberField in Frameworks */ = {isa = PBXBuildFile; productRef = A9B448B12A8389B90029944C /* iPhoneNumberField */; };
+		A9B448D32A8389B90029944C /* VGSShowSDK in Frameworks */ = {isa = PBXBuildFile; productRef = A9B448B72A8389B90029944C /* VGSShowSDK */; };
+		A9B448D42A8389B90029944C /* Lottie in Frameworks */ = {isa = PBXBuildFile; productRef = A9B448A52A8389B90029944C /* Lottie */; };
+		A9B448D52A8389B90029944C /* LFNetwork in Frameworks */ = {isa = PBXBuildFile; productRef = A9B448AC2A8389B90029944C /* LFNetwork */; };
+		A9B448D62A8389B90029944C /* LFServices in Frameworks */ = {isa = PBXBuildFile; productRef = A9B448AD2A8389B90029944C /* LFServices */; };
+		A9B448D72A8389B90029944C /* PinwheelSDK in Frameworks */ = {isa = PBXBuildFile; productRef = A9B448BA2A8389B90029944C /* PinwheelSDK */; };
+		A9B448D82A8389B90029944C /* LFLocalizable in Frameworks */ = {isa = PBXBuildFile; productRef = A9B448AF2A8389B90029944C /* LFLocalizable */; };
+		A9B448D92A8389B90029944C /* SmartyStreets in Frameworks */ = {isa = PBXBuildFile; productRef = A9B448B32A8389B90029944C /* SmartyStreets */; };
+		A9B448E62A8389B90029944C /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A9B4BA0A2A7C107D000ED67A /* Images.xcassets */; };
+		A9B449152A838A010029944C /* CauseCardConfig.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = A9B448F42A838A000029944C /* CauseCardConfig.xcconfig */; };
+		A9B449162A838A010029944C /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = A9B448F62A838A000029944C /* Localizable.strings */; };
+		A9B449172A838A010029944C /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = A9B448F82A838A000029944C /* LaunchScreen.storyboard */; };
+		A9B449182A838A010029944C /* LoadingPrimary.json in Resources */ = {isa = PBXBuildFile; fileRef = A9B448FB2A838A000029944C /* LoadingPrimary.json */; };
+		A9B449192A838A010029944C /* LoadingContrast.json in Resources */ = {isa = PBXBuildFile; fileRef = A9B448FC2A838A000029944C /* LoadingContrast.json */; };
+		A9B4491A2A838A010029944C /* LoadingMix.json in Resources */ = {isa = PBXBuildFile; fileRef = A9B448FD2A838A000029944C /* LoadingMix.json */; };
+		A9B449252A838A010029944C /* Colors.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A9B4490A2A838A000029944C /* Colors.xcassets */; };
+		A9B449262A838A010029944C /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A9B4490B2A838A000029944C /* Images.xcassets */; };
+		A9B449272A838A010029944C /* CauseCardApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9B4490D2A838A000029944C /* CauseCardApp.swift */; };
+		A9B449282A838A010029944C /* DashboardContainer+Injection.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9B4490F2A838A000029944C /* DashboardContainer+Injection.swift */; };
+		A9B449292A838A010029944C /* AppCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9B449112A838A000029944C /* AppCoordinator.swift */; };
+		A9B4492A2A838A010029944C /* AppView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9B449132A838A000029944C /* AppView.swift */; };
+		A9B4492B2A838A010029944C /* AppViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9B449142A838A000029944C /* AppViewModel.swift */; };
+		A9B449322A838A5B0029944C /* ApplePay.json in Resources */ = {isa = PBXBuildFile; fileRef = A9B4492C2A838A5B0029944C /* ApplePay.json */; };
+		A9B449332A838A5B0029944C /* TwinkleCircle.json in Resources */ = {isa = PBXBuildFile; fileRef = A9B4492D2A838A5B0029944C /* TwinkleCircle.json */; };
+		A9B449342A838A5B0029944C /* TwinkleContrast.json in Resources */ = {isa = PBXBuildFile; fileRef = A9B4492E2A838A5B0029944C /* TwinkleContrast.json */; };
+		A9B449352A838A5B0029944C /* TwinkleSides.json in Resources */ = {isa = PBXBuildFile; fileRef = A9B4492F2A838A5B0029944C /* TwinkleSides.json */; };
+		A9B449362A838A5B0029944C /* Welcome.json in Resources */ = {isa = PBXBuildFile; fileRef = A9B449302A838A5B0029944C /* Welcome.json */; };
+		A9B449372A838A5B0029944C /* LoadingHeart.json in Resources */ = {isa = PBXBuildFile; fileRef = A9B449312A838A5B0029944C /* LoadingHeart.json */; };
+		A9B449482A8392AB0029944C /* Orbitron-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = A9B449382A8392AA0029944C /* Orbitron-Bold.ttf */; };
+		A9B449492A8392AB0029944C /* Lato-Thin.ttf in Resources */ = {isa = PBXBuildFile; fileRef = A9B449392A8392AA0029944C /* Lato-Thin.ttf */; };
+		A9B4494A2A8392AB0029944C /* Lato-BlackItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = A9B4493A2A8392AB0029944C /* Lato-BlackItalic.ttf */; };
+		A9B4494B2A8392AB0029944C /* Lato-Light.ttf in Resources */ = {isa = PBXBuildFile; fileRef = A9B4493B2A8392AB0029944C /* Lato-Light.ttf */; };
+		A9B4494C2A8392AB0029944C /* Lato-LightItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = A9B4493C2A8392AB0029944C /* Lato-LightItalic.ttf */; };
+		A9B4494D2A8392AB0029944C /* Lato-BoldItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = A9B4493D2A8392AB0029944C /* Lato-BoldItalic.ttf */; };
+		A9B4494E2A8392AB0029944C /* Lato-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = A9B4493E2A8392AB0029944C /* Lato-Regular.ttf */; };
+		A9B4494F2A8392AB0029944C /* Orbitron-Medium.ttf in Resources */ = {isa = PBXBuildFile; fileRef = A9B4493F2A8392AB0029944C /* Orbitron-Medium.ttf */; };
+		A9B449502A8392AB0029944C /* Lato-Black.ttf in Resources */ = {isa = PBXBuildFile; fileRef = A9B449402A8392AB0029944C /* Lato-Black.ttf */; };
+		A9B449512A8392AB0029944C /* Lato-MediumItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = A9B449412A8392AB0029944C /* Lato-MediumItalic.ttf */; };
+		A9B449522A8392AB0029944C /* Lato-Italic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = A9B449422A8392AB0029944C /* Lato-Italic.ttf */; };
+		A9B449532A8392AB0029944C /* Lato-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = A9B449432A8392AB0029944C /* Lato-Bold.ttf */; };
+		A9B449542A8392AB0029944C /* Lato-Medium.ttf in Resources */ = {isa = PBXBuildFile; fileRef = A9B449442A8392AB0029944C /* Lato-Medium.ttf */; };
+		A9B449552A8392AB0029944C /* Lato-ThinItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = A9B449452A8392AB0029944C /* Lato-ThinItalic.ttf */; };
+		A9B449562A8392AB0029944C /* Montserrat-Medium.ttf in Resources */ = {isa = PBXBuildFile; fileRef = A9B449462A8392AB0029944C /* Montserrat-Medium.ttf */; };
+		A9B449572A8392AB0029944C /* Montserrat-Black.ttf in Resources */ = {isa = PBXBuildFile; fileRef = A9B449472A8392AB0029944C /* Montserrat-Black.ttf */; };
 		A9B4B9382A7C0C76000ED67A /* AppDelegate+Configs.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9BC804C2A774F5D00E4A1A0 /* AppDelegate+Configs.swift */; };
 		A9B4B9392A7C0C76000ED67A /* OnboardingContainer+Injection.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9B912F22A6B898C00ABD87B /* OnboardingContainer+Injection.swift */; };
 		A9B4B93F2A7C0C76000ED67A /* AppDelegate+Appearance.swift in Sources */ = {isa = PBXBuildFile; fileRef = A93837462A63DDFD009EB1DE /* AppDelegate+Appearance.swift */; };
@@ -192,7 +251,7 @@
 		A95354A32A5E571D008B0FAB /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
 		A95354A52A5E571D008B0FAB /* AppView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppView.swift; sourceTree = "<group>"; };
 		A95354A62A5E571D008B0FAB /* CardanoApp.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CardanoApp.swift; sourceTree = "<group>"; };
-		A95D418F2A6E31C60095596B /* Avalanche.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Avalanche.entitlements; sourceTree = "<group>"; };
+		A95D418F2A6E31C60095596B /* CauseCard.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = CauseCard.entitlements; sourceTree = "<group>"; };
 		A95D41902A6E35750095596B /* Cardano.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Cardano.entitlements; sourceTree = "<group>"; };
 		A963D4082A67F491006B9A54 /* AppCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppCoordinator.swift; sourceTree = "<group>"; };
 		A963D40A2A67F7FD006B9A54 /* AppViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppViewModel.swift; sourceTree = "<group>"; };
@@ -213,6 +272,44 @@
 		A97BF83C2A5DA8A900B8F5CA /* LiquidityFinancialConfig.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = LiquidityFinancialConfig.xcconfig; sourceTree = "<group>"; };
 		A97BF83D2A5DBCF200B8F5CA /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
 		A97BF83F2A5DC13000B8F5CA /* Colors.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Colors.xcassets; sourceTree = "<group>"; };
+		A9B448F02A8389B90029944C /* CauseCard.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = CauseCard.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		A9B448F42A838A000029944C /* CauseCardConfig.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = CauseCardConfig.xcconfig; sourceTree = "<group>"; };
+		A9B448F72A838A000029944C /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
+		A9B448F82A838A000029944C /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = LaunchScreen.storyboard; sourceTree = "<group>"; };
+		A9B448F92A838A000029944C /* CauseCard.entitlements */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.entitlements; path = CauseCard.entitlements; sourceTree = "<group>"; };
+		A9B448FB2A838A000029944C /* LoadingPrimary.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = LoadingPrimary.json; sourceTree = "<group>"; };
+		A9B448FC2A838A000029944C /* LoadingContrast.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = LoadingContrast.json; sourceTree = "<group>"; };
+		A9B448FD2A838A000029944C /* LoadingMix.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = LoadingMix.json; sourceTree = "<group>"; };
+		A9B448FE2A838A000029944C /* CauseCard-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "CauseCard-Info.plist"; sourceTree = "<group>"; };
+		A9B4490A2A838A000029944C /* Colors.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Colors.xcassets; sourceTree = "<group>"; };
+		A9B4490B2A838A000029944C /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
+		A9B4490D2A838A000029944C /* CauseCardApp.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CauseCardApp.swift; sourceTree = "<group>"; };
+		A9B4490F2A838A000029944C /* DashboardContainer+Injection.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "DashboardContainer+Injection.swift"; sourceTree = "<group>"; };
+		A9B449112A838A000029944C /* AppCoordinator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppCoordinator.swift; sourceTree = "<group>"; };
+		A9B449132A838A000029944C /* AppView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppView.swift; sourceTree = "<group>"; };
+		A9B449142A838A000029944C /* AppViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppViewModel.swift; sourceTree = "<group>"; };
+		A9B4492C2A838A5B0029944C /* ApplePay.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = ApplePay.json; sourceTree = "<group>"; };
+		A9B4492D2A838A5B0029944C /* TwinkleCircle.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = TwinkleCircle.json; sourceTree = "<group>"; };
+		A9B4492E2A838A5B0029944C /* TwinkleContrast.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = TwinkleContrast.json; sourceTree = "<group>"; };
+		A9B4492F2A838A5B0029944C /* TwinkleSides.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = TwinkleSides.json; sourceTree = "<group>"; };
+		A9B449302A838A5B0029944C /* Welcome.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = Welcome.json; sourceTree = "<group>"; };
+		A9B449312A838A5B0029944C /* LoadingHeart.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = LoadingHeart.json; sourceTree = "<group>"; };
+		A9B449382A8392AA0029944C /* Orbitron-Bold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Orbitron-Bold.ttf"; sourceTree = "<group>"; };
+		A9B449392A8392AA0029944C /* Lato-Thin.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Lato-Thin.ttf"; sourceTree = "<group>"; };
+		A9B4493A2A8392AB0029944C /* Lato-BlackItalic.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Lato-BlackItalic.ttf"; sourceTree = "<group>"; };
+		A9B4493B2A8392AB0029944C /* Lato-Light.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Lato-Light.ttf"; sourceTree = "<group>"; };
+		A9B4493C2A8392AB0029944C /* Lato-LightItalic.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Lato-LightItalic.ttf"; sourceTree = "<group>"; };
+		A9B4493D2A8392AB0029944C /* Lato-BoldItalic.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Lato-BoldItalic.ttf"; sourceTree = "<group>"; };
+		A9B4493E2A8392AB0029944C /* Lato-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Lato-Regular.ttf"; sourceTree = "<group>"; };
+		A9B4493F2A8392AB0029944C /* Orbitron-Medium.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Orbitron-Medium.ttf"; sourceTree = "<group>"; };
+		A9B449402A8392AB0029944C /* Lato-Black.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Lato-Black.ttf"; sourceTree = "<group>"; };
+		A9B449412A8392AB0029944C /* Lato-MediumItalic.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Lato-MediumItalic.ttf"; sourceTree = "<group>"; };
+		A9B449422A8392AB0029944C /* Lato-Italic.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Lato-Italic.ttf"; sourceTree = "<group>"; };
+		A9B449432A8392AB0029944C /* Lato-Bold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Lato-Bold.ttf"; sourceTree = "<group>"; };
+		A9B449442A8392AB0029944C /* Lato-Medium.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Lato-Medium.ttf"; sourceTree = "<group>"; };
+		A9B449452A8392AB0029944C /* Lato-ThinItalic.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Lato-ThinItalic.ttf"; sourceTree = "<group>"; };
+		A9B449462A8392AB0029944C /* Montserrat-Medium.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Montserrat-Medium.ttf"; sourceTree = "<group>"; };
+		A9B449472A8392AB0029944C /* Montserrat-Black.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Montserrat-Black.ttf"; sourceTree = "<group>"; };
 		A9B4B9742A7C0C76000ED67A /* DogeCard.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = DogeCard.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		A9B4B9782A7C0F41000ED67A /* DogeCardConfig.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = DogeCardConfig.xcconfig; sourceTree = "<group>"; };
 		A9B4B97B2A7C0F41000ED67A /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
@@ -351,6 +448,32 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		A9B448C62A8389B90029944C /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A9B448C72A8389B90029944C /* LFAccountOnboarding in Frameworks */,
+				A9B448C82A8389B90029944C /* OnboardingDomain in Frameworks */,
+				A9B448C92A8389B90029944C /* Factory in Frameworks */,
+				A9B448CA2A8389B90029944C /* AccountData in Frameworks */,
+				A9B448CB2A8389B90029944C /* OnboardingData in Frameworks */,
+				A9B448CC2A8389B90029944C /* DataUtilities in Frameworks */,
+				A9B448CD2A8389B90029944C /* LFDashboard in Frameworks */,
+				A9B448CE2A8389B90029944C /* LFStyleGuide in Frameworks */,
+				A9B448CF2A8389B90029944C /* AuthorizationManager in Frameworks */,
+				A9B448D02A8389B90029944C /* NetSpendData in Frameworks */,
+				A9B448D12A8389B90029944C /* LFUtilities in Frameworks */,
+				A9B448D22A8389B90029944C /* iPhoneNumberField in Frameworks */,
+				A9B448D32A8389B90029944C /* VGSShowSDK in Frameworks */,
+				A9B448D42A8389B90029944C /* Lottie in Frameworks */,
+				A9B448D52A8389B90029944C /* LFNetwork in Frameworks */,
+				A9B448D62A8389B90029944C /* LFServices in Frameworks */,
+				A9B448D72A8389B90029944C /* PinwheelSDK in Frameworks */,
+				A9B448D82A8389B90029944C /* LFLocalizable in Frameworks */,
+				A9B448D92A8389B90029944C /* SmartyStreets in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -496,6 +619,7 @@
 				A97BF7D62A5C602F00B8F5CA /* LiquidityFinancialUITests.xctest */,
 				A95354972A5E55B2008B0FAB /* Cardano.app */,
 				A9B4B9742A7C0C76000ED67A /* DogeCard.app */,
+				A9B448F02A8389B90029944C /* CauseCard.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -503,6 +627,7 @@
 		A97BF7BE2A5C602D00B8F5CA /* LiquidityFinancial */ = {
 			isa = PBXGroup;
 			children = (
+				A9B448F22A838A000029944C /* CauseCard */,
 				A97BF8102A5D989100B8F5CA /* Avalanche */,
 				A95354992A5E571D008B0FAB /* Cardano */,
 				A9B4B9762A7C0F41000ED67A /* DogeCard */,
@@ -602,7 +727,7 @@
 			isa = PBXGroup;
 			children = (
 				A9BC80392A774D2F00E4A1A0 /* Fonts */,
-				A95D418F2A6E31C60095596B /* Avalanche.entitlements */,
+				A95D418F2A6E31C60095596B /* CauseCard.entitlements */,
 				A97BF8392A5DA4DA00B8F5CA /* Avalanche-Info.plist */,
 				A9D6C4B12A5E91DF0038D0BB /* LaunchScreen.storyboard */,
 				A95354602A5DD91A008B0FAB /* Assets */,
@@ -618,6 +743,122 @@
 				A97BF83A2A5DA86000B8F5CA /* AvalancheConfig.xcconfig */,
 			);
 			path = Configurations;
+			sourceTree = "<group>";
+		};
+		A9B448F22A838A000029944C /* CauseCard */ = {
+			isa = PBXGroup;
+			children = (
+				A9B4490C2A838A000029944C /* Sources */,
+				A9B448F32A838A000029944C /* Configurations */,
+				A9B448F52A838A000029944C /* Resources */,
+			);
+			path = CauseCard;
+			sourceTree = "<group>";
+		};
+		A9B448F32A838A000029944C /* Configurations */ = {
+			isa = PBXGroup;
+			children = (
+				A9B448F42A838A000029944C /* CauseCardConfig.xcconfig */,
+			);
+			path = Configurations;
+			sourceTree = "<group>";
+		};
+		A9B448F52A838A000029944C /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				A9B448F62A838A000029944C /* Localizable.strings */,
+				A9B448F82A838A000029944C /* LaunchScreen.storyboard */,
+				A9B448F92A838A000029944C /* CauseCard.entitlements */,
+				A9B448FA2A838A000029944C /* Lottie */,
+				A9B448FE2A838A000029944C /* CauseCard-Info.plist */,
+				A9B448FF2A838A000029944C /* Fonts */,
+				A9B449092A838A000029944C /* Assets */,
+			);
+			path = Resources;
+			sourceTree = "<group>";
+		};
+		A9B448FA2A838A000029944C /* Lottie */ = {
+			isa = PBXGroup;
+			children = (
+				A9B4492C2A838A5B0029944C /* ApplePay.json */,
+				A9B449312A838A5B0029944C /* LoadingHeart.json */,
+				A9B4492D2A838A5B0029944C /* TwinkleCircle.json */,
+				A9B4492E2A838A5B0029944C /* TwinkleContrast.json */,
+				A9B4492F2A838A5B0029944C /* TwinkleSides.json */,
+				A9B449302A838A5B0029944C /* Welcome.json */,
+				A9B448FB2A838A000029944C /* LoadingPrimary.json */,
+				A9B448FC2A838A000029944C /* LoadingContrast.json */,
+				A9B448FD2A838A000029944C /* LoadingMix.json */,
+			);
+			path = Lottie;
+			sourceTree = "<group>";
+		};
+		A9B448FF2A838A000029944C /* Fonts */ = {
+			isa = PBXGroup;
+			children = (
+				A9B449402A8392AB0029944C /* Lato-Black.ttf */,
+				A9B4493A2A8392AB0029944C /* Lato-BlackItalic.ttf */,
+				A9B449432A8392AB0029944C /* Lato-Bold.ttf */,
+				A9B4493D2A8392AB0029944C /* Lato-BoldItalic.ttf */,
+				A9B449422A8392AB0029944C /* Lato-Italic.ttf */,
+				A9B4493B2A8392AB0029944C /* Lato-Light.ttf */,
+				A9B4493C2A8392AB0029944C /* Lato-LightItalic.ttf */,
+				A9B449442A8392AB0029944C /* Lato-Medium.ttf */,
+				A9B449412A8392AB0029944C /* Lato-MediumItalic.ttf */,
+				A9B4493E2A8392AB0029944C /* Lato-Regular.ttf */,
+				A9B449392A8392AA0029944C /* Lato-Thin.ttf */,
+				A9B449452A8392AB0029944C /* Lato-ThinItalic.ttf */,
+				A9B449472A8392AB0029944C /* Montserrat-Black.ttf */,
+				A9B449462A8392AB0029944C /* Montserrat-Medium.ttf */,
+				A9B449382A8392AA0029944C /* Orbitron-Bold.ttf */,
+				A9B4493F2A8392AB0029944C /* Orbitron-Medium.ttf */,
+			);
+			path = Fonts;
+			sourceTree = "<group>";
+		};
+		A9B449092A838A000029944C /* Assets */ = {
+			isa = PBXGroup;
+			children = (
+				A9B4490A2A838A000029944C /* Colors.xcassets */,
+				A9B4490B2A838A000029944C /* Images.xcassets */,
+			);
+			path = Assets;
+			sourceTree = "<group>";
+		};
+		A9B4490C2A838A000029944C /* Sources */ = {
+			isa = PBXGroup;
+			children = (
+				A9B4490D2A838A000029944C /* CauseCardApp.swift */,
+				A9B4490E2A838A000029944C /* DependenciesInjection */,
+				A9B449102A838A000029944C /* AppCoordinator */,
+				A9B449122A838A000029944C /* AppView */,
+			);
+			path = Sources;
+			sourceTree = "<group>";
+		};
+		A9B4490E2A838A000029944C /* DependenciesInjection */ = {
+			isa = PBXGroup;
+			children = (
+				A9B4490F2A838A000029944C /* DashboardContainer+Injection.swift */,
+			);
+			path = DependenciesInjection;
+			sourceTree = "<group>";
+		};
+		A9B449102A838A000029944C /* AppCoordinator */ = {
+			isa = PBXGroup;
+			children = (
+				A9B449112A838A000029944C /* AppCoordinator.swift */,
+			);
+			path = AppCoordinator;
+			sourceTree = "<group>";
+		};
+		A9B449122A838A000029944C /* AppView */ = {
+			isa = PBXGroup;
+			children = (
+				A9B449132A838A000029944C /* AppView.swift */,
+				A9B449142A838A000029944C /* AppViewModel.swift */,
+			);
+			path = AppView;
 			sourceTree = "<group>";
 		};
 		A9B4B9762A7C0F41000ED67A /* DogeCard */ = {
@@ -973,6 +1214,45 @@
 			productReference = A97BF7D62A5C602F00B8F5CA /* LiquidityFinancialUITests.xctest */;
 			productType = "com.apple.product-type.bundle.ui-testing";
 		};
+		A9B448A22A8389B90029944C /* CauseCard */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = A9B448ED2A8389B90029944C /* Build configuration list for PBXNativeTarget "CauseCard" */;
+			buildPhases = (
+				A9B448BC2A8389B90029944C /* Sources */,
+				A9B448C62A8389B90029944C /* Frameworks */,
+				A9B448DA2A8389B90029944C /* Resources */,
+				A9B448EC2A8389B90029944C /* Swiftlint (Debug Only) */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = CauseCard;
+			packageProductDependencies = (
+				A9B448A32A8389B90029944C /* Factory */,
+				A9B448A52A8389B90029944C /* Lottie */,
+				A9B448A72A8389B90029944C /* LFStyleGuide */,
+				A9B448A82A8389B90029944C /* LFAccountOnboarding */,
+				A9B448A92A8389B90029944C /* OnboardingDomain */,
+				A9B448AA2A8389B90029944C /* DataUtilities */,
+				A9B448AB2A8389B90029944C /* OnboardingData */,
+				A9B448AC2A8389B90029944C /* LFNetwork */,
+				A9B448AD2A8389B90029944C /* LFServices */,
+				A9B448AE2A8389B90029944C /* LFUtilities */,
+				A9B448AF2A8389B90029944C /* LFLocalizable */,
+				A9B448B02A8389B90029944C /* AuthorizationManager */,
+				A9B448B12A8389B90029944C /* iPhoneNumberField */,
+				A9B448B32A8389B90029944C /* SmartyStreets */,
+				A9B448B52A8389B90029944C /* NetSpendData */,
+				A9B448B62A8389B90029944C /* LFDashboard */,
+				A9B448B72A8389B90029944C /* VGSShowSDK */,
+				A9B448B92A8389B90029944C /* AccountData */,
+				A9B448BA2A8389B90029944C /* PinwheelSDK */,
+			);
+			productName = LiquidityFinancial;
+			productReference = A9B448F02A8389B90029944C /* CauseCard.app */;
+			productType = "com.apple.product-type.application";
+		};
 		A9B4B91F2A7C0C76000ED67A /* DogeCard */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = A9B4B9712A7C0C76000ED67A /* Build configuration list for PBXNativeTarget "DogeCard" */;
@@ -1058,6 +1338,7 @@
 				A97BF7BB2A5C602D00B8F5CA /* Avalanche */,
 				A953547C2A5E55B2008B0FAB /* Cardano */,
 				A9B4B91F2A7C0C76000ED67A /* DogeCard */,
+				A9B448A22A8389B90029944C /* CauseCard */,
 				A97BF7CB2A5C602F00B8F5CA /* LiquidityFinancialTests */,
 				A97BF7D52A5C602F00B8F5CA /* LiquidityFinancialUITests */,
 			);
@@ -1136,6 +1417,44 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		A9B448DA2A8389B90029944C /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A9B449362A838A5B0029944C /* Welcome.json in Resources */,
+				A9B4494B2A8392AB0029944C /* Lato-Light.ttf in Resources */,
+				A9B449522A8392AB0029944C /* Lato-Italic.ttf in Resources */,
+				A9B449372A838A5B0029944C /* LoadingHeart.json in Resources */,
+				A9B4491A2A838A010029944C /* LoadingMix.json in Resources */,
+				A9B449542A8392AB0029944C /* Lato-Medium.ttf in Resources */,
+				A9B449512A8392AB0029944C /* Lato-MediumItalic.ttf in Resources */,
+				A9B449502A8392AB0029944C /* Lato-Black.ttf in Resources */,
+				A9B449252A838A010029944C /* Colors.xcassets in Resources */,
+				A9B449262A838A010029944C /* Images.xcassets in Resources */,
+				A9B449182A838A010029944C /* LoadingPrimary.json in Resources */,
+				A9B449352A838A5B0029944C /* TwinkleSides.json in Resources */,
+				A9B449152A838A010029944C /* CauseCardConfig.xcconfig in Resources */,
+				A9B449342A838A5B0029944C /* TwinkleContrast.json in Resources */,
+				A9B448E62A8389B90029944C /* Images.xcassets in Resources */,
+				A9B4494C2A8392AB0029944C /* Lato-LightItalic.ttf in Resources */,
+				A9B449572A8392AB0029944C /* Montserrat-Black.ttf in Resources */,
+				A9B449562A8392AB0029944C /* Montserrat-Medium.ttf in Resources */,
+				A9B4494D2A8392AB0029944C /* Lato-BoldItalic.ttf in Resources */,
+				A9B449552A8392AB0029944C /* Lato-ThinItalic.ttf in Resources */,
+				A9B449532A8392AB0029944C /* Lato-Bold.ttf in Resources */,
+				A9B449482A8392AB0029944C /* Orbitron-Bold.ttf in Resources */,
+				A9B449492A8392AB0029944C /* Lato-Thin.ttf in Resources */,
+				A9B449172A838A010029944C /* LaunchScreen.storyboard in Resources */,
+				A9B4494F2A8392AB0029944C /* Orbitron-Medium.ttf in Resources */,
+				A9B449332A838A5B0029944C /* TwinkleCircle.json in Resources */,
+				A9B4494A2A8392AB0029944C /* Lato-BlackItalic.ttf in Resources */,
+				A9B449192A838A010029944C /* LoadingContrast.json in Resources */,
+				A9B449162A838A010029944C /* Localizable.strings in Resources */,
+				A9B449322A838A5B0029944C /* ApplePay.json in Resources */,
+				A9B4494E2A8392AB0029944C /* Lato-Regular.ttf in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		A9B4B9552A7C0C76000ED67A /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -1205,6 +1524,25 @@
 			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 1;
+			shellPath = /bin/sh;
+			shellScript = "if [[ \"$(uname -m)\" == arm64 ]]; then\n    export PATH=\"/opt/homebrew/bin:$PATH\"\nfi\n\nif which swiftlint > /dev/null; then\n  swiftlint\nelse\n  echo \"warning: SwiftLint not installed, download from https://github.com/realm/SwiftLint\"\nfi\n";
+		};
+		A9B448EC2A8389B90029944C /* Swiftlint (Debug Only) */ = {
+			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
+			buildActionMask = 12;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = "Swiftlint (Debug Only)";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "if [[ \"$(uname -m)\" == arm64 ]]; then\n    export PATH=\"/opt/homebrew/bin:$PATH\"\nfi\n\nif which swiftlint > /dev/null; then\n  swiftlint\nelse\n  echo \"warning: SwiftLint not installed, download from https://github.com/realm/SwiftLint\"\nfi\n";
 		};
@@ -1279,6 +1617,22 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		A9B448BC2A8389B90029944C /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A9B4492A2A838A010029944C /* AppView.swift in Sources */,
+				A9B449292A838A010029944C /* AppCoordinator.swift in Sources */,
+				A9B4492B2A838A010029944C /* AppViewModel.swift in Sources */,
+				A9B449282A838A010029944C /* DashboardContainer+Injection.swift in Sources */,
+				A9B448BD2A8389B90029944C /* AppDelegate+Configs.swift in Sources */,
+				A9B448BE2A8389B90029944C /* OnboardingContainer+Injection.swift in Sources */,
+				A9B449272A838A010029944C /* CauseCardApp.swift in Sources */,
+				A9B448C12A8389B90029944C /* AppDelegate+Appearance.swift in Sources */,
+				A9B448C32A8389B90029944C /* AppDelegate.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		A9B4B9372A7C0C76000ED67A /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -1311,6 +1665,14 @@
 /* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
+		A9B448F62A838A000029944C /* Localizable.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				A9B448F72A838A000029944C /* en */,
+			);
+			name = Localizable.strings;
+			sourceTree = "<group>";
+		};
 		A9B4B97A2A7C0F41000ED67A /* Localizable.strings */ = {
 			isa = PBXVariantGroup;
 			children = (
@@ -1702,6 +2064,88 @@
 			};
 			name = Release;
 		};
+		A9B448EE2A8389B90029944C /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = A9B448F42A838A000029944C /* CauseCardConfig.xcconfig */;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = "${SRCROOT}/LiquidityFinancial/CauseCard/Resources/CauseCard.entitlements";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				CODE_SIGN_STYLE = Manual;
+				CURRENT_PROJECT_VERSION = $BITRISE_BUILD_NUMBER;
+				DEVELOPMENT_ASSET_PATHS = "";
+				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = TX9PJZUNWS;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = "${SRCROOT}/LiquidityFinancial/CauseCard/Resources/CauseCard-Info.plist";
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.finance";
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen.storyboard;
+				INFOPLIST_KEY_UIStatusBarHidden = NO;
+				INFOPLIST_KEY_UIStatusBarStyle = UIStatusBarStyleLightContent;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0.1;
+				PRODUCT_BUNDLE_IDENTIFIER = com.liquidityfinancial.causecard;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = "Apple Development CauseCard";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Debug;
+		};
+		A9B448EF2A8389B90029944C /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = A9B448F42A838A000029944C /* CauseCardConfig.xcconfig */;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = "${SRCROOT}/LiquidityFinancial/CauseCard/Resources/CauseCard.entitlements";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				CODE_SIGN_STYLE = Manual;
+				CURRENT_PROJECT_VERSION = $BITRISE_BUILD_NUMBER;
+				DEVELOPMENT_ASSET_PATHS = "";
+				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = TX9PJZUNWS;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = "${SRCROOT}/LiquidityFinancial/CauseCard/Resources/CauseCard-Info.plist";
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.finance";
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen.storyboard;
+				INFOPLIST_KEY_UIStatusBarHidden = NO;
+				INFOPLIST_KEY_UIStatusBarStyle = UIStatusBarStyleLightContent;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0.1;
+				PRODUCT_BUNDLE_IDENTIFIER = com.liquidityfinancial.causecard;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = "Apple Development CauseCard";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Release;
+		};
 		A9B4B9722A7C0C76000ED67A /* Debug */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = A9B4B9782A7C0F41000ED67A /* DogeCardConfig.xcconfig */;
@@ -1834,6 +2278,15 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
+		A9B448ED2A8389B90029944C /* Build configuration list for PBXNativeTarget "CauseCard" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				A9B448EE2A8389B90029944C /* Debug */,
+				A9B448EF2A8389B90029944C /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		A9B4B9712A7C0C76000ED67A /* Build configuration list for PBXNativeTarget "DogeCard" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
@@ -1908,6 +2361,54 @@
 			requirement = {
 				kind = upToNextMinorVersion;
 				minimumVersion = 4.2.0;
+			};
+		};
+		A9B448A42A8389B90029944C /* XCRemoteSwiftPackageReference "Factory" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/hmlongco/Factory";
+			requirement = {
+				kind = upToNextMinorVersion;
+				minimumVersion = 2.2.0;
+			};
+		};
+		A9B448A62A8389B90029944C /* XCRemoteSwiftPackageReference "lottie-ios" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/airbnb/lottie-ios.git";
+			requirement = {
+				kind = upToNextMinorVersion;
+				minimumVersion = 4.2.0;
+			};
+		};
+		A9B448B22A8389B90029944C /* XCRemoteSwiftPackageReference "iPhoneNumberField" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/MojtabaHs/iPhoneNumberField.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 0.10.1;
+			};
+		};
+		A9B448B42A8389B90029944C /* XCRemoteSwiftPackageReference "smartystreets-ios-sdk" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/smartystreets/smartystreets-ios-sdk";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 8.0.0;
+			};
+		};
+		A9B448B82A8389B90029944C /* XCRemoteSwiftPackageReference "vgs-show-ios" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/verygoodsecurity/vgs-show-ios.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.0.0;
+			};
+		};
+		A9B448BB2A8389B90029944C /* XCRemoteSwiftPackageReference "pinwheel-ios-sdk" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/underdog-tech/pinwheel-ios-sdk.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 2.0.0;
 			};
 		};
 		A9B4B9212A7C0C76000ED67A /* XCRemoteSwiftPackageReference "Factory" */ = {
@@ -2064,6 +2565,88 @@
 		A980DF762A5FA26E000B3C09 /* LFUtilities */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = LFUtilities;
+		};
+		A9B448A32A8389B90029944C /* Factory */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = A9B448A42A8389B90029944C /* XCRemoteSwiftPackageReference "Factory" */;
+			productName = Factory;
+		};
+		A9B448A52A8389B90029944C /* Lottie */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = A9B448A62A8389B90029944C /* XCRemoteSwiftPackageReference "lottie-ios" */;
+			productName = Lottie;
+		};
+		A9B448A72A8389B90029944C /* LFStyleGuide */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = LFStyleGuide;
+		};
+		A9B448A82A8389B90029944C /* LFAccountOnboarding */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = LFAccountOnboarding;
+		};
+		A9B448A92A8389B90029944C /* OnboardingDomain */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = OnboardingDomain;
+		};
+		A9B448AA2A8389B90029944C /* DataUtilities */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = DataUtilities;
+		};
+		A9B448AB2A8389B90029944C /* OnboardingData */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = OnboardingData;
+		};
+		A9B448AC2A8389B90029944C /* LFNetwork */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = LFNetwork;
+		};
+		A9B448AD2A8389B90029944C /* LFServices */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = LFServices;
+		};
+		A9B448AE2A8389B90029944C /* LFUtilities */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = LFUtilities;
+		};
+		A9B448AF2A8389B90029944C /* LFLocalizable */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = LFLocalizable;
+		};
+		A9B448B02A8389B90029944C /* AuthorizationManager */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = AuthorizationManager;
+		};
+		A9B448B12A8389B90029944C /* iPhoneNumberField */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = A9B448B22A8389B90029944C /* XCRemoteSwiftPackageReference "iPhoneNumberField" */;
+			productName = iPhoneNumberField;
+		};
+		A9B448B32A8389B90029944C /* SmartyStreets */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = A9B448B42A8389B90029944C /* XCRemoteSwiftPackageReference "smartystreets-ios-sdk" */;
+			productName = SmartyStreets;
+		};
+		A9B448B52A8389B90029944C /* NetSpendData */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = NetSpendData;
+		};
+		A9B448B62A8389B90029944C /* LFDashboard */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = LFDashboard;
+		};
+		A9B448B72A8389B90029944C /* VGSShowSDK */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = A9B448B82A8389B90029944C /* XCRemoteSwiftPackageReference "vgs-show-ios" */;
+			productName = VGSShowSDK;
+		};
+		A9B448B92A8389B90029944C /* AccountData */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = AccountData;
+		};
+		A9B448BA2A8389B90029944C /* PinwheelSDK */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = A9B448BB2A8389B90029944C /* XCRemoteSwiftPackageReference "pinwheel-ios-sdk" */;
+			productName = PinwheelSDK;
 		};
 		A9B4B9202A7C0C76000ED67A /* Factory */ = {
 			isa = XCSwiftPackageProductDependency;
