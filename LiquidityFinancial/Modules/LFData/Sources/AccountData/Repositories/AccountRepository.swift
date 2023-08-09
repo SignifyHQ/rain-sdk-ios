@@ -25,11 +25,9 @@ public class AccountRepository: AccountRepositoryProtocol {
     return try await accountAPI.getAccount(currencyType: currencyType)
   }
   
-  public func getTransactions(accountId: String, currencyType: String, limit: Int, offset: Int) async throws -> [TransactionEntity] {
+  public func getTransactions(accountId: String, currencyType: String, limit: Int, offset: Int) async throws -> TransactionListEntity {
     return try await accountAPI.getTransactions(accountId: accountId, currencyType: currencyType, limit: limit, offset: offset)
   }
 }
-
-extension APITransaction: TransactionEntity {}
 
 extension APIAccount: LFAccount {}

@@ -1,4 +1,5 @@
 import Foundation
+import AccountDomain
 
 struct TransactionModel: Codable, Identifiable, Equatable {
   var id: String?
@@ -9,7 +10,7 @@ struct TransactionModel: Codable, Identifiable, Equatable {
   var subType: String?
   var description: String?
   var accountId: String?
-  var balance: String?
+  var currentBalance: String?
   var createdAt: String?
   var txnDate: String?
   var estimatedTxnDate: String?
@@ -32,8 +33,17 @@ struct TransactionModel: Codable, Identifiable, Equatable {
   var personName: String?
   var profileImageUrl: String?
   var cancellationDate: String?
-  var platformTxnType: PlatformTransactionType = .other
+  var platformTransactionType: PlatformTransactionType = .unknown
 
+  var titleDisplay: String {
+    guard let title = title else { return descriptionDisplay }
+    return title.isEmpty ? descriptionDisplay : title
+  }
+  
+  var descriptionDisplay: String {
+    return description ?? ""
+  }
+  
   var trxPrice: String? {
     let value: String?
     var currency: String?
@@ -66,7 +76,7 @@ struct TransactionModel: Codable, Identifiable, Equatable {
   var formattedBalance: String? {
     let prefix = isCashTransaction ? "$" : nil
     let fractionDigits = isCashTransaction ? 2 : 3
-    return balance?.formattedAmount(prefix: prefix, minFractionDigits: fractionDigits, maxFractionDigits: fractionDigits, absoluteValue: true)
+    return currentBalance?.formattedAmount(prefix: prefix, minFractionDigits: fractionDigits, maxFractionDigits: fractionDigits, absoluteValue: true)
   }
 
   var isPositiveAmount: Bool {
@@ -93,6 +103,20 @@ struct TransactionModel: Codable, Identifiable, Equatable {
 
   static func == (lhs: TransactionModel, rhs: TransactionModel) -> Bool {
     lhs.id == rhs.id
+  }
+}
+
+extension TransactionModel {
+  init(from transactionEntity: TransactionEntity) {
+    self.init(
+      id: transactionEntity.id,
+      title: transactionEntity.title,
+      amount: (transactionEntity.amount ?? 0).toString,
+      description: transactionEntity.description,
+      currentBalance: (transactionEntity.currentBalance ?? 0).toString,
+      status: TransactionStatus(rawValue: transactionEntity.status ?? ""),
+      platformTransactionType: PlatformTransactionType(rawValue: transactionEntity.type ?? "") ?? .unknown
+    )
   }
 }
 
@@ -192,5 +216,11 @@ extension TransactionModel {
   struct Sell: Codable {
     let quotedPrice: String
     let quotedCurrency: String
+  }
+}
+
+private extension Int {
+  var toString: String {
+    String(self)
   }
 }

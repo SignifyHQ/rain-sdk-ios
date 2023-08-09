@@ -33,8 +33,7 @@ struct CashView: View {
           assets: [.usd, .avax, .usdc]
         )
       case .transactions:
-        EmptyView()
-          // TransactionListView(type: .cash)
+        TransactionListView(type: .cash, currencyType: viewModel.currencyType)
       case .addMoney:
         MoveMoneyAccountView(kind: .receive)
       case .sendMoney:
@@ -110,9 +109,11 @@ private extension CashView {
         viewModel.appearOperations()
       }
       .refreshable {
-        await viewModel.refresh()
+        Task { @MainActor in
+          await viewModel.refresh()
+        }
       }
-        // .track(name: String(describing: type(of: self))) TODO: Will be implemented later
+      // .track(name: String(describing: type(of: self))) TODO: Will be implemented later
     }
   }
   
@@ -170,13 +171,11 @@ private extension CashView {
       if viewModel.transactions.isEmpty {
         noTransactionsYetView(height: size.height)
       } else {
-        EmptyView()
-          // TODO: Will be implemented later
-          //      ForEach(items) { transaction in
-          //        TransactionRowView(item: transaction, type: .cash) {
-          //          viewModel.transactionItemTapped(transaction)
-          //        }
-          //      }
+        ForEach(viewModel.transactions) { transaction in
+          TransactionRowView(item: transaction, type: .cash) {
+            //viewModel.transactionItemTapped(transaction)
+          }
+        }
       }
     }
   }

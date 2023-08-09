@@ -7,6 +7,7 @@ public protocol AccountDataStorageProtocol {
   var userNameDisplay: String { get set }
   var userEmail: String { get set }
   var addressDetail: String { get }
+  var accountID: String? { get set }
   
   func update(firstName: String?)
   func update(lastName: String?)

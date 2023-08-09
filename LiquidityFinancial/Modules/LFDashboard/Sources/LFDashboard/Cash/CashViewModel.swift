@@ -3,6 +3,8 @@ import LFCard
 import Factory
 import NetSpendData
 import NetSpendDomain
+import AccountDomain
+import AccountData
 import LFUtilities
 
 @MainActor
@@ -13,10 +15,10 @@ final class CashViewModel: ObservableObject {
   @Published var activity = Activity.loading
   @Published var cashCardDetails = CardModel.virtualDefault // MOCK DATA
   @Published var selectedAsset: AssetType = .usdc
-  @Published var transactions: [String] = [] // FAKE TYPE -> TransactionModel
   @Published var navigation: Navigation?
+  @Published var transactions: [TransactionModel] = []
   @Published var linkedAccount: [APILinkedSourceData] = []
-
+  
   @LazyInjected(\.accountRepository) var accountRepository
   @LazyInjected(\.accountDataManager) var accountDataManager
   @LazyInjected(\.externalFundingRepository) var externalFundingRepository
@@ -25,60 +27,49 @@ final class CashViewModel: ObservableObject {
     "FIAT"
   }
   
+  var transactionLimitEntity: Int {
+    50
+  }
+  
+  var transactionLimitOffset: Int {
+    0
+  }
+  
   private let guestHandler: () -> Void
   
   init(guestHandler: @escaping () -> Void) {
     self.guestHandler = guestHandler
-    getAccountInfomation()
   }
 }
 
 extension CashViewModel {
   func appearOperations() {
-    Task {
-      await refresh()
+    Task { @MainActor [weak self] in
+      guard let self else { return }
+      await self.refresh()
     }
   }
   
   func refresh() async {
-    await withTaskGroup(of: Void.self) { group in
-      group.addTask {
-          // await self.accountManager.refreshAccounts(loadCards: false)
+    do {
+      activity = .loading
+      isLoading = true
+      if let account = try await refreshAccounts() {
+        isLoading = false
+        
+        try getListConnectedAccount()
+        
+        try await loadTransactions(accountId: account.id)
+        activity = .transactions
+        
       }
-      group.addTask {
-        await self.loadTransactions()
-      }
-      group.addTask {
-        await self.getListConnectedAccount()
-      }
-    }
-  }
-  
-  func loadTransactions() async {
-    activity = .transactions
-  }
-  
-  func getListConnectedAccount() {
-    Task { @MainActor in
-      do {
-        let sessionID = self.accountDataManager.sessionID
-        let response = try await self.externalFundingRepository.getLinkedAccount(sessionId: sessionID)
-        let linkedAccount = response.linkedSources.compactMap({
-          APILinkedSourceData(
-            name: $0.name,
-            last4: $0.last4,
-            sourceType: APILinkSourceType(rawValue: $0.sourceType.rawString),
-            sourceId: $0.sourceId
-          )
-        })
-        self.linkedAccount = linkedAccount
-      } catch {
-        log.error(error)
-      }
+    } catch {
+      log.error(error)
     }
   }
   
   func onClickedSeeAllButton() {
+    navigation = .transactions
   }
   
   func guestCardTapped() {
@@ -89,39 +80,11 @@ extension CashViewModel {
     navigation = .changeAsset
   }
   
-  func getAccountInfomation() {
-    Task { @MainActor [weak self] in
-      guard let self else { return }
-      defer { isLoading = false }
-      isLoading = true
-      do {
-        let accounts = try await accountRepository.getAccount(currencyType: currencyType)
-        if let account = accounts.first { // TODO: Just get one
-          self.cashBalanceValue = account.availableBalance
-          self.selectedAsset = AssetType(rawValue: account.currency) ?? .usd
-          await self.getTransactions(accountId: account.id)
-        }
-        log.info(accounts)
-      } catch {
-        log.error(error.localizedDescription)
-      }
-    }
-  }
-  
-  func getTransactions(accountId: String) async {
-    do {
-      let transactions = try await accountRepository.getTransactions(accountId: accountId, currencyType: currencyType, limit: 10, offset: 1)
-      log.info(transactions)
-    } catch {
-      log.error(error.localizedDescription)
-    }
-  }
-  
   func addMoneyTapped() {
     Haptic.impact(.light).generate()
     if linkedAccount.isEmpty {
-      // fullScreen = .fundCard
-      // TODO: Will implement later
+        // fullScreen = .fundCard
+        // TODO: Will implement later
     } else {
       navigation = .addMoney
     }
@@ -130,10 +93,49 @@ extension CashViewModel {
   func sendMoneyTapped() {
     Haptic.impact(.light).generate()
     if linkedAccount.isEmpty {
-      // fullScreen = .fundCard
-      // TODO: Will implement later
+        // fullScreen = .fundCard
+        // TODO: Will implement later
     } else {
       navigation = .sendMoney
+    }
+  }
+}
+
+// MARK: - Types Private
+private extension CashViewModel {
+  func loadTransactions(accountId: String) async throws {
+    defer { activity = .transactions }
+    activity = .loading
+    let transactions = try await accountRepository.getTransactions(accountId: accountId, currencyType: currencyType, limit: transactionLimitEntity, offset: transactionLimitOffset)
+    self.transactions = transactions.data.compactMap({ TransactionModel(from: $0) })
+  }
+  
+  func refreshAccounts() async throws -> LFAccount? {
+    defer { isLoading = false }
+    isLoading = true
+    let accounts = try await accountRepository.getAccount(currencyType: currencyType)
+    if let account = accounts.first { // TODO: Temp Just get one
+      self.accountDataManager.accountID = account.id
+      self.cashBalanceValue = account.availableBalance
+      self.selectedAsset = AssetType(rawValue: account.currency) ?? .usd
+      return account
+    }
+    return nil
+  }
+  
+  func getListConnectedAccount() throws {
+    Task {
+      let sessionID = self.accountDataManager.sessionID
+      let response = try await self.externalFundingRepository.getLinkedAccount(sessionId: sessionID)
+      let linkedAccount = response.linkedSources.compactMap({
+        APILinkedSourceData(
+          name: $0.name,
+          last4: $0.last4,
+          sourceType: APILinkSourceType(rawValue: $0.sourceType.rawString),
+          sourceId: $0.sourceId
+        )
+      })
+      self.linkedAccount = linkedAccount
     }
   }
 }

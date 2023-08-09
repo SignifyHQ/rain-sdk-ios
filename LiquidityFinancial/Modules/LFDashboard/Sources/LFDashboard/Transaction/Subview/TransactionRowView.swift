@@ -19,8 +19,8 @@ struct TransactionRowView: View {
         Spacer()
         trailing
       }
-      .padding(.leading, 16)
-      .padding(.trailing, 20)
+      .padding(.leading, 12)
+      .padding(.trailing, 16)
       .background(Colors.secondaryBackground.swiftUIColor)
       .cornerRadius(12)
     }
@@ -47,7 +47,7 @@ private extension TransactionRowView {
       }
     }
     .frame(width: 46, height: 46)
-    .padding(.vertical, 16)
+    .padding(.vertical, 12)
   }
 
   var center: some View {
@@ -102,7 +102,7 @@ extension TransactionRowView {
   private var leftImageSource: ImageSource {
     switch type {
     case .cash, .crypto, .cashback:
-      return .local(item.platformTxnType.assetName)
+      return .local(item.platformTransactionType.assetName)
     case .userDonation:
       return .remote(url: item.donationCharityFundraiser?.sticker.url, placeholder: GenImages.Images.Transactions.txDonation.name)
     case .fundraiserDonation:
@@ -113,7 +113,7 @@ extension TransactionRowView {
   private var title: String? {
     switch type {
     case .cash, .crypto, .userDonation, .cashback:
-      return item.title
+      return item.titleDisplay
     case .fundraiserDonation:
       if let name = item.personName {
         return LFLocalizable.TransactionRow.FundraiserDonation.user(name)
@@ -124,7 +124,10 @@ extension TransactionRowView {
   }
 
   private var subtitle: String {
-    item.status == .pending ? LFLocalizable.TransactionRow.pending : item.transactionDateInLocalZone()
+    if let status = item.status {
+      return status == .pending ? status.localizedDescription() : item.transactionDateInLocalZone()
+    }
+    return TransactionStatus.unknown.localizedDescription()
   }
 
   private var amountColor: Color {

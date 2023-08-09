@@ -6,8 +6,8 @@ import LFUtilities
 struct TransactionListView: View {
   @StateObject private var viewModel: TransactionListViewModel
 
-  init(type: TransactionListViewModel.Kind) {
-    _viewModel = .init(wrappedValue: .init(type: type))
+  init(type: TransactionListViewModel.Kind, currencyType: String ) {
+    _viewModel = .init(wrappedValue: .init(type: type, currencyType: currencyType))
   }
 
   var body: some View {
@@ -25,7 +25,7 @@ struct TransactionListView: View {
 
   private var content: some View {
     Group {
-      if viewModel.showIndicator {
+      if viewModel.isLoading {
         loading
       } else {
         VStack(spacing: 10) {
@@ -36,6 +36,11 @@ struct TransactionListView: View {
             ForEach(viewModel.filteredTransactions) { transaction in
               item(transaction)
             }
+          }
+          if viewModel.isLoadingMore {
+            TransactionRowLoadingView()
+              .frame(height: 48)
+              .padding(.horizontal, 30)
           }
         }
       }

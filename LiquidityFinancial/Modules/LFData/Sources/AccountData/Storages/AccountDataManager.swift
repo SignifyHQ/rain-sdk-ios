@@ -46,6 +46,8 @@ public class AccountDataManager: AccountDataStorageProtocol {
       .filter { !$0.isEmpty }
       .joined(separator: ", ")
   }
+
+  public var accountID: String?
   
   public private(set) var userInfomationData: UserInfomationDataProtocol = UserInfomationData()
   

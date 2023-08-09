@@ -4,8 +4,8 @@ import LFLocalizable
 
 public enum TabOption: String, CaseIterable {
   case cash
-  case rewards
   case assets
+  case rewards
   case account
   
   var title: String {
