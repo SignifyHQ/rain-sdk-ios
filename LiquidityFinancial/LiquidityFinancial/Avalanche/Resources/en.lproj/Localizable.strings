@@ -510,6 +510,15 @@
 "referral.copy.buttonTitle" = "Copy invite link";
 "referral.toast.message" = "Invite link copied to clipboard.";
 
+// Asset View
+"assetView.buy.title" = "Buy";
+"assetView.sell.title" = "Sell";
+"assetView.transfer.title" = "Transfer";
+"assetView.wallet_address" = "Wallet address";
+"assetView.today" = "Today";
+"assetView.disclosure" = "Cryptocurrency services powered by Zero Hash";
+"assetView.see_all" = "See all";
+
 // MARK: - Common
 
 // Terms

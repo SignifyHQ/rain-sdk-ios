@@ -198,6 +198,28 @@ public enum LFLocalizable {
       }
     }
   }
+  public enum AssetView {
+    /// Cryptocurrency services powered by Zero Hash
+    public static let disclosure = LFLocalizable.tr("Localizable", "assetView.disclosure", fallback: "Cryptocurrency services powered by Zero Hash")
+    /// See all
+    public static let seeAll = LFLocalizable.tr("Localizable", "assetView.see_all", fallback: "See all")
+    /// Today
+    public static let today = LFLocalizable.tr("Localizable", "assetView.today", fallback: "Today")
+    /// Wallet address
+    public static let walletAddress = LFLocalizable.tr("Localizable", "assetView.wallet_address", fallback: "Wallet address")
+    public enum Buy {
+      /// Buy
+      public static let title = LFLocalizable.tr("Localizable", "assetView.buy.title", fallback: "Buy")
+    }
+    public enum Sell {
+      /// Sell
+      public static let title = LFLocalizable.tr("Localizable", "assetView.sell.title", fallback: "Sell")
+    }
+    public enum Transfer {
+      /// Transfer
+      public static let title = LFLocalizable.tr("Localizable", "assetView.transfer.title", fallback: "Transfer")
+    }
+  }
   public enum BankTransfers {
     public enum AccountNumber {
       /// Account number

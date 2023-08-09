@@ -155,6 +155,7 @@ public extension Constants {
     case accountCardSecurity = "XXXXXXXXXX XXXXXXXXX XXX"
     case currencyDescription = "Dollars"
     case documentName = "document.pdf"
+    case walletAddressPlaceholder = "*********"
   }
 }
 

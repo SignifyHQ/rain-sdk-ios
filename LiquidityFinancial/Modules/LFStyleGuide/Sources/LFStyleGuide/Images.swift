@@ -48,6 +48,7 @@ public enum GenImages {
     }
     public static let zerohash = ImageAsset(name: "Zerohash")
     public static let addMoney = ImageAsset(name: "addMoney")
+    public static let buy = ImageAsset(name: "buy")
     public static let calendar = ImageAsset(name: "calendar")
     public static let checkmark = ImageAsset(name: "checkmark")
     public static let dash = ImageAsset(name: "dash")
@@ -99,11 +100,14 @@ public enum GenImages {
     public static let personAndBackgroundDotted = ImageAsset(name: "person.and.background.dotted")
     public static let rewardsCashback = ImageAsset(name: "rewardsCashback")
     public static let rewardsDonation = ImageAsset(name: "rewardsDonation")
+    public static let sell = ImageAsset(name: "sell")
     public static let sendMoney = ImageAsset(name: "sendMoney")
     public static let stickerPlaceholder = ImageAsset(name: "stickerPlaceholder")
     public static let termsCheckboxDeselected = ImageAsset(name: "termsCheckboxDeselected")
     public static let termsCheckboxSelected = ImageAsset(name: "termsCheckboxSelected")
+    public static let transfer = ImageAsset(name: "transfer")
     public static let usdSymbol = ImageAsset(name: "usdSymbol")
+    public static let walletAddress = ImageAsset(name: "walletAddress")
   }
   public enum Images {
     public enum Transactions {
@@ -125,6 +129,7 @@ public enum GenImages {
     public static let connectedAppleWallet = ImageAsset(name: "connectedAppleWallet")
     public static let emptyCard = ImageAsset(name: "emptyCard")
     public static let icCopyBackground = ImageAsset(name: "ic_copy_background")
+    public static let icCrypto = ImageAsset(name: "ic_crypto")
     public static let icKycQuestion = ImageAsset(name: "ic_kyc_question_?")
     public static let icKycQuestionCheck = ImageAsset(name: "ic_kyc_question_check")
     public static let icLogo = ImageAsset(name: "ic_logo")

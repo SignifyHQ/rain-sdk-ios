@@ -22,7 +22,7 @@ struct DashboardView: View {
       case .rewards:
         EmptyView()
       case .assets:
-        EmptyView()
+        AssetView()
       case .account:
         AccountsView()
       }
