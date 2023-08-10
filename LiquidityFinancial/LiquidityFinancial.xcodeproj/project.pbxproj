@@ -251,7 +251,7 @@
 		A95354A32A5E571D008B0FAB /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
 		A95354A52A5E571D008B0FAB /* AppView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppView.swift; sourceTree = "<group>"; };
 		A95354A62A5E571D008B0FAB /* CardanoApp.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CardanoApp.swift; sourceTree = "<group>"; };
-		A95D418F2A6E31C60095596B /* CauseCard.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = CauseCard.entitlements; sourceTree = "<group>"; };
+		A95D418F2A6E31C60095596B /* Avalanche.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Avalanche.entitlements; sourceTree = "<group>"; };
 		A95D41902A6E35750095596B /* Cardano.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Cardano.entitlements; sourceTree = "<group>"; };
 		A963D4082A67F491006B9A54 /* AppCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppCoordinator.swift; sourceTree = "<group>"; };
 		A963D40A2A67F7FD006B9A54 /* AppViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppViewModel.swift; sourceTree = "<group>"; };
@@ -727,7 +727,7 @@
 			isa = PBXGroup;
 			children = (
 				A9BC80392A774D2F00E4A1A0 /* Fonts */,
-				A95D418F2A6E31C60095596B /* CauseCard.entitlements */,
+				A95D418F2A6E31C60095596B /* Avalanche.entitlements */,
 				A97BF8392A5DA4DA00B8F5CA /* Avalanche-Info.plist */,
 				A9D6C4B12A5E91DF0038D0BB /* LaunchScreen.storyboard */,
 				A95354602A5DD91A008B0FAB /* Assets */,
