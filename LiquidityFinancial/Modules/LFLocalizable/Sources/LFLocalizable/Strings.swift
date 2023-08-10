@@ -275,6 +275,10 @@ public enum LFLocalizable {
       /// Back
       public static let title = LFLocalizable.tr("Localizable", "button.back.title", fallback: "Back")
     }
+    public enum ContactSupport {
+      /// Contact Support
+      public static let title = LFLocalizable.tr("Localizable", "button.contactSupport.title", fallback: "Contact Support")
+    }
     public enum Continue {
       /// Continue
       public static let title = LFLocalizable.tr("Localizable", "button.continue.title", fallback: "Continue")
@@ -652,10 +656,10 @@ public enum LFLocalizable {
     /// Why do we need SSN?
     public static let why = LFLocalizable.tr("Localizable", "enter_ssn.why", fallback: "Why do we need SSN?")
     public enum Alert {
-      /// A valid SSN or Passport is required by our bank, Pathward. Your SSN is only stored with the bank and not accessible through AvalancheCard.
-      public static let message = LFLocalizable.tr("Localizable", "enter_ssn.alert.message", fallback: "A valid SSN or Passport is required by our bank, Pathward. Your SSN is only stored with the bank and not accessible through AvalancheCard.")
-      /// Ok
-      public static let ok = LFLocalizable.tr("Localizable", "enter_ssn.alert.ok", fallback: "Ok")
+      /// A valid SSN or Passport is required by our banking partners, to create a checking account.
+      public static let message = LFLocalizable.tr("Localizable", "enter_ssn.alert.message", fallback: "A valid SSN or Passport is required by our banking partners, to create a checking account.")
+      /// Okay
+      public static let okay = LFLocalizable.tr("Localizable", "enter_ssn.alert.okay", fallback: "Okay")
       /// WHY DO WE NEED SSN?
       public static let title = LFLocalizable.tr("Localizable", "enter_ssn.alert.title", fallback: "WHY DO WE NEED SSN?")
     }
@@ -704,8 +708,16 @@ public enum LFLocalizable {
     public enum Question {
       /// Please answer the following questions to help us verify your information.
       public static let desc = LFLocalizable.tr("Localizable", "kyc.question.desc", fallback: "Please answer the following questions to help us verify your information.")
+      /// The questions are only valid for 5 minutes
+      public static let timeDesc = LFLocalizable.tr("Localizable", "kyc.question.timeDesc", fallback: "The questions are only valid for 5 minutes")
       /// Additional Security Questions
       public static let title = LFLocalizable.tr("Localizable", "kyc.question.title", fallback: "Additional Security Questions")
+    }
+    public enum TimeIsUp {
+      /// The time to answer questions has expired, please contact support to verify your accont.
+      public static let message = LFLocalizable.tr("Localizable", "kyc.timeIsUp.message", fallback: "The time to answer questions has expired, please contact support to verify your accont.")
+      /// TIME IS UP
+      public static let title = LFLocalizable.tr("Localizable", "kyc.timeIsUp.title", fallback: "TIME IS UP")
     }
   }
   public enum KycStatus {

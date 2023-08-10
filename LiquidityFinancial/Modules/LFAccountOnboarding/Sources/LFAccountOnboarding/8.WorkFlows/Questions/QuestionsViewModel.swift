@@ -8,26 +8,49 @@ import OnboardingData
 // swiftlint:disable superfluous_disable_command
 @MainActor
 final class QuestionsViewModel: ObservableObject {
-  enum Navigation {
-    case kycReview
-    case uploadDocument
-    case missingInfo
-  }
-  
   @LazyInjected(\.netspendDataManager) var netspendDataManager
   @LazyInjected(\.accountDataManager) var accountDataManager
+  @LazyInjected(\.authorizationManager) var authorizationManager
   @LazyInjected(\.netspendRepository) var netspendRepository
   @LazyInjected(\.onboardingRepository) var onboardingRepository
   @LazyInjected(\.onboardingFlowCoordinator) var onboardingFlowCoordinator
-  
+  @LazyInjected(\.intercomService) var intercomService
+
   @Published var isLoading: Bool = false
   @Published var isEnableContinue: Bool = false
   @Published var toastMessage: String?
   @Published var questionList: QuestionsEntity
   @Published var navigation: Navigation?
-  
+  @Published var popup: Popup?
+  @Published var timeRemaining = Constants.kycQuestionTimeOut
+
+  let timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
+
   init(questionList: QuestionsEntity) {
     _questionList = .init(initialValue: questionList)
+  }
+}
+
+// MARK: - View Helpers
+extension QuestionsViewModel {
+  func coundownTimer() {
+    if timeRemaining > 0 {
+      timeRemaining -= 1
+    } else {
+      isEnableContinue = false
+      popup = .timeIsUp
+      timer.upstream.connect().cancel()
+    }
+  }
+  
+  func contactSupport() {
+    intercomService.openIntercom()
+  }
+  
+  func logout() {
+    authorizationManager.clearToken()
+    accountDataManager.clearUserSession()
+    popup = nil
   }
   
   func updateAnswerSelect(questionID: String, answerID: String) {
@@ -65,7 +88,7 @@ final class QuestionsViewModel: ObservableObject {
       isLoading = true
       do {
         _ = try await netspendRepository.putQuestion(sessionId: session.sessionId, encryptedData: encryptedData)
-       
+        
         try await handleWorkflows()
         
       } catch {
@@ -74,8 +97,11 @@ final class QuestionsViewModel: ObservableObject {
       }
     }
   }
-  
-  private func handleWorkflows() async throws {
+}
+
+// MARK: - Private Functions
+private extension QuestionsViewModel {
+  func handleWorkflows() async throws {
     let workflows = try await self.netspendRepository.getWorkflows()
     
     if workflows.steps.isEmpty {
@@ -104,5 +130,18 @@ final class QuestionsViewModel: ObservableObject {
         }
       }
     }
+  }
+}
+
+// MARK: - Types
+extension QuestionsViewModel {
+  enum Navigation {
+    case kycReview
+    case uploadDocument
+    case missingInfo
+  }
+  
+  enum Popup {
+    case timeIsUp
   }
 }

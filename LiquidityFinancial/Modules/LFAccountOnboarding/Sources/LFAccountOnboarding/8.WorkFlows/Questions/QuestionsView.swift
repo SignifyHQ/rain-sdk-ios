@@ -4,11 +4,9 @@ import LFUtilities
 import LFLocalizable
 
 struct QuestionsView: View {
-  
-  @State var offsetChange: CGPoint = .zero
-  
   @StateObject var viewModel: QuestionsViewModel
-  
+  @State var offsetChange: CGPoint = .zero
+
   init(viewModel: QuestionsViewModel) {
     _viewModel = .init(wrappedValue: viewModel)
   }
@@ -16,7 +14,6 @@ struct QuestionsView: View {
   var body: some View {
     VStack {
       headerView
-      
       OffsetObservingScrollView(offset: $offsetChange) {
         ForEach($viewModel.questionList.questions, id: \.id) { question in
           AnswerQuestionView(answerOption: question) { _, id in
@@ -24,7 +21,6 @@ struct QuestionsView: View {
           }
         }
       }
-      
       Button {
         
       } label: {
@@ -44,15 +40,23 @@ struct QuestionsView: View {
       ) {
         viewModel.actionContinue()
       }
-      .padding(.horizontal, 20)
       .padding(.bottom, 8)
       .padding(.top, 5)
-
     }
+    .onReceive(viewModel.timer) { _ in
+      viewModel.coundownTimer()
+    }
+    .padding(.horizontal, 30)
     .frame(max: .infinity)
     .background(Colors.background.swiftUIColor)
     .popup(item: $viewModel.toastMessage, style: .toast) {
       ToastView(toastMessage: $0)
+    }
+    .popup(item: $viewModel.popup) { popup in
+      switch popup {
+      case .timeIsUp:
+        timeIsUpPopup
+      }
     }
     .navigationLink(item: $viewModel.navigation) { item in
       switch item {
@@ -66,33 +70,44 @@ struct QuestionsView: View {
     }
     .navigationBarBackButtonHidden(viewModel.isLoading)
   }
-  
-  private var headerView: some View {
-    Group {
-      Text(LFLocalizable.Kyc.Question.title.uppercased())
-        .font(Fonts.regular.swiftUIFont(size: 20))
-        .foregroundColor(.white)
-        .padding(.horizontal, 20)
-        .padding(.vertical, 0)
-      Text(LFLocalizable.Kyc.Question.desc)
-        .font(Fonts.regular.swiftUIFont(size: 16))
-        .foregroundColor(.white)
-        .padding(.top, 2)
-        .padding(.horizontal, 20)
-      
+}
+
+// MARK: - View Components
+private extension QuestionsView {
+  var headerView: some View {
+    VStack(alignment: .leading, spacing: 24) {
+      VStack(alignment: .leading, spacing: 12) {
+        Text(LFLocalizable.Kyc.Question.title.uppercased())
+          .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.main.value))
+          .foregroundColor(Colors.label.swiftUIColor)
+        Text(LFLocalizable.Kyc.Question.desc)
+          .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.medium.value))
+          .foregroundColor(Colors.label.swiftUIColor.opacity(0.75))
+        Text(LFLocalizable.Kyc.Question.timeDesc)
+          .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.ultraSmall.value))
+          .foregroundColor(Colors.primary.swiftUIColor)
+      }
       GenImages.CommonImages.dash.swiftUIImage
         .foregroundColor(Color.white)
-        .padding(.vertical, 12)
-      
       HStack {
         GenImages.Images.icKycQuestion.swiftUIImage
-        
         Spacer()
       }
-      .padding(.horizontal, 20)
     }
   }
   
+  var timeIsUpPopup: some View {
+    LiquidityAlert(
+      title: LFLocalizable.Kyc.TimeIsUp.title,
+      message: LFLocalizable.Kyc.TimeIsUp.message,
+      primary: .init(text: LFLocalizable.Button.ContactSupport.title) {
+        viewModel.contactSupport()
+      },
+      secondary: .init(text: LFLocalizable.Button.NotNow.title) {
+        viewModel.logout()
+      }
+    )
+  }
 }
 
 private struct AnswerQuestionView: View {
@@ -105,7 +120,6 @@ private struct AnswerQuestionView: View {
         Text(answerOption.question)
           .font(Fonts.regular.swiftUIFont(size: 16))
           .foregroundColor(.white)
-          .padding(.horizontal, 20)
           .padding(.vertical, 12)
         Spacer()
       }
@@ -161,7 +175,6 @@ private struct AnswerButton: View {
           }
         }
       }
-      .padding(.horizontal, 20)
     }
   }
 }

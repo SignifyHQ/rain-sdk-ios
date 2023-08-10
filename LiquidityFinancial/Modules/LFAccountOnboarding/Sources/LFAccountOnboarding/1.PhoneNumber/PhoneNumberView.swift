@@ -159,20 +159,16 @@ private extension PhoneNumberView {
   
   @ViewBuilder
   var voipTermView: some View {
-    if environmentManager.networkEnvironment == .productionTest {
-      TextTappable(
-        text: LFLocalizable.Term.TermsVoip.description,
-        textAlignment: .center,
-        fontSize: Constants.FontSize.ultraSmall.value,
-        links: [LFLocalizable.Term.PrivacyPolicy.attributeText]
-      ) { _ in
-        guard let url = URL(string: LFUtility.privacyURL) else { return }
-        openURL(url)
-      }
-      .frame(height: 90)
-    } else {
-      EmptyView()
+    TextTappable(
+      text: LFLocalizable.Term.TermsVoip.description,
+      textAlignment: .center,
+      fontSize: Constants.FontSize.ultraSmall.value,
+      links: [LFLocalizable.Term.PrivacyPolicy.attributeText]
+    ) { _ in
+      guard let url = URL(string: LFUtility.privacyURL) else { return }
+      openURL(url)
     }
+    .frame(height: 90)
   }
 }
 

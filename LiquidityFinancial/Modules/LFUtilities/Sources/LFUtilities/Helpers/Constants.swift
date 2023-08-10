@@ -172,6 +172,8 @@ public extension Constants {
 
 public extension Constants {
   
+  static let kycQuestionTimeOut = 600
+  
   static var supportedStates: [String] = ["NY", "New York", "HI", "Hawaii"]
   
   static let netSpendSDKLinkBankErrors = ["error", "failedToLinkBank", "externalLinkBankError"]

@@ -11,9 +11,7 @@ struct UploadDocumentView: View {
       ScrollView(showsIndicators: false) {
         VStack(spacing: 24) {
           headerTitle
-          GenImages.CommonImages.dash.swiftUIImage
-            .foregroundColor(Colors.label.swiftUIColor.opacity(0.75))
-          uploadDocumentView
+          uploadDocumentArea
           importFilesList
           documentRequirementView
         }
@@ -61,28 +59,17 @@ struct UploadDocumentView: View {
 // MARK: - View Components
 private extension UploadDocumentView {
   var headerTitle: some View {
-    VStack(spacing: 16) {
-      Text(LFLocalizable.UploadDocument.Screen.title)
+    VStack(spacing: 2) {
+      Text(LFLocalizable.UploadDocument.Upload.title)
         .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.large.value))
         .foregroundColor(Colors.label.swiftUIColor)
-      Text(LFLocalizable.UploadDocument.Screen.description(LFUtility.appName))
+        .padding(.bottom, 28)
+      GenImages.CommonImages.dash.swiftUIImage
+        .foregroundColor(Colors.label.swiftUIColor.opacity(0.75))
+      Text(LFLocalizable.UploadDocument.Upload.description)
         .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.medium.value))
         .multilineTextAlignment(.center)
         .foregroundColor(Colors.label.swiftUIColor.opacity(0.75))
-    }
-  }
-  
-  var uploadDocumentView: some View {
-    VStack(spacing: 32) {
-      VStack(alignment: .leading, spacing: 12) {
-        Text(LFLocalizable.UploadDocument.Upload.title)
-          .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.main.value))
-          .foregroundColor(Colors.label.swiftUIColor)
-        Text(LFLocalizable.UploadDocument.Upload.description)
-          .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.medium.value))
-          .foregroundColor(Colors.label.swiftUIColor.opacity(0.75))
-      }
-      uploadDocumentArea
     }
   }
   

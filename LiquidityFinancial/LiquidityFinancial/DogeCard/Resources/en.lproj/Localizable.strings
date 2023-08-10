@@ -53,8 +53,8 @@
 "enter_ssn.no_ssn" = "No SSN? Tap here";
 "enter_ssn.continue" = "Continue";
 "enter_ssn.alert.title" = "WHY DO WE NEED SSN?";
-"enter_ssn.alert.message" = "A valid SSN or Passport is required by our bank, Pathward. Your SSN is only stored with the bank and not accessible through DogeCard.";
-"enter_ssn.alert.ok" = "Ok";
+"enter_ssn.alert.message" = "A valid SSN or Passport is required by our banking partners, to create a checking account.";
+"enter_ssn.alert.okay" = "Okay";
 
 //... PASSPORT...
 "passport_heading" = "ENTER PASSPORT NUMBER";
@@ -68,6 +68,9 @@
 // KYC Questions Screen
 "kyc.question.title" = "Additional Security Questions";
 "kyc.question.desc" = "Please answer the following questions to help us verify your information.";
+"kyc.question.timeDesc" = "The questions are only valid for 5 minutes";
+"kyc.timeIsUp.title" = "TIME IS UP";
+"kyc.timeIsUp.message" = "The time to answer questions has expired, please contact support to verify your accont.";
 
 // Upload KYC Document
 "uploadDocument.screen.title" = "SET UP YOUR ACCOUNT";
@@ -555,6 +558,7 @@
 "button.yes.title" = "Yes";
 "button.retry.title" = "Retry";
 "button.share.title" = "Share";
+"button.contactSupport.title" = "Contact Support";
 
 // Grid Value
 "grid_value.crypto" = "%@ AVAX";

@@ -141,7 +141,7 @@ struct EnterSSNView: View {
     LiquidityAlert(
       title: LFLocalizable.EnterSsn.Alert.title,
       message: LFLocalizable.EnterSsn.Alert.message,
-      primary: .init(text: LFLocalizable.EnterSsn.Alert.ok) { showPopup = false },
+      primary: .init(text: LFLocalizable.EnterSsn.Alert.okay) { showPopup = false },
       secondary: nil
     )
   }

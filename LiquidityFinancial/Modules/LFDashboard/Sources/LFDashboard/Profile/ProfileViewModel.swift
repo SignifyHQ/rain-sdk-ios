@@ -94,7 +94,6 @@ extension ProfileViewModel {
   
   func logout() {
     authorizationManager.clearToken()
-    authorizationManager.clearToken()
     accountDataManager.clearUserSession()
     popup = nil
   }
