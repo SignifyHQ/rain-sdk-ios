@@ -15,16 +15,17 @@ struct RewardTermsView: View {
           Text(LFLocalizable.RewardTerms.enrollTitle)
             .foregroundColor(Colors.label.swiftUIColor)
             .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.main.value))
-          
           rewardDetails
-          
           FullSizeButton(
             title: LFLocalizable.RewardTerms.enrollCta,
             isDisable: false
           ) {
+            // analyticsService.track(event: Event(name: .rewardTermsAccepted))
+            viewModel.onClickedContinueButton()
           }
-          
-          disclosuresDetail
+          Text(viewModel.disclaimerText)
+            .foregroundColor(Colors.label.swiftUIColor.opacity(0.75))
+            .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.ultraSmall.value))
           Spacer()
         }
         .padding(.horizontal, 32)
@@ -67,7 +68,7 @@ extension RewardTermsView {
       VStack(alignment: .leading) {
         buildRow(
           title: LFLocalizable.RewardTerms.amountTitle,
-          subtitle: LFLocalizable.RewardTerms.amountDescription
+          subtitle: LFLocalizable.RewardTerms.amountDescription(LFUtility.appName)
         )
         Divider()
           .overlay(Colors.label.swiftUIColor.opacity(0.2))
@@ -82,17 +83,6 @@ extension RewardTermsView {
           subtitle: LFLocalizable.RewardTerms.exchangeRateDescription
         )
       }
-    }
-  }
-  
-  private var disclosuresDetail: some View {
-    VStack(alignment: .leading, spacing: 8) {
-      Text(LFLocalizable.RewardTerms.disclosuresTitle)
-        .foregroundColor(Colors.label.swiftUIColor.opacity(0.75))
-        .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.ultraSmall.value))
-      Text(viewModel.disclaimerText)
-        .foregroundColor(Colors.label.swiftUIColor.opacity(0.75))
-        .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.ultraSmall.value))
     }
   }
 }

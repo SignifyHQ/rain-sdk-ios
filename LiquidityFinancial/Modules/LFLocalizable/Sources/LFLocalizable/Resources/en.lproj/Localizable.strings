@@ -156,7 +156,7 @@
 
 //...SET UP WALLET...
 "setUpWallet.title" = "CREATE YOUR WALLET";
-"setUpWallet.info" = "AvalancheCard has partnered with ZeroHash, a trusted partner in crypto and ZeroHash,a crypto storage and liquidity provider.";
+"setUpWallet.info" = "%@ Card has partnered with ZeroHash, a trusted partner in crypto.";
 "setUpWallet.termsAndCondition" = "I agree to the Zero Hash and Zero Hash Liquidity Services User Agreement, and I have read and understand the Zero Hash Privacy Policy and Regulatory Disclosures. I understand that the value of any cryptocurrency, including digital assets pegged to fiat currency, commodities, or any other asset, may go to zero.";
 "setUpWallet.risk_disclosure" = "The value of any cryptocurrency, including digital assets pegged to fiat currency, commodities, or any other asset, may go to zero.";
 "setUpWallet.userAgreement" = "User Agreement";
@@ -190,21 +190,22 @@
 "kycStatus.inReview.primaryTitle" = "Check Status";
 
 // Reward Terms
-"rewardTerms.enroll_title" = "ENROLL FOR AVALANCHECARD REWARDS";
+"rewardTerms.enroll_title" = "ENROLL IN CRYPTO REWARDS";
 "rewardTerms.amount_title" = "Transaction Amount";
-"rewardTerms.amount_description" = "up to 8'%' purchase of transaction";
+"rewardTerms.amount_description" = "up to 8% purchase of transaction in rewards";
 "rewardTerms.fees_title" = "Fees";
 "rewardTerms.fees_description" = "$0";
 "rewardTerms.fee_title" = "Fee";
 "rewardTerms.network_fee" = "Network Fee";
 "rewardTerms.exchange_rate_title" = "Exchange Rate";
-"rewardTerms.exchange_rate_description" = "Varies, the current prevaling price as determined by Zero Hash Liquidity Services LLC at the point of transaction.";
+"rewardTerms.exchange_rate_description" = "Exchange rate: Varies, the current prevailing price as determined by Zero Hash Liquidity Services LLC at point of transaction.";
 "rewardTerms.enroll_cta" = "Enroll now";
 "rewardTerms.disclosures_title" = "Exchange Rate";
-"rewardTerms.disclosures_first" = "By selecting to enroll in the crypto rewards program, you understand and agree that eligible rewards transactions will also trigger your authorization to invest in crypto once your action or card transaction is complete. Transactions may take time in certain cases.";
-"rewardTerms.disclosures_second" = "Orders may not be canceled or reversed once submitted by you. By submitting a withdrawal request, you are requesting an on-chain transaction that is not reversible or recallable. You are responsible for reviewing the recipient address and ensuring it is the correct address for the selected asset for withdrawal";
-"rewardTerms.disclosures_third" = "Zero Hash does not offer the ability to set up pre-authorized, automatic, or recurring Orders (“Pre-Authorized Orders”) in your Account; (b) any such Pre-Authorized Order feature (if available) is under the exclusive control of CauseCard ; (c) you must contact CauseCard in order to stop a Pre-Authorized Order before execution or to turn off such a feature in your Account; and (d) Zero Hash and ZHLS are not liable for the placement and execution of any Pre-Authorized order.";
-"rewardTerms.disclosures_fourth" = "Maximum reward amount may vary, and can depend on your level of participation in crypto rewards. Specific terms and condition may apply.";
+"rewardTerms.disclosures_first" = "Cryptocurrency services powered by Zero Hash";
+"rewardTerms.disclosures_second" = "Maximum reward amounts may vary, and can depend on the user’s level of participation in crypto rewards. Specific terms and conditions may apply.";
+"rewardTerms.disclosures_third" = "By selecting to enroll in the crypto rewards program, you understand and agree that eligible rewards transactions will also trigger your authorization to invest in crypto once your action or card transaction is complete. Transactions may take time in certain cases.";
+"rewardTerms.disclosures_fourth" = "Orders may not be canceled or reversed once submitted by you. Also, if a withdrawal request is being made, you are requesting an on-chain transaction that is not reversible or recallable. You are responsible for reviewing the recipient address and ensuring it is the correct address for the selected asset for withdrawal.";
+"rewardTerms.disclosures_fifth" = "Zero Hash does not offer the ability to set up pre-authorized, automatic, or recurring Orders (“Pre-Authorized Orders”) in your Account; (a) any such Pre-Authorized Order feature (if available) is under the exclusive control of [Business] ; (b) you must contact [Business] in order to stop a Pre-Authorized Order before execution or to turn off such a feature in your Account; and (c) Zero Hash and ZHLS are not liable for the placement and execution of any Pre-Authorized order.";
 
 //...REWARDS...
 "rewards" = "Rewards";

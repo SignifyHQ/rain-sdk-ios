@@ -13,7 +13,6 @@ struct SetupWalletView: View {
       VStack {
         HStack {
           Spacer()
-          
           Button {
             viewModel.openIntercom()
           } label: {
@@ -34,42 +33,30 @@ struct SetupWalletView: View {
               .frame(width: geo.size.width, alignment: .leading)
               .padding(.bottom, 20)
               .padding(.top, 15)
-            
-            Text(LFLocalizable.SetUpWallet.info)
+            Text(LFLocalizable.SetUpWallet.info(LFUtility.appName))
               .foregroundColor(Colors.label.swiftUIColor)
               .opacity(0.75)
               .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.medium.value))
               .padding(.horizontal, 35)
               .frame(width: geo.size.width, alignment: .leading)
               .padding(.bottom, 25)
-            
             HStack {
               GenImages.Images.icLogo.swiftUIImage
                 .resizable()
                 .scaledToFit()
-                .frame(width: 80, height: 80)
-                .padding(.leading, 45)
+                .frame(80)
                 .gesture(tap)
               Spacer()
-              
               GenImages.CommonImages.zerohash.swiftUIImage
-                .foregroundColor(Colors.zerohash.swiftUIColor)
-                .padding(.trailing, 45)
             }
-            .frame(
-              width: abs(geo.size.width - 60),
-              height: 130,
-              alignment: .center
-            )
+            .padding(16)
             .background(Colors.secondaryBackground.swiftUIColor)
             .cornerRadius(10)
             .shadow(radius: 10.0)
+            .padding(.horizontal, 30)
           }
-          
           Spacer()
-          
           terms
-          
           bottom
         }
       }
@@ -78,6 +65,9 @@ struct SetupWalletView: View {
       }
       .onAppear {
           //analyticsService.track(event: Event(name: .viewsWalletSetup))
+      }
+      .navigationLink(isActive: $viewModel.isNavigateToRewardsView) {
+        RewardTermsView()
       }
     }
     .navigationBarHidden(true)
@@ -118,6 +108,7 @@ extension SetupWalletView {
 
       TextTappable(
         text: strMessage,
+        fontSize: Constants.FontSize.ultraSmall.value,
         links: [strUserAgreement, strPrivacy, strDiscloures],
         style: .underlined
       ) { tappedString in
@@ -150,13 +141,6 @@ extension SetupWalletView {
       ) {
         viewModel.createZeroHashAccount()
       }
-
-      Text(LFLocalizable.zeroHashTransactiondetail)
-        .font(Fonts.regular.swiftUIFont(size: 10))
-        .foregroundColor(Colors.label.swiftUIColor.opacity(0.50))
-        .padding(.horizontal, 10)
-        .padding(.top, 10)
-
     }
     .ignoresSafeArea(.keyboard, edges: .bottom)
     .padding(.bottom, 5)

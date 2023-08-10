@@ -7,14 +7,13 @@ import LFServices
 // MARK: - SetupWalletViewModel
 
 class SetupWalletViewModel: ObservableObject {
-  
   @Published var showIndicator = false
   @Published var toastMessage: String?
   @Published var selection: Int?
   @Published var isTermsAgreed = false
+  @Published var isNavigateToRewardsView = false
   
   @LazyInjected(\.accountRepository) var accountRepository
-  @LazyInjected(\.onboardingFlowCoordinator) var onboardingFlowCoordinator
   @LazyInjected(\.intercomService) var intercomService
   
   func createZeroHashAccount() {
@@ -23,7 +22,7 @@ class SetupWalletViewModel: ObservableObject {
       showIndicator = true
       do {
         let zeroHashAccount = try await accountRepository.createZeroHashAccount()
-        onboardingFlowCoordinator.set(route: .dashboard)
+        isNavigateToRewardsView = true
         log.debug(zeroHashAccount)
       } catch {
         log.error(error.localizedDescription)
