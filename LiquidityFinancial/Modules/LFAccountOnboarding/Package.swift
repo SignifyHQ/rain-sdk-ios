@@ -14,6 +14,10 @@ let package = Package(
         .library(
           name: "DogeOnboarding",
           targets: ["DogeOnboarding"]
+        ),
+        .library(
+          name: "CauseCardOnboarding",
+          targets: ["CauseCardOnboarding"]
         )
     ],
     dependencies: [
@@ -25,14 +29,15 @@ let package = Package(
       .package(name: "LFStyleGuide", path: "../LFStyleGuide"),
       .package(name: "OnboardingDomain", path: "../LFDomain"),
       .package(name: "LFData", path: "../LFData"),
-      .package(name: "LFLocalizable", path: "../LFLocalizable")
+      .package(name: "LFLocalizable", path: "../LFLocalizable"),
+      .package(url: "https://github.com/SwiftGen/SwiftGenPlugin", from: "6.6.2")
     ],
     targets: [
         .target(
           name: "LFAccountOnboarding",
           dependencies: [
             "LFUtilities", "OnboardingDomain", "LFStyleGuide", "LFLocalizable", "Factory", "iPhoneNumberField",
-            "DogeOnboarding", "SwiftSoup",
+            "DogeOnboarding", "CauseCardOnboarding", "SwiftSoup",
             .product(name: "OnboardingData", package: "LFData"),
             .product(name: "AccountData", package: "LFData"),
             .product(name: "NetSpendData", package: "LFData"),
@@ -50,6 +55,19 @@ let package = Package(
           ],
           resources: [
             .process("ZResources")
+          ]
+        ),
+        .target(
+          name: "CauseCardOnboarding",
+          dependencies: [
+            "LFUtilities", "LFStyleGuide", "LFLocalizable", "Factory",
+            .product(name: "NetSpendData", package: "LFData")
+          ],
+          resources: [
+            .process("ZResources")
+          ],
+          plugins: [
+            .plugin(name: "SwiftGenPlugin", package: "SwiftGenPlugin")
           ]
         ),
         .testTarget(

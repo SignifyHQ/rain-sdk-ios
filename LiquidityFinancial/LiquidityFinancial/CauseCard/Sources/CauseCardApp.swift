@@ -1,4 +1,5 @@
 import SwiftUI
+import CauseCardOnboarding
 
 @main
 struct CauseCardApp: App {
@@ -7,7 +8,7 @@ struct CauseCardApp: App {
   
   var body: some Scene {
     WindowGroup {
-      AppView()
+      DonationsDisclosureView()
     }
   }
 }

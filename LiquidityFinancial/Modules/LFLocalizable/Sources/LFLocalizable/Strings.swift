@@ -198,6 +198,25 @@ public enum LFLocalizable {
       }
     }
   }
+  public enum AlertAttributedText {
+    /// 83-01252270
+    public static let ein = LFLocalizable.tr("Localizable", "alert_attributed_text.ein", fallback: "83-01252270")
+    /// Privacy Policy
+    public static let privacy = LFLocalizable.tr("Localizable", "alert_attributed_text.privacy", fallback: "Privacy Policy")
+    /// Round up spare change to the nearest dollar when you use your CauseCard. It's an easy way to make a big impact over time.
+    /// 
+    /// Round up donations made to ShoppingGives Foundation EIN: %@. 100%% of funds granted to designated nonprofit - %@ and %@.
+    public static func roundUp(_ p1: Any, _ p2: Any, _ p3: Any) -> String {
+      return LFLocalizable.tr("Localizable", "alert_attributed_text.round_up", String(describing: p1), String(describing: p2), String(describing: p3), fallback: "Round up spare change to the nearest dollar when you use your CauseCard. It's an easy way to make a big impact over time.\n\nRound up donations made to ShoppingGives Foundation EIN: %@. 100%% of funds granted to designated nonprofit - %@ and %@.")
+    }
+    /// Donations made to ShoppingGives Foundation EIN: %@.
+    /// 100%% of funds granted to designated nonprofit - %@ and %@.
+    public static func taxDeductions(_ p1: Any, _ p2: Any, _ p3: Any) -> String {
+      return LFLocalizable.tr("Localizable", "alert_attributed_text.tax_deductions", String(describing: p1), String(describing: p2), String(describing: p3), fallback: "Donations made to ShoppingGives Foundation EIN: %@.\n100%% of funds granted to designated nonprofit - %@ and %@.")
+    }
+    /// Terms & Conditions
+    public static let terms = LFLocalizable.tr("Localizable", "alert_attributed_text.terms", fallback: "Terms & Conditions")
+  }
   public enum AssetView {
     /// Cryptocurrency services powered by Zero Hash
     public static let disclosure = LFLocalizable.tr("Localizable", "assetView.disclosure", fallback: "Cryptocurrency services powered by Zero Hash")
@@ -694,6 +713,18 @@ public enum LFLocalizable {
     public enum UtilityBill {
       /// Utility Bill
       public static let title = LFLocalizable.tr("Localizable", "documentType.utilityBill.title", fallback: "Utility Bill")
+    }
+  }
+  public enum DonationsDisclosure {
+    /// %@ of the donations you make are tax deductible and go to charity. 
+    public static func text(_ p1: Any) -> String {
+      return LFLocalizable.tr("Localizable", "donations_disclosure.text", String(describing: p1), fallback: "%@ of the donations you make are tax deductible and go to charity. ")
+    }
+    public enum Alert {
+      /// Powered by ShoppingGives 
+      public static let poweredBy = LFLocalizable.tr("Localizable", "donations_disclosure.alert.powered_by", fallback: "Powered by ShoppingGives ")
+      /// DONATIONS
+      public static let title = LFLocalizable.tr("Localizable", "donations_disclosure.alert.title", fallback: "DONATIONS")
     }
   }
   public enum EnterCVVCode {
@@ -1212,6 +1243,16 @@ public enum LFLocalizable {
       public static let cellText = LFLocalizable.tr("Localizable", "securityCheck.noCreditCheck.cellText", fallback: "No credit checks")
     }
   }
+  public enum SelectRewards {
+    /// Continue
+    public static let `continue` = LFLocalizable.tr("Localizable", "select_rewards.continue", fallback: "Continue")
+    /// Welcome to %@, please select your rewards. You can change anytime.
+    public static func subtitle(_ p1: Any) -> String {
+      return LFLocalizable.tr("Localizable", "select_rewards.subtitle", String(describing: p1), fallback: "Welcome to %@, please select your rewards. You can change anytime.")
+    }
+    /// Select Rewards
+    public static let title = LFLocalizable.tr("Localizable", "select_rewards.title", fallback: "Select Rewards")
+  }
   public enum SetCardPin {
     public enum Popup {
       /// Your card's PIN is now set. Use it for purchases and at ATMs.
@@ -1322,6 +1363,24 @@ public enum LFLocalizable {
       public static let placeholder = LFLocalizable.tr("Localizable", "shippingAddress.zipCode.placeholder", fallback: "Enter zip code")
       /// Zip Code
       public static let title = LFLocalizable.tr("Localizable", "shippingAddress.zipCode.title", fallback: "Zip Code")
+    }
+  }
+  public enum SuggestCause {
+    /// 1000 characters max
+    public static let maxCharacters = LFLocalizable.tr("Localizable", "suggest_cause.max_characters", fallback: "1000 characters max")
+    /// Enter text
+    public static let placeholder = LFLocalizable.tr("Localizable", "suggest_cause.placeholder", fallback: "Enter text")
+    /// Submit
+    public static let submit = LFLocalizable.tr("Localizable", "suggest_cause.submit", fallback: "Submit")
+    /// Please tell us more
+    public static let tellMore = LFLocalizable.tr("Localizable", "suggest_cause.tell_more", fallback: "Please tell us more")
+    /// Suggest a Cause
+    public static let title = LFLocalizable.tr("Localizable", "suggest_cause.title", fallback: "Suggest a Cause")
+    public enum Alert {
+      /// Thank you for suggesting a cause. Our team will review and follow up.
+      public static let message = LFLocalizable.tr("Localizable", "suggest_cause.alert.message", fallback: "Thank you for suggesting a cause. Our team will review and follow up.")
+      /// THANK YOU
+      public static let title = LFLocalizable.tr("Localizable", "suggest_cause.alert.title", fallback: "THANK YOU")
     }
   }
   public enum Term {
@@ -1614,6 +1673,12 @@ public enum LFLocalizable {
       }
     }
   }
+  public enum UnspecifiedRewards {
+    /// Select a reward
+    public static let cta = LFLocalizable.tr("Localizable", "unspecified_rewards.cta", fallback: "Select a reward")
+    /// You can choose between
+    public static let title = LFLocalizable.tr("Localizable", "unspecified_rewards.title", fallback: "You can choose between")
+  }
   public enum UploadDocument {
     public enum AddressRequirement {
       /// 401 statement
@@ -1726,6 +1791,24 @@ public enum LFLocalizable {
       public static let description = LFLocalizable.tr("Localizable", "uploadDocument.upload.description", fallback: "Please Upload documents to help us verify your account")
       /// UPLOAD DOCUMENTS
       public static let title = LFLocalizable.tr("Localizable", "uploadDocument.upload.title", fallback: "UPLOAD DOCUMENTS")
+    }
+  }
+  public enum UserRewardType {
+    public enum Cashback {
+      /// %@ on every qualifying purchase
+      public static func subtitle(_ p1: Any) -> String {
+        return LFLocalizable.tr("Localizable", "user_reward_type.cashback.subtitle", String(describing: p1), fallback: "%@ on every qualifying purchase")
+      }
+      /// Instant Cashback
+      public static let title = LFLocalizable.tr("Localizable", "user_reward_type.cashback.title", fallback: "Instant Cashback")
+    }
+    public enum Donation {
+      /// %@ donated to a charity you choose
+      public static func subtitle(_ p1: Any) -> String {
+        return LFLocalizable.tr("Localizable", "user_reward_type.donation.subtitle", String(describing: p1), fallback: "%@ donated to a charity you choose")
+      }
+      /// Donate to Charity
+      public static let title = LFLocalizable.tr("Localizable", "user_reward_type.donation.title", fallback: "Donate to Charity")
     }
   }
   public enum VerificationCode {

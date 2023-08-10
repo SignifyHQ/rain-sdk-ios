@@ -86,7 +86,7 @@ public enum Fonts {
     case .Avalanche: return Inter.regular
     case .Cardano: return Chivo.regular
     case .DogeCard, .CauseCard: return Lato.regular
-    default : return Inter.regular
+    default : return Lato.regular
     }
   }
   public static var semiBold: FontConvertible {

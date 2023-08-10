@@ -621,6 +621,43 @@
 "share.cancel" = "Cancel";
 "share.failure" = "Failed to share on %@";
 
+// MARK: - Rewards
+// Select Rewards
+"select_rewards.title" = "Select Rewards";
+"select_rewards.subtitle" = "Welcome to %@, please select your rewards. You can change anytime.";
+"select_rewards.continue" = "Continue";
+
+// User Reward Type
+"user_reward_type.cashback.title" = "Instant Cashback";
+"user_reward_type.cashback.subtitle" = "%@ on every qualifying purchase";
+"user_reward_type.donation.title" = "Donate to Charity";
+"user_reward_type.donation.subtitle" = "%@ donated to a charity you choose";
+
+// Unspecified Rewards
+"unspecified_rewards.title" = "You can choose between";
+"unspecified_rewards.cta" = "Select a reward";
+
+// Donations Disclosure
+"donations_disclosure.text" = "%@ of the donations you make are tax deductible and go to charity. ";
+"donations_disclosure.alert.title" = "DONATIONS";
+"donations_disclosure.alert.powered_by" = "Powered by ShoppingGives ";
+
+// Alert Attributed Text
+"alert_attributed_text.tax_deductions" = "Donations made to ShoppingGives Foundation EIN: %@.\n100%% of funds granted to designated nonprofit - %@ and %@.";
+"alert_attributed_text.round_up" = "Round up spare change to the nearest dollar when you use your CauseCard. It's an easy way to make a big impact over time.\n\nRound up donations made to ShoppingGives Foundation EIN: %@. 100%% of funds granted to designated nonprofit - %@ and %@.";
+"alert_attributed_text.ein" = "83-01252270";
+"alert_attributed_text.terms" = "Terms & Conditions";
+"alert_attributed_text.privacy" = "Privacy Policy";
+
+// Suggest Cause
+"suggest_cause.title" = "Suggest a Cause";
+"suggest_cause.tell_more" = "Please tell us more";
+"suggest_cause.placeholder" = "Enter text";
+"suggest_cause.max_characters" = "1000 characters max";
+"suggest_cause.submit" = "Submit";
+"suggest_cause.alert.title" = "THANK YOU";
+"suggest_cause.alert.message" = "Thank you for suggesting a cause. Our team will review and follow up.";
+
 // MARK: - Common
 
 // Terms
