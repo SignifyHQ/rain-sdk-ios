@@ -303,6 +303,10 @@ public enum LFLocalizable {
       /// Retry
       public static let title = LFLocalizable.tr("Localizable", "button.retry.title", fallback: "Retry")
     }
+    public enum Share {
+      /// Share
+      public static let title = LFLocalizable.tr("Localizable", "button.share.title", fallback: "Share")
+    }
     public enum Skip {
       /// Skip
       public static let title = LFLocalizable.tr("Localizable", "button.skip.title", fallback: "Skip")
@@ -1000,6 +1004,18 @@ public enum LFLocalizable {
       }
       /// Set up your account
       public static let title = LFLocalizable.tr("Localizable", "question.screen.title", fallback: "Set up your account")
+    }
+  }
+  public enum ReceiveCryptoView {
+    /// Cryptocurrency services powered by Zero Hash
+    public static let servicesInfo = LFLocalizable.tr("Localizable", "receive_crypto_view.services_info", fallback: "Cryptocurrency services powered by Zero Hash")
+    /// Doge Wallet Address
+    public static let title = LFLocalizable.tr("Localizable", "receive_crypto_view.title", fallback: "Doge Wallet Address")
+    /// Wallet Details
+    public static let walletDetail = LFLocalizable.tr("Localizable", "receive_crypto_view.wallet_detail", fallback: "Wallet Details")
+    public enum Copied {
+      /// Copied!
+      public static let info = LFLocalizable.tr("Localizable", "receive_crypto_view.copied.info", fallback: "Copied!")
     }
   }
   public enum Referral {

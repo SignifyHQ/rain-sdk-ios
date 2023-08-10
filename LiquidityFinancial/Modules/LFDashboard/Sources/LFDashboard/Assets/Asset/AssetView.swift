@@ -21,7 +21,16 @@ struct AssetView: View {
           .customPresentationDetents(height: 228)
           .ignoresSafeArea(edges: .bottom)
       }
+      .navigationLink(item: $viewModel.navigation) { navigation in
+        switch navigation {
+        case .receive:
+          ReceiveCryptoView(account: viewModel.account)
+        }
+      }
       .background(Colors.background.swiftUIColor)
+      .onAppear {
+        viewModel.onAppear()
+      }
   }
 
   private var content: some View {
@@ -190,7 +199,7 @@ private extension AssetView {
         with: GenImages.CommonImages.buy,
         and: LFLocalizable.AssetView.Receive.title
       ) {
-        // TODO: Receive button tapped
+        viewModel.receiveButtonTapped()
       }
       Spacer()
     }

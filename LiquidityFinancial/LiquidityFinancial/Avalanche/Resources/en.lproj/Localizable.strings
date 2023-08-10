@@ -522,6 +522,12 @@
 "assetView.send.title" = "Send";
 "assetView.receive.title" = "Receive";
 
+// Receive Crypto View
+"receive_crypto_view.title" = "Avax Wallet address";
+"receive_crypto_view.copied.info" = "Copied!";
+"receive_crypto_view.services_info" = "Cryptocurrency services powered by Zero Hash";
+"receive_crypto_view.wallet_detail" = "Wallet Details";
+
 // MARK: - Common
 
 // Terms
@@ -548,6 +554,7 @@
 "button.no.title" = "No";
 "button.yes.title" = "Yes";
 "button.retry.title" = "Retry";
+"button.share.title" = "Share";
 
 // Grid Value
 "grid_value.crypto" = "%@ ADA";

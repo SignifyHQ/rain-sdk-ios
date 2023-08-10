@@ -80,6 +80,7 @@ public enum GenImages {
     public static let icRightArrow = ImageAsset(name: "ic_rightArrow")
     public static let icRoutingNumber = ImageAsset(name: "ic_routing Number")
     public static let icSearch = ImageAsset(name: "ic_search")
+    public static let icShare = ImageAsset(name: "ic_share")
     public static let icShareWithFriend = ImageAsset(name: "ic_shareWithFriend")
     public static let icTicketCircle = ImageAsset(name: "ic_ticketCircle")
     public static let icTrash = ImageAsset(name: "ic_trash")

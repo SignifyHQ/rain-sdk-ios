@@ -10,6 +10,7 @@ public struct FullSizeButton: View {
   let cornerRadius: CGFloat
   let textColor: Color?
   let backgroundColor: Color?
+  let icon: ImageAsset?
   let action: () -> Void
   
   public init(
@@ -22,6 +23,7 @@ public struct FullSizeButton: View {
     cornerRadius: CGFloat = 10,
     textColor: Color? = nil,
     backgroundColor: Color? = nil,
+    icon: ImageAsset? = nil,
     action: @escaping () -> Void
   ) {
     self.type = type
@@ -33,6 +35,7 @@ public struct FullSizeButton: View {
     self.height = height
     self.cornerRadius = cornerRadius
     self.action = action
+    self.icon = icon
     _isLoading = isLoading
   }
   
@@ -58,11 +61,16 @@ private extension FullSizeButton {
   
   var buttonView: some View {
     Button(action: action) {
-      Text(title)
-        .font(Fonts.bold.swiftUIFont(fixedSize: fontSize))
-        .foregroundColor(textColor ?? buttonTextColor)
-        .padding(.horizontal, 16)
-        .frame(maxWidth: .infinity)
+      HStack(spacing: 4) {
+        if let icon = icon {
+          icon.swiftUIImage
+        }
+        Text(title)
+          .font(Fonts.bold.swiftUIFont(fixedSize: fontSize))
+      }
+      .foregroundColor(textColor ?? buttonTextColor)
+      .padding(.horizontal, 16)
+      .frame(maxWidth: .infinity)
     }
     .frame(height: height)
     .applyIf(showGradientBackground) {
