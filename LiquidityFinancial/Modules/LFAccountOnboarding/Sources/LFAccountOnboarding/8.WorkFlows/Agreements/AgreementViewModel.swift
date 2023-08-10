@@ -5,6 +5,7 @@ import SwiftUI
 import NetSpendData
 import LFServices
 import Factory
+import SwiftSoup
 
 @MainActor
 final class AgreementViewModel: ObservableObject {
@@ -48,17 +49,25 @@ private extension AgreementViewModel {
     guard let agreementData = netspendDataManager.agreement else { return }
     var agreementList: [ServiceConditionModel] = []
     for item in agreementData.agreements {
-      let component = item.description.components(separatedBy: "\"")
-      if let message = component.first?.replacingOccurrences(of: " <a href=", with: ""),
-         let linkIndex = component.firstIndex(where: { $0.contains("http") }),
-         let key = message.components(separatedBy: ": ").last {
-        let link = component[linkIndex]
+      do {
+        let html: String = item.description
+        let doc: SwiftSoup.Document = try SwiftSoup.parse(html)
+        let text: String = try doc.body()!.text()
+        let links: [SwiftSoup.Element] = try doc.select("a").array()
+        var attributeInformation: [String: String] = [:]
+        for link in links {
+          let linkHref: String = try link.attr("href")
+          let linkText: String = try link.text()
+          attributeInformation[linkText] = linkHref
+        }
         let condition = ServiceConditionModel(
           id: item.id,
-          message: message,
-          attributeInformation: [key: link]
+          message: text,
+          attributeInformation: attributeInformation
         )
         agreementList.append(condition)
+      } catch {
+        log.error(error)
       }
     }
     self.agreements = agreementList

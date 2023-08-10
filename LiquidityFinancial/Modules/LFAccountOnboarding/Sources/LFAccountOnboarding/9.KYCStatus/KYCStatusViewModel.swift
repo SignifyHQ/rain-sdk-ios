@@ -7,6 +7,7 @@ import AccountData
 import OnboardingDomain
 import UIKit
 import LFServices
+import LFStyleGuide
 
 @MainActor
 final class KYCStatusViewModel: ObservableObject {
@@ -47,26 +48,26 @@ extension KYCStatusViewModel {
     intercomService.openIntercom()
   }
   
-  //MAGIC PASS KYC DASHBOARD
-
+  // MARK: MAGIC PASS KYC DASHBOARD
+  
   // swiftlint:disable force_unwrapping
   func magicPassKYC() {
-    Task {
+    Task { @MainActor in
+      defer { isLoading = false }
+      isLoading = true
       do {
         let user = try await accountRepository.getUser(
           deviceId: UIDevice.current.identifierForVendor?.uuidString ?? ""
         )
         var request = URLRequest(url: URL(string: "https://api-crypto.dev.liquidity.cc/v1/admin/users/\(user.userID)/approve")!)
         request.httpMethod = "POST"
-        URLSession.shared.dataTask(with: request) { _, response, error in
-          let httpResponse = response as? HTTPURLResponse
-          log.debug("approved dashboard state: \(httpResponse?.statusCode ?? 000)")
-          if let error = error {
-            log.error(error.localizedDescription)
-          }
-        }
-        .resume()
+        let (data, response) = try await URLSession.shared.data(for: request)
+        let httpResponse = response as? HTTPURLResponse
+        log.debug("approved dashboard state: \(httpResponse?.statusCode ?? 000)")
+        log.debug("approved dashboard data: \(data)")
+        self.toastMessage = "You have been approved by the Dashboard. Please click the button Check Status and go Next Step"
       } catch {
+        self.toastMessage = error.localizedDescription
         log.error(error.localizedDescription)
       }
     }

@@ -5,6 +5,7 @@ import LFLocalizable
 
 struct KYCStatusView: View {
   @StateObject var viewModel: KYCStatusViewModel
+  @State private var showPopup = false
   
   init(viewModel: KYCStatusViewModel) {
     _viewModel = .init(wrappedValue: viewModel)
@@ -25,6 +26,12 @@ struct KYCStatusView: View {
             viewModel.idvComplete()
           }
         }
+      }
+      .popup(item: $viewModel.toastMessage, style: .toast) {
+        ToastView(toastMessage: $0)
+      }
+      .popup(isPresented: $showPopup) {
+        magicPopup
       }
   }
 }
@@ -66,8 +73,8 @@ private extension KYCStatusView {
           .resizable()
           .scaledToFit()
           .frame(width: 124, height: 124)
-          .onTapGesture(count: 3) {
-            viewModel.magicPassKYC()
+          .onLongPressGesture(minimumDuration: 2) {
+            showPopup = true
           }
         contextView(info: info)
         Spacer()
@@ -113,6 +120,7 @@ private extension KYCStatusView {
         waitingPopup
       }
   }
+  
   var waitingPopup: some View {
     PopupAlert {
       VStack(spacing: 32) {
@@ -138,5 +146,19 @@ private extension KYCStatusView {
       }
       .padding(.vertical, 20)
     }
+  }
+  
+  var magicPopup: some View {
+    LiquidityAlert(
+      title: "[Tool Kit] - Pass review from Dashboard.",
+      message: "Click ok and we call service help you can pass a review of the Dashboard.",
+      primary: .init(text: LFLocalizable.Button.Ok.title) {
+        showPopup = false
+        viewModel.magicPassKYC()
+      },
+      secondary: .init(text: LFLocalizable.Button.Skip.title, action: {
+        showPopup = false
+      })
+    )
   }
 }

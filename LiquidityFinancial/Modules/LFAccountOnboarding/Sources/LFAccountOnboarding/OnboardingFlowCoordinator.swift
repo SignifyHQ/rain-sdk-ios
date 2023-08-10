@@ -78,10 +78,10 @@ public class OnboardingFlowCoordinator: OnboardingFlowCoordinatorProtocol {
       do {
         
         let onboardingState = try await onboardingRepository.getOnboardingState(sessionId: accountDataManager.sessionID)
+        try await refreshNetSpendSession()
         
         if onboardingState.missingSteps.isEmpty {
           
-          try await refreshNetSpendSession()
           routeSubject.value = .dashboard
           
         } else {

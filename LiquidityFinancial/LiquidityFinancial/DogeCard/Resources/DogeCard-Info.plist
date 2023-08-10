@@ -2,10 +2,6 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>Used to surface nearby ATMs for the user</string>
-	<key>NSPhotoLibraryUsageDescription</key>
-	<string>Used to process images for KYC purposes</string>
 	<key>AGREEMENT_URL</key>
 	<string>$(AGREEMENT_URL)</string>
 	<key>APP_BUNDLE_ID</key>
@@ -28,10 +24,10 @@
 	<string>$(MARKETING_VERSION)</string>
 	<key>CFBundleVersion</key>
 	<string>$BITRISE_BUILD_NUMBER</string>
-	<key>CONSENT_URL</key>
-	<string>$(CONSENT_URL)</string>
 	<key>CHARITY_ENABLED</key>
 	<string>$(CHARITY_ENABLED)</string>
+	<key>CONSENT_URL</key>
+	<string>$(CONSENT_URL)</string>
 	<key>CRYPTO_ENABLED</key>
 	<string>$(CRYPTO_ENABLED)</string>
 	<key>DISCLOSURE_URL</key>
@@ -75,6 +71,10 @@
 			</dict>
 		</dict>
 	</dict>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>Used to surface nearby ATMs for the user</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>Used to process images for KYC purposes</string>
 	<key>PATHWARD_DISCLOSURE_URL</key>
 	<string>$(PATHWARD_DISCLOSURE_URL)</string>
 	<key>PATHWARD_PRIVACY_URL</key>

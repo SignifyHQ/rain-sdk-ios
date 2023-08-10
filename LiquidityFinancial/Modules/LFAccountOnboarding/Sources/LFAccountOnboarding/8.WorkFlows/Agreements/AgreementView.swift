@@ -77,7 +77,7 @@ private extension AgreementView {
   }
   
   func conditionCell(condition: ServiceConditionModel) -> some View {
-    HStack(alignment: .top, spacing: 12) {
+    HStack(alignment: .top, spacing: 8) {
       Button {
         viewModel.updateSelectedAgreementItem(agreementID: condition.id, selected: !condition.selected)
       } label: {
@@ -91,8 +91,8 @@ private extension AgreementView {
           }
         }
       }
-      .frame(24)
-      .offset(y: 8)
+      .frame(28)
+      .offset(y: 10)
       .foregroundColor(Colors.label.swiftUIColor.opacity(0.25))
       TextTappable(
         text: condition.message,
@@ -105,7 +105,7 @@ private extension AgreementView {
         openURL(url)
       }
     }
-    .frame(maxHeight: 90)
+    .frame(minHeight: 90)
   }
   
   var continueButton: some View {
