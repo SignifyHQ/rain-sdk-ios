@@ -16,7 +16,6 @@ struct ConnectedAccountsView: View {
   
   var body: some View {
     content
-      .background(Colors.background.swiftUIColor)
       .toolbar {
         ToolbarItem(placement: .principal) {
           Text(LFLocalizable.ConnectedView.title)

@@ -156,6 +156,8 @@ public extension Constants {
     case currencyDescription = "Dollars"
     case documentName = "document.pdf"
     case walletAddressPlaceholder = "*********"
+    case statementFromMonth = "1"
+    case statementFromYear = "2023"
   }
 }
 

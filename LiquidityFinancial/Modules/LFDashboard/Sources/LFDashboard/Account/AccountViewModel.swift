@@ -151,6 +151,10 @@ extension AccountViewModel {
   func connectedAccountsTapped() {
     navigation = .connectedAccounts
   }
+  
+  func bankStatementTapped() {
+    navigation = .bankStatement
+  }
 }
 
 // MARK: - Types
@@ -163,6 +167,7 @@ extension AccountViewModel {
     case addMoney
     case directDeposit
     case connectedAccounts
+    case bankStatement
   }
   
   enum Popup {

@@ -270,6 +270,18 @@ public enum LFLocalizable {
       public static let title = LFLocalizable.tr("Localizable", "bankTransfers.screen.title", fallback: "BANK TRANSFERS")
     }
   }
+  public enum BankStatement {
+    /// Created %@
+    public static func created(_ p1: Any) -> String {
+      return LFLocalizable.tr("Localizable", "bank_statement.created", String(describing: p1), fallback: "Created %@")
+    }
+    /// There are currently no bank statements
+    public static let emptyInfo = LFLocalizable.tr("Localizable", "bank_statement.emptyInfo", fallback: "There are currently no bank statements")
+    /// NO STATEMENTS
+    public static let emptyTitle = LFLocalizable.tr("Localizable", "bank_statement.emptyTitle", fallback: "NO STATEMENTS")
+    /// Bank Statements
+    public static let title = LFLocalizable.tr("Localizable", "bank_statement.title", fallback: "Bank Statements")
+  }
   public enum Button {
     public enum Back {
       /// Back

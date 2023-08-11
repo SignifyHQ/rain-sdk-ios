@@ -30,6 +30,8 @@ struct AccountsView: View {
           .navigationTitle(LFLocalizable.AccountView.atmLocationTitle)
         case .connectedAccounts:
           ConnectedAccountsView(linkedAccount: viewModel.linkedAccount)
+        case .bankStatement:
+          BankStatementView()
         }
       }
       .popup(item: $viewModel.popup) { item in
@@ -204,7 +206,7 @@ private extension AccountsView {
         title: LFLocalizable.AccountView.bankStatements,
         value: nil
       ) {
-        // TODO: Will do later
+        viewModel.bankStatementTapped()
       }
       ArrowButton(
         image: GenImages.CommonImages.Accounts.tax,

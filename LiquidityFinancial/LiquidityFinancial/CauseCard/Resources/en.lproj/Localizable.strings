@@ -526,6 +526,12 @@
 "assetView.send.title" = "Send";
 "assetView.receive.title" = "Receive";
 
+//BANK STATEMENT
+"bank_statement.title" = "Bank Statements";
+"bank_statement.emptyTitle" = "NO STATEMENTS";
+"bank_statement.emptyInfo" = "There are currently no bank statements";
+"bank_statement.created" = "Created %@";
+
 // MARK: - Common
 
 // Terms

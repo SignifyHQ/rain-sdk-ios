@@ -532,6 +532,12 @@
 "receive_crypto_view.services_info" = "Cryptocurrency services powered by Zero Hash";
 "receive_crypto_view.wallet_detail" = "Wallet Details";
 
+//BANK STATEMENT
+"bank_statement.title" = "Bank Statements";
+"bank_statement.emptyTitle" = "NO STATEMENTS";
+"bank_statement.emptyInfo" = "There are currently no bank statements";
+"bank_statement.created" = "Created %@";
+
 // MARK: - Common
 
 // Terms
