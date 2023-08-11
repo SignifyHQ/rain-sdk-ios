@@ -1,6 +1,33 @@
 import Foundation
 
 public extension Double {
+  func roundTo0f() -> NSString {
+    NSString(format: "%.0f", self)
+  }
+  
+  func roundTo2f() -> NSString {
+    NSString(format: "%.2f", self)
+  }
+  
+  func roundTo3f() -> NSString {
+    NSString(format: "%.3f", self)
+  }
+  
+  func roundTo6f() -> NSString {
+    NSString(format: "%.6f", self)
+  }
+  
+  func calculatePercentage(value: Double, percentageVal: Double) -> Double {
+    let val = value * percentageVal
+    return val / 100.0
+  }
+  
+  func roundTo3fStr() -> String {
+    String(format: "%.3f", self)
+  }
+}
+
+public extension Double {
   /// Returns a String USD display of the current value, using the desired amount of fraction digits and setting the `symbolPrefix` (if any).
   ///
   /// Examples:

@@ -6,5 +6,5 @@ public struct APIAccount: Decodable {
   public let externalAccountId: String?
   public let currency: String
   public let availableBalance: Double
-  
+  public let availableUsdBalance: Double
 }

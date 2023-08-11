@@ -23,6 +23,10 @@ struct AssetView: View {
       }
       .navigationLink(item: $viewModel.navigation) { navigation in
         switch navigation {
+        case .buyCrypto:
+          BuySellCryptoInputView(type: .buyCrypto)
+        case .sellCrypto:
+          BuySellCryptoInputView(type: .sellCrypto)
         case .receive:
           ReceiveCryptoView(account: viewModel.account)
         }
@@ -43,13 +47,13 @@ struct AssetView: View {
             title: LFLocalizable.AssetView.Buy.title,
             image: GenImages.CommonImages.buy
           ) {
-            // TODO: buy crypto
+            viewModel.onClickedBuyButton()
           }
           iconTextButton(
             title: LFLocalizable.AssetView.Sell.title,
             image: GenImages.CommonImages.sell
           ) {
-            // TODO: sell crypto
+            viewModel.onClickedSellButton()
           }
           iconTextButton(
             title: LFLocalizable.AssetView.Transfer.title,

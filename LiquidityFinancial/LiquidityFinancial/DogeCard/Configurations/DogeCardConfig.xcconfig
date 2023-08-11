@@ -17,3 +17,4 @@ PATHWARD_DISCLOSURE_URL = https:/$()/dogecard.co/legal#privacy-policy
 
 CHARITY_ENABLED = false
 CRYPTO_ENABLED = true
+CRYPTO_FRACTION_DIGITS = 8

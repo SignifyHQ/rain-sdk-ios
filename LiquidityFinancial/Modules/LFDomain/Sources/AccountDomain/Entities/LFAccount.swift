@@ -5,4 +5,5 @@ public protocol LFAccount {
   var externalAccountId: String? { get }
   var currency: String { get }
   var availableBalance: Double { get }
+  var availableUsdBalance: Double { get }
 }

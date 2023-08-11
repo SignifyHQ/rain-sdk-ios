@@ -322,6 +322,16 @@
 "directDeposit.secondBenefit.title" = "3 ATM fees covered each month you direct deposit $300+";
 "directDeposit.copied.message" = "Copied to clipboard";
 
+// BuySellCrypto
+"buySellCryptoInput.buy.title" = "BUY DOGE";
+"buySellCryptoInput.buyAvailableBalance.subtitle" = "%@ available";
+"buySellCryptoInput.sell.title" = "SELL DOGE";
+"buySellCryptoInput.sellAvailableBalance.subtitle" = "%@ available to sell";
+"buySellCryptoInput.buy.annotation" = "You currently have %@ available to buy Dogecoin. If this amount is less than expected, please contact support.";
+"buySellCryptoInput.sell.annotation" = "You currently have %@ Dogecoin available to sell. Doge Rewards are not available to sell until 48 hours after they are earned.";
+"buySellCryptoInput.minimumCash.description" = "Minimum amount should be $0.10";
+"buySellCryptoInput.insufficientFunds.description" = "Insufficient funds";
+
 // MARK: - Popup
 
 // Logout
@@ -568,3 +578,6 @@
 
 // Toast
 "toast.copy.message" = "Copied to clipboard";
+
+// Disclosure
+"zerohash.disclosure.description" = "Cryptocurrency services powered by Zero Hash";

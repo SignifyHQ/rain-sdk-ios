@@ -32,6 +32,8 @@
 	<string>$(CONSENT_URL)</string>
 	<key>CHARITY_ENABLED</key>
 	<string>$(CHARITY_ENABLED)</string>
+	<key>CRYPTO_FRACTION_DIGITS</key>
+	<string>$(CRYPTO_FRACTION_DIGITS)</string>
 	<key>CRYPTO_ENABLED</key>
 	<string>$(CRYPTO_ENABLED)</string>
 	<key>DISCLOSURE_URL</key>

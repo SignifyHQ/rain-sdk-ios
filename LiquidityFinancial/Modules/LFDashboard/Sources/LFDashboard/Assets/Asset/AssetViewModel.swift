@@ -34,7 +34,6 @@ class AssetViewModel: ObservableObject {
 }
 
 extension AssetViewModel {
-  
   func onAppear() {
     Task { @MainActor in
       defer { isLoading = false }
@@ -43,9 +42,18 @@ extension AssetViewModel {
       guard var account = accounts.first else {
         return
       }
-      log.info("Account ")
       self.account = account
     }
+  }
+  
+  func onClickedBuyButton() {
+    Haptic.impact(.light).generate()
+    navigation = .buyCrypto
+  }
+  
+  func onClickedSellButton() {
+    Haptic.impact(.light).generate()
+    navigation = .sellCrypto
   }
   
   func transferButtonTapped() {
@@ -62,6 +70,8 @@ extension AssetViewModel {
 extension AssetViewModel {
   
   enum Navigation {
+    case buyCrypto
+    case sellCrypto
     case receive
   }
   
