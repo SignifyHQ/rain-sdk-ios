@@ -54,4 +54,14 @@ extension LFNetwork: NSExternalFundingAPIProtocol where R == NSExternalFundingRo
       decoder: .apiDecoder
     )
   }
+  
+  public func verifyCard(sessionId: String, cardId: String, amount: Double) async throws -> APIVerifyExternalCardResponse {
+    let parameter = VerifyExternalCardParameters(transferAmount: amount, cardId: cardId)
+    return try await self.request(
+      NSExternalFundingRoute.verifyCard(sessionId: sessionId, parameters: parameter),
+      target: APIVerifyExternalCardResponse.self,
+      failure: LFErrorObject.self,
+      decoder: .apiDecoder
+    )
+  }
 }

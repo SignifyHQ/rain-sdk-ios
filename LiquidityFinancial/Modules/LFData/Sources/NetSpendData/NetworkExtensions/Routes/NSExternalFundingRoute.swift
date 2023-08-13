@@ -11,6 +11,7 @@ public enum NSExternalFundingRoute {
   case getLinkedSource(sessionId: String)
   case deleteLinkedSource(sessionId: String, sourceId: String)
   case newTransaction(ExternalTransactionParameters, ExternalTransactionType, String)
+  case verifyCard(sessionId: String, parameters: VerifyExternalCardParameters)
 }
 
 extension NSExternalFundingRoute: LFRoute {
@@ -39,6 +40,8 @@ extension NSExternalFundingRoute: LFRoute {
       case .withdraw:
         return "/v1/netspend/external-funding/deposit"
       }
+    case .verifyCard:
+      return "/v1/netspend/external-funding/external-card/verify"
     }
   }
   
@@ -51,6 +54,8 @@ extension NSExternalFundingRoute: LFRoute {
     case .deleteLinkedSource:
       return .DELETE
     case .newTransaction:
+      return .POST
+    case .verifyCard:
       return .POST
     }
   }
@@ -72,6 +77,8 @@ extension NSExternalFundingRoute: LFRoute {
       base["netspendSessionId"] = sessionId
     case .newTransaction(_, _, let sessionId):
       base["netspendSessionId"] = sessionId
+    case .verifyCard(let sessionId, _):
+      base["netspendSessionId"] = sessionId
     }
     return base
   }
@@ -84,6 +91,8 @@ extension NSExternalFundingRoute: LFRoute {
       return nil
     case let .newTransaction(parameters, _, _):
       return parameters.encoded()
+    case let .verifyCard(_ , parameters):
+      return parameters.encoded()
     }
   }
   
@@ -91,7 +100,7 @@ extension NSExternalFundingRoute: LFRoute {
     switch self {
     case .getLinkedSource, .deleteLinkedSource:
       return nil
-    case .set:
+    case .set, .verifyCard:
       return .json
     case .getACHInfo, .pinWheelToken:
       return .url

@@ -1538,6 +1538,22 @@ public enum LFLocalizable {
       }
     }
   }
+  public enum VerifyCard {
+    /// Check your card activity for 1 pending micro-transaction from AvalancheCard. Enter the one amount in the fields below. Once verified, this  transaction will be canceled
+    public static let detail = LFLocalizable.tr("Localizable", "verify_card.detail", fallback: "Check your card activity for 1 pending micro-transaction from AvalancheCard. Enter the one amount in the fields below. Once verified, this  transaction will be canceled")
+    /// Verify card ownership
+    public static let title = LFLocalizable.tr("Localizable", "verify_card.title", fallback: "Verify card ownership")
+    public enum Amount {
+      /// Enter amount
+      public static let placeholder = LFLocalizable.tr("Localizable", "verify_card.amount.placeholder", fallback: "Enter amount")
+      /// Amount
+      public static let title = LFLocalizable.tr("Localizable", "verify_card.amount.title", fallback: "Amount")
+    }
+    public enum Button {
+      /// Verify Card
+      public static let verifyCard = LFLocalizable.tr("Localizable", "verify_card.button.verifyCard", fallback: "Verify Card")
+    }
+  }
   public enum Welcome {
     /// HOW IT WORKS:
     public static let howItWorks = LFLocalizable.tr("Localizable", "welcome.how_it_works", fallback: "HOW IT WORKS:")

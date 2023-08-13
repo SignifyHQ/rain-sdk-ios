@@ -55,6 +55,9 @@ class AddBankWithDebitViewModel: ObservableObject {
   func performAction() {
     loading = true
     Task { @MainActor in
+      defer {
+        self.loading = false
+      }
       do {
         guard let session = netspendDataManager.sdkSession else { return }
         let encryptedData = try session.encryptWithJWKSet(
@@ -83,14 +86,12 @@ class AddBankWithDebitViewModel: ObservableObject {
           postalCode: postalCode,
           encryptedData: encryptedData
         )
-        _ = try await externalFundingUseCase.set(
+        let response = try await externalFundingUseCase.set(
           request: request,
           sessionID: accountDataManager.sessionID
         )
-        self.loading = false
-        self.navigation = .moveMoney
+        self.navigation = .verifyCard(cardId: response.cardId)
       } catch {
-        self.loading = false
         log.error(error.localizedDescription)
         self.toastMessage = error.localizedDescription
       }
@@ -165,6 +166,6 @@ class AddBankWithDebitViewModel: ObservableObject {
 
 extension AddBankWithDebitViewModel {
   enum Navigation {
-    case moveMoney
+    case verifyCard(cardId: String)
   }
 }

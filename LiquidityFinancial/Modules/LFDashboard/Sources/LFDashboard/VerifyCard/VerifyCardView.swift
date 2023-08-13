@@ -3,130 +3,106 @@ import LFLocalizable
 import LFStyleGuide
 import LFUtilities
 
-struct AddBankWithDebitView: View {
-  enum Focus {
-    case card
-    case cvv
-    case exp
-  }
+struct VerifyCardView: View {
+  @StateObject private var viewModel: VerifyCardViewModel
   
+  enum Focus {
+    case amount
+  }
   @FocusState var keyboardFocus: Focus?
   
-  @StateObject private var viewModel: AddBankWithDebitViewModel
-  
-  init() {
+  init(cardId: String) {
     _viewModel = .init(
-      wrappedValue: AddBankWithDebitViewModel()
+      wrappedValue: VerifyCardViewModel(cardId: cardId)
     )
   }
   
   var body: some View {
     VStack {
-      VStack(alignment: .leading, spacing: 24) {
+      VStack(alignment: .leading, spacing: 8) {
         title
-        cardNumber
-        HStack(alignment: .top) {
-          expiresView
-          Spacer(minLength: 25)
-          cvvView
-        }
+        detail
+        amount
       }
       .padding(.horizontal, 30)
-      
       Spacer()
-      
-      FullSizeButton(
-        title: LFLocalizable.Button.Continue.title,
-        isDisable: !viewModel.actionEnabled,
-        isLoading: $viewModel.loading
-      ) {
-        viewModel.performAction()
-      }
-      .padding(.bottom, 12)
-      .padding(.horizontal, 30)
+      verifyButton
+      contactSupport
     }
     .background(Colors.background.swiftUIColor)
     .navigationLink(item: $viewModel.navigation) { item in
       switch item {
-      case .verifyCard(let cardId):
-        VerifyCardView(cardId: cardId)
+      case .moveMoney:
+        MoveMoneyAccountView(kind: .receive)
       }
     }
     .popup(item: $viewModel.toastMessage, style: .toast) {
       ToastView(toastMessage: $0)
     }
   }
-  
 }
 
-private extension AddBankWithDebitView {
+private extension VerifyCardView {
   
   var title: some View {
-    Text(LFLocalizable.AddBankWithDebit.title)
+    Text(LFLocalizable.VerifyCard.title.uppercased())
       .foregroundColor(Colors.label.swiftUIColor)
       .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.main.value))
       .padding(.vertical, 15)
   }
   
-  var cardNumber: some View {
+  var detail: some View {
+    Text(LFLocalizable.VerifyCard.detail)
+      .foregroundColor(Colors.label.swiftUIColor)
+      .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.medium.value))
+      .padding(.vertical, 15)
+  }
+  
+  var amount: some View {
     VStack(alignment: .leading) {
-      header(text: LFLocalizable.AddBankWithDebit.cardNumber)
+      header(text: LFLocalizable.VerifyCard.Amount.title)
       cardTextField(
-        placeholder: LFLocalizable.AddBankWithDebit.cardNumberPlaceholder,
-        value: $viewModel.cardNumber,
+        placeholder: LFLocalizable.VerifyCard.Amount.placeholder,
+        value: $viewModel.amount,
         formatters: [
-          TextLimitFormatter(limit: Constants.MaxCharacterLimit.cardLength.value),
-          RestrictionFormatter(restriction: .numbers),
-          CardFormatter()
+          RestrictionFormatter(restriction: .numbers)
         ],
-        focus: .card,
-        nextFocus: .exp
+        focus: .amount
       )
       .onAppear {
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-          keyboardFocus = .card
+          keyboardFocus = .amount
         }
       }
+    }.padding(.top, 16)
+  }
+ 
+  var verifyButton: some View {
+    FullSizeButton(
+      title: LFLocalizable.VerifyCard.Button.verifyCard,
+      isDisable: !viewModel.actionEnabled,
+      isLoading: $viewModel.loading
+    ) {
+      viewModel.performAction()
     }
+    .padding(.bottom, 12)
+    .padding(.horizontal, 30)
   }
   
-  var expiresView: some View {
-    VStack(alignment: .leading) {
-      header(text: LFLocalizable.AddBankWithDebit.expires)
-      textField(
-        placeholder: LFLocalizable.AddBankWithDebit.expiresPlaceholder,
-        value: $viewModel.cardExpiryDate,
-        errorValue: $viewModel.dateError,
-        formatters: [
-          TextLimitFormatter(limit: 7),
-          RestrictionFormatter(restriction: .numbers),
-          ExpirationFormatter()
-        ],
-        focus: .exp,
-        nextFocus: .cvv
-      )
+  var contactSupport: some View {
+    FullSizeButton(
+      title: LFLocalizable.Button.ContactSupport.title,
+      isDisable: false,
+      type: .secondary
+    ) {
+      viewModel.contactSupport()
     }
-  }
-  
-  var cvvView: some View {
-    VStack(alignment: .leading) {
-      header(text: LFLocalizable.AddBankWithDebit.cvv)
-      textField(
-        placeholder: LFLocalizable.AddBankWithDebit.cvvPlaceholder,
-        value: $viewModel.cardCVV,
-        formatters: [
-          TextLimitFormatter(limit: 4),
-          RestrictionFormatter(restriction: .numbers)
-        ],
-        focus: .cvv,
-        nextFocus: nil,
-        isSecure: true
-      )
-    }
+    .padding(.bottom, 12)
+    .padding(.horizontal, 30)
   }
 }
 
-private extension AddBankWithDebitView {
+private extension VerifyCardView {
   @ViewBuilder
   private func header(text: String) -> some View {
     Text(text)
