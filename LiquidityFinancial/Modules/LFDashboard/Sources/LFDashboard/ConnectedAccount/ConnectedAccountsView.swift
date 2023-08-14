@@ -70,7 +70,7 @@ struct ConnectedAccountsView: View {
           title: viewModel.title(for: item),
           style: .delete
         ) {
-          viewModel.deleteAccount(id: item.sourceId)
+          viewModel.deleteAccount(id: item.sourceId, sourceType: item.sourceType.rawValue)
         }
       }
     }

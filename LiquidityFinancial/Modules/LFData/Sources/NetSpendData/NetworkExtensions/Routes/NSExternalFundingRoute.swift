@@ -9,7 +9,7 @@ public enum NSExternalFundingRoute {
   case pinWheelToken(String)
   case getACHInfo(String)
   case getLinkedSource(sessionId: String)
-  case deleteLinkedSource(sessionId: String, sourceId: String)
+  case deleteLinkedSource(sessionId: String, sourceId: String, sourceType: String)
   case newTransaction(ExternalTransactionParameters, ExternalTransactionType, String)
   case verifyCard(sessionId: String, parameters: VerifyExternalCardParameters)
 }
@@ -31,8 +31,12 @@ extension NSExternalFundingRoute: LFRoute {
       return "/v1/netspend/external-funding/ach-info"
     case .getLinkedSource:
       return "/v1/netspend/external-funding"
-    case .deleteLinkedSource(_, let sourceId):
-      return "/v1/netspend/external-funding/external-card/\(sourceId)"
+    case .deleteLinkedSource(_, let sourceId, let sourceType):
+      if sourceType == APILinkSourceType.externalCard.rawString {
+        return "/v1/netspend/external-funding/external-card/\(sourceId)"
+      } else {
+        return "/v1/netspend/external-funding/external-bank/\(sourceId)"
+      }
     case .newTransaction(_, let type, _):
       switch type {
       case .deposit:
@@ -73,7 +77,7 @@ extension NSExternalFundingRoute: LFRoute {
       base["netspendSessionId"] = sessionId
     case .getLinkedSource(let sessionId):
       base["netspendSessionId"] = sessionId
-    case .deleteLinkedSource(let sessionId, _):
+    case .deleteLinkedSource(let sessionId, _, _):
       base["netspendSessionId"] = sessionId
     case .newTransaction(_, _, let sessionId):
       base["netspendSessionId"] = sessionId
@@ -91,7 +95,7 @@ extension NSExternalFundingRoute: LFRoute {
       return nil
     case let .newTransaction(parameters, _, _):
       return parameters.encoded()
-    case let .verifyCard(_ , parameters):
+    case let .verifyCard(_, parameters):
       return parameters.encoded()
     }
   }

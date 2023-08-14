@@ -5,7 +5,7 @@ public protocol NSExternalFundingAPIProtocol {
   func getPinWheelToken(sessionID: String) async throws -> APIPinWheelToken
   func getACHInfo(sessionID: String) async throws -> APIACHInfo
   func getLinkedSources(sessionID: String) async throws -> APILinkedSourcesResponse
-  func deleteLinkedSource(sessionId: String, sourceId: String) async throws -> APIUnlinkBankResponse
+  func deleteLinkedSource(sessionId: String, sourceId: String, sourceType: String) async throws -> APIUnlinkBankResponse
   func newTransaction(parameters: ExternalTransactionParameters, type: ExternalTransactionType, sessionId: String) async throws -> APIExternalTransactionResponse
   func verifyCard(sessionId: String, cardId: String, amount: Double) async throws -> APIVerifyExternalCardResponse
 }

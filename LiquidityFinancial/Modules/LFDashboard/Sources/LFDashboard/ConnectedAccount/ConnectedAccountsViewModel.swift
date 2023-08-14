@@ -36,13 +36,17 @@ extension ConnectedAccountsViewModel {
     }
   }
   
-  func deleteAccount(id: String) {
+  func deleteAccount(id: String, sourceType: String) {
     self.isLoading = true
     Task { @MainActor in
       defer { isLoading = false }
       do {
         let sessionID = accountDataManager.sessionID
-        let response = try await externalFundingRepository.deleteLinkedAccount(sessionId: sessionID, sourceId: id)
+        let response = try await externalFundingRepository.deleteLinkedAccount(
+          sessionId: sessionID,
+          sourceId: id,
+          sourceType: sourceType
+        )
         if response.success {
           self.linkedAccount.removeAll(where: {
             $0.sourceId == id

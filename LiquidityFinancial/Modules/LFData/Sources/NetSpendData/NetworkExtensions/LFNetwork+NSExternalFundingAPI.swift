@@ -41,8 +41,14 @@ extension LFNetwork: NSExternalFundingAPIProtocol where R == NSExternalFundingRo
     )
   }
   
-  public func deleteLinkedSource(sessionId: String, sourceId: String) async throws -> APIUnlinkBankResponse {
-    let result = try await request(NSExternalFundingRoute.deleteLinkedSource(sessionId: sessionId, sourceId: sourceId))
+  public func deleteLinkedSource(sessionId: String, sourceId: String, sourceType: String) async throws -> APIUnlinkBankResponse {
+    let result = try await request(
+      NSExternalFundingRoute.deleteLinkedSource(
+        sessionId: sessionId,
+        sourceId: sourceId,
+        sourceType: sourceType
+      )
+    )
     let statusCode = result.httpResponse?.statusCode
     return APIUnlinkBankResponse(success: statusCode == 200 || statusCode == 204)
   }

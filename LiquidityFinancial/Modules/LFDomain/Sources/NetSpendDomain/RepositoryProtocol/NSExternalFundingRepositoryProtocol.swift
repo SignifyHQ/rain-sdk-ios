@@ -5,7 +5,7 @@ public protocol NSExternalFundingRepositoryProtocol {
   func getPinWheelToken(sessionID: String) async throws -> PinWheelTokenEntity
   func getACHInfo(sessionID: String) async throws -> ACHInfoEntity
   func getLinkedAccount(sessionId: String) async throws -> any LinkedSourcesEntity
-  func deleteLinkedAccount(sessionId: String, sourceId: String) async throws -> UnlinkBankEntity
+  func deleteLinkedAccount(sessionId: String, sourceId: String, sourceType: String) async throws -> UnlinkBankEntity
   func newExternalTransaction(
     parameters: ExternalTransactionParametersEntity,
     type: ExternalTransactionTypeEntity,

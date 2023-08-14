@@ -34,8 +34,8 @@ public class NSExternalFundingRepository: NSExternalFundingRepositoryProtocol {
     try await externalFundingAPI.getLinkedSources(sessionID: sessionId)
   }
   
-  public func deleteLinkedAccount(sessionId: String, sourceId: String) async throws -> UnlinkBankEntity {
-    try await externalFundingAPI.deleteLinkedSource(sessionId: sessionId, sourceId: sourceId)
+  public func deleteLinkedAccount(sessionId: String, sourceId: String, sourceType: String) async throws -> UnlinkBankEntity {
+    try await externalFundingAPI.deleteLinkedSource(sessionId: sessionId, sourceId: sourceId, sourceType: sourceType)
   }
   
   public func newExternalTransaction(

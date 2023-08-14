@@ -23,7 +23,7 @@ public class NSExternalFundingUseCase: NSExternalFundingUseCaseProtocol {
     try await repository.getLinkedAccount(sessionId: sessionId)
   }
   
-  public func deleteLinkedAccount(sessionId: String, sourceId: String) async throws -> UnlinkBankEntity {
-    try await repository.deleteLinkedAccount(sessionId: sessionId, sourceId: sourceId)
+  public func deleteLinkedAccount(sessionId: String, sourceId: String, sourceType: String) async throws -> UnlinkBankEntity {
+    try await repository.deleteLinkedAccount(sessionId: sessionId, sourceId: sourceId, sourceType: sourceType)
   }
 }
