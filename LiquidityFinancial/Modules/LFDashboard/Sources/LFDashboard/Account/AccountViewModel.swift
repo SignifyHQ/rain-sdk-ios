@@ -72,7 +72,8 @@ extension AccountViewModel {
             name: $0.name,
             last4: $0.last4,
             sourceType: APILinkSourceType(rawValue: $0.sourceType.rawString),
-            sourceId: $0.sourceId
+            sourceId: $0.sourceId,
+            requiredFlow: $0.requiredFlow
           )
         })
         self.linkedAccount = linkedAccount

@@ -332,6 +332,10 @@ public enum LFLocalizable {
       /// Your Life
       public static let text = LFLocalizable.tr("Localizable", "button.title.text", fallback: "Trade Now and Get\nYour Life")
     }
+    public enum Verify {
+      /// Verify
+      public static let title = LFLocalizable.tr("Localizable", "button.verify.title", fallback: "Verify")
+    }
     public enum Yes {
       /// Yes
       public static let title = LFLocalizable.tr("Localizable", "button.yes.title", fallback: "Yes")
@@ -464,8 +468,8 @@ public enum LFLocalizable {
     }
   }
   public enum ConnectedView {
-    /// Checking or Savings Accounts
-    public static let title = LFLocalizable.tr("Localizable", "connectedView.title", fallback: "Checking or Savings Accounts")
+    /// Connected Accounts
+    public static let title = LFLocalizable.tr("Localizable", "connectedView.title", fallback: "Connected Accounts")
     public enum Row {
       /// %@ **** %@
       public static func externalBank(_ p1: Any, _ p2: Any) -> String {

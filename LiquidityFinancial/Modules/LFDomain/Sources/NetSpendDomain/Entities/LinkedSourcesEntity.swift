@@ -11,6 +11,7 @@ public protocol LinkedSourceDataEntity {
   var last4: String { get }
   var sourceType: APILinkedSourceTypeEntity { get }
   var sourceId: String { get }
+  var requiredFlow: String? { get }
 }
 
 public protocol LinkedSourceTypeEntity {

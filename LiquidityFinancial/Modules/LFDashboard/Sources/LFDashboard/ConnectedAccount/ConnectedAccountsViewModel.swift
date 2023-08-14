@@ -18,6 +18,7 @@ class ConnectedAccountsViewModel: ObservableObject {
   
   @Published var linkedAccount: [APILinkedSourceData] = []
   @Published var isLoading = false
+  @Published var navigation: Navigation?
   
   init(linkedAccount: [APILinkedSourceData]) {
     self.linkedAccount = linkedAccount
@@ -34,6 +35,14 @@ extension ConnectedAccountsViewModel {
     case .externalBank:
       return LFLocalizable.ConnectedView.Row.externalBank(account.name ?? "", account.last4)
     }
+  }
+  
+  func verify(sourceData: APILinkedSourceData) {
+    navigation = .verifyAccount(id: sourceData.sourceId)
+  }
+  
+  func addBankWithDebit() {
+    navigation = .addBankWithDebit
   }
   
   func deleteAccount(id: String, sourceType: String) {
@@ -57,5 +66,12 @@ extension ConnectedAccountsViewModel {
       }
     }
   }
-  
+}
+
+// MARK: - Types
+extension ConnectedAccountsViewModel {
+  enum Navigation {
+    case verifyAccount(id: String)
+    case addBankWithDebit
+  }
 }

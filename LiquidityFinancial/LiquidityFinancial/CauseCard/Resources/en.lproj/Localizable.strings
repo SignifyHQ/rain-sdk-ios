@@ -436,7 +436,7 @@
 "plaidLink.contactSupport.title" = "Contact Support";
 
 // ConnectedView
-"connectedView.title" = "Checking or Savings Accounts";
+"connectedView.title" = "Connected Accounts";
 "connectedView.row.debitCard" = "Debit Card **** %@";
 "connectedView.row.externalBank" = "%@ **** %@";
 
@@ -575,6 +575,7 @@
 "button.no.title" = "No";
 "button.yes.title" = "Yes";
 "button.retry.title" = "Retry";
+"button.verify.title" = "Verify";
 
 // Grid Value
 "grid_value.crypto" = "%@ ADA";

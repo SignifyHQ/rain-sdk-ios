@@ -6,7 +6,6 @@ import LFLocalizable
 
 struct ConnectedAccountsView: View {
   @StateObject private var viewModel: ConnectedAccountsViewModel
-  @State private var showDebitView = false
   
   init(linkedAccount: [APILinkedSourceData]) {
     _viewModel = .init(
@@ -24,7 +23,7 @@ struct ConnectedAccountsView: View {
         }
         ToolbarItem(placement: .navigationBarTrailing) {
           Button {
-            showDebitView = true
+            viewModel.addBankWithDebit()
           } label: {
             CircleButton(style: .plus)
           }
@@ -33,8 +32,13 @@ struct ConnectedAccountsView: View {
       .background(Colors.background.swiftUIColor)
       .navigationTitle("")
       .navigationBarTitleDisplayMode(.inline)
-      .navigationLink(isActive: $showDebitView) {
-        AddBankWithDebitView()
+      .navigationLink(item: $viewModel.navigation) { item in
+        switch item {
+        case .addBankWithDebit:
+          AddBankWithDebitView()
+        case .verifyAccount(let id):
+          VerifyCardView(cardId: id)
+        }
       }
   }
 
@@ -65,11 +69,9 @@ struct ConnectedAccountsView: View {
   private var contacts: some View {
     Group {
       ForEach(viewModel.linkedAccount, id: \.sourceId) { item in
-        TitleRow(
-          image: GenImages.CommonImages.Accounts.connectedAccounts,
-          title: viewModel.title(for: item),
-          style: .delete
-        ) {
+        ConnectedAccountRow(sourceData: item) {
+          viewModel.verify(sourceData: item)
+        } deleteAction: {
           viewModel.deleteAccount(id: item.sourceId, sourceType: item.sourceType.rawValue)
         }
       }

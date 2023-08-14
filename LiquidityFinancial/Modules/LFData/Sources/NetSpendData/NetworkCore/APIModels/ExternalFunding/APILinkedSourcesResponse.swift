@@ -15,13 +15,15 @@ public struct APILinkedSourceData: Codable, LinkedSourceDataEntity {
   public var last4: String
   public var sourceType: APILinkSourceType
   public var sourceId: String
+  public var requiredFlow: String?
   
-  public init?(name: String?, last4: String, sourceType: APILinkSourceType?, sourceId: String) {
+  public init?(name: String?, last4: String, sourceType: APILinkSourceType?, sourceId: String, requiredFlow: String?) {
     guard let sourceType = sourceType else { return nil }
     self.name = name
     self.last4 = last4
     self.sourceType = sourceType
     self.sourceId = sourceId
+    self.requiredFlow = requiredFlow
   }
 }
 

@@ -130,6 +130,7 @@ public enum GenImages {
     public static let connectedAppleWallet = ImageAsset(name: "connectedAppleWallet")
     public static let emptyCard = ImageAsset(name: "emptyCard")
     public static let forwardButton = ImageAsset(name: "forwardButton")
+    public static let icVerified = ImageAsset(name: "ic-verified")
     public static let icCopyBackground = ImageAsset(name: "ic_copy_background")
     public static let icCrypto = ImageAsset(name: "ic_crypto")
     public static let icKycQuestion = ImageAsset(name: "ic_kyc_question_?")
