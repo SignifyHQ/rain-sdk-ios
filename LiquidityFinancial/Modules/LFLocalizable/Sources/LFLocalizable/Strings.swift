@@ -353,9 +353,67 @@ public enum LFLocalizable {
       /// Your Life
       public static let text = LFLocalizable.tr("Localizable", "button.title.text", fallback: "Trade Now and Get\nYour Life")
     }
+    public enum Verify {
+      /// Verify
+      public static let title = LFLocalizable.tr("Localizable", "button.verify.title", fallback: "Verify")
+    }
     public enum Yes {
       /// Yes
       public static let title = LFLocalizable.tr("Localizable", "button.yes.title", fallback: "Yes")
+    }
+  }
+  public enum BuySellCryptoInput {
+    public enum Buy {
+      /// You currently have %@ available to buy Dogecoin. If this amount is less than expected, please contact support.
+      public static func annotation(_ p1: Any) -> String {
+        return LFLocalizable.tr("Localizable", "buySellCryptoInput.buy.annotation", String(describing: p1), fallback: "You currently have %@ available to buy Dogecoin. If this amount is less than expected, please contact support.")
+      }
+      /// BUY DOGE
+      public static let title = LFLocalizable.tr("Localizable", "buySellCryptoInput.buy.title", fallback: "BUY DOGE")
+    }
+    public enum BuyAvailableBalance {
+      /// %@ available
+      public static func subtitle(_ p1: Any) -> String {
+        return LFLocalizable.tr("Localizable", "buySellCryptoInput.buyAvailableBalance.subtitle", String(describing: p1), fallback: "%@ available")
+      }
+    }
+    public enum InsufficientFunds {
+      /// Insufficient funds
+      public static let description = LFLocalizable.tr("Localizable", "buySellCryptoInput.insufficientFunds.description", fallback: "Insufficient funds")
+    }
+    public enum MinimumCash {
+      /// Minimum amount should be $0.10
+      public static let description = LFLocalizable.tr("Localizable", "buySellCryptoInput.minimumCash.description", fallback: "Minimum amount should be $0.10")
+    }
+    public enum Sell {
+      /// You currently have %@ Dogecoin available to sell. Doge Rewards are not available to sell until 48 hours after they are earned.
+      public static func annotation(_ p1: Any) -> String {
+        return LFLocalizable.tr("Localizable", "buySellCryptoInput.sell.annotation", String(describing: p1), fallback: "You currently have %@ Dogecoin available to sell. Doge Rewards are not available to sell until 48 hours after they are earned.")
+      }
+      /// SELL DOGE
+      public static let title = LFLocalizable.tr("Localizable", "buySellCryptoInput.sell.title", fallback: "SELL DOGE")
+    }
+    public enum SellAvailableBalance {
+      /// %@ available to sell
+      public static func subtitle(_ p1: Any) -> String {
+        return LFLocalizable.tr("Localizable", "buySellCryptoInput.sellAvailableBalance.subtitle", String(describing: p1), fallback: "%@ available to sell")
+      }
+    }
+  }
+  public enum CancelTransfer {
+    /// Cancel Deposit
+    public static let title = LFLocalizable.tr("Localizable", "cancelTransfer.title", fallback: "Cancel Deposit")
+    public enum Fail {
+      /// We were unable to cancel your deposit. Please try again or contact support.
+      public static let message = LFLocalizable.tr("Localizable", "cancelTransfer.fail.message", fallback: "We were unable to cancel your deposit. Please try again or contact support.")
+      /// Something went wrong
+      public static let title = LFLocalizable.tr("Localizable", "cancelTransfer.fail.title", fallback: "Something went wrong")
+    }
+    public enum Success {
+      /// Your deposit has been successfully cancelled.
+      public static let message = LFLocalizable.tr("Localizable", "cancelTransfer.success.message", fallback: "Your deposit has been successfully cancelled.")
+      /// Success!
+      public static let title = LFLocalizable.tr("Localizable", "cancelTransfer.success.title", fallback: "Success!")
     }
   }
   public enum Card {
@@ -462,6 +520,18 @@ public enum LFLocalizable {
       public static let title = LFLocalizable.tr("Localizable", "cashTab.withdraw.title", fallback: "Withdraw")
     }
   }
+  public enum Cause {
+    public enum Share {
+      /// Include donations
+      public static let includeDonations = LFLocalizable.tr("Localizable", "cause.share.include_donations", fallback: "Include donations")
+      public enum Card {
+        /// I'm using CauseCard to support %@ by making passive donations through my everyday purchases.
+        public static func fundraiser(_ p1: Any) -> String {
+          return LFLocalizable.tr("Localizable", "cause.share.card.fundraiser", String(describing: p1), fallback: "I'm using CauseCard to support %@ by making passive donations through my everyday purchases.")
+        }
+      }
+    }
+  }
   public enum Causes {
     /// We were unable to load the Causes right now.
     /// Please try again.
@@ -500,8 +570,8 @@ public enum LFLocalizable {
     }
   }
   public enum ConnectedView {
-    /// Checking or Savings Accounts
-    public static let title = LFLocalizable.tr("Localizable", "connectedView.title", fallback: "Checking or Savings Accounts")
+    /// Connected Accounts
+    public static let title = LFLocalizable.tr("Localizable", "connectedView.title", fallback: "Connected Accounts")
     public enum Row {
       /// %@ **** %@
       public static func externalBank(_ p1: Any, _ p2: Any) -> String {
@@ -1450,6 +1520,8 @@ public enum LFLocalizable {
     public static let messages = LFLocalizable.tr("Localizable", "share.messages", fallback: "Messages")
     /// More
     public static let more = LFLocalizable.tr("Localizable", "share.more", fallback: "More")
+    /// Share
+    public static let navigationTitle = LFLocalizable.tr("Localizable", "share.navigation_title", fallback: "Share")
     /// Snapchat
     public static let snapchat = LFLocalizable.tr("Localizable", "share.snapchat", fallback: "Snapchat")
     /// TikTok
@@ -1459,9 +1531,9 @@ public enum LFLocalizable {
     /// WhatsApp
     public static let whatsapp = LFLocalizable.tr("Localizable", "share.whatsapp", fallback: "WhatsApp")
     public enum Card {
-      /// I'm using CauseCard to support %@ by making passive donations through my everyday purchases.
-      public static func fundraiser(_ p1: Any) -> String {
-        return LFLocalizable.tr("Localizable", "share.card.fundraiser", String(describing: p1), fallback: "I'm using CauseCard to support %@ by making passive donations through my everyday purchases.")
+      /// I'm using %@ to support %@ by making passive donations through my everyday purchases.
+      public static func fundraiser(_ p1: Any, _ p2: Any) -> String {
+        return LFLocalizable.tr("Localizable", "share.card.fundraiser", String(describing: p1), String(describing: p2), fallback: "I'm using %@ to support %@ by making passive donations through my everyday purchases.")
       }
     }
   }
@@ -1561,6 +1633,150 @@ public enum LFLocalizable {
       public static let message = LFLocalizable.tr("Localizable", "toast.copy.message", fallback: "Copied to clipboard")
     }
   }
+  public enum TransactionCard {
+    public enum Cashback {
+      /// Cashback
+      public static let title = LFLocalizable.tr("Localizable", "transactionCard.cashback.title", fallback: "Cashback")
+    }
+    public enum Crypto {
+      /// I earned %@ by making a %@ purchase with %@.
+      public static func message(_ p1: Any, _ p2: Any, _ p3: Any) -> String {
+        return LFLocalizable.tr("Localizable", "transactionCard.crypto.message", String(describing: p1), String(describing: p2), String(describing: p3), fallback: "I earned %@ by making a %@ purchase with %@.")
+      }
+      /// Doge Earned
+      public static let title = LFLocalizable.tr("Localizable", "transactionCard.crypto.title", fallback: "Doge Earned")
+    }
+    public enum Donation {
+      /// Supporting %@ - %@.
+      public static func message(_ p1: Any, _ p2: Any) -> String {
+        return LFLocalizable.tr("Localizable", "transactionCard.donation.message", String(describing: p1), String(describing: p2), fallback: "Supporting %@ - %@.")
+      }
+      /// Donation
+      public static let title = LFLocalizable.tr("Localizable", "transactionCard.donation.title", fallback: "Donation")
+    }
+    public enum Share {
+      /// Share
+      public static let title = LFLocalizable.tr("Localizable", "transactionCard.share.title", fallback: "Share")
+    }
+    public enum ShareCashback {
+      /// I earned %@ back by using my Visa %@. Get one here: %@
+      public static func title(_ p1: Any, _ p2: Any, _ p3: Any) -> String {
+        return LFLocalizable.tr("Localizable", "transactionCard.shareCashback.title", String(describing: p1), String(describing: p2), String(describing: p3), fallback: "I earned %@ back by using my Visa %@. Get one here: %@")
+      }
+    }
+    public enum ShareCrypto {
+      /// I earned %@ by using my Visa %@. Get one here: %@
+      public static func title(_ p1: Any, _ p2: Any, _ p3: Any) -> String {
+        return LFLocalizable.tr("Localizable", "transactionCard.shareCrypto.title", String(describing: p1), String(describing: p2), String(describing: p3), fallback: "I earned %@ by using my Visa %@. Get one here: %@")
+      }
+    }
+    public enum ShareDonationAmount {
+      /// I donated %@ to %@ using %@. Join us in supporting %@.
+      public static func message(_ p1: Any, _ p2: Any, _ p3: Any, _ p4: Any) -> String {
+        return LFLocalizable.tr("Localizable", "transactionCard.shareDonationAmount.message", String(describing: p1), String(describing: p2), String(describing: p3), String(describing: p4), fallback: "I donated %@ to %@ using %@. Join us in supporting %@.")
+      }
+    }
+    public enum ShareDonationGeneric {
+      /// We're raising money for %@ using %@. Join us in supporting %@.
+      public static func message(_ p1: Any, _ p2: Any, _ p3: Any) -> String {
+        return LFLocalizable.tr("Localizable", "transactionCard.shareDonationGeneric.message", String(describing: p1), String(describing: p2), String(describing: p3), fallback: "We're raising money for %@ using %@. Join us in supporting %@.")
+      }
+    }
+  }
+  public enum TransactionDetail {
+    /// Title
+    public static let title = LFLocalizable.tr("Localizable", "transactionDetail.title", fallback: "Title")
+    public enum BalanceCash {
+      /// Balance: %@
+      public static func title(_ p1: Any) -> String {
+        return LFLocalizable.tr("Localizable", "transactionDetail.balanceCash.title", String(describing: p1), fallback: "Balance: %@")
+      }
+    }
+    public enum BalanceCrypto {
+      /// Balance: %@ DOGE
+      public static func title(_ p1: Any) -> String {
+        return LFLocalizable.tr("Localizable", "transactionDetail.balanceCrypto.title", String(describing: p1), fallback: "Balance: %@ DOGE")
+      }
+    }
+    public enum CurrentRewards {
+      /// Current rewards
+      public static let title = LFLocalizable.tr("Localizable", "transactionDetail.currentRewards.title", fallback: "Current rewards")
+    }
+    public enum Description {
+      /// Description
+      public static let title = LFLocalizable.tr("Localizable", "transactionDetail.description.title", fallback: "Description")
+    }
+    public enum Donation {
+      /// Donation
+      public static let title = LFLocalizable.tr("Localizable", "transactionDetail.donation.title", fallback: "Donation")
+    }
+    public enum Fee {
+      /// Fee
+      public static let title = LFLocalizable.tr("Localizable", "transactionDetail.fee.title", fallback: "Fee")
+    }
+    public enum Merchant {
+      /// Vendor
+      public static let title = LFLocalizable.tr("Localizable", "transactionDetail.merchant.title", fallback: "Vendor")
+    }
+    public enum NetworkFee {
+      /// Network Fee
+      public static let title = LFLocalizable.tr("Localizable", "transactionDetail.networkFee.title", fallback: "Network Fee")
+    }
+    public enum PaidTo {
+      /// Paid To
+      public static let title = LFLocalizable.tr("Localizable", "transactionDetail.paidTo.title", fallback: "Paid To")
+    }
+    public enum Price {
+      /// Price
+      public static let title = LFLocalizable.tr("Localizable", "transactionDetail.price.title", fallback: "Price")
+    }
+    public enum Receipt {
+      /// Receipt
+      public static let button = LFLocalizable.tr("Localizable", "transactionDetail.receipt.button", fallback: "Receipt")
+    }
+    public enum ReceivedFrom {
+      /// Received From
+      public static let title = LFLocalizable.tr("Localizable", "transactionDetail.receivedFrom.title", fallback: "Received From")
+    }
+    public enum Reward {
+      /// Reward
+      public static let title = LFLocalizable.tr("Localizable", "transactionDetail.reward.title", fallback: "Reward")
+    }
+    public enum Rewards {
+      /// Rewards
+      public static let title = LFLocalizable.tr("Localizable", "transactionDetail.rewards.title", fallback: "Rewards")
+    }
+    public enum SaveWalletPopup {
+      /// Save wallet address
+      public static let button = LFLocalizable.tr("Localizable", "transactionDetail.saveWalletPopup.button", fallback: "Save wallet address")
+      /// Would you like to save this wallet address to use again?
+      public static let description = LFLocalizable.tr("Localizable", "transactionDetail.saveWalletPopup.description", fallback: "Would you like to save this wallet address to use again?")
+      /// SAVE WALLET ADDRESS
+      public static let title = LFLocalizable.tr("Localizable", "transactionDetail.saveWalletPopup.title", fallback: "SAVE WALLET ADDRESS")
+    }
+    public enum Source {
+      /// Source
+      public static let title = LFLocalizable.tr("Localizable", "transactionDetail.source.title", fallback: "Source")
+    }
+    public enum TotalDonated {
+      /// Total Donated: %@
+      public static func title(_ p1: Any) -> String {
+        return LFLocalizable.tr("Localizable", "transactionDetail.totalDonated.title", String(describing: p1), fallback: "Total Donated: %@")
+      }
+    }
+    public enum TransactionId {
+      /// Transaction Id
+      public static let title = LFLocalizable.tr("Localizable", "transactionDetail.transactionId.title", fallback: "Transaction Id")
+    }
+    public enum TransactionStatus {
+      /// Status
+      public static let title = LFLocalizable.tr("Localizable", "transactionDetail.transactionStatus.title", fallback: "Status")
+    }
+    public enum TransactionType {
+      /// Order Type
+      public static let title = LFLocalizable.tr("Localizable", "transactionDetail.transactionType.title", fallback: "Order Type")
+    }
+  }
   public enum TransactionList {
     /// Transactions
     public static let title = LFLocalizable.tr("Localizable", "transactionList.title", fallback: "Transactions")
@@ -1575,6 +1791,18 @@ public enum LFLocalizable {
       public static func user(_ p1: Any) -> String {
         return LFLocalizable.tr("Localizable", "transactionRow.fundraiser_donation.user", String(describing: p1), fallback: "Donation by %@")
       }
+    }
+  }
+  public enum TransferDebitSuggestion {
+    /// Get Faster Deposits
+    public static let title = LFLocalizable.tr("Localizable", "transferDebitSuggestion.title", fallback: "Get Faster Deposits")
+    public enum Body {
+      /// For instant deposits, connect and deposit with your Debit Card
+      public static let title = LFLocalizable.tr("Localizable", "transferDebitSuggestion.body.title", fallback: "For instant deposits, connect and deposit with your Debit Card")
+    }
+    public enum Connect {
+      /// Connect Debit Card
+      public static let title = LFLocalizable.tr("Localizable", "transferDebitSuggestion.connect.title", fallback: "Connect Debit Card")
     }
   }
   public enum TransferView {
@@ -1823,6 +2051,22 @@ public enum LFLocalizable {
       }
     }
   }
+  public enum VerifyCard {
+    /// Check your card activity for 1 pending micro-transaction from AvalancheCard. Enter the one amount in the fields below. Once verified, this  transaction will be canceled
+    public static let detail = LFLocalizable.tr("Localizable", "verify_card.detail", fallback: "Check your card activity for 1 pending micro-transaction from AvalancheCard. Enter the one amount in the fields below. Once verified, this  transaction will be canceled")
+    /// Verify card ownership
+    public static let title = LFLocalizable.tr("Localizable", "verify_card.title", fallback: "Verify card ownership")
+    public enum Amount {
+      /// Enter amount
+      public static let placeholder = LFLocalizable.tr("Localizable", "verify_card.amount.placeholder", fallback: "Enter amount")
+      /// Amount
+      public static let title = LFLocalizable.tr("Localizable", "verify_card.amount.title", fallback: "Amount")
+    }
+    public enum Button {
+      /// Verify Card
+      public static let verifyCard = LFLocalizable.tr("Localizable", "verify_card.button.verifyCard", fallback: "Verify Card")
+    }
+  }
   public enum Welcome {
     /// HOW IT WORKS:
     public static let howItWorks = LFLocalizable.tr("Localizable", "welcome.how_it_works", fallback: "HOW IT WORKS:")
@@ -1843,6 +2087,12 @@ public enum LFLocalizable {
       public static let item2 = LFLocalizable.tr("Localizable", "welcome.how_it_works.item2", fallback: "Use your AvalancheCard for everyday purchases")
       /// Spend AVAX, USDC, USD and earn rewards.
       public static let item3 = LFLocalizable.tr("Localizable", "welcome.how_it_works.item3", fallback: "Spend AVAX, USDC, USD and earn rewards.")
+    }
+  }
+  public enum Zerohash {
+    public enum Disclosure {
+      /// Cryptocurrency services powered by Zero Hash
+      public static let description = LFLocalizable.tr("Localizable", "zerohash.disclosure.description", fallback: "Cryptocurrency services powered by Zero Hash")
     }
   }
 }

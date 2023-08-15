@@ -735,8 +735,8 @@
 "fundraise.share_donation.generic" = "We're raising money for %@ using %@. Join us in supporting %@.";
 
 // Share
-"share.card.fundraiser" = "I'm using CauseCard to support %@ by making passive donations through my everyday purchases.";
-"share.include_donations" = "Include donations";
+"cause.share.card.fundraiser" = "I'm using CauseCard to support %@ by making passive donations through my everyday purchases.";
+"cause.share.include_donations" = "Include donations";
 "share.email" = "Email";
 "share.facebook" = "Facebook";
 "share.instagram" = "Instagram";

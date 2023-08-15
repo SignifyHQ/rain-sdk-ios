@@ -70,7 +70,7 @@ extension ShareItemData {
   static func build(from fundraiserDetail: FundraiserDetailModel, donation: Double? = nil) -> Self {
     .init(
       card: .init(fundraiserDetail: fundraiserDetail, donation: donation),
-      message: String(format: LFLocalizable.Share.Card.fundraiser(fundraiserDetail.name)),
+      message: String(format: LFLocalizable.Cause.Share.Card.fundraiser(fundraiserDetail.name)),
       attachmentUrl: fundraiserDetail.charityUrl ?? .init(string: LFUtility.shareAppUrl),
       showAmountToggle: donation != nil
     )
@@ -84,7 +84,7 @@ extension ShareItemData {
         backgroundColor: sticker.backgroundColor?.asHexColor,
         imageUrl: sticker.url
       ),
-      message: LFLocalizable.Share.Card.fundraiser(sticker.name),
+      message: LFLocalizable.Cause.Share.Card.fundraiser(sticker.name),
       attachmentUrl: .init(string: LFUtility.shareAppUrl),
       showAmountToggle: false
     )
