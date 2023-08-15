@@ -15,7 +15,10 @@ let package = Package(
       targets: ["AccountDomain"]),
     .library(
       name: "NetSpendDomain",
-      targets: ["NetSpendDomain"])
+      targets: ["NetSpendDomain"]),
+    .library(
+      name: "RewardDomain",
+      targets: ["RewardDomain"])
   ],
   dependencies: [
     .package(name: "LFServices", path: "../LFServices"),
@@ -36,6 +39,10 @@ let package = Package(
       dependencies: [
         "LFServices"
       ]
+    ),
+    .target(
+      name: "RewardDomain",
+      dependencies: []
     ),
     .testTarget(
       name: "OnboardingDomainTests",

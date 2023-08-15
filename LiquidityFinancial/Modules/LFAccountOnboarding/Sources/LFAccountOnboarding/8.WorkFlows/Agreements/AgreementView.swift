@@ -36,16 +36,23 @@ public struct AgreementView: View {
       
       Spacer()
       
-      VStack(alignment: .leading, spacing: 0) {
-        ScrollViewReader { _ in
-          ForEach($viewModel.agreements) { agreement in
-            conditionCell(
-              condition: agreement.wrappedValue
-            )
+      Group {
+        if viewModel.isLoading {
+          loadingView
+        } else {
+          VStack(alignment: .leading, spacing: 0) {
+            ScrollViewReader { _ in
+              ForEach($viewModel.agreements) { agreement in
+                conditionCell(
+                  condition: agreement.wrappedValue
+                )
+              }
+            }
+            .padding(0)
           }
         }
-        .padding(0)
       }
+      
       continueButton
     }
     .padding(.bottom, 16)
@@ -58,6 +65,19 @@ public struct AgreementView: View {
     .navigationLink(isActive: $viewModel.isNavigationPersonalInformation) {
       PersonalInformationView()
     }
+    .popup(item: $viewModel.toastMessage, style: .toast) {
+      ToastView(toastMessage: $0)
+    }
+  }
+  
+  private var loadingView: some View {
+    VStack {
+      Spacer()
+      LottieView(loading: .mix)
+        .frame(width: 30, height: 20)
+      Spacer()
+    }
+    .frame(maxWidth: .infinity)
   }
 }
 

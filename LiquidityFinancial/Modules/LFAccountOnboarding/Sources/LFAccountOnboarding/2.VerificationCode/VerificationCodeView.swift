@@ -47,14 +47,6 @@ struct VerificationCodeView: View {
     }
     // TODO: Will be implemented later
     // .track(name: String(describing: type(of: self)))
-    .navigationLink(isActive: $viewModel.isNavigationToWelcome) {
-      switch LFUtilities.target {
-      case .DogeCard:
-        DogeCardWelcomeView(destination: AnyView(AgreementView()))
-      default:
-        WelcomeView()
-      }
-    }
     .navigationBarBackButtonHidden(viewModel.isShowLoading)
   }
 }

@@ -11,17 +11,42 @@ import SwiftSoup
 final class AgreementViewModel: ObservableObject {
   @LazyInjected(\.intercomService) var intercomService
   @LazyInjected(\.netspendDataManager) var netspendDataManager
+  @LazyInjected(\.accountDataManager) var accountDataManager
+  @LazyInjected(\.netspendRepository) var netspendRepository
   
   @Published var isNavigationPersonalInformation: Bool = false
   @Published var isDisableButton: Bool = true
   @Published var agreements: [ServiceConditionModel] = []
+  @Published var isLoading: Bool = false
+  @Published var toastMessage: String?
   
   init() {
-    mapToServiceCondition()
+    checkData()
   }
     
   func openIntercom() {
     intercomService.openIntercom()
+  }
+  
+  private func checkData() {
+    if let agreementData = netspendDataManager.agreement {
+      mapToServiceCondition(agreementData: agreementData)
+    } else {
+      intercomService.loginIdentifiedUser(userAttributes: IntercomService.UserAttributes(phone: accountDataManager.phoneNumber))
+      
+      Task { @MainActor in
+        defer { isLoading = false }
+        isLoading = true
+        do {
+          let agreementData = try await netspendRepository.getAgreement()
+          netspendDataManager.update(agreement: agreementData)
+          mapToServiceCondition(agreementData: agreementData)
+        } catch {
+          log.error(error)
+          toastMessage = error.localizedDescription
+        }
+      }
+    }
   }
 }
 
@@ -45,14 +70,13 @@ private extension AgreementViewModel {
     isDisableButton = agreements.contains(where: { $0.selected == false })
   }
   
-  func mapToServiceCondition() {
-    guard let agreementData = netspendDataManager.agreement else { return }
+  func mapToServiceCondition(agreementData: APIAgreementData) {
     var agreementList: [ServiceConditionModel] = []
     for item in agreementData.agreements {
       do {
         let html: String = item.description
         let doc: SwiftSoup.Document = try SwiftSoup.parse(html)
-        let text: String = try doc.body()!.text()
+        let text: String = try doc.body()?.text() ?? ""
         let links: [SwiftSoup.Element] = try doc.select("a").array()
         var attributeInformation: [String: String] = [:]
         for link in links {

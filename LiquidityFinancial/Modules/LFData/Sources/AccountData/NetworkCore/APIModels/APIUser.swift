@@ -1,7 +1,6 @@
 import Foundation
 import AccountDomain
 
-// swiftlint:disable discouraged_optional_boolean
 public struct APIUser: Decodable {
   public let id: String?
   public let appState: APIAppState?

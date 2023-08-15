@@ -6,6 +6,7 @@ import NetSpendData
 import OnboardingData
 import AccountData
 import OnboardingDomain
+import LFRewards
 
 // swiftlint:disable cyclomatic_complexity
 public protocol OnboardingFlowCoordinatorProtocol {
@@ -30,6 +31,7 @@ public class OnboardingFlowCoordinator: OnboardingFlowCoordinatorProtocol {
     case question(QuestionsEntity)
     case document
     case zeroHash
+    case information
     
     public var id: String {
       String(describing: self)
@@ -51,11 +53,22 @@ public class OnboardingFlowCoordinator: OnboardingFlowCoordinatorProtocol {
   @LazyInjected(\.onboardingRepository) var onboardingRepository
   @LazyInjected(\.netspendRepository) var netspendRepository
   @LazyInjected(\.netspendDataManager) var netspendDataManager
+  @LazyInjected(\.rewardFlowCoordinator) var rewardFlowCoordinator
   
   public let routeSubject: CurrentValueSubject<Route, Never>
   
+  private var subscribers: Set<AnyCancellable> = []
+  
   public init() {
     self.routeSubject = .init(.initial)
+    rewardFlowCoordinator
+      .routeSubject
+      .removeDuplicates()
+      .receive(on: DispatchQueue.main)
+      .sink { [weak self] route in
+        self?.handlerRewardRoute(route: route)
+      }
+      .store(in: &subscribers)
   }
   
   public func set(route: Route) {
@@ -73,6 +86,15 @@ public class OnboardingFlowCoordinator: OnboardingFlowCoordinatorProtocol {
     }
   }
 
+  func handlerRewardRoute(route: RewardFlowCoordinator.Route) {
+    switch route {
+    case .information:
+      set(route: .information)
+    case .selectReward:
+      break //do not thing
+    }
+  }
+  
   func getCurrentState() {
     Task { @MainActor in
       do {
@@ -115,8 +137,12 @@ public class OnboardingFlowCoordinator: OnboardingFlowCoordinatorProtocol {
           
         }
       } catch {
-        if let error = error.asErrorObject, let code = error.code, code == "user_not_authorized" {
+        if error.localizedDescription.contains("user_not_authorized") {
           clearUserData()
+        }
+        if error.localizedDescription.contains("user_not_found") {
+          clearUserData()
+          //TODO: tony review implelement late
         }
         routeSubject.value = .phone
         log.error(error.localizedDescription)

@@ -16,7 +16,6 @@ opt_in_rules:
   - contains_over_first_not_nil
   - convenience_type
   - discouraged_object_literal
-  - discouraged_optional_boolean
   - empty_count
   - empty_string
   - empty_xctest_method

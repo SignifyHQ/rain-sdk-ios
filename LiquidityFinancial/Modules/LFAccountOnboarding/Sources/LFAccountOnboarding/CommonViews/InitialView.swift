@@ -25,7 +25,7 @@ struct InitialView: View {
         .frame(height: 34)
 
       ProgressView().progressViewStyle(.circular)
-        .tint(Colors.Buttons.highlightButton.swiftUIColor)
+        .tint(Colors.primary.swiftUIColor)
 
     }
     .frame(maxWidth: .infinity)

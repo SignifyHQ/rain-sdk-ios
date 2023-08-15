@@ -4,13 +4,16 @@ import LFUtilities
 import LFStyleGuide
 import AccountData
 import DogeOnboarding
+import LFRewards
 
+// swiftlint:disable cyclomatic_complexity
 public struct OnboardingContentView: View {
   
   @StateObject
   var viewModel = OnboardingContentViewModel()
   
   @Injected(\.accountDataManager) var accountDataManager
+  @LazyInjected(\.rewardFlowCoordinator) var rewardFlowCoordinator
   
   let environmentManager = EnvironmentManager()
   
@@ -33,6 +36,8 @@ public struct OnboardingContentView: View {
         switch LFUtilities.target {
         case .DogeCard:
           DogeCardWelcomeView(destination: AnyView(AgreementView()))
+        case .CauseCard:
+          SelectRewardsView(destination: AnyView(AgreementView()))
         default:
           WelcomeView()
         }
@@ -46,6 +51,8 @@ public struct OnboardingContentView: View {
         UploadDocumentView()
       case .zeroHash:
         SetupWalletView()
+      case .information:
+        PersonalInformationView()
       }
     }
   }

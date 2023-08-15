@@ -11,7 +11,6 @@ public struct FullSizeButton: View {
   let textColor: Color?
   let backgroundColor: Color?
   let icon: ImageAsset?
-  var gradientColor: [Color] = []
   let action: () -> Void
   
   public init(
@@ -25,7 +24,6 @@ public struct FullSizeButton: View {
     textColor: Color? = nil,
     backgroundColor: Color? = nil,
     icon: ImageAsset? = nil,
-    gradientColor: [Color] = [],
     action: @escaping () -> Void
   ) {
     self.type = type
@@ -36,7 +34,6 @@ public struct FullSizeButton: View {
     self.fontSize = fontSize
     self.height = height
     self.cornerRadius = cornerRadius
-    self.gradientColor = gradientColor
     self.action = action
     self.icon = icon
     _isLoading = isLoading
@@ -141,6 +138,18 @@ private extension FullSizeButton {
       return gradientColor.isEmpty ? [Colors.primary.swiftUIColor] : gradientColor
     }
     return [backgroundColor]
+  }
+  
+  var gradientColor: [Color] {
+    switch LFStyleGuide.target {
+    case .PrideCard, .CauseCard:
+      return [
+        Colors.Gradients.Button.gradientButton0.swiftUIColor,
+        Colors.Gradients.Button.gradientButton1.swiftUIColor
+      ]
+    default:
+      return []
+    }
   }
 }
 

@@ -82,6 +82,15 @@ extension LFUtility {
       .rootViewController
   }
   
+  public static var visibleViewController: UIViewController? {
+    UIApplication
+      .shared
+      .connectedScenes
+      .flatMap { ($0 as? UIWindowScene)?.windows ?? [] }
+      .first(where: \.isKeyWindow)?
+      .visibleViewController
+  }
+  
   public static func popToRootView() {
     popToRootModalView()
     popToRootNavigationView()

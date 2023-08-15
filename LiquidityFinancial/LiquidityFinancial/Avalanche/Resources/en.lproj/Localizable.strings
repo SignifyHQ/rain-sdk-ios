@@ -662,3 +662,18 @@
 
 // Disclosure
 "zerohash.disclosure.description" = "Cryptocurrency services powered by Zero Hash";
+
+  //...COMMON...
+"generic_ErrorMessage" = "Something went wrong, please try again.";
+
+"share.email" = "Email";
+"share.facebook" = "Facebook";
+"share.instagram" = "Instagram";
+"share.messages" = "Messages";
+"share.snapchat" = "Snapchat";
+"share.tikTok" = "TikTok";
+"share.twitter" = "Twitter";
+"share.whatsapp" = "WhatsApp";
+"share.more" = "More";
+"share.cancel" = "Cancel";
+"share.failure" = "Failed to share on %@";

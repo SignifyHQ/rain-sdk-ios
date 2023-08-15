@@ -21,7 +21,10 @@ let package = Package(
       targets: ["NetSpendData"]),
     .library(
       name: "AccountData",
-      targets: ["AccountData"])
+      targets: ["AccountData"]),
+    .library(
+      name: "RewardData",
+      targets: ["RewardData"])
   ],
   dependencies: [
     .package(name: "LFDomain", path: "../LFDomain"),
@@ -40,7 +43,10 @@ let package = Package(
     ),
     .target(
       name: "DataUtilities",
-      dependencies: ["LFNetwork"]),
+      dependencies: [
+        "LFNetwork"
+      ]
+    ),
     .target(
       name: "AuthorizationManager",
       dependencies: [
@@ -60,6 +66,13 @@ let package = Package(
       dependencies: [
         "DataUtilities", "LFNetwork", "Factory", "AuthorizationManager", "OnboardingData", "LFUtilities",
         .product(name: "AccountDomain", package: "LFDomain")
+      ]
+    ),
+    .target(
+      name: "RewardData",
+      dependencies: [
+        "DataUtilities", "LFNetwork", "Factory", "AuthorizationManager", "LFUtilities", "AccountData",
+        .product(name: "RewardDomain", package: "LFDomain")
       ]
     ),
     .testTarget(

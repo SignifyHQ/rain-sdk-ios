@@ -658,6 +658,122 @@
 "suggest_cause.alert.title" = "THANK YOU";
 "suggest_cause.alert.message" = "Thank you for suggesting a cause. Our team will review and follow up.";
 
+// Causes Filter
+
+"causes_filter.title" = "SELECT A CAUSE";
+"causes_filter.subtitle" = "Select categories you are interested in";
+"causes_filter.continue" = "Continue";
+
+  // Selecte Cause
+"select_cause.title" = "Select Fundraiser";
+"select_cause.subtitle" = "Select cause you are interested in";
+"select_cause.continue" = "Continue";
+
+  // Select Fundraiser
+
+"select_fundraiser.title" = "SELECT A CAUSE";
+"select_fundraiser.subtitle" = "You can change your cause anytime";
+"select_fundraiser.causes" = "%@ CAUSES";
+"select_fundraiser.select" = "Select";
+"select_fundraiser.success.title" = "THANK YOU!";
+"select_fundraiser.success.primary" = "Continue";
+"select_fundraiser.error" = "Unable to select Fundraiser, please try again.";
+
+  // Fundraiser Selection
+
+"fundraiser_selection.allowed" = "Thank you for supporting %@ (you can always change later).";
+"fundraiser_selection.allowed_before_account_creation" = "Thank you for supporting %@ (you can always change later). Next, please create your account.";
+
+  // Causes
+
+"causes.trending" = "Trending";
+"causes.explore" = "Explore";
+"causes.new" = "New";
+"causes.error" = "We were unable to load the Causes right now.\nPlease try again.";
+"causes.retry" = "Retry";
+
+  // Causes List
+
+"causes_list.error.title" = "We're Sorry";
+"causes_list.error.message" = "We aren't able to select this Cause right now.";
+
+  // Fundraiser Status
+
+"fundraiser_status.raised" = "raised";
+"fundraiser_status.donations" = "%@ donations";
+
+  // Skip Fundraiser
+
+"skip_fundraiser.title" = "Skip";
+
+// Donation
+"fundraiser_donation_annotation.description" = "You currently have %@ available to make a donation. If this amount is less than expected, please contact support.";
+
+// Fundraiser Actions
+
+"fundraiser_actions.share" = "Share";
+"fundraiser_actions.donate" = "Donate";
+"fundraiser_actions.more" = "More";
+
+// More ways to support
+
+"more_ways_to_support.title" = "More ways to support";
+"more_ways_to_support.share.title" = "SHARE";
+"more_ways_to_support.share.friends" = "Invite friends";
+"more_ways_to_support.share.cause" = "Share cause";
+"more_ways_to_support.photo.title" = "PROFILE PHOTO";
+"more_ways_to_support.photo.message" = "Update your profile photo on Social Media";
+"more_ways_to_support.photo.success" = "Image saved to Library!";
+"more_ways_to_support.photo.error" = "Failed to save image";
+"more_ways_to_support.news.title" = "NEWS AND UPDATES";
+"more_ways_to_support.news.message" = "Get news and updates from %@";
+"more_ways_to_support.employer.title" = "EMPLOYER MATCH PROGRAM";
+"more_ways_to_support.employer.message" = "Does your employer have a matching program?\nDouble your impact with a simple email";
+"more_ways_to_support.employer.action" = "Get taxable donations";
+
+"fundraise.share_donation.amount" = "I donated %@ to %@ using %@. Join us in supporting %@.";
+"fundraise.share_donation.generic" = "We're raising money for %@ using %@. Join us in supporting %@.";
+
+// Share
+"share.card.fundraiser" = "I'm using CauseCard to support %@ by making passive donations through my everyday purchases.";
+"share.include_donations" = "Include donations";
+"share.email" = "Email";
+"share.facebook" = "Facebook";
+"share.instagram" = "Instagram";
+"share.messages" = "Messages";
+"share.snapchat" = "Snapchat";
+"share.tikTok" = "TikTok";
+"share.twitter" = "Twitter";
+"share.whatsapp" = "WhatsApp";
+"share.more" = "More";
+"share.cancel" = "Cancel";
+"share.failure" = "Failed to share on %@";
+
+//Card Share
+"card_share.title.donation" = "Donation";
+"card_share.title.cashback" = "Cashback";
+"card_share.message.donation" = "Supporting %@ - %@.";
+"card_share.title" = "Share";
+"card_share.crypto" = "I earned %@ by using my Visa CauseCard. Get one here: %@";
+"card_share.cashback" = "I earned %@ back by using my Visa CauseCard. Get one here: %@";
+
+// Fundraiser Detail
+"fundraiser_detail.tags" = "Tags";
+"fundraiser_detail.confidence" = "Give with confidence";
+"fundraiser_detail.details" = "Charity details";
+"fundraiser_detail.status" = "501c3 Status";
+"fundraiser_detail.active" = "Active";
+"fundraiser_detail.ein" = "EIN";
+"fundraiser_detail.address" = "Address";
+"fundraiser_detail.website" = "Website";
+"fundraiser_detail.navigator" = "Charity Navigator";
+"fundraiser_detail.latest_donations" = "Latest Donations";
+"fundraiser_detail.select" = "Select Cause";
+"fundraiser_detail.success.title" = "THANK YOU!";
+"fundraiser_detail.error.title" = "We're Sorry";
+"fundraiser_detail.error.geocode" = "We aren't able to open the Charity address right now.";
+"fundraiser_detail.error.select" = "We weren't able to select this Fundraiser. Please try again.";
+
 // MARK: - Common
 
 // Terms
@@ -700,3 +816,6 @@
 
 // Disclosure
 "zerohash.disclosure.description" = "Cryptocurrency services powered by Zero Hash";
+
+//...COMMON...
+"generic_ErrorMessage" = "Something went wrong, please try again.";

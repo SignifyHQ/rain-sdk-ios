@@ -241,6 +241,7 @@
 		06D40C022A63DEB300EADB75 /* LoadingPrimary.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = LoadingPrimary.json; sourceTree = "<group>"; };
 		06EBE1FF2A6924E900157B32 /* LFDashboard */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = LFDashboard; path = Modules/LFDashboard; sourceTree = "<group>"; };
 		06EBE2002A69390700157B32 /* DashboardContainer+Injection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DashboardContainer+Injection.swift"; sourceTree = "<group>"; };
+		A9201F242A8698FB00A6FDB6 /* LFRewards */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = LFRewards; path = Modules/LFRewards; sourceTree = "<group>"; };
 		A938373D2A63BB20009EB1DE /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = LaunchScreen.storyboard; sourceTree = "<group>"; };
 		A93837462A63DDFD009EB1DE /* AppDelegate+Appearance.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AppDelegate+Appearance.swift"; sourceTree = "<group>"; };
 		A94F71F32A614E04002ADB34 /* LFLocalizable */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = LFLocalizable; path = Modules/LFLocalizable; sourceTree = "<group>"; };
@@ -666,6 +667,7 @@
 		A97BF8062A5D971400B8F5CA /* Presentation */ = {
 			isa = PBXGroup;
 			children = (
+				A9201F242A8698FB00A6FDB6 /* LFRewards */,
 				06CFE6B72A7263B400B494A2 /* LFCard */,
 				06EBE1FF2A6924E900157B32 /* LFDashboard */,
 				A97BF8072A5D975900B8F5CA /* LFAccountOnboarding */,

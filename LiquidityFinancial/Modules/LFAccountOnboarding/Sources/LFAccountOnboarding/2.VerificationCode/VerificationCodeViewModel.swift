@@ -147,7 +147,7 @@ extension VerificationCodeViewModel {
             }
           } else {
             if states.contains(OnboardingMissingStep.netSpendCreateAccount) {
-              isNavigationToWelcome = true
+              onboardingFlowCoordinator.set(route: .welcome)
             } else if states.contains(OnboardingMissingStep.dashboardReview) {
               onboardingFlowCoordinator.set(route: .kycReview)
             } else if states.contains(OnboardingMissingStep.zeroHashAccount) {
@@ -158,7 +158,7 @@ extension VerificationCodeViewModel {
           }
         }
       } catch {
-        isNavigationToWelcome = true
+        onboardingFlowCoordinator.set(route: .welcome)
         log.error(error.localizedDescription)
       }
     }
