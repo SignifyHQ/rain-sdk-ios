@@ -264,3 +264,14 @@ public extension StringProtocol where Self: RangeReplaceableCollection {
     .init(unfoldSubSequences(limitedTo: count).joined(separator: separator))
   }
 }
+
+// MARK: - Color
+public extension String {
+  var asHexColor: Color? {
+    if let hex = nilIfEmpty {
+      return .init(hex: hex)
+    } else {
+      return nil
+    }
+  }
+}

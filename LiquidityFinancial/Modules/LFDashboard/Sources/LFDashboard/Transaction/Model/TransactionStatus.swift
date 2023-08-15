@@ -1,12 +1,12 @@
 import Foundation
 
 enum TransactionStatus: String, Codable {
-  case notStarted
-  case completed
-  case inProgress
-  case pending
-  case settled
-  case unknown
+  case notStarted = "NOTSTARTED"
+  case completed = "COMPLETED"
+  case inProgress = "INPROGRESS"
+  case pending = "PENDING"
+  case settled = "SETTLED"
+  case unknown = "UNKNOW"
 
   init(from decoder: Decoder) throws {
     self = try TransactionStatus(rawValue: decoder.singleValueContainer().decode(RawValue.self)) ?? .unknown

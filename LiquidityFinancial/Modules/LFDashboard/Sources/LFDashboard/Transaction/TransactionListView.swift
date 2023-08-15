@@ -21,6 +21,10 @@ struct TransactionListView: View {
         }
       }
       .onAppear(perform: viewModel.onAppear)
+      .sheet(item: $viewModel.transactionDetail) { item in
+        TransactionDetailView(type: viewModel.rowType, transactionId: item.id ?? .empty)
+          .embedInNavigation()
+      }
   }
 
   private var content: some View {

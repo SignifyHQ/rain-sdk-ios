@@ -41,7 +41,7 @@ struct TransactionModel: Codable, Identifiable, Equatable {
   }
   
   var descriptionDisplay: String {
-    return description ?? ""
+    description ?? ""
   }
   
   var trxPrice: String? {
@@ -110,10 +110,12 @@ extension TransactionModel {
   init(from transactionEntity: TransactionEntity) {
     self.init(
       id: transactionEntity.id,
+      txnType: TransactionType(rawValue: transactionEntity.type ?? ""),
       title: transactionEntity.title,
       amount: (transactionEntity.amount ?? 0).toString,
       description: transactionEntity.description,
       currentBalance: (transactionEntity.currentBalance ?? 0).toString,
+      createdAt: transactionEntity.createdAt,
       status: TransactionStatus(rawValue: transactionEntity.status ?? ""),
       platformTransactionType: PlatformTransactionType(rawValue: transactionEntity.type ?? "") ?? .unknown
     )

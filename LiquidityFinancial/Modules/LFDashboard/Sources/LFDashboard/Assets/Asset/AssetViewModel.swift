@@ -39,7 +39,7 @@ extension AssetViewModel {
       defer { isLoading = false }
       isLoading = true
       let accounts = try await accountRepository.getAccount(currencyType: currencyType)
-      guard var account = accounts.first else {
+      guard let account = accounts.first else {
         return
       }
       self.account = account

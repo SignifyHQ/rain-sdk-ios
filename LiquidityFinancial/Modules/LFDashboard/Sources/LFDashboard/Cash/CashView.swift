@@ -38,6 +38,8 @@ struct CashView: View {
         MoveMoneyAccountView(kind: .receive)
       case .sendMoney:
         MoveMoneyAccountView(kind: .send)
+      case let .transactionDetail(transactionId):
+        TransactionDetailView(type: .cash, transactionId: transactionId ?? .empty)
       }
     }
   }
@@ -173,7 +175,7 @@ private extension CashView {
       } else {
         ForEach(viewModel.transactions) { transaction in
           TransactionRowView(item: transaction, type: .cash) {
-            //viewModel.transactionItemTapped(transaction)
+            viewModel.transactionItemTapped(transaction)
           }
         }
       }

@@ -127,7 +127,9 @@ public enum GenImages {
       public static let txOther = ImageAsset(name: "txOther")
     }
     public static let availableCard = ImageAsset(name: "availableCard")
+    public static let cashbackCard = ImageAsset(name: "cashbackCard")
     public static let connectedAppleWallet = ImageAsset(name: "connectedAppleWallet")
+    public static let debitSuggestion = ImageAsset(name: "debitSuggestion")
     public static let emptyCard = ImageAsset(name: "emptyCard")
     public static let forwardButton = ImageAsset(name: "forwardButton")
     public static let icVerified = ImageAsset(name: "ic-verified")
@@ -140,6 +142,7 @@ public enum GenImages {
     public static let referralsInbox = ImageAsset(name: "referralsInbox")
     public static let statusCompleted = ImageAsset(name: "statusCompleted")
     public static let statusPending = ImageAsset(name: "statusPending")
+    public static let transactionCard = ImageAsset(name: "transactionCard")
     public static let unavailableCard = ImageAsset(name: "unavailableCard")
     public static let virtualCard = ImageAsset(name: "virtualCard")
   }

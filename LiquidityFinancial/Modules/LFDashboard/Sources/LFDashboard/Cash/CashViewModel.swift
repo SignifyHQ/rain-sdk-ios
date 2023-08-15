@@ -99,6 +99,16 @@ extension CashViewModel {
       navigation = .sendMoney
     }
   }
+  
+  func transactionItemTapped(_ transaction: TransactionModel) {
+    if false { // userManager.isGuest TODO: Will be implemented later
+      guestHandler()
+    } else {
+      Haptic.impact(.light).generate()
+      navigation = .transactionDetail(transaction.id)
+    }
+  }
+
 }
 
 // MARK: - Types Private
@@ -152,6 +162,7 @@ extension CashViewModel {
     case bankStatements
     case changeAsset
     case transactions
+    case transactionDetail(String?)
     case addMoney
     case sendMoney
   }

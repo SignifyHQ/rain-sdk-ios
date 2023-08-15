@@ -183,7 +183,7 @@ extension TransactionRowView {
     switch txnType {
     case .credit, .reward, .cashback:
       return Colors.green.swiftUIColor
-    case .debit, .unknown:
+    case .debit, .unknown, .deposit:
       return Colors.error.swiftUIColor
     case .donation:
       return item.isPositiveAmount ? Colors.green.swiftUIColor : Colors.error.swiftUIColor

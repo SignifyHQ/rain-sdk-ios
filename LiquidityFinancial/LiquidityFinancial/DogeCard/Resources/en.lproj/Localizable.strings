@@ -554,6 +554,71 @@
 "verify_card.amount.placeholder" = "Enter amount";
 "verify_card.button.verifyCard" = "Verify Card";
 
+// TransactionDetail
+"transactionDetail.balanceCash.title" = "Balance: %@";
+"transactionDetail.balanceCrypto.title" = "Balance: %@ DOGE";
+"transactionDetail.totalDonated.title" = "Total Donated: %@";
+"transactionDetail.currentRewards.title" = "Current rewards";
+"transactionDetail.title" = "Title";
+"transactionDetail.source.title" = "Source";
+"transactionDetail.merchant.title" = "Vendor";
+"transactionDetail.transactionId.title" = "Transaction Id";
+"transactionDetail.paidTo.title" = "Paid To";
+"transactionDetail.description.title" = "Description";
+"transactionDetail.receivedFrom.title" = "Received From";
+"transactionDetail.transactionType.title" = "Order Type";
+"transactionDetail.transactionStatus.title" = "Status";
+"transactionDetail.reward.title" = "Reward";
+"transactionDetail.donation.title" = "Donation";
+"transactionDetail.saveWalletPopup.title" = "SAVE WALLET ADDRESS";
+"transactionDetail.saveWalletPopup.description" = "Would you like to save this wallet address to use again?";
+"transactionDetail.saveWalletPopup.button" = "Save wallet address";
+"transactionDetail.receipt.button" = "Receipt";
+"transactionDetail.networkFee.title" = "Network Fee";
+"transactionDetail.price.title" = "Price";
+"transactionDetail.fee.title" = "Fee";
+"transactionDetail.rewards.title" = "Rewards";
+
+// Transfer debit suggestion
+"transferDebitSuggestion.title" = "Get Faster Deposits";
+"transferDebitSuggestion.body.title" = "For instant deposits, connect and deposit with your Debit Card";
+"transferDebitSuggestion.connect.title" = "Connect Debit Card";
+
+// Cancel Transfer
+"cancelTransfer.title" = "Cancel Deposit";
+"cancelTransfer.fail.title" = "Something went wrong";
+"cancelTransfer.fail.message" = "We were unable to cancel your deposit. Please try again or contact support.";
+"cancelTransfer.success.title" = "Success!";
+"cancelTransfer.success.message" = "Your deposit has been successfully cancelled.";
+
+// TransactionCard
+"transactionCard.crypto.title" = "Doge Earned";
+"transactionCard.donation.title" = "Donation";
+"transactionCard.cashback.title" = "Cashback";
+"transactionCard.crypto.message" = "I earned %@ by making a %@ purchase with %@.";
+"transactionCard.donation.message" = "Supporting %@ - %@.";
+"transactionCard.shareDonationAmount.message" = "I donated %@ to %@ using %@. Join us in supporting %@.";
+"transactionCard.shareDonationGeneric.message" = "We're raising money for %@ using %@. Join us in supporting %@.";
+"transactionCard.share.title" = "Share";
+"transactionCard.shareCrypto.title" = "I earned %@ by using my Visa %@. Get one here: %@";
+"transactionCard.shareCashback.title" = "I earned %@ back by using my Visa %@. Get one here: %@";
+
+// Share
+"share.navigation_title" = "Share";
+"share.card.fundraiser" = "I'm using %@ to support %@ by making passive donations through my everyday purchases.";
+"share.include_donations" = "Include donations";
+"share.email" = "Email";
+"share.facebook" = "Facebook";
+"share.instagram" = "Instagram";
+"share.messages" = "Messages";
+"share.snapchat" = "Snapchat";
+"share.tikTok" = "TikTok";
+"share.twitter" = "Twitter";
+"share.whatsapp" = "WhatsApp";
+"share.more" = "More";
+"share.cancel" = "Cancel";
+"share.failure" = "Failed to share on %@";
+
 // MARK: - Common
 
 // Terms

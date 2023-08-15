@@ -8,6 +8,7 @@ public enum AccountRoute {
   case getUser(deviceId: String)
   case getAccount(currencyType: String)
   case getTransactions(accountId: String, currencyType: String, limit: Int, offset: Int)
+  case getTransactionDetail(accountId: String, transactionId: String)
 }
 
 extension AccountRoute: LFRoute {
@@ -27,13 +28,15 @@ extension AccountRoute: LFRoute {
       return "/v1/account/"
     case .getTransactions(let accountId, _, _, _):
       return "/v1/transactions/\(accountId)"
+    case let .getTransactionDetail(accountId, transactionId):
+      return "/v1/transactions/\(accountId)/transactions/\(transactionId)"
     }
   }
   
   public var httpMethod: HttpMethod {
     switch self {
     case .createZeroHashAccount: return .POST
-    case .getUser, .getAccount, .getTransactions: return .GET
+    case .getUser, .getAccount, .getTransactions, .getTransactionDetail: return .GET
     }
   }
   
@@ -45,7 +48,7 @@ extension AccountRoute: LFRoute {
       "Authorization": self.authorization
     ]
     switch self {
-    case .createZeroHashAccount, .getAccount, .getTransactions:
+    case .createZeroHashAccount, .getAccount, .getTransactions, .getTransactionDetail:
       return base
     case .getUser(let deviceId):
       base["ld-device-id"] = deviceId
@@ -58,6 +61,8 @@ extension AccountRoute: LFRoute {
     case .createZeroHashAccount:
       return nil
     case .getUser:
+      return nil
+    case .getTransactionDetail:
       return nil
     case .getAccount(let currencyType):
       return ["currencyType": currencyType]
@@ -74,7 +79,7 @@ extension AccountRoute: LFRoute {
     switch self {
     case .createZeroHashAccount, .getUser:
       return nil
-    case .getAccount, .getTransactions:
+    case .getAccount, .getTransactions, .getTransactionDetail:
       return .url
     }
   }

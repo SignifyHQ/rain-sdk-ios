@@ -1,4 +1,5 @@
 import UIKit
+import StoreKit
 
 // swiftlint: disable force_try fallthrough force_cast
 public enum LFUtility {
@@ -55,6 +56,16 @@ public enum LFConfiguration {
         return value
       default:
         throw Error.invalidValue
+      }
+    }
+  }
+}
+// Helpers
+extension LFUtility {
+  public static func showRatingAlert() {
+    if let scene = UIApplication.shared.connectedScenes.first(where: { $0.activationState == .foregroundActive }) as? UIWindowScene {
+      DispatchQueue.main.async {
+        SKStoreReviewController.requestReview(in: scene)
       }
     }
   }
