@@ -115,7 +115,8 @@ private extension AccountsView {
           .padding(.leading, 4)
       } else {
         Text(value)
-          .font(Fonts.bold.swiftUIFont(size: Constants.FontSize.ultraSmall.value))
+          .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.ultraSmall.value))
+          .foregroundColor(Colors.primary.swiftUIColor)
       }
     }
     .padding(.leading, 16)

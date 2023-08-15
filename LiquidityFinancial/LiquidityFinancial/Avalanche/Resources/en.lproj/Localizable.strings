@@ -426,7 +426,7 @@
 "accountView.legal" = "Legal";
 "accountView.deposit_limits" = "Deposit Limits";
 "accountView.atm_location_title" = "ATM Locations";
-"accountView.routingNumber.title" = "Rounting number";
+"accountView.routingNumber.title" = "Routing number";
 "accountView.accountNumber.title" = "Account number";
 
 // PlaidLink Popup

@@ -150,8 +150,8 @@ public enum LFLocalizable {
       public static let title = LFLocalizable.tr("Localizable", "accountView.one_time_transfers.title", fallback: "One-time Bank Transfers")
     }
     public enum RoutingNumber {
-      /// Rounting number
-      public static let title = LFLocalizable.tr("Localizable", "accountView.routingNumber.title", fallback: "Rounting number")
+      /// Routing number
+      public static let title = LFLocalizable.tr("Localizable", "accountView.routingNumber.title", fallback: "Routing number")
     }
   }
   public enum AddBankWithDebit {
