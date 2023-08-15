@@ -13,6 +13,6 @@ public enum APIRewardType: String, Decodable, SelectRewardTypeEntity {
   case referra = "REFERRA"
   
   public var rawString: String {
-    return self.rawValue
+    self.rawValue
   }
 }

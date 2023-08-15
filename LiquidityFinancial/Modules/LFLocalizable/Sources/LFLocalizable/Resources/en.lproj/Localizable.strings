@@ -233,6 +233,7 @@
 "cashTab.noTransactionYet.title" = "No transactions yet";
 "cashTab.deposit.title" = "Deposit";
 "cashTab.withdraw.title" = "Withdraw";
+"cashTab.waysToAdd.title" = "More ways to deposit";
 
 // CashCardView
 "cashCard.balance.title" = "%@ Balance";
@@ -629,9 +630,9 @@
 
 // User Reward Type
 "user_reward_type.cashback.title" = "Instant Cashback";
-"user_reward_type.cashback.subtitle" = "%@ on every qualifying purchase";
+"user_reward_type.cashback.subtitle" = "%.2f%% on every qualifying purchase";
 "user_reward_type.donation.title" = "Donate to Charity";
-"user_reward_type.donation.subtitle" = "%@ donated to a charity you choose";
+"user_reward_type.donation.subtitle" = "%.2f%%  donated to a charity you choose";
 
 // Unspecified Rewards
 "unspecified_rewards.title" = "You can choose between";

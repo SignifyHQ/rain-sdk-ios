@@ -13,7 +13,6 @@ class ConnectedAccountRowViewModel: ObservableObject {
     self.sourceData = sourceData
   }
   
-  
   var title: String {
     switch sourceData.sourceType {
     case .externalCard:

@@ -31,7 +31,7 @@ struct CardView: View {
           .resizable()
         Text(viewModel.cardModel.cardType.title)
           .font(Fonts.semiBold.swiftUIFont(size: Constants.FontSize.small.value))
-          .foregroundColor(Colors.label.swiftUIColor)
+          .foregroundColor(Colors.contrast.swiftUIColor)
           .padding(.top, 15)
           .padding(.leading, 10)
       }
@@ -61,7 +61,7 @@ private extension CardView {
       Spacer()
       trailingCardView
     }
-    .foregroundColor(Colors.label.swiftUIColor.opacity(0.75))
+    .foregroundColor(Colors.contrast.swiftUIColor.opacity(0.75))
     .padding(.top, -50)
     .padding(.horizontal, 16)
   }
@@ -72,7 +72,7 @@ private extension CardView {
         Text(LFLocalizable.Card.Exp.title)
           .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.ultraSmall.value))
         Text(viewModel.expirationTime)
-          .foregroundColor(Colors.label.swiftUIColor)
+          .foregroundColor(Colors.contrast.swiftUIColor)
           .font(Fonts.bold.swiftUIFont(size: Constants.FontSize.small.value))
           .hidden(isLoading)
       }
@@ -80,7 +80,7 @@ private extension CardView {
         Text(LFLocalizable.Card.Cvv.title)
           .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.ultraSmall.value))
         Text(viewModel.cvvNumber)
-          .foregroundColor(Colors.label.swiftUIColor)
+          .foregroundColor(Colors.contrast.swiftUIColor)
           .font(Fonts.bold.swiftUIFont(size: Constants.FontSize.small.value))
           .hidden(isLoading)
       }
@@ -93,7 +93,7 @@ private extension CardView {
         Text(LFLocalizable.Card.CardNumber.title)
           .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.ultraSmall.value))
         GenImages.CommonImages.icCopy.swiftUIImage
-          .foregroundColor(Colors.label.swiftUIColor)
+          .foregroundColor(Colors.contrast.swiftUIColor)
           .onTapGesture {
             viewModel.copyAction(cardNumber: cardMetaData?.pan)
           }
@@ -105,7 +105,7 @@ private extension CardView {
       } else {
         Text(viewModel.cardNumber)
           .font(Fonts.bold.swiftUIFont(size: Constants.FontSize.small.value))
-          .foregroundColor(Colors.label.swiftUIColor)
+          .foregroundColor(Colors.contrast.swiftUIColor)
       }
     }
   }
@@ -114,7 +114,7 @@ private extension CardView {
     if viewModel.isShowCardCopyMessage {
       Text(LFLocalizable.Card.CopyToClipboard.title)
         .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.ultraSmall.value))
-        .foregroundColor(Colors.label.swiftUIColor)
+        .foregroundColor(Colors.contrast.swiftUIColor)
         .frame(maxWidth: .infinity)
         .frame(height: 20, alignment: .center)
         .background(Colors.secondaryBackground.swiftUIColor.opacity(0.9))

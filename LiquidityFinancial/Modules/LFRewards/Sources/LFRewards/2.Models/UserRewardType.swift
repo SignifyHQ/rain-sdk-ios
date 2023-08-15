@@ -41,9 +41,9 @@ extension UserRewardType {
   var subtitle: String? {
     switch self {
     case .cashback:
-      return LFLocalizable.UserRewardType.Cashback.subtitle("0.75%")
+      return LFLocalizable.UserRewardType.Cashback.subtitle(0.75)
     case .donation:
-      return LFLocalizable.UserRewardType.Donation.subtitle("0.75%")
+      return LFLocalizable.UserRewardType.Donation.subtitle(0.75)
     case .crypto, .unspecified:
       return nil
     }

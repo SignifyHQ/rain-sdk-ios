@@ -9,10 +9,6 @@ import NetspendSdk
 
 @MainActor
 class AccountViewModel: ObservableObject {
-  var networkEnvironment: NetworkEnvironment {
-    EnvironmentManager().networkEnvironment
-  }
-  
   @LazyInjected(\.netspendRepository) var netspendRepository
   @LazyInjected(\.externalFundingRepository) var externalFundingRepository
   @LazyInjected(\.netspendDataManager) var netspendDataManager
@@ -20,15 +16,17 @@ class AccountViewModel: ObservableObject {
   @LazyInjected(\.intercomService) var intercomService
 
   @Published var navigation: Navigation?
-  @Published var popup: Popup?
   @Published var isDisableView: Bool = false
   @Published var isLoadingACH: Bool = false
   @Published var isLoading: Bool = false
-  @Published var isOpeningPlaidView: Bool = false
   @Published var netspendController: NetspendSdkViewController?
   @Published var toastMessage: String?
   @Published var linkedAccount: [APILinkedSourceData] = []
   @Published var achInformation: ACHModel = .default
+  
+  var networkEnvironment: NetworkEnvironment {
+    EnvironmentManager().networkEnvironment
+  }
   
   init() {
     getACHInfo()
@@ -39,6 +37,14 @@ class AccountViewModel: ObservableObject {
 extension AccountViewModel {
   func selectedAddOption(navigation: Navigation) {
     self.navigation = navigation
+  }
+  
+  func connectedAccountsTapped() {
+    navigation = .connectedAccounts
+  }
+  
+  func bankStatementTapped() {
+    navigation = .bankStatement
   }
 }
 
@@ -102,77 +108,13 @@ extension AccountViewModel {
   }
 }
 
-// MARK: - ExternalLinkBank Functions
-extension AccountViewModel {
-  func linkExternalBank() {
-    Task {
-      isOpeningPlaidView = true
-      isDisableView = true
-      do {
-        let sessionID = accountDataManager.sessionID
-        let tokenResponse = try await netspendRepository.getAuthorizationCode(sessionId: sessionID)
-        let controller = try NetspendSdk.shared.openWithPurpose(
-          purpose: .linkBank,
-          withPasscode: tokenResponse.authorizationCode
-        )
-        controller.view.isHidden = true
-        self.netspendController = controller
-      } catch {
-        toastMessage = error.localizedDescription
-      }
-    }
-  }
-  
-  func onPlaidUIDisappear() {
-    netspendController = nil
-    isOpeningPlaidView = false
-    isDisableView = false
-  }
-  
-  func onLinkExternalBankFailure() {
-    onPlaidUIDisappear()
-    popup = .plaidLinkError
-  }
-  
-  func onLinkExternalBankSuccess() {
-    onPlaidUIDisappear()
-    navigation = .addMoney
-  }
-  
-  func plaidLinkingErrorPrimaryAction() {
-    popup = nil
-    navigation = .addBankDebit
-  }
-  
-  func plaidLinkingErrorSecondaryAction() {
-    popup = nil
-    intercomService.openIntercom()
-  }
-  
-  func connectedAccountsTapped() {
-    navigation = .connectedAccounts
-  }
-  
-  func bankStatementTapped() {
-    navigation = .bankStatement
-  }
-}
-
 // MARK: - Types
 extension AccountViewModel {
   enum Navigation {
     case debugMenu
     case atmLocation(String)
-    case bankTransfers
-    case addBankDebit
-    case addMoney
-    case directDeposit
     case connectedAccounts
     case bankStatement
-  }
-  
-  enum Popup {
-    case plaidLinkError
   }
 }
 

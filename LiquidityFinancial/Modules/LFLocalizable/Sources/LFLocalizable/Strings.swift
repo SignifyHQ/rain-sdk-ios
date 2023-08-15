@@ -515,6 +515,10 @@ public enum LFLocalizable {
       /// See all
       public static let title = LFLocalizable.tr("Localizable", "cashTab.seeAll.title", fallback: "See all")
     }
+    public enum WaysToAdd {
+      /// More ways to deposit
+      public static let title = LFLocalizable.tr("Localizable", "cashTab.waysToAdd.title", fallback: "More ways to deposit")
+    }
     public enum Withdraw {
       /// Withdraw
       public static let title = LFLocalizable.tr("Localizable", "cashTab.withdraw.title", fallback: "Withdraw")
@@ -2013,17 +2017,17 @@ public enum LFLocalizable {
   }
   public enum UserRewardType {
     public enum Cashback {
-      /// %@ on every qualifying purchase
-      public static func subtitle(_ p1: Any) -> String {
-        return LFLocalizable.tr("Localizable", "user_reward_type.cashback.subtitle", String(describing: p1), fallback: "%@ on every qualifying purchase")
+      /// %.2f%% on every qualifying purchase
+      public static func subtitle(_ p1: Float) -> String {
+        return LFLocalizable.tr("Localizable", "user_reward_type.cashback.subtitle", p1, fallback: "%.2f%% on every qualifying purchase")
       }
       /// Instant Cashback
       public static let title = LFLocalizable.tr("Localizable", "user_reward_type.cashback.title", fallback: "Instant Cashback")
     }
     public enum Donation {
-      /// %@ donated to a charity you choose
-      public static func subtitle(_ p1: Any) -> String {
-        return LFLocalizable.tr("Localizable", "user_reward_type.donation.subtitle", String(describing: p1), fallback: "%@ donated to a charity you choose")
+      /// %.2f%%  donated to a charity you choose
+      public static func subtitle(_ p1: Float) -> String {
+        return LFLocalizable.tr("Localizable", "user_reward_type.donation.subtitle", p1, fallback: "%.2f%%  donated to a charity you choose")
       }
       /// Donate to Charity
       public static let title = LFLocalizable.tr("Localizable", "user_reward_type.donation.title", fallback: "Donate to Charity")

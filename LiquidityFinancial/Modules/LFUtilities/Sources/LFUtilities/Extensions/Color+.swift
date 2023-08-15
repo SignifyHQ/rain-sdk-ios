@@ -1,6 +1,5 @@
 import SwiftUI
 import Foundation
-import SwiftUI
 
 public extension Color {
   init(hex: String) {

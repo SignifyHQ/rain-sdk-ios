@@ -315,8 +315,8 @@ extension FundraiserDetailView {
   
   private var selectErrorPopup: some View {
     LiquidityAlert(
-      title:  LFLocalizable.FundraiserDetail.Error.title,
-      message:  LFLocalizable.FundraiserDetail.Error.select,
+      title: LFLocalizable.FundraiserDetail.Error.title,
+      message: LFLocalizable.FundraiserDetail.Error.select,
       primary: .init(text: LFLocalizable.Button.Ok.title) { viewModel.dismissPopup() },
       secondary: nil
     )

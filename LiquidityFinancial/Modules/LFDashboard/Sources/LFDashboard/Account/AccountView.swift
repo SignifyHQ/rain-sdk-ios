@@ -13,14 +13,6 @@ struct AccountsView: View {
       .disabled(viewModel.isDisableView)
       .navigationLink(item: $viewModel.navigation) { item in
         switch item {
-        case .bankTransfers:
-          BankTransfersView(achInformation: $viewModel.achInformation)
-        case .addBankDebit:
-          AddBankWithDebitView()
-        case .addMoney:
-          MoveMoneyAccountView(kind: .receive)
-        case .directDeposit:
-          DirectDepositView(achInformation: $viewModel.achInformation)
         case .debugMenu:
           DBAdminMenuView(environment: viewModel.networkEnvironment.title)
         case .atmLocation(let authorizationCode):
@@ -34,12 +26,6 @@ struct AccountsView: View {
           BankStatementView()
         }
       }
-      .popup(item: $viewModel.popup) { item in
-        switch item {
-        case .plaidLinkError:
-          plaidLinkingErrorPopup
-        }
-      }
       .background(Colors.background.swiftUIColor)
       .onAppear {
         viewModel.onAppear()
@@ -49,41 +35,30 @@ struct AccountsView: View {
 
 // MARK: - View Components
 private extension AccountsView {
-  @ViewBuilder func externalLinkBank(controller: NetspendSdkViewController?) -> some View {
-    if let controller {
-      ExternalLinkBankViewController(
-        controller: controller,
-        onSuccess: viewModel.onLinkExternalBankSuccess,
-        onFailure: viewModel.onLinkExternalBankFailure,
-        onCancelled: viewModel.onPlaidUIDisappear
-      )
-    }
-  }
-  
   var content: some View {
-    ZStack {
-      ScrollView {
-        VStack(alignment: .leading, spacing: 24) {
-          connectedAccountsSection
-          section(title: LFLocalizable.AccountView.connectNewAccounts) {
-            addFunds
-          }
-          section(title: LFLocalizable.AccountView.limits) {
-            depositLimits
-          }
-          section(title: LFLocalizable.AccountView.cardAccountDetails(LFUtility.appName)) {
-            accountDetailView
-          }
-          section(title: LFLocalizable.AccountView.shortcuts) {
-            shortcutSection
-          }
-          Spacer()
+    ScrollView {
+      VStack(alignment: .leading, spacing: 24) {
+        connectedAccountsSection
+        section(title: LFLocalizable.AccountView.connectNewAccounts) {
+          AddFundsView(
+            achInformation: $viewModel.achInformation,
+            isDisableView: $viewModel.isDisableView
+          )
         }
-        .padding(.top, 20)
-        .padding(.bottom, 12)
-        .padding(.horizontal, 30.0)
+        section(title: LFLocalizable.AccountView.limits) {
+          depositLimits
+        }
+        section(title: LFLocalizable.AccountView.cardAccountDetails(LFUtility.appName)) {
+          accountDetailView
+        }
+        section(title: LFLocalizable.AccountView.shortcuts) {
+          shortcutSection
+        }
+        Spacer()
       }
-      externalLinkBank(controller: viewModel.netspendController)
+      .padding(.top, 20)
+      .padding(.bottom, 12)
+      .padding(.horizontal, 30.0)
     }
   }
   
@@ -151,40 +126,6 @@ private extension AccountsView {
     }
   }
 
-  var addFunds: some View {
-    Group {
-      ArrowButton(
-        image: GenImages.CommonImages.Accounts.directDeposit,
-        title: LFLocalizable.AccountView.DirectDeposit.title,
-        value: LFLocalizable.AccountView.DirectDeposit.subtitle
-      ) {
-        viewModel.selectedAddOption(navigation: .directDeposit)
-      }
-      ArrowButton(
-        image: GenImages.CommonImages.Accounts.bankTransfers,
-        title: LFLocalizable.AccountView.BankTransfers.title,
-        value: LFLocalizable.AccountView.BankTransfers.subtitle
-      ) {
-        viewModel.selectedAddOption(navigation: .bankTransfers)
-      }
-      ArrowButton(
-        image: GenImages.CommonImages.Accounts.debitDeposit,
-        title: LFLocalizable.AccountView.DebitDeposits.title,
-        value: LFLocalizable.AccountView.DebitDeposits.subtitle
-      ) {
-        viewModel.selectedAddOption(navigation: .addBankDebit)
-      }
-      ArrowButton(
-        image: GenImages.CommonImages.Accounts.oneTime,
-        title: LFLocalizable.AccountView.OneTimeTransfers.title,
-        value: LFLocalizable.AccountView.OneTimeTransfers.subtitle,
-        isLoading: $viewModel.isOpeningPlaidView
-      ) {
-        viewModel.linkExternalBank()
-      }
-    }
-  }
-
   var shortcutSection: some View {
     VStack {
       ArrowButton(
@@ -248,24 +189,5 @@ private extension AccountsView {
     ) {
       // TODO: Will do later
     }
-  }
-  
-  var plaidLinkingErrorPopup: some View {
-    LiquidityAlert(
-      title: LFLocalizable.PlaidLink.Popup.title,
-      message: LFLocalizable.PlaidLink.Popup.description,
-      primary: .init(
-        text: LFLocalizable.PlaidLink.ConnectViaDebitCard.title,
-        action: {
-          viewModel.plaidLinkingErrorPrimaryAction()
-        }
-      ),
-      secondary: .init(
-        text: LFLocalizable.PlaidLink.ContactSupport.title,
-        action: {
-          viewModel.plaidLinkingErrorSecondaryAction()
-        }
-      )
-    )
   }
 }

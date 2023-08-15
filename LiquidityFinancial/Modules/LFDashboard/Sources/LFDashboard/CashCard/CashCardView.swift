@@ -87,7 +87,7 @@ struct CashCardView: View {
       fontSize: Constants.FontSize.ultraSmall.value,
       height: 25,
       cornerRadius: 5,
-      textColor: Colors.label.swiftUIColor,
+      textColor: Colors.contrast.swiftUIColor,
       backgroundColor: Colors.buttons.swiftUIColor
     ) {
       viewModel.activeCard()
@@ -99,7 +99,7 @@ struct CashCardView: View {
     HStack {
       VStack(alignment: .leading, spacing: 2) {
         Text(LFLocalizable.CashCard.Balance.title(assetType.title))
-          .foregroundColor(Colors.label.swiftUIColor)
+          .foregroundColor(Colors.contrast.swiftUIColor)
           .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.ultraSmall.value))
         
         ZStack(alignment: .bottomLeading) {
@@ -109,7 +109,7 @@ struct CashCardView: View {
           Text(
             cashBalance.formattedAmount(prefix: Constants.CurrencyUnit.usd.rawValue, minFractionDigits: 2)
           )
-            .foregroundColor(Colors.label.swiftUIColor)
+            .foregroundColor(Colors.contrast.swiftUIColor)
             .font(Fonts.bold.swiftUIFont(size: 22))
             .hidden(showLoadingIndicator)
         }

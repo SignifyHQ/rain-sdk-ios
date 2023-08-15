@@ -16,6 +16,7 @@ struct CashView: View {
     Group {
       if viewModel.isCardActive {
         activeView
+          .disabled(viewModel.isDisableView)
       } else {
         ErrorView(message: LFLocalizable.CashTab.DeActiveError.message)
       }
@@ -99,7 +100,10 @@ private extension CashView {
           ) {
             viewModel.guestCardTapped()
           }
-          changeAssetButton
+          if false {
+            // Temporarily disable this feature
+            changeAssetButton
+          }
           moveMoney
           activity(size: geo.size)
         }
@@ -126,9 +130,24 @@ private extension CashView {
         LottieView(loading: .mix)
           .frame(width: 30, height: 20)
           .padding(.top, 8)
+      case .addFunds:
+          addFundsView
       case .transactions:
         transactionsView(size: size)
       }
+    }
+  }
+  
+  var addFundsView: some View {
+    VStack(alignment: .leading, spacing: 10) {
+      Text(LFLocalizable.CashTab.WaysToAdd.title)
+        .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.ultraSmall.value))
+        .foregroundColor(Colors.label.swiftUIColor.opacity(0.75))
+        .padding(.top, 16)
+      AddFundsView(
+        achInformation: $viewModel.achInformation,
+        isDisableView: $viewModel.isDisableView
+      )
     }
   }
   

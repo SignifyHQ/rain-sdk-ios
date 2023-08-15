@@ -97,7 +97,7 @@ private extension ListCardsView {
     .overlay {
       if viewModel.isLoading {
         ProgressView().progressViewStyle(.circular)
-          .tint(Colors.Buttons.highlightButton.swiftUIColor)
+          .tint(Colors.primary.swiftUIColor)
       }
     }
     .disabled(viewModel.isLoading)

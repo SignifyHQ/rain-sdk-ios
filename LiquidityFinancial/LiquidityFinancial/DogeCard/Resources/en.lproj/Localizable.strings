@@ -231,6 +231,7 @@
 "cashTab.noTransactionYet.title" = "No transactions yet";
 "cashTab.deposit.title" = "Deposit";
 "cashTab.withdraw.title" = "Withdraw";
+"cashTab.waysToAdd.title" = "More ways to deposit";
 
 // CashCardView
 "cashCard.balance.title" = "%@ Balance";
