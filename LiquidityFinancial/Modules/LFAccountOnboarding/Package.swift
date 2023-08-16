@@ -27,7 +27,8 @@ let package = Package(
       .package(name: "LFData", path: "../LFData"),
       .package(name: "LFLocalizable", path: "../LFLocalizable"),
       .package(url: "https://github.com/SwiftGen/SwiftGenPlugin", from: "6.6.2"),
-      .package(name: "LFRewards", path: "../LFRewards")
+      .package(name: "LFRewards", path: "../LFRewards"),
+      .package(name: "LFNetwork", path: "../LFNetwork"),
     ],
     targets: [
         .target(
@@ -38,7 +39,8 @@ let package = Package(
             .product(name: "OnboardingData", package: "LFData"),
             .product(name: "AccountData", package: "LFData"),
             .product(name: "NetSpendData", package: "LFData"),
-            .product(name: "SmartyStreets", package: "smartystreets-ios-sdk")
+            .product(name: "SmartyStreets", package: "smartystreets-ios-sdk"),
+            .product(name: "AuthorizationManager", package: "LFNetwork")
           ],
           resources: [
             .process("ZResources")

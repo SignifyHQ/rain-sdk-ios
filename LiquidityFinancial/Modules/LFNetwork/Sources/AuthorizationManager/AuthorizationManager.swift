@@ -6,6 +6,7 @@ import NetworkUtilities
 // swiftlint:disable force_unwrapping
 
 public protocol AuthorizationManagerProtocol {
+  var logOutForcedName: Notification.Name { get }
   func isTokenValid() -> Bool
   func fetchToken() -> String
   func fetchRefreshToken() -> String
@@ -13,39 +14,14 @@ public protocol AuthorizationManagerProtocol {
   func refreshToken() async throws
   func clearToken()
   func update()
-}
-
-enum AuthError: Error {
-  case missingToken
-  case urlInvalid
-  case invalidBody
-}
-
-struct AuthorizationAccessTokens: Decodable, AccessTokens {
-  let accessToken: String
-  let tokenType: String
-  let refreshToken: String
-  let expiresIn: Int
-  
-  private var requestedAt = Date()
-  
-  enum CodingKeys: String, CodingKey {
-    case accessToken = "access_token"
-    case refreshToken = "refresh_token"
-    case tokenType = "token_type"
-    case expiresIn = "expires_in"
-  }
-  
-  var expiresAt: Date {
-    Calendar.current.date(byAdding: .second, value: expiresIn, to: requestedAt) ?? Date()
-  }
-  
-  var bearerAccessToken: String {
-    "\(tokenType) \(accessToken)"
-  }
+  func forcedLogout()
 }
 
 public class AuthorizationManager {
+  
+  public var logOutForcedName: Notification.Name {
+    Notification.Name("liquidity.authorizationManager.logOutForced")
+  }
   
   private var accessToken: String?
   private var expiresAt = Date()
@@ -57,6 +33,10 @@ public class AuthorizationManager {
   private var session = URLSession.shared
   
   public init() {}
+  
+  public func forcedLogout() {
+    NotificationCenter.default.post(name: logOutForcedName, object: nil)
+  }
 }
 
   // MARK: - RefreshTokenManager
@@ -95,10 +75,18 @@ public extension AuthorizationManager {
     }
     log.debug("AuthorizationManager: refreshToken \n \(request)")
     do {
+      
       let (data, response) = try await session.data(for: request)
       log.debug("AuthorizationManager: refreshToken \n \(response)")
+      
+      if let statusCode = (response as? HTTPURLResponse)?.statusCode, statusCode == APIConstants.StatusCodes.unauthorized {
+        //The server has forcibly logged out the user
+        self.forcedLogout()
+      }
+      
       let accessTokens = try JSONDecoder().decode(AuthorizationAccessTokens.self, from: data)
       refreshWith(apiToken: accessTokens)
+      
     } catch {
       log.error("AuthorizationManager: refreshToken \n \(error)")
       throw error

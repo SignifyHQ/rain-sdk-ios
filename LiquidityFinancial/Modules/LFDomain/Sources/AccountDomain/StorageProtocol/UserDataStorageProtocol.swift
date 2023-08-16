@@ -30,6 +30,7 @@ public protocol AccountDataStorageProtocol {
   func stored(phone: String)
   func stored(sessionID: String)
   func clearUserSession()
+  func storeUser(user: LFUser)
 }
 
 public protocol UserInfomationDataProtocol {
@@ -52,4 +53,9 @@ public protocol UserInfomationDataProtocol {
   var ssn: String? { get set }
   var passport: String? { get set }
   var referralLink: String? { get set }
+  var userRewardType: String? { get set }
+  var userAccessLevel: String? { get set }
+  var userSelectedFundraiserID: String? { get set }
+  var userRoundUpEnabled: Bool? { get set }
+  var accountReviewStatus: String? { get set }
 }

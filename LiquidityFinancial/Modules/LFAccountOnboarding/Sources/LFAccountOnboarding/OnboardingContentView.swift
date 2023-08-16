@@ -17,10 +17,18 @@ public struct OnboardingContentView: View {
   
   let environmentManager = EnvironmentManager()
   
-  public init() {}
+  var onRoute: OnboardingFlowCoordinator.Route?
+  
+  public init(onRoute: OnboardingFlowCoordinator.Route? = nil) {
+    self.onRoute = onRoute
+  }
   
   public var body: some View {
-    buildContent(for: viewModel.route)
+    if let onRoute = onRoute {
+      buildContent(for: onRoute)
+    } else {
+      buildContent(for: viewModel.route)
+    }
   }
   
   @ViewBuilder

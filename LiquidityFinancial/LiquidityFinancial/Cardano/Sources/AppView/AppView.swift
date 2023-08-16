@@ -20,6 +20,8 @@ struct AppView: View {
   private func buildContent(for route: AppCoordinator.Route) -> some View {
     Group {
       switch route {
+      case.onboardingPhone:
+        OnboardingContentView(onRoute: .phone)
       case .onboarding:
         OnboardingContentView()
       case .dashboard:

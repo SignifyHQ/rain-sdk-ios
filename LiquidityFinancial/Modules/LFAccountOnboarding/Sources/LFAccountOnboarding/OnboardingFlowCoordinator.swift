@@ -22,7 +22,7 @@ public class OnboardingFlowCoordinator: OnboardingFlowCoordinatorProtocol {
     public static func == (lhs: OnboardingFlowCoordinator.Route, rhs: OnboardingFlowCoordinator.Route) -> Bool {
       return lhs.hashValue == rhs.hashValue
     }
-    
+
     case initial
     case phone
     case welcome
@@ -73,7 +73,6 @@ public class OnboardingFlowCoordinator: OnboardingFlowCoordinatorProtocol {
   }
   
   public func set(route: Route) {
-    guard routeSubject.value != route else { return }
     log.info("OnboardingFlowCoordinator route: \(route), with current route: \(routeSubject.value)")
     routeSubject.send(route)
   }
@@ -83,7 +82,7 @@ public class OnboardingFlowCoordinator: OnboardingFlowCoordinatorProtocol {
       getCurrentState()
     } else {
       clearUserData()
-      routeSubject.value = .phone
+      set(route: .phone)
     }
   }
 
@@ -99,13 +98,16 @@ public class OnboardingFlowCoordinator: OnboardingFlowCoordinatorProtocol {
   func getCurrentState() {
     Task { @MainActor in
       do {
+        let user = try await accountRepository.getUser()
+        accountDataManager.storeUser(user: user)
+        
+        try await refreshNetSpendSession()
         
         let onboardingState = try await onboardingRepository.getOnboardingState(sessionId: accountDataManager.sessionID)
-        try await refreshNetSpendSession()
         
         if onboardingState.missingSteps.isEmpty {
           
-          routeSubject.value = .dashboard
+          set(route: .dashboard)
           
         } else {
           

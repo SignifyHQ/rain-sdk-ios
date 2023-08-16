@@ -130,5 +130,10 @@ public class AccountDataManager: AccountDataStorageProtocol {
   public func clearUserSession() {
     UserDefaults.userSessionID = ""
     UserDefaults.phoneNumber = ""
+    userInfomationData = UserInfomationData()
+  }
+  
+  public func storeUser(user: LFUser) {
+    userInfomationData = UserInfomationData(enity: user)
   }
 }

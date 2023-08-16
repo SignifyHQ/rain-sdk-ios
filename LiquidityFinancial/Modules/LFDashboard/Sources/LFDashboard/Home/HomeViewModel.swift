@@ -29,11 +29,7 @@ extension HomeViewModel {
     Task {
       do {
         let user = try await accountRepository.getUser()
-        accountDataManager.update(email: user.email)
-        accountDataManager.update(phone: user.phone)
-        accountDataManager.update(firstName: user.firstName)
-        accountDataManager.update(lastName: user.lastName)
-        accountDataManager.update(addressEntity: user.addressEntity)
+        accountDataManager.storeUser(user: user)
         if let firstName = user.firstName, let lastName = user.lastName {
           accountDataManager.update(fullName: firstName + " " + lastName)
         }

@@ -4,6 +4,7 @@ import LFUtilities
 import LFAccountOnboarding
 import SwiftUI
 import NetSpendData
+import AuthorizationManager
 
 // swiftlint:disable let_var_whitespace
 protocol AppCoordinatorProtocol {
@@ -16,8 +17,12 @@ class AppCoordinator: AppCoordinatorProtocol {
   
   enum Route: Int {
     case onboarding
+    case onboardingPhone
     case dashboard
   }
+  
+  @LazyInjected(\.authorizationManager)
+  private var authorizationManager
   
   @Injected(\.onboardingFlowCoordinator)
   private var onboardingFlowCoordinator
@@ -32,6 +37,14 @@ class AppCoordinator: AppCoordinatorProtocol {
       .receive(on: DispatchQueue.main)
       .sink { [weak self] route in
         self?.setOnboardingRoute(route)
+      }
+      .store(in: &subscribers)
+    
+    NotificationCenter.default
+      .publisher(for: authorizationManager.logOutForcedName)
+      .sink { [weak self] _ in
+        log.warning("The server has forcibly logged out the user")
+        self?.set(route: .onboardingPhone)
       }
       .store(in: &subscribers)
   }

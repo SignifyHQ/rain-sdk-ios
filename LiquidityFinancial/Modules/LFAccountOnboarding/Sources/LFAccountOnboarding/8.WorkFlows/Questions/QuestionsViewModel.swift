@@ -4,12 +4,14 @@ import Factory
 import LFUtilities
 import AccountData
 import OnboardingData
+import AuthorizationManager
 
 // swiftlint:disable superfluous_disable_command
 @MainActor
 final class QuestionsViewModel: ObservableObject {
   @LazyInjected(\.netspendDataManager) var netspendDataManager
   @LazyInjected(\.accountDataManager) var accountDataManager
+  @LazyInjected(\.accountRepository) var accountRepository
   @LazyInjected(\.authorizationManager) var authorizationManager
   @LazyInjected(\.netspendRepository) var netspendRepository
   @LazyInjected(\.onboardingRepository) var onboardingRepository
@@ -48,9 +50,27 @@ extension QuestionsViewModel {
   }
   
   func logout() {
-    authorizationManager.clearToken()
-    accountDataManager.clearUserSession()
-    popup = nil
+    apiLogout { [weak self] in
+      self?.authorizationManager.clearToken()
+      self?.accountDataManager.clearUserSession()
+      self?.intercomService.pushEventLogout()
+      self?.authorizationManager.forcedLogout()
+      self?.popup = nil
+    }
+  }
+  
+  func apiLogout(onCompletion: @escaping () -> Void) {
+    Task { @MainActor in
+      defer { isLoading = false }
+      isLoading = true
+      do {
+        _ = try await accountRepository.logout()
+        onCompletion()
+      } catch {
+        onCompletion()
+        log.error(error.localizedDescription)
+      }
+    }
   }
   
   func updateAnswerSelect(questionID: String, answerID: String) {

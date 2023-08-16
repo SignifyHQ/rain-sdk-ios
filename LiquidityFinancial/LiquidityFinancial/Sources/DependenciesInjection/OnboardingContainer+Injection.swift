@@ -15,7 +15,7 @@ extension Container {
   var coordinator: Factory<AppCoordinatorProtocol> {
     self {
       AppCoordinator()
-    }
+    }.singleton
   }
 
 }

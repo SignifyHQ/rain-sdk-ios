@@ -17,7 +17,8 @@ let package = Package(
     .package(name: "LFLocalizable", path: "../LFLocalizable"),
     .package(name: "LFServices", path: "../LFServices"),
     .package(name: "LFCard", path: "../LFCard"),
-    .package(name: "LFData", path: "../LFData")
+    .package(name: "LFData", path: "../LFData"),
+    .package(name: "LFNetwork", path: "../LFNetwork")
   ],
   targets: [
     .target(
@@ -25,7 +26,8 @@ let package = Package(
       dependencies: [
         "LFUtilities", "LFStyleGuide", "LFLocalizable", "LFServices", "LFCard",
         .product(name: "OnboardingData", package: "LFData"),
-        .product(name: "NetSpendData", package: "LFData")
+        .product(name: "NetSpendData", package: "LFData"),
+        .product(name: "AuthorizationManager", package: "LFNetwork")
       ]
     ),
     .testTarget(

@@ -14,6 +14,7 @@ final class ProfileViewModel: ObservableObject {
   
   @LazyInjected(\.intercomService) var intercomService
   @LazyInjected(\.accountDataManager) var accountDataManager
+  @LazyInjected(\.accountRepository) var accountRepository
   @LazyInjected(\.authorizationManager) var authorizationManager
 
   var name: String {
@@ -93,9 +94,22 @@ extension ProfileViewModel {
   }
   
   func logout() {
+    apiLogout()
     authorizationManager.clearToken()
     accountDataManager.clearUserSession()
-    popup = nil
+    authorizationManager.forcedLogout()
+    intercomService.pushEventLogout()
+    dismissPopup()
+  }
+  
+  func apiLogout() {
+    Task {
+      do {
+        _ = try await accountRepository.logout()
+      } catch {
+        log.error(error.localizedDescription)
+      }
+    }
   }
   
   func deleteAccountTapped() {
@@ -103,7 +117,12 @@ extension ProfileViewModel {
   }
   
   func deleteAccount() {
-    // TODO: Will be implemented later
+    apiLogout()
+    authorizationManager.clearToken()
+    accountDataManager.clearUserSession()
+    authorizationManager.forcedLogout()
+    intercomService.pushEventLogout()
+    dismissPopup()
   }
   
   func dismissPopup() {
