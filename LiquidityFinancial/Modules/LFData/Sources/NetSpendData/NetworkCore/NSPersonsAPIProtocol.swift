@@ -1,5 +1,5 @@
 import Foundation
-import LFNetwork
+import CoreNetwork
 
 public protocol NSPersonsAPIProtocol {
   func sessionInit() async throws -> APINSJwkToken

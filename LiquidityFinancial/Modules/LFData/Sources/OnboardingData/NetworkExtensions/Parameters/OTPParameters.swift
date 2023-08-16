@@ -1,5 +1,5 @@
 import Foundation
-import DataUtilities
+import NetworkUtilities
 
 public struct OTPParameters: Parameterable {
   

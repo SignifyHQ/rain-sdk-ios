@@ -1,8 +1,12 @@
 import Foundation
 import UIKit
 import LFServices
+import Factory
+import AuthorizationManager
 
 class AppDelegate: UIResponder, UIApplicationDelegate {
+  
+  @LazyInjected(\.authorizationManager) var authorizationManager
   
   var orientationLock = UIInterfaceOrientationMask.portrait
   

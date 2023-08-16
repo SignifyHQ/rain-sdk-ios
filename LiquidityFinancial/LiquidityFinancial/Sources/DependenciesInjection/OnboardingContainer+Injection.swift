@@ -1,10 +1,10 @@
 import Foundation
 import Factory
 import OnboardingDomain
-import LFNetwork
+import CoreNetwork
 import OnboardingData
 import LFAccountOnboarding
-import DataUtilities
+import NetworkUtilities
 import AuthorizationManager
 import NetSpendData
 

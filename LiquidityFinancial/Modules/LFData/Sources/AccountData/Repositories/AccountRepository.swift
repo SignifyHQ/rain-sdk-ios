@@ -17,8 +17,8 @@ public class AccountRepository: AccountRepositoryProtocol {
     return try await accountAPI.createZeroHashAccount()
   }
   
-  public func getUser(deviceId: String) async throws -> LFUser {
-    return try await accountAPI.getUser(deviceId: deviceId)
+  public func getUser() async throws -> LFUser {
+    return try await accountAPI.getUser()
   }
   
   public func getAccount(currencyType: String) async throws -> [LFAccount] {
@@ -31,6 +31,10 @@ public class AccountRepository: AccountRepositoryProtocol {
   
   public func getTransactionDetail(accountId: String, transactionId: String) async throws -> TransactionEntity {
     return try await accountAPI.getTransactionDetail(accountId: accountId, transactionId: transactionId)
+  }
+  
+  public func logout() async throws -> Bool {
+    return try await accountAPI.logout()
   }
 }
 

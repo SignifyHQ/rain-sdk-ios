@@ -11,12 +11,6 @@ let package = Package(
       name: "OnboardingData",
       targets: ["OnboardingData"]),
     .library(
-      name: "DataUtilities",
-      targets: ["DataUtilities"]),
-    .library(
-      name: "AuthorizationManager",
-      targets: ["AuthorizationManager"]),
-    .library(
       name: "NetSpendData",
       targets: ["NetSpendData"]),
     .library(
@@ -37,42 +31,37 @@ let package = Package(
     .target(
       name: "OnboardingData",
       dependencies: [
-        "DataUtilities", "LFNetwork", "AuthorizationManager", "Factory",
-        .product(name: "OnboardingDomain", package: "LFDomain")
-      ]
-    ),
-    .target(
-      name: "DataUtilities",
-      dependencies: [
-        "LFNetwork"
-      ]
-    ),
-    .target(
-      name: "AuthorizationManager",
-      dependencies: [
-        "DataUtilities", "LFUtilities", "Factory",
-        .product(name: "OnboardingDomain", package: "LFDomain")
+        "Factory",
+        .product(name: "OnboardingDomain", package: "LFDomain"),
+        .product(name: "NetworkUtilities", package: "LFNetwork"),
+        .product(name: "CoreNetwork", package: "LFNetwork")
       ]
     ),
     .target(
       name: "NetSpendData",
       dependencies: [
-        "LFNetwork", "LFServices", "DataUtilities", "LFUtilities", "Factory", "AuthorizationManager",
-        .product(name: "NetSpendDomain", package: "LFDomain")
+        "LFServices", "LFUtilities", "Factory",
+        .product(name: "NetSpendDomain", package: "LFDomain"),
+        .product(name: "NetworkUtilities", package: "LFNetwork"),
+        .product(name: "CoreNetwork", package: "LFNetwork")
       ]
     ),
     .target(
       name: "AccountData",
       dependencies: [
-        "DataUtilities", "LFNetwork", "Factory", "AuthorizationManager", "OnboardingData", "LFUtilities",
-        .product(name: "AccountDomain", package: "LFDomain")
+        "Factory", "OnboardingData", "LFUtilities",
+        .product(name: "AccountDomain", package: "LFDomain"),
+        .product(name: "NetworkUtilities", package: "LFNetwork"),
+        .product(name: "CoreNetwork", package: "LFNetwork")
       ]
     ),
     .target(
       name: "RewardData",
       dependencies: [
-        "DataUtilities", "LFNetwork", "Factory", "AuthorizationManager", "LFUtilities", "AccountData",
-        .product(name: "RewardDomain", package: "LFDomain")
+        "Factory", "LFUtilities", "AccountData",
+        .product(name: "RewardDomain", package: "LFDomain"),
+        .product(name: "NetworkUtilities", package: "LFNetwork"),
+        .product(name: "CoreNetwork", package: "LFNetwork")
       ]
     ),
     .testTarget(

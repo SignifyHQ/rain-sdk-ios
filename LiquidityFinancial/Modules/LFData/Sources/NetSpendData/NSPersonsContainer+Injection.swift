@@ -1,6 +1,6 @@
 import Foundation
 import Factory
-import LFNetwork
+import CoreNetwork
 
 extension Container {
   public var netspendAPI: Factory<NSPersonsAPIProtocol> {

@@ -1,6 +1,6 @@
 import Foundation
 import Factory
-import LFNetwork
+import CoreNetwork
 import NetSpendDomain
 
 extension Container {

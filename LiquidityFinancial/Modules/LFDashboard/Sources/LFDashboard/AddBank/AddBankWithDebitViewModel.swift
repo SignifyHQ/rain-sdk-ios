@@ -1,5 +1,5 @@
 import Foundation
-import LFNetwork
+import CoreNetwork
 import Factory
 import LFUtilities
 import Combine
@@ -70,9 +70,7 @@ class AddBankWithDebitViewModel: ObservableObject {
           log.error("Incomplete state")
           throw LiquidityError.invalidData
         }
-        let user = try await self.accountRepository.getUser(
-          deviceId: UIDevice.current.identifierForVendor?.uuidString ?? ""
-        )
+        let user = try await self.accountRepository.getUser()
         let fullName = "\(user.firstName ?? "") \(user.lastName ?? "")"
         let month = self.monthFormatter.string(from: date)
         let year = self.yearFormatter.string(from: date)

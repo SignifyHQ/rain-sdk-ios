@@ -2,7 +2,7 @@ import Foundation
 
 // swiftlint:disable convenience_type identifier_name
 
-public final class DataUtilities {
+public final class NetworkUtilities {
   
   static var target: Configs.Target!
   
@@ -14,9 +14,20 @@ public final class DataUtilities {
     }
   }
   
+  public static var productID: String {
+    switch NetworkUtilities.target {
+    case .Avalanche: return APIConstants.avalencheID
+    case .Cardano: return APIConstants.cardanoID
+    case .DogeCard: return APIConstants.dogeCardID
+    case .CauseCard: return APIConstants.causeCardID
+    case .PrideCard: return APIConstants.prideCardID
+    case .none:
+      fatalError("Wrong the target name. It must right for setup the API")
+    }
+  }
 }
 
-extension DataUtilities {
+extension NetworkUtilities {
   
   struct Configs {
     enum Target: String {

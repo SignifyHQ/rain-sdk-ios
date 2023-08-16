@@ -1,7 +1,7 @@
 import Foundation
 import LFUtilities
 import NetspendSdk
-import DataUtilities
+import NetworkUtilities
 
 public struct AnswerQuestionParameters: Parameterable {
   

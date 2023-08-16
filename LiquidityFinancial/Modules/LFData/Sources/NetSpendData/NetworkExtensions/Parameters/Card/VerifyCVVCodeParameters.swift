@@ -1,5 +1,5 @@
 import Foundation
-import DataUtilities
+import NetworkUtilities
 import NetSpendDomain
 
 public struct VerifyCVVCodeParameters: Parameterable, VerifyCVVCodeParametersEntity {

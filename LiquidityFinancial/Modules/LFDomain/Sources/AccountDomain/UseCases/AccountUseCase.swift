@@ -12,4 +12,8 @@ public final class AccountUseCase: AccountUseCaseProtocol {
   public func execute(accountId: String, currencyType: String, limit: Int, offset: Int) async throws -> TransactionListEntity {
     return try await repository.getTransactions(accountId: accountId, currencyType: currencyType, limit: limit, offset: offset)
   }
+  
+  public func logout() async throws -> Bool {
+    return try await repository.logout()
+  }
 }

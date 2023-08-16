@@ -1,6 +1,6 @@
 import Foundation
-import LFNetwork
-import DataUtilities
+import CoreNetwork
+import NetworkUtilities
 import AuthorizationManager
 
 public enum RewardRoute {
@@ -13,12 +13,7 @@ public enum RewardRoute {
 }
 
 extension RewardRoute: LFRoute {
-  
-  public var authorization: String {
-    let auth = AuthorizationManager()
-    return auth.fetchToken()
-  }
-  
+
   public var path: String {
     switch self {
     case .selectRewardType:
@@ -49,9 +44,9 @@ extension RewardRoute: LFRoute {
   public var httpHeaders: HttpHeaders {
     let base = [
       "Content-Type": "application/json",
-      "productId": self.productID,
+      "productId": NetworkUtilities.productID,
       "Accept": "application/json",
-      "Authorization": self.authorization
+      "Authorization": self.needAuthorizationKey
     ]
     switch self {
     case .selectRewardType, .getDonationCategories, .getCategoriesFundraisers, .getFundraisersDetail, .selectFundraiser, .setRoundUpDonation:

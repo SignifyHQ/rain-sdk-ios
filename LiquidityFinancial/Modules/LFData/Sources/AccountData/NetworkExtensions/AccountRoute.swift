@@ -1,25 +1,24 @@
 import Foundation
-import LFNetwork
-import DataUtilities
+import CoreNetwork
+import NetworkUtilities
 import AuthorizationManager
+import Factory
 
 public enum AccountRoute {
   case createZeroHashAccount
-  case getUser(deviceId: String)
+  case getUser
   case getAccount(currencyType: String)
   case getTransactions(accountId: String, currencyType: String, limit: Int, offset: Int)
   case getTransactionDetail(accountId: String, transactionId: String)
+  case logout
 }
 
 extension AccountRoute: LFRoute {
   
-  public var authorization: String {
-    let auth = AuthorizationManager()
-    return auth.fetchToken()
-  }
-  
   public var path: String {
     switch self {
+    case .logout:
+      return "v1/user/logout"
     case .createZeroHashAccount:
       return "/v1/zerohash/accounts"
     case .getUser:
@@ -35,7 +34,7 @@ extension AccountRoute: LFRoute {
   
   public var httpMethod: HttpMethod {
     switch self {
-    case .createZeroHashAccount: return .POST
+    case .createZeroHashAccount, .logout: return .POST
     case .getUser, .getAccount, .getTransactions, .getTransactionDetail: return .GET
     }
   }
@@ -43,26 +42,19 @@ extension AccountRoute: LFRoute {
   public var httpHeaders: HttpHeaders {
     var base = [
       "Content-Type": "application/json",
-      "productId": self.productID,
+      "productId": NetworkUtilities.productID,
       "Accept": "application/json",
-      "Authorization": self.authorization
+      "Authorization": self.needAuthorizationKey
     ]
     switch self {
-    case .createZeroHashAccount, .getAccount, .getTransactions, .getTransactionDetail:
-      return base
-    case .getUser(let deviceId):
-      base["ld-device-id"] = deviceId
+    case .createZeroHashAccount, .getAccount, .getTransactions, .getTransactionDetail, .logout, .getUser:
       return base
     }
   }
   
   public var parameters: Parameters? {
     switch self {
-    case .createZeroHashAccount:
-      return nil
-    case .getUser:
-      return nil
-    case .getTransactionDetail:
+    case .createZeroHashAccount, .getUser, .getTransactionDetail, .logout:
       return nil
     case .getAccount(let currencyType):
       return ["currencyType": currencyType]
@@ -77,7 +69,7 @@ extension AccountRoute: LFRoute {
   
   public var parameterEncoding: ParameterEncoding? {
     switch self {
-    case .createZeroHashAccount, .getUser:
+    case .createZeroHashAccount, .getUser, .logout:
       return nil
     case .getAccount, .getTransactions, .getTransactionDetail:
       return .url

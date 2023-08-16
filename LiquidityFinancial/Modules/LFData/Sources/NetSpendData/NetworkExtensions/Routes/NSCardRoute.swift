@@ -1,6 +1,6 @@
 import Foundation
-import LFNetwork
-import DataUtilities
+import CoreNetwork
+import NetworkUtilities
 import AuthorizationManager
 import NetSpendDomain
 
@@ -17,11 +17,6 @@ public enum NSCardRoute {
 }
 
 extension NSCardRoute: LFRoute {
-  
-  public var authorization: String {
-    let auth = AuthorizationManager()
-    return auth.fetchToken()
-  }
   
   public var path: String {
     switch self {
@@ -57,9 +52,9 @@ extension NSCardRoute: LFRoute {
   public var httpHeaders: HttpHeaders {
     var base = [
       "Content-Type": "application/json",
-      "productId": self.productID
+      "productId": NetworkUtilities.productID
     ]
-    base["Authorization"] = authorization
+    base["Authorization"] = self.needAuthorizationKey
     switch self {
     case .listCard:
       break

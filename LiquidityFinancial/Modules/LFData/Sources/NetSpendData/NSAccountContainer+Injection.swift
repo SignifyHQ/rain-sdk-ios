@@ -1,7 +1,7 @@
 import Foundation
 import Factory
 import NetSpendDomain
-import LFNetwork
+import CoreNetwork
 
 extension Container {
   public var nsAccountAPI: Factory<NSAccountAPIProtocol> {

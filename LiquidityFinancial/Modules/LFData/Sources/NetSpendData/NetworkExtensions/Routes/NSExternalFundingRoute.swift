@@ -1,6 +1,6 @@
 import Foundation
-import LFNetwork
-import DataUtilities
+import CoreNetwork
+import NetworkUtilities
 import AuthorizationManager
 import NetSpendDomain
 
@@ -15,11 +15,6 @@ public enum NSExternalFundingRoute {
 }
 
 extension NSExternalFundingRoute: LFRoute {
-  
-  public var authorization: String {
-    let auth = AuthorizationManager()
-    return auth.fetchToken()
-  }
   
   public var path: String {
     switch self {
@@ -67,9 +62,9 @@ extension NSExternalFundingRoute: LFRoute {
   public var httpHeaders: HttpHeaders {
     var base = [
       "Content-Type": "application/json",
-      "productId": self.productID
+      "productId": NetworkUtilities.productID
     ]
-    base["Authorization"] = authorization
+    base["Authorization"] = self.needAuthorizationKey
     switch self {
     case let .set(_, sessionId),
         let .pinWheelToken(sessionId),

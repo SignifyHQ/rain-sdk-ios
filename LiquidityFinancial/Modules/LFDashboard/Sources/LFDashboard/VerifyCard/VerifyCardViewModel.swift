@@ -1,4 +1,4 @@
-import LFNetwork
+import CoreNetwork
 import Factory
 import LFUtilities
 import Combine

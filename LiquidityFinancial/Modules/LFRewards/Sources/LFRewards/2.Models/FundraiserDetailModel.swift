@@ -1,7 +1,7 @@
 import Foundation
 import RewardData
 import RewardDomain
-
+import NetworkUtilities
   // MARK: - Fundraiser
 struct FundraiserDetailModel: Equatable, Identifiable {
   var id: String = UUID().uuidString

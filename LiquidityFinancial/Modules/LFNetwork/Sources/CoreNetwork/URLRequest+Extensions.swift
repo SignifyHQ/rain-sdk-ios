@@ -1,11 +1,12 @@
 import Foundation
+import AuthorizationManager
 
 // swiftlint:disable all
 extension URLRequest {
   
-  init(route: LFRoute) {
+  init(route: LFRoute, auth: AuthorizationManagerProtocol) {
     var url = route.url
-    let headers = route.httpHeaders
+    var headers = route.httpHeaders
     var body: Data?
     
     if let parameters = route.parameters, let parameterEncoding = route.parameterEncoding {
@@ -27,6 +28,9 @@ extension URLRequest {
     self.init(url: url)
     httpMethod = route.httpMethod.rawValue
     httpBody = body
+    if let value = headers["Authorization"], value == route.needAuthorizationKey {
+      headers["Authorization"] = auth.fetchToken()
+    }
     headers.forEach { setValue($0.value, forHTTPHeaderField: $0.key) }
   }
 }

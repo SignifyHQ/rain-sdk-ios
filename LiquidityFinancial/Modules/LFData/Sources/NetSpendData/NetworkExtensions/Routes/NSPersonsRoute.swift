@@ -1,6 +1,6 @@
-import LFNetwork
+import CoreNetwork
 import Foundation
-import DataUtilities
+import NetworkUtilities
 import AuthorizationManager
 
 public enum NSPersonsRoute {
@@ -53,7 +53,7 @@ extension NSPersonsRoute: LFRoute {
       "Content-Type": "application/json",
       "Accept": "application/json",
       "Authorization": authorization,
-      "productId": self.productID
+      "productId": NetworkUtilities.productID
     ]
     switch self {
     case .sessionInit, .getAgreements, .establishSession, .getWorkflows:

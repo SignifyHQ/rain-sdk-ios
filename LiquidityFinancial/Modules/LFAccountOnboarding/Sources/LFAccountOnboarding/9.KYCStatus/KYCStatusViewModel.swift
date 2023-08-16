@@ -56,9 +56,7 @@ extension KYCStatusViewModel {
       defer { isLoading = false }
       isLoading = true
       do {
-        let user = try await accountRepository.getUser(
-          deviceId: UIDevice.current.identifierForVendor?.uuidString ?? ""
-        )
+        let user = try await accountRepository.getUser()
         var request = URLRequest(url: URL(string: "https://api-crypto.dev.liquidity.cc/v1/admin/users/\(user.userID)/approve")!)
         request.httpMethod = "POST"
         let (data, response) = try await URLSession.shared.data(for: request)

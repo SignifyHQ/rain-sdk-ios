@@ -17,7 +17,10 @@ public struct APIUser: Decodable {
   public let metadata: APIAppState?
   public let status, chosenName, profileImage, accountReviewStatus: String?
   public let showIdv: Bool?
+  public let userRoundUpEnabled: Bool?
   public let referralLink, userRewardType, userAccessLevel: String?
+  public let userSelectedFundraiserID: String?
+  public let numberOfDevices: Int?
 }
 
 extension APIAddress: AddressEntity {}

@@ -1,7 +1,7 @@
 import Foundation
 import UIKit
 import LFStyleGuide
-import DataUtilities
+import NetworkUtilities
 
 extension AppDelegate {
   

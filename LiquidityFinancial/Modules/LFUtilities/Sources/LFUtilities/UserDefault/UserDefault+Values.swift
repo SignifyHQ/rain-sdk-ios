@@ -11,6 +11,9 @@ public extension UserDefaults {
   @LFUserDefault(key: Key.bearerAccessToken, defaultValue: "")
   static var bearerAccessToken: String
   
+  @LFUserDefault(key: Key.bearerRefreshToken, defaultValue: "")
+  static var bearerRefreshToken: String
+  
   @LFUserDefault(key: Key.environmentSelection, defaultValue: "")
   static var environmentSelection: String
   

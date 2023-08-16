@@ -1,7 +1,7 @@
 import Foundation
 import NetSpendDomain
-import DataUtilities
-import LFNetwork
+import NetworkUtilities
+import CoreNetwork
 import LFUtilities
 
 extension LFNetwork: NSAccountAPIProtocol where R == NSAccountRoute {

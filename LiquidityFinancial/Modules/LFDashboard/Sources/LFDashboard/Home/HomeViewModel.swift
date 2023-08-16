@@ -28,9 +28,7 @@ extension HomeViewModel {
   private func getUser() {
     Task {
       do {
-        let user = try await accountRepository.getUser(
-          deviceId: UIDevice.current.identifierForVendor?.uuidString ?? ""
-        )
+        let user = try await accountRepository.getUser()
         accountDataManager.update(email: user.email)
         accountDataManager.update(phone: user.phone)
         accountDataManager.update(firstName: user.firstName)

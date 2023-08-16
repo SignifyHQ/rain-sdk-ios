@@ -67,6 +67,7 @@ public class IntercomService: IntercomServiceProtocol {
       self?.logout()
     }
     .store(in: &subscriptions)
+    
   }
   
   public func pushEventLogin(with userAttributes: UserAttributes?) {

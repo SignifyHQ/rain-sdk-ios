@@ -1,6 +1,6 @@
 import Foundation
 import NetSpendDomain
-import DataUtilities
+import NetworkUtilities
 
 public struct ExternalTransactionParameters: Parameterable, ExternalTransactionParametersEntity {
   public var amount: Double

@@ -1,6 +1,6 @@
 import Foundation
 import NetSpendDomain
-import DataUtilities
+import NetworkUtilities
 
 public struct GetStatementParameters: Parameterable {
   public let fromMonth: String

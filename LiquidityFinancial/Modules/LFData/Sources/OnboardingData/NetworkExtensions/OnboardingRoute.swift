@@ -1,21 +1,17 @@
 import Foundation
-import LFNetwork
-import DataUtilities
+import CoreNetwork
+import NetworkUtilities
 import AuthorizationManager
 
 public enum OnboardingRoute {
   case otp(OTPParameters)
   case login(LoginParameters)
   case onboardingState(sessionId: String)
+  case refreshToken(token: String)
 }
 
 extension OnboardingRoute: LFRoute {
-  
-  public var authorization: String {
-    let auth = AuthorizationManager()
-    return auth.fetchToken()
-  }
-  
+
   public var path: String {
     switch self {
     case .otp:
@@ -24,12 +20,14 @@ extension OnboardingRoute: LFRoute {
       return "/v1/password-less/login"
     case .onboardingState:
       return "/v1/app/onboarding-state"
+    case .refreshToken:
+      return "/v1/password-less/refresh-token"
     }
   }
   
   public var httpMethod: HttpMethod {
     switch self {
-    case .login, .otp: return .POST
+    case .login, .otp, .refreshToken: return .POST
     case .onboardingState: return .GET
     }
   }
@@ -37,14 +35,14 @@ extension OnboardingRoute: LFRoute {
   public var httpHeaders: HttpHeaders {
     var base = [
       "Content-Type": "application/json",
-      "productId": self.productID
+      "productId": NetworkUtilities.productID
     ]
     switch self {
-    case .otp, .login:
+    case .otp, .login, .refreshToken:
       return base
     case .onboardingState(let sessionId):
       base["Accept"] = "application/json"
-      base["Authorization"] = authorization
+      base["Authorization"] = self.needAuthorizationKey
       base["netspendSessionId"] = sessionId
       return base
     }
@@ -56,6 +54,13 @@ extension OnboardingRoute: LFRoute {
       return otpParameters.encoded()
     case .login(let loginParameters):
       return loginParameters.encoded()
+    case .refreshToken(let refreshToken):
+      var body: [String: Any] {
+        [
+          "refreshToken": refreshToken
+        ]
+      }
+      return body
     case .onboardingState:
       return nil
     }
@@ -63,7 +68,7 @@ extension OnboardingRoute: LFRoute {
   
   public var parameterEncoding: ParameterEncoding? {
     switch self {
-    case .login, .otp: return .json
+    case .login, .otp, .refreshToken: return .json
     case .onboardingState: return nil
     }
   }

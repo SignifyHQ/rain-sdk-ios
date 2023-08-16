@@ -1,6 +1,6 @@
 import Foundation
-import DataUtilities
-import LFNetwork
+import NetworkUtilities
+import CoreNetwork
 import LFUtilities
 import AccountData
 

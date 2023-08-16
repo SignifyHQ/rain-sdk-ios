@@ -1,7 +1,9 @@
 import Foundation
 import LFStyleGuide
-import DataUtilities
+import NetworkUtilities
 import LFUtilities
+import Factory
+import AuthorizationManager
 
 // swiftlint:disable force_unwrapping
 
@@ -11,6 +13,7 @@ extension AppDelegate {
     setupStyleGuideConfig()
     setupDataUtilitiesConfig()
     setupLFUtilitiesConfig()
+    authorizationManagerRefresh()
   }
   
 }
@@ -20,12 +23,16 @@ private extension AppDelegate {
     Bundle.main.executableURL!.lastPathComponent
   }
   
+  func authorizationManagerRefresh() {
+    authorizationManager.update()
+  }
+  
   func setupStyleGuideConfig() {
     LFStyleGuide.initial(target: target)
   }
   
   func setupDataUtilitiesConfig() {
-    DataUtilities.initial(target: target)
+    NetworkUtilities.initial(target: target)
   }
   
   func setupLFUtilitiesConfig() {

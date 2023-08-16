@@ -9,4 +9,9 @@ public protocol LFUser {
   var email: String? { get }
   var addressEntity: AddressEntity? { get }
   var referralLink: String? { get }
+  var userRewardType: String? { get }
+  var userAccessLevel: String? { get }
+  var userSelectedFundraiserID: String? { get }
+  var userRoundUpEnabled: Bool? { get }
+  var accountReviewStatus: String? { get }
 }

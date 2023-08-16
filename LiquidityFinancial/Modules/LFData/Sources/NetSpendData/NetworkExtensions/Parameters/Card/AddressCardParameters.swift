@@ -1,6 +1,6 @@
 import Foundation
 import NetSpendDomain
-import DataUtilities
+import NetworkUtilities
 
 public struct AddressCardParameters: Parameterable, AddressCardParametersEntity {
   public let line1: String?

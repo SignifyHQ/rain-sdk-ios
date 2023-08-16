@@ -1,4 +1,4 @@
-import LFNetwork
+import CoreNetwork
 import Foundation
 import LFUtilities
 

@@ -41,9 +41,7 @@ extension OrderPhysicalCardViewModel {
   func getUser() {
     Task {
       do {
-        let user = try await accountRepository.getUser(
-          deviceId: UIDevice.current.identifierForVendor?.uuidString ?? ""
-        )
+        let user = try await accountRepository.getUser()
         if let addressEntity = user.addressEntity {
           shippingAddress = ShippingAddress(line1: addressEntity.line1 ?? "", line2: addressEntity.line2, city: addressEntity.city ?? "", state: addressEntity.state ?? "", postalCode: addressEntity.postalCode ?? "", country: addressEntity.country)
         }

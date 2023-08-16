@@ -54,6 +54,7 @@ public class OnboardingFlowCoordinator: OnboardingFlowCoordinatorProtocol {
   @LazyInjected(\.netspendRepository) var netspendRepository
   @LazyInjected(\.netspendDataManager) var netspendDataManager
   @LazyInjected(\.rewardFlowCoordinator) var rewardFlowCoordinator
+  @LazyInjected(\.accountRepository) var accountRepository
   
   public let routeSubject: CurrentValueSubject<Route, Never>
   

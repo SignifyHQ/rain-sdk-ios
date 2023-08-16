@@ -22,4 +22,7 @@ extension LFRoute {
     return baseURL.appendingPathComponent(path)
   }
   
+  public var needAuthorizationKey: String {
+    "need_authorization"
+  }
 }

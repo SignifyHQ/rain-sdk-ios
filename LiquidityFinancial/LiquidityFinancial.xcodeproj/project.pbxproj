@@ -20,6 +20,10 @@
 		06FB47082A7AAE430050304C /* PinwheelSDK in Frameworks */ = {isa = PBXBuildFile; productRef = 06FB47072A7AAE430050304C /* PinwheelSDK */; };
 		749091172A6584C300071B41 /* SmartyStreets in Frameworks */ = {isa = PBXBuildFile; productRef = 749091162A6584C300071B41 /* SmartyStreets */; };
 		A918D76E2A77B116001AD849 /* AccountData in Frameworks */ = {isa = PBXBuildFile; productRef = A918D76D2A77B116001AD849 /* AccountData */; };
+		A91D865D2A8BEC9A006D40D4 /* CoreNetwork in Frameworks */ = {isa = PBXBuildFile; productRef = A91D865C2A8BEC9A006D40D4 /* CoreNetwork */; };
+		A91D865F2A8C7844006D40D4 /* CoreNetwork in Frameworks */ = {isa = PBXBuildFile; productRef = A91D865E2A8C7844006D40D4 /* CoreNetwork */; };
+		A91D86612A8C784E006D40D4 /* CoreNetwork in Frameworks */ = {isa = PBXBuildFile; productRef = A91D86602A8C784E006D40D4 /* CoreNetwork */; };
+		A91D86632A8C7858006D40D4 /* CoreNetwork in Frameworks */ = {isa = PBXBuildFile; productRef = A91D86622A8C7858006D40D4 /* CoreNetwork */; };
 		A938373C2A63BAAC009EB1DE /* LFUtilities in Frameworks */ = {isa = PBXBuildFile; productRef = A938373B2A63BAAC009EB1DE /* LFUtilities */; };
 		A93837472A63DDFD009EB1DE /* AppDelegate+Appearance.swift in Sources */ = {isa = PBXBuildFile; fileRef = A93837462A63DDFD009EB1DE /* AppDelegate+Appearance.swift */; };
 		A93837482A63DDFF009EB1DE /* AppDelegate+Appearance.swift in Sources */ = {isa = PBXBuildFile; fileRef = A93837462A63DDFD009EB1DE /* AppDelegate+Appearance.swift */; };
@@ -63,7 +67,6 @@
 		A9B448C92A8389B90029944C /* Factory in Frameworks */ = {isa = PBXBuildFile; productRef = A9B448A32A8389B90029944C /* Factory */; };
 		A9B448CA2A8389B90029944C /* AccountData in Frameworks */ = {isa = PBXBuildFile; productRef = A9B448B92A8389B90029944C /* AccountData */; };
 		A9B448CB2A8389B90029944C /* OnboardingData in Frameworks */ = {isa = PBXBuildFile; productRef = A9B448AB2A8389B90029944C /* OnboardingData */; };
-		A9B448CC2A8389B90029944C /* DataUtilities in Frameworks */ = {isa = PBXBuildFile; productRef = A9B448AA2A8389B90029944C /* DataUtilities */; };
 		A9B448CD2A8389B90029944C /* LFDashboard in Frameworks */ = {isa = PBXBuildFile; productRef = A9B448B62A8389B90029944C /* LFDashboard */; };
 		A9B448CE2A8389B90029944C /* LFStyleGuide in Frameworks */ = {isa = PBXBuildFile; productRef = A9B448A72A8389B90029944C /* LFStyleGuide */; };
 		A9B448CF2A8389B90029944C /* AuthorizationManager in Frameworks */ = {isa = PBXBuildFile; productRef = A9B448B02A8389B90029944C /* AuthorizationManager */; };
@@ -72,7 +75,6 @@
 		A9B448D22A8389B90029944C /* iPhoneNumberField in Frameworks */ = {isa = PBXBuildFile; productRef = A9B448B12A8389B90029944C /* iPhoneNumberField */; };
 		A9B448D32A8389B90029944C /* VGSShowSDK in Frameworks */ = {isa = PBXBuildFile; productRef = A9B448B72A8389B90029944C /* VGSShowSDK */; };
 		A9B448D42A8389B90029944C /* Lottie in Frameworks */ = {isa = PBXBuildFile; productRef = A9B448A52A8389B90029944C /* Lottie */; };
-		A9B448D52A8389B90029944C /* LFNetwork in Frameworks */ = {isa = PBXBuildFile; productRef = A9B448AC2A8389B90029944C /* LFNetwork */; };
 		A9B448D62A8389B90029944C /* LFServices in Frameworks */ = {isa = PBXBuildFile; productRef = A9B448AD2A8389B90029944C /* LFServices */; };
 		A9B448D72A8389B90029944C /* PinwheelSDK in Frameworks */ = {isa = PBXBuildFile; productRef = A9B448BA2A8389B90029944C /* PinwheelSDK */; };
 		A9B448D82A8389B90029944C /* LFLocalizable in Frameworks */ = {isa = PBXBuildFile; productRef = A9B448AF2A8389B90029944C /* LFLocalizable */; };
@@ -394,6 +396,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				A9B912EC2A6B881100ABD87B /* iPhoneNumberField in Frameworks */,
+				A91D86612A8C784E006D40D4 /* CoreNetwork in Frameworks */,
 				A94F71EE2A610E65002ADB34 /* LFAccountOnboarding in Frameworks */,
 				A938373C2A63BAAC009EB1DE /* LFUtilities in Frameworks */,
 				A9B912E42A6B876300ABD87B /* OnboardingDomain in Frameworks */,
@@ -430,6 +433,7 @@
 				06D40C012A62AE3700EADB75 /* iPhoneNumberField in Frameworks */,
 				0603BD712A71191B00347DB2 /* VGSShowSDK in Frameworks */,
 				A97BF7EE2A5D719000B8F5CA /* Lottie in Frameworks */,
+				A91D86632A8C7858006D40D4 /* CoreNetwork in Frameworks */,
 				A980DF732A5FA25A000B3C09 /* LFNetwork in Frameworks */,
 				A980DF752A5FA265000B3C09 /* LFServices in Frameworks */,
 				06FB47082A7AAE430050304C /* PinwheelSDK in Frameworks */,
@@ -461,7 +465,6 @@
 				A9B448C92A8389B90029944C /* Factory in Frameworks */,
 				A9B448CA2A8389B90029944C /* AccountData in Frameworks */,
 				A9B448CB2A8389B90029944C /* OnboardingData in Frameworks */,
-				A9B448CC2A8389B90029944C /* DataUtilities in Frameworks */,
 				A9B448CD2A8389B90029944C /* LFDashboard in Frameworks */,
 				A9B448CE2A8389B90029944C /* LFStyleGuide in Frameworks */,
 				A9B448CF2A8389B90029944C /* AuthorizationManager in Frameworks */,
@@ -470,10 +473,10 @@
 				A9B448D22A8389B90029944C /* iPhoneNumberField in Frameworks */,
 				A9B448D32A8389B90029944C /* VGSShowSDK in Frameworks */,
 				A9B448D42A8389B90029944C /* Lottie in Frameworks */,
-				A9B448D52A8389B90029944C /* LFNetwork in Frameworks */,
 				A9B448D62A8389B90029944C /* LFServices in Frameworks */,
 				A9B448D72A8389B90029944C /* PinwheelSDK in Frameworks */,
 				A9B448D82A8389B90029944C /* LFLocalizable in Frameworks */,
+				A91D865D2A8BEC9A006D40D4 /* CoreNetwork in Frameworks */,
 				A9B448D92A8389B90029944C /* SmartyStreets in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -498,6 +501,7 @@
 				A9B4B9512A7C0C76000ED67A /* NetSpendData in Frameworks */,
 				A9B4B9522A7C0C76000ED67A /* Lottie in Frameworks */,
 				A9B4B9532A7C0C76000ED67A /* AuthorizationManager in Frameworks */,
+				A91D865F2A8C7844006D40D4 /* CoreNetwork in Frameworks */,
 				A9B4B9542A7C0C76000ED67A /* LFServices in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1136,6 +1140,7 @@
 				A9B912E92A6B881100ABD87B /* DataUtilities */,
 				A9B912EB2A6B881100ABD87B /* iPhoneNumberField */,
 				A9B912ED2A6B881100ABD87B /* SmartyStreets */,
+				A91D86602A8C784E006D40D4 /* CoreNetwork */,
 			);
 			productName = LiquidityFinancial;
 			productReference = A95354972A5E55B2008B0FAB /* Cardano.app */;
@@ -1175,6 +1180,7 @@
 				0603BD702A71191B00347DB2 /* VGSShowSDK */,
 				A918D76D2A77B116001AD849 /* AccountData */,
 				06FB47072A7AAE430050304C /* PinwheelSDK */,
+				A91D86622A8C7858006D40D4 /* CoreNetwork */,
 			);
 			productName = LiquidityFinancial;
 			productReference = A97BF7BC2A5C602D00B8F5CA /* Avalanche.app */;
@@ -1236,9 +1242,7 @@
 				A9B448A72A8389B90029944C /* LFStyleGuide */,
 				A9B448A82A8389B90029944C /* LFAccountOnboarding */,
 				A9B448A92A8389B90029944C /* OnboardingDomain */,
-				A9B448AA2A8389B90029944C /* DataUtilities */,
 				A9B448AB2A8389B90029944C /* OnboardingData */,
-				A9B448AC2A8389B90029944C /* LFNetwork */,
 				A9B448AD2A8389B90029944C /* LFServices */,
 				A9B448AE2A8389B90029944C /* LFUtilities */,
 				A9B448AF2A8389B90029944C /* LFLocalizable */,
@@ -1250,6 +1254,7 @@
 				A9B448B72A8389B90029944C /* VGSShowSDK */,
 				A9B448B92A8389B90029944C /* AccountData */,
 				A9B448BA2A8389B90029944C /* PinwheelSDK */,
+				A91D865C2A8BEC9A006D40D4 /* CoreNetwork */,
 			);
 			productName = LiquidityFinancial;
 			productReference = A9B448F02A8389B90029944C /* CauseCard.app */;
@@ -1287,6 +1292,7 @@
 				A9B4B9312A7C0C76000ED67A /* iPhoneNumberField */,
 				A9B4B9332A7C0C76000ED67A /* SmartyStreets */,
 				A9E46E992A7D68B800D1BE6F /* DogeOnboarding */,
+				A91D865E2A8C7844006D40D4 /* CoreNetwork */,
 			);
 			productName = LiquidityFinancial;
 			productReference = A9B4B9742A7C0C76000ED67A /* DogeCard.app */;
@@ -2488,6 +2494,22 @@
 			isa = XCSwiftPackageProductDependency;
 			productName = AccountData;
 		};
+		A91D865C2A8BEC9A006D40D4 /* CoreNetwork */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = CoreNetwork;
+		};
+		A91D865E2A8C7844006D40D4 /* CoreNetwork */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = CoreNetwork;
+		};
+		A91D86602A8C784E006D40D4 /* CoreNetwork */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = CoreNetwork;
+		};
+		A91D86622A8C7858006D40D4 /* CoreNetwork */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = CoreNetwork;
+		};
 		A938373B2A63BAAC009EB1DE /* LFUtilities */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = LFUtilities;
@@ -2590,17 +2612,9 @@
 			isa = XCSwiftPackageProductDependency;
 			productName = OnboardingDomain;
 		};
-		A9B448AA2A8389B90029944C /* DataUtilities */ = {
-			isa = XCSwiftPackageProductDependency;
-			productName = DataUtilities;
-		};
 		A9B448AB2A8389B90029944C /* OnboardingData */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = OnboardingData;
-		};
-		A9B448AC2A8389B90029944C /* LFNetwork */ = {
-			isa = XCSwiftPackageProductDependency;
-			productName = LFNetwork;
 		};
 		A9B448AD2A8389B90029944C /* LFServices */ = {
 			isa = XCSwiftPackageProductDependency;

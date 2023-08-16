@@ -1,6 +1,6 @@
 import Foundation
-import DataUtilities
-import LFNetwork
+import NetworkUtilities
+import CoreNetwork
 import LFUtilities
 
 extension LFNetwork: AccountAPIProtocol where R == AccountRoute {
@@ -8,8 +8,8 @@ extension LFNetwork: AccountAPIProtocol where R == AccountRoute {
     return try await request(AccountRoute.getAccount(currencyType: currencyType), target: [APIAccount].self, failure: LFErrorObject.self, decoder: .apiDecoder)
   }
   
-  public func getUser(deviceId: String) async throws -> APIUser {
-    return try await request(AccountRoute.getUser(deviceId: deviceId), target: APIUser.self, failure: LFErrorObject.self, decoder: .apiDecoder)
+  public func getUser() async throws -> APIUser {
+    return try await request(AccountRoute.getUser, target: APIUser.self, failure: LFErrorObject.self, decoder: .apiDecoder)
   }
   
   public func createZeroHashAccount() async throws -> APIZeroHashAccount {
@@ -28,5 +28,10 @@ extension LFNetwork: AccountAPIProtocol where R == AccountRoute {
       failure: LFErrorObject.self,
       decoder: .apiDecoder
     )
+  }
+  
+  public func logout() async throws -> Bool {
+    let result = try await request(AccountRoute.logout)
+    return (result.httpResponse?.statusCode ?? 500).isSuccess
   }
 }

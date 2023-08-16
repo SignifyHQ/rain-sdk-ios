@@ -1,7 +1,7 @@
 import Foundation
 import Factory
 import AccountDomain
-import LFNetwork
+import CoreNetwork
 import AuthorizationManager
 
 extension Container {
