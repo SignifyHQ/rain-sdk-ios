@@ -18,7 +18,8 @@ let package = Package(
     .package(name: "LFServices", path: "../LFServices"),
     .package(name: "LFCard", path: "../LFCard"),
     .package(name: "LFData", path: "../LFData"),
-    .package(name: "LFNetwork", path: "../LFNetwork")
+    .package(name: "LFNetwork", path: "../LFNetwork"),
+    .package(url: "https://github.com/twostraws/CodeScanner", from: "2.0.0")
   ],
   targets: [
     .target(

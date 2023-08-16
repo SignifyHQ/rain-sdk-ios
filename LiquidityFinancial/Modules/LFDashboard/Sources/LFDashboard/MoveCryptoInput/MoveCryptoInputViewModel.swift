@@ -6,7 +6,7 @@ import Factory
 import AccountDomain
 
 @MainActor
-final class BuySellCryptoInputViewModel: ObservableObject {
+final class MoveCryptoInputViewModel: ObservableObject {
   @LazyInjected(\.accountRepository) var accountRepository
   
   @Published var account: LFAccount?
@@ -41,6 +41,11 @@ final class BuySellCryptoInputViewModel: ObservableObject {
       fetchBuyCryptoQuote(amount: "\(amount)")
     case .sellCrypto:
       fetchSellCryptoQuote(amount: "\(amount)")
+    case .sendCrypto:
+      guard let account = account else {
+        return
+      }
+      navigation = .enterAddress(account: account)
     }
   }
   
@@ -48,14 +53,14 @@ final class BuySellCryptoInputViewModel: ObservableObject {
     switch type {
     case .buyCrypto:
       gridValues = Constant.Buy.buildRecommend(available: account?.availableUsdBalance ?? 0)
-    case .sellCrypto:
+    case .sellCrypto, .sendCrypto:
       gridValues = Constant.Sell.buildRecommend(available: account?.availableBalance ?? 0)
     }
   }
 }
 
 // MARK: - API logic
-private extension BuySellCryptoInputViewModel {
+private extension MoveCryptoInputViewModel {
   func getAccount() {
     Task {
       defer { isFetchingData = false }
@@ -109,12 +114,12 @@ private extension BuySellCryptoInputViewModel {
 }
 
 // MARK: - View Helpers
-extension BuySellCryptoInputViewModel {
+extension MoveCryptoInputViewModel {
   var isUSDCurrency: Bool {
     switch type {
     case .buyCrypto:
       return true
-    case .sellCrypto:
+    case .sellCrypto, .sendCrypto:
       return false
     }
   }
@@ -123,7 +128,7 @@ extension BuySellCryptoInputViewModel {
     switch type {
     case .buyCrypto:
       return false
-    case .sellCrypto:
+    case .sellCrypto, .sendCrypto:
       return true
     }
   }
@@ -132,38 +137,48 @@ extension BuySellCryptoInputViewModel {
     switch type {
     case .buyCrypto:
       return 2
-    case .sellCrypto:
+    case .sellCrypto, .sendCrypto:
       return LFUtility.cryptoFractionDigits
     }
   }
   
   var showCryptoDisclosure: Bool {
-    switch type {
-    case .buyCrypto, .sellCrypto:
-      return true
-    }
+    return true
+  }
+  
+  var showEstimatedFeeDescription: Bool {
+    type == .sendCrypto
   }
   
   var title: String {
     switch type {
     case .buyCrypto:
-      return LFLocalizable.BuySellCryptoInput.Buy.title
+      return LFLocalizable.MoveCryptoInput.Buy.title
     case .sellCrypto:
-      return LFLocalizable.BuySellCryptoInput.Sell.title
+      return LFLocalizable.MoveCryptoInput.Sell.title
+    case .sendCrypto:
+      return LFLocalizable.MoveCryptoInput.Send.title
     }
   }
   
   var subtitle: String? {
     switch type {
     case .buyCrypto:
-      return LFLocalizable.BuySellCryptoInput.BuyAvailableBalance.subtitle(
+      return LFLocalizable.MoveCryptoInput.BuyAvailableBalance.subtitle(
         account?.availableUsdBalance.formattedAmount(prefix: "$") ?? "$0.00"
       )
     case .sellCrypto:
-        guard let balance = account?.availableBalance.roundTo3f() else {
+      guard let balance = account?.availableBalance.roundTo3f() else {
         return nil
       }
-      return LFLocalizable.BuySellCryptoInput.SellAvailableBalance.subtitle(
+      return LFLocalizable.MoveCryptoInput.SellAvailableBalance.subtitle(
+        "\(balance)".formattedAmount(minFractionDigits: 3, maxFractionDigits: 3)
+      )
+    case .sendCrypto:
+      guard let balance = account?.availableBalance.roundTo3f() else {
+        return nil
+      }
+      return LFLocalizable.MoveCryptoInput.SendAvailableBalance.subtitle(
         "\(balance)".formattedAmount(minFractionDigits: 3, maxFractionDigits: 3)
       )
     }
@@ -172,14 +187,21 @@ extension BuySellCryptoInputViewModel {
   var annotationString: String {
     switch type {
     case .buyCrypto:
-      return LFLocalizable.BuySellCryptoInput.Buy.annotation(
+      return LFLocalizable.MoveCryptoInput.Buy.annotation(
         account?.availableUsdBalance.formattedAmount(prefix: "$") ?? "$0.00"
       )
     case .sellCrypto:
       guard let balance = account?.availableBalance.roundTo3f() else {
         return String.empty
       }
-      return LFLocalizable.BuySellCryptoInput.Sell.annotation(
+      return LFLocalizable.MoveCryptoInput.Sell.annotation(
+        "\(balance)".formattedAmount(minFractionDigits: 3, maxFractionDigits: 3)
+      )
+    case .sendCrypto:
+      guard let balance = account?.availableBalance.roundTo3f() else {
+        return String.empty
+      }
+      return LFLocalizable.MoveCryptoInput.Send.annotation(
         "\(balance)".formattedAmount(minFractionDigits: 3, maxFractionDigits: 3)
       )
     }
@@ -224,17 +246,18 @@ extension BuySellCryptoInputViewModel {
   func validateAmount(with availableBalance: Double?) -> String? {
     guard let balance = availableBalance else { return nil }
     if type != .sellCrypto, amount > 0, amount < 0.10 {
-      return LFLocalizable.BuySellCryptoInput.MinimumCash.description
+      return LFLocalizable.MoveCryptoInput.MinimumCash.description
     }
-    return balance < amount ? LFLocalizable.BuySellCryptoInput.InsufficientFunds.description : nil
+    return balance < amount ? LFLocalizable.MoveCryptoInput.InsufficientFunds.description : nil
   }
 }
 
 // MARK: - Types
-extension BuySellCryptoInputViewModel {
+extension MoveCryptoInputViewModel {
   enum Kind: Equatable, Identifiable {
     case buyCrypto
     case sellCrypto
+    case sendCrypto
     
     var id: String {
       switch self {
@@ -242,17 +265,20 @@ extension BuySellCryptoInputViewModel {
         return "buyCrypto"
       case .sellCrypto:
         return "sellCrypto"
+      case .sendCrypto:
+        return "sendCrypto"
       }
     }
   }
   
   enum Navigation {
     case detail
+    case enterAddress(account: LFAccount)
   }
 }
 
 // MARK: - Constant
-extension BuySellCryptoInputViewModel {
+extension MoveCryptoInputViewModel {
   private enum Constant {
     static let initValue = "0"
     enum Buy {

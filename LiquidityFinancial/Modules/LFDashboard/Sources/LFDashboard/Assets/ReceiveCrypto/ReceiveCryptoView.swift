@@ -137,6 +137,7 @@ private extension ReceiveCryptoView {
     .frame(maxWidth: .infinity)
     .padding(.bottom, 16)
     .padding(.top, 12)
+    .padding(.horizontal, 12)
   }
   
   var bottomView: some View {

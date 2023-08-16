@@ -194,7 +194,7 @@
 // Reward Terms
 "rewardTerms.enroll_title" = "ENROLL IN CRYPTO REWARDS";
 "rewardTerms.amount_title" = "Transaction Amount";
-"rewardTerms.amount_description" = "up to 8% purchase of transaction in rewards";
+"rewardTerms.amount_description" = "up to 8%% purchase of transaction in rewards";
 "rewardTerms.fees_title" = "Fees";
 "rewardTerms.fees_description" = "$0";
 "rewardTerms.fee_title" = "Fee";
@@ -265,7 +265,7 @@
 "listCard.orderPhysicalCard.title" = "Order Physical Card";
 "listCard.activateCard.buttonTitle" = "Activate %@ Card";
 "listCard.deals.title" = "Deals";
-"listCard.deals.description" = "up to 8% back in %@";
+"listCard.deals.description" = "up to 8%% back in %@";
 "listCard.activateCard.title" = "Activate Card";
 "listCard.activateCard.message" = "To start using your card, please activate it now";
 "listCard.activateCard.primary" = "Activate Card";
@@ -324,14 +324,18 @@
 "directDeposit.copied.message" = "Copied to clipboard";
 
 // BuySellCrypto
-"buySellCryptoInput.buy.title" = "BUY AVALANCHE";
-"buySellCryptoInput.buyAvailableBalance.subtitle" = "%@ available";
-"buySellCryptoInput.sell.title" = "SELL AVALANCHE";
-"buySellCryptoInput.sellAvailableBalance.subtitle" = "%@ available to sell";
-"buySellCryptoInput.buy.annotation" = "You currently have %@ available to buy Avaxcoin. If this amount is less than expected, please contact support.";
-"buySellCryptoInput.sell.annotation" = "You currently have %@ Avaxcoin available to sell. AAVALANCHE Rewards are not available to sell until 48 hours after they are earned.";
-"buySellCryptoInput.minimumCash.description" = "Minimum amount should be $0.10";
-"buySellCryptoInput.insufficientFunds.description" = "Insufficient funds";
+"MoveCryptoInput.buy.title" = "BUY AVAX";
+"MoveCryptoInput.buyAvailableBalance.subtitle" = "%@ available";
+"MoveCryptoInput.sell.title" = "SELL AVAX";
+"MoveCryptoInput.sellAvailableBalance.subtitle" = "%@ available to sell";
+"MoveCryptoInput.send.title" = "SEND AVAX";
+"MoveCryptoInput.sendAvailableBalance.subtitle" = "%@ available";
+"MoveCryptoInput.buy.annotation" = "You currently have %@ available to buy Avaxcoin. If this amount is less than expected, please contact support.";
+"MoveCryptoInput.sell.annotation" = "You currently have %@ Avaxcoin available to sell. AVALANCHE Rewards are not available to sell until 48 hours after they are earned.";
+"MoveCryptoInput.send.annotation" = "You currently have %@ Avaxcoin available to sell. AVALANCHE Rewards are not available to sell until 48 hours after they are earned.";
+"MoveCryptoInput.minimumCash.description" = "Minimum amount should be $0.10";
+"MoveCryptoInput.insufficientFunds.description" = "Insufficient funds";
+"MoveCryptoInput.send.estimated_fee" = "The estimated network fee is an approximation and the actual network fee applied on a withdrawal may differ.";
 
 // MARK: - Popup
 
@@ -629,6 +633,12 @@
 "balanceAlert.negative.message.crypto" = "Please deposit Avalanche";
 "balanceAlert.cta" = "Deposit";
 
+// EnterCryptoAddressView
+"EnterCryptoAddressView.title" = "SEND %@";
+"EnterCryptoAddressView.wallet_address.title" = "%@ Wallet Address";
+"EnterCryptoAddressView.wallet_address.placeholder" = "Wallet Address";
+"EnterCryptoAddressView.warning" = "Sending to a non - %@ wallet will result in lost funds";
+
 // MARK: - Common
 
 // Terms
@@ -686,3 +696,6 @@
 "share.more" = "More";
 "share.cancel" = "Cancel";
 "share.failure" = "Failed to share on %@";
+
+// Crypto
+"crypto.value" = "Avax";

@@ -70,7 +70,12 @@ extension AssetViewModel {
   
   func receiveButtonTapped() {
     showTransferSheet = false
-    navigation = .receive
+    navigation = .receiveCrypto
+  }
+  
+  func sendButtonTapped() {
+    showTransferSheet = false
+    navigation = .sendCrypto
   }
   
   func walletRowTapped() {
@@ -88,7 +93,8 @@ extension AssetViewModel {
   enum Navigation {
     case buyCrypto
     case sellCrypto
-    case receive
+    case receiveCrypto
+    case sendCrypto
   }
   
   enum SheetPresentation: Identifiable {

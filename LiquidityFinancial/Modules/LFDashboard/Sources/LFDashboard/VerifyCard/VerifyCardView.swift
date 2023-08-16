@@ -65,7 +65,6 @@ private extension VerifyCardView {
         placeholder: LFLocalizable.VerifyCard.Amount.placeholder,
         value: $viewModel.amount,
         formatters: [
-          RestrictionFormatter(restriction: .numbers)
         ],
         focus: .amount
       )

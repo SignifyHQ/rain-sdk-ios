@@ -94,6 +94,78 @@ public enum LFLocalizable {
   public static let zeroHashTransactiondetail = LFLocalizable.tr("Localizable", "Zero_hash_transactiondetail", fallback: "Cryptocurrency services powered by Zero Hash")
   /// Zip code
   public static let zipcode = LFLocalizable.tr("Localizable", "zipcode", fallback: "Zip code")
+  public enum EnterCryptoAddressView {
+    /// SEND %@
+    public static func title(_ p1: Any) -> String {
+      return LFLocalizable.tr("Localizable", "EnterCryptoAddressView.title", String(describing: p1), fallback: "SEND %@")
+    }
+    /// Sending to a non - %@ wallet will result in lost funds
+    public static func warning(_ p1: Any) -> String {
+      return LFLocalizable.tr("Localizable", "EnterCryptoAddressView.warning", String(describing: p1), fallback: "Sending to a non - %@ wallet will result in lost funds")
+    }
+    public enum WalletAddress {
+      /// Wallet Address
+      public static let placeholder = LFLocalizable.tr("Localizable", "EnterCryptoAddressView.wallet_address.placeholder", fallback: "Wallet Address")
+      /// %@ Wallet Address
+      public static func title(_ p1: Any) -> String {
+        return LFLocalizable.tr("Localizable", "EnterCryptoAddressView.wallet_address.title", String(describing: p1), fallback: "%@ Wallet Address")
+      }
+    }
+  }
+  public enum MoveCryptoInput {
+    public enum Buy {
+      /// You currently have %@ available to buy Dogecoin. If this amount is less than expected, please contact support.
+      public static func annotation(_ p1: Any) -> String {
+        return LFLocalizable.tr("Localizable", "MoveCryptoInput.buy.annotation", String(describing: p1), fallback: "You currently have %@ available to buy Dogecoin. If this amount is less than expected, please contact support.")
+      }
+      /// BUY DOGE
+      public static let title = LFLocalizable.tr("Localizable", "MoveCryptoInput.buy.title", fallback: "BUY DOGE")
+    }
+    public enum BuyAvailableBalance {
+      /// %@ available
+      public static func subtitle(_ p1: Any) -> String {
+        return LFLocalizable.tr("Localizable", "MoveCryptoInput.buyAvailableBalance.subtitle", String(describing: p1), fallback: "%@ available")
+      }
+    }
+    public enum InsufficientFunds {
+      /// Insufficient funds
+      public static let description = LFLocalizable.tr("Localizable", "MoveCryptoInput.insufficientFunds.description", fallback: "Insufficient funds")
+    }
+    public enum MinimumCash {
+      /// Minimum amount should be $0.10
+      public static let description = LFLocalizable.tr("Localizable", "MoveCryptoInput.minimumCash.description", fallback: "Minimum amount should be $0.10")
+    }
+    public enum Sell {
+      /// You currently have %@ Dogecoin available to sell. Doge Rewards are not available to sell until 48 hours after they are earned.
+      public static func annotation(_ p1: Any) -> String {
+        return LFLocalizable.tr("Localizable", "MoveCryptoInput.sell.annotation", String(describing: p1), fallback: "You currently have %@ Dogecoin available to sell. Doge Rewards are not available to sell until 48 hours after they are earned.")
+      }
+      /// SELL DOGE
+      public static let title = LFLocalizable.tr("Localizable", "MoveCryptoInput.sell.title", fallback: "SELL DOGE")
+    }
+    public enum SellAvailableBalance {
+      /// %@ available to sell
+      public static func subtitle(_ p1: Any) -> String {
+        return LFLocalizable.tr("Localizable", "MoveCryptoInput.sellAvailableBalance.subtitle", String(describing: p1), fallback: "%@ available to sell")
+      }
+    }
+    public enum Send {
+      /// You currently have %@ Dogecoin available to sell. Doge Rewards are not available to sell until 48 hours after they are earned.
+      public static func annotation(_ p1: Any) -> String {
+        return LFLocalizable.tr("Localizable", "MoveCryptoInput.send.annotation", String(describing: p1), fallback: "You currently have %@ Dogecoin available to sell. Doge Rewards are not available to sell until 48 hours after they are earned.")
+      }
+      /// The estimated network fee is an approximation and the actual network fee applied on a withdrawal may differ.
+      public static let estimatedFee = LFLocalizable.tr("Localizable", "MoveCryptoInput.send.estimated_fee", fallback: "The estimated network fee is an approximation and the actual network fee applied on a withdrawal may differ.")
+      /// SEND DOGE
+      public static let title = LFLocalizable.tr("Localizable", "MoveCryptoInput.send.title", fallback: "SEND DOGE")
+    }
+    public enum SendAvailableBalance {
+      /// %@ available
+      public static func subtitle(_ p1: Any) -> String {
+        return LFLocalizable.tr("Localizable", "MoveCryptoInput.sendAvailableBalance.subtitle", String(describing: p1), fallback: "%@ available")
+      }
+    }
+  }
   public enum AccountView {
     /// Free ATMs
     public static let atm = LFLocalizable.tr("Localizable", "accountView.atm", fallback: "Free ATMs")
@@ -384,44 +456,6 @@ public enum LFLocalizable {
       public static let title = LFLocalizable.tr("Localizable", "button.yes.title", fallback: "Yes")
     }
   }
-  public enum BuySellCryptoInput {
-    public enum Buy {
-      /// You currently have %@ available to buy Dogecoin. If this amount is less than expected, please contact support.
-      public static func annotation(_ p1: Any) -> String {
-        return LFLocalizable.tr("Localizable", "buySellCryptoInput.buy.annotation", String(describing: p1), fallback: "You currently have %@ available to buy Dogecoin. If this amount is less than expected, please contact support.")
-      }
-      /// BUY DOGE
-      public static let title = LFLocalizable.tr("Localizable", "buySellCryptoInput.buy.title", fallback: "BUY DOGE")
-    }
-    public enum BuyAvailableBalance {
-      /// %@ available
-      public static func subtitle(_ p1: Any) -> String {
-        return LFLocalizable.tr("Localizable", "buySellCryptoInput.buyAvailableBalance.subtitle", String(describing: p1), fallback: "%@ available")
-      }
-    }
-    public enum InsufficientFunds {
-      /// Insufficient funds
-      public static let description = LFLocalizable.tr("Localizable", "buySellCryptoInput.insufficientFunds.description", fallback: "Insufficient funds")
-    }
-    public enum MinimumCash {
-      /// Minimum amount should be $0.10
-      public static let description = LFLocalizable.tr("Localizable", "buySellCryptoInput.minimumCash.description", fallback: "Minimum amount should be $0.10")
-    }
-    public enum Sell {
-      /// You currently have %@ Dogecoin available to sell. Doge Rewards are not available to sell until 48 hours after they are earned.
-      public static func annotation(_ p1: Any) -> String {
-        return LFLocalizable.tr("Localizable", "buySellCryptoInput.sell.annotation", String(describing: p1), fallback: "You currently have %@ Dogecoin available to sell. Doge Rewards are not available to sell until 48 hours after they are earned.")
-      }
-      /// SELL DOGE
-      public static let title = LFLocalizable.tr("Localizable", "buySellCryptoInput.sell.title", fallback: "SELL DOGE")
-    }
-    public enum SellAvailableBalance {
-      /// %@ available to sell
-      public static func subtitle(_ p1: Any) -> String {
-        return LFLocalizable.tr("Localizable", "buySellCryptoInput.sellAvailableBalance.subtitle", String(describing: p1), fallback: "%@ available to sell")
-      }
-    }
-  }
   public enum CancelTransfer {
     /// Cancel Deposit
     public static let title = LFLocalizable.tr("Localizable", "cancelTransfer.title", fallback: "Cancel Deposit")
@@ -608,6 +642,10 @@ public enum LFLocalizable {
         return LFLocalizable.tr("Localizable", "connectedView.row.externalCard", String(describing: p1), fallback: "Debit Card **** %@")
       }
     }
+  }
+  public enum Crypto {
+    /// Doge
+    public static let value = LFLocalizable.tr("Localizable", "crypto.value", fallback: "Doge")
   }
   public enum DirectDeposit {
     public enum AccountNumber {
@@ -1048,9 +1086,9 @@ public enum LFLocalizable {
       public static let title = LFLocalizable.tr("Localizable", "listCard.changePin.title", fallback: "Change PIN")
     }
     public enum Deals {
-      /// up to 8% back in %@
+      /// up to 8%% back in %@
       public static func description(_ p1: Any) -> String {
-        return LFLocalizable.tr("Localizable", "listCard.deals.description", String(describing: p1), fallback: "up to 8% back in %@")
+        return LFLocalizable.tr("Localizable", "listCard.deals.description", String(describing: p1), fallback: "up to 8%% back in %@")
       }
       /// Deals
       public static let title = LFLocalizable.tr("Localizable", "listCard.deals.title", fallback: "Deals")
@@ -1394,10 +1432,8 @@ public enum LFLocalizable {
     }
   }
   public enum RewardTerms {
-    /// up to 8% purchase of transaction in rewards
-    public static func amountDescription(_ p1: UnsafeRawPointer) -> String {
-      return LFLocalizable.tr("Localizable", "rewardTerms.amount_description", Int(bitPattern: p1), fallback: "up to 8% purchase of transaction in rewards")
-    }
+    /// up to 8%% purchase of transaction in rewards
+    public static let amountDescription = LFLocalizable.tr("Localizable", "rewardTerms.amount_description", fallback: "up to 8%% purchase of transaction in rewards")
     /// Transaction Amount
     public static let amountTitle = LFLocalizable.tr("Localizable", "rewardTerms.amount_title", fallback: "Transaction Amount")
     /// Zero Hash does not offer the ability to set up pre-authorized, automatic, or recurring Orders (“Pre-Authorized Orders”) in your Account; (a) any such Pre-Authorized Order feature (if available) is under the exclusive control of [Business] ; (b) you must contact [Business] in order to stop a Pre-Authorized Order before execution or to turn off such a feature in your Account; and (c) Zero Hash and ZHLS are not liable for the placement and execution of any Pre-Authorized order.

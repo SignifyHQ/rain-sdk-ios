@@ -3,13 +3,13 @@ import LFLocalizable
 import LFUtilities
 import LFStyleGuide
 
-struct BuySellCryptoInputView: View {
-  @StateObject private var viewModel: BuySellCryptoInputViewModel
+struct MoveCryptoInputView: View {
+  @StateObject private var viewModel: MoveCryptoInputViewModel
   @State private var isShowAnnotationView: Bool = false
   @State private var screenSize: CGSize = .zero
   
-  init(type: BuySellCryptoInputViewModel.Kind) {
-    _viewModel = .init(wrappedValue: BuySellCryptoInputViewModel(type: type))
+  init(type: MoveCryptoInputViewModel.Kind) {
+    _viewModel = .init(wrappedValue: MoveCryptoInputViewModel(type: type))
   }
   
   var body: some View {
@@ -35,17 +35,19 @@ struct BuySellCryptoInputView: View {
       ToastView(toastMessage: $0)
     }
     .navigationBarTitleDisplayMode(.inline)
-//    .navigationLink(item: $viewModel.navigation) { navigation in
-//      switch navigation {
-//        case let .detail(viewModel):
-//          BuySellDetailView(viewModel: viewModel)
-//      }
-//    }
+    .navigationLink(item: $viewModel.navigation) { navigation in
+      switch navigation {
+      case .detail:
+        EmptyView()
+      case .enterAddress(let account):
+        EnterCryptoAddressView(account: account)
+      }
+    }
   }
 }
 
 // MARK: - View Components
-private extension BuySellCryptoInputView {
+private extension MoveCryptoInputView {
   var header: some View {
     ZStack(alignment: viewModel.isFetchingData ? .center : .topLeading) {
       VStack(spacing: 0) {
@@ -94,7 +96,7 @@ private extension BuySellCryptoInputView {
   
   var amountInput: some View {
     VStack(spacing: 12) {
-      HStack(alignment: .firstTextBaseline, spacing: 4) {
+      HStack(alignment: .lastTextBaseline, spacing: 4) {
         if viewModel.isUSDCurrency {
           GenImages.CommonImages.usdSymbol.swiftUIImage
             .foregroundColor(Colors.label.swiftUIColor)
@@ -102,10 +104,9 @@ private extension BuySellCryptoInputView {
         Text(viewModel.amountInput)
           .font(Fonts.bold.swiftUIFont(size: 50))
           .foregroundColor(Colors.label.swiftUIColor)
-        // TODO: Will be updated after designer add icon
-        //        if viewModel.isCryptoCurrency {
-        //          Image(Imagename.cryptoFilled)
-        //        }
+        if viewModel.isCryptoCurrency {
+          GenImages.Images.icCryptoFilled.swiftUIImage
+        }
       }
       .shakeAnimation(with: viewModel.numberOfShakes)
       error
@@ -142,7 +143,10 @@ private extension BuySellCryptoInputView {
   var footer: some View {
     VStack(spacing: 16) {
       continueButton
-      cryptoDisclosure
+      VStack(spacing: 12) {
+        cryptoDisclosure
+        estimatedFeeDescription
+      }
     }
   }
   
@@ -159,6 +163,16 @@ private extension BuySellCryptoInputView {
   @ViewBuilder var cryptoDisclosure: some View {
     if viewModel.showCryptoDisclosure {
       Text(LFLocalizable.Zerohash.Disclosure.description)
+        .font(Fonts.regular.swiftUIFont(size: 10))
+        .foregroundColor(Colors.label.swiftUIColor.opacity(0.5))
+        .fixedSize(horizontal: false, vertical: true)
+    }
+  }
+  
+  @ViewBuilder var estimatedFeeDescription: some View {
+    if viewModel.showEstimatedFeeDescription {
+      Text(LFLocalizable.MoveCryptoInput.Send.estimatedFee)
+        .multilineTextAlignment(.center)
         .font(Fonts.regular.swiftUIFont(size: 10))
         .foregroundColor(Colors.label.swiftUIColor.opacity(0.5))
         .fixedSize(horizontal: false, vertical: true)

@@ -68,7 +68,7 @@ extension RewardTermsView {
       VStack(alignment: .leading) {
         buildRow(
           title: LFLocalizable.RewardTerms.amountTitle,
-          subtitle: LFLocalizable.RewardTerms.amountDescription(LFUtility.appName)
+          subtitle: LFLocalizable.RewardTerms.amountDescription
         )
         Divider()
           .overlay(Colors.label.swiftUIColor.opacity(0.2))

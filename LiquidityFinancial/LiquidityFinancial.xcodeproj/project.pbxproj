@@ -19,6 +19,10 @@
 		06EBE2052A693C8100157B32 /* LFDashboard in Frameworks */ = {isa = PBXBuildFile; productRef = 06EBE2042A693C8100157B32 /* LFDashboard */; };
 		06FB47082A7AAE430050304C /* PinwheelSDK in Frameworks */ = {isa = PBXBuildFile; productRef = 06FB47072A7AAE430050304C /* PinwheelSDK */; };
 		749091172A6584C300071B41 /* SmartyStreets in Frameworks */ = {isa = PBXBuildFile; productRef = 749091162A6584C300071B41 /* SmartyStreets */; };
+		74BC08632A8CC6F500EFD00C /* CodeScanner in Frameworks */ = {isa = PBXBuildFile; productRef = 74BC08622A8CC6F500EFD00C /* CodeScanner */; };
+		74BC08652A8CC75100EFD00C /* CodeScanner in Frameworks */ = {isa = PBXBuildFile; productRef = 74BC08642A8CC75100EFD00C /* CodeScanner */; };
+		74BC08672A8CC75B00EFD00C /* CodeScanner in Frameworks */ = {isa = PBXBuildFile; productRef = 74BC08662A8CC75B00EFD00C /* CodeScanner */; };
+		74BC08692A8CC76700EFD00C /* CodeScanner in Frameworks */ = {isa = PBXBuildFile; productRef = 74BC08682A8CC76700EFD00C /* CodeScanner */; };
 		A918D76E2A77B116001AD849 /* AccountData in Frameworks */ = {isa = PBXBuildFile; productRef = A918D76D2A77B116001AD849 /* AccountData */; };
 		A91D865D2A8BEC9A006D40D4 /* CoreNetwork in Frameworks */ = {isa = PBXBuildFile; productRef = A91D865C2A8BEC9A006D40D4 /* CoreNetwork */; };
 		A91D865F2A8C7844006D40D4 /* CoreNetwork in Frameworks */ = {isa = PBXBuildFile; productRef = A91D865E2A8C7844006D40D4 /* CoreNetwork */; };
@@ -400,6 +404,7 @@
 				A9B912EE2A6B881100ABD87B /* SmartyStreets in Frameworks */,
 				A91D86672A8CC843006D40D4 /* NetworkUtilities in Frameworks */,
 				A953548C2A5E55B2008B0FAB /* Factory in Frameworks */,
+				74BC08672A8CC75B00EFD00C /* CodeScanner in Frameworks */,
 				A94F71F72A61CACF002ADB34 /* LFLocalizable in Frameworks */,
 				A953548D2A5E55B2008B0FAB /* LFStyleGuide in Frameworks */,
 				06EBE2052A693C8100157B32 /* LFDashboard in Frameworks */,
@@ -419,6 +424,7 @@
 				A980DF6D2A5FA249000B3C09 /* OnboardingDomain in Frameworks */,
 				A97BF7EB2A5D70C500B8F5CA /* Factory in Frameworks */,
 				A918D76E2A77B116001AD849 /* AccountData in Frameworks */,
+				74BC08652A8CC75100EFD00C /* CodeScanner in Frameworks */,
 				A980DF712A5FA252000B3C09 /* OnboardingData in Frameworks */,
 				06EBE2032A693C7800157B32 /* LFDashboard in Frameworks */,
 				A953545D2A5DD7F4008B0FAB /* LFStyleGuide in Frameworks */,
@@ -459,6 +465,7 @@
 				A9B448C82A8389B90029944C /* OnboardingDomain in Frameworks */,
 				A9B448C92A8389B90029944C /* Factory in Frameworks */,
 				A9B448CA2A8389B90029944C /* AccountData in Frameworks */,
+				74BC08692A8CC76700EFD00C /* CodeScanner in Frameworks */,
 				A9B448CB2A8389B90029944C /* OnboardingData in Frameworks */,
 				A9B448CD2A8389B90029944C /* LFDashboard in Frameworks */,
 				A9B448CE2A8389B90029944C /* LFStyleGuide in Frameworks */,
@@ -488,6 +495,7 @@
 				A9B4B9452A7C0C76000ED67A /* OnboardingDomain in Frameworks */,
 				A9B4B9472A7C0C76000ED67A /* SmartyStreets in Frameworks */,
 				A9B4B9482A7C0C76000ED67A /* Factory in Frameworks */,
+				74BC08632A8CC6F500EFD00C /* CodeScanner in Frameworks */,
 				A9B4B94B2A7C0C76000ED67A /* LFLocalizable in Frameworks */,
 				A9B4B94C2A7C0C76000ED67A /* LFStyleGuide in Frameworks */,
 				A9B4B94E2A7C0C76000ED67A /* LFDashboard in Frameworks */,
@@ -1134,6 +1142,7 @@
 				A9B912ED2A6B881100ABD87B /* SmartyStreets */,
 				A91D86602A8C784E006D40D4 /* CoreNetwork */,
 				A91D86662A8CC843006D40D4 /* NetworkUtilities */,
+				74BC08662A8CC75B00EFD00C /* CodeScanner */,
 			);
 			productName = LiquidityFinancial;
 			productReference = A95354972A5E55B2008B0FAB /* Cardano.app */;
@@ -1173,6 +1182,7 @@
 				06FB47072A7AAE430050304C /* PinwheelSDK */,
 				A91D86622A8C7858006D40D4 /* CoreNetwork */,
 				A91D86642A8CC813006D40D4 /* NetworkUtilities */,
+				74BC08642A8CC75100EFD00C /* CodeScanner */,
 			);
 			productName = LiquidityFinancial;
 			productReference = A97BF7BC2A5C602D00B8F5CA /* Avalanche.app */;
@@ -1247,6 +1257,7 @@
 				A9B448B92A8389B90029944C /* AccountData */,
 				A9B448BA2A8389B90029944C /* PinwheelSDK */,
 				A91D865C2A8BEC9A006D40D4 /* CoreNetwork */,
+				74BC08682A8CC76700EFD00C /* CodeScanner */,
 			);
 			productName = LiquidityFinancial;
 			productReference = A9B448F02A8389B90029944C /* CauseCard.app */;
@@ -1284,6 +1295,7 @@
 				A9E46E992A7D68B800D1BE6F /* DogeOnboarding */,
 				A91D865E2A8C7844006D40D4 /* CoreNetwork */,
 				A91D86682A8CC862006D40D4 /* NetworkUtilities */,
+				74BC08622A8CC6F500EFD00C /* CodeScanner */,
 			);
 			productName = LiquidityFinancial;
 			productReference = A9B4B9742A7C0C76000ED67A /* DogeCard.app */;
@@ -1329,6 +1341,7 @@
 				749091152A6584C300071B41 /* XCRemoteSwiftPackageReference "smartystreets-ios-sdk" */,
 				0603BD6F2A71191B00347DB2 /* XCRemoteSwiftPackageReference "vgs-show-ios" */,
 				06FB47062A7AAE430050304C /* XCRemoteSwiftPackageReference "pinwheel-ios-sdk" */,
+				74BC08612A8CC6F500EFD00C /* XCRemoteSwiftPackageReference "CodeScanner" */,
 			);
 			productRefGroup = A97BF7BD2A5C602D00B8F5CA /* Products */;
 			projectDirPath = "";
@@ -2330,6 +2343,14 @@
 				minimumVersion = 8.0.0;
 			};
 		};
+		74BC08612A8CC6F500EFD00C /* XCRemoteSwiftPackageReference "CodeScanner" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/twostraws/CodeScanner";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 2.0.0;
+			};
+		};
 		A953547E2A5E55B2008B0FAB /* XCRemoteSwiftPackageReference "Factory" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/hmlongco/Factory";
@@ -2480,6 +2501,26 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 749091152A6584C300071B41 /* XCRemoteSwiftPackageReference "smartystreets-ios-sdk" */;
 			productName = SmartyStreets;
+		};
+		74BC08622A8CC6F500EFD00C /* CodeScanner */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 74BC08612A8CC6F500EFD00C /* XCRemoteSwiftPackageReference "CodeScanner" */;
+			productName = CodeScanner;
+		};
+		74BC08642A8CC75100EFD00C /* CodeScanner */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 74BC08612A8CC6F500EFD00C /* XCRemoteSwiftPackageReference "CodeScanner" */;
+			productName = CodeScanner;
+		};
+		74BC08662A8CC75B00EFD00C /* CodeScanner */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 74BC08612A8CC6F500EFD00C /* XCRemoteSwiftPackageReference "CodeScanner" */;
+			productName = CodeScanner;
+		};
+		74BC08682A8CC76700EFD00C /* CodeScanner */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 74BC08612A8CC6F500EFD00C /* XCRemoteSwiftPackageReference "CodeScanner" */;
+			productName = CodeScanner;
 		};
 		A918D76D2A77B116001AD849 /* AccountData */ = {
 			isa = XCSwiftPackageProductDependency;

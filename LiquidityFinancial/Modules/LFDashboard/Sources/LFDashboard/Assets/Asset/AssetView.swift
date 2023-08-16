@@ -24,11 +24,13 @@ struct AssetView: View {
       .navigationLink(item: $viewModel.navigation) { navigation in
         switch navigation {
         case .buyCrypto:
-          BuySellCryptoInputView(type: .buyCrypto)
+          MoveCryptoInputView(type: .buyCrypto)
         case .sellCrypto:
-          BuySellCryptoInputView(type: .sellCrypto)
-        case .receive:
+          MoveCryptoInputView(type: .sellCrypto)
+        case .receiveCrypto:
           ReceiveCryptoView(account: viewModel.account)
+        case .sendCrypto:
+          MoveCryptoInputView(type: .sendCrypto)
         }
       }
       .sheet(item: $viewModel.sheet) { item in
@@ -207,7 +209,7 @@ private extension AssetView {
         with: GenImages.CommonImages.sell,
         and: LFLocalizable.AssetView.Send.title
       ) {
-        // TODO: send button tapped
+        viewModel.sendButtonTapped()
       }
       transferCell(
         with: GenImages.CommonImages.buy,
