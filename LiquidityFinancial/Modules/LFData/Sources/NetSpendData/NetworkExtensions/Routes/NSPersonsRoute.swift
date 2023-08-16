@@ -18,11 +18,6 @@ public enum NSPersonsRoute {
 
 extension NSPersonsRoute: LFRoute {
   
-  var authorization: String {
-    let auth = AuthorizationManager()
-    return auth.fetchToken()
-  }
-  
   public var path: String {
     switch self {
     case .sessionInit:
@@ -52,7 +47,7 @@ extension NSPersonsRoute: LFRoute {
     var base = [
       "Content-Type": "application/json",
       "Accept": "application/json",
-      "Authorization": authorization,
+      "Authorization": self.needAuthorizationKey,
       "productId": NetworkUtilities.productID
     ]
     switch self {
