@@ -173,6 +173,7 @@ public extension Constants {
 }
 
 public extension Constants {
+  static let lowBalanceThreshold = 5.0
   
   static let kycQuestionTimeOut = 600
   

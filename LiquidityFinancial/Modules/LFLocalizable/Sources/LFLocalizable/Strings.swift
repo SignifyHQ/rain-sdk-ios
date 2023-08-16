@@ -253,6 +253,28 @@ public enum LFLocalizable {
       public static let title = LFLocalizable.tr("Localizable", "assetView.transfer_popup.title", fallback: "TRANSFER DOGE")
     }
   }
+  public enum BalanceAlert {
+    /// Deposit
+    public static let cta = LFLocalizable.tr("Localizable", "balanceAlert.cta", fallback: "Deposit")
+    public enum Low {
+      /// Your balance is below %@
+      public static func message(_ p1: Any) -> String {
+        return LFLocalizable.tr("Localizable", "balanceAlert.low.message", String(describing: p1), fallback: "Your balance is below %@")
+      }
+      /// Low Balance Alert
+      public static let title = LFLocalizable.tr("Localizable", "balanceAlert.low.title", fallback: "Low Balance Alert")
+    }
+    public enum Negative {
+      /// Negative Balance
+      public static let title = LFLocalizable.tr("Localizable", "balanceAlert.negative.title", fallback: "Negative Balance")
+      public enum Message {
+        /// Please deposit cash
+        public static let cash = LFLocalizable.tr("Localizable", "balanceAlert.negative.message.cash", fallback: "Please deposit cash")
+        /// Please deposit Doge
+        public static let crypto = LFLocalizable.tr("Localizable", "balanceAlert.negative.message.crypto", fallback: "Please deposit Doge")
+      }
+    }
+  }
   public enum BankTransfers {
     public enum AccountNumber {
       /// Account number

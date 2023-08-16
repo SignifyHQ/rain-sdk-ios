@@ -7,9 +7,9 @@ import LFUtilities
 struct AssetView: View {
   @StateObject private var viewModel: AssetViewModel
 
-  init() {
+  init(guestHandler: @escaping () -> Void) {
     _viewModel = .init(
-      wrappedValue: .init()
+      wrappedValue: .init(guestHandler: guestHandler)
     )
   }
 
@@ -31,6 +31,13 @@ struct AssetView: View {
           ReceiveCryptoView(account: viewModel.account)
         }
       }
+      .sheet(item: $viewModel.sheet) { item in
+        switch item {
+        case .wallet:
+          ReceiveCryptoView(account: viewModel.account)
+            .embedInNavigation()
+        }
+      }
       .background(Colors.background.swiftUIColor)
       .onAppear {
         viewModel.onAppear()
@@ -42,6 +49,9 @@ struct AssetView: View {
       VStack(spacing: 10) {
         balance
         priceView
+        BalanceAlertView(type: .crypto, hasContacts: true, cryptoBalance: viewModel.cryptoBalance.asDouble) {
+          viewModel.walletRowTapped()
+        }
         HStack(spacing: 10) {
           iconTextButton(
             title: LFLocalizable.AssetView.Buy.title,

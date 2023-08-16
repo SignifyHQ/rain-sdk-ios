@@ -3,7 +3,7 @@ import Foundation
 
 public final class LFStyleGuide {
   
-  static var target: Configs.Target!
+  public static var target: Configs.Target!
   
   public static func initial(target: String) {
     if let target = Configs.Target(rawValue: target) {
@@ -17,8 +17,8 @@ public final class LFStyleGuide {
 
 extension LFStyleGuide {
   
-  struct Configs {
-    enum Target: String {
+  public struct Configs {
+    public enum Target: String {
       case Avalanche
       case Cardano
       case DogeCard

@@ -615,6 +615,14 @@
 "share.cancel" = "Cancel";
 "share.failure" = "Failed to share on %@";
 
+// Balance Alert
+"balanceAlert.low.title" = "Low Balance Alert";
+"balanceAlert.low.message" = "Your balance is below %@";
+"balanceAlert.negative.title" = "Negative Balance";
+"balanceAlert.negative.message.cash" = "Please deposit cash";
+"balanceAlert.negative.message.crypto" = "Please deposit Doge";
+"balanceAlert.cta" = "Deposit";
+
 // MARK: - Rewards
 
 // Select Rewards

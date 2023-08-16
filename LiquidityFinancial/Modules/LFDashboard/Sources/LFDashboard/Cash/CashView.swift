@@ -104,6 +104,9 @@ private extension CashView {
             // Temporarily disable this feature
             changeAssetButton
           }
+          BalanceAlertView(type: .cash, hasContacts: !viewModel.linkedAccount.isEmpty, cashBalance: viewModel.cashBalanceValue) {
+            viewModel.addMoneyTapped()
+          }
           moveMoney
           activity(size: geo.size)
         }

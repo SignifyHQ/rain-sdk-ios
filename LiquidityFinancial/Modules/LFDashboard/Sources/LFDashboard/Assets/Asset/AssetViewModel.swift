@@ -16,9 +16,12 @@ class AssetViewModel: ObservableObject {
   @Published var toastMessage: String = ""
   @Published var isLoading: Bool = false
   @Published var navigation: Navigation?
-  
+  @Published var sheet: SheetPresentation?
+
   @LazyInjected(\.accountDataManager) var accountDataManager
   @LazyInjected(\.accountRepository) var accountRepository
+
+  private let guestHandler: () -> Void
 
   var isPositivePrice: Bool {
     changePercent > 0
@@ -30,6 +33,10 @@ class AssetViewModel: ObservableObject {
   
   var currencyType: String {
     "CRYPTO"
+  }
+  
+  init(guestHandler: @escaping () -> Void) {
+    self.guestHandler = guestHandler
   }
 }
 
@@ -65,6 +72,15 @@ extension AssetViewModel {
     showTransferSheet = false
     navigation = .receive
   }
+  
+  func walletRowTapped() {
+    Haptic.impact(.soft).generate()
+    if false { // userManager.isGuest TODO: - Will be updated later
+      guestHandler()
+    } else {
+      sheet = .wallet
+    }
+  }
 }
 
 extension AssetViewModel {
@@ -75,4 +91,13 @@ extension AssetViewModel {
     case receive
   }
   
+  enum SheetPresentation: Identifiable {
+    case wallet
+    
+    var id: String {
+      switch self {
+      case .wallet: return "wallet"
+      }
+    }
+  }
 }
