@@ -1,0 +1,112 @@
+import SwiftUI
+import LFLocalizable
+import LFStyleGuide
+import LFUtilities
+
+struct ConfirmSendCryptoView: View {
+  @StateObject private var viewModel: ConfirmSendCryptoViewModel
+  init(amount: Double, address: String) {
+    _viewModel = .init(wrappedValue: ConfirmSendCryptoViewModel(amount: amount, address: address))
+  }
+
+  var body: some View {
+    content
+      .background(Colors.background.swiftUIColor)
+      .toolbar {
+        ToolbarItem(placement: .principal) {
+          Text(LFLocalizable.ConfirmSendCryptoView.title)
+            .foregroundColor(Colors.label.swiftUIColor)
+            .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.medium.value))
+        }
+      }
+      .navigationBarTitleDisplayMode(.inline)
+  }
+}
+
+// MARK: View Components
+
+private extension ConfirmSendCryptoView {
+  var content: some View {
+    VStack(spacing: 16) {
+      informationCell(
+        title: LFLocalizable.ConfirmSendCryptoView.amount,
+        value: viewModel.amountInput,
+        bonusValue: LFLocalizable.Crypto.value
+      )
+      if !viewModel.nickname.isEmpty {
+        informationCell(
+          title: LFLocalizable.ConfirmSendCryptoView.to,
+          value: viewModel.nickname
+        )
+      }
+      informationCell(
+        title: LFLocalizable.ConfirmSendCryptoView.walletAddress,
+        value: viewModel.address,
+        isLastItem: true
+      )
+      Spacer()
+      footer
+    }
+    .padding(.top, 30)
+    .padding(.horizontal, 30)
+  }
+  
+  var footer: some View {
+    VStack(spacing: 16) {
+      continueButton
+      VStack(spacing: 12) {
+        cryptoDisclosure
+        estimatedFeeDescription
+      }
+    }
+  }
+  
+  var continueButton: some View {
+    FullSizeButton(
+      title: LFLocalizable.Button.Confirm.title,
+      isDisable: false,
+      isLoading: $viewModel.showIndicator
+    ) {
+      viewModel.confirmButtonClicked()
+    }
+  }
+
+  func informationCell(title: String, value: String, bonusValue: String? = nil, isLastItem: Bool = false) -> some View {
+    VStack(alignment: .leading, spacing: 12) {
+      Text(title)
+        .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.ultraSmall.value))
+        .foregroundColor(Colors.label.swiftUIColor.opacity(0.75))
+      HStack(spacing: 4) {
+        Text(value)
+          .foregroundColor(Colors.label.swiftUIColor)
+        if let bonusValue = bonusValue {
+          Text(bonusValue)
+            .foregroundColor(Colors.primary.swiftUIColor)
+        }
+        Spacer()
+      }
+      .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.medium.value))
+      GenImages.CommonImages.dash.swiftUIImage
+        .resizable()
+        .scaledToFit()
+        .foregroundColor(Colors.label.swiftUIColor)
+        .padding(.top, 4)
+        .opacity(isLastItem ? 0 : 1)
+    }
+  }
+  
+  @ViewBuilder var cryptoDisclosure: some View {
+    Text(LFLocalizable.Zerohash.Disclosure.description)
+      .font(Fonts.regular.swiftUIFont(size: 10))
+      .foregroundColor(Colors.label.swiftUIColor.opacity(0.5))
+      .fixedSize(horizontal: false, vertical: true)
+  }
+  
+  @ViewBuilder var estimatedFeeDescription: some View {
+    Text(LFLocalizable.MoveCryptoInput.Send.estimatedFee)
+      .multilineTextAlignment(.center)
+      .font(Fonts.regular.swiftUIFont(size: 10))
+      .foregroundColor(Colors.label.swiftUIColor.opacity(0.5))
+      .fixedSize(horizontal: false, vertical: true)
+  }
+}

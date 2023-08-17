@@ -40,7 +40,7 @@ struct MoveCryptoInputView: View {
       case .detail:
         EmptyView()
       case .enterAddress(let account):
-        EnterCryptoAddressView(account: account)
+        EnterCryptoAddressView(account: account, amount: viewModel.amount)
       }
     }
   }

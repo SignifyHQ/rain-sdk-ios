@@ -94,6 +94,16 @@ public enum LFLocalizable {
   public static let zeroHashTransactiondetail = LFLocalizable.tr("Localizable", "Zero_hash_transactiondetail", fallback: "Cryptocurrency services powered by Zero Hash")
   /// Zip code
   public static let zipcode = LFLocalizable.tr("Localizable", "zipcode", fallback: "Zip code")
+  public enum ConfirmSendCryptoView {
+    /// Amount
+    public static let amount = LFLocalizable.tr("Localizable", "ConfirmSendCryptoView.amount", fallback: "Amount")
+    /// Confirm Transfer
+    public static let title = LFLocalizable.tr("Localizable", "ConfirmSendCryptoView.title", fallback: "Confirm Transfer")
+    /// To
+    public static let to = LFLocalizable.tr("Localizable", "ConfirmSendCryptoView.to", fallback: "To")
+    /// Wallet address
+    public static let walletAddress = LFLocalizable.tr("Localizable", "ConfirmSendCryptoView.wallet_address", fallback: "Wallet address")
+  }
   public enum EnterCryptoAddressView {
     /// SEND %@
     public static func title(_ p1: Any) -> String {
@@ -401,6 +411,10 @@ public enum LFLocalizable {
     public enum Back {
       /// Back
       public static let title = LFLocalizable.tr("Localizable", "button.back.title", fallback: "Back")
+    }
+    public enum Confirm {
+      /// Confirm
+      public static let title = LFLocalizable.tr("Localizable", "button.confirm.title", fallback: "Confirm")
     }
     public enum ContactSupport {
       /// Contact Support

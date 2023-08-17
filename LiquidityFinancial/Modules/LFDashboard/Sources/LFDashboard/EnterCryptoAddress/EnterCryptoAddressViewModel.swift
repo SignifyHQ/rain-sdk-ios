@@ -9,21 +9,29 @@ import CodeScanner
 final class EnterCryptoAddressViewModel: ObservableObject {
   @LazyInjected(\.accountRepository) var accountRepository
   
-  @Published var account: LFAccount
-  @Published var isActionAllowed = false
   @Published var isPerformingAction = false
   @Published var numberOfShakes = 0
   @Published var inlineError: String?
   @Published var toastMessage: String?
   @Published var inputValue: String = ""
   @Published var isShowingScanner: Bool = false
+  @Published var navigation: Navigation?
   
-  init(account: LFAccount) {
+  let amount: Double
+  let account: LFAccount
+  
+  init(account: LFAccount, amount: Double) {
     self.account = account
+    self.amount = amount
+  }
+  
+  var isActionAllowed: Bool {
+    !inputValue.trimWhitespacesAndNewlines().isEmpty
   }
   
   func continueButtonTapped() {
     Haptic.impact(.light).generate()
+    navigation = .confirm
   }
   
   func scanAddressTap() {
@@ -42,5 +50,11 @@ final class EnterCryptoAddressViewModel: ObservableObject {
     case let .failure(error):
       log.error("Scanning failed: \(error.localizedDescription)")
     }
+  }
+}
+
+extension EnterCryptoAddressViewModel {
+  enum Navigation {
+    case confirm
   }
 }

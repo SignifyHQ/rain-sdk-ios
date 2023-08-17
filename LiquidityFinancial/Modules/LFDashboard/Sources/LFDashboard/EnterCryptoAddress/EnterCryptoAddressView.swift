@@ -8,8 +8,8 @@ import CodeScanner
 struct EnterCryptoAddressView: View {
   @StateObject private var viewModel: EnterCryptoAddressViewModel
   
-  init(account: LFAccount) {
-    _viewModel = .init(wrappedValue: EnterCryptoAddressViewModel(account: account))
+  init(account: LFAccount, amount: Double) {
+    _viewModel = .init(wrappedValue: EnterCryptoAddressViewModel(account: account, amount: amount))
   }
   
   var body: some View {
@@ -36,6 +36,12 @@ struct EnterCryptoAddressView: View {
     .sheet(isPresented: $viewModel.isShowingScanner) {
       CodeScannerView(codeTypes: [.qr], simulatedData: "") { result in
         viewModel.handleScan(result: result)
+      }
+    }
+    .navigationLink(item: $viewModel.navigation) { item in
+      switch item {
+      case .confirm:
+        ConfirmSendCryptoView(amount: viewModel.amount, address: viewModel.inputValue)
       }
     }
   }

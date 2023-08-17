@@ -794,6 +794,12 @@
 "round_up.skip" = "Skip";
 "round_up.purchases" = "Round up purchases";
 
+// Confirmation Crypto Send
+"ConfirmSendCryptoView.title" = "Confirm Transfer";
+"ConfirmSendCryptoView.amount" = "Amount";
+"ConfirmSendCryptoView.to" = "To";
+"ConfirmSendCryptoView.wallet_address" = "Wallet address";
+
 // MARK: - Common
 
 // Terms
@@ -821,6 +827,7 @@
 "button.yes.title" = "Yes";
 "button.retry.title" = "Retry";
 "button.verify.title" = "Verify";
+"button.confirm.title" = "Confirm";
 
 // Grid Value
 "grid_value.crypto" = "%@ ADA";

@@ -638,6 +638,12 @@
 "EnterCryptoAddressView.wallet_address.placeholder" = "Wallet Address";
 "EnterCryptoAddressView.warning" = "Sending to a non - %@ wallet will result in lost funds";
 
+// Confirmation Crypto Send
+"ConfirmSendCryptoView.title" = "Confirm Transfer";
+"ConfirmSendCryptoView.amount" = "Amount";
+"ConfirmSendCryptoView.to" = "To";
+"ConfirmSendCryptoView.wallet_address" = "Wallet address";
+
 // MARK: - Common
 
 // Terms
@@ -667,6 +673,7 @@
 "button.share.title" = "Share";
 "button.contactSupport.title" = "Contact Support";
 "button.verify.title" = "Verify";
+"button.confirm.title" = "Confirm";
 
 // Grid Value
 "grid_value.crypto" = "%@ DOGE";
