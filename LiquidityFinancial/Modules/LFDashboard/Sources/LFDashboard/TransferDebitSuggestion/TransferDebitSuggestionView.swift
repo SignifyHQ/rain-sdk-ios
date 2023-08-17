@@ -2,6 +2,7 @@ import SwiftUI
 import LFUtilities
 import LFStyleGuide
 import LFLocalizable
+import LFBank
 
 struct TransferDebitSuggestionView: View {
   @StateObject private var viewModel: TransferDebitSuggestionViewModel

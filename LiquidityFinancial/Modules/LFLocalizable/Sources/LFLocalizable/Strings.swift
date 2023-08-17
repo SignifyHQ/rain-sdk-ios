@@ -1469,6 +1469,26 @@ public enum LFLocalizable {
     /// No rewards yet
     public static let noRewards = LFLocalizable.tr("Localizable", "rewards.no_rewards", fallback: "No rewards yet")
   }
+  public enum RoundUp {
+    /// Continue
+    public static let `continue` = LFLocalizable.tr("Localizable", "round_up.continue", fallback: "Continue")
+    /// Select a cause you'd like to support. You can change anytime.
+    public static let itemOne = LFLocalizable.tr("Localizable", "round_up.item_one", fallback: "Select a cause you'd like to support. You can change anytime.")
+    /// Your spare change will be donated to your selected cause.
+    public static let itemThree = LFLocalizable.tr("Localizable", "round_up.item_three", fallback: "Your spare change will be donated to your selected cause.")
+    /// Spend with your CauseCard.
+    public static let itemTwo = LFLocalizable.tr("Localizable", "round_up.item_two", fallback: "Spend with your CauseCard.")
+    /// Round up spare change to the nearest dollar when you use your %@. It's easy way to make a big impact over time.
+    public static func message(_ p1: Any) -> String {
+      return LFLocalizable.tr("Localizable", "round_up.message", String(describing: p1), fallback: "Round up spare change to the nearest dollar when you use your %@. It's easy way to make a big impact over time.")
+    }
+    /// Round up purchases
+    public static let purchases = LFLocalizable.tr("Localizable", "round_up.purchases", fallback: "Round up purchases")
+    /// Skip
+    public static let skip = LFLocalizable.tr("Localizable", "round_up.skip", fallback: "Skip")
+    /// ROUND UPS
+    public static let title = LFLocalizable.tr("Localizable", "round_up.title", fallback: "ROUND UPS")
+  }
   public enum Screen {
     public enum Title {
       /// Hello i live in Package LFLocalizable

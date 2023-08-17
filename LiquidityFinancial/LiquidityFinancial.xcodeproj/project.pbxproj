@@ -278,6 +278,7 @@
 		A97BF83C2A5DA8A900B8F5CA /* LiquidityFinancialConfig.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = LiquidityFinancialConfig.xcconfig; sourceTree = "<group>"; };
 		A97BF83D2A5DBCF200B8F5CA /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
 		A97BF83F2A5DC13000B8F5CA /* Colors.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Colors.xcassets; sourceTree = "<group>"; };
+		A99759C92A8D2A91005B391E /* LFBank */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = LFBank; path = Modules/LFBank; sourceTree = "<group>"; };
 		A9B448F02A8389B90029944C /* CauseCard.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = CauseCard.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		A9B448F42A838A000029944C /* CauseCardConfig.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = CauseCardConfig.xcconfig; sourceTree = "<group>"; };
 		A9B448F72A838A000029944C /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
@@ -673,6 +674,7 @@
 		A97BF8062A5D971400B8F5CA /* Presentation */ = {
 			isa = PBXGroup;
 			children = (
+				A99759C92A8D2A91005B391E /* LFBank */,
 				A9201F242A8698FB00A6FDB6 /* LFRewards */,
 				06CFE6B72A7263B400B494A2 /* LFCard */,
 				06EBE1FF2A6924E900157B32 /* LFDashboard */,
@@ -2083,7 +2085,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = "${SRCROOT}/LiquidityFinancial/CauseCard/Resources/CauseCard.entitlements";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution";
 				CODE_SIGN_STYLE = Manual;
 				CURRENT_PROJECT_VERSION = $BITRISE_BUILD_NUMBER;
 				DEVELOPMENT_ASSET_PATHS = "";
@@ -2104,10 +2106,10 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0.1;
+				MARKETING_VERSION = 2.0.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.liquidityfinancial.causecard;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = "Apple Development CauseCard";
+				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = "Apple Distribution CauseCard";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
 				SUPPORTS_MACCATALYST = NO;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
@@ -2124,7 +2126,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = "${SRCROOT}/LiquidityFinancial/CauseCard/Resources/CauseCard.entitlements";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution";
 				CODE_SIGN_STYLE = Manual;
 				CURRENT_PROJECT_VERSION = $BITRISE_BUILD_NUMBER;
 				DEVELOPMENT_ASSET_PATHS = "";
@@ -2145,10 +2147,10 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0.1;
+				MARKETING_VERSION = 2.0.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.liquidityfinancial.causecard;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = "Apple Development CauseCard";
+				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = "Apple Distribution CauseCard";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
 				SUPPORTS_MACCATALYST = NO;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;

@@ -784,6 +784,16 @@
 "EnterCryptoAddressView.wallet_address.placeholder" = "Wallet Address";
 "EnterCryptoAddressView.warning" = "Sending to a non - %@ wallet will result in lost funds";
 
+// Round up
+"round_up.title" = "ROUND UPS";
+"round_up.message" = "Round up spare change to the nearest dollar when you use your %@. It's easy way to make a big impact over time.";
+"round_up.item_one" = "Select a cause you'd like to support. You can change anytime.";
+"round_up.item_two" = "Spend with your CauseCard.";
+"round_up.item_three" = "Your spare change will be donated to your selected cause.";
+"round_up.continue" = "Continue";
+"round_up.skip" = "Skip";
+"round_up.purchases" = "Round up purchases";
+
 // MARK: - Common
 
 // Terms

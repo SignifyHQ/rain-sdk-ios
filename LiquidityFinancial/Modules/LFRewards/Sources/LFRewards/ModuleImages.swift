@@ -24,6 +24,16 @@ internal typealias AssetImageTypeAlias = ImageAsset.Image
 internal enum ModuleImages {
   internal static let icCharityStar = ImageAsset(name: "Ic_charityStar")
   internal static let icDownload = ImageAsset(name: "Ic_download")
+  internal enum NewUser {
+    internal static let accountActivated = ImageAsset(name: "accountActivated")
+    internal static let fundCard = ImageAsset(name: "fundCard")
+    internal static let roundUp = ImageAsset(name: "roundUp")
+  }
+  internal enum RoundUps {
+    internal static let roundUpsCard = ImageAsset(name: "roundUpsCard")
+    internal static let roundUpsCause = ImageAsset(name: "roundUpsCause")
+    internal static let roundUpsCycle = ImageAsset(name: "roundUpsCycle")
+  }
   internal enum Share {
     internal static let shareEmail = ImageAsset(name: "shareEmail")
     internal static let shareFacebook = ImageAsset(name: "shareFacebook")

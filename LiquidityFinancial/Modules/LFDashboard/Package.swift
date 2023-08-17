@@ -17,6 +17,7 @@ let package = Package(
     .package(name: "LFLocalizable", path: "../LFLocalizable"),
     .package(name: "LFServices", path: "../LFServices"),
     .package(name: "LFCard", path: "../LFCard"),
+    .package(name: "LFBank", path: "../LFBank"),
     .package(name: "LFData", path: "../LFData"),
     .package(name: "LFNetwork", path: "../LFNetwork"),
     .package(url: "https://github.com/twostraws/CodeScanner", from: "2.0.0")
@@ -25,7 +26,7 @@ let package = Package(
     .target(
       name: "LFDashboard",
       dependencies: [
-        "LFUtilities", "LFStyleGuide", "LFLocalizable", "LFServices", "LFCard",
+        "LFUtilities", "LFStyleGuide", "LFLocalizable", "LFServices", "LFCard", "LFBank",
         .product(name: "OnboardingData", package: "LFData"),
         .product(name: "NetSpendData", package: "LFData"),
         .product(name: "AuthorizationManager", package: "LFNetwork")
