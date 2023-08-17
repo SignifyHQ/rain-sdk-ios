@@ -55,10 +55,10 @@ extension MoreWaysToSupportViewModel {
   }
   
   enum SocialType: String {
-    case email
-    case twitter
-    case facebook
-    case instagram
+    case email = "shareEmail"
+    case twitter = "shareTwitter"
+    case facebook = "shareFacebook"
+    case instagram = "shareInstagram"
   }
 }
 

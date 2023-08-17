@@ -1,4 +1,5 @@
 import SwiftUI
+import UIKit
 import LFUtilities
 
 public struct TextTappable: UIViewRepresentable {
@@ -7,7 +8,7 @@ public struct TextTappable: UIViewRepresentable {
     textAlignment: NSTextAlignment = .natural,
     fontSize: CGFloat = Constants.FontSize.small.value,
     links: [String],
-    style: AttributeStyle = .fillColor,
+    style: AttributeStyle = .fillColor(Colors.primary.color),
     openLink: @escaping (String) -> Void) {
       attributedText = Self.buildAttributedText(text: text, textAlignment: textAlignment, fontSize: fontSize)
       linkTextAttributes = Self.buildLinkTextAttributes(fontSize: fontSize, style: style)
@@ -18,7 +19,7 @@ public struct TextTappable: UIViewRepresentable {
   public init(
     attributedText: NSAttributedString,
     links: [String],
-    style: AttributeStyle = .fillColor,
+    style: AttributeStyle = .fillColor(Colors.primary.color),
     openLink: @escaping (String) -> Void
   ) {
     self.attributedText = attributedText
@@ -84,10 +85,23 @@ public struct TextTappable: UIViewRepresentable {
   }
   
   private static func buildLinkTextAttributes(fontSize: CGFloat, style: AttributeStyle) -> [NSAttributedString.Key: Any] {
-    [
-      .underlineStyle: style == .fillColor ? 0 : 1,
-      .font: style == .fillColor ? Fonts.bold.font(size: fontSize) : Fonts.regular.font(size: fontSize),
-      .foregroundColor: style == .fillColor ? Colors.primary.color : Colors.label.color
+    let underlineStyle: Int
+    let font: UIFont
+    let foregroundColor: UIColor
+    switch style {
+    case .fillColor(let color):
+      underlineStyle = 0
+      font = Fonts.bold.font(size: fontSize)
+      foregroundColor = color
+    case .underlined(let color):
+      underlineStyle = 1
+      font = Fonts.regular.font(size: fontSize)
+      foregroundColor = color
+    }
+    return [
+      .underlineStyle: underlineStyle,
+      .font: font,
+      .foregroundColor: foregroundColor
     ]
   }
 }
@@ -114,7 +128,7 @@ extension TextTappable {
   // MARK: AttributeStyle
 extension TextTappable {
   public enum AttributeStyle {
-    case fillColor
-    case underlined
+    case fillColor(UIColor)
+    case underlined(UIColor)
   }
 }

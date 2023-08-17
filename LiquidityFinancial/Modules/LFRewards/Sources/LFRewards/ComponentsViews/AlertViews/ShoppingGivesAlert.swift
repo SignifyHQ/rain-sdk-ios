@@ -8,7 +8,7 @@ struct ShoppingGivesAlert: View {
   @Environment(\.openURL) private var openURL
   
   var body: some View {
-    TextTappable(attributedText: attributedText, linkTextAttributes: linkAttributes, links: [terms, privacy], openLink: openLink(value:))
+    TextTappable(attributedText: attributedText, linkTextAttributes: linkAttributes, links: [terms, privacy, ein], openLink: openLink(value:))
   }
   
   private var attributedText: NSAttributedString {

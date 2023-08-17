@@ -35,6 +35,7 @@ class FundraiserDetailViewModel: ObservableObject {
   }
   
   func apiFetchDetailFundraiser() {
+    guard fundraiserDetail == nil else { return }
     Task {
       defer { isLoading = false }
       isLoading = true
@@ -58,8 +59,7 @@ class FundraiserDetailViewModel: ObservableObject {
           ]
         ]
         _ = try await rewardUseCase.selectFundraiser(body: body)
-        //analyticsService.track(event: Event(name: .selectedFundraiserSuccess, params: fundraiser.selectedEventParams))
-        let message = LFLocalizable.FundraiserSelection.allowedBeforeAccountCreation(fundraiser.name)
+        let message = LFLocalizable.FundraiserSelection.allowedBeforeAccountCreation(fundraiserDetail?.name ?? "")
         popup = .selectSuccess(message)
       } catch {
         log.error(error.localizedDescription)
@@ -70,21 +70,31 @@ class FundraiserDetailViewModel: ObservableObject {
   
   func navigateToAddress() {
     guard let address = fundraiserDetail?.charity?.address else { return }
-    isGeocodingAddress = true
-    let geocoder = CLGeocoder()
-    geocoder.geocodeAddressString(address) { [weak self] placemarks, error in
-      guard let self = self else { return }
-      self.isGeocodingAddress = false
-      if let error = error {
+    Task { @MainActor in
+      defer { isGeocodingAddress = false }
+      isGeocodingAddress = true
+      do {
+        let geocoder = CLGeocoder()
+        // Create Address String
+        let country: String
+        if #available(iOS 16.0, *) {
+          country = Locale.Region.unitedStates.identifier
+        } else {
+          country = Locale.current.regionCode ?? "US"
+        }
+        let address = "\(country), \(address)"
+        let placemarks = try await geocoder.geocodeAddressString(address)
+        if let location = placemarks.first?.location {
+          let place = MKPlacemark(coordinate: location.coordinate)
+          let mapItem = MKMapItem(placemark: place)
+          mapItem.name = self.fundraiserDetail?.charityName
+          mapItem.openInMaps()
+        } else {
+          log.error("No location found after geocoding address \(address)")
+          self.popup = .geocodeError
+        }
+      } catch {
         log.error("Failed to geocode address \(address) - error :\(error)")
-        self.popup = .geocodeError
-      } else if let location = placemarks?.first?.location {
-        let place = MKPlacemark(coordinate: location.coordinate)
-        let mapItem = MKMapItem(placemark: place)
-        mapItem.name = self.fundraiserDetail?.charityName
-        mapItem.openInMaps()
-      } else {
-        log.error("No location found after geocoding address \(address)")
         self.popup = .geocodeError
       }
     }

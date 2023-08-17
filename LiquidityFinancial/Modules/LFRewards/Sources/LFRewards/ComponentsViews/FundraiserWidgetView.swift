@@ -16,7 +16,7 @@ struct FundraiserWidgetView: View {
       content
     }
     .sheet(isPresented: $showShare) {
-//      ShareView(viewModel: .init(data: .build(from: fundraiser)))
+      ShareView(viewModel: .init(data: .build(from: fundraiser)))
     }
   }
   
@@ -62,7 +62,7 @@ struct FundraiserWidgetView: View {
       GenImages.CommonImages.dash.swiftUIImage
         .foregroundColor(ModuleColors.label.swiftUIColor)
       
-//      FundraiserActionsView(fundraiser: fundraiser)
+      FundraiserActionsView(fundraiser: fundraiser)
     }
     .padding(.top, 52)
     .padding([.horizontal, .bottom], 16)

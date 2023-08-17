@@ -53,13 +53,9 @@ struct SelectFundraiserView: View {
 
   private var title: some View {
     VStack(alignment: .leading, spacing: 8) {
-      Text(LFLocalizable.SelectFundraiser.title)
+      Text(LFLocalizable.SelectFundraiser.causes(viewModel.categoryName))
         .font(Fonts.regular.swiftUIFont(size: 24))
         .foregroundColor(ModuleColors.label.swiftUIColor)
-      
-      Text(LFLocalizable.SelectFundraiser.subtitle)
-        .font(Fonts.regular.swiftUIFont(size: 16))
-        .foregroundColor(ModuleColors.label.swiftUIColor.opacity(0.75))
     }
   }
 

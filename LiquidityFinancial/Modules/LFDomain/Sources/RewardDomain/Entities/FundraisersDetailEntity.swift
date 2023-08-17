@@ -6,8 +6,8 @@ public protocol FundraisersDetailEntity {
   associatedtype APILatestDonationEnity: LatestDonationEnity
   var fundraiser: APIFundraiserEnity? { get }
   var charity: APICharityEnity? { get }
-  var currentDonatedAmount: Int? { get }
-  var currentDonatedCount: Int? { get }
+  var currentDonatedAmount: Double? { get }
+  var currentDonatedCount: Double? { get }
   var latestDonations: [APILatestDonationEnity]? { get }
 }
 
@@ -24,7 +24,7 @@ public protocol CharityEnity {
   var twitterUrl: String? { get }
   var facebookUrl: String? { get }
   var instagramUrl: String? { get }
-  var confidence: Int? { get }
+  var confidence: Double? { get }
   var address: String? { get }
   var ein: String? { get }
   var tags: [String]? { get }
@@ -36,8 +36,9 @@ public protocol FundraiserEnity {
   var name: String? { get }
   var description: String? { get }
   var stickerUrl: String? { get }
+  var backgroundColor: String? { get }
   var createdAt: String? { get }
-  var goal: Int? { get }
+  var goal: Double? { get }
   var currency: String? { get }
   var isFeatured: Bool? { get }
   var isLive: Bool? { get }
@@ -47,9 +48,12 @@ public protocol FundraiserEnity {
   // MARK: - LatestDonation
 public protocol LatestDonationEnity {
   var id: String? { get }
+  var title: String? { get }
   var fundraiserId: String? { get }
   var userId: String? { get }
   var userName: String? { get }
-  var amount: Int? { get }
+  var amount: Double? { get }
+  var stickerUrl: String? { get }
+  var status: String? { get }
   var createdAt: String? { get }
 }

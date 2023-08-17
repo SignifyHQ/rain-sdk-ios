@@ -26,10 +26,11 @@ struct SelectCauseCategoriesView: View {
       }
       .navigationLink(item: $viewModel.navigation) { navigation in
         switch navigation {
-        case let .selectFundraiser(model):
+        case let .selectFundraiser(cause, fundraisers):
           SelectFundraiserView(
             viewModel: SelectFundraiserViewModel(
-              fundraisers: model,
+              causeModel: cause,
+              fundraisers: fundraisers,
               showSkipButton: false),
             destination: destination
           )
@@ -51,9 +52,7 @@ struct SelectCauseCategoriesView: View {
       title
       grid
       Spacer()
-      if viewModel.isContinueEnabled {
-        bottom
-      }
+      bottom
     }
     .padding(.top, 20)
   }
@@ -92,7 +91,7 @@ struct SelectCauseCategoriesView: View {
   }
   
   private var continueButton: some View {
-    FullSizeButton(title: LFLocalizable.CausesFilter.continue, isDisable: false, isLoading: $viewModel.isLoading) {
+    FullSizeButton(title: LFLocalizable.CausesFilter.continue, isDisable: $viewModel.selected.isEmpty, isLoading: $viewModel.isLoading) {
       viewModel.continueTapped()
     }
   }

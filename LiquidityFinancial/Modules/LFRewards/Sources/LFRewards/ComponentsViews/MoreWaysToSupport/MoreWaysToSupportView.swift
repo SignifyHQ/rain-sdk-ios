@@ -55,9 +55,9 @@ struct MoreWaysToSupportView: View {
       header(title: LFLocalizable.MoreWaysToSupport.Share.title, message: nil)
       
       HStack(spacing: 12) {
-        shareItem(image: ModuleImages.icReferrals.swiftUIImage, text: LFLocalizable.MoreWaysToSupport.Share.friends) {
-          viewModel.inviteFriendsTapped()
-        }
+//        shareItem(image: ModuleImages.icReferrals.swiftUIImage, text: LFLocalizable.MoreWaysToSupport.Share.friends) {
+//          viewModel.inviteFriendsTapped()
+//        }
         shareItem(image: ModuleImages.icShared.swiftUIImage, text: LFLocalizable.MoreWaysToSupport.Share.cause) {
           viewModel.shareCauseTapped()
         }
@@ -185,7 +185,8 @@ extension MoreWaysToSupportView {
         Circle()
           .fill(ModuleColors.background.swiftUIColor)
           .frame(width: 44, height: 44)
-        Image(item.type.rawValue)
+        Image(item.type.rawValue, bundle: .module)
+          .resizable()
           .foregroundColor(ModuleColors.label.swiftUIColor)
       }
     }

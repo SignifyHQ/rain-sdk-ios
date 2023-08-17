@@ -36,7 +36,7 @@ struct ShareItemData {
     
     init(fundraiserDetail: FundraiserDetailModel, donation: Double?) {
       title = fundraiserDetail.name
-      backgroundColor = ModuleColors.separator.swiftUIColor.opacity(0.5)
+      backgroundColor = fundraiserDetail.fundraiser?.backgroundColor?.asHexColor ?? ModuleColors.separator.swiftUIColor
       imageUrl = fundraiserDetail.stickerUrl
       
       messageGeneric = LFLocalizable.Fundraise.ShareDonation.generic(fundraiserDetail.charityName, LFUtility.appName, fundraiserDetail.name)
@@ -76,7 +76,7 @@ extension ShareItemData {
     )
   }
   
-  static func build(from sticker: StickerModel) -> Self {
+  static func build(sticker: StickerModel) -> Self {
     .init(
       card: .init(
         title: sticker.name,

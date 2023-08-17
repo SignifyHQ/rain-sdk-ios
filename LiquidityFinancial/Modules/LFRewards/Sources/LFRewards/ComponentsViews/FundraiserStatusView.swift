@@ -8,18 +8,16 @@ struct FundraiserStatusView: View {
   
   var body: some View {
     Group {
-      if shouldShow {
-        HStack {
-          raised
-            .frame(maxWidth: .infinity)
-          divider
-          donations
-            .frame(maxWidth: .infinity)
-        }
-        .padding(.vertical, 8)
-        .background(ModuleColors.buttons.swiftUIColor)
-        .cornerRadius(8)
+      HStack {
+        raised
+          .frame(maxWidth: .infinity)
+        divider
+        donations
+          .frame(maxWidth: .infinity)
       }
+      .padding(.vertical, 8)
+      .background(ModuleColors.buttons.swiftUIColor)
+      .cornerRadius(8)
     }
   }
   
@@ -46,7 +44,7 @@ struct FundraiserStatusView: View {
   }
   
   private var donations: some View {
-    Text(LFLocalizable.FundraiserStatus.donations(fundraiser.currentDonations.roundedWithAbbreviations))
+    Text(LFLocalizable.FundraiserStatus.donations(Int(fundraiser.currentDonations).roundedWithAbbreviations))
       .font(Fonts.regular.swiftUIFont(size: 12))
       .foregroundColor(ModuleColors.label.swiftUIColor.opacity(0.75))
   }

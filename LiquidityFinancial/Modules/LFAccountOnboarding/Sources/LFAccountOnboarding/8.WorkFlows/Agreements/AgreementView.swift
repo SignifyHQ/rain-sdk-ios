@@ -117,7 +117,7 @@ private extension AgreementView {
       TextTappable(
         text: condition.message,
         links: Array(condition.attributeInformation.keys),
-        style: .underlined
+        style: .underlined(Colors.label.color)
       ) { tappedString in
         guard let url = URL(string: viewModel.getURL(tappedString: tappedString)) else {
           return

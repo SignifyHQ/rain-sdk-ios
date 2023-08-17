@@ -49,6 +49,7 @@ public enum Colors {
   public static let primary = ColorAsset(name: "primary")
   public static let secondaryBackground = ColorAsset(name: "secondaryBackground")
   public static let separator = ColorAsset(name: "separator")
+  public static let termAndPrivacy = ColorAsset(name: "termAndPrivacy")
   public static let tertiary = ColorAsset(name: "tertiary")
   public static let whiteText = ColorAsset(name: "whiteText")
   public static let zerohash = ColorAsset(name: "zerohash")

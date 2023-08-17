@@ -12,7 +12,7 @@ struct FundraiserDetailModel: Equatable, Identifiable {
   
   let fundraiser: Fundraiser?
   let charity: Charity?
-  let currentDonatedAmount, currentDonatedCount: Int?
+  let currentDonatedAmount, currentDonatedCount: Double?
   let latestDonations: [LatestDonation]?
   
   var name: String {
@@ -40,19 +40,15 @@ struct FundraiserDetailModel: Equatable, Identifiable {
   }
   
   var currentAmount: Double {
-    Double(currentDonatedAmount ?? 0)
+    currentDonatedAmount ?? 0
   }
   
-  var currentDonations: Int {
+  var currentDonations: Double {
     currentDonatedCount ?? 0
   }
   
   var description: String? {
     fundraiser?.description
-  }
-  
-  var emailUrl: URL? {
-    URL(string: charity?.url ?? "unknown")
   }
   
   var twitterUrl: URL? {
@@ -67,14 +63,16 @@ struct FundraiserDetailModel: Equatable, Identifiable {
     URL(string: charity?.instagramUrl ?? "unknown")
   }
   
-  var charityNavigatorUrl: URL?
+  var charityNavigatorUrl: URL? {
+    URL(string: charity?.url ?? "unknown")
+  }
   
     // MARK: - Charity
   struct Charity {
     let id, productId, name, description: String?
     let logoUrl, headerUrl, headerImageUrl, url: String?
     let twitterUrl, facebookUrl, instagramUrl: String?
-    let confidence: Int?
+    let confidence: Double?
     let address, ein: String?
     let tags: [String]?
     
@@ -96,13 +94,17 @@ struct FundraiserDetailModel: Equatable, Identifiable {
       self.ein = enity.ein
       self.tags = enity.tags
     }
+    
+    var confidenceValue: Double {
+      confidence ?? 0.0
+    }
   }
   
     // MARK: - Fundraiser
   struct Fundraiser {
-    let id, name, description, stickerUrl: String?
+    let id, name, description, stickerUrl, backgroundColor: String?
     let createdAt: String?
-    let goal: Int?
+    let goal: Double?
     let currency: String?
     let isFeatured, isLive: Bool?
     let categories: [String]?
@@ -119,13 +121,14 @@ struct FundraiserDetailModel: Equatable, Identifiable {
       self.isFeatured = enity.isFeatured
       self.isLive = enity.isLive
       self.categories = enity.categories
+      self.backgroundColor = enity.backgroundColor
     }
   }
   
     // MARK: - LatestDonation
   struct LatestDonation {
     let id, fundraiserId, userId, userName: String?
-    let amount: Int?
+    let amount: Double?
     let createdAt: String?
     
     init?(enity: (any LatestDonationEnity)?) {

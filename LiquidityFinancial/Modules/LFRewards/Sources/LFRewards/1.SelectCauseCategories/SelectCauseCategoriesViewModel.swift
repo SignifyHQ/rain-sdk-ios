@@ -53,6 +53,7 @@ class SelectCauseCategoriesViewModel: ObservableObject {
     }
   }
   
+  // swiftlint:disable force_unwrapping
   private func apiFetchCategoriesFundraisers(onCompletion: @escaping () -> Void) {
     Task {
       defer { isLoading = false }
@@ -62,7 +63,7 @@ class SelectCauseCategoriesViewModel: ObservableObject {
         let fundraisers = try await selectRewardUseCase.getCategoriesFundraisers(categoryID: categoryId, limit: limit, offset: offset)
         let fundraiserModels = fundraisers.data.compactMap({ FundraiserModel(fundraiserData: $0) })
         rewardDataManager.update(fundraisers: fundraisers)
-        self.navigation = .selectFundraiser(fundraiserModels)
+        self.navigation = .selectFundraiser(selected.first!, fundraiserModels)
       } catch {
         log.error(error.localizedDescription)
         showError = true
@@ -74,7 +75,7 @@ class SelectCauseCategoriesViewModel: ObservableObject {
 
 extension SelectCauseCategoriesViewModel {
   enum Navigation {
-    case selectFundraiser([FundraiserModel])
+    case selectFundraiser(CauseModel, [FundraiserModel])
     case agreement
   }
 }

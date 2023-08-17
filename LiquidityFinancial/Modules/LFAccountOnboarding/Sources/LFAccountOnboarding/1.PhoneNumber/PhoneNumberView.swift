@@ -89,7 +89,8 @@ private extension PhoneNumberView {
       text: LFLocalizable.Term.PrivacyPolicy.description,
       textAlignment: .center,
       fontSize: Constants.FontSize.ultraSmall.value,
-      links: [viewModel.terms, viewModel.esignConsent, viewModel.privacyPolicy]
+      links: [viewModel.terms, viewModel.esignConsent, viewModel.privacyPolicy],
+      style: .fillColor(Colors.termAndPrivacy.color)
     ) { tappedString in
       guard let url = URL(string: viewModel.getURL(tappedString: tappedString)) else { return }
       openURL(url)
@@ -163,7 +164,8 @@ private extension PhoneNumberView {
       text: LFLocalizable.Term.TermsVoip.description,
       textAlignment: .center,
       fontSize: Constants.FontSize.ultraSmall.value,
-      links: [LFLocalizable.Term.PrivacyPolicy.attributeText]
+      links: [LFLocalizable.Term.PrivacyPolicy.attributeText],
+      style: .fillColor(Colors.termAndPrivacy.color)
     ) { _ in
       guard let url = URL(string: LFUtility.privacyURL) else { return }
       openURL(url)

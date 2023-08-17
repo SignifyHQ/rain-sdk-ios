@@ -6,6 +6,12 @@ import LFLocalizable
 struct FundraiserActionsView: View {
   let fundraiser: FundraiserDetailModel
   
+  let canOpenDonation: Bool
+  init(fundraiser: FundraiserDetailModel, canOpenDonation: Bool = false) {
+    self.fundraiser = fundraiser
+    self.canOpenDonation = canOpenDonation
+  }
+  
   var body: some View {
     content
       .sheet(isPresented: $share) {
@@ -27,7 +33,9 @@ struct FundraiserActionsView: View {
   private var content: some View {
     HStack(spacing: 10) {
       item(.share)
-        //            item(.donate)
+      if canOpenDonation {
+        item(.donate)
+      }
       item(.more)
     }
   }
@@ -61,6 +69,7 @@ struct FundraiserActionsView: View {
     }
   }
   
+  // swiftlint:disable force_unwrapping
   private var activityItems: [Any] {
     if let url = fundraiser.charityUrl {
       return [url]

@@ -38,8 +38,8 @@ struct CardView: View {
     switch type {
     case .donation:
       return ModuleColors.separator.swiftUIColor.opacity(0.5)
-    case .shareDonation:
-      return ModuleColors.separator.swiftUIColor.opacity(0.5)
+    case .shareDonation(let data):
+      return data.backgroundColor ?? ModuleColors.separator.swiftUIColor.opacity(0.5)
     case .cashback:
       return ModuleColors.secondaryBackground.swiftUIColor
     }

@@ -11,7 +11,14 @@ class SelectFundraiserViewModel: ObservableObject {
   @Published var popup: Popup?
   @Published var showErrorAlert = false
   
-  init(fundraisers: [FundraiserModel], showSkipButton: Bool) {
+  var categoryName: String {
+    causeModel.name
+  }
+  
+  let causeModel: CauseModel
+  
+  init(causeModel: CauseModel, fundraisers: [FundraiserModel], showSkipButton: Bool) {
+    self.causeModel = causeModel
     self.fundraisers = fundraisers
     self.showSkipButton = showSkipButton
   }

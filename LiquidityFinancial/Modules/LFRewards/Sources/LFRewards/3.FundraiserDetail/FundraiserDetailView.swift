@@ -159,7 +159,7 @@ extension FundraiserDetailView {
       HStack(spacing: 8) {
         ForEach(0 ..< 4) { index in
           ModuleImages.icCharityStar.swiftUIImage
-            .foregroundColor((charity?.confidence ?? 0) > index ? ModuleColors.primary.swiftUIColor : ModuleColors.label.swiftUIColor.opacity(0.25))
+            .foregroundColor(Int(charity?.confidenceValue ?? 0.0) > index ? ModuleColors.primary.swiftUIColor : ModuleColors.label.swiftUIColor.opacity(0.25))
         }
         Spacer()
       }
@@ -308,7 +308,7 @@ extension FundraiserDetailView {
     LiquidityAlert(
       title: LFLocalizable.FundraiserDetail.Success.title,
       message: message,
-      primary: .init(text: LFLocalizable.Button.Ok.title) { viewModel.selectSuccessPrimary() },
+      primary: .init(text: LFLocalizable.Button.Continue.title) { viewModel.selectSuccessPrimary() },
       secondary: nil
     )
   }
