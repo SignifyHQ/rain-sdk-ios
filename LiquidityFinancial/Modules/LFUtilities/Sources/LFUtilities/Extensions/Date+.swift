@@ -22,7 +22,7 @@ public extension DateFormatter {
   /// A formatter following the server representation (`"yyyy-MM-dd'T'HH:mm:ss'Z'"`) and UTC timezone.
   static var server: DateFormatter = {
     let formatter = DateFormatter()
-    formatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss'Z'"
+    formatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSSSSSZ"
     formatter.timeZone = TimeZone(abbreviation: "UTC")
     return formatter
   }()

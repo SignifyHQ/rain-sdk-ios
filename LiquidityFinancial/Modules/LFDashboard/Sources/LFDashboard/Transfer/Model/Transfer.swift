@@ -1,7 +1,8 @@
 import Foundation
 import LFUtilities
+import LFTransaction
 
-struct Transfer: Codable {
+struct Transfer {
   var id: String?
   var amount: String?
   var status: TransactionStatus?

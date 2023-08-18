@@ -7,6 +7,7 @@ import AccountDomain
 import AccountData
 import LFUtilities
 import LFBank
+import LFTransaction
 
 @MainActor
 final class CashViewModel: ObservableObject {
@@ -79,7 +80,7 @@ extension CashViewModel {
       guestHandler()
     } else {
       Haptic.impact(.light).generate()
-      navigation = .transactionDetail(transaction.id)
+      navigation = .transactionDetail(transaction)
     }
   }
   
@@ -184,7 +185,7 @@ extension CashViewModel {
     case bankStatements
     case changeAsset
     case transactions
-    case transactionDetail(String?)
+    case transactionDetail(TransactionModel)
     case addMoney
     case sendMoney
   }

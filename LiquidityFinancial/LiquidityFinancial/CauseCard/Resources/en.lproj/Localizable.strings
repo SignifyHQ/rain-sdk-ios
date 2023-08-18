@@ -555,8 +555,8 @@
 "verify_card.button.verifyCard" = "Verify Card";
 
 // TransactionDetail
+"transactionDetail.balance.title" = "Balance";
 "transactionDetail.balanceCash.title" = "Balance: %@";
-"transactionDetail.balanceCrypto.title" = "Balance: %@ DOGE";
 "transactionDetail.totalDonated.title" = "Total Donated: %@";
 "transactionDetail.currentRewards.title" = "Current rewards";
 "transactionDetail.title" = "Title";
@@ -578,6 +578,7 @@
 "transactionDetail.price.title" = "Price";
 "transactionDetail.fee.title" = "Fee";
 "transactionDetail.rewards.title" = "Rewards";
+"transactionDetail.currentReward.title" = "Current Reward";
 
 // Transfer debit suggestion
 "transferDebitSuggestion.title" = "Get Faster Deposits";
@@ -595,7 +596,8 @@
 "transactionCard.crypto.title" = "Doge Earned";
 "transactionCard.donation.title" = "Donation";
 "transactionCard.cashback.title" = "Cashback";
-"transactionCard.crypto.message" = "I earned %@ by making a %@ purchase with %@.";
+"transactionCard.purchase.title" = "%@ Earn";
+"transactionCard.purchase.message" = "I earned %@ by making a %@ purchase with %@.";
 "transactionCard.donation.message" = "Supporting %@ - %@.";
 "transactionCard.shareDonationAmount.message" = "I donated %@ to %@ using %@. Join us in supporting %@.";
 "transactionCard.shareDonationGeneric.message" = "We're raising money for %@ using %@. Join us in supporting %@.";

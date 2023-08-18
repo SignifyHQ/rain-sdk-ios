@@ -14,6 +14,7 @@ CONSENT_URL = https:/$()/dogecard.co/legal#e-sign-consent
 PATHWARD_USER_URL = https:/$()/dogecard.co/legal#privacy-policy
 PATHWARD_PRIVACY_URL = https:/$()/dogecard.co/legal#privacy-policy
 PATHWARD_DISCLOSURE_URL = https:/$()/dogecard.co/legal#privacy-policy
+SHARE_APP_URL = https:/$()/dogecard.co/app
 
 CHARITY_ENABLED = false
 CRYPTO_ENABLED = true

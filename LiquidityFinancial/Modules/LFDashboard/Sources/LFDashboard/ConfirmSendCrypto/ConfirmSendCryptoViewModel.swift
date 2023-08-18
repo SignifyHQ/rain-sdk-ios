@@ -4,7 +4,6 @@ class ConfirmSendCryptoViewModel: ObservableObject {
   @Published var showIndicator: Bool = false
   @Published var toastMessage: String?
   
-
   let amount: Double
   let address: String
   let nickname: String = ""

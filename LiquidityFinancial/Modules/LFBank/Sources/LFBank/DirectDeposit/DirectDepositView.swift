@@ -16,9 +16,7 @@ public struct DirectDepositView: View {
     GenImages.CommonImages.CompanyLogo.companyLogo5,
     GenImages.CommonImages.CompanyLogo.companyLogo6
   ]
-  
-  
-  
+
   init(achInformation: Binding<ACHModel>) {
     _achInformation = achInformation
   }

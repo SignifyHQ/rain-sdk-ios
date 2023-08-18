@@ -18,7 +18,7 @@ public struct CircleSelected: View {
             Circle()
               .fill(Colors.primary.swiftUIColor)
               .overlay {
-                GenImages.CommonImages.checkmark.swiftUIImage
+                GenImages.CommonImages.icCheckmark.swiftUIImage
                   .foregroundColor(Colors.label.swiftUIColor)
               }
           }

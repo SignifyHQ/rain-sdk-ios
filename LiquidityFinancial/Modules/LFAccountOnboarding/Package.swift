@@ -28,7 +28,7 @@ let package = Package(
       .package(name: "LFLocalizable", path: "../LFLocalizable"),
       .package(url: "https://github.com/SwiftGen/SwiftGenPlugin", from: "6.6.2"),
       .package(name: "LFRewards", path: "../LFRewards"),
-      .package(name: "LFNetwork", path: "../LFNetwork"),
+      .package(name: "LFNetwork", path: "../LFNetwork")
     ],
     targets: [
         .target(

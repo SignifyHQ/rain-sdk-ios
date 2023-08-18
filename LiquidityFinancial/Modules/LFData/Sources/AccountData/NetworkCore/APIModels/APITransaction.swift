@@ -6,11 +6,45 @@ public struct APITransactionList: TransactionListEntity {
   public var data: [TransactionEntity]
 }
 
-public struct APITransaction: TransactionEntity, Codable {
-  public let id, accountId: String
-  public let title, description: String?
-  public let amount, currentBalance: Int?
-  public let type, status: String?
-  public let completedAt, createdAt: String?
-  public let updatedAt: String?
+public struct APITransaction: Codable {
+  public let id: String
+  public let accountId: String
+  public let title: String?
+  public let description: String?
+  public let amount: Double
+  public let currentBalance: Double?
+  public let fee: Double?
+  public let type: String
+  public let status: String?
+  public let completedAt: String?
+  public let createdAt: String
+  public let updatedAt: String
+  public var reward: APIReward?
+  public var receipt: APITransactionReceipt?
+}
+
+extension APITransaction: TransactionEntity {
+  public var rewardEntity: RewardEntity? {
+    reward
+  }
+  
+  public var receiptEntity: TransactionReceiptEntity? {
+    receipt
+  }
+}
+
+public struct APIReward: Codable, RewardEntity {
+  public let status: String
+  public let type: String?
+  public let amount: Double?
+  public let stickerUrl: String?
+  public let backgroundColor: String?
+  public var description: String?
+}
+
+public struct APITransactionReceipt: Codable, TransactionReceiptEntity {
+  public let id: String
+  public let accountId: String
+  public let fee: Double?
+  public let completedAt: String?
 }

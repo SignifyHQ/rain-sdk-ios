@@ -10,11 +10,30 @@ public protocol TransactionEntity {
   var accountId: String { get }
   var title: String? { get }
   var description: String? { get }
-  var amount: Int? { get }
-  var currentBalance: Int? { get }
-  var type: String? { get }
+  var amount: Double { get }
+  var currentBalance: Double? { get }
+  var fee: Double? { get }
+  var type: String { get }
   var status: String? { get }
   var completedAt: String? { get }
-  var createdAt: String? { get }
-  var updatedAt: String? { get }
+  var createdAt: String { get }
+  var updatedAt: String { get }
+  var rewardEntity: RewardEntity? { get }
+  var receiptEntity: TransactionReceiptEntity? { get }
+}
+
+public protocol RewardEntity {
+  var status: String { get }
+  var type: String? { get }
+  var amount: Double? { get }
+  var stickerUrl: String? { get }
+  var backgroundColor: String? { get }
+  var description: String? { get }
+}
+
+public protocol TransactionReceiptEntity {
+  var id: String { get }
+  var accountId: String { get }
+  var fee: Double? { get }
+  var completedAt: String? { get }
 }

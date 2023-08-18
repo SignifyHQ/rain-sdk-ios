@@ -24,6 +24,8 @@
 	<string>$(MARKETING_VERSION)</string>
 	<key>CFBundleVersion</key>
 	<string>$BITRISE_BUILD_NUMBER</string>
+	<key>SHARE_APP_URL</key>
+	<string>$(SHARE_APP_URL)</string>
 	<key>CHARITY_ENABLED</key>
 	<string>$(CHARITY_ENABLED)</string>
 	<key>CONSENT_URL</key>

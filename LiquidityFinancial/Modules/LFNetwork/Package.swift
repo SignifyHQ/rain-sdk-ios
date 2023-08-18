@@ -35,6 +35,6 @@ let package = Package(
         ),
         .target(
           name: "NetworkUtilities",
-          dependencies: ["LFUtilities"]),
+          dependencies: ["LFUtilities"])
     ]
 )

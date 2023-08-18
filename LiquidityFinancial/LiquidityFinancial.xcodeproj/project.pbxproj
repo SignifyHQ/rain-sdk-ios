@@ -238,6 +238,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		0697F3D32A8CCC3B006C867E /* LFTransaction */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = LFTransaction; path = Modules/LFTransaction; sourceTree = "<group>"; };
 		06CFE6B72A7263B400B494A2 /* LFCard */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = LFCard; path = Modules/LFCard; sourceTree = "<group>"; };
 		06D40BF72A625F5400EADB75 /* LoadingMix.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = LoadingMix.json; sourceTree = "<group>"; };
 		06D40BFB2A6260B300EADB75 /* LoadingContrast.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = LoadingContrast.json; sourceTree = "<group>"; };
@@ -675,6 +676,7 @@
 			isa = PBXGroup;
 			children = (
 				A99759C92A8D2A91005B391E /* LFBank */,
+				0697F3D32A8CCC3B006C867E /* LFTransaction */,
 				A9201F242A8698FB00A6FDB6 /* LFRewards */,
 				06CFE6B72A7263B400B494A2 /* LFCard */,
 				06EBE1FF2A6924E900157B32 /* LFDashboard */,

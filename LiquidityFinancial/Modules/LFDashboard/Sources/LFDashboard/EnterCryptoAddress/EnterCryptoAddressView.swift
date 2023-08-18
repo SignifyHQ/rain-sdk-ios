@@ -73,9 +73,11 @@ private extension EnterCryptoAddressView {
         .title(LFLocalizable.Crypto.value),
       clearValue: {
         viewModel.clearValue()
-      }) {
+      },
+      scanTap: {
         viewModel.scanAddressTap()
       }
+    )
   }
   
   var warningLabel: some View {

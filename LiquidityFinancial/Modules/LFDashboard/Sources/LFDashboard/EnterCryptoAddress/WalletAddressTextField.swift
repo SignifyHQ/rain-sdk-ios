@@ -17,14 +17,15 @@ struct WalletAddressTextField: View {
 
   private var disposeBag = Set<AnyCancellable>()
 
-  init(placeHolderText: String,
-       value: Binding<String>,
-       errorMessage: String? = nil,
-       textFieldTitle: String? = nil,
-       clearValue: (() -> Void)? = nil,
-       scanTap: (() -> Void)? = nil,
-       numberOfShakes: Binding<Int> = .constant(0))
-  {
+  init(
+    placeHolderText: String,
+    value: Binding<String>,
+    errorMessage: String? = nil,
+    textFieldTitle: String? = nil,
+    clearValue: (() -> Void)? = nil,
+    scanTap: (() -> Void)? = nil,
+    numberOfShakes: Binding<Int> = .constant(0)
+  ) {
     _value = value
     _numberOfShakes = numberOfShakes
     self.placeHolderText = placeHolderText

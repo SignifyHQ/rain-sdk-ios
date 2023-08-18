@@ -143,7 +143,7 @@ extension MoveCryptoInputViewModel {
   }
   
   var showCryptoDisclosure: Bool {
-    return true
+    true
   }
   
   var showEstimatedFeeDescription: Bool {

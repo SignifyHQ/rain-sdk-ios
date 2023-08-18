@@ -3,6 +3,7 @@ import LFUtilities
 import LFStyleGuide
 import LFLocalizable
 import LFBank
+import LFTransaction
 
 struct CashView: View {
   @StateObject private var viewModel: CashViewModel
@@ -40,8 +41,8 @@ struct CashView: View {
         MoveMoneyAccountView(kind: .receive)
       case .sendMoney:
         MoveMoneyAccountView(kind: .send)
-      case let .transactionDetail(transactionId):
-        TransactionDetailView(type: .cash, transactionId: transactionId ?? .empty)
+      case let .transactionDetail(transaction):
+          TransactionDetailView(transactionId: transaction.id, kind: transaction.detailType)
       }
     }
   }
@@ -197,7 +198,7 @@ private extension CashView {
         noTransactionsYetView(height: size.height)
       } else {
         ForEach(viewModel.transactions) { transaction in
-          TransactionRowView(item: transaction, type: .cash) {
+          TransactionRowView(item: transaction) {
             viewModel.transactionItemTapped(transaction)
           }
         }
