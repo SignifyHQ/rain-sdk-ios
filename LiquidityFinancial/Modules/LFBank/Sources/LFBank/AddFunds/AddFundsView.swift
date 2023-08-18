@@ -62,13 +62,13 @@ private extension AddFundsView {
   
   var content: some View {
     VStack(spacing: 8) {
-      ArrowButton(
+      /*ArrowButton(
         image: GenImages.CommonImages.Accounts.directDeposit,
         title: LFLocalizable.AccountView.DirectDeposit.title,
         value: LFLocalizable.AccountView.DirectDeposit.subtitle
       ) {
         viewModel.selectedAddOption(navigation: .directDeposit)
-      }
+      }*/
       ArrowButton(
         image: GenImages.CommonImages.Accounts.bankTransfers,
         title: LFLocalizable.AccountView.BankTransfers.title,
