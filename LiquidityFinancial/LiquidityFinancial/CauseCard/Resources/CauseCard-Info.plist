@@ -23,9 +23,7 @@
 	<key>CFBundleShortVersionString</key>
 	<string>$(MARKETING_VERSION)</string>
 	<key>CFBundleVersion</key>
-	<string>$BITRISE_BUILD_NUMBER</string>
-	<key>SHARE_APP_URL</key>
-	<string>$(SHARE_APP_URL)</string>
+	<string>2</string>
 	<key>CHARITY_ENABLED</key>
 	<string>$(CHARITY_ENABLED)</string>
 	<key>CONSENT_URL</key>
@@ -75,8 +73,14 @@
 			</dict>
 		</dict>
 	</dict>
+	<key>NSCameraUsageDescription</key>
+	<string>Used to capture user for KYC purposes</string>
+	<key>NSFaceIDUsageDescription</key>
+	<string>Application uses face ID to authorize sensitive transactions.</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>Used to surface nearby ATMs for the user</string>
+	<key>NSPhotoLibraryAddUsageDescription</key>
+	<string>Used to save images to Library</string>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>Used to process images for KYC purposes</string>
 	<key>PATHWARD_DISCLOSURE_URL</key>
@@ -87,6 +91,8 @@
 	<string>$(PATHWARD_USER_URL)</string>
 	<key>PRIVACY_URL</key>
 	<string>$(PRIVACY_URL)</string>
+	<key>SHARE_APP_URL</key>
+	<string>$(SHARE_APP_URL)</string>
 	<key>TERMS_URL</key>
 	<string>$(TERMS_URL)</string>
 	<key>UIApplicationSceneManifest</key>
