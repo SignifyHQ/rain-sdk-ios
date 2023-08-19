@@ -30,6 +30,7 @@ let package = Package(
         "LFUtilities", "LFStyleGuide", "LFLocalizable", "LFServices", "LFCard", "LFBank", "LFTransaction",
         .product(name: "OnboardingData", package: "LFData"),
         .product(name: "NetSpendData", package: "LFData"),
+        .product(name: "ZerohashData", package: "LFData"),
         .product(name: "AuthorizationManager", package: "LFNetwork")
       ]
     ),

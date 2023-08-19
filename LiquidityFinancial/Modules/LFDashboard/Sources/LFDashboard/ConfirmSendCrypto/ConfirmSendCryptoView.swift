@@ -2,11 +2,12 @@ import SwiftUI
 import LFLocalizable
 import LFStyleGuide
 import LFUtilities
+import LFTransaction
 
 struct ConfirmSendCryptoView: View {
   @StateObject private var viewModel: ConfirmSendCryptoViewModel
-  init(amount: Double, address: String) {
-    _viewModel = .init(wrappedValue: ConfirmSendCryptoViewModel(amount: amount, address: address))
+  init(accountId: String, amount: Double, address: String) {
+    _viewModel = .init(wrappedValue: ConfirmSendCryptoViewModel(accountId: accountId, amount: amount, address: address))
   }
 
   var body: some View {
@@ -20,6 +21,12 @@ struct ConfirmSendCryptoView: View {
         }
       }
       .navigationBarTitleDisplayMode(.inline)
+      .navigationLink(item: $viewModel.navigation) { item in
+        switch item {
+        case .detail(let transaction):
+          TransactionDetailView(transactionId: transaction.id, kind: transaction.detailType)
+        }
+      }
   }
 }
 
