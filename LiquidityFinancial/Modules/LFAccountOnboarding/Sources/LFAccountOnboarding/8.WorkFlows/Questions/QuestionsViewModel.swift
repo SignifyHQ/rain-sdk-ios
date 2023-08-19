@@ -133,9 +133,9 @@ private extension QuestionsViewModel {
       for stepIndex in 0...(steps.steps.count - 1) {
         let step = steps.steps[stepIndex]
         switch step.missingStep {
-        case .identityQuestions:
+        case .identityQuestions: //TODO: need review implement other case
           onboardingFlowCoordinator.set(route: .welcome)
-        case .provideDocuments:
+        case .provideDocuments: //TODO: need review implement other case 
           let documents = try await netspendRepository.getDocuments(sessionId: accountDataManager.sessionID)
           netspendDataManager.update(documentData: documents)
           navigation = .uploadDocument

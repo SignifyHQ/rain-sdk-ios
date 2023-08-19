@@ -32,6 +32,7 @@ public class OnboardingFlowCoordinator: OnboardingFlowCoordinatorProtocol {
     case document
     case zeroHash
     case information
+    case accountReject
     
     public var id: String {
       String(describing: self)
@@ -101,26 +102,11 @@ public class OnboardingFlowCoordinator: OnboardingFlowCoordinatorProtocol {
         let onboardingState = try await onboardingRepository.getOnboardingState(sessionId: accountDataManager.sessionID)
         
         if onboardingState.missingSteps.isEmpty {
-          
           set(route: .dashboard)
-          
         } else {
-          
           let states = onboardingState.mapToEnum()
           if states.isEmpty {
-            if onboardingState.missingSteps.count == 1 {
-              if onboardingState.missingSteps.contains(WorkflowsMissingStep.provideDocuments.rawValue) {
-                await handleUpDocumentCase()
-              } else if onboardingState.missingSteps.contains(WorkflowsMissingStep.identityQuestions.rawValue) {
-                await handleQuestionCase()
-              } else {
-                //TODO: Tony need review after
-                routeSubject.value = .kycReview
-              }
-            } else {
-              //TODO: Tony need review after
-              routeSubject.value = .kycReview
-            }
+            set(route: .dashboard)
           } else {
             if states.contains(OnboardingMissingStep.netSpendCreateAccount) {
               routeSubject.value = .welcome
@@ -129,10 +115,11 @@ public class OnboardingFlowCoordinator: OnboardingFlowCoordinatorProtocol {
             } else if states.contains(OnboardingMissingStep.zeroHashAccount) {
               routeSubject.value = .zeroHash
             } else if states.contains(OnboardingMissingStep.cardProvision) {
-              //TODO: Tony need review after
+              //TODO: we implement late
+            }  else if states.contains(OnboardingMissingStep.accountReject) {
+              routeSubject.value = .accountReject
             }
           }
-          
         }
       } catch {
         if error.localizedDescription.contains("user_not_authorized") {
@@ -140,7 +127,6 @@ public class OnboardingFlowCoordinator: OnboardingFlowCoordinatorProtocol {
         }
         if error.localizedDescription.contains("user_not_found") {
           clearUserData()
-          //TODO: tony review implelement late
         }
         routeSubject.value = .phone
         log.error(error.localizedDescription)

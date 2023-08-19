@@ -45,7 +45,33 @@ final class CashViewModel: ObservableObject {
   
   init(guestHandler: @escaping () -> Void) {
     self.guestHandler = guestHandler
+    appearOperations()
     getACHInfo()
+  }
+  
+  func appearOperations() {
+    Task { @MainActor [weak self] in
+      guard let self else { return }
+      await self.refresh()
+    }
+  }
+  
+  func refresh() async {
+    do {
+      activity = .loading
+      isLoading = true
+      if let account = try await refreshAccounts() {
+        isLoading = false
+        
+        try getListConnectedAccount()
+        
+        try await loadTransactions(accountId: account.id)
+        activity = transactions.isEmpty ? .addFunds : .transactions
+      }
+    } catch {
+      activity = .addFunds
+      log.error(error)
+    }
   }
 }
 
@@ -144,31 +170,6 @@ extension CashViewModel {
       } catch {
         toastMessage = error.localizedDescription
       }
-    }
-  }
-  
-  func appearOperations() {
-    Task { @MainActor [weak self] in
-      guard let self else { return }
-      await self.refresh()
-    }
-  }
-  
-  func refresh() async {
-    do {
-      activity = .loading
-      isLoading = true
-      if let account = try await refreshAccounts() {
-        isLoading = false
-        
-        try getListConnectedAccount()
-        
-        try await loadTransactions(accountId: account.id)
-        activity = transactions.isEmpty ? .addFunds : .transactions
-      }
-    } catch {
-      activity = .addFunds
-      log.error(error)
     }
   }
 }

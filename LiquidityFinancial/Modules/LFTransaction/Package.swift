@@ -28,7 +28,8 @@ let package = Package(
               .product(name: "OnboardingData", package: "LFData"),
               .product(name: "NetSpendData", package: "LFData"),
               .product(name: "AccountData", package: "LFData"),
-              .product(name: "NetSpendDomain", package: "LFDomain")
+              .product(name: "NetSpendDomain", package: "LFDomain"),
+              .product(name: "ZerohashData", package: "LFData")
             ]),
         .testTarget(
             name: "LFTransactionTests",

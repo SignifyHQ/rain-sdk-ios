@@ -23,11 +23,17 @@ class AppCoordinator: AppCoordinatorProtocol {
   
   @LazyInjected(\.authorizationManager)
   private var authorizationManager
-  
   @Injected(\.onboardingFlowCoordinator)
   private var onboardingFlowCoordinator
+  @LazyInjected(\.intercomService)
+  private var intercomService
+  @LazyInjected(\.accountRepository)
+  private var accountRepository
+  @LazyInjected(\.accountDataManager)
+  private var accountDataManager
   
   private var subscribers: Set<AnyCancellable> = []
+  private var oneTimeAPILogout: Bool = false
   let routeSubject: CurrentValueSubject<Route, Never> = .init(.onboarding)
   
   init() {
@@ -44,6 +50,7 @@ class AppCoordinator: AppCoordinatorProtocol {
       .publisher(for: authorizationManager.logOutForcedName)
       .sink { [weak self] _ in
         log.warning("The server has forcibly logged out the user")
+        self?.logout()
         self?.set(route: .onboardingPhone)
       }
       .store(in: &subscribers)
@@ -67,4 +74,22 @@ class AppCoordinator: AppCoordinatorProtocol {
     onboardingFlowCoordinator.routeUser()
   }
   
+  func logout() {
+    guard !oneTimeAPILogout else { return }
+    oneTimeAPILogout = true
+    apiLogout()
+    authorizationManager.clearToken()
+    accountDataManager.clearUserSession()
+    intercomService.pushEventLogout()
+  }
+  
+  func apiLogout() {
+    Task {
+      do {
+        _ = try await accountRepository.logout()
+      } catch {
+        log.error(error.localizedDescription)
+      }
+    }
+  }
 }

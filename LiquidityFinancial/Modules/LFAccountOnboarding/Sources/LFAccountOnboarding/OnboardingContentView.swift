@@ -61,6 +61,8 @@ public struct OnboardingContentView: View {
         SetupWalletView()
       case .information:
         PersonalInformationView()
+      case .accountReject:
+        KYCStatusView(viewModel: KYCStatusViewModel(state: .reject))
       }
     }
   }

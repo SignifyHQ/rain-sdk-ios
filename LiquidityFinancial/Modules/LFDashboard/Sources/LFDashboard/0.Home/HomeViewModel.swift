@@ -14,10 +14,6 @@ public final class HomeViewModel: ObservableObject {
   @Published var tabSelected: TabOption = .cash
   @Published var navigation: Navigation?
   
-#if DEBUG
-  var countMangicLogout: Int = 0
-#endif
-  
   public init() {
     getUser()
   }

@@ -116,9 +116,6 @@ private extension CashView {
         .padding(.top, 20)
         .padding(.bottom, 12)
       }
-      .onAppear {
-        //viewModel.appearOperations()
-      }
       .refreshable {
         Task { @MainActor in
           await viewModel.refresh()

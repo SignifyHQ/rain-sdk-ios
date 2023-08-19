@@ -19,6 +19,7 @@ final class AddressViewModel: ObservableObject {
     case declined
     case inReview
     case missingInfo
+    case agreement
     case home
   }
   
@@ -91,7 +92,8 @@ final class AddressViewModel: ObservableObject {
   private var subscriptions = Set<AnyCancellable>()
   private var pauseAutocomplete = false
   private var isSuggesionTapped: Bool = false
-
+  private var workflowData: APIWorkflowsData?
+  
   init() {
     $addressLine1
       .debounce(for: .seconds(0.5), scheduler: RunLoop.main)
@@ -133,7 +135,7 @@ final class AddressViewModel: ObservableObject {
         let userAttributes = IntercomService.UserAttributes(phone: accountDataManager.phoneNumber, email: param.email)
         intercomService.loginIdentifiedUser(userAttributes: userAttributes)
         
-        try await handleWorkflows()
+        try await apiFetchWorkflows()
 
       } catch {
         log.error(error)
@@ -208,15 +210,22 @@ final class AddressViewModel: ObservableObject {
     return param
   }
   
-  private func handleWorkflows() async throws {
+  func apiFetchWorkflows() async throws {
     let workflows = try await self.netspendRepository.getWorkflows()
+    self.workflowData = workflows
     
-    if workflows.steps.isEmpty {
+  }
+  
+  private func handleWorkflowData(data: APIWorkflowsData?) async throws {
+    guard let workflowData = data else {
+      return
+    }
+    if workflowData.steps.isEmpty {
       navigation = .inReview
       return
     }
     
-    if let steps = workflows.steps.first {
+    if let steps = workflowData.steps.first {
       for stepIndex in 0...(steps.steps.count - 1) {
         let step = steps.steps[stepIndex]
         switch step.missingStep {
@@ -235,7 +244,7 @@ final class AddressViewModel: ObservableObject {
         case .primaryPersonKYCApprove:
           navigation = .inReview
         case .acceptAgreement:
-          break
+          navigation = .agreement
         case .expectedUse:
           break
         case .identityScan:

@@ -132,19 +132,7 @@ extension VerificationCodeViewModel {
         } else {
           let states = onboardingState.mapToEnum()
           if states.isEmpty {
-            if onboardingState.missingSteps.count == 1 {
-              if onboardingState.missingSteps.contains(WorkflowsMissingStep.provideDocuments.rawValue) {
-                await handleUpDocumentCase()
-              } else if onboardingState.missingSteps.contains(WorkflowsMissingStep.identityQuestions.rawValue) {
-                await handleQuestionCase()
-              } else {
-                  //TODO: Tony need review after
-                onboardingFlowCoordinator.set(route: .kycReview)
-              }
-            } else {
-                //TODO: Tony need review after
-              onboardingFlowCoordinator.set(route: .kycReview)
-            }
+            onboardingFlowCoordinator.set(route: .dashboard)
           } else {
             if states.contains(OnboardingMissingStep.netSpendCreateAccount) {
               onboardingFlowCoordinator.set(route: .welcome)
@@ -153,7 +141,9 @@ extension VerificationCodeViewModel {
             } else if states.contains(OnboardingMissingStep.zeroHashAccount) {
               onboardingFlowCoordinator.set(route: .zeroHash)
             } else if states.contains(OnboardingMissingStep.cardProvision) {
-                //TODO: Tony review it
+              //TODO: We implement late
+            } else if states.contains(OnboardingMissingStep.accountReject) {
+              onboardingFlowCoordinator.set(route: .accountReject)
             }
           }
         }

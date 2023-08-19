@@ -86,11 +86,21 @@ struct AddressView: View {
       case .pendingIDV:
         KYCStatusView(viewModel: KYCStatusViewModel(state: .pendingIDV))
       case .declined:
-        KYCStatusView(viewModel: KYCStatusViewModel(state: .declined))
+        KYCStatusView(viewModel: KYCStatusViewModel(state: .reject))
       case .inReview:
         KYCStatusView(viewModel: KYCStatusViewModel(state: .inReview(viewModel.userNameDisplay)))
       case .missingInfo:
         KYCStatusView(viewModel: KYCStatusViewModel(state: .missingInfo))
+      case .agreement:
+        AgreementView(viewModel: AgreementViewModel()) {
+          Task {
+            do {
+              try await viewModel.apiFetchWorkflows()
+            } catch {
+              viewModel.toastMessage = error.localizedDescription
+            }
+          }
+        }
       default:
         EmptyView()
       }

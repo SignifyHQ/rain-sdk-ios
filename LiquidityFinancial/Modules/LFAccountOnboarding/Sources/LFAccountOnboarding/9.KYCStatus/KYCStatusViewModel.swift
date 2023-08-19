@@ -8,6 +8,7 @@ import OnboardingDomain
 import UIKit
 import LFServices
 import LFStyleGuide
+import AuthorizationManager
 
 @MainActor
 final class KYCStatusViewModel: ObservableObject {
@@ -29,6 +30,7 @@ final class KYCStatusViewModel: ObservableObject {
   @LazyInjected(\.accountRepository) var accountRepository
   @LazyInjected(\.onboardingFlowCoordinator) var onboardingFlowCoordinator
   @LazyInjected(\.intercomService) var intercomService
+  @LazyInjected(\.authorizationManager) var authorizationManager
   
   var username: String {
     accountDataManager.userNameDisplay
@@ -75,9 +77,10 @@ extension KYCStatusViewModel {
     switch state {
     case .inReview:
       fetchNewStatus()
+    case .reject:
+      forcedLogout()
     case .missingInfo:
-      // TODO: Tony Review handle after
-      break
+      break // TODO: implement late
     default:
       break
     }
@@ -108,13 +111,7 @@ extension KYCStatusViewModel {
         } else {
           let states = onboardingState.mapToEnum()
           if states.isEmpty {
-            let workflowsMissingStep = WorkflowsMissingStep.allCases.map { $0.rawValue }
-            if onboardingState.missingSteps.contains(where: { workflowsMissingStep.contains($0) }) {
-              return
-            } else {
-              //TODO: Tony need review
-              onboardingFlowCoordinator.set(route: .dashboard)
-            }
+            onboardingFlowCoordinator.set(route: .dashboard)
           } else {
             if states.contains(OnboardingMissingStep.netSpendCreateAccount) {
               onboardingFlowCoordinator.set(route: .welcome)
@@ -123,7 +120,9 @@ extension KYCStatusViewModel {
             } else if states.contains(OnboardingMissingStep.zeroHashAccount) {
               onboardingFlowCoordinator.set(route: .zeroHash)
             } else if states.contains(OnboardingMissingStep.cardProvision) {
-                //TODO: Tony review it
+              //TODO: we implement late
+            } else if states.contains(OnboardingMissingStep.accountReject) {
+              onboardingFlowCoordinator.set(route: .accountReject)
             }
           }
         }
@@ -136,6 +135,10 @@ extension KYCStatusViewModel {
   
   func checkOnboardingState(onCompletion: @escaping () -> Void) {
     
+  }
+  
+  func forcedLogout() {
+    NotificationCenter.default.post(name: authorizationManager.logOutForcedName, object: nil)
   }
 }
 

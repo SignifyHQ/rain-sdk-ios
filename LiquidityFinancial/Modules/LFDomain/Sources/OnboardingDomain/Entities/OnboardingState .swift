@@ -5,6 +5,7 @@ public enum OnboardingMissingStep: String, Codable {
   case dashboardReview = "DASHBOARD_REVIEW"
   case cardProvision = "CARD_PROVISION"
   case zeroHashAccount = "ZERO_HASH_ACCOUNT"
+  case accountReject = "ACCOUNT_REJECT"
 }
 
 public protocol OnboardingState {

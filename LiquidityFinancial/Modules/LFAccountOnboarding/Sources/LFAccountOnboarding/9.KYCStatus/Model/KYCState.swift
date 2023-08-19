@@ -6,7 +6,7 @@ public enum KYCState {
   case inVerify
   case missingInfo
   case pendingIDV
-  case declined
+  case reject
   case inReview(String)
   
   var kycInformation: KYCInformation? {
@@ -17,7 +17,7 @@ public enum KYCState {
         message: LFLocalizable.KycStatus.IdentityVerification.message,
         primary: LFLocalizable.Button.Continue.title
       )
-    case .declined:
+    case .reject:
       return KYCInformation(
         title: LFLocalizable.KycStatus.Fail.title,
         message: LFLocalizable.KycStatus.Fail.message,
