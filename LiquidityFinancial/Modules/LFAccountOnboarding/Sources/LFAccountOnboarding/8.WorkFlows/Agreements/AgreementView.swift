@@ -5,11 +5,19 @@ import LFLocalizable
 import OnboardingDomain
 
 public struct AgreementView: View {
-  @Environment(\.openURL)
-  var openURL
-  @StateObject private var viewModel = AgreementViewModel()
+  @Environment(\.dismiss) private var dismiss
+  @Environment(\.openURL) var openURL
+  @StateObject private var viewModel: AgreementViewModel
   
-  public init() {}
+  var onNext: (() -> Void)?
+  var onDisappear: ((_ isAcceptAgreement: Bool) -> Void)?
+  public init(viewModel: AgreementViewModel,
+              onNext: (() -> Void)? = nil,
+              onDisappear: ((_ isAcceptAgreement: Bool) -> Void)? = nil) {
+    _viewModel = .init(wrappedValue: viewModel)
+    self.onNext = onNext
+    self.onDisappear = onDisappear
+  }
   
   public var body: some View {
     VStack(spacing: 24) {
@@ -56,7 +64,7 @@ public struct AgreementView: View {
       continueButton
     }
     .padding(.bottom, 16)
-    .padding(.top, 30)
+    .padding(.top, 40)
     .padding(.horizontal, 30)
     .defaultToolBar(icon: .intercom, openIntercom: {
       viewModel.openIntercom()
@@ -67,6 +75,21 @@ public struct AgreementView: View {
     }
     .popup(item: $viewModel.toastMessage, style: .toast) {
       ToastView(toastMessage: $0)
+    }
+    .overlay(alignment: .topLeading) {
+      if onNext != nil {
+        Button {
+          dismiss()
+        } label: {
+          CircleButton(style: .xmark)
+        }
+        .padding(.top, -10)
+        .padding(.leading, 16)
+        .disabled(viewModel.isAcceptAgreementLoading)
+      }
+    }
+    .onDisappear {
+      self.onDisappear?(viewModel.isAcceptAgreement)
     }
   }
   
@@ -131,9 +154,16 @@ private extension AgreementView {
   var continueButton: some View {
     FullSizeButton(
       title: LFLocalizable.Button.Continue.title,
-      isDisable: viewModel.isDisableButton
+      isDisable: viewModel.isDisableButton,
+      isLoading: $viewModel.isAcceptAgreementLoading
     ) {
-      viewModel.isNavigationPersonalInformation = true
+      if let onNext = onNext {
+        viewModel.apiPostAgreements {
+          onNext()
+        }
+      } else {
+        viewModel.continute()
+      }
     }
   }
 }

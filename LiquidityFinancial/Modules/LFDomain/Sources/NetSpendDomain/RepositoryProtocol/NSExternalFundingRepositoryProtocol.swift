@@ -12,4 +12,5 @@ public protocol NSExternalFundingRepositoryProtocol {
     sessionId: String
   ) async throws -> ExternalTransactionResponseEntity
   func verifyCard(sessionId: String, request: VerifyExternalCardParametersEntity) async throws -> VerifyExternalCardResponseEntity
+  func getFundingStatus(sessionID: String) async throws -> any ExternalFundingsatusEntity
 }

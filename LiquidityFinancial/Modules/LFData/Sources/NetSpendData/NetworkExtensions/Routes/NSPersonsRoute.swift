@@ -7,6 +7,7 @@ public enum NSPersonsRoute {
   case sessionInit
   case establishSession(EstablishSessionParameters)
   case getAgreements
+  case postAgreements([String: Any])
   case createAccountPerson(AccountPersonParameters, sessionId: String)
   case getQuestions(sessionId: String)
   case putQuestions(sessionId: String, encryptData: String)
@@ -22,7 +23,7 @@ extension NSPersonsRoute: LFRoute {
     switch self {
     case .sessionInit:
       return "/v1/netspend/sessions/init"
-    case .getAgreements:
+    case .getAgreements, .postAgreements:
       return "/v1/netspend/persons/agreements"
     case .establishSession:
       return "/v1/netspend/sessions"
@@ -51,7 +52,7 @@ extension NSPersonsRoute: LFRoute {
       "productId": NetworkUtilities.productID
     ]
     switch self {
-    case .sessionInit, .getAgreements, .establishSession, .getWorkflows:
+    case .sessionInit, .getAgreements, .establishSession, .getWorkflows, .postAgreements:
       return base
     case .createAccountPerson(_, let sessionID):
       base["netspendSessionId"] = sessionID
@@ -78,7 +79,7 @@ extension NSPersonsRoute: LFRoute {
     switch self {
     case .sessionInit, .getAgreements, .getQuestions, .getWorkflows, .getDocuments:
       return .GET
-    case .establishSession, .createAccountPerson, .getAuthorizationCode:
+    case .establishSession, .createAccountPerson, .getAuthorizationCode, .postAgreements:
       return .POST
     case .putQuestions:
       return .PUT
@@ -101,6 +102,8 @@ extension NSPersonsRoute: LFRoute {
       return parametersData
     case .uploadDocuments(_, let documentData):
       return documentData.encoded()
+    case .postAgreements(let parameters):
+      return parameters
     }
   }
   
@@ -108,7 +111,7 @@ extension NSPersonsRoute: LFRoute {
     switch self {
     case .sessionInit, .getAgreements, .getQuestions, .getWorkflows, .getDocuments, .getAuthorizationCode:
       return nil
-    case .establishSession, .createAccountPerson, .putQuestions, .uploadDocuments:
+    case .establishSession, .createAccountPerson, .putQuestions, .uploadDocuments, .postAgreements:
       return .json
     }
   }

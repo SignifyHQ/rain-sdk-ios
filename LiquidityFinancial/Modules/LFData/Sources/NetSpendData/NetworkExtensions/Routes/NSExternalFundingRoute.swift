@@ -12,6 +12,7 @@ public enum NSExternalFundingRoute {
   case deleteLinkedSource(sessionId: String, sourceId: String, sourceType: String)
   case newTransaction(ExternalTransactionParameters, ExternalTransactionType, String)
   case verifyCard(sessionId: String, parameters: VerifyExternalCardParameters)
+  case getFundingStatus(sessionID: String)
 }
 
 extension NSExternalFundingRoute: LFRoute {
@@ -41,12 +42,14 @@ extension NSExternalFundingRoute: LFRoute {
       }
     case .verifyCard:
       return "/v1/netspend/external-funding/external-card/verify"
+    case .getFundingStatus:
+      return "/v1/netspend/external-funding/status"
     }
   }
   
   public var httpMethod: HttpMethod {
     switch self {
-    case .getACHInfo, .getLinkedSource:
+    case .getACHInfo, .getLinkedSource, .getFundingStatus:
       return .GET
     case .set, .pinWheelToken:
       return .POST
@@ -67,8 +70,9 @@ extension NSExternalFundingRoute: LFRoute {
     base["Authorization"] = self.needAuthorizationKey
     switch self {
     case let .set(_, sessionId),
-        let .pinWheelToken(sessionId),
-        let .getACHInfo(sessionId):
+      let .pinWheelToken(sessionId),
+      let .getACHInfo(sessionId),
+      let .getFundingStatus(sessionId):
       base["netspendSessionId"] = sessionId
     case .getLinkedSource(let sessionId):
       base["netspendSessionId"] = sessionId
@@ -86,7 +90,7 @@ extension NSExternalFundingRoute: LFRoute {
     switch self {
     case let .set(parameters, _):
       return parameters.encoded()
-    case .getACHInfo, .pinWheelToken, .getLinkedSource, .deleteLinkedSource:
+    case .getACHInfo, .pinWheelToken, .getLinkedSource, .deleteLinkedSource, .getFundingStatus:
       return nil
     case let .newTransaction(parameters, _, _):
       return parameters.encoded()
@@ -97,7 +101,7 @@ extension NSExternalFundingRoute: LFRoute {
   
   public var parameterEncoding: ParameterEncoding? {
     switch self {
-    case .getLinkedSource, .deleteLinkedSource:
+    case .getLinkedSource, .deleteLinkedSource, .getFundingStatus:
       return nil
     case .set, .verifyCard:
       return .json

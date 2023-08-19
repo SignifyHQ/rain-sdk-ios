@@ -25,6 +25,7 @@ class SetupWalletViewModel: ObservableObject {
         isNavigateToRewardsView = true
         log.debug(zeroHashAccount)
       } catch {
+        toastMessage = error.localizedDescription
         log.error(error.localizedDescription)
       }
     }

@@ -12,4 +12,5 @@ public protocol NSPersonsAPIProtocol {
   func getDocuments(sessionId: String) async throws -> APIDocumentData
   func uploadDocuments(path: PathDocumentParameters, documentData: DocumentParameters) async throws -> APIDocumentData.RequestedDocument
   func getAuthorizationCode(sessionId: String) async throws -> APIAuthorizationCode
+  func postAgreement(body: [String: Any]) async throws -> Bool
 }

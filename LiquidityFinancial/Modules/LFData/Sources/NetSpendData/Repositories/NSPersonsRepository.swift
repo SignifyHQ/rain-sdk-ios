@@ -18,6 +18,7 @@ public protocol NSPersonsRepositoryProtocol {
   func getDocuments(sessionId: String) async throws -> APIDocumentData
   func uploadDocuments(path: PathDocumentParameters, documentData: DocumentParameters) async throws -> APIDocumentData.RequestedDocument
   func getAuthorizationCode(sessionId: String) async throws -> APIAuthorizationCode
+  func postAgreement(body: [String : Any]) async throws -> Bool
 }
 
 public class NSPersonsRepository: NSPersonsRepositoryProtocol {
@@ -81,5 +82,9 @@ public class NSPersonsRepository: NSPersonsRepositoryProtocol {
   
   public func getAuthorizationCode(sessionId: String) async throws -> APIAuthorizationCode {
     return try await netSpendAPI.getAuthorizationCode(sessionId: sessionId)
+  }
+  
+  public func postAgreement(body: [String : Any]) async throws -> Bool {
+    return try await netSpendAPI.postAgreement(body: body)
   }
 }

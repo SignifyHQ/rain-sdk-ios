@@ -43,9 +43,9 @@ public struct OnboardingContentView: View {
       case .welcome:
         switch LFUtilities.target {
         case .DogeCard:
-          DogeCardWelcomeView(destination: AnyView(AgreementView()))
+          DogeCardWelcomeView(destination: AnyView(AgreementView(viewModel: AgreementViewModel())))
         case .CauseCard:
-          SelectRewardsView(destination: AnyView(AgreementView()))
+          SelectRewardsView(destination: AnyView(AgreementView(viewModel: AgreementViewModel())))
         default:
           WelcomeView()
         }

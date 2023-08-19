@@ -8,7 +8,7 @@ import Factory
 import SwiftSoup
 
 @MainActor
-final class AgreementViewModel: ObservableObject {
+public final class AgreementViewModel: ObservableObject {
   @LazyInjected(\.intercomService) var intercomService
   @LazyInjected(\.netspendDataManager) var netspendDataManager
   @LazyInjected(\.accountDataManager) var accountDataManager
@@ -19,17 +19,29 @@ final class AgreementViewModel: ObservableObject {
   @Published var agreements: [ServiceConditionModel] = []
   @Published var isLoading: Bool = false
   @Published var toastMessage: String?
+  @Published var isAcceptAgreementLoading: Bool = false
   
-  init() {
+  private(set) var isAcceptAgreement: Bool = false
+
+  private var fundingAgreement: APIAgreementData?
+  
+  public init(fundingAgreement: APIAgreementData? = nil) {
+    self.fundingAgreement = fundingAgreement
     checkData()
   }
     
+  func continute() {
+    isNavigationPersonalInformation = true
+  }
+  
   func openIntercom() {
     intercomService.openIntercom()
   }
   
   private func checkData() {
-    if let agreementData = netspendDataManager.agreement {
+    if let fundingAgreement = fundingAgreement {
+      mapToServiceCondition(agreementData: fundingAgreement)
+    } else if let agreementData = netspendDataManager.agreement {
       mapToServiceCondition(agreementData: agreementData)
     } else {
       intercomService.loginIdentifiedUser(userAttributes: IntercomService.UserAttributes(phone: accountDataManager.phoneNumber))
@@ -45,6 +57,28 @@ final class AgreementViewModel: ObservableObject {
           log.error(error)
           toastMessage = error.localizedDescription
         }
+      }
+    }
+  }
+  
+  func apiPostAgreements(onNext: @escaping () -> Void) {
+    Task {
+      defer { isAcceptAgreementLoading = false }
+      isAcceptAgreementLoading = true
+      do {
+        let body: [String: Any] = [
+          "agreementIds": [
+            fundingAgreement?.agreements.first?.id ?? ""
+          ]
+        ]
+        let entity = try await netspendRepository.postAgreement(body: body)
+        if entity {
+          isAcceptAgreement = true
+          onNext()
+        }
+      } catch {
+        log.error(error.localizedDescription)
+        toastMessage = error.localizedDescription
       }
     }
   }

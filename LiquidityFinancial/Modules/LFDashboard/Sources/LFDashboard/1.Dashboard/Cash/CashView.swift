@@ -104,7 +104,7 @@ private extension CashView {
           }
           if false {
             // Temporarily disable this feature
-            changeAssetButton
+            // changeAssetButton
           }
           BalanceAlertView(type: .cash, hasContacts: !viewModel.linkedAccount.isEmpty, cashBalance: viewModel.cashBalanceValue) {
             viewModel.addMoneyTapped()
@@ -117,7 +117,7 @@ private extension CashView {
         .padding(.bottom, 12)
       }
       .onAppear {
-        viewModel.appearOperations()
+        //viewModel.appearOperations()
       }
       .refreshable {
         Task { @MainActor in

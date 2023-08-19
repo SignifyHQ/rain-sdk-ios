@@ -147,6 +147,8 @@ private extension QuestionsViewModel {
           break
         case .expectedUse:
           break
+        case .acceptFeatureAgreement:
+          break
         }
       }
     }

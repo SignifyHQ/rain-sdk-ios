@@ -78,12 +78,7 @@ public class OnboardingFlowCoordinator: OnboardingFlowCoordinatorProtocol {
   }
   
   public func routeUser() {
-    if authorizationManager.isTokenValid() {
-      getCurrentState()
-    } else {
-      clearUserData()
-      set(route: .phone)
-    }
+    getCurrentState()
   }
 
   func handlerRewardRoute(route: RewardFlowCoordinator.Route) {

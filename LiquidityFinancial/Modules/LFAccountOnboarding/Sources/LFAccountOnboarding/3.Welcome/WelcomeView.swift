@@ -38,7 +38,7 @@ struct WelcomeView: View {
         // analyticsService.track(event: Event(name: .viewsWelcome))
     }
     .navigationLink(isActive: $viewModel.isPushToAgreementView) {
-      AgreementView()
+      AgreementView(viewModel: AgreementViewModel())
     }
     .navigationBarBackButtonHidden(true)
   }

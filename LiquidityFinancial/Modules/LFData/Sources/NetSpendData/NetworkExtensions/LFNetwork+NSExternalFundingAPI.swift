@@ -57,6 +57,7 @@ extension LFNetwork: NSExternalFundingAPIProtocol where R == NSExternalFundingRo
     return try await self.request(
       NSExternalFundingRoute.newTransaction(parameters, type, sessionId),
       target: APIExternalTransactionResponse.self,
+      failure: LFErrorObject.self,
       decoder: .apiDecoder
     )
   }
@@ -66,6 +67,15 @@ extension LFNetwork: NSExternalFundingAPIProtocol where R == NSExternalFundingRo
     return try await self.request(
       NSExternalFundingRoute.verifyCard(sessionId: sessionId, parameters: parameter),
       target: APIVerifyExternalCardResponse.self,
+      failure: LFErrorObject.self,
+      decoder: .apiDecoder
+    )
+  }
+  
+  public func getFundingStatus(sessionID: String) async throws -> APIExternalFundingsatus {
+    try await request(
+      NSExternalFundingRoute.getFundingStatus(sessionID: sessionID),
+      target: APIExternalFundingsatus.self,
       failure: LFErrorObject.self,
       decoder: .apiDecoder
     )

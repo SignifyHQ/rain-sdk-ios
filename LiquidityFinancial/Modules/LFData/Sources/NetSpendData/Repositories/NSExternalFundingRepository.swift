@@ -63,6 +63,10 @@ public class NSExternalFundingRepository: NSExternalFundingRepositoryProtocol {
   public func verifyCard(sessionId: String, request: VerifyExternalCardParametersEntity) async throws -> VerifyExternalCardResponseEntity {
     try await externalFundingAPI.verifyCard(sessionId: sessionId, cardId: request.cardId, amount: request.transferAmount)
   }
+  
+  public func getFundingStatus(sessionID: String) async throws -> any ExternalFundingsatusEntity {
+    try await externalFundingAPI.getFundingStatus(sessionID: sessionID)
+  }
 }
 
 extension APIUnlinkBankResponse: UnlinkBankEntity {}

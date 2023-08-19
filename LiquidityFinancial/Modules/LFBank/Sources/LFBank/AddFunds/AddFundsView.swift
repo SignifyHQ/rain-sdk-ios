@@ -3,8 +3,10 @@ import LFLocalizable
 import LFUtilities
 import LFStyleGuide
 import NetspendSdk
+import LFAccountOnboarding
 
 public struct AddFundsView: View {
+  
   @StateObject private var viewModel: AddFundsViewModel
   @Binding private var isDisableView: Bool
   @Binding private var achInformation: ACHModel
@@ -42,6 +44,16 @@ public struct AddFundsView: View {
             plaidLinkingErrorPopup
           }
         }
+        .fullScreenCover(item: $viewModel.fundingStatus) { data in
+          AgreementView(viewModel: AgreementViewModel(fundingAgreement: data)) {
+            viewModel.fundingStatus = nil
+          } onDisappear: { isAcceptAgreement in
+            if isAcceptAgreement {
+              viewModel.navigation = .addBankDebit
+            }
+          }
+        }
+      
       externalLinkBank(controller: viewModel.netspendController)
     }
   }
@@ -79,7 +91,8 @@ private extension AddFundsView {
       ArrowButton(
         image: GenImages.CommonImages.Accounts.debitDeposit,
         title: LFLocalizable.AccountView.DebitDeposits.title,
-        value: LFLocalizable.AccountView.DebitDeposits.subtitle
+        value: LFLocalizable.AccountView.DebitDeposits.subtitle,
+        isLoading: $viewModel.isLoading
       ) {
         viewModel.selectedAddOption(navigation: .addBankDebit)
       }

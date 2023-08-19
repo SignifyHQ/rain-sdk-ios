@@ -6,6 +6,7 @@ public protocol NetSpendDataManagerProtocol {
   var serverSession: APISessionData? { get }
   var sdkSession: NetspendSdkUserSession? { get }
   var agreement: APIAgreementData? { get }
+  var fundingAgreement: APIAgreementData? { get }
   var accountPersonData: APIAccountPersonData? { get }
   var documentData: APIDocumentData? { get set }
   func clear()
@@ -15,6 +16,7 @@ public protocol NetSpendDataManagerProtocol {
   func update(sdkSession: NetspendSdkUserSession?)
   func update(accountPersonData: APIAccountPersonData?)
   func update(documentData: APIDocumentData?)
+  func update(fundingAgreement: APIAgreementData?)
 }
 
 public class NetSpendDataManager: NetSpendDataManagerProtocol {
@@ -24,6 +26,7 @@ public class NetSpendDataManager: NetSpendDataManagerProtocol {
   public private(set) var agreement: APIAgreementData?
   public private(set) var sdkSession: NetspendSdkUserSession?
   public private(set) var accountPersonData: APIAccountPersonData?
+  public private(set) var fundingAgreement: APIAgreementData?
   
   public func update(jwkToken: APINSJwkToken?) {
     self.jwkToken = jwkToken
@@ -35,6 +38,10 @@ public class NetSpendDataManager: NetSpendDataManagerProtocol {
   
   public func update(agreement: APIAgreementData?) {
     self.agreement = agreement
+  }
+  
+  public func update(fundingAgreement: APIAgreementData?) {
+    self.fundingAgreement = fundingAgreement
   }
   
   public func update(sdkSession: NetspendSdkUserSession?) {
@@ -55,5 +62,6 @@ public class NetSpendDataManager: NetSpendDataManagerProtocol {
     agreement = nil
     sdkSession = nil
     documentData = nil
+    fundingAgreement = nil
   }
 }

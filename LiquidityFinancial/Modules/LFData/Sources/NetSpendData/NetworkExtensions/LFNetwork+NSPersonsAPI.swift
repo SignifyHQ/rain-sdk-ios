@@ -42,4 +42,9 @@ extension LFNetwork: NSPersonsAPIProtocol where R == NSPersonsRoute {
   public func getAuthorizationCode(sessionId: String) async throws -> APIAuthorizationCode {
     return try await request(NSPersonsRoute.getAuthorizationCode(sessionId: sessionId), target: APIAuthorizationCode.self, failure: LFErrorObject.self, decoder: .apiDecoder)
   }
+  
+  public func postAgreement(body: [String : Any]) async throws -> Bool {
+    let result = try await request(NSPersonsRoute.postAgreements(body))
+    return (result.httpResponse?.statusCode ?? 500).isSuccess
+  }
 }

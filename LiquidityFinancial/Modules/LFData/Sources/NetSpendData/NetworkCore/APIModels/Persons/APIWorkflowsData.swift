@@ -8,6 +8,7 @@ public enum WorkflowsMissingStep: String, Codable, CaseIterable {
   case acceptAgreement = "accept_agreement"
   case expectedUse = "expected_use"
   case identityScan = "identity_scan"
+  case acceptFeatureAgreement = "accept_feature_agreement"
 }
 
 public struct APIWorkflowsData: Decodable {

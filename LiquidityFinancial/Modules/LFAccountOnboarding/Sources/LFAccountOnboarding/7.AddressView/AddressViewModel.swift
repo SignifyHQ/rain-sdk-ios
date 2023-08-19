@@ -240,6 +240,8 @@ final class AddressViewModel: ObservableObject {
           break
         case .identityScan:
           navigation = .inReview
+        case .acceptFeatureAgreement:
+          break
         }
       }
     }
