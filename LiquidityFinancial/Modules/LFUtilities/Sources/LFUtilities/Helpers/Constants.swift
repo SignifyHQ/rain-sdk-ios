@@ -113,7 +113,7 @@ public extension Constants {
   }
 }
 
-  // MARK: - Currency Unit
+  // MARK: - Currency
 public extension Constants {
   enum CurrencyUnit: String {
     case usd = "$"
@@ -128,6 +128,11 @@ public extension Constants {
         return 2
       }
     }
+  }
+  
+  enum CurrencyType: String {
+    case fiat = "FIAT"
+    case crypto = "CRYPTO"
   }
 }
   // MARK: - Default

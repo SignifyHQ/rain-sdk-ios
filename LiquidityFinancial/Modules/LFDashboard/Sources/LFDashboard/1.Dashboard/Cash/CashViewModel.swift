@@ -23,16 +23,14 @@ final class CashViewModel: ObservableObject {
   @Published var toastMessage: String?
   @Published var activity = Activity.loading
   @Published var cashCardDetails = CardModel.virtualDefault // MOCK DATA
-  @Published var selectedAsset: AssetType = .usdc
+  @Published var selectedAsset: AssetType = .usd
   @Published var navigation: Navigation?
   @Published var transactions: [TransactionModel] = []
+  @Published var assets: [AssetModel] = []
   @Published var linkedAccount: [APILinkedSourceData] = []
   @Published var achInformation: ACHModel = .default
-  
-  var currencyType: String {
-    "FIAT"
-  }
-  
+  @Published var accountID: String = .empty
+    
   var transactionLimitEntity: Int {
     50
   }
@@ -41,6 +39,7 @@ final class CashViewModel: ObservableObject {
     0
   }
   
+  let currencyType = Constants.CurrencyType.fiat.rawValue
   private let guestHandler: () -> Void
   
   init(guestHandler: @escaping () -> Void) {
@@ -124,7 +123,12 @@ extension CashViewModel {
   private func loadTransactions(accountId: String) async throws {
     defer { activity = .transactions }
     activity = .loading
-    let transactions = try await accountRepository.getTransactions(accountId: accountId, currencyType: currencyType, limit: transactionLimitEntity, offset: transactionLimitOffset)
+    let transactions = try await accountRepository.getTransactions(
+      accountId: accountId,
+      currencyType: currencyType,
+      limit: transactionLimitEntity,
+      offset: transactionLimitOffset
+    )
     self.transactions = transactions.data.compactMap({ TransactionModel(from: $0) })
   }
   
@@ -132,7 +136,15 @@ extension CashViewModel {
     defer { isLoading = false }
     isLoading = true
     let accounts = try await accountRepository.getAccount(currencyType: currencyType)
+    assets = accounts.map {
+      AssetModel(
+        type: AssetType(rawValue: $0.currency.uppercased()),
+        availableBalance: $0.availableBalance,
+        availableUsdBalance: $0.availableUsdBalance
+      )
+    }
     if let account = accounts.first { // TODO: Temp Just get one
+      self.accountID = account.id
       self.accountDataManager.accountID = account.id
       self.cashBalanceValue = account.availableBalance
       self.selectedAsset = AssetType(rawValue: account.currency) ?? .usd

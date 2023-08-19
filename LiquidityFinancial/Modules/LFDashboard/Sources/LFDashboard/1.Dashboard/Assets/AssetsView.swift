@@ -3,37 +3,50 @@ import LFStyleGuide
 import LFLocalizable
 import LFUtilities
 
-struct ChangeAssetView: View {
-  @Binding var selectedAsset: AssetType
-  let balance: Double
-  let assets: [AssetModel]
-
+struct AssetsView: View {
+  @StateObject private var viewModel = AssetsViewModel()
+  
   var body: some View {
-    VStack(alignment: .leading, spacing: 20) {
-      Text(LFLocalizable.ChangeAsset.Screen.message)
-        .foregroundColor(Colors.label.swiftUIColor.opacity(0.75))
-        .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.medium.value))
-      VStack(spacing: 10) {
-        ForEach(assets, id: \.self) { asset in
-          assetCell(asset: asset)
+    ZStack {
+      if viewModel.isLoading {
+        LottieView(loading: .primary)
+          .frame(width: 30, height: 20)
+      } else {
+        VStack(spacing: 10) {
+          ForEach(viewModel.assets, id: \.self) { asset in
+            assetCell(asset: asset)
+          }
+          Spacer()
         }
       }
-      Spacer()
     }
     .padding(.top, 24)
     .padding(.horizontal, 30)
-    .frame(maxWidth: .infinity)
+    .frame(max: .infinity)
     .background(Colors.background.swiftUIColor)
-    .defaultToolBar(navigationTitle: LFLocalizable.ChangeAsset.Screen.title)
+    .popup(item: $viewModel.toastMessage, style: .toast) {
+      ToastView(toastMessage: $0)
+    }
+    .navigationLink(item: $viewModel.navigation) { item in
+      switch item {
+      case let .usd(asset):
+        FiatAssetView(asset: asset, guestHandler: {})
+      case let .crypto(asset):
+        CryptoAssetView(asset: asset, guestHandler: {})
+      }
+    }
+    .onAppear {
+      viewModel.getAccounts()
+    }
   }
 }
 
 // MARK: - View Components
-private extension ChangeAssetView {
+private extension AssetsView {
   @ViewBuilder func assetCell(asset: AssetModel) -> some View {
     if let assetType = asset.type {
       Button {
-        selectedAsset = assetType
+        viewModel.onClickedAssetButton(assetType: assetType)
       } label: {
         HStack(spacing: 8) {
           assetType.image
@@ -52,7 +65,6 @@ private extension ChangeAssetView {
             }
           }
           .padding(.trailing, 8)
-          CircleSelected(isSelected: selectedAsset == asset.type)
         }
         .padding(.horizontal, 16)
         .frame(height: 56)

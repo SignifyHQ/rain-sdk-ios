@@ -19,17 +19,15 @@ public class TransactionListViewModel: ObservableObject {
   
   @LazyInjected(\.accountRepository) var accountRepository
   @LazyInjected(\.accountDataManager) var accountDataManager
-  
-  private var accountID: String {
-    accountDataManager.accountID ?? ""
-  }
-  
+    
   let type: Kind
   let currencyType: String
+  let accountID: String
   
-  public init(type: Kind, currencyType: String ) {
+  public init(type: Kind, currencyType: String, accountID: String) {
     self.type = type
     self.currencyType = currencyType
+    self.accountID = accountID
   }
   
   var filteredTransactions: [TransactionModel] {

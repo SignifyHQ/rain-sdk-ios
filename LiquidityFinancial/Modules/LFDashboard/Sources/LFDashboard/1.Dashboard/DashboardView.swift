@@ -22,9 +22,7 @@ struct DashboardView: View {
       case .rewards:
         EmptyView()
       case .assets:
-        AssetView {
-          viewModel.handleGuestUser()
-        }
+        AssetsView()
       case .account:
         AccountsView()
       }

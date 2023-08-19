@@ -6,12 +6,14 @@ enum AssetType: String {
   case usd = "USD"
   case usdc = "USDC"
   case avax = "AVAX"
+  case cardano = "ADA"
+  case doge = "Doge"
   
   var title: String {
     self.rawValue
   }
   
-  var image: Image {
+  var image: Image? {
     switch self {
     case .usd:
       return GenImages.CommonImages.icUsd.swiftUIImage
@@ -19,20 +21,10 @@ enum AssetType: String {
       return GenImages.CommonImages.icUsdc.swiftUIImage
     case .avax:
       return GenImages.CommonImages.icAvax.swiftUIImage
-    }
-  }
-  
-  func getBalance(balance: Double) -> (String, String?) {
-    let usdBalance = balance.formattedAmount(prefix: Constants.CurrencyUnit.usd.rawValue, minFractionDigits: 2)
-    switch self {
-    case .usd:
-      return (usdBalance, nil)
-    case .avax:
-        // logic convert from usd to avax
-      return ("242.322", usdBalance) // HARDCODE for UI
-    case .usdc:
-        // logic convert from usd to usdc
-      return ("42.322", usdBalance) // HARDCODE for UI
+    case .cardano:
+      return GenImages.CommonImages.icCardano.swiftUIImage
+    case .doge:
+      return GenImages.CommonImages.icDoge.swiftUIImage
     }
   }
 }

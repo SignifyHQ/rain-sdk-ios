@@ -33,16 +33,20 @@ struct CashView: View {
         ChangeAssetView(
           selectedAsset: $viewModel.selectedAsset,
           balance: viewModel.cashBalanceValue,
-          assets: [.usd, .avax, .usdc]
+          assets: viewModel.assets
         )
       case .transactions:
-        TransactionListView(type: .cash, currencyType: viewModel.currencyType)
+        TransactionListView(
+          type: .cash,
+          currencyType: viewModel.currencyType,
+          accountID: viewModel.accountID
+        )
       case .addMoney:
         MoveMoneyAccountView(kind: .receive)
       case .sendMoney:
         MoveMoneyAccountView(kind: .send)
       case let .transactionDetail(transaction):
-          TransactionDetailView(transactionId: transaction.id, kind: transaction.detailType)
+        TransactionDetailView(transactionId: transaction.id, kind: transaction.detailType)
       }
     }
   }
@@ -102,10 +106,10 @@ private extension CashView {
           ) {
             viewModel.guestCardTapped()
           }
-          if false {
-            // Temporarily disable this feature
-            // changeAssetButton
+          .overlay(alignment: .bottom) {
+            depositButton
           }
+          changeAssetButton
           BalanceAlertView(type: .cash, hasContacts: !viewModel.linkedAccount.isEmpty, cashBalance: viewModel.cashBalanceValue) {
             viewModel.addMoneyTapped()
           }
@@ -122,6 +126,21 @@ private extension CashView {
         }
       }
       // .track(name: String(describing: type(of: self))) TODO: Will be implemented later
+    }
+  }
+  
+  @ViewBuilder var depositButton: some View {
+    if viewModel.transactions.isEmpty && viewModel.activity != .loading {
+      Button {
+        viewModel.addMoneyTapped()
+      } label: {
+        Text(LFLocalizable.CashTab.Deposit.title)
+          .font(Fonts.bold.swiftUIFont(size: Constants.FontSize.ultraSmall.value))
+          .foregroundColor(Colors.whiteText.swiftUIColor)
+      }
+      .frame(width: 80, height: 28)
+      .background(Colors.darkBackground.swiftUIColor.cornerRadius(8))
+      .padding(.bottom, 8)
     }
   }
   
