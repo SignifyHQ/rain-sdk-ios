@@ -4,18 +4,26 @@ import LFLocalizable
 import LFUtilities
 
 public struct CryptoTransactionDetailView: View {
-  @State private var isNavigationToReceipt = false
+  @StateObject private var viewModel: CryptoTransactionDetailViewModel
   
-  let transaction: TransactionModel
-  let transactionInfos: [TransactionInformation]
-  
-  public init(transaction: TransactionModel, transactionInfos: [TransactionInformation]) {
-    self.transaction = transaction
-    self.transactionInfos = transactionInfos
+  public init(
+    transaction: TransactionModel,
+    transactionInfos: [TransactionInformation],
+    isNewAddress: Bool = false,
+    walletAddress: String = ""
+  ) {
+    _viewModel = .init(
+      wrappedValue: CryptoTransactionDetailViewModel(
+        transaction: transaction,
+        transactionInfos: transactionInfos,
+        isNewAddress: isNewAddress,
+        address: walletAddress
+      )
+    )
   }
   
   public var body: some View {
-    CommonTransactionDetailView(transaction: transaction, content: content)
+    CommonTransactionDetailView(transaction: viewModel.transaction, content: content)
   }
 }
 
@@ -23,26 +31,42 @@ public struct CryptoTransactionDetailView: View {
 private extension CryptoTransactionDetailView {
   var content: some View {
     VStack(spacing: 24) {
-      ForEach(transactionInfos, id: \.self) { item in
+      ForEach(viewModel.transactionInfos, id: \.self) { item in
         GenImages.CommonImages.dash.swiftUIImage
           .foregroundColor(Colors.label.swiftUIColor)
         TransactionInformationCell(item: item)
       }
       Spacer()
-      if let status = transaction.status {
+      if let status = viewModel.transaction.status {
         StatusView(status: status)
       }
       footer
     }
-    .navigationLink(isActive: $isNavigationToReceipt) {
-      EmptyView() // TODO: - Will be replaced by ReceiptView
+    .navigationLink(item: $viewModel.navigation) { item in
+      EmptyView()
     }
+    .popup(isPresented: $viewModel.showSaveWalletAddressPopup) {
+      saveWalletAddressPopup
+    }
+  }
+  
+  private var saveWalletAddressPopup: some View {
+    LiquidityAlert(
+      title: LFLocalizable.TransactionDetail.SaveWalletPopup.title,
+      message: LFLocalizable.TransactionDetail.SaveWalletPopup.description,
+      primary: .init(text: LFLocalizable.TransactionDetail.SaveWalletPopup.button) {
+        viewModel.navigatedToEnterWalletNicknameScreen()
+      },
+      secondary: .init(text: LFLocalizable.Button.NotNow.title) {
+        viewModel.dismissPopup()
+      }
+    )
   }
   
   var footer: some View {
     VStack(spacing: 16) {
       Button {
-        isNavigationToReceipt = true
+        viewModel.goToReceiptScreen()
       } label: {
         ArrowButton(
           image: GenImages.CommonImages.Accounts.bankStatements,

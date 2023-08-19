@@ -24,7 +24,12 @@ struct ConfirmSendCryptoView: View {
       .navigationLink(item: $viewModel.navigation) { item in
         switch item {
         case .detail(let transaction):
-          TransactionDetailView(transactionId: transaction.id, kind: transaction.detailType)
+          CryptoTransactionDetailView(
+            transaction: transaction,
+            transactionInfos: [],
+            isNewAddress: viewModel.nickname.isEmpty,
+            walletAddress: viewModel.address
+          )
         }
       }
   }
