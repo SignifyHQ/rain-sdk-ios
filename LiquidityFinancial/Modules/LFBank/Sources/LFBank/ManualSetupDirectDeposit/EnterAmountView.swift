@@ -13,7 +13,7 @@ struct EnterAmountView: View {
       Spacer()
       CurrencyTextFieldView(
         fontSize: 50,
-        fontColor: Colors.label,
+        fontColor: Colors.label.swiftUIColor,
         placeHolderText: Constants.Default.currencyDefaultAmount.rawValue,
         value: $viewModel.paycheckAmount,
         textAlignment: .trailing

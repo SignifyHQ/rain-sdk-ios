@@ -110,7 +110,7 @@ private extension ProfileView {
         }
       }
       ArrowButton(
-        image: GenImages.CommonImages.icShareWithFriend,
+        image: GenImages.CommonImages.icShareWithFriend.swiftUIImage,
         title: LFLocalizable.Profile.Referrals.title,
         value: LFLocalizable.Profile.Referrals.message
       ) {
@@ -185,28 +185,28 @@ private extension ProfileView {
         .padding(.leading, 10)
       VStack(spacing: 10) {
         informationCell(
-          image: GenImages.CommonImages.icPhone,
+          image: GenImages.CommonImages.icPhone.swiftUIImage,
           title: LFLocalizable.Profile.PhoneNumber.title,
           value: viewModel.phoneNumber
         )
         informationCell(
-          image: GenImages.CommonImages.icMail,
+          image: GenImages.CommonImages.icMail.swiftUIImage,
           title: LFLocalizable.Profile.Email.title,
           value: viewModel.email
         )
         informationCell(
-          image: GenImages.CommonImages.icMap,
+          image: GenImages.CommonImages.icMap.swiftUIImage,
           title: LFLocalizable.Profile.Address.title,
           value: viewModel.address
         )
-        ArrowButton(image: GenImages.CommonImages.icWarning, title: LFLocalizable.Profile.DepositLimits.title, value: nil) {
+        ArrowButton(image: GenImages.CommonImages.icWarning.swiftUIImage, title: LFLocalizable.Profile.DepositLimits.title, value: nil) {
           viewModel.depositLimitsTapped()
         }
-        ArrowButton(image: GenImages.CommonImages.icQuestion, title: LFLocalizable.Profile.Help.title, value: nil) {
+        ArrowButton(image: GenImages.CommonImages.icQuestion.swiftUIImage, title: LFLocalizable.Profile.Help.title, value: nil) {
           viewModel.helpTapped()
         }
         if !viewModel.isNotificationsEnabled {
-          ArrowButton(image: GenImages.CommonImages.icNotification, title: LFLocalizable.Profile.Notifications.title, value: nil) {
+          ArrowButton(image: GenImages.CommonImages.icNotification.swiftUIImage, title: LFLocalizable.Profile.Notifications.title, value: nil) {
             viewModel.notificationsTapped()
           }
         }
@@ -259,9 +259,9 @@ private extension ProfileView {
     )
   }
   
-  func informationCell(image: ImageAsset, title: String, value: String) -> some View {
+  func informationCell(image: Image, title: String, value: String) -> some View {
     HStack(spacing: 12) {
-      image.swiftUIImage
+      image
         .foregroundColor(Colors.label.swiftUIColor)
       VStack(alignment: .leading, spacing: 2) {
         Text(title)

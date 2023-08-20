@@ -46,7 +46,7 @@ private extension RewardReversalTransactionDetailView {
         isNavigationToReceipt = true
       } label: {
         ArrowButton(
-          image: GenImages.CommonImages.Accounts.bankStatements,
+          image: GenImages.CommonImages.Accounts.bankStatements.swiftUIImage,
           title: LFLocalizable.TransactionDetail.Receipt.button,
           value: nil
         )

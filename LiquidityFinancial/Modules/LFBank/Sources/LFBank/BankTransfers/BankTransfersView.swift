@@ -77,13 +77,13 @@ private extension BankTransfersView {
   var accountInformation: some View {
     HStack {
       accountDetail(
-        image: GenImages.CommonImages.icRoutingNumber,
+        image: GenImages.CommonImages.icRoutingNumber.swiftUIImage,
         title: LFLocalizable.BankTransfers.RoutingNumber.title,
         value: achInformation.routingNumber
       )
       Spacer()
       accountDetail(
-        image: GenImages.CommonImages.icAccountNumber,
+        image: GenImages.CommonImages.icAccountNumber.swiftUIImage,
         title: LFLocalizable.BankTransfers.AccountNumber.title,
         value: achInformation.accountNumber
       )
@@ -91,13 +91,13 @@ private extension BankTransfersView {
     .padding(.horizontal, 10)
   }
   
-  func accountDetail(image: ImageAsset, title: String, value: String) -> some View {
+  func accountDetail(image: Image, title: String, value: String) -> some View {
     Button {
       UIPasteboard.general.string = value
       showToast = true
     } label: {
       VStack(alignment: .leading, spacing: 8) {
-        image.swiftUIImage
+        image
           .foregroundColor(Colors.label.swiftUIColor)
         HStack(spacing: 6) {
           Text(value)

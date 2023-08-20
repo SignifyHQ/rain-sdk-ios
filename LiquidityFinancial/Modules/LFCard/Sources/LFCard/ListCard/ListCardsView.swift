@@ -106,7 +106,7 @@ private extension ListCardsView {
   
   var dealsButton: some View {
     ArrowButton(
-      image: GenImages.CommonImages.icDeals,
+      image: GenImages.CommonImages.icDeals.swiftUIImage,
       title: LFLocalizable.ListCard.Deals.title,
       value: LFLocalizable.ListCard.Deals.description(LFUtility.appName)
     ) {

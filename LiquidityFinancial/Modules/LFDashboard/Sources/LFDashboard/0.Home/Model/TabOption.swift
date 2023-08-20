@@ -21,16 +21,16 @@ public enum TabOption: String, CaseIterable {
     }
   }
   
-  var imageAsset: ImageAsset {
+  var imageAsset: Image {
     switch self {
     case .cash:
-      return GenImages.CommonImages.icCash
+      return GenImages.CommonImages.icCash.swiftUIImage
     case .rewards:
-      return GenImages.CommonImages.icRewards
+      return GenImages.CommonImages.icRewards.swiftUIImage
     case .assets:
-      return GenImages.CommonImages.icAssets
+      return GenImages.CommonImages.icAssets.swiftUIImage
     case .account:
-      return GenImages.CommonImages.icAccount
+      return GenImages.CommonImages.icAccount.swiftUIImage
     }
   }
 }

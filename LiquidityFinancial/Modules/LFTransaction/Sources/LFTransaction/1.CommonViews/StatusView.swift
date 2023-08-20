@@ -8,7 +8,7 @@ struct StatusView: View {
   var body: some View {
     HStack(spacing: 8) {
       if let image = statusImage {
-        image.swiftUIImage
+        image
       }
       Text(status.localizedDescription())
         .font(Fonts.medium.swiftUIFont(size: Constants.FontSize.small.value))
@@ -19,12 +19,12 @@ struct StatusView: View {
 
 // MARK: - View Helpers
 private extension StatusView {
-  var statusImage: ImageAsset? {
+  var statusImage: Image? {
     switch status {
     case .pending:
-      return GenImages.Images.statusPending
+      return GenImages.Images.statusPending.swiftUIImage
     case .completed:
-      return GenImages.Images.statusCompleted
+      return GenImages.Images.statusCompleted.swiftUIImage
     default:
       return nil
     }

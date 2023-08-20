@@ -9,12 +9,12 @@ public struct DirectDepositView: View {
   @Binding var achInformation: ACHModel
   
   private let companyLogos = [
-    GenImages.CommonImages.CompanyLogo.companyLogo1,
-    GenImages.CommonImages.CompanyLogo.companyLogo2,
-    GenImages.CommonImages.CompanyLogo.companyLogo3,
-    GenImages.CommonImages.CompanyLogo.companyLogo4,
-    GenImages.CommonImages.CompanyLogo.companyLogo5,
-    GenImages.CommonImages.CompanyLogo.companyLogo6
+    GenImages.CommonImages.CompanyLogo.companyLogo1.swiftUIImage,
+    GenImages.CommonImages.CompanyLogo.companyLogo2.swiftUIImage,
+    GenImages.CommonImages.CompanyLogo.companyLogo3.swiftUIImage,
+    GenImages.CommonImages.CompanyLogo.companyLogo4.swiftUIImage,
+    GenImages.CommonImages.CompanyLogo.companyLogo5.swiftUIImage,
+    GenImages.CommonImages.CompanyLogo.companyLogo6.swiftUIImage
   ]
 
   init(achInformation: Binding<ACHModel>) {
@@ -128,7 +128,7 @@ private extension DirectDepositView {
       )
       VStack(alignment: .leading) {
         numberCell(
-          icon: GenImages.CommonImages.icRoutingNumber,
+          icon: GenImages.CommonImages.icRoutingNumber.swiftUIImage,
           iconDescription: LFLocalizable.DirectDeposit.RoutingNumber.title,
           title: LFLocalizable.DirectDeposit.RoutingNumber.title,
           value: achInformation.routingNumber
@@ -137,7 +137,7 @@ private extension DirectDepositView {
           viewModel.copy(text: achInformation.routingNumber)
         }
         numberCell(
-          icon: GenImages.CommonImages.icAccountNumber,
+          icon: GenImages.CommonImages.icAccountNumber.swiftUIImage,
           iconDescription: LFLocalizable.DirectDeposit.AccountNumber.title,
           title: LFLocalizable.DirectDeposit.AccountNumber.title,
           value: achInformation.accountNumber
@@ -164,7 +164,7 @@ private extension DirectDepositView {
   var companyIcons: some View {
     HStack(alignment: .center, spacing: -15) {
       ForEach(Array(companyLogos.reversed().enumerated()), id: \.offset) {offset, imageAsset in
-        imageAsset.swiftUIImage
+        imageAsset
           .overlay(
             Circle().stroke(Colors.secondaryBackground.swiftUIColor, lineWidth: 3)
           )
@@ -173,10 +173,10 @@ private extension DirectDepositView {
     }
   }
   
-  func numberCell(icon: ImageAsset, iconDescription: String, title: String, value: String) -> some View {
+  func numberCell(icon: Image, iconDescription: String, title: String, value: String) -> some View {
     VStack(alignment: .leading, spacing: 4) {
       HStack(spacing: 6) {
-        icon.swiftUIImage
+        icon
           .foregroundColor(Colors.label.swiftUIColor)
         Text(iconDescription)
           .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.ultraSmall.value))
@@ -214,8 +214,8 @@ private extension DirectDepositView {
           .foregroundColor(Colors.label.swiftUIColor)
           .multilineTextAlignment(.center)
         VStack(alignment: .leading, spacing: 28) {
-          benefitCell(icon: GenImages.CommonImages.icFlash, label: LFLocalizable.DirectDeposit.FirstBenefit.title)
-          benefitCell(icon: GenImages.CommonImages.icWallet, label: LFLocalizable.DirectDeposit.SecondBenefit.title)
+          benefitCell(icon: GenImages.CommonImages.icFlash.swiftUIImage, label: LFLocalizable.DirectDeposit.FirstBenefit.title)
+          benefitCell(icon: GenImages.CommonImages.icWallet.swiftUIImage, label: LFLocalizable.DirectDeposit.SecondBenefit.title)
         }
         .padding(.top, 24)
         .padding(.bottom, 40)
@@ -230,9 +230,9 @@ private extension DirectDepositView {
     }
   }
   
-  func benefitCell(icon: ImageAsset, label: String) -> some View {
+  func benefitCell(icon: Image, label: String) -> some View {
     HStack(spacing: 12) {
-      icon.swiftUIImage
+      icon
         .resizable()
         .aspectRatio(contentMode: .fit)
         .foregroundColor(Colors.label.swiftUIColor)

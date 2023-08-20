@@ -27,6 +27,8 @@ public protocol CharityEnity {
   var confidence: Double? { get }
   var address: String? { get }
   var ein: String? { get }
+  var emailListUrl: String? { get }
+  var charityNavigatorUrl: String? { get }
   var tags: [String]? { get }
 }
 

@@ -10,7 +10,7 @@ public struct FullSizeButton: View {
   let cornerRadius: CGFloat
   let textColor: Color?
   let backgroundColor: Color?
-  let icon: ImageAsset?
+  let icon: Image?
   let action: () -> Void
   
   public init(
@@ -23,7 +23,7 @@ public struct FullSizeButton: View {
     cornerRadius: CGFloat = 10,
     textColor: Color? = nil,
     backgroundColor: Color? = nil,
-    icon: ImageAsset? = nil,
+    icon: Image? = nil,
     action: @escaping () -> Void
   ) {
     self.type = type
@@ -63,7 +63,7 @@ private extension FullSizeButton {
     Button(action: action) {
       HStack(spacing: 4) {
         if let icon = icon {
-          icon.swiftUIImage
+          icon
         }
         Text(title)
           .font(Fonts.bold.swiftUIFont(fixedSize: fontSize))

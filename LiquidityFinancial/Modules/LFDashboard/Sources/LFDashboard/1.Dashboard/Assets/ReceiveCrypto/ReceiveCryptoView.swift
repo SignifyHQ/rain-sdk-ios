@@ -143,7 +143,7 @@ private extension ReceiveCryptoView {
   var bottomView: some View {
     VStack {
       VStack {
-        FullSizeButton(title: LFLocalizable.Button.Share.title, isDisable: false, type: .secondary, icon: GenImages.CommonImages.icShare) {
+        FullSizeButton(title: LFLocalizable.Button.Share.title, isDisable: false, type: .secondary, icon: GenImages.CommonImages.icShare.swiftUIImage) {
           viewModel.shareTap()
         }
         Text(LFLocalizable.ReceiveCryptoView.servicesInfo)

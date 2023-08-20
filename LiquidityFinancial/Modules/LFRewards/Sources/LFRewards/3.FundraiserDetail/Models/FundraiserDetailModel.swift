@@ -63,8 +63,12 @@ struct FundraiserDetailModel: Equatable, Identifiable {
     URL(string: charity?.instagramUrl ?? "unknown")
   }
   
+  var charityEmailUrl: URL? {
+    URL(string: charity?.emailListUrl ?? "unknown")
+  }
+  
   var charityNavigatorUrl: URL? {
-    URL(string: charity?.url ?? "unknown")
+    URL(string: charity?.charityNavigatorUrl ?? "unknown")
   }
   
     // MARK: - Charity
@@ -74,6 +78,8 @@ struct FundraiserDetailModel: Equatable, Identifiable {
     let twitterUrl, facebookUrl, instagramUrl: String?
     let confidence: Double?
     let address, ein: String?
+    let charityNavigatorUrl: String?
+    let emailListUrl: String?
     let tags: [String]?
     
     init?(enity: (any CharityEnity)?) {
@@ -93,6 +99,8 @@ struct FundraiserDetailModel: Equatable, Identifiable {
       self.address = enity.address
       self.ein = enity.ein
       self.tags = enity.tags
+      self.emailListUrl = enity.emailListUrl
+      self.charityNavigatorUrl = enity.charityNavigatorUrl
     }
     
     var confidenceValue: Double {

@@ -15,7 +15,7 @@ public struct CircleButton: View {
       switch style {
       case .right, .delete, .plus, .xmark:
         if let imageAsset = style.imageAsset {
-          imageAsset.swiftUIImage
+          imageAsset
             .foregroundColor(Colors.label.swiftUIColor)
             .frame(24.0)
         }
@@ -43,16 +43,16 @@ public extension CircleButton {
     case refresh = "arrow.counterclockwise"
     case plus = "add"
     
-    var imageAsset: ImageAsset? {
+    var imageAsset: Image? {
       switch self {
       case .right:
-        return GenImages.CommonImages.icRightArrow
+        return GenImages.CommonImages.icRightArrow.swiftUIImage
       case .xmark:
-        return GenImages.CommonImages.icXMark
+        return GenImages.CommonImages.icXMark.swiftUIImage
       case .delete:
-        return GenImages.CommonImages.icTrash
+        return GenImages.CommonImages.icTrash.swiftUIImage
       case .plus:
-        return GenImages.CommonImages.icPlus
+        return GenImages.CommonImages.icPlus.swiftUIImage
       default:
         return nil
       }

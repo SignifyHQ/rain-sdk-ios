@@ -8,7 +8,6 @@ import AccountData
 import OnboardingDomain
 import LFRewards
 
-// swiftlint:disable cyclomatic_complexity
 public protocol OnboardingFlowCoordinatorProtocol {
   var routeSubject: CurrentValueSubject<OnboardingFlowCoordinator.Route, Never> { get }
   func routeUser()
@@ -116,7 +115,7 @@ public class OnboardingFlowCoordinator: OnboardingFlowCoordinatorProtocol {
               routeSubject.value = .zeroHash
             } else if states.contains(OnboardingMissingStep.cardProvision) {
               //TODO: we implement late
-            }  else if states.contains(OnboardingMissingStep.accountReject) {
+            } else if states.contains(OnboardingMissingStep.accountReject) {
               routeSubject.value = .accountReject
             }
           }

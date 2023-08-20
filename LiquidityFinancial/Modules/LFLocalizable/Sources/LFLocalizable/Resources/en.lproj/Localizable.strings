@@ -223,6 +223,8 @@
 "home.rewardsTab.title" = "Rewards";
 "home.assetsTab.title" = "Assets";
 "home.accountTab.title" = "Account";
+"home.donationTab.title" = "Donations";
+"home.causeTab.title" = "Causes";
 
 // CashView
 "cashTab.deActiveError.message" = "Your checking account was deactivated";

@@ -1017,6 +1017,14 @@ public enum LFLocalizable {
       /// Cash
       public static let title = LFLocalizable.tr("Localizable", "home.cashTab.title", fallback: "Cash")
     }
+    public enum CauseTab {
+      /// Causes
+      public static let title = LFLocalizable.tr("Localizable", "home.causeTab.title", fallback: "Causes")
+    }
+    public enum DonationTab {
+      /// Donations
+      public static let title = LFLocalizable.tr("Localizable", "home.donationTab.title", fallback: "Donations")
+    }
     public enum RewardsTab {
       /// Rewards
       public static let title = LFLocalizable.tr("Localizable", "home.rewardsTab.title", fallback: "Rewards")

@@ -38,7 +38,7 @@ private extension RewardTransactionDetailView {
       amount: amountValue,
       message: LFLocalizable.TransactionCard.Purchase.message(rewardAmount, amountValue, LFUtility.appName),
       activityItem: LFLocalizable.TransactionCard.ShareCrypto.title(rewardAmount, LFUtility.appName, LFUtility.shareAppUrl),
-      image: GenImages.CommonImages.zerohash,
+      image: GenImages.CommonImages.zerohash.swiftUIImage,
       backgroundColor: Colors.purchaseCardBackground.swiftUIColor
     )
   }

@@ -16,8 +16,8 @@ struct CashCardView: View {
   private var isCardAvailable: Bool {
     isPOFlow
   }
-  private var cardImageAsset: ImageAsset {
-    isCardAvailable ? GenImages.Images.availableCard : GenImages.Images.unavailableCard
+  private var cardImageAsset: Image {
+    isCardAvailable ? GenImages.Images.availableCard.swiftUIImage : GenImages.Images.unavailableCard.swiftUIImage
   }
 
   init(
@@ -40,7 +40,7 @@ struct CashCardView: View {
   var body: some View {
     ZStack(alignment: .bottom) {
       ZStack(alignment: .topTrailing) {
-        cardImageAsset.swiftUIImage
+        cardImageAsset
           .resizable()
           .background(Color.clear)
           .clipped()

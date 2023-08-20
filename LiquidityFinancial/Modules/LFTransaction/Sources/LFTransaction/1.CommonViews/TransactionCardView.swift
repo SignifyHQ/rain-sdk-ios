@@ -50,7 +50,7 @@ private extension TransactionCardView {
     ZStack {
       LottieView(twinkle: .contrast)
         .frame(height: 160)
-      information.image.swiftUIImage
+      information.image
         .resizable()
         .scaledToFit()
     }

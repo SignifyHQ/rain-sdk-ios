@@ -32,7 +32,7 @@ public struct LiquidityAlert: View {
   public var body: some View {
     PopupAlert {
       VStack(spacing: 0) {
-        image.asset.swiftUIImage
+        image.asset
           .resizable()
           .frame(image.size)
           .padding(.bottom, 24)
@@ -117,15 +117,15 @@ extension LiquidityAlert {
   }
   
   public struct ImageConfiguration {
-    let asset: ImageAsset
+    let asset: Image
     let size: CGSize
     
     public static var appLogo: Self {
-      .init(asset: GenImages.Images.icLogo, size: .init(80))
+      .init(asset: GenImages.Images.icLogo.swiftUIImage, size: .init(80))
     }
     
     public static var error: Self {
-      .init(asset: GenImages.CommonImages.icXError, size: .init(80))
+      .init(asset: GenImages.CommonImages.icXError.swiftUIImage, size: .init(80))
     }
   }
 }

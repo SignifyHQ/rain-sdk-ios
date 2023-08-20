@@ -72,7 +72,7 @@ private extension HomeView {
   
   func tabItem(option: TabOption) -> some View {
     VStack(spacing: 2) {
-      option.imageAsset.swiftUIImage
+      option.imageAsset
         .foregroundColor(
           option == viewModel.tabSelected ? Colors.primary.swiftUIColor : Colors.label.swiftUIColor
         )

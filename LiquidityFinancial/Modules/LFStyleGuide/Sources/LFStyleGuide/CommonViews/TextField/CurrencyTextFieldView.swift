@@ -10,14 +10,14 @@ public struct CurrencyTextFieldView: View {
   @FocusState private var keyboardFocus: Bool
   @Binding var value: String
   var fontSize: CGFloat
-  var fontColor: ColorAsset
+  var fontColor: Color
   var placeHolderText: String?
   var alignment: TextAlignment
   private let isFocusOnStart: Bool
   
   public init(
     fontSize: CGFloat,
-    fontColor: ColorAsset,
+    fontColor: Color,
     placeHolderText: String,
     value: Binding<String>,
     textAlignment: TextAlignment,
@@ -41,7 +41,7 @@ public struct CurrencyTextFieldView: View {
           formatter: .constant(.defaultdata),
           textFieldConfiguration: { uiTextField in
             uiTextField.font = Fonts.bold.font(size: fontSize)
-            uiTextField.textColor = fontColor.color
+            uiTextField.textColor = fontColor.uiColor
             uiTextField.keyboardType = .numberPad
             
             if alignment == .trailing {

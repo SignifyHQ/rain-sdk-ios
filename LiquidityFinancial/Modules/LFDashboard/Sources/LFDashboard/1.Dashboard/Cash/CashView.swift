@@ -57,13 +57,13 @@ private extension CashView {
     HStack(spacing: 6) {
       iconTextButton(
         title: LFLocalizable.CashTab.Deposit.title,
-        image: GenImages.CommonImages.addMoney
+        image: GenImages.CommonImages.addMoney.swiftUIImage
       ) {
         viewModel.addMoneyTapped()
       }
       iconTextButton(
         title: LFLocalizable.CashTab.Withdraw.title,
-        image: GenImages.CommonImages.sendMoney
+        image: GenImages.CommonImages.sendMoney.swiftUIImage
       ) {
         viewModel.sendMoneyTapped()
       }
@@ -186,10 +186,10 @@ private extension CashView {
     }
   }
   
-  func iconTextButton(title: String, image: ImageAsset, action: @escaping () -> Void) -> some View {
+  func iconTextButton(title: String, image: Image, action: @escaping () -> Void) -> some View {
     Button(action: action) {
       HStack(spacing: 8) {
-        image.swiftUIImage
+        image
         Text(title)
           .font(Fonts.bold.swiftUIFont(size: Constants.FontSize.ultraSmall.value))
       }

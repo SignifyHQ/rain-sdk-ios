@@ -10,6 +10,8 @@ public struct APIFundraisersDetail: Decodable, FundraisersDetailEntity {
 
   // MARK: - Charity
 public struct APICharity: Decodable, CharityEnity {
+  public var emailListUrl: String?
+  public var charityNavigatorUrl: String?
   public let id, productId, name, description: String?
   public let logoUrl, headerUrl, headerImageUrl, url: String?
   public let twitterUrl, facebookUrl, instagramUrl: String?

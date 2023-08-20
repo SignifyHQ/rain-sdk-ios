@@ -72,9 +72,9 @@ private extension SecurityCheckView {
     }
   }
   
-  func informationSSNCell(imageAsset: ImageAsset, description: String) -> some View {
+  func informationSSNCell(imageAsset: Image, description: String) -> some View {
     HStack {
-      imageAsset.swiftUIImage
+      imageAsset
         .foregroundColor(Colors.label.swiftUIColor)
       Text(description)
         .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.ultraSmall.value))
@@ -85,11 +85,11 @@ private extension SecurityCheckView {
   var informationView: some View {
     VStack(alignment: .leading, spacing: 12) {
       informationSSNCell(
-        imageAsset: GenImages.CommonImages.icLock,
+        imageAsset: GenImages.CommonImages.icLock.swiftUIImage,
         description: LFLocalizable.SecurityCheck.Encrypt.cellText
       )
       informationSSNCell(
-        imageAsset: GenImages.CommonImages.icTicketCircle,
+        imageAsset: GenImages.CommonImages.icTicketCircle.swiftUIImage,
         description: LFLocalizable.SecurityCheck.NoCreditCheck.cellText
       )
     }

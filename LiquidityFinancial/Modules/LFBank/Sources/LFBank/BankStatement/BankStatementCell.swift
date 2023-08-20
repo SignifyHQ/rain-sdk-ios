@@ -5,7 +5,7 @@ import LFUtilities
 struct BankStatementCell: View {
   let title: String
   let detailTitle: String
-  let leftImage: ImageAsset?
+  let leftImage: Image?
   var backGroundColor: Color
   var titleColor: Color
   var action: () -> Void = {}
@@ -13,7 +13,7 @@ struct BankStatementCell: View {
   init(
     title: String,
     detailTitle: String,
-    leftImage: ImageAsset? = nil,
+    leftImage: Image? = nil,
     backGroundColor: Color = Colors.secondaryBackground.swiftUIColor,
     titleColor: Color = Colors.label.swiftUIColor,
     action: @escaping () -> Void = {}
@@ -33,7 +33,7 @@ struct BankStatementCell: View {
       VStack {
         HStack(alignment: .center) {
           if let image = leftImage {
-            image.swiftUIImage
+            image
               .foregroundColor(Colors.label.swiftUIColor)
           }
           VStack {

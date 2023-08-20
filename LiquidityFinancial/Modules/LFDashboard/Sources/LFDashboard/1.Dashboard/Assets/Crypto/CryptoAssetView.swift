@@ -71,26 +71,26 @@ private extension CryptoAssetView {
           HStack(spacing: 10) {
             iconTextButton(
               title: LFLocalizable.AssetView.Buy.title,
-              image: GenImages.CommonImages.buy
+              image: GenImages.CommonImages.buy.swiftUIImage
             ) {
               viewModel.onClickedBuyButton()
             }
             iconTextButton(
               title: LFLocalizable.AssetView.Sell.title,
-              image: GenImages.CommonImages.sell
+              image: GenImages.CommonImages.sell.swiftUIImage
             ) {
               viewModel.onClickedSellButton()
             }
             iconTextButton(
               title: LFLocalizable.AssetView.Transfer.title,
-              image: GenImages.CommonImages.transfer
+              image: GenImages.CommonImages.transfer.swiftUIImage
             ) {
               viewModel.transferButtonTapped()
             }
           }
           .padding(.top, 6)
           ArrowButton(
-            image: GenImages.CommonImages.walletAddress,
+            image: GenImages.CommonImages.walletAddress.swiftUIImage,
             title: LFLocalizable.AssetView.walletAddress,
             value: Constants.Default.walletAddressPlaceholder.rawValue
           ) {
@@ -230,10 +230,10 @@ private extension CryptoAssetView {
     }
   }
   
-  func iconTextButton(title: String, image: ImageAsset, action: @escaping () -> Void) -> some View {
+  func iconTextButton(title: String, image: Image, action: @escaping () -> Void) -> some View {
     Button(action: action) {
       VStack(spacing: 6) {
-        image.swiftUIImage
+        image
           .foregroundColor(Colors.label.swiftUIColor)
         Text(title)
           .font(Fonts.bold.swiftUIFont(size: Constants.FontSize.ultraSmall.value))
@@ -257,13 +257,13 @@ private extension CryptoAssetView {
         .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.main.value))
         .padding(.vertical, 14)
       transferCell(
-        with: GenImages.CommonImages.sell,
+        with: GenImages.CommonImages.sell.swiftUIImage,
         and: LFLocalizable.AssetView.Send.title
       ) {
         viewModel.sendButtonTapped()
       }
       transferCell(
-        with: GenImages.CommonImages.buy,
+        with: GenImages.CommonImages.buy.swiftUIImage,
         and: LFLocalizable.AssetView.Receive.title
       ) {
         viewModel.receiveButtonTapped()
@@ -274,10 +274,10 @@ private extension CryptoAssetView {
     .background(Colors.secondaryBackground.swiftUIColor)
   }
   
-  func transferCell(with image: ImageAsset, and title: String, action: @escaping () -> Void) -> some View {
+  func transferCell(with image: Image, and title: String, action: @escaping () -> Void) -> some View {
     Button(action: action) {
       HStack(spacing: 12) {
-        image.swiftUIImage
+        image
         Text(title)
           .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.regular.value))
         Spacer()

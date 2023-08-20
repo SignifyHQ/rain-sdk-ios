@@ -66,12 +66,12 @@ private extension AccountsView {
   var accountDetailView: some View {
     VStack(spacing: 10) {
       accountDetailCell(
-        image: GenImages.CommonImages.icRoutingNumber,
+        image: GenImages.CommonImages.icRoutingNumber.swiftUIImage,
         title: LFLocalizable.AccountView.RoutingNumber.title,
         value: viewModel.achInformation.routingNumber
       )
       accountDetailCell(
-        image: GenImages.CommonImages.icAccountNumber,
+        image: GenImages.CommonImages.icAccountNumber.swiftUIImage,
         title: LFLocalizable.AccountView.AccountNumber.title,
         value: viewModel.achInformation.accountNumber
       )
@@ -79,9 +79,9 @@ private extension AccountsView {
     .foregroundColor(Colors.label.swiftUIColor)
   }
   
-  func accountDetailCell(image: ImageAsset, title: String, value: String) -> some View {
+  func accountDetailCell(image: Image, title: String, value: String) -> some View {
     HStack(spacing: 12) {
-      image.swiftUIImage
+      image
       Text(title)
         .font(Fonts.regular.swiftUIFont(size: 13))
       Spacer()
@@ -107,7 +107,7 @@ private extension AccountsView {
       if !viewModel.linkedAccount.isEmpty {
         section(title: LFLocalizable.AccountView.connectedAccounts) {
           ArrowButton(
-            image: GenImages.CommonImages.Accounts.connectedAccounts,
+            image: GenImages.CommonImages.Accounts.connectedAccounts.swiftUIImage,
             title: LFLocalizable.AccountView.connectedAccounts,
             value: nil
           ) {
@@ -130,14 +130,14 @@ private extension AccountsView {
   var shortcutSection: some View {
     VStack {
       ArrowButton(
-        image: GenImages.CommonImages.icRewards,
+        image: GenImages.CommonImages.icRewards.swiftUIImage,
         title: LFLocalizable.AccountView.rewards,
         value: nil
       ) {
         // TODO: Will do later
       }
       ArrowButton(
-        image: GenImages.CommonImages.Accounts.atm,
+        image: GenImages.CommonImages.Accounts.atm.swiftUIImage,
         title: LFLocalizable.AccountView.atm,
         value: nil,
         isLoading: $viewModel.isLoading
@@ -145,35 +145,35 @@ private extension AccountsView {
         viewModel.getATMAuthorizationCode()
       }
       ArrowButton(
-        image: GenImages.CommonImages.Accounts.bankStatements,
+        image: GenImages.CommonImages.Accounts.bankStatements.swiftUIImage,
         title: LFLocalizable.AccountView.bankStatements,
         value: nil
       ) {
         viewModel.bankStatementTapped()
       }
       ArrowButton(
-        image: GenImages.CommonImages.Accounts.tax,
+        image: GenImages.CommonImages.Accounts.tax.swiftUIImage,
         title: LFLocalizable.AccountView.taxes,
         value: nil
       ) {
         // TODO: Will do later
       }
       ArrowButton(
-        image: GenImages.CommonImages.Accounts.help,
+        image: GenImages.CommonImages.Accounts.help.swiftUIImage,
         title: LFLocalizable.AccountView.helpSupport,
         value: nil
       ) {
         // TODO: Will do later
       }
       ArrowButton(
-        image: GenImages.CommonImages.Accounts.legal,
+        image: GenImages.CommonImages.Accounts.legal.swiftUIImage,
         title: LFLocalizable.AccountView.legal,
         value: nil
       ) {
         // TODO: Will do later
       }
       ArrowButton(
-        image: GenImages.CommonImages.personAndBackgroundDotted,
+        image: GenImages.CommonImages.personAndBackgroundDotted.swiftUIImage,
         title: "ADMIN MENU",
         value: nil
       ) {
@@ -184,7 +184,7 @@ private extension AccountsView {
 
   var depositLimits: some View {
     ArrowButton(
-      image: GenImages.CommonImages.Accounts.limits,
+      image: GenImages.CommonImages.Accounts.limits.swiftUIImage,
       title: LFLocalizable.AccountView.depositLimits,
       value: nil
     ) {

@@ -42,7 +42,7 @@ private extension CryptoTransactionDetailView {
       }
       footer
     }
-    .navigationLink(item: $viewModel.navigation) { item in
+    .navigationLink(item: $viewModel.navigation) { _ in
       EmptyView()
     }
     .popup(isPresented: $viewModel.showSaveWalletAddressPopup) {
@@ -69,7 +69,7 @@ private extension CryptoTransactionDetailView {
         viewModel.goToReceiptScreen()
       } label: {
         ArrowButton(
-          image: GenImages.CommonImages.Accounts.bankStatements,
+          image: GenImages.CommonImages.Accounts.bankStatements.swiftUIImage,
           title: LFLocalizable.TransactionDetail.Receipt.button,
           value: nil
         )

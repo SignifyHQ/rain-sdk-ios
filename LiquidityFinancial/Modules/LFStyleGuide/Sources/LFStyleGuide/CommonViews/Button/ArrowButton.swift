@@ -3,10 +3,10 @@ import LFUtilities
 
 public struct ArrowButton: View {
   public init(
-    image: ImageAsset?,
+    image: Image?,
     title: String,
     value: String?,
-    trailingImage: ImageAsset? = nil,
+    trailingImage: Image? = nil,
     isLoading: Binding<Bool> = .constant(false),
     action: @escaping () -> Void = {}
   ) {
@@ -18,10 +18,10 @@ public struct ArrowButton: View {
     self.action = action
   }
   
-  let image: ImageAsset?
+  let image: Image?
   let title: String
   let value: String?
-  let trailingImage: ImageAsset?
+  let trailingImage: Image?
   @Binding var isLoading: Bool
   
   let action: () -> Void
@@ -47,7 +47,7 @@ private extension ArrowButton {
   var leadingView: some View {
     HStack(spacing: 12) {
       if let image {
-        image.swiftUIImage
+        image
           .foregroundColor(Colors.label.swiftUIColor)
       }
       VStack(alignment: .leading, spacing: 2) {
@@ -69,7 +69,7 @@ private extension ArrowButton {
       LottieView(loading: .primary)
         .frame(width: 30, height: 20)
     } else if let trailingImage {
-      trailingImage.swiftUIImage
+      trailingImage
         .resizable()
         .frame(20)
         .foregroundColor(Colors.label.swiftUIColor)

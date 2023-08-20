@@ -6,7 +6,7 @@ public struct TransactionCardInformation {
   let amount: String
   let message: String
   let activityItem: String
-  let image: ImageAsset
+  let image: Image
   let backgroundColor: Color
   
   public init(
@@ -14,7 +14,7 @@ public struct TransactionCardInformation {
     amount: String,
     message: String,
     activityItem: String,
-    image: ImageAsset,
+    image: Image,
     backgroundColor: Color = Colors.primary.swiftUIColor
   ) {
     self.title = title

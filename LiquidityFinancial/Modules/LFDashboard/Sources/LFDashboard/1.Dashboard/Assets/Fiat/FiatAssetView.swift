@@ -77,23 +77,23 @@ private extension FiatAssetView {
     HStack(spacing: 6) {
       iconTextButton(
         title: LFLocalizable.CashTab.Deposit.title,
-        image: GenImages.CommonImages.addMoney
+        image: GenImages.CommonImages.addMoney.swiftUIImage
       ) {
         viewModel.addMoneyTapped()
       }
       iconTextButton(
         title: LFLocalizable.CashTab.Withdraw.title,
-        image: GenImages.CommonImages.sendMoney
+        image: GenImages.CommonImages.sendMoney.swiftUIImage
       ) {
         viewModel.sendMoneyTapped()
       }
     }
   }
   
-  func iconTextButton(title: String, image: ImageAsset, action: @escaping () -> Void) -> some View {
+  func iconTextButton(title: String, image: Image, action: @escaping () -> Void) -> some View {
     Button(action: action) {
       HStack(spacing: 8) {
-        image.swiftUIImage
+        image
         Text(title)
           .font(Fonts.bold.swiftUIFont(size: Constants.FontSize.ultraSmall.value))
       }
@@ -108,12 +108,12 @@ private extension FiatAssetView {
   var accountDetailView: some View {
     VStack(spacing: 10) {
       accountDetailCell(
-        image: GenImages.CommonImages.icRoutingNumber,
+        image: GenImages.CommonImages.icRoutingNumber.swiftUIImage,
         title: LFLocalizable.AccountView.RoutingNumber.title,
         value: viewModel.achInformation.routingNumber
       )
       accountDetailCell(
-        image: GenImages.CommonImages.icAccountNumber,
+        image: GenImages.CommonImages.icAccountNumber.swiftUIImage,
         title: LFLocalizable.AccountView.AccountNumber.title,
         value: viewModel.achInformation.accountNumber
       )
@@ -121,9 +121,9 @@ private extension FiatAssetView {
     .foregroundColor(Colors.label.swiftUIColor)
   }
   
-  func accountDetailCell(image: ImageAsset, title: String, value: String) -> some View {
+  func accountDetailCell(image: Image, title: String, value: String) -> some View {
     HStack(spacing: 12) {
-      image.swiftUIImage
+      image
       Text(title)
         .font(Fonts.regular.swiftUIFont(size: 13))
       Spacer()
