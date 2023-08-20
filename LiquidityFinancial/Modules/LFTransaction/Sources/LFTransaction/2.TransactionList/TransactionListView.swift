@@ -28,7 +28,7 @@ public struct TransactionListView: View {
     }
     .onAppear(perform: viewModel.onAppear)
     .navigationLink(item: $viewModel.transactionDetail) { item in
-      TransactionDetailView(transactionId: item.id, kind: item.detailType)
+      TransactionDetailView(accountID: viewModel.accountID, transactionId: item.id, kind: item.detailType)
     }
   }
 }

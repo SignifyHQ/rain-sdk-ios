@@ -11,23 +11,19 @@ import Factory
 @MainActor
 final class TransactionDetailViewModel: ObservableObject {
   @LazyInjected(\.accountRepository) var accountRepository
-  @LazyInjected(\.accountDataManager) var accountDataManager
 
   @Published var transaction: TransactionModel = .default
   @Published var isFetchingData = false
 
-  init(transactionId: String) {
+  init(accountID: String, transactionId: String) {
     maybeShowRatingAlert()
-    getTransactionDetail(transactionId: transactionId)
+    getTransactionDetail(accountID: accountID, transactionId: transactionId)
   }
 }
 
 // MARK: - API
 extension TransactionDetailViewModel {
-  private func getTransactionDetail(transactionId: String) {
-    guard let accountID = accountDataManager.accountID else {
-      return
-    }
+  private func getTransactionDetail(accountID: String, transactionId: String) {
     Task {
       defer { isFetchingData = false }
       isFetchingData = true

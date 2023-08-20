@@ -42,8 +42,13 @@ private extension CryptoTransactionDetailView {
       }
       footer
     }
-    .navigationLink(item: $viewModel.navigation) { _ in
-      EmptyView()
+    .navigationLink(item: $viewModel.navigation) { item in
+      switch item {
+      case .receipt(let cryptoReceipt):
+        CryptoTransactionReceiptView(accountID: viewModel.transaction.accountId, receipt: cryptoReceipt)
+      case .saveAddress(let address):
+        EmptyView() // TODO: Will be implemented later
+      }
     }
     .popup(isPresented: $viewModel.showSaveWalletAddressPopup) {
       saveWalletAddressPopup
@@ -65,14 +70,12 @@ private extension CryptoTransactionDetailView {
   
   var footer: some View {
     VStack(spacing: 16) {
-      Button {
+      ArrowButton(
+        image: GenImages.CommonImages.Accounts.bankStatements.swiftUIImage,
+        title: LFLocalizable.TransactionDetail.Receipt.button,
+        value: nil
+      ) {
         viewModel.goToReceiptScreen()
-      } label: {
-        ArrowButton(
-          image: GenImages.CommonImages.Accounts.bankStatements.swiftUIImage,
-          title: LFLocalizable.TransactionDetail.Receipt.button,
-          value: nil
-        )
       }
       Text(LFLocalizable.Zerohash.Disclosure.description)
         .font(Fonts.regular.swiftUIFont(size: 10))

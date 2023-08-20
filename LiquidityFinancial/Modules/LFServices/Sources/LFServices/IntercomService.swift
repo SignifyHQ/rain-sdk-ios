@@ -67,7 +67,7 @@ public class IntercomService: IntercomServiceProtocol {
       .receive(on: DispatchQueue.main)
       .sink { [weak self] _ in
       self?.logout()
-    }
+      }
     .store(in: &subscriptions)
     
   }

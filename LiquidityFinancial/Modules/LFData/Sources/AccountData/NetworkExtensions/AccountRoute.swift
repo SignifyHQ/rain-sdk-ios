@@ -40,7 +40,7 @@ extension AccountRoute: LFRoute {
   }
   
   public var httpHeaders: HttpHeaders {
-    var base = [
+    let base = [
       "Content-Type": "application/json",
       "productId": NetworkUtilities.productID,
       "Accept": "application/json",

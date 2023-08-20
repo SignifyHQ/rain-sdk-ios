@@ -4,18 +4,16 @@ import LFServices
 import ZerohashData
 
 class CryptoTransactionDetailViewModel: ObservableObject {
-  
   @Published var showIndicator: Bool = false
   @Published var toastMessage: String?
   @Published var navigation: Navigation?
-  
+  @Published var showSaveWalletAddressPopup = false
+
   let transaction: TransactionModel
   let transactionInfos: [TransactionInformation]
   var isNewAddress: Bool = false
   var walletAddress: String = ""
-  
-  @Published var showSaveWalletAddressPopup = false
-  
+    
   init(transaction: TransactionModel, transactionInfos: [TransactionInformation], isNewAddress: Bool, address: String) {
     self.transaction = transaction
     self.transactionInfos = transactionInfos
@@ -28,7 +26,10 @@ class CryptoTransactionDetailViewModel: ObservableObject {
   }
   
   func goToReceiptScreen() {
-    navigation = .receipt
+    guard let cryptoReceipt = transaction.cryptoReceipt else {
+      return
+    }
+    navigation = .receipt(cryptoReceipt)
   }
   
   func dismissPopup() {
@@ -43,7 +44,7 @@ class CryptoTransactionDetailViewModel: ObservableObject {
 
 extension CryptoTransactionDetailViewModel {
   enum Navigation {
-    case receipt
+    case receipt(CryptoReceipt)
     case saveAddress(address: String)
   }
 }

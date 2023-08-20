@@ -32,8 +32,19 @@ public protocol RewardEntity {
 }
 
 public protocol TransactionReceiptEntity {
+  var type: String { get }
   var id: String { get }
   var accountId: String { get }
   var fee: Double? { get }
   var completedAt: String? { get }
+  var tradingPair: String? { get }
+  var currency: String? { get }
+  var orderType: String? { get }
+  var size: Double? { get }
+  var exchangeRate: Double? { get }
+  var transactionValue: Double? { get }
+  var rewardsDonation: Double? { get }
+  var roundUpDonation: Double? { get }
+  var oneTimeDonation: Double? { get }
+  var totalDonation: Double? { get }
 }

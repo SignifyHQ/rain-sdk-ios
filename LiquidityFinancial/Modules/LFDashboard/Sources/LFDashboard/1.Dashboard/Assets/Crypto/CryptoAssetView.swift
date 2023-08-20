@@ -39,7 +39,7 @@ struct CryptoAssetView: View {
               accountID: viewModel.account?.id ?? .empty
             )
         case let .transactionDetail(transaction):
-          TransactionDetailView(transactionId: transaction.id, kind: transaction.detailType)
+          TransactionDetailView(accountID: viewModel.account?.id ?? .empty, transactionId: transaction.id, kind: transaction.detailType)
         }
       }
       .defaultToolBar(navigationTitle: viewModel.asset.type?.title ?? .empty)
@@ -136,7 +136,7 @@ private extension CryptoAssetView {
       } else {
         ForEach(viewModel.transactions) { transaction in
           TransactionRowView(item: transaction) {
-            // viewModel.transactionItemTapped(transaction)
+            viewModel.transactionItemTapped(transaction)
           }
         }
       }

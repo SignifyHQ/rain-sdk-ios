@@ -30,7 +30,7 @@ struct FiatAssetView: View {
             accountID: viewModel.account?.id ?? .empty
           )
         case let .transactionDetail(transaction):
-          TransactionDetailView(transactionId: transaction.id, kind: transaction.detailType)
+          TransactionDetailView(accountID: viewModel.account?.id ?? .empty, transactionId: transaction.id, kind: transaction.detailType)
         }
       }
       .defaultToolBar(navigationTitle: viewModel.asset.type?.title ?? .empty)

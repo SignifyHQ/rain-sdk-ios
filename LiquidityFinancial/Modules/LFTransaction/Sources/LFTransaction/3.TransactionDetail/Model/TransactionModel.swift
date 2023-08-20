@@ -46,6 +46,40 @@ public extension TransactionModel {
     description ?? ""
   }
   
+  var cryptoReceipt: CryptoReceipt? {
+    guard let receipt = receipt else {
+      return nil
+    }
+    return CryptoReceipt(
+      id: receipt.id,
+      accountId: receipt.accountId,
+      fee: receipt.fee,
+      completedAt: receipt.completedAt,
+      tradingPair: receipt.tradingPair,
+      currency: receipt.currency,
+      orderType: receipt.orderType,
+      size: receipt.size,
+      exchangeRate: receipt.exchangeRate,
+      transactionValue: receipt.transactionValue
+    )
+  }
+  
+  var donationReceipt: DonationReceipt? {
+    guard let receipt = receipt else {
+      return nil
+    }
+    return DonationReceipt(
+      id: receipt.id,
+      accountId: receipt.accountId,
+      fee: receipt.fee,
+      completedAt: receipt.completedAt,
+      rewardsDonation: receipt.rewardsDonation,
+      roundUpDonation: receipt.roundUpDonation,
+      oneTimeDonation: receipt.oneTimeDonation,
+      totalDonation: receipt.totalDonation
+    )
+  }
+  
   func transactionDateInLocalZone(includeYear: Bool = false) -> String {
     createdAt.serverToTransactionDisplay(includeYear: includeYear)
   }
@@ -180,10 +214,21 @@ public extension TransactionModel {
       return nil
     }
     return TransactionReceipt(
+      type: receipt.type,
       id: receipt.id,
       accountId: receipt.accountId,
       fee: receipt.fee,
-      completedAt: receipt.completedAt
+      completedAt: receipt.completedAt,
+      tradingPair: receipt.tradingPair,
+      currency: receipt.currency,
+      orderType: receipt.orderType,
+      size: receipt.size,
+      exchangeRate: receipt.exchangeRate,
+      transactionValue: receipt.transactionValue,
+      rewardsDonation: receipt.rewardsDonation,
+      roundUpDonation: receipt.roundUpDonation,
+      oneTimeDonation: receipt.oneTimeDonation,
+      totalDonation: receipt.totalDonation
     )
   }
   

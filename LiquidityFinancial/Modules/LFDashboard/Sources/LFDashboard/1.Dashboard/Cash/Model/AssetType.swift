@@ -7,10 +7,15 @@ enum AssetType: String {
   case usdc = "USDC"
   case avax = "AVAX"
   case cardano = "ADA"
-  case doge = "Doge"
+  case doge = "DOGE"
   
   var title: String {
-    self.rawValue
+    switch self {
+    case .doge:
+      return "Doge"
+    default:
+      return self.rawValue
+    }
   }
   
   var image: Image? {

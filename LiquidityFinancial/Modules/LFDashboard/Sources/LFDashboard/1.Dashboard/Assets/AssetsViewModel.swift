@@ -41,7 +41,7 @@ extension AssetsViewModel {
         let accounts = fiatAccounts + cryptoAccounts
         assets = accounts.map {
           AssetModel(
-            type: AssetType(rawValue: $0.currency.uppercased()),
+            type: AssetType(rawValue: $0.currency),
             availableBalance: $0.availableBalance,
             availableUsdBalance: $0.availableUsdBalance
           )

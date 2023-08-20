@@ -122,6 +122,13 @@ public extension Constants {
       rawValue
     }
     
+    public var description: String {
+      switch self {
+      case .usd:
+        return "USD"
+      }
+    }
+    
     public var maxFractionDigits: Int {
       switch self {
       case .usd:

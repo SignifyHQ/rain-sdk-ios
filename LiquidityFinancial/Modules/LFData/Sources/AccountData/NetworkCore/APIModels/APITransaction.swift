@@ -43,8 +43,19 @@ public struct APIReward: Codable, RewardEntity {
 }
 
 public struct APITransactionReceipt: Codable, TransactionReceiptEntity {
+  public let type: String
   public let id: String
   public let accountId: String
   public let fee: Double?
   public let completedAt: String?
+  public let tradingPair: String?
+  public let currency: String?
+  public let orderType: String?
+  public let size: Double?
+  public let exchangeRate: Double?
+  public let transactionValue: Double?
+  public let rewardsDonation: Double?
+  public let roundUpDonation: Double?
+  public let oneTimeDonation: Double?
+  public let totalDonation: Double?
 }

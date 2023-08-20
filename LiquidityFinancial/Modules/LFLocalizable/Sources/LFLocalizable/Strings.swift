@@ -661,6 +661,183 @@ public enum LFLocalizable {
     /// Doge
     public static let value = LFLocalizable.tr("Localizable", "crypto.value", fallback: "Doge")
   }
+  public enum CryptoReceipt {
+    public enum AccountID {
+      /// Account ID
+      public static let title = LFLocalizable.tr("Localizable", "cryptoReceipt.accountID.title", fallback: "Account ID")
+    }
+    public enum Amount {
+      /// Amount
+      public static let title = LFLocalizable.tr("Localizable", "cryptoReceipt.amount.title", fallback: "Amount")
+    }
+    public enum Beware {
+      /// Cryptocurrencies and money transfer services are commonly targeted by hackers and criminals who commit fraud. For more information on how to protect against fraud, visit the Consumer Financial Protection Bureau’s website at 
+      ///  https://www.consumerfinance.gov/consumer-tools/fraud/. 
+      /// 
+      /// 
+      /// 
+      /// 
+      /// 
+      public static let description = LFLocalizable.tr("Localizable", "cryptoReceipt.beware.description", fallback: "Cryptocurrencies and money transfer services are commonly targeted by hackers and criminals who commit fraud. For more information on how to protect against fraud, visit the Consumer Financial Protection Bureau’s website at \n https://www.consumerfinance.gov/consumer-tools/fraud/. \n\n\n\n\n")
+      /// Beware of Fraud:
+      public static let title = LFLocalizable.tr("Localizable", "cryptoReceipt.beware.title", fallback: "Beware of Fraud:")
+    }
+    public enum Cancellation {
+      /// All transactions are final. You are responsible for reviewing this receipt for accuracy land for notifying Zero Hash LLC of any tuspected errors via email at support@zerohash.com within 24 hours of the trade.
+      /// 
+      /// 
+      /// 
+      public static let description = LFLocalizable.tr("Localizable", "cryptoReceipt.cancellation.description", fallback: "All transactions are final. You are responsible for reviewing this receipt for accuracy land for notifying Zero Hash LLC of any tuspected errors via email at support@zerohash.com within 24 hours of the trade.\n\n\n")
+      /// Return/Cancellation Policy:
+      public static let title = LFLocalizable.tr("Localizable", "cryptoReceipt.cancellation.title", fallback: "Return/Cancellation Policy:")
+    }
+    public enum CardType {
+      /// doge@zerohash.com
+      public static let link = LFLocalizable.tr("Localizable", "cryptoReceipt.cardType.link", fallback: "doge@zerohash.com")
+    }
+    public enum ConsumerTools {
+      /// https://www.consumerfinance.gov/consumer-tools/fraud
+      public static let link = LFLocalizable.tr("Localizable", "cryptoReceipt.consumerTools.link", fallback: "https://www.consumerfinance.gov/consumer-tools/fraud")
+    }
+    public enum Currency {
+      /// Currency
+      public static let title = LFLocalizable.tr("Localizable", "cryptoReceipt.currency.title", fallback: "Currency")
+    }
+    public enum DateAndTime {
+      /// Date and Time
+      public static let title = LFLocalizable.tr("Localizable", "cryptoReceipt.dateAndTime.title", fallback: "Date and Time")
+    }
+    public enum ExchangeRate {
+      /// Exchange Rate
+      public static let title = LFLocalizable.tr("Localizable", "cryptoReceipt.exchangeRate.title", fallback: "Exchange Rate")
+    }
+    public enum Fee {
+      /// Fee
+      public static let title = LFLocalizable.tr("Localizable", "cryptoReceipt.fee.title", fallback: "Fee")
+    }
+    public enum Illinois {
+      /// In the event of an unresolved complaint, please contact the Illinois Department of Financial and Professional Regulation - Division of Financial Institutions at 1-888-473-4858 or submit an online complaint at 
+      ///  https://idfpr.illinois.gov/admin/dfi/dficomplaint.html. 
+      /// 
+      /// 
+      /// 
+      /// 
+      public static let description = LFLocalizable.tr("Localizable", "cryptoReceipt.illinois.description", fallback: "In the event of an unresolved complaint, please contact the Illinois Department of Financial and Professional Regulation - Division of Financial Institutions at 1-888-473-4858 or submit an online complaint at \n https://idfpr.illinois.gov/admin/dfi/dficomplaint.html. \n\n\n\n")
+      /// Illinois Customers
+      public static let title = LFLocalizable.tr("Localizable", "cryptoReceipt.illinois.title", fallback: "Illinois Customers")
+    }
+    public enum IllinoisCustomer {
+      /// https://idfpr.illinois.gov/admin/dfi/dficomplaint.html.
+      public static let link = LFLocalizable.tr("Localizable", "cryptoReceipt.illinoisCustomer.link", fallback: "https://idfpr.illinois.gov/admin/dfi/dficomplaint.html.")
+    }
+    public enum Liability {
+      /// Zero Hash LLC's or Zero Hash Liquidity Services LLC's aggregate liability, including for non-delivery or delayed delivery, is limited to losses resulting solely from the gross negligence, intentional misconduct or fraud of Zero Hash or Zero Hash Liquidity Services, their affiliates or any of their officers, directors, managers, partners, employees or independent agents or contractors, as determined by a court of competent jurisdiction or arbitration panel in accordance with the terms of the User Agreement 
+      /// 
+      /// 
+      /// 
+      /// 
+      /// 
+      /// 
+      /// 
+      /// 
+      /// 
+      /// 
+      public static let description = LFLocalizable.tr("Localizable", "cryptoReceipt.liability.description", fallback: "Zero Hash LLC's or Zero Hash Liquidity Services LLC's aggregate liability, including for non-delivery or delayed delivery, is limited to losses resulting solely from the gross negligence, intentional misconduct or fraud of Zero Hash or Zero Hash Liquidity Services, their affiliates or any of their officers, directors, managers, partners, employees or independent agents or contractors, as determined by a court of competent jurisdiction or arbitration panel in accordance with the terms of the User Agreement \n\n\n\n\n\n\n\n\n\n")
+      /// Liability for Non-Delivery or Delayed Delivery:
+      public static let title = LFLocalizable.tr("Localizable", "cryptoReceipt.liability.title", fallback: "Liability for Non-Delivery or Delayed Delivery:")
+    }
+    public enum MaineCustomer {
+      ///  www.credit.maine.gov
+      public static let link = LFLocalizable.tr("Localizable", "cryptoReceipt.maineCustomer.link", fallback: " www.credit.maine.gov")
+    }
+    public enum MaineCustomers {
+      /// In the event of a dispute, please contact the Bureau of Consumer Credit Protection at 1-800-332-8529 or at www.credit.maine.gov. 
+      /// 
+      /// 
+      public static let description = LFLocalizable.tr("Localizable", "cryptoReceipt.maineCustomers.description", fallback: "In the event of a dispute, please contact the Bureau of Consumer Credit Protection at 1-800-332-8529 or at www.credit.maine.gov. \n\n")
+      /// Maine Customers
+      public static let title = LFLocalizable.tr("Localizable", "cryptoReceipt.maineCustomers.title", fallback: "Maine Customers")
+    }
+    public enum MinnesotaCustomerCryptocurrency {
+      /// https://mn.gov/commerce/money/investments/cryptocurrency
+      public static let link = LFLocalizable.tr("Localizable", "cryptoReceipt.minnesotaCustomerCryptocurrency.link", fallback: "https://mn.gov/commerce/money/investments/cryptocurrency")
+    }
+    public enum MinnesotaCustomerFraud {
+      /// https://mn.gov/commerce/money/fraud/
+      public static let link = LFLocalizable.tr("Localizable", "cryptoReceipt.minnesotaCustomerFraud.link", fallback: "https://mn.gov/commerce/money/fraud/")
+    }
+    public enum MinnesotaCustomers {
+      /// If you believe you are a victim of fraud, please contact the Minnesota Commerce Department Consumer Services Center at 1-800-657-3602 or consumer.protection@state.mn.us. For more information about how to protect against fraud and submit a complaint, visit https://mn.gov/commerce/money/fraud/. For more information on cryptocurrency, please visit
+      /// https://mn.gov/commerce/money/investments/cryptocurrency/. 
+      /// 
+      /// 
+      /// 
+      /// 
+      /// 
+      /// 
+      /// 
+      public static let description = LFLocalizable.tr("Localizable", "cryptoReceipt.minnesotaCustomers.description", fallback: "If you believe you are a victim of fraud, please contact the Minnesota Commerce Department Consumer Services Center at 1-800-657-3602 or consumer.protection@state.mn.us. For more information about how to protect against fraud and submit a complaint, visit https://mn.gov/commerce/money/fraud/. For more information on cryptocurrency, please visit\nhttps://mn.gov/commerce/money/investments/cryptocurrency/. \n\n\n\n\n\n\n")
+      /// Minnesota Customers
+      public static let title = LFLocalizable.tr("Localizable", "cryptoReceipt.minnesotaCustomers.title", fallback: "Minnesota Customers")
+    }
+    public enum Navigation {
+      /// Receipt
+      public static let title = LFLocalizable.tr("Localizable", "cryptoReceipt.navigation.title", fallback: "Receipt")
+    }
+    public enum OrderNumber {
+      /// Order Number
+      public static let title = LFLocalizable.tr("Localizable", "cryptoReceipt.orderNumber.title", fallback: "Order Number")
+    }
+    public enum OrderType {
+      /// Order Type
+      public static let title = LFLocalizable.tr("Localizable", "cryptoReceipt.orderType.title", fallback: "Order Type")
+    }
+    public enum Phonenumber {
+      /// 855-744-7333
+      public static let link = LFLocalizable.tr("Localizable", "cryptoReceipt.phonenumber.link", fallback: "855-744-7333")
+    }
+    public enum PriceRisk {
+      /// The value of any cryptocurrency, including any digital assets pegged to fiat currency, commodities, or any other asset, may go to zero.
+      /// 
+      /// 
+      public static let description = LFLocalizable.tr("Localizable", "cryptoReceipt.priceRisk.description", fallback: "The value of any cryptocurrency, including any digital assets pegged to fiat currency, commodities, or any other asset, may go to zero.\n\n")
+      /// PRICE RISK
+      public static let title = LFLocalizable.tr("Localizable", "cryptoReceipt.priceRisk.title", fallback: "PRICE RISK")
+    }
+    public enum TexasCustomer {
+      /// www.dob.texas.gov.
+      public static let link = LFLocalizable.tr("Localizable", "cryptoReceipt.texasCustomer.link", fallback: "www.dob.texas.gov.")
+    }
+    public enum TexasCustomers {
+      /// If you have a complaint, first contact the consumer assistance division of Zero Hash LLC at 1 (855) 744-7333, if you still have an unresolved complaint regarding the company's money transmission activity, please direct your complaint to: Texas Department of Banking, 2601 North Lamar Boulevard, Austin, Texas 78705, 1-877-276- 5554 (toll free), www.dob.texas.gov. 
+      /// 
+      /// 
+      /// 
+      /// 
+      /// 
+      /// 
+      /// 
+      public static let description = LFLocalizable.tr("Localizable", "cryptoReceipt.texasCustomers.description", fallback: "If you have a complaint, first contact the consumer assistance division of Zero Hash LLC at 1 (855) 744-7333, if you still have an unresolved complaint regarding the company's money transmission activity, please direct your complaint to: Texas Department of Banking, 2601 North Lamar Boulevard, Austin, Texas 78705, 1-877-276- 5554 (toll free), www.dob.texas.gov. \n\n\n\n\n\n\n")
+      /// Texas Customers
+      public static let title = LFLocalizable.tr("Localizable", "cryptoReceipt.texasCustomers.title", fallback: "Texas Customers")
+    }
+    public enum TradingPair {
+      /// Trading Pair
+      public static let title = LFLocalizable.tr("Localizable", "cryptoReceipt.tradingPair.title", fallback: "Trading Pair")
+    }
+    public enum TransactionValue {
+      /// Transaction Value
+      public static let title = LFLocalizable.tr("Localizable", "cryptoReceipt.transactionValue.title", fallback: "Transaction Value")
+    }
+    public enum Zerohash {
+      /// Zero Hash LLC 327 N Aberdeen St Chicago, IL 60607 
+      /// 
+      ///  www.zerohash.com
+      public static let description = LFLocalizable.tr("Localizable", "cryptoReceipt.zerohash.description", fallback: "Zero Hash LLC 327 N Aberdeen St Chicago, IL 60607 \n\n www.zerohash.com")
+      /// www.zerohash.com
+      public static let link = LFLocalizable.tr("Localizable", "cryptoReceipt.zerohash.link", fallback: "www.zerohash.com")
+    }
+  }
   public enum DirectDeposit {
     public enum AccountNumber {
       /// AccountNumber

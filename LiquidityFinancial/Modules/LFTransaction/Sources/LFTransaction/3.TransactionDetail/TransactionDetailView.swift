@@ -12,8 +12,8 @@ public struct TransactionDetailView: View {
   @StateObject private var viewModel: TransactionDetailViewModel
   let kind: TransactionDetailType
   
-  public init(transactionId: String, kind: TransactionDetailType) {
-    _viewModel = .init(wrappedValue: TransactionDetailViewModel(transactionId: transactionId))
+  public init(accountID: String, transactionId: String, kind: TransactionDetailType) {
+    _viewModel = .init(wrappedValue: TransactionDetailViewModel(accountID: accountID, transactionId: transactionId))
     self.kind = kind
   }
   

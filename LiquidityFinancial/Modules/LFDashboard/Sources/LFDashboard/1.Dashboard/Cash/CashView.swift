@@ -46,7 +46,7 @@ struct CashView: View {
       case .sendMoney:
         MoveMoneyAccountView(kind: .send)
       case let .transactionDetail(transaction):
-        TransactionDetailView(transactionId: transaction.id, kind: transaction.detailType)
+        TransactionDetailView(accountID: viewModel.accountID, transactionId: transaction.id, kind: transaction.detailType)
       }
     }
   }
