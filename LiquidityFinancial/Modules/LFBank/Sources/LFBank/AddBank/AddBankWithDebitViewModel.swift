@@ -70,11 +70,11 @@ class AddBankWithDebitViewModel: ObservableObject {
           log.error("Incomplete state")
           throw LiquidityError.invalidData
         }
-        let user = try await self.accountRepository.getUser()
+        let user = accountDataManager.userInfomationData
         let fullName = "\(user.firstName ?? "") \(user.lastName ?? "")"
         let month = self.monthFormatter.string(from: date)
         let year = self.yearFormatter.string(from: date)
-        let postalCode = user.addressEntity?.postalCode ?? ""
+        let postalCode = user.postalCode ?? ""
         
         let request = ExternalCardParameters(
           month: month,

@@ -135,5 +135,8 @@ public class AccountDataManager: AccountDataStorageProtocol {
   
   public func storeUser(user: LFUser) {
     userInfomationData = UserInfomationData(enity: user)
+    if let fullName = userInfomationData.fullName, fullName.isEmpty {
+      update(fullName: (userInfomationData.firstName ?? "") + " " + (userInfomationData.lastName ?? ""))
+    }
   }
 }

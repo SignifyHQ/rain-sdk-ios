@@ -1,8 +1,6 @@
-import Combine
 import NetSpendData
 import NetSpendDomain
 import Foundation
-import UIKit
 import LFStyleGuide
 import LFUtilities
 import Factory
@@ -10,6 +8,7 @@ import LFServices
 import SwiftUI
 import OnboardingData
 import AccountData
+import AccountDomain
 
 @MainActor
 final class OrderPhysicalCardViewModel: ObservableObject {
@@ -31,24 +30,22 @@ final class OrderPhysicalCardViewModel: ObservableObject {
   
   init(onOrderSuccess: ((CardModel) -> Void)?) {
     self.onOrderSuccess = onOrderSuccess
-    getUser()
+    getUser(from: accountDataManager.userInfomationData)
   }
 }
 
 // MARK: - API Handle
 extension OrderPhysicalCardViewModel {
   
-  func getUser() {
-    Task {
-      do {
-        let user = try await accountRepository.getUser()
-        if let addressEntity = user.addressEntity {
-          shippingAddress = ShippingAddress(line1: addressEntity.line1 ?? "", line2: addressEntity.line2, city: addressEntity.city ?? "", state: addressEntity.state ?? "", postalCode: addressEntity.postalCode ?? "", country: addressEntity.country)
-        }
-      } catch {
-        log.error(error.localizedDescription)
-      }
-    }
+  func getUser(from userEntity: UserInfomationDataProtocol) {
+    shippingAddress = ShippingAddress(
+      line1: userEntity.addressLine1 ?? "",
+      line2: userEntity.addressLine2,
+      city: userEntity.city ?? "",
+      state: userEntity.state ?? "",
+      postalCode: userEntity.postalCode ?? "",
+      country: userEntity.country
+    )
   }
   
   func orderPhysicalCard() {

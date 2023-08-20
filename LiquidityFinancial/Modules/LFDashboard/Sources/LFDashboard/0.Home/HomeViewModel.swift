@@ -15,25 +15,13 @@ public final class HomeViewModel: ObservableObject {
   @Published var navigation: Navigation?
   
   public init() {
-    getUser()
+
   }
 }
 
 // MARK: - API
 extension HomeViewModel {
-  private func getUser() {
-    Task {
-      do {
-        let user = try await accountRepository.getUser()
-        accountDataManager.storeUser(user: user)
-        if let firstName = user.firstName, let lastName = user.lastName {
-          accountDataManager.update(fullName: firstName + " " + lastName)
-        }
-      } catch {
-        log.error(error.localizedDescription)
-      }
-    }
-  }
+
 }
 
 // MARK: - View Helpers

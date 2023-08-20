@@ -23,7 +23,7 @@ public class LFNetwork<R: LFRoute>: NetworkType {
 
 extension LFNetwork {
   
-  public func request(_ route: R) -> AnyPublisher<Response, LFNetworkError> {
+  public func requestCombine(_ route: R) -> AnyPublisher<Response, LFNetworkError> {
     let request = URLRequest(route: route, auth: authorizationManager)
     Self.debugLog(info: "Request: \(request)\n\(request.allHTTPHeaderFields ?? [:])")
     
@@ -44,7 +44,7 @@ extension LFNetwork {
       .eraseToAnyPublisher()
   }
   
-  public func request<T: Decodable>(_ route: R, target: T.Type, decoder: JSONDecoder = .init()) -> AnyPublisher<T, LFNetworkError> {
+  public func requestCombine<T: Decodable>(_ route: R, target: T.Type, decoder: JSONDecoder = .init()) -> AnyPublisher<T, LFNetworkError> {
     let request = URLRequest(route: route, auth: authorizationManager)
     Self.debugLog(info: "Request: \(request)\n\(request.allHTTPHeaderFields ?? [:])")
     
@@ -61,7 +61,7 @@ extension LFNetwork {
       .eraseToAnyPublisher()
   }
   
-  public func request<T: Decodable, E: DesignatedError>(_ route: R, target: T.Type, failure: E.Type, decoder: JSONDecoder = .init()) -> AnyPublisher<T, LFNetworkError> {
+  public func requestCombine<T: Decodable, E: DesignatedError>(_ route: R, target: T.Type, failure: E.Type, decoder: JSONDecoder = .init()) -> AnyPublisher<T, LFNetworkError> {
     let request = URLRequest(route: route, auth: authorizationManager)
     Self.debugLog(info: "Request: \(request)\n\(request.allHTTPHeaderFields ?? [:])")
     
@@ -82,7 +82,7 @@ extension LFNetwork {
 
 extension LFNetwork {
   
-  public func request(_ route: R) async throws -> Response {
+  public func request(_ route: R, shouldcheckAuthorized: Bool = true) async throws -> Response {
     let request = URLRequest(route: route, auth: authorizationManager)
     Self.debugLog(info: "Request: \(request)\n\(request.allHTTPHeaderFields ?? [:])")
     
@@ -90,7 +90,7 @@ extension LFNetwork {
       let (data, response) = try await session.data(for: request)
       self.processResponse(data: data, response: response)
       
-      if checkAuthorizedAndRun(data: data, response: response) {
+      if shouldcheckAuthorized, checkAuthorizedAndRun(data: data, response: response) {
         try await authorizationManager.refreshToken()
         let (data, response) = try await session.data(for: request)
         self.processResponse(data: data, response: response)
@@ -104,7 +104,7 @@ extension LFNetwork {
     }
   }
   
-  public func request<T>(_ route: R, target: T.Type, decoder: JSONDecoder) async throws -> T where T: Decodable {
+  public func request<T>(_ route: R, target: T.Type, decoder: JSONDecoder, shouldcheckAuthorized: Bool = true) async throws -> T where T: Decodable {
     let request = URLRequest(route: route, auth: authorizationManager)
     Self.debugLog(info: "Request: \(request)\n\(request.allHTTPHeaderFields ?? [:])")
     
@@ -112,7 +112,7 @@ extension LFNetwork {
       let (data, response) = try await session.data(for: request)
       self.processResponse(data: data, response: response)
       
-      if checkAuthorizedAndRun(data: data, response: response) {
+      if shouldcheckAuthorized, checkAuthorizedAndRun(data: data, response: response) {
         try await authorizationManager.refreshToken()
         let (data, response) = try await session.data(for: request)
         self.processResponse(data: data, response: response)
@@ -126,7 +126,7 @@ extension LFNetwork {
     }
   }
   
-  public func request<T, E>(_ route: R, target: T.Type, failure: E.Type, decoder: JSONDecoder) async throws -> T where T: Decodable, E: DesignatedError {
+  public func request<T, E>(_ route: R, target: T.Type, failure: E.Type, decoder: JSONDecoder, shouldcheckAuthorized: Bool = true) async throws -> T where T: Decodable, E: DesignatedError {
     let request = URLRequest(route: route, auth: authorizationManager)
     Self.debugLog(info: "Request: \(request)\n\(request.allHTTPHeaderFields ?? [:])")
     
@@ -134,7 +134,7 @@ extension LFNetwork {
       let (data, response) = try await session.data(for: request)
       self.processResponse(data: data, response: response)
       
-      if checkAuthorizedAndRun(data: data, response: response) {
+      if shouldcheckAuthorized, checkAuthorizedAndRun(data: data, response: response) {
         try await authorizationManager.refreshToken()
         let (data, response) = try await session.data(for: request)
         self.processResponse(data: data, response: response)

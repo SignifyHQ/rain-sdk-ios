@@ -17,7 +17,10 @@ extension LFNetwork: AccountAPIProtocol where R == AccountRoute {
   }
   
   public func getTransactions(accountId: String, currencyType: String, limit: Int, offset: Int) async throws -> APITransactionList {
-    let listModel = try await request(AccountRoute.getTransactions(accountId: accountId, currencyType: currencyType, limit: limit, offset: offset), target: APIListObject<APITransaction>.self, failure: LFErrorObject.self, decoder: .apiDecoder)
+    let listModel = try await request(AccountRoute.getTransactions(accountId: accountId, currencyType: currencyType, limit: limit, offset: offset),
+                                      target: APIListObject<APITransaction>.self,
+                                      failure: LFErrorObject.self,
+                                      decoder: .apiDecoder)
     return APITransactionList(total: listModel.total, data: listModel.data)
   }
   
@@ -31,7 +34,7 @@ extension LFNetwork: AccountAPIProtocol where R == AccountRoute {
   }
   
   public func logout() async throws -> Bool {
-    let result = try await request(AccountRoute.logout)
+    let result = try await request(AccountRoute.logout, shouldcheckAuthorized: false)
     return (result.httpResponse?.statusCode ?? 500).isSuccess
   }
 }
