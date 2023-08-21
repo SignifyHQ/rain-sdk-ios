@@ -7,7 +7,7 @@ public struct OAuthCredential: Decodable {
   public let refreshToken: String?
   public let expiresIn: Date
   
-  init(accessToken: String, refreshToken: String?, expiresIn: Date) {
+  public init(accessToken: String, refreshToken: String?, expiresIn: Date) {
     self.accessToken = accessToken
     self.refreshToken = refreshToken
     self.expiresIn = expiresIn

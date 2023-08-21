@@ -121,6 +121,7 @@ extension AuthorizationManager {
     Task {
       do {
         try await refreshToken()
+        update() // Update new token before refresh
         let credential = OAuthCredential(accessToken: fetchAccessToken(), refreshToken: fetchRefreshToken(), expiresIn: expiresAt)
         completion(.success(credential))
       } catch {

@@ -1,6 +1,8 @@
 import Alamofire
 import Foundation
 
+// swiftlint:disable all
+
 public protocol AuthenticatorDelegate: AnyObject {
   func requestTokens(with tokens: OAuthCredential, completion: @escaping (Result<OAuthCredential, Error>) -> Void)
 }
@@ -19,8 +21,8 @@ public class OAuthAuthenticator: Authenticator {
   }
   
   public func refresh(_ credential: OAuthCredential,
-               for _: Session,
-               completion: @escaping (Result<OAuthCredential, Error>) -> Void) {
+                      for _: Session,
+                      completion: @escaping (Result<OAuthCredential, Error>) -> Void) {
     guard let delegate = delegate else {
       completion(.failure(AuthError.noTokenProvider))
       return
@@ -30,8 +32,8 @@ public class OAuthAuthenticator: Authenticator {
   }
   
   public func didRequest(_: URLRequest,
-                  with response: HTTPURLResponse,
-                  failDueToAuthenticationError _: Error) -> Bool {
+                         with response: HTTPURLResponse,
+                         failDueToAuthenticationError _: Error) -> Bool {
     response.statusCode == 401
   }
   

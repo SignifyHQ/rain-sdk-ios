@@ -42,7 +42,7 @@ public final class LFCoreNetwork<R: LFRoute>: CoreNetworkType {
     let configuration = URLSessionConfiguration.default
     configuration.timeoutIntervalForRequest = 60
     configuration.timeoutIntervalForResource = 60
-    let diskCapacity = 30 * 1024 * 1024
+    let diskCapacity = 30 * 1_024 * 1_024
     configuration.urlCache = .init(memoryCapacity: configuration.urlCache?.memoryCapacity ?? 0, diskCapacity: diskCapacity)
     
     URLSessionConfiguration.mockingswizzleDefaultSessionConfiguration()
@@ -56,7 +56,7 @@ public final class LFCoreNetwork<R: LFRoute>: CoreNetworkType {
     return dataRequest.validate().publishUnserialized().value().eraseToAnyPublisher()
   }
   
-  public func requestCombine<T>(_ route: R, target: T.Type, decoder: JSONDecoder) -> AnyPublisher<T, AFError> where T : Decodable {
+  public func requestCombine<T>(_ route: R, target: T.Type, decoder: JSONDecoder) -> AnyPublisher<T, AFError> where T: Decodable {
     let request = LFURLRequest(route: route, auth: authorizationManager)
     let dataRequest = session.request(request, interceptor: buildInterceptor(from: route))
     return dataRequest.validate().publishDecodable(type: target).value().eraseToAnyPublisher()
@@ -75,14 +75,14 @@ public final class LFCoreNetwork<R: LFRoute>: CoreNetworkType {
     return Response(httpResponse: stringResponse.response, data: stringResponse.data)
   }
   
-  public func request<T>(_ route: R, target: T.Type, decoder: JSONDecoder) async throws -> T where T : Decodable {
+  public func request<T>(_ route: R, target: T.Type, decoder: JSONDecoder) async throws -> T where T: Decodable {
     let request = LFURLRequest(route: route, auth: authorizationManager)
     let dataRequest = session.request(request, interceptor: buildInterceptor(from: route))
     let value = try await dataRequest.validate().serializingDecodable(target).value
     return value
   }
   
-  public func request<T, E>(_ route: R, target: T.Type, failure: E.Type, decoder: JSONDecoder) async throws -> T where T : Decodable, E : Decodable, E : Error {
+  public func request<T, E>(_ route: R, target: T.Type, failure: E.Type, decoder: JSONDecoder) async throws -> T where T: Decodable, E: Decodable, E: Error {
     let request = LFURLRequest(route: route, auth: authorizationManager)
     let dataRequest = session.request(request, interceptor: buildInterceptor(from: route))
     let response = await dataRequest.validate().serializingDecodable(target).response
@@ -105,7 +105,7 @@ extension LFCoreNetwork: AuthenticatorDelegate {
 
 extension LFCoreNetwork {
   private func buildInterceptor(from route: R) -> Interceptor? {
-    let mustAuthorization = route.httpHeaders.contains(where: { (key, value) in
+    let mustAuthorization = route.httpHeaders.contains(where: { key, _ in
       key == "Authorization" ? true : false
     })
     if mustAuthorization {

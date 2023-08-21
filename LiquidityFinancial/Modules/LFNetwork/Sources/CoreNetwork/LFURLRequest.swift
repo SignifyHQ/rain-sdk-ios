@@ -42,4 +42,3 @@ extension LFURLRequest: URLConvertible {
     return Alamofire.HTTPMethod(rawValue: method)
   }
 }
-
