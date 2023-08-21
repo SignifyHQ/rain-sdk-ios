@@ -11,6 +11,8 @@ public enum AccountRoute {
   case getTransactions(accountId: String, currencyType: String, limit: Int, offset: Int)
   case getTransactionDetail(accountId: String, transactionId: String)
   case logout
+  case createWalletAddress(accountId: String, address: String, nickname: String)
+  case getWalletAddresses(accountId: String)
 }
 
 extension AccountRoute: LFRoute {
@@ -29,13 +31,17 @@ extension AccountRoute: LFRoute {
       return "/v1/transactions/\(accountId)"
     case let .getTransactionDetail(accountId, transactionId):
       return "/v1/transactions/\(accountId)/transactions/\(transactionId)"
+    case .createWalletAddress(let accountId, _, _), .getWalletAddresses(let accountId):
+      return "v1/accounts/\(accountId)/wallet-addresses"
     }
   }
   
   public var httpMethod: HttpMethod {
     switch self {
-    case .createZeroHashAccount, .logout: return .POST
-    case .getUser, .getAccount, .getTransactions, .getTransactionDetail: return .GET
+    case .createZeroHashAccount, .logout, .createWalletAddress:
+      return .POST
+    case .getUser, .getAccount, .getTransactions, .getTransactionDetail, .getWalletAddresses:
+      return .GET
     }
   }
   
@@ -47,14 +53,14 @@ extension AccountRoute: LFRoute {
       "Authorization": self.needAuthorizationKey
     ]
     switch self {
-    case .createZeroHashAccount, .getAccount, .getTransactions, .getTransactionDetail, .logout, .getUser:
+    case .createZeroHashAccount, .getAccount, .getTransactions, .getTransactionDetail, .logout, .getUser, .createWalletAddress, .getWalletAddresses:
       return base
     }
   }
   
   public var parameters: Parameters? {
     switch self {
-    case .createZeroHashAccount, .getUser, .getTransactionDetail, .logout:
+    case .createZeroHashAccount, .getUser, .getTransactionDetail, .logout, .getWalletAddresses:
       return nil
     case .getAccount(let currencyType):
       return ["currencyType": currencyType]
@@ -64,12 +70,19 @@ extension AccountRoute: LFRoute {
         "limit": String(limit),
         "offset": String(offset)
       ]
+    case .createWalletAddress(_, let address, let nickname):
+      return [
+        "nickname": nickname,
+        "address": address
+      ]
     }
   }
   
   public var parameterEncoding: ParameterEncoding? {
     switch self {
-    case .createZeroHashAccount, .getUser, .logout:
+    case .createWalletAddress:
+      return .json
+    case .createZeroHashAccount, .getUser, .logout, .getWalletAddresses:
       return nil
     case .getAccount, .getTransactions, .getTransactionDetail:
       return .url

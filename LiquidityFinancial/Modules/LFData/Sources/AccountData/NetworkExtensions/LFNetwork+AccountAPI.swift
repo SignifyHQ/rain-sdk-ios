@@ -37,4 +37,23 @@ extension LFCoreNetwork: AccountAPIProtocol where R == AccountRoute {
     let result = try await request(AccountRoute.logout)
     return (result.httpResponse?.statusCode ?? 500).isSuccess
   }
+  
+  public func createWalletAddresses(accountId: String, address: String, nickname: String) async throws -> APIWalletAddress {
+    try await request(
+      AccountRoute.createWalletAddress(accountId: accountId, address: address, nickname: nickname),
+      target: APIWalletAddress.self,
+      failure: LFErrorObject.self,
+      decoder: .apiDecoder
+    )
+  }
+  
+  public func getWalletAddresses(accountId: String) async throws -> [APIWalletAddress] {
+    let listModel = try await request(
+      AccountRoute.getWalletAddresses(accountId: accountId),
+      target: APIListObject<APIWalletAddress>.self,
+      failure: LFErrorObject.self,
+      decoder: .apiDecoder
+    )
+    return listModel.data
+  }
 }

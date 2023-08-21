@@ -686,6 +686,16 @@ https://mn.gov/commerce/money/investments/cryptocurrency/. \n\n\n\n\n\n\n";
 "ConfirmSendCryptoView.to" = "To";
 "ConfirmSendCryptoView.wallet_address" = "Wallet address";
 
+// Enter nickname of wallet
+"enter_nickname_of_wallet.save_title" = "SAVE WALLET ADDRESS";
+"enter_nickname_of_wallet.create_nickname" = "Create a name for \"%@\"";
+"enter_nickname_of_wallet.placeholder" = "Enter name";
+"enter_nickname_of_wallet.textField_title" = "Wallet address name";
+"enter_nickname_of_wallet.disclosures" = "You can change it at any time";
+"enter_nickname_of_wallet.save_button" = "Save";
+"enter_nickname_of_wallet.name_exist.inline_error" = "This wallet address name already exists";
+"enter_nickname_of_wallet.wallet_was_saved" = "Wallet address was saved";
+
 // MARK: - Common
 
 // Terms

@@ -13,4 +13,11 @@ public struct APIWalletAddress: WalletAddressEntity, Codable {
     self.nickname = nickname
     self.address = address
   }
+  
+  public init(entity: WalletAddressEntity) {
+    self.id = entity.id
+    self.accountId = entity.accountId
+    self.nickname = entity.nickname
+    self.address = entity.address
+  }
 }

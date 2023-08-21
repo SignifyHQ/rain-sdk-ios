@@ -8,4 +8,6 @@ public protocol AccountRepositoryProtocol {
   func getTransactions(accountId: String, currencyType: String, limit: Int, offset: Int) async throws -> TransactionListEntity
   func getTransactionDetail(accountId: String, transactionId: String) async throws -> TransactionEntity
   func logout() async throws -> Bool
+  func createWalletAddresses(accountId: String, address: String, nickname: String) async throws -> WalletAddressEntity
+  func getWalletAddresses(accountId: String) async throws -> [WalletAddressEntity]
 }

@@ -1,4 +1,5 @@
 import SwiftUI
+import AccountData
 import LFLocalizable
 import LFUtilities
 import Factory
@@ -16,6 +17,10 @@ final class EnterCryptoAddressViewModel: ObservableObject {
   @Published var inputValue: String = ""
   @Published var isShowingScanner: Bool = false
   @Published var navigation: Navigation?
+  @Published var wallets: [APIWalletAddress] = []
+  @Published var walletsFilter: [APIWalletAddress] = []
+  @Published var walletSelected: APIWalletAddress?
+  @Published var isFetchingData: Bool = false
   
   let amount: Double
   let account: LFAccount
@@ -23,6 +28,8 @@ final class EnterCryptoAddressViewModel: ObservableObject {
   init(account: LFAccount, amount: Double) {
     self.account = account
     self.amount = amount
+    
+    getSavedWallets()
   }
   
   var isActionAllowed: Bool {
@@ -40,6 +47,7 @@ final class EnterCryptoAddressViewModel: ObservableObject {
   
   func clearValue() {
     inputValue = "".trimWhitespacesAndNewlines()
+    walletSelected = nil
   }
   
   func handleScan(result: Result<ScanResult, ScanError>) {
@@ -51,6 +59,63 @@ final class EnterCryptoAddressViewModel: ObservableObject {
       log.error("Scanning failed: \(error.localizedDescription)")
     }
   }
+}
+
+extension EnterCryptoAddressViewModel {
+  
+  func getSavedWallets() {
+    isFetchingData = true
+    Task { @MainActor in
+      defer {
+        isFetchingData = false
+      }
+      do {
+        let response = try await accountRepository.getWalletAddresses(accountId: account.id)
+        let walletAddresses = response.map({ APIWalletAddress(entity: $0) })
+        wallets = walletAddresses
+        walletsFilter = walletAddresses
+      } catch {
+        toastMessage = error.localizedDescription
+      }
+      isFetchingData = false
+    }
+  }
+  
+  func filterWalletAddressList() {
+    if walletSelected?.address != inputValue {
+      walletSelected = nil
+    }
+    guard walletSelected == nil else {
+      return
+    }
+    walletsFilter = wallets.filter { wallet in
+      guard let nickname = wallet.nickname else {
+        return false
+      }
+      return nickname.lowercased().hasPrefix(inputValue.lowercased())
+    }
+    wallets.forEach { wallet in
+      if wallet.address == inputValue {
+        walletsFilter = [wallet]
+        walletSelected = wallet
+        return
+      }
+    }
+  }
+  
+  func selectedWallet(wallet: APIWalletAddress) {
+    walletSelected = wallet
+    inputValue = wallet.address
+  }
+  
+  func editWalletTapped(wallet: APIWalletAddress) {
+    
+  }
+  
+  func deleteWalletTapped(wallet: APIWalletAddress) {
+    
+  }
+  
 }
 
 extension EnterCryptoAddressViewModel {

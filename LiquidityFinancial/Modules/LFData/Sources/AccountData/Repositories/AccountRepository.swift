@@ -36,6 +36,14 @@ public class AccountRepository: AccountRepositoryProtocol {
   public func logout() async throws -> Bool {
     return try await accountAPI.logout()
   }
+  
+  public func createWalletAddresses(accountId: String, address: String, nickname: String) async throws -> WalletAddressEntity {
+    try await accountAPI.createWalletAddresses(accountId: accountId, address: address, nickname: nickname)
+  }
+  
+  public func getWalletAddresses(accountId: String) async throws -> [WalletAddressEntity] {
+    try await accountAPI.getWalletAddresses(accountId: accountId)
+  }
 }
 
 extension APIAccount: LFAccount {}

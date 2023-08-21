@@ -1063,6 +1063,28 @@ public enum LFLocalizable {
       public static let title = LFLocalizable.tr("Localizable", "enterCVVCode.setCardPin.title", fallback: "ENTER CVV TO SET CARD PIN")
     }
   }
+  public enum EnterNicknameOfWallet {
+    /// Create a name for "%@"
+    public static func createNickname(_ p1: Any) -> String {
+      return LFLocalizable.tr("Localizable", "enter_nickname_of_wallet.create_nickname", String(describing: p1), fallback: "Create a name for \"%@\"")
+    }
+    /// You can change it at any time
+    public static let disclosures = LFLocalizable.tr("Localizable", "enter_nickname_of_wallet.disclosures", fallback: "You can change it at any time")
+    /// Enter name
+    public static let placeholder = LFLocalizable.tr("Localizable", "enter_nickname_of_wallet.placeholder", fallback: "Enter name")
+    /// Save
+    public static let saveButton = LFLocalizable.tr("Localizable", "enter_nickname_of_wallet.save_button", fallback: "Save")
+    /// SAVE WALLET ADDRESS
+    public static let saveTitle = LFLocalizable.tr("Localizable", "enter_nickname_of_wallet.save_title", fallback: "SAVE WALLET ADDRESS")
+    /// Wallet address name
+    public static let textFieldTitle = LFLocalizable.tr("Localizable", "enter_nickname_of_wallet.textField_title", fallback: "Wallet address name")
+    /// Wallet address was saved
+    public static let walletWasSaved = LFLocalizable.tr("Localizable", "enter_nickname_of_wallet.wallet_was_saved", fallback: "Wallet address was saved")
+    public enum NameExist {
+      /// This wallet address name already exists
+      public static let inlineError = LFLocalizable.tr("Localizable", "enter_nickname_of_wallet.name_exist.inline_error", fallback: "This wallet address name already exists")
+    }
+  }
   public enum EnterSsn {
     /// Encrypted using 256-BIT SSL
     public static let bulletOne = LFLocalizable.tr("Localizable", "enter_ssn.bullet_one", fallback: "Encrypted using 256-BIT SSL")

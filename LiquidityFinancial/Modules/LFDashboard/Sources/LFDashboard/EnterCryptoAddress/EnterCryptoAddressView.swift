@@ -1,4 +1,5 @@
 import SwiftUI
+import AccountData
 import LFLocalizable
 import LFUtilities
 import LFStyleGuide
@@ -13,11 +14,18 @@ struct EnterCryptoAddressView: View {
   }
   
   var body: some View {
-    VStack(alignment: .leading, spacing: 32) {
+    VStack(alignment: .leading, spacing: 24) {
       header
+        .padding(.bottom, 8)
       VStack(alignment: .leading, spacing: 12) {
         textField
         warningLabel
+      }
+      if viewModel.isFetchingData {
+        LottieView(loading: .primary)
+          .frame(width: 30, height: 20)
+      } else {
+        savedWalletsAddress
       }
       Spacer()
       footer
@@ -37,6 +45,9 @@ struct EnterCryptoAddressView: View {
       CodeScannerView(codeTypes: [.qr], simulatedData: "") { result in
         viewModel.handleScan(result: result)
       }
+    }
+    .onChange(of: viewModel.inputValue) { _ in
+      viewModel.filterWalletAddressList()
     }
     .navigationLink(item: $viewModel.navigation) { item in
       switch item {
@@ -88,6 +99,73 @@ private extension EnterCryptoAddressView {
     Text(LFLocalizable.EnterCryptoAddressView.warning(LFLocalizable.Crypto.value))
       .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.textFieldHeader.value))
       .foregroundColor(Colors.label.swiftUIColor.opacity(0.5))
+  }
+  
+  var savedWalletsAddress: some View {
+    let buttons = [
+      SwipeWalletCellButton(
+        image: GenImages.CommonImages.icEdit.swiftUIImage,
+        backgroundColor: Colors.secondaryBackground.swiftUIColor
+      ) { wallet in
+        viewModel.editWalletTapped(wallet: wallet)
+      },
+      SwipeWalletCellButton(
+        image: GenImages.CommonImages.icTrash.swiftUIImage,
+        backgroundColor: Colors.error.swiftUIColor
+      ) { wallet in
+        viewModel.deleteWalletTapped(wallet: wallet)
+      }
+    ]
+
+    return ScrollView(showsIndicators: false) {
+      VStack(alignment: .leading, spacing: 10) {
+        ForEach(viewModel.walletsFilter, id: \.id) { wallet in
+          walletNicknameCell(with: wallet)
+            .swipeWalletCell(buttons: buttons, item: wallet) {
+              viewModel.selectedWallet(wallet: wallet)
+            }
+        }
+      }
+    }
+    .padding(.top, 12)
+  }
+  
+  func walletNicknameCell(with wallet: APIWalletAddress) -> some View {
+    HStack(spacing: 12) {
+      Circle()
+        .stroke(Colors.primary.swiftUIColor, lineWidth: 1)
+        .frame(width: 32, height: 32)
+        .overlay(
+          Text((wallet.nickname ?? "").prefix(1))
+            .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.medium.value))
+            .foregroundColor(Colors.label.swiftUIColor)
+        )
+      Text(wallet.nickname ?? "")
+        .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.small.value))
+        .foregroundColor(Colors.label.swiftUIColor)
+      Spacer()
+      circleBoxView(isSelected: wallet.address == viewModel.walletSelected?.address)
+    }
+    .padding(.horizontal, 12)
+    .frame(height: 56)
+    .background(Colors.secondaryBackground.swiftUIColor.cornerRadius(9))
+  }
+
+  @ViewBuilder
+  func circleBoxView(isSelected: Bool) -> some View {
+    if isSelected {
+      ZStack(alignment: .center) {
+        Circle()
+          .fill(Colors.primary.swiftUIColor)
+          .frame(width: 20, height: 20)
+        GenImages.CommonImages.icCheckmark.swiftUIImage
+          .foregroundColor(Colors.label.swiftUIColor)
+      }
+    } else {
+      Circle()
+        .stroke(Colors.label.swiftUIColor.opacity(0.75), lineWidth: 1)
+        .frame(width: 20, height: 20)
+    }
   }
   
   var error: some View {
