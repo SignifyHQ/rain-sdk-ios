@@ -247,7 +247,8 @@ private extension ProfileView {
     LiquidityAlert(
       title: LFLocalizable.Profile.DeleteAccount.message.uppercased(),
       primary: .init(text: LFLocalizable.Button.No.title, action: { viewModel.dismissPopup() }),
-      secondary: .init(text: LFLocalizable.Button.Yes.title, action: { viewModel.deleteAccount() })
+      secondary: .init(text: LFLocalizable.Button.Yes.title, action: { viewModel.deleteAccount() }),
+      isLoading: $viewModel.isLoading
     )
   }
   
@@ -255,7 +256,8 @@ private extension ProfileView {
     LiquidityAlert(
       title: LFLocalizable.Profile.Logout.message.uppercased(),
       primary: .init(text: LFLocalizable.Button.No.title, action: { viewModel.dismissPopup() }),
-      secondary: .init(text: LFLocalizable.Button.Yes.title, action: { viewModel.logout() })
+      secondary: .init(text: LFLocalizable.Button.Yes.title, action: { viewModel.logout() }),
+      isLoading: $viewModel.isLoading
     )
   }
   

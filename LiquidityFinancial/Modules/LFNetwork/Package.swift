@@ -20,16 +20,17 @@ let package = Package(
     dependencies: [
       .package(name: "LFUtilities", path: "../LFUtilities"),
       .package(name: "LFDomain", path: "../LFDomain"),
-      .package(url: "https://github.com/hmlongco/Factory", from: "2.2.0")
+      .package(url: "https://github.com/hmlongco/Factory", from: "2.2.0"),
+      .package(url: "https://github.com/Alamofire/Alamofire.git", .upToNextMajor(from: "5.7.1"))
     ],
     targets: [
         .target(
             name: "CoreNetwork",
-            dependencies: ["LFUtilities", "AuthorizationManager", "NetworkUtilities"]),
+            dependencies: ["LFUtilities", "AuthorizationManager", "NetworkUtilities", "Alamofire"]),
         .target(
           name: "AuthorizationManager",
           dependencies: [
-            "LFUtilities", "Factory", "NetworkUtilities",
+            "LFUtilities", "Factory", "NetworkUtilities", "Alamofire",
             .product(name: "OnboardingDomain", package: "LFDomain")
           ]
         ),

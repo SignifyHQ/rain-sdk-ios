@@ -4,7 +4,7 @@ import CoreNetwork
 
 extension Container {
   public var netspendAPI: Factory<NSPersonsAPIProtocol> {
-    self { LFNetwork<NSPersonsRoute>() }
+    self { LFCoreNetwork<NSPersonsRoute>() }
   }
   
   public var netspendRepository: Factory<NSPersonsRepositoryProtocol> {

@@ -6,7 +6,7 @@ import NetSpendDomain
 extension Container {
   public var externalFundingAPI: Factory<NSExternalFundingAPIProtocol> {
     self {
-      LFNetwork<NSExternalFundingRoute>()
+      LFCoreNetwork<NSExternalFundingRoute>()
     }
   }
   

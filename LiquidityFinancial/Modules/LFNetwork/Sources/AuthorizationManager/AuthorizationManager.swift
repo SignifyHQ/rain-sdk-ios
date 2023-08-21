@@ -8,13 +8,39 @@ import NetworkUtilities
 public protocol AuthorizationManagerProtocol {
   var logOutForcedName: Notification.Name { get }
   func isTokenValid() -> Bool
-  func fetchToken() -> String
+  func fetchAccessToken() -> String
   func fetchRefreshToken() -> String
   func refreshWith(apiToken: AccessTokens)
   func refreshToken() async throws
   func clearToken()
   func update()
   func forcedLogout()
+  func refresh(with accessTokens: OAuthCredential, completion: @escaping (Result<OAuthCredential, Error>) -> Void)
+  func fetchTokens() -> OAuthCredential?
+}
+
+struct AuthorizationAccessToken: Decodable, AccessTokens {
+  let accessToken: String
+  let tokenType: String
+  let refreshToken: String
+  let expiresIn: Int
+  
+  private var requestedAt = Date()
+  
+  enum CodingKeys: String, CodingKey {
+    case accessToken = "access_token"
+    case refreshToken = "refresh_token"
+    case tokenType = "token_type"
+    case expiresIn = "expires_in"
+  }
+  
+  var expiresAt: Date {
+    Calendar.current.date(byAdding: .second, value: expiresIn, to: requestedAt) ?? Date()
+  }
+  
+  var bearerAccessToken: String {
+    "\(tokenType) \(accessToken)"
+  }
 }
 
 public class AuthorizationManager {
@@ -73,35 +99,59 @@ public extension AuthorizationManager {
     } catch {
       throw AuthError.invalidBody
     }
+    
     log.debug("AuthorizationManager: refreshToken \n \(request)")
-    do {
-      
-      let (data, response) = try await session.data(for: request)
-      log.debug("AuthorizationManager: refreshToken \n \(response)")
-      
-      if let statusCode = (response as? HTTPURLResponse)?.statusCode, statusCode == APIConstants.StatusCodes.unauthorized {
-        //The server has forcibly logged out the user
-        self.forcedLogout()
-      }
-      
-      let accessTokens = try JSONDecoder().decode(AuthorizationAccessTokens.self, from: data)
+    
+    let (data, response) = try await session.data(for: request)
+    
+    log.debug("AuthorizationManager: refreshToken \n \(response)")
+    
+    if let statusCode = (response as? HTTPURLResponse)?.statusCode, statusCode == APIConstants.StatusCodes.unauthorized {
+      throw AuthError.unauthorized
+    } else {
+      let accessTokens = try JSONDecoder().decode(AuthorizationAccessToken.self, from: data)
       refreshWith(apiToken: accessTokens)
-      
-    } catch {
-      log.error("AuthorizationManager: refreshToken \n \(error)")
-      throw error
     }
   }
 }
 
-  // MARK: - AccessTokenManagerProtocol
+// MARK: - AccessTokenProvider
+extension AuthorizationManager {
+  public func refresh(with accessTokens: OAuthCredential, completion: @escaping (Result<OAuthCredential, Error>) -> Void) {
+    Task {
+      do {
+        try await refreshToken()
+        let credential = OAuthCredential(accessToken: fetchAccessToken(), refreshToken: fetchRefreshToken(), expiresIn: expiresAt)
+        completion(.success(credential))
+      } catch {
+        log.error(error.localizedDescription)
+        completion(.failure(error))
+        if error is AuthError {
+          forcedLogout() //The server has forcibly logged out the user
+        }
+      }
+    }
+  }
+  
+  public func fetchTokens() -> OAuthCredential? {
+    update()
+    let accessToken = fetchAccessToken()
+    let refreshToken = fetchRefreshToken()
+    if accessToken.isEmpty {
+      return nil
+    }
+    return OAuthCredential(accessToken: accessToken, refreshToken: refreshToken, expiresIn: expiresAt)
+  }
+}
+
+// MARK: - AccessTokenManagerProtocol
 extension AuthorizationManager: AuthorizationManagerProtocol {
   public func isTokenValid() -> Bool {
     update()
     return accessToken != nil && expiresAt > currentDate
   }
   
-  public func fetchToken() -> String {
+  public func fetchAccessToken() -> String {
     guard let token = accessToken else {
       return ""
     }
@@ -140,7 +190,7 @@ extension AuthorizationManager: AuthorizationManagerProtocol {
 private extension AuthorizationManager {
   func save(token: AccessTokens) {
     UserDefaults.accessTokenExpiresAt = token.expiresAt.timeIntervalSince1970
-    UserDefaults.bearerAccessToken = token.bearerAccessToken
+    UserDefaults.bearerAccessToken = token.accessToken
     UserDefaults.bearerRefreshToken = token.refreshToken
   }
   

@@ -6,7 +6,7 @@ import CoreNetwork
 extension Container {
   public var cardAPI: Factory<NSCardAPIProtocol> {
     self {
-      LFNetwork<NSCardRoute>()
+      LFCoreNetwork<NSCardRoute>()
     }
   }
   

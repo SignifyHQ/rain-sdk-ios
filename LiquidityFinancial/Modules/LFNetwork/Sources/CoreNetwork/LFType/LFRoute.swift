@@ -9,20 +9,3 @@ public protocol LFRoute {
   var parameters: Parameters? { get }
   var parameterEncoding: ParameterEncoding? { get }
 }
-
-extension LFRoute {
-  public var scheme: String {
-    "https"
-  }
-  
-  public var url: URL {
-    guard !path.isEmpty else {
-      return baseURL
-    }
-    return baseURL.appendingPathComponent(path)
-  }
-  
-  public var needAuthorizationKey: String {
-    "need_authorization"
-  }
-}

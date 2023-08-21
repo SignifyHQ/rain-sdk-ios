@@ -7,7 +7,7 @@ import AuthorizationManager
 extension Container {
   public var rewardAPI: Factory<RewardAPIProtocol> {
     self {
-      LFNetwork<RewardRoute>()
+      LFCoreNetwork<RewardRoute>()
     }
   }
   

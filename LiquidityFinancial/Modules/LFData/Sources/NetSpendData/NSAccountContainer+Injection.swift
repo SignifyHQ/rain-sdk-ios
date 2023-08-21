@@ -6,7 +6,7 @@ import CoreNetwork
 extension Container {
   public var nsAccountAPI: Factory<NSAccountAPIProtocol> {
     self {
-      LFNetwork<NSAccountRoute>()
+      LFCoreNetwork<NSAccountRoute>()
     }
   }
   

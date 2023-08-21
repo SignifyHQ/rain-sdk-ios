@@ -4,7 +4,7 @@ import NetworkUtilities
 import CoreNetwork
 import LFUtilities
 
-extension LFNetwork: NSExternalFundingAPIProtocol where R == NSExternalFundingRoute {
+extension LFCoreNetwork: NSExternalFundingAPIProtocol where R == NSExternalFundingRoute {
   public func set(request: ExternalCardParameters, sessionID: String) async throws -> APIExternalCard {
     return try await self.request(
       NSExternalFundingRoute.set(request, sessionID),

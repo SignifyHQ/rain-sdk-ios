@@ -13,6 +13,7 @@ import AccountData
 final class VerificationCodeViewModel: ObservableObject {
   @LazyInjected(\.accountDataManager) var accountDataManager
   @LazyInjected(\.onboardingRepository) var onboardingRepository
+  @LazyInjected(\.accountRepository) var accountRepository
   @LazyInjected(\.onboardingFlowCoordinator) var onboardingFlowCoordinator
   @LazyInjected(\.netspendRepository) var netspendRepository
   @LazyInjected(\.netspendDataManager) var netspendDataManager
@@ -68,7 +69,8 @@ extension VerificationCodeViewModel {
         let userSessionAnonymous = try netspendRepository.createUserSession(establishingSession: sessionConnectWithJWT, encryptedData: establishPersonSession.encryptedData)
         netspendDataManager.update(sdkSession: userSessionAnonymous)
         
-        checkOnboardingState { self.isShowLoading = false }
+        await checkOnboardingState()
+        self.isShowLoading = false
         
       } catch {
         self.isShowLoading = false
@@ -122,35 +124,33 @@ extension VerificationCodeViewModel {
 
   // MARK: Private
 extension VerificationCodeViewModel {
-  private func checkOnboardingState(onCompletion: @escaping () -> Void) {
-    Task { @MainActor in
-      defer { onCompletion() }
-      do {
-        let onboardingState = try await onboardingRepository.getOnboardingState(sessionId: accountDataManager.sessionID)
-        if onboardingState.missingSteps.isEmpty {
-          onboardingFlowCoordinator.set(route: .dashboard)
+  @MainActor
+  private func checkOnboardingState() async {
+    do {
+      let onboardingState = try await onboardingRepository.getOnboardingState(sessionId: accountDataManager.sessionID)
+      if onboardingState.missingSteps.isEmpty {
+        self.onboardingFlowCoordinator.set(route: .dashboard)
+      } else {
+        let states = onboardingState.mapToEnum()
+        if states.isEmpty {
+          self.onboardingFlowCoordinator.set(route: .dashboard)
         } else {
-          let states = onboardingState.mapToEnum()
-          if states.isEmpty {
-            onboardingFlowCoordinator.set(route: .dashboard)
-          } else {
-            if states.contains(OnboardingMissingStep.netSpendCreateAccount) {
-              onboardingFlowCoordinator.set(route: .welcome)
-            } else if states.contains(OnboardingMissingStep.dashboardReview) {
-              onboardingFlowCoordinator.set(route: .kycReview)
-            } else if states.contains(OnboardingMissingStep.zeroHashAccount) {
-              onboardingFlowCoordinator.set(route: .zeroHash)
-            } else if states.contains(OnboardingMissingStep.cardProvision) {
+          if states.contains(OnboardingMissingStep.netSpendCreateAccount) {
+            self.onboardingFlowCoordinator.set(route: .welcome)
+          } else if states.contains(OnboardingMissingStep.dashboardReview) {
+            self.onboardingFlowCoordinator.set(route: .kycReview)
+          } else if states.contains(OnboardingMissingStep.zeroHashAccount) {
+            self.onboardingFlowCoordinator.set(route: .zeroHash)
+          } else if states.contains(OnboardingMissingStep.cardProvision) {
               //TODO: We implement late
-            } else if states.contains(OnboardingMissingStep.accountReject) {
-              onboardingFlowCoordinator.set(route: .accountReject)
-            }
+          } else if states.contains(OnboardingMissingStep.accountReject) {
+            self.onboardingFlowCoordinator.set(route: .accountReject)
           }
         }
-      } catch {
-        onboardingFlowCoordinator.set(route: .welcome)
-        log.error(error.localizedDescription)
       }
+    } catch {
+      self.onboardingFlowCoordinator.set(route: .welcome)
+      log.error(error.localizedDescription)
     }
   }
   

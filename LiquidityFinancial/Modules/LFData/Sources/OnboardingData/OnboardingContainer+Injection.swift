@@ -7,7 +7,7 @@ import AuthorizationManager
 extension Container {
   public var onboardingAPI: Factory<OnboardingAPIProtocol> {
     self {
-      LFNetwork<OnboardingRoute>()
+      LFCoreNetwork<OnboardingRoute>()
     }
   }
   

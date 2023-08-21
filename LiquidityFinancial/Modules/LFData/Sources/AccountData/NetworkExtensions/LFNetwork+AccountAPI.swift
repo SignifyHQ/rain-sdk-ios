@@ -3,7 +3,7 @@ import NetworkUtilities
 import CoreNetwork
 import LFUtilities
 
-extension LFNetwork: AccountAPIProtocol where R == AccountRoute {
+extension LFCoreNetwork: AccountAPIProtocol where R == AccountRoute {
   public func getAccount(currencyType: String) async throws -> [APIAccount] {
     return try await request(AccountRoute.getAccount(currencyType: currencyType), target: [APIAccount].self, failure: LFErrorObject.self, decoder: .apiDecoder)
   }
@@ -34,7 +34,7 @@ extension LFNetwork: AccountAPIProtocol where R == AccountRoute {
   }
   
   public func logout() async throws -> Bool {
-    let result = try await request(AccountRoute.logout, shouldcheckAuthorized: false)
+    let result = try await request(AccountRoute.logout)
     return (result.httpResponse?.statusCode ?? 500).isSuccess
   }
 }

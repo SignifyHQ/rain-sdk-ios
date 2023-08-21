@@ -4,4 +4,5 @@ enum AuthError: Error {
   case missingToken
   case urlInvalid
   case invalidBody
+  case unauthorized
 }

@@ -4,7 +4,7 @@ import NetworkUtilities
 import CoreNetwork
 import LFUtilities
 
-extension LFNetwork: NSAccountAPIProtocol where R == NSAccountRoute {
+extension LFCoreNetwork: NSAccountAPIProtocol where R == NSAccountRoute {
   
   public func getStatements(sessionId: String, fromMonth: String, fromYear: String, toMonth: String, toYear: String) async throws -> [StatementModel] {
     let response = try await request(

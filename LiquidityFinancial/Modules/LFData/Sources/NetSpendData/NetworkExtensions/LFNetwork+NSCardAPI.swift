@@ -4,7 +4,7 @@ import NetworkUtilities
 import CoreNetwork
 import LFUtilities
 
-extension LFNetwork: NSCardAPIProtocol where R == NSCardRoute {
+extension LFCoreNetwork: NSCardAPIProtocol where R == NSCardRoute {
   public func getListCard() async throws -> [APICard] {
     try await request(
       NSCardRoute.listCard,

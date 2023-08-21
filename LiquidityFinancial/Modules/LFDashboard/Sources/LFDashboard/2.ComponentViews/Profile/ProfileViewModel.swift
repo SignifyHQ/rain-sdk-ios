@@ -8,6 +8,7 @@ final class ProfileViewModel: ObservableObject {
   @Published var isNotificationsEnabled: Bool = false
   @Published var isLoadingContribution: Bool = false
   @Published var showContributionToast: Bool = false
+  @Published var isLoading: Bool = false
   @Published var contribution: Contribution?
   @Published var navigation: Navigation?
   @Published var popup: Popup?
@@ -94,16 +95,16 @@ extension ProfileViewModel {
   }
   
   func logout() {
-    apiLogout()
-    authorizationManager.clearToken()
-    accountDataManager.clearUserSession()
-    authorizationManager.forcedLogout()
-    intercomService.pushEventLogout()
-    dismissPopup()
-  }
-  
-  func apiLogout() {
     Task {
+      defer {
+        isLoading = false
+        authorizationManager.clearToken()
+        accountDataManager.clearUserSession()
+        authorizationManager.forcedLogout()
+        intercomService.pushEventLogout()
+        dismissPopup()
+      }
+      isLoading = true
       do {
         _ = try await accountRepository.logout()
       } catch {
@@ -117,7 +118,7 @@ extension ProfileViewModel {
   }
   
   func deleteAccount() {
-    apiLogout()
+    logout()
     authorizationManager.clearToken()
     accountDataManager.clearUserSession()
     authorizationManager.forcedLogout()

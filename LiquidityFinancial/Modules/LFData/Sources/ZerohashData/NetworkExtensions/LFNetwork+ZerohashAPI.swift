@@ -4,7 +4,7 @@ import CoreNetwork
 import LFUtilities
 import AccountData
 
-extension LFNetwork: ZerohashAPIProtocol where R == ZerohashRoute {
+extension LFCoreNetwork: ZerohashAPIProtocol where R == ZerohashRoute {
   
   public func sendCrypto(accountId: String, destinationAddress: String, amount: Double) async throws -> APITransaction {
     return try await request(

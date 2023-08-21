@@ -4,7 +4,7 @@ import CoreNetwork
 import LFUtilities
 import AccountData
 
-extension LFNetwork: RewardAPIProtocol where R == RewardRoute {
+extension LFCoreNetwork: RewardAPIProtocol where R == RewardRoute {
   public func selectRewardType(body: [String: Any]) async throws -> APIUser {
     return try await request(RewardRoute.selectRewardType(body: body), target: APIUser.self, failure: LFErrorObject.self, decoder: .apiDecoder)
   }

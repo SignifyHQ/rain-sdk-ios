@@ -2,7 +2,7 @@ import CoreNetwork
 import Foundation
 import LFUtilities
 
-extension LFNetwork: NSPersonsAPIProtocol where R == NSPersonsRoute {
+extension LFCoreNetwork: NSPersonsAPIProtocol where R == NSPersonsRoute {
   public func sessionInit() async throws -> APINSJwkToken {
     return try await request(NSPersonsRoute.sessionInit, target: APINSJwkToken.self, failure: LFErrorObject.self, decoder: .apiDecoder)
   }

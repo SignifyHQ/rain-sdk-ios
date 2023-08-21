@@ -7,7 +7,7 @@ import AuthorizationManager
 extension Container {
   public var zerohashAPI: Factory<ZerohashAPIProtocol> {
     self {
-      LFNetwork<ZerohashRoute>()
+      LFCoreNetwork<ZerohashRoute>()
     }
   }
   

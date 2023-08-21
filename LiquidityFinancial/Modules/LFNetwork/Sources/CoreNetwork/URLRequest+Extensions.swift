@@ -2,6 +2,7 @@ import Foundation
 import AuthorizationManager
 
 // swiftlint:disable all
+
 extension URLRequest {
   
   init(route: LFRoute, auth: AuthorizationManagerProtocol) {
@@ -29,7 +30,7 @@ extension URLRequest {
     httpMethod = route.httpMethod.rawValue
     httpBody = body
     if let value = headers["Authorization"], value == route.needAuthorizationKey {
-      headers["Authorization"] = auth.fetchToken()
+      headers["Authorization"] = auth.fetchAccessToken()
     }
     headers.forEach { setValue($0.value, forHTTPHeaderField: $0.key) }
   }

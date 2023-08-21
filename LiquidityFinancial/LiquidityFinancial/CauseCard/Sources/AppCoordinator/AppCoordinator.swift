@@ -33,7 +33,6 @@ class AppCoordinator: AppCoordinatorProtocol {
   private var accountDataManager
   
   private var subscribers: Set<AnyCancellable> = []
-  private var oneTimeAPILogout: Bool = false
   let routeSubject: CurrentValueSubject<Route, Never> = .init(.onboarding)
   
   init() {
@@ -64,7 +63,6 @@ class AppCoordinator: AppCoordinatorProtocol {
   }
   
   func set(route: Route) {
-    guard routeSubject.value != route else { return }
     log.info("AppCoordinator route: \(route), with current route: \(routeSubject.value)")
     routeSubject.send(route)
   }
@@ -74,21 +72,8 @@ class AppCoordinator: AppCoordinatorProtocol {
   }
   
   func logout() {
-    guard !oneTimeAPILogout else { return }
-    oneTimeAPILogout = true
-    apiLogout()
     authorizationManager.clearToken()
     accountDataManager.clearUserSession()
     intercomService.pushEventLogout()
-  }
-  
-  func apiLogout() {
-    Task {
-      do {
-        _ = try await accountRepository.logout()
-      } catch {
-        log.error(error.localizedDescription)
-      }
-    }
   }
 }

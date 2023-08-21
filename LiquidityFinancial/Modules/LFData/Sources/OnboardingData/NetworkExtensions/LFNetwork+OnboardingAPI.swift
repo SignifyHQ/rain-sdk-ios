@@ -3,7 +3,7 @@ import NetworkUtilities
 import CoreNetwork
 import LFUtilities
 
-extension LFNetwork: OnboardingAPIProtocol where R == OnboardingRoute {
+extension LFCoreNetwork: OnboardingAPIProtocol where R == OnboardingRoute {
   public func login(phoneNumber: String, code: String) async throws -> APIAccessTokens {
     return try await request(
       OnboardingRoute.login(LoginParameters(phoneNumber: phoneNumber, code: code)),

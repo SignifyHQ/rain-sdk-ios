@@ -11,7 +11,7 @@ extension Container {
   
   public var accountAPI: Factory<AccountAPIProtocol> {
     self {
-      LFNetwork<AccountRoute>()
+      LFCoreNetwork<AccountRoute>()
     }
   }
   

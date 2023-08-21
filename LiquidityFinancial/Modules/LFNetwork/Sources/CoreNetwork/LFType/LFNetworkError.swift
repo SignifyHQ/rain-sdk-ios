@@ -10,6 +10,7 @@ public enum LFNetworkError: Error, Equatable {
     case (.designated, .designated): return true
     case (.underlying, .underlying): return true
     case (.unAuthorized, .unAuthorized): return true
+    case (.custom(let messageA), .custom(let messageB)): return messageA == messageB
     default: return false
     }
   }
@@ -18,6 +19,7 @@ public enum LFNetworkError: Error, Equatable {
   case designated(DesignatedError)
   case underlying(Error)
   case unAuthorized
+  case custom(message: String)
 }
 
 extension LFNetworkError: CustomDebugStringConvertible {
@@ -28,6 +30,7 @@ extension LFNetworkError: CustomDebugStringConvertible {
     case let .designated(error): return error.localizedDescription
     case let .underlying(error): return error.localizedDescription
     case .unAuthorized: return "unauthorized"
+    case .custom(let message): return message
     }
   }
 }
