@@ -4,7 +4,7 @@ import LFLocalizable
 import LFUtilities
 
 public struct DonationTransactionDetailView: View {
-  @State private var isNavigateToReceiptView = false
+  @StateObject private var viewModel = DonationTransactionDetailViewModel()
   let transaction: TransactionModel
   
   public init(transaction: TransactionModel) {
@@ -13,8 +13,11 @@ public struct DonationTransactionDetailView: View {
   
   public var body: some View {
     CommonTransactionDetailView(transaction: transaction, content: content)
-      .navigationLink(isActive: $isNavigateToReceiptView) {
-        EmptyView() // TODO: - Will be replaced by ReceiptView
+      .navigationLink(item: $viewModel.navigation) { item in
+        switch item {
+        case let .receipt(donationReceipt):
+          DonationTransactionReceiptView(accountID: transaction.accountId, receipt: donationReceipt)
+        }
       }
   }
 }
@@ -24,12 +27,14 @@ private extension DonationTransactionDetailView {
   var content: some View {
     VStack(spacing: 24) {
       TransactionCardView(information: cardInformation)
-      FullSizeButton(
-        title: LFLocalizable.TransactionDetail.Receipt.button,
-        isDisable: false,
-        type: .secondary
-      ) {
-        isNavigateToReceiptView = true
+      if let donationReceipt = transaction.donationReceipt {
+        FullSizeButton(
+          title: LFLocalizable.TransactionDetail.Receipt.button,
+          isDisable: false,
+          type: .secondary
+        ) {
+          viewModel.goToReceiptScreen(receipt: donationReceipt)
+        }
       }
     }
   }

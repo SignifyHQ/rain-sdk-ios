@@ -40,6 +40,8 @@ public struct APIReward: Codable, RewardEntity {
   public let stickerUrl: String?
   public let backgroundColor: String?
   public var description: String?
+  public var fundraiserName: String?
+  public var charityName: String?
 }
 
 public struct APITransactionReceipt: Codable, TransactionReceiptEntity {

@@ -1037,6 +1037,64 @@ public enum LFLocalizable {
       public static let title = LFLocalizable.tr("Localizable", "documentType.utilityBill.title", fallback: "Utility Bill")
     }
   }
+  public enum DonationReceipt {
+    public enum AccountID {
+      /// Account ID
+      public static let title = LFLocalizable.tr("Localizable", "donationReceipt.accountID.title", fallback: "Account ID")
+    }
+    public enum Charity {
+      /// Donations made to %@. EIN: %@
+      public static func title(_ p1: Any, _ p2: Any) -> String {
+        return LFLocalizable.tr("Localizable", "donationReceipt.charity.title", String(describing: p1), String(describing: p2), fallback: "Donations made to %@. EIN: %@")
+      }
+    }
+    public enum DateAndTime {
+      /// Date and Time
+      public static let title = LFLocalizable.tr("Localizable", "donationReceipt.dateAndTime.title", fallback: "Date and Time")
+    }
+    public enum Fee {
+      /// Fee
+      public static let title = LFLocalizable.tr("Localizable", "donationReceipt.fee.title", fallback: "Fee")
+    }
+    public enum Fundraiser {
+      /// 100%% of funds are tax deductible and granted to designated nonprofit: %@.
+      public static func title(_ p1: Any) -> String {
+        return LFLocalizable.tr("Localizable", "donationReceipt.fundraiser.title", String(describing: p1), fallback: "100%% of funds are tax deductible and granted to designated nonprofit: %@.")
+      }
+    }
+    public enum Navigation {
+      /// Donation Receipt
+      public static let title = LFLocalizable.tr("Localizable", "donationReceipt.navigation.title", fallback: "Donation Receipt")
+    }
+    public enum OneTime {
+      /// One Time Donation
+      public static let title = LFLocalizable.tr("Localizable", "donationReceipt.oneTime.title", fallback: "One Time Donation")
+    }
+    public enum Privacy {
+      /// Privacy Policy
+      public static let title = LFLocalizable.tr("Localizable", "donationReceipt.privacy.title", fallback: "Privacy Policy")
+    }
+    public enum Reward {
+      /// Rewards Donation
+      public static let title = LFLocalizable.tr("Localizable", "donationReceipt.reward.title", fallback: "Rewards Donation")
+    }
+    public enum Roundup {
+      /// Round up Donation
+      public static let title = LFLocalizable.tr("Localizable", "donationReceipt.roundup.title", fallback: "Round up Donation")
+    }
+    public enum Terms {
+      /// Terms & Conditions
+      public static let title = LFLocalizable.tr("Localizable", "donationReceipt.terms.title", fallback: "Terms & Conditions")
+    }
+    public enum Total {
+      /// Total Donation
+      public static let title = LFLocalizable.tr("Localizable", "donationReceipt.total.title", fallback: "Total Donation")
+    }
+    public enum TransactionNumber {
+      /// Transaction Number
+      public static let title = LFLocalizable.tr("Localizable", "donationReceipt.transactionNumber.title", fallback: "Transaction Number")
+    }
+  }
   public enum DonationsDisclosure {
     /// %@ of the donations you make are tax deductible and go to charity. 
     public static func text(_ p1: Any) -> String {

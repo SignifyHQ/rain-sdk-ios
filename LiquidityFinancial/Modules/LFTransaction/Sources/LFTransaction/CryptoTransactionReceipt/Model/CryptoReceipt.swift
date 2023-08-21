@@ -4,6 +4,7 @@ public struct CryptoReceipt {
   public let id: String
   public let accountId: String
   public let fee: Double?
+  public let createdAt: String
   public let completedAt: String?
   public let tradingPair: String?
   public let currency: String?
@@ -16,6 +17,7 @@ public struct CryptoReceipt {
     id: String,
     accountId: String,
     fee: Double?,
+    createdAt: String,
     completedAt: String?,
     tradingPair: String?,
     currency: String?,
@@ -27,6 +29,7 @@ public struct CryptoReceipt {
     self.id = id
     self.accountId = accountId
     self.fee = fee
+    self.createdAt = createdAt
     self.completedAt = completedAt
     self.tradingPair = tradingPair
     self.currency = currency

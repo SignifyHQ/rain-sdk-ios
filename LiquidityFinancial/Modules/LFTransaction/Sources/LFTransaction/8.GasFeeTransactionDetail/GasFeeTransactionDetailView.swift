@@ -4,17 +4,21 @@ import LFLocalizable
 import LFUtilities
 
 public struct GasFeeTransactionDetailView: View {
-  @State private var isNavigateToReceiptView = false
-  let transaction: TransactionModel
+  @StateObject private var viewModel: GasFeeTransactionDetailViewModel
   
   public init(transaction: TransactionModel) {
-    self.transaction = transaction
+    _viewModel = .init(wrappedValue: GasFeeTransactionDetailViewModel(transaction: transaction))
   }
   
   public var body: some View {
-    CommonTransactionDetailView(transaction: transaction, content: content)
-      .navigationLink(isActive: $isNavigateToReceiptView) {
-        EmptyView() // TODO: Will be replaced by ReceiptView
+    CommonTransactionDetailView(transaction: viewModel.transaction, content: content)
+      .navigationLink(item: $viewModel.navigation) { item in
+        switch item {
+        case let .cryptoReceipt(receipt):
+          CryptoTransactionReceiptView(accountID: viewModel.transaction.id, receipt: receipt)
+        case let .donationReceipt(receipt):
+          DonationTransactionReceiptView(accountID: viewModel.transaction.id, receipt: receipt)
+        }
       }
   }
 }
@@ -30,12 +34,14 @@ private extension GasFeeTransactionDetailView {
       ) {
         // TODO: - Will be implemented later
       }
-      FullSizeButton(
-        title: LFLocalizable.TransactionDetail.Receipt.button,
-        isDisable: false,
-        type: .secondary
-      ) {
-        isNavigateToReceiptView = true
+      if let receiptType = viewModel.transaction.receipt?.type {
+        FullSizeButton(
+          title: LFLocalizable.TransactionDetail.Receipt.button,
+          isDisable: false,
+          type: .secondary
+        ) {
+          viewModel.goToReceiptScreen(receiptType: receiptType)
+        }
       }
     }
   }

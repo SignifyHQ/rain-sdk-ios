@@ -4,14 +4,22 @@ import LFLocalizable
 import LFUtilities
 
 public struct PurchaseTransactionDetailView: View {
-  let transaction: TransactionModel
+  @StateObject private var viewModel: PurchaseTransactionDetailViewModel
   
   public init(transaction: TransactionModel) {
-    self.transaction = transaction
+    _viewModel = .init(wrappedValue: PurchaseTransactionDetailViewModel(transaction: transaction))
   }
   
   public var body: some View {
-    CommonTransactionDetailView(transaction: transaction, content: content)
+    CommonTransactionDetailView(transaction: viewModel.transaction, content: content)
+      .navigationLink(item: $viewModel.navigation) { item in
+        switch item {
+        case let .cryptoReceipt(receipt):
+          CryptoTransactionReceiptView(accountID: viewModel.transaction.id, receipt: receipt)
+        case let .donationReceipt(receipt):
+          DonationTransactionReceiptView(accountID: viewModel.transaction.id, receipt: receipt)
+        }
+      }
   }
 }
 
@@ -19,35 +27,16 @@ public struct PurchaseTransactionDetailView: View {
 private extension PurchaseTransactionDetailView {
   var content: some View {
     VStack(spacing: 24) {
-      TransactionCardView(information: cardInformation)
-      FullSizeButton(
-        title: LFLocalizable.TransactionDetail.Receipt.button,
-        isDisable: false,
-        type: .secondary
-      ) {
+      TransactionCardView(information: viewModel.cardInformation)
+      if let receiptType = viewModel.transaction.receipt?.type {
+        FullSizeButton(
+          title: LFLocalizable.TransactionDetail.Receipt.button,
+          isDisable: false,
+          type: .secondary
+        ) {
+          viewModel.goToReceiptScreen(receiptType: receiptType)
+        }
       }
     }
-  }
-}
-
-// MARK: - View Helpers
-private extension PurchaseTransactionDetailView {
-  var cardInformation: TransactionCardInformation {
-    TransactionCardInformation(
-      title: LFLocalizable.TransactionCard.Purchase.title(LFUtility.cardName),
-      amount: amountValue,
-      message: LFLocalizable.TransactionCard.Purchase.message(rewardAmount, amountValue, LFUtility.appName),
-      activityItem: LFLocalizable.TransactionCard.ShareCrypto.title(rewardAmount, LFUtility.appName, LFUtility.shareAppUrl),
-      image: GenImages.Images.defaultTransactionCard.swiftUIImage,
-      backgroundColor: Colors.purchaseCardBackground.swiftUIColor
-    )
-  }
-  
-  var rewardAmount: String {
-    transaction.rewards?.amount?.formattedAmount(minFractionDigits: 3) ?? .empty
-  }
-  
-  var amountValue: String {
-    transaction.amount.formattedAmount(prefix: Constants.CurrencyUnit.usd.rawValue, minFractionDigits: 2)
   }
 }

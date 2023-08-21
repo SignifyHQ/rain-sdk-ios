@@ -36,8 +36,11 @@ extension AssetsViewModel {
       defer { isLoading = false }
       isLoading = true
       do {
+        var cryptoAccounts = [LFAccount]()
         let fiatAccounts = try await self.accountRepository.getAccount(currencyType: Constants.CurrencyType.fiat.rawValue)
-        let cryptoAccounts = try await self.accountRepository.getAccount(currencyType: Constants.CurrencyType.crypto.rawValue)
+        if LFUtility.cryptoEnabled {
+          cryptoAccounts = try await self.accountRepository.getAccount(currencyType: Constants.CurrencyType.crypto.rawValue)
+        }
         let accounts = fiatAccounts + cryptoAccounts
         assets = accounts.map {
           AssetModel(

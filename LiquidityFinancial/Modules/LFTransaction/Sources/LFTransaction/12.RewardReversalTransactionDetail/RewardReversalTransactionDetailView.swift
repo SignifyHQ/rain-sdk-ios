@@ -4,18 +4,25 @@ import LFLocalizable
 import LFUtilities
 
 public struct RewardReversalTransactionDetailView: View {
-  @State private var isNavigationToReceipt = false
+  @StateObject private var viewModel: RewardReversalTransactionDetailViewModel
   
-  let transaction: TransactionModel
   let transactionInfos: [TransactionInformation]
   
   public init(transaction: TransactionModel, transactionInfos: [TransactionInformation]) {
-    self.transaction = transaction
+    _viewModel = .init(wrappedValue: RewardReversalTransactionDetailViewModel(transaction: transaction))
     self.transactionInfos = transactionInfos
   }
   
   public var body: some View {
-    CommonTransactionDetailView(transaction: transaction, content: content)
+    CommonTransactionDetailView(transaction: viewModel.transaction, content: content)
+      .navigationLink(item: $viewModel.navigation) { item in
+        switch item {
+        case let .cryptoReceipt(receipt):
+          CryptoTransactionReceiptView(accountID: viewModel.transaction.id, receipt: receipt)
+        case let .donationReceipt(receipt):
+          DonationTransactionReceiptView(accountID: viewModel.transaction.id, receipt: receipt)
+        }
+      }
   }
 }
 
@@ -29,27 +36,23 @@ private extension RewardReversalTransactionDetailView {
         TransactionInformationCell(item: item)
       }
       Spacer()
-      if let status = transaction.status {
+      if let status = viewModel.transaction.status {
         StatusView(status: status)
       }
       footer
-    }
-    .navigationLink(isActive: $isNavigationToReceipt) {
-      // TODO: - Will be replaced by ReceiptView
-      EmptyView()
     }
   }
   
   var footer: some View {
     VStack(spacing: 16) {
-      Button {
-        isNavigationToReceipt = true
-      } label: {
+      if let receiptType = viewModel.transaction.receipt?.type {
         ArrowButton(
           image: GenImages.CommonImages.Accounts.bankStatements.swiftUIImage,
           title: LFLocalizable.TransactionDetail.Receipt.button,
           value: nil
-        )
+        ) {
+          viewModel.goToReceiptScreen(receiptType: receiptType)
+        }
       }
       Text(LFLocalizable.Zerohash.Disclosure.description)
         .font(Fonts.regular.swiftUIFont(size: 10))

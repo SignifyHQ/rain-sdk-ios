@@ -25,10 +25,7 @@ class CryptoTransactionDetailViewModel: ObservableObject {
     }
   }
   
-  func goToReceiptScreen() {
-    guard let cryptoReceipt = transaction.cryptoReceipt else {
-      return
-    }
+  func goToReceiptScreen(cryptoReceipt: CryptoReceipt) {
     navigation = .receipt(cryptoReceipt)
   }
   

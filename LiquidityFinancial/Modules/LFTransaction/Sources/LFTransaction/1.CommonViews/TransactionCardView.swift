@@ -12,14 +12,15 @@ struct TransactionCardView: View {
       headerTitle
       imageView
       message
-      FullSizeButton(
-        title: LFLocalizable.TransactionCard.Share.title,
-        isDisable: true,
-        textColor: Colors.darkText.swiftUIColor,
-        backgroundColor: Colors.whiteText.swiftUIColor
-      ) {
+      Button {
         // Temporarily hidden
+      } label: {
+        Text(LFLocalizable.TransactionCard.Share.title)
+          .font(Fonts.bold.swiftUIFont(size: Constants.FontSize.ultraSmall.value))
+          .foregroundColor(Colors.darkText.swiftUIColor)
       }
+      .frame(width: 112, height: 34)
+      .background(Colors.whiteText.swiftUIColor.cornerRadius(32))
       .padding(.top, 12)
     }
     .onTapGesture {

@@ -351,33 +351,21 @@
 "cryptoReceipt.fee.title" = "Fee";
 "cryptoReceipt.dateAndTime.title" = "Date and Time";
 "cryptoReceipt.accountID.title" = "Account ID";
-"cryptoReceipt.zerohash.description" = "Zero Hash LLC 327 N Aberdeen St Chicago, IL 60607 \n\n www.zerohash.com";
-"cryptoReceipt.cancellation.title" = "Return/Cancellation Policy:";
-"cryptoReceipt.cancellation.description" = "All transactions are final. You are responsible for reviewing this receipt for accuracy land for notifying Zero Hash LLC of any tuspected errors via email at support@zerohash.com within 24 hours of the trade.\n\n\n";
-"cryptoReceipt.liability.title" = "Liability for Non-Delivery or Delayed Delivery:";
-"cryptoReceipt.liability.description" = "Zero Hash LLC's or Zero Hash Liquidity Services LLC's aggregate liability, including for non-delivery or delayed delivery, is limited to losses resulting solely from the gross negligence, intentional misconduct or fraud of Zero Hash or Zero Hash Liquidity Services, their affiliates or any of their officers, directors, managers, partners, employees or independent agents or contractors, as determined by a court of competent jurisdiction or arbitration panel in accordance with the terms of the User Agreement \n\n\n\n\n\n\n\n\n\n";
-"cryptoReceipt.beware.title" = "Beware of Fraud:";
-"cryptoReceipt.beware.description" = "Cryptocurrencies and money transfer services are commonly targeted by hackers and criminals who commit fraud. For more information on how to protect against fraud, visit the Consumer Financial Protection Bureau’s website at \n https://www.consumerfinance.gov/consumer-tools/fraud/. \n\n\n\n\n";
-"cryptoReceipt.priceRisk.title" = "PRICE RISK";
-"cryptoReceipt.priceRisk.description" = "The value of any cryptocurrency, including any digital assets pegged to fiat currency, commodities, or any other asset, may go to zero.\n\n";
-"cryptoReceipt.illinois.title" = "Illinois Customers";
-"cryptoReceipt.illinois.description" = "In the event of an unresolved complaint, please contact the Illinois Department of Financial and Professional Regulation - Division of Financial Institutions at 1-888-473-4858 or submit an online complaint at \n https://idfpr.illinois.gov/admin/dfi/dficomplaint.html. \n\n\n\n";
-"cryptoReceipt.maineCustomers.title" = "Maine Customers";
-"cryptoReceipt.maineCustomers.description" = "In the event of a dispute, please contact the Bureau of Consumer Credit Protection at 1-800-332-8529 or at www.credit.maine.gov. \n\n";
-"cryptoReceipt.minnesotaCustomers.title" = "Minnesota Customers";
-"cryptoReceipt.minnesotaCustomers.description" = "If you believe you are a victim of fraud, please contact the Minnesota Commerce Department Consumer Services Center at 1-800-657-3602 or consumer.protection@state.mn.us. For more information about how to protect against fraud and submit a complaint, visit https://mn.gov/commerce/money/fraud/. For more information on cryptocurrency, please visit
-https://mn.gov/commerce/money/investments/cryptocurrency/. \n\n\n\n\n\n\n";
-"cryptoReceipt.texasCustomers.title" = "Texas Customers";
-"cryptoReceipt.texasCustomers.description" = "If you have a complaint, first contact the consumer assistance division of Zero Hash LLC at 1 (855) 744-7333, if you still have an unresolved complaint regarding the company's money transmission activity, please direct your complaint to: Texas Department of Banking, 2601 North Lamar Boulevard, Austin, Texas 78705, 1-877-276- 5554 (toll free), www.dob.texas.gov. \n\n\n\n\n\n\n";
-"cryptoReceipt.consumerTools.link" = "https://www.consumerfinance.gov/consumer-tools/fraud";
-"cryptoReceipt.illinoisCustomer.link" = "https://idfpr.illinois.gov/admin/dfi/dficomplaint.html.";
-"cryptoReceipt.maineCustomer.link" = " www.credit.maine.gov";
-"cryptoReceipt.minnesotaCustomerFraud.link" = "https://mn.gov/commerce/money/fraud/";
-"cryptoReceipt.minnesotaCustomerCryptocurrency.link" = "https://mn.gov/commerce/money/investments/cryptocurrency";
-"cryptoReceipt.texasCustomer.link" = "www.dob.texas.gov.";
-"cryptoReceipt.cardType.link" = "cause@zerohash.com";
-"cryptoReceipt.zerohash.link" = "www.zerohash.com";
-"cryptoReceipt.phonenumber.link" = "855-744-7333";
+
+// DonationReceipt
+"donationReceipt.navigation.title" = "Donation Receipt";
+"donationReceipt.transactionNumber.title" = "Transaction Number";
+"donationReceipt.reward.title" = "Rewards Donation";
+"donationReceipt.roundup.title" = "Round up Donation";
+"donationReceipt.oneTime.title" = "One Time Donation";
+"donationReceipt.total.title" = "Total Donation";
+"donationReceipt.fee.title" = "Fee";
+"donationReceipt.dateAndTime.title" = "Date and Time";
+"donationReceipt.accountID.title" = "Account ID";
+"donationReceipt.fundraiser.title" = "100%% of funds are tax deductible and granted to designated nonprofit: %@.";
+"donationReceipt.charity.title" = "Donations made to %@. EIN: %@";
+"donationReceipt.terms.title" = "Terms & Conditions";
+"donationReceipt.privacy.title" = "Privacy Policy";
 
 // MARK: - Popup
 

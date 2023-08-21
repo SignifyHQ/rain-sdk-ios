@@ -1,7 +1,7 @@
 import Foundation
 
 public struct TransactionReceipt {
-  public var type: String
+  public var type: ReceiptType
   public var id: String
   public var accountId: String
   public var fee: Double?
@@ -34,7 +34,7 @@ public struct TransactionReceipt {
     oneTimeDonation: Double? = nil,
     totalDonation: Double? = nil
   ) {
-    self.type = type
+    self.type = ReceiptType(rawValue: type) ?? .errorReceipt
     self.id = id
     self.accountId = accountId
     self.fee = fee
@@ -50,4 +50,10 @@ public struct TransactionReceipt {
     self.oneTimeDonation = oneTimeDonation
     self.totalDonation = totalDonation
   }
+}
+
+public enum ReceiptType: String {
+  case crypto = "CRYPTO_RECEIPT"
+  case donation = "DONATION_RECEIPT"
+  case errorReceipt = "ERROR_RECEIPT"
 }

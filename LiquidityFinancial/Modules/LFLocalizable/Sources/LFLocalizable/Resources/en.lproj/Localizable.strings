@@ -380,6 +380,21 @@ https://mn.gov/commerce/money/investments/cryptocurrency/. \n\n\n\n\n\n\n";
 "cryptoReceipt.zerohash.link" = "www.zerohash.com";
 "cryptoReceipt.phonenumber.link" = "855-744-7333";
 
+// DonationReceipt
+"donationReceipt.navigation.title" = "Donation Receipt";
+"donationReceipt.transactionNumber.title" = "Transaction Number";
+"donationReceipt.reward.title" = "Rewards Donation";
+"donationReceipt.roundup.title" = "Round up Donation";
+"donationReceipt.oneTime.title" = "One Time Donation";
+"donationReceipt.total.title" = "Total Donation";
+"donationReceipt.fee.title" = "Fee";
+"donationReceipt.dateAndTime.title" = "Date and Time";
+"donationReceipt.accountID.title" = "Account ID";
+"donationReceipt.fundraiser.title" = "100%% of funds are tax deductible and granted to designated nonprofit: %@.";
+"donationReceipt.charity.title" = "Donations made to %@. EIN: %@";
+"donationReceipt.terms.title" = "Terms & Conditions";
+"donationReceipt.privacy.title" = "Privacy Policy";
+
 // MARK: - Popup
 
 // Logout

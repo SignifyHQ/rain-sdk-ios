@@ -29,6 +29,8 @@ public protocol RewardEntity {
   var stickerUrl: String? { get }
   var backgroundColor: String? { get }
   var description: String? { get }
+  var fundraiserName: String? { get }
+  var charityName: String? { get }
 }
 
 public protocol TransactionReceiptEntity {

@@ -54,6 +54,7 @@ public extension TransactionModel {
       id: receipt.id,
       accountId: receipt.accountId,
       fee: receipt.fee,
+      createdAt: createdAt,
       completedAt: receipt.completedAt,
       tradingPair: receipt.tradingPair,
       currency: receipt.currency,
@@ -72,11 +73,14 @@ public extension TransactionModel {
       id: receipt.id,
       accountId: receipt.accountId,
       fee: receipt.fee,
+      createdAt: createdAt,
       completedAt: receipt.completedAt,
       rewardsDonation: receipt.rewardsDonation,
       roundUpDonation: receipt.roundUpDonation,
       oneTimeDonation: receipt.oneTimeDonation,
-      totalDonation: receipt.totalDonation
+      totalDonation: receipt.totalDonation,
+      fundraiserName: rewards?.fundraiserName ?? .empty,
+      charityName: rewards?.charityName ?? .empty
     )
   }
   
@@ -204,6 +208,8 @@ public extension TransactionModel {
       type: reward.type,
       amount: reward.amount,
       stickerUrl: reward.stickerUrl,
+      fundraiserName: reward.fundraiserName,
+      charityName: reward.charityName,
       backgroundColor: reward.backgroundColor,
       description: reward.description
     )
