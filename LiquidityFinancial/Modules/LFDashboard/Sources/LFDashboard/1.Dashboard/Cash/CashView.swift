@@ -39,14 +39,19 @@ struct CashView: View {
         TransactionListView(
           type: .cash,
           currencyType: viewModel.currencyType,
-          accountID: viewModel.accountID
+          accountID: viewModel.accountDataManager.fiatAccountID
         )
       case .addMoney:
         MoveMoneyAccountView(kind: .receive)
       case .sendMoney:
         MoveMoneyAccountView(kind: .send)
       case let .transactionDetail(transaction):
-        TransactionDetailView(accountID: viewModel.accountID, transactionId: transaction.id, kind: transaction.detailType)
+        TransactionDetailView(
+          accountID: viewModel.accountDataManager.fiatAccountID,
+          transactionId: transaction.id,
+          kind: transaction.detailType,
+          isPopToRoot: false
+        )
       }
     }
   }

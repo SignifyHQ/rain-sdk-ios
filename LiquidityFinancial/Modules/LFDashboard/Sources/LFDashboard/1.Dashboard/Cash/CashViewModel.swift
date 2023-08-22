@@ -29,7 +29,6 @@ final class CashViewModel: ObservableObject {
   @Published var assets: [AssetModel] = []
   @Published var linkedAccount: [APILinkedSourceData] = []
   @Published var achInformation: ACHModel = .default
-  @Published var accountID: String = .empty
     
   var transactionLimitEntity: Int {
     50
@@ -145,8 +144,7 @@ extension CashViewModel {
       )
     }
     if let account = accounts.first { // TODO: Temp Just get one
-      self.accountID = account.id
-      self.accountDataManager.accountID = account.id
+      self.accountDataManager.fiatAccountID = account.id
       self.cashBalanceValue = account.availableBalance
       self.selectedAsset = AssetType(rawValue: account.currency) ?? .usd
       return account

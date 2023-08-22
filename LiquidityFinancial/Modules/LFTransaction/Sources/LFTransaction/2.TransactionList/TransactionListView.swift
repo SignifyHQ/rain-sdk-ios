@@ -6,8 +6,8 @@ import LFUtilities
 public struct TransactionListView: View {
   @StateObject private var viewModel: TransactionListViewModel
   
-  public init(type: TransactionListViewModel.Kind, currencyType: String, accountID: String) {
-    _viewModel = .init(wrappedValue: .init(type: type, currencyType: currencyType, accountID: accountID))
+  public init(type: TransactionListViewModel.Kind, currencyType: String, accountID: String?) {
+    _viewModel = .init(wrappedValue: .init(type: type, currencyType: currencyType, accountID: accountID ?? .empty))
   }
   
   public var body: some View {
@@ -28,7 +28,7 @@ public struct TransactionListView: View {
     }
     .onAppear(perform: viewModel.onAppear)
     .navigationLink(item: $viewModel.transactionDetail) { item in
-      TransactionDetailView(accountID: viewModel.accountID, transactionId: item.id, kind: item.detailType)
+      TransactionDetailView(accountID: viewModel.accountID, transactionId: item.id, kind: item.detailType, isPopToRoot: false)
     }
   }
 }

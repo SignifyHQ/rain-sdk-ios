@@ -3,14 +3,14 @@ import LFStyleGuide
 import LFLocalizable
 import LFUtilities
 
-public struct WithdrawTransactionDetailView: View {
+struct WithdrawTransactionDetailView: View {
   let transaction: TransactionModel
   
-  public init(transaction: TransactionModel) {
+  init(transaction: TransactionModel) {
     self.transaction = transaction
   }
   
-  public var body: some View {
+  var body: some View {
     CommonTransactionDetailView(transaction: transaction, content: content)
   }
 }
@@ -18,10 +18,16 @@ public struct WithdrawTransactionDetailView: View {
 // MARK: - View Components
 private extension WithdrawTransactionDetailView {
   var content: some View {
-    VStack {
+    VStack(spacing: 32) {
       GenImages.CommonImages.dash.swiftUIImage
         .foregroundColor(Colors.label.swiftUIColor)
       if let status = transaction.status {
+        StatusDiagramView(
+          transaction: transaction,
+          startTitle: LFLocalizable.TransferView.Status.Withdraw.started,
+          completedTitle: LFLocalizable.TransferView.Status.Withdraw.completed
+        )
+        Spacer()
         StatusView(status: status)
       }
     }

@@ -2,6 +2,7 @@ import SwiftUI
 import LFStyleGuide
 import LFUtilities
 import LFLocalizable
+import LFTransaction
 
 public struct MoveMoneyAccountView: View {
   @StateObject private var viewModel: MoveMoneyAccountViewModel
@@ -37,8 +38,12 @@ public struct MoveMoneyAccountView: View {
       }
       .navigationLink(item: $viewModel.navigation) { navigation in
         switch navigation {
-        case .transfer:
-          EmptyView()
+        case let .transactionDetai(id):
+          TransactionDetailView(
+            accountID: viewModel.accountDataManager.fiatAccountID,
+            transactionId: id,
+            kind: viewModel.kind == .receive ? .deposit : .withdraw
+          )
         case .addBankDebit:
           AddBankWithDebitView()
         }
@@ -117,9 +122,9 @@ private extension MoveMoneyAccountView {
         Spacer()
         Image(systemName: showListView ? "chevron.up" : "chevron.down")
           .foregroundColor(Colors.label.swiftUIColor)
-          .font(Fonts.medium.swiftUIFont(size: Constants.FontSize.medium.value))
+          .font(Fonts.medium.swiftUIFont(size: Constants.FontSize.small.value))
       }
-      .frame(width: screenSize.width * 0.46, height: 40)
+      .frame(width: screenSize.width * 0.48, height: 40)
     }
     .padding(.horizontal, 12)
     .background(Colors.secondaryBackground.swiftUIColor.cornerRadius(8))
@@ -156,7 +161,7 @@ private extension MoveMoneyAccountView {
         }
         addAccountButton
       }
-      .frame(width: screenSize.width * 0.46)
+      .frame(width: screenSize.width * 0.48)
       .padding(12)
       .background(Colors.secondaryBackground.swiftUIColor.cornerRadius(8))
       .offset(y: viewModel.kind == .receive ? 80 : 108) // accountDropdown height + spacing + header height
@@ -187,9 +192,10 @@ private extension MoveMoneyAccountView {
   var bottomView: some View {
     FullSizeButton(
       title: LFLocalizable.Button.Continue.title,
-      isDisable: !viewModel.isAmountActionAllowed
+      isDisable: !viewModel.isAmountActionAllowed,
+      isLoading: $viewModel.showIndicator
     ) {
-      viewModel.callTransferAPI()
+      viewModel.callBioMetric()
     }
   }
 

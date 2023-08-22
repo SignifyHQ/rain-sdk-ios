@@ -3,10 +3,10 @@ import LFStyleGuide
 import LFLocalizable
 import LFUtilities
 
-public struct CryptoTransactionDetailView: View {
+struct CryptoTransactionDetailView: View {
   @StateObject private var viewModel: CryptoTransactionDetailViewModel
   
-  public init(
+  init(
     transaction: TransactionModel,
     transactionInfos: [TransactionInformation],
     isNewAddress: Bool = false,
@@ -22,7 +22,7 @@ public struct CryptoTransactionDetailView: View {
     )
   }
   
-  public var body: some View {
+  var body: some View {
     CommonTransactionDetailView(transaction: viewModel.transaction, content: content)
   }
 }

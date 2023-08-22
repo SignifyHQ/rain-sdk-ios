@@ -8,7 +8,8 @@ import AccountDomain
 @MainActor
 final class MoveCryptoInputViewModel: ObservableObject {
   @LazyInjected(\.accountRepository) var accountRepository
-  
+  @LazyInjected(\.accountDataManager) var accountDataManager
+
   @Published var account: LFAccount?
   @Published var navigation: Navigation?
   @Published var isFetchingData = false
@@ -70,6 +71,7 @@ private extension MoveCryptoInputViewModel {
         return
       }
       self.account = account
+      self.accountDataManager.cryptoAccountID = account.id
       generateGridValues()
     }
   }

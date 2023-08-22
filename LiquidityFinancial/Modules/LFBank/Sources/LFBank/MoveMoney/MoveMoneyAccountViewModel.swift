@@ -6,16 +6,14 @@ import LFLocalizable
 import LFUtilities
 import Factory
 import LFStyleGuide
+import LFTransaction
 
 @MainActor
 public class MoveMoneyAccountViewModel: ObservableObject {
-  
-  let kind: Kind
-  let recommendValues: [GridValue] = [
-    .fixed(amount: 10, currency: .usd),
-    .fixed(amount: 50, currency: .usd),
-    .fixed(amount: 100, currency: .usd)
-  ]
+  @LazyInjected(\.authenticationService) var authenticationService
+  @LazyInjected(\.accountRepository) var accountRepository
+  @LazyInjected(\.accountDataManager) var accountDataManager
+  @LazyInjected(\.externalFundingRepository) var externalFundingRepository
   
   @Published var navigation: Navigation?
   @Published var amountInput: String = Constants.Default.zeroAmount.rawValue
@@ -28,25 +26,15 @@ public class MoveMoneyAccountViewModel: ObservableObject {
   @Published var selectedLinkedAccount: APILinkedSourceData?
   @Published var selectedValue: GridValue?
   
-  @LazyInjected(\.accountRepository) var accountRepository
-  @LazyInjected(\.accountDataManager) var accountDataManager
-  @LazyInjected(\.externalFundingRepository) var externalFundingRepository
+  let kind: Kind
+  let recommendValues: [GridValue] = [
+    .fixed(amount: 10, currency: .usd),
+    .fixed(amount: 50, currency: .usd),
+    .fixed(amount: 100, currency: .usd)
+  ]
 
   init(kind: Kind) {
     self.kind = kind
-  }
-}
-
-// MARK: Enum
-public extension MoveMoneyAccountViewModel {
-  enum Kind {
-    case send
-    case receive
-  }
-  
-  enum Navigation {
-    case transfer
-    case addBankDebit
   }
 }
 
@@ -61,6 +49,14 @@ extension MoveMoneyAccountViewModel {
     await withTaskGroup(of: Void.self) { group in
       group.addTask {
         await self.getListConnectedAccount()
+      }
+    }
+  }
+  
+  func callBioMetric() {
+    Task {
+      if await authenticationService.authenticateWithBiometrics() {
+        callTransferAPI()
       }
     }
   }
@@ -82,7 +78,7 @@ extension MoveMoneyAccountViewModel {
         self.linkedAccount = linkedAccount
         self.selectedLinkedAccount = linkedAccount.first
       } catch {
-        log.error(error)
+        toastMessage = error.localizedDescription
       }
     }
   }
@@ -110,10 +106,9 @@ extension MoveMoneyAccountViewModel {
           type: type,
           sessionId: sessionID
         )
-        log.info("Deposit \(response)")
-        navigation = .transfer
+        navigation = .transactionDetai(response.transactionId)
       } catch {
-        log.error(error.localizedDescription)
+        toastMessage = error.localizedDescription
       }
     }
   }
@@ -184,5 +179,18 @@ extension MoveMoneyAccountViewModel {
 
   func validateAmount(with kind: Kind) -> String? {
     return nil
+  }
+}
+
+// MARK: - Types
+public extension MoveMoneyAccountViewModel {
+  enum Kind {
+    case send
+    case receive
+  }
+  
+  enum Navigation {
+    case transactionDetai(String)
+    case addBankDebit
   }
 }

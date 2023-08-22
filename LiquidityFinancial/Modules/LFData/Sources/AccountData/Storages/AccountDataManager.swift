@@ -48,8 +48,9 @@ public class AccountDataManager: AccountDataStorageProtocol {
       .joined(separator: ", ")
   }
 
-  public var accountID: String?
-  
+  public var fiatAccountID: String?
+  public var cryptoAccountID: String?
+
   public private(set) var userInfomationData: UserInfomationDataProtocol = UserInfomationData()
   
   public func update(userID: String?) {

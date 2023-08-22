@@ -6,8 +6,8 @@ import LFTransaction
 
 struct ConfirmSendCryptoView: View {
   @StateObject private var viewModel: ConfirmSendCryptoViewModel
-  init(accountId: String, amount: Double, address: String) {
-    _viewModel = .init(wrappedValue: ConfirmSendCryptoViewModel(accountId: accountId, amount: amount, address: address))
+  init(amount: Double, address: String) {
+    _viewModel = .init(wrappedValue: ConfirmSendCryptoViewModel(amount: amount, address: address))
   }
 
   var body: some View {
@@ -23,14 +23,19 @@ struct ConfirmSendCryptoView: View {
       .navigationBarTitleDisplayMode(.inline)
       .navigationLink(item: $viewModel.navigation) { item in
         switch item {
-        case .detail(let transaction):
-          CryptoTransactionDetailView(
-            transaction: transaction,
-            transactionInfos: [],
+        case let .transactionDetail(id):
+          TransactionDetailView(
+            accountID: viewModel.accountDataManager.cryptoAccountID,
+            transactionId: id,
+            kind: .crypto,
             isNewAddress: viewModel.nickname.isEmpty,
-            walletAddress: viewModel.address
+            walletAddress: viewModel.address,
+            transactionInfo: viewModel.cryptoTransactions
           )
         }
+      }
+      .popup(item: $viewModel.toastMessage, style: .toast) {
+        ToastView(toastMessage: $0)
       }
   }
 }

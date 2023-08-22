@@ -103,6 +103,10 @@ public enum LFLocalizable {
     public static let to = LFLocalizable.tr("Localizable", "ConfirmSendCryptoView.to", fallback: "To")
     /// Wallet address
     public static let walletAddress = LFLocalizable.tr("Localizable", "ConfirmSendCryptoView.wallet_address", fallback: "Wallet address")
+    public enum Send {
+      /// Send
+      public static let title = LFLocalizable.tr("Localizable", "ConfirmSendCryptoView.send.title", fallback: "Send")
+    }
   }
   public enum EnterCryptoAddressView {
     /// SEND %@

@@ -27,10 +27,15 @@ struct FiatAssetView: View {
           TransactionListView(
             type: .crypto,
             currencyType: viewModel.currencyType,
-            accountID: viewModel.account?.id ?? .empty
+            accountID: viewModel.accountDataManager.fiatAccountID
           )
         case let .transactionDetail(transaction):
-          TransactionDetailView(accountID: viewModel.account?.id ?? .empty, transactionId: transaction.id, kind: transaction.detailType)
+            TransactionDetailView(
+              accountID: viewModel.accountDataManager.fiatAccountID,
+              transactionId: transaction.id,
+              kind: transaction.detailType,
+              isPopToRoot: false
+            )
         }
       }
       .defaultToolBar(navigationTitle: viewModel.asset.type?.title ?? .empty)

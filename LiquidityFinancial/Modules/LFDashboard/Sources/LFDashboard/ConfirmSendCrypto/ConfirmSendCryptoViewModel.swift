@@ -3,21 +3,21 @@ import Factory
 import LFServices
 import ZerohashData
 import LFTransaction
+import LFLocalizable
 
 class ConfirmSendCryptoViewModel: ObservableObject {
+  @LazyInjected(\.accountDataManager) var accountDataManager
   @LazyInjected(\.zerohashRepository) var zerohashRepository
   
   @Published var showIndicator: Bool = false
   @Published var toastMessage: String?
   @Published var navigation: Navigation?
   
-  let accountId: String
   let amount: Double
   let address: String
-  let nickname: String = ""
+  let nickname: String = .empty
 
-  init(accountId: String, amount: Double, address: String) {
-    self.accountId = accountId
+  init(amount: Double, address: String) {
     self.amount = amount
     self.address = address
   }
@@ -31,9 +31,16 @@ class ConfirmSendCryptoViewModel: ObservableObject {
       defer { showIndicator = false }
       showIndicator = true
       do {
-        let transactionEntity = try await zerohashRepository.sendCrypto(accountId: self.accountId, destinationAddress: self.address, amount: self.amount)
+        guard let accountID = self.accountDataManager.cryptoAccountID else {
+          return
+        }
+        let transactionEntity = try await self.zerohashRepository.sendCrypto(
+          accountId: accountID,
+          destinationAddress: self.address,
+          amount: self.amount
+        )
         let transaction = TransactionModel(from: transactionEntity)
-        self.navigation = .detail(transaction: transaction)
+        self.navigation = .transactionDetail(transaction.id)
       } catch {
         self.toastMessage = error.localizedDescription
       }
@@ -41,8 +48,21 @@ class ConfirmSendCryptoViewModel: ObservableObject {
   }
 }
 
+// MARK: - View Helpers
+extension ConfirmSendCryptoViewModel {
+  var cryptoTransactions: [TransactionInformation] {
+    [
+      TransactionInformation(
+        title: LFLocalizable.TransactionDetail.TransactionType.title,
+        value: LFLocalizable.ConfirmSendCryptoView.Send.title
+      )
+    ]
+  }
+}
+
+// MARK: - Types
 extension ConfirmSendCryptoViewModel {
   enum Navigation {
-    case detail(transaction: TransactionModel)
+    case transactionDetail(String)
   }
 }

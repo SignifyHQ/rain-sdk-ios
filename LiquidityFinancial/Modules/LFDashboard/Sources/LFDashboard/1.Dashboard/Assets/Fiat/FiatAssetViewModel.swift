@@ -55,6 +55,7 @@ private extension FiatAssetViewModel {
         return
       }
       self.account = account
+      self.accountDataManager.fiatAccountID = account.id
       await loadTransactions(accountId: account.id)
     } catch {
       toastMessage = error.localizedDescription

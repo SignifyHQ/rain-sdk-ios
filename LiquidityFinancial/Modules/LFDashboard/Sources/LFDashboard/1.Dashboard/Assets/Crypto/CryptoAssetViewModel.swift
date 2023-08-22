@@ -61,6 +61,7 @@ private extension CryptoAssetViewModel {
         return
       }
       self.account = account
+      self.accountDataManager.cryptoAccountID = account.id
       await loadTransactions(accountId: account.id)
     } catch {
       toastMessage = error.localizedDescription

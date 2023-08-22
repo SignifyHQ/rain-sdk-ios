@@ -4,17 +4,29 @@ import LFStyleGuide
 import LFLocalizable
 import LFUtilities
 
-/*
- This struct only use when open from list transaction.
- Transactions were opened from other actions please use specific transaction type
- */
 public struct TransactionDetailView: View {
   @StateObject private var viewModel: TransactionDetailViewModel
   let kind: TransactionDetailType
+  let isNewAddress: Bool?
+  let walletAddress: String?
+  let transactionInfo: [TransactionInformation]?
+  let isPopToRoot: Bool
   
-  public init(accountID: String, transactionId: String, kind: TransactionDetailType) {
-    _viewModel = .init(wrappedValue: TransactionDetailViewModel(accountID: accountID, transactionId: transactionId))
+  public init(
+    accountID: String?,
+    transactionId: String,
+    kind: TransactionDetailType,
+    isNewAddress: Bool? = nil,
+    walletAddress: String? = nil,
+    transactionInfo: [TransactionInformation]? = nil,
+    isPopToRoot: Bool = true
+  ) {
+    _viewModel = .init(wrappedValue: TransactionDetailViewModel(accountID: accountID ?? .empty, transactionId: transactionId))
     self.kind = kind
+    self.isPopToRoot = isPopToRoot
+    self.isNewAddress = isNewAddress
+    self.walletAddress = walletAddress
+    self.transactionInfo = transactionInfo
   }
   
   public var body: some View {
@@ -30,7 +42,12 @@ public struct TransactionDetailView: View {
           case .deposit:
             DepositTransactionDetailView(transaction: viewModel.transaction)
           case .crypto:
-            CryptoTransactionDetailView(transaction: viewModel.transaction, transactionInfos: viewModel.cryptoTransactions)
+            CryptoTransactionDetailView(
+              transaction: viewModel.transaction,
+              transactionInfos: transactionInfo ?? viewModel.cryptoTransactions,
+              isNewAddress: isNewAddress ?? false,
+              walletAddress: walletAddress ?? .empty
+            )
           case .withdraw:
             WithdrawTransactionDetailView(transaction: viewModel.transaction)
           case .purchase:
@@ -58,6 +75,17 @@ public struct TransactionDetailView: View {
       }
     }
     .frame(max: .infinity)
+    .navigationBarBackButtonHidden(isPopToRoot)
+    .toolbar {
+      ToolbarItem(placement: .navigationBarLeading) {
+        Button {
+          LFUtility.popToRootView()
+        } label: {
+          CircleButton(style: .xmark)
+        }
+        .opacity(isPopToRoot ? 1 : 0)
+      }
+    }
     .background(Colors.background.swiftUIColor)
   }
 }
