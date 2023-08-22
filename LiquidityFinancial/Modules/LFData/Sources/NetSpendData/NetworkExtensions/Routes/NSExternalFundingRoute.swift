@@ -36,9 +36,9 @@ extension NSExternalFundingRoute: LFRoute {
     case .newTransaction(_, let type, _):
       switch type {
       case .deposit:
-        return "/v1/netspend/external-funding/withdraw"
-      case .withdraw:
         return "/v1/netspend/external-funding/deposit"
+      case .withdraw:
+        return "/v1/netspend/external-funding/withdraw"
       }
     case .verifyCard:
       return "/v1/netspend/external-funding/external-card/verify"

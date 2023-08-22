@@ -10,13 +10,16 @@ import LFAccountOnboarding
 @MainActor
 final class AddFundsViewModel: ObservableObject {
   @Published var isDisableView: Bool = false
-  @Published var isOpeningPlaidView: Bool = false
   @Published var isLoading: Bool = false
   @Published var toastMessage: String?
   @Published var netspendController: NetspendSdkViewController?
   @Published var popup: Popup?
   @Published var navigation: Navigation?
   @Published var fundingStatus: APIAgreementData?
+  @Published var isLoadingLinkExternalCard: Bool = false
+  @Published var isLoadingLinkExternalBank: Bool = false
+  
+  private var nextNavigation: Navigation?
   
   @LazyInjected(\.netspendRepository) var netspendRepository
   @LazyInjected(\.externalFundingRepository) var externalFundingRepository
@@ -29,7 +32,6 @@ final class AddFundsViewModel: ObservableObject {
 extension AddFundsViewModel {
   func linkExternalBank() {
     Task {
-      isOpeningPlaidView = true
       isDisableView = true
       do {
         let sessionID = accountDataManager.sessionID
@@ -48,7 +50,7 @@ extension AddFundsViewModel {
   
   func onPlaidUIDisappear() {
     netspendController = nil
-    isOpeningPlaidView = false
+    isLoadingLinkExternalBank = false
     isDisableView = false
   }
   
@@ -72,15 +74,24 @@ extension AddFundsViewModel {
     intercomService.openIntercom()
   }
   
-  func apiFetchFundingStatus(onNext: @escaping (any ExternalFundingsatusEntity) -> Void) {
+  func apiFetchFundingStatus(for navigation: Navigation, onNext: @escaping (any ExternalFundingsatusEntity) -> Void) {
     Task {
-      defer { isLoading = false }
-      isLoading = true
+      defer {
+        if navigation == .addBankDebit {
+          isLoadingLinkExternalCard = false
+        }
+      }
+      if navigation == .linkExternalBank {
+        isLoadingLinkExternalBank = true
+      } else if navigation == .addBankDebit {
+        isLoadingLinkExternalCard = true
+      }
       do {
         let entity = try await self.externalFundingRepository.getFundingStatus(sessionID: accountDataManager.sessionID)
         onNext(entity)
       } catch {
         log.error(error.localizedDescription)
+        isLoadingLinkExternalBank = false
       }
     }
   }
@@ -88,18 +99,37 @@ extension AddFundsViewModel {
 
 // MARK: - View Helpers
 extension AddFundsViewModel {
+  func goNextNavigation() {
+    if nextNavigation == .linkExternalBank {
+      linkExternalBank()
+    } else {
+      navigation = nextNavigation
+    }
+    nextNavigation = nil
+  }
+  
+  func stopAction() {
+    isLoadingLinkExternalBank = false
+    nextNavigation = nil
+  }
+  
   func selectedAddOption(navigation: Navigation) {
     switch navigation {
-    case .addBankDebit:
-      apiFetchFundingStatus { [weak self] fundingStatus in
+    case .addBankDebit, .linkExternalBank:
+      apiFetchFundingStatus(for: navigation) { [weak self] fundingStatus in
         guard let self else { return }
         let externalCardStatus = fundingStatus.externalCardStatus
         guard let missingSteps = externalCardStatus.missingSteps, let agreement = externalCardStatus.agreement else { return }
         if missingSteps.contains(WorkflowsMissingStep.acceptFeatureAgreement.rawValue) {
           let agreementData = APIAgreementData(agreement: agreement)
+          self.nextNavigation = navigation
           self.fundingStatus = agreementData
         } else {
-          self.navigation = navigation
+          if navigation == .linkExternalBank {
+            linkExternalBank()
+          } else {
+            self.navigation = navigation
+          }
         }
       }
     default:
@@ -115,6 +145,7 @@ extension AddFundsViewModel {
     case addBankDebit
     case addMoney
     case directDeposit
+    case linkExternalBank
   }
   
   enum Popup {

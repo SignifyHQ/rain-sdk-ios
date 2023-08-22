@@ -33,6 +33,8 @@ public struct AddFundsView: View {
             MoveMoneyAccountView(kind: .receive)
           case .directDeposit:
             DirectDepositView(achInformation: $achInformation)
+          case .linkExternalBank:
+            EmptyView()
           }
         }
         .popup(item: $viewModel.toastMessage, style: .toast) {
@@ -49,7 +51,9 @@ public struct AddFundsView: View {
             viewModel.fundingStatus = nil
           } onDisappear: { isAcceptAgreement in
             if isAcceptAgreement {
-              viewModel.navigation = .addBankDebit
+              viewModel.goNextNavigation()
+            } else {
+              viewModel.stopAction()
             }
           }
         }
@@ -92,7 +96,7 @@ private extension AddFundsView {
         image: GenImages.CommonImages.Accounts.debitDeposit.swiftUIImage,
         title: LFLocalizable.AccountView.DebitDeposits.title,
         value: LFLocalizable.AccountView.DebitDeposits.subtitle,
-        isLoading: $viewModel.isLoading
+        isLoading: $viewModel.isLoadingLinkExternalCard
       ) {
         viewModel.selectedAddOption(navigation: .addBankDebit)
       }
@@ -100,9 +104,9 @@ private extension AddFundsView {
         image: GenImages.CommonImages.Accounts.oneTime.swiftUIImage,
         title: LFLocalizable.AccountView.OneTimeTransfers.title,
         value: LFLocalizable.AccountView.OneTimeTransfers.subtitle,
-        isLoading: $viewModel.isOpeningPlaidView
+        isLoading: $viewModel.isLoadingLinkExternalBank
       ) {
-        viewModel.linkExternalBank()
+        viewModel.selectedAddOption(navigation: .linkExternalBank)
       }
     }
   }
