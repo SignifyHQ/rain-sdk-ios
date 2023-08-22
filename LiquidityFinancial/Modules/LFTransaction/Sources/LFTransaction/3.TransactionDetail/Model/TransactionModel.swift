@@ -205,7 +205,7 @@ public extension TransactionModel {
     }
     return TransactionReward(
       status: TransactionStatus(rawValue: reward.status) ?? .unknown,
-      type: reward.type,
+      type: RewardType(rawValue: reward.type ?? .empty) ?? .unknow,
       amount: reward.amount,
       stickerUrl: reward.stickerUrl,
       fundraiserName: reward.fundraiserName,

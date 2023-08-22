@@ -1,27 +1,64 @@
 import SwiftUI
 import LFStyleGuide
+import LFLocalizable
+import LFUtilities
 
 public struct TransactionCardInformation {
-  let title: String
+  let cardType: TransactionCardType
   let amount: String
   let message: String
   let activityItem: String
-  let image: Image
-  let backgroundColor: Color
+  let stickerUrl: String?
+  let color: String?
   
   public init(
-    title: String,
+    cardType: TransactionCardType,
     amount: String,
     message: String,
     activityItem: String,
-    image: Image,
-    backgroundColor: Color = Colors.primary.swiftUIColor
+    stickerUrl: String?,
+    color: String?
   ) {
-    self.title = title
+    self.cardType = cardType
     self.amount = amount
     self.message = message
     self.activityItem = activityItem
-    self.backgroundColor = backgroundColor
-    self.image = image
+    self.color = color
+    self.stickerUrl = stickerUrl
   }
+}
+
+public extension TransactionCardInformation {
+  var title: String {
+    switch cardType {
+    case .cashback:
+      return LFLocalizable.TransactionCard.Cashback.title
+    case .donation:
+      return LFLocalizable.TransactionCard.Donation.title
+    case .crypto:
+      return LFLocalizable.TransactionCard.Crypto.title(LFUtility.cardName)
+    default:
+      return .empty
+    }
+  }
+  
+  var backgroundColor: Color {
+    switch cardType {
+    case .donation:
+      return color?.asHexColor ?? Colors.separator.swiftUIColor.opacity(0.5)
+    case .crypto:
+      return Colors.primary.swiftUIColor
+    case .cashback:
+      return color?.asHexColor ?? Colors.secondaryBackground.swiftUIColor
+    default:
+      return Colors.separator.swiftUIColor.opacity(0.5)
+    }
+  }
+}
+
+public enum TransactionCardType {
+  case crypto
+  case cashback
+  case donation
+  case unknow
 }

@@ -142,6 +142,27 @@ public extension Constants {
     case crypto = "CRYPTO"
   }
 }
+
+// MARK: - TransactionTypes
+public extension Constants {
+  enum TransactionTypesRequest {
+    case normal
+    case rewardCashBack
+    case rewardCryptoBack
+    
+    public var types: String {
+      switch self {
+      case .normal:
+        return "PURCHASE,DEPOSIT,WITHDRAW,SYSTEM_FEE,REFUND,CRYPTO_BUY,CRYPTO_SELL,DONATION,OTHER"
+      case .rewardCashBack:
+        return "REWARD_CASHBACK,REWARD_CASHBACK_REVERSE"
+      case .rewardCryptoBack:
+        return "REWARD_CRYPTOBACK,REWARD_CRYPTOBACK_DOSH,REWARD_CRYPTOBACK_REVERSE"
+      }
+    }
+  }
+}
+
   // MARK: - Default
 public extension Constants {
   enum Default: String {

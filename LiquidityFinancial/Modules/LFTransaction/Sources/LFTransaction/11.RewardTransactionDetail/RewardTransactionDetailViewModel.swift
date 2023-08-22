@@ -25,12 +25,12 @@ final class RewardTransactionDetailViewModel: ObservableObject {
 extension RewardTransactionDetailViewModel {
   var cardInformation: TransactionCardInformation {
     TransactionCardInformation(
-      title: LFLocalizable.TransactionCard.Purchase.title(LFUtility.cardName),
+      cardType: transaction.rewards?.type.transactionCardType ?? .unknow,
       amount: amountValue,
       message: LFLocalizable.TransactionCard.Purchase.message(rewardAmount, amountValue, LFUtility.appName),
       activityItem: LFLocalizable.TransactionCard.ShareCrypto.title(rewardAmount, LFUtility.appName, LFUtility.shareAppUrl),
-      image: GenImages.CommonImages.zerohash.swiftUIImage,
-      backgroundColor: Colors.purchaseCardBackground.swiftUIColor
+      stickerUrl: transaction.rewards?.stickerUrl,
+      color: transaction.rewards?.backgroundColor
     )
   }
   

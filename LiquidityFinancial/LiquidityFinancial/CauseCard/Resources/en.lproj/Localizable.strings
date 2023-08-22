@@ -623,10 +623,9 @@
 "cancelTransfer.success.message" = "Your deposit has been successfully cancelled.";
 
 // TransactionCard
-"transactionCard.crypto.title" = "Doge Earned";
+"transactionCard.crypto.title" = "%@ Earned";
 "transactionCard.donation.title" = "Donation";
 "transactionCard.cashback.title" = "Cashback";
-"transactionCard.purchase.title" = "%@ Earn";
 "transactionCard.purchase.message" = "I earned %@ by making a %@ purchase with %@.";
 "transactionCard.donation.message" = "Supporting %@ - %@.";
 "transactionCard.shareDonationAmount.message" = "I donated %@ to %@ using %@. Join us in supporting %@.";

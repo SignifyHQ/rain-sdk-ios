@@ -8,7 +8,7 @@ public enum AccountRoute {
   case createZeroHashAccount
   case getUser
   case getAccount(currencyType: String)
-  case getTransactions(accountId: String, currencyType: String, limit: Int, offset: Int)
+  case getTransactions(accountId: String, currencyType: String, transactionTypes: String, limit: Int, offset: Int)
   case getTransactionDetail(accountId: String, transactionId: String)
   case logout
   case createWalletAddress(accountId: String, address: String, nickname: String)
@@ -27,7 +27,7 @@ extension AccountRoute: LFRoute {
       return "/v1/user"
     case .getAccount:
       return "/v1/account/"
-    case .getTransactions(let accountId, _, _, _):
+    case .getTransactions(let accountId, _, _, _, _):
       return "/v1/transactions/\(accountId)"
     case let .getTransactionDetail(accountId, transactionId):
       return "/v1/transactions/\(accountId)/transactions/\(transactionId)"
@@ -64,9 +64,10 @@ extension AccountRoute: LFRoute {
       return nil
     case .getAccount(let currencyType):
       return ["currencyType": currencyType]
-    case .getTransactions(_, let currencyType, let limit, let offset):
+    case .getTransactions(_, let currencyType, let transactionTypes, let limit, let offset):
       return [
         "currencyType": currencyType,
+        "transactionTypes": transactionTypes,
         "limit": String(limit),
         "offset": String(offset)
       ]

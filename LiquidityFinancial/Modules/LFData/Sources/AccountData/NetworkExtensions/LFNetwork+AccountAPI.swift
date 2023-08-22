@@ -16,11 +16,13 @@ extension LFCoreNetwork: AccountAPIProtocol where R == AccountRoute {
     return try await request(AccountRoute.createZeroHashAccount, target: APIZeroHashAccount.self, failure: LFErrorObject.self, decoder: .apiDecoder)
   }
   
-  public func getTransactions(accountId: String, currencyType: String, limit: Int, offset: Int) async throws -> APITransactionList {
-    let listModel = try await request(AccountRoute.getTransactions(accountId: accountId, currencyType: currencyType, limit: limit, offset: offset),
-                                      target: APIListObject<APITransaction>.self,
-                                      failure: LFErrorObject.self,
-                                      decoder: .apiDecoder)
+  public func getTransactions(accountId: String, currencyType: String, transactionTypes: String, limit: Int, offset: Int) async throws -> APITransactionList {
+    let listModel = try await request(
+      AccountRoute.getTransactions(accountId: accountId, currencyType: currencyType, transactionTypes: transactionTypes, limit: limit, offset: offset),
+      target: APIListObject<APITransaction>.self,
+      failure: LFErrorObject.self,
+      decoder: .apiDecoder
+    )
     return APITransactionList(total: listModel.total, data: listModel.data)
   }
   

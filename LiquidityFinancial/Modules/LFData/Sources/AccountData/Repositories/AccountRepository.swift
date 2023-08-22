@@ -25,8 +25,12 @@ public class AccountRepository: AccountRepositoryProtocol {
     return try await accountAPI.getAccount(currencyType: currencyType)
   }
   
-  public func getTransactions(accountId: String, currencyType: String, limit: Int, offset: Int) async throws -> TransactionListEntity {
-    return try await accountAPI.getTransactions(accountId: accountId, currencyType: currencyType, limit: limit, offset: offset)
+  public func getTransactions(
+    accountId: String, currencyType: String, transactionTypes: String, limit: Int, offset: Int
+  ) async throws -> TransactionListEntity {
+    try await accountAPI.getTransactions(
+      accountId: accountId, currencyType: currencyType, transactionTypes: transactionTypes, limit: limit, offset: offset
+    )
   }
   
   public func getTransactionDetail(accountId: String, transactionId: String) async throws -> TransactionEntity {

@@ -2000,8 +2000,10 @@ public enum LFLocalizable {
       public static let title = LFLocalizable.tr("Localizable", "transactionCard.cashback.title", fallback: "Cashback")
     }
     public enum Crypto {
-      /// Doge Earned
-      public static let title = LFLocalizable.tr("Localizable", "transactionCard.crypto.title", fallback: "Doge Earned")
+      /// %@ Earned
+      public static func title(_ p1: Any) -> String {
+        return LFLocalizable.tr("Localizable", "transactionCard.crypto.title", String(describing: p1), fallback: "%@ Earned")
+      }
     }
     public enum Donation {
       /// Supporting %@ - %@.
@@ -2015,10 +2017,6 @@ public enum LFLocalizable {
       /// I earned %@ by making a %@ purchase with %@.
       public static func message(_ p1: Any, _ p2: Any, _ p3: Any) -> String {
         return LFLocalizable.tr("Localizable", "transactionCard.purchase.message", String(describing: p1), String(describing: p2), String(describing: p3), fallback: "I earned %@ by making a %@ purchase with %@.")
-      }
-      /// %@ Earn
-      public static func title(_ p1: Any) -> String {
-        return LFLocalizable.tr("Localizable", "transactionCard.purchase.title", String(describing: p1), fallback: "%@ Earn")
       }
     }
     public enum Share {

@@ -69,7 +69,13 @@ private extension TransactionListViewModel {
   func loadTransactions(offset: Int) async {
     do {
       if accountID.isEmpty { log.error("Missing account id") }
-      let transactions = try await accountRepository.getTransactions(accountId: accountID, currencyType: currencyType, limit: limit, offset: offset)
+      let transactions = try await accountRepository.getTransactions(
+        accountId: accountID,
+        currencyType: currencyType,
+        transactionTypes: Constants.TransactionTypesRequest.normal.types,
+        limit: limit,
+        offset: offset
+      )
       self.total = transactions.total
       self.transactions += transactions.data.compactMap({ TransactionModel(from: $0) })
     } catch {

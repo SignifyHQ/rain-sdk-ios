@@ -44,12 +44,12 @@ private extension DonationTransactionDetailView {
 private extension DonationTransactionDetailView {
   var cardInformation: TransactionCardInformation {
     TransactionCardInformation(
-      title: LFLocalizable.TransactionCard.Donation.title,
+      cardType: transaction.rewards?.type.transactionCardType ?? .unknow,
       amount: amountValue,
       message: transaction.rewards?.description ?? .empty,
       activityItem: "", // TODO: Will be implemented in Donation Ticket
-      image: GenImages.CommonImages.zerohash.swiftUIImage, // TODO: Will be implemented in Donation Ticket
-      backgroundColor: Colors.donationCardBackground.swiftUIColor // TODO: Will be implemented in Donation Ticket
+      stickerUrl: transaction.rewards?.stickerUrl,
+      color: transaction.rewards?.backgroundColor
     )
   }
   
