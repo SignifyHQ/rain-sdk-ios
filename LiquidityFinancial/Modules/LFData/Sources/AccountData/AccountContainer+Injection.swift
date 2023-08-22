@@ -5,7 +5,7 @@ import CoreNetwork
 import AuthorizationManager
 
 extension Container {
-  public var accountDataManager: Factory<AccountDataStorageProtocol> {
+  public var accountDataManager: Factory<any AccountDataStorageProtocol> {
     self { AccountDataManager() }.singleton
   }
   

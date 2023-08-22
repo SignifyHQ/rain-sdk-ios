@@ -1,4 +1,5 @@
 import Foundation
+import Combine
 
 public protocol AccountDataStorageProtocol {
   var userInfomationData: UserInfomationDataProtocol { get }
@@ -8,6 +9,11 @@ public protocol AccountDataStorageProtocol {
   var userEmail: String { get set }
   var addressDetail: String { get }
   var accountID: String? { get set }
+  
+  func subscribeWalletAddressesChanged(_ completion: @escaping ([WalletAddressEntity]) -> Void) -> Cancellable
+  func storeWalletAddresses(_ addresses: [WalletAddressEntity])
+  func addOrEditWalletAddress(_ address: WalletAddressEntity)
+  func removeWalletAddress(id: String)
   
   func update(firstName: String?)
   func update(lastName: String?)
@@ -31,6 +37,15 @@ public protocol AccountDataStorageProtocol {
   func stored(sessionID: String)
   func clearUserSession()
   func storeUser(user: LFUser)
+}
+
+extension AccountDataStorageProtocol {
+  
+  func storeWalletAddresses(_ addresses: [WalletAddressEntity]) {
+  }
+  
+  func addOrEditWalletAddress(_ address: WalletAddressEntity) {
+  }
 }
 
 public protocol UserInfomationDataProtocol {

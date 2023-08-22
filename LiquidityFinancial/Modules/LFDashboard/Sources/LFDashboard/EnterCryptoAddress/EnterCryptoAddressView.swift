@@ -57,6 +57,11 @@ struct EnterCryptoAddressView: View {
           amount: viewModel.amount,
           address: viewModel.inputValue
         )
+      case .editWalletAddress(let wallet):
+        EditNicknameOfWalletView(
+          accountId: viewModel.account.id,
+          wallet: wallet
+        )
       }
     }
   }

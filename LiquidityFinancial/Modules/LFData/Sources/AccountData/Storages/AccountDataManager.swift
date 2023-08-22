@@ -1,5 +1,6 @@
 import Foundation
 import AccountDomain
+import Combine
 
 public class AccountDataManager: AccountDataStorageProtocol {
   public func update(addressEntity: AddressEntity?) {
@@ -137,6 +138,35 @@ public class AccountDataManager: AccountDataStorageProtocol {
     userInfomationData = UserInfomationData(enity: user)
     if let fullName = userInfomationData.fullName, fullName.isEmpty {
       update(fullName: (userInfomationData.firstName ?? "") + " " + (userInfomationData.lastName ?? ""))
+    }
+  }
+  
+  public let walletAddressesSubject = CurrentValueSubject<[WalletAddressEntity], Never>([])
+  
+  public func subscribeWalletAddressesChanged(_ completion: @escaping ([WalletAddressEntity]) -> Void) -> Cancellable {
+    walletAddressesSubject.sink(receiveValue: completion)
+  }
+  
+  public func storeWalletAddresses(_ addresses: [WalletAddressEntity]) {
+    walletAddressesSubject.send(addresses)
+  }
+  
+  public func addOrEditWalletAddress(_ address: WalletAddressEntity) {
+    var newValues = walletAddressesSubject.value
+    if let index = newValues.firstIndex(where: { $0.id == address.id }) {
+      newValues.replaceSubrange(index...index, with: [address])
+    } else {
+      newValues.append(address)
+    }
+    walletAddressesSubject.send(newValues)
+  }
+  
+  public func removeWalletAddress(id: String) {
+    var newValues = walletAddressesSubject.value
+    let count = newValues.count
+    newValues.removeAll(where: { $0.id == id })
+    if count != newValues.count {
+      walletAddressesSubject.send(newValues)
     }
   }
 }

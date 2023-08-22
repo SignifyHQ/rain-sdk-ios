@@ -58,4 +58,13 @@ extension LFCoreNetwork: AccountAPIProtocol where R == AccountRoute {
     )
     return listModel.data
   }
+  
+  public func updateWalletAddresses(accountId: String, walletId: String, walletAddress: String, nickname: String) async throws -> APIWalletAddress {
+    try await request(
+      AccountRoute.updateWalletAddress(accountId: accountId, walletId: walletId, walletAddress: walletAddress, nickname: nickname),
+      target: APIWalletAddress.self,
+      failure: LFErrorObject.self,
+      decoder: .apiDecoder
+    )
+  }
 }

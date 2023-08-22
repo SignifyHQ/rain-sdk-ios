@@ -6,9 +6,10 @@ import AccountDomain
 import SwiftUI
 
 @MainActor
-class EnterNicknameOfWalletViewModel: ObservableObject {
+class EditNicknameOfWalletViewModel: ObservableObject {
   @LazyInjected(\.accountRepository) var accountRepository
   @LazyInjected(\.accountDataManager) var accountDataManager
+  
   @Published var shouldDismiss: Bool = false
   
   @Published var walletNickname: String = .empty
@@ -17,21 +18,22 @@ class EnterNicknameOfWalletViewModel: ObservableObject {
   @Published var inlineMessage: String?
   @Published var toastMessage: String?
 
-  let walletAddress: String
+  let wallet: APIWalletAddress
   let accountId: String
 
   var isActionAllowed: Bool {
     !walletNickname.trimWhitespacesAndNewlines().isEmpty
   }
 
-  init(accountId: String, walletAddress: String) {
+  init(accountId: String, wallet: APIWalletAddress) {
     self.accountId = accountId
-    self.walletAddress = walletAddress
+    self.wallet = wallet
+    self.walletNickname = wallet.nickname ?? .empty
   }
 }
 
-extension EnterNicknameOfWalletViewModel {
-  func saveWalletAddress() {
+extension EditNicknameOfWalletViewModel {
+  func editWalletAddress() {
     numberOfShakes = 0
     showIndicator = true
     Task { @MainActor in
@@ -39,9 +41,10 @@ extension EnterNicknameOfWalletViewModel {
         showIndicator = false
       }
       do {
-        let walletAddress = try await accountRepository.createWalletAddresses(
+        let walletAddress = try await accountRepository.updateWalletAddresses(
           accountId: accountId,
-          address: walletAddress,
+          walletId: wallet.id,
+          walletAddress: wallet.address,
           nickname: walletNickname
         )
         accountDataManager.addOrEditWalletAddress(walletAddress)
@@ -50,7 +53,7 @@ extension EnterNicknameOfWalletViewModel {
           self.shouldDismiss = true
         }
       } catch {
-        self.handleAPIError(error)
+        toastMessage = error.localizedDescription
       }
     }
   }
@@ -59,18 +62,5 @@ extension EnterNicknameOfWalletViewModel {
     if inlineMessage.isNotNil {
       inlineMessage = nil
     }
-  }
-}
-
-// MARK: - Private Functions
-
-private extension EnterNicknameOfWalletViewModel {
-  func handleAPIError(_ error: Error) {
-    // TODO: Need to check duplicate wallet address later
-    guard let code = error.asErrorObject?.code else {
-      toastMessage = error.localizedDescription
-      return
-    }
-    inlineMessage = LFLocalizable.EnterNicknameOfWallet.NameExist.inlineError
   }
 }

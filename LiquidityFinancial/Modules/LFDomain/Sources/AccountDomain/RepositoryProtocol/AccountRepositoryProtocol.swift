@@ -11,5 +11,6 @@ public protocol AccountRepositoryProtocol {
   func getTransactionDetail(accountId: String, transactionId: String) async throws -> TransactionEntity
   func logout() async throws -> Bool
   func createWalletAddresses(accountId: String, address: String, nickname: String) async throws -> WalletAddressEntity
+  func updateWalletAddresses(accountId: String, walletId: String, walletAddress: String, nickname: String) async throws -> WalletAddressEntity
   func getWalletAddresses(accountId: String) async throws -> [WalletAddressEntity]
 }

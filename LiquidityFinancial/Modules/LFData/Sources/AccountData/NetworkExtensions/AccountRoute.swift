@@ -12,6 +12,7 @@ public enum AccountRoute {
   case getTransactionDetail(accountId: String, transactionId: String)
   case logout
   case createWalletAddress(accountId: String, address: String, nickname: String)
+  case updateWalletAddress(accountId: String, walletId: String, walletAddress: String, nickname: String)
   case getWalletAddresses(accountId: String)
 }
 
@@ -33,6 +34,8 @@ extension AccountRoute: LFRoute {
       return "/v1/transactions/\(accountId)/transactions/\(transactionId)"
     case .createWalletAddress(let accountId, _, _), .getWalletAddresses(let accountId):
       return "v1/accounts/\(accountId)/wallet-addresses"
+    case let .updateWalletAddress(accountId, _, walletAddress, _):
+      return "v1/accounts/\(accountId)/wallet-addresses/\(walletAddress)"
     }
   }
   
@@ -42,6 +45,8 @@ extension AccountRoute: LFRoute {
       return .POST
     case .getUser, .getAccount, .getTransactions, .getTransactionDetail, .getWalletAddresses:
       return .GET
+    case .updateWalletAddress:
+      return .PATCH
     }
   }
   
@@ -52,10 +57,7 @@ extension AccountRoute: LFRoute {
       "Accept": "application/json",
       "Authorization": self.needAuthorizationKey
     ]
-    switch self {
-    case .createZeroHashAccount, .getAccount, .getTransactions, .getTransactionDetail, .logout, .getUser, .createWalletAddress, .getWalletAddresses:
-      return base
-    }
+    return base
   }
   
   public var parameters: Parameters? {
@@ -76,12 +78,17 @@ extension AccountRoute: LFRoute {
         "nickname": nickname,
         "address": address
       ]
+    case let .updateWalletAddress(_, walletId, _, nickname):
+      return [
+        "nickname": nickname,
+        "walletId": walletId
+      ]
     }
   }
   
   public var parameterEncoding: ParameterEncoding? {
     switch self {
-    case .createWalletAddress:
+    case .createWalletAddress, .updateWalletAddress:
       return .json
     case .createZeroHashAccount, .getUser, .logout, .getWalletAddresses:
       return nil

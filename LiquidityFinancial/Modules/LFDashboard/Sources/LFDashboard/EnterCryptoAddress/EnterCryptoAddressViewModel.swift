@@ -5,10 +5,12 @@ import LFUtilities
 import Factory
 import AccountDomain
 import CodeScanner
+import Combine
 
 @MainActor
 final class EnterCryptoAddressViewModel: ObservableObject {
   @LazyInjected(\.accountRepository) var accountRepository
+  @LazyInjected(\.accountDataManager) var accountDataManager
   
   @Published var isPerformingAction = false
   @Published var numberOfShakes = 0
@@ -25,11 +27,22 @@ final class EnterCryptoAddressViewModel: ObservableObject {
   let amount: Double
   let account: LFAccount
   
+  private var subscribers: Set<AnyCancellable> = []
+  
   init(account: LFAccount, amount: Double) {
     self.account = account
     self.amount = amount
     
     getSavedWallets()
+    accountDataManager
+      .subscribeWalletAddressesChanged({ [weak self] wallets in
+        guard let self = self else {
+          return
+        }
+        self.wallets = wallets.map({ APIWalletAddress(entity: $0) })
+        self.filterWalletAddressList()
+      })
+      .store(in: &subscribers)
   }
   
   var isActionAllowed: Bool {
@@ -74,6 +87,7 @@ extension EnterCryptoAddressViewModel {
         let walletAddresses = response.map({ APIWalletAddress(entity: $0) })
         wallets = walletAddresses
         walletsFilter = walletAddresses
+        accountDataManager.storeWalletAddresses(response)
       } catch {
         toastMessage = error.localizedDescription
       }
@@ -109,7 +123,7 @@ extension EnterCryptoAddressViewModel {
   }
   
   func editWalletTapped(wallet: APIWalletAddress) {
-    
+    navigation = .editWalletAddress(wallet: wallet)
   }
   
   func deleteWalletTapped(wallet: APIWalletAddress) {
@@ -121,5 +135,6 @@ extension EnterCryptoAddressViewModel {
 extension EnterCryptoAddressViewModel {
   enum Navigation {
     case confirm
+    case editWalletAddress(wallet: APIWalletAddress)
   }
 }

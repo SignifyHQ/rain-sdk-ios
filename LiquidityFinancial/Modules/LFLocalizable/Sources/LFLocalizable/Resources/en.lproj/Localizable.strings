@@ -877,6 +877,9 @@ https://mn.gov/commerce/money/investments/cryptocurrency/. \n\n\n\n\n\n\n";
 "enter_nickname_of_wallet.name_exist.inline_error" = "This wallet address name already exists";
 "enter_nickname_of_wallet.wallet_was_saved" = "Wallet address was saved";
 
+// Enter nickname of wallet
+"edit_nickname_of_wallet.save_title" = "EDIT WALLET ADDRESS";
+
 // MARK: - Common
 
 // Terms

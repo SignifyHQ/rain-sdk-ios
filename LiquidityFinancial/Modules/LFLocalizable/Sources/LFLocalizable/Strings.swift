@@ -1107,6 +1107,10 @@ public enum LFLocalizable {
       public static let title = LFLocalizable.tr("Localizable", "donations_disclosure.alert.title", fallback: "DONATIONS")
     }
   }
+  public enum EditNicknameOfWallet {
+    /// EDIT WALLET ADDRESS
+    public static let saveTitle = LFLocalizable.tr("Localizable", "edit_nickname_of_wallet.save_title", fallback: "EDIT WALLET ADDRESS")
+  }
   public enum EnterCVVCode {
     public enum ActiveCard {
       /// ACTIVATE PHYSICAL CARD

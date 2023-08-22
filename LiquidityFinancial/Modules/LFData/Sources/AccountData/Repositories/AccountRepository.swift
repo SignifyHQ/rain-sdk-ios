@@ -45,6 +45,15 @@ public class AccountRepository: AccountRepositoryProtocol {
     try await accountAPI.createWalletAddresses(accountId: accountId, address: address, nickname: nickname)
   }
   
+  public func updateWalletAddresses(accountId: String, walletId: String, walletAddress: String, nickname: String) async throws -> WalletAddressEntity {
+    try await accountAPI.updateWalletAddresses(
+      accountId: accountId,
+      walletId: walletId,
+      walletAddress: walletAddress,
+      nickname: nickname
+    )
+  }
+  
   public func getWalletAddresses(accountId: String) async throws -> [WalletAddressEntity] {
     try await accountAPI.getWalletAddresses(accountId: accountId)
   }
