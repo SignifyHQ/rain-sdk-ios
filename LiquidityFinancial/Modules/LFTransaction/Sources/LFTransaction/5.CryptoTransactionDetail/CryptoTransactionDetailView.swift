@@ -2,6 +2,7 @@ import SwiftUI
 import LFStyleGuide
 import LFLocalizable
 import LFUtilities
+import LFWalletAddress
 
 struct CryptoTransactionDetailView: View {
   @StateObject private var viewModel: CryptoTransactionDetailViewModel
@@ -47,7 +48,7 @@ private extension CryptoTransactionDetailView {
       case .receipt(let cryptoReceipt):
         CryptoTransactionReceiptView(accountID: viewModel.transaction.accountId, receipt: cryptoReceipt)
       case .saveAddress(let address):
-        EmptyView() // TODO: Will be implemented later
+        EnterNicknameOfWalletView(accountId: viewModel.transaction.accountId, walletAddress: viewModel.walletAddress)
       }
     }
     .popup(isPresented: $viewModel.showSaveWalletAddressPopup) {

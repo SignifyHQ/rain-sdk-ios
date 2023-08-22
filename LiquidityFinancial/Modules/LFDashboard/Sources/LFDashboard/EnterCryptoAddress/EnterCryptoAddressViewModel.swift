@@ -12,7 +12,6 @@ final class EnterCryptoAddressViewModel: ObservableObject {
   @LazyInjected(\.accountRepository) var accountRepository
   @LazyInjected(\.accountDataManager) var accountDataManager
   
-  @Published var isPerformingAction = false
   @Published var numberOfShakes = 0
   @Published var inlineError: String?
   @Published var toastMessage: String?
@@ -23,6 +22,8 @@ final class EnterCryptoAddressViewModel: ObservableObject {
   @Published var walletsFilter: [APIWalletAddress] = []
   @Published var walletSelected: APIWalletAddress?
   @Published var isFetchingData: Bool = false
+  @Published var showIndicator = false
+  @Published var popup: Popup?
   
   let amount: Double
   let account: LFAccount
@@ -77,11 +78,9 @@ final class EnterCryptoAddressViewModel: ObservableObject {
 extension EnterCryptoAddressViewModel {
   
   func getSavedWallets() {
-    isFetchingData = true
     Task { @MainActor in
-      defer {
-        isFetchingData = false
-      }
+      defer { isFetchingData = false }
+      isFetchingData = true
       do {
         let response = try await accountRepository.getWalletAddresses(accountId: account.id)
         let walletAddresses = response.map({ APIWalletAddress(entity: $0) })
@@ -91,7 +90,6 @@ extension EnterCryptoAddressViewModel {
       } catch {
         toastMessage = error.localizedDescription
       }
-      isFetchingData = false
     }
   }
   
@@ -127,7 +125,31 @@ extension EnterCryptoAddressViewModel {
   }
   
   func deleteWalletTapped(wallet: APIWalletAddress) {
-    
+    popup = .delete(wallet)
+  }
+  
+  func handleDelete(wallet: APIWalletAddress) {
+    Task { @MainActor in
+      defer { showIndicator = false }
+      showIndicator = true
+      do {
+        let response = try await accountRepository.deleteWalletAddresses(
+          accountId: account.id,
+          walletAddress: wallet.address
+        )
+        if response.success {
+          accountDataManager.removeWalletAddress(id: wallet.id)
+          toastMessage = LFLocalizable.EnterCryptoAddressView.DeleteSuccess.message
+          popup = nil
+        }
+      } catch {
+        toastMessage = error.localizedDescription
+      }
+    }
+  }
+  
+  func hidePopup() {
+    popup = nil
   }
   
 }
@@ -136,5 +158,9 @@ extension EnterCryptoAddressViewModel {
   enum Navigation {
     case confirm
     case editWalletAddress(wallet: APIWalletAddress)
+  }
+  
+  enum Popup {
+    case delete(APIWalletAddress)
   }
 }

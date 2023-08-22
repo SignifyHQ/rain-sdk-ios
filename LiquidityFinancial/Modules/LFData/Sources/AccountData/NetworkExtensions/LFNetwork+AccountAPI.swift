@@ -67,4 +67,15 @@ extension LFCoreNetwork: AccountAPIProtocol where R == AccountRoute {
       decoder: .apiDecoder
     )
   }
+  
+  public func deleteWalletAddresses(accountId: String, walletAddress: String) async throws -> APIDeleteWalletResponse {
+    let result = try await request(
+      AccountRoute.deleteWalletAddresses(
+        accountId: accountId,
+        walletAddress: walletAddress
+      )
+    )
+    let statusCode = result.httpResponse?.statusCode ?? 500
+    return APIDeleteWalletResponse(success: statusCode.isSuccess)
+  }
 }

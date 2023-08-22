@@ -5,6 +5,7 @@ import LFUtilities
 import LFStyleGuide
 import AccountDomain
 import CodeScanner
+import LFWalletAddress
 
 struct EnterCryptoAddressView: View {
   @StateObject private var viewModel: EnterCryptoAddressViewModel
@@ -36,6 +37,12 @@ struct EnterCryptoAddressView: View {
     .background(Colors.background.swiftUIColor)
     .popup(item: $viewModel.toastMessage, style: .toast) {
       ToastView(toastMessage: $0)
+    }
+    .popup(item: $viewModel.popup) { item in
+      switch item {
+      case let .delete(wallet):
+        deletePopup(wallet: wallet)
+      }
     }
     .onTapGesture {
       hideKeyboard()
@@ -210,5 +217,19 @@ private extension EnterCryptoAddressView {
       .font(Fonts.regular.swiftUIFont(size: 10))
       .foregroundColor(Colors.label.swiftUIColor.opacity(0.5))
       .fixedSize(horizontal: false, vertical: true)
+  }
+  
+  func deletePopup(wallet: APIWalletAddress) -> some View {
+    LiquidityAlert(
+      title: LFLocalizable.EnterCryptoAddressView.DeletePopup.title.uppercased(),
+      message: LFLocalizable.EnterCryptoAddressView.DeletePopup.message(wallet.nickname ?? ""),
+      primary: .init(text: LFLocalizable.EnterCryptoAddressView.DeletePopup.primaryButton) {
+        viewModel.handleDelete(wallet: wallet)
+      },
+      secondary: .init(text: LFLocalizable.Button.Back.title) {
+        viewModel.hidePopup()
+      },
+      isLoading: $viewModel.showIndicator
+    )
   }
 }

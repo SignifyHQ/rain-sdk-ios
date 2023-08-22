@@ -2,17 +2,16 @@ import SwiftUI
 import LFLocalizable
 import LFUtilities
 import LFStyleGuide
-import AccountData
 
-struct EditNicknameOfWalletView: View {
+public struct EnterNicknameOfWalletView: View {
   @Environment(\.dismiss) private var dismiss
-  @StateObject private var viewModel: EditNicknameOfWalletViewModel
+  @StateObject private var viewModel: EnterNicknameOfWalletViewModel
   
-  init(accountId: String, wallet: APIWalletAddress) {
-    _viewModel = .init(wrappedValue: EditNicknameOfWalletViewModel(accountId: accountId, wallet: wallet))
+  public init(accountId: String, walletAddress: String) {
+    _viewModel = .init(wrappedValue: EnterNicknameOfWalletViewModel(accountId: accountId, walletAddress: walletAddress))
   }
 
-  var body: some View {
+  public var body: some View {
     content
       .onChange(of: viewModel.walletNickname) { _ in
         viewModel.onEditingWalletName()
@@ -30,8 +29,7 @@ struct EditNicknameOfWalletView: View {
 }
 
 // MARK: View Components
-
-private extension EditNicknameOfWalletView {
+private extension EnterNicknameOfWalletView {
   var content: some View {
     VStack(alignment: .leading, spacing: 32) {
       headerTitle
@@ -42,7 +40,7 @@ private extension EditNicknameOfWalletView {
         isDisable: !viewModel.isActionAllowed,
         isLoading: $viewModel.showIndicator
       ) {
-        viewModel.editWalletAddress()
+        viewModel.saveWalletAddress()
       }
     }
     .padding(30)
@@ -84,10 +82,10 @@ private extension EditNicknameOfWalletView {
 
   var headerTitle: some View {
     VStack(alignment: .leading, spacing: 16) {
-      Text(LFLocalizable.EditNicknameOfWallet.saveTitle)
+      Text(LFLocalizable.EnterNicknameOfWallet.saveTitle)
         .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.main.value))
         .foregroundColor(Colors.label.swiftUIColor)
-      Text(LFLocalizable.EnterNicknameOfWallet.createNickname(viewModel.wallet.address))
+      Text(LFLocalizable.EnterNicknameOfWallet.createNickname(viewModel.walletAddress))
         .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.medium.value))
         .foregroundColor(Colors.label.swiftUIColor.opacity(0.75))
         .multilineTextAlignment(.leading)

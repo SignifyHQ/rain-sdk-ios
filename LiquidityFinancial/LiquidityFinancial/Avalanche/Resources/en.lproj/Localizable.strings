@@ -679,6 +679,11 @@ https://mn.gov/commerce/money/investments/cryptocurrency/. \n\n\n\n\n\n\n";
 "EnterCryptoAddressView.wallet_address.title" = "%@ Wallet Address";
 "EnterCryptoAddressView.wallet_address.placeholder" = "Wallet Address";
 "EnterCryptoAddressView.warning" = "Sending to a non - %@ wallet will result in lost funds";
+"EnterCryptoAddressView.delete_popup.title" = "Delete Saved wallet address";
+"EnterCryptoAddressView.delete_popup.message" = "Would you like to delete saved wallet: %@?";
+"EnterCryptoAddressView.delete_popup.primary_button" = "Delete";
+"EnterCryptoAddressView.save_success.message" = "Wallet address saved";
+"EnterCryptoAddressView.delete_success.message" = "Wallet address deleted";
 
 // Confirmation Crypto Send
 "ConfirmSendCryptoView.title" = "Confirm Transfer";

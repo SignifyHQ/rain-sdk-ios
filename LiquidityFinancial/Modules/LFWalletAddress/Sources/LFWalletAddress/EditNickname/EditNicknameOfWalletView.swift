@@ -2,18 +2,17 @@ import SwiftUI
 import LFLocalizable
 import LFUtilities
 import LFStyleGuide
+import AccountData
 
-// MARK: - EnterNicknameOfWalletView
-
-struct EnterNicknameOfWalletView: View {
+public struct EditNicknameOfWalletView: View {
   @Environment(\.dismiss) private var dismiss
-  @StateObject private var viewModel: EnterNicknameOfWalletViewModel
+  @StateObject private var viewModel: EditNicknameOfWalletViewModel
   
-  init(accountId: String, walletAddress: String) {
-    _viewModel = .init(wrappedValue: EnterNicknameOfWalletViewModel(accountId: accountId, walletAddress: walletAddress))
+  public init(accountId: String, wallet: APIWalletAddress) {
+    _viewModel = .init(wrappedValue: EditNicknameOfWalletViewModel(accountId: accountId, wallet: wallet))
   }
 
-  var body: some View {
+  public var body: some View {
     content
       .onChange(of: viewModel.walletNickname) { _ in
         viewModel.onEditingWalletName()
@@ -32,7 +31,7 @@ struct EnterNicknameOfWalletView: View {
 
 // MARK: View Components
 
-private extension EnterNicknameOfWalletView {
+private extension EditNicknameOfWalletView {
   var content: some View {
     VStack(alignment: .leading, spacing: 32) {
       headerTitle
@@ -43,7 +42,7 @@ private extension EnterNicknameOfWalletView {
         isDisable: !viewModel.isActionAllowed,
         isLoading: $viewModel.showIndicator
       ) {
-        viewModel.saveWalletAddress()
+        viewModel.editWalletAddress()
       }
     }
     .padding(30)
@@ -85,10 +84,10 @@ private extension EnterNicknameOfWalletView {
 
   var headerTitle: some View {
     VStack(alignment: .leading, spacing: 16) {
-      Text(LFLocalizable.EnterNicknameOfWallet.saveTitle)
+      Text(LFLocalizable.EditNicknameOfWallet.saveTitle)
         .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.main.value))
         .foregroundColor(Colors.label.swiftUIColor)
-      Text(LFLocalizable.EnterNicknameOfWallet.createNickname(viewModel.walletAddress))
+      Text(LFLocalizable.EnterNicknameOfWallet.createNickname(viewModel.wallet.address))
         .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.medium.value))
         .foregroundColor(Colors.label.swiftUIColor.opacity(0.75))
         .multilineTextAlignment(.leading)

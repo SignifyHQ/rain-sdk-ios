@@ -14,6 +14,7 @@ public enum AccountRoute {
   case createWalletAddress(accountId: String, address: String, nickname: String)
   case updateWalletAddress(accountId: String, walletId: String, walletAddress: String, nickname: String)
   case getWalletAddresses(accountId: String)
+  case deleteWalletAddresses(accountId: String, walletAddress: String)
 }
 
 extension AccountRoute: LFRoute {
@@ -36,6 +37,8 @@ extension AccountRoute: LFRoute {
       return "v1/accounts/\(accountId)/wallet-addresses"
     case let .updateWalletAddress(accountId, _, walletAddress, _):
       return "v1/accounts/\(accountId)/wallet-addresses/\(walletAddress)"
+    case let .deleteWalletAddresses(accountId, walletAddress):
+      return "v1/accounts/\(accountId)/wallet-addresses/\(walletAddress)"
     }
   }
   
@@ -47,6 +50,8 @@ extension AccountRoute: LFRoute {
       return .GET
     case .updateWalletAddress:
       return .PATCH
+    case .deleteWalletAddresses:
+      return .DELETE
     }
   }
   
@@ -62,7 +67,7 @@ extension AccountRoute: LFRoute {
   
   public var parameters: Parameters? {
     switch self {
-    case .createZeroHashAccount, .getUser, .getTransactionDetail, .logout, .getWalletAddresses:
+    case .createZeroHashAccount, .getUser, .getTransactionDetail, .logout, .getWalletAddresses, .deleteWalletAddresses:
       return nil
     case .getAccount(let currencyType):
       return ["currencyType": currencyType]
@@ -90,7 +95,7 @@ extension AccountRoute: LFRoute {
     switch self {
     case .createWalletAddress, .updateWalletAddress:
       return .json
-    case .createZeroHashAccount, .getUser, .logout, .getWalletAddresses:
+    case .createZeroHashAccount, .getUser, .logout, .getWalletAddresses, .deleteWalletAddresses:
       return nil
     case .getAccount, .getTransactions, .getTransactionDetail:
       return .url

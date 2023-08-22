@@ -57,6 +57,10 @@ public class AccountRepository: AccountRepositoryProtocol {
   public func getWalletAddresses(accountId: String) async throws -> [WalletAddressEntity] {
     try await accountAPI.getWalletAddresses(accountId: accountId)
   }
+  
+  public func deleteWalletAddresses(accountId: String, walletAddress: String) async throws -> DeleteWalletEntity {
+    try await accountAPI.deleteWalletAddresses(accountId: accountId, walletAddress: walletAddress)
+  }
 }
 
 extension APIAccount: LFAccount {}

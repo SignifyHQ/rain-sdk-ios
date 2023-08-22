@@ -4,31 +4,26 @@
 import PackageDescription
 
 let package = Package(
-  name: "LFDashboard",
+  name: "LFWalletAddress",
   platforms: [.iOS(.v15)],
   products: [
     .library(
-      name: "LFDashboard",
-      targets: ["LFDashboard"])
+      name: "LFWalletAddress",
+      targets: ["LFWalletAddress"])
   ],
   dependencies: [
     .package(name: "LFUtilities", path: "../LFUtilities"),
     .package(name: "LFStyleGuide", path: "../LFStyleGuide"),
     .package(name: "LFLocalizable", path: "../LFLocalizable"),
     .package(name: "LFServices", path: "../LFServices"),
-    .package(name: "LFCard", path: "../LFCard"),
-    .package(name: "LFBank", path: "../LFBank"),
-    .package(name: "LFTransaction", path: "../LFTransaction"),
-    .package(name: "LFWalletAddress", path: "../LFWalletAddress"),
     .package(name: "LFData", path: "../LFData"),
-    .package(name: "LFNetwork", path: "../LFNetwork"),
-    .package(url: "https://github.com/twostraws/CodeScanner", from: "2.0.0")
+    .package(name: "LFNetwork", path: "../LFNetwork")
   ],
   targets: [
     .target(
-      name: "LFDashboard",
+      name: "LFWalletAddress",
       dependencies: [
-        "LFUtilities", "LFStyleGuide", "LFLocalizable", "LFServices", "LFCard", "LFBank", "LFTransaction", "CodeScanner", "LFWalletAddress",
+        "LFUtilities", "LFStyleGuide", "LFLocalizable", "LFServices",
         .product(name: "OnboardingData", package: "LFData"),
         .product(name: "NetSpendData", package: "LFData"),
         .product(name: "ZerohashData", package: "LFData"),
@@ -36,7 +31,7 @@ let package = Package(
       ]
     ),
     .testTarget(
-      name: "LFDashboardTests",
-      dependencies: ["LFDashboard"])
+      name: "LFWalletAddressTests",
+      dependencies: ["LFWalletAddress"])
   ]
 )

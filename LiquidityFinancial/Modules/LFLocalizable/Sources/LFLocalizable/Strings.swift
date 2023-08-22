@@ -117,6 +117,24 @@ public enum LFLocalizable {
     public static func warning(_ p1: Any) -> String {
       return LFLocalizable.tr("Localizable", "EnterCryptoAddressView.warning", String(describing: p1), fallback: "Sending to a non - %@ wallet will result in lost funds")
     }
+    public enum DeletePopup {
+      /// Would you like to delete saved wallet: %@?
+      public static func message(_ p1: Any) -> String {
+        return LFLocalizable.tr("Localizable", "EnterCryptoAddressView.delete_popup.message", String(describing: p1), fallback: "Would you like to delete saved wallet: %@?")
+      }
+      /// Delete
+      public static let primaryButton = LFLocalizable.tr("Localizable", "EnterCryptoAddressView.delete_popup.primary_button", fallback: "Delete")
+      /// Delete Saved wallet address
+      public static let title = LFLocalizable.tr("Localizable", "EnterCryptoAddressView.delete_popup.title", fallback: "Delete Saved wallet address")
+    }
+    public enum DeleteSuccess {
+      /// Wallet address deleted
+      public static let message = LFLocalizable.tr("Localizable", "EnterCryptoAddressView.delete_success.message", fallback: "Wallet address deleted")
+    }
+    public enum SaveSuccess {
+      /// Wallet address saved
+      public static let message = LFLocalizable.tr("Localizable", "EnterCryptoAddressView.save_success.message", fallback: "Wallet address saved")
+    }
     public enum WalletAddress {
       /// Wallet Address
       public static let placeholder = LFLocalizable.tr("Localizable", "EnterCryptoAddressView.wallet_address.placeholder", fallback: "Wallet Address")
