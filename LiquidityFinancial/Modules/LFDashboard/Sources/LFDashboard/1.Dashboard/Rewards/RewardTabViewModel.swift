@@ -75,6 +75,13 @@ extension RewardTabViewModel {
     }
   }
   
+  func onClickedChangeReward() {
+    guard let assetModel = assetModel else {
+      return
+    }
+    navigation = .changeReward(assetModels: [assetModel], selectedAssetModel: assetModel)
+  }
+  
   func onClickedSeeAllButton() {
     navigation = .transactions
   }
@@ -93,6 +100,7 @@ extension RewardTabViewModel {
   }
   
   enum Navigation {
+    case changeReward(assetModels: [AssetModel], selectedAssetModel: AssetModel)
     case transactions
     case transactionDetail(TransactionModel)
   }

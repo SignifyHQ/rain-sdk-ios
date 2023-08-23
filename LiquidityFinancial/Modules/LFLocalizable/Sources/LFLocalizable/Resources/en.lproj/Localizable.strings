@@ -909,6 +909,10 @@ https://mn.gov/commerce/money/investments/cryptocurrency/. \n\n\n\n\n\n\n";
 "transaction_rewards_status.pending" = "Pending";
 "transaction_rewards_status.completed" = "Completed";
 
+"ChangeRewardView.title" = "Change rewards";
+"ChangeRewardView.caption" = "How would you like your rewards?";
+"ChangeRewardView.current_rewards" = "Current Rewards";
+
 // MARK: - Common
 
 // Terms

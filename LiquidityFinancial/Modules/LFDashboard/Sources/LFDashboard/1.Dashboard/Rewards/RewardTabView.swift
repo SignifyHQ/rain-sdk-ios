@@ -12,12 +12,18 @@ struct RewardTabView: View {
     content
       .navigationLink(item: $viewModel.navigation) { navigation in
         switch navigation {
+        case let .changeReward(assetModels, selectedAssetModel):
+          ChangeRewardView(
+            assetModels: assetModels,
+            selectedAssetModel: selectedAssetModel
+          )
         case .transactions:
-            TransactionListView(
-              type: .crypto,
-              currencyType: viewModel.currencyType,
-              accountID: viewModel.accountDataManager.cryptoAccountID
-            )
+          TransactionListView(
+            type: .crypto,
+            currencyType: viewModel.currencyType,
+            accountID: viewModel.accountDataManager.cryptoAccountID,
+            transactionTypes: Constants.TransactionTypesRequest.rewardCryptoBack.types
+          )
         case let .transactionDetail(transaction):
           TransactionDetailView(
             accountID: viewModel.accountDataManager.cryptoAccountID,
@@ -66,7 +72,7 @@ private extension RewardTabView {
   @ViewBuilder var headerView: some View {
     if let assetType = viewModel.assetModel?.type {
       Button(action: {
-        // TODO: Will implement later
+        viewModel.onClickedChangeReward()
       }) {
         HStack(alignment: .top, spacing: 12) {
           HStack(alignment: .center, spacing: 12) {

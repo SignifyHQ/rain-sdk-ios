@@ -6,8 +6,20 @@ import LFUtilities
 public struct TransactionListView: View {
   @StateObject private var viewModel: TransactionListViewModel
   
-  public init(type: TransactionListViewModel.Kind, currencyType: String, accountID: String?) {
-    _viewModel = .init(wrappedValue: .init(type: type, currencyType: currencyType, accountID: accountID ?? .empty))
+  public init(
+    type: TransactionListViewModel.Kind,
+    currencyType: String,
+    accountID: String?,
+    transactionTypes: String = Constants.TransactionTypesRequest.normal.types
+  ) {
+    _viewModel = .init(
+      wrappedValue: .init(
+        type: type,
+        currencyType: currencyType,
+        accountID: accountID ?? .empty,
+        transactionTypes: transactionTypes
+      )
+    )
   }
   
   public var body: some View {

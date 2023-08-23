@@ -23,11 +23,13 @@ public class TransactionListViewModel: ObservableObject {
   let type: Kind
   let currencyType: String
   let accountID: String
+  let transactionTypes: String
   
-  public init(type: Kind, currencyType: String, accountID: String) {
+  public init(type: Kind, currencyType: String, accountID: String, transactionTypes: String) {
     self.type = type
     self.currencyType = currencyType
     self.accountID = accountID
+    self.transactionTypes = transactionTypes
   }
   
   var filteredTransactions: [TransactionModel] {
@@ -72,7 +74,7 @@ private extension TransactionListViewModel {
       let transactions = try await accountRepository.getTransactions(
         accountId: accountID,
         currencyType: currencyType,
-        transactionTypes: Constants.TransactionTypesRequest.normal.types,
+        transactionTypes: transactionTypes,
         limit: limit,
         offset: offset
       )

@@ -94,6 +94,14 @@ public enum LFLocalizable {
   public static let zeroHashTransactiondetail = LFLocalizable.tr("Localizable", "Zero_hash_transactiondetail", fallback: "Cryptocurrency services powered by Zero Hash")
   /// Zip code
   public static let zipcode = LFLocalizable.tr("Localizable", "zipcode", fallback: "Zip code")
+  public enum ChangeRewardView {
+    /// How would you like your rewards?
+    public static let caption = LFLocalizable.tr("Localizable", "ChangeRewardView.caption", fallback: "How would you like your rewards?")
+    /// Current Rewards
+    public static let currentRewards = LFLocalizable.tr("Localizable", "ChangeRewardView.current_rewards", fallback: "Current Rewards")
+    /// Change rewards
+    public static let title = LFLocalizable.tr("Localizable", "ChangeRewardView.title", fallback: "Change rewards")
+  }
   public enum ConfirmSendCryptoView {
     /// Amount
     public static let amount = LFLocalizable.tr("Localizable", "ConfirmSendCryptoView.amount", fallback: "Amount")

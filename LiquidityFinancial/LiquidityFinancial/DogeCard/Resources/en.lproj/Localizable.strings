@@ -709,6 +709,10 @@ https://mn.gov/commerce/money/investments/cryptocurrency/. \n\n\n\n\n\n\n";
 "RewardTabView.see_all" = "See all";
 "RewardTabView.earning_rewards.description" = "Earning rewards in %@";
 
+"ChangeRewardView.title" = "Change rewards";
+"ChangeRewardView.caption" = "How would you like your rewards?";
+"ChangeRewardView.current_rewards" = "Current Rewards";
+
 // MARK: - Common
 
 // Terms
