@@ -48,8 +48,8 @@ struct UploadDocumentView: View {
       switch navigation {
       case .kycReview:
         KYCStatusView(viewModel: KYCStatusViewModel(state: .inReview(viewModel.accountDataManager.userNameDisplay)))
-      case .home:
-        EmptyView()
+      case .missingInfo:
+        KYCStatusView(viewModel: KYCStatusViewModel(state: .missingInfo))
       }
     }
     .navigationBarBackButtonHidden(viewModel.isLoading)

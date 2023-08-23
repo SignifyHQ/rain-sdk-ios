@@ -13,7 +13,7 @@ import UIKit
 final class UploadDocumentViewModel: ObservableObject {
   enum Navigation {
     case kycReview
-    case home
+    case missingInfo
   }
   
   @LazyInjected(\.netspendDataManager) var netspendDataManager
@@ -63,6 +63,8 @@ final class UploadDocumentViewModel: ObservableObject {
   let documentTypes: [NetSpendDocumentType] = [
     .foreignId, .other, .passport, .payStubDatedWithin30Days, .socialSecurityCard, .stateIssuedPhotoId, .utilityBill
   ]
+  
+  private var workflowData: APIWorkflowsData?
   
   private let maxSize = Double(Constants.Default.maxSize.rawValue) ?? 20
   
@@ -124,10 +126,50 @@ extension UploadDocumentViewModel {
         
         netspendDataManager.documentData?.update(status: postDocument.status, fromID: postDocument.documentRequestId)
        
+        await apiFetchWorkflows()
+        
         onSuccess()
       } catch {
         log.error(error.localizedDescription)
         toastMessage = error.localizedDescription
+      }
+    }
+  }
+  
+  func apiFetchWorkflows() async {
+    let workflows = try? await self.netspendRepository.getWorkflows()
+    self.workflowData = workflows
+  }
+  
+  func handleWorkflows(data: APIWorkflowsData?) {
+    guard let workflows = data else {
+      return
+    }
+    
+    if workflows.steps.isEmpty {
+      navigation = .kycReview
+      return
+    }
+    
+    if let steps = workflows.steps.first {
+      for stepIndex in 0...(steps.steps.count - 1) {
+        let step = steps.steps[stepIndex]
+        switch step.missingStep {
+        case .identityQuestions:
+          navigation = .missingInfo //"You can't upload question for now, Please try it late."
+        case .provideDocuments:
+          navigation = .missingInfo //"You can't upload document for now, Please try it late."
+        case .KYCData, .identityScan:
+          navigation = .missingInfo
+        case .primaryPersonKYCApprove:
+          navigation = .kycReview
+        case .acceptAgreement:
+          break
+        case .expectedUse:
+          break
+        case .acceptFeatureAgreement:
+          break
+        }
       }
     }
   }
@@ -188,14 +230,8 @@ extension UploadDocumentViewModel {
   func onClickedDocumentUploadedPrimaryButton() {
     isShowDocumentUploadedPopup = false
     guard let status = netspendDataManager.documentData?.requestedDocuments.first?.status else { return }
-    if status == .reviewInProgress {
-      navigation = .kycReview
-    } else if status == .open {
-      navigation = .kycReview
-    } else if status == .complete {
-      navigation = .kycReview
-      //onboardingFlowCoordinator.set(route: .dashboard)
-    }
+    log.info(status.rawValue)
+    handleWorkflows(data: workflowData)
   }
   
   func onUploadDocument() {

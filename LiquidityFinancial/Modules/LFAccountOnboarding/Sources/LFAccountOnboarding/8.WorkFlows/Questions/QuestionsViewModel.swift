@@ -133,15 +133,15 @@ private extension QuestionsViewModel {
       for stepIndex in 0...(steps.steps.count - 1) {
         let step = steps.steps[stepIndex]
         switch step.missingStep {
-        case .identityQuestions: //TODO: need review implement other case
-          onboardingFlowCoordinator.set(route: .welcome)
+        case .identityQuestions:
+          navigation = .missingInfo //"You can't upload question for now, Please try it late."
         case .provideDocuments: //TODO: need review implement other case
           let documents = try await netspendRepository.getDocuments(sessionId: accountDataManager.sessionID)
           netspendDataManager.update(documentData: documents)
           navigation = .uploadDocument
-        case .KYCData:
+        case .KYCData, .identityScan:
           navigation = .missingInfo
-        case .primaryPersonKYCApprove, .identityScan:
+        case .primaryPersonKYCApprove:
           navigation = .kycReview
         case .acceptAgreement:
           break

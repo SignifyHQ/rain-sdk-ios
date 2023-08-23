@@ -213,7 +213,7 @@ final class AddressViewModel: ObservableObject {
   func apiFetchWorkflows() async throws {
     let workflows = try await self.netspendRepository.getWorkflows()
     self.workflowData = workflows
-    
+    try await self.handleWorkflowData(data: workflows)
   }
   
   private func handleWorkflowData(data: APIWorkflowsData?) async throws {
@@ -248,7 +248,7 @@ final class AddressViewModel: ObservableObject {
         case .expectedUse:
           break
         case .identityScan:
-          navigation = .inReview
+          navigation = .missingInfo
         case .acceptFeatureAgreement:
           break
         }
