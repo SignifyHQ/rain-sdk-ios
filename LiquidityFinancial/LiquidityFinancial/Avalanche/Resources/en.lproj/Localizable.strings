@@ -705,6 +705,11 @@ https://mn.gov/commerce/money/investments/cryptocurrency/. \n\n\n\n\n\n\n";
 // Enter nickname of wallet
 "edit_nickname_of_wallet.save_title" = "EDIT WALLET ADDRESS";
 
+// Rewards Tab View
+"RewardTabView.lastest_rewards" = "Latest rewards";
+"RewardTabView.see_all" = "See all";
+"RewardTabView.earning_rewards.description" = "Earning rewards in %@";
+
 // MARK: - Common
 
 // Terms

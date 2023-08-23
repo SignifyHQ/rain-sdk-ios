@@ -20,7 +20,7 @@ struct DashboardView: View {
           viewModel.handleGuestUser()
         }
       case .rewards:
-        EmptyView()
+        RewardTabView()
       case .assets:
         AssetsView()
       case .account:

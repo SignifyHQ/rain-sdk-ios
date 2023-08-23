@@ -198,6 +198,18 @@ public enum LFLocalizable {
       }
     }
   }
+  public enum RewardTabView {
+    /// Latest rewards
+    public static let lastestRewards = LFLocalizable.tr("Localizable", "RewardTabView.lastest_rewards", fallback: "Latest rewards")
+    /// See all
+    public static let seeAll = LFLocalizable.tr("Localizable", "RewardTabView.see_all", fallback: "See all")
+    public enum EarningRewards {
+      /// Earning rewards in %@
+      public static func description(_ p1: Any) -> String {
+        return LFLocalizable.tr("Localizable", "RewardTabView.earning_rewards.description", String(describing: p1), fallback: "Earning rewards in %@")
+      }
+    }
+  }
   public enum AccountView {
     /// Free ATMs
     public static let atm = LFLocalizable.tr("Localizable", "accountView.atm", fallback: "Free ATMs")
