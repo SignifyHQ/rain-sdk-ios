@@ -1,50 +1,50 @@
 import Foundation
 import SwiftUI
 import LFLocalizable
+import LFStyleGuide
 
-enum UserRewardType: String, Codable {
-  case cashback
-  case donation
-  case crypto = "cryptoback"
-  case unspecified = ""
-
-  init(from decoder: Decoder) throws {
-    self = try UserRewardType(rawValue: decoder.singleValueContainer().decode(RawValue.self)) ?? .unspecified
-  }
+public enum UserRewardType: String, Codable {
+  case none = "NONE"
+  case cashBack = "CASHBACK"
+  case reverseCashBack = "REVERSE_CASHBACK"
+  case cryptoBack = "CRYPTOBACK"
+  case reverseCryptoBack = "REVERSE_CRYPTOBACK"
+  case doshCryptoBack = "DOSH_CRYPTOBACK"
+  case donation = "DONATION"
+  case roundUpDonation = "ROUND_UP_DONATION"
+  case referra = "REFERRA"
 }
 
-  // MARK: - UI Helpers
-
-extension UserRewardType {
-  var image: Image {
+public extension UserRewardType {
+  var image: Image? {
     switch self {
-    case .cashback:
-      return ModuleImages.icRewardsCashback.swiftUIImage
+    case .cashBack:
+      return GenImages.CommonImages.rewardsCashback.swiftUIImage
     case .donation:
-      return ModuleImages.icRewardsDonation.swiftUIImage
-    case .crypto, .unspecified:
-      return Image("")
-    }
-  }
-
-  var title: String? {
-    switch self {
-    case .cashback:
-      return LFLocalizable.UserRewardType.Cashback.title
-    case .donation:
-      return LFLocalizable.UserRewardType.Donation.title
-    case .crypto, .unspecified:
+      return GenImages.CommonImages.rewardsDonation.swiftUIImage
+    default:
       return nil
     }
   }
-
-  var subtitle: String? {
+  
+  var title: String? {
     switch self {
-    case .cashback:
-      return LFLocalizable.UserRewardType.Cashback.subtitle(0.75)
+    case .cashBack:
+      return LFLocalizable.UserRewardType.Cashback.title
     case .donation:
-      return LFLocalizable.UserRewardType.Donation.subtitle(0.75)
-    case .crypto, .unspecified:
+      return LFLocalizable.UserRewardType.Donation.title
+    default:
+      return nil
+    }
+  }
+  
+  func subtitle(p1: Float) -> String? {
+    switch self {
+    case .cashBack:
+      return LFLocalizable.UserRewardType.Cashback.subtitle(p1)
+    case .donation:
+      return LFLocalizable.UserRewardType.Donation.subtitle(p1)
+    default:
       return nil
     }
   }

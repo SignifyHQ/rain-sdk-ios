@@ -16,7 +16,11 @@ final class LogMonitor: EventMonitor {
   func request<Value>(_ request: DataRequest, didParseResponse response: DataResponse<Value, AFError>) {
     switch response.result {
     case .success:
-      log.debug("🚩 Finished request: \(request.description)")
+      if let value = response.value {
+        log.debug("🚩 Finished request: \(request.description) \n \(value)")
+      } else {
+        log.debug("🚩 Finished request: \(request.description)")
+      }
     case .failure:
       log.info(" Failed request: \(response.debugDescription)")
     }

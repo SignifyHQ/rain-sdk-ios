@@ -7,4 +7,7 @@ public protocol RewardRepositoryProtocol {
   func getFundraisersDetail(fundraiserID: String) async throws -> any FundraisersDetailEntity
   func selectFundraiser(body: [String: Any]) async throws -> SelectFundraiserEntity
   func setRoundUpDonation(body: [String: Any]) async throws -> RoundUpDonationEntity
+  func getContributionList(limit: Int, offset: Int) async throws -> ContributionListEntity
+  func getContribution(contributionID: String) async throws -> ContributionEntity
+  func getCategoriesTrending() async throws -> CategoriesFundraisersListEntity
 }

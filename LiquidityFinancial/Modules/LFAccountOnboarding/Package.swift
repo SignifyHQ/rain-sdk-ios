@@ -39,6 +39,7 @@ let package = Package(
             .product(name: "OnboardingData", package: "LFData"),
             .product(name: "AccountData", package: "LFData"),
             .product(name: "NetSpendData", package: "LFData"),
+            .product(name: "RewardData", package: "LFData"),
             .product(name: "SmartyStreets", package: "smartystreets-ios-sdk"),
             .product(name: "AuthorizationManager", package: "LFNetwork")
           ],

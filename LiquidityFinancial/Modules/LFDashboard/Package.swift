@@ -9,7 +9,10 @@ let package = Package(
   products: [
     .library(
       name: "LFDashboard",
-      targets: ["LFDashboard"])
+      targets: ["LFDashboard"]),
+    .library(
+      name: "LFRewardDashboard",
+      targets: ["LFRewardDashboard"])
   ],
   dependencies: [
     .package(name: "LFUtilities", path: "../LFUtilities"),
@@ -22,7 +25,9 @@ let package = Package(
     .package(name: "LFWalletAddress", path: "../LFWalletAddress"),
     .package(name: "LFData", path: "../LFData"),
     .package(name: "LFNetwork", path: "../LFNetwork"),
-    .package(url: "https://github.com/twostraws/CodeScanner", from: "2.0.0")
+    .package(name: "LFRewards", path: "../LFRewards"),
+    .package(url: "https://github.com/twostraws/CodeScanner", from: "2.0.0"),
+    .package(url: "https://github.com/SwiftGen/SwiftGenPlugin", from: "6.6.2")
   ],
   targets: [
     .target(
@@ -33,6 +38,22 @@ let package = Package(
         .product(name: "NetSpendData", package: "LFData"),
         .product(name: "ZerohashData", package: "LFData"),
         .product(name: "AuthorizationManager", package: "LFNetwork")
+      ]
+    ),
+    .target(
+      name: "LFRewardDashboard",
+      dependencies: [
+        "LFUtilities", "LFStyleGuide", "LFLocalizable", "LFServices", "LFCard", "LFBank", "LFTransaction", "CodeScanner", "LFRewards",
+        .product(name: "OnboardingData", package: "LFData"),
+        .product(name: "NetSpendData", package: "LFData"),
+        .product(name: "ZerohashData", package: "LFData"),
+        .product(name: "AuthorizationManager", package: "LFNetwork")
+      ],
+      resources: [
+        .process("ZResources")
+      ],
+      plugins: [
+        .plugin(name: "SwiftGenPlugin", package: "SwiftGenPlugin")
       ]
     ),
     .testTarget(

@@ -10,6 +10,9 @@ public enum RewardRoute {
   case getFundraisersDetail(fundraiserID: String)
   case selectFundraiser(body: [String: Any])
   case setRoundUpDonation(body: [String: Any])
+  case getContributionList(limit: Int, offset: Int)
+  case getContribution(contributionID: String)
+  case getCategoriesTrending
 }
 
 extension RewardRoute: LFRoute {
@@ -28,6 +31,12 @@ extension RewardRoute: LFRoute {
       return "v1/user/selected-fundraiser"
     case .setRoundUpDonation:
       return "v1/user/round-up-donation"
+    case .getContributionList:
+      return "/v1/donations/contributions"
+    case .getContribution(let contributionID):
+      return "/v1/donations/contributions/\(contributionID)"
+    case .getCategoriesTrending:
+      return "/v1/donations/categories-trending/fundraisers"
     }
   }
   
@@ -37,6 +46,9 @@ extension RewardRoute: LFRoute {
     case .getDonationCategories: return .GET
     case .getCategoriesFundraisers: return .GET
     case .getFundraisersDetail: return .GET
+    case .getContributionList: return .GET
+    case .getContribution: return .GET
+    case .getCategoriesTrending: return .GET
     case .selectFundraiser, .setRoundUpDonation: return .POST
     }
   }
@@ -49,7 +61,8 @@ extension RewardRoute: LFRoute {
       "Authorization": self.needAuthorizationKey
     ]
     switch self {
-    case .selectRewardType, .getDonationCategories, .getCategoriesFundraisers, .getFundraisersDetail, .selectFundraiser, .setRoundUpDonation:
+    case .selectRewardType, .getDonationCategories, .getCategoriesFundraisers, .getContribution, .getCategoriesTrending,
+        .getFundraisersDetail, .selectFundraiser, .setRoundUpDonation, .getContributionList:
       return base
     }
   }
@@ -72,7 +85,12 @@ extension RewardRoute: LFRoute {
         "limit": String(limit),
         "offset": String(offset)
       ]
-    case .getFundraisersDetail:
+    case let .getContributionList(limit, offset):
+      return [
+        "limit": String(limit),
+        "offset": String(offset)
+      ]
+    case .getFundraisersDetail, .getContribution, .getCategoriesTrending:
       return nil
     }
   }
@@ -81,9 +99,9 @@ extension RewardRoute: LFRoute {
     switch self {
     case .selectRewardType, .selectFundraiser, .setRoundUpDonation:
       return .json
-    case .getDonationCategories, .getCategoriesFundraisers:
+    case .getDonationCategories, .getCategoriesFundraisers, .getContributionList:
       return .url
-    case .getFundraisersDetail:
+    case .getFundraisersDetail, .getContribution, .getCategoriesTrending:
       return nil
     }
   }

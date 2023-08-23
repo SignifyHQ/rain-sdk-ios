@@ -103,7 +103,7 @@ extension SelectRewardsViewModel {
 
     var userRewardType: UserRewardType {
       switch self {
-      case .cashback: return .cashback
+      case .cashback: return .cashBack
       case .donation: return .donation
       }
     }

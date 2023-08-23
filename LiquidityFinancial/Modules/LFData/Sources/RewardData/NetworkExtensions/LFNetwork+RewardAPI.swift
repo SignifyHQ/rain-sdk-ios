@@ -5,6 +5,7 @@ import LFUtilities
 import AccountData
 
 extension LFCoreNetwork: RewardAPIProtocol where R == RewardRoute {
+  
   public func selectRewardType(body: [String: Any]) async throws -> APIUser {
     return try await request(RewardRoute.selectRewardType(body: body), target: APIUser.self, failure: LFErrorObject.self, decoder: .apiDecoder)
   }
@@ -55,4 +56,34 @@ extension LFCoreNetwork: RewardAPIProtocol where R == RewardRoute {
       decoder: .apiDecoder
     )
   }
+  
+  public func getContributionList(limit: Int, offset: Int) async throws -> APIContributionList {
+    let listModel = try await request(
+      RewardRoute.getContributionList(limit: limit, offset: offset),
+      target: APIListObject<APIContribution>.self,
+      failure: LFErrorObject.self,
+      decoder: .apiDecoder
+    )
+    return APIContributionList(total: listModel.total, data: listModel.data)
+  }
+  
+  public func getContribution(contributionID: String) async throws -> APIContribution {
+    return try await request(
+      RewardRoute.getContribution(contributionID: contributionID),
+      target: APIContribution.self,
+      failure: LFErrorObject.self,
+      decoder: .apiDecoder
+    )
+  }
+  
+  public func getCategoriesTrending() async throws -> APICategoriesFundraisersList {
+    let listModel = try await request(
+      RewardRoute.getCategoriesTrending,
+      target: APIListObject<APICategoriesFundraisers>.self,
+      failure: LFErrorObject.self,
+      decoder: .apiDecoder
+    )
+    return APICategoriesFundraisersList(total: listModel.total, data: listModel.data)
+  }
+  
 }

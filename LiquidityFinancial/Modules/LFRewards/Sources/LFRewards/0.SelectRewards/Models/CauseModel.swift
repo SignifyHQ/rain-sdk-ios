@@ -4,17 +4,17 @@ import RewardData
 
   // MARK: - Cause
 
-struct CauseModel: Hashable, Identifiable {
-  let id: String
-  let productId: String
-  let name: String
-  let logoUrl: URL?
-  let rank: Int
+public struct CauseModel: Hashable, Identifiable {
+  public let id: String
+  public let productId: String
+  public let name: String
+  public let logoUrl: URL?
+  public let rank: Int
 }
 
 // MARK: Codable
 extension CauseModel: Codable {
-  init?(rewardData: RewardCategoriesEntity) {
+  public init?(rewardData: RewardCategoriesEntity) {
     guard let id = rewardData.id,
           let name = rewardData.name,
           let logoUrl = rewardData.logoUrl,

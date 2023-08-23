@@ -698,6 +698,10 @@ https://mn.gov/commerce/money/investments/cryptocurrency/. \n\n\n\n\n\n\n";
 "select_rewards.subtitle" = "Welcome to %@, please select your rewards. You can change anytime.";
 "select_rewards.continue" = "Continue";
 
+// Edit Rewards
+"edit_rewards.navigation_title" = "Change rewards";
+"edit_rewards.title" = "Please select your rewards";
+
 // User Reward Type
 "user_reward_type.cashback.title" = "Instant Cashback";
 "user_reward_type.cashback.subtitle" = "%.2f%% on every qualifying purchase";
@@ -890,6 +894,20 @@ https://mn.gov/commerce/money/investments/cryptocurrency/. \n\n\n\n\n\n\n";
 "RewardTabView.lastest_rewards" = "Latest rewards";
 "RewardTabView.see_all" = "See all";
 "RewardTabView.earning_rewards.description" = "Earning rewards in %@";
+
+// Donations
+"donations.select_fundraiser" = "Select a Cause";
+"donations.user_donations" = "My Donations";
+"donations.fundraiser_donations" = "Latest";
+"donations.no_donations" = "No donations yet";
+
+// Cashback
+"cashback.latest" = "Latest rewards";
+"cashback.see_all" = "See all";
+
+// Transaction Rewards Status
+"transaction_rewards_status.pending" = "Pending";
+"transaction_rewards_status.completed" = "Completed";
 
 // MARK: - Common
 

@@ -2,87 +2,92 @@ import Foundation
 import RewardData
 import RewardDomain
 import NetworkUtilities
-  // MARK: - Fundraiser
-struct FundraiserDetailModel: Equatable, Identifiable {
-  var id: String = UUID().uuidString
+
+// MARK: - Fundraiser
+public typealias LFCharityModel = FundraiserDetailModel.Charity
+public typealias LFFundraiserModel = FundraiserDetailModel.Fundraiser
+public typealias LFLatestDonationModel = FundraiserDetailModel.LatestDonation
+
+public struct FundraiserDetailModel: Equatable, Identifiable {
+  public var id: String = UUID().uuidString
   
-  static func == (lhs: FundraiserDetailModel, rhs: FundraiserDetailModel) -> Bool {
+  public static func == (lhs: FundraiserDetailModel, rhs: FundraiserDetailModel) -> Bool {
     return lhs.id == rhs.id
   }
   
-  let fundraiser: Fundraiser?
-  let charity: Charity?
-  let currentDonatedAmount, currentDonatedCount: Double?
-  let latestDonations: [LatestDonation]?
+  public let fundraiser: Fundraiser?
+  public let charity: Charity?
+  public let currentDonatedAmount, currentDonatedCount: Double?
+  public let latestDonations: [LatestDonation]?
   
-  var name: String {
+  public var name: String {
     fundraiser?.name ?? "unknown"
   }
   
-  var charityName: String {
+  public var charityName: String {
     charity?.name ?? "unknown"
   }
   
-  var stickerUrl: URL? {
+  public var stickerUrl: URL? {
     URL(string: fundraiser?.stickerUrl ?? "unknown")
   }
   
-  var charityUrl: URL? {
+  public var charityUrl: URL? {
     URL(string: charity?.url ?? "unknown")
   }
   
-  var charityHeaderUrl: URL? {
+  public var charityHeaderUrl: URL? {
     URL(string: charity?.headerUrl ?? "unknown")
   }
   
-  var charityHeaderImageUrl: URL? {
+  public var charityHeaderImageUrl: URL? {
     URL(string: charity?.headerImageUrl ?? "unknown")
   }
   
-  var currentAmount: Double {
+  public var currentAmount: Double {
     currentDonatedAmount ?? 0
   }
   
-  var currentDonations: Double {
+  public var currentDonations: Double {
     currentDonatedCount ?? 0
   }
   
-  var description: String? {
+  public var description: String? {
     fundraiser?.description
   }
   
-  var twitterUrl: URL? {
+  public var twitterUrl: URL? {
     URL(string: charity?.twitterUrl ?? "unknown")
   }
   
-  var facebookUrl: URL? {
+  public var facebookUrl: URL? {
     URL(string: charity?.facebookUrl ?? "unknown")
   }
   
-  var instagramUrl: URL? {
+  public var instagramUrl: URL? {
     URL(string: charity?.instagramUrl ?? "unknown")
   }
   
-  var charityEmailUrl: URL? {
+  public var charityEmailUrl: URL? {
     URL(string: charity?.emailListUrl ?? "unknown")
   }
   
-  var charityNavigatorUrl: URL? {
+  public var charityNavigatorUrl: URL? {
     URL(string: charity?.charityNavigatorUrl ?? "unknown")
   }
   
     // MARK: - Charity
-  struct Charity {
-    let id, productId, name, description: String?
-    let logoUrl, headerUrl, headerImageUrl, url: String?
-    let twitterUrl, facebookUrl, instagramUrl: String?
-    let confidence: Double?
-    let address, ein: String?
-    let charityNavigatorUrl: String?
-    let emailListUrl: String?
-    let tags: [String]?
+  public struct Charity {
+    public let id, productId, name, description: String?
+    public let logoUrl, headerUrl, headerImageUrl, url: String?
+    public let twitterUrl, facebookUrl, instagramUrl: String?
+    public let confidence: Double?
+    public let address, ein: String?
+    public let charityNavigatorUrl: String?
+    public let emailListUrl: String?
+    public let tags: [String]?
     
-    init?(enity: (any CharityEnity)?) {
+    public init?(enity: (any CharityEnity)?) {
       guard let enity = enity else { return nil }
       self.id = enity.id
       self.productId = enity.productId
@@ -103,21 +108,21 @@ struct FundraiserDetailModel: Equatable, Identifiable {
       self.charityNavigatorUrl = enity.charityNavigatorUrl
     }
     
-    var confidenceValue: Double {
+    public var confidenceValue: Double {
       confidence ?? 0.0
     }
   }
   
     // MARK: - Fundraiser
-  struct Fundraiser {
-    let id, name, description, stickerUrl, backgroundColor: String?
-    let createdAt: String?
-    let goal: Double?
-    let currency: String?
-    let isFeatured, isLive: Bool?
-    let categories: [String]?
+  public struct Fundraiser {
+    public let id, name, description, stickerUrl, backgroundColor: String?
+    public let createdAt: String?
+    public let goal: Double?
+    public let currency: String?
+    public let isFeatured, isLive: Bool?
+    public let categories: [String]?
     
-    init?(enity: (any FundraiserEnity)?) {
+    public init?(enity: (any FundraiserEnity)?) {
       guard let enity = enity else { return nil }
       self.id = enity.id
       self.name = enity.name
@@ -134,12 +139,12 @@ struct FundraiserDetailModel: Equatable, Identifiable {
   }
   
     // MARK: - LatestDonation
-  struct LatestDonation {
-    let id, fundraiserId, userId, userName: String?
-    let amount: Double?
-    let createdAt: String?
+  public struct LatestDonation {
+    public let id, fundraiserId, userId, userName: String?
+    public let amount: Double?
+    public let createdAt: String?
     
-    init?(enity: (any LatestDonationEnity)?) {
+    public init?(enity: (any LatestDonationEnity)?) {
       guard let enity = enity else { return nil }
       self.id = enity.id
       self.fundraiserId = enity.fundraiserId
@@ -150,7 +155,7 @@ struct FundraiserDetailModel: Equatable, Identifiable {
     }
   }
   
-  init(enity: any FundraisersDetailEntity) {
+  public init(enity: any FundraisersDetailEntity) {
     self.fundraiser = Fundraiser(enity: enity.fundraiser)
     self.charity = Charity(enity: enity.charity)
     self.latestDonations = enity.latestDonations?.compactMap({ LatestDonation(enity: $0) })

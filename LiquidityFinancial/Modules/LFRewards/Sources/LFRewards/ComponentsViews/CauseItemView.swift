@@ -2,16 +2,16 @@ import SwiftUI
 import LFStyleGuide
 import LFUtilities
 
-struct CauseItemView: View {
+public struct CauseItemView: View {
   let cause: CauseModel
   let isLoading: Bool
   
-  init(cause: CauseModel, isLoading: Bool = false) {
+  public init(cause: CauseModel, isLoading: Bool = false) {
     self.cause = cause
     self.isLoading = isLoading
   }
   
-  var body: some View {
+  public var body: some View {
     ZStack {
       VStack(spacing: 6) {
         CachedAsyncImage(url: cause.logoUrl) { image in

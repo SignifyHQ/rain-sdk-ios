@@ -22,7 +22,7 @@ struct UserRewardRowView: View {
           .font(Fonts.regular.swiftUIFont(size: 16))
           .foregroundColor(ModuleColors.label.swiftUIColor)
         if type.showSubtitle {
-          Text(reward.subtitle ?? "")
+          Text(reward.subtitle(p1: 0.75) ?? "")
             .font(Fonts.regular.swiftUIFont(size: 12))
             .foregroundColor(ModuleColors.label.swiftUIColor.opacity(0.75))
         }
@@ -95,31 +95,3 @@ extension UserRewardRowView {
     case loading
   }
 }
-
-#if DEBUG
-
-  // MARK: - UserRewardRowView_Previews
-
-struct UserRewardRowView_Previews: PreviewProvider {
-  static var previews: some View {
-    VStack(alignment: .leading) {
-      Spacer()
-      
-      Text("Short")
-      UserRewardRowView(type: .short, reward: .donation, selection: .selected)
-      UserRewardRowView(type: .short, reward: .cashback, selection: .unselected)
-      
-      Spacer().frame(height: 40)
-      
-      Text("Full")
-      UserRewardRowView(type: .full, reward: .donation, selection: .unselected)
-      UserRewardRowView(type: .full, reward: .cashback, selection: .loading)
-      
-      Spacer()
-    }
-    .padding(20)
-    .background(ModuleColors.background.swiftUIColor)
-  }
-}
-
-#endif

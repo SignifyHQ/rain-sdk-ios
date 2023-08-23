@@ -3,8 +3,10 @@ import LFUtilities
 import LFStyleGuide
 import LFLocalizable
 
-struct DonationsDisclosureView: View {
-  var body: some View {
+public struct DonationsDisclosureView: View {
+  public init() {}
+  
+  public var body: some View {
     content
       .fixedSize(horizontal: false, vertical: true)
       .popup(isPresented: $showPopup) {

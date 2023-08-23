@@ -3,22 +3,22 @@ import RewardData
 import RewardDomain
 
 // MARK: - Fundraiser
-struct FundraiserModel: Hashable, Identifiable {
-  let id: String
-  let name: String
-  let description: String?
-  let goal: Int
-  let stickerUrlString: String
-  let currency: String
-  let isFeatured: Bool
-  let isLive: Bool
-  let categories: [String]
+public struct FundraiserModel: Hashable, Identifiable {
+  public let id: String
+  public let name: String
+  public let description: String?
+  public let goal: Int
+  public let stickerUrlString: String
+  public let currency: String
+  public let isFeatured: Bool
+  public let isLive: Bool
+  public let categories: [String]
   
-  var stickerUrl: URL? {
+  public var stickerUrl: URL? {
     URL(string: stickerUrlString)
   }
   
-  init?(fundraiserData: CategoriesFundraisersEntity) {
+  public init?(fundraiserData: CategoriesFundraisersEntity) {
     guard let id = fundraiserData.id,
           let name = fundraiserData.name,
           let description = fundraiserData.description,
@@ -45,7 +45,7 @@ struct FundraiserModel: Hashable, Identifiable {
 extension FundraiserModel {
     // The API is returning a dummy Fundraiser instead of returning null.
     // We need to manually ignore it so that the app doesn't show that a dummy fundraiser is selected.
-  var isValid: Bool {
+  public var isValid: Bool {
     id != "00000000-0000-0000-0000-000000000000"
   }
 }

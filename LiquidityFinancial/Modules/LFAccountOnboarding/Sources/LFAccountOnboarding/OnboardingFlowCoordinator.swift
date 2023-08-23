@@ -5,8 +5,11 @@ import Factory
 import NetSpendData
 import OnboardingData
 import AccountData
+import AccountDomain
 import OnboardingDomain
 import LFRewards
+import RewardData
+import RewardDomain
 
 public protocol OnboardingFlowCoordinatorProtocol {
   var routeSubject: CurrentValueSubject<OnboardingFlowCoordinator.Route, Never> { get }
@@ -55,6 +58,7 @@ public class OnboardingFlowCoordinator: OnboardingFlowCoordinatorProtocol {
   @LazyInjected(\.netspendDataManager) var netspendDataManager
   @LazyInjected(\.rewardFlowCoordinator) var rewardFlowCoordinator
   @LazyInjected(\.accountRepository) var accountRepository
+  @LazyInjected(\.rewardDataManager) var rewardDataManager
   
   public let routeSubject: CurrentValueSubject<Route, Never>
   
@@ -78,7 +82,7 @@ public class OnboardingFlowCoordinator: OnboardingFlowCoordinatorProtocol {
   }
   
   public func routeUser() {
-    getCurrentState()
+    apiFetchCurrentState()
   }
 
   func handlerRewardRoute(route: RewardFlowCoordinator.Route) {
@@ -90,11 +94,11 @@ public class OnboardingFlowCoordinator: OnboardingFlowCoordinatorProtocol {
     }
   }
   
-  func getCurrentState() {
+  func apiFetchCurrentState() {
     Task { @MainActor in
       do {
         let user = try await accountRepository.getUser()
-        accountDataManager.storeUser(user: user)
+        handleDataUser(user: user)
         
         try await refreshNetSpendSession()
         
@@ -108,15 +112,15 @@ public class OnboardingFlowCoordinator: OnboardingFlowCoordinatorProtocol {
             set(route: .dashboard)
           } else {
             if states.contains(OnboardingMissingStep.netSpendCreateAccount) {
-              routeSubject.value = .welcome
+              set(route: .welcome)
             } else if states.contains(OnboardingMissingStep.dashboardReview) {
-              routeSubject.value = .kycReview
+              set(route: .kycReview)
             } else if states.contains(OnboardingMissingStep.zeroHashAccount) {
-              routeSubject.value = .zeroHash
+              set(route: .zeroHash)
             } else if states.contains(OnboardingMissingStep.cardProvision) {
               //TODO: we implement late
             } else if states.contains(OnboardingMissingStep.accountReject) {
-              routeSubject.value = .accountReject
+              set(route: .accountReject)
             }
           }
         }
@@ -127,9 +131,18 @@ public class OnboardingFlowCoordinator: OnboardingFlowCoordinatorProtocol {
         if error.localizedDescription.contains("user_not_found") {
           clearUserData()
         }
-        routeSubject.value = .phone
+        set(route: .phone)
         log.error(error.localizedDescription)
       }
+    }
+  }
+}
+
+extension OnboardingFlowCoordinator {
+  private func handleDataUser(user: LFUser) {
+    accountDataManager.storeUser(user: user)
+    if let rewardType = APIRewardType(rawValue: user.userRewardType ?? "") {
+      rewardDataManager.update(currentSelectReward: rewardType)
     }
   }
   
@@ -138,12 +151,12 @@ public class OnboardingFlowCoordinator: OnboardingFlowCoordinatorProtocol {
       let questionsEncrypt = try await netspendRepository.getQuestion(sessionId: accountDataManager.sessionID)
       if let usersession = netspendDataManager.sdkSession, let questionsDecode = questionsEncrypt.decodeData(session: usersession) {
         let questionsEntity = QuestionsEntity.mapObj(questionsDecode)
-        routeSubject.value = .question(questionsEntity)
+        set(route: .question(questionsEntity))
       } else {
-        routeSubject.value = .kycReview
+        set(route: .kycReview)
       }
     } catch {
-      routeSubject.value = .kycReview
+      set(route: .kycReview)
       log.debug(error)
     }
   }
@@ -152,14 +165,15 @@ public class OnboardingFlowCoordinator: OnboardingFlowCoordinatorProtocol {
     do {
       let documents = try await netspendRepository.getDocuments(sessionId: accountDataManager.sessionID)
       netspendDataManager.update(documentData: documents)
-      routeSubject.value = .document
+      set(route: .document)
     } catch {
-      routeSubject.value = .kycReview
+      set(route: .kycReview)
       log.debug(error)
     }
   }
   
   private func clearUserData() {
+    log.info("<<<<<<<<<<<<<< 401 no auth and clear user data >>>>>>>>>>>>>>>")
     accountDataManager.clearUserSession()
     authorizationManager.clearToken()
   }

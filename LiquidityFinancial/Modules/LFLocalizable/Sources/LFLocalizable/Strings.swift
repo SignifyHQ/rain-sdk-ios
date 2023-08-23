@@ -628,6 +628,12 @@ public enum LFLocalizable {
       public static let title = LFLocalizable.tr("Localizable", "cashTab.withdraw.title", fallback: "Withdraw")
     }
   }
+  public enum Cashback {
+    /// Latest rewards
+    public static let latest = LFLocalizable.tr("Localizable", "cashback.latest", fallback: "Latest rewards")
+    /// See all
+    public static let seeAll = LFLocalizable.tr("Localizable", "cashback.see_all", fallback: "See all")
+  }
   public enum Cause {
     public enum Share {
       /// Include donations
@@ -1129,6 +1135,16 @@ public enum LFLocalizable {
       public static let title = LFLocalizable.tr("Localizable", "donationReceipt.transactionNumber.title", fallback: "Transaction Number")
     }
   }
+  public enum Donations {
+    /// Latest
+    public static let fundraiserDonations = LFLocalizable.tr("Localizable", "donations.fundraiser_donations", fallback: "Latest")
+    /// No donations yet
+    public static let noDonations = LFLocalizable.tr("Localizable", "donations.no_donations", fallback: "No donations yet")
+    /// Select a Cause
+    public static let selectFundraiser = LFLocalizable.tr("Localizable", "donations.select_fundraiser", fallback: "Select a Cause")
+    /// My Donations
+    public static let userDonations = LFLocalizable.tr("Localizable", "donations.user_donations", fallback: "My Donations")
+  }
   public enum DonationsDisclosure {
     /// %@ of the donations you make are tax deductible and go to charity. 
     public static func text(_ p1: Any) -> String {
@@ -1144,6 +1160,12 @@ public enum LFLocalizable {
   public enum EditNicknameOfWallet {
     /// EDIT WALLET ADDRESS
     public static let saveTitle = LFLocalizable.tr("Localizable", "edit_nickname_of_wallet.save_title", fallback: "EDIT WALLET ADDRESS")
+  }
+  public enum EditRewards {
+    /// Change rewards
+    public static let navigationTitle = LFLocalizable.tr("Localizable", "edit_rewards.navigation_title", fallback: "Change rewards")
+    /// Please select your rewards
+    public static let title = LFLocalizable.tr("Localizable", "edit_rewards.title", fallback: "Please select your rewards")
   }
   public enum EnterCVVCode {
     public enum ActiveCard {
@@ -2197,6 +2219,12 @@ public enum LFLocalizable {
         return LFLocalizable.tr("Localizable", "transactionRow.fundraiser_donation.user", String(describing: p1), fallback: "Donation by %@")
       }
     }
+  }
+  public enum TransactionRewardsStatus {
+    /// Completed
+    public static let completed = LFLocalizable.tr("Localizable", "transaction_rewards_status.completed", fallback: "Completed")
+    /// Pending
+    public static let pending = LFLocalizable.tr("Localizable", "transaction_rewards_status.pending", fallback: "Pending")
   }
   public enum TransferDebitSuggestion {
     /// Get Faster Deposits

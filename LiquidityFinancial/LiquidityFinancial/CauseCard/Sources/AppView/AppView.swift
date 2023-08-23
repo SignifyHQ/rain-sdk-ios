@@ -3,7 +3,8 @@ import Factory
 import LFAccountOnboarding
 import LFStyleGuide
 import LFUtilities
-import LFDashboard
+import LFRewardDashboard
+import RewardData
 
 struct AppView: View {
 
@@ -25,10 +26,14 @@ struct AppView: View {
       case .onboarding:
         OnboardingContentView()
       case .dashboard:
-        HomeView(viewModel: HomeViewModel(), tabOptions: TabOption.allCases)
+        HomeView(tabOptions: buildTabOption())
       }
     }
     .embedInNavigation()
+  }
+  
+  func buildTabOption() -> [TabOption] {
+    return [TabOption.cash, TabOption.rewards, TabOption.account]
   }
 }
 

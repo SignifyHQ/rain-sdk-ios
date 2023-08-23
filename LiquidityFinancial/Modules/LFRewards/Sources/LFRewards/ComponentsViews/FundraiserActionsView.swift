@@ -3,16 +3,16 @@ import LFUtilities
 import LFStyleGuide
 import LFLocalizable
 
-struct FundraiserActionsView: View {
+public struct FundraiserActionsView: View {
   let fundraiser: FundraiserDetailModel
   
   let canOpenDonation: Bool
-  init(fundraiser: FundraiserDetailModel, canOpenDonation: Bool = false) {
+  public init(fundraiser: FundraiserDetailModel, canOpenDonation: Bool = false) {
     self.fundraiser = fundraiser
     self.canOpenDonation = canOpenDonation
   }
   
-  var body: some View {
+  public var body: some View {
     content
       .sheet(isPresented: $share) {
         ShareView(viewModel: .init(data: .build(from: fundraiser)))

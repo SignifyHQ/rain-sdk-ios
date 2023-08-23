@@ -35,4 +35,16 @@ public class RewardRepository: RewardRepositoryProtocol {
   public func setRoundUpDonation(body: [String: Any]) async throws -> RoundUpDonationEntity {
     return try await self.rewardAPI.setRoundUpDonation(body: body)
   }
+  
+  public func getContributionList(limit: Int, offset: Int) async throws -> ContributionListEntity {
+    return try await self.rewardAPI.getContributionList(limit: limit, offset: offset)
+  }
+  
+  public func getContribution(contributionID: String) async throws -> ContributionEntity {
+    return try await self.rewardAPI.getContribution(contributionID: contributionID)
+  }
+  
+  public func getCategoriesTrending() async throws -> CategoriesFundraisersListEntity {
+    return try await self.rewardAPI.getCategoriesTrending()
+  }
 }

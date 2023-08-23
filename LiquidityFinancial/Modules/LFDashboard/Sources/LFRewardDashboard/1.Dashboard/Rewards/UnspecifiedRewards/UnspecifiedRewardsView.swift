@@ -1,0 +1,84 @@
+import SwiftUI
+import LFStyleGuide
+import LFUtilities
+import LFLocalizable
+import LFRewards
+
+struct UnspecifiedRewardsView: View {
+  @State private var showEditRewards = false
+  
+  var body: some View {
+    content
+      .padding(.horizontal, 30)
+      .background(Colors.background.swiftUIColor)
+      .navigationLink(isActive: $showEditRewards) {
+        EditRewardsView(viewModel: .init())
+      }
+  }
+  
+  private var content: some View {
+    VStack {
+      ZStack(alignment: .top) {
+        VStack(spacing: 0) {
+          Spacer()
+            .frame(height: 72)
+          VStack(spacing: 0) {
+            Spacer()
+              .frame(height: 105)
+            info
+          }
+          .background(Colors.secondaryBackground.swiftUIColor)
+          .cornerRadius(10)
+          
+          EmptyListView(text: LFLocalizable.Rewards.noRewards)
+            .padding(.top, 100)
+        }
+        ModuleImages.bgUnspecifiedRewards.swiftUIImage
+          .resizable()
+          .frame(width: 315, height: 177)
+      }
+      Spacer()
+    }
+  }
+  
+  private var info: some View {
+    VStack(alignment: .leading, spacing: 16) {
+      Text(LFLocalizable.UnspecifiedRewards.title.uppercased())
+        .font(Fonts.regular.swiftUIFont(size: 18))
+        .foregroundColor(Colors.label.swiftUIColor)
+      
+      VStack(alignment: .leading, spacing: 12) {
+        row(item: .cashBack)
+        row(item: .donation)
+      }
+      FullSizeButton(title: LFLocalizable.UnspecifiedRewards.cta, isDisable: false) {
+        showEditRewards = true
+      }
+    }
+    .padding(16)
+  }
+  
+  private func row(item: UserRewardType) -> some View {
+    HStack(spacing: 8) {
+      item.image
+      if let title = item.title {
+        Text(title)
+          .font(Fonts.regular.swiftUIFont(size: 16))
+          .foregroundColor(Colors.label.swiftUIColor.opacity(0.75))
+      }
+      Spacer()
+    }
+  }
+}
+
+#if DEBUG
+
+  // MARK: - UnspecifiedRewardsView_Previews
+
+struct UnspecifiedRewardsView_Previews: PreviewProvider {
+  static var previews: some View {
+    UnspecifiedRewardsView()
+      .embedInNavigation()
+  }
+}
+#endif

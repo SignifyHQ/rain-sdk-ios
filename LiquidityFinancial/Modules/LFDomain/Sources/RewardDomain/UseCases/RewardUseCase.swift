@@ -31,4 +31,16 @@ public final class RewardUseCase: RewardUseCaseProtocol {
   public func setRoundUpDonation(body: [String: Any]) async throws -> RoundUpDonationEntity {
     return try await self.repository.setRoundUpDonation(body: body)
   }
+  
+  public func getContributionList(limit: Int, offset: Int) async throws -> ContributionListEntity {
+    return try await self.repository.getContributionList(limit: limit, offset: offset)
+  }
+  
+  public func getContribution(contributionID: String) async throws -> ContributionEntity {
+    return try await self.repository.getContribution(contributionID: contributionID)
+  }
+  
+  public func getCategoriesTrending() async throws -> CategoriesFundraisersListEntity {
+    return try await self.repository.getCategoriesTrending()
+  }
 }

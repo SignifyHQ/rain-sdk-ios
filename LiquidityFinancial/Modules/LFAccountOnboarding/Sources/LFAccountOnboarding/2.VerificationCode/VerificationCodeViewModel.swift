@@ -8,6 +8,9 @@ import Factory
 import NetspendSdk
 import LFServices
 import AccountData
+import AccountDomain
+import RewardData
+import RewardDomain
 
 @MainActor
 final class VerificationCodeViewModel: ObservableObject {
@@ -17,6 +20,7 @@ final class VerificationCodeViewModel: ObservableObject {
   @LazyInjected(\.onboardingFlowCoordinator) var onboardingFlowCoordinator
   @LazyInjected(\.netspendRepository) var netspendRepository
   @LazyInjected(\.netspendDataManager) var netspendDataManager
+  @LazyInjected(\.rewardDataManager) var rewardDataManager
   @LazyInjected(\.intercomService) var intercomService
   
   @Published var isNavigationToWelcome: Bool = false
@@ -93,7 +97,6 @@ extension VerificationCodeViewModel {
   }
   
   func performAutoGetTwilioMessagesIfNeccessary() {
-      //guard DemoAccountsHelper.shared.shouldInterceptSms(number: formatPhoneNumber) else { return }
     DemoAccountsHelper.shared.getTwilioMessages(for: formatPhoneNumber)
       .sink { [weak self] code in
         guard let self else { return }
@@ -124,15 +127,29 @@ extension VerificationCodeViewModel {
 
   // MARK: Private
 extension VerificationCodeViewModel {
+  private func apiFetchUser() async throws {
+    let user = try await accountRepository.getUser()
+    handleDataUser(user: user)
+  }
+  
+  private func handleDataUser(user: LFUser) {
+    accountDataManager.storeUser(user: user)
+    if let rewardType = APIRewardType(rawValue: user.userRewardType ?? "") {
+      rewardDataManager.update(currentSelectReward: rewardType)
+    }
+  }
+  
   @MainActor
   private func checkOnboardingState() async {
     do {
       let onboardingState = try await onboardingRepository.getOnboardingState(sessionId: accountDataManager.sessionID)
       if onboardingState.missingSteps.isEmpty {
+        try await apiFetchUser()
         self.onboardingFlowCoordinator.set(route: .dashboard)
       } else {
         let states = onboardingState.mapToEnum()
         if states.isEmpty {
+          try await apiFetchUser()
           self.onboardingFlowCoordinator.set(route: .dashboard)
         } else {
           if states.contains(OnboardingMissingStep.netSpendCreateAccount) {
