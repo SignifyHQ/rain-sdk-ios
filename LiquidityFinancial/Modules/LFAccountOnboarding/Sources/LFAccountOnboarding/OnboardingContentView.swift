@@ -63,6 +63,8 @@ public struct OnboardingContentView: View {
         PersonalInformationView()
       case .accountReject:
         KYCStatusView(viewModel: KYCStatusViewModel(state: .reject))
+      case .unclear(let message):
+        KYCStatusView(viewModel: KYCStatusViewModel(state: .common(message)))
       }
     }
   }

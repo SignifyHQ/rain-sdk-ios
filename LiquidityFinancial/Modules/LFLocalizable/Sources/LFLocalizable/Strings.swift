@@ -1385,6 +1385,12 @@ public enum LFLocalizable {
       public static let message = LFLocalizable.tr("Localizable", "kycStatus.fail.message", fallback: "Based on the information you entered, we were unable to create a Depository account at this time. We will be in touch via email.")
       /// WE’RE SORRY
       public static let title = LFLocalizable.tr("Localizable", "kycStatus.fail.title", fallback: "WE’RE SORRY")
+      public enum Unclear {
+        /// %@, we were unable to create a Depository account at this time. We will be in touch via email.
+        public static func message(_ p1: Any) -> String {
+          return LFLocalizable.tr("Localizable", "kycStatus.fail.unclear.message", String(describing: p1), fallback: "%@, we were unable to create a Depository account at this time. We will be in touch via email.")
+        }
+      }
     }
     public enum IdentityVerification {
       /// Please verify your identity with a valid Driver’s License, ID or Passport. 

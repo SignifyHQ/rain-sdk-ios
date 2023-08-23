@@ -8,6 +8,7 @@ public enum KYCState {
   case pendingIDV
   case reject
   case inReview(String)
+  case common(String)
   
   var kycInformation: KYCInformation? {
     switch self {
@@ -33,6 +34,13 @@ public enum KYCState {
       return KYCInformation(
         title: LFLocalizable.KycStatus.InReview.title,
         message: LFLocalizable.KycStatus.InReview.message(username),
+        primary: LFLocalizable.KycStatus.InReview.primaryTitle,
+        secondary: LFLocalizable.KycStatus.InReview.secondaryTitle
+      )
+    case let .common(messagekey):
+      return KYCInformation(
+        title: LFLocalizable.KycStatus.Fail.title,
+        message: LFLocalizable.KycStatus.Fail.Unclear.message(messagekey),
         primary: LFLocalizable.KycStatus.InReview.primaryTitle,
         secondary: LFLocalizable.KycStatus.InReview.secondaryTitle
       )

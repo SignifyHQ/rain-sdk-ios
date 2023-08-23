@@ -6,6 +6,15 @@ public enum OnboardingMissingStep: String, Codable {
   case cardProvision = "CARD_PROVISION"
   case zeroHashAccount = "ZERO_HASH_ACCOUNT"
   case accountReject = "ACCOUNT_REJECT"
+  
+  case identityQuestions = "identity_questions"
+  case provideDocuments = "provide_documents"
+  case primaryPersonKYCApprove = "primary_person_kyc_approve"
+  case KYCData = "kyc_data"
+  case acceptAgreement = "accept_agreement"
+  case expectedUse = "expected_use"
+  case identityScan = "identity_scan"
+  case acceptFeatureAgreement = "accept_feature_agreement"
 }
 
 public protocol OnboardingState {

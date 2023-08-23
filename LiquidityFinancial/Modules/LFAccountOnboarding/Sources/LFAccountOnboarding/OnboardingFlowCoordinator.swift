@@ -35,6 +35,7 @@ public class OnboardingFlowCoordinator: OnboardingFlowCoordinatorProtocol {
     case zeroHash
     case information
     case accountReject
+    case unclear(String)
     
     public var id: String {
       String(describing: self)
@@ -117,10 +118,22 @@ public class OnboardingFlowCoordinator: OnboardingFlowCoordinatorProtocol {
               set(route: .kycReview)
             } else if states.contains(OnboardingMissingStep.zeroHashAccount) {
               set(route: .zeroHash)
-            } else if states.contains(OnboardingMissingStep.cardProvision) {
-              //TODO: we implement late
             } else if states.contains(OnboardingMissingStep.accountReject) {
               set(route: .accountReject)
+            } else if states.contains(OnboardingMissingStep.primaryPersonKYCApprove) {
+              set(route: .kycReview)
+            } else if states.contains(OnboardingMissingStep.identityQuestions) {
+              let questionsEncrypt = try await netspendRepository.getQuestion(sessionId: accountDataManager.sessionID)
+              if let usersession = netspendDataManager.sdkSession, let questionsDecode = questionsEncrypt.decodeData(session: usersession) {
+                let questionsEntity = QuestionsEntity.mapObj(questionsDecode)
+                set(route: .question(questionsEntity))
+              }
+            } else if states.contains(OnboardingMissingStep.provideDocuments) {
+              let documents = try await netspendRepository.getDocuments(sessionId: accountDataManager.sessionID)
+              netspendDataManager.update(documentData: documents)
+              set(route: .document)
+            } else {
+              set(route: .unclear(states.compactMap({ $0.rawValue }).joined()))
             }
           }
         }
