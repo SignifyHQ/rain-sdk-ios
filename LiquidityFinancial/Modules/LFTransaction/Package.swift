@@ -18,13 +18,14 @@ let package = Package(
       .package(name: "LFStyleGuide", path: "../LFStyleGuide"),
       .package(name: "LFLocalizable", path: "../LFLocalizable"),
       .package(name: "LFServices", path: "../LFServices"),
-      .package(name: "LFData", path: "../LFData")
+      .package(name: "LFData", path: "../LFData"),
+      .package(name: "LFWalletAddress", path: "../LFWalletAddress")
     ],
     targets: [
         .target(
             name: "LFTransaction",
             dependencies: [
-              "LFUtilities", "LFStyleGuide", "LFLocalizable", "LFServices", "Factory",
+              "LFUtilities", "LFStyleGuide", "LFLocalizable", "LFServices", "Factory", "LFWalletAddress",
               .product(name: "OnboardingData", package: "LFData"),
               .product(name: "NetSpendData", package: "LFData"),
               .product(name: "AccountData", package: "LFData"),
