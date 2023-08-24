@@ -49,13 +49,16 @@ private extension ActivatePhysicalCardView {
       Spacer()
         .frame(maxHeight: 60)
       VStack(spacing: 60) {
-        GenImages.Images.physicalCard.swiftUIImage
+        VStack(spacing: 28) {
+          GenImages.Images.connectedAppleWallet.swiftUIImage
+          GenImages.Images.connectedAppleWalletShadow.swiftUIImage
+        }
         VStack(spacing: 16) {
           Text(LFLocalizable.CardActivated.CardActived.title)
             .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.large.value))
             .foregroundColor(Colors.label.swiftUIColor)
             .multilineTextAlignment(.center)
-          Text(LFLocalizable.CardActivated.CardActived.description(LFUtility.appName))
+          Text(LFLocalizable.CardActivated.CardActived.description)
             .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.medium.value))
             .foregroundColor(Colors.label.swiftUIColor.opacity(0.75))
             .multilineTextAlignment(.center)
@@ -64,11 +67,16 @@ private extension ActivatePhysicalCardView {
         }
       }
       Spacer()
-      FullSizeButton(
-        title: LFLocalizable.Button.Continue.title,
-        isDisable: false
-      ) {
-        activeContent = .addAppleWallet
+      VStack(spacing: 10) {
+        applePay
+        
+        FullSizeButton(
+          title: LFLocalizable.Button.Skip.title,
+          isDisable: false,
+          type: .secondary
+        ) {
+          dismiss()
+        }
       }
       .padding(.bottom, 12)
     }
@@ -82,6 +90,20 @@ private extension ActivatePhysicalCardView {
       }
       .padding(.top, 10)
       .padding(.leading, 16)
+    }
+  }
+  
+  var applePay: some View {
+    Button {
+      activeContent = .addAppleWallet
+    } label: {
+      ApplePayButton()
+        .frame(height: 40)
+        .cornerRadius(10)
+        .overlay(
+          RoundedRectangle(cornerRadius: 10)
+            .stroke(Colors.label.swiftUIColor, lineWidth: 1)
+        )
     }
   }
 }

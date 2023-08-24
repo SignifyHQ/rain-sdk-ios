@@ -149,7 +149,7 @@ private extension AddressView {
   
   var title: some View {
     Text(
-      LFLocalizable.addressTitle(LFUtility.appName.uppercased())
+      LFLocalizable.addressTitle
     )
     .foregroundColor(Colors.label.swiftUIColor)
     .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.main.value))

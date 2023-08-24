@@ -14,11 +14,11 @@
 
 // Wellcome Screen
 "welcome.header.title" = "WELCOME!";
-"welcome.header.desc" = "The AvalancheCard is an easy way to spend your crypto assets to earn rewards. You can also buy, sell and spend Avalanche assets with the AvalancheCard app.";
+"welcome.header.desc" = "The DogeCard is an easy way to spend cash or Dogecoin, and earn rewards.  Here is how: ";
 "welcome.how_it_works" = "HOW IT WORKS:";
-"welcome.how_it_works.item1" = "Create a AvalancheCard account";
-"welcome.how_it_works.item2" = "Use your AvalancheCard for everyday purchases";
-"welcome.how_it_works.item3" = "Spend AVAX, USDC, USD and earn rewards.";
+"welcome.how_it_works.item1" = "Create an account";
+"welcome.how_it_works.item2" = "Use your DogeCard anywhere Visa is accepted";
+"welcome.how_it_works.item3" = "Spend cash or Dogecoin, earn rewards";
 "welcome.button.order_card" = "Order Card";
 
 // VerificationCode Screen
@@ -55,7 +55,7 @@
 "enter_ssn.no_ssn" = "No SSN? Tap here";
 "enter_ssn.continue" = "Continue";
 "enter_ssn.alert.title" = "WHY DO WE NEED SSN?";
-"enter_ssn.alert.message" = "A valid SSN or Passport is required by our banking partners, to create a checking account.";
+"enter_ssn.alert.message" = "A valid SSN or Passport is required by our partners to provide cryptocurrency and banking services.";
 "enter_ssn.alert.okay" = "Okay";
 
 //... PASSPORT...
@@ -137,7 +137,7 @@
 "documentType.utilityBill.title" = "Utility Bill";
 
 // Address View
-"address_title" = "WHERE TO SEND YOUR %@ CARD?";
+"address_title" = "YOUR ADDRESS";
 "addressLine1_title" = "Address line 1 ";
 "addressLine2_title" = "Address line 2";
 "enter_address" = "Enter address";
@@ -159,17 +159,17 @@
 
 //...SET UP WALLET...
 "setUpWallet.title" = "CREATE YOUR WALLET";
-"setUpWallet.info" = "%@ Card has partnered with ZeroHash, a trusted partner in crypto.";
+"setUpWallet.info" = "%@ has partnered with Zero Hash to offer cryptocurrency services.";
 "setUpWallet.termsAndCondition" = "I agree to the Zero Hash and Zero Hash Liquidity Services User Agreement, and I have read and understand the Zero Hash Privacy Policy and Regulatory Disclosures. I understand that the value of any cryptocurrency, including digital assets pegged to fiat currency, commodities, or any other asset, may go to zero.";
 "setUpWallet.risk_disclosure" = "The value of any cryptocurrency, including digital assets pegged to fiat currency, commodities, or any other asset, may go to zero.";
-"setUpWallet.userAgreement" = "User Agreement";
+"setUpWallet.userAgreement" = "Zero Hash and Zero Hash Liquidity Services User Agreement";
 "setUpWallet.solid_privacyPolicy" = "Privacy Policy";
 "setUpWallet.regulatory_disclosures" = "Regulatory Disclosures";
 "setUpWallet.wallet_useragreement" = "Zero Hash and Zero Hash Liquidity Services User Agreement";
 
 // Set Up Account
-"question.screen.title" = "Set up your account";
-"question.screen.description" = "%@ Card has partnered with NetSpend and Pathward Bank, a trusted partner in banking.";
+"question.screen.title" = "ACCOUNT TERMS";
+"question.screen.description" = "%@ has partnered with NetSpend and Pathward to provide banking and card services.";
 "question.netpendCondition.description" = "I agree to the Netspend User Agreement, and I have read and understand the NetSpend Privacy Policy and Regulatory Disclosures.";
 "question.pathwardCondition.description" = "I agree to the Pathward Bank User Agreement, and I have read and understand the Pathward Privacy Policy and Regulatory Disclosures.";
 "question.netpendCondition.userAgreement" = "Netspend User Agreement";
@@ -188,7 +188,7 @@
 "kycStatus.fail.title" = "WE’RE SORRY";
 "kycStatus.fail.message" = "Based on the information you entered, we were unable to create a Depository account at this time. We will be in touch via email.";
 "kycStatus.inReview.title" = "VERIFYING ACCOUNT DETAILS";
-"kycStatus.inReview.message" = "Hi %@, we are still verifying your account details. This is common when phone numbers, addresses or emails change. Please contact support and we will help verify the details. Thank you for your patience.";
+"kycStatus.inReview.message" = "Hi %@, we are still verifying your account details.  This is common when VOIP or Google voice phone numbers are used, or addresses / emails change.  Please contact support and we will help verify the details.  Thank you for your patience.";
 "kycStatus.inReview.secondaryTitle" = "Contact Support";
 "kycStatus.inReview.primaryTitle" = "Check Status";
 "kycStatus.fail.unclear.message" = "%@, we were unable to create a Depository account at this time. We will be in touch via email.";
@@ -202,14 +202,14 @@
 "rewardTerms.fee_title" = "Fee";
 "rewardTerms.network_fee" = "Network Fee";
 "rewardTerms.exchange_rate_title" = "Exchange Rate";
-"rewardTerms.exchange_rate_description" = "Exchange rate: Varies, the current prevailing price as determined by Zero Hash Liquidity Services LLC at point of transaction.";
+"rewardTerms.exchange_rate_description" = "Varies, the current prevailing price as determined by Zero Hash Liquidity Services LLC at point of transaction.";
 "rewardTerms.enroll_cta" = "Enroll now";
 "rewardTerms.disclosures_title" = "Exchange Rate";
-"rewardTerms.disclosures_first" = "Cryptocurrency services powered by Zero Hash";
-"rewardTerms.disclosures_second" = "Maximum reward amounts may vary, and can depend on the user’s level of participation in crypto rewards. Specific terms and conditions may apply.";
-"rewardTerms.disclosures_third" = "By selecting to enroll in the crypto rewards program, you understand and agree that eligible rewards transactions will also trigger your authorization to invest in crypto once your action or card transaction is complete. Transactions may take time in certain cases.";
-"rewardTerms.disclosures_fourth" = "Orders may not be canceled or reversed once submitted by you. Also, if a withdrawal request is being made, you are requesting an on-chain transaction that is not reversible or recallable. You are responsible for reviewing the recipient address and ensuring it is the correct address for the selected asset for withdrawal.";
-"rewardTerms.disclosures_fifth" = "Zero Hash does not offer the ability to set up pre-authorized, automatic, or recurring Orders (“Pre-Authorized Orders”) in your Account; (a) any such Pre-Authorized Order feature (if available) is under the exclusive control of [Business] ; (b) you must contact [Business] in order to stop a Pre-Authorized Order before execution or to turn off such a feature in your Account; and (c) Zero Hash and ZHLS are not liable for the placement and execution of any Pre-Authorized order.";
+"rewardTerms.disclosures_first" = "By selecting to enroll in the crypto rewards program, you understand and agree that eligible rewards transactions will also trigger your authorization to invest in crypto once your action or card transaction is complete. Transactions may take time in certain cases.";
+"rewardTerms.disclosures_second" = "Cryptocurrency services powered by Zero Hash.";
+"rewardTerms.disclosures_third" = "Orders may not be canceled or reversed once submitted by you. Also, if a withdrawal request is being made, you are requesting an on-chain transaction that is not reversible or recallable. You are responsible for reviewing the recipient address and ensuring it is the correct address for the selected asset for withdrawal.";
+"rewardTerms.disclosures_fourth" = "Zero Hash does not offer the ability to set up pre-authorized, automatic, or recurring Orders (“Pre-Authorized Orders”) in your Account; (a) any such Pre-Authorized Order feature (if available) is under the exclusive control of [Business] ; (b) you must contact [Business] in order to stop a Pre-Authorized Order before execution or to turn off such a feature in your Account; and (c) Zero Hash and ZHLS are not liable for the placement and execution of any Pre-Authorized order.";
+"rewardTerms.disclosures_fifth" = "Maximum reward amounts may vary, and can depend on the user’s level of participation in crypto rewards. Specific terms and conditions may apply.";
 
 //...REWARDS...
 "rewards" = "Rewards";
@@ -247,7 +247,7 @@
 
 // CARD ACTIVED
 "cardActivated.cardActived.title" = "CARD ACTIVATED!";
-"cardActivated.cardActived.description" = "Your %@ is now active, and can be used anywhere Visa is accepted.";
+"cardActivated.cardActived.description" = "Your card is activated!  Next, add it to your Apple Pay wallet for fast and easy payments.";
 
 // ADD TO WALLET
 "addToWallet.applePay.title" = "ADD TO APPLE PAY";
@@ -288,7 +288,7 @@
 "enterCVVCode.screen.description" = "Enter the 3-digit CVV code of your card";
 
 // Order PhysicalCard
-"orderPhysicalCard.physicalCard.title" = "PHYSICAL CARD";
+"orderPhysicalCard.physicalCard.title" = "ORDER PHYSICAL CARD";
 "orderPhysicalCard.fees.title" = "Fees";
 "orderPhysicalCard.address.title" = "THE CARD WILL BE SHIPPED TO:";
 "orderPhysicalCard.editAddress.buttonTitle" = "Edit address";
@@ -297,7 +297,7 @@
 "orderPhysicalCard.orderedSuccess.message" = "Thank you, your physical card was ordered. It will arrive in 7-14 business days. After it arrives, please come back to activate your card.";
 
 // ShippingAddress
-"shippingAddress.screen.title" = "WHERE TO SEND YOUR %@ CARD?";
+"shippingAddress.screen.title" = "WHERE TO SEND YOUR %@?";
 "shippingAddress.mainAddress.title" = "Address line 1 ";
 "shippingAddress.subAddress.title" = "Address line 2 (optional)";
 "shippingAddress.city.title" = "City";

@@ -26,7 +26,6 @@ public struct DogeCardWelcomeView: View {
             Text(LFLocalizable.Welcome.howItWorks)
               .font(Fonts.regular.swiftUIFont(size: 18))
               .foregroundColor(Colors.label.swiftUIColor)
-            Spacer()
           }
           items
           Spacer()
@@ -56,6 +55,13 @@ public struct DogeCardWelcomeView: View {
         .frame(width: 300, height: 232)
         .padding(.bottom, 10)
       
+      Text(LFLocalizable.Welcome.Header.title)
+        .font(Fonts.regular.swiftUIFont(fixedSize: 24))
+        .foregroundColor(Colors.label.swiftUIColor)
+        .fixedSize(horizontal: false, vertical: true)
+        .multilineTextAlignment(.center)
+        .padding(.horizontal, 30)
+      
       Text(LFLocalizable.Welcome.Header.desc)
         .font(Fonts.regular.swiftUIFont(fixedSize: 16))
         .foregroundColor(Colors.label.swiftUIColor.opacity(0.75))
@@ -84,7 +90,7 @@ public struct DogeCardWelcomeView: View {
   private var buttons: some View {
     VStack(spacing: 10) {
       FullSizeButton(
-        title: LFLocalizable.Welcome.Button.orderCard,
+        title: LFLocalizable.Button.Continue.title,
         isDisable: viewModel.isLoading,
         isLoading: $viewModel.isLoading
       ) {

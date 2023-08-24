@@ -21,7 +21,6 @@ struct WelcomeView: View {
             Text(LFLocalizable.Welcome.howItWorks)
               .font(Fonts.regular.swiftUIFont(size: 18))
               .foregroundColor(Colors.label.swiftUIColor)
-            Spacer()
           }
           items
           Spacer()
@@ -87,7 +86,7 @@ struct WelcomeView: View {
   private var buttons: some View {
     VStack(spacing: 10) {
       FullSizeButton(
-        title: LFLocalizable.Welcome.Button.orderCard,
+        title: LFLocalizable.Button.Continue.title,
         isDisable: viewModel.isLoading,
         isLoading: $viewModel.isLoading
       ) {

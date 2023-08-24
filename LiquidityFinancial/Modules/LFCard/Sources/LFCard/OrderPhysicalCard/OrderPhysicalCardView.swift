@@ -94,7 +94,7 @@ private extension OrderPhysicalCardView {
         viewModel.onClickedEditAddressButton()
       }
       FullSizeButton(
-        title: LFLocalizable.OrderPhysicalCard.Order.buttonTitle,
+        title: LFLocalizable.Button.Continue.title,
         isDisable: false,
         isLoading: $viewModel.isOrderingCard
       ) {

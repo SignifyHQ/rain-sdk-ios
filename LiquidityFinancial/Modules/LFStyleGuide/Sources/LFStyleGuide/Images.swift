@@ -131,6 +131,7 @@ public enum GenImages {
     public static let availableCard = ImageAsset(name: "availableCard")
     public static let cashbackCard = ImageAsset(name: "cashbackCard")
     public static let connectedAppleWallet = ImageAsset(name: "connectedAppleWallet")
+    public static let connectedAppleWalletShadow = ImageAsset(name: "connectedAppleWalletShadow")
     public static let debitSuggestion = ImageAsset(name: "debitSuggestion")
     public static let defaultTransactionCard = ImageAsset(name: "defaultTransactionCard")
     public static let emptyCard = ImageAsset(name: "emptyCard")

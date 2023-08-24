@@ -89,7 +89,6 @@ private extension ListCardsView {
   var cardDetails: some View {
     VStack(spacing: 16) {
       cardView
-      dealsButton
       rows
       Spacer()
       buttonGroup

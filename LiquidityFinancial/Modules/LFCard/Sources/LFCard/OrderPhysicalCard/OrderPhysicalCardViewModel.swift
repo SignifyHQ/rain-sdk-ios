@@ -18,7 +18,7 @@ final class OrderPhysicalCardViewModel: ObservableObject {
   
   @Published var isOrderingCard: Bool = false
   @Published var isShowOrderSuccessPopup: Bool = false
-  @Published var fees: Double = 0
+  @Published var fees: Double = 5
   @Published var navigation: Navigation?
   @Published var shippingAddress: ShippingAddress?
   @Published var toastMessage: String?

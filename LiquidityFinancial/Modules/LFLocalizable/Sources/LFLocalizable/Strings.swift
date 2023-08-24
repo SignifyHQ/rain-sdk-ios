@@ -12,10 +12,8 @@ import Foundation
 public enum LFLocalizable {
   /// ACCOUNT UPDATE
   public static let accountUpdate = LFLocalizable.tr("Localizable", "account_update", fallback: "ACCOUNT UPDATE")
-  /// WHERE TO SEND YOUR %@ CARD?
-  public static func addressTitle(_ p1: Any) -> String {
-    return LFLocalizable.tr("Localizable", "address_title", String(describing: p1), fallback: "WHERE TO SEND YOUR %@ CARD?")
-  }
+  /// YOUR ADDRESS
+  public static let addressTitle = LFLocalizable.tr("Localizable", "address_title", fallback: "YOUR ADDRESS")
   /// Address line 1 
   public static let addressLine1Title = LFLocalizable.tr("Localizable", "addressLine1_title", fallback: "Address line 1 ")
   /// Address line 2
@@ -556,10 +554,8 @@ public enum LFLocalizable {
   }
   public enum CardActivated {
     public enum CardActived {
-      /// Your %@ is now active, and can be used anywhere Visa is accepted.
-      public static func description(_ p1: Any) -> String {
-        return LFLocalizable.tr("Localizable", "cardActivated.cardActived.description", String(describing: p1), fallback: "Your %@ is now active, and can be used anywhere Visa is accepted.")
-      }
+      /// Your card is activated!  Next, add it to your Apple Pay wallet for fast and easy payments.
+      public static let description = LFLocalizable.tr("Localizable", "cardActivated.cardActived.description", fallback: "Your card is activated!  Next, add it to your Apple Pay wallet for fast and easy payments.")
       /// CARD ACTIVATED!
       public static let title = LFLocalizable.tr("Localizable", "cardActivated.cardActived.title", fallback: "CARD ACTIVATED!")
     }
@@ -1227,8 +1223,8 @@ public enum LFLocalizable {
     /// Why do we need SSN?
     public static let why = LFLocalizable.tr("Localizable", "enter_ssn.why", fallback: "Why do we need SSN?")
     public enum Alert {
-      /// A valid SSN or Passport is required by our banking partners, to create a checking account.
-      public static let message = LFLocalizable.tr("Localizable", "enter_ssn.alert.message", fallback: "A valid SSN or Passport is required by our banking partners, to create a checking account.")
+      /// A valid SSN or Passport is required by our partners to provide cryptocurrency and banking services.
+      public static let message = LFLocalizable.tr("Localizable", "enter_ssn.alert.message", fallback: "A valid SSN or Passport is required by our partners to provide cryptocurrency and banking services.")
       /// Okay
       public static let okay = LFLocalizable.tr("Localizable", "enter_ssn.alert.okay", fallback: "Okay")
       /// WHY DO WE NEED SSN?
@@ -1399,9 +1395,9 @@ public enum LFLocalizable {
       public static let title = LFLocalizable.tr("Localizable", "kycStatus.identityVerification.title", fallback: "DRIVER’s LICENSE, ID OR PASSPORT")
     }
     public enum InReview {
-      /// Hi %@, we are still verifying your account details. This is common when phone numbers, addresses or emails change. Please contact support and we will help verify the details. Thank you for your patience.
+      /// Hi %@, we are still verifying your account details.  This is common when VOIP or Google voice phone numbers are used, or addresses / emails change.  Please contact support and we will help verify the details.  Thank you for your patience.
       public static func message(_ p1: Any) -> String {
-        return LFLocalizable.tr("Localizable", "kycStatus.inReview.message", String(describing: p1), fallback: "Hi %@, we are still verifying your account details. This is common when phone numbers, addresses or emails change. Please contact support and we will help verify the details. Thank you for your patience.")
+        return LFLocalizable.tr("Localizable", "kycStatus.inReview.message", String(describing: p1), fallback: "Hi %@, we are still verifying your account details.  This is common when VOIP or Google voice phone numbers are used, or addresses / emails change.  Please contact support and we will help verify the details.  Thank you for your patience.")
       }
       /// Check Status
       public static let primaryTitle = LFLocalizable.tr("Localizable", "kycStatus.inReview.primaryTitle", fallback: "Check Status")
@@ -1554,8 +1550,8 @@ public enum LFLocalizable {
       public static let title = LFLocalizable.tr("Localizable", "orderPhysicalCard.orderedSuccess.title", fallback: "PHYSICAL CARD ORDERED")
     }
     public enum PhysicalCard {
-      /// PHYSICAL CARD
-      public static let title = LFLocalizable.tr("Localizable", "orderPhysicalCard.physicalCard.title", fallback: "PHYSICAL CARD")
+      /// ORDER PHYSICAL CARD
+      public static let title = LFLocalizable.tr("Localizable", "orderPhysicalCard.physicalCard.title", fallback: "ORDER PHYSICAL CARD")
     }
   }
   public enum PhoneNumber {
@@ -1714,12 +1710,12 @@ public enum LFLocalizable {
       public static let userAgreement = LFLocalizable.tr("Localizable", "question.pathwardCondition.userAgreement", fallback: "Pathward Bank User Agreement")
     }
     public enum Screen {
-      /// %@ Card has partnered with NetSpend and Pathward Bank, a trusted partner in banking.
+      /// %@ has partnered with NetSpend and Pathward to provide banking and card services.
       public static func description(_ p1: Any) -> String {
-        return LFLocalizable.tr("Localizable", "question.screen.description", String(describing: p1), fallback: "%@ Card has partnered with NetSpend and Pathward Bank, a trusted partner in banking.")
+        return LFLocalizable.tr("Localizable", "question.screen.description", String(describing: p1), fallback: "%@ has partnered with NetSpend and Pathward to provide banking and card services.")
       }
-      /// Set up your account
-      public static let title = LFLocalizable.tr("Localizable", "question.screen.title", fallback: "Set up your account")
+      /// ACCOUNT TERMS
+      public static let title = LFLocalizable.tr("Localizable", "question.screen.title", fallback: "ACCOUNT TERMS")
     }
   }
   public enum ReceiveCryptoView {
@@ -1789,24 +1785,24 @@ public enum LFLocalizable {
     public static let amountDescription = LFLocalizable.tr("Localizable", "rewardTerms.amount_description", fallback: "up to 8%% purchase of transaction in rewards")
     /// Transaction Amount
     public static let amountTitle = LFLocalizable.tr("Localizable", "rewardTerms.amount_title", fallback: "Transaction Amount")
-    /// Zero Hash does not offer the ability to set up pre-authorized, automatic, or recurring Orders (“Pre-Authorized Orders”) in your Account; (a) any such Pre-Authorized Order feature (if available) is under the exclusive control of [Business] ; (b) you must contact [Business] in order to stop a Pre-Authorized Order before execution or to turn off such a feature in your Account; and (c) Zero Hash and ZHLS are not liable for the placement and execution of any Pre-Authorized order.
-    public static let disclosuresFifth = LFLocalizable.tr("Localizable", "rewardTerms.disclosures_fifth", fallback: "Zero Hash does not offer the ability to set up pre-authorized, automatic, or recurring Orders (“Pre-Authorized Orders”) in your Account; (a) any such Pre-Authorized Order feature (if available) is under the exclusive control of [Business] ; (b) you must contact [Business] in order to stop a Pre-Authorized Order before execution or to turn off such a feature in your Account; and (c) Zero Hash and ZHLS are not liable for the placement and execution of any Pre-Authorized order.")
-    /// Cryptocurrency services powered by Zero Hash
-    public static let disclosuresFirst = LFLocalizable.tr("Localizable", "rewardTerms.disclosures_first", fallback: "Cryptocurrency services powered by Zero Hash")
-    /// Orders may not be canceled or reversed once submitted by you. Also, if a withdrawal request is being made, you are requesting an on-chain transaction that is not reversible or recallable. You are responsible for reviewing the recipient address and ensuring it is the correct address for the selected asset for withdrawal.
-    public static let disclosuresFourth = LFLocalizable.tr("Localizable", "rewardTerms.disclosures_fourth", fallback: "Orders may not be canceled or reversed once submitted by you. Also, if a withdrawal request is being made, you are requesting an on-chain transaction that is not reversible or recallable. You are responsible for reviewing the recipient address and ensuring it is the correct address for the selected asset for withdrawal.")
     /// Maximum reward amounts may vary, and can depend on the user’s level of participation in crypto rewards. Specific terms and conditions may apply.
-    public static let disclosuresSecond = LFLocalizable.tr("Localizable", "rewardTerms.disclosures_second", fallback: "Maximum reward amounts may vary, and can depend on the user’s level of participation in crypto rewards. Specific terms and conditions may apply.")
+    public static let disclosuresFifth = LFLocalizable.tr("Localizable", "rewardTerms.disclosures_fifth", fallback: "Maximum reward amounts may vary, and can depend on the user’s level of participation in crypto rewards. Specific terms and conditions may apply.")
     /// By selecting to enroll in the crypto rewards program, you understand and agree that eligible rewards transactions will also trigger your authorization to invest in crypto once your action or card transaction is complete. Transactions may take time in certain cases.
-    public static let disclosuresThird = LFLocalizable.tr("Localizable", "rewardTerms.disclosures_third", fallback: "By selecting to enroll in the crypto rewards program, you understand and agree that eligible rewards transactions will also trigger your authorization to invest in crypto once your action or card transaction is complete. Transactions may take time in certain cases.")
+    public static let disclosuresFirst = LFLocalizable.tr("Localizable", "rewardTerms.disclosures_first", fallback: "By selecting to enroll in the crypto rewards program, you understand and agree that eligible rewards transactions will also trigger your authorization to invest in crypto once your action or card transaction is complete. Transactions may take time in certain cases.")
+    /// Zero Hash does not offer the ability to set up pre-authorized, automatic, or recurring Orders (“Pre-Authorized Orders”) in your Account; (a) any such Pre-Authorized Order feature (if available) is under the exclusive control of [Business] ; (b) you must contact [Business] in order to stop a Pre-Authorized Order before execution or to turn off such a feature in your Account; and (c) Zero Hash and ZHLS are not liable for the placement and execution of any Pre-Authorized order.
+    public static let disclosuresFourth = LFLocalizable.tr("Localizable", "rewardTerms.disclosures_fourth", fallback: "Zero Hash does not offer the ability to set up pre-authorized, automatic, or recurring Orders (“Pre-Authorized Orders”) in your Account; (a) any such Pre-Authorized Order feature (if available) is under the exclusive control of [Business] ; (b) you must contact [Business] in order to stop a Pre-Authorized Order before execution or to turn off such a feature in your Account; and (c) Zero Hash and ZHLS are not liable for the placement and execution of any Pre-Authorized order.")
+    /// Cryptocurrency services powered by Zero Hash.
+    public static let disclosuresSecond = LFLocalizable.tr("Localizable", "rewardTerms.disclosures_second", fallback: "Cryptocurrency services powered by Zero Hash.")
+    /// Orders may not be canceled or reversed once submitted by you. Also, if a withdrawal request is being made, you are requesting an on-chain transaction that is not reversible or recallable. You are responsible for reviewing the recipient address and ensuring it is the correct address for the selected asset for withdrawal.
+    public static let disclosuresThird = LFLocalizable.tr("Localizable", "rewardTerms.disclosures_third", fallback: "Orders may not be canceled or reversed once submitted by you. Also, if a withdrawal request is being made, you are requesting an on-chain transaction that is not reversible or recallable. You are responsible for reviewing the recipient address and ensuring it is the correct address for the selected asset for withdrawal.")
     /// Exchange Rate
     public static let disclosuresTitle = LFLocalizable.tr("Localizable", "rewardTerms.disclosures_title", fallback: "Exchange Rate")
     /// Enroll now
     public static let enrollCta = LFLocalizable.tr("Localizable", "rewardTerms.enroll_cta", fallback: "Enroll now")
     /// ENROLL IN CRYPTO REWARDS
     public static let enrollTitle = LFLocalizable.tr("Localizable", "rewardTerms.enroll_title", fallback: "ENROLL IN CRYPTO REWARDS")
-    /// Exchange rate: Varies, the current prevailing price as determined by Zero Hash Liquidity Services LLC at point of transaction.
-    public static let exchangeRateDescription = LFLocalizable.tr("Localizable", "rewardTerms.exchange_rate_description", fallback: "Exchange rate: Varies, the current prevailing price as determined by Zero Hash Liquidity Services LLC at point of transaction.")
+    /// Varies, the current prevailing price as determined by Zero Hash Liquidity Services LLC at point of transaction.
+    public static let exchangeRateDescription = LFLocalizable.tr("Localizable", "rewardTerms.exchange_rate_description", fallback: "Varies, the current prevailing price as determined by Zero Hash Liquidity Services LLC at point of transaction.")
     /// Exchange Rate
     public static let exchangeRateTitle = LFLocalizable.tr("Localizable", "rewardTerms.exchange_rate_title", fallback: "Exchange Rate")
     /// Fee
@@ -1917,9 +1913,9 @@ public enum LFLocalizable {
     }
   }
   public enum SetUpWallet {
-    /// %@ Card has partnered with ZeroHash, a trusted partner in crypto.
+    /// %@ has partnered with Zero Hash to offer cryptocurrency services.
     public static func info(_ p1: Any) -> String {
-      return LFLocalizable.tr("Localizable", "setUpWallet.info", String(describing: p1), fallback: "%@ Card has partnered with ZeroHash, a trusted partner in crypto.")
+      return LFLocalizable.tr("Localizable", "setUpWallet.info", String(describing: p1), fallback: "%@ has partnered with Zero Hash to offer cryptocurrency services.")
     }
     /// Regulatory Disclosures
     public static let regulatoryDisclosures = LFLocalizable.tr("Localizable", "setUpWallet.regulatory_disclosures", fallback: "Regulatory Disclosures")
@@ -1931,8 +1927,8 @@ public enum LFLocalizable {
     public static let termsAndCondition = LFLocalizable.tr("Localizable", "setUpWallet.termsAndCondition", fallback: "I agree to the Zero Hash and Zero Hash Liquidity Services User Agreement, and I have read and understand the Zero Hash Privacy Policy and Regulatory Disclosures. I understand that the value of any cryptocurrency, including digital assets pegged to fiat currency, commodities, or any other asset, may go to zero.")
     /// CREATE YOUR WALLET
     public static let title = LFLocalizable.tr("Localizable", "setUpWallet.title", fallback: "CREATE YOUR WALLET")
-    /// User Agreement
-    public static let userAgreement = LFLocalizable.tr("Localizable", "setUpWallet.userAgreement", fallback: "User Agreement")
+    /// Zero Hash and Zero Hash Liquidity Services User Agreement
+    public static let userAgreement = LFLocalizable.tr("Localizable", "setUpWallet.userAgreement", fallback: "Zero Hash and Zero Hash Liquidity Services User Agreement")
     /// Zero Hash and Zero Hash Liquidity Services User Agreement
     public static let walletUseragreement = LFLocalizable.tr("Localizable", "setUpWallet.wallet_useragreement", fallback: "Zero Hash and Zero Hash Liquidity Services User Agreement")
   }
@@ -1992,9 +1988,9 @@ public enum LFLocalizable {
       public static let title = LFLocalizable.tr("Localizable", "shippingAddress.mainAddress.title", fallback: "Address line 1 ")
     }
     public enum Screen {
-      /// WHERE TO SEND YOUR %@ CARD?
+      /// WHERE TO SEND YOUR %@?
       public static func title(_ p1: Any) -> String {
-        return LFLocalizable.tr("Localizable", "shippingAddress.screen.title", String(describing: p1), fallback: "WHERE TO SEND YOUR %@ CARD?")
+        return LFLocalizable.tr("Localizable", "shippingAddress.screen.title", String(describing: p1), fallback: "WHERE TO SEND YOUR %@?")
       }
     }
     public enum State {
@@ -2522,18 +2518,18 @@ public enum LFLocalizable {
       public static let orderCard = LFLocalizable.tr("Localizable", "welcome.button.order_card", fallback: "Order Card")
     }
     public enum Header {
-      /// The AvalancheCard is an easy way to spend your crypto assets to earn rewards. You can also buy, sell and spend Avalanche assets with the AvalancheCard app.
-      public static let desc = LFLocalizable.tr("Localizable", "welcome.header.desc", fallback: "The AvalancheCard is an easy way to spend your crypto assets to earn rewards. You can also buy, sell and spend Avalanche assets with the AvalancheCard app.")
+      /// The DogeCard is an easy way to spend cash or Dogecoin, and earn rewards.  Here is how: 
+      public static let desc = LFLocalizable.tr("Localizable", "welcome.header.desc", fallback: "The DogeCard is an easy way to spend cash or Dogecoin, and earn rewards.  Here is how: ")
       /// WELCOME!
       public static let title = LFLocalizable.tr("Localizable", "welcome.header.title", fallback: "WELCOME!")
     }
     public enum HowItWorks {
-      /// Create a AvalancheCard account
-      public static let item1 = LFLocalizable.tr("Localizable", "welcome.how_it_works.item1", fallback: "Create a AvalancheCard account")
-      /// Use your AvalancheCard for everyday purchases
-      public static let item2 = LFLocalizable.tr("Localizable", "welcome.how_it_works.item2", fallback: "Use your AvalancheCard for everyday purchases")
-      /// Spend AVAX, USDC, USD and earn rewards.
-      public static let item3 = LFLocalizable.tr("Localizable", "welcome.how_it_works.item3", fallback: "Spend AVAX, USDC, USD and earn rewards.")
+      /// Create an account
+      public static let item1 = LFLocalizable.tr("Localizable", "welcome.how_it_works.item1", fallback: "Create an account")
+      /// Use your DogeCard anywhere Visa is accepted
+      public static let item2 = LFLocalizable.tr("Localizable", "welcome.how_it_works.item2", fallback: "Use your DogeCard anywhere Visa is accepted")
+      /// Spend cash or Dogecoin, earn rewards
+      public static let item3 = LFLocalizable.tr("Localizable", "welcome.how_it_works.item3", fallback: "Spend cash or Dogecoin, earn rewards")
     }
   }
   public enum Zerohash {
