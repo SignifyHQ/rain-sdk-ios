@@ -6,8 +6,14 @@ import LFTransaction
 
 struct ConfirmSendCryptoView: View {
   @StateObject private var viewModel: ConfirmSendCryptoViewModel
-  init(amount: Double, address: String) {
-    _viewModel = .init(wrappedValue: ConfirmSendCryptoViewModel(amount: amount, address: address))
+  init(amount: Double, address: String, nickname: String) {
+    _viewModel = .init(
+      wrappedValue: ConfirmSendCryptoViewModel(
+        amount: amount,
+        address: address,
+        nickname: nickname
+      )
+    )
   }
 
   var body: some View {

@@ -19,9 +19,6 @@ class ReceiveCryptoViewModel: ObservableObject {
   @Published var showCloseButton = false
   @Published var toastMessage: String?
   
-  let context = CIContext()
-  let filter = CIFilter.qrCodeGenerator()
-
   init(account: LFAccount? = nil) {
     self.account = account
   }
@@ -43,7 +40,9 @@ extension ReceiveCryptoViewModel {
   }
   
   func updateCode() {
-    qrCode = generateQRCode(from: cryptoAddress)
+    Task { @MainActor in
+      qrCode = generateQRCode(from: cryptoAddress)
+    }
   }
 
   func getActivityItems() -> [AnyObject] {
@@ -61,6 +60,9 @@ extension ReceiveCryptoViewModel {
   }
 
   func generateQRCode(from string: String) -> UIImage {
+    let context = CIContext()
+    let filter = CIFilter.qrCodeGenerator()
+    
     filter.message = Data(string.utf8)
 
     if let outputImage = filter.outputImage {

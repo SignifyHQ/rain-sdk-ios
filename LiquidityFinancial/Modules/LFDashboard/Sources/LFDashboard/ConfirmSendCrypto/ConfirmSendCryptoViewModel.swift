@@ -15,11 +15,12 @@ class ConfirmSendCryptoViewModel: ObservableObject {
   
   let amount: Double
   let address: String
-  let nickname: String = .empty
+  let nickname: String
 
-  init(amount: Double, address: String) {
+  init(amount: Double, address: String, nickname: String) {
     self.amount = amount
     self.address = address
+    self.nickname = nickname
   }
   
   var amountInput: String {

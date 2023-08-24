@@ -99,7 +99,7 @@ private extension CryptoAssetView {
             title: LFLocalizable.AssetView.walletAddress,
             value: Constants.Default.walletAddressPlaceholder.rawValue
           ) {
-            // TODO: Wallet address Tapped
+            viewModel.receiveButtonTapped()
           }
           activity(size: geo.size)
           disclosure

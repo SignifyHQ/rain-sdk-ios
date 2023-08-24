@@ -101,10 +101,6 @@ private extension ReceiveCryptoView {
         .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.buttonTextSize.value))
         .padding(.vertical, 30)
         .multilineTextAlignment(.leading)
-      GenImages.Images.icCrypto.swiftUIImage
-        .resizable()
-        .foregroundColor(Colors.primary.swiftUIColor)
-        .frame(width: 24.0, height: 24.0, alignment: .center)
     }.frame(maxWidth: .infinity, alignment: .leading)
       .padding(.horizontal, 30)
   }

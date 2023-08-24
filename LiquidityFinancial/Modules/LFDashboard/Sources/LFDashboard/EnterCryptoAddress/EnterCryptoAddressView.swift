@@ -59,7 +59,11 @@ struct EnterCryptoAddressView: View {
     .navigationLink(item: $viewModel.navigation) { item in
       switch item {
       case .confirm:
-        ConfirmSendCryptoView(amount: viewModel.amount, address: viewModel.inputValue)
+        ConfirmSendCryptoView(
+          amount: viewModel.amount,
+          address: viewModel.inputValue,
+          nickname: viewModel.selectedNickname
+        )
       case .editWalletAddress(let wallet):
         EditNicknameOfWalletView(
           accountId: viewModel.account.id,

@@ -30,6 +30,14 @@ final class EnterCryptoAddressViewModel: ObservableObject {
   
   private var subscribers: Set<AnyCancellable> = []
   
+  var selectedNickname: String {
+    guard let walletSelected = walletSelected,
+          walletSelected.address == inputValue else {
+      return .empty
+    }
+    return walletSelected.nickname ?? .empty
+  }
+  
   init(account: LFAccount, amount: Double) {
     self.account = account
     self.amount = amount
