@@ -11,7 +11,7 @@ public protocol LFUser {
   var referralLink: String? { get }
   var userRewardType: String? { get }
   var userAccessLevel: String? { get }
-  var userSelectedFundraiserID: String? { get }
+  var userSelectedFundraiserId: String? { get }
   var userRoundUpEnabled: Bool? { get }
   var accountReviewStatus: String? { get }
 }

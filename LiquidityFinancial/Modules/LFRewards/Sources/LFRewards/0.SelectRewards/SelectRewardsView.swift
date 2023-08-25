@@ -3,12 +3,19 @@ import LFStyleGuide
 import LFUtilities
 import LFLocalizable
 
+public enum RewardWhereStart {
+  case onboarding
+  case dashboard
+}
+
 public struct SelectRewardsView: View {
   @StateObject private var viewModel = SelectRewardsViewModel()
   
   let destinationView: AnyView
-  public init(destination: AnyView) {
+  let whereStart: RewardWhereStart
+  public init(destination: AnyView, whereStart: RewardWhereStart = .onboarding) {
     self.destinationView = destination
+    self.whereStart = whereStart
   }
   
   public var body: some View {
@@ -21,7 +28,7 @@ public struct SelectRewardsView: View {
       .navigationLink(item: $viewModel.navigation) { item in
         switch item {
         case .causeFilter(let causes):
-          SelectCauseCategoriesView(viewModel: SelectCauseCategoriesViewModel(causes: causes), destination: destinationView)
+          SelectCauseCategoriesView(viewModel: SelectCauseCategoriesViewModel(causes: causes), destination: destinationView, whereStart: whereStart)
         case .agreement:
           destinationView
         }

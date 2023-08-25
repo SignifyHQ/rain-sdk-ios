@@ -1,0 +1,67 @@
+import SwiftUI
+import LFLocalizable
+import LFStyleGuide
+import LFUtilities
+
+public struct RewardTransactionRow: View {
+  let item: RewardTransactionRowModel
+  let action: (() -> Void)?
+  
+  public init(item: RewardTransactionRowModel, action: (() -> Void)? = nil) {
+    self.item = item
+    self.action = action
+  }
+  
+  public var body: some View {
+    Button {
+      action?()
+    } label: {
+      HStack(spacing: 10) {
+        transactionImage
+        center
+        Spacer()
+        trailing
+      }
+      .padding(.leading, 12)
+      .padding(.trailing, 16)
+      .background(Colors.secondaryBackground.swiftUIColor)
+      .cornerRadius(12)
+    }
+  }
+}
+
+  // MARK: - View Components
+private extension RewardTransactionRow {
+  var transactionImage: some View {
+    Image(item.assetName, bundle: .main)
+      .frame(46)
+      .padding(.vertical, 12)
+  }
+  
+  var center: some View {
+    VStack(alignment: .leading, spacing: 4) {
+      Text(item.titleDisplay)
+        .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.medium.value))
+        .foregroundColor(Colors.label.swiftUIColor)
+        .multilineTextAlignment(.leading)
+        .minimumScaleFactor(0.7)
+        .allowsTightening(true)
+        .lineLimit(2)
+      Text(item.subtitle)
+        .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.ultraSmall.value))
+        .foregroundColor(Colors.label.swiftUIColor.opacity(0.6))
+        .lineLimit(1)
+    }
+  }
+  
+  var trailing: some View {
+    VStack(alignment: .trailing, spacing: 4) {
+      Text(item.ammountFormatted )
+        .font(Fonts.bold.swiftUIFont(size: Constants.FontSize.medium.value))
+        .foregroundColor(Colors.secondaryBackground.swiftUIColor)
+        .minimumScaleFactor(0.7)
+        .allowsTightening(true)
+        .lineLimit(1)
+    }
+  }
+}

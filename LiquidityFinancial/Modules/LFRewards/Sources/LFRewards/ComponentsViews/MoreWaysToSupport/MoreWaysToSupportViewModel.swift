@@ -1,5 +1,6 @@
 import Foundation
 import UIKit
+import LFLocalizable
 
 @MainActor
 class MoreWaysToSupportViewModel: ObservableObject {
@@ -29,12 +30,12 @@ class MoreWaysToSupportViewModel: ObservableObject {
         let (data, _) = try await URLSession.shared.data(from: url)
         if let image = UIImage(data: data) {
           let imageSaver = ImageSaver { error in
-            self.toastMessage = error != nil ? "more_ways_to_support.photo.error".localizedString : "more_ways_to_support.photo.success".localizedString
+            self.toastMessage = error != nil ? LFLocalizable.MoreWaysToSupport.Photo.error : LFLocalizable.MoreWaysToSupport.Photo.success
           }
           imageSaver.writeToPhotoAlbum(image: image)
         }
       } catch {
-        toastMessage = "more_ways_to_support.photo.error".localizedString
+        toastMessage = LFLocalizable.MoreWaysToSupport.Photo.error
       }
     }
   }
@@ -55,10 +56,10 @@ extension MoreWaysToSupportViewModel {
   }
   
   enum SocialType: String {
-    case email = "shareEmail"
-    case twitter = "shareTwitter"
-    case facebook = "shareFacebook"
-    case instagram = "shareInstagram"
+    case email = "ic_email"
+    case twitter = "ic_twitter"
+    case facebook = "ic_facebook"
+    case instagram = "ic_instagram"
   }
 }
 

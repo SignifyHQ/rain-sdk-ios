@@ -6,4 +6,6 @@ protocol AccountUseCaseProtocol {
     accountId: String, currencyType: String, transactionTypes: String, limit: Int, offset: Int
   ) async throws -> TransactionListEntity
   func logout() async throws -> Bool
+  
+  func getReferralCampaign() async throws -> ReferralCampaignEntity
 }

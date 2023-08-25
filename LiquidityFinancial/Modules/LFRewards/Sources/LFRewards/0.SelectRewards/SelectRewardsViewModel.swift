@@ -40,14 +40,12 @@ class SelectRewardsViewModel: ObservableObject {
   }
 
   func donationNavigation() {
-    //analyticsService.track(event: Event(name: .selectedDonationReward))
     apiFetchCategories { [weak self] model in
       self?.navigation = .causeFilter(model)
     }
   }
 
   func cashbackNavigation() {
-    //analyticsService.track(event: Event(name: .selectedCashbackReward))
     navigation = .agreement
   }
   

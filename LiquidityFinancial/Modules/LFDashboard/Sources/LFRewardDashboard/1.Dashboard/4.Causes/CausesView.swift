@@ -18,12 +18,20 @@ struct CausesView: View {
         viewModel.appearOpeations()
       }
       .navigationLink(item: $viewModel.navigation) { navigation in
-//        switch navigation {
-//        case let .fundraiserDetail(viewModel):
-//          FundraiserDetailView(viewModel: viewModel)
-//        case let .selectFundraiser(viewModel):
-//          SelectFundraiserView(viewModel: viewModel)
-//        }
+        switch navigation {
+        case let .fundraiserDetail(fundraiserID):
+          FundraiserDetailView(
+            viewModel: FundraiserDetailViewModel(fundraiserID: fundraiserID, whereStart: .dashboard),
+            destination: AnyView(EmptyView()),
+            fundraiserDetailViewType: .select
+          )
+        case .selectFundraiser(let causeModel, let fundraisers):
+          SelectFundraiserView(
+            viewModel: SelectFundraiserViewModel(causeModel: causeModel, fundraisers: fundraisers, showSkipButton: false),
+            destination: AnyView(EmptyView()),
+            whereStart: .dashboard
+          )
+        }
       }
       .popup(isPresented: $viewModel.showError, style: .toast) {
         ToastView(toastMessage: LFLocalizable.genericErrorMessage)
@@ -84,7 +92,7 @@ extension CausesView {
       }
       .padding(.bottom, 16)
     }
-    .disabled(viewModel.isLoading)
+    .disabled(viewModel.isLoadingFundraisers != nil)
     .padding(.top, 20)
   }
   
@@ -118,7 +126,7 @@ extension CausesView {
         Button {
           viewModel.selected(cause: cause)
         } label: {
-          CauseItemView(cause: cause, isLoading: viewModel.isLoading)
+          CauseItemView(cause: cause, isLoading: viewModel.isLoadingFundraisers == cause)
         }
       }
     }

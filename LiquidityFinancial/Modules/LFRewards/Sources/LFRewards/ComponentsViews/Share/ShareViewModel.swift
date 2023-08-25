@@ -4,14 +4,14 @@ import LFUtilities
 import LFLocalizable
 
 @MainActor
-class ShareViewModel: ObservableObject {
+public class ShareViewModel: ObservableObject {
   var data: ShareItemData
   let items: [any ShareItem]
   @Published var includeDonation = false
   @Published var toastMessage: String?
   @Published var showShareSheet = false
   
-  init(data: ShareItemData) {
+  public init(data: ShareItemData) {
     self.data = data
     subject = .init()
     items = [

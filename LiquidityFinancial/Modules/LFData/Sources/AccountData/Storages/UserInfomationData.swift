@@ -38,6 +38,6 @@ public struct UserInfomationData: Codable, UserInfomationDataProtocol {
     self.userRewardType = enity.userRewardType
     self.userAccessLevel = enity.userAccessLevel
     self.userRoundUpEnabled = enity.userRoundUpEnabled
-    self.userSelectedFundraiserID = enity.userSelectedFundraiserID
+    self.userSelectedFundraiserID = enity.userSelectedFundraiserId
   }
 }

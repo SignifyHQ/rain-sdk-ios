@@ -3,12 +3,12 @@ import LFUtilities
 import LFStyleGuide
 import LFLocalizable
 
-struct ShareView: View {
-  init(viewModel: ShareViewModel) {
+public struct ShareView: View {
+  public init(viewModel: ShareViewModel) {
     _viewModel = .init(wrappedValue: viewModel)
   }
   
-  var body: some View {
+  public var body: some View {
     content
       .edgesIgnoringSafeArea(.bottom)
       .background(ModuleColors.background.swiftUIColor)

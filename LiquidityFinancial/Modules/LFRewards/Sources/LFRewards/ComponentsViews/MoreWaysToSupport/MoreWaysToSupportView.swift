@@ -186,7 +186,7 @@ extension MoreWaysToSupportView {
           .fill(ModuleColors.background.swiftUIColor)
           .frame(width: 44, height: 44)
         Image(item.type.rawValue, bundle: .module)
-          .resizable()
+          .renderingMode(.template)
           .foregroundColor(ModuleColors.label.swiftUIColor)
       }
     }

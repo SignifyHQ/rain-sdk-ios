@@ -6,7 +6,7 @@ final class LogMonitor: EventMonitor {
   let queue: DispatchQueue = .init(label: "com.liquidity.networklog")
   
   func request(_ request: Request, didCreateTask _: URLSessionTask) {
-    log.debug("🚀 Firing request: \(request.description)")
+    log.debug("🚀 Firing request: \(request.cURLDescription())")
   }
   
   func requestIsRetrying(_ request: Request) {

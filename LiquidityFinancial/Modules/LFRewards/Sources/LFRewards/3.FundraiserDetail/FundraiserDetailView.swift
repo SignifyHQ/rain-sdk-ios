@@ -3,7 +3,12 @@ import LFUtilities
 import LFStyleGuide
 import LFLocalizable
 
-struct FundraiserDetailView: View {
+public struct FundraiserDetailView: View {
+  public enum FundraiserDetailViewType {
+    case select
+    case view
+  }
+  
   @Environment(\.dismiss) private var dismiss
   @Environment(\.openURL) private var openUrl
   @StateObject private var viewModel: FundraiserDetailViewModel
@@ -13,13 +18,15 @@ struct FundraiserDetailView: View {
   }
   
   let destination: AnyView
+  let fundraiserDetailViewType: FundraiserDetailViewType
   
-  init(viewModel: FundraiserDetailViewModel, destination: AnyView) {
+  public init(viewModel: FundraiserDetailViewModel, destination: AnyView, fundraiserDetailViewType: FundraiserDetailViewType = .select) {
     _viewModel = .init(wrappedValue: viewModel)
     self.destination = destination
+    self.fundraiserDetailViewType = fundraiserDetailViewType
   }
   
-  var body: some View {
+  public var body: some View {
     content
       .background(ModuleColors.background.swiftUIColor)
       .navigationBarHidden(true)
@@ -41,7 +48,7 @@ struct FundraiserDetailView: View {
         }
       }
       .onAppear {
-        viewModel.apiFetchDetailFundraiser()
+        viewModel.onAppear()
       }
   }
   
@@ -74,7 +81,9 @@ struct FundraiserDetailView: View {
               .padding(.top, -20)
             }
           }
-          select
+          if fundraiserDetailViewType == .select {
+            select
+          }
         }
         .edgesIgnoringSafeArea(.bottom)
       }
@@ -267,20 +276,17 @@ extension FundraiserDetailView {
 extension FundraiserDetailView {
   private var latestDonations: some View {
     Group {
-      // TODO: implement late
-      EmptyView()
-//      if !viewModel.latestDonations.isEmpty {
-//        VStack(alignment: .leading, spacing: 10) {
-//          title("fundraiser_detail.latest_donations".localizedString)
-//            .padding(.bottom, 2)
-//
-//          ForEach(viewModel.latestDonations) { transaction in
-//            // For some reason, SwiftUI reduces the size of the texts without them being long enough to justify it.
-//            // That's why we set the minimumScaleFactor of them to 1.0
-//            //TransactionRowView(item: transaction, type: .fundraiserDonation, minimumScaleFactor: 1.0) {}
-//          }
-//        }
-//      }
+      if !viewModel.latestDonations.isEmpty {
+        VStack(alignment: .leading, spacing: 10) {
+          
+          title(LFLocalizable.FundraiserDetail.latestDonations)
+            .padding(.bottom, 2)
+          
+          ForEach(viewModel.latestDonations) { transaction in
+            RewardTransactionRow(item: transaction)
+          }
+        }
+      }
     }
   }
 }

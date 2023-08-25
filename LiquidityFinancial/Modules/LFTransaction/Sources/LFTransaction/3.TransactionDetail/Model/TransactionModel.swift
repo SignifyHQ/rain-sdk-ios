@@ -18,6 +18,23 @@ public struct TransactionModel: Identifiable {
   public var updateAt: String
   var rewards: TransactionReward?
   var receipt: TransactionReceipt?
+  
+  public init(id: String, accountId: String, title: String? = nil, description: String? = nil, amount: Double, currentBalance: Double? = nil, fee: Double? = nil, type: TransactionType, status: TransactionStatus? = nil, completedAt: String? = nil, createdAt: String, updateAt: String, rewards: TransactionReward? = nil, receipt: TransactionReceipt? = nil) {
+    self.id = id
+    self.accountId = accountId
+    self.title = title
+    self.description = description
+    self.amount = amount
+    self.currentBalance = currentBalance
+    self.fee = fee
+    self.type = type
+    self.status = status
+    self.completedAt = completedAt
+    self.createdAt = createdAt
+    self.updateAt = updateAt
+    self.rewards = rewards
+    self.receipt = receipt
+  }
 }
 
 // MARK: - View Helpers

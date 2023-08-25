@@ -1,7 +1,7 @@
 import Foundation
 
 @MainActor
-class SelectFundraiserViewModel: ObservableObject {
+public class SelectFundraiserViewModel: ObservableObject {
   let showSkipButton: Bool
   var fundraisers: [FundraiserModel] = []
   
@@ -17,7 +17,7 @@ class SelectFundraiserViewModel: ObservableObject {
   
   let causeModel: CauseModel
   
-  init(causeModel: CauseModel, fundraisers: [FundraiserModel], showSkipButton: Bool) {
+  public init(causeModel: CauseModel, fundraisers: [FundraiserModel], showSkipButton: Bool) {
     self.causeModel = causeModel
     self.fundraisers = fundraisers
     self.showSkipButton = showSkipButton

@@ -19,7 +19,7 @@ public struct APIUser: Decodable {
   public let showIdv: Bool?
   public let userRoundUpEnabled: Bool?
   public let referralLink, userRewardType, userAccessLevel: String?
-  public let userSelectedFundraiserID: String?
+  public let userSelectedFundraiserId: String?
   public let numberOfDevices: Int?
 }
 

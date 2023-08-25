@@ -4,6 +4,7 @@ import LFUtilities
 import LFLocalizable
 import LFRewards
 import LFTransaction
+import Combine
 
 struct DonationsView: View {
   @StateObject private var viewModel: DonationsViewModel
@@ -13,45 +14,55 @@ struct DonationsView: View {
   }
   
   var body: some View {
-    ScrollView(showsIndicators: false) {
-      VStack(spacing: 8) {
-        if viewModel.isLoading {
-          loading
-        } else {
-          if let fundraiser = viewModel.selectedFundraiser {
-            selectedFundraiser(fundraiser)
-          } else {
-            selectFundraiser
+    Group {
+      if viewModel.isLoading {
+        loading
+      } else {
+        ScrollView(showsIndicators: false) {
+          VStack(spacing: 8) {
+            if let fundraiser = viewModel.selectedFundraiser {
+              selectedFundraiser(fundraiser)
+            } else {
+              selectFundraiser
+            }
+            
+            segmentControl
+              .padding(.top, 12)
+            
+            feed
+            Spacer()
           }
-          
-          segmentControl
-            .padding(.top, 12)
-          
-          feed
+          .padding(.top, 16)
+          .padding(.horizontal, 30)
         }
-        
-        Spacer()
       }
-      .padding(.top, 20)
-      .padding(.horizontal, 30)
     }
     .background(Colors.background.swiftUIColor)
     .onAppear {
-      viewModel.refresh()
+      viewModel.onAppear()
     }
     .refreshable {
       viewModel.refresh()
     }
-    .sheet(item: $viewModel.sheet) { sheet in
-      switch sheet {
-      case let .transactionDetail(transaction):
-        EmptyView()
+    .onReceive(NotificationCenter.default.publisher(for: .selectedFundraisersSuccess)) { _ in
+      viewModel.navigation = nil
+    }
+    .navigationLink(item: $viewModel.navigation, destination: { navigation in
+      switch navigation {
+      case .causeCategories(let causes):
+        SelectCauseCategoriesView(
+          viewModel: SelectCauseCategoriesViewModel(causes: causes),
+          destination: AnyView(EmptyView()),
+          whereStart: .dashboard
+        )
+      }
+    })
+//    .sheet(item: $viewModel.sheet) { sheet in
+//      switch sheet {
+//      case let .transactionDetail(transaction):
 //        TransactionDetailView(transaction: transaction, type: rowType)
 //          .embedInNavigation()
-      }
-    }
-//    .navigationLink(isActive: $viewModel.isPushToSelectCauseView) {
-//      SelectCauseView()
+//      }
 //    }
   }
 }
@@ -62,10 +73,9 @@ extension DonationsView {
   private var loading: some View {
     Group {
       LottieView(loading: .primary)
-        .frame(width: 30, height: 25)
-        .padding(.top, 20)
+        .frame(width: 45, height: 30)
     }
-    .frame(maxWidth: .infinity)
+    .frame(maxWidth: .infinity, maxHeight: .infinity)
   }
   
   private var selectFundraiser: some View {
@@ -137,14 +147,14 @@ extension DonationsView {
     Group {
       switch viewModel.selectedOption {
       case .userDonations:
-        handleFeed(feed: viewModel.userDonations)
+        handleFeed(feed: viewModel.contributionData)
       case .fundraiserDonations:
-        handleFeed(feed: viewModel.fundraiserDonations)
+        handleFeed(feed: viewModel.latestDonationData)
       }
     }
   }
   
-  private func handleFeed(feed: DataStatus<TransactionModel>) -> some View {
+  private func handleFeed(feed: DataStatus<RewardTransactionRowModel>) -> some View {
     Group {
       switch feed {
       case .failure,
@@ -159,7 +169,7 @@ extension DonationsView {
     }
   }
   
-  private func transactions(items: [TransactionModel]) -> some View {
+  private func transactions(items: [RewardTransactionRowModel]) -> some View {
     Group {
       if items.isEmpty {
         EmptyListView(text: LFLocalizable.Rewards.noRewards)
@@ -167,9 +177,7 @@ extension DonationsView {
       } else {
         VStack(spacing: 10) {
           ForEach(items) { transaction in
-            TransactionRowView(item: transaction) {
-              viewModel.transactionItemTapped(transaction)
-            }
+            RewardTransactionRow(item: transaction)
           }
         }
       }

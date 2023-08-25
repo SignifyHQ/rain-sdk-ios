@@ -2,30 +2,26 @@ import Foundation
 
   // MARK: - Sticker
 
-struct StickerModel: Hashable, Identifiable {
-    /// The identifier of this sticker.
-  let id: String
+public struct StickerModel: Hashable, Identifiable {
+  public let id: String
+  public let name: String
+  public let url: URL?
+  public let count: Int?
+  public let backgroundColor: String?
+  public let charityName: String?
   
-    /// The name of the related fundraiser.
-  let name: String
-  
-    /// The url to the sticker's asset.
-  let url: URL?
-  
-    /// The count, if available, represents the amount of times the user has earned this sticker.
-  let count: Int?
-  
-    /// The background color of the related fundraiser.
-  let backgroundColor: String?
-  
-    /// The name of the related charity.
-  let charityName: String?
+  public init(id: String, name: String, url: URL?, count: Int?, backgroundColor: String?, charityName: String?) {
+    self.id = id
+    self.name = name
+    self.url = url
+    self.count = count
+    self.backgroundColor = backgroundColor
+    self.charityName = charityName
+  }
 }
 
-  // MARK: Codable
-
 extension StickerModel: Codable {
-  init(from decoder: Decoder) throws {
+  public init(from decoder: Decoder) throws {
     let container = try decoder.container(keyedBy: CodingKeys.self)
     id = try container.decode(String.self, forKey: .id)
     name = try container.decode(String.self, forKey: .name)

@@ -47,4 +47,12 @@ public class RewardRepository: RewardRepositoryProtocol {
   public func getCategoriesTrending() async throws -> CategoriesFundraisersListEntity {
     return try await self.rewardAPI.getCategoriesTrending()
   }
+  
+  public func postDonationsSuggest(name: String) async throws -> Bool {
+    return try await self.rewardAPI.postDonationsSuggest(name: name)
+  }
+  
+  public func getUserDonationSummary() async throws -> any UserDonationSummaryEntity {
+    return try await self.rewardAPI.getUserDonationSummary()
+  }
 }

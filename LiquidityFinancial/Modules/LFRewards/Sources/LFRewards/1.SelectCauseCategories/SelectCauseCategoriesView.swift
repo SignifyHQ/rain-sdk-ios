@@ -3,24 +3,28 @@ import LFStyleGuide
 import LFUtilities
 import LFLocalizable
 
-struct SelectCauseCategoriesView: View {
+public struct SelectCauseCategoriesView: View {
   
   @StateObject private var viewModel: SelectCauseCategoriesViewModel
   
   let destination: AnyView
-  init(viewModel: SelectCauseCategoriesViewModel, destination: AnyView) {
+  let whereStart: RewardWhereStart
+  public init(viewModel: SelectCauseCategoriesViewModel, destination: AnyView, whereStart: RewardWhereStart = .onboarding) {
     _viewModel = .init(wrappedValue: viewModel)
     self.destination = destination
+    self.whereStart = whereStart
   }
   
-  var body: some View {
+  public var body: some View {
     content
       .scrollOnOverflow()
       .background(ModuleColors.background.swiftUIColor)
       .toolbar {
         ToolbarItem(placement: .navigationBarTrailing) {
-          SkipFundraiserView {
-            viewModel.navigation = .agreement
+          if whereStart == .onboarding {
+            SkipFundraiserView {
+              viewModel.navigation = .agreement
+            }
           }
         }
       }
@@ -32,7 +36,8 @@ struct SelectCauseCategoriesView: View {
               causeModel: cause,
               fundraisers: fundraisers,
               showSkipButton: false),
-            destination: destination
+            destination: destination,
+            whereStart: whereStart
           )
         case .agreement:
           destination
@@ -54,7 +59,7 @@ struct SelectCauseCategoriesView: View {
       Spacer()
       bottom
     }
-    .padding(.top, 20)
+    .padding(.top, 8)
   }
   
   private var title: some View {
@@ -68,7 +73,8 @@ struct SelectCauseCategoriesView: View {
         .font(Fonts.regular.swiftUIFont(size: 16))
         .foregroundColor(ModuleColors.label.swiftUIColor.opacity(0.75))
     }
-    .padding(.horizontal, 30)
+    .padding(.horizontal, 18)
+    .padding(.bottom, 8)
   }
   
   private var grid: some View {

@@ -2,6 +2,8 @@ import Foundation
 import Factory
 import LFUtilities
 import AuthorizationManager
+import RewardData
+import RewardDomain
 
 @MainActor
 final class ProfileViewModel: ObservableObject {
@@ -17,7 +19,13 @@ final class ProfileViewModel: ObservableObject {
   @LazyInjected(\.accountDataManager) var accountDataManager
   @LazyInjected(\.accountRepository) var accountRepository
   @LazyInjected(\.authorizationManager) var authorizationManager
+  @LazyInjected(\.rewardDataManager) var rewardDataManager
+  @LazyInjected(\.rewardRepository) var rewardRepository
 
+  lazy var rewardUseCase: RewardUseCase = {
+    RewardUseCase(repository: rewardRepository)
+  }()
+  
   var name: String {
     accountDataManager.userInfomationData.fullName ?? ""
   }
@@ -27,14 +35,14 @@ final class ProfileViewModel: ObservableObject {
   }
 
   var totalDonations: String {
-    guard let totalDonations = contribution?.totalDonations else {
+    guard let totalDonations = contribution?.donationCount else {
       return Constants.Default.undefinedSymbol.rawValue
     }
     return String(totalDonations)
   }
 
   var totalDonated: String {
-    contribution?.totalAmount.formattedAmount(prefix: Constants.CurrencyUnit.usd.rawValue) ?? Constants.Default.undefinedSymbol.rawValue
+    Double(contribution?.donationAmount ?? 0).formattedAmount(prefix: Constants.CurrencyUnit.usd.rawValue)
   }
 
   var stickers: [Sticker] {
@@ -55,9 +63,6 @@ final class ProfileViewModel: ObservableObject {
   }
 
   var showStickers: Bool {
-    guard LFUtility.charityEnabled else {
-      return false
-    }
     return isLoadingContribution || !stickers.isEmpty
   }
   
@@ -133,7 +138,14 @@ extension ProfileViewModel {
 
 extension ProfileViewModel {
   private func loadContribution() async {
-    // TODO: Will be implemented later
+    do {
+      defer { isLoadingContribution = false }
+      isLoadingContribution = true
+      let entity = try await rewardUseCase.getUserDonationSummary()
+      self.contribution = Contribution(entity: entity)
+    } catch {
+      log.error(error.localizedDescription)
+    }
   }
   
   func checkNotificationsStatus() {

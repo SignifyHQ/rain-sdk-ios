@@ -8,7 +8,7 @@ import AccountDomain
 import Factory
 
 @MainActor
-class CashbackViewModel: ObservableObject {
+class RewardViewModel: ObservableObject {
   @LazyInjected(\.accountDataManager) var accountDataManager
   @LazyInjected(\.accountRepository) var accountRepository
   
@@ -32,7 +32,7 @@ class CashbackViewModel: ObservableObject {
 
   // MARK: - Actions
 
-extension CashbackViewModel {
+extension RewardViewModel {
   func refresh() {
     apiFetchCryptoAccount()
   }
@@ -48,7 +48,7 @@ extension CashbackViewModel {
 
   // MARK: - API logic
 
-extension CashbackViewModel {
+extension RewardViewModel {
   private func subscribeToUserTransactionNotifications() {
     
   }
@@ -87,7 +87,7 @@ extension CashbackViewModel {
 
   // MARK: - Types
 
-extension CashbackViewModel {
+extension RewardViewModel {
   enum Navigation {
     case transactions
   }

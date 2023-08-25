@@ -8,11 +8,10 @@ import LFUtilities
 import LFLocalizable
 
 @MainActor
-class FundraiserDetailViewModel: ObservableObject {
+public class FundraiserDetailViewModel: ObservableObject {
   @LazyInjected(\.rewardRepository) var rewardRepository
   @LazyInjected(\.rewardDataManager) var rewardDataManager
   
-//  @Published var latestDonations: [TransactionModel] = []
   @Published var isGeocodingAddress = false
   @Published var isSelecting = false
   @Published var isLoading = false
@@ -24,24 +23,38 @@ class FundraiserDetailViewModel: ObservableObject {
     RewardUseCase(repository: rewardRepository)
   }()
   
-  var fundraiserID: String {
-    fundraiser.id
+  var latestDonations: [RewardTransactionRowModel] {
+    let latestDonations = fundraiserDetail?.latestDonations ?? []
+    return latestDonations.compactMap({ RewardTransactionRowModel(latestDonation: $0) })
   }
   
-  let fundraiser: FundraiserModel
+  var fundraiserID: String
+  let whereStart: RewardWhereStart
   
-  init(fundraiser: FundraiserModel) {
-    self.fundraiser = fundraiser
+  public init(fundraiserID: String, whereStart: RewardWhereStart = .onboarding) {
+    self.fundraiserID = fundraiserID
+    self.whereStart = whereStart
+  }
+  
+  public init(fundraiserDetail: FundraiserDetailModel, whereStart: RewardWhereStart = .onboarding) {
+    self.fundraiserDetail = fundraiserDetail
+    self.whereStart = whereStart
+    self.fundraiserID = ""
+  }
+  
+  func onAppear() {
+    apiFetchDetailFundraiser()
   }
   
   func apiFetchDetailFundraiser() {
-    guard fundraiserDetail == nil else { return }
+    guard fundraiserDetail == nil, !fundraiserID.isEmpty else { return }
     Task {
       defer { isLoading = false }
       isLoading = true
       do {
         let enity = try await rewardUseCase.getFundraisersDetail(fundraiserID: fundraiserID)
         fundraiserDetail = FundraiserDetailModel(enity: enity)
+        rewardDataManager.update(fundraisersDetail: enity)
       } catch {
         log.error(error.localizedDescription)
       }
@@ -58,7 +71,9 @@ class FundraiserDetailViewModel: ObservableObject {
             "fundraiserId": fundraiserID
           ]
         ]
-        _ = try await rewardUseCase.selectFundraiser(body: body)
+        let entity = try await rewardUseCase.selectFundraiser(body: body)
+        rewardDataManager.update(selectedFundraiserID: entity.userSelectedFundraiserId ?? "")
+        
         let message = LFLocalizable.FundraiserSelection.allowedBeforeAccountCreation(fundraiserDetail?.name ?? "")
         popup = .selectSuccess(message)
       } catch {
@@ -106,11 +121,12 @@ class FundraiserDetailViewModel: ObservableObject {
   
   func selectSuccessPrimary() {
     dismissPopup()
-    navigation = .agreement
-  }
-  
-  private func loadLatestDonations() {
-
+    switch whereStart {
+    case .dashboard:
+      NotificationCenter.default.post(name: .selectedFundraisersSuccess, object: nil)
+    case .onboarding:
+      navigation = .agreement
+    }
   }
 }
 

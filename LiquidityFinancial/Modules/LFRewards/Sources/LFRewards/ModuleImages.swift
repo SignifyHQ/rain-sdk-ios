@@ -35,10 +35,14 @@ internal enum ModuleImages {
     internal static let roundUpsCycle = ImageAsset(name: "roundUpsCycle")
   }
   internal enum Share {
+    internal static let icEmail = ImageAsset(name: "ic_email")
+    internal static let icFacebook = ImageAsset(name: "ic_facebook")
+    internal static let icInstagram = ImageAsset(name: "ic_instagram")
+    internal static let icShareLink = ImageAsset(name: "ic_shareLink")
+    internal static let icTwitter = ImageAsset(name: "ic_twitter")
     internal static let shareEmail = ImageAsset(name: "shareEmail")
     internal static let shareFacebook = ImageAsset(name: "shareFacebook")
     internal static let shareInstagram = ImageAsset(name: "shareInstagram")
-    internal static let shareLink = ImageAsset(name: "shareLink")
     internal static let shareMessages = ImageAsset(name: "shareMessages")
     internal static let shareSnapchat = ImageAsset(name: "shareSnapchat")
     internal static let shareTikTok = ImageAsset(name: "shareTikTok")

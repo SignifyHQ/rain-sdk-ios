@@ -1,13 +1,20 @@
 import SwiftUI
 import Factory
+import AccountData
+import AccountDomain
 
 @MainActor
 final class ReferralsViewModel: ObservableObject {
   @LazyInjected(\.accountDataManager) var accountDataManager
+  @LazyInjected(\.accountRepository) var accountRepository
 
   @Published var status = Status.loading
   @Published var showShareSheet = false
   @Published var showCopyToast = false
+  
+  lazy var accountUseCase: AccountUseCase = {
+    return AccountUseCase(repository: accountRepository)
+  }()
   
   private var referralLink = ""
 
@@ -17,6 +24,7 @@ final class ReferralsViewModel: ObservableObject {
 
 // MARK: - API
 extension ReferralsViewModel {
+  //TODO: Tony implement late
   private func fetchCampaigns() {
     let userData = accountDataManager.userInfomationData
     status = .loading

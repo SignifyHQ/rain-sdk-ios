@@ -5,10 +5,10 @@ import LFLocalizable
 import LFTransaction
 import LFRewards
 
-struct CashbackView: View {
-  @StateObject private var viewModel: CashbackViewModel
+struct RewardsView: View {
+  @StateObject private var viewModel: RewardViewModel
   
-  init(viewModel: CashbackViewModel) {
+  init(viewModel: RewardViewModel) {
     _viewModel = StateObject(wrappedValue: viewModel)
   }
   
@@ -141,7 +141,7 @@ struct CashbackView: View {
 
 struct CashbackView_Previews: PreviewProvider {
   static var previews: some View {
-    CashbackView(viewModel: .init())
+    RewardsView(viewModel: .init())
       .embedInNavigation()
   }
 }

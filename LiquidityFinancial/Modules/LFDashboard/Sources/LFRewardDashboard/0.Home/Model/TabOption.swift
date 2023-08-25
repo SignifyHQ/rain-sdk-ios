@@ -20,7 +20,7 @@ public enum TabOption: Int, CaseIterable, Hashable {
     case .donation:
       return LFLocalizable.Home.DonationTab.title
     case .causes:
-      return LFLocalizable.Home.CashTab.title
+      return LFLocalizable.Home.CauseTab.title
     case .account:
       return LFLocalizable.Home.AccountTab.title
     }

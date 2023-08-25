@@ -2,6 +2,7 @@ import Foundation
 import RewardData
 import RewardDomain
 import NetworkUtilities
+import LFStyleGuide
 
 // MARK: - Fundraiser
 public typealias LFCharityModel = FundraiserDetailModel.Charity
@@ -52,8 +53,8 @@ public struct FundraiserDetailModel: Equatable, Identifiable {
     currentDonatedCount ?? 0
   }
   
-  public var description: String? {
-    fundraiser?.description
+  public var description: String {
+    fundraiser?.description ?? "unknown"
   }
   
   public var twitterUrl: URL? {
@@ -73,7 +74,8 @@ public struct FundraiserDetailModel: Equatable, Identifiable {
   }
   
   public var charityNavigatorUrl: URL? {
-    URL(string: charity?.charityNavigatorUrl ?? "unknown")
+    guard let charityNavigatorUrl = charity?.charityNavigatorUrl, let ein = charity?.ein else { return nil }
+    return URL(string: "\(charityNavigatorUrl)/ein/\(ein)")
   }
   
     // MARK: - Charity
@@ -139,19 +141,37 @@ public struct FundraiserDetailModel: Equatable, Identifiable {
   }
   
     // MARK: - LatestDonation
-  public struct LatestDonation {
-    public let id, fundraiserId, userId, userName: String?
+  public struct LatestDonation: Identifiable, Equatable {
+    public let id: String
+    public let fundraiserId, userId, userName: String?
     public let amount: Double?
     public let createdAt: String?
     
     public init?(enity: (any LatestDonationEnity)?) {
       guard let enity = enity else { return nil }
-      self.id = enity.id
+      self.id = enity.id ?? UUID().uuidString
       self.fundraiserId = enity.fundraiserId
       self.userId = enity.userId
       self.userName = enity.userName
       self.amount = enity.amount
       self.createdAt = enity.createdAt
+    }
+    
+    public var assetName: String {
+      GenImages.Images.Transactions.txDonation.name
+    }
+    public var titleDisplay: String {
+      userName ?? ""
+    }
+    public var subtitle: String {
+      transactionDateInLocalZone()
+    }
+    public var ammountFormatted: String {
+      amount?.formattedAmount(minFractionDigits: 3, maxFractionDigits: 3) ?? "$0"
+    }
+    
+    func transactionDateInLocalZone(includeYear: Bool = false) -> String {
+      createdAt?.serverToTransactionDisplay(includeYear: includeYear) ?? ""
     }
   }
   

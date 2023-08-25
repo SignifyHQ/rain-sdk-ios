@@ -23,10 +23,14 @@ struct FundraiserHeaderView: View {
         showDetails = true
       }
       .navigationLink(isActive: $showDetails) {
-//        FundraiserDetailView(viewModel: .init(fundraiser: fundraiser, selection: selection))
+        FundraiserDetailView(
+          viewModel: FundraiserDetailViewModel(fundraiserDetail: fundraiser, whereStart: .dashboard),
+          destination: AnyView(EmptyView()),
+          fundraiserDetailViewType: .view
+        )
       }
       .sheet(isPresented: $showShare) {
-//        ShareView(viewModel: .init(data: .build(from: fundraiser)))
+        ShareView(viewModel: .init(data: .build(from: fundraiser)))
       }
   }
   
@@ -55,7 +59,7 @@ struct FundraiserHeaderView: View {
   }
   
   private var stickerImage: some View {
-    CachedAsyncImage(url: URL(string: "fundraiser.sticker.url")) { image in
+    CachedAsyncImage(url: fundraiser.stickerUrl) { image in
       image
         .resizable()
         .scaledToFill()
@@ -75,13 +79,13 @@ struct FundraiserHeaderView: View {
   
   private var nameDescription: some View {
     VStack(alignment: .leading, spacing: 8) {
-      Text(fundraiser.name ?? "")
+      Text(fundraiser.name)
         .multilineTextAlignment(.leading)
         .font(Fonts.bold.swiftUIFont(size: 14))
         .foregroundColor(Colors.label.swiftUIColor)
         .lineLimit(2)
         .layoutPriority(1)
-      Text(fundraiser.description ?? "")
+      Text(fundraiser.description)
         .multilineTextAlignment(.leading)
         .font(Fonts.regular.swiftUIFont(size: 12))
         .foregroundColor(Colors.label.swiftUIColor.opacity(0.75))

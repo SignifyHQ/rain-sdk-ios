@@ -5,7 +5,7 @@ import Factory
 import LFUtilities
 
 @MainActor
-class SelectCauseCategoriesViewModel: ObservableObject {
+public class SelectCauseCategoriesViewModel: ObservableObject {
   private var total: Int = 0
   private var offset = 0
   private var limit = 100
@@ -28,7 +28,7 @@ class SelectCauseCategoriesViewModel: ObservableObject {
     !selected.isEmpty
   }
   
-  init(causes: [CauseModel]) {
+  public init(causes: [CauseModel]) {
     self.causes = causes
   }
   

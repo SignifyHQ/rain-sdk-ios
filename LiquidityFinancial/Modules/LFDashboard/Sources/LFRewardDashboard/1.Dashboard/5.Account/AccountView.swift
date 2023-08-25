@@ -27,6 +27,10 @@ struct AccountsView: View {
           BankStatementView()
         }
       }
+      .sheet(isPresented: $viewModel.openLegal) {
+        WebView(url: URL(string: LFUtility.termsURL)!)
+          .ignoresSafeArea()
+      }
       .background(Colors.background.swiftUIColor)
       .onAppear {
         viewModel.onAppear()
@@ -130,13 +134,6 @@ private extension AccountsView {
   var shortcutSection: some View {
     VStack {
       ArrowButton(
-        image: GenImages.CommonImages.icRewards.swiftUIImage,
-        title: LFLocalizable.AccountView.rewards,
-        value: nil
-      ) {
-        // TODO: Will do later
-      }
-      ArrowButton(
         image: GenImages.CommonImages.Accounts.atm.swiftUIImage,
         title: LFLocalizable.AccountView.atm,
         value: nil,
@@ -152,25 +149,18 @@ private extension AccountsView {
         viewModel.bankStatementTapped()
       }
       ArrowButton(
-        image: GenImages.CommonImages.Accounts.tax.swiftUIImage,
-        title: LFLocalizable.AccountView.taxes,
-        value: nil
-      ) {
-        // TODO: Will do later
-      }
-      ArrowButton(
         image: GenImages.CommonImages.Accounts.help.swiftUIImage,
         title: LFLocalizable.AccountView.helpSupport,
         value: nil
       ) {
-        // TODO: Will do later
+        viewModel.openIntercomService()
       }
       ArrowButton(
         image: GenImages.CommonImages.Accounts.legal.swiftUIImage,
         title: LFLocalizable.AccountView.legal,
         value: nil
       ) {
-        // TODO: Will do later
+        viewModel.openLegal.toggle()
       }
       ArrowButton(
         image: GenImages.CommonImages.personAndBackgroundDotted.swiftUIImage,

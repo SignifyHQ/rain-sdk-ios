@@ -3,16 +3,18 @@ import LFUtilities
 import LFStyleGuide
 import LFLocalizable
 
-struct SelectFundraiserView: View {
+public struct SelectFundraiserView: View {
   @StateObject private var viewModel: SelectFundraiserViewModel
 
   let destination: AnyView
-  init(viewModel: SelectFundraiserViewModel, destination: AnyView) {
+  let whereStart: RewardWhereStart
+  public init(viewModel: SelectFundraiserViewModel, destination: AnyView, whereStart: RewardWhereStart = .onboarding) {
     _viewModel = .init(wrappedValue: viewModel)
     self.destination = destination
+    self.whereStart = whereStart
   }
 
-  var body: some View {
+  public var body: some View {
     content
       .background(ModuleColors.background.swiftUIColor)
       .toolbar {
@@ -48,7 +50,7 @@ struct SelectFundraiserView: View {
       .frame(maxWidth: .infinity)
     }
     .padding(.horizontal, 30)
-    .padding(.top, 20)
+    .padding(.top, 12)
   }
 
   private var title: some View {
@@ -71,7 +73,7 @@ struct SelectFundraiserView: View {
 
   private func item(fundraiser: FundraiserModel) -> some View {
     VStack(spacing: 16) {
-      FundraiserItemView(fundraiser: fundraiser, destination: destination)
+      FundraiserItemView(fundraiser: fundraiser, destination: destination, whereStart: whereStart)
     }
     .background(ModuleColors.secondaryBackground.swiftUIColor)
     .cornerRadius(10)

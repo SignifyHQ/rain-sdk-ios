@@ -20,7 +20,7 @@ struct StickerView: View {
   }
   
   private var image: some View {
-    CachedAsyncImage(url: sticker.url) { image in
+    CachedAsyncImage(url: sticker.stickerUrl) { image in
       image
         .resizable()
         .scaledToFill()
@@ -29,12 +29,12 @@ struct StickerView: View {
       StickerPlaceholderView()
     }
     .frame(type == .profile ? 80 : 140)
-    .padding(.top, sticker.count == nil ? 0 : type.imageTopPadding)
+    .padding(.top, sticker.donationCount == nil ? 0 : type.imageTopPadding)
   }
   
   private var counter: some View {
     Group {
-      if let count = sticker.count {
+      if let count = sticker.donationCount {
         ZStack {
           Circle()
             .strokeBorder(Colors.background.swiftUIColor, lineWidth: type == .profile ? 2 : 4)

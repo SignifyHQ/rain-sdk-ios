@@ -217,8 +217,8 @@ public enum LFLocalizable {
     }
   }
   public enum AccountView {
-    /// Free ATMs
-    public static let atm = LFLocalizable.tr("Localizable", "accountView.atm", fallback: "Free ATMs")
+    /// ATM’s Nearby
+    public static let atm = LFLocalizable.tr("Localizable", "accountView.atm", fallback: "ATM’s Nearby")
     /// ATM Locations
     public static let atmLocationTitle = LFLocalizable.tr("Localizable", "accountView.atm_location_title", fallback: "ATM Locations")
     /// Bank statements

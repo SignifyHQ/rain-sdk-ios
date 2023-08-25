@@ -3,7 +3,7 @@ import SwiftUI
 import LFLocalizable
 import LFUtilities
 
-struct ShareItemData {
+public struct ShareItemData {
     /// The content of the card that is displayed on the `ShareView` and sometimes even shared to the third party app.
   var card: ShareDonationData
   
@@ -67,7 +67,7 @@ extension ShareItemData {
 }
 
 extension ShareItemData {
-  static func build(from fundraiserDetail: FundraiserDetailModel, donation: Double? = nil) -> Self {
+  public static func build(from fundraiserDetail: FundraiserDetailModel, donation: Double? = nil) -> Self {
     .init(
       card: .init(fundraiserDetail: fundraiserDetail, donation: donation),
       message: String(format: LFLocalizable.Cause.Share.Card.fundraiser(fundraiserDetail.name)),
@@ -76,7 +76,7 @@ extension ShareItemData {
     )
   }
   
-  static func build(sticker: StickerModel) -> Self {
+  public static func build(sticker: StickerModel) -> Self {
     .init(
       card: .init(
         title: sticker.name,

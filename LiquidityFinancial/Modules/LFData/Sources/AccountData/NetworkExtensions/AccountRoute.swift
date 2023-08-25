@@ -15,6 +15,7 @@ public enum AccountRoute {
   case updateWalletAddress(accountId: String, walletId: String, walletAddress: String, nickname: String)
   case getWalletAddresses(accountId: String)
   case deleteWalletAddresses(accountId: String, walletAddress: String)
+  case getReferralCampaign
 }
 
 extension AccountRoute: LFRoute {
@@ -39,6 +40,8 @@ extension AccountRoute: LFRoute {
       return "v1/accounts/\(accountId)/wallet-addresses/\(walletAddress)"
     case let .deleteWalletAddresses(accountId, walletAddress):
       return "v1/accounts/\(accountId)/wallet-addresses/\(walletAddress)"
+    case .getReferralCampaign:
+      return "/v1/app/referral-campaign"
     }
   }
   
@@ -46,7 +49,7 @@ extension AccountRoute: LFRoute {
     switch self {
     case .createZeroHashAccount, .logout, .createWalletAddress:
       return .POST
-    case .getUser, .getAccount, .getTransactions, .getTransactionDetail, .getWalletAddresses:
+    case .getUser, .getAccount, .getTransactions, .getTransactionDetail, .getWalletAddresses, .getReferralCampaign:
       return .GET
     case .updateWalletAddress:
       return .PATCH
@@ -88,6 +91,8 @@ extension AccountRoute: LFRoute {
         "nickname": nickname,
         "walletId": walletId
       ]
+    case .getReferralCampaign:
+      return nil
     }
   }
   
@@ -97,7 +102,7 @@ extension AccountRoute: LFRoute {
       return .json
     case .createZeroHashAccount, .getUser, .logout, .getWalletAddresses, .deleteWalletAddresses:
       return nil
-    case .getAccount, .getTransactions, .getTransactionDetail:
+    case .getAccount, .getTransactions, .getTransactionDetail, .getReferralCampaign:
       return .url
     }
   }

@@ -20,4 +20,8 @@ public final class AccountUseCase: AccountUseCaseProtocol {
   public func logout() async throws -> Bool {
     return try await repository.logout()
   }
+  
+  public func getReferralCampaign() async throws -> ReferralCampaignEntity {
+    return try await repository.getReferralCampaign()
+  }
 }

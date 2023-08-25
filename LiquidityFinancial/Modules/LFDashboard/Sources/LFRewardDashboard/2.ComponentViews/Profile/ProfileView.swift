@@ -103,11 +103,9 @@ private extension ProfileView {
   
   var donationsInvites: some View {
     VStack(spacing: 10) {
-      if viewModel.showContribution {
-        HStack(spacing: 10) {
-          contributionItem(value: viewModel.totalDonations, title: LFLocalizable.Profile.TotalDonations.title)
-          contributionItem(value: viewModel.totalDonated, title: LFLocalizable.Profile.TotalDonated.title)
-        }
+      HStack(spacing: 10) {
+        contributionItem(value: viewModel.totalDonations, title: LFLocalizable.Profile.TotalDonations.title)
+        contributionItem(value: viewModel.totalDonated, title: LFLocalizable.Profile.TotalDonated.title)
       }
       ArrowButton(
         image: GenImages.CommonImages.icShareWithFriend.swiftUIImage,
@@ -205,7 +203,7 @@ private extension ProfileView {
         ArrowButton(image: GenImages.CommonImages.icQuestion.swiftUIImage, title: LFLocalizable.Profile.Help.title, value: nil) {
           viewModel.helpTapped()
         }
-        if !viewModel.isNotificationsEnabled {
+        if viewModel.isNotificationsEnabled {
           ArrowButton(image: GenImages.CommonImages.icNotification.swiftUIImage, title: LFLocalizable.Profile.Notifications.title, value: nil) {
             viewModel.notificationsTapped()
           }

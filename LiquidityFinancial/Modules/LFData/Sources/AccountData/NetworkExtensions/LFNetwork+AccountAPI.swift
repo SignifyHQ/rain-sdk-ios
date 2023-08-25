@@ -78,4 +78,13 @@ extension LFCoreNetwork: AccountAPIProtocol where R == AccountRoute {
     let statusCode = result.httpResponse?.statusCode ?? 500
     return APIDeleteWalletResponse(success: statusCode.isSuccess)
   }
+  
+  public func getReferralCampaign() async throws -> APIReferralCampaign {
+    return try await request(
+      AccountRoute.getReferralCampaign,
+      target: APIReferralCampaign.self,
+      failure: LFErrorObject.self,
+      decoder: .apiDecoder
+    )
+  }
 }

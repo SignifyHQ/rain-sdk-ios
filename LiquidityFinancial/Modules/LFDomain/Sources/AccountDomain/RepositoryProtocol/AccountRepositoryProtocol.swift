@@ -14,4 +14,5 @@ public protocol AccountRepositoryProtocol {
   func updateWalletAddresses(accountId: String, walletId: String, walletAddress: String, nickname: String) async throws -> WalletAddressEntity
   func getWalletAddresses(accountId: String) async throws -> [WalletAddressEntity]
   func deleteWalletAddresses(accountId: String, walletAddress: String) async throws -> DeleteWalletEntity
+  func getReferralCampaign() async throws -> ReferralCampaignEntity
 }

@@ -20,6 +20,7 @@ class AccountViewModel: ObservableObject {
   @Published var isDisableView: Bool = false
   @Published var isLoadingACH: Bool = false
   @Published var isLoading: Bool = false
+  @Published var openLegal = false
   @Published var netspendController: NetspendSdkViewController?
   @Published var toastMessage: String?
   @Published var linkedAccount: [APILinkedSourceData] = []
@@ -46,6 +47,10 @@ extension AccountViewModel {
   
   func bankStatementTapped() {
     navigation = .bankStatement
+  }
+  
+  func openIntercomService() {
+    intercomService.openIntercom()
   }
 }
 

@@ -5,8 +5,7 @@ import RewardData
 import RewardDomain
 import LFUtilities
 import LFLocalizable
-
-// swiftlint:disable force_unwrapping
+import Combine
 
 @MainActor
 class CausesViewModel: ObservableObject {
@@ -19,10 +18,12 @@ class CausesViewModel: ObservableObject {
   @Published var categoriesTrending: [CategoriesTrendingModel] = []
   @Published var navigation: Navigation?
   @Published var showError = false
-  @Published var isLoading = false
+  @Published var isLoadingFundraisers: CauseModel?
   
   @LazyInjected(\.rewardRepository) var rewardRepository
   @LazyInjected(\.rewardDataManager) var rewardDataManager
+  
+  private var subscribers: Set<AnyCancellable> = []
   
   lazy var rewardUseCase: RewardUseCase = {
     RewardUseCase(repository: rewardRepository)
@@ -31,27 +32,28 @@ class CausesViewModel: ObservableObject {
   let tabRedirection: TabRedirection
   init(tabRedirection: @escaping TabRedirection) {
     self.tabRedirection = tabRedirection
+    handleSelectedFundraisersSuccess()
   }
   
   func appearOpeations() {
     switch status {
     case .idle:
-      loadData()
+      apiFetchCategories()
     default:
       break
     }
   }
   
   func retryTapped() {
-    loadData()
+    apiFetchCategories()
   }
   
   func selected(fundraiser: CategoriesTrendingModel) {
-    
+    self.navigation = .fundraiserDetail(fundraiser.id ?? "")
   }
   
   func selected(cause: CauseModel) {
-    
+    apiFetchCategoriesFundraisers(cause: cause)
   }
   
   func getCauseName(from id: String) -> String? {
@@ -63,10 +65,18 @@ class CausesViewModel: ObservableObject {
   // MARK: - API logic
 
 extension CausesViewModel {
-  private func loadData() {
+  private func handleSelectedFundraisersSuccess() {
+    NotificationCenter.default.publisher(for: .selectedFundraisersSuccess)
+      .receive(on: DispatchQueue.main)
+      .sink { [weak self] _ in
+        guard self?.rewardDataManager.fundraisersDetail != nil else { return }
+        self?.navigation = nil
+      }
+      .store(in: &subscribers)
+  }
+  
+  private func apiFetchCategories() {
     Task {
-      defer { isLoading = false }
-      isLoading = true
       status = .loading
       do {
         let categories = try await rewardUseCase.getDonationCategories(limit: limit, offset: offset)
@@ -88,9 +98,20 @@ extension CausesViewModel {
     }
   }
   
-  private func onFundraiserSelected() {
-    navigation = nil
-    tabRedirection(.rewards)
+  private func apiFetchCategoriesFundraisers(cause: CauseModel) {
+    Task {
+      defer { isLoadingFundraisers = nil }
+      isLoadingFundraisers = cause
+      do {
+        let fundraisers = try await rewardUseCase.getCategoriesFundraisers(categoryID: cause.id, limit: limit, offset: offset)
+        let fundraiserModels = fundraisers.data.compactMap({ FundraiserModel(fundraiserData: $0) })
+        rewardDataManager.update(fundraisers: fundraisers)
+        navigation = .selectFundraiser(cause, fundraiserModels)
+      } catch {
+        log.error(error.localizedDescription)
+        showError = true
+      }
+    }
   }
 }
 
@@ -111,5 +132,6 @@ extension CausesViewModel {
   
   enum Navigation {
     case selectFundraiser(CauseModel, [FundraiserModel])
+    case fundraiserDetail(String)
   }
 }

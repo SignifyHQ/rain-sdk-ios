@@ -137,6 +137,9 @@ extension VerificationCodeViewModel {
     if let rewardType = APIRewardType(rawValue: user.userRewardType ?? "") {
       rewardDataManager.update(currentSelectReward: rewardType)
     }
+    if let userSelectedFundraiserID = user.userSelectedFundraiserId {
+      rewardDataManager.update(selectedFundraiserID: userSelectedFundraiserID)
+    }
   }
   
   @MainActor

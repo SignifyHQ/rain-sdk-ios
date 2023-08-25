@@ -21,6 +21,7 @@ struct SuggestCauseButton: View {
   // MARK: - SuggestCauseView
 
 struct SuggestCauseView: View {
+
   var body: some View {
     content
       .toolbar {
@@ -32,7 +33,7 @@ struct SuggestCauseView: View {
           }
         }
       }
-      .popup(isPresented: $showSuccess, dismissMethods: []) {
+      .popup(isPresented: $viewModel.showSuccess, dismissMethods: []) {
         successPopup
       }
       .embedInNavigation()
@@ -40,10 +41,10 @@ struct SuggestCauseView: View {
   
   @Environment(\.dismiss) private var dismiss
   @State private var input = ""
-  @State private var isLoading = false
-  @State private var showSuccess = false
   @FocusState private var keyboardFocus: Bool
   
+  @StateObject var viewModel = SuggestCauseViewModel()
+
   private var content: some View {
     VStack(alignment: .leading, spacing: 15) {
       Text(LFLocalizable.SuggestCause.title.uppercased())
@@ -99,22 +100,13 @@ struct SuggestCauseView: View {
   }
   
   private var submit: some View {
-    FullSizeButton(title: LFLocalizable.SuggestCause.submit, isDisable: isSubmitEnabled, isLoading: $isLoading) {
-      submitAction()
+    FullSizeButton(title: LFLocalizable.SuggestCause.submit, isDisable: !isSubmitEnabled, isLoading: $viewModel.isLoading) {
+      viewModel.submitCause(name: input)
     }
   }
   
   private var isSubmitEnabled: Bool {
     input.count > 5
-  }
-  
-  private func submitAction() {
-    isLoading = true
-      // Simulate request until API is ready
-    DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
-      showSuccess = true
-      isLoading = false
-    }
   }
   
   private var successPopup: some View {
@@ -127,7 +119,7 @@ struct SuggestCauseView: View {
   }
   
   private func dismissPopup() {
-    showSuccess = false
+    viewModel.showSuccess = false
     dismiss()
   }
 }

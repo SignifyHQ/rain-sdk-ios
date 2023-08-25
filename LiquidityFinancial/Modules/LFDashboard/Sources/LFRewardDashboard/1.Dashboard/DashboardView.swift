@@ -20,7 +20,7 @@ struct DashboardView: View {
           viewModel.handleGuestUser()
         }
       case .rewards:
-        CashbackView(viewModel: .init())
+        RewardsView(viewModel: .init())
       case .donation:
         let viewModel = DonationsViewModel(tabRedirection: { tabOption in
           log.debug(tabOption)

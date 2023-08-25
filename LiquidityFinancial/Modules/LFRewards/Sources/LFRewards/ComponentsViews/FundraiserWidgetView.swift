@@ -49,11 +49,9 @@ struct FundraiserWidgetView: View {
           .font(Fonts.regular.swiftUIFont(size: 18))
           .foregroundColor(ModuleColors.label.swiftUIColor)
         
-        if let description = fundraiser.description {
-          Text(description)
-            .font(Fonts.regular.swiftUIFont(size: 14))
-            .foregroundColor(ModuleColors.label.swiftUIColor.opacity(0.75))
-        }
+        Text(fundraiser.description)
+          .font(Fonts.regular.swiftUIFont(size: 14))
+          .foregroundColor(ModuleColors.label.swiftUIColor.opacity(0.75))
       }
       .multilineTextAlignment(.center)
       

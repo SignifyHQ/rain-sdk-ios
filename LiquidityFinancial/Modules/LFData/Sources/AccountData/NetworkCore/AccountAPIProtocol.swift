@@ -15,4 +15,5 @@ public protocol AccountAPIProtocol {
   func updateWalletAddresses(accountId: String, walletId: String, walletAddress: String, nickname: String) async throws -> APIWalletAddress
   func getWalletAddresses(accountId: String) async throws -> [APIWalletAddress]
   func deleteWalletAddresses(accountId: String, walletAddress: String) async throws -> APIDeleteWalletResponse
+  func getReferralCampaign() async throws -> APIReferralCampaign
 }

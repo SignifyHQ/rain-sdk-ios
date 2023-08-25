@@ -465,7 +465,7 @@ https://mn.gov/commerce/money/investments/cryptocurrency/. \n\n\n\n\n\n\n";
 "accountView.one_time_transfers.title" = "One-time Bank Transfers";
 "accountView.one_time_transfers.subtitle" = "Good for small amounts";
 "accountView.rewards" = "Current Rewards";
-"accountView.atm" = "Free ATMs";
+"accountView.atm" = "ATM’s Nearby";
 "accountView.bank_statements" = "Bank statements";
 "accountView.taxes" = "Taxes";
 "accountView.help_support" = "Help & Support";

@@ -25,9 +25,6 @@ struct EditRewardsView: View {
         ToastView(toastMessage: LFLocalizable.genericErrorMessage)
       }
       .disabled(viewModel.isLoading)
-      .onDisappear {
-        NotificationCenter.default.post(name: NotificationsName.reloadTabbar, object: nil)
-      }
   }
   
   private var content: some View {

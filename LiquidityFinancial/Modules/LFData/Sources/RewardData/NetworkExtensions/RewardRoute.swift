@@ -13,6 +13,8 @@ public enum RewardRoute {
   case getContributionList(limit: Int, offset: Int)
   case getContribution(contributionID: String)
   case getCategoriesTrending
+  case donationsSuggest(name: String)
+  case getUserDonationSummary
 }
 
 extension RewardRoute: LFRoute {
@@ -37,6 +39,10 @@ extension RewardRoute: LFRoute {
       return "/v1/donations/contributions/\(contributionID)"
     case .getCategoriesTrending:
       return "/v1/donations/categories-trending/fundraisers"
+    case .donationsSuggest:
+      return "/v1/donations/suggest"
+    case .getUserDonationSummary:
+      return "/v1/donations/user-donation-summary"
     }
   }
   
@@ -49,7 +55,8 @@ extension RewardRoute: LFRoute {
     case .getContributionList: return .GET
     case .getContribution: return .GET
     case .getCategoriesTrending: return .GET
-    case .selectFundraiser, .setRoundUpDonation: return .POST
+    case .selectFundraiser, .setRoundUpDonation, .donationsSuggest: return .POST
+    case .getUserDonationSummary: return .GET
     }
   }
   
@@ -62,7 +69,7 @@ extension RewardRoute: LFRoute {
     ]
     switch self {
     case .selectRewardType, .getDonationCategories, .getCategoriesFundraisers, .getContribution, .getCategoriesTrending,
-        .getFundraisersDetail, .selectFundraiser, .setRoundUpDonation, .getContributionList:
+        .getFundraisersDetail, .selectFundraiser, .setRoundUpDonation, .getContributionList, .donationsSuggest, .getUserDonationSummary:
       return base
     }
   }
@@ -92,16 +99,22 @@ extension RewardRoute: LFRoute {
       ]
     case .getFundraisersDetail, .getContribution, .getCategoriesTrending:
       return nil
+    case .donationsSuggest(name: let name):
+      return [
+        "suggestion": name
+      ]
+    case .getUserDonationSummary:
+      return nil
     }
   }
   
   public var parameterEncoding: ParameterEncoding? {
     switch self {
-    case .selectRewardType, .selectFundraiser, .setRoundUpDonation:
+    case .selectRewardType, .selectFundraiser, .setRoundUpDonation, .donationsSuggest:
       return .json
     case .getDonationCategories, .getCategoriesFundraisers, .getContributionList:
       return .url
-    case .getFundraisersDetail, .getContribution, .getCategoriesTrending:
+    case .getFundraisersDetail, .getContribution, .getCategoriesTrending, .getUserDonationSummary:
       return nil
     }
   }

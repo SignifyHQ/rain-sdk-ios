@@ -8,15 +8,17 @@ struct FundraiserItemView: View {
   let imageSize: CGFloat
   let shareOnImageTap: Bool
   let destination: AnyView
+  let whereStart: RewardWhereStart
   
   @State private var showDetails = false
   @State private var showShare = false
 
-  init(fundraiser: FundraiserModel, imageSize: CGFloat = 80, shareOnImageTap: Bool = false, destination: AnyView) {
+  init(fundraiser: FundraiserModel, imageSize: CGFloat = 80, shareOnImageTap: Bool = false, destination: AnyView, whereStart: RewardWhereStart) {
     self.fundraiser = fundraiser
     self.imageSize = imageSize
     self.shareOnImageTap = shareOnImageTap
     self.destination = destination
+    self.whereStart = whereStart
   }
   
   var body: some View {
@@ -25,11 +27,10 @@ struct FundraiserItemView: View {
         showDetails = true
       }
       .navigationLink(isActive: $showDetails) {
-        FundraiserDetailView(viewModel: FundraiserDetailViewModel(fundraiser: fundraiser), destination: destination)
+        FundraiserDetailView(
+          viewModel: FundraiserDetailViewModel(fundraiserID: fundraiser.id, whereStart: whereStart),
+          destination: destination)
       }
-//      .sheet(isPresented: $showShare) {
-//        ShareView(viewModel: .init(data: .build(from: fundraiser)))
-//      }
   }
   
   private var content: some View {
