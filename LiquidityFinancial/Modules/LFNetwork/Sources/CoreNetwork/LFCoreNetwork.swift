@@ -16,7 +16,6 @@ public protocol CoreNetworkType {
   func request<T, E>(_ route: R, target: T.Type, failure: E.Type, decoder: JSONDecoder) async throws -> T where T: Decodable, E: DesignatedError
 }
 
-
 public final class LFCoreNetwork<R: LFRoute>: CoreNetworkType {
   
   @LazyInjected(\.authorizationManager) var authorizationManager

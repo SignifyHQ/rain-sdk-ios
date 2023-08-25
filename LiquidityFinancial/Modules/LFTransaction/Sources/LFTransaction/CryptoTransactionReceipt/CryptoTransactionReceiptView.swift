@@ -60,7 +60,8 @@ private extension CryptoTransactionReceiptView {
       HStack(spacing: 4) {
         TextTappable(
           text: LFLocalizable.CryptoReceipt.CardType.link,
-          textAlignment: .center, links: [LFLocalizable.CryptoReceipt.CardType.link],
+          textAlignment: .center,
+          links: [LFLocalizable.CryptoReceipt.CardType.link],
           openLink: openLink(value:)
         )
         .frame(maxWidth: 136)

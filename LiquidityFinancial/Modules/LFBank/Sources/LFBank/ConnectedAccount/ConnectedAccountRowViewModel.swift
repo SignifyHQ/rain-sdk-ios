@@ -23,6 +23,6 @@ class ConnectedAccountRowViewModel: ObservableObject {
   }
   
   var showVerified: Bool {
-    sourceData.requiredFlow == nil || sourceData.requiredFlow!.isEmpty
+    sourceData.requiredFlow == nil || (sourceData.requiredFlow?.isEmpty ?? true)
   }
 }

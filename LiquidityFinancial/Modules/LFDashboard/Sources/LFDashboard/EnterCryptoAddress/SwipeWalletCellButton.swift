@@ -9,8 +9,7 @@ struct SwipeWalletCellButton {
 
   init(image: Image,
        backgroundColor: Color,
-       action: @escaping (APIWalletAddress) -> Void)
-  {
+       action: @escaping (APIWalletAddress) -> Void) {
     self.image = image
     self.backgroundColor = backgroundColor
     self.action = action

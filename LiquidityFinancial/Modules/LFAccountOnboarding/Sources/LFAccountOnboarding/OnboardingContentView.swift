@@ -6,7 +6,6 @@ import AccountData
 import DogeOnboarding
 import LFRewards
 
-// swiftlint:disable cyclomatic_complexity
 public struct OnboardingContentView: View {
   
   @StateObject

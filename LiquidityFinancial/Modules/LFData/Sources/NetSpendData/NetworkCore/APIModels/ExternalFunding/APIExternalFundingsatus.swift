@@ -51,7 +51,7 @@ public struct APIExternalFundingsatus: Decodable, ExternalFundingsatusEntity {
 
 extension APIAgreementData {
   public init(agreement: any AgreementEntity) {
-    let documents: Array<APIAgreementData.Document> = agreement.documents?.compactMap({ APIAgreementData.Document(entity: $0) }) ?? []
+    let documents: [APIAgreementData.Document] = agreement.documents?.compactMap({ APIAgreementData.Document(entity: $0) }) ?? []
     self.init(agreements: [
       APIAgreementData.Agreement(
         id: agreement.id ?? "",
@@ -66,7 +66,7 @@ extension APIAgreementData {
 extension APIAgreementData.Document {
   public init?(entity: any DocumentEntity) {
     guard let type = entity.type, let files = entity.files else { return nil }
-    let fileWarp: Array<APIAgreementData.File> = files.compactMap({ APIAgreementData.File(entity: $0) })
+    let fileWarp: [APIAgreementData.File] = files.compactMap({ APIAgreementData.File(entity: $0) })
     self.init(type: type, files: fileWarp)
   }
 }

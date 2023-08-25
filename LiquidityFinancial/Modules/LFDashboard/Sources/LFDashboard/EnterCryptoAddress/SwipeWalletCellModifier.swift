@@ -10,8 +10,7 @@ extension View {
                        buttonSpacing: CGFloat = 10,
                        appearWidth: CGFloat = 10,
                        dismissWidth: CGFloat = 10,
-                       action: @escaping () -> Void) -> some View
-  {
+                       action: @escaping () -> Void) -> some View {
     modifier(
       SwipeWalletCellModifier(
         buttons: buttons,
@@ -31,9 +30,9 @@ struct SwipeWalletCellModifier: ViewModifier {
   @State private var status: WalletCellStatus = .showCell
   @State private var offset: CGFloat = 0.0
   @State private var frameWidth: CGFloat = 0
-  @State private var currentCellID: UUID? = nil
+  @State private var currentCellID: UUID?
   @State private var cancellables: Set<AnyCancellable> = []
-
+  
   private let cellID = UUID()
   private let buttons: [SwipeWalletCellButton]
   private let item: APIWalletAddress
@@ -43,11 +42,11 @@ struct SwipeWalletCellModifier: ViewModifier {
   private let dismissWidth: CGFloat
   private let action: (() -> Void)?
   private let appearAnimation: Animation = .easeOut(duration: 0.5)
-
+  
   private var buttonsWidth: CGFloat {
     CGFloat(buttons.count) * buttonWidth
   }
-
+  
   init(
     buttons: [SwipeWalletCellButton],
     item: APIWalletAddress,
@@ -65,7 +64,7 @@ struct SwipeWalletCellModifier: ViewModifier {
     self.dismissWidth = dismissWidth
     self.action = action
   }
-
+  
   func body(content: Content) -> some View {
     ZStack(alignment: .topLeading) {
       GeometryReader { proxy in
@@ -92,7 +91,7 @@ struct SwipeWalletCellModifier: ViewModifier {
   }
 }
 
-// MARK: - View Components
+  // MARK: - View Components
 extension SwipeWalletCellModifier {
   private func mainContent(content: Content) -> some View {
     ZStack(alignment: .leading) {
@@ -115,7 +114,7 @@ extension SwipeWalletCellModifier {
     }
     .offset(x: offset)
   }
-
+  
   private func slotView(with button: SwipeWalletCellButton) -> some View {
     SquareButton(
       image: button.image,
@@ -130,7 +129,7 @@ extension SwipeWalletCellModifier {
   }
 }
 
-// MARK: - UI Helpers
+  // MARK: - UI Helpers
 
 extension SwipeWalletCellModifier {
   private func cellOffset(index: Int, count: Int, width: CGFloat) -> CGFloat {
@@ -142,8 +141,8 @@ extension SwipeWalletCellModifier {
     let cellOffset = offset * (CGFloat(count - index) / CGFloat(count)) - (index == 0 ? 0 : 0)
     return width + cellOffset
   }
-
-  /// Set the status and associated values to ``CellStatus.showCell``
+  
+    /// Set the status and associated values to ``CellStatus.showCell``
   private func resetStatus() {
     status = .showCell
     withAnimation(.easeInOut) {
@@ -153,18 +152,18 @@ extension SwipeWalletCellModifier {
     currentCellID = nil
     shouldResetStatusOnAppear = false
   }
-
+  
   private func dismissNotification() {
     NotificationCenter.default.post(name: .swipeWalletCellReset, object: nil)
   }
-
+  
   private func onReceiveResetNotice(notice: NotificationCenter.Publisher.Output) {
     if cellID != notice.object as? UUID {
       resetStatus()
-      currentCellID = notice.object as? UUID ?? nil
+      currentCellID = notice.object as? UUID
     }
   }
-
+  
   private func onAppear() {
     if shouldResetStatusOnAppear {
       resetStatus()
@@ -172,19 +171,19 @@ extension SwipeWalletCellModifier {
   }
 }
 
-// MARK: - Drag Gesture
+  // MARK: - Drag Gesture
 
 extension SwipeWalletCellModifier {
   private func onChangedDragGesture(value: DragGesture.Value) {
     cancellables.removeAll()
     shouldResetStatusOnAppear = false
-
+    
     var width = value.translation.width
     if currentCellID != cellID {
       currentCellID = cellID
       NotificationCenter.default.post(Notification(name: .swipeWalletCellReset, object: cellID))
     }
-
+    
     switch status {
     case .showCell:
       width = min(0, width)
@@ -197,7 +196,7 @@ extension SwipeWalletCellModifier {
       }
     }
   }
-
+  
   private func onEndedDragGesture(width: Double) {
     if currentCellID != cellID {
       currentCellID = cellID

@@ -28,7 +28,8 @@ extension PurchaseTransactionDetailViewModel {
       cardType: transaction.rewards?.type.transactionCardType ?? .unknow,
       amount: amountValue,
       message: transaction.rewards?.description ?? LFLocalizable.TransactionCard.Purchase.message(
-        rewardAmount, amountValue,
+        rewardAmount,
+        amountValue,
         LFUtility.appName
       ),
       activityItem: LFLocalizable.TransactionCard.ShareCrypto.title(rewardAmount, LFUtility.appName, LFUtility.shareAppUrl),

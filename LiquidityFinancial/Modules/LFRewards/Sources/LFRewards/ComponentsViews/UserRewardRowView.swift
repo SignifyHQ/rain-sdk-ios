@@ -22,7 +22,7 @@ struct UserRewardRowView: View {
           .font(Fonts.regular.swiftUIFont(size: 16))
           .foregroundColor(ModuleColors.label.swiftUIColor)
         if type.showSubtitle {
-          Text(reward.subtitle(p1: 0.75) ?? "")
+          Text(reward.subtitle(param: 0.75) ?? "")
             .font(Fonts.regular.swiftUIFont(size: 12))
             .foregroundColor(ModuleColors.label.swiftUIColor.opacity(0.75))
         }

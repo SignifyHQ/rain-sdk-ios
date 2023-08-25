@@ -38,12 +38,12 @@ public extension UserRewardType {
     }
   }
   
-  func subtitle(p1: Float) -> String? {
+  func subtitle(param: Float) -> String? {
     switch self {
     case .cashBack:
-      return LFLocalizable.UserRewardType.Cashback.subtitle(p1)
+      return LFLocalizable.UserRewardType.Cashback.subtitle(param)
     case .donation:
-      return LFLocalizable.UserRewardType.Donation.subtitle(p1)
+      return LFLocalizable.UserRewardType.Donation.subtitle(param)
     default:
       return nil
     }

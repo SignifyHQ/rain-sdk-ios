@@ -67,7 +67,7 @@ extension EnterNicknameOfWalletViewModel {
 private extension EnterNicknameOfWalletViewModel {
   func handleAPIError(_ error: Error) {
     // TODO: Need to check duplicate wallet address later
-    guard let code = error.asErrorObject?.code else {
+    guard error.asErrorObject != nil else {
       toastMessage = error.localizedDescription
       return
     }

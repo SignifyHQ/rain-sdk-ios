@@ -47,7 +47,7 @@ private extension CryptoTransactionDetailView {
       switch item {
       case .receipt(let cryptoReceipt):
         CryptoTransactionReceiptView(accountID: viewModel.transaction.accountId, receipt: cryptoReceipt)
-      case .saveAddress(let address):
+      case .saveAddress:
         EnterNicknameOfWalletView(accountId: viewModel.transaction.accountId, walletAddress: viewModel.walletAddress)
       }
     }

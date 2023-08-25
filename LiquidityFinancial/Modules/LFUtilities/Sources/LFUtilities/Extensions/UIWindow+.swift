@@ -5,23 +5,23 @@ import UIKit
 public extension UIWindow {
   var visibleViewController: UIViewController? {
     if let rootViewController {
-      return UIWindow.getVisibleViewControllerFrom(vc: rootViewController)
+      return UIWindow.getVisibleViewControllerFrom(viewController: rootViewController)
     }
     return nil
   }
   
-  private static func getVisibleViewControllerFrom(vc: UIViewController) -> UIViewController {
-    if let navigationController = vc as? UINavigationController,
+  private static func getVisibleViewControllerFrom(viewController: UIViewController) -> UIViewController {
+    if let navigationController = viewController as? UINavigationController,
        let visibleController = navigationController.visibleViewController {
-      return UIWindow.getVisibleViewControllerFrom(vc: visibleController)
-    } else if let tabBarController = vc as? UITabBarController,
+      return UIWindow.getVisibleViewControllerFrom(viewController: visibleController)
+    } else if let tabBarController = viewController as? UITabBarController,
               let selectedTabController = tabBarController.selectedViewController {
-      return UIWindow.getVisibleViewControllerFrom(vc: selectedTabController)
+      return UIWindow.getVisibleViewControllerFrom(viewController: selectedTabController)
     } else {
-      if let presentedViewController = vc.presentedViewController {
-        return UIWindow.getVisibleViewControllerFrom(vc: presentedViewController)
+      if let presentedViewController = viewController.presentedViewController {
+        return UIWindow.getVisibleViewControllerFrom(viewController: presentedViewController)
       } else {
-        return vc
+        return viewController
       }
     }
   }

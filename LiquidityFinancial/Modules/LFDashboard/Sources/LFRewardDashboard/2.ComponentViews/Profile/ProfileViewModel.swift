@@ -63,7 +63,7 @@ final class ProfileViewModel: ObservableObject {
   }
 
   var showStickers: Bool {
-    return isLoadingContribution || !stickers.isEmpty
+    isLoadingContribution || !stickers.isEmpty
   }
   
   init() {

@@ -71,9 +71,9 @@ private extension RewardTabView {
   
   @ViewBuilder var headerView: some View {
     if let assetType = viewModel.assetModel?.type {
-      Button(action: {
+      Button {
         viewModel.onClickedChangeReward()
-      }) {
+      } label: {
         HStack(alignment: .top, spacing: 12) {
           HStack(alignment: .center, spacing: 12) {
             ZStack(alignment: .center) {

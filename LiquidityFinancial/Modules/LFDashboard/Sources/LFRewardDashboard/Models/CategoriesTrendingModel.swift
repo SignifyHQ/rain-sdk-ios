@@ -28,4 +28,3 @@ public struct CategoriesTrendingModel: Identifiable {
     URL(string: stickerUrl ?? "")
   }
 }
-

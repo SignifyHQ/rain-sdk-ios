@@ -28,8 +28,11 @@ struct AccountsView: View {
         }
       }
       .sheet(isPresented: $viewModel.openLegal) {
-        WebView(url: URL(string: LFUtility.termsURL)!)
-          .ignoresSafeArea()
+        if let url = URL(string: LFUtility.termsURL) {
+          WebView(url: url)
+            .ignoresSafeArea()
+        }
+
       }
       .background(Colors.background.swiftUIColor)
       .onAppear {

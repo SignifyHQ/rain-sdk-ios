@@ -13,7 +13,7 @@ final class ReferralsViewModel: ObservableObject {
   @Published var showCopyToast = false
   
   lazy var accountUseCase: AccountUseCase = {
-    return AccountUseCase(repository: accountRepository)
+    AccountUseCase(repository: accountRepository)
   }()
   
   private var referralLink = ""
