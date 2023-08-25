@@ -31,6 +31,7 @@ internal enum ModuleImages {
   internal static let icHomeCause = ImageAsset(name: "ic_home_cause")
   internal static let icHomeDonation = ImageAsset(name: "ic_home_donation")
   internal static let icHomeRewards = ImageAsset(name: "ic_home_rewards")
+  internal static let icSearch = ImageAsset(name: "ic_search")
   internal static let icSettingReward = ImageAsset(name: "ic_setting_reward")
   internal static let icStatusCompleted = ImageAsset(name: "ic_statusCompleted")
   internal static let icStatusPending = ImageAsset(name: "ic_statusPending")

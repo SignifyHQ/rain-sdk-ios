@@ -877,6 +877,10 @@
 "ChangeRewardView.caption" = "How would you like your rewards?";
 "ChangeRewardView.current_rewards" = "Current Rewards";
 
+// Search Causes
+"search_causes.navigation_title" = "Search charities";
+"search_causes.no_results" = "No results found";
+
 // MARK: - Common
 
 // Terms

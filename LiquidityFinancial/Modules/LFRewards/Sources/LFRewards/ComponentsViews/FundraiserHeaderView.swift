@@ -1,23 +1,22 @@
 import SwiftUI
-import LFRewards
 import LFStyleGuide
 import LFLocalizable
 import LFUtilities
 
-struct FundraiserHeaderView: View {
+public struct FundraiserHeaderView: View {
   let fundraiser: FundraiserDetailModel
   let imageSize: CGFloat
   let shareOnImageTap: Bool
   @State private var showDetails = false
   @State private var showShare = false
   
-  init(fundraiser: FundraiserDetailModel, imageSize: CGFloat = 80, shareOnImageTap: Bool = false) {
+  public init(fundraiser: FundraiserDetailModel, imageSize: CGFloat = 80, shareOnImageTap: Bool = false) {
     self.fundraiser = fundraiser
     self.imageSize = imageSize
     self.shareOnImageTap = shareOnImageTap
   }
   
-  var body: some View {
+  public var body: some View {
     content
       .onTapGesture {
         showDetails = true

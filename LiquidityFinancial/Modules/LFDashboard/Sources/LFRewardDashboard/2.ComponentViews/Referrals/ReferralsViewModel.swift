@@ -2,6 +2,7 @@ import SwiftUI
 import Factory
 import AccountData
 import AccountDomain
+import LFUtilities
 
 @MainActor
 final class ReferralsViewModel: ObservableObject {
@@ -24,13 +25,20 @@ final class ReferralsViewModel: ObservableObject {
 
 // MARK: - API
 extension ReferralsViewModel {
-  //TODO: Tony implement late
   private func fetchCampaigns() {
     let userData = accountDataManager.userInfomationData
     status = .loading
-    referralLink = userData.referralLink ?? ""
-    // TODO: Will be implemented later
-    // FAKE CALL API
+    referralLink = "https://dev-getcausecard.d8nxzyrm4k1vo.amplifyapp.com" + (userData.referralLink ?? "")
+    
+//    Task { @MainActor in
+//      do {
+//        let entity = try await accountRepository.getReferralCampaign()
+//      } catch {
+//        self.status = .failure
+//        log.error(error.localizedDescription)
+//      }
+//    }
+    
     DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
       self.status = .success(
         ReferralCampaign(

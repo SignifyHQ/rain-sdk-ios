@@ -2,7 +2,7 @@ import SwiftUI
 import LFLocalizable
 import LFStyleGuide
 import LFUtilities
-
+import LFRewards
 public struct HomeView: View {
   
   @StateObject private var viewModel: HomeViewModel
@@ -33,7 +33,9 @@ public struct HomeView: View {
     .navigationLink(item: $viewModel.navigation) { item in
       switch item {
       case .searchCauses:
-        EmptyView() // TODO: - Will be implemented later
+        SearchCausesView(viewModel: SearchFundraiserViewModel(onSelect: {
+          
+        }))
       case .editRewards:
         EditRewardsView(viewModel: EditRewardsViewModel())
       case .profile:
@@ -80,6 +82,14 @@ private extension HomeView {
   
   var trailingNavigationBarView: some View {
     HStack(spacing: 12) {
+      if viewModel.showSearchButton {
+        Button {
+          viewModel.onClickedSearchButton()
+        } label: {
+          GenImages.CommonImages.icSearch.swiftUIImage
+            .foregroundColor(Colors.label.swiftUIColor)
+        }
+      }
       if viewModel.showGearButton {
         Button {
           viewModel.onClickedGearButton()

@@ -57,6 +57,11 @@ extension VerificationCodeViewModel {
         accountDataManager.update(phone: formatPhoneNumber)
         accountDataManager.stored(phone: formatPhoneNumber)
         
+        if LFUtility.charityEnabled {
+          // we enalbe showRoundUpForCause after user login
+          UserDefaults.showRoundUpForCause = true
+        }
+        
         intercomService.loginIdentifiedUser(userAttributes: IntercomService.UserAttributes(phone: formatPhoneNumber))
         
         let token = try await netspendRepository.clientSessionInit()

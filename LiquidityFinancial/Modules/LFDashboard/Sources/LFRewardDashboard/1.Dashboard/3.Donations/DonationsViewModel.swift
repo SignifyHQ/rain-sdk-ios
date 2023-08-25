@@ -15,6 +15,8 @@ class DonationsViewModel: ObservableObject {
   private var limit = 100
   
   let tabRedirection: TabRedirection
+  
+  @Published var showRoundUpDonation: Bool = false
   @Published var status = Status.idle
   @Published var isLoading = true
   @Published var sheet: Sheet?
@@ -41,6 +43,7 @@ class DonationsViewModel: ObservableObject {
 
   @LazyInjected(\.rewardRepository) var rewardRepository
   @LazyInjected(\.rewardDataManager) var rewardDataManager
+  @LazyInjected(\.accountDataManager) var accountDataManager
   
   private var subscribers: Set<AnyCancellable> = []
   
@@ -80,6 +83,8 @@ extension DonationsViewModel {
         defer { isLoading = false }
         isLoading = true
         await fetchAll()
+        //TODO: Implement late, now is disable from BE
+        //handleShowRoundUpDonationPopup()
       }
     } else {
       isLoading = false
@@ -104,6 +109,13 @@ extension DonationsViewModel {
         self?.selectedFundraiser = FundraiserDetailModel(enity: entity)
       }
       .store(in: &subscribers)
+  }
+  
+  func handleShowRoundUpDonationPopup() {
+    guard let userRoundUpEnabled = accountDataManager.userInfomationData.userRoundUpEnabled else { return }
+    guard !userRoundUpEnabled && UserDefaults.showRoundUpForCause else { return }
+    UserDefaults.showRoundUpForCause = false
+    showRoundUpDonation.toggle()
   }
 }
 

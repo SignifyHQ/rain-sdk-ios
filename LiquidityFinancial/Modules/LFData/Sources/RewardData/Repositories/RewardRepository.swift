@@ -55,4 +55,8 @@ public class RewardRepository: RewardRepositoryProtocol {
   public func getUserDonationSummary() async throws -> any UserDonationSummaryEntity {
     return try await self.rewardAPI.getUserDonationSummary()
   }
+  
+  public func searchFundraisers(texts: [String], limit: Int, offset: Int) async throws -> CategoriesFundraisersListEntity {
+    return try await self.rewardAPI.searchFundraisers(texts: texts, limit: limit, offset: offset)
+  }
 }

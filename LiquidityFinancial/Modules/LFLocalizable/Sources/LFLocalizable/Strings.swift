@@ -1844,6 +1844,12 @@ public enum LFLocalizable {
       public static let text = LFLocalizable.tr("Localizable", "screen.title.text", fallback: "Hello i live in Package LFLocalizable")
     }
   }
+  public enum SearchCauses {
+    /// Search charities
+    public static let navigationTitle = LFLocalizable.tr("Localizable", "search_causes.navigation_title", fallback: "Search charities")
+    /// No results found
+    public static let noResults = LFLocalizable.tr("Localizable", "search_causes.no_results", fallback: "No results found")
+  }
   public enum SecurityCheck {
     public enum Encrypt {
       /// Encrypted using 256-BIT SSL

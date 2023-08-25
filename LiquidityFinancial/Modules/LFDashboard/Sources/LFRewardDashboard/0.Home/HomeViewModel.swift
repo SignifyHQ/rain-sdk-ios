@@ -33,6 +33,10 @@ public final class HomeViewModel: ObservableObject {
   var showGearButton: Bool {
     tabSelected == .rewards || tabSelected == .donation
   }
+  
+  var showSearchButton: Bool {
+    tabSelected == .donation || tabSelected == .causes
+  }
 }
 
 // MARK: - API Reward
@@ -127,6 +131,10 @@ extension HomeViewModel {
   
   func onClickedGearButton() {
     navigation = .editRewards
+  }
+  
+  func onClickedSearchButton() {
+    navigation = .searchCauses
   }
 }
 

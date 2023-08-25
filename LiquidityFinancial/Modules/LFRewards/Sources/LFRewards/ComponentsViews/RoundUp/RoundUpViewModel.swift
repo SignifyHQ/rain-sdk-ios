@@ -5,7 +5,7 @@ import Factory
 import LFUtilities
 
 @MainActor
-class RoundUpViewModel: ObservableObject {
+public class RoundUpViewModel: ObservableObject {
 
   @LazyInjected(\.rewardRepository) var rewardRepository
   @LazyInjected(\.rewardDataManager) var rewardDataManager
@@ -18,7 +18,7 @@ class RoundUpViewModel: ObservableObject {
   @Published var isLoading = false
   @Published var showError = false
   
-  init(onFinish: @escaping () -> Void) {
+  public init(onFinish: @escaping () -> Void) {
     self.onFinish = onFinish
   }
   

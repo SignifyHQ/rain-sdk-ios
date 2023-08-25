@@ -47,6 +47,13 @@ struct DonationsView: View {
     .onReceive(NotificationCenter.default.publisher(for: .selectedFundraisersSuccess)) { _ in
       viewModel.navigation = nil
     }
+    .sheet(isPresented: $viewModel.showRoundUpDonation, content: {
+      RoundUpView(
+        viewModel: RoundUpViewModel(onFinish: {
+          viewModel.showRoundUpDonation.toggle()
+        })
+      )
+    })
     .navigationLink(item: $viewModel.navigation, destination: { navigation in
       switch navigation {
       case .causeCategories(let causes):

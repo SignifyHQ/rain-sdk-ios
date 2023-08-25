@@ -22,13 +22,13 @@ public enum KYCState {
       return KYCInformation(
         title: LFLocalizable.KycStatus.Fail.title,
         message: LFLocalizable.KycStatus.Fail.message,
-        primary: LFLocalizable.Button.Continue.title
+        primary: LFLocalizable.Button.Done.title
       )
     case .missingInfo:
       return KYCInformation(
         title: LFLocalizable.KycStatus.Fail.title,
         message: LFLocalizable.KycStatus.MissingInfo.message,
-        primary: LFLocalizable.Button.Continue.title
+        primary: LFLocalizable.Button.Done.title
       )
     case let .inReview(username):
       return KYCInformation(

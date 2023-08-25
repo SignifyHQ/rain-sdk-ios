@@ -40,9 +40,14 @@ private extension ReferralsView {
           .resizable()
           .scaledToFit()
           .frame(max: .infinity)
-        referralsContext(campaign: campaign)
+        Text(LFUtility.appName.uppercased())
+          .font(Fonts.Montserrat.black.swiftUIFont(size: Constants.FontSize.navigationBar.value))
+          .foregroundColor(Colors.label.swiftUIColor)
+          .padding(.leading, 12)
+        //referralsContext(campaign: campaign)
       }
-      howItWorkView(campaign: campaign)
+      Spacer()
+      //howItWorkView(campaign: campaign)
       buttonGroupView
     }
     .scrollOnOverflow()

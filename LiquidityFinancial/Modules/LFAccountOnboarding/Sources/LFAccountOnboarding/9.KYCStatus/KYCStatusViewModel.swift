@@ -80,7 +80,7 @@ extension KYCStatusViewModel {
     case .reject:
       forcedLogout()
     case .missingInfo:
-      break // TODO: implement late
+      forcedLogout()
     default:
       break
     }

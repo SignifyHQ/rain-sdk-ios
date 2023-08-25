@@ -3,8 +3,9 @@ import LFUtilities
 import LFStyleGuide
 import LFLocalizable
 
-struct RoundUpView: View {
-  var body: some View {
+public struct RoundUpView: View {
+  
+  public var body: some View {
     content
       .background(ModuleColors.background.swiftUIColor)
       .popup(isPresented: $viewModel.showError, style: .toast) {
@@ -14,6 +15,10 @@ struct RoundUpView: View {
 
   @StateObject var viewModel: RoundUpViewModel
 
+  public init(viewModel: RoundUpViewModel) {
+    _viewModel = .init(wrappedValue: viewModel)
+  }
+  
   private var content: some View {
     VStack(spacing: 24) {
       details

@@ -100,14 +100,16 @@ private extension AddFundsView {
       ) {
         viewModel.selectedAddOption(navigation: .addBankDebit)
       }
-      ArrowButton(
-        image: GenImages.CommonImages.Accounts.oneTime.swiftUIImage,
-        title: LFLocalizable.AccountView.OneTimeTransfers.title,
-        value: LFLocalizable.AccountView.OneTimeTransfers.subtitle,
-        isLoading: $viewModel.isLoadingLinkExternalBank
-      ) {
-        viewModel.selectedAddOption(navigation: .linkExternalBank)
-      }
+      /*
+       ArrowButton(
+       image: GenImages.CommonImages.Accounts.oneTime.swiftUIImage,
+       title: LFLocalizable.AccountView.OneTimeTransfers.title,
+       value: LFLocalizable.AccountView.OneTimeTransfers.subtitle,
+       isLoading: $viewModel.isLoadingLinkExternalBank
+       ) {
+       viewModel.selectedAddOption(navigation: .linkExternalBank)
+       }
+       */
     }
   }
   

@@ -29,4 +29,7 @@ public extension UserDefaults {
   @LFUserDefault(key: Key.userEmail, defaultValue: "")
   static var userEmail: String
   
+  @LFUserDefault(key: Key.showRoundUpForCause, defaultValue: false)
+  static var showRoundUpForCause: Bool
+  
 }

@@ -15,6 +15,7 @@ public enum RewardRoute {
   case getCategoriesTrending
   case donationsSuggest(name: String)
   case getUserDonationSummary
+  case searchFundraisers(texts: [String], limit: Int, offset: Int)
 }
 
 extension RewardRoute: LFRoute {
@@ -43,6 +44,8 @@ extension RewardRoute: LFRoute {
       return "/v1/donations/suggest"
     case .getUserDonationSummary:
       return "/v1/donations/user-donation-summary"
+    case .searchFundraisers:
+      return "/v1/donations/fundraisers-search"
     }
   }
   
@@ -57,6 +60,7 @@ extension RewardRoute: LFRoute {
     case .getCategoriesTrending: return .GET
     case .selectFundraiser, .setRoundUpDonation, .donationsSuggest: return .POST
     case .getUserDonationSummary: return .GET
+    case .searchFundraisers: return .GET
     }
   }
   
@@ -69,7 +73,8 @@ extension RewardRoute: LFRoute {
     ]
     switch self {
     case .selectRewardType, .getDonationCategories, .getCategoriesFundraisers, .getContribution, .getCategoriesTrending,
-        .getFundraisersDetail, .selectFundraiser, .setRoundUpDonation, .getContributionList, .donationsSuggest, .getUserDonationSummary:
+        .getFundraisersDetail, .selectFundraiser, .setRoundUpDonation, .getContributionList,
+        .donationsSuggest, .getUserDonationSummary, .searchFundraisers:
       return base
     }
   }
@@ -105,6 +110,15 @@ extension RewardRoute: LFRoute {
       ]
     case .getUserDonationSummary:
       return nil
+    case let .searchFundraisers(texts, limit, offset):
+      var param = [
+        "limit": String(limit),
+        "offset": String(offset)
+      ]
+      texts.forEach { text in
+        param["category"] = text
+      }
+      return param
     }
   }
   
@@ -112,7 +126,7 @@ extension RewardRoute: LFRoute {
     switch self {
     case .selectRewardType, .selectFundraiser, .setRoundUpDonation, .donationsSuggest:
       return .json
-    case .getDonationCategories, .getCategoriesFundraisers, .getContributionList:
+    case .getDonationCategories, .getCategoriesFundraisers, .getContributionList, .searchFundraisers:
       return .url
     case .getFundraisersDetail, .getContribution, .getCategoriesTrending, .getUserDonationSummary:
       return nil

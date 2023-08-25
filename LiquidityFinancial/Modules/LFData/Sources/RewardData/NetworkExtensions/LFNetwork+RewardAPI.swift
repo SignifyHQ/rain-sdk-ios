@@ -38,6 +38,16 @@ extension LFCoreNetwork: RewardAPIProtocol where R == RewardRoute {
     return APICategoriesFundraisersList(total: listModel.total, data: listModel.data)
   }
   
+  public func searchFundraisers(texts: [String], limit: Int, offset: Int) async throws -> APICategoriesFundraisersList {
+    let listModel = try await request(
+      RewardRoute.searchFundraisers(texts: texts, limit: limit, offset: offset),
+      target: APIListObject<APICategoriesFundraisers>.self,
+      failure: LFErrorObject.self,
+      decoder: .apiDecoder
+    )
+    return APICategoriesFundraisersList(total: listModel.total, data: listModel.data)
+  }
+  
   public func getFundraisersDetail(fundraiserID: String) async throws -> APIFundraisersDetail {
     return try await request(
       RewardRoute.getFundraisersDetail(fundraiserID: fundraiserID),

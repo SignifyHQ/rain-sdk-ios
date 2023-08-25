@@ -3,7 +3,6 @@ import LFUtilities
 import LFStyleGuide
 import LFLocalizable
 import LFServices
-import NetspendSdk
 import LFBank
 
 struct AccountsView: View {
