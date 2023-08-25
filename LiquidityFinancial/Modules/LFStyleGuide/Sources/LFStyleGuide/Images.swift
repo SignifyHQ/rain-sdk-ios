@@ -152,6 +152,7 @@ public enum GenImages {
     public static let transactionCard = ImageAsset(name: "transactionCard")
     public static let unavailableCard = ImageAsset(name: "unavailableCard")
     public static let virtualCard = ImageAsset(name: "virtualCard")
+    public static let welcomeHeader = ImageAsset(name: "welcomeHeader")
   }
 }
 // swiftlint:enable identifier_name line_length nesting type_body_length type_name

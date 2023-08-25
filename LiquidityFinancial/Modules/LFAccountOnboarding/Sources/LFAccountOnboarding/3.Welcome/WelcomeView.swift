@@ -16,12 +16,10 @@ struct WelcomeView: View {
         .padding(.vertical, 12)
       
       ScrollView(showsIndicators: true) {
-        VStack(spacing: 24) {
-          HStack {
-            Text(LFLocalizable.Welcome.howItWorks)
-              .font(Fonts.regular.swiftUIFont(size: 18))
-              .foregroundColor(Colors.label.swiftUIColor)
-          }
+        VStack(alignment: .leading, spacing: 24) {
+          Text(LFLocalizable.Welcome.howItWorks)
+            .font(Fonts.regular.swiftUIFont(size: 18))
+            .foregroundColor(Colors.label.swiftUIColor)
           items
           Spacer()
         }
@@ -44,10 +42,10 @@ struct WelcomeView: View {
   
   private var staticTop: some View {
     VStack(spacing: 12) {
-      GenImages.Images.icLogo.swiftUIImage
+      GenImages.Images.welcomeHeader.swiftUIImage
         .resizable()
         .scaledToFit()
-        .frame(110)
+        .frame(width: 300, height: 232)
         .padding(.bottom, 10)
       
       Text(LFLocalizable.Welcome.Header.title)
