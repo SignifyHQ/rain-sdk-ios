@@ -162,14 +162,10 @@ extension VerificationCodeViewModel {
         } else {
           if states.contains(OnboardingMissingStep.netSpendCreateAccount) {
             onboardingFlowCoordinator.set(route: .welcome)
-          } else if states.contains(OnboardingMissingStep.dashboardReview) {
-            onboardingFlowCoordinator.set(route: .kycReview)
-          } else if states.contains(OnboardingMissingStep.zeroHashAccount) {
-            onboardingFlowCoordinator.set(route: .zeroHash)
-          } else if states.contains(OnboardingMissingStep.accountReject) {
-            onboardingFlowCoordinator.set(route: .accountReject)
-          } else if states.contains(OnboardingMissingStep.primaryPersonKYCApprove) {
-            onboardingFlowCoordinator.set(route: .kycReview)
+          } else if states.contains(OnboardingMissingStep.acceptAgreement) {
+            onboardingFlowCoordinator.set(route: .agreement)
+          } else if states.contains(OnboardingMissingStep.acceptFeatureAgreement) {
+            onboardingFlowCoordinator.set(route: .featureAgreement)
           } else if states.contains(OnboardingMissingStep.identityQuestions) {
             let questionsEncrypt = try await netspendRepository.getQuestion(sessionId: accountDataManager.sessionID)
             if let usersession = netspendDataManager.sdkSession, let questionsDecode = questionsEncrypt.decodeData(session: usersession) {
@@ -180,14 +176,28 @@ extension VerificationCodeViewModel {
             let documents = try await netspendRepository.getDocuments(sessionId: accountDataManager.sessionID)
             netspendDataManager.update(documentData: documents)
             onboardingFlowCoordinator.set(route: .document)
+          } else if states.contains(OnboardingMissingStep.dashboardReview) {
+            onboardingFlowCoordinator.set(route: .kycReview)
+          } else if states.contains(OnboardingMissingStep.zeroHashAccount) {
+            onboardingFlowCoordinator.set(route: .zeroHash)
+          } else if states.contains(OnboardingMissingStep.accountReject) {
+            onboardingFlowCoordinator.set(route: .accountReject)
+          } else if states.contains(OnboardingMissingStep.primaryPersonKYCApprove) {
+            onboardingFlowCoordinator.set(route: .kycReview)
           } else {
             onboardingFlowCoordinator.set(route: .unclear(states.compactMap({ $0.rawValue }).joined()))
           }
         }
       }
     } catch {
-      self.onboardingFlowCoordinator.set(route: .welcome)
       log.error(error.localizedDescription)
+      
+      if error.localizedDescription.contains("identity_verification_questions_not_available") {
+        onboardingFlowCoordinator.set(route: .popTimeUp)
+        return
+      }
+      
+      onboardingFlowCoordinator.forcedLogout()
     }
   }
   

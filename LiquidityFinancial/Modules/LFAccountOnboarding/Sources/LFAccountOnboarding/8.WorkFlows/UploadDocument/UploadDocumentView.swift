@@ -50,9 +50,13 @@ struct UploadDocumentView: View {
         KYCStatusView(viewModel: KYCStatusViewModel(state: .inReview(viewModel.accountDataManager.userNameDisplay)))
       case .missingInfo:
         KYCStatusView(viewModel: KYCStatusViewModel(state: .missingInfo))
+      case .agreement:
+        AgreementView(viewModel: AgreementViewModel()) {
+          log.info("after accept agreement will fetch missing step and go next:\(viewModel.onboardingFlowCoordinator.routeSubject.value) ")
+        }
       }
     }
-    .navigationBarBackButtonHidden(viewModel.isLoading)
+    .navigationBarBackButtonHidden()
   }
 }
 

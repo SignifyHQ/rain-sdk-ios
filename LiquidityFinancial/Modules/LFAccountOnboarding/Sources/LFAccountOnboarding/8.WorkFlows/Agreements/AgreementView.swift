@@ -91,6 +91,7 @@ public struct AgreementView: View {
     .onDisappear {
       self.onDisappear?(viewModel.isAcceptAgreement)
     }
+    .navigationBarBackButtonHidden()
   }
   
   private var loadingView: some View {
@@ -159,7 +160,12 @@ private extension AgreementView {
     ) {
       if let onNext = onNext {
         viewModel.apiPostAgreements {
-          onNext()
+          Task { @MainActor in
+            self.viewModel.isLoading = true
+            await viewModel.onboardingFlowCoordinator.apiFetchCurrentState()
+            self.viewModel.isLoading = false
+            onNext()
+          }
         }
       } else {
         viewModel.continute()

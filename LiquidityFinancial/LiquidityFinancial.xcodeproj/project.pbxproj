@@ -42,6 +42,7 @@
 		A938373C2A63BAAC009EB1DE /* LFUtilities in Frameworks */ = {isa = PBXBuildFile; productRef = A938373B2A63BAAC009EB1DE /* LFUtilities */; };
 		A93837472A63DDFD009EB1DE /* AppDelegate+Appearance.swift in Sources */ = {isa = PBXBuildFile; fileRef = A93837462A63DDFD009EB1DE /* AppDelegate+Appearance.swift */; };
 		A93837482A63DDFF009EB1DE /* AppDelegate+Appearance.swift in Sources */ = {isa = PBXBuildFile; fileRef = A93837462A63DDFD009EB1DE /* AppDelegate+Appearance.swift */; };
+		A93C15062A99C65D00BD7564 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = A93C15052A99C65D00BD7564 /* GoogleService-Info.plist */; };
 		A94F71EE2A610E65002ADB34 /* LFAccountOnboarding in Frameworks */ = {isa = PBXBuildFile; productRef = A94F71ED2A610E65002ADB34 /* LFAccountOnboarding */; };
 		A94F71F52A61CAC6002ADB34 /* LFLocalizable in Frameworks */ = {isa = PBXBuildFile; productRef = A94F71F42A61CAC6002ADB34 /* LFLocalizable */; };
 		A94F71F72A61CACF002ADB34 /* LFLocalizable in Frameworks */ = {isa = PBXBuildFile; productRef = A94F71F62A61CACF002ADB34 /* LFLocalizable */; };
@@ -264,6 +265,7 @@
 		A9201F242A8698FB00A6FDB6 /* LFRewards */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = LFRewards; path = Modules/LFRewards; sourceTree = "<group>"; };
 		A938373D2A63BB20009EB1DE /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = LaunchScreen.storyboard; sourceTree = "<group>"; };
 		A93837462A63DDFD009EB1DE /* AppDelegate+Appearance.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AppDelegate+Appearance.swift"; sourceTree = "<group>"; };
+		A93C15052A99C65D00BD7564 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		A94F71F32A614E04002ADB34 /* LFLocalizable */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = LFLocalizable; path = Modules/LFLocalizable; sourceTree = "<group>"; };
 		A95354972A5E55B2008B0FAB /* Cardano.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Cardano.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		A953549B2A5E571D008B0FAB /* CardanoConfig.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = CardanoConfig.xcconfig; sourceTree = "<group>"; };
@@ -598,6 +600,7 @@
 		A953549C2A5E571D008B0FAB /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				A93C15052A99C65D00BD7564 /* GoogleService-Info.plist */,
 				A9BC80142A774CEC00E4A1A0 /* Fonts */,
 				A95D41902A6E35750095596B /* Cardano.entitlements */,
 				A95354A02A5E571D008B0FAB /* Cardano-Info.plist */,
@@ -1410,6 +1413,7 @@
 				A9B4BA032A7C0FCA000ED67A /* Localizable.strings in Resources */,
 				A9B912D12A6B86A800ABD87B /* LoadingPrimary.json in Resources */,
 				A9BC80272A774D0500E4A1A0 /* Chivo-SemiBold.ttf in Resources */,
+				A93C15062A99C65D00BD7564 /* GoogleService-Info.plist in Resources */,
 				A9B912D22A6B86A800ABD87B /* LoadingContrast.json in Resources */,
 				A9BC80382A774D0500E4A1A0 /* Chivo-BoldItalic.ttf in Resources */,
 				A9B912D32A6B86A800ABD87B /* LoadingMix.json in Resources */,

@@ -3,34 +3,48 @@ import LFStyleGuide
 import LFUtilities
 import LFLocalizable
 
-struct QuestionsView: View {
+public struct QuestionsView: View {
   @StateObject var viewModel: QuestionsViewModel
   @State var offsetChange: CGPoint = .zero
-
-  init(viewModel: QuestionsViewModel) {
+  @State var selectedPage: Int = 0
+  
+  public init(viewModel: QuestionsViewModel) {
     _viewModel = .init(wrappedValue: viewModel)
   }
   
-  var body: some View {
+  public var body: some View {
     VStack {
       headerView
-      OffsetObservingScrollView(offset: $offsetChange) {
-        ForEach($viewModel.questionList.questions, id: \.id) { question in
+        .padding(.top, 30)
+      
+      TabView(selection: $selectedPage) {
+        ForEach(Array($viewModel.questionList.questions.enumerated()), id: \.offset) { index, question in
           AnswerQuestionView(answerOption: question) { _, id in
             viewModel.updateAnswerSelect(questionID: question.wrappedValue.id, answerID: id)
+            withAnimation {
+              if selectedPage < viewModel.questionList.questions.count - 1 {
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.75) {
+                  selectedPage += 1
+                }
+              }
+            }
           }
+          .padding(.horizontal, 30)
+          .tag(index)
         }
       }
-      Button {
-        
-      } label: {
-        Image(systemName: "chevron.compact.down")
-          .font(.largeTitle)
-          .imageScale(.large)
+      .onChange(of: selectedPage) { newValue in
+        log.debug(newValue)
       }
-      .padding(3)
-      .foregroundColor(.white)
-      .isHidden(hidden: offsetChange.y >= 100, remove: true)
+      .frame(width: UIScreen.main.bounds.width)
+      .tabViewStyle(.page(indexDisplayMode: .never))
+      .animation(.easeInOut, value: 0.55)
+      .transition(.slide)
+      
+//      Spacer()
+      
+//      PageIndicator(numPages: $viewModel.questionList.questions.count, currentPage: $selectedPage)
+//        .padding(.bottom, 16)
       
       FullSizeButton(
         title: LFLocalizable.Button.Continue.title,
@@ -40,14 +54,8 @@ struct QuestionsView: View {
       ) {
         viewModel.actionContinue()
       }
-      .padding(.bottom, 8)
-      .padding(.top, 5)
-    }
-    .onReceive(viewModel.timer) { _ in
-      viewModel.coundownTimer()
     }
     .padding(.horizontal, 30)
-    .frame(max: .infinity)
     .background(Colors.background.swiftUIColor)
     .popup(item: $viewModel.toastMessage, style: .toast) {
       ToastView(toastMessage: $0)
@@ -66,13 +74,17 @@ struct QuestionsView: View {
         KYCStatusView(viewModel: KYCStatusViewModel(state: .missingInfo))
       case .uploadDocument:
         UploadDocumentView()
+      case .agreement:
+        AgreementView(viewModel: AgreementViewModel()) {
+          log.info("after accept agreement will fetch missing step and go next:\(viewModel.onboardingFlowCoordinator.routeSubject.value) ")
+        }
       }
     }
-    .navigationBarBackButtonHidden(viewModel.isLoading)
+    .navigationBarBackButtonHidden()
   }
 }
 
-// MARK: - View Components
+  // MARK: - View Components
 private extension QuestionsView {
   var headerView: some View {
     VStack(alignment: .leading, spacing: 24) {
@@ -115,9 +127,10 @@ private struct AnswerQuestionView: View {
   let onChange: (_ isChecked: Bool, _ id: String) -> Void
   
   var body: some View {
-    Group {
+    VStack {
       HStack {
         Text(answerOption.question)
+          .lineLimit(4)
           .font(Fonts.regular.swiftUIFont(size: 16))
           .foregroundColor(.white)
           .padding(.vertical, 12)
@@ -135,7 +148,7 @@ private struct AnswerQuestionView: View {
 private struct AnswerButton: View {
   @Binding var answer: QuestionsEntity.Answer
   let onChange: (_ isChecked: Bool, _ id: String) -> Void
-
+  
   var body: some View {
     Button {
       onChange(answer.isSelect, answer.answerId)

@@ -13,6 +13,7 @@ public final class AgreementViewModel: ObservableObject {
   @LazyInjected(\.netspendDataManager) var netspendDataManager
   @LazyInjected(\.accountDataManager) var accountDataManager
   @LazyInjected(\.netspendRepository) var netspendRepository
+  @LazyInjected(\.onboardingFlowCoordinator) var onboardingFlowCoordinator
   
   @Published var isNavigationPersonalInformation: Bool = false
   @Published var isDisableButton: Bool = true

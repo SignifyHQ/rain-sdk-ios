@@ -15,7 +15,6 @@ struct KYCStatusView: View {
     makeContentView(with: viewModel.state)
       .background(Colors.background.swiftUIColor)
       .navigationBarBackButtonHidden()
-      // .track(name: String(describing: type(of: self))) TODO: Will be implemented later
       .defaultToolBar(icon: .intercom, openIntercom: {
         viewModel.openIntercom()
       })

@@ -5,9 +5,12 @@ import Factory
 import OnboardingData
 import NetSpendData
 import LFUtilities
+import AuthorizationManager
 
 class OnboardingContentViewModel: ObservableObject {
   @LazyInjected(\.onboardingFlowCoordinator) var onboardingFlowCoordinator
+  @LazyInjected(\.intercomService) var intercomService
+  @LazyInjected(\.authorizationManager) var authorizationManager
   
   @Published var route = OnboardingFlowCoordinator.Route.initial
   
@@ -33,5 +36,13 @@ class OnboardingContentViewModel: ObservableObject {
     DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
       UINavigationBar.setAnimationsEnabled(true)
     }
+  }
+  
+  func contactSupport() {
+    intercomService.openIntercom()
+  }
+  
+  func forcedLogout() {
+    NotificationCenter.default.post(name: authorizationManager.logOutForcedName, object: nil)
   }
 }

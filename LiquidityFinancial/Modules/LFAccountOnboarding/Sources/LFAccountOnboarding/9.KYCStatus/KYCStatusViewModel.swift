@@ -134,8 +134,14 @@ extension KYCStatusViewModel {
           }
         }
       } catch {
-        onboardingFlowCoordinator.set(route: .welcome)
         log.error(error.localizedDescription)
+        
+        if error.localizedDescription.contains("identity_verification_questions_not_available") {
+          onboardingFlowCoordinator.set(route: .popTimeUp)
+          return
+        }
+        
+        onboardingFlowCoordinator.forcedLogout()
       }
     }
   }

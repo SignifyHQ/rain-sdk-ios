@@ -5,6 +5,7 @@ import LFStyleGuide
 import AccountData
 import DogeOnboarding
 import LFRewards
+import LFLocalizable
 
 public struct OnboardingContentView: View {
   
@@ -64,7 +65,30 @@ public struct OnboardingContentView: View {
         KYCStatusView(viewModel: KYCStatusViewModel(state: .reject))
       case .unclear(let message):
         KYCStatusView(viewModel: KYCStatusViewModel(state: .common(message)))
+      case .agreement, .featureAgreement:
+        AgreementView(viewModel: AgreementViewModel()) {
+          log.info("after accept agreement will fetch missing step and go next:\(viewModel.onboardingFlowCoordinator.routeSubject.value) ")
+        }
+      case .popTimeUp:
+        ZStack {
+          timeIsUpPopup
+        }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .background(Color.black.edgesIgnoringSafeArea(.all))
       }
     }
+  }
+  
+  private var timeIsUpPopup: some View {
+    LiquidityAlert(
+      title: LFLocalizable.Kyc.TimeIsUp.title,
+      message: LFLocalizable.Kyc.TimeIsUp.message,
+      primary: .init(text: LFLocalizable.Button.ContactSupport.title) {
+        viewModel.contactSupport()
+      },
+      secondary: .init(text: LFLocalizable.Button.NotNow.title) {
+        viewModel.forcedLogout()
+      }
+    )
   }
 }

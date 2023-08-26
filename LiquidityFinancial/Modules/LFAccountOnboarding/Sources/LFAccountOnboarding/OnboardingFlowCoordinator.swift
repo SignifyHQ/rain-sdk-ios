@@ -10,11 +10,15 @@ import OnboardingDomain
 import LFRewards
 import RewardData
 import RewardDomain
+import LFStyleGuide
+import LFLocalizable
 
 public protocol OnboardingFlowCoordinatorProtocol {
   var routeSubject: CurrentValueSubject<OnboardingFlowCoordinator.Route, Never> { get }
   func routeUser()
   func set(route: OnboardingFlowCoordinator.Route)
+  func apiFetchCurrentState() async
+  func forcedLogout()
 }
 
 public class OnboardingFlowCoordinator: OnboardingFlowCoordinatorProtocol {
@@ -36,6 +40,9 @@ public class OnboardingFlowCoordinator: OnboardingFlowCoordinatorProtocol {
     case information
     case accountReject
     case unclear(String)
+    case agreement
+    case featureAgreement
+    case popTimeUp
     
     public var id: String {
       String(describing: self)
@@ -60,6 +67,7 @@ public class OnboardingFlowCoordinator: OnboardingFlowCoordinatorProtocol {
   @LazyInjected(\.rewardFlowCoordinator) var rewardFlowCoordinator
   @LazyInjected(\.accountRepository) var accountRepository
   @LazyInjected(\.rewardDataManager) var rewardDataManager
+  @LazyInjected(\.intercomService) var intercomService
   
   public let routeSubject: CurrentValueSubject<Route, Never>
   
@@ -83,7 +91,9 @@ public class OnboardingFlowCoordinator: OnboardingFlowCoordinatorProtocol {
   }
   
   public func routeUser() {
-    apiFetchCurrentState()
+    Task { @MainActor in
+       await apiFetchCurrentState()
+    }
   }
 
   func handlerRewardRoute(route: RewardFlowCoordinator.Route) {
@@ -95,59 +105,66 @@ public class OnboardingFlowCoordinator: OnboardingFlowCoordinatorProtocol {
     }
   }
   
-  func apiFetchCurrentState() {
-    Task { @MainActor in
-      do {
-        let user = try await accountRepository.getUser()
-        handleDataUser(user: user)
-        
-        try await refreshNetSpendSession()
-        
-        let onboardingState = try await onboardingRepository.getOnboardingState(sessionId: accountDataManager.sessionID)
-        
-        if onboardingState.missingSteps.isEmpty {
+  public func apiFetchCurrentState() async {
+    do {
+      let user = try await accountRepository.getUser()
+      handleDataUser(user: user)
+      
+      try await refreshNetSpendSession()
+      
+      let onboardingState = try await onboardingRepository.getOnboardingState(sessionId: accountDataManager.sessionID)
+      
+      if onboardingState.missingSteps.isEmpty {
+        set(route: .dashboard)
+      } else {
+        let states = onboardingState.mapToEnum()
+        if states.isEmpty {
           set(route: .dashboard)
         } else {
-          let states = onboardingState.mapToEnum()
-          if states.isEmpty {
-            set(route: .dashboard)
-          } else {
-            if states.contains(OnboardingMissingStep.netSpendCreateAccount) {
-              set(route: .welcome)
-            } else if states.contains(OnboardingMissingStep.dashboardReview) {
-              set(route: .kycReview)
-            } else if states.contains(OnboardingMissingStep.zeroHashAccount) {
-              set(route: .zeroHash)
-            } else if states.contains(OnboardingMissingStep.accountReject) {
-              set(route: .accountReject)
-            } else if states.contains(OnboardingMissingStep.primaryPersonKYCApprove) {
-              set(route: .kycReview)
-            } else if states.contains(OnboardingMissingStep.identityQuestions) {
-              let questionsEncrypt = try await netspendRepository.getQuestion(sessionId: accountDataManager.sessionID)
-              if let usersession = netspendDataManager.sdkSession, let questionsDecode = questionsEncrypt.decodeData(session: usersession) {
-                let questionsEntity = QuestionsEntity.mapObj(questionsDecode)
-                set(route: .question(questionsEntity))
-              }
-            } else if states.contains(OnboardingMissingStep.provideDocuments) {
-              let documents = try await netspendRepository.getDocuments(sessionId: accountDataManager.sessionID)
-              netspendDataManager.update(documentData: documents)
-              set(route: .document)
-            } else {
-              set(route: .unclear(states.compactMap({ $0.rawValue }).joined()))
+          if states.contains(OnboardingMissingStep.netSpendCreateAccount) {
+            set(route: .welcome)
+          } else if states.contains(OnboardingMissingStep.acceptAgreement) {
+            set(route: .agreement)
+          } else if states.contains(OnboardingMissingStep.acceptFeatureAgreement) {
+            set(route: .featureAgreement)
+          } else if states.contains(OnboardingMissingStep.identityQuestions) {
+            let questionsEncrypt = try await netspendRepository.getQuestion(sessionId: accountDataManager.sessionID)
+            if let usersession = netspendDataManager.sdkSession, let questionsDecode = questionsEncrypt.decodeData(session: usersession) {
+              let questionsEntity = QuestionsEntity.mapObj(questionsDecode)
+              set(route: .question(questionsEntity))
             }
+          } else if states.contains(OnboardingMissingStep.provideDocuments) {
+            let documents = try await netspendRepository.getDocuments(sessionId: accountDataManager.sessionID)
+            netspendDataManager.update(documentData: documents)
+            set(route: .document)
+          } else if states.contains(OnboardingMissingStep.dashboardReview) {
+            set(route: .kycReview)
+          } else if states.contains(OnboardingMissingStep.zeroHashAccount) {
+            set(route: .zeroHash)
+          } else if states.contains(OnboardingMissingStep.accountReject) {
+            set(route: .accountReject)
+          } else if states.contains(OnboardingMissingStep.primaryPersonKYCApprove) {
+            set(route: .kycReview)
+          } else {
+            set(route: .unclear(states.compactMap({ $0.rawValue }).joined()))
           }
         }
-      } catch {
-        if error.localizedDescription.contains("user_not_authorized") {
-          clearUserData()
-        }
-        if error.localizedDescription.contains("user_not_found") {
-          clearUserData()
-        }
-        set(route: .phone)
-        log.error(error.localizedDescription)
       }
+    } catch {
+      log.error(error.localizedDescription)
+      
+      if error.localizedDescription.contains("identity_verification_questions_not_available") {
+        set(route: .popTimeUp)
+        return
+      }
+      
+      forcedLogout()
     }
+  }
+
+  public func forcedLogout() {
+    clearUserData()
+    set(route: .phone)
   }
 }
 

@@ -8,7 +8,7 @@ import AuthorizationManager
 
 // swiftlint:disable superfluous_disable_command
 @MainActor
-final class QuestionsViewModel: ObservableObject {
+public final class QuestionsViewModel: ObservableObject {
   @LazyInjected(\.netspendDataManager) var netspendDataManager
   @LazyInjected(\.accountDataManager) var accountDataManager
   @LazyInjected(\.accountRepository) var accountRepository
@@ -25,10 +25,11 @@ final class QuestionsViewModel: ObservableObject {
   @Published var navigation: Navigation?
   @Published var popup: Popup?
   @Published var timeRemaining = Constants.kycQuestionTimeOut
-
+  
+  
   let timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
 
-  init(questionList: QuestionsEntity) {
+  public init(questionList: QuestionsEntity = .mockKYCQuestion) {
     _questionList = .init(initialValue: questionList)
   }
 }
@@ -112,6 +113,11 @@ extension QuestionsViewModel {
         try await handleWorkflows()
         
       } catch {
+        if error.localizedDescription.contains("identity_verification_questions_not_available") {
+          onboardingFlowCoordinator.set(route: .popTimeUp)
+          return
+        }
+        
         log.error(error)
         toastMessage = error.localizedDescription
       }
@@ -134,8 +140,8 @@ private extension QuestionsViewModel {
         let step = steps.steps[stepIndex]
         switch step.missingStep {
         case .identityQuestions:
-          navigation = .missingInfo //"You can't upload question for now, Please try it late."
-        case .provideDocuments: //TODO: need review implement other case
+          onboardingFlowCoordinator.set(route: .unclear("You can't upload question for now, Please try it late."))
+        case .provideDocuments:
           let documents = try await netspendRepository.getDocuments(sessionId: accountDataManager.sessionID)
           netspendDataManager.update(documentData: documents)
           navigation = .uploadDocument
@@ -143,12 +149,10 @@ private extension QuestionsViewModel {
           navigation = .missingInfo
         case .primaryPersonKYCApprove:
           navigation = .kycReview
-        case .acceptAgreement:
-          break
+        case .acceptAgreement, .acceptFeatureAgreement:
+          navigation = .agreement
         case .expectedUse:
-          break
-        case .acceptFeatureAgreement:
-          break
+          onboardingFlowCoordinator.set(route: .unclear(step.missingStep.rawValue))
         }
       }
     }
@@ -161,6 +165,7 @@ extension QuestionsViewModel {
     case kycReview
     case uploadDocument
     case missingInfo
+    case agreement
   }
   
   enum Popup {

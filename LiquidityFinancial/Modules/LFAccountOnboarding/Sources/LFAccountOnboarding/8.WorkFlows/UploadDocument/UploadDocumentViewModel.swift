@@ -14,6 +14,7 @@ final class UploadDocumentViewModel: ObservableObject {
   enum Navigation {
     case kycReview
     case missingInfo
+    case agreement
   }
   
   @LazyInjected(\.netspendDataManager) var netspendDataManager
@@ -156,19 +157,17 @@ extension UploadDocumentViewModel {
         let step = steps.steps[stepIndex]
         switch step.missingStep {
         case .identityQuestions:
-          navigation = .missingInfo //"You can't upload question for now, Please try it late."
+          onboardingFlowCoordinator.set(route: .unclear("You can't upload question for now, Please try it late."))
         case .provideDocuments:
-          navigation = .missingInfo //"You can't upload document for now, Please try it late."
+          onboardingFlowCoordinator.set(route: .unclear("You can't upload document for now, Please try it late."))
         case .KYCData, .identityScan:
           navigation = .missingInfo
         case .primaryPersonKYCApprove:
           navigation = .kycReview
-        case .acceptAgreement:
-          break
+        case .acceptAgreement, .acceptFeatureAgreement:
+          navigation = .agreement
         case .expectedUse:
-          break
-        case .acceptFeatureAgreement:
-          break
+          onboardingFlowCoordinator.set(route: .unclear(step.missingStep.rawValue))
         }
       }
     }
