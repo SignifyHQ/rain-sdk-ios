@@ -15,7 +15,8 @@ let package = Package(
       .package(url: "https://github.com/underdog-tech/pinwheel-ios-sdk.git", from: "2.3.15"),
       .package(url: "https://github.com/intercom/intercom-ios", from: "15.1.3"),
       .package(url: "https://github.com/marinofelipe/CurrencyText.git", from: "3.0.0"),
-      .package(url: "https://github.com/hmlongco/Factory", from: "2.2.0")
+      .package(url: "https://github.com/hmlongco/Factory", from: "2.2.0"),
+      .package(url: "https://github.com/firebase/firebase-ios-sdk", from: "10.0.0")
     ],
     targets: [
         .target(
@@ -25,7 +26,8 @@ let package = Package(
               .product(name: "VGSShowSDK", package: "vgs-show-ios"),
               .product(name: "PinwheelSDK", package: "pinwheel-ios-sdk"),
               .product(name: "CurrencyText", package: "CurrencyText"),
-              .product(name: "Intercom", package: "intercom-ios")
+              .product(name: "Intercom", package: "intercom-ios"),
+              .product(name: "FirebaseMessaging", package: "firebase-ios-sdk")
             ],
             resources: [
               .process("Resources")

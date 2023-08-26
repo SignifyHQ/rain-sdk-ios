@@ -34,6 +34,8 @@
 	<string>$(CRYPTO_FRACTION_DIGITS)</string>
 	<key>DISCLOSURE_URL</key>
 	<string>$(DISCLOSURE_URL)</string>
+	<key>FirebaseAppDelegateProxyEnabled</key>
+	<false/>
 	<key>ITSAppUsesNonExemptEncryption</key>
 	<false/>
 	<key>LSApplicationCategoryType</key>

@@ -3,6 +3,8 @@ import UIKit
 import FraudForce
 import LFUtilities
 import Intercom
+import Firebase
+import Factory
 
 public enum KickoffService {
   static var networkEnvironment: NetworkEnvironment {
@@ -10,12 +12,18 @@ public enum KickoffService {
   }
   
   public static func kickoff(application: UIApplication, launchingOptions: [UIApplication.LaunchOptionsKey: Any]?) {
+    kickoffFirebase()
     kickoffNetspend()
     kichOffIntercom()
+    kickoffPushNotifications(application: application)
   }
   
   public static func application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
     // Set device token for push notifications.
+    Messaging.messaging().setAPNSToken(
+      deviceToken,
+      type: networkEnvironment == .productionTest ? .sandbox : .prod
+    )
     Intercom.setDeviceToken(deviceToken) { error in
       guard let error = error else { return }
       log.error("Error setting device token: \(error.localizedDescription)")
@@ -38,5 +46,20 @@ extension KickoffService {
 extension KickoffService {
   static func kickoffNetspend() {
     NetSpendService.kickoffNetspend(networkEnvironment: networkEnvironment)
+  }
+}
+
+// MARK: Firebase {
+extension KickoffService {
+  private static func kickoffFirebase() {
+    FirebaseApp.configure()
+  }
+}
+
+// MARK: Push notification
+extension KickoffService {
+  private static func kickoffPushNotifications(application: UIApplication) {
+    Container.shared.pushNotificationService.resolve().setUp()
+    application.registerForRemoteNotifications()
   }
 }
