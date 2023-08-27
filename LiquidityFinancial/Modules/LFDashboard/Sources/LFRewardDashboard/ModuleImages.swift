@@ -24,8 +24,6 @@ internal typealias AssetImageTypeAlias = ImageAsset.Image
 internal enum ModuleImages {
   internal static let bgSelectFundraiser = ImageAsset(name: "bg_selectFundraiser")
   internal static let bgSelectRewards = ImageAsset(name: "bg_selectRewards")
-  internal static let bgUnspecifiedRewards = ImageAsset(name: "bg_unspecifiedRewards")
-  internal static let icEmptyList = ImageAsset(name: "ic_emptyList")
   internal static let icHomeAccount = ImageAsset(name: "ic_home_account")
   internal static let icHomeCash = ImageAsset(name: "ic_home_cash")
   internal static let icHomeCause = ImageAsset(name: "ic_home_cause")

@@ -142,7 +142,7 @@ private extension FullSizeButton {
   
   var gradientColor: [Color] {
     switch LFStyleGuide.target {
-    case .PrideCard, .CauseCard:
+    case .CauseCard:
       return [
         Colors.Gradients.Button.gradientButton0.swiftUIColor,
         Colors.Gradients.Button.gradientButton1.swiftUIColor

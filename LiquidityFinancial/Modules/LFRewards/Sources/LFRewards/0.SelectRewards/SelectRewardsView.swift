@@ -2,6 +2,7 @@ import SwiftUI
 import LFStyleGuide
 import LFUtilities
 import LFLocalizable
+import PridcardRewards
 
 public enum RewardWhereStart {
   case onboarding
@@ -62,10 +63,19 @@ public struct SelectRewardsView: View {
   }
   
   private var asset: some View {
-    ModuleImages.bgHeaderSelectReward.swiftUIImage
-      .resizable()
-      .aspectRatio(contentMode: .fit)
-      .layoutPriority(1)
+    Group {
+      switch LFUtilities.target {
+      case .CauseCard:
+        ModuleImages.bgHeaderSelectReward.swiftUIImage
+          .resizable()
+          .aspectRatio(contentMode: .fit)
+          .layoutPriority(1)
+      case .PrideCard:
+        HeaderSelectRewardView()
+      default:
+        EmptyView()
+      }
+    }
   }
   
   private var titles: some View {

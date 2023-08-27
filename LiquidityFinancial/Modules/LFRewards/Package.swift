@@ -9,7 +9,10 @@ let package = Package(
     products: [
         .library(
             name: "LFRewards",
-            targets: ["LFRewards"])
+            targets: ["LFRewards"]),
+        .library(
+          name: "PridcardRewards",
+          targets: ["PridcardRewards"])
     ],
     dependencies: [
       .package(url: "https://github.com/hmlongco/Factory", from: "2.2.0"),
@@ -24,7 +27,7 @@ let package = Package(
         .target(
             name: "LFRewards",
             dependencies: [
-              "LFUtilities", "LFStyleGuide", "LFLocalizable", "Factory",
+              "LFUtilities", "LFStyleGuide", "LFLocalizable", "Factory", "PridcardRewards",
               .product(name: "NetSpendData", package: "LFData"),
               .product(name: "RewardData", package: "LFData"),
               .product(name: "RewardDomain", package: "LFDomain")
@@ -35,6 +38,18 @@ let package = Package(
             plugins: [
               .plugin(name: "SwiftGenPlugin", package: "SwiftGenPlugin")
             ]
+        ),
+        .target(
+          name: "PridcardRewards",
+          dependencies: [
+            "LFUtilities", "LFStyleGuide", "LFLocalizable"
+          ],
+          resources: [
+            .process("ZResources")
+          ],
+          plugins: [
+            .plugin(name: "SwiftGenPlugin", package: "SwiftGenPlugin")
+          ]
         ),
         .testTarget(
             name: "LFRewardsTests",

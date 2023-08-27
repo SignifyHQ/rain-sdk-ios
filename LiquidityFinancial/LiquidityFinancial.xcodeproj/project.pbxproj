@@ -75,6 +75,69 @@
 		A980DF712A5FA252000B3C09 /* OnboardingData in Frameworks */ = {isa = PBXBuildFile; productRef = A980DF702A5FA252000B3C09 /* OnboardingData */; };
 		A980DF752A5FA265000B3C09 /* LFServices in Frameworks */ = {isa = PBXBuildFile; productRef = A980DF742A5FA265000B3C09 /* LFServices */; };
 		A980DF772A5FA26E000B3C09 /* LFUtilities in Frameworks */ = {isa = PBXBuildFile; productRef = A980DF762A5FA26E000B3C09 /* LFUtilities */; };
+		A99D2F282A9A56CF00947773 /* AppDelegate+Configs.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9BC804C2A774F5D00E4A1A0 /* AppDelegate+Configs.swift */; };
+		A99D2F292A9A56CF00947773 /* OnboardingContainer+Injection.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9B912F22A6B898C00ABD87B /* OnboardingContainer+Injection.swift */; };
+		A99D2F2B2A9A56CF00947773 /* AppDelegate+Appearance.swift in Sources */ = {isa = PBXBuildFile; fileRef = A93837462A63DDFD009EB1DE /* AppDelegate+Appearance.swift */; };
+		A99D2F2C2A9A56CF00947773 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = A97BF8192A5D9E6B00B8F5CA /* AppDelegate.swift */; };
+		A99D2F2E2A9A56CF00947773 /* LFAccountOnboarding in Frameworks */ = {isa = PBXBuildFile; productRef = A99D2F0A2A9A56CF00947773 /* LFAccountOnboarding */; };
+		A99D2F2F2A9A56CF00947773 /* OnboardingDomain in Frameworks */ = {isa = PBXBuildFile; productRef = A99D2F0B2A9A56CF00947773 /* OnboardingDomain */; };
+		A99D2F302A9A56CF00947773 /* RewardDomain in Frameworks */ = {isa = PBXBuildFile; productRef = A99D2F202A9A56CF00947773 /* RewardDomain */; };
+		A99D2F312A9A56CF00947773 /* Factory in Frameworks */ = {isa = PBXBuildFile; productRef = A99D2F052A9A56CF00947773 /* Factory */; };
+		A99D2F322A9A56CF00947773 /* AccountData in Frameworks */ = {isa = PBXBuildFile; productRef = A99D2F182A9A56CF00947773 /* AccountData */; };
+		A99D2F332A9A56CF00947773 /* LFRewardDashboard in Frameworks */ = {isa = PBXBuildFile; productRef = A99D2F1E2A9A56CF00947773 /* LFRewardDashboard */; };
+		A99D2F342A9A56CF00947773 /* CodeScanner in Frameworks */ = {isa = PBXBuildFile; productRef = A99D2F1C2A9A56CF00947773 /* CodeScanner */; };
+		A99D2F352A9A56CF00947773 /* OnboardingData in Frameworks */ = {isa = PBXBuildFile; productRef = A99D2F0C2A9A56CF00947773 /* OnboardingData */; };
+		A99D2F362A9A56CF00947773 /* LFStyleGuide in Frameworks */ = {isa = PBXBuildFile; productRef = A99D2F092A9A56CF00947773 /* LFStyleGuide */; };
+		A99D2F372A9A56CF00947773 /* AuthorizationManager in Frameworks */ = {isa = PBXBuildFile; productRef = A99D2F102A9A56CF00947773 /* AuthorizationManager */; };
+		A99D2F382A9A56CF00947773 /* NetSpendData in Frameworks */ = {isa = PBXBuildFile; productRef = A99D2F152A9A56CF00947773 /* NetSpendData */; };
+		A99D2F392A9A56CF00947773 /* LFUtilities in Frameworks */ = {isa = PBXBuildFile; productRef = A99D2F0E2A9A56CF00947773 /* LFUtilities */; };
+		A99D2F3A2A9A56CF00947773 /* iPhoneNumberField in Frameworks */ = {isa = PBXBuildFile; productRef = A99D2F112A9A56CF00947773 /* iPhoneNumberField */; };
+		A99D2F3B2A9A56CF00947773 /* VGSShowSDK in Frameworks */ = {isa = PBXBuildFile; productRef = A99D2F162A9A56CF00947773 /* VGSShowSDK */; };
+		A99D2F3C2A9A56CF00947773 /* Lottie in Frameworks */ = {isa = PBXBuildFile; productRef = A99D2F072A9A56CF00947773 /* Lottie */; };
+		A99D2F3D2A9A56CF00947773 /* LFServices in Frameworks */ = {isa = PBXBuildFile; productRef = A99D2F0D2A9A56CF00947773 /* LFServices */; };
+		A99D2F3E2A9A56CF00947773 /* PinwheelSDK in Frameworks */ = {isa = PBXBuildFile; productRef = A99D2F192A9A56CF00947773 /* PinwheelSDK */; };
+		A99D2F3F2A9A56CF00947773 /* LFLocalizable in Frameworks */ = {isa = PBXBuildFile; productRef = A99D2F0F2A9A56CF00947773 /* LFLocalizable */; };
+		A99D2F402A9A56CF00947773 /* RewardData in Frameworks */ = {isa = PBXBuildFile; productRef = A99D2F1F2A9A56CF00947773 /* RewardData */; };
+		A99D2F412A9A56CF00947773 /* CoreNetwork in Frameworks */ = {isa = PBXBuildFile; productRef = A99D2F1B2A9A56CF00947773 /* CoreNetwork */; };
+		A99D2F422A9A56CF00947773 /* FirebaseMessaging in Frameworks */ = {isa = PBXBuildFile; productRef = A99D2F212A9A56CF00947773 /* FirebaseMessaging */; };
+		A99D2F432A9A56CF00947773 /* SmartyStreets in Frameworks */ = {isa = PBXBuildFile; productRef = A99D2F132A9A56CF00947773 /* SmartyStreets */; };
+		A99D2F532A9A56CF00947773 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A9B4BA0A2A7C107D000ED67A /* Images.xcassets */; };
+		A99D2F9B2A9A56F200947773 /* PrideCardConfig.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = A99D2F6D2A9A56F200947773 /* PrideCardConfig.xcconfig */; };
+		A99D2F9C2A9A56F200947773 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = A99D2F6F2A9A56F200947773 /* Localizable.strings */; };
+		A99D2F9D2A9A56F200947773 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = A99D2F712A9A56F200947773 /* LaunchScreen.storyboard */; };
+		A99D2F9E2A9A56F200947773 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = A99D2F722A9A56F200947773 /* GoogleService-Info.plist */; };
+		A99D2FA82A9A56F200947773 /* Lato-Italic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = A99D2F7F2A9A56F200947773 /* Lato-Italic.ttf */; };
+		A99D2FA92A9A56F200947773 /* Lato-LightItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = A99D2F802A9A56F200947773 /* Lato-LightItalic.ttf */; };
+		A99D2FAA2A9A56F200947773 /* Lato-Thin.ttf in Resources */ = {isa = PBXBuildFile; fileRef = A99D2F812A9A56F200947773 /* Lato-Thin.ttf */; };
+		A99D2FAB2A9A56F200947773 /* Montserrat-Medium.ttf in Resources */ = {isa = PBXBuildFile; fileRef = A99D2F822A9A56F200947773 /* Montserrat-Medium.ttf */; };
+		A99D2FAC2A9A56F200947773 /* Lato-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = A99D2F832A9A56F200947773 /* Lato-Bold.ttf */; };
+		A99D2FAD2A9A56F200947773 /* Lato-Black.ttf in Resources */ = {isa = PBXBuildFile; fileRef = A99D2F842A9A56F200947773 /* Lato-Black.ttf */; };
+		A99D2FAE2A9A56F200947773 /* Orbitron-Medium.ttf in Resources */ = {isa = PBXBuildFile; fileRef = A99D2F852A9A56F200947773 /* Orbitron-Medium.ttf */; };
+		A99D2FAF2A9A56F200947773 /* Lato-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = A99D2F862A9A56F200947773 /* Lato-Regular.ttf */; };
+		A99D2FB02A9A56F200947773 /* Lato-BlackItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = A99D2F872A9A56F200947773 /* Lato-BlackItalic.ttf */; };
+		A99D2FB12A9A56F200947773 /* Lato-MediumItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = A99D2F882A9A56F200947773 /* Lato-MediumItalic.ttf */; };
+		A99D2FB22A9A56F200947773 /* Montserrat-Black.ttf in Resources */ = {isa = PBXBuildFile; fileRef = A99D2F892A9A56F200947773 /* Montserrat-Black.ttf */; };
+		A99D2FB32A9A56F200947773 /* Lato-BoldItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = A99D2F8A2A9A56F200947773 /* Lato-BoldItalic.ttf */; };
+		A99D2FB42A9A56F200947773 /* Lato-Light.ttf in Resources */ = {isa = PBXBuildFile; fileRef = A99D2F8B2A9A56F200947773 /* Lato-Light.ttf */; };
+		A99D2FB52A9A56F200947773 /* Lato-Medium.ttf in Resources */ = {isa = PBXBuildFile; fileRef = A99D2F8C2A9A56F200947773 /* Lato-Medium.ttf */; };
+		A99D2FB62A9A56F200947773 /* Lato-ThinItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = A99D2F8D2A9A56F200947773 /* Lato-ThinItalic.ttf */; };
+		A99D2FB72A9A56F200947773 /* Orbitron-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = A99D2F8E2A9A56F200947773 /* Orbitron-Bold.ttf */; };
+		A99D2FB82A9A56F200947773 /* Colors.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A99D2F902A9A56F200947773 /* Colors.xcassets */; };
+		A99D2FB92A9A56F200947773 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A99D2F912A9A56F200947773 /* Images.xcassets */; };
+		A99D2FBA2A9A56F200947773 /* DashboardContainer+Injection.swift in Sources */ = {isa = PBXBuildFile; fileRef = A99D2F942A9A56F200947773 /* DashboardContainer+Injection.swift */; };
+		A99D2FBB2A9A56F200947773 /* AppCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = A99D2F962A9A56F200947773 /* AppCoordinator.swift */; };
+		A99D2FBC2A9A56F200947773 /* PrideCardApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = A99D2F972A9A56F200947773 /* PrideCardApp.swift */; };
+		A99D2FBD2A9A56F200947773 /* AppView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A99D2F992A9A56F200947773 /* AppView.swift */; };
+		A99D2FBE2A9A56F200947773 /* AppViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A99D2F9A2A9A56F200947773 /* AppViewModel.swift */; };
+		A99D2FC92A9AFD8300947773 /* TwinkleCircle.json in Resources */ = {isa = PBXBuildFile; fileRef = A99D2FC02A9AFD8300947773 /* TwinkleCircle.json */; };
+		A99D2FCA2A9AFD8300947773 /* LoadingPrimary.json in Resources */ = {isa = PBXBuildFile; fileRef = A99D2FC12A9AFD8300947773 /* LoadingPrimary.json */; };
+		A99D2FCB2A9AFD8300947773 /* Welcome.json in Resources */ = {isa = PBXBuildFile; fileRef = A99D2FC22A9AFD8300947773 /* Welcome.json */; };
+		A99D2FCC2A9AFD8300947773 /* LoadingContrast.json in Resources */ = {isa = PBXBuildFile; fileRef = A99D2FC32A9AFD8300947773 /* LoadingContrast.json */; };
+		A99D2FCD2A9AFD8300947773 /* LoadingHeart.json in Resources */ = {isa = PBXBuildFile; fileRef = A99D2FC42A9AFD8300947773 /* LoadingHeart.json */; };
+		A99D2FCE2A9AFD8300947773 /* ApplePay.json in Resources */ = {isa = PBXBuildFile; fileRef = A99D2FC52A9AFD8300947773 /* ApplePay.json */; };
+		A99D2FCF2A9AFD8300947773 /* TwinkleContrast.json in Resources */ = {isa = PBXBuildFile; fileRef = A99D2FC62A9AFD8300947773 /* TwinkleContrast.json */; };
+		A99D2FD02A9AFD8300947773 /* TwinkleSides.json in Resources */ = {isa = PBXBuildFile; fileRef = A99D2FC72A9AFD8300947773 /* TwinkleSides.json */; };
+		A99D2FD12A9AFD8300947773 /* LoadingMix.json in Resources */ = {isa = PBXBuildFile; fileRef = A99D2FC82A9AFD8300947773 /* LoadingMix.json */; };
 		A9B448BD2A8389B90029944C /* AppDelegate+Configs.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9BC804C2A774F5D00E4A1A0 /* AppDelegate+Configs.swift */; };
 		A9B448BE2A8389B90029944C /* OnboardingContainer+Injection.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9B912F22A6B898C00ABD87B /* OnboardingContainer+Injection.swift */; };
 		A9B448C12A8389B90029944C /* AppDelegate+Appearance.swift in Sources */ = {isa = PBXBuildFile; fileRef = A93837462A63DDFD009EB1DE /* AppDelegate+Appearance.swift */; };
@@ -296,6 +359,45 @@
 		A97BF83D2A5DBCF200B8F5CA /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
 		A97BF83F2A5DC13000B8F5CA /* Colors.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Colors.xcassets; sourceTree = "<group>"; };
 		A99759C92A8D2A91005B391E /* LFBank */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = LFBank; path = Modules/LFBank; sourceTree = "<group>"; };
+		A99D2F692A9A56CF00947773 /* PrideCard.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = PrideCard.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		A99D2F6D2A9A56F200947773 /* PrideCardConfig.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = PrideCardConfig.xcconfig; sourceTree = "<group>"; };
+		A99D2F702A9A56F200947773 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
+		A99D2F712A9A56F200947773 /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = LaunchScreen.storyboard; sourceTree = "<group>"; };
+		A99D2F722A9A56F200947773 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
+		A99D2F732A9A56F200947773 /* PrideCard-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "PrideCard-Info.plist"; sourceTree = "<group>"; };
+		A99D2F7D2A9A56F200947773 /* PrideCard.entitlements */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.entitlements; path = PrideCard.entitlements; sourceTree = "<group>"; };
+		A99D2F7F2A9A56F200947773 /* Lato-Italic.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Lato-Italic.ttf"; sourceTree = "<group>"; };
+		A99D2F802A9A56F200947773 /* Lato-LightItalic.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Lato-LightItalic.ttf"; sourceTree = "<group>"; };
+		A99D2F812A9A56F200947773 /* Lato-Thin.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Lato-Thin.ttf"; sourceTree = "<group>"; };
+		A99D2F822A9A56F200947773 /* Montserrat-Medium.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Montserrat-Medium.ttf"; sourceTree = "<group>"; };
+		A99D2F832A9A56F200947773 /* Lato-Bold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Lato-Bold.ttf"; sourceTree = "<group>"; };
+		A99D2F842A9A56F200947773 /* Lato-Black.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Lato-Black.ttf"; sourceTree = "<group>"; };
+		A99D2F852A9A56F200947773 /* Orbitron-Medium.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Orbitron-Medium.ttf"; sourceTree = "<group>"; };
+		A99D2F862A9A56F200947773 /* Lato-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Lato-Regular.ttf"; sourceTree = "<group>"; };
+		A99D2F872A9A56F200947773 /* Lato-BlackItalic.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Lato-BlackItalic.ttf"; sourceTree = "<group>"; };
+		A99D2F882A9A56F200947773 /* Lato-MediumItalic.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Lato-MediumItalic.ttf"; sourceTree = "<group>"; };
+		A99D2F892A9A56F200947773 /* Montserrat-Black.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Montserrat-Black.ttf"; sourceTree = "<group>"; };
+		A99D2F8A2A9A56F200947773 /* Lato-BoldItalic.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Lato-BoldItalic.ttf"; sourceTree = "<group>"; };
+		A99D2F8B2A9A56F200947773 /* Lato-Light.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Lato-Light.ttf"; sourceTree = "<group>"; };
+		A99D2F8C2A9A56F200947773 /* Lato-Medium.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Lato-Medium.ttf"; sourceTree = "<group>"; };
+		A99D2F8D2A9A56F200947773 /* Lato-ThinItalic.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Lato-ThinItalic.ttf"; sourceTree = "<group>"; };
+		A99D2F8E2A9A56F200947773 /* Orbitron-Bold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Orbitron-Bold.ttf"; sourceTree = "<group>"; };
+		A99D2F902A9A56F200947773 /* Colors.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Colors.xcassets; sourceTree = "<group>"; };
+		A99D2F912A9A56F200947773 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
+		A99D2F942A9A56F200947773 /* DashboardContainer+Injection.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "DashboardContainer+Injection.swift"; sourceTree = "<group>"; };
+		A99D2F962A9A56F200947773 /* AppCoordinator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppCoordinator.swift; sourceTree = "<group>"; };
+		A99D2F972A9A56F200947773 /* PrideCardApp.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PrideCardApp.swift; sourceTree = "<group>"; };
+		A99D2F992A9A56F200947773 /* AppView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppView.swift; sourceTree = "<group>"; };
+		A99D2F9A2A9A56F200947773 /* AppViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppViewModel.swift; sourceTree = "<group>"; };
+		A99D2FC02A9AFD8300947773 /* TwinkleCircle.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = TwinkleCircle.json; sourceTree = "<group>"; };
+		A99D2FC12A9AFD8300947773 /* LoadingPrimary.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = LoadingPrimary.json; sourceTree = "<group>"; };
+		A99D2FC22A9AFD8300947773 /* Welcome.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = Welcome.json; sourceTree = "<group>"; };
+		A99D2FC32A9AFD8300947773 /* LoadingContrast.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = LoadingContrast.json; sourceTree = "<group>"; };
+		A99D2FC42A9AFD8300947773 /* LoadingHeart.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = LoadingHeart.json; sourceTree = "<group>"; };
+		A99D2FC52A9AFD8300947773 /* ApplePay.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = ApplePay.json; sourceTree = "<group>"; };
+		A99D2FC62A9AFD8300947773 /* TwinkleContrast.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = TwinkleContrast.json; sourceTree = "<group>"; };
+		A99D2FC72A9AFD8300947773 /* TwinkleSides.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = TwinkleSides.json; sourceTree = "<group>"; };
+		A99D2FC82A9AFD8300947773 /* LoadingMix.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = LoadingMix.json; sourceTree = "<group>"; };
 		A9B448F02A8389B90029944C /* CauseCard.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = CauseCard.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		A9B448F42A838A000029944C /* CauseCardConfig.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = CauseCardConfig.xcconfig; sourceTree = "<group>"; };
 		A9B448F72A838A000029944C /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
@@ -478,6 +580,35 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		A99D2F2D2A9A56CF00947773 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A99D2F2E2A9A56CF00947773 /* LFAccountOnboarding in Frameworks */,
+				A99D2F2F2A9A56CF00947773 /* OnboardingDomain in Frameworks */,
+				A99D2F302A9A56CF00947773 /* RewardDomain in Frameworks */,
+				A99D2F312A9A56CF00947773 /* Factory in Frameworks */,
+				A99D2F322A9A56CF00947773 /* AccountData in Frameworks */,
+				A99D2F332A9A56CF00947773 /* LFRewardDashboard in Frameworks */,
+				A99D2F342A9A56CF00947773 /* CodeScanner in Frameworks */,
+				A99D2F352A9A56CF00947773 /* OnboardingData in Frameworks */,
+				A99D2F362A9A56CF00947773 /* LFStyleGuide in Frameworks */,
+				A99D2F372A9A56CF00947773 /* AuthorizationManager in Frameworks */,
+				A99D2F382A9A56CF00947773 /* NetSpendData in Frameworks */,
+				A99D2F392A9A56CF00947773 /* LFUtilities in Frameworks */,
+				A99D2F3A2A9A56CF00947773 /* iPhoneNumberField in Frameworks */,
+				A99D2F3B2A9A56CF00947773 /* VGSShowSDK in Frameworks */,
+				A99D2F3C2A9A56CF00947773 /* Lottie in Frameworks */,
+				A99D2F3D2A9A56CF00947773 /* LFServices in Frameworks */,
+				A99D2F3E2A9A56CF00947773 /* PinwheelSDK in Frameworks */,
+				A99D2F3F2A9A56CF00947773 /* LFLocalizable in Frameworks */,
+				A99D2F402A9A56CF00947773 /* RewardData in Frameworks */,
+				A99D2F412A9A56CF00947773 /* CoreNetwork in Frameworks */,
+				A99D2F422A9A56CF00947773 /* FirebaseMessaging in Frameworks */,
+				A99D2F432A9A56CF00947773 /* SmartyStreets in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		A9B448C62A8389B90029944C /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -653,6 +784,7 @@
 				A95354972A5E55B2008B0FAB /* Cardano.app */,
 				A9B4B9742A7C0C76000ED67A /* DogeCard.app */,
 				A9B448F02A8389B90029944C /* CauseCard.app */,
+				A99D2F692A9A56CF00947773 /* PrideCard.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -660,6 +792,7 @@
 		A97BF7BE2A5C602D00B8F5CA /* LiquidityFinancial */ = {
 			isa = PBXGroup;
 			children = (
+				A99D2F6B2A9A56F200947773 /* PrideCard */,
 				A9B448F22A838A000029944C /* CauseCard */,
 				A97BF8102A5D989100B8F5CA /* Avalanche */,
 				A95354992A5E571D008B0FAB /* Cardano */,
@@ -781,6 +914,123 @@
 				A97BF83A2A5DA86000B8F5CA /* AvalancheConfig.xcconfig */,
 			);
 			path = Configurations;
+			sourceTree = "<group>";
+		};
+		A99D2F6B2A9A56F200947773 /* PrideCard */ = {
+			isa = PBXGroup;
+			children = (
+				A99D2F922A9A56F200947773 /* Sources */,
+				A99D2F6C2A9A56F200947773 /* Configurations */,
+				A99D2F6E2A9A56F200947773 /* Resources */,
+			);
+			path = PrideCard;
+			sourceTree = "<group>";
+		};
+		A99D2F6C2A9A56F200947773 /* Configurations */ = {
+			isa = PBXGroup;
+			children = (
+				A99D2F6D2A9A56F200947773 /* PrideCardConfig.xcconfig */,
+			);
+			path = Configurations;
+			sourceTree = "<group>";
+		};
+		A99D2F6E2A9A56F200947773 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				A99D2FBF2A9AFD8300947773 /* Lottie */,
+				A99D2F6F2A9A56F200947773 /* Localizable.strings */,
+				A99D2F712A9A56F200947773 /* LaunchScreen.storyboard */,
+				A99D2F722A9A56F200947773 /* GoogleService-Info.plist */,
+				A99D2F732A9A56F200947773 /* PrideCard-Info.plist */,
+				A99D2F7D2A9A56F200947773 /* PrideCard.entitlements */,
+				A99D2F7E2A9A56F200947773 /* Fonts */,
+				A99D2F8F2A9A56F200947773 /* Assets */,
+			);
+			path = Resources;
+			sourceTree = "<group>";
+		};
+		A99D2F7E2A9A56F200947773 /* Fonts */ = {
+			isa = PBXGroup;
+			children = (
+				A99D2F7F2A9A56F200947773 /* Lato-Italic.ttf */,
+				A99D2F802A9A56F200947773 /* Lato-LightItalic.ttf */,
+				A99D2F812A9A56F200947773 /* Lato-Thin.ttf */,
+				A99D2F822A9A56F200947773 /* Montserrat-Medium.ttf */,
+				A99D2F832A9A56F200947773 /* Lato-Bold.ttf */,
+				A99D2F842A9A56F200947773 /* Lato-Black.ttf */,
+				A99D2F852A9A56F200947773 /* Orbitron-Medium.ttf */,
+				A99D2F862A9A56F200947773 /* Lato-Regular.ttf */,
+				A99D2F872A9A56F200947773 /* Lato-BlackItalic.ttf */,
+				A99D2F882A9A56F200947773 /* Lato-MediumItalic.ttf */,
+				A99D2F892A9A56F200947773 /* Montserrat-Black.ttf */,
+				A99D2F8A2A9A56F200947773 /* Lato-BoldItalic.ttf */,
+				A99D2F8B2A9A56F200947773 /* Lato-Light.ttf */,
+				A99D2F8C2A9A56F200947773 /* Lato-Medium.ttf */,
+				A99D2F8D2A9A56F200947773 /* Lato-ThinItalic.ttf */,
+				A99D2F8E2A9A56F200947773 /* Orbitron-Bold.ttf */,
+			);
+			path = Fonts;
+			sourceTree = "<group>";
+		};
+		A99D2F8F2A9A56F200947773 /* Assets */ = {
+			isa = PBXGroup;
+			children = (
+				A99D2F902A9A56F200947773 /* Colors.xcassets */,
+				A99D2F912A9A56F200947773 /* Images.xcassets */,
+			);
+			path = Assets;
+			sourceTree = "<group>";
+		};
+		A99D2F922A9A56F200947773 /* Sources */ = {
+			isa = PBXGroup;
+			children = (
+				A99D2F972A9A56F200947773 /* PrideCardApp.swift */,
+				A99D2F952A9A56F200947773 /* AppCoordinator */,
+				A99D2F982A9A56F200947773 /* AppView */,
+				A99D2F932A9A56F200947773 /* DependenciesInjection */,
+			);
+			path = Sources;
+			sourceTree = "<group>";
+		};
+		A99D2F932A9A56F200947773 /* DependenciesInjection */ = {
+			isa = PBXGroup;
+			children = (
+				A99D2F942A9A56F200947773 /* DashboardContainer+Injection.swift */,
+			);
+			path = DependenciesInjection;
+			sourceTree = "<group>";
+		};
+		A99D2F952A9A56F200947773 /* AppCoordinator */ = {
+			isa = PBXGroup;
+			children = (
+				A99D2F962A9A56F200947773 /* AppCoordinator.swift */,
+			);
+			path = AppCoordinator;
+			sourceTree = "<group>";
+		};
+		A99D2F982A9A56F200947773 /* AppView */ = {
+			isa = PBXGroup;
+			children = (
+				A99D2F992A9A56F200947773 /* AppView.swift */,
+				A99D2F9A2A9A56F200947773 /* AppViewModel.swift */,
+			);
+			path = AppView;
+			sourceTree = "<group>";
+		};
+		A99D2FBF2A9AFD8300947773 /* Lottie */ = {
+			isa = PBXGroup;
+			children = (
+				A99D2FC02A9AFD8300947773 /* TwinkleCircle.json */,
+				A99D2FC12A9AFD8300947773 /* LoadingPrimary.json */,
+				A99D2FC22A9AFD8300947773 /* Welcome.json */,
+				A99D2FC32A9AFD8300947773 /* LoadingContrast.json */,
+				A99D2FC42A9AFD8300947773 /* LoadingHeart.json */,
+				A99D2FC52A9AFD8300947773 /* ApplePay.json */,
+				A99D2FC62A9AFD8300947773 /* TwinkleContrast.json */,
+				A99D2FC72A9AFD8300947773 /* TwinkleSides.json */,
+				A99D2FC82A9AFD8300947773 /* LoadingMix.json */,
+			);
+			path = Lottie;
 			sourceTree = "<group>";
 		};
 		A9B448F22A838A000029944C /* CauseCard */ = {
@@ -1259,6 +1509,48 @@
 			productReference = A97BF7D62A5C602F00B8F5CA /* LiquidityFinancialUITests.xctest */;
 			productType = "com.apple.product-type.bundle.ui-testing";
 		};
+		A99D2F042A9A56CF00947773 /* PrideCard */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = A99D2F662A9A56CF00947773 /* Build configuration list for PBXNativeTarget "PrideCard" */;
+			buildPhases = (
+				A99D2F232A9A56CF00947773 /* Sources */,
+				A99D2F2D2A9A56CF00947773 /* Frameworks */,
+				A99D2F442A9A56CF00947773 /* Resources */,
+				A99D2F652A9A56CF00947773 /* Swiftlint (Debug Only) */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = PrideCard;
+			packageProductDependencies = (
+				A99D2F052A9A56CF00947773 /* Factory */,
+				A99D2F072A9A56CF00947773 /* Lottie */,
+				A99D2F092A9A56CF00947773 /* LFStyleGuide */,
+				A99D2F0A2A9A56CF00947773 /* LFAccountOnboarding */,
+				A99D2F0B2A9A56CF00947773 /* OnboardingDomain */,
+				A99D2F0C2A9A56CF00947773 /* OnboardingData */,
+				A99D2F0D2A9A56CF00947773 /* LFServices */,
+				A99D2F0E2A9A56CF00947773 /* LFUtilities */,
+				A99D2F0F2A9A56CF00947773 /* LFLocalizable */,
+				A99D2F102A9A56CF00947773 /* AuthorizationManager */,
+				A99D2F112A9A56CF00947773 /* iPhoneNumberField */,
+				A99D2F132A9A56CF00947773 /* SmartyStreets */,
+				A99D2F152A9A56CF00947773 /* NetSpendData */,
+				A99D2F162A9A56CF00947773 /* VGSShowSDK */,
+				A99D2F182A9A56CF00947773 /* AccountData */,
+				A99D2F192A9A56CF00947773 /* PinwheelSDK */,
+				A99D2F1B2A9A56CF00947773 /* CoreNetwork */,
+				A99D2F1C2A9A56CF00947773 /* CodeScanner */,
+				A99D2F1E2A9A56CF00947773 /* LFRewardDashboard */,
+				A99D2F1F2A9A56CF00947773 /* RewardData */,
+				A99D2F202A9A56CF00947773 /* RewardDomain */,
+				A99D2F212A9A56CF00947773 /* FirebaseMessaging */,
+			);
+			productName = LiquidityFinancial;
+			productReference = A99D2F692A9A56CF00947773 /* PrideCard.app */;
+			productType = "com.apple.product-type.application";
+		};
 		A9B448A22A8389B90029944C /* CauseCard */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = A9B448ED2A8389B90029944C /* Build configuration list for PBXNativeTarget "CauseCard" */;
@@ -1391,6 +1683,7 @@
 				A953547C2A5E55B2008B0FAB /* Cardano */,
 				A9B4B91F2A7C0C76000ED67A /* DogeCard */,
 				A9B448A22A8389B90029944C /* CauseCard */,
+				A99D2F042A9A56CF00947773 /* PrideCard */,
 				A97BF7CB2A5C602F00B8F5CA /* LiquidityFinancialTests */,
 				A97BF7D52A5C602F00B8F5CA /* LiquidityFinancialUITests */,
 			);
@@ -1471,6 +1764,45 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		A99D2F442A9A56CF00947773 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A99D2FB32A9A56F200947773 /* Lato-BoldItalic.ttf in Resources */,
+				A99D2FB22A9A56F200947773 /* Montserrat-Black.ttf in Resources */,
+				A99D2FD02A9AFD8300947773 /* TwinkleSides.json in Resources */,
+				A99D2FA82A9A56F200947773 /* Lato-Italic.ttf in Resources */,
+				A99D2FB92A9A56F200947773 /* Images.xcassets in Resources */,
+				A99D2FAC2A9A56F200947773 /* Lato-Bold.ttf in Resources */,
+				A99D2FA92A9A56F200947773 /* Lato-LightItalic.ttf in Resources */,
+				A99D2FCF2A9AFD8300947773 /* TwinkleContrast.json in Resources */,
+				A99D2FCA2A9AFD8300947773 /* LoadingPrimary.json in Resources */,
+				A99D2FCC2A9AFD8300947773 /* LoadingContrast.json in Resources */,
+				A99D2FC92A9AFD8300947773 /* TwinkleCircle.json in Resources */,
+				A99D2FAE2A9A56F200947773 /* Orbitron-Medium.ttf in Resources */,
+				A99D2F532A9A56CF00947773 /* Images.xcassets in Resources */,
+				A99D2FAA2A9A56F200947773 /* Lato-Thin.ttf in Resources */,
+				A99D2FCD2A9AFD8300947773 /* LoadingHeart.json in Resources */,
+				A99D2F9C2A9A56F200947773 /* Localizable.strings in Resources */,
+				A99D2F9D2A9A56F200947773 /* LaunchScreen.storyboard in Resources */,
+				A99D2FB52A9A56F200947773 /* Lato-Medium.ttf in Resources */,
+				A99D2FB02A9A56F200947773 /* Lato-BlackItalic.ttf in Resources */,
+				A99D2FB42A9A56F200947773 /* Lato-Light.ttf in Resources */,
+				A99D2FB62A9A56F200947773 /* Lato-ThinItalic.ttf in Resources */,
+				A99D2FAF2A9A56F200947773 /* Lato-Regular.ttf in Resources */,
+				A99D2FB82A9A56F200947773 /* Colors.xcassets in Resources */,
+				A99D2FAB2A9A56F200947773 /* Montserrat-Medium.ttf in Resources */,
+				A99D2FCB2A9AFD8300947773 /* Welcome.json in Resources */,
+				A99D2F9B2A9A56F200947773 /* PrideCardConfig.xcconfig in Resources */,
+				A99D2FB12A9A56F200947773 /* Lato-MediumItalic.ttf in Resources */,
+				A99D2FD12A9AFD8300947773 /* LoadingMix.json in Resources */,
+				A99D2F9E2A9A56F200947773 /* GoogleService-Info.plist in Resources */,
+				A99D2FCE2A9AFD8300947773 /* ApplePay.json in Resources */,
+				A99D2FB72A9A56F200947773 /* Orbitron-Bold.ttf in Resources */,
+				A99D2FAD2A9A56F200947773 /* Lato-Black.ttf in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		A9B448DA2A8389B90029944C /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -1545,6 +1877,25 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
+		A99D2F652A9A56CF00947773 /* Swiftlint (Debug Only) */ = {
+			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
+			buildActionMask = 12;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = "Swiftlint (Debug Only)";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "if [[ \"$(uname -m)\" == arm64 ]]; then\n    export PATH=\"/opt/homebrew/bin:$PATH\"\nfi\n\nif which swiftlint > /dev/null; then\n  swiftlint\nelse\n  echo \"warning: SwiftLint not installed, download from https://github.com/realm/SwiftLint\"\nfi\n";
+		};
 		A9B1DAE42A5FC60C003F3C3C /* Swiftlint (Debug Only) */ = {
 			isa = PBXShellScriptBuildPhase;
 			alwaysOutOfDate = 1;
@@ -1673,6 +2024,22 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		A99D2F232A9A56CF00947773 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A99D2FBD2A9A56F200947773 /* AppView.swift in Sources */,
+				A99D2FBB2A9A56F200947773 /* AppCoordinator.swift in Sources */,
+				A99D2FBE2A9A56F200947773 /* AppViewModel.swift in Sources */,
+				A99D2FBA2A9A56F200947773 /* DashboardContainer+Injection.swift in Sources */,
+				A99D2FBC2A9A56F200947773 /* PrideCardApp.swift in Sources */,
+				A99D2F282A9A56CF00947773 /* AppDelegate+Configs.swift in Sources */,
+				A99D2F292A9A56CF00947773 /* OnboardingContainer+Injection.swift in Sources */,
+				A99D2F2B2A9A56CF00947773 /* AppDelegate+Appearance.swift in Sources */,
+				A99D2F2C2A9A56CF00947773 /* AppDelegate.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		A9B448BC2A8389B90029944C /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -1721,6 +2088,14 @@
 /* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
+		A99D2F6F2A9A56F200947773 /* Localizable.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				A99D2F702A9A56F200947773 /* en */,
+			);
+			name = Localizable.strings;
+			sourceTree = "<group>";
+		};
 		A9B448F62A838A000029944C /* Localizable.strings */ = {
 			isa = PBXVariantGroup;
 			children = (
@@ -2120,6 +2495,88 @@
 			};
 			name = Release;
 		};
+		A99D2F672A9A56CF00947773 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = A99D2F6D2A9A56F200947773 /* PrideCardConfig.xcconfig */;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = "${SRCROOT}/LiquidityFinancial/PrideCard/Resources/PrideCard.entitlements";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution";
+				CODE_SIGN_STYLE = Manual;
+				CURRENT_PROJECT_VERSION = $BITRISE_BUILD_NUMBER;
+				DEVELOPMENT_ASSET_PATHS = "";
+				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = TX9PJZUNWS;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = "${SRCROOT}/LiquidityFinancial/PrideCard/Resources/PrideCard-Info.plist";
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.finance";
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen.storyboard;
+				INFOPLIST_KEY_UIStatusBarHidden = NO;
+				INFOPLIST_KEY_UIStatusBarStyle = UIStatusBarStyleLightContent;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 2.0.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.liquidityfinancial.pridecard;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = "Apple Distribution PrideCard";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Debug;
+		};
+		A99D2F682A9A56CF00947773 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = A99D2F6D2A9A56F200947773 /* PrideCardConfig.xcconfig */;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = "${SRCROOT}/LiquidityFinancial/PrideCard/Resources/PrideCard.entitlements";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution";
+				CODE_SIGN_STYLE = Manual;
+				CURRENT_PROJECT_VERSION = $BITRISE_BUILD_NUMBER;
+				DEVELOPMENT_ASSET_PATHS = "";
+				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = TX9PJZUNWS;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = "${SRCROOT}/LiquidityFinancial/PrideCard/Resources/PrideCard-Info.plist";
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.finance";
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen.storyboard;
+				INFOPLIST_KEY_UIStatusBarHidden = NO;
+				INFOPLIST_KEY_UIStatusBarStyle = UIStatusBarStyleLightContent;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 2.0.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.liquidityfinancial.pridecard;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = "Apple Distribution PrideCard";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Release;
+		};
 		A9B448EE2A8389B90029944C /* Debug */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = A9B448F42A838A000029944C /* CauseCardConfig.xcconfig */;
@@ -2334,6 +2791,15 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
+		A99D2F662A9A56CF00947773 /* Build configuration list for PBXNativeTarget "PrideCard" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				A99D2F672A9A56CF00947773 /* Debug */,
+				A99D2F682A9A56CF00947773 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		A9B448ED2A8389B90029944C /* Build configuration list for PBXNativeTarget "CauseCard" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
@@ -2433,6 +2899,70 @@
 			requirement = {
 				kind = upToNextMinorVersion;
 				minimumVersion = 4.2.0;
+			};
+		};
+		A99D2F062A9A56CF00947773 /* XCRemoteSwiftPackageReference "Factory" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/hmlongco/Factory";
+			requirement = {
+				kind = upToNextMinorVersion;
+				minimumVersion = 2.2.0;
+			};
+		};
+		A99D2F082A9A56CF00947773 /* XCRemoteSwiftPackageReference "lottie-ios" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/airbnb/lottie-ios.git";
+			requirement = {
+				kind = upToNextMinorVersion;
+				minimumVersion = 4.2.0;
+			};
+		};
+		A99D2F122A9A56CF00947773 /* XCRemoteSwiftPackageReference "iPhoneNumberField" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/MojtabaHs/iPhoneNumberField.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 0.10.1;
+			};
+		};
+		A99D2F142A9A56CF00947773 /* XCRemoteSwiftPackageReference "smartystreets-ios-sdk" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/smartystreets/smartystreets-ios-sdk";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 8.0.0;
+			};
+		};
+		A99D2F172A9A56CF00947773 /* XCRemoteSwiftPackageReference "vgs-show-ios" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/verygoodsecurity/vgs-show-ios.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.0.0;
+			};
+		};
+		A99D2F1A2A9A56CF00947773 /* XCRemoteSwiftPackageReference "pinwheel-ios-sdk" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/underdog-tech/pinwheel-ios-sdk.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 2.0.0;
+			};
+		};
+		A99D2F1D2A9A56CF00947773 /* XCRemoteSwiftPackageReference "CodeScanner" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/twostraws/CodeScanner";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 2.0.0;
+			};
+		};
+		A99D2F222A9A56CF00947773 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/firebase/firebase-ios-sdk";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 10.0.0;
 			};
 		};
 		A9B448A42A8389B90029944C /* XCRemoteSwiftPackageReference "Factory" */ = {
@@ -2714,6 +3244,102 @@
 		A980DF762A5FA26E000B3C09 /* LFUtilities */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = LFUtilities;
+		};
+		A99D2F052A9A56CF00947773 /* Factory */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = A99D2F062A9A56CF00947773 /* XCRemoteSwiftPackageReference "Factory" */;
+			productName = Factory;
+		};
+		A99D2F072A9A56CF00947773 /* Lottie */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = A99D2F082A9A56CF00947773 /* XCRemoteSwiftPackageReference "lottie-ios" */;
+			productName = Lottie;
+		};
+		A99D2F092A9A56CF00947773 /* LFStyleGuide */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = LFStyleGuide;
+		};
+		A99D2F0A2A9A56CF00947773 /* LFAccountOnboarding */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = LFAccountOnboarding;
+		};
+		A99D2F0B2A9A56CF00947773 /* OnboardingDomain */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = OnboardingDomain;
+		};
+		A99D2F0C2A9A56CF00947773 /* OnboardingData */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = OnboardingData;
+		};
+		A99D2F0D2A9A56CF00947773 /* LFServices */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = LFServices;
+		};
+		A99D2F0E2A9A56CF00947773 /* LFUtilities */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = LFUtilities;
+		};
+		A99D2F0F2A9A56CF00947773 /* LFLocalizable */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = LFLocalizable;
+		};
+		A99D2F102A9A56CF00947773 /* AuthorizationManager */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = AuthorizationManager;
+		};
+		A99D2F112A9A56CF00947773 /* iPhoneNumberField */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = A99D2F122A9A56CF00947773 /* XCRemoteSwiftPackageReference "iPhoneNumberField" */;
+			productName = iPhoneNumberField;
+		};
+		A99D2F132A9A56CF00947773 /* SmartyStreets */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = A99D2F142A9A56CF00947773 /* XCRemoteSwiftPackageReference "smartystreets-ios-sdk" */;
+			productName = SmartyStreets;
+		};
+		A99D2F152A9A56CF00947773 /* NetSpendData */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = NetSpendData;
+		};
+		A99D2F162A9A56CF00947773 /* VGSShowSDK */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = A99D2F172A9A56CF00947773 /* XCRemoteSwiftPackageReference "vgs-show-ios" */;
+			productName = VGSShowSDK;
+		};
+		A99D2F182A9A56CF00947773 /* AccountData */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = AccountData;
+		};
+		A99D2F192A9A56CF00947773 /* PinwheelSDK */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = A99D2F1A2A9A56CF00947773 /* XCRemoteSwiftPackageReference "pinwheel-ios-sdk" */;
+			productName = PinwheelSDK;
+		};
+		A99D2F1B2A9A56CF00947773 /* CoreNetwork */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = CoreNetwork;
+		};
+		A99D2F1C2A9A56CF00947773 /* CodeScanner */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = A99D2F1D2A9A56CF00947773 /* XCRemoteSwiftPackageReference "CodeScanner" */;
+			productName = CodeScanner;
+		};
+		A99D2F1E2A9A56CF00947773 /* LFRewardDashboard */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = LFRewardDashboard;
+		};
+		A99D2F1F2A9A56CF00947773 /* RewardData */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = RewardData;
+		};
+		A99D2F202A9A56CF00947773 /* RewardDomain */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = RewardDomain;
+		};
+		A99D2F212A9A56CF00947773 /* FirebaseMessaging */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = A99D2F222A9A56CF00947773 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseMessaging;
 		};
 		A9B448A32A8389B90029944C /* Factory */ = {
 			isa = XCSwiftPackageProductDependency;

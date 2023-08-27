@@ -1,0 +1,25 @@
+input_dir: ZResources
+#output_dir: ${DERIVED_SOURCES_DIR}
+
+## Generate constants for Assets Catalogs, including constants for images, colors
+xcassets:
+  - inputs:
+      - Media.xcassets
+    outputs:
+      - templateName: swift5
+        params:
+          enumName: ModuleImages
+          forceProvidesNamespaces: true
+          publicAccess: false
+        output: ModuleImages.swift
+        
+  - inputs:
+      - Colors.xcassets
+    outputs:
+      - templateName: swift5
+        params:
+          enumName: ModuleColors
+          forceProvidesNamespaces: true
+          publicAccess: false
+        output: ModuleColors.swift
+

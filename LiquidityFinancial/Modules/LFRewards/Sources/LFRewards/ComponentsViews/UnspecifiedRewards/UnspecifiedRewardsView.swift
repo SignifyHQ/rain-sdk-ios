@@ -2,17 +2,22 @@ import SwiftUI
 import LFStyleGuide
 import LFUtilities
 import LFLocalizable
-import LFRewards
+import PridcardRewards
 
-struct UnspecifiedRewardsView: View {
+public struct UnspecifiedRewardsView: View {
   @State private var showEditRewards = false
   
-  var body: some View {
+  var destination: AnyView
+  public init(destination: AnyView) {
+    self.destination = destination
+  }
+  
+  public var body: some View {
     content
       .padding(.horizontal, 30)
       .background(Colors.background.swiftUIColor)
       .navigationLink(isActive: $showEditRewards) {
-        EditRewardsView(viewModel: .init())
+        destination
       }
   }
   
@@ -33,11 +38,24 @@ struct UnspecifiedRewardsView: View {
           EmptyListView(text: LFLocalizable.Rewards.noRewards)
             .padding(.top, 100)
         }
+
+        bgHeaderView
+      }
+      Spacer()
+    }
+  }
+  
+  private var bgHeaderView: some View {
+    Group {
+      switch LFUtilities.target {
+      case .PrideCard:
+        HeaderUnspecifiedRewardsView()
+      case .CauseCard:
         ModuleImages.bgUnspecifiedRewards.swiftUIImage
           .resizable()
           .frame(width: 315, height: 177)
+      default: EmptyView()
       }
-      Spacer()
     }
   }
   
@@ -70,15 +88,3 @@ struct UnspecifiedRewardsView: View {
     }
   }
 }
-
-#if DEBUG
-
-  // MARK: - UnspecifiedRewardsView_Previews
-
-struct UnspecifiedRewardsView_Previews: PreviewProvider {
-  static var previews: some View {
-    UnspecifiedRewardsView()
-      .embedInNavigation()
-  }
-}
-#endif

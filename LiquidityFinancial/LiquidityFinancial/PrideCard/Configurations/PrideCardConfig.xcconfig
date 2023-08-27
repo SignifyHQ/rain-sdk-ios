@@ -1,0 +1,32 @@
+// Configuration settings file format documentation can be found at:
+// https://help.apple.com/xcode/#/dev745c5c974
+
+#include "LiquidityFinancial/Configurations/LiquidityFinancialConfig.xcconfig"
+
+APP_NAME = PrideCard
+APP_BUNDLE_ID = com.liquidityfinancial.pridecard
+
+TERMS_URL = https:/$()/paywithpride.com/legal
+AGREEMENT_URL = https:/$()/paywithpride.com/legal#consumer-account
+PRIVACY_URL = https:/$()/paywithpride.com/legal#privacy-policy
+CONSENT_URL = https:/$()/paywithpride.com/legal#e-sign-consent
+WALLET_PRIVACY_URL = https:/$()/seedcx.zendesk.com/hc/en-us/articles/360009900494-Privacy-Policy-
+
+PATHWARD_USER_URL = https:/$()/paywithpride.com/legal#privacy-policy
+PATHWARD_PRIVACY_URL = https:/$()/paywithpride.com/legal#privacy-policy
+PATHWARD_DISCLOSURE_URL = https:/$()/paywithpride.com/legal#privacy-policy
+
+BANK_TRUST_CONSUMER_URL = https:/$()/paywithpride.com/legal#bank-trust-consumer
+BANK_TRUST_POLICY_URL = https:/$()/paywithpride.com/legal#bank-trust-policy
+APPSTORE_URL = https:/$()/apps.apple.com/us/app/pridecard/id1591668322
+SHARE_APP_URL = https:/$()/paywithpride.com/
+REWARDS_VIDEO_URL = https:/$()twitter.com/TheDogeCard/status/1611066507957571747
+
+CHARITY_ENABLED = true
+CRYPTO_ENABLED = false
+CRYPTO_FRACTION_DIGITS = 8
+
+// SOCIAL MEDIA
+SNAPCHAT_CLIENT_ID = 980820e9-3ee9-4d0f-bea6-e860581a300b
+FACEBOOK_APP_ID = 874392587090128
+TIK_TOK_APP_ID = 7184767475974866949

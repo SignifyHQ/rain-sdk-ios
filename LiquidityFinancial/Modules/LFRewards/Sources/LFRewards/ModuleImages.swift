@@ -51,10 +51,12 @@ internal enum ModuleImages {
   }
   internal static let bgCashbackCard = ImageAsset(name: "bg_cashbackCard")
   internal static let bgHeaderSelectReward = ImageAsset(name: "bg_header_select_reward")
+  internal static let bgUnspecifiedRewards = ImageAsset(name: "bg_unspecifiedRewards")
   internal static let icAddress = ImageAsset(name: "ic_address")
   internal static let icCharityStatus = ImageAsset(name: "ic_charity_status")
   internal static let icDonate = ImageAsset(name: "ic_donate")
   internal static let icEin = ImageAsset(name: "ic_ein")
+  internal static let icEmptyList = ImageAsset(name: "ic_emptyList")
   internal static let icMore = ImageAsset(name: "ic_more")
   internal static let icNavigation = ImageAsset(name: "ic_navigation")
   internal static let icReferrals = ImageAsset(name: "ic_referrals")

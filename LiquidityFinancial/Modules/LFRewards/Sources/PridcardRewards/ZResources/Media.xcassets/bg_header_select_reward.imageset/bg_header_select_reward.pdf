@@ -1,0 +1,4218 @@
+%PDF-1.7
+
+1 0 obj
+  << /Length 2 0 R
+     /Range [ 0.000000 1.000000 0.000000 1.000000 0.000000 1.000000 ]
+     /Domain [ 0.000000 1.000000 ]
+     /FunctionType 4
+  >>
+stream
+{  0.933333 exch 0.360784 exch 0.243137 exch dup 0.000000 gt { exch pop exch pop exch pop dup 0.000000 sub 0.289593 mul 0.933333 add exch dup 0.000000 sub 1.216290 mul 0.360784 add exch dup 0.000000 sub 0.270287 mul 0.243137 add exch } if dup 0.203125 gt { exch pop exch pop exch pop dup 0.203125 sub -0.142448 mul 0.992157 add exch dup 0.203125 sub 1.139587 mul 0.607843 add exch dup 0.203125 sub -0.081399 mul 0.298039 add exch } if dup 0.395833 gt { exch pop exch pop exch pop dup 0.395833 sub -1.411765 mul 0.964706 add exch dup 0.395833 sub -0.037647 mul 0.827451 add exch dup 0.395833 sub -0.282353 mul 0.282353 add exch } if dup 0.604167 gt { exch pop exch pop exch pop dup 0.604167 sub -2.100310 mul 0.670588 add exch dup 0.604167 sub -1.367183 mul 0.819608 add exch dup 0.604167 sub 2.040868 mul 0.223529 add exch } if dup 0.802083 gt { exch pop exch pop exch pop dup 0.802083 sub 1.129412 mul 0.254902 add exch dup 0.802083 sub -0.733127 mul 0.549020 add exch dup 0.802083 sub 0.336842 mul 0.627451 add exch } if dup 1.000000 gt { exch pop exch pop exch pop 0.478431 exch 0.403922 exch 0.694118 exch } if pop }
+endstream
+endobj
+
+2 0 obj
+  1120
+endobj
+
+3 0 obj
+  << /Length 4 0 R
+     /Range [ 0.000000 1.000000 0.000000 1.000000 0.000000 1.000000 ]
+     /Domain [ 0.000000 1.000000 ]
+     /FunctionType 4
+  >>
+stream
+{  0.054902 exch 0.141176 exch 0.321569 exch dup 0.000000 gt { exch pop exch pop exch pop dup 0.000000 sub 0.000000 mul 0.054902 add exch dup 0.000000 sub 0.000000 mul 0.141176 add exch dup 0.000000 sub 0.000000 mul 0.321569 add exch } if dup 1.000000 gt { exch pop exch pop exch pop 0.054902 exch 0.141176 exch 0.321569 exch } if pop }
+endstream
+endobj
+
+4 0 obj
+  336
+endobj
+
+5 0 obj
+  << /Length 6 0 R
+     /Range [ 0.000000 1.000000 0.000000 1.000000 0.000000 1.000000 ]
+     /Domain [ 0.000000 1.000000 ]
+     /FunctionType 4
+  >>
+stream
+{  0.290196 exch 0.525490 exch 1.000000 exch dup 0.000000 gt { exch pop exch pop exch pop dup 0.000000 sub 0.000000 mul 0.290196 add exch dup 0.000000 sub 0.000000 mul 0.525490 add exch dup 0.000000 sub -3.177335 mul 1.000000 add exch } if dup 0.001234 gt { exch pop exch pop exch pop dup 0.001234 sub -0.745739 mul 0.290196 add exch dup 0.001234 sub -1.242898 mul 0.525490 add exch dup 0.001234 sub -2.154356 mul 0.996078 add exch } if dup 0.095890 gt { exch pop exch pop exch pop dup 0.095890 sub -0.633122 mul 0.219608 add exch dup 0.095890 sub -1.012995 mul 0.407843 add exch dup 0.095890 sub -1.814948 mul 0.792157 add exch } if dup 0.188800 gt { exch pop exch pop exch pop dup 0.188800 sub -0.526385 mul 0.160784 add exch dup 0.188800 sub -0.833443 mul 0.313726 add exch dup 0.188800 sub -1.447559 mul 0.623529 add exch } if dup 0.278200 gt { exch pop exch pop exch pop dup 0.278200 sub -0.369959 mul 0.113725 add exch dup 0.278200 sub -0.647429 mul 0.239216 add exch dup 0.278200 sub -1.109878 mul 0.494118 add exch } if dup 0.363000 gt { exch pop exch pop exch pop dup 0.363000 sub -0.250100 mul 0.082353 add exch dup 0.363000 sub -0.400160 mul 0.184314 add exch dup 0.363000 sub -0.750300 mul 0.400000 add exch } if dup 0.441400 gt { exch pop exch pop exch pop dup 0.441400 sub -0.119197 mul 0.062745 add exch dup 0.441400 sub -0.178795 mul 0.152941 add exch dup 0.441400 sub -0.297991 mul 0.341176 add exch } if dup 0.507200 gt { exch pop exch pop exch pop dup 0.507200 sub 0.493723 mul 0.054902 add exch dup 0.507200 sub 0.493723 mul 0.141176 add exch dup 0.507200 sub 0.634786 mul 0.321569 add exch } if dup 0.562800 gt { exch pop exch pop exch pop dup 0.562800 sub 0.782575 mul 0.082353 add exch dup 0.562800 sub 0.869527 mul 0.168627 add exch dup 0.562800 sub 1.043433 mul 0.356863 add exch } if dup 0.653000 gt { exch pop exch pop exch pop dup 0.653000 sub 1.001105 mul 0.152941 add exch dup 0.653000 sub 1.139188 mul 0.247059 add exch dup 0.653000 sub 1.346313 mul 0.450980 add exch } if dup 0.766600 gt { exch pop exch pop exch pop dup 0.766600 sub 1.196512 mul 0.266667 add exch dup 0.766600 sub 1.316164 mul 0.376471 add exch dup 0.766600 sub 1.615291 mul 0.603922 add exch } if dup 0.897700 gt { exch pop exch pop exch pop dup 0.897700 sub 1.341691 mul 0.423529 add exch dup 0.897700 sub 1.495026 mul 0.549020 add exch dup 0.897700 sub 1.801698 mul 0.815686 add exch } if dup 1.000000 gt { exch pop exch pop exch pop 0.560784 exch 0.701961 exch 1.000000 exch } if pop }
+endstream
+endobj
+
+6 0 obj
+  2489
+endobj
+
+7 0 obj
+  << /Length 8 0 R
+     /Range [ 0.000000 1.000000 0.000000 1.000000 0.000000 1.000000 ]
+     /Domain [ 0.000000 1.000000 ]
+     /FunctionType 4
+  >>
+stream
+{  0.933333 exch 0.360784 exch 0.243137 exch dup 0.000000 gt { exch pop exch pop exch pop dup 0.000000 sub 0.289593 mul 0.933333 add exch dup 0.000000 sub 1.216290 mul 0.360784 add exch dup 0.000000 sub 0.270287 mul 0.243137 add exch } if dup 0.203125 gt { exch pop exch pop exch pop dup 0.203125 sub -0.142448 mul 0.992157 add exch dup 0.203125 sub 1.139587 mul 0.607843 add exch dup 0.203125 sub -0.081399 mul 0.298039 add exch } if dup 0.395833 gt { exch pop exch pop exch pop dup 0.395833 sub -1.411765 mul 0.964706 add exch dup 0.395833 sub -0.037647 mul 0.827451 add exch dup 0.395833 sub -0.282353 mul 0.282353 add exch } if dup 0.604167 gt { exch pop exch pop exch pop dup 0.604167 sub -2.100310 mul 0.670588 add exch dup 0.604167 sub -1.367183 mul 0.819608 add exch dup 0.604167 sub 2.040868 mul 0.223529 add exch } if dup 0.802083 gt { exch pop exch pop exch pop dup 0.802083 sub 1.129412 mul 0.254902 add exch dup 0.802083 sub -0.733127 mul 0.549020 add exch dup 0.802083 sub 0.336842 mul 0.627451 add exch } if dup 1.000000 gt { exch pop exch pop exch pop 0.478431 exch 0.403922 exch 0.694118 exch } if pop }
+endstream
+endobj
+
+8 0 obj
+  1120
+endobj
+
+9 0 obj
+  << /Length 10 0 R
+     /Range [ 0.000000 1.000000 0.000000 1.000000 0.000000 1.000000 ]
+     /Domain [ 0.000000 1.000000 ]
+     /FunctionType 4
+  >>
+stream
+{  0.631373 exch 0.615686 exch 0.600000 exch dup 0.000000 gt { exch pop exch pop exch pop dup 0.000000 sub -0.349020 mul 0.631373 add exch dup 0.000000 sub -0.341176 mul 0.615686 add exch dup 0.000000 sub -0.329412 mul 0.600000 add exch } if dup 1.000000 gt { exch pop exch pop exch pop 0.282353 exch 0.274510 exch 0.270588 exch } if pop }
+endstream
+endobj
+
+10 0 obj
+  339
+endobj
+
+11 0 obj
+  << /Length 12 0 R
+     /Range [ 0.000000 1.000000 0.000000 1.000000 0.000000 1.000000 ]
+     /Domain [ 0.000000 1.000000 ]
+     /FunctionType 4
+  >>
+stream
+{  0.631373 exch 0.615686 exch 0.600000 exch dup 0.000000 gt { exch pop exch pop exch pop dup 0.000000 sub -0.349020 mul 0.631373 add exch dup 0.000000 sub -0.341176 mul 0.615686 add exch dup 0.000000 sub -0.329412 mul 0.600000 add exch } if dup 1.000000 gt { exch pop exch pop exch pop 0.282353 exch 0.274510 exch 0.270588 exch } if pop }
+endstream
+endobj
+
+12 0 obj
+  339
+endobj
+
+13 0 obj
+  << /Length 14 0 R
+     /Range [ 0.000000 1.000000 0.000000 1.000000 0.000000 1.000000 ]
+     /Domain [ 0.000000 1.000000 ]
+     /FunctionType 4
+  >>
+stream
+{  0.921569 exch 0.925490 exch 0.933333 exch dup 0.000000 gt { exch pop exch pop exch pop dup 0.000000 sub -0.154260 mul 0.921569 add exch dup 0.000000 sub -0.145895 mul 0.925490 add exch dup 0.000000 sub -0.129167 mul 0.933333 add exch } if dup 1.000000 gt { exch pop exch pop exch pop 0.767309 exch 0.779595 exch 0.804167 exch } if pop }
+endstream
+endobj
+
+14 0 obj
+  339
+endobj
+
+15 0 obj
+  << /Length 16 0 R
+     /Range [ 0.000000 1.000000 0.000000 1.000000 0.000000 1.000000 ]
+     /Domain [ 0.000000 1.000000 ]
+     /FunctionType 4
+  >>
+stream
+{  0.941176 exch 0.913725 exch 0.894118 exch dup 0.387700 gt { exch pop exch pop exch pop dup 0.387700 sub 0.000000 mul 0.941176 add exch dup 0.387700 sub 0.000000 mul 0.913725 add exch dup 0.387700 sub 0.000000 mul 0.894118 add exch } if dup 1.000000 gt { exch pop exch pop exch pop 0.941176 exch 0.913725 exch 0.894118 exch } if pop }
+endstream
+endobj
+
+16 0 obj
+  336
+endobj
+
+17 0 obj
+  << /Length 18 0 R
+     /Range [ 0.000000 1.000000 0.000000 1.000000 0.000000 1.000000 ]
+     /Domain [ 0.000000 1.000000 ]
+     /FunctionType 4
+  >>
+stream
+{  0.933333 exch 0.360784 exch 0.243137 exch dup 0.000000 gt { exch pop exch pop exch pop dup 0.000000 sub 0.289593 mul 0.933333 add exch dup 0.000000 sub 1.216290 mul 0.360784 add exch dup 0.000000 sub 0.270287 mul 0.243137 add exch } if dup 0.203125 gt { exch pop exch pop exch pop dup 0.203125 sub -0.142448 mul 0.992157 add exch dup 0.203125 sub 1.139587 mul 0.607843 add exch dup 0.203125 sub -0.081399 mul 0.298039 add exch } if dup 0.395833 gt { exch pop exch pop exch pop dup 0.395833 sub -1.411765 mul 0.964706 add exch dup 0.395833 sub -0.037647 mul 0.827451 add exch dup 0.395833 sub -0.282353 mul 0.282353 add exch } if dup 0.604167 gt { exch pop exch pop exch pop dup 0.604167 sub -2.100310 mul 0.670588 add exch dup 0.604167 sub -1.367183 mul 0.819608 add exch dup 0.604167 sub 2.040868 mul 0.223529 add exch } if dup 0.802083 gt { exch pop exch pop exch pop dup 0.802083 sub 1.129412 mul 0.254902 add exch dup 0.802083 sub -0.733127 mul 0.549020 add exch dup 0.802083 sub 0.336842 mul 0.627451 add exch } if dup 1.000000 gt { exch pop exch pop exch pop 0.478431 exch 0.403922 exch 0.694118 exch } if pop }
+endstream
+endobj
+
+18 0 obj
+  1120
+endobj
+
+19 0 obj
+  << /Length 20 0 R
+     /Range [ 0.000000 1.000000 0.000000 1.000000 0.000000 1.000000 ]
+     /Domain [ 0.000000 1.000000 ]
+     /FunctionType 4
+  >>
+stream
+{  0.933333 exch 0.360784 exch 0.243137 exch dup 0.000000 gt { exch pop exch pop exch pop dup 0.000000 sub 0.289593 mul 0.933333 add exch dup 0.000000 sub 1.216290 mul 0.360784 add exch dup 0.000000 sub 0.270287 mul 0.243137 add exch } if dup 0.203125 gt { exch pop exch pop exch pop dup 0.203125 sub -0.142448 mul 0.992157 add exch dup 0.203125 sub 1.139587 mul 0.607843 add exch dup 0.203125 sub -0.081399 mul 0.298039 add exch } if dup 0.395833 gt { exch pop exch pop exch pop dup 0.395833 sub -1.411765 mul 0.964706 add exch dup 0.395833 sub -0.037647 mul 0.827451 add exch dup 0.395833 sub -0.282353 mul 0.282353 add exch } if dup 0.604167 gt { exch pop exch pop exch pop dup 0.604167 sub -2.100310 mul 0.670588 add exch dup 0.604167 sub -1.367183 mul 0.819608 add exch dup 0.604167 sub 2.040868 mul 0.223529 add exch } if dup 0.802083 gt { exch pop exch pop exch pop dup 0.802083 sub 1.129412 mul 0.254902 add exch dup 0.802083 sub -0.733127 mul 0.549020 add exch dup 0.802083 sub 0.336842 mul 0.627451 add exch } if dup 1.000000 gt { exch pop exch pop exch pop 0.478431 exch 0.403922 exch 0.694118 exch } if pop }
+endstream
+endobj
+
+20 0 obj
+  1120
+endobj
+
+21 0 obj
+  << /Length 22 0 R
+     /Range [ 0.000000 1.000000 0.000000 1.000000 0.000000 1.000000 ]
+     /Domain [ 0.000000 1.000000 ]
+     /FunctionType 4
+  >>
+stream
+{  0.631373 exch 0.615686 exch 0.600000 exch dup 0.000000 gt { exch pop exch pop exch pop dup 0.000000 sub -0.349020 mul 0.631373 add exch dup 0.000000 sub -0.341176 mul 0.615686 add exch dup 0.000000 sub -0.329412 mul 0.600000 add exch } if dup 1.000000 gt { exch pop exch pop exch pop 0.282353 exch 0.274510 exch 0.270588 exch } if pop }
+endstream
+endobj
+
+22 0 obj
+  339
+endobj
+
+23 0 obj
+  << /Length 24 0 R
+     /Range [ 0.000000 1.000000 0.000000 1.000000 0.000000 1.000000 ]
+     /Domain [ 0.000000 1.000000 ]
+     /FunctionType 4
+  >>
+stream
+{  0.831373 exch 0.831373 exch 0.831373 exch dup 0.055043 gt { exch pop exch pop exch pop dup 0.055043 sub -6.581573 mul 0.831373 add exch dup 0.055043 sub -6.581573 mul 0.831373 add exch dup 0.055043 sub -6.581573 mul 0.831373 add exch } if dup 0.096157 gt { exch pop exch pop exch pop dup 0.096157 sub 24.887852 mul 0.560784 add exch dup 0.096157 sub 24.887852 mul 0.560784 add exch dup 0.096157 sub 24.887852 mul 0.560784 add exch } if dup 0.099150 gt { exch pop exch pop exch pop dup 0.099150 sub 20.191549 mul 0.635294 add exch dup 0.099150 sub 20.191549 mul 0.635294 add exch dup 0.099150 sub 20.191549 mul 0.635294 add exch } if dup 0.104200 gt { exch pop exch pop exch pop dup 0.104200 sub 13.318533 mul 0.737255 add exch dup 0.104200 sub 13.318533 mul 0.737255 add exch dup 0.104200 sub 13.318533 mul 0.737255 add exch } if dup 0.109500 gt { exch pop exch pop exch pop dup 0.109500 sub 7.988377 mul 0.807843 add exch dup 0.109500 sub 7.988377 mul 0.807843 add exch dup 0.109500 sub 7.988377 mul 0.807843 add exch } if dup 0.114900 gt { exch pop exch pop exch pop dup 0.114900 sub 2.614380 mul 0.850980 add exch dup 0.114900 sub 2.614380 mul 0.850980 add exch dup 0.114900 sub 2.614380 mul 0.850980 add exch } if dup 0.120900 gt { exch pop exch pop exch pop dup 0.120900 sub 0.000000 mul 0.866667 add exch dup 0.120900 sub 0.000000 mul 0.866667 add exch dup 0.120900 sub 0.000000 mul 0.866667 add exch } if dup 0.122000 gt { exch pop exch pop exch pop dup 0.122000 sub -0.760415 mul 0.866667 add exch dup 0.122000 sub -0.760415 mul 0.866667 add exch dup 0.122000 sub -0.760415 mul 0.866667 add exch } if dup 0.158100 gt { exch pop exch pop exch pop dup 0.158100 sub -0.078041 mul 0.839216 add exch dup 0.158100 sub -0.078041 mul 0.839216 add exch dup 0.158100 sub -0.078041 mul 0.839216 add exch } if dup 0.258600 gt { exch pop exch pop exch pop dup 0.258600 sub 0.000000 mul 0.831373 add exch dup 0.258600 sub 0.000000 mul 0.831373 add exch dup 0.258600 sub 0.000000 mul 0.831373 add exch } if dup 0.456600 gt { exch pop exch pop exch pop dup 0.456600 sub 0.000000 mul 0.831373 add exch dup 0.456600 sub 0.000000 mul 0.831373 add exch dup 0.456600 sub 0.000000 mul 0.831373 add exch } if dup 0.489200 gt { exch pop exch pop exch pop dup 0.489200 sub 0.000000 mul 0.831373 add exch dup 0.489200 sub 0.000000 mul 0.831373 add exch dup 0.489200 sub 0.000000 mul 0.831373 add exch } if dup 0.691000 gt { exch pop exch pop exch pop dup 0.691000 sub 0.000000 mul 0.831373 add exch dup 0.691000 sub 0.000000 mul 0.831373 add exch dup 0.691000 sub 0.000000 mul 0.831373 add exch } if dup 0.724200 gt { exch pop exch pop exch pop dup 0.724200 sub 0.463178 mul 0.831373 add exch dup 0.724200 sub 0.463178 mul 0.831373 add exch dup 0.724200 sub 0.463178 mul 0.831373 add exch } if dup 0.749600 gt { exch pop exch pop exch pop dup 0.749600 sub 2.034776 mul 0.843137 add exch dup 0.749600 sub 2.034776 mul 0.843137 add exch dup 0.749600 sub 2.034776 mul 0.843137 add exch } if dup 0.770800 gt { exch pop exch pop exch pop dup 0.770800 sub 3.401355 mul 0.886275 add exch dup 0.770800 sub 3.401355 mul 0.886275 add exch dup 0.770800 sub 3.401355 mul 0.886275 add exch } if dup 0.790400 gt { exch pop exch pop exch pop dup 0.790400 sub 4.659313 mul 0.952941 add exch dup 0.790400 sub 4.659313 mul 0.952941 add exch dup 0.790400 sub 4.659313 mul 0.952941 add exch } if dup 0.800500 gt { exch pop exch pop exch pop dup 0.800500 sub -2.063981 mul 1.000000 add exch dup 0.800500 sub -2.063981 mul 1.000000 add exch dup 0.800500 sub -2.063981 mul 1.000000 add exch } if dup 0.808100 gt { exch pop exch pop exch pop dup 0.808100 sub -6.293850 mul 0.984314 add exch dup 0.808100 sub -6.293850 mul 0.984314 add exch dup 0.808100 sub -6.293850 mul 0.984314 add exch } if dup 0.816200 gt { exch pop exch pop exch pop dup 0.816200 sub -9.803964 mul 0.933333 add exch dup 0.816200 sub -9.803964 mul 0.933333 add exch dup 0.816200 sub -9.803964 mul 0.933333 add exch } if dup 0.824600 gt { exch pop exch pop exch pop dup 0.824600 sub -13.840765 mul 0.850980 add exch dup 0.824600 sub -13.840765 mul 0.850980 add exch dup 0.824600 sub -13.840765 mul 0.850980 add exch } if dup 0.833100 gt { exch pop exch pop exch pop dup 0.833100 sub -17.531759 mul 0.733333 add exch dup 0.833100 sub -17.531759 mul 0.733333 add exch dup 0.833100 sub -17.531759 mul 0.733333 add exch } if dup 0.841600 gt { exch pop exch pop exch pop dup 0.841600 sub -19.607510 mul 0.584314 add exch dup 0.841600 sub -19.607510 mul 0.584314 add exch dup 0.841600 sub -19.607510 mul 0.584314 add exch } if dup 0.842800 gt { exch pop exch pop exch pop dup 0.842800 sub 2.407984 mul 0.560784 add exch dup 0.842800 sub 2.407984 mul 0.560784 add exch dup 0.842800 sub 2.407984 mul 0.560784 add exch } if dup 0.854200 gt { exch pop exch pop exch pop dup 0.854200 sub 2.175096 mul 0.588235 add exch dup 0.854200 sub 2.175096 mul 0.588235 add exch dup 0.854200 sub 2.175096 mul 0.588235 add exch } if dup 0.915500 gt { exch pop exch pop exch pop dup 0.915500 sub 1.543924 mul 0.721569 add exch dup 0.915500 sub 1.543924 mul 0.721569 add exch dup 0.915500 sub 1.543924 mul 0.721569 add exch } if dup 0.966300 gt { exch pop exch pop exch pop dup 0.966300 sub 0.930936 mul 0.800000 add exch dup 0.966300 sub 0.930936 mul 0.800000 add exch dup 0.966300 sub 0.930936 mul 0.800000 add exch } if dup 1.000000 gt { exch pop exch pop exch pop 0.831373 exch 0.831373 exch 0.831373 exch } if pop }
+endstream
+endobj
+
+24 0 obj
+  5425
+endobj
+
+25 0 obj
+  << /Length 26 0 R
+     /Range [ 0.000000 1.000000 0.000000 1.000000 0.000000 1.000000 ]
+     /Domain [ 0.000000 1.000000 ]
+     /FunctionType 4
+  >>
+stream
+{  0.831373 exch 0.831373 exch 0.831373 exch dup 0.000000 gt { exch pop exch pop exch pop dup 0.000000 sub -1.005967 mul 0.831373 add exch dup 0.000000 sub -1.005967 mul 0.831373 add exch dup 0.000000 sub -1.005967 mul 0.831373 add exch } if dup 0.230000 gt { exch pop exch pop exch pop dup 0.230000 sub 0.000000 mul 0.600000 add exch dup 0.230000 sub 0.000000 mul 0.600000 add exch dup 0.230000 sub 0.000000 mul 0.600000 add exch } if dup 0.253100 gt { exch pop exch pop exch pop dup 0.253100 sub 0.000000 mul 0.600000 add exch dup 0.253100 sub 0.000000 mul 0.600000 add exch dup 0.253100 sub 0.000000 mul 0.600000 add exch } if dup 0.723700 gt { exch pop exch pop exch pop dup 0.723700 sub 0.000000 mul 0.600000 add exch dup 0.723700 sub 0.000000 mul 0.600000 add exch dup 0.723700 sub 0.000000 mul 0.600000 add exch } if dup 0.723900 gt { exch pop exch pop exch pop dup 0.723900 sub 1.578340 mul 0.600000 add exch dup 0.723900 sub 1.578340 mul 0.600000 add exch dup 0.723900 sub 1.578340 mul 0.600000 add exch } if dup 0.788500 gt { exch pop exch pop exch pop dup 0.788500 sub 1.064680 mul 0.701961 add exch dup 0.788500 sub 1.064680 mul 0.701961 add exch dup 0.788500 sub 1.064680 mul 0.701961 add exch } if dup 0.854800 gt { exch pop exch pop exch pop dup 0.854800 sub 0.623370 mul 0.772549 add exch dup 0.854800 sub 0.623370 mul 0.772549 add exch dup 0.854800 sub 0.623370 mul 0.772549 add exch } if dup 0.924000 gt { exch pop exch pop exch pop dup 0.924000 sub 0.206398 mul 0.815686 add exch dup 0.924000 sub 0.206398 mul 0.815686 add exch dup 0.924000 sub 0.206398 mul 0.815686 add exch } if dup 1.000000 gt { exch pop exch pop exch pop 0.831373 exch 0.831373 exch 0.831373 exch } if pop }
+endstream
+endobj
+
+26 0 obj
+  1697
+endobj
+
+27 0 obj
+  << /Length 28 0 R
+     /Range [ 0.000000 1.000000 0.000000 1.000000 0.000000 1.000000 ]
+     /Domain [ 0.000000 1.000000 ]
+     /FunctionType 4
+  >>
+stream
+{  0.933333 exch 0.360784 exch 0.243137 exch dup 0.000000 gt { exch pop exch pop exch pop dup 0.000000 sub 0.289593 mul 0.933333 add exch dup 0.000000 sub 1.216290 mul 0.360784 add exch dup 0.000000 sub 0.270287 mul 0.243137 add exch } if dup 0.203125 gt { exch pop exch pop exch pop dup 0.203125 sub -0.142448 mul 0.992157 add exch dup 0.203125 sub 1.139587 mul 0.607843 add exch dup 0.203125 sub -0.081399 mul 0.298039 add exch } if dup 0.395833 gt { exch pop exch pop exch pop dup 0.395833 sub -1.411765 mul 0.964706 add exch dup 0.395833 sub -0.037647 mul 0.827451 add exch dup 0.395833 sub -0.282353 mul 0.282353 add exch } if dup 0.604167 gt { exch pop exch pop exch pop dup 0.604167 sub -2.100310 mul 0.670588 add exch dup 0.604167 sub -1.367183 mul 0.819608 add exch dup 0.604167 sub 2.040868 mul 0.223529 add exch } if dup 0.802083 gt { exch pop exch pop exch pop dup 0.802083 sub 1.129412 mul 0.254902 add exch dup 0.802083 sub -0.733127 mul 0.549020 add exch dup 0.802083 sub 0.336842 mul 0.627451 add exch } if dup 1.000000 gt { exch pop exch pop exch pop 0.478431 exch 0.403922 exch 0.694118 exch } if pop }
+endstream
+endobj
+
+28 0 obj
+  1120
+endobj
+
+29 0 obj
+  << /Length 30 0 R
+     /Range [ 0.000000 1.000000 0.000000 1.000000 0.000000 1.000000 ]
+     /Domain [ 0.000000 1.000000 ]
+     /FunctionType 4
+  >>
+stream
+{  0.933333 exch 0.360784 exch 0.243137 exch dup 0.000000 gt { exch pop exch pop exch pop dup 0.000000 sub 0.289593 mul 0.933333 add exch dup 0.000000 sub 1.216290 mul 0.360784 add exch dup 0.000000 sub 0.270287 mul 0.243137 add exch } if dup 0.203125 gt { exch pop exch pop exch pop dup 0.203125 sub -0.142448 mul 0.992157 add exch dup 0.203125 sub 1.139587 mul 0.607843 add exch dup 0.203125 sub -0.081399 mul 0.298039 add exch } if dup 0.395833 gt { exch pop exch pop exch pop dup 0.395833 sub -1.411765 mul 0.964706 add exch dup 0.395833 sub -0.037647 mul 0.827451 add exch dup 0.395833 sub -0.282353 mul 0.282353 add exch } if dup 0.604167 gt { exch pop exch pop exch pop dup 0.604167 sub -2.100310 mul 0.670588 add exch dup 0.604167 sub -1.367183 mul 0.819608 add exch dup 0.604167 sub 2.040868 mul 0.223529 add exch } if dup 0.802083 gt { exch pop exch pop exch pop dup 0.802083 sub 1.129412 mul 0.254902 add exch dup 0.802083 sub -0.733127 mul 0.549020 add exch dup 0.802083 sub 0.336842 mul 0.627451 add exch } if dup 1.000000 gt { exch pop exch pop exch pop 0.478431 exch 0.403922 exch 0.694118 exch } if pop }
+endstream
+endobj
+
+30 0 obj
+  1120
+endobj
+
+31 0 obj
+  << /Type /XObject
+     /Length 32 0 R
+     /Group << /Type /Group
+               /S /Transparency
+            >>
+     /Subtype /Form
+     /Resources << /ExtGState << /E1 << /ca 0.030000 >> >> >>
+     /BBox [ 0.000000 0.000000 375.000000 316.435547 ]
+  >>
+stream
+/DeviceRGB CS
+/DeviceRGB cs
+q
+-0.764082 -0.645120 -0.645120 0.764082 237.978088 224.575806 cm
+1.000000 1.000000 1.000000 scn
+47.308422 42.858521 m
+47.308422 29.955940 36.718071 19.496338 23.654211 19.496338 c
+10.590351 19.496338 0.000000 29.955940 0.000000 42.858521 c
+0.000000 55.761097 10.590351 66.220703 23.654211 66.220703 c
+36.718071 66.220703 47.308422 55.761097 47.308422 42.858521 c
+h
+f
+n
+Q
+q
+/E1 gs
+0.919679 0.392670 -0.392670 0.919679 183.576782 182.462418 cm
+0.000000 0.000000 0.000000 scn
+52.208557 35.502151 m
+23.631533 34.678314 12.823452 54.851460 10.991540 65.041016 c
+0.000000 45.806408 l
+24.043259 16.611023 l
+52.208557 35.502151 l
+h
+f
+n
+Q
+q
+174.183670 226.801666 m
+182.507385 216.943054 197.346970 215.783112 207.328827 224.210846 c
+217.310684 232.638611 218.654877 247.462646 210.331161 257.321259 c
+202.007462 267.179871 187.167877 268.339844 177.186020 259.912079 c
+167.204163 251.484329 165.859970 236.660294 174.183670 226.801666 c
+h
+W*
+n
+q
+-0.764082 -0.645120 -0.645120 0.764082 237.980042 224.573853 cm
+0.992157 0.607843 0.298039 scn
+45.558422 42.858521 m
+45.558422 30.942871 35.772133 21.246338 23.654211 21.246338 c
+23.654211 17.746338 l
+37.664009 17.746338 49.058422 28.969013 49.058422 42.858521 c
+45.558422 42.858521 l
+h
+23.654211 21.246338 m
+11.536290 21.246338 1.750000 30.942871 1.750000 42.858521 c
+-1.750000 42.858521 l
+-1.750000 28.969013 9.644411 17.746338 23.654211 17.746338 c
+23.654211 21.246338 l
+h
+1.750000 42.858521 m
+1.750000 54.774166 11.536290 64.470703 23.654211 64.470703 c
+23.654211 67.970703 l
+9.644411 67.970703 -1.750000 56.748028 -1.750000 42.858521 c
+1.750000 42.858521 l
+h
+23.654211 64.470703 m
+35.772133 64.470703 45.558422 54.774166 45.558422 42.858521 c
+49.058422 42.858521 l
+49.058422 56.748028 37.664009 67.970703 23.654211 67.970703 c
+23.654211 64.470703 l
+h
+f
+n
+Q
+Q
+q
+0.919679 0.392670 -0.392670 0.919679 208.768661 230.922501 cm
+1.000000 1.000000 1.000000 scn
+2.421058 6.354492 m
+3.074964 4.587339 l
+4.842116 3.933434 l
+3.074964 3.279529 l
+2.421058 1.512376 l
+1.767153 3.279529 l
+0.000000 3.933434 l
+1.767153 4.587339 l
+2.421058 6.354492 l
+h
+f
+n
+Q
+q
+0.919679 0.392670 -0.392670 0.919679 171.187210 238.787323 cm
+1.000000 1.000000 1.000000 scn
+0.807019 2.118164 m
+1.024988 1.529113 l
+1.614039 1.311145 l
+1.024988 1.093176 l
+0.807019 0.504125 l
+0.589051 1.093176 l
+0.000000 1.311145 l
+0.589051 1.529113 l
+0.807019 2.118164 l
+h
+f
+n
+Q
+q
+0.764082 0.645120 -0.645120 0.764082 198.130615 219.969635 cm
+0.207843 0.207843 0.207843 scn
+13.963511 34.364891 m
+15.051641 34.031097 15.663152 32.878399 15.329357 31.790268 c
+14.724941 29.819942 l
+18.008804 28.812586 l
+19.096933 28.478790 19.708445 27.326094 19.374649 26.237965 c
+19.040855 25.149834 17.888159 24.538322 16.800028 24.872116 c
+8.919091 27.289669 l
+8.658813 27.369513 8.447807 27.434145 8.264448 27.487173 c
+8.205535 27.305618 8.140728 27.094666 8.060885 26.834387 c
+7.255034 24.207405 l
+7.175192 23.947128 7.110559 23.736122 7.057531 23.552763 c
+7.239085 23.493851 7.450038 23.429043 7.710317 23.349201 c
+12.964273 21.737499 l
+13.054770 21.709764 l
+13.054805 21.709753 l
+13.593694 21.544676 14.176395 21.366177 14.647917 21.149189 c
+15.200312 20.894985 15.875249 20.469975 16.304670 19.660515 c
+16.734093 18.851053 16.707520 18.053892 16.608240 17.453974 c
+16.523499 16.941887 16.344543 16.359331 16.179045 15.820580 c
+16.179033 15.820545 l
+16.179028 15.820522 l
+16.151247 15.730049 l
+15.345396 13.103067 l
+15.317664 13.012579 l
+15.317653 13.012545 l
+15.152575 12.473652 14.974074 11.890951 14.757087 11.419426 c
+14.502883 10.867033 14.077875 10.192095 13.268415 9.762672 c
+12.302614 11.583204 l
+13.268409 9.762669 l
+12.458947 9.333248 11.661788 9.359823 11.061870 9.459101 c
+10.549794 9.543842 9.967247 9.722792 9.428497 9.888290 c
+9.428403 9.888319 l
+9.337945 9.916094 l
+8.681067 10.117598 l
+8.076708 8.147455 l
+7.742915 7.059326 6.590217 6.447815 5.502087 6.781610 c
+4.413956 7.115404 3.802446 8.268103 4.136240 9.356232 c
+4.740600 11.326372 l
+1.457010 12.333645 l
+0.368880 12.667440 -0.242630 13.820139 0.091164 14.908268 c
+0.424958 15.996399 1.577656 16.607908 2.665786 16.274115 c
+7.900420 14.668341 l
+7.906828 14.666441 7.913234 14.664511 7.919638 14.662546 c
+7.926043 14.660582 7.932430 14.658588 7.938802 14.656567 c
+10.546721 13.856564 l
+10.806998 13.776722 11.018008 13.712091 11.201367 13.659063 c
+11.260280 13.840616 11.325086 14.051567 11.404928 14.311844 c
+12.210779 16.938824 l
+12.290622 17.199102 12.355252 17.410112 12.408280 17.593472 c
+12.226727 17.652384 12.015775 17.717190 11.755498 17.797031 c
+6.501541 19.408731 l
+6.411051 19.436464 l
+5.872151 19.601545 5.289432 19.780048 4.817899 19.997042 c
+4.265504 20.251245 3.590566 20.676252 3.161144 21.485714 c
+4.981677 22.451515 l
+3.161143 21.485714 l
+2.731721 22.295177 2.758293 23.092337 2.857573 23.692257 c
+2.942319 24.204357 3.121280 24.786934 3.286785 25.325703 c
+3.314566 25.416182 l
+4.120418 28.043163 l
+4.148151 28.133656 l
+4.313231 28.672556 4.491735 29.255274 4.708727 29.726805 c
+4.962932 30.279202 5.387939 30.954138 6.197401 31.383560 c
+7.006862 31.812983 7.804023 31.786411 8.403943 31.687130 c
+8.916042 31.602385 9.498619 31.423424 10.037388 31.257919 c
+10.127868 31.230137 l
+10.784472 31.028717 l
+11.388889 32.999043 l
+11.722683 34.087173 12.875381 34.698685 13.963511 34.364891 c
+h
+f*
+n
+Q
+
+endstream
+endobj
+
+32 0 obj
+  5291
+endobj
+
+33 0 obj
+  << /Type /XObject
+     /Length 34 0 R
+     /Group << /Type /Group
+               /S /Transparency
+            >>
+     /Subtype /Form
+     /Resources << >>
+     /BBox [ 0.000000 0.000000 375.000000 316.435547 ]
+  >>
+stream
+/DeviceRGB CS
+/DeviceRGB cs
+q
+-0.764082 -0.645120 -0.645120 0.764082 237.980042 224.574829 cm
+1.000000 1.000000 1.000000 scn
+47.308422 42.858521 m
+47.308422 29.955940 36.718071 19.496338 23.654211 19.496338 c
+10.590351 19.496338 0.000000 29.955940 0.000000 42.858521 c
+0.000000 55.761097 10.590351 66.220703 23.654211 66.220703 c
+36.718071 66.220703 47.308422 55.761097 47.308422 42.858521 c
+h
+f
+n
+Q
+
+endstream
+endobj
+
+34 0 obj
+  400
+endobj
+
+35 0 obj
+  << /Type /XObject
+     /Length 36 0 R
+     /Group << /Type /Group
+               /S /Transparency
+            >>
+     /Subtype /Form
+     /Resources << /XObject << /X1 31 0 R >>
+                   /ExtGState << /E1 << /SMask << /Type /Mask
+                                                  /G 33 0 R
+                                                  /S /Alpha
+                                               >>
+                                        /Type /ExtGState
+                                     >> >>
+                >>
+     /BBox [ 0.000000 0.000000 375.000000 316.435547 ]
+  >>
+stream
+/DeviceRGB CS
+/DeviceRGB cs
+q
+/E1 gs
+/X1 Do
+Q
+
+endstream
+endobj
+
+36 0 obj
+  46
+endobj
+
+37 0 obj
+  << /Length 38 0 R
+     /Range [ 0.000000 1.000000 0.000000 1.000000 0.000000 1.000000 ]
+     /Domain [ 0.000000 1.000000 ]
+     /FunctionType 4
+  >>
+stream
+{  0.933333 exch 0.360784 exch 0.243137 exch dup 0.000000 gt { exch pop exch pop exch pop dup 0.000000 sub 0.289593 mul 0.933333 add exch dup 0.000000 sub 1.216290 mul 0.360784 add exch dup 0.000000 sub 0.270287 mul 0.243137 add exch } if dup 0.203125 gt { exch pop exch pop exch pop dup 0.203125 sub -0.142448 mul 0.992157 add exch dup 0.203125 sub 1.139587 mul 0.607843 add exch dup 0.203125 sub -0.081399 mul 0.298039 add exch } if dup 0.395833 gt { exch pop exch pop exch pop dup 0.395833 sub -1.411765 mul 0.964706 add exch dup 0.395833 sub -0.037647 mul 0.827451 add exch dup 0.395833 sub -0.282353 mul 0.282353 add exch } if dup 0.604167 gt { exch pop exch pop exch pop dup 0.604167 sub -2.100310 mul 0.670588 add exch dup 0.604167 sub -1.367183 mul 0.819608 add exch dup 0.604167 sub 2.040868 mul 0.223529 add exch } if dup 0.802083 gt { exch pop exch pop exch pop dup 0.802083 sub 1.129412 mul 0.254902 add exch dup 0.802083 sub -0.733127 mul 0.549020 add exch dup 0.802083 sub 0.336842 mul 0.627451 add exch } if dup 1.000000 gt { exch pop exch pop exch pop 0.478431 exch 0.403922 exch 0.694118 exch } if pop }
+endstream
+endobj
+
+38 0 obj
+  1120
+endobj
+
+39 0 obj
+  << /Type /XObject
+     /Length 40 0 R
+     /Group << /Type /Group
+               /S /Transparency
+            >>
+     /Subtype /Form
+     /Resources << /ExtGState << /E1 << /ca 0.030000 >> >> >>
+     /BBox [ 0.000000 0.000000 375.000000 316.435547 ]
+  >>
+stream
+/DeviceRGB CS
+/DeviceRGB cs
+q
+-1.000000 -0.000000 0.221378 0.975188 118.606064 90.414177 cm
+1.000000 1.000000 1.000000 scn
+41.318352 19.391773 m
+41.318352 8.122887 32.068924 -1.012352 20.659176 -1.012352 c
+9.249428 -1.012352 0.000000 8.122887 0.000000 19.391773 c
+0.000000 30.660660 9.249428 39.795898 20.659176 39.795898 c
+32.068924 39.795898 41.318352 30.660660 41.318352 19.391773 c
+h
+f
+n
+Q
+q
+/E1 gs
+1.000000 0.000000 -0.000000 1.000000 74.464844 78.159180 cm
+0.000000 0.000000 0.000000 scn
+43.520622 15.359531 m
+19.699051 14.689709 10.689524 31.091402 9.162457 39.375977 c
+0.000000 23.737362 l
+20.042263 0.000175 l
+43.520622 15.359531 l
+h
+f
+n
+Q
+
+endstream
+endobj
+
+40 0 obj
+  649
+endobj
+
+41 0 obj
+  << /Type /XObject
+     /Length 42 0 R
+     /Group << /Type /Group
+               /S /Transparency
+            >>
+     /Subtype /Form
+     /Resources << >>
+     /BBox [ 0.000000 0.000000 375.000000 316.435547 ]
+  >>
+stream
+/DeviceRGB CS
+/DeviceRGB cs
+q
+-1.000000 -0.000000 0.221378 0.975188 118.606064 90.414177 cm
+1.000000 1.000000 1.000000 scn
+41.318352 19.391773 m
+41.318352 8.122887 32.068924 -1.012352 20.659176 -1.012352 c
+9.249428 -1.012352 0.000000 8.122887 0.000000 19.391773 c
+0.000000 30.660660 9.249428 39.795898 20.659176 39.795898 c
+32.068924 39.795898 41.318352 30.660660 41.318352 19.391773 c
+h
+f
+n
+Q
+
+endstream
+endobj
+
+42 0 obj
+  394
+endobj
+
+43 0 obj
+  << /Type /XObject
+     /Length 44 0 R
+     /Group << /Type /Group
+               /S /Transparency
+            >>
+     /Subtype /Form
+     /Resources << /Pattern << /P1 << /Matrix [ -42.125126 -0.668277 8.606724 40.931973 118.809296 88.289703 ]
+                                      /Shading << /Coords [ 0.000000 0.000000 1.000000 0.000000 ]
+                                                  /ColorSpace /DeviceRGB
+                                                  /Function 37 0 R
+                                                  /Domain [ 0.000000 1.000000 ]
+                                                  /ShadingType 2
+                                                  /Extend [ true true ]
+                                               >>
+                                      /PatternType 2
+                                      /Type /Pattern
+                                   >> >>
+                   /XObject << /X1 39 0 R >>
+                   /ExtGState << /E1 << /SMask << /Type /Mask
+                                                  /G 41 0 R
+                                                  /S /Alpha
+                                               >>
+                                        /Type /ExtGState
+                                     >> >>
+                >>
+     /BBox [ 0.000000 0.000000 375.000000 316.435547 ]
+  >>
+stream
+/DeviceRGB CS
+/DeviceRGB cs
+q
+/E1 gs
+/X1 Do
+Q
+q
+81.580635 109.323822 m
+79.085945 98.334534 86.313034 89.425964 97.722778 89.425964 c
+109.132530 89.425964 120.404297 98.334534 122.898987 109.323822 c
+125.393669 120.313110 118.166588 129.221680 106.756836 129.221680 c
+95.347092 129.221680 84.075317 120.313110 81.580635 109.323822 c
+h
+W*
+n
+q
+-1.000000 -0.000000 0.221378 0.975188 118.606064 90.413200 cm
+/Pattern cs
+/P1 scn
+39.788044 19.391773 m
+39.788044 8.985920 31.241735 0.517960 20.659176 0.517960 c
+20.659176 -2.542660 l
+32.896111 -2.542660 42.848660 7.259853 42.848660 19.391773 c
+39.788044 19.391773 l
+h
+20.659176 0.517960 m
+10.076616 0.517960 1.530309 8.985920 1.530309 19.391773 c
+-1.530309 19.391773 l
+-1.530309 7.259853 8.422239 -2.542660 20.659176 -2.542660 c
+20.659176 0.517960 l
+h
+1.530309 19.391773 m
+1.530309 29.797628 10.076616 38.265591 20.659176 38.265591 c
+20.659176 41.326206 l
+8.422239 41.326206 -1.530309 31.523693 -1.530309 19.391773 c
+1.530309 19.391773 l
+h
+20.659176 38.265591 m
+31.241735 38.265591 39.788044 29.797628 39.788044 19.391773 c
+42.848660 19.391773 l
+42.848660 31.523693 32.896111 41.326206 20.659176 41.326206 c
+20.659176 38.265591 l
+h
+f
+n
+Q
+Q
+q
+1.000000 0.000000 0.277482 0.960731 90.616409 98.962387 cm
+0.207843 0.207843 0.207843 scn
+11.879443 23.012289 m
+12.805124 22.728329 13.325341 21.747719 13.041380 20.822039 c
+12.527188 19.145836 l
+15.320233 18.289042 l
+16.245916 18.005081 16.766132 17.024471 16.482170 16.098791 c
+16.198210 15.173110 15.217600 14.652893 14.291919 14.936855 c
+7.587543 16.993484 l
+7.366121 17.061409 7.186616 17.116392 7.030631 17.161503 c
+6.980514 17.007053 6.925382 16.827595 6.857459 16.606173 c
+6.171916 14.371382 l
+6.103992 14.149961 6.049009 13.970457 6.003898 13.814472 c
+6.158347 13.764355 6.337808 13.709220 6.559227 13.641297 c
+11.028812 12.270210 l
+11.105794 12.246617 l
+11.564240 12.106182 12.059963 11.954328 12.461100 11.769731 c
+12.931027 11.553476 13.505201 11.191918 13.870515 10.503303 c
+14.235826 9.814688 14.213222 9.136537 14.128764 8.626180 c
+14.056670 8.190532 13.904426 7.694929 13.763629 7.236592 c
+13.739996 7.159623 l
+13.054453 4.924831 l
+13.030860 4.847851 l
+12.890424 4.389402 12.738570 3.893681 12.553972 3.492544 c
+12.337719 3.022615 11.976161 2.448442 11.287546 2.083130 c
+10.598930 1.717815 9.920778 1.740421 9.410422 1.824879 c
+8.974774 1.896973 8.479170 2.049217 8.020835 2.190014 c
+7.943865 2.213648 l
+7.385386 2.384966 l
+6.871222 0.708851 l
+6.587260 -0.216831 5.606651 -0.737047 4.680970 -0.453087 c
+3.755290 -0.169125 3.235073 0.811483 3.519034 1.737165 c
+4.033198 3.413280 l
+1.239490 4.270277 l
+0.313809 4.554239 -0.206407 5.534847 0.077554 6.460529 c
+0.361516 7.386210 1.342124 7.906427 2.267805 7.622466 c
+6.737601 6.251289 l
+8.972180 5.565836 l
+9.193601 5.497913 9.373108 5.442930 9.529094 5.397820 c
+9.579211 5.552269 9.634342 5.731728 9.702265 5.953148 c
+10.387808 8.187939 l
+10.455731 8.409359 10.510714 8.588867 10.555824 8.744851 c
+10.401375 8.794969 10.221916 8.850100 10.000497 8.918022 c
+5.530912 10.289110 l
+5.453931 10.312702 l
+5.453895 10.312714 l
+4.995459 10.453146 4.499751 10.604997 4.098624 10.789590 c
+3.628697 11.005843 3.054523 11.367401 2.689210 12.056016 c
+2.323897 12.744631 2.346502 13.422783 2.430960 13.933140 c
+2.503054 14.368787 2.655298 14.864390 2.796094 15.322725 c
+2.819728 15.399697 l
+3.505272 17.634487 l
+3.528865 17.711472 l
+3.669300 18.169918 3.821155 18.665640 4.005751 19.066776 c
+4.222005 19.536703 4.583563 20.110878 5.272178 20.476191 c
+5.960793 20.841503 6.638944 20.818899 7.149301 20.734442 c
+7.584949 20.662346 8.080551 20.510103 8.538886 20.369307 c
+8.615857 20.345673 l
+9.175001 20.174150 l
+9.689192 21.850353 l
+9.973154 22.776035 10.953762 23.296251 11.879443 23.012289 c
+h
+f*
+n
+Q
+
+endstream
+endobj
+
+44 0 obj
+  3736
+endobj
+
+45 0 obj
+  << /Length 46 0 R
+     /Range [ 0.000000 1.000000 0.000000 1.000000 0.000000 1.000000 ]
+     /Domain [ 0.000000 1.000000 ]
+     /FunctionType 4
+  >>
+stream
+{  0.933333 exch 0.360784 exch 0.243137 exch dup 0.000000 gt { exch pop exch pop exch pop dup 0.000000 sub 0.289593 mul 0.933333 add exch dup 0.000000 sub 1.216290 mul 0.360784 add exch dup 0.000000 sub 0.270287 mul 0.243137 add exch } if dup 0.203125 gt { exch pop exch pop exch pop dup 0.203125 sub -0.142448 mul 0.992157 add exch dup 0.203125 sub 1.139587 mul 0.607843 add exch dup 0.203125 sub -0.081399 mul 0.298039 add exch } if dup 0.395833 gt { exch pop exch pop exch pop dup 0.395833 sub -1.411765 mul 0.964706 add exch dup 0.395833 sub -0.037647 mul 0.827451 add exch dup 0.395833 sub -0.282353 mul 0.282353 add exch } if dup 0.604167 gt { exch pop exch pop exch pop dup 0.604167 sub -2.100310 mul 0.670588 add exch dup 0.604167 sub -1.367183 mul 0.819608 add exch dup 0.604167 sub 2.040868 mul 0.223529 add exch } if dup 0.802083 gt { exch pop exch pop exch pop dup 0.802083 sub 1.129412 mul 0.254902 add exch dup 0.802083 sub -0.733127 mul 0.549020 add exch dup 0.802083 sub 0.336842 mul 0.627451 add exch } if dup 1.000000 gt { exch pop exch pop exch pop 0.478431 exch 0.403922 exch 0.694118 exch } if pop }
+endstream
+endobj
+
+46 0 obj
+  1120
+endobj
+
+47 0 obj
+  << /Type /XObject
+     /Length 48 0 R
+     /Group << /Type /Group
+               /S /Transparency
+            >>
+     /Subtype /Form
+     /Resources << /ExtGState << /E1 << /ca 0.350000 >> >>
+                   /Pattern << /P1 << /Matrix [ -42.125126 -0.668277 8.606724 40.931973 120.742889 86.363922 ]
+                                      /Shading << /Coords [ 0.000000 0.000000 1.000000 0.000000 ]
+                                                  /ColorSpace /DeviceRGB
+                                                  /Function 45 0 R
+                                                  /Domain [ 0.000000 1.000000 ]
+                                                  /ShadingType 2
+                                                  /Extend [ true true ]
+                                               >>
+                                      /PatternType 2
+                                      /Type /Pattern
+                                   >> >>
+                >>
+     /BBox [ 0.000000 0.000000 375.000000 316.435547 ]
+  >>
+stream
+/DeviceRGB CS
+/DeviceRGB cs
+q
+-1.000000 -0.000000 0.221378 0.975188 120.539658 88.487419 cm
+/Pattern cs
+/P1 scn
+41.318352 19.391773 m
+41.318352 8.122887 32.068924 -1.012352 20.659176 -1.012352 c
+9.249428 -1.012352 0.000000 8.122887 0.000000 19.391773 c
+0.000000 30.660660 9.249428 39.795898 20.659176 39.795898 c
+32.068924 39.795898 41.318352 30.660660 41.318352 19.391773 c
+h
+f
+n
+Q
+q
+/E1 gs
+-1.000000 -0.000000 0.221378 0.975188 120.539658 88.487419 cm
+0.000000 0.000000 0.000000 scn
+41.318352 19.391773 m
+41.318352 8.122887 32.068924 -1.012352 20.659176 -1.012352 c
+9.249428 -1.012352 0.000000 8.122887 0.000000 19.391773 c
+0.000000 30.660660 9.249428 39.795898 20.659176 39.795898 c
+32.068924 39.795898 41.318352 30.660660 41.318352 19.391773 c
+h
+f
+n
+Q
+
+endstream
+endobj
+
+48 0 obj
+  756
+endobj
+
+49 0 obj
+  << /Length 50 0 R
+     /Range [ 0.000000 1.000000 0.000000 1.000000 0.000000 1.000000 ]
+     /Domain [ 0.000000 1.000000 ]
+     /FunctionType 4
+  >>
+stream
+{  0.000000 exch 0.000000 exch 0.000000 exch dup 0.000000 gt { exch pop exch pop exch pop dup 0.000000 sub 0.237500 mul 0.000000 add exch dup 0.000000 sub 0.237500 mul 0.000000 add exch dup 0.000000 sub 0.237500 mul 0.000000 add exch } if dup 1.000000 gt { exch pop exch pop exch pop 0.237500 exch 0.237500 exch 0.237500 exch } if pop }
+endstream
+endobj
+
+50 0 obj
+  336
+endobj
+
+51 0 obj
+  << /Type /XObject
+     /Length 52 0 R
+     /Group << /Type /Group
+               /S /Transparency
+            >>
+     /Subtype /Form
+     /Resources << /ExtGState << /E4 << /ca 0.200000 >>
+                                 /E2 << /ca 0.200000 >>
+                                 /E3 << /ca 0.200000 >>
+                                 /E1 << /ca 0.020000 >>
+                              >>
+                   /Pattern << /P1 << /Matrix [ -5.436636 -119.537224 125.076820 6.219322 92.407555 250.591217 ]
+                                      /Shading << /Coords [ 0.000000 0.000000 1.000000 0.000000 ]
+                                                  /ColorSpace /DeviceRGB
+                                                  /Function 49 0 R
+                                                  /Domain [ 0.000000 1.000000 ]
+                                                  /ShadingType 2
+                                                  /Extend [ true true ]
+                                               >>
+                                      /PatternType 2
+                                      /Type /Pattern
+                                   >> >>
+                >>
+     /BBox [ 0.000000 0.000000 375.000000 316.435547 ]
+  >>
+stream
+/DeviceRGB CS
+/DeviceRGB cs
+q
+0.986001 -0.166738 0.269563 0.962983 187.008163 147.885986 cm
+/Pattern cs
+/P1 scn
+0.000000 107.213303 m
+0.000000 110.437256 2.613529 113.050781 5.837480 113.050781 c
+143.991196 113.050781 l
+147.215149 113.050781 149.828674 110.437256 149.828674 107.213303 c
+149.828674 27.434410 l
+149.828674 24.210457 147.215149 21.596931 143.991196 21.596931 c
+5.837483 21.596931 l
+2.613532 21.596931 0.000000 24.210457 0.000000 27.434410 c
+0.000000 107.213303 l
+h
+f
+n
+Q
+q
+/E1 gs
+-0.986001 0.166738 0.269563 0.962983 352.897705 106.651543 cm
+0.000000 0.000000 0.000000 scn
+183.964508 28.624733 m
+68.249428 46.686699 13.574990 101.553528 2.106464 125.922852 c
+0.000000 27.012054 l
+183.964508 28.624733 l
+h
+f
+n
+Q
+q
+0.986001 -0.166738 0.261465 0.964318 262.641205 186.214630 cm
+1.000000 1.000000 1.000000 scn
+0.000000 22.100492 m
+0.000000 5.062796 l
+1.392773 4.116556 2.906815 3.336475 4.514756 2.751204 c
+4.514756 22.100492 l
+4.514756 25.990122 7.667105 29.142035 11.556319 29.142035 c
+15.445950 29.142035 18.597843 25.990122 18.597843 22.100492 c
+18.597843 18.210863 15.445950 15.058949 11.556319 15.058949 c
+10.666158 15.058949 9.814198 15.224270 9.029958 15.525837 c
+9.029958 10.821230 l
+9.843274 10.639708 10.688588 10.543758 11.556319 10.543758 c
+17.938236 10.543758 23.112638 15.718576 23.112638 22.100492 c
+23.112638 28.482409 17.938236 33.657227 11.556319 33.657227 c
+5.174402 33.657227 0.000000 28.481995 0.000000 22.100492 c
+0.000000 22.100492 l
+h
+f*
+n
+Q
+q
+/E2 gs
+0.986001 -0.166738 0.269563 0.962983 202.385086 178.880585 cm
+1.000000 1.000000 1.000000 scn
+0.000000 7.391124 m
+0.000000 8.710615 1.069659 9.780273 2.389150 9.780273 c
+28.669788 9.780273 l
+29.989279 9.780273 31.058935 8.710615 31.058935 7.391124 c
+31.058935 7.391124 l
+31.058935 6.071633 29.989277 5.001974 28.669786 5.001974 c
+2.389147 5.001974 l
+1.069656 5.001974 0.000000 6.071633 0.000000 7.391124 c
+0.000000 7.391124 l
+h
+f
+n
+Q
+q
+/E3 gs
+0.986001 -0.166738 0.269563 0.962983 198.735092 165.832275 cm
+1.000000 1.000000 1.000000 scn
+0.000000 11.382730 m
+0.000000 13.230017 1.497523 14.727539 3.344810 14.727539 c
+46.349506 14.727539 l
+48.196793 14.727539 49.694317 13.230017 49.694317 11.382730 c
+49.694317 11.382730 l
+49.694317 9.535442 48.196793 8.037920 46.349506 8.037920 c
+3.344811 8.037920 l
+1.497523 8.037920 0.000000 9.535442 0.000000 11.382730 c
+0.000000 11.382730 l
+h
+f
+n
+Q
+q
+/E4 gs
+0.986001 -0.166738 0.269563 0.962983 310.095947 151.170898 cm
+1.000000 1.000000 1.000000 scn
+0.000000 8.204414 m
+0.000000 10.579497 1.925386 12.504883 4.300469 12.504883 c
+21.024519 12.504883 l
+23.399603 12.504883 25.324984 10.579497 25.324984 8.204414 c
+25.324984 8.204414 l
+25.324984 5.829330 23.399597 3.903945 21.024515 3.903945 c
+4.300464 3.903945 l
+1.925380 3.903945 0.000000 5.829330 0.000000 8.204414 c
+0.000000 8.204414 l
+h
+f
+n
+Q
+q
+0.506599 -0.798834 0.887818 0.563030 292.880920 165.368774 cm
+1.000000 1.000000 1.000000 scn
+0.000000 5.537109 m
+1.327302 4.599390 l
+1.750323 4.300531 2.315726 4.300530 2.738747 4.599389 c
+4.066050 5.537109 l
+3.137136 4.202934 l
+2.844704 3.782922 2.844704 3.225247 3.137136 2.805235 c
+4.066050 1.471061 l
+2.738746 2.408779 l
+2.315726 2.707637 1.750325 2.707637 1.327304 2.408780 c
+0.000000 1.471061 l
+0.937720 2.798362 l
+1.236579 3.221384 1.236579 3.786786 0.937720 4.209807 c
+0.000000 5.537109 l
+h
+f
+n
+Q
+q
+0.506599 -0.798834 0.887818 0.563030 238.345398 230.018204 cm
+1.000000 1.000000 1.000000 scn
+0.000000 7.814453 m
+2.163158 6.286212 l
+2.586180 5.987354 3.151581 5.987354 3.574603 6.286212 c
+5.737761 7.814453 l
+4.226886 5.644422 l
+3.934454 5.224410 3.934455 4.666735 4.226886 4.246723 c
+5.737761 2.076692 l
+3.574601 3.604930 l
+3.151580 3.903788 2.586180 3.903788 2.163159 3.604930 c
+0.000000 2.076692 l
+1.528241 4.239851 l
+1.827099 4.662872 1.827099 5.228273 1.528241 5.651295 c
+0.000000 7.814453 l
+h
+f
+n
+Q
+q
+0.506599 -0.798834 0.887818 0.563030 338.370361 221.953308 cm
+1.000000 1.000000 1.000000 scn
+0.000000 6.217773 m
+1.577076 5.103591 l
+2.000098 4.804733 2.565499 4.804733 2.988520 5.103592 c
+4.565596 6.217773 l
+3.462779 4.633825 l
+3.170347 4.213814 3.170347 3.656138 3.462779 3.236126 c
+4.565596 1.652177 l
+2.988520 2.766357 l
+2.565499 3.065214 2.000098 3.065215 1.577077 2.766357 c
+0.000000 1.652177 l
+1.114182 3.229254 l
+1.413041 3.652275 1.413040 4.217676 1.114182 4.640697 c
+0.000000 6.217773 l
+h
+f
+n
+Q
+q
+0.506599 -0.798834 0.887818 0.563030 250.882660 179.626282 cm
+1.000000 1.000000 1.000000 scn
+0.000000 3.907227 m
+0.728721 3.392395 l
+1.151742 3.093537 1.717144 3.093537 2.140166 3.392395 c
+2.868887 3.907227 l
+2.356733 3.171632 l
+2.064301 2.751620 2.064301 2.193945 2.356733 1.773934 c
+2.868887 1.038339 l
+2.140164 1.553170 l
+1.717143 1.852028 1.151743 1.852028 0.728722 1.553170 c
+0.000000 1.038339 l
+0.514831 1.767061 l
+0.813690 2.190082 0.813690 2.755484 0.514831 3.178505 c
+0.000000 3.907227 l
+h
+f
+n
+Q
+
+endstream
+endobj
+
+52 0 obj
+  4849
+endobj
+
+53 0 obj
+  << /Length 54 0 R
+     /Range [ 0.000000 1.000000 0.000000 1.000000 0.000000 1.000000 ]
+     /Domain [ 0.000000 1.000000 ]
+     /FunctionType 4
+  >>
+stream
+{  0.941176 exch 0.913725 exch 0.894118 exch dup 0.000000 gt { exch pop exch pop exch pop dup 0.000000 sub 0.000000 mul 0.941176 add exch dup 0.000000 sub 0.000000 mul 0.913725 add exch dup 0.000000 sub 0.000000 mul 0.894118 add exch } if dup 0.758000 gt { exch pop exch pop exch pop 0.941176 exch 0.913725 exch 0.894118 exch } if pop }
+endstream
+endobj
+
+54 0 obj
+  336
+endobj
+
+55 0 obj
+  << /Length 56 0 R
+     /Range [ 0.000000 1.000000 0.000000 1.000000 0.000000 1.000000 ]
+     /Domain [ 0.000000 1.000000 ]
+     /FunctionType 4
+  >>
+stream
+{  0.941176 exch 0.913725 exch 0.894118 exch dup 0.000000 gt { exch pop exch pop exch pop dup 0.000000 sub 0.000000 mul 0.941176 add exch dup 0.000000 sub 0.000000 mul 0.913725 add exch dup 0.000000 sub 0.000000 mul 0.894118 add exch } if dup 0.758000 gt { exch pop exch pop exch pop 0.941176 exch 0.913725 exch 0.894118 exch } if pop }
+endstream
+endobj
+
+56 0 obj
+  336
+endobj
+
+57 0 obj
+  << /Length 58 0 R
+     /Range [ 0.000000 1.000000 0.000000 1.000000 0.000000 1.000000 ]
+     /Domain [ 0.000000 1.000000 ]
+     /FunctionType 4
+  >>
+stream
+{  0.941176 exch 0.913725 exch 0.894118 exch dup 0.000000 gt { exch pop exch pop exch pop dup 0.000000 sub 0.000000 mul 0.941176 add exch dup 0.000000 sub 0.000000 mul 0.913725 add exch dup 0.000000 sub 0.000000 mul 0.894118 add exch } if dup 0.758000 gt { exch pop exch pop exch pop 0.941176 exch 0.913725 exch 0.894118 exch } if pop }
+endstream
+endobj
+
+58 0 obj
+  336
+endobj
+
+59 0 obj
+  << /Length 60 0 R
+     /Range [ 0.000000 1.000000 0.000000 1.000000 0.000000 1.000000 ]
+     /Domain [ 0.000000 1.000000 ]
+     /FunctionType 4
+  >>
+stream
+{  0.941176 exch 0.913725 exch 0.894118 exch dup 0.000000 gt { exch pop exch pop exch pop dup 0.000000 sub 0.000000 mul 0.941176 add exch dup 0.000000 sub 0.000000 mul 0.913725 add exch dup 0.000000 sub 0.000000 mul 0.894118 add exch } if dup 0.758000 gt { exch pop exch pop exch pop 0.941176 exch 0.913725 exch 0.894118 exch } if pop }
+endstream
+endobj
+
+60 0 obj
+  336
+endobj
+
+61 0 obj
+  << /Length 62 0 R
+     /Range [ 0.000000 1.000000 ]
+     /Domain [ 0.000000 1.000000 ]
+     /FunctionType 4
+  >>
+stream
+{  1.000000 exch dup 0.000000 gt { exch pop dup 0.000000 sub -1.319261 mul 1.000000 add exch } if dup 0.758000 gt { exch pop 0.000000 exch } if pop }
+endstream
+endobj
+
+62 0 obj
+  149
+endobj
+
+63 0 obj
+  << /BBox [ 0.000000 0.000000 375.000000 316.435547 ]
+     /Resources << /Pattern << /P1 << /Matrix [ -6.611980 12.826114 -12.826114 -6.611980 247.624939 64.296555 ]
+                                      /Shading << /Coords [ 0.000000 0.000000 1.000000 0.000000 ]
+                                                  /ColorSpace /DeviceGray
+                                                  /Function 61 0 R
+                                                  /Domain [ 0.000000 1.000000 ]
+                                                  /ShadingType 2
+                                                  /Extend [ true true ]
+                                               >>
+                                      /PatternType 2
+                                      /Type /Pattern
+                                   >> >> >>
+     /Subtype /Form
+     /Length 64 0 R
+     /Group << /Type /Group
+               /S /Transparency
+               /CS /DeviceGray
+            >>
+     /Type /XObject
+  >>
+stream
+/DeviceGray CS
+/DeviceGray cs
+0.989862 -0.142034 0.142034 0.989862 222.857971 58.110886 cm
+13.071549 17.968750 m
+12.829777 17.968750 12.588006 17.646397 12.507415 17.324032 c
+11.459732 9.506703 6.060132 3.140013 0.579943 3.220604 c
+0.338170 3.220604 0.096399 2.898225 0.015808 2.575861 c
+-0.064783 2.172906 0.176990 1.850546 0.418763 1.850546 c
+6.463089 1.769955 12.346231 8.700793 13.474504 17.324032 c
+13.555096 17.646397 13.393913 17.968750 13.071549 17.968750 c
+h
+/Pattern cs
+/P1 scn
+f
+n
+
+endstream
+endobj
+
+64 0 obj
+  492
+endobj
+
+65 0 obj
+  << /Length 66 0 R
+     /Range [ 0.000000 1.000000 ]
+     /Domain [ 0.000000 1.000000 ]
+     /FunctionType 4
+  >>
+stream
+{  1.000000 exch dup 0.000000 gt { exch pop dup 0.000000 sub -1.319261 mul 1.000000 add exch } if dup 0.758000 gt { exch pop 0.000000 exch } if pop }
+endstream
+endobj
+
+66 0 obj
+  149
+endobj
+
+67 0 obj
+  << /BBox [ 0.000000 0.000000 375.000000 316.435547 ]
+     /Resources << /Pattern << /P1 << /Matrix [ 12.382923 9.702056 -9.702056 12.382923 161.323151 65.215714 ]
+                                      /Shading << /Coords [ 0.000000 0.000000 1.000000 0.000000 ]
+                                                  /ColorSpace /DeviceGray
+                                                  /Function 65 0 R
+                                                  /Domain [ 0.000000 1.000000 ]
+                                                  /ShadingType 2
+                                                  /Extend [ true true ]
+                                               >>
+                                      /PatternType 2
+                                      /Type /Pattern
+                                   >> >> >>
+     /Subtype /Form
+     /Length 68 0 R
+     /Group << /Type /Group
+               /S /Transparency
+               /CS /DeviceGray
+            >>
+     /Type /XObject
+  >>
+stream
+/DeviceGray CS
+/DeviceGray cs
+0.989862 -0.142034 0.142034 0.989862 159.739716 68.274742 cm
+0.756485 17.840199 m
+0.998258 17.840199 1.159440 17.517815 1.159440 17.114859 c
+0.111757 9.297531 3.738353 2.850261 9.218542 2.769670 c
+9.460315 2.769670 9.621497 2.447310 9.621497 2.044355 c
+9.540906 1.641399 9.299135 1.399612 9.057363 1.399612 c
+3.013036 1.480204 -0.935924 8.491622 0.192350 17.114859 c
+0.272941 17.598406 0.514712 17.920788 0.756485 17.840199 c
+h
+/Pattern cs
+/P1 scn
+f
+n
+
+endstream
+endobj
+
+68 0 obj
+  482
+endobj
+
+69 0 obj
+  << /Length 70 0 R
+     /Range [ 0.000000 1.000000 ]
+     /Domain [ 0.000000 1.000000 ]
+     /FunctionType 4
+  >>
+stream
+{  1.000000 exch dup 0.000000 gt { exch pop dup 0.000000 sub -1.319261 mul 1.000000 add exch } if dup 0.758000 gt { exch pop 0.000000 exch } if pop }
+endstream
+endobj
+
+70 0 obj
+  149
+endobj
+
+71 0 obj
+  << /BBox [ 0.000000 0.000000 375.000000 316.435547 ]
+     /Resources << /Pattern << /P1 << /Matrix [ -12.359983 -9.684093 9.684093 -12.359983 283.169434 300.252563 ]
+                                      /Shading << /Coords [ 0.000000 0.000000 1.000000 0.000000 ]
+                                                  /ColorSpace /DeviceGray
+                                                  /Function 69 0 R
+                                                  /Domain [ 0.000000 1.000000 ]
+                                                  /ShadingType 2
+                                                  /Extend [ true true ]
+                                               >>
+                                      /PatternType 2
+                                      /Type /Pattern
+                                   >> >> >>
+     /Subtype /Form
+     /Length 72 0 R
+     /Group << /Type /Group
+               /S /Transparency
+               /CS /DeviceGray
+            >>
+     /Type /XObject
+  >>
+stream
+/DeviceGray CS
+/DeviceGray cs
+0.989862 -0.142034 0.142034 0.989862 283.768524 265.159668 cm
+8.865012 1.332872 m
+8.623239 1.332872 8.462057 1.655237 8.462057 2.058192 c
+9.509740 9.875521 5.883144 16.322798 0.402955 16.403389 c
+0.161182 16.403389 0.000000 16.725756 0.000000 17.128710 c
+0.080591 17.531666 0.322362 17.773438 0.564135 17.773438 c
+6.608461 17.692846 10.557421 10.681431 9.429147 2.058192 c
+9.348556 1.655237 9.106785 1.332872 8.865012 1.332872 c
+h
+/Pattern cs
+/P1 scn
+f
+n
+
+endstream
+endobj
+
+72 0 obj
+  485
+endobj
+
+73 0 obj
+  << /Length 74 0 R
+     /Range [ 0.000000 1.000000 ]
+     /Domain [ 0.000000 1.000000 ]
+     /FunctionType 4
+  >>
+stream
+{  1.000000 exch dup 0.000000 gt { exch pop dup 0.000000 sub -1.319261 mul 1.000000 add exch } if dup 0.758000 gt { exch pop 0.000000 exch } if pop }
+endstream
+endobj
+
+74 0 obj
+  149
+endobj
+
+75 0 obj
+  << /BBox [ 0.000000 0.000000 375.000000 316.435547 ]
+     /Resources << /Pattern << /P1 << /Matrix [ 6.605074 -12.812723 12.812723 6.605074 206.675552 285.940826 ]
+                                      /Shading << /Coords [ 0.000000 0.000000 1.000000 0.000000 ]
+                                                  /ColorSpace /DeviceGray
+                                                  /Function 73 0 R
+                                                  /Domain [ 0.000000 1.000000 ]
+                                                  /ShadingType 2
+                                                  /Extend [ true true ]
+                                               >>
+                                      /PatternType 2
+                                      /Type /Pattern
+                                   >> >> >>
+     /Subtype /Form
+     /Length 76 0 R
+     /Group << /Type /Group
+               /S /Transparency
+               /CS /DeviceGray
+            >>
+     /Type /XObject
+  >>
+stream
+/DeviceGray CS
+/DeviceGray cs
+0.989862 -0.142034 0.142034 0.989862 216.734497 275.162537 cm
+0.402955 1.839108 m
+0.644728 1.839108 0.886505 2.161474 0.967096 2.483839 c
+2.014779 10.301167 7.333783 16.587265 12.894563 16.587265 c
+13.136335 16.587265 13.378113 16.909628 13.458704 17.231991 c
+13.539294 17.634947 13.297522 17.876720 13.055748 17.957312 c
+7.011422 18.037903 1.128274 11.107077 0.000000 2.564428 c
+0.000000 2.161473 0.161182 1.839108 0.402955 1.839108 c
+h
+/Pattern cs
+/P1 scn
+f
+n
+
+endstream
+endobj
+
+76 0 obj
+  492
+endobj
+
+77 0 obj
+  << /Type /XObject
+     /Length 78 0 R
+     /Group << /Type /Group
+               /S /Transparency
+            >>
+     /Subtype /Form
+     /Resources << /Pattern << /P4 << /Matrix [ -6.611980 12.826114 -12.826114 -6.611980 247.624939 64.296555 ]
+                                      /Shading << /Coords [ 0.000000 0.000000 1.000000 0.000000 ]
+                                                  /ColorSpace /DeviceRGB
+                                                  /Function 53 0 R
+                                                  /Domain [ 0.000000 1.000000 ]
+                                                  /ShadingType 2
+                                                  /Extend [ true true ]
+                                               >>
+                                      /PatternType 2
+                                      /Type /Pattern
+                                   >>
+                               /P3 << /Matrix [ 12.382923 9.702056 -9.702056 12.382923 161.323151 65.215714 ]
+                                      /Shading << /Coords [ 0.000000 0.000000 1.000000 0.000000 ]
+                                                  /ColorSpace /DeviceRGB
+                                                  /Function 55 0 R
+                                                  /Domain [ 0.000000 1.000000 ]
+                                                  /ShadingType 2
+                                                  /Extend [ true true ]
+                                               >>
+                                      /PatternType 2
+                                      /Type /Pattern
+                                   >>
+                               /P2 << /Matrix [ 6.605074 -12.812723 12.812723 6.605074 206.675552 285.940826 ]
+                                      /Shading << /Coords [ 0.000000 0.000000 1.000000 0.000000 ]
+                                                  /ColorSpace /DeviceRGB
+                                                  /Function 57 0 R
+                                                  /Domain [ 0.000000 1.000000 ]
+                                                  /ShadingType 2
+                                                  /Extend [ true true ]
+                                               >>
+                                      /PatternType 2
+                                      /Type /Pattern
+                                   >>
+                               /P1 << /Matrix [ -12.359983 -9.684093 9.684093 -12.359983 283.169434 300.252563 ]
+                                      /Shading << /Coords [ 0.000000 0.000000 1.000000 0.000000 ]
+                                                  /ColorSpace /DeviceRGB
+                                                  /Function 59 0 R
+                                                  /Domain [ 0.000000 1.000000 ]
+                                                  /ShadingType 2
+                                                  /Extend [ true true ]
+                                               >>
+                                      /PatternType 2
+                                      /Type /Pattern
+                                   >>
+                            >>
+                   /ExtGState << /E7 << /ca 0.290000 >>
+                                 /E8 << /SMask << /Type /Mask
+                                                  /G 63 0 R
+                                                  /S /Luminosity
+                                               >>
+                                        /Type /ExtGState
+                                     >>
+                                 /E6 << /SMask << /Type /Mask
+                                                  /G 67 0 R
+                                                  /S /Luminosity
+                                               >>
+                                        /Type /ExtGState
+                                     >>
+                                 /E2 << /SMask << /Type /Mask
+                                                  /G 71 0 R
+                                                  /S /Luminosity
+                                               >>
+                                        /Type /ExtGState
+                                     >>
+                                 /E5 << /ca 0.290000 >>
+                                 /E4 << /SMask << /Type /Mask
+                                                  /G 75 0 R
+                                                  /S /Luminosity
+                                               >>
+                                        /Type /ExtGState
+                                     >>
+                                 /E3 << /ca 0.550000 >>
+                                 /E1 << /ca 0.550000 >>
+                              >>
+                >>
+     /BBox [ 0.000000 0.000000 375.000000 316.435547 ]
+  >>
+stream
+q
+/E1 gs
+/E2 gs
+0.989862 -0.142034 0.142034 0.989862 283.768524 265.159668 cm
+/Pattern cs
+/P1 scn
+8.865012 1.332872 m
+8.623239 1.332872 8.462057 1.655237 8.462057 2.058192 c
+9.509740 9.875521 5.883144 16.322798 0.402955 16.403389 c
+0.161182 16.403389 0.000000 16.725756 0.000000 17.128710 c
+0.080591 17.531666 0.322362 17.773438 0.564135 17.773438 c
+6.608461 17.692846 10.557421 10.681431 9.429147 2.058192 c
+9.348556 1.655237 9.106785 1.332872 8.865012 1.332872 c
+h
+f
+n
+Q
+q
+/E3 gs
+/E4 gs
+0.989862 -0.142034 0.142034 0.989862 216.734497 275.162537 cm
+/Pattern cs
+/P2 scn
+0.402955 1.839108 m
+0.644728 1.839108 0.886505 2.161474 0.967096 2.483839 c
+2.014779 10.301167 7.333783 16.587265 12.894563 16.587265 c
+13.136335 16.587265 13.378113 16.909628 13.458704 17.231991 c
+13.539294 17.634947 13.297522 17.876720 13.055748 17.957312 c
+7.011422 18.037903 1.128274 11.107077 0.000000 2.564428 c
+0.000000 2.161473 0.161182 1.839108 0.402955 1.839108 c
+h
+f
+n
+Q
+q
+/E5 gs
+/E6 gs
+0.989862 -0.142034 0.142034 0.989862 159.739716 68.274742 cm
+/Pattern cs
+/P3 scn
+0.756485 17.840199 m
+0.998258 17.840199 1.159440 17.517815 1.159440 17.114859 c
+0.111757 9.297531 3.738353 2.850261 9.218542 2.769670 c
+9.460315 2.769670 9.621497 2.447310 9.621497 2.044355 c
+9.540906 1.641399 9.299135 1.399612 9.057363 1.399612 c
+3.013036 1.480204 -0.935924 8.491622 0.192350 17.114859 c
+0.272941 17.598406 0.514712 17.920788 0.756485 17.840199 c
+h
+f
+n
+Q
+q
+/E7 gs
+/E8 gs
+0.989862 -0.142034 0.142034 0.989862 222.857971 58.110886 cm
+/Pattern cs
+/P4 scn
+13.071549 17.968750 m
+12.829777 17.968750 12.588006 17.646397 12.507415 17.324032 c
+11.459732 9.506703 6.060132 3.140013 0.579943 3.220604 c
+0.338170 3.220604 0.096399 2.898225 0.015808 2.575861 c
+-0.064783 2.172906 0.176990 1.850546 0.418763 1.850546 c
+6.463089 1.769955 12.346231 8.700793 13.474504 17.324032 c
+13.555096 17.646397 13.393913 17.968750 13.071549 17.968750 c
+h
+f
+n
+Q
+
+endstream
+endobj
+
+78 0 obj
+  1903
+endobj
+
+79 0 obj
+  << /Length 80 0 R
+     /Range [ 0.000000 1.000000 0.000000 1.000000 0.000000 1.000000 ]
+     /Domain [ 0.000000 1.000000 ]
+     /FunctionType 4
+  >>
+stream
+{  0.933333 exch 0.360784 exch 0.243137 exch dup 0.000000 gt { exch pop exch pop exch pop dup 0.000000 sub 0.289593 mul 0.933333 add exch dup 0.000000 sub 1.216290 mul 0.360784 add exch dup 0.000000 sub 0.270287 mul 0.243137 add exch } if dup 0.203125 gt { exch pop exch pop exch pop dup 0.203125 sub -0.142448 mul 0.992157 add exch dup 0.203125 sub 1.139587 mul 0.607843 add exch dup 0.203125 sub -0.081399 mul 0.298039 add exch } if dup 0.395833 gt { exch pop exch pop exch pop dup 0.395833 sub -1.411765 mul 0.964706 add exch dup 0.395833 sub -0.037647 mul 0.827451 add exch dup 0.395833 sub -0.282353 mul 0.282353 add exch } if dup 0.604167 gt { exch pop exch pop exch pop dup 0.604167 sub -2.100310 mul 0.670588 add exch dup 0.604167 sub -1.367183 mul 0.819608 add exch dup 0.604167 sub 2.040868 mul 0.223529 add exch } if dup 0.802083 gt { exch pop exch pop exch pop dup 0.802083 sub 1.129412 mul 0.254902 add exch dup 0.802083 sub -0.733127 mul 0.549020 add exch dup 0.802083 sub 0.336842 mul 0.627451 add exch } if dup 1.000000 gt { exch pop exch pop exch pop 0.478431 exch 0.403922 exch 0.694118 exch } if pop }
+endstream
+endobj
+
+80 0 obj
+  1120
+endobj
+
+81 0 obj
+  << /Type /XObject
+     /Length 82 0 R
+     /Group << /Type /Group
+               /S /Transparency
+            >>
+     /Subtype /Form
+     /Resources << /Pattern << /P1 << /Matrix [ -21.650225 -18.893353 -18.893353 21.650225 94.076950 161.672043 ]
+                                      /Shading << /Coords [ 0.000000 0.000000 1.000000 0.000000 ]
+                                                  /ColorSpace /DeviceRGB
+                                                  /Function 79 0 R
+                                                  /Domain [ 0.000000 1.000000 ]
+                                                  /ShadingType 2
+                                                  /Extend [ true true ]
+                                               >>
+                                      /PatternType 2
+                                      /Type /Pattern
+                                   >> >>
+                   /ExtGState << /E1 << /ca 0.030000 >> >>
+                >>
+     /BBox [ 0.000000 0.000000 375.000000 316.435547 ]
+  >>
+stream
+/DeviceRGB CS
+/DeviceRGB cs
+q
+-0.764082 -0.645120 -0.645120 0.764082 100.723145 153.073151 cm
+1.000000 1.000000 1.000000 scn
+28.282614 25.622143 m
+28.282614 17.908535 21.951334 11.655420 14.141307 11.655420 c
+6.331278 11.655420 0.000000 17.908535 0.000000 25.622143 c
+0.000000 33.335751 6.331278 39.588867 14.141307 39.588867 c
+21.951334 39.588867 28.282614 33.335751 28.282614 25.622143 c
+h
+f
+n
+Q
+q
+/E1 gs
+0.919679 0.392670 -0.392670 0.919679 68.198196 127.896606 cm
+0.000000 0.000000 0.000000 scn
+31.212082 21.224436 m
+14.127748 20.731915 7.666304 32.792122 6.571123 38.883789 c
+0.000000 27.384674 l
+14.373893 9.930662 l
+31.212082 21.224436 l
+h
+f
+n
+Q
+q
+62.583576 154.404877 m
+67.559776 148.511063 76.431396 147.817596 82.398895 152.856003 c
+88.366394 157.894409 89.169998 166.756729 84.193802 172.650543 c
+79.217598 178.544373 70.345978 179.237839 64.378479 174.199432 c
+58.410984 169.161026 57.607376 160.298706 62.583576 154.404877 c
+h
+W*
+n
+q
+-0.764082 -0.645120 -0.645120 0.764082 100.723145 153.073151 cm
+/Pattern cs
+/P1 scn
+27.235109 25.622143 m
+27.235109 18.499285 21.385120 12.702925 14.141307 12.702925 c
+14.141307 10.607916 l
+22.517550 10.607916 29.330116 17.317785 29.330116 25.622143 c
+27.235109 25.622143 l
+h
+14.141307 12.702925 m
+6.897493 12.702925 1.047504 18.499285 1.047504 25.622143 c
+-1.047504 25.622143 l
+-1.047504 17.317785 5.765064 10.607916 14.141307 10.607916 c
+14.141307 12.702925 l
+h
+1.047504 25.622143 m
+1.047504 32.745003 6.897493 38.541363 14.141307 38.541363 c
+14.141307 40.636372 l
+5.765064 40.636372 -1.047504 33.926502 -1.047504 25.622143 c
+1.047504 25.622143 l
+h
+14.141307 38.541363 m
+21.385120 38.541363 27.235109 32.745003 27.235109 25.622143 c
+29.330116 25.622143 l
+29.330116 33.926502 22.517550 40.636372 14.141307 40.636372 c
+14.141307 38.541363 l
+h
+f
+n
+Q
+Q
+q
+0.919679 0.392670 -0.392670 0.919679 83.259262 156.868607 cm
+1.000000 1.000000 1.000000 scn
+1.447392 3.798828 m
+1.838320 2.742363 l
+2.894785 2.351436 l
+1.838320 1.960508 l
+1.447392 0.904043 l
+1.056465 1.960508 l
+0.000000 2.351436 l
+1.056465 2.742363 l
+1.447392 3.798828 l
+h
+f
+n
+Q
+q
+0.919679 0.392670 -0.392670 0.919679 60.792278 161.569504 cm
+1.000000 1.000000 1.000000 scn
+0.482464 1.266602 m
+0.612773 0.914447 l
+0.964928 0.784137 l
+0.612773 0.653828 l
+0.482464 0.301673 l
+0.352155 0.653828 l
+0.000000 0.784137 l
+0.352155 0.914447 l
+0.482464 1.266602 l
+h
+f
+n
+Q
+q
+0.764082 0.645120 -0.645120 0.764082 76.900543 150.318817 cm
+0.207843 0.207843 0.207843 scn
+8.347799 20.545109 m
+8.998321 20.345554 9.363903 19.656431 9.164350 19.005911 c
+8.803000 17.827957 l
+10.766286 17.225700 l
+11.416808 17.026146 11.782390 16.337025 11.582836 15.686502 c
+11.383283 15.035980 10.694160 14.670399 10.043638 14.869952 c
+5.332142 16.315248 l
+5.176538 16.362980 5.050391 16.401621 4.940773 16.433323 c
+4.905553 16.324783 4.866809 16.198669 4.819076 16.043064 c
+4.337311 14.472567 l
+4.289578 14.316962 4.250938 14.190815 4.219236 14.081197 c
+4.327775 14.045977 4.453890 14.007233 4.609494 13.959499 c
+7.750491 12.995970 l
+7.804594 12.979389 l
+7.804609 12.979384 l
+7.804642 12.979374 l
+8.126800 12.880686 8.475148 12.773976 8.757031 12.644258 c
+9.087272 12.492285 9.490773 12.238200 9.747497 11.754277 c
+10.004219 11.270353 9.988334 10.793782 9.928982 10.435129 c
+9.878319 10.128989 9.771335 9.780719 9.672395 9.458634 c
+9.672389 9.458611 l
+9.672383 9.458597 l
+9.655775 9.404508 l
+9.174009 7.834008 l
+9.157431 7.779910 l
+9.157419 7.779876 l
+9.058731 7.457712 8.952019 7.109357 8.822297 6.827469 c
+8.670325 6.497227 8.416241 6.093727 7.932318 5.837003 c
+7.448392 5.580279 6.971822 5.596166 6.613169 5.655518 c
+6.307038 5.706179 5.958780 5.813158 5.636703 5.912097 c
+5.636645 5.912114 l
+5.582547 5.928725 l
+5.189894 6.049175 l
+4.828579 4.871332 l
+4.629026 4.220810 3.939903 3.855228 3.289382 4.054783 c
+2.638860 4.254335 2.273278 4.943459 2.472831 5.593981 c
+2.834146 6.771823 l
+0.871051 7.374021 l
+0.220529 7.573574 -0.145053 8.262697 0.054501 8.913218 c
+0.254055 9.563741 0.943177 9.929323 1.593699 9.729769 c
+4.725924 8.768929 l
+4.728843 8.768058 4.731761 8.767174 4.734677 8.766279 c
+4.737594 8.765385 4.740505 8.764481 4.743410 8.763566 c
+6.305195 8.284473 l
+6.460798 8.236740 6.586946 8.198102 6.696565 8.166400 c
+6.731785 8.274940 6.770529 8.401054 6.818261 8.556657 c
+7.300026 10.127155 l
+7.347759 10.282758 7.386397 10.408907 7.418099 10.518525 c
+7.309560 10.553745 7.183446 10.592488 7.027843 10.640222 c
+3.886846 11.603752 l
+3.832748 11.620331 l
+3.832710 11.620342 l
+3.510547 11.719030 3.162194 11.825743 2.880306 11.955463 c
+2.550065 12.107436 2.146564 12.361521 1.889841 12.845446 c
+1.633118 13.329369 1.649003 13.805939 1.708356 14.164593 c
+1.759020 14.470743 1.866009 14.819027 1.964954 15.141123 c
+1.981562 15.195214 l
+2.463328 16.765713 l
+2.479908 16.819813 l
+2.479909 16.819818 l
+2.578600 17.141991 2.685315 17.490356 2.815040 17.772253 c
+2.967012 18.102493 3.221097 18.505995 3.705020 18.762718 c
+4.188944 19.019442 4.665515 19.003555 5.024168 18.944202 c
+5.330319 18.893539 5.678604 18.786549 6.000698 18.687605 c
+6.054790 18.670996 l
+6.447252 18.550606 l
+6.808601 19.728558 l
+7.008155 20.379080 7.697277 20.744661 8.347799 20.545109 c
+h
+f*
+n
+Q
+
+endstream
+endobj
+
+82 0 obj
+  5142
+endobj
+
+83 0 obj
+  << /Type /XObject
+     /Length 84 0 R
+     /Group << /Type /Group
+               /S /Transparency
+            >>
+     /Subtype /Form
+     /Resources << >>
+     /BBox [ 0.000000 0.000000 375.000000 316.435547 ]
+  >>
+stream
+/DeviceRGB CS
+/DeviceRGB cs
+q
+-0.764082 -0.645120 -0.645120 0.764082 100.723145 153.073151 cm
+1.000000 1.000000 1.000000 scn
+28.282614 25.622143 m
+28.282614 17.908535 21.951334 11.655420 14.141307 11.655420 c
+6.331278 11.655420 0.000000 17.908535 0.000000 25.622143 c
+0.000000 33.335751 6.331278 39.588867 14.141307 39.588867 c
+21.951334 39.588867 28.282614 33.335751 28.282614 25.622143 c
+h
+f
+n
+Q
+
+endstream
+endobj
+
+84 0 obj
+  398
+endobj
+
+85 0 obj
+  << /Type /XObject
+     /Length 86 0 R
+     /Group << /Type /Group
+               /S /Transparency
+            >>
+     /Subtype /Form
+     /Resources << /XObject << /X1 81 0 R >>
+                   /ExtGState << /E1 << /SMask << /Type /Mask
+                                                  /G 83 0 R
+                                                  /S /Alpha
+                                               >>
+                                        /Type /ExtGState
+                                     >> >>
+                >>
+     /BBox [ 0.000000 0.000000 375.000000 316.435547 ]
+  >>
+stream
+/DeviceRGB CS
+/DeviceRGB cs
+q
+/E1 gs
+/X1 Do
+Q
+
+endstream
+endobj
+
+86 0 obj
+  46
+endobj
+
+87 0 obj
+  << /Length 88 0 R
+     /Range [ 0.000000 1.000000 0.000000 1.000000 0.000000 1.000000 ]
+     /Domain [ 0.000000 1.000000 ]
+     /FunctionType 4
+  >>
+stream
+{  0.933333 exch 0.360784 exch 0.243137 exch dup 0.000000 gt { exch pop exch pop exch pop dup 0.000000 sub 0.289593 mul 0.933333 add exch dup 0.000000 sub 1.216290 mul 0.360784 add exch dup 0.000000 sub 0.270287 mul 0.243137 add exch } if dup 0.203125 gt { exch pop exch pop exch pop dup 0.203125 sub -0.142448 mul 0.992157 add exch dup 0.203125 sub 1.139587 mul 0.607843 add exch dup 0.203125 sub -0.081399 mul 0.298039 add exch } if dup 0.395833 gt { exch pop exch pop exch pop dup 0.395833 sub -1.411765 mul 0.964706 add exch dup 0.395833 sub -0.037647 mul 0.827451 add exch dup 0.395833 sub -0.282353 mul 0.282353 add exch } if dup 0.604167 gt { exch pop exch pop exch pop dup 0.604167 sub -2.100310 mul 0.670588 add exch dup 0.604167 sub -1.367183 mul 0.819608 add exch dup 0.604167 sub 2.040868 mul 0.223529 add exch } if dup 0.802083 gt { exch pop exch pop exch pop dup 0.802083 sub 1.129412 mul 0.254902 add exch dup 0.802083 sub -0.733127 mul 0.549020 add exch dup 0.802083 sub 0.336842 mul 0.627451 add exch } if dup 1.000000 gt { exch pop exch pop exch pop 0.478431 exch 0.403922 exch 0.694118 exch } if pop }
+endstream
+endobj
+
+88 0 obj
+  1120
+endobj
+
+89 0 obj
+  << /Type /XObject
+     /Length 90 0 R
+     /Group << /Type /Group
+               /S /Transparency
+            >>
+     /Subtype /Form
+     /Resources << /ExtGState << /E1 << /ca 0.030000 >> >> >>
+     /BBox [ 0.000000 0.000000 375.000000 316.435547 ]
+  >>
+stream
+/DeviceRGB CS
+/DeviceRGB cs
+q
+-1.000000 -0.000000 -0.348081 0.937464 108.883873 247.405579 cm
+1.000000 1.000000 1.000000 scn
+38.982754 16.843006 m
+38.982754 6.211115 30.256166 -2.407738 19.491377 -2.407738 c
+8.726586 -2.407738 0.000000 6.211115 0.000000 16.843006 c
+0.000000 27.474899 8.726586 36.093750 19.491377 36.093750 c
+30.256166 36.093750 38.982754 27.474899 38.982754 16.843006 c
+h
+f
+n
+Q
+q
+/E1 gs
+1.000000 0.000000 -0.000000 1.000000 50.734375 236.811523 cm
+0.000000 0.000000 0.000000 scn
+61.509045 13.642868 m
+27.841280 13.047895 15.107836 27.616776 12.949584 34.975586 c
+0.000000 21.084515 l
+28.326351 -0.000149 l
+61.509045 13.642868 l
+h
+f
+n
+Q
+
+endstream
+endobj
+
+90 0 obj
+  654
+endobj
+
+91 0 obj
+  << /Type /XObject
+     /Length 92 0 R
+     /Group << /Type /Group
+               /S /Transparency
+            >>
+     /Subtype /Form
+     /Resources << >>
+     /BBox [ 0.000000 0.000000 375.000000 316.435547 ]
+  >>
+stream
+/DeviceRGB CS
+/DeviceRGB cs
+q
+-1.000000 -0.000000 -0.348081 0.937464 108.883873 247.405579 cm
+1.000000 1.000000 1.000000 scn
+38.982754 16.843006 m
+38.982754 6.211115 30.256166 -2.407738 19.491377 -2.407738 c
+8.726586 -2.407738 0.000000 6.211115 0.000000 16.843006 c
+0.000000 27.474899 8.726586 36.093750 19.491377 36.093750 c
+30.256166 36.093750 38.982754 27.474899 38.982754 16.843006 c
+h
+f
+n
+Q
+
+endstream
+endobj
+
+92 0 obj
+  396
+endobj
+
+93 0 obj
+  << /Type /XObject
+     /Length 94 0 R
+     /Group << /Type /Group
+               /S /Transparency
+            >>
+     /Subtype /Form
+     /Resources << /Pattern << /P1 << /Matrix [ -39.375744 -0.606111 -14.430837 37.124332 110.751152 244.117859 ]
+                                      /Shading << /Coords [ 0.000000 0.000000 1.000000 0.000000 ]
+                                                  /ColorSpace /DeviceRGB
+                                                  /Function 87 0 R
+                                                  /Domain [ 0.000000 1.000000 ]
+                                                  /ShadingType 2
+                                                  /Extend [ true true ]
+                                               >>
+                                      /PatternType 2
+                                      /Type /Pattern
+                                   >> >>
+                   /XObject << /X1 89 0 R >>
+                   /ExtGState << /E1 << /SMask << /Type /Mask
+                                                  /G 91 0 R
+                                                  /S /Alpha
+                                               >>
+                                        /Type /ExtGState
+                                     >> >>
+                >>
+     /BBox [ 0.000000 0.000000 375.000000 316.435547 ]
+  >>
+stream
+/DeviceRGB CS
+/DeviceRGB cs
+q
+/E1 gs
+/X1 Do
+Q
+q
+64.038383 263.195312 m
+67.739143 253.228271 79.465790 245.148407 90.230583 245.148407 c
+100.995369 245.148407 106.721901 253.228271 103.021133 263.195312 c
+99.320374 273.162323 87.593727 281.242188 76.828934 281.242188 c
+66.064148 281.242188 60.337620 273.162323 64.038383 263.195312 c
+h
+W*
+n
+q
+-1.000000 -0.000000 -0.348081 0.937464 108.883873 247.405579 cm
+/Pattern cs
+/P1 scn
+37.538948 16.843006 m
+37.538948 7.025362 29.475737 -0.963932 19.491377 -0.963932 c
+19.491377 -3.851543 l
+31.036596 -3.851543 40.426559 5.396866 40.426559 16.843006 c
+37.538948 16.843006 l
+h
+19.491377 -0.963932 m
+9.507016 -0.963932 1.443805 7.025362 1.443805 16.843006 c
+-1.443805 16.843006 l
+-1.443805 5.396866 7.946157 -3.851543 19.491377 -3.851543 c
+19.491377 -0.963932 l
+h
+1.443805 16.843006 m
+1.443805 26.660650 9.507016 34.649944 19.491377 34.649944 c
+19.491377 37.537556 l
+7.946157 37.537556 -1.443805 28.289146 -1.443805 16.843006 c
+1.443805 16.843006 l
+h
+19.491377 34.649944 m
+29.475737 34.649944 37.538948 26.660650 37.538948 16.843006 c
+40.426559 16.843006 l
+40.426559 28.289146 31.036596 37.537556 19.491377 37.537556 c
+19.491377 34.649944 l
+h
+f
+n
+Q
+Q
+q
+0.967866 0.251468 -0.693834 0.720134 82.882797 253.140137 cm
+0.207843 0.207843 0.207843 scn
+12.890153 23.327953 m
+13.894639 23.019817 14.459142 21.955727 14.151007 20.951241 c
+13.593040 19.132334 l
+16.624474 18.202414 l
+17.628958 17.894278 18.193462 16.830187 17.885326 15.825701 c
+17.577192 14.821215 16.513102 14.256711 15.508615 14.564847 c
+8.233487 16.796562 l
+7.993215 16.870268 7.798428 16.929932 7.629162 16.978884 c
+7.574778 16.811287 7.514953 16.616549 7.441247 16.376278 c
+6.697341 13.951231 l
+6.623637 13.710961 6.563972 13.516175 6.515020 13.346910 c
+6.682619 13.292527 6.877356 13.232701 7.117627 13.158996 c
+11.967711 11.671186 l
+12.051250 11.645584 l
+12.548724 11.493194 13.086649 11.328411 13.521935 11.128099 c
+14.031868 10.893435 14.654923 10.501098 15.051335 9.753858 c
+15.447748 9.006621 15.423219 8.270738 15.331571 7.716933 c
+15.253339 7.244196 15.088133 6.706398 14.935349 6.209042 c
+14.909706 6.125526 l
+14.165801 3.700480 l
+14.140202 3.616951 l
+13.987811 3.119476 13.823028 2.581549 13.622714 2.146261 c
+13.388050 1.636328 12.995712 1.013273 12.248475 0.616859 c
+11.501237 0.220448 10.765352 0.244978 10.211548 0.336626 c
+9.738822 0.414856 9.201038 0.580057 8.703691 0.732838 c
+8.620141 0.758492 l
+8.013597 0.944555 l
+7.455717 -0.874071 l
+7.147581 -1.878557 6.083491 -2.443062 5.079005 -2.134926 c
+4.074519 -1.826790 3.510015 -0.762701 3.818151 0.241785 c
+4.376032 2.060411 l
+1.345011 2.990206 l
+0.340525 3.298342 -0.223979 4.362431 0.084156 5.366917 c
+0.392292 6.371403 1.456382 6.935905 2.460868 6.627771 c
+7.286451 5.147478 l
+7.294544 5.145111 7.302634 5.142685 7.310720 5.140205 c
+7.318806 5.137726 7.326863 5.135197 7.334891 5.132618 c
+9.735998 4.396055 l
+9.976268 4.322351 10.171057 4.262688 10.340322 4.213737 c
+10.394705 4.381334 10.454530 4.576069 10.528234 4.816338 c
+11.272141 7.241385 l
+11.345845 7.481652 11.405508 7.676442 11.454460 7.845706 c
+11.286861 7.900090 11.092124 7.959916 10.851853 8.033621 c
+6.001769 9.521430 l
+5.918241 9.547029 l
+5.918232 9.547032 l
+5.420758 9.699423 4.882833 9.864204 4.447548 10.064517 c
+3.937615 10.299181 3.314560 10.691519 2.918147 11.438756 c
+2.521735 12.185995 2.546264 12.921878 2.637912 13.475682 c
+2.716143 13.948417 2.881348 14.486211 3.034130 14.983564 c
+3.059776 15.067089 l
+3.803682 17.492134 l
+3.829284 17.575672 l
+3.981675 18.073147 4.146457 18.611071 4.346768 19.046356 c
+4.581432 19.556290 4.973770 20.179344 5.721008 20.575756 c
+6.468247 20.972170 7.204131 20.947639 7.757936 20.855991 c
+8.230671 20.777760 8.768466 20.612555 9.265821 20.459774 c
+9.349344 20.434128 l
+9.955474 20.248192 l
+10.513441 22.067099 l
+10.821577 23.071585 11.885667 23.636089 12.890153 23.327953 c
+h
+f*
+n
+Q
+
+endstream
+endobj
+
+94 0 obj
+  3862
+endobj
+
+95 0 obj
+  << /Type /XObject
+     /Length 96 0 R
+     /Group << /Type /Group
+               /S /Transparency
+            >>
+     /Subtype /Form
+     /Resources << >>
+     /BBox [ 0.000000 0.000000 375.000000 316.435547 ]
+  >>
+stream
+q
+0.989862 -0.142034 0.142034 0.989862 190.842651 58.810471 cm
+0.196078 0.211765 0.219608 scn
+0.536482 1.755672 m
+11.658044 1.675076 l
+11.819226 1.675076 11.819224 1.836254 11.738634 1.997436 c
+11.658043 2.158617 11.416271 2.319795 11.255089 2.319795 c
+0.133527 2.400391 l
+-0.027655 2.400391 -0.027654 2.239213 0.052937 2.078032 c
+0.214119 1.836258 0.375300 1.755672 0.536482 1.755672 c
+h
+f
+n
+Q
+q
+0.989862 -0.142034 0.142034 0.989862 189.215530 60.811611 cm
+0.941667 0.941667 0.941667 scn
+0.015808 0.329042 m
+0.096399 0.248452 0.338175 0.167851 0.660539 0.167851 c
+0.982903 0.167851 1.144085 0.248452 1.063494 0.329042 c
+0.982903 0.409634 0.741127 0.490234 0.418763 0.490234 c
+0.176990 0.490234 -0.064783 0.409634 0.015808 0.329042 c
+h
+f
+n
+Q
+q
+0.989862 -0.142034 0.142034 0.989862 203.627502 58.580173 cm
+0.941667 0.941667 0.941667 scn
+0.020537 0.330019 m
+0.101128 0.249428 0.342898 0.168852 0.665262 0.168852 c
+0.987626 0.168852 1.148808 0.249428 1.068217 0.330019 c
+0.987626 0.410610 0.745856 0.491211 0.423492 0.491211 c
+0.101128 0.491211 -0.060054 0.410610 0.020537 0.330019 c
+h
+f
+n
+Q
+q
+0.989862 -0.142034 0.142034 0.989862 184.902084 61.395943 cm
+0.196078 0.211765 0.219608 scn
+0.015441 0.363222 m
+0.096033 0.282631 0.418397 0.202030 0.821352 0.202030 c
+1.224307 0.202030 1.385486 0.282631 1.385486 0.363222 c
+1.304895 0.443813 0.982531 0.524414 0.579576 0.524414 c
+0.176621 0.524414 -0.065150 0.443813 0.015441 0.363222 c
+h
+f
+n
+Q
+q
+0.989862 -0.142034 0.142034 0.989862 182.521225 61.818794 cm
+0.196078 0.211765 0.219608 scn
+0.015441 0.363247 m
+0.096033 0.282656 0.418397 0.202055 0.821352 0.202055 c
+1.224307 0.202055 1.385486 0.282656 1.385486 0.363247 c
+1.304895 0.443838 0.982531 0.524414 0.579576 0.524414 c
+0.176621 0.524414 -0.065150 0.443838 0.015441 0.363247 c
+h
+f
+n
+Q
+q
+0.989862 -0.142034 0.142034 0.989862 180.126694 62.162544 cm
+0.196078 0.211765 0.219608 scn
+0.015441 0.363247 m
+0.096033 0.282656 0.418397 0.202055 0.821352 0.202055 c
+1.224307 0.202055 1.385486 0.282656 1.385486 0.363247 c
+1.304895 0.443838 0.982531 0.524414 0.579576 0.524414 c
+0.176621 0.524414 -0.065150 0.443838 0.015441 0.363247 c
+h
+f
+n
+Q
+q
+0.989862 -0.142034 0.142034 0.989862 211.991928 57.264107 cm
+0.196078 0.211765 0.219608 scn
+0.015441 0.363247 m
+0.096033 0.282656 0.418397 0.202055 0.821352 0.202055 c
+1.224307 0.202055 1.385486 0.282656 1.385486 0.363247 c
+1.304895 0.443838 0.982531 0.524414 0.579576 0.524414 c
+0.176621 0.524414 -0.065150 0.443838 0.015441 0.363247 c
+h
+f
+n
+Q
+q
+0.989862 -0.142034 0.142034 0.989862 209.597397 57.607857 cm
+0.196078 0.211765 0.219608 scn
+0.015441 0.363247 m
+0.096033 0.282656 0.418397 0.202055 0.821352 0.202055 c
+1.224307 0.202055 1.385486 0.282656 1.385486 0.363247 c
+1.304895 0.443838 0.982531 0.524414 0.579576 0.524414 c
+0.176621 0.524414 -0.065150 0.443838 0.015441 0.363247 c
+h
+f
+n
+Q
+q
+0.989862 -0.142034 0.142034 0.989862 207.216537 58.030708 cm
+0.196078 0.211765 0.219608 scn
+0.015441 0.363222 m
+0.096033 0.282631 0.418397 0.202055 0.821352 0.202055 c
+1.224307 0.202055 1.385486 0.282631 1.385486 0.363222 c
+1.304895 0.443813 0.982531 0.524414 0.579576 0.524414 c
+0.176621 0.524414 -0.065150 0.443813 0.015441 0.363222 c
+h
+f
+n
+Q
+q
+0.989862 -0.142034 0.142034 0.989862 216.757889 56.450466 cm
+0.196078 0.211765 0.219608 scn
+0.015441 0.411706 m
+0.096033 0.331115 0.418397 0.250514 0.821352 0.250514 c
+1.224307 0.250514 1.385486 0.331115 1.385486 0.411706 c
+1.304895 0.492297 0.982531 0.572873 0.579576 0.572873 c
+0.176621 0.653464 -0.065150 0.572888 0.015441 0.411706 c
+h
+f
+n
+Q
+q
+0.989862 -0.142034 0.142034 0.989862 214.384506 56.921333 cm
+0.196078 0.211765 0.219608 scn
+0.015441 0.363247 m
+0.096033 0.282656 0.418397 0.202055 0.821352 0.202055 c
+1.224307 0.202055 1.385486 0.282656 1.385486 0.363247 c
+1.304895 0.443838 0.982531 0.524414 0.579576 0.524414 c
+0.176621 0.524414 -0.065150 0.443838 0.015441 0.363247 c
+h
+f
+n
+Q
+
+endstream
+endobj
+
+96 0 obj
+  3865
+endobj
+
+97 0 obj
+  << /Length 98 0 R
+     /Range [ 0.000000 1.000000 0.000000 1.000000 0.000000 1.000000 ]
+     /Domain [ 0.000000 1.000000 ]
+     /FunctionType 4
+  >>
+stream
+{  0.000000 exch 0.000000 exch 0.000000 exch dup 0.000000 gt { exch pop exch pop exch pop dup 0.000000 sub 0.237500 mul 0.000000 add exch dup 0.000000 sub 0.237500 mul 0.000000 add exch dup 0.000000 sub 0.237500 mul 0.000000 add exch } if dup 1.000000 gt { exch pop exch pop exch pop 0.237500 exch 0.237500 exch 0.237500 exch } if pop }
+endstream
+endobj
+
+98 0 obj
+  336
+endobj
+
+99 0 obj
+  << /Length 100 0 R
+     /Range [ 0.000000 1.000000 0.000000 1.000000 0.000000 1.000000 ]
+     /Domain [ 0.000000 1.000000 ]
+     /FunctionType 4
+  >>
+stream
+{  0.572549 exch 0.996078 exch 0.615686 exch dup 0.000000 gt { exch pop exch pop exch pop dup 0.000000 sub -0.572549 mul 0.572549 add exch dup 0.000000 sub -0.207843 mul 0.996078 add exch dup 0.000000 sub 0.384314 mul 0.615686 add exch } if dup 1.000000 gt { exch pop exch pop exch pop 0.000000 exch 0.788235 exch 1.000000 exch } if pop }
+endstream
+endobj
+
+100 0 obj
+  338
+endobj
+
+101 0 obj
+  << /Type /XObject
+     /Length 102 0 R
+     /Group << /Type /Group
+               /S /Transparency
+            >>
+     /Subtype /Form
+     /Resources << /ExtGState << /E6 << /ca 0.100000 >>
+                                 /E4 << /ca 0.100000 >>
+                                 /E2 << /ca 0.200000 >>
+                                 /E5 << /ca 0.100000 >>
+                                 /E3 << /ca 0.400000 >>
+                                 /E1 << /ca 0.200000 >>
+                              >>
+                   /Pattern << /P2 << /Matrix [ -156.293228 146.298569 -146.298569 -156.293228 359.060303 257.684814 ]
+                                      /Shading << /Coords [ 0.000000 0.000000 1.000000 0.000000 ]
+                                                  /ColorSpace /DeviceRGB
+                                                  /Function 97 0 R
+                                                  /Domain [ 0.000000 1.000000 ]
+                                                  /ShadingType 2
+                                                  /Extend [ true true ]
+                                               >>
+                                      /PatternType 2
+                                      /Type /Pattern
+                                   >>
+                               /P1 << /Matrix [ -164.576965 -104.928726 104.928726 -164.576965 155.227524 296.305481 ]
+                                      /Shading << /Coords [ 0.000000 0.000000 1.000000 0.000000 ]
+                                                  /ColorSpace /DeviceRGB
+                                                  /Function 99 0 R
+                                                  /Domain [ 0.000000 1.000000 ]
+                                                  /ShadingType 2
+                                                  /Extend [ true true ]
+                                               >>
+                                      /PatternType 2
+                                      /Type /Pattern
+                                   >>
+                            >>
+                >>
+     /BBox [ 0.000000 0.000000 375.000000 316.435547 ]
+  >>
+stream
+/DeviceRGB CS
+/DeviceRGB cs
+q
+-0.963734 -0.266865 0.266865 -0.963734 157.780655 299.741699 cm
+/Pattern cs
+/P1 scn
+0.000000 200.554535 m
+0.000000 203.418518 2.321716 205.740234 5.185699 205.740234 c
+106.145874 205.740234 l
+109.009857 205.740234 111.331573 203.418518 111.331573 200.554535 c
+111.331573 28.272629 l
+111.331573 25.408646 109.009857 23.086929 106.145874 23.086929 c
+5.185700 23.086929 l
+2.321718 23.086929 0.000000 25.408646 0.000000 28.272629 c
+0.000000 200.554535 l
+h
+f
+n
+Q
+q
+-0.963734 -0.266865 0.266865 -0.963734 157.780655 299.741699 cm
+/Pattern cs
+/P2 scn
+0.000000 200.554535 m
+0.000000 203.418518 2.321716 205.740234 5.185699 205.740234 c
+106.145874 205.740234 l
+109.009857 205.740234 111.331573 203.418518 111.331573 200.554535 c
+111.331573 28.272629 l
+111.331573 25.408646 109.009857 23.086929 106.145874 23.086929 c
+5.185700 23.086929 l
+2.321718 23.086929 0.000000 25.408646 0.000000 28.272629 c
+0.000000 200.554535 l
+h
+f
+n
+Q
+q
+/E1 gs
+-0.994010 -0.109288 -0.109288 0.994010 236.810547 35.898712 cm
+1.000000 1.000000 1.000000 scn
+178.410370 21.508713 m
+66.188881 57.110840 13.165142 165.259338 2.042867 213.293945 c
+0.000000 18.329956 l
+178.410370 21.508713 l
+h
+f
+n
+Q
+q
+/E2 gs
+-0.963734 -0.266865 0.266865 -0.963734 199.529449 125.075096 cm
+1.000000 1.000000 1.000000 scn
+0.000000 13.041100 m
+0.000000 15.923290 2.336477 18.259766 5.218668 18.259766 c
+25.513470 18.259766 l
+28.395660 18.259766 30.732143 15.923290 30.732143 13.041100 c
+30.732143 13.041100 l
+30.732143 10.158909 28.395666 7.822433 25.513475 7.822433 c
+5.218673 7.822433 l
+2.336482 7.822433 0.000000 10.158909 0.000000 13.041100 c
+0.000000 13.041100 l
+h
+f
+n
+Q
+q
+/E3 gs
+-0.963734 -0.266865 0.266865 -0.963734 146.545197 254.081436 cm
+1.000000 1.000000 1.000000 scn
+0.000000 19.992706 m
+0.000000 22.701529 2.195933 24.897461 4.904754 24.897461 c
+15.327355 24.897461 l
+18.036177 24.897461 20.232109 22.701529 20.232109 19.992706 c
+20.232109 9.570096 l
+20.232109 6.861275 18.036177 4.665342 15.327355 4.665342 c
+4.904753 4.665342 l
+2.195932 4.665342 0.000000 6.861275 0.000000 9.570096 c
+0.000000 19.992706 l
+h
+f
+n
+Q
+q
+0.707107 0.707107 -0.707107 0.707107 163.567368 210.834976 cm
+1.000000 1.000000 1.000000 scn
+0.000000 6.978516 m
+1.610696 5.840581 l
+2.124037 5.477913 2.810158 5.477914 3.323499 5.840582 c
+4.934194 6.978516 l
+3.806947 5.359480 l
+3.452079 4.849791 3.452078 4.173047 3.806947 3.663357 c
+4.934194 2.044322 l
+3.323498 3.182253 l
+2.810158 3.544920 2.124037 3.544920 1.610697 3.182253 c
+0.000000 2.044322 l
+1.137934 3.655018 l
+1.500602 4.168359 1.500602 4.854479 1.137933 5.367821 c
+0.000000 6.978516 l
+h
+f
+n
+Q
+q
+0.707107 0.707107 -0.707107 0.707107 157.246796 249.656525 cm
+1.000000 1.000000 1.000000 scn
+0.000000 3.671875 m
+0.441525 3.359944 l
+0.954866 2.997276 1.640987 2.997276 2.154328 3.359944 c
+2.595852 3.671875 l
+2.282635 3.222010 l
+1.927767 2.712321 1.927767 2.035577 2.282635 1.525888 c
+2.595852 1.076023 l
+2.154327 1.387954 l
+1.640986 1.750621 0.954866 1.750621 0.441525 1.387954 c
+0.000000 1.076023 l
+0.311931 1.517548 l
+0.674599 2.030889 0.674599 2.717010 0.311931 3.230351 c
+0.000000 3.671875 l
+h
+f
+n
+Q
+q
+0.707107 0.707107 -0.707107 0.707107 169.999252 156.655045 cm
+1.000000 1.000000 1.000000 scn
+0.000000 4.923828 m
+0.884311 4.299075 l
+1.397652 3.936407 2.083773 3.936407 2.597114 4.299075 c
+3.481425 4.923828 l
+2.859920 4.031176 l
+2.505051 3.521487 2.505052 2.844743 2.859921 2.335054 c
+3.481425 1.442403 l
+2.597113 2.067155 l
+2.083773 2.429822 1.397653 2.429823 0.884312 2.067156 c
+0.000000 1.442403 l
+0.624753 2.326714 l
+0.987421 2.840055 0.987421 3.526176 0.624753 4.039517 c
+0.000000 4.923828 l
+h
+f
+n
+Q
+q
+/E4 gs
+0.930377 -0.366604 0.366604 0.930377 47.023590 235.327484 cm
+0.000000 0.000000 0.000000 scn
+45.218624 33.735992 m
+45.218624 22.726788 35.096088 13.802063 22.609312 13.802063 c
+10.122534 13.802063 0.000000 22.726788 0.000000 33.735992 c
+0.000000 44.745197 10.122534 53.669922 22.609312 53.669922 c
+35.096088 53.669922 45.218624 44.745197 45.218624 33.735992 c
+h
+f
+n
+Q
+q
+/E5 gs
+-0.573003 -0.819553 0.819553 -0.573003 90.092590 141.582016 cm
+0.000000 0.000000 0.000000 scn
+41.346729 36.521664 m
+41.346729 26.549355 32.090950 18.465202 20.673365 18.465202 c
+9.255780 18.465202 0.000000 26.549355 0.000000 36.521664 c
+0.000000 46.493973 9.255780 54.578125 20.673365 54.578125 c
+32.090950 54.578125 41.346729 46.493973 41.346729 36.521664 c
+h
+f
+n
+Q
+q
+/E6 gs
+0.930377 -0.366604 0.366604 0.930377 57.706505 147.163513 cm
+0.000000 0.000000 0.000000 scn
+25.058027 20.875198 m
+25.058027 13.375238 19.448597 7.295321 12.529014 7.295321 c
+5.609430 7.295321 0.000000 13.375238 0.000000 20.875198 c
+0.000000 28.375160 5.609430 34.455078 12.529014 34.455078 c
+19.448597 34.455078 25.058027 28.375160 25.058027 20.875198 c
+h
+f
+n
+Q
+
+endstream
+endobj
+
+102 0 obj
+  4743
+endobj
+
+103 0 obj
+  << /Type /XObject
+     /Length 104 0 R
+     /Group << /Type /Group
+               /S /Transparency
+            >>
+     /Subtype /Form
+     /Resources << >>
+     /BBox [ 0.000000 0.000000 375.000000 316.435547 ]
+  >>
+stream
+/DeviceRGB CS
+/DeviceRGB cs
+q
+-1.000000 -0.000000 0.221378 0.975188 120.537704 88.488396 cm
+0.705882 0.592157 0.290196 scn
+41.318352 19.391773 m
+41.318352 8.122887 32.068924 -1.012352 20.659176 -1.012352 c
+9.249428 -1.012352 0.000000 8.122887 0.000000 19.391773 c
+0.000000 30.660660 9.249428 39.795898 20.659176 39.795898 c
+32.068924 39.795898 41.318352 30.660660 41.318352 19.391773 c
+h
+f
+n
+Q
+
+endstream
+endobj
+
+104 0 obj
+  394
+endobj
+
+105 0 obj
+  << /Length 106 0 R
+     /Range [ 0.000000 1.000000 ]
+     /Domain [ 0.000000 1.000000 ]
+     /FunctionType 4
+  >>
+stream
+{  1.000000 exch dup 0.387700 gt { exch pop dup 0.387700 sub -1.633186 mul 1.000000 add exch } if dup 1.000000 gt { exch pop 0.000000 exch } if pop }
+endstream
+endobj
+
+106 0 obj
+  149
+endobj
+
+107 0 obj
+  << /BBox [ 0.000000 0.000000 375.000000 316.435547 ]
+     /Resources << /Pattern << /P1 << /Matrix [ -0.210300 -1.465617 1.465617 -0.210300 265.235565 282.044281 ]
+                                      /Shading << /Coords [ 0.000000 0.000000 1.000000 0.000000 ]
+                                                  /ColorSpace /DeviceGray
+                                                  /Function 105 0 R
+                                                  /Domain [ 0.000000 1.000000 ]
+                                                  /ShadingType 2
+                                                  /Extend [ true true ]
+                                               >>
+                                      /PatternType 2
+                                      /Type /Pattern
+                                   >> >> >>
+     /Subtype /Form
+     /Length 108 0 R
+     /Group << /Type /Group
+               /S /Transparency
+               /CS /DeviceGray
+            >>
+     /Type /XObject
+  >>
+stream
+/DeviceGray CS
+/DeviceGray cs
+0.989862 -0.142034 0.142034 0.989862 266.508331 280.491577 cm
+0.241775 0.051094 m
+0.080596 0.051094 l
+0.000005 0.051094 0.000000 0.131688 0.000000 0.212279 c
+0.000000 0.454049 l
+0.000000 0.534640 0.080601 0.615234 0.161192 0.615234 c
+0.322371 0.615234 l
+0.402962 0.615234 0.402955 0.534640 0.402955 0.454049 c
+0.402955 0.212279 l
+0.322364 0.051097 0.241775 0.051094 0.241775 0.051094 c
+h
+/Pattern cs
+/P1 scn
+f
+n
+
+endstream
+endobj
+
+108 0 obj
+  442
+endobj
+
+109 0 obj
+  << /Type /XObject
+     /Length 110 0 R
+     /Group << /Type /Group
+               /S /Transparency
+            >>
+     /Subtype /Form
+     /Resources << >>
+     /BBox [ 0.000000 0.000000 375.000000 316.435547 ]
+  >>
+stream
+/DeviceRGB CS
+/DeviceRGB cs
+q
+0.764082 0.645120 -0.645120 0.764082 201.957397 193.903748 cm
+0.000000 0.000000 0.000000 scn
+0.000000 66.666992 m
+47.308422 66.666992 l
+47.308422 19.358570 l
+0.000000 19.358570 l
+0.000000 66.666992 l
+h
+f
+n
+Q
+
+endstream
+endobj
+
+110 0 obj
+  238
+endobj
+
+111 0 obj
+  << /Length 112 0 R
+     /Range [ 0.000000 1.000000 ]
+     /Domain [ 0.000000 1.000000 ]
+     /FunctionType 4
+  >>
+stream
+{  0.000000 exch dup 0.000000 gt { exch pop dup 0.000000 sub 1.000000 mul 0.000000 add exch } if dup 1.000000 gt { exch pop 1.000000 exch } if pop }
+endstream
+endobj
+
+112 0 obj
+  148
+endobj
+
+113 0 obj
+  << /BBox [ 0.000000 0.000000 375.000000 316.435547 ]
+     /Resources << /Pattern << /P1 << /Matrix [ 1.515806 -0.503999 0.503999 1.515806 265.839752 279.658997 ]
+                                      /Shading << /Coords [ 0.000000 0.000000 1.000000 0.000000 ]
+                                                  /ColorSpace /DeviceGray
+                                                  /Function 111 0 R
+                                                  /Domain [ 0.000000 1.000000 ]
+                                                  /ShadingType 2
+                                                  /Extend [ true true ]
+                                               >>
+                                      /PatternType 2
+                                      /Type /Pattern
+                                   >> >> >>
+     /Subtype /Form
+     /Length 114 0 R
+     /Group << /Type /Group
+               /S /Transparency
+               /CS /DeviceGray
+            >>
+     /Type /XObject
+  >>
+stream
+/DeviceGray CS
+/DeviceGray cs
+0.989862 -0.142034 0.142034 0.989862 265.760559 278.779236 cm
+1.627092 1.368795 m
+1.546501 0.724067 1.143549 0.240520 0.660002 0.240520 c
+0.176456 0.240520 -0.065319 0.724067 0.015272 1.368795 c
+0.095863 2.013523 0.498815 2.497070 0.982362 2.497070 c
+1.465908 2.497070 1.788274 2.013523 1.627092 1.368795 c
+h
+/Pattern cs
+/P1 scn
+f
+n
+
+endstream
+endobj
+
+114 0 obj
+  363
+endobj
+
+115 0 obj
+  << /Type /XObject
+     /Length 116 0 R
+     /Group << /Type /Group
+               /S /Transparency
+            >>
+     /Subtype /Form
+     /Resources << >>
+     /BBox [ 0.000000 0.000000 375.000000 316.435547 ]
+  >>
+stream
+/DeviceRGB CS
+/DeviceRGB cs
+q
+1.000000 0.000000 -0.348081 0.937464 69.990135 247.175980 cm
+0.000000 0.000000 0.000000 scn
+0.000000 36.544922 m
+38.982754 36.544922 l
+38.982754 -2.437832 l
+0.000000 -2.437832 l
+0.000000 36.544922 l
+h
+f
+n
+Q
+
+endstream
+endobj
+
+116 0 obj
+  237
+endobj
+
+117 0 obj
+  << /Type /XObject
+     /Length 118 0 R
+     /Group << /Type /Group
+               /S /Transparency
+            >>
+     /Subtype /Form
+     /Resources << >>
+     /BBox [ 0.000000 0.000000 375.000000 316.435547 ]
+  >>
+stream
+/DeviceRGB CS
+/DeviceRGB cs
+q
+-0.963734 -0.266865 0.266865 -0.963734 157.780655 299.741699 cm
+0.000000 0.000000 0.000000 scn
+0.000000 200.554535 m
+0.000000 203.418518 2.321716 205.740234 5.185699 205.740234 c
+106.145874 205.740234 l
+109.009857 205.740234 111.331573 203.418518 111.331573 200.554535 c
+111.331573 28.272629 l
+111.331573 25.408646 109.009857 23.086929 106.145874 23.086929 c
+5.185700 23.086929 l
+2.321718 23.086929 0.000000 25.408646 0.000000 28.272629 c
+0.000000 200.554535 l
+h
+f
+n
+Q
+
+endstream
+endobj
+
+118 0 obj
+  499
+endobj
+
+119 0 obj
+  << /Type /XObject
+     /Length 120 0 R
+     /Group << /Type /Group
+               /S /Transparency
+            >>
+     /Subtype /Form
+     /Resources << >>
+     /BBox [ 0.000000 0.000000 375.000000 316.435547 ]
+  >>
+stream
+/DeviceRGB CS
+/DeviceRGB cs
+q
+1.000000 0.000000 0.221378 0.975188 77.226494 90.142334 cm
+0.000000 0.000000 0.000000 scn
+0.000000 40.292969 m
+41.318352 40.292969 l
+41.318352 -1.025383 l
+0.000000 -1.025383 l
+0.000000 40.292969 l
+h
+f
+n
+Q
+
+endstream
+endobj
+
+120 0 obj
+  235
+endobj
+
+121 0 obj
+  << /Type /XObject
+     /Length 122 0 R
+     /Group << /Type /Group
+               /S /Transparency
+            >>
+     /Subtype /Form
+     /Resources << >>
+     /BBox [ 0.000000 0.000000 375.000000 316.435547 ]
+  >>
+stream
+/DeviceRGB CS
+/DeviceRGB cs
+q
+0.986001 -0.166738 0.269563 0.962983 187.008163 147.885986 cm
+0.000000 0.000000 0.000000 scn
+0.000000 107.213303 m
+0.000000 110.437256 2.613529 113.050781 5.837480 113.050781 c
+143.991196 113.050781 l
+147.215149 113.050781 149.828674 110.437256 149.828674 107.213303 c
+149.828674 27.434410 l
+149.828674 24.210457 147.215149 21.596931 143.991196 21.596931 c
+5.837483 21.596931 l
+2.613532 21.596931 0.000000 24.210457 0.000000 27.434410 c
+0.000000 107.213303 l
+h
+f
+n
+Q
+
+endstream
+endobj
+
+122 0 obj
+  497
+endobj
+
+123 0 obj
+  << /Type /XObject
+     /Length 124 0 R
+     /Group << /Type /Group
+               /S /Transparency
+            >>
+     /Subtype /Form
+     /Resources << >>
+     /BBox [ 0.000000 0.000000 375.000000 316.435547 ]
+  >>
+stream
+/DeviceRGB CS
+/DeviceRGB cs
+q
+0.764082 0.645120 -0.645120 0.764082 79.188736 134.735886 cm
+0.000000 0.000000 0.000000 scn
+0.000000 39.856445 m
+28.282614 39.856445 l
+28.282614 11.573832 l
+0.000000 11.573832 l
+0.000000 39.856445 l
+h
+f
+n
+Q
+
+endstream
+endobj
+
+124 0 obj
+  237
+endobj
+
+125 0 obj
+  << /Pattern << /P3 << /Matrix [ 4.968408 -5.131265 5.131265 4.968408 35.380455 224.457367 ]
+                        /Shading << /Coords [ 0.000000 0.000000 1.000000 0.000000 ]
+                                    /ColorSpace /DeviceRGB
+                                    /Function 19 0 R
+                                    /Domain [ 0.000000 1.000000 ]
+                                    /ShadingType 2
+                                    /Extend [ true true ]
+                                 >>
+                        /PatternType 2
+                        /Type /Pattern
+                     >>
+                 /P15 << /Matrix [ -41.704689 -0.640486 -15.282610 39.319603 111.054092 240.414764 ]
+                         /Shading << /Coords [ 0.000000 0.000000 1.000000 0.000000 ]
+                                     /ColorSpace /DeviceRGB
+                                     /Function 1 0 R
+                                     /Domain [ 0.000000 1.000000 ]
+                                     /ShadingType 2
+                                     /Extend [ true true ]
+                                  >>
+                         /PatternType 2
+                         /Type /Pattern
+                      >>
+                 /P6 << /Matrix [ -79.502480 -274.035248 274.035248 -79.502480 -66.918060 403.579620 ]
+                        /Shading << /Coords [ 0.000000 0.000000 1.000000 0.000000 ]
+                                    /ColorSpace /DeviceRGB
+                                    /Function 23 0 R
+                                    /Domain [ 0.000000 1.000000 ]
+                                    /ShadingType 2
+                                    /Extend [ true true ]
+                                 >>
+                        /PatternType 2
+                        /Type /Pattern
+                     >>
+                 /P7 << /Matrix [ -10.955837 1.572042 -1.572042 -10.955837 306.267365 270.062286 ]
+                        /Shading << /Coords [ 0.000000 0.000000 1.000000 0.000000 ]
+                                    /ColorSpace /DeviceRGB
+                                    /Function 21 0 R
+                                    /Domain [ 0.000000 1.000000 ]
+                                    /ShadingType 2
+                                    /Extend [ true true ]
+                                 >>
+                        /PatternType 2
+                        /Type /Pattern
+                     >>
+                 /P13 << /Matrix [ 1.515806 -0.503999 0.503999 1.515806 265.839752 279.658997 ]
+                         /Shading << /Coords [ 0.000000 0.000000 1.000000 0.000000 ]
+                                     /ColorSpace /DeviceRGB
+                                     /Function 3 0 R
+                                     /Domain [ 0.000000 1.000000 ]
+                                     /ShadingType 2
+                                     /Extend [ true true ]
+                                  >>
+                         /PatternType 2
+                         /Type /Pattern
+                      >>
+                 /P12 << /Matrix [ 1.932595 -0.642579 0.642579 1.932595 265.582031 279.582062 ]
+                         /Shading << /Coords [ 0.000000 0.000000 1.000000 0.000000 ]
+                                     /ColorSpace /DeviceRGB
+                                     /Function 5 0 R
+                                     /Domain [ 0.000000 1.000000 ]
+                                     /ShadingType 2
+                                     /Extend [ true true ]
+                                  >>
+                         /PatternType 2
+                         /Type /Pattern
+                      >>
+                 /P9 << /Matrix [ -8.942346 1.283128 -1.283128 -8.942346 181.693283 72.977501 ]
+                        /Shading << /Coords [ 0.000000 0.000000 1.000000 0.000000 ]
+                                    /ColorSpace /DeviceRGB
+                                    /Function 9 0 R
+                                    /Domain [ 0.000000 1.000000 ]
+                                    /ShadingType 2
+                                    /Extend [ true true ]
+                                 >>
+                        /PatternType 2
+                        /Type /Pattern
+                     >>
+                 /P1 << /Matrix [ 36.127010 31.915318 -31.915318 36.127010 35.815708 95.484314 ]
+                        /Shading << /Coords [ 0.000000 0.000000 1.000000 0.000000 ]
+                                    /ColorSpace /DeviceRGB
+                                    /Function 7 0 R
+                                    /Domain [ 0.000000 1.000000 ]
+                                    /ShadingType 2
+                                    /Extend [ true true ]
+                                 >>
+                        /PatternType 2
+                        /Type /Pattern
+                     >>
+                 /P8 << /Matrix [ -10.995565 1.577742 -1.577742 -10.995565 255.362900 91.451622 ]
+                        /Shading << /Coords [ 0.000000 0.000000 1.000000 0.000000 ]
+                                    /ColorSpace /DeviceRGB
+                                    /Function 11 0 R
+                                    /Domain [ 0.000000 1.000000 ]
+                                    /ShadingType 2
+                                    /Extend [ true true ]
+                                 >>
+                        /PatternType 2
+                        /Type /Pattern
+                     >>
+                 /P11 << /Matrix [ -32.119610 -223.847290 223.847290 -32.119610 -30.153931 326.774872 ]
+                         /Shading << /Coords [ 0.000000 0.000000 1.000000 0.000000 ]
+                                     /ColorSpace /DeviceRGB
+                                     /Function 13 0 R
+                                     /Domain [ 0.000000 1.000000 ]
+                                     /ShadingType 2
+                                     /Extend [ true true ]
+                                  >>
+                         /PatternType 2
+                         /Type /Pattern
+                      >>
+                 /P14 << /Matrix [ -0.210300 -1.465617 1.465617 -0.210300 265.235565 282.044281 ]
+                         /Shading << /Coords [ 0.000000 0.000000 1.000000 0.000000 ]
+                                     /ColorSpace /DeviceRGB
+                                     /Function 15 0 R
+                                     /Domain [ 0.000000 1.000000 ]
+                                     /ShadingType 2
+                                     /Extend [ true true ]
+                                  >>
+                         /PatternType 2
+                         /Type /Pattern
+                      >>
+                 /P4 << /Matrix [ 8.143408 8.410336 8.410336 -8.143408 286.527161 99.734230 ]
+                        /Shading << /Coords [ 0.000000 0.000000 1.000000 0.000000 ]
+                                    /ColorSpace /DeviceRGB
+                                    /Function 17 0 R
+                                    /Domain [ 0.000000 1.000000 ]
+                                    /ShadingType 2
+                                    /Extend [ true true ]
+                                 >>
+                        /PatternType 2
+                        /Type /Pattern
+                     >>
+                 /P10 << /Matrix [ -13.362978 -44.502739 44.502739 -13.362978 242.723816 244.546570 ]
+                         /Shading << /Coords [ 0.000000 0.000000 1.000000 0.000000 ]
+                                     /ColorSpace /DeviceRGB
+                                     /Function 25 0 R
+                                     /Domain [ 0.000000 1.000000 ]
+                                     /ShadingType 2
+                                     /Extend [ true true ]
+                                  >>
+                         /PatternType 2
+                         /Type /Pattern
+                      >>
+                 /P5 << /Matrix [ 3.084839 3.185956 3.185956 -3.084839 332.386322 258.057495 ]
+                        /Shading << /Coords [ 0.000000 0.000000 1.000000 0.000000 ]
+                                    /ColorSpace /DeviceRGB
+                                    /Function 27 0 R
+                                    /Domain [ 0.000000 1.000000 ]
+                                    /ShadingType 2
+                                    /Extend [ true true ]
+                                 >>
+                        /PatternType 2
+                        /Type /Pattern
+                     >>
+                 /P2 << /Matrix [ 2.111435 -2.415568 2.415568 2.111435 35.578571 163.077042 ]
+                        /Shading << /Coords [ 0.000000 0.000000 1.000000 0.000000 ]
+                                    /ColorSpace /DeviceRGB
+                                    /Function 29 0 R
+                                    /Domain [ 0.000000 1.000000 ]
+                                    /ShadingType 2
+                                    /Extend [ true true ]
+                                 >>
+                        /PatternType 2
+                        /Type /Pattern
+                     >>
+              >>
+     /XObject << /X9 35 0 R
+                 /X4 77 0 R
+                 /X8 43 0 R
+                 /X7 47 0 R
+                 /X5 51 0 R
+                 /X2 85 0 R
+                 /X6 93 0 R
+                 /X3 95 0 R
+                 /X1 101 0 R
+              >>
+     /ExtGState << /E20 << /SMask << /Type /Mask
+                                     /G 103 0 R
+                                     /S /Alpha
+                                  >>
+                           /Type /ExtGState
+                        >>
+                   /E17 << /ca 0.100000 >>
+                   /E15 << /ca 0.100000 >>
+                   /E14 << /SMask << /Type /Mask
+                                     /G 107 0 R
+                                     /S /Luminosity
+                                  >>
+                           /Type /ExtGState
+                        >>
+                   /E22 << /SMask << /Type /Mask
+                                     /G 109 0 R
+                                     /S /Alpha
+                                  >>
+                           /Type /ExtGState
+                        >>
+                   /E12 << /SMask << /Type /Mask
+                                     /G 113 0 R
+                                     /S /Luminosity
+                                  >>
+                           /Type /ExtGState
+                        >>
+                   /E19 << /SMask << /Type /Mask
+                                     /G 115 0 R
+                                     /S /Alpha
+                                  >>
+                           /Type /ExtGState
+                        >>
+                   /E7 << /ca 0.320000 >>
+                   /E11 << /ca 0.030000 >>
+                   /E1 << /SMask << /Type /Mask
+                                    /G 117 0 R
+                                    /S /Alpha
+                                 >>
+                          /Type /ExtGState
+                       >>
+                   /E18 << /ca 0.350000 >>
+                   /E8 << /ca 0.650000 >>
+                   /E21 << /SMask << /Type /Mask
+                                     /G 119 0 R
+                                     /S /Alpha
+                                  >>
+                           /Type /ExtGState
+                        >>
+                   /E13 << /ca 0.480000 >>
+                   /E6 << /ca 0.570000 >>
+                   /E16 << /SMask << /Type /Mask
+                                     /G 121 0 R
+                                     /S /Alpha
+                                  >>
+                           /Type /ExtGState
+                        >>
+                   /E2 << /SMask << /Type /Mask
+                                    /G 123 0 R
+                                    /S /Alpha
+                                 >>
+                          /Type /ExtGState
+                       >>
+                   /E5 << /ca 0.400000 >>
+                   /E9 << /ca 0.030000 >>
+                   /E4 << /ca 0.680000 >>
+                   /E3 << /ca 0.050000 >>
+                   /E10 << /ca 0.030000 >>
+                >>
+  >>
+endobj
+
+126 0 obj
+  << /Length 127 0 R >>
+stream
+/DeviceRGB CS
+/DeviceRGB cs
+q
+/E1 gs
+/X1 Do
+Q
+q
+0.964664 0.263482 -0.263482 0.964664 129.379791 151.552460 cm
+1.000000 1.000000 1.000000 scn
+0.000000 26.100941 m
+0.000000 7.835829 l
+1.493110 6.821423 3.116225 5.985142 4.840003 5.357708 c
+4.840003 26.100941 l
+4.840003 30.270782 8.219451 33.649765 12.388848 33.649765 c
+16.558691 33.649765 19.937649 30.270782 19.937649 26.100941 c
+19.937649 21.931097 16.558691 18.552116 12.388848 18.552116 c
+11.434558 18.552116 10.521222 18.729349 9.680485 19.052641 c
+9.680485 14.009108 l
+10.552394 13.814508 11.458605 13.711647 12.388848 13.711647 c
+19.230526 13.711647 24.777697 19.259264 24.777697 26.100941 c
+24.777697 32.942619 19.230526 38.490234 12.388848 38.490234 c
+5.547172 38.490234 0.000000 32.942173 0.000000 26.100941 c
+0.000000 26.100941 l
+h
+f*
+n
+Q
+q
+/E2 gs
+/X2 Do
+Q
+q
+/E3 gs
+1.000000 0.000000 -0.000000 1.000000 87.580078 25.304688 cm
+0.000000 0.000000 0.000000 scn
+174.501175 5.011448 m
+174.501175 2.243942 135.437759 0.000435 87.250587 0.000435 c
+39.063419 0.000435 0.000000 2.243942 0.000000 5.011448 c
+0.000000 7.778954 39.063419 10.022461 87.250587 10.022461 c
+135.437759 10.022461 174.501175 7.778954 174.501175 5.011448 c
+h
+f
+n
+Q
+q
+0.734627 0.678472 -0.678472 0.734627 43.901062 88.299927 cm
+/Pattern cs
+/P1 scn
+-0.392625 24.404945 m
+-0.427408 24.188103 -0.279821 23.984123 -0.062980 23.949341 c
+0.153861 23.914558 0.357843 24.062145 0.392625 24.278984 c
+-0.392625 24.404945 l
+h
+29.959818 46.276421 m
+29.959818 46.674065 l
+29.951954 46.674065 l
+29.944096 46.673756 l
+29.959818 46.276421 l
+h
+47.432678 58.513489 m
+47.652035 58.502880 47.838455 58.672104 47.849064 58.891460 c
+47.859673 59.110817 47.690449 59.297241 47.471092 59.307850 c
+47.432678 58.513489 l
+h
+0.392625 24.278984 m
+1.483601 31.080305 8.903296 45.045349 29.975538 45.879089 c
+29.944096 46.673756 l
+8.439901 45.822926 0.749429 31.524694 -0.392625 24.404945 c
+0.392625 24.278984 l
+h
+29.959818 45.878777 m
+32.913597 45.878777 34.409058 45.263504 35.051041 44.528728 c
+35.654922 43.837566 35.596756 42.911087 35.056484 41.953285 c
+34.517220 40.997276 33.546600 40.122772 32.569500 39.679893 c
+31.574989 39.229126 30.743650 39.282959 30.266579 39.861366 c
+29.653055 39.355328 l
+30.478584 38.354450 31.787233 38.452156 32.897820 38.955536 c
+34.025810 39.466805 35.125397 40.456726 35.749172 41.562561 c
+36.371933 42.666595 36.569637 43.999367 35.649940 45.051994 c
+34.768345 46.061008 32.960785 46.674065 29.959818 46.674065 c
+29.959818 45.878777 l
+h
+30.266579 39.861366 m
+29.688940 40.561699 29.108286 42.135452 28.928240 44.140472 c
+28.749832 46.127266 28.971828 48.471409 29.929241 50.680672 c
+30.883970 52.883743 32.573631 54.962635 35.353104 56.431454 c
+38.137646 57.902954 42.039673 58.774284 47.432678 58.513489 c
+47.471092 59.307850 l
+41.978077 59.573483 37.924934 58.690052 34.981522 57.134598 c
+32.033039 55.576466 30.221960 53.356201 29.199528 50.996902 c
+28.179779 48.643799 27.948191 46.162361 28.136139 44.069344 c
+28.322451 41.994556 28.928093 40.234276 29.653055 39.355328 c
+30.266579 39.861366 l
+h
+f
+n
+Q
+q
+0.678472 -0.734627 0.734627 0.678472 34.461620 161.925980 cm
+/Pattern cs
+/P2 scn
+-0.303178 3.205038 m
+-0.445282 3.037598 -0.424742 2.786662 -0.257302 2.644558 c
+-0.089862 2.502455 0.161074 2.522994 0.303178 2.690434 c
+-0.303178 3.205038 l
+h
+1.579280 4.808594 m
+1.882458 5.065896 l
+1.806905 5.154920 1.696043 5.206238 1.579280 5.206238 c
+1.462517 5.206238 1.351655 5.154920 1.276102 5.065896 c
+1.579280 4.808594 l
+h
+2.855382 2.690434 m
+2.997486 2.522994 3.248422 2.502455 3.415862 2.644558 c
+3.583302 2.786662 3.603842 3.037598 3.461738 3.205038 c
+2.855382 2.690434 l
+h
+0.303178 2.690434 m
+1.882458 4.551291 l
+1.276102 5.065896 l
+-0.303178 3.205038 l
+0.303178 2.690434 l
+h
+1.276102 4.551291 m
+2.855382 2.690434 l
+3.461738 3.205038 l
+1.882458 5.065896 l
+1.276102 4.551291 l
+h
+f
+n
+Q
+q
+0.707107 -0.707107 0.707107 0.707107 8.322945 181.981140 cm
+0.207843 0.207843 0.207843 scn
+0.000000 14.552734 m
+3.985999 11.736682 l
+4.680833 11.245792 5.609533 11.245792 6.304367 11.736683 c
+10.290366 14.552734 l
+7.507271 10.555447 l
+7.026937 9.865556 7.026938 8.949547 7.507271 8.259657 c
+10.290366 4.262368 l
+6.304366 7.078414 l
+5.609533 7.569303 4.680833 7.569304 3.986001 7.078415 c
+0.000000 4.262368 l
+2.816052 8.248368 l
+3.306942 8.943202 3.306942 9.871902 2.816052 10.566735 c
+0.000000 14.552734 l
+h
+f
+n
+Q
+q
+0.707107 -0.707107 0.707107 0.707107 143.161972 228.093613 cm
+1.000000 1.000000 1.000000 scn
+0.000000 10.805664 m
+3.232767 8.521760 l
+3.584908 8.272977 4.055574 8.272976 4.407715 8.521759 c
+7.640483 10.805664 l
+5.385699 7.567176 l
+5.142267 7.217540 5.142266 6.753306 5.385698 6.403671 c
+7.640483 3.165181 l
+4.407714 5.449081 l
+4.055573 5.697863 3.584909 5.697863 3.232769 5.449081 c
+0.000000 3.165181 l
+2.283904 6.397949 l
+2.532687 6.750090 2.532688 7.220755 2.283905 7.572896 c
+0.000000 10.805664 l
+h
+f
+n
+Q
+q
+0.707107 -0.707107 0.707107 0.707107 33.481392 222.395462 cm
+/Pattern cs
+/P3 scn
+0.000000 9.942383 m
+2.723105 8.018547 l
+3.197793 7.683187 3.832252 7.683187 4.306940 8.018547 c
+7.030046 9.942383 l
+5.128725 7.211565 l
+4.800577 6.740253 4.800577 6.114466 5.128726 5.643155 c
+7.030046 2.912337 l
+4.306939 4.836169 l
+3.832252 5.171528 3.197794 5.171528 2.723107 4.836169 c
+0.000000 2.912337 l
+1.923836 5.635443 l
+2.259196 6.110131 2.259196 6.744589 1.923836 7.219277 c
+0.000000 9.942383 l
+h
+f
+n
+Q
+q
+0.707107 -0.707107 0.707107 0.707107 107.482803 282.935913 cm
+0.050000 0.050000 0.050000 scn
+0.000000 11.887695 m
+3.411141 9.477773 l
+3.885829 9.142412 4.520288 9.142411 4.994977 9.477772 c
+8.406119 11.887695 l
+6.025755 8.468840 l
+5.697608 7.997529 5.697608 7.371742 6.025756 6.900431 c
+8.406119 3.481576 l
+4.994976 5.891495 l
+4.520288 6.226854 3.885831 6.226855 3.411144 5.891495 c
+0.000000 3.481576 l
+2.409923 6.892717 l
+2.745283 7.367405 2.745284 8.001865 2.409924 8.476553 c
+0.000000 11.887695 l
+h
+f
+n
+Q
+q
+0.707107 -0.707107 0.707107 0.707107 300.467163 125.389053 cm
+0.050000 0.050000 0.050000 scn
+0.000000 11.887695 m
+3.411141 9.477773 l
+3.885829 9.142412 4.520288 9.142411 4.994977 9.477772 c
+8.406119 11.887695 l
+6.025755 8.468840 l
+5.697608 7.997529 5.697608 7.371742 6.025756 6.900431 c
+8.406119 3.481576 l
+4.994976 5.891495 l
+4.520288 6.226854 3.885831 6.226855 3.411144 5.891495 c
+0.000000 3.481576 l
+2.409923 6.892717 l
+2.745283 7.367405 2.745284 8.001865 2.409924 8.476553 c
+0.000000 11.887695 l
+h
+f
+n
+Q
+q
+0.707107 0.707107 0.707107 -0.707107 283.415253 103.113068 cm
+/Pattern cs
+/P4 scn
+0.000000 16.294922 m
+4.463272 13.141684 l
+5.241303 12.592015 6.281205 12.592015 7.059236 13.141684 c
+11.522509 16.294922 l
+8.406173 11.819008 l
+7.868326 11.046513 7.868326 10.020823 8.406173 9.248327 c
+11.522509 4.772413 l
+7.059233 7.925647 l
+6.281203 8.475313 5.241305 8.475313 4.463274 7.925647 c
+0.000000 4.772413 l
+3.153239 9.235685 l
+3.702907 10.013718 3.702907 11.053618 3.153239 11.831650 c
+0.000000 16.294922 l
+h
+f
+n
+Q
+q
+0.707107 0.707107 0.707107 -0.707107 321.193481 270.775269 cm
+0.207843 0.207843 0.207843 scn
+0.000000 4.971680 m
+1.053902 4.227113 l
+1.475770 3.929069 2.039630 3.929069 2.461498 4.227112 c
+3.515401 4.971680 l
+2.776853 3.910923 l
+2.485219 3.492056 2.485219 2.935902 2.776853 2.517036 c
+3.515401 1.456279 l
+2.461497 2.200845 l
+2.039630 2.498888 1.475771 2.498888 1.053904 2.200845 c
+0.000000 1.456279 l
+0.744567 2.510181 l
+1.042611 2.932049 1.042611 3.495909 0.744567 3.917777 c
+0.000000 4.971680 l
+h
+f
+n
+Q
+q
+0.707107 0.707107 0.707107 -0.707107 331.207397 259.337524 cm
+/Pattern cs
+/P5 scn
+0.000000 6.172852 m
+1.478648 5.128208 l
+1.900516 4.830164 2.464375 4.830164 2.886243 5.128208 c
+4.364891 6.172852 l
+3.330616 4.687349 l
+3.038982 4.268483 3.038983 3.712329 3.330616 3.293463 c
+4.364891 1.807961 l
+2.886241 2.852603 l
+2.464374 3.150646 1.900516 3.150645 1.478649 2.852603 c
+0.000000 1.807961 l
+1.044644 3.286608 l
+1.342687 3.708476 1.342687 4.272336 1.044644 4.694204 c
+0.000000 6.172852 l
+h
+f
+n
+Q
+q
+0.707107 0.707107 0.707107 -0.707107 309.721069 83.141235 cm
+0.207843 0.207843 0.207843 scn
+0.000000 6.172852 m
+1.478648 5.128208 l
+1.900516 4.830164 2.464375 4.830164 2.886243 5.128208 c
+4.364891 6.172852 l
+3.330616 4.687349 l
+3.038982 4.268483 3.038983 3.712329 3.330616 3.293463 c
+4.364891 1.807961 l
+2.886241 2.852603 l
+2.464374 3.150646 1.900516 3.150645 1.478649 2.852603 c
+0.000000 1.807961 l
+1.044644 3.286608 l
+1.342687 3.708476 1.342687 4.272336 1.044644 4.694204 c
+0.000000 6.172852 l
+h
+f
+n
+Q
+q
+0.989862 -0.142034 0.142034 0.989862 163.856216 49.659317 cm
+/Pattern cs
+/P6 scn
+2.175955 16.662506 m
+56.816666 15.856598 l
+57.058441 15.856598 57.380806 15.856598 57.622578 15.856598 c
+57.703167 15.856598 57.783760 15.856598 57.864353 15.856598 c
+58.025536 15.856598 58.267303 15.937195 58.428486 15.937195 c
+58.509079 15.937195 58.589672 15.937164 58.670261 16.017761 c
+58.912037 16.017761 59.073219 16.098358 59.314995 16.178955 c
+59.395584 16.178955 59.395580 16.178955 59.476173 16.178955 c
+59.717945 16.259537 60.040310 16.340118 60.282082 16.420715 c
+60.362675 16.420715 60.443268 16.501312 60.523857 16.501312 c
+60.685040 16.581909 60.926811 16.662506 61.087994 16.743103 c
+61.168583 16.743103 61.249176 16.823669 61.329769 16.823669 c
+61.490952 16.904266 61.732723 16.984879 61.893902 17.146057 c
+61.974495 17.146057 62.055084 17.226624 62.055084 17.226624 c
+62.296856 17.387802 62.538624 17.468399 62.780396 17.629578 c
+62.860989 17.629578 62.861000 17.710175 62.941589 17.710175 c
+63.102772 17.871353 63.344543 17.951950 63.505722 18.113129 c
+63.586315 18.193726 63.666908 18.193726 63.747498 18.274323 c
+63.908680 18.435501 64.069862 18.516098 64.311630 18.677277 c
+64.392227 18.757874 64.472816 18.757858 64.553406 18.838440 c
+64.795181 18.999634 65.036949 19.241409 65.278725 19.483185 c
+65.359322 19.563782 l
+65.601089 19.724960 65.762276 19.966721 65.923454 20.127914 c
+66.004044 20.208496 66.084641 20.289108 66.165230 20.369690 c
+66.326408 20.530884 66.487587 20.692032 66.648766 20.853226 c
+66.729362 20.933807 66.809952 21.014420 66.809952 21.095016 c
+66.971130 21.336777 67.212914 21.578552 67.374092 21.820328 c
+67.374092 21.820328 67.374084 21.900925 67.454681 21.900925 c
+67.696449 22.142685 67.857628 22.465057 68.018814 22.706833 c
+68.099403 22.787415 68.099411 22.867996 68.180008 22.948593 c
+68.341187 23.190369 68.421776 23.351562 68.582962 23.593338 c
+68.663551 23.673920 68.663551 23.754501 68.744141 23.835098 c
+68.905319 24.076874 69.066505 24.318634 69.147095 24.560410 c
+69.147095 24.641006 69.227676 24.721603 69.227676 24.721603 c
+69.388863 25.043976 69.550049 25.366318 69.791824 25.688675 c
+69.872414 25.769272 69.872414 25.849884 69.953003 25.930466 c
+70.114189 26.172241 70.194778 26.494614 70.355957 26.736374 c
+70.355957 26.816971 70.436546 26.897552 70.436546 26.978149 c
+70.597725 27.300507 70.758911 27.703476 70.920097 28.025848 c
+70.920097 28.106430 71.000694 28.187012 71.000694 28.187012 c
+71.081284 28.509369 71.242462 28.831741 71.323051 29.154114 c
+71.323051 29.234695 71.403648 29.395874 71.403648 29.476471 c
+71.484238 29.798828 71.645416 30.121201 71.726006 30.443573 c
+71.726006 30.524155 71.726013 30.524155 71.806602 30.604736 c
+71.887192 31.007690 71.967781 31.330048 72.128960 31.733002 c
+72.128960 31.813599 72.209557 31.974808 72.209557 32.055389 c
+72.290146 32.377762 72.370735 32.619507 72.370735 32.941879 c
+72.370735 33.022461 72.451317 33.183670 72.451317 33.264252 c
+72.531914 33.667206 72.612511 34.070160 72.612511 34.473114 c
+99.449310 231.759918 l
+99.529900 232.324051 99.610504 232.888184 99.610504 233.371735 c
+99.610504 233.452332 99.610504 233.532913 99.610504 233.694107 c
+99.610504 234.097061 99.691086 234.580597 99.691086 234.983551 c
+99.691086 235.064148 99.691086 235.144745 99.691086 235.225327 c
+99.691086 235.708878 99.691086 236.192413 99.691086 236.675964 c
+99.691086 236.756561 99.691086 236.917740 99.691086 236.998337 c
+99.691086 237.401291 99.610504 237.804245 99.610504 238.287781 c
+99.610504 238.368378 99.610504 238.448975 99.610504 238.448975 c
+99.529907 238.932526 99.449318 239.335464 99.368729 239.819016 c
+99.368729 239.899612 99.288132 240.060791 99.288132 240.141388 c
+99.207542 240.544342 99.126953 240.947296 98.965775 241.350250 c
+98.965775 241.350250 98.965775 241.350250 98.965775 241.430832 c
+98.885178 241.833786 98.723999 242.236755 98.562813 242.639709 c
+98.562813 242.720291 98.482224 242.800888 98.482224 242.881485 c
+98.321037 243.284439 98.159866 243.687378 97.998680 244.009750 c
+97.998680 244.009750 97.998680 244.090347 97.918083 244.090347 c
+97.756905 244.412704 97.595718 244.735062 97.434532 245.057434 c
+97.353943 245.138031 97.353943 245.218613 97.273354 245.299210 c
+97.112175 245.621567 96.870399 245.943939 96.628624 246.266296 c
+96.628624 246.346893 96.548042 246.346893 96.548042 246.427475 c
+96.386856 246.669250 96.145088 246.911026 95.983910 247.152802 c
+95.903313 247.233383 95.822716 247.394577 95.661537 247.475159 c
+95.500351 247.636353 95.339172 247.878113 95.097397 248.039307 c
+95.016808 248.119888 94.936218 248.200485 94.855621 248.281067 c
+94.613853 248.522842 94.372086 248.684036 94.130310 248.845215 c
+94.049721 248.845215 94.049721 248.925797 93.969131 249.006393 c
+93.646767 249.248169 93.324394 249.409348 93.002029 249.570526 c
+93.002029 249.570526 92.921448 249.570526 92.921448 249.651123 c
+92.599083 249.812302 92.276718 249.973480 91.954353 250.134659 c
+91.873756 250.134659 l
+91.551392 250.295853 91.148438 250.376434 90.826073 250.457031 c
+101.544678 247.797531 l
+101.947639 247.716934 102.270004 247.555756 102.592369 247.475159 c
+102.672951 247.475159 l
+102.995316 247.313980 103.317688 247.152802 103.640053 246.991623 c
+103.640053 246.991623 103.720634 246.991623 103.720634 246.911026 c
+103.720634 246.911026 103.801231 246.911026 103.801231 246.830429 c
+104.123596 246.669250 104.365364 246.508072 104.687729 246.266296 c
+104.768318 246.266296 104.768326 246.185715 104.848915 246.105118 c
+105.090691 245.943939 105.332458 245.702164 105.574234 245.540985 c
+105.654823 245.460388 105.735420 245.379807 105.816010 245.299210 c
+105.977188 245.138031 106.138367 244.976837 106.380142 244.735062 c
+106.460732 244.654480 106.541321 244.493286 106.702499 244.412704 c
+106.783096 244.332108 106.863686 244.251526 106.944275 244.170929 c
+107.024872 244.009750 107.186058 243.848572 107.266647 243.687393 c
+107.266647 243.606796 107.347229 243.606796 107.347229 243.526199 c
+107.589005 243.203842 107.750191 242.881470 107.991966 242.559113 c
+108.072556 242.478516 108.072548 242.397934 108.153145 242.317337 c
+108.314323 241.994980 108.475510 241.672607 108.636696 241.350250 c
+108.636696 241.350250 108.636688 241.269653 108.717278 241.269653 c
+108.878456 240.866699 109.039642 240.544342 109.200829 240.141388 c
+109.200829 240.060791 109.281425 239.980194 109.281425 239.899612 c
+109.442604 239.496658 109.523193 239.093689 109.684380 238.690735 c
+109.684380 238.690735 109.684380 238.690750 109.684380 238.610153 c
+109.764969 238.207199 109.926147 237.804245 110.006737 237.401291 c
+110.006737 237.320694 110.087334 237.159515 110.087334 237.078918 c
+110.167923 236.675964 110.248505 236.192429 110.329094 235.708878 c
+110.329094 235.628281 110.329094 235.547699 110.329094 235.547699 c
+110.409691 235.144730 110.409691 234.741776 110.409691 234.258240 c
+110.409691 234.177643 110.409691 234.016464 110.409691 233.935867 c
+110.409691 233.452332 110.409691 232.968781 110.409691 232.485229 c
+110.409691 232.404648 110.409691 232.324051 110.409691 232.243469 c
+110.409691 231.840500 110.409691 231.356964 110.329094 230.954010 c
+110.329094 230.873413 110.329094 230.792816 110.329094 230.631638 c
+110.329094 230.228683 110.248512 229.745148 110.167915 229.342194 c
+110.167915 229.261597 110.167923 229.100418 110.087334 229.019821 c
+83.331108 31.894196 l
+83.250519 31.491241 83.250519 31.088287 83.169930 30.685333 c
+83.169930 30.604736 83.089340 30.443573 83.089340 30.362976 c
+83.008751 30.040604 83.008743 29.798828 82.928154 29.476471 c
+82.928154 29.395874 82.847565 29.234695 82.847565 29.154114 c
+82.766975 28.751160 82.686378 28.428802 82.525200 28.025848 c
+82.525200 27.945251 82.525208 27.945236 82.444611 27.864655 c
+82.364021 27.542282 82.283424 27.219910 82.122238 26.897552 c
+82.122238 26.816956 82.122246 26.816971 82.041656 26.736374 c
+82.041656 26.655792 81.961060 26.655777 81.961060 26.575195 c
+81.880470 26.252823 81.719292 25.930481 81.638702 25.608109 c
+81.638702 25.527527 81.558105 25.446915 81.558105 25.446915 c
+81.396927 25.124557 81.235748 24.721603 81.074570 24.399246 c
+81.074570 24.318649 80.993973 24.238052 80.993973 24.157455 c
+80.832787 23.915680 80.752197 23.593323 80.591019 23.351547 c
+80.510429 23.270950 80.510429 23.190369 80.429840 23.109787 c
+80.268654 22.787415 80.107475 22.465042 79.865700 22.142685 c
+79.865700 22.062088 79.785110 22.062103 79.785110 21.981522 c
+79.623924 21.739746 79.462746 21.497955 79.382149 21.256180 c
+79.301559 21.175583 79.301559 21.095001 79.220970 21.014420 c
+79.059792 20.772644 78.979202 20.611465 78.818016 20.369690 c
+78.737427 20.289108 78.737427 20.208496 78.656837 20.127914 c
+78.495659 19.886139 78.253876 19.563766 78.092690 19.321991 c
+78.092690 19.321991 78.092697 19.241394 78.012108 19.241394 c
+77.850922 18.999634 77.609154 18.757858 77.447975 18.516083 c
+77.367378 18.435501 77.286781 18.354919 77.286781 18.274323 c
+77.125595 18.113144 76.964424 17.951950 76.803238 17.790771 c
+76.722649 17.710175 76.642059 17.629593 76.561462 17.549011 c
+76.400284 17.387833 76.158516 17.146042 75.997330 16.984863 c
+75.916733 16.904266 l
+75.674965 16.662491 75.433197 16.501328 75.191422 16.259552 c
+75.110832 16.178955 75.030235 16.178940 74.949646 16.098358 c
+74.788467 15.937180 74.627281 15.856583 74.385513 15.695404 c
+74.304916 15.614807 74.224327 15.614822 74.143738 15.534241 c
+73.982552 15.373047 73.740784 15.292465 73.579597 15.131287 c
+73.499008 15.131287 73.499016 15.050690 73.418419 15.050690 c
+73.176651 14.889496 72.934868 14.728317 72.693092 14.647736 c
+72.612503 14.647736 72.531914 14.567139 72.531914 14.567139 c
+72.370735 14.486542 72.128960 14.405960 71.967781 14.244766 c
+71.887192 14.244766 71.806595 14.164185 71.726006 14.164185 c
+71.564819 14.083588 71.323051 14.003006 71.161873 13.922409 c
+71.081276 13.922409 71.000687 13.841812 70.920097 13.841812 c
+70.678322 13.761230 70.436546 13.680618 70.114182 13.600037 c
+70.033592 13.600037 70.033600 13.600037 69.953003 13.600037 c
+69.711235 13.519440 69.550049 13.519455 69.308273 13.438858 c
+69.227684 13.438858 69.147087 13.438858 69.066498 13.358261 c
+68.905319 13.358261 68.663544 13.277664 68.502365 13.277664 c
+68.421776 13.277664 68.341179 13.277664 68.260590 13.277664 c
+68.018814 13.277664 67.696449 13.277664 67.454681 13.277664 c
+12.813972 14.083588 l
+12.088654 14.083588 11.443927 14.164185 10.718608 14.325363 c
+0.000000 16.984863 l
+0.725319 16.823685 1.450636 16.662506 2.175955 16.662506 c
+h
+f
+n
+Q
+q
+0.989862 -0.142034 0.142034 0.989862 292.997437 255.723648 cm
+/Pattern cs
+/P7 scn
+0.000000 3.236766 m
+10.879786 1.544349 l
+11.121562 3.236766 l
+0.241775 5.009766 l
+0.000000 3.236766 l
+h
+f
+n
+Q
+q
+0.989862 -0.142034 0.142034 0.989862 242.087708 77.396187 cm
+/Pattern cs
+/P8 scn
+0.000000 2.998013 m
+10.879786 1.547385 l
+11.121562 3.239777 l
+0.241775 4.690430 l
+0.000000 2.998013 l
+h
+f
+n
+Q
+q
+0.989862 -0.142034 0.142034 0.989862 170.931870 61.521301 cm
+/Pattern cs
+/P9 scn
+7.575557 1.336634 m
+0.000000 3.834961 l
+1.208865 3.754365 l
+9.026198 1.256038 l
+7.575557 1.336634 l
+h
+f
+n
+Q
+q
+/E4 gs
+/X3 Do
+Q
+q
+/E5 gs
+0.989862 -0.142034 0.142034 0.989862 280.084778 196.413528 cm
+0.000000 0.000000 0.000000 scn
+4.923713 28.239157 m
+5.649027 28.158573 l
+5.649027 27.916798 l
+6.051982 27.594435 6.293765 27.110891 6.213174 26.546753 c
+2.908938 2.127674 l
+2.828347 1.563538 2.505978 1.160576 2.022432 0.999393 c
+2.022432 0.757629 l
+1.297118 0.838213 l
+0.491208 0.918804 -0.072934 1.724720 0.007657 2.530630 c
+3.311893 26.949709 l
+3.392484 27.836210 4.117803 28.400339 4.923713 28.239157 c
+h
+f
+n
+Q
+q
+0.989862 -0.142034 0.142034 0.989862 280.483215 196.355911 cm
+0.941667 0.941667 0.941667 scn
+4.923713 28.239157 m
+5.649027 28.158573 l
+5.649027 27.916798 l
+6.051982 27.594435 6.293765 27.110891 6.213174 26.546753 c
+2.908938 2.127674 l
+2.828347 1.563538 2.505978 1.160576 2.022432 0.999393 c
+2.022432 0.757629 l
+1.297118 0.838213 l
+0.491208 0.918804 -0.072934 1.724720 0.007657 2.530630 c
+3.311893 26.949709 l
+3.392484 27.836210 4.117803 28.400339 4.923713 28.239157 c
+h
+f
+n
+Q
+q
+0.989862 -0.142034 0.142034 0.989862 281.131470 196.311279 cm
+/Pattern cs
+/P10 scn
+1.297118 0.790617 m
+2.103028 0.710026 2.828340 1.274168 2.989522 2.080078 c
+6.293758 26.499157 l
+6.374349 27.305069 5.810207 28.030380 5.004297 28.191563 c
+4.198387 28.272152 3.473075 27.708023 3.311893 26.902113 c
+0.007657 2.483034 l
+-0.072934 1.677124 0.491208 0.951799 1.297118 0.790617 c
+h
+f
+n
+Q
+q
+0.989862 -0.142034 0.142034 0.989862 155.643631 53.232834 cm
+0.941667 0.941667 0.941667 scn
+10.895372 14.211380 m
+3.642181 14.291962 -1.193283 22.834625 0.257355 33.230865 c
+26.932980 230.517654 l
+28.303026 240.913895 35.395039 249.214767 42.728821 249.134186 c
+97.369530 248.489456 l
+104.703316 248.408859 109.458168 239.866211 108.088120 229.550568 c
+81.412506 32.183167 l
+80.042458 21.786926 72.950447 13.405472 65.616661 13.566666 c
+10.895372 14.211380 l
+h
+f
+n
+Q
+q
+0.989862 -0.142034 0.142034 0.989862 235.687393 290.392975 cm
+0.631373 0.615686 0.600000 scn
+1.208865 0.189592 m
+1.531224 2.929688 l
+0.322359 2.929688 l
+0.000000 0.189592 l
+1.208865 0.189592 l
+h
+f
+n
+Q
+q
+0.989862 -0.142034 0.142034 0.989862 282.193878 283.139038 cm
+0.631373 0.615686 0.600000 scn
+1.208865 0.200799 m
+1.611820 3.021484 l
+0.322371 3.021484 l
+0.000000 0.200799 l
+1.208865 0.200799 l
+h
+f
+n
+Q
+q
+0.989862 -0.142034 0.142034 0.989862 171.516159 65.027702 cm
+0.631373 0.615686 0.600000 scn
+1.289461 0.200799 m
+1.611820 3.021484 l
+0.402955 3.021484 l
+0.000000 0.281395 l
+1.289461 0.200799 l
+h
+f
+n
+Q
+q
+0.989862 -0.142034 0.142034 0.989862 162.414932 92.367386 cm
+0.631373 0.615686 0.600000 scn
+0.241772 2.235352 m
+3.384823 2.235352 l
+3.143047 0.462364 l
+0.000000 0.542935 l
+0.241772 2.235352 l
+h
+f
+n
+Q
+q
+0.989862 -0.142034 0.142034 0.989862 213.188370 270.875214 cm
+0.631373 0.615686 0.600000 scn
+3.384826 2.235352 m
+3.143051 0.462352 l
+0.000000 0.462352 l
+0.241776 2.235352 l
+3.384826 2.235352 l
+h
+f
+n
+Q
+q
+0.989862 -0.142034 0.142034 0.989862 290.852081 258.916382 cm
+0.631373 0.615686 0.600000 scn
+2.578910 0.382273 m
+0.000000 0.382273 l
+0.161180 2.155273 l
+2.820685 2.155273 l
+2.578910 0.382273 l
+h
+f
+n
+Q
+q
+0.989862 -0.142034 0.142034 0.989862 240.068878 80.329468 cm
+0.631373 0.615686 0.600000 scn
+2.578910 0.382261 m
+0.000000 0.382261 l
+0.241775 2.155273 l
+2.820685 2.074677 l
+2.578910 0.382261 l
+h
+f
+n
+Q
+q
+0.989862 -0.142034 0.142034 0.989862 156.166550 53.920929 cm
+0.321569 0.321569 0.321569 scn
+10.554260 14.099960 m
+3.542842 14.180557 -1.131440 22.400848 0.238607 32.394135 c
+26.994827 229.680923 l
+28.364874 239.674210 35.134514 247.733307 42.226524 247.652725 c
+96.947838 247.007996 l
+103.959251 246.927399 108.633522 238.707123 107.263474 228.713837 c
+80.587860 31.346466 l
+79.217812 21.353180 72.367569 13.294067 65.356148 13.374649 c
+10.554260 14.099960 l
+h
+f
+n
+Q
+q
+0.989862 -0.142034 0.142034 0.989862 156.471283 54.358154 cm
+0.121569 0.121569 0.121569 scn
+10.318939 14.027435 m
+3.388111 14.108017 -1.124985 22.167130 0.245062 31.999237 c
+27.001278 229.205429 l
+28.290733 239.037537 35.060379 246.935455 41.910614 246.854858 c
+96.631920 246.210129 l
+103.562744 246.129532 108.075844 238.070435 106.705795 228.318924 c
+80.030167 30.951538 l
+78.740707 21.119431 71.971062 13.221527 65.120827 13.302109 c
+10.318939 14.027435 l
+h
+f
+n
+Q
+q
+/E6 gs
+0.989862 -0.142034 0.142034 0.989862 251.817856 279.815582 cm
+0.329412 0.321569 0.309804 scn
+11.142100 1.678219 m
+0.423492 1.839405 l
+0.101128 1.839405 -0.060054 2.161770 0.020537 2.564725 c
+0.101128 2.967680 0.342904 3.290039 0.665268 3.290039 c
+11.383876 3.128860 l
+11.706240 3.128860 11.867421 2.806494 11.786831 2.403539 c
+11.706240 2.000584 11.464464 1.678219 11.142100 1.678219 c
+h
+f
+n
+Q
+q
+0.989862 -0.142034 0.142034 0.989862 251.920349 280.377197 cm
+0.098039 0.105882 0.109804 scn
+0.564135 2.397367 m
+11.282741 2.236182 l
+11.524514 2.236182 11.685696 1.994411 11.685696 1.672047 c
+11.685696 1.752638 11.685700 1.752636 11.766292 1.833227 c
+11.846883 2.236182 11.605109 2.558547 11.363337 2.558547 c
+0.644731 2.719727 l
+0.322366 2.719727 0.080591 2.397367 0.000000 1.994412 c
+0.000000 1.913821 0.000000 1.913818 0.000000 1.833227 c
+0.080591 2.155591 0.322362 2.397367 0.564135 2.397367 c
+h
+f
+n
+Q
+q
+/E7 gs
+0.989862 -0.142034 0.142034 0.989862 265.307526 278.015808 cm
+0.329412 0.321569 0.309804 scn
+2.448970 2.189209 m
+2.287788 1.222117 1.643069 0.416208 0.998341 0.496799 c
+0.353613 0.496799 -0.129943 1.302706 0.031239 2.269799 c
+0.192421 3.236891 0.837152 4.042799 1.481880 3.962209 c
+2.126608 3.881618 2.529561 3.156301 2.448970 2.189209 c
+h
+f
+n
+Q
+q
+0.989862 -0.142034 0.142034 0.989862 271.062897 276.670563 cm
+0.098039 0.105882 0.109804 scn
+3.170501 2.622362 m
+3.009319 1.413497 2.203406 0.446401 1.316905 0.446401 c
+0.430404 0.446401 -0.133739 1.494087 0.027444 2.702952 c
+0.188626 3.911817 0.994538 4.878906 1.881039 4.878906 c
+2.767541 4.878906 3.331683 3.831227 3.170501 2.622362 c
+h
+f
+n
+Q
+q
+0.989862 -0.142034 0.142034 0.989862 240.953506 281.317047 cm
+0.098039 0.105882 0.109804 scn
+3.170495 2.622362 m
+3.009313 1.413497 2.203400 0.446401 1.316899 0.446401 c
+0.430398 0.446401 -0.133738 1.494087 0.027444 2.702952 c
+0.188626 3.911817 0.994532 4.878906 1.881033 4.878906 c
+2.767535 4.878906 3.331677 3.911818 3.170495 2.622362 c
+h
+f
+n
+Q
+q
+0.989862 -0.142034 0.142034 0.989862 246.855850 280.470367 cm
+0.098039 0.105882 0.109804 scn
+3.170489 2.622362 m
+3.009307 1.413497 2.203394 0.446401 1.316893 0.446401 c
+0.430392 0.446401 -0.133738 1.494087 0.027444 2.702952 c
+0.188626 3.911817 0.994539 4.878906 1.881040 4.878906 c
+2.767541 4.798315 3.331671 3.831227 3.170489 2.622362 c
+h
+f
+n
+Q
+q
+/E8 gs
+/X4 Do
+Q
+q
+0.989862 -0.142034 0.142034 0.989862 159.792542 58.394424 cm
+/Pattern cs
+/P11 scn
+93.346565 238.035172 m
+87.463417 238.115768 l
+86.576920 238.115768 85.771004 237.148666 85.609825 235.859207 c
+85.368050 234.005615 l
+84.965096 231.265533 83.111504 229.008972 81.177315 229.008972 c
+48.537960 229.411926 l
+46.603775 229.411926 45.314320 231.668488 45.717274 234.489166 c
+45.959049 236.342758 l
+46.120232 237.551620 45.556099 238.599304 44.669598 238.599304 c
+38.786449 238.679901 l
+33.306263 238.760483 28.067848 232.474396 27.020164 224.737656 c
+0.183362 27.450821 l
+-0.864321 19.714081 2.681681 13.347397 8.161870 13.266800 c
+62.883163 12.541489 l
+68.363350 12.460892 73.682358 18.746979 74.730034 26.483719 c
+101.405663 223.851151 l
+102.453346 231.668472 98.826752 238.035172 93.346565 238.035172 c
+h
+f
+n
+Q
+q
+/E9 gs
+0.989862 -0.142034 0.142034 0.989862 233.908661 180.543442 cm
+0.000000 0.000000 0.000000 scn
+37.329628 106.597145 m
+31.446480 106.677734 l
+30.559978 106.677734 29.754066 105.710640 29.592884 104.421181 c
+29.351109 102.567596 l
+28.948153 99.827499 27.094561 97.570946 25.160378 97.570946 c
+9.283950 97.812721 l
+5.173808 89.350662 2.191940 79.760330 0.821892 69.686455 c
+-3.691205 36.241188 10.815183 8.598473 33.703030 6.100151 c
+45.388729 92.493713 l
+46.436413 100.230453 42.809814 106.597145 37.329628 106.597145 c
+h
+f
+n
+Q
+q
+/E10 gs
+0.989862 -0.142034 0.142034 0.989862 171.797607 111.835655 cm
+0.000000 0.000000 0.000000 scn
+12.088653 92.443359 m
+0.000000 3.470894 l
+13.700473 9.837585 25.224985 27.164642 28.045670 47.715351 c
+30.785765 68.185471 24.016123 85.754303 12.088653 92.443359 c
+h
+f
+n
+Q
+q
+/E11 gs
+0.989862 -0.142034 0.142034 0.989862 218.505173 113.548073 cm
+0.000000 0.000000 0.000000 scn
+22.674099 19.157473 m
+21.465235 10.373053 15.501495 3.281063 9.295988 3.361654 c
+3.090480 3.442245 -0.939067 10.614845 0.189207 19.479858 c
+1.398072 28.264277 7.361805 35.356277 13.567313 35.275688 c
+19.772821 35.195095 23.882965 28.022484 22.674099 19.157473 c
+h
+f
+n
+Q
+q
+0.989862 -0.142034 0.142034 0.989862 265.525513 278.425049 cm
+/Pattern cs
+/P12 scn
+2.050590 1.752484 m
+1.969999 0.946574 1.405862 0.301844 0.841725 0.301844 c
+0.277587 0.301844 -0.125368 0.946574 0.035814 1.752484 c
+0.116405 2.558394 0.680542 3.203125 1.244680 3.203125 c
+1.808817 3.203125 2.211772 2.558394 2.050590 1.752484 c
+h
+f
+n
+Q
+q
+/E12 gs
+0.989862 -0.142034 0.142034 0.989862 265.760559 278.779236 cm
+/Pattern cs
+/P13 scn
+1.627092 1.368795 m
+1.546501 0.724067 1.143549 0.240520 0.660002 0.240520 c
+0.176456 0.240520 -0.065319 0.724067 0.015272 1.368795 c
+0.095863 2.013523 0.498815 2.497070 0.982362 2.497070 c
+1.465908 2.497070 1.788274 2.013523 1.627092 1.368795 c
+h
+f
+n
+Q
+q
+/E13 gs
+/E14 gs
+0.989862 -0.142034 0.142034 0.989862 266.508331 280.491577 cm
+/Pattern cs
+/P14 scn
+0.241775 0.051094 m
+0.080596 0.051094 l
+0.000005 0.051094 0.000000 0.131688 0.000000 0.212279 c
+0.000000 0.454049 l
+0.000000 0.534640 0.080601 0.615234 0.161192 0.615234 c
+0.322371 0.615234 l
+0.402962 0.615234 0.402955 0.534640 0.402955 0.454049 c
+0.402955 0.212279 l
+0.322364 0.051097 0.241775 0.051094 0.241775 0.051094 c
+h
+f
+n
+Q
+q
+/E15 gs
+0.986880 -0.161458 0.161458 0.986880 189.894547 134.124969 cm
+0.000000 0.000000 0.000000 scn
+3.680251 51.756603 m
+3.888108 53.398174 5.284500 54.628906 6.939180 54.628906 c
+138.491348 54.628906 l
+140.100861 54.628906 141.473328 53.462738 141.733185 51.874336 c
+144.032761 37.818672 l
+144.342834 35.923443 142.968018 34.167534 141.053757 34.013878 c
+4.029588 23.015005 l
+1.951706 22.848213 0.245968 24.634018 0.507826 26.702072 c
+3.680251 51.756603 l
+h
+f
+n
+Q
+q
+/E16 gs
+/X5 Do
+Q
+q
+/E17 gs
+0.890486 -0.455010 0.455010 0.890486 161.577103 214.623962 cm
+0.000000 0.000000 0.000000 scn
+43.635799 36.690094 m
+43.635799 24.784500 33.867592 15.133114 21.817900 15.133114 c
+9.768207 15.133114 0.000000 24.784500 0.000000 36.690094 c
+0.000000 48.595680 9.768207 58.247070 21.817900 58.247070 c
+33.867592 58.247070 43.635799 48.595680 43.635799 36.690094 c
+h
+f
+n
+Q
+q
+-1.000000 -0.000000 -0.348081 0.937464 109.108368 243.815018 cm
+/Pattern cs
+/P15 scn
+41.287865 16.694672 m
+41.287865 6.062778 32.561283 -2.556065 21.796494 -2.556065 c
+11.031704 -2.556065 0.000028 7.117220 0.000028 17.749113 c
+0.000028 28.381006 9.474665 38.315430 20.239452 38.315430 c
+31.004242 38.315430 41.287865 27.326565 41.287865 16.694672 c
+h
+f
+n
+Q
+q
+/E18 gs
+-1.000000 -0.000000 -0.348081 0.937464 109.108368 243.815018 cm
+0.000000 0.000000 0.000000 scn
+41.287865 16.694672 m
+41.287865 6.062778 32.561283 -2.556065 21.796494 -2.556065 c
+11.031704 -2.556065 0.000028 7.117220 0.000028 17.749113 c
+0.000028 28.381006 9.474665 38.315430 20.239452 38.315430 c
+31.004242 38.315430 41.287865 27.326565 41.287865 16.694672 c
+h
+f
+n
+Q
+q
+/E19 gs
+/X6 Do
+Q
+q
+/E20 gs
+/X7 Do
+Q
+q
+/E21 gs
+/X8 Do
+Q
+q
+/E22 gs
+/X9 Do
+Q
+
+endstream
+endobj
+
+127 0 obj
+  30683
+endobj
+
+128 0 obj
+  << /Annots []
+     /Type /Page
+     /MediaBox [ 0.000000 0.000000 375.000000 316.435547 ]
+     /Resources 125 0 R
+     /Contents 126 0 R
+     /Parent 129 0 R
+  >>
+endobj
+
+129 0 obj
+  << /Kids [ 128 0 R ]
+     /Count 1
+     /Type /Pages
+  >>
+endobj
+
+130 0 obj
+  << /Pages 129 0 R
+     /Type /Catalog
+  >>
+endobj
+
+xref
+0 131
+0000000000 65535 f
+0000000010 00000 n
+0000001314 00000 n
+0000001337 00000 n
+0000001857 00000 n
+0000001879 00000 n
+0000004552 00000 n
+0000004575 00000 n
+0000005879 00000 n
+0000005902 00000 n
+0000006426 00000 n
+0000006449 00000 n
+0000006974 00000 n
+0000006997 00000 n
+0000007522 00000 n
+0000007545 00000 n
+0000008067 00000 n
+0000008090 00000 n
+0000009396 00000 n
+0000009420 00000 n
+0000010726 00000 n
+0000010750 00000 n
+0000011275 00000 n
+0000011298 00000 n
+0000016909 00000 n
+0000016933 00000 n
+0000018816 00000 n
+0000018840 00000 n
+0000020146 00000 n
+0000020170 00000 n
+0000021476 00000 n
+0000021500 00000 n
+0000027083 00000 n
+0000027107 00000 n
+0000027759 00000 n
+0000027782 00000 n
+0000028454 00000 n
+0000028476 00000 n
+0000029782 00000 n
+0000029806 00000 n
+0000030747 00000 n
+0000030770 00000 n
+0000031416 00000 n
+0000031439 00000 n
+0000036564 00000 n
+0000036588 00000 n
+0000037894 00000 n
+0000037918 00000 n
+0000039745 00000 n
+0000039768 00000 n
+0000040290 00000 n
+0000040313 00000 n
+0000046433 00000 n
+0000046457 00000 n
+0000046979 00000 n
+0000047002 00000 n
+0000047524 00000 n
+0000047547 00000 n
+0000048069 00000 n
+0000048092 00000 n
+0000048614 00000 n
+0000048637 00000 n
+0000048936 00000 n
+0000048959 00000 n
+0000050480 00000 n
+0000050503 00000 n
+0000050802 00000 n
+0000050825 00000 n
+0000052334 00000 n
+0000052357 00000 n
+0000052656 00000 n
+0000052679 00000 n
+0000054194 00000 n
+0000054217 00000 n
+0000054516 00000 n
+0000054539 00000 n
+0000056059 00000 n
+0000056082 00000 n
+0000062900 00000 n
+0000062924 00000 n
+0000064230 00000 n
+0000064254 00000 n
+0000070470 00000 n
+0000070494 00000 n
+0000071144 00000 n
+0000071167 00000 n
+0000071839 00000 n
+0000071861 00000 n
+0000073167 00000 n
+0000073191 00000 n
+0000074137 00000 n
+0000074160 00000 n
+0000074808 00000 n
+0000074831 00000 n
+0000080085 00000 n
+0000080109 00000 n
+0000084226 00000 n
+0000084250 00000 n
+0000084772 00000 n
+0000084795 00000 n
+0000085320 00000 n
+0000085344 00000 n
+0000092274 00000 n
+0000092299 00000 n
+0000092947 00000 n
+0000092971 00000 n
+0000093272 00000 n
+0000093296 00000 n
+0000094769 00000 n
+0000094793 00000 n
+0000095285 00000 n
+0000095309 00000 n
+0000095609 00000 n
+0000095633 00000 n
+0000097025 00000 n
+0000097049 00000 n
+0000097540 00000 n
+0000097564 00000 n
+0000098317 00000 n
+0000098341 00000 n
+0000098830 00000 n
+0000098854 00000 n
+0000099605 00000 n
+0000099629 00000 n
+0000100120 00000 n
+0000100144 00000 n
+0000112448 00000 n
+0000143191 00000 n
+0000143217 00000 n
+0000143400 00000 n
+0000143478 00000 n
+trailer
+<< /ID [ (some) (id) ]
+   /Root 130 0 R
+   /Size 131
+>>
+startxref
+143541
+%%EOF

@@ -51,10 +51,11 @@ struct UserRewardRowView: View {
           Circle()
             .fill(
               LinearGradient(
-                gradient: Gradient(colors: [ModuleColors.Gradients.Button.gradientButton0.swiftUIColor, ModuleColors.Gradients.Button.gradientButton1.swiftUIColor]),
+                gradient: Gradient(colors: [Colors.Gradients.Button.gradientButton0.swiftUIColor, Colors.Gradients.Button.gradientButton1.swiftUIColor]),
                 startPoint: .leading,
                 endPoint: .trailing
-              ))
+              )
+            )
             .frame(20)
           Image(systemName: "checkmark")
             .resizable()

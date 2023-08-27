@@ -1,0 +1,930 @@
+"screen.title.text" = "Hello i am Avalanche";
+
+// MARK: - Screens
+
+// Initial Screen
+"initial.label.title" = "%@";
+
+// PhoneNumber Screen
+"phoneNumber.textField.title" = "Phone Number";
+"phoneNumber.textField.description" = "Phone Number";
+"phoneNumber.environment.title" = "Environment";
+
+// Wellcome Screen
+"welcome.header.title" = "WELCOME!";
+"welcome.header.desc" = "The AvalancheCard is an easy way to spend your crypto assets to earn rewards. You can also buy, sell and spend Avalanche assets with the AvalancheCard app.";
+"welcome.how_it_works" = "HOW IT WORKS:";
+"welcome.how_it_works.item1" = "Create a AvalancheCard account";
+"welcome.how_it_works.item2" = "Use your AvalancheCard for everyday purchases";
+"welcome.how_it_works.item3" = "Spend AVAX, USDC, USD and earn rewards.";
+"welcome.button.order_card" = "Order Card";
+
+// VerificationCode Screen
+"verificationCode.enterCode.screenTitle" = "ENTER VERIFICATION CODE";
+"verificationCode.sendTo.textFieldTitle" = "Code sent to %@";
+"verificationCode.enterCode.textFieldPlaceholder" = "Enter Code";
+"verificationCode.resend.buttonTitle" = "Resend Code";
+"verificationCode.otpSent.toastMessage" = "New code sent";
+
+// Personal information
+"addPersonalInformation.title" = "ADD PERSONAL INFORMATION";
+"name_exceed_message" = "First name and Last name should not be more than 23 characters";
+"first_name" = "Legal First name";
+"enter_firstName" = "Enter first name";
+"last_name" = "Legal Last name";
+"enter_lastName" = "Enter last name";
+"email" = "Email";
+"enter_emailAddress" = "Enter email address";
+"dob" = "Date of birth";
+"dob_format"= "dd / mm / yyyy";
+
+// SecurityCheck Screen
+"securityCheck.last4SSN.screenTitle" = "SECURITY CHECK: ENTER LAST 4 OF SSN";
+"securityCheck.last4SSN.textFieldTitle" = "Last 4 digits of Social Security Number/Passport";
+"securityCheck.encrypt.cellText" = "Encrypted using 256-BIT SSL";
+"securityCheck.noCreditCheck.cellText" = "No credit checks";
+
+
+// Enter SSN
+"enter_ssn.title" = "PLEASE ENTER YOUR SSN";
+"enter_ssn.placeholder" = "Enter Social Security Number";
+"enter_ssn.bullet_one" = "Encrypted using 256-BIT SSL";
+"enter_ssn.bullet_two" = "No credit checks";
+"enter_ssn.why" = "Why do we need SSN?";
+"enter_ssn.no_ssn" = "No SSN? Tap here";
+"enter_ssn.continue" = "Continue";
+"enter_ssn.alert.title" = "WHY DO WE NEED SSN?";
+"enter_ssn.alert.message" = "A valid SSN or Passport is required by our partners to provide cryptocurrency and banking services.";
+"enter_ssn.alert.okay" = "Okay";
+
+//... PASSPORT...
+"passport_heading" = "ENTER PASSPORT NUMBER";
+"passport_placeholder" = "Passport number";
+"passport_encrypt_info" = "Encrypted using 256-BIT SSL";
+"passport_noCreditCheck_info" = "No credit checks";
+"passport_requiredToCreate_info" = "Required to create %@";
+"passport_type_international" = "International Passport";
+"passport_type_us" = "US Passport";
+
+// KYC Questions Screen
+"kyc.question.title" = "Additional Security Questions";
+"kyc.question.desc" = "Please answer the following questions to help us verify your information.";
+"kyc.question.timeDesc" = "The questions are only valid for 5 minutes";
+"kyc.timeIsUp.title" = "TIME IS UP";
+"kyc.timeIsUp.message" = "The time to answer questions has expired, please contact support to verify your accont.";
+
+// Upload KYC Document
+"uploadDocument.screen.title" = "SET UP YOUR ACCOUNT";
+"uploadDocument.screen.description" = "%@ has partnered with NetSpend and Pathward Bank, a trusted partner in banking.";
+"uploadDocument.upload.title" = "UPLOAD DOCUMENTS";
+"uploadDocument.upload.description" = "Please Upload documents to help us verify your account";
+"uploadDocument.upload.actionTitle" = "Upload Documents";
+"uploadDocument.maxSize.description" = "%@ MB max size";
+"uploadDocument.button.title" = "Upload Documents";
+
+"uploadDocument.requirement.title" = "DOCUMENTS MUST CONTAIN:";
+"uploadDocument.identifyRequirement.title" = "Identity Verification";
+"uploadDocument.identifyRequirement.idCard" = "State issued ID Card";
+"uploadDocument.identifyRequirement.greenCard" = "Permanent US-Resident card for foreign-born, non-citizens (green card)";
+"uploadDocument.identifyRequirement.usPassport" = "US Passport";
+"uploadDocument.identifyRequirement.driverLicense" = "Driver's license";
+"uploadDocument.identifyRequirement.govermentOrMilitaryCard" = "Government/military card";
+"uploadDocument.identifyRequirement.foreignPassport" = "Foreign Passpost";
+"uploadDocument.identifyRequirement.visa" = "Visa";
+"uploadDocument.identifyRequirement.matriculaConsular" = "Matricula Consular";
+
+"uploadDocument.addressRequirement.title" = "Address Verification - Any ID with a matching address";
+"uploadDocument.addressRequirement.utility" = "Utility bill";
+"uploadDocument.addressRequirement.payStub" = "Pay Stub";
+"uploadDocument.addressRequirement.bankStatement" = "Bank Statement";
+"uploadDocument.addressRequirement.idMatching" = "ID with matching address";
+"uploadDocument.addressRequirement.401Statement" = "401 statement";
+"uploadDocument.addressRequirement.mortgae" = "Mortgae document";
+
+"uploadDocument.secondaryRequirement.title" = "Secondary Document - Any document that can be used as secondary verification document";
+"uploadDocument.secondaryRequirement.utility" = "Utility bill";
+"uploadDocument.secondaryRequirement.earnings" = "Earnings Statement";
+"uploadDocument.secondaryRequirement.cellPhone" = "Cell phone bill";
+"uploadDocument.secondaryRequirement.creditCard" = "Credit card bill";
+"uploadDocument.secondaryRequirement.bankStatement" = "Bank Statement";
+"uploadDocument.secondaryRequirement.collectionsLetter" = "Collections letter";
+"uploadDocument.secondaryRequirement.schoolRecords" = "School records";
+"uploadDocument.secondaryRequirement.insurance" = "Insurance bill";
+"uploadDocument.secondaryRequirement.medical" = "Medical bill";
+"uploadDocument.secondaryRequirement.mortgae" = "Mortgage Statement";
+"uploadDocument.secondaryRequirement.401Statement" = "401 statement";
+"uploadDocument.secondaryRequirement.medicaid" = "Medicaid letter";
+
+"uploadDocument.proofRequirement.title" = "Proof of name change";
+"uploadDocument.proofRequirement.oldStateID" = "State ID with the old name";
+"uploadDocument.proofRequirement.newStateID" = "State ID with the new name";
+"uploadDocument.proofRequirement.oldLicense" = "Driver's license with the old name";
+"uploadDocument.proofRequirement.newLicense" = "Driver's license with the new name";
+
+"uploadDocument.ssnRequirement.title" = "SSN document";
+"uploadDocument.ssnRequirement.socialSecurity" = "Social Security card";
+
+// DocumentType
+"documentType.button.title" = "Choose Document Type";
+"documentType.bottomSheet.title" = "DOCUMENT TYPE";
+"documentType.foreignID.title" = "Foreign ID";
+"documentType.other.title" = "Other";
+"documentType.passport.title" = "Passport";
+"documentType.payStub.title" = "Pay Stub dated within 30 days";
+"documentType.socialSecurityCard.title" = "Social Security Card";
+"documentType.stateID.title" = "State issued photo id";
+"documentType.utilityBill.title" = "Utility Bill";
+
+// Address View
+"address_title" = "YOUR ADDRESS";
+"addressLine1_title" = "Address line 1 ";
+"addressLine2_title" = "Address line 2";
+"enter_address" = "Enter address";
+"city" = "City";
+"enter_city" = "Enter city";
+"state" = "State";
+"enter_state" = "Enter state";
+"zipcode" = "Zip code";
+"enter_zipcode" = "Enter zip code";
+"address.disclosure.text" = "By tapping 'Continue', you consent to our %@ and %@.";
+"address.disclosure.agreement" = "PrideCard Agreement";
+"address.disclosure.privacy" = "Privacy Policy";
+"account_update" = "ACCOUNT UPDATE";
+"waitlist_message" = "Hello, %@. We are very sorry, but due to regulations regarding Doge, we are currently unable to open accounts for residents of New York and Hawaii. We are currently working with regulators to resolve this. In the meantime, we will contact you as soon as we can open your account.";
+"join_waitlist" = "Join waitlist";
+"cancel_account" = "Cancel account";
+"waitlist_joined_title" = "WAITLIST JOINED";
+"waitlist_joined_message" = "You are now on the waitlist. We will email you when we can operate in your state.";
+
+//...SET UP WALLET...
+"setUpWallet.title" = "CREATE YOUR WALLET";
+"setUpWallet.info" = "%@ has partnered with Zero Hash to offer cryptocurrency services.";
+"setUpWallet.termsAndCondition" = "I agree to the Zero Hash and Zero Hash Liquidity Services User Agreement, and I have read and understand the Zero Hash Privacy Policy and Regulatory Disclosures. I understand that the value of any cryptocurrency, including digital assets pegged to fiat currency, commodities, or any other asset, may go to zero.";
+"setUpWallet.risk_disclosure" = "The value of any cryptocurrency, including digital assets pegged to fiat currency, commodities, or any other asset, may go to zero.";
+"setUpWallet.userAgreement" = "Zero Hash and Zero Hash Liquidity Services User Agreement";
+"setUpWallet.solid_privacyPolicy" = "Privacy Policy";
+"setUpWallet.regulatory_disclosures" = "Regulatory Disclosures";
+"setUpWallet.wallet_useragreement" = "Zero Hash and Zero Hash Liquidity Services User Agreement";
+
+// Set Up Account
+"question.screen.title" = "ACCOUNT TERMS";
+"question.screen.description" = "%@ has partnered with NetSpend and Pathward to provide banking and card services.";
+"question.netpendCondition.description" = "I agree to the Netspend User Agreement, and I have read and understand the NetSpend Privacy Policy and Regulatory Disclosures.";
+"question.pathwardCondition.description" = "I agree to the Pathward Bank User Agreement, and I have read and understand the Pathward Privacy Policy and Regulatory Disclosures.";
+"question.netpendCondition.userAgreement" = "Netspend User Agreement";
+"question.netpendCondition.privacyPolicy" = "NetSpend Privacy Policy";
+"question.netpendCondition.regulatoryDisclosures" = "Regulatory Disclosures";
+"question.pathwardCondition.userAgreement" = "Pathward Bank User Agreement";
+"question.pathwardCondition.privacyPolicy" = "Pathward Privacy Policy";
+"question.pathwardCondition.regulatoryDisclosures" = "Regulatory Disclosures";
+
+// KYC Status
+"kycStatus.missingInfo.message" = "The information you have entered is not complete, you need to contact us via email to add some necessary information.";
+"kycStatus.identityVerification.title" = "DRIVER’s LICENSE, ID OR PASSPORT";
+"kycStatus.identityVerification.message" = "Please verify your identity with a valid Driver’s License, ID or Passport. ";
+"kycStatus.waitingVerification.title" = "THANK YOU FOR WAITING";
+"kycStatus.waitingVerification.message" = "We’re confiming your account details. This could take up to 30 seconds";
+"kycStatus.fail.title" = "WE’RE SORRY";
+"kycStatus.fail.message" = "Based on the information you entered, we were unable to create a Depository account at this time. We will be in touch via email.";
+"kycStatus.inReview.title" = "VERIFYING ACCOUNT DETAILS";
+"kycStatus.inReview.message" = "Hi %@, we are still verifying your account details.  This is common when VOIP or Google voice phone numbers are used, or addresses / emails change.  Please contact support and we will help verify the details.  Thank you for your patience.";
+"kycStatus.inReview.secondaryTitle" = "Contact Support";
+"kycStatus.inReview.primaryTitle" = "Check Status";
+"kycStatus.fail.unclear.message" = "%@, we were unable to create a Depository account at this time. We will be in touch via email.";
+
+// Reward Terms
+"rewardTerms.enroll_title" = "ENROLL IN CRYPTO REWARDS";
+"rewardTerms.amount_title" = "Transaction Amount";
+"rewardTerms.amount_description" = "up to 8%% purchase of transaction in rewards";
+"rewardTerms.fees_title" = "Fees";
+"rewardTerms.fees_description" = "$0";
+"rewardTerms.fee_title" = "Fee";
+"rewardTerms.network_fee" = "Network Fee";
+"rewardTerms.exchange_rate_title" = "Exchange Rate";
+"rewardTerms.exchange_rate_description" = "Varies, the current prevailing price as determined by Zero Hash Liquidity Services LLC at point of transaction.";
+"rewardTerms.enroll_cta" = "Enroll now";
+"rewardTerms.disclosures_title" = "Exchange Rate";
+"rewardTerms.disclosures_first" = "By selecting to enroll in the crypto rewards program, you understand and agree that eligible rewards transactions will also trigger your authorization to invest in crypto once your action or card transaction is complete. Transactions may take time in certain cases.";
+"rewardTerms.disclosures_second" = "Cryptocurrency services powered by Zero Hash.";
+"rewardTerms.disclosures_third" = "Orders may not be canceled or reversed once submitted by you. Also, if a withdrawal request is being made, you are requesting an on-chain transaction that is not reversible or recallable. You are responsible for reviewing the recipient address and ensuring it is the correct address for the selected asset for withdrawal.";
+"rewardTerms.disclosures_fourth" = "Zero Hash does not offer the ability to set up pre-authorized, automatic, or recurring Orders (“Pre-Authorized Orders”) in your Account; (a) any such Pre-Authorized Order feature (if available) is under the exclusive control of [Business] ; (b) you must contact [Business] in order to stop a Pre-Authorized Order before execution or to turn off such a feature in your Account; and (c) Zero Hash and ZHLS are not liable for the placement and execution of any Pre-Authorized order.";
+"rewardTerms.disclosures_fifth" = "Maximum reward amounts may vary, and can depend on the user’s level of participation in crypto rewards. Specific terms and conditions may apply.";
+
+//...REWARDS...
+"rewards" = "Rewards";
+"total_rewards" = "Total rewards";
+"cryptocurrency_services_info" = "Cryptocurrency services powered by Zero Hash";
+"sell_rewards" = "Sell Rewards";
+"transfer_rewards" = "Transfer Rewards";
+"rewards.no_rewards" = "No rewards yet";
+
+// Home
+"home.cashTab.title" = "Cash";
+"home.rewardsTab.title" = "Rewards";
+"home.assetsTab.title" = "Assets";
+"home.accountTab.title" = "Account";
+"home.donationTab.title" = "Donations";
+"home.causeTab.title" = "Causes";
+
+// CashView
+"cashTab.deActiveError.message" = "Your checking account was deactivated";
+"cashTab.activeCard.buttonTitle" = "Tap to Activate %@ Card";
+"cashTab.seeAll.title" = "See all";
+"cashTab.changeAsset.buttonTitle" = "Change";
+"cashTab.lastestTransaction.title" = "Latest Transactions";
+"cashTab.noTransactionYet.title" = "No transactions yet";
+"cashTab.deposit.title" = "Deposit";
+"cashTab.withdraw.title" = "Withdraw";
+"cashTab.waysToAdd.title" = "More ways to deposit";
+
+// CashCardView
+"cashCard.balance.title" = "%@ Balance";
+
+// ChangeAssetView
+"changeAsset.screen.title" = "Change asset";
+"changeAsset.screen.message" = "Please select the asset to spend.";
+
+// CARD ACTIVED
+"cardActivated.cardActived.title" = "CARD ACTIVATED!";
+"cardActivated.cardActived.description" = "Your card is activated!  Next, add it to your Apple Pay wallet for fast and easy payments.";
+
+// ADD TO WALLET
+"addToWallet.applePay.title" = "ADD TO APPLE PAY";
+"addToWallet.applePay.description" = "Your %@ account is activated! Next, add %@ to your Apple Pay wallet for fast and easy payments.";
+"addToWallet.applePay.message" = "It will add this card to Apple Wallet";
+
+// SET CARD PIN
+"setCardPin.screen.title" = "SET CARD PIN";
+"setCardPin.screen.description" = "This PIN can be used at ATMs and for purchases, and is not used to get access to the app.";
+"setCardPin.popup.title" = "CARD PIN SET";
+"setCardPin.popup.successMessage" = "Your card's PIN is now set. Use it for purchases and at ATMs.";
+
+// LIST CARD
+"listCard.security.title" = "Security";
+"listCard.showCardNumber.title" = "Show card number";
+"listCard.lockCard.title" = "Lock card";
+"listCard.lockCard.description" = "Stop card from being used";
+"listCard.changePin.title" = "Change PIN";
+"listCard.orderPhysicalCard.title" = "Order Physical Card";
+"listCard.activateCard.buttonTitle" = "Activate %@ Card";
+"listCard.deals.title" = "Deals";
+"listCard.deals.description" = "up to 8%% back in %@";
+"listCard.activateCard.title" = "Activate Card";
+"listCard.activateCard.message" = "To start using your card, please activate it now";
+"listCard.activateCard.primary" = "Activate Card";
+
+// CARD
+"card.virtual.title" = "Virtual";
+"card.physical.title" = "Physical";
+"card.cardNumber.title" = "Card number";
+"card.exp.title" = "Exp";
+"card.cvv.title" = "CVV";
+"card.copyToClipboard.title" = "Card number copied to clipboard";
+
+// EnterCVVCode
+"enterCVVCode.setCardPin.title" = "ENTER CVV TO SET CARD PIN";
+"enterCVVCode.activeCard.title" = "ACTIVATE PHYSICAL CARD";
+"enterCVVCode.screen.description" = "Enter the 3-digit CVV code of your card";
+
+// Order PhysicalCard
+"orderPhysicalCard.physicalCard.title" = "ORDER PHYSICAL CARD";
+"orderPhysicalCard.fees.title" = "Fees";
+"orderPhysicalCard.address.title" = "THE CARD WILL BE SHIPPED TO:";
+"orderPhysicalCard.editAddress.buttonTitle" = "Edit address";
+"orderPhysicalCard.order.buttonTitle" = "Order Physical Card";
+"orderPhysicalCard.orderedSuccess.title" = "PHYSICAL CARD ORDERED";
+"orderPhysicalCard.orderedSuccess.message" = "Thank you, your physical card was ordered. It will arrive in 7-14 business days. After it arrives, please come back to activate your card.";
+
+// ShippingAddress
+"shippingAddress.screen.title" = "WHERE TO SEND YOUR %@?";
+"shippingAddress.mainAddress.title" = "Address line 1 ";
+"shippingAddress.subAddress.title" = "Address line 2 (optional)";
+"shippingAddress.city.title" = "City";
+"shippingAddress.state.title" = "State";
+"shippingAddress.zipCode.title" = "Zip Code";
+"shippingAddress.confirm.buttonTitle" = "Confirm Address";
+"shippingAddress.address.placeholder" = "Enter address";
+"shippingAddress.city.placeholder" = "Enter city";
+"shippingAddress.state.placeholder" = "Enter state";
+"shippingAddress.zipCode.placeholder" = "Enter zip code";
+
+// DirectDeposit
+"directDeposit.screen.title" = "Direct Deposit";
+"directDeposit.seeAllBenefits.buttonTitle" = "See all the benefits";
+"directDeposit.automationSetup.title" = "Automatic Setup";
+"directDeposit.findYourEmployer.title" = "FIND YOUR EMPLOYER";
+"directDeposit.automationSetup.description" = "Tell us who pays you, and we’ll help you get set up.";
+"directDeposit.getStarted.buttonTitle" = "Get Started";
+"directDeposit.manualSetup.title" = "Manual Setup";
+"directDeposit.useAccountDetails.title" = "USE ACCOUNT DETAILS";
+"directDeposit.manualSetup.description" = "Give these to your employer and they’ll handle the rest.";
+"directDeposit.routingNumber.title" = "Routing Number";
+"directDeposit.accountNumber.title" = "AccountNumber";
+"directDeposit.fillOutForm.buttonTitle" = "Fill out a form";
+"directDeposit.benefits.bottomSheetTitle" = "BENEFITS OF DIRECT DEPOSIT";
+"directDeposit.firstBenefit.title" = "Payday up to 2 days early";
+"directDeposit.secondBenefit.title" = "3 ATM fees covered each month you direct deposit $300+";
+"directDeposit.copied.message" = "Copied to clipboard";
+
+// BuySellCrypto
+"MoveCryptoInput.buy.title" = "BUY DOGE";
+"MoveCryptoInput.buyAvailableBalance.subtitle" = "%@ available";
+"MoveCryptoInput.sell.title" = "SELL DOGE";
+"MoveCryptoInput.sellAvailableBalance.subtitle" = "%@ available to sell";
+"MoveCryptoInput.send.title" = "SEND DOGE";
+"MoveCryptoInput.sendAvailableBalance.subtitle" = "%@ available";
+"MoveCryptoInput.buy.annotation" = "You currently have %@ available to buy Dogecoin. If this amount is less than expected, please contact support.";
+"MoveCryptoInput.sell.annotation" = "You currently have %@ Dogecoin available to sell. Doge Rewards are not available to sell until 48 hours after they are earned.";
+"MoveCryptoInput.send.annotation" = "You currently have %@ Dogecoin available to sell. Doge Rewards are not available to sell until 48 hours after they are earned.";
+"MoveCryptoInput.minimumCash.description" = "Minimum amount should be $0.10";
+"MoveCryptoInput.insufficientFunds.description" = "Insufficient funds";
+"MoveCryptoInput.send.estimated_fee" = "The estimated network fee is an approximation and the actual network fee applied on a withdrawal may differ.";
+
+// CryptoReceipt
+"cryptoReceipt.navigation.title" = "Receipt";
+"cryptoReceipt.orderNumber.title" = "Order Number";
+"cryptoReceipt.tradingPair.title" = "Trading Pair";
+"cryptoReceipt.currency.title" = "Currency";
+"cryptoReceipt.orderType.title" = "Order Type";
+"cryptoReceipt.amount.title" = "Amount";
+"cryptoReceipt.exchangeRate.title" = "Exchange Rate";
+"cryptoReceipt.transactionValue.title" = "Transaction Value";
+"cryptoReceipt.fee.title" = "Fee";
+"cryptoReceipt.dateAndTime.title" = "Date and Time";
+"cryptoReceipt.accountID.title" = "Account ID";
+
+// DonationReceipt
+"donationReceipt.navigation.title" = "Donation Receipt";
+"donationReceipt.transactionNumber.title" = "Transaction Number";
+"donationReceipt.reward.title" = "Rewards Donation";
+"donationReceipt.roundup.title" = "Round up Donation";
+"donationReceipt.oneTime.title" = "One Time Donation";
+"donationReceipt.total.title" = "Total Donation";
+"donationReceipt.fee.title" = "Fee";
+"donationReceipt.dateAndTime.title" = "Date and Time";
+"donationReceipt.accountID.title" = "Account ID";
+"donationReceipt.fundraiser.title" = "100%% of funds are tax deductible and granted to designated nonprofit: %@.";
+"donationReceipt.charity.title" = "Donations made to %@. EIN: %@";
+"donationReceipt.terms.title" = "Terms & Conditions";
+"donationReceipt.privacy.title" = "Privacy Policy";
+
+// MARK: - Popup
+
+// Logout
+"popup.logout.title" = "Are you sure you want to log out?";
+"popup.logout.primaryTitle" = "No";
+"popup.logout.secondaryTitle" = "Yes";
+
+// UploadDocuments
+"popup.uploadDocument.title" = "DOCUMENTS UPLOADED";
+"popup.uploadDocument.description" = "Thank you, we have received your document";
+
+// Transfer
+"transferView.credit" = "Deposit";
+"transferView.debit" = "Withdraw";
+"transferView.credit_started" = "Deposit started";
+"transferView.credit_completed" = "Deposit completed";
+"transferView.debit_started" = "Withdraw started";
+"transferView.debit_completed" = "Withdraw completed";
+"transferView.debit_card" = "Debit Card **** %@";
+"transferView.checking" = "Checking **** %@";
+"transferView.saving" = "Savings **** %@";
+"transferView.limits_reached" = "Limits reached";
+"transferView.withdraw_annotation.description" = "You currently have %@ available to withdraw. Rewards are not available to withdraw until 48 hours after they are earned.";
+
+// Transfer Status
+
+"transferView.status.deposit.started" = "Deposit started";
+"transferView.status.deposit.completed" = "Deposit completed";
+"transferView.status.withdraw.started" = "Withdraw started";
+"transferView.status.withdraw.completed" = "Withdraw completed";
+"transferView.status.reward.started" = "Reward pending";
+"transferView.status.reward.completed" = "Reward completed";
+
+// Transfer debit suggestion
+"transferView.debit_suggestion.title" = "Get Faster Deposits";
+"transferView.debit_suggestion.body" = "For instant deposits, connect and deposit with your Debit Card";
+"transferView.debit_suggestion.connect" = "Connect Debit Card";
+
+// Transaction Rewards Status
+"transferView.rewards_status.pending" = "Pending";
+"transferView.rewards_status.completed" = "Completed";
+
+// User Reward Type
+"transferView.reward_type.cashback.title" = "Instant Cashback";
+"transferView.reward_type.cashback.subtitle" = "0.75% on every qualifying purchase";
+"transferView.reward_type.donation.title" = "Donate to Charity";
+"transferView.reward_type.donation.subtitle" = "0.75% donated to a charity you choose";
+
+// MoveMoney
+"moveMoney.withdraw.annotation" = "You currently have %@ available to withdraw. Rewards are not available to withdraw until 48 hours after they are earned.";
+"moveMoney.add_account" = "Add bank or card";
+"moveMoney.deposit.title" = "DEPOSIT";
+"moveMoney.withdraw.title" = "WITHDRAW";
+"moveMoney.available_balance.subtitle" = "%@ available";
+"moveMoney.error.noContact" = "no contact selected";
+
+// Add bank with debit
+"addBankWithDebit.title" = "ADD A BANK USING YOUR DEBIT CARD";
+"addBankWithDebit.card_number" = "Card number";
+"addBankWithDebit.card_number_placeholder" = "1234 5678 9012 3456";
+"addBankWithDebit.expires" = "Expires";
+"addBankWithDebit.expires_placeholder" = "MM / YY";
+"addBankWithDebit.cvv" = "CVV";
+"addBankWithDebit.cvv_placeholder" = "Enter CVV";
+
+// Transaction
+"transactionList.title" = "Transactions";
+
+"transactionRow.pending" = "Pending";
+"transactionRow.fundraiser_donation.user" = "Donation by %@";
+"transactionRow.fundraiser_donation.generic" = "Donation";
+
+// Account view
+"accountView.connected_accounts" = "Connected Accounts";
+"accountView.connect_new_accounts" = "Connect New Accounts";
+"accountView.limits" = "Limits";
+"accountView.card_account_details" = "%@ Account";
+"accountView.shortcuts" = "Shortcuts";
+"accountView.direct_deposit.title" = "Direct Deposit";
+"accountView.direct_deposit.subtitle" = "Get paid up to 2 days faster";
+"accountView.bank_transfers.title" = "Bank Transfers";
+"accountView.bank_transfers.subtitle" = "Send from your bank to AvalancheCard";
+"accountView.debit_deposits.title" = "Debit Deposits";
+"accountView.debit_deposits.subtitle" = "Add money from your Debit Card";
+"accountView.one_time_transfers.title" = "One-time Bank Transfers";
+"accountView.one_time_transfers.subtitle" = "Good for small amounts";
+"accountView.rewards" = "Current Rewards";
+"accountView.atm" = "ATM’s Nearby";
+"accountView.bank_statements" = "Bank statements";
+"accountView.taxes" = "Taxes";
+"accountView.help_support" = "Help & Support";
+"accountView.legal" = "Legal";
+"accountView.deposit_limits" = "Deposit Limits";
+"accountView.atm_location_title" = "ATM Locations";
+"accountView.routingNumber.title" = "Routing number";
+"accountView.accountNumber.title" = "Account number";
+
+// PlaidLink Popup
+"plaidLink.popup.title" = "WE’RE SORRY";
+"plaidLink.popup.description" = "We’re unable to link your bank account via Plaid.";
+"plaidLink.connectViaDebitCard.title" = "Link Bank via Debit Card";
+"plaidLink.contactSupport.title" = "Contact Support";
+
+// ConnectedView
+"connectedView.title" = "Connected Accounts";
+"connectedView.row.debitCard" = "Debit Card **** %@";
+"connectedView.row.externalBank" = "%@ **** %@";
+
+// ManualSetup DirectDeposit
+"directDeposit.form.title" = "DIRECT DEPOSIT FORM";
+"directDeposit.form.description" = "Receive paychecks up to two days early by completing this form and sharing it with your employer’s payroll department. \n \n \nYou can also save the completed form to share with your employer later.";
+"directDeposit.employerName.title" = "ENTER THE NAME OF YOUR EMPLOYER";
+"directDeposit.employerName.textFieldTitle" = "Employer name";
+"directDeposit.employerName.textFieldPlaceholder" = "Enter employer name";
+"directDeposit.paycheck.title" = "HOW MUCH OF PAYCHECK YOU WANT TO DEPOSIT?";
+"directDeposit.paycheck.full" = "Full Paycheck";
+"directDeposit.paycheck.enterPercentage" = "Enter Percentage";
+"directDeposit.paycheck.enterAmount" = "Enter Amount";
+"directDeposit.addSignature.title" = "ADD YOUR SIGNATURE";
+"directDeposit.addSignature.description" = "Sign the form on the next page to authorize Direct Deposit enrollment.";
+"directDeposit.addSignature.buttonTitle" = "Add Signature";
+"directDeposit.addSignature.placeholder" = "Signature";
+"directDeposit.manualSetup.successTitle" = "YOUR DIRECT DEPOSIT FORM IS READY";
+"directDeposit.manualSetup.successMessage" = "Share this form with your employer's payroll team to authorize direct deposits to your %@Card";
+"directDeposit.emailForm.buttonTitle" = "Email Form";
+"directDeposit.viewForm.buttonTitle" = "View Form";
+"directDeposit.toolbal.title" = "Direct Deposit";
+"directDeposit.mail.toastMessage" =  "Mail app is not configured";
+"directDeposit.signature.toastMessage" = "Please add your signature";
+"directDeposit.pdf.emailText" = "help@%@Card.co";
+"directDeposit.pdf.formText" = "Direct Deposit Form";
+"directDeposit.pdf.customName" = "Customer name";
+"directDeposit.pdf.payTo" = "Pay \n to the order of";
+"directDeposit.pdf.authorization" ="AUTHORIZATION";
+"directDeposit.pdf.firstDescription" = "I,";
+"directDeposit.pdf.secondDescription" = "authorize,";
+"directDeposit.pdf.thirdDescription" = "to directly deposit my wages";
+"directDeposit.pdf.fourthDescription" = "less lawful withholdings and deductions), or earnings, as applicable, to my PrideCard account, including employer receives written notification from me of its termination of my employment or enagement";
+"directDeposit.pdf.fifthDescription" = "\n This authorization replaces any previous direct deposit authorization and shall remain in effect until my employer receives written notification from me of its termination. The information for my %@Card account is provided above";
+"directDeposit.pdf.sixthDescription" = "I wish to deposit";
+"directDeposit.pdf.signature" = "Signature";
+"directDeposit.pdf.date" = "Date";
+"directDeposit.pdf.entirePaycheck" = "Entire Paycheck";
+
+// BankTransfer
+"bankTransfers.screen.title" = "BANK TRANSFERS";
+"bankTransfers.howTo.title" = "How to transfer money from your bank to %@Card:";
+"bankTransfers.bulletOne.title" = "Login to your bank, and find the transfers section of your bank’s app or website";
+"bankTransfers.bulletTwo.title" = "If it’s your first transfer, you’ll need to add your PrideCard as an external account. Enter you routing and account number, and select Checking as account type.";
+"bankTransfers.bulletThree.title" = "Select PrideCard as the recipient and transfer up to $25k at a time.";
+"bankTransfers.routingNumber.title" = "Rounting number";
+"bankTransfers.accountNumber.title" = "Account number";
+"bankTransfers.disclosure.message" = "Some banks require a one-time test deposit to verify your account. If so, check your %@Card transactions after 1-2 days, and enter the test deposit amounts in the bank’s app or website.";
+
+// Profile
+"profile.toolbar.title" = "Profile";
+"profile.totalDonations.title" = "Total donations";
+"profile.totalDonated.title" = "Total donated";
+"profile.stickers.title" = "Stickers";
+"profile.accountsettings.title" = "Account & Settings";
+"profile.phoneNumber.title" = "Phone Number";
+"profile.email.title" = "Email";
+"profile.address.title" = "Address";
+"profile.depositLimits.title" = "Deposit Limits";
+"profile.help.title" = "Help & support";
+"profile.rewards.title" = "Current Rewards";
+"profile.atm.title" = "ATM's Nearby";
+"profile.taxes.title" = "Taxes";
+"profile.or.title" = "OR";
+"profile.deleteAccount.title" = "Delete Account";
+"profile.version.title" = "Version %@";
+"profile.notifications.title" = "Notifications";
+"profile.contributionToast.message" = "Failed to load your donations";
+"profile.deleteAccount.message" = "Are you sure you want to delete your account?";
+"profile.referrals.title" = "Invite Friends";
+"profile.referrals.message" = "Make donations";
+"profile.logout.title" = "Log Out";
+"profile.logout.message" = "Are you sure you want to log out?";
+
+// Referral
+"referral.screen.title" = "MAKE DONATIONS WITH FRIENDS";
+"referral.info.message" = "Send your invite link to a friend, and we will match their donations for the first %@, or up to %@. This is tax deductable donations in your name.";
+"referral.example.crypto" = "If the friend you invited earns 500 %@ in a week, you will also get 500 AVAX. Your bonus will be paid each Friday to your %@Card wallet.";
+"referral.example.donation" = "If your friend donates %@ in the first %@, we will donate %@ to your selected cause. The donation will be made in your name and is tax deductable.";
+"referral.example.title" = "HOW IT WORKS";
+"referral.campaign.day" = "%d days";
+"referral.campaign.week" = "%d weeks";
+"referral.error.message" = "We are unable to fetch the referral campaigns now. Please try again.";
+"referral.send.buttonTitle" = "Send invite link";
+"referral.copy.buttonTitle" = "Copy invite link";
+"referral.toast.message" = "Invite link copied to clipboard.";
+
+// Asset View
+"assetView.buy.title" = "Buy";
+"assetView.sell.title" = "Sell";
+"assetView.transfer.title" = "Transfer";
+"assetView.wallet_address" = "Wallet address";
+"assetView.today" = "Today";
+"assetView.disclosure" = "Cryptocurrency services powered by Zero Hash";
+"assetView.see_all" = "See all";
+"assetView.transfer_popup.title" = "TRANSFER AVAX";
+"assetView.send.title" = "Send";
+"assetView.receive.title" = "Receive";
+
+//BANK STATEMENT
+"bank_statement.title" = "Bank Statements";
+"bank_statement.emptyTitle" = "NO STATEMENTS";
+"bank_statement.emptyInfo" = "There are currently no bank statements";
+"bank_statement.created" = "Created %@";
+
+// VERIFY CARD
+"verify_card.title" = "Verify card ownership";
+"verify_card.detail" = "Check your card activity for 1 pending micro-transaction from AvalancheCard. Enter the one amount in the fields below. Once verified, this  transaction will be canceled";
+"verify_card.amount.title" = "Amount";
+"verify_card.amount.placeholder" = "Enter amount";
+"verify_card.button.verifyCard" = "Verify Card";
+
+// TransactionDetail
+"transactionDetail.balance.title" = "Balance";
+"transactionDetail.balanceCash.title" = "Balance: %@";
+"transactionDetail.totalDonated.title" = "Total Donated: %@";
+"transactionDetail.currentRewards.title" = "Current rewards";
+"transactionDetail.title" = "Title";
+"transactionDetail.source.title" = "Source";
+"transactionDetail.merchant.title" = "Vendor";
+"transactionDetail.transactionId.title" = "Transaction Id";
+"transactionDetail.paidTo.title" = "Paid To";
+"transactionDetail.description.title" = "Description";
+"transactionDetail.receivedFrom.title" = "Received From";
+"transactionDetail.transactionType.title" = "Order Type";
+"transactionDetail.transactionStatus.title" = "Status";
+"transactionDetail.reward.title" = "Reward";
+"transactionDetail.donation.title" = "Donation";
+"transactionDetail.saveWalletPopup.title" = "SAVE WALLET ADDRESS";
+"transactionDetail.saveWalletPopup.description" = "Would you like to save this wallet address to use again?";
+"transactionDetail.saveWalletPopup.button" = "Save wallet address";
+"transactionDetail.receipt.button" = "Receipt";
+"transactionDetail.networkFee.title" = "Network Fee";
+"transactionDetail.price.title" = "Price";
+"transactionDetail.fee.title" = "Fee";
+"transactionDetail.rewards.title" = "Rewards";
+"transactionDetail.currentReward.title" = "Current Reward";
+
+// Transfer debit suggestion
+"transferDebitSuggestion.title" = "Get Faster Deposits";
+"transferDebitSuggestion.body.title" = "For instant deposits, connect and deposit with your Debit Card";
+"transferDebitSuggestion.connect.title" = "Connect Debit Card";
+
+// Cancel Transfer
+"cancelTransfer.title" = "Cancel Deposit";
+"cancelTransfer.fail.title" = "Something went wrong";
+"cancelTransfer.fail.message" = "We were unable to cancel your deposit. Please try again or contact support.";
+"cancelTransfer.success.title" = "Success!";
+"cancelTransfer.success.message" = "Your deposit has been successfully cancelled.";
+
+// TransactionCard
+"transactionCard.crypto.title" = "%@ Earned";
+"transactionCard.donation.title" = "Donation";
+"transactionCard.cashback.title" = "Cashback";
+"transactionCard.purchase.message" = "I earned %@ by making a %@ purchase with %@.";
+"transactionCard.donation.message" = "Supporting %@ - %@.";
+"transactionCard.shareDonationAmount.message" = "I donated %@ to %@ using %@. Join us in supporting %@.";
+"transactionCard.shareDonationGeneric.message" = "We're raising money for %@ using %@. Join us in supporting %@.";
+"transactionCard.share.title" = "Share";
+"transactionCard.shareCrypto.title" = "I earned %@ by using my Visa %@. Get one here: %@";
+"transactionCard.shareCashback.title" = "I earned %@ back by using my Visa %@. Get one here: %@";
+
+// Share
+"share.navigation_title" = "Share";
+"cause.share.card.fundraiser" = "I'm using PrideCard to support %@ by making passive donations through my everyday purchases.";
+"cause.share.include_donations" = "Include donations";
+"share.email" = "Email";
+"share.facebook" = "Facebook";
+"share.instagram" = "Instagram";
+"share.messages" = "Messages";
+"share.snapchat" = "Snapchat";
+"share.tikTok" = "TikTok";
+"share.twitter" = "Twitter";
+"share.whatsapp" = "WhatsApp";
+"share.more" = "More";
+"share.cancel" = "Cancel";
+"share.failure" = "Failed to share on %@";
+
+// Balance Alert
+"balanceAlert.low.title" = "Low Balance Alert";
+"balanceAlert.low.message" = "Your balance is below %@";
+"balanceAlert.negative.title" = "Negative Balance";
+"balanceAlert.negative.message.cash" = "Please deposit cash";
+"balanceAlert.negative.message.crypto" = "Please deposit Doge";
+"balanceAlert.cta" = "Deposit";
+
+// MARK: - Rewards
+
+// Select Rewards
+"select_rewards.title" = "Select Rewards";
+"select_rewards.subtitle" = "Welcome to %@, please select your rewards. You can change anytime.";
+"select_rewards.continue" = "Continue";
+
+// Edit Rewards
+"edit_rewards.navigation_title" = "Change rewards";
+"edit_rewards.title" = "Please select your rewards";
+
+// User Reward Type
+"user_reward_type.cashback.title" = "Instant Cashback";
+"user_reward_type.cashback.subtitle" = "%.2f%% on every qualifying purchase";
+"user_reward_type.donation.title" = "Donate to Charity";
+"user_reward_type.donation.subtitle" = "%.2f%%  donated to a charity you choose";
+
+// Unspecified Rewards
+"unspecified_rewards.title" = "You can choose between";
+"unspecified_rewards.cta" = "Select a reward";
+
+// Donations Disclosure
+"donations_disclosure.text" = "%@ of the donations you make are tax deductible and go to charity. ";
+"donations_disclosure.alert.title" = "DONATIONS";
+"donations_disclosure.alert.powered_by" = "Powered by ShoppingGives ";
+
+// Alert Attributed Text
+"alert_attributed_text.tax_deductions" = "Donations made to ShoppingGives Foundation EIN: %@.\n100%% of funds granted to designated nonprofit - %@ and %@.";
+"alert_attributed_text.round_up" = "Round up spare change to the nearest dollar when you use your PrideCard. It's an easy way to make a big impact over time.\n\nRound up donations made to ShoppingGives Foundation EIN: %@. 100%% of funds granted to designated nonprofit - %@ and %@.";
+"alert_attributed_text.ein" = "83-01252270";
+"alert_attributed_text.terms" = "Terms & Conditions";
+"alert_attributed_text.privacy" = "Privacy Policy";
+
+// Suggest Cause
+"suggest_cause.title" = "Suggest a Cause";
+"suggest_cause.tell_more" = "Please tell us more";
+"suggest_cause.placeholder" = "Enter text";
+"suggest_cause.max_characters" = "1000 characters max";
+"suggest_cause.submit" = "Submit";
+"suggest_cause.alert.title" = "THANK YOU";
+"suggest_cause.alert.message" = "Thank you for suggesting a cause. Our team will review and follow up.";
+
+  // Causes Filter
+
+"causes_filter.title" = "SELECT A CAUSE";
+"causes_filter.subtitle" = "Select categories you are interested in";
+"causes_filter.continue" = "Continue";
+
+  // Selecte Cause
+"select_cause.title" = "Select Fundraiser";
+"select_cause.subtitle" = "Select cause you are interested in";
+"select_cause.continue" = "Continue";
+
+  // Select Fundraiser
+
+"select_fundraiser.title" = "SELECT A CAUSE";
+"select_fundraiser.subtitle" = "You can change your cause anytime";
+"select_fundraiser.causes" = "%@ CAUSES";
+"select_fundraiser.select" = "Select";
+"select_fundraiser.success.title" = "THANK YOU!";
+"select_fundraiser.success.primary" = "Continue";
+"select_fundraiser.error" = "Unable to select Fundraiser, please try again.";
+
+  // Fundraiser Selection
+
+"fundraiser_selection.allowed" = "Thank you for supporting %@ (you can always change later).";
+"fundraiser_selection.allowed_before_account_creation" = "Thank you for supporting %@ (you can always change later). Next, please create your account.";
+
+  // Causes
+
+"causes.trending" = "Trending";
+"causes.explore" = "Explore";
+"causes.new" = "New";
+"causes.error" = "We were unable to load the Causes right now.\nPlease try again.";
+"causes.retry" = "Retry";
+
+  // Causes List
+
+"causes_list.error.title" = "We're Sorry";
+"causes_list.error.message" = "We aren't able to select this Cause right now.";
+
+  // Fundraiser Status
+
+"fundraiser_status.raised" = "raised";
+"fundraiser_status.donations" = "%@ donations";
+
+  // Skip Fundraiser
+
+"skip_fundraiser.title" = "Skip";
+
+  // Fundraiser Actions
+
+"fundraiser_actions.share" = "Share";
+"fundraiser_actions.donate" = "Donate";
+"fundraiser_actions.more" = "More";
+
+  // More ways to support
+
+"more_ways_to_support.title" = "More ways to support";
+"more_ways_to_support.share.title" = "SHARE";
+"more_ways_to_support.share.friends" = "Invite friends";
+"more_ways_to_support.share.cause" = "Share cause";
+"more_ways_to_support.photo.title" = "PROFILE PHOTO";
+"more_ways_to_support.photo.message" = "Update your profile photo on Social Media";
+"more_ways_to_support.photo.success" = "Image saved to Library!";
+"more_ways_to_support.photo.error" = "Failed to save image";
+"more_ways_to_support.news.title" = "NEWS AND UPDATES";
+"more_ways_to_support.news.message" = "Get news and updates from %@";
+"more_ways_to_support.employer.title" = "EMPLOYER MATCH PROGRAM";
+"more_ways_to_support.employer.message" = "Does your employer have a matching program?\nDouble your impact with a simple email";
+"more_ways_to_support.employer.action" = "Get taxable donations";
+
+"fundraise.share_donation.amount" = "I donated %@ to %@ using %@. Join us in supporting %@.";
+"fundraise.share_donation.generic" = "We're raising money for %@ using %@. Join us in supporting %@.";
+
+ // Share
+"share.card.fundraiser" = "I'm using PrideCard to support %@ by making passive donations through my everyday purchases.";
+"share.include_donations" = "Include donations";
+"share.email" = "Email";
+"share.facebook" = "Facebook";
+"share.instagram" = "Instagram";
+"share.messages" = "Messages";
+"share.snapchat" = "Snapchat";
+"share.tikTok" = "TikTok";
+"share.twitter" = "Twitter";
+"share.whatsapp" = "WhatsApp";
+"share.more" = "More";
+"share.cancel" = "Cancel";
+"share.failure" = "Failed to share on %@";
+
+//Card Share
+"card_share.title.donation" = "Donation";
+"card_share.title.cashback" = "Cashback";
+"card_share.message.donation" = "Supporting %@ - %@.";
+"card_share.title" = "Share";
+"card_share.crypto" = "I earned %@ by using my Visa PrideCard. Get one here: %@";
+"card_share.cashback" = "I earned %@ back by using my Visa PrideCard. Get one here: %@";
+
+// Fundraiser Detail
+"fundraiser_detail.tags" = "Tags";
+"fundraiser_detail.confidence" = "Give with confidence";
+"fundraiser_detail.details" = "Charity details";
+"fundraiser_detail.status" = "501c3 Status";
+"fundraiser_detail.active" = "Active";
+"fundraiser_detail.ein" = "EIN";
+"fundraiser_detail.address" = "Address";
+"fundraiser_detail.website" = "Website";
+"fundraiser_detail.navigator" = "Charity Navigator";
+"fundraiser_detail.latest_donations" = "Latest Donations";
+"fundraiser_detail.select" = "Select Cause";
+"fundraiser_detail.success.title" = "THANK YOU!";
+"fundraiser_detail.error.title" = "We're Sorry";
+"fundraiser_detail.error.geocode" = "We aren't able to open the Charity address right now.";
+"fundraiser_detail.error.select" = "We weren't able to select this Fundraiser. Please try again.";
+
+// EnterCryptoAddressView
+"EnterCryptoAddressView.title" = "SEND %@";
+"EnterCryptoAddressView.wallet_address.title" = "%@ Wallet Address";
+"EnterCryptoAddressView.wallet_address.placeholder" = "Wallet Address";
+"EnterCryptoAddressView.warning" = "Sending to a non - %@ wallet will result in lost funds";
+"EnterCryptoAddressView.delete_popup.title" = "Delete Saved wallet address";
+"EnterCryptoAddressView.delete_popup.message" = "Would you like to delete saved wallet: %@?";
+"EnterCryptoAddressView.delete_popup.primary_button" = "Delete";
+"EnterCryptoAddressView.save_success.message" = "Wallet address saved";
+"EnterCryptoAddressView.delete_success.message" = "Wallet address deleted";
+
+// Round up
+"round_up.title" = "ROUND UPS";
+"round_up.message" = "Round up spare change to the nearest dollar when you use your %@. It's easy way to make a big impact over time.";
+"round_up.item_one" = "Select a cause you'd like to support. You can change anytime.";
+"round_up.item_two" = "Spend with your PrideCard.";
+"round_up.item_three" = "Your spare change will be donated to your selected cause.";
+"round_up.continue" = "Continue";
+"round_up.skip" = "Skip";
+"round_up.purchases" = "Round up purchases";
+
+// Confirmation Crypto Send
+"ConfirmSendCryptoView.title" = "Confirm Transfer";
+"ConfirmSendCryptoView.amount" = "Amount";
+"ConfirmSendCryptoView.to" = "To";
+"ConfirmSendCryptoView.wallet_address" = "Wallet address";
+
+// Enter nickname of wallet
+"enter_nickname_of_wallet.save_title" = "SAVE WALLET ADDRESS";
+"enter_nickname_of_wallet.create_nickname" = "Create a name for \"%@\"";
+"enter_nickname_of_wallet.placeholder" = "Enter name";
+"enter_nickname_of_wallet.textField_title" = "Wallet address name";
+"enter_nickname_of_wallet.disclosures" = "You can change it at any time";
+"enter_nickname_of_wallet.save_button" = "Save";
+"enter_nickname_of_wallet.name_exist.inline_error" = "This wallet address name already exists";
+"enter_nickname_of_wallet.wallet_was_saved" = "Wallet address was saved";
+
+// Enter nickname of wallet
+"edit_nickname_of_wallet.save_title" = "EDIT WALLET ADDRESS";
+
+// Rewards Tab View
+"RewardTabView.lastest_rewards" = "Latest rewards";
+"RewardTabView.see_all" = "See all";
+"RewardTabView.earning_rewards.description" = "Earning rewards in %@";
+
+// Donations
+"donations.select_fundraiser" = "Select a Cause";
+"donations.user_donations" = "My Donations";
+"donations.fundraiser_donations" = "Latest";
+"donations.no_donations" = "No donations yet";
+
+// Cashback
+"cashback.latest" = "Latest rewards";
+"cashback.see_all" = "See all";
+
+// Transaction Rewards Status
+"transaction_rewards_status.pending" = "Pending";
+"transaction_rewards_status.completed" = "Completed";
+
+"ChangeRewardView.title" = "Change rewards";
+"ChangeRewardView.caption" = "How would you like your rewards?";
+"ChangeRewardView.current_rewards" = "Current Rewards";
+
+// Search Causes
+"search_causes.navigation_title" = "Search charities";
+"search_causes.no_results" = "No results found";
+
+// MARK: - Common
+
+// Terms
+"term.privacyPolicy.description" = "By tapping ‘Continue’, you agree to our Terms, E-sign consent and Privacy Policy.";
+"term.termsVoip.description" = "Using VOIP or Google Voice numbers can result in onboarding delays. We NEVER share your phone number with third parties for marketing, per our Privacy Policy.";
+"term.privacyPolicy.attributeText" = "Privacy Policy";
+"term.esignConsent.attributeText" = "E-sign consent";
+"term.terms.attributeText" = "Terms";
+
+// Title
+"error.weAreSorry.title" = "WE’RE SORRY";
+
+// Zero hash
+"Zero_hash_transactiondetail" = "Cryptocurrency services powered by Zero Hash";
+
+// Button Title
+"button.continue.title" = "Continue";
+"button.logout.title" = "Log Out";
+"button.ok.title" = "OK";
+"button.skip.title" = "Skip";
+"button.notNow.title" = "Not now";
+"button.done.title" = "Done";
+"button.back.title" = "Back";
+"button.no.title" = "No";
+"button.yes.title" = "Yes";
+"button.retry.title" = "Retry";
+"button.verify.title" = "Verify";
+"button.confirm.title" = "Confirm";
+
+// Grid Value
+"grid_value.crypto" = "%@ ADA";
+"grid_value.all" = "All";
+
+// Textfield
+"textfield.search.placeholder" = "Search...";
+
+// Toast
+"toast.copy.message" = "Copied to clipboard";
+
+// Disclosure
+"zerohash.disclosure.description" = "Cryptocurrency services powered by Zero Hash";
+
+//...COMMON...
+"generic_ErrorMessage" = "Something went wrong, please try again.";
+
+// Crypto
+"crypto.value" = "Cause";

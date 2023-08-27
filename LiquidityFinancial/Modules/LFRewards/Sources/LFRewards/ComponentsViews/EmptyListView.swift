@@ -3,10 +3,14 @@ import LFUtilities
 import LFStyleGuide
 import LFLocalizable
 
-struct EmptyListView: View {
+public struct EmptyListView: View {
   let text: String
   
-  var body: some View {
+  public init(text: String) {
+    self.text = text
+  }
+  
+  public var body: some View {
     VStack(spacing: 8) {
       ModuleImages.icEmptyList.swiftUIImage
         .resizable()
