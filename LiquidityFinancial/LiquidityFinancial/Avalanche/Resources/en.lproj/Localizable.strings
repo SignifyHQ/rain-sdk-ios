@@ -717,6 +717,12 @@ https://mn.gov/commerce/money/investments/cryptocurrency/. \n\n\n\n\n\n\n";
 
 // MARK: - Common
 
+// Notification Pop up
+"notification_popup.title" = "WOULD YOU LIKE TO BE NOTIFIED?";
+"notification_popup.subtitle" = "Would you like to be notified about the status of your account or if your card has been charged?";
+"notification_popup.action" = "Yes";
+"notification_popup.dismiss" = "Not now";
+
 // Terms
 "term.privacyPolicy.description" = "By tapping ‘Continue’, you agree to our Terms, E-sign consent and Privacy Policy.";
 "term.termsVoip.description" = "Using VOIP or Google Voice numbers can result in onboarding delays. We NEVER share your phone number with third parties for marketing, per our Privacy Policy.";

@@ -1526,6 +1526,16 @@ public enum LFLocalizable {
       public static let title = LFLocalizable.tr("Localizable", "moveMoney.withdraw.title", fallback: "WITHDRAW")
     }
   }
+  public enum NotificationPopup {
+    /// Yes
+    public static let action = LFLocalizable.tr("Localizable", "notification_popup.action", fallback: "Yes")
+    /// Not now
+    public static let dismiss = LFLocalizable.tr("Localizable", "notification_popup.dismiss", fallback: "Not now")
+    /// Would you like to be notified about the status of your account or if your card has been charged?
+    public static let subtitle = LFLocalizable.tr("Localizable", "notification_popup.subtitle", fallback: "Would you like to be notified about the status of your account or if your card has been charged?")
+    /// WOULD YOU LIKE TO BE NOTIFIED?
+    public static let title = LFLocalizable.tr("Localizable", "notification_popup.title", fallback: "WOULD YOU LIKE TO BE NOTIFIED?")
+  }
   public enum OrderPhysicalCard {
     public enum Address {
       /// THE CARD WILL BE SHIPPED TO:

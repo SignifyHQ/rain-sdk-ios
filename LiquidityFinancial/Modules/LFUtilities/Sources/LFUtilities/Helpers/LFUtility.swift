@@ -148,3 +148,10 @@ extension LFUtility {
     }
   }
 }
+
+extension LFUtility {
+  
+  public static var deviceId: String {
+    UIDevice.current.identifierForVendor?.uuidString ?? .empty
+  }
+}

@@ -30,8 +30,5 @@ struct DashboardView: View {
     .popup(item: $viewModel.toastMessage, style: .toast) {
       ToastView(toastMessage: $0)
     }
-    .onAppear {
-      viewModel.appearOperations()
-    }
   }
 }

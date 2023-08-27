@@ -43,6 +43,15 @@ public struct HomeView: View {
         ProfileView()
       }
     }
+    .popup(item: $viewModel.popup) { popup in
+      switch popup {
+      case .notifications:
+        notificationsPopup
+      }
+    }
+    .onAppear {
+      viewModel.appearOperations()
+    }
   }
 }
 
@@ -105,5 +114,20 @@ private extension HomeView {
       }
       .padding(.trailing, 12)
     }
+  }
+  
+  private var notificationsPopup: some View {
+    LiquidityAlert(
+      title: LFLocalizable.NotificationPopup.title,
+      message: LFLocalizable.NotificationPopup.subtitle,
+      primary: .init(
+        text: LFLocalizable.NotificationPopup.action,
+        action: viewModel.notificationsPopupAction
+      ),
+      secondary: .init(
+        text: LFLocalizable.NotificationPopup.dismiss,
+        action: viewModel.clearPopup
+      )
+    )
   }
 }

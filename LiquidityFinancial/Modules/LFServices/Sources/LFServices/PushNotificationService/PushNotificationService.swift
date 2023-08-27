@@ -2,6 +2,7 @@ import FirebaseMessaging
 import UserNotifications
 import Foundation
 import Factory
+import LFUtilities
 
 extension Container {
   public var pushNotificationService: Factory<PushNotificationsService> {
@@ -34,6 +35,18 @@ public class PushNotificationsService: NSObject {
           continuation.resume(throwing: error)
         } else {
           continuation.resume(returning: success)
+        }
+      }
+    })
+  }
+  
+  public func fcmToken() async throws -> String {
+    return try await withCheckedThrowingContinuation({ (continuation: CheckedContinuation<String, Error>) in
+      Messaging.messaging().token { token, error in
+        if let token = token {
+          continuation.resume(returning: token)
+        } else {
+          continuation.resume(throwing: error ?? LFConfiguration.Error.invalidValue)
         }
       }
     })

@@ -5,6 +5,12 @@ public extension UserDefaults {
   @LFUserDefault(key: Key.hasRegisterPushToken, defaultValue: false)
   static var hasRegisterPushToken: Bool
   
+  @LFUserDefault(key: Key.didShowPushTokenPopup, defaultValue: false)
+  static var didShowPushTokenPopup: Bool
+  
+  @LFUserDefault(key: Key.lastestFCMToken, defaultValue: "")
+  static var lastestFCMToken: String
+  
   @LFUserDefault(key: Key.accessTokenExpiresAt, defaultValue: 0)
   static var accessTokenExpiresAt: TimeInterval
   

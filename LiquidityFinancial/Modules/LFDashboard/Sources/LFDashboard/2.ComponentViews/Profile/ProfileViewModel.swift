@@ -17,6 +17,7 @@ final class ProfileViewModel: ObservableObject {
   @LazyInjected(\.accountDataManager) var accountDataManager
   @LazyInjected(\.accountRepository) var accountRepository
   @LazyInjected(\.authorizationManager) var authorizationManager
+  @LazyInjected(\.devicesRepository) var devicesRepository
 
   var name: String {
     accountDataManager.userInfomationData.fullName ?? ""
@@ -106,6 +107,7 @@ extension ProfileViewModel {
       }
       isLoading = true
       do {
+        _ = try await devicesRepository.deregister(deviceId: LFUtility.deviceId, token: UserDefaults.lastestFCMToken)
         _ = try await accountRepository.logout()
       } catch {
         log.error(error.localizedDescription)
