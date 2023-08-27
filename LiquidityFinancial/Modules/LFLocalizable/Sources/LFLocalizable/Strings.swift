@@ -705,6 +705,22 @@ public enum LFLocalizable {
     /// Doge
     public static let value = LFLocalizable.tr("Localizable", "crypto.value", fallback: "Doge")
   }
+  public enum CryptoChart {
+    public enum Filter {
+      /// All
+      public static let all = LFLocalizable.tr("Localizable", "cryptoChart.filter.all", fallback: "All")
+      /// 1D
+      public static let day = LFLocalizable.tr("Localizable", "cryptoChart.filter.day", fallback: "1D")
+      /// Live
+      public static let live = LFLocalizable.tr("Localizable", "cryptoChart.filter.live", fallback: "Live")
+      /// 1M
+      public static let month = LFLocalizable.tr("Localizable", "cryptoChart.filter.month", fallback: "1M")
+      /// 1W
+      public static let week = LFLocalizable.tr("Localizable", "cryptoChart.filter.week", fallback: "1W")
+      /// 1Y
+      public static let year = LFLocalizable.tr("Localizable", "cryptoChart.filter.year", fallback: "1Y")
+    }
+  }
   public enum CryptoReceipt {
     public enum AccountID {
       /// Account ID

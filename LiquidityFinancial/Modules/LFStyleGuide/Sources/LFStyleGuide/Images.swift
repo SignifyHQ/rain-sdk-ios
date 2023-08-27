@@ -37,6 +37,10 @@ public enum GenImages {
       public static let tax = ImageAsset(name: "tax")
       public static let verification = ImageAsset(name: "verification")
     }
+    public enum Charts {
+      public static let candleStick = ImageAsset(name: "candleStick")
+      public static let lineChart = ImageAsset(name: "lineChart")
+    }
     public enum CompanyLogo {
       public static let companyLogo1 = ImageAsset(name: "company-logo-1")
       public static let companyLogo2 = ImageAsset(name: "company-logo-2")
@@ -113,6 +117,9 @@ public enum GenImages {
     public static let walletAddress = ImageAsset(name: "walletAddress")
   }
   public enum Images {
+    public enum Charts {
+      public static let candleStick = ImageAsset(name: "candleStick")
+    }
     public enum Transactions {
       public static let txCardPurchase = ImageAsset(name: "txCardPurchase")
       public static let txCardRefund = ImageAsset(name: "txCardRefund")

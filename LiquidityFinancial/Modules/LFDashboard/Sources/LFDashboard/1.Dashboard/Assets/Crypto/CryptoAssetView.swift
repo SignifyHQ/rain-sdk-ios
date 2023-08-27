@@ -4,6 +4,7 @@ import LFStyleGuide
 import LFLocalizable
 import LFUtilities
 import LFTransaction
+import LFCryptoChart
 
 struct CryptoAssetView: View {
   @StateObject private var viewModel: CryptoAssetViewModel
@@ -70,6 +71,17 @@ private extension CryptoAssetView {
         VStack(spacing: 10) {
           balance
           priceView
+          CryptoChartView(
+            filterOptionSubject: viewModel.filterOptionSubject,
+            chartOptionSubject: viewModel.chartOptionSubject
+          )
+          .setHighlightValueEnable(false)
+          .setGridXEnable(false)
+          .setGridYEnable(true)
+          .frame(height: 184)
+          .onTapGesture {
+            // viewModel.cryptoChartTapped()
+          }
           BalanceAlertView(type: .crypto, hasContacts: true, cryptoBalance: viewModel.account?.availableBalance) {
             viewModel.walletRowTapped()
           }

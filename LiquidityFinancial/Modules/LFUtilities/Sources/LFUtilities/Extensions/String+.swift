@@ -246,6 +246,16 @@ public extension String {
     return DateFormatter.monthDayDisplay.string(from: date)
   }
   
+  func convertTimestampToDouble() -> Double {
+    let dateFormatter = DateFormatter()
+    dateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSSSSSZ"
+    
+    if let date = dateFormatter.date(from: self) {
+      let unixTimestamp = date.timeIntervalSince1970
+      return unixTimestamp
+    }
+    return .zero
+  }
 }
 
 extension Collection {

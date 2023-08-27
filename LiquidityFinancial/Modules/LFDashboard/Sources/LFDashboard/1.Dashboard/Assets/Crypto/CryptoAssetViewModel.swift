@@ -1,14 +1,18 @@
+import Combine
 import Foundation
 import AccountDomain
 import LFUtilities
 import Factory
 import LFTransaction
+import CryptoChartData
+import LFCryptoChart
 
 @MainActor
 class CryptoAssetViewModel: ObservableObject {
   @LazyInjected(\.accountDataManager) var accountDataManager
   @LazyInjected(\.accountRepository) var accountRepository
-  
+  @LazyInjected(\.marketManager) var marketManager
+
   @Published var account: LFAccount?
   @Published var loading: Bool = false
   @Published var showTransferSheet: Bool = false
@@ -25,7 +29,11 @@ class CryptoAssetViewModel: ObservableObject {
   let asset: AssetModel
   let currencyType = Constants.CurrencyType.crypto.rawValue
   private let guestHandler: () -> Void
+  private var subscribers: Set<AnyCancellable> = []
 
+  var filterOptionSubject = CurrentValueSubject<CryptoFilterOption, Never>(.live)
+  var chartOptionSubject = CurrentValueSubject<ChartOption, Never>(.line)
+  
   var cryptoBalance: String {
     account?.availableBalance.formattedAmount(
       minFractionDigits: 3, maxFractionDigits: 3
@@ -49,6 +57,8 @@ class CryptoAssetViewModel: ObservableObject {
   init(asset: AssetModel, guestHandler: @escaping () -> Void) {
     self.asset = asset
     self.guestHandler = guestHandler
+    
+    observeMarketManager()
   }
 }
 
@@ -83,6 +93,28 @@ private extension CryptoAssetViewModel {
       toastMessage = error.localizedDescription
       activity = .failure
     }
+  }
+  
+  func observeMarketManager() {
+    marketManager.liveLineModelsSubject.map { models in
+      guard let value = models.last?.close else {
+        return "0.00"
+      }
+      return value.formattedAmount(prefix: "$", minFractionDigits: 6, maxFractionDigits: 6)
+    }
+    .receive(on: DispatchQueue.main)
+    .assign(to: \.cryptoPrice, on: self)
+    .store(in: &subscribers)
+    
+    marketManager.liveLineModelsSubject.map { models -> Double in
+      guard let value = models.last?.changePercentage else {
+        return 0
+      }
+      return value
+    }
+    .receive(on: DispatchQueue.main)
+    .assign(to: \.changePercent, on: self)
+    .store(in: &subscribers)
   }
 }
 

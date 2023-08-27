@@ -715,6 +715,14 @@ https://mn.gov/commerce/money/investments/cryptocurrency/. \n\n\n\n\n\n\n";
 "ChangeRewardView.caption" = "How would you like your rewards?";
 "ChangeRewardView.current_rewards" = "Current Rewards";
 
+// CryptoChart
+"cryptoChart.filter.live" = "Live";
+"cryptoChart.filter.day" = "1D";
+"cryptoChart.filter.week" = "1W";
+"cryptoChart.filter.month" = "1M";
+"cryptoChart.filter.year" = "1Y";
+"cryptoChart.filter.all" = "All";
+
 // MARK: - Common
 
 // Notification Pop up

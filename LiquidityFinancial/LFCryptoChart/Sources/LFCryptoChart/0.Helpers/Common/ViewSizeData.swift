@@ -1,0 +1,14 @@
+import SwiftUI
+
+public struct ViewSizeData: Identifiable, Equatable, Hashable {
+  public let id: UUID = .init()
+  public let size: CGSize
+
+  public static func == (lhs: Self, rhs: Self) -> Bool {
+    lhs.id == rhs.id
+  }
+
+  public func hash(into hasher: inout Hasher) {
+    hasher.combine(id)
+  }
+}

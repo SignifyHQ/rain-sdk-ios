@@ -23,6 +23,7 @@ let package = Package(
     .package(name: "LFBank", path: "../LFBank"),
     .package(name: "LFTransaction", path: "../LFTransaction"),
     .package(name: "LFWalletAddress", path: "../LFWalletAddress"),
+    .package(name: "LFCryptoChart", path: "../LFCryptoChart"),
     .package(name: "LFData", path: "../LFData"),
     .package(name: "LFNetwork", path: "../LFNetwork"),
     .package(name: "LFRewards", path: "../LFRewards"),
@@ -33,7 +34,7 @@ let package = Package(
     .target(
       name: "LFDashboard",
       dependencies: [
-        "LFUtilities", "LFStyleGuide", "LFLocalizable", "LFServices", "LFCard", "LFBank", "LFTransaction", "CodeScanner", "LFWalletAddress",
+        "LFUtilities", "LFStyleGuide", "LFLocalizable", "LFServices", "LFCard", "LFBank", "LFTransaction", "LFCryptoChart", "CodeScanner", "LFWalletAddress",
         .product(name: "OnboardingData", package: "LFData"),
         .product(name: "NetSpendData", package: "LFData"),
         .product(name: "ZerohashData", package: "LFData"),

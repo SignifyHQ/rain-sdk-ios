@@ -1,0 +1,26 @@
+import SwiftUI
+
+public class ChartStyle: ObservableObject {
+  public let backgroundColor: ColorGradient
+  public let foregroundColor: [ColorGradient]
+
+  public init(backgroundColor: Color, foregroundColor: [ColorGradient]) {
+    self.backgroundColor = ColorGradient(backgroundColor)
+    self.foregroundColor = foregroundColor
+  }
+
+  public init(backgroundColor: Color, foregroundColor: ColorGradient) {
+    self.backgroundColor = ColorGradient(backgroundColor)
+    self.foregroundColor = [foregroundColor]
+  }
+
+  public init(backgroundColor: ColorGradient, foregroundColor: ColorGradient) {
+    self.backgroundColor = backgroundColor
+    self.foregroundColor = [foregroundColor]
+  }
+
+  public init(backgroundColor: ColorGradient, foregroundColor: [ColorGradient]) {
+    self.backgroundColor = backgroundColor
+    self.foregroundColor = foregroundColor
+  }
+}
