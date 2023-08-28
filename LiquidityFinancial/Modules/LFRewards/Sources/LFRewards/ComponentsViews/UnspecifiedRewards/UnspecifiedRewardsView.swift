@@ -2,7 +2,7 @@ import SwiftUI
 import LFStyleGuide
 import LFUtilities
 import LFLocalizable
-import PridcardRewards
+import PridecardRewards
 
 public struct UnspecifiedRewardsView: View {
   @State private var showEditRewards = false

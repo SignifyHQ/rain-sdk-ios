@@ -7,6 +7,7 @@ excluded:
   - "**/.build"
   - "**/*Tests.swift"
   - "**/NetworkDebugTool"
+  - "**/LFCryptoChart"
 opt_in_rules:
   - array_init
   - closure_body_length

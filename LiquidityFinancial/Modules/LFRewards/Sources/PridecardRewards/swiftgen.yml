@@ -12,14 +12,4 @@ xcassets:
           forceProvidesNamespaces: true
           publicAccess: false
         output: ModuleImages.swift
-        
-  - inputs:
-      - Colors.xcassets
-    outputs:
-      - templateName: swift5
-        params:
-          enumName: ModuleColors
-          forceProvidesNamespaces: true
-          publicAccess: false
-        output: ModuleColors.swift
 

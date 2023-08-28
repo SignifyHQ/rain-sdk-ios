@@ -2,7 +2,7 @@ import SwiftUI
 import LFStyleGuide
 import LFUtilities
 import LFLocalizable
-import PridcardRewards
+import PridecardRewards
 
 public enum RewardWhereStart {
   case onboarding
