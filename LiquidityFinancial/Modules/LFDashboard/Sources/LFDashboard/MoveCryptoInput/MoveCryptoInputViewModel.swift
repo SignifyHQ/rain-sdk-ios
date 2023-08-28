@@ -10,7 +10,8 @@ final class MoveCryptoInputViewModel: ObservableObject {
   @LazyInjected(\.accountRepository) var accountRepository
   @LazyInjected(\.accountDataManager) var accountDataManager
 
-  @Published var account: LFAccount?
+  @Published var cryptoAccount: LFAccount?
+  @Published var fiatAccount: LFAccount?
   @Published var navigation: Navigation?
   @Published var isFetchingData = false
   @Published var isPerformingAction = false
@@ -43,7 +44,7 @@ final class MoveCryptoInputViewModel: ObservableObject {
     case .sellCrypto:
       fetchSellCryptoQuote(amount: "\(amount)")
     case .sendCrypto:
-      guard let account = account else {
+      guard let account = cryptoAccount else {
         return
       }
       navigation = .enterAddress(account: account)
@@ -53,9 +54,9 @@ final class MoveCryptoInputViewModel: ObservableObject {
   private func generateGridValues() {
     switch type {
     case .buyCrypto:
-      gridValues = Constant.Buy.buildRecommend(available: account?.availableUsdBalance ?? 0)
+      gridValues = Constant.Buy.buildRecommend(available: fiatAccount?.availableBalance ?? 0)
     case .sellCrypto, .sendCrypto:
-      gridValues = Constant.Sell.buildRecommend(available: account?.availableBalance ?? 0)
+      gridValues = Constant.Sell.buildRecommend(available: cryptoAccount?.availableBalance ?? 0)
     }
   }
 }
@@ -66,12 +67,17 @@ private extension MoveCryptoInputViewModel {
     Task {
       defer { isFetchingData = false }
       isFetchingData = true
-      let accounts = try await accountRepository.getAccount(currencyType: currencyType)
-      guard let account = accounts.first else {
+      
+      let fiatAccounts = try await self.accountRepository.getAccount(currencyType: Constants.CurrencyType.fiat.rawValue)
+      let cryptoAccounts = try await self.accountRepository.getAccount(currencyType: Constants.CurrencyType.crypto.rawValue)
+      guard let fiatAccount = fiatAccounts.first, let cryptoAccount = cryptoAccounts.first else {
         return
       }
-      self.account = account
-      self.accountDataManager.cryptoAccountID = account.id
+      self.fiatAccount = fiatAccount
+      self.cryptoAccount = cryptoAccount
+      self.accountDataManager.cryptoAccountID = cryptoAccount.id
+      self.accountDataManager.fiatAccountID = fiatAccount.id
+      
       generateGridValues()
     }
   }
@@ -167,21 +173,21 @@ extension MoveCryptoInputViewModel {
     switch type {
     case .buyCrypto:
       return LFLocalizable.MoveCryptoInput.BuyAvailableBalance.subtitle(
-        account?.availableUsdBalance.formattedAmount(prefix: "$") ?? "$0.00"
+        fiatAccount?.availableBalance.formattedAmount(prefix: "$") ?? "$0.00"
       )
     case .sellCrypto:
-      guard let balance = account?.availableBalance.roundTo3f() else {
+      guard let balance = cryptoAccount?.availableBalance.roundTo3f() else {
         return nil
       }
       return LFLocalizable.MoveCryptoInput.SellAvailableBalance.subtitle(
-        "\(balance)".formattedAmount(minFractionDigits: 3, maxFractionDigits: 3)
+        "\(balance)".formattedAmount(minFractionDigits: 3, maxFractionDigits: 3), LFUtility.cryptoCurrency.uppercased()
       )
     case .sendCrypto:
-      guard let balance = account?.availableBalance.roundTo3f() else {
+      guard let balance = cryptoAccount?.availableBalance.roundTo3f() else {
         return nil
       }
       return LFLocalizable.MoveCryptoInput.SendAvailableBalance.subtitle(
-        "\(balance)".formattedAmount(minFractionDigits: 3, maxFractionDigits: 3)
+        "\(balance)".formattedAmount(minFractionDigits: 3, maxFractionDigits: 3), LFUtility.cryptoCurrency.uppercased()
       )
     }
   }
@@ -190,17 +196,17 @@ extension MoveCryptoInputViewModel {
     switch type {
     case .buyCrypto:
       return LFLocalizable.MoveCryptoInput.Buy.annotation(
-        account?.availableUsdBalance.formattedAmount(prefix: "$") ?? "$0.00"
+        fiatAccount?.availableBalance.formattedAmount(prefix: "$") ?? "$0.00"
       )
     case .sellCrypto:
-      guard let balance = account?.availableBalance.roundTo3f() else {
+      guard let balance = cryptoAccount?.availableBalance.roundTo3f() else {
         return String.empty
       }
       return LFLocalizable.MoveCryptoInput.Sell.annotation(
         "\(balance)".formattedAmount(minFractionDigits: 3, maxFractionDigits: 3)
       )
     case .sendCrypto:
-      guard let balance = account?.availableBalance.roundTo3f() else {
+      guard let balance = cryptoAccount?.availableBalance.roundTo3f() else {
         return String.empty
       }
       return LFLocalizable.MoveCryptoInput.Send.annotation(
@@ -236,7 +242,7 @@ extension MoveCryptoInputViewModel {
   func validateAmountInput() {
     numberOfShakes = 0
     inlineError = validateAmount(
-      with: type == .sellCrypto ? account?.availableBalance : account?.availableUsdBalance
+      with: type == .sellCrypto ? cryptoAccount?.availableBalance : fiatAccount?.availableBalance
     )
     if inlineError.isNotNil {
       withAnimation(.linear(duration: 0.5)) {

@@ -330,9 +330,9 @@
 "MoveCryptoInput.buy.title" = "BUY DOGE";
 "MoveCryptoInput.buyAvailableBalance.subtitle" = "%@ available";
 "MoveCryptoInput.sell.title" = "SELL DOGE";
-"MoveCryptoInput.sellAvailableBalance.subtitle" = "%@ available to sell";
+"MoveCryptoInput.sellAvailableBalance.subtitle" = "%@ %@ available";
 "MoveCryptoInput.send.title" = "SEND DOGE";
-"MoveCryptoInput.sendAvailableBalance.subtitle" = "%@ available";
+"MoveCryptoInput.sendAvailableBalance.subtitle" = "%@ %@ available";
 "MoveCryptoInput.buy.annotation" = "You currently have %@ available to buy Dogecoin. If this amount is less than expected, please contact support.";
 "MoveCryptoInput.sell.annotation" = "You currently have %@ Dogecoin available to sell. Doge Rewards are not available to sell until 48 hours after they are earned.";
 "MoveCryptoInput.send.annotation" = "You currently have %@ Dogecoin available to sell. Doge Rewards are not available to sell until 48 hours after they are earned.";

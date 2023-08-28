@@ -182,9 +182,9 @@ public enum LFLocalizable {
       public static let title = LFLocalizable.tr("Localizable", "MoveCryptoInput.sell.title", fallback: "SELL DOGE")
     }
     public enum SellAvailableBalance {
-      /// %@ available to sell
-      public static func subtitle(_ p1: Any) -> String {
-        return LFLocalizable.tr("Localizable", "MoveCryptoInput.sellAvailableBalance.subtitle", String(describing: p1), fallback: "%@ available to sell")
+      /// %@ %@ available
+      public static func subtitle(_ p1: Any, _ p2: Any) -> String {
+        return LFLocalizable.tr("Localizable", "MoveCryptoInput.sellAvailableBalance.subtitle", String(describing: p1), String(describing: p2), fallback: "%@ %@ available")
       }
     }
     public enum Send {
@@ -198,9 +198,9 @@ public enum LFLocalizable {
       public static let title = LFLocalizable.tr("Localizable", "MoveCryptoInput.send.title", fallback: "SEND DOGE")
     }
     public enum SendAvailableBalance {
-      /// %@ available
-      public static func subtitle(_ p1: Any) -> String {
-        return LFLocalizable.tr("Localizable", "MoveCryptoInput.sendAvailableBalance.subtitle", String(describing: p1), fallback: "%@ available")
+      /// %@ %@ available
+      public static func subtitle(_ p1: Any, _ p2: Any) -> String {
+        return LFLocalizable.tr("Localizable", "MoveCryptoInput.sendAvailableBalance.subtitle", String(describing: p1), String(describing: p2), fallback: "%@ %@ available")
       }
     }
   }
