@@ -46,6 +46,12 @@ struct CryptoAssetView: View {
             kind: transaction.detailType,
             isPopToRoot: false
           )
+        case .chartDetail:
+          CryptoChartDetailView(
+            filterOptionSubject: viewModel.filterOptionSubject,
+            chartOptionSubject: viewModel.chartOptionSubject,
+            account: viewModel.account
+          )
         }
       }
       .defaultToolBar(navigationTitle: viewModel.asset.type?.title ?? .empty)
@@ -80,7 +86,7 @@ private extension CryptoAssetView {
           .setGridYEnable(true)
           .frame(height: 184)
           .onTapGesture {
-            // viewModel.cryptoChartTapped()
+            viewModel.cryptoChartTapped()
           }
           BalanceAlertView(type: .crypto, hasContacts: true, cryptoBalance: viewModel.account?.availableBalance) {
             viewModel.walletRowTapped()

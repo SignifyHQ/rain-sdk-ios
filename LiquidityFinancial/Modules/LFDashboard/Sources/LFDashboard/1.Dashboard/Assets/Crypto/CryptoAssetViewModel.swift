@@ -164,6 +164,11 @@ extension CryptoAssetViewModel {
     }
   }
   
+  func cryptoChartTapped() {
+    Haptic.impact(.soft).generate()
+    navigation = .chartDetail
+  }
+  
   func transactionItemTapped(_ transaction: TransactionModel) {
     if false { // userManager.isGuest TODO: Will be implemented later
       guestHandler()
@@ -188,6 +193,7 @@ extension CryptoAssetViewModel {
     case sendCrypto
     case transactions
     case transactionDetail(TransactionModel)
+    case chartDetail
   }
   
   enum SheetPresentation: Identifiable {

@@ -723,6 +723,25 @@ https://mn.gov/commerce/money/investments/cryptocurrency/. \n\n\n\n\n\n\n";
 "cryptoChart.filter.year" = "1Y";
 "cryptoChart.filter.all" = "All";
 
+// CryptoChartDetail
+"cryptoChartDetail.buy.title" = "Buy";
+"cryptoChartDetail.sell.title" = "Sell";
+"cryptoChartDetail.send.title" = "Send";
+"cryptoChartDetail.receive.title" = "Receive";
+"cryptoChartDetail.transfer.title" = "Transfer";
+"cryptoChartDetail.walletAddress.title" = "Wallet address";
+"cryptoChartDetail.lastTransactions.title" = "Latest Transactions";
+"cryptoChartDetail.seeAll.title" = "See all";
+"cryptoChartDetail.today.title" = "Today";
+"cryptoChartDetail.change.title" = "Change";
+"cryptoChartDetail.open.title" = "Open";
+"cryptoChartDetail.close.title" = "Close";
+"cryptoChartDetail.high.title" = "High";
+"cryptoChartDetail.low.title" = "Low";
+"cryptoChartDetail.volume.title" = "Volume";
+"cryptoChartDetail.transferBalance.title" = "YOU DON'T HAVE ANY DOGE TO TRANSFER AT THIS TIME.";
+"cryptoChartDetail.transferCoin.title" = "Transfer %@";
+
 // MARK: - Common
 
 // Notification Pop up

@@ -721,6 +721,78 @@ public enum LFLocalizable {
       public static let year = LFLocalizable.tr("Localizable", "cryptoChart.filter.year", fallback: "1Y")
     }
   }
+  public enum CryptoChartDetail {
+    public enum Buy {
+      /// Buy
+      public static let title = LFLocalizable.tr("Localizable", "cryptoChartDetail.buy.title", fallback: "Buy")
+    }
+    public enum Change {
+      /// Change
+      public static let title = LFLocalizable.tr("Localizable", "cryptoChartDetail.change.title", fallback: "Change")
+    }
+    public enum Close {
+      /// Close
+      public static let title = LFLocalizable.tr("Localizable", "cryptoChartDetail.close.title", fallback: "Close")
+    }
+    public enum High {
+      /// High
+      public static let title = LFLocalizable.tr("Localizable", "cryptoChartDetail.high.title", fallback: "High")
+    }
+    public enum LastTransactions {
+      /// Latest Transactions
+      public static let title = LFLocalizable.tr("Localizable", "cryptoChartDetail.lastTransactions.title", fallback: "Latest Transactions")
+    }
+    public enum Low {
+      /// Low
+      public static let title = LFLocalizable.tr("Localizable", "cryptoChartDetail.low.title", fallback: "Low")
+    }
+    public enum Open {
+      /// Open
+      public static let title = LFLocalizable.tr("Localizable", "cryptoChartDetail.open.title", fallback: "Open")
+    }
+    public enum Receive {
+      /// Receive
+      public static let title = LFLocalizable.tr("Localizable", "cryptoChartDetail.receive.title", fallback: "Receive")
+    }
+    public enum SeeAll {
+      /// See all
+      public static let title = LFLocalizable.tr("Localizable", "cryptoChartDetail.seeAll.title", fallback: "See all")
+    }
+    public enum Sell {
+      /// Sell
+      public static let title = LFLocalizable.tr("Localizable", "cryptoChartDetail.sell.title", fallback: "Sell")
+    }
+    public enum Send {
+      /// Send
+      public static let title = LFLocalizable.tr("Localizable", "cryptoChartDetail.send.title", fallback: "Send")
+    }
+    public enum Today {
+      /// Today
+      public static let title = LFLocalizable.tr("Localizable", "cryptoChartDetail.today.title", fallback: "Today")
+    }
+    public enum Transfer {
+      /// Transfer
+      public static let title = LFLocalizable.tr("Localizable", "cryptoChartDetail.transfer.title", fallback: "Transfer")
+    }
+    public enum TransferBalance {
+      /// YOU DON'T HAVE ANY DOGE TO TRANSFER AT THIS TIME.
+      public static let title = LFLocalizable.tr("Localizable", "cryptoChartDetail.transferBalance.title", fallback: "YOU DON'T HAVE ANY DOGE TO TRANSFER AT THIS TIME.")
+    }
+    public enum TransferCoin {
+      /// Transfer %@
+      public static func title(_ p1: Any) -> String {
+        return LFLocalizable.tr("Localizable", "cryptoChartDetail.transferCoin.title", String(describing: p1), fallback: "Transfer %@")
+      }
+    }
+    public enum Volume {
+      /// Volume
+      public static let title = LFLocalizable.tr("Localizable", "cryptoChartDetail.volume.title", fallback: "Volume")
+    }
+    public enum WalletAddress {
+      /// Wallet address
+      public static let title = LFLocalizable.tr("Localizable", "cryptoChartDetail.walletAddress.title", fallback: "Wallet address")
+    }
+  }
   public enum CryptoReceipt {
     public enum AccountID {
       /// Account ID

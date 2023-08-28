@@ -58,23 +58,6 @@ struct CashView: View {
 }
 
 private extension CashView {
-  private var moveMoney: some View {
-    HStack(spacing: 6) {
-      iconTextButton(
-        title: LFLocalizable.CashTab.Deposit.title,
-        image: GenImages.CommonImages.addMoney.swiftUIImage
-      ) {
-        viewModel.addMoneyTapped()
-      }
-      iconTextButton(
-        title: LFLocalizable.CashTab.Withdraw.title,
-        image: GenImages.CommonImages.sendMoney.swiftUIImage
-      ) {
-        viewModel.sendMoneyTapped()
-      }
-    }
-  }
-  
   var changeAssetButton: some View {
     HStack(spacing: 8) {
       viewModel.selectedAsset.image
@@ -118,7 +101,6 @@ private extension CashView {
           BalanceAlertView(type: .cash, hasContacts: !viewModel.linkedAccount.isEmpty, cashBalance: viewModel.cashBalanceValue) {
             viewModel.addMoneyTapped()
           }
-          moveMoney
           activity(size: geo.size)
         }
         .padding(.horizontal, 30)
@@ -189,21 +171,6 @@ private extension CashView {
       }
       .foregroundColor(Colors.label.swiftUIColor)
     }
-  }
-  
-  func iconTextButton(title: String, image: Image, action: @escaping () -> Void) -> some View {
-    Button(action: action) {
-      HStack(spacing: 8) {
-        image
-        Text(title)
-          .font(Fonts.bold.swiftUIFont(size: Constants.FontSize.ultraSmall.value))
-      }
-      .foregroundColor(Colors.label.swiftUIColor)
-      .padding(.vertical, 12)
-    }
-    .frame(maxWidth: .infinity)
-    .background(Colors.secondaryBackground.swiftUIColor)
-    .cornerRadius(10)
   }
   
   func transactionsView(size: CGSize) -> some View {
