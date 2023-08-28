@@ -464,6 +464,7 @@
 "accountView.atm_location_title" = "ATM Locations";
 "accountView.routingNumber.title" = "Routing number";
 "accountView.accountNumber.title" = "Account number";
+"accountView.notifications" = "Enable Notifications";
 
 // PlaidLink Popup
 "plaidLink.popup.title" = "WE’RE SORRY";

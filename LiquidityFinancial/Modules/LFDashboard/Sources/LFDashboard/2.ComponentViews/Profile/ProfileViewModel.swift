@@ -104,6 +104,7 @@ extension ProfileViewModel {
         authorizationManager.forcedLogout()
         intercomService.pushEventLogout()
         dismissPopup()
+        UserDefaults.lastestFCMToken = .empty
       }
       isLoading = true
       do {

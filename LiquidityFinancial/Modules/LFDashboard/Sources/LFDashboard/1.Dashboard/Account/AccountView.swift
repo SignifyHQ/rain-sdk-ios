@@ -7,6 +7,8 @@ import NetspendSdk
 import LFBank
 
 struct AccountsView: View {
+  @Environment(\.scenePhase) var scenePhase
+  
   @StateObject private var viewModel = AccountViewModel()
   
   var body: some View {
@@ -165,6 +167,15 @@ private extension AccountsView {
       ) {
         // TODO: Will do later
       }
+      if !viewModel.notificationsEnabled {
+        ArrowButton(
+          image: GenImages.CommonImages.Accounts.notifications.swiftUIImage,
+          title: LFLocalizable.AccountView.notifications,
+          value: nil
+        ) {
+          viewModel.notificationTapped()
+        }
+      }
       ArrowButton(
         image: GenImages.CommonImages.Accounts.legal.swiftUIImage,
         title: LFLocalizable.AccountView.legal,
@@ -179,7 +190,11 @@ private extension AccountsView {
       ) {
         viewModel.navigation = .debugMenu
       }
-    }
+    }.onChange(of: scenePhase, perform: { newValue in
+      if newValue == .active {
+        viewModel.checkNotificationsStatus()
+      }
+    })
   }
 
   var depositLimits: some View {

@@ -239,6 +239,8 @@ public enum LFLocalizable {
     public static let legal = LFLocalizable.tr("Localizable", "accountView.legal", fallback: "Legal")
     /// Limits
     public static let limits = LFLocalizable.tr("Localizable", "accountView.limits", fallback: "Limits")
+    /// Enable Notifications
+    public static let notifications = LFLocalizable.tr("Localizable", "accountView.notifications", fallback: "Enable Notifications")
     /// Current Rewards
     public static let rewards = LFLocalizable.tr("Localizable", "accountView.rewards", fallback: "Current Rewards")
     /// Shortcuts

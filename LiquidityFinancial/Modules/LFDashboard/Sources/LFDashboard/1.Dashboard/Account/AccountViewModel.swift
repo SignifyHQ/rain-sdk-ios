@@ -15,7 +15,9 @@ class AccountViewModel: ObservableObject {
   @LazyInjected(\.netspendDataManager) var netspendDataManager
   @LazyInjected(\.accountDataManager) var accountDataManager
   @LazyInjected(\.intercomService) var intercomService
-
+  @LazyInjected(\.pushNotificationService) var pushNotificationService
+  @LazyInjected(\.devicesRepository) var devicesRepository
+  
   @Published var navigation: Navigation?
   @Published var isDisableView: Bool = false
   @Published var isLoadingACH: Bool = false
@@ -24,6 +26,7 @@ class AccountViewModel: ObservableObject {
   @Published var toastMessage: String?
   @Published var linkedAccount: [APILinkedSourceData] = []
   @Published var achInformation: ACHModel = .default
+  @Published var notificationsEnabled = false
   
   var networkEnvironment: NetworkEnvironment {
     EnvironmentManager().networkEnvironment
@@ -31,6 +34,7 @@ class AccountViewModel: ObservableObject {
   
   init() {
     getACHInfo()
+    checkNotificationsStatus()
   }
 }
 
@@ -46,6 +50,62 @@ extension AccountViewModel {
   
   func bankStatementTapped() {
     navigation = .bankStatement
+  }
+  
+  func checkNotificationsStatus() {
+    Task { @MainActor in
+      do {
+        let status = try await pushNotificationService.notificationSettingStatus()
+        self.notificationsEnabled = status == .authorized
+      } catch {
+        log.error(error.localizedDescription)
+      }
+    }
+  }
+  
+  func notificationTapped() {
+    Task { @MainActor in
+      do {
+        let status = try await pushNotificationService.notificationSettingStatus()
+        switch status {
+        case .authorized:
+          break
+        case .notDetermined:
+          let success = try await pushNotificationService.requestPermission()
+          if success {
+            break
+          }
+          return
+        case .denied:
+          if let settingsUrl = URL(string: UIApplication.openSettingsURLString), UIApplication.shared.canOpenURL(settingsUrl) {
+            await UIApplication.shared.open(settingsUrl)
+          }
+          return
+        default:
+          return
+        }
+        self.pushFCMTokenIfNeed()
+      } catch {
+        log.error(error)
+      }
+    }
+  }
+  
+  func pushFCMTokenIfNeed() {
+    Task { @MainActor in
+      do {
+        let token = try await pushNotificationService.fcmToken()
+        if token == UserDefaults.lastestFCMToken {
+          return
+        }
+        let response = try await devicesRepository.register(deviceId: LFUtility.deviceId, token: token)
+        if response.success {
+          UserDefaults.lastestFCMToken = token
+        }
+      } catch {
+        log.error(error)
+      }
+    }
   }
 }
 
