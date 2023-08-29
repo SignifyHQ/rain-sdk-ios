@@ -9,8 +9,8 @@ import AuthorizationManager
 public class MarketManager {
   @LazyInjected(\.cryptoChartRepository) var cryptoChartRepository
   @LazyInjected(\.authorizationManager) var authorizationManager
-
-  // MARK: - LineChart Subjects
+  
+    // MARK: - LineChart Subjects
   public let lineModelsSubject = CurrentValueSubject<[CryptoFilterOption: [HistoricalPriceModel]], Never>([:])
   public let lineDatasSubject = CurrentValueSubject<[CryptoFilterOption: [(Double, Double)]], Never>([:])
   public let lineRangeYSubject = CurrentValueSubject<[CryptoFilterOption: ClosedRange<FloatLiteralType>], Never>([:])
@@ -21,7 +21,7 @@ public class MarketManager {
   public let liveRangeYSubject = CurrentValueSubject<ClosedRange<FloatLiteralType>, Never>(0 ... 1)
   public let liveRangeXSubject = CurrentValueSubject<[(String, Double)], Never>([])
   
-  // MARK: - CandleChart Subjects
+    // MARK: - CandleChart Subjects
   public let candleModelsSubject = CurrentValueSubject<[CryptoFilterOption: [HistoricalPriceModel]], Never>([:])
   public let candleDatasSubject = CurrentValueSubject<[CryptoFilterOption: [CandleData]], Never>([:])
   public let candleRangeYSubject = CurrentValueSubject<[CryptoFilterOption: ClosedRange<FloatLiteralType>], Never>([:])
@@ -145,19 +145,19 @@ private extension MarketManager {
         
         let trimModels = self.wrapCandleModels(historicalModels)
         let candleDatas = trimModels.toCandleDatas()
-
+        
         var candleModel = self.candleModelsSubject.value
         candleModel[option] = trimModels
         self.candleModelsSubject.send(candleModel)
-
+        
         var candleData = self.candleDatasSubject.value
         candleData[option] = candleDatas
         self.candleDatasSubject.send(candleData)
-
+        
         var candleRangeYCache = self.candleRangeYSubject.value
         candleRangeYCache[option] = candleDatas.rangeY()
         self.candleRangeYSubject.send(candleRangeYCache)
-
+        
         var candleRangeXCache = self.candleRangeXSubject.value
         candleRangeXCache[option] = trimModels.getGridXIndexes()
         self.candleRangeXSubject.send(candleRangeXCache)
@@ -167,7 +167,7 @@ private extension MarketManager {
   }
 }
 
-// MARK: - Private Functions
+  // MARK: - Private Functions
 private extension MarketManager {
   func startPriceWebsocket() {
     guard let url = URL(string: "wss://api-crypto.dev.liquidity.cc/ws/cmc/\(LFUtility.cryptoCurrency)/live") else {
@@ -179,15 +179,17 @@ private extension MarketManager {
   }
   
   func sendPingWebsocket() {
-    pingSocketTimer.prepend(Date()).sink(receiveValue: { [weak self] _ in
-      self?.websocketTask?.sendPing(pongReceiveHandler: { error in
-        if let error = error {
-          log.error("Websocket pong receive \(error.localizedDescription)")
-        } else {
-          log.info("Websocket ping success")
-        }
+    pingSocketTimer.prepend(Date())
+      .sink(receiveValue: { [weak self] _ in
+        self?.websocketTask?.sendPing(pongReceiveHandler: { error in
+          if let error = error {
+            log.error("Websocket pong receive \(error.localizedDescription)")
+          } else {
+            log.info("Websocket ping success")
+          }
+        })
       })
-    }).store(in: &subscribers)
+      .store(in: &subscribers)
   }
   
   func connectSocket(url: URL) -> URLSessionWebSocketTask? {
@@ -211,74 +213,74 @@ private extension MarketManager {
         self.receivePriceMessage()
       }
       switch result {
-        case let .failure(error):
-          log.debug("Websocket receiving message: \(error)")
-        case let .success(message):
-          let model: HistoricalPriceModel?
-          switch message {
-          case let .string(text):
-            model = HistoricalPriceModel.generateHistoricalPriceModel(message: text)
-          case let .data(data):
-            model = HistoricalPriceModel.generateHistoricalPriceModel(data: data)
-          @unknown default:
-            model = nil
+      case let .failure(error):
+        log.debug("Websocket receiving message: \(error)")
+      case let .success(message):
+        let model: HistoricalPriceModel?
+        switch message {
+        case let .string(text):
+          model = HistoricalPriceModel.generateHistoricalPriceModel(message: text)
+        case let .data(data):
+          model = HistoricalPriceModel.generateHistoricalPriceModel(data: data)
+        @unknown default:
+          model = nil
+        }
+        guard let model = model else {
+          return
+        }
+        var newPrices = self.liveLineModelsSubject.value
+        if let lastValue = newPrices.last,
+           let lastOpenTime = lastValue.timeOpen?.convertTimestampToDouble()
+        {
+        if lastOpenTime > model.timeOpen?.convertTimestampToDouble() ?? 0 {
+          return
+        }
+        }
+        
+        newPrices.append(model)
+        self.liveLineModelsSubject.send(newPrices)
+        
+        if let value = model.close {
+          var newDatas = self.liveDatasSubject.value
+          let xValue = Double(newDatas.count)
+          newDatas.append((xValue, value))
+          self.liveDatasSubject.send(newDatas)
+          
+          var rangeY = self.liveRangeYSubject.value
+          if rangeY.lowerBound > value || rangeY.upperBound < value {
+            rangeY = min(rangeY.lowerBound, value) ... max(rangeY.upperBound, value)
+            self.liveRangeYSubject.send(rangeY)
           }
-          guard let model = model else {
-            return
+        }
+        self.liveRangeXSubject.send(newPrices.getGridXIndexes())
+        
+        var newValue = self.liveCandleModelsSubject.value
+        var candleDatas = self.liveCandleDatasSubject.value
+        if let lastModel = newValue.last, var lastCandleData = candleDatas.last {
+          let openTimeValue = model.timeOpen?.convertTimestampToDouble() ?? 0
+          let lastTimeValue = lastModel.lastUpdated?.convertTimestampToDouble() ?? 0
+          if openTimeValue <= lastTimeValue {
+            newValue.removeLast()
+            candleDatas.removeLast()
+          } else {
+            newValue.removeLast()
+            candleDatas.removeLast()
+            lastCandleData.close = model.open ?? lastCandleData.close
+            
+            newValue.append(lastModel)
+            candleDatas.append(lastCandleData)
           }
-          var newPrices = self.liveLineModelsSubject.value
-          if let lastValue = newPrices.last,
-             let lastOpenTime = lastValue.timeOpen?.convertTimestampToDouble()
-          {
-            if lastOpenTime > model.timeOpen?.convertTimestampToDouble() ?? 0 {
-              return
-            }
-          }
-
-          newPrices.append(model)
-          self.liveLineModelsSubject.send(newPrices)
-
-          if let value = model.close {
-            var newDatas = self.liveDatasSubject.value
-            let xValue = Double(newDatas.count)
-            newDatas.append((xValue, value))
-            self.liveDatasSubject.send(newDatas)
-
-            var rangeY = self.liveRangeYSubject.value
-            if rangeY.lowerBound > value || rangeY.upperBound < value {
-              rangeY = min(rangeY.lowerBound, value) ... max(rangeY.upperBound, value)
-              self.liveRangeYSubject.send(rangeY)
-            }
-          }
-          self.liveRangeXSubject.send(newPrices.getGridXIndexes())
-
-          var newValue = self.liveCandleModelsSubject.value
-          var candleDatas = self.liveCandleDatasSubject.value
-          if let lastModel = newValue.last, var lastCandleData = candleDatas.last {
-            let openTimeValue = model.timeOpen?.convertTimestampToDouble() ?? 0
-            let lastTimeValue = lastModel.lastUpdated?.convertTimestampToDouble() ?? 0
-            if openTimeValue <= lastTimeValue {
-              newValue.removeLast()
-              candleDatas.removeLast()
-            } else {
-              newValue.removeLast()
-              candleDatas.removeLast()
-              lastCandleData.close = model.open ?? lastCandleData.close
-
-              newValue.append(lastModel)
-              candleDatas.append(lastCandleData)
-            }
-          }
-          newValue.append(model)
-          self.liveCandleModelsSubject.send(newValue)
-
-          self.liveCandleDatasSubject.send(candleDatas)
-          self.liveCandleRangeXSubject.send(newValue.getGridXIndexes())
-          self.liveCandleRangeYSubject.send(candleDatas.rangeY())
+        }
+        newValue.append(model)
+        self.liveCandleModelsSubject.send(newValue)
+        
+        self.liveCandleDatasSubject.send(candleDatas)
+        self.liveCandleRangeXSubject.send(newValue.getGridXIndexes())
+        self.liveCandleRangeYSubject.send(candleDatas.rangeY())
       }
     }
   }
-
+  
   func wrapCandleModels(_ models: [HistoricalPriceModel]) -> [HistoricalPriceModel] {
     let maximumCandleCount = 40
     if models.count <= maximumCandleCount {
@@ -286,20 +288,20 @@ private extension MarketManager {
     }
     let range = models.count / maximumCandleCount
     var resultModels = [HistoricalPriceModel]()
-
+    
     for index in 0 ..< maximumCandleCount {
       let startIndex = index * range
       let endIndex = (index == maximumCandleCount - 1) ? models.count - 1 : index * range + range - 1
       let startModel = models[startIndex]
       let endModel = models[endIndex]
-
+      
       let rangeModels = Array(models[startIndex ... endIndex])
       var rangeLow = startModel.low
       var rangeHigh = startModel.high
       var value = 0.0
       var valueCount: Double = 0
       var volume: Double = 0
-
+      
       for model in rangeModels {
         guard let high = model.high,
               let low = model.low
@@ -314,7 +316,7 @@ private extension MarketManager {
         }
         value += model.close ?? 0.0
         valueCount += 1
-
+        
         if let volumeString = model.volume {
           volume += volumeString
         }

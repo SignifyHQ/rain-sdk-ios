@@ -93,7 +93,7 @@ extension Array where Element == HistoricalPriceModel {
       var data = CandleData(low: low, high: high, open: open, close: close, xValue: timestampValue)
       if indexes.contains(where: { $0 == index }) {
         data.shouldGridLine = true
-        let date = Date(timeIntervalSince1970: Double(timestampValue / 1000))
+        let date = Date(timeIntervalSince1970: Double(timestampValue / 1_000))
         data.gridTitle = DateFormatter.chartGridDisplay.string(from: date)
       }
       datas.append(data)
@@ -112,7 +112,7 @@ extension Array where Element == HistoricalPriceModel {
       }
       let model = self[index]
       let timestampValue = model.timestamp ?? model.lastUpdated?.convertTimestampToDouble() ?? 0
-      let date = Date(timeIntervalSince1970: Double(timestampValue / 1000))
+      let date = Date(timeIntervalSince1970: Double(timestampValue / 1_000))
       return (
         DateFormatter.chartGridDisplay.string(from: date),
         offset

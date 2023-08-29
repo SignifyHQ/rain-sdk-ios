@@ -44,24 +44,24 @@ struct CryptoChartDetailView: View {
       .defaultToolBar(navigationTitle: LFUtility.cardName)
       .navigationLink(item: $viewModel.navigation) { navigation in
         switch navigation {
-          case .addMoney:
-            MoveMoneyAccountView(kind: .receive)
-          case .accountsView:
-            AccountsView()
-          case .transactions:
-            TransactionListView(
-              type: .crypto,
-              currencyType: Constants.CurrencyType.crypto.rawValue,
-              accountID: viewModel.accountDataManager.cryptoAccountID
-            )
-          case .send:
-            MoveCryptoInputView(type: .sendCrypto)
-          case .receive:
-            ReceiveCryptoView(account: viewModel.account)
-          case .buy:
-            MoveCryptoInputView(type: .buyCrypto)
-          case .sell:
-            MoveCryptoInputView(type: .sellCrypto)
+        case .addMoney:
+          MoveMoneyAccountView(kind: .receive)
+        case .accountsView:
+          AccountsView()
+        case .transactions:
+          TransactionListView(
+            type: .crypto,
+            currencyType: Constants.CurrencyType.crypto.rawValue,
+            accountID: viewModel.accountDataManager.cryptoAccountID
+          )
+        case .send:
+          MoveCryptoInputView(type: .sendCrypto)
+        case .receive:
+          ReceiveCryptoView(account: viewModel.account)
+        case .buy:
+          MoveCryptoInputView(type: .buyCrypto)
+        case .sell:
+          MoveCryptoInputView(type: .sellCrypto)
         }
       }
       .sheet(item: $viewModel.sheet) { item in
@@ -180,15 +180,15 @@ private extension CryptoChartDetailView {
   var activity: some View {
     Group {
       switch viewModel.activity {
-        case .loading:
-          LottieView(loading: .mix)
-            .frame(width: 30, height: 20)
-        case .failure:
-          EmptyView()
+      case .loading:
+        LottieView(loading: .mix)
+          .frame(width: 30, height: 20)
+      case .failure:
+        EmptyView()
       }
     }
   }
-
+  
   var priceView: some View {
     HStack(spacing: 8) {
       Text(viewModel.cryptoPrice.formattedAmount(prefix: Constants.CurrencyUnit.usd.symbol, minFractionDigits: 2))

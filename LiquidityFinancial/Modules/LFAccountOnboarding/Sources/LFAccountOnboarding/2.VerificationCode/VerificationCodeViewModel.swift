@@ -66,13 +66,8 @@ extension VerificationCodeViewModel {
         
         intercomService.loginIdentifiedUser(userAttributes: IntercomService.UserAttributes(phone: formatPhoneNumber))
         
-        if checkUserIsValid() {
-          try await refreshNetSpendSession()
-          await checkOnboardingState()
-        } else {
-          try await initNetSpendSession()
-          await checkOnboardingState()
-        }
+        try await initNetSpendSession()
+        await checkOnboardingState()
         
         self.isShowLoading = false
         

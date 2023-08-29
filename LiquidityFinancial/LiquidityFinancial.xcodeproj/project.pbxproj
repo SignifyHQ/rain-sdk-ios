@@ -289,6 +289,10 @@
 		A9BC804B2A774D4F00E4A1A0 /* Inter-Thin.ttf in Resources */ = {isa = PBXBuildFile; fileRef = A9BC80422A774D4F00E4A1A0 /* Inter-Thin.ttf */; };
 		A9BC804D2A774F5D00E4A1A0 /* AppDelegate+Configs.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9BC804C2A774F5D00E4A1A0 /* AppDelegate+Configs.swift */; };
 		A9BC804E2A774F5F00E4A1A0 /* AppDelegate+Configs.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9BC804C2A774F5D00E4A1A0 /* AppDelegate+Configs.swift */; };
+		A9CFBB722A9DA7A600269DB8 /* Orbitron-Medium.ttf in Resources */ = {isa = PBXBuildFile; fileRef = A9CFBB702A9DA7A600269DB8 /* Orbitron-Medium.ttf */; };
+		A9CFBB732A9DA7A600269DB8 /* Orbitron-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = A9CFBB712A9DA7A600269DB8 /* Orbitron-Bold.ttf */; };
+		A9CFBB762A9DA7B300269DB8 /* Orbitron-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = A9CFBB742A9DA7B300269DB8 /* Orbitron-Bold.ttf */; };
+		A9CFBB772A9DA7B300269DB8 /* Orbitron-Medium.ttf in Resources */ = {isa = PBXBuildFile; fileRef = A9CFBB752A9DA7B300269DB8 /* Orbitron-Medium.ttf */; };
 		A9D6C4A52A5E5FE00038D0BB /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = A9D6C4A72A5E5FE00038D0BB /* Localizable.strings */; };
 		A9D6C4B22A5E91DF0038D0BB /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = A9D6C4B12A5E91DF0038D0BB /* LaunchScreen.storyboard */; };
 		A9E46E9A2A7D68B800D1BE6F /* DogeOnboarding in Frameworks */ = {isa = PBXBuildFile; productRef = A9E46E992A7D68B800D1BE6F /* DogeOnboarding */; };
@@ -503,6 +507,10 @@
 		A9BC80412A774D4F00E4A1A0 /* Inter-Black.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Inter-Black.ttf"; sourceTree = "<group>"; };
 		A9BC80422A774D4F00E4A1A0 /* Inter-Thin.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Inter-Thin.ttf"; sourceTree = "<group>"; };
 		A9BC804C2A774F5D00E4A1A0 /* AppDelegate+Configs.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AppDelegate+Configs.swift"; sourceTree = "<group>"; };
+		A9CFBB702A9DA7A600269DB8 /* Orbitron-Medium.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Orbitron-Medium.ttf"; sourceTree = "<group>"; };
+		A9CFBB712A9DA7A600269DB8 /* Orbitron-Bold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Orbitron-Bold.ttf"; sourceTree = "<group>"; };
+		A9CFBB742A9DA7B300269DB8 /* Orbitron-Bold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Orbitron-Bold.ttf"; sourceTree = "<group>"; };
+		A9CFBB752A9DA7B300269DB8 /* Orbitron-Medium.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Orbitron-Medium.ttf"; sourceTree = "<group>"; };
 		A9D6C4A62A5E5FE00038D0BB /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
 		A9D6C4AB2A5E60850038D0BB /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
 		A9D6C4AF2A5E63470038D0BB /* LFServices */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = LFServices; path = Modules/LFServices; sourceTree = "<group>"; };
@@ -1317,6 +1325,8 @@
 		A9BC80142A774CEC00E4A1A0 /* Fonts */ = {
 			isa = PBXGroup;
 			children = (
+				A9CFBB712A9DA7A600269DB8 /* Orbitron-Bold.ttf */,
+				A9CFBB702A9DA7A600269DB8 /* Orbitron-Medium.ttf */,
 				A9BC80222A774D0500E4A1A0 /* Chivo-Black.ttf */,
 				A9BC80212A774D0500E4A1A0 /* Chivo-BlackItalic.ttf */,
 				A9BC801B2A774D0400E4A1A0 /* Chivo-Bold.ttf */,
@@ -1342,6 +1352,8 @@
 		A9BC80392A774D2F00E4A1A0 /* Fonts */ = {
 			isa = PBXGroup;
 			children = (
+				A9CFBB742A9DA7B300269DB8 /* Orbitron-Bold.ttf */,
+				A9CFBB752A9DA7B300269DB8 /* Orbitron-Medium.ttf */,
 				A9BC80412A774D4F00E4A1A0 /* Inter-Black.ttf */,
 				A9BC803F2A774D4E00E4A1A0 /* Inter-Bold.ttf */,
 				A9BC80402A774D4F00E4A1A0 /* Inter-ExtraBold.ttf */,
@@ -1709,7 +1721,9 @@
 				A9B912D12A6B86A800ABD87B /* LoadingPrimary.json in Resources */,
 				A9BC80272A774D0500E4A1A0 /* Chivo-SemiBold.ttf in Resources */,
 				A93C15062A99C65D00BD7564 /* GoogleService-Info.plist in Resources */,
+				A9CFBB722A9DA7A600269DB8 /* Orbitron-Medium.ttf in Resources */,
 				A9B912D22A6B86A800ABD87B /* LoadingContrast.json in Resources */,
+				A9CFBB732A9DA7A600269DB8 /* Orbitron-Bold.ttf in Resources */,
 				A9BC80382A774D0500E4A1A0 /* Chivo-BoldItalic.ttf in Resources */,
 				A9B912D32A6B86A800ABD87B /* LoadingMix.json in Resources */,
 				A9BC80342A774D0500E4A1A0 /* Chivo-Black.ttf in Resources */,
@@ -1732,12 +1746,14 @@
 			buildActionMask = 2147483647;
 			files = (
 				A97BF83E2A5DBCF200B8F5CA /* Images.xcassets in Resources */,
+				A9CFBB762A9DA7B300269DB8 /* Orbitron-Bold.ttf in Resources */,
 				A9BC80432A774D4F00E4A1A0 /* Inter-Light.ttf in Resources */,
 				A9BC80452A774D4F00E4A1A0 /* Inter-SemiBold.ttf in Resources */,
 				06D40BFC2A6260B300EADB75 /* LoadingContrast.json in Resources */,
 				A9BC80492A774D4F00E4A1A0 /* Inter-ExtraBold.ttf in Resources */,
 				A9D6C4B22A5E91DF0038D0BB /* LaunchScreen.storyboard in Resources */,
 				A9BC804A2A774D4F00E4A1A0 /* Inter-Black.ttf in Resources */,
+				A9CFBB772A9DA7B300269DB8 /* Orbitron-Medium.ttf in Resources */,
 				A9D6C4A52A5E5FE00038D0BB /* Localizable.strings in Resources */,
 				A9BC80462A774D4F00E4A1A0 /* Inter-ExtraLight.ttf in Resources */,
 				A9BC80442A774D4F00E4A1A0 /* Inter-Regular.ttf in Resources */,

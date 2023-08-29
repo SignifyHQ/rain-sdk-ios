@@ -170,16 +170,10 @@ public enum Fonts {
     fatalError("The target not support the font.")
   }
   public static var orbitronBold: FontConvertible {
-    if orbitroFont {
-      return FontConvertible(name: "Orbitron-Bold", family: "Orbitron", path: "Orbitron-Bold.ttf")
-    }
-    fatalError("The target not support the font.")
+    return FontConvertible(name: "Orbitron-Bold", family: "Orbitron", path: "Orbitron-Bold.ttf")
   }
   public static var orbitronMedium: FontConvertible {
-    if orbitroFont {
-      return FontConvertible(name: "Orbitron-Medium", family: "Orbitron", path: "Orbitron-Medium.ttf")
-    }
-    fatalError("The target not support the font.")
+    return FontConvertible(name: "Orbitron-Medium", family: "Orbitron", path: "Orbitron-Medium.ttf")
   }
   
   public enum Chivo {
@@ -245,13 +239,13 @@ public enum Fonts {
     var allCustomFonts: [FontConvertible] = []
     switch LFStyleGuide.target {
     case .Avalanche:
-      allCustomFonts.append(contentsOf: Inter.all)
+      allCustomFonts.append(contentsOf: Inter.all + Orbitron.all)
     case .Cardano:
-      allCustomFonts.append(contentsOf: Chivo.all)
-    case .DogeCard, .CauseCard, .PrideCard, .PrideCard:
+      allCustomFonts.append(contentsOf: Chivo.all + Orbitron.all)
+    case .DogeCard, .CauseCard, .PrideCard:
       allCustomFonts.append(contentsOf: Lato.all + Montserrat.all + Orbitron.all)
     default :
-      allCustomFonts.append(contentsOf: Inter.all)
+      allCustomFonts.append(contentsOf: Inter.all + Orbitron.all)
     }
     allCustomFonts.forEach { $0.register() }
   }

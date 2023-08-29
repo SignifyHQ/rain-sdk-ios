@@ -10,7 +10,7 @@ import AccountDomain
 final class CryptoChartDetailViewModel: ObservableObject {
   @LazyInjected(\.marketManager) var marketManager
   @LazyInjected(\.accountDataManager) var accountDataManager
-
+  
   @Published var loading: Bool = false
   @Published var showTransferSheet: Bool = false
   @Published var navigation: Navigation?
@@ -51,19 +51,19 @@ final class CryptoChartDetailViewModel: ObservableObject {
   }
   
   func appearOperations() {
-    // TODO: - Will be implemented later
-    // analyticsService.track(event: Event(name: EventName.viewCryptoWalletSetup))
+      // TODO: - Will be implemented later
+      // analyticsService.track(event: Event(name: EventName.viewCryptoWalletSetup))
     Task {
       await refresh(includeAccounts: false)
     }
   }
   
   func refresh(includeAccounts: Bool = true) async {
-    // TODO: - Will be implemented later
+      // TODO: - Will be implemented later
   }
   
   private func subscribeToUserTransactionNotifications() {
-    // TODO: - Will be implemented later
+      // TODO: - Will be implemented later
   }
   
   private func observeMarketManager() {
@@ -115,32 +115,32 @@ final class CryptoChartDetailViewModel: ObservableObject {
   }
 }
 
-// MARK: - Actions
+  // MARK: - Actions
 extension CryptoChartDetailViewModel {
   func buyButtonTapped() {
-    // TODO: - Will be implemented later
-    // analyticsService.track(event: Event(name: EventName.tapsBuyCrypto))
+      // TODO: - Will be implemented later
+      // analyticsService.track(event: Event(name: EventName.tapsBuyCrypto))
     Haptic.impact(.light).generate()
     navigation = .buy
   }
   
   func sellButtonTapped() {
-    // TODO: - Will be implemented later
-    // analyticsService.track(event: Event(name: EventName.tapsSellCrypto))
+      // TODO: - Will be implemented later
+      // analyticsService.track(event: Event(name: EventName.tapsSellCrypto))
     Haptic.impact(.light).generate()
     navigation = .sell
   }
   
   func transferButtonTapped() {
-    // TODO: - Will be implemented later
-    // analyticsService.track(event: Event(name: .tapsTransferCrypto))
+      // TODO: - Will be implemented later
+      // analyticsService.track(event: Event(name: .tapsTransferCrypto))
     Haptic.impact(.light).generate()
     showTransferSheet = true
   }
   
   func sendButtonTapped() {
-    // TODO: - Will be implemented later
-    // analyticsService.track(event: Event(name: EventName.tapsSendCrypto.rawValue))
+      // TODO: - Will be implemented later
+      // analyticsService.track(event: Event(name: EventName.tapsSendCrypto.rawValue))
     showTransferSheet = false
     if let cryptoBalance = account?.availableBalance, cryptoBalance > 0 {
       navigation = .send
@@ -151,8 +151,8 @@ extension CryptoChartDetailViewModel {
   
   func receiveButtonTapped() {
     showTransferSheet = false
-    // TODO: - Will be implemented later
-    // analyticsService.track(event: Event(name: EventName.tapsRecieveCrypto.rawValue))
+      // TODO: - Will be implemented later
+      // analyticsService.track(event: Event(name: EventName.tapsRecieveCrypto.rawValue))
     navigation = .receive
   }
   
@@ -171,7 +171,7 @@ extension CryptoChartDetailViewModel {
   }
 }
 
-// MARK: - Types
+  // MARK: - Types
 extension CryptoChartDetailViewModel {
   enum Activity {
     case loading
@@ -194,8 +194,8 @@ extension CryptoChartDetailViewModel {
     
     var id: String {
       switch self {
-        case .trxDetail: return "trxDetail"
-        case .wallet: return "wallet"
+      case .trxDetail: return "trxDetail"
+      case .wallet: return "wallet"
       }
     }
   }

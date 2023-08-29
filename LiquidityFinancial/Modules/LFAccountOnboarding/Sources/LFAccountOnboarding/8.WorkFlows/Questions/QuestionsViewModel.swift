@@ -26,7 +26,6 @@ public final class QuestionsViewModel: ObservableObject {
   @Published var popup: Popup?
   @Published var timeRemaining = Constants.kycQuestionTimeOut
   
-  
   let timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
 
   public init(questionList: QuestionsEntity = .mockKYCQuestion) {

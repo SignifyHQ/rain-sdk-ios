@@ -31,7 +31,6 @@ public class SearchFundraiserViewModel: ObservableObject {
     subscribeToSearchText()
   }
   
-  
   private func subscribeToSearchText() {
     textObserver = $searchText
       .debounce(for: 0.3, scheduler: DispatchQueue.main)

@@ -27,7 +27,7 @@ public class PushNotificationsService: NSObject {
     })
   }
   
-  public func requestPermission() async throws -> Bool  {
+  public func requestPermission() async throws -> Bool {
     return try await withCheckedThrowingContinuation({ (continuation: CheckedContinuation<Bool, Error>) in
       let center = UNUserNotificationCenter.current()
       center.requestAuthorization(options: [.alert, .badge, .sound]) { success, error in
@@ -65,7 +65,7 @@ extension PushNotificationsService: UNUserNotificationCenterDelegate {
   }
 
   private func handleNotification(userInfo: [AnyHashable: Any]) {
-    print("Handle notification \(userInfo)")
+    log.info("Handle notification \(userInfo)")
   }
 }
 
@@ -73,6 +73,6 @@ extension PushNotificationsService: UNUserNotificationCenterDelegate {
 
 extension PushNotificationsService: MessagingDelegate {
   public func messaging(_: Messaging, didReceiveRegistrationToken fcmToken: String?) {
-    print("notification didReceiveRegistrationToken: \(fcmToken ?? "empty")")
+    log.info("notification didReceiveRegistrationToken: \(fcmToken ?? "empty")")
   }
 }
