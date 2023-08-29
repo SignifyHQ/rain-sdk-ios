@@ -27,7 +27,8 @@ struct FiatAssetView: View {
           TransactionListView(
             type: .crypto,
             currencyType: viewModel.currencyType,
-            accountID: viewModel.accountDataManager.fiatAccountID
+            accountID: viewModel.accountDataManager.fiatAccountID,
+            transactionTypes: Constants.TransactionTypesRequest.fiat.types
           )
         case let .transactionDetail(transaction):
             TransactionDetailView(

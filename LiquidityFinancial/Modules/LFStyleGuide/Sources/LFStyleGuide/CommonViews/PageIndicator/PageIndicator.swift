@@ -54,7 +54,7 @@ public struct PageIndicator: View {
   public var body: some View {
     VStack {
       HStack(alignment: .center, spacing: 3) {
-        ForEach((0 ..< numPages)) {
+        ForEach(0 ..< numPages, id: \.self) {
           DotIndicator(
             pageIndex: $0,
             slectedPage: self.$selectedIndex

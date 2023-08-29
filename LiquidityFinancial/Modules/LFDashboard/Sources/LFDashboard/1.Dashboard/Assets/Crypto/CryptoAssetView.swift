@@ -37,7 +37,8 @@ struct CryptoAssetView: View {
             TransactionListView(
               type: .crypto,
               currencyType: viewModel.currencyType,
-              accountID: viewModel.accountDataManager.cryptoAccountID
+              accountID: viewModel.accountDataManager.cryptoAccountID,
+              transactionTypes: Constants.TransactionTypesRequest.crypto.types
             )
         case let .transactionDetail(transaction):
           TransactionDetailView(

@@ -14,7 +14,7 @@ public struct TransactionReward {
 public enum RewardType: String {
   case cashback = "CASHBACK"
   case reverseCashback = "REVERSE_CASHBACK"
-  case cryptoBack = "CRYPTOBACK"
+  case cryptoBack = "CRYPTO_BACK"
   case reverseCryptoBack = "REVERSE_CRYPTOBACK"
   case doshCryptoBack = "DOSH_CRYPTOBACK"
   case donation = "DONATION"

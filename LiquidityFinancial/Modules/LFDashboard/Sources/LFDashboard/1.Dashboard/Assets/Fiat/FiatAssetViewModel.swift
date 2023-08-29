@@ -29,7 +29,8 @@ class FiatAssetViewModel: ObservableObject {
   let asset: AssetModel
   let currencyType = Constants.CurrencyType.fiat.rawValue
   private let guestHandler: () -> Void
-  
+  private let isGuest = false // TODO: - Will be remove after handle guest feature
+
   var usdBalance: String {
     account?.availableBalance.formattedAmount(
       prefix: Constants.CurrencyUnit.usd.rawValue,
@@ -67,7 +68,7 @@ private extension FiatAssetViewModel {
       let transactions = try await accountRepository.getTransactions(
         accountId: accountId,
         currencyType: currencyType,
-        transactionTypes: Constants.TransactionTypesRequest.normal.types,
+        transactionTypes: Constants.TransactionTypesRequest.fiat.types,
         limit: 50,
         offset: 0
       )
@@ -152,7 +153,7 @@ extension FiatAssetViewModel {
   }
   
   func transactionItemTapped(_ transaction: TransactionModel) {
-    if false { // userManager.isGuest TODO: Will be implemented later
+    if isGuest {
       guestHandler()
     } else {
       Haptic.impact(.light).generate()

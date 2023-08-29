@@ -27,7 +27,8 @@ struct RewardsView: View {
           TransactionListView(
             type: .cashback,
             currencyType: viewModel.currencyType,
-            accountID: viewModel.account?.id ?? .empty
+            accountID: viewModel.account?.id ?? .empty,
+            transactionTypes: Constants.TransactionTypesRequest.fiat.types
           )
         }
       }

@@ -52,7 +52,8 @@ struct CryptoChartDetailView: View {
           TransactionListView(
             type: .crypto,
             currencyType: Constants.CurrencyType.crypto.rawValue,
-            accountID: viewModel.accountDataManager.cryptoAccountID
+            accountID: viewModel.accountDataManager.cryptoAccountID,
+            transactionTypes: Constants.TransactionTypesRequest.crypto.types
           )
         case .send:
           MoveCryptoInputView(type: .sendCrypto)

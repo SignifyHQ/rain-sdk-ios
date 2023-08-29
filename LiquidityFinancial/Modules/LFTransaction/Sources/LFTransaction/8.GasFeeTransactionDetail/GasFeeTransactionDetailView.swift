@@ -27,6 +27,7 @@ public struct GasFeeTransactionDetailView: View {
 private extension GasFeeTransactionDetailView {
   var content: some View {
     VStack(spacing: 10) {
+      Spacer()
       FullSizeButton(
         title: LFLocalizable.TransactionDetail.CurrentReward.title,
         isDisable: false,

@@ -27,7 +27,9 @@ public struct PurchaseTransactionDetailView: View {
 private extension PurchaseTransactionDetailView {
   var content: some View {
     VStack(spacing: 24) {
-      TransactionCardView(information: viewModel.cardInformation)
+      if viewModel.transaction.rewards != nil {
+        TransactionCardView(information: viewModel.cardInformation)
+      }
       if let receiptType = viewModel.transaction.receipt?.type {
         FullSizeButton(
           title: LFLocalizable.TransactionDetail.Receipt.button,

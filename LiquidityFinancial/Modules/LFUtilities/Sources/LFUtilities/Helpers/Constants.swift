@@ -146,14 +146,17 @@ public extension Constants {
 // MARK: - TransactionTypes
 public extension Constants {
   enum TransactionTypesRequest {
-    case normal
+    case fiat
+    case crypto
     case rewardCashBack
     case rewardCryptoBack
     
     public var types: String {
       switch self {
-      case .normal:
+      case .fiat:
         return "PURCHASE,DEPOSIT,WITHDRAW,SYSTEM_FEE,REFUND,CRYPTO_BUY,CRYPTO_SELL,DONATION,OTHER"
+      case .crypto:
+        return "CRYPTO_BUY,CRYPTO_SELL,CRYPTO_WITHDRAW,CRYPTO_DEPOSIT,CRYPTO_GAS_DEDUCTION,CRYPTO_BUY_REFUND"
       case .rewardCashBack:
         return "REWARD_CASHBACK,REWARD_CASHBACK_REVERSE"
       case .rewardCryptoBack:

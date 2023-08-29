@@ -10,7 +10,7 @@ public struct TransactionListView: View {
     type: TransactionListViewModel.Kind,
     currencyType: String,
     accountID: String?,
-    transactionTypes: String = Constants.TransactionTypesRequest.normal.types
+    transactionTypes: String
   ) {
     _viewModel = .init(
       wrappedValue: .init(

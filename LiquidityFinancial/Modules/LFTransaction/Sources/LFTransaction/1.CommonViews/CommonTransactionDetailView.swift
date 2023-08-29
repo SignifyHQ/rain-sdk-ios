@@ -30,7 +30,7 @@ struct CommonTransactionDetailView<Content: View>: View {
     .frame(maxWidth: .infinity)
     .navigationBarTitleDisplayMode(.inline)
     .padding([.top, .horizontal], 30)
-    .padding(.bottom, 20)
+    .padding(.bottom, 12)
     .background(Colors.background.swiftUIColor)
   }
 }

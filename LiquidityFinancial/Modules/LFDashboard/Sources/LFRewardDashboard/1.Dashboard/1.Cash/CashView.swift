@@ -34,7 +34,8 @@ struct CashView: View {
         TransactionListView(
           type: .cash,
           currencyType: viewModel.currencyType,
-          accountID: viewModel.accountID
+          accountID: viewModel.accountID,
+          transactionTypes: Constants.TransactionTypesRequest.fiat.types
         )
       case .addMoney:
         MoveMoneyAccountView(kind: .receive)

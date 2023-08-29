@@ -30,7 +30,8 @@ class CryptoAssetViewModel: ObservableObject {
   let currencyType = Constants.CurrencyType.crypto.rawValue
   private let guestHandler: () -> Void
   private var subscribers: Set<AnyCancellable> = []
-
+  private var isGuest = false // TODO: - Will be remove after handle guest feature
+  
   var filterOptionSubject = CurrentValueSubject<CryptoFilterOption, Never>(.live)
   var chartOptionSubject = CurrentValueSubject<ChartOption, Never>(.line)
   
@@ -83,7 +84,7 @@ private extension CryptoAssetViewModel {
       let transactions = try await accountRepository.getTransactions(
         accountId: accountId,
         currencyType: currencyType,
-        transactionTypes: Constants.TransactionTypesRequest.normal.types,
+        transactionTypes: Constants.TransactionTypesRequest.crypto.types,
         limit: 50,
         offset: 0
       )
@@ -157,7 +158,7 @@ extension CryptoAssetViewModel {
 
   func walletRowTapped() {
     Haptic.impact(.soft).generate()
-    if false { // userManager.isGuest TODO: - Will be updated later
+    if isGuest {
       guestHandler()
     } else {
       sheet = .wallet
@@ -170,7 +171,7 @@ extension CryptoAssetViewModel {
   }
   
   func transactionItemTapped(_ transaction: TransactionModel) {
-    if false { // userManager.isGuest TODO: Will be implemented later
+    if isGuest {
       guestHandler()
     } else {
       Haptic.impact(.light).generate()

@@ -87,5 +87,6 @@ public struct TransactionDetailView: View {
       }
     }
     .background(Colors.background.swiftUIColor)
+    .edgesIgnoringSafeArea(.bottom)
   }
 }

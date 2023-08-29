@@ -29,7 +29,8 @@ final class CashViewModel: ObservableObject {
   @Published var assets: [AssetModel] = []
   @Published var linkedAccount: [APILinkedSourceData] = []
   @Published var achInformation: ACHModel = .default
-    
+  
+  private let isGuest = false // TODO: - Will be remove after handle guest feature
   var transactionLimitEntity: Int {
     50
   }
@@ -100,7 +101,7 @@ extension CashViewModel {
   }
   
   func transactionItemTapped(_ transaction: TransactionModel) {
-    if false { // userManager.isGuest TODO: Will be implemented later
+    if isGuest {
       guestHandler()
     } else {
       Haptic.impact(.light).generate()
@@ -125,7 +126,7 @@ extension CashViewModel {
     let transactions = try await accountRepository.getTransactions(
       accountId: accountId,
       currencyType: currencyType,
-      transactionTypes: Constants.TransactionTypesRequest.normal.types,
+      transactionTypes: Constants.TransactionTypesRequest.fiat.types,
       limit: transactionLimitEntity,
       offset: transactionLimitOffset
     )
