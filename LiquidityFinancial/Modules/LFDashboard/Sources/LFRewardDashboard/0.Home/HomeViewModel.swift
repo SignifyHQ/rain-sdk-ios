@@ -11,6 +11,7 @@ import LFRewards
 import Combine
 import LFAccountOnboarding
 import OnboardingDomain
+import DevicesData
 
 @MainActor
 public final class HomeViewModel: ObservableObject {
@@ -21,6 +22,7 @@ public final class HomeViewModel: ObservableObject {
   @LazyInjected(\.accountRepository) var accountRepository
   @LazyInjected(\.onboardingRepository) var onboardingRepository
   @LazyInjected(\.netspendRepository) var netspendRepository
+  @LazyInjected(\.devicesRepository) var devicesRepository
   
   @LazyInjected(\.pushNotificationService) var pushNotificationService
   @LazyInjected(\.onboardingFlowCoordinator) var onboardingFlowCoordinator
@@ -28,6 +30,7 @@ public final class HomeViewModel: ObservableObject {
   @Published var tabSelected: TabOption = .cash
   @Published var navigation: Navigation?
   @Published var tabOptions: [TabOption] = [.cash, .rewards, .account]
+  @Published var popup: Popup?
   
   private var subscribers: Set<AnyCancellable> = []
   
@@ -178,6 +181,92 @@ private extension HomeViewModel {
   }
 }
 
+// MARK: Notifications
+extension HomeViewModel {
+  func checkGoTransactionDetail() {
+    guard
+      let id = pushNotificationService.selectedTransactionId,
+      let type = pushNotificationService.selectedTransactionType else {
+      return
+    }
+    openTransactionId(id, type: type)
+  }
+  
+  func appearOperations() {
+    checkShouldShowNotification()
+  }
+  
+  func checkShouldShowNotification() {
+    Task { @MainActor in
+      do {
+        let status = try await pushNotificationService.notificationSettingStatus()
+        if status == .notDetermined {
+          if UserDefaults.didShowPushTokenPopup {
+            return
+          }
+          popup = .notifications
+          UserDefaults.didShowPushTokenPopup = true
+        } else if status == .authorized {
+          self.pushFCMTokenIfNeed()
+        }
+      } catch {
+        log.error(error)
+      }
+    }
+  }
+  
+  func pushFCMTokenIfNeed() {
+    Task { @MainActor in
+      do {
+        let token = try await pushNotificationService.fcmToken()
+        if token == UserDefaults.lastestFCMToken {
+          return
+        }
+        let response = try await devicesRepository.register(deviceId: LFUtility.deviceId, token: token)
+        if response.success {
+          UserDefaults.lastestFCMToken = token
+        }
+      } catch {
+        log.error(error)
+      }
+    }
+  }
+  
+  func notificationsPopupAction() {
+    clearPopup()
+    Task { @MainActor in
+      do {
+        let success = try await pushNotificationService.requestPermission()
+        if success {
+          self.pushFCMTokenIfNeed()
+        }
+      } catch {
+        log.error(error)
+      }
+    }
+  }
+
+  func clearPopup() {
+    popup = nil
+  }
+  
+  func openTransactionId(_ id: String, type: String) {
+    let isCrypto = type == "crypto"
+    Task { @MainActor in
+      do {
+        let currencyType = isCrypto ? Constants.CurrencyType.crypto.rawValue : Constants.CurrencyType.fiat.rawValue
+        let accounts = try await self.accountRepository.getAccount(currencyType: currencyType)
+        guard let account = accounts.first else {
+          return
+        }
+        navigation = .transactionDetail(id: id, accountId: account.id)
+      } catch {
+        log.error(error.localizedDescription)
+      }
+    }
+  }
+}
+
 // MARK: - View Helpers
 extension HomeViewModel {
   func onSelectedTab(tab: TabOption) {
@@ -203,5 +292,10 @@ extension HomeViewModel {
     case searchCauses
     case editRewards
     case profile
+    case transactionDetail(id: String, accountId: String)
+  }
+  
+  enum Popup {
+    case notifications
   }
 }

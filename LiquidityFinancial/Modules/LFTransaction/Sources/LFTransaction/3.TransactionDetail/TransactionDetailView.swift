@@ -6,7 +6,7 @@ import LFUtilities
 
 public struct TransactionDetailView: View {
   @StateObject private var viewModel: TransactionDetailViewModel
-  let kind: TransactionDetailType
+  let kind: TransactionDetailType?
   let isNewAddress: Bool?
   let walletAddress: String?
   let transactionInfo: [TransactionInformation]?
@@ -15,7 +15,7 @@ public struct TransactionDetailView: View {
   public init(
     accountID: String?,
     transactionId: String,
-    kind: TransactionDetailType,
+    kind: TransactionDetailType? = nil,
     isNewAddress: Bool? = nil,
     walletAddress: String? = nil,
     transactionInfo: [TransactionInformation]? = nil,
@@ -36,41 +36,7 @@ public struct TransactionDetailView: View {
           .frame(width: 30, height: 20)
       } else {
         Group {
-          switch kind {
-          case .common:
-            CommonTransactionDetailView(transaction: viewModel.transaction)
-          case .deposit:
-            DepositTransactionDetailView(transaction: viewModel.transaction)
-          case .crypto:
-            CryptoTransactionDetailView(
-              transaction: viewModel.transaction,
-              transactionInfos: transactionInfo ?? viewModel.cryptoTransactions,
-              isNewAddress: isNewAddress ?? false,
-              walletAddress: walletAddress ?? .empty
-            )
-          case .withdraw:
-            WithdrawTransactionDetailView(transaction: viewModel.transaction)
-          case .purchase:
-            PurchaseTransactionDetailView(transaction: viewModel.transaction)
-          case .refund:
-            RefundTransactionDetailView(
-              transaction: viewModel.transaction,
-              transactionInfos: LFUtility.cryptoEnabled ? viewModel.refundCryptoTransactions : viewModel.refundTransactions
-            )
-          case .donation:
-            DonationTransactionDetailView(transaction: viewModel.transaction)
-          case .cashback:
-            CashbackTransactionDetail(transaction: viewModel.transaction)
-          case .reward:
-            RewardTransactionDetailView(transaction: viewModel.transaction)
-          case .rewardReversal:
-            RewardReversalTransactionDetailView(
-              transaction: viewModel.transaction,
-              transactionInfos: viewModel.rewardTransactions
-            )
-          case .fee:
-            GasFeeTransactionDetailView(transaction: viewModel.transaction)
-          }
+          transactionContent(kind: kind ?? viewModel.transaction.detailType)
         }
       }
     }
@@ -89,4 +55,46 @@ public struct TransactionDetailView: View {
     .background(Colors.background.swiftUIColor)
     .edgesIgnoringSafeArea(.bottom)
   }
+}
+
+extension TransactionDetailView {
+  
+  @ViewBuilder func transactionContent(kind: TransactionDetailType) -> some View {
+    switch kind {
+    case .common:
+      CommonTransactionDetailView(transaction: viewModel.transaction)
+    case .deposit:
+      DepositTransactionDetailView(transaction: viewModel.transaction)
+    case .crypto:
+      CryptoTransactionDetailView(
+        transaction: viewModel.transaction,
+        transactionInfos: transactionInfo ?? viewModel.cryptoTransactions,
+        isNewAddress: isNewAddress ?? false,
+        walletAddress: walletAddress ?? .empty
+      )
+    case .withdraw:
+      WithdrawTransactionDetailView(transaction: viewModel.transaction)
+    case .purchase:
+      PurchaseTransactionDetailView(transaction: viewModel.transaction)
+    case .refund:
+      RefundTransactionDetailView(
+        transaction: viewModel.transaction,
+        transactionInfos: LFUtility.cryptoEnabled ? viewModel.refundCryptoTransactions : viewModel.refundTransactions
+      )
+    case .donation:
+      DonationTransactionDetailView(transaction: viewModel.transaction)
+    case .cashback:
+      CashbackTransactionDetail(transaction: viewModel.transaction)
+    case .reward:
+      RewardTransactionDetailView(transaction: viewModel.transaction)
+    case .rewardReversal:
+      RewardReversalTransactionDetailView(
+        transaction: viewModel.transaction,
+        transactionInfos: viewModel.rewardTransactions
+      )
+    case .fee:
+      GasFeeTransactionDetailView(transaction: viewModel.transaction)
+    }
+  }
+  
 }

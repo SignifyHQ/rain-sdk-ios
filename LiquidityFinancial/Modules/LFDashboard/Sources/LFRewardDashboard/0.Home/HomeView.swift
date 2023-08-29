@@ -1,9 +1,11 @@
 import SwiftUI
+import LFTransaction
 import LFLocalizable
 import LFStyleGuide
 import LFUtilities
 import LFRewards
 public struct HomeView: View {
+  @Environment(\.scenePhase) var scenePhase
   
   @StateObject private var viewModel: HomeViewModel
   
@@ -40,8 +42,15 @@ public struct HomeView: View {
         EditRewardsView(viewModel: EditRewardsViewModel())
       case .profile:
         ProfileView()
+      case .transactionDetail(let id, let accountId):
+        TransactionDetailView(accountID: accountId, transactionId: id)
       }
     }
+    .onChange(of: scenePhase, perform: { newValue in
+      if newValue == .active {
+        viewModel.checkGoTransactionDetail()
+      }
+    })
   }
 }
 

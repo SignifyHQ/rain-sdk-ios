@@ -3,6 +3,7 @@ import UserNotifications
 import Foundation
 import Factory
 import LFUtilities
+import Combine
 
 extension Container {
   public var pushNotificationService: Factory<PushNotificationsService> {
@@ -13,9 +14,17 @@ extension Container {
 }
 
 public class PushNotificationsService: NSObject {
+  public var selectedTransactionId: String?
+  public var selectedTransactionType: String?
+  
   public func setUp() {
     UNUserNotificationCenter.current().delegate = self
     Messaging.messaging().delegate = self
+  }
+  
+  public func clearSelection() {
+    selectedTransactionId = nil
+    selectedTransactionType = nil
   }
   
   public func notificationSettingStatus() async throws -> UNAuthorizationStatus {
@@ -66,11 +75,16 @@ extension PushNotificationsService: UNUserNotificationCenterDelegate {
 
   private func handleNotification(userInfo: [AnyHashable: Any]) {
     log.info("Handle notification \(userInfo)")
+    guard let transactionId = userInfo["transactionId"] as? String,
+          let transactionType = userInfo["transactionType"] as? String else {
+      return
+    }
+    selectedTransactionId = transactionId
+    selectedTransactionType = transactionType
   }
 }
 
 // MARK: MessagingDelegate
-
 extension PushNotificationsService: MessagingDelegate {
   public func messaging(_: Messaging, didReceiveRegistrationToken fcmToken: String?) {
     log.info("notification didReceiveRegistrationToken: \(fcmToken ?? "empty")")

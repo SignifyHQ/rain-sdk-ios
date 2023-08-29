@@ -30,6 +30,7 @@ public final class HomeViewModel: ObservableObject {
     apiFetchUser()
     apiFetchOnboardingState()
     accountDataManager.userCompleteOnboarding = true
+    checkGoTransactionDetail()
   }
 }
 
@@ -104,9 +105,18 @@ extension HomeViewModel {
 
 // MARK: Notifications
 extension HomeViewModel {
-  
   func appearOperations() {
     checkShouldShowNotification()
+    checkGoTransactionDetail()
+  }
+  
+  func checkGoTransactionDetail() {
+    guard
+      let id = pushNotificationService.selectedTransactionId,
+      let type = pushNotificationService.selectedTransactionType else {
+      return
+    }
+    openTransactionId(id, type: type)
   }
   
   func checkShouldShowNotification() {
@@ -163,6 +173,22 @@ extension HomeViewModel {
     popup = nil
   }
   
+  func openTransactionId(_ id: String, type: String) {
+    let isCrypto = type == "crypto"
+    Task { @MainActor in
+      do {
+        let currencyType = isCrypto ? Constants.CurrencyType.crypto.rawValue : Constants.CurrencyType.fiat.rawValue
+        let accounts = try await self.accountRepository.getAccount(currencyType: currencyType)
+        guard let account = accounts.first else {
+          return
+        }
+        navigation = .transactionDetail(id: id, accountId: account.id)
+        pushNotificationService.clearSelection()
+      } catch {
+        log.error(error.localizedDescription)
+      }
+    }
+  }
 }
 
 // MARK: - View Helpers
@@ -186,6 +212,7 @@ extension HomeViewModel {
     case searchCauses
     case editRewards
     case profile
+    case transactionDetail(id: String, accountId: String)
   }
   
   enum Popup {

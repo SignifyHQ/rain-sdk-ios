@@ -1,9 +1,12 @@
 import SwiftUI
+import LFTransaction
 import LFLocalizable
 import LFStyleGuide
 import LFUtilities
 
 public struct HomeView: View {
+  @Environment(\.scenePhase) var scenePhase
+  
   @StateObject private var viewModel: HomeViewModel
   let tabOptions: [TabOption]
   
@@ -41,6 +44,8 @@ public struct HomeView: View {
         EmptyView() // TODO: - Will be implemented later
       case .profile:
         ProfileView()
+      case .transactionDetail(let id, let accountId):
+        TransactionDetailView(accountID: accountId, transactionId: id)
       }
     }
     .popup(item: $viewModel.popup) { popup in
@@ -52,6 +57,11 @@ public struct HomeView: View {
     .onAppear {
       viewModel.appearOperations()
     }
+    .onChange(of: scenePhase, perform: { newValue in
+      if newValue == .active {
+        viewModel.checkGoTransactionDetail()
+      }
+    })
   }
 }
 
