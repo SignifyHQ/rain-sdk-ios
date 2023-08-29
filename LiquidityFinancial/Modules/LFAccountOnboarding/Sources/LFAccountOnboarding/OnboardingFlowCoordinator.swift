@@ -248,7 +248,11 @@ extension OnboardingFlowCoordinator {
     let token = try await netspendRepository.clientSessionInit()
     netspendDataManager.update(jwkToken: token)
     
-    let sessionEntity = try await netspendRepository.getSession(sessionId: accountDataManager.sessionID)
-    accountDataManager.stored(sessionID: sessionEntity.sessionId)
+    let sessionConnectWithJWT = await netspendRepository.establishingSessionWithJWKSet(jwtToken: token)
+    guard let deviceData = sessionConnectWithJWT?.deviceData else { return }
+    
+    let establishPersonSession = try await netspendRepository.establishPersonSession(deviceData: EstablishSessionParameters(encryptedData: deviceData))
+    netspendDataManager.update(serverSession: establishPersonSession)
+    accountDataManager.stored(sessionID: establishPersonSession.id)
   }
 }
