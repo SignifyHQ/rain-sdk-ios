@@ -26,8 +26,8 @@ public extension UserDefaults {
   @LFUserDefault(key: Key.phoneNumber, defaultValue: "")
   static var phoneNumber: String
   
-  @LFUserDefault(key: Key.userSessionID, defaultValue: "")
-  static var userSessionID: String
+  @LFUserDefault(key: Key.userSessionID, defaultValue: [:])
+  static var userSessionID: [String: String]
   
   @LFUserDefault(key: Key.userNameDisplay, defaultValue: "")
   static var userNameDisplay: String
@@ -37,5 +37,8 @@ public extension UserDefaults {
   
   @LFUserDefault(key: Key.showRoundUpForCause, defaultValue: false)
   static var showRoundUpForCause: Bool
+  
+  @LFUserDefault(key: Key.userCompleteOnboarding, defaultValue: false)
+  static var userCompleteOnboarding: Bool
   
 }

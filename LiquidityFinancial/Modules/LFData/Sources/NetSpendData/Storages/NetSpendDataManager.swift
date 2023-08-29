@@ -3,7 +3,7 @@ import NetspendSdk
 
 public protocol NetSpendDataManagerProtocol {
   var jwkToken: APINSJwkToken? { get }
-  var serverSession: APISessionData? { get }
+  var serverSession: APIEstablishedSessionData? { get }
   var sdkSession: NetspendSdkUserSession? { get }
   var agreement: APIAgreementData? { get }
   var fundingAgreement: APIAgreementData? { get }
@@ -11,7 +11,7 @@ public protocol NetSpendDataManagerProtocol {
   var documentData: APIDocumentData? { get set }
   func clear()
   func update(jwkToken: APINSJwkToken?)
-  func update(serverSession: APISessionData?)
+  func update(serverSession: APIEstablishedSessionData?)
   func update(agreement: APIAgreementData?)
   func update(sdkSession: NetspendSdkUserSession?)
   func update(accountPersonData: APIAccountPersonData?)
@@ -22,7 +22,7 @@ public protocol NetSpendDataManagerProtocol {
 public class NetSpendDataManager: NetSpendDataManagerProtocol {
   public var documentData: APIDocumentData?
   public private(set) var jwkToken: APINSJwkToken?
-  public private(set) var serverSession: APISessionData?
+  public private(set) var serverSession: APIEstablishedSessionData?
   public private(set) var agreement: APIAgreementData?
   public private(set) var sdkSession: NetspendSdkUserSession?
   public private(set) var accountPersonData: APIAccountPersonData?
@@ -32,7 +32,7 @@ public class NetSpendDataManager: NetSpendDataManagerProtocol {
     self.jwkToken = jwkToken
   }
   
-  public func update(serverSession: APISessionData?) {
+  public func update(serverSession: APIEstablishedSessionData?) {
     self.serverSession = serverSession
   }
   

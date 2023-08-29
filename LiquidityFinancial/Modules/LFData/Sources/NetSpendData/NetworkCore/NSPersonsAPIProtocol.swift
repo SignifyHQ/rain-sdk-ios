@@ -3,7 +3,7 @@ import CoreNetwork
 
 public protocol NSPersonsAPIProtocol {
   func sessionInit() async throws -> APINSJwkToken
-  func establishSession(deviceData: EstablishSessionParameters) async throws -> APISessionData
+  func establishSession(deviceData: EstablishSessionParameters) async throws -> APIEstablishedSessionData
   func getAgreement() async throws -> APIAgreementData
   func createAccountPerson(personInfo: AccountPersonParameters, sessionId: String) async throws -> APIAccountPersonData
   func getQuestion(sessionId: String) async throws -> APIQuestionData
@@ -13,4 +13,5 @@ public protocol NSPersonsAPIProtocol {
   func uploadDocuments(path: PathDocumentParameters, documentData: DocumentParameters) async throws -> APIDocumentData.RequestedDocument
   func getAuthorizationCode(sessionId: String) async throws -> APIAuthorizationCode
   func postAgreement(body: [String: Any]) async throws -> Bool
+  func getSession(sessionId: String) async throws -> APISessionData
 }

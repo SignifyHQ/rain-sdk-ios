@@ -3,7 +3,7 @@
 // MARK: - Screens
 
 // Initial Screen
-"initial.label.title" = "%@";
+"initial.label.title" = "%@ Card";
 
 // PhoneNumber Screen
 "phoneNumber.textField.title" = "Phone Number";

@@ -35,7 +35,16 @@ public class AccountDataManager: AccountDataStorageProtocol {
   }
   
   public var sessionID: String {
-    UserDefaults.userSessionID
+    UserDefaults.userSessionID[phoneNumber] ?? ""
+  }
+  
+  public var userCompleteOnboarding: Bool {
+    get {
+      UserDefaults.userCompleteOnboarding
+    }
+    set {
+      UserDefaults.userCompleteOnboarding = newValue
+    }
   }
   
   public var addressDetail: String {
@@ -126,12 +135,15 @@ public class AccountDataManager: AccountDataStorageProtocol {
   }
   
   public func stored(sessionID: String) {
-    UserDefaults.userSessionID = sessionID
+    UserDefaults.userSessionID = [phoneNumber: sessionID]
   }
   
   public func clearUserSession() {
-    UserDefaults.userSessionID = ""
+    //UserDefaults.userSessionID = [:] // we don't clear it beacause it alway map with phone
     UserDefaults.phoneNumber = ""
+    UserDefaults.userEmail = ""
+    UserDefaults.userNameDisplay = ""
+    UserDefaults.userCompleteOnboarding = false
     userInfomationData = UserInfomationData()
   }
   

@@ -10,7 +10,8 @@ public protocol AccountDataStorageProtocol {
   var addressDetail: String { get }
   var fiatAccountID: String? { get set }
   var cryptoAccountID: String? { get set }
-
+  var userCompleteOnboarding: Bool { get set }
+  
   func subscribeWalletAddressesChanged(_ completion: @escaping ([WalletAddressEntity]) -> Void) -> Cancellable
   func storeWalletAddresses(_ addresses: [WalletAddressEntity])
   func addOrEditWalletAddress(_ address: WalletAddressEntity)

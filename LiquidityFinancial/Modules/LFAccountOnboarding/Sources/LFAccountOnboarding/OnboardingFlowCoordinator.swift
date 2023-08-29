@@ -92,7 +92,19 @@ public class OnboardingFlowCoordinator: OnboardingFlowCoordinatorProtocol {
   
   public func routeUser() {
     Task { @MainActor in
-       await apiFetchCurrentState()
+#if DEBUG
+      let start = CFAbsoluteTimeGetCurrent()
+#endif
+      if checkUserIsValid() {
+        await apiFetchCurrentState()
+      } else {
+        log.info("<<<<<<<<<<<<<< User change phone login to device >>>>>>>>>>>>>>>")
+        forcedLogout()
+      }
+#if DEBUG
+      let diff = CFAbsoluteTimeGetCurrent() - start
+      log.debug("Took \(diff) seconds")
+#endif
     }
   }
 
@@ -107,12 +119,39 @@ public class OnboardingFlowCoordinator: OnboardingFlowCoordinatorProtocol {
   
   public func apiFetchCurrentState() async {
     do {
-      let user = try await accountRepository.getUser()
-      handleDataUser(user: user)
+      if authorizationManager.isTokenValid() {
+        try await apiFetchAndUpdateForStart()
+      } else {
+        try await authorizationManager.refreshToken()
+        try await apiFetchAndUpdateForStart()
+      }
+    } catch {
+      log.error(error.localizedDescription)
       
-      try await refreshNetSpendSession()
+      if error.localizedDescription.contains("identity_verification_questions_not_available") {
+        set(route: .popTimeUp)
+        return
+      }
       
-      let onboardingState = try await onboardingRepository.getOnboardingState(sessionId: accountDataManager.sessionID)
+      forcedLogout()
+    }
+  }
+  
+  func checkUserIsValid() -> Bool {
+    accountDataManager.sessionID.isEmpty == false
+  }
+  
+  func apiFetchAndUpdateForStart() async throws {
+    try await refreshNetSpendSession()
+    
+    async let fetchUser = accountRepository.getUser()
+    let user = try await fetchUser
+    handleDataUser(user: user)
+    
+    if accountDataManager.userCompleteOnboarding == false {
+      async let fetchOnboardingState = onboardingRepository.getOnboardingState(sessionId: accountDataManager.sessionID)
+      
+      let onboardingState = try await fetchOnboardingState
       
       if onboardingState.missingSteps.isEmpty {
         set(route: .dashboard)
@@ -150,15 +189,8 @@ public class OnboardingFlowCoordinator: OnboardingFlowCoordinatorProtocol {
           }
         }
       }
-    } catch {
-      log.error(error.localizedDescription)
-      
-      if error.localizedDescription.contains("identity_verification_questions_not_available") {
-        set(route: .popTimeUp)
-        return
-      }
-      
-      forcedLogout()
+    } else {
+      set(route: .dashboard)
     }
   }
 
@@ -216,15 +248,7 @@ extension OnboardingFlowCoordinator {
     let token = try await netspendRepository.clientSessionInit()
     netspendDataManager.update(jwkToken: token)
     
-    let sessionConnectWithJWT = await netspendRepository.establishingSessionWithJWKSet(jwtToken: token)
-    
-    guard let deviceData = sessionConnectWithJWT?.deviceData else { return }
-    
-    let establishPersonSession = try await netspendRepository.establishPersonSession(deviceData: EstablishSessionParameters(encryptedData: deviceData))
-    netspendDataManager.update(serverSession: establishPersonSession)
-    accountDataManager.stored(sessionID: establishPersonSession.id)
-    
-    let userSessionAnonymous = try netspendRepository.createUserSession(establishingSession: sessionConnectWithJWT, encryptedData: establishPersonSession.encryptedData)
-    netspendDataManager.update(sdkSession: userSessionAnonymous)
+    let sessionEntity = try await netspendRepository.getSession(sessionId: accountDataManager.sessionID)
+    accountDataManager.stored(sessionID: sessionEntity.sessionId)
   }
 }

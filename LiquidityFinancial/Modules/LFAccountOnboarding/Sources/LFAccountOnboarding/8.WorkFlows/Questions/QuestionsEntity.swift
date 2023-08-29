@@ -45,7 +45,7 @@ public class QuestionsEntity {
     }
   }
   
-  static func mapObj(_ obj: NetSpendQuestionDataDecode) -> QuestionsEntity {
+  public static func mapObj(_ obj: NetSpendQuestionDataDecode) -> QuestionsEntity {
     var questions: [AnswerOptions] = []
     obj.questions.forEach { question in
       questions.append(

@@ -7,8 +7,8 @@ extension LFCoreNetwork: NSPersonsAPIProtocol where R == NSPersonsRoute {
     return try await request(NSPersonsRoute.sessionInit, target: APINSJwkToken.self, failure: LFErrorObject.self, decoder: .apiDecoder)
   }
   
-  public func establishSession(deviceData: EstablishSessionParameters) async throws -> APISessionData {
-    return try await request(NSPersonsRoute.establishSession(deviceData), target: APISessionData.self, failure: LFErrorObject.self, decoder: .apiDecoder)
+  public func establishSession(deviceData: EstablishSessionParameters) async throws -> APIEstablishedSessionData {
+    return try await request(NSPersonsRoute.establishSession(deviceData), target: APIEstablishedSessionData.self, failure: LFErrorObject.self, decoder: .apiDecoder)
   }
   
   public func getAgreement() async throws -> APIAgreementData {
@@ -46,5 +46,9 @@ extension LFCoreNetwork: NSPersonsAPIProtocol where R == NSPersonsRoute {
   public func postAgreement(body: [String: Any]) async throws -> Bool {
     let result = try await request(NSPersonsRoute.postAgreements(body))
     return (result.httpResponse?.statusCode ?? 500).isSuccess
+  }
+  
+  public func getSession(sessionId: String) async throws -> APISessionData {
+    return try await request(NSPersonsRoute.getSession(sessionId: sessionId), target: APISessionData.self, failure: LFErrorObject.self, decoder: .apiDecoder)
   }
 }

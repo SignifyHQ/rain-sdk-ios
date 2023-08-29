@@ -15,6 +15,7 @@ public enum NSPersonsRoute {
   case getDocuments(sessionId: String)
   case uploadDocuments(path: PathDocumentParameters, documentData: DocumentParameters)
   case getAuthorizationCode(sessionId: String)
+  case getSession(sessionId: String)
 }
 
 extension NSPersonsRoute: LFRoute {
@@ -41,6 +42,8 @@ extension NSPersonsRoute: LFRoute {
       return "/v1/netspend/persons/document-requests/\(path.documentID)"
     case .getAuthorizationCode:
       return "/v1/netspend/client-sdk/authorization-codes"
+    case .getSession(sessionId: let sessionId):
+      return "/v1/netspend/sessions/\(sessionId)"
     }
   }
   
@@ -52,7 +55,7 @@ extension NSPersonsRoute: LFRoute {
       "productId": NetworkUtilities.productID
     ]
     switch self {
-    case .sessionInit, .getAgreements, .establishSession, .getWorkflows, .postAgreements:
+    case .sessionInit, .getAgreements, .establishSession, .getWorkflows, .postAgreements, .getSession:
       return base
     case .createAccountPerson(_, let sessionID):
       base["netspendSessionId"] = sessionID
@@ -77,7 +80,7 @@ extension NSPersonsRoute: LFRoute {
   
   public var httpMethod: HttpMethod {
     switch self {
-    case .sessionInit, .getAgreements, .getQuestions, .getWorkflows, .getDocuments:
+    case .sessionInit, .getAgreements, .getQuestions, .getWorkflows, .getDocuments, .getSession:
       return .GET
     case .establishSession, .createAccountPerson, .getAuthorizationCode, .postAgreements:
       return .POST
@@ -90,7 +93,7 @@ extension NSPersonsRoute: LFRoute {
   
   public var parameters: Parameters? {
     switch self {
-    case .sessionInit, .getAgreements, .getQuestions, .getWorkflows, .getDocuments, .getAuthorizationCode:
+    case .sessionInit, .getAgreements, .getQuestions, .getWorkflows, .getDocuments, .getAuthorizationCode, .getSession:
       return nil
     case .establishSession(let parameters):
       return parameters.encoded()
@@ -109,7 +112,7 @@ extension NSPersonsRoute: LFRoute {
   
   public var parameterEncoding: ParameterEncoding? {
     switch self {
-    case .sessionInit, .getAgreements, .getQuestions, .getWorkflows, .getDocuments, .getAuthorizationCode:
+    case .sessionInit, .getAgreements, .getQuestions, .getWorkflows, .getDocuments, .getAuthorizationCode, .getSession:
       return nil
     case .establishSession, .createAccountPerson, .putQuestions, .uploadDocuments, .postAgreements:
       return .json

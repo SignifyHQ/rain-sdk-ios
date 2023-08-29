@@ -13,4 +13,5 @@ public extension Key {
   static let userSessionID: Key = "UserSessionID"
   static let userNameDisplay: Key = "userNameDisplay"
   static let showRoundUpForCause: Key = "showRoundUpForCause"
+  static let userCompleteOnboarding: Key = "userCompleteOnboarding"
 }

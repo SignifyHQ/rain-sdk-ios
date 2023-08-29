@@ -8,7 +8,7 @@ import LFUtilities
 public protocol NSPersonsRepositoryProtocol {
   func clientSessionInit() async throws -> APINSJwkToken
   func establishingSessionWithJWKSet(jwtToken: APINSJwkToken) async -> NetspendSdkUserSessionConnectionJWKSet!
-  func establishPersonSession(deviceData: EstablishSessionParameters) async throws -> APISessionData
+  func establishPersonSession(deviceData: EstablishSessionParameters) async throws -> APIEstablishedSessionData
   func createUserSession(establishingSession: NetspendSdkUserSessionConnectionJWKSet?, encryptedData: String) throws -> NetspendSdkUserSession?
   func getAgreement() async throws -> APIAgreementData
   func createAccountPerson(personInfo: AccountPersonParameters, sessionId: String) async throws -> APIAccountPersonData
@@ -19,6 +19,7 @@ public protocol NSPersonsRepositoryProtocol {
   func uploadDocuments(path: PathDocumentParameters, documentData: DocumentParameters) async throws -> APIDocumentData.RequestedDocument
   func getAuthorizationCode(sessionId: String) async throws -> APIAuthorizationCode
   func postAgreement(body: [String: Any]) async throws -> Bool
+  func getSession(sessionId: String) async throws -> APISessionData
 }
 
 public class NSPersonsRepository: NSPersonsRepositoryProtocol {
@@ -37,14 +38,14 @@ public class NSPersonsRepository: NSPersonsRepositoryProtocol {
     var session: NetspendSdkUserSessionConnectionJWKSet!
     do {
       session = try NetspendSdk.shared.createUserSessionConnection(jwkSet: jwtToken.rawData, iovationToken: FraudForce.blackbox())
-      try await Task.sleep(seconds: 1) // We need to wait for sdk make sure the init session
+      try await Task.sleep(seconds: 0.5) // We need to wait for sdk make sure the init session
     } catch {
       log.error(error)
     }
     return session
   }
   
-  public func establishPersonSession(deviceData: EstablishSessionParameters) async throws -> APISessionData {
+  public func establishPersonSession(deviceData: EstablishSessionParameters) async throws -> APIEstablishedSessionData {
     return try await netSpendAPI.establishSession(deviceData: deviceData)
   }
   
@@ -86,5 +87,9 @@ public class NSPersonsRepository: NSPersonsRepositoryProtocol {
   
   public func postAgreement(body: [String: Any]) async throws -> Bool {
     return try await netSpendAPI.postAgreement(body: body)
+  }
+  
+  public func getSession(sessionId: String) async throws -> APISessionData {
+    return try await netSpendAPI.getSession(sessionId: sessionId)
   }
 }

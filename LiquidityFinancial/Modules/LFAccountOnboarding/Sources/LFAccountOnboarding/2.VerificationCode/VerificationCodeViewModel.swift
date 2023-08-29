@@ -52,33 +52,28 @@ extension VerificationCodeViewModel {
     guard !isShowLoading else { return }
     isShowLoading = true
     Task {
+#if DEBUG
+      let start = CFAbsoluteTimeGetCurrent()
+#endif
       do {
         _ = try await loginUseCase.execute(phoneNumber: formatPhoneNumber, code: code)
         accountDataManager.update(phone: formatPhoneNumber)
         accountDataManager.stored(phone: formatPhoneNumber)
         
-        if LFUtility.charityEnabled {
-          // we enalbe showRoundUpForCause after user login
+        if LFUtility.charityEnabled { // we enalbe showRoundUpForCause after user login
           UserDefaults.showRoundUpForCause = true
         }
         
         intercomService.loginIdentifiedUser(userAttributes: IntercomService.UserAttributes(phone: formatPhoneNumber))
         
-        let token = try await netspendRepository.clientSessionInit()
-        netspendDataManager.update(jwkToken: token)
+        if checkUserIsValid() {
+          try await refreshNetSpendSession()
+          await checkOnboardingState()
+        } else {
+          try await initNetSpendSession()
+          await checkOnboardingState()
+        }
         
-        let sessionConnectWithJWT = await netspendRepository.establishingSessionWithJWKSet(jwtToken: token)
-        
-        guard let deviceData = sessionConnectWithJWT?.deviceData else { return }
-        
-        let establishPersonSession = try await netspendRepository.establishPersonSession(deviceData: EstablishSessionParameters(encryptedData: deviceData))
-        netspendDataManager.update(serverSession: establishPersonSession)
-        accountDataManager.stored(sessionID: establishPersonSession.id)
-        
-        let userSessionAnonymous = try netspendRepository.createUserSession(establishingSession: sessionConnectWithJWT, encryptedData: establishPersonSession.encryptedData)
-        netspendDataManager.update(sdkSession: userSessionAnonymous)
-        
-        await checkOnboardingState()
         self.isShowLoading = false
         
       } catch {
@@ -86,6 +81,10 @@ extension VerificationCodeViewModel {
         toastMessage = error.localizedDescription
         log.error(error)
       }
+#if DEBUG
+      let diff = CFAbsoluteTimeGetCurrent() - start
+      log.debug("Took \(diff) seconds")
+#endif
     }
   }
   
@@ -132,9 +131,33 @@ extension VerificationCodeViewModel {
 
   // MARK: Private
 extension VerificationCodeViewModel {
-  private func apiFetchUser() async throws {
-    let user = try await accountRepository.getUser()
-    handleDataUser(user: user)
+  private func refreshNetSpendSession() async throws {
+    log.info("<<<<<<<<<<<<<< Refresh NetSpend Session >>>>>>>>>>>>>>>")
+    let token = try await netspendRepository.clientSessionInit()
+    netspendDataManager.update(jwkToken: token)
+    
+    let sessionEntity = try await netspendRepository.getSession(sessionId: accountDataManager.sessionID)
+    accountDataManager.stored(sessionID: sessionEntity.sessionId)
+  }
+  
+  private func initNetSpendSession() async throws {
+    let token = try await netspendRepository.clientSessionInit()
+    netspendDataManager.update(jwkToken: token)
+    
+    let sessionConnectWithJWT = await netspendRepository.establishingSessionWithJWKSet(jwtToken: token)
+    
+    guard let deviceData = sessionConnectWithJWT?.deviceData else { return }
+    
+    let establishPersonSession = try await netspendRepository.establishPersonSession(deviceData: EstablishSessionParameters(encryptedData: deviceData))
+    netspendDataManager.update(serverSession: establishPersonSession)
+    accountDataManager.stored(sessionID: establishPersonSession.id)
+    
+    let userSessionAnonymous = try netspendRepository.createUserSession(establishingSession: sessionConnectWithJWT, encryptedData: establishPersonSession.encryptedData)
+    netspendDataManager.update(sdkSession: userSessionAnonymous)
+  }
+  
+  private func checkUserIsValid() -> Bool {
+    accountDataManager.sessionID.isEmpty == false
   }
   
   private func handleDataUser(user: LFUser) {
@@ -150,44 +173,53 @@ extension VerificationCodeViewModel {
   @MainActor
   private func checkOnboardingState() async {
     do {
-      let onboardingState = try await onboardingRepository.getOnboardingState(sessionId: accountDataManager.sessionID)
-      if onboardingState.missingSteps.isEmpty {
-        try await apiFetchUser()
-        self.onboardingFlowCoordinator.set(route: .dashboard)
-      } else {
-        let states = onboardingState.mapToEnum()
-        if states.isEmpty {
-          try await apiFetchUser()
+      async let fetchUser = accountRepository.getUser()
+      let user = try await fetchUser
+      handleDataUser(user: user)
+      
+      if accountDataManager.userCompleteOnboarding == false {
+        async let fetchOnboardingState = onboardingRepository.getOnboardingState(sessionId: accountDataManager.sessionID)
+        
+        let onboardingState = try await fetchOnboardingState
+        
+        if onboardingState.missingSteps.isEmpty {
           self.onboardingFlowCoordinator.set(route: .dashboard)
         } else {
-          if states.contains(OnboardingMissingStep.netSpendCreateAccount) {
-            onboardingFlowCoordinator.set(route: .welcome)
-          } else if states.contains(OnboardingMissingStep.acceptAgreement) {
-            onboardingFlowCoordinator.set(route: .agreement)
-          } else if states.contains(OnboardingMissingStep.acceptFeatureAgreement) {
-            onboardingFlowCoordinator.set(route: .featureAgreement)
-          } else if states.contains(OnboardingMissingStep.identityQuestions) {
-            let questionsEncrypt = try await netspendRepository.getQuestion(sessionId: accountDataManager.sessionID)
-            if let usersession = netspendDataManager.sdkSession, let questionsDecode = questionsEncrypt.decodeData(session: usersession) {
-              let questionsEntity = QuestionsEntity.mapObj(questionsDecode)
-              onboardingFlowCoordinator.set(route: .question(questionsEntity))
-            }
-          } else if states.contains(OnboardingMissingStep.provideDocuments) {
-            let documents = try await netspendRepository.getDocuments(sessionId: accountDataManager.sessionID)
-            netspendDataManager.update(documentData: documents)
-            onboardingFlowCoordinator.set(route: .document)
-          } else if states.contains(OnboardingMissingStep.dashboardReview) {
-            onboardingFlowCoordinator.set(route: .kycReview)
-          } else if states.contains(OnboardingMissingStep.zeroHashAccount) {
-            onboardingFlowCoordinator.set(route: .zeroHash)
-          } else if states.contains(OnboardingMissingStep.accountReject) {
-            onboardingFlowCoordinator.set(route: .accountReject)
-          } else if states.contains(OnboardingMissingStep.primaryPersonKYCApprove) {
-            onboardingFlowCoordinator.set(route: .kycReview)
+          let states = onboardingState.mapToEnum()
+          if states.isEmpty {
+            self.onboardingFlowCoordinator.set(route: .dashboard)
           } else {
-            onboardingFlowCoordinator.set(route: .unclear(states.compactMap({ $0.rawValue }).joined()))
+            if states.contains(OnboardingMissingStep.netSpendCreateAccount) {
+              onboardingFlowCoordinator.set(route: .welcome)
+            } else if states.contains(OnboardingMissingStep.acceptAgreement) {
+              onboardingFlowCoordinator.set(route: .agreement)
+            } else if states.contains(OnboardingMissingStep.acceptFeatureAgreement) {
+              onboardingFlowCoordinator.set(route: .featureAgreement)
+            } else if states.contains(OnboardingMissingStep.identityQuestions) {
+              let questionsEncrypt = try await netspendRepository.getQuestion(sessionId: accountDataManager.sessionID)
+              if let usersession = netspendDataManager.sdkSession, let questionsDecode = questionsEncrypt.decodeData(session: usersession) {
+                let questionsEntity = QuestionsEntity.mapObj(questionsDecode)
+                onboardingFlowCoordinator.set(route: .question(questionsEntity))
+              }
+            } else if states.contains(OnboardingMissingStep.provideDocuments) {
+              let documents = try await netspendRepository.getDocuments(sessionId: accountDataManager.sessionID)
+              netspendDataManager.update(documentData: documents)
+              onboardingFlowCoordinator.set(route: .document)
+            } else if states.contains(OnboardingMissingStep.dashboardReview) {
+              onboardingFlowCoordinator.set(route: .kycReview)
+            } else if states.contains(OnboardingMissingStep.zeroHashAccount) {
+              onboardingFlowCoordinator.set(route: .zeroHash)
+            } else if states.contains(OnboardingMissingStep.accountReject) {
+              onboardingFlowCoordinator.set(route: .accountReject)
+            } else if states.contains(OnboardingMissingStep.primaryPersonKYCApprove) {
+              onboardingFlowCoordinator.set(route: .kycReview)
+            } else {
+              onboardingFlowCoordinator.set(route: .unclear(states.compactMap({ $0.rawValue }).joined()))
+            }
           }
         }
+      } else {
+        self.onboardingFlowCoordinator.set(route: .dashboard)
       }
     } catch {
       log.error(error.localizedDescription)
