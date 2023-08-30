@@ -106,6 +106,7 @@ struct CashCardView: View {
           LottieView(loading: .contrast)
             .frame(width: 30, height: 20, alignment: .leading)
             .hidden(!showLoadingIndicator)
+            .foregroundColor(Colors.contrast.swiftUIColor)
           Text(
             cashBalance.formattedAmount(prefix: Constants.CurrencyUnit.usd.rawValue, minFractionDigits: 2)
           )

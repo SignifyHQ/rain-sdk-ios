@@ -46,8 +46,6 @@ struct CryptoChartDetailView: View {
         switch navigation {
         case .addMoney:
           MoveMoneyAccountView(kind: .receive)
-        case .accountsView:
-          AccountsView()
         case .transactions:
           TransactionListView(
             type: .crypto,

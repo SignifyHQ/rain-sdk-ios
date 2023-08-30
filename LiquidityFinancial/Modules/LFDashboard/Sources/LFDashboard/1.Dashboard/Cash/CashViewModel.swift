@@ -8,6 +8,7 @@ import AccountData
 import LFUtilities
 import LFBank
 import LFTransaction
+import Combine
 
 @MainActor
 final class CashViewModel: ObservableObject {
@@ -30,7 +31,8 @@ final class CashViewModel: ObservableObject {
   @Published var linkedAccount: [APILinkedSourceData] = []
   @Published var achInformation: ACHModel = .default
   
-  private let isGuest = false // TODO: - Will be remove after handle guest feature
+  let currencyType = Constants.CurrencyType.fiat.rawValue
+  
   var transactionLimitEntity: Int {
     50
   }
@@ -38,38 +40,53 @@ final class CashViewModel: ObservableObject {
   var transactionLimitOffset: Int {
     0
   }
+
+  private var cancellable: Set<AnyCancellable> = []
   
-  let currencyType = Constants.CurrencyType.fiat.rawValue
-  private let guestHandler: () -> Void
-  
-  init(guestHandler: @escaping () -> Void) {
-    self.guestHandler = guestHandler
-    appearOperations()
-    getACHInfo()
-  }
-  
-  func appearOperations() {
-    Task { @MainActor [weak self] in
-      guard let self else { return }
-      await self.refresh()
-    }
-  }
-  
-  func refresh() async {
-    do {
-      activity = .loading
-      isLoading = true
-      if let account = try await refreshAccounts() {
-        isLoading = false
-        
-        try getListConnectedAccount()
-        
-        try await loadTransactions(accountId: account.id)
-        activity = transactions.isEmpty ? .addFunds : .transactions
+  init(accounts: (accountsFiat: Published<[LFAccount]>.Publisher, isLoading: Published<Bool>.Publisher),
+       linkedAccount: Published<[APILinkedSourceData]>.Publisher) {
+    
+    accounts.accountsFiat
+      .receive(on: DispatchQueue.main)
+      .sink { [weak self] accounts in
+        self?.assets = accounts.map {
+          AssetModel(
+            type: AssetType(rawValue: $0.currency.uppercased()),
+            availableBalance: $0.availableBalance,
+            availableUsdBalance: $0.availableUsdBalance
+          )
+        }
+        if let account = accounts.first { // TODO: Temp Just get one
+          self?.accountDataManager.fiatAccountID = account.id
+          self?.cashBalanceValue = account.availableBalance
+          self?.selectedAsset = AssetType(rawValue: account.currency) ?? .usd
+          self?.refreshTransactions(with: account.id)
+        }
       }
-    } catch {
-      activity = .addFunds
-      log.error(error)
+      .store(in: &cancellable)
+    
+    accounts.isLoading
+      .assign(to: \.isLoading, on: self)
+      .store(in: &cancellable)
+    
+    linkedAccount
+      .assign(to: \.linkedAccount, on: self)
+      .store(in: &cancellable)
+    
+  }
+  
+  func refreshTransactions(with accountID: String) {
+    Task { @MainActor in
+      do {
+        activity = .loading
+        try await loadTransactions(accountId: accountID)
+        try await getACHInfo()
+        activity = transactions.isEmpty ? .addFunds : .transactions
+      } catch {
+        activity = .addFunds
+        log.error(error)
+        toastMessage = error.localizedDescription
+      }
     }
   }
 }
@@ -101,12 +118,8 @@ extension CashViewModel {
   }
   
   func transactionItemTapped(_ transaction: TransactionModel) {
-    if isGuest {
-      guestHandler()
-    } else {
-      Haptic.impact(.light).generate()
-      navigation = .transactionDetail(transaction)
-    }
+    Haptic.impact(.light).generate()
+    navigation = .transactionDetail(transaction)
   }
   
   func onClickedSeeAllButton() {
@@ -114,7 +127,7 @@ extension CashViewModel {
   }
   
   func guestCardTapped() {
-    guestHandler()
+    
   }
 }
 
@@ -133,55 +146,16 @@ extension CashViewModel {
     self.transactions = transactions.data.compactMap({ TransactionModel(from: $0) })
   }
   
-  private func refreshAccounts() async throws -> LFAccount? {
-    defer { isLoading = false }
-    isLoading = true
-    let accounts = try await accountRepository.getAccount(currencyType: currencyType)
-    assets = accounts.map {
-      AssetModel(
-        type: AssetType(rawValue: $0.currency.uppercased()),
-        availableBalance: $0.availableBalance,
-        availableUsdBalance: $0.availableUsdBalance
+  private func getACHInfo() async throws {
+    do {
+      let achResponse = try await externalFundingRepository.getACHInfo(sessionID: accountDataManager.sessionID)
+      achInformation = ACHModel(
+        accountNumber: achResponse.accountNumber ?? Constants.Default.undefined.rawValue,
+        routingNumber: achResponse.routingNumber ?? Constants.Default.undefined.rawValue,
+        accountName: achResponse.accountName ?? Constants.Default.undefined.rawValue
       )
-    }
-    if let account = accounts.first { // TODO: Temp Just get one
-      self.accountDataManager.fiatAccountID = account.id
-      self.cashBalanceValue = account.availableBalance
-      self.selectedAsset = AssetType(rawValue: account.currency) ?? .usd
-      return account
-    }
-    return nil
-  }
-  
-  private func getListConnectedAccount() throws {
-    Task {
-      let sessionID = self.accountDataManager.sessionID
-      let response = try await self.externalFundingRepository.getLinkedAccount(sessionId: sessionID)
-      let linkedAccount = response.linkedSources.compactMap({
-        APILinkedSourceData(
-          name: $0.name,
-          last4: $0.last4,
-          sourceType: APILinkSourceType(rawValue: $0.sourceType.rawString),
-          sourceId: $0.sourceId,
-          requiredFlow: $0.requiredFlow
-        )
-      })
-      self.linkedAccount = linkedAccount
-    }
-  }
-  
-  private func getACHInfo() {
-    Task {
-      do {
-        let achResponse = try await externalFundingRepository.getACHInfo(sessionID: accountDataManager.sessionID)
-        achInformation = ACHModel(
-          accountNumber: achResponse.accountNumber ?? Constants.Default.undefined.rawValue,
-          routingNumber: achResponse.routingNumber ?? Constants.Default.undefined.rawValue,
-          accountName: achResponse.accountName ?? Constants.Default.undefined.rawValue
-        )
-      } catch {
-        toastMessage = error.localizedDescription
-      }
+    } catch {
+      log.error(error.localizedDescription)
     }
   }
 }

@@ -3,15 +3,22 @@ import LFTransaction
 import LFLocalizable
 import LFStyleGuide
 import LFUtilities
+import Combine
 
 public struct HomeView: View {
   @Environment(\.scenePhase) var scenePhase
   
   @StateObject private var viewModel: HomeViewModel
+  
+  var dataStorages: HomeDataStorages
+  
   let tabOptions: [TabOption]
   
   public init(viewModel: HomeViewModel, tabOptions: [TabOption]) {
     _viewModel = .init(wrappedValue: viewModel)
+    self.dataStorages = HomeDataStorages(toastMessage: { toastMessage in
+      viewModel.toastMessage = toastMessage
+    })
     self.tabOptions = tabOptions
   }
   
@@ -19,9 +26,7 @@ public struct HomeView: View {
     VStack(spacing: 0) {
       ZStack {
         ForEach(tabOptions, id: \.self) { option in
-          DashboardView(option: option) { option in
-            viewModel.tabSelected = option
-          }
+          DashboardView(dataStorages: dataStorages, option: option)
           .opacity(viewModel.tabSelected == option ? 1 : 0)
         }
       }
@@ -38,10 +43,6 @@ public struct HomeView: View {
     }
     .navigationLink(item: $viewModel.navigation) { item in
       switch item {
-      case .searchCauses:
-        EmptyView() // TODO: - Will be implemented later
-      case .editRewards:
-        EmptyView() // TODO: - Will be implemented later
       case .profile:
         ProfileView()
       case .transactionDetail(let id, let accountId):
@@ -55,7 +56,7 @@ public struct HomeView: View {
       }
     }
     .onAppear {
-      viewModel.appearOperations()
+      viewModel.onAppear()
     }
     .onChange(of: scenePhase, perform: { newValue in
       if newValue == .active {

@@ -35,12 +35,11 @@ public final class HomeViewModel: ObservableObject {
   private var subscribers: Set<AnyCancellable> = []
   
   private var isFristLoad: Bool = true
+  
   init(tabOptions: [TabOption]) {
     self.tabOptions = tabOptions
-    apiFetchUser()
-    apiFetchOnboardingState()
-    handleSelectRewardChange()
-    handleSelectedFundraisersSuccess()
+    accountDataManager.userCompleteOnboarding = true
+    initData()
   }
   
   var showGearButton: Bool {
@@ -52,8 +51,15 @@ public final class HomeViewModel: ObservableObject {
   }
 }
 
-// MARK: - API Reward
+// MARK: - Private
 private extension HomeViewModel {
+  func initData() {
+    apiFetchUser()
+    apiFetchOnboardingState()
+    handleSelectRewardChange()
+    handleSelectedFundraisersSuccess()
+  }
+  
   func handleSelectedFundraisersSuccess() {
     NotificationCenter.default.publisher(for: .selectedFundraisersSuccess)
       .delay(for: 0.55, scheduler: RunLoop.main)

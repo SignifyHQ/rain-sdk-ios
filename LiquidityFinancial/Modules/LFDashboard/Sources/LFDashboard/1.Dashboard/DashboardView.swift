@@ -2,33 +2,40 @@ import SwiftUI
 import LFStyleGuide
 import LFLocalizable
 import LFUtilities
+import LFBank
 
 struct DashboardView: View {
-  @StateObject private var viewModel: DashboardViewModel
   
-  init(option: TabOption, tabRedirection: @escaping ((TabOption) -> Void)) {
-    _viewModel = .init(
-      wrappedValue: DashboardViewModel(option: option, tabRedirection: tabRedirection)
-    )
+  private var dataStorages: HomeDataStorages
+  
+  let option: TabOption
+  
+  init(dataStorages: HomeDataStorages, option: TabOption) {
+    self.option = option
+    self.dataStorages = dataStorages
   }
   
   var body: some View {
     Group {
-      switch viewModel.option {
+      switch option {
       case .cash:
-        CashView {
-          viewModel.handleGuestUser()
+        CashView(viewModel:
+                  CashViewModel(
+                    accounts: (accountsFiat: dataStorages.$fiatAccounts, isLoading: dataStorages.$isLoading),
+                    linkedAccount: dataStorages.$linkedAccount
+                  )
+        ) { // handle refresh call back
+          dataStorages.refreshCash()
         }
       case .rewards:
-        RewardTabView()
+        RewardTabView(viewModel: RewardTabViewModel(
+          accounts: (accountsFiat: dataStorages.$cryptoAccounts, isLoading: dataStorages.$isLoading)
+        ))
       case .assets:
-        AssetsView()
+        AssetsView(viewModel: AssetsViewModel(assets: dataStorages.$allAssets, isLoading: dataStorages.$isLoading))
       case .account:
-        AccountsView()
+        AccountsView(viewModel: AccountViewModel(achInformationData: dataStorages.$achInformationData))
       }
-    }
-    .popup(item: $viewModel.toastMessage, style: .toast) {
-      ToastView(toastMessage: $0)
     }
   }
 }

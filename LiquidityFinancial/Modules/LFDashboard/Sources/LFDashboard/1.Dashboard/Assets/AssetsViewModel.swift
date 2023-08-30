@@ -1,7 +1,9 @@
 import Foundation
+import SwiftUI
 import AccountDomain
 import LFUtilities
 import Factory
+import Combine
 
 @MainActor
 final class AssetsViewModel: ObservableObject {
@@ -13,7 +15,16 @@ final class AssetsViewModel: ObservableObject {
   @Published var assets: [AssetModel] = []
   @Published var navigation: Navigation?
   
-  init() {
+  private var cancellable: Set<AnyCancellable> = []
+  
+  init(assets: Published<[AssetModel]>.Publisher, isLoading: Published<Bool>.Publisher) {
+    assets
+      .assign(to: \.assets, on: self)
+      .store(in: &cancellable)
+    
+    isLoading
+      .assign(to: \.isLoading, on: self)
+      .store(in: &cancellable)
   }
   
   func onClickedAssetButton(assetType: AssetType) {
@@ -29,34 +40,12 @@ final class AssetsViewModel: ObservableObject {
   }
 }
 
-// MARK: - API
+  // MARK: - API
 extension AssetsViewModel {
-  func getAccounts() {
-    Task {
-      defer { isLoading = false }
-      isLoading = true
-      do {
-        var cryptoAccounts = [LFAccount]()
-        let fiatAccounts = try await self.accountRepository.getAccount(currencyType: Constants.CurrencyType.fiat.rawValue)
-        if LFUtility.cryptoEnabled {
-          cryptoAccounts = try await self.accountRepository.getAccount(currencyType: Constants.CurrencyType.crypto.rawValue)
-        }
-        let accounts = fiatAccounts + cryptoAccounts
-        assets = accounts.map {
-          AssetModel(
-            type: AssetType(rawValue: $0.currency),
-            availableBalance: $0.availableBalance,
-            availableUsdBalance: $0.availableUsdBalance
-          )
-        }
-      } catch {
-        toastMessage = error.localizedDescription
-      }
-    }
-  }
+  
 }
 
-// MARK: - Types
+  // MARK: - Types
 extension AssetsViewModel {
   enum Navigation {
     case usd(AssetModel)

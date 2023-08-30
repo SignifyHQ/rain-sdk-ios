@@ -28,12 +28,22 @@ class AccountViewModel: ObservableObject {
   @Published var achInformation: ACHModel = .default
   @Published var notificationsEnabled = false
   
+  private var cancellable: Set<AnyCancellable> = []
+  
   var networkEnvironment: NetworkEnvironment {
     EnvironmentManager().networkEnvironment
   }
   
-  init() {
-    getACHInfo()
+  init(achInformationData: Published<(model: ACHModel, loading: Bool)>.Publisher) {
+    
+    achInformationData
+      .receive(on: DispatchQueue.main)
+      .sink { [weak self] achModel in
+        self?.isLoadingACH = achModel.loading
+        self?.achInformation = achModel.model
+      }
+      .store(in: &cancellable)
+    
     checkNotificationsStatus()
   }
 }
@@ -146,24 +156,6 @@ extension AccountViewModel {
         self.linkedAccount = linkedAccount
       } catch {
         log.error(error)
-      }
-    }
-  }
-  
-  func getACHInfo() {
-    isLoadingACH = true
-    Task {
-      do {
-        let achResponse = try await externalFundingRepository.getACHInfo(sessionID: accountDataManager.sessionID)
-        achInformation = ACHModel(
-          accountNumber: achResponse.accountNumber ?? Constants.Default.undefined.rawValue,
-          routingNumber: achResponse.routingNumber ?? Constants.Default.undefined.rawValue,
-          accountName: achResponse.accountName ?? Constants.Default.undefined.rawValue
-        )
-        isLoadingACH = false
-      } catch {
-        isLoadingACH = false
-        toastMessage = error.localizedDescription
       }
     }
   }

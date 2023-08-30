@@ -9,7 +9,11 @@ import LFBank
 struct AccountsView: View {
   @Environment(\.scenePhase) var scenePhase
   
-  @StateObject private var viewModel = AccountViewModel()
+  @StateObject private var viewModel: AccountViewModel
+  
+  init(viewModel: AccountViewModel) {
+    _viewModel = .init(wrappedValue: viewModel)
+  }
   
   var body: some View {
     content

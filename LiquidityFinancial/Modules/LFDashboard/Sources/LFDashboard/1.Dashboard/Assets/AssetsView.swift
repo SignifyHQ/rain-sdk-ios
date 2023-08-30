@@ -4,7 +4,11 @@ import LFLocalizable
 import LFUtilities
 
 struct AssetsView: View {
-  @StateObject private var viewModel = AssetsViewModel()
+  @StateObject private var viewModel: AssetsViewModel
+  
+  init(viewModel: AssetsViewModel) {
+    self._viewModel = .init(wrappedValue: viewModel)
+  }
   
   var body: some View {
     ZStack {
@@ -34,9 +38,6 @@ struct AssetsView: View {
       case let .crypto(asset):
         CryptoAssetView(asset: asset, guestHandler: {})
       }
-    }
-    .onAppear {
-      viewModel.getAccounts()
     }
   }
 }

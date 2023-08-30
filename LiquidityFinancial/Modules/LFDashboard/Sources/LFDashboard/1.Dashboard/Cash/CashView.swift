@@ -8,10 +8,12 @@ import LFTransaction
 struct CashView: View {
   @StateObject private var viewModel: CashViewModel
   
-  init(guestHandler: @escaping () -> Void) {
+  var onRefresh: (() -> Void)
+  init(viewModel: CashViewModel, onRefresh: @escaping (() -> Void)) {
     _viewModel = .init(
-      wrappedValue: CashViewModel(guestHandler: guestHandler)
+      wrappedValue: viewModel
     )
+    self.onRefresh = onRefresh
   }
   
   var body: some View {
@@ -86,6 +88,7 @@ private extension CashView {
     GeometryReader { geo in
       ScrollView(showsIndicators: false) {
         VStack(spacing: 16) {
+          
           CashCardView(
             isPOFlow: true, // !userManager.isGuest
             showLoadingIndicator: viewModel.isLoading,
@@ -98,22 +101,23 @@ private extension CashView {
           .overlay(alignment: .bottom) {
             depositButton
           }
+          
           changeAssetButton
+          
           BalanceAlertView(type: .cash, hasContacts: !viewModel.linkedAccount.isEmpty, cashBalance: viewModel.cashBalanceValue) {
             viewModel.addMoneyTapped()
           }
+          
           activity(size: geo.size)
+          
         }
         .padding(.horizontal, 30)
         .padding(.top, 20)
         .padding(.bottom, 12)
       }
       .refreshable {
-        Task { @MainActor in
-          await viewModel.refresh()
-        }
+        onRefresh()
       }
-      // .track(name: String(describing: type(of: self))) TODO: Will be implemented later
     }
   }
   

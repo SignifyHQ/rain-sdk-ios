@@ -180,7 +180,6 @@ extension CryptoChartDetailViewModel {
   
   enum Navigation {
     case addMoney
-    case accountsView
     case transactions
     case send
     case receive

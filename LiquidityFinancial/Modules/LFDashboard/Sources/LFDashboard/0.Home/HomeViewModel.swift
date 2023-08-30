@@ -7,6 +7,10 @@ import LFUtilities
 import DevicesData
 import LFAccountOnboarding
 import OnboardingDomain
+import AccountDomain
+import NetSpendData
+import Combine
+import LFBank
 
 @MainActor
 public final class HomeViewModel: ObservableObject {
@@ -26,9 +30,11 @@ public final class HomeViewModel: ObservableObject {
   @Published var navigation: Navigation?
   @Published var popup: Popup?
   
+  @Published var isLoading: Bool = false
+  @Published var toastMessage: String?
+
   public init() {
-    apiFetchUser()
-    apiFetchOnboardingState()
+    initData()
     accountDataManager.userCompleteOnboarding = true
     checkGoTransactionDetail()
   }
@@ -103,9 +109,20 @@ extension HomeViewModel {
   }
 }
 
+// MARK: API init data tab content
+extension HomeViewModel {
+  
+  func initData() {
+    apiFetchUser()
+    apiFetchOnboardingState()
+  }
+  
+}
+
 // MARK: Notifications
 extension HomeViewModel {
-  func appearOperations() {
+
+  func onAppear() {
     checkShouldShowNotification()
     checkGoTransactionDetail()
   }
@@ -209,8 +226,6 @@ extension HomeViewModel {
 // MARK: - Types
 extension HomeViewModel {
   enum Navigation {
-    case searchCauses
-    case editRewards
     case profile
     case transactionDetail(id: String, accountId: String)
   }

@@ -6,8 +6,13 @@ import LFUtilities
 import LFTransaction
 
 struct RewardTabView: View {
-  @StateObject private var viewModel = RewardTabViewModel()
-
+  @StateObject private var viewModel: RewardTabViewModel
+  var onRefresh: (() -> Void)?
+  init(viewModel: RewardTabViewModel, onRefresh: (() -> Void)? = nil) {
+    _viewModel = .init(wrappedValue: viewModel)
+    self.onRefresh = onRefresh
+  }
+  
   var body: some View {
     content
       .navigationLink(item: $viewModel.navigation) { navigation in
@@ -35,7 +40,7 @@ struct RewardTabView: View {
       }
       .background(Colors.background.swiftUIColor)
       .onAppear {
-        viewModel.refreshData()
+        viewModel.apiLoadTransactions()
       }
   }
 }

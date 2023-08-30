@@ -3,6 +3,7 @@ import AccountDomain
 import LFUtilities
 import Factory
 import LFTransaction
+import Combine
 
 @MainActor
 class RewardTabViewModel: ObservableObject {
@@ -19,58 +20,52 @@ class RewardTabViewModel: ObservableObject {
   
   let currencyType = Constants.CurrencyType.crypto.rawValue
   
-  init() {
-  }
-}
-
-// MARK: - Private Functions
-private extension RewardTabViewModel {
-  func getCryptoAccount() async {
-    do {
-      let accounts = try await accountRepository.getAccount(currencyType: currencyType)
-      guard let account = accounts.first else {
-        return
-      }
-      self.account = account
-      self.assetModel = AssetModel(
-        type: AssetType(rawValue: account.currency),
-        availableBalance: account.availableBalance,
-        availableUsdBalance: account.availableUsdBalance
-      )
-      self.accountDataManager.cryptoAccountID = account.id
-    } catch {
-      toastMessage = error.localizedDescription
-    }
-  }
+  private var cancellable: Set<AnyCancellable> = []
   
-  func loadTransactions(accountId: String) async {
-    do {
-      let transactions = try await accountRepository.getTransactions(
-        accountId: accountId,
-        currencyType: currencyType,
-        transactionTypes: Constants.TransactionTypesRequest.rewardCryptoBack.types,
-        limit: 50,
-        offset: 0
-      )
-      self.transactions = transactions.data.compactMap({ TransactionModel(from: $0) })
-      activity = .transactions
-    } catch {
-      toastMessage = error.localizedDescription
-      activity = .failure
-    }
+  init(accounts: (accountsFiat: Published<[LFAccount]>.Publisher, isLoading: Published<Bool>.Publisher)) {
+    accounts.accountsFiat
+      .receive(on: DispatchQueue.main)
+      .sink { [weak self] accounts in
+        if let account = accounts.first {
+          self?.account = account
+          self?.assetModel = AssetModel(
+            type: AssetType(rawValue: account.currency),
+            availableBalance: account.availableBalance,
+            availableUsdBalance: account.availableUsdBalance
+          )
+          self?.accountDataManager.cryptoAccountID = account.id
+          self?.apiLoadTransactions()
+        }
+      }
+      .store(in: &cancellable)
+    
+    accounts.isLoading
+      .assign(to: \.isLoading, on: self)
+      .store(in: &cancellable)
   }
 }
 
 // MARK: - View Helpers
 extension RewardTabViewModel {
-  func refreshData() {
+  func apiLoadTransactions() {
     Task {
       defer { isLoading = false }
       isLoading = true
-      await getCryptoAccount()
-      
       if let account = account {
-        await loadTransactions(accountId: account.id)
+        do {
+          let transactions = try await accountRepository.getTransactions(
+            accountId: account.id,
+            currencyType: currencyType,
+            transactionTypes: Constants.TransactionTypesRequest.rewardCryptoBack.types,
+            limit: 50,
+            offset: 0
+          )
+          self.transactions = transactions.data.compactMap({ TransactionModel(from: $0) })
+          activity = .transactions
+        } catch {
+          toastMessage = error.localizedDescription
+          activity = .failure
+        }
       }
     }
   }

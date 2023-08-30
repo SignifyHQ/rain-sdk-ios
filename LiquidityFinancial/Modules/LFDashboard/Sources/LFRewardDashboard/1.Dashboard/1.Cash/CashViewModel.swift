@@ -121,7 +121,7 @@ extension CashViewModel {
     let transactions = try await accountRepository.getTransactions(
       accountId: accountId,
       currencyType: currencyType,
-      transactionTypes: Constants.TransactionTypesRequest.normal.types,
+      transactionTypes: Constants.TransactionTypesRequest.fiat.types,
       limit: transactionLimitEntity,
       offset: transactionLimitOffset
     )
