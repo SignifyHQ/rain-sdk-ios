@@ -9,8 +9,12 @@ struct AssetModel: Hashable {
   var availableBalanceFormatted: String {
     availableBalance.formattedAmount(
       prefix: type == .usd ? Constants.CurrencyUnit.usd.rawValue : nil,
-      minFractionDigits: 3,
-      maxFractionDigits: 3
+      minFractionDigits: type == .usd
+      ? Constants.FractionDigitsLimit.fiat.minFractionDigits
+      : Constants.FractionDigitsLimit.crypto.minFractionDigits,
+      maxFractionDigits: type == .usd
+      ? Constants.FractionDigitsLimit.fiat.maxFractionDigits
+      : Constants.FractionDigitsLimit.crypto.maxFractionDigits
     )
   }
   
@@ -20,8 +24,8 @@ struct AssetModel: Hashable {
     }
     return availableUsdBalance?.formattedAmount(
       prefix: Constants.CurrencyUnit.usd.rawValue,
-      minFractionDigits: 3,
-      maxFractionDigits: 3
+      minFractionDigits: Constants.FractionDigitsLimit.fiat.minFractionDigits,
+      maxFractionDigits: Constants.FractionDigitsLimit.fiat.maxFractionDigits
     )
   }
 }

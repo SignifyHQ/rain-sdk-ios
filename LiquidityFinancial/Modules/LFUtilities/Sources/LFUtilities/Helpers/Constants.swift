@@ -113,6 +113,28 @@ public extension Constants {
   }
 }
 
+// MARK: - FractionDigitsLimit
+public extension Constants {
+  enum FractionDigitsLimit {
+    case fiat
+    case crypto
+    
+    public var maxFractionDigits: Int {
+      switch self {
+      case .fiat: return 2
+      case .crypto: return 8
+      }
+    }
+    
+    public var minFractionDigits: Int {
+      switch self {
+      case .fiat: return 2
+      case .crypto: return 2
+      }
+    }
+  }
+}
+
   // MARK: - Currency
 public extension Constants {
   enum CurrencyUnit: String {

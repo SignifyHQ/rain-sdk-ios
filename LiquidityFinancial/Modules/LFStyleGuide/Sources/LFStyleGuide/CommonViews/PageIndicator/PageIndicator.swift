@@ -11,9 +11,9 @@ public struct DotIndicator: View {
   
   public var body: some View {
     
-    Button(action: {
+    Button {
       self.slectedPage = self.pageIndex
-    }) {
+    } label: {
       Text("\(pageIndex)")
         .padding(slectedPage == pageIndex ? 8 : 4)
         .font(Fonts.medium.swiftUIFont(size: slectedPage == pageIndex ? 15 : 13))
@@ -32,7 +32,6 @@ public struct DotIndicator: View {
         )
         .animation(.spring(), value: 1.3)
     }
-    
   }
 }
 

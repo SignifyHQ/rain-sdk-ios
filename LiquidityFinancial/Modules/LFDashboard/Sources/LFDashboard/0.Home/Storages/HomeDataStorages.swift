@@ -66,15 +66,7 @@ extension HomeDataStorages {
         let fiatAccounts = try await fiatAccountsEntity
         let linkedSources = try await linkedAccountEntity.linkedSources
         
-        let assets = fiatAccounts.map {
-          AssetModel(
-            type: AssetType(rawValue: $0.currency),
-            availableBalance: $0.availableBalance,
-            availableUsdBalance: $0.availableUsdBalance
-          )
-        }
-        
-        let linkedAccount = linkedAccount.compactMap({
+        let linkedAccount = linkedSources.compactMap({
           APILinkedSourceData(
             name: $0.name,
             last4: $0.last4,
@@ -86,7 +78,6 @@ extension HomeDataStorages {
         
         self.fiatAccounts = fiatAccounts
         self.linkedAccount = linkedAccount
-        self.allAssets = assets
       } catch {
         log.error(error.localizedDescription)
         toastMessage(error.localizedDescription)

@@ -19,11 +19,12 @@ struct DashboardView: View {
     Group {
       switch option {
       case .cash:
-        CashView(viewModel:
-                  CashViewModel(
-                    accounts: (accountsFiat: dataStorages.$fiatAccounts, isLoading: dataStorages.$isLoading),
-                    linkedAccount: dataStorages.$linkedAccount
-                  )
+        CashView(
+          viewModel:
+            CashViewModel(
+              accounts: (accountsFiat: dataStorages.$fiatAccounts, isLoading: dataStorages.$isLoading),
+              linkedAccount: dataStorages.$linkedAccount
+            )
         ) { // handle refresh call back
           dataStorages.refreshCash()
         }
