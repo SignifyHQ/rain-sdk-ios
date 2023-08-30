@@ -58,6 +58,7 @@ final class CashViewModel: ObservableObject {
         }
         if let account = accounts.first { // TODO: Temp Just get one
           self?.accountDataManager.fiatAccountID = account.id
+          self?.accountDataManager.externalAccountID = account.externalAccountId
           self?.cashBalanceValue = account.availableBalance
           self?.selectedAsset = AssetType(rawValue: account.currency) ?? .usd
           self?.refreshTransactions(with: account.id)

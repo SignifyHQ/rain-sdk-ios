@@ -17,10 +17,11 @@ class AccountViewModel: ObservableObject {
   @LazyInjected(\.intercomService) var intercomService
   @LazyInjected(\.pushNotificationService) var pushNotificationService
   @LazyInjected(\.devicesRepository) var devicesRepository
-  
+
   @Published var navigation: Navigation?
   @Published var isDisableView: Bool = false
   @Published var isLoadingACH: Bool = false
+  @Published var isLoadingDisputeTransaction: Bool = false
   @Published var isLoading: Bool = false
   @Published var netspendController: NetspendSdkViewController?
   @Published var toastMessage: String?
@@ -139,6 +140,25 @@ extension AccountViewModel {
     }
   }
   
+  func getDisputeAuthorizationCode() {
+    Task {
+      defer {
+        isLoadingDisputeTransaction = false
+        isDisableView = false
+      }
+      isLoadingDisputeTransaction = true
+      isDisableView = true
+      do {
+        guard let session = netspendDataManager.sdkSession else { return }
+        let code = try await netspendRepository.getAuthorizationCode(sessionId: session.sessionId)
+        guard let id = accountDataManager.externalAccountID else { return }
+        navigation = .disputeTransaction(id, code.authorizationCode)
+      } catch {
+        toastMessage = error.localizedDescription
+      }
+    }
+  }
+  
   func getListConnectedAccount() {
     Task {
       do {
@@ -168,6 +188,7 @@ extension AccountViewModel {
     case atmLocation(String)
     case connectedAccounts
     case bankStatement
+    case disputeTransaction(String, String)
   }
 }
 

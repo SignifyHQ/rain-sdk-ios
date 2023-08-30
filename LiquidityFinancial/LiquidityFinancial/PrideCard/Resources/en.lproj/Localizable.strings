@@ -468,6 +468,7 @@
 "accountView.routingNumber.title" = "Routing number";
 "accountView.accountNumber.title" = "Account number";
 "accountView.notifications" = "Enable Notifications";
+"accountView.disclosure.message" = "The PrideCard pre-paid debit card is established by Pathward, National Association Member FDIC, pursuant to license by Visa. Netspend is a service provider to Pathward.";
 
 // PlaidLink Popup
 "plaidLink.popup.title" = "WE’RE SORRY";
@@ -913,6 +914,7 @@
 "button.retry.title" = "Retry";
 "button.verify.title" = "Verify";
 "button.confirm.title" = "Confirm";
+"button.disputeTransaction.title" = "Dispute a Transaction";
 
 // Grid Value
 "grid_value.crypto" = "%@ ADA";

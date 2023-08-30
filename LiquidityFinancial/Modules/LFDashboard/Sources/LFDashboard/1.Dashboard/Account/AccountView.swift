@@ -31,6 +31,11 @@ struct AccountsView: View {
           ConnectedAccountsView(linkedAccount: viewModel.linkedAccount)
         case .bankStatement:
           BankStatementView()
+        case let .disputeTransaction(netspendAccountID, passcode):
+          NetspendDisputeTransactionViewController(netspendAccountID: netspendAccountID, passcode: passcode) {
+            viewModel.navigation = nil
+          }
+          .navigationBarHidden(true)
         }
       }
       .background(Colors.background.swiftUIColor)
@@ -61,12 +66,19 @@ private extension AccountsView {
         section(title: LFLocalizable.AccountView.shortcuts) {
           shortcutSection
         }
+        bottomDisclosure
         Spacer()
       }
       .padding(.top, 20)
       .padding(.bottom, 12)
       .padding(.horizontal, 30.0)
     }
+  }
+  
+  var bottomDisclosure: some View {
+    Text(LFLocalizable.AccountView.Disclosure.message)
+      .font(Fonts.regular.swiftUIFont(size: 10))
+      .foregroundColor(Colors.label.swiftUIColor.opacity(0.75))
   }
   
   var accountDetailView: some View {
@@ -194,7 +206,16 @@ private extension AccountsView {
       ) {
         viewModel.navigation = .debugMenu
       }
-    }.onChange(of: scenePhase, perform: { newValue in
+      ArrowButton(
+        image: GenImages.CommonImages.Accounts.icDispute.swiftUIImage,
+        title: LFLocalizable.Button.DisputeTransaction.title,
+        value: nil,
+        isLoading: $viewModel.isLoadingDisputeTransaction
+      ) {
+        viewModel.getDisputeAuthorizationCode()
+      }
+    }
+    .onChange(of: scenePhase, perform: { newValue in
       if newValue == .active {
         viewModel.checkNotificationsStatus()
       }

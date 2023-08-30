@@ -477,6 +477,7 @@ https://mn.gov/commerce/money/investments/cryptocurrency/. \n\n\n\n\n\n\n";
 "accountView.routingNumber.title" = "Routing number";
 "accountView.accountNumber.title" = "Account number";
 "accountView.notifications" = "Enable Notifications";
+"accountView.disclosure.message" = "The DogeCard pre-paid debit card is established by Pathward, National Association Member FDIC, pursuant to license by Visa. Netspend is a service provider to Pathward. Cryptocurrency services provided by Zero Hash. Cryptocurrency is not insured by, or subject to the protections of the FDIC.";
 
 // PlaidLink Popup
 "plaidLink.popup.title" = "WE’RE SORRY";
@@ -781,6 +782,7 @@ https://mn.gov/commerce/money/investments/cryptocurrency/. \n\n\n\n\n\n\n";
 "button.contactSupport.title" = "Contact Support";
 "button.verify.title" = "Verify";
 "button.confirm.title" = "Confirm";
+"button.disputeTransaction.title" = "Dispute a Transaction";
 
 // Grid Value
 "grid_value.crypto" = "%@ DOGE";
