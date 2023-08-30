@@ -47,6 +47,7 @@ extension NetSpendDocumentType {
   }
 }
 
+// swiftlint:disable all
 extension Data {
   private static let mimeTypeSignatures: [UInt8 : String] = [
     0xFF : "image/jpeg",
