@@ -3,9 +3,20 @@ import LFServices
 import LFLocalizable
 import LFUtilities
 import LFStyleGuide
+import NetSpendData
+import NetSpendDomain
+import NetspendSdk
+import Factory
 
 final class PurchaseTransactionDetailViewModel: ObservableObject {
+  @LazyInjected(\.netspendRepository) var netspendRepository
+  @LazyInjected(\.netspendDataManager) var netspendDataManager
+  @LazyInjected(\.accountDataManager) var accountDataManager
+
   @Published var navigation: Navigation?
+  @Published var isLoadingDisputeTransaction: Bool = false
+  @Published var toastMessage: String?
+
   let transaction: TransactionModel
   
   init(transaction: TransactionModel) {
@@ -19,6 +30,27 @@ final class PurchaseTransactionDetailViewModel: ObservableObject {
       navigation = .cryptoReceipt(cryptoReceipt)
     }
   }
+}
+
+// MARK: - API
+extension PurchaseTransactionDetailViewModel {
+  func getDisputeAuthorizationCode() {
+    Task {
+      defer {
+        isLoadingDisputeTransaction = false
+      }
+      isLoadingDisputeTransaction = true
+      do {
+        guard let session = netspendDataManager.sdkSession else { return }
+        let code = try await netspendRepository.getAuthorizationCode(sessionId: session.sessionId)
+        guard let id = accountDataManager.externalAccountID else { return }
+        navigation = .disputeTransaction(id, code.authorizationCode)
+      } catch {
+        toastMessage = error.localizedDescription
+      }
+    }
+  }
+
 }
 
 // MARK: - View Helpers
@@ -52,5 +84,6 @@ extension PurchaseTransactionDetailViewModel {
   enum Navigation {
     case cryptoReceipt(CryptoReceipt)
     case donationReceipt(DonationReceipt)
+    case disputeTransaction(String, String)
   }
 }

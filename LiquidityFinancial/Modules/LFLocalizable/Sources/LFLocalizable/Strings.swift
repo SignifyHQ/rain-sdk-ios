@@ -269,6 +269,10 @@ public enum LFLocalizable {
       /// Direct Deposit
       public static let title = LFLocalizable.tr("Localizable", "accountView.direct_deposit.title", fallback: "Direct Deposit")
     }
+    public enum Disclosure {
+      /// The DogeCard pre-paid debit card is established by Pathward, National Association Member FDIC, pursuant to license by Visa. Netspend is a service provider to Pathward. Cryptocurrency services provided by Zero Hash. Cryptocurrency is not insured by, or subject to the protections of the FDIC.
+      public static let message = LFLocalizable.tr("Localizable", "accountView.disclosure.message", fallback: "The DogeCard pre-paid debit card is established by Pathward, National Association Member FDIC, pursuant to license by Visa. Netspend is a service provider to Pathward. Cryptocurrency services provided by Zero Hash. Cryptocurrency is not insured by, or subject to the protections of the FDIC.")
+    }
     public enum OneTimeTransfers {
       /// Good for small amounts
       public static let subtitle = LFLocalizable.tr("Localizable", "accountView.one_time_transfers.subtitle", fallback: "Good for small amounts")
@@ -465,6 +469,10 @@ public enum LFLocalizable {
     public enum Continue {
       /// Continue
       public static let title = LFLocalizable.tr("Localizable", "button.continue.title", fallback: "Continue")
+    }
+    public enum DisputeTransaction {
+      /// Dispute a Transaction
+      public static let title = LFLocalizable.tr("Localizable", "button.disputeTransaction.title", fallback: "Dispute a Transaction")
     }
     public enum Done {
       /// Done

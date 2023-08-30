@@ -59,6 +59,7 @@ public class AccountDataManager: AccountDataStorageProtocol {
 
   public var fiatAccountID: String?
   public var cryptoAccountID: String?
+  public var externalAccountID: String?
 
   public private(set) var userInfomationData: UserInfomationDataProtocol = UserInfomationData()
   

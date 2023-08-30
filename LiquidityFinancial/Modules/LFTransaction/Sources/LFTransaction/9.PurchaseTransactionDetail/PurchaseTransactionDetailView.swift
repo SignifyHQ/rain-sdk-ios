@@ -2,6 +2,7 @@ import SwiftUI
 import LFStyleGuide
 import LFLocalizable
 import LFUtilities
+import LFServices
 
 public struct PurchaseTransactionDetailView: View {
   @StateObject private var viewModel: PurchaseTransactionDetailViewModel
@@ -18,6 +19,11 @@ public struct PurchaseTransactionDetailView: View {
           CryptoTransactionReceiptView(accountID: viewModel.transaction.id, receipt: receipt)
         case let .donationReceipt(receipt):
           DonationTransactionReceiptView(accountID: viewModel.transaction.id, receipt: receipt)
+        case let .disputeTransaction(netspendAccountID, passcode):
+          NetspendDisputeTransactionViewController(netspendAccountID: netspendAccountID, passcode: passcode) {
+            viewModel.navigation = nil
+          }
+          .navigationBarHidden(true)
         }
       }
   }
@@ -30,13 +36,32 @@ private extension PurchaseTransactionDetailView {
       if viewModel.transaction.rewards != nil {
         TransactionCardView(information: viewModel.cardInformation)
       }
-      if let receiptType = viewModel.transaction.receipt?.type {
-        FullSizeButton(
-          title: LFLocalizable.TransactionDetail.Receipt.button,
-          isDisable: false,
-          type: .secondary
-        ) {
-          viewModel.goToReceiptScreen(receiptType: receiptType)
+      VStack(spacing: 10) {
+        if LFUtility.cryptoEnabled {
+          FullSizeButton(
+            title: LFLocalizable.TransactionDetail.CurrentReward.title,
+            isDisable: false,
+            type: .tertiary
+          ) {
+            // TODO: - Will be implemented later
+          }
+          FullSizeButton(
+            title: LFLocalizable.Button.DisputeTransaction.title,
+            isDisable: false,
+            isLoading: $viewModel.isLoadingDisputeTransaction,
+            type: .tertiary
+          ) {
+            viewModel.getDisputeAuthorizationCode()
+          }
+        }
+        if let receiptType = viewModel.transaction.receipt?.type {
+          FullSizeButton(
+            title: LFLocalizable.TransactionDetail.Receipt.button,
+            isDisable: false,
+            type: .secondary
+          ) {
+            viewModel.goToReceiptScreen(receiptType: receiptType)
+          }
         }
       }
     }

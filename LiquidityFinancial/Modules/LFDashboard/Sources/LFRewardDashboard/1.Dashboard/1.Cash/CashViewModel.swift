@@ -135,6 +135,7 @@ extension CashViewModel {
     if let account = accounts.first {
       self.accountID = account.id
       self.accountDataManager.fiatAccountID = account.id
+      self.accountDataManager.externalAccountID = account.externalAccountId
       self.cashBalanceValue = account.availableBalance
       self.selectedAsset = AssetType(rawValue: account.currency) ?? .usd
       return account
