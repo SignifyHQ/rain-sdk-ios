@@ -17,7 +17,8 @@ public final class AgreementViewModel: ObservableObject {
   
   @Published var isNavigationPersonalInformation: Bool = false
   @Published var isDisableButton: Bool = true
-  @Published var agreements: [ServiceConditionModel] = []
+  @Published var conditions: [ServiceConditionModel] = []
+  @Published var condition: ServiceConditionModel?
   @Published var isLoading: Bool = false
   @Published var toastMessage: String?
   @Published var isAcceptAgreementLoading: Bool = false
@@ -25,6 +26,10 @@ public final class AgreementViewModel: ObservableObject {
   private(set) var isAcceptAgreement: Bool = false
 
   private var fundingAgreement: APIAgreementData?
+  
+  var showConditions: [ServiceConditionModel] {
+    condition != nil ? [condition!] : conditions
+  }
   
   public init(fundingAgreement: APIAgreementData? = nil) {
     self.fundingAgreement = fundingAgreement
@@ -88,12 +93,19 @@ public final class AgreementViewModel: ObservableObject {
 // MARK: View Helpers
 extension AgreementViewModel {
   func getURL(tappedString: String) -> String {
-    let itemTapped = agreements.first(where: { $0.attributeInformation[tappedString] != nil })
+    if let url = condition?.attributeInformation[tappedString] {
+      return url
+    }
+    let itemTapped = conditions.first(where: { $0.attributeInformation[tappedString] != nil })
     return itemTapped?.attributeInformation[tappedString] ?? ""
   }
   
   func updateSelectedAgreementItem(agreementID: String, selected: Bool) {
-    agreements.first(where: { $0.id == agreementID })?.update(selected: selected)
+    if let condition = condition, condition.id == agreementID {
+      condition.update(selected: selected)
+    } else {
+      conditions.first(where: { $0.id == agreementID })?.update(selected: selected)
+    }
     isEnableButton()
     self.objectWillChange.send()
   }
@@ -102,10 +114,40 @@ extension AgreementViewModel {
 // MARK: Private Functions
 private extension AgreementViewModel {
   func isEnableButton() {
-    isDisableButton = agreements.contains(where: { $0.selected == false })
+    if let condition = condition {
+      isDisableButton = !condition.selected
+    } else {
+      isDisableButton = conditions.contains(where: { $0.selected == false })
+    }
+  }
+  
+  func mapToServiceGenericCondition(description: String) {
+    do {
+      let html: String = description
+      let doc: SwiftSoup.Document = try SwiftSoup.parse(html)
+      let text: String = try doc.body()?.text() ?? ""
+      let links: [SwiftSoup.Element] = try doc.select("a").array()
+      var attributeInformation: [String: String] = [:]
+      for link in links {
+        let linkHref: String = try link.attr("href")
+        let linkText: String = try link.text()
+        attributeInformation[linkText] = linkHref
+      }
+      let condition = ServiceConditionModel(
+        id: UUID().uuidString,
+        message: text,
+        attributeInformation: attributeInformation
+      )
+      self.condition = condition
+    } catch {
+      log.error(error)
+    }
   }
   
   func mapToServiceCondition(agreementData: APIAgreementData) {
+    if let description = agreementData.description {
+      mapToServiceGenericCondition(description: description)
+    }
     var agreementList: [ServiceConditionModel] = []
     for item in agreementData.agreements {
       do {
@@ -129,6 +171,5 @@ private extension AgreementViewModel {
         log.error(error)
       }
     }
-    self.agreements = agreementList
   }
 }

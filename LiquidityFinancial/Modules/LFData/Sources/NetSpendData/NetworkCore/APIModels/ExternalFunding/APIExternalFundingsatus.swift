@@ -52,14 +52,17 @@ public struct APIExternalFundingsatus: Decodable, ExternalFundingsatusEntity {
 extension APIAgreementData {
   public init(agreement: any AgreementEntity) {
     let documents: [APIAgreementData.Document] = agreement.documents?.compactMap({ APIAgreementData.Document(entity: $0) }) ?? []
-    self.init(agreements: [
-      APIAgreementData.Agreement(
-        id: agreement.id ?? "",
-        type: agreement.type ?? "",
-        documents: documents,
-        description: agreement.description ?? ""
-      )
-    ])
+    self.init(
+      agreements: [
+        APIAgreementData.Agreement(
+          id: agreement.id ?? "",
+          type: agreement.type ?? "",
+          documents: documents,
+          description: agreement.description ?? ""
+        )
+      ],
+      description: agreement.description ?? .empty
+    )
   }
 }
 

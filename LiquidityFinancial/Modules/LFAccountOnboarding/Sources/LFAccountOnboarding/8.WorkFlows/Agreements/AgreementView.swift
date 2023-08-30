@@ -43,25 +43,28 @@ public struct AgreementView: View {
       .cornerRadius(12)
       
       Spacer()
+        .frame(maxHeight: .infinity)
       
-      Group {
+      VStack(spacing: 0) {
         if viewModel.isLoading {
           loadingView
         } else {
-          VStack(alignment: .leading, spacing: 0) {
-            ScrollViewReader { _ in
-              ForEach($viewModel.agreements) { agreement in
+          if let condition = viewModel.condition {
+            conditionCell(
+              condition: condition
+            )
+          } else {
+            VStack(alignment: .leading, spacing: 0) {
+              ForEach($viewModel.conditions) { condition in
                 conditionCell(
-                  condition: agreement.wrappedValue
+                  condition: condition.wrappedValue
                 )
               }
             }
-            .padding(0)
           }
         }
+        continueButton
       }
-      
-      continueButton
     }
     .padding(.bottom, 16)
     .padding(.top, 40)
@@ -96,10 +99,8 @@ public struct AgreementView: View {
   
   private var loadingView: some View {
     VStack {
-      Spacer()
       LottieView(loading: .mix)
         .frame(width: 30, height: 20)
-      Spacer()
     }
     .frame(maxWidth: .infinity)
   }
@@ -149,7 +150,6 @@ private extension AgreementView {
         openURL(url)
       }
     }
-    .frame(minHeight: 90)
   }
   
   var continueButton: some View {

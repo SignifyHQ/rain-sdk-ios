@@ -2,6 +2,7 @@ import Foundation
 
 public struct APIAgreementData: Decodable {
   public let agreements: [APIAgreementData.Agreement]
+  public let description: String?
   
     // MARK: - Agreement
   public struct Agreement: Codable {
