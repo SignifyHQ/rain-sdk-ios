@@ -166,7 +166,22 @@ private extension HomeViewModel {
             } else if states.contains(OnboardingMissingStep.provideDocuments) {
               let documents = try await netspendRepository.getDocuments(sessionId: accountDataManager.sessionID)
               netspendDataManager.update(documentData: documents)
-              onboardingFlowCoordinator.set(route: .document)
+              if let status = documents.requestedDocuments.first?.status {
+                switch status {
+                case .complete:
+                  onboardingFlowCoordinator.set(route: .kycReview)
+                case .open:
+                  onboardingFlowCoordinator.set(route: .document)
+                case .reviewInProgress:
+                  onboardingFlowCoordinator.set(route: .documentInReview)
+                }
+              } else {
+                if documents.requestedDocuments.isEmpty {
+                  onboardingFlowCoordinator.set(route: .kycReview)
+                } else {
+                  onboardingFlowCoordinator.set(route: .unclear("Required Document Unknown: \(documents.requestedDocuments.debugDescription)"))
+                }
+              }
             } else if states.contains(OnboardingMissingStep.dashboardReview) {
               onboardingFlowCoordinator.set(route: .kycReview)
             } else if states.contains(OnboardingMissingStep.zeroHashAccount) {

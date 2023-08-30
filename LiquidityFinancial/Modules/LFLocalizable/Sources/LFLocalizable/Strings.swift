@@ -1466,6 +1466,14 @@ public enum LFLocalizable {
     }
   }
   public enum KycStatus {
+    public enum Document {
+      public enum Inreview {
+        /// We will update you after your documents have been reviewed. Thank you for your patience.
+        public static let message = LFLocalizable.tr("Localizable", "kycStatus.document.inreview.message", fallback: "We will update you after your documents have been reviewed. Thank you for your patience.")
+        /// Documents are in review
+        public static let title = LFLocalizable.tr("Localizable", "kycStatus.document.inreview.title", fallback: "Documents are in review")
+      }
+    }
     public enum Fail {
       /// Based on the information you entered, we were unable to create a Depository account at this time. We will be in touch via email.
       public static let message = LFLocalizable.tr("Localizable", "kycStatus.fail.message", fallback: "Based on the information you entered, we were unable to create a Depository account at this time. We will be in touch via email.")

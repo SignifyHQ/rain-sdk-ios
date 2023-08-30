@@ -64,7 +64,8 @@ extension KYCStatusViewModel {
         let (data, response) = try await URLSession.shared.data(for: request)
         let httpResponse = response as? HTTPURLResponse
         log.debug("approved dashboard state: \(httpResponse?.statusCode ?? 000)")
-        log.debug("approved dashboard data: \(data)")
+        let json = try JSONSerialization.jsonObject(with: data, options: []) as? [String: Any]
+        log.debug("approved dashboard data: \(String(describing: json))")
         self.toastMessage = "You have been approved by the Dashboard. Please click the button Check Status and go Next Step"
       } catch {
         self.toastMessage = error.localizedDescription
@@ -127,7 +128,22 @@ extension KYCStatusViewModel {
             } else if states.contains(OnboardingMissingStep.provideDocuments) {
               let documents = try await netspendRepository.getDocuments(sessionId: accountDataManager.sessionID)
               netspendDataManager.update(documentData: documents)
-              onboardingFlowCoordinator.set(route: .document)
+              if let status = documents.requestedDocuments.first?.status {
+                switch status {
+                case .complete:
+                  onboardingFlowCoordinator.set(route: .kycReview)
+                case .open:
+                  onboardingFlowCoordinator.set(route: .document)
+                case .reviewInProgress:
+                  onboardingFlowCoordinator.set(route: .documentInReview)
+                }
+              } else {
+                if documents.requestedDocuments.isEmpty {
+                  onboardingFlowCoordinator.set(route: .kycReview)
+                } else {
+                  onboardingFlowCoordinator.set(route: .unclear("Required Document Unknown: \(documents.requestedDocuments.debugDescription)"))
+                }
+              }
             } else {
               onboardingFlowCoordinator.set(route: .unclear(states.compactMap({ $0.rawValue }).joined()))
             }

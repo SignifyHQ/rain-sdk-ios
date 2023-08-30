@@ -125,21 +125,7 @@ extension VerificationCodeViewModel {
 }
 
   // MARK: Private
-extension VerificationCodeViewModel {
-  private func refreshNetSpendSession() async throws {
-    log.info("<<<<<<<<<<<<<< Refresh NetSpend Session >>>>>>>>>>>>>>>")
-    let token = try await netspendRepository.clientSessionInit()
-    netspendDataManager.update(jwkToken: token)
-    
-    let sessionConnectWithJWT = await netspendRepository.establishingSessionWithJWKSet(jwtToken: token)
-    
-    guard let deviceData = sessionConnectWithJWT?.deviceData else { return }
-    
-    let establishPersonSession = try await netspendRepository.establishPersonSession(deviceData: EstablishSessionParameters(encryptedData: deviceData))
-    netspendDataManager.update(serverSession: establishPersonSession)
-    accountDataManager.stored(sessionID: establishPersonSession.id)
-  }
-  
+extension VerificationCodeViewModel {  
   private func initNetSpendSession() async throws {
     log.info("<<<<<<<<<<<<<< Refresh NetSpend Session >>>>>>>>>>>>>>>")
     let token = try await netspendRepository.clientSessionInit()
@@ -205,7 +191,22 @@ extension VerificationCodeViewModel {
             } else if states.contains(OnboardingMissingStep.provideDocuments) {
               let documents = try await netspendRepository.getDocuments(sessionId: accountDataManager.sessionID)
               netspendDataManager.update(documentData: documents)
-              onboardingFlowCoordinator.set(route: .document)
+              if let status = documents.requestedDocuments.first?.status {
+                switch status {
+                case .complete:
+                  onboardingFlowCoordinator.set(route: .kycReview)
+                case .open:
+                  onboardingFlowCoordinator.set(route: .document)
+                case .reviewInProgress:
+                  onboardingFlowCoordinator.set(route: .documentInReview)
+                }
+              } else {
+                if documents.requestedDocuments.isEmpty {
+                  onboardingFlowCoordinator.set(route: .kycReview)
+                } else {
+                  onboardingFlowCoordinator.set(route: .unclear("Required Document Unknown: \(documents.requestedDocuments.debugDescription)"))
+                }
+              }
             } else if states.contains(OnboardingMissingStep.dashboardReview) {
               onboardingFlowCoordinator.set(route: .kycReview)
             } else if states.contains(OnboardingMissingStep.zeroHashAccount) {
@@ -243,17 +244,6 @@ extension VerificationCodeViewModel {
       } else {
         onboardingFlowCoordinator.set(route: .kycReview)
       }
-    } catch {
-      onboardingFlowCoordinator.set(route: .kycReview)
-      log.debug(error)
-    }
-  }
-  
-  private func handleUpDocumentCase() async {
-    do {
-      let documents = try await netspendRepository.getDocuments(sessionId: accountDataManager.sessionID)
-      netspendDataManager.update(documentData: documents)
-      onboardingFlowCoordinator.set(route: .document)
     } catch {
       onboardingFlowCoordinator.set(route: .kycReview)
       log.debug(error)

@@ -41,22 +41,38 @@ extension NetSpendDocumentType {
     }
   }
   
-  var documentType: String {
-    switch self {
-    case .foreignId:
-      return NetSpendDocumentRequestContentTypes.jpeg.rawValue
-    case .other:
-      return NetSpendDocumentRequestContentTypes.jpeg.rawValue
-    case .passport:
-      return NetSpendDocumentRequestContentTypes.jpeg.rawValue
-    case .payStubDatedWithin30Days:
-      return NetSpendDocumentRequestContentTypes.jpeg.rawValue
-    case .socialSecurityCard:
-      return NetSpendDocumentRequestContentTypes.jpeg.rawValue
-    case .stateIssuedPhotoId:
-      return NetSpendDocumentRequestContentTypes.jpeg.rawValue
-    case .utilityBill:
-      return NetSpendDocumentRequestContentTypes.jpeg.rawValue
+  func getMimeType(from url: URL) -> String {
+    guard let data = try? Data(contentsOf: url) else { return "uknown" }
+    return data.fileExtension
+  }
+}
+
+extension Data {
+  private static let mimeTypeSignatures: [UInt8 : String] = [
+    0xFF : "image/jpeg",
+    0x89 : "image/png",
+    0x47 : "image/gif",
+    0x25 : "application/pdf",
+  ]
+  
+  var mimeType: String {
+    var c: UInt8 = 0
+    copyBytes(to: &c, count: 1)
+    return Data.mimeTypeSignatures[c] ?? "application/octet-stream"
+  }
+  
+  var fileExtension: String {
+    switch mimeType {
+    case "image/jpeg":
+      return "image/jpeg"
+    case "image/png":
+      return "image/png"
+    case "image/gif":
+      return "image/gif"
+    case "application/pdf":
+      return "application/pdf"
+    default:
+      return "uknown"
     }
   }
 }

@@ -31,7 +31,7 @@ struct UploadDocumentView: View {
     }
     .fileImporter(
       isPresented: $viewModel.isOpenFileImporterFront,
-      allowedContentTypes: [.content, .pdf, .gif, .jpeg, .png, .bmp]
+      allowedContentTypes: [.pdf, .gif, .jpeg, .png]
     ) { result in
       viewModel.handleImportedFile(result: result)
     }
@@ -46,8 +46,8 @@ struct UploadDocumentView: View {
     }
     .navigationLink(item: $viewModel.navigation) { navigation in
       switch navigation {
-      case .kycReview:
-        KYCStatusView(viewModel: KYCStatusViewModel(state: .inReview(viewModel.accountDataManager.userNameDisplay)))
+      case .documentInReview:
+        KYCStatusView(viewModel: KYCStatusViewModel(state: .documentInReview))
       case .missingInfo:
         KYCStatusView(viewModel: KYCStatusViewModel(state: .missingInfo))
       case .agreement:

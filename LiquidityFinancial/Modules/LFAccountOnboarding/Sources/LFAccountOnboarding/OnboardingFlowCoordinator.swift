@@ -43,6 +43,7 @@ public class OnboardingFlowCoordinator: OnboardingFlowCoordinatorProtocol {
     case agreement
     case featureAgreement
     case popTimeUp
+    case documentInReview
     
     public var id: String {
       String(describing: self)
@@ -175,7 +176,22 @@ public class OnboardingFlowCoordinator: OnboardingFlowCoordinatorProtocol {
           } else if states.contains(OnboardingMissingStep.provideDocuments) {
             let documents = try await netspendRepository.getDocuments(sessionId: accountDataManager.sessionID)
             netspendDataManager.update(documentData: documents)
-            set(route: .document)
+            if let status = documents.requestedDocuments.first?.status {
+              switch status {
+              case .complete:
+                set(route: .kycReview)
+              case .open:
+                set(route: .document)
+              case .reviewInProgress:
+                set(route: .documentInReview)
+              }
+            } else {
+              if documents.requestedDocuments.isEmpty {
+                set(route: .kycReview)
+              } else {
+                set(route: .unclear("Required Document Unknown: \(documents.requestedDocuments.debugDescription)"))
+              }
+            }
           } else if states.contains(OnboardingMissingStep.dashboardReview) {
             set(route: .kycReview)
           } else if states.contains(OnboardingMissingStep.zeroHashAccount) {
@@ -226,17 +242,6 @@ extension OnboardingFlowCoordinator {
     }
   }
   
-  private func handleUpDocumentCase() async {
-    do {
-      let documents = try await netspendRepository.getDocuments(sessionId: accountDataManager.sessionID)
-      netspendDataManager.update(documentData: documents)
-      set(route: .document)
-    } catch {
-      set(route: .kycReview)
-      log.debug(error)
-    }
-  }
-  
   private func clearUserData() {
     log.info("<<<<<<<<<<<<<< 401 no auth and clear user data >>>>>>>>>>>>>>>")
     accountDataManager.clearUserSession()
@@ -254,5 +259,8 @@ extension OnboardingFlowCoordinator {
     let establishPersonSession = try await netspendRepository.establishPersonSession(deviceData: EstablishSessionParameters(encryptedData: deviceData))
     netspendDataManager.update(serverSession: establishPersonSession)
     accountDataManager.stored(sessionID: establishPersonSession.id)
+    
+    let userSessionAnonymous = try netspendRepository.createUserSession(establishingSession: sessionConnectWithJWT, encryptedData: establishPersonSession.encryptedData)
+    netspendDataManager.update(sdkSession: userSessionAnonymous)
   }
 }

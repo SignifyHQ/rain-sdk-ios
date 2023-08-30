@@ -7,12 +7,13 @@ import OnboardingData
 import AccountData
 import SwiftUI
 import UIKit
+import UniformTypeIdentifiers
 
 // swiftlint:disable all
 @MainActor
 final class UploadDocumentViewModel: ObservableObject {
   enum Navigation {
-    case kycReview
+    case documentInReview
     case missingInfo
     case agreement
   }
@@ -76,16 +77,31 @@ final class UploadDocumentViewModel: ObservableObject {
 extension UploadDocumentViewModel {
   private func createDocument(document: Document) -> DocumentEncryptedData {
     var documentEncryptedData = DocumentEncryptedData()
-    if document.documentDisplayType == .front {
-      documentEncryptedData.frontImageContentType = document.fileType.documentType
-      if let datastr = try? Data(contentsOf: document.filePath).base64EncodedString() {
-        documentEncryptedData.frontImage = datastr
+    switch document.documentDisplayType {
+    case .front:
+      documentEncryptedData.frontImageContentType = document.fileType.getMimeType(from: document.filePath)
+      if let data = try? Data(contentsOf: document.filePath) {
+        if documentEncryptedData.frontImageContentType == "image/jpeg", let base64EncodedString = UIImage(data: data)?.jpegData(compressionQuality: 1)?.base64EncodedString() {
+          documentEncryptedData.frontImage = base64EncodedString
+        } else {
+          if let datastr = try? Data(contentsOf: document.filePath).base64EncodedString() {
+            documentEncryptedData.frontImage = datastr
+          }
+        }
       }
-    } else if document.documentDisplayType == .back {
-      documentEncryptedData.backImageContentType = document.fileType.documentType
-      if let datastr = try? Data(contentsOf: document.filePath).base64EncodedString() {
-        documentEncryptedData.backImage = datastr
+    case .back:
+      documentEncryptedData.backImageContentType = document.fileType.getMimeType(from: document.filePath)
+      if let data = try? Data(contentsOf: document.filePath) {
+        if documentEncryptedData.backImageContentType == "image/jpeg", let base64EncodedString = UIImage(data: data)?.jpegData(compressionQuality: 1)?.base64EncodedString() {
+          documentEncryptedData.backImage = base64EncodedString
+        } else {
+          if let datastr = try? Data(contentsOf: document.filePath).base64EncodedString() {
+            documentEncryptedData.backImage = datastr
+          }
+        }
       }
+    default:
+      break
     }
     return documentEncryptedData
   }
@@ -126,49 +142,11 @@ extension UploadDocumentViewModel {
         let postDocument = try await netspendRepository.uploadDocuments(path: path, documentData: documentData)
         
         netspendDataManager.documentData?.update(status: postDocument.status, fromID: postDocument.documentRequestId)
-       
-        await apiFetchWorkflows()
-        
+    
         onSuccess()
       } catch {
         log.error(error.localizedDescription)
         toastMessage = error.localizedDescription
-      }
-    }
-  }
-  
-  func apiFetchWorkflows() async {
-    let workflows = try? await self.netspendRepository.getWorkflows()
-    self.workflowData = workflows
-  }
-  
-  func handleWorkflows(data: APIWorkflowsData?) {
-    guard let workflows = data else {
-      return
-    }
-    
-    if workflows.steps.isEmpty {
-      navigation = .kycReview
-      return
-    }
-    
-    if let steps = workflows.steps.first {
-      for stepIndex in 0...(steps.steps.count - 1) {
-        let step = steps.steps[stepIndex]
-        switch step.missingStep {
-        case .identityQuestions:
-          onboardingFlowCoordinator.set(route: .unclear("You can't upload question for now, Please try it late."))
-        case .provideDocuments:
-          onboardingFlowCoordinator.set(route: .unclear("You can't upload document for now, Please try it late."))
-        case .KYCData, .identityScan:
-          navigation = .missingInfo
-        case .primaryPersonKYCApprove:
-          navigation = .kycReview
-        case .acceptAgreement, .acceptFeatureAgreement:
-          navigation = .agreement
-        case .expectedUse:
-          onboardingFlowCoordinator.set(route: .unclear(step.missingStep.rawValue))
-        }
       }
     }
   }
@@ -229,8 +207,14 @@ extension UploadDocumentViewModel {
   func onClickedDocumentUploadedPrimaryButton() {
     isShowDocumentUploadedPopup = false
     guard let status = netspendDataManager.documentData?.requestedDocuments.first?.status else { return }
+    if status == .reviewInProgress {
+      navigation = .documentInReview
+    } else if status == .open {
+      navigation = .documentInReview
+    } else if status == .complete {
+      onboardingFlowCoordinator.set(route: .kycReview)
+    }
     log.info(status.rawValue)
-    handleWorkflows(data: workflowData)
   }
   
   func onUploadDocument() {

@@ -75,6 +75,8 @@ public struct OnboardingContentView: View {
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .background(Color.black.edgesIgnoringSafeArea(.all))
+      case .documentInReview:
+        KYCStatusView(viewModel: KYCStatusViewModel(state: .documentInReview))
       }
     }
   }

@@ -9,6 +9,7 @@ public enum KYCState {
   case reject
   case inReview(String)
   case common(String)
+  case documentInReview
   
   var kycInformation: KYCInformation? {
     switch self {
@@ -43,6 +44,12 @@ public enum KYCState {
         message: LFLocalizable.KycStatus.Fail.Unclear.message(messagekey),
         primary: LFLocalizable.KycStatus.InReview.primaryTitle,
         secondary: LFLocalizable.KycStatus.InReview.secondaryTitle
+      )
+    case .documentInReview:
+      return KYCInformation(
+        title: LFLocalizable.KycStatus.Document.Inreview.title,
+        message: LFLocalizable.KycStatus.Document.Inreview.title,
+        primary: LFLocalizable.Button.Ok.title
       )
     default:
       return nil
