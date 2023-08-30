@@ -49,11 +49,7 @@ public struct AgreementView: View {
         if viewModel.isLoading {
           loadingView
         } else {
-          if let condition = viewModel.condition {
-            conditionCell(
-              condition: condition
-            )
-          } else {
+          if viewModel.condition == nil {
             VStack(alignment: .leading, spacing: 0) {
               ForEach($viewModel.conditions) { condition in
                 conditionCell(
@@ -63,7 +59,16 @@ public struct AgreementView: View {
             }
           }
         }
-        continueButton
+        
+        VStack(spacing: 0) {
+          if let condition = viewModel.condition {
+            conditionCell(
+              condition: condition
+            )
+          }
+          Spacer().frame(height: 24)
+          continueButton
+        }
       }
     }
     .padding(.bottom, 16)

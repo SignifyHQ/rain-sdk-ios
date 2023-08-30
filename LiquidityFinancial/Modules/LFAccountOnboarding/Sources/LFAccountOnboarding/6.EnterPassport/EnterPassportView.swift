@@ -58,10 +58,6 @@ private extension EnterPassportView {
         image: GenImages.CommonImages.icTicketCircle.swiftUIImage,
         description: LFLocalizable.passportNoCreditCheckInfo
       )
-      infoBullet(
-        image: GenImages.CommonImages.icHome.swiftUIImage,
-        description: String(format: LFLocalizable.passportRequiredToCreateInfo(Bundle.main.appName ?? ""))
-      )
     }
     .padding(.top, 20)
   }

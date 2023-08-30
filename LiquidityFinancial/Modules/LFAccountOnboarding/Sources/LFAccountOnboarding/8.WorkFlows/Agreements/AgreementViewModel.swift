@@ -72,10 +72,9 @@ public final class AgreementViewModel: ObservableObject {
       defer { isAcceptAgreementLoading = false }
       isAcceptAgreementLoading = true
       do {
+        let ids: [String] = fundingAgreement?.agreements.map({ $0.id }) ?? []
         let body: [String: Any] = [
-          "agreementIds": [
-            fundingAgreement?.agreements.first?.id ?? ""
-          ]
+          "agreementIds": ids
         ]
         let entity = try await netspendRepository.postAgreement(body: body)
         if entity {
