@@ -49,6 +49,7 @@ let package = Package(
         .product(name: "OnboardingData", package: "LFData"),
         .product(name: "NetSpendData", package: "LFData"),
         .product(name: "ZerohashData", package: "LFData"),
+        .product(name: "DevicesData", package: "LFData"),
         .product(name: "AuthorizationManager", package: "LFNetwork")
       ],
       resources: [
