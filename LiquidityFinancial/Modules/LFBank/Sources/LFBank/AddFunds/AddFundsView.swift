@@ -26,13 +26,13 @@ public struct AddFundsView: View {
         .navigationLink(item: $viewModel.navigation) { item in
           switch item {
           case .bankTransfers:
-            BankTransfersView(achInformation: $achInformation)
+            DirectDepositView(achInformation: $achInformation)
           case .addBankDebit:
             AddBankWithDebitView()
           case .addMoney:
             MoveMoneyAccountView(kind: .receive)
           case .directDeposit:
-            DirectDepositView(achInformation: $achInformation)
+            BankTransfersView(achInformation: $achInformation)
           case .linkExternalBank:
             EmptyView()
           }
@@ -78,20 +78,21 @@ private extension AddFundsView {
   
   var content: some View {
     VStack(spacing: 8) {
-      /*ArrowButton(
+      ArrowButton(
         image: GenImages.CommonImages.Accounts.directDeposit.swiftUIImage,
         title: LFLocalizable.AccountView.DirectDeposit.title,
         value: LFLocalizable.AccountView.DirectDeposit.subtitle
       ) {
         viewModel.selectedAddOption(navigation: .directDeposit)
-      }*/
+      }
+      /*
       ArrowButton(
         image: GenImages.CommonImages.Accounts.bankTransfers.swiftUIImage,
         title: LFLocalizable.AccountView.BankTransfers.title,
         value: LFLocalizable.AccountView.BankTransfers.subtitle
       ) {
         viewModel.selectedAddOption(navigation: .bankTransfers)
-      }
+      }*/
       ArrowButton(
         image: GenImages.CommonImages.Accounts.debitDeposit.swiftUIImage,
         title: LFLocalizable.AccountView.DebitDeposits.title,
@@ -100,16 +101,14 @@ private extension AddFundsView {
       ) {
         viewModel.selectedAddOption(navigation: .addBankDebit)
       }
-      /*
-       ArrowButton(
-       image: GenImages.CommonImages.Accounts.oneTime.swiftUIImage,
-       title: LFLocalizable.AccountView.OneTimeTransfers.title,
-       value: LFLocalizable.AccountView.OneTimeTransfers.subtitle,
-       isLoading: $viewModel.isLoadingLinkExternalBank
-       ) {
-       viewModel.selectedAddOption(navigation: .linkExternalBank)
-       }
-       */
+      ArrowButton(
+        image: GenImages.CommonImages.Accounts.oneTime.swiftUIImage,
+        title: LFLocalizable.AccountView.OneTimeTransfers.title,
+        value: LFLocalizable.AccountView.OneTimeTransfers.subtitle,
+        isLoading: $viewModel.isLoadingLinkExternalBank
+      ) {
+        viewModel.selectedAddOption(navigation: .linkExternalBank)
+      }
     }
   }
   

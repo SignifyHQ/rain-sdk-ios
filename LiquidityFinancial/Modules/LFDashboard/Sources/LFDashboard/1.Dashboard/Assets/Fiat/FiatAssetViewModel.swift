@@ -7,6 +7,7 @@ import Factory
 import LFBank
 import LFTransaction
 import DashboardRepository
+import Combine
 
 @MainActor
 class FiatAssetViewModel: ObservableObject {
@@ -32,6 +33,7 @@ class FiatAssetViewModel: ObservableObject {
   let currencyType = Constants.CurrencyType.fiat.rawValue
   private let guestHandler: () -> Void
   private let isGuest = false // TODO: - Will be remove after handle guest feature
+  private var cancellable: Set<AnyCancellable> = []
 
   var usdBalance: String {
     account?.availableBalance.formattedAmount(
@@ -45,7 +47,7 @@ class FiatAssetViewModel: ObservableObject {
     self.asset = asset
     self.guestHandler = guestHandler
     getACHInfo()
-    getListConnectedAccount()
+    subscribeLinkedAccounts()
   }
 }
 
@@ -105,25 +107,15 @@ private extension FiatAssetViewModel {
     }
   }
   
-  func getListConnectedAccount() {
-    Task {
-      do {
-        let sessionID = self.accountDataManager.sessionID
-        let response = try await self.externalFundingRepository.getLinkedAccount(sessionId: sessionID)
-        let linkedAccount = response.linkedSources.compactMap({
-          APILinkedSourceData(
-            name: $0.name,
-            last4: $0.last4,
-            sourceType: APILinkSourceType(rawValue: $0.sourceType.rawString),
-            sourceId: $0.sourceId,
-            requiredFlow: $0.requiredFlow
-          )
-        })
-        self.linkedAccount = linkedAccount
-      } catch {
-        toastMessage = error.localizedDescription
+  func subscribeLinkedAccounts() {
+    accountDataManager.subscribeLinkedSourcesChanged { [weak self] entities in
+      guard let self = self else {
+        return
       }
+      let linkedSources = entities.compactMap({ APILinkedSourceData(entity: $0) })
+      self.linkedAccount = linkedSources
     }
+    .store(in: &cancellable)
   }
 }
 

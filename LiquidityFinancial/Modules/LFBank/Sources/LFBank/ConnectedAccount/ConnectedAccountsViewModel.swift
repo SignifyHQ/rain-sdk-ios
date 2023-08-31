@@ -20,8 +20,22 @@ class ConnectedAccountsViewModel: ObservableObject {
   @Published var isLoading = false
   @Published var navigation: Navigation?
   
+  private var cancellable: Set<AnyCancellable> = []
+  
   init(linkedAccount: [APILinkedSourceData]) {
     self.linkedAccount = linkedAccount
+    subscribeLinkedAccounts()
+  }
+  
+  func subscribeLinkedAccounts() {
+    accountDataManager.subscribeLinkedSourcesChanged { [weak self] entities in
+      guard let self = self else {
+        return
+      }
+      let linkedSources = entities.compactMap({ APILinkedSourceData(entity: $0) })
+      self.linkedAccount = linkedSources
+    }
+    .store(in: &cancellable)
   }
   
 }
@@ -57,6 +71,7 @@ extension ConnectedAccountsViewModel {
           sourceType: sourceType
         )
         if response.success {
+          self.accountDataManager.removeLinkedSource(id: id)
           self.linkedAccount.removeAll(where: {
             $0.sourceId == id
           })

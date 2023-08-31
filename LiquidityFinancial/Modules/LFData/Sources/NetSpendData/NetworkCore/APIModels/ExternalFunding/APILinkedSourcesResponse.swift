@@ -25,6 +25,17 @@ public struct APILinkedSourceData: Codable, LinkedSourceDataEntity {
     self.sourceId = sourceId
     self.requiredFlow = requiredFlow
   }
+  
+  public init?(entity: any LinkedSourceDataEntity) {
+    guard let sourceType = APILinkSourceType(rawValue: entity.sourceType.rawString) else {
+      return nil
+    }
+    self.name = entity.name
+    self.last4 = entity.last4
+    self.sourceType = sourceType
+    self.sourceId = entity.sourceId
+    self.requiredFlow = entity.requiredFlow
+  }
 }
 
 public enum APILinkSourceType: String, Codable, LinkedSourceTypeEntity {

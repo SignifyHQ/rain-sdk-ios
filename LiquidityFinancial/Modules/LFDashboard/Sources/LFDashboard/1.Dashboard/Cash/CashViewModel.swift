@@ -44,9 +44,13 @@ final class CashViewModel: ObservableObject {
 
   private var cancellable: Set<AnyCancellable> = []
   
-  init(accounts: (accountsFiat: Published<[LFAccount]>.Publisher, isLoading: Published<Bool>.Publisher),
-       linkedAccount: Published<[APILinkedSourceData]>.Publisher) {
-    
+  init(
+    accounts: (
+      accountsFiat: Published<[LFAccount]>.Publisher,
+      isLoading: Published<Bool>.Publisher
+    ),
+    linkedAccount: Published<[APILinkedSourceData]>.Publisher
+  ) {
     accounts.accountsFiat
       .receive(on: DispatchQueue.main)
       .sink { [weak self] accounts in

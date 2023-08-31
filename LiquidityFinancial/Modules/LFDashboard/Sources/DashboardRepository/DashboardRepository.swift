@@ -29,6 +29,7 @@ public final class DashboardRepository: ObservableObject {
   public init(toastMessage: @escaping (String) -> Void) {
     self.toastMessage = toastMessage
     initData()
+    subscribeLinkedAccounts()
   }
 }
 
@@ -39,6 +40,17 @@ public extension DashboardRepository {
     apiFetchAssetFromAccounts()
     apiFetchListConnectedAccount()
     apiFetchACHInfo()
+  }
+  
+  func subscribeLinkedAccounts() {
+    accountDataManager.subscribeLinkedSourcesChanged { [weak self] entities in
+      guard let self = self else {
+        return
+      }
+      let linkedSources = entities.compactMap({ APILinkedSourceData(entity: $0) })
+      self.linkedAccount = linkedSources
+    }
+    .store(in: &cancellable)
   }
   
   func refreshCash() {
@@ -55,18 +67,9 @@ public extension DashboardRepository {
         let fiatAccounts = try await fiatAccountsEntity
         let linkedSources = try await linkedAccountEntity.linkedSources
         
-        let linkedAccount = linkedSources.compactMap({
-          APILinkedSourceData(
-            name: $0.name,
-            last4: $0.last4,
-            sourceType: APILinkSourceType(rawValue: $0.sourceType.rawString),
-            sourceId: $0.sourceId,
-            requiredFlow: $0.requiredFlow
-          )
-        })
         
         self.fiatAccounts = fiatAccounts
-        self.linkedAccount = linkedAccount
+        self.accountDataManager.storeLinkedSources(linkedSources)
       } catch {
         log.error(error.localizedDescription)
         toastMessage(error.localizedDescription)
@@ -106,16 +109,7 @@ public extension DashboardRepository {
       do {
         let sessionID = self.accountDataManager.sessionID
         let response = try await self.externalFundingRepository.getLinkedAccount(sessionId: sessionID)
-        let linkedAccount = response.linkedSources.compactMap({
-          APILinkedSourceData(
-            name: $0.name,
-            last4: $0.last4,
-            sourceType: APILinkSourceType(rawValue: $0.sourceType.rawString),
-            sourceId: $0.sourceId,
-            requiredFlow: $0.requiredFlow
-          )
-        })
-        self.linkedAccount = linkedAccount
+        self.accountDataManager.storeLinkedSources(response.linkedSources)
       } catch {
         log.error(error.localizedDescription)
         toastMessage(error.localizedDescription)

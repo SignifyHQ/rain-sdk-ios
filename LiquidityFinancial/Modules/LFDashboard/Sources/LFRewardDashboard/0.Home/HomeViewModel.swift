@@ -23,6 +23,7 @@ public final class HomeViewModel: ObservableObject {
   @LazyInjected(\.onboardingRepository) var onboardingRepository
   @LazyInjected(\.netspendRepository) var netspendRepository
   @LazyInjected(\.devicesRepository) var devicesRepository
+  @LazyInjected(\.externalFundingRepository) var externalFundingRepository
   
   @LazyInjected(\.pushNotificationService) var pushNotificationService
   @LazyInjected(\.onboardingFlowCoordinator) var onboardingFlowCoordinator
@@ -58,6 +59,7 @@ private extension HomeViewModel {
     apiFetchOnboardingState()
     handleSelectRewardChange()
     handleSelectedFundraisersSuccess()
+    getListConnectedAccount()
   }
   
   func handleSelectedFundraisersSuccess() {
@@ -284,6 +286,19 @@ extension HomeViewModel {
           return
         }
         navigation = .transactionDetail(id: id, accountId: account.id)
+      } catch {
+        log.error(error.localizedDescription)
+      }
+    }
+  }
+  
+  func getListConnectedAccount() {
+    Task { @MainActor in
+      do {
+        let sessionID = self.accountDataManager.sessionID
+        async let response = self.externalFundingRepository.getLinkedAccount(sessionId: sessionID)
+        let linkedSources = try await response.linkedSources
+        self.accountDataManager.storeLinkedSources(linkedSources)
       } catch {
         log.error(error.localizedDescription)
       }

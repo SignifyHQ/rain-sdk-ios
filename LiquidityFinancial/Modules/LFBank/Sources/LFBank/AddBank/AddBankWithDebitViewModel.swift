@@ -88,6 +88,11 @@ class AddBankWithDebitViewModel: ObservableObject {
           request: request,
           sessionID: accountDataManager.sessionID
         )
+        let sessionID = self.accountDataManager.sessionID
+        async let linkedAccountResponse = self.externalFundingRepository.getLinkedAccount(sessionId: sessionID)
+        let linkedSources = try await linkedAccountResponse.linkedSources
+        self.accountDataManager.storeLinkedSources(linkedSources)
+        
         self.navigation = .verifyCard(cardId: response.cardId)
       } catch {
         log.error(error.localizedDescription)

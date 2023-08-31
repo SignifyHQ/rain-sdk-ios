@@ -61,7 +61,18 @@ extension AddFundsViewModel {
   
   func onLinkExternalBankSuccess() {
     onPlaidUIDisappear()
-    navigation = .addMoney
+    Task { @MainActor in
+      do {
+        let sessionID = self.accountDataManager.sessionID
+        async let linkedAccountResponse = self.externalFundingRepository.getLinkedAccount(sessionId: sessionID)
+        let linkedSources = try await linkedAccountResponse.linkedSources
+        self.accountDataManager.storeLinkedSources(linkedSources)
+        
+        navigation = .addMoney
+      } catch {
+        log.error(error.localizedDescription)
+      }
+    }
   }
   
   func plaidLinkingErrorPrimaryAction() {

@@ -23,7 +23,10 @@ struct DashboardView: View {
         CashView(
           viewModel:
             CashViewModel(
-              accounts: (accountsFiat: dataStorages.$fiatAccounts, isLoading: dataStorages.$isLoading),
+              accounts: (
+                accountsFiat: dataStorages.$fiatAccounts,
+                isLoading: dataStorages.$isLoading
+              ),
               linkedAccount: dataStorages.$linkedAccount
             )
         ) { // handle refresh call back

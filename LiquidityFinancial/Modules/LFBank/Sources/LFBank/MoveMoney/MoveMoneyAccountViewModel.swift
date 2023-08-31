@@ -26,6 +26,7 @@ public class MoveMoneyAccountViewModel: ObservableObject {
   @Published var selectedLinkedAccount: APILinkedSourceData?
   @Published var selectedValue: GridValue?
   
+  private var cancellable: Set<AnyCancellable> = []
   let kind: Kind
   let recommendValues: [GridValue] = [
     .fixed(amount: 10, currency: .usd),
@@ -35,10 +36,26 @@ public class MoveMoneyAccountViewModel: ObservableObject {
 
   init(kind: Kind) {
     self.kind = kind
+    
+    subscribeLinkedAccounts()
   }
 }
 
 extension MoveMoneyAccountViewModel {
+  func subscribeLinkedAccounts() {
+    accountDataManager.subscribeLinkedSourcesChanged { [weak self] entities in
+      guard let self = self else {
+        return
+      }
+      let linkedSources = entities.compactMap({ $0.isVerified ? APILinkedSourceData(entity: $0) : nil })
+      self.linkedAccount = linkedSources
+      if self.selectedLinkedAccount == nil {
+        self.selectedLinkedAccount = linkedSources.first
+      }
+    }
+    .store(in: &cancellable)
+  }
+  
   func appearOperations() {
     Task {
       await refresh()
@@ -65,18 +82,9 @@ extension MoveMoneyAccountViewModel {
     Task { @MainActor in
       do {
         let sessionID = self.accountDataManager.sessionID
-        let response = try await self.externalFundingRepository.getLinkedAccount(sessionId: sessionID)
-        let linkedAccount = response.linkedSources.compactMap({
-          APILinkedSourceData(
-            name: $0.name,
-            last4: $0.last4,
-            sourceType: APILinkSourceType(rawValue: $0.sourceType.rawString),
-            sourceId: $0.sourceId,
-            requiredFlow: $0.requiredFlow
-          )
-        })
-        self.linkedAccount = linkedAccount
-        self.selectedLinkedAccount = linkedAccount.first
+        async let response = self.externalFundingRepository.getLinkedAccount(sessionId: sessionID)
+        let linkedSources = try await response.linkedSources
+        self.accountDataManager.storeLinkedSources(linkedSources)
       } catch {
         toastMessage = error.localizedDescription
       }
