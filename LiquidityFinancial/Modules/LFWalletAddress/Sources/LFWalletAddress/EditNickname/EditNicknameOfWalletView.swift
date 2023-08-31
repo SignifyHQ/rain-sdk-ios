@@ -87,7 +87,7 @@ private extension EditNicknameOfWalletView {
       Text(LFLocalizable.EditNicknameOfWallet.saveTitle)
         .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.main.value))
         .foregroundColor(Colors.label.swiftUIColor)
-      Text(LFLocalizable.EnterNicknameOfWallet.createNickname(viewModel.wallet.address))
+      Text(LFLocalizable.EnterNicknameOfWallet.editNickname(viewModel.wallet.address))
         .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.medium.value))
         .foregroundColor(Colors.label.swiftUIColor.opacity(0.75))
         .multilineTextAlignment(.leading)

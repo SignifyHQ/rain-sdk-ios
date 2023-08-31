@@ -26,13 +26,13 @@ public struct AddFundsView: View {
         .navigationLink(item: $viewModel.navigation) { item in
           switch item {
           case .bankTransfers:
-            DirectDepositView(achInformation: $achInformation)
+            BankTransfersView(achInformation: $achInformation)
           case .addBankDebit:
             AddBankWithDebitView()
           case .addMoney:
             MoveMoneyAccountView(kind: .receive)
           case .directDeposit:
-            BankTransfersView(achInformation: $achInformation)
+            DirectDepositView(achInformation: $achInformation)
           case .linkExternalBank:
             EmptyView()
           }

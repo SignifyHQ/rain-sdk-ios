@@ -12,7 +12,7 @@
 
 // Wellcome Screen
 "welcome.header.title" = "WELCOME!";
-"welcome.header.desc" = "The CardanoCard is an easy way to earn Cardano with everyday purchases. You can also buy, sell and spend Cardano with the CardanoCard app.";
+"welcome.header.desc" = "The Cardano Card is an easy way to spend cash or crypto, and earn rewards. Here is how:";
 "welcome.how_it_works" = "HOW IT WORKS:";
 "welcome.how_it_works.item1" = "Create a CardanoCard account";
 "welcome.how_it_works.item2" = "Use your CardanoCard for everyday purchases";
@@ -701,6 +701,7 @@ https://mn.gov/commerce/money/investments/cryptocurrency/. \n\n\n\n\n\n\n";
 // Enter nickname of wallet
 "enter_nickname_of_wallet.save_title" = "SAVE WALLET ADDRESS";
 "enter_nickname_of_wallet.create_nickname" = "Create a name for \"%@\"";
+"enter_nickname_of_wallet.edit_nickname" = "Create new name for \"%@\"";
 "enter_nickname_of_wallet.placeholder" = "Enter name";
 "enter_nickname_of_wallet.textField_title" = "Wallet address name";
 "enter_nickname_of_wallet.disclosures" = "You can change it at any time";
