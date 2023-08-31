@@ -227,8 +227,8 @@ public enum LFLocalizable {
     public static func cardAccountDetails(_ p1: Any) -> String {
       return LFLocalizable.tr("Localizable", "accountView.card_account_details", String(describing: p1), fallback: "%@ Account")
     }
-    /// Connect New Accounts
-    public static let connectNewAccounts = LFLocalizable.tr("Localizable", "accountView.connect_new_accounts", fallback: "Connect New Accounts")
+    /// Connect
+    public static let connectNewAccounts = LFLocalizable.tr("Localizable", "accountView.connect_new_accounts", fallback: "Connect")
     /// Connected Accounts
     public static let connectedAccounts = LFLocalizable.tr("Localizable", "accountView.connected_accounts", fallback: "Connected Accounts")
     /// Deposit Limits
@@ -258,14 +258,14 @@ public enum LFLocalizable {
       public static let title = LFLocalizable.tr("Localizable", "accountView.bank_transfers.title", fallback: "Bank Transfers")
     }
     public enum DebitDeposits {
-      /// Add money from your Debit Card
-      public static let subtitle = LFLocalizable.tr("Localizable", "accountView.debit_deposits.subtitle", fallback: "Add money from your Debit Card")
-      /// Debit Deposits
-      public static let title = LFLocalizable.tr("Localizable", "accountView.debit_deposits.title", fallback: "Debit Deposits")
+      /// Use your Debit Card
+      public static let subtitle = LFLocalizable.tr("Localizable", "accountView.debit_deposits.subtitle", fallback: "Use your Debit Card")
+      /// Instant Deposits
+      public static let title = LFLocalizable.tr("Localizable", "accountView.debit_deposits.title", fallback: "Instant Deposits")
     }
     public enum DirectDeposit {
-      /// Get paid up to 2 days faster
-      public static let subtitle = LFLocalizable.tr("Localizable", "accountView.direct_deposit.subtitle", fallback: "Get paid up to 2 days faster")
+      /// Deposit part, or all of your paycheck
+      public static let subtitle = LFLocalizable.tr("Localizable", "accountView.direct_deposit.subtitle", fallback: "Deposit part, or all of your paycheck")
       /// Direct Deposit
       public static let title = LFLocalizable.tr("Localizable", "accountView.direct_deposit.title", fallback: "Direct Deposit")
     }
@@ -274,10 +274,10 @@ public enum LFLocalizable {
       public static let message = LFLocalizable.tr("Localizable", "accountView.disclosure.message", fallback: "The DogeCard pre-paid debit card is established by Pathward, National Association Member FDIC, pursuant to license by Visa. Netspend is a service provider to Pathward. Cryptocurrency services provided by Zero Hash. Cryptocurrency is not insured by, or subject to the protections of the FDIC.")
     }
     public enum OneTimeTransfers {
-      /// Good for small amounts
-      public static let subtitle = LFLocalizable.tr("Localizable", "accountView.one_time_transfers.subtitle", fallback: "Good for small amounts")
-      /// One-time Bank Transfers
-      public static let title = LFLocalizable.tr("Localizable", "accountView.one_time_transfers.title", fallback: "One-time Bank Transfers")
+      /// Connect an external bank with Plaid
+      public static let subtitle = LFLocalizable.tr("Localizable", "accountView.one_time_transfers.subtitle", fallback: "Connect an external bank with Plaid")
+      /// Bank Transfers
+      public static let title = LFLocalizable.tr("Localizable", "accountView.one_time_transfers.title", fallback: "Bank Transfers")
     }
     public enum RoutingNumber {
       /// Routing number

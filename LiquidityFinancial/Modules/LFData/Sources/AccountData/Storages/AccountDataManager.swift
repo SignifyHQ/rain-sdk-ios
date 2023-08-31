@@ -1,4 +1,5 @@
 import Foundation
+import NetSpendDomain
 import AccountDomain
 import Combine
 
@@ -155,6 +156,7 @@ public class AccountDataManager: AccountDataStorageProtocol {
     }
   }
   
+  // MARK: Wallet addresses
   public let walletAddressesSubject = CurrentValueSubject<[WalletAddressEntity], Never>([])
   
   public func subscribeWalletAddressesChanged(_ completion: @escaping ([WalletAddressEntity]) -> Void) -> Cancellable {
@@ -181,6 +183,36 @@ public class AccountDataManager: AccountDataStorageProtocol {
     newValues.removeAll(where: { $0.id == id })
     if count != newValues.count {
       walletAddressesSubject.send(newValues)
+    }
+  }
+  
+  // MARK: linked sources
+  public let linkedSourcesSubject = CurrentValueSubject<[any LinkedSourceDataEntity], Never>([])
+  
+  public func subscribeLinkedSourcesChanged(_ completion: @escaping ([any LinkedSourceDataEntity]) -> Void) -> Cancellable {
+    linkedSourcesSubject.sink(receiveValue: completion)
+  }
+  
+  public func storeLinkedSources(_ sources: [any LinkedSourceDataEntity]) {
+    linkedSourcesSubject.send(sources)
+  }
+  
+  public func addOrEditLinkedSource(_ source: any LinkedSourceDataEntity) {
+    var newValues = linkedSourcesSubject.value
+    if let index = newValues.firstIndex(where: { $0.sourceId == source.sourceId }) {
+      newValues.replaceSubrange(index...index, with: [source])
+    } else {
+      newValues.append(source)
+    }
+    linkedSourcesSubject.send(newValues)
+  }
+  
+  public func removeLinkedSource(id: String) {
+    var newValues = linkedSourcesSubject.value
+    let count = newValues.count
+    newValues.removeAll(where: { $0.sourceId == id })
+    if count != newValues.count {
+      linkedSourcesSubject.send(newValues)
     }
   }
 }

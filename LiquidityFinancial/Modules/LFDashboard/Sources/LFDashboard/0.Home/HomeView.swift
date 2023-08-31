@@ -61,6 +61,7 @@ public struct HomeView: View {
     .onChange(of: scenePhase, perform: { newValue in
       if newValue == .active {
         viewModel.checkGoTransactionDetail()
+        dataStorages.apiFetchListConnectedAccount()
       }
     })
   }

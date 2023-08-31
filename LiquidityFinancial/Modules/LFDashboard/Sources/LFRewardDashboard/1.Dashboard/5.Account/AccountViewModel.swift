@@ -27,12 +27,15 @@ class AccountViewModel: ObservableObject {
   @Published var linkedAccount: [APILinkedSourceData] = []
   @Published var achInformation: ACHModel = .default
   
+  private var cancellable: Set<AnyCancellable> = []
+  
   var networkEnvironment: NetworkEnvironment {
     EnvironmentManager().networkEnvironment
   }
   
   init() {
     getACHInfo()
+    subscribeLinkedAccounts()
   }
 }
 
@@ -94,25 +97,15 @@ extension AccountViewModel {
     }
   }
   
-  func getListConnectedAccount() {
-    Task {
-      do {
-        let sessionID = accountDataManager.sessionID
-        let response = try await externalFundingRepository.getLinkedAccount(sessionId: sessionID)
-        let linkedAccount = response.linkedSources.compactMap({
-          APILinkedSourceData(
-            name: $0.name,
-            last4: $0.last4,
-            sourceType: APILinkSourceType(rawValue: $0.sourceType.rawString),
-            sourceId: $0.sourceId,
-            requiredFlow: $0.requiredFlow
-          )
-        })
-        self.linkedAccount = linkedAccount
-      } catch {
-        log.error(error)
+  func subscribeLinkedAccounts() {
+    accountDataManager.subscribeLinkedSourcesChanged { [weak self] entities in
+      guard let self = self else {
+        return
       }
+      let linkedSources = entities.compactMap({ APILinkedSourceData(entity: $0) })
+      self.linkedAccount = linkedSources
     }
+    .store(in: &cancellable)
   }
   
   func getACHInfo() {
@@ -148,6 +141,5 @@ extension AccountViewModel {
 extension AccountViewModel {
   
   func onAppear() {
-    getListConnectedAccount()
   }
 }

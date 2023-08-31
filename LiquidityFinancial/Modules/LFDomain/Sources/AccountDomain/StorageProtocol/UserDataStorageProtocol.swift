@@ -1,4 +1,5 @@
 import Foundation
+import NetSpendDomain
 import Combine
 
 public protocol AccountDataStorageProtocol {
@@ -17,6 +18,11 @@ public protocol AccountDataStorageProtocol {
   func storeWalletAddresses(_ addresses: [WalletAddressEntity])
   func addOrEditWalletAddress(_ address: WalletAddressEntity)
   func removeWalletAddress(id: String)
+  
+  func subscribeLinkedSourcesChanged(_ completion: @escaping ([any LinkedSourceDataEntity]) -> Void) -> Cancellable
+  func storeLinkedSources(_ sources: [any LinkedSourceDataEntity])
+  func addOrEditLinkedSource(_ source: any LinkedSourceDataEntity)
+  func removeLinkedSource(id: String)
   
   func update(firstName: String?)
   func update(lastName: String?)

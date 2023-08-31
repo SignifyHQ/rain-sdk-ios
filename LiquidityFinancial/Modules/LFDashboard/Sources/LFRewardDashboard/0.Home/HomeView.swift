@@ -4,6 +4,7 @@ import LFLocalizable
 import LFStyleGuide
 import LFUtilities
 import LFRewards
+
 public struct HomeView: View {
   @Environment(\.scenePhase) var scenePhase
   
@@ -49,6 +50,7 @@ public struct HomeView: View {
     .onChange(of: scenePhase, perform: { newValue in
       if newValue == .active {
         viewModel.checkGoTransactionDetail()
+        viewModel.getListConnectedAccount()
       }
     })
   }

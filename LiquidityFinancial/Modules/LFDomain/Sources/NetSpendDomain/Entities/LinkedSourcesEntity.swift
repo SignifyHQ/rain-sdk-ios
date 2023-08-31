@@ -14,6 +14,12 @@ public protocol LinkedSourceDataEntity {
   var requiredFlow: String? { get }
 }
 
+public extension LinkedSourceDataEntity {
+  var isVerified: Bool {
+    requiredFlow == nil || requiredFlow!.isEmpty
+  }
+}
+
 public protocol LinkedSourceTypeEntity {
   static var externalBank: Self { get }
   static var externalCard: Self { get }

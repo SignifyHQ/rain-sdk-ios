@@ -5,6 +5,7 @@ import LFLocalizable
 import LFBank
 import LFTransaction
 
+// TODO: Will use or not
 struct CashView: View {
   @StateObject private var viewModel: CashViewModel
   

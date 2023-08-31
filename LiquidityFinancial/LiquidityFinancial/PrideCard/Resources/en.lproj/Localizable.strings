@@ -447,18 +447,18 @@
 
 // Account view
 "accountView.connected_accounts" = "Connected Accounts";
-"accountView.connect_new_accounts" = "Connect New Accounts";
+"accountView.connect_new_accounts" = "Connect";
 "accountView.limits" = "Limits";
 "accountView.card_account_details" = "%@ Account";
 "accountView.shortcuts" = "Shortcuts";
 "accountView.direct_deposit.title" = "Direct Deposit";
-"accountView.direct_deposit.subtitle" = "Get paid up to 2 days faster";
+"accountView.direct_deposit.subtitle" = "Deposit part, or all of your paycheck";
 "accountView.bank_transfers.title" = "Bank Transfers";
 "accountView.bank_transfers.subtitle" = "Send from your bank to AvalancheCard";
-"accountView.debit_deposits.title" = "Debit Deposits";
-"accountView.debit_deposits.subtitle" = "Add money from your Debit Card";
-"accountView.one_time_transfers.title" = "One-time Bank Transfers";
-"accountView.one_time_transfers.subtitle" = "Good for small amounts";
+"accountView.debit_deposits.title" = "Instant Deposits";
+"accountView.debit_deposits.subtitle" = "Use your Debit Card";
+"accountView.one_time_transfers.title" = "Bank Transfers";
+"accountView.one_time_transfers.subtitle" = "Connect an external bank with Plaid";
 "accountView.rewards" = "Current Rewards";
 "accountView.atm" = "ATM’s Nearby";
 "accountView.bank_statements" = "Bank statements";
