@@ -46,13 +46,6 @@ struct CryptoChartDetailView: View {
         switch navigation {
         case .addMoney:
           MoveMoneyAccountView(kind: .receive)
-        case .transactions:
-          TransactionListView(
-            type: .crypto,
-            currencyType: Constants.CurrencyType.crypto.rawValue,
-            accountID: viewModel.accountDataManager.cryptoAccountID,
-            transactionTypes: Constants.TransactionTypesRequest.crypto.types
-          )
         case .send:
           MoveCryptoInputView(type: .sendCrypto)
         case .receive:
@@ -223,18 +216,6 @@ private extension CryptoChartDetailView {
       .font(Fonts.regular.swiftUIFont(size: 10))
       .padding(.horizontal, 20)
       .multilineTextAlignment(.center)
-  }
-  
-  var seeAllTransactions: some View {
-    Button {
-      viewModel.seeAllTransactionsTapped()
-    } label: {
-      HStack(spacing: 8) {
-        Text(LFLocalizable.CryptoChartDetail.SeeAll.title)
-        GenImages.CommonImages.icRightArrow.swiftUIImage
-      }
-      .frame(height: 30, alignment: .bottom)
-    }
   }
   
   var transferBalancePopup: some View {

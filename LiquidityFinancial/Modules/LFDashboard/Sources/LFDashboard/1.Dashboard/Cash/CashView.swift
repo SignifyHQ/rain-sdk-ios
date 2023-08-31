@@ -105,7 +105,7 @@ private extension CashView {
             viewModel.addMoneyTapped()
           }
           
-          activity(size: geo.size)
+          activity
           
         }
         .padding(.horizontal, 30)
@@ -133,7 +133,7 @@ private extension CashView {
     }
   }
   
-  func activity(size: CGSize) -> some View {
+  var activity: some View {
     Group {
       switch viewModel.activity {
       case .loading:
@@ -143,7 +143,14 @@ private extension CashView {
       case .addFunds:
           addFundsView
       case .transactions:
-        transactionsView(size: size)
+        ShortTransactionsView(
+          transactions: $viewModel.transactions,
+          title: LFLocalizable.CashTab.LastestTransaction.title,
+          onTapTransactionCell: viewModel.transactionItemTapped,
+          seeAllAction: {
+            viewModel.onClickedSeeAllButton()
+          }
+        )
       }
     }
   }
@@ -159,55 +166,5 @@ private extension CashView {
         isDisableView: $viewModel.isDisableView
       )
     }
-  }
-  
-  var seeAllTransactions: some View {
-    Button {
-      viewModel.onClickedSeeAllButton()
-    } label: {
-      HStack(spacing: 8) {
-        Text(LFLocalizable.CashTab.SeeAll.title)
-          .foregroundColor(Colors.label.swiftUIColor)
-          .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.ultraSmall.value))
-        GenImages.CommonImages.icRightArrow.swiftUIImage
-      }
-      .foregroundColor(Colors.label.swiftUIColor)
-    }
-  }
-  
-  func transactionsView(size: CGSize) -> some View {
-    VStack(alignment: .leading, spacing: 10) {
-      HStack(alignment: .bottom) {
-        Text(LFLocalizable.CashTab.LastestTransaction.title)
-        Spacer()
-        seeAllTransactions
-      }
-      .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.ultraSmall.value))
-      .foregroundColor(Colors.label.swiftUIColor.opacity(0.75))
-      if viewModel.transactions.isEmpty {
-        noTransactionsYetView(height: size.height)
-      } else {
-        ForEach(viewModel.transactions) { transaction in
-          TransactionRowView(item: transaction) {
-            viewModel.transactionItemTapped(transaction)
-          }
-        }
-      }
-    }
-  }
-  
-  func noTransactionsYetView(height: CGFloat) -> some View {
-    HStack {
-      Spacer()
-      VStack(spacing: 8) {
-        GenImages.CommonImages.icSearch.swiftUIImage
-          .foregroundColor(Colors.label.swiftUIColor)
-        Text(LFLocalizable.CashTab.NoTransactionYet.title)
-          .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.ultraSmall.value))
-          .foregroundColor(Colors.label.swiftUIColor.opacity(0.75))
-      }
-      Spacer()
-    }
-    .frame(height: height * 0.5)
   }
 }

@@ -87,7 +87,7 @@ extension TransactionDetailViewModel {
       TransactionInformation(
         title: LFLocalizable.TransactionDetail.Rewards.title,
         value: LFUtility.cryptoCurrency,
-        markValue: transaction.rewards?.amount?.formattedAmount(minFractionDigits: 3, maxFractionDigits: 3)
+        markValue: transaction.rewards?.amount?.formattedAmount(minFractionDigits: 2, maxFractionDigits: 2)
       )
     ]
   }

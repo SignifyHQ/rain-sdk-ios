@@ -73,65 +73,63 @@ struct CryptoAssetView: View {
 // MARK: - View Components
 private extension CryptoAssetView {
   var content: some View {
-    GeometryReader { geo in
-      ScrollView(showsIndicators: false) {
-        VStack(spacing: 10) {
-          balance
-          priceView
-          CryptoChartView(
-            filterOptionSubject: viewModel.filterOptionSubject,
-            chartOptionSubject: viewModel.chartOptionSubject
-          )
-          .setHighlightValueEnable(false)
-          .setGridXEnable(false)
-          .setGridYEnable(true)
-          .frame(height: 184)
-          .onTapGesture {
-            viewModel.cryptoChartTapped()
-          }
-          BalanceAlertView(type: .crypto, hasContacts: true, cryptoBalance: viewModel.account?.availableBalance) {
-            viewModel.walletRowTapped()
-          }
-          HStack(spacing: 10) {
-            iconTextButton(
-              title: LFLocalizable.AssetView.Buy.title,
-              image: GenImages.CommonImages.buy.swiftUIImage
-            ) {
-              viewModel.onClickedBuyButton()
-            }
-            iconTextButton(
-              title: LFLocalizable.AssetView.Sell.title,
-              image: GenImages.CommonImages.sell.swiftUIImage
-            ) {
-              viewModel.onClickedSellButton()
-            }
-            iconTextButton(
-              title: LFLocalizable.AssetView.Transfer.title,
-              image: GenImages.CommonImages.transfer.swiftUIImage
-            ) {
-              viewModel.transferButtonTapped()
-            }
-          }
-          .padding(.top, 6)
-          ArrowButton(
-            image: GenImages.CommonImages.walletAddress.swiftUIImage,
-            title: LFLocalizable.AssetView.walletAddress,
-            value: Constants.Default.walletAddressPlaceholder.rawValue
-          ) {
-            viewModel.receiveButtonTapped()
-          }
-          activity(size: geo.size)
-          disclosure
-            .padding(.top, 2)
-          Spacer()
+    ScrollView(showsIndicators: false) {
+      VStack(spacing: 10) {
+        balance
+        priceView
+        CryptoChartView(
+          filterOptionSubject: viewModel.filterOptionSubject,
+          chartOptionSubject: viewModel.chartOptionSubject
+        )
+        .setHighlightValueEnable(false)
+        .setGridXEnable(false)
+        .setGridYEnable(true)
+        .frame(height: 184)
+        .onTapGesture {
+          viewModel.cryptoChartTapped()
         }
-        .padding(.top, 20)
-        .padding(.horizontal, 30)
+        BalanceAlertView(type: .crypto, hasContacts: true, cryptoBalance: viewModel.account?.availableBalance) {
+          viewModel.walletRowTapped()
+        }
+        HStack(spacing: 10) {
+          iconTextButton(
+            title: LFLocalizable.AssetView.Buy.title,
+            image: GenImages.CommonImages.buy.swiftUIImage
+          ) {
+            viewModel.onClickedBuyButton()
+          }
+          iconTextButton(
+            title: LFLocalizable.AssetView.Sell.title,
+            image: GenImages.CommonImages.sell.swiftUIImage
+          ) {
+            viewModel.onClickedSellButton()
+          }
+          iconTextButton(
+            title: LFLocalizable.AssetView.Transfer.title,
+            image: GenImages.CommonImages.transfer.swiftUIImage
+          ) {
+            viewModel.transferButtonTapped()
+          }
+        }
+        .padding(.top, 6)
+        ArrowButton(
+          image: GenImages.CommonImages.walletAddress.swiftUIImage,
+          title: LFLocalizable.AssetView.walletAddress,
+          value: Constants.Default.walletAddressPlaceholder.rawValue
+        ) {
+          viewModel.receiveButtonTapped()
+        }
+        activity
+        Spacer()
+        disclosure
+          .padding(.bottom, 8)
       }
+      .padding(.top, 20)
+      .padding(.horizontal, 30)
     }
   }
   
-  func activity(size: CGSize) -> some View {
+  var activity: some View {
     Group {
       switch viewModel.activity {
       case .loading:
@@ -139,49 +137,20 @@ private extension CryptoAssetView {
           .frame(width: 30, height: 20)
           .padding(.top, 8)
       case .transactions:
-        transactionsView(size: size)
+        ShortTransactionsView(
+          transactions: $viewModel.transactions,
+          title: LFLocalizable.CashTab.LastestTransaction.title,
+          onTapTransactionCell: viewModel.transactionItemTapped,
+          seeAllAction: {
+            viewModel.onClickedSeeAllButton()
+          }
+        )
       case .failure:
         EmptyView()
       }
     }
   }
-  
-  func transactionsView(size: CGSize) -> some View {
-    VStack(alignment: .leading, spacing: 10) {
-      HStack(alignment: .bottom) {
-        Text(LFLocalizable.CashTab.LastestTransaction.title)
-        Spacer()
-        seeAllTransactions
-      }
-      .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.ultraSmall.value))
-      .foregroundColor(Colors.label.swiftUIColor.opacity(0.75))
-      if viewModel.transactions.isEmpty {
-        noTransactionsYetView(height: size.height)
-      } else {
-        ForEach(viewModel.transactions) { transaction in
-          TransactionRowView(item: transaction) {
-            viewModel.transactionItemTapped(transaction)
-          }
-        }
-      }
-    }
-  }
-    
-  func noTransactionsYetView(height: CGFloat) -> some View {
-    HStack {
-      Spacer()
-      VStack(spacing: 8) {
-        GenImages.CommonImages.icSearch.swiftUIImage
-          .foregroundColor(Colors.label.swiftUIColor)
-        Text(LFLocalizable.CashTab.NoTransactionYet.title)
-          .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.ultraSmall.value))
-          .foregroundColor(Colors.label.swiftUIColor.opacity(0.75))
-      }
-      Spacer()
-    }
-    .frame(height: height * 0.5)
-  }
-  
+
   var balance: some View {
     VStack(alignment: .center, spacing: 4) {
       HStack(alignment: .center, spacing: 4) {
@@ -240,18 +209,6 @@ private extension CryptoAssetView {
       .font(Fonts.bold.swiftUIFont(size: 10))
       .padding(.horizontal, 20)
       .multilineTextAlignment(.center)
-  }
-  
-  var seeAllTransactions: some View {
-    Button {
-      viewModel.onClickedSeeAllButton()
-    } label: {
-      HStack(spacing: 8) {
-        Text(LFLocalizable.AssetView.seeAll)
-        GenImages.CommonImages.icRightArrow.swiftUIImage
-      }
-      .frame(height: 30, alignment: .bottom)
-    }
   }
   
   func iconTextButton(title: String, image: Image, action: @escaping () -> Void) -> some View {

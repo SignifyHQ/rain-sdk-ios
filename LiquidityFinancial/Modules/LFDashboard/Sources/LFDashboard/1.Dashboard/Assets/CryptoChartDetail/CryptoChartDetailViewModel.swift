@@ -165,10 +165,6 @@ extension CryptoChartDetailViewModel {
   func clearPopup() {
     popup = nil
   }
-  
-  func seeAllTransactionsTapped() {
-    navigation = .transactions
-  }
 }
 
   // MARK: - Types
@@ -180,7 +176,6 @@ extension CryptoChartDetailViewModel {
   
   enum Navigation {
     case addMoney
-    case transactions
     case send
     case receive
     case buy

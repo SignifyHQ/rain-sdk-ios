@@ -37,7 +37,7 @@ public struct RewardTransactionRowModel: Identifiable, Equatable {
     transactionDateInLocalZone()
   }
   public var ammountFormatted: String {
-    amount?.formattedAmount(minFractionDigits: 3, maxFractionDigits: 3) ?? "$0"
+    amount?.formattedAmount(minFractionDigits: 2, maxFractionDigits: 2) ?? "$0"
   }
   
   func transactionDateInLocalZone(includeYear: Bool = false) -> String {

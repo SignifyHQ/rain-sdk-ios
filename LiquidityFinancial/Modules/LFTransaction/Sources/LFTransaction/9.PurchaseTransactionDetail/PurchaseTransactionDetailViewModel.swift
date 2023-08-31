@@ -71,7 +71,7 @@ extension PurchaseTransactionDetailViewModel {
   }
   
   var rewardAmount: String {
-    transaction.rewards?.amount?.formattedAmount(minFractionDigits: 3) ?? .empty
+    transaction.rewards?.amount?.formattedAmount(minFractionDigits: 2) ?? .empty
   }
   
   var amountValue: String {

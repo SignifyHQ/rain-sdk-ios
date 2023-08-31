@@ -737,8 +737,6 @@ https://mn.gov/commerce/money/investments/cryptocurrency/. \n\n\n\n\n\n\n";
 "cryptoChartDetail.receive.title" = "Receive";
 "cryptoChartDetail.transfer.title" = "Transfer";
 "cryptoChartDetail.walletAddress.title" = "Wallet address";
-"cryptoChartDetail.lastTransactions.title" = "Latest Transactions";
-"cryptoChartDetail.seeAll.title" = "See all";
 "cryptoChartDetail.today.title" = "Today";
 "cryptoChartDetail.change.title" = "Change";
 "cryptoChartDetail.open.title" = "Open";

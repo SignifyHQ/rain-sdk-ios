@@ -37,7 +37,8 @@ class CryptoAssetViewModel: ObservableObject {
   
   var cryptoBalance: String {
     account?.availableBalance.formattedAmount(
-      minFractionDigits: 3, maxFractionDigits: 3
+      minFractionDigits: Constants.FractionDigitsLimit.crypto.minFractionDigits,
+      maxFractionDigits: Constants.FractionDigitsLimit.crypto.maxFractionDigits
     ) ?? asset.availableBalanceFormatted
   }
   

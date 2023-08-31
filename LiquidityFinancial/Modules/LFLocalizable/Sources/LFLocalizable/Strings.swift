@@ -748,10 +748,6 @@ public enum LFLocalizable {
       /// High
       public static let title = LFLocalizable.tr("Localizable", "cryptoChartDetail.high.title", fallback: "High")
     }
-    public enum LastTransactions {
-      /// Latest Transactions
-      public static let title = LFLocalizable.tr("Localizable", "cryptoChartDetail.lastTransactions.title", fallback: "Latest Transactions")
-    }
     public enum Low {
       /// Low
       public static let title = LFLocalizable.tr("Localizable", "cryptoChartDetail.low.title", fallback: "Low")
@@ -763,10 +759,6 @@ public enum LFLocalizable {
     public enum Receive {
       /// Receive
       public static let title = LFLocalizable.tr("Localizable", "cryptoChartDetail.receive.title", fallback: "Receive")
-    }
-    public enum SeeAll {
-      /// See all
-      public static let title = LFLocalizable.tr("Localizable", "cryptoChartDetail.seeAll.title", fallback: "See all")
     }
     public enum Sell {
       /// Sell

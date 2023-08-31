@@ -57,7 +57,7 @@ private extension RewardTabView {
             loading
           } else {
             headerView
-            activity(size: geo.size)
+            activity
           }
           Spacer()
         }
@@ -110,7 +110,7 @@ private extension RewardTabView {
     }
   }
   
-  func activity(size: CGSize) -> some View {
+  var activity: some View {
     Group {
       switch viewModel.activity {
       case .loading:
@@ -118,58 +118,17 @@ private extension RewardTabView {
           .frame(width: 30, height: 20)
           .padding(.top, 8)
       case .transactions:
-        transactionsView(size: size)
+        ShortTransactionsView(
+          transactions: $viewModel.transactions,
+          title: LFLocalizable.RewardTabView.lastestRewards,
+          onTapTransactionCell: viewModel.transactionItemTapped,
+          seeAllAction: {
+            viewModel.onClickedSeeAllButton()
+          }
+        )
       case .failure:
         EmptyView()
       }
-    }
-  }
-  
-  func transactionsView(size: CGSize) -> some View {
-    VStack(alignment: .leading, spacing: 10) {
-      HStack(alignment: .bottom) {
-        Text(LFLocalizable.RewardTabView.lastestRewards)
-        Spacer()
-        seeAllTransactions
-      }
-      .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.ultraSmall.value))
-      .foregroundColor(Colors.label.swiftUIColor.opacity(0.75))
-      if viewModel.transactions.isEmpty {
-        noTransactionsYetView(height: size.height)
-      } else {
-        ForEach(viewModel.transactions) { transaction in
-          TransactionRowView(item: transaction) {
-            viewModel.transactionItemTapped(transaction)
-          }
-        }
-      }
-    }
-  }
-    
-  func noTransactionsYetView(height: CGFloat) -> some View {
-    HStack {
-      Spacer()
-      VStack(spacing: 8) {
-        GenImages.CommonImages.icSearch.swiftUIImage
-          .foregroundColor(Colors.label.swiftUIColor)
-        Text(LFLocalizable.CashTab.NoTransactionYet.title)
-          .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.ultraSmall.value))
-          .foregroundColor(Colors.label.swiftUIColor.opacity(0.75))
-      }
-      Spacer()
-    }
-    .frame(height: height * 0.5)
-  }
-  
-  var seeAllTransactions: some View {
-    Button {
-      viewModel.onClickedSeeAllButton()
-    } label: {
-      HStack(spacing: 8) {
-        Text(LFLocalizable.RewardTabView.seeAll)
-        GenImages.CommonImages.icRightArrow.swiftUIImage
-      }
-      .frame(height: 30, alignment: .bottom)
     }
   }
 }
