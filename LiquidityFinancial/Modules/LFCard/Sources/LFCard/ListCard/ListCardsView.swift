@@ -50,7 +50,7 @@ public struct ListCardsView: View {
     .navigationLink(item: $viewModel.navigation) { navigation in
       switch navigation {
       case .orderPhysicalCard:
-        OrderPhysicalCardView { card in
+        OrderPhysicalCardView(navigation: $viewModel.navigation) { card in
           viewModel.orderPhysicalSuccess(card: card)
         }
       }

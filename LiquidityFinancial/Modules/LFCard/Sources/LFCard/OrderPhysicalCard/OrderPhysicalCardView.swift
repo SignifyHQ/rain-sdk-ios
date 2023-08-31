@@ -5,9 +5,11 @@ import LFStyleGuide
 
 struct OrderPhysicalCardView: View {
   @StateObject private var viewModel: OrderPhysicalCardViewModel
+  @Binding private var listCardNavigation: ListCardsViewModel.Navigation?
   
-  init(onSuccess: ((CardModel) -> Void)? = nil) {
+  init(navigation: Binding<ListCardsViewModel.Navigation?>, onSuccess: ((CardModel) -> Void)? = nil) {
     _viewModel = .init(wrappedValue: OrderPhysicalCardViewModel(onOrderSuccess: onSuccess))
+    _listCardNavigation = navigation
   }
   
   var body: some View {
@@ -110,6 +112,7 @@ private extension OrderPhysicalCardView {
       message: LFLocalizable.OrderPhysicalCard.OrderedSuccess.message,
       primary: .init(text: LFLocalizable.Button.Ok.title) {
         viewModel.primaryOrderSuccessAction()
+        listCardNavigation = nil
       }
     )
   }
