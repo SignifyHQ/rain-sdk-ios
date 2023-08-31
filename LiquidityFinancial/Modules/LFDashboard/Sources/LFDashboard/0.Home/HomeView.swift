@@ -10,13 +10,13 @@ public struct HomeView: View {
   
   @StateObject private var viewModel: HomeViewModel
   
-  var dataStorages: HomeDataStorages
+  var dataStorages: HomeRepository
   
   let tabOptions: [TabOption]
   
   public init(viewModel: HomeViewModel, tabOptions: [TabOption]) {
     _viewModel = .init(wrappedValue: viewModel)
-    self.dataStorages = HomeDataStorages(toastMessage: { toastMessage in
+    self.dataStorages = HomeRepository(toastMessage: { toastMessage in
       viewModel.toastMessage = toastMessage
     })
     self.tabOptions = tabOptions

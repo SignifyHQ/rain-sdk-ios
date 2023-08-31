@@ -22,6 +22,9 @@ APPSTORE_URL = https:/$()/apps.apple.com/us/app/causecard/id6444664550
 SHARE_APP_URL = https:/$()/causecard.co/app
 REWARDS_VIDEO_URL = https:/$()twitter.com/TheDogeCard/status/1611066507957571747
 
+REFERRALLINK_DEV = https:/$()/dev-causecard.d171e50hgm8pcq.amplifyapp.com
+REFERRALLINK_PRO = https:/$()/causecards.co
+
 CHARITY_ENABLED = true
 CRYPTO_ENABLED = false
 CRYPTO_FRACTION_DIGITS = 8

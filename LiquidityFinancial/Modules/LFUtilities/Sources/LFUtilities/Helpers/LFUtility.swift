@@ -26,7 +26,8 @@ public enum LFUtility {
   public static let marketingVersion = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "0.0.0"
   public static let bundleVersion = Bundle.main.infoDictionary?["CFBundleVersion"] as? String ?? "unknown"
   public static let bundleName = Bundle.main.infoDictionary?["CFBundleName"] as? String ?? "unkwnown"
-
+  public static let referrallinkDev: String = try! LFConfiguration.value(for: "REFERRALLINK_DEV")
+  public static let referrallinkProd: String = try! LFConfiguration.value(for: "REFERRALLINK_PRO")
 }
 
 public enum LFConfiguration {

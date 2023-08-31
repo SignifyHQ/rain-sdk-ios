@@ -13,7 +13,7 @@ import Combine
 import LFBank
 
 @MainActor
-final class HomeDataStorages: ObservableObject {
+final class HomeRepository: ObservableObject {
   @LazyInjected(\.accountDataManager) var accountDataManager
   @LazyInjected(\.netspendDataManager) var netspendDataManager
   
@@ -44,7 +44,7 @@ final class HomeDataStorages: ObservableObject {
 }
 
   // MARK: API init data tab content
-extension HomeDataStorages {
+extension HomeRepository {
   
   func initData() {
     apiFetchAssetFromAccounts()

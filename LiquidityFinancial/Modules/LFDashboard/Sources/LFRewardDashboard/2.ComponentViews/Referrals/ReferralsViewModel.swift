@@ -13,13 +13,15 @@ final class ReferralsViewModel: ObservableObject {
   @Published var showShareSheet = false
   @Published var showCopyToast = false
   
+  private lazy var enviromentManager = EnvironmentManager()
+  
   lazy var accountUseCase: AccountUseCase = {
     AccountUseCase(repository: accountRepository)
   }()
   
   private var referralLink = ""
-
-  init() {
+  private var referralLinkEnvironment: String {
+    enviromentManager.networkEnvironment == .productionTest ? LFUtility.referrallinkDev : LFUtility.referrallinkProd
   }
 }
 
@@ -28,7 +30,7 @@ extension ReferralsViewModel {
   private func fetchCampaigns() {
     let userData = accountDataManager.userInfomationData
     status = .loading
-    referralLink = "https://dev-getcausecard.d8nxzyrm4k1vo.amplifyapp.com" + (userData.referralLink ?? "")
+    referralLink = referralLinkEnvironment + (userData.referralLink ?? "")
     
 //    Task { @MainActor in
 //      do {

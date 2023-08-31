@@ -22,6 +22,9 @@ APPSTORE_URL = https:/$()/apps.apple.com/us/app/pridecard/id1591668322
 SHARE_APP_URL = https:/$()/paywithpride.com/
 REWARDS_VIDEO_URL = https:/$()twitter.com/TheDogeCard/status/1611066507957571747
 
+REFERRALLINK_DEV = https:/$()/dev-pridecard.d79rwlgojw5j.amplifyapp.com
+REFERRALLINK_PRO = https:/$()/paywithpride.com
+
 CHARITY_ENABLED = true
 CRYPTO_ENABLED = false
 CRYPTO_FRACTION_DIGITS = 8

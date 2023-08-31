@@ -93,6 +93,10 @@
 	<string>$(PATHWARD_USER_URL)</string>
 	<key>PRIVACY_URL</key>
 	<string>$(PRIVACY_URL)</string>
+	<key>REFERRALLINK_DEV</key>
+	<string>$(REFERRALLINK_DEV)</string>
+	<key>REFERRALLINK_PRO</key>
+	<string>$(REFERRALLINK_PRO)</string>
 	<key>SHARE_APP_URL</key>
 	<string>$(SHARE_APP_URL)</string>
 	<key>TERMS_URL</key>

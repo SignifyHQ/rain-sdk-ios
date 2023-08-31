@@ -16,6 +16,9 @@ PATHWARD_PRIVACY_URL = https:/$()/avalanche.co/legal#privacy-policy
 PATHWARD_DISCLOSURE_URL = https:/$()/avalanche.co/legal#privacy-policy
 SHARE_APP_URL = https:/$()/avalanche.co/app
 
+REFERRALLINK_DEV = https:/$()/dev-avalanchecard.dxtm8n5zeavql.amplifyapp.com
+REFERRALLINK_PRO = https:/$()/dev-avalanchecard.dxtm8n5zeavql.amplifyapp.com
+
 CHARITY_ENABLED = false
 CRYPTO_ENABLED = true
 CRYPTO_FRACTION_DIGITS = 8

@@ -20,56 +20,59 @@ public struct AgreementView: View {
   }
   
   public var body: some View {
-    VStack(spacing: 24) {
-      headerTitle
-
-      ZStack {
-        HStack {
-          GenImages.Images.icLogo.swiftUIImage
-            .resizable()
-            .scaledToFit()
-            .frame(width: 80, height: 80)
-          Spacer()
-          GenImages.CommonImages.netspendLogo.swiftUIImage
-            .scaledToFit()
-            .frame(width: 173, height: 87)
+    VStack {
+      VStack(spacing: 24) {
+        headerTitle
+        
+        ZStack {
+          HStack {
+            GenImages.Images.icLogo.swiftUIImage
+              .resizable()
+              .scaledToFit()
+              .frame(width: 80, height: 80)
+            Spacer()
+            GenImages.CommonImages.netspendLogo.swiftUIImage
+              .scaledToFit()
+              .frame(width: 173, height: 87)
+          }
+          .padding(.horizontal, 20)
         }
-        .padding(.horizontal, 20)
         .frame(height: 112)
         .frame(maxWidth: 600)
+        .foregroundColor(.clear)
+        .background(Colors.secondaryBackground.swiftUIColor)
+        .cornerRadius(12)
       }
-      .foregroundColor(.clear)
-      .background(Colors.secondaryBackground.swiftUIColor)
-      .cornerRadius(12)
       
       Spacer()
-        .frame(maxHeight: .infinity)
-      
-      VStack(spacing: 0) {
-        if viewModel.isLoading {
-          loadingView
-        } else {
-          if viewModel.condition == nil {
-            VStack(alignment: .leading, spacing: 0) {
-              ForEach($viewModel.conditions) { condition in
-                conditionCell(
-                  condition: condition.wrappedValue
-                )
+
+      VStack(alignment: .center) {
+        
+        Spacer()
+        
+        VStack(spacing: 0) {
+          if viewModel.isLoading {
+            loadingView
+          } else {
+            if let condition = viewModel.condition {
+              conditionCell(
+                condition: condition
+              )
+            } else {
+              VStack(alignment: .leading, spacing: 0) {
+                ForEach($viewModel.conditions) { condition in
+                  conditionCell(
+                    condition: condition.wrappedValue
+                  )
+                }
               }
             }
           }
         }
-        
-        VStack(spacing: 0) {
-          if let condition = viewModel.condition {
-            conditionCell(
-              condition: condition
-            )
-          }
-          Spacer().frame(height: 24)
-          continueButton
-        }
+
+        continueButton
       }
+      .frame(maxHeight: .infinity, alignment: .bottom)
     }
     .padding(.bottom, 16)
     .padding(.top, 40)
@@ -154,6 +157,8 @@ private extension AgreementView {
         }
         openURL(url)
       }
+      .frame(minHeight: 80)
+      .fixedSize(horizontal: false, vertical: true)
     }
   }
   

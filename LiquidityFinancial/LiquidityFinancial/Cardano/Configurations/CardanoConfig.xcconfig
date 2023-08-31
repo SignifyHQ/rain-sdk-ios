@@ -16,6 +16,9 @@ PATHWARD_PRIVACY_URL = https:/$()/cardano.co/legal#privacy-policy
 PATHWARD_DISCLOSURE_URL = https:/$()/cardano.co/legal#privacy-policy
 SHARE_APP_URL = https:/$()/cardano.co/app
 
+REFERRALLINK_DEV = https:/$()/dev-cardanocard.d48v8qlss9gj4.amplifyapp.com
+REFERRALLINK_PRO = https:/$()/dev-cardanocard.d48v8qlss9gj4.amplifyapp.com
+
 CHARITY_ENABLED = false
 CRYPTO_ENABLED = true
 CRYPTO_FRACTION_DIGITS = 8

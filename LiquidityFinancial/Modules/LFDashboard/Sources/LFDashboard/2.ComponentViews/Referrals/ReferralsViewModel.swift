@@ -1,17 +1,18 @@
 import SwiftUI
 import Factory
+import LFUtilities
 
 @MainActor
 final class ReferralsViewModel: ObservableObject {
   @LazyInjected(\.accountDataManager) var accountDataManager
-
+  private lazy var enviromentManager = EnvironmentManager()
   @Published var status = Status.loading
   @Published var showShareSheet = false
   @Published var showCopyToast = false
   
-  private var referralLink = ""
-
-  init() {
+  var referralLink = ""
+  private var referralLinkEnvironment: String {
+    enviromentManager.networkEnvironment == .productionTest ? LFUtility.referrallinkDev : LFUtility.referrallinkProd
   }
 }
 
@@ -20,7 +21,7 @@ extension ReferralsViewModel {
   private func fetchCampaigns() {
     let userData = accountDataManager.userInfomationData
     status = .loading
-    referralLink = userData.referralLink ?? ""
+    referralLink = referralLinkEnvironment + (userData.referralLink ?? "")
     // TODO: Will be implemented later
     // FAKE CALL API
     DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {

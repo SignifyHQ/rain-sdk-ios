@@ -20,7 +20,13 @@ struct AssetsView: View {
           ForEach(viewModel.assets, id: \.self) { asset in
             assetCell(asset: asset)
           }
+          
           Spacer()
+          
+          Text(LFLocalizable.AssetView.disclosure)
+            .font(Fonts.Inter.extraLight.swiftUIFont(size: 10))
+            .foregroundColor(Colors.whiteText.swiftUIColor)
+            .padding(.bottom, 8)
         }
       }
     }
@@ -56,14 +62,19 @@ private extension AssetsView {
             .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.medium.value))
           Spacer()
           VStack(alignment: .trailing, spacing: 2) {
-            Text(asset.availableBalanceFormatted)
-              .foregroundColor(Colors.label.swiftUIColor)
-              .font(Fonts.black.swiftUIFont(size: Constants.FontSize.medium.value))
             if let bottomBalance = asset.availableUsdBalanceFormatted {
               Text(bottomBalance)
                 .foregroundColor(Colors.label.swiftUIColor)
-                .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.ultraSmall.value))
+                .font(Fonts.Inter.bold.swiftUIFont(size: Constants.FontSize.medium.value))
             }
+            
+            let font = asset.type == .usd ?
+            Fonts.Inter.bold.swiftUIFont(size: Constants.FontSize.medium.value) :
+            Fonts.Inter.regular.swiftUIFont(size: Constants.FontSize.ultraSmall.value)
+            
+            Text(asset.availableBalanceFormatted)
+              .foregroundColor(Colors.label.swiftUIColor)
+              .font(font)
           }
           .padding(.trailing, 8)
         }

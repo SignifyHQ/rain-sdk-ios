@@ -48,7 +48,7 @@ public enum KYCState {
     case .documentInReview:
       return KYCInformation(
         title: LFLocalizable.KycStatus.Document.Inreview.title,
-        message: LFLocalizable.KycStatus.Document.Inreview.title,
+        message: LFLocalizable.KycStatus.Document.Inreview.message,
         primary: LFLocalizable.Button.Ok.title
       )
     default:

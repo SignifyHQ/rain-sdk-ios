@@ -6,11 +6,11 @@ import LFBank
 
 struct DashboardView: View {
   
-  private var dataStorages: HomeDataStorages
+  private var dataStorages: HomeRepository
   
   let option: TabOption
   
-  init(dataStorages: HomeDataStorages, option: TabOption) {
+  init(dataStorages: HomeRepository, option: TabOption) {
     self.option = option
     self.dataStorages = dataStorages
   }
