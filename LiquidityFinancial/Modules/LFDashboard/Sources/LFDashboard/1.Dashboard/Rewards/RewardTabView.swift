@@ -40,7 +40,9 @@ struct RewardTabView: View {
       }
       .background(Colors.background.swiftUIColor)
       .onAppear {
-        viewModel.apiLoadTransactions()
+        Task { @MainActor in
+          await viewModel.apiLoadTransactions()
+        }
       }
   }
 }

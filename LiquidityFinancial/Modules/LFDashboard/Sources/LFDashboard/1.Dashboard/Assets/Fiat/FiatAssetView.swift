@@ -55,7 +55,7 @@ private extension FiatAssetView {
         VStack(spacing: 10) {
           balance
           moveMoney
-          accountDetailView
+          //accountDetailView
           activity(size: geo.size)
         }
         .padding(.top, 26)
@@ -159,6 +159,8 @@ private extension FiatAssetView {
           .padding(.top, 8)
       case .transactions:
         transactionsView(size: size)
+      case .addFund:
+        addFundsView
       case .failure:
         EmptyView()
       }
@@ -210,6 +212,19 @@ private extension FiatAssetView {
         GenImages.CommonImages.icRightArrow.swiftUIImage
       }
       .frame(height: 30, alignment: .bottom)
+    }
+  }
+  
+  var addFundsView: some View {
+    VStack(alignment: .leading, spacing: 10) {
+      Text(LFLocalizable.CashTab.WaysToAdd.title)
+        .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.ultraSmall.value))
+        .foregroundColor(Colors.label.swiftUIColor.opacity(0.75))
+        .padding(.top, 16)
+      AddFundsView(
+        achInformation: $viewModel.achInformation,
+        isDisableView: $viewModel.isDisableView
+      )
     }
   }
 }

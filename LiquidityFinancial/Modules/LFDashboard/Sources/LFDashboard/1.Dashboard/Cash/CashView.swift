@@ -71,15 +71,12 @@ private extension CashView {
       Button {
         viewModel.onClickedChangeAssetButton()
       } label: {
-        Text(LFLocalizable.CashTab.ChangeAsset.buttonTitle)
-          .foregroundColor(Colors.label.swiftUIColor)
-          .font(Fonts.bold.swiftUIFont(size: Constants.FontSize.ultraSmall.value))
-          .frame(width: 100, height: 40)
-          .background(Colors.buttons.swiftUIColor.cornerRadius(8))
+        CircleButton(style: .right)
+          .frame(32)
       }
     }
     .padding(.leading, 16)
-    .padding(.trailing, 8)
+    .padding(.trailing, 12)
     .frame(height: 56)
     .background(Colors.secondaryBackground.swiftUIColor.cornerRadius(9))
   }

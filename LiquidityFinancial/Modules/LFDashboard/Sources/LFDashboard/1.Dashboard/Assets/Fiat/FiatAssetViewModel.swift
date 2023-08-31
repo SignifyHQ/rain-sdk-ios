@@ -15,6 +15,7 @@ class FiatAssetViewModel: ObservableObject {
   
   @Published var account: LFAccount?
   @Published var isLoadingACH: Bool = false
+  @Published var isDisableView: Bool = false
   @Published var showTransferSheet: Bool = false
   @Published var cryptoPrice: String = "0.00"
   @Published var changePercent: Double = 0
@@ -34,8 +35,8 @@ class FiatAssetViewModel: ObservableObject {
   var usdBalance: String {
     account?.availableBalance.formattedAmount(
       prefix: Constants.CurrencyUnit.usd.rawValue,
-      minFractionDigits: 3,
-      maxFractionDigits: 3
+      minFractionDigits: Constants.FractionDigitsLimit.fiat.minFractionDigits,
+      maxFractionDigits: Constants.FractionDigitsLimit.fiat.maxFractionDigits
     ) ?? asset.availableBalanceFormatted
   }
   
@@ -72,8 +73,13 @@ private extension FiatAssetViewModel {
         limit: 50,
         offset: 0
       )
-      self.transactions = transactions.data.compactMap({ TransactionModel(from: $0) })
-      activity = .transactions
+      let transactionsModel = transactions.data.compactMap({ TransactionModel(from: $0) })
+      if transactionsModel.isEmpty {
+        activity = .addFund
+      } else {
+        self.transactions = transactionsModel
+        activity = .transactions
+      }
     } catch {
       toastMessage = error.localizedDescription
       activity = .failure
@@ -167,6 +173,7 @@ extension FiatAssetViewModel {
   enum Activity {
     case loading
     case failure
+    case addFund
     case transactions
   }
   

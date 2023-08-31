@@ -34,7 +34,7 @@ class RewardTabViewModel: ObservableObject {
             availableUsdBalance: account.availableUsdBalance
           )
           self?.accountDataManager.cryptoAccountID = account.id
-          self?.apiLoadTransactions()
+          self?.fetchAllTransactions()
         }
       }
       .store(in: &cancellable)
@@ -47,23 +47,29 @@ class RewardTabViewModel: ObservableObject {
 
 // MARK: - View Helpers
 extension RewardTabViewModel {
-  func apiLoadTransactions() {
-    Task {
+  func fetchAllTransactions() {
+    Task { @MainActor in
       defer { isLoading = false }
       isLoading = true
-      if let account = account {
-        do {
-          let transactions = try await accountRepository.getTransactions(
-            accountId: account.id,
-            currencyType: currencyType,
-            transactionTypes: Constants.TransactionTypesRequest.rewardCryptoBack.types,
-            limit: 50,
-            offset: 0
-          )
-          self.transactions = transactions.data.compactMap({ TransactionModel(from: $0) })
-          activity = .transactions
-        } catch {
-          toastMessage = error.localizedDescription
+      await apiLoadTransactions()
+    }
+  }
+  
+  func apiLoadTransactions() async {
+    if let account = account {
+      do {
+        let transactions = try await accountRepository.getTransactions(
+          accountId: account.id,
+          currencyType: currencyType,
+          transactionTypes: Constants.TransactionTypesRequest.rewardCryptoBack.types,
+          limit: 50,
+          offset: 0
+        )
+        self.transactions = transactions.data.compactMap({ TransactionModel(from: $0) })
+        activity = .transactions
+      } catch {
+        toastMessage = error.localizedDescription
+        if transactions.isEmpty {
           activity = .failure
         }
       }

@@ -224,7 +224,7 @@
 "rewards.no_rewards" = "No rewards yet";
 
 // Home
-"home.cashTab.title" = "Cash";
+"home.cashTab.title" = "Card";
 "home.rewardsTab.title" = "Rewards";
 "home.assetsTab.title" = "Assets";
 "home.accountTab.title" = "Account";
