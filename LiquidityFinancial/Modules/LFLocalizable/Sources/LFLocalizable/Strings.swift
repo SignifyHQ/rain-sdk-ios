@@ -1282,6 +1282,10 @@ public enum LFLocalizable {
     }
     /// You can change it at any time
     public static let disclosures = LFLocalizable.tr("Localizable", "enter_nickname_of_wallet.disclosures", fallback: "You can change it at any time")
+    /// Create new name for "%@"
+    public static func editNickname(_ p1: Any) -> String {
+      return LFLocalizable.tr("Localizable", "enter_nickname_of_wallet.edit_nickname", String(describing: p1), fallback: "Create new name for \"%@\"")
+    }
     /// Enter name
     public static let placeholder = LFLocalizable.tr("Localizable", "enter_nickname_of_wallet.placeholder", fallback: "Enter name")
     /// Save

@@ -888,6 +888,7 @@ https://mn.gov/commerce/money/investments/cryptocurrency/. \n\n\n\n\n\n\n";
 // Enter nickname of wallet
 "enter_nickname_of_wallet.save_title" = "SAVE WALLET ADDRESS";
 "enter_nickname_of_wallet.create_nickname" = "Create a name for \"%@\"";
+"enter_nickname_of_wallet.edit_nickname" = "Create new name for \"%@\"";
 "enter_nickname_of_wallet.placeholder" = "Enter name";
 "enter_nickname_of_wallet.textField_title" = "Wallet address name";
 "enter_nickname_of_wallet.disclosures" = "You can change it at any time";
