@@ -1511,6 +1511,12 @@ public enum LFLocalizable {
       public static let secondaryTitle = LFLocalizable.tr("Localizable", "kycStatus.inReview.secondaryTitle", fallback: "Contact Support")
       /// VERIFYING ACCOUNT DETAILS
       public static let title = LFLocalizable.tr("Localizable", "kycStatus.inReview.title", fallback: "VERIFYING ACCOUNT DETAILS")
+      public enum Popup {
+        /// Thank you for your patience while your account is still reviewed.
+        public static let message = LFLocalizable.tr("Localizable", "kycStatus.inReview.popup.message", fallback: "Thank you for your patience while your account is still reviewed.")
+        /// In Review
+        public static let title = LFLocalizable.tr("Localizable", "kycStatus.inReview.popup.title", fallback: "In Review")
+      }
     }
     public enum MissingInfo {
       /// The information you have entered is not complete, you need to contact us via email to add some necessary information.

@@ -22,6 +22,7 @@ final class KYCStatusViewModel: ObservableObject {
   @Published var isLoading: Bool = false
   @Published var toastMessage: String?
   @Published var navigation: Navigation?
+  @Published var popup: Popup?
   
   @LazyInjected(\.netspendRepository) var netspendRepository
   @LazyInjected(\.netspendDataManager) var netspendDataManager
@@ -112,7 +113,12 @@ extension KYCStatusViewModel {
             if states.contains(OnboardingMissingStep.netSpendCreateAccount) {
               onboardingFlowCoordinator.set(route: .welcome)
             } else if states.contains(OnboardingMissingStep.dashboardReview) {
-              onboardingFlowCoordinator.set(route: .kycReview)
+              switch state {
+              case .inReview:
+                popup = .inReview
+              default:
+                onboardingFlowCoordinator.set(route: .kycReview)
+              }
             } else if states.contains(OnboardingMissingStep.zeroHashAccount) {
               onboardingFlowCoordinator.set(route: .zeroHash)
             } else if states.contains(OnboardingMissingStep.accountReject) {
@@ -162,8 +168,12 @@ extension KYCStatusViewModel {
     }
   }
   
-  func checkOnboardingState(onCompletion: @escaping () -> Void) {
-    
+  func openMagicPopup() {
+    popup = .magic
+  }
+  
+  func closePopup() {
+    popup = nil
   }
   
   func forcedLogout() {
@@ -208,5 +218,10 @@ extension KYCStatusViewModel {
       case .idv: return "idv"
       }
     }
+  }
+  
+  enum Popup {
+    case inReview
+    case magic
   }
 }

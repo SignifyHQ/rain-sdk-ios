@@ -192,6 +192,8 @@
 "kycStatus.inReview.secondaryTitle" = "Contact Support";
 "kycStatus.inReview.primaryTitle" = "Check Status";
 "kycStatus.fail.unclear.message" = "%@, we were unable to create a Depository account at this time. We will be in touch via email.";
+"kycStatus.inReview.popup.title" = "In Review";
+"kycStatus.inReview.popup.message" = "Thank you for your patience while your account is still reviewed.";
 
 "kycStatus.document.inreview.message" = "We will update you after your documents have been reviewed. Thank you for your patience.";
 "kycStatus.document.inreview.title" = "Documents are in review";

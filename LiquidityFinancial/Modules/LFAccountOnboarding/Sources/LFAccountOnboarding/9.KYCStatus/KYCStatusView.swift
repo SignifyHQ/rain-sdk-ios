@@ -5,7 +5,6 @@ import LFLocalizable
 
 struct KYCStatusView: View {
   @StateObject var viewModel: KYCStatusViewModel
-  @State private var showPopup = false
   
   init(viewModel: KYCStatusViewModel) {
     _viewModel = .init(wrappedValue: viewModel)
@@ -29,8 +28,13 @@ struct KYCStatusView: View {
       .popup(item: $viewModel.toastMessage, style: .toast) {
         ToastView(toastMessage: $0)
       }
-      .popup(isPresented: $showPopup) {
-        magicPopup
+      .popup(item: $viewModel.popup) { popup in
+        switch popup {
+        case .inReview:
+          inReviewPopup
+        case .magic:
+          magicPopup
+        }
       }
   }
 }
@@ -73,7 +77,7 @@ private extension KYCStatusView {
           .scaledToFit()
           .frame(width: 124, height: 124)
           .onLongPressGesture(minimumDuration: 2) {
-            showPopup = true
+            viewModel.openMagicPopup()
           }
         contextView(info: info)
         Spacer()
@@ -152,12 +156,22 @@ private extension KYCStatusView {
       title: "[Tool Kit] - Pass review from Dashboard.",
       message: "Click ok and we call service help you can pass a review of the Dashboard.",
       primary: .init(text: LFLocalizable.Button.Ok.title) {
-        showPopup = false
+        viewModel.closePopup()
         viewModel.magicPassKYC()
       },
       secondary: .init(text: LFLocalizable.Button.Skip.title, action: {
-        showPopup = false
+        viewModel.closePopup()
       })
+    )
+  }
+  
+  var inReviewPopup: some View {
+    LiquidityAlert(
+      title: LFLocalizable.KycStatus.InReview.Popup.title,
+      message: LFLocalizable.KycStatus.InReview.Popup.message,
+      primary: .init(text: LFLocalizable.Button.Ok.title) {
+        viewModel.closePopup()
+      }
     )
   }
 }
