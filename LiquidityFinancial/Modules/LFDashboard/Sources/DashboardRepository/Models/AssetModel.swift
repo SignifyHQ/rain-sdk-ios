@@ -1,12 +1,18 @@
 import Foundation
 import LFUtilities
 
-struct AssetModel: Hashable {
-  let type: AssetType?
-  let availableBalance: Double
-  let availableUsdBalance: Double?
+public struct AssetModel: Hashable {
+  public let type: AssetType?
+  public let availableBalance: Double
+  public let availableUsdBalance: Double?
   
-  var availableBalanceFormatted: String {
+  public init(type: AssetType?, availableBalance: Double, availableUsdBalance: Double?) {
+    self.type = type
+    self.availableBalance = availableBalance
+    self.availableUsdBalance = availableUsdBalance
+  }
+  
+  public var availableBalanceFormatted: String {
     availableBalance.formattedAmount(
       prefix: type == .usd ? Constants.CurrencyUnit.usd.rawValue : nil,
       minFractionDigits: type == .usd
@@ -18,7 +24,7 @@ struct AssetModel: Hashable {
     )
   }
   
-  var availableUsdBalanceFormatted: String? {
+  public var availableUsdBalanceFormatted: String? {
     guard type != .usd else {
       return nil
     }

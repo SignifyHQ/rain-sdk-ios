@@ -4,6 +4,7 @@ import LFUtilities
 import Factory
 import LFTransaction
 import Combine
+import DashboardRepository
 
 @MainActor
 class RewardTabViewModel: ObservableObject {

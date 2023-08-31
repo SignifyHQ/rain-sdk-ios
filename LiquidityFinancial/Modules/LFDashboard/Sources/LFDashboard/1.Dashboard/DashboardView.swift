@@ -3,14 +3,15 @@ import LFStyleGuide
 import LFLocalizable
 import LFUtilities
 import LFBank
+import DashboardRepository
 
 struct DashboardView: View {
   
-  private var dataStorages: HomeRepository
+  private var dataStorages: DashboardRepository
   
   let option: TabOption
   
-  init(dataStorages: HomeRepository, option: TabOption) {
+  init(dataStorages: DashboardRepository, option: TabOption) {
     self.option = option
     self.dataStorages = dataStorages
   }

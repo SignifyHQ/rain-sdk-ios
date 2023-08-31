@@ -1,50 +1,39 @@
-import UIKit
-import Foundation
 import Factory
-import OnboardingData
 import AccountData
 import LFUtilities
-import DevicesData
-import LFAccountOnboarding
-import OnboardingDomain
 import AccountDomain
 import NetSpendData
 import Combine
 import LFBank
 
 @MainActor
-final class HomeRepository: ObservableObject {
+public final class DashboardRepository: ObservableObject {
   @LazyInjected(\.accountDataManager) var accountDataManager
   @LazyInjected(\.netspendDataManager) var netspendDataManager
   
   @LazyInjected(\.accountRepository) var accountRepository
-  @LazyInjected(\.devicesRepository) var devicesRepository
-  @LazyInjected(\.onboardingRepository) var onboardingRepository
   @LazyInjected(\.netspendRepository) var netspendRepository
   @LazyInjected(\.externalFundingRepository) var externalFundingRepository
   
-  @LazyInjected(\.pushNotificationService) var pushNotificationService
-  @LazyInjected(\.onboardingFlowCoordinator) var onboardingFlowCoordinator
+  @Published public var isLoading: Bool = false
+  @Published public var allAssets: [AssetModel] = []
+  @Published public var fiatAccounts: [LFAccount] = []
+  @Published public var cryptoAccounts: [LFAccount] = []
+  @Published public var linkedAccount: [APILinkedSourceData] = []
   
-  @Published var isLoading: Bool = false
-  @Published var allAssets: [AssetModel] = []
-  @Published var fiatAccounts: [LFAccount] = []
-  @Published var cryptoAccounts: [LFAccount] = []
-  @Published var linkedAccount: [APILinkedSourceData] = []
-  
-  @Published var achInformationData: (model: ACHModel, loading: Bool) = (.default, false)
+  @Published public var achInformationData: (model: ACHModel, loading: Bool) = (.default, false)
   
   private var cancellable: Set<AnyCancellable> = []
   
   var toastMessage: (String) -> Void
-  init(toastMessage: @escaping (String) -> Void) {
+  public init(toastMessage: @escaping (String) -> Void) {
     self.toastMessage = toastMessage
     initData()
   }
 }
 
   // MARK: API init data tab content
-extension HomeRepository {
+public extension DashboardRepository {
   
   func initData() {
     apiFetchAssetFromAccounts()

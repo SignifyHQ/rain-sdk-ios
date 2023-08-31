@@ -4,6 +4,7 @@ import LFStyleGuide
 import LFLocalizable
 import LFUtilities
 import LFTransaction
+import DashboardRepository
 
 struct ChangeRewardView: View {
   @Environment(\.dismiss) private var dismiss

@@ -2,14 +2,14 @@ import SwiftUI
 import LFStyleGuide
 import LFUtilities
 
-enum AssetType: String {
+public enum AssetType: String {
   case usd = "USD"
   case usdc = "USDC"
   case avax = "AVAX"
   case cardano = "ADA"
   case doge = "DOGE"
   
-  var title: String {
+  public var title: String {
     switch self {
     case .doge:
       return "Doge"
@@ -18,7 +18,7 @@ enum AssetType: String {
     }
   }
   
-  var image: Image? {
+  public var image: Image? {
     switch self {
     case .usd:
       return GenImages.CommonImages.icUsd.swiftUIImage
@@ -33,3 +33,4 @@ enum AssetType: String {
     }
   }
 }
+                                                                  

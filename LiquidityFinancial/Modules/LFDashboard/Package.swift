@@ -12,7 +12,10 @@ let package = Package(
       targets: ["LFDashboard"]),
     .library(
       name: "LFRewardDashboard",
-      targets: ["LFRewardDashboard"])
+      targets: ["LFRewardDashboard"]),
+    .library(
+      name: "DashboardRepository",
+      targets: ["DashboardRepository"])
   ],
   dependencies: [
     .package(name: "LFUtilities", path: "../LFUtilities"),
@@ -32,9 +35,21 @@ let package = Package(
   ],
   targets: [
     .target(
+      name: "DashboardRepository",
+      dependencies: [
+        "LFUtilities", "LFServices", "LFBank",
+        .product(name: "OnboardingData", package: "LFData"),
+        .product(name: "NetSpendData", package: "LFData"),
+        .product(name: "ZerohashData", package: "LFData"),
+        .product(name: "DevicesData", package: "LFData"),
+        .product(name: "AuthorizationManager", package: "LFNetwork")
+      ]
+    ),
+    .target(
       name: "LFDashboard",
       dependencies: [
-        "LFUtilities", "LFStyleGuide", "LFLocalizable", "LFServices", "LFCard", "LFBank", "LFTransaction", "LFCryptoChart", "CodeScanner", "LFWalletAddress",
+        "LFUtilities", "LFStyleGuide", "LFLocalizable", "LFServices", "LFCard", "DashboardRepository",
+        "LFBank", "LFTransaction", "LFCryptoChart", "CodeScanner", "LFWalletAddress",
         .product(name: "OnboardingData", package: "LFData"),
         .product(name: "NetSpendData", package: "LFData"),
         .product(name: "ZerohashData", package: "LFData"),
@@ -45,7 +60,8 @@ let package = Package(
     .target(
       name: "LFRewardDashboard",
       dependencies: [
-        "LFUtilities", "LFStyleGuide", "LFLocalizable", "LFServices", "LFCard", "LFBank", "LFTransaction", "CodeScanner", "LFRewards",
+        "LFUtilities", "LFStyleGuide", "LFLocalizable", "LFServices", "LFCard",
+        "LFBank", "LFTransaction", "CodeScanner", "LFRewards", "DashboardRepository",
         .product(name: "OnboardingData", package: "LFData"),
         .product(name: "NetSpendData", package: "LFData"),
         .product(name: "ZerohashData", package: "LFData"),

@@ -6,6 +6,7 @@ import LFUtilities
 import Factory
 import LFBank
 import LFTransaction
+import DashboardRepository
 
 @MainActor
 class FiatAssetViewModel: ObservableObject {

@@ -2,6 +2,7 @@ import SwiftUI
 import LFStyleGuide
 import LFLocalizable
 import LFUtilities
+import DashboardRepository
 
 struct AssetsView: View {
   @StateObject private var viewModel: AssetsViewModel

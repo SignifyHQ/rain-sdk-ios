@@ -4,19 +4,20 @@ import LFLocalizable
 import LFStyleGuide
 import LFUtilities
 import Combine
+import DashboardRepository
 
 public struct HomeView: View {
   @Environment(\.scenePhase) var scenePhase
   
   @StateObject private var viewModel: HomeViewModel
   
-  var dataStorages: HomeRepository
+  var dataStorages: DashboardRepository
   
   let tabOptions: [TabOption]
   
   public init(viewModel: HomeViewModel, tabOptions: [TabOption]) {
     _viewModel = .init(wrappedValue: viewModel)
-    self.dataStorages = HomeRepository(toastMessage: { toastMessage in
+    self.dataStorages = DashboardRepository(toastMessage: { toastMessage in
       viewModel.toastMessage = toastMessage
     })
     self.tabOptions = tabOptions

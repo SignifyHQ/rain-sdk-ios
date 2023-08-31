@@ -9,6 +9,7 @@ import LFUtilities
 import LFBank
 import LFTransaction
 import Combine
+import DashboardRepository
 
 @MainActor
 final class CashViewModel: ObservableObject {
