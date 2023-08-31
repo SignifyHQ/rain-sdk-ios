@@ -73,7 +73,12 @@ extension VerificationCodeViewModel {
         
       } catch {
         self.isShowLoading = false
-        toastMessage = error.localizedDescription
+        if error.localizedDescription.contains("credentials_invalid") {
+          toastMessage = "OTP is invalid. Please resend OTP"
+        } else {
+          toastMessage = error.localizedDescription
+        }
+        
         log.error(error)
       }
 #if DEBUG
