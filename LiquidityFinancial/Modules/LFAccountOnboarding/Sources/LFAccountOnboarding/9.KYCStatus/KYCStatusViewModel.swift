@@ -97,6 +97,7 @@ extension KYCStatusViewModel {
     openIntercom()
   }
   
+  // swiftlint:disable function_body_length
   func fetchNewStatus() {
     Task { @MainActor in
       defer { isLoading = false }
@@ -167,7 +168,8 @@ extension KYCStatusViewModel {
       }
     }
   }
-  
+  // swiftlint:enable function_body_length
+
   func openMagicPopup() {
     popup = .magic
   }

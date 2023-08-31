@@ -82,39 +82,32 @@ private extension CashView {
   }
   
   var activeView: some View {
-    GeometryReader { geo in
-      ScrollView(showsIndicators: false) {
-        VStack(spacing: 16) {
-          
-          CashCardView(
-            isPOFlow: true, // !userManager.isGuest
-            showLoadingIndicator: viewModel.isLoading,
-            cashBalance: viewModel.cashBalanceValue,
-            assetType: viewModel.selectedAsset,
-            cardDetails: $viewModel.cashCardDetails
-          ) {
-            viewModel.guestCardTapped()
-          }
-          .overlay(alignment: .bottom) {
-            depositButton
-          }
-          
-          changeAssetButton
-          
-          BalanceAlertView(type: .cash, hasContacts: !viewModel.linkedAccount.isEmpty, cashBalance: viewModel.cashBalanceValue) {
-            viewModel.addMoneyTapped()
-          }
-          
-          activity
-          
+    ScrollView(showsIndicators: false) {
+      VStack(spacing: 16) {
+        CashCardView(
+          isPOFlow: true, // !userManager.isGuest
+          showLoadingIndicator: viewModel.isLoading,
+          cashBalance: viewModel.cashBalanceValue,
+          assetType: viewModel.selectedAsset,
+          cardDetails: $viewModel.cashCardDetails
+        ) {
+          viewModel.guestCardTapped()
         }
-        .padding(.horizontal, 30)
-        .padding(.top, 20)
-        .padding(.bottom, 12)
+        .overlay(alignment: .bottom) {
+          depositButton
+        }
+        changeAssetButton
+        BalanceAlertView(type: .cash, hasContacts: !viewModel.linkedAccount.isEmpty, cashBalance: viewModel.cashBalanceValue) {
+          viewModel.addMoneyTapped()
+        }
+        activity
       }
-      .refreshable {
-        onRefresh()
-      }
+      .padding(.horizontal, 30)
+      .padding(.top, 20)
+      .padding(.bottom, 12)
+    }
+    .refreshable {
+      onRefresh()
     }
   }
   

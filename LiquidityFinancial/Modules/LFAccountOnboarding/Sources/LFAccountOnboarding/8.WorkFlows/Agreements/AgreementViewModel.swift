@@ -28,7 +28,10 @@ public final class AgreementViewModel: ObservableObject {
   private var fundingAgreement: APIAgreementData?
   
   var showConditions: [ServiceConditionModel] {
-    condition != nil ? [condition!] : conditions
+    guard let condition = condition else {
+      return conditions
+    }
+    return [condition]
   }
   
   public init(fundingAgreement: APIAgreementData? = nil) {

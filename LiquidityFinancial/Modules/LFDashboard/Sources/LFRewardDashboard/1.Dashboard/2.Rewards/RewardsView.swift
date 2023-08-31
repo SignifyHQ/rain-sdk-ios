@@ -107,7 +107,7 @@ struct RewardsView: View {
         Text(LFLocalizable.Cashback.latest)
         Spacer()
         seeAllTransactions
-          .opacity(viewModel.transactions.isEmpty ? 0 : 1)
+          .opacity(items.isEmpty ? 0 : 1)
       }
       .font(Fonts.regular.swiftUIFont(size: 12))
       .foregroundColor(Colors.label.swiftUIColor.opacity(0.75))

@@ -61,12 +61,17 @@ public extension MarketManager {
     var maxValue: Double?
     
     for model in trimModels {
-      guard let value = model.close else {
-        continue
+      guard let value = model.close else { continue }
+      if let minValueUnwrapped = minValue {
+        minValue = min(minValueUnwrapped, value)
+      } else {
+        minValue = value
       }
-      minValue = minValue == nil ? value : min(minValue!, value)
-      maxValue = maxValue == nil ? value : max(maxValue!, value)
-      
+      if let maxValueUnwrapped = maxValue {
+        maxValue = max(maxValueUnwrapped, value)
+      } else {
+        maxValue = value
+      }
       let xValue = Double(lineDatas.count)
       lineDatas.append((xValue, value))
     }
@@ -95,6 +100,7 @@ public extension MarketManager {
   }
 }
 
+// MARK: - CMCSymbolHistories Handles
 private extension MarketManager {
   func fetchCMCSymbolHistories(option: CryptoFilterOption) {
     Task {
@@ -107,67 +113,74 @@ private extension MarketManager {
         guard !historicalModels.isEmpty else {
           return
         }
-        var lineModels = [HistoricalPriceModel]()
-        var lineDatas = [(Double, Double)]()
-        var minValue: Double!
-        var maxValue: Double!
-        
-        for model in historicalModels {
-          guard let value = model.close else {
-            continue
-          }
-          minValue = minValue == nil ? value : min(minValue, value)
-          maxValue = maxValue == nil ? value : max(maxValue, value)
-          
-          let xValue = Double(lineDatas.count)
-          lineDatas.append((xValue, value))
-          lineModels.append(model)
-        }
-        
-        if !lineDatas.isEmpty, let minValue = minValue, let maxValue = maxValue {
-          let lineRangeY = minValue ... maxValue
-          
-          var newModelData = self.lineModelsSubject.value
-          newModelData[option] = lineModels
-          self.lineModelsSubject.send(newModelData)
-          
-          var newLineData = self.lineDatasSubject.value
-          newLineData[option] = lineDatas
-          self.lineDatasSubject.send(newLineData)
-          
-          var rangeYData = self.lineRangeYSubject.value
-          rangeYData[option] = lineRangeY
-          self.lineRangeYSubject.send(rangeYData)
-        }
-        var rangeXData = self.lineRangeXSubject.value
-        rangeXData[option] = historicalModels.getGridXIndexes()
-        self.lineRangeXSubject.send(rangeXData)
-        
-        let trimModels = self.wrapCandleModels(historicalModels)
-        let candleDatas = trimModels.toCandleDatas()
-        
-        var candleModel = self.candleModelsSubject.value
-        candleModel[option] = trimModels
-        self.candleModelsSubject.send(candleModel)
-        
-        var candleData = self.candleDatasSubject.value
-        candleData[option] = candleDatas
-        self.candleDatasSubject.send(candleData)
-        
-        var candleRangeYCache = self.candleRangeYSubject.value
-        candleRangeYCache[option] = candleDatas.rangeY()
-        self.candleRangeYSubject.send(candleRangeYCache)
-        
-        var candleRangeXCache = self.candleRangeXSubject.value
-        candleRangeXCache[option] = trimModels.getGridXIndexes()
-        self.candleRangeXSubject.send(candleRangeXCache)
+        handleCMCSymbolForLineChart(historicalModels: historicalModels, option: option)
+        handleCMCSymbolForCandleChart(historicalModels: historicalModels, option: option)
       } catch {
       }
     }
   }
+  
+  func handleCMCSymbolForLineChart(historicalModels: [HistoricalPriceModel], option: CryptoFilterOption) {
+    var lineModels = [HistoricalPriceModel]()
+    var lineDatas = [(Double, Double)]()
+    var minValue: Double!
+    var maxValue: Double!
+    
+    for model in historicalModels {
+      guard let value = model.close else {
+        continue
+      }
+      minValue = minValue == nil ? value : min(minValue, value)
+      maxValue = maxValue == nil ? value : max(maxValue, value)
+      
+      let xValue = Double(lineDatas.count)
+      lineDatas.append((xValue, value))
+      lineModels.append(model)
+    }
+    
+    if !lineDatas.isEmpty, let minValue = minValue, let maxValue = maxValue {
+      let lineRangeY = minValue ... maxValue
+      
+      var newModelData = self.lineModelsSubject.value
+      newModelData[option] = lineModels
+      self.lineModelsSubject.send(newModelData)
+      
+      var newLineData = self.lineDatasSubject.value
+      newLineData[option] = lineDatas
+      self.lineDatasSubject.send(newLineData)
+      
+      var rangeYData = self.lineRangeYSubject.value
+      rangeYData[option] = lineRangeY
+      self.lineRangeYSubject.send(rangeYData)
+    }
+    var rangeXData = self.lineRangeXSubject.value
+    rangeXData[option] = historicalModels.getGridXIndexes()
+    self.lineRangeXSubject.send(rangeXData)
+  }
+  
+  func handleCMCSymbolForCandleChart(historicalModels: [HistoricalPriceModel], option: CryptoFilterOption) {
+    let trimModels = self.wrapCandleModels(historicalModels)
+    let candleDatas = trimModels.toCandleDatas()
+    
+    var candleModel = self.candleModelsSubject.value
+    candleModel[option] = trimModels
+    self.candleModelsSubject.send(candleModel)
+    
+    var candleData = self.candleDatasSubject.value
+    candleData[option] = candleDatas
+    self.candleDatasSubject.send(candleData)
+    
+    var candleRangeYCache = self.candleRangeYSubject.value
+    candleRangeYCache[option] = candleDatas.rangeY()
+    self.candleRangeYSubject.send(candleRangeYCache)
+    
+    var candleRangeXCache = self.candleRangeXSubject.value
+    candleRangeXCache[option] = trimModels.getGridXIndexes()
+    self.candleRangeXSubject.send(candleRangeXCache)
+  }
 }
 
-  // MARK: - Private Functions
+// MARK: - Websocket Handles
 private extension MarketManager {
   func startPriceWebsocket() {
     guard let url = URL(string: "wss://api-crypto.dev.liquidity.cc/ws/cmc/\(LFUtility.cryptoCurrency)/live") else {
@@ -206,12 +219,8 @@ private extension MarketManager {
   
   func receivePriceMessage() {
     websocketTask?.receive { [weak self] result in
-      guard let self = self else {
-        return
-      }
-      defer {
-        self.receivePriceMessage()
-      }
+      guard let self = self else { return }
+      defer { self.receivePriceMessage() }
       switch result {
       case let .failure(error):
         log.debug("Websocket receiving message: \(error)")
@@ -225,62 +234,67 @@ private extension MarketManager {
         @unknown default:
           model = nil
         }
-        guard let model = model else {
-          return
-        }
-        var newPrices = self.liveLineModelsSubject.value
-        if let lastValue = newPrices.last,
-           let lastOpenTime = lastValue.timeOpen?.convertTimestampToDouble()
-        {
-        if lastOpenTime > model.timeOpen?.convertTimestampToDouble() ?? 0 {
-          return
-        }
-        }
-        
-        newPrices.append(model)
-        self.liveLineModelsSubject.send(newPrices)
-        
-        if let value = model.close {
-          var newDatas = self.liveDatasSubject.value
-          let xValue = Double(newDatas.count)
-          newDatas.append((xValue, value))
-          self.liveDatasSubject.send(newDatas)
-          
-          var rangeY = self.liveRangeYSubject.value
-          if rangeY.lowerBound > value || rangeY.upperBound < value {
-            rangeY = min(rangeY.lowerBound, value) ... max(rangeY.upperBound, value)
-            self.liveRangeYSubject.send(rangeY)
-          }
-        }
-        self.liveRangeXSubject.send(newPrices.getGridXIndexes())
-        
-        var newValue = self.liveCandleModelsSubject.value
-        var candleDatas = self.liveCandleDatasSubject.value
-        if let lastModel = newValue.last, var lastCandleData = candleDatas.last {
-          let openTimeValue = model.timeOpen?.convertTimestampToDouble() ?? 0
-          let lastTimeValue = lastModel.lastUpdated?.convertTimestampToDouble() ?? 0
-          if openTimeValue <= lastTimeValue {
-            newValue.removeLast()
-            candleDatas.removeLast()
-          } else {
-            newValue.removeLast()
-            candleDatas.removeLast()
-            lastCandleData.close = model.open ?? lastCandleData.close
-            
-            newValue.append(lastModel)
-            candleDatas.append(lastCandleData)
-          }
-        }
-        newValue.append(model)
-        self.liveCandleModelsSubject.send(newValue)
-        
-        self.liveCandleDatasSubject.send(candleDatas)
-        self.liveCandleRangeXSubject.send(newValue.getGridXIndexes())
-        self.liveCandleRangeYSubject.send(candleDatas.rangeY())
+        guard let model = model else { return }
+        handlePriceValueForLineChart(priceModel: model)
+        handlePriceValueForCandleChart(priceModel: model)
       }
     }
   }
   
+  func handlePriceValueForLineChart(priceModel: HistoricalPriceModel) {
+    var newPrices = self.liveLineModelsSubject.value
+    if let lastValue = newPrices.last,
+       let lastOpenTime = lastValue.timeOpen?.convertTimestampToDouble() {
+      if lastOpenTime > priceModel.timeOpen?.convertTimestampToDouble() ?? 0 {
+        return
+      }
+    }
+    
+    newPrices.append(priceModel)
+    self.liveLineModelsSubject.send(newPrices)
+    
+    if let value = priceModel.close {
+      var newDatas = self.liveDatasSubject.value
+      let xValue = Double(newDatas.count)
+      newDatas.append((xValue, value))
+      self.liveDatasSubject.send(newDatas)
+      
+      var rangeY = self.liveRangeYSubject.value
+      if rangeY.lowerBound > value || rangeY.upperBound < value {
+        rangeY = min(rangeY.lowerBound, value) ... max(rangeY.upperBound, value)
+        self.liveRangeYSubject.send(rangeY)
+      }
+    }
+    self.liveRangeXSubject.send(newPrices.getGridXIndexes())
+  }
+  
+  func handlePriceValueForCandleChart(priceModel: HistoricalPriceModel) {
+    var newValue = self.liveCandleModelsSubject.value
+    var candleDatas = self.liveCandleDatasSubject.value
+    if let lastModel = newValue.last, var lastCandleData = candleDatas.last {
+      let openTimeValue = priceModel.timeOpen?.convertTimestampToDouble() ?? 0
+      let lastTimeValue = lastModel.lastUpdated?.convertTimestampToDouble() ?? 0
+      if openTimeValue <= lastTimeValue {
+        newValue.removeLast()
+        candleDatas.removeLast()
+      } else {
+        newValue.removeLast()
+        candleDatas.removeLast()
+        lastCandleData.close = priceModel.open ?? lastCandleData.close
+        
+        newValue.append(lastModel)
+        candleDatas.append(lastCandleData)
+      }
+    }
+    newValue.append(priceModel)
+    
+    self.liveCandleModelsSubject.send(newValue)
+    self.liveCandleDatasSubject.send(candleDatas)
+    self.liveCandleRangeXSubject.send(newValue.getGridXIndexes())
+    self.liveCandleRangeYSubject.send(candleDatas.rangeY())
+  }
+  
+  // swiftlint:disable function_body_length
   func wrapCandleModels(_ models: [HistoricalPriceModel]) -> [HistoricalPriceModel] {
     let maximumCandleCount = 40
     if models.count <= maximumCandleCount {
@@ -308,12 +322,23 @@ private extension MarketManager {
         else {
           continue
         }
-        if rangeLow == nil || low < rangeLow! {
+        
+        if let rangeLowValue = rangeLow {
+          if rangeLowValue > low {
+            rangeLow = low
+          }
+        } else {
           rangeLow = low
         }
-        if rangeHigh == nil || high > rangeHigh! {
+        
+        if let rangeHighValue = rangeHigh {
+          if rangeHighValue < high {
+            rangeHigh = high
+          }
+        } else {
           rangeHigh = high
         }
+        
         value += model.close ?? 0.0
         valueCount += 1
         
@@ -349,4 +374,5 @@ private extension MarketManager {
     }
     return resultModels
   }
+  // swiftlint:enable function_body_length
 }

@@ -87,36 +87,34 @@ private extension CashView {
   }
   
   var activeView: some View {
-    GeometryReader { geo in
-      ScrollView(showsIndicators: false) {
-        VStack(spacing: 16) {
-          CashCardView(
-            isPOFlow: true, // !userManager.isGuest
-            showLoadingIndicator: viewModel.isLoading,
-            cashBalance: viewModel.cashBalanceValue,
-            assetType: viewModel.selectedAsset,
-            cardDetails: $viewModel.cashCardDetails
-          ) {
-            viewModel.guestCardTapped()
-          }
-          .overlay(alignment: .bottom) {
-            depositButton
-          }
-          changeAssetButton
-          BalanceAlertView(type: .cash, hasContacts: !viewModel.linkedAccount.isEmpty, cashBalance: viewModel.cashBalanceValue) {
-            viewModel.addMoneyTapped()
-          }
-          moveMoney
-          activity(size: geo.size)
+    ScrollView(showsIndicators: false) {
+      VStack(spacing: 16) {
+        CashCardView(
+          isPOFlow: true, // !userManager.isGuest
+          showLoadingIndicator: viewModel.isLoading,
+          cashBalance: viewModel.cashBalanceValue,
+          assetType: viewModel.selectedAsset,
+          cardDetails: $viewModel.cashCardDetails
+        ) {
+          viewModel.guestCardTapped()
         }
-        .padding(.horizontal, 30)
-        .padding(.top, 20)
-        .padding(.bottom, 12)
+        .overlay(alignment: .bottom) {
+          depositButton
+        }
+        changeAssetButton
+        BalanceAlertView(type: .cash, hasContacts: !viewModel.linkedAccount.isEmpty, cashBalance: viewModel.cashBalanceValue) {
+          viewModel.addMoneyTapped()
+        }
+        moveMoney
+        activity
       }
-      .refreshable {
-        Task { @MainActor in
-          await viewModel.refresh()
-        }
+      .padding(.horizontal, 30)
+      .padding(.top, 20)
+      .padding(.bottom, 12)
+    }
+    .refreshable {
+      Task { @MainActor in
+        await viewModel.refresh()
       }
       // .track(name: String(describing: type(of: self))) TODO: Will be implemented later
     }
@@ -149,6 +147,7 @@ private extension CashView {
       case .transactions:
         ShortTransactionsView(
           transactions: $viewModel.transactions,
+          title: LFLocalizable.CashTab.LastestTransaction.title,
           onTapTransactionCell: viewModel.transactionItemTapped,
           seeAllAction: {
             viewModel.onClickedSeeAllButton()

@@ -142,6 +142,7 @@ public class OnboardingFlowCoordinator: OnboardingFlowCoordinatorProtocol {
     accountDataManager.sessionID.isEmpty == false
   }
   
+  // swiftlint:disable function_body_length
   func apiFetchAndUpdateForStart() async throws {
     try await refreshNetSpendSession()
     
@@ -209,6 +210,7 @@ public class OnboardingFlowCoordinator: OnboardingFlowCoordinatorProtocol {
       set(route: .dashboard)
     }
   }
+  // swiftlint:enable function_body_length
 
   public func forcedLogout() {
     clearUserData()

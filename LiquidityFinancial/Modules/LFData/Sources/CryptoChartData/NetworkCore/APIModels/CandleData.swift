@@ -21,24 +21,26 @@ public struct CandleData {
   }
 }
 
-public func / (left: CandleData, right: CGFloat) -> CandleData {
-  CandleData(
-    low: left.low / right,
-    high: left.high / right,
-    open: left.open / right,
-    close: left.close / right,
-    xValue: left.xValue
-  )
-}
-
-public func - (left: CandleData, right: CGFloat) -> CandleData {
-  CandleData(
-    low: left.low - right,
-    high: left.high - right,
-    open: left.open - right,
-    close: left.close - right,
-    xValue: left.xValue
-  )
+public extension CandleData {
+  static func / (left: CandleData, right: CGFloat) -> CandleData {
+    CandleData(
+      low: left.low / right,
+      high: left.high / right,
+      open: left.open / right,
+      close: left.close / right,
+      xValue: left.xValue
+    )
+  }
+  
+  static func - (left: CandleData, right: CGFloat) -> CandleData {
+    CandleData(
+      low: left.low - right,
+      high: left.high - right,
+      open: left.open - right,
+      close: left.close - right,
+      xValue: left.xValue
+    )
+  }
 }
 
 public extension Array where Element == CandleData {

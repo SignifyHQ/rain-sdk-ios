@@ -50,20 +50,18 @@ struct RewardTabView: View {
 // MARK: - View Components
 private extension RewardTabView {
   var content: some View {
-    GeometryReader { geo in
-      ScrollView(showsIndicators: false) {
-        VStack(spacing: 10) {
-          if viewModel.isLoading {
-            loading
-          } else {
-            headerView
-            activity
-          }
-          Spacer()
+    ScrollView(showsIndicators: false) {
+      VStack(spacing: 10) {
+        if viewModel.isLoading {
+          loading
+        } else {
+          headerView
+          activity
         }
-        .padding(.top, 20)
-        .padding(.horizontal, 30)
+        Spacer()
       }
+      .padding(.top, 20)
+      .padding(.horizontal, 30)
     }
   }
   

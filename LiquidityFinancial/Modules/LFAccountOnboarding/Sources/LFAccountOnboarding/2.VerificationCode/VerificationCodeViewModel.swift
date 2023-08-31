@@ -125,7 +125,7 @@ extension VerificationCodeViewModel {
 }
 
   // MARK: Private
-extension VerificationCodeViewModel {  
+extension VerificationCodeViewModel {
   private func initNetSpendSession() async throws {
     log.info("<<<<<<<<<<<<<< Refresh NetSpend Session >>>>>>>>>>>>>>>")
     let token = try await netspendRepository.clientSessionInit()
@@ -157,6 +157,7 @@ extension VerificationCodeViewModel {
     }
   }
   
+  // swiftlint:disable function_body_length
   @MainActor
   private func checkOnboardingState() async {
     do {
@@ -234,7 +235,8 @@ extension VerificationCodeViewModel {
       onboardingFlowCoordinator.forcedLogout()
     }
   }
-  
+  // swiftlint:enable function_body_length
+
   private func handleQuestionCase() async {
     do {
       let questionsEncrypt = try await netspendRepository.getQuestion(sessionId: accountDataManager.sessionID)

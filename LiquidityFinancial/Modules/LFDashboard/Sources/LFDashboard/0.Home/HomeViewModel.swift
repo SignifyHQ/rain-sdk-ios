@@ -59,6 +59,7 @@ extension HomeViewModel {
     }
   }
   
+  // swiftlint:disable function_body_length
   func apiFetchOnboardingState() {
     Task { @MainActor in
       do {
@@ -122,6 +123,8 @@ extension HomeViewModel {
       }
     }
   }
+  // swiftlint:enable function_body_length
+
 }
 
 // MARK: API init data tab content

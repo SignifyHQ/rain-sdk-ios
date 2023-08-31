@@ -137,6 +137,7 @@ private extension HomeViewModel {
     }
   }
   
+  // swiftlint:disable function_body_length
   func apiFetchOnboardingState() {
     Task { @MainActor in
       do {
@@ -200,6 +201,8 @@ private extension HomeViewModel {
       }
     }
   }
+  // swiftlint:enable function_body_length
+
 }
 
 // MARK: Notifications
