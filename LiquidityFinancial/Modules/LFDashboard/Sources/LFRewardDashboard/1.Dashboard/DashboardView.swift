@@ -2,7 +2,7 @@ import SwiftUI
 import LFStyleGuide
 import LFLocalizable
 import LFUtilities
-import DashboardRepository
+import BaseDashboard
 import LFCard
 
 struct DashboardView: View {

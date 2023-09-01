@@ -14,8 +14,8 @@ let package = Package(
       name: "LFRewardDashboard",
       targets: ["LFRewardDashboard"]),
     .library(
-      name: "DashboardRepository",
-      targets: ["DashboardRepository"])
+      name: "BaseDashboard",
+      targets: ["BaseDashboard"])
   ],
   dependencies: [
     .package(name: "LFUtilities", path: "../LFUtilities"),
@@ -35,7 +35,7 @@ let package = Package(
   ],
   targets: [
     .target(
-      name: "DashboardRepository",
+      name: "BaseDashboard",
       dependencies: [
         "LFUtilities", "LFServices", "LFBank",
         .product(name: "OnboardingData", package: "LFData"),
@@ -48,7 +48,7 @@ let package = Package(
     .target(
       name: "LFDashboard",
       dependencies: [
-        "LFUtilities", "LFStyleGuide", "LFLocalizable", "LFServices", "LFCard", "DashboardRepository",
+        "LFUtilities", "LFStyleGuide", "LFLocalizable", "LFServices", "LFCard", "BaseDashboard",
         "LFBank", "LFTransaction", "LFCryptoChart", "CodeScanner", "LFWalletAddress",
         .product(name: "OnboardingData", package: "LFData"),
         .product(name: "NetSpendData", package: "LFData"),
@@ -61,7 +61,7 @@ let package = Package(
       name: "LFRewardDashboard",
       dependencies: [
         "LFUtilities", "LFStyleGuide", "LFLocalizable", "LFServices", "LFCard",
-        "LFBank", "LFTransaction", "CodeScanner", "LFRewards", "DashboardRepository",
+        "LFBank", "LFTransaction", "CodeScanner", "LFRewards", "BaseDashboard",
         .product(name: "OnboardingData", package: "LFData"),
         .product(name: "NetSpendData", package: "LFData"),
         .product(name: "ZerohashData", package: "LFData"),

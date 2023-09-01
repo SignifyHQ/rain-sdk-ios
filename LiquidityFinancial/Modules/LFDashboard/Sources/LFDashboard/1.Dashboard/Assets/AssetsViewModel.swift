@@ -4,7 +4,7 @@ import AccountDomain
 import LFUtilities
 import Factory
 import Combine
-import DashboardRepository
+import BaseDashboard
 
 @MainActor
 final class AssetsViewModel: ObservableObject {

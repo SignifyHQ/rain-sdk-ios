@@ -3,7 +3,7 @@ import LFStyleGuide
 import LFLocalizable
 import LFUtilities
 import LFBank
-import DashboardRepository
+import BaseDashboard
 import LFCard
 
 struct DashboardView: View {

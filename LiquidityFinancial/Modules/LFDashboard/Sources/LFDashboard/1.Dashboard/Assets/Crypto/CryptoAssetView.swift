@@ -5,7 +5,7 @@ import LFLocalizable
 import LFUtilities
 import LFTransaction
 import LFCryptoChart
-import DashboardRepository
+import BaseDashboard
 
 struct CryptoAssetView: View {
   @StateObject private var viewModel: CryptoAssetViewModel

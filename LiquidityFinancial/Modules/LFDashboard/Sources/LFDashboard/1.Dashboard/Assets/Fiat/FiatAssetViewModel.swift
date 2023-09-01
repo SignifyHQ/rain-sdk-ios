@@ -6,7 +6,7 @@ import LFUtilities
 import Factory
 import LFBank
 import LFTransaction
-import DashboardRepository
+import BaseDashboard
 import Combine
 
 @MainActor

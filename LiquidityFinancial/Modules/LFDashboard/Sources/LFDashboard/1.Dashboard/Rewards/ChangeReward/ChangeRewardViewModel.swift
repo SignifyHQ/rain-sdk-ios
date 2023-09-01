@@ -3,7 +3,7 @@ import AccountDomain
 import LFUtilities
 import Factory
 import LFTransaction
-import DashboardRepository
+import BaseDashboard
 
 @MainActor
 class ChangeRewardViewModel: ObservableObject {

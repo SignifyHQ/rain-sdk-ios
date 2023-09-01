@@ -3,7 +3,7 @@ import LFUtilities
 import LFStyleGuide
 import LFLocalizable
 import LFCard
-import DashboardRepository
+import BaseDashboard
 
 struct CashCardView: View {
   @StateObject private var viewModel: CashCardViewModel

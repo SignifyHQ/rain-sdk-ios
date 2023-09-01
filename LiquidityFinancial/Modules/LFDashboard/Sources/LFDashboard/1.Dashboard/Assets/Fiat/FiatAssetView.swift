@@ -5,7 +5,7 @@ import LFLocalizable
 import LFUtilities
 import LFBank
 import LFTransaction
-import DashboardRepository
+import BaseDashboard
 
 struct FiatAssetView: View {
   @StateObject private var viewModel: FiatAssetViewModel

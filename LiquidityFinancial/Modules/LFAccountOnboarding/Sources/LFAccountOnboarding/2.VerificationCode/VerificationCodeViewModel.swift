@@ -90,6 +90,8 @@ extension VerificationCodeViewModel {
   
   func performGetOTP(formatPhoneNumber: String) {
     Task {
+      defer { isShowLoading = false }
+      isShowLoading = true
       do {
         _ = try await requestOtpUseCase.execute(phoneNumber: formatPhoneNumber)
         isShowLoading = false

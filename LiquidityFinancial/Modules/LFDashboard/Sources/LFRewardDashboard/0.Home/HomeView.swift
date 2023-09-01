@@ -4,7 +4,7 @@ import LFLocalizable
 import LFStyleGuide
 import LFUtilities
 import LFRewards
-import DashboardRepository
+import BaseDashboard
 
 public struct HomeView: View {
   @Environment(\.scenePhase) var scenePhase

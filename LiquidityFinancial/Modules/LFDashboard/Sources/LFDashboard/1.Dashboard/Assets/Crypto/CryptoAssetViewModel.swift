@@ -6,7 +6,7 @@ import Factory
 import LFTransaction
 import CryptoChartData
 import LFCryptoChart
-import DashboardRepository
+import BaseDashboard
 
 @MainActor
 class CryptoAssetViewModel: ObservableObject {
