@@ -1,23 +1,25 @@
 import Foundation
+import UIKit
 import Factory
 import LFUtilities
 import AuthorizationManager
 
 @MainActor
 final class ProfileViewModel: ObservableObject {
-  @Published var isNotificationsEnabled: Bool = false
   @Published var isLoadingContribution: Bool = false
   @Published var showContributionToast: Bool = false
   @Published var isLoading: Bool = false
   @Published var contribution: Contribution?
   @Published var navigation: Navigation?
   @Published var popup: Popup?
+  @Published var notificationsEnabled = false
   
   @LazyInjected(\.intercomService) var intercomService
   @LazyInjected(\.accountDataManager) var accountDataManager
   @LazyInjected(\.accountRepository) var accountRepository
   @LazyInjected(\.authorizationManager) var authorizationManager
   @LazyInjected(\.devicesRepository) var devicesRepository
+  @LazyInjected(\.pushNotificationService) var pushNotificationService
 
   var name: String {
     accountDataManager.userInfomationData.fullName ?? ""
@@ -87,10 +89,6 @@ extension ProfileViewModel {
     intercomService.openIntercom()
   }
   
-  func notificationsTapped() {
-    requestNotificationPermission()
-  }
-  
   func logoutTapped() {
     popup = .logout
   }
@@ -135,15 +133,65 @@ extension ProfileViewModel {
 }
 
 extension ProfileViewModel {
-  private func loadContribution() async {
-    // TODO: Will be implemented later
-  }
-  
   func checkNotificationsStatus() {
-    // TODO: Will be implemented later
+    Task { @MainActor in
+      do {
+        let status = try await pushNotificationService.notificationSettingStatus()
+        self.notificationsEnabled = status == .authorized
+      } catch {
+        log.error(error.localizedDescription)
+      }
+    }
   }
   
-  private func requestNotificationPermission() {
+  func notificationTapped() {
+    Task { @MainActor in
+      do {
+        let status = try await pushNotificationService.notificationSettingStatus()
+        switch status {
+        case .authorized:
+          break
+        case .notDetermined:
+          let success = try await pushNotificationService.requestPermission()
+          if success {
+            break
+          }
+          return
+        case .denied:
+          if let settingsUrl = URL(string: UIApplication.openSettingsURLString), UIApplication.shared.canOpenURL(settingsUrl) {
+            await UIApplication.shared.open(settingsUrl)
+          }
+          return
+        default:
+          return
+        }
+        self.pushFCMTokenIfNeed()
+      } catch {
+        log.error(error)
+      }
+    }
+  }
+  
+  func pushFCMTokenIfNeed() {
+    Task { @MainActor in
+      do {
+        let token = try await pushNotificationService.fcmToken()
+        if token == UserDefaults.lastestFCMToken {
+          return
+        }
+        let response = try await devicesRepository.register(deviceId: LFUtility.deviceId, token: token)
+        if response.success {
+          UserDefaults.lastestFCMToken = token
+        }
+      } catch {
+        log.error(error)
+      }
+    }
+  }
+}
+
+extension ProfileViewModel {
+  private func loadContribution() async {
     // TODO: Will be implemented later
   }
 }
