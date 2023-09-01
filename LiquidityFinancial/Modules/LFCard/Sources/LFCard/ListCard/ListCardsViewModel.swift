@@ -9,7 +9,7 @@ import AccountData
 import PassKit
 
 @MainActor
-final class ListCardsViewModel: ObservableObject {
+public final class ListCardsViewModel: ObservableObject {
   @LazyInjected(\.netspendDataManager) var netspendDataManager
   @LazyInjected(\.intercomService) var intercomService
   @LazyInjected(\.accountDataManager) var accountDataManager
@@ -31,15 +31,26 @@ final class ListCardsViewModel: ObservableObject {
     NSCardUseCase(repository: cardRepository)
   }()
   
-  private var bag = Set<AnyCancellable>()
+  private var cancellable = Set<AnyCancellable>()
   var isHasPhysicalCard: Bool {
     cardsList.contains { card in
       card.cardType == .physical
     }
   }
   
-  init() {
-    getListCard()
+  public init(cardData: Published<(CardData)>.Publisher) {
+    cardData
+      .receive(on: DispatchQueue.main)
+      .sink { [weak self] cardData in
+        guard let self = self else {
+          return
+        }
+        self.isInit = cardData.loading
+        self.cardsList = cardData.cards
+        self.cardMetaDatas = cardData.metaDatas
+        self.currentCard = cardData.cards.first ?? .virtualDefault
+      }
+      .store(in: &cancellable)
   }
 }
 
@@ -72,48 +83,15 @@ private extension ListCardsViewModel {
       }
     }
   }
-  
-  func getListCard() {
-    isInit = true
-    Task {
-      do {
-        let cards = try await cardUseCase.getListCard()
-        cardsList = cards.map { card in
-          mapToCardModel(card: card)
-        }
-        cardMetaDatas = Array(repeating: nil, count: cardsList.count)
-        cardsList.map { $0.id }.enumerated().forEach { index, id in
-          getCard(with: id, and: index)
-        }
-        currentCard = cardsList.first ?? .virtualDefault
-        isInit = false
-      } catch {
-        isInit = false
-        toastMessage = error.localizedDescription
-      }
-    }
-  }
-  
-  func getCard(with cardID: String, and index: Int) {
-    Task {
-      do {
-        let card = try await cardUseCase.getCard(cardID: cardID, sessionID: accountDataManager.sessionID)
-        if let usersession = netspendDataManager.sdkSession {
-          let encryptedData: APICardEncrypted? = card.decodeData(session: usersession)
-          if let encryptedData {
-            cardMetaDatas[index] = CardMetaData(pan: encryptedData.pan, cvv: encryptedData.cvv2)
-          }
-        }
-      } catch {
-        isInit = false
-        toastMessage = error.localizedDescription
-      }
-    }
-  }
 }
 
 // MARK: - View Helpers
 extension ListCardsViewModel {
+  func onDisappear() {
+    currentCard = cardsList.first ?? .virtualDefault
+    isShowCardNumber = false
+  }
+  
   func orderPhysicalSuccess(card: CardModel) {
     cardMetaDatas.append(nil)
     cardsList.append(card)
@@ -130,11 +108,7 @@ extension ListCardsViewModel {
   func openIntercom() {
     intercomService.openIntercom()
   }
-  func dealsAction() {
-    // TODO: Will be implemented later
-    // doshManager.showRewards()
-  }
-  
+
   func lockCardToggled() {
     if currentCard.cardStatus == .active && isCardLocked {
       callLockCardAPI()

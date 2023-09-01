@@ -16,6 +16,24 @@ public struct CardModel: Identifiable, Hashable {
     return "\(expiryMonthFormated)/\(expiryYearFormated)"
   }
   
+  public init(
+    id: String,
+    cardType: CardType,
+    cardholderName: String?,
+    expiryMonth: Int,
+    expiryYear: Int,
+    last4: String,
+    cardStatus: CardStatus
+  ) {
+    self.id = id
+    self.cardType = cardType
+    self.cardholderName = cardholderName
+    self.expiryMonth = expiryMonth
+    self.expiryYear = expiryYear
+    self.last4 = last4
+    self.cardStatus = cardStatus
+  }
+  
   public static let virtualDefault = CardModel(
     id: "",
     cardType: .virtual,

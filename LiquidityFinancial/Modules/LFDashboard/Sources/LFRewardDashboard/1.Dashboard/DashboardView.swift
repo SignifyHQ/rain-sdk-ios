@@ -2,11 +2,15 @@ import SwiftUI
 import LFStyleGuide
 import LFLocalizable
 import LFUtilities
+import DashboardRepository
+import LFCard
 
 struct DashboardView: View {
   @StateObject private var viewModel: DashboardViewModel
-  
-  init(option: TabOption, tabRedirection: @escaping ((TabOption) -> Void)) {
+  private var dataStorages: DashboardRepository
+
+  init(dataStorages: DashboardRepository, option: TabOption, tabRedirection: @escaping ((TabOption) -> Void)) {
+    self.dataStorages = dataStorages
     _viewModel = .init(
       wrappedValue: DashboardViewModel(option: option, tabRedirection: tabRedirection)
     )
@@ -16,7 +20,7 @@ struct DashboardView: View {
     Group {
       switch viewModel.option {
       case .cash:
-        CashView {
+        CashView(listCardViewModel: ListCardsViewModel(cardData: dataStorages.$cardData)) {
           viewModel.handleGuestUser()
         }
       case .rewards:

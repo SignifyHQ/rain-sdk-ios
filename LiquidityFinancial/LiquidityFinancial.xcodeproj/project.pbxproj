@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		0602D46E2AA1E8C000260DB1 /* LoadingPrimary.json in Resources */ = {isa = PBXBuildFile; fileRef = 0602D46D2AA1E8C000260DB1 /* LoadingPrimary.json */; };
 		0603BD712A71191B00347DB2 /* VGSShowSDK in Frameworks */ = {isa = PBXBuildFile; productRef = 0603BD702A71191B00347DB2 /* VGSShowSDK */; };
 		06D40BF82A625F5400EADB75 /* LoadingMix.json in Resources */ = {isa = PBXBuildFile; fileRef = 06D40BF72A625F5400EADB75 /* LoadingMix.json */; };
 		06D40BFC2A6260B300EADB75 /* LoadingContrast.json in Resources */ = {isa = PBXBuildFile; fileRef = 06D40BFB2A6260B300EADB75 /* LoadingContrast.json */; };
@@ -317,6 +318,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		0602D46D2AA1E8C000260DB1 /* LoadingPrimary.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; name = LoadingPrimary.json; path = "../../../../../../ios-liquidity/Liquidity/Liquidity/CauseCard/Resources/Lottie/LoadingPrimary.json"; sourceTree = "<group>"; };
 		0697F3D32A8CCC3B006C867E /* LFTransaction */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = LFTransaction; path = Modules/LFTransaction; sourceTree = "<group>"; };
 		06CFE6B72A7263B400B494A2 /* LFCard */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = LFCard; path = Modules/LFCard; sourceTree = "<group>"; };
 		06D40BF72A625F5400EADB75 /* LoadingMix.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = LoadingMix.json; sourceTree = "<group>"; };
@@ -1342,6 +1344,7 @@
 		A9C478F52AA1DAED0055F812 /* Lottie */ = {
 			isa = PBXGroup;
 			children = (
+				0602D46D2AA1E8C000260DB1 /* LoadingPrimary.json */,
 				A9C478F62AA1DAED0055F812 /* TwinkleCircle.json */,
 				A9C478F72AA1DAED0055F812 /* Welcome.json */,
 				A9C478F82AA1DAED0055F812 /* LoadingContrast.json */,
@@ -1857,6 +1860,7 @@
 				7414934A2A99155200F0DC4D /* GoogleService-Info.plist in Resources */,
 				A9B4494A2A8392AB0029944C /* Lato-BlackItalic.ttf in Resources */,
 				A9C479022AA1DAED0055F812 /* ApplePay.json in Resources */,
+				0602D46E2AA1E8C000260DB1 /* LoadingPrimary.json in Resources */,
 				A9B449162A838A010029944C /* Localizable.strings in Resources */,
 				A9B4494E2A8392AB0029944C /* Lato-Regular.ttf in Resources */,
 			);

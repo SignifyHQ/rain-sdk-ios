@@ -9,4 +9,9 @@ public struct CardMetaData: Equatable {
   public var panFormatted: String {
     pan.insertSpaces(afterEvery: 4)
   }
+  
+  public init(pan: String, cvv: String) {
+    self.pan = pan
+    self.cvv = cvv
+  }
 }

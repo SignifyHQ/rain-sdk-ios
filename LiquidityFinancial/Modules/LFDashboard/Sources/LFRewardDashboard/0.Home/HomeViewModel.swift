@@ -32,12 +32,13 @@ public final class HomeViewModel: ObservableObject {
   @Published var navigation: Navigation?
   @Published var tabOptions: [TabOption] = [.cash, .rewards, .account]
   @Published var popup: Popup?
+  @Published var toastMessage: String?
   
   private var subscribers: Set<AnyCancellable> = []
   
   private var isFristLoad: Bool = true
   
-  init(tabOptions: [TabOption]) {
+  public init(tabOptions: [TabOption]) {
     self.tabOptions = tabOptions
     accountDataManager.userCompleteOnboarding = true
     initData()

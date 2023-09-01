@@ -26,7 +26,7 @@ struct AppView: View {
       case .onboarding:
         OnboardingContentView()
       case .dashboard:
-        HomeView(tabOptions: buildTabOption())
+        HomeView(viewModel: HomeViewModel(tabOptions: buildTabOption()))
       }
     }
     .embedInNavigation()

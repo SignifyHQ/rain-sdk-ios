@@ -538,8 +538,8 @@ public enum LFLocalizable {
   }
   public enum Card {
     public enum CardNumber {
-      /// Card number
-      public static let title = LFLocalizable.tr("Localizable", "card.cardNumber.title", fallback: "Card number")
+      /// Card Number
+      public static let title = LFLocalizable.tr("Localizable", "card.cardNumber.title", fallback: "Card Number")
     }
     public enum CopyToClipboard {
       /// Card number copied to clipboard
@@ -1548,6 +1548,10 @@ public enum LFLocalizable {
       /// Change PIN
       public static let title = LFLocalizable.tr("Localizable", "listCard.changePin.title", fallback: "Change PIN")
     }
+    public enum CloseCard {
+      /// Close Card
+      public static let title = LFLocalizable.tr("Localizable", "listCard.closeCard.title", fallback: "Close Card")
+    }
     public enum Deals {
       /// up to 8%% back in %@
       public static func description(_ p1: Any) -> String {
@@ -1559,8 +1563,8 @@ public enum LFLocalizable {
     public enum LockCard {
       /// Stop card from being used
       public static let description = LFLocalizable.tr("Localizable", "listCard.lockCard.description", fallback: "Stop card from being used")
-      /// Lock card
-      public static let title = LFLocalizable.tr("Localizable", "listCard.lockCard.title", fallback: "Lock card")
+      /// Lock Card
+      public static let title = LFLocalizable.tr("Localizable", "listCard.lockCard.title", fallback: "Lock Card")
     }
     public enum OrderPhysicalCard {
       /// Order Physical Card
@@ -1571,8 +1575,8 @@ public enum LFLocalizable {
       public static let title = LFLocalizable.tr("Localizable", "listCard.security.title", fallback: "Security")
     }
     public enum ShowCardNumber {
-      /// Show card number
-      public static let title = LFLocalizable.tr("Localizable", "listCard.showCardNumber.title", fallback: "Show card number")
+      /// Show Card Number
+      public static let title = LFLocalizable.tr("Localizable", "listCard.showCardNumber.title", fallback: "Show Card Number")
     }
   }
   public enum MoreWaysToSupport {

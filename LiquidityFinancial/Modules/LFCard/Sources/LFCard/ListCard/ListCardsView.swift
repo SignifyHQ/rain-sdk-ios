@@ -1,3 +1,4 @@
+import Combine
 import SwiftUI
 import LFLocalizable
 import LFUtilities
@@ -5,10 +6,12 @@ import LFStyleGuide
 
 public struct ListCardsView: View {
   @Environment(\.dismiss) private var dismiss
-  @StateObject var viewModel = ListCardsViewModel()
+  @StateObject var viewModel: ListCardsViewModel
   @State private var activeContent: ActiveContent = .verifyCvv
   
-  public init() {}
+  public init(viewModel: ListCardsViewModel) {
+    _viewModel = .init(wrappedValue: viewModel)
+  }
   
   public var body: some View {
     ZStack(alignment: .top) {
@@ -21,6 +24,9 @@ public struct ListCardsView: View {
     }
     .onChange(of: viewModel.currentCard) { _ in
       viewModel.onChangeCurrentCard()
+    }
+    .onDisappear {
+      viewModel.onDisappear()
     }
     .padding(.horizontal, 30)
     .padding(.bottom, 16)
@@ -101,17 +107,7 @@ private extension ListCardsView {
     .disabled(viewModel.isLoading)
     .padding(.bottom, 10)
   }
-  
-  var dealsButton: some View {
-    ArrowButton(
-      image: GenImages.CommonImages.icDeals.swiftUIImage,
-      title: LFLocalizable.ListCard.Deals.title,
-      value: LFLocalizable.ListCard.Deals.description(LFUtility.appName)
-    ) {
-      viewModel.dealsAction()
-    }
-  }
-  
+
   var cardView: some View {
     TabView(selection: $viewModel.currentCard) {
       ForEach(Array(viewModel.cardsList.enumerated()), id: \.offset) { offset, item in
@@ -169,6 +165,13 @@ private extension ListCardsView {
             isSwitchOn: $viewModel.isCardLocked
           ) { _ in
             viewModel.lockCardToggled()
+          }
+        }
+        if viewModel.currentCard.cardStatus != .closed {
+          GenImages.CommonImages.dash.swiftUIImage
+            .foregroundColor(Colors.label.swiftUIColor)
+          row(title: LFLocalizable.ListCard.CloseCard.title) {
+            // TODO: Will be implemented later
           }
         }
         if viewModel.isActive && viewModel.currentCard.cardType != .virtual {

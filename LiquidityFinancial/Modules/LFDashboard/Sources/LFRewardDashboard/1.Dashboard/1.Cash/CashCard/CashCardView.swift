@@ -12,6 +12,7 @@ struct CashCardView: View {
   let cashBalance: Double
   let assetType: AssetType
   let orderCardAction: () -> Void
+  let listCardViewModel: ListCardsViewModel
   
   private var isCardAvailable: Bool {
     isPOFlow
@@ -26,6 +27,7 @@ struct CashCardView: View {
     cashBalance: Double,
     assetType: AssetType,
     cardDetails: Binding<CardModel>,
+    listCardViewModel: ListCardsViewModel,
     orderCardAction: @escaping () -> Void
   ) {
     self.isPOFlow = isPOFlow
@@ -34,6 +36,7 @@ struct CashCardView: View {
     self.showLoadingIndicator = showLoadingIndicator
     _cardDetails = cardDetails
     self.orderCardAction = orderCardAction
+    self.listCardViewModel = listCardViewModel
     _viewModel = .init(wrappedValue: CashCardViewModel(cardDetails: cardDetails.wrappedValue))
   }
   
@@ -68,7 +71,7 @@ struct CashCardView: View {
       activateCard(card: card)
     }
     .navigationLink(isActive: $viewModel.isShowCardDetail) {
-      ListCardsView()
+      ListCardsView(viewModel: listCardViewModel)
     }
   }
   

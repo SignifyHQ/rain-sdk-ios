@@ -262,8 +262,9 @@
 
 // LIST CARD
 "listCard.security.title" = "Security";
-"listCard.showCardNumber.title" = "Show card number";
-"listCard.lockCard.title" = "Lock card";
+"listCard.showCardNumber.title" = "Show Card Number";
+"listCard.lockCard.title" = "Lock Card";
+"listCard.closeCard.title" = "Close Card";
 "listCard.lockCard.description" = "Stop card from being used";
 "listCard.changePin.title" = "Change PIN";
 "listCard.orderPhysicalCard.title" = "Order Physical Card";
@@ -277,7 +278,7 @@
 // CARD
 "card.virtual.title" = "Virtual";
 "card.physical.title" = "Physical";
-"card.cardNumber.title" = "Card number";
+"card.cardNumber.title" = "Card Number";
 "card.exp.title" = "Exp";
 "card.cvv.title" = "CVV";
 "card.copyToClipboard.title" = "Card number copied to clipboard";

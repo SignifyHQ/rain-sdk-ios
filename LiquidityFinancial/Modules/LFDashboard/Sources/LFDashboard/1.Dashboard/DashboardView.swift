@@ -4,6 +4,7 @@ import LFLocalizable
 import LFUtilities
 import LFBank
 import DashboardRepository
+import LFCard
 
 struct DashboardView: View {
   
@@ -28,7 +29,8 @@ struct DashboardView: View {
                 isLoading: dataStorages.$isLoading
               ),
               linkedAccount: dataStorages.$linkedAccount
-            )
+            ),
+          listCardViewModel: ListCardsViewModel(cardData: dataStorages.$cardData)
         ) { // handle refresh call back
           dataStorages.refreshCash()
         }

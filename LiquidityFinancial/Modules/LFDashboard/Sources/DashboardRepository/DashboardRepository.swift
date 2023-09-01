@@ -5,6 +5,7 @@ import AccountDomain
 import NetSpendData
 import Combine
 import LFBank
+import LFCard
 
 @MainActor
 public final class DashboardRepository: ObservableObject {
@@ -14,6 +15,7 @@ public final class DashboardRepository: ObservableObject {
   @LazyInjected(\.accountRepository) var accountRepository
   @LazyInjected(\.netspendRepository) var netspendRepository
   @LazyInjected(\.externalFundingRepository) var externalFundingRepository
+  @LazyInjected(\.cardRepository) var cardRepository
   
   @Published public var isLoading: Bool = false
   @Published public var allAssets: [AssetModel] = []
@@ -21,6 +23,7 @@ public final class DashboardRepository: ObservableObject {
   @Published public var cryptoAccounts: [LFAccount] = []
   @Published public var linkedAccount: [APILinkedSourceData] = []
   
+  @Published public var cardData: CardData = CardData(cards: [], metaDatas: [], loading: true)
   @Published public var achInformationData: (model: ACHModel, loading: Bool) = (.default, false)
   
   private var cancellable: Set<AnyCancellable> = []
@@ -40,6 +43,7 @@ public extension DashboardRepository {
     apiFetchAssetFromAccounts()
     apiFetchListConnectedAccount()
     apiFetchACHInfo()
+    apiFetchListCard()
   }
   
   func subscribeLinkedAccounts() {
@@ -67,12 +71,55 @@ public extension DashboardRepository {
         let fiatAccounts = try await fiatAccountsEntity
         let linkedSources = try await linkedAccountEntity.linkedSources
         
-        
         self.fiatAccounts = fiatAccounts
         self.accountDataManager.storeLinkedSources(linkedSources)
       } catch {
         log.error(error.localizedDescription)
         toastMessage(error.localizedDescription)
+      }
+    }
+  }
+  
+  func apiFetchListCard() {
+    cardData.loading = true
+    Task {
+      do {
+        let cards = try await cardRepository.getListCard()
+        cardData.cards = cards.map { card in
+          CardModel(
+            id: card.id,
+            cardType: CardType(rawValue: card.type) ?? .virtual,
+            cardholderName: nil,
+            expiryMonth: card.expirationMonth,
+            expiryYear: card.expirationYear,
+            last4: card.panLast4,
+            cardStatus: CardStatus(rawValue: card.status) ?? .unactivated
+          )
+        }
+        cardData.metaDatas = Array(repeating: nil, count: cardData.cards.count)
+        cardData.cards.map { $0.id }.enumerated().forEach { index, id in
+          apiFetchCardDetail(with: id, and: index)
+        }
+      } catch {
+        cardData.loading = false
+        toastMessage(error.localizedDescription)
+      }
+    }
+    
+    func apiFetchCardDetail(with cardID: String, and index: Int) {
+      Task {
+        defer { cardData.loading = false }
+        do {
+          let card = try await cardRepository.getCard(cardID: cardID, sessionID: accountDataManager.sessionID)
+          if let usersession = netspendDataManager.sdkSession {
+            let encryptedData: APICardEncrypted? = card.decodeData(session: usersession)
+            if let encryptedData {
+              cardData.metaDatas[index] = CardMetaData(pan: encryptedData.pan, cvv: encryptedData.cvv2)
+            }
+          }
+        } catch {
+          toastMessage(error.localizedDescription)
+        }
       }
     }
   }

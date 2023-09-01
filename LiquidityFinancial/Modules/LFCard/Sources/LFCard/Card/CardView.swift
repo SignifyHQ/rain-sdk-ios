@@ -36,6 +36,7 @@ struct CardView: View {
           .padding(.leading, 10)
       }
       headerTitleView
+        .opacity(viewModel.cardModel.cardType == .physical ? 0 : 1)
     }
     .onChange(of: isShowCardNumber) { _ in
       if isShowCardNumber {

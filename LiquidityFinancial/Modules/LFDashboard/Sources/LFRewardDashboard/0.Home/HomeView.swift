@@ -4,14 +4,20 @@ import LFLocalizable
 import LFStyleGuide
 import LFUtilities
 import LFRewards
+import DashboardRepository
 
 public struct HomeView: View {
   @Environment(\.scenePhase) var scenePhase
   
   @StateObject private var viewModel: HomeViewModel
   
-  public init(tabOptions: [TabOption]) {
-    _viewModel = .init(wrappedValue: HomeViewModel(tabOptions: tabOptions))
+  var dataStorages: DashboardRepository
+
+  public init(viewModel: HomeViewModel) {
+    _viewModel = .init(wrappedValue: viewModel)
+    self.dataStorages = DashboardRepository(toastMessage: { toastMessage in
+      viewModel.toastMessage = toastMessage
+    })
   }
   
   public var body: some View {
@@ -59,7 +65,7 @@ public struct HomeView: View {
 // MARK: - View Components
 private extension HomeView {
   func loadTabView(option: TabOption) -> some View {
-    DashboardView(option: option) { option in
+    DashboardView(dataStorages: dataStorages, option: option) { option in
       viewModel.tabSelected = option
     }.tabItem {
       tabItem(option: option)

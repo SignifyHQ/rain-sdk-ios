@@ -4,15 +4,18 @@ import LFStyleGuide
 import LFLocalizable
 import LFBank
 import LFTransaction
+import LFCard
 
 // TODO: Will use or not
 struct CashView: View {
   @StateObject private var viewModel: CashViewModel
-  
-  init(guestHandler: @escaping () -> Void) {
+  let listCardViewModel: ListCardsViewModel
+
+  init(listCardViewModel: ListCardsViewModel, guestHandler: @escaping () -> Void) {
     _viewModel = .init(
       wrappedValue: CashViewModel(guestHandler: guestHandler)
     )
+    self.listCardViewModel = listCardViewModel
   }
   
   var body: some View {
@@ -104,7 +107,8 @@ private extension CashView {
           showLoadingIndicator: viewModel.isLoading,
           cashBalance: viewModel.cashBalanceValue,
           assetType: viewModel.selectedAsset,
-          cardDetails: $viewModel.cashCardDetails
+          cardDetails: $viewModel.cashCardDetails,
+          listCardViewModel: listCardViewModel
         ) {
           viewModel.guestCardTapped()
         }

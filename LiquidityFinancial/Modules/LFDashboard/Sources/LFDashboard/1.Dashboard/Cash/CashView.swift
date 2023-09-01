@@ -4,15 +4,18 @@ import LFStyleGuide
 import LFLocalizable
 import LFBank
 import LFTransaction
+import LFCard
 
 struct CashView: View {
   @StateObject private var viewModel: CashViewModel
-  
+  let listCardViewModel: ListCardsViewModel
   var onRefresh: (() -> Void)
-  init(viewModel: CashViewModel, onRefresh: @escaping (() -> Void)) {
+  
+  init(viewModel: CashViewModel, listCardViewModel: ListCardsViewModel, onRefresh: @escaping (() -> Void)) {
     _viewModel = .init(
       wrappedValue: viewModel
     )
+    self.listCardViewModel = listCardViewModel
     self.onRefresh = onRefresh
   }
   
@@ -98,7 +101,8 @@ private extension CashView {
           showLoadingIndicator: viewModel.isLoading,
           cashBalance: viewModel.cashBalanceValue,
           assetType: viewModel.selectedAsset,
-          cardDetails: $viewModel.cashCardDetails
+          cardDetails: $viewModel.cashCardDetails,
+          listCardViewModel: listCardViewModel
         ) {
           viewModel.guestCardTapped()
         }
