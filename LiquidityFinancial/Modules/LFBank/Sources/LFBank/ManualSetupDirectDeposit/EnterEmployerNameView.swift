@@ -37,7 +37,6 @@ struct EnterEmployerNameView: View {
     .navigationLink(isActive: $isNavigateToDepositPaycheck) {
       PaycheckDepositView(viewModel: viewModel)
     }
-    // .track(name: String(describing: type(of: self))) TODO: - Will be implemented later
   }
 }
 

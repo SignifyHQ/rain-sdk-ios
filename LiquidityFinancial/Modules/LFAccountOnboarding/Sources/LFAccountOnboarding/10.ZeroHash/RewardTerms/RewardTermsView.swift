@@ -20,7 +20,6 @@ struct RewardTermsView: View {
             title: LFLocalizable.RewardTerms.enrollCta,
             isDisable: false
           ) {
-            // analyticsService.track(event: Event(name: .rewardTermsAccepted))
             viewModel.onClickedContinueButton()
           }
           Text(viewModel.disclaimerText)

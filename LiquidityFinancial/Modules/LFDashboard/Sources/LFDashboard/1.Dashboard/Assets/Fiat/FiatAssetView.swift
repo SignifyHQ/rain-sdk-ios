@@ -40,6 +40,15 @@ struct FiatAssetView: View {
             )
         }
       }
+      .fullScreenCover(item: $viewModel.fullScreen) { item in
+        switch item {
+        case .fundCard(let kind):
+          FundCardView(kind: kind) {
+            viewModel.fullScreen = nil
+          }
+          .embedInNavigation()
+        }
+      }
       .defaultToolBar(navigationTitle: viewModel.asset.type?.title ?? .empty)
       .background(Colors.background.swiftUIColor)
       .onAppear {

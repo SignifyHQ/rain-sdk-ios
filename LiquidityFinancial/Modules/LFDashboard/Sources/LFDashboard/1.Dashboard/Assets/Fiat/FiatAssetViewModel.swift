@@ -28,6 +28,7 @@ class FiatAssetViewModel: ObservableObject {
   @Published var transactions: [TransactionModel] = []
   @Published var achInformation: ACHModel = .default
   @Published var linkedAccount: [APILinkedSourceData] = []
+  @Published var fullScreen: FullScreen?
 
   let asset: AssetModel
   let currencyType = Constants.CurrencyType.fiat.rawValue
@@ -130,8 +131,7 @@ extension FiatAssetViewModel {
   func addMoneyTapped() {
     Haptic.impact(.light).generate()
     if linkedAccount.isEmpty {
-      // fullScreen = .fundCard
-      // TODO: Will implement later
+      fullScreen = .fundCard(.receive)
     } else {
       navigation = .addMoney
     }
@@ -140,8 +140,7 @@ extension FiatAssetViewModel {
   func sendMoneyTapped() {
     Haptic.impact(.light).generate()
     if linkedAccount.isEmpty {
-      // fullScreen = .fundCard
-      // TODO: Will implement later
+      fullScreen = .fundCard(.send)
     } else {
       navigation = .sendMoney
     }
@@ -175,5 +174,15 @@ extension FiatAssetViewModel {
     case sendMoney
     case transactions
     case transactionDetail(TransactionModel)
+  }
+  
+  enum FullScreen: Identifiable {
+    case fundCard(MoveMoneyAccountViewModel.Kind)
+
+    var id: String {
+      switch self {
+      case .fundCard: return "fundCard"
+      }
+    }
   }
 }

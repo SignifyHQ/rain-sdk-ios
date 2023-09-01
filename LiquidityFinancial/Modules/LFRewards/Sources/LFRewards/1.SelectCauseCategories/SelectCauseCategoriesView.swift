@@ -46,10 +46,6 @@ public struct SelectCauseCategoriesView: View {
       .popup(isPresented: $viewModel.showError, style: .toast) {
         ToastView(toastMessage: LFLocalizable.genericErrorMessage)
       }
-      .onAppear {
-        //TODO: Update later
-        //analyticsService.track(event: Event(name: .viewsSelectFundraiserCategories))
-      }
   }
   
   private var content: some View {

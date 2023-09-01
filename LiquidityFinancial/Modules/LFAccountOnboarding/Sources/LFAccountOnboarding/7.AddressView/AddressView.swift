@@ -74,9 +74,6 @@ struct AddressView: View {
     .popup(item: $viewModel.toastMessage, style: .toast) {
       ToastView(toastMessage: $0)
     }
-    .onAppear {
-      //analyticsService.track(event: Event(name: .viewedAddress))
-    }
     .navigationLink(item: $viewModel.navigation) { navigation in
       switch navigation {
       case .question(let questionsEntity):

@@ -889,6 +889,9 @@
 "search_causes.navigation_title" = "Search charities";
 "search_causes.no_results" = "No results found";
 
+"fundCard.title" = "FUND YOUR PRIDECARD";
+"fundCard.message" = "PrideCard is a Pre-paid Debit Card, which means there are no credit checks, interest payments or overdrafts. However, you have to deposit money to your account before you can use. Start by connecting your bank:";
+
 // MARK: - Common
 
 // Terms

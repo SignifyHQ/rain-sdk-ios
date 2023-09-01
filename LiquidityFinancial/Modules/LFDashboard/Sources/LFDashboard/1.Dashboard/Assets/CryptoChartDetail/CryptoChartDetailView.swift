@@ -65,7 +65,6 @@ struct CryptoChartDetailView: View {
           transferBalancePopup
         }
       }
-      // .track(name: String(describing: type(of: self))) TODO: - Will be implemented later
   }
 }
 

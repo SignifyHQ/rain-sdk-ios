@@ -67,8 +67,6 @@ extension ReferralsViewModel {
   }
   
   func onAppear() {
-    // TODO: - Will be implemented later
-    // analyticsService.track(event: Event(name: .viewsInviteFriends))
     fetchCampaigns()
   }
   

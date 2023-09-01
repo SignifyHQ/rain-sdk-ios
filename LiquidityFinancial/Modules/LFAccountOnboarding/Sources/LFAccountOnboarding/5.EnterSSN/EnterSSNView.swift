@@ -47,10 +47,6 @@ struct EnterSSNView: View {
         AddressView()
       }
     }
-    //.track(name: String(describing: type(of: self)))
-    .onAppear {
-      //analyticsService.track(event: Event(name: .viewsInReviewSSN))
-    }
   }
 
   private var secureField: some View {

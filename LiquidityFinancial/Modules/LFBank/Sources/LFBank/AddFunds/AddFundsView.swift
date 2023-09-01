@@ -10,10 +10,16 @@ public struct AddFundsView: View {
   @StateObject private var viewModel: AddFundsViewModel
   @Binding private var isDisableView: Bool
   @Binding private var achInformation: ACHModel
+  private var options: [FundOption] = [.directDeposit, .debitDeposit, .oneTime]
 
-  public init(achInformation: Binding<ACHModel>, isDisableView: Binding<Bool>) {
+  public init(
+    achInformation: Binding<ACHModel>,
+    isDisableView: Binding<Bool>,
+    options: [FundOption] = [.directDeposit, .debitDeposit, .oneTime]
+  ) {
     _achInformation = achInformation
     _isDisableView = isDisableView
+    self.options = options
     _viewModel = StateObject(wrappedValue: AddFundsViewModel())
   }
   
@@ -78,36 +84,19 @@ private extension AddFundsView {
   
   var content: some View {
     VStack(spacing: 8) {
-      ArrowButton(
-        image: GenImages.CommonImages.Accounts.directDeposit.swiftUIImage,
-        title: LFLocalizable.AccountView.DirectDeposit.title,
-        value: LFLocalizable.AccountView.DirectDeposit.subtitle
-      ) {
-        viewModel.selectedAddOption(navigation: .directDeposit)
-      }
-      /*
-      ArrowButton(
-        image: GenImages.CommonImages.Accounts.bankTransfers.swiftUIImage,
-        title: LFLocalizable.AccountView.BankTransfers.title,
-        value: LFLocalizable.AccountView.BankTransfers.subtitle
-      ) {
-        viewModel.selectedAddOption(navigation: .bankTransfers)
-      }*/
-      ArrowButton(
-        image: GenImages.CommonImages.Accounts.debitDeposit.swiftUIImage,
-        title: LFLocalizable.AccountView.DebitDeposits.title,
-        value: LFLocalizable.AccountView.DebitDeposits.subtitle,
-        isLoading: $viewModel.isLoadingLinkExternalCard
-      ) {
-        viewModel.selectedAddOption(navigation: .addBankDebit)
-      }
-      ArrowButton(
-        image: GenImages.CommonImages.Accounts.oneTime.swiftUIImage,
-        title: LFLocalizable.AccountView.OneTimeTransfers.title,
-        value: LFLocalizable.AccountView.OneTimeTransfers.subtitle,
-        isLoading: $viewModel.isLoadingLinkExternalBank
-      ) {
-        viewModel.selectedAddOption(navigation: .linkExternalBank)
+      ForEach(options, id: \.self) { option in
+        ArrowButton(
+          image: option.image,
+          title: option.title,
+          value: option.subtitle,
+          isLoading: option == .debitDeposit ?
+          $viewModel.isLoadingLinkExternalCard :
+            (option == .oneTime ?
+             $viewModel.isLoadingLinkExternalBank : .constant(false)
+            )
+        ) {
+          viewModel.selectedAddOption(navigation: option.navigation)
+        }
       }
     }
   }

@@ -45,6 +45,5 @@ struct EnterAmountView: View {
     .navigationLink(isActive: $isNavigateToSignatureView) {
       AddSignatureView(viewModel: viewModel)
     }
-    // .track(name: String(describing: type(of: self))) TODO: Will be implemented later
   }
 }

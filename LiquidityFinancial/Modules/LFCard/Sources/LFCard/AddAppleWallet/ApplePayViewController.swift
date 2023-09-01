@@ -23,9 +23,6 @@ struct ApplePayViewController: UIViewControllerRepresentable {
   func updateUIViewController(_: PKAddPaymentPassViewController, context _: Context) {}
   
   func makeUIViewController(context: Context) -> PKAddPaymentPassViewController {
-    // TODO: Will be implemented later
-    // analyticsService.track(event: Event(name: .viewsAddApplePay))
-    
     let request = PKAddPaymentPassRequestConfiguration(encryptionScheme: .ECC_V2)
     request?.cardholderName = viewModel.cardModel.cardholderName
     request?.primaryAccountSuffix = viewModel.cardModel.last4
@@ -52,8 +49,6 @@ extension ApplePayViewController {
     }
     
     func addPaymentPassViewController(_: PKAddPaymentPassViewController, generateRequestWithCertificateChain certificates: [Data], nonce: Data, nonceSignature: Data, completionHandler handler: @escaping (PKAddPaymentPassRequest) -> Void) {
-//      TODO: Will be implemented later
-//      analyticsService.track(event: Event(name: .tapsAddApplePay))
       if PKAddPaymentPassViewController.canAddPaymentPass() {
         Task { @MainActor in
           do {
@@ -90,9 +85,6 @@ extension ApplePayViewController {
     }
     
     func addPaymentPassViewController(_: PKAddPaymentPassViewController, didFinishAdding _: PKPaymentPass?, error: Error?) {
-      // TODO: Will be implemented later
-      //      let eventName: EventName = error == nil ? .applePayConnectSuccess : .applePayConnectError
-      //      analyticsService.track(event: Event(name: eventName))
       parent.presentation.wrappedValue.dismiss()
       if error == nil {
         parent.onSuccess?()

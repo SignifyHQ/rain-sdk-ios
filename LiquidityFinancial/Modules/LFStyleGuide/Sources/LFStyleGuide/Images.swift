@@ -142,6 +142,7 @@ public enum GenImages {
     public static let defaultTransactionCard = ImageAsset(name: "defaultTransactionCard")
     public static let emptyCard = ImageAsset(name: "emptyCard")
     public static let forwardButton = ImageAsset(name: "forwardButton")
+    public static let fundCard = ImageAsset(name: "fundCard")
     public static let icVerified = ImageAsset(name: "ic-verified")
     public static let icCoin = ImageAsset(name: "ic_coin")
     public static let icCopyBackground = ImageAsset(name: "ic_copy_background")

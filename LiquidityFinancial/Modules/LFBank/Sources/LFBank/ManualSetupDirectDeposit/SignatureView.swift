@@ -33,7 +33,6 @@ struct SignatureView: View {
       }
       Spacer()
     }
-    // .track(name: String(describing: type(of: self))) TODO: - Will be implem
     .popup(item: $toastMessage, style: .toast) {
       ToastView(toastMessage: $0)
     }

@@ -46,7 +46,6 @@ public struct ErrorView: View {
       // TODO: Will be implemeted later
       // intercomService.openIntercom()
     })
-    // .track(name: String(describing: type(of: self))) TODO: Will be implemented later
   }
 }
 

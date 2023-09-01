@@ -45,7 +45,6 @@ private extension TransactionDetailViewModel {
     return
     #else
     if showRatingAlert {
-      // analyticsService.track(event: Event(name: .conditionalReviewPrompt)) TODO: Will be implemented later
       LFUtility.showRatingAlert()
     }
     #endif

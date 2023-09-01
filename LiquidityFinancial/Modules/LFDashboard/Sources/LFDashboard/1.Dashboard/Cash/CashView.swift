@@ -57,6 +57,15 @@ struct CashView: View {
         )
       }
     }
+    .fullScreenCover(item: $viewModel.fullScreen) { item in
+      switch item {
+      case .fundCard(let kind):
+        FundCardView(kind: kind) {
+          viewModel.fullScreen = nil
+        }
+        .embedInNavigation()
+      }
+    }
   }
 }
 

@@ -29,7 +29,6 @@ struct CryptoTransactionReceiptView: View {
     }
     .padding(.top, 36)
     .background(Colors.background.swiftUIColor)
-    // .track(name: String(describing: type(of: self))) TODO: Will be implemented later
     .navigationBarTitleDisplayMode(.inline)
     .defaultToolBar(navigationTitle: LFLocalizable.CryptoReceipt.Navigation.title)
   }

@@ -24,8 +24,6 @@ struct SecurityCheckView: View {
     .padding(.horizontal, 30)
     .background(Colors.background.swiftUIColor)
     .onAppear {
-      // TODO: Will be implemented later
-      // analyticsService.track(event: Event(name: .viewedSSN))
       viewModel.updateUserDetails()
     }
     .popup(item: $toastMessage, style: .toast) {
@@ -38,8 +36,6 @@ struct SecurityCheckView: View {
       // TODO: Will be implemeted later
       // intercomService.openIntercom()
     })
-    // TODO: Will be implemented later
-    // .track(name: String(describing: type(of: self)))
   }
 }
 

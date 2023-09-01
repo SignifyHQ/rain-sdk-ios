@@ -58,7 +58,6 @@ struct PhoneNumberView: View {
     .defaultToolBar(icon: .intercom, openIntercom: {
       viewModel.openIntercom()
     })
-      // .track(name: String(describing: type(of: self))) TODO: Will be implemented later
     .navigationLink(isActive: $viewModel.isNavigationToVertificationView) {
       VerificationCodeView(phoneNumber: viewModel.phoneNumber.reformatPhone)
     }

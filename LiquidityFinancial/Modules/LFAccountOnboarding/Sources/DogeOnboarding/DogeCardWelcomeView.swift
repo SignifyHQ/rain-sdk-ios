@@ -37,10 +37,6 @@ public struct DogeCardWelcomeView: View {
         .padding(.horizontal, 30)
     }
     .background(Colors.background.swiftUIColor)
-    .onAppear {
-        // TODO: Add analytics later
-        // analyticsService.track(event: Event(name: .viewsWelcome))
-    }
     .navigationLink(isActive: $viewModel.isPushToAgreementView) {
       destination
     }

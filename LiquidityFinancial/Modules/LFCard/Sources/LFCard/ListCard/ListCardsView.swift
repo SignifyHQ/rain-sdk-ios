@@ -28,7 +28,6 @@ public struct ListCardsView: View {
     .defaultToolBar(icon: .intercom, openIntercom: {
       viewModel.openIntercom()
     })
-    // .track(name: String(describing: type(of: self))) TODO: Will be implemented later
     .sheet(item: $viewModel.present) { item in
       switch item {
       case let .changePin(card):

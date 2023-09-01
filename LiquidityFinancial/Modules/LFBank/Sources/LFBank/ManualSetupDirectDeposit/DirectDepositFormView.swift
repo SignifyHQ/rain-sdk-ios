@@ -33,6 +33,5 @@ struct DirectDepositFormView: View {
     .navigationLink(isActive: $isNavigateToEnterEmployerName) {
       EnterEmployerNameView(achInformation: $achInformation)
     }
-    // .track(name: String(describing: type(of: self))) TODO: - Will be implemented later
   }
 }

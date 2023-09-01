@@ -1331,6 +1331,12 @@ public enum LFLocalizable {
       public static let title = LFLocalizable.tr("Localizable", "error.weAreSorry.title", fallback: "WE’RE SORRY")
     }
   }
+  public enum FundCard {
+    /// DogeCard is a Pre-paid Debit Card, which means there are no credit checks, interest payments or overdrafts. However, you have to deposit money to your account before you can use. Start by connecting your bank:
+    public static let message = LFLocalizable.tr("Localizable", "fundCard.message", fallback: "DogeCard is a Pre-paid Debit Card, which means there are no credit checks, interest payments or overdrafts. However, you have to deposit money to your account before you can use. Start by connecting your bank:")
+    /// FUND YOUR DOGECARD
+    public static let title = LFLocalizable.tr("Localizable", "fundCard.title", fallback: "FUND YOUR DOGECARD")
+  }
   public enum Fundraise {
     public enum ShareDonation {
       /// I donated %@ to %@ using %@. Join us in supporting %@.

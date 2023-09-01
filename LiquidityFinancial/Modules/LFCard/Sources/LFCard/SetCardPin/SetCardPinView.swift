@@ -16,9 +16,6 @@ struct SetCardPinView: View {
   var body: some View {
     content
       .background(Colors.background.swiftUIColor)
-      .onAppear {
-        // analyticsService.track(event: Event(name: .viewedSetATMPin)) TODO: Will be implemented later
-      }
       .popup(isPresented: $viewModel.isShowSetPinSuccessPopup) {
         successPopup
       }
@@ -26,7 +23,6 @@ struct SetCardPinView: View {
         ToastView(toastMessage: $0)
       }
       .navigationBarTitleDisplayMode(.inline)
-      // .track(name: String(describing: type(of: self))) TODO: Will be implemented later
       .adaptToKeyboard()
       .ignoresSafeArea(edges: .bottom)
       .defaultToolBar(icon: .xMark, onDismiss: {

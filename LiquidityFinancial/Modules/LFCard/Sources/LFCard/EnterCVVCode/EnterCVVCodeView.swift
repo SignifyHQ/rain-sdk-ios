@@ -18,13 +18,9 @@ struct EnterCVVCodeView: View {
   var body: some View {
     content
       .background(Colors.background.swiftUIColor)
-      .onAppear {
-        // analyticsService.track(event: Event(name: .viewedSetATMPin)) TODO: Will be implemented later
-      }
       .popup(item: $viewModel.toastMessage, style: .toast) {
         ToastView(toastMessage: $0)
       }
-      // .track(name: String(describing: type(of: self))) TODO: Will be implemented later
       .adaptToKeyboard()
       .navigationBarTitleDisplayMode(.inline)
       .defaultToolBar(icon: .xMark, onDismiss: {

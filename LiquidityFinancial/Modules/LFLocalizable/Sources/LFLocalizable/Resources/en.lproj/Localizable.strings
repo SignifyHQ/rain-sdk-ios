@@ -951,6 +951,9 @@ https://mn.gov/commerce/money/investments/cryptocurrency/. \n\n\n\n\n\n\n";
 "cryptoChartDetail.transferBalance.title" = "YOU DON'T HAVE ANY DOGE TO TRANSFER AT THIS TIME.";
 "cryptoChartDetail.transferCoin.title" = "Transfer %@";
 
+"fundCard.title" = "FUND YOUR DOGECARD";
+"fundCard.message" = "DogeCard is a Pre-paid Debit Card, which means there are no credit checks, interest payments or overdrafts. However, you have to deposit money to your account before you can use. Start by connecting your bank:";
+
 // MARK: - Common
 
 // Notification Pop up

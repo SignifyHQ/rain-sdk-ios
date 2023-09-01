@@ -49,6 +49,5 @@ struct EnterPercentageView: View {
       }
     }
     .navigationBarTitleDisplayMode(.inline)
-    // .track(name: String(describing: type(of: self))) TODO: - Will be implemented later
   }
 }

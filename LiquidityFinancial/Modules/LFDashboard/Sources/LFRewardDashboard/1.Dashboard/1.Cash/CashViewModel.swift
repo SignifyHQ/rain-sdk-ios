@@ -29,6 +29,7 @@ final class CashViewModel: ObservableObject {
   @Published var linkedAccount: [APILinkedSourceData] = []
   @Published var achInformation: ACHModel = .default
   @Published var accountID: String = .empty
+  @Published var fullScreen: FullScreen?
     
   var transactionLimitEntity: Int {
     50
@@ -82,8 +83,7 @@ extension CashViewModel {
   func addMoneyTapped() {
     Haptic.impact(.light).generate()
     if linkedAccount.isEmpty {
-      // fullScreen = .fundCard
-      // TODO: Will implement later
+      fullScreen = .fundCard(.receive)
     } else {
       navigation = .addMoney
     }
@@ -92,8 +92,7 @@ extension CashViewModel {
   func sendMoneyTapped() {
     Haptic.impact(.light).generate()
     if linkedAccount.isEmpty {
-      // fullScreen = .fundCard
-      // TODO: Will implement later
+      fullScreen = .fundCard(.send)
     } else {
       navigation = .sendMoney
     }
@@ -191,5 +190,15 @@ extension CashViewModel {
     case transactionDetail(TransactionModel)
     case addMoney
     case sendMoney
+  }
+  
+  enum FullScreen: Identifiable {
+    case fundCard(MoveMoneyAccountViewModel.Kind)
+
+    var id: String {
+      switch self {
+      case .fundCard: return "fundCard"
+      }
+    }
   }
 }

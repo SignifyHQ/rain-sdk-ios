@@ -16,7 +16,6 @@ final class CashCardViewModel: ObservableObject {
 extension CashCardViewModel {
   func activeCard() {
     // TODO: Will be implemented later
-    // analyticsService.track(event: Event(name: EventName.tapsActivateCard.rawValue))
     // Call activeCard API
     cardActivated = cardDetails // Fake call api
   }

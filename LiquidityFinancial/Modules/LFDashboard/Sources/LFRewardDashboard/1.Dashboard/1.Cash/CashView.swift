@@ -46,6 +46,15 @@ struct CashView: View {
         TransactionDetailView(accountID: viewModel.accountID, transactionId: transaction.id, kind: transaction.detailType)
       }
     }
+    .fullScreenCover(item: $viewModel.fullScreen) { item in
+      switch item {
+      case .fundCard(let kind):
+        FundCardView(kind: kind) {
+          viewModel.fullScreen = nil
+        }
+        .embedInNavigation()
+      }
+    }
   }
 }
 
@@ -117,7 +126,6 @@ private extension CashView {
       Task { @MainActor in
         await viewModel.refresh()
       }
-      // .track(name: String(describing: type(of: self))) TODO: Will be implemented later
     }
   }
   

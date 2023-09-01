@@ -19,7 +19,6 @@ struct DirectDepositPDFView: View {
     .background(
       Colors.whiteText.swiftUIColor.edgesIgnoringSafeArea(.all)
     )
-    // .track(name: String(describing: type(of: self))) TODO: Will be implemented later
   }
 }
 

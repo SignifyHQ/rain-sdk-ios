@@ -30,7 +30,6 @@ struct InitialView: View {
     }
     .frame(maxWidth: .infinity)
     .frame(maxHeight: .infinity)
-    //.track(name: String(describing: type(of: self)))
     .background(Colors.background.swiftUIColor)
   }
   

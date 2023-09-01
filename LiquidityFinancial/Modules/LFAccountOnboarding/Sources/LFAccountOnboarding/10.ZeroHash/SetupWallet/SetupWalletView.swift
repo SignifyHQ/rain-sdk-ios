@@ -63,9 +63,6 @@ struct SetupWalletView: View {
       .popup(item: $viewModel.toastMessage, style: .toast) {
         ToastView(toastMessage: $0)
       }
-      .onAppear {
-          //analyticsService.track(event: Event(name: .viewsWalletSetup))
-      }
       .navigationLink(isActive: $viewModel.isNavigateToRewardsView) {
         RewardTermsView()
       }

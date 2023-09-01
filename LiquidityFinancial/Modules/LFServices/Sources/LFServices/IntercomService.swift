@@ -85,7 +85,6 @@ public class IntercomService: IntercomServiceProtocol {
   }
   
   public func openIntercom() {
-    //analyticsService.track(event: Event(name: .openIntercom))
     Intercom.present()
   }
   

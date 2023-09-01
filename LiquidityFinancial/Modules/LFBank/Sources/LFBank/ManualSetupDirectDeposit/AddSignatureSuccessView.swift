@@ -45,14 +45,11 @@ struct AddSignatureSuccessView: View {
       LFUtility.popToRootView()
     })
     .onAppear {
-      // TODO: - Will be implemented later
-      // analyticsService.track(event: Event(name: EventName.viewsDirectDepositReady))
       DirectDepositPDFView(viewModel: viewModel).exportToPDF()
     }
     .navigationLink(isActive: $isNavigationViewForm) {
       PDFWebView(documentName: Constants.Default.documentName.rawValue)
     }
-    // .track(name: String(describing: type(of: self))) TODO: - Will be implemented later
   }
 }
 

@@ -47,11 +47,6 @@ struct PersonalInformationView: View {
     .navigationLink(isActive: $viewModel.isNavigationToSSNView) {
       EnterSSNView()
     }
-    // TODO: Add track event
-    //    .onAppear {
-    //      analyticsService.track(event: Event(name: EventName.viewedPersonalInfo.rawValue))
-    //    }
-    //    .track(name: String(describing: type(of: self)))
   }
   
   @ViewBuilder

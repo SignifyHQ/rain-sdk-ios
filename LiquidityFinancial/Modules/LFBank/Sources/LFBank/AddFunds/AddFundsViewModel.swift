@@ -26,6 +26,16 @@ final class AddFundsViewModel: ObservableObject {
   @LazyInjected(\.accountDataManager) var accountDataManager
   @LazyInjected(\.intercomService) var intercomService
   
+  func loading(option: FundOption) -> Bool {
+    switch option {
+    case .debitDeposit:
+      return isLoadingLinkExternalCard
+    case .oneTime:
+      return isLoadingLinkExternalBank
+    default:
+      return false
+    }
+  }
 }
 
 // MARK: - ExternalLinkBank Functions

@@ -51,8 +51,6 @@ final class CryptoChartDetailViewModel: ObservableObject {
   }
   
   func appearOperations() {
-      // TODO: - Will be implemented later
-      // analyticsService.track(event: Event(name: EventName.viewCryptoWalletSetup))
     Task {
       await refresh(includeAccounts: false)
     }
@@ -118,29 +116,21 @@ final class CryptoChartDetailViewModel: ObservableObject {
   // MARK: - Actions
 extension CryptoChartDetailViewModel {
   func buyButtonTapped() {
-      // TODO: - Will be implemented later
-      // analyticsService.track(event: Event(name: EventName.tapsBuyCrypto))
     Haptic.impact(.light).generate()
     navigation = .buy
   }
   
   func sellButtonTapped() {
-      // TODO: - Will be implemented later
-      // analyticsService.track(event: Event(name: EventName.tapsSellCrypto))
     Haptic.impact(.light).generate()
     navigation = .sell
   }
   
   func transferButtonTapped() {
-      // TODO: - Will be implemented later
-      // analyticsService.track(event: Event(name: .tapsTransferCrypto))
     Haptic.impact(.light).generate()
     showTransferSheet = true
   }
   
   func sendButtonTapped() {
-      // TODO: - Will be implemented later
-      // analyticsService.track(event: Event(name: EventName.tapsSendCrypto.rawValue))
     showTransferSheet = false
     if let cryptoBalance = account?.availableBalance, cryptoBalance > 0 {
       navigation = .send
@@ -151,8 +141,6 @@ extension CryptoChartDetailViewModel {
   
   func receiveButtonTapped() {
     showTransferSheet = false
-      // TODO: - Will be implemented later
-      // analyticsService.track(event: Event(name: EventName.tapsRecieveCrypto.rawValue))
     navigation = .receive
   }
   

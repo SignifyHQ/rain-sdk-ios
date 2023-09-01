@@ -29,6 +29,5 @@ struct AddSignatureView: View {
     .navigationLink(isActive: $isNavigateToSignatureView) {
       SignatureView(viewModel: viewModel)
     }
-    // .track(name: String(describing: type(of: self))) TODO: - Will be implemented later
   }
 }

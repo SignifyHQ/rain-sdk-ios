@@ -41,8 +41,6 @@ struct VerificationCodeView: View {
       viewModel.isResendButonTimerOn = false
       viewModel.performAutoGetTwilioMessagesIfNeccessary()
     }
-    // TODO: Will be implemented later
-    // .track(name: String(describing: type(of: self)))
     .navigationBarBackButtonHidden(viewModel.isShowLoading)
   }
 }
