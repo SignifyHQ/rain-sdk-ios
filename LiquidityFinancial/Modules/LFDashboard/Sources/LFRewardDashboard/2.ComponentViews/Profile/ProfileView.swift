@@ -203,7 +203,7 @@ private extension ProfileView {
         ArrowButton(image: GenImages.CommonImages.icQuestion.swiftUIImage, title: LFLocalizable.Profile.Help.title, value: nil) {
           viewModel.helpTapped()
         }
-        if viewModel.notificationsEnabled {
+        if !viewModel.notificationsEnabled {
           ArrowButton(
             image: GenImages.CommonImages.icNotification.swiftUIImage,
             title: LFLocalizable.Profile.Notifications.title,

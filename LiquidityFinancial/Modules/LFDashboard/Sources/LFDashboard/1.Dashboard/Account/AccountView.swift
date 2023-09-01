@@ -38,6 +38,9 @@ struct AccountsView: View {
           .navigationBarHidden(true)
         }
       }
+      .popup(item: $viewModel.toastMessage, style: .toast) {
+        ToastView(toastMessage: $0)
+      }
       .background(Colors.background.swiftUIColor)
       .onAppear {
         viewModel.onAppear()
@@ -87,30 +90,38 @@ private extension AccountsView {
         image: GenImages.CommonImages.icRoutingNumber.swiftUIImage,
         title: LFLocalizable.AccountView.RoutingNumber.title,
         value: viewModel.achInformation.routingNumber
-      )
+      ) {
+        UIPasteboard.general.string = viewModel.achInformation.routingNumber
+        viewModel.toastMessage = LFLocalizable.Toast.Copy.message
+      }
       accountDetailCell(
         image: GenImages.CommonImages.icAccountNumber.swiftUIImage,
         title: LFLocalizable.AccountView.AccountNumber.title,
         value: viewModel.achInformation.accountNumber
-      )
+      ) {
+        UIPasteboard.general.string = viewModel.achInformation.accountNumber
+        viewModel.toastMessage = LFLocalizable.Toast.Copy.message
+      }
     }
     .foregroundColor(Colors.label.swiftUIColor)
   }
   
-  func accountDetailCell(image: Image, title: String, value: String) -> some View {
-    HStack(spacing: 12) {
-      image
-      Text(title)
-        .font(Fonts.regular.swiftUIFont(size: 13))
-      Spacer()
-      if viewModel.isLoadingACH {
-        LottieView(loading: .primary)
-          .frame(width: 28, height: 16)
-          .padding(.leading, 4)
-      } else {
-        Text(value)
-          .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.ultraSmall.value))
-          .foregroundColor(Colors.primary.swiftUIColor)
+  func accountDetailCell(image: Image, title: String, value: String, action: @escaping () -> Void) -> some View {
+    Button(action: action) {
+      HStack(spacing: 12) {
+        image
+        Text(title)
+          .font(Fonts.regular.swiftUIFont(size: 13))
+        Spacer()
+        if viewModel.isLoadingACH {
+          LottieView(loading: .primary)
+            .frame(width: 28, height: 16)
+            .padding(.leading, 4)
+        } else {
+          Text(value)
+            .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.ultraSmall.value))
+            .foregroundColor(Colors.primary.swiftUIColor)
+        }
       }
     }
     .padding(.leading, 16)
