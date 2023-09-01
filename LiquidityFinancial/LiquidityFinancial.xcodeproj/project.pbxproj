@@ -12,8 +12,6 @@
 		06D40BFC2A6260B300EADB75 /* LoadingContrast.json in Resources */ = {isa = PBXBuildFile; fileRef = 06D40BFB2A6260B300EADB75 /* LoadingContrast.json */; };
 		06D40C012A62AE3700EADB75 /* iPhoneNumberField in Frameworks */ = {isa = PBXBuildFile; productRef = 06D40C002A62AE3700EADB75 /* iPhoneNumberField */; };
 		06D40C032A63DEB300EADB75 /* LoadingPrimary.json in Resources */ = {isa = PBXBuildFile; fileRef = 06D40C022A63DEB300EADB75 /* LoadingPrimary.json */; };
-		06DB98F22A8BD7F80071922E /* LoadingPrimary.json in Resources */ = {isa = PBXBuildFile; fileRef = 06DB98F12A8BD7F80071922E /* LoadingPrimary.json */; };
-		06DB98F42A8BD80E0071922E /* LoadingPrimary.json in Resources */ = {isa = PBXBuildFile; fileRef = 06DB98F32A8BD80E0071922E /* LoadingPrimary.json */; };
 		06EBE2012A69390700157B32 /* DashboardContainer+Injection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06EBE2002A69390700157B32 /* DashboardContainer+Injection.swift */; };
 		06EBE2032A693C7800157B32 /* LFDashboard in Frameworks */ = {isa = PBXBuildFile; productRef = 06EBE2022A693C7800157B32 /* LFDashboard */; };
 		06EBE2052A693C8100157B32 /* LFDashboard in Frameworks */ = {isa = PBXBuildFile; productRef = 06EBE2042A693C8100157B32 /* LFDashboard */; };
@@ -129,15 +127,6 @@
 		A99D2FBC2A9A56F200947773 /* PrideCardApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = A99D2F972A9A56F200947773 /* PrideCardApp.swift */; };
 		A99D2FBD2A9A56F200947773 /* AppView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A99D2F992A9A56F200947773 /* AppView.swift */; };
 		A99D2FBE2A9A56F200947773 /* AppViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A99D2F9A2A9A56F200947773 /* AppViewModel.swift */; };
-		A99D2FC92A9AFD8300947773 /* TwinkleCircle.json in Resources */ = {isa = PBXBuildFile; fileRef = A99D2FC02A9AFD8300947773 /* TwinkleCircle.json */; };
-		A99D2FCA2A9AFD8300947773 /* LoadingPrimary.json in Resources */ = {isa = PBXBuildFile; fileRef = A99D2FC12A9AFD8300947773 /* LoadingPrimary.json */; };
-		A99D2FCB2A9AFD8300947773 /* Welcome.json in Resources */ = {isa = PBXBuildFile; fileRef = A99D2FC22A9AFD8300947773 /* Welcome.json */; };
-		A99D2FCC2A9AFD8300947773 /* LoadingContrast.json in Resources */ = {isa = PBXBuildFile; fileRef = A99D2FC32A9AFD8300947773 /* LoadingContrast.json */; };
-		A99D2FCD2A9AFD8300947773 /* LoadingHeart.json in Resources */ = {isa = PBXBuildFile; fileRef = A99D2FC42A9AFD8300947773 /* LoadingHeart.json */; };
-		A99D2FCE2A9AFD8300947773 /* ApplePay.json in Resources */ = {isa = PBXBuildFile; fileRef = A99D2FC52A9AFD8300947773 /* ApplePay.json */; };
-		A99D2FCF2A9AFD8300947773 /* TwinkleContrast.json in Resources */ = {isa = PBXBuildFile; fileRef = A99D2FC62A9AFD8300947773 /* TwinkleContrast.json */; };
-		A99D2FD02A9AFD8300947773 /* TwinkleSides.json in Resources */ = {isa = PBXBuildFile; fileRef = A99D2FC72A9AFD8300947773 /* TwinkleSides.json */; };
-		A99D2FD12A9AFD8300947773 /* LoadingMix.json in Resources */ = {isa = PBXBuildFile; fileRef = A99D2FC82A9AFD8300947773 /* LoadingMix.json */; };
 		A9B448BD2A8389B90029944C /* AppDelegate+Configs.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9BC804C2A774F5D00E4A1A0 /* AppDelegate+Configs.swift */; };
 		A9B448BE2A8389B90029944C /* OnboardingContainer+Injection.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9B912F22A6B898C00ABD87B /* OnboardingContainer+Injection.swift */; };
 		A9B448C12A8389B90029944C /* AppDelegate+Appearance.swift in Sources */ = {isa = PBXBuildFile; fileRef = A93837462A63DDFD009EB1DE /* AppDelegate+Appearance.swift */; };
@@ -162,8 +151,6 @@
 		A9B449152A838A010029944C /* CauseCardConfig.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = A9B448F42A838A000029944C /* CauseCardConfig.xcconfig */; };
 		A9B449162A838A010029944C /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = A9B448F62A838A000029944C /* Localizable.strings */; };
 		A9B449172A838A010029944C /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = A9B448F82A838A000029944C /* LaunchScreen.storyboard */; };
-		A9B449192A838A010029944C /* LoadingContrast.json in Resources */ = {isa = PBXBuildFile; fileRef = A9B448FC2A838A000029944C /* LoadingContrast.json */; };
-		A9B4491A2A838A010029944C /* LoadingMix.json in Resources */ = {isa = PBXBuildFile; fileRef = A9B448FD2A838A000029944C /* LoadingMix.json */; };
 		A9B449252A838A010029944C /* Colors.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A9B4490A2A838A000029944C /* Colors.xcassets */; };
 		A9B449262A838A010029944C /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A9B4490B2A838A000029944C /* Images.xcassets */; };
 		A9B449272A838A010029944C /* CauseCardApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9B4490D2A838A000029944C /* CauseCardApp.swift */; };
@@ -171,12 +158,6 @@
 		A9B449292A838A010029944C /* AppCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9B449112A838A000029944C /* AppCoordinator.swift */; };
 		A9B4492A2A838A010029944C /* AppView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9B449132A838A000029944C /* AppView.swift */; };
 		A9B4492B2A838A010029944C /* AppViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9B449142A838A000029944C /* AppViewModel.swift */; };
-		A9B449322A838A5B0029944C /* ApplePay.json in Resources */ = {isa = PBXBuildFile; fileRef = A9B4492C2A838A5B0029944C /* ApplePay.json */; };
-		A9B449332A838A5B0029944C /* TwinkleCircle.json in Resources */ = {isa = PBXBuildFile; fileRef = A9B4492D2A838A5B0029944C /* TwinkleCircle.json */; };
-		A9B449342A838A5B0029944C /* TwinkleContrast.json in Resources */ = {isa = PBXBuildFile; fileRef = A9B4492E2A838A5B0029944C /* TwinkleContrast.json */; };
-		A9B449352A838A5B0029944C /* TwinkleSides.json in Resources */ = {isa = PBXBuildFile; fileRef = A9B4492F2A838A5B0029944C /* TwinkleSides.json */; };
-		A9B449362A838A5B0029944C /* Welcome.json in Resources */ = {isa = PBXBuildFile; fileRef = A9B449302A838A5B0029944C /* Welcome.json */; };
-		A9B449372A838A5B0029944C /* LoadingHeart.json in Resources */ = {isa = PBXBuildFile; fileRef = A9B449312A838A5B0029944C /* LoadingHeart.json */; };
 		A9B449482A8392AB0029944C /* Orbitron-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = A9B449382A8392AA0029944C /* Orbitron-Bold.ttf */; };
 		A9B449492A8392AB0029944C /* Lato-Thin.ttf in Resources */ = {isa = PBXBuildFile; fileRef = A9B449392A8392AA0029944C /* Lato-Thin.ttf */; };
 		A9B4494A2A8392AB0029944C /* Lato-BlackItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = A9B4493A2A8392AB0029944C /* Lato-BlackItalic.ttf */; };
@@ -213,8 +194,6 @@
 		A9B4B9542A7C0C76000ED67A /* LFServices in Frameworks */ = {isa = PBXBuildFile; productRef = A9B4B92F2A7C0C76000ED67A /* LFServices */; };
 		A9B4B9A72A7C0F41000ED67A /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = A9B4B97A2A7C0F41000ED67A /* Localizable.strings */; };
 		A9B4B9AA2A7C0F41000ED67A /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = A9B4B97C2A7C0F41000ED67A /* LaunchScreen.storyboard */; };
-		A9B4B9B02A7C0F41000ED67A /* LoadingContrast.json in Resources */ = {isa = PBXBuildFile; fileRef = A9B4B9802A7C0F41000ED67A /* LoadingContrast.json */; };
-		A9B4B9B32A7C0F41000ED67A /* LoadingMix.json in Resources */ = {isa = PBXBuildFile; fileRef = A9B4B9812A7C0F41000ED67A /* LoadingMix.json */; };
 		A9B4B9EF2A7C0F41000ED67A /* Colors.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A9B4B9972A7C0F41000ED67A /* Colors.xcassets */; };
 		A9B4B9F22A7C0F41000ED67A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A9B4B9982A7C0F41000ED67A /* Images.xcassets */; };
 		A9B4B9F52A7C0F41000ED67A /* DogeCardApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9B4B99A2A7C0F41000ED67A /* DogeCardApp.swift */; };
@@ -289,6 +268,28 @@
 		A9BC804B2A774D4F00E4A1A0 /* Inter-Thin.ttf in Resources */ = {isa = PBXBuildFile; fileRef = A9BC80422A774D4F00E4A1A0 /* Inter-Thin.ttf */; };
 		A9BC804D2A774F5D00E4A1A0 /* AppDelegate+Configs.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9BC804C2A774F5D00E4A1A0 /* AppDelegate+Configs.swift */; };
 		A9BC804E2A774F5F00E4A1A0 /* AppDelegate+Configs.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9BC804C2A774F5D00E4A1A0 /* AppDelegate+Configs.swift */; };
+		A9C478F02AA1DA660055F812 /* LoadingPrimary.json in Resources */ = {isa = PBXBuildFile; fileRef = A9C478EB2AA1DA650055F812 /* LoadingPrimary.json */; };
+		A9C478F12AA1DA660055F812 /* LoadingContrast.json in Resources */ = {isa = PBXBuildFile; fileRef = A9C478EC2AA1DA650055F812 /* LoadingContrast.json */; };
+		A9C478F22AA1DA660055F812 /* TwinkleContrast.json in Resources */ = {isa = PBXBuildFile; fileRef = A9C478ED2AA1DA650055F812 /* TwinkleContrast.json */; };
+		A9C478F32AA1DA660055F812 /* TwinkleSides.json in Resources */ = {isa = PBXBuildFile; fileRef = A9C478EE2AA1DA650055F812 /* TwinkleSides.json */; };
+		A9C478F42AA1DA660055F812 /* LoadingMix.json in Resources */ = {isa = PBXBuildFile; fileRef = A9C478EF2AA1DA650055F812 /* LoadingMix.json */; };
+		A9C478FE2AA1DAED0055F812 /* TwinkleCircle.json in Resources */ = {isa = PBXBuildFile; fileRef = A9C478F62AA1DAED0055F812 /* TwinkleCircle.json */; };
+		A9C478FF2AA1DAED0055F812 /* Welcome.json in Resources */ = {isa = PBXBuildFile; fileRef = A9C478F72AA1DAED0055F812 /* Welcome.json */; };
+		A9C479002AA1DAED0055F812 /* LoadingContrast.json in Resources */ = {isa = PBXBuildFile; fileRef = A9C478F82AA1DAED0055F812 /* LoadingContrast.json */; };
+		A9C479012AA1DAED0055F812 /* LoadingHeart.json in Resources */ = {isa = PBXBuildFile; fileRef = A9C478F92AA1DAED0055F812 /* LoadingHeart.json */; };
+		A9C479022AA1DAED0055F812 /* ApplePay.json in Resources */ = {isa = PBXBuildFile; fileRef = A9C478FA2AA1DAED0055F812 /* ApplePay.json */; };
+		A9C479032AA1DAED0055F812 /* TwinkleContrast.json in Resources */ = {isa = PBXBuildFile; fileRef = A9C478FB2AA1DAED0055F812 /* TwinkleContrast.json */; };
+		A9C479042AA1DAED0055F812 /* TwinkleSides.json in Resources */ = {isa = PBXBuildFile; fileRef = A9C478FC2AA1DAED0055F812 /* TwinkleSides.json */; };
+		A9C479052AA1DAED0055F812 /* LoadingMix.json in Resources */ = {isa = PBXBuildFile; fileRef = A9C478FD2AA1DAED0055F812 /* LoadingMix.json */; };
+		A9C479102AA1DB280055F812 /* TwinkleCircle.json in Resources */ = {isa = PBXBuildFile; fileRef = A9C479072AA1DB280055F812 /* TwinkleCircle.json */; };
+		A9C479112AA1DB280055F812 /* LoadingPrimary.json in Resources */ = {isa = PBXBuildFile; fileRef = A9C479082AA1DB280055F812 /* LoadingPrimary.json */; };
+		A9C479122AA1DB280055F812 /* Welcome.json in Resources */ = {isa = PBXBuildFile; fileRef = A9C479092AA1DB280055F812 /* Welcome.json */; };
+		A9C479132AA1DB280055F812 /* LoadingContrast.json in Resources */ = {isa = PBXBuildFile; fileRef = A9C4790A2AA1DB280055F812 /* LoadingContrast.json */; };
+		A9C479142AA1DB280055F812 /* LoadingHeart.json in Resources */ = {isa = PBXBuildFile; fileRef = A9C4790B2AA1DB280055F812 /* LoadingHeart.json */; };
+		A9C479152AA1DB280055F812 /* ApplePay.json in Resources */ = {isa = PBXBuildFile; fileRef = A9C4790C2AA1DB280055F812 /* ApplePay.json */; };
+		A9C479162AA1DB280055F812 /* TwinkleContrast.json in Resources */ = {isa = PBXBuildFile; fileRef = A9C4790D2AA1DB280055F812 /* TwinkleContrast.json */; };
+		A9C479172AA1DB280055F812 /* TwinkleSides.json in Resources */ = {isa = PBXBuildFile; fileRef = A9C4790E2AA1DB280055F812 /* TwinkleSides.json */; };
+		A9C479182AA1DB280055F812 /* LoadingMix.json in Resources */ = {isa = PBXBuildFile; fileRef = A9C4790F2AA1DB280055F812 /* LoadingMix.json */; };
 		A9CFBB722A9DA7A600269DB8 /* Orbitron-Medium.ttf in Resources */ = {isa = PBXBuildFile; fileRef = A9CFBB702A9DA7A600269DB8 /* Orbitron-Medium.ttf */; };
 		A9CFBB732A9DA7A600269DB8 /* Orbitron-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = A9CFBB712A9DA7A600269DB8 /* Orbitron-Bold.ttf */; };
 		A9CFBB762A9DA7B300269DB8 /* Orbitron-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = A9CFBB742A9DA7B300269DB8 /* Orbitron-Bold.ttf */; };
@@ -321,8 +322,6 @@
 		06D40BF72A625F5400EADB75 /* LoadingMix.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = LoadingMix.json; sourceTree = "<group>"; };
 		06D40BFB2A6260B300EADB75 /* LoadingContrast.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = LoadingContrast.json; sourceTree = "<group>"; };
 		06D40C022A63DEB300EADB75 /* LoadingPrimary.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = LoadingPrimary.json; sourceTree = "<group>"; };
-		06DB98F12A8BD7F80071922E /* LoadingPrimary.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; name = LoadingPrimary.json; path = "../../../../../../ios-liquidity/Liquidity/Liquidity/DogeCard/Resources/Lottie/LoadingPrimary.json"; sourceTree = "<group>"; };
-		06DB98F32A8BD80E0071922E /* LoadingPrimary.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; name = LoadingPrimary.json; path = "../../../../../../ios-liquidity/Liquidity/Liquidity/CauseCard/Resources/Lottie/LoadingPrimary.json"; sourceTree = "<group>"; };
 		06EBE1FF2A6924E900157B32 /* LFDashboard */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = LFDashboard; path = Modules/LFDashboard; sourceTree = "<group>"; };
 		06EBE2002A69390700157B32 /* DashboardContainer+Injection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DashboardContainer+Injection.swift"; sourceTree = "<group>"; };
 		741493432A9912A700F0DC4D /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
@@ -394,22 +393,11 @@
 		A99D2F972A9A56F200947773 /* PrideCardApp.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PrideCardApp.swift; sourceTree = "<group>"; };
 		A99D2F992A9A56F200947773 /* AppView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppView.swift; sourceTree = "<group>"; };
 		A99D2F9A2A9A56F200947773 /* AppViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppViewModel.swift; sourceTree = "<group>"; };
-		A99D2FC02A9AFD8300947773 /* TwinkleCircle.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = TwinkleCircle.json; sourceTree = "<group>"; };
-		A99D2FC12A9AFD8300947773 /* LoadingPrimary.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = LoadingPrimary.json; sourceTree = "<group>"; };
-		A99D2FC22A9AFD8300947773 /* Welcome.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = Welcome.json; sourceTree = "<group>"; };
-		A99D2FC32A9AFD8300947773 /* LoadingContrast.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = LoadingContrast.json; sourceTree = "<group>"; };
-		A99D2FC42A9AFD8300947773 /* LoadingHeart.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = LoadingHeart.json; sourceTree = "<group>"; };
-		A99D2FC52A9AFD8300947773 /* ApplePay.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = ApplePay.json; sourceTree = "<group>"; };
-		A99D2FC62A9AFD8300947773 /* TwinkleContrast.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = TwinkleContrast.json; sourceTree = "<group>"; };
-		A99D2FC72A9AFD8300947773 /* TwinkleSides.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = TwinkleSides.json; sourceTree = "<group>"; };
-		A99D2FC82A9AFD8300947773 /* LoadingMix.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = LoadingMix.json; sourceTree = "<group>"; };
 		A9B448F02A8389B90029944C /* CauseCard.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = CauseCard.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		A9B448F42A838A000029944C /* CauseCardConfig.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = CauseCardConfig.xcconfig; sourceTree = "<group>"; };
 		A9B448F72A838A000029944C /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
 		A9B448F82A838A000029944C /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = LaunchScreen.storyboard; sourceTree = "<group>"; };
 		A9B448F92A838A000029944C /* CauseCard.entitlements */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.entitlements; path = CauseCard.entitlements; sourceTree = "<group>"; };
-		A9B448FC2A838A000029944C /* LoadingContrast.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = LoadingContrast.json; sourceTree = "<group>"; };
-		A9B448FD2A838A000029944C /* LoadingMix.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = LoadingMix.json; sourceTree = "<group>"; };
 		A9B448FE2A838A000029944C /* CauseCard-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "CauseCard-Info.plist"; sourceTree = "<group>"; };
 		A9B4490A2A838A000029944C /* Colors.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Colors.xcassets; sourceTree = "<group>"; };
 		A9B4490B2A838A000029944C /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
@@ -418,12 +406,6 @@
 		A9B449112A838A000029944C /* AppCoordinator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppCoordinator.swift; sourceTree = "<group>"; };
 		A9B449132A838A000029944C /* AppView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppView.swift; sourceTree = "<group>"; };
 		A9B449142A838A000029944C /* AppViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppViewModel.swift; sourceTree = "<group>"; };
-		A9B4492C2A838A5B0029944C /* ApplePay.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = ApplePay.json; sourceTree = "<group>"; };
-		A9B4492D2A838A5B0029944C /* TwinkleCircle.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = TwinkleCircle.json; sourceTree = "<group>"; };
-		A9B4492E2A838A5B0029944C /* TwinkleContrast.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = TwinkleContrast.json; sourceTree = "<group>"; };
-		A9B4492F2A838A5B0029944C /* TwinkleSides.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = TwinkleSides.json; sourceTree = "<group>"; };
-		A9B449302A838A5B0029944C /* Welcome.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = Welcome.json; sourceTree = "<group>"; };
-		A9B449312A838A5B0029944C /* LoadingHeart.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = LoadingHeart.json; sourceTree = "<group>"; };
 		A9B449382A8392AA0029944C /* Orbitron-Bold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Orbitron-Bold.ttf"; sourceTree = "<group>"; };
 		A9B449392A8392AA0029944C /* Lato-Thin.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Lato-Thin.ttf"; sourceTree = "<group>"; };
 		A9B4493A2A8392AB0029944C /* Lato-BlackItalic.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Lato-BlackItalic.ttf"; sourceTree = "<group>"; };
@@ -445,8 +427,6 @@
 		A9B4B97B2A7C0F41000ED67A /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
 		A9B4B97C2A7C0F41000ED67A /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = LaunchScreen.storyboard; sourceTree = "<group>"; };
 		A9B4B97D2A7C0F41000ED67A /* DogeCard.entitlements */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.entitlements; path = DogeCard.entitlements; sourceTree = "<group>"; };
-		A9B4B9802A7C0F41000ED67A /* LoadingContrast.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = LoadingContrast.json; sourceTree = "<group>"; };
-		A9B4B9812A7C0F41000ED67A /* LoadingMix.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = LoadingMix.json; sourceTree = "<group>"; };
 		A9B4B9822A7C0F41000ED67A /* DogeCard-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "DogeCard-Info.plist"; sourceTree = "<group>"; };
 		A9B4B9972A7C0F41000ED67A /* Colors.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Colors.xcassets; sourceTree = "<group>"; };
 		A9B4B9982A7C0F41000ED67A /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
@@ -507,6 +487,28 @@
 		A9BC80412A774D4F00E4A1A0 /* Inter-Black.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Inter-Black.ttf"; sourceTree = "<group>"; };
 		A9BC80422A774D4F00E4A1A0 /* Inter-Thin.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Inter-Thin.ttf"; sourceTree = "<group>"; };
 		A9BC804C2A774F5D00E4A1A0 /* AppDelegate+Configs.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AppDelegate+Configs.swift"; sourceTree = "<group>"; };
+		A9C478EB2AA1DA650055F812 /* LoadingPrimary.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = LoadingPrimary.json; sourceTree = "<group>"; };
+		A9C478EC2AA1DA650055F812 /* LoadingContrast.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = LoadingContrast.json; sourceTree = "<group>"; };
+		A9C478ED2AA1DA650055F812 /* TwinkleContrast.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = TwinkleContrast.json; sourceTree = "<group>"; };
+		A9C478EE2AA1DA650055F812 /* TwinkleSides.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = TwinkleSides.json; sourceTree = "<group>"; };
+		A9C478EF2AA1DA650055F812 /* LoadingMix.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = LoadingMix.json; sourceTree = "<group>"; };
+		A9C478F62AA1DAED0055F812 /* TwinkleCircle.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = TwinkleCircle.json; sourceTree = "<group>"; };
+		A9C478F72AA1DAED0055F812 /* Welcome.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = Welcome.json; sourceTree = "<group>"; };
+		A9C478F82AA1DAED0055F812 /* LoadingContrast.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = LoadingContrast.json; sourceTree = "<group>"; };
+		A9C478F92AA1DAED0055F812 /* LoadingHeart.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = LoadingHeart.json; sourceTree = "<group>"; };
+		A9C478FA2AA1DAED0055F812 /* ApplePay.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = ApplePay.json; sourceTree = "<group>"; };
+		A9C478FB2AA1DAED0055F812 /* TwinkleContrast.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = TwinkleContrast.json; sourceTree = "<group>"; };
+		A9C478FC2AA1DAED0055F812 /* TwinkleSides.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = TwinkleSides.json; sourceTree = "<group>"; };
+		A9C478FD2AA1DAED0055F812 /* LoadingMix.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = LoadingMix.json; sourceTree = "<group>"; };
+		A9C479072AA1DB280055F812 /* TwinkleCircle.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = TwinkleCircle.json; sourceTree = "<group>"; };
+		A9C479082AA1DB280055F812 /* LoadingPrimary.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = LoadingPrimary.json; sourceTree = "<group>"; };
+		A9C479092AA1DB280055F812 /* Welcome.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = Welcome.json; sourceTree = "<group>"; };
+		A9C4790A2AA1DB280055F812 /* LoadingContrast.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = LoadingContrast.json; sourceTree = "<group>"; };
+		A9C4790B2AA1DB280055F812 /* LoadingHeart.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = LoadingHeart.json; sourceTree = "<group>"; };
+		A9C4790C2AA1DB280055F812 /* ApplePay.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = ApplePay.json; sourceTree = "<group>"; };
+		A9C4790D2AA1DB280055F812 /* TwinkleContrast.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = TwinkleContrast.json; sourceTree = "<group>"; };
+		A9C4790E2AA1DB280055F812 /* TwinkleSides.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = TwinkleSides.json; sourceTree = "<group>"; };
+		A9C4790F2AA1DB280055F812 /* LoadingMix.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = LoadingMix.json; sourceTree = "<group>"; };
 		A9CFBB702A9DA7A600269DB8 /* Orbitron-Medium.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Orbitron-Medium.ttf"; sourceTree = "<group>"; };
 		A9CFBB712A9DA7A600269DB8 /* Orbitron-Bold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Orbitron-Bold.ttf"; sourceTree = "<group>"; };
 		A9CFBB742A9DA7B300269DB8 /* Orbitron-Bold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Orbitron-Bold.ttf"; sourceTree = "<group>"; };
@@ -947,7 +949,7 @@
 		A99D2F6E2A9A56F200947773 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
-				A99D2FBF2A9AFD8300947773 /* Lottie */,
+				A9C479062AA1DB280055F812 /* Lottie */,
 				A99D2F6F2A9A56F200947773 /* Localizable.strings */,
 				A99D2F712A9A56F200947773 /* LaunchScreen.storyboard */,
 				A99D2F722A9A56F200947773 /* GoogleService-Info.plist */,
@@ -1027,22 +1029,6 @@
 			path = AppView;
 			sourceTree = "<group>";
 		};
-		A99D2FBF2A9AFD8300947773 /* Lottie */ = {
-			isa = PBXGroup;
-			children = (
-				A99D2FC02A9AFD8300947773 /* TwinkleCircle.json */,
-				A99D2FC12A9AFD8300947773 /* LoadingPrimary.json */,
-				A99D2FC22A9AFD8300947773 /* Welcome.json */,
-				A99D2FC32A9AFD8300947773 /* LoadingContrast.json */,
-				A99D2FC42A9AFD8300947773 /* LoadingHeart.json */,
-				A99D2FC52A9AFD8300947773 /* ApplePay.json */,
-				A99D2FC62A9AFD8300947773 /* TwinkleContrast.json */,
-				A99D2FC72A9AFD8300947773 /* TwinkleSides.json */,
-				A99D2FC82A9AFD8300947773 /* LoadingMix.json */,
-			);
-			path = Lottie;
-			sourceTree = "<group>";
-		};
 		A9B448F22A838A000029944C /* CauseCard */ = {
 			isa = PBXGroup;
 			children = (
@@ -1064,32 +1050,16 @@
 		A9B448F52A838A000029944C /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				A9C478F52AA1DAED0055F812 /* Lottie */,
 				A9B448F62A838A000029944C /* Localizable.strings */,
 				A9B448F82A838A000029944C /* LaunchScreen.storyboard */,
 				A9B448F92A838A000029944C /* CauseCard.entitlements */,
 				741493492A99155200F0DC4D /* GoogleService-Info.plist */,
-				A9B448FA2A838A000029944C /* Lottie */,
 				A9B448FE2A838A000029944C /* CauseCard-Info.plist */,
 				A9B448FF2A838A000029944C /* Fonts */,
 				A9B449092A838A000029944C /* Assets */,
 			);
 			path = Resources;
-			sourceTree = "<group>";
-		};
-		A9B448FA2A838A000029944C /* Lottie */ = {
-			isa = PBXGroup;
-			children = (
-				06DB98F32A8BD80E0071922E /* LoadingPrimary.json */,
-				A9B4492C2A838A5B0029944C /* ApplePay.json */,
-				A9B449312A838A5B0029944C /* LoadingHeart.json */,
-				A9B4492D2A838A5B0029944C /* TwinkleCircle.json */,
-				A9B4492E2A838A5B0029944C /* TwinkleContrast.json */,
-				A9B4492F2A838A5B0029944C /* TwinkleSides.json */,
-				A9B449302A838A5B0029944C /* Welcome.json */,
-				A9B448FC2A838A000029944C /* LoadingContrast.json */,
-				A9B448FD2A838A000029944C /* LoadingMix.json */,
-			);
-			path = Lottie;
 			sourceTree = "<group>";
 		};
 		A9B448FF2A838A000029944C /* Fonts */ = {
@@ -1181,26 +1151,16 @@
 		A9B4B9792A7C0F41000ED67A /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				A9C478EA2AA1DA650055F812 /* Lottie */,
 				A9B4BA0E2A7C1EF8000ED67A /* Fonts */,
 				A9B4B97A2A7C0F41000ED67A /* Localizable.strings */,
 				A9B4B97C2A7C0F41000ED67A /* LaunchScreen.storyboard */,
 				A9B4B97D2A7C0F41000ED67A /* DogeCard.entitlements */,
 				74CB16792A9851EB00C137F3 /* GoogleService-Info.plist */,
-				A9B4B97E2A7C0F41000ED67A /* Lottie */,
 				A9B4B9822A7C0F41000ED67A /* DogeCard-Info.plist */,
 				A9B4B9962A7C0F41000ED67A /* Assets */,
 			);
 			path = Resources;
-			sourceTree = "<group>";
-		};
-		A9B4B97E2A7C0F41000ED67A /* Lottie */ = {
-			isa = PBXGroup;
-			children = (
-				06DB98F12A8BD7F80071922E /* LoadingPrimary.json */,
-				A9B4B9802A7C0F41000ED67A /* LoadingContrast.json */,
-				A9B4B9812A7C0F41000ED67A /* LoadingMix.json */,
-			);
-			path = Lottie;
 			sourceTree = "<group>";
 		};
 		A9B4B9962A7C0F41000ED67A /* Assets */ = {
@@ -1365,6 +1325,49 @@
 				A9BC80422A774D4F00E4A1A0 /* Inter-Thin.ttf */,
 			);
 			path = Fonts;
+			sourceTree = "<group>";
+		};
+		A9C478EA2AA1DA650055F812 /* Lottie */ = {
+			isa = PBXGroup;
+			children = (
+				A9C478EB2AA1DA650055F812 /* LoadingPrimary.json */,
+				A9C478EC2AA1DA650055F812 /* LoadingContrast.json */,
+				A9C478ED2AA1DA650055F812 /* TwinkleContrast.json */,
+				A9C478EE2AA1DA650055F812 /* TwinkleSides.json */,
+				A9C478EF2AA1DA650055F812 /* LoadingMix.json */,
+			);
+			path = Lottie;
+			sourceTree = "<group>";
+		};
+		A9C478F52AA1DAED0055F812 /* Lottie */ = {
+			isa = PBXGroup;
+			children = (
+				A9C478F62AA1DAED0055F812 /* TwinkleCircle.json */,
+				A9C478F72AA1DAED0055F812 /* Welcome.json */,
+				A9C478F82AA1DAED0055F812 /* LoadingContrast.json */,
+				A9C478F92AA1DAED0055F812 /* LoadingHeart.json */,
+				A9C478FA2AA1DAED0055F812 /* ApplePay.json */,
+				A9C478FB2AA1DAED0055F812 /* TwinkleContrast.json */,
+				A9C478FC2AA1DAED0055F812 /* TwinkleSides.json */,
+				A9C478FD2AA1DAED0055F812 /* LoadingMix.json */,
+			);
+			path = Lottie;
+			sourceTree = "<group>";
+		};
+		A9C479062AA1DB280055F812 /* Lottie */ = {
+			isa = PBXGroup;
+			children = (
+				A9C479072AA1DB280055F812 /* TwinkleCircle.json */,
+				A9C479082AA1DB280055F812 /* LoadingPrimary.json */,
+				A9C479092AA1DB280055F812 /* Welcome.json */,
+				A9C4790A2AA1DB280055F812 /* LoadingContrast.json */,
+				A9C4790B2AA1DB280055F812 /* LoadingHeart.json */,
+				A9C4790C2AA1DB280055F812 /* ApplePay.json */,
+				A9C4790D2AA1DB280055F812 /* TwinkleContrast.json */,
+				A9C4790E2AA1DB280055F812 /* TwinkleSides.json */,
+				A9C4790F2AA1DB280055F812 /* LoadingMix.json */,
+			);
+			path = Lottie;
 			sourceTree = "<group>";
 		};
 		A9D6C4AE2A5E62F40038D0BB /* Services */ = {
@@ -1786,21 +1789,20 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A9C479162AA1DB280055F812 /* TwinkleContrast.json in Resources */,
 				A99D2FB32A9A56F200947773 /* Lato-BoldItalic.ttf in Resources */,
+				A9C479172AA1DB280055F812 /* TwinkleSides.json in Resources */,
+				A9C479182AA1DB280055F812 /* LoadingMix.json in Resources */,
 				A99D2FB22A9A56F200947773 /* Montserrat-Black.ttf in Resources */,
-				A99D2FD02A9AFD8300947773 /* TwinkleSides.json in Resources */,
+				A9C479102AA1DB280055F812 /* TwinkleCircle.json in Resources */,
 				A99D2FA82A9A56F200947773 /* Lato-Italic.ttf in Resources */,
 				A99D2FB92A9A56F200947773 /* Images.xcassets in Resources */,
 				A99D2FAC2A9A56F200947773 /* Lato-Bold.ttf in Resources */,
 				A99D2FA92A9A56F200947773 /* Lato-LightItalic.ttf in Resources */,
-				A99D2FCF2A9AFD8300947773 /* TwinkleContrast.json in Resources */,
-				A99D2FCA2A9AFD8300947773 /* LoadingPrimary.json in Resources */,
-				A99D2FCC2A9AFD8300947773 /* LoadingContrast.json in Resources */,
-				A99D2FC92A9AFD8300947773 /* TwinkleCircle.json in Resources */,
 				A99D2FAE2A9A56F200947773 /* Orbitron-Medium.ttf in Resources */,
 				A99D2F532A9A56CF00947773 /* Images.xcassets in Resources */,
+				A9C479112AA1DB280055F812 /* LoadingPrimary.json in Resources */,
 				A99D2FAA2A9A56F200947773 /* Lato-Thin.ttf in Resources */,
-				A99D2FCD2A9AFD8300947773 /* LoadingHeart.json in Resources */,
 				A99D2F9C2A9A56F200947773 /* Localizable.strings in Resources */,
 				A99D2F9D2A9A56F200947773 /* LaunchScreen.storyboard in Resources */,
 				A99D2FB52A9A56F200947773 /* Lato-Medium.ttf in Resources */,
@@ -1808,14 +1810,15 @@
 				A99D2FB42A9A56F200947773 /* Lato-Light.ttf in Resources */,
 				A99D2FB62A9A56F200947773 /* Lato-ThinItalic.ttf in Resources */,
 				A99D2FAF2A9A56F200947773 /* Lato-Regular.ttf in Resources */,
+				A9C479122AA1DB280055F812 /* Welcome.json in Resources */,
+				A9C479142AA1DB280055F812 /* LoadingHeart.json in Resources */,
 				A99D2FB82A9A56F200947773 /* Colors.xcassets in Resources */,
+				A9C479132AA1DB280055F812 /* LoadingContrast.json in Resources */,
+				A9C479152AA1DB280055F812 /* ApplePay.json in Resources */,
 				A99D2FAB2A9A56F200947773 /* Montserrat-Medium.ttf in Resources */,
-				A99D2FCB2A9AFD8300947773 /* Welcome.json in Resources */,
 				A99D2F9B2A9A56F200947773 /* PrideCardConfig.xcconfig in Resources */,
 				A99D2FB12A9A56F200947773 /* Lato-MediumItalic.ttf in Resources */,
-				A99D2FD12A9AFD8300947773 /* LoadingMix.json in Resources */,
 				A99D2F9E2A9A56F200947773 /* GoogleService-Info.plist in Resources */,
-				A99D2FCE2A9AFD8300947773 /* ApplePay.json in Resources */,
 				A99D2FB72A9A56F200947773 /* Orbitron-Bold.ttf in Resources */,
 				A99D2FAD2A9A56F200947773 /* Lato-Black.ttf in Resources */,
 			);
@@ -1825,37 +1828,36 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				06DB98F42A8BD80E0071922E /* LoadingPrimary.json in Resources */,
-				A9B449362A838A5B0029944C /* Welcome.json in Resources */,
 				A9B4494B2A8392AB0029944C /* Lato-Light.ttf in Resources */,
 				A9B449522A8392AB0029944C /* Lato-Italic.ttf in Resources */,
-				A9B449372A838A5B0029944C /* LoadingHeart.json in Resources */,
-				A9B4491A2A838A010029944C /* LoadingMix.json in Resources */,
+				A9C478FE2AA1DAED0055F812 /* TwinkleCircle.json in Resources */,
+				A9C479042AA1DAED0055F812 /* TwinkleSides.json in Resources */,
 				A9B449542A8392AB0029944C /* Lato-Medium.ttf in Resources */,
 				A9B449512A8392AB0029944C /* Lato-MediumItalic.ttf in Resources */,
+				A9C479012AA1DAED0055F812 /* LoadingHeart.json in Resources */,
 				A9B449502A8392AB0029944C /* Lato-Black.ttf in Resources */,
 				A9B449252A838A010029944C /* Colors.xcassets in Resources */,
+				A9C479032AA1DAED0055F812 /* TwinkleContrast.json in Resources */,
 				A9B449262A838A010029944C /* Images.xcassets in Resources */,
-				A9B449352A838A5B0029944C /* TwinkleSides.json in Resources */,
+				A9C478FF2AA1DAED0055F812 /* Welcome.json in Resources */,
 				A9B449152A838A010029944C /* CauseCardConfig.xcconfig in Resources */,
-				A9B449342A838A5B0029944C /* TwinkleContrast.json in Resources */,
 				A9B448E62A8389B90029944C /* Images.xcassets in Resources */,
 				A9B4494C2A8392AB0029944C /* Lato-LightItalic.ttf in Resources */,
 				A9B449572A8392AB0029944C /* Montserrat-Black.ttf in Resources */,
 				A9B449562A8392AB0029944C /* Montserrat-Medium.ttf in Resources */,
+				A9C479052AA1DAED0055F812 /* LoadingMix.json in Resources */,
 				A9B4494D2A8392AB0029944C /* Lato-BoldItalic.ttf in Resources */,
 				A9B449552A8392AB0029944C /* Lato-ThinItalic.ttf in Resources */,
+				A9C479002AA1DAED0055F812 /* LoadingContrast.json in Resources */,
 				A9B449532A8392AB0029944C /* Lato-Bold.ttf in Resources */,
 				A9B449482A8392AB0029944C /* Orbitron-Bold.ttf in Resources */,
 				A9B449492A8392AB0029944C /* Lato-Thin.ttf in Resources */,
 				A9B449172A838A010029944C /* LaunchScreen.storyboard in Resources */,
 				A9B4494F2A8392AB0029944C /* Orbitron-Medium.ttf in Resources */,
 				7414934A2A99155200F0DC4D /* GoogleService-Info.plist in Resources */,
-				A9B449332A838A5B0029944C /* TwinkleCircle.json in Resources */,
 				A9B4494A2A8392AB0029944C /* Lato-BlackItalic.ttf in Resources */,
-				A9B449192A838A010029944C /* LoadingContrast.json in Resources */,
+				A9C479022AA1DAED0055F812 /* ApplePay.json in Resources */,
 				A9B449162A838A010029944C /* Localizable.strings in Resources */,
-				A9B449322A838A5B0029944C /* ApplePay.json in Resources */,
 				A9B4494E2A8392AB0029944C /* Lato-Regular.ttf in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1872,17 +1874,19 @@
 				A9B4BA2C2A7C1EF8000ED67A /* Lato-Medium.ttf in Resources */,
 				A9B4BA0D2A7C107D000ED67A /* Images.xcassets in Resources */,
 				A9B4B9EF2A7C0F41000ED67A /* Colors.xcassets in Resources */,
+				A9C478F12AA1DA660055F812 /* LoadingContrast.json in Resources */,
 				A9B4BA212A7C1EF8000ED67A /* Lato-Thin.ttf in Resources */,
+				A9C478F22AA1DA660055F812 /* TwinkleContrast.json in Resources */,
 				A9B4BA2B2A7C1EF8000ED67A /* Lato-Light.ttf in Resources */,
 				A9B4BA232A7C1EF8000ED67A /* Lato-Bold.ttf in Resources */,
-				A9B4B9B32A7C0F41000ED67A /* LoadingMix.json in Resources */,
+				A9C478F42AA1DA660055F812 /* LoadingMix.json in Resources */,
+				A9C478F02AA1DA660055F812 /* LoadingPrimary.json in Resources */,
 				A9B4BA252A7C1EF8000ED67A /* Orbitron-Medium.ttf in Resources */,
 				A9B4BA282A7C1EF8000ED67A /* Lato-MediumItalic.ttf in Resources */,
-				06DB98F22A8BD7F80071922E /* LoadingPrimary.json in Resources */,
 				A9B4B9F22A7C0F41000ED67A /* Images.xcassets in Resources */,
 				A9B4BA272A7C1EF8000ED67A /* Lato-BlackItalic.ttf in Resources */,
 				A9B4BA292A7C1EF8000ED67A /* Montserrat-Black.ttf in Resources */,
-				A9B4B9B02A7C0F41000ED67A /* LoadingContrast.json in Resources */,
+				A9C478F32AA1DA660055F812 /* TwinkleSides.json in Resources */,
 				A9B4BA262A7C1EF8000ED67A /* Lato-Regular.ttf in Resources */,
 				A9B4BA2D2A7C1EF8000ED67A /* Lato-ThinItalic.ttf in Resources */,
 				A9B4BA1F2A7C1EF8000ED67A /* Lato-Italic.ttf in Resources */,
