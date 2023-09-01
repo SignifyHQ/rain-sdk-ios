@@ -40,7 +40,7 @@ let package = Package(
     .target(
       name: "AccountDomain",
       dependencies: [
-        "LFServices", "Factory"
+        "LFServices", "Factory", "NetSpendDomain"
       ]
     ),
     .target(
