@@ -40,6 +40,12 @@ public struct ConnectedAccountsView: View {
           VerifyCardView(cardId: id)
         }
       }
+      .popup(item: $viewModel.popup) { item in
+        switch item {
+        case let .delete(data):
+          deletePopup(linkedSource: data)
+        }
+      }
   }
 
   private var content: some View {
@@ -72,9 +78,26 @@ public struct ConnectedAccountsView: View {
         ConnectedAccountRow(sourceData: item) {
           viewModel.verify(sourceData: item)
         } deleteAction: {
-          viewModel.deleteAccount(id: item.sourceId, sourceType: item.sourceType.rawValue)
+          viewModel.openDeletePopup(linkedSource: item)
         }
       }
     }
+  }
+  
+  func deletePopup(linkedSource: APILinkedSourceData) -> some View {
+    LiquidityAlert(
+      title: LFLocalizable.ConnectedView.DeletePopup.title.uppercased(),
+      message: LFLocalizable.ConnectedView.DeletePopup.message,
+      primary: .init(text: LFLocalizable.ConnectedView.DeletePopup.primaryButton) {
+        viewModel.deleteAccount(
+          id: linkedSource.sourceId,
+          sourceType: linkedSource.sourceType.rawValue
+        )
+      },
+      secondary: .init(text: LFLocalizable.Button.Back.title) {
+        viewModel.hidePopup()
+      },
+      isLoading: $viewModel.isDeleting
+    )
   }
 }

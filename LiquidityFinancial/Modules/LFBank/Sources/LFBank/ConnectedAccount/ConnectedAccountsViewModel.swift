@@ -18,7 +18,9 @@ class ConnectedAccountsViewModel: ObservableObject {
   
   @Published var linkedAccount: [APILinkedSourceData] = []
   @Published var isLoading = false
+  @Published var isDeleting = false
   @Published var navigation: Navigation?
+  @Published var popup: Popup?
   
   private var cancellable: Set<AnyCancellable> = []
   
@@ -59,10 +61,21 @@ extension ConnectedAccountsViewModel {
     navigation = .addBankWithDebit
   }
   
+  func openDeletePopup(linkedSource: APILinkedSourceData) {
+    popup = .delete(linkedSource: linkedSource)
+  }
+  
+  func hidePopup() {
+    popup = nil
+  }
+  
   func deleteAccount(id: String, sourceType: String) {
-    self.isLoading = true
+    self.isDeleting = true
     Task { @MainActor in
-      defer { isLoading = false }
+      defer {
+        isDeleting = false
+        hidePopup()
+      }
       do {
         let sessionID = accountDataManager.sessionID
         let response = try await externalFundingRepository.deleteLinkedAccount(
@@ -88,5 +101,9 @@ extension ConnectedAccountsViewModel {
   enum Navigation {
     case verifyAccount(id: String)
     case addBankWithDebit
+  }
+  
+  enum Popup {
+    case delete(linkedSource: APILinkedSourceData)
   }
 }

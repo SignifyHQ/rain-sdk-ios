@@ -700,6 +700,14 @@ public enum LFLocalizable {
   public enum ConnectedView {
     /// Connected Accounts
     public static let title = LFLocalizable.tr("Localizable", "connectedView.title", fallback: "Connected Accounts")
+    public enum DeletePopup {
+      /// Are you sure you want to remove this bank account/debit card?
+      public static let message = LFLocalizable.tr("Localizable", "connectedView.delete_popup.message", fallback: "Are you sure you want to remove this bank account/debit card?")
+      /// Delete
+      public static let primaryButton = LFLocalizable.tr("Localizable", "connectedView.delete_popup.primary_button", fallback: "Delete")
+      /// Remove this bank account/debit card
+      public static let title = LFLocalizable.tr("Localizable", "connectedView.delete_popup.title", fallback: "Remove this bank account/debit card")
+    }
     public enum Row {
       /// %@ **** %@
       public static func externalBank(_ p1: Any, _ p2: Any) -> String {

@@ -493,6 +493,9 @@ https://mn.gov/commerce/money/investments/cryptocurrency/. \n\n\n\n\n\n\n";
 "connectedView.title" = "Connected Accounts";
 "connectedView.row.debitCard" = "Debit Card **** %@";
 "connectedView.row.externalBank" = "%@ **** %@";
+"connectedView.delete_popup.title" = "Remove this bank account/debit card";
+"connectedView.delete_popup.message" = "Are you sure you want to remove this bank account/debit card?";
+"connectedView.delete_popup.primary_button" = "Delete";
 
 // ManualSetup DirectDeposit
 "directDeposit.form.title" = "DIRECT DEPOSIT FORM";
