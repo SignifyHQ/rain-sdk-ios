@@ -3,6 +3,7 @@ import Combine
 import Alamofire
 import AuthorizationManager
 import Factory
+import UniformTypeIdentifiers
 
 public protocol CoreNetworkType {
   
@@ -14,6 +15,7 @@ public protocol CoreNetworkType {
   func request(_ route: R) async throws -> Response
   func request<T>(_ route: R, target: T.Type, decoder: JSONDecoder) async throws -> T where T: Decodable
   func request<T, E>(_ route: R, target: T.Type, failure: E.Type, decoder: JSONDecoder) async throws -> T where T: Decodable, E: DesignatedError
+  func download(_ route: R, fileName: String, type: UTType) async throws -> URL
 }
 
 public final class LFCoreNetwork<R: LFRoute>: CoreNetworkType {
@@ -94,6 +96,20 @@ public final class LFCoreNetwork<R: LFRoute>: CoreNetworkType {
     throw LFNetworkError.custom(message: response.error?.localizedDescription ?? "Unknown error")
   }
   
+  public func download(_ route: R, fileName: String, type: UTType = .pdf) async throws -> URL {
+    let request = LFURLRequest(route: route, auth: authorizationManager)
+    let downloadRequest = session.download(request, interceptor: buildInterceptor(from: route)) { temporaryURL, _ in
+      let fileManager = FileManager.default
+      let options: DownloadRequest.Options = [.createIntermediateDirectories, .removePreviousFile]
+      
+      if let directoryURL = fileManager.urls(for: .documentDirectory, in: .userDomainMask).first {
+        return (directoryURL.appendingPathComponent(fileName, conformingTo: type), options)
+      }
+      
+      return (temporaryURL, options)
+    }
+    return try await downloadRequest.validate().serializingDownloadedFileURL().value
+  }
 }
 
 extension LFCoreNetwork: AuthenticatorDelegate {

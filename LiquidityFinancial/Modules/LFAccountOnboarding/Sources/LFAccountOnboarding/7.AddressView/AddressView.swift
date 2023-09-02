@@ -74,6 +74,14 @@ struct AddressView: View {
     .popup(item: $viewModel.toastMessage, style: .toast) {
       ToastView(toastMessage: $0)
     }
+    .popup(item: $viewModel.popup) { item in
+      switch item {
+      case let .waitlist(message):
+        waitlistPopup(message: message)
+      case .waitlistJoined:
+        waitlistJoinedPopup
+      }
+    }
     .navigationLink(item: $viewModel.navigation) { navigation in
       switch navigation {
       case .question(let questionsEntity):
@@ -290,6 +298,29 @@ private extension AddressView {
           keyboardFocus = nextFocus
         }
     }
+  }
+  
+  private func waitlistPopup(message: String) -> some View {
+    LiquidityAlert(
+      title: LFLocalizable.accountUpdate,
+      message: message,
+      primary: .init(text: LFLocalizable.joinWaitlist) {
+        viewModel.actionJoinWaitList()
+      },
+      secondary: .init(text: LFLocalizable.cancelAccount) {
+        viewModel.actionLogout()
+      }
+    )
+  }
+  
+  private var waitlistJoinedPopup: some View {
+    LiquidityAlert(
+      title: LFLocalizable.waitlistJoinedTitle,
+      message: LFLocalizable.waitlistJoinedMessage,
+      primary: .init(text: LFLocalizable.Button.Ok.title.uppercased()) {
+        viewModel.actionLogout()
+      }
+    )
   }
 }
 

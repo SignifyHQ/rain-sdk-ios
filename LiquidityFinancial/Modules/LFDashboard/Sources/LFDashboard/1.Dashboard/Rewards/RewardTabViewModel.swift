@@ -23,16 +23,18 @@ class RewardTabViewModel: ObservableObject {
   
   private var cancellable: Set<AnyCancellable> = []
   
-  init(accounts: (accountsFiat: Published<[LFAccount]>.Publisher, isLoading: Published<Bool>.Publisher)) {
-    accounts.accountsFiat
+  init(accounts: (accountsCrypto: Published<[LFAccount]>.Publisher, isLoading: Published<Bool>.Publisher)) {
+    accounts.accountsCrypto
       .receive(on: DispatchQueue.main)
       .sink { [weak self] accounts in
         if let account = accounts.first {
           self?.account = account
           self?.assetModel = AssetModel(
+            id: account.id,
             type: AssetType(rawValue: account.currency),
             availableBalance: account.availableBalance,
-            availableUsdBalance: account.availableUsdBalance
+            availableUsdBalance: account.availableUsdBalance,
+            externalAccountId: account.externalAccountId
           )
           self?.accountDataManager.cryptoAccountID = account.id
           self?.fetchAllTransactions()

@@ -57,9 +57,11 @@ final class CashViewModel: ObservableObject {
       .sink { [weak self] accounts in
         self?.assets = accounts.map {
           AssetModel(
+            id: $0.id,
             type: AssetType(rawValue: $0.currency.uppercased()),
             availableBalance: $0.availableBalance,
-            availableUsdBalance: $0.availableUsdBalance
+            availableUsdBalance: $0.availableUsdBalance,
+            externalAccountId: $0.externalAccountId
           )
         }
         if let account = accounts.first { // TODO: Temp Just get one

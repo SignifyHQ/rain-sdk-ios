@@ -136,9 +136,11 @@ public extension DashboardRepository {
         let accounts = fiatAccounts + cryptoAccounts
         let assets = accounts.map {
           AssetModel(
+            id: $0.id,
             type: AssetType(rawValue: $0.currency),
             availableBalance: $0.availableBalance,
-            availableUsdBalance: $0.availableUsdBalance
+            availableUsdBalance: $0.availableUsdBalance,
+            externalAccountId: $0.externalAccountId
           )
         }
         self.fiatAccounts = fiatAccounts

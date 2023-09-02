@@ -5,6 +5,7 @@ import LFLocalizable
 import LFServices
 import NetspendSdk
 import LFBank
+import BaseDashboard
 
 struct AccountsView: View {
   @Environment(\.scenePhase) var scenePhase
@@ -36,6 +37,16 @@ struct AccountsView: View {
             viewModel.navigation = nil
           }
           .navigationBarHidden(true)
+        case .taxes:
+          TaxesView()
+        case .wallet(asset: let asset):
+          ReceiveCryptoView(asset: asset)
+        }
+      }
+      .sheet(isPresented: $viewModel.openLegal) {
+        if let url = URL(string: LFUtility.termsURL) {
+          WebView(url: url)
+            .ignoresSafeArea()
         }
       }
       .popup(item: $viewModel.toastMessage, style: .toast) {
@@ -50,6 +61,7 @@ struct AccountsView: View {
 
 // MARK: - View Components
 private extension AccountsView {
+  @ViewBuilder
   var content: some View {
     ScrollView {
       VStack(alignment: .leading, spacing: 24) {
@@ -65,6 +77,13 @@ private extension AccountsView {
         }
         section(title: LFLocalizable.AccountView.cardAccountDetails(LFUtility.appName)) {
           accountDetailView
+        }
+        if viewModel.assets.isNotEmpty {
+          section(title: LFLocalizable.AccountView.wallets) {
+            ForEach(viewModel.assets, id: \.externalAccountId) { asset in
+              assetCell(asset: asset)
+            }
+          }
         }
         section(title: LFLocalizable.AccountView.shortcuts) {
           shortcutSection
@@ -185,14 +204,14 @@ private extension AccountsView {
         title: LFLocalizable.AccountView.taxes,
         value: nil
       ) {
-        // TODO: Will do later
+        viewModel.openTaxes()
       }
       ArrowButton(
         image: GenImages.CommonImages.Accounts.help.swiftUIImage,
         title: LFLocalizable.AccountView.helpSupport,
         value: nil
       ) {
-        // TODO: Will do later
+        viewModel.openIntercomService()
       }
       if !viewModel.notificationsEnabled {
         ArrowButton(
@@ -208,7 +227,7 @@ private extension AccountsView {
         title: LFLocalizable.AccountView.legal,
         value: nil
       ) {
-        // TODO: Will do later
+        viewModel.openLegal.toggle()
       }
       ArrowButton(
         image: GenImages.CommonImages.personAndBackgroundDotted.swiftUIImage,
@@ -243,3 +262,31 @@ private extension AccountsView {
     }
   }
 }
+
+  // MARK: - View Components
+private extension AccountsView {
+  @ViewBuilder func assetCell(asset: AssetModel) -> some View {
+    if let assetType = asset.type {
+      Button {
+        viewModel.openWalletAddress(asset: asset)
+      } label: {
+        HStack(spacing: 8) {
+          assetType.image
+          Text(assetType.title)
+            .foregroundColor(Colors.label.swiftUIColor)
+            .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.medium.value))
+          Spacer()
+          HStack(spacing: 0) {
+            Text("********\(viewModel.getSubWalletAddress(asset: asset))")
+              .foregroundColor(Colors.label.swiftUIColor)
+              .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.small.value))
+          }
+        }
+        .padding(.horizontal, 16)
+        .frame(height: 56)
+        .background(Colors.secondaryBackground.swiftUIColor.cornerRadius(9))
+      }
+    }
+  }
+}
+

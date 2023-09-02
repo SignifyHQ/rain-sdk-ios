@@ -7,7 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		0602D46E2AA1E8C000260DB1 /* LoadingPrimary.json in Resources */ = {isa = PBXBuildFile; fileRef = 0602D46D2AA1E8C000260DB1 /* LoadingPrimary.json */; };
 		0603BD712A71191B00347DB2 /* VGSShowSDK in Frameworks */ = {isa = PBXBuildFile; productRef = 0603BD702A71191B00347DB2 /* VGSShowSDK */; };
 		06D40BF82A625F5400EADB75 /* LoadingMix.json in Resources */ = {isa = PBXBuildFile; fileRef = 06D40BF72A625F5400EADB75 /* LoadingMix.json */; };
 		06D40BFC2A6260B300EADB75 /* LoadingContrast.json in Resources */ = {isa = PBXBuildFile; fileRef = 06D40BFB2A6260B300EADB75 /* LoadingContrast.json */; };
@@ -240,6 +239,15 @@
 		A9B912EE2A6B881100ABD87B /* SmartyStreets in Frameworks */ = {isa = PBXBuildFile; productRef = A9B912ED2A6B881100ABD87B /* SmartyStreets */; };
 		A9B912F32A6B898C00ABD87B /* OnboardingContainer+Injection.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9B912F22A6B898C00ABD87B /* OnboardingContainer+Injection.swift */; };
 		A9B912F42A6B898C00ABD87B /* OnboardingContainer+Injection.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9B912F22A6B898C00ABD87B /* OnboardingContainer+Injection.swift */; };
+		A9BBDD2C2AA341720022B2AC /* TwinkleCircle.json in Resources */ = {isa = PBXBuildFile; fileRef = A9BBDD242AA341720022B2AC /* TwinkleCircle.json */; };
+		A9BBDD2D2AA341720022B2AC /* Welcome.json in Resources */ = {isa = PBXBuildFile; fileRef = A9BBDD252AA341720022B2AC /* Welcome.json */; };
+		A9BBDD2E2AA341720022B2AC /* LoadingContrast.json in Resources */ = {isa = PBXBuildFile; fileRef = A9BBDD262AA341720022B2AC /* LoadingContrast.json */; };
+		A9BBDD2F2AA341720022B2AC /* LoadingHeart.json in Resources */ = {isa = PBXBuildFile; fileRef = A9BBDD272AA341720022B2AC /* LoadingHeart.json */; };
+		A9BBDD302AA341720022B2AC /* ApplePay.json in Resources */ = {isa = PBXBuildFile; fileRef = A9BBDD282AA341720022B2AC /* ApplePay.json */; };
+		A9BBDD312AA341720022B2AC /* TwinkleContrast.json in Resources */ = {isa = PBXBuildFile; fileRef = A9BBDD292AA341720022B2AC /* TwinkleContrast.json */; };
+		A9BBDD322AA341720022B2AC /* TwinkleSides.json in Resources */ = {isa = PBXBuildFile; fileRef = A9BBDD2A2AA341720022B2AC /* TwinkleSides.json */; };
+		A9BBDD332AA341720022B2AC /* LoadingMix.json in Resources */ = {isa = PBXBuildFile; fileRef = A9BBDD2B2AA341720022B2AC /* LoadingMix.json */; };
+		A9BBDD352AA341BB0022B2AC /* LoadingPrimary.json in Resources */ = {isa = PBXBuildFile; fileRef = A9BBDD342AA341BB0022B2AC /* LoadingPrimary.json */; };
 		A9BC80272A774D0500E4A1A0 /* Chivo-SemiBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = A9BC80152A774D0400E4A1A0 /* Chivo-SemiBold.ttf */; };
 		A9BC80282A774D0500E4A1A0 /* Chivo-Italic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = A9BC80162A774D0400E4A1A0 /* Chivo-Italic.ttf */; };
 		A9BC80292A774D0500E4A1A0 /* Chivo-Thin.ttf in Resources */ = {isa = PBXBuildFile; fileRef = A9BC80172A774D0400E4A1A0 /* Chivo-Thin.ttf */; };
@@ -274,14 +282,6 @@
 		A9C478F22AA1DA660055F812 /* TwinkleContrast.json in Resources */ = {isa = PBXBuildFile; fileRef = A9C478ED2AA1DA650055F812 /* TwinkleContrast.json */; };
 		A9C478F32AA1DA660055F812 /* TwinkleSides.json in Resources */ = {isa = PBXBuildFile; fileRef = A9C478EE2AA1DA650055F812 /* TwinkleSides.json */; };
 		A9C478F42AA1DA660055F812 /* LoadingMix.json in Resources */ = {isa = PBXBuildFile; fileRef = A9C478EF2AA1DA650055F812 /* LoadingMix.json */; };
-		A9C478FE2AA1DAED0055F812 /* TwinkleCircle.json in Resources */ = {isa = PBXBuildFile; fileRef = A9C478F62AA1DAED0055F812 /* TwinkleCircle.json */; };
-		A9C478FF2AA1DAED0055F812 /* Welcome.json in Resources */ = {isa = PBXBuildFile; fileRef = A9C478F72AA1DAED0055F812 /* Welcome.json */; };
-		A9C479002AA1DAED0055F812 /* LoadingContrast.json in Resources */ = {isa = PBXBuildFile; fileRef = A9C478F82AA1DAED0055F812 /* LoadingContrast.json */; };
-		A9C479012AA1DAED0055F812 /* LoadingHeart.json in Resources */ = {isa = PBXBuildFile; fileRef = A9C478F92AA1DAED0055F812 /* LoadingHeart.json */; };
-		A9C479022AA1DAED0055F812 /* ApplePay.json in Resources */ = {isa = PBXBuildFile; fileRef = A9C478FA2AA1DAED0055F812 /* ApplePay.json */; };
-		A9C479032AA1DAED0055F812 /* TwinkleContrast.json in Resources */ = {isa = PBXBuildFile; fileRef = A9C478FB2AA1DAED0055F812 /* TwinkleContrast.json */; };
-		A9C479042AA1DAED0055F812 /* TwinkleSides.json in Resources */ = {isa = PBXBuildFile; fileRef = A9C478FC2AA1DAED0055F812 /* TwinkleSides.json */; };
-		A9C479052AA1DAED0055F812 /* LoadingMix.json in Resources */ = {isa = PBXBuildFile; fileRef = A9C478FD2AA1DAED0055F812 /* LoadingMix.json */; };
 		A9C479102AA1DB280055F812 /* TwinkleCircle.json in Resources */ = {isa = PBXBuildFile; fileRef = A9C479072AA1DB280055F812 /* TwinkleCircle.json */; };
 		A9C479112AA1DB280055F812 /* LoadingPrimary.json in Resources */ = {isa = PBXBuildFile; fileRef = A9C479082AA1DB280055F812 /* LoadingPrimary.json */; };
 		A9C479122AA1DB280055F812 /* Welcome.json in Resources */ = {isa = PBXBuildFile; fileRef = A9C479092AA1DB280055F812 /* Welcome.json */; };
@@ -318,7 +318,6 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		0602D46D2AA1E8C000260DB1 /* LoadingPrimary.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; name = LoadingPrimary.json; path = "../../../../../../ios-liquidity/Liquidity/Liquidity/CauseCard/Resources/Lottie/LoadingPrimary.json"; sourceTree = "<group>"; };
 		0697F3D32A8CCC3B006C867E /* LFTransaction */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = LFTransaction; path = Modules/LFTransaction; sourceTree = "<group>"; };
 		06CFE6B72A7263B400B494A2 /* LFCard */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = LFCard; path = Modules/LFCard; sourceTree = "<group>"; };
 		06D40BF72A625F5400EADB75 /* LoadingMix.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = LoadingMix.json; sourceTree = "<group>"; };
@@ -461,6 +460,15 @@
 		A9B912DB2A6B871300ABD87B /* DashboardContainer+Injection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DashboardContainer+Injection.swift"; sourceTree = "<group>"; };
 		A9B912EF2A6B891000ABD87B /* AppCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppCoordinator.swift; sourceTree = "<group>"; };
 		A9B912F22A6B898C00ABD87B /* OnboardingContainer+Injection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "OnboardingContainer+Injection.swift"; sourceTree = "<group>"; };
+		A9BBDD242AA341720022B2AC /* TwinkleCircle.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = TwinkleCircle.json; sourceTree = "<group>"; };
+		A9BBDD252AA341720022B2AC /* Welcome.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = Welcome.json; sourceTree = "<group>"; };
+		A9BBDD262AA341720022B2AC /* LoadingContrast.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = LoadingContrast.json; sourceTree = "<group>"; };
+		A9BBDD272AA341720022B2AC /* LoadingHeart.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = LoadingHeart.json; sourceTree = "<group>"; };
+		A9BBDD282AA341720022B2AC /* ApplePay.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = ApplePay.json; sourceTree = "<group>"; };
+		A9BBDD292AA341720022B2AC /* TwinkleContrast.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = TwinkleContrast.json; sourceTree = "<group>"; };
+		A9BBDD2A2AA341720022B2AC /* TwinkleSides.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = TwinkleSides.json; sourceTree = "<group>"; };
+		A9BBDD2B2AA341720022B2AC /* LoadingMix.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = LoadingMix.json; sourceTree = "<group>"; };
+		A9BBDD342AA341BB0022B2AC /* LoadingPrimary.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = LoadingPrimary.json; sourceTree = "<group>"; };
 		A9BC80152A774D0400E4A1A0 /* Chivo-SemiBold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Chivo-SemiBold.ttf"; sourceTree = "<group>"; };
 		A9BC80162A774D0400E4A1A0 /* Chivo-Italic.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Chivo-Italic.ttf"; sourceTree = "<group>"; };
 		A9BC80172A774D0400E4A1A0 /* Chivo-Thin.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Chivo-Thin.ttf"; sourceTree = "<group>"; };
@@ -494,14 +502,6 @@
 		A9C478ED2AA1DA650055F812 /* TwinkleContrast.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = TwinkleContrast.json; sourceTree = "<group>"; };
 		A9C478EE2AA1DA650055F812 /* TwinkleSides.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = TwinkleSides.json; sourceTree = "<group>"; };
 		A9C478EF2AA1DA650055F812 /* LoadingMix.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = LoadingMix.json; sourceTree = "<group>"; };
-		A9C478F62AA1DAED0055F812 /* TwinkleCircle.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = TwinkleCircle.json; sourceTree = "<group>"; };
-		A9C478F72AA1DAED0055F812 /* Welcome.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = Welcome.json; sourceTree = "<group>"; };
-		A9C478F82AA1DAED0055F812 /* LoadingContrast.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = LoadingContrast.json; sourceTree = "<group>"; };
-		A9C478F92AA1DAED0055F812 /* LoadingHeart.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = LoadingHeart.json; sourceTree = "<group>"; };
-		A9C478FA2AA1DAED0055F812 /* ApplePay.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = ApplePay.json; sourceTree = "<group>"; };
-		A9C478FB2AA1DAED0055F812 /* TwinkleContrast.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = TwinkleContrast.json; sourceTree = "<group>"; };
-		A9C478FC2AA1DAED0055F812 /* TwinkleSides.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = TwinkleSides.json; sourceTree = "<group>"; };
-		A9C478FD2AA1DAED0055F812 /* LoadingMix.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = LoadingMix.json; sourceTree = "<group>"; };
 		A9C479072AA1DB280055F812 /* TwinkleCircle.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = TwinkleCircle.json; sourceTree = "<group>"; };
 		A9C479082AA1DB280055F812 /* LoadingPrimary.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = LoadingPrimary.json; sourceTree = "<group>"; };
 		A9C479092AA1DB280055F812 /* Welcome.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = Welcome.json; sourceTree = "<group>"; };
@@ -1052,7 +1052,7 @@
 		A9B448F52A838A000029944C /* Resources */ = {
 			isa = PBXGroup;
 			children = (
-				A9C478F52AA1DAED0055F812 /* Lottie */,
+				A9BBDD232AA341720022B2AC /* Lottie */,
 				A9B448F62A838A000029944C /* Localizable.strings */,
 				A9B448F82A838A000029944C /* LaunchScreen.storyboard */,
 				A9B448F92A838A000029944C /* CauseCard.entitlements */,
@@ -1284,6 +1284,22 @@
 			path = DependenciesInjection;
 			sourceTree = "<group>";
 		};
+		A9BBDD232AA341720022B2AC /* Lottie */ = {
+			isa = PBXGroup;
+			children = (
+				A9BBDD342AA341BB0022B2AC /* LoadingPrimary.json */,
+				A9BBDD242AA341720022B2AC /* TwinkleCircle.json */,
+				A9BBDD252AA341720022B2AC /* Welcome.json */,
+				A9BBDD262AA341720022B2AC /* LoadingContrast.json */,
+				A9BBDD272AA341720022B2AC /* LoadingHeart.json */,
+				A9BBDD282AA341720022B2AC /* ApplePay.json */,
+				A9BBDD292AA341720022B2AC /* TwinkleContrast.json */,
+				A9BBDD2A2AA341720022B2AC /* TwinkleSides.json */,
+				A9BBDD2B2AA341720022B2AC /* LoadingMix.json */,
+			);
+			path = Lottie;
+			sourceTree = "<group>";
+		};
 		A9BC80142A774CEC00E4A1A0 /* Fonts */ = {
 			isa = PBXGroup;
 			children = (
@@ -1337,22 +1353,6 @@
 				A9C478ED2AA1DA650055F812 /* TwinkleContrast.json */,
 				A9C478EE2AA1DA650055F812 /* TwinkleSides.json */,
 				A9C478EF2AA1DA650055F812 /* LoadingMix.json */,
-			);
-			path = Lottie;
-			sourceTree = "<group>";
-		};
-		A9C478F52AA1DAED0055F812 /* Lottie */ = {
-			isa = PBXGroup;
-			children = (
-				0602D46D2AA1E8C000260DB1 /* LoadingPrimary.json */,
-				A9C478F62AA1DAED0055F812 /* TwinkleCircle.json */,
-				A9C478F72AA1DAED0055F812 /* Welcome.json */,
-				A9C478F82AA1DAED0055F812 /* LoadingContrast.json */,
-				A9C478F92AA1DAED0055F812 /* LoadingHeart.json */,
-				A9C478FA2AA1DAED0055F812 /* ApplePay.json */,
-				A9C478FB2AA1DAED0055F812 /* TwinkleContrast.json */,
-				A9C478FC2AA1DAED0055F812 /* TwinkleSides.json */,
-				A9C478FD2AA1DAED0055F812 /* LoadingMix.json */,
 			);
 			path = Lottie;
 			sourceTree = "<group>";
@@ -1833,25 +1833,25 @@
 			files = (
 				A9B4494B2A8392AB0029944C /* Lato-Light.ttf in Resources */,
 				A9B449522A8392AB0029944C /* Lato-Italic.ttf in Resources */,
-				A9C478FE2AA1DAED0055F812 /* TwinkleCircle.json in Resources */,
-				A9C479042AA1DAED0055F812 /* TwinkleSides.json in Resources */,
+				A9BBDD2C2AA341720022B2AC /* TwinkleCircle.json in Resources */,
+				A9BBDD322AA341720022B2AC /* TwinkleSides.json in Resources */,
 				A9B449542A8392AB0029944C /* Lato-Medium.ttf in Resources */,
 				A9B449512A8392AB0029944C /* Lato-MediumItalic.ttf in Resources */,
-				A9C479012AA1DAED0055F812 /* LoadingHeart.json in Resources */,
+				A9BBDD2F2AA341720022B2AC /* LoadingHeart.json in Resources */,
 				A9B449502A8392AB0029944C /* Lato-Black.ttf in Resources */,
 				A9B449252A838A010029944C /* Colors.xcassets in Resources */,
-				A9C479032AA1DAED0055F812 /* TwinkleContrast.json in Resources */,
+				A9BBDD312AA341720022B2AC /* TwinkleContrast.json in Resources */,
 				A9B449262A838A010029944C /* Images.xcassets in Resources */,
-				A9C478FF2AA1DAED0055F812 /* Welcome.json in Resources */,
+				A9BBDD2D2AA341720022B2AC /* Welcome.json in Resources */,
 				A9B449152A838A010029944C /* CauseCardConfig.xcconfig in Resources */,
 				A9B448E62A8389B90029944C /* Images.xcassets in Resources */,
 				A9B4494C2A8392AB0029944C /* Lato-LightItalic.ttf in Resources */,
 				A9B449572A8392AB0029944C /* Montserrat-Black.ttf in Resources */,
 				A9B449562A8392AB0029944C /* Montserrat-Medium.ttf in Resources */,
-				A9C479052AA1DAED0055F812 /* LoadingMix.json in Resources */,
+				A9BBDD332AA341720022B2AC /* LoadingMix.json in Resources */,
 				A9B4494D2A8392AB0029944C /* Lato-BoldItalic.ttf in Resources */,
 				A9B449552A8392AB0029944C /* Lato-ThinItalic.ttf in Resources */,
-				A9C479002AA1DAED0055F812 /* LoadingContrast.json in Resources */,
+				A9BBDD2E2AA341720022B2AC /* LoadingContrast.json in Resources */,
 				A9B449532A8392AB0029944C /* Lato-Bold.ttf in Resources */,
 				A9B449482A8392AB0029944C /* Orbitron-Bold.ttf in Resources */,
 				A9B449492A8392AB0029944C /* Lato-Thin.ttf in Resources */,
@@ -1859,8 +1859,8 @@
 				A9B4494F2A8392AB0029944C /* Orbitron-Medium.ttf in Resources */,
 				7414934A2A99155200F0DC4D /* GoogleService-Info.plist in Resources */,
 				A9B4494A2A8392AB0029944C /* Lato-BlackItalic.ttf in Resources */,
-				A9C479022AA1DAED0055F812 /* ApplePay.json in Resources */,
-				0602D46E2AA1E8C000260DB1 /* LoadingPrimary.json in Resources */,
+				A9BBDD302AA341720022B2AC /* ApplePay.json in Resources */,
+				A9BBDD352AA341BB0022B2AC /* LoadingPrimary.json in Resources */,
 				A9B449162A838A010029944C /* Localizable.strings in Resources */,
 				A9B4494E2A8392AB0029944C /* Lato-Regular.ttf in Resources */,
 			);

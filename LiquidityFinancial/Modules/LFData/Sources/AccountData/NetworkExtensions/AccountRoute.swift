@@ -16,6 +16,9 @@ public enum AccountRoute {
   case getWalletAddresses(accountId: String)
   case deleteWalletAddresses(accountId: String, walletAddress: String)
   case getReferralCampaign
+  case getTaxFile(accountId: String)
+  case getTaxFileYear(accountId: String, year: String)
+  case addToWaitList(body: WaitListParameter)
 }
 
 extension AccountRoute: LFRoute {
@@ -42,12 +45,18 @@ extension AccountRoute: LFRoute {
       return "v1/accounts/\(accountId)/wallet-addresses/\(walletAddress)"
     case .getReferralCampaign:
       return "/v1/app/referral-campaign"
+    case .getTaxFile(accountId: let accountId):
+      return "/v1/account/\(accountId)/tax-file"
+    case .getTaxFileYear(accountId: let accountId, year: let year):
+      return "/v1/account/\(accountId)/tax-file/\(year)"
+    case .addToWaitList:
+      return "v1/user/add-to-wait-list"
     }
   }
   
   public var httpMethod: HttpMethod {
     switch self {
-    case .createZeroHashAccount, .logout, .createWalletAddress:
+    case .createZeroHashAccount, .logout, .createWalletAddress, .addToWaitList:
       return .POST
     case .getUser, .getAccount, .getTransactions, .getTransactionDetail, .getWalletAddresses, .getReferralCampaign:
       return .GET
@@ -55,17 +64,25 @@ extension AccountRoute: LFRoute {
       return .PATCH
     case .deleteWalletAddresses:
       return .DELETE
+    case .getTaxFile, .getTaxFileYear:
+      return .GET
     }
   }
   
   public var httpHeaders: HttpHeaders {
-    let base = [
+    var base = [
       "Content-Type": "application/json",
       "productId": NetworkUtilities.productID,
-      "Accept": "application/json",
       "Authorization": self.needAuthorizationKey
     ]
-    return base
+    switch self {
+    case .getTaxFileYear:
+      base["Content-Type"] = "application/pdf"
+      return base
+    default:
+      base["Accept"] = "application/json"
+      return base
+    }
   }
   
   public var parameters: Parameters? {
@@ -91,16 +108,18 @@ extension AccountRoute: LFRoute {
         "nickname": nickname,
         "walletId": walletId
       ]
-    case .getReferralCampaign:
+    case .getReferralCampaign, .getTaxFile, .getTaxFileYear:
       return nil
+    case .addToWaitList(body: let body):
+      return body.encoded()
     }
   }
   
   public var parameterEncoding: ParameterEncoding? {
     switch self {
-    case .createWalletAddress, .updateWalletAddress:
+    case .createWalletAddress, .updateWalletAddress, .addToWaitList:
       return .json
-    case .createZeroHashAccount, .getUser, .logout, .getWalletAddresses, .deleteWalletAddresses:
+    case .createZeroHashAccount, .getUser, .logout, .getWalletAddresses, .deleteWalletAddresses, .getTaxFile, .getTaxFileYear:
       return nil
     case .getAccount, .getTransactions, .getTransactionDetail, .getReferralCampaign:
       return .url

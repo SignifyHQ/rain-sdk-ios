@@ -36,7 +36,6 @@ struct AccountsView: View {
           WebView(url: url)
             .ignoresSafeArea()
         }
-
       }
       .popup(item: $viewModel.toastMessage, style: .toast) {
         ToastView(toastMessage: $0)

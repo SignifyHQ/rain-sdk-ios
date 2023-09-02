@@ -8,6 +8,8 @@ import OnboardingData
 import AccountData
 import NetSpendData
 import LFServices
+import LFLocalizable
+import DevicesData
 
 // swiftlint:disable all
 @MainActor
@@ -23,17 +25,26 @@ final class AddressViewModel: ObservableObject {
     case home
   }
   
+  enum Popup {
+    case waitlist(String)
+    case waitlistJoined
+  }
+  
 #if DEBUG
   var countGenerateUser: Int = 0
 #endif
   
   @LazyInjected(\.accountDataManager) var accountDataManager
   @LazyInjected(\.netspendRepository) var netspendRepository
+  @LazyInjected(\.accountRepository) var accountRepository
   @LazyInjected(\.netspendDataManager) var netspendDataManager
   @LazyInjected(\.onboardingFlowCoordinator) var onboardingFlowCoordinator
   @LazyInjected(\.intercomService) var intercomService
+  @LazyInjected(\.authorizationManager) var authorizationManager
+  @LazyInjected(\.devicesRepository) var devicesRepository
   
   @Published var isLoading: Bool = false
+  @Published var popup: Popup?
   @Published var toastMessage: String?
   @Published var displaySuggestions: Bool = false
   @Published var navigation: Navigation?
@@ -124,6 +135,12 @@ final class AddressViewModel: ObservableObject {
   }
 
   func actionContinue() {
+    guard isStateValid else {
+      let message = LFLocalizable.waitlistMessage(accountDataManager.userInfomationData.firstName ?? "")
+      popup = .waitlist(message)
+      return
+    }
+    
     Task { @MainActor in
       defer { isLoading = false }
       isLoading = true
@@ -160,14 +177,6 @@ final class AddressViewModel: ObservableObject {
       if countGenerateUser >= 5 { countGenerateUser = 0 }
     }
 #endif
-  }
-  
-  private var isStateValid: Bool {
-    if LFUtility.cryptoEnabled {
-      return !Constants.supportedStates.contains(state.uppercased())
-    } else {
-      return true
-    }
   }
   
   private func createAccountPersonParameters() throws -> AccountPersonParameters {
@@ -252,6 +261,64 @@ final class AddressViewModel: ObservableObject {
         case .acceptFeatureAgreement:
           break
         }
+      }
+    }
+  }
+}
+
+extension AddressViewModel {
+  func actionJoinWaitList() {
+    callUpdateAPIToJoinWaitlist()
+  }
+  
+  func actionLogout() {
+    logout()
+  }
+  
+  private var isStateValid: Bool {
+    if LFUtility.cryptoEnabled {
+      return !Constants.supportedStates.contains(state.uppercased())
+    } else {
+      return true
+    }
+  }
+  
+  private func callUpdateAPIToJoinWaitlist() {
+    Task { @MainActor in
+      defer { isLoading = false }
+      isLoading = true
+      do {
+        let entity = try await accountRepository.addToWaitList(waitList: "CRYPTO_PRODUCT") //support crypto product only
+        popup = .waitlistJoined
+      } catch {
+        log.error(error.localizedDescription)
+        popup = nil
+        toastMessage = error.localizedDescription
+      }
+    }
+  }
+  
+  private func logout() {
+    Task {
+      defer {
+        isLoading = false
+        authorizationManager.clearToken()
+        accountDataManager.clearUserSession()
+        authorizationManager.forcedLogout()
+        intercomService.pushEventLogout()
+        popup = nil
+        UserDefaults.lastestFCMToken = .empty
+      }
+      isLoading = true
+      do {
+        async let deregisterEntity = devicesRepository.deregister(deviceId: LFUtility.deviceId, token: UserDefaults.lastestFCMToken)
+        async let logoutEntity = accountRepository.logout()
+        let deregister = try await deregisterEntity
+        let logout = try await logoutEntity
+        log.debug(deregister)
+        log.debug(logout)
+      } catch {
+        log.error(error.localizedDescription)
       }
     }
   }

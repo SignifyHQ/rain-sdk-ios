@@ -896,6 +896,14 @@
 "fundCard.title" = "FUND YOUR CAUSECARD";
 "fundCard.message" = "CauseCard is a Pre-paid Debit Card, which means there are no credit checks, interest payments or overdrafts. However, you have to deposit money to your account before you can use. Start by connecting your bank:";
 
+  // Taxes
+"taxes.navigation_title" = "Taxes";
+"taxes.error" = "We were unable to load Taxes right now.\nPlease try again.";
+"taxes.retry" = "Retry";
+"taxes.empty.title" = "NO TAXES";
+"taxes.empty.message" = "There are currently no taxes";
+"taxes.value" = "Created %@";
+
 // MARK: - Common
 
 // Notification Pop up

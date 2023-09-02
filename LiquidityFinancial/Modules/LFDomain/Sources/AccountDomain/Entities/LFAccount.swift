@@ -6,4 +6,6 @@ public protocol LFAccount {
   var currency: String { get }
   var availableBalance: Double { get }
   var availableUsdBalance: Double { get }
+  
+  init(id: String, externalAccountId: String?, currency: String, availableBalance: Double, availableUsdBalance: Double)
 }

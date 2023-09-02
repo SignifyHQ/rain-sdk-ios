@@ -106,8 +106,12 @@ extension ProfileViewModel {
       }
       isLoading = true
       do {
-        _ = try await devicesRepository.deregister(deviceId: LFUtility.deviceId, token: UserDefaults.lastestFCMToken)
-        _ = try await accountRepository.logout()
+        async let deregisterEntity = devicesRepository.deregister(deviceId: LFUtility.deviceId, token: UserDefaults.lastestFCMToken)
+        async let logoutEntity = accountRepository.logout()
+        let deregister = try await deregisterEntity
+        let logout = try await logoutEntity
+        log.debug(deregister)
+        log.debug(logout)
       } catch {
         log.error(error.localizedDescription)
       }

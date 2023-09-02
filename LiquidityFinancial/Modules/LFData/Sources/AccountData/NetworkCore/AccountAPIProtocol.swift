@@ -16,4 +16,7 @@ public protocol AccountAPIProtocol {
   func getWalletAddresses(accountId: String) async throws -> [APIWalletAddress]
   func deleteWalletAddresses(accountId: String, walletAddress: String) async throws -> APIDeleteWalletResponse
   func getReferralCampaign() async throws -> APIReferralCampaign
+  func getTaxFile(accountId: String) async throws -> [APITaxFile]
+  func getTaxFileYear(accountId: String, year: String, fileName: String) async throws -> URL
+  func addToWaitList(body: WaitListParameter) async throws -> Bool
 }

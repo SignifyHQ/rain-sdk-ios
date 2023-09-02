@@ -475,6 +475,7 @@ https://mn.gov/commerce/money/investments/cryptocurrency/. \n\n\n\n\n\n\n";
 "transactionRow.fundraiser_donation.generic" = "Donation";
 
 // Account view
+"accountView.wallets" = "Wallets";
 "accountView.connected_accounts" = "Connected Accounts";
 "accountView.connect_new_accounts" = "Connect";
 "accountView.limits" = "Limits";
@@ -957,6 +958,14 @@ https://mn.gov/commerce/money/investments/cryptocurrency/. \n\n\n\n\n\n\n";
 
 "fundCard.title" = "FUND YOUR DOGECARD";
 "fundCard.message" = "DogeCard is a Pre-paid Debit Card, which means there are no credit checks, interest payments or overdrafts. However, you have to deposit money to your account before you can use. Start by connecting your bank:";
+
+// Taxes
+"taxes.navigation_title" = "Taxes";
+"taxes.error" = "We were unable to load Taxes right now.\nPlease try again.";
+"taxes.retry" = "Retry";
+"taxes.empty.title" = "NO TAXES";
+"taxes.empty.message" = "There are currently no taxes";
+"taxes.value" = "Created %@";
 
 // MARK: - Common
 

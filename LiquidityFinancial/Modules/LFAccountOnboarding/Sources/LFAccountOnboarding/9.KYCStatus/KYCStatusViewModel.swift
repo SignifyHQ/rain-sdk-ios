@@ -81,7 +81,7 @@ extension KYCStatusViewModel {
       fetchNewStatus()
     case .reject:
       forcedLogout()
-    case .missingInfo:
+    case .missingInfo, .documentInReview:
       forcedLogout()
     default:
       break

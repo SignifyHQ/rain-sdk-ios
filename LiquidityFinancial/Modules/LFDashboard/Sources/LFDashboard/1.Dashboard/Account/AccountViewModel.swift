@@ -7,6 +7,9 @@ import NetSpendData
 import NetSpendDomain
 import NetspendSdk
 import LFBank
+import BaseDashboard
+import AccountDomain
+import AccountData
 
 @MainActor
 class AccountViewModel: ObservableObject {
@@ -19,15 +22,20 @@ class AccountViewModel: ObservableObject {
   @LazyInjected(\.devicesRepository) var devicesRepository
 
   @Published var navigation: Navigation?
+  
   @Published var isDisableView: Bool = false
   @Published var isLoadingACH: Bool = false
   @Published var isLoadingDisputeTransaction: Bool = false
   @Published var isLoading: Bool = false
+  @Published var notificationsEnabled = false
+  @Published var openLegal = false
+  @Published var isLoadingAssets: Bool = false
+  
   @Published var netspendController: NetspendSdkViewController?
   @Published var toastMessage: String?
   @Published var linkedAccount: [APILinkedSourceData] = []
   @Published var achInformation: ACHModel = .default
-  @Published var notificationsEnabled = false
+  @Published var assets: [AssetModel] = []
   
   private var cancellable: Set<AnyCancellable> = []
   
@@ -35,7 +43,23 @@ class AccountViewModel: ObservableObject {
     EnvironmentManager().networkEnvironment
   }
   
-  init(achInformationData: Published<(model: ACHModel, loading: Bool)>.Publisher) {
+  init(achInformationData: Published<(model: ACHModel, loading: Bool)>.Publisher, accountsCrypto: Published<[LFAccount]>.Publisher) {
+    
+    accountsCrypto
+      .receive(on: DispatchQueue.main)
+      .sink { [weak self] accounts in
+        let assets = accounts.compactMap({
+          AssetModel(
+            id: $0.id,
+            type: AssetType(rawValue: $0.currency),
+            availableBalance: $0.availableBalance,
+            availableUsdBalance: $0.availableUsdBalance,
+            externalAccountId: $0.externalAccountId
+          )
+        })
+        self?.assets = assets
+      }
+      .store(in: &cancellable)
     
     achInformationData
       .receive(on: DispatchQueue.main)
@@ -59,6 +83,14 @@ class AccountViewModel: ObservableObject {
     }
     .store(in: &cancellable)
   }
+  
+  func getSubWalletAddress(asset: AssetModel) -> String {
+    var walletAdress = ""
+    if let externalAccountId = asset.externalAccountId {
+      walletAdress = externalAccountId.substring(start: 0, end: externalAccountId.count/4)
+    }
+    return walletAdress
+  }
 }
 
 // MARK: - View Helpers
@@ -73,6 +105,18 @@ extension AccountViewModel {
   
   func bankStatementTapped() {
     navigation = .bankStatement
+  }
+  
+  func openIntercomService() {
+    intercomService.openIntercom()
+  }
+  
+  func openTaxes() {
+    navigation = .taxes
+  }
+  
+  func openWalletAddress(asset: AssetModel) {
+    navigation = .wallet(asset: asset)
   }
   
   func checkNotificationsStatus() {
@@ -180,6 +224,8 @@ extension AccountViewModel {
     case connectedAccounts
     case bankStatement
     case disputeTransaction(String, String)
+    case taxes
+    case wallet(asset: AssetModel)
   }
 }
 

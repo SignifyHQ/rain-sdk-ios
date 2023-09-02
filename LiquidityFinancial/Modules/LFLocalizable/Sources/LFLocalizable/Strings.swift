@@ -247,6 +247,8 @@ public enum LFLocalizable {
     public static let shortcuts = LFLocalizable.tr("Localizable", "accountView.shortcuts", fallback: "Shortcuts")
     /// Taxes
     public static let taxes = LFLocalizable.tr("Localizable", "accountView.taxes", fallback: "Taxes")
+    /// Wallets
+    public static let wallets = LFLocalizable.tr("Localizable", "accountView.wallets", fallback: "Wallets")
     public enum AccountNumber {
       /// Account number
       public static let title = LFLocalizable.tr("Localizable", "accountView.accountNumber.title", fallback: "Account number")
@@ -2172,6 +2174,25 @@ public enum LFLocalizable {
       public static let message = LFLocalizable.tr("Localizable", "suggest_cause.alert.message", fallback: "Thank you for suggesting a cause. Our team will review and follow up.")
       /// THANK YOU
       public static let title = LFLocalizable.tr("Localizable", "suggest_cause.alert.title", fallback: "THANK YOU")
+    }
+  }
+  public enum Taxes {
+    /// We were unable to load Taxes right now.
+    /// Please try again.
+    public static let error = LFLocalizable.tr("Localizable", "taxes.error", fallback: "We were unable to load Taxes right now.\nPlease try again.")
+    /// Taxes
+    public static let navigationTitle = LFLocalizable.tr("Localizable", "taxes.navigation_title", fallback: "Taxes")
+    /// Retry
+    public static let retry = LFLocalizable.tr("Localizable", "taxes.retry", fallback: "Retry")
+    /// Created %@
+    public static func value(_ p1: Any) -> String {
+      return LFLocalizable.tr("Localizable", "taxes.value", String(describing: p1), fallback: "Created %@")
+    }
+    public enum Empty {
+      /// There are currently no taxes
+      public static let message = LFLocalizable.tr("Localizable", "taxes.empty.message", fallback: "There are currently no taxes")
+      /// NO TAXES
+      public static let title = LFLocalizable.tr("Localizable", "taxes.empty.title", fallback: "NO TAXES")
     }
   }
   public enum Term {

@@ -36,12 +36,12 @@ struct DashboardView: View {
         }
       case .rewards:
         RewardTabView(viewModel: RewardTabViewModel(
-          accounts: (accountsFiat: dataStorages.$cryptoAccounts, isLoading: dataStorages.$isLoading)
+          accounts: (accountsCrypto: dataStorages.$cryptoAccounts, isLoading: dataStorages.$isLoading)
         ))
       case .assets:
         AssetsView(viewModel: AssetsViewModel(assets: dataStorages.$allAssets, isLoading: dataStorages.$isLoading))
       case .account:
-        AccountsView(viewModel: AccountViewModel(achInformationData: dataStorages.$achInformationData))
+        AccountsView(viewModel: AccountViewModel(achInformationData: dataStorages.$achInformationData, accountsCrypto: dataStorages.$cryptoAccounts))
       }
     }
   }

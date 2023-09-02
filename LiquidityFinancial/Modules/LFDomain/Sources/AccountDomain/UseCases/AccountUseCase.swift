@@ -24,4 +24,16 @@ public final class AccountUseCase: AccountUseCaseProtocol {
   public func getReferralCampaign() async throws -> ReferralCampaignEntity {
     return try await repository.getReferralCampaign()
   }
+  
+  public func getTaxFile(accountId: String) async throws -> [any TaxFileEntity] {
+    return try await repository.getTaxFile(accountId: accountId)
+  }
+  
+  public func getTaxFileYear(accountId: String, year: String, fileName: String) async throws -> URL {
+    return try await repository.getTaxFileYear(accountId: accountId, year: year, fileName: fileName)
+  }
+  
+  public func addToWaitList(waitList: String) async throws -> Bool {
+    return try await repository.addToWaitList(waitList: waitList)
+  }
 }
