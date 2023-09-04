@@ -1,4 +1,5 @@
 import SwiftUI
+import BaseDashboard
 import AccountData
 import LFLocalizable
 import LFUtilities
@@ -25,8 +26,7 @@ final class EnterCryptoAddressViewModel: ObservableObject {
   @Published var showIndicator = false
   @Published var popup: Popup?
   
-  let amount: Double
-  let account: LFAccount
+  let asset: AssetModel
   
   private var subscribers: Set<AnyCancellable> = []
   
@@ -38,9 +38,8 @@ final class EnterCryptoAddressViewModel: ObservableObject {
     return walletSelected.nickname ?? .empty
   }
   
-  init(account: LFAccount, amount: Double) {
-    self.account = account
-    self.amount = amount
+  init(asset: AssetModel) {
+    self.asset = asset
     
     getSavedWallets()
     accountDataManager
@@ -60,7 +59,7 @@ final class EnterCryptoAddressViewModel: ObservableObject {
   
   func continueButtonTapped() {
     Haptic.impact(.light).generate()
-    navigation = .confirm
+    navigation = .enterAmount(address: inputValue, nickname: selectedNickname)
   }
   
   func scanAddressTap() {
@@ -90,7 +89,7 @@ extension EnterCryptoAddressViewModel {
       defer { isFetchingData = false }
       isFetchingData = true
       do {
-        let response = try await accountRepository.getWalletAddresses(accountId: account.id)
+        let response = try await accountRepository.getWalletAddresses(accountId: asset.id)
         let walletAddresses = response.map({ APIWalletAddress(entity: $0) })
         wallets = walletAddresses
         walletsFilter = walletAddresses
@@ -142,7 +141,7 @@ extension EnterCryptoAddressViewModel {
       showIndicator = true
       do {
         let response = try await accountRepository.deleteWalletAddresses(
-          accountId: account.id,
+          accountId: asset.id,
           walletAddress: wallet.address
         )
         if response.success {
@@ -164,7 +163,7 @@ extension EnterCryptoAddressViewModel {
 
 extension EnterCryptoAddressViewModel {
   enum Navigation {
-    case confirm
+    case enterAmount(address: String, nickname: String?)
     case editWalletAddress(wallet: APIWalletAddress)
   }
   

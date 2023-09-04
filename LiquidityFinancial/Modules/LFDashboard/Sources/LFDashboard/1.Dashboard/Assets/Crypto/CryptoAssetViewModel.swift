@@ -14,7 +14,6 @@ class CryptoAssetViewModel: ObservableObject {
   @LazyInjected(\.accountRepository) var accountRepository
   @LazyInjected(\.marketManager) var marketManager
 
-  @Published var account: LFAccount?
   @Published var loading: Bool = false
   @Published var showTransferSheet: Bool = false
   @Published var cryptoPrice: String = "0.00"
@@ -26,27 +25,20 @@ class CryptoAssetViewModel: ObservableObject {
   @Published var sheet: SheetPresentation?
   @Published var activity = Activity.loading
   @Published var transactions: [TransactionModel] = []
+  @Published var asset: AssetModel
   
-  let asset: AssetModel
   let currencyType = Constants.CurrencyType.crypto.rawValue
-  private let guestHandler: () -> Void
   private var subscribers: Set<AnyCancellable> = []
-  private var isGuest = false // TODO: - Will be remove after handle guest feature
   
   var filterOptionSubject = CurrentValueSubject<CryptoFilterOption, Never>(.live)
   var chartOptionSubject = CurrentValueSubject<ChartOption, Never>(.line)
   
   var cryptoBalance: String {
-    account?.availableBalance.formattedAmount(
-      minFractionDigits: Constants.FractionDigitsLimit.crypto.minFractionDigits,
-      maxFractionDigits: Constants.FractionDigitsLimit.crypto.maxFractionDigits
-    ) ?? asset.availableBalanceFormatted
+    asset.availableBalanceFormatted
   }
   
   var usdBalance: String {
-    account?.availableUsdBalance.formattedAmount(
-      prefix: Constants.CurrencyUnit.usd.symbol, minFractionDigits: 2
-    ) ?? asset.availableUsdBalanceFormatted ?? .empty
+    asset.availableUsdBalanceFormatted ?? .empty
   }
   
   var isPositivePrice: Bool {
@@ -57,11 +49,11 @@ class CryptoAssetViewModel: ObservableObject {
     String(format: "%.2f%%", abs(changePercent))
   }
   
-  init(asset: AssetModel, guestHandler: @escaping () -> Void) {
+  init(asset: AssetModel) {
     self.asset = asset
-    self.guestHandler = guestHandler
     
     observeMarketManager()
+    observeAssetChange(id: asset.id)
   }
 }
 
@@ -69,13 +61,8 @@ class CryptoAssetViewModel: ObservableObject {
 private extension CryptoAssetViewModel {
   func getCryptoAccount() async {
     do {
-      let accounts = try await accountRepository.getAccount(currencyType: currencyType)
-      guard let account = accounts.first else {
-        return
-      }
-      self.account = account
-      self.accountDataManager.cryptoAccountID = account.id
-      await loadTransactions(accountId: account.id)
+      let account = try await accountRepository.getAccountDetail(id: self.asset.id)
+      self.accountDataManager.addOrUpdateAccount(account)
     } catch {
       toastMessage = error.localizedDescription
     }
@@ -96,6 +83,17 @@ private extension CryptoAssetViewModel {
       toastMessage = error.localizedDescription
       activity = .failure
     }
+  }
+  
+  func observeAssetChange(id: String) {
+    accountDataManager.accountsSubject.compactMap({ (accounts: [LFAccount]) -> AssetModel? in
+      guard let account = accounts.first(where: {
+        $0.id == id
+      }) else {
+        return nil
+      }
+      return AssetModel(account: account)
+    }).assign(to: \.asset, on: self).store(in: &subscribers)
   }
   
   func observeMarketManager() {
@@ -125,7 +123,18 @@ private extension CryptoAssetViewModel {
 extension CryptoAssetViewModel {
   func refreshData() {
     Task {
-      await getCryptoAccount()
+      await refresh()
+    }
+  }
+  
+  func refresh() async {
+    await withTaskGroup(of: Void.self) { group in
+      group.addTask {
+        await self.getCryptoAccount()
+      }
+      group.addTask {
+        await self.loadTransactions(accountId: self.asset.id)
+      }
     }
   }
   
@@ -160,11 +169,7 @@ extension CryptoAssetViewModel {
 
   func walletRowTapped() {
     Haptic.impact(.soft).generate()
-    if isGuest {
-      guestHandler()
-    } else {
-      sheet = .wallet
-    }
+    sheet = .wallet
   }
   
   func cryptoChartTapped() {
@@ -173,12 +178,8 @@ extension CryptoAssetViewModel {
   }
   
   func transactionItemTapped(_ transaction: TransactionModel) {
-    if isGuest {
-      guestHandler()
-    } else {
-      Haptic.impact(.light).generate()
-      navigation = .transactionDetail(transaction)
-    }
+    Haptic.impact(.light).generate()
+    navigation = .transactionDetail(transaction)
   }
 }
 

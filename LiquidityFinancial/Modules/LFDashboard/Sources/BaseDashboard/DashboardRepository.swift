@@ -73,6 +73,7 @@ public extension DashboardRepository {
         
         self.fiatAccounts = fiatAccounts
         self.accountDataManager.storeLinkedSources(linkedSources)
+        self.accountDataManager.addOrUpdateAccounts(fiatAccounts)
       } catch {
         log.error(error.localizedDescription)
         toastMessage(error.localizedDescription)
@@ -134,18 +135,12 @@ public extension DashboardRepository {
         let fiatAccounts = try await fiatAccountsEntity
         let cryptoAccounts = try await cryptoAccountsEntity
         let accounts = fiatAccounts + cryptoAccounts
-        let assets = accounts.map {
-          AssetModel(
-            id: $0.id,
-            type: AssetType(rawValue: $0.currency),
-            availableBalance: $0.availableBalance,
-            availableUsdBalance: $0.availableUsdBalance,
-            externalAccountId: $0.externalAccountId
-          )
-        }
+        let assets = accounts.map { AssetModel(account: $0) }
+        
         self.fiatAccounts = fiatAccounts
         self.cryptoAccounts = cryptoAccounts
         self.allAssets = assets
+        self.accountDataManager.accountsSubject.send(accounts)
       } catch {
         log.error(error.localizedDescription)
         toastMessage(error.localizedDescription)

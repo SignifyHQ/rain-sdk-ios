@@ -1,4 +1,5 @@
 import Combine
+import BaseDashboard
 import SwiftUI
 import CryptoChartData
 import AccountDomain
@@ -19,11 +20,11 @@ struct CryptoChartDetailView: View {
   init(
     filterOptionSubject: CurrentValueSubject<CryptoFilterOption, Never>,
     chartOptionSubject: CurrentValueSubject<ChartOption, Never>,
-    account: LFAccount?
+    asset: AssetModel
   ) {
     self.filterOptionSubject = filterOptionSubject
     self.chartOptionSubject = chartOptionSubject
-    _viewModel = .init(wrappedValue: CryptoChartDetailViewModel(account: account))
+    _viewModel = .init(wrappedValue: CryptoChartDetailViewModel(asset: asset))
   }
   
   var body: some View {
@@ -47,13 +48,13 @@ struct CryptoChartDetailView: View {
         case .addMoney:
           MoveMoneyAccountView(kind: .receive)
         case .send:
-          MoveCryptoInputView(type: .sendCrypto)
+          EnterCryptoAddressView(assetModel: viewModel.asset)
         case .receive:
-          ReceiveCryptoView(account: viewModel.account)
+          ReceiveCryptoView(assetModel: viewModel.asset)
         case .buy:
-          MoveCryptoInputView(type: .buyCrypto)
+          MoveCryptoInputView(type: .buyCrypto, assetModel: viewModel.asset)
         case .sell:
-          MoveCryptoInputView(type: .sellCrypto)
+          MoveCryptoInputView(type: .sellCrypto, assetModel: viewModel.asset)
         }
       }
       .sheet(item: $viewModel.sheet) { item in
@@ -237,7 +238,7 @@ private extension CryptoChartDetailView {
       )
       .embedInNavigation()
     case .wallet:
-      ReceiveCryptoView(account: viewModel.account)
+      ReceiveCryptoView(assetModel: viewModel.asset)
         .embedInNavigation()
     }
   }

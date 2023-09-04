@@ -1,4 +1,5 @@
 import Foundation
+import BaseDashboard
 import AccountDomain
 import LFUtilities
 import Factory
@@ -12,19 +13,19 @@ class ReceiveCryptoViewModel: ObservableObject {
   @LazyInjected(\.accountDataManager) var accountDataManager
   @LazyInjected(\.accountRepository) var accountRepository
   
-  @Published var account: LFAccount?
+  @Published var assetModel: AssetModel
   @Published var isDisplaySheet: Bool = false
   @Published var qrCode = UIImage()
   @Published var isShareSheetViewPresented = false
   @Published var showCloseButton = false
   @Published var toastMessage: String?
   
-  init(account: LFAccount? = nil) {
-    self.account = account
+  init(assetModel: AssetModel) {
+    self.assetModel = assetModel
   }
   
   var cryptoAddress: String {
-    account?.externalAccountId ?? ""
+    assetModel.externalAccountId ?? .empty
   }
 }
 

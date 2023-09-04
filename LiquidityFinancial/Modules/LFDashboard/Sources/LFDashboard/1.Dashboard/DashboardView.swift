@@ -39,7 +39,7 @@ struct DashboardView: View {
           accounts: (accountsCrypto: dataStorages.$cryptoAccounts, isLoading: dataStorages.$isLoading)
         ))
       case .assets:
-        AssetsView(viewModel: AssetsViewModel(assets: dataStorages.$allAssets, isLoading: dataStorages.$isLoading))
+        AssetsView(viewModel: AssetsViewModel(isLoading: dataStorages.$isLoading))
       case .account:
         AccountsView(viewModel: AccountViewModel(achInformationData: dataStorages.$achInformationData, accountsCrypto: dataStorages.$cryptoAccounts))
       }

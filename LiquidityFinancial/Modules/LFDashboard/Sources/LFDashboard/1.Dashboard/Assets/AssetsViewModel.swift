@@ -18,24 +18,21 @@ final class AssetsViewModel: ObservableObject {
   
   private var cancellable: Set<AnyCancellable> = []
   
-  init(assets: Published<[AssetModel]>.Publisher, isLoading: Published<Bool>.Publisher) {
-    assets
-      .assign(to: \.assets, on: self)
-      .store(in: &cancellable)
+  init(isLoading: Published<Bool>.Publisher) {
+    accountDataManager
+      .accountsSubject.map({ accounts in
+        accounts.map({ AssetModel(account: $0) })
+      }).assign(to: \.assets, on: self).store(in: &cancellable)
     
     isLoading
       .assign(to: \.isLoading, on: self)
       .store(in: &cancellable)
   }
   
-  func onClickedAssetButton(assetType: AssetType) {
-    guard let asset = assets.first(where: { $0.type == assetType }) else {
-      return
-    }
-    switch assetType {
-    case .usd:
+  func onClickedAsset(asset: AssetModel) {
+    if asset.type == .usd {
       navigation = .usd(asset)
-    default:
+    } else {
       navigation = .crypto(asset)
     }
   }

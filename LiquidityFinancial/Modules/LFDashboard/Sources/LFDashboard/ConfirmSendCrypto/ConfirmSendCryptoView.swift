@@ -1,4 +1,5 @@
 import SwiftUI
+import BaseDashboard
 import LFLocalizable
 import LFStyleGuide
 import LFUtilities
@@ -6,9 +7,10 @@ import LFTransaction
 
 struct ConfirmSendCryptoView: View {
   @StateObject private var viewModel: ConfirmSendCryptoViewModel
-  init(amount: Double, address: String, nickname: String) {
+  init(assetModel: AssetModel, amount: Double, address: String, nickname: String) {
     _viewModel = .init(
       wrappedValue: ConfirmSendCryptoViewModel(
+        assetModel: assetModel,
         amount: amount,
         address: address,
         nickname: nickname

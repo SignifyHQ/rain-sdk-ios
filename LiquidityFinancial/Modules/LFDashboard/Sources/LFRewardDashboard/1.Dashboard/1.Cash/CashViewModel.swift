@@ -139,6 +139,7 @@ extension CashViewModel {
       self.selectedAsset = AssetType(rawValue: account.currency) ?? .usd
       return account
     }
+    accountDataManager.addOrUpdateAccounts(accounts)
     return nil
   }
   

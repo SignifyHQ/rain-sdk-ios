@@ -41,9 +41,9 @@ struct AssetsView: View {
     .navigationLink(item: $viewModel.navigation) { item in
       switch item {
       case let .usd(asset):
-        FiatAssetView(asset: asset, guestHandler: {})
+        FiatAssetView(asset: asset)
       case let .crypto(asset):
-        CryptoAssetView(asset: asset, guestHandler: {})
+        CryptoAssetView(asset: asset)
       }
     }
   }
@@ -54,7 +54,7 @@ private extension AssetsView {
   @ViewBuilder func assetCell(asset: AssetModel) -> some View {
     if let assetType = asset.type {
       Button {
-        viewModel.onClickedAssetButton(assetType: assetType)
+        viewModel.onClickedAsset(asset: asset)
       } label: {
         HStack(spacing: 8) {
           assetType.image

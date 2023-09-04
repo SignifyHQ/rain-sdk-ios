@@ -40,7 +40,7 @@ struct AccountsView: View {
         case .taxes:
           TaxesView()
         case .wallet(asset: let asset):
-          ReceiveCryptoView(asset: asset)
+          ReceiveCryptoView(assetModel: asset)
         }
       }
       .sheet(isPresented: $viewModel.openLegal) {

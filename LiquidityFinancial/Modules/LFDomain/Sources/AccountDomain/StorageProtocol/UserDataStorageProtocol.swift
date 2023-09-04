@@ -24,6 +24,10 @@ public protocol AccountDataStorageProtocol {
   func addOrEditLinkedSource(_ source: any LinkedSourceDataEntity)
   func removeLinkedSource(id: String)
   
+  var accountsSubject: CurrentValueSubject<[LFAccount], Never> { get }
+  func addOrUpdateAccounts(_ accounts: [LFAccount])
+  func addOrUpdateAccount(_ account: LFAccount)
+  
   func update(firstName: String?)
   func update(lastName: String?)
   func update(phone: String?)

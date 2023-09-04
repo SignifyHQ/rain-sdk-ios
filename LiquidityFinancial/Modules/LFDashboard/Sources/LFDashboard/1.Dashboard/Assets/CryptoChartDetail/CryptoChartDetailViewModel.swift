@@ -1,4 +1,5 @@
 import Combine
+import BaseDashboard
 import SwiftUI
 import LFUtilities
 import LFTransaction
@@ -27,7 +28,7 @@ final class CryptoChartDetailViewModel: ObservableObject {
   @Published var lowPrice: String = ""
   @Published var volumePrice: String = ""
   
-  let account: LFAccount?
+  let asset: AssetModel
   let selectedHistoricalPriceSubject = CurrentValueSubject<HistoricalPriceModel?, Never>(nil)
   
   private var subscribers: Set<AnyCancellable> = []
@@ -40,8 +41,8 @@ final class CryptoChartDetailViewModel: ObservableObject {
     String(format: "%.2f%%", abs(changePercent))
   }
   
-  init(account: LFAccount?) {
-    self.account = account
+  init(asset: AssetModel) {
+    self.asset = asset
     observeMarketManager()
     subscribeToUserTransactionNotifications()
   }
@@ -132,7 +133,7 @@ extension CryptoChartDetailViewModel {
   
   func sendButtonTapped() {
     showTransferSheet = false
-    if let cryptoBalance = account?.availableBalance, cryptoBalance > 0 {
+    if asset.availableBalance > 0 {
       navigation = .send
     } else {
       popup = .sendBalance

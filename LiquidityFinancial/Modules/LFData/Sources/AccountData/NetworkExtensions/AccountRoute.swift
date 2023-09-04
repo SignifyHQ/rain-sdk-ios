@@ -8,6 +8,7 @@ public enum AccountRoute {
   case createZeroHashAccount
   case getUser
   case getAccount(currencyType: String)
+  case getAccountDetail(id: String)
   case getTransactions(accountId: String, currencyType: String, transactionTypes: String, limit: Int, offset: Int)
   case getTransactionDetail(accountId: String, transactionId: String)
   case logout
@@ -33,6 +34,8 @@ extension AccountRoute: LFRoute {
       return "/v1/user"
     case .getAccount:
       return "/v1/account/"
+    case .getAccountDetail(let id):
+      return "/v1/account/\(id)"
     case .getTransactions(let accountId, _, _, _, _):
       return "/v1/transactions/\(accountId)"
     case let .getTransactionDetail(accountId, transactionId):
@@ -58,7 +61,7 @@ extension AccountRoute: LFRoute {
     switch self {
     case .createZeroHashAccount, .logout, .createWalletAddress, .addToWaitList:
       return .POST
-    case .getUser, .getAccount, .getTransactions, .getTransactionDetail, .getWalletAddresses, .getReferralCampaign:
+    case .getUser, .getAccount, .getTransactions, .getTransactionDetail, .getWalletAddresses, .getReferralCampaign, .getAccountDetail:
       return .GET
     case .updateWalletAddress:
       return .PATCH
@@ -108,7 +111,7 @@ extension AccountRoute: LFRoute {
         "nickname": nickname,
         "walletId": walletId
       ]
-    case .getReferralCampaign, .getTaxFile, .getTaxFileYear:
+    case .getReferralCampaign, .getTaxFile, .getTaxFileYear, .getAccountDetail:
       return nil
     case .addToWaitList(body: let body):
       return body.encoded()
@@ -119,7 +122,7 @@ extension AccountRoute: LFRoute {
     switch self {
     case .createWalletAddress, .updateWalletAddress, .addToWaitList:
       return .json
-    case .createZeroHashAccount, .getUser, .logout, .getWalletAddresses, .deleteWalletAddresses, .getTaxFile, .getTaxFileYear:
+    case .createZeroHashAccount, .getUser, .logout, .getWalletAddresses, .deleteWalletAddresses, .getTaxFile, .getTaxFileYear, .getAccountDetail:
       return nil
     case .getAccount, .getTransactions, .getTransactionDetail, .getReferralCampaign:
       return .url

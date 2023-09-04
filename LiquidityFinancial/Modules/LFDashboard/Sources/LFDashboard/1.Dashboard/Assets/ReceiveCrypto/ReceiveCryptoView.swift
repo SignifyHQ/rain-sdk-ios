@@ -16,23 +16,9 @@ struct ReceiveCryptoView: View {
   
   @StateObject private var viewModel: ReceiveCryptoViewModel
   
-  init(account: LFAccount?) {
+  init(assetModel: AssetModel) {
     _viewModel = .init(
-      wrappedValue: .init(account: account)
-    )
-  }
-  
-  init(asset: AssetModel?) {
-    _viewModel = .init(
-      wrappedValue: .init(
-        account: APIAccount(
-          id: asset?.id ?? "",
-          externalAccountId: asset?.externalAccountId,
-          currency: asset?.type?.rawValue ?? "",
-          availableBalance: asset?.availableBalance ?? 0.0,
-          availableUsdBalance: asset?.availableUsdBalance ?? 0.0
-        )
-      )
+      wrappedValue: .init(assetModel: assetModel)
     )
   }
   

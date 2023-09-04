@@ -15,7 +15,7 @@ class FiatAssetViewModel: ObservableObject {
   @LazyInjected(\.accountRepository) var accountRepository
   @LazyInjected(\.externalFundingRepository) var externalFundingRepository
   
-  @Published var account: LFAccount?
+  @Published var asset: AssetModel
   @Published var isLoadingACH: Bool = false
   @Published var isDisableView: Bool = false
   @Published var showTransferSheet: Bool = false
@@ -29,40 +29,33 @@ class FiatAssetViewModel: ObservableObject {
   @Published var achInformation: ACHModel = .default
   @Published var linkedAccount: [APILinkedSourceData] = []
   @Published var fullScreen: FullScreen?
-
-  let asset: AssetModel
+  
   let currencyType = Constants.CurrencyType.fiat.rawValue
-  private let guestHandler: () -> Void
-  private let isGuest = false // TODO: - Will be remove after handle guest feature
   private var cancellable: Set<AnyCancellable> = []
 
   var usdBalance: String {
-    account?.availableBalance.formattedAmount(
-      prefix: Constants.CurrencyUnit.usd.rawValue,
-      minFractionDigits: Constants.FractionDigitsLimit.fiat.minFractionDigits,
-      maxFractionDigits: Constants.FractionDigitsLimit.fiat.maxFractionDigits
-    ) ?? asset.availableBalanceFormatted
+    asset.availableBalanceFormatted
   }
   
-  init(asset: AssetModel, guestHandler: @escaping () -> Void) {
+  var title: String {
+    asset.type?.title ?? .empty
+  }
+  
+  init(asset: AssetModel) {
     self.asset = asset
-    self.guestHandler = guestHandler
     getACHInfo()
     subscribeLinkedAccounts()
+    subscribeAssetChange(id: asset.id)
   }
 }
 
 // MARK: - Private Functions
 private extension FiatAssetViewModel {
-  func getFiatAccount() async {
+  func getAccountDetail(id: String) async {
     do {
-      let accounts = try await accountRepository.getAccount(currencyType: currencyType)
-      guard let account = accounts.first else {
-        return
-      }
-      self.account = account
+      let account = try await accountRepository.getAccountDetail(id: id)
       self.accountDataManager.fiatAccountID = account.id
-      await loadTransactions(accountId: account.id)
+      self.accountDataManager.addOrUpdateAccount(account)
     } catch {
       toastMessage = error.localizedDescription
     }
@@ -118,13 +111,38 @@ private extension FiatAssetViewModel {
     }
     .store(in: &cancellable)
   }
+  
+  func subscribeAssetChange(id: String) {
+    accountDataManager.accountsSubject.compactMap({ (accounts: [LFAccount]) -> AssetModel? in
+      guard let account = accounts.first(where: {
+        $0.id == id
+      }) else {
+        return nil
+      }
+      return AssetModel(account: account)
+    })
+    .assign(to: \.asset, on: self)
+    .store(in: &cancellable)
+  }
 }
 
 // MARK: - View Helpers
 extension FiatAssetViewModel {
   func refreshData() {
     Task {
-      await getFiatAccount()
+      await refresh()
+    }
+  }
+  
+  func refresh() async {
+    let id = self.asset.id
+    await withTaskGroup(of: Void.self) { group in
+      group.addTask {
+        await self.getAccountDetail(id: id)
+      }
+      group.addTask {
+        await self.loadTransactions(accountId: id)
+      }
     }
   }
   
@@ -151,12 +169,8 @@ extension FiatAssetViewModel {
   }
   
   func transactionItemTapped(_ transaction: TransactionModel) {
-    if isGuest {
-      guestHandler()
-    } else {
-      Haptic.impact(.light).generate()
-      navigation = .transactionDetail(transaction)
-    }
+    Haptic.impact(.light).generate()
+    navigation = .transactionDetail(transaction)
   }
 }
 

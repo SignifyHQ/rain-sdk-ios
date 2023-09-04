@@ -1,4 +1,5 @@
 import Foundation
+import BaseDashboard
 import Factory
 import LFServices
 import ZerohashData
@@ -8,6 +9,7 @@ import LFLocalizable
 class ConfirmSendCryptoViewModel: ObservableObject {
   @LazyInjected(\.accountDataManager) var accountDataManager
   @LazyInjected(\.zerohashRepository) var zerohashRepository
+  @LazyInjected(\.accountRepository) var accountRepository
   
   @Published var showIndicator: Bool = false
   @Published var toastMessage: String?
@@ -16,8 +18,10 @@ class ConfirmSendCryptoViewModel: ObservableObject {
   let amount: Double
   let address: String
   let nickname: String
+  let assetModel: AssetModel
 
-  init(amount: Double, address: String, nickname: String) {
+  init(assetModel: AssetModel, amount: Double, address: String, nickname: String) {
+    self.assetModel = assetModel
     self.amount = amount
     self.address = address
     self.nickname = nickname
@@ -28,18 +32,18 @@ class ConfirmSendCryptoViewModel: ObservableObject {
   }
   
   func confirmButtonClicked() {
+    let id = assetModel.id
     Task { @MainActor in
       defer { showIndicator = false }
       showIndicator = true
       do {
-        guard let accountID = self.accountDataManager.cryptoAccountID else {
-          return
-        }
         let transactionEntity = try await self.zerohashRepository.sendCrypto(
-          accountId: accountID,
+          accountId: id,
           destinationAddress: self.address,
           amount: self.amount
         )
+        let account = try await accountRepository.getAccountDetail(id: id)
+        self.accountDataManager.addOrUpdateAccount(account)
         let transaction = TransactionModel(from: transactionEntity)
         self.navigation = .transactionDetail(transaction.id)
       } catch {

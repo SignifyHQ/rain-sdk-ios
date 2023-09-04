@@ -10,9 +10,9 @@ import BaseDashboard
 struct FiatAssetView: View {
   @StateObject private var viewModel: FiatAssetViewModel
   
-  init(asset: AssetModel, guestHandler: @escaping () -> Void) {
+  init(asset: AssetModel) {
     _viewModel = .init(
-      wrappedValue: .init(asset: asset, guestHandler: guestHandler)
+      wrappedValue: .init(asset: asset)
     )
   }
   
@@ -28,12 +28,12 @@ struct FiatAssetView: View {
           TransactionListView(
             type: .crypto,
             currencyType: viewModel.currencyType,
-            accountID: viewModel.accountDataManager.fiatAccountID,
+            accountID: viewModel.asset.id,
             transactionTypes: Constants.TransactionTypesRequest.fiat.types
           )
         case let .transactionDetail(transaction):
             TransactionDetailView(
-              accountID: viewModel.accountDataManager.fiatAccountID,
+              accountID: viewModel.asset.id,
               transactionId: transaction.id,
               kind: transaction.detailType,
               isPopToRoot: false
@@ -49,7 +49,7 @@ struct FiatAssetView: View {
           .embedInNavigation()
         }
       }
-      .defaultToolBar(navigationTitle: viewModel.asset.type?.title ?? .empty)
+      .defaultToolBar(navigationTitle: viewModel.title)
       .background(Colors.background.swiftUIColor)
       .onAppear {
         viewModel.refreshData()

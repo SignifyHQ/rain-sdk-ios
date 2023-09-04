@@ -215,4 +215,23 @@ public class AccountDataManager: AccountDataStorageProtocol {
       linkedSourcesSubject.send(newValues)
     }
   }
+  
+  // MARK: Account
+  public let accountsSubject = CurrentValueSubject<[LFAccount], Never>([])
+  
+  public func addOrUpdateAccounts(_ accounts: [LFAccount]) {
+    for account in accounts {
+      addOrUpdateAccount(account)
+    }
+  }
+  
+  public func addOrUpdateAccount(_ account: LFAccount) {
+    var newValues = accountsSubject.value
+    if let index = newValues.firstIndex(where: { $0.id == account.id }) {
+      newValues.replaceSubrange(index...index, with: [account])
+    } else {
+      newValues.append(account)
+    }
+    accountsSubject.send(newValues)
+  }
 }

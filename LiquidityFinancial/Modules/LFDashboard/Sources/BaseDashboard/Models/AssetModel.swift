@@ -1,19 +1,28 @@
 import Foundation
 import LFUtilities
+import AccountDomain
 
 public struct AssetModel: Hashable {
-  public let id: String?
+  public let id: String
   public let type: AssetType?
   public let availableBalance: Double
   public let availableUsdBalance: Double?
   public let externalAccountId: String?
   
-  public init(id: String?, type: AssetType?, availableBalance: Double, availableUsdBalance: Double?, externalAccountId: String?) {
+  public init(id: String, type: AssetType?, availableBalance: Double, availableUsdBalance: Double?, externalAccountId: String?) {
     self.id = id
     self.type = type
     self.availableBalance = availableBalance
     self.availableUsdBalance = availableUsdBalance
     self.externalAccountId = externalAccountId
+  }
+  
+  public init(account: LFAccount) {
+    self.id = account.id
+    self.type = AssetType(rawValue: account.currency.uppercased())
+    self.availableBalance = account.availableBalance
+    self.availableUsdBalance = account.availableUsdBalance
+    self.externalAccountId = account.externalAccountId
   }
   
   public var availableBalanceFormatted: String {

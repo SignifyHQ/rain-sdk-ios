@@ -1,4 +1,5 @@
 import SwiftUI
+import BaseDashboard
 import LFLocalizable
 import LFUtilities
 import LFStyleGuide
@@ -8,8 +9,10 @@ struct MoveCryptoInputView: View {
   @State private var isShowAnnotationView: Bool = false
   @State private var screenSize: CGSize = .zero
   
-  init(type: MoveCryptoInputViewModel.Kind) {
-    _viewModel = .init(wrappedValue: MoveCryptoInputViewModel(type: type))
+  init(type: MoveCryptoInputViewModel.Kind, assetModel: AssetModel) {
+    _viewModel = .init(
+      wrappedValue: MoveCryptoInputViewModel(type: type, assetModel: assetModel)
+    )
   }
   
   var body: some View {
@@ -39,8 +42,13 @@ struct MoveCryptoInputView: View {
       switch navigation {
       case .detail:
         EmptyView()
-      case .enterAddress(let account):
-        EnterCryptoAddressView(account: account, amount: viewModel.amount)
+      case .confirmSend:
+        ConfirmSendCryptoView(
+          assetModel: viewModel.assetModel,
+          amount: viewModel.amount,
+          address: viewModel.address,
+          nickname: viewModel.nickname
+        )
       }
     }
   }

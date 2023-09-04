@@ -10,9 +10,9 @@ import BaseDashboard
 struct CryptoAssetView: View {
   @StateObject private var viewModel: CryptoAssetViewModel
 
-  init(asset: AssetModel, guestHandler: @escaping () -> Void) {
+  init(asset: AssetModel) {
     _viewModel = .init(
-      wrappedValue: .init(asset: asset, guestHandler: guestHandler)
+      wrappedValue: .init(asset: asset)
     )
   }
 
@@ -27,23 +27,23 @@ struct CryptoAssetView: View {
       .navigationLink(item: $viewModel.navigation) { navigation in
         switch navigation {
         case .buyCrypto:
-          MoveCryptoInputView(type: .buyCrypto)
+          MoveCryptoInputView(type: .buyCrypto, assetModel: viewModel.asset)
         case .sellCrypto:
-          MoveCryptoInputView(type: .sellCrypto)
+          MoveCryptoInputView(type: .sellCrypto, assetModel: viewModel.asset)
         case .receiveCrypto:
-          ReceiveCryptoView(account: viewModel.account)
+          ReceiveCryptoView(assetModel: viewModel.asset)
         case .sendCrypto:
-          MoveCryptoInputView(type: .sendCrypto)
+          EnterCryptoAddressView(assetModel: viewModel.asset)
         case .transactions:
             TransactionListView(
               type: .crypto,
               currencyType: viewModel.currencyType,
-              accountID: viewModel.accountDataManager.cryptoAccountID,
+              accountID: viewModel.asset.id,
               transactionTypes: Constants.TransactionTypesRequest.crypto.types
             )
         case let .transactionDetail(transaction):
           TransactionDetailView(
-            accountID: viewModel.accountDataManager.cryptoAccountID,
+            accountID: viewModel.asset.id,
             transactionId: transaction.id,
             kind: transaction.detailType,
             isPopToRoot: false
@@ -52,7 +52,7 @@ struct CryptoAssetView: View {
           CryptoChartDetailView(
             filterOptionSubject: viewModel.filterOptionSubject,
             chartOptionSubject: viewModel.chartOptionSubject,
-            account: viewModel.account
+            asset: viewModel.asset
           )
         }
       }
@@ -60,7 +60,7 @@ struct CryptoAssetView: View {
       .sheet(item: $viewModel.sheet) { item in
         switch item {
         case .wallet:
-          ReceiveCryptoView(account: viewModel.account)
+          ReceiveCryptoView(assetModel: viewModel.asset)
             .embedInNavigation()
         }
       }
@@ -89,7 +89,7 @@ private extension CryptoAssetView {
         .onTapGesture {
           viewModel.cryptoChartTapped()
         }
-        BalanceAlertView(type: .crypto, hasContacts: true, cryptoBalance: viewModel.account?.availableBalance) {
+        BalanceAlertView(type: .crypto, hasContacts: true, cryptoBalance: viewModel.asset.availableBalance) {
           viewModel.walletRowTapped()
         }
         HStack(spacing: 10) {
