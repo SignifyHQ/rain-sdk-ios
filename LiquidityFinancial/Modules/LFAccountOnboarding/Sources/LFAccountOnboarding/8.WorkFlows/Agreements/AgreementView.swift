@@ -9,12 +9,15 @@ public struct AgreementView: View {
   @Environment(\.openURL) var openURL
   @StateObject private var viewModel: AgreementViewModel
   
+  var shouldFetchCurrentState: Bool = false
   var onNext: (() -> Void)?
   var onDisappear: ((_ isAcceptAgreement: Bool) -> Void)?
+  
   public init(viewModel: AgreementViewModel,
               onNext: (() -> Void)? = nil,
-              onDisappear: ((_ isAcceptAgreement: Bool) -> Void)? = nil) {
+              onDisappear: ((_ isAcceptAgreement: Bool) -> Void)? = nil, shouldFetchCurrentState: Bool = true) {
     _viewModel = .init(wrappedValue: viewModel)
+    self.shouldFetchCurrentState = shouldFetchCurrentState
     self.onNext = onNext
     self.onDisappear = onDisappear
   }
@@ -87,18 +90,6 @@ public struct AgreementView: View {
     .popup(item: $viewModel.toastMessage, style: .toast) {
       ToastView(toastMessage: $0)
     }
-    .overlay(alignment: .topLeading) {
-      if onNext != nil {
-        Button {
-          dismiss()
-        } label: {
-          CircleButton(style: .xmark)
-        }
-        .padding(.top, -10)
-        .padding(.leading, 16)
-        .disabled(viewModel.isAcceptAgreementLoading)
-      }
-    }
     .onDisappear {
       self.onDisappear?(viewModel.isAcceptAgreement)
     }
@@ -170,11 +161,16 @@ private extension AgreementView {
     ) {
       if let onNext = onNext {
         viewModel.apiPostAgreements {
-          Task { @MainActor in
-            self.viewModel.isLoading = true
-            await viewModel.onboardingFlowCoordinator.apiFetchCurrentState()
-            self.viewModel.isLoading = false
+          if shouldFetchCurrentState {
+            dismiss()
             onNext()
+          } else {
+            Task { @MainActor in
+              self.viewModel.isLoading = true
+              await viewModel.onboardingFlowCoordinator.apiFetchCurrentState()
+              self.viewModel.isLoading = false
+              onNext()
+            }
           }
         }
       } else {

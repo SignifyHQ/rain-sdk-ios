@@ -28,7 +28,7 @@ class AccountViewModel: ObservableObject {
   @Published var isLoadingDisputeTransaction: Bool = false
   @Published var isLoading: Bool = false
   @Published var notificationsEnabled = false
-  @Published var openLegal = false
+  @Published var sheet: Sheet?
   @Published var isLoadingAssets: Bool = false
   
   @Published var netspendController: NetspendSdkViewController?
@@ -36,6 +36,8 @@ class AccountViewModel: ObservableObject {
   @Published var linkedAccount: [APILinkedSourceData] = []
   @Published var achInformation: ACHModel = .default
   @Published var assets: [AssetModel] = []
+  
+  private(set) var addFundsViewModel = AddFundsViewModel()
   
   private var cancellable: Set<AnyCancellable> = []
   
@@ -69,6 +71,8 @@ class AccountViewModel: ObservableObject {
       }
       .store(in: &cancellable)
     
+    handleFundingAgreementData()
+    
     subscribeLinkedAccounts()
     checkNotificationsStatus()
   }
@@ -95,6 +99,23 @@ class AccountViewModel: ObservableObject {
 
 // MARK: - View Helpers
 extension AccountViewModel {
+  func handleFundingAgreementData() {
+    addFundsViewModel.fundingAgreementData
+      .receive(on: DispatchQueue.main)
+      .sink { [weak self] agreementData in
+        self?.openFundingAgreement(data: agreementData)
+    }
+    .store(in: &cancellable)
+  }
+  
+  func handleFundingAcceptAgreement(isAccept: Bool) {
+    if isAccept {
+      addFundsViewModel.goNextNavigation()
+    } else {
+      addFundsViewModel.stopAction()
+    }
+  }
+  
   func selectedAddOption(navigation: Navigation) {
     self.navigation = navigation
   }
@@ -113,6 +134,18 @@ extension AccountViewModel {
   
   func openTaxes() {
     navigation = .taxes
+  }
+  
+  func openFundingAgreement(data: APIAgreementData?) {
+    if data == nil {
+      sheet = nil
+    } else {
+      sheet = .agreement(data)
+    }
+  }
+  
+  func openLegal() {
+    sheet = .legal
   }
   
   func openWalletAddress(asset: AssetModel) {
@@ -227,10 +260,25 @@ extension AccountViewModel {
     case taxes
     case wallet(asset: AssetModel)
   }
-}
-
-extension AccountViewModel {
   
-  func onAppear() {
+  enum Sheet: Hashable, Identifiable {
+    static func == (lhs: AccountViewModel.Sheet, rhs: AccountViewModel.Sheet) -> Bool {
+      return lhs.hashValue == rhs.hashValue
+    }
+    func hash(into hasher: inout Hasher) {
+      hasher.combine(hashValue)
+    }
+    var hashValue: Int {
+      switch self {
+      case .legal: return 0
+      case .agreement: return 1
+      }
+    }
+    
+    var id: Self {
+      return self
+    }
+    case legal
+    case agreement(APIAgreementData?)
   }
 }

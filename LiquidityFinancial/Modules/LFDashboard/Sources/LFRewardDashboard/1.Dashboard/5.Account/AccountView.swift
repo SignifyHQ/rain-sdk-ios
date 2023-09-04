@@ -55,6 +55,7 @@ private extension AccountsView {
         connectedAccountsSection
         section(title: LFLocalizable.AccountView.connectNewAccounts) {
           AddFundsView(
+            viewModel: AddFundsViewModel(), 
             achInformation: $viewModel.achInformation,
             isDisableView: $viewModel.isDisableView
           )

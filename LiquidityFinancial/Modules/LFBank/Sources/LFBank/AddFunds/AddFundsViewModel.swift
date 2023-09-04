@@ -8,16 +8,18 @@ import LFUtilities
 import LFAccountOnboarding
 
 @MainActor
-final class AddFundsViewModel: ObservableObject {
+public final class AddFundsViewModel: ObservableObject {
   @Published var isDisableView: Bool = false
   @Published var isLoading: Bool = false
   @Published var toastMessage: String?
   @Published var netspendController: NetspendSdkViewController?
   @Published var popup: Popup?
   @Published var navigation: Navigation?
-  @Published var fundingStatus: APIAgreementData?
+  
   @Published var isLoadingLinkExternalCard: Bool = false
   @Published var isLoadingLinkExternalBank: Bool = false
+  
+  public private(set) var fundingAgreementData = CurrentValueSubject<APIAgreementData?, Never>(nil)
   
   private var nextNavigation: Navigation?
   
@@ -36,6 +38,8 @@ final class AddFundsViewModel: ObservableObject {
       return false
     }
   }
+  
+  public init() {}
 }
 
 // MARK: - ExternalLinkBank Functions
@@ -120,7 +124,7 @@ extension AddFundsViewModel {
 
 // MARK: - View Helpers
 extension AddFundsViewModel {
-  func goNextNavigation() {
+  public func goNextNavigation() {
     if nextNavigation == .linkExternalBank {
       linkExternalBank()
     } else {
@@ -129,7 +133,7 @@ extension AddFundsViewModel {
     nextNavigation = nil
   }
   
-  func stopAction() {
+  public func stopAction() {
     isLoadingLinkExternalBank = false
     nextNavigation = nil
   }
@@ -144,7 +148,7 @@ extension AddFundsViewModel {
         if missingSteps.contains(WorkflowsMissingStep.acceptFeatureAgreement.rawValue) {
           let agreementData = APIAgreementData(agreement: agreement)
           self.nextNavigation = navigation
-          self.fundingStatus = agreementData
+          self.fundingAgreementData.send(agreementData)
         } else {
           if navigation == .linkExternalBank {
             linkExternalBank()

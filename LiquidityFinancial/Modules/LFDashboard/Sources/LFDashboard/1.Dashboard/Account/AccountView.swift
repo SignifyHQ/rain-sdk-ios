@@ -6,6 +6,7 @@ import LFServices
 import NetspendSdk
 import LFBank
 import BaseDashboard
+import LFAccountOnboarding
 
 struct AccountsView: View {
   @Environment(\.scenePhase) var scenePhase
@@ -43,23 +44,29 @@ struct AccountsView: View {
           ReceiveCryptoView(assetModel: asset)
         }
       }
-      .sheet(isPresented: $viewModel.openLegal) {
-        if let url = URL(string: LFUtility.termsURL) {
-          WebView(url: url)
-            .ignoresSafeArea()
+      .sheet(item: $viewModel.sheet, content: { sheet in
+        switch sheet {
+        case .legal:
+          if let url = URL(string: LFUtility.termsURL) {
+            WebView(url: url)
+              .ignoresSafeArea()
+          }
+        case .agreement(let data):
+          AgreementView(viewModel: AgreementViewModel(fundingAgreement: data), onNext: {
+            self.viewModel.addFundsViewModel.fundingAgreementData.send(nil)
+          }, onDisappear:  { isAcceptAgreement in
+            self.viewModel.handleFundingAcceptAgreement(isAccept: isAcceptAgreement)
+          }, shouldFetchCurrentState: false)
         }
-      }
+      })
       .popup(item: $viewModel.toastMessage, style: .toast) {
         ToastView(toastMessage: $0)
       }
       .background(Colors.background.swiftUIColor)
-      .onAppear {
-        viewModel.onAppear()
-      }
   }
 }
 
-// MARK: - View Components
+  // MARK: - View Components
 private extension AccountsView {
   @ViewBuilder
   var content: some View {
@@ -68,6 +75,7 @@ private extension AccountsView {
         connectedAccountsSection
         section(title: LFLocalizable.AccountView.connectNewAccounts) {
           AddFundsView(
+            viewModel: viewModel.addFundsViewModel,
             achInformation: $viewModel.achInformation,
             isDisableView: $viewModel.isDisableView
           )
@@ -165,7 +173,7 @@ private extension AccountsView {
       }
     }
   }
-
+  
   func section<V: View>(title: String, @ViewBuilder content: () -> V) -> some View {
     VStack(alignment: .leading, spacing: 12) {
       Text(title)
@@ -174,7 +182,7 @@ private extension AccountsView {
       content()
     }
   }
-
+  
   var shortcutSection: some View {
     VStack {
       ArrowButton(
@@ -182,7 +190,7 @@ private extension AccountsView {
         title: LFLocalizable.AccountView.rewards,
         value: nil
       ) {
-        // TODO: Will do later
+          // TODO: Will do later
       }
       ArrowButton(
         image: GenImages.CommonImages.Accounts.atm.swiftUIImage,
@@ -227,7 +235,7 @@ private extension AccountsView {
         title: LFLocalizable.AccountView.legal,
         value: nil
       ) {
-        viewModel.openLegal.toggle()
+        viewModel.openLegal()
       }
       ArrowButton(
         image: GenImages.CommonImages.personAndBackgroundDotted.swiftUIImage,
@@ -251,14 +259,14 @@ private extension AccountsView {
       }
     })
   }
-
+  
   var depositLimits: some View {
     ArrowButton(
       image: GenImages.CommonImages.Accounts.limits.swiftUIImage,
       title: LFLocalizable.AccountView.depositLimits,
       value: nil
     ) {
-      // TODO: Will do later
+        // TODO: Will do later
     }
   }
 }

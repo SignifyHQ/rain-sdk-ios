@@ -54,6 +54,7 @@ public struct FundCardView: View {
 
   private var actions: some View {
     AddFundsView(
+      viewModel: AddFundsViewModel(),
       achInformation: $viewModel.achInformation,
       isDisableView: $viewModel.isDisableView,
       options: [.debitDeposit, .oneTime]

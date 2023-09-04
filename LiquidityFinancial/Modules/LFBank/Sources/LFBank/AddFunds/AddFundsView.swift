@@ -10,17 +10,19 @@ public struct AddFundsView: View {
   @StateObject private var viewModel: AddFundsViewModel
   @Binding private var isDisableView: Bool
   @Binding private var achInformation: ACHModel
+  
   private var options: [FundOption] = [.directDeposit, .debitDeposit, .oneTime]
 
   public init(
+    viewModel: AddFundsViewModel,
     achInformation: Binding<ACHModel>,
     isDisableView: Binding<Bool>,
     options: [FundOption] = [.directDeposit, .debitDeposit, .oneTime]
   ) {
     _achInformation = achInformation
     _isDisableView = isDisableView
+    _viewModel = StateObject(wrappedValue: viewModel)
     self.options = options
-    _viewModel = StateObject(wrappedValue: AddFundsViewModel())
   }
   
   public var body: some View {
@@ -50,17 +52,6 @@ public struct AddFundsView: View {
           switch item {
           case .plaidLinkingError:
             plaidLinkingErrorPopup
-          }
-        }
-        .fullScreenCover(item: $viewModel.fundingStatus) { data in
-          AgreementView(viewModel: AgreementViewModel(fundingAgreement: data)) {
-            viewModel.fundingStatus = nil
-          } onDisappear: { isAcceptAgreement in
-            if isAcceptAgreement {
-              viewModel.goNextNavigation()
-            } else {
-              viewModel.stopAction()
-            }
           }
         }
       
