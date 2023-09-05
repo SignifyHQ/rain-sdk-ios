@@ -46,8 +46,8 @@ public struct CryptoChartView: View {
       .showChartMarks(false)
       .setBackground(
         colorGradient: ColorGradient(
-          Color(hex: "66F0C13B"),
-          Color(hex: "00F0C13B")
+          Colors.Gradients.Chart.chartTop.swiftUIColor,
+          Colors.Gradients.Chart.chartBottom.swiftUIColor
         )
       )
       .setGridColor(to: Color(white: 1.0, opacity: 0.15))
@@ -119,7 +119,7 @@ public struct CryptoChartView: View {
         )
         .foregroundColor(
           viewModel.filterOption == option
-          ? Colors.buttons.swiftUIColor
+          ? Colors.contrast.swiftUIColor
           : Colors.whiteText.swiftUIColor
         )
         .cornerRadius(16)
@@ -136,7 +136,7 @@ public struct CryptoChartView: View {
     } label: {
       ZStack {
         Circle()
-          .fill(Colors.tertiaryBackground.swiftUIColor)
+          .fill(Colors.darkText.swiftUIColor)
           .frame(32)
         
         if viewModel.chartOption == .candlestick {

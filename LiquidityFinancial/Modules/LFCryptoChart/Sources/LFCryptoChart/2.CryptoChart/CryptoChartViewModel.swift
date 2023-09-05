@@ -202,7 +202,7 @@ private extension CryptoChartViewModel {
       .assign(to: \.lineChartRangeY, on: self)
       .store(in: &subscribers)
     
-    Publishers.CombineLatest($filterOption,marketManager.lineRangeXSubject)
+    Publishers.CombineLatest($filterOption, marketManager.lineRangeXSubject)
       .compactMap { option, map in
         if option == .live {
           return nil

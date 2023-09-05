@@ -35,6 +35,10 @@ public enum Colors {
       public static let gradientButton0 = ColorAsset(name: "gradientButton0")
       public static let gradientButton1 = ColorAsset(name: "gradientButton1")
     }
+    public enum Chart {
+      public static let chartBottom = ColorAsset(name: "ChartBottom")
+      public static let chartTop = ColorAsset(name: "ChartTop")
+    }
   }
   public static let background = ColorAsset(name: "background")
   public static let buttonText = ColorAsset(name: "buttonText")

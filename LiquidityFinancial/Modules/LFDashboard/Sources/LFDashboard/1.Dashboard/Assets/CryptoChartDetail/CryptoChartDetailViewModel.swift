@@ -70,7 +70,11 @@ final class CryptoChartDetailViewModel: ObservableObject {
       guard let value = models.last?.close else {
         return "0.00"
       }
-      return value.formattedAmount(prefix: "$", minFractionDigits: 6, maxFractionDigits: 6)
+      return value.formattedAmount(
+        prefix: Constants.CurrencyUnit.usd.symbol,
+        minFractionDigits: 6,
+        maxFractionDigits: 6
+      )
     }
     .receive(on: DispatchQueue.main)
     .assign(to: \.cryptoPrice, on: self)
@@ -86,31 +90,61 @@ final class CryptoChartDetailViewModel: ObservableObject {
     .assign(to: \.changePercent, on: self)
     .store(in: &subscribers)
     
+    marketManager.liveLineModelsSubject
+      .receive(on: DispatchQueue.main)
+      .sink(receiveValue: { [weak self] models in
+        guard let self = self, let model = models.last else {
+          return
+        }
+        if self.selectedHistoricalPriceSubject.value == nil {
+          self.receiveSocketPriceValue(model: model)
+        }
+      })
+      .store(in: &subscribers)
+    
     selectedHistoricalPriceSubject
       .receive(on: DispatchQueue.main)
       .sink(receiveValue: { [weak self] model in
-        guard let self = self else {
+        guard let model = model else {
           return
         }
-        guard let model = model,
-              let open = model.open,
-              let close = model.open,
-              let high = model.high,
-              let low = model.low else {
-          self.openPrice = ""
-          self.closePrice = ""
-          self.highPrice = ""
-          self.lowPrice = ""
-          self.volumePrice = ""
-          return
-        }
-        self.openPrice = open.formattedAmount(minFractionDigits: 6, maxFractionDigits: 6)
-        self.closePrice = close.formattedAmount(minFractionDigits: 6, maxFractionDigits: 6)
-        self.highPrice = high.formattedAmount(minFractionDigits: 6, maxFractionDigits: 6)
-        self.lowPrice = low.formattedAmount(minFractionDigits: 6, maxFractionDigits: 6)
-        self.volumePrice = model.volume?.formattedAmount(minFractionDigits: 6, maxFractionDigits: 6) ?? "-"
+        self?.receiveSocketPriceValue(model: model)
       })
       .store(in: &subscribers)
+  }
+  
+  private func receiveSocketPriceValue(model: HistoricalPriceModel) {
+    guard let open = model.open,
+          let close = model.open,
+          let high = model.high,
+          let low = model.low else {
+      return
+    }
+    openPrice = open.formattedAmount(
+      prefix: Constants.CurrencyUnit.usd.symbol,
+      minFractionDigits: 6,
+      maxFractionDigits: 6
+    )
+    closePrice = close.formattedAmount(
+      prefix: Constants.CurrencyUnit.usd.symbol,
+      minFractionDigits: 6,
+      maxFractionDigits: 6
+    )
+    highPrice = high.formattedAmount(
+      prefix: Constants.CurrencyUnit.usd.symbol,
+      minFractionDigits: 6,
+      maxFractionDigits: 6
+    )
+    lowPrice = low.formattedAmount(
+      prefix: Constants.CurrencyUnit.usd.symbol,
+      minFractionDigits: 6,
+      maxFractionDigits: 6
+    )
+    volumePrice = model.volume?.formattedAmount(
+      prefix: Constants.CurrencyUnit.usd.symbol,
+      minFractionDigits: 2,
+      maxFractionDigits: 2
+    ) ?? "-"
   }
 }
 

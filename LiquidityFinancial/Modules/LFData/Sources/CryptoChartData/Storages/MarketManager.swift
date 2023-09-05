@@ -350,8 +350,8 @@ private extension MarketManager {
         value /= valueCount
       }
       
-      let startTimeStamp = startModel.lastUpdated?.convertTimestampToDouble() ?? 0
-      let endTimeStamp = startModel.lastUpdated?.convertTimestampToDouble() ?? 0
+      let startTimeStamp = startModel.timestamp ?? startModel.lastUpdated?.convertTimestampToDouble() ?? 0
+      let endTimeStamp = endModel.timestamp ?? startModel.lastUpdated?.convertTimestampToDouble() ?? 0
       let timestamp = (startTimeStamp + endTimeStamp) / 2
       
       let candleModel = HistoricalPriceModel(

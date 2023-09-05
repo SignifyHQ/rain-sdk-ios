@@ -42,7 +42,7 @@ struct CryptoChartDetailView: View {
         await viewModel.refresh()
       }
       .background(Colors.background.swiftUIColor)
-      .defaultToolBar(navigationTitle: LFUtility.cardName)
+      .defaultToolBar(navigationTitle: LFUtility.cryptoCurrency.uppercased())
       .navigationLink(item: $viewModel.navigation) { navigation in
         switch navigation {
         case .addMoney:
@@ -96,7 +96,7 @@ private extension CryptoChartDetailView {
   var priceDetailView: some View {
     VStack(alignment: .leading, spacing: 4) {
       Text(viewModel.cryptoPrice)
-        .foregroundColor(Colors.primary.swiftUIColor)
+        .foregroundColor(balanceTitleColor)
         .font(Fonts.bold.swiftUIFont(size: 30))
       HStack(spacing: 8) {
         Text(LFLocalizable.CryptoChartDetail.Change.title)
@@ -131,7 +131,7 @@ private extension CryptoChartDetailView {
       priceDetailView
       Spacer()
       selectInfoDetailView
-        .frame(width: 112)
+        .frame(width: 124)
       Spacer()
         .frame(width: 24)
     }
@@ -163,9 +163,9 @@ private extension CryptoChartDetailView {
             viewModel.transferButtonTapped()
           }
         }
+        .padding(.horizontal, 30)
       }
       .padding(.top, 20)
-      .padding(.horizontal, 30)
     }
   }
   
@@ -299,6 +299,18 @@ private extension CryptoChartDetailView {
       .padding(.horizontal, 16)
       .background(Colors.buttons.swiftUIColor)
       .cornerRadius(9)
+    }
+  }
+}
+
+// MARK: - ViewHelpers
+private extension CryptoChartDetailView {
+  var balanceTitleColor: Color {
+    switch LFStyleGuide.target {
+    case .DogeCard:
+      return Colors.primary.swiftUIColor
+    default:
+      return Colors.label.swiftUIColor
     }
   }
 }

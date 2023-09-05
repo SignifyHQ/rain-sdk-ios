@@ -114,7 +114,7 @@ extension Array where Element == HistoricalPriceModel {
       }
       let model = self[index]
       let timestampValue = model.timestamp ?? model.lastUpdated?.convertTimestampToDouble() ?? 0
-      let date = Date(timeIntervalSince1970: Double(timestampValue / 1_000))
+      let date = Date(timeIntervalSince1970: TimeInterval(timestampValue))
       return (
         DateFormatter.chartGridDisplay.string(from: date),
         offset

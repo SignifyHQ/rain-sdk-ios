@@ -86,6 +86,7 @@ private extension CryptoAssetView {
         .setGridXEnable(false)
         .setGridYEnable(true)
         .frame(height: 184)
+        .padding(.horizontal, -30)
         .onTapGesture {
           viewModel.cryptoChartTapped()
         }

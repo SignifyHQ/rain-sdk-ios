@@ -248,7 +248,7 @@ public extension String {
   
   func convertTimestampToDouble() -> Double {
     let dateFormatter = DateFormatter()
-    dateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSSSSSZ"
+    dateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSSZ"
     
     if let date = dateFormatter.date(from: self) {
       let unixTimestamp = date.timeIntervalSince1970
