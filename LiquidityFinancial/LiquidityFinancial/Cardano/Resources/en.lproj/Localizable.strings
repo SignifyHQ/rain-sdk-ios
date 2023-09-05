@@ -606,7 +606,7 @@ https://mn.gov/commerce/money/investments/cryptocurrency/. \n\n\n\n\n\n\n";
 
 // VERIFY CARD
 "verify_card.title" = "Verify card ownership";
-"verify_card.detail" = "Check your card activity for 1 pending micro-transaction from AvalancheCard. Enter the one amount in the fields below. Once verified, this  transaction will be canceled";
+"verify_card.detail" = "Check your card activity for 1 pending micro-transaction from Cardano Card. Enter the one amount in the fields below. Once verified, this  transaction will be canceled";
 "verify_card.amount.title" = "Amount";
 "verify_card.amount.placeholder" = "Enter amount";
 "verify_card.button.verifyCard" = "Verify Card";
