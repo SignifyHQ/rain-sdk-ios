@@ -42,6 +42,7 @@ final class AddressViewModel: ObservableObject {
   @LazyInjected(\.intercomService) var intercomService
   @LazyInjected(\.authorizationManager) var authorizationManager
   @LazyInjected(\.devicesRepository) var devicesRepository
+  @LazyInjected(\.pushNotificationService) var pushNotificationService
   
   @Published var isLoading: Bool = false
   @Published var popup: Popup?
@@ -307,7 +308,7 @@ extension AddressViewModel {
         authorizationManager.forcedLogout()
         intercomService.pushEventLogout()
         popup = nil
-        UserDefaults.lastestFCMToken = .empty
+        pushNotificationService.signOut()
       }
       isLoading = true
       do {

@@ -195,9 +195,6 @@ extension AccountViewModel {
     Task { @MainActor in
       do {
         let token = try await pushNotificationService.fcmToken()
-        if token == UserDefaults.lastestFCMToken {
-          return
-        }
         let response = try await devicesRepository.register(deviceId: LFUtility.deviceId, token: token)
         if response.success {
           UserDefaults.lastestFCMToken = token

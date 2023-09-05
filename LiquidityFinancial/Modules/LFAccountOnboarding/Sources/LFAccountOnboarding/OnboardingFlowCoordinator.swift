@@ -69,6 +69,7 @@ public class OnboardingFlowCoordinator: OnboardingFlowCoordinatorProtocol {
   @LazyInjected(\.accountRepository) var accountRepository
   @LazyInjected(\.rewardDataManager) var rewardDataManager
   @LazyInjected(\.intercomService) var intercomService
+  @LazyInjected(\.pushNotificationService) var pushNotificationService
   
   public let routeSubject: CurrentValueSubject<Route, Never>
   
@@ -248,6 +249,7 @@ extension OnboardingFlowCoordinator {
     log.info("<<<<<<<<<<<<<< 401 no auth and clear user data >>>>>>>>>>>>>>>")
     accountDataManager.clearUserSession()
     authorizationManager.clearToken()
+    pushNotificationService.signOut()
   }
   
   private func refreshNetSpendSession() async throws {

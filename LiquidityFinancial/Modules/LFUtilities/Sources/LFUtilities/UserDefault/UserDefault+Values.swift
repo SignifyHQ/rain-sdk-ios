@@ -41,4 +41,7 @@ public extension UserDefaults {
   @LFUserDefault(key: Key.userCompleteOnboarding, defaultValue: false)
   static var userCompleteOnboarding: Bool
   
+  @LFUserDefault(key: Key.isFirstRun, defaultValue: true)
+  static var isFirstRun: Bool
+  
 }

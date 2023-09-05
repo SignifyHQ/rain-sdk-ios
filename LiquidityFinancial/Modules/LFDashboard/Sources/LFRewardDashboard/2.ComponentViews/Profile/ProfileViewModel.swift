@@ -107,6 +107,7 @@ extension ProfileViewModel {
         authorizationManager.forcedLogout()
         intercomService.pushEventLogout()
         dismissPopup()
+        pushNotificationService.signOut()
       }
       isLoading = true
       do {
@@ -128,6 +129,7 @@ extension ProfileViewModel {
     authorizationManager.forcedLogout()
     intercomService.pushEventLogout()
     dismissPopup()
+    pushNotificationService.signOut()
   }
   
   func dismissPopup() {
@@ -179,9 +181,6 @@ extension ProfileViewModel {
     Task { @MainActor in
       do {
         let token = try await pushNotificationService.fcmToken()
-        if token == UserDefaults.lastestFCMToken {
-          return
-        }
         let response = try await devicesRepository.register(deviceId: LFUtility.deviceId, token: token)
         if response.success {
           UserDefaults.lastestFCMToken = token

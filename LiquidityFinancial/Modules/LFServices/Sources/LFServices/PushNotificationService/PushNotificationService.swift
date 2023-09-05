@@ -4,6 +4,7 @@ import Foundation
 import Factory
 import LFUtilities
 import Combine
+import UIKit
 
 extension Container {
   public var pushNotificationService: Factory<PushNotificationsService> {
@@ -14,8 +15,7 @@ extension Container {
 }
 
 public class PushNotificationsService: NSObject {
-  public var selectedTransactionId: String?
-  public var selectedTransactionType: String?
+  public var event: NotificationEvent?
   
   public func setUp() {
     UNUserNotificationCenter.current().delegate = self
@@ -23,8 +23,13 @@ public class PushNotificationsService: NSObject {
   }
   
   public func clearSelection() {
-    selectedTransactionId = nil
-    selectedTransactionType = nil
+    event = nil
+  }
+  
+  public func signOut() {
+    Messaging.messaging().deleteToken { _ in
+    }
+    UserDefaults.hasRegisterPushToken = false
   }
   
   public func notificationSettingStatus() async throws -> UNAuthorizationStatus {
@@ -43,6 +48,7 @@ public class PushNotificationsService: NSObject {
         if let error = error {
           continuation.resume(throwing: error)
         } else {
+          UserDefaults.hasRegisterPushToken = true
           continuation.resume(returning: success)
         }
       }
@@ -75,12 +81,13 @@ extension PushNotificationsService: UNUserNotificationCenterDelegate {
 
   private func handleNotification(userInfo: [AnyHashable: Any]) {
     log.info("Handle notification \(userInfo)")
-    guard let transactionId = userInfo["transactionId"] as? String,
-          let transactionType = userInfo["transactionType"] as? String else {
+    guard
+      let transactionId = userInfo["transactionId"] as? String,
+      let accountId = userInfo["accountId"] as? String
+    else {
       return
     }
-    selectedTransactionId = transactionId
-    selectedTransactionType = transactionType
+    event = .transaction(id: transactionId, accountId: accountId)
   }
 }
 

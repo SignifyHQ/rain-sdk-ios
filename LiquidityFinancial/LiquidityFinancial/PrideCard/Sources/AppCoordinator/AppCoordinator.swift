@@ -31,6 +31,8 @@ class AppCoordinator: AppCoordinatorProtocol {
   private var accountRepository
   @LazyInjected(\.accountDataManager)
   private var accountDataManager
+  @LazyInjected(\.pushNotificationService)
+  private var pushNotificationService
   
   private var subscribers: Set<AnyCancellable> = []
   let routeSubject: CurrentValueSubject<Route, Never> = .init(.onboarding)
@@ -75,5 +77,6 @@ class AppCoordinator: AppCoordinatorProtocol {
     authorizationManager.clearToken()
     accountDataManager.clearUserSession()
     intercomService.pushEventLogout()
+    pushNotificationService.signOut()
   }
 }

@@ -17,6 +17,7 @@ public final class QuestionsViewModel: ObservableObject {
   @LazyInjected(\.onboardingRepository) var onboardingRepository
   @LazyInjected(\.onboardingFlowCoordinator) var onboardingFlowCoordinator
   @LazyInjected(\.intercomService) var intercomService
+  @LazyInjected(\.pushNotificationService) var pushNotificationService  
 
   @Published var isLoading: Bool = false
   @Published var isEnableContinue: Bool = false
@@ -56,6 +57,7 @@ extension QuestionsViewModel {
       self?.intercomService.pushEventLogout()
       self?.authorizationManager.forcedLogout()
       self?.popup = nil
+      self?.pushNotificationService.signOut()
     }
   }
   

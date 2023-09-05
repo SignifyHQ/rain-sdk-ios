@@ -146,12 +146,13 @@ extension HomeViewModel {
   }
   
   func checkGoTransactionDetail() {
-    guard
-      let id = pushNotificationService.selectedTransactionId,
-      let type = pushNotificationService.selectedTransactionType else {
+    guard let event = pushNotificationService.event else {
       return
     }
-    openTransactionId(id, type: type)
+    switch event {
+    case let .transaction(id, accountId):
+      openTransactionId(id, accountId: accountId)
+    }
   }
   
   func checkShouldShowNotification() {
@@ -177,9 +178,6 @@ extension HomeViewModel {
     Task { @MainActor in
       do {
         let token = try await pushNotificationService.fcmToken()
-        if token == UserDefaults.lastestFCMToken {
-          return
-        }
         let response = try await devicesRepository.register(deviceId: LFUtility.deviceId, token: token)
         if response.success {
           UserDefaults.lastestFCMToken = token
@@ -208,20 +206,10 @@ extension HomeViewModel {
     popup = nil
   }
   
-  func openTransactionId(_ id: String, type: String) {
-    let isCrypto = type == "crypto"
+  func openTransactionId(_ id: String, accountId: String) {
     Task { @MainActor in
-      do {
-        let currencyType = isCrypto ? Constants.CurrencyType.crypto.rawValue : Constants.CurrencyType.fiat.rawValue
-        let accounts = try await self.accountRepository.getAccount(currencyType: currencyType)
-        guard let account = accounts.first else {
-          return
-        }
-        navigation = .transactionDetail(id: id, accountId: account.id)
-        pushNotificationService.clearSelection()
-      } catch {
-        log.error(error.localizedDescription)
-      }
+      navigation = .transactionDetail(id: id, accountId: accountId)
+      pushNotificationService.clearSelection()
     }
   }
 }

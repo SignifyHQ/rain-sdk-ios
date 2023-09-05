@@ -14,6 +14,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     setUpAppearence()
     setupConfigs()
     KickoffService.kickoff(application: application, launchingOptions: options)
+    UserDefaults.isFirstRun = false
     return true
   }
   
