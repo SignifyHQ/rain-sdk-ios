@@ -119,10 +119,6 @@ extension Array where Element == HistoricalPriceModel {
       ?? model.lastUpdated?.convertTimestampToDouble(dateFormat: Constants.DateFormat.iso8601WithTimeZone.rawValue)
       ?? 0
       let date = Date(timeIntervalSince1970: TimeInterval(timestampValue))
-      let value = DateFormatter.chartGridDisplay.string(from: date).convertToNewDateFormat(
-        from: Constants.DateFormat.normal.rawValue,
-        to: option.datetimeFormat
-      )
       return (
         DateFormatter.chartGridDisplay.string(from: date).convertToNewDateFormat(
           from: Constants.DateFormat.normal.rawValue,

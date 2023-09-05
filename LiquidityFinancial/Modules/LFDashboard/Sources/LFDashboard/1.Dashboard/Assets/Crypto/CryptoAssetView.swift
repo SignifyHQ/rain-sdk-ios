@@ -139,7 +139,7 @@ private extension CryptoAssetView {
         Text(Constants.Default.walletAddressPlaceholder.rawValue)
           .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.medium.value))
           .foregroundColor(walletPlaceHolderColor)
-          .offset(y: -2)
+          .offset(y: 3)
       }
       .padding(.horizontal, 12)
       .frame(height: 56)
