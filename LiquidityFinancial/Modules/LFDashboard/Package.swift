@@ -30,6 +30,7 @@ let package = Package(
     .package(name: "LFData", path: "../LFData"),
     .package(name: "LFNetwork", path: "../LFNetwork"),
     .package(name: "LFRewards", path: "../LFRewards"),
+    .package(name: "LFAccountOnboarding", path: "../LFAccountOnboarding"),
     .package(url: "https://github.com/twostraws/CodeScanner", from: "2.0.0"),
     .package(url: "https://github.com/SwiftGen/SwiftGenPlugin", from: "6.6.2")
   ],
@@ -49,7 +50,7 @@ let package = Package(
       name: "LFDashboard",
       dependencies: [
         "LFUtilities", "LFStyleGuide", "LFLocalizable", "LFServices", "LFCard", "BaseDashboard",
-        "LFBank", "LFTransaction", "LFCryptoChart", "CodeScanner", "LFWalletAddress",
+        "LFBank", "LFTransaction", "LFCryptoChart", "CodeScanner", "LFWalletAddress", "LFAccountOnboarding",
         .product(name: "OnboardingData", package: "LFData"),
         .product(name: "NetSpendData", package: "LFData"),
         .product(name: "ZerohashData", package: "LFData"),
@@ -61,7 +62,7 @@ let package = Package(
       name: "LFRewardDashboard",
       dependencies: [
         "LFUtilities", "LFStyleGuide", "LFLocalizable", "LFServices", "LFCard",
-        "LFBank", "LFTransaction", "CodeScanner", "LFRewards", "BaseDashboard",
+        "LFBank", "LFTransaction", "CodeScanner", "LFRewards", "BaseDashboard", "LFAccountOnboarding",
         .product(name: "OnboardingData", package: "LFData"),
         .product(name: "NetSpendData", package: "LFData"),
         .product(name: "ZerohashData", package: "LFData"),

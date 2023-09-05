@@ -20,7 +20,7 @@ class AccountViewModel: ObservableObject {
   @LazyInjected(\.intercomService) var intercomService
   @LazyInjected(\.pushNotificationService) var pushNotificationService
   @LazyInjected(\.devicesRepository) var devicesRepository
-
+  
   @Published var navigation: Navigation?
   
   @Published var isDisableView: Bool = false
@@ -91,21 +91,21 @@ class AccountViewModel: ObservableObject {
   func getSubWalletAddress(asset: AssetModel) -> String {
     var walletAdress = ""
     if let externalAccountId = asset.externalAccountId {
-      walletAdress = externalAccountId.substring(start: 0, end: externalAccountId.count/4)
+      walletAdress = externalAccountId.substring(start: 0, end: externalAccountId.count / 4)
     }
     return walletAdress
   }
 }
 
-// MARK: - View Helpers
+  // MARK: - View Helpers
 extension AccountViewModel {
   func handleFundingAgreementData() {
     addFundsViewModel.fundingAgreementData
       .receive(on: DispatchQueue.main)
       .sink { [weak self] agreementData in
         self?.openFundingAgreement(data: agreementData)
-    }
-    .store(in: &cancellable)
+      }
+      .store(in: &cancellable)
   }
   
   func handleFundingAcceptAgreement(isAccept: Bool) {
@@ -209,7 +209,7 @@ extension AccountViewModel {
   }
 }
 
-// MARK: - API
+  // MARK: - API
 extension AccountViewModel {
   func getATMAuthorizationCode() {
     Task {
@@ -249,7 +249,7 @@ extension AccountViewModel {
   }
 }
 
-// MARK: - Types
+  // MARK: - Types
 extension AccountViewModel {
   enum Navigation {
     case debugMenu
@@ -263,20 +263,19 @@ extension AccountViewModel {
   
   enum Sheet: Hashable, Identifiable {
     static func == (lhs: AccountViewModel.Sheet, rhs: AccountViewModel.Sheet) -> Bool {
-      return lhs.hashValue == rhs.hashValue
+      return lhs.hashRawValue == rhs.hashRawValue
     }
     func hash(into hasher: inout Hasher) {
-      hasher.combine(hashValue)
+      hasher.combine(hashRawValue)
     }
-    var hashValue: Int {
+    var hashRawValue: Int {
       switch self {
       case .legal: return 0
       case .agreement: return 1
       }
     }
-    
     var id: Self {
-      return self
+      self
     }
     case legal
     case agreement(APIAgreementData?)

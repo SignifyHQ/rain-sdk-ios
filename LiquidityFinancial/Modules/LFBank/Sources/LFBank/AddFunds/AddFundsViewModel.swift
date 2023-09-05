@@ -5,7 +5,6 @@ import NetSpendData
 import NetSpendDomain
 import NetspendSdk
 import LFUtilities
-import LFAccountOnboarding
 
 @MainActor
 public final class AddFundsViewModel: ObservableObject {

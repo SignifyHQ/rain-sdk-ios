@@ -8,4 +8,3 @@ public struct WaitListParameter: Parameterable {
     let waitList: String
   }
 }
-

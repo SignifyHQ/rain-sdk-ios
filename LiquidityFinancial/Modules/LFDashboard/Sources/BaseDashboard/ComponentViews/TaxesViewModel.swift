@@ -16,7 +16,7 @@ class TaxesViewModel: ObservableObject {
   @LazyInjected(\.accountDataManager) var accountDataManager
   
   lazy var useCase: AccountUseCase = {
-    return AccountUseCase(repository: accountRepository)
+    AccountUseCase(repository: accountRepository)
   }()
   
   func onAppear() {

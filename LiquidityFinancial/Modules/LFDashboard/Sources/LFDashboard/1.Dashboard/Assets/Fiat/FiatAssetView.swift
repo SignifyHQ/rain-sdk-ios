@@ -189,7 +189,7 @@ private extension FiatAssetView {
         .foregroundColor(Colors.label.swiftUIColor.opacity(0.75))
         .padding(.top, 16)
       AddFundsView(
-        viewModel: AddFundsViewModel(), 
+        viewModel: AddFundsViewModel(),
         achInformation: $viewModel.achInformation,
         isDisableView: $viewModel.isDisableView
       )

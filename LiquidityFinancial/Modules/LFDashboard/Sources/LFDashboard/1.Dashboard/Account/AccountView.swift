@@ -52,11 +52,13 @@ struct AccountsView: View {
               .ignoresSafeArea()
           }
         case .agreement(let data):
-          AgreementView(viewModel: AgreementViewModel(fundingAgreement: data), onNext: {
-            self.viewModel.addFundsViewModel.fundingAgreementData.send(nil)
-          }, onDisappear:  { isAcceptAgreement in
-            self.viewModel.handleFundingAcceptAgreement(isAccept: isAcceptAgreement)
-          }, shouldFetchCurrentState: false)
+          AgreementView(
+            viewModel: AgreementViewModel(fundingAgreement: data),
+            onNext: {
+            //self.viewModel.addFundsViewModel.fundingAgreementData.send(nil)
+            }, onDisappear: { isAcceptAgreement in
+              self.viewModel.handleFundingAcceptAgreement(isAccept: isAcceptAgreement)
+            }, shouldFetchCurrentState: false)
         }
       })
       .popup(item: $viewModel.toastMessage, style: .toast) {
@@ -297,4 +299,3 @@ private extension AccountsView {
     }
   }
 }
-

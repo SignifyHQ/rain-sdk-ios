@@ -32,6 +32,7 @@ final class CashViewModel: ObservableObject {
   @Published var linkedAccount: [APILinkedSourceData] = []
   @Published var achInformation: ACHModel = .default
   @Published var fullScreen: FullScreen?
+  @Published var sheet: Sheet?
   
   let currencyType = Constants.CurrencyType.fiat.rawValue
   
@@ -43,6 +44,8 @@ final class CashViewModel: ObservableObject {
     0
   }
 
+  private(set) var addFundsViewModel = AddFundsViewModel()
+  
   private var cancellable: Set<AnyCancellable> = []
   
   init(
@@ -82,6 +85,7 @@ final class CashViewModel: ObservableObject {
       .assign(to: \.linkedAccount, on: self)
       .store(in: &cancellable)
     
+    handleFundingAgreementData()
   }
   
   func refreshTransactions(with accountID: String) {
@@ -102,6 +106,31 @@ final class CashViewModel: ObservableObject {
 
 // MARK: - View Helpers
 extension CashViewModel {
+  func handleFundingAgreementData() {
+    addFundsViewModel.fundingAgreementData
+      .receive(on: DispatchQueue.main)
+      .sink { [weak self] agreementData in
+        self?.openFundingAgreement(data: agreementData)
+      }
+      .store(in: &cancellable)
+  }
+  
+  func handleFundingAcceptAgreement(isAccept: Bool) {
+    if isAccept {
+      addFundsViewModel.goNextNavigation()
+    } else {
+      addFundsViewModel.stopAction()
+    }
+  }
+  
+  func openFundingAgreement(data: APIAgreementData?) {
+    if data == nil {
+      sheet = nil
+    } else {
+      sheet = .agreement(data)
+    }
+  }
+  
   func onClickedChangeAssetButton() {
     navigation = .changeAsset
   }
@@ -192,5 +221,24 @@ extension CashViewModel {
       case .fundCard: return "fundCard"
       }
     }
+  }
+  
+  enum Sheet: Hashable, Identifiable {
+    static func == (lhs: CashViewModel.Sheet, rhs: CashViewModel.Sheet) -> Bool {
+      return lhs.hashRawValue == rhs.hashRawValue
+    }
+    func hash(into hasher: inout Hasher) {
+      hasher.combine(hashRawValue)
+    }
+    var hashRawValue: Int {
+      switch self {
+      case .agreement: return 0
+      }
+    }
+    var id: Self {
+      self
+    }
+    
+    case agreement(APIAgreementData?)
   }
 }

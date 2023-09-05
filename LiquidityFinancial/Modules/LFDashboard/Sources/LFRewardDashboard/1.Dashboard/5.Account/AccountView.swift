@@ -4,6 +4,7 @@ import LFStyleGuide
 import LFLocalizable
 import LFServices
 import LFBank
+import LFAccountOnboarding
 
 struct AccountsView: View {
   @StateObject private var viewModel = AccountViewModel()
@@ -31,19 +32,27 @@ struct AccountsView: View {
           .navigationBarHidden(true)
         }
       }
-      .sheet(isPresented: $viewModel.openLegal) {
-        if let url = URL(string: LFUtility.termsURL) {
-          WebView(url: url)
-            .ignoresSafeArea()
+      .sheet(item: $viewModel.sheet, content: { sheet in
+        switch sheet {
+        case .legal:
+          if let url = URL(string: LFUtility.termsURL) {
+            WebView(url: url)
+              .ignoresSafeArea()
+          }
+        case .agreement(let data):
+          AgreementView(
+            viewModel: AgreementViewModel(fundingAgreement: data),
+            onNext: {
+                //self.viewModel.addFundsViewModel.fundingAgreementData.send(nil)
+            }, onDisappear: { isAcceptAgreement in
+              self.viewModel.handleFundingAcceptAgreement(isAccept: isAcceptAgreement)
+            }, shouldFetchCurrentState: false)
         }
-      }
+      })
       .popup(item: $viewModel.toastMessage, style: .toast) {
         ToastView(toastMessage: $0)
       }
       .background(Colors.background.swiftUIColor)
-      .onAppear {
-        viewModel.onAppear()
-      }
   }
 }
 
@@ -55,7 +64,7 @@ private extension AccountsView {
         connectedAccountsSection
         section(title: LFLocalizable.AccountView.connectNewAccounts) {
           AddFundsView(
-            viewModel: AddFundsViewModel(), 
+            viewModel: viewModel.addFundsViewModel,
             achInformation: $viewModel.achInformation,
             isDisableView: $viewModel.isDisableView
           )

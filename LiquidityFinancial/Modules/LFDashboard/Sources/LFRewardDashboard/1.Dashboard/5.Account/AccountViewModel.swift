@@ -26,6 +26,9 @@ class AccountViewModel: ObservableObject {
   @Published var toastMessage: String?
   @Published var linkedAccount: [APILinkedSourceData] = []
   @Published var achInformation: ACHModel = .default
+  @Published var sheet: Sheet?
+  
+  private(set) var addFundsViewModel = AddFundsViewModel()
   
   private var cancellable: Set<AnyCancellable> = []
   
@@ -36,6 +39,7 @@ class AccountViewModel: ObservableObject {
   init() {
     getACHInfo()
     subscribeLinkedAccounts()
+    handleFundingAgreementData()
   }
 }
 
@@ -55,6 +59,31 @@ extension AccountViewModel {
   
   func openIntercomService() {
     intercomService.openIntercom()
+  }
+  
+  func handleFundingAgreementData() {
+    addFundsViewModel.fundingAgreementData
+      .receive(on: DispatchQueue.main)
+      .sink { [weak self] agreementData in
+        self?.openFundingAgreement(data: agreementData)
+      }
+      .store(in: &cancellable)
+  }
+  
+  func handleFundingAcceptAgreement(isAccept: Bool) {
+    if isAccept {
+      addFundsViewModel.goNextNavigation()
+    } else {
+      addFundsViewModel.stopAction()
+    }
+  }
+  
+  func openFundingAgreement(data: APIAgreementData?) {
+    if data == nil {
+      sheet = nil
+    } else {
+      sheet = .agreement(data)
+    }
   }
 }
 
@@ -136,10 +165,24 @@ extension AccountViewModel {
     case bankStatement
     case disputeTransaction(String, String)
   }
-}
-
-extension AccountViewModel {
   
-  func onAppear() {
+  enum Sheet: Hashable, Identifiable {
+    static func == (lhs: AccountViewModel.Sheet, rhs: AccountViewModel.Sheet) -> Bool {
+      return lhs.hashRawValue == rhs.hashRawValue
+    }
+    func hash(into hasher: inout Hasher) {
+      hasher.combine(hashRawValue)
+    }
+    var hashRawValue: Int {
+      switch self {
+      case .legal: return 0
+      case .agreement: return 1
+      }
+    }
+    var id: Self {
+      self
+    }
+    case legal
+    case agreement(APIAgreementData?)
   }
 }

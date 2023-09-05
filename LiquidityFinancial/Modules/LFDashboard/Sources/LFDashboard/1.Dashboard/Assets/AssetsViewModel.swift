@@ -22,7 +22,9 @@ final class AssetsViewModel: ObservableObject {
     accountDataManager
       .accountsSubject.map({ accounts in
         accounts.map({ AssetModel(account: $0) })
-      }).assign(to: \.assets, on: self).store(in: &cancellable)
+      })
+      .assign(to: \.assets, on: self)
+      .store(in: &cancellable)
     
     isLoading
       .assign(to: \.isLoading, on: self)

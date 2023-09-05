@@ -16,7 +16,7 @@ public protocol LinkedSourceDataEntity {
 
 public extension LinkedSourceDataEntity {
   var isVerified: Bool {
-    requiredFlow == nil || requiredFlow!.isEmpty
+    requiredFlow == nil || (requiredFlow?.isEmpty ?? true)
   }
 }
 

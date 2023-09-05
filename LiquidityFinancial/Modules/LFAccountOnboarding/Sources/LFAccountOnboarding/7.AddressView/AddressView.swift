@@ -98,13 +98,7 @@ struct AddressView: View {
         KYCStatusView(viewModel: KYCStatusViewModel(state: .missingInfo))
       case .agreement:
         AgreementView(viewModel: AgreementViewModel()) {
-          Task {
-            do {
-              try await viewModel.apiFetchWorkflows()
-            } catch {
-              viewModel.toastMessage = error.localizedDescription
-            }
-          }
+          log.info("after accept agreement will fetch missing step and go next:\(viewModel.onboardingFlowCoordinator.routeSubject.value) ")
         }
       default:
         EmptyView()

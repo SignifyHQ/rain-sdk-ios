@@ -5,6 +5,7 @@ import LFLocalizable
 import LFBank
 import LFTransaction
 import LFCard
+import LFAccountOnboarding
 
 // TODO: Will use or not
 struct CashView: View {
@@ -49,6 +50,18 @@ struct CashView: View {
         TransactionDetailView(accountID: viewModel.accountID, transactionId: transaction.id, kind: transaction.detailType)
       }
     }
+    .sheet(item: $viewModel.sheet, content: { sheet in
+      switch sheet {
+      case .agreement(let data):
+        AgreementView(
+          viewModel: AgreementViewModel(fundingAgreement: data),
+          onNext: {
+              //self.viewModel.addFundsViewModel.fundingAgreementData.send(nil)
+          }, onDisappear: { isAcceptAgreement in
+            self.viewModel.handleFundingAcceptAgreement(isAccept: isAcceptAgreement)
+          }, shouldFetchCurrentState: false)
+      }
+    })
     .fullScreenCover(item: $viewModel.fullScreen) { item in
       switch item {
       case .fundCard(let kind):
@@ -177,7 +190,7 @@ private extension CashView {
         .foregroundColor(Colors.label.swiftUIColor.opacity(0.75))
         .padding(.top, 16)
       AddFundsView(
-        viewModel: AddFundsViewModel(), 
+        viewModel: viewModel.addFundsViewModel,
         achInformation: $viewModel.achInformation,
         isDisableView: $viewModel.isDisableView
       )

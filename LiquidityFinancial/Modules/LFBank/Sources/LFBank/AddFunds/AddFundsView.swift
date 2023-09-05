@@ -3,7 +3,6 @@ import LFLocalizable
 import LFUtilities
 import LFStyleGuide
 import NetspendSdk
-import LFAccountOnboarding
 
 public struct AddFundsView: View {
   

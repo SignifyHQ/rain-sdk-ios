@@ -93,7 +93,9 @@ private extension CryptoAssetViewModel {
         return nil
       }
       return AssetModel(account: account)
-    }).assign(to: \.asset, on: self).store(in: &subscribers)
+    })
+    .assign(to: \.asset, on: self)
+    .store(in: &subscribers)
   }
   
   func observeMarketManager() {

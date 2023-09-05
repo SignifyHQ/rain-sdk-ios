@@ -15,7 +15,8 @@ public struct AgreementView: View {
   
   public init(viewModel: AgreementViewModel,
               onNext: (() -> Void)? = nil,
-              onDisappear: ((_ isAcceptAgreement: Bool) -> Void)? = nil, shouldFetchCurrentState: Bool = true) {
+              onDisappear: ((_ isAcceptAgreement: Bool) -> Void)? = nil,
+              shouldFetchCurrentState: Bool = true) {
     _viewModel = .init(wrappedValue: viewModel)
     self.shouldFetchCurrentState = shouldFetchCurrentState
     self.onNext = onNext
@@ -162,15 +163,15 @@ private extension AgreementView {
       if let onNext = onNext {
         viewModel.apiPostAgreements {
           if shouldFetchCurrentState {
-            dismiss()
-            onNext()
-          } else {
             Task { @MainActor in
-              self.viewModel.isLoading = true
+              self.viewModel.isAcceptAgreementLoading = true
               await viewModel.onboardingFlowCoordinator.apiFetchCurrentState()
-              self.viewModel.isLoading = false
+              self.viewModel.isAcceptAgreementLoading = false
               onNext()
             }
+          } else {
+            dismiss()
+            onNext()
           }
         }
       } else {
