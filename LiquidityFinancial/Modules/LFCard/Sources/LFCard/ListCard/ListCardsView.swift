@@ -3,6 +3,7 @@ import SwiftUI
 import LFLocalizable
 import LFUtilities
 import LFStyleGuide
+import LFRewards
 
 public struct ListCardsView: View {
   @Environment(\.dismiss) private var dismiss
@@ -60,6 +61,9 @@ public struct ListCardsView: View {
         }
       }
     }
+    .popup(isPresented: $viewModel.roundUpPurchasesPopup, content: {
+      roundUpPurchasesPopup
+    })
     .popup(item: $viewModel.toastMessage, style: .toast) {
       ToastView(toastMessage: $0)
     }
@@ -140,8 +144,13 @@ private extension ListCardsView {
     }
   }
   
+  @ViewBuilder
   var rows: some View {
     VStack(alignment: .leading, spacing: 18) {
+      if viewModel.showRoundUpPurchases {
+        roundUpPurchasesView
+      }
+      
       if viewModel.currentCard.cardType != .physical || viewModel.currentCard.cardStatus != .unactivated {
         Text(LFLocalizable.ListCard.Security.title)
           .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.ultraSmall.value))
@@ -261,6 +270,74 @@ private extension ListCardsView {
       isDisable: false
     ) {
       viewModel.onClickedActiveCard()
+    }
+  }
+  
+  private var roundUpPurchasesView: some View {
+    HStack(spacing: 12) {
+      GenImages.CommonImages.icRoundUpDonationLeft.swiftUIImage
+        .foregroundColor(Colors.label.swiftUIColor)
+      VStack(alignment: .leading, spacing: 2) {
+        Text(LFLocalizable.CardsDetail.donations)
+          .font(Fonts.regular.swiftUIFont(size: 12))
+          .foregroundColor(Colors.label.swiftUIColor.opacity(0.75))
+        
+        Text(LFLocalizable.CardsDetail.Roundup.desc)
+          .font(Fonts.regular.swiftUIFont(size: 12))
+          .foregroundColor(Colors.label.swiftUIColor)
+      }
+      Spacer()
+      Button {
+        viewModel.roundUpPurchasesPopup.toggle()
+      } label: {
+        GenImages.CommonImages.info.swiftUIImage
+      }
+      .foregroundColor(Colors.label.swiftUIColor)
+      
+      roundUpToggle
+    }
+    .padding(14)
+    .background(Colors.secondaryBackground.swiftUIColor)
+    .cornerRadius(10)
+  }
+  
+  private var roundUpToggle: some View {
+    let isOn: Binding<Bool> = .init {
+      viewModel.roundUpPurchases
+    } set: { value in
+      viewModel.callUpdateRoundUpDonationAPI(status: value)
+    }
+    return ZStack {
+      Toggle("", isOn: isOn)
+        .toggleStyle(SwitchToggleStyle(tint: Colors.primary.swiftUIColor))
+        .frame(maxWidth: 36)
+        .padding(.trailing, 12)
+        .hidden(viewModel.isUpdatingRoundUpPurchases)
+
+      LottieView(loading: .primary)
+        .frame(width: 30, height: 20)
+        .hidden(!viewModel.isUpdatingRoundUpPurchases)
+    }
+  }
+
+  private var roundUpPurchasesPopup: some View {
+    PopupAlert {
+      VStack(spacing: 24) {
+        GenImages.Images.icLogo.swiftUIImage
+          .resizable()
+          .frame(width: 80, height: 80)
+
+        Text(LFLocalizable.CardsDetail.Roundup.title)
+          .font(Fonts.regular.swiftUIFont(size: 18))
+          .foregroundColor(Colors.label.swiftUIColor)
+
+        ShoppingGivesAlert(type: .roundUp)
+          .frame(height: 300)
+
+        FullSizeButton(title: LFLocalizable.Button.Ok.title, isDisable: false) {
+          viewModel.roundUpPurchasesPopup = false
+        }
+      }
     }
   }
 }

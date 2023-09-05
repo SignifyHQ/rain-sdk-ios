@@ -596,6 +596,22 @@ public enum LFLocalizable {
       public static let donation = LFLocalizable.tr("Localizable", "card_share.title.donation", fallback: "Donation")
     }
   }
+  public enum CardsDetail {
+    /// Donations
+    public static let donations = LFLocalizable.tr("Localizable", "cards_detail.donations", fallback: "Donations")
+    public enum Deals {
+      /// Donate up to 8% of purchase
+      public static func value(_ p1: Int) -> String {
+        return LFLocalizable.tr("Localizable", "cards_detail.deals.value", p1, fallback: "Donate up to 8% of purchase")
+      }
+    }
+    public enum Roundup {
+      /// Round up purchases
+      public static let desc = LFLocalizable.tr("Localizable", "cards_detail.roundup.desc", fallback: "Round up purchases")
+      /// ROUND UP
+      public static let title = LFLocalizable.tr("Localizable", "cards_detail.roundup.title", fallback: "ROUND UP")
+    }
+  }
   public enum CashCard {
     public enum Balance {
       /// %@ Balance

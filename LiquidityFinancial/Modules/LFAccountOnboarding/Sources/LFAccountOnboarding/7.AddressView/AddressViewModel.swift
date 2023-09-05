@@ -288,7 +288,7 @@ extension AddressViewModel {
       defer { isLoading = false }
       isLoading = true
       do {
-        let entity = try await accountRepository.addToWaitList(waitList: "CRYPTO_PRODUCT") //support crypto product only
+        _ = try await accountRepository.addToWaitList(waitList: "CRYPTO_PRODUCT") //support crypto product only
         popup = .waitlistJoined
       } catch {
         log.error(error.localizedDescription)

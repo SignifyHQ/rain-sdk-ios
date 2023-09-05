@@ -3,11 +3,16 @@ import LFUtilities
 import LFStyleGuide
 import LFLocalizable
 
-struct ShoppingGivesAlert: View {
-  let type: Kind
+public struct ShoppingGivesAlert: View {
+  
   @Environment(\.openURL) private var openURL
   
-  var body: some View {
+  let type: Kind
+  public init(type: Kind) {
+    self.type = type
+  }
+  
+  public var body: some View {
     TextTappable(attributedText: attributedText, linkTextAttributes: linkAttributes, links: [terms, privacy, ein], openLink: openLink(value:))
   }
   
@@ -77,7 +82,7 @@ struct ShoppingGivesAlert: View {
   }
 }
 
-extension ShoppingGivesAlert {
+public extension ShoppingGivesAlert {
   enum Kind {
     case taxDeductions
     case roundUp

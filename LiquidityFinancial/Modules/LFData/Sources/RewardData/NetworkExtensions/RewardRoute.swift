@@ -116,7 +116,7 @@ extension RewardRoute: LFRoute {
         "offset": String(offset)
       ]
       texts.forEach { text in
-        param["category"] = text
+        param["name"] = text
       }
       return param
     }

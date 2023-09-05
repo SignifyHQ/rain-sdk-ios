@@ -288,6 +288,11 @@
 "card.cvv.title" = "CVV";
 "card.copyToClipboard.title" = "Card number copied to clipboard";
 
+"cards_detail.donations" = "Donations";
+"cards_detail.roundup.desc" = "Round up purchases";
+"cards_detail.roundup.title" = "ROUND UP";
+"cards_detail.deals.value" = "Donate up to 8% of purchase";
+
 // EnterCVVCode
 "enterCVVCode.setCardPin.title" = "ENTER CVV TO SET CARD PIN";
 "enterCVVCode.activeCard.title" = "ACTIVATE PHYSICAL CARD";

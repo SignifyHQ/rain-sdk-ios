@@ -1,4 +1,5 @@
 import Foundation
+import LFStyleGuide
 import Combine
 import Factory
 import NetSpendData
@@ -7,6 +8,8 @@ import LFUtilities
 import OnboardingData
 import AccountData
 import PassKit
+import RewardData
+import RewardDomain
 
 @MainActor
 public final class ListCardsViewModel: ObservableObject {
@@ -14,6 +17,9 @@ public final class ListCardsViewModel: ObservableObject {
   @LazyInjected(\.intercomService) var intercomService
   @LazyInjected(\.accountDataManager) var accountDataManager
   @LazyInjected(\.cardRepository) var cardRepository
+  
+  @LazyInjected(\.rewardRepository) var rewardRepository
+  @LazyInjected(\.rewardDataManager) var rewardDataManager
   
   @Published var isInit: Bool = false
   @Published var isLoading: Bool = false
@@ -27,15 +33,31 @@ public final class ListCardsViewModel: ObservableObject {
   @Published var navigation: Navigation?
   @Published var toastMessage: String?
   
+  @Published var roundUpPurchasesPopup: Bool = false
+  @Published var isUpdatingRoundUpPurchases = false
+  
   lazy var cardUseCase: NSCardUseCaseProtocol = {
     NSCardUseCase(repository: cardRepository)
   }()
   
+  lazy var rewardUseCase: RewardUseCase = {
+    RewardUseCase(repository: rewardRepository)
+  }()
+  
   private var cancellable = Set<AnyCancellable>()
+  
   var isHasPhysicalCard: Bool {
     cardsList.contains { card in
       card.cardType == .physical
     }
+  }
+  
+  var roundUpPurchases: Bool {
+    rewardDataManager.roundUpDonation ?? false
+  }
+  
+  var showRoundUpPurchases: Bool {
+    false //TODO: currently the feature is disable
   }
   
   public init(cardData: Published<(CardData)>.Publisher) {
@@ -55,8 +77,8 @@ public final class ListCardsViewModel: ObservableObject {
 }
 
 // MARK: - API
-private extension ListCardsViewModel {
-  func callLockCardAPI() {
+extension ListCardsViewModel {
+  private func callLockCardAPI() {
     isLoading = true
     Task {
       do {
@@ -70,7 +92,7 @@ private extension ListCardsViewModel {
     }
   }
   
-  func callUnLockCardAPI() {
+  private func callUnLockCardAPI() {
     isLoading = true
     Task {
       do {
@@ -79,6 +101,25 @@ private extension ListCardsViewModel {
       } catch {
         isCardLocked = true
         isLoading = false
+        toastMessage = error.localizedDescription
+      }
+    }
+  }
+  
+  func callUpdateRoundUpDonationAPI(status: Bool) {
+    Task { @MainActor in
+      defer { isUpdatingRoundUpPurchases = false }
+      isUpdatingRoundUpPurchases = true
+      do {
+        let body: [String: Any] = [
+          "updateRoundUpDonationRequest": [
+            "roundUpDonation": status
+          ]
+        ]
+        let entity = try await rewardUseCase.setRoundUpDonation(body: body)
+        rewardDataManager.update(roundUpDonation: entity.userRoundUpEnabled ?? false)
+      } catch {
+        log.error(error.localizedDescription)
         toastMessage = error.localizedDescription
       }
     }

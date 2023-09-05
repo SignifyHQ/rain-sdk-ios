@@ -18,16 +18,19 @@ let package = Package(
     .package(name: "LFStyleGuide", path: "../LFStyleGuide"),
     .package(name: "LFLocalizable", path: "../LFLocalizable"),
     .package(name: "LFServices", path: "../LFServices"),
-    .package(name: "LFData", path: "../LFData")
+    .package(name: "LFData", path: "../LFData"),
+    .package(name: "LFRewards", path: "../LFRewards")
   ],
   targets: [
     .target(
       name: "LFCard",
       dependencies: [
-        "LFUtilities", "LFStyleGuide", "LFLocalizable", "LFServices", "Factory",
+        "LFUtilities", "LFStyleGuide", "LFLocalizable", "LFServices", "Factory", "LFRewards",
         .product(name: "OnboardingData", package: "LFData"),
         .product(name: "NetSpendData", package: "LFData"),
         .product(name: "AccountData", package: "LFData"),
+        .product(name: "RewardData", package: "LFData"),
+        .product(name: "RewardDomain", package: "LFDomain"),
         .product(name: "NetSpendDomain", package: "LFDomain")
       ]),
     .testTarget(
