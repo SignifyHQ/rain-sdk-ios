@@ -114,13 +114,7 @@ private extension CryptoAssetView {
           }
         }
         .padding(.top, 6)
-        ArrowButton(
-          image: GenImages.CommonImages.walletAddress.swiftUIImage,
-          title: LFLocalizable.AssetView.walletAddress,
-          value: Constants.Default.walletAddressPlaceholder.rawValue
-        ) {
-          viewModel.receiveButtonTapped()
-        }
+        walletAddressButton
         activity
         Spacer()
         disclosure
@@ -128,6 +122,28 @@ private extension CryptoAssetView {
       }
       .padding(.top, 20)
       .padding(.horizontal, 30)
+    }
+  }
+  
+  var walletAddressButton: some View {
+    Button {
+      viewModel.receiveButtonTapped()
+    } label: {
+      HStack(spacing: 8) {
+        GenImages.CommonImages.walletAddress.swiftUIImage
+          .foregroundColor(Colors.label.swiftUIColor)
+        Text(LFLocalizable.AssetView.walletAddress)
+          .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.ultraSmall.value))
+          .foregroundColor(Colors.label.swiftUIColor)
+        Spacer()
+        Text(Constants.Default.walletAddressPlaceholder.rawValue)
+          .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.medium.value))
+          .foregroundColor(walletPlaceHolderColor)
+          .offset(y: -2)
+      }
+      .padding(.horizontal, 12)
+      .frame(height: 56)
+      .background(Colors.secondaryBackground.swiftUIColor.cornerRadius(9))
     }
   }
   
@@ -159,19 +175,23 @@ private extension CryptoAssetView {
         Text(viewModel.cryptoBalance)
           .foregroundColor(Colors.label.swiftUIColor)
           .font(Fonts.bold.swiftUIFont(size: 32))
-        GenImages.Images.icCrypto.swiftUIImage
+        GenImages.Images.icCryptoCurrency.swiftUIImage
           .foregroundColor(Colors.primary.swiftUIColor)
       }
-      Text(viewModel.usdBalance)
-        .foregroundColor(Colors.label.swiftUIColor)
-        .font(Fonts.bold.swiftUIFont(size: Constants.FontSize.small.value))
-        .padding(.vertical, 8)
-        .padding(.horizontal, 12)
-        .background(
-          Rectangle()
-            .cornerRadius(32)
-            .foregroundColor(Colors.secondaryBackground.swiftUIColor)
-        )
+      HStack(spacing: 4) {
+        Text(viewModel.usdBalance)
+          .foregroundColor(Colors.label.swiftUIColor)
+        Text(viewModel.fluctuationAmmount)
+          .foregroundColor(Colors.label.swiftUIColor.opacity(0.5))
+      }
+      .font(Fonts.bold.swiftUIFont(size: Constants.FontSize.small.value))
+      .padding(.vertical, 8)
+      .padding(.horizontal, 12)
+      .background(
+        Rectangle()
+          .cornerRadius(32)
+          .foregroundColor(Colors.secondaryBackground.swiftUIColor)
+      )
     }
   }
   
@@ -271,6 +291,18 @@ private extension CryptoAssetView {
       .padding(.horizontal, 16)
       .background(Colors.buttons.swiftUIColor)
       .cornerRadius(9)
+    }
+  }
+}
+
+// MARK: - View Helpers
+private extension CryptoAssetView {
+  var walletPlaceHolderColor: Color {
+    switch LFStyleGuide.target {
+    case .Cardano:
+      return Colors.label.swiftUIColor
+    default:
+      return Colors.primary.swiftUIColor
     }
   }
 }

@@ -82,13 +82,13 @@ public extension MarketManager {
       self.liveDatasSubject.send(lineDatas)
       self.liveRangeYSubject.send(lineRangeY)
     }
-    self.liveRangeXSubject.send(trimModels.getGridXIndexes())
+    self.liveRangeXSubject.send(trimModels.getGridXIndexes(option: .live))
     self.liveLineModelsSubject.send(trimModels)
     
     let candleDatas = trimModels.toCandleDatas()
     
     self.liveCandleDatasSubject.send(candleDatas)
-    self.liveCandleRangeXSubject.send(trimModels.getGridXIndexes())
+    self.liveCandleRangeXSubject.send(trimModels.getGridXIndexes(option: .live))
     self.liveCandleRangeYSubject.send(candleDatas.rangeY())
     self.liveCandleModelsSubject.send(trimModels)
     
@@ -154,7 +154,7 @@ private extension MarketManager {
       self.lineRangeYSubject.send(rangeYData)
     }
     var rangeXData = self.lineRangeXSubject.value
-    rangeXData[option] = historicalModels.getGridXIndexes()
+    rangeXData[option] = historicalModels.getGridXIndexes(option: option)
     self.lineRangeXSubject.send(rangeXData)
   }
   
@@ -175,7 +175,7 @@ private extension MarketManager {
     self.candleRangeYSubject.send(candleRangeYCache)
     
     var candleRangeXCache = self.candleRangeXSubject.value
-    candleRangeXCache[option] = trimModels.getGridXIndexes()
+    candleRangeXCache[option] = trimModels.getGridXIndexes(option: option)
     self.candleRangeXSubject.send(candleRangeXCache)
   }
 }
@@ -244,8 +244,10 @@ private extension MarketManager {
   func handlePriceValueForLineChart(priceModel: HistoricalPriceModel) {
     var newPrices = self.liveLineModelsSubject.value
     if let lastValue = newPrices.last,
-       let lastOpenTime = lastValue.timeOpen?.convertTimestampToDouble() {
-      if lastOpenTime > priceModel.timeOpen?.convertTimestampToDouble() ?? 0 {
+       let lastOpenTime = lastValue.timeOpen?.convertTimestampToDouble(dateFormat: Constants.DateFormat.iso8601WithTimeZone.rawValue) {
+      if lastOpenTime > priceModel.timeOpen?.convertTimestampToDouble(
+        dateFormat: Constants.DateFormat.iso8601WithTimeZone.rawValue
+      ) ?? 0 {
         return
       }
     }
@@ -265,15 +267,19 @@ private extension MarketManager {
         self.liveRangeYSubject.send(rangeY)
       }
     }
-    self.liveRangeXSubject.send(newPrices.getGridXIndexes())
+    self.liveRangeXSubject.send(newPrices.getGridXIndexes(option: .live))
   }
   
   func handlePriceValueForCandleChart(priceModel: HistoricalPriceModel) {
     var newValue = self.liveCandleModelsSubject.value
     var candleDatas = self.liveCandleDatasSubject.value
     if let lastModel = newValue.last, var lastCandleData = candleDatas.last {
-      let openTimeValue = priceModel.timeOpen?.convertTimestampToDouble() ?? 0
-      let lastTimeValue = lastModel.lastUpdated?.convertTimestampToDouble() ?? 0
+      let openTimeValue = priceModel.timeOpen?.convertTimestampToDouble(
+        dateFormat: Constants.DateFormat.iso8601WithTimeZone.rawValue
+      ) ?? 0
+      let lastTimeValue = lastModel.lastUpdated?.convertTimestampToDouble(
+        dateFormat: Constants.DateFormat.iso8601WithTimeZone.rawValue
+      ) ?? 0
       if openTimeValue <= lastTimeValue {
         newValue.removeLast()
         candleDatas.removeLast()
@@ -290,7 +296,7 @@ private extension MarketManager {
     
     self.liveCandleModelsSubject.send(newValue)
     self.liveCandleDatasSubject.send(candleDatas)
-    self.liveCandleRangeXSubject.send(newValue.getGridXIndexes())
+    self.liveCandleRangeXSubject.send(newValue.getGridXIndexes(option: .live))
     self.liveCandleRangeYSubject.send(candleDatas.rangeY())
   }
   
@@ -350,8 +356,12 @@ private extension MarketManager {
         value /= valueCount
       }
       
-      let startTimeStamp = startModel.timestamp ?? startModel.lastUpdated?.convertTimestampToDouble() ?? 0
-      let endTimeStamp = endModel.timestamp ?? startModel.lastUpdated?.convertTimestampToDouble() ?? 0
+      let startTimeStamp = startModel.timestamp ?? startModel.lastUpdated?.convertTimestampToDouble(
+        dateFormat: Constants.DateFormat.iso8601WithTimeZone.rawValue
+      ) ?? 0
+      let endTimeStamp = endModel.timestamp ?? startModel.lastUpdated?.convertTimestampToDouble(
+        dateFormat: Constants.DateFormat.iso8601WithTimeZone.rawValue
+      ) ?? 0
       let timestamp = (startTimeStamp + endTimeStamp) / 2
       
       let candleModel = HistoricalPriceModel(

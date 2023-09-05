@@ -1,5 +1,6 @@
 import Foundation
 import CryptoChartDomain
+import LFUtilities
 
 public struct HistoricalPriceModel: Codable {
   public let currency: String
@@ -72,7 +73,9 @@ public extension HistoricalPriceModel {
     HistoricalPriceModel(
       currency: entity.currency,
       interval: entity.interval,
-      timestamp: entity.timestamp?.convertTimestampToDouble() ?? 0,
+      timestamp: entity.timestamp?.convertTimestampToDouble(
+        dateFormat: Constants.DateFormat.iso8601WithTimeZone.rawValue
+      ) ?? 0,
       changePercentage: nil,
       timeOpen: nil,
       timeHigh: nil,

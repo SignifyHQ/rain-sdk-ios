@@ -148,6 +148,7 @@ public enum GenImages {
     public static let icCoin = ImageAsset(name: "ic_coin")
     public static let icCopyBackground = ImageAsset(name: "ic_copy_background")
     public static let icCrypto = ImageAsset(name: "ic_crypto")
+    public static let icCryptoCurrency = ImageAsset(name: "ic_crypto_currency")
     public static let icCryptoFilled = ImageAsset(name: "ic_crypto_filled")
     public static let icKycQuestion = ImageAsset(name: "ic_kyc_question_?")
     public static let icKycQuestionCheck = ImageAsset(name: "ic_kyc_question_check")

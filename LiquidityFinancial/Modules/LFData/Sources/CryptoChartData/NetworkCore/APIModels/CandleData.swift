@@ -91,7 +91,9 @@ extension Array where Element == HistoricalPriceModel {
         log.error("Chart HistoricalPriceModel to CandleData: \(self)")
         continue
       }
-      let timestampValue = model.timestamp ?? model.lastUpdated?.convertTimestampToDouble() ?? 0
+      let timestampValue = model.timestamp
+      ?? model.lastUpdated?.convertTimestampToDouble(dateFormat: Constants.DateFormat.iso8601WithTimeZone.rawValue)
+      ?? 0
       var data = CandleData(low: low, high: high, open: open, close: close, xValue: timestampValue)
       if indexes.contains(where: { $0 == index }) {
         data.shouldGridLine = true
@@ -104,7 +106,7 @@ extension Array where Element == HistoricalPriceModel {
     return datas
   }
   
-  func getGridXIndexes() -> [(String, Double)] {
+  func getGridXIndexes(option: CryptoFilterOption) -> [(String, Double)] {
     let count = count
     let xOffsets: [Double] = [0.15, 0.5, 0.85]
     return xOffsets.compactMap { offset -> (String, Double)? in
@@ -113,10 +115,19 @@ extension Array where Element == HistoricalPriceModel {
         return nil
       }
       let model = self[index]
-      let timestampValue = model.timestamp ?? model.lastUpdated?.convertTimestampToDouble() ?? 0
+      let timestampValue = model.timestamp
+      ?? model.lastUpdated?.convertTimestampToDouble(dateFormat: Constants.DateFormat.iso8601WithTimeZone.rawValue)
+      ?? 0
       let date = Date(timeIntervalSince1970: TimeInterval(timestampValue))
+      let value = DateFormatter.chartGridDisplay.string(from: date).convertToNewDateFormat(
+        from: Constants.DateFormat.normal.rawValue,
+        to: option.datetimeFormat
+      )
       return (
-        DateFormatter.chartGridDisplay.string(from: date),
+        DateFormatter.chartGridDisplay.string(from: date).convertToNewDateFormat(
+          from: Constants.DateFormat.normal.rawValue,
+          to: option.datetimeFormat
+        ),
         offset
       )
     }

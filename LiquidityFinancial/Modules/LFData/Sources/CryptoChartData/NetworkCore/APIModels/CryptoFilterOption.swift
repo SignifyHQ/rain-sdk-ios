@@ -1,5 +1,6 @@
 import Foundation
 import LFLocalizable
+import LFUtilities
 
 public enum CryptoFilterOption: String, CaseIterable {
   case live
@@ -52,6 +53,23 @@ extension CryptoFilterOption {
       return LFLocalizable.CryptoChart.Filter.year
     case .all:
       return LFLocalizable.CryptoChart.Filter.all
+    }
+  }
+  
+  public var datetimeFormat: String {
+    switch self {
+      case .live:
+        return Constants.DateFormat.periodSeparated.rawValue
+      case .day:
+        return Constants.DateFormat.hour.rawValue
+      case .week:
+        return Constants.DateFormat.periodSeparated.rawValue
+      case .month:
+        return Constants.DateFormat.periodSeparated.rawValue
+      case .year:
+        return Constants.DateFormat.year.rawValue
+      case .all:
+        return Constants.DateFormat.year.rawValue
     }
   }
 }

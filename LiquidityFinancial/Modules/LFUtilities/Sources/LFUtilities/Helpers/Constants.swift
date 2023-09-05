@@ -165,6 +165,17 @@ public extension Constants {
   }
 }
 
+// MARK: - DateFormat
+public extension Constants {
+  enum DateFormat: String {
+    case normal = "yyyy.dd.MM HH:mm"
+    case iso8601WithTimeZone = "yyyy-MM-dd'T'HH:mm:ss.SSSZ"
+    case hour = "HH:mm"
+    case year = "yyyy"
+    case periodSeparated = "yyyy.MM.dd"
+  }
+}
+
 // MARK: - TransactionTypes
 public extension Constants {
   enum TransactionTypesRequest {
@@ -213,7 +224,7 @@ public extension Constants {
     case accountCardSecurity = "XXXXXXXXXX XXXXXXXXX XXX"
     case currencyDescription = "Dollars"
     case documentName = "document.pdf"
-    case walletAddressPlaceholder = "*********"
+    case walletAddressPlaceholder = "************"
     case statementFromMonth = "1"
     case statementFromYear = "2023"
   }

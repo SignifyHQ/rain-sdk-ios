@@ -246,15 +246,29 @@ public extension String {
     return DateFormatter.monthDayDisplay.string(from: date)
   }
   
-  func convertTimestampToDouble() -> Double {
+  func convertTimestampToDouble(dateFormat: String) -> Double {
     let dateFormatter = DateFormatter()
-    dateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSSZ"
+    dateFormatter.dateFormat = dateFormat
     
     if let date = dateFormatter.date(from: self) {
       let unixTimestamp = date.timeIntervalSince1970
       return unixTimestamp
     }
     return .zero
+  }
+  
+  func convertToNewDateFormat(from inputFormat: String, to outputFormat: String) -> String {
+    let inputDateFormatter = DateFormatter()
+    inputDateFormatter.dateFormat = inputFormat
+    
+    if let inputDate = inputDateFormatter.date(from: self) {
+      let outputDateFormatter = DateFormatter()
+      outputDateFormatter.dateFormat = outputFormat
+      outputDateFormatter.timeZone = TimeZone(identifier: "UTC")
+      return outputDateFormatter.string(from: inputDate)
+    } else {
+      return self
+    }
   }
 }
 

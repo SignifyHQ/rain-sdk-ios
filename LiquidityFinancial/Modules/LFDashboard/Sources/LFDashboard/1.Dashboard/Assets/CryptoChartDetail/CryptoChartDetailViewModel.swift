@@ -140,11 +140,7 @@ final class CryptoChartDetailViewModel: ObservableObject {
       minFractionDigits: 6,
       maxFractionDigits: 6
     )
-    volumePrice = model.volume?.formattedAmount(
-      prefix: Constants.CurrencyUnit.usd.symbol,
-      minFractionDigits: 2,
-      maxFractionDigits: 2
-    ) ?? "-"
+    volumePrice = model.volume?.transformedShort() ?? "-"
   }
 }
 

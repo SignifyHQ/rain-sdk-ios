@@ -17,6 +17,7 @@ class CryptoAssetViewModel: ObservableObject {
   @Published var loading: Bool = false
   @Published var showTransferSheet: Bool = false
   @Published var cryptoPrice: String = "0.00"
+  @Published var closePrice: Double = 0
   @Published var changePercent: Double = 0
   @Published var showCryptoDetail: Bool = false
   @Published var toastMessage: String = ""
@@ -39,6 +40,11 @@ class CryptoAssetViewModel: ObservableObject {
   
   var usdBalance: String {
     asset.availableUsdBalanceFormatted ?? .empty
+  }
+  
+  var fluctuationAmmount: String {
+    let value = closePrice * asset.availableBalance - (asset.availableUsdBalance ?? 0)
+    return "(\(value.formattedAmount(prefix: Constants.CurrencyUnit.usd.symbol, minFractionDigits: 2)))"
   }
   
   var isPositivePrice: Bool {
@@ -100,7 +106,7 @@ private extension CryptoAssetViewModel {
   
   func observeMarketManager() {
     marketManager.liveLineModelsSubject.map { models in
-      guard let value = models.last?.close else {
+      guard let value = models.last?.value else {
         return "0.00"
       }
       return value.formattedAmount(prefix: "$", minFractionDigits: 6, maxFractionDigits: 6)
@@ -117,6 +123,16 @@ private extension CryptoAssetViewModel {
     }
     .receive(on: DispatchQueue.main)
     .assign(to: \.changePercent, on: self)
+    .store(in: &subscribers)
+    
+    marketManager.liveLineModelsSubject.map { models in
+      guard let value = models.last?.close else {
+        return 0
+      }
+      return value
+    }
+    .receive(on: DispatchQueue.main)
+    .assign(to: \.closePrice, on: self)
     .store(in: &subscribers)
   }
 }
