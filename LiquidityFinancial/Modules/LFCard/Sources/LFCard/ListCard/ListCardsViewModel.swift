@@ -30,6 +30,7 @@ public final class ListCardsViewModel: ObservableObject {
   @Published var cardMetaDatas: [CardMetaData?] = []
   @Published var currentCard: CardModel = .virtualDefault
   @Published var present: Presentation?
+  @Published var fullScreenPresent: FullScreenPresentation?
   @Published var navigation: Navigation?
   @Published var toastMessage: String?
   
@@ -160,7 +161,7 @@ extension ListCardsViewModel {
   
   func onClickedChangePinButton() {
     if currentCard.cardStatus == .active {
-      present = .changePin(currentCard)
+      fullScreenPresent = .changePin(currentCard)
     } else {
       presentActivateCardView()
     }
@@ -205,7 +206,7 @@ private extension ListCardsViewModel {
   func presentActivateCardView() {
     switch currentCard.cardType {
     case .physical:
-      present = .activatePhysicalCard(currentCard)
+      fullScreenPresent = .activatePhysicalCard(currentCard)
     default:
       break
     }
@@ -224,19 +225,27 @@ private extension ListCardsViewModel {
 // MARK: - Types
 extension ListCardsViewModel {
   enum Presentation: Identifiable {
-    case changePin(CardModel)
     case addAppleWallet(CardModel)
     case applePay(CardModel)
-    case activatePhysicalCard(CardModel)
     
     var id: String {
       switch self {
-      case .changePin:
-        return "changePin"
       case .addAppleWallet:
         return "addAppleWallet"
       case .applePay:
         return "applePay"
+      }
+    }
+  }
+  
+  enum FullScreenPresentation: Identifiable {
+    case changePin(CardModel)
+    case activatePhysicalCard(CardModel)
+
+    var id: String {
+      switch self {
+      case .changePin:
+        return "changePin"
       case .activatePhysicalCard:
         return "activatePhysicalCard"
       }

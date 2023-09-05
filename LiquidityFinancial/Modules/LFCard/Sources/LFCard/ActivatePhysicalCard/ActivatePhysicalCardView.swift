@@ -48,7 +48,7 @@ private extension ActivatePhysicalCardView {
     VStack(spacing: 16) {
       Spacer()
         .frame(maxHeight: 60)
-      VStack(spacing: 60) {
+      VStack(spacing: 54) {
         VStack(spacing: 28) {
           GenImages.Images.connectedAppleWallet.swiftUIImage
           GenImages.Images.connectedAppleWalletShadow.swiftUIImage
@@ -78,7 +78,7 @@ private extension ActivatePhysicalCardView {
           dismiss()
         }
       }
-      .padding(.bottom, 12)
+      .padding(.bottom, 16)
     }
     .padding(.horizontal, 30)
     .background(Colors.background.swiftUIColor)
@@ -88,7 +88,7 @@ private extension ActivatePhysicalCardView {
       } label: {
         CircleButton(style: .xmark)
       }
-      .padding(.top, 10)
+      .padding(.top, 16)
       .padding(.leading, 16)
     }
   }

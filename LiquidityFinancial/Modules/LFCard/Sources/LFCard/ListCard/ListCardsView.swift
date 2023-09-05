@@ -37,19 +37,23 @@ public struct ListCardsView: View {
     })
     .sheet(item: $viewModel.present) { item in
       switch item {
-      case let .changePin(card):
-        changePinContent(cardID: card.id)
-          .embedInNavigation()
       case let .addAppleWallet(cardModel):
         AddAppleWalletView(card: cardModel, onFinish: {})
           .embedInNavigation()
       case let .applePay(cardModel):
         ApplePayViewController(card: cardModel)
+      }
+    }
+    .fullScreenCover(item: $viewModel.fullScreenPresent) { item in
+      switch item {
       case let .activatePhysicalCard(cardModel):
         ActivatePhysicalCardView(card: cardModel) { cardID in
           viewModel.activePhysicalSuccess(id: cardID)
         }
         .embedInNavigation()
+      case let .changePin(card):
+        changePinContent(cardID: card.id)
+          .embedInNavigation()
       }
     }
     .ignoresSafeArea(.keyboard, edges: .bottom)
