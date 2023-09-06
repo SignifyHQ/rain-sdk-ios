@@ -14,9 +14,9 @@
 "welcome.header.title" = "WELCOME!";
 "welcome.header.desc" = "The Cardano Card is an easy way to spend cash or crypto, and earn rewards. Here is how:";
 "welcome.how_it_works" = "HOW IT WORKS:";
-"welcome.how_it_works.item1" = "Create a CardanoCard account";
-"welcome.how_it_works.item2" = "Use your CardanoCard for everyday purchases";
-"welcome.how_it_works.item3" = "Get up to 8%% back of each purchase in Cardano";
+"welcome.how_it_works.item1" = "Create an account";
+"welcome.how_it_works.item2" = "Use your Cardano Card anywhere Visa is accepted";
+"welcome.how_it_works.item3" = "Spend ADA, USDC, USD and earn rewards.";
 "welcome.button.order_card" = "Order Card";
 
 // VerificationCode Screen
@@ -467,6 +467,7 @@ https://mn.gov/commerce/money/investments/cryptocurrency/. \n\n\n\n\n\n\n";
 "accountView.bank_transfers.subtitle" = "Send from your bank to CardanoCard";
 "accountView.debit_deposits.title" = "Instant Deposits";
 "accountView.debit_deposits.subtitle" = "Use your Debit Card";
+"accountView.debit_deposits_funds.subtitle" = "Connect your bank with a Debit Card";
 "accountView.one_time_transfers.title" = "Bank Transfers";
 "accountView.one_time_transfers.subtitle" = "Connect an external bank with Plaid";
 "accountView.rewards" = "Current Rewards";
@@ -588,7 +589,7 @@ https://mn.gov/commerce/money/investments/cryptocurrency/. \n\n\n\n\n\n\n";
 "assetView.today" = "Today";
 "assetView.disclosure" = "Cryptocurrency services powered by Zero Hash";
 "assetView.see_all" = "See all";
-"assetView.transfer_popup.title" = "TRANSFER CARDANO";
+"assetView.transfer_popup.title" = "TRANSFER";
 "assetView.send.title" = "Send";
 "assetView.receive.title" = "Receive";
 

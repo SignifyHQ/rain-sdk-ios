@@ -115,10 +115,10 @@ private extension SecurityCheckView {
   var logoutPopup: some View {
     LiquidityAlert(
       title: LFLocalizable.Popup.Logout.title.uppercased(),
-      primary: .init(text: LFLocalizable.Popup.Logout.primaryTitle) {
+      primary: .init(text: LFLocalizable.Popup.Logout.secondaryTitle) {
         viewModel.logout()
       },
-      secondary: .init(text: LFLocalizable.Popup.Logout.secondaryTitle) {
+      secondary: .init(text: LFLocalizable.Popup.Logout.primaryTitle) {
         viewModel.hideLogoutPopup()
       }
     )

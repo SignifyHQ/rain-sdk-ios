@@ -8,6 +8,7 @@ public enum FundOption {
   case bankTransfers
   case debitDeposit
   case oneTime
+  case debitDepositFunds
 }
 
 extension FundOption {
@@ -18,7 +19,7 @@ extension FundOption {
       return GenImages.CommonImages.Accounts.directDeposit.swiftUIImage
     case .bankTransfers:
       return GenImages.CommonImages.Accounts.bankTransfers.swiftUIImage
-    case .debitDeposit:
+    case .debitDeposit, .debitDepositFunds:
       return GenImages.CommonImages.Accounts.debitDeposit.swiftUIImage
     case .oneTime:
       return GenImages.CommonImages.Accounts.oneTime.swiftUIImage
@@ -31,7 +32,7 @@ extension FundOption {
       return LFLocalizable.AccountView.DirectDeposit.title
     case .bankTransfers:
       return LFLocalizable.AccountView.BankTransfers.title
-    case .debitDeposit:
+    case .debitDeposit, .debitDepositFunds:
       return LFLocalizable.AccountView.DebitDeposits.title
     case .oneTime:
       return LFLocalizable.AccountView.OneTimeTransfers.title
@@ -48,6 +49,8 @@ extension FundOption {
       return LFLocalizable.AccountView.DebitDeposits.subtitle
     case .oneTime:
       return LFLocalizable.AccountView.OneTimeTransfers.subtitle
+    case .debitDepositFunds:
+      return LFLocalizable.AccountView.DebitDepositsFunds.subtitle
     }
   }
   
@@ -57,7 +60,7 @@ extension FundOption {
       return .directDeposit
     case .bankTransfers:
       return .bankTransfers
-    case .debitDeposit:
+    case .debitDeposit, .debitDepositFunds:
       return .addBankDebit
     case .oneTime:
       return .linkExternalBank

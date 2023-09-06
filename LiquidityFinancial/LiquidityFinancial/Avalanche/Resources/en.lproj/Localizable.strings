@@ -469,6 +469,7 @@ https://mn.gov/commerce/money/investments/cryptocurrency/. \n\n\n\n\n\n\n";
 "accountView.bank_transfers.subtitle" = "Send from your bank to AvalancheCard";
 "accountView.debit_deposits.title" = "Instant Deposits";
 "accountView.debit_deposits.subtitle" = "Use your Debit Card";
+"accountView.debit_deposits_funds.subtitle" = "Connect your bank with a Debit Card";
 "accountView.one_time_transfers.title" = "Bank Transfers";
 "accountView.one_time_transfers.subtitle" = "Connect an external bank with Plaid";
 "accountView.rewards" = "Current Rewards";
@@ -590,7 +591,7 @@ https://mn.gov/commerce/money/investments/cryptocurrency/. \n\n\n\n\n\n\n";
 "assetView.today" = "Today";
 "assetView.disclosure" = "Cryptocurrency services powered by Zero Hash";
 "assetView.see_all" = "See all";
-"assetView.transfer_popup.title" = "TRANSFER AVAX";
+"assetView.transfer_popup.title" = "TRANSFER";
 "assetView.send.title" = "Send";
 "assetView.receive.title" = "Receive";
 

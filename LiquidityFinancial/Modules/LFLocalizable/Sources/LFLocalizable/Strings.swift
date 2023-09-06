@@ -265,6 +265,10 @@ public enum LFLocalizable {
       /// Instant Deposits
       public static let title = LFLocalizable.tr("Localizable", "accountView.debit_deposits.title", fallback: "Instant Deposits")
     }
+    public enum DebitDepositsFunds {
+      /// Connect your bank with a Debit Card
+      public static let subtitle = LFLocalizable.tr("Localizable", "accountView.debit_deposits_funds.subtitle", fallback: "Connect your bank with a Debit Card")
+    }
     public enum DirectDeposit {
       /// Deposit part, or all of your paycheck
       public static let subtitle = LFLocalizable.tr("Localizable", "accountView.direct_deposit.subtitle", fallback: "Deposit part, or all of your paycheck")
@@ -379,8 +383,8 @@ public enum LFLocalizable {
       public static let title = LFLocalizable.tr("Localizable", "assetView.transfer.title", fallback: "Transfer")
     }
     public enum TransferPopup {
-      /// TRANSFER DOGE
-      public static let title = LFLocalizable.tr("Localizable", "assetView.transfer_popup.title", fallback: "TRANSFER DOGE")
+      /// TRANSFER
+      public static let title = LFLocalizable.tr("Localizable", "assetView.transfer_popup.title", fallback: "TRANSFER")
     }
   }
   public enum BalanceAlert {
