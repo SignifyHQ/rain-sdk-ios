@@ -28,6 +28,7 @@ public enum LFUtility {
   public static let bundleName = Bundle.main.infoDictionary?["CFBundleName"] as? String ?? "unkwnown"
   public static let referrallinkDev: String = try! LFConfiguration.value(for: "REFERRALLINK_DEV")
   public static let referrallinkProd: String = try! LFConfiguration.value(for: "REFERRALLINK_PRO")
+  public static let universalLink: String = try! LFConfiguration.value(for: "UNIVERSAL_LINK")
 }
 
 public enum LFConfiguration {

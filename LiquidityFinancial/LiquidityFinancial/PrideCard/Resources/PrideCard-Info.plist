@@ -132,6 +132,8 @@
 	</array>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<false/>
+	<key>UNIVERSAL_LINK</key>
+	<string>$(UNIVERSAL_LINK)</string>
 	<key>WALLET_PRIVACY_URL</key>
 	<string>$(WALLET_PRIVACY_URL)</string>
 	<key>ZEROHASH_URL</key>

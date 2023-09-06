@@ -12,7 +12,7 @@ public let log: SwiftyBeaver.Type = {
 #if DEBUG
   console.minLevel = .verbose
 #else
-  console.minLevel = .error
+  console.minLevel = .info
 #endif
   
   log.addDestination(console)

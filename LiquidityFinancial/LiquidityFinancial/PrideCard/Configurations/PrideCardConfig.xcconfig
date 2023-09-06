@@ -25,6 +25,8 @@ REWARDS_VIDEO_URL = https:/$()twitter.com/TheDogeCard/status/1611066507957571747
 REFERRALLINK_DEV = https:/$()/dev-pridecard.d79rwlgojw5j.amplifyapp.com
 REFERRALLINK_PRO = https:/$()/paywithpride.com
 
+UNIVERSAL_LINK = https:/$()/pridecard.cc/plaid
+
 CHARITY_ENABLED = true
 CRYPTO_ENABLED = false
 CRYPTO_FRACTION_DIGITS = 8

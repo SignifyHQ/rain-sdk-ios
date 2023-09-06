@@ -19,6 +19,8 @@ SHARE_APP_URL = https:/$()/dogecard.co/app
 REFERRALLINK_DEV = https:/$()/dev-dogecard.d2ap16azx4464o.amplifyapp.com
 REFERRALLINK_PRO = https:/$()/dev-dogecard.d2ap16azx4464o.amplifyapp.com
 
+UNIVERSAL_LINK = https:/$()/dogeapp.cc/plaid
+
 CHARITY_ENABLED = false
 CRYPTO_ENABLED = true
 CRYPTO_FRACTION_DIGITS = 8

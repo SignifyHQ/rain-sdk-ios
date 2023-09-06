@@ -16,13 +16,9 @@ public struct NetspendDisputeTransactionViewController: UIViewControllerRepresen
   }
   
   public func makeUIViewController(context: Context) -> UIViewController {
-    if let netspendViewController = try? NetspendSdk.shared.openWithPurpose(
-      purpose: "disputeLean",
-      withPasscode: passcode,
-      usingParams: [
-        "accountId": netspendAccountID
-      ]
-    ) {
+    if let netspendViewController = try? NetspendSdk.shared.openWithPurpose(purpose: .disputeLean, withPasscode: passcode, usingParams: [
+      "accountId": netspendAccountID
+    ]) {
       netspendViewController.delegate = context.coordinator
       return netspendViewController
     }

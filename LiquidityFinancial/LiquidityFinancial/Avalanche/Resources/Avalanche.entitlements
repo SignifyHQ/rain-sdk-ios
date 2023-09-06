@@ -6,8 +6,7 @@
 	<string>development</string>
 	<key>com.apple.developer.associated-domains</key>
 	<array>
-		<string>applinks:app.xyz.com/link-bank</string>
-		<string>applinks:dev-app.xyz.com/link-bank</string>
+		<string>applinks:avalanche.cc</string>
 	</array>
 	<key>com.apple.developer.networking.wifi-info</key>
 	<true/>

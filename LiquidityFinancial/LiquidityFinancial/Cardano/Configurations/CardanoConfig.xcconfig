@@ -19,6 +19,8 @@ SHARE_APP_URL = https:/$()/cardano.co/app
 REFERRALLINK_DEV = https:/$()/dev-cardanocard.d48v8qlss9gj4.amplifyapp.com
 REFERRALLINK_PRO = https:/$()/dev-cardanocard.d48v8qlss9gj4.amplifyapp.com
 
+UNIVERSAL_LINK = https:/$()/cardano.cc/plaid
+
 CHARITY_ENABLED = false
 CRYPTO_ENABLED = true
 CRYPTO_FRACTION_DIGITS = 8

@@ -2678,8 +2678,8 @@ public enum LFLocalizable {
     }
   }
   public enum VerifyCard {
-    /// Check your card activity for 1 pending micro-transaction from AvalancheCard. Enter the one amount in the fields below. Once verified, this  transaction will be canceled
-    public static let detail = LFLocalizable.tr("Localizable", "verify_card.detail", fallback: "Check your card activity for 1 pending micro-transaction from AvalancheCard. Enter the one amount in the fields below. Once verified, this  transaction will be canceled")
+    /// Check your card activity for 1 pending micro-transaction from AvalancheCard. Enter the one amount in the fields below. Once verified, this transaction will be canceled
+    public static let detail = LFLocalizable.tr("Localizable", "verify_card.detail", fallback: "Check your card activity for 1 pending micro-transaction from AvalancheCard. Enter the one amount in the fields below. Once verified, this transaction will be canceled")
     /// Verify card ownership
     public static let title = LFLocalizable.tr("Localizable", "verify_card.title", fallback: "Verify card ownership")
     public enum Amount {

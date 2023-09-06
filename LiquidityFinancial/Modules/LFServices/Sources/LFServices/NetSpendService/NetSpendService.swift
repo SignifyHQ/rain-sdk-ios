@@ -30,7 +30,7 @@ enum NetSpendService {
     )
     
     let apiKey = networkEnvironment == .productionTest ? Configs.NetSpend.sdkIdCert : Configs.NetSpend.sdkIdProd
-    
+    log.info("kickoffNetspend with apikey: \(apiKey)")
     do {
       try NetspendSdk.shared.initialize(
         sdkId: apiKey,

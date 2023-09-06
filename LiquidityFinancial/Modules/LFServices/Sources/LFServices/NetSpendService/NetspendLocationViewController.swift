@@ -14,7 +14,7 @@ public struct NetspendLocationViewController: UIViewControllerRepresentable {
   
   public func makeUIViewController(context: Context) -> UIViewController {
     if let netspendViewController = try? NetspendSdk.shared.openWithPurpose(
-      purpose: "locations",
+      purpose: .locations,
       withPasscode: withPasscode,
       usingParams: [:]
     ) {

@@ -19,6 +19,8 @@ SHARE_APP_URL = https:/$()/avalanche.co/app
 REFERRALLINK_DEV = https:/$()/dev-avalanchecard.dxtm8n5zeavql.amplifyapp.com
 REFERRALLINK_PRO = https:/$()/dev-avalanchecard.dxtm8n5zeavql.amplifyapp.com
 
+UNIVERSAL_LINK = https:/$()/avalanche.cc/plaid
+
 CHARITY_ENABLED = false
 CRYPTO_ENABLED = true
 CRYPTO_FRACTION_DIGITS = 8
