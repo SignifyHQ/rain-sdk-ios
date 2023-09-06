@@ -5,6 +5,7 @@ public protocol NSCardUseCaseProtocol {
   func getCard(cardID: String, sessionID: String) async throws -> CardEntity
   func lockCard(cardID: String, sessionID: String) async throws -> CardEntity
   func unlockCard(cardID: String, sessionID: String) async throws -> CardEntity
+  func closeCard(reason: CloseCardReasonEntity, cardID: String, sessionID: String) async throws -> CardEntity
   func orderPhysicalCard(address: AddressCardParametersEntity, sessionID: String) async throws -> CardEntity
   func verifyCVVCode(requestParam: VerifyCVVCodeParametersEntity, cardID: String, sessionID: String) async throws -> VerifyCVVCodeEntity
   func setPin(requestParam: SetPinRequestEntity, cardID: String, sessionID: String) async throws -> CardEntity

@@ -23,6 +23,10 @@ public class NSCardUseCase: NSCardUseCaseProtocol {
     try await repository.unlockCard(cardID: cardID, sessionID: sessionID)
   }
   
+  public func closeCard(reason: CloseCardReasonEntity, cardID: String, sessionID: String) async throws -> CardEntity {
+    try await repository.closeCard(reason: reason, cardID: cardID, sessionID: sessionID)
+  }
+  
   public func orderPhysicalCard(address: AddressCardParametersEntity, sessionID: String) async throws -> CardEntity {
     try await repository.orderPhysicalCard(address: address, sessionID: sessionID)
   }

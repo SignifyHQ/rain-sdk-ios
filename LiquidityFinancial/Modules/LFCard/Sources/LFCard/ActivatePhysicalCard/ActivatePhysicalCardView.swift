@@ -68,8 +68,7 @@ private extension ActivatePhysicalCardView {
       }
       Spacer()
       VStack(spacing: 10) {
-        applePay
-        
+        // applePay TODO: - Temporarily hide this button
         FullSizeButton(
           title: LFLocalizable.Button.Skip.title,
           isDisable: false,

@@ -1574,11 +1574,20 @@ public enum LFLocalizable {
       /// Activate Card
       public static let title = LFLocalizable.tr("Localizable", "listCard.activateCard.title", fallback: "Activate Card")
     }
+    public enum CardClosed {
+      /// You have successfully 
+      ///  closed your card.
+      public static let message = LFLocalizable.tr("Localizable", "listCard.cardClosed.message", fallback: "You have successfully \n closed your card.")
+      /// CARD CLOSED
+      public static let title = LFLocalizable.tr("Localizable", "listCard.cardClosed.title", fallback: "CARD CLOSED")
+    }
     public enum ChangePin {
       /// Change PIN
       public static let title = LFLocalizable.tr("Localizable", "listCard.changePin.title", fallback: "Change PIN")
     }
     public enum CloseCard {
+      /// Are you sure close this card?
+      public static let message = LFLocalizable.tr("Localizable", "listCard.closeCard.message", fallback: "Are you sure close this card?")
       /// Close Card
       public static let title = LFLocalizable.tr("Localizable", "listCard.closeCard.title", fallback: "Close Card")
     }

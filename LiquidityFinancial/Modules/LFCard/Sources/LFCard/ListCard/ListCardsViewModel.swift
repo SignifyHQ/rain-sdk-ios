@@ -32,6 +32,7 @@ public final class ListCardsViewModel: ObservableObject {
   @Published var present: Presentation?
   @Published var fullScreenPresent: FullScreenPresentation?
   @Published var navigation: Navigation?
+  @Published var popup: Popup?
   @Published var toastMessage: String?
   
   @Published var roundUpPurchasesPopup: Bool = false
@@ -84,7 +85,7 @@ extension ListCardsViewModel {
     Task {
       do {
         let card = try await cardUseCase.lockCard(cardID: currentCard.id, sessionID: accountDataManager.sessionID)
-        updateCardLock(status: .disabled, id: card.id)
+        updateCardStatus(status: .disabled, id: card.id)
       } catch {
         isCardLocked = false
         isLoading = false
@@ -98,10 +99,30 @@ extension ListCardsViewModel {
     Task {
       do {
         let card = try await cardUseCase.unlockCard(cardID: currentCard.id, sessionID: accountDataManager.sessionID)
-        updateCardLock(status: .active, id: card.id)
+        updateCardStatus(status: .active, id: card.id)
       } catch {
         isCardLocked = true
         isLoading = false
+        toastMessage = error.localizedDescription
+      }
+    }
+  }
+  
+  func closeCard() {
+    Task {
+      defer {
+        isLoading = false
+      }
+      hidePopup()
+      isLoading = true
+      do {
+        let request = CloseCardReasonParameters()
+        let card = try await cardUseCase.closeCard(
+          reason: request, cardID: currentCard.id, sessionID: accountDataManager.sessionID
+        )
+        updateCardStatus(status: .closed, id: card.id)
+        popup = .closeCardSuccessfully
+      } catch {
         toastMessage = error.localizedDescription
       }
     }
@@ -187,6 +208,14 @@ extension ListCardsViewModel {
   func onClickedActiveCard() {
     presentActivateCardView()
   }
+  
+  func onClickCloseCardButton() {
+    popup = .confirmCloseCard
+  }
+  
+  func hidePopup() {
+    popup = nil
+  }
 }
 
 // MARK: - Private Functions
@@ -212,7 +241,7 @@ private extension ListCardsViewModel {
     }
   }
   
-  func updateCardLock(status: CardStatus, id: String) {
+  func updateCardStatus(status: CardStatus, id: String) {
     isLoading = false
     guard id == currentCard.id, let index = cardsList.firstIndex(where: { $0.id == id
     }) else { return }
@@ -254,5 +283,10 @@ extension ListCardsViewModel {
   
   enum Navigation {
     case orderPhysicalCard
+  }
+  
+  enum Popup {
+    case confirmCloseCard
+    case closeCardSuccessfully
   }
 }

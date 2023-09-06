@@ -9,6 +9,7 @@ public enum NSCardRoute {
   case card(String, String)
   case lock(String, String)
   case unlock(String, String)
+  case close(CloseCardReasonParameters, cardId: String, sessionId: String)
   case orderPhysicalCard(AddressCardParameters, String)
   case verifyCVVCode(VerifyCVVCodeParameters, String, String)
   case setPin(SetPinParameters, String, String)
@@ -28,6 +29,8 @@ extension NSCardRoute: LFRoute {
       return "/v1/netspend/cards/\(cardID)/lock"
     case let .unlock(cardID, _):
       return "/v1/netspend/cards/\(cardID)/unlock"
+    case let .close(_, cardID, _):
+      return "/v1/netspend/cards/\(cardID)/close"
     case .orderPhysicalCard:
       return "/v1/netspend/cards/physical-card"
     case let .verifyCVVCode(_, cardID, _):
@@ -44,7 +47,7 @@ extension NSCardRoute: LFRoute {
   public var httpMethod: HttpMethod {
     switch self {
     case .listCard, .card, .getApplyPayToken: return .GET
-    case .lock, .unlock, .orderPhysicalCard, .verifyCVVCode, .postApplyPayToken: return .POST
+    case .lock, .unlock, .close, .orderPhysicalCard, .verifyCVVCode, .postApplyPayToken: return .POST
     case .setPin: return .PUT
     }
   }
@@ -61,6 +64,7 @@ extension NSCardRoute: LFRoute {
     case let .card(_, sessionId),
       let .lock(_, sessionId),
       let .unlock(_, sessionId),
+      let .close(_, _, sessionId),
       let .orderPhysicalCard(_, sessionId),
       let .verifyCVVCode(_, _, sessionId),
       let .setPin(_, _, sessionId),
@@ -75,6 +79,8 @@ extension NSCardRoute: LFRoute {
     switch self {
     case .listCard, .card, .lock, .unlock, .getApplyPayToken:
       return nil
+    case let .close(parameters, _, _):
+      return parameters.encoded()
     case let .orderPhysicalCard(parameters, _):
       var wrapBody: [String: Any] = [:]
       wrapBody["shippingAddress"] = parameters.encoded()
@@ -91,7 +97,7 @@ extension NSCardRoute: LFRoute {
   public var parameterEncoding: ParameterEncoding? {
     switch self {
     case .listCard, .card, .lock, .unlock, .getApplyPayToken: return nil
-    case .orderPhysicalCard, .verifyCVVCode, .setPin, .postApplyPayToken:
+    case .orderPhysicalCard, .verifyCVVCode, .setPin, .postApplyPayToken, .close:
       return .json
     }
   }

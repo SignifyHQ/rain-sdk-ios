@@ -26,6 +26,11 @@ public class NSCardRepository: NSCardRepositoryProtocol {
     try await cardAPI.unlockCard(cardID: cardID, sessionID: sessionID)
   }
   
+  public func closeCard(reason: CloseCardReasonEntity, cardID: String, sessionID: String) async throws -> CardEntity {
+    let reasonRequest = CloseCardReasonParameters(reason: reason.reason)
+    return try await cardAPI.closeCard(reason: reasonRequest, cardID: cardID, sessionID: sessionID)
+  }
+  
   public func orderPhysicalCard(address: AddressCardParametersEntity, sessionID: String) async throws -> CardEntity {
     return try await cardAPI.orderPhysicalCard(address: address as! AddressCardParameters, sessionID: sessionID)
   }

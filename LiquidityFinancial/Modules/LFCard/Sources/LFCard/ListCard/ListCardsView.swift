@@ -56,6 +56,14 @@ public struct ListCardsView: View {
           .embedInNavigation()
       }
     }
+    .popup(item: $viewModel.popup) { item in
+      switch item {
+      case .confirmCloseCard:
+        confirmationCloseCardPopup
+      case .closeCardSuccessfully:
+        closeCardSuccessfullyPopup
+      }
+    }
     .ignoresSafeArea(.keyboard, edges: .bottom)
     .navigationLink(item: $viewModel.navigation) { navigation in
       switch navigation {
@@ -180,18 +188,18 @@ private extension ListCardsView {
             viewModel.lockCardToggled()
           }
         }
-        if viewModel.currentCard.cardStatus != .closed {
-          GenImages.CommonImages.dash.swiftUIImage
-            .foregroundColor(Colors.label.swiftUIColor)
-          row(title: LFLocalizable.ListCard.CloseCard.title) {
-            // TODO: Will be implemented later
-          }
-        }
         if viewModel.isActive && viewModel.currentCard.cardType != .virtual {
           GenImages.CommonImages.dash.swiftUIImage
             .foregroundColor(Colors.label.swiftUIColor)
           row(title: LFLocalizable.ListCard.ChangePin.title) {
             viewModel.onClickedChangePinButton()
+          }
+        }
+        if viewModel.currentCard.cardStatus != .closed && viewModel.currentCard.cardStatus != .disabled {
+          GenImages.CommonImages.dash.swiftUIImage
+            .foregroundColor(Colors.label.swiftUIColor)
+          row(title: LFLocalizable.ListCard.CloseCard.title) {
+            viewModel.onClickCloseCardButton()
           }
         }
       }
@@ -239,7 +247,8 @@ private extension ListCardsView {
   @ViewBuilder var buttonGroup: some View {
     VStack(spacing: 14) {
       if viewModel.isActive {
-        applePay
+        // applePay TODO: - Temporarily hide this button
+        EmptyView()
       } else if viewModel.currentCard.cardStatus == .unactivated {
         activeCardButton
       }
@@ -277,7 +286,7 @@ private extension ListCardsView {
     }
   }
   
-  private var roundUpPurchasesView: some View {
+  var roundUpPurchasesView: some View {
     HStack(spacing: 12) {
       GenImages.CommonImages.icRoundUpDonationLeft.swiftUIImage
         .foregroundColor(Colors.label.swiftUIColor)
@@ -305,7 +314,7 @@ private extension ListCardsView {
     .cornerRadius(10)
   }
   
-  private var roundUpToggle: some View {
+  var roundUpToggle: some View {
     let isOn: Binding<Bool> = .init {
       viewModel.roundUpPurchases
     } set: { value in
@@ -324,7 +333,7 @@ private extension ListCardsView {
     }
   }
 
-  private var roundUpPurchasesPopup: some View {
+  var roundUpPurchasesPopup: some View {
     PopupAlert {
       VStack(spacing: 24) {
         GenImages.Images.icLogo.swiftUIImage
@@ -344,8 +353,39 @@ private extension ListCardsView {
       }
     }
   }
+  
+  var confirmationCloseCardPopup: some View {
+    LiquidityAlert(
+      title: LFLocalizable.ListCard.CloseCard.title,
+      message: LFLocalizable.ListCard.CloseCard.message,
+      primary: .init(
+        text: LFLocalizable.Button.Ok.title,
+        action: {
+          viewModel.closeCard()
+        }
+      ),
+      secondary: .init(
+        text: LFLocalizable.Button.NotNow.title,
+        action: {
+          viewModel.hidePopup()
+        }
+      )
+    )
+  }
+  
+  var closeCardSuccessfullyPopup: some View {
+    LiquidityAlert(
+      title: LFLocalizable.ListCard.CardClosed.title,
+      message: LFLocalizable.ListCard.CardClosed.message,
+      primary: .init(
+        text: LFLocalizable.Button.Ok.title,
+        action: {
+          viewModel.hidePopup()
+        }
+      )
+    )
+  }
 }
-
 // MARK: - View Types
 private extension ListCardsView {
   enum ActiveContent {

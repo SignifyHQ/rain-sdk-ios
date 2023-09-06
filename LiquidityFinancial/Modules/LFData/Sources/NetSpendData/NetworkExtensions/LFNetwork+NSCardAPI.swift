@@ -41,6 +41,15 @@ extension LFCoreNetwork: NSCardAPIProtocol where R == NSCardRoute {
     )
   }
   
+  public func closeCard(reason: CloseCardReasonParameters, cardID: String, sessionID: String) async throws -> APICard {
+    try await request(
+      NSCardRoute.close(reason, cardId: cardID, sessionId: sessionID),
+      target: APICard.self,
+      failure: LFErrorObject.self,
+      decoder: .apiDecoder
+    )
+  }
+  
   public func orderPhysicalCard(address: AddressCardParameters, sessionID: String) async throws -> APICard {
     return try await request(
       NSCardRoute.orderPhysicalCard(address, sessionID),

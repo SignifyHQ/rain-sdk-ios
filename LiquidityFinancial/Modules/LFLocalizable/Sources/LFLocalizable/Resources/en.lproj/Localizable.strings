@@ -274,6 +274,9 @@
 "listCard.changePin.title" = "Change PIN";
 "listCard.orderPhysicalCard.title" = "Order Physical Card";
 "listCard.activateCard.buttonTitle" = "Activate %@ Card";
+"listCard.closeCard.message" = "Are you sure close this card?";
+"listCard.cardClosed.title" = "CARD CLOSED";
+"listCard.cardClosed.message" = "You have successfully \n closed your card.";
 "listCard.deals.title" = "Deals";
 "listCard.deals.description" = "up to 8%% back in %@";
 "listCard.activateCard.title" = "Activate Card";
