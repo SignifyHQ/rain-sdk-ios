@@ -33,9 +33,10 @@ public struct PurchaseTransactionDetailView: View {
 private extension PurchaseTransactionDetailView {
   var content: some View {
     VStack(spacing: 24) {
-      if viewModel.transaction.rewards != nil {
+      if (viewModel.transaction.rewards != nil) || (viewModel.cardInformation.cardType == .crypto) {
         TransactionCardView(information: viewModel.cardInformation)
       }
+      Spacer()
       VStack(spacing: 10) {
         if LFUtility.cryptoEnabled {
           FullSizeButton(

@@ -25,7 +25,7 @@ final class RewardTransactionDetailViewModel: ObservableObject {
 extension RewardTransactionDetailViewModel {
   var cardInformation: TransactionCardInformation {
     TransactionCardInformation(
-      cardType: transaction.rewards?.type.transactionCardType ?? .unknow,
+      cardType: transaction.rewards?.type.transactionCardType ?? (LFUtility.cryptoEnabled ? .crypto : .unknow),
       amount: amountValue,
       message: LFLocalizable.TransactionCard.Purchase.message(rewardAmount, amountValue, LFUtility.appName),
       activityItem: LFLocalizable.TransactionCard.ShareCrypto.title(rewardAmount, LFUtility.appName, LFUtility.shareAppUrl),

@@ -2,6 +2,7 @@ import Foundation
 import AccountDomain
 import SwiftUI
 import LFStyleGuide
+import LFUtilities
 
 public struct TransactionModel: Identifiable {
   public var id: String
@@ -52,11 +53,19 @@ public extension TransactionModel {
   }
   
   var ammountFormatted: String {
-    amount.formattedAmount(minFractionDigits: 3, maxFractionDigits: 3)
+    amount.formattedAmount(
+      prefix: Constants.CurrencyUnit.usd.symbol,
+      minFractionDigits: Constants.FractionDigitsLimit.fiat.minFractionDigits,
+      maxFractionDigits: Constants.FractionDigitsLimit.fiat.minFractionDigits
+    )
   }
   
   var balanceFormatted: String? {
-    currentBalance?.formattedAmount(minFractionDigits: 3, maxFractionDigits: 3)
+    currentBalance?.formattedAmount(
+      prefix: Constants.CurrencyUnit.usd.symbol,
+      minFractionDigits: Constants.FractionDigitsLimit.fiat.minFractionDigits,
+      maxFractionDigits: Constants.FractionDigitsLimit.fiat.minFractionDigits
+    )
   }
   
   var descriptionDisplay: String {

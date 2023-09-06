@@ -26,8 +26,18 @@ public struct RewardTransactionDetailView: View {
 // MARK: - View Components
 private extension RewardTransactionDetailView {
   var content: some View {
-    VStack(spacing: 24) {
+    VStack(spacing: 10) {
       TransactionCardView(information: viewModel.cardInformation)
+        .padding(.bottom, 6)
+      if viewModel.cardInformation.cardType == .crypto {
+        FullSizeButton(
+          title: LFLocalizable.TransactionDetail.CurrentReward.title,
+          isDisable: false,
+          type: .tertiary
+        ) {
+          // TODO: - Will be implemented later
+        }
+      }
       if let receiptType = viewModel.transaction.receipt?.type {
         FullSizeButton(
           title: LFLocalizable.TransactionDetail.Receipt.button,

@@ -57,7 +57,7 @@ extension PurchaseTransactionDetailViewModel {
 extension PurchaseTransactionDetailViewModel {
   var cardInformation: TransactionCardInformation {
     TransactionCardInformation(
-      cardType: transaction.rewards?.type.transactionCardType ?? .unknow,
+      cardType: transaction.rewards?.type.transactionCardType ?? (LFUtility.cryptoEnabled ? .crypto : .unknow),
       amount: amountValue,
       message: transaction.rewards?.description ?? LFLocalizable.TransactionCard.Purchase.message(
         rewardAmount,

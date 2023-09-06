@@ -72,10 +72,10 @@ private extension CryptoTransactionDetailView {
   var footer: some View {
     VStack(spacing: 16) {
       if let cryptoReceipt = viewModel.transaction.cryptoReceipt {
-        ArrowButton(
-          image: GenImages.CommonImages.Accounts.bankStatements.swiftUIImage,
+        FullSizeButton(
           title: LFLocalizable.TransactionDetail.Receipt.button,
-          value: nil
+          isDisable: false,
+          type: .secondary
         ) {
           viewModel.goToReceiptScreen(cryptoReceipt: cryptoReceipt)
         }

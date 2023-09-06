@@ -22,6 +22,7 @@ struct CommonTransactionDetailView<Content: View>: View {
       }
       Spacer()
     }
+    .scrollOnOverflow()
     .defaultToolBar(
       icon: .intercom,
       navigationTitle: transaction.title?.capitalized,

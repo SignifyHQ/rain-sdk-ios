@@ -2323,6 +2323,10 @@ public enum LFLocalizable {
         return LFLocalizable.tr("Localizable", "transactionDetail.balanceCash.title", String(describing: p1), fallback: "Balance: %@")
       }
     }
+    public enum Buy {
+      /// BUY
+      public static let title = LFLocalizable.tr("Localizable", "transactionDetail.buy.title", fallback: "BUY")
+    }
     public enum CurrentReward {
       /// Current Reward
       public static let title = LFLocalizable.tr("Localizable", "transactionDetail.currentReward.title", fallback: "Current Reward")
@@ -2351,6 +2355,10 @@ public enum LFLocalizable {
       /// Network Fee
       public static let title = LFLocalizable.tr("Localizable", "transactionDetail.networkFee.title", fallback: "Network Fee")
     }
+    public enum OrderType {
+      /// Order Type
+      public static let title = LFLocalizable.tr("Localizable", "transactionDetail.orderType.title", fallback: "Order Type")
+    }
     public enum PaidTo {
       /// Paid To
       public static let title = LFLocalizable.tr("Localizable", "transactionDetail.paidTo.title", fallback: "Paid To")
@@ -2362,6 +2370,10 @@ public enum LFLocalizable {
     public enum Receipt {
       /// Receipt
       public static let button = LFLocalizable.tr("Localizable", "transactionDetail.receipt.button", fallback: "Receipt")
+    }
+    public enum Receive {
+      /// RECEIVE
+      public static let title = LFLocalizable.tr("Localizable", "transactionDetail.receive.title", fallback: "RECEIVE")
     }
     public enum ReceivedFrom {
       /// Received From
@@ -2383,6 +2395,14 @@ public enum LFLocalizable {
       /// SAVE WALLET ADDRESS
       public static let title = LFLocalizable.tr("Localizable", "transactionDetail.saveWalletPopup.title", fallback: "SAVE WALLET ADDRESS")
     }
+    public enum Sell {
+      /// SELL
+      public static let title = LFLocalizable.tr("Localizable", "transactionDetail.sell.title", fallback: "SELL")
+    }
+    public enum Send {
+      /// SEND
+      public static let title = LFLocalizable.tr("Localizable", "transactionDetail.send.title", fallback: "SEND")
+    }
     public enum Source {
       /// Source
       public static let title = LFLocalizable.tr("Localizable", "transactionDetail.source.title", fallback: "Source")
@@ -2402,8 +2422,8 @@ public enum LFLocalizable {
       public static let title = LFLocalizable.tr("Localizable", "transactionDetail.transactionStatus.title", fallback: "Status")
     }
     public enum TransactionType {
-      /// Order Type
-      public static let title = LFLocalizable.tr("Localizable", "transactionDetail.transactionType.title", fallback: "Order Type")
+      /// Transaction Type
+      public static let title = LFLocalizable.tr("Localizable", "transactionDetail.transactionType.title", fallback: "Transaction Type")
     }
   }
   public enum TransactionList {

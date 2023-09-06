@@ -617,7 +617,12 @@
 "transactionDetail.paidTo.title" = "Paid To";
 "transactionDetail.description.title" = "Description";
 "transactionDetail.receivedFrom.title" = "Received From";
-"transactionDetail.transactionType.title" = "Order Type";
+"transactionDetail.transactionType.title" = "Transaction Type";
+"transactionDetail.orderType.title" = "Order Type";
+"transactionDetail.buy.title" = "BUY";
+"transactionDetail.sell.title" = "SELL";
+"transactionDetail.send.title" = "SEND";
+"transactionDetail.receive.title" = "RECEIVE";
 "transactionDetail.transactionStatus.title" = "Status";
 "transactionDetail.reward.title" = "Reward";
 "transactionDetail.donation.title" = "Donation";

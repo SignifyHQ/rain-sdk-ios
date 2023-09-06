@@ -58,7 +58,7 @@ extension ConfirmSendCryptoViewModel {
   var cryptoTransactions: [TransactionInformation] {
     [
       TransactionInformation(
-        title: LFLocalizable.TransactionDetail.TransactionType.title,
+        title: LFLocalizable.TransactionDetail.OrderType.title,
         value: LFLocalizable.ConfirmSendCryptoView.Send.title
       )
     ]

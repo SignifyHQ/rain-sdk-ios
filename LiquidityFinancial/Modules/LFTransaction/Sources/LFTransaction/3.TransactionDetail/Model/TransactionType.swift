@@ -1,5 +1,6 @@
 import Foundation
 import LFStyleGuide
+import LFLocalizable
 
 public enum TransactionType: String, Codable {
   case purchase = "PURCHASE"
@@ -24,6 +25,21 @@ public enum TransactionType: String, Codable {
 
   public init(from decoder: Decoder) throws {
     self = try TransactionType(rawValue: decoder.singleValueContainer().decode(RawValue.self)) ?? .unknown
+  }
+  
+  public var title: String {
+    switch self {
+    case .cryptoBuy:
+      return LFLocalizable.TransactionDetail.Buy.title
+    case .cryptoSell:
+      return LFLocalizable.TransactionDetail.Sell.title
+    case .cryptoWidthDraw:
+      return LFLocalizable.TransactionDetail.Send.title
+    case .cryptoDeposit:
+      return LFLocalizable.TransactionDetail.Receive.title
+    default:
+      return rawValue
+    }
   }
   
   public var assetName: String {

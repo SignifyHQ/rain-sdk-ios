@@ -10,12 +10,7 @@ public enum AssetType: String {
   case doge = "DOGE"
   
   public var title: String {
-    switch self {
-    case .doge:
-      return "Doge"
-    default:
-      return self.rawValue
-    }
+    rawValue
   }
   
   public var image: Image? {
