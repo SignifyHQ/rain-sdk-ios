@@ -981,6 +981,15 @@ https://mn.gov/commerce/money/investments/cryptocurrency/. \n\n\n\n\n\n\n";
 "taxes.empty.message" = "There are currently no taxes";
 "taxes.value" = "Created %@";
 
+// Account Reward
+"account.reward.error" = "We were unable to load Reward right now.\nPlease try again.";
+"account.reward.retry" = "Retry";
+"account.reward.empty.title" = "NO REWARDS";
+"account.reward.empty.message" = "There are currently no rewards";
+"account.reward.session.normal" = "Rewards by Asset Type";
+"account.reward.session.special" = "Special Promotions";
+"account.reward.item.desc_up_to_back" = "%@%% back";
+
 // MARK: - Common
 
 // Notification Pop up

@@ -117,4 +117,22 @@ extension LFCoreNetwork: AccountAPIProtocol where R == AccountRoute {
     let statusCode = result.httpResponse?.statusCode ?? 500
     return statusCode.isSuccess
   }
+  
+  public func getUserRewards() async throws -> [APIUserRewards] {
+    return try await request(
+      AccountRoute.getUserRewards,
+      target: [APIUserRewards].self,
+      failure: LFErrorObject.self,
+      decoder: .apiDecoder
+    )
+  }
+  
+  public func getFeatureConfig() async throws -> APIAccountFeatureConfig {
+    return try await request(
+      AccountRoute.getFeatureConfig,
+      target: APIAccountFeatureConfig.self,
+      failure: LFErrorObject.self,
+      decoder: .apiDecoder
+    )
+  }
 }

@@ -216,6 +216,33 @@ public enum LFLocalizable {
       }
     }
   }
+  public enum Account {
+    public enum Reward {
+      /// We were unable to load Reward right now.
+      /// Please try again.
+      public static let error = LFLocalizable.tr("Localizable", "account.reward.error", fallback: "We were unable to load Reward right now.\nPlease try again.")
+      /// Retry
+      public static let retry = LFLocalizable.tr("Localizable", "account.reward.retry", fallback: "Retry")
+      public enum Empty {
+        /// There are currently no rewards
+        public static let message = LFLocalizable.tr("Localizable", "account.reward.empty.message", fallback: "There are currently no rewards")
+        /// NO REWARDS
+        public static let title = LFLocalizable.tr("Localizable", "account.reward.empty.title", fallback: "NO REWARDS")
+      }
+      public enum Item {
+        /// %@%% back
+        public static func descUpToBack(_ p1: Any) -> String {
+          return LFLocalizable.tr("Localizable", "account.reward.item.desc_up_to_back", String(describing: p1), fallback: "%@%% back")
+        }
+      }
+      public enum Session {
+        /// Rewards by Asset Type
+        public static let normal = LFLocalizable.tr("Localizable", "account.reward.session.normal", fallback: "Rewards by Asset Type")
+        /// Special Promotions
+        public static let special = LFLocalizable.tr("Localizable", "account.reward.session.special", fallback: "Special Promotions")
+      }
+    }
+  }
   public enum AccountView {
     /// ATM’s Nearby
     public static let atm = LFLocalizable.tr("Localizable", "accountView.atm", fallback: "ATM’s Nearby")
@@ -1592,9 +1619,9 @@ public enum LFLocalizable {
       public static let title = LFLocalizable.tr("Localizable", "listCard.closeCard.title", fallback: "Close Card")
     }
     public enum Deals {
-      /// up to 8%% back in %@
+      /// up to 8% back in %@
       public static func description(_ p1: Any) -> String {
-        return LFLocalizable.tr("Localizable", "listCard.deals.description", String(describing: p1), fallback: "up to 8%% back in %@")
+        return LFLocalizable.tr("Localizable", "listCard.deals.description", String(describing: p1), fallback: "up to 8% back in %@")
       }
       /// Deals
       public static let title = LFLocalizable.tr("Localizable", "listCard.deals.title", fallback: "Deals")

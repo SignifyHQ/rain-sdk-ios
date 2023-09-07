@@ -36,13 +36,21 @@ class AccountViewModel: ObservableObject {
   @Published var linkedAccount: [APILinkedSourceData] = []
   @Published var achInformation: ACHModel = .default
   @Published var assets: [AssetModel] = []
-  
+    
   private(set) var addFundsViewModel = AddFundsViewModel()
   
   private var cancellable: Set<AnyCancellable> = []
   
   var networkEnvironment: NetworkEnvironment {
     EnvironmentManager().networkEnvironment
+  }
+  
+  var showAdminMenu: Bool {
+    if let userData = accountDataManager.userInfomationData as? UserInfomationData {
+        //TODO: wait the BE implemented access_Level so temp we will enable white mode LIVE for tester
+      return (userData.accessLevel == UserInfomationData.AccessLevel.LIVE) && LFUtilities.isSimulatorOrTestFlight
+    }
+    return false
   }
   
   init(achInformationData: Published<(model: ACHModel, loading: Bool)>.Publisher, accountsCrypto: Published<[LFAccount]>.Publisher) {
@@ -152,6 +160,10 @@ extension AccountViewModel {
     navigation = .wallet(asset: asset)
   }
   
+  func openReward() {
+    navigation = .rewards
+  }
+  
   func checkNotificationsStatus() {
     Task { @MainActor in
       do {
@@ -256,6 +268,7 @@ extension AccountViewModel {
     case disputeTransaction(String, String)
     case taxes
     case wallet(asset: AssetModel)
+    case rewards
   }
   
   enum Sheet: Hashable, Identifiable {

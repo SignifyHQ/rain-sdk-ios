@@ -274,7 +274,7 @@
 "listCard.cardClosed.title" = "CARD CLOSED";
 "listCard.cardClosed.message" = "You have successfully \n closed your card.";
 "listCard.deals.title" = "Deals";
-"listCard.deals.description" = "up to 8% back in %@";
+"listCard.deals.description" = "up to 8 back in %@";
 "listCard.activateCard.title" = "Activate Card";
 "listCard.activateCard.message" = "To start using your card, please activate it now";
 "listCard.activateCard.primary" = "Activate Card";
@@ -771,6 +771,15 @@ https://mn.gov/commerce/money/investments/cryptocurrency/. \n\n\n\n\n\n\n";
 "taxes.empty.title" = "NO TAXES";
 "taxes.empty.message" = "There are currently no taxes";
 "taxes.value" = "Created %@";
+
+  // Account Reward
+"account.reward.error" = "We were unable to load Reward right now.\nPlease try again.";
+"account.reward.retry" = "Retry";
+"account.reward.empty.title" = "NO REWARDS";
+"account.reward.empty.message" = "There are currently no rewards";
+"account.reward.session.normal" = "Rewards by Asset Type";
+"account.reward.session.special" = "Special Promotions";
+"account.reward.item.desc_up_to_back" = "%@%% back";
 
 // MARK: - Common
 

@@ -82,4 +82,12 @@ public class AccountRepository: AccountRepositoryProtocol {
     let parameter = WaitListParameter(request: WaitListParameter.Request(waitList: waitList))
     return try await accountAPI.addToWaitList(body: parameter)
   }
+  
+  public func getUserRewards() async throws -> [UserRewardsEntity] {
+    return try await accountAPI.getUserRewards()
+  }
+  
+  public func getFeatureConfig() async throws -> AccountFeatureConfigEntity {
+    return try await accountAPI.getFeatureConfig()
+  }
 }

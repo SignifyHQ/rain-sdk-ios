@@ -40,4 +40,12 @@ public struct UserInfomationData: Codable, UserInfomationDataProtocol {
     self.userRoundUpEnabled = enity.userRoundUpEnabled
     self.userSelectedFundraiserID = enity.userSelectedFundraiserId
   }
+  
+  public enum AccessLevel: String {
+    case LIVE, INTERNAL, DISABLED, EXPERIMENTAL, NONE
+  }
+  
+  public var accessLevel: AccessLevel {
+    AccessLevel(rawValue: userAccessLevel ?? "") ?? .NONE
+  }
 }

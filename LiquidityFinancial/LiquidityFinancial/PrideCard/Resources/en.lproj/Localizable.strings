@@ -910,7 +910,30 @@
 "fundCard.title" = "FUND YOUR PRIDECARD";
 "fundCard.message" = "PrideCard is a Pre-paid Debit Card, which means there are no credit checks, interest payments or overdrafts. However, you have to deposit money to your account before you can use. Start by connecting your bank:";
 
+  // Taxes
+"taxes.navigation_title" = "Taxes";
+"taxes.error" = "We were unable to load Taxes right now.\nPlease try again.";
+"taxes.retry" = "Retry";
+"taxes.empty.title" = "NO TAXES";
+"taxes.empty.message" = "There are currently no taxes";
+"taxes.value" = "Created %@";
+
+  // Account Reward
+"account.reward.error" = "We were unable to load Reward right now.\nPlease try again.";
+"account.reward.retry" = "Retry";
+"account.reward.empty.title" = "NO REWARDS";
+"account.reward.empty.message" = "There are currently no rewards";
+"account.reward.session.normal" = "Rewards by Asset Type";
+"account.reward.session.special" = "Special Promotions";
+"account.reward.item.desc_up_to_back" = "%@%% back";
+
 // MARK: - Common
+
+// Notification Pop up
+"notification_popup.title" = "WOULD YOU LIKE TO BE NOTIFIED?";
+"notification_popup.subtitle" = "Would you like to be notified about the status of your account or if your card has been charged?";
+"notification_popup.action" = "Yes";
+"notification_popup.dismiss" = "Not now";
 
 // Terms
 "term.privacyPolicy.description" = "By tapping ‘Continue’, you agree to our Terms, E-sign consent and Privacy Policy.";

@@ -20,6 +20,8 @@ public enum AccountRoute {
   case getTaxFile(accountId: String)
   case getTaxFileYear(accountId: String, year: String)
   case addToWaitList(body: WaitListParameter)
+  case getUserRewards
+  case getFeatureConfig
 }
 
 extension AccountRoute: LFRoute {
@@ -54,6 +56,10 @@ extension AccountRoute: LFRoute {
       return "/v1/account/\(accountId)/tax-file/\(year)"
     case .addToWaitList:
       return "v1/user/add-to-wait-list"
+    case .getUserRewards:
+      return "v1/user/reward-campaigns"
+    case .getFeatureConfig:
+      return "/v1/feature-config"
     }
   }
   
@@ -67,7 +73,7 @@ extension AccountRoute: LFRoute {
       return .PATCH
     case .deleteWalletAddresses:
       return .DELETE
-    case .getTaxFile, .getTaxFileYear:
+    case .getTaxFile, .getTaxFileYear, .getUserRewards, .getFeatureConfig:
       return .GET
     }
   }
@@ -111,7 +117,7 @@ extension AccountRoute: LFRoute {
         "nickname": nickname,
         "walletId": walletId
       ]
-    case .getReferralCampaign, .getTaxFile, .getTaxFileYear, .getAccountDetail:
+    case .getReferralCampaign, .getTaxFile, .getTaxFileYear, .getAccountDetail, .getUserRewards, .getFeatureConfig:
       return nil
     case .addToWaitList(body: let body):
       return body.encoded()
@@ -122,7 +128,7 @@ extension AccountRoute: LFRoute {
     switch self {
     case .createWalletAddress, .updateWalletAddress, .addToWaitList:
       return .json
-    case .createZeroHashAccount, .getUser, .logout, .getWalletAddresses, .deleteWalletAddresses, .getTaxFile, .getTaxFileYear, .getAccountDetail:
+    case .createZeroHashAccount, .getUser, .logout, .getWalletAddresses, .deleteWalletAddresses, .getTaxFile, .getTaxFileYear, .getAccountDetail, .getUserRewards, .getFeatureConfig:
       return nil
     case .getAccount, .getTransactions, .getTransactionDetail, .getReferralCampaign:
       return .url

@@ -5,6 +5,7 @@ import LFLocalizable
 import LFServices
 import LFBank
 import LFAccountOnboarding
+import BaseDashboard
 
 struct AccountsView: View {
   @StateObject private var viewModel = AccountViewModel()
@@ -21,6 +22,7 @@ struct AccountsView: View {
             viewModel.navigation = nil
           })
           .navigationTitle(LFLocalizable.AccountView.atmLocationTitle)
+          .foregroundColor(Colors.label.swiftUIColor)
         case .connectedAccounts:
           ConnectedAccountsView(linkedAccount: viewModel.linkedAccount)
         case .bankStatement:
@@ -30,6 +32,8 @@ struct AccountsView: View {
             viewModel.navigation = nil
           }
           .navigationBarHidden(true)
+        case .rewards:
+          CurrentRewardView()
         }
       }
       .sheet(item: $viewModel.sheet, content: { sheet in
@@ -168,12 +172,11 @@ private extension AccountsView {
   var shortcutSection: some View {
     VStack {
       ArrowButton(
-        image: GenImages.CommonImages.Accounts.atm.swiftUIImage,
-        title: LFLocalizable.AccountView.atm,
-        value: nil,
-        isLoading: $viewModel.isLoading
+        image: GenImages.CommonImages.icRewards.swiftUIImage,
+        title: LFLocalizable.AccountView.rewards,
+        value: nil
       ) {
-        viewModel.getATMAuthorizationCode()
+        viewModel.openReward()
       }
       ArrowButton(
         image: GenImages.CommonImages.Accounts.bankStatements.swiftUIImage,
@@ -196,12 +199,14 @@ private extension AccountsView {
       ) {
         viewModel.openLegal.toggle()
       }
-      ArrowButton(
-        image: GenImages.CommonImages.personAndBackgroundDotted.swiftUIImage,
-        title: "ADMIN MENU",
-        value: nil
-      ) {
-        viewModel.navigation = .debugMenu
+      if viewModel.showAdminMenu {
+        ArrowButton(
+          image: GenImages.CommonImages.personAndBackgroundDotted.swiftUIImage,
+          title: "ADMIN MENU",
+          value: nil
+        ) {
+          viewModel.navigation = .debugMenu
+        }
       }
       ArrowButton(
         image: GenImages.CommonImages.Accounts.icDispute.swiftUIImage,

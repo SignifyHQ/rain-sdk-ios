@@ -25,8 +25,13 @@ public final class DashboardRepository: ObservableObject {
   
   @Published public var cardData: CardData = CardData(cards: [], metaDatas: [], loading: true)
   @Published public var achInformationData: (model: ACHModel, loading: Bool) = (.default, false)
+  @Published public var featureConfig: AccountFeatureConfigData = AccountFeatureConfigData(configJSON: "", isLoading: false)
   
   private var cancellable: Set<AnyCancellable> = []
+  
+  lazy var accountUseCase: AccountUseCase = {
+    AccountUseCase(repository: accountRepository)
+  }()
   
   var toastMessage: (String) -> Void
   public init(toastMessage: @escaping (String) -> Void) {
@@ -44,6 +49,7 @@ public extension DashboardRepository {
     apiFetchListConnectedAccount()
     apiFetchACHInfo()
     apiFetchListCard()
+    apiFetchFetureConfig()
   }
   
   func subscribeLinkedAccounts() {
@@ -174,6 +180,20 @@ public extension DashboardRepository {
         )
         achInformationData.model = achInformation
       } catch {
+        toastMessage(error.localizedDescription)
+      }
+    }
+  }
+  
+  func apiFetchFetureConfig() {
+    Task { @MainActor in
+      do {
+        defer {featureConfig.isLoading = false }
+        featureConfig.isLoading = true
+        let entity = try await accountUseCase.getFeatureConfig()
+        featureConfig.configJSON = entity.config ?? ""
+      } catch {
+        log.error(error.localizedDescription)
         toastMessage(error.localizedDescription)
       }
     }

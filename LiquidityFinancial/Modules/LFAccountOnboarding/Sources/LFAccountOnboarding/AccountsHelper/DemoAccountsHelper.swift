@@ -135,5 +135,3 @@ extension DemoAccountsHelper {
     let body: String
   }
 }
-
-extension String: Error {}

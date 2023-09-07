@@ -7,6 +7,8 @@ import NetspendSdk
 import LFBank
 import BaseDashboard
 import LFAccountOnboarding
+import AccountData
+import AccountDomain
 
 struct AccountsView: View {
   @Environment(\.scenePhase) var scenePhase
@@ -29,6 +31,7 @@ struct AccountsView: View {
             viewModel.navigation = nil
           })
           .navigationTitle(LFLocalizable.AccountView.atmLocationTitle)
+          .foregroundColor(Colors.label.swiftUIColor)
         case .connectedAccounts:
           ConnectedAccountsView(linkedAccount: viewModel.linkedAccount)
         case .bankStatement:
@@ -40,6 +43,8 @@ struct AccountsView: View {
           .navigationBarHidden(true)
         case .taxes:
           TaxesView()
+        case .rewards:
+          CurrentRewardView()
         case .wallet(asset: let asset):
           ReceiveCryptoView(assetModel: asset)
         }
@@ -192,7 +197,7 @@ private extension AccountsView {
         title: LFLocalizable.AccountView.rewards,
         value: nil
       ) {
-          // TODO: Will do later
+        viewModel.openReward()
       }
       ArrowButton(
         image: GenImages.CommonImages.Accounts.atm.swiftUIImage,
@@ -239,12 +244,14 @@ private extension AccountsView {
       ) {
         viewModel.openLegal()
       }
-      ArrowButton(
-        image: GenImages.CommonImages.personAndBackgroundDotted.swiftUIImage,
-        title: "ADMIN MENU",
-        value: nil
-      ) {
-        viewModel.navigation = .debugMenu
+      if viewModel.showAdminMenu {
+        ArrowButton(
+          image: GenImages.CommonImages.personAndBackgroundDotted.swiftUIImage,
+          title: "ADMIN MENU",
+          value: nil
+        ) {
+          viewModel.navigation = .debugMenu
+        }
       }
       ArrowButton(
         image: GenImages.CommonImages.Accounts.icDispute.swiftUIImage,

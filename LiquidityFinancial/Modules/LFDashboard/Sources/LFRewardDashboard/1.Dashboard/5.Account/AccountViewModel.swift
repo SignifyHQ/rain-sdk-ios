@@ -7,6 +7,7 @@ import NetSpendData
 import NetSpendDomain
 import NetspendSdk
 import LFBank
+import AccountData
 
 @MainActor
 class AccountViewModel: ObservableObject {
@@ -34,6 +35,14 @@ class AccountViewModel: ObservableObject {
   
   var networkEnvironment: NetworkEnvironment {
     EnvironmentManager().networkEnvironment
+  }
+  
+  var showAdminMenu: Bool {
+    if let userData = accountDataManager.userInfomationData as? UserInfomationData {
+      //TODO: wait the BE implemented access_Level so temp we will enable white mode LIVE for tester
+      return (userData.accessLevel == UserInfomationData.AccessLevel.LIVE) && LFUtilities.isSimulatorOrTestFlight
+    }
+    return false
   }
   
   init() {
@@ -84,6 +93,10 @@ extension AccountViewModel {
     } else {
       sheet = .agreement(data)
     }
+  }
+  
+  func openReward() {
+    navigation = .rewards
   }
 }
 
@@ -164,6 +177,7 @@ extension AccountViewModel {
     case connectedAccounts
     case bankStatement
     case disputeTransaction(String, String)
+    case rewards
   }
   
   enum Sheet: Hashable, Identifiable {

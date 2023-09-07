@@ -20,4 +20,6 @@ public protocol AccountAPIProtocol {
   func getTaxFile(accountId: String) async throws -> [APITaxFile]
   func getTaxFileYear(accountId: String, year: String, fileName: String) async throws -> URL
   func addToWaitList(body: WaitListParameter) async throws -> Bool
+  func getUserRewards() async throws -> [APIUserRewards]
+  func getFeatureConfig() async throws -> APIAccountFeatureConfig
 }
