@@ -54,7 +54,7 @@
 "enter_ssn.no_ssn" = "No SSN? Tap here";
 "enter_ssn.continue" = "Continue";
 "enter_ssn.alert.title" = "WHY DO WE NEED SSN?";
-"enter_ssn.alert.message" = "A valid SSN or Passport is required by our partners to provide cryptocurrency and banking services.";
+"enter_ssn.alert.message" = "A valid SSN is required by our partners to provide cryptocurrency and banking services.";
 "enter_ssn.alert.okay" = "Okay";
 
 //... PASSPORT...

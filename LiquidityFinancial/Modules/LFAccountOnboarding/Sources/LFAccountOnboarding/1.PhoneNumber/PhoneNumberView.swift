@@ -19,45 +19,51 @@ struct PhoneNumberView: View {
   @FocusState private var keyboardFocus: Bool
   
   var body: some View {
-    VStack {
-      HStack {
+    ZStack {
+      VStack {
+        Rectangle()
+          .fill(.clear)
+          .frame(maxWidth: .infinity)
+          .frame(height: 60)
+        
+        GenImages.Images.icLogo.swiftUIImage
+          .resizable()
+          .scaledToFit()
+          .frame(width: 120, height: 120)
+          .onTapGesture(count: ViewConstant.magicTapCount) {
+            viewModel.onActiveSecretMode()
+          }
+        
+        phoneNumberView
+        
+        voipTermView
+        
         Spacer()
+        
+        footerView
+      }
+    }
+    .frame(maxWidth: .infinity, maxHeight: .infinity)
+    .onTapGesture {
+      keyboardFocus = false
+    }
+    .overlay(alignment: .topTrailing , content: {
         Button {
-          viewModel.openIntercom()
+          keyboardFocus = false
+          DispatchQueue.main.asyncAfter(wallDeadline: .now() + 0.5) {
+            viewModel.openIntercom()
+          }
         } label: {
           GenImages.CommonImages.icChat.swiftUIImage
             .foregroundColor(Colors.label.swiftUIColor)
         }
-      }
-      .frame(height: 34)
-      .padding(.bottom, 8)
-      
-      GenImages.Images.icLogo.swiftUIImage
-        .resizable()
-        .scaledToFit()
-        .frame(width: 120, height: 120)
-        .onTapGesture(count: ViewConstant.magicTapCount) {
-          viewModel.onActiveSecretMode()
-        }
-      
-      phoneNumberView
-      
-      voipTermView
-      
-      Spacer()
-      
-      footerView
-    }
-    .onTapGesture {
-      keyboardFocus = false
-    }
+        .padding(.top, 28)
+        .padding(.leading, 16)
+    })
     .padding(.horizontal, 26)
     .onChange(of: viewModel.phoneNumber, perform: viewModel.onChangedPhoneNumber)
     .background(Colors.background.swiftUIColor)
     .navigationBarBackButtonHidden()
-    .defaultToolBar(icon: .intercom, openIntercom: {
-      viewModel.openIntercom()
-    })
     .navigationLink(isActive: $viewModel.isNavigationToVertificationView) {
       VerificationCodeView(phoneNumber: viewModel.phoneNumber.reformatPhone)
     }
@@ -118,6 +124,13 @@ private extension PhoneNumberView {
             minHeight: 44,
             alignment: .center
           )
+          .toolbar {
+            ToolbarItemGroup(placement: .keyboard) {
+              Button("Done") {
+                keyboardFocus = false
+              }
+            }
+          }
           .onAppear {
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
               if viewModel.isDisableButton {

@@ -1374,8 +1374,8 @@ public enum LFLocalizable {
     /// Why do we need SSN?
     public static let why = LFLocalizable.tr("Localizable", "enter_ssn.why", fallback: "Why do we need SSN?")
     public enum Alert {
-      /// A valid SSN or Passport is required by our partners to provide cryptocurrency and banking services.
-      public static let message = LFLocalizable.tr("Localizable", "enter_ssn.alert.message", fallback: "A valid SSN or Passport is required by our partners to provide cryptocurrency and banking services.")
+      /// A valid SSN is required by our partners to provide cryptocurrency and banking services.
+      public static let message = LFLocalizable.tr("Localizable", "enter_ssn.alert.message", fallback: "A valid SSN is required by our partners to provide cryptocurrency and banking services.")
       /// Okay
       public static let okay = LFLocalizable.tr("Localizable", "enter_ssn.alert.okay", fallback: "Okay")
       /// WHY DO WE NEED SSN?

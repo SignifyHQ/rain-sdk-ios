@@ -17,6 +17,7 @@ public struct DateTextField: UIViewRepresentable {
     var components = DateComponents()
     components.calendar = calendar
     components.year = -18
+    components.month = -1
     let maxDate = calendar.date(byAdding: components, to: currentDate)!
 
     components.year = -100

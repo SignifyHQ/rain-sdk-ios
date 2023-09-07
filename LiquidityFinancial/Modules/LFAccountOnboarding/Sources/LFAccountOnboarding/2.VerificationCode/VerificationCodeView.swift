@@ -25,7 +25,7 @@ struct VerificationCodeView: View {
     }
     .ignoresSafeArea(.keyboard)
     .padding(.bottom, 16)
-    .padding(.top, 30)
+    .padding(.top, 8)
     .padding(.horizontal, 30)
     .defaultToolBar(icon: .intercom, openIntercom: {
       viewModel.openIntercom()

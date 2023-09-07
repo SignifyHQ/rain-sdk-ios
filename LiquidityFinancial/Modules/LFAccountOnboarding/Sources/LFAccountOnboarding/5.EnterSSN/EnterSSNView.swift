@@ -112,13 +112,13 @@ struct EnterSSNView: View {
       }
 
       VStack(spacing: 10) {
-        FullSizeButton(
-          title: LFLocalizable.EnterSsn.noSsn,
-          isDisable: false,
-          type: .secondary
-        ) {
-          navigation = .passport
-        }
+//        FullSizeButton(
+//          title: LFLocalizable.EnterSsn.noSsn,
+//          isDisable: false,
+//          type: .secondary
+//        ) {
+//          navigation = .passport
+//        }
         
         FullSizeButton(
           title: LFLocalizable.EnterSsn.continue,
