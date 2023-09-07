@@ -11,6 +11,7 @@ public struct TransactionDetailView: View {
   let walletAddress: String?
   let transactionInfo: [TransactionInformation]?
   let isPopToRoot: Bool
+  let popAction: (() -> Void)?
   
   public init(
     accountID: String?,
@@ -19,7 +20,8 @@ public struct TransactionDetailView: View {
     isNewAddress: Bool? = nil,
     walletAddress: String? = nil,
     transactionInfo: [TransactionInformation]? = nil,
-    isPopToRoot: Bool = true
+    isPopToRoot: Bool = true,
+    popAction: (() -> Void)? = nil
   ) {
     _viewModel = .init(wrappedValue: TransactionDetailViewModel(accountID: accountID ?? .empty, transactionId: transactionId))
     self.kind = kind
@@ -27,6 +29,7 @@ public struct TransactionDetailView: View {
     self.isNewAddress = isNewAddress
     self.walletAddress = walletAddress
     self.transactionInfo = transactionInfo
+    self.popAction = popAction
   }
   
   public var body: some View {
@@ -45,7 +48,11 @@ public struct TransactionDetailView: View {
     .toolbar {
       ToolbarItem(placement: .navigationBarLeading) {
         Button {
-          LFUtility.popToRootView()
+          if let popAction = popAction {
+            popAction()
+          } else {
+            LFUtility.popToRootView()
+          }
         } label: {
           CircleButton(style: .xmark)
         }

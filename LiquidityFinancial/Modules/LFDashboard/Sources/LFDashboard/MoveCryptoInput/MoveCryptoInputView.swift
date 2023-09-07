@@ -8,11 +8,13 @@ struct MoveCryptoInputView: View {
   @StateObject private var viewModel: MoveCryptoInputViewModel
   @State private var isShowAnnotationView: Bool = false
   @State private var screenSize: CGSize = .zero
+  private let completeAction: (() -> Void)?
   
-  init(type: MoveCryptoInputViewModel.Kind, assetModel: AssetModel) {
+  init(type: MoveCryptoInputViewModel.Kind, assetModel: AssetModel, completeAction: (() -> Void)? = nil) {
     _viewModel = .init(
       wrappedValue: MoveCryptoInputViewModel(type: type, assetModel: assetModel)
     )
+    self.completeAction = completeAction
   }
   
   var body: some View {
@@ -47,7 +49,8 @@ struct MoveCryptoInputView: View {
           assetModel: viewModel.assetModel,
           amount: viewModel.amount,
           address: viewModel.address,
-          nickname: viewModel.nickname
+          nickname: viewModel.nickname,
+          completeAction: completeAction
         )
       }
     }

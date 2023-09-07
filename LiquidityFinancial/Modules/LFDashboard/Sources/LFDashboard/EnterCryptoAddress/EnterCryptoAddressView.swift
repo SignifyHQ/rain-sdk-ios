@@ -11,8 +11,11 @@ import LFWalletAddress
 struct EnterCryptoAddressView: View {
   @StateObject private var viewModel: EnterCryptoAddressViewModel
   
-  init(assetModel: AssetModel) {
+  private let completeAction: (() -> Void)?
+  
+  init(assetModel: AssetModel, completeAction: @escaping (() -> Void)) {
     _viewModel = .init(wrappedValue: EnterCryptoAddressViewModel(asset: assetModel))
+    self.completeAction = completeAction
   }
   
   var body: some View {
@@ -62,7 +65,8 @@ struct EnterCryptoAddressView: View {
       case .enterAmount(let address, let nickname):
         MoveCryptoInputView(
           type: .sendCrypto(address: address, nickname: nickname),
-          assetModel: viewModel.asset
+          assetModel: viewModel.asset,
+          completeAction: completeAction
         )
       case .editWalletAddress(let wallet):
         EditNicknameOfWalletView(

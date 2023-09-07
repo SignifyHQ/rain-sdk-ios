@@ -48,7 +48,9 @@ struct CryptoChartDetailView: View {
         case .addMoney:
           MoveMoneyAccountView(kind: .receive)
         case .send:
-          EnterCryptoAddressView(assetModel: viewModel.asset)
+          EnterCryptoAddressView(assetModel: viewModel.asset) {
+            viewModel.navigation = nil
+          }
         case .receive:
           ReceiveCryptoView(assetModel: viewModel.asset)
         case .buy:

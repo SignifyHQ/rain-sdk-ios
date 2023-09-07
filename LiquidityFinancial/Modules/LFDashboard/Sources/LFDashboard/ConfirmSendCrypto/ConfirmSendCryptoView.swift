@@ -7,7 +7,9 @@ import LFTransaction
 
 struct ConfirmSendCryptoView: View {
   @StateObject private var viewModel: ConfirmSendCryptoViewModel
-  init(assetModel: AssetModel, amount: Double, address: String, nickname: String) {
+  private let completeAction: (() -> Void)?
+  
+  init(assetModel: AssetModel, amount: Double, address: String, nickname: String, completeAction: (() -> Void)? = nil) {
     _viewModel = .init(
       wrappedValue: ConfirmSendCryptoViewModel(
         assetModel: assetModel,
@@ -16,6 +18,7 @@ struct ConfirmSendCryptoView: View {
         nickname: nickname
       )
     )
+    self.completeAction = completeAction
   }
 
   var body: some View {
@@ -38,7 +41,10 @@ struct ConfirmSendCryptoView: View {
             kind: .crypto,
             isNewAddress: viewModel.nickname.isEmpty,
             walletAddress: viewModel.address,
-            transactionInfo: viewModel.cryptoTransactions
+            transactionInfo: viewModel.cryptoTransactions,
+            popAction: {
+              completeAction?()
+            }
           )
         }
       }
