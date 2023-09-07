@@ -39,8 +39,7 @@ class AccountViewModel: ObservableObject {
   
   var showAdminMenu: Bool {
     if let userData = accountDataManager.userInfomationData as? UserInfomationData {
-      //TODO: wait the BE implemented access_Level so temp we will enable white mode LIVE for tester
-      return (userData.accessLevel == UserInfomationData.AccessLevel.LIVE) && LFUtilities.isSimulatorOrTestFlight
+      return userData.accessLevel == UserInfomationData.AccessLevel.INTERNAL
     }
     return false
   }
