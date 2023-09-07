@@ -24,6 +24,8 @@ public struct PurchaseTransactionDetailView: View {
             viewModel.navigation = nil
           }
           .navigationBarHidden(true)
+        case .rewardCampaigns:
+          CurrentRewardView()
         }
       }
   }
@@ -32,19 +34,22 @@ public struct PurchaseTransactionDetailView: View {
 // MARK: - View Components
 private extension PurchaseTransactionDetailView {
   var content: some View {
-    VStack(spacing: 24) {
-      if (viewModel.transaction.rewards != nil) || (viewModel.cardInformation.cardType == .crypto) {
+    VStack {
+      if viewModel.transaction.rewards != nil {
         TransactionCardView(information: viewModel.cardInformation)
+          .padding(.bottom, 12)
       }
       Spacer()
       VStack(spacing: 10) {
         if LFUtility.cryptoEnabled {
-          FullSizeButton(
-            title: LFLocalizable.TransactionDetail.CurrentReward.title,
-            isDisable: false,
-            type: .tertiary
-          ) {
-            // TODO: - Will be implemented later
+          if viewModel.transaction.rewards != nil {
+            FullSizeButton(
+              title: LFLocalizable.TransactionDetail.CurrentReward.title,
+              isDisable: false,
+              type: .tertiary
+            ) {
+              viewModel.onClickedCurrentRewardButton()
+            }
           }
           FullSizeButton(
             title: LFLocalizable.Button.DisputeTransaction.title,

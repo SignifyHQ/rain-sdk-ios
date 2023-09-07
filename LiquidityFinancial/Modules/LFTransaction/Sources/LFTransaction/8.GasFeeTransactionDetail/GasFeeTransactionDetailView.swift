@@ -28,13 +28,6 @@ private extension GasFeeTransactionDetailView {
   var content: some View {
     VStack(spacing: 10) {
       Spacer()
-      FullSizeButton(
-        title: LFLocalizable.TransactionDetail.CurrentReward.title,
-        isDisable: false,
-        type: .tertiary
-      ) {
-        // TODO: - Will be implemented later
-      }
       if let receiptType = viewModel.transaction.receipt?.type {
         FullSizeButton(
           title: LFLocalizable.TransactionDetail.Receipt.button,

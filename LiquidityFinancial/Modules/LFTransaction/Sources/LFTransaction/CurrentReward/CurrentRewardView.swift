@@ -21,7 +21,6 @@ public struct CurrentRewardView: View {
       }
     }
     .background(Colors.background.swiftUIColor)
-    .navigationTitle("")
     .navigationBarTitleDisplayMode(.inline)
     .frame(
       maxWidth: .infinity,
@@ -102,6 +101,7 @@ public struct CurrentRewardView: View {
           .foregroundColor(Colors.label.swiftUIColor)
           .opacity(0.75)
           .frame(maxWidth: .infinity, alignment: .leading)
+          .multilineTextAlignment(.leading)
         Text(desc)
           .font(Fonts.regular.swiftUIFont(size: 20))
           .foregroundColor(Colors.label.swiftUIColor)

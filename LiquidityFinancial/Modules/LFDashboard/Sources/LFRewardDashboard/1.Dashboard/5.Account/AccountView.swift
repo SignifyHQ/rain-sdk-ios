@@ -6,6 +6,7 @@ import LFServices
 import LFBank
 import LFAccountOnboarding
 import BaseDashboard
+import LFTransaction
 
 struct AccountsView: View {
   @StateObject private var viewModel = AccountViewModel()

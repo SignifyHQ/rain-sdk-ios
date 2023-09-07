@@ -22,14 +22,6 @@ final class PurchaseTransactionDetailViewModel: ObservableObject {
   init(transaction: TransactionModel) {
     self.transaction = transaction
   }
-  
-  func goToReceiptScreen(receiptType: ReceiptType) {
-    if let donationReceipt = transaction.donationReceipt, receiptType == .donation {
-      navigation = .donationReceipt(donationReceipt)
-    } else if let cryptoReceipt = transaction.cryptoReceipt, receiptType == .crypto {
-      navigation = .cryptoReceipt(cryptoReceipt)
-    }
-  }
 }
 
 // MARK: - API
@@ -55,9 +47,21 @@ extension PurchaseTransactionDetailViewModel {
 
 // MARK: - View Helpers
 extension PurchaseTransactionDetailViewModel {
+  func goToReceiptScreen(receiptType: ReceiptType) {
+    if let donationReceipt = transaction.donationReceipt, receiptType == .donation {
+      navigation = .donationReceipt(donationReceipt)
+    } else if let cryptoReceipt = transaction.cryptoReceipt, receiptType == .crypto {
+      navigation = .cryptoReceipt(cryptoReceipt)
+    }
+  }
+  
+  func onClickedCurrentRewardButton() {
+    navigation = .rewardCampaigns
+  }
+  
   var cardInformation: TransactionCardInformation {
     TransactionCardInformation(
-      cardType: transaction.rewards?.type.transactionCardType ?? (LFUtility.cryptoEnabled ? .crypto : .unknow),
+      cardType: transaction.rewards?.type.transactionCardType ?? .unknow,
       amount: amountValue,
       message: transaction.rewards?.description ?? LFLocalizable.TransactionCard.Purchase.message(
         rewardAmount,
@@ -85,5 +89,6 @@ extension PurchaseTransactionDetailViewModel {
     case cryptoReceipt(CryptoReceipt)
     case donationReceipt(DonationReceipt)
     case disputeTransaction(String, String)
+    case rewardCampaigns
   }
 }

@@ -86,7 +86,10 @@ extension TransactionDetailView {
     case .cashback:
       CashbackTransactionDetail(transaction: viewModel.transaction)
     case .reward:
-      RewardTransactionDetailView(transaction: viewModel.transaction)
+        RewardReversalTransactionDetailView(
+          transaction: viewModel.transaction,
+          transactionInfos: viewModel.rewardTransactions
+        )
     case .rewardReversal:
       RewardReversalTransactionDetailView(
         transaction: viewModel.transaction,

@@ -9,6 +9,7 @@ import BaseDashboard
 import LFAccountOnboarding
 import AccountData
 import AccountDomain
+import LFTransaction
 
 struct AccountsView: View {
   @Environment(\.scenePhase) var scenePhase
