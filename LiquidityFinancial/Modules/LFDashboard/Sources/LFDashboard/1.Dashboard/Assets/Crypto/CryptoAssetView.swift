@@ -95,27 +95,7 @@ private extension CryptoAssetView {
         BalanceAlertView(type: .crypto, hasContacts: true, cryptoBalance: viewModel.asset.availableBalance) {
           viewModel.walletRowTapped()
         }
-        HStack(spacing: 10) {
-          iconTextButton(
-            title: LFLocalizable.AssetView.Buy.title,
-            image: GenImages.CommonImages.buy.swiftUIImage
-          ) {
-            viewModel.onClickedBuyButton()
-          }
-          iconTextButton(
-            title: LFLocalizable.AssetView.Sell.title,
-            image: GenImages.CommonImages.sell.swiftUIImage
-          ) {
-            viewModel.onClickedSellButton()
-          }
-          iconTextButton(
-            title: LFLocalizable.AssetView.Transfer.title,
-            image: GenImages.CommonImages.transfer.swiftUIImage
-          ) {
-            viewModel.transferButtonTapped()
-          }
-        }
-        .padding(.top, 6)
+        transferButton
         walletAddressButton
         activity
         Spacer()
@@ -124,6 +104,50 @@ private extension CryptoAssetView {
       }
       .padding(.top, 20)
       .padding(.horizontal, 30)
+    }
+  }
+  
+  var cryptoButtons: some View {
+    HStack(spacing: 10) {
+      iconTextButton(
+        title: LFLocalizable.AssetView.Buy.title,
+        image: GenImages.CommonImages.buy.swiftUIImage
+      ) {
+        viewModel.onClickedBuyButton()
+      }
+      iconTextButton(
+        title: LFLocalizable.AssetView.Sell.title,
+        image: GenImages.CommonImages.sell.swiftUIImage
+      ) {
+        viewModel.onClickedSellButton()
+      }
+      iconTextButton(
+        title: LFLocalizable.AssetView.Transfer.title,
+        image: GenImages.CommonImages.transfer.swiftUIImage
+      ) {
+        viewModel.transferButtonTapped()
+      }
+    }
+    .padding(.top, 6)
+  }
+  
+  var transferButton: some View {
+    Button {
+      viewModel.transferButtonTapped()
+    } label: {
+      HStack(spacing: 8) {
+        GenImages.CommonImages.transfer.swiftUIImage
+          .foregroundColor(Colors.label.swiftUIColor)
+        Text(LFLocalizable.AssetView.Transfer.title)
+          .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.ultraSmall.value))
+          .foregroundColor(Colors.label.swiftUIColor)
+        Spacer()
+        GenImages.CommonImages.icRightArrow.swiftUIImage
+          .foregroundColor(Colors.label.swiftUIColor)
+      }
+      .padding(.horizontal, 12)
+      .frame(height: 56)
+      .background(Colors.secondaryBackground.swiftUIColor.cornerRadius(9))
     }
   }
   
@@ -295,6 +319,11 @@ private extension CryptoAssetView {
       .cornerRadius(9)
     }
   }
+}
+
+private extension CryptoAssetView {
+  
+  
 }
 
 // MARK: - View Helpers

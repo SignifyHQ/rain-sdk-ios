@@ -154,21 +154,46 @@ private extension CryptoChartDetailView {
         .setGridXEnable(true)
         .setGridYEnable(true)
         
-        HStack(spacing: 10) {
-          iconTextButton(title: LFLocalizable.CryptoChartDetail.Buy.title, image: GenImages.CommonImages.buy.swiftUIImage) {
-            viewModel.buyButtonTapped()
-          }
-          iconTextButton(title: LFLocalizable.CryptoChartDetail.Sell.title, image: GenImages.CommonImages.sell.swiftUIImage) {
-            viewModel.sellButtonTapped()
-          }
-          iconTextButton(title: LFLocalizable.CryptoChartDetail.Transfer.title, image: GenImages.CommonImages.transfer.swiftUIImage) {
-            viewModel.transferButtonTapped()
-          }
-        }
-        .padding(.horizontal, 30)
+        transferButton
       }
       .padding(.top, 20)
     }
+  }
+  
+  var transferButton: some View {
+    Button {
+      viewModel.transferButtonTapped()
+    } label: {
+      HStack(spacing: 8) {
+        GenImages.CommonImages.transfer.swiftUIImage
+          .foregroundColor(Colors.label.swiftUIColor)
+        Text(LFLocalizable.AssetView.Transfer.title)
+          .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.ultraSmall.value))
+          .foregroundColor(Colors.label.swiftUIColor)
+        Spacer()
+        GenImages.CommonImages.icRightArrow.swiftUIImage
+          .foregroundColor(Colors.label.swiftUIColor)
+      }
+      .padding(.horizontal, 12)
+      .frame(height: 56)
+      .background(Colors.secondaryBackground.swiftUIColor.cornerRadius(9))
+    }
+    .padding(.horizontal, 30)
+  }
+  
+  var actionButtons: some View {
+    HStack(spacing: 10) {
+      iconTextButton(title: LFLocalizable.CryptoChartDetail.Buy.title, image: GenImages.CommonImages.buy.swiftUIImage) {
+        viewModel.buyButtonTapped()
+      }
+      iconTextButton(title: LFLocalizable.CryptoChartDetail.Sell.title, image: GenImages.CommonImages.sell.swiftUIImage) {
+        viewModel.sellButtonTapped()
+      }
+      iconTextButton(title: LFLocalizable.CryptoChartDetail.Transfer.title, image: GenImages.CommonImages.transfer.swiftUIImage) {
+        viewModel.transferButtonTapped()
+      }
+    }
+    .padding(.horizontal, 30)
   }
   
   var activity: some View {
