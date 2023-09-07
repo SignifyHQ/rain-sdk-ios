@@ -35,6 +35,7 @@ public struct DogeCardWelcomeView: View {
       
       buttons
         .padding(.horizontal, 30)
+        .padding(.bottom, 12)
     }
     .background(Colors.background.swiftUIColor)
     .navigationLink(isActive: $viewModel.isPushToAgreementView) {

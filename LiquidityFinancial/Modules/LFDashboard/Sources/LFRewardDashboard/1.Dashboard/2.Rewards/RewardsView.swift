@@ -30,13 +30,13 @@ struct RewardsView: View {
             accountID: viewModel.account?.id ?? .empty,
             transactionTypes: Constants.TransactionTypesRequest.fiat.types
           )
-        }
-      }
-      .sheet(item: $viewModel.sheet) { sheet in
-        switch sheet {
         case let .transactionDetail(transaction):
-          TransactionDetailView(accountID: viewModel.account?.id ?? .empty, transactionId: transaction.id, kind: .cashback)
-            .embedInNavigation()
+          TransactionDetailView(
+            accountID: viewModel.account?.id ?? .empty,
+            transactionId: transaction.id,
+            kind: .cashback,
+            isPopToRoot: false
+          )
         }
       }
   }

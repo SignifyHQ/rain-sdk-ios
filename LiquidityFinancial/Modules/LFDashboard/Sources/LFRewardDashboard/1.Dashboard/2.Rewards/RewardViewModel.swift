@@ -14,7 +14,6 @@ class RewardViewModel: ObservableObject {
   
   @Published var feed: DataStatus<TransactionModel> = .idle
   @Published var navigation: Navigation?
-  @Published var sheet: Sheet?
   @Published var account: LFAccount?
   @Published var toastMessage: String = ""
   @Published var isLoading: Bool = false
@@ -42,7 +41,7 @@ extension RewardViewModel {
   }
   
   func transactionItemTapped(_ transaction: TransactionModel) {
-    sheet = .transactionDetail(transaction)
+    navigation = .transactionDetail(transaction)
   }
 }
 
@@ -90,16 +89,6 @@ extension RewardViewModel {
 extension RewardViewModel {
   enum Navigation {
     case transactions
-  }
-  
-  enum Sheet: Identifiable {
     case transactionDetail(TransactionModel)
-    
-    var id: String {
-      switch self {
-      case let .transactionDetail(item):
-        return "transactionDetail-\(item.id)"
-      }
-    }
   }
 }

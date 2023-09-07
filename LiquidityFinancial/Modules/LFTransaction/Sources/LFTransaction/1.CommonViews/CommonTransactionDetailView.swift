@@ -7,6 +7,7 @@ import LFUtilities
 struct CommonTransactionDetailView<Content: View>: View {
   let transaction: TransactionModel
   @ViewBuilder let content: Content?
+  @StateObject private var viewModel = CommonTransactionDetailViewModel()
   
   init(transaction: TransactionModel, content: Content? = EmptyView()) {
     self.transaction = transaction
@@ -26,7 +27,9 @@ struct CommonTransactionDetailView<Content: View>: View {
     .defaultToolBar(
       icon: .intercom,
       navigationTitle: transaction.title?.capitalized,
-      openIntercom: {}
+      openIntercom: {
+        viewModel.openIntercom()
+      }
     )
     .frame(maxWidth: .infinity)
     .navigationBarTitleDisplayMode(.inline)
