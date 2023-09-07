@@ -109,13 +109,14 @@ private extension ProfileView {
           contributionItem(value: viewModel.totalDonated, title: LFLocalizable.Profile.TotalDonated.title)
         }
       }
-      ArrowButton(
-        image: GenImages.CommonImages.icShareWithFriend.swiftUIImage,
-        title: LFLocalizable.Profile.Referrals.title,
-        value: LFLocalizable.Profile.Referrals.message
-      ) {
-        viewModel.showReferrals()
-      }
+      // TODO: - Will be uncomment later. Temporarily hide this feature
+      //      ArrowButton(
+      //        image: GenImages.CommonImages.icShareWithFriend.swiftUIImage,
+      //        title: LFLocalizable.Profile.Referrals.title,
+      //        value: LFLocalizable.Profile.Referrals.message
+      //      ) {
+      //        viewModel.showReferrals()
+      //      }
     }
   }
   

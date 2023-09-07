@@ -55,9 +55,10 @@ struct MoreWaysToSupportView: View {
       header(title: LFLocalizable.MoreWaysToSupport.Share.title, message: nil)
       
       HStack(spacing: 12) {
-//        shareItem(image: ModuleImages.icReferrals.swiftUIImage, text: LFLocalizable.MoreWaysToSupport.Share.friends) {
-//          viewModel.inviteFriendsTapped()
-//        }
+        // TODO: - Will be uncomment later. Temporarily hide this feature
+        //        shareItem(image: ModuleImages.icReferrals.swiftUIImage, text: LFLocalizable.MoreWaysToSupport.Share.friends) {
+        //          viewModel.inviteFriendsTapped()
+        //        }
         shareItem(image: ModuleImages.icShared.swiftUIImage, text: LFLocalizable.MoreWaysToSupport.Share.cause) {
           viewModel.shareCauseTapped()
         }
