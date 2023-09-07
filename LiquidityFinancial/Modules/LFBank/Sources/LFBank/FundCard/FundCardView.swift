@@ -57,7 +57,7 @@ public struct FundCardView: View {
       viewModel: AddFundsViewModel(),
       achInformation: $viewModel.achInformation,
       isDisableView: $viewModel.isDisableView,
-      options: [.debitDeposit, .oneTime]
+      options: [.debitDepositFunds, .oneTime]
     )
     .padding(.top, 8)
     .fixedSize(horizontal: false, vertical: true)

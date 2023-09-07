@@ -1619,9 +1619,9 @@ public enum LFLocalizable {
       public static let title = LFLocalizable.tr("Localizable", "listCard.closeCard.title", fallback: "Close Card")
     }
     public enum Deals {
-      /// up to 8% back in %@
+      /// up to 8%% back in %@
       public static func description(_ p1: Any) -> String {
-        return LFLocalizable.tr("Localizable", "listCard.deals.description", String(describing: p1), fallback: "up to 8% back in %@")
+        return LFLocalizable.tr("Localizable", "listCard.deals.description", String(describing: p1), fallback: "up to 8%% back in %@")
       }
       /// Deals
       public static let title = LFLocalizable.tr("Localizable", "listCard.deals.title", fallback: "Deals")
