@@ -102,9 +102,10 @@ private extension Line {
               .font(Fonts.regular.swiftUIFont(size: 10))
               .foregroundColor(Colors.label.swiftUIColor)
               .opacity(0.5)
+              .frame(width: 100)
               .offset(
                 CGSize(
-                  width: xOffset * metrics.size.width - 40,
+                  width: xOffset * metrics.size.width - 50,
                   height: 0
                 )
               )

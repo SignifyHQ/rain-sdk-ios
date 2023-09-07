@@ -58,18 +58,18 @@ extension CryptoFilterOption {
   
   public var datetimeFormat: String {
     switch self {
-      case .live:
-        return Constants.DateFormat.periodSeparated.rawValue
-      case .day:
-        return Constants.DateFormat.hour.rawValue
-      case .week:
-        return Constants.DateFormat.periodSeparated.rawValue
-      case .month:
-        return Constants.DateFormat.periodSeparated.rawValue
-      case .year:
-        return Constants.DateFormat.year.rawValue
-      case .all:
-        return Constants.DateFormat.year.rawValue
+    case .live:
+      return Constants.DateFormat.periodSeparated.rawValue
+    case .day:
+      return Constants.DateFormat.hour.rawValue
+    case .week:
+      return Constants.DateFormat.periodSeparated.rawValue
+    case .month:
+      return Constants.DateFormat.periodSeparated.rawValue
+    case .year:
+      return Constants.DateFormat.periodSeparated.rawValue
+    case .all:
+      return Constants.DateFormat.year.rawValue
     }
   }
 }

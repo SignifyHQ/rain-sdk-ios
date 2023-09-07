@@ -201,7 +201,7 @@ final class AddressViewModel: ObservableObject {
     let param = AccountPersonParameters(
       firstName: accountDataManager.userInfomationData.firstName ?? "",
       lastName: accountDataManager.userInfomationData.lastName ?? "",
-      middleName: accountDataManager.userInfomationData.fullName ?? "",
+      middleName: .empty,
       agreementIDS: agreementIDS,
       phone: accountDataManager.userInfomationData.phone ?? "",
       email: accountDataManager.userInfomationData.email ?? "",

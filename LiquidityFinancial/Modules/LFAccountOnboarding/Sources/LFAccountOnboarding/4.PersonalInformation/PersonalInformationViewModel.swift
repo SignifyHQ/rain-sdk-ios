@@ -37,6 +37,7 @@ class PersonalInformationViewModel: ObservableObject {
       accountDataManager.update(email: email)
       accountDataManager.update(firstName: firstName)
       accountDataManager.update(lastName: lastName)
+      accountDataManager.update(fullName: firstName + " " + lastName)
       accountDataManager.update(dateOfBirth: dateCheck?.getDateString())
       accountDataManager.userNameDisplay = firstName
       accountDataManager.userEmail = email
