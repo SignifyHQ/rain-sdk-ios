@@ -141,7 +141,9 @@ public class AccountDataManager: AccountDataStorageProtocol {
   }
   
   public func clearUserSession() {
-    //UserDefaults.userSessionID = [:] // we don't clear it beacause it alway map with phone
+    // we don't clear it beacause it alway map with phoneNumber
+    // when the user login with multi-account on the phone
+    //UserDefaults.userSessionID = [:]
     UserDefaults.phoneNumber = ""
     UserDefaults.userEmail = ""
     UserDefaults.userNameDisplay = ""

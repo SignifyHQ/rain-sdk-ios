@@ -66,7 +66,7 @@ public class IntercomService: IntercomServiceProtocol {
     eventLogout
       .receive(on: DispatchQueue.main)
       .sink { [weak self] _ in
-      self?.logout()
+        self?.logout()
       }
     .store(in: &subscriptions)
     
@@ -96,7 +96,7 @@ public class IntercomService: IntercomServiceProtocol {
     Intercom.loginUnidentifiedUser { result in
       switch result {
       case .success:
-        log.debug("IntercomService login UnidentifiedUser is success")
+        log.info("IntercomService login UnidentifiedUser is success")
       case .failure(let error):
         log.error(error.localizedDescription)
       }
@@ -115,7 +115,7 @@ public class IntercomService: IntercomServiceProtocol {
     Intercom.loginUser(with: attributes) { result in
       switch result {
       case .success:
-        log.debug("IntercomService login IdentifiedUser is success: \(userAttributes.phone)")
+        log.info("IntercomService login IdentifiedUser is success: \(userAttributes.phone)")
       case .failure(let error):
         log.error(error.localizedDescription)
       }

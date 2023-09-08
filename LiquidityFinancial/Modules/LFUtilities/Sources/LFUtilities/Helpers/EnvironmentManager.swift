@@ -23,7 +23,11 @@ public class EnvironmentManager: ObservableObject {
     if let environment = NetworkEnvironment(rawValue: environmentSelection) {
       return environment
     }
+  #if DEBUG
     return .productionTest
+  #else
+    return .productionLive
+  #endif
   }() {
     didSet {
       UserDefaults.environmentSelection = networkEnvironment.rawValue

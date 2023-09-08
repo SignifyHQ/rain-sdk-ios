@@ -64,8 +64,6 @@ extension VerificationCodeViewModel {
           UserDefaults.showRoundUpForCause = true
         }
         
-        intercomService.loginIdentifiedUser(userAttributes: IntercomService.UserAttributes(phone: formatPhoneNumber))
-        
         try await initNetSpendSession()
         await checkOnboardingState()
         

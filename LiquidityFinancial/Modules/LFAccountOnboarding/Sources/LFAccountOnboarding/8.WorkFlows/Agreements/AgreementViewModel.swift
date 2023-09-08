@@ -53,8 +53,6 @@ public final class AgreementViewModel: ObservableObject {
     } else if let agreementData = netspendDataManager.agreement {
       mapToServiceCondition(agreementData: agreementData)
     } else {
-      intercomService.loginIdentifiedUser(userAttributes: IntercomService.UserAttributes(phone: accountDataManager.phoneNumber))
-      
       Task { @MainActor in
         defer { isLoading = false }
         isLoading = true

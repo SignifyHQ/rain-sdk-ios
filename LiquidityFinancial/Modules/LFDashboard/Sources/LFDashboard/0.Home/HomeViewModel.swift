@@ -11,6 +11,7 @@ import AccountDomain
 import NetSpendData
 import Combine
 import LFBank
+import LFServices
 
 @MainActor
 public final class HomeViewModel: ObservableObject {
@@ -24,6 +25,8 @@ public final class HomeViewModel: ObservableObject {
   
   @LazyInjected(\.pushNotificationService) var pushNotificationService
   @LazyInjected(\.onboardingFlowCoordinator) var onboardingFlowCoordinator
+  
+  @LazyInjected(\.intercomService) var intercomService
   
   @Published var isShowGearButton: Bool = false
   @Published var tabSelected: TabOption = .cash
@@ -135,15 +138,25 @@ extension HomeViewModel {
     apiFetchOnboardingState()
   }
   
+  func onAppear() {
+    checkShouldShowNotification()
+    checkGoTransactionDetail()
+    loginIntercom()
+  }
+  
+  func loginIntercom() {
+    var userAttributes: IntercomService.UserAttributes
+    if let userID = accountDataManager.userInfomationData.userID {
+      userAttributes = IntercomService.UserAttributes(phone: accountDataManager.phoneNumber, userId: userID, email: accountDataManager.userEmail)
+    } else {
+      userAttributes = IntercomService.UserAttributes(phone: accountDataManager.phoneNumber, email: accountDataManager.userEmail)
+    }
+    intercomService.loginIdentifiedUser(userAttributes: userAttributes)
+  }
 }
 
 // MARK: Notifications
 extension HomeViewModel {
-
-  func onAppear() {
-    checkShouldShowNotification()
-    checkGoTransactionDetail()
-  }
   
   func checkGoTransactionDetail() {
     guard let event = pushNotificationService.event else {

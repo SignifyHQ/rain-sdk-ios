@@ -1,11 +1,13 @@
 import LFLocalizable
 import Combine
 import Factory
+import LFServices
 
 @MainActor
 final class RewardTermsViewModel: ObservableObject {
   @LazyInjected(\.onboardingFlowCoordinator) var onboardingFlowCoordinator
-
+  @LazyInjected(\.intercomService) var intercomService
+  
   var disclaimerText: String {
     LFLocalizable.RewardTerms.disclosuresFirst + "\n\n" +
     LFLocalizable.RewardTerms.disclosuresSecond + "\n\n" +
@@ -16,5 +18,9 @@ final class RewardTermsViewModel: ObservableObject {
   
   func onClickedContinueButton() {
     onboardingFlowCoordinator.set(route: .dashboard)
+  }
+  
+  func openIntercom() {
+    intercomService.openIntercom()
   }
 }

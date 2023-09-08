@@ -35,8 +35,7 @@ struct RewardTermsView: View {
     .navigationBarBackButtonHidden(true)
     .navigationBarTitleDisplayMode(.inline)
     .defaultToolBar(icon: .both, openIntercom: {
-      // TODO: Will be implemeted later
-      // intercomService.openIntercom()
+      viewModel.openIntercom()
     })
   }
 

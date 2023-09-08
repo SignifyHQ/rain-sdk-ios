@@ -12,6 +12,7 @@ import Combine
 import LFAccountOnboarding
 import OnboardingDomain
 import DevicesData
+import LFServices
 
 @MainActor
 public final class HomeViewModel: ObservableObject {
@@ -27,6 +28,8 @@ public final class HomeViewModel: ObservableObject {
   
   @LazyInjected(\.pushNotificationService) var pushNotificationService
   @LazyInjected(\.onboardingFlowCoordinator) var onboardingFlowCoordinator
+  
+  @LazyInjected(\.intercomService) var intercomService
   
   @Published var tabSelected: TabOption = .cash
   @Published var navigation: Navigation?
@@ -51,6 +54,10 @@ public final class HomeViewModel: ObservableObject {
   var showSearchButton: Bool {
     tabSelected == .donation || tabSelected == .causes
   }
+  
+  func onAppear() {
+    loginIntercom()
+  }
 }
 
 // MARK: - Private
@@ -61,6 +68,16 @@ private extension HomeViewModel {
     handleSelectRewardChange()
     handleSelectedFundraisersSuccess()
     getListConnectedAccount()
+  }
+  
+  func loginIntercom() {
+    var userAttributes: IntercomService.UserAttributes
+    if let userID = accountDataManager.userInfomationData.userID {
+      userAttributes = IntercomService.UserAttributes(phone: accountDataManager.phoneNumber, userId: userID, email: accountDataManager.userEmail)
+    } else {
+      userAttributes = IntercomService.UserAttributes(phone: accountDataManager.phoneNumber, email: accountDataManager.userEmail)
+    }
+    intercomService.loginIdentifiedUser(userAttributes: userAttributes)
   }
   
   func handleSelectedFundraisersSuccess() {

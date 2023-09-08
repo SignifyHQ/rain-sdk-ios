@@ -29,7 +29,9 @@ enum NetSpendService {
       specialColor: netspendSdkColorGroup
     )
     
-    let apiKey = networkEnvironment == .productionTest ? Configs.NetSpend.sdkIdCert : Configs.NetSpend.sdkIdProd
+    //let apiKey = networkEnvironment == .productionTest ? Configs.NetSpend.sdkIdCert : Configs.NetSpend.sdkIdProd
+    // TODO: Currently, just work with sandbox when BE setup Production we update again later
+    let apiKey = Configs.NetSpend.sdkIdCert
     log.info("kickoffNetspend with apikey: \(apiKey)")
     do {
       try NetspendSdk.shared.initialize(

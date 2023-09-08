@@ -30,10 +30,6 @@ final class PhoneNumberViewModel: ObservableObject {
   lazy var loginUseCase: LoginUseCaseProtocol = {
     LoginUseCase(repository: onboardingRepository)
   }()
-  
-  init() {
-    intercomService.loginUnidentifiedUser()
-  }
 }
 
 // MARK: - API

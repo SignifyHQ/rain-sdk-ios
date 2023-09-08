@@ -30,6 +30,7 @@ public struct HomeView: View {
     .tint(ModuleColors.tabarHighlight.swiftUIColor)
     .onAppear {
       UITabBar.appearance().backgroundColor = Colors.secondaryBackground.swiftUIColor.uiColor
+      viewModel.onAppear()
     }
     .toolbar {
       ToolbarItem(placement: .navigationBarTrailing) {

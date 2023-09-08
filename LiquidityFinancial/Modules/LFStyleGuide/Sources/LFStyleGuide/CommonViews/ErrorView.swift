@@ -1,8 +1,12 @@
 import SwiftUI
 import LFLocalizable
 import LFUtilities
+import LFServices
+import Factory
 
 public struct ErrorView: View {
+  @Injected(\.intercomService) var intercomService
+  
   @State private var isShowLogoutPopup: Bool = false
   let message: String
   
@@ -43,8 +47,7 @@ public struct ErrorView: View {
     .background(Colors.background.swiftUIColor, ignoresSafeAreaEdges: .all)
     .navigationBarTitleDisplayMode(.inline)
     .defaultToolBar(icon: .intercom, openIntercom: {
-      // TODO: Will be implemeted later
-      // intercomService.openIntercom()
+       intercomService.openIntercom()
     })
   }
 }

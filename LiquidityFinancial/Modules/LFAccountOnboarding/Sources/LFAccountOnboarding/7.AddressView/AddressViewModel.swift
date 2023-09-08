@@ -150,9 +150,6 @@ final class AddressViewModel: ObservableObject {
         let person = try await netspendRepository.createAccountPerson(personInfo: param, sessionId: accountDataManager.sessionID)
         netspendDataManager.update(accountPersonData: person)
         
-        let userAttributes = IntercomService.UserAttributes(phone: accountDataManager.phoneNumber, email: param.email)
-        intercomService.loginIdentifiedUser(userAttributes: userAttributes)
-        
         try await apiFetchWorkflows()
 
       } catch {

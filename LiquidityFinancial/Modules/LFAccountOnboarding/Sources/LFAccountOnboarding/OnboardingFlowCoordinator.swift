@@ -68,7 +68,6 @@ public class OnboardingFlowCoordinator: OnboardingFlowCoordinatorProtocol {
   @LazyInjected(\.rewardFlowCoordinator) var rewardFlowCoordinator
   @LazyInjected(\.accountRepository) var accountRepository
   @LazyInjected(\.rewardDataManager) var rewardDataManager
-  @LazyInjected(\.intercomService) var intercomService
   @LazyInjected(\.pushNotificationService) var pushNotificationService
   
   public let routeSubject: CurrentValueSubject<Route, Never>

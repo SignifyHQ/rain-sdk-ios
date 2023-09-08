@@ -13,6 +13,7 @@ public struct OnboardingContentView: View {
   var viewModel = OnboardingContentViewModel()
   
   @Injected(\.accountDataManager) var accountDataManager
+  @Injected(\.intercomService) var intercomService
   @LazyInjected(\.rewardFlowCoordinator) var rewardFlowCoordinator
   
   let environmentManager = EnvironmentManager()
@@ -78,6 +79,9 @@ public struct OnboardingContentView: View {
       case .documentInReview:
         KYCStatusView(viewModel: KYCStatusViewModel(state: .documentInReview))
       }
+    }
+    .onAppear {
+      intercomService.loginUnidentifiedUser()
     }
   }
   
