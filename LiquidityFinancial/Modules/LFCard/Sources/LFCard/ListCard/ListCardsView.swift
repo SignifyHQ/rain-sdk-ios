@@ -356,7 +356,7 @@ private extension ListCardsView {
   
   var confirmationCloseCardPopup: some View {
     LiquidityAlert(
-      title: LFLocalizable.ListCard.CloseCard.title,
+      title: LFLocalizable.ListCard.CloseCard.title.uppercased(),
       message: LFLocalizable.ListCard.CloseCard.message,
       primary: .init(
         text: LFLocalizable.Button.Ok.title,

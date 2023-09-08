@@ -1613,8 +1613,8 @@ public enum LFLocalizable {
       public static let title = LFLocalizable.tr("Localizable", "listCard.changePin.title", fallback: "Change PIN")
     }
     public enum CloseCard {
-      /// Are you sure close this card?
-      public static let message = LFLocalizable.tr("Localizable", "listCard.closeCard.message", fallback: "Are you sure close this card?")
+      /// Are you sure you want to remove this card?
+      public static let message = LFLocalizable.tr("Localizable", "listCard.closeCard.message", fallback: "Are you sure you want to remove this card?")
       /// Close Card
       public static let title = LFLocalizable.tr("Localizable", "listCard.closeCard.title", fallback: "Close Card")
     }
