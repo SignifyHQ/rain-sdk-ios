@@ -198,9 +198,10 @@ private extension ProfileView {
           title: LFLocalizable.Profile.Address.title,
           value: viewModel.address
         )
+        /* TODO: Remove for MVP
         ArrowButton(image: GenImages.CommonImages.icWarning.swiftUIImage, title: LFLocalizable.Profile.DepositLimits.title, value: nil) {
           viewModel.depositLimitsTapped()
-        }
+        }*/
         ArrowButton(image: GenImages.CommonImages.icQuestion.swiftUIImage, title: LFLocalizable.Profile.Help.title, value: nil) {
           viewModel.helpTapped()
         }

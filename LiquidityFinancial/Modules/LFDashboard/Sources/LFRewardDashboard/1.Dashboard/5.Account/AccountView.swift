@@ -74,9 +74,11 @@ private extension AccountsView {
             isDisableView: $viewModel.isDisableView
           )
         }
+        /*  TODO: Remove for MVP
         section(title: LFLocalizable.AccountView.limits) {
           depositLimits
         }
+        */
         section(title: LFLocalizable.AccountView.cardAccountDetails(LFUtility.appName)) {
           accountDetailView
         }
