@@ -3,5 +3,5 @@
 
 
 ZEROHASH_URL = https:/$()/zerohash.com/dogecard
-DISCLOSURE_URL = https:/$()/seedcx.zendesk.com/hc/en-us/articles/360008819314-State-Money-Transmitter-Disclosures
-WALLET_PRIVACY_URL = https:/$()/seedcx.zendesk.com/hc/en-us/articles/360009900494-Privacy-Policy-
+DISCLOSURE_URL = https:/$()/zerohash.zendesk.com/hc/en-us/articles/360008819314-US-Licenses-and-Disclosures-
+WALLET_PRIVACY_URL = https:/$()/zerohash.zendesk.com/hc/en-us/articles/360009900494-Privacy-Policy-

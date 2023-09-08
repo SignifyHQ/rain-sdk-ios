@@ -44,6 +44,7 @@ public enum Colors {
   public static let buttonText = ColorAsset(name: "buttonText")
   public static let buttons = ColorAsset(name: "buttons")
   public static let contrast = ColorAsset(name: "contrast")
+  public static let cryptoTermsUnderline = ColorAsset(name: "cryptoTermsUnderline")
   public static let darkBackground = ColorAsset(name: "darkBackground")
   public static let darkText = ColorAsset(name: "darkText")
   public static let donationCardBackground = ColorAsset(name: "donationCardBackground")

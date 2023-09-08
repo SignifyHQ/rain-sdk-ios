@@ -107,7 +107,7 @@ extension SetupWalletView {
         text: strMessage,
         fontSize: Constants.FontSize.ultraSmall.value,
         links: [strUserAgreement, strPrivacy, strDiscloures],
-        style: .underlined(Colors.label.color)
+        style: .underlined(Colors.cryptoTermsUnderline.color)
       ) { tappedString in
         if tappedString == strUserAgreement {
           if let url = URL(string: LFUtility.zerohashURL) {
