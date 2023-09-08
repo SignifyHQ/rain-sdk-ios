@@ -71,7 +71,7 @@ public struct HomeView: View {
 // MARK: - View Components
 private extension HomeView {
   var leadingNavigationBarView: some View {
-    Text(viewModel.tabSelected.title.uppercased())
+    Text(viewModel.tabSelected.title)
       .font(Fonts.orbitronBold.swiftUIFont(size: Constants.FontSize.navigationBar.value))
       .foregroundColor(Colors.label.swiftUIColor)
       .padding(.leading, 12)
