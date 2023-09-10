@@ -1,5 +1,4 @@
 import Foundation
-import LFUtilities
 
 public final class CryptoChartUseCase: CryptoChartUseCaseProtocol {
   

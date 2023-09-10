@@ -1,7 +1,0 @@
-// Configuration settings file format documentation can be found at:
-// https://help.apple.com/xcode/#/dev745c5c974
-
-
-ZEROHASH_URL = https:/$()/zerohash.com/dogecard
-DISCLOSURE_URL = https:/$()/zerohash.zendesk.com/hc/en-us/articles/360008819314-US-Licenses-and-Disclosures-
-WALLET_PRIVACY_URL = https:/$()/zerohash.zendesk.com/hc/en-us/articles/360009900494-Privacy-Policy-

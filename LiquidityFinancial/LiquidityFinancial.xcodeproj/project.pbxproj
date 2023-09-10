@@ -362,6 +362,7 @@
 		A97BF83C2A5DA8A900B8F5CA /* LiquidityFinancialConfig.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = LiquidityFinancialConfig.xcconfig; sourceTree = "<group>"; };
 		A97BF83D2A5DBCF200B8F5CA /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
 		A97BF83F2A5DC13000B8F5CA /* Colors.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Colors.xcassets; sourceTree = "<group>"; };
+		A98A95132AAC42500079085F /* LFBuildTools */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = LFBuildTools; path = Modules/LFBuildTools; sourceTree = "<group>"; };
 		A99759C92A8D2A91005B391E /* LFBank */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = LFBank; path = Modules/LFBank; sourceTree = "<group>"; };
 		A99D1CA32A9CEBD60025BE25 /* LFCryptoChart */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = LFCryptoChart; path = Modules/LFCryptoChart; sourceTree = "<group>"; };
 		A99D2F692A9A56CF00947773 /* PrideCard.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = PrideCard.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -810,9 +811,7 @@
 				A97BF8102A5D989100B8F5CA /* Avalanche */,
 				A95354992A5E571D008B0FAB /* Cardano */,
 				A9B4B9762A7C0F41000ED67A /* DogeCard */,
-				A97BF8122A5D98EA00B8F5CA /* Configurations */,
-				A9B4BA092A7C107D000ED67A /* Resources */,
-				A97BF80F2A5D986C00B8F5CA /* Sources */,
+				A98A95112AAC3C1C0079085F /* ApplicationBase */,
 			);
 			path = LiquidityFinancial;
 			sourceTree = "<group>";
@@ -860,6 +859,7 @@
 		A97BF80D2A5D980200B8F5CA /* Utilities */ = {
 			isa = PBXGroup;
 			children = (
+				A98A95132AAC42500079085F /* LFBuildTools */,
 				A94F71F32A614E04002ADB34 /* LFLocalizable */,
 				A97BF8132A5D9CC300B8F5CA /* LFUtilities */,
 				A97BF80E2A5D982500B8F5CA /* LFStyleGuide */,
@@ -928,6 +928,16 @@
 				A97BF83A2A5DA86000B8F5CA /* AvalancheConfig.xcconfig */,
 			);
 			path = Configurations;
+			sourceTree = "<group>";
+		};
+		A98A95112AAC3C1C0079085F /* ApplicationBase */ = {
+			isa = PBXGroup;
+			children = (
+				A97BF8122A5D98EA00B8F5CA /* Configurations */,
+				A9B4BA092A7C107D000ED67A /* Resources */,
+				A97BF80F2A5D986C00B8F5CA /* Sources */,
+			);
+			path = ApplicationBase;
 			sourceTree = "<group>";
 		};
 		A99D2F6B2A9A56F200947773 /* PrideCard */ = {

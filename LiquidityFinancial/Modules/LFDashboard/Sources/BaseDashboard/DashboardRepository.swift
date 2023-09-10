@@ -117,9 +117,9 @@ public extension DashboardRepository {
       Task {
         defer { cardData.loading = false }
         do {
-          let card = try await cardRepository.getCard(cardID: cardID, sessionID: accountDataManager.sessionID)
-          if let usersession = netspendDataManager.sdkSession {
-            let encryptedData: APICardEncrypted? = card.decodeData(session: usersession)
+          let entity = try await cardRepository.getCard(cardID: cardID, sessionID: accountDataManager.sessionID)
+          if let usersession = netspendDataManager.sdkSession, let cardModel = entity as? APICard {
+            let encryptedData: APICardEncrypted? = cardModel.decodeData(session: usersession)
             if let encryptedData {
               cardData.metaDatas[index] = CardMetaData(pan: encryptedData.pan, cvv: encryptedData.cvv2)
             }

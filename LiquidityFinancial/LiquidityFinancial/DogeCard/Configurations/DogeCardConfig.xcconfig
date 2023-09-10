@@ -1,7 +1,7 @@
 // Configuration settings file format documentation can be found at:
 // https://help.apple.com/xcode/#/dev745c5c974
 
-#include "LiquidityFinancial/Configurations/LiquidityFinancialConfig.xcconfig"
+#include "LiquidityFinancial/ApplicationBase/Configurations/LiquidityFinancialConfig.xcconfig"
 
 APP_NAME = DogeCard
 APP_BUNDLE_ID = com.liquidityfinancial.dogeking

@@ -30,8 +30,7 @@ let package = Package(
       targets: ["CryptoChartDomain"])
   ],
   dependencies: [
-    .package(name: "LFServices", path: "../LFServices"),
-    .package(url: "https://github.com/hmlongco/Factory", from: "2.2.0")
+    .package(name: "LFBuildTools", path: "../LFBuildTools")
   ],
   targets: [
     .target(
@@ -40,14 +39,13 @@ let package = Package(
     .target(
       name: "AccountDomain",
       dependencies: [
-        "LFServices", "Factory", "NetSpendDomain"
-      ]
+        "NetSpendDomain"
+      ],
+      plugins: [.plugin(name: "SourceryPlugin", package: "LFBuildTools")]
     ),
     .target(
       name: "NetSpendDomain",
-      dependencies: [
-        "LFServices"
-      ]
+      dependencies: []
     ),
     .target(
       name: "RewardDomain",
@@ -63,9 +61,7 @@ let package = Package(
     ),
     .target(
       name: "CryptoChartDomain",
-      dependencies: [
-        "LFServices", "Factory"
-      ]
+      dependencies: []
     ),
     .testTarget(
       name: "OnboardingDomainTests",
