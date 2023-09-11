@@ -35,7 +35,7 @@ final class AddressViewModel: ObservableObject {
 #endif
   
   @LazyInjected(\.accountDataManager) var accountDataManager
-  @LazyInjected(\.netspendRepository) var netspendRepository
+  @LazyInjected(\.nsPersionRepository) var nsPersionRepository
   @LazyInjected(\.accountRepository) var accountRepository
   @LazyInjected(\.netspendDataManager) var netspendDataManager
   @LazyInjected(\.onboardingFlowCoordinator) var onboardingFlowCoordinator

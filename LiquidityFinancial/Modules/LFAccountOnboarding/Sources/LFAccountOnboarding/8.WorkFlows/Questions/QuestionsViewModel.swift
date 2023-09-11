@@ -13,7 +13,7 @@ public final class QuestionsViewModel: ObservableObject {
   @LazyInjected(\.accountDataManager) var accountDataManager
   @LazyInjected(\.accountRepository) var accountRepository
   @LazyInjected(\.authorizationManager) var authorizationManager
-  @LazyInjected(\.netspendRepository) var netspendRepository
+  @LazyInjected(\.nsPersionRepository) var nsPersionRepository
   @LazyInjected(\.onboardingRepository) var onboardingRepository
   @LazyInjected(\.onboardingFlowCoordinator) var onboardingFlowCoordinator
   @LazyInjected(\.intercomService) var intercomService

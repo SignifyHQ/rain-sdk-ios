@@ -20,7 +20,7 @@ final class UploadDocumentViewModel: ObservableObject {
   
   @LazyInjected(\.netspendDataManager) var netspendDataManager
   @LazyInjected(\.accountDataManager) var accountDataManager
-  @LazyInjected(\.netspendRepository) var netspendRepository
+  @LazyInjected(\.nsPersionRepository) var nsPersionRepository
   @LazyInjected(\.onboardingRepository) var onboardingRepository
   @LazyInjected(\.onboardingFlowCoordinator) var onboardingFlowCoordinator
   

@@ -10,7 +10,7 @@ import OnboardingData
 
 class WelcomeViewModel: ObservableObject {
   
-  @Injected(\.netspendRepository) var netspendRepository
+  @Injected(\.nsPersionRepository) var nsPersionRepository
   @Injected(\.netspendDataManager) var netspendDataManager
   @Injected(\.onboardingRepository) var onboardingRepository
   

@@ -9,7 +9,7 @@ import NetspendSdk
 import Factory
 
 final class PurchaseTransactionDetailViewModel: ObservableObject {
-  @LazyInjected(\.netspendRepository) var netspendRepository
+  @LazyInjected(\.nsPersionRepository) var nsPersionRepository
   @LazyInjected(\.netspendDataManager) var netspendDataManager
   @LazyInjected(\.accountDataManager) var accountDataManager
 

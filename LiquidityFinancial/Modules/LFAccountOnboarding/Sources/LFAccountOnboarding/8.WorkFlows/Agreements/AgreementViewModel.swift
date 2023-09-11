@@ -12,7 +12,7 @@ public final class AgreementViewModel: ObservableObject {
   @LazyInjected(\.intercomService) var intercomService
   @LazyInjected(\.netspendDataManager) var netspendDataManager
   @LazyInjected(\.accountDataManager) var accountDataManager
-  @LazyInjected(\.netspendRepository) var netspendRepository
+  @LazyInjected(\.nsPersionRepository) var nsPersionRepository
   @LazyInjected(\.onboardingFlowCoordinator) var onboardingFlowCoordinator
   
   @Published var isNavigationPersonalInformation: Bool = false

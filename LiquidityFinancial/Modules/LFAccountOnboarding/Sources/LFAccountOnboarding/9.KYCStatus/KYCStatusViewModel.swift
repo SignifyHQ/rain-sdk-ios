@@ -24,7 +24,7 @@ final class KYCStatusViewModel: ObservableObject {
   @Published var navigation: Navigation?
   @Published var popup: Popup?
   
-  @LazyInjected(\.netspendRepository) var netspendRepository
+  @LazyInjected(\.nsPersionRepository) var nsPersionRepository
   @LazyInjected(\.netspendDataManager) var netspendDataManager
   @LazyInjected(\.accountDataManager) var accountDataManager
   @LazyInjected(\.onboardingRepository) var onboardingRepository

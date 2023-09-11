@@ -13,7 +13,7 @@ public final class DashboardRepository: ObservableObject {
   @LazyInjected(\.netspendDataManager) var netspendDataManager
   
   @LazyInjected(\.accountRepository) var accountRepository
-  @LazyInjected(\.netspendRepository) var netspendRepository
+  @LazyInjected(\.nsPersionRepository) var nsPersionRepository
   @LazyInjected(\.externalFundingRepository) var externalFundingRepository
   @LazyInjected(\.cardRepository) var cardRepository
   

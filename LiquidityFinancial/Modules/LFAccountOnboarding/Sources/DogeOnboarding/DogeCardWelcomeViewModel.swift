@@ -7,7 +7,7 @@ import Combine
 
 class DogeCardWelcomeViewModel: ObservableObject {
   
-  @Injected(\.netspendRepository) var netspendRepository
+  @Injected(\.nsPersionRepository) var nsPersionRepository
   @Injected(\.netspendDataManager) var netspendDataManager
   
   @Published var isPushToAgreementView: Bool = false

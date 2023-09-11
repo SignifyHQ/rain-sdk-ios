@@ -22,7 +22,7 @@ public final class HomeViewModel: ObservableObject {
   
   @LazyInjected(\.accountRepository) var accountRepository
   @LazyInjected(\.onboardingRepository) var onboardingRepository
-  @LazyInjected(\.netspendRepository) var netspendRepository
+  @LazyInjected(\.nsPersionRepository) var nsPersionRepository
   @LazyInjected(\.devicesRepository) var devicesRepository
   @LazyInjected(\.externalFundingRepository) var externalFundingRepository
   
