@@ -23,8 +23,9 @@ extension LFCoreNetwork: NSPersonsAPIProtocol where R == NSPersonsRoute {
     return try await request(NSPersonsRoute.getQuestions(sessionId: sessionId), target: APIQuestionData.self, failure: LFErrorObject.self, decoder: .apiDecoder)
   }
   
-  public func putQuestion(sessionId: String, encryptedData: String) async throws -> APIAnswerQuestionData {
-    return try await request(NSPersonsRoute.putQuestions(sessionId: sessionId, encryptData: encryptedData), target: APIAnswerQuestionData.self, failure: LFErrorObject.self, decoder: .apiDecoder)
+  public func putQuestion(sessionId: String, encryptedData: String) async throws -> Bool {
+    let result = try await request(NSPersonsRoute.putQuestions(sessionId: sessionId, encryptData: encryptedData))
+    return (result.httpResponse?.statusCode ?? 500).isSuccess
   }
   
   public func getWorkflows() async throws -> APIWorkflowsData {

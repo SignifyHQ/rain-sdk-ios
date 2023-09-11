@@ -187,7 +187,7 @@ final class AddressViewModel: ObservableObject {
       typeGovernmentID = IdNumberType.passport.rawValue
       governmentID = passport
     }
-    let agreementIDS = netspendDataManager.agreement?.agreements.compactMap { $0.id } ?? []
+    let agreementIDS = netspendDataManager.agreement?.listAgreementID.compactMap { $0 } ?? []
     let encryptedData = try netspendDataManager.sdkSession?.encryptWithJWKSet(value: [
       "date_of_birth": accountDataManager.userInfomationData.dateOfBirth ?? "",
       "government_id": [
@@ -219,8 +219,8 @@ final class AddressViewModel: ObservableObject {
   
   func apiFetchWorkflows() async throws {
     let workflows = try await self.nsPersionRepository.getWorkflows()
-    self.workflowData = workflows
-    try await self.handleWorkflowData(data: workflows)
+    self.workflowData = workflows as? APIWorkflowsData
+    try await self.handleWorkflowData(data: workflows as? APIWorkflowsData)
   }
   
   private func handleWorkflowData(data: APIWorkflowsData?) async throws {
@@ -238,12 +238,16 @@ final class AddressViewModel: ObservableObject {
         switch step.missingStep {
         case .identityQuestions:
           let questionsEncrypt = try await nsPersionRepository.getQuestion(sessionId: accountDataManager.sessionID)
-          if let usersession = netspendDataManager.sdkSession, let questionsDecode = questionsEncrypt.decodeData(session: usersession) {
+          if let usersession = netspendDataManager.sdkSession, let questionsDecode = (questionsEncrypt as? APIQuestionData)?.decodeData(session: usersession) {
             let questionsEntity = QuestionsEntity.mapObj(questionsDecode)
             navigation = .question(questionsEntity)
           }
         case .provideDocuments:
           let documents = try await nsPersionRepository.getDocuments(sessionId: accountDataManager.sessionID)
+          guard let documents = documents as? APIDocumentData else {
+            log.error("Can't map document from BE")
+            return
+          }
           netspendDataManager.update(documentData: documents)
           navigation = .document
         case .KYCData:

@@ -1,13 +1,14 @@
 import Foundation
 import Factory
 import CoreNetwork
+import NetSpendDomain
 
 extension Container {
   public var netspendAPI: Factory<NSPersonsAPIProtocol> {
     self { LFCoreNetwork<NSPersonsRoute>() }
   }
   
-  public var nsPersionRepository: Factory<NSPersonsRepositoryProtocol> {
+  public var nsPersionRepository: Factory<NSPersonsRepository> {
     self { NSPersonsRepository(netSpendAPI: self.netspendAPI.callAsFunction()) }
   }
   

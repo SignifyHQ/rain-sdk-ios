@@ -1,9 +1,15 @@
 import Foundation
+import NetSpendDomain
 
-public struct APIAgreementData: Decodable {
+public struct APIAgreementData: Decodable, AgreementDataEntity {
   public let agreements: [APIAgreementData.Agreement]
   public let description: String?
-  
+  public var listDescription: [String] {
+    agreements.map { $0.description }
+  }
+  public var listAgreementID: [String] {
+    agreements.map { $0.id }
+  }
     // MARK: - Agreement
   public struct Agreement: Codable {
     public let id, type: String

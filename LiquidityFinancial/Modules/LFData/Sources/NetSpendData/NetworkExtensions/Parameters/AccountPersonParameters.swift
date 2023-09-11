@@ -1,12 +1,13 @@
 import Foundation
 import NetworkUtilities
+import NetSpendDomain
 
 public enum IdNumberType: String {
   case ssn, passport
   case nonUsPassport = "non_us_passport"
 }
 
-public struct AccountPersonParameters: Parameterable {
+public struct AccountPersonParameters: Parameterable, AccountPersonParametersEntity {
   public let firstName, lastName, middleName: String
   public let agreementIds: [String]
   public let phone, email, fullName, dateOfBirth: String

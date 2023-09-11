@@ -139,11 +139,14 @@ extension UploadDocumentViewModel {
           DocumentParameters.Document(documentType: documentTypeSelected.rawValue, country: "US", encryptedData: encryptedData ?? "")
         ])
         let path = PathDocumentParameters(sessionId: sessionId, documentID: documentId, isUpdate: isUpdateDocument)
-        let postDocument = try await nsPersionRepository.uploadDocuments(path: path, documentData: documentData)
-        
-        netspendDataManager.documentData?.update(status: postDocument.status, fromID: postDocument.documentRequestId)
-    
-        onSuccess()
+        let documentEntity = try await nsPersionRepository.uploadDocuments(path: path, documentData: documentData)
+        if let documentAPI = documentEntity as? APIDocumentData.RequestedDocument {
+          netspendDataManager.documentData?.update(status: documentAPI.status, fromID: documentAPI.documentRequestId)
+          onSuccess()
+        } else {
+          log.error("Can't map RequestedUploadDocument from BE")
+          toastMessage = "Can't map RequestedUploadDocument from BE"
+        }
       } catch {
         log.error(error.localizedDescription)
         toastMessage = error.localizedDescription

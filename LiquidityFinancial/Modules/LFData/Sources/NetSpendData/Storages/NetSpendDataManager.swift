@@ -1,34 +1,35 @@
 import Foundation
 import NetspendSdk
+import NetSpendDomain
 
 public protocol NetSpendDataManagerProtocol {
-  var jwkToken: APINSJwkToken? { get }
+  var jwkToken: NSJwkTokenEntity? { get }
   var serverSession: APIEstablishedSessionData? { get }
   var sdkSession: NetspendSdkUserSession? { get }
-  var agreement: APIAgreementData? { get }
+  var agreement: AgreementDataEntity? { get }
   var fundingAgreement: APIAgreementData? { get }
-  var accountPersonData: APIAccountPersonData? { get }
+  var accountPersonData: AccountPersonDataEntity? { get }
   var documentData: APIDocumentData? { get set }
   func clear()
-  func update(jwkToken: APINSJwkToken?)
+  func update(jwkToken: NSJwkTokenEntity?)
   func update(serverSession: APIEstablishedSessionData?)
-  func update(agreement: APIAgreementData?)
+  func update(agreement: AgreementDataEntity?)
   func update(sdkSession: NetspendSdkUserSession?)
-  func update(accountPersonData: APIAccountPersonData?)
+  func update(accountPersonData: AccountPersonDataEntity?)
   func update(documentData: APIDocumentData?)
   func update(fundingAgreement: APIAgreementData?)
 }
 
 public class NetSpendDataManager: NetSpendDataManagerProtocol {
   public var documentData: APIDocumentData?
-  public private(set) var jwkToken: APINSJwkToken?
+  public private(set) var jwkToken: NSJwkTokenEntity?
   public private(set) var serverSession: APIEstablishedSessionData?
-  public private(set) var agreement: APIAgreementData?
+  public private(set) var agreement: AgreementDataEntity?
   public private(set) var sdkSession: NetspendSdkUserSession?
-  public private(set) var accountPersonData: APIAccountPersonData?
+  public private(set) var accountPersonData: AccountPersonDataEntity?
   public private(set) var fundingAgreement: APIAgreementData?
   
-  public func update(jwkToken: APINSJwkToken?) {
+  public func update(jwkToken: NSJwkTokenEntity?) {
     self.jwkToken = jwkToken
   }
   
@@ -36,7 +37,7 @@ public class NetSpendDataManager: NetSpendDataManagerProtocol {
     self.serverSession = serverSession
   }
   
-  public func update(agreement: APIAgreementData?) {
+  public func update(agreement: AgreementDataEntity?) {
     self.agreement = agreement
   }
   
@@ -48,7 +49,7 @@ public class NetSpendDataManager: NetSpendDataManagerProtocol {
     self.sdkSession = sdkSession
   }
   
-  public func update(accountPersonData: APIAccountPersonData?) {
+  public func update(accountPersonData: AccountPersonDataEntity?) {
     self.accountPersonData = accountPersonData
   }
   

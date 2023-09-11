@@ -2,11 +2,13 @@ import Foundation
 import LFUtilities
 import NetspendSdk
 import NetworkUtilities
+import NetSpendDomain
 
-public struct APIQuestionData: Decodable {
-  public let encryptedData: String
+public struct APIQuestionData: Decodable, QuestionDataEntiy {
+  public let encryptedData: String?
   
   public func decodeData(session: NetspendSdkUserSession) -> NetSpendQuestionDataDecode? {
+    guard let encryptedData = encryptedData else { return nil }
     guard let jsonStr = try? session.decryptWithJWKSet(value: encryptedData).jsonString else { return nil }
     let obj = try? NetSpendQuestionDataDecode(jsonStr)
     return obj

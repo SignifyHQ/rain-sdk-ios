@@ -130,7 +130,9 @@ extension QuestionsViewModel {
 private extension QuestionsViewModel {
   func handleWorkflows() async throws {
     let workflows = try await self.nsPersionRepository.getWorkflows()
-    
+    guard let workflows = workflows as? APIWorkflowsData else {
+      return
+    }
     if workflows.steps.isEmpty {
       navigation = .kycReview
       return
@@ -144,6 +146,10 @@ private extension QuestionsViewModel {
           onboardingFlowCoordinator.set(route: .unclear("You can't upload question for now, Please try it late."))
         case .provideDocuments:
           let documents = try await nsPersionRepository.getDocuments(sessionId: accountDataManager.sessionID)
+          guard let documents = documents as? APIDocumentData else {
+            log.error("Can't map document from BE")
+            return
+          }
           netspendDataManager.update(documentData: documents)
           navigation = .uploadDocument
         case .KYCData, .identityScan:

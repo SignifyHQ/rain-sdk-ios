@@ -50,7 +50,7 @@ public final class AgreementViewModel: ObservableObject {
   private func checkData() {
     if let fundingAgreement = fundingAgreement {
       mapToServiceCondition(agreementData: fundingAgreement)
-    } else if let agreementData = netspendDataManager.agreement {
+    } else if let agreementData = netspendDataManager.agreement as? APIAgreementData {
       mapToServiceCondition(agreementData: agreementData)
     } else {
       Task { @MainActor in
@@ -59,7 +59,9 @@ public final class AgreementViewModel: ObservableObject {
         do {
           let agreementData = try await nsPersionRepository.getAgreement()
           netspendDataManager.update(agreement: agreementData)
-          mapToServiceCondition(agreementData: agreementData)
+          if let agreementData = agreementData as? APIAgreementData {
+            mapToServiceCondition(agreementData: agreementData)
+          }
         } catch {
           log.error(error)
           toastMessage = error.localizedDescription

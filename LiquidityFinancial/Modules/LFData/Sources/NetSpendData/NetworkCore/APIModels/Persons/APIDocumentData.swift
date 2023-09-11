@@ -1,9 +1,10 @@
 import Foundation
+import NetSpendDomain
 
-public class APIDocumentData: Decodable {
+public class APIDocumentData: Decodable, DocumentDataEntity {
   public var requestedDocuments: [RequestedDocument]
   
-  public class RequestedDocument: Codable {
+  public class RequestedDocument: Codable, UploadRequestedDocumentEntity {
     public var status: NetSpendDocumentReviewStatus
     public var statusReason: NetSpendDocumentReviewStatusReason
     public let workflow, documentRequestId: String

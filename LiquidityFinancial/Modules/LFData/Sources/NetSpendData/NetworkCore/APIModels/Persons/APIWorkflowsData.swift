@@ -1,4 +1,5 @@
 import Foundation
+import NetSpendDomain
 
 public enum WorkflowsMissingStep: String, Codable, CaseIterable {
   case identityQuestions = "identity_questions"
@@ -11,7 +12,7 @@ public enum WorkflowsMissingStep: String, Codable, CaseIterable {
   case acceptFeatureAgreement = "accept_feature_agreement"
 }
 
-public struct APIWorkflowsData: Decodable {
+public struct APIWorkflowsData: Decodable, WorkflowsDataEntity {
   public let steps: [APIWorkflowsData.WorkflowsStep]
   
   public struct WorkflowsStep: Codable {

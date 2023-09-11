@@ -1,6 +1,7 @@
 import Foundation
+import NetSpendDomain
 
-public struct APIEstablishedSessionData: Decodable {
+public struct APIEstablishedSessionData: Decodable, EstablishedSessionEntity {
   public let id: String
   public let encryptedData: String
 }

@@ -1,10 +1,11 @@
 import Foundation
+import NetSpendDomain
 
 // swiftlint: disable all
-public struct APINSJwkToken: Decodable {
+public struct APINSJwkToken: Decodable, NSJwkTokenEntity {
   public let jwks: [APINSJwkToken.Jwk]
   
-  var rawData: [[String: String]] {
+  public var rawData: [[String: String]] {
     var jwt: [[String: String]] = .init()
     jwks.forEach { token in
       jwt.append(token.dict)

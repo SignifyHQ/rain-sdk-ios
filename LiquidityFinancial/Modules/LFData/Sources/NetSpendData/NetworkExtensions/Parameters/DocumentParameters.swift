@@ -1,7 +1,8 @@
 import Foundation
 import NetworkUtilities
+import NetSpendDomain
 
-public struct PathDocumentParameters: Parameterable {
+public struct PathDocumentParameters: Parameterable, PathDocumentParametersEntity {
   public let sessionId, documentID: String
   public let isUpdate: Bool
   public init(sessionId: String, documentID: String, isUpdate: Bool) {
@@ -11,7 +12,7 @@ public struct PathDocumentParameters: Parameterable {
   }
 }
 
-public struct DocumentParameters: Parameterable {
+public struct DocumentParameters: Parameterable, DocumentParametersEntity {
   public let purpose: String
   public let documents: [Document]
   
@@ -20,7 +21,7 @@ public struct DocumentParameters: Parameterable {
     self.documents = documents
   }
   
-  public struct Document: Codable {
+  public struct Document: Codable, NSDocumentEntity {
     public let documentType: String
     public let country, encryptedData: String
     
