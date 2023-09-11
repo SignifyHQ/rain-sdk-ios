@@ -427,6 +427,7 @@ https://mn.gov/commerce/money/investments/cryptocurrency/. \n\n\n\n\n\n\n";
 // Transaction Rewards Status
 "transferView.rewards_status.pending" = "Pending";
 "transferView.rewards_status.completed" = "Completed";
+"transferView.rewards_status.failed" = "Failed";
 
 // User Reward Type
 "transferView.reward_type.cashback.title" = "Instant Cashback";

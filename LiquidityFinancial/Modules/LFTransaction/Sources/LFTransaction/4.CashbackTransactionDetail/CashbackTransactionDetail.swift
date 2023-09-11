@@ -29,7 +29,7 @@ private extension CashbackTransactionDetail {
           completedTitle: LFLocalizable.TransferView.RewardsStatus.completed
         )
         Spacer()
-        StatusView(status: status)
+        StatusView(transactionStatus: status)
       }
     }
   }

@@ -34,7 +34,7 @@ extension PurchaseTransactionDetailViewModel {
       isLoadingDisputeTransaction = true
       do {
         guard let session = netspendDataManager.sdkSession else { return }
-        let code = try await netspendRepository.getAuthorizationCode(sessionId: session.sessionId)
+        let code = try await nsPersionRepository.getAuthorizationCode(sessionId: session.sessionId)
         guard let id = accountDataManager.externalAccountID else { return }
         navigation = .disputeTransaction(id, code.authorizationCode)
       } catch {

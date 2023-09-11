@@ -423,6 +423,7 @@
 // Transaction Rewards Status
 "transferView.rewards_status.pending" = "Pending";
 "transferView.rewards_status.completed" = "Completed";
+"transferView.rewards_status.failed" = "Failed";
 
 // User Reward Type
 "transferView.reward_type.cashback.title" = "Instant Cashback";
@@ -653,6 +654,7 @@
 "transactionCard.donation.title" = "Donation";
 "transactionCard.cashback.title" = "Cashback";
 "transactionCard.purchase.message" = "I earned %@ by making a %@ purchase with %@.";
+"transactionCard.donation.header" = "Donation to %@";
 "transactionCard.donation.message" = "Supporting %@ - %@.";
 "transactionCard.shareDonationAmount.message" = "I donated %@ to %@ using %@. Join us in supporting %@.";
 "transactionCard.shareDonationGeneric.message" = "We're raising money for %@ using %@. Join us in supporting %@.";

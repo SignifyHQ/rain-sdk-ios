@@ -57,7 +57,7 @@ public final class AgreementViewModel: ObservableObject {
         defer { isLoading = false }
         isLoading = true
         do {
-          let agreementData = try await netspendRepository.getAgreement()
+          let agreementData = try await nsPersionRepository.getAgreement()
           netspendDataManager.update(agreement: agreementData)
           mapToServiceCondition(agreementData: agreementData)
         } catch {
@@ -77,7 +77,7 @@ public final class AgreementViewModel: ObservableObject {
         let body: [String: Any] = [
           "agreementIds": ids
         ]
-        let entity = try await netspendRepository.postAgreement(body: body)
+        let entity = try await nsPersionRepository.postAgreement(body: body)
         if entity {
           isAcceptAgreement = true
           onNext()

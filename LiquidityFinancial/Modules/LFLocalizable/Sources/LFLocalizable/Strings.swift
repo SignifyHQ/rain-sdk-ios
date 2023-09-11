@@ -2295,6 +2295,10 @@ public enum LFLocalizable {
       }
     }
     public enum Donation {
+      /// Donation to %@
+      public static func header(_ p1: Any) -> String {
+        return LFLocalizable.tr("Localizable", "transactionCard.donation.header", String(describing: p1), fallback: "Donation to %@")
+      }
       /// Supporting %@ - %@.
       public static func message(_ p1: Any, _ p2: Any) -> String {
         return LFLocalizable.tr("Localizable", "transactionCard.donation.message", String(describing: p1), String(describing: p2), fallback: "Supporting %@ - %@.")
@@ -2543,6 +2547,8 @@ public enum LFLocalizable {
     public enum RewardsStatus {
       /// Completed
       public static let completed = LFLocalizable.tr("Localizable", "transferView.rewards_status.completed", fallback: "Completed")
+      /// Failed
+      public static let failed = LFLocalizable.tr("Localizable", "transferView.rewards_status.failed", fallback: "Failed")
       /// Pending
       public static let pending = LFLocalizable.tr("Localizable", "transferView.rewards_status.pending", fallback: "Pending")
     }

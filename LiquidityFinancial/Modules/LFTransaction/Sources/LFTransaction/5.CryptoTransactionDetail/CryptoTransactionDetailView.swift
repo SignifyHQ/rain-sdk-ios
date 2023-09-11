@@ -39,7 +39,7 @@ private extension CryptoTransactionDetailView {
       }
       Spacer()
       if let status = viewModel.transaction.status {
-        StatusView(status: status)
+        StatusView(transactionStatus: status)
       }
       footer
     }

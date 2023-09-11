@@ -25,11 +25,14 @@ extension RewardTransactionRowModel {
   init(contribution: ContributionModel) {
     self.init(
       id: contribution.id,
+      title: contribution.title,
       fundraiserId: contribution.fundraiserId,
       donationId: nil,
       userId: contribution.userId,
       userName: contribution.userName,
       amount: contribution.amount,
+      stickerUrl: contribution.stickerUrl,
+      status: contribution.status,
       createdAt: contribution.createdAt
     )
   }

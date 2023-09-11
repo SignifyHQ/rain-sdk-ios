@@ -28,7 +28,8 @@ private extension WithdrawTransactionDetailView {
           completedTitle: LFLocalizable.TransferView.Status.Withdraw.completed
         )
         Spacer()
-        StatusView(status: status)
+        StatusView(transactionStatus: status)
+          .padding(.bottom, 16)
       }
     }
   }

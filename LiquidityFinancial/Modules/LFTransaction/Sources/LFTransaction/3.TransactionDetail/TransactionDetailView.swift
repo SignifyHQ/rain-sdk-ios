@@ -16,6 +16,7 @@ public struct TransactionDetailView: View {
   public init(
     accountID: String?,
     transactionId: String,
+    fundraisersId: String = .empty,
     kind: TransactionDetailType? = nil,
     isNewAddress: Bool? = nil,
     walletAddress: String? = nil,
@@ -23,7 +24,13 @@ public struct TransactionDetailView: View {
     isPopToRoot: Bool = true,
     popAction: (() -> Void)? = nil
   ) {
-    _viewModel = .init(wrappedValue: TransactionDetailViewModel(accountID: accountID ?? .empty, transactionId: transactionId))
+    _viewModel = .init(
+      wrappedValue: TransactionDetailViewModel(
+        accountID: accountID ?? .empty,
+        transactionId: transactionId,
+        fundraisersId: fundraisersId,
+        kind: kind)
+    )
     self.kind = kind
     self.isPopToRoot = isPopToRoot
     self.isNewAddress = isNewAddress
@@ -89,7 +96,7 @@ extension TransactionDetailView {
         transactionInfos: LFUtility.cryptoEnabled ? viewModel.refundCryptoTransactions : viewModel.refundTransactions
       )
     case .donation:
-      DonationTransactionDetailView(transaction: viewModel.transaction)
+      DonationTransactionDetailView(donation: viewModel.donation)
     case .cashback:
       CashbackTransactionDetail(transaction: viewModel.transaction)
     case .reward:

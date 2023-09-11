@@ -28,7 +28,7 @@ private extension RefundTransactionDetailView {
       }
       Spacer()
       if let status = transaction.status {
-        StatusView(status: status)
+        StatusView(transactionStatus: status)
       }
     }
   }

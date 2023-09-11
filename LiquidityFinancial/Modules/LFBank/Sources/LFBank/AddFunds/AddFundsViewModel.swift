@@ -48,7 +48,7 @@ extension AddFundsViewModel {
       isDisableView = true
       do {
         let sessionID = accountDataManager.sessionID
-        let tokenResponse = try await netspendRepository.getAuthorizationCode(sessionId: sessionID)
+        let tokenResponse = try await nsPersionRepository.getAuthorizationCode(sessionId: sessionID)
         let usingParams = ["redirectUri": LFUtility.universalLink]
         log.info("NetSpend openWithPurpose usingParams: \(usingParams)")
         let controller = try NetspendSdk.shared.openWithPurpose(

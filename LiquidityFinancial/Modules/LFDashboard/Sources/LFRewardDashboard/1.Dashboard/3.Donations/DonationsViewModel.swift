@@ -19,7 +19,6 @@ class DonationsViewModel: ObservableObject {
   @Published var showRoundUpDonation: Bool = false
   @Published var status = Status.idle
   @Published var isLoading = true
-  @Published var sheet: Sheet?
   @Published var navigation: Navigation?
   @Published var selectedOption = Option.userDonations {
     didSet {
@@ -97,8 +96,8 @@ extension DonationsViewModel {
     self.navigation = .causeCategories(causes)
   }
   
-  func transactionItemTapped(_ transaction: TransactionModel) {
-    sheet = .transactionDetail(transaction)
+  func transactionItemTapped(donationID: String, fundraisersID: String) {
+    navigation = .transactionDetail(donationID, fundraisersID)
   }
   
   func handleSelectedFundraisersSuccess() {
@@ -166,6 +165,7 @@ extension DonationsViewModel {
   
   enum Navigation {
     case causeCategories([CauseModel])
+    case transactionDetail(String, String)
   }
   
   enum Option: String, Identifiable, CaseIterable {
@@ -182,17 +182,6 @@ extension DonationsViewModel {
         return LFLocalizable.Donations.userDonations
       case .fundraiserDonations:
         return LFLocalizable.Donations.fundraiserDonations
-      }
-    }
-  }
-  
-  enum Sheet: Identifiable {
-    case transactionDetail(TransactionModel)
-    
-    var id: String {
-      switch self {
-      case let .transactionDetail(item):
-        return "transactionDetail-\(item.id)"
       }
     }
   }

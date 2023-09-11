@@ -5,37 +5,56 @@ import LFUtilities
 
 public struct DonationTransactionDetailView: View {
   @StateObject private var viewModel = DonationTransactionDetailViewModel()
-  let transaction: TransactionModel
+  let donation: DonationModel
   
-  public init(transaction: TransactionModel) {
-    self.transaction = transaction
+  public init(donation: DonationModel) {
+    self.donation = donation
   }
   
   public var body: some View {
-    CommonTransactionDetailView(transaction: transaction, content: content)
-      .navigationLink(item: $viewModel.navigation) { item in
-        switch item {
-        case let .receipt(donationReceipt):
-          DonationTransactionReceiptView(accountID: transaction.accountId, receipt: donationReceipt)
-        }
+    VStack(spacing: 24) {
+      headerTitle
+      amountView
+      TransactionCardView(information: cardInformation)
+      StatusView(donationStatus: donation.status)
+    }
+    .scrollOnOverflow()
+    .defaultToolBar(
+      icon: .intercom,
+      navigationTitle: LFLocalizable.TransactionCard.Donation.title,
+      openIntercom: {
+        viewModel.openIntercom()
       }
+    )
+    .frame(maxWidth: .infinity)
+    .navigationBarTitleDisplayMode(.inline)
+    .padding([.top, .horizontal], 30)
+    .padding(.bottom, 12)
+    .background(Colors.background.swiftUIColor)
   }
 }
 
 // MARK: - View Components
 private extension DonationTransactionDetailView {
-  var content: some View {
-    VStack(spacing: 24) {
-      TransactionCardView(information: cardInformation)
-      if let donationReceipt = transaction.donationReceipt {
-        FullSizeButton(
-          title: LFLocalizable.TransactionDetail.Receipt.button,
-          isDisable: false,
-          type: .secondary
-        ) {
-          viewModel.goToReceiptScreen(receipt: donationReceipt)
-        }
-      }
+  var headerTitle: some View {
+    VStack(spacing: 8) {
+      Text(donation.title)
+        .foregroundColor(Colors.label.swiftUIColor)
+        .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.medium.value))
+      Text(donation.transactionDateInLocalZone(includeYear: true))
+        .foregroundColor(Colors.label.swiftUIColor.opacity(0.6))
+        .font(Fonts.regular.swiftUIFont(size: 10))
+    }
+  }
+  
+  var amountView: some View {
+    VStack(spacing: 14) {
+      Text(amountValue)
+        .font(Fonts.medium.swiftUIFont(size: 40))
+        .foregroundColor(Colors.green.swiftUIColor)
+      Text(LFLocalizable.TransactionDetail.TotalDonated.title(totalDonation))
+        .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.ultraSmall.value))
+        .foregroundColor(Colors.label.swiftUIColor.opacity(0.6))
     }
   }
 }
@@ -44,16 +63,26 @@ private extension DonationTransactionDetailView {
 private extension DonationTransactionDetailView {
   var cardInformation: TransactionCardInformation {
     TransactionCardInformation(
-      cardType: transaction.rewards?.type.transactionCardType ?? .unknow,
+      cardType: .donation,
       amount: amountValue,
-      message: transaction.rewards?.description ?? .empty,
+      message: donation.message,
       activityItem: "", // TODO: Will be implemented in Donation Ticket
-      stickerUrl: transaction.rewards?.stickerUrl,
-      color: transaction.rewards?.backgroundColor
+      stickerUrl: donation.stickerURL,
+      color: donation.backgroundColor
     )
   }
   
   var amountValue: String {
-    transaction.amount.formattedAmount(prefix: Constants.CurrencyUnit.usd.rawValue, minFractionDigits: 2)
+    donation.amount.formattedAmount(
+      prefix: Constants.CurrencyUnit.usd.rawValue,
+      minFractionDigits: Constants.FractionDigitsLimit.fiat.minFractionDigits
+    )
+  }
+  
+  var totalDonation: String {
+    donation.totalDonation.formattedAmount(
+      prefix: Constants.CurrencyUnit.usd.rawValue,
+      minFractionDigits: 2
+    )
   }
 }

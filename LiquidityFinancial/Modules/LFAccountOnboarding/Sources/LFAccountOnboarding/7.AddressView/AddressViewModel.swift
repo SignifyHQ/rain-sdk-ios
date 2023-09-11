@@ -147,7 +147,7 @@ final class AddressViewModel: ObservableObject {
       isLoading = true
       do {
         let param = try createAccountPersonParameters()
-        let person = try await netspendRepository.createAccountPerson(personInfo: param, sessionId: accountDataManager.sessionID)
+        let person = try await nsPersionRepository.createAccountPerson(personInfo: param, sessionId: accountDataManager.sessionID)
         netspendDataManager.update(accountPersonData: person)
         
         try await apiFetchWorkflows()
@@ -218,7 +218,7 @@ final class AddressViewModel: ObservableObject {
   }
   
   func apiFetchWorkflows() async throws {
-    let workflows = try await self.netspendRepository.getWorkflows()
+    let workflows = try await self.nsPersionRepository.getWorkflows()
     self.workflowData = workflows
     try await self.handleWorkflowData(data: workflows)
   }
@@ -237,13 +237,13 @@ final class AddressViewModel: ObservableObject {
         let step = steps.steps[stepIndex]
         switch step.missingStep {
         case .identityQuestions:
-          let questionsEncrypt = try await netspendRepository.getQuestion(sessionId: accountDataManager.sessionID)
+          let questionsEncrypt = try await nsPersionRepository.getQuestion(sessionId: accountDataManager.sessionID)
           if let usersession = netspendDataManager.sdkSession, let questionsDecode = questionsEncrypt.decodeData(session: usersession) {
             let questionsEntity = QuestionsEntity.mapObj(questionsDecode)
             navigation = .question(questionsEntity)
           }
         case .provideDocuments:
-          let documents = try await netspendRepository.getDocuments(sessionId: accountDataManager.sessionID)
+          let documents = try await nsPersionRepository.getDocuments(sessionId: accountDataManager.sessionID)
           netspendDataManager.update(documentData: documents)
           navigation = .document
         case .KYCData:

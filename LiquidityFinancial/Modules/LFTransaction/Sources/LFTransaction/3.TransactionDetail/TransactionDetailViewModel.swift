@@ -7,23 +7,36 @@ import LFStyleGuide
 import AccountData
 import AccountDomain
 import Factory
+import RewardData
+import RewardDomain
 
 @MainActor
 final class TransactionDetailViewModel: ObservableObject {
   @LazyInjected(\.accountRepository) var accountRepository
+  @LazyInjected(\.rewardRepository) var rewardRepository
 
   @Published var transaction: TransactionModel = .default
+  @Published var donation: DonationModel = .default
   @Published var isFetchingData = false
+  
+  lazy var rewardUseCase: RewardUseCase = {
+    RewardUseCase(repository: rewardRepository)
+  }()
 
-  init(accountID: String, transactionId: String) {
+  init(accountID: String, transactionId: String, fundraisersId: String, kind: TransactionDetailType?) {
     maybeShowRatingAlert()
-    getTransactionDetail(accountID: accountID, transactionId: transactionId)
+    switch kind {
+    case .donation:
+      getFundraisersDetail(fundraisersID: fundraisersId, transactionId: transactionId)
+    default:
+      getTransactionDetail(accountID: accountID, transactionId: transactionId)
+    }
   }
 }
 
 // MARK: - API
-extension TransactionDetailViewModel {
-  private func getTransactionDetail(accountID: String, transactionId: String) {
+private extension TransactionDetailViewModel {
+  func getTransactionDetail(accountID: String, transactionId: String) {
     Task {
       defer { isFetchingData = false }
       isFetchingData = true
@@ -32,6 +45,33 @@ extension TransactionDetailViewModel {
           accountId: accountID, transactionId: transactionId
         )
         transaction = TransactionModel(from: transactionEntity)
+      } catch {
+      }
+    }
+  }
+  
+  func getFundraisersDetail(fundraisersID: String, transactionId: String) {
+    Task {
+      defer { isFetchingData = false }
+      isFetchingData = true
+      do {
+        let fundraisers = try await self.rewardUseCase.getFundraisersDetail(fundraiserID: fundraisersID)
+        let donationDetail = fundraisers.latestDonations?.first { $0.id == transactionId }
+        donation = DonationModel(
+          id: transactionId,
+          title: LFLocalizable.TransactionCard.Donation.header(fundraisers.fundraiser?.name ?? .empty),
+          message: LFLocalizable.TransactionCard.Donation.message(
+            fundraisers.fundraiser?.name ?? .empty,
+            fundraisers.charity?.name ?? .empty
+          ),
+          fundraiserId: fundraisersID,
+          amount: donationDetail?.amount ?? 0,
+          totalDonation: fundraisers.currentDonatedAmount ?? 0,
+          stickerURL: fundraisers.fundraiser?.stickerUrl,
+          backgroundColor: fundraisers.fundraiser?.backgroundColor ?? .empty,
+          status: DonationStatus(rawValue: donationDetail?.status ?? .empty) ?? .unknown,
+          createdAt: donationDetail?.createdAt ?? .empty
+        )
       } catch {
       }
     }

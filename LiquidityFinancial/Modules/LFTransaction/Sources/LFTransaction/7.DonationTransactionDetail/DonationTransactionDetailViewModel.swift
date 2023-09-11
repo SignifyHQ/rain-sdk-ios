@@ -3,6 +3,8 @@ import Factory
 import LFServices
 
 class DonationTransactionDetailViewModel: ObservableObject {
+  @LazyInjected(\.intercomService) var intercomService
+  
   @Published var navigation: Navigation?
   
   init() {
@@ -10,6 +12,10 @@ class DonationTransactionDetailViewModel: ObservableObject {
   
   func goToReceiptScreen(receipt: DonationReceipt) {
     navigation = .receipt(receipt)
+  }
+  
+  func openIntercom() {
+    intercomService.openIntercom()
   }
 }
 

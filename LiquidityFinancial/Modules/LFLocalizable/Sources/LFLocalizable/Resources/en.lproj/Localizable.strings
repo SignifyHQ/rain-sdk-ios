@@ -451,6 +451,7 @@ https://mn.gov/commerce/money/investments/cryptocurrency/. \n\n\n\n\n\n\n";
 // Transaction Rewards Status
 "transferView.rewards_status.pending" = "Pending";
 "transferView.rewards_status.completed" = "Completed";
+"transferView.rewards_status.failed" = "Failed";
 
 // User Reward Type
 "transferView.reward_type.cashback.title" = "Instant Cashback";
@@ -688,6 +689,7 @@ https://mn.gov/commerce/money/investments/cryptocurrency/. \n\n\n\n\n\n\n";
 "transactionCard.donation.title" = "Donation";
 "transactionCard.cashback.title" = "Cashback";
 "transactionCard.purchase.message" = "I earned %@ by making a %@ purchase with %@.";
+"transactionCard.donation.header" = "Donation to %@";
 "transactionCard.donation.message" = "Supporting %@ - %@.";
 "transactionCard.shareDonationAmount.message" = "I donated %@ to %@ using %@. Join us in supporting %@.";
 "transactionCard.shareDonationGeneric.message" = "We're raising money for %@ using %@. Join us in supporting %@.";

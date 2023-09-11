@@ -30,6 +30,7 @@ struct DonationsView: View {
               .padding(.top, 12)
             
             feed
+              .padding(.top, 8)
             Spacer()
           }
           .padding(.top, 16)
@@ -54,7 +55,7 @@ struct DonationsView: View {
         })
       )
     })
-    .navigationLink(item: $viewModel.navigation, destination: { navigation in
+    .navigationLink(item: $viewModel.navigation) { navigation in
       switch navigation {
       case .causeCategories(let causes):
         SelectCauseCategoriesView(
@@ -62,15 +63,16 @@ struct DonationsView: View {
           destination: AnyView(EmptyView()),
           whereStart: .dashboard
         )
+      case .transactionDetail(let donationID, let fundraisersID):
+        TransactionDetailView(
+          accountID: viewModel.accountDataManager.fiatAccountID,
+          transactionId: donationID,
+          fundraisersId: fundraisersID,
+          kind: .donation,
+          isPopToRoot: false
+        )
       }
-    })
-//    .sheet(item: $viewModel.sheet) { sheet in
-//      switch sheet {
-//      case let .transactionDetail(transaction):
-//        TransactionDetailView(transaction: transaction, type: rowType)
-//          .embedInNavigation()
-//      }
-//    }
+    }
   }
 }
 
@@ -183,8 +185,13 @@ extension DonationsView {
           .padding(.top, 100)
       } else {
         VStack(spacing: 10) {
-          ForEach(items) { transaction in
-            RewardTransactionRow(item: transaction)
+          ForEach(items) { donation in
+            RewardTransactionRow(item: donation) {
+              viewModel.transactionItemTapped(
+                donationID: donation.id,
+                fundraisersID: donation.fundraiserId ?? .empty
+              )
+            }
           }
         }
       }

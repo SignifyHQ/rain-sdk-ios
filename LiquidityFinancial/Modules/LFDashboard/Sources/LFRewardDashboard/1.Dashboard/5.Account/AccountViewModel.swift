@@ -111,7 +111,7 @@ extension AccountViewModel {
       isDisableView = true
       do {
         let sessionID = accountDataManager.sessionID
-        let code = try await netspendRepository.getAuthorizationCode(sessionId: sessionID)
+        let code = try await nsPersionRepository.getAuthorizationCode(sessionId: sessionID)
         navigation = .atmLocation(code.authorizationCode)
       } catch {
         toastMessage = error.localizedDescription
@@ -129,7 +129,7 @@ extension AccountViewModel {
       isDisableView = true
       do {
         guard let session = netspendDataManager.sdkSession else { return }
-        let code = try await netspendRepository.getAuthorizationCode(sessionId: session.sessionId)
+        let code = try await nsPersionRepository.getAuthorizationCode(sessionId: session.sessionId)
         guard let id = accountDataManager.externalAccountID else { return }
         navigation = .disputeTransaction(id, code.authorizationCode)
       } catch {

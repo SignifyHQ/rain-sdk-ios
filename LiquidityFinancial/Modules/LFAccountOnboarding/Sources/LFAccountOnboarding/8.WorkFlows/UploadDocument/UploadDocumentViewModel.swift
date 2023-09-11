@@ -139,7 +139,7 @@ extension UploadDocumentViewModel {
           DocumentParameters.Document(documentType: documentTypeSelected.rawValue, country: "US", encryptedData: encryptedData ?? "")
         ])
         let path = PathDocumentParameters(sessionId: sessionId, documentID: documentId, isUpdate: isUpdateDocument)
-        let postDocument = try await netspendRepository.uploadDocuments(path: path, documentData: documentData)
+        let postDocument = try await nsPersionRepository.uploadDocuments(path: path, documentData: documentData)
         
         netspendDataManager.documentData?.update(status: postDocument.status, fromID: postDocument.documentRequestId)
     

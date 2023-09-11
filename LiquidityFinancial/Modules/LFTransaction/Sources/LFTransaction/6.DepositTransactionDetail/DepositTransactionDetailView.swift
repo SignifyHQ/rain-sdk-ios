@@ -29,7 +29,7 @@ private extension DepositTransactionDetailView {
           completedTitle: LFLocalizable.TransferView.Status.Deposit.completed
         )
         Spacer()
-        StatusView(status: status)
+        StatusView(transactionStatus: status)
       }
     }
   }

@@ -1,18 +1,45 @@
 %PDF-1.7
 
 1 0 obj
-  << /ExtGState << /E1 << /ca 0.150000 >> >> >>
+  << /Length 2 0 R
+     /Range [ 0.000000 1.000000 0.000000 1.000000 0.000000 1.000000 ]
+     /Domain [ 0.000000 1.000000 ]
+     /FunctionType 4
+  >>
+stream
+{  0.520313 exch 0.925000 exch 0.561531 exch dup 0.000000 gt { exch pop exch pop exch pop dup 0.000000 sub -0.520313 mul 0.520313 add exch dup 0.000000 sub -0.218873 mul 0.925000 add exch dup 0.000000 sub 0.334303 mul 0.561531 add exch } if dup 1.000000 gt { exch pop exch pop exch pop 0.000000 exch 0.706127 exch 0.895833 exch } if pop }
+endstream
 endobj
 
 2 0 obj
-  << /Length 3 0 R >>
+  338
+endobj
+
+3 0 obj
+  << /Pattern << /P1 << /Matrix [ 8.041993 0.136881 -0.136881 8.041993 7.509196 7.372069 ]
+                        /Shading << /Coords [ 0.000000 0.000000 1.000000 0.000000 ]
+                                    /ColorSpace /DeviceRGB
+                                    /Function 1 0 R
+                                    /Domain [ 0.000000 1.000000 ]
+                                    /ShadingType 2
+                                    /Extend [ true true ]
+                                 >>
+                        /PatternType 2
+                        /Type /Pattern
+                     >> >>
+     /ExtGState << /E1 << /ca 0.150000 >> >>
+  >>
+endobj
+
+4 0 obj
+  << /Length 5 0 R >>
 stream
 /DeviceRGB CS
 /DeviceRGB cs
 q
 /E1 gs
-1.000000 0.000000 -0.000000 1.000000 3.332031 1.832031 cm
-1.000000 1.000000 1.000000 scn
+1.000000 0.000000 -0.000000 1.000000 3.333496 1.832031 cm
+0.207843 0.207843 0.207843 scn
 14.083333 8.167318 m
 14.083333 8.581532 13.747546 8.917318 13.333333 8.917318 c
 12.919120 8.917318 12.583333 8.581532 12.583333 8.167318 c
@@ -46,7 +73,8 @@ n
 Q
 q
 1.000000 0.000000 -0.000000 1.000000 7.500000 6.685547 cm
-0.941176 0.756863 0.231373 scn
+/Pattern cs
+/P1 scn
 0.576166 4.210607 m
 0.310993 4.528815 -0.161931 4.571808 -0.480138 4.306635 c
 -0.798346 4.041462 -0.841339 3.568538 -0.576166 3.250330 c
@@ -86,47 +114,49 @@ Q
 endstream
 endobj
 
-3 0 obj
-  1846
+5 0 obj
+  1835
 endobj
 
-4 0 obj
+6 0 obj
   << /Annots []
      /Type /Page
      /MediaBox [ 0.000000 0.000000 20.000000 20.000000 ]
-     /Resources 1 0 R
-     /Contents 2 0 R
-     /Parent 5 0 R
+     /Resources 3 0 R
+     /Contents 4 0 R
+     /Parent 7 0 R
   >>
 endobj
 
-5 0 obj
-  << /Kids [ 4 0 R ]
+7 0 obj
+  << /Kids [ 6 0 R ]
      /Count 1
      /Type /Pages
   >>
 endobj
 
-6 0 obj
-  << /Pages 5 0 R
+8 0 obj
+  << /Pages 7 0 R
      /Type /Catalog
   >>
 endobj
 
 xref
-0 7
+0 9
 0000000000 65535 f
 0000000010 00000 n
-0000000074 00000 n
-0000001976 00000 n
-0000001999 00000 n
-0000002172 00000 n
-0000002246 00000 n
+0000000532 00000 n
+0000000554 00000 n
+0000001222 00000 n
+0000003113 00000 n
+0000003136 00000 n
+0000003309 00000 n
+0000003383 00000 n
 trailer
 << /ID [ (some) (id) ]
-   /Root 6 0 R
-   /Size 7
+   /Root 8 0 R
+   /Size 9
 >>
 startxref
-2305
+3442
 %%EOF

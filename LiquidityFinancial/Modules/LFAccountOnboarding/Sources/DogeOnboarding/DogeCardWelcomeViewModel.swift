@@ -21,7 +21,7 @@ class DogeCardWelcomeViewModel: ObservableObject {
       defer { isLoading = false }
       isLoading = true
       do {
-        let agreement = try await netspendRepository.getAgreement()
+        let agreement = try await nsPersionRepository.getAgreement()
         netspendDataManager.update(agreement: agreement)
         isPushToAgreementView = true
       } catch {

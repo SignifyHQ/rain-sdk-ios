@@ -109,7 +109,7 @@ extension QuestionsViewModel {
       defer { isLoading = false }
       isLoading = true
       do {
-        _ = try await netspendRepository.putQuestion(sessionId: session.sessionId, encryptedData: encryptedData)
+        _ = try await nsPersionRepository.putQuestion(sessionId: session.sessionId, encryptedData: encryptedData)
         
         try await handleWorkflows()
         
@@ -129,7 +129,7 @@ extension QuestionsViewModel {
 // MARK: - Private Functions
 private extension QuestionsViewModel {
   func handleWorkflows() async throws {
-    let workflows = try await self.netspendRepository.getWorkflows()
+    let workflows = try await self.nsPersionRepository.getWorkflows()
     
     if workflows.steps.isEmpty {
       navigation = .kycReview
@@ -143,7 +143,7 @@ private extension QuestionsViewModel {
         case .identityQuestions:
           onboardingFlowCoordinator.set(route: .unclear("You can't upload question for now, Please try it late."))
         case .provideDocuments:
-          let documents = try await netspendRepository.getDocuments(sessionId: accountDataManager.sessionID)
+          let documents = try await nsPersionRepository.getDocuments(sessionId: accountDataManager.sessionID)
           netspendDataManager.update(documentData: documents)
           navigation = .uploadDocument
         case .KYCData, .identityScan:

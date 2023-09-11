@@ -3,12 +3,12 @@ import Foundation
 public protocol FundraisersDetailEntity {
   associatedtype APIFundraiserEnity: FundraiserEnity
   associatedtype APICharityEnity: CharityEnity
-  associatedtype APILatestDonationEnity: LatestDonationEnity
+  associatedtype APILatestDonationEntity: LatestDonationEnity
   var fundraiser: APIFundraiserEnity? { get }
   var charity: APICharityEnity? { get }
   var currentDonatedAmount: Double? { get }
   var currentDonatedCount: Double? { get }
-  var latestDonations: [APILatestDonationEnity]? { get }
+  var latestDonations: [APILatestDonationEntity]? { get }
 }
 
   // MARK: - Charity

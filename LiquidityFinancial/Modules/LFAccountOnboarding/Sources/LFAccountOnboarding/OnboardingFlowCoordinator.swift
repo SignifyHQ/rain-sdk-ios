@@ -169,13 +169,13 @@ public class OnboardingFlowCoordinator: OnboardingFlowCoordinatorProtocol {
           } else if states.contains(OnboardingMissingStep.acceptFeatureAgreement) {
             set(route: .featureAgreement)
           } else if states.contains(OnboardingMissingStep.identityQuestions) {
-            let questionsEncrypt = try await netspendRepository.getQuestion(sessionId: accountDataManager.sessionID)
+            let questionsEncrypt = try await nsPersionRepository.getQuestion(sessionId: accountDataManager.sessionID)
             if let usersession = netspendDataManager.sdkSession, let questionsDecode = questionsEncrypt.decodeData(session: usersession) {
               let questionsEntity = QuestionsEntity.mapObj(questionsDecode)
               set(route: .question(questionsEntity))
             }
           } else if states.contains(OnboardingMissingStep.provideDocuments) {
-            let documents = try await netspendRepository.getDocuments(sessionId: accountDataManager.sessionID)
+            let documents = try await nsPersionRepository.getDocuments(sessionId: accountDataManager.sessionID)
             netspendDataManager.update(documentData: documents)
             if let status = documents.requestedDocuments.first?.status {
               switch status {
@@ -231,7 +231,7 @@ extension OnboardingFlowCoordinator {
   
   private func handleQuestionCase() async {
     do {
-      let questionsEncrypt = try await netspendRepository.getQuestion(sessionId: accountDataManager.sessionID)
+      let questionsEncrypt = try await nsPersionRepository.getQuestion(sessionId: accountDataManager.sessionID)
       if let usersession = netspendDataManager.sdkSession, let questionsDecode = questionsEncrypt.decodeData(session: usersession) {
         let questionsEntity = QuestionsEntity.mapObj(questionsDecode)
         set(route: .question(questionsEntity))
@@ -253,17 +253,17 @@ extension OnboardingFlowCoordinator {
   
   private func refreshNetSpendSession() async throws {
     log.info("<<<<<<<<<<<<<< Refresh NetSpend Session >>>>>>>>>>>>>>>")
-    let token = try await netspendRepository.clientSessionInit()
+    let token = try await nsPersionRepository.clientSessionInit()
     netspendDataManager.update(jwkToken: token)
     
-    let sessionConnectWithJWT = await netspendRepository.establishingSessionWithJWKSet(jwtToken: token)
+    let sessionConnectWithJWT = await nsPersionRepository.establishingSessionWithJWKSet(jwtToken: token)
     guard let deviceData = sessionConnectWithJWT?.deviceData else { return }
     
-    let establishPersonSession = try await netspendRepository.establishPersonSession(deviceData: EstablishSessionParameters(encryptedData: deviceData))
+    let establishPersonSession = try await nsPersionRepository.establishPersonSession(deviceData: EstablishSessionParameters(encryptedData: deviceData))
     netspendDataManager.update(serverSession: establishPersonSession)
     accountDataManager.stored(sessionID: establishPersonSession.id)
     
-    let userSessionAnonymous = try netspendRepository.createUserSession(establishingSession: sessionConnectWithJWT, encryptedData: establishPersonSession.encryptedData)
+    let userSessionAnonymous = try nsPersionRepository.createUserSession(establishingSession: sessionConnectWithJWT, encryptedData: establishPersonSession.encryptedData)
     netspendDataManager.update(sdkSession: userSessionAnonymous)
   }
 }
