@@ -156,6 +156,7 @@ private extension CryptoChartDetailView {
         
         transferButton
       }
+      .padding(.bottom, 12)
       .padding(.top, 20)
     }
   }

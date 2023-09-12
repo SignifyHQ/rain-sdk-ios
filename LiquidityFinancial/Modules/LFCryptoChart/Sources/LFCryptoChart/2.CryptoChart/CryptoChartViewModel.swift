@@ -45,7 +45,6 @@ class CryptoChartViewModel: ObservableObject {
   ) {
     self.filterOptionSubject = filterOptionSubject
     self.chartOptionSubject = chartOptionSubject
-    fetchCryptoChartData()
   }
   
   var title: String {
@@ -54,18 +53,6 @@ class CryptoChartViewModel: ObservableObject {
   
   var options: [CryptoFilterOption] {
     CryptoFilterOption.allCases
-  }
-}
-
-// MARK: - API
-extension CryptoChartViewModel {
-  func fetchCryptoChartData() {
-    Task {
-      do {
-        try await marketManager.fetchData()
-      } catch {
-      }
-    }
   }
 }
 

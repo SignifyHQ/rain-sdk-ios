@@ -82,14 +82,6 @@ public struct CandleChartCell: View {
     .onDisappear {
       didCellAppear = false
     }
-    .transition(.slide)
-    .animation(
-      Animation.spring()
-        .delay(
-          touchLocation < 0 || !didCellAppear ? Double(index) * 0.04 : 0
-        ),
-      value: UUID()
-    )
   }
 }
 

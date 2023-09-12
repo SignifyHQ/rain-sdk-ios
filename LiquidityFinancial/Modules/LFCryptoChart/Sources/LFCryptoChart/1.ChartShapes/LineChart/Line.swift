@@ -149,10 +149,6 @@ private extension Line {
       style: style,
       trimTo: didCellAppear ? 1.0 : 0.0
     )
-    .animation(
-      Animation.easeIn(duration: 0.75),
-      value: UUID()
-    )
   }
 }
 

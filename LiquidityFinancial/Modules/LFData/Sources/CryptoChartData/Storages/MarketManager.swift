@@ -36,6 +36,14 @@ public class MarketManager {
     .autoconnect()
   var websocketTask: URLSessionWebSocketTask?
   private var subscribers: Set<AnyCancellable> = []
+  
+  public init() {
+    Task {
+      do {
+        try await fetchData()
+      } catch {}
+    }
+  }
 }
 
 public extension MarketManager {
