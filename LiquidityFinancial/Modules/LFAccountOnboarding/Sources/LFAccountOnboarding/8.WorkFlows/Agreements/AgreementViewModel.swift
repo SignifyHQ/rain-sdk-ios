@@ -20,6 +20,7 @@ public final class AgreementViewModel: ObservableObject {
   @Published var conditions: [ServiceConditionModel] = []
   @Published var condition: ServiceConditionModel?
   @Published var isLoading: Bool = false
+  @Published var isTransferTerms: Bool = false
   @Published var toastMessage: String?
   @Published var isAcceptAgreementLoading: Bool = false
   
@@ -49,6 +50,7 @@ public final class AgreementViewModel: ObservableObject {
   
   private func checkData() {
     if let fundingAgreement = fundingAgreement {
+      isTransferTerms = true
       mapToServiceCondition(agreementData: fundingAgreement)
     } else if let agreementData = netspendDataManager.agreement as? APIAgreementData {
       mapToServiceCondition(agreementData: agreementData)
@@ -173,5 +175,20 @@ private extension AgreementViewModel {
         log.error(error)
       }
     }
+  }
+}
+
+// MARK: - View Helpers
+extension AgreementViewModel {
+  var title: String {
+    isTransferTerms
+    ? LFLocalizable.Question.TransferTerms.title
+    : LFLocalizable.Question.AccountTerms.title
+  }
+  
+  var description: String {
+    isTransferTerms
+    ? LFLocalizable.Question.TransferTerms.description
+    : LFLocalizable.Question.AccountTerms.description(LFUtility.appName)
   }
 }

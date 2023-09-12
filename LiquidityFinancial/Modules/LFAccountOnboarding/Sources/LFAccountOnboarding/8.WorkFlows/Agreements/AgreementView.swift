@@ -13,10 +13,12 @@ public struct AgreementView: View {
   var onNext: (() -> Void)?
   var onDisappear: ((_ isAcceptAgreement: Bool) -> Void)?
   
-  public init(viewModel: AgreementViewModel,
-              onNext: (() -> Void)? = nil,
-              onDisappear: ((_ isAcceptAgreement: Bool) -> Void)? = nil,
-              shouldFetchCurrentState: Bool = true) {
+  public init(
+    viewModel: AgreementViewModel,
+    onNext: (() -> Void)? = nil,
+    onDisappear: ((_ isAcceptAgreement: Bool) -> Void)? = nil,
+    shouldFetchCurrentState: Bool = true
+  ) {
     _viewModel = .init(wrappedValue: viewModel)
     self.shouldFetchCurrentState = shouldFetchCurrentState
     self.onNext = onNext
@@ -24,62 +26,18 @@ public struct AgreementView: View {
   }
   
   public var body: some View {
-    VStack {
+    VStack(alignment: .leading, spacing: 16) {
       VStack(spacing: 24) {
         headerTitle
-        
-        ZStack {
-          HStack {
-            GenImages.Images.icLogo.swiftUIImage
-              .resizable()
-              .scaledToFit()
-              .frame(width: 80, height: 80)
-            Spacer()
-            GenImages.CommonImages.netspendLogo.swiftUIImage
-              .scaledToFit()
-              .frame(width: 173, height: 87)
-          }
-          .padding(.horizontal, 20)
-        }
-        .frame(height: 112)
-        .frame(maxWidth: 600)
-        .foregroundColor(.clear)
-        .background(Colors.secondaryBackground.swiftUIColor)
-        .cornerRadius(12)
+        netspendLogo
       }
-      
       Spacer()
-
-      VStack(alignment: .center) {
-        
-        Spacer()
-        
-        VStack(spacing: 0) {
-          if viewModel.isLoading {
-            loadingView
-          } else {
-            if let condition = viewModel.condition {
-              conditionCell(
-                condition: condition
-              )
-            } else {
-              VStack(alignment: .leading, spacing: 0) {
-                ForEach($viewModel.conditions) { condition in
-                  conditionCell(
-                    condition: condition.wrappedValue
-                  )
-                }
-              }
-            }
-          }
-        }
-
-        continueButton
-      }
-      .frame(maxHeight: .infinity, alignment: .bottom)
+      termAndConditions
+      continueButton
+      footer
     }
     .padding(.bottom, 16)
-    .padding(.top, 40)
+    .padding(.top, 30)
     .padding(.horizontal, 30)
     .defaultToolBar(icon: .intercom, openIntercom: {
       viewModel.openIntercom()
@@ -94,51 +52,105 @@ public struct AgreementView: View {
     .onDisappear {
       self.onDisappear?(viewModel.isAcceptAgreement)
     }
-    .navigationBarBackButtonHidden()
+  }
+}
+
+// MARK: View Components
+private extension AgreementView {
+  @ViewBuilder var footer: some View {
+    if viewModel.isTransferTerms {
+      Text(LFLocalizable.Question.TransferTerms.diclosure)
+        .foregroundColor(Colors.label.swiftUIColor.opacity(0.5))
+        .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.ultraSmall.value))
+        .multilineTextAlignment(.leading)
+        .padding(.trailing, 20)
+    }
   }
   
-  private var loadingView: some View {
+  @ViewBuilder var netspendLogo: some View {
+    if !viewModel.isTransferTerms {
+      ZStack {
+        HStack {
+          GenImages.Images.icLogo.swiftUIImage
+            .resizable()
+            .scaledToFit()
+            .frame(width: 80, height: 80)
+          Spacer()
+          GenImages.CommonImages.netspendLogo.swiftUIImage
+            .scaledToFit()
+            .frame(width: 173, height: 87)
+        }
+        .padding(.horizontal, 20)
+      }
+      .frame(height: 112)
+      .frame(maxWidth: 600)
+      .foregroundColor(.clear)
+      .background(Colors.secondaryBackground.swiftUIColor)
+      .cornerRadius(12)
+    }
+  }
+  
+  var loadingView: some View {
     VStack {
       LottieView(loading: .mix)
         .frame(width: 30, height: 20)
     }
     .frame(maxWidth: .infinity)
   }
-}
-
-// MARK: View Components
-private extension AgreementView {
+  
+  var termAndConditions: some View {
+    VStack(spacing: 0) {
+      if viewModel.isLoading {
+        loadingView
+      } else {
+        if let condition = viewModel.condition {
+          conditionCell(
+            condition: condition
+          )
+        } else {
+          VStack(alignment: .leading, spacing: 0) {
+            ForEach($viewModel.conditions) { condition in
+              conditionCell(
+                condition: condition.wrappedValue
+              )
+            }
+          }
+        }
+      }
+    }
+  }
+  
   var headerTitle: some View {
     VStack(alignment: .leading, spacing: 12) {
-      Text(LFLocalizable.Question.Screen.title.uppercased())
+      Text(viewModel.title.uppercased())
         .foregroundColor(Colors.label.swiftUIColor)
         .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.main.value))
-      Text(
-        LFLocalizable.Question.Screen.description(LFUtility.appName)
-      )
-      .foregroundColor(Colors.label.swiftUIColor.opacity(0.75))
-      .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.medium.value))
+      Text(viewModel.description)
+        .multilineTextAlignment(.leading)
+        .foregroundColor(Colors.label.swiftUIColor.opacity(0.75))
+        .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.medium.value))
     }
+    .padding(.trailing, 30)
   }
   
   func conditionCell(condition: ServiceConditionModel) -> some View {
     HStack(alignment: .top, spacing: 8) {
-      Button {
-        viewModel.updateSelectedAgreementItem(agreementID: condition.id, selected: !condition.selected)
-      } label: {
-        Group {
-          if condition.selected {
-            GenImages.CommonImages.termsCheckboxSelected.swiftUIImage
-              .foregroundColor(Colors.Buttons.highlightButton.swiftUIColor)
-          } else {
-            GenImages.CommonImages.termsCheckboxDeselected.swiftUIImage
-              .foregroundColor(Colors.Buttons.unhighlightButton.swiftUIColor)
-          }
+      Group {
+        if condition.selected {
+          GenImages.Images.termsCheckboxSelected.swiftUIImage
+            .onTapGesture {
+              viewModel.updateSelectedAgreementItem(agreementID: condition.id, selected: !condition.selected)
+            }
+        } else {
+          GenImages.CommonImages.termsCheckboxDeselected.swiftUIImage
+            .foregroundColor(Colors.Buttons.highlightButton.swiftUIColor)
+            .onTapGesture {
+              viewModel.updateSelectedAgreementItem(agreementID: condition.id, selected: !condition.selected)
+            }
         }
       }
       .frame(28)
-      .offset(y: 10)
-      .foregroundColor(Colors.label.swiftUIColor.opacity(0.25))
+      .offset(y: 6)
       TextTappable(
         text: condition.message,
         links: Array(condition.attributeInformation.keys),

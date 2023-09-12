@@ -31,7 +31,6 @@ final class CashViewModel: ObservableObject {
   @Published var achInformation: ACHModel = .default
   @Published var accountID: String = .empty
   @Published var fullScreen: FullScreen?
-  @Published var sheet: Sheet?
   
   var transactionLimitEntity: Int {
     50
@@ -223,6 +222,7 @@ extension CashViewModel {
     case transactionDetail(TransactionModel)
     case addMoney
     case sendMoney
+    case agreement(APIAgreementData?)
   }
   
   enum FullScreen: Identifiable {
@@ -233,24 +233,5 @@ extension CashViewModel {
       case .fundCard: return "fundCard"
       }
     }
-  }
-  
-  enum Sheet: Hashable, Identifiable {
-    static func == (lhs: CashViewModel.Sheet, rhs: CashViewModel.Sheet) -> Bool {
-      return lhs.hashRawValue == rhs.hashRawValue
-    }
-    func hash(into hasher: inout Hasher) {
-      hasher.combine(hashRawValue)
-    }
-    var hashRawValue: Int {
-      switch self {
-      case .agreement: return 0
-      }
-    }
-    var id: Self {
-      self
-    }
-    
-    case agreement(APIAgreementData?)
   }
 }

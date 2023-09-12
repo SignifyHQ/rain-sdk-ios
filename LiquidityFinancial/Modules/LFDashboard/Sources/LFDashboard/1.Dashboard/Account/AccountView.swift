@@ -48,6 +48,14 @@ struct AccountsView: View {
           CurrentRewardView()
         case .wallet(asset: let asset):
           ReceiveCryptoView(assetModel: asset)
+        case .agreement(let data):
+          AgreementView(
+            viewModel: AgreementViewModel(fundingAgreement: data),
+            onNext: {
+              //self.viewModel.addFundsViewModel.fundingAgreementData.send(nil)
+            }, onDisappear: { isAcceptAgreement in
+              self.viewModel.handleFundingAcceptAgreement(isAccept: isAcceptAgreement)
+            }, shouldFetchCurrentState: false)
         }
       }
       .sheet(item: $viewModel.sheet, content: { sheet in
@@ -57,14 +65,6 @@ struct AccountsView: View {
             WebView(url: url)
               .ignoresSafeArea()
           }
-        case .agreement(let data):
-          AgreementView(
-            viewModel: AgreementViewModel(fundingAgreement: data),
-            onNext: {
-            //self.viewModel.addFundsViewModel.fundingAgreementData.send(nil)
-            }, onDisappear: { isAcceptAgreement in
-              self.viewModel.handleFundingAcceptAgreement(isAccept: isAcceptAgreement)
-            }, shouldFetchCurrentState: false)
         }
       })
       .popup(item: $viewModel.toastMessage, style: .toast) {
@@ -201,6 +201,7 @@ private extension AccountsView {
       ) {
         viewModel.openReward()
       }
+      /* TODO: Remove for MVP
       ArrowButton(
         image: GenImages.CommonImages.Accounts.atm.swiftUIImage,
         title: LFLocalizable.AccountView.atm,
@@ -209,6 +210,7 @@ private extension AccountsView {
       ) {
         viewModel.getATMAuthorizationCode()
       }
+       */
       ArrowButton(
         image: GenImages.CommonImages.Accounts.bankStatements.swiftUIImage,
         title: LFLocalizable.AccountView.bankStatements,
@@ -239,6 +241,7 @@ private extension AccountsView {
           viewModel.notificationTapped()
         }
       }
+      /* TODO: Remove for MVP
       ArrowButton(
         image: GenImages.CommonImages.Accounts.legal.swiftUIImage,
         title: LFLocalizable.AccountView.legal,
@@ -246,6 +249,7 @@ private extension AccountsView {
       ) {
         viewModel.openLegal()
       }
+       */
       if viewModel.showAdminMenu {
         ArrowButton(
           image: GenImages.CommonImages.personAndBackgroundDotted.swiftUIImage,

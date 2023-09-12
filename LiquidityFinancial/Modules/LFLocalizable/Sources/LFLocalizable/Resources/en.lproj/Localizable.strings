@@ -168,8 +168,11 @@
 "setUpWallet.wallet_useragreement" = "Zero Hash and Zero Hash Liquidity Services User Agreement";
 
 // Set Up Account
-"question.screen.title" = "ACCOUNT TERMS";
-"question.screen.description" = "%@ has partnered with NetSpend and Pathward to provide banking and card services.";
+"question.accountTerms.title" = "ACCOUNT TERMS";
+"question.accountTerms.description" = "%@ has partnered with NetSpend and Pathward to provide banking and card services.";
+"question.transferTerms.title" = "TRANSFER TERMS AND CONDITIONS";
+"question.transferTerms.description" = "Please review the Transfer terms and conditions.";
+"question.transferTerms.diclosure" = "Bank Transfer is a money transfer service provided by Netspend Corporation (NMLS #906983). See netspend.com/licenses.";
 "question.netpendCondition.description" = "I agree to the Netspend User Agreement, and I have read and understand the NetSpend Privacy Policy and Regulatory Disclosures.";
 "question.pathwardCondition.description" = "I agree to the Pathward Bank User Agreement, and I have read and understand the Pathward Privacy Policy and Regulatory Disclosures.";
 "question.netpendCondition.userAgreement" = "Netspend User Agreement";
@@ -501,7 +504,7 @@ https://mn.gov/commerce/money/investments/cryptocurrency/. \n\n\n\n\n\n\n";
 "accountView.debit_deposits_funds.subtitle" = "Connect your bank with a Debit Card";
 "accountView.rewards" = "Current Rewards";
 "accountView.atm" = "ATM’s Nearby";
-"accountView.bank_statements" = "Bank statements";
+"accountView.bank_statements" = "Bank Statements";
 "accountView.taxes" = "Taxes";
 "accountView.help_support" = "Help & Support";
 "accountView.legal" = "Legal";
@@ -632,6 +635,7 @@ https://mn.gov/commerce/money/investments/cryptocurrency/. \n\n\n\n\n\n\n";
 "bank_statement.title" = "Bank Statements";
 "bank_statement.emptyTitle" = "NO STATEMENTS";
 "bank_statement.emptyInfo" = "There are currently no bank statements";
+"bank_statement.error" = "We were unable to load Bank Statementes right now.\nPlease try again.";
 "bank_statement.created" = "Created %@";
 
 // VERIFY CARD

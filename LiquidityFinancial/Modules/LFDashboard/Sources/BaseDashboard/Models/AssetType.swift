@@ -28,4 +28,3 @@ public enum AssetType: String {
     }
   }
 }
-                                                                  

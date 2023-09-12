@@ -145,9 +145,9 @@ extension AccountViewModel {
   
   func openFundingAgreement(data: APIAgreementData?) {
     if data == nil {
-      sheet = nil
+      navigation = nil
     } else {
-      sheet = .agreement(data)
+      navigation = .agreement(data)
     }
   }
   
@@ -268,6 +268,7 @@ extension AccountViewModel {
     case taxes
     case wallet(asset: AssetModel)
     case rewards
+    case agreement(APIAgreementData?)
   }
   
   enum Sheet: Hashable, Identifiable {
@@ -280,13 +281,11 @@ extension AccountViewModel {
     var hashRawValue: Int {
       switch self {
       case .legal: return 0
-      case .agreement: return 1
       }
     }
     var id: Self {
       self
     }
     case legal
-    case agreement(APIAgreementData?)
   }
 }

@@ -3,10 +3,11 @@ import LFStyleGuide
 import LFUtilities
 import LFLocalizable
 
-struct UploadDocumentView: View {
+public struct UploadDocumentView: View {
   @StateObject private var viewModel = UploadDocumentViewModel()
   
-  var body: some View {
+  public init() {}
+  public var body: some View {
     VStack {
       ScrollView(showsIndicators: false) {
         VStack(spacing: 24) {

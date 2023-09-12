@@ -29,6 +29,7 @@ public struct FundCardView: View {
         skip
       }
       .multilineTextAlignment(.center)
+      .padding(.bottom, 16)
       .padding(.horizontal, 30)
     }
   }

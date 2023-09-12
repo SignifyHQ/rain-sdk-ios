@@ -84,20 +84,22 @@ extension SetupWalletView {
   
   private var terms: some View {
     HStack {
-      Button {
-        viewModel.isTermsAgreed.toggle()
-      } label: {
+      Group {
         if viewModel.isTermsAgreed {
-          GenImages.CommonImages.termsCheckboxSelected.swiftUIImage
-            .foregroundColor(Colors.Buttons.highlightButton.swiftUIColor)
+          GenImages.Images.termsCheckboxSelected.swiftUIImage
+            .onTapGesture {
+              viewModel.isTermsAgreed.toggle()
+            }
         } else {
           GenImages.CommonImages.termsCheckboxDeselected.swiftUIImage
-            .foregroundColor(Colors.Buttons.unhighlightButton.swiftUIColor)
+            .foregroundColor(Colors.Buttons.highlightButton.swiftUIColor)
+            .onTapGesture {
+              viewModel.isTermsAgreed.toggle()
+            }
         }
       }
       .padding(.leading, 20)
       .padding(.bottom, 130)
-      
       let strMessage = LFLocalizable.SetUpWallet.termsAndCondition
       let strUserAgreement = LFLocalizable.SetUpWallet.userAgreement
       let strPrivacy = LFLocalizable.SetUpWallet.solidPrivacyPolicy

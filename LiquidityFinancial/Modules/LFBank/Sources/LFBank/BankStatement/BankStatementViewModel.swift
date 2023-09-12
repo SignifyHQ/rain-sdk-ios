@@ -5,8 +5,7 @@ import NetSpendDomain
 import Factory
 
 class BankStatementViewModel: ObservableObject {
-  @Published var statements = [StatementModel]()
-  @Published var isLoading = false
+  @Published var status: DataStatus<StatementModel> = .idle
   @Published var navigation: Navigation?
   @Published var toastMessage: String?
   var showNoStatements = false
@@ -31,16 +30,20 @@ class BankStatementViewModel: ObservableObject {
   }()
   
   init() {
-    getBankStatement()
   }
   
   func onAppear() {
+    switch status {
+      case .idle:
+        getBankStatement()
+      default:
+        break
+    }
   }
  
   func getBankStatement() {
     Task { @MainActor in
-      defer { isLoading = false }
-      isLoading = true
+      status = .loading
       do {
         let sessionID = accountDataManager.sessionID
         let date = Date()
@@ -54,9 +57,9 @@ class BankStatementViewModel: ObservableObject {
           toMonth: month,
           toYear: year
         )
-        self.statements = response
+        status = .success(response)
       } catch {
-        log.error(error)
+        status = .failure(error)
       }
     }
   }

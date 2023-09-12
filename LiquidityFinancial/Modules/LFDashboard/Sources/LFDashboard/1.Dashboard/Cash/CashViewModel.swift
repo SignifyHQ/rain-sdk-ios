@@ -32,7 +32,6 @@ final class CashViewModel: ObservableObject {
   @Published var linkedAccount: [APILinkedSourceData] = []
   @Published var achInformation: ACHModel = .default
   @Published var fullScreen: FullScreen?
-  @Published var sheet: Sheet?
   
   let currencyType = Constants.CurrencyType.fiat.rawValue
   
@@ -125,9 +124,9 @@ extension CashViewModel {
   
   func openFundingAgreement(data: APIAgreementData?) {
     if data == nil {
-      sheet = nil
+      navigation = nil
     } else {
-      sheet = .agreement(data)
+      navigation = .agreement(data)
     }
   }
   
@@ -211,6 +210,7 @@ extension CashViewModel {
     case transactionDetail(TransactionModel)
     case addMoney
     case sendMoney
+    case agreement(APIAgreementData?)
   }
   
   enum FullScreen: Identifiable {
@@ -221,24 +221,5 @@ extension CashViewModel {
       case .fundCard: return "fundCard"
       }
     }
-  }
-  
-  enum Sheet: Hashable, Identifiable {
-    static func == (lhs: CashViewModel.Sheet, rhs: CashViewModel.Sheet) -> Bool {
-      return lhs.hashRawValue == rhs.hashRawValue
-    }
-    func hash(into hasher: inout Hasher) {
-      hasher.combine(hashRawValue)
-    }
-    var hashRawValue: Int {
-      switch self {
-      case .agreement: return 0
-      }
-    }
-    var id: Self {
-      self
-    }
-    
-    case agreement(APIAgreementData?)
   }
 }

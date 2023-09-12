@@ -53,20 +53,16 @@ struct CashView: View {
           kind: transaction.detailType,
           isPopToRoot: false
         )
-      }
-    }
-    .sheet(item: $viewModel.sheet, content: { sheet in
-      switch sheet {
       case .agreement(let data):
         AgreementView(
           viewModel: AgreementViewModel(fundingAgreement: data),
           onNext: {
-              //self.viewModel.addFundsViewModel.fundingAgreementData.send(nil)
+            //self.viewModel.addFundsViewModel.fundingAgreementData.send(nil)
           }, onDisappear: { isAcceptAgreement in
             self.viewModel.handleFundingAcceptAgreement(isAccept: isAcceptAgreement)
           }, shouldFetchCurrentState: false)
       }
-    })
+    }
     .fullScreenCover(item: $viewModel.fullScreen) { item in
       switch item {
       case .fundCard(let kind):
@@ -133,7 +129,9 @@ private extension CashView {
         .overlay(alignment: .bottom) {
           depositButton
         }
-        changeAssetButton
+        /* TODO: Remove for MVP
+         changeAssetButton
+         */
         BalanceAlertView(type: .cash, hasContacts: !viewModel.linkedAccount.isEmpty, cashBalance: viewModel.cashBalanceValue) {
           viewModel.addMoneyTapped()
         }

@@ -61,7 +61,8 @@ extension TaxesViewModel {
     status = .loading
     Task {
       do {
-        let taxes = try await useCase.getTaxFile(accountId: accountId).compactMap({ $0 as? APITaxFile })
+        var taxes = try await self.useCase.getTaxFile(accountId: accountId).compactMap({ $0 as? APITaxFile })
+        taxes = taxes.sorted { Int($0.year ?? .empty) ?? 0 > Int($1.year ?? .empty) ?? 0 }
         status = .success(taxes)
       } catch {
         log.error("Failed to fetch taxes: \(error.localizedDescription)")

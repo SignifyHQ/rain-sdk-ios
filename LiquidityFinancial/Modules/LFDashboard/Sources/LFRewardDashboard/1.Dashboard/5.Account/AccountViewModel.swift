@@ -69,6 +69,10 @@ extension AccountViewModel {
     intercomService.openIntercom()
   }
   
+  func openTaxes() {
+    navigation = .taxes
+  }
+  
   func handleFundingAgreementData() {
     addFundsViewModel.fundingAgreementData
       .receive(on: DispatchQueue.main)
@@ -88,9 +92,9 @@ extension AccountViewModel {
   
   func openFundingAgreement(data: APIAgreementData?) {
     if data == nil {
-      sheet = nil
+      navigation = nil
     } else {
-      sheet = .agreement(data)
+      navigation = .agreement(data)
     }
   }
   
@@ -176,7 +180,9 @@ extension AccountViewModel {
     case connectedAccounts
     case bankStatement
     case disputeTransaction(String, String)
+    case taxes
     case rewards
+    case agreement(APIAgreementData?)
   }
   
   enum Sheet: Hashable, Identifiable {
@@ -189,13 +195,11 @@ extension AccountViewModel {
     var hashRawValue: Int {
       switch self {
       case .legal: return 0
-      case .agreement: return 1
       }
     }
     var id: Self {
       self
     }
     case legal
-    case agreement(APIAgreementData?)
   }
 }

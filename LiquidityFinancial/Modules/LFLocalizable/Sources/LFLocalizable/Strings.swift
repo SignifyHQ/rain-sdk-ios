@@ -250,8 +250,8 @@ public enum LFLocalizable {
     public static let atm = LFLocalizable.tr("Localizable", "accountView.atm", fallback: "ATM’s Nearby")
     /// ATM Locations
     public static let atmLocationTitle = LFLocalizable.tr("Localizable", "accountView.atm_location_title", fallback: "ATM Locations")
-    /// Bank statements
-    public static let bankStatements = LFLocalizable.tr("Localizable", "accountView.bank_statements", fallback: "Bank statements")
+    /// Bank Statements
+    public static let bankStatements = LFLocalizable.tr("Localizable", "accountView.bank_statements", fallback: "Bank Statements")
     /// %@ Account
     public static func cardAccountDetails(_ p1: Any) -> String {
       return LFLocalizable.tr("Localizable", "accountView.card_account_details", String(describing: p1), fallback: "%@ Account")
@@ -485,6 +485,9 @@ public enum LFLocalizable {
     public static let emptyInfo = LFLocalizable.tr("Localizable", "bank_statement.emptyInfo", fallback: "There are currently no bank statements")
     /// NO STATEMENTS
     public static let emptyTitle = LFLocalizable.tr("Localizable", "bank_statement.emptyTitle", fallback: "NO STATEMENTS")
+    /// We were unable to load Bank Statementes right now.
+    /// Please try again.
+    public static let error = LFLocalizable.tr("Localizable", "bank_statement.error", fallback: "We were unable to load Bank Statementes right now.\nPlease try again.")
     /// Bank Statements
     public static let title = LFLocalizable.tr("Localizable", "bank_statement.title", fallback: "Bank Statements")
   }
@@ -1885,6 +1888,14 @@ public enum LFLocalizable {
     }
   }
   public enum Question {
+    public enum AccountTerms {
+      /// %@ has partnered with NetSpend and Pathward to provide banking and card services.
+      public static func description(_ p1: Any) -> String {
+        return LFLocalizable.tr("Localizable", "question.accountTerms.description", String(describing: p1), fallback: "%@ has partnered with NetSpend and Pathward to provide banking and card services.")
+      }
+      /// ACCOUNT TERMS
+      public static let title = LFLocalizable.tr("Localizable", "question.accountTerms.title", fallback: "ACCOUNT TERMS")
+    }
     public enum NetpendCondition {
       /// I agree to the Netspend User Agreement, and I have read and understand the NetSpend Privacy Policy and Regulatory Disclosures.
       public static let description = LFLocalizable.tr("Localizable", "question.netpendCondition.description", fallback: "I agree to the Netspend User Agreement, and I have read and understand the NetSpend Privacy Policy and Regulatory Disclosures.")
@@ -1905,13 +1916,13 @@ public enum LFLocalizable {
       /// Pathward Bank User Agreement
       public static let userAgreement = LFLocalizable.tr("Localizable", "question.pathwardCondition.userAgreement", fallback: "Pathward Bank User Agreement")
     }
-    public enum Screen {
-      /// %@ has partnered with NetSpend and Pathward to provide banking and card services.
-      public static func description(_ p1: Any) -> String {
-        return LFLocalizable.tr("Localizable", "question.screen.description", String(describing: p1), fallback: "%@ has partnered with NetSpend and Pathward to provide banking and card services.")
-      }
-      /// ACCOUNT TERMS
-      public static let title = LFLocalizable.tr("Localizable", "question.screen.title", fallback: "ACCOUNT TERMS")
+    public enum TransferTerms {
+      /// Please review the Transfer terms and conditions.
+      public static let description = LFLocalizable.tr("Localizable", "question.transferTerms.description", fallback: "Please review the Transfer terms and conditions.")
+      /// Bank Transfer is a money transfer service provided by Netspend Corporation (NMLS #906983). See netspend.com/licenses.
+      public static let diclosure = LFLocalizable.tr("Localizable", "question.transferTerms.diclosure", fallback: "Bank Transfer is a money transfer service provided by Netspend Corporation (NMLS #906983). See netspend.com/licenses.")
+      /// TRANSFER TERMS AND CONDITIONS
+      public static let title = LFLocalizable.tr("Localizable", "question.transferTerms.title", fallback: "TRANSFER TERMS AND CONDITIONS")
     }
   }
   public enum ReceiveCryptoView {
