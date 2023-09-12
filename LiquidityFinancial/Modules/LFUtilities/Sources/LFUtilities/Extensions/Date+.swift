@@ -31,7 +31,7 @@ public extension DateFormatter {
   /// Example: `Oct 20 at 04:06 PM`
   static var transactionDisplayShort: DateFormatter = {
     let formatter = DateFormatter()
-    formatter.dateFormat = "MMM dd 'at' hh:mm a"
+    formatter.dateFormat = "MMMM d, yyyy 'at' h:mm a"
     return formatter
   }()
 
@@ -39,7 +39,7 @@ public extension DateFormatter {
   /// Example: `Oct 20 2022 at 04:06 PM`
   static var transactionDisplayFull: DateFormatter = {
     let formatter = DateFormatter()
-    formatter.dateFormat = "MMM dd yyyy 'at' hh:mm a"
+    formatter.dateFormat = "MMMM d, yyyy 'at' h:mm a"
     return formatter
   }()
 

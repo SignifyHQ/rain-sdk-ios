@@ -45,7 +45,7 @@ public extension Double {
     }
     let doubleValue = (value as NSDecimalNumber).doubleValue
     if let suffix = suffix {
-      return "\(doubleValue.formattedAmount(prefix: "$", minFractionDigits: 2))\(suffix ?? .empty)"
+      return "\(doubleValue.formattedAmount(prefix: "$", minFractionDigits: 2))\(suffix)"
     } else {
       return "\(doubleValue.formattedAmount(prefix: "$", minFractionDigits: 6))"
     }

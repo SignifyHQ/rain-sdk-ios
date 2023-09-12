@@ -321,11 +321,6 @@ private extension CryptoAssetView {
   }
 }
 
-private extension CryptoAssetView {
-  
-  
-}
-
 // MARK: - View Helpers
 private extension CryptoAssetView {
   var walletPlaceHolderColor: Color {

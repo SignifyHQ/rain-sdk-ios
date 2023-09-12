@@ -22,7 +22,11 @@ final class ProfileViewModel: ObservableObject {
   @LazyInjected(\.pushNotificationService) var pushNotificationService
 
   var name: String {
-    accountDataManager.userInfomationData.fullName ?? ""
+    if let firstName = accountDataManager.userInfomationData.firstName,
+       let lastName = accountDataManager.userInfomationData.lastName {
+      return firstName + " " + lastName
+    }
+    return accountDataManager.userInfomationData.fullName ?? ""
   }
 
   var email: String {

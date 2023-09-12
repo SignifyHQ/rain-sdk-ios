@@ -12,7 +12,7 @@ struct StatusDiagramView: View {
       HStack(spacing: 4) {
         circleCheckmark(isEnable: true)
         Rectangle()
-          .fill(isCompleted ? Colors.primary.swiftUIColor : Colors.label.swiftUIColor.opacity(0.25))
+          .fill(Colors.label.swiftUIColor.opacity(0.25))
           .frame(width: 156, height: 2)
         circleCheckmark(isEnable: isCompleted)
       }
@@ -31,7 +31,7 @@ private extension StatusDiagramView {
   func circleCheckmark(isEnable: Bool) -> some View {
     Circle()
       .stroke(
-        isEnable ? Colors.primary.swiftUIColor : Colors.label.swiftUIColor.opacity(0.25),
+        isEnable ? Colors.darkText.swiftUIColor : Colors.label.swiftUIColor.opacity(0.25),
         lineWidth: 1)
       .frame(20)
       .overlay {

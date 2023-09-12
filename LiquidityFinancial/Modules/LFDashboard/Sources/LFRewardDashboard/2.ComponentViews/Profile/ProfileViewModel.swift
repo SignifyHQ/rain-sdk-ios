@@ -30,7 +30,11 @@ final class ProfileViewModel: ObservableObject {
   }()
   
   var name: String {
-    accountDataManager.userInfomationData.fullName ?? ""
+    if let firstName = accountDataManager.userInfomationData.firstName,
+       let lastName = accountDataManager.userInfomationData.lastName {
+      return firstName + " " + lastName
+    }
+    return accountDataManager.userInfomationData.fullName ?? ""
   }
 
   var email: String {
@@ -45,7 +49,8 @@ final class ProfileViewModel: ObservableObject {
   }
 
   var totalDonated: String {
-    Double(contribution?.donationAmount ?? 0).formattedAmount(prefix: Constants.CurrencyUnit.usd.rawValue)
+    Double(contribution?.donationAmount ?? 0)
+      .formattedAmount(prefix: Constants.CurrencyUnit.usd.rawValue)
   }
 
   var stickers: [Sticker] {

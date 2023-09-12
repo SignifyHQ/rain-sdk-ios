@@ -3,7 +3,8 @@ import LFRewards
 import RewardDomain
 
 struct Contribution {
-  let donationAmount, donationCount: Int
+  let donationAmount: Double
+  let donationCount: Int
   let stickers: [Sticker]
   
   init(entity: any UserDonationSummaryEntity) {

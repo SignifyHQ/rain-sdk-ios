@@ -2,7 +2,7 @@ import Foundation
 
 public protocol UserDonationSummaryEntity {
   associatedtype APIDonationSticker: DonationStickerEntity
-  var donationAmount: Int? { get }
+  var donationAmount: Double? { get }
   var donationCount: Int? { get }
   var stickers: [APIDonationSticker] { get }
 }

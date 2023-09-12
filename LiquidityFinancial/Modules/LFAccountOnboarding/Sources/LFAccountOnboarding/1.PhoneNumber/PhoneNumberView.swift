@@ -47,7 +47,7 @@ struct PhoneNumberView: View {
     .onTapGesture {
       keyboardFocus = false
     }
-    .overlay(alignment: .topTrailing , content: {
+    .overlay(alignment: .topTrailing, content: {
         Button {
           keyboardFocus = false
           DispatchQueue.main.asyncAfter(wallDeadline: .now() + 0.5) {

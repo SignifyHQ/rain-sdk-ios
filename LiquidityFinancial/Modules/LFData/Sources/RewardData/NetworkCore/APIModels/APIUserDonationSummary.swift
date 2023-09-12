@@ -2,7 +2,8 @@ import Foundation
 import RewardDomain
 
 public struct APIUserDonationSummary: Decodable, UserDonationSummaryEntity {
-  public let donationAmount, donationCount: Int?
+  public let donationCount: Int?
+  public let donationAmount: Double?
   public let stickers: [APIDonationSticker]
 }
 
