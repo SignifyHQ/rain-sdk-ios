@@ -2,6 +2,7 @@ import Foundation
 import NetSpendDomain
 import AccountDomain
 import Combine
+import LFUtilities
 
 public class AccountDataManager: AccountDataStorageProtocol {
   public func update(addressEntity: AddressEntity?) {
@@ -235,5 +236,17 @@ public class AccountDataManager: AccountDataStorageProtocol {
       newValues.append(account)
     }
     accountsSubject.send(newValues)
+  }
+  
+  // MARK: Config
+  private let featureConfigSubject = CurrentValueSubject<FeatureConfigModel?, Never>(nil)
+  
+  public var featureConfig: FeatureConfigModel? {
+    get {
+      featureConfigSubject.value
+    }
+    set {
+      featureConfigSubject.send(newValue)
+    }
   }
 }

@@ -5,6 +5,7 @@ import LFServices
 import ZerohashData
 import LFTransaction
 import LFLocalizable
+import ZerohashDomain
 
 class ConfirmSendCryptoViewModel: ObservableObject {
   @LazyInjected(\.accountDataManager) var accountDataManager
@@ -19,12 +20,18 @@ class ConfirmSendCryptoViewModel: ObservableObject {
   let address: String
   let nickname: String
   let assetModel: AssetModel
+  let feeLockedResponse: APILockedNetworkFeeResponse?
+  
+  var fee: Double? {
+    feeLockedResponse?.fee
+  }
 
-  init(assetModel: AssetModel, amount: Double, address: String, nickname: String) {
+  init(assetModel: AssetModel, amount: Double, address: String, nickname: String, feeLockedResponse: APILockedNetworkFeeResponse?) {
     self.assetModel = assetModel
     self.amount = amount
     self.address = address
     self.nickname = nickname
+    self.feeLockedResponse = feeLockedResponse
   }
   
   var amountInput: String {
@@ -32,6 +39,31 @@ class ConfirmSendCryptoViewModel: ObservableObject {
   }
   
   func confirmButtonClicked() {
+    if let quoteId = feeLockedResponse?.quoteId {
+      executeQuote(id: quoteId)
+    } else {
+      sendCrypto()
+    }
+  }
+  
+  func executeQuote(id: String) {
+    let accountId = assetModel.id
+    Task { @MainActor in
+      defer { showIndicator = false }
+      showIndicator = true
+      do {
+        let transactionEntity = try await self.zerohashRepository.execute(accountId: accountId, quoteId: id)
+        let account = try await accountRepository.getAccountDetail(id: accountId)
+        self.accountDataManager.addOrUpdateAccount(account)
+        let transaction = TransactionModel(from: transactionEntity)
+        self.navigation = .transactionDetail(transaction.id)
+      } catch {
+        self.toastMessage = error.localizedDescription
+      }
+    }
+  }
+  
+  func sendCrypto() {
     let id = assetModel.id
     Task { @MainActor in
       defer { showIndicator = false }

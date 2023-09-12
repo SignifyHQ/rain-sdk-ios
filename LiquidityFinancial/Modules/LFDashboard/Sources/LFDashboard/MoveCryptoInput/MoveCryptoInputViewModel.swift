@@ -6,11 +6,13 @@ import LFStyleGuide
 import Factory
 import AccountDomain
 import Combine
+import ZerohashDomain
 
 @MainActor
 final class MoveCryptoInputViewModel: ObservableObject {
   @LazyInjected(\.accountRepository) var accountRepository
   @LazyInjected(\.accountDataManager) var accountDataManager
+  @LazyInjected(\.zerohashRepository) var zerohashRepository
 
   @Published var assetModel: AssetModel
   @Published var fiatAccount: LFAccount?
@@ -66,7 +68,11 @@ final class MoveCryptoInputViewModel: ObservableObject {
     case .sellCrypto:
       fetchSellCryptoQuote(amount: "\(amount)")
     case .sendCrypto:
-      navigation = .confirmSend
+      if accountDataManager.featureConfig?.isSendCryptoV2Enabled ?? false {
+        fetchSendCryptoQuote(amount: amount, address: address)
+      } else {
+        navigation = .confirmSend()
+      }
     }
   }
   
@@ -116,6 +122,24 @@ private extension MoveCryptoInputViewModel {
       self.accountDataManager.cryptoAccountID = cryptoId
       
       generateGridValues()
+    }
+  }
+  
+  func fetchSendCryptoQuote(amount: Double, address: String) {
+    Task {
+      defer { isPerformingAction = false }
+      isPerformingAction = true
+      do {
+        let lockedResponse = try await self.zerohashRepository.lockedNetworkFee(
+          accountId: assetModel.id,
+          destinationAddress: address,
+          amount: amount,
+          maxAmount: isMaxAmount
+        )
+        navigation = .confirmSend(lockedFeeResponse: lockedResponse)
+      } catch {
+        self.toastMessage = error.localizedDescription
+      }
     }
   }
   
@@ -295,6 +319,15 @@ extension MoveCryptoInputViewModel {
     }
     return balance < amount ? LFLocalizable.MoveCryptoInput.InsufficientFunds.description : nil
   }
+  
+  var isMaxAmount: Bool {
+    switch type {
+    case .sendCrypto, .sellCrypto:
+      return amount >= assetModel.availableBalance
+    default:
+      return false
+    }
+  }
 }
 
 // MARK: - Types
@@ -318,7 +351,7 @@ extension MoveCryptoInputViewModel {
   
   enum Navigation {
     case detail
-    case confirmSend
+    case confirmSend(lockedFeeResponse: APILockedNetworkFeeResponse? = nil)
   }
 }
 

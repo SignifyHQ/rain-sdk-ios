@@ -50,6 +50,8 @@ public protocol AccountDataStorageProtocol {
   func stored(sessionID: String)
   func clearUserSession()
   func storeUser(user: LFUser)
+  
+  var featureConfig: FeatureConfigModel? { get set }
 }
 
 extension AccountDataStorageProtocol {

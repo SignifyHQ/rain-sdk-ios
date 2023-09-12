@@ -905,6 +905,7 @@ https://mn.gov/commerce/money/investments/cryptocurrency/. \n\n\n\n\n\n\n";
 "ConfirmSendCryptoView.to" = "To";
 "ConfirmSendCryptoView.wallet_address" = "Wallet address";
 "ConfirmSendCryptoView.send.title" = "Send";
+"ConfirmSendCryptoView.fee" = "Fee";
 
 // Enter nickname of wallet
 "enter_nickname_of_wallet.save_title" = "SAVE WALLET ADDRESS";

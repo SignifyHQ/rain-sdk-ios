@@ -44,12 +44,13 @@ struct MoveCryptoInputView: View {
       switch navigation {
       case .detail:
         EmptyView()
-      case .confirmSend:
+      case .confirmSend(let lockedFeeResponse):
         ConfirmSendCryptoView(
           assetModel: viewModel.assetModel,
           amount: viewModel.amount,
           address: viewModel.address,
           nickname: viewModel.nickname,
+          feeLockedResponse: lockedFeeResponse,
           completeAction: completeAction
         )
       }

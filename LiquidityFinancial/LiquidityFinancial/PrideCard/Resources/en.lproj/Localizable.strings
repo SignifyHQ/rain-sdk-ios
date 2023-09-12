@@ -867,6 +867,7 @@
 "ConfirmSendCryptoView.amount" = "Amount";
 "ConfirmSendCryptoView.to" = "To";
 "ConfirmSendCryptoView.wallet_address" = "Wallet address";
+"ConfirmSendCryptoView.fee" = "Fee";
 
 // Enter nickname of wallet
 "enter_nickname_of_wallet.save_title" = "SAVE WALLET ADDRESS";

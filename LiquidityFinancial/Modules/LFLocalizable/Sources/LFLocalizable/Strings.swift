@@ -103,6 +103,8 @@ public enum LFLocalizable {
   public enum ConfirmSendCryptoView {
     /// Amount
     public static let amount = LFLocalizable.tr("Localizable", "ConfirmSendCryptoView.amount", fallback: "Amount")
+    /// Fee
+    public static let fee = LFLocalizable.tr("Localizable", "ConfirmSendCryptoView.fee", fallback: "Fee")
     /// Confirm Transfer
     public static let title = LFLocalizable.tr("Localizable", "ConfirmSendCryptoView.title", fallback: "Confirm Transfer")
     /// To

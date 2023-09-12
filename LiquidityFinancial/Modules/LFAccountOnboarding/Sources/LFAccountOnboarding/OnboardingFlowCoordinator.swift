@@ -264,7 +264,6 @@ extension OnboardingFlowCoordinator {
     guard let deviceData = sessionConnectWithJWT?.deviceData else { return }
     
     let establishPersonSession = try await nsPersionRepository.establishPersonSession(deviceData: EstablishSessionParameters(encryptedData: deviceData))
-
     netspendDataManager.update(serverSession: establishPersonSession as? APIEstablishedSessionData)
     accountDataManager.stored(sessionID: establishPersonSession.id)
     

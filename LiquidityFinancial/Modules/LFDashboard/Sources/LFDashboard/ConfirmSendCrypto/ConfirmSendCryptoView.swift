@@ -4,18 +4,20 @@ import LFLocalizable
 import LFStyleGuide
 import LFUtilities
 import LFTransaction
+import ZerohashDomain
 
 struct ConfirmSendCryptoView: View {
   @StateObject private var viewModel: ConfirmSendCryptoViewModel
   private let completeAction: (() -> Void)?
   
-  init(assetModel: AssetModel, amount: Double, address: String, nickname: String, completeAction: (() -> Void)? = nil) {
+  init(assetModel: AssetModel, amount: Double, address: String, nickname: String, feeLockedResponse: APILockedNetworkFeeResponse? = nil, completeAction: (() -> Void)? = nil) {
     _viewModel = .init(
       wrappedValue: ConfirmSendCryptoViewModel(
         assetModel: assetModel,
         amount: amount,
         address: address,
-        nickname: nickname
+        nickname: nickname,
+        feeLockedResponse: feeLockedResponse
       )
     )
     self.completeAction = completeAction
@@ -75,6 +77,12 @@ private extension ConfirmSendCryptoView {
         value: viewModel.address,
         isLastItem: true
       )
+      if let fee = viewModel.fee {
+        informationCell(
+          title: LFLocalizable.ConfirmSendCryptoView.fee,
+          value: fee.roundTo3fStr()
+        )
+      }
       Spacer()
       footer
     }

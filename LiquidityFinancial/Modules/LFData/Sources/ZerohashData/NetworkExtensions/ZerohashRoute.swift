@@ -5,6 +5,8 @@ import AuthorizationManager
 
 public enum ZerohashRoute {
   case sendCrypto(accountId: String, destinationAddress: String, amount: Double)
+  case lockedNetworkFee(accountId: String, destinationAddress: String, amount: Double, maxAmount: Bool)
+  case executeQuote(accountId: String, quoteId: String)
 }
 
 extension ZerohashRoute: LFRoute {
@@ -13,13 +15,15 @@ extension ZerohashRoute: LFRoute {
     switch self {
     case .sendCrypto(let accountId, _, _):
       return "v1/zerohash/account/\(accountId)/send"
+    case .lockedNetworkFee(let accountId, _, _, _):
+      return "v1/zerohash/accounts/\(accountId)/withdrawal/locked-network-fee"
+    case .executeQuote(let accountId, _):
+      return "v1/zerohash/accounts/\(accountId)/withdrawal/execute"
     }
   }
   
   public var httpMethod: HttpMethod {
-    switch self {
-    case .sendCrypto: return .POST
-    }
+    return .POST
   }
   
   public var httpHeaders: HttpHeaders {
@@ -29,10 +33,7 @@ extension ZerohashRoute: LFRoute {
       "Accept": "application/json",
       "Authorization": self.needAuthorizationKey
     ]
-    switch self {
-    case .sendCrypto:
-      return base
-    }
+    return base
   }
   
   public var parameters: Parameters? {
@@ -42,14 +43,21 @@ extension ZerohashRoute: LFRoute {
         "destinationAddress": destinationAddress,
         "amount": amount
       ]
+    case .lockedNetworkFee(_, let destinationAddress, let amount, let maxAmount):
+      return [
+        "destinationAddress": destinationAddress,
+        "amount": amount,
+        "maxAmount": maxAmount
+      ]
+    case .executeQuote(_, let quoteId):
+      return [
+        "quoteId": quoteId
+      ]
     }
   }
   
   public var parameterEncoding: ParameterEncoding? {
-    switch self {
-    case .sendCrypto:
-      return .json
-    }
+    return .json
   }
   
 }

@@ -1,5 +1,6 @@
 import Foundation
 import LFUtilities
+import AccountDomain
 
 public struct AccountFeatureConfigData {
   enum AccessLevel: String, Codable {
@@ -31,26 +32,4 @@ public struct AccountFeatureConfigData {
   public var isLoading: Bool
   
   var featureConfig: FeatureConfigModel?
-  
-  public struct FeatureConfigModel: Codable {
-    public struct PlatformVersion: Codable {
-      public let minVersionNumber: Int?
-      public let minVersionString: String?
-    }
-    
-    public struct Version: Codable {
-      public let ios: PlatformVersion?
-    }
-    
-    public let features: [String: AnyCodable]?
-    public let version: Version?
-    
-    public var minVersionNumber: Int {
-      version?.ios?.minVersionNumber ?? 0
-    }
-    
-    public var minVersionString: String {
-      version?.ios?.minVersionString ?? ""
-    }
-  }
 }
