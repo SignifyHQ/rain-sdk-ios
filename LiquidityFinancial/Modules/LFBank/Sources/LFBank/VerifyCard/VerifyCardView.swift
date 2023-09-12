@@ -65,6 +65,7 @@ private extension VerifyCardView {
         placeholder: LFLocalizable.VerifyCard.Amount.placeholder,
         value: $viewModel.amount,
         formatters: [
+          DecimalFormatter()
         ],
         focus: .amount
       )
@@ -111,43 +112,18 @@ private extension VerifyCardView {
   }
   
   @ViewBuilder
-  private func textField(
-    placeholder: String,
-    value: Binding<String>,
-    errorValue: Binding<String?>? = nil,
-    restriction: TextRestriction = .none,
-    formatters: [TextFormatter] = [],
-    focus: Focus,
-    nextFocus: Focus? = nil,
-    isSecure: Bool = false
-  ) -> some View {
-    TextFieldWrapper(errorValue: errorValue ?? .constant(nil)) {
-      FormattingTextField(value: value, formatters: formatters, isSecure: isSecure)
-        .keyboardType(.numberPad)
-        .modifier(PlaceholderStyle(showPlaceHolder: value.wrappedValue.isEmpty, placeholder: placeholder))
-        .primaryFieldStyle()
-        .autocorrectionDisabled()
-        .submitLabel(nextFocus == nil ? .done : .next)
-        .focused($keyboardFocus, equals: focus)
-        .onSubmit {
-          keyboardFocus = nextFocus
-        }
-    }
-  }
-  
-  @ViewBuilder
   private func cardTextField(
     placeholder: String,
     value: Binding<String>,
     errorValue: Binding<String?>? = nil,
     restriction: TextRestriction = .none,
-    formatters: [TextFormatter] = [],
+    formatters: [TextFormatter],
     focus: Focus,
     nextFocus: Focus? = nil
   ) -> some View {
     TextFieldWrapper(errorValue: errorValue ?? .constant(nil)) {
       FormattingTextField(value: value, formatters: formatters)
-        .keyboardType(.numberPad)
+        .keyboardType(.decimalPad)
         .modifier(PlaceholderStyle(showPlaceHolder: value.wrappedValue.isEmpty, placeholder: placeholder))
         .primaryFieldStyle()
         .autocorrectionDisabled()

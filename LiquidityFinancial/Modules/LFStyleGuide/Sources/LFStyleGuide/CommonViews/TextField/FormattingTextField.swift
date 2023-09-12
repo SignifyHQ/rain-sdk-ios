@@ -18,17 +18,15 @@ public struct FormattingTextField: View {
 
   public var body: some View {
     if isSecure {
-      SecureField("", text: Binding(get: {
-        format(value: value.wrappedValue)
-      }, set: { string in
-        value.wrappedValue = format(value: string)
-      }))
+      SecureField("", text: value)
+        .onChange(of: value.wrappedValue) { newValue in
+          value.wrappedValue = format(value: newValue)
+        }
     } else {
-      TextField("", text: Binding(get: {
-        format(value: value.wrappedValue)
-      }, set: { string in
-        value.wrappedValue = format(value: string)
-      }))
+      TextField("", text: value)
+        .onChange(of: value.wrappedValue) { newValue in
+          value.wrappedValue = format(value: newValue)
+        }
     }
   }
 
@@ -37,6 +35,7 @@ public struct FormattingTextField: View {
     formatters.forEach { formatter in
       formatted = formatter.format(text: formatted)
     }
+    print("Luan formatted: \(formatted)")
     return formatted
   }
 }
@@ -88,5 +87,24 @@ public struct RestrictionFormatter: TextFormatter {
   
   public func format(text: String) -> String {
     text.filter { restriction.allowedInput.contains($0) }
+  }
+}
+
+// MARK: Regex
+public struct DecimalFormatter: TextFormatter {
+  public init() {}
+  
+  public func format(text: String) -> String {
+    let filtered = text.filter { "0123456789.".contains($0) }
+    
+    if filtered.contains(".") {
+      let splitted = filtered.split(separator: ".")
+      if splitted.count >= 2 {
+        let preDecimal = String(splitted[0])
+        let afterDecimal = String(splitted[1])
+        return "\(preDecimal).\(afterDecimal)"
+      }
+    }
+    return filtered
   }
 }
