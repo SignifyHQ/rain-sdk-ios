@@ -16,7 +16,7 @@ struct RewardsView: View {
     content
       .background(Colors.background.swiftUIColor)
       .onAppear {
-        viewModel.refresh()
+        viewModel.onAppear()
       }
       .refreshable {
         viewModel.refresh()
@@ -136,16 +136,3 @@ struct RewardsView: View {
     }
   }
 }
-
-#if DEBUG
-
-  // MARK: - SelectRewardsView_Previews
-
-struct CashbackView_Previews: PreviewProvider {
-  static var previews: some View {
-    RewardsView(viewModel: .init())
-      .embedInNavigation()
-  }
-}
-
-#endif

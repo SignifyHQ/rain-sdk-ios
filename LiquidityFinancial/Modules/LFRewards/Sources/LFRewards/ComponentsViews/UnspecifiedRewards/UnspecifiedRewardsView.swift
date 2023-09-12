@@ -35,6 +35,14 @@ public struct UnspecifiedRewardsView: View {
           .background(Colors.secondaryBackground.swiftUIColor)
           .cornerRadius(10)
           
+          HStack(alignment: .bottom) {
+            Text(LFLocalizable.Cashback.latest)
+            Spacer()
+          }
+          .font(Fonts.regular.swiftUIFont(size: 12))
+          .foregroundColor(Colors.label.swiftUIColor.opacity(0.75))
+          .padding(.top, 16)
+          
           EmptyListView(text: LFLocalizable.Rewards.noRewards)
             .padding(.top, 100)
         }

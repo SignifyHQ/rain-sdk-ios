@@ -4,6 +4,7 @@ import LFLocalizable
 import LFUtilities
 import BaseDashboard
 import LFCard
+import LFRewards
 
 struct DashboardView: View {
   @StateObject private var viewModel: DashboardViewModel
@@ -25,6 +26,8 @@ struct DashboardView: View {
         }
       case .rewards:
         RewardsView(viewModel: .init())
+      case .noneReward:
+        UnspecifiedRewardsView(destination: AnyView(EditRewardsView(viewModel: EditRewardsViewModel())))
       case .donation:
         let viewModel = DonationsViewModel(tabRedirection: { tabOption in
           log.debug(tabOption)

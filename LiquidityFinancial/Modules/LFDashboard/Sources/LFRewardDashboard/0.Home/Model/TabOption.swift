@@ -8,6 +8,7 @@ public enum TabOption: Int, CaseIterable, Hashable {
   case cash
   case donation
   case rewards
+  case noneReward
   case causes
   case account
   
@@ -23,6 +24,8 @@ public enum TabOption: Int, CaseIterable, Hashable {
       return LFLocalizable.Home.CauseTab.title
     case .account:
       return LFLocalizable.Home.AccountTab.title
+    case .noneReward:
+      return LFLocalizable.Home.RewardsTab.title
     }
   }
   
@@ -38,6 +41,8 @@ public enum TabOption: Int, CaseIterable, Hashable {
       return ModuleImages.icHomeCause.swiftUIImage
     case .account:
       return ModuleImages.icHomeAccount.swiftUIImage
+    case .noneReward:
+      return ModuleImages.icHomeRewards.swiftUIImage
     }
   }
 }

@@ -149,6 +149,7 @@ extension HomeViewModel {
   }
   
   func loginIntercom() {
+    guard intercomService.isLoginIdentifiedSuccess == false else { return }
     var userAttributes: IntercomService.UserAttributes
     if let userID = accountDataManager.userInfomationData.userID {
       userAttributes = IntercomService.UserAttributes(phone: accountDataManager.phoneNumber, userId: userID, email: accountDataManager.userEmail)

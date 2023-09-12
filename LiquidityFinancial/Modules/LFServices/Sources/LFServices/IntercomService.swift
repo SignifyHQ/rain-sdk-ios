@@ -13,6 +13,7 @@ extension Container {
 }
 
 public protocol IntercomServiceProtocol {
+  var isLoginIdentifiedSuccess: Bool { get }
   func openIntercom()
   func loginUnidentifiedUser()
   func loginIdentifiedUser(userAttributes: IntercomService.UserAttributes)
@@ -45,6 +46,8 @@ public class IntercomService: IntercomServiceProtocol {
       }
     }
   }
+  
+  public private(set) var isLoginIdentifiedSuccess: Bool = false
   
   private var subscriptions = Set<AnyCancellable>()
   
@@ -112,10 +115,11 @@ public class IntercomService: IntercomServiceProtocol {
     if let userId = userAttributes.userId {
       attributes.userId = userId
     }
-    Intercom.loginUser(with: attributes) { result in
+    Intercom.loginUser(with: attributes) { [weak self] result in
       switch result {
       case .success:
         log.info("IntercomService login IdentifiedUser is success: \(userAttributes.phone)")
+        self?.isLoginIdentifiedSuccess = true
       case .failure(let error):
         log.error(error.localizedDescription)
       }

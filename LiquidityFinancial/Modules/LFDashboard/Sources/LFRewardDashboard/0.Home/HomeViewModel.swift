@@ -73,6 +73,7 @@ private extension HomeViewModel {
   }
   
   func loginIntercom() {
+    guard intercomService.isLoginIdentifiedSuccess == false else { return }
     var userAttributes: IntercomService.UserAttributes
     if let userID = accountDataManager.userInfomationData.userID {
       userAttributes = IntercomService.UserAttributes(phone: accountDataManager.phoneNumber, userId: userID, email: accountDataManager.userEmail)
@@ -106,14 +107,17 @@ private extension HomeViewModel {
   
   func buildTabOption(with reward: SelectRewardTypeEntity) {
     let rewardList: [TabOption] = [.cash, .rewards, .account]
+    let noneRewardList: [TabOption] = [.cash, .noneReward, .account]
     let donationList: [TabOption] = [.cash, .donation, .causes, .account]
     switch reward.rawString {
     case UserRewardType.cashBack.rawValue:
       tabOptions = rewardList
     case UserRewardType.donation.rawValue:
       tabOptions = donationList
+    case UserRewardType.none.rawValue:
+      tabOptions = noneRewardList
     default:
-      tabOptions = rewardList
+      tabOptions = noneRewardList
     }
   }
   
@@ -124,6 +128,8 @@ private extension HomeViewModel {
       tabSelected = .rewards
     case UserRewardType.donation.rawValue:
       tabSelected = .donation
+    case UserRewardType.none.rawValue:
+      tabSelected = .rewards
     default:
       tabSelected = .cash
     }

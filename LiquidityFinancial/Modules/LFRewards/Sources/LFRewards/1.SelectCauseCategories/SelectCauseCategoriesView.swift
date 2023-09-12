@@ -7,12 +7,19 @@ public struct SelectCauseCategoriesView: View {
   
   @StateObject private var viewModel: SelectCauseCategoriesViewModel
   
+  var isPopToRoot: Bool {
+    onPopToRoot != nil
+  }
+  
   let destination: AnyView
   let whereStart: RewardWhereStart
-  public init(viewModel: SelectCauseCategoriesViewModel, destination: AnyView, whereStart: RewardWhereStart = .onboarding) {
+  var onPopToRoot: (() -> Void)?
+  
+  public init(viewModel: SelectCauseCategoriesViewModel, destination: AnyView, whereStart: RewardWhereStart = .onboarding, onPopToRoot: (() -> Void)? = nil) {
     _viewModel = .init(wrappedValue: viewModel)
     self.destination = destination
     self.whereStart = whereStart
+    self.onPopToRoot = onPopToRoot
   }
   
   public var body: some View {
@@ -45,6 +52,17 @@ public struct SelectCauseCategoriesView: View {
       }
       .popup(isPresented: $viewModel.showError, style: .toast) {
         ToastView(toastMessage: LFLocalizable.genericErrorMessage)
+      }
+      .navigationBarBackButtonHidden(isPopToRoot)
+      .toolbar {
+        ToolbarItem(placement: .navigationBarLeading) {
+          Button {
+            onPopToRoot?()
+          } label: {
+            CircleButton(style: .xmark)
+          }
+          .opacity(isPopToRoot ? 1 : 0)
+        }
       }
   }
   

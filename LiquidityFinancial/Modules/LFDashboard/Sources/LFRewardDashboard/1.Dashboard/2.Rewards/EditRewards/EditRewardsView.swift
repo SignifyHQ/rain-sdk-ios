@@ -25,6 +25,23 @@ struct EditRewardsView: View {
         ToastView(toastMessage: LFLocalizable.genericErrorMessage)
       }
       .disabled(viewModel.isLoading)
+      .onDisappear {
+        viewModel.onDisappear()
+      }
+      .onReceive(NotificationCenter.default.publisher(for: .selectedFundraisersSuccess)) { _ in
+        viewModel.handleSelectedFundraisersSuccess()
+      }
+      .navigationLink(item: $viewModel.navigation) { navigation in
+        switch navigation {
+        case let .selectFundraiser(causes):
+          SelectCauseCategoriesView(
+            viewModel: SelectCauseCategoriesViewModel(causes: causes),
+            destination: AnyView(EmptyView()),
+            whereStart: .dashboard) { //handle on pop to root view
+              viewModel.handlePopToRootView()
+            }
+        }
+      }
   }
   
   private var content: some View {

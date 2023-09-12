@@ -16,11 +16,14 @@ class RewardViewModel: ObservableObject {
   @Published var navigation: Navigation?
   @Published var account: LFAccount?
   @Published var toastMessage: String = ""
-  @Published var isLoading: Bool = false
+  
+  private var isFirstLoad: Bool = false
+  private var isLoading: Bool = false
   
   let currencyType = Constants.CurrencyType.fiat.rawValue
   
   init() {
+    isFirstLoad = true
     subscribeToUserTransactionNotifications()
   }
   
@@ -33,7 +36,13 @@ class RewardViewModel: ObservableObject {
 
 extension RewardViewModel {
   func refresh() {
-    apiFetchCryptoAccount()
+    isFirstLoad = true
+    apiRefreshData()
+  }
+  
+  func onAppear() {
+    guard !isLoading else { return }
+    apiRefreshData()
   }
   
   func seeAllTransactionsTapped() {
@@ -47,29 +56,60 @@ extension RewardViewModel {
 
   // MARK: - API logic
 
-extension RewardViewModel {
-  private func subscribeToUserTransactionNotifications() {
+private extension RewardViewModel {
+  func subscribeToUserTransactionNotifications() {
     
   }
   
-  func apiFetchCryptoAccount() {
+  func apiRefreshData() {
     Task {
       do {
-        feed = .loading
-        let accounts = try await accountRepository.getAccount(currencyType: currencyType)
-        guard let account = accounts.first else {
-          feed = .success([])
-          return
+        defer { isLoading = false }
+        isLoading = true
+        
+        if isFirstLoad {
+          feed = .loading
+          let accounts = try await accountRepository.getAccount(currencyType: currencyType)
+          guard let account = accounts.first else {
+            // reset state for first load
+            isFirstLoad = false
+            
+            feed = .success([])
+            return
+          }
+          
+          self.account = account
+          let models = try await apiFetchTransactions(accountId: account.id)
+          feed = .success(models)
+          
+          // reset state for first load
+          isFirstLoad = false
+        } else {
+          if let account = account {
+            let models = try await apiFetchTransactions(accountId: account.id)
+            feed = .success(models)
+          } else {
+            let accounts = try await accountRepository.getAccount(currencyType: currencyType)
+            guard let account = accounts.first else { return }
+            self.account = account
+            let models = try await apiFetchTransactions(accountId: account.id)
+            feed = .success(models)
+          }
         }
-        self.account = account
-        let models = try await apiFetchTransactions(accountId: account.id)
-        feed = .success(models)
       } catch {
-        feed = .failure(error)
+        if isFirstLoad {
+          feed = .failure(error)
+          // reset state for first load
+          isFirstLoad = false
+        }
         log.error(error.localizedDescription)
         toastMessage = error.localizedDescription
       }
     }
+  }
+  
+  func apiFetchCryptoAccount() async throws -> [LFAccount] {
+    return try await accountRepository.getAccount(currencyType: currencyType)
   }
   
   func apiFetchTransactions(accountId: String) async throws -> [TransactionModel] {
