@@ -30,7 +30,8 @@ let package = Package(
       targets: ["CryptoChartDomain"])
   ],
   dependencies: [
-    .package(name: "LFBuildTools", path: "../LFBuildTools")
+    .package(name: "LFBuildTools", path: "../LFBuildTools"),
+    .package(name: "LFUtilities", path: "../LFUtilities")
   ],
   targets: [
     .target(
@@ -39,7 +40,7 @@ let package = Package(
     .target(
       name: "AccountDomain",
       dependencies: [
-        "NetSpendDomain"
+        "NetSpendDomain", "LFUtilities"
       ],
       plugins: [.plugin(name: "SourceryPlugin", package: "LFBuildTools")]
     ),

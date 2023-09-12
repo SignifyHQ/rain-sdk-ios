@@ -62,11 +62,9 @@ extension KYCStatusViewModel {
         let user = try await accountRepository.getUser()
         var request = URLRequest(url: URL(string: "https://api-crypto.dev.liquidity.cc/v1/admin/users/\(user.userID)/approve")!)
         request.httpMethod = "POST"
-        let (data, response) = try await URLSession.shared.data(for: request)
+        let (_, response) = try await URLSession.shared.data(for: request)
         let httpResponse = response as? HTTPURLResponse
         log.debug("approved dashboard state: \(httpResponse?.statusCode ?? 000)")
-        let json = try JSONSerialization.jsonObject(with: data, options: []) as? [String: Any]
-        log.debug("approved dashboard data: \(String(describing: json))")
         self.toastMessage = "You have been approved by the Dashboard. Please click the button Check Status and go Next Step"
       } catch {
         self.toastMessage = error.localizedDescription
