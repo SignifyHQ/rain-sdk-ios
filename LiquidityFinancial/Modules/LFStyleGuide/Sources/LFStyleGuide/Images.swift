@@ -157,6 +157,7 @@ public enum GenImages {
     public static let referralsInbox = ImageAsset(name: "referralsInbox")
     public static let statusCompleted = ImageAsset(name: "statusCompleted")
     public static let statusPending = ImageAsset(name: "statusPending")
+    public static let termsCheckboxDeselected = ImageAsset(name: "termsCheckboxDeselected")
     public static let termsCheckboxSelected = ImageAsset(name: "termsCheckboxSelected")
     public static let transactionCard = ImageAsset(name: "transactionCard")
     public static let unavailableCard = ImageAsset(name: "unavailableCard")

@@ -37,7 +37,7 @@ public struct AgreementView: View {
       footer
     }
     .padding(.bottom, 16)
-    .padding(.top, 30)
+    .padding(.top, 20)
     .padding(.horizontal, 30)
     .defaultToolBar(icon: .intercom, openIntercom: {
       viewModel.openIntercom()
@@ -142,8 +142,7 @@ private extension AgreementView {
               viewModel.updateSelectedAgreementItem(agreementID: condition.id, selected: !condition.selected)
             }
         } else {
-          GenImages.CommonImages.termsCheckboxDeselected.swiftUIImage
-            .foregroundColor(Colors.Buttons.highlightButton.swiftUIColor)
+          GenImages.Images.termsCheckboxDeselected.swiftUIImage
             .onTapGesture {
               viewModel.updateSelectedAgreementItem(agreementID: condition.id, selected: !condition.selected)
             }
