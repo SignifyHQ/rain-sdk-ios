@@ -190,7 +190,7 @@ private extension CryptoChartDetailView {
       iconTextButton(title: LFLocalizable.CryptoChartDetail.Sell.title, image: GenImages.CommonImages.sell.swiftUIImage) {
         viewModel.sellButtonTapped()
       }
-      iconTextButton(title: LFLocalizable.CryptoChartDetail.Transfer.title, image: GenImages.CommonImages.transfer.swiftUIImage) {
+      iconTextButton(title: LFLocalizable.CryptoChartDetail.Transfer.title.uppercased(), image: GenImages.CommonImages.transfer.swiftUIImage) {
         viewModel.transferButtonTapped()
       }
     }
