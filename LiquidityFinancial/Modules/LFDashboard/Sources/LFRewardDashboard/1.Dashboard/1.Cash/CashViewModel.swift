@@ -101,9 +101,9 @@ extension CashViewModel {
   
   func openFundingAgreement(data: APIAgreementData?) {
     if data == nil {
-      sheet = nil
+      navigation = nil
     } else {
-      sheet = .agreement(data)
+      navigation = .agreement(data)
     }
   }
   
