@@ -248,7 +248,7 @@ private extension CryptoChartDetailView {
   
   var transferBalancePopup: some View {
     LiquidityAlert(
-      title: LFLocalizable.CryptoChartDetail.TransferBalance.title,
+      title: LFLocalizable.CryptoChartDetail.TransferBalance.title(LFUtility.cryptoCurrency.uppercased()),
       message: .empty,
       primary: .init(text: LFLocalizable.Button.Ok.title.uppercased()) {
         viewModel.clearPopup()
@@ -293,7 +293,7 @@ private extension CryptoChartDetailView {
         .foregroundColor(Colors.label.swiftUIColor.opacity(0.75))
         .frame(width: 32, height: 4)
         .padding(.top, 6)
-      Text(LFLocalizable.CryptoChartDetail.TransferCoin.title(LFUtility.cryptoCurrency).uppercased())
+      Text(LFLocalizable.CryptoChartDetail.TransferCoin.title)
         .foregroundColor(Colors.label.swiftUIColor)
         .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.main.value))
         .padding(.vertical, 14)

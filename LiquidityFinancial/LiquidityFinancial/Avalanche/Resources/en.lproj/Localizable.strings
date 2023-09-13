@@ -765,8 +765,8 @@ https://mn.gov/commerce/money/investments/cryptocurrency/. \n\n\n\n\n\n\n";
 "cryptoChartDetail.high.title" = "High";
 "cryptoChartDetail.low.title" = "Low";
 "cryptoChartDetail.volume.title" = "Volume";
-"cryptoChartDetail.transferBalance.title" = "YOU DON'T HAVE ANY DOGE TO TRANSFER AT THIS TIME.";
-"cryptoChartDetail.transferCoin.title" = "Transfer %@";
+"cryptoChartDetail.transferBalance.title" = "YOU DON'T HAVE ANY %@ TO TRANSFER AT THIS TIME.";
+"cryptoChartDetail.transferCoin.title" = "Transfer";
 
 "fundCard.title" = "FUND YOUR AVALANCHE CARD";
 "fundCard.message" = "Avalanche Card is a Pre-paid Debit Card, which means there are no credit checks, interest payments or overdrafts. However, you have to deposit money to your account before you can you use. Start by connecting your bank:";

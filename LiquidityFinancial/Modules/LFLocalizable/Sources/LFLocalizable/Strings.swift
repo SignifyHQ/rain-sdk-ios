@@ -839,14 +839,14 @@ public enum LFLocalizable {
       public static let title = LFLocalizable.tr("Localizable", "cryptoChartDetail.transfer.title", fallback: "Transfer")
     }
     public enum TransferBalance {
-      /// YOU DON'T HAVE ANY DOGE TO TRANSFER AT THIS TIME.
-      public static let title = LFLocalizable.tr("Localizable", "cryptoChartDetail.transferBalance.title", fallback: "YOU DON'T HAVE ANY DOGE TO TRANSFER AT THIS TIME.")
+      /// YOU DON'T HAVE ANY %@ TO TRANSFER AT THIS TIME.
+      public static func title(_ p1: Any) -> String {
+        return LFLocalizable.tr("Localizable", "cryptoChartDetail.transferBalance.title", String(describing: p1), fallback: "YOU DON'T HAVE ANY %@ TO TRANSFER AT THIS TIME.")
+      }
     }
     public enum TransferCoin {
-      /// Transfer %@
-      public static func title(_ p1: Any) -> String {
-        return LFLocalizable.tr("Localizable", "cryptoChartDetail.transferCoin.title", String(describing: p1), fallback: "Transfer %@")
-      }
+      /// Transfer
+      public static let title = LFLocalizable.tr("Localizable", "cryptoChartDetail.transferCoin.title", fallback: "Transfer")
     }
     public enum Volume {
       /// Volume
