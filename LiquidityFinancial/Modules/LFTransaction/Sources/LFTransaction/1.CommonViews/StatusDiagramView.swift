@@ -31,14 +31,13 @@ private extension StatusDiagramView {
   func circleCheckmark(isEnable: Bool) -> some View {
     Circle()
       .stroke(
-        isEnable ? Colors.darkText.swiftUIColor : Colors.label.swiftUIColor.opacity(0.25),
+        isEnable ? Colors.circleOutline.swiftUIColor : Colors.label.swiftUIColor.opacity(0.25),
         lineWidth: 1)
       .frame(20)
       .overlay {
         GenImages.CommonImages.icCheckmark.swiftUIImage
-          .foregroundColor(
-            isEnable ? Colors.primary.swiftUIColor : Colors.label.swiftUIColor.opacity(0.25)
-          )
+          .foregroundColor(Colors.checkmark.swiftUIColor)
+          .opacity(isEnable ? 1 : 0)
       }
   }
   
