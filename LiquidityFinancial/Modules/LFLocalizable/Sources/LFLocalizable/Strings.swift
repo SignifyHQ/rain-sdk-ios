@@ -209,6 +209,8 @@ public enum LFLocalizable {
   public enum RewardTabView {
     /// Latest rewards
     public static let lastestRewards = LFLocalizable.tr("Localizable", "RewardTabView.lastest_rewards", fallback: "Latest rewards")
+    /// No rewards yet
+    public static let noRewards = LFLocalizable.tr("Localizable", "RewardTabView.noRewards", fallback: "No rewards yet")
     /// See all
     public static let seeAll = LFLocalizable.tr("Localizable", "RewardTabView.see_all", fallback: "See all")
     public enum EarningRewards {

@@ -891,6 +891,7 @@
 "RewardTabView.lastest_rewards" = "Latest rewards";
 "RewardTabView.see_all" = "See all";
 "RewardTabView.earning_rewards.description" = "Earning rewards in %@";
+"RewardTabView.noRewards" = "No rewards yet";
 
 // Donations
 "donations.select_fundraiser" = "Select a Cause";

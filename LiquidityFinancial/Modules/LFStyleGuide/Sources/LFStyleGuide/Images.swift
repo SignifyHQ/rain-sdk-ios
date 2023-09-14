@@ -141,6 +141,7 @@ public enum GenImages {
     public static let debitSuggestion = ImageAsset(name: "debitSuggestion")
     public static let defaultTransactionCard = ImageAsset(name: "defaultTransactionCard")
     public static let emptyCard = ImageAsset(name: "emptyCard")
+    public static let emptyRewards = ImageAsset(name: "empty_rewards")
     public static let forwardButton = ImageAsset(name: "forwardButton")
     public static let fundCard = ImageAsset(name: "fundCard")
     public static let icVerified = ImageAsset(name: "ic-verified")

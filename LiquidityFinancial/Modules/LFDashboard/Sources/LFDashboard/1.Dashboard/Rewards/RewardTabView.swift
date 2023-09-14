@@ -116,17 +116,35 @@ private extension RewardTabView {
           .frame(width: 30, height: 20)
           .padding(.top, 8)
       case .transactions:
-        ShortTransactionsView(
-          transactions: $viewModel.transactions,
-          title: LFLocalizable.RewardTabView.lastestRewards,
-          onTapTransactionCell: viewModel.transactionItemTapped,
-          seeAllAction: {
-            viewModel.onClickedSeeAllButton()
-          }
-        )
+        if viewModel.transactions.isEmpty {
+          emptyView
+        } else {
+          ShortTransactionsView(
+            transactions: $viewModel.transactions,
+            title: LFLocalizable.RewardTabView.lastestRewards,
+            onTapTransactionCell: viewModel.transactionItemTapped,
+            seeAllAction: {
+              viewModel.onClickedSeeAllButton()
+            }
+          )
+        }
       case .failure:
         EmptyView()
       }
+    }
+  }
+  
+  var emptyView: some View {
+    HStack(alignment: .center) {
+      VStack(alignment: .center, spacing: 12) {
+        Spacer(minLength: 120)
+        GenImages.Images.emptyRewards.swiftUIImage
+        Text(LFLocalizable.RewardTabView.noRewards)
+          .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.medium.value))
+          .foregroundColor(Colors.label.swiftUIColor)
+        Spacer(minLength: 120)
+      }
+      .fixedSize(horizontal: false, vertical: true)
     }
   }
 }
