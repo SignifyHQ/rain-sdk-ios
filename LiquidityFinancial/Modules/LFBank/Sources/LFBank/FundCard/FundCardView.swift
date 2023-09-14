@@ -7,7 +7,7 @@ import LFStyleGuide
 public struct FundCardView: View {
   @StateObject private var viewModel: FundCardViewModel
   let onFinish: () -> Void
-
+  
   public init(kind: MoveMoneyAccountViewModel.Kind, onFinish: @escaping () -> Void) {
     self.onFinish = onFinish
     _viewModel = StateObject(wrappedValue: FundCardViewModel(kind: kind))
@@ -24,15 +24,15 @@ public struct FundCardView: View {
             }, onDisappear: { isAcceptAgreement in
               self.viewModel.handleFundingAcceptAgreement(isAccept: isAcceptAgreement)
             }, shouldFetchCurrentState: false)
+        }
       }
-    }
       .background(Colors.background.swiftUIColor)
   }
-
+  
   private var content: some View {
     VStack(spacing: 0) {
       header
-
+      
       VStack(spacing: 16) {
         title
         message
@@ -45,26 +45,26 @@ public struct FundCardView: View {
       .padding(.horizontal, 30)
     }
   }
-
+  
   private var header: some View {
     ZStack {
       GenImages.Images.fundCard.swiftUIImage
     }
   }
-
+  
   private var title: some View {
     Text(LFLocalizable.FundCard.title)
       .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.large.value))
       .foregroundColor(Colors.label.swiftUIColor)
   }
-
+  
   private var message: some View {
     Text(LFLocalizable.FundCard.message)
       .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.medium.value))
       .foregroundColor(Colors.label.swiftUIColor.opacity(0.75))
       .lineSpacing(1.25)
   }
-
+  
   private var actions: some View {
     AddFundsView(
       viewModel: viewModel.addFundsViewModel,
@@ -75,7 +75,7 @@ public struct FundCardView: View {
     .padding(.top, 8)
     .fixedSize(horizontal: false, vertical: true)
   }
-
+  
   private var skip: some View {
     FullSizeButton(
       title: LFLocalizable.Button.Skip.title,

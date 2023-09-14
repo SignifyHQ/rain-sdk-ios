@@ -3,6 +3,7 @@ import UIKit
 import LFServices
 import Factory
 import AuthorizationManager
+import LFUtilities
 
 class AppDelegate: UIResponder, UIApplicationDelegate {
   
@@ -28,6 +29,16 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
   
   func application(_ application: UIApplication, didFailToRegisterForRemoteNotificationsWithError error: Error) {
     
+  }
+  
+  func application(_: UIApplication, didReceiveRemoteNotification userInfo: [AnyHashable: Any], fetchCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void) {
+    NotificationsReceived.shared.addNotification(userInfo)
+    guard let aps = userInfo["aps"] as? [String: AnyObject] else {
+      completionHandler(.failed)
+      return
+    }
+    log.debug("got something, aka the \(aps)")
+    completionHandler(.newData)
   }
   
   func application(_ app: UIApplication, open url: URL, options: [UIApplication.OpenURLOptionsKey: Any] = [:]) -> Bool {

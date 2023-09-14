@@ -114,6 +114,10 @@ extension MoveMoneyAccountViewModel {
           type: type,
           sessionId: sessionID
         )
+        
+        //Push a notification for update transaction list event
+        NotificationCenter.default.post(name: .moneyTransactionSuccess, object: nil)
+        
         navigation = .transactionDetai(response.transactionId)
       } catch {
         toastMessage = error.localizedDescription

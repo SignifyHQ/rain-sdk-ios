@@ -35,8 +35,11 @@ final class CashViewModel: ObservableObject {
   
   let currencyType = Constants.CurrencyType.fiat.rawValue
   
+  //This is flag handle case when app have change scenePhase
+  var shouldReloadListTransaction: Bool = false
+  
   var transactionLimitEntity: Int {
-    50
+    100
   }
   
   var transactionLimitOffset: Int {
@@ -54,6 +57,7 @@ final class CashViewModel: ObservableObject {
     ),
     linkedAccount: Published<[APILinkedSourceData]>.Publisher
   ) {
+    
     accounts.accountsFiat
       .receive(on: DispatchQueue.main)
       .sink { [weak self] accounts in
@@ -71,7 +75,7 @@ final class CashViewModel: ObservableObject {
           self?.accountDataManager.externalAccountID = account.externalAccountId
           self?.cashBalanceValue = account.availableBalance
           self?.selectedAsset = AssetType(rawValue: account.currency) ?? .usd
-          self?.refreshTransactions(with: account.id)
+          self?.firstLoadData(with: account.id)
         }
       }
       .store(in: &cancellable)
@@ -85,9 +89,28 @@ final class CashViewModel: ObservableObject {
       .store(in: &cancellable)
     
     handleFundingAgreementData()
+    handleEventReloadTransaction()
   }
   
-  func refreshTransactions(with accountID: String) {
+  func handleEventReloadTransaction() {
+    NotificationCenter.default.publisher(for: .moneyTransactionSuccess)
+      .sink { [weak self] _ in
+        guard let self else { return }
+        guard let accountID = self.accountDataManager.fiatAccountID else { return }
+        let animation = self.transactions.isEmpty ? true : false
+        self.refreshTransaction(withAnimation: animation, accountID: accountID)
+      }
+      .store(in: &cancellable)
+  }
+  
+  func onRefresh() {
+    guard let accountID = accountDataManager.fiatAccountID else { return }
+    guard activity != .loading else { return }
+    refreshTransaction(withAnimation: false, accountID: accountID)
+  }
+  
+  func firstLoadData(with accountID: String) {
+    guard transactions.isEmpty || achInformation.accountName == ACHModel.default.accountName else { return }
     Task { @MainActor in
       do {
         activity = .loading
@@ -101,6 +124,27 @@ final class CashViewModel: ObservableObject {
       }
     }
   }
+  
+  func refreshTransaction(withAnimation: Bool, accountID: String) {
+    Task { @MainActor in
+      do {
+        if withAnimation {
+          activity = .loading
+        }
+        try await loadTransactions(accountId: accountID)
+        if withAnimation {
+          activity = transactions.isEmpty ? .addFunds : .transactions
+        }
+      } catch {
+        if withAnimation {
+          activity = .addFunds
+        }
+        log.error(error)
+        toastMessage = error.localizedDescription
+      }
+    }
+  }
+  
 }
 
 // MARK: - View Helpers
@@ -169,8 +213,6 @@ extension CashViewModel {
 // MARK: - Private Functions
  extension CashViewModel {
   private func loadTransactions(accountId: String) async throws {
-    defer { activity = .transactions }
-    activity = .loading
     let transactions = try await accountRepository.getTransactions(
       accountId: accountId,
       currencyType: currencyType,

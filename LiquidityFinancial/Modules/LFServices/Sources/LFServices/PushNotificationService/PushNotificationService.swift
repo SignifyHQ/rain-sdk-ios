@@ -27,8 +27,7 @@ public class PushNotificationsService: NSObject {
   }
   
   public func signOut() {
-    Messaging.messaging().deleteToken { _ in
-    }
+    Messaging.messaging().deleteToken { _ in }
     UserDefaults.hasRegisterPushToken = false
   }
   
@@ -73,14 +72,15 @@ extension PushNotificationsService: UNUserNotificationCenterDelegate {
     handleNotification(userInfo: response.notification.request.content.userInfo)
     completionHandler()
   }
-
+  
   public func userNotificationCenter(_ center: UNUserNotificationCenter, willPresent notification: UNNotification, withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
-    // Method called when the notification arrives with the app in foreground.
+      // Method called when the notification arrives with the app in foreground.
     completionHandler([.banner, .sound])
   }
-
+  
   private func handleNotification(userInfo: [AnyHashable: Any]) {
     log.info("Handle notification \(userInfo)")
+    NotificationsReceived.shared.addNotification(userInfo)
     guard
       let transactionId = userInfo["transactionId"] as? String,
       let accountId = userInfo["accountId"] as? String
@@ -91,7 +91,7 @@ extension PushNotificationsService: UNUserNotificationCenterDelegate {
   }
 }
 
-// MARK: MessagingDelegate
+  // MARK: MessagingDelegate
 extension PushNotificationsService: MessagingDelegate {
   public func messaging(_: Messaging, didReceiveRegistrationToken fcmToken: String?) {
     log.info("notification didReceiveRegistrationToken: \(fcmToken ?? "empty")")

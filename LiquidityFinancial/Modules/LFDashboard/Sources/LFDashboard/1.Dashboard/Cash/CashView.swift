@@ -8,6 +8,7 @@ import LFCard
 import LFAccountOnboarding
 
 struct CashView: View {
+  @Environment(\.scenePhase) var scenePhase
   @StateObject private var viewModel: CashViewModel
   let listCardViewModel: ListCardsViewModel
   var onRefresh: (() -> Void)
@@ -78,6 +79,15 @@ struct CashView: View {
         .embedInNavigation()
       }
     }
+    .onChange(of: scenePhase, perform: { newValue in
+      if newValue == .background {
+        viewModel.shouldReloadListTransaction = true
+      }
+      if newValue == .active && viewModel.shouldReloadListTransaction {
+        viewModel.shouldReloadListTransaction = false
+        viewModel.onRefresh()
+      }
+    })
   }
 }
 
@@ -132,6 +142,7 @@ private extension CashView {
     }
     .refreshable {
       onRefresh()
+      viewModel.onRefresh()
     }
   }
   

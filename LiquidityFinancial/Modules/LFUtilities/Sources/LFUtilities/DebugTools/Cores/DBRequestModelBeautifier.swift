@@ -1,6 +1,8 @@
 import Foundation
 import UIKit
 
+//swiftlint:disable all
+
 class DBRequestModelBeautifier {
   static func overview(request: DBRequestModel) -> NSMutableAttributedString {
     let url = NSMutableAttributedString().bold("URL: ").normal(request.url + "\n")

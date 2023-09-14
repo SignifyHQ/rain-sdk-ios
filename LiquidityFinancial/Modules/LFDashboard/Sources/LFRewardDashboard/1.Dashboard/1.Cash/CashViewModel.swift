@@ -32,8 +32,11 @@ final class CashViewModel: ObservableObject {
   @Published var accountID: String = .empty
   @Published var fullScreen: FullScreen?
   
+    //This is flag handle case when app have change scenePhase
+  var shouldReloadListTransaction: Bool = false
+  
   var transactionLimitEntity: Int {
-    50
+    100
   }
   
   var transactionLimitOffset: Int {
@@ -49,33 +52,80 @@ final class CashViewModel: ObservableObject {
   
   init(guestHandler: @escaping () -> Void) {
     self.guestHandler = guestHandler
-    appearOperations()
+    firstLoadData()
     getACHInfo()
     handleFundingAgreementData()
+    handleEventReloadTransaction()
   }
   
-  func appearOperations() {
-    Task { @MainActor [weak self] in
-      guard let self else { return }
-      await self.refresh()
+  func refreshable() {
+    guard let accountID = accountDataManager.fiatAccountID else { return }
+    refreshAccount()
+    let animation = self.transactions.isEmpty ? true : false
+    refreshTransaction(withAnimation: animation, accountID: accountID)
+  }
+  
+  private func handleEventReloadTransaction() {
+    NotificationCenter.default.publisher(for: .moneyTransactionSuccess)
+      .sink { [weak self] _ in
+        guard let self else { return }
+        guard let accountID = self.accountDataManager.fiatAccountID else { return }
+        let animation = self.transactions.isEmpty ? true : false
+        self.refreshTransaction(withAnimation: animation, accountID: accountID)
+      }
+      .store(in: &cancellable)
+  }
+  
+  private func firstLoadData() {
+    Task { @MainActor in
+      do {
+        activity = .loading
+        isLoading = true
+        if let account = try await refreshAccounts() {
+          isLoading = false
+          
+          try getListConnectedAccount()
+          
+          try await loadTransactions(accountId: account.id)
+          activity = transactions.isEmpty ? .addFunds : .transactions
+        }
+      } catch {
+        activity = .addFunds
+        log.error(error)
+      }
     }
   }
   
-  func refresh() async {
-    do {
-      activity = .loading
-      isLoading = true
-      if let account = try await refreshAccounts() {
-        isLoading = false
-        
+  func refreshAccount() {
+    Task { @MainActor in
+      do {
+        defer { isLoading = false }
+        isLoading = true
         try getListConnectedAccount()
-        
-        try await loadTransactions(accountId: account.id)
-        activity = transactions.isEmpty ? .addFunds : .transactions
+        try await refreshAccounts()
+      } catch {
+        log.error(error)
       }
-    } catch {
-      activity = .addFunds
-      log.error(error)
+    }
+  }
+  
+  func refreshTransaction(withAnimation: Bool, accountID: String) {
+    Task { @MainActor in
+      do {
+        if withAnimation {
+          activity = .loading
+        }
+        try await loadTransactions(accountId: accountID)
+        if withAnimation {
+          activity = transactions.isEmpty ? .addFunds : .transactions
+        }
+      } catch {
+        if withAnimation {
+          activity = .addFunds
+        }
+        log.error(error)
+        toastMessage = error.localizedDescription
+      }
     }
   }
 }
@@ -146,8 +196,6 @@ extension CashViewModel {
 // MARK: - Private Functions
  extension CashViewModel {
   private func loadTransactions(accountId: String) async throws {
-    defer { activity = .transactions }
-    activity = .loading
     let transactions = try await accountRepository.getTransactions(
       accountId: accountId,
       currencyType: currencyType,
@@ -158,6 +206,7 @@ extension CashViewModel {
     self.transactions = transactions.data.compactMap({ TransactionModel(from: $0) })
   }
   
+  @discardableResult
   private func refreshAccounts() async throws -> LFAccount? {
     defer { isLoading = false }
     isLoading = true

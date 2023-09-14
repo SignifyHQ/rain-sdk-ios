@@ -2,7 +2,7 @@ import SwiftUI
 
 public struct DBAdminMenuView: View {
   enum Action {
-    case network, analytics
+    case network, analytics, notification
   }
   
   let environment: String
@@ -37,6 +37,21 @@ public struct DBAdminMenuView: View {
                 .font(Font.system(size: 20, design: .monospaced))
                 .onTapGesture {
                   action = .network
+                }
+            }
+          }
+          
+          Section("Notifications") {
+            HStack {
+              Image(systemName: "escape")
+                .font(Font.system(size: 25, design: .rounded))
+                .foregroundColor(Color.orange)
+
+              Text("Notification Debugger")
+                .frame(maxWidth: .infinity)
+                .font(Font.system(size: 20, design: .monospaced))
+                .onTapGesture {
+                  action = .notification
                 }
             }
           }
@@ -80,6 +95,8 @@ public struct DBAdminMenuView: View {
         DBRequestsView()
       case .analytics:
         DebugAnalyticsView()
+      case .notification:
+        DebugNotificationView()
       }
     }
     .toolbar {

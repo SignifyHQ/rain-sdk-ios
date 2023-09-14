@@ -26,7 +26,7 @@ public enum KickoffService {
     )
     Intercom.setDeviceToken(deviceToken) { error in
       guard let error = error else { return }
-      log.error("Error setting device token: \(error.localizedDescription)")
+      log.error("Intercom Error setting device token: \(error.localizedDescription)")
     }
   }
 }
