@@ -24,14 +24,14 @@ struct CryptoTransactionDetailView: View {
   }
   
   var body: some View {
-    CommonTransactionDetailView(transaction: viewModel.transaction, content: content)
+    CommonTransactionDetailView(transaction: viewModel.transaction, content: content, isCryptoBalance: true)
   }
 }
 
 // MARK: - View Components
 private extension CryptoTransactionDetailView {
   var content: some View {
-    VStack(spacing: 24) {
+    VStack(spacing: 16) {
       ForEach(viewModel.transactionInfos, id: \.self) { item in
         GenImages.CommonImages.dash.swiftUIImage
           .foregroundColor(Colors.label.swiftUIColor)
@@ -43,6 +43,7 @@ private extension CryptoTransactionDetailView {
       }
       footer
     }
+    .padding(.top, 16)
     .navigationLink(item: $viewModel.navigation) { item in
       switch item {
       case .receipt(let cryptoReceipt):

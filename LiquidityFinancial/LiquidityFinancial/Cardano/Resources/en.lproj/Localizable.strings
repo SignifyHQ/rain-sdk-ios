@@ -622,6 +622,8 @@ https://mn.gov/commerce/money/investments/cryptocurrency/. \n\n\n\n\n\n\n";
 
 // TransactionDetail
 "transactionDetail.balance.title" = "Balance";
+"transactionDetail.nickname.title" = "Nickname";
+"transactionDetail.walletAddress.title" = "Wallet Address";
 "transactionDetail.balanceCash.title" = "Balance: %@";
 "transactionDetail.totalDonated.title" = "Total Donated: %@";
 "transactionDetail.currentRewards.title" = "Current rewards";

@@ -6,6 +6,7 @@ import ZerohashData
 import LFTransaction
 import LFLocalizable
 import ZerohashDomain
+import LFUtilities
 
 class ConfirmSendCryptoViewModel: ObservableObject {
   @LazyInjected(\.accountDataManager) var accountDataManager
@@ -16,6 +17,7 @@ class ConfirmSendCryptoViewModel: ObservableObject {
   @Published var toastMessage: String?
   @Published var navigation: Navigation?
   
+  var transaction: TransactionModel = .default
   let amount: Double
   let address: String
   let nickname: String
@@ -55,7 +57,7 @@ class ConfirmSendCryptoViewModel: ObservableObject {
         let transactionEntity = try await self.zerohashRepository.execute(accountId: accountId, quoteId: id)
         let account = try await accountRepository.getAccountDetail(id: accountId)
         self.accountDataManager.addOrUpdateAccount(account)
-        let transaction = TransactionModel(from: transactionEntity)
+        transaction = TransactionModel(from: transactionEntity)
         self.navigation = .transactionDetail(transaction.id)
       } catch {
         self.toastMessage = error.localizedDescription
@@ -76,7 +78,7 @@ class ConfirmSendCryptoViewModel: ObservableObject {
         )
         let account = try await accountRepository.getAccountDetail(id: id)
         self.accountDataManager.addOrUpdateAccount(account)
-        let transaction = TransactionModel(from: transactionEntity)
+        transaction = TransactionModel(from: transactionEntity)
         self.navigation = .transactionDetail(transaction.id)
       } catch {
         self.toastMessage = error.localizedDescription
@@ -88,12 +90,38 @@ class ConfirmSendCryptoViewModel: ObservableObject {
 // MARK: - View Helpers
 extension ConfirmSendCryptoViewModel {
   var cryptoTransactions: [TransactionInformation] {
-    [
+    var transactionInfors = [
       TransactionInformation(
         title: LFLocalizable.TransactionDetail.OrderType.title,
-        value: LFLocalizable.ConfirmSendCryptoView.Send.title
+        value: LFLocalizable.ConfirmSendCryptoView.Send.title.uppercased()
       )
     ]
+    if let currentBalance = transaction.currentBalance {
+      transactionInfors.append(
+        TransactionInformation(
+          title: LFLocalizable.TransactionDetail.Balance.title,
+          value: LFUtility.cryptoCurrency.uppercased(),
+          markValue: transaction.currentBalance?.formattedAmount(
+            minFractionDigits: Constants.FractionDigitsLimit.crypto.minFractionDigits
+          )
+        )
+      )
+    }
+    if !nickname.isEmpty {
+      transactionInfors.append(
+        TransactionInformation(
+          title: LFLocalizable.TransactionDetail.Nickname.title,
+          value: nickname
+        )
+      )
+    }
+    transactionInfors.append(
+      TransactionInformation(
+        title: LFLocalizable.TransactionDetail.WalletAddress.title,
+        value: address
+      )
+    )
+    return transactionInfors
   }
 }
 

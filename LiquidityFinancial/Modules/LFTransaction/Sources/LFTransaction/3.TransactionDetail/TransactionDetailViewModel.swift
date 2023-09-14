@@ -114,7 +114,7 @@ extension TransactionDetailViewModel {
   var cryptoTransactions: [TransactionInformation] {
     [
       TransactionInformation(
-        title: LFLocalizable.TransactionDetail.TransactionType.title,
+        title: LFLocalizable.TransactionDetail.OrderType.title,
         value: transaction.type.title
       )
     ]

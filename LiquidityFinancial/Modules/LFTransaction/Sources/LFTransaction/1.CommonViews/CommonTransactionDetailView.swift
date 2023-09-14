@@ -5,12 +5,15 @@ import LFLocalizable
 import LFUtilities
 
 struct CommonTransactionDetailView<Content: View>: View {
-  let transaction: TransactionModel
   @ViewBuilder let content: Content?
   @StateObject private var viewModel = CommonTransactionDetailViewModel()
   
-  init(transaction: TransactionModel, content: Content? = EmptyView()) {
+  let transaction: TransactionModel
+  let isCryptoBalance: Bool
+  
+  init(transaction: TransactionModel, content: Content? = EmptyView(), isCryptoBalance: Bool = false) {
     self.transaction = transaction
+    self.isCryptoBalance = isCryptoBalance
     self.content = content
   }
   
@@ -82,9 +85,10 @@ private extension CommonTransactionDetailView {
   }
   
   var balanceValue: String {
-    transaction.currentBalance?.formattedAmount(
-      prefix: Constants.CurrencyUnit.usd.rawValue,
+    let balance = transaction.currentBalance?.formattedAmount(
+      prefix: isCryptoBalance ? nil : Constants.CurrencyUnit.usd.symbol,
       minFractionDigits: 2
     ) ?? .empty
+    return isCryptoBalance ? "\(balance) \(LFUtility.cryptoCurrency.uppercased())" : balance
   }
 }

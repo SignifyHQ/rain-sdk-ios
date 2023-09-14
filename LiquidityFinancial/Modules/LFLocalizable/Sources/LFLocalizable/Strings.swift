@@ -2401,6 +2401,10 @@ public enum LFLocalizable {
       /// Network Fee
       public static let title = LFLocalizable.tr("Localizable", "transactionDetail.networkFee.title", fallback: "Network Fee")
     }
+    public enum Nickname {
+      /// Nickname
+      public static let title = LFLocalizable.tr("Localizable", "transactionDetail.nickname.title", fallback: "Nickname")
+    }
     public enum OrderType {
       /// Order Type
       public static let title = LFLocalizable.tr("Localizable", "transactionDetail.orderType.title", fallback: "Order Type")
@@ -2470,6 +2474,10 @@ public enum LFLocalizable {
     public enum TransactionType {
       /// Transaction Type
       public static let title = LFLocalizable.tr("Localizable", "transactionDetail.transactionType.title", fallback: "Transaction Type")
+    }
+    public enum WalletAddress {
+      /// Wallet Address
+      public static let title = LFLocalizable.tr("Localizable", "transactionDetail.walletAddress.title", fallback: "Wallet Address")
     }
   }
   public enum TransactionList {
