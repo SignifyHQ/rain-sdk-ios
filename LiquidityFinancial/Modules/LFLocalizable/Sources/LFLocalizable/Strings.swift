@@ -219,6 +219,12 @@ public enum LFLocalizable {
         return LFLocalizable.tr("Localizable", "RewardTabView.earning_rewards.description", String(describing: p1), fallback: "Earning rewards in %@")
       }
     }
+    public enum FirstReward {
+      /// Select Reward
+      public static let select = LFLocalizable.tr("Localizable", "RewardTabView.firstReward.select", fallback: "Select Reward")
+      /// CHOOSE BETWEEN
+      public static let title = LFLocalizable.tr("Localizable", "RewardTabView.firstReward.title", fallback: "CHOOSE BETWEEN")
+    }
   }
   public enum Account {
     public enum Reward {

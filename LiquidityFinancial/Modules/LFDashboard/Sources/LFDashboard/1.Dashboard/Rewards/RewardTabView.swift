@@ -1,4 +1,5 @@
 import Combine
+import BaseDashboard
 import SwiftUI
 import LFStyleGuide
 import LFLocalizable
@@ -54,6 +55,9 @@ private extension RewardTabView {
       VStack(spacing: 10) {
         if viewModel.isLoading {
           loading
+        } else if false {
+          // TODO: Will implement later will API ready
+          selectTypeView
         } else {
           headerView
           activity
@@ -138,7 +142,7 @@ private extension RewardTabView {
     HStack(alignment: .center) {
       VStack(alignment: .center, spacing: 12) {
         Spacer(minLength: 120)
-        GenImages.Images.emptyRewards.swiftUIImage
+        GenImages.Images.rewardHeader.swiftUIImage
         Text(LFLocalizable.RewardTabView.noRewards)
           .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.medium.value))
           .foregroundColor(Colors.label.swiftUIColor)
@@ -146,5 +150,59 @@ private extension RewardTabView {
       }
       .fixedSize(horizontal: false, vertical: true)
     }
+  }
+  
+  var selectTypeView: some View {
+    ZStack(alignment: .top) {
+      VStack {
+        Spacer().frame(height: 60)
+        VStack(alignment: .center) {
+          selectTypeContentView
+            .padding(.horizontal, 16)
+        }
+        .padding(.top, 90)
+        .padding([.bottom], 16)
+        .background(Colors.secondaryBackground.swiftUIColor)
+        .cornerRadius(10)
+      }
+      
+      GenImages.Images.rewardHeader.swiftUIImage
+        .alignmentGuide(VerticalAlignment.top) {
+          $0[VerticalAlignment.top] + 16
+        }
+        .zIndex(1)
+    }
+  }
+  
+  var selectTypeContentView: some View {
+    VStack(alignment: .leading) {
+      Text(LFLocalizable.RewardTabView.FirstReward.title)
+        .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.main.value))
+        .foregroundColor(Colors.label.swiftUIColor)
+      Spacer().frame(height: 16)
+      VStack(spacing: 12) {
+        ForEach(viewModel.assetTypes, id: \.self) { asset in
+          assetCell(assetType: asset)
+        }
+      }
+      Spacer().frame(height: 16)
+      FullSizeButton(
+        title: LFLocalizable.RewardTabView.FirstReward.select,
+        isDisable: false
+      ) {
+        viewModel.onClickedChangeReward()
+      }
+    }
+  }
+  
+  @ViewBuilder func assetCell(assetType: AssetType) -> some View {
+    HStack(spacing: 8) {
+      assetType.image
+      Text(assetType.title)
+        .foregroundColor(Colors.label.swiftUIColor)
+        .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.medium.value))
+      Spacer()
+    }
+    .frame(height: 24)
   }
 }

@@ -18,6 +18,7 @@ class RewardTabViewModel: ObservableObject {
   @Published var navigation: Navigation?
   @Published var activity = Activity.loading
   @Published var transactions: [TransactionModel] = []
+  @Published var assetTypes: [AssetType] = []
   
   let currencyType = Constants.CurrencyType.crypto.rawValue
   
@@ -27,17 +28,23 @@ class RewardTabViewModel: ObservableObject {
     accounts.accountsCrypto
       .receive(on: DispatchQueue.main)
       .sink { [weak self] accounts in
+        guard let self = self else {
+          return
+        }
+        self.assetTypes = accounts.compactMap({
+          AssetType(rawValue: $0.currency)
+        })
         if let account = accounts.first {
-          self?.account = account
-          self?.assetModel = AssetModel(
+          self.account = account
+          self.assetModel = AssetModel(
             id: account.id,
             type: AssetType(rawValue: account.currency),
             availableBalance: account.availableBalance,
             availableUsdBalance: account.availableUsdBalance,
             externalAccountId: account.externalAccountId
           )
-          self?.accountDataManager.cryptoAccountID = account.id
-          self?.fetchAllTransactions()
+          self.accountDataManager.cryptoAccountID = account.id
+          self.fetchAllTransactions()
         }
       }
       .store(in: &cancellable)

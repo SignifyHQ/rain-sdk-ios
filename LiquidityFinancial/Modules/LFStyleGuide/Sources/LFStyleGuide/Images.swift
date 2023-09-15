@@ -156,6 +156,7 @@ public enum GenImages {
     public static let icScanner = ImageAsset(name: "ic_scanner")
     public static let physicalCard = ImageAsset(name: "physicalCard")
     public static let referralsInbox = ImageAsset(name: "referralsInbox")
+    public static let rewardHeader = ImageAsset(name: "rewardHeader")
     public static let statusCompleted = ImageAsset(name: "statusCompleted")
     public static let statusPending = ImageAsset(name: "statusPending")
     public static let termsCheckboxDeselected = ImageAsset(name: "termsCheckboxDeselected")

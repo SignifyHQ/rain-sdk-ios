@@ -741,6 +741,8 @@ https://mn.gov/commerce/money/investments/cryptocurrency/. \n\n\n\n\n\n\n";
 "RewardTabView.see_all" = "See all";
 "RewardTabView.earning_rewards.description" = "Earning rewards in %@";
 "RewardTabView.noRewards" = "No rewards yet";
+"RewardTabView.firstReward.title" = "CHOOSE BETWEEN";
+"RewardTabView.firstReward.select" = "Select Reward";
 
 // Change Reward View
 "ChangeRewardView.title" = "Change rewards";

@@ -894,6 +894,8 @@
 "RewardTabView.see_all" = "See all";
 "RewardTabView.earning_rewards.description" = "Earning rewards in %@";
 "RewardTabView.noRewards" = "No rewards yet";
+"RewardTabView.firstReward.title" = "CHOOSE BETWEEN";
+"RewardTabView.firstReward.select" = "Select Reward";
 
 // Donations
 "donations.select_fundraiser" = "Select a Cause";
