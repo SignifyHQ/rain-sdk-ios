@@ -2270,10 +2270,10 @@ public enum LFLocalizable {
       return LFLocalizable.tr("Localizable", "taxes.value", String(describing: p1), fallback: "Created %@")
     }
     public enum Empty {
-      /// There are currently no taxes
-      public static let message = LFLocalizable.tr("Localizable", "taxes.empty.message", fallback: "There are currently no taxes")
-      /// NO TAXES
-      public static let title = LFLocalizable.tr("Localizable", "taxes.empty.title", fallback: "NO TAXES")
+      /// There are currently no tax statements
+      public static let message = LFLocalizable.tr("Localizable", "taxes.empty.message", fallback: "There are currently no tax statements")
+      /// NO STATEMENTS
+      public static let title = LFLocalizable.tr("Localizable", "taxes.empty.title", fallback: "NO STATEMENTS")
     }
   }
   public enum Term {

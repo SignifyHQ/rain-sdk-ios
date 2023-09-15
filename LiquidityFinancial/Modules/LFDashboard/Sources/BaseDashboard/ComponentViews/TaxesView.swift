@@ -42,7 +42,7 @@ public struct TaxesView: View {
         loading
       case let .success(items):
         if items.isEmpty {
-          empty
+          emptyTaxView
         } else {
           rows(items: items)
         }
@@ -94,8 +94,11 @@ extension TaxesView {
     }
   }
   
-  private var empty: some View {
-    VStack(spacing: 10) {
+  private var emptyTaxView: some View {
+    VStack(spacing: 12) {
+      GenImages.CommonImages.icSearch.swiftUIImage
+        .foregroundColor(Colors.label.swiftUIColor)
+        .padding(.bottom, 12)
       Text(LFLocalizable.Taxes.Empty.title)
         .foregroundColor(Colors.label.swiftUIColor)
         .font(Fonts.regular.swiftUIFont(size: 24))

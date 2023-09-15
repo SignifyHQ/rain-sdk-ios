@@ -65,11 +65,13 @@ private extension BankStatementView {
   }
   
   var emptyStatements: some View {
-    VStack(spacing: 10) {
+    VStack(spacing: 12) {
+      GenImages.CommonImages.icSearch.swiftUIImage
+        .foregroundColor(Colors.label.swiftUIColor)
+        .padding(.bottom, 12)
       Text(LFLocalizable.BankStatement.emptyTitle)
         .foregroundColor(Colors.label.swiftUIColor)
         .font(Fonts.regular.swiftUIFont(size: 24))
-
       Text(LFLocalizable.BankStatement.emptyInfo)
         .foregroundColor(Colors.label.swiftUIColor)
         .opacity(0.75)

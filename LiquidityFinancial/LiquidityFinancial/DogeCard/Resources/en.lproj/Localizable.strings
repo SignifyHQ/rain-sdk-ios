@@ -780,8 +780,8 @@ https://mn.gov/commerce/money/investments/cryptocurrency/. \n\n\n\n\n\n\n";
 "taxes.navigation_title" = "Taxes";
 "taxes.error" = "We were unable to load Taxes right now.\nPlease try again.";
 "taxes.retry" = "Retry";
-"taxes.empty.title" = "NO TAXES";
-"taxes.empty.message" = "There are currently no taxes";
+"taxes.empty.title" = "NO STATEMENTS";
+"taxes.empty.message" = "There are currently no tax statements";
 "taxes.value" = "Created %@";
 
   // Account Reward
