@@ -81,7 +81,7 @@ private extension AccountsView {
           depositLimits
         }
         */
-        section(title: LFLocalizable.AccountView.cardAccountDetails(LFUtility.appName)) {
+        section(title: LFLocalizable.AccountView.cardAccountDetails) {
           accountDetailView
         }
         section(title: LFLocalizable.AccountView.shortcuts) {

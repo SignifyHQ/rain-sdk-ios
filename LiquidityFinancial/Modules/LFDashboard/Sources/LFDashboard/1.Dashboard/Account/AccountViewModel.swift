@@ -97,8 +97,10 @@ class AccountViewModel: ObservableObject {
   
   func getSubWalletAddress(asset: AssetModel) -> String {
     var walletAdress = ""
-    if let externalAccountId = asset.externalAccountId {
-      walletAdress = externalAccountId.substring(start: 0, end: externalAccountId.count / 4)
+    let showCount: Int = 4
+    if let externalAccountId = asset.externalAccountId, externalAccountId.count >= showCount {
+      let lastIndex = externalAccountId.count
+      walletAdress = externalAccountId.substring(start: lastIndex - showCount, end: lastIndex)
     }
     return walletAdress
   }

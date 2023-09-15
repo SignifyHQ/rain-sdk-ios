@@ -260,10 +260,8 @@ public enum LFLocalizable {
     public static let atmLocationTitle = LFLocalizable.tr("Localizable", "accountView.atm_location_title", fallback: "ATM Locations")
     /// Bank Statements
     public static let bankStatements = LFLocalizable.tr("Localizable", "accountView.bank_statements", fallback: "Bank Statements")
-    /// %@ Account
-    public static func cardAccountDetails(_ p1: Any) -> String {
-      return LFLocalizable.tr("Localizable", "accountView.card_account_details", String(describing: p1), fallback: "%@ Account")
-    }
+    /// Account
+    public static let cardAccountDetails = LFLocalizable.tr("Localizable", "accountView.card_account_details", fallback: "Account")
     /// Connect
     public static let connectNewAccounts = LFLocalizable.tr("Localizable", "accountView.connect_new_accounts", fallback: "Connect")
     /// Connected Accounts
@@ -325,6 +323,12 @@ public enum LFLocalizable {
     public enum RoutingNumber {
       /// Routing number
       public static let title = LFLocalizable.tr("Localizable", "accountView.routingNumber.title", fallback: "Routing number")
+    }
+    public enum Wallet {
+      /// %@ Wallet
+      public static func title(_ p1: Any) -> String {
+        return LFLocalizable.tr("Localizable", "accountView.wallet.title", String(describing: p1), fallback: "%@ Wallet")
+      }
     }
   }
   public enum AddBankWithDebit {

@@ -488,10 +488,11 @@ https://mn.gov/commerce/money/investments/cryptocurrency/. \n\n\n\n\n\n\n";
 
 // Account view
 "accountView.wallets" = "Wallets";
+"accountView.wallet.title" = "%@ Wallet";
 "accountView.connected_accounts" = "Connected Accounts";
 "accountView.connect_new_accounts" = "Connect";
 "accountView.limits" = "Limits";
-"accountView.card_account_details" = "%@ Account";
+"accountView.card_account_details" = "Account";
 "accountView.shortcuts" = "Shortcuts";
 "accountView.direct_deposit.title" = "Direct Deposit";
 "accountView.direct_deposit.subtitle" = "Deposit part, or all of your paycheck";

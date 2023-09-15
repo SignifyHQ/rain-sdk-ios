@@ -92,7 +92,7 @@ private extension AccountsView {
         section(title: LFLocalizable.AccountView.limits) {
           depositLimits
         }*/
-        section(title: LFLocalizable.AccountView.cardAccountDetails(LFUtility.appName)) {
+        section(title: LFLocalizable.AccountView.cardAccountDetails) {
           accountDetailView
         }
         if viewModel.assets.isNotEmpty {
@@ -295,13 +295,13 @@ private extension AccountsView {
       } label: {
         HStack(spacing: 8) {
           assetType.image
-          Text(assetType.title)
+          Text(LFLocalizable.AccountView.Wallet.title(assetType.title))
             .foregroundColor(Colors.label.swiftUIColor)
             .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.medium.value))
           Spacer()
           HStack(spacing: 0) {
-            Text("********\(viewModel.getSubWalletAddress(asset: asset))")
-              .foregroundColor(Colors.label.swiftUIColor)
+            Text("****\(viewModel.getSubWalletAddress(asset: asset))")
+              .foregroundColor(Colors.primary.swiftUIColor)
               .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.small.value))
           }
         }
