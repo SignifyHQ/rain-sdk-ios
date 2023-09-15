@@ -29,9 +29,7 @@ class CausesViewModel: ObservableObject {
     RewardUseCase(repository: rewardRepository)
   }()
   
-  let tabRedirection: TabRedirection
-  init(tabRedirection: @escaping TabRedirection) {
-    self.tabRedirection = tabRedirection
+  init() {
     handleSelectedFundraisersSuccess()
   }
   

@@ -244,6 +244,8 @@ public enum LFLocalizable {
         public static func descUpToBack(_ p1: Any) -> String {
           return LFLocalizable.tr("Localizable", "account.reward.item.desc_up_to_back", String(describing: p1), fallback: "%@%% back")
         }
+        /// Qualifying purchases
+        public static let title = LFLocalizable.tr("Localizable", "account.reward.item.title", fallback: "Qualifying purchases")
       }
       public enum Session {
         /// Rewards by Asset Type
@@ -2116,10 +2118,8 @@ public enum LFLocalizable {
   public enum SelectRewards {
     /// Continue
     public static let `continue` = LFLocalizable.tr("Localizable", "select_rewards.continue", fallback: "Continue")
-    /// Welcome to %@, please select your rewards. You can change anytime.
-    public static func subtitle(_ p1: Any) -> String {
-      return LFLocalizable.tr("Localizable", "select_rewards.subtitle", String(describing: p1), fallback: "Welcome to %@, please select your rewards. You can change anytime.")
-    }
+    /// You can change anytime
+    public static let subtitle = LFLocalizable.tr("Localizable", "select_rewards.subtitle", fallback: "You can change anytime")
     /// Select Rewards
     public static let title = LFLocalizable.tr("Localizable", "select_rewards.title", fallback: "Select Rewards")
   }

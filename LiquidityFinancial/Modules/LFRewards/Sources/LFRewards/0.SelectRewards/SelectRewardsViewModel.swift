@@ -40,31 +40,45 @@ class SelectRewardsViewModel: ObservableObject {
   }
 
   func donationNavigation() {
-    apiFetchCategories { [weak self] model in
-      self?.navigation = .causeFilter(model)
+    switch LFUtilities.target {
+    case .CauseCard:
+      Task { @MainActor in
+        do {
+          defer { isLoading = false }
+          isLoading = true
+          let causeList = try await apiFetchCategories()
+          self.navigation = .causeFilter(causeList)
+        } catch {
+          log.error(error.localizedDescription)
+          showError = true
+        }
+      }
+    case .PrideCard:
+      Task { @MainActor in
+        do {
+          defer { isLoading = false }
+          isLoading = true
+          let causeList = try await apiFetchCategories()
+          if let causeItem = causeList.first {
+            let fundraisers = try await apiFetchCategoriesFundraisers(causeItem: causeItem)
+            self.navigation = .selectFundraiser(causeItem, fundraisers)
+          } else {
+              //This cause never happen
+            self.navigation = .causeFilter(causeList)
+          }
+        } catch {
+          log.error(error.localizedDescription)
+          showError = true
+        }
+      }
+    default: break
     }
   }
 
   func cashbackNavigation() {
     navigation = .agreement
   }
-  
-  private func apiFetchCategories(onCompletion: @escaping ([CauseModel]) -> Void) {
-    Task {
-      defer { isLoading = false }
-      isLoading = true
-      do {
-        let categories = try await selectRewardUseCase.getDonationCategories(limit: limit, offset: offset)
-        rewardDataManager.update(rewardCategories: categories)
-        let causeCategories = categories.data.compactMap({ CauseModel(rewardData: $0) })
-        onCompletion(causeCategories)
-      } catch {
-        log.error(error.localizedDescription)
-        showError = true
-      }
-    }
-  }
-  
+    
   private func apiSelecteRewardType(option: Option) {
     let param: [String: Any] = [
       "updateRewardTypeRequest": [
@@ -89,6 +103,21 @@ class SelectRewardsViewModel: ObservableObject {
         showError = true
       }
     }
+  }
+  
+  private func apiFetchCategories() async throws -> [CauseModel] {
+    let categories = try await selectRewardUseCase.getDonationCategories(limit: limit, offset: offset)
+    rewardDataManager.update(rewardCategories: categories)
+    let causeCategories = categories.data.compactMap({ CauseModel(rewardData: $0) })
+    return causeCategories
+  }
+  
+  private func apiFetchCategoriesFundraisers(causeItem: CauseModel) async throws -> [FundraiserModel] {
+    let categoryId = causeItem.id
+    let fundraisers = try await selectRewardUseCase.getCategoriesFundraisers(categoryID: categoryId, limit: limit, offset: offset)
+    let fundraiserModels = fundraisers.data.compactMap({ FundraiserModel(fundraiserData: $0) })
+    rewardDataManager.update(fundraisers: fundraisers)
+    return fundraiserModels
   }
 }
 
@@ -117,5 +146,6 @@ extension SelectRewardsViewModel {
   enum Navigation {
     case agreement
     case causeFilter([CauseModel])
+    case selectFundraiser(CauseModel, [FundraiserModel])
   }
 }

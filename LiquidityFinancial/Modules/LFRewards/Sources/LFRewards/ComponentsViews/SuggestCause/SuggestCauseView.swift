@@ -5,8 +5,10 @@ import LFLocalizable
 
   // MARK: - SuggestCauseButton
 
-struct SuggestCauseButton: View {
-  var body: some View {
+public struct SuggestCauseButton: View {
+  public init() {}
+  
+  public var body: some View {
     FullSizeButton(title: LFLocalizable.SuggestCause.title, isDisable: false, type: .secondary) {
       showInput = true
     }
@@ -20,9 +22,9 @@ struct SuggestCauseButton: View {
 
   // MARK: - SuggestCauseView
 
-struct SuggestCauseView: View {
+public struct SuggestCauseView: View {
 
-  var body: some View {
+  public var body: some View {
     content
       .toolbar {
         ToolbarItem(placement: .navigationBarLeading) {

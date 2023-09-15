@@ -731,7 +731,7 @@ https://mn.gov/commerce/money/investments/cryptocurrency/. \n\n\n\n\n\n\n";
 // MARK: - Rewards
 // Select Rewards
 "select_rewards.title" = "Select Rewards";
-"select_rewards.subtitle" = "Welcome to %@, please select your rewards. You can change anytime.";
+"select_rewards.subtitle" = "You can change anytime";
 "select_rewards.continue" = "Continue";
 
 // Edit Rewards
@@ -1002,6 +1002,7 @@ https://mn.gov/commerce/money/investments/cryptocurrency/. \n\n\n\n\n\n\n";
 "account.reward.session.normal" = "Rewards by Asset Type";
 "account.reward.session.special" = "Special Promotions";
 "account.reward.item.desc_up_to_back" = "%@%% back";
+"account.reward.item.title" = "Qualifying purchases";
 
 // MARK: - Common
 

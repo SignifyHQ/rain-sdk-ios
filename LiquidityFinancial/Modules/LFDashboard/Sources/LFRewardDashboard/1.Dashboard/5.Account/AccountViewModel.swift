@@ -69,10 +69,6 @@ extension AccountViewModel {
     intercomService.openIntercom()
   }
   
-  func openTaxes() {
-    navigation = .taxes
-  }
-  
   func handleFundingAgreementData() {
     addFundsViewModel.fundingAgreementData
       .receive(on: DispatchQueue.main)
@@ -180,7 +176,6 @@ extension AccountViewModel {
     case connectedAccounts
     case bankStatement
     case disputeTransaction(String, String)
-    case taxes
     case rewards
     case agreement(APIAgreementData?)
   }

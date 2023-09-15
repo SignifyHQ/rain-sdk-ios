@@ -3,17 +3,19 @@ import LFUtilities
 import LFStyleGuide
 import LFLocalizable
 
-struct FundraiserItemView: View {
+public struct FundraiserItemView: View {
   let fundraiser: FundraiserModel
   let imageSize: CGFloat
   let shareOnImageTap: Bool
   let destination: AnyView
   let whereStart: RewardWhereStart
   
+  var onSelectItem: ((_ fundraiserID: String) -> Void)?
+  
   @State private var showDetails = false
   @State private var showShare = false
 
-  init(fundraiser: FundraiserModel, imageSize: CGFloat = 80, shareOnImageTap: Bool = false, destination: AnyView, whereStart: RewardWhereStart) {
+  public init(fundraiser: FundraiserModel, imageSize: CGFloat = 80, shareOnImageTap: Bool = false, destination: AnyView, whereStart: RewardWhereStart) {
     self.fundraiser = fundraiser
     self.imageSize = imageSize
     self.shareOnImageTap = shareOnImageTap
@@ -21,10 +23,23 @@ struct FundraiserItemView: View {
     self.whereStart = whereStart
   }
   
-  var body: some View {
+  public init(fundraiser: FundraiserModel, onSelectItem: @escaping (_ fundraiserID: String) -> Void) {
+    self.fundraiser = fundraiser
+    self.imageSize = 80
+    self.shareOnImageTap = false
+    self.destination = AnyView(EmptyView())
+    self.whereStart = .dashboard
+    self.onSelectItem = onSelectItem
+  }
+  
+  public var body: some View {
     content
       .onTapGesture {
-        showDetails = true
+        if let onSelectItem = onSelectItem {
+          onSelectItem(fundraiser.id)
+        } else {
+          showDetails = true
+        }
       }
       .navigationLink(isActive: $showDetails) {
         FundraiserDetailView(

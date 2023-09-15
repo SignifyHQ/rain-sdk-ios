@@ -54,7 +54,7 @@ public final class HomeViewModel: ObservableObject {
   }
   
   var showSearchButton: Bool {
-    tabSelected == .donation || tabSelected == .causes
+    tabSelected == .causes
   }
   
   func onAppear() {

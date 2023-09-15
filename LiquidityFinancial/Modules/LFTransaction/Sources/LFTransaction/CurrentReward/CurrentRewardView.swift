@@ -37,8 +37,7 @@ public struct CurrentRewardView: View {
         if !rewards.isEmpty {
           section(title: LFLocalizable.Account.Reward.Session.normal) {
             ForEach(rewards) { item in
-              
-              rowView(title: item.name ?? "", desc: LFLocalizable.Account.Reward.Item.descUpToBack("\(item.returnRate ?? 0.0)")) {
+              rowView(title: item.title, desc: LFLocalizable.Account.Reward.Item.descUpToBack("\(item.returnRate ?? 0.0)")) {
                 
               }
             }

@@ -34,10 +34,11 @@ struct DashboardView: View {
         })
         DonationsView(viewModel: viewModel)
       case .causes:
-        let viewModel = CausesViewModel(tabRedirection: { tabOption in
-          log.debug(tabOption)
-        })
-        CausesView(viewModel: viewModel)
+        switch LFUtilities.target {
+        case .CauseCard: CausesView(viewModel: CausesViewModel())
+        case .PrideCard: PrideCardCauseView(viewModel: PrideCardCauseViewModel())
+        default: CausesView(viewModel: CausesViewModel())
+        }
       case .account:
         AccountsView()
       }

@@ -19,26 +19,18 @@ public struct FundraiserModel: Hashable, Identifiable {
   }
   
   public init?(fundraiserData: CategoriesFundraisersEntity) {
-    guard let id = fundraiserData.id,
-          let name = fundraiserData.name,
-          let description = fundraiserData.description,
-          let goal = fundraiserData.goal,
-          let stickerURL = fundraiserData.stickerUrl,
-          let isFeatured = fundraiserData.isFeatured,
-          let isLive = fundraiserData.isLive,
-          let currency = fundraiserData.currency,
-          let categories = fundraiserData.categories  else {
+    guard let id = fundraiserData.id else {
       return nil
     }
     self.id = id
-    self.name = name
-    self.description = description
-    self.goal = goal
-    self.stickerUrlString = stickerURL
-    self.isFeatured = isFeatured
-    self.isLive = isLive
-    self.categories = categories
-    self.currency = currency
+    self.name = fundraiserData.name ?? ""
+    self.description = fundraiserData.description ?? ""
+    self.goal = fundraiserData.goal ?? 0
+    self.stickerUrlString = fundraiserData.stickerUrl ?? ""
+    self.isFeatured = fundraiserData.isFeatured ?? false
+    self.isLive = fundraiserData.isLive ?? false
+    self.categories = fundraiserData.categories ?? []
+    self.currency = fundraiserData.currency ?? "$"
   }
 }
 

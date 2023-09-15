@@ -33,8 +33,6 @@ struct AccountsView: View {
             viewModel.navigation = nil
           }
           .navigationBarHidden(true)
-        case .taxes:
-          TaxesView()
         case .rewards:
           CurrentRewardView()
         case .agreement(let data):
@@ -189,13 +187,6 @@ private extension AccountsView {
         value: nil
       ) {
         viewModel.bankStatementTapped()
-      }
-      ArrowButton(
-        image: GenImages.CommonImages.Accounts.tax.swiftUIImage,
-        title: LFLocalizable.AccountView.taxes,
-        value: nil
-      ) {
-        viewModel.openTaxes()
       }
       ArrowButton(
         image: GenImages.CommonImages.Accounts.help.swiftUIImage,

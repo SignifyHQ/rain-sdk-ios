@@ -47,3 +47,12 @@ final class CurrentRewardViewModel: ObservableObject {
     apiFetchUserRewards()
   }
 }
+
+extension APIUserRewards {
+  var title: String {
+    switch LFUtilities.target {
+    case .CauseCard, .PrideCard: return LFLocalizable.Account.Reward.Item.title
+    default: return name ?? ""
+    }
+  }
+}

@@ -32,6 +32,15 @@ public struct SelectRewardsView: View {
           SelectCauseCategoriesView(viewModel: SelectCauseCategoriesViewModel(causes: causes), destination: destinationView, whereStart: whereStart)
         case .agreement:
           destinationView
+        case let .selectFundraiser(cause, fundraisers):
+          SelectFundraiserView(
+            viewModel: SelectFundraiserViewModel(
+              causeModel: cause,
+              fundraisers: fundraisers,
+              showSkipButton: false),
+            destination: destinationView,
+            whereStart: whereStart
+          )
         }
       }
   }
@@ -83,7 +92,7 @@ public struct SelectRewardsView: View {
       Text(LFLocalizable.SelectRewards.title.uppercased())
         .font(Fonts.regular.swiftUIFont(size: 18))
         .foregroundColor(ModuleColors.label.swiftUIColor)
-      Text(LFLocalizable.SelectRewards.subtitle(LFUtility.appName))
+      Text(LFLocalizable.SelectRewards.subtitle)
         .font(Fonts.regular.swiftUIFont(size: 12))
         .foregroundColor(ModuleColors.label.swiftUIColor.opacity(0.75))
     }
@@ -92,7 +101,7 @@ public struct SelectRewardsView: View {
   
   private var options: some View {
     func option(_ item: SelectRewardsViewModel.Option) -> some View {
-      UserRewardRowView(type: .full, reward: item.userRewardType, selection: viewModel.selection(item))
+      UserRewardRowView(type: .short, reward: item.userRewardType, selection: viewModel.selection(item))
         .onTapGesture {
           viewModel.optionSelected(item)
         }

@@ -40,7 +40,7 @@ public struct SelectFundraiserView: View {
       title
       ScrollView(showsIndicators: false) {
         VStack(spacing: 16) {
-          ForEach(viewModel.fundraisers) { fundraiser in
+          ForEach(viewModel.fundraisers, id: \.id) { fundraiser in
             item(fundraiser: fundraiser)
           }
         }
