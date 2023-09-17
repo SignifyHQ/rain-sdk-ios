@@ -105,7 +105,7 @@ private extension FullSizeButton {
     case .contrast:
       return Colors.primary.swiftUIColor
     case .white:
-      return Colors.background.swiftUIColor
+      return Colors.darkText.swiftUIColor
     }
   }
   
@@ -129,7 +129,7 @@ private extension FullSizeButton {
     case .primary:
       return .clear
     case .white:
-      return Colors.label.swiftUIColor
+      return Colors.whiteText.swiftUIColor
     }
   }
   

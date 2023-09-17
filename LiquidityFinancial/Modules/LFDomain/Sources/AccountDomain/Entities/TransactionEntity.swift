@@ -20,6 +20,12 @@ public protocol TransactionEntity {
   var updatedAt: String { get }
   var rewardEntity: RewardEntity? { get }
   var receiptEntity: TransactionReceiptEntity? { get }
+  var externalTransactionEntity: ExternalTransactionEntity? { get }
+}
+
+public protocol ExternalTransactionEntity {
+  var type: String? { get }
+  var transactionType: String? { get }
 }
 
 public protocol RewardEntity {

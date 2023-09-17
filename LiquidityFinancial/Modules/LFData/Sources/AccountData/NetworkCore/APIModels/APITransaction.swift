@@ -21,9 +21,14 @@ public struct APITransaction: Codable {
   public let updatedAt: String
   public var reward: APIReward?
   public var receipt: APITransactionReceipt?
+  public var externalTransaction: APIExternalTransaction?
 }
 
 extension APITransaction: TransactionEntity {
+  public var externalTransactionEntity: ExternalTransactionEntity? {
+    externalTransaction
+  }
+  
   public var rewardEntity: RewardEntity? {
     reward
   }
@@ -31,6 +36,11 @@ extension APITransaction: TransactionEntity {
   public var receiptEntity: TransactionReceiptEntity? {
     receipt
   }
+}
+
+public struct APIExternalTransaction: Codable, ExternalTransactionEntity {
+  public let type: String?
+  public let transactionType: String?
 }
 
 public struct APIReward: Codable, RewardEntity {

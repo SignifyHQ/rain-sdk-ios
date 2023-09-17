@@ -165,6 +165,13 @@ public extension Constants {
   }
 }
 
+  // MARK: TransactionType
+public extension Constants {
+  enum TransactionType: String {
+    case ach = "ACH"
+  }
+}
+
 // MARK: - DateFormat
 public extension Constants {
   enum DateFormat: String {

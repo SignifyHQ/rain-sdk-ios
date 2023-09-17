@@ -19,8 +19,25 @@ public struct TransactionModel: Identifiable {
   public var updateAt: String
   var rewards: TransactionReward?
   var receipt: TransactionReceipt?
+  var externalTransaction: ExternalTransaction?
   
-  public init(id: String, accountId: String, title: String? = nil, description: String? = nil, amount: Double, currentBalance: Double? = nil, fee: Double? = nil, type: TransactionType, status: TransactionStatus? = nil, completedAt: String? = nil, createdAt: String, updateAt: String, rewards: TransactionReward? = nil, receipt: TransactionReceipt? = nil) {
+  public init(
+    id: String,
+    accountId: String,
+    title: String? = nil,
+    description: String? = nil,
+    amount: Double,
+    currentBalance: Double? = nil,
+    fee: Double? = nil,
+    type: TransactionType,
+    status: TransactionStatus? = nil,
+    completedAt: String? = nil,
+    createdAt: String,
+    updateAt: String,
+    rewards: TransactionReward? = nil,
+    receipt: TransactionReceipt? = nil,
+    externalTransaction: ExternalTransaction? = nil
+  ) {
     self.id = id
     self.accountId = accountId
     self.title = title
@@ -35,11 +52,19 @@ public struct TransactionModel: Identifiable {
     self.updateAt = updateAt
     self.rewards = rewards
     self.receipt = receipt
+    self.externalTransaction = externalTransaction
   }
 }
 
 // MARK: - View Helpers
 public extension TransactionModel {
+  var isACHTransaction: Bool {
+    guard let transactionType = externalTransaction?.transactionType else {
+      return false
+    }
+    return transactionType == Constants.TransactionType.ach.rawValue
+  }
+  
   var titleDisplay: String {
     guard let title = title else { return descriptionDisplay }
     return title.isEmpty ? descriptionDisplay : title
@@ -221,7 +246,8 @@ public extension TransactionModel {
       createdAt: transactionEntity.createdAt,
       updateAt: transactionEntity.updatedAt,
       rewards: Self.generateTransactionReward(rewardEntity: transactionEntity.rewardEntity),
-      receipt: Self.generateTransactionReceipt(receiptEntity: transactionEntity.receiptEntity)
+      receipt: Self.generateTransactionReceipt(receiptEntity: transactionEntity.receiptEntity),
+      externalTransaction: Self.generateExternalTransaction(externalTransactionEntity: transactionEntity.externalTransactionEntity)
     )
   }
   
@@ -238,6 +264,16 @@ public extension TransactionModel {
       charityName: reward.charityName,
       backgroundColor: reward.backgroundColor,
       description: reward.description
+    )
+  }
+      
+  static func generateExternalTransaction(externalTransactionEntity: ExternalTransactionEntity?) -> ExternalTransaction? {
+    guard let externalTransaction = externalTransactionEntity else {
+      return nil
+    }
+    return ExternalTransaction(
+      type: externalTransaction.type,
+      transactionType: externalTransaction.transactionType
     )
   }
   
