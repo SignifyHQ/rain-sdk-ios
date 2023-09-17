@@ -5,6 +5,7 @@ import LFStyleGuide
 import LFLocalizable
 import LFUtilities
 import LFTransaction
+import LFBank
 
 struct RewardTabView: View {
   @StateObject private var viewModel: RewardTabViewModel
@@ -28,14 +29,16 @@ struct RewardTabView: View {
             type: .crypto,
             currencyType: viewModel.currencyType,
             accountID: viewModel.accountDataManager.cryptoAccountID,
-            transactionTypes: Constants.TransactionTypesRequest.rewardCryptoBack.types
+            transactionTypes: Constants.TransactionTypesRequest.rewardCryptoBack.types,
+            destinationView: AnyView(AddBankWithDebitView())
           )
         case let .transactionDetail(transaction):
           TransactionDetailView(
             accountID: viewModel.accountDataManager.cryptoAccountID,
             transactionId: transaction.id,
             kind: transaction.detailType,
-            isPopToRoot: false
+            isPopToRoot: false,
+            destinationView: AnyView(AddBankWithDebitView())
           )
         }
       }

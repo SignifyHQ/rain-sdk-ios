@@ -12,6 +12,7 @@ public struct TransactionDetailView: View {
   let transactionInfo: [TransactionInformation]?
   let isPopToRoot: Bool
   let popAction: (() -> Void)?
+  let destinationView: AnyView
   
   public init(
     accountID: String?,
@@ -22,6 +23,7 @@ public struct TransactionDetailView: View {
     walletAddress: String? = nil,
     transactionInfo: [TransactionInformation]? = nil,
     isPopToRoot: Bool = true,
+    destinationView: AnyView = AnyView(EmptyView()),
     popAction: (() -> Void)? = nil
   ) {
     _viewModel = .init(
@@ -36,6 +38,7 @@ public struct TransactionDetailView: View {
     self.isNewAddress = isNewAddress
     self.walletAddress = walletAddress
     self.transactionInfo = transactionInfo
+    self.destinationView = destinationView
     self.popAction = popAction
   }
   
@@ -78,7 +81,7 @@ extension TransactionDetailView {
     case .common:
       CommonTransactionDetailView(transaction: viewModel.transaction)
     case .deposit:
-      DepositTransactionDetailView(transaction: viewModel.transaction)
+      DepositTransactionDetailView(transaction: viewModel.transaction, destinationView: destinationView)
     case .crypto:
       CryptoTransactionDetailView(
         transaction: viewModel.transaction,

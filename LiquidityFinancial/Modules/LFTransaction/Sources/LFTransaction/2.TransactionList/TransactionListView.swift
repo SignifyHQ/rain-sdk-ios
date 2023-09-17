@@ -5,12 +5,14 @@ import LFUtilities
 
 public struct TransactionListView: View {
   @StateObject private var viewModel: TransactionListViewModel
-  
+  let destinationView: AnyView
+
   public init(
     type: TransactionListViewModel.Kind,
     currencyType: String,
     accountID: String?,
-    transactionTypes: String
+    transactionTypes: String,
+    destinationView: AnyView = AnyView(EmptyView())
   ) {
     _viewModel = .init(
       wrappedValue: .init(
@@ -20,6 +22,7 @@ public struct TransactionListView: View {
         transactionTypes: transactionTypes
       )
     )
+    self.destinationView = destinationView
   }
   
   public var body: some View {
@@ -40,7 +43,13 @@ public struct TransactionListView: View {
     }
     .onAppear(perform: viewModel.onAppear)
     .navigationLink(item: $viewModel.transactionDetail) { item in
-      TransactionDetailView(accountID: viewModel.accountID, transactionId: item.id, kind: item.detailType, isPopToRoot: false)
+      TransactionDetailView(
+        accountID: viewModel.accountID,
+        transactionId: item.id,
+        kind: item.detailType,
+        isPopToRoot: false,
+        destinationView: destinationView
+      )
     }
   }
 }

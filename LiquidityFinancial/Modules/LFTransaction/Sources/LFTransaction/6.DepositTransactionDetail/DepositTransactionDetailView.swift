@@ -7,9 +7,11 @@ import LFUtilities
 struct DepositTransactionDetailView: View {
   @StateObject private var viewModel = DepositTransactionDetailViewModel()
   let transaction: TransactionModel
-  
-  init(transaction: TransactionModel) {
+  let destinationView: AnyView
+
+  init(transaction: TransactionModel, destinationView: AnyView) {
     self.transaction = transaction
+    self.destinationView = destinationView
   }
   
   var body: some View {
@@ -36,9 +38,7 @@ private extension DepositTransactionDetailView {
     .navigationLink(item: $viewModel.navigation) { item in
       switch item {
       case .addBank:
-        EmptyView()
-        // TODO: - Will be implemented later
-        // AddBankWithDebitView()
+        destinationView
       }
     }
   }
@@ -90,8 +90,7 @@ private extension DepositTransactionDetailView {
         height: 34,
         cornerRadius: 17
       ) {
-        // TODO: Will be implemented later
-        // viewModel.connectDebitCard()
+        viewModel.connectDebitCard()
       }
       .frame(width: 188)
     }

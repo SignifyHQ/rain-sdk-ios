@@ -6,6 +6,7 @@ import LFUtilities
 import LFRewards
 import BaseDashboard
 import LFAccountOnboarding
+import LFBank
 
 public struct HomeView: View {
   @Environment(\.scenePhase) var scenePhase
@@ -58,7 +59,11 @@ public struct HomeView: View {
       case .profile:
         ProfileView()
       case .transactionDetail(let id, let accountId):
-        TransactionDetailView(accountID: accountId, transactionId: id)
+        TransactionDetailView(
+          accountID: accountId,
+          transactionId: id,
+          destinationView: AnyView(AddBankWithDebitView())
+        )
       }
     }
     .onChange(of: scenePhase, perform: { newValue in

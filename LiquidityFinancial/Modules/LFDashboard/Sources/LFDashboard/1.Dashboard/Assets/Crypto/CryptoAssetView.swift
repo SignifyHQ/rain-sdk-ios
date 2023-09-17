@@ -6,6 +6,7 @@ import LFUtilities
 import LFTransaction
 import LFCryptoChart
 import BaseDashboard
+import LFBank
 
 struct CryptoAssetView: View {
   @StateObject private var viewModel: CryptoAssetViewModel
@@ -41,14 +42,16 @@ struct CryptoAssetView: View {
               type: .crypto,
               currencyType: viewModel.currencyType,
               accountID: viewModel.asset.id,
-              transactionTypes: Constants.TransactionTypesRequest.crypto.types
+              transactionTypes: Constants.TransactionTypesRequest.crypto.types,
+              destinationView: AnyView(AddBankWithDebitView())
             )
         case let .transactionDetail(transaction):
           TransactionDetailView(
             accountID: viewModel.asset.id,
             transactionId: transaction.id,
             kind: transaction.detailType,
-            isPopToRoot: false
+            isPopToRoot: false,
+            destinationView: AnyView(AddBankWithDebitView())
           )
         case .chartDetail:
           CryptoChartDetailView(

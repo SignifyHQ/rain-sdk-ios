@@ -41,7 +41,8 @@ struct CashView: View {
           type: .cash,
           currencyType: viewModel.currencyType,
           accountID: viewModel.accountID,
-          transactionTypes: Constants.TransactionTypesRequest.fiat.types
+          transactionTypes: Constants.TransactionTypesRequest.fiat.types,
+          destinationView: AnyView(AddBankWithDebitView())
         )
       case .addMoney:
         MoveMoneyAccountView(kind: .receive)
@@ -52,7 +53,8 @@ struct CashView: View {
           accountID: viewModel.accountID,
           transactionId: transaction.id,
           kind: transaction.detailType,
-          isPopToRoot: false
+          isPopToRoot: false,
+          destinationView: AnyView(AddBankWithDebitView())
         )
       case .agreement(let data):
         AgreementView(

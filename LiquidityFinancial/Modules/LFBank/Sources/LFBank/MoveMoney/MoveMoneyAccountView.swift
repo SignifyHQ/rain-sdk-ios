@@ -42,7 +42,8 @@ public struct MoveMoneyAccountView: View {
           TransactionDetailView(
             accountID: viewModel.accountDataManager.fiatAccountID,
             transactionId: id,
-            kind: viewModel.kind == .receive ? .deposit : .withdraw
+            kind: viewModel.kind == .receive ? .deposit : .withdraw,
+            destinationView: AnyView(AddBankWithDebitView())
           )
         case .addBankDebit:
           AddBankWithDebitView()
