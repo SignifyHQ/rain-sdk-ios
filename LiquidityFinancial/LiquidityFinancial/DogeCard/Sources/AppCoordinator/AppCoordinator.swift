@@ -14,10 +14,11 @@ protocol AppCoordinatorProtocol {
 
 class AppCoordinator: AppCoordinatorProtocol {
   
-  enum Route: Int {
+  enum Route {
     case onboarding
     case onboardingPhone
     case dashboard
+    case dumpOut(OnboardingFlowCoordinator.Route)
   }
   
   @LazyInjected(\.authorizationManager)

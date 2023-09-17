@@ -26,7 +26,11 @@ struct AppView: View {
       case .onboarding:
         OnboardingContentView()
       case .dashboard:
-        HomeView(viewModel: HomeViewModel(tabOptions: buildTabOption()))
+        HomeView(viewModel: HomeViewModel(tabOptions: buildTabOption())) { route in
+          viewModel.setDumpOutRoute(route)
+        }
+      case .dumpOut(let route):
+        OnboardingContentView(onRoute: route)
       }
     }
     .embedInNavigation()

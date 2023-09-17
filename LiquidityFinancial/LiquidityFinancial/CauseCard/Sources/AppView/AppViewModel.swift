@@ -3,6 +3,7 @@ import UIKit
 import Combine
 import LFUtilities
 import Factory
+import LFAccountOnboarding
 
 class AppViewModel: ObservableObject {
   
@@ -22,6 +23,10 @@ class AppViewModel: ObservableObject {
       .store(in: &subscribers)
     
     coordinator.routeUser()
+  }
+  
+  func setDumpOutRoute(_ route: OnboardingFlowCoordinator.Route) {
+    setRoute(.dumpOut(route))
   }
   
   private func setRoute(_ route: AppCoordinator.Route) {

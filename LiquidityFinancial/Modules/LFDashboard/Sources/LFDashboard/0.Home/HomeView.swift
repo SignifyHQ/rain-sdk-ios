@@ -5,22 +5,26 @@ import LFStyleGuide
 import LFUtilities
 import Combine
 import BaseDashboard
+import LFAccountOnboarding
 
 public struct HomeView: View {
   @Environment(\.scenePhase) var scenePhase
   
   @StateObject private var viewModel: HomeViewModel
   
+  var onChangeRoute: ((OnboardingFlowCoordinator.Route) -> Void)?
+  
   var dataStorages: DashboardRepository
   
   let tabOptions: [TabOption]
   
-  public init(viewModel: HomeViewModel, tabOptions: [TabOption]) {
+  public init(viewModel: HomeViewModel, tabOptions: [TabOption], onChangeRoute: ((OnboardingFlowCoordinator.Route) -> Void)? = nil) {
     _viewModel = .init(wrappedValue: viewModel)
     self.dataStorages = DashboardRepository(toastMessage: { toastMessage in
       viewModel.toastMessage = toastMessage
     })
     self.tabOptions = tabOptions
+    self.onChangeRoute = onChangeRoute
   }
   
   public var body: some View {
@@ -58,6 +62,9 @@ public struct HomeView: View {
     }
     .onAppear {
       viewModel.onAppear()
+      dataStorages.apiFetchOnboardingState { route in
+        onChangeRoute?(route)
+      }
     }
     .onChange(of: scenePhase, perform: { newValue in
       if newValue == .active {

@@ -1,14 +1,10 @@
 import UIKit
 import Foundation
 import Factory
-import OnboardingData
 import AccountData
 import LFUtilities
 import DevicesData
-import LFAccountOnboarding
-import OnboardingDomain
 import AccountDomain
-import NetSpendData
 import Combine
 import LFBank
 import LFServices
@@ -16,15 +12,11 @@ import LFServices
 @MainActor
 public final class HomeViewModel: ObservableObject {
   @LazyInjected(\.accountDataManager) var accountDataManager
-  @LazyInjected(\.netspendDataManager) var netspendDataManager
   
   @LazyInjected(\.accountRepository) var accountRepository
   @LazyInjected(\.devicesRepository) var devicesRepository
-  @LazyInjected(\.onboardingRepository) var onboardingRepository
-  @LazyInjected(\.nsPersionRepository) var nsPersionRepository
   
   @LazyInjected(\.pushNotificationService) var pushNotificationService
-  @LazyInjected(\.onboardingFlowCoordinator) var onboardingFlowCoordinator
   
   @LazyInjected(\.intercomService) var intercomService
   
@@ -61,76 +53,6 @@ extension HomeViewModel {
       }
     }
   }
-  
-  // swiftlint:disable function_body_length
-  func apiFetchOnboardingState() {
-    Task { @MainActor in
-      do {
-        async let fetchOnboardingState = onboardingRepository.getOnboardingState(sessionId: accountDataManager.sessionID)
-        
-        let onboardingState = try await fetchOnboardingState
-        
-        if onboardingState.missingSteps.isEmpty {
-          log.info("Current OnboardingState in Dashboard is Empty")
-        } else {
-          let states = onboardingState.mapToEnum()
-          if states.isEmpty {
-            log.info("Current OnboardingState in Dashboard is Empty")
-          } else {
-            if states.contains(OnboardingMissingStep.netSpendCreateAccount) {
-              return
-            } else if states.contains(OnboardingMissingStep.acceptAgreement) {
-              onboardingFlowCoordinator.set(route: .agreement)
-            } else if states.contains(OnboardingMissingStep.acceptFeatureAgreement) {
-              onboardingFlowCoordinator.set(route: .featureAgreement)
-            } else if states.contains(OnboardingMissingStep.identityQuestions) {
-              let questionsEncrypt = try await nsPersionRepository.getQuestion(sessionId: accountDataManager.sessionID)
-              if let usersession = netspendDataManager.sdkSession, let questionsDecode = (questionsEncrypt as? APIQuestionData)?.decodeData(session: usersession) {
-                let questionsEntity = QuestionsEntity.mapObj(questionsDecode)
-                onboardingFlowCoordinator.set(route: .question(questionsEntity))
-              }
-            } else if states.contains(OnboardingMissingStep.provideDocuments) {
-              let documents = try await nsPersionRepository.getDocuments(sessionId: accountDataManager.sessionID)
-              guard let documents = documents as? APIDocumentData else {
-                log.error("Can't map document from BE")
-                return
-              }
-              netspendDataManager.update(documentData: documents)
-              if let status = documents.requestedDocuments.first?.status {
-                switch status {
-                case .complete:
-                  onboardingFlowCoordinator.set(route: .kycReview)
-                case .open:
-                  onboardingFlowCoordinator.set(route: .document)
-                case .reviewInProgress:
-                  onboardingFlowCoordinator.set(route: .documentInReview)
-                }
-              } else {
-                if documents.requestedDocuments.isEmpty {
-                  onboardingFlowCoordinator.set(route: .kycReview)
-                } else {
-                  onboardingFlowCoordinator.set(route: .unclear("Required Document Unknown: \(documents.requestedDocuments.debugDescription)"))
-                }
-              }
-            } else if states.contains(OnboardingMissingStep.dashboardReview) {
-              onboardingFlowCoordinator.set(route: .kycReview)
-            } else if states.contains(OnboardingMissingStep.zeroHashAccount) {
-              log.info("Current OnboardingState in Dashboard is wrong step: zeroHashAccount")
-            } else if states.contains(OnboardingMissingStep.accountReject) {
-              onboardingFlowCoordinator.set(route: .accountReject)
-            } else if states.contains(OnboardingMissingStep.primaryPersonKYCApprove) {
-              onboardingFlowCoordinator.set(route: .kycReview)
-            } else {
-              onboardingFlowCoordinator.set(route: .unclear(states.compactMap({ $0.rawValue }).joined()))
-            }
-          }
-        }
-      } catch {
-        log.error(error.localizedDescription)
-      }
-    }
-  }
-  // swiftlint:enable function_body_length
 
 }
 
@@ -139,7 +61,6 @@ extension HomeViewModel {
   
   func initData() {
     apiFetchUser()
-    apiFetchOnboardingState()
   }
   
   func onAppear() {
