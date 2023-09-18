@@ -19,8 +19,7 @@ extension DBCache: Codable where Key: Codable, Value: Codable {
 
 extension DBCache where Key: Codable, Value: Codable {
   func saveToDisk(withName name: String,
-                  using fileManager: FileManager = .default) throws
-  {
+                  using fileManager: FileManager = .default) throws {
     let folderURLs = fileManager.urls(
       for: .cachesDirectory,
       in: .userDomainMask
@@ -40,8 +39,7 @@ final class DBCache<Key: Hashable, Value> {
 
   init(dateProvider: @escaping () -> Date = Date.init,
        entryLifetime: TimeInterval = 12 * 60 * 60,
-       maximumEntryCount: Int = 100)
-  {
+       maximumEntryCount: Int = 100) {
     self.dateProvider = dateProvider
     self.entryLifetime = entryLifetime
     wrapped.countLimit = maximumEntryCount
@@ -127,8 +125,7 @@ private extension DBCache {
     var keys = Set<Key>()
 
     func cache(_ cache: NSCache<AnyObject, AnyObject>,
-               willEvictObject object: Any)
-    {
+               willEvictObject object: Any) {
       guard let entry = object as? Entry else {
         return
       }

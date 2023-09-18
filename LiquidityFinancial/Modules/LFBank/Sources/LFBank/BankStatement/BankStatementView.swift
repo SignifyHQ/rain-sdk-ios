@@ -8,7 +8,7 @@ import LFLocalizable
 public struct BankStatementView: View {
   @Environment(\.dismiss) private var dismiss
   @StateObject private var viewModel = BankStatementViewModel()
-
+  
   public init() {}
   
   public var body: some View {
@@ -29,8 +29,8 @@ public struct BankStatementView: View {
       }
       .navigationLink(item: $viewModel.navigation) { item in
         switch item {
-          case let .pdfDocument(title, url):
-            DocumentViewer(title: title, url: url)
+        case let .pdfDocument(title, url):
+          DocumentViewer(title: title, url: url)
         }
       }
   }
@@ -40,16 +40,16 @@ private extension BankStatementView {
   var content: some View {
     VStack(spacing: 10) {
       switch viewModel.status {
-        case .idle, .loading:
-          loadingView
-        case let .success(items):
-          if items.isEmpty {
-            emptyStatements
-          } else {
-            statementsView(statements: items)
-          }
-        case .failure:
-          failure
+      case .idle, .loading:
+        loadingView
+      case let .success(items):
+        if items.isEmpty {
+          emptyStatements
+        } else {
+          statementsView(statements: items)
+        }
+      case .failure:
+        failure
       }
     }
   }
@@ -80,7 +80,7 @@ private extension BankStatementView {
     .padding(.horizontal, 30)
     .frame(maxWidth: .infinity, maxHeight: .infinity)
   }
-
+  
   func statementsView(statements: [StatementModel]) -> some View {
     ScrollView {
       VStack {

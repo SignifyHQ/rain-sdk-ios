@@ -20,7 +20,7 @@ class BankStatementViewModel: ObservableObject {
     formatter.locale = Locale(identifier: "en_US_POSIX")
     return formatter
   }()
-
+  
   private lazy var yearFormatter: DateFormatter = {
     let formatter = DateFormatter()
     formatter.dateFormat = "YYYY"
@@ -34,13 +34,13 @@ class BankStatementViewModel: ObservableObject {
   
   func onAppear() {
     switch status {
-      case .idle:
-        getBankStatement()
-      default:
-        break
+    case .idle:
+      getBankStatement()
+    default:
+      break
     }
   }
- 
+  
   func getBankStatement() {
     Task { @MainActor in
       status = .loading

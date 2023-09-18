@@ -10,6 +10,10 @@ public typealias LFFundraiserModel = FundraiserDetailModel.Fundraiser
 public typealias LFLatestDonationModel = FundraiserDetailModel.LatestDonation
 
 public struct FundraiserDetailModel: Equatable, Identifiable {
+  enum Constants {
+    static var charityNavigatorUrl: String = "https://www.charitynavigator.org/ein/"
+  }
+  
   public var id: String = UUID().uuidString
   
   public static func == (lhs: FundraiserDetailModel, rhs: FundraiserDetailModel) -> Bool {
@@ -73,9 +77,9 @@ public struct FundraiserDetailModel: Equatable, Identifiable {
     URL(string: charity?.emailListUrl ?? "unknown")
   }
   
-  public var charityNavigatorUrl: URL? {
-    guard let charityNavigatorUrl = charity?.charityNavigatorUrl, let ein = charity?.ein else { return nil }
-    return URL(string: "\(charityNavigatorUrl)/ein/\(ein)")
+  public var fullCharityNavigatorUrl: URL? {
+    guard let ein = charity?.ein else { return nil }
+    return URL(string: "\(Constants.charityNavigatorUrl)\(ein)")
   }
   
     // MARK: - Charity
@@ -85,7 +89,6 @@ public struct FundraiserDetailModel: Equatable, Identifiable {
     public let twitterUrl, facebookUrl, instagramUrl: String?
     public let confidence: Double?
     public let address, ein: String?
-    public let charityNavigatorUrl: String?
     public let emailListUrl: String?
     public let tags: [String]?
     
@@ -107,7 +110,6 @@ public struct FundraiserDetailModel: Equatable, Identifiable {
       self.ein = enity.ein
       self.tags = enity.tags
       self.emailListUrl = enity.emailListUrl
-      self.charityNavigatorUrl = enity.charityNavigatorUrl
     }
     
     public var confidenceValue: Double {

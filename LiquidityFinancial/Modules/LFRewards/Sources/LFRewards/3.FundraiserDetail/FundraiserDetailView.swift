@@ -240,7 +240,7 @@ extension FundraiserDetailView {
         }
       }
       
-      if let url = viewModel.fundraiserDetail?.charityNavigatorUrl {
+      if let url = viewModel.fundraiserDetail?.fullCharityNavigatorUrl {
         Button {
           openUrl(url)
         } label: {

@@ -6,7 +6,7 @@ excluded:
   - "**/generated"
   - "**/.build"
   - "**/*Tests.swift"
-  - "**/NetworkDebugTool"
+  - "**/DebugTools"
   - "**/LFCryptoChart"
 opt_in_rules:
   - array_init
