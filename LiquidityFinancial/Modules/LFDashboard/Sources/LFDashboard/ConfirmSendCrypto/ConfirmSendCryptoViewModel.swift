@@ -12,6 +12,7 @@ class ConfirmSendCryptoViewModel: ObservableObject {
   @LazyInjected(\.accountDataManager) var accountDataManager
   @LazyInjected(\.zerohashRepository) var zerohashRepository
   @LazyInjected(\.accountRepository) var accountRepository
+  @LazyInjected(\.authenticationService) var authenticationService
   
   @Published var showIndicator: Bool = false
   @Published var toastMessage: String?
@@ -40,12 +41,24 @@ class ConfirmSendCryptoViewModel: ObservableObject {
     amount.roundTo3fStr()
   }
   
-  func confirmButtonClicked() {
+  func callBioMetric() {
+    Task {
+      if await authenticationService.authenticateWithBiometrics() {
+        callTransferAPI()
+      }
+    }
+  }
+  
+  private func callTransferAPI() {
     if let quoteId = feeLockedResponse?.quoteId {
       executeQuote(id: quoteId)
     } else {
       sendCrypto()
     }
+  }
+  
+  func confirmButtonClicked() {
+    callBioMetric()
   }
   
   func executeQuote(id: String) {
