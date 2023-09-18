@@ -40,11 +40,12 @@
 "dob" = "Date of birth";
 "dob_format"= "dd / mm / yyyy";
 
-// SecurityCheck Screen
-"securityCheck.last4SSN.screenTitle" = "SECURITY CHECK: ENTER LAST 4 OF SSN";
-"securityCheck.last4SSN.textFieldTitle" = "Last 4 digits of Social Security Number/Passport";
-"securityCheck.encrypt.cellText" = "Encrypted using 256-BIT SSL";
-"securityCheck.noCreditCheck.cellText" = "No credit checks";
+// Enter Verification Code
+"enterVerificationCode.last4SSN.screenTitle" = "LAST 4 DIGITS OF SSN";
+"enterVerificationCode.last4SSN.placeholder" = "Enter Last 4 of SSN";
+"enterVerificationCode.last5Passport.screenTitle" = "LAST 5 DIGITS OF PASSPORT";
+"enterVerificationCode.last5Passport.placeholder" = "Enter Last 5 of PASSPORT";
+"enterVerificationCode.encrypt.cellText" = "Encrypted using 256-BIT SSL";
 
 // Enter SSN
 "enter_ssn.title" = "PLEASE ENTER YOUR SSN";

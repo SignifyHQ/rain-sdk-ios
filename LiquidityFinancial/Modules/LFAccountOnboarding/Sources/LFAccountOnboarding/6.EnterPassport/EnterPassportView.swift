@@ -86,7 +86,7 @@ private extension EnterPassportView {
           .keyboardType(.default)
           .limitInputLength(
             value: $viewModel.passport,
-            length: Constants.MaxCharacterLimit.passportLength.value
+            length: Constants.MaxCharacterLimit.fullPassportLength.value
           )
           .modifier(
             PlaceholderStyle(

@@ -13,6 +13,7 @@ public enum Constants {
     case phoneNumber
     case verificationLimit
     case ssnLength
+    case passportLength
     case fullSSNLength
     case cardLength
     case cardLast4Length
@@ -22,7 +23,7 @@ public enum Constants {
     case amountLimit
     case cryptoLimit
     case cvv
-    case passportLength
+    case fullPassportLength
     case any
     
     public var value: Int {
@@ -45,6 +46,8 @@ public enum Constants {
         return 6
       case .ssnLength:
         return 4
+      case .passportLength:
+        return 5
       case .fullSSNLength:
         return 9
       case .cardLength:
@@ -63,7 +66,7 @@ public enum Constants {
         return 16
       case .cvv:
         return 4
-      case .passportLength:
+      case .fullPassportLength:
         return 20
       case .any:
         return 200

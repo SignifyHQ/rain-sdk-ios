@@ -1351,6 +1351,24 @@ public enum LFLocalizable {
       public static let title = LFLocalizable.tr("Localizable", "enterCVVCode.setCardPin.title", fallback: "ENTER CVV TO SET CARD PIN")
     }
   }
+  public enum EnterVerificationCode {
+    public enum Encrypt {
+      /// Encrypted using 256-BIT SSL
+      public static let cellText = LFLocalizable.tr("Localizable", "enterVerificationCode.encrypt.cellText", fallback: "Encrypted using 256-BIT SSL")
+    }
+    public enum Last4SSN {
+      /// Enter Last 4 of SSN
+      public static let placeholder = LFLocalizable.tr("Localizable", "enterVerificationCode.last4SSN.placeholder", fallback: "Enter Last 4 of SSN")
+      /// LAST 4 DIGITS OF SSN
+      public static let screenTitle = LFLocalizable.tr("Localizable", "enterVerificationCode.last4SSN.screenTitle", fallback: "LAST 4 DIGITS OF SSN")
+    }
+    public enum Last5Passport {
+      /// Enter Last 5 of PASSPORT
+      public static let placeholder = LFLocalizable.tr("Localizable", "enterVerificationCode.last5Passport.placeholder", fallback: "Enter Last 5 of PASSPORT")
+      /// LAST 5 DIGITS OF PASSPORT
+      public static let screenTitle = LFLocalizable.tr("Localizable", "enterVerificationCode.last5Passport.screenTitle", fallback: "LAST 5 DIGITS OF PASSPORT")
+    }
+  }
   public enum EnterNicknameOfWallet {
     /// Create a name for "%@"
     public static func createNickname(_ p1: Any) -> String {
@@ -2070,22 +2088,6 @@ public enum LFLocalizable {
     public static let navigationTitle = LFLocalizable.tr("Localizable", "search_causes.navigation_title", fallback: "Search charities")
     /// No results found
     public static let noResults = LFLocalizable.tr("Localizable", "search_causes.no_results", fallback: "No results found")
-  }
-  public enum SecurityCheck {
-    public enum Encrypt {
-      /// Encrypted using 256-BIT SSL
-      public static let cellText = LFLocalizable.tr("Localizable", "securityCheck.encrypt.cellText", fallback: "Encrypted using 256-BIT SSL")
-    }
-    public enum Last4SSN {
-      /// SECURITY CHECK: ENTER LAST 4 OF SSN
-      public static let screenTitle = LFLocalizable.tr("Localizable", "securityCheck.last4SSN.screenTitle", fallback: "SECURITY CHECK: ENTER LAST 4 OF SSN")
-      /// Last 4 digits of Social Security Number/Passport
-      public static let textFieldTitle = LFLocalizable.tr("Localizable", "securityCheck.last4SSN.textFieldTitle", fallback: "Last 4 digits of Social Security Number/Passport")
-    }
-    public enum NoCreditCheck {
-      /// No credit checks
-      public static let cellText = LFLocalizable.tr("Localizable", "securityCheck.noCreditCheck.cellText", fallback: "No credit checks")
-    }
   }
   public enum SelectCause {
     /// Continue
