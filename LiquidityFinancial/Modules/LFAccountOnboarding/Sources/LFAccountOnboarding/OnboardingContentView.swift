@@ -41,6 +41,8 @@ public struct OnboardingContentView: View {
       case .phone:
         PhoneNumberView()
         .environmentObject(environmentManager)
+      case .accountLocked:
+        AccountLockedView()
       case .welcome:
         switch LFUtilities.target {
         case .DogeCard:

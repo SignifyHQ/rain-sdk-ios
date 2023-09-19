@@ -11,6 +11,7 @@ import AccountData
 import AccountDomain
 import RewardData
 import RewardDomain
+import LFLocalizable
 
 @MainActor
 final class VerificationCodeViewModel: ObservableObject {
@@ -90,14 +91,7 @@ extension VerificationCodeViewModel {
         self.isShowLoading = false
         
       } catch {
-        self.isShowLoading = false
-        if error.localizedDescription.contains("credentials_invalid") {
-          toastMessage = "OTP is invalid. Please resend OTP"
-        } else {
-          toastMessage = error.localizedDescription
-        }
-        
-        log.error(error)
+        handleError(error: error)
       }
     #if DEBUG
       let diff = CFAbsoluteTimeGetCurrent() - start
@@ -151,9 +145,25 @@ extension VerificationCodeViewModel {
   }
 }
 
-  // MARK: Private
-extension VerificationCodeViewModel {
-  private func initNetSpendSession() async throws {
+  // MARK: Private Functions
+private extension VerificationCodeViewModel {
+  func handleError(error: Error) {
+    isShowLoading = false
+    guard let code = error.asErrorObject?.code else {
+      toastMessage = error.localizedDescription
+      return
+    }
+    switch code {
+    case Constants.ErrorCode.userInactive.value:
+      onboardingFlowCoordinator.set(route: .accountLocked)
+    case Constants.ErrorCode.credentialsInvalid.value:
+      toastMessage = LFLocalizable.VerificationCode.OtpInvalid.message
+    default:
+      toastMessage = error.localizedDescription
+    }
+  }
+  
+  func initNetSpendSession() async throws {
     log.info("<<<<<<<<<<<<<< Refresh NetSpend Session >>>>>>>>>>>>>>>")
     let token = try await nsPersionRepository.clientSessionInit()
     netspendDataManager.update(jwkToken: token)
@@ -171,11 +181,11 @@ extension VerificationCodeViewModel {
     netspendDataManager.update(sdkSession: userSessionAnonymous)
   }
   
-  private func checkUserIsValid() -> Bool {
+  func checkUserIsValid() -> Bool {
     accountDataManager.sessionID.isEmpty == false
   }
   
-  private func handleDataUser(user: LFUser) {
+  func handleDataUser(user: LFUser) {
     accountDataManager.storeUser(user: user)
     if let rewardType = APIRewardType(rawValue: user.userRewardType ?? "") {
       rewardDataManager.update(currentSelectReward: rewardType)
@@ -187,7 +197,7 @@ extension VerificationCodeViewModel {
   
   // swiftlint:disable function_body_length
   @MainActor
-  private func checkOnboardingState() async {
+  func checkOnboardingState() async {
     do {
       async let fetchUser = accountRepository.getUser()
       let user = try await fetchUser

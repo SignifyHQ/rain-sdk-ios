@@ -18,6 +18,7 @@ final class PhoneNumberViewModel: ObservableObject {
   @Published var toastMessage: String?
   
   @LazyInjected(\.onboardingRepository) var onboardingRepository
+  @LazyInjected(\.onboardingFlowCoordinator) var onboardingFlowCoordinator
   @LazyInjected(\.intercomService) var intercomService
   
   let terms = LFLocalizable.Term.Terms.attributeText
@@ -36,23 +37,19 @@ final class PhoneNumberViewModel: ObservableObject {
 extension PhoneNumberViewModel {
   func performGetOTP() {
     Task {
+      defer { isLoading = false }
+      isLoading = true
       do {
         let formatPhone = Constants.Default.regionCode.rawValue + phoneNumber
         let otpResponse = try await requestOtpUseCase.execute(phoneNumber: formatPhone.reformatPhone)
-        isLoading = false
         let requiredAuth = otpResponse.requiredAuth.map {
           RequiredAuth(rawValue: $0) ?? .unknow
         }
         navigation = .verificationCode(requiredAuth)
       } catch {
-        isLoading = false
-        toastMessage = error.localizedDescription
+        handleError(error: error)
       }
     }
-  }
-  
-  func openIntercom() {
-    intercomService.openIntercom()
   }
 }
 
@@ -68,6 +65,10 @@ extension PhoneNumberViewModel {
     }
   }
   
+  func openIntercom() {
+    intercomService.openIntercom()
+  }
+  
   func onActiveSecretMode() {
     isSecretMode = true
   }
@@ -80,6 +81,22 @@ extension PhoneNumberViewModel {
       withAnimation {
         self.isShowConditions = isAllowed
       }
+    }
+  }
+}
+
+// MARK: - Private Functions
+private extension PhoneNumberViewModel {
+  func handleError(error: Error) {
+    guard let code = error.asErrorObject?.code else {
+      toastMessage = error.localizedDescription
+      return
+    }
+    switch code {
+      case Constants.ErrorCode.userInactive.value:
+        onboardingFlowCoordinator.set(route: .accountLocked)
+      default:
+        toastMessage = error.localizedDescription
     }
   }
 }

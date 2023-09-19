@@ -66,7 +66,7 @@ extension IdentityVerificationCodeViewModel {
         await checkOnboardingState()
         
       } catch {
-        toastMessage = error.localizedDescription
+        handleError(error: error)
       }
     }
   }
@@ -99,6 +99,23 @@ extension IdentityVerificationCodeViewModel {
 
 // MARK: - Private Functions
 private extension IdentityVerificationCodeViewModel {
+  func handleError(error: Error) {
+    guard let code = error.asErrorObject?.code else {
+      toastMessage = error.localizedDescription
+      return
+    }
+    switch code {
+      case Constants.ErrorCode.userInactive.value:
+        onboardingFlowCoordinator.set(route: .accountLocked)
+      case Constants.ErrorCode.credentialsInvalid.value:
+        toastMessage = LFLocalizable.EnterVerificationCode.CodeInvalid.message
+      case Constants.ErrorCode.lastXIdInvalid.value:
+        toastMessage = LFLocalizable.EnterVerificationCode.LastXIdInvalid.message
+      default:
+        toastMessage = error.localizedDescription
+    }
+  }
+  
   func checkSSNFilled() {
     let ssnLength = ssn.trimWhitespacesAndNewlines().count
     isDisableButton = (ssnLength == 0) || (ssnLength != Constants.MaxCharacterLimit.ssnLength.value)

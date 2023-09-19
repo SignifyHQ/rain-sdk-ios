@@ -31,6 +31,7 @@ public class OnboardingFlowCoordinator: OnboardingFlowCoordinatorProtocol {
 
     case initial
     case phone
+    case accountLocked
     case welcome
     case kycReview
     case dashboard

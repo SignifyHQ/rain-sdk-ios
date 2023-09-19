@@ -25,6 +25,7 @@
 "verificationCode.enterCode.textFieldPlaceholder" = "Enter Code";
 "verificationCode.resend.buttonTitle" = "Resend Code";
 "verificationCode.otpSent.toastMessage" = "New code sent";
+"verificationCode.otpInvalid.message" = "OTP is invalid. Please resend OTP";
 
 // Personal information
 "addPersonalInformation.title" = "ADD PERSONAL INFORMATION";
@@ -44,6 +45,8 @@
 "enterVerificationCode.last5Passport.screenTitle" = "LAST 5 DIGITS OF PASSPORT";
 "enterVerificationCode.last5Passport.placeholder" = "Enter Last 5 of PASSPORT";
 "enterVerificationCode.encrypt.cellText" = "Encrypted using 256-BIT SSL";
+"enterVerificationCode.codeInvalid.message" = "OTP is invalid. Please resend OTP";
+"enterVerificationCode.lastXIdInvalid.message" = "SSN or Passport is invalid.";
 
 // Enter SSN
 "enter_ssn.title" = "PLEASE ENTER YOUR SSN";
@@ -793,6 +796,11 @@ https://mn.gov/commerce/money/investments/cryptocurrency/. \n\n\n\n\n\n\n";
 "account.reward.session.special" = "Special Promotions";
 "account.reward.item.desc_up_to_back" = "%@%% back";
 
+// Account Locked
+"accountLocked.contactSupport.title" = "CONTACT SUPPORT";
+"accountLocked.contactSupport.description" = "Your account was locked due to too many verification attempts. Please
+contact support.";
+
 // MARK: - Common
 
 // Notification Pop up
@@ -830,6 +838,7 @@ https://mn.gov/commerce/money/investments/cryptocurrency/. \n\n\n\n\n\n\n";
 "button.verify.title" = "Verify";
 "button.confirm.title" = "Confirm";
 "button.disputeTransaction.title" = "Dispute a Transaction";
+"button.contactSupport.title" = "Contact Support";
 
 // Grid Value
 "grid_value.crypto" = "%@ AVAX";

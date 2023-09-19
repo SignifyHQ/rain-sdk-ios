@@ -255,6 +255,15 @@ public enum LFLocalizable {
       }
     }
   }
+  public enum AccountLocked {
+    public enum ContactSupport {
+      /// Your account was locked due to too many verification attempts. Please
+      /// contact support.
+      public static let description = LFLocalizable.tr("Localizable", "accountLocked.contactSupport.description", fallback: "Your account was locked due to too many verification attempts. Please\ncontact support.")
+      /// CONTACT SUPPORT
+      public static let title = LFLocalizable.tr("Localizable", "accountLocked.contactSupport.title", fallback: "CONTACT SUPPORT")
+    }
+  }
   public enum AccountView {
     /// ATM’s Nearby
     public static let atm = LFLocalizable.tr("Localizable", "accountView.atm", fallback: "ATM’s Nearby")
@@ -1352,6 +1361,10 @@ public enum LFLocalizable {
     }
   }
   public enum EnterVerificationCode {
+    public enum CodeInvalid {
+      /// OTP is invalid. Please resend OTP
+      public static let message = LFLocalizable.tr("Localizable", "enterVerificationCode.codeInvalid.message", fallback: "OTP is invalid. Please resend OTP")
+    }
     public enum Encrypt {
       /// Encrypted using 256-BIT SSL
       public static let cellText = LFLocalizable.tr("Localizable", "enterVerificationCode.encrypt.cellText", fallback: "Encrypted using 256-BIT SSL")
@@ -1367,6 +1380,10 @@ public enum LFLocalizable {
       public static let placeholder = LFLocalizable.tr("Localizable", "enterVerificationCode.last5Passport.placeholder", fallback: "Enter Last 5 of PASSPORT")
       /// LAST 5 DIGITS OF PASSPORT
       public static let screenTitle = LFLocalizable.tr("Localizable", "enterVerificationCode.last5Passport.screenTitle", fallback: "LAST 5 DIGITS OF PASSPORT")
+    }
+    public enum LastXIdInvalid {
+      /// SSN or Passport is invalid.
+      public static let message = LFLocalizable.tr("Localizable", "enterVerificationCode.lastXIdInvalid.message", fallback: "SSN or Passport is invalid.")
     }
   }
   public enum EnterNicknameOfWallet {
@@ -2758,6 +2775,10 @@ public enum LFLocalizable {
       public static let screenTitle = LFLocalizable.tr("Localizable", "verificationCode.enterCode.screenTitle", fallback: "ENTER VERIFICATION CODE")
       /// Enter Code
       public static let textFieldPlaceholder = LFLocalizable.tr("Localizable", "verificationCode.enterCode.textFieldPlaceholder", fallback: "Enter Code")
+    }
+    public enum OtpInvalid {
+      /// OTP is invalid. Please resend OTP
+      public static let message = LFLocalizable.tr("Localizable", "verificationCode.otpInvalid.message", fallback: "OTP is invalid. Please resend OTP")
     }
     public enum OtpSent {
       /// New code sent

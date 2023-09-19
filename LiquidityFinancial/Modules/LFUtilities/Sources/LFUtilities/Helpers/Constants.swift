@@ -175,6 +175,19 @@ public extension Constants {
   }
 }
 
+// MARK: ErrorCode
+public extension Constants {
+  enum ErrorCode: String {
+    case userInactive = "user_inactive"
+    case credentialsInvalid = "credentials_invalid"
+    case lastXIdInvalid = "last_x_id_invalid"
+    
+    public var value: String {
+      rawValue
+    }
+  }
+}
+
 // MARK: - DateFormat
 public extension Constants {
   enum DateFormat: String {

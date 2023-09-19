@@ -154,6 +154,7 @@ public enum GenImages {
     public static let icKycQuestionCheck = ImageAsset(name: "ic_kyc_question_check")
     public static let icLogo = ImageAsset(name: "ic_logo")
     public static let icScanner = ImageAsset(name: "ic_scanner")
+    public static let lockedAccount = ImageAsset(name: "lockedAccount")
     public static let physicalCard = ImageAsset(name: "physicalCard")
     public static let referralsInbox = ImageAsset(name: "referralsInbox")
     public static let rewardHeader = ImageAsset(name: "rewardHeader")

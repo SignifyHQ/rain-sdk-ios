@@ -7,7 +7,6 @@ struct IdentityVerificationCodeView: View {
   @StateObject private var viewModel: IdentityVerificationCodeViewModel
   @State var selection: Int?
   @State var showIndicator = false
-  @State var toastMessage: String?
   @FocusState var keyboardFocus: Bool
   
   init(phoneNumber: String, otpCode: String, kind: IdentityVerificationCodeViewModel.Kind) {
@@ -30,7 +29,7 @@ struct IdentityVerificationCodeView: View {
     .padding(.horizontal, 30)
     .padding(.vertical, 16)
     .background(Colors.background.swiftUIColor)
-    .popup(item: $toastMessage, style: .toast) {
+    .popup(item: $viewModel.toastMessage, style: .toast) {
       ToastView(toastMessage: $0)
     }
     .defaultToolBar(icon: .intercom, openIntercom: {
