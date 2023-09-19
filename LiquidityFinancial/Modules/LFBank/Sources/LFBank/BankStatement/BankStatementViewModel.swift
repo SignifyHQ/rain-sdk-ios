@@ -71,6 +71,13 @@ class BankStatementViewModel: ObservableObject {
     navigation = .pdfDocument(item.period, url)
   }
   
+  func detailFor(statement: StatementModel) -> String {
+    guard let date = DateFormatter.serverShort.date(from: statement.createdAt) else {
+      return .empty
+    }
+    return DateFormatter.monthDayYearDisplay.string(from: date)
+  }
+  
 }
 
 extension BankStatementViewModel {

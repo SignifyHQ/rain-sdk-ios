@@ -86,8 +86,8 @@ private extension BankStatementView {
       VStack {
         ForEach(statements, id: \.period) { item in
           BankStatementCell(
-            title: item.period,
-            detailTitle: LFLocalizable.BankStatement.created(item.period),
+            title: item.name,
+            detailTitle: LFLocalizable.BankStatement.created(viewModel.detailFor(statement: item)),
             backGroundColor: Colors.secondaryBackground.swiftUIColor,
             titleColor: Colors.label.swiftUIColor
           ) {

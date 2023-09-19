@@ -26,6 +26,14 @@ public extension DateFormatter {
     formatter.timeZone = TimeZone(abbreviation: "UTC")
     return formatter
   }()
+  
+  /// A formatter following the server representation (`"yyyy-MM-dd'T'HH:mm:ss'Z'"`) and UTC timezone.
+  static var serverShort: DateFormatter = {
+    let formatter = DateFormatter()
+    formatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ssZ"
+    formatter.timeZone = TimeZone(abbreviation: "UTC")
+    return formatter
+  }()
 
   /// A formatter used to represent dates with the display representation of its month (short), day and time.
   /// Example: `Oct 20 at 04:06 PM`

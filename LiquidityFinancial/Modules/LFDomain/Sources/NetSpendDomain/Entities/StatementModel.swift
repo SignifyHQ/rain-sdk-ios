@@ -7,6 +7,8 @@ public struct StatementListReponse: Codable {
 public struct StatementModel: Codable, Equatable {
   public var period: String
   public var url: String
+  public var name: String
+  public var createdAt: String
 }
 
 extension StatementModel {
