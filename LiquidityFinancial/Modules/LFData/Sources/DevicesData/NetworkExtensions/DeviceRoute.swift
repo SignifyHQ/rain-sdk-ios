@@ -14,9 +14,9 @@ extension DeviceRoute: LFRoute {
   public var path: String {
     switch self {
     case .register:
-      return "/devices/notifications/register"
+      return "/v1/devices/notifications/register"
     case .deregister:
-      return "/devices/notifications/deregister"
+      return "/v1/devices/notifications/deregister"
     }
   }
   
