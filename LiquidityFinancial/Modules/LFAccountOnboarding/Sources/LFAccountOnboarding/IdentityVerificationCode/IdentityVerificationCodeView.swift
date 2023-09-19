@@ -3,15 +3,17 @@ import LFUtilities
 import LFStyleGuide
 import LFLocalizable
 
-struct EnterVerificationCodeView: View {
-  @StateObject private var viewModel: EnterVerificationCodeViewModel
+struct IdentityVerificationCodeView: View {
+  @StateObject private var viewModel: IdentityVerificationCodeViewModel
   @State var selection: Int?
   @State var showIndicator = false
   @State var toastMessage: String?
   @FocusState var keyboardFocus: Bool
   
-  init(kind: EnterVerificationCodeViewModel.Kind) {
-    _viewModel = .init(wrappedValue: EnterVerificationCodeViewModel(kind: kind))
+  init(phoneNumber: String, otpCode: String, kind: IdentityVerificationCodeViewModel.Kind) {
+    _viewModel = .init(
+      wrappedValue: IdentityVerificationCodeViewModel(phoneNumber: phoneNumber, otpCode: otpCode, kind: kind)
+    )
   }
   
   var body: some View {
@@ -38,7 +40,7 @@ struct EnterVerificationCodeView: View {
 }
 
 // MARK: - View Components
-private extension EnterVerificationCodeView {
+private extension IdentityVerificationCodeView {
   @ViewBuilder var textField: some View {
     if viewModel.kind == .ssn {
       ssnTextField
@@ -111,6 +113,7 @@ private extension EnterVerificationCodeView {
       isDisable: viewModel.isDisableButton,
       isLoading: $viewModel.isLoading
     ) {
+      viewModel.login()
     }
     .ignoresSafeArea(.keyboard, edges: .bottom)
   }

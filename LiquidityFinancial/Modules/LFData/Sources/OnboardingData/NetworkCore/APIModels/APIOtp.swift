@@ -1,5 +1,5 @@
 import Foundation
 
-public struct APIOtp {
-  public let success: Bool
+public struct APIOtp: Codable {
+  public let requiredAuth: [String]
 }

@@ -2,6 +2,7 @@ import CoreNetwork
 import Foundation
 import NetworkUtilities
 import AuthorizationManager
+import LFUtilities
 
 public enum NSPersonsRoute {
   case sessionInit
@@ -58,6 +59,7 @@ extension NSPersonsRoute: LFRoute {
     case .sessionInit, .getAgreements, .establishSession, .getWorkflows, .postAgreements, .getSession:
       return base
     case .createAccountPerson(_, let sessionID):
+      base["ld-device-id"] = LFUtility.deviceId
       base["netspendSessionId"] = sessionID
       return base
     case .getQuestions(let sessionID):

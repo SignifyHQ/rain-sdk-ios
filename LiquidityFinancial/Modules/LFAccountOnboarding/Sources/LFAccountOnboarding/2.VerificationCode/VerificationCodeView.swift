@@ -11,8 +11,8 @@ struct VerificationCodeView: View {
   @StateObject private var viewModel: VerificationCodeViewModel
   @FocusState private var keyboardFocus: Bool
     
-  init(phoneNumber: String) {
-    _viewModel = .init(wrappedValue: VerificationCodeViewModel(phoneNumber: phoneNumber))
+  init(phoneNumber: String, requiredAuth: [RequiredAuth]) {
+    _viewModel = .init(wrappedValue: VerificationCodeViewModel(phoneNumber: phoneNumber, requireAuth: requiredAuth))
   }
   
   var body: some View {
@@ -39,7 +39,12 @@ struct VerificationCodeView: View {
     }
     .onAppear {
       viewModel.isResendButonTimerOn = false
-      viewModel.performAutoGetTwilioMessagesIfNeccessary()
+    }
+    .navigationLink(item: $viewModel.navigation) { item in
+      switch item {
+      case let .identityVerificationCode(phoneNumber, otpCode, kind):
+        IdentityVerificationCodeView(phoneNumber: phoneNumber, otpCode: otpCode, kind: kind)
+      }
     }
     .navigationBarBackButtonHidden(viewModel.isShowLoading)
   }
@@ -115,7 +120,7 @@ private extension VerificationCodeView {
 #if DEBUG
 struct VerificationCodeView_Previews: PreviewProvider {
   static var previews: some View {
-    VerificationCodeView(phoneNumber: "2345678888")
+    VerificationCodeView(phoneNumber: "2345678888", requiredAuth: [.otp])
       .previewLayout(PreviewLayout.sizeThatFits)
       .previewDisplayName("Default preview")
   }

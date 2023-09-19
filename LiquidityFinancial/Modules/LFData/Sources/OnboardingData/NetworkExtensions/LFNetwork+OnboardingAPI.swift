@@ -4,9 +4,10 @@ import CoreNetwork
 import LFUtilities
 
 extension LFCoreNetwork: OnboardingAPIProtocol where R == OnboardingRoute {
-  public func login(phoneNumber: String, code: String) async throws -> APIAccessTokens {
+  public func login(phoneNumber: String, otpCode: String, lastID: String) async throws -> APIAccessTokens {
+    let requestParams = LoginParameters(phoneNumber: phoneNumber, otpCode: otpCode, lastID: lastID)
     return try await request(
-      OnboardingRoute.login(LoginParameters(phoneNumber: phoneNumber, code: code)),
+      OnboardingRoute.login(requestParams),
       target: APIAccessTokens.self,
       failure: LFErrorObject.self,
       decoder: .apiDecoder
@@ -14,8 +15,12 @@ extension LFCoreNetwork: OnboardingAPIProtocol where R == OnboardingRoute {
   }
   
   public func requestOTP(phoneNumber: String) async throws -> APIOtp {
-    let result = try await request(OnboardingRoute.otp(OTPParameters(phoneNumber: phoneNumber)))
-    return result.httpResponse?.statusCode == 200 ? APIOtp(success: true) : APIOtp(success: false)
+    return try await request(
+      OnboardingRoute.otp(OTPParameters(phoneNumber: phoneNumber)),
+      target: APIOtp.self,
+      failure: LFErrorObject.self,
+      decoder: .apiDecoder
+    )
   }
   
   public func getOnboardingState(sessionId: String) async throws -> APIOnboardingState {

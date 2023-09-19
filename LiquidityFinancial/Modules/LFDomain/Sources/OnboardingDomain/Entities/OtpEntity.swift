@@ -1,5 +1,5 @@
 import Foundation
 
 public protocol OtpEntity {
-  var success: Bool { get }
+  var requiredAuth: [String] { get }
 }

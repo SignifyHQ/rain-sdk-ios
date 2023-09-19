@@ -64,8 +64,14 @@ struct PhoneNumberView: View {
     .onChange(of: viewModel.phoneNumber, perform: viewModel.onChangedPhoneNumber)
     .background(Colors.background.swiftUIColor)
     .navigationBarBackButtonHidden()
-    .navigationLink(isActive: $viewModel.isNavigationToVertificationView) {
-      VerificationCodeView(phoneNumber: viewModel.phoneNumber.reformatPhone)
+    .navigationLink(item: $viewModel.navigation) { item in
+      switch item {
+      case let .verificationCode(requiredAuth):
+          VerificationCodeView(
+            phoneNumber: viewModel.phoneNumber.reformatPhone,
+            requiredAuth: requiredAuth
+          )
+      }
     }
     .popup(item: $viewModel.toastMessage, style: .toast) {
       ToastView(toastMessage: $0)

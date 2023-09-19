@@ -32,7 +32,9 @@ final class VerificationCodeViewModel: ObservableObject {
   @Published var timeString: String = ""
   @Published var toastMessage: String?
   @Published var errorMessage: String?
+  @Published var navigation: Navigation?
   
+  let requireAuth: [RequiredAuth]
   var cancellables: Set<AnyCancellable> = []
   lazy var requestOtpUseCase: RequestOTPUseCaseProtocol = {
     RequestOTPUseCase(repository: onboardingRepository)
@@ -41,26 +43,44 @@ final class VerificationCodeViewModel: ObservableObject {
     LoginUseCase(repository: onboardingRepository)
   }()
   
-  init(phoneNumber: String) {
+  init(phoneNumber: String, requireAuth: [RequiredAuth]) {
+    self.requireAuth = requireAuth
     formatPhoneNumber = Constants.Default.regionCode.rawValue + phoneNumber
+    performAutoGetTwilioMessagesIfNeccessary()
   }
 }
 
   // MARK: API
 extension VerificationCodeViewModel {
-  func performVerifyOTPCode(formatPhoneNumber: String, code: String) {
+  func handleAfterGetOTP(formatPhoneNumber: String, code: String) {
     guard !isShowLoading else { return }
     isShowLoading = true
+    if requireAuth.count == 1 && requireAuth.contains(where: { $0 == .otp }) {
+      performVerifyOTPCode(formatPhoneNumber: formatPhoneNumber, code: code)
+    } else {
+      isShowLoading = false
+      let isSSNCheck = requireAuth.contains(where: { $0 == .ssn })
+      let isPassportCheck = requireAuth.contains(where: { $0 == .passport })
+      let identityVerificationKind: IdentityVerificationCodeViewModel.Kind? = isSSNCheck
+      ? .ssn
+      : isPassportCheck ? .passport : nil
+      if let kind = identityVerificationKind {
+        navigation = .identityVerificationCode(formatPhoneNumber, self.otpCode, kind)
+      }
+    }
+  }
+  
+  func performVerifyOTPCode(formatPhoneNumber: String, code: String) {
     Task {
-#if DEBUG
+    #if DEBUG
       let start = CFAbsoluteTimeGetCurrent()
-#endif
+    #endif
       do {
-        _ = try await loginUseCase.execute(phoneNumber: formatPhoneNumber, code: code)
+        _ = try await loginUseCase.execute(phoneNumber: formatPhoneNumber, otpCode: code, lastID: .empty)
         accountDataManager.update(phone: formatPhoneNumber)
         accountDataManager.stored(phone: formatPhoneNumber)
         
-        if LFUtility.charityEnabled { // we enalbe showRoundUpForCause after user login
+        if LFUtility.charityEnabled { // we enable showRoundUpForCause after user login
           UserDefaults.showRoundUpForCause = true
         }
         
@@ -79,10 +99,10 @@ extension VerificationCodeViewModel {
         
         log.error(error)
       }
-#if DEBUG
+    #if DEBUG
       let diff = CFAbsoluteTimeGetCurrent() - start
       log.debug("Took \(diff) seconds")
-#endif
+    #endif
     }
   }
   
@@ -109,7 +129,6 @@ extension VerificationCodeViewModel {
         log.debug(code ?? "performGetTwilioMessagesIfNeccessary not found")
         guard let code = code else { return }
         self.otpCode = code
-        self.performVerifyOTPCode(formatPhoneNumber: formatPhoneNumber, code: code)
       }
       .store(in: &cancellables)
   }
@@ -123,7 +142,7 @@ extension VerificationCodeViewModel {
 extension VerificationCodeViewModel {
   func onChangedOTPCode() {
     if otpCode.count == Constants.MaxCharacterLimit.verificationLimit.value {
-      performVerifyOTPCode(formatPhoneNumber: formatPhoneNumber, code: otpCode)
+      handleAfterGetOTP(formatPhoneNumber: formatPhoneNumber, code: otpCode)
     }
   }
   
@@ -247,5 +266,12 @@ extension VerificationCodeViewModel {
       
       onboardingFlowCoordinator.forcedLogout()
     }
+  }
+}
+
+// MARK: Types
+extension VerificationCodeViewModel {
+  enum Navigation {
+    case identityVerificationCode(String, String, IdentityVerificationCodeViewModel.Kind)
   }
 }

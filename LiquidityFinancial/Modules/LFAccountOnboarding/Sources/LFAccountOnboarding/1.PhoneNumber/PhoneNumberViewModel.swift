@@ -12,7 +12,7 @@ final class PhoneNumberViewModel: ObservableObject {
   @Published var isSecretMode: Bool = false
   @Published var isLoading: Bool = false
   @Published var isDisableButton: Bool = true
-  @Published var isNavigationToVertificationView: Bool = false
+  @Published var navigation: Navigation?
   @Published var isShowConditions: Bool = false
   @Published var phoneNumber: String = ""
   @Published var toastMessage: String?
@@ -40,7 +40,10 @@ extension PhoneNumberViewModel {
         let formatPhone = Constants.Default.regionCode.rawValue + phoneNumber
         let otpResponse = try await requestOtpUseCase.execute(phoneNumber: formatPhone.reformatPhone)
         isLoading = false
-        handleAfterGetOTP(isSuccess: otpResponse.success)
+        let requiredAuth = otpResponse.requiredAuth.map {
+          RequiredAuth(rawValue: $0) ?? .unknow
+        }
+        navigation = .verificationCode(requiredAuth)
       } catch {
         isLoading = false
         toastMessage = error.localizedDescription
@@ -50,15 +53,6 @@ extension PhoneNumberViewModel {
   
   func openIntercom() {
     intercomService.openIntercom()
-  }
-}
-
-// MARK: - API
-private extension PhoneNumberViewModel {
-  func handleAfterGetOTP(isSuccess: Bool) {
-    if isSuccess {
-      navigateToOTPVerification()
-    }
   }
 }
 
@@ -88,10 +82,6 @@ extension PhoneNumberViewModel {
       }
     }
   }
-  
-  func navigateToOTPVerification() {
-    isNavigationToVertificationView = true
-  }
 }
 
 extension String {
@@ -102,5 +92,12 @@ extension String {
       .replace(string: ")", replacement: "")
       .replace(string: "-", replacement: "")
       .trimWhitespacesAndNewlines()
+  }
+}
+
+// MARK: Types
+extension PhoneNumberViewModel {
+  enum Navigation {
+    case verificationCode([RequiredAuth])
   }
 }

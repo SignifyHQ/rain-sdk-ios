@@ -2,6 +2,7 @@ import Foundation
 import CoreNetwork
 import NetworkUtilities
 import AuthorizationManager
+import LFUtilities
 
 public enum OnboardingRoute {
   case otp(OTPParameters)
@@ -38,7 +39,10 @@ extension OnboardingRoute: LFRoute {
       "productId": NetworkUtilities.productID
     ]
     switch self {
-    case .otp, .login, .refreshToken:
+    case .refreshToken:
+      return base
+    case .otp, .login:
+      base["ld-device-id"] = LFUtility.deviceId
       return base
     case .onboardingState(let sessionId):
       base["Accept"] = "application/json"

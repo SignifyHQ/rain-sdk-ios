@@ -11,8 +11,8 @@ public class OnboardingRepository: OnboardingRepositoryProtocol {
     self.auth = auth
   }
   
-  public func login(phoneNumber: String, code: String) async throws -> AccessTokens {
-    let accessTokens = try await onboardingAPI.login(phoneNumber: phoneNumber, code: code)
+  public func login(phoneNumber: String, otpCode: String, lastID: String) async throws -> AccessTokens {
+    let accessTokens = try await onboardingAPI.login(phoneNumber: phoneNumber, otpCode: otpCode, lastID: lastID)
     auth.refreshWith(apiToken: accessTokens)
     return accessTokens
   }
