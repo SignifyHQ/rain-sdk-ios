@@ -241,7 +241,7 @@
 
 // CashView
 "cashTab.deActiveError.message" = "Your checking account was deactivated";
-"cashTab.activeCard.buttonTitle" = "Tap to Activate %@ Card";
+"cashTab.createCard.buttonTitle" = "Create Card";
 "cashTab.seeAll.title" = "See all";
 "cashTab.changeAsset.buttonTitle" = "Change";
 "cashTab.lastestTransaction.title" = "Latest Transactions";

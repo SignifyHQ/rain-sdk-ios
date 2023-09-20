@@ -14,6 +14,10 @@ public class NSCardRepository: NSCardRepositoryProtocol {
     try await cardAPI.getListCard()
   }
   
+  public func createCard(sessionID: String) async throws -> CardEntity {
+    try await cardAPI.createCard(sessionID: sessionID)
+  }
+  
   public func getCard(cardID: String, sessionID: String) async throws -> CardEntity {
     try await cardAPI.getCard(cardID: cardID, sessionID: sessionID)
   }

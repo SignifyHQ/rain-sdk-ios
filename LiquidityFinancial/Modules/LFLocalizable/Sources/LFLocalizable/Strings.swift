@@ -680,15 +680,13 @@ public enum LFLocalizable {
     }
   }
   public enum CashTab {
-    public enum ActiveCard {
-      /// Tap to Activate %@ Card
-      public static func buttonTitle(_ p1: Any) -> String {
-        return LFLocalizable.tr("Localizable", "cashTab.activeCard.buttonTitle", String(describing: p1), fallback: "Tap to Activate %@ Card")
-      }
-    }
     public enum ChangeAsset {
       /// Change
       public static let buttonTitle = LFLocalizable.tr("Localizable", "cashTab.changeAsset.buttonTitle", fallback: "Change")
+    }
+    public enum CreateCard {
+      /// Create Card
+      public static let buttonTitle = LFLocalizable.tr("Localizable", "cashTab.createCard.buttonTitle", fallback: "Create Card")
     }
     public enum DeActiveError {
       /// Your checking account was deactivated

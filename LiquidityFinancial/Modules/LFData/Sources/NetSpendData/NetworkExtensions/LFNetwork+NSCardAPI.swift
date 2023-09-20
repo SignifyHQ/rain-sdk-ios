@@ -14,6 +14,15 @@ extension LFCoreNetwork: NSCardAPIProtocol where R == NSCardRoute {
     )
   }
   
+  public func createCard(sessionID: String) async throws -> APICard {
+    try await request(
+      NSCardRoute.createCard(sessionID),
+      target: APICard.self,
+      failure: LFErrorObject.self,
+      decoder: .apiDecoder
+    )
+  }
+  
   public func getCard(cardID: String, sessionID: String) async throws -> APICard {
     try await request(
       NSCardRoute.card(cardID, sessionID),

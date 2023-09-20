@@ -1,3 +1,4 @@
+import Foundation
 import Factory
 import AccountData
 import LFUtilities
@@ -43,6 +44,7 @@ public final class DashboardRepository: ObservableObject {
     self.toastMessage = toastMessage
     initData()
     subscribeLinkedAccounts()
+    subscribeAddedNewVirtualCard()
   }
 }
 
@@ -55,6 +57,15 @@ public extension DashboardRepository {
     apiFetchACHInfo()
     apiFetchListCard()
     apiFetchFetureConfig()
+  }
+  
+  func subscribeAddedNewVirtualCard() {
+    NotificationCenter.default.publisher(for: .addedNewVirtualCard)
+      .sink { [weak self] _ in
+        guard let self else { return }
+        self.apiFetchListCard()
+      }
+      .store(in: &cancellable)
   }
   
   func subscribeLinkedAccounts() {
@@ -74,7 +85,7 @@ public extension DashboardRepository {
       isLoading = true
       do {
         let sessionID = self.accountDataManager.sessionID
-        
+        apiFetchListCard()
         async let fiatAccountsEntity = self.accountRepository.getAccount(currencyType: Constants.CurrencyType.fiat.rawValue)
         
         async let linkedAccountEntity = self.externalFundingRepository.getLinkedAccount(sessionId: sessionID)
@@ -108,9 +119,14 @@ public extension DashboardRepository {
             cardStatus: CardStatus(rawValue: card.status) ?? .unactivated
           )
         }
-        cardData.metaDatas = Array(repeating: nil, count: cardData.cards.count)
-        cardData.cards.map { $0.id }.enumerated().forEach { index, id in
-          apiFetchCardDetail(with: id, and: index)
+        let filteredCards = cardData.cards.filter({ $0.cardStatus != .closed })
+        if filteredCards.isEmpty {
+          NotificationCenter.default.post(name: .noLinkedCards, object: nil)
+        } else {
+          cardData.metaDatas = Array(repeating: nil, count: filteredCards.count)
+          filteredCards.map { $0.id }.enumerated().forEach { index, id in
+            apiFetchCardDetail(with: id, and: index)
+          }
         }
       } catch {
         cardData.loading = false

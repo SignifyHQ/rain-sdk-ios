@@ -7,7 +7,8 @@ import BaseDashboard
 
 struct CashCardView: View {
   @StateObject private var viewModel: CashCardViewModel
-  @Binding var cardDetails: CardModel
+  @Binding var isNotLinkedCard: Bool
+  
   let listCardViewModel: ListCardsViewModel
   let isPOFlow: Bool
   let showLoadingIndicator: Bool
@@ -19,53 +20,52 @@ struct CashCardView: View {
     isPOFlow
   }
   private var cardImageAsset: Image {
-    isCardAvailable ? GenImages.Images.availableCard.swiftUIImage : GenImages.Images.unavailableCard.swiftUIImage
+    isCardAvailable && !isNotLinkedCard ? GenImages.Images.availableCard.swiftUIImage : GenImages.Images.unavailableCard.swiftUIImage
   }
 
   init(
+    isNoLinkedCard: Binding<Bool>,
     isPOFlow: Bool,
     showLoadingIndicator: Bool,
     cashBalance: Double,
     assetType: AssetType,
-    cardDetails: Binding<CardModel>,
     listCardViewModel: ListCardsViewModel,
     orderCardAction: @escaping () -> Void
   ) {
+    _isNotLinkedCard = isNoLinkedCard
     self.isPOFlow = isPOFlow
     self.cashBalance = cashBalance
     self.assetType = assetType
     self.showLoadingIndicator = showLoadingIndicator
-    _cardDetails = cardDetails
     self.orderCardAction = orderCardAction
     self.listCardViewModel = listCardViewModel
-    _viewModel = .init(wrappedValue: CashCardViewModel(cardDetails: cardDetails.wrappedValue))
+    _viewModel = .init(wrappedValue: CashCardViewModel())
   }
   
   var body: some View {
     ZStack(alignment: .bottom) {
-      ZStack(alignment: .topTrailing) {
+      ZStack(alignment: .bottomLeading) {
         cardImageAsset
           .resizable()
           .background(Color.clear)
           .clipped()
           .aspectRatio(contentMode: .fit)
-        
-        if cardDetails.cardStatus == .unactivated {
-          activateCard
-        }
+        createCardButton
       }
-      if isPOFlow {
+      if isPOFlow && !isNotLinkedCard {
         balance
       }
     }
     .fixedSize(horizontal: false, vertical: true)
+    .onReceive(NotificationCenter.default.publisher(for: .addedNewVirtualCard)) { _ in
+      isNotLinkedCard = false
+    }
+    .onReceive(NotificationCenter.default.publisher(for: .noLinkedCards)) { _ in
+      isNotLinkedCard = true
+    }
     .onTapGesture {
-      if isPOFlow {
-        if cardDetails.cardStatus == .unactivated {
-          viewModel.activeCard()
-        } else {
-          viewModel.isShowCardDetail.toggle()
-        }
+      if isPOFlow && !isNotLinkedCard {
+        viewModel.isShowCardDetail.toggle()
       }
     }
     .fullScreenCover(item: $viewModel.cardActivated) { card in
@@ -83,20 +83,31 @@ struct CashCardView: View {
     }
   }
 
-  private var activateCard: some View {
-    FullSizeButton(
-      title: LFLocalizable.CashTab.ActiveCard.buttonTitle(cardDetails.cardType.title),
-      isDisable: false,
-      type: .contrast,
-      fontSize: Constants.FontSize.ultraSmall.value,
-      height: 25,
-      cornerRadius: 5,
-      textColor: Colors.contrast.swiftUIColor,
-      backgroundColor: Colors.buttons.swiftUIColor
-    ) {
-      viewModel.activeCard()
+  @ViewBuilder private var createCardButton: some View {
+    if isNotLinkedCard {
+      Button {
+        viewModel.createCard()
+      } label: {
+        if viewModel.isCreatingCard {
+          HStack {
+            Spacer()
+            CircleIndicatorView()
+            Spacer()
+          }
+        } else {
+          HStack {
+            Spacer()
+            Text(LFLocalizable.CashTab.CreateCard.buttonTitle)
+              .foregroundColor(Colors.whiteText.swiftUIColor)
+              .font(Fonts.medium.swiftUIFont(size: Constants.FontSize.small.value))
+            Spacer()
+          }
+        }
+      }
+      .frame(height: 40)
+      .background(Colors.buttons.swiftUIColor.cornerRadius(10))
+      .padding([.horizontal, .bottom], 8)
     }
-    .padding([.horizontal, .top], 15)
   }
   
   private var balance: some View {

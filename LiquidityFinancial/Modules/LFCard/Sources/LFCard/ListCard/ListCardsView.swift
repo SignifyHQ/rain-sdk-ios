@@ -56,7 +56,7 @@ public struct ListCardsView: View {
           .embedInNavigation()
       }
     }
-    .popup(item: $viewModel.popup) { item in
+    .popup(item: $viewModel.popup, dismissMethods: .tapInside) { item in
       switch item {
       case .confirmCloseCard:
         confirmationCloseCardPopup
@@ -126,7 +126,7 @@ private extension ListCardsView {
 
   var cardView: some View {
     TabView(selection: $viewModel.currentCard) {
-      ForEach(Array(viewModel.cardsList.enumerated()), id: \.offset) { offset, item in
+      ForEach(Array(viewModel.cardsList.enumerated()), id: \.element.id) { offset, item in
         CardView(
           card: item,
           cardMetaData: viewModel.cardMetaDatas.count > offset ? $viewModel.cardMetaDatas[offset] : .constant(nil),
@@ -380,7 +380,9 @@ private extension ListCardsView {
       primary: .init(
         text: LFLocalizable.Button.Ok.title,
         action: {
-          viewModel.hidePopup()
+          viewModel.primaryActionCloseCardSuccessfully {
+            dismiss()
+          }
         }
       )
     )

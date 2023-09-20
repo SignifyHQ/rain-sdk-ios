@@ -3,6 +3,7 @@ import LFUtilities
 import LFLocalizable
 import Factory
 import AccountData
+import NetSpendData
 import AccountDomain
 import RewardData
 import RewardDomain
@@ -16,6 +17,8 @@ final class IdentityVerificationCodeViewModel: ObservableObject {
   @LazyInjected(\.rewardDataManager) var rewardDataManager
   @LazyInjected(\.onboardingRepository) var onboardingRepository
   @LazyInjected(\.onboardingFlowCoordinator) var onboardingFlowCoordinator
+  @LazyInjected(\.nsPersionRepository) var nsPersionRepository
+  @LazyInjected(\.netspendDataManager) var netspendDataManager
 
   @Published var isDisableButton: Bool = true
   @Published var isShowLogoutPopup: Bool = false
@@ -63,6 +66,7 @@ extension IdentityVerificationCodeViewModel {
           UserDefaults.showRoundUpForCause = true
         }
         
+        try await initNetSpendSession()
         await checkOnboardingState()
         
       } catch {
@@ -100,20 +104,38 @@ extension IdentityVerificationCodeViewModel {
 // MARK: - Private Functions
 private extension IdentityVerificationCodeViewModel {
   func handleError(error: Error) {
-    guard let code = error.asErrorObject?.code else {
+    guard let errorObject = error.asErrorObject else {
       toastMessage = error.localizedDescription
       return
     }
-    switch code {
-      case Constants.ErrorCode.userInactive.value:
-        onboardingFlowCoordinator.set(route: .accountLocked)
-      case Constants.ErrorCode.credentialsInvalid.value:
-        toastMessage = LFLocalizable.EnterVerificationCode.CodeInvalid.message
-      case Constants.ErrorCode.lastXIdInvalid.value:
-        toastMessage = LFLocalizable.EnterVerificationCode.LastXIdInvalid.message
-      default:
-        toastMessage = error.localizedDescription
+    switch errorObject.code {
+    case Constants.ErrorCode.userInactive.value:
+      onboardingFlowCoordinator.set(route: .accountLocked)
+    case Constants.ErrorCode.credentialsInvalid.value:
+      toastMessage = LFLocalizable.EnterVerificationCode.CodeInvalid.message
+    case Constants.ErrorCode.lastXIdInvalid.value:
+      errorMessage = errorObject.message
+    default:
+      toastMessage = error.localizedDescription
     }
+  }
+  
+  func initNetSpendSession() async throws {
+    log.info("<<<<<<<<<<<<<< Refresh NetSpend Session >>>>>>>>>>>>>>>")
+    let token = try await nsPersionRepository.clientSessionInit()
+    netspendDataManager.update(jwkToken: token)
+    
+    let sessionConnectWithJWT = await nsPersionRepository.establishingSessionWithJWKSet(jwtToken: token)
+    
+    guard let deviceData = sessionConnectWithJWT?.deviceData else { return }
+    
+    let establishPersonSession = try await nsPersionRepository.establishPersonSession(deviceData: EstablishSessionParameters(encryptedData: deviceData))
+    
+    netspendDataManager.update(serverSession: establishPersonSession as? APIEstablishedSessionData)
+    accountDataManager.stored(sessionID: establishPersonSession.id)
+    
+    let userSessionAnonymous = try nsPersionRepository.createUserSession(establishingSession: sessionConnectWithJWT, encryptedData: establishPersonSession.encryptedData)
+    netspendDataManager.update(sdkSession: userSessionAnonymous)
   }
   
   func checkSSNFilled() {

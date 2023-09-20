@@ -11,6 +11,8 @@ import LFAccountOnboarding
 struct CashView: View {
   @Environment(\.scenePhase) var scenePhase
   @StateObject private var viewModel: CashViewModel
+  @State private var isNotLinkedCard = false
+
   let listCardViewModel: ListCardsViewModel
 
   init(listCardViewModel: ListCardsViewModel, guestHandler: @escaping () -> Void) {
@@ -129,11 +131,11 @@ private extension CashView {
     ScrollView(showsIndicators: false) {
       VStack(spacing: 16) {
         CashCardView(
+          isNoLinkedCard: $isNotLinkedCard,
           isPOFlow: true, // !userManager.isGuest
           showLoadingIndicator: viewModel.isLoading,
           cashBalance: viewModel.cashBalanceValue,
           assetType: viewModel.selectedAsset,
-          cardDetails: $viewModel.cashCardDetails,
           listCardViewModel: listCardViewModel
         ) {
           viewModel.guestCardTapped()
@@ -160,7 +162,7 @@ private extension CashView {
   }
   
   @ViewBuilder var depositButton: some View {
-    if viewModel.transactions.isEmpty && viewModel.activity != .loading {
+    if viewModel.transactions.isEmpty && viewModel.activity != .loading && !isNotLinkedCard {
       Button {
         viewModel.addMoneyTapped()
       } label: {

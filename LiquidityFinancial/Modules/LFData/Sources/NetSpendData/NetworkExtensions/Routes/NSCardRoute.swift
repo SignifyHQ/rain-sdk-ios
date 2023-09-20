@@ -6,6 +6,7 @@ import NetSpendDomain
 
 public enum NSCardRoute {
   case listCard
+  case createCard(String)
   case card(String, String)
   case lock(String, String)
   case unlock(String, String)
@@ -21,7 +22,7 @@ extension NSCardRoute: LFRoute {
   
   public var path: String {
     switch self {
-    case .listCard:
+    case .listCard, .createCard:
       return "/v1/netspend/cards"
     case let .card(cardID, _):
       return "/v1/netspend/cards/\(cardID)"
@@ -47,7 +48,7 @@ extension NSCardRoute: LFRoute {
   public var httpMethod: HttpMethod {
     switch self {
     case .listCard, .card, .getApplyPayToken: return .GET
-    case .lock, .unlock, .close, .orderPhysicalCard, .verifyCVVCode, .postApplyPayToken: return .POST
+    case .createCard, .lock, .unlock, .close, .orderPhysicalCard, .verifyCVVCode, .postApplyPayToken: return .POST
     case .setPin: return .PUT
     }
   }
@@ -61,7 +62,8 @@ extension NSCardRoute: LFRoute {
     switch self {
     case .listCard:
       break
-    case let .card(_, sessionId),
+    case let .createCard(sessionId),
+      let .card(_, sessionId),
       let .lock(_, sessionId),
       let .unlock(_, sessionId),
       let .close(_, _, sessionId),
@@ -77,7 +79,7 @@ extension NSCardRoute: LFRoute {
   
   public var parameters: Parameters? {
     switch self {
-    case .listCard, .card, .lock, .unlock, .getApplyPayToken:
+    case .listCard, .createCard, .card, .lock, .unlock, .getApplyPayToken:
       return nil
     case let .close(parameters, _, _):
       return parameters.encoded()
@@ -96,7 +98,7 @@ extension NSCardRoute: LFRoute {
   
   public var parameterEncoding: ParameterEncoding? {
     switch self {
-    case .listCard, .card, .lock, .unlock, .getApplyPayToken: return nil
+    case .listCard, .createCard, .card, .lock, .unlock, .getApplyPayToken: return nil
     case .orderPhysicalCard, .verifyCVVCode, .setPin, .postApplyPayToken, .close:
       return .json
     }

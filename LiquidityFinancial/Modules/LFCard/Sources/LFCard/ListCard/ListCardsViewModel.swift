@@ -26,6 +26,9 @@ public final class ListCardsViewModel: ObservableObject {
   @Published var isShowCardNumber: Bool = false
   @Published var isCardLocked: Bool = false
   @Published var isActive: Bool = false
+  @Published var roundUpPurchasesPopup: Bool = false
+  @Published var isUpdatingRoundUpPurchases = false
+  @Published var isHasPhysicalCard: Bool = false
   @Published var cardsList: [CardModel] = []
   @Published var cardMetaDatas: [CardMetaData?] = []
   @Published var currentCard: CardModel = .virtualDefault
@@ -34,9 +37,6 @@ public final class ListCardsViewModel: ObservableObject {
   @Published var navigation: Navigation?
   @Published var popup: Popup?
   @Published var toastMessage: String?
-  
-  @Published var roundUpPurchasesPopup: Bool = false
-  @Published var isUpdatingRoundUpPurchases = false
   
   lazy var cardUseCase: NSCardUseCaseProtocol = {
     NSCardUseCase(repository: cardRepository)
@@ -47,12 +47,6 @@ public final class ListCardsViewModel: ObservableObject {
   }()
   
   private var cancellable = Set<AnyCancellable>()
-  
-  var isHasPhysicalCard: Bool {
-    cardsList.contains { card in
-      card.cardType == .physical
-    }
-  }
   
   var roundUpPurchases: Bool {
     rewardDataManager.roundUpDonation ?? false
@@ -70,9 +64,12 @@ public final class ListCardsViewModel: ObservableObject {
           return
         }
         self.isInit = cardData.loading
-        self.cardsList = cardData.cards
+        self.isHasPhysicalCard = cardData.cards.contains { card in
+          card.cardType == .physical
+        }
+        self.cardsList = cardData.cards.filter { $0.cardStatus != .closed }
         self.cardMetaDatas = cardData.metaDatas
-        self.currentCard = cardData.cards.first ?? .virtualDefault
+        self.currentCard = self.cardsList.first ?? .virtualDefault
       }
       .store(in: &cancellable)
   }
@@ -117,10 +114,9 @@ extension ListCardsViewModel {
       isLoading = true
       do {
         let request = CloseCardReasonParameters()
-        let card = try await cardUseCase.closeCard(
+        _ = try await cardUseCase.closeCard(
           reason: request, cardID: currentCard.id, sessionID: accountDataManager.sessionID
         )
-        updateCardStatus(status: .closed, id: card.id)
         popup = .closeCardSuccessfully
       } catch {
         toastMessage = error.localizedDescription
@@ -156,6 +152,7 @@ extension ListCardsViewModel {
   }
   
   func orderPhysicalSuccess(card: CardModel) {
+    isHasPhysicalCard = true
     cardMetaDatas.append(nil)
     cardsList.append(card)
   }
@@ -216,6 +213,11 @@ extension ListCardsViewModel {
   func hidePopup() {
     popup = nil
   }
+  
+  func primaryActionCloseCardSuccessfully(completion: @escaping () -> Void) {
+    updateListCard(id: currentCard.id, completion: completion)
+    popup = nil
+  }
 }
 
 // MARK: - Private Functions
@@ -243,11 +245,27 @@ private extension ListCardsViewModel {
   
   func updateCardStatus(status: CardStatus, id: String) {
     isLoading = false
-    guard id == currentCard.id, let index = cardsList.firstIndex(where: { $0.id == id
-    }) else { return }
+    guard id == currentCard.id, let index = cardsList.firstIndex(where: { $0.id == id }) else {
+      return
+    }
     currentCard.cardStatus = status
     cardsList[index].cardStatus = status
     isActive = status == .active
+  }
+  
+  func updateListCard(id: String, completion: @escaping () -> Void) {
+    isLoading = false
+    guard let index = cardsList.firstIndex(where: { $0.id == id }) else {
+      return
+    }
+    cardsList.remove(at: index)
+    cardMetaDatas.remove(at: index)
+    if let firstCard = cardsList.first {
+      currentCard = firstCard
+    } else {
+      NotificationCenter.default.post(name: .noLinkedCards, object: nil)
+      completion()
+    }
   }
 }
 
