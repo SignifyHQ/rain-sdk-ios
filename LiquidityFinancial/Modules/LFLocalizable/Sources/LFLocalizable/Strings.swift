@@ -1755,6 +1755,20 @@ public enum LFLocalizable {
       /// no contact selected
       public static let noContact = LFLocalizable.tr("Localizable", "moveMoney.error.noContact", fallback: "no contact selected")
     }
+    public enum TransferFeePopup {
+      /// Free
+      public static let free = LFLocalizable.tr("Localizable", "moveMoney.transferFeePopup.free", fallback: "Free")
+      /// Instant
+      public static let instant = LFLocalizable.tr("Localizable", "moveMoney.transferFeePopup.instant", fallback: "Instant")
+      /// Normal
+      public static let normal = LFLocalizable.tr("Localizable", "moveMoney.transferFeePopup.normal", fallback: "Normal")
+      /// (3-4 business days)
+      public static let normalDays = LFLocalizable.tr("Localizable", "moveMoney.transferFeePopup.normalDays", fallback: "(3-4 business days)")
+      /// %@ SPEED
+      public static func title(_ p1: Any) -> String {
+        return LFLocalizable.tr("Localizable", "moveMoney.transferFeePopup.title", String(describing: p1), fallback: "%@ SPEED")
+      }
+    }
     public enum Withdraw {
       /// You currently have %@ available to withdraw. Rewards are not available to withdraw until 48 hours after they are earned.
       public static func annotation(_ p1: Any) -> String {

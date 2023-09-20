@@ -449,6 +449,11 @@ https://mn.gov/commerce/money/investments/cryptocurrency/. \n\n\n\n\n\n\n";
 "moveMoney.withdraw.title" = "WITHDRAW";
 "moveMoney.available_balance.subtitle" = "%@ available";
 "moveMoney.error.noContact" = "no contact selected";
+"moveMoney.transferFeePopup.title" = "%@ SPEED";
+"moveMoney.transferFeePopup.instant" = "Instant";
+"moveMoney.transferFeePopup.normal" = "Normal";
+"moveMoney.transferFeePopup.normalDays" = "(3-4 business days)";
+"moveMoney.transferFeePopup.free" = "Free";
 
 // Add bank with debit
 "addBankWithDebit.title" = "ADD A BANK USING YOUR DEBIT CARD";

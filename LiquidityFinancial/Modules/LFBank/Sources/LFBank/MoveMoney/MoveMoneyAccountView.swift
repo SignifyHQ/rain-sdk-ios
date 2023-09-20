@@ -18,6 +18,12 @@ public struct MoveMoneyAccountView: View {
 
   public var body: some View {
     content
+      .blur(radius: viewModel.showTransferFeeSheet ? 16 : 0)
+      .sheet(isPresented: $viewModel.showTransferFeeSheet) {
+        transferFeeSheet
+          .customPresentationDetents(height: 272)
+          .ignoresSafeArea(edges: .bottom)
+      }
       .frame(maxWidth: .infinity)
       .readGeometry { geo in
         screenSize = geo.size
@@ -33,6 +39,8 @@ public struct MoveMoneyAccountView: View {
         showAnnotationView = false
       }
       .navigationBarTitleDisplayMode(.inline)
+      .navigationBarHidden(viewModel.showTransferFeeSheet)
+      .overlay(popupBackground)
       .popup(item: $viewModel.toastMessage, style: .toast) {
         ToastView(toastMessage: $0)
       }
@@ -49,6 +57,7 @@ public struct MoveMoneyAccountView: View {
           AddBankWithDebitView()
         }
       }
+      .background(Colors.background.swiftUIColor)
   }
 }
 
@@ -72,6 +81,12 @@ private extension MoveMoneyAccountView {
     .padding(.horizontal, 30)
     .padding(.bottom, 34)
     .background(Colors.background.swiftUIColor)
+  }
+  
+  @ViewBuilder var popupBackground: some View {
+    if viewModel.showTransferFeeSheet {
+      Colors.background.swiftUIColor.opacity(0.5).ignoresSafeArea()
+    }
   }
 
   var topView: some View {
@@ -196,7 +211,7 @@ private extension MoveMoneyAccountView {
       isDisable: !viewModel.isAmountActionAllowed,
       isLoading: $viewModel.showIndicator
     ) {
-      viewModel.callBioMetric()
+      viewModel.continueTransfer()
     }
   }
 
@@ -241,6 +256,111 @@ private extension MoveMoneyAccountView {
     case .send:
       return LFLocalizable.MoveMoney.Withdraw.title
     }
+  }
+  
+  var transferFeeSheet: some View {
+    VStack(spacing: 10) {
+      RoundedRectangle(cornerRadius: 4)
+        .foregroundColor(Colors.label.swiftUIColor.opacity(0.75))
+        .frame(width: 32, height: 4)
+        .padding(.top, 6)
+      Text(viewModel.transferFeePopupTitle)
+        .foregroundColor(Colors.label.swiftUIColor)
+        .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.main.value))
+        .padding(.vertical, 14)
+      Button {
+        viewModel.selectTransferInstant = true
+      } label: {
+        HStack(spacing: 12) {
+          Text(LFLocalizable.MoveMoney.TransferFeePopup.instant)
+            .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.small.value))
+            .foregroundColor(Colors.label.swiftUIColor)
+          Spacer()
+          HStack(spacing: 8) {
+            Text("$0.69")
+              .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.small.value))
+              .foregroundColor(Colors.primary.swiftUIColor)
+            
+            if let isSelect = viewModel.selectTransferInstant, isSelect {
+              GenImages.Images.icKycQuestionCheck.swiftUIImage
+                .scaledToFit()
+                .frame(width: 20, height: 20)
+                .padding(.trailing, 20)
+            } else {
+              Ellipse()
+                .foregroundColor(.clear)
+                .frame(width: 20, height: 20)
+                .overlay(
+                  Ellipse()
+                    .inset(by: 0.50)
+                    .stroke(.white, lineWidth: 1)
+                )
+                .opacity(0.25)
+                .padding(.trailing, 20)
+            }
+          }
+        }
+        .frame(height: 48)
+        .padding(.horizontal, 16)
+        .background(Colors.background.swiftUIColor)
+        .cornerRadius(9)
+      }
+      
+      Button {
+        viewModel.selectTransferInstant = false
+      } label: {
+        HStack(spacing: 12) {
+          HStack(spacing: 12) {
+            Text(LFLocalizable.MoveMoney.TransferFeePopup.normal)
+              .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.small.value))
+              .foregroundColor(Colors.label.swiftUIColor)
+            
+            Text(LFLocalizable.MoveMoney.TransferFeePopup.normalDays)
+              .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.small.value))
+              .foregroundColor(Colors.label.swiftUIColor.opacity(0.6))
+          }
+          Spacer()
+          HStack(spacing: 8) {
+            Text(LFLocalizable.MoveMoney.TransferFeePopup.free)
+              .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.small.value))
+              .foregroundColor(Colors.primary.swiftUIColor)
+            
+            if let isSelect = viewModel.selectTransferInstant, !isSelect {
+              GenImages.Images.icKycQuestionCheck.swiftUIImage
+                .scaledToFit()
+                .frame(width: 20, height: 20)
+                .padding(.trailing, 20)
+            } else {
+              Ellipse()
+                .foregroundColor(.clear)
+                .frame(width: 20, height: 20)
+                .overlay(
+                  Ellipse()
+                    .inset(by: 0.50)
+                    .stroke(.white, lineWidth: 1)
+                )
+                .opacity(0.25)
+                .padding(.trailing, 20)
+            }
+          }
+        }
+        .frame(height: 48)
+        .padding(.horizontal, 16)
+        .background(Colors.background.swiftUIColor)
+        .cornerRadius(9)
+      }
+      
+      FullSizeButton(
+        title: LFLocalizable.Button.Continue.title,
+        isDisable: viewModel.selectTransferInstant == nil,
+        isLoading: $viewModel.showIndicator
+      ) {
+        viewModel.continueTransferFeePopup()
+      }
+      .padding(.vertical, 32)
+    }
+    .padding(.horizontal, 30)
+    .background(Colors.secondaryBackground.swiftUIColor)
   }
 }
 

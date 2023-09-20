@@ -25,6 +25,8 @@ public class MoveMoneyAccountViewModel: ObservableObject {
   @Published var linkedAccount: [APILinkedSourceData] = []
   @Published var selectedLinkedAccount: APILinkedSourceData?
   @Published var selectedValue: GridValue?
+  @Published var showTransferFeeSheet: Bool = false
+  @Published var selectTransferInstant: Bool?
   
   private var cancellable: Set<AnyCancellable> = []
   let kind: Kind
@@ -76,6 +78,30 @@ extension MoveMoneyAccountViewModel {
         callTransferAPI()
       }
     }
+  }
+  
+  func continueTransfer() {
+    guard let account = selectedLinkedAccount else {
+      return
+    }
+    switch account.sourceType {
+    case .externalBank:
+      callBioMetric()
+    case .externalCard:
+      showTransferFeeSheet = true
+    }
+  }
+  
+  func continueTransferFeePopup() {
+    guard let selectTransferInstant = selectTransferInstant else {
+      return
+    }
+    showTransferFeeSheet = false
+    if selectTransferInstant {
+      callBioMetric()
+      return
+    }
+    // TODO: Will need open screen to choose link bank or open plaid screen for link bank
   }
   
   func getListConnectedAccount() {
@@ -191,6 +217,11 @@ extension MoveMoneyAccountViewModel {
 
   func validateAmount(with kind: Kind) -> String? {
     return nil
+  }
+  
+  var transferFeePopupTitle: String {
+    let title = kind == .receive ? LFLocalizable.MoveMoney.Deposit.title : LFLocalizable.MoveMoney.Withdraw.title
+    return LFLocalizable.MoveMoney.TransferFeePopup.title(title.uppercased())
   }
 }
 
