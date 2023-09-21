@@ -10,8 +10,11 @@ import LFAccountOnboarding
 import AccountData
 import AccountDomain
 import LFTransaction
+import Factory
 
 struct AccountsView: View {
+  @Injected(\.analyticsService) var analyticsService
+  
   @Environment(\.scenePhase) var scenePhase
   
   @StateObject private var viewModel: AccountViewModel
@@ -22,6 +25,7 @@ struct AccountsView: View {
   
   var body: some View {
     content
+      .track(name: String(describing: type(of: self)))
       .disabled(viewModel.isDisableView)
       .navigationLink(item: $viewModel.navigation) { item in
         switch item {
@@ -135,6 +139,7 @@ private extension AccountsView {
         title: LFLocalizable.AccountView.AccountNumber.title,
         value: viewModel.achInformation.accountNumber
       ) {
+        analyticsService.track(event: AnalyticsEvent(name: .viewsAccountAndRouting))
         UIPasteboard.general.string = viewModel.achInformation.accountNumber
         viewModel.toastMessage = LFLocalizable.Toast.Copy.message
       }

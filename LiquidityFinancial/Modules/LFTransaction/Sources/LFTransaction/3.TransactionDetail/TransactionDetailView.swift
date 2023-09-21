@@ -3,6 +3,7 @@ import SwiftUI
 import LFStyleGuide
 import LFLocalizable
 import LFUtilities
+import LFServices
 
 public struct TransactionDetailView: View {
   @StateObject private var viewModel: TransactionDetailViewModel
@@ -71,6 +72,7 @@ public struct TransactionDetailView: View {
     }
     .background(Colors.background.swiftUIColor)
     .edgesIgnoringSafeArea(.bottom)
+    .track(name: String(describing: type(of: self)))
   }
 }
 

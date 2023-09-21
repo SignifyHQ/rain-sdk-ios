@@ -47,7 +47,7 @@ public class NSPersonsUseCase: NSPersonsUseCaseProtocol {
     try await repository.getAuthorizationCode(sessionId: sessionId)
   }
   
-  public func postAgreement(body: [String : Any]) async throws -> Bool {
+  public func postAgreement(body: [String: Any]) async throws -> Bool {
     try await repository.postAgreement(body: body)
   }
 }

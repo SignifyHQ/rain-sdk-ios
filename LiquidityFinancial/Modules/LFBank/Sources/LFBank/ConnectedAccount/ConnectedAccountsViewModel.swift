@@ -5,6 +5,7 @@ import Factory
 import NetSpendData
 import LFUtilities
 import LFLocalizable
+import LFServices
 
 class ConnectedAccountsViewModel: ObservableObject {
 
@@ -15,6 +16,7 @@ class ConnectedAccountsViewModel: ObservableObject {
   @LazyInjected(\.externalFundingRepository) var externalFundingRepository
   @LazyInjected(\.netspendDataManager) var netspendDataManager
   @LazyInjected(\.accountDataManager) var accountDataManager
+  @LazyInjected(\.analyticsService) var analyticsService
   
   @Published var linkedAccount: [APILinkedSourceData] = []
   @Published var isLoading = false
@@ -44,6 +46,10 @@ class ConnectedAccountsViewModel: ObservableObject {
 
 extension ConnectedAccountsViewModel {
 
+  func trackAccountViewAppear() {
+    analyticsService.track(event: AnalyticsEvent(name: .viewedAccounts))
+  }
+  
   func title(for account: APILinkedSourceData) -> String {
     switch account.sourceType {
     case .externalCard:

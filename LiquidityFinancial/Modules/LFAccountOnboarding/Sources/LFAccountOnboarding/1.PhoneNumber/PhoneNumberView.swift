@@ -5,6 +5,7 @@ import LFUtilities
 import LFLocalizable
 import LFServices
 import Combine
+import Factory
 
 struct PhoneNumberView: View {
   @EnvironmentObject
@@ -13,6 +14,8 @@ struct PhoneNumberView: View {
   var openURL
   @Environment(\.presentationMode)
   var presentation
+  @Injected(\.analyticsService)
+  var analyticsService
   
   @StateObject private var viewModel = PhoneNumberViewModel()
   
@@ -76,7 +79,11 @@ struct PhoneNumberView: View {
     .popup(item: $viewModel.toastMessage, style: .toast) {
       ToastView(toastMessage: $0)
     }
+    .onAppear(perform: {
+      analyticsService.track(event: AnalyticsEvent(name: .phoneVerified))
+    })
     .navigationBarHidden(true)
+    .track(name: String(describing: type(of: self)))
   }
 }
 

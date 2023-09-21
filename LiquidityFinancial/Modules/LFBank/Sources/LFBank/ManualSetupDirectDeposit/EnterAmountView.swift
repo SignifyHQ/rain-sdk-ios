@@ -2,6 +2,7 @@ import SwiftUI
 import LFLocalizable
 import LFUtilities
 import LFStyleGuide
+import LFServices
 
 struct EnterAmountView: View {
   @FocusState private var keyboardFocus: Bool
@@ -45,5 +46,6 @@ struct EnterAmountView: View {
     .navigationLink(isActive: $isNavigateToSignatureView) {
       AddSignatureView(viewModel: viewModel)
     }
+    .track(name: String(describing: type(of: self)))
   }
 }

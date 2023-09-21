@@ -3,6 +3,7 @@ import SwiftUI
 import LFStyleGuide
 import LFLocalizable
 import LFUtilities
+import LFServices
 
 struct InitialView: View {
   
@@ -31,6 +32,7 @@ struct InitialView: View {
     .frame(maxWidth: .infinity)
     .frame(maxHeight: .infinity)
     .background(Colors.background.swiftUIColor)
+    .track(name: String(describing: type(of: self)))
   }
   
 }

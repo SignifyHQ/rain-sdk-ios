@@ -7,8 +7,12 @@ import LFRewards
 import BaseDashboard
 import LFAccountOnboarding
 import LFBank
+import Factory
+import LFServices
 
 public struct HomeView: View {
+  @Injected(\.analyticsService) var analyticsService
+  
   @Environment(\.scenePhase) var scenePhase
   
   @StateObject private var viewModel: HomeViewModel
@@ -72,6 +76,9 @@ public struct HomeView: View {
         viewModel.getListConnectedAccount()
       }
     })
+    .onAppear {
+      analyticsService.track(event: AnalyticsEvent(name: .viewedHome))
+    }
   }
 }
 

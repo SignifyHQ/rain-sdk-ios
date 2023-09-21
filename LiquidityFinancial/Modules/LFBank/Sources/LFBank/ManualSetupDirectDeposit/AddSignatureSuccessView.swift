@@ -3,6 +3,7 @@ import LFLocalizable
 import LFStyleGuide
 import SwiftUI
 import MessageUI
+import LFServices
 
 struct AddSignatureSuccessView: View {
   @StateObject var viewModel: ManualSetupViewModel
@@ -50,6 +51,7 @@ struct AddSignatureSuccessView: View {
     .navigationLink(isActive: $isNavigationViewForm) {
       PDFWebView(documentName: Constants.Default.documentName.rawValue)
     }
+    .track(name: String(describing: type(of: self)))
   }
 }
 

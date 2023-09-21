@@ -5,11 +5,13 @@ import LFCard
 import NetSpendData
 import NetSpendDomain
 import Factory
+import LFServices
 
 @MainActor
 final class CashCardViewModel: ObservableObject {
   @LazyInjected(\.accountDataManager) var accountDataManager
   @LazyInjected(\.cardRepository) var cardRepository
+  @LazyInjected(\.analyticsService) var analyticsService
 
   @Published var isShowCardDetail = false
   @Published var isCreatingCard = false
@@ -19,9 +21,6 @@ final class CashCardViewModel: ObservableObject {
   lazy var cardUseCase: NSCardUseCaseProtocol = {
     NSCardUseCase(repository: cardRepository)
   }()
-
-  init() {
-  }
 }
 
 // MARK: API Functions
@@ -33,8 +32,10 @@ extension CashCardViewModel {
       do {
         _ = try await cardUseCase.createCard(sessionID: accountDataManager.sessionID)
         NotificationCenter.default.post(name: .addedNewVirtualCard, object: nil)
+        analyticsService.track(event: AnalyticsEvent(name: .createCardSuccess))
       } catch {
         toastMessage = error.localizedDescription
+        analyticsService.track(event: AnalyticsEvent(name: .createCardError))
       }
     }
   }

@@ -2,13 +2,20 @@ import SwiftUI
 import LFStyleGuide
 import LFLocalizable
 import LFUtilities
+import LFServices
+import Factory
 
 struct PersonalInformationView: View {
   
-  @State var toastMessage: String?
-  @FocusState var keyboardFocus: Focus?
+  @State
+  var toastMessage: String?
+  @FocusState
+  var keyboardFocus: Focus?
+  @Injected(\.analyticsService)
+  var analyticsService
   
-  @StateObject private var viewModel = PersonalInformationViewModel()
+  @StateObject
+  var viewModel = PersonalInformationViewModel()
 
   var body: some View {
     VStack {
@@ -29,6 +36,7 @@ struct PersonalInformationView: View {
           if (viewModel.firstName + " " + viewModel.lastName).count > 23 {
             toastMessage = "name_exceed_message".localizedString
           } else {
+            analyticsService.track(event: AnalyticsEvent(name: .personalInfoCompleted))
             viewModel.isNavigationToSSNView = true
           }
         }
@@ -47,6 +55,10 @@ struct PersonalInformationView: View {
     .navigationLink(isActive: $viewModel.isNavigationToSSNView) {
       EnterSSNView()
     }
+    .onAppear(perform: {
+      analyticsService.track(event: AnalyticsEvent(name: .viewedPersonalInfo))
+    })
+    .track(name: String(describing: type(of: self)))
   }
   
   @ViewBuilder

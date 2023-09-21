@@ -1,6 +1,8 @@
 import Foundation
 import VGSShowSDK
+import LFUtilities
 
+//swiftlint:disable force_try
 enum Configs {
   
   enum NetSpend {
@@ -33,6 +35,16 @@ enum Configs {
     
     static var appID: String {
       "q9956v3x"
+    }
+  }
+  
+  enum Segment {
+    static var prodKey: String {
+      return try! LFConfiguration.value(for: "SEGMENT_PROD_KEY")
+    }
+    
+    static var devKey: String {
+      return try! LFConfiguration.value(for: "SEGMENT_DEV_KEY")
     }
   }
 }

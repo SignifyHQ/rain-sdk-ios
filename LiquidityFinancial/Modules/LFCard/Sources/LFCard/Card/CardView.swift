@@ -3,6 +3,7 @@ import SwiftUI
 import LFStyleGuide
 import LFUtilities
 import LFLocalizable
+import LFServices
 
 struct CardView: View {
   @StateObject private var viewModel: CardViewModel
@@ -51,6 +52,7 @@ struct CardView: View {
     .overlay {
       cardCopyMessageView
     }
+    .track(name: String(describing: type(of: self)))
   }
 }
 

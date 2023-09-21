@@ -1,8 +1,11 @@
 import Foundation
 import VGSShowSDK
+import LFUtilities
 
 // swiftlint:disable convenience_type
 public class LFServices {
+  
+  static let environment = EnvironmentManager()
   
   public static let vgsShowSandBox: VGSShow = {
     VGSShow(
@@ -16,6 +19,13 @@ public class LFServices {
       id: Configs.VSGID.live.id,
       environment: .live
     )
+  }()
+  
+  public static let segmentKey: String = {
+    switch environment.networkEnvironment {
+    case .productionLive: return Configs.Segment.prodKey
+    case .productionTest: return Configs.Segment.devKey
+    }
   }()
   
 }

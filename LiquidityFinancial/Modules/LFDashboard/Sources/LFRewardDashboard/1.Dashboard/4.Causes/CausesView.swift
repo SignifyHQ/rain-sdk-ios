@@ -3,6 +3,7 @@ import LFStyleGuide
 import LFUtilities
 import LFLocalizable
 import LFRewards
+import LFServices
 
 struct CausesView: View {
   @StateObject private var viewModel: CausesViewModel
@@ -13,6 +14,7 @@ struct CausesView: View {
   
   var body: some View {
     content
+      .track(name: String(describing: type(of: self)))
       .background(Colors.background.swiftUIColor)
       .onAppear {
         viewModel.appearOpeations()

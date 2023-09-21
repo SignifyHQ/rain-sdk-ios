@@ -3,6 +3,7 @@ import LFStyleGuide
 import LFUtilities
 import LFLocalizable
 import OnboardingDomain
+import LFServices
 
 public struct AgreementView: View {
   @Environment(\.dismiss) private var dismiss
@@ -52,6 +53,7 @@ public struct AgreementView: View {
     .onDisappear {
       self.onDisappear?(viewModel.isAcceptAgreement)
     }
+    .track(name: String(describing: type(of: self)))
   }
 }
 

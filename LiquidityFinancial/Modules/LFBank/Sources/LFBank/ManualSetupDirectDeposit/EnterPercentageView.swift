@@ -2,6 +2,7 @@ import SwiftUI
 import LFLocalizable
 import LFUtilities
 import LFStyleGuide
+import LFServices
 
 struct EnterPercentageView: View {
   @FocusState private var keyboardFocus: Bool
@@ -49,5 +50,6 @@ struct EnterPercentageView: View {
       }
     }
     .navigationBarTitleDisplayMode(.inline)
+    .track(name: String(describing: type(of: self)))
   }
 }

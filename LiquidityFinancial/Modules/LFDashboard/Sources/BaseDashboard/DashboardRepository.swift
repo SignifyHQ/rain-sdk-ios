@@ -9,6 +9,7 @@ import LFBank
 import LFCard
 import LFAccountOnboarding
 import OnboardingDomain
+import LFServices
 
 @MainActor
 public final class DashboardRepository: ObservableObject {
@@ -22,6 +23,8 @@ public final class DashboardRepository: ObservableObject {
   @LazyInjected(\.cardRepository) var cardRepository
   
   @LazyInjected(\.onboardingFlowCoordinator) var onboardingFlowCoordinator
+  
+  @LazyInjected(\.analyticsService) var analyticsService
   
   @Published public var isLoading: Bool = false
   @Published public var allAssets: [AssetModel] = []
@@ -163,6 +166,9 @@ public extension DashboardRepository {
         let cryptoAccounts = try await cryptoAccountsEntity
         let accounts = fiatAccounts + cryptoAccounts
         let assets = accounts.map { AssetModel(account: $0) }
+        
+        analyticsService.set(params: [PropertiesName.cashBalance.rawValue: fiatAccounts.first?.availableBalance ?? "0"])
+        analyticsService.set(params: [PropertiesName.cryptoBalance.rawValue: cryptoAccounts.first?.availableBalance ?? "0"])
         
         self.fiatAccounts = fiatAccounts
         self.cryptoAccounts = cryptoAccounts

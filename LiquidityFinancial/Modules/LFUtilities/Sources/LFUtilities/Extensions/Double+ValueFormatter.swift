@@ -1,5 +1,6 @@
 import Foundation
 
+//swiftlint:disable number_separator
 public extension Double {
   func transformedShort(maxDigits: Int = Int.max) -> String {
     var value = abs(Decimal(self))

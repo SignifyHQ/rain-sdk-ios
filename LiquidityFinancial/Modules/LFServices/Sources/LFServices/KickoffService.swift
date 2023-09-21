@@ -7,6 +7,7 @@ import Firebase
 import Factory
 
 public enum KickoffService {
+  
   static var networkEnvironment: NetworkEnvironment {
     EnvironmentManager().networkEnvironment
   }
@@ -28,6 +29,11 @@ public enum KickoffService {
       guard let error = error else { return }
       log.error("Intercom Error setting device token: \(error.localizedDescription)")
     }
+  }
+  
+  private static func kickoffAnalytics() {
+    // firing here to ensure all analytics is setup.
+    Container.shared.analyticsService.callAsFunction().track(event: AnalyticsEvent(name: .appLaunch))
   }
 }
 

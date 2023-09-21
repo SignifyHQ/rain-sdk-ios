@@ -3,6 +3,7 @@ import LFStyleGuide
 import LFLocalizable
 import LFUtilities
 import BaseDashboard
+import LFServices
 
 struct AssetsView: View {
   @StateObject private var viewModel: AssetsViewModel
@@ -46,6 +47,7 @@ struct AssetsView: View {
         CryptoAssetView(asset: asset)
       }
     }
+    .track(name: String(describing: type(of: self)))
   }
 }
 

@@ -10,6 +10,7 @@ import AccountData
 import PassKit
 import RewardData
 import RewardDomain
+import LFServices
 
 @MainActor
 public final class ListCardsViewModel: ObservableObject {
@@ -20,6 +21,8 @@ public final class ListCardsViewModel: ObservableObject {
   
   @LazyInjected(\.rewardRepository) var rewardRepository
   @LazyInjected(\.rewardDataManager) var rewardDataManager
+  
+  @LazyInjected(\.analyticsService) var analyticsService
   
   @Published var isInit: Bool = false
   @Published var isLoading: Bool = false
@@ -171,8 +174,10 @@ extension ListCardsViewModel {
 
   func lockCardToggled() {
     if currentCard.cardStatus == .active && isCardLocked {
+      analyticsService.track(event: AnalyticsEvent(name: .tapsLockCard))
       callLockCardAPI()
     } else if currentCard.cardStatus == .disabled && !isCardLocked {
+      analyticsService.track(event: AnalyticsEvent(name: .tapsUnlockCard))
       callUnLockCardAPI()
     }
   }

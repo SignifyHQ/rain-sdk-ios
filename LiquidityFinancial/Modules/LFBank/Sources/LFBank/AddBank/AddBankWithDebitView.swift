@@ -2,6 +2,8 @@ import SwiftUI
 import LFLocalizable
 import LFStyleGuide
 import LFUtilities
+import LFServices
+import Factory
 
 public struct AddBankWithDebitView: View {
   enum Focus {
@@ -9,6 +11,8 @@ public struct AddBankWithDebitView: View {
     case cvv
     case exp
   }
+  
+  @Injected(\.analyticsService) var analyticsService
   
   @FocusState var keyboardFocus: Focus?
   
@@ -55,6 +59,10 @@ public struct AddBankWithDebitView: View {
     .popup(item: $viewModel.toastMessage, style: .toast) {
       ToastView(toastMessage: $0)
     }
+    .onAppear(perform: {
+      analyticsService.track(event: AnalyticsEvent(name: .viewsAddDebitCardScreen))
+    })
+    .track(name: String(describing: type(of: self)))
   }
   
 }

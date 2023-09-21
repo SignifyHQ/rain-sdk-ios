@@ -4,6 +4,7 @@ import LFLocalizable
 import LFUtilities
 import LFStyleGuide
 import LFRewards
+import LFServices
 
 public struct ListCardsView: View {
   @Environment(\.dismiss) private var dismiss
@@ -79,6 +80,7 @@ public struct ListCardsView: View {
     .popup(item: $viewModel.toastMessage, style: .toast) {
       ToastView(toastMessage: $0)
     }
+    .track(name: String(describing: type(of: self)))
   }
 }
 

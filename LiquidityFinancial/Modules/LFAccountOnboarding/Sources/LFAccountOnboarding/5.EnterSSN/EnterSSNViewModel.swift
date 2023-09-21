@@ -10,6 +10,7 @@ class EnterSSNViewModel: ObservableObject {
   
   @LazyInjected(\.accountDataManager) var accountDataManager
   @LazyInjected(\.intercomService) var intercomService
+  @LazyInjected(\.analyticsService) var analyticsService
   
   @Published var errorMessage: String?
   @Published var isActionAllowed: Bool = false {

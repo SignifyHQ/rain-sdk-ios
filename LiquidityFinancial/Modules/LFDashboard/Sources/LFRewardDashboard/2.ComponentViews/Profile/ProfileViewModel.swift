@@ -5,6 +5,7 @@ import LFUtilities
 import AuthorizationManager
 import RewardData
 import RewardDomain
+import LFServices
 
 @MainActor
 final class ProfileViewModel: ObservableObject {
@@ -24,6 +25,7 @@ final class ProfileViewModel: ObservableObject {
   @LazyInjected(\.rewardRepository) var rewardRepository
   @LazyInjected(\.pushNotificationService) var pushNotificationService
   @LazyInjected(\.devicesRepository) var devicesRepository
+  @LazyInjected(\.analyticsService) var analyticsService
 
   lazy var rewardUseCase: RewardUseCase = {
     RewardUseCase(repository: rewardRepository)
@@ -104,6 +106,7 @@ extension ProfileViewModel {
   }
   
   func logout() {
+    analyticsService.track(event: AnalyticsEvent(name: .loggedOut))
     Task {
       defer {
         isLoading = false
@@ -128,6 +131,7 @@ extension ProfileViewModel {
   }
   
   func deleteAccount() {
+    analyticsService.track(event: AnalyticsEvent(name: .deleteAccount))
     logout()
     authorizationManager.clearToken()
     accountDataManager.clearUserSession()

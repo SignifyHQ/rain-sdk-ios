@@ -2,6 +2,7 @@ import SwiftUI
 import LFLocalizable
 import LFUtilities
 import LFStyleGuide
+import LFServices
 
 struct PaycheckDepositView: View {
   @StateObject var viewModel: ManualSetupViewModel
@@ -43,6 +44,7 @@ struct PaycheckDepositView: View {
         EnterAmountView(viewModel: viewModel)
       }
     }
+    .track(name: String(describing: type(of: self)))
   }
 }
 

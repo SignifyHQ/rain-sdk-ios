@@ -2,6 +2,7 @@ import SwiftUI
 import LFLocalizable
 import LFStyleGuide
 import LFUtilities
+import LFServices
 
 struct DirectDepositPDFView: View {
   @StateObject var viewModel: ManualSetupViewModel
@@ -19,6 +20,7 @@ struct DirectDepositPDFView: View {
     .background(
       Colors.whiteText.swiftUIColor.edgesIgnoringSafeArea(.all)
     )
+    .track(name: String(describing: type(of: self)))
   }
 }
 

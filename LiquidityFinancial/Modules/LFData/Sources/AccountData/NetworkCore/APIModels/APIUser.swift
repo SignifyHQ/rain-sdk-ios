@@ -1,7 +1,7 @@
 import Foundation
 import AccountDomain
 
-public struct APIUser: Decodable {
+public struct APIUser: Codable {
   public let id: String?
   public let appState: APIAppState?
   public let firstName, lastName, fullName, phone: String?
@@ -37,12 +37,12 @@ extension APIUser: LFUser {
 }
 
   // MARK: - AppState
-public struct APIAppState: Decodable {
+public struct APIAppState: Codable {
   public let additionalProp1, additionalProp2, additionalProp3: String?
 }
 
   // MARK: - Kyc
-public struct APIKyc: Decodable {
+public struct APIKyc: Codable {
   public let id, personId, status, reviewCode: String?
   public let reviewMessage: String?
   public let results: APIResults?
@@ -50,6 +50,6 @@ public struct APIKyc: Decodable {
 }
 
   // MARK: - Results
-public struct APIResults: Decodable {
+public struct APIResults: Codable {
   public let idv, address, dateOfBirth, fraud: String?
 }

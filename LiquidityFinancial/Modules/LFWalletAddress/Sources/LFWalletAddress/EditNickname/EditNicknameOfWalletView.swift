@@ -3,6 +3,7 @@ import LFLocalizable
 import LFUtilities
 import LFStyleGuide
 import AccountData
+import LFServices
 
 public struct EditNicknameOfWalletView: View {
   @Environment(\.dismiss) private var dismiss
@@ -26,6 +27,7 @@ public struct EditNicknameOfWalletView: View {
       .adaptToKeyboard()
       .ignoresSafeArea(edges: .bottom)
       .navigationBarTitleDisplayMode(.inline)
+      .track(name: String(describing: type(of: self)))
   }
 }
 

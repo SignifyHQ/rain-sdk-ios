@@ -13,6 +13,7 @@ struct AccountsView: View {
   
   var body: some View {
     content
+      .track(name: String(describing: type(of: self)))
       .disabled(viewModel.isDisableView)
       .navigationLink(item: $viewModel.navigation) { item in
         switch item {

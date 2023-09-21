@@ -2,6 +2,7 @@ import SwiftUI
 import LFStyleGuide
 import LFLocalizable
 import LFUtilities
+import LFServices
 
 struct CryptoTransactionReceiptView: View {
   @Environment(\.openURL) private var openURL
@@ -31,6 +32,7 @@ struct CryptoTransactionReceiptView: View {
     .background(Colors.background.swiftUIColor)
     .navigationBarTitleDisplayMode(.inline)
     .defaultToolBar(navigationTitle: LFLocalizable.CryptoReceipt.Navigation.title)
+    .track(name: String(describing: type(of: self)))
   }
 }
 

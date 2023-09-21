@@ -2,6 +2,7 @@ import SwiftUI
 import LFStyleGuide
 import LFUtilities
 import LFLocalizable
+import LFServices
 
 public struct UploadDocumentView: View {
   @StateObject private var viewModel = UploadDocumentViewModel()
@@ -58,6 +59,7 @@ public struct UploadDocumentView: View {
       }
     }
     .navigationBarBackButtonHidden()
+    .track(name: String(describing: type(of: self)))
   }
 }
 

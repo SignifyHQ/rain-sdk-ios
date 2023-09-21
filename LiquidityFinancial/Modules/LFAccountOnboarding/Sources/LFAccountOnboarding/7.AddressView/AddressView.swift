@@ -3,8 +3,13 @@ import SwiftUI
 import LFStyleGuide
 import LFLocalizable
 import LFUtilities
+import LFServices
+import Factory
 
 struct AddressView: View {
+  @Injected(\.analyticsService)
+  var analyticsService
+  
   @StateObject private var viewModel = AddressViewModel()
 
   init() {
@@ -104,7 +109,11 @@ struct AddressView: View {
         EmptyView()
       }
     }
+    .onAppear(perform: {
+      analyticsService.track(event: AnalyticsEvent(name: .viewedAddress))
+    })
     .navigationBarBackButtonHidden(viewModel.isLoading)
+    .track(name: String(describing: type(of: self)))
   }
 }
 

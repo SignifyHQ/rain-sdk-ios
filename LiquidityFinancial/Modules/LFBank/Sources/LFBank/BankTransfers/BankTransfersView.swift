@@ -2,6 +2,7 @@ import SwiftUI
 import LFLocalizable
 import LFUtilities
 import LFStyleGuide
+import LFServices
 
 struct BankTransfersView: View {
   @Environment(\.dismiss) private var dismiss
@@ -31,6 +32,7 @@ struct BankTransfersView: View {
     .popup(isPresented: $showToast, style: .toast) {
       ToastView(toastMessage: LFLocalizable.Toast.Copy.message)
     }
+    .track(name: String(describing: type(of: self)))
   }
 }
 

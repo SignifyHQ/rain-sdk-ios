@@ -2,6 +2,7 @@ import SwiftUI
 import LFStyleGuide
 import LFLocalizable
 import LFUtilities
+import LFServices
 
 struct DonationTransactionReceiptView: View {
   @Environment(\.openURL) private var openURL
@@ -36,6 +37,7 @@ struct DonationTransactionReceiptView: View {
     .background(Colors.background.swiftUIColor)
     .navigationBarTitleDisplayMode(.inline)
     .defaultToolBar(navigationTitle: LFLocalizable.DonationReceipt.Navigation.title)
+    .track(name: String(describing: type(of: self)))
   }
 }
 

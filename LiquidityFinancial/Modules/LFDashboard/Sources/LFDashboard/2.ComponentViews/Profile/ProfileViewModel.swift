@@ -3,6 +3,7 @@ import UIKit
 import Factory
 import LFUtilities
 import AuthorizationManager
+import LFServices
 
 @MainActor
 final class ProfileViewModel: ObservableObject {
@@ -20,7 +21,8 @@ final class ProfileViewModel: ObservableObject {
   @LazyInjected(\.authorizationManager) var authorizationManager
   @LazyInjected(\.devicesRepository) var devicesRepository
   @LazyInjected(\.pushNotificationService) var pushNotificationService
-
+  @LazyInjected(\.analyticsService) var analyticsService
+  
   var name: String {
     if let firstName = accountDataManager.userInfomationData.firstName,
        let lastName = accountDataManager.userInfomationData.lastName {
@@ -98,6 +100,7 @@ extension ProfileViewModel {
   }
   
   func logout() {
+    analyticsService.track(event: AnalyticsEvent(name: .loggedOut))
     Task {
       defer {
         isLoading = false
@@ -127,6 +130,7 @@ extension ProfileViewModel {
   }
   
   func deleteAccount() {
+    analyticsService.track(event: AnalyticsEvent(name: .deleteAccount))
     logout()
     authorizationManager.clearToken()
     accountDataManager.clearUserSession()

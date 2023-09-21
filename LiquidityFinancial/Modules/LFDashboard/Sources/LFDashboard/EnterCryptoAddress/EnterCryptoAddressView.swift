@@ -7,6 +7,7 @@ import LFStyleGuide
 import AccountDomain
 import CodeScanner
 import LFWalletAddress
+import LFServices
 
 struct EnterCryptoAddressView: View {
   @StateObject private var viewModel: EnterCryptoAddressViewModel
@@ -75,6 +76,7 @@ struct EnterCryptoAddressView: View {
         )
       }
     }
+    .track(name: String(describing: type(of: self)))
   }
 }
 

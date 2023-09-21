@@ -21,6 +21,9 @@ REFERRALLINK_PRO = https:/$()/dev-dogecard.d2ap16azx4464o.amplifyapp.com
 
 UNIVERSAL_LINK = https:/$()/dogeapp.cc/plaid
 
+SEGMENT_DEV_KEY = XgSIxLlZc8bqJvrVnFbmN7nRufN98ZY7
+SEGMENT_PROD_KEY = 7NX8uCazB6xakKw1Hj6AGLXx8EhWixTi
+
 CHARITY_ENABLED = false
 CRYPTO_ENABLED = true
 CRYPTO_FRACTION_DIGITS = 8

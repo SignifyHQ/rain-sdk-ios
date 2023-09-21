@@ -32,6 +32,7 @@ final class KYCStatusViewModel: ObservableObject {
   @LazyInjected(\.onboardingFlowCoordinator) var onboardingFlowCoordinator
   @LazyInjected(\.intercomService) var intercomService
   @LazyInjected(\.authorizationManager) var authorizationManager
+  @LazyInjected(\.analyticsService) var analyticsService
   
   var username: String {
     accountDataManager.userNameDisplay
@@ -103,10 +104,12 @@ extension KYCStatusViewModel {
       do {
         let onboardingState = try await onboardingRepository.getOnboardingState(sessionId: accountDataManager.sessionID)
         if onboardingState.missingSteps.isEmpty {
+          analyticsService.track(event: AnalyticsEvent(name: .kycStatusViewPass))
           onboardingFlowCoordinator.set(route: .dashboard)
         } else {
           let states = onboardingState.mapToEnum()
           if states.isEmpty {
+            analyticsService.track(event: AnalyticsEvent(name: .kycStatusViewPass))
             onboardingFlowCoordinator.set(route: .dashboard)
           } else {
             if states.contains(OnboardingMissingStep.netSpendCreateAccount) {

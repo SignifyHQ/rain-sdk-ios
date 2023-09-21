@@ -2,10 +2,16 @@ import SwiftUI
 import LFLocalizable
 import LFStyleGuide
 import LFUtilities
+import LFServices
+import Factory
 
 struct SetupWalletView: View {
-  @Environment(\.openURL) var openURL
-  @StateObject private var viewModel = SetupWalletViewModel()
+  @Injected(\.analyticsService)
+  var analyticsService
+  @Environment(\.openURL)
+  var openURL
+  @StateObject
+  var viewModel = SetupWalletViewModel()
 
   var body: some View {
     GeometryReader { geo in
@@ -69,6 +75,10 @@ struct SetupWalletView: View {
     }
     .navigationBarHidden(true)
     .navigationBarBackButtonHidden(viewModel.showIndicator)
+    .track(name: String(describing: type(of: self)))
+    .onAppear {
+      analyticsService.track(event: AnalyticsEvent(name: .viewsWalletSetup))
+    }
   }
 
   private var tap: some Gesture {

@@ -5,6 +5,7 @@ import LFStyleGuide
 import LFUtilities
 import LFTransaction
 import ZerohashDomain
+import LFServices
 
 struct ConfirmSendCryptoView: View {
   @StateObject private var viewModel: ConfirmSendCryptoViewModel
@@ -53,6 +54,7 @@ struct ConfirmSendCryptoView: View {
       .popup(item: $viewModel.toastMessage, style: .toast) {
         ToastView(toastMessage: $0)
       }
+      .track(name: String(describing: type(of: self)))
   }
 }
 

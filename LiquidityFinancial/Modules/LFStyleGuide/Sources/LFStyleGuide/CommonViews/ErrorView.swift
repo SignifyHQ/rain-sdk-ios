@@ -49,6 +49,7 @@ public struct ErrorView: View {
     .defaultToolBar(icon: .intercom, openIntercom: {
        intercomService.openIntercom()
     })
+    .track(name: String(describing: type(of: self)))
   }
 }
 

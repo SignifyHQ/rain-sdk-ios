@@ -2,8 +2,12 @@ import SwiftUI
 import LFLocalizable
 import LFStyleGuide
 import LFUtilities
+import Factory
+import LFServices
 
 public struct TransactionRowView: View {
+  @Injected(\.analyticsService) var analyticsService
+  
   let item: TransactionModel
   let action: () -> Void
 
@@ -14,6 +18,7 @@ public struct TransactionRowView: View {
   
   public var body: some View {
     Button {
+      analyticsService.track(event: AnalyticsEvent(name: .viewedTransactionDetail))
       action()
     } label: {
       HStack(spacing: 10) {

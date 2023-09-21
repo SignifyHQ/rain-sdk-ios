@@ -27,6 +27,9 @@ REFERRALLINK_PRO = https:/$()/causecards.co
 
 UNIVERSAL_LINK = https:/$()/causecard.co/plaid
 
+SEGMENT_DEV_KEY = UYbVbjCOB6AMjnE09Fiw9FA33k66D0hn
+SEGMENT_PROD_KEY = tWYWJmmBR2qkJhshOScoC5gUoFzmkQzv
+
 CHARITY_ENABLED = true
 CRYPTO_ENABLED = false
 CRYPTO_FRACTION_DIGITS = 8

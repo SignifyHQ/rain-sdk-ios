@@ -2,6 +2,7 @@ import SwiftUI
 import LFLocalizable
 import LFUtilities
 import LFStyleGuide
+import LFServices
 
 struct EnterCVVCodeView: View {
   @Environment(\.dismiss) private var dismiss
@@ -27,6 +28,7 @@ struct EnterCVVCodeView: View {
         hideKeyboard()
       })
       .ignoresSafeArea(edges: .bottom)
+      .track(name: String(describing: type(of: self)))
   }
 }
 

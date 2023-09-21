@@ -33,7 +33,7 @@ final class PhoneNumberViewModel: ObservableObject {
   }()
 }
 
-// MARK: - API
+  // MARK: - API
 extension PhoneNumberViewModel {
   func performGetOTP() {
     Task {
@@ -53,7 +53,7 @@ extension PhoneNumberViewModel {
   }
 }
 
-// MARK: - View Helpers
+  // MARK: - View Helpers
 extension PhoneNumberViewModel {
   func getURL(tappedString: String) -> String {
     if tappedString == terms {
@@ -85,7 +85,7 @@ extension PhoneNumberViewModel {
   }
 }
 
-// MARK: - Private Functions
+  // MARK: - Private Functions
 private extension PhoneNumberViewModel {
   func handleError(error: Error) {
     guard let code = error.asErrorObject?.code else {
@@ -93,10 +93,10 @@ private extension PhoneNumberViewModel {
       return
     }
     switch code {
-      case Constants.ErrorCode.userInactive.value:
-        onboardingFlowCoordinator.set(route: .accountLocked)
-      default:
-        toastMessage = error.localizedDescription
+    case Constants.ErrorCode.userInactive.value:
+      onboardingFlowCoordinator.set(route: .accountLocked)
+    default:
+      toastMessage = error.localizedDescription
     }
   }
 }
@@ -112,7 +112,7 @@ extension String {
   }
 }
 
-// MARK: Types
+  // MARK: Types
 extension PhoneNumberViewModel {
   enum Navigation {
     case verificationCode([RequiredAuth])

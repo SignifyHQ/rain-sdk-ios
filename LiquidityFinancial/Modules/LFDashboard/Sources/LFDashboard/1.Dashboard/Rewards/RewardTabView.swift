@@ -6,6 +6,7 @@ import LFLocalizable
 import LFUtilities
 import LFTransaction
 import LFBank
+import LFServices
 
 struct RewardTabView: View {
   @StateObject private var viewModel: RewardTabViewModel
@@ -17,6 +18,7 @@ struct RewardTabView: View {
   
   var body: some View {
     content
+      .track(name: String(describing: type(of: self)))
       .navigationLink(item: $viewModel.navigation) { navigation in
         switch navigation {
         case let .changeReward(assetModels, selectedAssetModel):

@@ -2,6 +2,7 @@ import SwiftUI
 import LFStyleGuide
 import LFUtilities
 import LFLocalizable
+import LFServices
 
 struct AccountLockedView: View {
   @StateObject private var viewModel = AccountLockedViewModel()
@@ -19,6 +20,7 @@ struct AccountLockedView: View {
     .defaultToolBar(icon: .intercom, openIntercom: {
       viewModel.openIntercom()
     })
+    .track(name: String(describing: type(of: self)))
   }
 }
 

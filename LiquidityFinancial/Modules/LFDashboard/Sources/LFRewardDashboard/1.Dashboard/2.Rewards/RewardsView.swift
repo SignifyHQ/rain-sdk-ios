@@ -4,6 +4,7 @@ import LFUtilities
 import LFLocalizable
 import LFTransaction
 import LFRewards
+import LFServices
 
 struct RewardsView: View {
   @StateObject private var viewModel: RewardViewModel
@@ -14,6 +15,7 @@ struct RewardsView: View {
   
   var body: some View {
     content
+      .track(name: String(describing: type(of: self)))
       .background(Colors.background.swiftUIColor)
       .onAppear {
         viewModel.onAppear()

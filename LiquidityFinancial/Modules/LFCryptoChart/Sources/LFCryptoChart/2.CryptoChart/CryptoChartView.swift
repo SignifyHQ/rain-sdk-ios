@@ -3,6 +3,7 @@ import SwiftUI
 import LFStyleGuide
 import LFUtilities
 import CryptoChartData
+import LFServices
 
 public struct CryptoChartView: View {
   @StateObject private var viewModel: CryptoChartViewModel
@@ -37,6 +38,7 @@ public struct CryptoChartView: View {
     .onDisappear {
       viewModel.disconnectSocket()
     }
+    .track(name: String(describing: type(of: self)))
   }
   
   var lineChartView: some View {

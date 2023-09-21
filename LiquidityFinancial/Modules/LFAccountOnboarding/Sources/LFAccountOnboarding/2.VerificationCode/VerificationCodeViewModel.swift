@@ -23,6 +23,7 @@ final class VerificationCodeViewModel: ObservableObject {
   @LazyInjected(\.netspendDataManager) var netspendDataManager
   @LazyInjected(\.rewardDataManager) var rewardDataManager
   @LazyInjected(\.intercomService) var intercomService
+  @LazyInjected(\.analyticsService) var analyticsService
   
   @Published var isNavigationToWelcome: Bool = false
   @Published var isResendButonTimerOn = false
@@ -57,6 +58,7 @@ extension VerificationCodeViewModel {
     guard !isShowLoading else { return }
     isShowLoading = true
     if requireAuth.count == 1 && requireAuth.contains(where: { $0 == .otp }) {
+      analyticsService.track(event: AnalyticsEvent(name: .viewSignUpLogin))
       performVerifyOTPCode(formatPhoneNumber: formatPhoneNumber, code: code)
     } else {
       isShowLoading = false
@@ -88,9 +90,14 @@ extension VerificationCodeViewModel {
         try await initNetSpendSession()
         await checkOnboardingState()
         
+        analyticsService.set(params: ["phoneVerified": true])
+        analyticsService.track(event: AnalyticsEvent(name: .loggedIn))
+        
         self.isShowLoading = false
         
       } catch {
+        analyticsService.set(params: ["phoneVerified": false])
+        analyticsService.track(event: AnalyticsEvent(name: .phoneVerificationError))
         handleError(error: error)
       }
     #if DEBUG

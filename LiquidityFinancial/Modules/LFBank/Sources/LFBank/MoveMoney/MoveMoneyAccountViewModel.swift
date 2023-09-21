@@ -7,6 +7,7 @@ import LFUtilities
 import Factory
 import LFStyleGuide
 import LFTransaction
+import LFServices
 
 @MainActor
 public class MoveMoneyAccountViewModel: ObservableObject {
@@ -14,6 +15,7 @@ public class MoveMoneyAccountViewModel: ObservableObject {
   @LazyInjected(\.accountRepository) var accountRepository
   @LazyInjected(\.accountDataManager) var accountDataManager
   @LazyInjected(\.externalFundingRepository) var externalFundingRepository
+  @LazyInjected(\.analyticsService) var analyticsService
   
   @Published var navigation: Navigation?
   @Published var amountInput: String = Constants.Default.zeroAmount.rawValue
@@ -140,6 +142,8 @@ extension MoveMoneyAccountViewModel {
           type: type,
           sessionId: sessionID
         )
+        
+        analyticsService.track(event: AnalyticsEvent(name: .sendMoneySuccess))
         
         //Push a notification for update transaction list event
         NotificationCenter.default.post(name: .moneyTransactionSuccess, object: nil)

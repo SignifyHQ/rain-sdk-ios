@@ -2,6 +2,8 @@ import SwiftUI
 import LFUtilities
 import LFStyleGuide
 import LFLocalizable
+import Factory
+import LFServices
 
 public struct FundraiserItemView: View {
   let fundraiser: FundraiserModel
@@ -11,6 +13,8 @@ public struct FundraiserItemView: View {
   let whereStart: RewardWhereStart
   
   var onSelectItem: ((_ fundraiserID: String) -> Void)?
+  
+  @Injected(\.analyticsService) var analyticsService
   
   @State private var showDetails = false
   @State private var showShare = false
@@ -35,6 +39,7 @@ public struct FundraiserItemView: View {
   public var body: some View {
     content
       .onTapGesture {
+        analyticsService.track(event: AnalyticsEvent(name: .selectedFundraiserSuccess))
         if let onSelectItem = onSelectItem {
           onSelectItem(fundraiser.id)
         } else {

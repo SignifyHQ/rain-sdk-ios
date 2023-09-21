@@ -4,6 +4,7 @@ import NetSpendData
 import AccountData
 import LFUtilities
 import LFServices
+
 // MARK: - SetupWalletViewModel
 
 class SetupWalletViewModel: ObservableObject {
@@ -15,6 +16,7 @@ class SetupWalletViewModel: ObservableObject {
   
   @LazyInjected(\.accountRepository) var accountRepository
   @LazyInjected(\.intercomService) var intercomService
+  @LazyInjected(\.analyticsService) var analyticsService
   
   func createZeroHashAccount() {
     Task { @MainActor in
@@ -24,6 +26,7 @@ class SetupWalletViewModel: ObservableObject {
         let zeroHashAccount = try await accountRepository.createZeroHashAccount()
         isNavigateToRewardsView = true
         log.debug(zeroHashAccount)
+        analyticsService.track(event: AnalyticsEvent(name: .walletSetupSuccess))
       } catch {
         toastMessage = error.localizedDescription
         log.error(error.localizedDescription)

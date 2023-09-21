@@ -6,6 +6,7 @@ import LFBank
 import LFTransaction
 import LFCard
 import LFAccountOnboarding
+import LFServices
 
 struct CashView: View {
   @Environment(\.scenePhase) var scenePhase
@@ -32,6 +33,7 @@ struct CashView: View {
         ErrorView(message: LFLocalizable.CashTab.DeActiveError.message)
       }
     }
+    .track(name: String(describing: type(of: self)))
     .background(Colors.background.swiftUIColor)
     .navigationLink(item: $viewModel.navigation) { navigation in
       switch navigation {

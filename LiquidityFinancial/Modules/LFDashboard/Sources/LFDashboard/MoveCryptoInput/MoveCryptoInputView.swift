@@ -3,6 +3,7 @@ import BaseDashboard
 import LFLocalizable
 import LFUtilities
 import LFStyleGuide
+import LFServices
 
 struct MoveCryptoInputView: View {
   @StateObject private var viewModel: MoveCryptoInputViewModel
@@ -55,6 +56,7 @@ struct MoveCryptoInputView: View {
         )
       }
     }
+    .track(name: String(describing: type(of: self)))
   }
 }
 

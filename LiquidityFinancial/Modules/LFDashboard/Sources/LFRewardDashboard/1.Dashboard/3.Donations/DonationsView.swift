@@ -5,6 +5,7 @@ import LFLocalizable
 import LFRewards
 import LFTransaction
 import Combine
+import LFServices
 
 struct DonationsView: View {
   @StateObject private var viewModel: DonationsViewModel
@@ -38,6 +39,7 @@ struct DonationsView: View {
         }
       }
     }
+    .track(name: String(describing: type(of: self)))
     .background(Colors.background.swiftUIColor)
     .onAppear {
       viewModel.onAppear()

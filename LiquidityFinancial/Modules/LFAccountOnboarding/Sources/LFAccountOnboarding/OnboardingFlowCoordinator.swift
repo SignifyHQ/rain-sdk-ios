@@ -12,6 +12,7 @@ import RewardData
 import RewardDomain
 import LFStyleGuide
 import LFLocalizable
+import LFServices
 
 public protocol OnboardingFlowCoordinatorProtocol {
   var routeSubject: CurrentValueSubject<OnboardingFlowCoordinator.Route, Never> { get }
@@ -70,6 +71,7 @@ public class OnboardingFlowCoordinator: OnboardingFlowCoordinatorProtocol {
   @LazyInjected(\.accountRepository) var accountRepository
   @LazyInjected(\.rewardDataManager) var rewardDataManager
   @LazyInjected(\.pushNotificationService) var pushNotificationService
+  @LazyInjected(\.analyticsService) var analyticsService
   
   public let routeSubject: CurrentValueSubject<Route, Never>
   
@@ -226,12 +228,24 @@ public class OnboardingFlowCoordinator: OnboardingFlowCoordinatorProtocol {
 extension OnboardingFlowCoordinator {
   private func handleDataUser(user: LFUser) {
     accountDataManager.storeUser(user: user)
+    trackUserInformation(user: user)
     if let rewardType = APIRewardType(rawValue: user.userRewardType ?? "") {
       rewardDataManager.update(currentSelectReward: rewardType)
     }
     if let userSelectedFundraiserID = user.userSelectedFundraiserId {
       rewardDataManager.update(selectedFundraiserID: userSelectedFundraiserID)
     }
+  }
+  
+  private func trackUserInformation(user: LFUser) {
+    guard let userModel = user as? APIUser else { return }
+    guard let data = try? JSONEncoder().encode(userModel) else { return }
+    let dictionary = (try? JSONSerialization.jsonObject(with: data, options: .fragmentsAllowed)).flatMap { $0 as? [String: Any] }
+    var values = dictionary ?? [:]
+    values["birthday"] = userModel.dateOfBirth?.getDate()
+    values["avatar"] = userModel.profileImage ?? ""
+    values["idNumber"] = "REDACTED"
+    analyticsService.set(params: values)
   }
   
   private func handleQuestionCase() async {

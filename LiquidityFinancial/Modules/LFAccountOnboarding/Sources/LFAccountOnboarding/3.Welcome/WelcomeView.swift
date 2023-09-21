@@ -2,9 +2,11 @@ import Foundation
 import SwiftUI
 import LFStyleGuide
 import LFLocalizable
+import LFServices
+import Factory
 
 struct WelcomeView: View {
-  
+  @Injected(\.analyticsService) var analyticsService
   @StateObject var viewModel = WelcomeViewModel()
   
   public var body: some View {
@@ -34,7 +36,11 @@ struct WelcomeView: View {
     .navigationLink(isActive: $viewModel.isPushToAgreementView) {
       AgreementView(viewModel: AgreementViewModel())
     }
+    .onAppear {
+      analyticsService.track(event: AnalyticsEvent(name: .viewsWelcome))
+    }
     .navigationBarBackButtonHidden(true)
+    .track(name: String(describing: type(of: self)))
   }
   
   private var staticTop: some View {

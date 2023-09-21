@@ -46,6 +46,9 @@ public struct ConnectedAccountsView: View {
           deletePopup(linkedSource: data)
         }
       }
+      .onAppear {
+        viewModel.trackAccountViewAppear()
+      }
   }
 
   private var content: some View {

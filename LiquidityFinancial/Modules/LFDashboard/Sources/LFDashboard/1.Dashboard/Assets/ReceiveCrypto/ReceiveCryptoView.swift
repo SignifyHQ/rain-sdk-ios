@@ -7,10 +7,14 @@ import LFStyleGuide
 import AccountDomain
 import AccountData
 import BaseDashboard
+import LFServices
+import Factory
 
 // MARK: - ReceiveCryptoView
 
 struct ReceiveCryptoView: View {
+  @Injected(\.analyticsService) var analyticsService
+  
   @Environment(\.isPresented) private var isPresented
   @Environment(\.dismiss) private var dismiss
   
@@ -89,7 +93,11 @@ struct ReceiveCryptoView: View {
             .foregroundColor(Colors.label.swiftUIColor)
         }
       }
+      .onAppear(perform: {
+        analyticsService.track(event: AnalyticsEvent(name: .viewsWalletAddress))
+      })
       .background(Colors.background.swiftUIColor)
+      .track(name: String(describing: type(of: self)))
     }
   }
 }
@@ -129,6 +137,7 @@ private extension ReceiveCryptoView {
         .frame(CGSize(width: 24, height: 24))
         .foregroundColor(Colors.primary.swiftUIColor)
         .onTapGesture {
+          analyticsService.track(event: AnalyticsEvent(name: .tapsCopyWalletAddress))
           viewModel.copyAddress()
         }
     }
@@ -142,6 +151,7 @@ private extension ReceiveCryptoView {
     VStack {
       VStack {
         FullSizeButton(title: LFLocalizable.Button.Share.title, isDisable: false, type: .secondary, icon: GenImages.CommonImages.icShare.swiftUIImage) {
+          analyticsService.track(event: AnalyticsEvent(name: .tapsShareWalletAddress))
           viewModel.shareTap()
         }
         Text(LFLocalizable.ReceiveCryptoView.servicesInfo)

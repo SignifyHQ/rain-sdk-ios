@@ -23,7 +23,7 @@ extension ZerohashRoute: LFRoute {
   }
   
   public var httpMethod: HttpMethod {
-    return .POST
+    .POST
   }
   
   public var httpHeaders: HttpHeaders {
@@ -57,7 +57,7 @@ extension ZerohashRoute: LFRoute {
   }
   
   public var parameterEncoding: ParameterEncoding? {
-    return .json
+    .json
   }
   
 }

@@ -2,6 +2,7 @@ import SwiftUI
 import LFLocalizable
 import LFUtilities
 import LFStyleGuide
+import LFServices
 
 public struct EnterNicknameOfWalletView: View {
   @Environment(\.dismiss) private var dismiss
@@ -25,6 +26,7 @@ public struct EnterNicknameOfWalletView: View {
       .adaptToKeyboard()
       .ignoresSafeArea(edges: .bottom)
       .navigationBarTitleDisplayMode(.inline)
+      .track(name: String(describing: type(of: self)))
   }
 }
 

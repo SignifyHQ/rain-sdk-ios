@@ -138,5 +138,9 @@
 	<string>$(WALLET_PRIVACY_URL)</string>
 	<key>ZEROHASH_URL</key>
 	<string>$(ZEROHASH_URL)</string>
+	<key>SEGMENT_DEV_KEY</key>
+	<string>${SEGMENT_DEV_KEY}</string>
+	<key>SEGMENT_PROD_KEY</key>
+	<string>${SEGMENT_PROD_KEY}</string>
 </dict>
 </plist>

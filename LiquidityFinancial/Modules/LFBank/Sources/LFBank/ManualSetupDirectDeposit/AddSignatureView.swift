@@ -2,10 +2,13 @@ import SwiftUI
 import LFLocalizable
 import LFUtilities
 import LFStyleGuide
+import LFServices
+import Factory
 
 struct AddSignatureView: View {
   @StateObject var viewModel: ManualSetupViewModel
   @State private var isNavigateToSignatureView = false
+  @Injected(\.analyticsService) var analyticsService
   
   var body: some View {
     VStack(alignment: .leading, spacing: 20) {
@@ -29,5 +32,9 @@ struct AddSignatureView: View {
     .navigationLink(isActive: $isNavigateToSignatureView) {
       SignatureView(viewModel: viewModel)
     }
+    .onAppear(perform: {
+      analyticsService.track(event: AnalyticsEvent(name: .viewsDirectDepositReady))
+    })
+    .track(name: String(describing: type(of: self)))
   }
 }

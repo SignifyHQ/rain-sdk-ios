@@ -2,9 +2,16 @@ import SwiftUI
 import LFLocalizable
 import LFUtilities
 import LFStyleGuide
+import LFServices
+import Factory
 
 struct RewardTermsView: View {
-  @StateObject private var viewModel = RewardTermsViewModel()
+  
+  @Injected(\.analyticsService)
+  var analyticsService
+  
+  @StateObject
+  var viewModel = RewardTermsViewModel()
   
   var body: some View {
     ZStack {
@@ -20,6 +27,7 @@ struct RewardTermsView: View {
             title: LFLocalizable.RewardTerms.enrollCta,
             isDisable: false
           ) {
+            analyticsService.track(event: AnalyticsEvent(name: .rewardTermsAccepted))
             viewModel.onClickedContinueButton()
           }
           Text(viewModel.disclaimerText)
@@ -29,6 +37,7 @@ struct RewardTermsView: View {
         }
         .padding(.horizontal, 32)
       }.onAppear {
+        analyticsService.track(event: AnalyticsEvent(name: .rewardTermsViewed))
       }
       .padding([.top], 1)
     }
@@ -37,6 +46,7 @@ struct RewardTermsView: View {
     .defaultToolBar(icon: .both, openIntercom: {
       viewModel.openIntercom()
     })
+    .track(name: String(describing: type(of: self)))
   }
 
   private func buildRow(title: String, subtitle: String) -> some View {

@@ -1,10 +1,13 @@
 import SwiftUI
 import Factory
 import LFUtilities
+import LFServices
 
 @MainActor
 final class ReferralsViewModel: ObservableObject {
+  @LazyInjected(\.analyticsService) var analyticsService
   @LazyInjected(\.accountDataManager) var accountDataManager
+  
   private lazy var enviromentManager = EnvironmentManager()
   @Published var status = Status.loading
   @Published var showShareSheet = false
@@ -50,6 +53,7 @@ extension ReferralsViewModel {
   }
   
   func onAppear() {
+    analyticsService.track(event: AnalyticsEvent(name: .viewsInviteFriends))
     fetchCampaigns()
   }
   

@@ -2,6 +2,7 @@ import SwiftUI
 import LFUtilities
 import LFStyleGuide
 import LFLocalizable
+import LFServices
 
 struct KYCStatusView: View {
   @StateObject var viewModel: KYCStatusViewModel
@@ -12,6 +13,7 @@ struct KYCStatusView: View {
   
   public var body: some View {
     makeContentView(with: viewModel.state)
+      .track(name: String(describing: type(of: self)))
       .background(Colors.background.swiftUIColor)
       .navigationBarBackButtonHidden()
       .defaultToolBar(icon: .intercom, openIntercom: {

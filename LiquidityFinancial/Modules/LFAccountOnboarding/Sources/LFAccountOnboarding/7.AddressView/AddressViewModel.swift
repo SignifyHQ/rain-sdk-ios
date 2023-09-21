@@ -43,6 +43,7 @@ final class AddressViewModel: ObservableObject {
   @LazyInjected(\.authorizationManager) var authorizationManager
   @LazyInjected(\.devicesRepository) var devicesRepository
   @LazyInjected(\.pushNotificationService) var pushNotificationService
+  @LazyInjected(\.analyticsService) var analyticsService
   
   @Published var isLoading: Bool = false
   @Published var popup: Popup?
@@ -151,7 +152,8 @@ final class AddressViewModel: ObservableObject {
         netspendDataManager.update(accountPersonData: person)
         
         try await apiFetchWorkflows()
-
+        analyticsService.track(event: AnalyticsEvent(name: .addressCompleted))
+        
       } catch {
         log.error(error)
         toastMessage = error.localizedDescription

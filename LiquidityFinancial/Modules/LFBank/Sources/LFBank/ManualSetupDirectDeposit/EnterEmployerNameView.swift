@@ -2,6 +2,7 @@ import SwiftUI
 import LFLocalizable
 import LFUtilities
 import LFStyleGuide
+import LFServices
 
 struct EnterEmployerNameView: View {
   @StateObject var viewModel: ManualSetupViewModel
@@ -37,6 +38,7 @@ struct EnterEmployerNameView: View {
     .navigationLink(isActive: $isNavigateToDepositPaycheck) {
       PaycheckDepositView(viewModel: viewModel)
     }
+    .track(name: String(describing: type(of: self)))
   }
 }
 

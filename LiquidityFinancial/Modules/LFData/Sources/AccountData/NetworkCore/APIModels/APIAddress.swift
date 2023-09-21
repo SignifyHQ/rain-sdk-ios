@@ -1,6 +1,6 @@
 import Foundation
 
-public struct APIAddress: Decodable {
+public struct APIAddress: Codable {
   public let line1: String?
   public let line2: String?
   public let city: String?

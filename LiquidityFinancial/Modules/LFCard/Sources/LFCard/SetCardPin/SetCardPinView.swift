@@ -2,6 +2,7 @@ import SwiftUI
 import LFLocalizable
 import LFUtilities
 import LFStyleGuide
+import LFServices
 
 struct SetCardPinView: View {
   @Environment(\.dismiss) private var dismiss
@@ -28,6 +29,7 @@ struct SetCardPinView: View {
       .defaultToolBar(icon: .xMark, onDismiss: {
         hideKeyboard()
       })
+      .track(name: String(describing: type(of: self)))
   }
 }
 

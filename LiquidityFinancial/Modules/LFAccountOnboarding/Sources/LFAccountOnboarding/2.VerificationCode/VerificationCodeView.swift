@@ -6,11 +6,17 @@ import LFLocalizable
 import OnboardingDomain
 import NetSpendData
 import DogeOnboarding
+import LFServices
+import Factory
 
 struct VerificationCodeView: View {
-  @StateObject private var viewModel: VerificationCodeViewModel
-  @FocusState private var keyboardFocus: Bool
-    
+  @StateObject
+  var viewModel: VerificationCodeViewModel
+  @FocusState
+  var keyboardFocus: Bool
+  @Injected(\.analyticsService)
+  var analyticsService
+  
   init(phoneNumber: String, requiredAuth: [RequiredAuth]) {
     _viewModel = .init(wrappedValue: VerificationCodeViewModel(phoneNumber: phoneNumber, requireAuth: requiredAuth))
   }
@@ -39,6 +45,7 @@ struct VerificationCodeView: View {
     }
     .onAppear {
       viewModel.isResendButonTimerOn = false
+      analyticsService.track(event: AnalyticsEvent(name: .phoneVerified))
     }
     .navigationLink(item: $viewModel.navigation) { item in
       switch item {
@@ -47,6 +54,7 @@ struct VerificationCodeView: View {
       }
     }
     .navigationBarBackButtonHidden(viewModel.isShowLoading)
+    .track(name: String(describing: type(of: self)))
   }
 }
 

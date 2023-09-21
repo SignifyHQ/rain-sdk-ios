@@ -27,6 +27,9 @@ REFERRALLINK_PRO = https:/$()/paywithpride.com
 
 UNIVERSAL_LINK = https:/$()/pridecard.cc/plaid
 
+SEGMENT_DEV_KEY = 4gz2JASSk4ij1AOzaoWx5o1z0CyTdhrM
+SEGMENT_PROD_KEY = xepkm9YaxVX2SXFQh2FeW72fNdDeaa6l
+
 CHARITY_ENABLED = true
 CRYPTO_ENABLED = false
 CRYPTO_FRACTION_DIGITS = 8

@@ -3,6 +3,7 @@ import LFStyleGuide
 import LFUtilities
 import LFLocalizable
 import LFTransaction
+import LFServices
 
 public struct MoveMoneyAccountView: View {
   @StateObject private var viewModel: MoveMoneyAccountViewModel
@@ -58,6 +59,7 @@ public struct MoveMoneyAccountView: View {
         }
       }
       .background(Colors.background.swiftUIColor)
+      .track(name: String(describing: type(of: self)))
   }
 }
 

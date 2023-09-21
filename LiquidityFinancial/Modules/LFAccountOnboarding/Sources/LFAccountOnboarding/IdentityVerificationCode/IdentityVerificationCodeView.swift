@@ -2,6 +2,7 @@ import SwiftUI
 import LFUtilities
 import LFStyleGuide
 import LFLocalizable
+import LFServices
 
 struct IdentityVerificationCodeView: View {
   @StateObject private var viewModel: IdentityVerificationCodeViewModel
@@ -35,6 +36,7 @@ struct IdentityVerificationCodeView: View {
     .defaultToolBar(icon: .intercom, openIntercom: {
       viewModel.openIntercom()
     })
+    .track(name: String(describing: type(of: self)))
   }
 }
 

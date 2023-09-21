@@ -3,6 +3,7 @@ import Factory
 import RewardData
 import RewardDomain
 import LFUtilities
+import LFServices
 
 @MainActor
 class SelectRewardsViewModel: ObservableObject {
@@ -17,6 +18,7 @@ class SelectRewardsViewModel: ObservableObject {
   
   @LazyInjected(\.rewardRepository) var rewardRepository
   @LazyInjected(\.rewardDataManager) var rewardDataManager
+  @LazyInjected(\.analyticsService) var analyticsService
   
   lazy var selectRewardUseCase: RewardUseCase = {
     RewardUseCase(repository: rewardRepository)
@@ -92,9 +94,11 @@ class SelectRewardsViewModel: ObservableObject {
         _ = try await selectRewardUseCase.selectReward(body: param)
         switch option {
         case .cashback:
+          analyticsService.track(event: AnalyticsEvent(name: .selectedCashbackReward))
           rewardDataManager.update(currentSelectReward: APIRewardType.cashBack)
           cashbackNavigation()
         case .donation:
+          analyticsService.track(event: AnalyticsEvent(name: .selectedDonationReward))
           rewardDataManager.update(currentSelectReward: APIRewardType.donation)
           donationNavigation()
         }

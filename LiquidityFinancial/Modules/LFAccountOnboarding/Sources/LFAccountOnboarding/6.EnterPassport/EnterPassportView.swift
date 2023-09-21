@@ -2,6 +2,7 @@ import SwiftUI
 import LFLocalizable
 import LFStyleGuide
 import LFUtilities
+import LFServices
 
 // MARK: - PassportView
 struct EnterPassportView: View {
@@ -42,6 +43,7 @@ struct EnterPassportView: View {
     .navigationLink(isActive: $viewModel.isNavigationToAddressView) {
       AddressView()
     }
+    .track(name: String(describing: type(of: self)))
   }
 }
 

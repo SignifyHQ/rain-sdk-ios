@@ -7,12 +7,14 @@ import LFTransaction
 import CryptoChartData
 import LFCryptoChart
 import BaseDashboard
+import LFServices
 
 @MainActor
 class CryptoAssetViewModel: ObservableObject {
   @LazyInjected(\.accountDataManager) var accountDataManager
   @LazyInjected(\.accountRepository) var accountRepository
   @LazyInjected(\.marketManager) var marketManager
+  @LazyInjected(\.analyticsService) var analyticsService
 
   @Published var loading: Bool = false
   @Published var showTransferSheet: Bool = false
@@ -171,21 +173,25 @@ extension CryptoAssetViewModel {
   }
   
   func transferButtonTapped() {
+    analyticsService.track(event: AnalyticsEvent(name: .tapsTransferCrypto))
     Haptic.impact(.light).generate()
     showTransferSheet = true
   }
   
   func receiveButtonTapped() {
+    analyticsService.track(event: AnalyticsEvent(name: .tapsRecieveCrypto))
     showTransferSheet = false
     navigation = .receiveCrypto
   }
   
   func sendButtonTapped() {
+    analyticsService.track(event: AnalyticsEvent(name: .tapsSendCrypto))
     showTransferSheet = false
     navigation = .sendCrypto
   }
 
   func walletRowTapped() {
+    analyticsService.track(event: AnalyticsEvent(name: .tapsSendToExternalWallet))
     Haptic.impact(.soft).generate()
     sheet = .wallet
   }

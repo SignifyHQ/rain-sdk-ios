@@ -3,11 +3,13 @@ import Factory
 import AccountData
 import AccountDomain
 import LFUtilities
+import LFServices
 
 @MainActor
 final class ReferralsViewModel: ObservableObject {
   @LazyInjected(\.accountDataManager) var accountDataManager
   @LazyInjected(\.accountRepository) var accountRepository
+  @LazyInjected(\.analyticsService) var analyticsService
 
   @Published var status = Status.loading
   @Published var showShareSheet = false
@@ -67,6 +69,7 @@ extension ReferralsViewModel {
   }
   
   func onAppear() {
+    analyticsService.track(event: AnalyticsEvent(name: .viewsInviteFriends))
     fetchCampaigns()
   }
   

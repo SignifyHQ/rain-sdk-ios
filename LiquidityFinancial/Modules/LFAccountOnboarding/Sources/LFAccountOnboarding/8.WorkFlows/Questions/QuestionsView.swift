@@ -2,6 +2,7 @@ import SwiftUI
 import LFStyleGuide
 import LFUtilities
 import LFLocalizable
+import LFServices
 
 public struct QuestionsView: View {
   @StateObject var viewModel: QuestionsViewModel
@@ -41,11 +42,6 @@ public struct QuestionsView: View {
       .animation(.easeInOut, value: 0.55)
       .transition(.slide)
       
-//      Spacer()
-      
-//      PageIndicator(numPages: $viewModel.questionList.questions.count, currentPage: $selectedPage)
-//        .padding(.bottom, 16)
-      
       FullSizeButton(
         title: LFLocalizable.Button.Continue.title,
         isDisable: !viewModel.isEnableContinue,
@@ -81,6 +77,7 @@ public struct QuestionsView: View {
       }
     }
     .navigationBarBackButtonHidden()
+    .track(name: String(describing: type(of: self)))
   }
 }
 

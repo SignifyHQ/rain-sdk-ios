@@ -2,9 +2,16 @@ import SwiftUI
 import LFLocalizable
 import LFStyleGuide
 import LFUtilities
+import LFServices
+import Factory
 
 struct EnterSSNView: View {
-  @StateObject private var viewModel = EnterSSNViewModel(isVerifySSN: true)
+  
+  @Injected(\.analyticsService)
+  var analyticsService
+  
+  @StateObject
+  var viewModel = EnterSSNViewModel(isVerifySSN: true)
 
   @State private var navigation: Navigation?
   @State private var toastMessage: String?
@@ -47,6 +54,10 @@ struct EnterSSNView: View {
         AddressView()
       }
     }
+    .onAppear(perform: {
+      analyticsService.track(event: AnalyticsEvent(name: .viewedSSN))
+    })
+    .track(name: String(describing: type(of: self)))
   }
 
   private var secureField: some View {
@@ -125,6 +136,7 @@ struct EnterSSNView: View {
           isDisable: !viewModel.isActionAllowed,
           type: .primary
         ) {
+          analyticsService.track(event: AnalyticsEvent(name: .ssnCompleted))
           navigation = .address
         }
       }

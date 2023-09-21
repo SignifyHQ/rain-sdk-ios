@@ -57,6 +57,7 @@ public struct DirectDepositView: View {
     }
     .navigationBarTitleDisplayMode(.inline)
     .background(Colors.background.swiftUIColor)
+    .track(name: String(describing: type(of: self)))
   }
 }
 

@@ -2,6 +2,7 @@ import SwiftUI
 import LFLocalizable
 import LFStyleGuide
 import LFUtilities
+import LFServices
 
 public struct TransactionListView: View {
   @StateObject private var viewModel: TransactionListViewModel
@@ -51,6 +52,7 @@ public struct TransactionListView: View {
         destinationView: destinationView
       )
     }
+    .track(name: String(describing: type(of: self)))
   }
 }
 

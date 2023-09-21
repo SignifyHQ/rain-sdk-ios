@@ -2,9 +2,11 @@ import SwiftUI
 import LFStyleGuide
 import LFUtilities
 import LFLocalizable
+import Factory
+import LFServices
 
 public struct SelectCauseCategoriesView: View {
-  
+  @Injected(\.analyticsService) var analyticsService
   @StateObject private var viewModel: SelectCauseCategoriesViewModel
   
   var isPopToRoot: Bool {
@@ -63,6 +65,9 @@ public struct SelectCauseCategoriesView: View {
           }
           .opacity(isPopToRoot ? 1 : 0)
         }
+      }
+      .onAppear {
+        analyticsService.track(event: AnalyticsEvent(name: .viewsSelectFundraiserCategories))
       }
   }
   

@@ -2,6 +2,7 @@ import SwiftUI
 import LFLocalizable
 import LFUtilities
 import LFStyleGuide
+import LFServices
 
 struct DirectDepositFormView: View {
   @State private var isNavigateToEnterEmployerName = false
@@ -33,5 +34,6 @@ struct DirectDepositFormView: View {
     .navigationLink(isActive: $isNavigateToEnterEmployerName) {
       EnterEmployerNameView(achInformation: $achInformation)
     }
+    .track(name: String(describing: type(of: self)))
   }
 }

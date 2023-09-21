@@ -4,6 +4,7 @@ import UIKit
 import LFLocalizable
 import LFUtilities
 import LFStyleGuide
+import LFServices
 
 struct SignatureView: View {
   @Environment(\.dismiss) var dismiss
@@ -42,6 +43,7 @@ struct SignatureView: View {
       AddSignatureSuccessView(viewModel: viewModel)
     }
     .navigationBarHidden(true)
+    .track(name: String(describing: type(of: self)))
   }
   
   private func extractImageAndHandle() {
