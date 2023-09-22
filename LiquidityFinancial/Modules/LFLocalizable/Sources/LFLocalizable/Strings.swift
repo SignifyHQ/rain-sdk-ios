@@ -2118,6 +2118,10 @@ public enum LFLocalizable {
     /// No results found
     public static let noResults = LFLocalizable.tr("Localizable", "search_causes.no_results", fallback: "No results found")
   }
+  public enum SelectBankAccount {
+    /// Select Account
+    public static let title = LFLocalizable.tr("Localizable", "selectBankAccount.title", fallback: "Select Account")
+  }
   public enum SelectCause {
     /// Continue
     public static let `continue` = LFLocalizable.tr("Localizable", "select_cause.continue", fallback: "Continue")

@@ -21,9 +21,13 @@ struct FiatAssetView: View {
       .navigationLink(item: $viewModel.navigation) { navigation in
         switch navigation {
         case .addMoney:
-          MoveMoneyAccountView(kind: .receive)
+          MoveMoneyAccountView(kind: .receive) {
+            viewModel.navigation = nil
+          }
         case .sendMoney:
-          MoveMoneyAccountView(kind: .send)
+          MoveMoneyAccountView(kind: .send) {
+            viewModel.navigation = nil
+          }
         case .transactions:
           TransactionListView(
             type: .crypto,

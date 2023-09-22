@@ -38,8 +38,9 @@ public class MoveMoneyAccountViewModel: ObservableObject {
     .fixed(amount: 100, currency: .usd)
   ]
 
-  init(kind: Kind) {
+  init(kind: Kind, selectedAccount: APILinkedSourceData? = nil) {
     self.kind = kind
+    self.selectedLinkedAccount = selectedAccount
     
     subscribeLinkedAccounts()
   }
@@ -103,7 +104,14 @@ extension MoveMoneyAccountViewModel {
       callBioMetric()
       return
     }
-    // TODO: Will need open screen to choose link bank or open plaid screen for link bank
+    let linkedBanks = linkedAccount.filter { data in
+      data.isVerified && data.sourceType == .externalBank
+    }
+    if linkedBanks.isEmpty {
+      // TODO: Will need open open plaid screen for link bank
+    } else {
+      navigation = .selectBankAccount
+    }
   }
   
   func getListConnectedAccount() {
@@ -239,5 +247,6 @@ public extension MoveMoneyAccountViewModel {
   enum Navigation {
     case transactionDetai(String)
     case addBankDebit
+    case selectBankAccount
   }
 }

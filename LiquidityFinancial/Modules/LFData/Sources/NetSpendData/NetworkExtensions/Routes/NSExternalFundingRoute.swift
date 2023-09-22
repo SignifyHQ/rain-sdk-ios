@@ -33,7 +33,15 @@ extension NSExternalFundingRoute: LFRoute {
       } else {
         return "/v1/netspend/external-funding/external-bank/\(sourceId)"
       }
-    case .newTransaction(_, let type, _):
+    case .newTransaction(let parameters, let type, _):
+      if parameters.sourceType == APILinkSourceType.externalBank.rawString {
+        switch type {
+        case .deposit:
+          return "/v1/netspend/external-banks/deposit"
+        case .withdraw:
+          return "/v1/netspend/external-banks/withdraw"
+        }
+      }
       switch type {
       case .deposit:
         return "/v1/netspend/external-funding/deposit"
@@ -93,6 +101,12 @@ extension NSExternalFundingRoute: LFRoute {
     case .getACHInfo, .pinWheelToken, .getLinkedSource, .deleteLinkedSource, .getFundingStatus:
       return nil
     case let .newTransaction(parameters, _, _):
+      if parameters.sourceType == APILinkSourceType.externalBank.rawString {
+        return [
+          "amount": parameters.amount,
+          "sourceId": parameters.sourceId
+        ]
+      }
       return parameters.encoded()
     case let .verifyCard(_, parameters):
       return parameters.encoded()

@@ -539,6 +539,9 @@ https://mn.gov/commerce/money/investments/cryptocurrency/. \n\n\n\n\n\n\n";
 "connectedView.delete_popup.message" = "Are you sure you want to remove this bank account/debit card?";
 "connectedView.delete_popup.primary_button" = "Delete";
 
+// Select Bank Account
+"selectBankAccount.title" = "Select Account";
+
 // ManualSetup DirectDeposit
 "directDeposit.form.title" = "DIRECT DEPOSIT FORM";
 "directDeposit.form.description" = "Receive paychecks up to two days early by completing this form and sharing it with your employer’s payroll department. \n \n \nYou can also save the completed form to share with your employer later.";

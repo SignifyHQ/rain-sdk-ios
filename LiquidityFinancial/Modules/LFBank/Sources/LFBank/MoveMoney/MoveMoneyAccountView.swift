@@ -4,17 +4,20 @@ import LFUtilities
 import LFLocalizable
 import LFTransaction
 import LFServices
+import NetSpendData
 
 public struct MoveMoneyAccountView: View {
   @StateObject private var viewModel: MoveMoneyAccountViewModel
   @State private var showListView: Bool = false
   @State private var showAnnotationView: Bool = false
   @State private var screenSize: CGSize = .zero
+  private let completeAction: (() -> Void)?
 
-  public init(kind: MoveMoneyAccountViewModel.Kind) {
+  public init(kind: MoveMoneyAccountViewModel.Kind, completeAction: (() -> Void)? = nil) {
     _viewModel = .init(
       wrappedValue: MoveMoneyAccountViewModel(kind: kind)
     )
+    self.completeAction = completeAction
   }
 
   public var body: some View {
@@ -56,6 +59,8 @@ public struct MoveMoneyAccountView: View {
           )
         case .addBankDebit:
           AddBankWithDebitView()
+        case .selectBankAccount:
+          SelectBankAccountView(linkedAccount: viewModel.linkedAccount, kind: viewModel.kind, amount: viewModel.amount, completeAction: completeAction)
         }
       }
       .background(Colors.background.swiftUIColor)
