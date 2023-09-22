@@ -107,11 +107,7 @@ extension MoveMoneyAccountViewModel {
     let linkedBanks = linkedAccount.filter { data in
       data.isVerified && data.sourceType == .externalBank
     }
-    if linkedBanks.isEmpty {
-      // TODO: Will need open open plaid screen for link bank
-    } else {
-      navigation = .selectBankAccount
-    }
+    navigation = .selectBankAccount
   }
   
   func getListConnectedAccount() {

@@ -510,6 +510,7 @@
 
 // Select Bank Account
 "selectBankAccount.title" = "Select Account";
+"selectBankAccount.connectABank" = "Connect a Bank Account";
 
 // ManualSetup DirectDeposit
 "directDeposit.form.title" = "DIRECT DEPOSIT FORM";

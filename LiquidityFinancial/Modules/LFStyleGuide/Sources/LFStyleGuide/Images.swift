@@ -56,7 +56,6 @@ public enum GenImages {
     public static let buy = ImageAsset(name: "buy")
     public static let calendar = ImageAsset(name: "calendar")
     public static let dash = ImageAsset(name: "dash")
-    public static let icPlus = ImageAsset(name: "ic-plus")
     public static let icCheckboxSelected = ImageAsset(name: "icCheckboxSelected")
     public static let icCheckboxUnselected = ImageAsset(name: "icCheckboxUnselected")
     public static let icAccount = ImageAsset(name: "ic_account")
@@ -136,6 +135,7 @@ public enum GenImages {
     }
     public static let availableCard = ImageAsset(name: "availableCard")
     public static let cashbackCard = ImageAsset(name: "cashbackCard")
+    public static let connectBankBanner = ImageAsset(name: "connectBankBanner")
     public static let connectedAppleWallet = ImageAsset(name: "connectedAppleWallet")
     public static let connectedAppleWalletShadow = ImageAsset(name: "connectedAppleWalletShadow")
     public static let defaultTransactionCard = ImageAsset(name: "defaultTransactionCard")
@@ -144,6 +144,7 @@ public enum GenImages {
     public static let fasterDeposit = ImageAsset(name: "fasterDeposit")
     public static let forwardButton = ImageAsset(name: "forwardButton")
     public static let fundCard = ImageAsset(name: "fundCard")
+    public static let icPlus = ImageAsset(name: "ic-plus")
     public static let icVerified = ImageAsset(name: "ic-verified")
     public static let icCoin = ImageAsset(name: "ic_coin")
     public static let icCopyBackground = ImageAsset(name: "ic_copy_background")

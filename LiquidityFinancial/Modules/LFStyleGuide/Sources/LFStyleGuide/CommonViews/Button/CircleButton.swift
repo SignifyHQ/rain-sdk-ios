@@ -52,7 +52,7 @@ public extension CircleButton {
       case .delete:
         return GenImages.CommonImages.icTrash.swiftUIImage
       case .plus:
-        return GenImages.CommonImages.icPlus.swiftUIImage
+        return GenImages.Images.icPlus.swiftUIImage
       default:
         return nil
       }

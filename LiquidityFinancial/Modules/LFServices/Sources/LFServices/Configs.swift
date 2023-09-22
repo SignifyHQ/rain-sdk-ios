@@ -40,11 +40,11 @@ enum Configs {
   
   enum Segment {
     static var prodKey: String {
-      return try! LFConfiguration.value(for: "SEGMENT_PROD_KEY")
+      (try? LFConfiguration.value(for: "SEGMENT_PROD_KEY")) ?? .empty
     }
     
     static var devKey: String {
-      return try! LFConfiguration.value(for: "SEGMENT_DEV_KEY")
+      (try? LFConfiguration.value(for: "SEGMENT_DEV_KEY")) ?? .empty
     }
   }
 }

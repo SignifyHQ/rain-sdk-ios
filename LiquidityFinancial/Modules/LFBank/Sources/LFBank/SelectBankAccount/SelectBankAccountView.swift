@@ -4,6 +4,7 @@ import NetSpendData
 import LFStyleGuide
 import LFUtilities
 import LFLocalizable
+import NetspendSdk
 
 public struct SelectBankAccountView: View {
   @StateObject private var viewModel: SelectBankAccountViewModel
@@ -33,7 +34,15 @@ public struct SelectBankAccountView: View {
             .foregroundColor(Colors.label.swiftUIColor)
             .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.medium.value))
         }
+        ToolbarItem(placement: .navigationBarTrailing) {
+          Button {
+            viewModel.addNewBankAccount()
+          } label: {
+            CircleButton(style: .plus)
+          }
+        }
       }
+      .disabled(viewModel.isDisableView)
       .background(Colors.background.swiftUIColor)
       .navigationTitle("")
       .navigationBarTitleDisplayMode(.inline)
@@ -52,15 +61,39 @@ public struct SelectBankAccountView: View {
   }
 
   private var content: some View {
-    VStack(spacing: 10) {
-      contacts
-      Spacer()
-        .frame(maxWidth: .infinity)
-      bottomView
+    ZStack() {
+      VStack(spacing: 10) {
+        if viewModel.isLoading {
+          Spacer()
+          loading
+          Spacer()
+        } else if viewModel.linkedBanks.isEmpty {
+          Spacer()
+          emptyView
+          Spacer()
+        } else {
+          contacts
+          Spacer()
+            .frame(maxWidth: .infinity)
+          bottomView
+        }
+      }
+      .padding(.horizontal, 30)
+      .padding(.vertical, 20)
+      .background(Colors.background.swiftUIColor)
+      externalLinkBank(controller: viewModel.netspendController)
     }
-    .padding(.horizontal, 30)
-    .padding(.vertical, 20)
-    .background(Colors.background.swiftUIColor)
+  }
+  
+  @ViewBuilder func externalLinkBank(controller: NetspendSdkViewController?) -> some View {
+    if let controller {
+      ExternalLinkBankViewController(
+        controller: controller,
+        onSuccess: viewModel.onLinkExternalBankSuccess,
+        onFailure: viewModel.onLinkExternalBankFailure,
+        onCancelled: viewModel.onPlaidUIDisappear
+      )
+    }
   }
   
   private var loading: some View {
@@ -70,6 +103,22 @@ public struct SelectBankAccountView: View {
         .padding(.top, 20)
     }
     .frame(maxWidth: .infinity)
+  }
+  
+  var emptyView: some View {
+    Group {
+      VStack(alignment: .center, spacing: 24) {
+        GenImages.Images.connectBankBanner.swiftUIImage
+        FullSizeButton(
+          title: LFLocalizable.SelectBankAccount.connectABank,
+          isDisable: false,
+          isLoading: $viewModel.linkBankIndicator
+        ) {
+          viewModel.addNewBankAccount()
+        }.padding(.horizontal, 20)
+      }
+      .fixedSize(horizontal: false, vertical: false)
+    }
   }
 
   private var contacts: some View {

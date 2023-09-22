@@ -6,6 +6,7 @@ import NetSpendData
 import LFUtilities
 import LFLocalizable
 import LFServices
+import NetspendSdk
 
 class SelectBankAccountViewModel: ObservableObject {
 
@@ -18,12 +19,18 @@ class SelectBankAccountViewModel: ObservableObject {
   @LazyInjected(\.accountDataManager) var accountDataManager
   @LazyInjected(\.authenticationService) var authenticationService
   @LazyInjected(\.analyticsService) var analyticsService
+  @LazyInjected(\.nsPersionRepository) var nsPersionRepository
   
   @Published var linkedBanks: [APILinkedSourceData] = []
   @Published var navigation: Navigation?
   @Published var selectedBank: APILinkedSourceData?
   @Published var showIndicator: Bool = false
   @Published var toastMessage: String?
+  @Published var linkBankIndicator: Bool = false
+  @Published var isDisableView: Bool = false
+  @Published var isLoading: Bool = false
+  @Published var netspendController: NetspendSdkViewController?
+  
   let amount: String
   let kind: MoveMoneyAccountViewModel.Kind
   
@@ -50,6 +57,10 @@ class SelectBankAccountViewModel: ObservableObject {
       })
     }
     .store(in: &cancellable)
+  }
+  
+  func addNewBankAccount() {
+    linkExternalBank()
   }
   
   func continueTapped() {
@@ -103,6 +114,57 @@ class SelectBankAccountViewModel: ObservableObject {
     }
   }
   
+}
+
+// MARK: - ExternalLinkBank Functions
+extension SelectBankAccountViewModel {
+  func linkExternalBank() {
+    Task { @MainActor in
+      isDisableView = true
+      linkBankIndicator = true
+      do {
+        let sessionID = accountDataManager.sessionID
+        let tokenResponse = try await nsPersionRepository.getAuthorizationCode(sessionId: sessionID)
+        let usingParams = ["redirectUri": LFUtility.universalLink]
+        log.info("NetSpend openWithPurpose usingParams: \(usingParams)")
+        let controller = try NetspendSdk.shared.openWithPurpose(
+          purpose: .linkBank,
+          withPasscode: tokenResponse.authorizationCode,
+          usingParams: usingParams
+        )
+        controller.view.isHidden = true
+        self.netspendController = controller
+      } catch {
+        toastMessage = error.localizedDescription
+      }
+    }
+  }
+  
+  func onPlaidUIDisappear() {
+    netspendController = nil
+    linkBankIndicator = false
+    isDisableView = false
+  }
+  
+  func onLinkExternalBankFailure() {
+    onPlaidUIDisappear()
+  }
+  
+  func onLinkExternalBankSuccess() {
+    onPlaidUIDisappear()
+    Task { @MainActor in
+      defer { isLoading = false }
+      isLoading = true
+      do {
+        let sessionID = self.accountDataManager.sessionID
+        async let linkedAccountResponse = self.externalFundingRepository.getLinkedAccount(sessionId: sessionID)
+        let linkedSources = try await linkedAccountResponse.linkedSources
+        self.accountDataManager.storeLinkedSources(linkedSources)
+      } catch {
+        log.error(error.localizedDescription)
+      }
+    }
+  }
 }
 
 extension SelectBankAccountViewModel {
