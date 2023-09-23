@@ -90,4 +90,8 @@ public class AccountRepository: AccountRepositoryProtocol {
   public func getFeatureConfig() async throws -> AccountFeatureConfigEntity {
     return try await accountAPI.getFeatureConfig()
   }
+  
+  public func createSupportTicket(title: String? = .empty, description: String? = .empty, type: String) async throws -> SupportTicketEntity {
+    try await accountAPI.createSupportTicket(title: title, description: description, type: type)
+  }
 }

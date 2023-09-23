@@ -22,4 +22,5 @@ public protocol AccountAPIProtocol {
   func addToWaitList(body: WaitListParameter) async throws -> Bool
   func getUserRewards() async throws -> [APIUserRewards]
   func getFeatureConfig() async throws -> APIAccountFeatureConfig
+  func createSupportTicket(title: String?, description: String?, type: String) async throws -> APISupportTicket
 }

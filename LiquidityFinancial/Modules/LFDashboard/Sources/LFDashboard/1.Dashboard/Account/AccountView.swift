@@ -37,6 +37,8 @@ struct AccountsView: View {
           })
           .navigationTitle(LFLocalizable.AccountView.atmLocationTitle)
           .foregroundColor(Colors.label.swiftUIColor)
+        case .depositLimits:
+          TransferLimitsView()
         case .connectedAccounts:
           ConnectedAccountsView(linkedAccount: viewModel.linkedAccount)
         case .bankStatement:
@@ -92,10 +94,9 @@ private extension AccountsView {
             isDisableView: $viewModel.isDisableView
           )
         }
-        /* TODO: Remove for MVP
         section(title: LFLocalizable.AccountView.limits) {
           depositLimits
-        }*/
+        }
         section(title: LFLocalizable.AccountView.cardAccountDetails) {
           accountDetailView
         }
@@ -286,7 +287,7 @@ private extension AccountsView {
       title: LFLocalizable.AccountView.depositLimits,
       value: nil
     ) {
-        // TODO: Will do later
+      viewModel.onClickedDepositLimitsButton()
     }
   }
 }

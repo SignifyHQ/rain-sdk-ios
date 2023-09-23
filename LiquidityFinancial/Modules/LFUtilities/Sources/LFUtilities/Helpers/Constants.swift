@@ -181,6 +181,18 @@ public extension Constants {
     case userInactive = "user_inactive"
     case credentialsInvalid = "credentials_invalid"
     case lastXIdInvalid = "last_x_id_invalid"
+    case ticketExisted = "increase_limit_ticket_existed"
+    
+    public var value: String {
+      rawValue
+    }
+  }
+}
+
+// MARK: SupportTicket
+public extension Constants {
+  enum SupportTicket: String {
+    case increaseLimit = "increase_limit"
     
     public var value: String {
       rawValue

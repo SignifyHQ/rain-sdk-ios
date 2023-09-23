@@ -22,6 +22,7 @@ public enum AccountRoute {
   case addToWaitList(body: WaitListParameter)
   case getUserRewards
   case getFeatureConfig
+  case createSupportTicket(title: String?, description: String?, type: String)
 }
 
 extension AccountRoute: LFRoute {
@@ -60,12 +61,14 @@ extension AccountRoute: LFRoute {
       return "v1/user/reward-campaigns"
     case .getFeatureConfig:
       return "/v1/feature-config"
+    case .createSupportTicket:
+      return "/v1/support-tickets"
     }
   }
   
   public var httpMethod: HttpMethod {
     switch self {
-    case .createZeroHashAccount, .logout, .createWalletAddress, .addToWaitList:
+    case .createZeroHashAccount, .logout, .createWalletAddress, .addToWaitList, .createSupportTicket:
       return .POST
     case .getUser, .getAccount, .getTransactions, .getTransactionDetail, .getWalletAddresses, .getReferralCampaign, .getAccountDetail:
       return .GET
@@ -121,12 +124,18 @@ extension AccountRoute: LFRoute {
       return nil
     case .addToWaitList(body: let body):
       return body.encoded()
+    case let .createSupportTicket(title, description, type):
+      return [
+        "title": title ?? .empty,
+        "description": description ?? .empty,
+        "type": type
+      ]
     }
   }
   
   public var parameterEncoding: ParameterEncoding? {
     switch self {
-    case .createWalletAddress, .updateWalletAddress, .addToWaitList:
+    case .createWalletAddress, .updateWalletAddress, .addToWaitList, .createSupportTicket:
       return .json
     case .createZeroHashAccount, .getUser, .logout, .getWalletAddresses, .deleteWalletAddresses, .getTaxFile, .getTaxFileYear, .getAccountDetail, .getUserRewards, .getFeatureConfig:
       return nil

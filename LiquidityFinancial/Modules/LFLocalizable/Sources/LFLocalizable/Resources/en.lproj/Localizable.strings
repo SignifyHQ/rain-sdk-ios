@@ -1022,6 +1022,27 @@ https://mn.gov/commerce/money/investments/cryptocurrency/. \n\n\n\n\n\n\n";
 "accountLocked.contactSupport.description" = "Your account was locked due to too many verification attempts. Please
 contact support.";
 
+// TransferLimit
+"transferLimit.screen.title" = "Limits";
+"transferLimit.createSupportTicket.title" = "Support Ticket";
+"transferLimit.increaseLimit.message" = "Your request to increase the limits has been sent successfully!";
+"transferLimit.increaseLimitInReview.message" = "You already submitted a request to increase your limits. Thanks for your patience!";
+"transferLimit.error.title" = "We were unable to load transfer limits right now.\nPlease try again.";
+"transferLimit.deposit.tabTitle" = "Deposit";
+"transferLimit.withdraw.tabTitle" = "Withdrawal";
+"transferLimit.cardDeposit.title" = "Debit Card Deposit Limits";
+"transferLimit.cardWithdrawal.title" = "Debit Card Withdrawal Limits";
+"transferLimit.bankDeposit.title" = "Bank Account Deposit Limits";
+"transferLimit.bankWithdrawal.title" = "Bank Account Withdrawal Limits";
+"transferLimit.cardDeposit.message" = "You can “push” funds to card by sending an external transfer from your bank or Direct Deposit.";
+"transferLimit.cardWithdrawal.message" = "There are limits to how much you can “pull” to your card. This includes funds deposited using the app’s “Deposit” feature.";
+"transferLimit.bankDeposit.message" = "You can “push” funds to card by sending an external transfer from your bank or Direct Deposit. ";
+"transferLimit.bankWithdrawal.message" = "There are limits to how much you can “pull” to your card. This includes funds deposited using the app’s “Deposit” feature.";
+"transferLimit.daily.title" = "Daily";
+"transferLimit.weekly.title" = "Weekly";
+"transferLimit.monthly.title" = "Monthly";
+"transferLimit.requestLimitIncrease.title" = "Request Limit Increase";
+
 // MARK: - Common
 
 // Notification Pop up

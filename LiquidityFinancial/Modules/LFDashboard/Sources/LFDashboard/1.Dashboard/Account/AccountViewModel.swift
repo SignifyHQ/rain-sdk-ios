@@ -133,6 +133,10 @@ extension AccountViewModel {
     navigation = .connectedAccounts
   }
   
+  func onClickedDepositLimitsButton() {
+    navigation = .depositLimits
+  }
+  
   func bankStatementTapped() {
     navigation = .bankStatement
   }
@@ -264,6 +268,7 @@ extension AccountViewModel {
   enum Navigation {
     case debugMenu
     case atmLocation(String)
+    case depositLimits
     case connectedAccounts
     case bankStatement
     case disputeTransaction(String, String)

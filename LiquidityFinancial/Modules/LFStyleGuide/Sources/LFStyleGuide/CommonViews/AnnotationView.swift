@@ -4,10 +4,12 @@ import LFUtilities
 public struct AnnotationView: View {
   private let description: String
   private let radius: CGFloat
+  private let corners: UIRectCorner
 
-  public init(description: String, radius: CGFloat = 16) {
+  public init(description: String, radius: CGFloat = 16, corners: UIRectCorner) {
     self.description = description
     self.radius = radius
+    self.corners = corners
   }
 
   public var body: some View {
@@ -20,7 +22,7 @@ public struct AnnotationView: View {
       .background(
         Colors.secondaryBackground.swiftUIColor.cornerRadius(
           radius,
-          corners: [.topLeft, .bottomLeft, .bottomRight]
+          corners: corners
         )
       )
   }

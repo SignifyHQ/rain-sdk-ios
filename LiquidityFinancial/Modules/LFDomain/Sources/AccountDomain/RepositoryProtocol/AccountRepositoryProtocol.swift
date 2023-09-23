@@ -21,4 +21,5 @@ public protocol AccountRepositoryProtocol {
   func addToWaitList(waitList: String) async throws -> Bool
   func getUserRewards() async throws -> [UserRewardsEntity]
   func getFeatureConfig() async throws -> AccountFeatureConfigEntity
+  func createSupportTicket(title: String?, description: String?, type: String) async throws -> SupportTicketEntity
 }

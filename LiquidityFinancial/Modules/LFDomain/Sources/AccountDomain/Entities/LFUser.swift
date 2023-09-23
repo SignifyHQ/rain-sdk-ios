@@ -14,4 +14,5 @@ public protocol LFUser {
   var userSelectedFundraiserId: String? { get }
   var userRoundUpEnabled: Bool? { get }
   var accountReviewStatus: String? { get }
+  var transferLimitConfigsEntity: [TransferLimitConfigEntity] { get }
 }

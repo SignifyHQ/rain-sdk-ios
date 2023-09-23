@@ -53,7 +53,10 @@ struct DonationInputView: View {
         Spacer()
         preFilledGrid
       }
-      AnnotationView(description: viewModel.annotationString)
+      AnnotationView(
+        description: viewModel.annotationString,
+        corners: [.topLeft, .bottomLeft, .bottomRight]
+      )
         .frame(width: screenSize.width * 0.64)
         .offset(x: -10, y: 56)
         .opacity(showAnnotationView ? 1 : 0)

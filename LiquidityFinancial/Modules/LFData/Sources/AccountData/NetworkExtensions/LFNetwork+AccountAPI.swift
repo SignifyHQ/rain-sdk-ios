@@ -135,4 +135,13 @@ extension LFCoreNetwork: AccountAPIProtocol where R == AccountRoute {
       decoder: .apiDecoder
     )
   }
+  
+  public func createSupportTicket(title: String?, description: String?, type: String) async throws -> APISupportTicket {
+    try await request(
+      AccountRoute.createSupportTicket(title: title, description: description, type: type),
+      target: APISupportTicket.self,
+      failure: LFErrorObject.self,
+      decoder: .apiDecoder
+    )
+  }
 }
