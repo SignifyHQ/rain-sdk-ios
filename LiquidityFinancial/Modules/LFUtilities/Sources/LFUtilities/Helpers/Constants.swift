@@ -182,6 +182,7 @@ public extension Constants {
     case credentialsInvalid = "credentials_invalid"
     case lastXIdInvalid = "last_x_id_invalid"
     case ticketExisted = "increase_limit_ticket_existed"
+    case transferLimitExceeded = "transfer_limit_exceeded"
     
     public var value: String {
       rawValue

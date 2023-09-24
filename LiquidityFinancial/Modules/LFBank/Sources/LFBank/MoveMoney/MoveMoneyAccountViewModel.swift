@@ -1,5 +1,6 @@
 import Combine
 import NetSpendData
+import NetSpendDomain
 import Foundation
 import SwiftUI
 import LFLocalizable
@@ -16,10 +17,12 @@ public class MoveMoneyAccountViewModel: ObservableObject {
   @LazyInjected(\.accountDataManager) var accountDataManager
   @LazyInjected(\.externalFundingRepository) var externalFundingRepository
   @LazyInjected(\.analyticsService) var analyticsService
+  @LazyInjected(\.intercomService) var intercomService
   
   @Published var navigation: Navigation?
   @Published var amountInput: String = Constants.Default.zeroAmount.rawValue
   @Published var cashBalanceValue: String = Constants.Default.zeroAmount.rawValue
+  @Published var isFetchingRemainingAmount: Bool = false
   @Published var showIndicator: Bool = false
   @Published var toastMessage: String?
   @Published var inlineError: String?
@@ -27,10 +30,15 @@ public class MoveMoneyAccountViewModel: ObservableObject {
   @Published var linkedAccount: [APILinkedSourceData] = []
   @Published var selectedLinkedAccount: APILinkedSourceData?
   @Published var selectedValue: GridValue?
+  @Published var popup: Popup?
   @Published var showTransferFeeSheet: Bool = false
   @Published var selectTransferInstant: Bool?
   
   private var cancellable: Set<AnyCancellable> = []
+  
+  private var cardRemainingAmount = RemainingAvailableAmount.default
+  private var bankRemainingAmount = RemainingAvailableAmount.default
+  
   let kind: Kind
   let recommendValues: [GridValue] = [
     .fixed(amount: 10, currency: .usd),
@@ -43,10 +51,41 @@ public class MoveMoneyAccountViewModel: ObservableObject {
     self.selectedLinkedAccount = selectedAccount
     
     subscribeLinkedAccounts()
+    getRemainingAvailableAmount()
   }
 }
 
 extension MoveMoneyAccountViewModel {
+  func getRemainingAvailableAmount() {
+    Task {
+      defer { isFetchingRemainingAmount = false }
+      isFetchingRemainingAmount = true
+      
+      do {
+        let cardRemainingAmount = try await externalFundingRepository.getCardRemainingAmount(
+          sessionID: accountDataManager.sessionID,
+          type: kind.externalTransactionType
+        )
+        let bankRemainingAmount = try await externalFundingRepository.getBankRemainingAmount(
+          sessionID: accountDataManager.sessionID,
+          type: kind.externalTransactionType
+        )
+        self.cardRemainingAmount = RemainingAvailableAmount(
+          from: cardRemainingAmount.map {
+            TransferLimitConfig(from: $0)
+          }
+        )
+        self.bankRemainingAmount = RemainingAvailableAmount(
+          from: bankRemainingAmount.map {
+            TransferLimitConfig(from: $0)
+          }
+        )
+      } catch {
+        log.error(error.localizedDescription)
+      }
+    }
+  }
+  
   func subscribeLinkedAccounts() {
     accountDataManager.subscribeLinkedSourcesChanged { [weak self] entities in
       guard let self = self else {
@@ -154,8 +193,21 @@ extension MoveMoneyAccountViewModel {
         
         navigation = .transactionDetai(response.transactionId)
       } catch {
-        toastMessage = error.localizedDescription
+        handleTransferError(error: error)
       }
+    }
+  }
+  
+  func handleTransferError(error: Error) {
+    guard let errorObject = error.asErrorObject else {
+      toastMessage = error.localizedDescription
+      return
+    }
+    switch errorObject.code {
+    case Constants.ErrorCode.transferLimitExceeded.value:
+      popup = .limitReached
+    default:
+      toastMessage = errorObject.message
     }
   }
 }
@@ -197,7 +249,7 @@ extension MoveMoneyAccountViewModel {
   var amount: String {
     amountInput.removeDollarSign().removeGroupingSeparator().convertToDecimalFormat()
   }
-
+  
   func resetSelectedValue() {
     selectedValue = nil
     guard let amount = amountInput.removeGroupingSeparator().asDouble,
@@ -215,16 +267,32 @@ extension MoveMoneyAccountViewModel {
 
   func validateAmountInput() {
     numberOfShakes = 0
-    inlineError = validateAmount(with: kind)
+    inlineError = validateAmount(with: amount.asDouble)
     if inlineError.isNotNil {
       withAnimation(.linear(duration: 0.5)) {
         numberOfShakes = 4
       }
     }
   }
-
-  func validateAmount(with kind: Kind) -> String? {
+  
+  func validateAmount(with amount: Double?) -> String? {
+    guard let sourceType = selectedLinkedAccount?.sourceType, let amountValue = amount else {
+      return nil
+    }
+    let remainingAmount = sourceType == .externalCard ? cardRemainingAmount : bankRemainingAmount
+    let isReachOut = remainingAmount.day < amountValue || remainingAmount.week < amountValue || remainingAmount.month < amountValue
+    if isReachOut {
+      return LFLocalizable.TransferView.limitsReached
+    }
     return nil
+  }
+  
+  func contactSupport() {
+    intercomService.openIntercom()
+  }
+  
+  func hidePopup() {
+    popup = nil
   }
   
   var transferFeePopupTitle: String {
@@ -238,11 +306,24 @@ public extension MoveMoneyAccountViewModel {
   enum Kind {
     case send
     case receive
+
+    var externalTransactionType: String {
+      switch self {
+      case .receive:
+        return "deposit"
+      case .send:
+        return "withdraw"
+      }
+    }
   }
   
   enum Navigation {
     case transactionDetai(String)
     case addBankDebit
     case selectBankAccount
+  }
+  
+  enum Popup {
+    case limitReached
   }
 }

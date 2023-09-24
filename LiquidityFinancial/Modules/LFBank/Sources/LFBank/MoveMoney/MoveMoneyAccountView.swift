@@ -28,6 +28,15 @@ public struct MoveMoneyAccountView: View {
           .customPresentationDetents(height: 272)
           .ignoresSafeArea(edges: .bottom)
       }
+      .popup(item: $viewModel.popup) { item in
+        switch item {
+        case .limitReached:
+          depositLimitReachedPopup
+        }
+      }
+      .popup(item: $viewModel.toastMessage, style: .toast) {
+        ToastView(toastMessage: $0)
+      }
       .frame(maxWidth: .infinity)
       .readGeometry { geo in
         screenSize = geo.size
@@ -75,6 +84,7 @@ private extension MoveMoneyAccountView {
     VStack(spacing: .zero) {
       topView
       keyboard
+        .disabled(viewModel.isFetchingRemainingAmount)
       bottomView
     }
     .overlay(
@@ -101,7 +111,12 @@ private extension MoveMoneyAccountView {
       titleView
       accountsDropdown
       Spacer(minLength: 0)
-      amountInput
+      if viewModel.isFetchingRemainingAmount {
+        LottieView(loading: .primary)
+          .frame(width: 30, height: 20)
+      } else {
+        amountInput
+      }
       Spacer(minLength: 0)
       preFilledGrid
     }
@@ -371,6 +386,25 @@ private extension MoveMoneyAccountView {
     }
     .padding(.horizontal, 30)
     .background(Colors.secondaryBackground.swiftUIColor)
+  }
+  
+  var depositLimitReachedPopup: some View {
+    LiquidityAlert(
+      title: LFLocalizable.TransferView.LimitsReachedPopup.title.uppercased(),
+      message: LFLocalizable.TransferView.LimitsReachedPopup.message,
+      primary: .init(
+        text: LFLocalizable.Button.ContactSupport.title,
+        action: {
+          viewModel.contactSupport()
+        }
+      ),
+      secondary: .init(
+        text: LFLocalizable.Button.Skip.title,
+        action: {
+          viewModel.hidePopup()
+        }
+      )
+    )
   }
 }
 

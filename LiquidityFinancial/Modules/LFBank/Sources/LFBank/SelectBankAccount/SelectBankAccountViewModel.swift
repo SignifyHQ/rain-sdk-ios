@@ -20,12 +20,14 @@ class SelectBankAccountViewModel: ObservableObject {
   @LazyInjected(\.authenticationService) var authenticationService
   @LazyInjected(\.analyticsService) var analyticsService
   @LazyInjected(\.nsPersionRepository) var nsPersionRepository
+  @LazyInjected(\.intercomService) var intercomService
   
   @Published var linkedBanks: [APILinkedSourceData] = []
   @Published var navigation: Navigation?
   @Published var selectedBank: APILinkedSourceData?
   @Published var showIndicator: Bool = false
   @Published var toastMessage: String?
+  @Published var popup: Popup?
   @Published var linkBankIndicator: Bool = false
   @Published var isDisableView: Bool = false
   @Published var isLoading: Bool = false
@@ -109,11 +111,23 @@ class SelectBankAccountViewModel: ObservableObject {
         
         navigation = .transactionDetai(response.transactionId)
       } catch {
-        toastMessage = error.localizedDescription
+        handleTransferError(error: error)
       }
     }
   }
   
+  func handleTransferError(error: Error) {
+    guard let errorObject = error.asErrorObject else {
+      toastMessage = error.localizedDescription
+      return
+    }
+    switch errorObject.code {
+      case Constants.ErrorCode.transferLimitExceeded.value:
+        popup = .limitReached
+      default:
+        toastMessage = errorObject.message
+    }
+  }
 }
 
 // MARK: - ExternalLinkBank Functions
@@ -165,6 +179,14 @@ extension SelectBankAccountViewModel {
       }
     }
   }
+  
+  func contactSupport() {
+    intercomService.openIntercom()
+  }
+  
+  func hidePopup() {
+    popup = nil
+  }
 }
 
 extension SelectBankAccountViewModel {
@@ -184,5 +206,9 @@ extension SelectBankAccountViewModel {
 extension SelectBankAccountViewModel {
   enum Navigation {
     case transactionDetai(String)
+  }
+  
+  enum Popup {
+    case limitReached
   }
 }

@@ -1,4 +1,5 @@
 import Foundation
+import NetSpendDomain
 
 public struct APITransferLimitConfig: Codable {
   public let userId: String?
@@ -12,3 +13,5 @@ public struct APITransferLimitConfig: Codable {
   public let createdAt: String?
   public let updatedAt: String?
 }
+
+extension APITransferLimitConfig: TransferLimitConfigEntity {}

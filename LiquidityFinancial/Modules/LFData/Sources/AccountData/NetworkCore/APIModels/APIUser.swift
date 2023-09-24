@@ -1,5 +1,7 @@
 import Foundation
+import NetSpendData
 import AccountDomain
+import NetSpendDomain
 
 public struct APIUser: Codable {
   public let id: String?
@@ -25,7 +27,6 @@ public struct APIUser: Codable {
 }
 
 extension APIAddress: AddressEntity {}
-extension APITransferLimitConfig: TransferLimitConfigEntity {}
 
 extension APIUser: LFUser {
   public var userID: String {

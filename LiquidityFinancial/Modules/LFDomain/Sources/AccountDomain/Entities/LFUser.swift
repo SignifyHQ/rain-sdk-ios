@@ -1,4 +1,5 @@
 import Foundation
+import NetSpendDomain
 
 public protocol LFUser {
   var userID: String { get }

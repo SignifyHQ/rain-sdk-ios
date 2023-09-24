@@ -67,6 +67,14 @@ public class NSExternalFundingRepository: NSExternalFundingRepositoryProtocol {
   public func getFundingStatus(sessionID: String) async throws -> any ExternalFundingsatusEntity {
     try await externalFundingAPI.getFundingStatus(sessionID: sessionID)
   }
+  
+  public func getCardRemainingAmount(sessionID: String, type: String) async throws -> [TransferLimitConfigEntity] {
+    try await externalFundingAPI.getCardRemainingAmount(sessionID: sessionID, type: type)
+  }
+  
+  public func getBankRemainingAmount(sessionID: String, type: String) async throws -> [TransferLimitConfigEntity] {
+    try await externalFundingAPI.getBankRemainingAmount(sessionID: sessionID, type: type)
+  }
 }
 
 extension APIUnlinkBankResponse: UnlinkBankEntity {}

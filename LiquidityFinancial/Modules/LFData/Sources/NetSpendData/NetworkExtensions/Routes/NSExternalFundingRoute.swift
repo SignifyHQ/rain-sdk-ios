@@ -13,6 +13,8 @@ public enum NSExternalFundingRoute {
   case newTransaction(ExternalTransactionParameters, ExternalTransactionType, String)
   case verifyCard(sessionId: String, parameters: VerifyExternalCardParameters)
   case getFundingStatus(sessionID: String)
+  case getCardRemainingAmount(sessionID: String, type: String)
+  case getBankRemainingAmount(sessionID: String, type: String)
 }
 
 extension NSExternalFundingRoute: LFRoute {
@@ -52,12 +54,16 @@ extension NSExternalFundingRoute: LFRoute {
       return "/v1/netspend/external-funding/external-card/verify"
     case .getFundingStatus:
       return "/v1/netspend/external-funding/status"
+    case let .getCardRemainingAmount(_, type):
+      return "/v1/netspend/external-cards/\(type)/limits"
+    case let .getBankRemainingAmount(_, type):
+      return "/v1/netspend/external-banks/\(type)/limits"
     }
   }
   
   public var httpMethod: HttpMethod {
     switch self {
-    case .getACHInfo, .getLinkedSource, .getFundingStatus:
+    case .getACHInfo, .getLinkedSource, .getFundingStatus, .getCardRemainingAmount, .getBankRemainingAmount:
       return .GET
     case .set, .pinWheelToken:
       return .POST
@@ -90,6 +96,8 @@ extension NSExternalFundingRoute: LFRoute {
       base["netspendSessionId"] = sessionId
     case .verifyCard(let sessionId, _):
       base["netspendSessionId"] = sessionId
+    case .getCardRemainingAmount(let sessionId, _), .getBankRemainingAmount(let sessionId, _):
+      base["netspendSessionId"] = sessionId
     }
     return base
   }
@@ -98,7 +106,7 @@ extension NSExternalFundingRoute: LFRoute {
     switch self {
     case let .set(parameters, _):
       return parameters.encoded()
-    case .getACHInfo, .pinWheelToken, .getLinkedSource, .deleteLinkedSource, .getFundingStatus:
+    case .getACHInfo, .pinWheelToken, .getLinkedSource, .deleteLinkedSource, .getFundingStatus, .getCardRemainingAmount, .getBankRemainingAmount:
       return nil
     case let .newTransaction(parameters, _, _):
       if parameters.sourceType == APILinkSourceType.externalBank.rawString {
@@ -115,7 +123,7 @@ extension NSExternalFundingRoute: LFRoute {
   
   public var parameterEncoding: ParameterEncoding? {
     switch self {
-    case .getLinkedSource, .deleteLinkedSource, .getFundingStatus:
+    case .getLinkedSource, .deleteLinkedSource, .getFundingStatus, .getCardRemainingAmount, .getBankRemainingAmount:
       return nil
     case .set, .verifyCard:
       return .json

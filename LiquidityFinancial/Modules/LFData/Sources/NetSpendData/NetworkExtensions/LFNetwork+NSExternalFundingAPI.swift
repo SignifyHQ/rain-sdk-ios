@@ -80,4 +80,22 @@ extension LFCoreNetwork: NSExternalFundingAPIProtocol where R == NSExternalFundi
       decoder: .apiDecoder
     )
   }
+  
+  public func getCardRemainingAmount(sessionID: String, type: String) async throws -> [APITransferLimitConfig] {
+    try await request(
+      NSExternalFundingRoute.getCardRemainingAmount(sessionID: sessionID, type: type),
+      target: [APITransferLimitConfig].self,
+      failure: LFErrorObject.self,
+      decoder: .apiDecoder
+    )
+  }
+  
+  public func getBankRemainingAmount(sessionID: String, type: String) async throws -> [APITransferLimitConfig] {
+    try await request(
+      NSExternalFundingRoute.getBankRemainingAmount(sessionID: sessionID, type: type),
+      target: [APITransferLimitConfig].self,
+      failure: LFErrorObject.self,
+      decoder: .apiDecoder
+    )
+  }
 }

@@ -2667,6 +2667,12 @@ public enum LFLocalizable {
       /// Get Faster Deposits
       public static let title = LFLocalizable.tr("Localizable", "transferView.debit_suggestion.title", fallback: "Get Faster Deposits")
     }
+    public enum LimitsReachedPopup {
+      /// We're sorry, your deposit crossed your current limit. Please contact support to increase your limits.
+      public static let message = LFLocalizable.tr("Localizable", "transferView.limits_reached_popup.message", fallback: "We're sorry, your deposit crossed your current limit. Please contact support to increase your limits.")
+      /// Deposit limit reached
+      public static let title = LFLocalizable.tr("Localizable", "transferView.limits_reached_popup.title", fallback: "Deposit limit reached")
+    }
     public enum RewardType {
       public enum Cashback {
         /// 0.75% on every qualifying purchase

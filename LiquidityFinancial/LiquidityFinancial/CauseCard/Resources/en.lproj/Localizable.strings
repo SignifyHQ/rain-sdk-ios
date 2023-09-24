@@ -410,6 +410,8 @@
 "transferView.checking" = "Checking **** %@";
 "transferView.saving" = "Savings **** %@";
 "transferView.limits_reached" = "Limits reached";
+"transferView.limits_reached_popup.title" = "Deposit limit reached";
+"transferView.limits_reached_popup.message" = "We're sorry, your deposit crossed your current limit. Please contact support to increase your limits.";
 "transferView.withdraw_annotation.description" = "You currently have %@ available to withdraw. Rewards are not available to withdraw until 48 hours after they are earned.";
 
 // Transfer Status

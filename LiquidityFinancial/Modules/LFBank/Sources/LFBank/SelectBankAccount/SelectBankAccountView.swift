@@ -42,6 +42,15 @@ public struct SelectBankAccountView: View {
           }
         }
       }
+      .popup(item: $viewModel.popup) { item in
+        switch item {
+          case .limitReached:
+            depositLimitReachedPopup
+        }
+      }
+      .popup(item: $viewModel.toastMessage, style: .toast) {
+        ToastView(toastMessage: $0)
+      }
       .disabled(viewModel.isDisableView)
       .background(Colors.background.swiftUIColor)
       .navigationTitle("")
@@ -177,5 +186,24 @@ public struct SelectBankAccountView: View {
     .frame(height: 56)
     .background(Colors.secondaryBackground.swiftUIColor)
     .cornerRadius(9)
+  }
+  
+  var depositLimitReachedPopup: some View {
+    LiquidityAlert(
+      title: LFLocalizable.TransferView.LimitsReachedPopup.title,
+      message: LFLocalizable.TransferView.LimitsReachedPopup.message,
+      primary: .init(
+        text: LFLocalizable.Button.ContactSupport.title,
+        action: {
+          viewModel.contactSupport()
+        }
+      ),
+      secondary: .init(
+        text: LFLocalizable.Button.Skip.title,
+        action: {
+          viewModel.hidePopup()
+        }
+      )
+    )
   }
 }
