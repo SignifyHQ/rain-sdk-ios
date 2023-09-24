@@ -18,6 +18,7 @@ public struct TextFieldWrapper<Content: View>: View {
       HStack {
         content
         GenImages.CommonImages.icError.swiftUIImage
+          .foregroundColor(Colors.error.swiftUIColor)
           .hidden(errorValue == nil)
       }
       Divider()

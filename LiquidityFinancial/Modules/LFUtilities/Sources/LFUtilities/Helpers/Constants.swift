@@ -180,7 +180,7 @@ public extension Constants {
   enum ErrorCode: String {
     case userInactive = "user_inactive"
     case credentialsInvalid = "credentials_invalid"
-    case lastXIdInvalid = "last_x_id_invalid"
+    case invalidSSN = "invalid_ssn"
     case ticketExisted = "increase_limit_ticket_existed"
     case transferLimitExceeded = "transfer_limit_exceeded"
     

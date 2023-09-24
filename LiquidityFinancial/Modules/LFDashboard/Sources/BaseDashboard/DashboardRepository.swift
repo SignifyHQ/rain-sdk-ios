@@ -47,7 +47,7 @@ public final class DashboardRepository: ObservableObject {
     self.toastMessage = toastMessage
     initData()
     subscribeLinkedAccounts()
-    subscribeAddedNewVirtualCard()
+    refreshListCards()
   }
 }
 
@@ -62,8 +62,8 @@ public extension DashboardRepository {
     apiFetchFetureConfig()
   }
   
-  func subscribeAddedNewVirtualCard() {
-    NotificationCenter.default.publisher(for: .addedNewVirtualCard)
+  func refreshListCards() {
+    NotificationCenter.default.publisher(for: .refreshListCards)
       .sink { [weak self] _ in
         guard let self else { return }
         self.apiFetchListCard()

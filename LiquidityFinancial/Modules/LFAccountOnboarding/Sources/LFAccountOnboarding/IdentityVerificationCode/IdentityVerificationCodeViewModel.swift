@@ -113,7 +113,7 @@ private extension IdentityVerificationCodeViewModel {
       onboardingFlowCoordinator.set(route: .accountLocked)
     case Constants.ErrorCode.credentialsInvalid.value:
       toastMessage = LFLocalizable.EnterVerificationCode.CodeInvalid.message
-    case Constants.ErrorCode.lastXIdInvalid.value:
+    case Constants.ErrorCode.invalidSSN.value:
       errorMessage = errorObject.message
     default:
       toastMessage = error.localizedDescription

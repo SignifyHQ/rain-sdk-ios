@@ -26,13 +26,14 @@ final class CashCardViewModel: ObservableObject {
 
 // MARK: API Functions
 extension CashCardViewModel {
-  func createCard() {
+  func createCard(onSuccess: @escaping () -> Void) {
     Task {
       defer { isCreatingCard = false }
       isCreatingCard = true
       do {
         _ = try await cardUseCase.createCard(sessionID: accountDataManager.sessionID)
-        NotificationCenter.default.post(name: .addedNewVirtualCard, object: nil)
+        NotificationCenter.default.post(name: .refreshListCards, object: nil)
+        onSuccess()
       } catch {
         toastMessage = error.localizedDescription
       }

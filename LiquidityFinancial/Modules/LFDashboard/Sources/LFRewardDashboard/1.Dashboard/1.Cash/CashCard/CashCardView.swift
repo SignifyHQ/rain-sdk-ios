@@ -56,9 +56,6 @@ struct CashCardView: View {
       }
     }
     .fixedSize(horizontal: false, vertical: true)
-    .onReceive(NotificationCenter.default.publisher(for: .addedNewVirtualCard)) { _ in
-      isNotLinkedCard = false
-    }
     .onReceive(NotificationCenter.default.publisher(for: .noLinkedCards)) { _ in
       isNotLinkedCard = true
     }
@@ -85,7 +82,9 @@ struct CashCardView: View {
   @ViewBuilder private var createCardButton: some View {
     if isNotLinkedCard {
       Button {
-        viewModel.createCard()
+        viewModel.createCard(onSuccess: {
+          isNotLinkedCard = false
+        })
       } label: {
         if viewModel.isCreatingCard {
           HStack {

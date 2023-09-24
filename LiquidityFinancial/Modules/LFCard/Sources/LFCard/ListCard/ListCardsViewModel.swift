@@ -51,6 +51,7 @@ public final class ListCardsViewModel: ObservableObject {
   
   private var cancellable = Set<AnyCancellable>()
   
+  var isSwitchCard = true
   var roundUpPurchases: Bool {
     rewardDataManager.roundUpDonation ?? false
   }
@@ -60,21 +61,7 @@ public final class ListCardsViewModel: ObservableObject {
   }
   
   public init(cardData: Published<(CardData)>.Publisher) {
-    cardData
-      .receive(on: DispatchQueue.main)
-      .sink { [weak self] cardData in
-        guard let self = self else {
-          return
-        }
-        self.isInit = cardData.loading
-        self.isHasPhysicalCard = cardData.cards.contains { card in
-          card.cardType == .physical
-        }
-        self.cardsList = cardData.cards.filter { $0.cardStatus != .closed }
-        self.cardMetaDatas = cardData.metaDatas
-        self.currentCard = self.cardsList.first ?? .virtualDefault
-      }
-      .store(in: &cancellable)
+    subscribeListCardsChange(cardData)
   }
 }
 
@@ -150,8 +137,7 @@ extension ListCardsViewModel {
 // MARK: - View Helpers
 extension ListCardsViewModel {
   func onDisappear() {
-    currentCard = cardsList.first ?? .virtualDefault
-    isShowCardNumber = false
+    NotificationCenter.default.post(name: .refreshListCards, object: nil)
   }
   
   func orderPhysicalSuccess(card: CardModel) {
@@ -163,6 +149,7 @@ extension ListCardsViewModel {
   func activePhysicalSuccess(id: String) {
     guard id == currentCard.id, let index = cardsList.firstIndex(where: { $0.id == id
     }) else { return }
+    isSwitchCard = false
     currentCard.cardStatus = .active
     cardsList[index].cardStatus = .active
     isActive = true
@@ -200,7 +187,11 @@ extension ListCardsViewModel {
   func onChangeCurrentCard() {
     isActive = currentCard.cardStatus == .active
     isCardLocked = currentCard.cardStatus == .disabled
-    isShowCardNumber = false
+    if isSwitchCard {
+      isShowCardNumber = false
+    } else {
+      isSwitchCard = true
+    }
   }
   
   func onClickedOrderPhysicalCard() {
@@ -227,6 +218,26 @@ extension ListCardsViewModel {
 
 // MARK: - Private Functions
 private extension ListCardsViewModel {
+  func subscribeListCardsChange(_ cardData: Published<(CardData)>.Publisher) {
+    cardData
+      .receive(on: DispatchQueue.main)
+      .sink { [weak self] cardData in
+        guard let self = self else {
+          return
+        }
+        self.isInit = cardData.loading
+        self.isHasPhysicalCard = cardData.cards.contains { card in
+          card.cardType == .physical
+        }
+        self.cardsList = cardData.cards.filter { $0.cardStatus != .closed }
+        self.cardMetaDatas = cardData.metaDatas
+        self.currentCard = self.cardsList.first ?? .virtualDefault
+        self.isActive = currentCard.cardStatus == .active
+        self.isCardLocked = currentCard.cardStatus == .disabled
+      }
+      .store(in: &cancellable)
+  }
+  
   func mapToCardModel(card: CardEntity) -> CardModel {
     CardModel(
       id: card.id,
@@ -253,6 +264,7 @@ private extension ListCardsViewModel {
     guard id == currentCard.id, let index = cardsList.firstIndex(where: { $0.id == id }) else {
       return
     }
+    isSwitchCard = false
     currentCard.cardStatus = status
     cardsList[index].cardStatus = status
     isActive = status == .active

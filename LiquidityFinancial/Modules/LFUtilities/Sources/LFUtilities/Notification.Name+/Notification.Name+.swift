@@ -7,5 +7,5 @@ public extension Notification.Name {
   
   static let noLinkedCards = Notification.Name("com.liquidityfinancial.cards.noLinkedCards")
   
-  static let addedNewVirtualCard = Notification.Name("com.liquidityfinancial.cards.addedNewVirtualCard")
+  static let refreshListCards = Notification.Name("com.liquidityfinancial.cards.refreshListCards")
 }

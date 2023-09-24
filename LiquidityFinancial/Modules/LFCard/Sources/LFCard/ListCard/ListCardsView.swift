@@ -27,15 +27,28 @@ public struct ListCardsView: View {
     .onChange(of: viewModel.currentCard) { _ in
       viewModel.onChangeCurrentCard()
     }
-    .onDisappear {
-      viewModel.onDisappear()
-    }
     .padding(.horizontal, 30)
     .padding(.bottom, 16)
     .background(Colors.background.swiftUIColor)
-    .defaultToolBar(icon: .intercom, openIntercom: {
-      viewModel.openIntercom()
-    })
+    .navigationBarBackButtonHidden(true)
+    .toolbar {
+      ToolbarItem(placement: .navigationBarLeading) {
+        Button {
+          viewModel.onDisappear()
+          dismiss()
+        } label: {
+          GenImages.CommonImages.icBack.swiftUIImage
+        }
+      }
+      ToolbarItem(placement: .navigationBarTrailing) {
+        Button {
+          viewModel.openIntercom()
+        } label: {
+          GenImages.CommonImages.icChat.swiftUIImage
+            .foregroundColor(Colors.label.swiftUIColor)
+        }
+      }
+    }
     .sheet(item: $viewModel.present) { item in
       switch item {
       case let .addAppleWallet(cardModel):
