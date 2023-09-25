@@ -35,22 +35,76 @@ public struct PurchaseTransactionDetailView: View {
 private extension PurchaseTransactionDetailView {
   var content: some View {
     VStack {
+      
       if viewModel.transaction.rewards != nil {
         TransactionCardView(information: viewModel.cardInformation)
           .padding(.bottom, 12)
+      } else {
+        GenImages.CommonImages.dash.swiftUIImage
+          .foregroundColor(Colors.label.swiftUIColor)
+          .padding(.bottom, 16)
+        
+        VStack(spacing: 12) {
+          HStack {
+            Text(LFLocalizable.rewards)
+              .foregroundColor(Colors.label.swiftUIColor)
+              .font(Fonts.regular.swiftUIFont(size: 16))
+            
+            Spacer()
+            
+            Text("0")
+              .foregroundColor(Colors.primary.swiftUIColor)
+              .font(Fonts.semiBold.swiftUIFont(size: 16))
+            Text(LFLocalizable.Crypto.value.uppercased())
+              .foregroundColor(Colors.label.swiftUIColor)
+              .font(Fonts.semiBold.swiftUIFont(size: 16))
+          }
+          .padding(.bottom, 16)
+          
+          if let note = viewModel.transaction.note {
+            VStack(spacing: 12) {
+              Text((note.title ?? "").uppercased())
+                .foregroundColor(Colors.label.swiftUIColor)
+                .font(Fonts.regular.swiftUIFont(size: 16))
+              
+              Text(note.message ?? "")
+                .multilineTextAlignment(.center)
+                .font(Fonts.regular.swiftUIFont(size: 12))
+                .foregroundColor(Colors.label.swiftUIColor)
+            }
+            .padding(20)
+            .fixedSize(horizontal: false, vertical: true)
+            .background(Colors.secondaryBackground.swiftUIColor)
+            .cornerRadius(10)
+          }
+        }
       }
-      Spacer()
+            
       VStack(spacing: 10) {
         if LFUtility.cryptoEnabled {
-          if viewModel.transaction.rewards != nil {
+          if viewModel.transaction.rewards == nil {
+            Spacer()
+            GenImages.CommonImages.dash.swiftUIImage
+              .foregroundColor(Colors.label.swiftUIColor)
+              .padding(.bottom, 16)
+            
             FullSizeButton(
-              title: LFLocalizable.TransactionDetail.CurrentReward.title,
+              title: LFLocalizable.Button.ContactSupport.title,
               isDisable: false,
               type: .tertiary
             ) {
-              viewModel.onClickedCurrentRewardButton()
+              viewModel.openContactSupport()
             }
           }
+          
+          FullSizeButton(
+            title: LFLocalizable.TransactionDetail.CurrentReward.title,
+            isDisable: false,
+            type: .tertiary
+          ) {
+            viewModel.onClickedCurrentRewardButton()
+          }
+          
           FullSizeButton(
             title: LFLocalizable.Button.DisputeTransaction.title,
             isDisable: false,

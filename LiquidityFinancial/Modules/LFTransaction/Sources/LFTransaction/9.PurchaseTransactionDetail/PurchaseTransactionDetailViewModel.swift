@@ -12,6 +12,7 @@ final class PurchaseTransactionDetailViewModel: ObservableObject {
   @LazyInjected(\.nsPersionRepository) var nsPersionRepository
   @LazyInjected(\.netspendDataManager) var netspendDataManager
   @LazyInjected(\.accountDataManager) var accountDataManager
+  @LazyInjected(\.intercomService) var intercomService
 
   @Published var navigation: Navigation?
   @Published var isLoadingDisputeTransaction: Bool = false
@@ -80,6 +81,10 @@ extension PurchaseTransactionDetailViewModel {
   
   var amountValue: String {
     transaction.amount.formattedAmount(prefix: Constants.CurrencyUnit.usd.rawValue, minFractionDigits: 2)
+  }
+  
+  func openContactSupport() {
+    intercomService.openIntercom()
   }
 }
 

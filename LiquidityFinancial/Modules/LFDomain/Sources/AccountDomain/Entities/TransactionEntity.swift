@@ -18,6 +18,7 @@ public protocol TransactionEntity {
   var completedAt: String? { get }
   var createdAt: String { get }
   var updatedAt: String { get }
+  var noteEnity: TransactionNoteEntity? { get }
   var rewardEntity: RewardEntity? { get }
   var receiptEntity: TransactionReceiptEntity? { get }
   var externalTransactionEntity: ExternalTransactionEntity? { get }
@@ -37,6 +38,11 @@ public protocol RewardEntity {
   var description: String? { get }
   var fundraiserName: String? { get }
   var charityName: String? { get }
+}
+
+public protocol TransactionNoteEntity {
+  var title: String? { get }
+  var message: String? { get }
 }
 
 public protocol TransactionReceiptEntity {

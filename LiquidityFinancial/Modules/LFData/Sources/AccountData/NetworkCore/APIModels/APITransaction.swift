@@ -22,6 +22,7 @@ public struct APITransaction: Codable {
   public var reward: APIReward?
   public var receipt: APITransactionReceipt?
   public var externalTransaction: APIExternalTransaction?
+  public var note: APITransactionNote?
 }
 
 extension APITransaction: TransactionEntity {
@@ -35,6 +36,10 @@ extension APITransaction: TransactionEntity {
   
   public var receiptEntity: TransactionReceiptEntity? {
     receipt
+  }
+  
+  public var noteEnity: TransactionNoteEntity? {
+    note
   }
 }
 
@@ -70,4 +75,9 @@ public struct APITransactionReceipt: Codable, TransactionReceiptEntity {
   public let roundUpDonation: Double?
   public let oneTimeDonation: Double?
   public let totalDonation: Double?
+}
+
+public struct APITransactionNote: Codable, TransactionNoteEntity {
+  public let title: String?
+  public let message: String?
 }

@@ -17,6 +17,7 @@ public struct TransactionModel: Identifiable {
   public var completedAt: String?
   public var createdAt: String
   public var updateAt: String
+  var note: TransactionNote?
   var rewards: TransactionReward?
   var receipt: TransactionReceipt?
   var externalTransaction: ExternalTransaction?
@@ -34,6 +35,7 @@ public struct TransactionModel: Identifiable {
     completedAt: String? = nil,
     createdAt: String,
     updateAt: String,
+    note: TransactionNote? = nil,
     rewards: TransactionReward? = nil,
     receipt: TransactionReceipt? = nil,
     externalTransaction: ExternalTransaction? = nil
@@ -53,6 +55,7 @@ public struct TransactionModel: Identifiable {
     self.rewards = rewards
     self.receipt = receipt
     self.externalTransaction = externalTransaction
+    self.note = note
   }
 }
 
@@ -245,10 +248,18 @@ public extension TransactionModel {
       completedAt: transactionEntity.completedAt,
       createdAt: transactionEntity.createdAt,
       updateAt: transactionEntity.updatedAt,
+      note: Self.generateTransactionNote(noteEntity: transactionEntity.noteEnity),
       rewards: Self.generateTransactionReward(rewardEntity: transactionEntity.rewardEntity),
       receipt: Self.generateTransactionReceipt(receiptEntity: transactionEntity.receiptEntity),
       externalTransaction: Self.generateExternalTransaction(externalTransactionEntity: transactionEntity.externalTransactionEntity)
     )
+  }
+  
+  static func generateTransactionNote(noteEntity: TransactionNoteEntity?) -> TransactionNote? {
+    guard let noteEntity = noteEntity else {
+      return nil
+    }
+    return TransactionNote(title: noteEntity.title, message: noteEntity.message)
   }
   
   static func generateTransactionReward(rewardEntity: RewardEntity?) -> TransactionReward? {
