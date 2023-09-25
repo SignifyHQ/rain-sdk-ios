@@ -82,17 +82,25 @@ public extension TransactionModel {
   
   var ammountFormatted: String {
     amount.formattedAmount(
-      prefix: Constants.CurrencyUnit.usd.symbol,
-      minFractionDigits: Constants.FractionDigitsLimit.fiat.minFractionDigits,
-      maxFractionDigits: Constants.FractionDigitsLimit.fiat.minFractionDigits
+      prefix: isCryptoTransaction ? nil : Constants.CurrencyUnit.usd.symbol,
+      minFractionDigits: isCryptoTransaction
+      ? Constants.FractionDigitsLimit.crypto.minFractionDigits
+      : Constants.FractionDigitsLimit.fiat.minFractionDigits,
+      maxFractionDigits: isCryptoTransaction
+      ? Constants.FractionDigitsLimit.crypto.maxFractionDigits
+      : Constants.FractionDigitsLimit.fiat.maxFractionDigits
     )
   }
   
   var balanceFormatted: String? {
     currentBalance?.formattedAmount(
-      prefix: Constants.CurrencyUnit.usd.symbol,
-      minFractionDigits: Constants.FractionDigitsLimit.fiat.minFractionDigits,
-      maxFractionDigits: Constants.FractionDigitsLimit.fiat.minFractionDigits
+      prefix: isCryptoTransaction ? nil : Constants.CurrencyUnit.usd.symbol,
+      minFractionDigits: isCryptoTransaction
+      ? Constants.FractionDigitsLimit.crypto.minFractionDigits
+      : Constants.FractionDigitsLimit.fiat.minFractionDigits,
+      maxFractionDigits: isCryptoTransaction
+      ? Constants.FractionDigitsLimit.crypto.maxFractionDigits
+      : Constants.FractionDigitsLimit.fiat.maxFractionDigits
     )
   }
   
@@ -178,6 +186,7 @@ public extension TransactionModel {
         .cryptoDeposit,
         .cryptoBuyRefund,
         .cryptoWidthDraw,
+        .cryptoGasDeduction,
         .rewardCryptoBack,
         .rewardCryptoDosh,
         .rewardCryptoBackReverse:

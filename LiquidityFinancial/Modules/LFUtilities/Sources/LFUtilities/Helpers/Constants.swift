@@ -125,7 +125,7 @@ public extension Constants {
     public var maxFractionDigits: Int {
       switch self {
       case .fiat: return 2
-      case .crypto: return 6
+      case .crypto: return 8
       }
     }
     
