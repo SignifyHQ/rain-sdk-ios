@@ -33,6 +33,7 @@ public class MoveMoneyAccountViewModel: ObservableObject {
   @Published var popup: Popup?
   @Published var showTransferFeeSheet: Bool = false
   @Published var selectTransferInstant: Bool?
+  @Published var externalCardFeeResponse: APIExternalCardFeeResponse?
   
   private var cancellable: Set<AnyCancellable> = []
   
@@ -130,7 +131,7 @@ extension MoveMoneyAccountViewModel {
     case .externalBank:
       callBioMetric()
     case .externalCard:
-      showTransferFeeSheet = true
+      getTransactionFee(account: account)
     }
   }
   
@@ -142,9 +143,6 @@ extension MoveMoneyAccountViewModel {
     if selectTransferInstant {
       callBioMetric()
       return
-    }
-    let linkedBanks = linkedAccount.filter { data in
-      data.isVerified && data.sourceType == .externalBank
     }
     navigation = .selectBankAccount
   }
@@ -162,22 +160,54 @@ extension MoveMoneyAccountViewModel {
     }
   }
   
+  func getTransactionFee(account: APILinkedSourceData) {
+    guard let amount = self.amount.asDouble else {
+      toastMessage = LFLocalizable.MoveMoney.Error.noContact
+      return
+    }
+    Task { @MainActor in
+      defer { showIndicator = false }
+      showIndicator = true
+      
+      do {
+        let sessionID = self.accountDataManager.sessionID
+        let parameters = ExternalTransactionParameters(
+          amount: amount,
+          sourceId: account.sourceId,
+          sourceType: account.sourceType.rawValue,
+          m2mFeeRequestId: nil
+        )
+        let type: ExternalTransactionType = kind == .receive ? .deposit : .withdraw
+        let response = try await self.externalFundingRepository.externalCardTransactionFee(
+          parameters: parameters,
+          type: type,
+          sessionId: sessionID
+        )
+        externalCardFeeResponse = APIExternalCardFeeResponse(entity: response)
+        showTransferFeeSheet = true
+      } catch {
+        handleTransferError(error: error)
+      }
+    }
+  }
+  
   func callTransferAPI() {
     guard let linkedAccount = selectedLinkedAccount, let amount = self.amount.asDouble else {
       toastMessage = LFLocalizable.MoveMoney.Error.noContact
       return
     }
-    showIndicator = true
     Task { @MainActor in
       defer {
         showIndicator = false
       }
+      showIndicator = true
       do {
         let sessionID = self.accountDataManager.sessionID
         let parameters = ExternalTransactionParameters(
           amount: amount,
           sourceId: linkedAccount.sourceId,
-          sourceType: linkedAccount.sourceType.rawValue
+          sourceType: linkedAccount.sourceType.rawValue,
+          m2mFeeRequestId: self.externalCardFeeResponse?.id
         )
         let type: ExternalTransactionType = kind == .receive ? .deposit : .withdraw
         let response = try await self.externalFundingRepository.newExternalTransaction(

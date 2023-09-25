@@ -95,7 +95,8 @@ class SelectBankAccountViewModel: ObservableObject {
         let parameters = ExternalTransactionParameters(
           amount: amount,
           sourceId: selectedBank.sourceId,
-          sourceType: selectedBank.sourceType.rawValue
+          sourceType: selectedBank.sourceType.rawValue,
+          m2mFeeRequestId: nil
         )
         let type: ExternalTransactionType = kind == .receive ? .deposit : .withdraw
         let response = try await self.externalFundingRepository.newExternalTransaction(

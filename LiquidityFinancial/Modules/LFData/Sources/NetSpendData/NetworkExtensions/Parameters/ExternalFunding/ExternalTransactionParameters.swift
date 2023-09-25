@@ -6,11 +6,13 @@ public struct ExternalTransactionParameters: Parameterable, ExternalTransactionP
   public var amount: Double
   public var sourceId: String
   public var sourceType: String
+  public var m2mFeeRequestId: String?
   
-  public init(amount: Double, sourceId: String, sourceType: String) {
+  public init(amount: Double, sourceId: String, sourceType: String, m2mFeeRequestId: String?) {
     self.amount = amount
     self.sourceId = sourceId
     self.sourceType = sourceType
+    self.m2mFeeRequestId = m2mFeeRequestId
   }
 }
 

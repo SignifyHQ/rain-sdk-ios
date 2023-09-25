@@ -62,6 +62,19 @@ extension LFCoreNetwork: NSExternalFundingAPIProtocol where R == NSExternalFundi
     )
   }
   
+  public func externalCardTransactionFee(
+    parameters: ExternalTransactionParameters,
+    type: ExternalTransactionType,
+    sessionId: String
+  ) async throws -> APIExternalCardFeeResponse {
+    return try await self.request(
+      NSExternalFundingRoute.externalCardTransactionFee(parameters, type, sessionId: sessionId),
+      target: APIExternalCardFeeResponse.self,
+      failure: LFErrorObject.self,
+      decoder: .apiDecoder
+    )
+  }
+  
   public func verifyCard(sessionId: String, cardId: String, amount: Double) async throws -> APIVerifyExternalCardResponse {
     let parameter = VerifyExternalCardParameters(transferAmount: amount, cardId: cardId)
     return try await self.request(

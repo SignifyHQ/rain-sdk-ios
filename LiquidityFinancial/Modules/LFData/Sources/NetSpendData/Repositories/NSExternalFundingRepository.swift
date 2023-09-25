@@ -46,10 +46,30 @@ public class NSExternalFundingRepository: NSExternalFundingRepositoryProtocol {
     let transactionParameters = ExternalTransactionParameters(
       amount: parameters.amount,
       sourceId: parameters.sourceId,
-      sourceType: parameters.sourceType
+      sourceType: parameters.sourceType,
+      m2mFeeRequestId: parameters.m2mFeeRequestId
     )
     let transactionType = ExternalTransactionType(rawValue: type.rawString) ?? .deposit
     return try await externalFundingAPI.newTransaction(
+      parameters: transactionParameters,
+      type: transactionType,
+      sessionId: sessionId
+    )
+  }
+  
+  public func externalCardTransactionFee(
+    parameters: ExternalTransactionParametersEntity,
+    type: ExternalTransactionTypeEntity,
+    sessionId: String
+  ) async throws -> ExternalCardFeeEntity {
+    let transactionParameters = ExternalTransactionParameters(
+      amount: parameters.amount,
+      sourceId: parameters.sourceId,
+      sourceType: parameters.sourceType,
+      m2mFeeRequestId: parameters.m2mFeeRequestId
+    )
+    let transactionType = ExternalTransactionType(rawValue: type.rawString) ?? .deposit
+    return try await externalFundingAPI.externalCardTransactionFee(
       parameters: transactionParameters,
       type: transactionType,
       sessionId: sessionId

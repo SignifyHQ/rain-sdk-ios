@@ -302,7 +302,7 @@ private extension MoveMoneyAccountView {
             .foregroundColor(Colors.label.swiftUIColor)
           Spacer()
           HStack(spacing: 8) {
-            Text("$0.69")
+            Text(viewModel.externalCardFeeResponse?.amount.formattedAmount(prefix: Constants.CurrencyUnit.usd.symbol) ?? .empty)
               .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.small.value))
               .foregroundColor(Colors.primary.swiftUIColor)
             
