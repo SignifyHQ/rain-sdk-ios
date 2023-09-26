@@ -2603,6 +2603,12 @@ public enum LFLocalizable {
       /// Please try again.
       public static let title = LFLocalizable.tr("Localizable", "transferLimit.error.title", fallback: "We were unable to load transfer limits right now.\nPlease try again.")
     }
+    public enum FinancialInstitutionsLimits {
+      /// There are limits to how much you can “pull” to your card. This includes funds deposited using the app’s “Deposit” feature.
+      public static let message = LFLocalizable.tr("Localizable", "transferLimit.financialInstitutionsLimits.message", fallback: "There are limits to how much you can “pull” to your card. This includes funds deposited using the app’s “Deposit” feature.")
+      /// Financial Institutions Spending Limits
+      public static let title = LFLocalizable.tr("Localizable", "transferLimit.financialInstitutionsLimits.title", fallback: "Financial Institutions Spending Limits")
+    }
     public enum IncreaseLimit {
       /// Your request to increase the limits has been sent successfully!
       public static let message = LFLocalizable.tr("Localizable", "transferLimit.increaseLimit.message", fallback: "Your request to increase the limits has been sent successfully!")
@@ -2615,6 +2621,10 @@ public enum LFLocalizable {
       /// Monthly
       public static let title = LFLocalizable.tr("Localizable", "transferLimit.monthly.title", fallback: "Monthly")
     }
+    public enum PerTransaction {
+      /// Per Transaction
+      public static let title = LFLocalizable.tr("Localizable", "transferLimit.perTransaction.title", fallback: "Per Transaction")
+    }
     public enum RequestLimitIncrease {
       /// Request Limit Increase
       public static let title = LFLocalizable.tr("Localizable", "transferLimit.requestLimitIncrease.title", fallback: "Request Limit Increase")
@@ -2622,6 +2632,24 @@ public enum LFLocalizable {
     public enum Screen {
       /// Limits
       public static let title = LFLocalizable.tr("Localizable", "transferLimit.screen.title", fallback: "Limits")
+    }
+    public enum SendToCard {
+      /// There are limits to how much you can “pull” to your card. This includes funds deposited using the app’s “Deposit” feature.
+      public static let message = LFLocalizable.tr("Localizable", "transferLimit.sendToCard.message", fallback: "There are limits to how much you can “pull” to your card. This includes funds deposited using the app’s “Deposit” feature.")
+      /// Send to %@Card
+      public static func title(_ p1: Any) -> String {
+        return LFLocalizable.tr("Localizable", "transferLimit.sendToCard.title", String(describing: p1), fallback: "Send to %@Card")
+      }
+    }
+    public enum Spending {
+      /// Spending
+      public static let tabTitle = LFLocalizable.tr("Localizable", "transferLimit.spending.tabTitle", fallback: "Spending")
+    }
+    public enum SpendingLimits {
+      /// There are limits to how much you can “pull” to your card. This includes funds deposited using the app’s “Deposit” feature.
+      public static let message = LFLocalizable.tr("Localizable", "transferLimit.spendingLimits.message", fallback: "There are limits to how much you can “pull” to your card. This includes funds deposited using the app’s “Deposit” feature.")
+      /// Spending Limits
+      public static let title = LFLocalizable.tr("Localizable", "transferLimit.spendingLimits.title", fallback: "Spending Limits")
     }
     public enum Weekly {
       /// Weekly

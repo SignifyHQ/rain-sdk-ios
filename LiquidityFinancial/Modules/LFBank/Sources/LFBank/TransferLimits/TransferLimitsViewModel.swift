@@ -10,8 +10,9 @@ final class TransferLimitsViewModel: ObservableObject {
   @Published var isFetchingTransferLimit = false
   @Published var isFetchTransferLimitFail = false
   @Published var isRequesting = false
-  @Published var depositTranferLimitConfigs = TransferLimits.default
-  @Published var withdrawTranferLimitConfigs = TransferLimits.default
+  @Published var depositTransferLimitConfigs = TransferLimits.default
+  @Published var withdrawTransferLimitConfigs = TransferLimits.default
+  @Published var spendingTransferLimitConfigs = TransferLimits.default
   @Published var toastMessage: String?
   @Published var popup: Popup?
 
@@ -31,11 +32,14 @@ extension TransferLimitsViewModel {
         let transferLimitConfigs = user.transferLimitConfigsEntity.map {
           TransferLimitConfig(from: $0)
         }
-        depositTranferLimitConfigs = TransferLimits(
+        depositTransferLimitConfigs = TransferLimits(
           transferLimitConfigs: transferLimitConfigs.filter({ $0.type == .deposit })
         )
-        withdrawTranferLimitConfigs = TransferLimits(
+        withdrawTransferLimitConfigs = TransferLimits(
           transferLimitConfigs: transferLimitConfigs.filter({ $0.type == .withdraw })
+        )
+        spendingTransferLimitConfigs = TransferLimits(
+          transferLimitConfigs: transferLimitConfigs.filter({ $0.type == .spending })
         )
       } catch {
         isFetchTransferLimitFail = true

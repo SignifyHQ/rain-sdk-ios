@@ -822,17 +822,25 @@ contact support.";
 "transferLimit.error.title" = "We were unable to load transfer limits right now.\nPlease try again.";
 "transferLimit.deposit.tabTitle" = "Deposit";
 "transferLimit.withdraw.tabTitle" = "Withdrawal";
+"transferLimit.spending.tabTitle" = "Spending";
+"transferLimit.sendToCard.title" = "Send to %@Card";
 "transferLimit.cardDeposit.title" = "Debit Card Deposit Limits";
 "transferLimit.cardWithdrawal.title" = "Debit Card Withdrawal Limits";
 "transferLimit.bankDeposit.title" = "Bank Account Deposit Limits";
 "transferLimit.bankWithdrawal.title" = "Bank Account Withdrawal Limits";
+"transferLimit.spendingLimits.title" = "Spending Limits";
+"transferLimit.financialInstitutionsLimits.title" = "Financial Institutions Spending Limits";
 "transferLimit.cardDeposit.message" = "You can “push” funds to card by sending an external transfer from your bank or Direct Deposit.";
 "transferLimit.cardWithdrawal.message" = "There are limits to how much you can “pull” to your card. This includes funds deposited using the app’s “Deposit” feature.";
 "transferLimit.bankDeposit.message" = "You can “push” funds to card by sending an external transfer from your bank or Direct Deposit. ";
 "transferLimit.bankWithdrawal.message" = "There are limits to how much you can “pull” to your card. This includes funds deposited using the app’s “Deposit” feature.";
+"transferLimit.sendToCard.message" = "There are limits to how much you can “pull” to your card. This includes funds deposited using the app’s “Deposit” feature.";
+"transferLimit.spendingLimits.message" = "There are limits to how much you can “pull” to your card. This includes funds deposited using the app’s “Deposit” feature.";
+"transferLimit.financialInstitutionsLimits.message" = "There are limits to how much you can “pull” to your card. This includes funds deposited using the app’s “Deposit” feature.";
 "transferLimit.daily.title" = "Daily";
 "transferLimit.weekly.title" = "Weekly";
 "transferLimit.monthly.title" = "Monthly";
+"transferLimit.perTransaction.title" = "Per Transaction";
 "transferLimit.requestLimitIncrease.title" = "Request Limit Increase";
 
 // MARK: - Common

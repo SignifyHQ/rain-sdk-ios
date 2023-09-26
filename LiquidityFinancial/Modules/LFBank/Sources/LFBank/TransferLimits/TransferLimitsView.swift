@@ -7,7 +7,7 @@ public struct TransferLimitsView: View {
   @StateObject private var viewModel = TransferLimitsViewModel()
   @State private var selectedAnnotation: TransferLimitSection?
   @State private var screenSize: CGSize = .zero
-  @State private var selectedTab: TransferLimitConfig.TransactionType = .deposit
+  @State private var selectedTab: TransferLimitConfig.TransactionType = .spending
 
   public init() {}
   
@@ -19,9 +19,13 @@ public struct TransferLimitsView: View {
       } else if viewModel.isFetchTransferLimitFail {
         failure
       } else {
-        VStack(spacing: 24) {
-          headerTabView
-          transferLimitsView
+        VStack(alignment: .leading) {
+          ScrollView(showsIndicators: false) {
+            VStack(alignment: .leading, spacing: 24) {
+              headerTabView
+              transferLimitsView
+            }
+          }
           Spacer()
           requestLimitIncreaseButton
         }
@@ -56,10 +60,12 @@ public struct TransferLimitsView: View {
 // MARK: - View Components
 private extension TransferLimitsView {
   var headerTabView: some View {
-    HStack {
+    HStack(spacing: 0) {
+      tabItem(type: .spending)
       tabItem(type: .deposit)
       tabItem(type: .withdraw)
     }
+    .padding(.horizontal, 8)
     .frame(width: screenSize.width, height: 40)
     .background(Colors.secondaryBackground.swiftUIColor)
     .cornerRadius(32)
@@ -79,8 +85,7 @@ private extension TransferLimitsView {
       selectedTab = type
       selectedAnnotation = nil
     }
-    .padding(.horizontal, 8)
-    .frame(width: screenSize.width / 2 - (screenSize.width > 0 ? 8.0 : 0), height: 32)
+    .frame(width: (screenSize.width - (screenSize.width > 0 ? 8.0 : 0)) / 3, height: 32)
     .background(
       LinearGradient(
         colors: selectedTab == type ? gradientColor : [],
@@ -92,71 +97,99 @@ private extension TransferLimitsView {
   }
   
   @ViewBuilder var transferLimitsView: some View {
-    if selectedTab == .deposit {
+    switch selectedTab {
+    case .deposit:
       depositLimitsView
-    } else if selectedTab == .withdraw {
+    case .withdraw:
       withdrawLimitsView
+    case .spending:
+      spendingLimitsView
+    default:
+      EmptyView()
+    }
+  }
+  
+  var spendingLimitsView: some View {
+    VStack(alignment: .leading, spacing: 50) {
+      transferLimitSection(
+        type: TransferLimitSection.spendingLimit,
+        transferSection: viewModel.spendingTransferLimitConfigs.spending
+      )
+      transferLimitSection(
+        type: TransferLimitSection.financialInstitutionsLimit,
+        transferSection: viewModel.spendingTransferLimitConfigs.financialInstitutionsSpending
+      )
     }
   }
   
   var depositLimitsView: some View {
-    VStack(spacing: 50) {
+    VStack(alignment: .leading, spacing: 50) {
+      transferLimitSection(
+        type: TransferLimitSection.sendToCard,
+        transferSection: viewModel.depositTransferLimitConfigs.sendToCard
+      )
       transferLimitSection(
         type: TransferLimitSection.cardDeposit,
-        transferSection: viewModel.depositTranferLimitConfigs.debitCard
+        transferSection: viewModel.depositTransferLimitConfigs.debitCard
       )
       transferLimitSection(
         type: TransferLimitSection.bankDeposit,
-        transferSection: viewModel.depositTranferLimitConfigs.bankAccount
+        transferSection: viewModel.depositTransferLimitConfigs.bankAccount
       )
     }
   }
   
   var withdrawLimitsView: some View {
-    VStack(spacing: 50) {
+    VStack(alignment: .leading, spacing: 50) {
       transferLimitSection(
         type: TransferLimitSection.cardWithdraw,
-        transferSection: viewModel.withdrawTranferLimitConfigs.debitCard
+        transferSection: viewModel.withdrawTransferLimitConfigs.debitCard
       )
       transferLimitSection(
         type: TransferLimitSection.bankWithdraw,
-        transferSection: viewModel.withdrawTranferLimitConfigs.bankAccount
+        transferSection: viewModel.withdrawTransferLimitConfigs.bankAccount
       )
     }
   }
   
-  func transferLimitSection(type: TransferLimitSection, transferSection: [TransferLimitConfig]) -> some View {
-    VStack(alignment: .leading, spacing: 24) {
-      HStack(spacing: 5) {
-        Text(type.title)
-          .foregroundColor(Colors.label.swiftUIColor)
-          .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.medium.value))
-        GenImages.CommonImages.info.swiftUIImage
-          .foregroundColor(Colors.label.swiftUIColor.opacity(0.5))
-          .onTapGesture {
-            Haptic.impact(.light).generate()
-            if selectedAnnotation == type {
-              selectedAnnotation = nil
-            } else {
-              selectedAnnotation = type
+  @ViewBuilder func transferLimitSection(type: TransferLimitSection, transferSection: [TransferLimitConfig]) -> some View {
+    if !transferSection.isEmpty {
+      VStack(alignment: .leading, spacing: 24) {
+        HStack(spacing: 5) {
+          Text(type.title)
+            .foregroundColor(Colors.label.swiftUIColor)
+            .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.medium.value))
+          GenImages.CommonImages.info.swiftUIImage
+            .foregroundColor(Colors.label.swiftUIColor.opacity(0.5))
+            .onTapGesture {
+              Haptic.impact(.light).generate()
+              if selectedAnnotation == type {
+                selectedAnnotation = nil
+              } else {
+                // selectedAnnotation = type TODO: - Will be implemented later
+              }
             }
-          }
+        }
+        transferLimitItem(
+          title: TransferLimitConfig.TransferPeriod.day.title,
+          value: transferSection.first { $0.period == .day }?.amount
+        )
+        transferLimitItem(
+          title: TransferLimitConfig.TransferPeriod.week.title,
+          value: transferSection.first { $0.period == .week }?.amount
+        )
+        transferLimitItem(
+          title: TransferLimitConfig.TransferPeriod.month.title,
+          value: transferSection.first { $0.period == .month }?.amount
+        )
+        transferLimitItem(
+          title: TransferLimitConfig.TransferPeriod.perTransaction.title,
+          value: transferSection.first { $0.period == .perTransaction }?.amount
+        )
       }
-      transferLimitItem(
-        title: TransferLimitConfig.TransferPeriod.day.title,
-        value: transferSection.first { $0.period == .day }?.amount
-      )
-      transferLimitItem(
-        title: TransferLimitConfig.TransferPeriod.week.title,
-        value: transferSection.first { $0.period == .week }?.amount
-      )
-      transferLimitItem(
-        title: TransferLimitConfig.TransferPeriod.month.title,
-        value: transferSection.first { $0.period == .month }?.amount
-      )
-    }
-    .overlay(alignment: .top) {
-      annotationView(type: type)
+      .overlay(alignment: .top) {
+        annotationView(type: type)
+      }
     }
   }
   
