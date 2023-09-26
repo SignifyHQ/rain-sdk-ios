@@ -9,6 +9,12 @@ import LFServices
 
 struct DonationsView: View {
   @StateObject private var viewModel: DonationsViewModel
+  @State private var screenSize: CGSize = .zero
+  
+  private var emptySpaceHeight: CGFloat {
+    // (main height - item height) / 2
+    max(20, screenSize.height / 2 - 280)
+  }
   
   init(viewModel: DonationsViewModel) {
     _viewModel = StateObject(wrappedValue: viewModel)
@@ -46,6 +52,9 @@ struct DonationsView: View {
     }
     .refreshable {
       viewModel.refresh()
+    }
+    .readGeometry { geo in
+      screenSize = geo.size
     }
     .onReceive(NotificationCenter.default.publisher(for: .selectedFundraisersSuccess)) { _ in
       viewModel.navigation = nil
@@ -180,11 +189,24 @@ extension DonationsView {
     }
   }
   
+  var emptyView: some View {
+    VStack(alignment: .center, spacing: 12) {
+      Spacer(minLength: emptySpaceHeight)
+      GenImages.Images.emptyRewards.swiftUIImage
+        .resizable()
+        .aspectRatio(contentMode: .fit)
+        .padding(.horizontal, 40)
+      Text(LFLocalizable.RewardTabView.noRewards)
+        .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.medium.value))
+        .foregroundColor(Colors.label.swiftUIColor)
+      Spacer(minLength: emptySpaceHeight)
+    }
+  }
+  
   private func transactions(items: [RewardTransactionRowModel]) -> some View {
     Group {
       if items.isEmpty {
-        EmptyListView(text: LFLocalizable.Rewards.noRewards)
-          .padding(.top, 100)
+        emptyView
       } else {
         VStack(spacing: 10) {
           ForEach(items) { donation in

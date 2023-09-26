@@ -8,6 +8,12 @@ import LFServices
 
 struct RewardsView: View {
   @StateObject private var viewModel: RewardViewModel
+  @State private var screenSize: CGSize = .zero
+  
+  private var emptySpaceHeight: CGFloat {
+    // (main height - item height) / 2
+    max(20, screenSize.height / 2 - 200)
+  }
   
   init(viewModel: RewardViewModel) {
     _viewModel = StateObject(wrappedValue: viewModel)
@@ -22,6 +28,9 @@ struct RewardsView: View {
       }
       .refreshable {
         viewModel.refresh()
+      }
+      .readGeometry { geo in
+        screenSize = geo.size
       }
       .navigationLink(item: $viewModel.navigation) { navigation in
         switch navigation {
@@ -103,26 +112,41 @@ struct RewardsView: View {
     }
   }
   
+  var emptyView: some View {
+    VStack(alignment: .center, spacing: 12) {
+      Spacer(minLength: emptySpaceHeight)
+      GenImages.Images.emptyRewards.swiftUIImage
+        .resizable()
+        .aspectRatio(contentMode: .fit)
+        .padding(.horizontal, 40)
+      Text(LFLocalizable.RewardTabView.noRewards)
+        .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.medium.value))
+        .foregroundColor(Colors.label.swiftUIColor)
+      Spacer(minLength: emptySpaceHeight)
+    }
+  }
+  
   private func transactions(_ items: [TransactionModel]) -> some View {
-    LazyVStack(alignment: .leading, spacing: 10) {
-      HStack(alignment: .bottom) {
-        Text(LFLocalizable.Cashback.latest)
-        Spacer()
-        seeAllTransactions
-          .opacity(items.isEmpty ? 0 : 1)
-      }
-      .font(Fonts.regular.swiftUIFont(size: 12))
-      .foregroundColor(Colors.label.swiftUIColor.opacity(0.75))
-      ForEach(items) { transaction in
-        TransactionRowView(item: transaction) {
-          viewModel.transactionItemTapped(transaction)
+    Group {
+      if items.isEmpty {
+        emptyView
+      } else {
+        LazyVStack(alignment: .leading, spacing: 10) {
+          HStack(alignment: .bottom) {
+            Text(LFLocalizable.Cashback.latest)
+            Spacer()
+            seeAllTransactions
+              .opacity(items.isEmpty ? 0 : 1)
+          }
+          .font(Fonts.regular.swiftUIFont(size: 12))
+          .foregroundColor(Colors.label.swiftUIColor.opacity(0.75))
+          ForEach(items) { transaction in
+            TransactionRowView(item: transaction) {
+              viewModel.transactionItemTapped(transaction)
+            }
+          }
         }
       }
-    }
-    .overlay {
-      EmptyListView(text: LFLocalizable.Rewards.noRewards)
-        .opacity(items.isEmpty ? 1 : 0)
-        .offset(y: 200)
     }
   }
   

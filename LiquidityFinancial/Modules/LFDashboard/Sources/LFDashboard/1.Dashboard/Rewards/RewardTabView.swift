@@ -147,7 +147,7 @@ private extension RewardTabView {
     HStack(alignment: .center) {
       VStack(alignment: .center, spacing: 12) {
         Spacer(minLength: 120)
-        GenImages.Images.rewardHeader.swiftUIImage
+        GenImages.Images.emptyRewards.swiftUIImage
         Text(LFLocalizable.RewardTabView.noRewards)
           .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.medium.value))
           .foregroundColor(Colors.label.swiftUIColor)
