@@ -61,6 +61,7 @@ public final class AgreementViewModel: ObservableObject {
         do {
           let agreementData = try await nsPersionRepository.getAgreement()
           netspendDataManager.update(agreement: agreementData)
+          
           if let agreementData = agreementData as? APIAgreementData {
             mapToServiceCondition(agreementData: agreementData)
           }
@@ -77,7 +78,12 @@ public final class AgreementViewModel: ObservableObject {
       defer { isAcceptAgreementLoading = false }
       isAcceptAgreementLoading = true
       do {
-        let ids: [String] = fundingAgreement?.agreements.map({ $0.id }) ?? []
+        var ids: [String] = []
+        if let fundingAgreement = fundingAgreement {
+          ids = fundingAgreement.agreements.map({ $0.id })
+        } else if let fundingAgreement = netspendDataManager.agreement {
+          ids = fundingAgreement.listAgreementID
+        }
         let body: [String: Any] = [
           "agreementIds": ids
         ]

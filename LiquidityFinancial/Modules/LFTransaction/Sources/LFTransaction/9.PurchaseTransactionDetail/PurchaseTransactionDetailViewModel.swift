@@ -28,7 +28,7 @@ final class PurchaseTransactionDetailViewModel: ObservableObject {
 // MARK: - API
 extension PurchaseTransactionDetailViewModel {
   func getDisputeAuthorizationCode() {
-    Task {
+    Task { @MainActor in
       defer {
         isLoadingDisputeTransaction = false
       }

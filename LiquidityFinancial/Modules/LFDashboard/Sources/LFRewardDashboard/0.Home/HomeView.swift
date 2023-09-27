@@ -24,7 +24,7 @@ public struct HomeView: View {
   public init(viewModel: HomeViewModel, onChangeRoute: ((OnboardingFlowCoordinator.Route) -> Void)? = nil) {
     _viewModel = .init(wrappedValue: viewModel)
     self.onChangeRoute = onChangeRoute
-    dashboardRepository.start { toastMessage in
+    dashboardRepository.load { toastMessage in
       viewModel.toastMessage = toastMessage
     }
   }

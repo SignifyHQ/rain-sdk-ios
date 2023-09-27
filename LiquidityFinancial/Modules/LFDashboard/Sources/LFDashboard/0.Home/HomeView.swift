@@ -24,7 +24,7 @@ public struct HomeView: View {
     _viewModel = .init(wrappedValue: viewModel)
     self.tabOptions = tabOptions
     self.onChangeRoute = onChangeRoute
-    dashboardRepository.start { toastMessage in
+    dashboardRepository.load { toastMessage in
       viewModel.toastMessage = toastMessage
     }
   }

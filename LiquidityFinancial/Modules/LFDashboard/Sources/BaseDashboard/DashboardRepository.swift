@@ -69,7 +69,7 @@ public final class DashboardRepository: ObservableObject {
     refreshListCards()
   }
   
-  public func start(toastMessage: @escaping (String) -> Void) {
+  public func load(toastMessage: @escaping (String) -> Void) {
     self.toastMessage = toastMessage
     switch LFUtilities.target {
     case .CauseCard, .PrideCard:
@@ -121,7 +121,7 @@ public extension DashboardRepository {
   }
   
   func refreshCash() {
-    Task {
+    Task { @MainActor in
       defer { isLoading = false }
       isLoading = true
       do {
@@ -146,7 +146,7 @@ public extension DashboardRepository {
   
   func apiFetchListCard() {
     cardData.loading = true
-    Task {
+    Task { @MainActor in
       do {
         let cards = try await cardRepository.getListCard()
         cardData.cards = cards.map { card in
@@ -176,7 +176,7 @@ public extension DashboardRepository {
     }
     
     @Sendable func apiFetchCardDetail(with cardID: String, and index: Int) {
-      Task {
+      Task { @MainActor in
         defer { cardData.loading = false }
         do {
           let entity = try await cardRepository.getCard(cardID: cardID, sessionID: accountDataManager.sessionID)
@@ -220,7 +220,7 @@ public extension DashboardRepository {
   }
   
   func apiFetchListConnectedAccount() {
-    Task {
+    Task { @MainActor in
       do {
         let sessionID = self.accountDataManager.sessionID
         let response = try await self.externalFundingRepository.getLinkedAccount(sessionId: sessionID)
@@ -233,7 +233,7 @@ public extension DashboardRepository {
   }
   
   func apiFetchACHInfo() {
-    Task {
+    Task { @MainActor in
       defer { achInformationData.loading = false }
       achInformationData.loading = true
       do {
