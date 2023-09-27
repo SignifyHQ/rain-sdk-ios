@@ -53,8 +53,8 @@ public protocol FileEntity {
   // MARK: - Limit
 public protocol LimitEntity {
   var period: String? { get }
-  var maxAmount: Int? { get }
-  var maxTransfer: Int? { get }
-  var remainingAmount: Int? { get }
-  var remainingTransfer: Int? { get }
+  var maxAmount: Double? { get }
+  var maxTransfer: Double? { get }
+  var remainingAmount: Double? { get }
+  var remainingTransfer: Double? { get }
 }

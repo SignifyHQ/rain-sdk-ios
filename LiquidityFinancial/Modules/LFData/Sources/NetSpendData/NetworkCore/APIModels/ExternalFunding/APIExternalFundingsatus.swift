@@ -45,7 +45,7 @@ public struct APIExternalFundingsatus: Decodable, ExternalFundingsatusEntity {
     // MARK: - Limit
   public struct Limit: Codable, LimitEntity {
     public let period: String?
-    public let maxAmount, maxTransfer, remainingAmount, remainingTransfer: Int?
+    public let maxAmount, maxTransfer, remainingAmount, remainingTransfer: Double?
   }
 }
 
