@@ -163,7 +163,7 @@ public class AccountDataManager: AccountDataStorageProtocol {
   public let walletAddressesSubject = CurrentValueSubject<[WalletAddressEntity], Never>([])
   
   public func subscribeWalletAddressesChanged(_ completion: @escaping ([WalletAddressEntity]) -> Void) -> Cancellable {
-    walletAddressesSubject.sink(receiveValue: completion)
+    walletAddressesSubject.receive(on: DispatchQueue.main).sink(receiveValue: completion)
   }
   
   public func storeWalletAddresses(_ addresses: [WalletAddressEntity]) {
@@ -193,7 +193,7 @@ public class AccountDataManager: AccountDataStorageProtocol {
   public let linkedSourcesSubject = CurrentValueSubject<[any LinkedSourceDataEntity], Never>([])
   
   public func subscribeLinkedSourcesChanged(_ completion: @escaping ([any LinkedSourceDataEntity]) -> Void) -> Cancellable {
-    linkedSourcesSubject.sink(receiveValue: completion)
+    linkedSourcesSubject.receive(on: DispatchQueue.main).sink(receiveValue: completion)
   }
   
   public func storeLinkedSources(_ sources: [any LinkedSourceDataEntity]) {

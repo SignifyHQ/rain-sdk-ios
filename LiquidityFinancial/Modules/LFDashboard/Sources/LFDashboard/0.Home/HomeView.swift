@@ -7,32 +7,33 @@ import Combine
 import BaseDashboard
 import LFAccountOnboarding
 import LFBank
+import Factory
 
 public struct HomeView: View {
+  @Injected(\.dashboardRepository) var dashboardRepository
+  
   @Environment(\.scenePhase) var scenePhase
   
   @StateObject private var viewModel: HomeViewModel
   
   var onChangeRoute: ((OnboardingFlowCoordinator.Route) -> Void)?
   
-  var dataStorages: DashboardRepository
-  
   let tabOptions: [TabOption]
   
   public init(viewModel: HomeViewModel, tabOptions: [TabOption], onChangeRoute: ((OnboardingFlowCoordinator.Route) -> Void)? = nil) {
     _viewModel = .init(wrappedValue: viewModel)
-    self.dataStorages = DashboardRepository(toastMessage: { toastMessage in
-      viewModel.toastMessage = toastMessage
-    })
     self.tabOptions = tabOptions
     self.onChangeRoute = onChangeRoute
+    dashboardRepository.start { toastMessage in
+      viewModel.toastMessage = toastMessage
+    }
   }
   
   public var body: some View {
     VStack(spacing: 0) {
       ZStack {
         ForEach(tabOptions, id: \.self) { option in
-          DashboardView(dataStorages: dataStorages, option: option)
+          DashboardView(dataStorages: dashboardRepository, option: option)
           .opacity(viewModel.tabSelected == option ? 1 : 0)
         }
       }
@@ -67,14 +68,14 @@ public struct HomeView: View {
     }
     .onAppear {
       viewModel.onAppear()
-      dataStorages.apiFetchOnboardingState { route in
+      dashboardRepository.apiFetchOnboardingState { route in
         onChangeRoute?(route)
       }
     }
     .onChange(of: scenePhase, perform: { newValue in
       if newValue == .active {
         viewModel.checkGoTransactionDetail()
-        dataStorages.apiFetchListConnectedAccount()
+        dashboardRepository.apiFetchListConnectedAccount()
       }
     })
   }

@@ -111,8 +111,7 @@ extension NSExternalFundingRoute: LFRoute {
         "sourceId": parameters.sourceId
       ]
       if parameters.sourceType == APILinkSourceType.externalCard.rawString,
-         let feeId = parameters.m2mFeeRequestId
-      {
+         let feeId = parameters.m2mFeeRequestId {
         params["m2mFeeRequestId"] = feeId
       }
       return params

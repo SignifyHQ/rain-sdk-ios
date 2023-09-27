@@ -9,7 +9,7 @@ import LFServices
 import NetspendSdk
 
 class SelectBankAccountViewModel: ObservableObject {
-
+  
   var networkEnvironment: NetworkEnvironment {
     EnvironmentManager().networkEnvironment
   }
@@ -107,7 +107,7 @@ class SelectBankAccountViewModel: ObservableObject {
         
         analyticsService.track(event: AnalyticsEvent(name: .sendMoneySuccess))
         
-        //Push a notification for update transaction list event
+          //Push a notification for update transaction list event
         NotificationCenter.default.post(name: .moneyTransactionSuccess, object: nil)
         
         navigation = .transactionDetai(response.transactionId)
@@ -123,15 +123,15 @@ class SelectBankAccountViewModel: ObservableObject {
       return
     }
     switch errorObject.code {
-      case Constants.ErrorCode.transferLimitExceeded.value:
-        popup = .limitReached
-      default:
-        toastMessage = errorObject.message
+    case Constants.ErrorCode.transferLimitExceeded.value:
+      popup = .limitReached
+    default:
+      toastMessage = errorObject.message
     }
   }
 }
 
-// MARK: - ExternalLinkBank Functions
+  // MARK: - ExternalLinkBank Functions
 extension SelectBankAccountViewModel {
   func linkExternalBank() {
     Task { @MainActor in
@@ -191,7 +191,7 @@ extension SelectBankAccountViewModel {
 }
 
 extension SelectBankAccountViewModel {
-
+  
   func title(for account: APILinkedSourceData) -> String {
     switch account.sourceType {
     case .externalCard:
@@ -203,7 +203,7 @@ extension SelectBankAccountViewModel {
   
 }
 
-// MARK: - Types
+  // MARK: - Types
 extension SelectBankAccountViewModel {
   enum Navigation {
     case transactionDetai(String)

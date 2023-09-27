@@ -32,6 +32,7 @@ public struct OnboardingContentView: View {
     }
   }
   
+  //swiftlint:disable function_body_length
   @ViewBuilder
   private func buildContent(for route: OnboardingFlowCoordinator.Route) -> some View {
     Group {

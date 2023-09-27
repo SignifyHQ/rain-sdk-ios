@@ -86,7 +86,10 @@ final class MoveCryptoInputViewModel: ObservableObject {
   }
   
   private func observeAccounts() {
-    accountDataManager.accountsSubject.sink(receiveValue: { [weak self] accounts in
+    accountDataManager
+      .accountsSubject
+      .receive(on: DispatchQueue.main)
+      .sink(receiveValue: { [weak self] accounts in
       guard let self = self else {
         return
       }

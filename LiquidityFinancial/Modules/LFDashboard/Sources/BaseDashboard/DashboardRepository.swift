@@ -10,8 +10,16 @@ import LFCard
 import LFAccountOnboarding
 import OnboardingDomain
 import LFServices
+import DevicesData
 
-@MainActor
+extension Container {
+  public var dashboardRepository: Factory<DashboardRepository> {
+    self {
+      DashboardRepository()
+    }.singleton
+  }
+}
+
 public final class DashboardRepository: ObservableObject {
   @LazyInjected(\.accountDataManager) var accountDataManager
   @LazyInjected(\.netspendDataManager) var netspendDataManager
@@ -23,6 +31,9 @@ public final class DashboardRepository: ObservableObject {
   @LazyInjected(\.cardRepository) var cardRepository
   
   @LazyInjected(\.onboardingFlowCoordinator) var onboardingFlowCoordinator
+  
+  @LazyInjected(\.pushNotificationService) var pushNotificationService
+  @LazyInjected(\.devicesRepository) var devicesRepository
   
   @LazyInjected(\.analyticsService) var analyticsService
   
@@ -42,10 +53,30 @@ public final class DashboardRepository: ObservableObject {
     AccountUseCase(repository: accountRepository)
   }()
   
-  var toastMessage: (String) -> Void
+  var toastMessage: ((String) -> Void)?
+  
+  init() {}
+  
   public init(toastMessage: @escaping (String) -> Void) {
     self.toastMessage = toastMessage
-    initData()
+    switch LFUtilities.target {
+    case .CauseCard, .PrideCard:
+      initRewardData()
+    default:
+      initData()
+    }
+    subscribeLinkedAccounts()
+    refreshListCards()
+  }
+  
+  public func start(toastMessage: @escaping (String) -> Void) {
+    self.toastMessage = toastMessage
+    switch LFUtilities.target {
+    case .CauseCard, .PrideCard:
+      initRewardData()
+    default:
+      initData()
+    }
     subscribeLinkedAccounts()
     refreshListCards()
   }
@@ -53,6 +84,13 @@ public final class DashboardRepository: ObservableObject {
 
   // MARK: API init data tab content
 public extension DashboardRepository {
+  
+  func initRewardData() {
+    apiFetchListConnectedAccount()
+    apiFetchACHInfo()
+    apiFetchListCard()
+    apiFetchFetureConfig()
+  }
   
   func initData() {
     apiFetchAssetFromAccounts()
@@ -101,7 +139,7 @@ public extension DashboardRepository {
         self.accountDataManager.addOrUpdateAccounts(fiatAccounts)
       } catch {
         log.error(error.localizedDescription)
-        toastMessage(error.localizedDescription)
+        toastMessage?(error.localizedDescription)
       }
     }
   }
@@ -133,11 +171,11 @@ public extension DashboardRepository {
         }
       } catch {
         cardData.loading = false
-        toastMessage(error.localizedDescription)
+        toastMessage?(error.localizedDescription)
       }
     }
     
-    func apiFetchCardDetail(with cardID: String, and index: Int) {
+    @Sendable func apiFetchCardDetail(with cardID: String, and index: Int) {
       Task {
         defer { cardData.loading = false }
         do {
@@ -149,14 +187,14 @@ public extension DashboardRepository {
             }
           }
         } catch {
-          toastMessage(error.localizedDescription)
+          toastMessage?(error.localizedDescription)
         }
       }
     }
   }
   
   func apiFetchAssetFromAccounts() {
-    Task {
+    Task { @MainActor in
       defer { isLoading = false }
       isLoading = true
       do {
@@ -176,7 +214,7 @@ public extension DashboardRepository {
         self.accountDataManager.accountsSubject.send(accounts)
       } catch {
         log.error(error.localizedDescription)
-        toastMessage(error.localizedDescription)
+        toastMessage?(error.localizedDescription)
       }
     }
   }
@@ -189,7 +227,7 @@ public extension DashboardRepository {
         self.accountDataManager.storeLinkedSources(response.linkedSources)
       } catch {
         log.error(error.localizedDescription)
-        toastMessage(error.localizedDescription)
+        toastMessage?(error.localizedDescription)
       }
     }
   }
@@ -207,7 +245,7 @@ public extension DashboardRepository {
         )
         achInformationData.model = achInformation
       } catch {
-        toastMessage(error.localizedDescription)
+        toastMessage?(error.localizedDescription)
       }
     }
   }
@@ -221,78 +259,8 @@ public extension DashboardRepository {
         featureConfig.configJSON = entity.config ?? ""
       } catch {
         log.error(error.localizedDescription)
-        toastMessage(error.localizedDescription)
+        toastMessage?(error.localizedDescription)
       }
     }
   }
-  
-    // swiftlint:disable function_body_length
-  func apiFetchOnboardingState(onChangeRoute: @escaping ((OnboardingFlowCoordinator.Route) -> Void)) {
-    Task { @MainActor in
-      do {
-        async let fetchOnboardingState = onboardingRepository.getOnboardingState(sessionId: accountDataManager.sessionID)
-        
-        let onboardingState = try await fetchOnboardingState
-        
-        if onboardingState.missingSteps.isEmpty {
-          log.info("Current OnboardingState in Dashboard is Empty")
-        } else {
-          let states = onboardingState.mapToEnum()
-          if states.isEmpty {
-            log.info("Current OnboardingState in Dashboard is Empty")
-          } else {
-            if states.contains(OnboardingMissingStep.netSpendCreateAccount) {
-              return
-            } else if states.contains(OnboardingMissingStep.acceptAgreement) {
-              onChangeRoute(.agreement)
-            } else if states.contains(OnboardingMissingStep.acceptFeatureAgreement) {
-              onChangeRoute(.featureAgreement)
-            } else if states.contains(OnboardingMissingStep.identityQuestions) {
-              let questionsEncrypt = try await nsPersionRepository.getQuestion(sessionId: accountDataManager.sessionID)
-              if let usersession = netspendDataManager.sdkSession, let questionsDecode = (questionsEncrypt as? APIQuestionData)?.decodeData(session: usersession) {
-                let questionsEntity = QuestionsEntity.mapObj(questionsDecode)
-                onChangeRoute(.question(questionsEntity))
-              }
-            } else if states.contains(OnboardingMissingStep.provideDocuments) {
-              let documents = try await nsPersionRepository.getDocuments(sessionId: accountDataManager.sessionID)
-              guard let documents = documents as? APIDocumentData else {
-                log.error("Can't map document from BE")
-                return
-              }
-              netspendDataManager.update(documentData: documents)
-              if let status = documents.requestedDocuments.first?.status {
-                switch status {
-                case .complete:
-                  onChangeRoute(.kycReview)
-                case .open:
-                  onChangeRoute(.document)
-                case .reviewInProgress:
-                  onChangeRoute(.documentInReview)
-                }
-              } else {
-                if documents.requestedDocuments.isEmpty {
-                  onChangeRoute(.kycReview)
-                } else {
-                  onChangeRoute(.unclear("Required Document Unknown: \(documents.requestedDocuments.debugDescription)"))
-                }
-              }
-            } else if states.contains(OnboardingMissingStep.dashboardReview) {
-              onChangeRoute(.kycReview)
-            } else if states.contains(OnboardingMissingStep.zeroHashAccount) {
-              onChangeRoute(.unclear("Current OnboardingState in Dashboard is wrong step: zeroHashAccount"))
-            } else if states.contains(OnboardingMissingStep.accountReject) {
-              onChangeRoute(.accountReject)
-            } else if states.contains(OnboardingMissingStep.primaryPersonKYCApprove) {
-              onChangeRoute(.kycReview)
-            } else {
-              onChangeRoute(.unclear(states.compactMap({ $0.rawValue }).joined()))
-            }
-          }
-        }
-      } catch {
-        log.error(error.localizedDescription)
-      }
-    }
-  }
-    // swiftlint:enable function_body_length
 }

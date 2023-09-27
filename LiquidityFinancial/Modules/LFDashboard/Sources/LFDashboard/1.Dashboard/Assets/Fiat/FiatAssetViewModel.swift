@@ -113,7 +113,10 @@ private extension FiatAssetViewModel {
   }
   
   func subscribeAssetChange(id: String) {
-    accountDataManager.accountsSubject.compactMap({ (accounts: [LFAccount]) -> AssetModel? in
+    accountDataManager
+      .accountsSubject
+      .receive(on: DispatchQueue.main)
+      .compactMap({ (accounts: [LFAccount]) -> AssetModel? in
       guard let account = accounts.first(where: {
         $0.id == id
       }) else {

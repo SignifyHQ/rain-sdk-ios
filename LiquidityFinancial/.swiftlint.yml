@@ -106,7 +106,8 @@ implicit_return:
     - getter
 
 closure_body_length: 100
-cyclomatic_complexity: 20
+cyclomatic_complexity: 30
+file_length: 550
 
 custom_rules:
 

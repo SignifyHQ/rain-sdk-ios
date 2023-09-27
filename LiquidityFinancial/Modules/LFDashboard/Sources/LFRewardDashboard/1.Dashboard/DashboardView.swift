@@ -40,14 +40,11 @@ struct DashboardView: View {
         default: CausesView(viewModel: CausesViewModel())
         }
       case .account:
-        AccountsView()
+        AccountsView(viewModel: AccountViewModel(achInformationData: dataStorages.$achInformationData))
       }
     }
     .popup(item: $viewModel.toastMessage, style: .toast) {
       ToastView(toastMessage: $0)
-    }
-    .onAppear {
-      viewModel.appearOperations()
     }
   }
 }

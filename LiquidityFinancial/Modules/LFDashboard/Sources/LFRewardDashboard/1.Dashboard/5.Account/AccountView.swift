@@ -9,7 +9,12 @@ import BaseDashboard
 import LFTransaction
 
 struct AccountsView: View {
-  @StateObject private var viewModel = AccountViewModel()
+  @StateObject private var viewModel: AccountViewModel
+  @Environment(\.scenePhase) var scenePhase
+  
+  init(viewModel: AccountViewModel) {
+    _viewModel = .init(wrappedValue: viewModel)
+  }
   
   var body: some View {
     content
@@ -196,6 +201,15 @@ private extension AccountsView {
       ) {
         viewModel.openIntercomService()
       }
+      if !viewModel.notificationsEnabled {
+        ArrowButton(
+          image: GenImages.CommonImages.Accounts.notifications.swiftUIImage,
+          title: LFLocalizable.AccountView.notifications,
+          value: nil
+        ) {
+          viewModel.notificationTapped()
+        }
+      }
       /* TODO: Remove for MVP
       ArrowButton(
         image: GenImages.CommonImages.Accounts.legal.swiftUIImage,
@@ -222,6 +236,11 @@ private extension AccountsView {
       ) {
         viewModel.getDisputeAuthorizationCode()
       }
+      .onChange(of: scenePhase, perform: { newValue in
+        if newValue == .active {
+          viewModel.checkNotificationsStatus()
+        }
+      })
     }
   }
 

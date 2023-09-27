@@ -35,7 +35,6 @@ public struct FormattingTextField: View {
     formatters.forEach { formatter in
       formatted = formatter.format(text: formatted)
     }
-    print("Luan formatted: \(formatted)")
     return formatted
   }
 }

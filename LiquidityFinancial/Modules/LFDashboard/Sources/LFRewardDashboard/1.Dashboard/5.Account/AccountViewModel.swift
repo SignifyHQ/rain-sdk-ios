@@ -16,13 +16,16 @@ class AccountViewModel: ObservableObject {
   @LazyInjected(\.netspendDataManager) var netspendDataManager
   @LazyInjected(\.accountDataManager) var accountDataManager
   @LazyInjected(\.intercomService) var intercomService
-
+  @LazyInjected(\.pushNotificationService) var pushNotificationService
+  @LazyInjected(\.dashboardRepository) var dashboardRepository
+  
   @Published var navigation: Navigation?
   @Published var isDisableView: Bool = false
   @Published var isLoadingACH: Bool = false
   @Published var isLoadingDisputeTransaction: Bool = false
   @Published var isLoading: Bool = false
   @Published var openLegal = false
+  @Published var notificationsEnabled = false
   @Published var netspendController: NetspendSdkViewController?
   @Published var toastMessage: String?
   @Published var linkedAccount: [APILinkedSourceData] = []
@@ -44,10 +47,18 @@ class AccountViewModel: ObservableObject {
     return false
   }
   
-  init() {
-    getACHInfo()
+  init(achInformationData: Published<(model: ACHModel, loading: Bool)>.Publisher) {
+    achInformationData
+      .receive(on: DispatchQueue.main)
+      .sink { [weak self] achModel in
+        self?.isLoadingACH = achModel.loading
+        self?.achInformation = achModel.model
+      }
+      .store(in: &cancellable)
+    
     subscribeLinkedAccounts()
     handleFundingAgreementData()
+    checkNotificationsStatus()
   }
 }
 
@@ -105,6 +116,20 @@ extension AccountViewModel {
 
 // MARK: - API
 extension AccountViewModel {
+  func checkNotificationsStatus() {
+    dashboardRepository.checkNotificationsStatus { @MainActor [weak self] status in
+      self?.notificationsEnabled = status
+    }
+  }
+  
+  func notificationTapped() {
+    dashboardRepository.notificationTapped()
+  }
+  
+  func pushFCMTokenIfNeed() {
+    dashboardRepository.pushFCMTokenIfNeed()
+  }
+  
   func getATMAuthorizationCode() {
     Task {
       defer {
@@ -144,31 +169,11 @@ extension AccountViewModel {
   
   func subscribeLinkedAccounts() {
     accountDataManager.subscribeLinkedSourcesChanged { [weak self] entities in
-      guard let self = self else {
-        return
-      }
+      guard let self = self else { return }
       let linkedSources = entities.compactMap({ APILinkedSourceData(entity: $0) })
       self.linkedAccount = linkedSources
     }
     .store(in: &cancellable)
-  }
-  
-  func getACHInfo() {
-    isLoadingACH = true
-    Task {
-      do {
-        let achResponse = try await externalFundingRepository.getACHInfo(sessionID: accountDataManager.sessionID)
-        achInformation = ACHModel(
-          accountNumber: achResponse.accountNumber ?? Constants.Default.undefined.rawValue,
-          routingNumber: achResponse.routingNumber ?? Constants.Default.undefined.rawValue,
-          accountName: achResponse.accountName ?? Constants.Default.undefined.rawValue
-        )
-        isLoadingACH = false
-      } catch {
-        isLoadingACH = false
-        toastMessage = error.localizedDescription
-      }
-    }
   }
 }
 

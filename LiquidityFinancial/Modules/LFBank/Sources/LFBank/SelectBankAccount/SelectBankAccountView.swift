@@ -44,8 +44,8 @@ public struct SelectBankAccountView: View {
       }
       .popup(item: $viewModel.popup) { item in
         switch item {
-          case .limitReached:
-            depositLimitReachedPopup
+        case .limitReached:
+          depositLimitReachedPopup
         }
       }
       .popup(item: $viewModel.toastMessage, style: .toast) {
@@ -68,9 +68,9 @@ public struct SelectBankAccountView: View {
         }
       }
   }
-
+  
   private var content: some View {
-    ZStack() {
+    ZStack {
       VStack(spacing: 10) {
         if viewModel.isLoading {
           Spacer()
@@ -129,7 +129,7 @@ public struct SelectBankAccountView: View {
       .fixedSize(horizontal: false, vertical: false)
     }
   }
-
+  
   private var contacts: some View {
     Group {
       ForEach(viewModel.linkedBanks, id: \.sourceId) { item in
@@ -162,8 +162,7 @@ public struct SelectBankAccountView: View {
             .foregroundColor(Colors.label.swiftUIColor)
         }
         Spacer()
-        if let selectedBank = viewModel.selectedBank, selectedBank.sourceId == bank.sourceId
-        {
+        if let selectedBank = viewModel.selectedBank, selectedBank.sourceId == bank.sourceId {
           GenImages.Images.icKycQuestionCheck.swiftUIImage
             .scaledToFit()
             .frame(width: 20, height: 20)

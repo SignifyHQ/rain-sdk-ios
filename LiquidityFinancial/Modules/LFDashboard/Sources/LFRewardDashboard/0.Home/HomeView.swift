@@ -11,6 +11,8 @@ import Factory
 import LFServices
 
 public struct HomeView: View {
+  
+  @Injected(\.dashboardRepository) var dashboardRepository
   @Injected(\.analyticsService) var analyticsService
   
   @Environment(\.scenePhase) var scenePhase
@@ -18,15 +20,13 @@ public struct HomeView: View {
   @StateObject private var viewModel: HomeViewModel
   
   var onChangeRoute: ((OnboardingFlowCoordinator.Route) -> Void)?
-  
-  var dataStorages: DashboardRepository
 
   public init(viewModel: HomeViewModel, onChangeRoute: ((OnboardingFlowCoordinator.Route) -> Void)? = nil) {
     _viewModel = .init(wrappedValue: viewModel)
-    self.dataStorages = DashboardRepository(toastMessage: { toastMessage in
-      viewModel.toastMessage = toastMessage
-    })
     self.onChangeRoute = onChangeRoute
+    dashboardRepository.start { toastMessage in
+      viewModel.toastMessage = toastMessage
+    }
   }
   
   public var body: some View {
@@ -40,7 +40,7 @@ public struct HomeView: View {
     .onAppear {
       UITabBar.appearance().backgroundColor = Colors.secondaryBackground.swiftUIColor.uiColor
       viewModel.onAppear()
-      dataStorages.apiFetchOnboardingState { route in
+      dashboardRepository.apiFetchOnboardingState { route in
         onChangeRoute?(route)
       }
     }
@@ -70,6 +70,12 @@ public struct HomeView: View {
         )
       }
     }
+    .popup(item: $viewModel.popup) { popup in
+      switch popup {
+      case .notifications:
+        notificationsPopup
+      }
+    }
     .onChange(of: scenePhase, perform: { newValue in
       if newValue == .active {
         viewModel.checkGoTransactionDetail()
@@ -78,6 +84,7 @@ public struct HomeView: View {
     })
     .onAppear {
       analyticsService.track(event: AnalyticsEvent(name: .viewedHome))
+      viewModel.appearOperations()
     }
   }
 }
@@ -85,7 +92,7 @@ public struct HomeView: View {
 // MARK: - View Components
 private extension HomeView {
   func loadTabView(option: TabOption) -> some View {
-    DashboardView(dataStorages: dataStorages, option: option) { option in
+    DashboardView(dataStorages: dashboardRepository, option: option) { option in
       viewModel.tabSelected = option
     }.tabItem {
       tabItem(option: option)
@@ -144,4 +151,20 @@ private extension HomeView {
       .padding(.trailing, 12)
     }
   }
+  
+  private var notificationsPopup: some View {
+    LiquidityAlert(
+      title: LFLocalizable.NotificationPopup.title,
+      message: LFLocalizable.NotificationPopup.subtitle,
+      primary: .init(
+        text: LFLocalizable.NotificationPopup.action,
+        action: viewModel.notificationsPopupAction
+      ),
+      secondary: .init(
+        text: LFLocalizable.NotificationPopup.dismiss,
+        action: viewModel.clearPopup
+      )
+    )
+  }
+
 }

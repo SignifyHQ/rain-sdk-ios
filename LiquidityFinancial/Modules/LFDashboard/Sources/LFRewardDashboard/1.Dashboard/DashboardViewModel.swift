@@ -39,8 +39,4 @@ extension DashboardViewModel {
   func handleGuestUser() {
 
   }
-  
-  func appearOperations() {
-
-  }
 }
