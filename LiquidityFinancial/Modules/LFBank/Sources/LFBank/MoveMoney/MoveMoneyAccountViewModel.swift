@@ -54,6 +54,13 @@ public class MoveMoneyAccountViewModel: ObservableObject {
     subscribeLinkedAccounts()
     getRemainingAvailableAmount()
   }
+  
+  var instantFeeString: String {
+    guard let amount = externalCardFeeResponse?.amount, amount > 0 else {
+      return LFLocalizable.MoveMoney.TransferFeePopup.free
+    }
+    return amount.formattedAmount(prefix: Constants.CurrencyUnit.usd.symbol)
+  }
 }
 
 extension MoveMoneyAccountViewModel {
