@@ -162,7 +162,7 @@ private extension AccountsView {
         } else {
           Text(value)
             .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.ultraSmall.value))
-            .foregroundColor(Colors.primary.swiftUIColor)
+            .foregroundColor(textColor)
         }
       }
     }
@@ -307,7 +307,7 @@ private extension AccountsView {
           Spacer()
           HStack(spacing: 0) {
             Text("****\(viewModel.getSubWalletAddress(asset: asset))")
-              .foregroundColor(Colors.primary.swiftUIColor)
+              .foregroundColor(textColor)
               .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.small.value))
           }
         }
@@ -315,6 +315,18 @@ private extension AccountsView {
         .frame(height: 56)
         .background(Colors.secondaryBackground.swiftUIColor.cornerRadius(9))
       }
+    }
+  }
+}
+
+// MARK: - View Helpers
+private extension AccountsView {
+  var textColor: Color {
+    switch LFStyleGuide.target {
+    case .Cardano:
+      return Colors.whiteText.swiftUIColor
+    default:
+      return Colors.primary.swiftUIColor
     }
   }
 }

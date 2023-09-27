@@ -205,7 +205,7 @@ private extension TransferLimitsView {
             .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.medium.value))
             .foregroundStyle(
               LinearGradient(
-                colors: gradientColor,
+                colors: textColor,
                 startPoint: .leading,
                 endPoint: .trailing
               )
@@ -290,7 +290,16 @@ private extension TransferLimitsView {
         Colors.Gradients.Button.gradientButton1.swiftUIColor
       ]
     default:
-        return [Colors.primary.swiftUIColor]
+      return [Colors.primary.swiftUIColor]
+    }
+  }
+  
+  var textColor: [Color] {
+    switch LFStyleGuide.target {
+    case .Cardano:
+      return [Colors.whiteText.swiftUIColor]
+    default:
+      return gradientColor
     }
   }
 }

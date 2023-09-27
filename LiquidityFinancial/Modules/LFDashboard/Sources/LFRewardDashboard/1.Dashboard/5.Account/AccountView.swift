@@ -142,7 +142,13 @@ private extension AccountsView {
         } else {
           Text(value)
             .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.ultraSmall.value))
-            .foregroundColor(Colors.primary.swiftUIColor)
+            .foregroundStyle(
+              LinearGradient(
+                colors: gradientColor,
+                startPoint: .leading,
+                endPoint: .trailing
+              )
+            )
         }
       }
     }
@@ -251,6 +257,21 @@ private extension AccountsView {
       value: nil
     ) {
       viewModel.onClickedDepositLimitsButton()
+    }
+  }
+}
+
+// MARK: - View Helpers
+private extension AccountsView {
+  var gradientColor: [Color] {
+    switch LFStyleGuide.target {
+    case .CauseCard:
+      return [
+        Colors.Gradients.Button.gradientButton0.swiftUIColor,
+        Colors.Gradients.Button.gradientButton1.swiftUIColor
+      ]
+    default:
+      return [Colors.primary.swiftUIColor]
     }
   }
 }
