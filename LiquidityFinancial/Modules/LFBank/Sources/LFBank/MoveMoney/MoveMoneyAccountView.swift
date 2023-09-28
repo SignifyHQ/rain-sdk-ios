@@ -324,7 +324,7 @@ private extension MoveMoneyAccountView {
                 .overlay(
                   Ellipse()
                     .inset(by: 0.50)
-                    .stroke(.white, lineWidth: 1)
+                    .stroke(Colors.label.swiftUIColor, lineWidth: 1)
                 )
                 .opacity(0.25)
                 .padding(.trailing, 20)
@@ -368,7 +368,7 @@ private extension MoveMoneyAccountView {
                 .overlay(
                   Ellipse()
                     .inset(by: 0.50)
-                    .stroke(.white, lineWidth: 1)
+                    .stroke(Colors.label.swiftUIColor, lineWidth: 1)
                 )
                 .opacity(0.25)
                 .padding(.trailing, 20)

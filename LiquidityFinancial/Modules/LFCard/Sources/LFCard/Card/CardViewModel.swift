@@ -34,7 +34,11 @@ extension CardViewModel {
   }
   
   func hideCardInformation() {
-    cardNumber = "\(Constants.Default.cardNumberPlaceholder.rawValue)\(cardModel.last4)"
+    if cardModel.cardType == .physical {
+      cardNumber = "\(Constants.Default.physicalCardNumberPlaceholder.rawValue)\(cardModel.last4)"
+    } else {
+      cardNumber = "\(Constants.Default.cardNumberPlaceholder.rawValue)\(cardModel.last4)"
+    }
     expirationTime = Constants.Default.expirationDatePlaceholder.rawValue
     cvvNumber = Constants.Default.cvvPlaceholder.rawValue
   }

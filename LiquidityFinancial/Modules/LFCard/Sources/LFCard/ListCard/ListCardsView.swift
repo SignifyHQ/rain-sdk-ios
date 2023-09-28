@@ -21,7 +21,6 @@ public struct ListCardsView: View {
         loadingView
       } else {
         cardDetails
-        pageIndicator
       }
     }
     .onChange(of: viewModel.currentCard) { _ in
@@ -40,6 +39,28 @@ public struct ListCardsView: View {
           GenImages.CommonImages.icBack.swiftUIImage
         }
       }
+      
+      ToolbarItem(placement: .principal) {
+        Button {
+          viewModel.isShowListCardDropdown.toggle()
+        } label: {
+          HStack {
+            Text(viewModel.title(for: viewModel.currentCard))
+              .font(Fonts.medium.swiftUIFont(size: Constants.FontSize.small.value))
+              .foregroundColor(Colors.label.swiftUIColor)
+            Spacer()
+            Image(systemName: viewModel.isShowListCardDropdown ? "chevron.up" : "chevron.down")
+              .foregroundColor(Colors.label.swiftUIColor)
+              .font(Fonts.medium.swiftUIFont(size: Constants.FontSize.small.value))
+          }
+        }
+        .padding(.horizontal, 16)
+        .padding(.vertical, 8)
+        .frame(width: 172)
+        .background(Colors.buttons.swiftUIColor.cornerRadius(16))
+        .opacity(viewModel.cardsList.count > 1 ? 1 : 0)
+      }
+
       ToolbarItem(placement: .navigationBarTrailing) {
         Button {
           viewModel.openIntercom()
@@ -48,6 +69,10 @@ public struct ListCardsView: View {
             .foregroundColor(Colors.label.swiftUIColor)
         }
       }
+    }
+    .overlay(cardsList.padding(.top, 8), alignment: .top)
+    .onTapGesture {
+      viewModel.isShowListCardDropdown = false
     }
     .sheet(item: $viewModel.present) { item in
       switch item {
@@ -99,6 +124,33 @@ public struct ListCardsView: View {
 
 // MARK: - View Components
 private extension ListCardsView {
+  
+  @ViewBuilder var cardsList: some View {
+    if viewModel.isShowListCardDropdown {
+      VStack(alignment: .leading, spacing: 12) {
+        ForEach(viewModel.cardsList, id: \.id) { item in
+          HStack {
+            Text(viewModel.title(for: item))
+              .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.small.value))
+              .foregroundColor(Colors.label.swiftUIColor)
+            Spacer()
+            Image(systemName: "checkmark")
+              .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.medium.value))
+              .foregroundColor(viewModel.currentCard.id == item.id ? Colors.primary.swiftUIColor : .clear)
+          }
+          .frame(height: 14)
+          .onTapGesture {
+            viewModel.currentCard = item
+            viewModel.isShowListCardDropdown.toggle()
+          }
+        }
+      }
+      .padding(16)
+      .frame(width: 172)
+      .background(Colors.buttons.swiftUIColor.cornerRadius(16))
+    }
+  }
+  
   func changePinContent(cardID: String) -> some View {
     Group {
       switch activeContent {
@@ -141,7 +193,7 @@ private extension ListCardsView {
 
   var cardView: some View {
     TabView(selection: $viewModel.currentCard) {
-      ForEach(Array(viewModel.cardsList.enumerated()), id: \.element.id) { offset, item in
+      ForEach(Array([viewModel.currentCard].enumerated()), id: \.element.id) { offset, item in
         CardView(
           card: item,
           cardMetaData: viewModel.cardMetaDatas.count > offset ? $viewModel.cardMetaDatas[offset] : .constant(nil),
@@ -152,7 +204,7 @@ private extension ListCardsView {
       }
     }
     .tabViewStyle(.page(indexDisplayMode: .never))
-    .padding(.top, 10)
+    .padding(.top, 24)
     .frame(maxHeight: 220)
   }
   

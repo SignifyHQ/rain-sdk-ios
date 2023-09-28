@@ -615,6 +615,10 @@ public enum LFLocalizable {
       public static let title = LFLocalizable.tr("Localizable", "card.exp.title", fallback: "Exp")
     }
     public enum Physical {
+      /// %@Card
+      public static func name(_ p1: Any) -> String {
+        return LFLocalizable.tr("Localizable", "card.physical.name", String(describing: p1), fallback: "%@Card")
+      }
       /// Physical
       public static let title = LFLocalizable.tr("Localizable", "card.physical.title", fallback: "Physical")
     }

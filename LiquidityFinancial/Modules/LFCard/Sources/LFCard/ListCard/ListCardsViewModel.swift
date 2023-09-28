@@ -11,6 +11,7 @@ import PassKit
 import RewardData
 import RewardDomain
 import LFServices
+import LFLocalizable
 
 @MainActor
 public final class ListCardsViewModel: ObservableObject {
@@ -40,6 +41,7 @@ public final class ListCardsViewModel: ObservableObject {
   @Published var navigation: Navigation?
   @Published var popup: Popup?
   @Published var toastMessage: String?
+  @Published var isShowListCardDropdown: Bool = false
   
   lazy var cardUseCase: NSCardUseCaseProtocol = {
     NSCardUseCase(repository: cardRepository)
@@ -136,6 +138,16 @@ extension ListCardsViewModel {
 
 // MARK: - View Helpers
 extension ListCardsViewModel {
+  
+  func title(for card: CardModel) -> String {
+    switch card.cardType {
+    case .virtual:
+      return LFLocalizable.Card.Virtual.title + " **** " + card.last4
+    case .physical:
+      return LFLocalizable.Card.Physical.title + " **** " + card.last4
+    }
+  }
+  
   func onDisappear() {
     NotificationCenter.default.post(name: .refreshListCards, object: nil)
   }

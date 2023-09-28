@@ -297,6 +297,7 @@
 "card.exp.title" = "Exp";
 "card.cvv.title" = "CVV";
 "card.copyToClipboard.title" = "Card number copied to clipboard";
+"card.physical.name" = "%@Card";
 
 "cards_detail.donations" = "Donations";
 "cards_detail.roundup.desc" = "Round up purchases";

@@ -37,7 +37,8 @@ struct CardView: View {
           .padding(.leading, 10)
       }
       headerTitleView
-        .opacity(viewModel.cardModel.cardType == .physical ? 0 : 1)
+      physicalTitleView
+        .opacity(viewModel.cardModel.cardType != .physical ? 0 : 1)
     }
     .onChange(of: isShowCardNumber) { _ in
       if isShowCardNumber {
@@ -58,11 +59,41 @@ struct CardView: View {
 
 // MARK: View Components
 private extension CardView {
+  var physicalTitleView: some View {
+    HStack {
+      Text(LFLocalizable.Card.Physical.name(LFUtility.cardName))
+        .font(Fonts.bold.swiftUIFont(size: Constants.FontSize.medium.value))
+        .foregroundColor(Colors.contrast.swiftUIColor)
+    }
+    .foregroundColor(Colors.contrast.swiftUIColor.opacity(0.75))
+    .padding(.top, -50)
+    .padding(.horizontal, 16)
+  }
+  
+  var physicalNumberView: some View {
+    HStack(alignment: .bottom) {
+      VStack(alignment: .leading, spacing: 6) {
+        if isLoading {
+          LottieView(loading: .contrast)
+            .frame(width: 30, height: 20)
+        } else {
+          Text(viewModel.cardNumber)
+            .font(Fonts.bold.swiftUIFont(size: Constants.FontSize.small.value))
+            .foregroundColor(Colors.contrast.swiftUIColor)
+        }
+      }
+    }
+    .foregroundColor(Colors.contrast.swiftUIColor.opacity(0.75))
+    .padding(.top, -50)
+    .padding(.horizontal, 16)
+  }
+  
   var headerTitleView: some View {
     HStack {
       cardNumberView
       Spacer()
       trailingCardView
+        .hidden(viewModel.cardModel.cardType == .physical)
     }
     .foregroundColor(Colors.contrast.swiftUIColor.opacity(0.75))
     .padding(.top, -50)
@@ -95,6 +126,7 @@ private extension CardView {
       HStack(spacing: 8) {
         Text(LFLocalizable.Card.CardNumber.title)
           .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.ultraSmall.value))
+          .hidden(viewModel.cardModel.cardType == .physical)
         GenImages.CommonImages.icCopy.swiftUIImage
           .foregroundColor(Colors.contrast.swiftUIColor)
           .onTapGesture {

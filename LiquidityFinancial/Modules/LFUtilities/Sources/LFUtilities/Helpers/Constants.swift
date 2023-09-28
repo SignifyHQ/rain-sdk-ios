@@ -255,6 +255,7 @@ public extension Constants {
     case zeroAmount = "0"
     case expirationDatePlaceholder = "••/••"
     case cardNumberPlaceholder = "••••  ••••  ••••  "
+    case physicalCardNumberPlaceholder = "••••  "
     case cvvPlaceholder = "•••"
     case decimalSeparator = "."
     case percentage = "%"
