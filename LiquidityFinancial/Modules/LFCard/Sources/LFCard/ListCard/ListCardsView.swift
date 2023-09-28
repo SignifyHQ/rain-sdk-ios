@@ -205,7 +205,7 @@ private extension ListCardsView {
     }
     .tabViewStyle(.page(indexDisplayMode: .never))
     .padding(.top, 24)
-    .frame(maxHeight: 220)
+    .frame(maxHeight: 260)
   }
   
   @ViewBuilder var pageIndicator: some View {

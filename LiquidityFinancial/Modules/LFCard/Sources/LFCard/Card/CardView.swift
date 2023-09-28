@@ -30,6 +30,7 @@ struct CardView: View {
       ZStack(alignment: .topLeading) {
         GenImages.Images.emptyCard.swiftUIImage
           .resizable()
+          .aspectRatio(contentMode: .fit)
         Text(viewModel.cardModel.cardType.title)
           .font(Fonts.semiBold.swiftUIFont(size: Constants.FontSize.small.value))
           .foregroundColor(Colors.contrast.swiftUIColor)
@@ -64,24 +65,6 @@ private extension CardView {
       Text(LFLocalizable.Card.Physical.name(LFUtility.cardName))
         .font(Fonts.bold.swiftUIFont(size: Constants.FontSize.medium.value))
         .foregroundColor(Colors.contrast.swiftUIColor)
-    }
-    .foregroundColor(Colors.contrast.swiftUIColor.opacity(0.75))
-    .padding(.top, -50)
-    .padding(.horizontal, 16)
-  }
-  
-  var physicalNumberView: some View {
-    HStack(alignment: .bottom) {
-      VStack(alignment: .leading, spacing: 6) {
-        if isLoading {
-          LottieView(loading: .contrast)
-            .frame(width: 30, height: 20)
-        } else {
-          Text(viewModel.cardNumber)
-            .font(Fonts.bold.swiftUIFont(size: Constants.FontSize.small.value))
-            .foregroundColor(Colors.contrast.swiftUIColor)
-        }
-      }
     }
     .foregroundColor(Colors.contrast.swiftUIColor.opacity(0.75))
     .padding(.top, -50)
