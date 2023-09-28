@@ -243,6 +243,12 @@ extension MoveMoneyAccountViewModel {
     switch errorObject.code {
     case Constants.ErrorCode.transferLimitExceeded.value:
       popup = .limitReached
+    case Constants.ErrorCode.amountTooLow.value:
+      popup = .amountTooLow
+    case Constants.ErrorCode.bankTransferRequestLimitReached.value:
+      popup = .bankLimits
+    case Constants.ErrorCode.insufficientFunds.value:
+      popup = .insufficientFunds
     default:
       toastMessage = errorObject.message
     }
@@ -362,5 +368,8 @@ public extension MoveMoneyAccountViewModel {
   
   enum Popup {
     case limitReached
+    case amountTooLow
+    case bankLimits
+    case insufficientFunds
   }
 }

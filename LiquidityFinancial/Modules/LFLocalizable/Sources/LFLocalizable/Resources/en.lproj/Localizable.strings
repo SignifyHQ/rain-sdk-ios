@@ -442,6 +442,12 @@ https://mn.gov/commerce/money/investments/cryptocurrency/. \n\n\n\n\n\n\n";
 "transferView.limits_reached_popup.title" = "Deposit limit reached";
 "transferView.limits_reached_popup.message" = "We're sorry, your deposit crossed your current limit. Please contact support to increase your limits.";
 "transferView.withdraw_annotation.description" = "You currently have %@ available to withdraw. Rewards are not available to withdraw until 48 hours after they are earned.";
+"transferView.amountTooLow.title" = "We're sorry";
+"transferView.amountTooLow.message" = "This transaction was blocked because amount is too low.";
+"transferView.bankLimits.title" = "We're sorry";
+"transferView.bankLimits.message" = "This deposit was blocked because it is over your banks current withdraw limit. Please contact your bank to raise the limit.";
+"transferView.insufficientFundsPopup.title" = "Insufficient funds";
+"transferView.insufficientFundsPopup.message" = "We were unable to %@ due to insufficient funds. Please try again or contact support.";
 
 // Transfer Status
 
@@ -451,6 +457,8 @@ https://mn.gov/commerce/money/investments/cryptocurrency/. \n\n\n\n\n\n\n";
 "transferView.status.withdraw.completed" = "Withdraw completed";
 "transferView.status.reward.started" = "Reward pending";
 "transferView.status.reward.completed" = "Reward completed";
+"transferView.status.transferFee" = "Transfer Fee";
+"transferView.status.free" = "Free";
 
 // Transfer debit suggestion
 "transferView.debit_suggestion.title" = "Get Faster Deposits";

@@ -183,6 +183,9 @@ public extension Constants {
     case invalidSSN = "invalid_ssn"
     case ticketExisted = "increase_limit_ticket_existed"
     case transferLimitExceeded = "transfer_limit_exceeded"
+    case bankTransferRequestLimitReached = "bank_transfer_request_limit_reached"
+    case amountTooLow = "amount_too_low"
+    case insufficientFunds = "insufficient_funds"
     
     public var value: String {
       rawValue

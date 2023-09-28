@@ -2687,6 +2687,18 @@ public enum LFLocalizable {
     public static func saving(_ p1: Any) -> String {
       return LFLocalizable.tr("Localizable", "transferView.saving", String(describing: p1), fallback: "Savings **** %@")
     }
+    public enum AmountTooLow {
+      /// This transaction was blocked because amount is too low.
+      public static let message = LFLocalizable.tr("Localizable", "transferView.amountTooLow.message", fallback: "This transaction was blocked because amount is too low.")
+      /// We're sorry
+      public static let title = LFLocalizable.tr("Localizable", "transferView.amountTooLow.title", fallback: "We're sorry")
+    }
+    public enum BankLimits {
+      /// This deposit was blocked because it is over your banks current withdraw limit. Please contact your bank to raise the limit.
+      public static let message = LFLocalizable.tr("Localizable", "transferView.bankLimits.message", fallback: "This deposit was blocked because it is over your banks current withdraw limit. Please contact your bank to raise the limit.")
+      /// We're sorry
+      public static let title = LFLocalizable.tr("Localizable", "transferView.bankLimits.title", fallback: "We're sorry")
+    }
     public enum DebitSuggestion {
       /// For instant deposits, connect and deposit with your Debit Card
       public static let body = LFLocalizable.tr("Localizable", "transferView.debit_suggestion.body", fallback: "For instant deposits, connect and deposit with your Debit Card")
@@ -2694,6 +2706,14 @@ public enum LFLocalizable {
       public static let connect = LFLocalizable.tr("Localizable", "transferView.debit_suggestion.connect", fallback: "Connect Debit Card")
       /// Get Faster Deposits
       public static let title = LFLocalizable.tr("Localizable", "transferView.debit_suggestion.title", fallback: "Get Faster Deposits")
+    }
+    public enum InsufficientFundsPopup {
+      /// We were unable to %@ due to insufficient funds. Please try again or contact support.
+      public static func message(_ p1: Any) -> String {
+        return LFLocalizable.tr("Localizable", "transferView.insufficientFundsPopup.message", String(describing: p1), fallback: "We were unable to %@ due to insufficient funds. Please try again or contact support.")
+      }
+      /// Insufficient funds
+      public static let title = LFLocalizable.tr("Localizable", "transferView.insufficientFundsPopup.title", fallback: "Insufficient funds")
     }
     public enum LimitsReachedPopup {
       /// We're sorry, your deposit crossed your current limit. Please contact support to increase your limits.
@@ -2728,6 +2748,10 @@ public enum LFLocalizable {
       public static let pending = LFLocalizable.tr("Localizable", "transferView.rewards_status.pending", fallback: "Pending")
     }
     public enum Status {
+      /// Free
+      public static let free = LFLocalizable.tr("Localizable", "transferView.status.free", fallback: "Free")
+      /// Transfer Fee
+      public static let transferFee = LFLocalizable.tr("Localizable", "transferView.status.transferFee", fallback: "Transfer Fee")
       public enum Deposit {
         /// Deposit completed
         public static let completed = LFLocalizable.tr("Localizable", "transferView.status.deposit.completed", fallback: "Deposit completed")

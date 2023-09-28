@@ -32,6 +32,12 @@ public struct MoveMoneyAccountView: View {
         switch item {
         case .limitReached:
           depositLimitReachedPopup
+        case .amountTooLow:
+          amountTooLowPopup
+        case .bankLimits:
+          bankLimitsPopup
+        case .insufficientFunds:
+          insufficientFundsPopup
         }
       }
       .popup(item: $viewModel.toastMessage, style: .toast) {
@@ -406,6 +412,46 @@ private extension MoveMoneyAccountView {
       )
     )
   }
+  
+  var amountTooLowPopup: some View {
+    LiquidityAlert(
+      title: LFLocalizable.TransferView.AmountTooLow.title.uppercased(),
+      message: LFLocalizable.TransferView.AmountTooLow.message,
+      primary: .init(
+        text: LFLocalizable.Button.Ok.title,
+        action: {
+          viewModel.hidePopup()
+        }
+      )
+    )
+  }
+  
+  var bankLimitsPopup: some View {
+    LiquidityAlert(
+      title: LFLocalizable.TransferView.BankLimits.title.uppercased(),
+      message: LFLocalizable.TransferView.BankLimits.message,
+      primary: .init(
+        text: LFLocalizable.Button.Ok.title,
+        action: {
+          viewModel.hidePopup()
+        }
+      )
+    )
+  }
+  
+  var insufficientFundsPopup: some View {
+    LiquidityAlert(
+      title: LFLocalizable.TransferView.InsufficientFundsPopup.title.uppercased(),
+      message: LFLocalizable.TransferView.InsufficientFundsPopup.message(title.lowercased()),
+      primary: .init(
+        text: LFLocalizable.Button.Ok.title,
+        action: {
+          viewModel.hidePopup()
+        }
+      )
+    )
+  }
+  
 }
 
 // MARK: - AddMoneyAccountView_Previews
