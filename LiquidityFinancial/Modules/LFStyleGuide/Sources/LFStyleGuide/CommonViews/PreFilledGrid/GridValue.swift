@@ -53,7 +53,7 @@ public extension GridValue {
       case .usd:
         return Constants.CurrencyUnit.usd.maxFractionDigits
       case .crypto:
-        return LFUtility.cryptoFractionDigits
+        return LFUtilities.cryptoFractionDigits
       }
     }
   }

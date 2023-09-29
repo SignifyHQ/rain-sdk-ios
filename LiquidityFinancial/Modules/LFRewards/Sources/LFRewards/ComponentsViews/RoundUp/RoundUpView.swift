@@ -51,7 +51,7 @@ public struct RoundUpView: View {
 
   private var message: some View {
     Text(
-      LFLocalizable.RoundUp.message(LFUtility.appName)
+      LFLocalizable.RoundUp.message(LFUtilities.appName)
     )
     .font(Fonts.regular.swiftUIFont(size: 16))
     .foregroundColor(ModuleColors.label.swiftUIColor.opacity(0.75))

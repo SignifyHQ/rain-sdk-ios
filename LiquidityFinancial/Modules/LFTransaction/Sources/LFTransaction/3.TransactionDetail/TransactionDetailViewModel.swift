@@ -85,7 +85,7 @@ private extension TransactionDetailViewModel {
     return
     #else
     if showRatingAlert {
-      LFUtility.showRatingAlert()
+      LFUtilities.showRatingAlert()
     }
     #endif
   }
@@ -124,7 +124,7 @@ extension TransactionDetailViewModel {
     [
       TransactionInformation(
         title: LFLocalizable.TransactionDetail.Rewards.title,
-        value: LFUtility.cryptoCurrency,
+        value: LFUtilities.cryptoCurrency,
         markValue: transaction.rewards?.amount?.formattedAmount(minFractionDigits: 2, maxFractionDigits: 2)
       )
     ]
@@ -145,7 +145,7 @@ extension TransactionDetailViewModel {
     [
       TransactionInformation(
         title: LFLocalizable.TransactionDetail.Balance.title,
-        value: LFUtility.cryptoCurrency,
+        value: LFUtilities.cryptoCurrency,
         markValue: transaction.currentBalance?.formattedAmount(minFractionDigits: 2)
       )
     ]

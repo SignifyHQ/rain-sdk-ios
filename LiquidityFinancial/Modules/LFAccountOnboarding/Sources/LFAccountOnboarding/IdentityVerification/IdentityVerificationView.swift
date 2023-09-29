@@ -36,7 +36,7 @@ private struct PersonaView: UIViewRepresentable {
     webView.scrollView.bounces = false
     webView.translatesAutoresizingMaskIntoConstraints = false
     
-    let redirectURI = "&redirect-uri=\(LFUtility.personaCallback)"
+    let redirectURI = "&redirect-uri=\(LFUtilities.personaCallback)"
     let strHostedURL = hostedURL.absoluteString + redirectURI
     if let url = URL(string: strHostedURL) {
       webView.load(URLRequest(url: url))
@@ -61,7 +61,7 @@ private class PersonaWebView: NSObject, WKNavigationDelegate {
   /// Handle navigation actions from the web view.
   func webView(_: WKWebView, decidePolicyFor navigationAction: WKNavigationAction, decisionHandler: @escaping (WKNavigationActionPolicy) -> Void) {
     // Check if we are being redirected to our `redirectUri`. This happens once verification is completed.
-    guard let redirectUri = navigationAction.request.url?.absoluteString, redirectUri.starts(with: LFUtility.personaCallback) else {
+    guard let redirectUri = navigationAction.request.url?.absoluteString, redirectUri.starts(with: LFUtilities.personaCallback) else {
       // We're not being redirected, so load the URL.
       decisionHandler(.allow)
       return

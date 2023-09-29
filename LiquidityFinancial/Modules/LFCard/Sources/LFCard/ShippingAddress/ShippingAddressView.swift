@@ -43,7 +43,7 @@ private extension ShippingAddressView {
   var content: some View {
     VStack(alignment: .leading, spacing: 32) {
       Text(
-        LFLocalizable.ShippingAddress.Screen.title(LFUtility.appName.uppercased())
+        LFLocalizable.ShippingAddress.Screen.title(LFUtilities.appName.uppercased())
       )
       .foregroundColor(Colors.label.swiftUIColor)
       .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.main.value))

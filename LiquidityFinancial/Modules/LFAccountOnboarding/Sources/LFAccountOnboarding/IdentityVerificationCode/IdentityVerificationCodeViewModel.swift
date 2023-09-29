@@ -62,7 +62,7 @@ extension IdentityVerificationCodeViewModel {
         accountDataManager.update(phone: phoneNumber)
         accountDataManager.stored(phone: phoneNumber)
         
-        if LFUtility.charityEnabled { // we enable showRoundUpForCause after user login
+        if LFUtilities.charityEnabled { // we enable showRoundUpForCause after user login
           UserDefaults.showRoundUpForCause = true
         }
         

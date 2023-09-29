@@ -42,7 +42,7 @@ struct CryptoChartDetailView: View {
         await viewModel.refresh()
       }
       .background(Colors.background.swiftUIColor)
-      .defaultToolBar(navigationTitle: LFUtility.cryptoCurrency.uppercased())
+      .defaultToolBar(navigationTitle: LFUtilities.cryptoCurrency.uppercased())
       .navigationLink(item: $viewModel.navigation) { navigation in
         switch navigation {
         case .addMoney:
@@ -248,7 +248,7 @@ private extension CryptoChartDetailView {
   
   var transferBalancePopup: some View {
     LiquidityAlert(
-      title: LFLocalizable.CryptoChartDetail.TransferBalance.title(LFUtility.cryptoCurrency.uppercased()),
+      title: LFLocalizable.CryptoChartDetail.TransferBalance.title(LFUtilities.cryptoCurrency.uppercased()),
       message: .empty,
       primary: .init(text: LFLocalizable.Button.Ok.title.uppercased()) {
         viewModel.clearPopup()

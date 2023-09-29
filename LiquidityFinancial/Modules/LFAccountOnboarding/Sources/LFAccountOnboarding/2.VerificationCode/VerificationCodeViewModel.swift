@@ -83,7 +83,7 @@ extension VerificationCodeViewModel {
         accountDataManager.update(phone: formatPhoneNumber)
         accountDataManager.stored(phone: formatPhoneNumber)
         
-        if LFUtility.charityEnabled { // we enable showRoundUpForCause after user login
+        if LFUtilities.charityEnabled { // we enable showRoundUpForCause after user login
           UserDefaults.showRoundUpForCause = true
         }
         

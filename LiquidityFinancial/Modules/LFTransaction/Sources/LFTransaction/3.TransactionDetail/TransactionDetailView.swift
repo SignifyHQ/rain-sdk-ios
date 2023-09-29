@@ -62,7 +62,7 @@ public struct TransactionDetailView: View {
           if let popAction = popAction {
             popAction()
           } else {
-            LFUtility.popToRootView()
+            LFUtilities.popToRootView()
           }
         } label: {
           CircleButton(style: .xmark)
@@ -98,7 +98,7 @@ extension TransactionDetailView {
     case .refund:
       RefundTransactionDetailView(
         transaction: viewModel.transaction,
-        transactionInfos: LFUtility.cryptoEnabled ? viewModel.refundCryptoTransactions : viewModel.refundTransactions
+        transactionInfos: LFUtilities.cryptoEnabled ? viewModel.refundCryptoTransactions : viewModel.refundTransactions
       )
     case .donation:
       DonationTransactionDetailView(donation: viewModel.donation)

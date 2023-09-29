@@ -291,9 +291,9 @@ public extension Constants {
   static let netSpendSDKLinkBankErrors = ["error", "failedToLinkBank", "externalLinkBankError"]
   
   static let pathwardAttributeInformation = [
-    LFLocalizable.Question.PathwardCondition.userAgreement: LFUtility.pathwardUserAgreement,
-    LFLocalizable.Question.PathwardCondition.privacyPolicy: LFUtility.pathwardPrivacyPolicy,
-    LFLocalizable.Question.PathwardCondition.regulatoryDisclosures: LFUtility.pathwardRegulatoryDisclosure
+    LFLocalizable.Question.PathwardCondition.userAgreement: LFUtilities.pathwardUserAgreement,
+    LFLocalizable.Question.PathwardCondition.privacyPolicy: LFUtilities.pathwardPrivacyPolicy,
+    LFLocalizable.Question.PathwardCondition.regulatoryDisclosures: LFUtilities.pathwardRegulatoryDisclosure
   ]
   
   static let identifyVerification = [

@@ -210,7 +210,7 @@ extension MoveCryptoInputViewModel {
     case .buyCrypto:
       return 2
     case .sellCrypto, .sendCrypto:
-      return LFUtility.cryptoFractionDigits
+      return LFUtilities.cryptoFractionDigits
     }
   }
   
@@ -247,12 +247,12 @@ extension MoveCryptoInputViewModel {
     case .sellCrypto:
       let balance = assetModel.availableBalance.roundTo3f()
       return LFLocalizable.MoveCryptoInput.SellAvailableBalance.subtitle(
-        "\(balance)".formattedAmount(minFractionDigits: 3, maxFractionDigits: 3), LFUtility.cryptoCurrency.uppercased()
+        "\(balance)".formattedAmount(minFractionDigits: 3, maxFractionDigits: 3), LFUtilities.cryptoCurrency.uppercased()
       )
     case .sendCrypto:
       let balance = assetModel.availableBalance.roundTo3f()
       return LFLocalizable.MoveCryptoInput.SendAvailableBalance.subtitle(
-        "\(balance)".formattedAmount(minFractionDigits: 3, maxFractionDigits: 3), LFUtility.cryptoCurrency.uppercased()
+        "\(balance)".formattedAmount(minFractionDigits: 3, maxFractionDigits: 3), LFUtilities.cryptoCurrency.uppercased()
       )
     }
   }

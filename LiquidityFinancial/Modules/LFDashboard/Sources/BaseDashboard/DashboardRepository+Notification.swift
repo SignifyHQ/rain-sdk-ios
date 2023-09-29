@@ -48,7 +48,7 @@ public extension DashboardRepository {
     Task { @MainActor in
       do {
         let token = try await pushNotificationService.fcmToken()
-        let response = try await devicesRepository.register(deviceId: LFUtility.deviceId, token: token)
+        let response = try await devicesRepository.register(deviceId: LFUtilities.deviceId, token: token)
         if response.success {
           UserDefaults.lastestFCMToken = token
         }

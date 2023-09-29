@@ -11,8 +11,6 @@ struct ProfileView: View {
     ScrollView(showsIndicators: false) {
       VStack(spacing: 24) {
         contact
-        donationsInvites
-        stickers
         accountSettings
         bottom
       }
@@ -53,9 +51,6 @@ struct ProfileView: View {
       case .logout:
         logoutPopup
       }
-    }
-    .popup(isPresented: $viewModel.showContributionToast, style: .toast) {
-      ToastView(toastMessage: LFLocalizable.Profile.ContributionToast.message)
     }
   }
 }
@@ -99,83 +94,6 @@ private extension ProfileView {
         .frame(92)
         .padding(1)
     }
-  }
-  
-  var donationsInvites: some View {
-    VStack(spacing: 10) {
-      if viewModel.showContribution {
-        HStack(spacing: 10) {
-          contributionItem(value: viewModel.totalDonations, title: LFLocalizable.Profile.TotalDonations.title)
-          contributionItem(value: viewModel.totalDonated, title: LFLocalizable.Profile.TotalDonated.title)
-        }
-      }
-      // TODO: - Will be uncomment later. Temporarily hide this feature
-      //      ArrowButton(
-      //        image: GenImages.CommonImages.icShareWithFriend.swiftUIImage,
-      //        title: LFLocalizable.Profile.Referrals.title,
-      //        value: LFLocalizable.Profile.Referrals.message
-      //      ) {
-      //        viewModel.showReferrals()
-      //      }
-    }
-  }
-  
-  func contributionItem(value: String, title: String) -> some View {
-    VStack(spacing: 4) {
-      ZStack {
-        Text(value)
-          .font(Fonts.regular.swiftUIFont(size: 20))
-          .foregroundColor(Colors.label.swiftUIColor)
-          .hidden(viewModel.isLoadingContribution)
-        
-        LottieView(loading: .primary)
-          .frame(width: 30, height: 20)
-          .hidden(!viewModel.isLoadingContribution)
-      }
-      Text(title)
-        .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.ultraSmall.value))
-        .foregroundColor(Colors.label.swiftUIColor)
-    }
-    .frame(maxWidth: .infinity)
-    .padding(.horizontal, 4)
-    .padding(.vertical, 16)
-    .background(Colors.secondaryBackground.swiftUIColor)
-    .cornerRadius(10)
-  }
-  
-  @ViewBuilder var stickers: some View {
-    if viewModel.showStickers {
-      VStack(alignment: .leading, spacing: 16) {
-        Text(LFLocalizable.Profile.Stickers.title)
-          .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.ultraSmall.value))
-          .foregroundColor(Colors.label.swiftUIColor.opacity(0.75))
-          .padding(.leading, 10)
-        
-        if viewModel.isLoadingContribution {
-          Group {
-            LottieView(loading: .primary)
-              .frame(width: 45, height: 30)
-              .padding()
-          }
-          .frame(height: 80)
-          .frame(maxWidth: .infinity)
-        } else {
-          stickersCarousel
-        }
-      }
-    }
-  }
-  
-  var stickersCarousel: some View {
-    ScrollView(.horizontal, showsIndicators: false) {
-      HStack(spacing: 16) {
-        ForEach(viewModel.stickers) { item in
-          StickerView(type: .profile, sticker: item)
-        }
-      }
-      .padding(.leading, 30)
-    }
-    .padding(.horizontal, -30)
   }
   
   var accountSettings: some View {
@@ -242,7 +160,7 @@ private extension ProfileView {
           viewModel.deleteAccountTapped()
         }
       }
-      Text(LFLocalizable.Profile.Version.title(LFUtility.marketingVersion))
+      Text(LFLocalizable.Profile.Version.title(LFUtilities.marketingVersion))
         .font(Fonts.regular.swiftUIFont(size: 10))
         .foregroundColor(Colors.label.swiftUIColor.opacity(0.5))
     }

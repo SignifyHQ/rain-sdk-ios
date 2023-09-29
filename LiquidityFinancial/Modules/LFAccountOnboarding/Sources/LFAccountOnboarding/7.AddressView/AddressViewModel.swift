@@ -280,7 +280,7 @@ extension AddressViewModel {
   }
   
   private var isStateValid: Bool {
-    if LFUtility.cryptoEnabled {
+    if LFUtilities.cryptoEnabled {
       return !Constants.supportedStates.contains(state.uppercased())
     } else {
       return true
@@ -315,7 +315,7 @@ extension AddressViewModel {
       }
       isLoading = true
       do {
-        async let deregisterEntity = devicesRepository.deregister(deviceId: LFUtility.deviceId, token: UserDefaults.lastestFCMToken)
+        async let deregisterEntity = devicesRepository.deregister(deviceId: LFUtilities.deviceId, token: UserDefaults.lastestFCMToken)
         async let logoutEntity = accountRepository.logout()
         let deregister = try await deregisterEntity
         let logout = try await logoutEntity

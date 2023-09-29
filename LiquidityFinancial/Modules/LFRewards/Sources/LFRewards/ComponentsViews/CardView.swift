@@ -151,7 +151,7 @@ struct CardView: View {
       sheet = .fundraiser(.init(data: .build(from: data.fundraiserDetail, donation: data.donation)))
     case let .cashback(data):
       let reward = data.cashback.formattedAmount(prefix: "$", minFractionDigits: 2, absoluteValue: true)
-      let item = LFLocalizable.CardShare.cashback(reward, LFUtility.shareAppUrl)
+      let item = LFLocalizable.CardShare.cashback(reward, LFUtilities.shareAppUrl)
       sheet = .activityItems([item])
     case .shareDonation:
       break

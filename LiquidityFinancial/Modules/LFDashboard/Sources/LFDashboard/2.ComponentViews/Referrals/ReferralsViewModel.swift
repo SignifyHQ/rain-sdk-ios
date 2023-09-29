@@ -15,7 +15,7 @@ final class ReferralsViewModel: ObservableObject {
   
   var referralLink = ""
   private var referralLinkEnvironment: String {
-    enviromentManager.networkEnvironment == .productionTest ? LFUtility.referrallinkDev : LFUtility.referrallinkProd
+    enviromentManager.networkEnvironment == .productionTest ? LFUtilities.referrallinkDev : LFUtilities.referrallinkProd
   }
 }
 

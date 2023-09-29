@@ -240,7 +240,7 @@ private extension ProfileView {
           viewModel.deleteAccountTapped()
         }
       }
-      Text(LFLocalizable.Profile.Version.title(LFUtility.marketingVersion))
+      Text(LFLocalizable.Profile.Version.title(LFUtilities.marketingVersion))
         .font(Fonts.regular.swiftUIFont(size: 10))
         .foregroundColor(Colors.label.swiftUIColor.opacity(0.5))
     }

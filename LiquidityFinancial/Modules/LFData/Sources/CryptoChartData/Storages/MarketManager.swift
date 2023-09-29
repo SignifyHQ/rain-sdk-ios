@@ -53,7 +53,7 @@ public extension MarketManager {
   
   func fetchData() async throws {
     let models = try await cryptoChartRepository.getCMCSymbolHistories(
-      symbol: LFUtility.cryptoCurrency.uppercased(),
+      symbol: LFUtilities.cryptoCurrency.uppercased(),
       period: CryptoFilterOption.live.interval
     )
     let historicalModels = HistoricalPriceModel.map(entities: models)
@@ -114,7 +114,7 @@ private extension MarketManager {
     Task {
       do {
         let models = try await self.cryptoChartRepository.getCMCSymbolHistories(
-          symbol: LFUtility.cryptoCurrency.uppercased(),
+          symbol: LFUtilities.cryptoCurrency.uppercased(),
           period: option.interval
         )
         let historicalModels = HistoricalPriceModel.map(entities: models)
@@ -191,7 +191,7 @@ private extension MarketManager {
 // MARK: - Websocket Handles
 private extension MarketManager {
   func startPriceWebsocket() {
-    guard let url = URL(string: "wss://api-crypto.dev.liquidity.cc/ws/cmc/\(LFUtility.cryptoCurrency)/live") else {
+    guard let url = URL(string: "wss://api-crypto.dev.liquidity.cc/ws/cmc/\(LFUtilities.cryptoCurrency)/live") else {
       return
     }
     websocketTask = connectSocket(url: url)

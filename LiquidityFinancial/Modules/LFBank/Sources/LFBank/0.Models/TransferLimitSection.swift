@@ -22,7 +22,7 @@ enum TransferLimitSection {
       case .bankWithdraw:
         return LFLocalizable.TransferLimit.BankWithdrawal.title
       case .sendToCard:
-        return LFLocalizable.TransferLimit.SendToCard.title(LFUtility.cardName)
+        return LFLocalizable.TransferLimit.SendToCard.title(LFUtilities.cardName)
       case .spendingLimit:
         return LFLocalizable.TransferLimit.SpendingLimits.title
       case .financialInstitutionsLimit:

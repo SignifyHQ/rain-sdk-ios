@@ -48,7 +48,7 @@ private extension AddAppleWalletView {
       Text(LFLocalizable.AddToWallet.ApplePay.title)
         .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.large.value))
         .foregroundColor(Colors.label.swiftUIColor)
-      Text(LFLocalizable.AddToWallet.ApplePay.description(LFUtility.appName, LFUtility.appName))
+      Text(LFLocalizable.AddToWallet.ApplePay.description(LFUtilities.appName, LFUtilities.appName))
         .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.medium.value))
         .foregroundColor(Colors.label.swiftUIColor.opacity(0.75))
         .multilineTextAlignment(.center)

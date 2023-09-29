@@ -89,6 +89,6 @@ private extension CommonTransactionDetailView {
       prefix: isCryptoBalance ? nil : Constants.CurrencyUnit.usd.symbol,
       minFractionDigits: 2
     ) ?? .empty
-    return isCryptoBalance ? "\(balance) \(LFUtility.cryptoCurrency.uppercased())" : balance
+    return isCryptoBalance ? "\(balance) \(LFUtilities.cryptoCurrency.uppercased())" : balance
   }
 }

@@ -5,16 +5,16 @@ import LFUtilities
 import LFBank
 import BaseDashboard
 import LFCard
+import Factory
 
 struct DashboardView: View {
   
-  private var dataStorages: DashboardRepository
+  @Injected(\.dashboardRepository) var dashboardRepository
   
   let option: TabOption
   
-  init(dataStorages: DashboardRepository, option: TabOption) {
+  init(option: TabOption) {
     self.option = option
-    self.dataStorages = dataStorages
   }
   
   var body: some View {
@@ -25,23 +25,23 @@ struct DashboardView: View {
           viewModel:
             CashViewModel(
               accounts: (
-                accountsFiat: dataStorages.$fiatAccounts,
-                isLoading: dataStorages.$isLoading
+                accountsFiat: dashboardRepository.$fiatAccounts,
+                isLoading: dashboardRepository.$isLoading
               ),
-              linkedAccount: dataStorages.$linkedAccount
+              linkedAccount: dashboardRepository.$linkedAccount
             ),
-          listCardViewModel: ListCardsViewModel(cardData: dataStorages.$cardData)
+          listCardViewModel: ListCardsViewModel(cardData: dashboardRepository.$cardData)
         ) { // handle refresh call back
-          dataStorages.refreshCash()
+          dashboardRepository.refreshCash()
         }
       case .rewards:
         RewardTabView(viewModel: RewardTabViewModel(
-          accounts: (accountsCrypto: dataStorages.$cryptoAccounts, isLoading: dataStorages.$isLoading)
+          accounts: (accountsCrypto: dashboardRepository.$cryptoAccounts, isLoading: dashboardRepository.$isLoading)
         ))
       case .assets:
-        AssetsView(viewModel: AssetsViewModel(isLoading: dataStorages.$isLoading))
+        AssetsView(viewModel: AssetsViewModel(isLoading: dashboardRepository.$isLoading))
       case .account:
-        AccountsView(viewModel: AccountViewModel(achInformationData: dataStorages.$achInformationData, accountsCrypto: dataStorages.$cryptoAccounts))
+        AccountsView(viewModel: AccountViewModel(achInformationData: dashboardRepository.$achInformationData, accountsCrypto: dashboardRepository.$cryptoAccounts))
       }
     }
   }

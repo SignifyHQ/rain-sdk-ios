@@ -109,11 +109,11 @@ extension ConfirmSendCryptoViewModel {
         value: LFLocalizable.ConfirmSendCryptoView.Send.title.uppercased()
       )
     ]
-    if let currentBalance = transaction.currentBalance {
+    if let _ = transaction.currentBalance {
       transactionInfors.append(
         TransactionInformation(
           title: LFLocalizable.TransactionDetail.Balance.title,
-          value: LFUtility.cryptoCurrency.uppercased(),
+          value: LFUtilities.cryptoCurrency.uppercased(),
           markValue: transaction.currentBalance?.formattedAmount(
             minFractionDigits: Constants.FractionDigitsLimit.crypto.minFractionDigits
           )

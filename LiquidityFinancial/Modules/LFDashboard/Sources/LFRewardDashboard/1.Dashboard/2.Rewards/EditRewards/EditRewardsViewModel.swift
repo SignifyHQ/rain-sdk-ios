@@ -175,13 +175,13 @@ class EditRewardsViewModel: ObservableObject {
   
   func handlePopToRootView() {
     rewardDataManager.update(currentSelectReward: APIRewardType.none)
-    LFUtility.popToRootView()
+    LFUtilities.popToRootView()
     navigation = nil
   }
   
   func handleSelectedFundraisersSuccess() {
     rewardDataManager.update(currentSelectReward: APIRewardType.donation)
-    LFUtility.popToRootView()
+    LFUtilities.popToRootView()
     navigation = nil
   }
 }

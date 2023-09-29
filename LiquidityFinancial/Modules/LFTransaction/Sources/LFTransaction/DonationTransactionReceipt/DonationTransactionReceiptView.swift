@@ -82,9 +82,9 @@ private extension DonationTransactionReceiptView {
       style: .underlined(Colors.label.color)
     ) { text in
       if text == terms {
-        openLink(value: LFUtility.termsURL)
+        openLink(value: LFUtilities.termsURL)
       } else if text == privacy {
-        openLink(value: LFUtility.privacyURL)
+        openLink(value: LFUtilities.privacyURL)
       }
     }
     .frame(height: 16)

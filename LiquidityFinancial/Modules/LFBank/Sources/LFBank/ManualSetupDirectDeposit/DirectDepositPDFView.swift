@@ -65,7 +65,7 @@ private extension DirectDepositPDFView {
           .font(Fonts.regular.swiftUIFont(size: 11))
           .lineSpacing(3)
         
-        Text(LFLocalizable.DirectDeposit.Pdf.fifthDescription(LFUtility.appName))
+        Text(LFLocalizable.DirectDeposit.Pdf.fifthDescription(LFUtilities.appName))
           .font(Fonts.regular.swiftUIFont(size: 11))
           .lineSpacing(3)
           .frame(minWidth: 0, maxWidth: .infinity, alignment: .leading)
@@ -195,7 +195,7 @@ private extension DirectDepositPDFView {
 
   var footerView: some View {
     HStack {
-      Text("\(LFUtility.appName) | \(Constants.Default.companyInformation.rawValue) \(LFLocalizable.DirectDeposit.Pdf.emailText(LFUtility.appName))")
+      Text("\(LFUtilities.appName) | \(Constants.Default.companyInformation.rawValue) \(LFLocalizable.DirectDeposit.Pdf.emailText(LFUtilities.appName))")
         .frame(width: 270.0, height: 50.0, alignment: .leading)
         .font(Fonts.regular.swiftUIFont(size: 10))
         .foregroundColor(Colors.separator.swiftUIColor)
@@ -291,7 +291,7 @@ extension DirectDepositPDFView {
     let pdfVC = UIHostingController(rootView: printView)
 
     // Render the view behind all other views
-    let rootVC = LFUtility.rootViewController
+    let rootVC = LFUtilities.rootViewController
     rootVC?.addChild(pdfVC)
     rootVC?.view.insertSubview(pdfVC.view, at: 0)
 

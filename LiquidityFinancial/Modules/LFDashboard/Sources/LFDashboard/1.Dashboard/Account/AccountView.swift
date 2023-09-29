@@ -67,7 +67,7 @@ struct AccountsView: View {
       .sheet(item: $viewModel.sheet, content: { sheet in
         switch sheet {
         case .legal:
-          if let url = URL(string: LFUtility.termsURL) {
+          if let url = URL(string: LFUtilities.termsURL) {
             WebView(url: url)
               .ignoresSafeArea()
           }

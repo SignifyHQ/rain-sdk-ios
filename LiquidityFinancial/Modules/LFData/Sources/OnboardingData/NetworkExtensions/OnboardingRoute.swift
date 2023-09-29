@@ -42,7 +42,7 @@ extension OnboardingRoute: LFRoute {
     case .refreshToken:
       return base
     case .otp, .login:
-      base["ld-device-id"] = LFUtility.deviceId
+      base["ld-device-id"] = LFUtilities.deviceId
       return base
     case .onboardingState(let sessionId):
       base["Accept"] = "application/json"

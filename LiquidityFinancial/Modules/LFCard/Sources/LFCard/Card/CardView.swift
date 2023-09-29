@@ -62,7 +62,7 @@ struct CardView: View {
 private extension CardView {
   var physicalTitleView: some View {
     HStack {
-      Text(LFLocalizable.Card.Physical.name(LFUtility.cardName))
+      Text(LFLocalizable.Card.Physical.name(LFUtilities.cardName))
         .font(Fonts.bold.swiftUIFont(size: Constants.FontSize.medium.value))
         .foregroundColor(Colors.contrast.swiftUIColor)
     }

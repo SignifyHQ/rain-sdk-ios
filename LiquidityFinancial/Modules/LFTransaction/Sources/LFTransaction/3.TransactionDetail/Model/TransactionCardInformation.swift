@@ -36,7 +36,7 @@ public extension TransactionCardInformation {
     case .donation:
       return LFLocalizable.TransactionCard.Donation.title
     case .crypto:
-      return LFLocalizable.TransactionCard.Crypto.title(LFUtility.cardName)
+      return LFLocalizable.TransactionCard.Crypto.title(LFUtilities.cardName)
     default:
       return .empty
     }

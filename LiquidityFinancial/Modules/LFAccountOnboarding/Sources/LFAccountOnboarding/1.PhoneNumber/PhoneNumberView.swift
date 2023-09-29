@@ -192,7 +192,7 @@ private extension PhoneNumberView {
       links: [LFLocalizable.Term.PrivacyPolicy.attributeText],
       style: .fillColor(Colors.termAndPrivacy.color)
     ) { _ in
-      guard let url = URL(string: LFUtility.privacyURL) else { return }
+      guard let url = URL(string: LFUtilities.privacyURL) else { return }
       openURL(url)
     }
     .frame(height: 90)

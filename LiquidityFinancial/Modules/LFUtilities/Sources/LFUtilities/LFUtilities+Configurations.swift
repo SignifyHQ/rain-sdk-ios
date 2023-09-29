@@ -1,8 +1,7 @@
-import UIKit
-import StoreKit
+import Foundation
 
 // swiftlint: disable force_try fallthrough force_cast
-public enum LFUtility {
+extension LFUtilities {
   public static var personaCallback = "https://personacallback"
   public static var termsURL: String = try! LFConfiguration.value(for: "TERMS_URL")
   public static var accountAgreementURL: String = try! LFConfiguration.value(for: "ACCOUNT_AGREEMENT_URL")
@@ -37,7 +36,7 @@ public enum LFConfiguration {
     case invalidValue
   }
   
-  //IT SUPPORT FOR RUN CODE UI IN PREVIEWS
+    //IT SUPPORT FOR RUN CODE UI IN PREVIEWS
   static var isPreview: Bool {
     ProcessInfo.processInfo.environment["XCODE_RUNNING_FOR_PREVIEWS"] == "1"
   }
@@ -59,101 +58,5 @@ public enum LFConfiguration {
         throw Error.invalidValue
       }
     }
-  }
-}
-// Helpers
-extension LFUtility {
-  public static func showRatingAlert() {
-    if let scene = UIApplication.shared.connectedScenes.first(where: { $0.activationState == .foregroundActive }) as? UIWindowScene {
-      DispatchQueue.main.async {
-        SKStoreReviewController.requestReview(in: scene)
-      }
-    }
-  }
-}
-
-// Navigation
-extension LFUtility {
-  public static var rootViewController: UIViewController? {
-    UIApplication
-      .shared
-      .connectedScenes
-      .flatMap { ($0 as? UIWindowScene)?.windows ?? [] }
-      .first(where: \.isKeyWindow)?
-      .rootViewController
-  }
-  
-  public static var visibleViewController: UIViewController? {
-    UIApplication
-      .shared
-      .connectedScenes
-      .flatMap { ($0 as? UIWindowScene)?.windows ?? [] }
-      .first(where: \.isKeyWindow)?
-      .visibleViewController
-  }
-  
-  public static func popToRootView() {
-    popToRootModalView()
-    popToRootNavigationView()
-  }
-  
-  private static func popToRootModalView() {
-    rootViewController?.dismiss(animated: true)
-  }
-  
-  private static func popToRootNavigationView() {
-    findNavigationController(viewController: rootViewController)?.popToRootViewController(animated: true)
-  }
-  
-  private static func findNavigationController(viewController: UIViewController?) -> UINavigationController? {
-    guard let viewController = viewController else {
-      return nil
-    }
-    if let navigationController = viewController as? UINavigationController {
-      return navigationController
-    }
-    for childViewController in viewController.children {
-      return findNavigationController(viewController: childViewController)
-    }
-    return nil
-  }
-}
-
-extension LFUtility {
-  public static var cryptoCurrency: String {
-    switch LFUtilities.target {
-    case .DogeCard:
-      return "Doge"
-    case .Avalanche:
-      return "AVAX"
-    case .Cardano:
-      return "ADA"
-    default:
-      return .empty
-    }
-  }
-  
-  public static var cardName: String {
-    switch LFUtilities.target {
-    case .DogeCard:
-      return "Doge"
-    case .Avalanche:
-      return "Avalanche"
-    case .Cardano:
-      return "Cardano"
-    case .CauseCard:
-      return "Cause"
-    case .PrideCard:
-      return "Pride"
-    default:
-      return .empty
-    }
-  }
-}
-
-extension LFUtility {
-  
-  public static var deviceId: String {
-    UIDevice.current.identifierForVendor?.uuidString ?? .empty
   }
 }

@@ -16,7 +16,7 @@ struct BankTransfersView: View {
           bankTransfersView
           GenImages.CommonImages.dash.swiftUIImage
             .foregroundColor(Colors.label.swiftUIColor)
-          Text(LFLocalizable.BankTransfers.Disclosure.message(LFUtility.appName))
+          Text(LFLocalizable.BankTransfers.Disclosure.message(LFUtilities.appName))
             .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.medium.value))
             .foregroundColor(Colors.label.swiftUIColor.opacity(0.75))
         }
@@ -41,7 +41,7 @@ private extension BankTransfersView {
   var bankTransfersView: some View {
     VStack(alignment: .leading, spacing: 12) {
       sectionTitle(text: LFLocalizable.BankTransfers.Screen.title)
-      Text(LFLocalizable.BankTransfers.HowTo.title(LFUtility.appName))
+      Text(LFLocalizable.BankTransfers.HowTo.title(LFUtilities.appName))
       .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.medium.value))
       .foregroundColor(Colors.label.swiftUIColor.opacity(0.75))
       .padding(.bottom, 4)

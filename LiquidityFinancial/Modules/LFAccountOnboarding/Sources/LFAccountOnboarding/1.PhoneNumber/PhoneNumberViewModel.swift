@@ -57,11 +57,11 @@ extension PhoneNumberViewModel {
 extension PhoneNumberViewModel {
   func getURL(tappedString: String) -> String {
     if tappedString == terms {
-      return LFUtility.termsURL
+      return LFUtilities.termsURL
     } else if tappedString == esignConsent {
-      return LFUtility.consentURL
+      return LFUtilities.consentURL
     } else {
-      return LFUtility.privacyURL
+      return LFUtilities.privacyURL
     }
   }
   

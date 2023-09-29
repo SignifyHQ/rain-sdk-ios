@@ -39,11 +39,11 @@ public struct ShareItemData {
       backgroundColor = fundraiserDetail.fundraiser?.backgroundColor?.asHexColor ?? ModuleColors.separator.swiftUIColor
       imageUrl = fundraiserDetail.stickerUrl
       
-      messageGeneric = LFLocalizable.Fundraise.ShareDonation.generic(fundraiserDetail.charityName, LFUtility.appName, fundraiserDetail.name)
+      messageGeneric = LFLocalizable.Fundraise.ShareDonation.generic(fundraiserDetail.charityName, LFUtilities.appName, fundraiserDetail.name)
       if let donation {
         let amount = donation.formattedAmount(prefix: "$", minFractionDigits: 2, absoluteValue: true)
         
-        messageDonation = LFLocalizable.Fundraise.ShareDonation.amount(amount, fundraiserDetail.charityName, LFUtility.appName, fundraiserDetail.name)
+        messageDonation = LFLocalizable.Fundraise.ShareDonation.amount(amount, fundraiserDetail.charityName, LFUtilities.appName, fundraiserDetail.name)
       } else {
         messageDonation = messageGeneric
       }
@@ -71,7 +71,7 @@ extension ShareItemData {
     .init(
       card: .init(fundraiserDetail: fundraiserDetail, donation: donation),
       message: String(format: LFLocalizable.Cause.Share.Card.fundraiser(fundraiserDetail.name)),
-      attachmentUrl: fundraiserDetail.charityUrl ?? .init(string: LFUtility.shareAppUrl),
+      attachmentUrl: fundraiserDetail.charityUrl ?? .init(string: LFUtilities.shareAppUrl),
       showAmountToggle: donation != nil
     )
   }
@@ -80,12 +80,12 @@ extension ShareItemData {
     .init(
       card: .init(
         title: sticker.name,
-        message: LFLocalizable.Fundraise.ShareDonation.generic(sticker.name, LFUtility.appName, sticker.charityName ?? sticker.name),
+        message: LFLocalizable.Fundraise.ShareDonation.generic(sticker.name, LFUtilities.appName, sticker.charityName ?? sticker.name),
         backgroundColor: sticker.backgroundColor?.asHexColor,
         imageUrl: sticker.url
       ),
       message: LFLocalizable.Cause.Share.Card.fundraiser(sticker.name),
-      attachmentUrl: .init(string: LFUtility.shareAppUrl),
+      attachmentUrl: .init(string: LFUtilities.shareAppUrl),
       showAmountToggle: false
     )
   }

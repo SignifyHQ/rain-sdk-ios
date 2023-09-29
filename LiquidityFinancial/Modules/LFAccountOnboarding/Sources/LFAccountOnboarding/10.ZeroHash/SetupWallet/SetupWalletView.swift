@@ -39,7 +39,7 @@ struct SetupWalletView: View {
               .frame(width: geo.size.width, alignment: .leading)
               .padding(.bottom, 20)
               .padding(.top, 15)
-            Text(LFLocalizable.SetUpWallet.info(LFUtility.appName))
+            Text(LFLocalizable.SetUpWallet.info(LFUtilities.appName))
               .foregroundColor(Colors.label.swiftUIColor)
               .opacity(0.75)
               .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.medium.value))
@@ -122,15 +122,15 @@ extension SetupWalletView {
         style: .underlined(Colors.cryptoTermsUnderline.color)
       ) { tappedString in
         if tappedString == strUserAgreement {
-          if let url = URL(string: LFUtility.zerohashURL) {
+          if let url = URL(string: LFUtilities.zerohashURL) {
             openURL(url)
           }
         } else if tappedString == strDiscloures {
-          if let url = URL(string: LFUtility.disclosureURL) {
+          if let url = URL(string: LFUtilities.disclosureURL) {
             openURL(url)
           }
         } else {
-          if let url = URL(string: LFUtility.walletPrivacyURL) {
+          if let url = URL(string: LFUtilities.walletPrivacyURL) {
             openURL(url)
           }
         }

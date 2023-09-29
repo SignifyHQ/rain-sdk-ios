@@ -7,10 +7,7 @@ import LFServices
 
 @MainActor
 final class ProfileViewModel: ObservableObject {
-  @Published var isLoadingContribution: Bool = false
-  @Published var showContributionToast: Bool = false
   @Published var isLoading: Bool = false
-  @Published var contribution: Contribution?
   @Published var navigation: Navigation?
   @Published var popup: Popup?
   @Published var notificationsEnabled = false
@@ -36,21 +33,6 @@ final class ProfileViewModel: ObservableObject {
     accountDataManager.userInfomationData.email ?? ""
   }
 
-  var totalDonations: String {
-    guard let totalDonations = contribution?.totalDonations else {
-      return Constants.Default.undefinedSymbol.rawValue
-    }
-    return String(totalDonations)
-  }
-
-  var totalDonated: String {
-    contribution?.totalAmount.formattedAmount(prefix: Constants.CurrencyUnit.usd.rawValue) ?? Constants.Default.undefinedSymbol.rawValue
-  }
-
-  var stickers: [Sticker] {
-    contribution?.stickers ?? []
-  }
-
   var phoneNumber: String {
     let phoneNumber = accountDataManager.userInfomationData.phone ?? accountDataManager.phoneNumber
     return phoneNumber.formattedUSPhoneNumber()
@@ -58,17 +40,6 @@ final class ProfileViewModel: ObservableObject {
 
   var address: String {
     accountDataManager.addressDetail
-  }
-  
-  var showContribution: Bool {
-    LFUtility.charityEnabled
-  }
-
-  var showStickers: Bool {
-    guard LFUtility.charityEnabled else {
-      return false
-    }
-    return isLoadingContribution || !stickers.isEmpty
   }
   
   init() {
@@ -79,9 +50,7 @@ final class ProfileViewModel: ObservableObject {
 // MARK: - Actions
 extension ProfileViewModel {
   func onAppear() {
-    Task {
-      await loadContribution()
-    }
+
   }
   
   func showReferrals() {
@@ -114,7 +83,7 @@ extension ProfileViewModel {
       }
       isLoading = true
       do {
-        async let deregisterEntity = devicesRepository.deregister(deviceId: LFUtility.deviceId, token: UserDefaults.lastestFCMToken)
+        async let deregisterEntity = devicesRepository.deregister(deviceId: LFUtilities.deviceId, token: UserDefaults.lastestFCMToken)
         async let logoutEntity = accountRepository.logout()
         let deregister = try await deregisterEntity
         let logout = try await logoutEntity
@@ -159,12 +128,6 @@ extension ProfileViewModel {
   
   func pushFCMTokenIfNeed() {
     dashboardRepository.pushFCMTokenIfNeed()
-  }
-}
-
-extension ProfileViewModel {
-  private func loadContribution() async {
-    // TODO: Will be implemented later
   }
 }
 

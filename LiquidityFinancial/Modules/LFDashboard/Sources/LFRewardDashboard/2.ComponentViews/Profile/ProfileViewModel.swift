@@ -69,7 +69,7 @@ final class ProfileViewModel: ObservableObject {
   }
   
   var showContribution: Bool {
-    LFUtility.charityEnabled
+    LFUtilities.charityEnabled
   }
 
   var showStickers: Bool {

@@ -33,7 +33,7 @@ public struct HomeView: View {
     VStack(spacing: 0) {
       ZStack {
         ForEach(tabOptions, id: \.self) { option in
-          DashboardView(dataStorages: dashboardRepository, option: option)
+          DashboardView(option: option)
           .opacity(viewModel.tabSelected == option ? 1 : 0)
         }
       }

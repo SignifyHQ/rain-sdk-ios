@@ -43,7 +43,7 @@ struct AddSignatureSuccessView: View {
     .navigationBarBackButtonHidden(true)
     .background(Colors.background.swiftUIColor)
     .defaultToolBar(icon: .xMark, onDismiss: {
-      LFUtility.popToRootView()
+      LFUtilities.popToRootView()
     })
     .onAppear {
       DirectDepositPDFView(viewModel: viewModel).exportToPDF()

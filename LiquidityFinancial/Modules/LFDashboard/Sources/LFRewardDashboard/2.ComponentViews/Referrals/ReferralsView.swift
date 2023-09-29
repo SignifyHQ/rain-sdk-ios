@@ -21,8 +21,8 @@ struct ReferralsView: View {
   }
   
   private func example(_ campaign: ReferralCampaign) -> String {
-    if LFUtility.cryptoEnabled {
-      return LFLocalizable.Referral.Example.crypto(LFUtility.appName, LFUtility.appName)
+    if LFUtilities.cryptoEnabled {
+      return LFLocalizable.Referral.Example.crypto(LFUtilities.appName, LFUtilities.appName)
     } else {
       return LFLocalizable.Referral.Example.donation(
         campaign.inviterBonusDisplay, campaign.periodDisplay, campaign.inviterBonusDisplay
@@ -40,7 +40,7 @@ private extension ReferralsView {
           .resizable()
           .scaledToFit()
           .frame(max: .infinity)
-        Text(LFUtility.appName.uppercased())
+        Text(LFUtilities.appName.uppercased())
           .font(Fonts.Montserrat.black.swiftUIFont(size: Constants.FontSize.navigationBar.value))
           .foregroundColor(Colors.label.swiftUIColor)
           .padding(.leading, 12)

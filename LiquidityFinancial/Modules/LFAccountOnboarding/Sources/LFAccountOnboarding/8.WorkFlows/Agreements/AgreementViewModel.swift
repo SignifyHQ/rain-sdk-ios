@@ -195,6 +195,6 @@ extension AgreementViewModel {
   var description: String {
     isTransferTerms
     ? LFLocalizable.Question.TransferTerms.description
-    : LFLocalizable.Question.AccountTerms.description(LFUtility.appName)
+    : LFLocalizable.Question.AccountTerms.description(LFUtilities.appName)
   }
 }

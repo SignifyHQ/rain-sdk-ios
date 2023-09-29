@@ -49,7 +49,7 @@ extension AddFundsViewModel {
       do {
         let sessionID = accountDataManager.sessionID
         let tokenResponse = try await nsPersionRepository.getAuthorizationCode(sessionId: sessionID)
-        let usingParams = ["redirectUri": LFUtility.universalLink]
+        let usingParams = ["redirectUri": LFUtilities.universalLink]
         log.info("NetSpend openWithPurpose usingParams: \(usingParams)")
         let controller = try NetspendSdk.shared.openWithPurpose(
           purpose: .linkBank,

@@ -21,8 +21,8 @@ struct ReferralsView: View {
   }
   
   private func example(_ campaign: ReferralCampaign) -> String {
-    if LFUtility.cryptoEnabled {
-      return LFLocalizable.Referral.Example.crypto(LFUtility.appName, LFUtility.appName)
+    if LFUtilities.cryptoEnabled {
+      return LFLocalizable.Referral.Example.crypto(LFUtilities.appName, LFUtilities.appName)
     } else {
       return LFLocalizable.Referral.Example.donation(
         campaign.inviterBonusDisplay, campaign.periodDisplay, campaign.inviterBonusDisplay

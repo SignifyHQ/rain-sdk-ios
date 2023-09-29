@@ -22,7 +22,7 @@ struct EmailShareItem: ShareItem {
   }
 
   func share(card: UIImage?) {
-    guard let viewController = LFUtility.visibleViewController else {
+    guard let viewController = LFUtilities.visibleViewController else {
       return log.error("Unable to find visible view controller for EmailShareItem")
     }
 

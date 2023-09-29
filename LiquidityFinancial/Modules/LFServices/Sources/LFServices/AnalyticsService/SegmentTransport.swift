@@ -13,7 +13,7 @@ class SegmentTransport: AnalyticsTransportProtocol {
     
     Analytics.setup(with: configuration)
     
-    Analytics.shared().group(LFUtility.appName, traits: [:])
+    Analytics.shared().group(LFUtilities.appName, traits: [:])
   }
   
   func track(event: EventType) {
