@@ -17,7 +17,7 @@ class SelectBankAccountViewModel: ObservableObject {
   @LazyInjected(\.externalFundingRepository) var externalFundingRepository
   @LazyInjected(\.netspendDataManager) var netspendDataManager
   @LazyInjected(\.accountDataManager) var accountDataManager
-  @LazyInjected(\.authenticationService) var authenticationService
+  @LazyInjected(\.biometricsService) var biometricsService
   @LazyInjected(\.analyticsService) var analyticsService
   @LazyInjected(\.nsPersionRepository) var nsPersionRepository
   @LazyInjected(\.intercomService) var intercomService
@@ -74,7 +74,7 @@ class SelectBankAccountViewModel: ObservableObject {
   
   func callBioMetric() {
     Task {
-      if await authenticationService.authenticateWithBiometrics() {
+      if await biometricsService.authenticateWithBiometrics() {
         callTransferAPI()
       }
     }

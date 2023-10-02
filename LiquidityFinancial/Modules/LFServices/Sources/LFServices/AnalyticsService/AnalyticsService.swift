@@ -7,6 +7,7 @@ extension Container {
     self {
       let analytics = AnalyticsService()
       analytics.addTransport(SegmentTransport())
+      analytics.addTransport(DataDogTransport())
       return analytics
     }.singleton
   }

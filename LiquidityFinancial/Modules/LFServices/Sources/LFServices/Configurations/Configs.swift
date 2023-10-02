@@ -46,4 +46,14 @@ enum Configs {
       (try? LFConfiguration.value(for: "SEGMENT_DEV_KEY")) ?? .empty
     }
   }
+  
+  enum DataDog {
+    static var appID: String {
+      "4af1360f-bb0f-456f-b267-b34a63c4b9b4"
+    }
+    
+    static var clientToken: String {
+      "pub691559048fc10b3b4d3096efed1e69be"
+    }
+  }
 }

@@ -12,7 +12,7 @@ import LFServices
 
 @MainActor
 public class MoveMoneyAccountViewModel: ObservableObject {
-  @LazyInjected(\.authenticationService) var authenticationService
+  @LazyInjected(\.biometricsService) var biometricsService
   @LazyInjected(\.accountRepository) var accountRepository
   @LazyInjected(\.accountDataManager) var accountDataManager
   @LazyInjected(\.externalFundingRepository) var externalFundingRepository
@@ -124,7 +124,7 @@ extension MoveMoneyAccountViewModel {
   
   func callBioMetric() {
     Task {
-      if await authenticationService.authenticateWithBiometrics() {
+      if await biometricsService.authenticateWithBiometrics() {
         callTransferAPI()
       }
     }

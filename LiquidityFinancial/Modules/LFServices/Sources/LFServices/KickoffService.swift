@@ -5,6 +5,9 @@ import LFUtilities
 import Intercom
 import Firebase
 import Factory
+import DatadogRUM
+import DatadogTrace
+import DatadogCore
 
 public enum KickoffService {
   
@@ -16,6 +19,7 @@ public enum KickoffService {
     kickoffFirebase()
     kickoffNetspend()
     kichOffIntercom()
+    kickoffDataDog()
     kickoffPushNotifications(application: application)
   }
   
@@ -67,5 +71,29 @@ extension KickoffService {
   private static func kickoffPushNotifications(application: UIApplication) {
     Container.shared.pushNotificationService.resolve().setUp()
     application.registerForRemoteNotifications()
+  }
+}
+
+// MARK: DataDoge
+extension KickoffService {
+  private static func kickoffDataDog() {
+    let appID = Configs.DataDog.appID
+    let clientToken = Configs.DataDog.clientToken
+    let environment = networkEnvironment.rawValue
+    Datadog.initialize(
+      with: Datadog.Configuration(
+        clientToken: clientToken, env: environment, site: .us5, service: LFUtilities.appName
+      ),
+      trackingConsent: .granted
+    )
+    
+    DatadogRUM.RUM.enable(
+      with: RUM.Configuration(
+        applicationID: appID,
+        urlSessionTracking: RUM.Configuration.URLSessionTracking(),
+        trackBackgroundEvents: true
+      )
+    )
+    log.addDestination(DataDogLogDestination())
   }
 }

@@ -5,14 +5,14 @@ import LFUtilities
 import Factory
 
 extension Container {
-  public var authenticationService: Factory<AuthenticationService> {
+  public var biometricsService: Factory<BiometricsService> {
     self {
-      AuthenticationService()
+      BiometricsService()
     }.singleton
   }
 }
 
-public struct AuthenticationService {
+public struct BiometricsService {
   private(set) var context = LAContext()
   
   public func authenticateWithBiometrics() async -> Bool {

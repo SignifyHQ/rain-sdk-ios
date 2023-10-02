@@ -12,7 +12,7 @@ class ConfirmSendCryptoViewModel: ObservableObject {
   @LazyInjected(\.accountDataManager) var accountDataManager
   @LazyInjected(\.zerohashRepository) var zerohashRepository
   @LazyInjected(\.accountRepository) var accountRepository
-  @LazyInjected(\.authenticationService) var authenticationService
+  @LazyInjected(\.biometricsService) var biometricsService
   
   @Published var showIndicator: Bool = false
   @Published var toastMessage: String?
@@ -43,7 +43,7 @@ class ConfirmSendCryptoViewModel: ObservableObject {
   
   func callBioMetric() {
     Task {
-      if await authenticationService.authenticateWithBiometrics() {
+      if await biometricsService.authenticateWithBiometrics() {
         callTransferAPI()
       }
     }

@@ -17,7 +17,8 @@ let package = Package(
       .package(url: "https://github.com/marinofelipe/CurrencyText.git", from: "3.0.0"),
       .package(url: "https://github.com/hmlongco/Factory", from: "2.2.0"),
       .package(url: "https://github.com/firebase/firebase-ios-sdk", from: "10.0.0"),
-      .package(url: "https://github.com/segmentio/analytics-ios", from: "4.1.8")
+      .package(url: "https://github.com/segmentio/analytics-ios", from: "4.1.8"),
+      .package(url: "https://github.com/Datadog/dd-sdk-ios.git", from: "2.2.1")
     ],
     targets: [
         .target(
@@ -29,7 +30,11 @@ let package = Package(
               .product(name: "PinwheelSDK", package: "pinwheel-ios-sdk"),
               .product(name: "CurrencyText", package: "CurrencyText"),
               .product(name: "Intercom", package: "intercom-ios"),
-              .product(name: "FirebaseMessaging", package: "firebase-ios-sdk")
+              .product(name: "FirebaseMessaging", package: "firebase-ios-sdk"),
+              .product(name:  "DatadogCore", package: "dd-sdk-ios"),
+              .product(name:  "DatadogTrace", package: "dd-sdk-ios"),
+              .product(name:  "DatadogRUM", package: "dd-sdk-ios"),
+              .product(name:  "DatadogLogs", package: "dd-sdk-ios")
             ],
             resources: [
               .process("Resources")

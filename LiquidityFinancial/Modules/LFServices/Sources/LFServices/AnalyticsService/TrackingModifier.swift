@@ -1,4 +1,5 @@
 import SwiftUI
+import DatadogRUM
 import Factory
 
 // MARK: - TrackingModifier
@@ -11,6 +12,7 @@ struct TrackingModifier: ViewModifier {
   
   func body(content: Content) -> some View {
     content
+      .trackRUMView(name: name)
       .onAppear {
         analyticsService.track(screen: name, appear: true)
       }
