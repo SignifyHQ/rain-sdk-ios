@@ -190,9 +190,9 @@ public enum LFLocalizable {
       }
     }
     public enum Send {
-      /// You currently have %@ Dogecoin available to sell. Doge Rewards are not available to sell until 48 hours after they are earned.
+      /// You currently have %@ DOGE available to send. DOGE Rewards are not available to send until 48 hours after they are earned.
       public static func annotation(_ p1: Any) -> String {
-        return LFLocalizable.tr("Localizable", "MoveCryptoInput.send.annotation", String(describing: p1), fallback: "You currently have %@ Dogecoin available to sell. Doge Rewards are not available to sell until 48 hours after they are earned.")
+        return LFLocalizable.tr("Localizable", "MoveCryptoInput.send.annotation", String(describing: p1), fallback: "You currently have %@ DOGE available to send. DOGE Rewards are not available to send until 48 hours after they are earned.")
       }
       /// The estimated network fee is an approximation and the actual network fee applied on a withdrawal may differ.
       public static let estimatedFee = LFLocalizable.tr("Localizable", "MoveCryptoInput.send.estimated_fee", fallback: "The estimated network fee is an approximation and the actual network fee applied on a withdrawal may differ.")
