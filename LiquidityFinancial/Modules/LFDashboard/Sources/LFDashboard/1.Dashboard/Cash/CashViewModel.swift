@@ -14,6 +14,7 @@ import BaseDashboard
 @MainActor
 final class CashViewModel: ObservableObject {
   @LazyInjected(\.accountRepository) var accountRepository
+  @LazyInjected(\.dashboardRepository) var dashboardRepository
   @LazyInjected(\.accountDataManager) var accountDataManager
   @LazyInjected(\.externalFundingRepository) var externalFundingRepository
   
@@ -50,46 +51,44 @@ final class CashViewModel: ObservableObject {
   
   private var cancellable: Set<AnyCancellable> = []
   
-  init(
-    accounts: (
-      accountsFiat: Published<[LFAccount]>.Publisher,
-      isLoading: Published<Bool>.Publisher
-    ),
-    linkedAccount: Published<[APILinkedSourceData]>.Publisher
-  ) {
-    
-    accounts.accountsFiat
-      .receive(on: DispatchQueue.main)
-      .sink { [weak self] accounts in
-        self?.assets = accounts.map {
-          AssetModel(
-            id: $0.id,
-            type: AssetType(rawValue: $0.currency.uppercased()),
-            availableBalance: $0.availableBalance,
-            availableUsdBalance: $0.availableUsdBalance,
-            externalAccountId: $0.externalAccountId
-          )
+  init() {
+    dashboardRepository.$fiatData.receive(on: DispatchQueue.main)
+      .sink { [weak self] fiatData in
+        if fiatData.loading {
+          self?.assets = fiatData.fiatAccount.map {
+            AssetModel(
+              id: $0.id,
+              type: AssetType(rawValue: $0.currency.uppercased()),
+              availableBalance: $0.availableBalance,
+              availableUsdBalance: $0.availableUsdBalance,
+              externalAccountId: $0.externalAccountId
+            )
+          }
+          if let account = fiatData.fiatAccount.first {
+            self?.accountDataManager.fiatAccountID = account.id
+            self?.accountDataManager.externalAccountID = account.externalAccountId
+            self?.cashBalanceValue = account.availableBalance
+            self?.selectedAsset = AssetType(rawValue: account.currency) ?? .usd
+            self?.firstLoadData(with: account.id)
+          }
         }
-        if let account = accounts.first { // TODO: Temp Just get one
-          self?.accountDataManager.fiatAccountID = account.id
-          self?.accountDataManager.externalAccountID = account.externalAccountId
-          self?.cashBalanceValue = account.availableBalance
-          self?.selectedAsset = AssetType(rawValue: account.currency) ?? .usd
-          self?.firstLoadData(with: account.id)
-        }
+        
+        self?.isLoading = fiatData.loading
       }
       .store(in: &cancellable)
     
-    accounts.isLoading
-      .assign(to: \.isLoading, on: self)
-      .store(in: &cancellable)
-    
-    linkedAccount
-      .assign(to: \.linkedAccount, on: self)
-      .store(in: &cancellable)
-    
+    subscribeLinkedAccounts()
     handleFundingAgreementData()
     handleEventReloadTransaction()
+  }
+  
+  func subscribeLinkedAccounts() {
+    accountDataManager.subscribeLinkedSourcesChanged { [weak self] entities in
+      guard let self = self else { return }
+      let linkedSources = entities.compactMap({ APILinkedSourceData(entity: $0) })
+      self.linkedAccount = linkedSources
+    }
+    .store(in: &cancellable)
   }
   
   func handleEventReloadTransaction() {
@@ -104,9 +103,12 @@ final class CashViewModel: ObservableObject {
   }
   
   func onRefresh() {
+    
+    dashboardRepository.refreshCash()
+    
     guard let accountID = accountDataManager.fiatAccountID else { return }
     guard activity != .loading else { return }
-    refreshTransaction(withAnimation: false, accountID: accountID)
+    refreshTransaction(withAnimation: true, accountID: accountID)
   }
   
   func firstLoadData(with accountID: String) {

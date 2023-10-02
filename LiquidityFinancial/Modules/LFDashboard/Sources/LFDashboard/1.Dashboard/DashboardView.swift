@@ -22,24 +22,15 @@ struct DashboardView: View {
       switch option {
       case .cash:
         CashView(
-          viewModel:
-            CashViewModel(
-              accounts: (
-                accountsFiat: dashboardRepository.$fiatAccounts,
-                isLoading: dashboardRepository.$isLoading
-              ),
-              linkedAccount: dashboardRepository.$linkedAccount
-            ),
+          viewModel: CashViewModel(),
           listCardViewModel: ListCardsViewModel(cardData: dashboardRepository.$cardData)
-        ) { // handle refresh call back
-          dashboardRepository.refreshCash()
-        }
+        )
       case .rewards:
-        RewardTabView(isLoading: dashboardRepository.$isLoadingRewardTab)
+        RewardTabView()
       case .assets:
         AssetsView(viewModel: AssetsViewModel())
       case .account:
-        AccountsView(viewModel: AccountViewModel(achInformationData: dashboardRepository.$achInformationData, accountsCrypto: dashboardRepository.$cryptoAccounts))
+        AccountsView(viewModel: AccountViewModel())
       }
     }
   }

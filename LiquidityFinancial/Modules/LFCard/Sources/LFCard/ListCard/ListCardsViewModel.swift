@@ -16,13 +16,11 @@ import LFLocalizable
 @MainActor
 public final class ListCardsViewModel: ObservableObject {
   @LazyInjected(\.netspendDataManager) var netspendDataManager
-  @LazyInjected(\.intercomService) var intercomService
   @LazyInjected(\.accountDataManager) var accountDataManager
-  @LazyInjected(\.cardRepository) var cardRepository
-  
-  @LazyInjected(\.rewardRepository) var rewardRepository
   @LazyInjected(\.rewardDataManager) var rewardDataManager
-  
+  @LazyInjected(\.cardRepository) var cardRepository
+  @LazyInjected(\.rewardRepository) var rewardRepository
+  @LazyInjected(\.intercomService) var intercomService
   @LazyInjected(\.analyticsService) var analyticsService
   
   @Published var isInit: Bool = false
@@ -47,7 +45,7 @@ public final class ListCardsViewModel: ObservableObject {
     NSCardUseCase(repository: cardRepository)
   }()
   
-  lazy var rewardUseCase: RewardUseCase = {
+  lazy var rewardUseCase: RewardUseCaseProtocol = {
     RewardUseCase(repository: rewardRepository)
   }()
   

@@ -86,7 +86,9 @@ private extension AccountsView {
   var content: some View {
     ScrollView {
       VStack(alignment: .leading, spacing: 24) {
+        
         connectedAccountsSection
+        
         section(title: LFLocalizable.AccountView.connectNewAccounts) {
           AddFundsView(
             viewModel: viewModel.addFundsViewModel,
@@ -94,9 +96,11 @@ private extension AccountsView {
             isDisableView: $viewModel.isDisableView
           )
         }
+        
         section(title: LFLocalizable.AccountView.cardAccountDetails) {
           accountDetailView
         }
+        
         if viewModel.assets.isNotEmpty {
           section(title: LFLocalizable.AccountView.wallets) {
             ForEach(viewModel.assets, id: \.externalAccountId) { asset in
@@ -104,9 +108,11 @@ private extension AccountsView {
             }
           }
         }
+        
         section(title: LFLocalizable.AccountView.shortcuts) {
           shortcutSection
         }
+        
         bottomDisclosure
         Spacer()
       }

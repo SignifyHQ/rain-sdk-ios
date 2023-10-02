@@ -10,6 +10,7 @@ import BaseDashboard
 class RewardTabViewModel: ObservableObject {
   @LazyInjected(\.accountDataManager) var accountDataManager
   @LazyInjected(\.accountRepository) var accountRepository
+  @LazyInjected(\.dashboardRepository) var dashboardRepository
   
   @Published var selectedRewardCurrency: AssetType?
   @Published var toastMessage: String = ""
@@ -25,8 +26,9 @@ class RewardTabViewModel: ObservableObject {
   var transactionTypes = Constants.TransactionTypesRequest.rewardCryptoBack.types
   private var cancellable: Set<AnyCancellable> = []
   
-  init(isLoading: Published<Bool>.Publisher) {
-    isLoading
+  init() {
+    dashboardRepository
+      .$isLoadingRewardTab
       .receive(on: DispatchQueue.main)
       .assign(to: \.isLoading, on: self)
       .store(in: &cancellable)

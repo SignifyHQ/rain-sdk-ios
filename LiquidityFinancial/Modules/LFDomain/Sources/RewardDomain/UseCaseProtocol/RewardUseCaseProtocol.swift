@@ -1,6 +1,6 @@
 import Foundation
 
-protocol RewardUseCaseProtocol {
+public protocol RewardUseCaseProtocol {
   func selectReward(body: [String: Any]) async throws -> SelectRewardEntity
   func getDonationCategories(limit: Int, offset: Int) async throws -> RewardCategoriesListEntity
   func getCategoriesFundraisers(categoryID: String, limit: Int, offset: Int) async throws -> CategoriesFundraisersListEntity

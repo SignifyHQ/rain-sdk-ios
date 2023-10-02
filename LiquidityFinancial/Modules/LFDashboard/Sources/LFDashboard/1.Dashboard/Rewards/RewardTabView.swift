@@ -10,10 +10,8 @@ import LFServices
 
 struct RewardTabView: View {
   @StateObject private var viewModel: RewardTabViewModel
-  var onRefresh: (() -> Void)?
-  init(isLoading: Published<Bool>.Publisher, onRefresh: (() -> Void)? = nil) {
-    _viewModel = .init(wrappedValue: RewardTabViewModel(isLoading: isLoading))
-    self.onRefresh = onRefresh
+  init() {
+    _viewModel = .init(wrappedValue: RewardTabViewModel())
   }
   
   var body: some View {

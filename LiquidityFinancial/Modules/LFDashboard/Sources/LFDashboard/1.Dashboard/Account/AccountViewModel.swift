@@ -26,7 +26,7 @@ class AccountViewModel: ObservableObject {
   @Published var isDisableView: Bool = false
   @Published var isLoadingACH: Bool = false
   @Published var isLoadingDisputeTransaction: Bool = false
-  @Published var isLoading: Bool = false
+  @Published var isLoadingAuthorization: Bool = false
   @Published var notificationsEnabled = false
   @Published var sheet: Sheet?
   @Published var isLoadingAssets: Bool = false
@@ -52,66 +52,76 @@ class AccountViewModel: ObservableObject {
     return false
   }
   
-  init(achInformationData: Published<(model: ACHModel, loading: Bool)>.Publisher, accountsCrypto: Published<[LFAccount]>.Publisher) {
+  init() {
+    subscribeCryptoAccount()
     
-    accountsCrypto
+    subscribeACHInformation()
+    
+    subscribeFundingAgreementData()
+    
+    subscribeLinkedAccounts()
+    
+    checkNotificationsStatus()
+  }
+  
+  func subscribeCryptoAccount() {
+    dashboardRepository
+      .$cryptoData
       .receive(on: DispatchQueue.main)
-      .sink { [weak self] accounts in
-        let assets = accounts.compactMap({
-          AssetModel(
-            id: $0.id,
-            type: AssetType(rawValue: $0.currency),
-            availableBalance: $0.availableBalance,
-            availableUsdBalance: $0.availableUsdBalance,
-            externalAccountId: $0.externalAccountId
-          )
-        })
-        self?.assets = assets
+      .sink { [weak self] cryptoData in
+        if cryptoData.loading {
+          let assets = cryptoData.cryptoAccounts.compactMap({
+            AssetModel(
+              id: $0.id,
+              type: AssetType(rawValue: $0.currency),
+              availableBalance: $0.availableBalance,
+              availableUsdBalance: $0.availableUsdBalance,
+              externalAccountId: $0.externalAccountId
+            )
+          })
+          self?.assets = assets
+        }
       }
       .store(in: &cancellable)
-    
-    achInformationData
+  }
+  
+  func subscribeACHInformation() {
+    dashboardRepository
+      .$achInformationData
       .receive(on: DispatchQueue.main)
       .sink { [weak self] achModel in
         self?.isLoadingACH = achModel.loading
         self?.achInformation = achModel.model
       }
       .store(in: &cancellable)
-    
-    handleFundingAgreementData()
-    
-    subscribeLinkedAccounts()
-    checkNotificationsStatus()
   }
   
   func subscribeLinkedAccounts() {
     accountDataManager.subscribeLinkedSourcesChanged { [weak self] entities in
-      guard let self = self else {
-        return
-      }
+      guard let self = self else { return }
       let linkedSources = entities.compactMap({ APILinkedSourceData(entity: $0) })
       self.linkedAccount = linkedSources
     }
     .store(in: &cancellable)
   }
   
-  func getLastFourDigits(from value: String) -> String {
-    let showCount = 4
-    let lastIndex = value.count
-
-    return lastIndex >= showCount ? value.substring(start: lastIndex - showCount, end: lastIndex) : value
-  }
-}
-
-  // MARK: - View Helpers
-extension AccountViewModel {
-  func handleFundingAgreementData() {
+  func subscribeFundingAgreementData() {
     addFundsViewModel.fundingAgreementData
       .receive(on: DispatchQueue.main)
       .sink { [weak self] agreementData in
         self?.openFundingAgreement(data: agreementData)
       }
       .store(in: &cancellable)
+  }
+}
+
+  // MARK: - View Helpers
+extension AccountViewModel {
+  func getLastFourDigits(from value: String) -> String {
+    let showCount = 4
+    let lastIndex = value.count
+    
+    return lastIndex >= showCount ? value.substring(start: lastIndex - showCount, end: lastIndex) : value
   }
   
   func handleFundingAcceptAgreement(isAccept: Bool) {
@@ -186,10 +196,10 @@ extension AccountViewModel {
   func getATMAuthorizationCode() {
     Task {
       defer {
-        isLoading = false
+        isLoadingAuthorization = false
         isDisableView = false
       }
-      isLoading = true
+      isLoadingAuthorization = true
       isDisableView = true
       do {
         let sessionID = accountDataManager.sessionID

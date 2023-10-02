@@ -37,12 +37,11 @@ public final class DashboardRepository: ObservableObject {
   
   @LazyInjected(\.analyticsService) var analyticsService
   
-  @Published public var isLoading: Bool = false
+  
+  @Published public var fiatData: (fiatAccount: [LFAccount], loading: Bool) = ([], false)
+  @Published public var cryptoData: (cryptoAccounts: [LFAccount], loading: Bool) = ([], false)
+  
   @Published public var isLoadingRewardTab: Bool = false
-  @Published public var allAssets: [AssetModel] = []
-  @Published public var fiatAccounts: [LFAccount] = []
-  @Published public var cryptoAccounts: [LFAccount] = []
-  @Published public var linkedAccount: [APILinkedSourceData] = []
   
   @Published public var cardData: CardData = CardData(cards: [], metaDatas: [], loading: true)
   @Published public var achInformationData: (model: ACHModel, loading: Bool) = (.default, false)
@@ -66,7 +65,6 @@ public final class DashboardRepository: ObservableObject {
     default:
       initData()
     }
-    subscribeLinkedAccounts()
     refreshListCards()
   }
   
@@ -78,7 +76,6 @@ public final class DashboardRepository: ObservableObject {
     default:
       initData()
     }
-    subscribeLinkedAccounts()
     refreshListCards()
   }
 }
@@ -110,24 +107,15 @@ public extension DashboardRepository {
       .store(in: &cancellable)
   }
   
-  func subscribeLinkedAccounts() {
-    accountDataManager.subscribeLinkedSourcesChanged { [weak self] entities in
-      guard let self = self else {
-        return
-      }
-      let linkedSources = entities.compactMap({ APILinkedSourceData(entity: $0) })
-      self.linkedAccount = linkedSources
-    }
-    .store(in: &cancellable)
-  }
-  
   func refreshCash() {
     Task { @MainActor in
-      defer { isLoading = false }
-      isLoading = true
+      defer { fiatData.loading = false }
+      fiatData.loading = true
       do {
-        let sessionID = self.accountDataManager.sessionID
         apiFetchListCard()
+        
+        let sessionID = self.accountDataManager.sessionID
+        
         async let fiatAccountsEntity = self.accountRepository.getAccount(currencyType: Constants.CurrencyType.fiat.rawValue)
         
         async let linkedAccountEntity = self.externalFundingRepository.getLinkedAccount(sessionId: sessionID)
@@ -135,7 +123,7 @@ public extension DashboardRepository {
         let fiatAccounts = try await fiatAccountsEntity
         let linkedSources = try await linkedAccountEntity.linkedSources
         
-        self.fiatAccounts = fiatAccounts
+        self.fiatData.fiatAccount = fiatAccounts
         
         self.accountDataManager.storeLinkedSources(linkedSources)
         self.accountDataManager.addOrUpdateAccounts(fiatAccounts)
@@ -198,25 +186,29 @@ public extension DashboardRepository {
   func apiFetchAssetFromAccounts() {
     Task { @MainActor in
       defer {
-        isLoading = false
+        fiatData.loading = false
+        cryptoData.loading = false
       }
       isLoadingRewardTab = true
-      isLoading = true
+      fiatData.loading = true
+      cryptoData.loading = true
+      
       do {
         async let fiatAccountsEntity = self.accountRepository.getAccount(currencyType: Constants.CurrencyType.fiat.rawValue)
         async let cryptoAccountsEntity = self.accountRepository.getAccount(currencyType: Constants.CurrencyType.crypto.rawValue)
         let fiatAccounts = try await fiatAccountsEntity
         let cryptoAccounts = try await cryptoAccountsEntity
         let accounts = fiatAccounts + cryptoAccounts
+        
         let assets = accounts.map { AssetModel(account: $0) }
         getRewardCurrency(assets: assets)
+        
         analyticsService.set(params: [PropertiesName.cashBalance.rawValue: fiatAccounts.first?.availableBalance ?? "0"])
         analyticsService.set(params: [PropertiesName.cryptoBalance.rawValue: cryptoAccounts.first?.availableBalance ?? "0"])
         
-        self.fiatAccounts = fiatAccounts
-        self.cryptoAccounts = cryptoAccounts
+        self.fiatData.fiatAccount = fiatAccounts
+        self.cryptoData.cryptoAccounts = cryptoAccounts
         
-        self.allAssets = assets
         self.accountDataManager.accountsSubject.send(accounts)
       } catch {
         isLoadingRewardTab = false
@@ -226,7 +218,7 @@ public extension DashboardRepository {
     }
   }
   
-  func getRewardCurrency(assets: [AssetModel] = []) {
+  private func getRewardCurrency(assets: [AssetModel] = []) {
     Task { @MainActor in
       do {
         let availableRewardCurrencies = try await accountRepository.getAvailableRewardCurrrencies()

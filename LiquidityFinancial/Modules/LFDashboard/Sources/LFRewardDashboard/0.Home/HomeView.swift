@@ -38,7 +38,8 @@ public struct HomeView: View {
     .navigationBarTitleDisplayMode(.inline)
     .tint(ModuleColors.tabarHighlight.swiftUIColor)
     .onAppear {
-      UITabBar.appearance().backgroundColor = Colors.secondaryBackground.swiftUIColor.uiColor
+      analyticsService.track(event: AnalyticsEvent(name: .viewedHome))
+      UITabBar.appearance().backgroundColor = Color.white.uiColor
       viewModel.onAppear()
       dashboardRepository.apiFetchOnboardingState { route in
         onChangeRoute?(route)
@@ -82,10 +83,6 @@ public struct HomeView: View {
         viewModel.getListConnectedAccount()
       }
     })
-    .onAppear {
-      analyticsService.track(event: AnalyticsEvent(name: .viewedHome))
-      viewModel.appearOperations()
-    }
   }
 }
 

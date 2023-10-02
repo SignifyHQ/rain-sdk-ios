@@ -50,6 +50,7 @@ public final class HomeViewModel: ObservableObject {
   
   func onAppear() {
     loginIntercom()
+    checkShouldShowNotification()
   }
 }
 
@@ -167,10 +168,6 @@ extension HomeViewModel {
     case let .transaction(id, accountId):
       openTransactionId(id, accountId: accountId)
     }
-  }
-  
-  func appearOperations() {
-    checkShouldShowNotification()
   }
   
   func checkShouldShowNotification() {

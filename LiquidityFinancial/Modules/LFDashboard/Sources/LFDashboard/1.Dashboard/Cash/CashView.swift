@@ -14,14 +14,12 @@ struct CashView: View {
   @State private var isNotLinkedCard = false
   
   let listCardViewModel: ListCardsViewModel
-  var onRefresh: (() -> Void)
   
-  init(viewModel: CashViewModel, listCardViewModel: ListCardsViewModel, onRefresh: @escaping (() -> Void)) {
+  init(viewModel: CashViewModel, listCardViewModel: ListCardsViewModel) {
     _viewModel = .init(
       wrappedValue: viewModel
     )
     self.listCardViewModel = listCardViewModel
-    self.onRefresh = onRefresh
   }
   
   var body: some View {
@@ -147,7 +145,6 @@ private extension CashView {
       .padding(.bottom, 12)
     }
     .refreshable {
-      onRefresh()
       viewModel.onRefresh()
     }
   }
