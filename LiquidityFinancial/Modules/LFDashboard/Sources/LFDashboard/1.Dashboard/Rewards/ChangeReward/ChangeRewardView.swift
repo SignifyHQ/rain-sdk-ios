@@ -10,17 +10,27 @@ struct ChangeRewardView: View {
   @Environment(\.dismiss) private var dismiss
   @StateObject private var viewModel: ChangeRewardViewModel
   
-  init(assetModels: [AssetModel], selectedAssetModel: AssetModel) {
+  init(availableCurrencies: [AssetType], selectedRewardCurrency: AssetType?) {
     _viewModel = .init(
       wrappedValue: ChangeRewardViewModel(
-        assetModels: assetModels,
-        selectedAssetModel: selectedAssetModel
+        availableCurrencies: availableCurrencies,
+        selectedRewardCurrency: selectedRewardCurrency
       )
     )
   }
   
   var body: some View {
     content
+      .disabled(viewModel.isChangingCurrency)
+      .popup(item: $viewModel.toastMessage, style: .toast) {
+        ToastView(toastMessage: $0)
+      }
+      .navigationLink(item: $viewModel.navigation) { item in
+        switch item {
+        case .currentRewards:
+          CurrentRewardView()
+        }
+      }
       .defaultToolBar(navigationTitle: LFLocalizable.ChangeRewardView.title)
       .background(Colors.background.swiftUIColor)
   }
@@ -32,44 +42,56 @@ private extension ChangeRewardView {
     VStack(alignment: .leading, spacing: 20) {
       Text(LFLocalizable.ChangeRewardView.caption)
         .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.medium.value))
-        .foregroundColor(Colors.label.swiftUIColor)
+        .foregroundColor(Colors.label.swiftUIColor.opacity(0.75))
       VStack(spacing: 10) {
-        ForEach(viewModel.assetModels, id: \.self) { asset in
-          assetCell(asset: asset)
+        ForEach(viewModel.availableCurrencies, id: \.self) { assetType in
+          assetCell(assetType: assetType)
         }
       }
       Spacer()
-      ArrowButton(
-        image: GenImages.CommonImages.icRewards.swiftUIImage,
-        title: LFLocalizable.ChangeRewardView.currentRewards,
-        value: nil
-      ) {
-        dismiss()
-      }
-      .padding(.bottom, 24)
+      buttonsView
     }
     .padding(.top, 20)
     .padding(.horizontal, 30)
   }
   
-  @ViewBuilder func assetCell(asset: AssetModel) -> some View {
-    if let assetType = asset.type {
-      Button {
-        // TODO: Change assets later
-      } label: {
-        HStack(spacing: 8) {
-          assetType.image
-          Text(assetType.title)
-            .foregroundColor(Colors.label.swiftUIColor)
-            .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.medium.value))
-          Spacer()
-          circleBoxView(isSelected: asset.type == viewModel.selectedAssetModel.type)
-          .padding(.trailing, 8)
-        }
-        .padding(.horizontal, 16)
-        .frame(height: 56)
-        .background(Colors.secondaryBackground.swiftUIColor.cornerRadius(9))
+  var buttonsView: some View {
+    VStack(spacing: 16) {
+      ArrowButton(
+        image: GenImages.CommonImages.icRewards.swiftUIImage,
+        title: LFLocalizable.ChangeRewardView.currentRewards,
+        value: nil,
+        fontSize: Constants.FontSize.medium.value
+      ) {
+        viewModel.onClickedCurrentRewardsButton()
       }
+      FullSizeButton(
+        title: LFLocalizable.Button.Save.title,
+        isDisable: viewModel.isDisableButton,
+        isLoading: $viewModel.isChangingCurrency
+      ) {
+        viewModel.onSaveRewardCurrency()
+      }
+    }
+    .padding(.bottom, 24)
+  }
+  
+  func assetCell(assetType: AssetType) -> some View {
+    Button {
+      viewModel.onSelectedRewardCurrency(assetType: assetType)
+    } label: {
+      HStack(spacing: 8) {
+        assetType.image
+        Text(assetType.title)
+          .foregroundColor(Colors.label.swiftUIColor)
+          .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.medium.value))
+        Spacer()
+        circleBoxView(isSelected: assetType == viewModel.selectedRewardCurrency)
+        .padding(.trailing, 8)
+      }
+      .padding(.horizontal, 16)
+      .frame(height: 56)
+      .background(Colors.secondaryBackground.swiftUIColor.cornerRadius(9))
     }
   }
   

@@ -2,6 +2,7 @@ import Foundation
 import NetworkUtilities
 import CoreNetwork
 import LFUtilities
+import NetSpendData
 
 extension LFCoreNetwork: AccountAPIProtocol where R == AccountRoute {
   public func getAccount(currencyType: String) async throws -> [APIAccount] {
@@ -19,6 +20,33 @@ extension LFCoreNetwork: AccountAPIProtocol where R == AccountRoute {
   
   public func getUser() async throws -> APIUser {
     return try await request(AccountRoute.getUser, target: APIUser.self, failure: LFErrorObject.self, decoder: .apiDecoder)
+  }
+  
+  public func getAvailableRewardCurrencies() async throws -> APIAvailableRewardCurrencies {
+    try await request(
+      AccountRoute.getAvailableRewardCurrencies,
+      target: APIAvailableRewardCurrencies.self,
+      failure: LFErrorObject.self,
+      decoder: .apiDecoder
+    )
+  }
+  
+  public func getSelectedRewardCurrency() async throws -> APIRewardCurrency {
+    try await request(
+      AccountRoute.getSelectedRewardCurrency,
+      target: APIRewardCurrency.self,
+      failure: LFErrorObject.self,
+      decoder: .apiDecoder
+    )
+  }
+  
+  public func updateSelectedRewardCurrency(rewardCurrency: String) async throws -> APIRewardCurrency {
+    try await request(
+      AccountRoute.updateSelectedRewardCurrency(rewardCurrency: rewardCurrency),
+      target: APIRewardCurrency.self,
+      failure: LFErrorObject.self,
+      decoder: .apiDecoder
+    )
   }
   
   public func createZeroHashAccount() async throws -> APIZeroHashAccount {

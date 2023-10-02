@@ -769,7 +769,7 @@ https://mn.gov/commerce/money/investments/cryptocurrency/. \n\n\n\n\n\n\n";
 "RewardTabView.firstReward.select" = "Select Reward";
 
 // Change Reward View
-"ChangeRewardView.title" = "Change rewards";
+"ChangeRewardView.title" = "Select Rewards";
 "ChangeRewardView.caption" = "How would you like your rewards?";
 "ChangeRewardView.current_rewards" = "Current Rewards";
 
@@ -890,6 +890,7 @@ contact support.";
 "button.confirm.title" = "Confirm";
 "button.disputeTransaction.title" = "Dispute a Transaction";
 "button.contactSupport.title" = "Contact Support";
+"button.save.title" = "Save";
 
 // Grid Value
 "grid_value.crypto" = "%@ ADA";

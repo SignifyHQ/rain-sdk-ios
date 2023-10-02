@@ -11,45 +11,51 @@ class RewardTabViewModel: ObservableObject {
   @LazyInjected(\.accountDataManager) var accountDataManager
   @LazyInjected(\.accountRepository) var accountRepository
   
-  @Published var account: LFAccount?
-  @Published var assetModel: AssetModel?
+  @Published var selectedRewardCurrency: AssetType?
   @Published var toastMessage: String = ""
   @Published var isLoading: Bool = false
+  @Published var accounts: [LFAccount] = []
   @Published var navigation: Navigation?
   @Published var activity = Activity.loading
   @Published var transactions: [TransactionModel] = []
-  @Published var assetTypes: [AssetType] = []
+  @Published var availableRewardCurrencies: [AssetType] = []
   
-  let currencyType = Constants.CurrencyType.crypto.rawValue
-  
+  var accountID: String = .empty
+  var currencyType = Constants.CurrencyType.crypto.rawValue
+  var transactionTypes = Constants.TransactionTypesRequest.rewardCryptoBack.types
   private var cancellable: Set<AnyCancellable> = []
   
-  init() {
+  init(isLoading: Published<Bool>.Publisher) {
+    isLoading
+      .receive(on: DispatchQueue.main)
+      .assign(to: \.isLoading, on: self)
+      .store(in: &cancellable)
+    
     accountDataManager
-      .accountsSubject
-      .map({ accounts in
-        accounts.filter({ !Constants.CurrencyList.fiats.contains($0.currency) })
-      })
+      .availableRewardCurrenciesSubject
+      .receive(on: DispatchQueue.main)
+      .sink { [weak self] rewardCurrencies in
+        guard let self, let rewardCurrencies else { return }
+        self.availableRewardCurrencies = rewardCurrencies.availableRewardCurrencies
+          .compactMap { AssetType(rawValue: $0) }
+          .sorted { $0.index < $1.index }
+      }
+      .store(in: &cancellable)
+    
+    accountDataManager
+      .selectedRewardCurrencySubject
+      .receive(on: DispatchQueue.main)
+      .sink { [weak self] response in
+        guard let self, let response else { return }
+        self.selectedRewardCurrency = AssetType(rawValue: response.rewardCurrency)
+        self.fetchAllTransactions()
+      }
+      .store(in: &cancellable)
+    
+    accountDataManager.accountsSubject
       .receive(on: DispatchQueue.main)
       .sink { [weak self] accounts in
-        guard let self = self else {
-          return
-        }
-        self.assetTypes = accounts.compactMap({
-          AssetType(rawValue: $0.currency)
-        })
-        if let account = accounts.first {
-          self.account = account
-          self.assetModel = AssetModel(
-            id: account.id,
-            type: AssetType(rawValue: account.currency),
-            availableBalance: account.availableBalance,
-            availableUsdBalance: account.availableUsdBalance,
-            externalAccountId: account.externalAccountId
-          )
-          self.accountDataManager.cryptoAccountID = account.id
-          self.fetchAllTransactions()
-        }
+        self?.accounts = accounts
       }
       .store(in: &cancellable)
   }
@@ -60,42 +66,51 @@ extension RewardTabViewModel {
   
   func fetchAllTransactions() {
     Task { @MainActor in
-      defer { isLoading = false }
-      isLoading = true
+      guard let selectedRewardCurrency else { return }
+      accountID = accounts.first(where: { $0.currency == selectedRewardCurrency.rawValue })?.id ?? .empty
+      if selectedRewardCurrency == .usd {
+        currencyType = Constants.CurrencyType.fiat.rawValue
+        transactionTypes = Constants.TransactionTypesRequest.rewardCashBack.types
+      } else {
+        currencyType = Constants.CurrencyType.crypto.rawValue
+        transactionTypes = Constants.TransactionTypesRequest.rewardCryptoBack.types
+      }
       await apiLoadTransactions()
     }
   }
   
   func apiLoadTransactions() async {
-    if let account = account {
-      do {
-        let transactions = try await accountRepository.getTransactions(
-          accountId: account.id,
-          currencyType: currencyType,
-          transactionTypes: Constants.TransactionTypesRequest.rewardCryptoBack.types,
-          limit: 50,
-          offset: 0
-        )
-        self.transactions = transactions.data.compactMap({ TransactionModel(from: $0) })
-        activity = .transactions
-      } catch {
-        toastMessage = error.localizedDescription
-        if transactions.isEmpty {
-          activity = .failure
-        }
+    guard !accountID.isEmpty else {
+      activity = .failure
+      return
+    }
+    do {
+      let transactions = try await accountRepository.getTransactions(
+        accountId: accountID,
+        currencyType: currencyType,
+        transactionTypes: transactionTypes,
+        limit: 50,
+        offset: 0
+      )
+      self.transactions = transactions.data.compactMap({ TransactionModel(from: $0) })
+      activity = .transactions
+    } catch {
+      toastMessage = error.localizedDescription
+      if transactions.isEmpty {
+        activity = .failure
       }
     }
   }
   
   func onClickedChangeReward() {
-    guard let assetModel = assetModel else {
-      return
-    }
-    navigation = .changeReward(assetModels: [assetModel], selectedAssetModel: assetModel)
+    navigation = .changeReward(selectedRewardCurrency: selectedRewardCurrency)
   }
   
   func onClickedSeeAllButton() {
-    navigation = .transactions
+    guard let selectedRewardCurrency else {
+      return
+    }
+    navigation = .transactions(isCrypto: selectedRewardCurrency != .usd)
   }
   
   func transactionItemTapped(_ transaction: TransactionModel) {
@@ -112,8 +127,8 @@ extension RewardTabViewModel {
   }
   
   enum Navigation {
-    case changeReward(assetModels: [AssetModel], selectedAssetModel: AssetModel)
-    case transactions
+    case changeReward(selectedRewardCurrency: AssetType?)
+    case transactions(isCrypto: Bool)
     case transactionDetail(TransactionModel)
   }
 }

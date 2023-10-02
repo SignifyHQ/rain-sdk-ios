@@ -38,6 +38,7 @@ public final class DashboardRepository: ObservableObject {
   @LazyInjected(\.analyticsService) var analyticsService
   
   @Published public var isLoading: Bool = false
+  @Published public var isLoadingRewardTab: Bool = false
   @Published public var allAssets: [AssetModel] = []
   @Published public var fiatAccounts: [LFAccount] = []
   @Published public var cryptoAccounts: [LFAccount] = []
@@ -196,7 +197,10 @@ public extension DashboardRepository {
   
   func apiFetchAssetFromAccounts() {
     Task { @MainActor in
-      defer { isLoading = false }
+      defer {
+        isLoading = false
+      }
+      isLoadingRewardTab = true
       isLoading = true
       do {
         async let fiatAccountsEntity = self.accountRepository.getAccount(currencyType: Constants.CurrencyType.fiat.rawValue)
@@ -205,7 +209,7 @@ public extension DashboardRepository {
         let cryptoAccounts = try await cryptoAccountsEntity
         let accounts = fiatAccounts + cryptoAccounts
         let assets = accounts.map { AssetModel(account: $0) }
-        
+        getRewardCurrency(assets: assets)
         analyticsService.set(params: [PropertiesName.cashBalance.rawValue: fiatAccounts.first?.availableBalance ?? "0"])
         analyticsService.set(params: [PropertiesName.cryptoBalance.rawValue: cryptoAccounts.first?.availableBalance ?? "0"])
         
@@ -217,6 +221,35 @@ public extension DashboardRepository {
       } catch {
         log.error(error.localizedDescription)
         toastMessage?(error.localizedDescription)
+      }
+    }
+  }
+  
+  func getRewardCurrency(assets: [AssetModel] = []) {
+    Task { @MainActor in
+      do {
+        let availableRewardCurrencies = try await accountRepository.getAvailableRewardCurrrencies()
+        accountDataManager.availableRewardCurrenciesSubject.send(availableRewardCurrencies)
+        let selectedRewardCurrency = try await accountRepository.getSelectedRewardCurrency()
+        accountDataManager.selectedRewardCurrencySubject.send(selectedRewardCurrency)
+        isLoadingRewardTab = false
+      } catch {
+        guard let errorObject = error.asErrorObject else {
+          toastMessage?(error.localizedDescription)
+          isLoadingRewardTab = false
+          return
+        }
+        switch errorObject.code {
+        case Constants.ErrorCode.accountCreationInProgress.rawValue:
+          let availableRewardCurrencies = APIAvailableRewardCurrencies(
+            availableRewardCurrencies: assets.compactMap { $0.type?.rawValue }
+          )
+          accountDataManager.selectedRewardCurrencySubject.send(nil)
+          accountDataManager.availableRewardCurrenciesSubject.send(availableRewardCurrencies)
+        default:
+          toastMessage?(errorObject.message)
+        }
+        isLoadingRewardTab = false
       }
     }
   }

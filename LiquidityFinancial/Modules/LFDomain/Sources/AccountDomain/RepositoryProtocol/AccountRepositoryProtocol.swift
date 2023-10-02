@@ -4,6 +4,9 @@ import Foundation
 public protocol AccountRepositoryProtocol {
   func createZeroHashAccount() async throws -> ZeroHashAccount
   func getUser() async throws -> LFUser
+  func getAvailableRewardCurrrencies() async throws -> AvailableRewardCurrenciesEntity
+  func getSelectedRewardCurrency() async throws -> RewardCurrencyEntity
+  func updateSelectedRewardCurrency(rewardCurrency: String) async throws -> RewardCurrencyEntity
   func getAccount(currencyType: String) async throws -> [LFAccount]
   func getAccountDetail(id: String) async throws -> LFAccount
   func getTransactions(

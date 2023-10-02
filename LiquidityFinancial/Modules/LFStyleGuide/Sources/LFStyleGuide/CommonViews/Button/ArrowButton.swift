@@ -6,6 +6,7 @@ public struct ArrowButton: View {
     image: Image?,
     title: String,
     value: String?,
+    fontSize: CGFloat = Constants.FontSize.ultraSmall.value,
     trailingImage: Image? = nil,
     isLoading: Binding<Bool> = .constant(false),
     action: @escaping () -> Void = {}
@@ -13,6 +14,7 @@ public struct ArrowButton: View {
     self.image = image
     self.title = title
     self.value = value
+    self.fontSize = fontSize
     self.trailingImage = trailingImage
     _isLoading = isLoading
     self.action = action
@@ -21,6 +23,7 @@ public struct ArrowButton: View {
   let image: Image?
   let title: String
   let value: String?
+  let fontSize: CGFloat
   let trailingImage: Image?
   @Binding var isLoading: Bool
   
@@ -52,7 +55,7 @@ private extension ArrowButton {
       }
       VStack(alignment: .leading, spacing: 2) {
         Text(title)
-          .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.ultraSmall.value))
+          .font(Fonts.regular.swiftUIFont(size: fontSize))
           .foregroundColor(Colors.label.swiftUIColor)
         if let value {
           Text(value)

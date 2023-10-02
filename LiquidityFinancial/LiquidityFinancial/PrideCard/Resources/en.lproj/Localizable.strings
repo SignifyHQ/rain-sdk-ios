@@ -934,7 +934,7 @@
 "transaction_rewards_status.pending" = "Pending";
 "transaction_rewards_status.completed" = "Completed";
 
-"ChangeRewardView.title" = "Change rewards";
+"ChangeRewardView.title" = "Select Rewards";
 "ChangeRewardView.caption" = "How would you like your rewards?";
 "ChangeRewardView.current_rewards" = "Current Rewards";
 
@@ -1033,6 +1033,7 @@ contact support.";
 "button.confirm.title" = "Confirm";
 "button.disputeTransaction.title" = "Dispute a Transaction";
 "button.contactSupport.title" = "Contact Support";
+"button.save.title" = "Save";
 
 // Grid Value
 "grid_value.crypto" = "%@ ADA";

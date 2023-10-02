@@ -1,10 +1,14 @@
 import Foundation
 import NetworkUtilities
 import LFUtilities
+import NetSpendData
 
 public protocol AccountAPIProtocol {
   func createZeroHashAccount() async throws -> APIZeroHashAccount
   func getUser() async throws -> APIUser
+  func getAvailableRewardCurrencies() async throws -> APIAvailableRewardCurrencies
+  func getSelectedRewardCurrency() async throws -> APIRewardCurrency
+  func updateSelectedRewardCurrency(rewardCurrency: String) async throws -> APIRewardCurrency
   func getAccount(currencyType: String) async throws -> [APIAccount]
   func getAccountDetail(id: String) async throws -> APIAccount
   func getTransactions(

@@ -11,8 +11,8 @@ import LFServices
 struct RewardTabView: View {
   @StateObject private var viewModel: RewardTabViewModel
   var onRefresh: (() -> Void)?
-  init(viewModel: RewardTabViewModel, onRefresh: (() -> Void)? = nil) {
-    _viewModel = .init(wrappedValue: viewModel)
+  init(isLoading: Published<Bool>.Publisher, onRefresh: (() -> Void)? = nil) {
+    _viewModel = .init(wrappedValue: RewardTabViewModel(isLoading: isLoading))
     self.onRefresh = onRefresh
   }
   
@@ -21,22 +21,22 @@ struct RewardTabView: View {
       .track(name: String(describing: type(of: self)))
       .navigationLink(item: $viewModel.navigation) { navigation in
         switch navigation {
-        case let .changeReward(assetModels, selectedAssetModel):
+        case let .changeReward(selectedRewardCurrency):
           ChangeRewardView(
-            assetModels: assetModels,
-            selectedAssetModel: selectedAssetModel
+            availableCurrencies: viewModel.availableRewardCurrencies,
+            selectedRewardCurrency: selectedRewardCurrency
           )
-        case .transactions:
+        case let .transactions(isCrypto):
           TransactionListView(
-            type: .crypto,
+            type: isCrypto ? .crypto : .cashback,
             currencyType: viewModel.currencyType,
-            accountID: viewModel.accountDataManager.cryptoAccountID,
-            transactionTypes: Constants.TransactionTypesRequest.rewardCryptoBack.types,
+            accountID: viewModel.accountID,
+            transactionTypes: viewModel.transactionTypes,
             destinationView: AnyView(AddBankWithDebitView())
           )
         case let .transactionDetail(transaction):
           TransactionDetailView(
-            accountID: viewModel.accountDataManager.cryptoAccountID,
+            accountID: viewModel.accountID,
             transactionId: transaction.id,
             kind: transaction.detailType,
             isPopToRoot: false,
@@ -46,11 +46,7 @@ struct RewardTabView: View {
       }
       .background(Colors.background.swiftUIColor)
       .refreshable {
-      }
-      .onAppear {
-        Task { @MainActor in
-          await viewModel.apiLoadTransactions()
-        }
+        viewModel.fetchAllTransactions()
       }
   }
 }
@@ -62,8 +58,7 @@ private extension RewardTabView {
       VStack(spacing: 10) {
         if viewModel.isLoading {
           loading
-        } else if false {
-          // TODO: Will implement later will API ready
+        } else if viewModel.selectedRewardCurrency == nil {
           selectTypeView
         } else {
           headerView
@@ -86,7 +81,7 @@ private extension RewardTabView {
   }
   
   @ViewBuilder var headerView: some View {
-    if let assetType = viewModel.assetModel?.type {
+    if let assetType = viewModel.selectedRewardCurrency {
       Button {
         viewModel.onClickedChangeReward()
       } label: {
@@ -161,24 +156,11 @@ private extension RewardTabView {
   
   var selectTypeView: some View {
     ZStack(alignment: .top) {
-      VStack {
-        Spacer().frame(height: 60)
-        VStack(alignment: .center) {
-          selectTypeContentView
-            .padding(.horizontal, 16)
-        }
-        .padding(.top, 90)
-        .padding([.bottom], 16)
-        .background(Colors.secondaryBackground.swiftUIColor)
-        .cornerRadius(10)
-      }
-      
+      selectTypeContentView
       GenImages.Images.rewardHeader.swiftUIImage
-        .alignmentGuide(VerticalAlignment.top) {
-          $0[VerticalAlignment.top] + 16
-        }
-        .zIndex(1)
+        .offset(y: -74)
     }
+    .offset(y: 74)
   }
   
   var selectTypeContentView: some View {
@@ -188,7 +170,7 @@ private extension RewardTabView {
         .foregroundColor(Colors.label.swiftUIColor)
       Spacer().frame(height: 16)
       VStack(spacing: 12) {
-        ForEach(viewModel.assetTypes, id: \.self) { asset in
+        ForEach(viewModel.availableRewardCurrencies, id: \.self) { asset in
           assetCell(assetType: asset)
         }
       }
@@ -200,6 +182,10 @@ private extension RewardTabView {
         viewModel.onClickedChangeReward()
       }
     }
+    .padding([.horizontal, .bottom], 16)
+    .padding(.top, 120)
+    .background(Colors.secondaryBackground.swiftUIColor)
+    .cornerRadius(10)
   }
   
   @ViewBuilder func assetCell(assetType: AssetType) -> some View {

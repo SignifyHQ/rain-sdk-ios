@@ -222,6 +222,10 @@ public class AccountDataManager: AccountDataStorageProtocol {
   // MARK: Account
   public let accountsSubject = CurrentValueSubject<[LFAccount], Never>([])
   
+  public var availableRewardCurrenciesSubject = CurrentValueSubject<AvailableRewardCurrenciesEntity?, Never>(nil)
+  
+  public var selectedRewardCurrencySubject = CurrentValueSubject<RewardCurrencyEntity?, Never>(nil)
+  
   public func addOrUpdateAccounts(_ accounts: [LFAccount]) {
     for account in accounts {
       addOrUpdateAccount(account)

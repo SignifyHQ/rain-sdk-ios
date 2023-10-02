@@ -3,10 +3,14 @@ import CoreNetwork
 import NetworkUtilities
 import AuthorizationManager
 import Factory
+import NetSpendData
 
 public enum AccountRoute {
   case createZeroHashAccount
   case getUser
+  case getAvailableRewardCurrencies
+  case getSelectedRewardCurrency
+  case updateSelectedRewardCurrency(rewardCurrency: String)
   case getAccount(currencyType: String)
   case getAccountDetail(id: String)
   case getTransactions(accountId: String, currencyType: String, transactionTypes: String, limit: Int, offset: Int)
@@ -35,6 +39,12 @@ extension AccountRoute: LFRoute {
       return "/v1/zerohash/accounts"
     case .getUser:
       return "/v1/user"
+    case .getAvailableRewardCurrencies:
+      return "/v1/user/available-reward-currencies"
+    case .getSelectedRewardCurrency:
+      return "/v1/user/selected-reward-currency"
+    case .updateSelectedRewardCurrency:
+      return "/v1/user/selected-reward-currency"
     case .getAccount:
       return "/v1/account/"
     case .getAccountDetail(let id):
@@ -68,15 +78,31 @@ extension AccountRoute: LFRoute {
   
   public var httpMethod: HttpMethod {
     switch self {
-    case .createZeroHashAccount, .logout, .createWalletAddress, .addToWaitList, .createSupportTicket:
+    case .createZeroHashAccount,
+        .logout,
+        .createWalletAddress,
+        .addToWaitList,
+        .createSupportTicket,
+        .updateSelectedRewardCurrency:
       return .POST
-    case .getUser, .getAccount, .getTransactions, .getTransactionDetail, .getWalletAddresses, .getReferralCampaign, .getAccountDetail:
+    case .getUser,
+        .getAccount,
+        .getTransactions,
+        .getTransactionDetail,
+        .getWalletAddresses,
+        .getReferralCampaign,
+        .getAccountDetail,
+        .getAvailableRewardCurrencies,
+        .getSelectedRewardCurrency:
       return .GET
     case .updateWalletAddress:
       return .PATCH
     case .deleteWalletAddresses:
       return .DELETE
-    case .getTaxFile, .getTaxFileYear, .getUserRewards, .getFeatureConfig:
+    case .getTaxFile,
+        .getTaxFileYear,
+        .getUserRewards,
+        .getFeatureConfig:
       return .GET
     }
   }
@@ -99,7 +125,20 @@ extension AccountRoute: LFRoute {
   
   public var parameters: Parameters? {
     switch self {
-    case .createZeroHashAccount, .getUser, .getTransactionDetail, .logout, .getWalletAddresses, .deleteWalletAddresses:
+    case .createZeroHashAccount,
+        .getUser,
+        .getTransactionDetail,
+        .logout,
+        .getWalletAddresses,
+        .deleteWalletAddresses,
+        .getAvailableRewardCurrencies,
+        .getSelectedRewardCurrency,
+        .getReferralCampaign,
+        .getTaxFile,
+        .getTaxFileYear,
+        .getAccountDetail,
+        .getUserRewards,
+        .getFeatureConfig:
       return nil
     case .getAccount(let currencyType):
       return ["currencyType": currencyType]
@@ -120,8 +159,12 @@ extension AccountRoute: LFRoute {
         "nickname": nickname,
         "walletId": walletId
       ]
-    case .getReferralCampaign, .getTaxFile, .getTaxFileYear, .getAccountDetail, .getUserRewards, .getFeatureConfig:
-      return nil
+    case let .updateSelectedRewardCurrency(rewardCurrency):
+        return [
+          "request": [
+            "rewardCurrency": rewardCurrency
+          ]
+        ]
     case .addToWaitList(body: let body):
       return body.encoded()
     case let .createSupportTicket(title, description, type):
@@ -135,11 +178,29 @@ extension AccountRoute: LFRoute {
   
   public var parameterEncoding: ParameterEncoding? {
     switch self {
-    case .createWalletAddress, .updateWalletAddress, .addToWaitList, .createSupportTicket:
+    case .createWalletAddress,
+        .updateWalletAddress,
+        .addToWaitList,
+        .createSupportTicket,
+        .updateSelectedRewardCurrency:
       return .json
-    case .createZeroHashAccount, .getUser, .logout, .getWalletAddresses, .deleteWalletAddresses, .getTaxFile, .getTaxFileYear, .getAccountDetail, .getUserRewards, .getFeatureConfig:
+    case .createZeroHashAccount,
+        .getAvailableRewardCurrencies,
+        .getSelectedRewardCurrency,
+        .getUser,
+        .logout,
+        .getWalletAddresses,
+        .deleteWalletAddresses,
+        .getTaxFile,
+        .getTaxFileYear,
+        .getAccountDetail,
+        .getUserRewards,
+        .getFeatureConfig:
       return nil
-    case .getAccount, .getTransactions, .getTransactionDetail, .getReferralCampaign:
+    case .getAccount,
+        .getTransactions,
+        .getTransactionDetail,
+        .getReferralCampaign:
       return .url
     }
   }

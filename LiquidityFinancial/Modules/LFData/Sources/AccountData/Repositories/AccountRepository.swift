@@ -2,6 +2,7 @@ import Foundation
 import AuthorizationManager
 import AccountDomain
 import LFUtilities
+import NetSpendData
 
 public class AccountRepository: AccountRepositoryProtocol {
   
@@ -19,6 +20,18 @@ public class AccountRepository: AccountRepositoryProtocol {
   
   public func getUser() async throws -> LFUser {
     return try await accountAPI.getUser()
+  }
+  
+  public func getAvailableRewardCurrrencies() async throws -> AvailableRewardCurrenciesEntity {
+    try await accountAPI.getAvailableRewardCurrencies()
+  }
+  
+  public func getSelectedRewardCurrency() async throws -> RewardCurrencyEntity {
+    try await accountAPI.getSelectedRewardCurrency()
+  }
+  
+  public func updateSelectedRewardCurrency(rewardCurrency: String) async throws -> RewardCurrencyEntity {
+    try await accountAPI.updateSelectedRewardCurrency(rewardCurrency: rewardCurrency)
   }
   
   public func getAccount(currencyType: String) async throws -> [LFAccount] {

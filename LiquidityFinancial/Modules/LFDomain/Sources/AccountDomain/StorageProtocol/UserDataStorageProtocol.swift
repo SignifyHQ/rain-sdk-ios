@@ -24,6 +24,8 @@ public protocol AccountDataStorageProtocol {
   func addOrEditLinkedSource(_ source: any LinkedSourceDataEntity)
   func removeLinkedSource(id: String)
   
+  var availableRewardCurrenciesSubject: CurrentValueSubject<AvailableRewardCurrenciesEntity?, Never> { get }
+  var selectedRewardCurrencySubject: CurrentValueSubject<RewardCurrencyEntity?, Never> { get }
   var accountsSubject: CurrentValueSubject<[LFAccount], Never> { get }
   func addOrUpdateAccounts(_ accounts: [LFAccount])
   func addOrUpdateAccount(_ account: LFAccount)

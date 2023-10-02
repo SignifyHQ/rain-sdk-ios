@@ -97,8 +97,8 @@ public enum LFLocalizable {
     public static let caption = LFLocalizable.tr("Localizable", "ChangeRewardView.caption", fallback: "How would you like your rewards?")
     /// Current Rewards
     public static let currentRewards = LFLocalizable.tr("Localizable", "ChangeRewardView.current_rewards", fallback: "Current Rewards")
-    /// Change rewards
-    public static let title = LFLocalizable.tr("Localizable", "ChangeRewardView.title", fallback: "Change rewards")
+    /// Select Rewards
+    public static let title = LFLocalizable.tr("Localizable", "ChangeRewardView.title", fallback: "Select Rewards")
   }
   public enum ConfirmSendCryptoView {
     /// Amount
@@ -558,6 +558,10 @@ public enum LFLocalizable {
     public enum Retry {
       /// Retry
       public static let title = LFLocalizable.tr("Localizable", "button.retry.title", fallback: "Retry")
+    }
+    public enum Save {
+      /// Save
+      public static let title = LFLocalizable.tr("Localizable", "button.save.title", fallback: "Save")
     }
     public enum Share {
       /// Share
