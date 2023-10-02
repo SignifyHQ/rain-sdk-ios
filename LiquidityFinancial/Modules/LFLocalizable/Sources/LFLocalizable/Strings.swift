@@ -144,8 +144,8 @@ public enum LFLocalizable {
       public static let message = LFLocalizable.tr("Localizable", "EnterCryptoAddressView.save_success.message", fallback: "Wallet address saved")
     }
     public enum WalletAddress {
-      /// Wallet Address
-      public static let placeholder = LFLocalizable.tr("Localizable", "EnterCryptoAddressView.wallet_address.placeholder", fallback: "Wallet Address")
+      /// Name, or Wallet Address
+      public static let placeholder = LFLocalizable.tr("Localizable", "EnterCryptoAddressView.wallet_address.placeholder", fallback: "Name, or Wallet Address")
       /// %@ Wallet Address
       public static func title(_ p1: Any) -> String {
         return LFLocalizable.tr("Localizable", "EnterCryptoAddressView.wallet_address.title", String(describing: p1), fallback: "%@ Wallet Address")

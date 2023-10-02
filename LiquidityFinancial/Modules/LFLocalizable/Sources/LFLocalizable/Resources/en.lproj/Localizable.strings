@@ -912,7 +912,7 @@ https://mn.gov/commerce/money/investments/cryptocurrency/. \n\n\n\n\n\n\n";
 // EnterCryptoAddressView
 "EnterCryptoAddressView.title" = "SEND %@";
 "EnterCryptoAddressView.wallet_address.title" = "%@ Wallet Address";
-"EnterCryptoAddressView.wallet_address.placeholder" = "Wallet Address";
+"EnterCryptoAddressView.wallet_address.placeholder" = "Name, or Wallet Address";
 "EnterCryptoAddressView.warning" = "Sending to a non - %@ wallet will result in lost funds";
 "EnterCryptoAddressView.delete_popup.title" = "Delete Saved wallet address";
 "EnterCryptoAddressView.delete_popup.message" = "Would you like to delete saved wallet: %@?";
