@@ -81,7 +81,7 @@ extension RewardTermsView {
         Divider()
           .overlay(Colors.label.swiftUIColor.opacity(0.2))
         buildRow(
-          title: LFLocalizable.RewardTerms.feeTitle,
+          title: LFLocalizable.RewardTerms.feesTitle,
           subtitle: LFLocalizable.RewardTerms.feesDescription
         )
         Divider()

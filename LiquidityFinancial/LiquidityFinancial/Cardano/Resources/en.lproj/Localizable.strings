@@ -506,8 +506,9 @@ https://mn.gov/commerce/money/investments/cryptocurrency/. \n\n\n\n\n\n\n";
 "accountView.legal" = "Legal";
 "accountView.deposit_limits" = "Deposit Limits";
 "accountView.atm_location_title" = "ATM Locations";
-"accountView.routingNumber.title" = "Routing number";
-"accountView.accountNumber.title" = "Account number";
+"accountView.hiddenValue.title" = "**** %@";
+"accountView.routingNumber.title" = "Routing Number";
+"accountView.accountNumber.title" = "Account Number";
 "accountView.notifications" = "Enable Notifications";
 "accountView.disclosure.message" = "The Cardano Card pre-paid debit card is established by Pathward, National Association Member FDIC, pursuant to license by Visa. Netspend is a service provider to Pathward. Cryptocurrency services provided by Zero Hash. Cryptocurrency is not insured by, or subject to the protections of the FDIC.";
 
@@ -813,6 +814,7 @@ https://mn.gov/commerce/money/investments/cryptocurrency/. \n\n\n\n\n\n\n";
 "account.reward.empty.title" = "NO REWARDS";
 "account.reward.empty.message" = "There are currently no rewards";
 "account.reward.session.normal" = "Rewards by Asset Type";
+"account.spendingReward.normal" = "Spending %@";
 "account.reward.session.special" = "Special Promotions";
 "account.reward.item.desc_up_to_back" = "%@%% back";
 

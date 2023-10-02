@@ -95,14 +95,11 @@ class AccountViewModel: ObservableObject {
     .store(in: &cancellable)
   }
   
-  func getSubWalletAddress(asset: AssetModel) -> String {
-    var walletAdress = ""
-    let showCount: Int = 4
-    if let externalAccountId = asset.externalAccountId, externalAccountId.count >= showCount {
-      let lastIndex = externalAccountId.count
-      walletAdress = externalAccountId.substring(start: lastIndex - showCount, end: lastIndex)
-    }
-    return walletAdress
+  func getLastFourDigits(from value: String) -> String {
+    let showCount = 4
+    let lastIndex = value.count
+
+    return lastIndex >= showCount ? value.substring(start: lastIndex - showCount, end: lastIndex) : value
   }
 }
 

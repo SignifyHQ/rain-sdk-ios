@@ -500,8 +500,9 @@
 "accountView.legal" = "Legal";
 "accountView.deposit_limits" = "Deposit Limits";
 "accountView.atm_location_title" = "ATM Locations";
-"accountView.routingNumber.title" = "Routing number";
-"accountView.accountNumber.title" = "Account number";
+"accountView.hiddenValue.title" = "**** %@";
+"accountView.routingNumber.title" = "Routing Number";
+"accountView.accountNumber.title" = "Account Number";
 "accountView.notifications" = "Enable Notifications";
 "accountView.disclosure.message" = "The CauseCard pre-paid debit card is established by Pathward, National Association Member FDIC, pursuant to license by Visa. Netspend is a service provider to Pathward.";
 

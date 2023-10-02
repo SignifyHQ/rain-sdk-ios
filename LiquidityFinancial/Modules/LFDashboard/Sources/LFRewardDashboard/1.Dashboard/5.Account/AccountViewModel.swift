@@ -112,6 +112,13 @@ extension AccountViewModel {
   func openReward() {
     navigation = .rewards
   }
+  
+  func getLastFourDigits(from value: String) -> String {
+    let showCount = 4
+    let lastIndex = value.count
+
+    return lastIndex >= showCount ? value.substring(start: lastIndex - showCount, end: lastIndex) : value
+  }
 }
 
 // MARK: - API

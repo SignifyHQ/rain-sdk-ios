@@ -254,6 +254,12 @@ public enum LFLocalizable {
         public static let special = LFLocalizable.tr("Localizable", "account.reward.session.special", fallback: "Special Promotions")
       }
     }
+    public enum SpendingReward {
+      /// Spending %@
+      public static func normal(_ p1: Any) -> String {
+        return LFLocalizable.tr("Localizable", "account.spendingReward.normal", String(describing: p1), fallback: "Spending %@")
+      }
+    }
   }
   public enum AccountLocked {
     public enum ContactSupport {
@@ -296,8 +302,8 @@ public enum LFLocalizable {
     /// Wallets
     public static let wallets = LFLocalizable.tr("Localizable", "accountView.wallets", fallback: "Wallets")
     public enum AccountNumber {
-      /// Account number
-      public static let title = LFLocalizable.tr("Localizable", "accountView.accountNumber.title", fallback: "Account number")
+      /// Account Number
+      public static let title = LFLocalizable.tr("Localizable", "accountView.accountNumber.title", fallback: "Account Number")
     }
     public enum BankTransfers {
       /// Send from your bank to AvalancheCard
@@ -325,6 +331,12 @@ public enum LFLocalizable {
       /// The DogeCard pre-paid debit card is established by Pathward, National Association Member FDIC, pursuant to license by Visa. Netspend is a service provider to Pathward. Cryptocurrency services provided by Zero Hash. Cryptocurrency is not insured by, or subject to the protections of the FDIC.
       public static let message = LFLocalizable.tr("Localizable", "accountView.disclosure.message", fallback: "The DogeCard pre-paid debit card is established by Pathward, National Association Member FDIC, pursuant to license by Visa. Netspend is a service provider to Pathward. Cryptocurrency services provided by Zero Hash. Cryptocurrency is not insured by, or subject to the protections of the FDIC.")
     }
+    public enum HiddenValue {
+      /// **** %@
+      public static func title(_ p1: Any) -> String {
+        return LFLocalizable.tr("Localizable", "accountView.hiddenValue.title", String(describing: p1), fallback: "**** %@")
+      }
+    }
     public enum OneTimeTransfers {
       /// Connect an external bank with Plaid
       public static let subtitle = LFLocalizable.tr("Localizable", "accountView.one_time_transfers.subtitle", fallback: "Connect an external bank with Plaid")
@@ -332,8 +344,8 @@ public enum LFLocalizable {
       public static let title = LFLocalizable.tr("Localizable", "accountView.one_time_transfers.title", fallback: "Bank Transfers")
     }
     public enum RoutingNumber {
-      /// Routing number
-      public static let title = LFLocalizable.tr("Localizable", "accountView.routingNumber.title", fallback: "Routing number")
+      /// Routing Number
+      public static let title = LFLocalizable.tr("Localizable", "accountView.routingNumber.title", fallback: "Routing Number")
     }
     public enum Wallet {
       /// %@ Wallet

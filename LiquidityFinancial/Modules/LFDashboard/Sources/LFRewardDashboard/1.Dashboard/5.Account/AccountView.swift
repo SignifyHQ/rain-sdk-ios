@@ -82,9 +82,6 @@ private extension AccountsView {
             isDisableView: $viewModel.isDisableView
           )
         }
-        section(title: LFLocalizable.AccountView.limits) {
-          depositLimits
-        }
         section(title: LFLocalizable.AccountView.cardAccountDetails) {
           accountDetailView
         }
@@ -119,7 +116,9 @@ private extension AccountsView {
       accountDetailCell(
         image: GenImages.CommonImages.icAccountNumber.swiftUIImage,
         title: LFLocalizable.AccountView.AccountNumber.title,
-        value: viewModel.achInformation.accountNumber
+        value: LFLocalizable.AccountView.HiddenValue.title(
+          viewModel.getLastFourDigits(from: viewModel.achInformation.accountNumber)
+        )
       ) {
         UIPasteboard.general.string = viewModel.achInformation.accountNumber
         viewModel.toastMessage = LFLocalizable.Toast.Copy.message
@@ -163,15 +162,39 @@ private extension AccountsView {
     Group {
       if !viewModel.linkedAccount.isEmpty {
         section(title: LFLocalizable.AccountView.connectedAccounts) {
-          ArrowButton(
-            image: GenImages.CommonImages.Accounts.connectedAccounts.swiftUIImage,
-            title: LFLocalizable.AccountView.connectedAccounts,
-            value: nil
-          ) {
-            viewModel.connectedAccountsTapped()
-          }
+          connectedAccountButton
         }
       }
+    }
+  }
+  
+  var connectedAccountButton: some View {
+    Button(action: {
+      viewModel.connectedAccountsTapped()
+    }) {
+      HStack(spacing: 4) {
+        GenImages.CommonImages.Accounts.connectedAccounts.swiftUIImage
+          .foregroundColor(Colors.label.swiftUIColor)
+        Text(LFLocalizable.AccountView.connectedAccounts)
+          .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.ultraSmall.value))
+          .foregroundColor(Colors.label.swiftUIColor)
+          .padding(.leading, 8)
+        Spacer()
+        Circle()
+          .fill(Colors.buttons.swiftUIColor)
+          .frame(32.0)
+          .overlay {
+            Text("\(viewModel.linkedAccount.count)")
+              .foregroundColor(Colors.label.swiftUIColor)
+              .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.ultraSmall.value))
+          }
+        CircleButton(style: .right)
+      }
+      .padding(.leading, 16)
+      .padding(.trailing, 12)
+      .frame(height: 56)
+      .background(Colors.secondaryBackground.swiftUIColor)
+      .cornerRadius(10)
     }
   }
 
@@ -187,6 +210,13 @@ private extension AccountsView {
   var shortcutSection: some View {
     VStack {
       ArrowButton(
+        image: GenImages.CommonImages.Accounts.limits.swiftUIImage,
+        title: LFLocalizable.AccountView.depositLimits,
+        value: nil
+      ) {
+        viewModel.onClickedDepositLimitsButton()
+      }
+      ArrowButton(
         image: GenImages.CommonImages.icRewards.swiftUIImage,
         title: LFLocalizable.AccountView.rewards,
         value: nil
@@ -199,13 +229,6 @@ private extension AccountsView {
         value: nil
       ) {
         viewModel.bankStatementTapped()
-      }
-      ArrowButton(
-        image: GenImages.CommonImages.Accounts.help.swiftUIImage,
-        title: LFLocalizable.AccountView.helpSupport,
-        value: nil
-      ) {
-        viewModel.openIntercomService()
       }
       if !viewModel.notificationsEnabled {
         ArrowButton(
@@ -247,16 +270,6 @@ private extension AccountsView {
           viewModel.checkNotificationsStatus()
         }
       })
-    }
-  }
-
-  var depositLimits: some View {
-    ArrowButton(
-      image: GenImages.CommonImages.Accounts.limits.swiftUIImage,
-      title: LFLocalizable.AccountView.depositLimits,
-      value: nil
-    ) {
-      viewModel.onClickedDepositLimitsButton()
     }
   }
 }

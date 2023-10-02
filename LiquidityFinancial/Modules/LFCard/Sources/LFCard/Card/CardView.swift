@@ -132,7 +132,7 @@ private extension CardView {
     if viewModel.isShowCardCopyMessage {
       Text(LFLocalizable.Card.CopyToClipboard.title)
         .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.ultraSmall.value))
-        .foregroundColor(Colors.contrast.swiftUIColor)
+        .foregroundColor(Colors.label.swiftUIColor)
         .frame(maxWidth: .infinity)
         .frame(height: 20, alignment: .center)
         .background(Colors.secondaryBackground.swiftUIColor.opacity(0.9))
