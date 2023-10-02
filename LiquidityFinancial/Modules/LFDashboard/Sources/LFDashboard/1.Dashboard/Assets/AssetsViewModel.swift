@@ -18,16 +18,12 @@ final class AssetsViewModel: ObservableObject {
   
   private var cancellable: Set<AnyCancellable> = []
   
-  init(isLoading: Published<Bool>.Publisher) {
+  init() {
     accountDataManager
       .accountsSubject.map({ accounts in
         accounts.map({ AssetModel(account: $0) })
       })
       .assign(to: \.assets, on: self)
-      .store(in: &cancellable)
-    
-    isLoading
-      .assign(to: \.isLoading, on: self)
       .store(in: &cancellable)
   }
   
@@ -36,6 +32,20 @@ final class AssetsViewModel: ObservableObject {
       navigation = .usd(asset)
     } else {
       navigation = .crypto(asset)
+    }
+  }
+  
+  func refresh() async {
+    async let fiatAccountsEntity = self.accountRepository.getAccount(currencyType: Constants.CurrencyType.fiat.rawValue)
+    async let cryptoAccountsEntity = self.accountRepository.getAccount(currencyType: Constants.CurrencyType.crypto.rawValue)
+    do {
+      let fiatAccounts = try await fiatAccountsEntity
+      let cryptoAccounts = try await cryptoAccountsEntity
+      let accounts = fiatAccounts + cryptoAccounts
+      
+      self.accountDataManager.accountsSubject.send(accounts)
+    } catch {
+      toastMessage = error.localizedDescription
     }
   }
 }

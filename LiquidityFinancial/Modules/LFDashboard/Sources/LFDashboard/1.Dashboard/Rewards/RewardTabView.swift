@@ -45,6 +45,8 @@ struct RewardTabView: View {
         }
       }
       .background(Colors.background.swiftUIColor)
+      .refreshable {
+      }
       .onAppear {
         Task { @MainActor in
           await viewModel.apiLoadTransactions()

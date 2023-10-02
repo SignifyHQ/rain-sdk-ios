@@ -19,12 +19,13 @@ struct AssetsView: View {
           .frame(width: 30, height: 20)
       } else {
         VStack(spacing: 10) {
-          ForEach(viewModel.assets, id: \.self) { asset in
-            assetCell(asset: asset)
+          ScrollView(showsIndicators: false) {
+            ForEach(viewModel.assets, id: \.self) { asset in
+              assetCell(asset: asset)
+            }
           }
-          
+          .padding(.top, 24)
           Spacer()
-          
           Text(LFLocalizable.AssetView.disclosure)
             .font(Fonts.Inter.extraLight.swiftUIFont(size: 10))
             .foregroundColor(Colors.whiteText.swiftUIColor)
@@ -32,9 +33,9 @@ struct AssetsView: View {
         }
       }
     }
-    .padding(.top, 24)
-    .padding(.horizontal, 30)
-    .frame(max: .infinity)
+    .refreshable {
+      await viewModel.refresh()
+    }
     .background(Colors.background.swiftUIColor)
     .popup(item: $viewModel.toastMessage, style: .toast) {
       ToastView(toastMessage: $0)
@@ -85,6 +86,7 @@ private extension AssetsView {
         .frame(height: 56)
         .background(Colors.secondaryBackground.swiftUIColor.cornerRadius(9))
       }
+      .padding(.horizontal, 30)
     }
   }
 }

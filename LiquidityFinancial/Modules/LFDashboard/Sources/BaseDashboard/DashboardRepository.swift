@@ -135,6 +135,7 @@ public extension DashboardRepository {
         let linkedSources = try await linkedAccountEntity.linkedSources
         
         self.fiatAccounts = fiatAccounts
+        
         self.accountDataManager.storeLinkedSources(linkedSources)
         self.accountDataManager.addOrUpdateAccounts(fiatAccounts)
       } catch {
@@ -210,6 +211,7 @@ public extension DashboardRepository {
         
         self.fiatAccounts = fiatAccounts
         self.cryptoAccounts = cryptoAccounts
+        
         self.allAssets = assets
         self.accountDataManager.accountsSubject.send(accounts)
       } catch {

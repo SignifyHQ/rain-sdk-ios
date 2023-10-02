@@ -166,6 +166,10 @@ public extension Constants {
     case fiat = "FIAT"
     case crypto = "CRYPTO"
   }
+  
+  struct CurrencyList {
+    public static let fiats = ["USD"]
+  }
 }
 
   // MARK: TransactionType

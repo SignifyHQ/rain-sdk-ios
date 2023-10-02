@@ -59,6 +59,8 @@ public enum Colors {
   public static let purchaseCardBackground = ColorAsset(name: "purchaseCardBackground")
   public static let secondaryBackground = ColorAsset(name: "secondaryBackground")
   public static let separator = ColorAsset(name: "separator")
+  public static let tabbarSelected = ColorAsset(name: "tabbar_selected")
+  public static let tabbarUnselected = ColorAsset(name: "tabbar_unselected")
   public static let termAndPrivacy = ColorAsset(name: "termAndPrivacy")
   public static let tertiary = ColorAsset(name: "tertiary")
   public static let tertiaryBackground = ColorAsset(name: "tertiaryBackground")

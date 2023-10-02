@@ -8,6 +8,7 @@ import BaseDashboard
 import LFAccountOnboarding
 import LFBank
 import Factory
+import LFCard
 
 public struct HomeView: View {
   @Injected(\.dashboardRepository) var dashboardRepository
@@ -18,11 +19,9 @@ public struct HomeView: View {
   
   var onChangeRoute: ((OnboardingFlowCoordinator.Route) -> Void)?
   
-  let tabOptions: [TabOption]
-  
-  public init(viewModel: HomeViewModel, tabOptions: [TabOption], onChangeRoute: ((OnboardingFlowCoordinator.Route) -> Void)? = nil) {
+  public init(viewModel: HomeViewModel, onChangeRoute: ((OnboardingFlowCoordinator.Route) -> Void)? = nil) {
     _viewModel = .init(wrappedValue: viewModel)
-    self.tabOptions = tabOptions
+    
     self.onChangeRoute = onChangeRoute
     dashboardRepository.load { toastMessage in
       viewModel.toastMessage = toastMessage
@@ -30,16 +29,31 @@ public struct HomeView: View {
   }
   
   public var body: some View {
-    VStack(spacing: 0) {
-      ZStack {
-        ForEach(tabOptions, id: \.self) { option in
-          DashboardView(option: option)
-          .opacity(viewModel.tabSelected == option ? 1 : 0)
-        }
+    TabView(selection: $viewModel.tabSelected) {
+      ForEach(viewModel.tabOptions, id: \.self) { option in
+        loadTabView(option: option)
       }
-      tabBar
     }
     .navigationBarTitleDisplayMode(.inline)
+    .tint(Colors.tabbarSelected.swiftUIColor)
+    .onAppear {
+      UITabBar.appearance().backgroundColor = Colors.secondaryBackground.swiftUIColor.uiColor
+      UITabBar.appearance().unselectedItemTintColor = Colors.tabbarUnselected.swiftUIColor.uiColor
+      UITabBarItem.appearance().setTitleTextAttributes(
+        [
+          NSAttributedString.Key.font: Fonts.orbitronMedium.font(size: 10),
+          NSAttributedString.Key.foregroundColor: Colors.label.swiftUIColor.opacity(0.75).uiColor
+        ],
+        for: .normal
+      )
+      UITabBarItem.appearance().setTitleTextAttributes(
+        [
+          NSAttributedString.Key.font: Fonts.orbitronMedium.font(size: 10),
+          NSAttributedString.Key.foregroundColor: Colors.label.swiftUIColor.uiColor
+        ],
+        for: .selected
+      )
+    }
     .toolbar {
       ToolbarItem(placement: .navigationBarTrailing) {
         trailingNavigationBarView
@@ -83,26 +97,18 @@ public struct HomeView: View {
 
 // MARK: - View Components
 private extension HomeView {
+  func loadTabView(option: TabOption) -> some View {
+    DashboardView(option: option).tabItem {
+      tabItem(option: option)
+    }
+    .tag(option)
+  }
+  
   var leadingNavigationBarView: some View {
     Text(viewModel.tabSelected.title)
       .font(Fonts.orbitronBold.swiftUIFont(size: Constants.FontSize.navigationBar.value))
       .foregroundColor(Colors.label.swiftUIColor)
       .padding(.leading, 12)
-  }
-  
-  var tabBar: some View {
-    HStack(spacing: 0) {
-      ForEach(tabOptions, id: \.self) { option in
-        tabItem(option: option)
-        if option != tabOptions.last {
-          Spacer()
-        }
-      }
-    }
-    .padding(.horizontal, 32)
-    .padding(.bottom, 0)
-    .padding(.top, 8)
-    .background(Colors.secondaryBackground.swiftUIColor)
   }
   
   func tabItem(option: TabOption) -> some View {
@@ -111,6 +117,7 @@ private extension HomeView {
         .foregroundColor(
           option == viewModel.tabSelected ? Colors.primary.swiftUIColor : Colors.label.swiftUIColor
         )
+        .tint(Colors.primary.swiftUIColor)
       Text(option.title)
         .foregroundColor(
           option == viewModel.tabSelected ? Colors.label.swiftUIColor : Colors.label.swiftUIColor.opacity(0.75)

@@ -24,8 +24,12 @@ class RewardTabViewModel: ObservableObject {
   
   private var cancellable: Set<AnyCancellable> = []
   
-  init(accounts: (accountsCrypto: Published<[LFAccount]>.Publisher, isLoading: Published<Bool>.Publisher)) {
-    accounts.accountsCrypto
+  init() {
+    accountDataManager
+      .accountsSubject
+      .map({ accounts in
+        accounts.filter({ !Constants.CurrencyList.fiats.contains($0.currency) })
+      })
       .receive(on: DispatchQueue.main)
       .sink { [weak self] accounts in
         guard let self = self else {
@@ -48,15 +52,12 @@ class RewardTabViewModel: ObservableObject {
         }
       }
       .store(in: &cancellable)
-    
-    accounts.isLoading
-      .assign(to: \.isLoading, on: self)
-      .store(in: &cancellable)
   }
 }
 
 // MARK: - View Helpers
 extension RewardTabViewModel {
+  
   func fetchAllTransactions() {
     Task { @MainActor in
       defer { isLoading = false }

@@ -4,10 +4,5 @@ import LFDashboard
 
 @MainActor
 extension Container {
-  // ViewModels
-  var homeViewModel: Factory<HomeViewModel> {
-    self {
-      HomeViewModel()
-    }
-  }
+  
 }

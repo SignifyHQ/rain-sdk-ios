@@ -35,11 +35,9 @@ struct DashboardView: View {
           dashboardRepository.refreshCash()
         }
       case .rewards:
-        RewardTabView(viewModel: RewardTabViewModel(
-          accounts: (accountsCrypto: dashboardRepository.$cryptoAccounts, isLoading: dashboardRepository.$isLoading)
-        ))
+        RewardTabView(viewModel: RewardTabViewModel())
       case .assets:
-        AssetsView(viewModel: AssetsViewModel(isLoading: dashboardRepository.$isLoading))
+        AssetsView(viewModel: AssetsViewModel())
       case .account:
         AccountsView(viewModel: AccountViewModel(achInformationData: dashboardRepository.$achInformationData, accountsCrypto: dashboardRepository.$cryptoAccounts))
       }

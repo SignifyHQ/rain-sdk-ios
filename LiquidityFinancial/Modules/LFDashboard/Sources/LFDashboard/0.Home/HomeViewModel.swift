@@ -22,13 +22,16 @@ public final class HomeViewModel: ObservableObject {
   
   @Published var isShowGearButton: Bool = false
   @Published var tabSelected: TabOption = .cash
+  @Published var tabOptions: [TabOption] = [.cash, .rewards, .account]
   @Published var navigation: Navigation?
   @Published var popup: Popup?
   
   @Published var isLoading: Bool = false
   @Published var toastMessage: String?
 
-  public init() {
+  public init(tabOptions: [TabOption]) {
+    self.tabOptions = tabOptions
+    
     initData()
     accountDataManager.userCompleteOnboarding = true
     checkGoTransactionDetail()
