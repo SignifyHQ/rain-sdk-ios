@@ -1359,10 +1359,10 @@ public enum LFLocalizable {
     public static let saveTitle = LFLocalizable.tr("Localizable", "edit_nickname_of_wallet.save_title", fallback: "EDIT WALLET ADDRESS")
   }
   public enum EditRewards {
-    /// Change rewards
-    public static let navigationTitle = LFLocalizable.tr("Localizable", "edit_rewards.navigation_title", fallback: "Change rewards")
-    /// Please select your rewards
-    public static let title = LFLocalizable.tr("Localizable", "edit_rewards.title", fallback: "Please select your rewards")
+    /// Select Rewards
+    public static let navigationTitle = LFLocalizable.tr("Localizable", "edit_rewards.navigation_title", fallback: "Select Rewards")
+    /// How would you like your rewards?
+    public static let title = LFLocalizable.tr("Localizable", "edit_rewards.title", fallback: "How would you like your rewards?")
   }
   public enum EnterCVVCode {
     public enum ActiveCard {
@@ -2799,10 +2799,10 @@ public enum LFLocalizable {
     }
   }
   public enum UnspecifiedRewards {
-    /// Select a reward
-    public static let cta = LFLocalizable.tr("Localizable", "unspecified_rewards.cta", fallback: "Select a reward")
-    /// You can choose between
-    public static let title = LFLocalizable.tr("Localizable", "unspecified_rewards.title", fallback: "You can choose between")
+    /// Select Reward
+    public static let cta = LFLocalizable.tr("Localizable", "unspecified_rewards.cta", fallback: "Select Reward")
+    /// CHOOSE BETWEEN
+    public static let title = LFLocalizable.tr("Localizable", "unspecified_rewards.title", fallback: "CHOOSE BETWEEN")
   }
   public enum UploadDocument {
     public enum AddressRequirement {
@@ -2920,12 +2920,14 @@ public enum LFLocalizable {
   }
   public enum UserRewardType {
     public enum Cashback {
+      /// Earning cash back rewards
+      public static let description = LFLocalizable.tr("Localizable", "user_reward_type.cashback.description", fallback: "Earning cash back rewards")
       /// %.2f%% on every qualifying purchase
       public static func subtitle(_ p1: Float) -> String {
         return LFLocalizable.tr("Localizable", "user_reward_type.cashback.subtitle", p1, fallback: "%.2f%% on every qualifying purchase")
       }
-      /// Instant Cashback
-      public static let title = LFLocalizable.tr("Localizable", "user_reward_type.cashback.title", fallback: "Instant Cashback")
+      /// Cash Back
+      public static let title = LFLocalizable.tr("Localizable", "user_reward_type.cashback.title", fallback: "Cash Back")
     }
     public enum Donation {
       /// %.2f%%  donated to a charity you choose

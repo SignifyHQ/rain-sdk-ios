@@ -724,18 +724,19 @@
 "select_rewards.continue" = "Continue";
 
 // Edit Rewards
-"edit_rewards.navigation_title" = "Change rewards";
-"edit_rewards.title" = "Please select your rewards";
+"edit_rewards.navigation_title" = "Select Rewards";
+"edit_rewards.title" = "How would you like your rewards?";
 
 // User Reward Type
-"user_reward_type.cashback.title" = "Instant Cashback";
+"user_reward_type.cashback.title" = "Cash Back";
+"user_reward_type.cashback.description" = "Earning cash back rewards";
 "user_reward_type.cashback.subtitle" = "%.2f%% on every qualifying purchase";
 "user_reward_type.donation.title" = "Donate to Charity";
 "user_reward_type.donation.subtitle" = "%.2f%%  donated to a charity you choose";
 
 // Unspecified Rewards
-"unspecified_rewards.title" = "You can choose between";
-"unspecified_rewards.cta" = "Select a reward";
+"unspecified_rewards.title" = "CHOOSE BETWEEN";
+"unspecified_rewards.cta" = "Select Reward";
 
 // Donations Disclosure
 "donations_disclosure.text" = "%@ of the donations you make are tax deductible and go to charity. ";

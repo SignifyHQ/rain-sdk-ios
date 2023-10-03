@@ -3,6 +3,7 @@ import LFStyleGuide
 import LFLocalizable
 import LFUtilities
 import LFRewards
+import LFTransaction
 
 struct EditRewardsView: View {
   @StateObject private var viewModel: EditRewardsViewModel
@@ -17,7 +18,7 @@ struct EditRewardsView: View {
       .toolbar {
         ToolbarItem(placement: .principal) {
           Text(LFLocalizable.EditRewards.navigationTitle)
-            .font(Fonts.regular.swiftUIFont(size: 16))
+            .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.medium.value))
             .foregroundColor(Colors.label.swiftUIColor)
         }
       }
@@ -25,41 +26,68 @@ struct EditRewardsView: View {
         ToastView(toastMessage: LFLocalizable.genericErrorMessage)
       }
       .disabled(viewModel.isLoading)
-      .onDisappear {
-        viewModel.onDisappear()
-      }
       .onReceive(NotificationCenter.default.publisher(for: .selectedFundraisersSuccess)) { _ in
         viewModel.handleSelectedFundraisersSuccess()
       }
       .navigationLink(item: $viewModel.navigation) { navigation in
         switch navigation {
+        case .currentRewards:
+          CurrentRewardView()
         case let .selectFundraiser(causes):
           SelectCauseCategoriesView(
             viewModel: SelectCauseCategoriesViewModel(causes: causes),
             destination: AnyView(EmptyView()),
-            whereStart: .dashboard) { //handle on pop to root view
-              viewModel.handlePopToRootView()
-            }
+            whereStart: .dashboard
+          ) { //handle on pop to root view
+            viewModel.handlePopToRootView()
+          }
         }
       }
   }
-  
-  private var content: some View {
+}
+
+// MARK: - View Components
+private extension EditRewardsView {
+  var content: some View {
     VStack(alignment: .leading, spacing: 10) {
       Text(LFLocalizable.EditRewards.title)
         .font(Fonts.regular.swiftUIFont(size: 16))
         .foregroundColor(Colors.label.swiftUIColor.opacity(0.75))
         .padding(.bottom, 2)
-      
       ForEach(viewModel.rowModel, id: \.id) { item in
-        UserRewardRowView(type: .short, reward: item.rewardSelecting, selection: viewModel.selection(item))
-          .onTapGesture {
-            viewModel.optionTapped(item)
-          }
+        UserRewardRowView(
+          type: .short,
+          reward: item.rewardSelecting,
+          selection: viewModel.selection(item)
+        )
+        .onTapGesture {
+          viewModel.onSelectedReward(item)
+        }
       }
-      
       Spacer()
+      buttonsView
     }
-    .padding(30)
+    .padding([.top, .horizontal], 30)
+  }
+  
+  var buttonsView: some View {
+    VStack(spacing: 16) {
+      ArrowButton(
+        image: GenImages.CommonImages.icRewards.swiftUIImage,
+        title: LFLocalizable.ChangeRewardView.currentRewards,
+        value: nil,
+        fontSize: Constants.FontSize.medium.value
+      ) {
+        viewModel.onClickedCurrentRewardsButton()
+      }
+      FullSizeButton(
+        title: LFLocalizable.Button.Save.title,
+        isDisable: viewModel.isDisableButton,
+        isLoading: $viewModel.isLoading
+      ) {
+        viewModel.apiSelecteRewardType()
+      }
+    }
+    .padding(.bottom, 24)
   }
 }

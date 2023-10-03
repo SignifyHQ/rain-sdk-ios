@@ -65,7 +65,7 @@ struct UserRewardRowView: View {
           GenImages.CommonImages.icCheckmark.swiftUIImage
             .resizable()
             .frame(10)
-            .foregroundColor(Colors.primary.swiftUIColor)
+            .foregroundColor(Colors.contrast.swiftUIColor)
         }
       case .loading:
         LottieView(loading: .primary)

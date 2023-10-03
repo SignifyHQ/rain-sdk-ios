@@ -82,9 +82,15 @@ struct RewardsView: View {
         Text(item.title ?? "")
           .font(Fonts.regular.swiftUIFont(size: 16))
           .foregroundColor(Colors.label.swiftUIColor)
-        Text(item.subtitle(param: 0.75) ?? "")
-          .font(Fonts.regular.swiftUIFont(size: 12))
-          .foregroundColor(Colors.label.swiftUIColor.opacity(0.75))
+        if item == .cashBack {
+          Text(LFLocalizable.UserRewardType.Cashback.description)
+            .font(Fonts.regular.swiftUIFont(size: 12))
+            .foregroundColor(Colors.label.swiftUIColor.opacity(0.75))
+        } else {
+          Text(item.subtitle(param: 0.75) ?? "")
+            .font(Fonts.regular.swiftUIFont(size: 12))
+            .foregroundColor(Colors.label.swiftUIColor.opacity(0.75))
+        }
       }
       
       Spacer()
