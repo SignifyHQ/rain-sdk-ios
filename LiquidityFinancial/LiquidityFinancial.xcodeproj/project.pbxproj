@@ -395,6 +395,7 @@
 		A99D2F972A9A56F200947773 /* PrideCardApp.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PrideCardApp.swift; sourceTree = "<group>"; };
 		A99D2F992A9A56F200947773 /* AppView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppView.swift; sourceTree = "<group>"; };
 		A99D2F9A2A9A56F200947773 /* AppViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppViewModel.swift; sourceTree = "<group>"; };
+		A9A23B0F2ACD46D900CD9D7F /* TestHelpers */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = TestHelpers; path = Modules/TestHelpers; sourceTree = "<group>"; };
 		A9B448F02A8389B90029944C /* CauseCard.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = CauseCard.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		A9B448F42A838A000029944C /* CauseCardConfig.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = CauseCardConfig.xcconfig; sourceTree = "<group>"; };
 		A9B448F72A838A000029944C /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
@@ -859,6 +860,7 @@
 		A97BF80D2A5D980200B8F5CA /* Utilities */ = {
 			isa = PBXGroup;
 			children = (
+				A9A23B0F2ACD46D900CD9D7F /* TestHelpers */,
 				A98A95132AAC42500079085F /* LFBuildTools */,
 				A94F71F32A614E04002ADB34 /* LFLocalizable */,
 				A97BF8132A5D9CC300B8F5CA /* LFUtilities */,

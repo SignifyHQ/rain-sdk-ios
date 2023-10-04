@@ -21,7 +21,8 @@ let package = Package(
       .package(name: "LFUtilities", path: "../LFUtilities"),
       .package(name: "LFDomain", path: "../LFDomain"),
       .package(url: "https://github.com/hmlongco/Factory", from: "2.2.0"),
-      .package(url: "https://github.com/Alamofire/Alamofire.git", .upToNextMajor(from: "5.7.1"))
+      .package(url: "https://github.com/Alamofire/Alamofire.git", .upToNextMajor(from: "5.7.1")),
+      .package(name: "LFBuildTools", path: "../LFBuildTools")
     ],
     targets: [
         .target(
@@ -32,7 +33,8 @@ let package = Package(
           dependencies: [
             "LFUtilities", "Factory", "NetworkUtilities", "Alamofire",
             .product(name: "OnboardingDomain", package: "LFDomain")
-          ]
+          ],
+          plugins: [.plugin(name: "SourceryPlugin", package: "LFBuildTools")]
         ),
         .target(
           name: "NetworkUtilities",

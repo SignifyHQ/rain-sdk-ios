@@ -34,7 +34,9 @@ let package = Package(
     .package(name: "LFNetwork", path: "../LFNetwork"),
     .package(name: "LFUtilities", path: "../LFUtilities"),
     .package(name: "LFServices", path: "../LFServices"),
-    .package(url: "https://github.com/hmlongco/Factory", from: "2.2.0")
+    .package(url: "https://github.com/hmlongco/Factory", from: "2.2.0"),
+    .package(name: "LFBuildTools", path: "../LFBuildTools"),
+    .package(name: "TestHelpers", path: "../TestHelpers")
   ],
   targets: [
     .target(
@@ -44,7 +46,8 @@ let package = Package(
         .product(name: "OnboardingDomain", package: "LFDomain"),
         .product(name: "NetworkUtilities", package: "LFNetwork"),
         .product(name: "CoreNetwork", package: "LFNetwork")
-      ]
+      ],
+      plugins: [.plugin(name: "SourceryPlugin", package: "LFBuildTools")]
     ),
     .target(
       name: "NetSpendData",
@@ -102,6 +105,9 @@ let package = Package(
     ),
     .testTarget(
       name: "OnboardingDataTests",
-      dependencies: ["OnboardingData"])
+      dependencies: ["OnboardingData", "TestHelpers"]),
+    .testTarget(
+      name: "AccountDataTests",
+      dependencies: ["AccountData"])
   ]
 )
