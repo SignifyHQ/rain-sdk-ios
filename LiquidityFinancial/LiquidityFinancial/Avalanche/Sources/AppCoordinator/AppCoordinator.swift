@@ -3,7 +3,6 @@ import Factory
 import LFUtilities
 import LFAccountOnboarding
 import SwiftUI
-import NetSpendData
 import AuthorizationManager
 
 // swiftlint:disable let_var_whitespace

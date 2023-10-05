@@ -3,7 +3,6 @@ import CoreNetwork
 import NetworkUtilities
 import AuthorizationManager
 import Factory
-import NetSpendData
 
 public enum AccountRoute {
   case createZeroHashAccount

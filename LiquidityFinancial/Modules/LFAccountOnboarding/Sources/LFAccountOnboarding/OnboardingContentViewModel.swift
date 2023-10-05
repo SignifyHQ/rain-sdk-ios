@@ -3,7 +3,6 @@ import Combine
 import SwiftUI
 import Factory
 import OnboardingData
-import NetSpendData
 import LFUtilities
 import AuthorizationManager
 

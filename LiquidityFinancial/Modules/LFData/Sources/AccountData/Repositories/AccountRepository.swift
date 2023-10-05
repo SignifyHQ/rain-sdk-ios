@@ -2,7 +2,6 @@ import Foundation
 import AuthorizationManager
 import AccountDomain
 import LFUtilities
-import NetSpendData
 
 public class AccountRepository: AccountRepositoryProtocol {
   

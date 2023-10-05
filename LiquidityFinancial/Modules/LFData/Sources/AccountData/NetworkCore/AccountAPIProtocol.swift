@@ -1,7 +1,6 @@
 import Foundation
 import NetworkUtilities
 import LFUtilities
-import NetSpendData
 
 public protocol AccountAPIProtocol {
   func createZeroHashAccount() async throws -> APIZeroHashAccount

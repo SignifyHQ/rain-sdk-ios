@@ -1,12 +1,10 @@
 import Foundation
-import NetSpendData
 import NetSpendDomain
 import Factory
 
 @MainActor
 final class ApplePayViewModel: ObservableObject {
   @LazyInjected(\.cardRepository) var cardRepository
-  @LazyInjected(\.netspendDataManager) var netspendDataManager
   @LazyInjected(\.intercomService) var intercomService
   @LazyInjected(\.accountDataManager) var accountDataManager
 

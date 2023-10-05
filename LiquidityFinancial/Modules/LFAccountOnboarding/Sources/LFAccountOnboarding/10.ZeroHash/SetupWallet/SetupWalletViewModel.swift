@@ -1,6 +1,5 @@
 import SwiftUI
 import Factory
-import NetSpendData
 import AccountData
 import LFUtilities
 import LFServices

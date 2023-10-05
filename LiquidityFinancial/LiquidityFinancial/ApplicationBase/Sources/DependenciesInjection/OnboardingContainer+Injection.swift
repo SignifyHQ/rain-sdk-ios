@@ -6,7 +6,6 @@ import OnboardingData
 import LFAccountOnboarding
 import NetworkUtilities
 import AuthorizationManager
-import NetSpendData
 
 @MainActor
 extension Container {

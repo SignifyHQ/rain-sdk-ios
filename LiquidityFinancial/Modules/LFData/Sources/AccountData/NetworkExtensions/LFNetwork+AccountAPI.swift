@@ -2,7 +2,6 @@ import Foundation
 import NetworkUtilities
 import CoreNetwork
 import LFUtilities
-import NetSpendData
 
 extension LFCoreNetwork: AccountAPIProtocol where R == AccountRoute {
   public func getAccount(currencyType: String) async throws -> [APIAccount] {
