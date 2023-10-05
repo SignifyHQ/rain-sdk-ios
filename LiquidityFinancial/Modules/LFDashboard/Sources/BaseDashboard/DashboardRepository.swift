@@ -219,6 +219,7 @@ public extension DashboardRepository {
         self.allAssets = assets
         self.accountDataManager.accountsSubject.send(accounts)
       } catch {
+        isLoadingRewardTab = false
         log.error(error.localizedDescription)
         toastMessage?(error.localizedDescription)
       }

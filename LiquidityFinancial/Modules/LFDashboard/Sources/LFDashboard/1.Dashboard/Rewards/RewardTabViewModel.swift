@@ -13,7 +13,7 @@ class RewardTabViewModel: ObservableObject {
   
   @Published var selectedRewardCurrency: AssetType?
   @Published var toastMessage: String = ""
-  @Published var isLoading: Bool = false
+  @Published var isLoading: Bool = true
   @Published var accounts: [LFAccount] = []
   @Published var navigation: Navigation?
   @Published var activity = Activity.loading
