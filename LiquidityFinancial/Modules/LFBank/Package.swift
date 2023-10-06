@@ -9,7 +9,10 @@ let package = Package(
     products: [
         .library(
             name: "LFBank",
-            targets: ["LFBank"])
+            targets: ["LFBank"]),
+        .library(
+            name: "LFSolidBank",
+            targets: ["LFSolidBank"])
     ],
     dependencies: [
       .package(name: "LFUtilities", path: "../LFUtilities"),
@@ -25,6 +28,18 @@ let package = Package(
     targets: [
         .target(
             name: "LFBank",
+            dependencies: [
+              "LFUtilities", "LFStyleGuide", "LFLocalizable", "LFServices", "LFTransaction", "LFAccountOnboarding",
+              .product(name: "OnboardingData", package: "LFData"),
+              .product(name: "NetSpendData", package: "LFData"),
+              .product(name: "AccountData", package: "LFData"),
+              .product(name: "NetSpendDomain", package: "LFDomain"),
+              .product(name: "OnboardingDomain", package: "LFDomain"),
+              .product(name: "AccountDomain", package: "LFDomain"),
+              .product(name: "AuthorizationManager", package: "LFNetwork")
+            ]),
+        .target(
+            name: "LFSolidBank",
             dependencies: [
               "LFUtilities", "LFStyleGuide", "LFLocalizable", "LFServices", "LFTransaction", "LFAccountOnboarding",
               .product(name: "OnboardingData", package: "LFData"),
