@@ -24,13 +24,11 @@ struct CausesView: View {
         case let .fundraiserDetail(fundraiserID):
           FundraiserDetailView(
             viewModel: FundraiserDetailViewModel(fundraiserID: fundraiserID, whereStart: .dashboard),
-            destination: AnyView(EmptyView()),
             fundraiserDetailViewType: .select
           )
         case .selectFundraiser(let causeModel, let fundraisers):
           SelectFundraiserView(
             viewModel: SelectFundraiserViewModel(causeModel: causeModel, fundraisers: fundraisers, showSkipButton: false),
-            destination: AnyView(EmptyView()),
             whereStart: .dashboard
           )
         }

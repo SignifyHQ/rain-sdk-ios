@@ -9,21 +9,20 @@ public struct FundraiserItemView: View {
   let fundraiser: FundraiserModel
   let imageSize: CGFloat
   let shareOnImageTap: Bool
-  let destination: AnyView
   let whereStart: RewardWhereStart
   
   var onSelectItem: ((_ fundraiserID: String) -> Void)?
   
+  @Injected(\.rewardNavigation) var rewardNavigation
   @Injected(\.analyticsService) var analyticsService
   
   @State private var showDetails = false
   @State private var showShare = false
 
-  public init(fundraiser: FundraiserModel, imageSize: CGFloat = 80, shareOnImageTap: Bool = false, destination: AnyView, whereStart: RewardWhereStart) {
+  public init(fundraiser: FundraiserModel, imageSize: CGFloat = 80, shareOnImageTap: Bool = false, whereStart: RewardWhereStart) {
     self.fundraiser = fundraiser
     self.imageSize = imageSize
     self.shareOnImageTap = shareOnImageTap
-    self.destination = destination
     self.whereStart = whereStart
   }
   
@@ -31,7 +30,6 @@ public struct FundraiserItemView: View {
     self.fundraiser = fundraiser
     self.imageSize = 80
     self.shareOnImageTap = false
-    self.destination = AnyView(EmptyView())
     self.whereStart = .dashboard
     self.onSelectItem = onSelectItem
   }
@@ -47,9 +45,7 @@ public struct FundraiserItemView: View {
         }
       }
       .navigationLink(isActive: $showDetails) {
-        FundraiserDetailView(
-          viewModel: FundraiserDetailViewModel(fundraiserID: fundraiser.id, whereStart: whereStart),
-          destination: destination)
+        FundraiserDetailView(viewModel: FundraiserDetailViewModel(fundraiserID: fundraiser.id, whereStart: whereStart))
       }
   }
   

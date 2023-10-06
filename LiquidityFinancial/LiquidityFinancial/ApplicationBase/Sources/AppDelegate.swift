@@ -9,11 +9,14 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
   
   @LazyInjected(\.authorizationManager) var authorizationManager
   
+  var navigationContainer: NavigationContainer!
+  
   var orientationLock = UIInterfaceOrientationMask.portrait
   
   func application(_ application: UIApplication, didFinishLaunchingWithOptions options: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
     setUpAppearence()
     setupConfigs()
+    setupNavigaton()
     KickoffService.kickoff(application: application, launchingOptions: options)
     UserDefaults.isFirstRun = false
     return true
@@ -55,5 +58,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
   
   func application(_: UIApplication, supportedInterfaceOrientationsFor _: UIWindow?) -> UIInterfaceOrientationMask {
     orientationLock
+  }
+}
+
+extension AppDelegate {
+  func setupNavigaton() {
+    navigationContainer = NavigationContainer()
+    navigationContainer.registerModuleNavigation()
   }
 }

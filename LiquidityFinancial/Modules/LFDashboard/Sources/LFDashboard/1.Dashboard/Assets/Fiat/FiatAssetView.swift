@@ -33,16 +33,14 @@ struct FiatAssetView: View {
             type: .crypto,
             currencyType: viewModel.currencyType,
             accountID: viewModel.asset.id,
-            transactionTypes: Constants.TransactionTypesRequest.fiat.types,
-            destinationView: AnyView(AddBankWithDebitView())
+            transactionTypes: Constants.TransactionTypesRequest.fiat.types
           )
         case let .transactionDetail(transaction):
             TransactionDetailView(
               accountID: viewModel.asset.id,
               transactionId: transaction.id,
               kind: transaction.detailType,
-              isPopToRoot: false,
-              destinationView: AnyView(AddBankWithDebitView())
+              isPopToRoot: false
             )
         }
       }

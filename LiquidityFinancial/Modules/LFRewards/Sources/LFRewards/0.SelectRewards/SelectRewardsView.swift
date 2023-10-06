@@ -3,6 +3,7 @@ import LFStyleGuide
 import LFUtilities
 import LFLocalizable
 import PridecardRewards
+import Factory
 
 public enum RewardWhereStart {
   case onboarding
@@ -11,11 +12,10 @@ public enum RewardWhereStart {
 
 public struct SelectRewardsView: View {
   @StateObject private var viewModel = SelectRewardsViewModel()
+  @Injected(\.rewardNavigation) var rewardNavigation
   
-  let destinationView: AnyView
   let whereStart: RewardWhereStart
-  public init(destination: AnyView, whereStart: RewardWhereStart = .onboarding) {
-    self.destinationView = destination
+  public init(whereStart: RewardWhereStart = .onboarding) {
     self.whereStart = whereStart
   }
   
@@ -29,16 +29,15 @@ public struct SelectRewardsView: View {
       .navigationLink(item: $viewModel.navigation) { item in
         switch item {
         case .causeFilter(let causes):
-          SelectCauseCategoriesView(viewModel: SelectCauseCategoriesViewModel(causes: causes), destination: destinationView, whereStart: whereStart)
+          SelectCauseCategoriesView(viewModel: SelectCauseCategoriesViewModel(causes: causes), whereStart: whereStart)
         case .agreement:
-          destinationView
+          rewardNavigation.resolveAgreementView()
         case let .selectFundraiser(cause, fundraisers):
           SelectFundraiserView(
             viewModel: SelectFundraiserViewModel(
               causeModel: cause,
               fundraisers: fundraisers,
               showSkipButton: false),
-            destination: destinationView,
             whereStart: whereStart
           )
         }

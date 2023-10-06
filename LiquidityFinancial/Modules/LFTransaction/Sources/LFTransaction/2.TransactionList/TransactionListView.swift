@@ -6,14 +6,12 @@ import LFServices
 
 public struct TransactionListView: View {
   @StateObject private var viewModel: TransactionListViewModel
-  let destinationView: AnyView
 
   public init(
     type: TransactionListViewModel.Kind,
     currencyType: String,
     accountID: String?,
-    transactionTypes: String,
-    destinationView: AnyView = AnyView(EmptyView())
+    transactionTypes: String
   ) {
     _viewModel = .init(
       wrappedValue: .init(
@@ -23,7 +21,6 @@ public struct TransactionListView: View {
         transactionTypes: transactionTypes
       )
     )
-    self.destinationView = destinationView
   }
   
   public var body: some View {
@@ -48,8 +45,7 @@ public struct TransactionListView: View {
         accountID: viewModel.accountID,
         transactionId: item.id,
         kind: item.detailType,
-        isPopToRoot: false,
-        destinationView: destinationView
+        isPopToRoot: false
       )
     }
     .track(name: String(describing: type(of: self)))

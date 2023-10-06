@@ -62,7 +62,6 @@ public struct SelectBankAccountView: View {
             accountID: viewModel.accountDataManager.fiatAccountID,
             transactionId: id,
             kind: viewModel.kind == .receive ? .deposit : .withdraw,
-            destinationView: AnyView(AddBankWithDebitView()),
             popAction: completeAction
           )
         }

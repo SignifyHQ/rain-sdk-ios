@@ -24,7 +24,6 @@ public struct FundraiserHeaderView: View {
       .navigationLink(isActive: $showDetails) {
         FundraiserDetailView(
           viewModel: FundraiserDetailViewModel(fundraiserDetail: fundraiser, whereStart: .dashboard),
-          destination: AnyView(EmptyView()),
           fundraiserDetailViewType: .view
         )
       }

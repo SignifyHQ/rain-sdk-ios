@@ -29,16 +29,14 @@ struct RewardTabView: View {
             type: isCrypto ? .crypto : .cashback,
             currencyType: viewModel.currencyType,
             accountID: viewModel.accountID,
-            transactionTypes: viewModel.transactionTypes,
-            destinationView: AnyView(AddBankWithDebitView())
+            transactionTypes: viewModel.transactionTypes
           )
         case let .transactionDetail(transaction):
           TransactionDetailView(
             accountID: viewModel.accountID,
             transactionId: transaction.id,
             kind: transaction.detailType,
-            isPopToRoot: false,
-            destinationView: AnyView(AddBankWithDebitView())
+            isPopToRoot: false
           )
         }
       }

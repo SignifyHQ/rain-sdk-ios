@@ -3,9 +3,12 @@ import LFStyleGuide
 import LFLocalizable
 import LFUtilities
 import LFServices
+import Factory
 
 public struct PurchaseTransactionDetailView: View {
   @StateObject private var viewModel: PurchaseTransactionDetailViewModel
+  
+  @Injected(\.transactionNavigation) var transactionNavigation
   
   public init(transaction: TransactionModel) {
     _viewModel = .init(wrappedValue: PurchaseTransactionDetailViewModel(transaction: transaction))
@@ -25,7 +28,7 @@ public struct PurchaseTransactionDetailView: View {
           }
           .navigationBarHidden(true)
         case .rewardCampaigns:
-          CurrentRewardView()
+          transactionNavigation.resolveCurrentReward()
         }
       }
   }

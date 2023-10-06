@@ -2,15 +2,15 @@ import SwiftUI
 import LFUtilities
 import LFStyleGuide
 import LFLocalizable
+import Factory
 
 public struct SelectFundraiserView: View {
   @StateObject private var viewModel: SelectFundraiserViewModel
-
-  let destination: AnyView
+  @Injected(\.rewardNavigation) var rewardNavigation
+  
   let whereStart: RewardWhereStart
-  public init(viewModel: SelectFundraiserViewModel, destination: AnyView, whereStart: RewardWhereStart = .onboarding) {
+  public init(viewModel: SelectFundraiserViewModel, whereStart: RewardWhereStart = .onboarding) {
     _viewModel = .init(wrappedValue: viewModel)
-    self.destination = destination
     self.whereStart = whereStart
   }
 
@@ -27,7 +27,7 @@ public struct SelectFundraiserView: View {
       .navigationLink(item: $viewModel.navigation) { navigation in
         switch navigation {
         case .agreement:
-          destination
+          rewardNavigation.resolveAgreementView()
         }
       }
       .popup(isPresented: $viewModel.showErrorAlert, style: .toast) {
@@ -73,7 +73,7 @@ public struct SelectFundraiserView: View {
 
   private func item(fundraiser: FundraiserModel) -> some View {
     VStack(spacing: 16) {
-      FundraiserItemView(fundraiser: fundraiser, destination: destination, whereStart: whereStart)
+      FundraiserItemView(fundraiser: fundraiser, whereStart: whereStart)
     }
     .background(ModuleColors.secondaryBackground.swiftUIColor)
     .cornerRadius(10)

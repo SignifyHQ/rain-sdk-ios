@@ -66,8 +66,7 @@ public struct HomeView: View {
       case .transactionDetail(let id, let accountId):
         TransactionDetailView(
           accountID: accountId,
-          transactionId: id,
-          destinationView: AnyView(AddBankWithDebitView())
+          transactionId: id
         )
       }
     }

@@ -71,7 +71,6 @@ struct DonationsView: View {
       case .causeCategories(let causes):
         SelectCauseCategoriesView(
           viewModel: SelectCauseCategoriesViewModel(causes: causes),
-          destination: AnyView(EmptyView()),
           whereStart: .dashboard
         )
       case .transactionDetail(let donationID, let fundraisersID):

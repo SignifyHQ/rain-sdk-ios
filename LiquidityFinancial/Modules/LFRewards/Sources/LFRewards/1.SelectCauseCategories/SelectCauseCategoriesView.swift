@@ -7,19 +7,18 @@ import LFServices
 
 public struct SelectCauseCategoriesView: View {
   @Injected(\.analyticsService) var analyticsService
+  @Injected(\.rewardNavigation) var rewardNavigation
   @StateObject private var viewModel: SelectCauseCategoriesViewModel
   
   var isPopToRoot: Bool {
     onPopToRoot != nil
   }
   
-  let destination: AnyView
   let whereStart: RewardWhereStart
   var onPopToRoot: (() -> Void)?
   
-  public init(viewModel: SelectCauseCategoriesViewModel, destination: AnyView, whereStart: RewardWhereStart = .onboarding, onPopToRoot: (() -> Void)? = nil) {
+  public init(viewModel: SelectCauseCategoriesViewModel, whereStart: RewardWhereStart = .onboarding, onPopToRoot: (() -> Void)? = nil) {
     _viewModel = .init(wrappedValue: viewModel)
-    self.destination = destination
     self.whereStart = whereStart
     self.onPopToRoot = onPopToRoot
   }
@@ -45,11 +44,10 @@ public struct SelectCauseCategoriesView: View {
               causeModel: cause,
               fundraisers: fundraisers,
               showSkipButton: false),
-            destination: destination,
             whereStart: whereStart
           )
         case .agreement:
-          destination
+          rewardNavigation.resolveAgreementView()
         }
       }
       .popup(isPresented: $viewModel.showError, style: .toast) {

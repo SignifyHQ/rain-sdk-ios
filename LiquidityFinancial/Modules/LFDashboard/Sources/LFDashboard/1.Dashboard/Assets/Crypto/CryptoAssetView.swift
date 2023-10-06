@@ -42,16 +42,14 @@ struct CryptoAssetView: View {
               type: .crypto,
               currencyType: viewModel.currencyType,
               accountID: viewModel.asset.id,
-              transactionTypes: Constants.TransactionTypesRequest.crypto.types,
-              destinationView: AnyView(AddBankWithDebitView())
+              transactionTypes: Constants.TransactionTypesRequest.crypto.types
             )
         case let .transactionDetail(transaction):
           TransactionDetailView(
             accountID: viewModel.asset.id,
             transactionId: transaction.id,
             kind: transaction.detailType,
-            isPopToRoot: false,
-            destinationView: AnyView(AddBankWithDebitView())
+            isPopToRoot: false
           )
         case .chartDetail:
           CryptoChartDetailView(

@@ -49,7 +49,7 @@ public struct OnboardingContentView: View {
         case .DogeCard:
           DogeCardWelcomeView(destination: AnyView(AgreementView(viewModel: AgreementViewModel())))
         case .CauseCard, .PrideCard:
-          SelectRewardsView(destination: AnyView(AgreementView(viewModel: AgreementViewModel())))
+          SelectRewardsView()
         default:
           WelcomeView()
         }

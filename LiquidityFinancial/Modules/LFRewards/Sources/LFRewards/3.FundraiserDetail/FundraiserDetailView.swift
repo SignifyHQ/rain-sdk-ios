@@ -2,6 +2,7 @@ import SwiftUI
 import LFUtilities
 import LFStyleGuide
 import LFLocalizable
+import Factory
 
 public struct FundraiserDetailView: View {
   public enum FundraiserDetailViewType {
@@ -11,18 +12,18 @@ public struct FundraiserDetailView: View {
   
   @Environment(\.dismiss) private var dismiss
   @Environment(\.openURL) private var openUrl
+  @Injected(\.rewardNavigation) var rewardNavigation
   @StateObject private var viewModel: FundraiserDetailViewModel
+  
   
   private var charity: FundraiserDetailModel.Charity? {
     viewModel.fundraiserDetail?.charity
   }
   
-  let destination: AnyView
   let fundraiserDetailViewType: FundraiserDetailViewType
   
-  public init(viewModel: FundraiserDetailViewModel, destination: AnyView, fundraiserDetailViewType: FundraiserDetailViewType = .select) {
+  public init(viewModel: FundraiserDetailViewModel, fundraiserDetailViewType: FundraiserDetailViewType = .select) {
     _viewModel = .init(wrappedValue: viewModel)
-    self.destination = destination
     self.fundraiserDetailViewType = fundraiserDetailViewType
   }
   
@@ -44,7 +45,7 @@ public struct FundraiserDetailView: View {
       .navigationLink(item: $viewModel.navigation) { navigation in
         switch navigation {
         case .agreement:
-          destination
+          rewardNavigation.resolveAgreementView()
         }
       }
       .onAppear {

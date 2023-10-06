@@ -262,8 +262,7 @@ private extension CryptoChartDetailView {
       TransactionDetailView(
         accountID: viewModel.accountDataManager.cryptoAccountID,
         transactionId: model.id,
-        kind: model.detailType,
-        destinationView: AnyView(AddBankWithDebitView())
+        kind: model.detailType
       )
       .embedInNavigation()
     case .wallet:

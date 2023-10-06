@@ -4,6 +4,7 @@ import LFLocalizable
 import LFUtilities
 import LFRewards
 import LFTransaction
+import BaseDashboard
 
 struct EditRewardsView: View {
   @StateObject private var viewModel: EditRewardsViewModel
@@ -36,7 +37,6 @@ struct EditRewardsView: View {
         case let .selectFundraiser(causes):
           SelectCauseCategoriesView(
             viewModel: SelectCauseCategoriesViewModel(causes: causes),
-            destination: AnyView(EmptyView()),
             whereStart: .dashboard
           ) { //handle on pop to root view
             viewModel.handlePopToRootView()

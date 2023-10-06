@@ -22,7 +22,6 @@ struct PrideCardCauseView: View {
         case let .fundraiserDetail(fundraiserID):
           FundraiserDetailView(
             viewModel: FundraiserDetailViewModel(fundraiserID: fundraiserID, whereStart: .dashboard),
-            destination: AnyView(EmptyView()),
             fundraiserDetailViewType: .select
           )
         }

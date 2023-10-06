@@ -3,15 +3,16 @@ import SwiftUI
 import LFStyleGuide
 import LFLocalizable
 import LFUtilities
+import Factory
 
 struct DepositTransactionDetailView: View {
   @StateObject private var viewModel = DepositTransactionDetailViewModel()
+  @Injected(\.transactionNavigation) var transactionNavigation
+  
   let transaction: TransactionModel
-  let destinationView: AnyView
 
-  init(transaction: TransactionModel, destinationView: AnyView) {
+  init(transaction: TransactionModel) {
     self.transaction = transaction
-    self.destinationView = destinationView
   }
   
   var body: some View {
@@ -58,7 +59,7 @@ private extension DepositTransactionDetailView {
     .navigationLink(item: $viewModel.navigation) { item in
       switch item {
       case .addBank:
-        destinationView
+        transactionNavigation.resolveAddBankDebit()
       }
     }
   }

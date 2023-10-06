@@ -86,7 +86,7 @@ public struct SearchCausesView: View {
   
   private func itemFundraiserView(fundraiser: FundraiserModel) -> some View {
     VStack(spacing: 16) {
-      FundraiserItemView(fundraiser: fundraiser, destination: AnyView(EmptyView()), whereStart: .onboarding)
+      FundraiserItemView(fundraiser: fundraiser, whereStart: .onboarding)
     }
     .background(ModuleColors.secondaryBackground.swiftUIColor)
     .cornerRadius(10)
