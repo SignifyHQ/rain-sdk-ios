@@ -38,7 +38,6 @@ public final class DashboardRepository: ObservableObject {
   
   @LazyInjected(\.analyticsService) var analyticsService
   
-  
   @Published public var fiatData: (fiatAccount: [LFAccount], loading: Bool) = ([], false)
   @Published public var cryptoData: (cryptoAccounts: [LFAccount], loading: Bool) = ([], false)
   

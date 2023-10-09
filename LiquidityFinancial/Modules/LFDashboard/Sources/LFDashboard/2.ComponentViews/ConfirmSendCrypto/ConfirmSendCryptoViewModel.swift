@@ -109,7 +109,7 @@ extension ConfirmSendCryptoViewModel {
         value: LFLocalizable.ConfirmSendCryptoView.Send.title.uppercased()
       )
     ]
-    if let _ = transaction.currentBalance {
+    if transaction.currentBalance != nil {
       transactionInfors.append(
         TransactionInformation(
           title: LFLocalizable.TransactionDetail.Balance.title,

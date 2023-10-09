@@ -3,12 +3,12 @@ import SwiftUI
 
 typealias Factory = (DIContainerAnyView) -> AnyView
 
-protocol ServiceEntryProtocol: AnyObject{
+protocol ServiceEntryProtocol: AnyObject {
   var factory: Factory { get }
   var instance: AnyView? { get set }
 }
 
-final public class ServiceEntry: ServiceEntryProtocol {
+public final class ServiceEntry: ServiceEntryProtocol {
   var instance: AnyView?
   
   var factory: Factory
@@ -19,7 +19,7 @@ final public class ServiceEntry: ServiceEntryProtocol {
   }
 }
 
-final public class DIContainerAnyView {
+public final class DIContainerAnyView {
   private var services: [String: ServiceEntryProtocol] = [:]
   public init() {}
   

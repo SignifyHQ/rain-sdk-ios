@@ -169,9 +169,9 @@ private extension AccountsView {
   }
   
   var connectedAccountButton: some View {
-    Button(action: {
+    Button {
       viewModel.connectedAccountsTapped()
-    }) {
+    } label: {
       HStack(spacing: 4) {
         GenImages.CommonImages.Accounts.connectedAccounts.swiftUIImage
           .foregroundColor(Colors.label.swiftUIColor)

@@ -14,7 +14,7 @@ let package = Package(
     .library(
       name: "LFSolidCard",
       targets: ["LFSolidCard"]
-    ),
+    )
   ],
   dependencies: [
     .package(url: "https://github.com/hmlongco/Factory", from: "2.2.0"),

@@ -16,7 +16,7 @@ class DataDogLogDestination: BaseDestination {
     return logger
   }()
 
-  override public var defaultHashValue: Int { 100 }
+  public override var defaultHashValue: Int { 100 }
 
   override func send(_ level: SwiftyBeaver.Level, msg: String, thread: String, file: String, function: String, line: Int, context: Any? = nil) -> String? {
     switch level {

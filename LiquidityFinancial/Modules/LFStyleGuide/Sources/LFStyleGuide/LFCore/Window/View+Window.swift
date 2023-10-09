@@ -172,8 +172,8 @@ extension Window {
 // MARK: - RootView
 
 private extension Window {
-  struct RootView<Content: View>: View {
-    var content: Content
+  struct RootView<CustomContent: View>: View {
+    var content: CustomContent
     var context: Window.Context
 
     var body: some View {

@@ -15,7 +15,6 @@ public struct FundraiserDetailView: View {
   @Injected(\.rewardNavigation) var rewardNavigation
   @StateObject private var viewModel: FundraiserDetailViewModel
   
-  
   private var charity: FundraiserDetailModel.Charity? {
     viewModel.fundraiserDetail?.charity
   }

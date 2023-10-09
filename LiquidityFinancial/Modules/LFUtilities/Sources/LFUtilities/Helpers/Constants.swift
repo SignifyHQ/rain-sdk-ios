@@ -167,7 +167,7 @@ public extension Constants {
     case crypto = "CRYPTO"
   }
   
-  struct CurrencyList {
+  enum CurrencyList {
     public static let fiats = ["USD"]
   }
 }

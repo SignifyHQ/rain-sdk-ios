@@ -31,10 +31,10 @@ let package = Package(
               .product(name: "CurrencyText", package: "CurrencyText"),
               .product(name: "Intercom", package: "intercom-ios"),
               .product(name: "FirebaseMessaging", package: "firebase-ios-sdk"),
-              .product(name:  "DatadogCore", package: "dd-sdk-ios"),
-              .product(name:  "DatadogTrace", package: "dd-sdk-ios"),
-              .product(name:  "DatadogRUM", package: "dd-sdk-ios"),
-              .product(name:  "DatadogLogs", package: "dd-sdk-ios")
+              .product(name: "DatadogCore", package: "dd-sdk-ios"),
+              .product(name: "DatadogTrace", package: "dd-sdk-ios"),
+              .product(name: "DatadogRUM", package: "dd-sdk-ios"),
+              .product(name: "DatadogLogs", package: "dd-sdk-ios")
             ],
             resources: [
               .process("Resources")
