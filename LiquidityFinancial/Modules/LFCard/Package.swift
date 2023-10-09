@@ -8,8 +8,13 @@ let package = Package(
   platforms: [.iOS(.v15)],
   products: [
     .library(
-      name: "LFCard",
-      targets: ["LFCard"])
+      name: "LFNetSpendCard",
+      targets: ["LFNetSpendCard"]
+    ),
+    .library(
+      name: "LFSolidCard",
+      targets: ["LFSolidCard"]
+    ),
   ],
   dependencies: [
     .package(url: "https://github.com/hmlongco/Factory", from: "2.2.0"),
@@ -23,7 +28,18 @@ let package = Package(
   ],
   targets: [
     .target(
-      name: "LFCard",
+      name: "LFNetSpendCard",
+      dependencies: [
+        "LFUtilities", "LFStyleGuide", "LFLocalizable", "LFServices", "Factory", "LFRewards",
+        .product(name: "OnboardingData", package: "LFData"),
+        .product(name: "NetSpendData", package: "LFData"),
+        .product(name: "AccountData", package: "LFData"),
+        .product(name: "RewardData", package: "LFData"),
+        .product(name: "RewardDomain", package: "LFDomain"),
+        .product(name: "NetSpendDomain", package: "LFDomain")
+      ]),
+    .target(
+      name: "LFSolidCard",
       dependencies: [
         "LFUtilities", "LFStyleGuide", "LFLocalizable", "LFServices", "Factory", "LFRewards",
         .product(name: "OnboardingData", package: "LFData"),
@@ -35,6 +51,6 @@ let package = Package(
       ]),
     .testTarget(
       name: "LFCardTests",
-      dependencies: ["LFCard"])
+      dependencies: ["LFNetSpendCard", "LFSolidCard"])
   ]
 )

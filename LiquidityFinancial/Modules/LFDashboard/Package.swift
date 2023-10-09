@@ -38,36 +38,40 @@ let package = Package(
     .target(
       name: "BaseDashboard",
       dependencies: [
-        "LFUtilities", "LFServices", "LFBank", "LFCard", "LFAccountOnboarding",
+        "LFUtilities", "LFServices", "LFBank", "LFAccountOnboarding",
         .product(name: "OnboardingData", package: "LFData"),
         .product(name: "NetSpendData", package: "LFData"),
         .product(name: "ZerohashData", package: "LFData"),
         .product(name: "DevicesData", package: "LFData"),
-        .product(name: "AuthorizationManager", package: "LFNetwork")
+        .product(name: "AuthorizationManager", package: "LFNetwork"),
+        .product(name: "LFNetSpendCard", package: "LFCard"),
+        .product(name: "LFSolidCard", package: "LFCard")
       ]
     ),
     .target(
       name: "LFDashboard",
       dependencies: [
-        "LFUtilities", "LFStyleGuide", "LFLocalizable", "LFServices", "LFCard", "BaseDashboard",
+        "LFUtilities", "LFStyleGuide", "LFLocalizable", "LFServices", "BaseDashboard",
         "LFBank", "LFTransaction", "LFCryptoChart", "CodeScanner", "LFWalletAddress",
         .product(name: "OnboardingData", package: "LFData"),
         .product(name: "NetSpendData", package: "LFData"),
         .product(name: "ZerohashData", package: "LFData"),
         .product(name: "DevicesData", package: "LFData"),
-        .product(name: "AuthorizationManager", package: "LFNetwork")
+        .product(name: "AuthorizationManager", package: "LFNetwork"),
+        .product(name: "LFNetSpendCard", package: "LFCard")
       ]
     ),
     .target(
       name: "LFRewardDashboard",
       dependencies: [
-        "LFUtilities", "LFStyleGuide", "LFLocalizable", "LFServices", "LFCard",
+        "LFUtilities", "LFStyleGuide", "LFLocalizable", "LFServices",
         "LFBank", "LFTransaction", "CodeScanner", "LFRewards", "BaseDashboard",
         .product(name: "OnboardingData", package: "LFData"),
         .product(name: "NetSpendData", package: "LFData"),
         .product(name: "ZerohashData", package: "LFData"),
         .product(name: "DevicesData", package: "LFData"),
-        .product(name: "AuthorizationManager", package: "LFNetwork")
+        .product(name: "AuthorizationManager", package: "LFNetwork"),
+        .product(name: "LFSolidCard", package: "LFCard")
       ],
       resources: [
         .process("ZResources")

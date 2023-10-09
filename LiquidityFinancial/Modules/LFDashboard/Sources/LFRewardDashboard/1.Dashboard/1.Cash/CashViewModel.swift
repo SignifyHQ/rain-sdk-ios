@@ -1,5 +1,5 @@
 import Foundation
-import LFCard
+import LFSolidCard
 import Factory
 import NetSpendData
 import NetSpendDomain

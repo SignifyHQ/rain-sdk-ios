@@ -3,7 +3,7 @@ import LFStyleGuide
 import LFLocalizable
 import LFUtilities
 import BaseDashboard
-import LFCard
+import LFSolidCard
 import LFRewards
 
 struct DashboardView: View {
@@ -21,7 +21,7 @@ struct DashboardView: View {
     Group {
       switch viewModel.option {
       case .cash:
-        CashView(listCardViewModel: ListCardsViewModel(cardData: dataStorages.$cardData)) {
+        CashView(listCardViewModel: ListCardsViewModel(cardData: dataStorages.$solidCardData)) {
           viewModel.handleGuestUser()
         }
       case .rewards:

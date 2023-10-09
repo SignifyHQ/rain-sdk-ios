@@ -2,7 +2,7 @@ import SwiftUI
 import LFUtilities
 import LFStyleGuide
 import LFLocalizable
-import LFCard
+import LFNetSpendCard
 import BaseDashboard
 
 struct CashCardView: View {

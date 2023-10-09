@@ -1,7 +1,7 @@
 import LFUtilities
 import Foundation
 import AccountData
-import LFCard
+import LFNetSpendCard
 import NetSpendData
 import NetSpendDomain
 import Factory

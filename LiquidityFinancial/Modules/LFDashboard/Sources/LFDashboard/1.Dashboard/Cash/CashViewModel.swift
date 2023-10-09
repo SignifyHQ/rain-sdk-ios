@@ -1,5 +1,5 @@
 import Foundation
-import LFCard
+import LFNetSpendCard
 import Factory
 import NetSpendData
 import NetSpendDomain

@@ -6,7 +6,8 @@ import AccountDomain
 import NetSpendData
 import Combine
 import LFBank
-import LFCard
+import LFNetSpendCard
+import LFSolidCard
 import LFAccountOnboarding
 import OnboardingDomain
 import LFServices
@@ -43,7 +44,8 @@ public final class DashboardRepository: ObservableObject {
   
   @Published public var isLoadingRewardTab: Bool = false
   
-  @Published public var cardData: CardData = CardData(cards: [], metaDatas: [], loading: true)
+  @Published public var netspendCardData: LFNetSpendCard.CardData = CardData(cards: [], metaDatas: [], loading: true)
+  @Published public var solidCardData: LFSolidCard.CardData = CardData(cards: [], metaDatas: [], loading: true)
   @Published public var achInformationData: (model: ACHModel, loading: Bool) = (.default, false)
   @Published public var featureConfig: AccountFeatureConfigData = AccountFeatureConfigData(configJSON: "", isLoading: false)
   
@@ -86,7 +88,7 @@ public extension DashboardRepository {
   func initRewardData() {
     apiFetchListConnectedAccount()
     apiFetchACHInfo()
-    apiFetchListCard()
+    apiFetchSolidCards()
     apiFetchFetureConfig()
   }
   
@@ -94,7 +96,7 @@ public extension DashboardRepository {
     apiFetchAssetFromAccounts()
     apiFetchListConnectedAccount()
     apiFetchACHInfo()
-    apiFetchListCard()
+    apiFetchNetSpendCards()
     apiFetchFetureConfig()
   }
   
@@ -102,7 +104,7 @@ public extension DashboardRepository {
     NotificationCenter.default.publisher(for: .refreshListCards)
       .sink { [weak self] _ in
         guard let self else { return }
-        self.apiFetchListCard()
+        self.apiFetchListCards()
       }
       .store(in: &cancellable)
   }
@@ -112,7 +114,7 @@ public extension DashboardRepository {
       defer { fiatData.loading = false }
       fiatData.loading = true
       do {
-        apiFetchListCard()
+        apiFetchListCards()
         
         let sessionID = self.accountDataManager.sessionID
         
@@ -134,12 +136,21 @@ public extension DashboardRepository {
     }
   }
   
-  func apiFetchListCard() {
-    cardData.loading = true
+  func apiFetchListCards() {
+    switch LFUtilities.target {
+    case .CauseCard, .PrideCard:
+      apiFetchSolidCards()
+    default:
+      apiFetchNetSpendCards()
+    }
+  }
+  
+  func apiFetchNetSpendCards() {
+    netspendCardData.loading = true
     Task { @MainActor in
       do {
         let cards = try await cardRepository.getListCard()
-        cardData.cards = cards.map { card in
+        netspendCardData.cards = cards.map { card in
           CardModel(
             id: card.id,
             cardType: CardType(rawValue: card.type) ?? .virtual,
@@ -150,35 +161,84 @@ public extension DashboardRepository {
             cardStatus: CardStatus(rawValue: card.status) ?? .unactivated
           )
         }
-        let filteredCards = cardData.cards.filter({ $0.cardStatus != .closed })
+        let filteredCards = netspendCardData.cards.filter({ $0.cardStatus != .closed })
         if filteredCards.isEmpty {
           NotificationCenter.default.post(name: .noLinkedCards, object: nil)
         } else {
-          cardData.metaDatas = Array(repeating: nil, count: filteredCards.count)
+          netspendCardData.metaDatas = Array(repeating: nil, count: filteredCards.count)
           filteredCards.map { $0.id }.enumerated().forEach { index, id in
-            apiFetchCardDetail(with: id, and: index)
+            apiFetchNetSpendCardDetail(with: id, and: index)
           }
         }
       } catch {
-        cardData.loading = false
+        netspendCardData.loading = false
         toastMessage?(error.localizedDescription)
       }
     }
+  }
     
-    @Sendable func apiFetchCardDetail(with cardID: String, and index: Int) {
-      Task { @MainActor in
-        defer { cardData.loading = false }
-        do {
-          let entity = try await cardRepository.getCard(cardID: cardID, sessionID: accountDataManager.sessionID)
-          if let usersession = netspendDataManager.sdkSession, let cardModel = entity as? APICard {
-            let encryptedData: APICardEncrypted? = cardModel.decodeData(session: usersession)
-            if let encryptedData {
-              cardData.metaDatas[index] = CardMetaData(pan: encryptedData.pan, cvv: encryptedData.cvv2)
-            }
-          }
-        } catch {
-          toastMessage?(error.localizedDescription)
+  func apiFetchSolidCards() {
+    solidCardData.loading = true
+    Task { @MainActor in
+      do {
+        let cards = try await cardRepository.getListCard()
+        solidCardData.cards = cards.map { card in
+          CardModel(
+            id: card.id,
+            cardType: CardType(rawValue: card.type) ?? .virtual,
+            cardholderName: nil,
+            expiryMonth: card.expirationMonth,
+            expiryYear: card.expirationYear,
+            last4: card.panLast4,
+            cardStatus: CardStatus(rawValue: card.status) ?? .unactivated
+          )
         }
+        let filteredCards = solidCardData.cards.filter({ $0.cardStatus != .closed })
+        if filteredCards.isEmpty {
+          NotificationCenter.default.post(name: .noLinkedCards, object: nil)
+        } else {
+          solidCardData.metaDatas = Array(repeating: nil, count: filteredCards.count)
+          filteredCards.map { $0.id }.enumerated().forEach { index, id in
+            apiFetchSolidCardDetail(with: id, and: index)
+          }
+        }
+      } catch {
+        solidCardData.loading = false
+        toastMessage?(error.localizedDescription)
+      }
+    }
+  }
+  
+  @Sendable func apiFetchNetSpendCardDetail(with cardID: String, and index: Int) {
+    Task { @MainActor in
+      defer { netspendCardData.loading = false }
+      do {
+        let entity = try await cardRepository.getCard(cardID: cardID, sessionID: accountDataManager.sessionID)
+        if let usersession = netspendDataManager.sdkSession, let cardModel = entity as? APICard {
+          let encryptedData: APICardEncrypted? = cardModel.decodeData(session: usersession)
+          if let encryptedData {
+            netspendCardData.metaDatas[index] = CardMetaData(pan: encryptedData.pan, cvv: encryptedData.cvv2)
+          }
+        }
+      } catch {
+        toastMessage?(error.localizedDescription)
+      }
+    }
+  }
+  
+  @Sendable func apiFetchSolidCardDetail(with cardID: String, and index: Int) {
+    Task { @MainActor in
+      defer { solidCardData.loading = false }
+      do {
+        let entity = try await cardRepository.getCard(cardID: cardID, sessionID: accountDataManager.sessionID)
+        if let usersession = netspendDataManager.sdkSession, let cardModel = entity as? APICard {
+          let encryptedData: APICardEncrypted? = cardModel.decodeData(session: usersession)
+          if let encryptedData {
+            solidCardData.metaDatas[index] = CardMetaData(pan: encryptedData.pan, cvv: encryptedData.cvv2)
+          }
+        }
+      } catch {
+        toastMessage?(error.localizedDescription)
       }
     }
   }

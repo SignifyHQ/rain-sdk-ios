@@ -4,7 +4,7 @@ import LFStyleGuide
 import LFLocalizable
 import LFBank
 import LFTransaction
-import LFCard
+import LFSolidCard
 import LFAccountOnboarding
 import LFServices
 

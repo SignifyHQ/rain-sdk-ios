@@ -8,7 +8,7 @@ import BaseDashboard
 import LFAccountOnboarding
 import LFBank
 import Factory
-import LFCard
+import LFNetSpendCard
 
 public struct HomeView: View {
   @Injected(\.dashboardRepository) var dashboardRepository

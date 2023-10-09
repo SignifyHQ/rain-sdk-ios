@@ -2,7 +2,7 @@ import SwiftUI
 import LFUtilities
 import LFStyleGuide
 import LFLocalizable
-import LFCard
+import LFSolidCard
 
 struct CashCardView: View {
   @StateObject private var viewModel: CashCardViewModel

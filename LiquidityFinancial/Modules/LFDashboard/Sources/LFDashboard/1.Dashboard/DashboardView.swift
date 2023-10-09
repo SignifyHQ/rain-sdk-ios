@@ -4,7 +4,7 @@ import LFLocalizable
 import LFUtilities
 import LFBank
 import BaseDashboard
-import LFCard
+import LFNetSpendCard
 import Factory
 
 struct DashboardView: View {
@@ -23,7 +23,7 @@ struct DashboardView: View {
       case .cash:
         CashView(
           viewModel: CashViewModel(),
-          listCardViewModel: ListCardsViewModel(cardData: dashboardRepository.$cardData)
+          listCardViewModel: ListCardsViewModel(cardData: dashboardRepository.$netspendCardData)
         )
       case .rewards:
         RewardTabView()
