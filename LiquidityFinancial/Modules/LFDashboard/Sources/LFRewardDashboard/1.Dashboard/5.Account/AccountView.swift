@@ -4,13 +4,15 @@ import LFStyleGuide
 import LFLocalizable
 import LFServices
 import LFBank
-import LFAccountOnboarding
-import BaseDashboard
 import LFTransaction
+import Factory
 
 struct AccountsView: View {
   @StateObject private var viewModel: AccountViewModel
   @Environment(\.scenePhase) var scenePhase
+  
+  @Injected(\.transactionNavigation) var transactionNavigation
+  @Injected(\.rewardNavigation) var rewardNavigation
   
   init(viewModel: AccountViewModel) {
     _viewModel = .init(wrappedValue: viewModel)
@@ -23,34 +25,25 @@ struct AccountsView: View {
       .navigationLink(item: $viewModel.navigation) { item in
         switch item {
         case .debugMenu:
-          DBAdminMenuView(environment: viewModel.networkEnvironment.title)
+          //DBAdminMenuView(environment: viewModel.networkEnvironment.title)
+          EmptyView()
         case .atmLocation(let authorizationCode):
-          NetspendLocationViewController(withPasscode: authorizationCode, onClose: {
-            viewModel.navigation = nil
-          })
-          .navigationTitle(LFLocalizable.AccountView.atmLocationTitle)
-          .foregroundColor(Colors.label.swiftUIColor)
+          EmptyView()
         case .depositLimits:
-          TransferLimitsView()
+          //TransferLimitsView()
+          EmptyView()
         case .connectedAccounts:
-          ConnectedAccountsView(linkedAccount: viewModel.linkedAccount)
+          //ConnectedAccountsView(linkedAccount: viewModel.linkedAccount)
+          EmptyView()
         case .bankStatement:
-          BankStatementView()
+          //BankStatementView()
+          EmptyView()
         case let .disputeTransaction(netspendAccountID, passcode):
-          NetspendDisputeTransactionViewController(netspendAccountID: netspendAccountID, passcode: passcode) {
-            viewModel.navigation = nil
-          }
-          .navigationBarHidden(true)
+          EmptyView()
         case .rewards:
-          CurrentRewardView()
+          transactionNavigation.resolveCurrentReward()
         case .agreement(let data):
-          AgreementView(
-            viewModel: AgreementViewModel(fundingAgreement: data),
-            onNext: {
-              //self.viewModel.addFundsViewModel.fundingAgreementData.send(nil)
-            }, onDisappear: { isAcceptAgreement in
-              self.viewModel.handleFundingAcceptAgreement(isAccept: isAcceptAgreement)
-            }, shouldFetchCurrentState: false)
+          rewardNavigation.resolveAgreementView()
         }
       }
       .sheet(item: $viewModel.sheet, content: { sheet in

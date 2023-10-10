@@ -31,12 +31,14 @@ class SelectBankAccountViewModel: ObservableObject {
   @Published var linkBankIndicator: Bool = false
   @Published var isDisableView: Bool = false
   @Published var isLoading: Bool = false
-  @Published var netspendController: NetspendSdkViewController?
+  @Published var plaidConfig: PlaidConfig?
+  @Published var plaidLoading: Bool = false
   
   let amount: String
   let kind: MoveMoneyAccountViewModel.Kind
   
   private var cancellable: Set<AnyCancellable> = []
+  private lazy var plaidHelper = PlaidHelper()
   
   init(linkedAccount: [APILinkedSourceData], amount: String, kind: MoveMoneyAccountViewModel.Kind) {
     self.linkedBanks = linkedAccount.filter({ data in
@@ -134,29 +136,29 @@ class SelectBankAccountViewModel: ObservableObject {
   // MARK: - ExternalLinkBank Functions
 extension SelectBankAccountViewModel {
   func linkExternalBank() {
-    Task { @MainActor in
-      isDisableView = true
-      linkBankIndicator = true
-      do {
-        let sessionID = accountDataManager.sessionID
-        let tokenResponse = try await nsPersionRepository.getAuthorizationCode(sessionId: sessionID)
-        let usingParams = ["redirectUri": LFUtilities.universalLink]
-        log.info("NetSpend openWithPurpose usingParams: \(usingParams)")
-        let controller = try NetspendSdk.shared.openWithPurpose(
-          purpose: .linkBank,
-          withPasscode: tokenResponse.authorizationCode,
-          usingParams: usingParams
-        )
-        controller.view.isHidden = true
-        self.netspendController = controller
-      } catch {
-        toastMessage = error.localizedDescription
-      }
+    plaidHelper.onLoading = { [weak self] isLoading in
+      self?.linkBankIndicator = isLoading
+    }
+
+    plaidHelper.onFailure = { [weak self] error in
+      self?.onLinkExternalBankFailure()
+    }
+
+    plaidHelper.onExit = { [weak self] in
+      self?.onPlaidUIDisappear()
+    }
+
+    plaidHelper.onSuccess = { [weak self] in
+      self?.onLinkExternalBankSuccess()
+    }
+
+    plaidHelper.load { [weak self] value in
+      self?.plaidConfig = value
     }
   }
   
   func onPlaidUIDisappear() {
-    netspendController = nil
+    plaidConfig = nil
     linkBankIndicator = false
     isDisableView = false
   }

@@ -5,7 +5,7 @@ import LFUtilities
 import AccountDomain
 import NetSpendData
 import Combine
-import LFBank
+import LFBaseBank
 import LFNetSpendCard
 import LFSolidCard
 import LFAccountOnboarding

@@ -6,6 +6,7 @@ import NetSpendDomain
 import AccountDomain
 import AccountData
 import LFUtilities
+import LFBaseBank
 import LFBank
 import LFTransaction
 import Combine

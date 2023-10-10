@@ -4,7 +4,6 @@ import NetSpendData
 import LFStyleGuide
 import LFUtilities
 import LFLocalizable
-import NetspendSdk
 
 public struct SelectBankAccountView: View {
   @StateObject private var viewModel: SelectBankAccountViewModel
@@ -55,6 +54,9 @@ public struct SelectBankAccountView: View {
       .background(Colors.background.swiftUIColor)
       .navigationTitle("")
       .navigationBarTitleDisplayMode(.inline)
+      .sheet(item: $viewModel.plaidConfig) { item in
+        PlaidLinkView(configuration: item.config)
+      }
       .navigationLink(item: $viewModel.navigation) { item in
         switch item {
         case let .transactionDetai(id):
@@ -62,7 +64,6 @@ public struct SelectBankAccountView: View {
             accountID: viewModel.accountDataManager.fiatAccountID,
             transactionId: id,
             kind: viewModel.kind == .receive ? .deposit : .withdraw,
-            destinationView: AnyView(AddBankWithDebitView()),
             popAction: completeAction
           )
         }
@@ -90,18 +91,6 @@ public struct SelectBankAccountView: View {
       .padding(.horizontal, 30)
       .padding(.vertical, 20)
       .background(Colors.background.swiftUIColor)
-      externalLinkBank(controller: viewModel.netspendController)
-    }
-  }
-  
-  @ViewBuilder func externalLinkBank(controller: NetspendSdkViewController?) -> some View {
-    if let controller {
-      ExternalLinkBankViewController(
-        controller: controller,
-        onSuccess: viewModel.onLinkExternalBankSuccess,
-        onFailure: viewModel.onLinkExternalBankFailure,
-        onCancelled: viewModel.onPlaidUIDisappear
-      )
     }
   }
   

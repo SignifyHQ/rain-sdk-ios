@@ -6,6 +6,7 @@ import Factory
 import NetSpendData
 import NetSpendDomain
 import NetspendSdk
+import LFBaseBank
 import LFBank
 import AccountData
 
@@ -26,7 +27,6 @@ class AccountViewModel: ObservableObject {
   @Published var isLoading: Bool = false
   @Published var openLegal = false
   @Published var notificationsEnabled = false
-  @Published var netspendController: NetspendSdkViewController?
   @Published var toastMessage: String?
   @Published var linkedAccount: [APILinkedSourceData] = []
   @Published var achInformation: ACHModel = .default

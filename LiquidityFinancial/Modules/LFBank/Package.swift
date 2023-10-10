@@ -11,6 +11,9 @@ let package = Package(
             name: "LFBank",
             targets: ["LFBank"]),
         .library(
+            name: "LFBaseBank",
+            targets: ["LFBank"]),
+        .library(
             name: "LFSolidBank",
             targets: ["LFSolidBank"])
     ],
@@ -29,6 +32,18 @@ let package = Package(
         .target(
             name: "LFBank",
             dependencies: [
+              "LFUtilities", "LFStyleGuide", "LFLocalizable", "LFServices", "LFTransaction", "LFAccountOnboarding", "LFBaseBank",
+              .product(name: "OnboardingData", package: "LFData"),
+              .product(name: "NetSpendData", package: "LFData"),
+              .product(name: "AccountData", package: "LFData"),
+              .product(name: "NetSpendDomain", package: "LFDomain"),
+              .product(name: "OnboardingDomain", package: "LFDomain"),
+              .product(name: "AccountDomain", package: "LFDomain"),
+              .product(name: "AuthorizationManager", package: "LFNetwork")
+            ]),
+        .target(
+            name: "LFBaseBank",
+            dependencies: [
               "LFUtilities", "LFStyleGuide", "LFLocalizable", "LFServices", "LFTransaction", "LFAccountOnboarding",
               .product(name: "OnboardingData", package: "LFData"),
               .product(name: "NetSpendData", package: "LFData"),
@@ -41,7 +56,7 @@ let package = Package(
         .target(
             name: "LFSolidBank",
             dependencies: [
-              "LFUtilities", "LFStyleGuide", "LFLocalizable", "LFServices", "LFTransaction", "LFAccountOnboarding",
+              "LFUtilities", "LFStyleGuide", "LFLocalizable", "LFServices", "LFTransaction", "LFAccountOnboarding", "LFBaseBank",
               .product(name: "OnboardingData", package: "LFData"),
               .product(name: "NetSpendData", package: "LFData"),
               .product(name: "AccountData", package: "LFData"),

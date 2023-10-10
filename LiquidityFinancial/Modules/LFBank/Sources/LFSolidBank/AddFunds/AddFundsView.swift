@@ -2,7 +2,7 @@ import SwiftUI
 import LFLocalizable
 import LFUtilities
 import LFStyleGuide
-import NetspendSdk
+import LFBaseBank
 
 public struct AddFundsView: View {
   
@@ -30,6 +30,9 @@ public struct AddFundsView: View {
         .onChange(of: viewModel.isDisableView) { _ in
           isDisableView = viewModel.isDisableView
         }
+        .sheet(item: $viewModel.plaidConfig) { item in
+          PlaidLinkView(configuration: item.config)
+        }
         .navigationLink(item: $viewModel.navigation) { item in
           switch item {
           case .bankTransfers:
@@ -54,24 +57,12 @@ public struct AddFundsView: View {
           }
         }
       
-      externalLinkBank(controller: viewModel.netspendController)
     }
   }
 }
 
 // MARK: - View Components
 private extension AddFundsView {
-  @ViewBuilder func externalLinkBank(controller: NetspendSdkViewController?) -> some View {
-    if let controller {
-      ExternalLinkBankViewController(
-        controller: controller,
-        onSuccess: viewModel.onLinkExternalBankSuccess,
-        onFailure: viewModel.onLinkExternalBankFailure,
-        onCancelled: viewModel.onPlaidUIDisappear
-      )
-    }
-  }
-  
   var content: some View {
     VStack(spacing: 8) {
       ForEach(options, id: \.self) { option in

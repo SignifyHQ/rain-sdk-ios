@@ -7,6 +7,7 @@ import NetSpendData
 import NetSpendDomain
 import NetspendSdk
 import LFBank
+import LFBaseBank
 import BaseDashboard
 import AccountDomain
 import AccountData

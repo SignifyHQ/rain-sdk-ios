@@ -1,4 +1,5 @@
 import Foundation
+import LFBaseBank
 import LFUtilities
 
 final class ManualSetupViewModel: ObservableObject {
