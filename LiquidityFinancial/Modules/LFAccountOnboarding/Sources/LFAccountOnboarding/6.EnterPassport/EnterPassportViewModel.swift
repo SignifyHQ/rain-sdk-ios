@@ -8,7 +8,7 @@ import LFServices
 @MainActor
 final class EnterPassportViewModel: ObservableObject {
   @LazyInjected(\.accountDataManager) var accountDataManager
-  @LazyInjected(\.intercomService) var intercomService
+  @LazyInjected(\.customSupportService) var customSupportService
   
   @Published var isNavigationToAddressView: Bool = false
   @Published var showPassportTypes: Bool = false
@@ -30,8 +30,8 @@ final class EnterPassportViewModel: ObservableObject {
     isActionAllowed = isValidPassport(passport)
   }
   
-  func openIntercom() {
-    intercomService.openIntercom()
+  func openSupportScreen() {
+    customSupportService.openSupportScreen()
   }
 }
 

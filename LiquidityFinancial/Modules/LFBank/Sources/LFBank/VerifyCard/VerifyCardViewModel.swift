@@ -17,7 +17,7 @@ class VerifyCardViewModel: ObservableObject {
   @LazyInjected(\.accountDataManager) var accountDataManager
   @LazyInjected(\.accountRepository) var accountRepository
   @LazyInjected(\.netspendDataManager) var netspendDataManager
-  @LazyInjected(\.intercomService) var intercomService
+  @LazyInjected(\.customSupportService) var customSupportService
   
   private let cardId: String
   
@@ -61,7 +61,7 @@ class VerifyCardViewModel: ObservableObject {
   }
   
   func contactSupport() {
-    intercomService.openIntercom()
+    customSupportService.openSupportScreen()
   }
 
   func dismissPopup() {

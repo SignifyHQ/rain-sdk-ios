@@ -33,8 +33,8 @@ struct IdentityVerificationCodeView: View {
     .popup(item: $viewModel.toastMessage, style: .toast) {
       ToastView(toastMessage: $0)
     }
-    .defaultToolBar(icon: .intercom, openIntercom: {
-      viewModel.openIntercom()
+    .defaultToolBar(icon: .support, openSupportScreen: {
+      viewModel.openSupportScreen()
     })
     .track(name: String(describing: type(of: self)))
   }

@@ -43,8 +43,8 @@ struct RewardTermsView: View {
     }
     .navigationBarBackButtonHidden(true)
     .navigationBarTitleDisplayMode(.inline)
-    .defaultToolBar(icon: .both, openIntercom: {
-      viewModel.openIntercom()
+    .defaultToolBar(icon: .both, openSupportScreen: {
+      viewModel.openSupportScreen()
     })
     .track(name: String(describing: type(of: self)))
   }

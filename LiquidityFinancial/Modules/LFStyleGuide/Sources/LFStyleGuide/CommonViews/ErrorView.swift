@@ -5,7 +5,7 @@ import LFServices
 import Factory
 
 public struct ErrorView: View {
-  @Injected(\.intercomService) var intercomService
+  @Injected(\.customSupportService) var customSupportService
   
   @State private var isShowLogoutPopup: Bool = false
   let message: String
@@ -46,8 +46,8 @@ public struct ErrorView: View {
     .padding(30)
     .background(Colors.background.swiftUIColor, ignoresSafeAreaEdges: .all)
     .navigationBarTitleDisplayMode(.inline)
-    .defaultToolBar(icon: .intercom, openIntercom: {
-       intercomService.openIntercom()
+    .defaultToolBar(icon: .support, openSupportScreen: {
+       customSupportService.openSupportScreen()
     })
     .track(name: String(describing: type(of: self)))
   }

@@ -11,7 +11,7 @@ import OnboardingDomain
 
 @MainActor
 final class IdentityVerificationCodeViewModel: ObservableObject {
-  @LazyInjected(\.intercomService) var intercomService
+  @LazyInjected(\.customSupportService) var customSupportService
   @LazyInjected(\.accountDataManager) var accountDataManager
   @LazyInjected(\.accountRepository) var accountRepository
   @LazyInjected(\.rewardDataManager) var rewardDataManager
@@ -96,8 +96,8 @@ extension IdentityVerificationCodeViewModel {
     }
   }
   
-  func openIntercom() {
-    intercomService.openIntercom()
+  func openSupportScreen() {
+    customSupportService.openSupportScreen()
   }
 }
 

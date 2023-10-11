@@ -73,8 +73,8 @@ struct AddressView: View {
     .onTapGesture {
       viewModel.stopSuggestions()
     }
-    .defaultToolBar(icon: .intercom, openIntercom: {
-      viewModel.openIntercom()
+    .defaultToolBar(icon: .support, openSupportScreen: {
+      viewModel.openSupportScreen()
     })
     .popup(item: $viewModel.toastMessage, style: .toast) {
       ToastView(toastMessage: $0)

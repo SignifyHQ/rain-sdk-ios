@@ -37,8 +37,8 @@ struct EnterSSNView: View {
     .padding(.horizontal, 30)
     .background(Colors.background.swiftUIColor)
     .navigationTitle("")
-    .defaultToolBar(icon: .intercom, openIntercom: {
-      viewModel.openIntercom()
+    .defaultToolBar(icon: .support, openSupportScreen: {
+      viewModel.openSupportScreen()
     })
     .popup(item: $toastMessage, style: .toast) {
       ToastView(toastMessage: $0)

@@ -9,7 +9,7 @@ import SwiftSoup
 
 @MainActor
 public final class AgreementViewModel: ObservableObject {
-  @LazyInjected(\.intercomService) var intercomService
+  @LazyInjected(\.customSupportService) var customSupportService
   @LazyInjected(\.netspendDataManager) var netspendDataManager
   @LazyInjected(\.accountDataManager) var accountDataManager
   @LazyInjected(\.nsPersionRepository) var nsPersionRepository
@@ -44,8 +44,8 @@ public final class AgreementViewModel: ObservableObject {
     isNavigationPersonalInformation = true
   }
   
-  func openIntercom() {
-    intercomService.openIntercom()
+  func openSupportScreen() {
+    customSupportService.openSupportScreen()
   }
   
   private func checkData() {

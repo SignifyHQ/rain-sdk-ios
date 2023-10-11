@@ -13,7 +13,7 @@ public struct OnboardingContentView: View {
   var viewModel = OnboardingContentViewModel()
   
   @Injected(\.accountDataManager) var accountDataManager
-  @Injected(\.intercomService) var intercomService
+  @Injected(\.customSupportService) var customSupportService
   @LazyInjected(\.rewardFlowCoordinator) var rewardFlowCoordinator
   
   let environmentManager = EnvironmentManager()
@@ -84,7 +84,7 @@ public struct OnboardingContentView: View {
       }
     }
     .onAppear {
-      intercomService.loginUnidentifiedUser()
+      customSupportService.loginUnidentifiedUser()
     }
   }
   

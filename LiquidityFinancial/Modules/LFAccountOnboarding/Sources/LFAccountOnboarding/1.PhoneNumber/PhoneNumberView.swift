@@ -54,7 +54,7 @@ struct PhoneNumberView: View {
         Button {
           keyboardFocus = false
           DispatchQueue.main.asyncAfter(wallDeadline: .now() + 0.5) {
-            viewModel.openIntercom()
+            viewModel.openSupportScreen()
           }
         } label: {
           GenImages.CommonImages.icChat.swiftUIImage

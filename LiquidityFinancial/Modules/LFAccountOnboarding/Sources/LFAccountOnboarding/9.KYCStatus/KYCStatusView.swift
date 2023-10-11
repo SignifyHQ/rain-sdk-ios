@@ -16,8 +16,8 @@ struct KYCStatusView: View {
       .track(name: String(describing: type(of: self)))
       .background(Colors.background.swiftUIColor)
       .navigationBarBackButtonHidden()
-      .defaultToolBar(icon: .intercom, openIntercom: {
-        viewModel.openIntercom()
+      .defaultToolBar(icon: .support, openSupportScreen: {
+        viewModel.openSupportScreen()
       })
       .fullScreenCover(item: $viewModel.presentation) { item in
         switch item {

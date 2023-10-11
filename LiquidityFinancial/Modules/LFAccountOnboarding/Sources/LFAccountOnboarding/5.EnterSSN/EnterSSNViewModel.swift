@@ -9,7 +9,7 @@ import LFServices
 class EnterSSNViewModel: ObservableObject {
   
   @LazyInjected(\.accountDataManager) var accountDataManager
-  @LazyInjected(\.intercomService) var intercomService
+  @LazyInjected(\.customSupportService) var customSupportService
   @LazyInjected(\.analyticsService) var analyticsService
   
   @Published var errorMessage: String?
@@ -35,8 +35,8 @@ class EnterSSNViewModel: ObservableObject {
   var countGenerateUser: Int = 0
   #endif
   
-  func openIntercom() {
-    intercomService.openIntercom()
+  func openSupportScreen() {
+    customSupportService.openSupportScreen()
   }
   
   func magicFillAccount() {

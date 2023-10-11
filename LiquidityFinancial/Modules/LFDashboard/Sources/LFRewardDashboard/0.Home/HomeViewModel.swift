@@ -22,7 +22,7 @@ public final class HomeViewModel: ObservableObject {
   
   @LazyInjected(\.pushNotificationService) var pushNotificationService
   
-  @LazyInjected(\.intercomService) var intercomService
+  @LazyInjected(\.customSupportService) var customSupportService
   
   @Published var tabSelected: TabOption = .cash
   @Published var navigation: Navigation?
@@ -49,7 +49,7 @@ public final class HomeViewModel: ObservableObject {
   }
   
   func onAppear() {
-    loginIntercom()
+    loginCustomSupportService()
     checkShouldShowNotification()
   }
 }
@@ -63,15 +63,15 @@ private extension HomeViewModel {
     getListConnectedAccount()
   }
   
-  func loginIntercom() {
-    guard intercomService.isLoginIdentifiedSuccess == false else { return }
-    var userAttributes: IntercomService.UserAttributes
+  func loginCustomSupportService() {
+    guard customSupportService.isLoginIdentifiedSuccess == false else { return }
+    var userAttributes: UserAttributes
     if let userID = accountDataManager.userInfomationData.userID {
-      userAttributes = IntercomService.UserAttributes(phone: accountDataManager.phoneNumber, userId: userID, email: accountDataManager.userEmail)
+      userAttributes = UserAttributes(phone: accountDataManager.phoneNumber, userId: userID, email: accountDataManager.userEmail)
     } else {
-      userAttributes = IntercomService.UserAttributes(phone: accountDataManager.phoneNumber, email: accountDataManager.userEmail)
+      userAttributes = UserAttributes(phone: accountDataManager.phoneNumber, email: accountDataManager.userEmail)
     }
-    intercomService.loginIdentifiedUser(userAttributes: userAttributes)
+    customSupportService.loginIdentifiedUser(userAttributes: userAttributes)
   }
   
   func handleSelectedFundraisersSuccess() {

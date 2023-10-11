@@ -14,7 +14,7 @@ class SetupWalletViewModel: ObservableObject {
   @Published var isNavigateToRewardsView = false
   
   @LazyInjected(\.accountRepository) var accountRepository
-  @LazyInjected(\.intercomService) var intercomService
+  @LazyInjected(\.customSupportService) var customSupportService
   @LazyInjected(\.analyticsService) var analyticsService
   
   func createZeroHashAccount() {
@@ -33,7 +33,7 @@ class SetupWalletViewModel: ObservableObject {
     }
   }
   
-  func openIntercom() {
-    intercomService.openIntercom()
+  func openSupportScreen() {
+    customSupportService.openSupportScreen()
   }
 }

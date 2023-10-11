@@ -4,57 +4,16 @@ import LFUtilities
 import Factory
 import Combine
 
-extension Container {
-  public var intercomService: Factory<IntercomServiceProtocol> {
-    self {
-      IntercomService()
-    }.singleton
-  }
-}
-
-public protocol IntercomServiceProtocol {
-  var isLoginIdentifiedSuccess: Bool { get }
-  func openIntercom()
-  func loginUnidentifiedUser()
-  func loginIdentifiedUser(userAttributes: IntercomService.UserAttributes)
-  func pushEventLogin(with userAttributes: IntercomService.UserAttributes?)
-  func pushEventLogout()
-}
-
-public class IntercomService: IntercomServiceProtocol {
-  
-  public struct UserAttributes {
-    public var phone: String
-    public var userId: String?
-    public var email: String?
-    public var custon: CustomAttributes?
-    
-    public init(phone: String, userId: String? = nil, email: String? = nil, custon: CustomAttributes? = nil) {
-      self.phone = phone
-      self.userId = userId
-      self.email = email
-      self.custon = custon
-    }
-    
-    public struct CustomAttributes {
-      public var appStatus: String?
-      public var bundleName: String?
-      
-      public init(appStatus: String? = nil, bundleName: String? = nil) {
-        self.appStatus = appStatus
-        self.bundleName = bundleName
-      }
-    }
-  }
+public class IntercomService: CustomerSupportServiceProtocol {
   
   public private(set) var isLoginIdentifiedSuccess: Bool = false
   
   private var subscriptions = Set<AnyCancellable>()
   
-  let eventLoggin: PassthroughSubject<IntercomService.UserAttributes?, Never>
+  let eventLoggin: PassthroughSubject<UserAttributes?, Never>
   let eventLogout: PassthroughSubject<Void, Never>
   init() {
-    eventLoggin = PassthroughSubject<IntercomService.UserAttributes?, Never>()
+    eventLoggin = PassthroughSubject<UserAttributes?, Never>()
     eventLogout = PassthroughSubject<Void, Never>()
     
     eventLoggin.sink { [weak self] userAttributes in
@@ -87,7 +46,7 @@ public class IntercomService: IntercomServiceProtocol {
     eventLogout.send(())
   }
   
-  public func openIntercom() {
+  public func openSupportScreen() {
     Intercom.present()
   }
   

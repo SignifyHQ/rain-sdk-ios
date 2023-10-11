@@ -5,7 +5,7 @@ import Factory
 @MainActor
 final class ApplePayViewModel: ObservableObject {
   @LazyInjected(\.cardRepository) var cardRepository
-  @LazyInjected(\.intercomService) var intercomService
+  @LazyInjected(\.customSupportService) var customSupportService
   @LazyInjected(\.accountDataManager) var accountDataManager
 
   private lazy var userCase: NSCardUseCase? = { [weak self] in

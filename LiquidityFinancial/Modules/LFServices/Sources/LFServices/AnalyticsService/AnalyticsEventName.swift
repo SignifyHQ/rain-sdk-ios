@@ -121,7 +121,7 @@ public enum AnalyticsEventName: String {
   case tapsLockCard = "taps lock card"
   case tapsUnlockCard = "taps unlock card"
   case tapsConnectPlaid = "taps connect plaid"
-  case openIntercom = "open intercom"
+  case openSupportScreen = "open support screen"
   case viewsSelectFundraiserCategories = "views select fundraiser categories"
   case selectedFundraiserSuccess = "selected fundraiser success"
   case viewsInReviewSSN = "views in review ssn"

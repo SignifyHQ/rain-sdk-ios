@@ -4,11 +4,11 @@ import LFUtilities
 
 @MainActor
 public final class CommonTransactionDetailViewModel: ObservableObject {
-  @LazyInjected(\.intercomService) var intercomService
+  @LazyInjected(\.customSupportService) var customSupportService
   
   public init() {}
   
-  func openIntercom() {
-    intercomService.openIntercom()
+  func openSupportScreen() {
+    customSupportService.openSupportScreen()
   }
 }

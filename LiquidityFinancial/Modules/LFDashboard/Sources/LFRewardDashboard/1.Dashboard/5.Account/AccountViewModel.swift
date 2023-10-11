@@ -16,7 +16,7 @@ class AccountViewModel: ObservableObject {
   @LazyInjected(\.externalFundingRepository) var externalFundingRepository
   @LazyInjected(\.netspendDataManager) var netspendDataManager
   @LazyInjected(\.accountDataManager) var accountDataManager
-  @LazyInjected(\.intercomService) var intercomService
+  @LazyInjected(\.customSupportService) var customSupportService
   @LazyInjected(\.pushNotificationService) var pushNotificationService
   @LazyInjected(\.dashboardRepository) var dashboardRepository
   
@@ -80,8 +80,8 @@ extension AccountViewModel {
     navigation = .bankStatement
   }
   
-  func openIntercomService() {
-    intercomService.openIntercom()
+  func opencustomSupportService() {
+    customSupportService.openSupportScreen()
   }
   
   func handleFundingAgreementData() {

@@ -28,10 +28,10 @@ struct CommonTransactionDetailView<Content: View>: View {
     }
     .scrollOnOverflow()
     .defaultToolBar(
-      icon: .intercom,
+      icon: .support,
       navigationTitle: transaction.title?.capitalized,
-      openIntercom: {
-        viewModel.openIntercom()
+      openSupportScreen: {
+        viewModel.openSupportScreen()
       }
     )
     .frame(maxWidth: .infinity)

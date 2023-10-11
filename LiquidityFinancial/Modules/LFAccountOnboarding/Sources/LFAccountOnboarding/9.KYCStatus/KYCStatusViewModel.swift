@@ -30,7 +30,7 @@ final class KYCStatusViewModel: ObservableObject {
   @LazyInjected(\.onboardingRepository) var onboardingRepository
   @LazyInjected(\.accountRepository) var accountRepository
   @LazyInjected(\.onboardingFlowCoordinator) var onboardingFlowCoordinator
-  @LazyInjected(\.intercomService) var intercomService
+  @LazyInjected(\.customSupportService) var customSupportService
   @LazyInjected(\.authorizationManager) var authorizationManager
   @LazyInjected(\.analyticsService) var analyticsService
   
@@ -48,8 +48,8 @@ final class KYCStatusViewModel: ObservableObject {
 
 extension KYCStatusViewModel {
   
-  func openIntercom() {
-    intercomService.openIntercom()
+  func openSupportScreen() {
+    customSupportService.openSupportScreen()
   }
   
   // MARK: MAGIC PASS KYC DASHBOARD
@@ -93,7 +93,7 @@ extension KYCStatusViewModel {
   }
   
   func secondaryAction() {
-    openIntercom()
+    openSupportScreen()
   }
   
   // swiftlint:disable function_body_length

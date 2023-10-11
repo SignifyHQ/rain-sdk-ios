@@ -25,8 +25,8 @@ class AppCoordinator: AppCoordinatorProtocol {
   private var authorizationManager
   @LazyInjected(\.onboardingFlowCoordinator)
   private var onboardingFlowCoordinator
-  @LazyInjected(\.intercomService)
-  private var intercomService
+  @LazyInjected(\.customSupportService)
+  private var customSupportService
   @LazyInjected(\.accountRepository)
   private var accountRepository
   @LazyInjected(\.accountDataManager)
@@ -76,7 +76,7 @@ class AppCoordinator: AppCoordinatorProtocol {
   func logout() {
     authorizationManager.clearToken()
     accountDataManager.clearUserSession()
-    intercomService.pushEventLogout()
+    customSupportService.pushEventLogout()
     pushNotificationService.signOut()
   }
 }

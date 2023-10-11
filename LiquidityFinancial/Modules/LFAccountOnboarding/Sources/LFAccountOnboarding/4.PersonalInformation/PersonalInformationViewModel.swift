@@ -28,7 +28,7 @@ class PersonalInformationViewModel: ObservableObject {
   }
   
   @LazyInjected(\.accountDataManager) var accountDataManager
-  @LazyInjected(\.intercomService) var intercomService
+  @LazyInjected(\.customSupportService) var customSupportService
   
   @Published var isNavigationToSSNView: Bool = false
   @Published var isActionAllowed: Bool = false {
@@ -82,8 +82,8 @@ class PersonalInformationViewModel: ObservableObject {
   var countGenerateUser: Int = 0
 #endif
   
-  func openIntercom() {
-    intercomService.openIntercom()
+  func openSupportScreen() {
+    customSupportService.openSupportScreen()
   }
   
   func magicFillAccount() {

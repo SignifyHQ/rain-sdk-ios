@@ -37,8 +37,8 @@ struct EnterPassportView: View {
     .onTapGesture {
       viewModel.hidePassportTypes()
     }
-    .defaultToolBar(icon: .intercom, openIntercom: {
-      viewModel.openIntercom()
+    .defaultToolBar(icon: .support, openSupportScreen: {
+      viewModel.openSupportScreen()
     })
     .navigationLink(isActive: $viewModel.isNavigationToAddressView) {
       AddressView()

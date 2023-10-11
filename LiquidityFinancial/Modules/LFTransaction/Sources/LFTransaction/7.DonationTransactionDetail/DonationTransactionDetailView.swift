@@ -20,10 +20,10 @@ public struct DonationTransactionDetailView: View {
     }
     .scrollOnOverflow()
     .defaultToolBar(
-      icon: .intercom,
+      icon: .support,
       navigationTitle: LFLocalizable.TransactionCard.Donation.title,
-      openIntercom: {
-        viewModel.openIntercom()
+      openSupportScreen: {
+        viewModel.openSupportScreen()
       }
     )
     .frame(maxWidth: .infinity)

@@ -63,7 +63,7 @@ public struct ListCardsView: View {
 
       ToolbarItem(placement: .navigationBarTrailing) {
         Button {
-          viewModel.openIntercom()
+          viewModel.openSupportScreen()
         } label: {
           GenImages.CommonImages.icChat.swiftUIImage
             .foregroundColor(Colors.label.swiftUIColor)

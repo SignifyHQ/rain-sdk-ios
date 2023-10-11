@@ -17,8 +17,8 @@ struct AccountLockedView: View {
     .padding(.horizontal, 30)
     .padding(.bottom, 16)
     .background(Colors.background.swiftUIColor)
-    .defaultToolBar(icon: .intercom, openIntercom: {
-      viewModel.openIntercom()
+    .defaultToolBar(icon: .support, openSupportScreen: {
+      viewModel.openSupportScreen()
     })
     .track(name: String(describing: type(of: self)))
   }
@@ -46,7 +46,7 @@ private extension AccountLockedView {
         isDisable: false,
         textColor: Colors.contrast.swiftUIColor
       ) {
-        viewModel.openIntercom()
+        viewModel.openSupportScreen()
       }
       FullSizeButton(
         title: LFLocalizable.Button.Logout.title,

@@ -4,13 +4,13 @@ import Factory
 
 @MainActor
 final class AccountLockedViewModel: ObservableObject {
-  @LazyInjected(\.intercomService) var intercomService
+  @LazyInjected(\.customSupportService) var customSupportService
   @LazyInjected(\.onboardingFlowCoordinator) var onboardingFlowCoordinator
 
   init() {}
   
-  func openIntercom() {
-    intercomService.openIntercom()
+  func openSupportScreen() {
+    customSupportService.openSupportScreen()
   }
   
   func logout() {

@@ -7,14 +7,14 @@ extension View {
     icon: ToolBarIcon? = nil,
     navigationTitle: String? = nil,
     onDismiss: (() -> Void)? = nil,
-    openIntercom: (() -> Void)? = nil
+    openSupportScreen: (() -> Void)? = nil
   ) -> some View {
     modifier(
       ToolBarModifier(
         icon: icon,
         navigationTitle: navigationTitle ?? "",
         onDismiss: onDismiss,
-        openIntercom: openIntercom
+            openSupportScreen: openSupportScreen
       )
     )
   }
@@ -23,7 +23,7 @@ extension View {
 // MARK: - Type
 public enum ToolBarIcon {
   case xMark
-  case intercom
+  case support
   case both
 }
 
@@ -33,18 +33,18 @@ private struct ToolBarModifier: ViewModifier {
   let icon: ToolBarIcon?
   let navigationTitle: String
   let onDismiss: (() -> Void)?
-  let openIntercom: (() -> Void)?
+  let openSupportScreen: (() -> Void)?
 
   init(
     icon: ToolBarIcon? = nil,
     navigationTitle: String = "",
     onDismiss: (() -> Void)? = nil,
-    openIntercom: (() -> Void)? = nil
+    openSupportScreen: (() -> Void)? = nil
   ) {
     self.icon = icon
     self.navigationTitle = navigationTitle
     self.onDismiss = onDismiss
-    self.openIntercom = openIntercom
+    self.openSupportScreen = openSupportScreen
   }
   
   func body(content: Content) -> some View {
@@ -66,9 +66,9 @@ private struct ToolBarModifier: ViewModifier {
             .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.medium.value))
         }
         ToolbarItem(placement: .navigationBarTrailing) {
-          if icon == .intercom || icon == .both {
+          if icon == .support || icon == .both {
             Button {
-              openIntercom?()
+              openSupportScreen?()
             } label: {
               GenImages.CommonImages.icChat.swiftUIImage
                 .foregroundColor(Colors.label.swiftUIColor)

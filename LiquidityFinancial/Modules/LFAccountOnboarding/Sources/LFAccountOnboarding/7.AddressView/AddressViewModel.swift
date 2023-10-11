@@ -39,7 +39,7 @@ final class AddressViewModel: ObservableObject {
   @LazyInjected(\.accountRepository) var accountRepository
   @LazyInjected(\.netspendDataManager) var netspendDataManager
   @LazyInjected(\.onboardingFlowCoordinator) var onboardingFlowCoordinator
-  @LazyInjected(\.intercomService) var intercomService
+  @LazyInjected(\.customSupportService) var customSupportService
   @LazyInjected(\.authorizationManager) var authorizationManager
   @LazyInjected(\.devicesRepository) var devicesRepository
   @LazyInjected(\.pushNotificationService) var pushNotificationService
@@ -161,8 +161,8 @@ final class AddressViewModel: ObservableObject {
     }
   }
   
-  func openIntercom() {
-    intercomService.openIntercom()
+  func openSupportScreen() {
+    customSupportService.openSupportScreen()
   }
   
   func magicFillAccount() {
@@ -309,7 +309,7 @@ extension AddressViewModel {
         authorizationManager.clearToken()
         accountDataManager.clearUserSession()
         authorizationManager.forcedLogout()
-        intercomService.pushEventLogout()
+        customSupportService.pushEventLogout()
         popup = nil
         pushNotificationService.signOut()
       }

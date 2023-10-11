@@ -20,7 +20,7 @@ public final class ListCardsViewModel: ObservableObject {
   @LazyInjected(\.rewardDataManager) var rewardDataManager
   @LazyInjected(\.cardRepository) var cardRepository
   @LazyInjected(\.rewardRepository) var rewardRepository
-  @LazyInjected(\.intercomService) var intercomService
+  @LazyInjected(\.customSupportService) var customSupportService
   @LazyInjected(\.analyticsService) var analyticsService
   
   @Published var isInit: Bool = false
@@ -165,8 +165,8 @@ extension ListCardsViewModel {
     isActive = true
   }
   
-  func openIntercom() {
-    intercomService.openIntercom()
+  func openSupportScreen() {
+    customSupportService.openSupportScreen()
   }
 
   func lockCardToggled() {

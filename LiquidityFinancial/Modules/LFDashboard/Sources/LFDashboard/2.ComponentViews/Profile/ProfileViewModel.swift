@@ -12,7 +12,7 @@ final class ProfileViewModel: ObservableObject {
   @Published var popup: Popup?
   @Published var notificationsEnabled = false
   
-  @LazyInjected(\.intercomService) var intercomService
+  @LazyInjected(\.customSupportService) var customSupportService
   @LazyInjected(\.accountDataManager) var accountDataManager
   @LazyInjected(\.accountRepository) var accountRepository
   @LazyInjected(\.authorizationManager) var authorizationManager
@@ -62,7 +62,7 @@ extension ProfileViewModel {
   }
   
   func helpTapped() {
-    intercomService.openIntercom()
+    customSupportService.openSupportScreen()
   }
   
   func logoutTapped() {
@@ -77,7 +77,7 @@ extension ProfileViewModel {
         authorizationManager.clearToken()
         accountDataManager.clearUserSession()
         authorizationManager.forcedLogout()
-        intercomService.pushEventLogout()
+        customSupportService.pushEventLogout()
         dismissPopup()
         pushNotificationService.signOut()
       }
@@ -105,7 +105,7 @@ extension ProfileViewModel {
     authorizationManager.clearToken()
     accountDataManager.clearUserSession()
     authorizationManager.forcedLogout()
-    intercomService.pushEventLogout()
+    customSupportService.pushEventLogout()
     dismissPopup()
     pushNotificationService.signOut()
   }

@@ -40,8 +40,8 @@ public struct AgreementView: View {
     .padding(.bottom, 16)
     .padding(.top, 20)
     .padding(.horizontal, 30)
-    .defaultToolBar(icon: .intercom, openIntercom: {
-      viewModel.openIntercom()
+    .defaultToolBar(icon: .support, openSupportScreen: {
+      viewModel.openSupportScreen()
     })
     .background(Colors.background.swiftUIColor)
     .navigationLink(isActive: $viewModel.isNavigationPersonalInformation) {

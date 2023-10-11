@@ -6,7 +6,7 @@ import LFServices
 @MainActor
 final class RewardTermsViewModel: ObservableObject {
   @LazyInjected(\.onboardingFlowCoordinator) var onboardingFlowCoordinator
-  @LazyInjected(\.intercomService) var intercomService
+  @LazyInjected(\.customSupportService) var customSupportService
   
   var disclaimerText: String {
     LFLocalizable.RewardTerms.disclosuresFirst + "\n\n" +
@@ -20,7 +20,7 @@ final class RewardTermsViewModel: ObservableObject {
     onboardingFlowCoordinator.set(route: .dashboard)
   }
   
-  func openIntercom() {
-    intercomService.openIntercom()
+  func openSupportScreen() {
+    customSupportService.openSupportScreen()
   }
 }
