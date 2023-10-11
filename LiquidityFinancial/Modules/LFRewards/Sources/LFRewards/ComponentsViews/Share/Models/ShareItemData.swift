@@ -41,7 +41,7 @@ public struct ShareItemData {
       
       messageGeneric = LFLocalizable.Fundraise.ShareDonation.generic(fundraiserDetail.charityName, LFUtilities.appName, fundraiserDetail.name)
       if let donation {
-        let amount = donation.formattedAmount(prefix: "$", minFractionDigits: 2, absoluteValue: true)
+        let amount = donation.formattedUSDAmount(absoluteValue: true)
         
         messageDonation = LFLocalizable.Fundraise.ShareDonation.amount(amount, fundraiserDetail.charityName, LFUtilities.appName, fundraiserDetail.name)
       } else {

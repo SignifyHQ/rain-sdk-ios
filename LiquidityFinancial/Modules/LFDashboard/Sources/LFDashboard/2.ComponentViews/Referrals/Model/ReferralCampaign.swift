@@ -31,7 +31,7 @@ extension ReferralCampaign {
   
   var inviterBonusDisplay: String {
     if currency == "USD" {
-      return inviterBonusAmount.formattedAmount(prefix: Constants.CurrencyUnit.usd.rawValue)
+      return inviterBonusAmount.formattedUSDAmount()
     } else {
       return "\(inviterBonusAmount.formattedAmount()) \(currency))"
     }

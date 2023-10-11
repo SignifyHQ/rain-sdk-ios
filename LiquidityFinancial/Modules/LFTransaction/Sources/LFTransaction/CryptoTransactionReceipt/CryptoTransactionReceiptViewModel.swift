@@ -21,17 +21,17 @@ final class CryptoTransactionReceiptViewModel: ObservableObject {
         value: receipt.currency),
       .init(
         title: LFLocalizable.CryptoReceipt.ExchangeRate.title,
-        markValue: receipt.exchangeRate?.formattedAmount(prefix: Constants.CurrencyUnit.usd.symbol, minFractionDigits: 2),
+        markValue: receipt.exchangeRate?.formattedUSDAmount(),
         value: Constants.CurrencyUnit.usd.description
       ),
       .init(
         title: LFLocalizable.CryptoReceipt.TransactionValue.title,
-        markValue: receipt.transactionValue?.formattedAmount(prefix: Constants.CurrencyUnit.usd.symbol, minFractionDigits: 2),
+        markValue: receipt.transactionValue?.formattedUSDAmount(),
         value: Constants.CurrencyUnit.usd.description
       ),
       .init(
         title: LFLocalizable.CryptoReceipt.Fee.title,
-        markValue: receipt.fee?.formattedAmount(prefix: Constants.CurrencyUnit.usd.symbol) ?? "$0",
+        markValue: receipt.fee?.formattedUSDAmount() ?? "$0",
         value: Constants.CurrencyUnit.usd.description
       ),
       .init(title: LFLocalizable.CryptoReceipt.DateAndTime.title, value: receipt.createdAt.serverToTransactionDisplay(includeYear: true)),

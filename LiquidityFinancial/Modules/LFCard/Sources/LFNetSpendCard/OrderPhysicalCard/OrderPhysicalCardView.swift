@@ -80,7 +80,7 @@ private extension OrderPhysicalCardView {
         .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.medium.value))
         .foregroundColor(Colors.label.swiftUIColor.opacity(0.75))
       Spacer()
-      Text(viewModel.fees.formattedAmount(prefix: Constants.CurrencyUnit.usd.symbol))
+      Text(viewModel.fees.formattedUSDAmount())
         .font(Fonts.bold.swiftUIFont(size: Constants.FontSize.medium.value))
         .foregroundColor(Colors.label.swiftUIColor)
     }

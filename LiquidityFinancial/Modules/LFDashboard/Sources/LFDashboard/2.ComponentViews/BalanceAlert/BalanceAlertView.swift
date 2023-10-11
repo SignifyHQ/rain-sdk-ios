@@ -69,7 +69,7 @@ private extension BalanceAlertView {
           
           Text(
             LFLocalizable.BalanceAlert.Low.message(
-              Constants.lowBalanceThreshold.formattedAmount(prefix: Constants.CurrencyUnit.usd.rawValue)
+              Constants.lowBalanceThreshold.formattedUSDAmount()
             )
           )
           .font(Fonts.bold.swiftUIFont(size: Constants.FontSize.ultraSmall.value))

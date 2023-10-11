@@ -242,7 +242,7 @@ extension MoveCryptoInputViewModel {
     switch type {
     case .buyCrypto:
       return LFLocalizable.MoveCryptoInput.BuyAvailableBalance.subtitle(
-        fiatAccount?.availableBalance.formattedAmount(prefix: "$") ?? "$0.00"
+        fiatAccount?.availableBalance.formattedUSDAmount() ?? "$0.00"
       )
     case .sellCrypto:
       let balance = assetModel.availableBalance.roundTo3f()
@@ -261,7 +261,7 @@ extension MoveCryptoInputViewModel {
     switch type {
     case .buyCrypto:
       return LFLocalizable.MoveCryptoInput.Buy.annotation(
-        fiatAccount?.availableBalance.formattedAmount(prefix: "$") ?? "$0.00"
+        fiatAccount?.availableBalance.formattedUSDAmount() ?? "$0.00"
       )
     case .sellCrypto:
       let balance = assetModel.availableBalance.roundTo3f()

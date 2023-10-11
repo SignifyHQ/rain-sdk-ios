@@ -51,8 +51,7 @@ final class ProfileViewModel: ObservableObject {
   }
 
   var totalDonated: String {
-    Double(contribution?.donationAmount ?? 0)
-      .formattedAmount(prefix: Constants.CurrencyUnit.usd.rawValue)
+    Double(contribution?.donationAmount ?? 0).formattedUSDAmount()
   }
 
   var stickers: [Sticker] {

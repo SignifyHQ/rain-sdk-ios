@@ -43,14 +43,6 @@ public enum GenImages {
       public static let candleStick = ImageAsset(name: "candleStick")
       public static let lineChart = ImageAsset(name: "lineChart")
     }
-    public enum CompanyLogo {
-      public static let companyLogo1 = ImageAsset(name: "company-logo-1")
-      public static let companyLogo2 = ImageAsset(name: "company-logo-2")
-      public static let companyLogo3 = ImageAsset(name: "company-logo-3")
-      public static let companyLogo4 = ImageAsset(name: "company-logo-4")
-      public static let companyLogo5 = ImageAsset(name: "company-logo-5")
-      public static let companyLogo6 = ImageAsset(name: "company-logo-6")
-    }
     public static let zerohash = ImageAsset(name: "Zerohash")
     public static let addMoney = ImageAsset(name: "addMoney")
     public static let buy = ImageAsset(name: "buy")
@@ -118,6 +110,14 @@ public enum GenImages {
     public static let walletAddress = ImageAsset(name: "walletAddress")
   }
   public enum Images {
+    public enum CompanyLogo {
+      public static let companyLogo1 = ImageAsset(name: "company-logo-1")
+      public static let companyLogo2 = ImageAsset(name: "company-logo-2")
+      public static let companyLogo3 = ImageAsset(name: "company-logo-3")
+      public static let companyLogo4 = ImageAsset(name: "company-logo-4")
+      public static let companyLogo5 = ImageAsset(name: "company-logo-5")
+      public static let companyLogo6 = ImageAsset(name: "company-logo-6")
+    }
     public enum Transactions {
       public static let txCardPurchase = ImageAsset(name: "txCardPurchase")
       public static let txCardRefund = ImageAsset(name: "txCardRefund")

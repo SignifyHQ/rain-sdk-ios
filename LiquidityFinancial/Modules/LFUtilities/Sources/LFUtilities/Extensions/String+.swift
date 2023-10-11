@@ -40,6 +40,14 @@ public extension String {
     ) ?? ""
   }
   
+  func formattedUSDAmount(absoluteValue: Bool = false) -> String {
+    asDouble?.formattedUSDAmount(absoluteValue: absoluteValue) ?? String.empty
+  }
+
+  func formattedCryptoAmount(absoluteValue: Bool = false) -> String {
+    asDouble?.formattedCryptoAmount(absoluteValue: absoluteValue) ?? String.empty
+  }
+  
   func substring(start: Int, end: Int) -> String {
     if start < 0 || end > count {
       return ""

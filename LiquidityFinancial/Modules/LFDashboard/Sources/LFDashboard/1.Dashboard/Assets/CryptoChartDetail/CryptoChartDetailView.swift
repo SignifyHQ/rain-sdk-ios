@@ -211,7 +211,7 @@ private extension CryptoChartDetailView {
   
   var priceView: some View {
     HStack(spacing: 8) {
-      Text(viewModel.cryptoPrice.formattedAmount(prefix: Constants.CurrencyUnit.usd.symbol, minFractionDigits: 2))
+      Text(viewModel.cryptoPrice.formattedUSDAmount())
         .foregroundColor(Colors.primary.swiftUIColor)
         .font(Fonts.bold.swiftUIFont(size: Constants.FontSize.ultraSmall.value))
       HStack(spacing: 4) {

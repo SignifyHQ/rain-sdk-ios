@@ -46,7 +46,7 @@ class CryptoAssetViewModel: ObservableObject {
   
   var fluctuationAmmount: String {
     let value = closePrice * asset.availableBalance - (asset.availableUsdBalance ?? 0)
-    return "(\(value.formattedAmount(prefix: Constants.CurrencyUnit.usd.symbol, minFractionDigits: 2)))"
+    return "(\(value.formattedUSDAmount())"
   }
   
   var isPositivePrice: Bool {
@@ -113,7 +113,11 @@ private extension CryptoAssetViewModel {
       guard let value = models.last?.value else {
         return "0.00"
       }
-      return value.formattedAmount(prefix: "$", minFractionDigits: 6, maxFractionDigits: 6)
+      return value.formattedAmount(
+        prefix: Constants.CurrencyUnit.usd.symbol,
+        minFractionDigits: 6,
+        maxFractionDigits: 6
+      )
     }
     .receive(on: DispatchQueue.main)
     .assign(to: \.cryptoPrice, on: self)

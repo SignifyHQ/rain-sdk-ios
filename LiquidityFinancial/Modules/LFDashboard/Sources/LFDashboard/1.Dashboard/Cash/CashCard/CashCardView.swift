@@ -122,7 +122,7 @@ struct CashCardView: View {
             .hidden(!showLoadingIndicator)
             .foregroundColor(Colors.contrast.swiftUIColor)
           Text(
-            cashBalance.formattedAmount(prefix: Constants.CurrencyUnit.usd.rawValue, minFractionDigits: 2)
+            cashBalance.formattedUSDAmount()
           )
             .foregroundColor(Colors.contrast.swiftUIColor)
             .font(Fonts.bold.swiftUIFont(size: 22))

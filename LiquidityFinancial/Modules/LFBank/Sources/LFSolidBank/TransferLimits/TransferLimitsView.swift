@@ -201,7 +201,7 @@ private extension TransferLimitsView {
             .foregroundColor(Colors.label.swiftUIColor.opacity(0.75))
             .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.ultraSmall.value))
           Spacer()
-          Text(limitAmount.formattedAmount(prefix: Constants.CurrencyUnit.usd.symbol))
+          Text(limitAmount.formattedUSDAmount())
             .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.medium.value))
             .foregroundStyle(
               LinearGradient(

@@ -27,7 +27,7 @@ struct FundraiserStatusView: View {
   
   private var raised: some View {
     HStack(alignment: .lastTextBaseline, spacing: 4) {
-      Text(fundraiser.currentAmount.formattedAmount(prefix: "$", absoluteValue: true))
+      Text(fundraiser.currentAmount.formattedUSDAmount(absoluteValue: true))
         .font(Fonts.medium.swiftUIFont(size: 12))
         .foregroundColor(ModuleColors.label.swiftUIColor)
       

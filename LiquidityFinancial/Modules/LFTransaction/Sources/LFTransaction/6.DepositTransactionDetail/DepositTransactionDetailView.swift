@@ -45,7 +45,7 @@ private extension DepositTransactionDetailView {
               .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.medium.value))
               .foregroundColor(Colors.label.swiftUIColor)
             Spacer()
-            Text(fee > 0 ? fee.formattedAmount(prefix: Constants.CurrencyUnit.usd.symbol) : LFLocalizable.TransferView.Status.free)
+            Text(fee > 0 ? fee.formattedUSDAmount() : LFLocalizable.TransferView.Status.free)
               .font(Fonts.bold.swiftUIFont(size: Constants.FontSize.medium.value))
               .foregroundColor(Colors.label.swiftUIColor)
           }

@@ -10,12 +10,12 @@ public struct DirectDepositView: View {
   @Binding var achInformation: ACHModel
   
   private let companyLogos = [
-    GenImages.CommonImages.CompanyLogo.companyLogo1.swiftUIImage,
-    GenImages.CommonImages.CompanyLogo.companyLogo2.swiftUIImage,
-    GenImages.CommonImages.CompanyLogo.companyLogo3.swiftUIImage,
-    GenImages.CommonImages.CompanyLogo.companyLogo4.swiftUIImage,
-    GenImages.CommonImages.CompanyLogo.companyLogo5.swiftUIImage,
-    GenImages.CommonImages.CompanyLogo.companyLogo6.swiftUIImage
+    GenImages.Images.CompanyLogo.companyLogo1.swiftUIImage,
+    GenImages.Images.CompanyLogo.companyLogo2.swiftUIImage,
+    GenImages.Images.CompanyLogo.companyLogo3.swiftUIImage,
+    GenImages.Images.CompanyLogo.companyLogo4.swiftUIImage,
+    GenImages.Images.CompanyLogo.companyLogo5.swiftUIImage,
+    GenImages.Images.CompanyLogo.companyLogo6.swiftUIImage
   ]
 
   init(achInformation: Binding<ACHModel>) {
@@ -26,7 +26,6 @@ public struct DirectDepositView: View {
     ScrollView {
       HStack(alignment: .top) {
         VStack(spacing: 24) {
-          seeAllBenefitsButton
           VStack(spacing: 16) {
             automaticSetup
             manualSetup
@@ -36,6 +35,7 @@ public struct DirectDepositView: View {
       }
       .padding(.horizontal, 32)
     }
+    .padding(.top, 28)
     .blur(radius: viewModel.isShowAllBenefits ? 24 : 0)
     .toolbar {
       ToolbarItem(placement: .principal) {
@@ -64,21 +64,6 @@ public struct DirectDepositView: View {
 
 // MARK: - View Components
 private extension DirectDepositView {
-  var seeAllBenefitsButton: some View {
-    Button {
-      viewModel.onClickedSeeAllBenefitsButton()
-    } label: {
-      Text(LFLocalizable.DirectDeposit.SeeAllBenefits.buttonTitle)
-        .font(Fonts.medium.swiftUIFont(size: Constants.FontSize.ultraSmall.value))
-        .foregroundColor(Colors.label.swiftUIColor)
-        .padding(.vertical, 10)
-        .padding(.horizontal, 16)
-    }
-    .background(Colors.buttons.swiftUIColor)
-    .cornerRadius(32)
-    .padding(.top, 24)
-  }
-  
   var automaticSetup: some View {
     VStack(spacing: 8) {
       sectionTitle(
@@ -108,7 +93,13 @@ private extension DirectDepositView {
     VStack(spacing: 8) {
       Text(setupType)
         .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.medium.value))
-        .foregroundColor(Colors.primary.swiftUIColor)
+        .foregroundStyle(
+          LinearGradient(
+            colors: primaryTextColor,
+            startPoint: .leading,
+            endPoint: .trailing
+          )
+        )
       Text(title)
         .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.main.value))
         .foregroundColor(Colors.label.swiftUIColor)
@@ -149,14 +140,6 @@ private extension DirectDepositView {
         }
       }
       .padding(.bottom, 24)
-      
-      FullSizeButton(
-        title: LFLocalizable.DirectDeposit.FillOutForm.buttonTitle,
-        isDisable: false,
-        type: .secondary
-      ) {
-        viewModel.manualSetup()
-      }
     }
     .padding(16)
     .background(Colors.secondaryBackground.swiftUIColor)
@@ -194,7 +177,13 @@ private extension DirectDepositView {
           .frame(20)
           .scaledToFit()
       }
-      .foregroundColor(Colors.primary.swiftUIColor)
+      .foregroundStyle(
+        LinearGradient(
+          colors: primaryTextColor,
+          startPoint: .leading,
+          endPoint: .trailing
+        )
+      )
     }
     .foregroundColor(Colors.label.swiftUIColor)
     .padding(.horizontal, -4)
@@ -247,5 +236,20 @@ private extension DirectDepositView {
       Spacer()
     }
     .fixedSize(horizontal: false, vertical: true)
+  }
+}
+
+// MARK: - View Helpers
+private extension DirectDepositView {
+  var primaryTextColor: [Color] {
+    switch LFStyleGuide.target {
+    case .CauseCard:
+      return [
+        Colors.Gradients.Button.gradientButton0.swiftUIColor,
+        Colors.Gradients.Button.gradientButton1.swiftUIColor
+      ]
+    default:
+      return [Colors.primary.swiftUIColor]
+    }
   }
 }

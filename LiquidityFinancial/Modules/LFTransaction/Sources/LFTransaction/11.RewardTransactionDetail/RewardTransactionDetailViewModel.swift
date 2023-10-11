@@ -39,7 +39,7 @@ extension RewardTransactionDetailViewModel {
   }
   
   var amountValue: String {
-    transaction.amount.formattedAmount(prefix: Constants.CurrencyUnit.usd.rawValue, minFractionDigits: 2)
+    transaction.amount.formattedUSDAmount()
   }
 }
 

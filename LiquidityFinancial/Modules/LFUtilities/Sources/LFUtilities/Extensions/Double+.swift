@@ -51,6 +51,34 @@ public extension Double {
     let prefix = prefix ?? ""
     return "\(prefix)\(result)"
   }
+  
+  /// Returns a String USD display of the current value
+  /// - Parameter absoluteValue: Check if it is an absolute value
+  /// - Returns: String
+  func formattedUSDAmount(absoluteValue: Bool = false) -> String {
+    let formatter = NumberFormatter.usdFormatter
+    formatter.minimumFractionDigits = Constants.FractionDigitsLimit.fiat.minFractionDigits
+    formatter.maximumFractionDigits = Constants.FractionDigitsLimit.fiat.maxFractionDigits
+    let value = absoluteValue ? abs(self) : self
+    guard let result = formatter.string(from: value) else {
+      return String.empty
+    }
+    return "\(Constants.CurrencyUnit.usd.symbol)\(result)"
+  }
+
+  /// Returns a String crypto display of the current value
+  /// - Parameter absoluteValue: Check if it is an absolute value
+  /// - Returns: String
+  func formattedCryptoAmount(absoluteValue: Bool = false) -> String {
+    let formatter = NumberFormatter.usdFormatter
+    formatter.minimumFractionDigits = Constants.FractionDigitsLimit.crypto.minFractionDigits
+    formatter.maximumFractionDigits = Constants.FractionDigitsLimit.crypto.maxFractionDigits
+    let value = absoluteValue ? abs(self) : self
+    guard let result = formatter.string(from: value) else {
+      return String.empty
+    }
+    return result
+  }
 }
 
 private extension NumberFormatter {

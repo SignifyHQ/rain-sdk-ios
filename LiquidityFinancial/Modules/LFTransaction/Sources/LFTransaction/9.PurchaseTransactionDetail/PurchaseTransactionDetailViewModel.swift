@@ -80,7 +80,7 @@ extension PurchaseTransactionDetailViewModel {
   }
   
   var amountValue: String {
-    transaction.amount.formattedAmount(prefix: Constants.CurrencyUnit.usd.rawValue, minFractionDigits: 2)
+    transaction.amount.formattedUSDAmount()
   }
   
   func openContactSupport() {

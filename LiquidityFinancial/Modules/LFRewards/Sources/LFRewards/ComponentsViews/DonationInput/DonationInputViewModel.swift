@@ -108,7 +108,7 @@ extension DonationInputViewModel {
     case .buyDonation:
       return String(
         format: "available_balance.subtitle".localizedString,
-        cashAvailableBalance?.formattedAmount(prefix: "$") ?? "$0.00"
+        cashAvailableBalance?.formattedUSDAmount() ?? "$0.00"
       )
     }
   }
@@ -118,7 +118,7 @@ extension DonationInputViewModel {
     case .buyDonation:
       return String(
         format: "buy_sell_input.buy_donation_annotation.description".localizedString,
-        cashAvailableBalance?.formattedAmount(prefix: "$") ?? "$0.00"
+        cashAvailableBalance?.formattedUSDAmount() ?? "$0.00"
       )
     }
   }

@@ -59,7 +59,7 @@ public class MoveMoneyAccountViewModel: ObservableObject {
     guard let amount = externalCardFeeResponse?.amount, amount > 0 else {
       return LFLocalizable.MoveMoney.TransferFeePopup.free
     }
-    return amount.formattedAmount(prefix: Constants.CurrencyUnit.usd.symbol)
+    return amount.formattedUSDAmount()
   }
 }
 
@@ -272,13 +272,13 @@ extension MoveMoneyAccountViewModel {
   
   var subtitle: String {
     LFLocalizable.MoveMoney.AvailableBalance.subtitle(
-      cashBalanceValue.formattedAmount(prefix: Constants.CurrencyUnit.usd.rawValue)
+      cashBalanceValue.formattedUSDAmount()
     )
   }
 
   var annotationString: String {
     LFLocalizable.MoveMoney.Withdraw.annotation(
-      cashBalanceValue.formattedAmount(prefix: Constants.CurrencyUnit.usd.rawValue)
+      cashBalanceValue.formattedUSDAmount()
     )
   }
 

@@ -120,9 +120,7 @@ struct CashCardView: View {
           LottieView(loading: .contrast)
             .frame(width: 30, height: 20, alignment: .leading)
             .hidden(!showLoadingIndicator)
-          Text(
-            cashBalance.formattedAmount(prefix: Constants.CurrencyUnit.usd.rawValue, minFractionDigits: 2)
-          )
+          Text(cashBalance.formattedUSDAmount())
             .foregroundColor(Colors.contrast.swiftUIColor)
             .font(Fonts.bold.swiftUIFont(size: 22))
             .hidden(showLoadingIndicator)
