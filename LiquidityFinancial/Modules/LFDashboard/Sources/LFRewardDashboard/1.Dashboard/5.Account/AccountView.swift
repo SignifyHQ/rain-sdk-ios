@@ -25,21 +25,28 @@ struct AccountsView: View {
       .navigationLink(item: $viewModel.navigation) { item in
         switch item {
         case .debugMenu:
-          //DBAdminMenuView(environment: viewModel.networkEnvironment.title)
-          EmptyView()
+          DBAdminMenuView(environment: viewModel.networkEnvironment.title)
         case .atmLocation(let authorizationCode):
-          EmptyView()
+          NetspendLocationViewController(
+            withPasscode: authorizationCode,
+            onClose: {
+              viewModel.navigation = nil
+            })
+          .navigationTitle(LFLocalizable.AccountView.atmLocationTitle)
+          .foregroundColor(Colors.label.swiftUIColor)
         case .depositLimits:
-          //TransferLimitsView()
-          EmptyView()
+          TransferLimitsView()
         case .connectedAccounts:
-          //ConnectedAccountsView(linkedAccount: viewModel.linkedAccount)
-          EmptyView()
+          ConnectedAccountsView(linkedAccount: viewModel.linkedAccount)
         case .bankStatement:
-          //BankStatementView()
-          EmptyView()
+          BankStatementView()
         case let .disputeTransaction(netspendAccountID, passcode):
-          EmptyView()
+          NetspendDisputeTransactionViewController(
+            netspendAccountID: netspendAccountID,
+            passcode: passcode
+          ) {
+            viewModel.navigation = nil
+          }.navigationBarHidden(true)
         case .rewards:
           transactionNavigation.resolveCurrentReward()
         case .agreement(let data):
