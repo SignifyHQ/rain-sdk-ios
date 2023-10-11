@@ -34,7 +34,7 @@ let package = Package(
     .package(name: "LFNetwork", path: "../LFNetwork"),
     .package(name: "LFUtilities", path: "../LFUtilities"),
     .package(name: "LFServices", path: "../LFServices"),
-    .package(url: "https://github.com/hmlongco/Factory", from: "2.2.0"),
+    .package(url: "https://github.com/hmlongco/Factory", from: "2.3.0"),
     .package(name: "LFBuildTools", path: "../LFBuildTools"),
     .package(name: "TestHelpers", path: "../TestHelpers")
   ],

@@ -1,6 +1,5 @@
 import Foundation
 
-// sourcery: AutoMockable
 public protocol AccountRepositoryProtocol {
   func createZeroHashAccount() async throws -> ZeroHashAccount
   func getUser() async throws -> LFUser

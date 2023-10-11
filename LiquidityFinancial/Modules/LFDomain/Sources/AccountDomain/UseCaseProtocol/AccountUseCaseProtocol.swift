@@ -1,6 +1,5 @@
 import Foundation
 
-// sourcery: AutoMockable
 protocol AccountUseCaseProtocol {
   func execute(
     accountId: String, currencyType: String, transactionTypes: String, limit: Int, offset: Int

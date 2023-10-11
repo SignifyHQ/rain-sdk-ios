@@ -31,7 +31,13 @@ public struct HomeView: View {
   public var body: some View {
     TabView(selection: $viewModel.tabSelected) {
       ForEach(viewModel.tabOptions, id: \.self) { option in
-        loadTabView(option: option)
+        if #available(iOS 17.0, *) {
+          loadTabView(option: option)
+            .toolbar(.visible, for: .tabBar)
+            .toolbarBackground(Colors.secondaryBackground.swiftUIColor, for: .tabBar)
+        } else {
+          loadTabView(option: option)
+        }
       }
     }
     .navigationBarTitleDisplayMode(.inline)

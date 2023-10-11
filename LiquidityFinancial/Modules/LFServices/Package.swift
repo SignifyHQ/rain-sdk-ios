@@ -15,7 +15,7 @@ let package = Package(
       .package(url: "https://github.com/underdog-tech/pinwheel-ios-sdk.git", from: "2.3.15"),
       .package(url: "https://github.com/intercom/intercom-ios", from: "15.1.3"),
       .package(url: "https://github.com/marinofelipe/CurrencyText.git", from: "3.0.0"),
-      .package(url: "https://github.com/hmlongco/Factory", from: "2.2.0"),
+      .package(url: "https://github.com/hmlongco/Factory", from: "2.3.0"),
       .package(url: "https://github.com/firebase/firebase-ios-sdk", from: "10.0.0"),
       .package(url: "https://github.com/segmentio/analytics-ios", from: "4.1.8"),
       .package(url: "https://github.com/Datadog/dd-sdk-ios.git", from: "2.2.1")

@@ -15,7 +15,7 @@ let package = Package(
           targets: ["PridecardRewards"])
     ],
     dependencies: [
-      .package(url: "https://github.com/hmlongco/Factory", from: "2.2.0"),
+      .package(url: "https://github.com/hmlongco/Factory", from: "2.3.0"),
       .package(name: "LFUtilities", path: "../LFUtilities"),
       .package(name: "LFStyleGuide", path: "../LFStyleGuide"),
       .package(name: "LFDomain", path: "../LFDomain"),

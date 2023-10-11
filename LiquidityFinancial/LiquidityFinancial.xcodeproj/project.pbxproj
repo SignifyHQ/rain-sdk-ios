@@ -879,7 +879,9 @@
 				A97BF7BD2A5C602D00B8F5CA /* Products */,
 				A953545B2A5DD7F4008B0FAB /* Frameworks */,
 			);
+			indentWidth = 2;
 			sourceTree = "<group>";
+			tabWidth = 2;
 		};
 		A97BF7BD2A5C602D00B8F5CA /* Products */ = {
 			isa = PBXGroup;
@@ -3071,8 +3073,8 @@
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/hmlongco/Factory";
 			requirement = {
-				kind = upToNextMinorVersion;
-				minimumVersion = 2.2.0;
+				kind = exactVersion;
+				version = 2.3.0;
 			};
 		};
 		A97BF7EC2A5D719000B8F5CA /* XCRemoteSwiftPackageReference "lottie-ios" */ = {

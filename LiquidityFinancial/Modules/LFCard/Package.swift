@@ -17,7 +17,7 @@ let package = Package(
     )
   ],
   dependencies: [
-    .package(url: "https://github.com/hmlongco/Factory", from: "2.2.0"),
+    .package(url: "https://github.com/hmlongco/Factory", from: "2.3.0"),
     .package(name: "LFDomain", path: "../LFDomain"),
     .package(name: "LFUtilities", path: "../LFUtilities"),
     .package(name: "LFStyleGuide", path: "../LFStyleGuide"),

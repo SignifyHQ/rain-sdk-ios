@@ -19,7 +19,7 @@ let package = Package(
     dependencies: [
       .package(url: "https://github.com/MojtabaHs/iPhoneNumberField.git", from: "0.10.1"),
       .package(url: "https://github.com/smartystreets/smartystreets-ios-sdk", branch: "master"),
-      .package(url: "https://github.com/hmlongco/Factory", from: "2.2.0"),
+      .package(url: "https://github.com/hmlongco/Factory", from: "2.3.0"),
       .package(url: "https://github.com/scinfu/SwiftSoup.git", from: "2.6.1"),
       .package(name: "LFUtilities", path: "../LFUtilities"),
       .package(name: "LFStyleGuide", path: "../LFStyleGuide"),
