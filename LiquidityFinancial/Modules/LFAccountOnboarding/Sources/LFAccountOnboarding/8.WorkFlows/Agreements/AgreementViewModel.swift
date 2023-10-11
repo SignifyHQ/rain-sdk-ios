@@ -9,7 +9,7 @@ import SwiftSoup
 
 @MainActor
 public final class AgreementViewModel: ObservableObject {
-  @LazyInjected(\.customSupportService) var customSupportService
+  @LazyInjected(\.customerSupportService) var customerSupportService
   @LazyInjected(\.netspendDataManager) var netspendDataManager
   @LazyInjected(\.accountDataManager) var accountDataManager
   @LazyInjected(\.nsPersionRepository) var nsPersionRepository
@@ -45,7 +45,7 @@ public final class AgreementViewModel: ObservableObject {
   }
   
   func openSupportScreen() {
-    customSupportService.openSupportScreen()
+    customerSupportService.openSupportScreen()
   }
   
   private func checkData() {

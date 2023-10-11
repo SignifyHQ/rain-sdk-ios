@@ -18,7 +18,7 @@ public final class HomeViewModel: ObservableObject {
   
   @LazyInjected(\.pushNotificationService) var pushNotificationService
   
-  @LazyInjected(\.customSupportService) var customSupportService
+  @LazyInjected(\.customerSupportService) var customerSupportService
   
   @Published var isShowGearButton: Bool = false
   @Published var tabSelected: TabOption = .cash
@@ -69,18 +69,18 @@ extension HomeViewModel {
   func onAppear() {
     checkShouldShowNotification()
     checkGoTransactionDetail()
-    loginCustomSupportService()
+    logincustomerSupportService()
   }
   
-  func loginCustomSupportService() {
-    guard customSupportService.isLoginIdentifiedSuccess == false else { return }
+  func logincustomerSupportService() {
+    guard customerSupportService.isLoginIdentifiedSuccess == false else { return }
     var userAttributes: UserAttributes
     if let userID = accountDataManager.userInfomationData.userID {
       userAttributes = UserAttributes(phone: accountDataManager.phoneNumber, userId: userID, email: accountDataManager.userEmail)
     } else {
       userAttributes = UserAttributes(phone: accountDataManager.phoneNumber, email: accountDataManager.userEmail)
     }
-    customSupportService.loginIdentifiedUser(userAttributes: userAttributes)
+    customerSupportService.loginIdentifiedUser(userAttributes: userAttributes)
   }
 }
 

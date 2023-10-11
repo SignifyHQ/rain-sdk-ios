@@ -25,7 +25,7 @@ public final class AddFundsViewModel: ObservableObject {
   @LazyInjected(\.nsPersionRepository) var nsPersionRepository
   @LazyInjected(\.externalFundingRepository) var externalFundingRepository
   @LazyInjected(\.accountDataManager) var accountDataManager
-  @LazyInjected(\.customSupportService) var customSupportService
+  @LazyInjected(\.customerSupportService) var customerSupportService
   
   func loading(option: FundOption) -> Bool {
     switch option {
@@ -98,7 +98,7 @@ extension AddFundsViewModel {
   
   func plaidLinkingErrorSecondaryAction() {
     popup = nil
-    customSupportService.openSupportScreen()
+    customerSupportService.openSupportScreen()
   }
   
   func apiFetchFundingStatus(for navigation: Navigation, onNext: @escaping (any ExternalFundingsatusEntity) -> Void) {

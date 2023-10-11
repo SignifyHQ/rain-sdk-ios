@@ -9,7 +9,7 @@ import LFServices
 class EnterSSNViewModel: ObservableObject {
   
   @LazyInjected(\.accountDataManager) var accountDataManager
-  @LazyInjected(\.customSupportService) var customSupportService
+  @LazyInjected(\.customerSupportService) var customerSupportService
   @LazyInjected(\.analyticsService) var analyticsService
   
   @Published var errorMessage: String?
@@ -36,7 +36,7 @@ class EnterSSNViewModel: ObservableObject {
   #endif
   
   func openSupportScreen() {
-    customSupportService.openSupportScreen()
+    customerSupportService.openSupportScreen()
   }
   
   func magicFillAccount() {

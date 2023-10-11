@@ -17,7 +17,7 @@ public class MoveMoneyAccountViewModel: ObservableObject {
   @LazyInjected(\.accountDataManager) var accountDataManager
   @LazyInjected(\.externalFundingRepository) var externalFundingRepository
   @LazyInjected(\.analyticsService) var analyticsService
-  @LazyInjected(\.customSupportService) var customSupportService
+  @LazyInjected(\.customerSupportService) var customerSupportService
   
   @Published var navigation: Navigation?
   @Published var amountInput: String = Constants.Default.zeroAmount.rawValue
@@ -331,7 +331,7 @@ extension MoveMoneyAccountViewModel {
   }
   
   func contactSupport() {
-    customSupportService.openSupportScreen()
+    customerSupportService.openSupportScreen()
   }
   
   func hidePopup() {

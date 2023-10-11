@@ -8,7 +8,7 @@ import AuthorizationManager
 
 class OnboardingContentViewModel: ObservableObject {
   @LazyInjected(\.onboardingFlowCoordinator) var onboardingFlowCoordinator
-  @LazyInjected(\.customSupportService) var customSupportService
+  @LazyInjected(\.customerSupportService) var customerSupportService
   @LazyInjected(\.authorizationManager) var authorizationManager
   
   @Published var route = OnboardingFlowCoordinator.Route.initial
@@ -38,7 +38,7 @@ class OnboardingContentViewModel: ObservableObject {
   }
   
   func contactSupport() {
-    customSupportService.openSupportScreen()
+    customerSupportService.openSupportScreen()
   }
   
   func forcedLogout() {

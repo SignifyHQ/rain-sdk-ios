@@ -22,7 +22,7 @@ final class VerificationCodeViewModel: ObservableObject {
   @LazyInjected(\.nsPersionRepository) var nsPersionRepository
   @LazyInjected(\.netspendDataManager) var netspendDataManager
   @LazyInjected(\.rewardDataManager) var rewardDataManager
-  @LazyInjected(\.customSupportService) var customSupportService
+  @LazyInjected(\.customerSupportService) var customerSupportService
   @LazyInjected(\.analyticsService) var analyticsService
   
   @Published var isNavigationToWelcome: Bool = false
@@ -135,7 +135,7 @@ extension VerificationCodeViewModel {
   }
   
   func openSupportScreen() {
-    customSupportService.openSupportScreen()
+    customerSupportService.openSupportScreen()
   }
 }
 

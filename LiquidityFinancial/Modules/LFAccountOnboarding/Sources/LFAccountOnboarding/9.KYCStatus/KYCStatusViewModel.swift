@@ -30,7 +30,7 @@ final class KYCStatusViewModel: ObservableObject {
   @LazyInjected(\.onboardingRepository) var onboardingRepository
   @LazyInjected(\.accountRepository) var accountRepository
   @LazyInjected(\.onboardingFlowCoordinator) var onboardingFlowCoordinator
-  @LazyInjected(\.customSupportService) var customSupportService
+  @LazyInjected(\.customerSupportService) var customerSupportService
   @LazyInjected(\.authorizationManager) var authorizationManager
   @LazyInjected(\.analyticsService) var analyticsService
   
@@ -49,7 +49,7 @@ final class KYCStatusViewModel: ObservableObject {
 extension KYCStatusViewModel {
   
   func openSupportScreen() {
-    customSupportService.openSupportScreen()
+    customerSupportService.openSupportScreen()
   }
   
   // MARK: MAGIC PASS KYC DASHBOARD

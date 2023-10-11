@@ -3,7 +3,7 @@ import Factory
 import LFServices
 
 class DonationTransactionDetailViewModel: ObservableObject {
-  @LazyInjected(\.customSupportService) var customSupportService
+  @LazyInjected(\.customerSupportService) var customerSupportService
   
   @Published var navigation: Navigation?
   
@@ -15,7 +15,7 @@ class DonationTransactionDetailViewModel: ObservableObject {
   }
   
   func openSupportScreen() {
-    customSupportService.openSupportScreen()
+    customerSupportService.openSupportScreen()
   }
 }
 

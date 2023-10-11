@@ -28,7 +28,7 @@ class PersonalInformationViewModel: ObservableObject {
   }
   
   @LazyInjected(\.accountDataManager) var accountDataManager
-  @LazyInjected(\.customSupportService) var customSupportService
+  @LazyInjected(\.customerSupportService) var customerSupportService
   
   @Published var isNavigationToSSNView: Bool = false
   @Published var isActionAllowed: Bool = false {
@@ -83,7 +83,7 @@ class PersonalInformationViewModel: ObservableObject {
 #endif
   
   func openSupportScreen() {
-    customSupportService.openSupportScreen()
+    customerSupportService.openSupportScreen()
   }
   
   func magicFillAccount() {

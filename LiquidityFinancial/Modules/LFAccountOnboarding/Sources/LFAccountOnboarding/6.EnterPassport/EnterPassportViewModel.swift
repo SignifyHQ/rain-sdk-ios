@@ -8,7 +8,7 @@ import LFServices
 @MainActor
 final class EnterPassportViewModel: ObservableObject {
   @LazyInjected(\.accountDataManager) var accountDataManager
-  @LazyInjected(\.customSupportService) var customSupportService
+  @LazyInjected(\.customerSupportService) var customerSupportService
   
   @Published var isNavigationToAddressView: Bool = false
   @Published var showPassportTypes: Bool = false
@@ -31,7 +31,7 @@ final class EnterPassportViewModel: ObservableObject {
   }
   
   func openSupportScreen() {
-    customSupportService.openSupportScreen()
+    customerSupportService.openSupportScreen()
   }
 }
 

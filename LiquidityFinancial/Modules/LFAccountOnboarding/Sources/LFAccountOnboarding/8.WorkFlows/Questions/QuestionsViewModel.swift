@@ -16,7 +16,7 @@ public final class QuestionsViewModel: ObservableObject {
   @LazyInjected(\.nsPersionRepository) var nsPersionRepository
   @LazyInjected(\.onboardingRepository) var onboardingRepository
   @LazyInjected(\.onboardingFlowCoordinator) var onboardingFlowCoordinator
-  @LazyInjected(\.customSupportService) var customSupportService
+  @LazyInjected(\.customerSupportService) var customerSupportService
   @LazyInjected(\.pushNotificationService) var pushNotificationService
 
   @Published var isLoading: Bool = false
@@ -47,14 +47,14 @@ extension QuestionsViewModel {
   }
   
   func contactSupport() {
-    customSupportService.openSupportScreen()
+    customerSupportService.openSupportScreen()
   }
   
   func logout() {
     apiLogout { [weak self] in
       self?.authorizationManager.clearToken()
       self?.accountDataManager.clearUserSession()
-      self?.customSupportService.pushEventLogout()
+      self?.customerSupportService.pushEventLogout()
       self?.authorizationManager.forcedLogout()
       self?.popup = nil
       self?.pushNotificationService.signOut()

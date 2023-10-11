@@ -12,7 +12,7 @@ final class PurchaseTransactionDetailViewModel: ObservableObject {
   @LazyInjected(\.nsPersionRepository) var nsPersionRepository
   @LazyInjected(\.netspendDataManager) var netspendDataManager
   @LazyInjected(\.accountDataManager) var accountDataManager
-  @LazyInjected(\.customSupportService) var customSupportService
+  @LazyInjected(\.customerSupportService) var customerSupportService
 
   @Published var navigation: Navigation?
   @Published var isLoadingDisputeTransaction: Bool = false
@@ -84,7 +84,7 @@ extension PurchaseTransactionDetailViewModel {
   }
   
   func openContactSupport() {
-    customSupportService.openSupportScreen()
+    customerSupportService.openSupportScreen()
   }
 }
 

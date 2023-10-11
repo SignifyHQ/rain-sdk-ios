@@ -4,7 +4,7 @@ import Factory
 @MainActor
 extension Container {
   
-  public var customSupportService: Factory<CustomerSupportServiceProtocol> {
+  public var customerSupportService: Factory<CustomerSupportServiceProtocol> {
     self {
       IntercomService()
     }.singleton

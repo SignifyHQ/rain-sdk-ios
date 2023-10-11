@@ -4,13 +4,13 @@ import Factory
 
 @MainActor
 final class AccountLockedViewModel: ObservableObject {
-  @LazyInjected(\.customSupportService) var customSupportService
+  @LazyInjected(\.customerSupportService) var customerSupportService
   @LazyInjected(\.onboardingFlowCoordinator) var onboardingFlowCoordinator
 
   init() {}
   
   func openSupportScreen() {
-    customSupportService.openSupportScreen()
+    customerSupportService.openSupportScreen()
   }
   
   func logout() {

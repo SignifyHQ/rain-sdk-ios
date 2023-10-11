@@ -4,11 +4,11 @@ import LFUtilities
 
 @MainActor
 public final class CommonTransactionDetailViewModel: ObservableObject {
-  @LazyInjected(\.customSupportService) var customSupportService
+  @LazyInjected(\.customerSupportService) var customerSupportService
   
   public init() {}
   
   func openSupportScreen() {
-    customSupportService.openSupportScreen()
+    customerSupportService.openSupportScreen()
   }
 }

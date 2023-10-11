@@ -7,7 +7,7 @@ import Factory
 final class AddAppleWalletViewModel: ObservableObject {
   @LazyInjected(\.cardRepository) var cardRepository
   @LazyInjected(\.netspendDataManager) var netspendDataManager
-  @LazyInjected(\.customSupportService) var customSupportService
+  @LazyInjected(\.customerSupportService) var customerSupportService
   @LazyInjected(\.accountDataManager) var accountDataManager
   
   @Published var isShowApplePay: Bool = false

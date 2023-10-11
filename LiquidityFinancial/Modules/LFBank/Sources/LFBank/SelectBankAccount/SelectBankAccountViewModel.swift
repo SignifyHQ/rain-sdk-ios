@@ -20,7 +20,7 @@ class SelectBankAccountViewModel: ObservableObject {
   @LazyInjected(\.biometricsService) var biometricsService
   @LazyInjected(\.analyticsService) var analyticsService
   @LazyInjected(\.nsPersionRepository) var nsPersionRepository
-  @LazyInjected(\.customSupportService) var customSupportService
+  @LazyInjected(\.customerSupportService) var customerSupportService
   
   @Published var linkedBanks: [APILinkedSourceData] = []
   @Published var navigation: Navigation?
@@ -182,7 +182,7 @@ extension SelectBankAccountViewModel {
   }
   
   func contactSupport() {
-    customSupportService.openSupportScreen()
+    customerSupportService.openSupportScreen()
   }
   
   func hidePopup() {
