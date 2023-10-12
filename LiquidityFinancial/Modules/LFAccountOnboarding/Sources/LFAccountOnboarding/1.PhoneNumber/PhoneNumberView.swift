@@ -84,6 +84,9 @@ struct PhoneNumberView: View {
     })
     .navigationBarHidden(true)
     .track(name: String(describing: type(of: self)))
+    .onReceive(environmentManager.$networkEnvironment) { environment in
+      viewModel.environmentChange(environment: environment)
+    }
   }
 }
 

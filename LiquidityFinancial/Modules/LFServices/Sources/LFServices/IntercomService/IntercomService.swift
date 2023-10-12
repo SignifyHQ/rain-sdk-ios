@@ -46,6 +46,13 @@ public class IntercomService: CustomerSupportServiceProtocol {
     eventLogout.send(())
   }
   
+  public func setUp(environment: NetworkEnvironment) {
+    let apiKey = environment == .productionTest ? Configs.Intercom.apiKeySandBox : Configs.Intercom.apiKey
+    let appID = environment == .productionTest ? Configs.Intercom.appIDSandBox : Configs.Intercom.appID
+    Intercom.setApiKey(apiKey, forAppId: appID)
+    Intercom.setLauncherVisible(false)
+  }
+  
   public func openSupportScreen() {
     Intercom.present()
   }

@@ -19,6 +19,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     setupNavigaton()
     KickoffService.kickoff(application: application, launchingOptions: options)
     UserDefaults.isFirstRun = false
+    setupServices()
     return true
   }
   
@@ -65,5 +66,11 @@ extension AppDelegate {
   func setupNavigaton() {
     navigationContainer = NavigationContainer()
     navigationContainer.registerModuleNavigation()
+  }
+}
+
+extension AppDelegate {
+  func setupServices() {
+    Container.shared.customerSupportService.resolve().setUp(environment: EnvironmentManager().networkEnvironment)
   }
 }

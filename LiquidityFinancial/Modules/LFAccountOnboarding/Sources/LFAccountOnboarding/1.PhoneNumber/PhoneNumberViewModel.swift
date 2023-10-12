@@ -82,6 +82,10 @@ extension PhoneNumberViewModel {
       }
     }
   }
+  
+  func environmentChange(environment: NetworkEnvironment) {
+    self.customerSupportService.setUp(environment: environment)
+  }
 }
 
   // MARK: - Private Functions
