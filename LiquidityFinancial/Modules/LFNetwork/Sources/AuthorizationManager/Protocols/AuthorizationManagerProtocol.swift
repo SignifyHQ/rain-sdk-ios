@@ -3,7 +3,6 @@ import OnboardingDomain
 import LFUtilities
 import NetworkUtilities
 
-// sourcery: AutoMockable
 public protocol AuthorizationManagerProtocol {
   var logOutForcedName: Notification.Name { get }
   func isTokenValid() -> Bool

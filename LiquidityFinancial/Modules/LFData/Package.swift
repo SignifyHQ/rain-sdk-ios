@@ -27,7 +27,10 @@ let package = Package(
       targets: ["DevicesData"]),
     .library(
       name: "CryptoChartData",
-      targets: ["CryptoChartData"])
+      targets: ["CryptoChartData"]),
+    .library(
+      name: "OnboardingDataMocks",
+      targets: ["OnboardingDataMocks"])
   ],
   dependencies: [
     .package(name: "LFDomain", path: "../LFDomain"),
@@ -35,8 +38,8 @@ let package = Package(
     .package(name: "LFUtilities", path: "../LFUtilities"),
     .package(name: "LFServices", path: "../LFServices"),
     .package(url: "https://github.com/hmlongco/Factory", from: "2.3.0"),
-    .package(name: "LFBuildTools", path: "../LFBuildTools"),
-    .package(name: "TestHelpers", path: "../TestHelpers")
+    .package(name: "TestHelpers", path: "../TestHelpers"),
+    .package(url: "https://github.com/birdrides/mockingbird", .upToNextMajor(from: "0.20.0"))
   ],
   targets: [
     .target(
@@ -46,8 +49,7 @@ let package = Package(
         .product(name: "OnboardingDomain", package: "LFDomain"),
         .product(name: "NetworkUtilities", package: "LFNetwork"),
         .product(name: "CoreNetwork", package: "LFNetwork")
-      ],
-      plugins: [.plugin(name: "SourceryPlugin", package: "LFBuildTools")]
+      ]
     ),
     .target(
       name: "NetSpendData",
@@ -103,9 +105,22 @@ let package = Package(
         .product(name: "CryptoChartDomain", package: "LFDomain")
       ]
     ),
+    .target(
+      name: "OnboardingDataMocks",
+      dependencies: [
+        "OnboardingData",
+        .product(name: "Mockingbird", package: "mockingbird")
+      ]
+    ),
     .testTarget(
       name: "OnboardingDataTests",
-      dependencies: ["OnboardingData", "TestHelpers"]),
+      dependencies: [
+        "OnboardingData",
+        "TestHelpers",
+        "OnboardingDataMocks",
+        .product(name: "NetworkMocks", package: "LFNetwork")
+      ]
+    ),
     .testTarget(
       name: "AccountDataTests",
       dependencies: ["AccountData"])
