@@ -13,6 +13,7 @@ final class NavigationContainer {
   
   @LazyInjected(\.transactionNavigation) var transactionNavigation
   @LazyInjected(\.rewardNavigation) var rewardNavigation
+  @LazyInjected(\.dashboardNavigation) var dashboardNavigation
   
   @MainActor
   func registerModuleNavigation() {
@@ -20,6 +21,8 @@ final class NavigationContainer {
     registerTransactionModuleNavigation(container: container)
     
     registerRewardModuleNavigation(container: container)
+    
+    registerDashboardModuleNavigation(container: container)
   }
   
   @MainActor
@@ -33,6 +36,19 @@ final class NavigationContainer {
     transactionNavigation.registerAddBankDebit(type: AddBankWithDebitView.self) { _ in
       AnyView(AddBankWithDebitView())
     }
+    
+    transactionNavigation.registerDisputeTransactionView(type: NetspendDisputeTransactionViewController.self) { [weak dashboardNavigation] _ in
+      guard let parameters = dashboardNavigation?.disputeTransactionParameters else {
+        return AnyView(EmptyView())
+      }
+      return AnyView(
+        NetspendDisputeTransactionViewController(
+          netspendAccountID: parameters.id,
+          passcode: parameters.passcode,
+          onClose: parameters.onClose
+        )
+      )
+    }
   }
   
   @MainActor
@@ -41,6 +57,24 @@ final class NavigationContainer {
     
     rewardNavigation.registerAgreementView(type: AgreementView.self) { _ in
       AnyView(AgreementView(viewModel: AgreementViewModel()))
+    }
+  }
+  
+  @MainActor
+  func registerDashboardModuleNavigation(container: DIContainerAnyView) {
+    dashboardNavigation.setup(container: container)
+    
+    dashboardNavigation.registerDisputeTransactionView(type: NetspendDisputeTransactionViewController.self) { [weak dashboardNavigation] _ in
+      guard let parameters = dashboardNavigation?.disputeTransactionParameters else {
+        return AnyView(EmptyView())
+      }
+      return AnyView(
+        NetspendDisputeTransactionViewController(
+          netspendAccountID: parameters.id,
+          passcode: parameters.passcode,
+          onClose: parameters.onClose
+        )
+      )
     }
   }
   

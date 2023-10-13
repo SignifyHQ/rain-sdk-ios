@@ -23,10 +23,12 @@ public struct PurchaseTransactionDetailView: View {
         case let .donationReceipt(receipt):
           DonationTransactionReceiptView(accountID: viewModel.transaction.id, receipt: receipt)
         case let .disputeTransaction(netspendAccountID, passcode):
-          NetspendDisputeTransactionViewController(netspendAccountID: netspendAccountID, passcode: passcode) {
+          transactionNavigation.resolveDisputeTransactionView(
+            id: netspendAccountID,
+            passcode: passcode
+          ) {
             viewModel.navigation = nil
-          }
-          .navigationBarHidden(true)
+          }?.navigationBarHidden(true)
         case .rewardCampaigns:
           transactionNavigation.resolveCurrentReward()
         }

@@ -20,7 +20,7 @@ public final class ServiceEntry: ServiceEntryProtocol {
 }
 
 public final class DIContainerAnyView {
-  private var services: [String: ServiceEntryProtocol] = [:]
+  internal var services: [String: ServiceEntryProtocol] = [:]
   public init() {}
   
   public func register(type: Any.Type, name: String, factory: @escaping (DIContainerAnyView) -> AnyView) {
@@ -43,5 +43,15 @@ public final class DIContainerAnyView {
       return resolvedService
     }
     return nil
+  }
+  
+  @discardableResult
+  public func clear(type: Any.Type, name: String) -> Bool {
+    let key = "\(type)\(name)"
+    if let entry = services[key] {
+      entry.instance = nil
+      return true
+    }
+    return false
   }
 }

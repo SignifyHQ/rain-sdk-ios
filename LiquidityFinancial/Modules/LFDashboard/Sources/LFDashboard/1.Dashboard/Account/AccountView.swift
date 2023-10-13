@@ -14,6 +14,8 @@ import Factory
 
 struct AccountsView: View {
   @Injected(\.analyticsService) var analyticsService
+  @Injected(\.bankConfig) var bankConfig
+  @Injected(\.dashboardNavigation) var dashboardNavigation
   
   @Environment(\.scenePhase) var scenePhase
   
@@ -44,10 +46,12 @@ struct AccountsView: View {
         case .bankStatement:
           BankStatementView()
         case let .disputeTransaction(netspendAccountID, passcode):
-          NetspendDisputeTransactionViewController(netspendAccountID: netspendAccountID, passcode: passcode) {
+          dashboardNavigation.resolveDisputeTransactionView(
+            id: netspendAccountID,
+            passcode: passcode
+          ) {
             viewModel.navigation = nil
-          }
-          .navigationBarHidden(true)
+          }?.navigationBarHidden(true)
         case .taxes:
           TaxesView()
         case .rewards:
@@ -294,13 +298,15 @@ private extension AccountsView {
           viewModel.navigation = .debugMenu
         }
       }
-      ArrowButton(
-        image: GenImages.CommonImages.Accounts.icDispute.swiftUIImage,
-        title: LFLocalizable.Button.DisputeTransaction.title,
-        value: nil,
-        isLoading: $viewModel.isLoadingDisputeTransaction
-      ) {
-        viewModel.getDisputeAuthorizationCode()
+      if bankConfig.supportDisputeTransaction {
+        ArrowButton(
+          image: GenImages.CommonImages.Accounts.icDispute.swiftUIImage,
+          title: LFLocalizable.Button.DisputeTransaction.title,
+          value: nil,
+          isLoading: $viewModel.isLoadingDisputeTransaction
+        ) {
+          viewModel.getDisputeAuthorizationCode()
+        }
       }
     }
     .onChange(of: scenePhase, perform: { newValue in

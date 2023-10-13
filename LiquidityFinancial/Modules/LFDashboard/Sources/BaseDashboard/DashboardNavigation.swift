@@ -6,9 +6,9 @@ import SwiftUI
 @MainActor
 extension Container {
   
-  public var transactionNavigation: Factory<TransactionNavigation> {
+  public var dashboardNavigation: Factory<DashboardNavigation> {
     self {
-      TransactionNavigation()
+      DashboardNavigation()
     }.shared
   }
   
@@ -20,11 +20,9 @@ public struct DisputeTransactionParameters {
   public let onClose: (() -> Void)
 }
 
-public final class TransactionNavigation {
+public final class DashboardNavigation {
   
   enum Destination: String {
-    case currentReward = "CurrentReward"
-    case addBankDebit = "AddBankDebit"
     case disputeTransactionView
   }
   
@@ -39,26 +37,6 @@ public final class TransactionNavigation {
     self.container = container
   }
   
-  public func registerCurrentReward(type: Any.Type, factory: @escaping (DIContainerAnyView) -> AnyView) {
-    services[Destination.currentReward.rawValue] = type
-    container.register(type: type, name: Destination.currentReward.rawValue, factory: factory)
-  }
-  
-  public func resolveCurrentReward() -> AnyView? {
-    guard let type = services[Destination.currentReward.rawValue] else { return nil }
-    return container.resolve(type: type, name: Destination.currentReward.rawValue)
-  }
-  
-  public func registerAddBankDebit(type: Any.Type, factory: @escaping (DIContainerAnyView) -> AnyView) {
-    services[Destination.addBankDebit.rawValue] = type
-    container.register(type: type, name: Destination.addBankDebit.rawValue, factory: factory)
-  }
-  
-  public func resolveAddBankDebit() -> AnyView? {
-    guard let type = services[Destination.addBankDebit.rawValue] else { return nil }
-    return container.resolve(type: type, name: Destination.addBankDebit.rawValue)
-  }
-  
   public func registerDisputeTransactionView(type: Any.Type, factory: @escaping (DIContainerAnyView) -> AnyView) {
     services[Destination.disputeTransactionView.rawValue] = type
     container.register(type: type, name: Destination.disputeTransactionView.rawValue, factory: factory)
@@ -70,5 +48,4 @@ public final class TransactionNavigation {
     container.clear(type: type, name: Destination.disputeTransactionView.rawValue)
     return container.resolve(type: type, name: Destination.disputeTransactionView.rawValue)
   }
-  
 }

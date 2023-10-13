@@ -13,6 +13,8 @@ struct AccountsView: View {
   
   @Injected(\.transactionNavigation) var transactionNavigation
   @Injected(\.rewardNavigation) var rewardNavigation
+  @Injected(\.dashboardNavigation) var dashboardNavigation
+  @Injected(\.bankConfig) var bankConfig
   
   init(viewModel: AccountViewModel) {
     _viewModel = .init(wrappedValue: viewModel)
@@ -41,12 +43,12 @@ struct AccountsView: View {
         case .bankStatement:
           BankStatementView()
         case let .disputeTransaction(netspendAccountID, passcode):
-          NetspendDisputeTransactionViewController(
-            netspendAccountID: netspendAccountID,
+          dashboardNavigation.resolveDisputeTransactionView(
+            id: netspendAccountID,
             passcode: passcode
           ) {
             viewModel.navigation = nil
-          }.navigationBarHidden(true)
+          }?.navigationBarHidden(true)
         case .rewards:
           transactionNavigation.resolveCurrentReward()
         case .agreement(let data):
@@ -66,6 +68,11 @@ struct AccountsView: View {
         ToastView(toastMessage: $0)
       }
       .background(Colors.background.swiftUIColor)
+      .onChange(of: scenePhase, perform: { newValue in
+        if newValue == .active {
+          viewModel.checkNotificationsStatus()
+        }
+      })
   }
 }
 
@@ -257,19 +264,16 @@ private extension AccountsView {
           viewModel.navigation = .debugMenu
         }
       }
-      ArrowButton(
-        image: GenImages.CommonImages.Accounts.icDispute.swiftUIImage,
-        title: LFLocalizable.Button.DisputeTransaction.title,
-        value: nil,
-        isLoading: $viewModel.isLoadingDisputeTransaction
-      ) {
-        viewModel.getDisputeAuthorizationCode()
-      }
-      .onChange(of: scenePhase, perform: { newValue in
-        if newValue == .active {
-          viewModel.checkNotificationsStatus()
+      if bankConfig.supportDisputeTransaction {
+        ArrowButton(
+          image: GenImages.CommonImages.Accounts.icDispute.swiftUIImage,
+          title: LFLocalizable.Button.DisputeTransaction.title,
+          value: nil,
+          isLoading: $viewModel.isLoadingDisputeTransaction
+        ) {
+          viewModel.getDisputeAuthorizationCode()
         }
-      })
+      }
     }
   }
 }
