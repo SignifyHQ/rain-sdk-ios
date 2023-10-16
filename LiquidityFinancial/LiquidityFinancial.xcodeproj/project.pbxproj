@@ -87,7 +87,6 @@
 		A97BF7D12A5C602F00B8F5CA /* LiquidityFinancialTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A97BF7D02A5C602F00B8F5CA /* LiquidityFinancialTests.swift */; };
 		A97BF7DB2A5C602F00B8F5CA /* LiquidityFinancialUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A97BF7DA2A5C602F00B8F5CA /* LiquidityFinancialUITests.swift */; };
 		A97BF7DD2A5C602F00B8F5CA /* LiquidityFinancialUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A97BF7DC2A5C602F00B8F5CA /* LiquidityFinancialUITestsLaunchTests.swift */; };
-		A97BF7EB2A5D70C500B8F5CA /* Factory in Frameworks */ = {isa = PBXBuildFile; productRef = A97BF7EA2A5D70C500B8F5CA /* Factory */; };
 		A97BF7EE2A5D719000B8F5CA /* Lottie in Frameworks */ = {isa = PBXBuildFile; productRef = A97BF7ED2A5D719000B8F5CA /* Lottie */; };
 		A97BF8182A5D9DE200B8F5CA /* AvalancheApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = A97BF8172A5D9DE200B8F5CA /* AvalancheApp.swift */; };
 		A97BF81A2A5D9E6B00B8F5CA /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = A97BF8192A5D9E6B00B8F5CA /* AppDelegate.swift */; };
@@ -392,7 +391,6 @@
 		A97BF83C2A5DA8A900B8F5CA /* LiquidityFinancialConfig.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = LiquidityFinancialConfig.xcconfig; sourceTree = "<group>"; };
 		A97BF83D2A5DBCF200B8F5CA /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
 		A97BF83F2A5DC13000B8F5CA /* Colors.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Colors.xcassets; sourceTree = "<group>"; };
-		A98A95132AAC42500079085F /* LFBuildTools */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = LFBuildTools; path = Modules/LFBuildTools; sourceTree = "<group>"; };
 		A99759C92A8D2A91005B391E /* LFBank */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = LFBank; path = Modules/LFBank; sourceTree = "<group>"; };
 		A99D1CA32A9CEBD60025BE25 /* LFCryptoChart */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = LFCryptoChart; path = Modules/LFCryptoChart; sourceTree = "<group>"; };
 		A99D2F692A9A56CF00947773 /* PrideCard.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = PrideCard.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -591,7 +589,6 @@
 			files = (
 				A980DF6B2A5FA23D000B3C09 /* LFAccountOnboarding in Frameworks */,
 				A980DF6D2A5FA249000B3C09 /* OnboardingDomain in Frameworks */,
-				A97BF7EB2A5D70C500B8F5CA /* Factory in Frameworks */,
 				741493462A9912E800F0DC4D /* FirebaseMessaging in Frameworks */,
 				A941BEAD2AD001EB00FCB01C /* LFTransaction in Frameworks */,
 				A918D76E2A77B116001AD849 /* AccountData in Frameworks */,
@@ -954,7 +951,6 @@
 			isa = PBXGroup;
 			children = (
 				A9A23B0F2ACD46D900CD9D7F /* TestHelpers */,
-				A98A95132AAC42500079085F /* LFBuildTools */,
 				A94F71F32A614E04002ADB34 /* LFLocalizable */,
 				A97BF8132A5D9CC300B8F5CA /* LFUtilities */,
 				A97BF80E2A5D982500B8F5CA /* LFStyleGuide */,
@@ -1578,7 +1574,6 @@
 			);
 			name = Avalanche;
 			packageProductDependencies = (
-				A97BF7EA2A5D70C500B8F5CA /* Factory */,
 				A97BF7ED2A5D719000B8F5CA /* Lottie */,
 				A953545C2A5DD7F4008B0FAB /* LFStyleGuide */,
 				A980DF6A2A5FA23D000B3C09 /* LFAccountOnboarding */,
@@ -1814,7 +1809,6 @@
 			);
 			mainGroup = A97BF7B32A5C602D00B8F5CA;
 			packageReferences = (
-				A97BF7E92A5D70C400B8F5CA /* XCRemoteSwiftPackageReference "Factory" */,
 				A97BF7EC2A5D719000B8F5CA /* XCRemoteSwiftPackageReference "lottie-ios" */,
 				A9E6B1CD2A5DD1A2008ED988 /* XCRemoteSwiftPackageReference "SwiftGenPlugin" */,
 				06D40BFF2A62AE3700EADB75 /* XCRemoteSwiftPackageReference "iPhoneNumberField" */,
@@ -3069,14 +3063,6 @@
 				minimumVersion = 4.2.0;
 			};
 		};
-		A97BF7E92A5D70C400B8F5CA /* XCRemoteSwiftPackageReference "Factory" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/hmlongco/Factory";
-			requirement = {
-				kind = exactVersion;
-				version = 2.3.0;
-			};
-		};
 		A97BF7EC2A5D719000B8F5CA /* XCRemoteSwiftPackageReference "lottie-ios" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/airbnb/lottie-ios.git";
@@ -3478,11 +3464,6 @@
 		A963D3FA2A67081D006B9A54 /* NetSpendData */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = NetSpendData;
-		};
-		A97BF7EA2A5D70C500B8F5CA /* Factory */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = A97BF7E92A5D70C400B8F5CA /* XCRemoteSwiftPackageReference "Factory" */;
-			productName = Factory;
 		};
 		A97BF7ED2A5D719000B8F5CA /* Lottie */ = {
 			isa = XCSwiftPackageProductDependency;

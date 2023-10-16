@@ -11,7 +11,7 @@ public extension DashboardRepository {
   func apiFetchOnboardingState(onChangeRoute: @escaping ((OnboardingFlowCoordinator.Route) -> Void)) {
     Task { @MainActor in
       do {
-        async let fetchOnboardingState = onboardingRepository.getOnboardingState(sessionId: accountDataManager.sessionID)
+        async let fetchOnboardingState = onboardingRepository.onboardingState(sessionId: accountDataManager.sessionID)
         
         let onboardingState = try await fetchOnboardingState
         

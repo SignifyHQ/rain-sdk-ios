@@ -3,6 +3,7 @@ import NetworkUtilities
 import LFUtilities
 import AccountData
 
+// sourcery: AutoMockable
 public protocol RewardAPIProtocol {
   func selectRewardType(body: [String: Any]) async throws -> APIUser
   func getDonationCategories(limit: Int, offset: Int) async throws -> APIRewardCategoriesList

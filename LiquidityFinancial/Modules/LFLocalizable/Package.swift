@@ -6,7 +6,7 @@ import PackageDescription
 let package = Package(
     name: "LFLocalizable",
     defaultLocalization: "en",
-    platforms: [.iOS(.v15)],
+    platforms: [.iOS(.v15), .macOS(.v10_14)],
     products: [
         .library(
           name: "LFLocalizable",

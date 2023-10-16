@@ -5,7 +5,7 @@ import PackageDescription
 
 let package = Package(
   name: "LFNetwork",
-  platforms: [.iOS(.v15)],
+  platforms: [.iOS(.v15), .macOS(.v10_14)],
   products: [
     .library(
       name: "CoreNetwork",
@@ -17,15 +17,15 @@ let package = Package(
       name: "NetworkUtilities",
       targets: ["NetworkUtilities"]),
     .library(
-      name: "NetworkMocks",
-      targets: ["NetworkMocks"])
+      name: "NetworkTestHelpers",
+      targets: ["NetworkTestHelpers"])
   ],
   dependencies: [
     .package(name: "LFUtilities", path: "../LFUtilities"),
     .package(name: "LFDomain", path: "../LFDomain"),
-    .package(url: "https://github.com/hmlongco/Factory", from: "2.3.0"),
+    .package(url: "https://github.com/hmlongco/Factory", from: "2.3.1"),
     .package(url: "https://github.com/Alamofire/Alamofire.git", .upToNextMajor(from: "5.7.1")),
-    .package(url: "https://github.com/birdrides/mockingbird", .upToNextMajor(from: "0.20.0"))
+    .package(url: "https://github.com/krzysztofzablocki/Sourcery.git", from: "2.0.0")
   ],
   targets: [
     .target(
@@ -40,13 +40,10 @@ let package = Package(
     ),
     .target(
       name: "NetworkUtilities",
-      dependencies: ["LFUtilities"]),
-    .target(
-      name: "NetworkMocks",
-      dependencies: [
-        "AuthorizationManager",
-        .product(name: "Mockingbird", package: "mockingbird")
-      ]
-    )
+      dependencies: ["LFUtilities"]
+    ),
+    .target(name: "NetworkTestHelpers", dependencies: [
+      "AuthorizationManager"
+    ])
   ]
 )

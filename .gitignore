@@ -46,6 +46,9 @@ simulatorCaptures/
 # this file is created when running clean-pbxproj script
 *.tmp
 
+*.generated.swift
+.mockingbird
 loc-export
 
 
+*.lock

@@ -5,7 +5,7 @@ import PackageDescription
 
 let package = Package(
     name: "LFCryptoChart",
-    platforms: [.iOS(.v15)],
+    platforms: [.iOS(.v15), .macOS(.v10_14)],
     products: [
         .library(
             name: "LFCryptoChart",

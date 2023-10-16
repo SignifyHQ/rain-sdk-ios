@@ -5,7 +5,7 @@ import PackageDescription
 
 let package = Package(
   name: "LFData",
-  platforms: [.iOS(.v15)],
+  platforms: [.iOS(.v15), .macOS(.v10_14)],
   products: [
     .library(
       name: "OnboardingData",
@@ -29,17 +29,17 @@ let package = Package(
       name: "CryptoChartData",
       targets: ["CryptoChartData"]),
     .library(
-      name: "OnboardingDataMocks",
-      targets: ["OnboardingDataMocks"])
+      name: "DataTestHelpers",
+      targets: ["DataTestHelpers"])
   ],
   dependencies: [
     .package(name: "LFDomain", path: "../LFDomain"),
     .package(name: "LFNetwork", path: "../LFNetwork"),
     .package(name: "LFUtilities", path: "../LFUtilities"),
     .package(name: "LFServices", path: "../LFServices"),
-    .package(url: "https://github.com/hmlongco/Factory", from: "2.3.0"),
     .package(name: "TestHelpers", path: "../TestHelpers"),
-    .package(url: "https://github.com/birdrides/mockingbird", .upToNextMajor(from: "0.20.0"))
+    .package(url: "https://github.com/hmlongco/Factory", from: "2.3.1"),
+    .package(url: "https://github.com/krzysztofzablocki/Sourcery.git", from: "2.0.0")
   ],
   targets: [
     .target(
@@ -106,23 +106,14 @@ let package = Package(
       ]
     ),
     .target(
-      name: "OnboardingDataMocks",
+      name: "DataTestHelpers",
       dependencies: [
-        "OnboardingData",
-        .product(name: "Mockingbird", package: "mockingbird")
+        "OnboardingData", "NetSpendData", "AccountData", "RewardData", "ZerohashData", "DevicesData", "CryptoChartData"
       ]
     ),
-    .testTarget(
-      name: "OnboardingDataTests",
-      dependencies: [
-        "OnboardingData",
-        "TestHelpers",
-        "OnboardingDataMocks",
-        .product(name: "NetworkMocks", package: "LFNetwork")
-      ]
-    ),
-    .testTarget(
-      name: "AccountDataTests",
-      dependencies: ["AccountData"])
+    .testTarget(name: "OnboardingDataTests", dependencies: [
+      "OnboardingData", "DataTestHelpers", "TestHelpers",
+      .product(name: "NetworkTestHelpers", package: "LFNetwork")
+    ])
   ]
 )

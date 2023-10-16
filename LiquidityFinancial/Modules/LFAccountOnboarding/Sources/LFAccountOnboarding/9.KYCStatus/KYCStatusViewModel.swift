@@ -102,7 +102,7 @@ extension KYCStatusViewModel {
       defer { isLoading = false }
       isLoading = true
       do {
-        let onboardingState = try await onboardingRepository.getOnboardingState(sessionId: accountDataManager.sessionID)
+        let onboardingState = try await onboardingRepository.onboardingState(sessionId: accountDataManager.sessionID)
         if onboardingState.missingSteps.isEmpty {
           analyticsService.track(event: AnalyticsEvent(name: .kycStatusViewPass))
           onboardingFlowCoordinator.set(route: .dashboard)

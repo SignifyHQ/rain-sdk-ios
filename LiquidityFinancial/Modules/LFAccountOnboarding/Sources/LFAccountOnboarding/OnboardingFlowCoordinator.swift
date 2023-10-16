@@ -154,7 +154,7 @@ public class OnboardingFlowCoordinator: OnboardingFlowCoordinatorProtocol {
     handleDataUser(user: user)
     
     if accountDataManager.userCompleteOnboarding == false {
-      async let fetchOnboardingState = onboardingRepository.getOnboardingState(sessionId: accountDataManager.sessionID)
+      async let fetchOnboardingState = onboardingRepository.onboardingState(sessionId: accountDataManager.sessionID)
       
       let onboardingState = try await fetchOnboardingState
       

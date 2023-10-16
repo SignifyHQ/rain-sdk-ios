@@ -8,6 +8,10 @@ excluded:
   - "**/*Tests.swift"
   - "**/DebugTools"
   - "**/LFCryptoChart"
+  - "**/*/_*.swift"
+  - "**/*/*.generated.swift"
+  - "_*.swift"
+  - "*.generated.swift"
 opt_in_rules:
   - array_init
   - closure_body_length

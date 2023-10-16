@@ -11,7 +11,7 @@ public class OnboardingRepository: OnboardingRepositoryProtocol {
     self.auth = auth
   }
   
-  public func login(phoneNumber: String, otpCode: String, lastID: String) async throws -> AccessTokens {
+  public func login(phoneNumber: String, otpCode: String, lastID: String) async throws -> AccessTokensEntity {
     let accessTokens = try await onboardingAPI.login(phoneNumber: phoneNumber, otpCode: otpCode, lastID: lastID)
     auth.refreshWith(apiToken: accessTokens)
     return accessTokens
@@ -21,13 +21,13 @@ public class OnboardingRepository: OnboardingRepositoryProtocol {
     return try await onboardingAPI.requestOTP(phoneNumber: phoneNumber)
   }
   
-  public func getOnboardingState(sessionId: String) async throws -> OnboardingState {
+  public func onboardingState(sessionId: String) async throws -> OnboardingStateEnity {
     return try await onboardingAPI.getOnboardingState(sessionId: sessionId)
   }
 }
 
-extension APIAccessTokens: AccessTokens {}
+extension APIAccessTokens: AccessTokensEntity {}
 
 extension APIOtp: OtpEntity {}
 
-extension APIOnboardingState: OnboardingState {}
+extension APIOnboardingState: OnboardingStateEnity {}

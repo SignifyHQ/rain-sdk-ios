@@ -1,5 +1,6 @@
 import Foundation
 
+// sourcery: AutoMockable
 public protocol NSCardAPIProtocol {
   func getListCard() async throws -> [APICard]
   func createCard(sessionID: String) async throws -> APICard

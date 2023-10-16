@@ -1,7 +1,6 @@
 import Foundation
-import NetworkUtilities
-import LFUtilities
 
+// sourcery: AutoMockable
 public protocol CryptoChartAPIProtocol {
   func getCMCSymbolHistories(symbol: String, period: String) async throws -> [APICMCSymbolHistories]
 }

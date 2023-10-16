@@ -1,0 +1,6 @@
+sources:
+  - Protocols
+templates:
+  - ../../../../sourcery/Templates
+output:
+  ../NetworkTestHelpers

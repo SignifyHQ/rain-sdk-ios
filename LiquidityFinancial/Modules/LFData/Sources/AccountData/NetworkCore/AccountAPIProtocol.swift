@@ -1,7 +1,6 @@
 import Foundation
-import NetworkUtilities
-import LFUtilities
 
+// sourcery: AutoMockable
 public protocol AccountAPIProtocol {
   func createZeroHashAccount() async throws -> APIZeroHashAccount
   func getUser() async throws -> APIUser

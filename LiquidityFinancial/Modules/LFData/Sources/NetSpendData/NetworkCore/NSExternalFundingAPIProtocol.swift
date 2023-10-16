@@ -1,5 +1,6 @@
 import Foundation
 
+// sourcery: AutoMockable
 public protocol NSExternalFundingAPIProtocol {
   func set(request: ExternalCardParameters, sessionID: String) async throws -> APIExternalCard
   func getPinWheelToken(sessionID: String) async throws -> APIPinWheelToken

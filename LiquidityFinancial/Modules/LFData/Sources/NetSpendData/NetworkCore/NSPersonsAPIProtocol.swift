@@ -1,6 +1,6 @@
 import Foundation
-import CoreNetwork
 
+// sourcery: AutoMockable
 public protocol NSPersonsAPIProtocol {
   func sessionInit() async throws -> APINSJwkToken
   func establishSession(deviceData: EstablishSessionParameters) async throws -> APIEstablishedSessionData

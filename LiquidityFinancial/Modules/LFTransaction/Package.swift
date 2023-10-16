@@ -5,14 +5,14 @@ import PackageDescription
 
 let package = Package(
     name: "LFTransaction",
-    platforms: [.iOS(.v15)],
+    platforms: [.iOS(.v15), .macOS(.v10_14)],
     products: [
         .library(
             name: "LFTransaction",
             targets: ["LFTransaction"])
     ],
     dependencies: [
-      .package(url: "https://github.com/hmlongco/Factory", from: "2.3.0"),
+      .package(url: "https://github.com/hmlongco/Factory", from: "2.3.1"),
       .package(name: "LFDomain", path: "../LFDomain"),
       .package(name: "LFUtilities", path: "../LFUtilities"),
       .package(name: "LFStyleGuide", path: "../LFStyleGuide"),

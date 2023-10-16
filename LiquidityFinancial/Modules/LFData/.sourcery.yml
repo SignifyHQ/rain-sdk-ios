@@ -1,0 +1,7 @@
+sources:
+  - Sources/AccountData/NetworkCore
+  - Sources/OnboardingData/NetworkCore
+templates:
+  - sourcery/Templates
+output:
+  Sources/DomainTestHelpers

@@ -4,13 +4,22 @@ import LFUtilities
 import NetworkUtilities
 
 // swiftlint:disable force_unwrapping
-struct AuthorizationAccessToken: Decodable, AccessTokens {
-  let accessToken: String
-  let tokenType: String
-  let refreshToken: String
-  let expiresIn: Int
+struct AuthorizationAccessToken: Decodable, AccessTokensEntity {
+  var accessToken: String
+  var tokenType: String
+  var refreshToken: String
+  var expiresIn: Int
   
-  private var requestedAt = Date()
+  init(accessToken: String, tokenType: String, refreshToken: String, expiresIn: Int) {
+    self.accessToken = accessToken
+    self.tokenType = tokenType
+    self.refreshToken = refreshToken
+    self.expiresIn = expiresIn
+  }
+  
+  private var requestedAt: Date {
+    Date()
+  }
   
   enum CodingKeys: String, CodingKey {
     case accessToken = "access_token"
@@ -151,7 +160,7 @@ extension AuthorizationManager: AuthorizationManagerProtocol {
     return token
   }
   
-  public func refreshWith(apiToken: AccessTokens) {
+  public func refreshWith(apiToken: AccessTokensEntity) {
     let expiresAt = apiToken.expiresAt
     let token = apiToken.bearerAccessToken
     let refreshToken = apiToken.refreshToken
@@ -174,7 +183,7 @@ extension AuthorizationManager: AuthorizationManagerProtocol {
 
   // MARK: - Token Expiration
 private extension AuthorizationManager {
-  func save(token: AccessTokens) {
+  func save(token: AccessTokensEntity) {
     UserDefaults.accessTokenExpiresAt = token.expiresAt.timeIntervalSince1970
     UserDefaults.bearerAccessToken = token.accessToken
     UserDefaults.bearerRefreshToken = token.refreshToken

@@ -5,7 +5,7 @@ import PackageDescription
 
 let package = Package(
   name: "LFDomain",
-  platforms: [.iOS(.v15)],
+  platforms: [.iOS(.v15), .macOS(.v10_14)],
   products: [
     .library(
       name: "OnboardingDomain",
@@ -27,10 +27,14 @@ let package = Package(
       targets: ["DevicesDomain"]),
     .library(
       name: "CryptoChartDomain",
-      targets: ["CryptoChartDomain"])
+      targets: ["CryptoChartDomain"]),
+    .library(
+      name: "DomainDataMocks",
+      targets: ["DomainDataMocks"])
   ],
   dependencies: [
-    .package(name: "LFUtilities", path: "../LFUtilities")
+    .package(name: "LFUtilities", path: "../LFUtilities"),
+    .package(name: "TestHelpers", path: "../TestHelpers")
   ],
   targets: [
     .target(
@@ -62,8 +66,14 @@ let package = Package(
       name: "CryptoChartDomain",
       dependencies: []
     ),
+    .target(
+      name: "DomainDataMocks",
+      dependencies: [
+        "AccountDomain", "CryptoChartDomain", "DevicesDomain", "ZerohashDomain", "OnboardingDomain",
+      ]
+    ),
     .testTarget(
       name: "OnboardingDomainTests",
-      dependencies: ["OnboardingDomain"])
+      dependencies: ["OnboardingDomain", "TestHelpers", "DomainDataMocks"])
   ]
 )

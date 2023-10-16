@@ -1,12 +1,21 @@
 import Foundation
 
 public struct APIAccessTokens: Decodable, Equatable {
-  public let accessToken: String
-  public let tokenType: String
-  public let refreshToken: String
-  public let expiresIn: Int
+  public var accessToken: String
+  public var tokenType: String
+  public var refreshToken: String
+  public var expiresIn: Int
   
-  private var requestedAt = Date()
+  public init(accessToken: String, tokenType: String, refreshToken: String, expiresIn: Int) {
+    self.accessToken = accessToken
+    self.tokenType = tokenType
+    self.refreshToken = refreshToken
+    self.expiresIn = expiresIn
+  }
+  
+  private var requestedAt: Date {
+    Date()
+  }
   
   enum CodingKeys: String, CodingKey {
     case accessToken = "access_token"
