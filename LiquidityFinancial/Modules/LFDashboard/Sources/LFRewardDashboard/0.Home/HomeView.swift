@@ -5,7 +5,7 @@ import LFStyleGuide
 import LFUtilities
 import LFRewards
 import BaseDashboard
-import LFAccountOnboarding
+import NetspendOnboarding
 import LFBank
 import Factory
 import LFServices
@@ -19,9 +19,9 @@ public struct HomeView: View {
   
   @StateObject private var viewModel: HomeViewModel
   
-  var onChangeRoute: ((OnboardingFlowCoordinator.Route) -> Void)?
+  var onChangeRoute: ((NSOnboardingFlowCoordinator.Route) -> Void)?
 
-  public init(viewModel: HomeViewModel, onChangeRoute: ((OnboardingFlowCoordinator.Route) -> Void)? = nil) {
+  public init(viewModel: HomeViewModel, onChangeRoute: ((NSOnboardingFlowCoordinator.Route) -> Void)? = nil) {
     _viewModel = .init(wrappedValue: viewModel)
     self.onChangeRoute = onChangeRoute
     dashboardRepository.load { toastMessage in

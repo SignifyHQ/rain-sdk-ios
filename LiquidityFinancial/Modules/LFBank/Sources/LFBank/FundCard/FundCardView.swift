@@ -1,5 +1,5 @@
 import SwiftUI
-import LFAccountOnboarding
+import NetspendOnboarding
 import LFLocalizable
 import LFUtilities
 import LFStyleGuide

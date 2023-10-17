@@ -1,5 +1,6 @@
 import Foundation
 
+// sourcery: AutoMockable
 public protocol LFAccount {
   var id: String { get }
   var externalAccountId: String? { get }

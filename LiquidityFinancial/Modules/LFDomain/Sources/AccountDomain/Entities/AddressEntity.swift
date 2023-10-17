@@ -1,5 +1,6 @@
 import Foundation
 
+// sourcery: AutoMockable
 public protocol AddressEntity {
   var line1: String? { get }
   var line2: String? { get }

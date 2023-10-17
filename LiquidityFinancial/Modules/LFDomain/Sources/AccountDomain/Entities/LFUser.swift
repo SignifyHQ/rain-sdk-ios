@@ -1,6 +1,13 @@
 import Foundation
 import NetSpendDomain
 
+// sourcery: AutoMockable
+public enum AccountReviewStatusEnum: String {
+  case approved
+  case rejected
+  case inreview
+}
+
 public protocol LFUser {
   var userID: String { get }
   var firstName: String? { get }
@@ -16,4 +23,11 @@ public protocol LFUser {
   var userRoundUpEnabled: Bool? { get }
   var accountReviewStatus: String? { get }
   var transferLimitConfigsEntity: [TransferLimitConfigEntity] { get }
+}
+
+public extension LFUser {
+  var accountReviewStatusEnum: AccountReviewStatusEnum? {
+    guard let value = accountReviewStatus else { return nil }
+    return AccountReviewStatusEnum(rawValue: value)
+  }
 }

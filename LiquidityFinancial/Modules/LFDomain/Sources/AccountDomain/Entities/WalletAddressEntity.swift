@@ -1,5 +1,6 @@
 import Foundation
 
+// sourcery: AutoMockable
 public protocol WalletAddressEntity {
   var id: String { get }
   var accountId: String { get }

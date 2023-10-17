@@ -140,7 +140,7 @@ extension SelectBankAccountViewModel {
       self?.linkBankIndicator = isLoading
     }
 
-    plaidHelper.onFailure = { [weak self] error in
+    plaidHelper.onFailure = { [weak self] _ in
       self?.onLinkExternalBankFailure()
     }
 

@@ -38,4 +38,9 @@ extension LFCoreNetwork: ZerohashAPIProtocol where R == ZerohashRoute {
       decoder: .apiDecoder
     )
   }
+  
+  public func getOnboardingStep() async throws -> APIZHOnboardingStep {
+    let result = try await request(ZerohashRoute.getOnboardingStep, target: [String].self, decoder: .apiDecoder)
+    return APIZHOnboardingStep(missingSteps: result)
+  }
 }

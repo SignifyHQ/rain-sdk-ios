@@ -1,5 +1,5 @@
 import Foundation
-import LFAccountOnboarding
+import NetspendOnboarding
 import OnboardingData
 import OnboardingDomain
 import LFUtilities
@@ -8,7 +8,7 @@ import NetSpendData
 public extension DashboardRepository {
   
   // swiftlint:disable function_body_length
-  func apiFetchOnboardingState(onChangeRoute: @escaping ((OnboardingFlowCoordinator.Route) -> Void)) {
+  func apiFetchOnboardingState(onChangeRoute: @escaping ((NSOnboardingFlowCoordinator.Route) -> Void)) {
     Task { @MainActor in
       do {
         async let fetchOnboardingState = onboardingRepository.onboardingState(sessionId: accountDataManager.sessionID)
@@ -60,7 +60,7 @@ public extension DashboardRepository {
             } else if states.contains(OnboardingMissingStep.dashboardReview) {
               onChangeRoute(.kycReview)
             } else if states.contains(OnboardingMissingStep.zeroHashAccount) {
-              onChangeRoute(.unclear("Current OnboardingState in Dashboard is wrong step: zeroHashAccount"))
+              onChangeRoute(.zeroHash)
             } else if states.contains(OnboardingMissingStep.accountReject) {
               onChangeRoute(.accountReject)
             } else if states.contains(OnboardingMissingStep.primaryPersonKYCApprove) {

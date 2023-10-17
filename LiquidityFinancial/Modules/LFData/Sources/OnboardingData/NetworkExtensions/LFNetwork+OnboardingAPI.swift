@@ -4,6 +4,11 @@ import CoreNetwork
 import LFUtilities
 
 extension LFCoreNetwork: OnboardingAPIProtocol where R == OnboardingRoute {
+  public func getOnboardingProcess() async throws -> APIOnboardingProcess {
+    let result = try await request(OnboardingRoute.getOnboardingProcess, target: [String].self, decoder: .apiDecoder)
+    return APIOnboardingProcess(processSteps: result)
+  }
+  
   public func login(phoneNumber: String, otpCode: String, lastID: String) async throws -> APIAccessTokens {
     let requestParams = LoginParameters(phoneNumber: phoneNumber, otpCode: otpCode, lastID: lastID)
     return try await request(

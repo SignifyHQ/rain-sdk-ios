@@ -1,0 +1,308 @@
+import SwiftUI
+import LFUtilities
+import Combine
+import Factory
+import NetSpendData
+import NetSpendDomain
+import OnboardingData
+import AccountData
+import AccountDomain
+import OnboardingDomain
+import LFRewards
+import RewardData
+import RewardDomain
+import LFStyleGuide
+import LFLocalizable
+import LFServices
+import BaseOnboarding
+import ZerohashDomain
+import ZerohashData
+
+public protocol OnboardingFlowCoordinatorProtocol {
+  var routeSubject: CurrentValueSubject<NSOnboardingFlowCoordinator.Route, Never> { get }
+  func routeUser()
+  func set(route: NSOnboardingFlowCoordinator.Route)
+  func apiFetchCurrentState() async
+  func handlerOnboardingStep() async throws
+  func refreshNetSpendSession() async throws
+  func forcedLogout()
+}
+
+public class NSOnboardingFlowCoordinator: OnboardingFlowCoordinatorProtocol {
+  
+  public enum Route: Hashable, Identifiable {
+    
+    public static func == (lhs: NSOnboardingFlowCoordinator.Route, rhs: NSOnboardingFlowCoordinator.Route) -> Bool {
+      return lhs.hashValue == rhs.hashValue
+    }
+
+    case initial
+    case phone
+    case accountLocked
+    case welcome
+    case kycReview
+    case dashboard
+    case question(QuestionsEntity)
+    case document
+    case zeroHash
+    case information
+    case accountReject
+    case unclear(String)
+    case agreement
+    case featureAgreement
+    case popTimeUp
+    case documentInReview
+    
+    public var id: String {
+      String(describing: self)
+    }
+    
+    public func hash(into hasher: inout Hasher) {
+      switch self {
+      case .question(let question):
+        hasher.combine(question.id)
+        hasher.combine(id)
+      default:
+        hasher.combine(id)
+      }
+    }
+  }
+  
+  @LazyInjected(\.authorizationManager) var authorizationManager
+  @LazyInjected(\.accountDataManager) var accountDataManager
+  @LazyInjected(\.onboardingRepository) var onboardingRepository
+  @LazyInjected(\.nsPersionRepository) var nsPersionRepository
+  @LazyInjected(\.netspendDataManager) var netspendDataManager
+  @LazyInjected(\.rewardFlowCoordinator) var rewardFlowCoordinator
+  @LazyInjected(\.accountRepository) var accountRepository
+  @LazyInjected(\.rewardDataManager) var rewardDataManager
+  @LazyInjected(\.pushNotificationService) var pushNotificationService
+  @LazyInjected(\.analyticsService) var analyticsService
+  @LazyInjected(\.nsOnboardingRepository) var nsOnboardingRepository
+  @LazyInjected(\.zerohashRepository) var zerohashRepository
+  
+  public let routeSubject: CurrentValueSubject<Route, Never>
+  
+  private var subscribers: Set<AnyCancellable> = []
+  
+  public init() {
+    self.routeSubject = .init(.initial)
+    rewardFlowCoordinator
+      .routeSubject
+      .removeDuplicates()
+      .receive(on: DispatchQueue.main)
+      .sink { [weak self] route in
+        self?.handlerRewardRoute(route: route)
+      }
+      .store(in: &subscribers)
+  }
+  
+  public func set(route: Route) {
+    log.info("OnboardingFlowCoordinator route: \(route), with current route: \(routeSubject.value)")
+    routeSubject.send(route)
+  }
+  
+  public func routeUser() {
+    Task { @MainActor in
+#if DEBUG
+      let start = CFAbsoluteTimeGetCurrent()
+#endif
+      if checkUserIsValid() {
+        await apiFetchCurrentState()
+      } else {
+        log.info("<<<<<<<<<<<<<< User change phone login to device >>>>>>>>>>>>>>>")
+        forcedLogout()
+      }
+#if DEBUG
+      let diff = CFAbsoluteTimeGetCurrent() - start
+      log.debug("Took \(diff) seconds")
+#endif
+    }
+  }
+
+  func handlerRewardRoute(route: RewardFlowCoordinator.Route) {
+    switch route {
+    case .information:
+      set(route: .information)
+    case .selectReward:
+      break //do not thing
+    }
+  }
+  
+  public func apiFetchCurrentState() async {
+    do {
+      if authorizationManager.isTokenValid() {
+        try await apiFetchAndUpdateForStart()
+      } else {
+        try await authorizationManager.refreshToken()
+        try await apiFetchAndUpdateForStart()
+      }
+    } catch {
+      log.error(error.localizedDescription)
+      
+      if error.localizedDescription.contains("identity_verification_questions_not_available") {
+        set(route: .popTimeUp)
+        return
+      }
+      
+      forcedLogout()
+    }
+  }
+  
+  public func handlerOnboardingStep() async throws {
+    let onboardingStep = try await nsOnboardingRepository.getOnboardingStep(sessionID: accountDataManager.sessionID)
+    
+    if onboardingStep.processSteps.isEmpty {
+      try await fetchZeroHashStatus()
+    } else {
+      let states = onboardingStep.mapToEnum()
+      if states.isEmpty {
+        set(route: .dashboard)
+      } else {
+        if states.contains(NSOnboardingTypeEnum.createAccount) {
+          set(route: .welcome)
+        } else if states.contains(NSOnboardingTypeEnum.acceptAgreement) {
+          set(route: .agreement)
+        } else if states.contains(NSOnboardingTypeEnum.acceptFeatureAgreement) {
+          set(route: .featureAgreement)
+        } else if states.contains(NSOnboardingTypeEnum.identityQuestions) {
+          let questionsEncrypt = try await nsPersionRepository.getQuestion(sessionId: accountDataManager.sessionID)
+          if let usersession = netspendDataManager.sdkSession, let questionsDecode = (questionsEncrypt as? APIQuestionData)?.decodeData(session: usersession) {
+            let questionsEntity = QuestionsEntity.mapObj(questionsDecode)
+            set(route: .question(questionsEntity))
+          }
+        } else if states.contains(NSOnboardingTypeEnum.provideDocuments) {
+          let documents = try await nsPersionRepository.getDocuments(sessionId: accountDataManager.sessionID)
+          guard let documents = documents as? APIDocumentData else {
+            log.error("Can't map document from BE")
+            return
+          }
+          netspendDataManager.update(documentData: documents)
+          if let status = documents.requestedDocuments.first?.status {
+            switch status {
+            case .complete:
+              set(route: .kycReview)
+            case .open:
+              set(route: .document)
+            case .reviewInProgress:
+              set(route: .documentInReview)
+            }
+          } else {
+            if documents.requestedDocuments.isEmpty {
+              set(route: .kycReview)
+            } else {
+              set(route: .unclear("Required Document Unknown: \(documents.requestedDocuments.debugDescription)"))
+            }
+          }
+        }
+      }
+    }
+  }
+  
+  public func forcedLogout() {
+    clearUserData()
+    set(route: .phone)
+  }
+  
+  public func refreshNetSpendSession() async throws {
+    log.info("<<<<<<<<<<<<<< Refresh NetSpend Session >>>>>>>>>>>>>>>")
+    let token = try await nsPersionRepository.clientSessionInit()
+    netspendDataManager.update(jwkToken: token)
+    
+    let sessionConnectWithJWT = await nsPersionRepository.establishingSessionWithJWKSet(jwtToken: token)
+    guard let deviceData = sessionConnectWithJWT?.deviceData else { return }
+    
+    let establishPersonSession = try await nsPersionRepository.establishPersonSession(deviceData: EstablishSessionParameters(encryptedData: deviceData))
+    netspendDataManager.update(serverSession: establishPersonSession as? APIEstablishedSessionData)
+    accountDataManager.stored(sessionID: establishPersonSession.id)
+    
+    let userSessionAnonymous = try nsPersionRepository.createUserSession(establishingSession: sessionConnectWithJWT, encryptedData: establishPersonSession.encryptedData)
+    netspendDataManager.update(sdkSession: userSessionAnonymous)
+  }
+}
+
+private extension NSOnboardingFlowCoordinator {
+  func checkUserIsValid() -> Bool {
+    accountDataManager.sessionID.isEmpty == false
+  }
+  
+  func apiFetchAndUpdateForStart() async throws {
+     try await refreshNetSpendSession()
+    if accountDataManager.userCompleteOnboarding == false {
+      try await handlerOnboardingStep()
+    } else {
+      set(route: .dashboard)
+    }
+  }
+  
+  func fetchZeroHashStatus() async throws {
+    let result = try await zerohashRepository.getOnboardingStep()
+    if result.mapToEnum().contains(.createAccount) {
+      set(route: .zeroHash)
+    } else {
+      try await fetchUserReviewStatus()
+    }
+  }
+  
+  func fetchUserReviewStatus() async throws {
+    let user = try await accountRepository.getUser()
+    if let accountReviewStatus = user.accountReviewStatusEnum {
+      switch accountReviewStatus {
+      case .approved:
+        set(route: .dashboard)
+      case .rejected:
+        set(route: .accountReject)
+      case .inreview:
+        set(route: .kycReview)
+      }
+    }
+    handleDataUser(user: user)
+  }
+}
+
+extension NSOnboardingFlowCoordinator {
+  private func handleDataUser(user: LFUser) {
+    accountDataManager.storeUser(user: user)
+    trackUserInformation(user: user)
+    //TODO: Tony review it
+    if let rewardType = APIRewardType(rawValue: user.userRewardType ?? "") {
+      rewardDataManager.update(currentSelectReward: rewardType)
+    }
+    if let userSelectedFundraiserID = user.userSelectedFundraiserId {
+      rewardDataManager.update(selectedFundraiserID: userSelectedFundraiserID)
+    }
+  }
+  
+  private func trackUserInformation(user: LFUser) {
+    guard let userModel = user as? APIUser else { return }
+    guard let data = try? JSONEncoder().encode(userModel) else { return }
+    let dictionary = (try? JSONSerialization.jsonObject(with: data, options: .fragmentsAllowed)).flatMap { $0 as? [String: Any] }
+    var values = dictionary ?? [:]
+    values["birthday"] = userModel.dateOfBirth?.getDate()
+    values["avatar"] = userModel.profileImage ?? ""
+    values["idNumber"] = "REDACTED"
+    analyticsService.set(params: values)
+  }
+  
+  private func handleQuestionCase() async {
+    do {
+      let questionsEncrypt = try await nsPersionRepository.getQuestion(sessionId: accountDataManager.sessionID)
+      if let usersession = netspendDataManager.sdkSession, let questionsDecode = (questionsEncrypt as? APIQuestionData)?.decodeData(session: usersession) {
+        let questionsEntity = QuestionsEntity.mapObj(questionsDecode)
+        set(route: .question(questionsEntity))
+      } else {
+        set(route: .kycReview)
+      }
+    } catch {
+      set(route: .kycReview)
+      log.debug(error)
+    }
+  }
+  
+  private func clearUserData() {
+    log.info("<<<<<<<<<<<<<< 401 no auth and clear user data >>>>>>>>>>>>>>>")
+    accountDataManager.clearUserSession()
+    authorizationManager.clearToken()
+    pushNotificationService.signOut()
+  }
+}

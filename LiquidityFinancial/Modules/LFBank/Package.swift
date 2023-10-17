@@ -26,13 +26,13 @@ let package = Package(
       .package(name: "LFData", path: "../LFData"),
       .package(name: "LFNetwork", path: "../LFNetwork"),
       .package(name: "LFTransaction", path: "../LFTransaction"),
-      .package(name: "LFAccountOnboarding", path: "../LFAccountOnboarding")
+      .package(name: "NetspendOnboarding", path: "../LFOnboarding")
     ],
     targets: [
         .target(
             name: "LFBank",
             dependencies: [
-              "LFUtilities", "LFStyleGuide", "LFLocalizable", "LFServices", "LFTransaction", "LFAccountOnboarding", "LFBaseBank",
+              "LFUtilities", "LFStyleGuide", "LFLocalizable", "LFServices", "LFTransaction", "NetspendOnboarding", "LFBaseBank",
               .product(name: "OnboardingData", package: "LFData"),
               .product(name: "NetSpendData", package: "LFData"),
               .product(name: "AccountData", package: "LFData"),
@@ -44,7 +44,7 @@ let package = Package(
         .target(
             name: "LFBaseBank",
             dependencies: [
-              "LFUtilities", "LFStyleGuide", "LFLocalizable", "LFServices", "LFTransaction", "LFAccountOnboarding",
+              "LFUtilities", "LFStyleGuide", "LFLocalizable", "LFServices", "LFTransaction", "NetspendOnboarding",
               .product(name: "OnboardingData", package: "LFData"),
               .product(name: "NetSpendData", package: "LFData"),
               .product(name: "AccountData", package: "LFData"),
@@ -56,7 +56,7 @@ let package = Package(
         .target(
             name: "LFSolidBank",
             dependencies: [
-              "LFUtilities", "LFStyleGuide", "LFLocalizable", "LFServices", "LFTransaction", "LFAccountOnboarding", "LFBaseBank",
+              "LFUtilities", "LFStyleGuide", "LFLocalizable", "LFServices", "LFTransaction", "NetspendOnboarding", "LFBaseBank",
               .product(name: "OnboardingData", package: "LFData"),
               .product(name: "NetSpendData", package: "LFData"),
               .product(name: "AccountData", package: "LFData"),

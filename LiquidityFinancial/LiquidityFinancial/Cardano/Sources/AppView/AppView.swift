@@ -1,6 +1,6 @@
 import SwiftUI
 import Factory
-import LFAccountOnboarding
+import NetspendOnboarding
 import LFStyleGuide
 import LFUtilities
 import LFDashboard
@@ -21,15 +21,15 @@ struct AppView: View {
     Group {
       switch route {
       case.onboardingPhone:
-        OnboardingContentView(onRoute: .phone)
+        NSOnboardingContentView(onRoute: .phone)
       case .onboarding:
-        OnboardingContentView()
+        NSOnboardingContentView()
       case .dashboard:
         HomeView(viewModel: HomeViewModel(tabOptions: TabOption.allCases)) { route in
           viewModel.setDumpOutRoute(route)
         }
       case .dumpOut(let route):
-        OnboardingContentView(onRoute: route)
+        NSOnboardingContentView(onRoute: route)
       }
     }
     .embedInNavigation()

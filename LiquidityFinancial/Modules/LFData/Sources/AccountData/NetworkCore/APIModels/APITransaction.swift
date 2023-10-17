@@ -4,9 +4,14 @@ import AccountDomain
 public struct APITransactionList: TransactionListEntity {
   public var total: Int
   public var data: [TransactionEntity]
+  
+  public init(total: Int, data: [TransactionEntity]) {
+    self.total = total
+    self.data = data
+  }
 }
 
-public struct APITransaction: Codable {
+public struct APITransaction: Codable, TransactionEntity {
   public let id: String
   public let accountId: String
   public let title: String?
@@ -23,9 +28,28 @@ public struct APITransaction: Codable {
   public var receipt: APITransactionReceipt?
   public var externalTransaction: APIExternalTransaction?
   public var note: APITransactionNote?
+  
+  public init(id: String, accountId: String, title: String?, description: String?, amount: Double, currentBalance: Double?, fee: Double?, type: String, status: String?, completedAt: String?, createdAt: String, updatedAt: String, reward: APIReward? = nil, receipt: APITransactionReceipt? = nil, externalTransaction: APIExternalTransaction? = nil, note: APITransactionNote? = nil) {
+    self.id = id
+    self.accountId = accountId
+    self.title = title
+    self.description = description
+    self.amount = amount
+    self.currentBalance = currentBalance
+    self.fee = fee
+    self.type = type
+    self.status = status
+    self.completedAt = completedAt
+    self.createdAt = createdAt
+    self.updatedAt = updatedAt
+    self.reward = reward
+    self.receipt = receipt
+    self.externalTransaction = externalTransaction
+    self.note = note
+  }
 }
 
-extension APITransaction: TransactionEntity {
+extension APITransaction {
   public var externalTransactionEntity: ExternalTransactionEntity? {
     externalTransaction
   }
@@ -46,6 +70,11 @@ extension APITransaction: TransactionEntity {
 public struct APIExternalTransaction: Codable, ExternalTransactionEntity {
   public let type: String?
   public let transactionType: String?
+  
+  public init(type: String?, transactionType: String?) {
+    self.type = type
+    self.transactionType = transactionType
+  }
 }
 
 public struct APIReward: Codable, RewardEntity {
@@ -57,6 +86,17 @@ public struct APIReward: Codable, RewardEntity {
   public var description: String?
   public var fundraiserName: String?
   public var charityName: String?
+  
+  public init(status: String, type: String?, amount: Double?, stickerUrl: String?, backgroundColor: String?, description: String? = nil, fundraiserName: String? = nil, charityName: String? = nil) {
+    self.status = status
+    self.type = type
+    self.amount = amount
+    self.stickerUrl = stickerUrl
+    self.backgroundColor = backgroundColor
+    self.description = description
+    self.fundraiserName = fundraiserName
+    self.charityName = charityName
+  }
 }
 
 public struct APITransactionReceipt: Codable, TransactionReceiptEntity {
@@ -75,9 +115,32 @@ public struct APITransactionReceipt: Codable, TransactionReceiptEntity {
   public let roundUpDonation: Double?
   public let oneTimeDonation: Double?
   public let totalDonation: Double?
+  
+  public init(type: String, id: String, accountId: String, fee: Double?, completedAt: String?, tradingPair: String?, currency: String?, orderType: String?, size: Double?, exchangeRate: Double?, transactionValue: Double?, rewardsDonation: Double?, roundUpDonation: Double?, oneTimeDonation: Double?, totalDonation: Double?) {
+    self.type = type
+    self.id = id
+    self.accountId = accountId
+    self.fee = fee
+    self.completedAt = completedAt
+    self.tradingPair = tradingPair
+    self.currency = currency
+    self.orderType = orderType
+    self.size = size
+    self.exchangeRate = exchangeRate
+    self.transactionValue = transactionValue
+    self.rewardsDonation = rewardsDonation
+    self.roundUpDonation = roundUpDonation
+    self.oneTimeDonation = oneTimeDonation
+    self.totalDonation = totalDonation
+  }
 }
 
 public struct APITransactionNote: Codable, TransactionNoteEntity {
   public let title: String?
   public let message: String?
+  
+  public init(title: String?, message: String?) {
+    self.title = title
+    self.message = message
+  }
 }

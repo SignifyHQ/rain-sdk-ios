@@ -1,5 +1,6 @@
 import Foundation
 
+// sourcery: AutoMockable
 public protocol TaxFileEntity: Equatable {
   var name: String? { get }
   var year: String? { get }

@@ -8,7 +8,7 @@ import Combine
 import LFBaseBank
 import LFNetSpendCard
 import LFSolidCard
-import LFAccountOnboarding
+import NetspendOnboarding
 import OnboardingDomain
 import LFServices
 import DevicesData
@@ -31,7 +31,7 @@ public final class DashboardRepository: ObservableObject {
   @LazyInjected(\.externalFundingRepository) var externalFundingRepository
   @LazyInjected(\.cardRepository) var cardRepository
   
-  @LazyInjected(\.onboardingFlowCoordinator) var onboardingFlowCoordinator
+  @LazyInjected(\.nsOnboardingFlowCoordinator) var onboardingFlowCoordinator
   
   @LazyInjected(\.pushNotificationService) var pushNotificationService
   @LazyInjected(\.devicesRepository) var devicesRepository

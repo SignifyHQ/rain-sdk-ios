@@ -5,7 +5,7 @@ import LFLocalizable
 import LFBank
 import LFTransaction
 import LFNetSpendCard
-import LFAccountOnboarding
+import NetspendOnboarding
 import LFServices
 
 struct CashView: View {

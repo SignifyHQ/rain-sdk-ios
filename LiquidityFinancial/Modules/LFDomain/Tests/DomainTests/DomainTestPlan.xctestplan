@@ -1,0 +1,33 @@
+{
+  "configurations" : [
+    {
+      "id" : "2B0319A9-97AA-40C0-92CA-692BE6E37F40",
+      "name" : "Configuration 1",
+      "options" : {
+
+      }
+    }
+  ],
+  "defaultOptions" : {
+    "testTimeoutsEnabled" : true
+  },
+  "testTargets" : [
+    {
+      "parallelizable" : true,
+      "target" : {
+        "containerPath" : "container:",
+        "identifier" : "OnboardingDomainTests",
+        "name" : "OnboardingDomainTests"
+      }
+    },
+    {
+      "parallelizable" : true,
+      "target" : {
+        "containerPath" : "container:",
+        "identifier" : "ZerohashDomainTests",
+        "name" : "ZerohashDomainTests"
+      }
+    }
+  ],
+  "version" : 1
+}

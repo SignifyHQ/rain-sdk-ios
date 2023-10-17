@@ -30,7 +30,7 @@ let package = Package(
     .package(name: "LFData", path: "../LFData"),
     .package(name: "LFNetwork", path: "../LFNetwork"),
     .package(name: "LFRewards", path: "../LFRewards"),
-    .package(name: "LFAccountOnboarding", path: "../LFAccountOnboarding"),
+    .package(name: "NetspendOnboarding", path: "../LFOnboarding"),
     .package(url: "https://github.com/twostraws/CodeScanner", from: "2.0.0"),
     .package(url: "https://github.com/SwiftGen/SwiftGenPlugin", from: "6.6.2")
   ],
@@ -38,7 +38,7 @@ let package = Package(
     .target(
       name: "BaseDashboard",
       dependencies: [
-        "LFUtilities", "LFServices", "LFAccountOnboarding",
+        "LFUtilities", "LFServices", "NetspendOnboarding",
         .product(name: "LFBaseBank", package: "LFBank"),
         .product(name: "OnboardingData", package: "LFData"),
         .product(name: "NetSpendData", package: "LFData"),

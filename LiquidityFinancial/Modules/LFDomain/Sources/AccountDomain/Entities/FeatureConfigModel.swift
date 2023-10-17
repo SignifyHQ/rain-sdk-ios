@@ -1,6 +1,7 @@
 import Foundation
 import LFUtilities
 
+// sourcery: AutoMockable
 public struct FeatureConfigModel: Codable {
   public struct PlatformVersion: Codable {
     public let minVersionNumber: Int?

@@ -14,7 +14,7 @@ extension View {
         icon: icon,
         navigationTitle: navigationTitle ?? "",
         onDismiss: onDismiss,
-            openSupportScreen: openSupportScreen
+        openSupportScreen: openSupportScreen
       )
     )
   }
@@ -34,7 +34,7 @@ private struct ToolBarModifier: ViewModifier {
   let navigationTitle: String
   let onDismiss: (() -> Void)?
   let openSupportScreen: (() -> Void)?
-
+  
   init(
     icon: ToolBarIcon? = nil,
     navigationTitle: String = "",

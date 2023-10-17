@@ -1,5 +1,6 @@
 import Foundation
 
+// sourcery: AutoMockable
 public protocol UserRewardsEntity {
   var name: String? { get }
   var returnRate: Double? { get }

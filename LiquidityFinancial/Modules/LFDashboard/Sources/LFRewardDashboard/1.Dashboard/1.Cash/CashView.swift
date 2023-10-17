@@ -5,7 +5,7 @@ import LFLocalizable
 import LFBank
 import LFTransaction
 import LFSolidCard
-import LFAccountOnboarding
+import NetspendOnboarding
 import LFServices
 
 // TODO: Will use or not

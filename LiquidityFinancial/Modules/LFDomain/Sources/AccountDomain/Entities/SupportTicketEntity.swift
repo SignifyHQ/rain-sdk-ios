@@ -1,5 +1,6 @@
 import Foundation
 
+// sourcery: AutoMockable
 public protocol SupportTicketEntity {
   var id: String { get }
   var userId: String { get }

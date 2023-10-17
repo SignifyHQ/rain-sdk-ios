@@ -7,6 +7,7 @@ public enum ZerohashRoute {
   case sendCrypto(accountId: String, destinationAddress: String, amount: Double)
   case lockedNetworkFee(accountId: String, destinationAddress: String, amount: Double, maxAmount: Bool)
   case executeQuote(accountId: String, quoteId: String)
+  case getOnboardingStep
 }
 
 extension ZerohashRoute: LFRoute {
@@ -19,11 +20,18 @@ extension ZerohashRoute: LFRoute {
       return "v1/zerohash/accounts/\(accountId)/withdrawal/locked-network-fee"
     case .executeQuote(let accountId, _):
       return "v1/zerohash/accounts/\(accountId)/withdrawal/execute"
+    case .getOnboardingStep:
+      return "/v1/zerohash/onboarding/missing-steps"
     }
   }
   
   public var httpMethod: HttpMethod {
-    .POST
+    switch self {
+    case .getOnboardingStep:
+      return .GET
+    default:
+      return .POST
+    }
   }
   
   public var httpHeaders: HttpHeaders {
@@ -53,11 +61,16 @@ extension ZerohashRoute: LFRoute {
       return [
         "quoteId": quoteId
       ]
+    case .getOnboardingStep:
+      return nil
     }
   }
   
   public var parameterEncoding: ParameterEncoding? {
-    .json
+    switch self {
+    case .getOnboardingStep: return nil
+    default: return .json
+    }
   }
   
 }

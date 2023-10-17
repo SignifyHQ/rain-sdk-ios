@@ -1,7 +1,7 @@
 import Combine
 import Factory
 import LFUtilities
-import LFAccountOnboarding
+import NetspendOnboarding
 import SwiftUI
 import AuthorizationManager
 
@@ -18,12 +18,12 @@ class AppCoordinator: AppCoordinatorProtocol {
     case onboarding
     case onboardingPhone
     case dashboard
-    case dumpOut(OnboardingFlowCoordinator.Route)
+    case dumpOut(NSOnboardingFlowCoordinator.Route)
   }
   
   @LazyInjected(\.authorizationManager)
   private var authorizationManager
-  @LazyInjected(\.onboardingFlowCoordinator)
+  @LazyInjected(\.nsOnboardingFlowCoordinator)
   private var onboardingFlowCoordinator
   @LazyInjected(\.customerSupportService)
   private var customerSupportService
@@ -56,7 +56,7 @@ class AppCoordinator: AppCoordinatorProtocol {
       .store(in: &subscribers)
   }
   
-  private func setOnboardingRoute(_ route: OnboardingFlowCoordinator.Route) {
+  private func setOnboardingRoute(_ route: NSOnboardingFlowCoordinator.Route) {
     if route == .dashboard {
       set(route: .dashboard)
     } else {

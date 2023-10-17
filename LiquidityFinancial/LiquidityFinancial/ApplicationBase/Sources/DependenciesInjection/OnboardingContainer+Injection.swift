@@ -3,7 +3,7 @@ import Factory
 import OnboardingDomain
 import CoreNetwork
 import OnboardingData
-import LFAccountOnboarding
+import NetspendOnboarding
 import NetworkUtilities
 import AuthorizationManager
 

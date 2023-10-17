@@ -2,6 +2,7 @@ import Foundation
 import NetSpendDomain
 import Combine
 
+// sourcery: AutoMockable
 public protocol AccountDataStorageProtocol {
   var userInfomationData: UserInfomationDataProtocol { get }
   var phoneNumber: String { get }

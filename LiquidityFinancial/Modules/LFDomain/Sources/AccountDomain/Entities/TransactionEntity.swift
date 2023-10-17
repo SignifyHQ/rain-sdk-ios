@@ -1,10 +1,12 @@
 import Foundation
 
+// sourcery: AutoMockable
 public protocol TransactionListEntity {
   var total: Int { get }
   var data: [TransactionEntity] { get }
 }
 
+// sourcery: AutoMockable
 public protocol TransactionEntity {
   var id: String { get }
   var accountId: String { get }
@@ -24,11 +26,14 @@ public protocol TransactionEntity {
   var externalTransactionEntity: ExternalTransactionEntity? { get }
 }
 
+// sourcery: AutoMockable
 public protocol ExternalTransactionEntity {
   var type: String? { get }
   var transactionType: String? { get }
+  init(type: String?, transactionType: String?)
 }
 
+// sourcery: AutoMockable
 public protocol RewardEntity {
   var status: String { get }
   var type: String? { get }
@@ -38,13 +43,17 @@ public protocol RewardEntity {
   var description: String? { get }
   var fundraiserName: String? { get }
   var charityName: String? { get }
+  init(status: String, type: String?, amount: Double?, stickerUrl: String?, backgroundColor: String?, description: String?, fundraiserName: String?, charityName: String?)
 }
 
+// sourcery: AutoMockable
 public protocol TransactionNoteEntity {
   var title: String? { get }
   var message: String? { get }
+  init(title: String?, message: String?)
 }
 
+// sourcery: AutoMockable
 public protocol TransactionReceiptEntity {
   var type: String { get }
   var id: String { get }
@@ -61,4 +70,5 @@ public protocol TransactionReceiptEntity {
   var roundUpDonation: Double? { get }
   var oneTimeDonation: Double? { get }
   var totalDonation: Double? { get }
+  init(type: String, id: String, accountId: String, fee: Double?, completedAt: String?, tradingPair: String?, currency: String?, orderType: String?, size: Double?, exchangeRate: Double?, transactionValue: Double?, rewardsDonation: Double?, roundUpDonation: Double?, oneTimeDonation: Double?, totalDonation: Double?)
 }

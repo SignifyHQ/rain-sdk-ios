@@ -6,4 +6,5 @@ public protocol OnboardingAPIProtocol {
   func requestOTP(phoneNumber: String) async throws -> APIOtp
   func getOnboardingState(sessionId: String) async throws -> APIOnboardingState
   func refreshToken(token: String) async throws -> Bool
+  func getOnboardingProcess() async throws -> APIOnboardingProcess
 }

@@ -3,7 +3,7 @@ import UIKit
 import Combine
 import LFUtilities
 import Factory
-import LFAccountOnboarding
+import NetspendOnboarding
 
 class AppViewModel: ObservableObject {
   
@@ -25,7 +25,7 @@ class AppViewModel: ObservableObject {
     coordinator.routeUser()
   }
   
-  func setDumpOutRoute(_ route: OnboardingFlowCoordinator.Route) {
+  func setDumpOutRoute(_ route: NSOnboardingFlowCoordinator.Route) {
     setRoute(.dumpOut(route))
   }
   

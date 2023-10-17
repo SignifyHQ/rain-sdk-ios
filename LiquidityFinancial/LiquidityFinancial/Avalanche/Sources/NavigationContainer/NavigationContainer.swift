@@ -7,7 +7,7 @@ import Factory
 import LFBank
 import SwiftUI
 import LFRewards
-import LFAccountOnboarding
+import NetspendOnboarding
 
 final class NavigationContainer {
   
@@ -56,7 +56,7 @@ final class NavigationContainer {
     rewardNavigation.setup(container: container)
     
     rewardNavigation.registerAgreementView(type: AgreementView.self) { _ in
-      AnyView(AgreementView(viewModel: AgreementViewModel()))
+      AnyView(AgreementView(viewModel: AgreementViewModel(needBufferData: true)))
     }
   }
   

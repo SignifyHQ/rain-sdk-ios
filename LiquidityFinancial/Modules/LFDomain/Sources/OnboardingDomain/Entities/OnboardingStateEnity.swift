@@ -17,6 +17,7 @@ public enum OnboardingMissingStep: String, Codable {
   case acceptFeatureAgreement = "accept_feature_agreement"
 }
 
+// sourcery: AutoMockable
 public protocol OnboardingStateEnity {
   var missingSteps: [String] { get }
   init(missingSteps: [String]) 

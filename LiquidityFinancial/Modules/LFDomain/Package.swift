@@ -29,12 +29,13 @@ let package = Package(
       name: "CryptoChartDomain",
       targets: ["CryptoChartDomain"]),
     .library(
-      name: "DomainDataMocks",
-      targets: ["DomainDataMocks"])
+      name: "DomainTestHelpers",
+      targets: ["DomainTestHelpers"])
   ],
   dependencies: [
     .package(name: "LFUtilities", path: "../LFUtilities"),
-    .package(name: "TestHelpers", path: "../TestHelpers")
+    .package(name: "TestHelpers", path: "../TestHelpers"),
+    .package(url: "https://github.com/krzysztofzablocki/Sourcery.git", from: "2.0.0")
   ],
   targets: [
     .target(
@@ -67,13 +68,19 @@ let package = Package(
       dependencies: []
     ),
     .target(
-      name: "DomainDataMocks",
+      name: "DomainTestHelpers",
       dependencies: [
-        "AccountDomain", "CryptoChartDomain", "DevicesDomain", "ZerohashDomain", "OnboardingDomain",
+        "AccountDomain", "CryptoChartDomain", "DevicesDomain", "ZerohashDomain", "OnboardingDomain"
       ]
     ),
     .testTarget(
+      name: "DomainTests",
+      dependencies: ["TestHelpers", "DomainTestHelpers"]),
+    .testTarget(
       name: "OnboardingDomainTests",
-      dependencies: ["OnboardingDomain", "TestHelpers", "DomainDataMocks"])
+      dependencies: ["OnboardingDomain", "TestHelpers", "DomainTestHelpers"]),
+    .testTarget(
+      name: "ZerohashDomainTests",
+      dependencies: ["OnboardingDomain", "TestHelpers", "DomainTestHelpers"])
   ]
 )

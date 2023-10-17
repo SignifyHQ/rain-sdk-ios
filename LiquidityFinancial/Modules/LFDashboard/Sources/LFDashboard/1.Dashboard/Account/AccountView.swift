@@ -6,7 +6,7 @@ import LFServices
 import NetspendSdk
 import LFBank
 import BaseDashboard
-import LFAccountOnboarding
+import NetspendOnboarding
 import AccountData
 import AccountDomain
 import LFTransaction

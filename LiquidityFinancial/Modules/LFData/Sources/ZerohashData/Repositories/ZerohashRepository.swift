@@ -28,4 +28,10 @@ public class ZerohashRepository: ZerohashRepositoryProtocol {
       accountId: accountId, quoteId: quoteId
     )
   }
+  
+  public func getOnboardingStep() async throws -> ZHOnboardingStepEntity {
+    return try await self.zerohashAPI.getOnboardingStep()
+  }
 }
+
+extension APIZHOnboardingStep: ZHOnboardingStepEntity {}
