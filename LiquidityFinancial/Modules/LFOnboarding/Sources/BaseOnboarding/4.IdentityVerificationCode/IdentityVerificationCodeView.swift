@@ -2,6 +2,7 @@ import SwiftUI
 import LFUtilities
 import LFStyleGuide
 import LFLocalizable
+import LFAccessibility
 import LFServices
 
 public struct IdentityVerificationCodeView<ViewModel>: View where ViewModel: IdentityVerificationCodeViewProtocol {
@@ -20,6 +21,7 @@ public struct IdentityVerificationCodeView<ViewModel>: View where ViewModel: Ide
         .foregroundColor(Colors.label.swiftUIColor)
         .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.main.value))
         .padding(.top, 12)
+        .accessibilityIdentifier(LFAccessibility.IdentityVerificationCode.headerTitle)
       textField
       informationCell
       Spacer()
@@ -69,6 +71,7 @@ private extension IdentityVerificationCodeView {
             }
           }
       }
+      .accessibilityIdentifier(LFAccessibility.IdentityVerificationCode.ssnSecureField)
     }
   }
   
@@ -115,5 +118,6 @@ private extension IdentityVerificationCodeView {
       viewModel.login()
     }
     .ignoresSafeArea(.keyboard, edges: .bottom)
+    .accessibilityIdentifier(LFAccessibility.IdentityVerificationCode.continueButton)
   }
 }

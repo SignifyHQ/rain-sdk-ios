@@ -1,0 +1,11 @@
+## Generate accessibility identifier
+strings:
+  - inputs:
+      - Resources
+    outputs:
+      - templateName: structured-swift5
+        params:
+          enumName: LFAccessibility
+          publicAccess: true
+          bundle: Bundle.main
+        output: Strings.swift

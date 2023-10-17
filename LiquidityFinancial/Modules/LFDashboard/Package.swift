@@ -21,6 +21,7 @@ let package = Package(
     .package(name: "LFUtilities", path: "../LFUtilities"),
     .package(name: "LFStyleGuide", path: "../LFStyleGuide"),
     .package(name: "LFLocalizable", path: "../LFLocalizable"),
+    .package(name: "LFAccessibility", path: "../LFAccessibility"),
     .package(name: "LFServices", path: "../LFServices"),
     .package(name: "LFCard", path: "../LFCard"),
     .package(name: "LFBank", path: "../LFBank"),
@@ -52,7 +53,7 @@ let package = Package(
     .target(
       name: "LFDashboard",
       dependencies: [
-        "LFUtilities", "LFStyleGuide", "LFLocalizable", "LFServices", "BaseDashboard",
+        "LFUtilities", "LFStyleGuide", "LFLocalizable", "LFAccessibility", "LFServices", "BaseDashboard",
         "LFBank", "LFTransaction", "LFCryptoChart", "CodeScanner", "LFWalletAddress",
         .product(name: "OnboardingData", package: "LFData"),
         .product(name: "NetSpendData", package: "LFData"),
@@ -65,7 +66,7 @@ let package = Package(
     .target(
       name: "LFRewardDashboard",
       dependencies: [
-        "LFUtilities", "LFStyleGuide", "LFLocalizable", "LFServices", "LFTransaction", "CodeScanner", "LFRewards", "BaseDashboard",
+        "LFUtilities", "LFStyleGuide", "LFLocalizable", "LFAccessibility", "LFServices", "LFTransaction", "CodeScanner", "LFRewards", "BaseDashboard",
         .product(name: "LFBank", package: "LFBank"),
         .product(name: "OnboardingData", package: "LFData"),
         .product(name: "NetSpendData", package: "LFData"),

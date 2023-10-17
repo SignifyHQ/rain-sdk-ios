@@ -1,0 +1,24 @@
+{
+  "configurations" : [
+    {
+      "id" : "A9CECF75-0958-4512-A8AC-005AE4B1DF23",
+      "name" : "Configuration 1",
+      "options" : {
+
+      }
+    }
+  ],
+  "defaultOptions" : {
+
+  },
+  "testTargets" : [
+    {
+      "target" : {
+        "containerPath" : "container:LiquidityFinancial.xcodeproj",
+        "identifier" : "A97BF7D52A5C602F00B8F5CA",
+        "name" : "LiquidityFinancialUITests"
+      }
+    }
+  ],
+  "version" : 1
+}

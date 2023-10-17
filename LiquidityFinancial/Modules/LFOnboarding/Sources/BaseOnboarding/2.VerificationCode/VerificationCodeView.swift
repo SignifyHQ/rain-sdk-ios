@@ -3,6 +3,7 @@ import SwiftUI
 import LFStyleGuide
 import LFUtilities
 import LFLocalizable
+import LFAccessibility
 import OnboardingDomain
 import LFServices
 import Factory
@@ -67,18 +68,18 @@ private extension VerificationCodeView {
       Text(LFLocalizable.VerificationCode.EnterCode.screenTitle)
         .foregroundColor(Colors.label.swiftUIColor)
         .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.main.value))
+        .accessibilityIdentifier(LFAccessibility.VerificationCode.headerTitle)
       HStack(spacing: 4) {
-        Text(
-          LFLocalizable.VerificationCode.SendTo.textFieldTitle("+1")
-        )
-        .foregroundColor(Colors.label.swiftUIColor.opacity(0.75))
-        .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.medium.value))
+        Text(LFLocalizable.VerificationCode.SendTo.textFieldTitle("+1"))
+          .foregroundColor(Colors.label.swiftUIColor.opacity(0.75))
+          .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.medium.value))
         iPhoneNumberField("", text: $viewModel.formatPhoneNumber)
           .flagHidden(true)
           .foregroundColor(Colors.label.swiftUIColor.opacity(0.75))
           .disabled(true)
         Spacer()
       }
+      .accessibilityIdentifier(LFAccessibility.VerificationCode.headerDescription)
     }
   }
   
@@ -99,6 +100,7 @@ private extension VerificationCodeView {
         }
       }
     }
+    .accessibilityIdentifier(LFAccessibility.VerificationCode.verificationCodeTextField)
   }
   
   @ViewBuilder var resendCodeTimer: some View {
@@ -110,6 +112,7 @@ private extension VerificationCodeView {
             .foregroundColor(Colors.error.swiftUIColor)
             .frame(minWidth: 0, maxWidth: .infinity, alignment: .leading)
             .padding(.leading, 30)
+            .accessibilityIdentifier(LFAccessibility.VerificationCode.resendTimerText)
         }
       }
     }
@@ -124,5 +127,6 @@ private extension VerificationCodeView {
     ) {
        viewModel.resendOTP()
     }
+    .accessibilityIdentifier(LFAccessibility.VerificationCode.resendButton)
   }
 }

@@ -1,5 +1,6 @@
 import SwiftUI
 import LFUtilities
+import LFAccessibility
 
 // MARK: - LiquidityAlert
 public struct LiquidityAlert: View {
@@ -51,6 +52,7 @@ private extension LiquidityAlert {
         .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.main.value))
         .foregroundColor(Colors.label.swiftUIColor)
         .multilineTextAlignment(.center)
+        .accessibilityIdentifier(LFAccessibility.Popup.title)
       if let message {
         Text(message)
           .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.medium.value))
@@ -71,6 +73,7 @@ private extension LiquidityAlert {
         backgroundColor: primary.backgroundColor,
         action: primary.action
       )
+      .accessibilityIdentifier(LFAccessibility.Popup.primaryButton)
       if let secondPrimary = secondPrimary {
         FullSizeButton(
           title: secondPrimary.text,
@@ -89,6 +92,7 @@ private extension LiquidityAlert {
           backgroundColor: primary.backgroundColor,
           action: secondary.action
         )
+        .accessibilityIdentifier(LFAccessibility.Popup.secondaryButton)
       }
     }
     .padding(.top, 30)

@@ -3,6 +3,7 @@ import SwiftUI
 import LFStyleGuide
 import LFUtilities
 import LFLocalizable
+import LFAccessibility
 import LFServices
 import Combine
 import Factory
@@ -43,6 +44,7 @@ public struct PhoneNumberView<ViewModel: PhoneNumberViewModelProtocol>: View {
           .resizable()
           .scaledToFit()
           .frame(width: 120, height: 120)
+          .accessibilityIdentifier(LFAccessibility.PhoneNumber.logoImage)
           .onTapGesture(count: ViewConstant.magicTapCount) {
             viewModel.onActiveSecretMode()
           }
@@ -123,6 +125,7 @@ private extension PhoneNumberView {
       guard let url = URL(string: viewModel.getURL(tappedString: tappedString)) else { return }
       openURL(url)
     }
+    .accessibilityIdentifier(LFAccessibility.PhoneNumber.conditionTextTappable)
     .frame(height: 50)
   }
   
@@ -163,6 +166,7 @@ private extension PhoneNumberView {
           }
       }
     }
+    .accessibilityIdentifier(LFAccessibility.PhoneNumber.textField)
   }
   
   var phoneNumberView: some View {
@@ -170,6 +174,7 @@ private extension PhoneNumberView {
       Text(LFLocalizable.PhoneNumber.TextField.title.uppercased())
         .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.main.value))
         .foregroundColor(Colors.label.swiftUIColor)
+        .accessibilityIdentifier(LFAccessibility.PhoneNumber.headerTitle)
       phoneNumberTextField
     }
     .padding(.top, 24)
@@ -188,6 +193,7 @@ private extension PhoneNumberView {
         keyboardFocus = false
         viewModel.performGetOTP()
       }
+      .accessibilityIdentifier(LFAccessibility.PhoneNumber.continueButton)
       conditionView
     }
     .padding(.bottom, 12)
@@ -205,6 +211,7 @@ private extension PhoneNumberView {
       guard let url = URL(string: LFUtilities.privacyURL) else { return }
       openURL(url)
     }
+    .accessibilityIdentifier(LFAccessibility.PhoneNumber.voipTermTextTappable)
     .frame(height: 90)
   }
 }

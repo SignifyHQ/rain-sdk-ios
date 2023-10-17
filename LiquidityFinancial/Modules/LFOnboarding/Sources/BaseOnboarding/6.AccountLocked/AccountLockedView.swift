@@ -2,6 +2,7 @@ import SwiftUI
 import LFStyleGuide
 import LFUtilities
 import LFLocalizable
+import LFAccessibility
 import LFServices
 
 public struct AccountLockedView<ViewModel: AccountLockedViewModelProtocol>: View {
@@ -14,6 +15,7 @@ public struct AccountLockedView<ViewModel: AccountLockedViewModelProtocol>: View
   public var body: some View {
     VStack(spacing: 24) {
       GenImages.Images.lockedAccount.swiftUIImage
+        .accessibilityIdentifier(LFAccessibility.AccountLockedScreen.lockedImage)
       descriptionView
       Spacer()
       buttonGroupView
@@ -35,10 +37,12 @@ private extension AccountLockedView {
       Text(LFLocalizable.AccountLocked.ContactSupport.title)
         .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.large.value))
         .foregroundColor(Colors.label.swiftUIColor)
+        .accessibilityIdentifier(LFAccessibility.AccountLockedScreen.contactSupportTitle)
       Text(LFLocalizable.AccountLocked.ContactSupport.description)
         .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.medium.value))
         .foregroundColor(Colors.label.swiftUIColor.opacity(0.75))
         .multilineTextAlignment(.center)
+        .accessibilityIdentifier(LFAccessibility.AccountLockedScreen.contactSupportDescription)
     }
     .padding(.horizontal, 12)
   }
@@ -52,6 +56,7 @@ private extension AccountLockedView {
       ) {
         viewModel.openSupportScreen()
       }
+      .accessibilityIdentifier(LFAccessibility.AccountLockedScreen.contactSupportButton)
       FullSizeButton(
         title: LFLocalizable.Button.Logout.title,
         isDisable: false,
@@ -60,6 +65,7 @@ private extension AccountLockedView {
       ) {
         viewModel.logout()
       }
+      .accessibilityIdentifier(LFAccessibility.AccountLockedScreen.logoutButton)
     }
   }
 }

@@ -1,0 +1,29 @@
+{
+  "configurations" : [
+    {
+      "id" : "4393727D-F7C6-46A3-AE16-6534D72E67D1",
+      "name" : "Test Scheme Action",
+      "options" : {
+
+      }
+    }
+  ],
+  "defaultOptions" : {
+    "codeCoverage" : false,
+    "targetForVariableExpansion" : {
+      "containerPath" : "container:LiquidityFinancial.xcodeproj",
+      "identifier" : "A9B4B91F2A7C0C76000ED67A",
+      "name" : "DogeCard"
+    }
+  },
+  "testTargets" : [
+    {
+      "target" : {
+        "containerPath" : "container:LiquidityFinancial.xcodeproj",
+        "identifier" : "A97BF7D52A5C602F00B8F5CA",
+        "name" : "LiquidityFinancialUITests"
+      }
+    }
+  ],
+  "version" : 1
+}

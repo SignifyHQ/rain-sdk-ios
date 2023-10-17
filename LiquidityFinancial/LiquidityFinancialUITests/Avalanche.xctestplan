@@ -1,0 +1,29 @@
+{
+  "configurations" : [
+    {
+      "id" : "367F1127-FD56-47EA-908A-E2FFCFE2C689",
+      "name" : "Test Scheme Action",
+      "options" : {
+
+      }
+    }
+  ],
+  "defaultOptions" : {
+    "codeCoverage" : false,
+    "targetForVariableExpansion" : {
+      "containerPath" : "container:LiquidityFinancial.xcodeproj",
+      "identifier" : "A97BF7BB2A5C602D00B8F5CA",
+      "name" : "Avalanche"
+    }
+  },
+  "testTargets" : [
+    {
+      "target" : {
+        "containerPath" : "container:LiquidityFinancial.xcodeproj",
+        "identifier" : "A97BF7D52A5C602F00B8F5CA",
+        "name" : "LiquidityFinancialUITests"
+      }
+    }
+  ],
+  "version" : 1
+}

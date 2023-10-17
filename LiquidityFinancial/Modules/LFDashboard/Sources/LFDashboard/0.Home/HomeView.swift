@@ -1,6 +1,7 @@
 import SwiftUI
 import LFTransaction
 import LFLocalizable
+import LFAccessibility
 import LFStyleGuide
 import LFUtilities
 import Combine
@@ -150,6 +151,7 @@ private extension HomeView {
         GenImages.CommonImages.icProfile.swiftUIImage
           .foregroundColor(Colors.label.swiftUIColor)
       }
+      .accessibilityIdentifier(LFAccessibility.HomeScreen.profileButton)
       .padding(.trailing, 12)
     }
   }

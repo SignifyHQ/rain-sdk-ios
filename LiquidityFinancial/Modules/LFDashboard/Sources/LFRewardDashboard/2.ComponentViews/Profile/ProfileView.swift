@@ -2,6 +2,7 @@ import SwiftUI
 import LFStyleGuide
 import LFLocalizable
 import LFUtilities
+import LFAccessibility
 
 struct ProfileView: View {
   @StateObject private var viewModel = ProfileViewModel()
@@ -224,6 +225,7 @@ private extension ProfileView {
         FullSizeButton(title: LFLocalizable.Profile.Logout.title, isDisable: false, type: .secondary) {
           viewModel.logoutTapped()
         }
+        .accessibilityIdentifier(LFAccessibility.ProfileScreen.logoutButton)
         HStack {
           Rectangle()
             .fill(Colors.label.swiftUIColor.opacity(0.5))

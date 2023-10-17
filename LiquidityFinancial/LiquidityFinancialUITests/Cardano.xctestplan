@@ -1,0 +1,29 @@
+{
+  "configurations" : [
+    {
+      "id" : "04C6CD65-D3AC-44E9-9258-2D7602454420",
+      "name" : "Test Scheme Action",
+      "options" : {
+
+      }
+    }
+  ],
+  "defaultOptions" : {
+    "codeCoverage" : false,
+    "targetForVariableExpansion" : {
+      "containerPath" : "container:LiquidityFinancial.xcodeproj",
+      "identifier" : "A953547C2A5E55B2008B0FAB",
+      "name" : "Cardano"
+    }
+  },
+  "testTargets" : [
+    {
+      "target" : {
+        "containerPath" : "container:LiquidityFinancial.xcodeproj",
+        "identifier" : "A97BF7D52A5C602F00B8F5CA",
+        "name" : "LiquidityFinancialUITests"
+      }
+    }
+  ],
+  "version" : 1
+}
