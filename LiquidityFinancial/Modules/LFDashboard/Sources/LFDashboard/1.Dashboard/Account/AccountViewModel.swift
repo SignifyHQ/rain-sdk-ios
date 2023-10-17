@@ -6,7 +6,7 @@ import Factory
 import NetSpendData
 import NetSpendDomain
 import NetspendSdk
-import LFBank
+import LFNetspendBank
 import LFBaseBank
 import BaseDashboard
 import AccountDomain

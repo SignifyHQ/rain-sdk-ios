@@ -4,7 +4,7 @@ import BaseDashboard
 import LFTransaction
 import LFUtilities
 import Factory
-import LFBank
+import LFNetspendBank
 import SwiftUI
 import LFRewards
 import NetspendOnboarding

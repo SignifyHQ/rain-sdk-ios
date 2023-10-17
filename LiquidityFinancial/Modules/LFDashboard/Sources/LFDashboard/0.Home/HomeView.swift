@@ -7,7 +7,7 @@ import LFUtilities
 import Combine
 import BaseDashboard
 import NetspendOnboarding
-import LFBank
+import LFNetspendBank
 import Factory
 import LFNetSpendCard
 

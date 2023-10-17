@@ -8,11 +8,11 @@ let package = Package(
     platforms: [.iOS(.v15), .macOS(.v10_14)],
     products: [
         .library(
-            name: "LFBank",
-            targets: ["LFBank"]),
+            name: "LFNetspendBank",
+            targets: ["LFNetspendBank"]),
         .library(
             name: "LFBaseBank",
-            targets: ["LFBank"]),
+            targets: ["LFBaseBank"]),
         .library(
             name: "LFSolidBank",
             targets: ["LFSolidBank"])
@@ -30,7 +30,7 @@ let package = Package(
     ],
     targets: [
         .target(
-            name: "LFBank",
+            name: "LFNetspendBank",
             dependencies: [
               "LFUtilities", "LFStyleGuide", "LFLocalizable", "LFServices", "LFTransaction", "NetspendOnboarding", "LFBaseBank",
               .product(name: "OnboardingData", package: "LFData"),
@@ -67,6 +67,6 @@ let package = Package(
             ]),
         .testTarget(
             name: "LFBankTests",
-            dependencies: ["LFBank"])
+            dependencies: ["LFNetspendBank"])
     ]
 )

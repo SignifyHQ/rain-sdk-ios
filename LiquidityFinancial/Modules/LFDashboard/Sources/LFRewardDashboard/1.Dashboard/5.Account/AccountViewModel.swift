@@ -7,7 +7,7 @@ import NetSpendData
 import NetSpendDomain
 import NetspendSdk
 import LFBaseBank
-import LFBank
+import LFNetspendBank
 import AccountData
 
 @MainActor

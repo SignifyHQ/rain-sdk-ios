@@ -4,7 +4,7 @@ import AccountData
 import NetSpendData
 import LFUtilities
 import Factory
-import LFBank
+import LFNetspendBank
 import LFBaseBank
 import LFTransaction
 import BaseDashboard

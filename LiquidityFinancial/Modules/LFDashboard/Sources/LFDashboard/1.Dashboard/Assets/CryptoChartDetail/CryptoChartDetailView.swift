@@ -9,7 +9,7 @@ import LFUtilities
 import LFLocalizable
 import LFTransaction
 import LFWalletAddress
-import LFBank
+import LFNetspendBank
 
 struct CryptoChartDetailView: View {
   @StateObject private var viewModel: CryptoChartDetailViewModel

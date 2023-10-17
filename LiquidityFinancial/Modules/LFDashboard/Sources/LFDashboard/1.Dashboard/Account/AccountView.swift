@@ -4,7 +4,7 @@ import LFStyleGuide
 import LFLocalizable
 import LFServices
 import NetspendSdk
-import LFBank
+import LFNetspendBank
 import BaseDashboard
 import NetspendOnboarding
 import AccountData

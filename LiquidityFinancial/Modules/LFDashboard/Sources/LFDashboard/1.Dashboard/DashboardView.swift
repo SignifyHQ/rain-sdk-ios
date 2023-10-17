@@ -2,7 +2,7 @@ import SwiftUI
 import LFStyleGuide
 import LFLocalizable
 import LFUtilities
-import LFBank
+import LFNetspendBank
 import BaseDashboard
 import LFNetSpendCard
 import Factory

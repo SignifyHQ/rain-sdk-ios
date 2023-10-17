@@ -5,7 +5,7 @@ import LFStyleGuide
 import LFLocalizable
 import LFUtilities
 import LFTransaction
-import LFBank
+import LFNetspendBank
 import LFServices
 
 struct RewardTabView: View {

@@ -7,7 +7,7 @@ import AccountDomain
 import AccountData
 import LFUtilities
 import LFBaseBank
-import LFBank
+import LFNetspendBank
 import LFTransaction
 import Combine
 

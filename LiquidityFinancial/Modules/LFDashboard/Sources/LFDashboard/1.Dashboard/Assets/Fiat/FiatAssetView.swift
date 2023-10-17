@@ -3,7 +3,7 @@ import SwiftUI
 import LFStyleGuide
 import LFLocalizable
 import LFUtilities
-import LFBank
+import LFNetspendBank
 import LFTransaction
 import BaseDashboard
 

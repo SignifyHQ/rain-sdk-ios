@@ -73,7 +73,6 @@
 		A93C15062A99C65D00BD7564 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = A93C15052A99C65D00BD7564 /* GoogleService-Info.plist */; };
 		A941BE8D2ACFC3CB00FCB01C /* LFTransaction in Frameworks */ = {isa = PBXBuildFile; productRef = A941BE8C2ACFC3CB00FCB01C /* LFTransaction */; };
 		A941BE922ACFC76800FCB01C /* BaseDashboard in Frameworks */ = {isa = PBXBuildFile; productRef = A941BE912ACFC76800FCB01C /* BaseDashboard */; };
-		A941BE972ACFD05800FCB01C /* LFBank in Frameworks */ = {isa = PBXBuildFile; productRef = A941BE962ACFD05800FCB01C /* LFBank */; };
 		A941BE992ACFFAB100FCB01C /* LFRewards in Frameworks */ = {isa = PBXBuildFile; productRef = A941BE982ACFFAB100FCB01C /* LFRewards */; };
 		A941BE9B2AD001AA00FCB01C /* LFDashboard in Frameworks */ = {isa = PBXBuildFile; productRef = A941BE9A2AD001AA00FCB01C /* LFDashboard */; };
 		A941BE9D2AD001B100FCB01C /* BaseDashboard in Frameworks */ = {isa = PBXBuildFile; productRef = A941BE9C2AD001B100FCB01C /* BaseDashboard */; };
@@ -795,7 +794,6 @@
 				A9B4B9472A7C0C76000ED67A /* SmartyStreets in Frameworks */,
 				A9B4B9482A7C0C76000ED67A /* Factory in Frameworks */,
 				74CB16812A9853F800C137F3 /* FirebaseMessaging in Frameworks */,
-				A941BE972ACFD05800FCB01C /* LFBank in Frameworks */,
 				A989D53A2AD7AFCD00197EFF /* NetspendOnboarding in Frameworks */,
 				A941BE8D2ACFC3CB00FCB01C /* LFTransaction in Frameworks */,
 				74BC08632A8CC6F500EFD00C /* CodeScanner in Frameworks */,
@@ -1993,7 +1991,6 @@
 				74CB16802A9853F800C137F3 /* FirebaseMessaging */,
 				A941BE8C2ACFC3CB00FCB01C /* LFTransaction */,
 				A941BE912ACFC76800FCB01C /* BaseDashboard */,
-				A941BE962ACFD05800FCB01C /* LFBank */,
 				A941BE982ACFFAB100FCB01C /* LFRewards */,
 				A989D5392AD7AFCD00197EFF /* NetspendOnboarding */,
 				06663AF62ADE395D00A3FF12 /* LFAccessibility */,
@@ -3635,10 +3632,6 @@
 		A941BE912ACFC76800FCB01C /* BaseDashboard */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = BaseDashboard;
-		};
-		A941BE962ACFD05800FCB01C /* LFBank */ = {
-			isa = XCSwiftPackageProductDependency;
-			productName = LFBank;
 		};
 		A941BE982ACFFAB100FCB01C /* LFRewards */ = {
 			isa = XCSwiftPackageProductDependency;

@@ -6,7 +6,7 @@ import LFUtilities
 import DevicesData
 import AccountDomain
 import Combine
-import LFBank
+import LFNetspendBank
 import LFServices
 
 @MainActor

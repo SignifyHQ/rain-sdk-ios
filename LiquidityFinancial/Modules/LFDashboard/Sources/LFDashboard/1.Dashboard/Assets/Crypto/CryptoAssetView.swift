@@ -6,7 +6,7 @@ import LFUtilities
 import LFTransaction
 import LFCryptoChart
 import BaseDashboard
-import LFBank
+import LFNetspendBank
 
 struct CryptoAssetView: View {
   @StateObject private var viewModel: CryptoAssetViewModel
