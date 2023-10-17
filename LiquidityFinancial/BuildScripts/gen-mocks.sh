@@ -2,7 +2,8 @@
 set -eu
 
 function gen_mocks() {
-  local module_path="$1"
+  local initial_dir=$(pwd)  # Store the initial directory
+  local module_path="$1"  # Path to the module where you need to create mocks
 
   if [[ -d "${module_path}" ]]; then
     cd "${module_path}"
@@ -13,6 +14,8 @@ function gen_mocks() {
   else
     echo "Directory ${module_path} does not exist"
   fi
+  
+  cd "$initial_dir"  # Return to the initial directory
 }
 
 gen_mocks "../Modules/LFNetwork"

@@ -76,7 +76,6 @@
 		A941BE992ACFFAB100FCB01C /* LFRewards in Frameworks */ = {isa = PBXBuildFile; productRef = A941BE982ACFFAB100FCB01C /* LFRewards */; };
 		A941BE9B2AD001AA00FCB01C /* LFDashboard in Frameworks */ = {isa = PBXBuildFile; productRef = A941BE9A2AD001AA00FCB01C /* LFDashboard */; };
 		A941BE9D2AD001B100FCB01C /* BaseDashboard in Frameworks */ = {isa = PBXBuildFile; productRef = A941BE9C2AD001B100FCB01C /* BaseDashboard */; };
-		A941BE9F2AD001B800FCB01C /* LFBank in Frameworks */ = {isa = PBXBuildFile; productRef = A941BE9E2AD001B800FCB01C /* LFBank */; };
 		A941BEA12AD001BD00FCB01C /* LFTransaction in Frameworks */ = {isa = PBXBuildFile; productRef = A941BEA02AD001BD00FCB01C /* LFTransaction */; };
 		A941BEA32AD001C700FCB01C /* LFRewards in Frameworks */ = {isa = PBXBuildFile; productRef = A941BEA22AD001C700FCB01C /* LFRewards */; };
 		A941BEA52AD001CF00FCB01C /* LFRewards in Frameworks */ = {isa = PBXBuildFile; productRef = A941BEA42AD001CF00FCB01C /* LFRewards */; };
@@ -109,7 +108,6 @@
 		A97BF7C22A5C602D00B8F5CA /* AppView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A97BF7C12A5C602D00B8F5CA /* AppView.swift */; };
 		A97BF7D12A5C602F00B8F5CA /* LiquidityFinancialTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A97BF7D02A5C602F00B8F5CA /* LiquidityFinancialTests.swift */; };
 		A97BF7DB2A5C602F00B8F5CA /* BaseAppUITest.swift in Sources */ = {isa = PBXBuildFile; fileRef = A97BF7DA2A5C602F00B8F5CA /* BaseAppUITest.swift */; };
-		A97BF7EB2A5D70C500B8F5CA /* Factory in Frameworks */ = {isa = PBXBuildFile; productRef = A97BF7EA2A5D70C500B8F5CA /* Factory */; };
 		A97BF7EE2A5D719000B8F5CA /* Lottie in Frameworks */ = {isa = PBXBuildFile; productRef = A97BF7ED2A5D719000B8F5CA /* Lottie */; };
 		A97BF8182A5D9DE200B8F5CA /* AvalancheApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = A97BF8172A5D9DE200B8F5CA /* AvalancheApp.swift */; };
 		A97BF81A2A5D9E6B00B8F5CA /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = A97BF8192A5D9E6B00B8F5CA /* AppDelegate.swift */; };
@@ -345,6 +343,7 @@
 		A9CFBB772A9DA7B300269DB8 /* Orbitron-Medium.ttf in Resources */ = {isa = PBXBuildFile; fileRef = A9CFBB752A9DA7B300269DB8 /* Orbitron-Medium.ttf */; };
 		A9D6C4A52A5E5FE00038D0BB /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = A9D6C4A72A5E5FE00038D0BB /* Localizable.strings */; };
 		A9D6C4B22A5E91DF0038D0BB /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = A9D6C4B12A5E91DF0038D0BB /* LaunchScreen.storyboard */; };
+		E2E87F162ADEABBC00D99EBB /* LFNetspendBank in Frameworks */ = {isa = PBXBuildFile; productRef = E2E87F152ADEABBC00D99EBB /* LFNetspendBank */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -456,7 +455,6 @@
 		A97BF7D02A5C602F00B8F5CA /* LiquidityFinancialTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LiquidityFinancialTests.swift; sourceTree = "<group>"; };
 		A97BF7D62A5C602F00B8F5CA /* LiquidityFinancialUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = LiquidityFinancialUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		A97BF7DA2A5C602F00B8F5CA /* BaseAppUITest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseAppUITest.swift; sourceTree = "<group>"; };
-		A97BF8072A5D975900B8F5CA /* LFAccountOnboarding */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = LFAccountOnboarding; path = Modules/LFAccountOnboarding; sourceTree = "<group>"; };
 		A97BF80E2A5D982500B8F5CA /* LFStyleGuide */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = LFStyleGuide; path = Modules/LFStyleGuide; sourceTree = "<group>"; };
 		A97BF8132A5D9CC300B8F5CA /* LFUtilities */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = LFUtilities; path = Modules/LFUtilities; sourceTree = "<group>"; };
 		A97BF8172A5D9DE200B8F5CA /* AvalancheApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AvalancheApp.swift; sourceTree = "<group>"; };
@@ -749,7 +747,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				A989D5402AD7B00E00197EFF /* SolidOnboarding in Frameworks */,
-				A941BE9F2AD001B800FCB01C /* LFBank in Frameworks */,
 				A941BE9B2AD001AA00FCB01C /* LFDashboard in Frameworks */,
 				A9B448C82A8389B90029944C /* OnboardingDomain in Frameworks */,
 				A953E06B2A9358AB00401E06 /* RewardDomain in Frameworks */,
@@ -764,6 +761,7 @@
 				A941BEA12AD001BD00FCB01C /* LFTransaction in Frameworks */,
 				A9B448D12A8389B90029944C /* LFUtilities in Frameworks */,
 				A9B448D22A8389B90029944C /* iPhoneNumberField in Frameworks */,
+				E2E87F162ADEABBC00D99EBB /* LFNetspendBank in Frameworks */,
 				A9B448D32A8389B90029944C /* VGSShowSDK in Frameworks */,
 				06663AFD2ADE399A00A3FF12 /* LFAccessibility in Frameworks */,
 				A9B448D42A8389B90029944C /* Lottie in Frameworks */,
@@ -785,7 +783,6 @@
 			files = (
 				A941BE992ACFFAB100FCB01C /* LFRewards in Frameworks */,
 				06663AF72ADE395D00A3FF12 /* LFAccessibility in Frameworks */,
-				A9E46E9A2A7D68B800D1BE6F /* DogeOnboarding in Frameworks */,
 				A941BE922ACFC76800FCB01C /* BaseDashboard in Frameworks */,
 				A9B4B9422A7C0C76000ED67A /* iPhoneNumberField in Frameworks */,
 				A91D86692A8CC862006D40D4 /* NetworkUtilities in Frameworks */,
@@ -1947,11 +1944,11 @@
 				741493472A99150E00F0DC4D /* FirebaseMessaging */,
 				A941BE9A2AD001AA00FCB01C /* LFDashboard */,
 				A941BE9C2AD001B100FCB01C /* BaseDashboard */,
-				A941BE9E2AD001B800FCB01C /* LFBank */,
 				A941BEA02AD001BD00FCB01C /* LFTransaction */,
 				A941BEA22AD001C700FCB01C /* LFRewards */,
 				A989D53F2AD7B00E00197EFF /* SolidOnboarding */,
 				06663AFC2ADE399A00A3FF12 /* LFAccessibility */,
+				E2E87F152ADEABBC00D99EBB /* LFNetspendBank */,
 			);
 			productName = LiquidityFinancial;
 			productReference = A9B448F02A8389B90029944C /* CauseCard.app */;
@@ -3645,10 +3642,6 @@
 			isa = XCSwiftPackageProductDependency;
 			productName = BaseDashboard;
 		};
-		A941BE9E2AD001B800FCB01C /* LFBank */ = {
-			isa = XCSwiftPackageProductDependency;
-			productName = LFBank;
-		};
 		A941BEA02AD001BD00FCB01C /* LFTransaction */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = LFTransaction;
@@ -4031,6 +4024,10 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 749091152A6584C300071B41 /* XCRemoteSwiftPackageReference "smartystreets-ios-sdk" */;
 			productName = SmartyStreets;
+		};
+		E2E87F152ADEABBC00D99EBB /* LFNetspendBank */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = LFNetspendBank;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};
