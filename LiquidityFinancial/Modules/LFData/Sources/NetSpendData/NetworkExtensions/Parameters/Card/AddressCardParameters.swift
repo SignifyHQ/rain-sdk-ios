@@ -1,5 +1,5 @@
 import Foundation
-import NetSpendDomain
+import BankDomain
 import NetworkUtilities
 
 public struct AddressCardParameters: Parameterable, AddressCardParametersEntity {

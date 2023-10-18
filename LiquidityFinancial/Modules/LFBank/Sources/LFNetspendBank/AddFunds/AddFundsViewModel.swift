@@ -2,7 +2,7 @@ import Combine
 import SwiftUI
 import Factory
 import NetSpendData
-import NetSpendDomain
+import BankDomain
 import NetspendSdk
 import LFUtilities
 

@@ -1,5 +1,5 @@
 import Foundation
-import NetSpendDomain
+import BankDomain
 
 public struct APISetPinRequest: SetPinRequestEntity {
   public let verifyId: String

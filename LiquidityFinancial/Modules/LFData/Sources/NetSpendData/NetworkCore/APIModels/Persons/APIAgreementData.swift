@@ -1,5 +1,5 @@
 import Foundation
-import NetSpendDomain
+import BankDomain
 
 public struct APIAgreementData: Decodable, AgreementDataEntity {
   public let agreements: [APIAgreementData.Agreement]

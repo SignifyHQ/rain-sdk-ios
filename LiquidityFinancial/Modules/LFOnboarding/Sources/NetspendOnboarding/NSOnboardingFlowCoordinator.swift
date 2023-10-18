@@ -3,7 +3,7 @@ import LFUtilities
 import Combine
 import Factory
 import NetSpendData
-import NetSpendDomain
+import BankDomain
 import OnboardingData
 import AccountData
 import AccountDomain

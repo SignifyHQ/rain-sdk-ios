@@ -5,7 +5,7 @@ import LFUtilities
 import LFServices
 import Factory
 import NetSpendData
-import NetSpendDomain
+import BankDomain
 
 @MainActor
 final class DirectDepositViewModel: ObservableObject {

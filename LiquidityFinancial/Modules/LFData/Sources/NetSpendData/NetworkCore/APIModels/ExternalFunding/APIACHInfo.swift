@@ -1,5 +1,5 @@
 import Foundation
-import NetSpendDomain
+import BankDomain
 
 public struct APIACHInfo: ACHInfoEntity, Decodable {
   public var bankName: String?

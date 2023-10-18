@@ -4,7 +4,7 @@ import LFServices
 import NetspendSdk
 import FraudForce
 import LFUtilities
-import NetSpendDomain
+import BankDomain
 
 public class NSPersonsRepository: NSPersonsRepositoryProtocol {
   

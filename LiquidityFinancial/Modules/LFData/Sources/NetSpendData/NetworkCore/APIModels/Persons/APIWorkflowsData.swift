@@ -1,5 +1,5 @@
 import Foundation
-import NetSpendDomain
+import BankDomain
 
 public enum WorkflowsMissingStep: String, Codable, CaseIterable {
   case identityQuestions = "identity_questions"

@@ -1,5 +1,5 @@
 import Foundation
-import NetSpendDomain
+import BankDomain
 
 // swiftlint: disable all
 public struct APINSJwkToken: Decodable, NSJwkTokenEntity {

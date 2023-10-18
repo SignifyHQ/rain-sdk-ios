@@ -1,5 +1,5 @@
 import Foundation
-import NetSpendDomain
+import BankDomain
 
 public struct APIAccountPersonData: Decodable, AccountPersonDataEntity {
   public let liquidityAccountId, externalAccountId, externalPersonId: String

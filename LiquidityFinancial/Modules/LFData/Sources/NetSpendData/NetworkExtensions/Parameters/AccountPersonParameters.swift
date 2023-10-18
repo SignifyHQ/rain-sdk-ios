@@ -1,6 +1,6 @@
 import Foundation
 import NetworkUtilities
-import NetSpendDomain
+import BankDomain
 
 public enum IdNumberType: String {
   case ssn, passport

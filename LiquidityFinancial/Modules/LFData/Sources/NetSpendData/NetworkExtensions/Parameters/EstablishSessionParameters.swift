@@ -1,6 +1,6 @@
 import Foundation
 import NetworkUtilities
-import NetSpendDomain
+import BankDomain
 
 public struct EstablishSessionParameters: Parameterable, EstablishSessionParametersEntity {
   public let encryptedData: String

@@ -1,5 +1,5 @@
 import Foundation
-import NetSpendDomain
+import BankDomain
 
 public struct APIGetApplePayToken: Decodable, GetApplePayTokenEntity {
   public typealias Token = APIApplePayToken

@@ -1,5 +1,5 @@
 import Foundation
-import NetSpendDomain
+import BankDomain
 
 public struct APIPinWheelToken: PinWheelTokenEntity, Decodable {
   public var id: String

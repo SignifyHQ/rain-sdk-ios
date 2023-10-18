@@ -1,5 +1,5 @@
 import Foundation
-import NetSpendDomain
+import BankDomain
 
 public struct APITransferLimitConfig: Codable {
   public let userId: String?

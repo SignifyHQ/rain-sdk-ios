@@ -2,7 +2,7 @@ import Foundation
 import LFUtilities
 import NetspendSdk
 import NetworkUtilities
-import NetSpendDomain
+import BankDomain
 
 public struct APIQuestionData: Decodable, QuestionDataEntiy {
   public let encryptedData: String?

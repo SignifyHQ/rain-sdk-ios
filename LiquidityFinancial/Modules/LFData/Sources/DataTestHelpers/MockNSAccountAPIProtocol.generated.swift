@@ -4,7 +4,7 @@
 
 import Foundation
 import NetSpendData
-import NetSpendDomain
+import BankDomain
 
 public class MockNSAccountAPIProtocol: NSAccountAPIProtocol {
 

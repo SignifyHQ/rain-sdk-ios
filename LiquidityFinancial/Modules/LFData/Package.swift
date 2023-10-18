@@ -14,6 +14,9 @@ let package = Package(
       name: "NetSpendData",
       targets: ["NetSpendData"]),
     .library(
+      name: "SolidData",
+      targets: ["SolidData"]),
+    .library(
       name: "AccountData",
       targets: ["AccountData"]),
     .library(
@@ -56,7 +59,16 @@ let package = Package(
       name: "NetSpendData",
       dependencies: [
         "LFServices", "LFUtilities", "Factory",
-        .product(name: "NetSpendDomain", package: "LFDomain"),
+        .product(name: "BankDomain", package: "LFDomain"),
+        .product(name: "NetworkUtilities", package: "LFNetwork"),
+        .product(name: "CoreNetwork", package: "LFNetwork")
+      ]
+    ),
+    .target(
+      name: "SolidData",
+      dependencies: [
+        "LFServices", "LFUtilities", "Factory",
+        .product(name: "BankDomain", package: "LFDomain"),
         .product(name: "NetworkUtilities", package: "LFNetwork"),
         .product(name: "CoreNetwork", package: "LFNetwork")
       ]

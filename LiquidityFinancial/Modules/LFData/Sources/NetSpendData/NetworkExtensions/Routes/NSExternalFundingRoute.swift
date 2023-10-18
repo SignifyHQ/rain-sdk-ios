@@ -2,7 +2,7 @@ import Foundation
 import CoreNetwork
 import NetworkUtilities
 import AuthorizationManager
-import NetSpendDomain
+import BankDomain
 
 public enum NSExternalFundingRoute {
   case set(ExternalCardParameters, String)

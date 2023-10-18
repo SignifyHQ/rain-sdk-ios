@@ -1,5 +1,5 @@
 import Foundation
-import NetSpendDomain
+import BankDomain
 
 // sourcery: AutoMockable
 public protocol NSAccountAPIProtocol {

@@ -1,5 +1,5 @@
 import Foundation
-import NetSpendDomain
+import BankDomain
 
 public class NSAccountRepository: NSAccountRepositoryProtocol {
   private let accountAPI: NSAccountAPIProtocol

@@ -1,6 +1,6 @@
 import Foundation
 import Factory
-import NetSpendDomain
+import BankDomain
 import CoreNetwork
 
 extension Container {

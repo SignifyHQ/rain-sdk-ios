@@ -1,6 +1,6 @@
 import Foundation
 import NetworkUtilities
-import NetSpendDomain
+import BankDomain
 
 public struct PathDocumentParameters: Parameterable, PathDocumentParametersEntity {
   public let sessionId, documentID: String

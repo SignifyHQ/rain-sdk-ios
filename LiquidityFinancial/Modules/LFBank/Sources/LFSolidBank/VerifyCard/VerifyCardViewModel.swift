@@ -9,7 +9,7 @@ import SwiftUI
 import OnboardingData
 import AccountData
 import NetSpendData
-import NetSpendDomain
+import BankDomain
 
 @MainActor
 class VerifyCardViewModel: ObservableObject {

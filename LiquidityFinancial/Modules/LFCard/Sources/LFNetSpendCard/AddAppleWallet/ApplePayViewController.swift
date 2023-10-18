@@ -3,7 +3,7 @@ import PassKit
 import SwiftUI
 import LFLocalizable
 import NetSpendData
-import NetSpendDomain
+import BankDomain
 import Factory
 import LFUtilities
 

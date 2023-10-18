@@ -1,5 +1,5 @@
 import NetSpendData
-import NetSpendDomain
+import BankDomain
 import Foundation
 import LFStyleGuide
 import LFUtilities

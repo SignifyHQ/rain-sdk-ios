@@ -1,6 +1,6 @@
 import Foundation
 import NetspendSdk
-import NetSpendDomain
+import BankDomain
 
 public protocol NetSpendDataManagerProtocol {
   var jwkToken: NSJwkTokenEntity? { get }

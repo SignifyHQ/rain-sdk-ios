@@ -1,6 +1,6 @@
 import Foundation
 import NetworkUtilities
-import NetSpendDomain
+import BankDomain
 
 public struct VerifyCVVCodeParameters: Parameterable, VerifyCVVCodeParametersEntity {
   public let verificationType: String

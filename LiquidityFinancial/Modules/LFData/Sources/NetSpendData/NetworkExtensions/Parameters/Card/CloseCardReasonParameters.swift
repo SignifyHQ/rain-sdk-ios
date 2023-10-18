@@ -1,6 +1,6 @@
 import Foundation
 import NetworkUtilities
-import NetSpendDomain
+import BankDomain
 
 public struct CloseCardReasonParameters: Parameterable, CloseCardReasonEntity {
   public let reason: String?

@@ -1,7 +1,7 @@
 import Foundation
 import LFUtilities
 import AccountDomain
-import NetSpendDomain
+import BankDomain
 import Factory
 
 class BankStatementViewModel: ObservableObject {

@@ -6,4 +6,7 @@ public enum LiquidityError: Error {
 
   /// An error thrown when certain data or object cannot be initialized.
   case invalidData
+  
+  /// Not supported
+  case notSupport
 }

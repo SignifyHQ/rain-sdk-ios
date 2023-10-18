@@ -1,6 +1,6 @@
 import Combine
 import NetSpendData
-import NetSpendDomain
+import BankDomain
 import Foundation
 import SwiftUI
 import LFLocalizable

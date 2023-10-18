@@ -1,5 +1,5 @@
 import Foundation
-import NetSpendDomain
+import BankDomain
 
 public class APIDocumentData: Decodable, DocumentDataEntity {
   public var requestedDocuments: [RequestedDocument]

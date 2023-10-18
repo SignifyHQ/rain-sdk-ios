@@ -4,7 +4,7 @@ import LFLocalizable
 import LFUtilities
 import LFStyleGuide
 import NetSpendData
-import NetSpendDomain
+import BankDomain
 import NetspendSdk
 import Factory
 

@@ -1,7 +1,7 @@
 import Foundation
 import NetSpendData
 import AccountDomain
-import NetSpendDomain
+import BankDomain
 
 public struct APIUser: Codable {
   public let id: String?

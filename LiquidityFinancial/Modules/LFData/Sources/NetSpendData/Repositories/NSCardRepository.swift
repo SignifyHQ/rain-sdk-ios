@@ -1,5 +1,5 @@
 import Foundation
-import NetSpendDomain
+import BankDomain
 import NetspendSdk
 
 // swiftlint: disable force_cast
@@ -62,7 +62,7 @@ extension APICard: CardEntity {
     APICard.decodeData(session: session, encryptedData: encryptedData) as? T
   }
   
-  public var shippingAddressEntity: NetSpendDomain.ShippingAddressEntity? {
+  public var shippingAddressEntity: BankDomain.ShippingAddressEntity? {
     shippingAddress
   }
 }

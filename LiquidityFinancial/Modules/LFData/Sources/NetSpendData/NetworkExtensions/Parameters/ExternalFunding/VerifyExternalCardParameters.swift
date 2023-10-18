@@ -1,6 +1,6 @@
 import Foundation
 import NetworkUtilities
-import NetSpendDomain
+import BankDomain
 
 public struct VerifyExternalCardParameters: Parameterable, VerifyExternalCardParametersEntity {
   public var transferAmount: Double

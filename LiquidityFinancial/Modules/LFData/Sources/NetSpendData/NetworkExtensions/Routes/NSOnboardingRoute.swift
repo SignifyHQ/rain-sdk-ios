@@ -2,7 +2,7 @@ import Foundation
 import CoreNetwork
 import NetworkUtilities
 import AuthorizationManager
-import NetSpendDomain
+import BankDomain
 
 public enum NSOnboardingRoute {
   case getOnboardingStep(sessionID: String)
