@@ -1,5 +1,5 @@
+import Foundation
 import NetworkUtilities
-import BankDomain
 import CoreNetwork
 import LFUtilities
 

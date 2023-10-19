@@ -1,7 +1,7 @@
 import Combine
 import Factory
 import LFUtilities
-import NetspendOnboarding
+import SolidOnboarding
 import SwiftUI
 import AuthorizationManager
 
@@ -18,13 +18,13 @@ class AppCoordinator: AppCoordinatorProtocol {
     case onboarding
     case onboardingPhone
     case dashboard
-    case dumpOut(NSOnboardingFlowCoordinator.Route)
+    case dumpOut(SolidOnboardingFlowCoordinator.Route)
   }
   
   @LazyInjected(\.authorizationManager)
   private var authorizationManager
-  @LazyInjected(\.nsOnboardingFlowCoordinator)
-  private var onboardingFlowCoordinator
+  @LazyInjected(\.solidOnboardingFlowCoordinator)
+  private var solidOnboardingFlowCoordinator
   @LazyInjected(\.customerSupportService)
   private var customerSupportService
   @LazyInjected(\.accountRepository)
@@ -38,7 +38,7 @@ class AppCoordinator: AppCoordinatorProtocol {
   let routeSubject: CurrentValueSubject<Route, Never> = .init(.onboarding)
   
   init() {
-    onboardingFlowCoordinator
+    solidOnboardingFlowCoordinator
       .routeSubject
       .receive(on: DispatchQueue.main)
       .sink { [weak self] route in
@@ -56,7 +56,7 @@ class AppCoordinator: AppCoordinatorProtocol {
       .store(in: &subscribers)
   }
   
-  private func setOnboardingRoute(_ route: NSOnboardingFlowCoordinator.Route) {
+  private func setOnboardingRoute(_ route: SolidOnboardingFlowCoordinator.Route) {
     if route == .dashboard {
       set(route: .dashboard)
     } else {
@@ -70,7 +70,7 @@ class AppCoordinator: AppCoordinatorProtocol {
   }
   
   func routeUser() {
-    onboardingFlowCoordinator.routeUser()
+    solidOnboardingFlowCoordinator.routeUser()
   }
   
   func logout() {

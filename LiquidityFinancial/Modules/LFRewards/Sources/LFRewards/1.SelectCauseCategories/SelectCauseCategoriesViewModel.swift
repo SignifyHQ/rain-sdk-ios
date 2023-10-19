@@ -12,6 +12,7 @@ public class SelectCauseCategoriesViewModel: ObservableObject {
   
   @LazyInjected(\.rewardRepository) var rewardRepository
   @LazyInjected(\.rewardDataManager) var rewardDataManager
+  @LazyInjected(\.rewardFlowCoordinator) var rewardFlowCoordinator
   
   @Published var selected: [CauseModel] = []
   @Published var isLoading = false
@@ -53,6 +54,10 @@ public class SelectCauseCategoriesViewModel: ObservableObject {
     }
   }
   
+  func skipAndDumpToInformation() {
+    rewardFlowCoordinator.set(route: .information)
+  }
+  
   // swiftlint:disable force_unwrapping
   private func apiFetchCategoriesFundraisers(onCompletion: @escaping () -> Void) {
     Task {
@@ -76,6 +81,5 @@ public class SelectCauseCategoriesViewModel: ObservableObject {
 extension SelectCauseCategoriesViewModel {
   enum Navigation {
     case selectFundraiser(CauseModel, [FundraiserModel])
-    case agreement
   }
 }

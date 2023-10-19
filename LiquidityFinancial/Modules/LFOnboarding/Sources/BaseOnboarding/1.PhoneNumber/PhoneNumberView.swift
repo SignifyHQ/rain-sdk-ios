@@ -22,12 +22,11 @@ public struct PhoneNumberView<ViewModel: PhoneNumberViewModelProtocol>: View {
   @StateObject
   var viewModel: ViewModel
   
-  @ObservedObject
-  var coordinator: BaseOnboardingNavigations
+  @InjectedObject(\.baseOnboardingNavigations)
+  var baseOnboardingNavigation
   
-  public init(viewModel: ViewModel, coordinator: BaseOnboardingNavigations) {
+  public init(viewModel: ViewModel) {
     _viewModel = .init(wrappedValue: viewModel)
-    self.coordinator = coordinator
   }
   
   @FocusState private var keyboardFocus: Bool
@@ -79,7 +78,7 @@ public struct PhoneNumberView<ViewModel: PhoneNumberViewModelProtocol>: View {
     .onChange(of: viewModel.phoneNumber, perform: viewModel.onChangedPhoneNumber)
     .background(Colors.background.swiftUIColor)
     .navigationBarBackButtonHidden()
-    .navigationLink(item: $coordinator.phoneNumberDestinationView) { item in
+    .navigationLink(item: $baseOnboardingNavigation.phoneNumberDestinationView) { item in
         switch item {
         case let .verificationCode(destinationView):
           destinationView

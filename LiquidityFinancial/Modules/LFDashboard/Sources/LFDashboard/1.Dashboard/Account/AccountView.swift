@@ -51,7 +51,8 @@ struct AccountsView: View {
             passcode: passcode
           ) {
             viewModel.navigation = nil
-          }?.navigationBarHidden(true)
+          }?
+            .navigationBarHidden(true)
         case .taxes:
           TaxesView()
         case .rewards:
@@ -84,7 +85,7 @@ struct AccountsView: View {
   }
 }
 
-  // MARK: - View Components
+// MARK: - View Components
 private extension AccountsView {
   @ViewBuilder
   var content: some View {
@@ -248,14 +249,14 @@ private extension AccountsView {
         viewModel.openReward()
       }
       /* TODO: Remove for MVP
-      ArrowButton(
-        image: GenImages.CommonImages.Accounts.atm.swiftUIImage,
-        title: LFLocalizable.AccountView.atm,
-        value: nil,
-        isLoading: $viewModel.isLoading
-      ) {
-        viewModel.getATMAuthorizationCode()
-      }
+       ArrowButton(
+       image: GenImages.CommonImages.Accounts.atm.swiftUIImage,
+       title: LFLocalizable.AccountView.atm,
+       value: nil,
+       isLoading: $viewModel.isLoading
+       ) {
+       viewModel.getATMAuthorizationCode()
+       }
        */
       ArrowButton(
         image: GenImages.CommonImages.Accounts.bankStatements.swiftUIImage,
@@ -281,13 +282,13 @@ private extension AccountsView {
         }
       }
       /* TODO: Remove for MVP
-      ArrowButton(
-        image: GenImages.CommonImages.Accounts.legal.swiftUIImage,
-        title: LFLocalizable.AccountView.legal,
-        value: nil
-      ) {
-        viewModel.openLegal()
-      }
+       ArrowButton(
+       image: GenImages.CommonImages.Accounts.legal.swiftUIImage,
+       title: LFLocalizable.AccountView.legal,
+       value: nil
+       ) {
+       viewModel.openLegal()
+       }
        */
       if viewModel.showAdminMenu {
         ArrowButton(
@@ -317,7 +318,7 @@ private extension AccountsView {
   }
 }
 
-  // MARK: - View Components
+// MARK: - View Components
 private extension AccountsView {
   @ViewBuilder func assetCell(asset: AssetModel) -> some View {
     if let assetType = asset.type {
@@ -336,8 +337,8 @@ private extension AccountsView {
                 viewModel.getLastFourDigits(from: asset.externalAccountId ?? .empty)
               )
             )
-              .foregroundColor(textColor)
-              .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.small.value))
+            .foregroundColor(textColor)
+            .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.small.value))
           }
         }
         .padding(.horizontal, 16)

@@ -39,7 +39,10 @@ let package = Package(
       name: "BaseOnboarding",
       dependencies: [
         "LFUtilities", "LFStyleGuide", "LFLocalizable", "Factory", "iPhoneNumberField",
-        .product(name: "OnboardingDomain", package: "LFDomain")
+        .product(name: "OnboardingDomain", package: "LFDomain"),
+        .product(name: "AccountDomain", package: "LFDomain"),
+        .product(name: "OnboardingData", package: "LFData"),
+        .product(name: "AccountData", package: "LFData")
       ],
       resources: [
         .process("ZResources")
@@ -76,14 +79,14 @@ let package = Package(
       name: "SolidOnboarding",
       dependencies: [
         "LFUtilities", "LFStyleGuide", "LFLocalizable", "Factory", "LFRewards",
-        .product(name: "OnboardingData", package: "LFData"),
-        .product(name: "AccountData", package: "LFData"),
-        .product(name: "NetSpendData", package: "LFData"),
+        .product(name: "SolidData", package: "LFData"),
         .product(name: "RewardData", package: "LFData"),
-        .product(name: "DevicesData", package: "LFData"),
+        .product(name: "RewardDomain", package: "LFDomain"),
         .product(name: "SmartyStreets", package: "smartystreets-ios-sdk"),
         .product(name: "AuthorizationManager", package: "LFNetwork"),
-        .product(name: "OnboardingDomain", package: "LFDomain")
+        .product(name: "AccountData", package: "LFData"),
+        .product(name: "DevicesData", package: "LFData"),
+        .product(name: "SolidDomain", package: "LFDomain")
       ],
       resources: [
         .process("ZResources")

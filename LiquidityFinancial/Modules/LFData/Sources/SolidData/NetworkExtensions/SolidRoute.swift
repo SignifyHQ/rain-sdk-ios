@@ -24,7 +24,7 @@ extension SolidRoute: LFRoute {
   }
   
   public var httpHeaders: HttpHeaders {
-    return [
+    [
       "Content-Type": "application/json",
       "productId": NetworkUtilities.productID,
       "Authorization": self.needAuthorizationKey,

@@ -6,7 +6,7 @@ import LFStyleGuide
 import LFUtilities
 import LFRewards
 import BaseDashboard
-import NetspendOnboarding
+import SolidOnboarding
 import LFNetspendBank
 import Factory
 import LFServices
@@ -20,9 +20,9 @@ public struct HomeView: View {
   
   @StateObject private var viewModel: HomeViewModel
   
-  var onChangeRoute: ((NSOnboardingFlowCoordinator.Route) -> Void)?
+  var onChangeRoute: ((SolidOnboardingFlowCoordinator.Route) -> Void)?
 
-  public init(viewModel: HomeViewModel, onChangeRoute: ((NSOnboardingFlowCoordinator.Route) -> Void)? = nil) {
+  public init(viewModel: HomeViewModel, onChangeRoute: ((SolidOnboardingFlowCoordinator.Route) -> Void)? = nil) {
     _viewModel = .init(wrappedValue: viewModel)
     self.onChangeRoute = onChangeRoute
     dashboardRepository.load { toastMessage in
@@ -42,9 +42,10 @@ public struct HomeView: View {
       analyticsService.track(event: AnalyticsEvent(name: .viewedHome))
       UITabBar.appearance().backgroundColor = Color.white.uiColor
       viewModel.onAppear()
-      dashboardRepository.apiFetchOnboardingState { route in
-        onChangeRoute?(route)
-      }
+      //TODO: Tony Review for this case on Donation App
+//      dashboardRepository.apiFetchOnboardingState { route in
+//        onChangeRoute?(route)
+//      }
     }
     .toolbar {
       ToolbarItem(placement: .navigationBarTrailing) {

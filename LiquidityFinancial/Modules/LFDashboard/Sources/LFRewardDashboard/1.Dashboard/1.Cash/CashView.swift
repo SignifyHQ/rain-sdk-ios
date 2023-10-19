@@ -5,7 +5,7 @@ import LFLocalizable
 import LFNetspendBank
 import LFTransaction
 import LFSolidCard
-import NetspendOnboarding
+import SolidOnboarding
 import LFServices
 
 // TODO: Will use or not
@@ -58,14 +58,6 @@ struct CashView: View {
           kind: transaction.detailType,
           isPopToRoot: false
         )
-      case .agreement(let data):
-        AgreementView(
-          viewModel: AgreementViewModel(fundingAgreement: data),
-          onNext: {
-            //self.viewModel.addFundsViewModel.fundingAgreementData.send(nil)
-          }, onDisappear: { isAcceptAgreement in
-            self.viewModel.handleFundingAcceptAgreement(isAccept: isAcceptAgreement)
-          }, shouldFetchCurrentState: false)
       }
     }
     .fullScreenCover(item: $viewModel.fullScreen) { item in

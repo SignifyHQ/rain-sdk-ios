@@ -1,5 +1,5 @@
 import Foundation
-import LFDashboard
+import LFRewardDashboard
 import BaseDashboard
 import LFTransaction
 import LFUtilities
@@ -19,8 +19,6 @@ final class NavigationContainer {
   func registerModuleNavigation() {
     let container = DIContainerAnyView()
     registerTransactionModuleNavigation(container: container)
-    
-    registerRewardModuleNavigation(container: container)
     
     registerDashboardModuleNavigation(container: container)
   }
@@ -48,15 +46,6 @@ final class NavigationContainer {
           onClose: parameters.onClose
         )
       )
-    }
-  }
-  
-  @MainActor
-  func registerRewardModuleNavigation(container: DIContainerAnyView) {
-    rewardNavigation.setup(container: container)
-    
-    rewardNavigation.registerAgreementView(type: AgreementView.self) { _ in
-      AnyView(AgreementView(viewModel: AgreementViewModel(needBufferData: true)))
     }
   }
   

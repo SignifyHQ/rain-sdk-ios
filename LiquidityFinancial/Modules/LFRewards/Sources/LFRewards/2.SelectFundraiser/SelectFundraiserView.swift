@@ -6,7 +6,6 @@ import Factory
 
 public struct SelectFundraiserView: View {
   @StateObject private var viewModel: SelectFundraiserViewModel
-  @Injected(\.rewardNavigation) var rewardNavigation
   
   let whereStart: RewardWhereStart
   public init(viewModel: SelectFundraiserViewModel, whereStart: RewardWhereStart = .onboarding) {
@@ -22,12 +21,6 @@ public struct SelectFundraiserView: View {
           if viewModel.showSkipButton {
             skipButton
           }
-        }
-      }
-      .navigationLink(item: $viewModel.navigation) { navigation in
-        switch navigation {
-        case .agreement:
-          rewardNavigation.resolveAgreementView()
         }
       }
       .popup(isPresented: $viewModel.showErrorAlert, style: .toast) {
@@ -65,7 +58,7 @@ public struct SelectFundraiserView: View {
     Group {
       if viewModel.showSkipButton {
         SkipFundraiserView {
-          viewModel.navigation = .agreement
+          viewModel.skipAndDumpToInformation()
         }
       }
     }

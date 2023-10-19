@@ -28,14 +28,4 @@ public final class RewardNavigation {
   public func setup(container: DIContainerAnyView) {
     self.container = container
   }
-  
-  public func registerAgreementView(type: Any.Type, factory: @escaping (DIContainerAnyView) -> AnyView) {
-    services[Destination.agreementView.rawValue] = type
-    container.register(type: type, name: Destination.agreementView.rawValue, factory: factory)
-  }
-  
-  public func resolveAgreementView() -> AnyView? {
-    guard let type = services[Destination.agreementView.rawValue] else { return nil }
-    return container.resolve(type: type, name: Destination.agreementView.rawValue)
-  }
 }

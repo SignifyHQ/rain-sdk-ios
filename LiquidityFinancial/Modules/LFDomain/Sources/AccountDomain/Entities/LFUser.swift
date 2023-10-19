@@ -6,6 +6,7 @@ public enum AccountReviewStatusEnum: String {
   case approved
   case rejected
   case inreview
+  case reviewing
 }
 
 public protocol LFUser {

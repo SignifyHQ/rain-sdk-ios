@@ -154,7 +154,7 @@ extension CashViewModel {
     if data == nil {
       navigation = nil
     } else {
-      navigation = .agreement(data)
+//      navigation = .agreement(data)
     }
   }
   
@@ -272,7 +272,6 @@ extension CashViewModel {
     case transactionDetail(TransactionModel)
     case addMoney
     case sendMoney
-    case agreement(APIAgreementData?)
   }
   
   enum FullScreen: Identifiable {

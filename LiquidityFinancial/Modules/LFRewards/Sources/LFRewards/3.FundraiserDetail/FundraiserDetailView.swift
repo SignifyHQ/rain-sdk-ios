@@ -12,7 +12,6 @@ public struct FundraiserDetailView: View {
   
   @Environment(\.dismiss) private var dismiss
   @Environment(\.openURL) private var openUrl
-  @Injected(\.rewardNavigation) var rewardNavigation
   @StateObject private var viewModel: FundraiserDetailViewModel
   
   private var charity: FundraiserDetailModel.Charity? {
@@ -39,12 +38,6 @@ public struct FundraiserDetailView: View {
           selectErrorPopup
         case .geocodeError:
           geocodeErrorPopup
-        }
-      }
-      .navigationLink(item: $viewModel.navigation) { navigation in
-        switch navigation {
-        case .agreement:
-          rewardNavigation.resolveAgreementView()
         }
       }
       .onAppear {

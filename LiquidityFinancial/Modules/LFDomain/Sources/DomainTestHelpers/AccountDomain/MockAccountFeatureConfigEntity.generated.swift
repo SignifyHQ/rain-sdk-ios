@@ -1,0 +1,14 @@
+// Generated using Sourcery 2.0.2 — https://github.com/krzysztofzablocki/Sourcery
+// DO NOT EDIT
+// swiftlint:disable all
+
+import Foundation
+import AccountDomain
+
+public class MockAccountFeatureConfigEntity: AccountFeatureConfigEntity {
+
+    public init() {}
+
+    public var config: String?
+
+}

@@ -1,4 +1,5 @@
 import Foundation
+import Factory
 
 @MainActor
 public class SelectFundraiserViewModel: ObservableObject {
@@ -11,6 +12,8 @@ public class SelectFundraiserViewModel: ObservableObject {
   @Published var popup: Popup?
   @Published var showErrorAlert = false
   
+  @LazyInjected(\.rewardFlowCoordinator) var rewardFlowCoordinator
+  
   var categoryName: String {
     causeModel.name
   }
@@ -21,6 +24,10 @@ public class SelectFundraiserViewModel: ObservableObject {
     self.causeModel = causeModel
     self.fundraisers = fundraisers
     self.showSkipButton = showSkipButton
+  }
+  
+  func skipAndDumpToInformation() {
+    rewardFlowCoordinator.set(route: .information)
   }
 }
 

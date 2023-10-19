@@ -7,7 +7,6 @@ import LFServices
 
 public struct SelectCauseCategoriesView: View {
   @Injected(\.analyticsService) var analyticsService
-  @Injected(\.rewardNavigation) var rewardNavigation
   @StateObject private var viewModel: SelectCauseCategoriesViewModel
   
   var isPopToRoot: Bool {
@@ -31,7 +30,7 @@ public struct SelectCauseCategoriesView: View {
         ToolbarItem(placement: .navigationBarTrailing) {
           if whereStart == .onboarding {
             SkipFundraiserView {
-              viewModel.navigation = .agreement
+              viewModel.skipAndDumpToInformation()
             }
           }
         }
@@ -46,8 +45,6 @@ public struct SelectCauseCategoriesView: View {
               showSkipButton: false),
             whereStart: whereStart
           )
-        case .agreement:
-          rewardNavigation.resolveAgreementView()
         }
       }
       .popup(isPresented: $viewModel.showError, style: .toast) {

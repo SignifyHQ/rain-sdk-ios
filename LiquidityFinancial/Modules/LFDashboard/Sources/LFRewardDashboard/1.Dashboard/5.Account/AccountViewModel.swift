@@ -32,8 +32,6 @@ class AccountViewModel: ObservableObject {
   @Published var achInformation: ACHModel = .default
   @Published var sheet: Sheet?
   
-  private(set) var addFundsViewModel = AddFundsViewModel()
-  
   private var cancellable: Set<AnyCancellable> = []
   
   var networkEnvironment: NetworkEnvironment {
@@ -57,7 +55,6 @@ class AccountViewModel: ObservableObject {
       .store(in: &cancellable)
     
     subscribeLinkedAccounts()
-    handleFundingAgreementData()
     checkNotificationsStatus()
   }
 }
@@ -82,31 +79,6 @@ extension AccountViewModel {
   
   func opencustomerSupportService() {
     customerSupportService.openSupportScreen()
-  }
-  
-  func handleFundingAgreementData() {
-    addFundsViewModel.fundingAgreementData
-      .receive(on: DispatchQueue.main)
-      .sink { [weak self] agreementData in
-        self?.openFundingAgreement(data: agreementData)
-      }
-      .store(in: &cancellable)
-  }
-  
-  func handleFundingAcceptAgreement(isAccept: Bool) {
-    if isAccept {
-      addFundsViewModel.goNextNavigation()
-    } else {
-      addFundsViewModel.stopAction()
-    }
-  }
-  
-  func openFundingAgreement(data: APIAgreementData?) {
-    if data == nil {
-      navigation = nil
-    } else {
-      navigation = .agreement(data)
-    }
   }
   
   func openReward() {
@@ -194,7 +166,6 @@ extension AccountViewModel {
     case bankStatement
     case disputeTransaction(String, String)
     case rewards
-    case agreement(APIAgreementData?)
   }
   
   enum Sheet: Hashable, Identifiable {

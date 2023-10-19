@@ -12,7 +12,6 @@ struct AccountsView: View {
   @Environment(\.scenePhase) var scenePhase
   
   @Injected(\.transactionNavigation) var transactionNavigation
-  @Injected(\.rewardNavigation) var rewardNavigation
   @Injected(\.dashboardNavigation) var dashboardNavigation
   @Injected(\.bankConfig) var bankConfig
   
@@ -48,11 +47,10 @@ struct AccountsView: View {
             passcode: passcode
           ) {
             viewModel.navigation = nil
-          }?.navigationBarHidden(true)
+          }?
+            .navigationBarHidden(true)
         case .rewards:
           transactionNavigation.resolveCurrentReward()
-        case .agreement(let data):
-          rewardNavigation.resolveAgreementView()
         }
       }
       .sheet(item: $viewModel.sheet, content: { sheet in
@@ -83,11 +81,8 @@ private extension AccountsView {
       VStack(alignment: .leading, spacing: 24) {
         connectedAccountsSection
         section(title: LFLocalizable.AccountView.connectNewAccounts) {
-          AddFundsView(
-            viewModel: viewModel.addFundsViewModel,
-            achInformation: $viewModel.achInformation,
-            isDisableView: $viewModel.isDisableView
-          )
+          //TODO: Luan Tran
+          EmptyView()
         }
         section(title: LFLocalizable.AccountView.cardAccountDetails) {
           accountDetailView
@@ -204,7 +199,7 @@ private extension AccountsView {
       .cornerRadius(10)
     }
   }
-
+  
   func section<V: View>(title: String, @ViewBuilder content: () -> V) -> some View {
     VStack(alignment: .leading, spacing: 12) {
       Text(title)
@@ -213,7 +208,7 @@ private extension AccountsView {
       content()
     }
   }
-
+  
   var shortcutSection: some View {
     VStack {
       ArrowButton(
@@ -247,13 +242,13 @@ private extension AccountsView {
         }
       }
       /* TODO: Remove for MVP
-      ArrowButton(
-        image: GenImages.CommonImages.Accounts.legal.swiftUIImage,
-        title: LFLocalizable.AccountView.legal,
-        value: nil
-      ) {
-        viewModel.openLegal.toggle()
-      }
+       ArrowButton(
+       image: GenImages.CommonImages.Accounts.legal.swiftUIImage,
+       title: LFLocalizable.AccountView.legal,
+       value: nil
+       ) {
+       viewModel.openLegal.toggle()
+       }
        */
       if viewModel.showAdminMenu {
         ArrowButton(

@@ -11,13 +11,13 @@ import LFLocalizable
 public class FundraiserDetailViewModel: ObservableObject {
   @LazyInjected(\.rewardRepository) var rewardRepository
   @LazyInjected(\.rewardDataManager) var rewardDataManager
+  @LazyInjected(\.rewardFlowCoordinator) var rewardFlowCoordinator
   
   @Published var isGeocodingAddress = false
   @Published var isSelecting = false
   @Published var isLoading = false
   @Published var popup: Popup?
   @Published var fundraiserDetail: FundraiserDetailModel?
-  @Published var navigation: Navigation?
   
   lazy var rewardUseCase: RewardUseCase = {
     RewardUseCase(repository: rewardRepository)
@@ -44,6 +44,10 @@ public class FundraiserDetailViewModel: ObservableObject {
   
   func onAppear() {
     apiFetchDetailFundraiser()
+  }
+  
+  func skipAndDumpToInformation() {
+    rewardFlowCoordinator.set(route: .information)
   }
   
   func apiFetchDetailFundraiser() {
@@ -125,7 +129,7 @@ public class FundraiserDetailViewModel: ObservableObject {
     case .dashboard:
       NotificationCenter.default.post(name: .selectedFundraisersSuccess, object: nil)
     case .onboarding:
-      navigation = .agreement
+      skipAndDumpToInformation()
     }
   }
 }
@@ -133,10 +137,6 @@ public class FundraiserDetailViewModel: ObservableObject {
   // MARK: - Types
 
 extension FundraiserDetailViewModel {
-  enum Navigation {
-    case agreement
-  }
-  
   enum Popup {
     case selectSuccess(String)
     case selectError

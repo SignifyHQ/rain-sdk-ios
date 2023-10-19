@@ -29,13 +29,17 @@ let package = Package(
       name: "CryptoChartDomain",
       targets: ["CryptoChartDomain"]),
     .library(
+      name: "SolidDomain",
+      targets: ["SolidDomain"]),
+    .library(
       name: "DomainTestHelpers",
       targets: ["DomainTestHelpers"])
   ],
   dependencies: [
     .package(name: "LFUtilities", path: "../LFUtilities"),
     .package(name: "TestHelpers", path: "../TestHelpers"),
-    .package(url: "https://github.com/krzysztofzablocki/Sourcery.git", from: "2.0.0")
+    .package(url: "https://github.com/krzysztofzablocki/Sourcery.git", from: "2.0.0"),
+    .package(url:  "https://github.com/Quick/Nimble.git", from: "12.0.0")
   ],
   targets: [
     .target(
@@ -68,9 +72,13 @@ let package = Package(
       dependencies: []
     ),
     .target(
+      name: "SolidDomain",
+      dependencies: []
+    ),
+    .target(
       name: "DomainTestHelpers",
       dependencies: [
-        "AccountDomain", "CryptoChartDomain", "DevicesDomain", "ZerohashDomain", "OnboardingDomain"
+        "AccountDomain", "CryptoChartDomain", "DevicesDomain", "ZerohashDomain", "OnboardingDomain", "SolidDomain"
       ]
     ),
     .testTarget(
@@ -81,6 +89,9 @@ let package = Package(
       dependencies: ["OnboardingDomain", "TestHelpers", "DomainTestHelpers"]),
     .testTarget(
       name: "ZerohashDomainTests",
-      dependencies: ["OnboardingDomain", "TestHelpers", "DomainTestHelpers"])
+      dependencies: ["ZerohashDomain", "TestHelpers", "DomainTestHelpers"]),
+    .testTarget(
+      name: "SolidDomainTests",
+      dependencies: ["SolidDomain", "TestHelpers", "DomainTestHelpers", "Nimble"]),
   ]
 )

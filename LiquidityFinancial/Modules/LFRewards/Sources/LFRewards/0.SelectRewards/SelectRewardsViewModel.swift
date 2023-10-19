@@ -19,6 +19,7 @@ class SelectRewardsViewModel: ObservableObject {
   @LazyInjected(\.rewardRepository) var rewardRepository
   @LazyInjected(\.rewardDataManager) var rewardDataManager
   @LazyInjected(\.analyticsService) var analyticsService
+  @LazyInjected(\.rewardFlowCoordinator) var rewardFlowCoordinator
   
   lazy var selectRewardUseCase: RewardUseCase = {
     RewardUseCase(repository: rewardRepository)
@@ -78,7 +79,7 @@ class SelectRewardsViewModel: ObservableObject {
   }
 
   func cashbackNavigation() {
-    navigation = .agreement
+    rewardFlowCoordinator.set(route: .information)
   }
     
   private func apiSelecteRewardType(option: Option) {
@@ -148,7 +149,6 @@ extension SelectRewardsViewModel {
   }
 
   enum Navigation {
-    case agreement
     case causeFilter([CauseModel])
     case selectFundraiser(CauseModel, [FundraiserModel])
   }

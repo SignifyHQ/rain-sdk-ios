@@ -27,6 +27,13 @@
         "identifier" : "ZerohashDomainTests",
         "name" : "ZerohashDomainTests"
       }
+    },
+    {
+      "target" : {
+        "containerPath" : "container:",
+        "identifier" : "SolidDomainTests",
+        "name" : "SolidDomainTests"
+      }
     }
   ],
   "version" : 1

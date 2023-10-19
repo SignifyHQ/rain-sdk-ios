@@ -11,22 +11,26 @@ import BaseOnboarding
 public struct NSOnboardingContentView: View {
   @StateObject
   var viewModel = NSOnboardingContentViewModel()
-  @StateObject
-  var baseOnboardingNavigation = BaseOnboardingNavigations()
+  
+  @InjectedObject(\.baseOnboardingNavigations)
+  var baseOnboardingNavigation
   
   @Injected(\.accountDataManager)
   var accountDataManager
+  
   @Injected(\.customerSupportService)
   var customerSupportService
+  
   @LazyInjected(\.rewardFlowCoordinator)
   var rewardFlowCoordinator
   
-  let environmentManager = EnvironmentManager()
+  var contenViewFactory: NSContentViewFactory
   
   var onRoute: NSOnboardingFlowCoordinator.Route?
   
   public init(onRoute: NSOnboardingFlowCoordinator.Route? = nil) {
     self.onRoute = onRoute
+    self.contenViewFactory = Container.shared.contenViewFactory.resolve(EnvironmentManager())
   }
   
   public var body: some View {
@@ -43,44 +47,46 @@ public struct NSOnboardingContentView: View {
     Group {
       switch route {
       case .initial:
-        InitialView()
+        contenViewFactory
+          .createView(type: .initial)
       case .phone:
-        PhoneNumberView(
-          viewModel: PhoneNumberViewModel(coordinator: baseOnboardingNavigation),
-          coordinator: baseOnboardingNavigation
-        )
-        .environmentObject(environmentManager)
+        contenViewFactory
+          .createView(type: .phone)
       case .accountLocked:
-        AccountLockedView(viewModel: AccountLockedViewModel())
+        contenViewFactory
+          .createView(type: .accountLocked)
       case .welcome:
-        switch LFUtilities.target {
-        case .DogeCard:
-          DogeCardWelcomeView(destination: AnyView(AgreementView(viewModel: AgreementViewModel())))
-        case .CauseCard, .PrideCard:
-          SelectRewardsView()
-        default:
-          WelcomeView()
-        }
+        contenViewFactory
+          .createView(type: .welcome)
       case .kycReview:
-        KYCStatusView(viewModel: KYCStatusViewModel(state: .inReview(accountDataManager.userNameDisplay)))
+        contenViewFactory
+          .createView(type: .kycReview)
       case .dashboard:
         EmptyView()
       case .question(let questions):
-        QuestionsView(viewModel: QuestionsViewModel(questionList: questions))
+        contenViewFactory
+          .createView(type: .question(questions))
       case .document:
-        UploadDocumentView()
+        contenViewFactory
+          .createView(type: .document)
       case .zeroHash:
-        SetupWalletView()
+        contenViewFactory
+          .createView(type: .zeroHash)
       case .information:
-        PersonalInformationView()
+        contenViewFactory
+          .createView(type: .infomation)
       case .accountReject:
-        KYCStatusView(viewModel: KYCStatusViewModel(state: .reject))
+        contenViewFactory
+          .createView(type: .accountReject)
       case .unclear(let message):
-        KYCStatusView(viewModel: KYCStatusViewModel(state: .common(message)))
-      case .agreement, .featureAgreement:
-        AgreementView(viewModel: AgreementViewModel(needBufferData: true)) {
-          log.info("after accept agreement will fetch missing step and go next:\(viewModel.onboardingFlowCoordinator.routeSubject.value) ")
-        }
+        contenViewFactory
+          .createView(type: .unclear(message))
+      case .agreement:
+        contenViewFactory
+          .createView(type: .agreement)
+      case .featureAgreement:
+        contenViewFactory
+          .createView(type: .featureAgreement)
       case .popTimeUp:
         ZStack {
           timeIsUpPopup
@@ -88,7 +94,8 @@ public struct NSOnboardingContentView: View {
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .background(Color.black.edgesIgnoringSafeArea(.all))
       case .documentInReview:
-        KYCStatusView(viewModel: KYCStatusViewModel(state: .documentInReview))
+        contenViewFactory
+          .createView(type: .documentInReview)
       }
     }
     .onAppear {

@@ -43,7 +43,7 @@ let package = Package(
     .package(name: "TestHelpers", path: "../TestHelpers"),
     .package(url: "https://github.com/hmlongco/Factory", from: "2.3.1"),
     .package(url: "https://github.com/krzysztofzablocki/Sourcery.git", from: "2.0.0"),
-    .package(url:  "https://github.com/Quick/Nimble.git", from: "12.0.0")
+    .package(url: "https://github.com/Quick/Nimble.git", from: "12.0.0")
   ],
   targets: [
     .target(
@@ -69,6 +69,7 @@ let package = Package(
       dependencies: [
         "LFServices", "LFUtilities", "Factory",
         .product(name: "BankDomain", package: "LFDomain"),
+        .product(name: "SolidDomain", package: "LFDomain"),
         .product(name: "NetworkUtilities", package: "LFNetwork"),
         .product(name: "CoreNetwork", package: "LFNetwork")
       ]
@@ -128,6 +129,13 @@ let package = Package(
       name: "OnboardingDataTests",
       dependencies: [
         "OnboardingData", "DataTestHelpers", "TestHelpers", "Nimble",
+        .product(name: "NetworkTestHelpers", package: "LFNetwork")
+      ]
+    ),
+    .testTarget(
+      name: "SolidDataTests",
+      dependencies: [
+        "SolidData", "DataTestHelpers", "TestHelpers", "Nimble",
         .product(name: "NetworkTestHelpers", package: "LFNetwork")
       ]
     )

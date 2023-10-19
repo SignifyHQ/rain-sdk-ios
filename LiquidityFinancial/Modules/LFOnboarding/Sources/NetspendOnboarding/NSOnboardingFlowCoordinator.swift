@@ -18,6 +18,14 @@ import BaseOnboarding
 import ZerohashDomain
 import ZerohashData
 
+extension Container {
+  public var nsOnboardingFlowCoordinator: Factory<OnboardingFlowCoordinatorProtocol> {
+    self {
+      NSOnboardingFlowCoordinator()
+    }.singleton
+  }
+}
+
 public protocol OnboardingFlowCoordinatorProtocol {
   var routeSubject: CurrentValueSubject<NSOnboardingFlowCoordinator.Route, Never> { get }
   func routeUser()
@@ -73,9 +81,7 @@ public class NSOnboardingFlowCoordinator: OnboardingFlowCoordinatorProtocol {
   @LazyInjected(\.onboardingRepository) var onboardingRepository
   @LazyInjected(\.nsPersionRepository) var nsPersionRepository
   @LazyInjected(\.netspendDataManager) var netspendDataManager
-  @LazyInjected(\.rewardFlowCoordinator) var rewardFlowCoordinator
   @LazyInjected(\.accountRepository) var accountRepository
-  @LazyInjected(\.rewardDataManager) var rewardDataManager
   @LazyInjected(\.pushNotificationService) var pushNotificationService
   @LazyInjected(\.analyticsService) var analyticsService
   @LazyInjected(\.nsOnboardingRepository) var nsOnboardingRepository
@@ -83,18 +89,8 @@ public class NSOnboardingFlowCoordinator: OnboardingFlowCoordinatorProtocol {
   
   public let routeSubject: CurrentValueSubject<Route, Never>
   
-  private var subscribers: Set<AnyCancellable> = []
-  
   public init() {
     self.routeSubject = .init(.initial)
-    rewardFlowCoordinator
-      .routeSubject
-      .removeDuplicates()
-      .receive(on: DispatchQueue.main)
-      .sink { [weak self] route in
-        self?.handlerRewardRoute(route: route)
-      }
-      .store(in: &subscribers)
   }
   
   public func set(route: Route) {
@@ -120,15 +116,6 @@ public class NSOnboardingFlowCoordinator: OnboardingFlowCoordinatorProtocol {
     }
   }
 
-  func handlerRewardRoute(route: RewardFlowCoordinator.Route) {
-    switch route {
-    case .information:
-      set(route: .information)
-    case .selectReward:
-      break //do not thing
-    }
-  }
-  
   public func apiFetchCurrentState() async {
     do {
       if authorizationManager.isTokenValid() {
@@ -194,6 +181,14 @@ public class NSOnboardingFlowCoordinator: OnboardingFlowCoordinatorProtocol {
               set(route: .unclear("Required Document Unknown: \(documents.requestedDocuments.debugDescription)"))
             }
           }
+        } else if states.contains(NSOnboardingTypeEnum.primaryPersonKYCApprove) {
+          set(route: .kycReview)
+        } else if states.contains(NSOnboardingTypeEnum.KYCData) {
+          set(route: .unclear("Missing the information: \(NSOnboardingTypeEnum.KYCData.rawValue)"))
+        } else if states.contains(NSOnboardingTypeEnum.expectedUse) {
+          set(route: .unclear("Missing the information: \(NSOnboardingTypeEnum.expectedUse.rawValue)"))
+        } else if states.contains(NSOnboardingTypeEnum.identityScan) {
+          set(route: .unclear("Missing the information: \(NSOnboardingTypeEnum.identityScan.rawValue)"))
         }
       }
     }
@@ -252,7 +247,7 @@ private extension NSOnboardingFlowCoordinator {
         set(route: .dashboard)
       case .rejected:
         set(route: .accountReject)
-      case .inreview:
+      case .inreview, .reviewing:
         set(route: .kycReview)
       }
     }
@@ -264,13 +259,6 @@ extension NSOnboardingFlowCoordinator {
   private func handleDataUser(user: LFUser) {
     accountDataManager.storeUser(user: user)
     trackUserInformation(user: user)
-    //TODO: Tony review it
-    if let rewardType = APIRewardType(rawValue: user.userRewardType ?? "") {
-      rewardDataManager.update(currentSelectReward: rewardType)
-    }
-    if let userSelectedFundraiserID = user.userSelectedFundraiserId {
-      rewardDataManager.update(selectedFundraiserID: userSelectedFundraiserID)
-    }
   }
   
   private func trackUserInformation(user: LFUser) {
