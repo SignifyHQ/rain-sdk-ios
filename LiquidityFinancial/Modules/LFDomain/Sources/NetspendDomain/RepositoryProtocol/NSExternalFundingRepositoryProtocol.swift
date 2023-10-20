@@ -20,5 +20,4 @@ public protocol NSExternalFundingRepositoryProtocol {
   func getFundingStatus(sessionID: String) async throws -> any ExternalFundingsatusEntity
   func getCardRemainingAmount(sessionID: String, type: String) async throws -> [TransferLimitConfigEntity]
   func getBankRemainingAmount(sessionID: String, type: String) async throws -> [TransferLimitConfigEntity]
-  func createPlaidToken(accountId: String) async throws -> CreatePlaidTokenResponseEntity
 }

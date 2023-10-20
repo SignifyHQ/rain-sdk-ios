@@ -4,7 +4,7 @@ import UIKit
 import LFStyleGuide
 import LFUtilities
 import NetSpendData
-import BankDomain
+import NetspendDomain
 import Factory
 import AccountData
 

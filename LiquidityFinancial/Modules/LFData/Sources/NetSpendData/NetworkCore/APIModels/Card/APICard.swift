@@ -1,5 +1,5 @@
 import Foundation
-import BankDomain
+import NetspendDomain
 import NetspendSdk
 import LFUtilities
 

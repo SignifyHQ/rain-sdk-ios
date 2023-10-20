@@ -1,5 +1,5 @@
 import Foundation
-import BankDomain
+import NetspendDomain
 
   // MARK: - ExternalBankStatus
 public struct APIExternalFundingsatus: Decodable, ExternalFundingsatusEntity {

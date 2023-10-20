@@ -1,6 +1,6 @@
 import Foundation
 import AccountDomain
-import BankDomain
+import NetspendDomain
 import LFLocalizable
 
 public struct TransferLimitConfig {

@@ -68,7 +68,7 @@ let package = Package(
       name: "LFRewardDashboard",
       dependencies: [
         "LFUtilities", "LFStyleGuide", "LFLocalizable", "LFAccessibility", "LFServices", "LFTransaction", "CodeScanner", "LFRewards", "BaseDashboard",
-        .product(name: "LFNetspendBank", package: "LFBank"),
+        .product(name: "LFSolidBank", package: "LFBank"),
         .product(name: "OnboardingData", package: "LFData"),
         .product(name: "NetSpendData", package: "LFData"),
         .product(name: "ZerohashData", package: "LFData"),

@@ -5,7 +5,7 @@
 import Foundation
 import AccountDomain
 import Combine
-import NetSpendDomain
+import NetspendDomain
 
 public class MockAccountDataStorageProtocol: AccountDataStorageProtocol {
 

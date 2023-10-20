@@ -14,8 +14,8 @@ let package = Package(
       name: "AccountDomain",
       targets: ["AccountDomain"]),
     .library(
-      name: "BankDomain",
-      targets: ["BankDomain"]),
+      name: "NetspendDomain",
+      targets: ["NetspendDomain"]),
     .library(
       name: "RewardDomain",
       targets: ["RewardDomain"]),
@@ -48,11 +48,11 @@ let package = Package(
     .target(
       name: "AccountDomain",
       dependencies: [
-        "BankDomain", "LFUtilities"
+        "NetspendDomain", "LFUtilities"
       ]
     ),
     .target(
-      name: "BankDomain",
+      name: "NetspendDomain",
       dependencies: []
     ),
     .target(

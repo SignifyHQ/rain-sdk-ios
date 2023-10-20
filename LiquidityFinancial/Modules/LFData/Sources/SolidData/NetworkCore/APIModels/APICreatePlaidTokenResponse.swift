@@ -1,7 +1,7 @@
-import Foundation
+import SolidDomain
 
-public struct APICreatePlaidTokenResponse: Codable {
+public struct APICreatePlaidTokenResponse: Codable, CreatePlaidTokenResponseEntity {
   
-  var linkToken: String
+  public var linkToken: String
   
 }

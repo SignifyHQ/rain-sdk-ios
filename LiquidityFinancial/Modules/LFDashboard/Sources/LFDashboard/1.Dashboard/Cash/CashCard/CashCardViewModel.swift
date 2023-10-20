@@ -3,7 +3,7 @@ import Foundation
 import AccountData
 import LFNetSpendCard
 import NetSpendData
-import BankDomain
+import NetspendDomain
 import Factory
 import LFServices
 

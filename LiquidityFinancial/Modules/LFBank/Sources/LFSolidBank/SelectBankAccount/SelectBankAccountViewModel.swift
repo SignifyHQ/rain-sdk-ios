@@ -136,25 +136,6 @@ class SelectBankAccountViewModel: ObservableObject {
   // MARK: - ExternalLinkBank Functions
 extension SelectBankAccountViewModel {
   func linkExternalBank() {
-    plaidHelper.onLoading = { [weak self] isLoading in
-      self?.linkBankIndicator = isLoading
-    }
-
-    plaidHelper.onFailure = { [weak self] _ in
-      self?.onLinkExternalBankFailure()
-    }
-
-    plaidHelper.onExit = { [weak self] in
-      self?.onPlaidUIDisappear()
-    }
-
-    plaidHelper.onSuccess = { [weak self] in
-      self?.onLinkExternalBankSuccess()
-    }
-
-    plaidHelper.load { [weak self] value in
-      self?.plaidConfig = value
-    }
   }
   
   func onPlaidUIDisappear() {

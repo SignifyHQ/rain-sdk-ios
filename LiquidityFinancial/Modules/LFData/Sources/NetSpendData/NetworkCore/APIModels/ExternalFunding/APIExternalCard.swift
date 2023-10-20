@@ -1,5 +1,5 @@
 import Foundation
-import BankDomain
+import NetspendDomain
 
 public struct APIExternalCard: ExternalCardEntity, Decodable {
   public var cardId: String

@@ -36,7 +36,7 @@ let package = Package(
         .product(name: "AccountData", package: "LFData"),
         .product(name: "RewardData", package: "LFData"),
         .product(name: "RewardDomain", package: "LFDomain"),
-        .product(name: "BankDomain", package: "LFDomain")
+        .product(name: "NetspendDomain", package: "LFDomain")
       ]),
     .target(
       name: "LFSolidCard",
@@ -47,7 +47,7 @@ let package = Package(
         .product(name: "AccountData", package: "LFData"),
         .product(name: "RewardData", package: "LFData"),
         .product(name: "RewardDomain", package: "LFDomain"),
-        .product(name: "BankDomain", package: "LFDomain")
+        .product(name: "NetspendDomain", package: "LFDomain")
       ]),
     .testTarget(
       name: "LFCardTests",

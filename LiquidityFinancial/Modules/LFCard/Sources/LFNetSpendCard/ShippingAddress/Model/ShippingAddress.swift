@@ -1,5 +1,5 @@
 import Foundation
-import BankDomain
+import NetspendDomain
 
 struct ShippingAddress {
   let line1: String

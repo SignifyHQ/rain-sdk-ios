@@ -2,7 +2,7 @@ import Foundation
 import CoreNetwork
 import NetworkUtilities
 import AuthorizationManager
-import BankDomain
+import NetspendDomain
 
 public enum NSAccountRoute {
   case getStatements(sessionId: String, fromMonth: String, fromYear: String, toMonth: String, toYear: String)

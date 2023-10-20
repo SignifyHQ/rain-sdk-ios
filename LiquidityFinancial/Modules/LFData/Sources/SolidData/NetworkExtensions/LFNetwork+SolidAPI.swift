@@ -13,4 +13,13 @@ extension LFCoreNetwork: SolidAPIProtocol where R == SolidRoute {
       decoder: .apiDecoder
     )
   }
+  
+  public func plaidLink(accountId: String, token: String, plaidAccountId: String) async throws -> SolidContact {
+    return try await request(
+      SolidRoute.plaidLink(accountId: accountId, token: token, plaidAccountId: plaidAccountId),
+      target: SolidContact.self,
+      failure: LFErrorObject.self,
+      decoder: .apiDecoder
+    )
+  }
 }

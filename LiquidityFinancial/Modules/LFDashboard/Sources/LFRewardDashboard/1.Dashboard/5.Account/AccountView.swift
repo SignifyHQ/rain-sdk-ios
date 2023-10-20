@@ -3,7 +3,7 @@ import LFUtilities
 import LFStyleGuide
 import LFLocalizable
 import LFServices
-import LFNetspendBank
+import LFSolidBank
 import LFTransaction
 import Factory
 

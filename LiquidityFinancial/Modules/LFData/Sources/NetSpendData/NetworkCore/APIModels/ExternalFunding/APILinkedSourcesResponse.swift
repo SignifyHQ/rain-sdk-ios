@@ -1,5 +1,5 @@
 import Foundation
-import BankDomain
+import NetspendDomain
 
 public struct APILinkedSourcesResponse: Codable, LinkedSourcesEntity {
   public typealias SourceData = APILinkedSourceData

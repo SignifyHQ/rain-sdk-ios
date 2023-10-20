@@ -1,5 +1,5 @@
 import Foundation
-import BankDomain
+import NetspendDomain
 
 public struct APIEstablishedSessionData: Decodable, EstablishedSessionEntity {
   public let id: String

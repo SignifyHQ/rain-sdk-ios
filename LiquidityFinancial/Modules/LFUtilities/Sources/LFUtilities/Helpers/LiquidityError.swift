@@ -9,4 +9,7 @@ public enum LiquidityError: Error {
   
   /// Not supported
   case notSupport
+  
+  /// user Cancelled
+  case userCancelled
 }

@@ -3,7 +3,7 @@ import LFStyleGuide
 import Combine
 import Factory
 import NetSpendData
-import BankDomain
+import NetspendDomain
 import LFUtilities
 import OnboardingData
 import AccountData

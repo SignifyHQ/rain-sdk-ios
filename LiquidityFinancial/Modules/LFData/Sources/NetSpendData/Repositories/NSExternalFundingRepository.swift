@@ -1,5 +1,5 @@
 import LFUtilities
-import BankDomain
+import NetspendDomain
 import NetspendSdk
 
 public class NSExternalFundingRepository: NSExternalFundingRepositoryProtocol {
@@ -26,7 +26,7 @@ public class NSExternalFundingRepository: NSExternalFundingRepositoryProtocol {
     try await externalFundingAPI.getPinWheelToken(sessionID: sessionID)
   }
   
-  public func getACHInfo(sessionID: String) async throws -> BankDomain.ACHInfoEntity {
+  public func getACHInfo(sessionID: String) async throws -> NetspendDomain.ACHInfoEntity {
     try await externalFundingAPI.getACHInfo(sessionID: sessionID)
   }
   
@@ -94,10 +94,6 @@ public class NSExternalFundingRepository: NSExternalFundingRepositoryProtocol {
   
   public func getBankRemainingAmount(sessionID: String, type: String) async throws -> [TransferLimitConfigEntity] {
     try await externalFundingAPI.getBankRemainingAmount(sessionID: sessionID, type: type)
-  }
-  
-  public func createPlaidToken(accountId: String) async throws -> CreatePlaidTokenResponseEntity {
-    throw LiquidityError.notSupport
   }
 }
 

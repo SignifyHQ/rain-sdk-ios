@@ -1,5 +1,5 @@
 import PDFKit
-import BankDomain
+import NetspendDomain
 import SwiftUI
 import LFUtilities
 import LFStyleGuide

@@ -20,3 +20,4 @@ function gen_mocks() {
 
 gen_mocks "../Modules/LFNetwork"
 gen_mocks "../Modules/LFData"
+gen_mocks "../Modules/LFDomain"

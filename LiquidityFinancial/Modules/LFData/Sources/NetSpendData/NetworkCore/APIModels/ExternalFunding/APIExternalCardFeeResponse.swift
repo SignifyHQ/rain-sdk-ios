@@ -1,5 +1,5 @@
 import Foundation
-import BankDomain
+import NetspendDomain
 
 public struct APIExternalCardFeeResponse: ExternalCardFeeEntity, Decodable {
   public let id: String

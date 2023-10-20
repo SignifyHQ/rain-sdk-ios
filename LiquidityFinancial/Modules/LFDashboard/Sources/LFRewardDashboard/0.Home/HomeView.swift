@@ -7,7 +7,7 @@ import LFUtilities
 import LFRewards
 import BaseDashboard
 import SolidOnboarding
-import LFNetspendBank
+import LFSolidBank
 import Factory
 import LFServices
 

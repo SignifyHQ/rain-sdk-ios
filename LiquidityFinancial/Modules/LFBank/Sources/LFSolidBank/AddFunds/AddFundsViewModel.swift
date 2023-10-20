@@ -2,8 +2,9 @@ import Combine
 import SwiftUI
 import Factory
 import NetSpendData
-import BankDomain
+import SolidDomain
 import LFUtilities
+import SolidData
 
 @MainActor
 public final class AddFundsViewModel: ObservableObject {
@@ -18,7 +19,6 @@ public final class AddFundsViewModel: ObservableObject {
   @Published var isLoadingLinkExternalBank: Bool = false
   
   public private(set) var fundingAgreementData = CurrentValueSubject<APIAgreementData?, Never>(nil)
-  private lazy var plaidHelper = PlaidHelper()
   
   private var nextNavigation: Navigation?
   
@@ -26,6 +26,15 @@ public final class AddFundsViewModel: ObservableObject {
   @LazyInjected(\.externalFundingRepository) var externalFundingRepository
   @LazyInjected(\.accountDataManager) var accountDataManager
   @LazyInjected(\.customerSupportService) var customerSupportService
+  @LazyInjected(\.solidLinkSourceRepository) var solidLinkSourceRepository
+  
+  lazy var createPlaidTokenUseCase: CreatePlaidTokenUseCaseProtocol = {
+    CreatePlaidTokenUseCase(repository: solidLinkSourceRepository)
+  }()
+  
+  lazy var plaidLinkUseCase: PlaidLinkUseCaseProtocol = {
+    PlaidLinkUseCase(repository: solidLinkSourceRepository)
+  }()
   
   func loading(option: FundOption) -> Bool {
     switch option {
@@ -44,29 +53,48 @@ public final class AddFundsViewModel: ObservableObject {
 // MARK: - ExternalLinkBank Functions
 extension AddFundsViewModel {
   func linkExternalBank() {
-    plaidHelper.onLoading = { @MainActor [weak self] isLoading in
-      self?.isLoadingLinkExternalBank = isLoading
+    guard let accountId = accountDataManager.fiatAccountID else {
+      return
     }
-
-    plaidHelper.onFailure = { @MainActor [weak self] _ in
-      self?.onLinkExternalBankFailure()
+    Task { @MainActor in
+      defer { self.isLoadingLinkExternalBank = false }
+      self.isLoadingLinkExternalBank = true
+      do {
+        let response = try await self.createPlaidTokenUseCase.execute(accountId: accountId)
+        let plaidResponse = try await PlaidHelper.createLinkTokenConfiguration(token: response.linkToken, onCreated: { [weak self] configuration in
+          self?.plaidConfig = PlaidConfig(config: configuration)
+        })
+        let solidContact = try await self.plaidLinkUseCase.execute(
+          accountId: accountId,
+          token: plaidResponse.publicToken,
+          plaidAccountId: plaidResponse.plaidAccountId
+        )
+        guard let linkedSource = APILinkedSourceData(
+          name: solidContact.name,
+          last4: solidContact.last4,
+          sourceType: APILinkSourceType(rawValue: solidContact.type),
+          sourceId: solidContact.solidContactId,
+          requiredFlow: nil
+        ) else {
+          self.onPlaidUIDisappear()
+          return
+        }
+        self.accountDataManager.addOrEditLinkedSource(linkedSource)
+        
+        navigation = .addMoney
+      } catch {
+        log.error(error.localizedDescription)
+        if let liquidError = error as? LiquidityError, liquidError == .userCancelled {
+          self.onPlaidUIDisappear()
+        } else {
+          self.onLinkExternalBankFailure()
+        }
+      }
     }
-
-    plaidHelper.onExit = { @MainActor [weak self] in
-      self?.onPlaidUIDisappear()
-    }
-
-    plaidHelper.onSuccess = { @MainActor [weak self] in
-      self?.onLinkExternalBankSuccess()
-    }
-
-    plaidHelper.load { @MainActor [weak self] value in
-      self?.plaidConfig = value
-    }
+    
   }
   
   func onPlaidUIDisappear() {
-    plaidConfig = nil
     isLoadingLinkExternalBank = false
     isDisableView = false
   }
@@ -102,27 +130,6 @@ extension AddFundsViewModel {
     customerSupportService.openSupportScreen()
   }
   
-  func apiFetchFundingStatus(for navigation: Navigation, onNext: @escaping (any ExternalFundingsatusEntity) -> Void) {
-    Task {
-      defer {
-        if navigation == .addBankDebit {
-          isLoadingLinkExternalCard = false
-        }
-      }
-      if navigation == .linkExternalBank {
-        isLoadingLinkExternalBank = true
-      } else if navigation == .addBankDebit {
-        isLoadingLinkExternalCard = true
-      }
-      do {
-        let entity = try await self.externalFundingRepository.getFundingStatus(sessionID: accountDataManager.sessionID)
-        onNext(entity)
-      } catch {
-        log.error(error.localizedDescription)
-        isLoadingLinkExternalBank = false
-      }
-    }
-  }
 }
 
 // MARK: - View Helpers
@@ -143,23 +150,10 @@ extension AddFundsViewModel {
   
   func selectedAddOption(navigation: Navigation) {
     switch navigation {
-    case .addBankDebit, .linkExternalBank:
-      apiFetchFundingStatus(for: navigation) { [weak self] fundingStatus in
-        guard let self else { return }
-        let externalCardStatus = fundingStatus.externalCardStatus
-        guard let missingSteps = externalCardStatus.missingSteps, let agreement = externalCardStatus.agreement else { return }
-        if missingSteps.contains(WorkflowsMissingStep.acceptFeatureAgreement.rawValue) {
-          let agreementData = APIAgreementData(agreement: agreement)
-          self.nextNavigation = navigation
-          self.fundingAgreementData.send(agreementData)
-        } else {
-          if navigation == .linkExternalBank {
-            linkExternalBank()
-          } else {
-            self.navigation = navigation
-          }
-        }
-      }
+    case .linkExternalBank:
+      linkExternalBank()
+    case .addBankDebit:
+      self.navigation = navigation
     default:
       self.navigation = navigation
     }

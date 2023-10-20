@@ -1,5 +1,5 @@
 import Foundation
-import BankDomain
+import NetspendDomain
 
 public struct APIExternalTransactionResponse: ExternalTransactionResponseEntity, Decodable {
   public let transactionId: String

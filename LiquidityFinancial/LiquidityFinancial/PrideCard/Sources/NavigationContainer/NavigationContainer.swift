@@ -4,7 +4,7 @@ import BaseDashboard
 import LFTransaction
 import LFUtilities
 import Factory
-import LFNetspendBank
+import LFSolidBank
 import SwiftUI
 import LFRewards
 import NetspendOnboarding
@@ -35,17 +35,8 @@ final class NavigationContainer {
       AnyView(AddBankWithDebitView())
     }
     
-    transactionNavigation.registerDisputeTransactionView(type: NetspendDisputeTransactionViewController.self) { [weak dashboardNavigation] _ in
-      guard let parameters = dashboardNavigation?.disputeTransactionParameters else {
-        return AnyView(EmptyView())
-      }
-      return AnyView(
-        NetspendDisputeTransactionViewController(
-          netspendAccountID: parameters.id,
-          passcode: parameters.passcode,
-          onClose: parameters.onClose
-        )
-      )
+    transactionNavigation.registerDisputeTransactionView(type: EmptyView.self) { _ in
+      return AnyView(EmptyView())
     }
   }
   
@@ -53,17 +44,8 @@ final class NavigationContainer {
   func registerDashboardModuleNavigation(container: DIContainerAnyView) {
     dashboardNavigation.setup(container: container)
     
-    dashboardNavigation.registerDisputeTransactionView(type: NetspendDisputeTransactionViewController.self) { [weak dashboardNavigation] _ in
-      guard let parameters = dashboardNavigation?.disputeTransactionParameters else {
-        return AnyView(EmptyView())
-      }
-      return AnyView(
-        NetspendDisputeTransactionViewController(
-          netspendAccountID: parameters.id,
-          passcode: parameters.passcode,
-          onClose: parameters.onClose
-        )
-      )
+    dashboardNavigation.registerDisputeTransactionView(type: EmptyView.self) { _ in
+      return AnyView(EmptyView())
     }
   }
   

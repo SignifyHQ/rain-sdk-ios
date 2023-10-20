@@ -59,7 +59,7 @@ let package = Package(
       name: "NetSpendData",
       dependencies: [
         "LFServices", "LFUtilities", "Factory",
-        .product(name: "BankDomain", package: "LFDomain"),
+        .product(name: "NetspendDomain", package: "LFDomain"),
         .product(name: "NetworkUtilities", package: "LFNetwork"),
         .product(name: "CoreNetwork", package: "LFNetwork")
       ]
@@ -68,7 +68,7 @@ let package = Package(
       name: "SolidData",
       dependencies: [
         "LFServices", "LFUtilities", "Factory",
-        .product(name: "BankDomain", package: "LFDomain"),
+        .product(name: "NetspendDomain", package: "LFDomain"),
         .product(name: "SolidDomain", package: "LFDomain"),
         .product(name: "NetworkUtilities", package: "LFNetwork"),
         .product(name: "CoreNetwork", package: "LFNetwork")
@@ -122,7 +122,8 @@ let package = Package(
     .target(
       name: "DataTestHelpers",
       dependencies: [
-        "OnboardingData", "NetSpendData", "AccountData", "RewardData", "ZerohashData", "DevicesData", "CryptoChartData"
+        "OnboardingData", "NetSpendData", "AccountData", "RewardData", "ZerohashData", "DevicesData", "CryptoChartData",
+        .product(name: "NetspendDomain", package: "LFDomain")
       ]
     ),
     .testTarget(

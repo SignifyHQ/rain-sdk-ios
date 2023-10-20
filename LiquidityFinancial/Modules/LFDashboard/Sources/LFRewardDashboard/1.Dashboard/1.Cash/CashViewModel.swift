@@ -2,12 +2,12 @@ import Foundation
 import LFSolidCard
 import Factory
 import NetSpendData
-import BankDomain
+import NetspendDomain
 import AccountDomain
 import AccountData
 import LFUtilities
 import LFBaseBank
-import LFNetspendBank
+import LFSolidBank
 import LFTransaction
 import Combine
 

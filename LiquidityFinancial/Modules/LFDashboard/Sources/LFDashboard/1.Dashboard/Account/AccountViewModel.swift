@@ -4,7 +4,7 @@ import UIKit
 import LFUtilities
 import Factory
 import NetSpendData
-import BankDomain
+import NetspendDomain
 import NetspendSdk
 import LFNetspendBank
 import LFBaseBank

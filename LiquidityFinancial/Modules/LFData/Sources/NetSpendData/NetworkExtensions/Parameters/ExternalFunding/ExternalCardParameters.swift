@@ -1,6 +1,6 @@
 import Foundation
 import NetworkUtilities
-import BankDomain
+import NetspendDomain
 
 public struct ExternalCardExpiration: ExternalCardExpirationEntity {
   public var month: String

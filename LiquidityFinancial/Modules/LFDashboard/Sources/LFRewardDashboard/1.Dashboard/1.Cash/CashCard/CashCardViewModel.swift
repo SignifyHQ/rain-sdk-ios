@@ -3,7 +3,7 @@ import Foundation
 import AccountData
 import LFSolidCard
 import NetSpendData
-import BankDomain
+import NetspendDomain
 import Factory
 
 @MainActor

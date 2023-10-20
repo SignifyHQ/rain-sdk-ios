@@ -1,7 +1,7 @@
 import Foundation
 import Factory
 import CoreNetwork
-import BankDomain
+import NetspendDomain
 
 extension Container {
   public var netspendAPI: Factory<NSPersonsAPIProtocol> {

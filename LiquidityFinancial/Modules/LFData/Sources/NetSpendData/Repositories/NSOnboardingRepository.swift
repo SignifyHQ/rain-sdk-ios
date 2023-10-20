@@ -1,5 +1,5 @@
 import Foundation
-import BankDomain
+import NetspendDomain
 
 public class NSOnboardingRepository: NSOnboardingRepositoryProtocol {
   private let onboardingAPI: NSOnboardingAPIProtocol
