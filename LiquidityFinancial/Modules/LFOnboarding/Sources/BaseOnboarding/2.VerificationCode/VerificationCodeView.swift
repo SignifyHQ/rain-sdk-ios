@@ -17,9 +17,9 @@ public struct VerificationCodeView<ViewModel: VerificationCodeViewModelProtocol>
   var analyticsService
   
   @ObservedObject
-  var coordinator: BaseOnboardingNavigations
+  var coordinator: BaseOnboardingDestinationView
   
-  public init(viewModel: ViewModel, coordinator: BaseOnboardingNavigations) {
+  public init(viewModel: ViewModel, coordinator: BaseOnboardingDestinationView) {
     _viewModel = .init(wrappedValue: viewModel)
     self.coordinator = coordinator
   }

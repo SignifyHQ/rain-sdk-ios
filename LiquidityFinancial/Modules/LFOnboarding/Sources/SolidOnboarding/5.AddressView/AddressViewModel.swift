@@ -136,9 +136,13 @@ final class AddressViewModel: ObservableObject {
       isLoading = true
       do {
         let parameters = createPersonParameters()
-        _ = try await solidCreatePersonUseCase.execute(parameters: parameters)
-        try await solidOnboardingFlowCoordinator.handlerOnboardingStep()
-        analyticsService.track(event: AnalyticsEvent(name: .addressCompleted))
+        let result = try await solidCreatePersonUseCase.execute(parameters: parameters)
+        if result {
+          try await solidOnboardingFlowCoordinator.handlerOnboardingStep()
+          analyticsService.track(event: AnalyticsEvent(name: .addressCompleted))
+        } else {
+          toastMessage = "Something went wrong, please try again later!"
+        }
       } catch {
         log.error(error)
         toastMessage = error.localizedDescription
@@ -153,10 +157,10 @@ final class AddressViewModel: ObservableObject {
   private func createPersonParameters() -> APISolidPersonParameters {
     var typeGovernmentID: String = ""
     var governmentID: String = ""
-    if let ssn = accountDataManager.userInfomationData.ssn {
+    if let ssn = accountDataManager.userInfomationData.ssn, ssn.isEmpty == false {
       typeGovernmentID = SolidIDType.SSN.rawValue
       governmentID = ssn
-    } else if let passport = accountDataManager.userInfomationData.passport {
+    } else if let passport = accountDataManager.userInfomationData.passport, passport.isEmpty == false {
       typeGovernmentID = SolidIDType.PASSPORT.rawValue
       governmentID = passport
     }

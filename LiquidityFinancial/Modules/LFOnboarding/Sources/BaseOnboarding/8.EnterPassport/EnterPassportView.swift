@@ -13,7 +13,7 @@ public struct EnterPassportView: View {
   @FocusState
   var keyboardFocus: Bool
 
-  @InjectedObject(\.baseOnboardingNavigations)
+  @InjectedObject(\.baseOnboardingDestinationView)
   var baseOnboardingNavigation
   
   let onEnterAddress: () -> Void

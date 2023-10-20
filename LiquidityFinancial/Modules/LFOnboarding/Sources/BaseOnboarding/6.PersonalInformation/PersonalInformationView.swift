@@ -17,7 +17,7 @@ public struct PersonalInformationView: View {
   @StateObject
   var viewModel: PersonalInformationViewModel
 
-  @InjectedObject(\.baseOnboardingNavigations)
+  @InjectedObject(\.baseOnboardingDestinationView)
   var baseOnboardingNavigation
   
   let onEnterSSN: () -> Void

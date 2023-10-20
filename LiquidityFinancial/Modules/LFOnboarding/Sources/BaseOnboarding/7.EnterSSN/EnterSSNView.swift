@@ -11,7 +11,7 @@ public struct EnterSSNView: View {
   var analyticsService
   @StateObject
   var viewModel: EnterSSNViewModel
-  @InjectedObject(\.baseOnboardingNavigations)
+  @InjectedObject(\.baseOnboardingDestinationView)
   var baseOnboardingNavigation
   @State
   private var toastMessage: String?
@@ -136,6 +136,7 @@ public struct EnterSSNView: View {
             isDisable: false,
             type: .secondary
           ) {
+            self.viewModel.accountDataManager.update(ssn: nil)
             self.onEnterPassport()
           }
         }

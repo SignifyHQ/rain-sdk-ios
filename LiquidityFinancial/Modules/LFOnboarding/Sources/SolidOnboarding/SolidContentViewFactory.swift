@@ -32,14 +32,14 @@ final class SolidContentViewFactory {
   
   let environmentManager: EnvironmentManager
   let flowCoordinator: SolidOnboardingFlowCoordinatorProtocol
-  let baseOnboardingNavigation: BaseOnboardingNavigations
+  let baseOnboardingNavigation: BaseOnboardingDestinationView
   let accountDataManager: AccountDataStorageProtocol
   
   init(
     container: Container,
     environment: EnvironmentManager
   ) {
-    baseOnboardingNavigation = container.baseOnboardingNavigations.callAsFunction()
+    baseOnboardingNavigation = container.baseOnboardingDestinationView.callAsFunction()
     flowCoordinator = container.solidOnboardingFlowCoordinator.callAsFunction()
     accountDataManager = container.accountDataManager.callAsFunction()
     environmentManager = environment

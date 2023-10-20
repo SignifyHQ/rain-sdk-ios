@@ -24,8 +24,8 @@ public protocol VerificationCodeViewModelProtocol: ObservableObject {
   var requireAuth: [RequiredAuth] { get set }
   var cancellables: Set<AnyCancellable> { get set }
   
-  var coordinator: BaseOnboardingNavigations { get }
-  init(phoneNumber: String, requireAuth: [RequiredAuth], coordinator: BaseOnboardingNavigations)
+  var coordinator: BaseOnboardingDestinationView { get }
+  init(phoneNumber: String, requireAuth: [RequiredAuth], coordinator: BaseOnboardingDestinationView)
   
   func handleAfterGetOTP(formatPhoneNumber: String, code: String)
   func performVerifyOTPCode(formatPhoneNumber: String, code: String)

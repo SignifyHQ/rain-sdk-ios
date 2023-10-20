@@ -3,12 +3,12 @@ import SwiftUI
 import Factory
 
 public extension Container {
-    var baseOnboardingNavigations: Factory<BaseOnboardingNavigations> {
-      self { BaseOnboardingNavigations() }.singleton
+    var baseOnboardingDestinationView: Factory<BaseOnboardingDestinationView> {
+      self { BaseOnboardingDestinationView() }.singleton
     }
 }
 
-public final class BaseOnboardingNavigations: ObservableObject {
+public final class BaseOnboardingDestinationView: ObservableObject {
   public init() {}
   
   @Published public var verificationDestinationView: VerificationCodeNavigation?

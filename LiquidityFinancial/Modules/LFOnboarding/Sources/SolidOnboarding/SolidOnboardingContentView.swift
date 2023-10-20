@@ -12,7 +12,7 @@ public struct SolidOnboardingContentView: View {
   @StateObject
   var viewModel = SolidOnboardingContentViewModel()
   
-  @InjectedObject(\.baseOnboardingNavigations)
+  @InjectedObject(\.baseOnboardingDestinationView)
   var baseOnboardingNavigation
   
   @Injected(\.accountDataManager)

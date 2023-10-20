@@ -26,6 +26,7 @@ public final class EnterPassportViewModel: ObservableObject {
   }
   @Published var isActionAllowed: Bool = false {
     didSet {
+      guard isActionAllowed else { return }
       accountDataManager.update(passport: passport)
     }
   }

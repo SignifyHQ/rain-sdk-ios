@@ -27,14 +27,14 @@ final class NSContentViewFactory {
   
   let environmentManager: EnvironmentManager
   let flowCoordinator: OnboardingFlowCoordinatorProtocol
-  let baseOnboardingNavigation: BaseOnboardingNavigations
+  let baseOnboardingNavigation: BaseOnboardingDestinationView
   let accountDataManager: AccountDataStorageProtocol
   
   init(
     container: Container,
     environment: EnvironmentManager
   ) {
-    baseOnboardingNavigation = container.baseOnboardingNavigations.callAsFunction()
+    baseOnboardingNavigation = container.baseOnboardingDestinationView.callAsFunction()
     flowCoordinator = container.nsOnboardingFlowCoordinator.callAsFunction()
     accountDataManager = container.accountDataManager.callAsFunction()
     environmentManager = environment

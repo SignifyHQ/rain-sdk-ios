@@ -22,7 +22,7 @@ public struct PhoneNumberView<ViewModel: PhoneNumberViewModelProtocol>: View {
   @StateObject
   var viewModel: ViewModel
   
-  @InjectedObject(\.baseOnboardingNavigations)
+  @InjectedObject(\.baseOnboardingDestinationView)
   var baseOnboardingNavigation
   
   public init(viewModel: ViewModel) {

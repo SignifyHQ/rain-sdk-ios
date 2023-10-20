@@ -10,8 +10,8 @@ import BaseOnboarding
 
 @MainActor
 final class PhoneNumberViewModel: ObservableObject, PhoneNumberViewModelProtocol {
-  unowned let coordinator: BaseOnboarding.BaseOnboardingNavigations
-  init(coordinator: BaseOnboarding.BaseOnboardingNavigations) {
+  unowned let coordinator: BaseOnboarding.BaseOnboardingDestinationView
+  init(coordinator: BaseOnboarding.BaseOnboardingDestinationView) {
     self.coordinator = coordinator
   }
   
