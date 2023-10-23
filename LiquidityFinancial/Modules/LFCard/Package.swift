@@ -8,6 +8,10 @@ let package = Package(
   platforms: [.iOS(.v15), .macOS(.v10_14)],
   products: [
     .library(
+      name: "BaseCard",
+      targets: ["BaseCard"]
+    ),
+    .library(
       name: "LFNetSpendCard",
       targets: ["LFNetSpendCard"]
     ),
@@ -28,7 +32,7 @@ let package = Package(
   ],
   targets: [
     .target(
-      name: "LFNetSpendCard",
+      name: "BaseCard",
       dependencies: [
         "LFUtilities", "LFStyleGuide", "LFLocalizable", "LFServices", "Factory", "LFRewards",
         .product(name: "OnboardingData", package: "LFData"),
@@ -39,9 +43,20 @@ let package = Package(
         .product(name: "NetspendDomain", package: "LFDomain")
       ]),
     .target(
+      name: "LFNetSpendCard",
+      dependencies: [
+        "BaseCard", "LFUtilities", "LFStyleGuide", "LFLocalizable", "LFServices", "Factory", "LFRewards",
+        .product(name: "OnboardingData", package: "LFData"),
+        .product(name: "NetSpendData", package: "LFData"),
+        .product(name: "AccountData", package: "LFData"),
+        .product(name: "RewardData", package: "LFData"),
+        .product(name: "RewardDomain", package: "LFDomain"),
+        .product(name: "NetspendDomain", package: "LFDomain")
+      ]),
+    .target(
       name: "LFSolidCard",
       dependencies: [
-        "LFUtilities", "LFStyleGuide", "LFLocalizable", "LFServices", "Factory", "LFRewards",
+        "BaseCard", "LFUtilities", "LFStyleGuide", "LFLocalizable", "LFServices", "Factory", "LFRewards",
         .product(name: "OnboardingData", package: "LFData"),
         .product(name: "NetSpendData", package: "LFData"),
         .product(name: "AccountData", package: "LFData"),
@@ -51,6 +66,6 @@ let package = Package(
       ]),
     .testTarget(
       name: "LFCardTests",
-      dependencies: ["LFNetSpendCard", "LFSolidCard"])
+      dependencies: ["BaseCard", "LFNetSpendCard", "LFSolidCard"])
   ]
 )

@@ -4,12 +4,13 @@ import LFStyleGuide
 import LFLocalizable
 import LFNetSpendCard
 import BaseDashboard
+import BaseCard
 
 struct CashCardView: View {
   @StateObject private var viewModel: CashCardViewModel
   @Binding var isNotLinkedCard: Bool
   
-  let listCardViewModel: ListCardsViewModel
+  let listCardViewModel: NSListCardsViewModel
   let isPOFlow: Bool
   let showLoadingIndicator: Bool
   let cashBalance: Double
@@ -29,7 +30,7 @@ struct CashCardView: View {
     showLoadingIndicator: Bool,
     cashBalance: Double,
     assetType: AssetType,
-    listCardViewModel: ListCardsViewModel,
+    listCardViewModel: NSListCardsViewModel,
     orderCardAction: @escaping () -> Void
   ) {
     _isNotLinkedCard = isNoLinkedCard
@@ -69,13 +70,22 @@ struct CashCardView: View {
       activateCard(card: card)
     }
     .navigationLink(isActive: $viewModel.isShowCardDetail) {
-      ListCardsView(viewModel: listCardViewModel)
+      ListCardsView<
+        NSListCardsViewModel,
+        NSCardViewModel,
+        NSEnterCVVCodeViewModel,
+        NSSetCardPinViewModel,
+        NSAddAppleWalletViewModel
+      >(viewModel: listCardViewModel)
     }
   }
   
   @ViewBuilder func activateCard(card: CardModel) -> some View {
+    EmptyView()
     if card.cardType == .physical {
-      ActivatePhysicalCardView(card: card)
+      ActivatePhysicalCardView<
+        NSEnterCVVCodeViewModel, NSSetCardPinViewModel, NSAddAppleWalletViewModel
+      >(card: card)
         .embedInNavigation()
     }
   }

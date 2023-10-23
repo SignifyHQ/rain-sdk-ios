@@ -6,6 +6,7 @@ import LFNetspendBank
 import BaseDashboard
 import LFNetSpendCard
 import Factory
+import BaseCard
 
 struct DashboardView: View {
   
@@ -23,7 +24,10 @@ struct DashboardView: View {
       case .cash:
         CashView(
           viewModel: CashViewModel(),
-          listCardViewModel: ListCardsViewModel(cardData: dashboardRepository.$netspendCardData)
+          listCardViewModel: NSListCardsViewModel(
+            cardData: dashboardRepository.$netspendCardData,
+            coordinator: Container().baseCardDestinationObservable.callAsFunction()
+          )
         )
       case .rewards:
         RewardTabView()

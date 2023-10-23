@@ -46,8 +46,7 @@ let package = Package(
         .product(name: "ZerohashData", package: "LFData"),
         .product(name: "DevicesData", package: "LFData"),
         .product(name: "AuthorizationManager", package: "LFNetwork"),
-        .product(name: "LFNetSpendCard", package: "LFCard"),
-        .product(name: "LFSolidCard", package: "LFCard"),
+        .product(name: "BaseCard", package: "LFCard"),
         .product(name: "NetspendOnboarding", package: "LFOnboarding")
       ]
     ),

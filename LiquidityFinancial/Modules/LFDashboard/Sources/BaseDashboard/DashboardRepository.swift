@@ -6,8 +6,7 @@ import AccountDomain
 import NetSpendData
 import Combine
 import LFBaseBank
-import LFNetSpendCard
-import LFSolidCard
+import BaseCard
 import NetspendOnboarding
 import OnboardingDomain
 import LFServices
@@ -43,8 +42,8 @@ public final class DashboardRepository: ObservableObject {
   
   @Published public var isLoadingRewardTab: Bool = false
   
-  @Published public var netspendCardData: LFNetSpendCard.CardData = CardData(cards: [], metaDatas: [], loading: true)
-  @Published public var solidCardData: LFSolidCard.CardData = CardData(cards: [], metaDatas: [], loading: true)
+  @Published public var netspendCardData: CardData = CardData(cards: [], metaDatas: [], loading: true)
+  @Published public var solidCardData: CardData = CardData(cards: [], metaDatas: [], loading: true)
   @Published public var achInformationData: (model: ACHModel, loading: Bool) = (.default, false)
   @Published public var featureConfig: AccountFeatureConfigData = AccountFeatureConfigData(configJSON: "", isLoading: false)
   

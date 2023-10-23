@@ -5,6 +5,7 @@ import LFUtilities
 import BaseDashboard
 import LFSolidCard
 import LFRewards
+import Factory
 
 struct DashboardView: View {
   @StateObject private var viewModel: DashboardViewModel
@@ -21,7 +22,12 @@ struct DashboardView: View {
     Group {
       switch viewModel.option {
       case .cash:
-        CashView(listCardViewModel: ListCardsViewModel(cardData: dataStorages.$solidCardData)) {
+          CashView(
+            listCardViewModel: SolidListCardsViewModel(
+              cardData: dataStorages.$solidCardData,
+              coordinator: Container().baseCardDestinationObservable.callAsFunction()
+            )
+          ) {
           viewModel.handleGuestUser()
         }
       case .rewards:

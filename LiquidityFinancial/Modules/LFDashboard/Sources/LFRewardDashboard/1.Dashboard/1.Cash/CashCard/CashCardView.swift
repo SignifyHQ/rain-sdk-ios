@@ -3,6 +3,7 @@ import LFUtilities
 import LFStyleGuide
 import LFLocalizable
 import LFSolidCard
+import BaseCard
 
 struct CashCardView: View {
   @StateObject private var viewModel: CashCardViewModel
@@ -13,7 +14,7 @@ struct CashCardView: View {
   let cashBalance: Double
   let assetType: AssetType
   let orderCardAction: () -> Void
-  let listCardViewModel: ListCardsViewModel
+  let listCardViewModel: SolidListCardsViewModel
   
   private var isCardAvailable: Bool {
     isPOFlow
@@ -28,7 +29,7 @@ struct CashCardView: View {
     showLoadingIndicator: Bool,
     cashBalance: Double,
     assetType: AssetType,
-    listCardViewModel: ListCardsViewModel,
+    listCardViewModel: SolidListCardsViewModel,
     orderCardAction: @escaping () -> Void
   ) {
     _isNotLinkedCard = isNoLinkedCard
@@ -68,13 +69,21 @@ struct CashCardView: View {
       activateCard(card: card)
     }
     .navigationLink(isActive: $viewModel.isShowCardDetail) {
-      ListCardsView(viewModel: listCardViewModel)
+      ListCardsView<
+        SolidListCardsViewModel,
+        SolidCardViewModel,
+        SolidEnterCVVCodeViewModel,
+        SolidSetCardPinViewModel,
+        SolidAddAppleWalletViewModel
+      >(viewModel: listCardViewModel)
     }
   }
   
   @ViewBuilder func activateCard(card: CardModel) -> some View {
     if card.cardType == .physical {
-      ActivatePhysicalCardView(card: card)
+      ActivatePhysicalCardView<
+        SolidEnterCVVCodeViewModel, SolidSetCardPinViewModel, SolidAddAppleWalletViewModel
+      >(card: card)
         .embedInNavigation()
     }
   }

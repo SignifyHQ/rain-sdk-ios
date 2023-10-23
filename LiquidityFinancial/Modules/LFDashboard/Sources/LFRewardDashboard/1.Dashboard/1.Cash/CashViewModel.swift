@@ -10,6 +10,7 @@ import LFBaseBank
 import LFSolidBank
 import LFTransaction
 import Combine
+import BaseCard
 
 @MainActor
 final class CashViewModel: ObservableObject {

@@ -5,6 +5,7 @@ import LFSolidCard
 import NetSpendData
 import NetspendDomain
 import Factory
+import BaseCard
 
 @MainActor
 final class CashCardViewModel: ObservableObject {
