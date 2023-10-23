@@ -4,7 +4,6 @@
 
 import Foundation
 import NetSpendData
-import NetSpendDomain
 
 public class MockNSCardAPIProtocol: NSCardAPIProtocol {
 

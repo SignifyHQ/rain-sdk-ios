@@ -3,6 +3,7 @@
 // swiftlint:disable all
 
 import Foundation
+import SolidData
 
 public class MockSolidAPIProtocol: SolidAPIProtocol {
 

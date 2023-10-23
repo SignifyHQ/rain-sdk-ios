@@ -122,8 +122,15 @@ let package = Package(
     .target(
       name: "DataTestHelpers",
       dependencies: [
-        "OnboardingData", "NetSpendData", "AccountData", "RewardData", "ZerohashData", "DevicesData", "CryptoChartData",
+        "OnboardingData", "NetSpendData", "AccountData", "RewardData", "ZerohashData", "DevicesData", "CryptoChartData", "SolidData",
         .product(name: "NetspendDomain", package: "LFDomain")
+      ]
+    ),
+    .testTarget(
+      name: "DevicesDataTests",
+      dependencies: [
+        "DevicesData", "DataTestHelpers", "Nimble",
+        .product(name: "NetworkTestHelpers", package: "LFNetwork")
       ]
     ),
     .testTarget(
