@@ -5,10 +5,36 @@
 import Foundation
 import SolidData
 
-public class MockSolidAPIProtocol: SolidAPIProtocol {
+public class MockSolidExternalFundingAPIProtocol: SolidExternalFundingAPIProtocol {
 
     public init() {}
 
+
+    //MARK: - createDebitCardToken
+
+    public var createDebitCardTokenAccountIDThrowableError: Error?
+    public var createDebitCardTokenAccountIDCallsCount = 0
+    public var createDebitCardTokenAccountIDCalled: Bool {
+        return createDebitCardTokenAccountIDCallsCount > 0
+    }
+    public var createDebitCardTokenAccountIDReceivedAccountID: String?
+    public var createDebitCardTokenAccountIDReceivedInvocations: [String] = []
+    public var createDebitCardTokenAccountIDReturnValue: APISolidDebitCardToken!
+    public var createDebitCardTokenAccountIDClosure: ((String) async throws -> APISolidDebitCardToken)?
+
+    public func createDebitCardToken(accountID: String) async throws -> APISolidDebitCardToken {
+        if let error = createDebitCardTokenAccountIDThrowableError {
+            throw error
+        }
+        createDebitCardTokenAccountIDCallsCount += 1
+        createDebitCardTokenAccountIDReceivedAccountID = accountID
+        createDebitCardTokenAccountIDReceivedInvocations.append(accountID)
+        if let createDebitCardTokenAccountIDClosure = createDebitCardTokenAccountIDClosure {
+            return try await createDebitCardTokenAccountIDClosure(accountID)
+        } else {
+            return createDebitCardTokenAccountIDReturnValue
+        }
+    }
 
     //MARK: - createPlaidToken
 

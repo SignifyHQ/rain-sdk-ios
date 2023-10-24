@@ -7,18 +7,13 @@ public class LFServices {
   
   static let environment = EnvironmentManager()
   
-  public static let vgsShowSandBox: VGSShow = {
-    VGSShow(
-      id: Configs.VSGID.sandbox.id,
-      environment: .sandbox
-    )
-  }()
-  
-  public static let vgsShowLive: VGSShow = {
-    VGSShow(
-      id: Configs.VSGID.live.id,
-      environment: .live
-    )
+  public static var vgsConfig: (id: String, env: String) = {
+    switch environment.networkEnvironment {
+    case .productionLive:
+      return (id: Configs.VSGID.live.id, env: VGSEnvironment.live.rawValue)
+    case .productionTest:
+      return (id: Configs.VSGID.sandbox.id, env: VGSEnvironment.sandbox.rawValue)
+    }
   }()
   
   public static let segmentKey: String = {

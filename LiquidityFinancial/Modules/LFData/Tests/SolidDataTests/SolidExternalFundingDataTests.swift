@@ -7,16 +7,16 @@ import XCTest
 
 @testable import SolidData
 
-// Test cases for the OnboardingData module.
-final class SolidLinkSourceRepositoryTests: XCTestCase {
+// Test cases for the SolidData Module.
+final class SolidExternalFundingDataTests: XCTestCase {
   
-  var api: MockSolidAPIProtocol!
-  var repository: SolidLinkSourceRepository!
+  var api: MockSolidExternalFundingAPIProtocol!
+  var repository: SolidExternalFundingRepository!
   
   override func setUp() {
     super.setUp()
-    api = MockSolidAPIProtocol()
-    repository = SolidLinkSourceRepository(solidAPI: api)
+    api = MockSolidExternalFundingAPIProtocol()
+    repository = SolidExternalFundingRepository(solidExternalFundingAPI: api)
   }
   
   override func tearDown() {
@@ -25,7 +25,10 @@ final class SolidLinkSourceRepositoryTests: XCTestCase {
     
     super.tearDown()
   }
-  
+}
+
+// MARK: - Create PlaidToken Tests
+extension SolidExternalFundingDataTests {
   // Test the createPlaidToken functionality under normal conditions.
   func test_createPlaidToken_happy_case() {
     runAsyncTest {
@@ -61,8 +64,10 @@ final class SolidLinkSourceRepositoryTests: XCTestCase {
       expect(self.api.createPlaidTokenAccountIdThrowableError?.localizedDescription).to(equal(error.localizedDescription))
     }
   }
-  
-  
+}
+
+// MARK: - PlaidLink Tests
+extension SolidExternalFundingDataTests {
   // Test the plaid link functionality under normal conditions.
   func test_plaid_link_happy_case() {
     runAsyncTest {
@@ -102,5 +107,48 @@ final class SolidLinkSourceRepositoryTests: XCTestCase {
       expect(resultExpectRepository.last4).toNot(equal(mockSuccessResult.last4))
     }
   }
+}
+
+// MARK: - Create DebitCardToken Tests
+extension SolidExternalFundingDataTests {
+  /// Test the createDebitCardToken functionality under normal conditions.
+  func test_createDebitCardToken_happy_case() async {
+    // Given: The expected mock success
+    let mockSuccessResult = APISolidDebitCardToken(
+      linkToken: "mock_link_token",
+      solidContactId: "mock_solid_contact_id"
+    )
+    let accountIDSuccess = "mock_account_id"
+    
+    self.api.createDebitCardTokenAccountIDReturnValue = mockSuccessResult
+    
+    // When: Calling createDebitCardToken function on the repository should return an value successfully
+    await expect {
+      try await self.repository
+        .createDebitCardToken(accountID: accountIDSuccess)
+        .linkToken
+    }
+    // Then: The repository will returns the same result as the api
+    .to(equal(mockSuccessResult.linkToken))
+    
+    // And verify the input parameter should be correctly
+    expect(self.api.createDebitCardTokenAccountIDReceivedAccountID).to(equal(accountIDSuccess))
+  }
   
+  /// Test the createDebitCardToken functionality when it encounters an error.
+  func test_createDebitCardToken_failed_case_throw() async {
+    // Given: A mock error which will be thrown
+    let expectedError = TestError.fail("mock_error")
+    self.api.createDebitCardTokenAccountIDThrowableError = expectedError
+    
+    // When: Calling login function on the repository with parameters which should throw an error
+    await expect {
+      try await self.repository.createDebitCardToken(accountID: "").linkToken
+    }
+    .to(throwError { error in
+      // Then: The error is the one we expected
+      expect(expectedError).to(equal(error))
+    })
+  }
+
 }

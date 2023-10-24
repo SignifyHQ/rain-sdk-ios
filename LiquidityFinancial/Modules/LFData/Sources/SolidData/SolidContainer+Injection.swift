@@ -4,15 +4,15 @@ import CoreNetwork
 import AuthorizationManager
 
 extension Container {
-  public var solidAPI: Factory<SolidAPIProtocol> {
+  public var solidExternalFundingAPI: Factory<SolidExternalFundingAPIProtocol> {
     self {
-      LFCoreNetwork<SolidRoute>()
+      LFCoreNetwork<SolidExternalFundingRoute>()
     }
   }
   
-  public var solidLinkSourceRepository: Factory<LinkSourceRepositoryProtocol> {
+  public var solidLinkSourceRepository: Factory<SolidExternalFundingRepositoryProtocol> {
     self {
-      SolidLinkSourceRepository(solidAPI: self.solidAPI.callAsFunction())
+      SolidExternalFundingRepository(solidExternalFundingAPI: self.solidExternalFundingAPI.callAsFunction())
     }
   }
   

@@ -5,10 +5,36 @@
 import Foundation
 import SolidDomain
 
-public class MockLinkSourceRepositoryProtocol: LinkSourceRepositoryProtocol {
+public class MockSolidExternalFundingRepositoryProtocol: SolidExternalFundingRepositoryProtocol {
 
     public init() {}
 
+
+    //MARK: - createDebitCardToken
+
+    public var createDebitCardTokenAccountIDThrowableError: Error?
+    public var createDebitCardTokenAccountIDCallsCount = 0
+    public var createDebitCardTokenAccountIDCalled: Bool {
+        return createDebitCardTokenAccountIDCallsCount > 0
+    }
+    public var createDebitCardTokenAccountIDReceivedAccountID: String?
+    public var createDebitCardTokenAccountIDReceivedInvocations: [String] = []
+    public var createDebitCardTokenAccountIDReturnValue: SolidDebitCardTokenEntity!
+    public var createDebitCardTokenAccountIDClosure: ((String) async throws -> SolidDebitCardTokenEntity)?
+
+    public func createDebitCardToken(accountID: String) async throws -> SolidDebitCardTokenEntity {
+        if let error = createDebitCardTokenAccountIDThrowableError {
+            throw error
+        }
+        createDebitCardTokenAccountIDCallsCount += 1
+        createDebitCardTokenAccountIDReceivedAccountID = accountID
+        createDebitCardTokenAccountIDReceivedInvocations.append(accountID)
+        if let createDebitCardTokenAccountIDClosure = createDebitCardTokenAccountIDClosure {
+            return try await createDebitCardTokenAccountIDClosure(accountID)
+        } else {
+            return createDebitCardTokenAccountIDReturnValue
+        }
+    }
 
     //MARK: - createPlaidToken
 
@@ -45,7 +71,7 @@ public class MockLinkSourceRepositoryProtocol: LinkSourceRepositoryProtocol {
     }
     public var linkPlaidAccountIdTokenPlaidAccountIdReceivedArguments: (accountId: String, token: String, plaidAccountId: String)?
     public var linkPlaidAccountIdTokenPlaidAccountIdReceivedInvocations: [(accountId: String, token: String, plaidAccountId: String)] = []
-  public var linkPlaidAccountIdTokenPlaidAccountIdReturnValue: (any SolidContactEntity)!
+    public var linkPlaidAccountIdTokenPlaidAccountIdReturnValue: (any SolidContactEntity)!
     public var linkPlaidAccountIdTokenPlaidAccountIdClosure: ((String, String, String) async throws -> any SolidContactEntity)?
 
     public func linkPlaid(accountId: String, token: String, plaidAccountId: String) async throws -> any SolidContactEntity {
@@ -58,7 +84,7 @@ public class MockLinkSourceRepositoryProtocol: LinkSourceRepositoryProtocol {
         if let linkPlaidAccountIdTokenPlaidAccountIdClosure = linkPlaidAccountIdTokenPlaidAccountIdClosure {
             return try await linkPlaidAccountIdTokenPlaidAccountIdClosure(accountId, token, plaidAccountId)
         } else {
-          return linkPlaidAccountIdTokenPlaidAccountIdReturnValue
+            return linkPlaidAccountIdTokenPlaidAccountIdReturnValue
         }
     }
 

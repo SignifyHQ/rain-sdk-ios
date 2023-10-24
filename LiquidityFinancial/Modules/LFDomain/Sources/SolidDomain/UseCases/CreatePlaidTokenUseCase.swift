@@ -2,9 +2,9 @@ import Foundation
 
 public class CreatePlaidTokenUseCase: CreatePlaidTokenUseCaseProtocol {
   
-  private let repository: LinkSourceRepositoryProtocol
+  private let repository: SolidExternalFundingRepositoryProtocol
   
-  public init(repository: LinkSourceRepositoryProtocol) {
+  public init(repository: SolidExternalFundingRepositoryProtocol) {
     self.repository = repository
   }
   

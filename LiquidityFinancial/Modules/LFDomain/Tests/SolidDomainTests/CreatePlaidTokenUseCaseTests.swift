@@ -7,12 +7,12 @@ import Nimble
 
 final class CreatePlaidTokenUseCaseTests: XCTestCase {
   
-  var repository: MockLinkSourceRepositoryProtocol!
+  var repository: MockSolidExternalFundingRepositoryProtocol!
   var usecase: CreatePlaidTokenUseCase!
   
   override func setUp() {
     super.setUp()
-    repository = MockLinkSourceRepositoryProtocol()
+    repository = MockSolidExternalFundingRepositoryProtocol()
     usecase = CreatePlaidTokenUseCase(repository: repository)
   }
   

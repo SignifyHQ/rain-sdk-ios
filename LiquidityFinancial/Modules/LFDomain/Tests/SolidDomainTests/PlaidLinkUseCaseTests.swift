@@ -7,12 +7,12 @@ import Nimble
 
 final class PlaidLinkUseCaseTests: XCTestCase {
   
-  var repository: MockLinkSourceRepositoryProtocol!
+  var repository: MockSolidExternalFundingRepositoryProtocol!
   var usecase: PlaidLinkUseCase!
   
   override func setUp() {
     super.setUp()
-    repository = MockLinkSourceRepositoryProtocol()
+    repository = MockSolidExternalFundingRepositoryProtocol()
     usecase = PlaidLinkUseCase(repository: repository)
   }
   

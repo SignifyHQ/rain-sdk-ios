@@ -18,7 +18,8 @@ let package = Package(
       .package(url: "https://github.com/hmlongco/Factory", from: "2.3.1"),
       .package(url: "https://github.com/firebase/firebase-ios-sdk", from: "10.0.0"),
       .package(url: "https://github.com/segmentio/analytics-ios", from: "4.1.8"),
-      .package(url: "https://github.com/Datadog/dd-sdk-ios.git", from: "2.2.1")
+      .package(url: "https://github.com/Datadog/dd-sdk-ios.git", from: "2.2.1"),
+      .package(url: "https://github.com/verygoodsecurity/vgs-collect-ios.git", from: "1.15.1")
     ],
     targets: [
         .target(
@@ -34,7 +35,8 @@ let package = Package(
               .product(name: "DatadogCore", package: "dd-sdk-ios"),
               .product(name: "DatadogTrace", package: "dd-sdk-ios"),
               .product(name: "DatadogRUM", package: "dd-sdk-ios"),
-              .product(name: "DatadogLogs", package: "dd-sdk-ios")
+              .product(name: "DatadogLogs", package: "dd-sdk-ios"),
+              .product(name: "VGSCollectSDK", package: "vgs-collect-ios"),
             ],
             resources: [
               .process("Resources")

@@ -9,24 +9,27 @@ import LFServices
 import SwiftUI
 import OnboardingData
 import AccountData
-import NetSpendData
-import NetspendDomain
+import SolidData
+import SolidDomain
 
 @MainActor
 class AddBankWithDebitViewModel: ObservableObject {
-  @LazyInjected(\.externalFundingRepository) var externalFundingRepository
+  @LazyInjected(\.vaultService) var vaultService
   @LazyInjected(\.accountDataManager) var accountDataManager
   @LazyInjected(\.accountRepository) var accountRepository
-  @LazyInjected(\.netspendDataManager) var netspendDataManager
   @LazyInjected(\.analyticsService) var analyticsService
+  @LazyInjected(\.solidLinkSourceRepository) var solidLinkSourceRepository
+  @LazyInjected(\.solidAccountRepository) var solidAccountRepository
   
-  lazy var externalFundingUseCase: NSExternalFundingUseCaseProtocol = {
-    NSExternalFundingUseCase(repository: externalFundingRepository)
+  lazy var getAccountUsecase: SolidGetAccountsUseCaseProtocol = {
+    SolidGetAccountsUseCase(repository: solidAccountRepository)
   }()
   
-  init() {
-    
-  }
+  lazy var solidDebitCardTokenUseCase: SolidDebitCardTokenUseCaseProtocol = {
+    SolidDebitCardTokenUseCase(repository: solidLinkSourceRepository)
+  }()
+  
+  init() {}
   
   @Published var loading: Bool = false
   @Published var actionEnabled: Bool = false
@@ -51,68 +54,6 @@ class AddBankWithDebitViewModel: ObservableObject {
     didSet {
       checkAction()
     }
-  }
-
-  func performAction() {
-    loading = true
-    Task { @MainActor in
-      defer {
-        self.loading = false
-      }
-      do {
-        guard let session = netspendDataManager.sdkSession else { return }
-        let encryptedData = try session.encryptWithJWKSet(
-          value: [
-            Constants.NetSpendKey.cvv2.rawValue: cardCVV,
-            Constants.NetSpendKey.pan.rawValue: cardNumber.removeWhitespace()
-          ]
-        )
-        guard let date = self.dateFormatter.date(from: self.cardExpiryDate.removeWhitespace()) else {
-          log.error("Incomplete state")
-          throw LiquidityError.invalidData
-        }
-        let user = accountDataManager.userInfomationData
-        let fullName = "\(user.firstName ?? "") \(user.lastName ?? "")"
-        let month = self.monthFormatter.string(from: date)
-        let year = self.yearFormatter.string(from: date)
-        let postalCode = user.postalCode ?? ""
-        
-        let request = ExternalCardParameters(
-          month: month,
-          year: year,
-          nameOnCard: fullName,
-          nickname: fullName,
-          postalCode: postalCode,
-          encryptedData: encryptedData
-        )
-        let response = try await externalFundingUseCase.set(
-          request: request,
-          sessionID: accountDataManager.sessionID
-        )
-        analyticsService.track(event: AnalyticsEvent(name: .debitCardConnectionSuccess))
-        let sessionID = self.accountDataManager.sessionID
-        async let linkedAccountResponse = self.externalFundingRepository.getLinkedAccount(sessionId: sessionID)
-        let linkedSources = try await linkedAccountResponse.linkedSources
-        self.accountDataManager.storeLinkedSources(linkedSources)
-        
-        self.navigation = .verifyCard(cardId: response.cardId)
-      } catch {
-        analyticsService.track(event: AnalyticsEvent(name: .debitCardFail))
-        log.error(error.localizedDescription)
-        self.toastMessage = error.localizedDescription
-      }
-    }
-  }
-
-  func dismissPopup() {
-  }
-
-  func handleCardExpiryDate(dateComponents: DateComponents) -> Bool {
-    guard let date = Calendar.current.date(from: dateComponents) else { return false }
-    let formatter = DateFormatter()
-    formatter.dateFormat = "MM/yy"
-    self.cardExpiryDate = formatter.string(from: date)
-    return true
   }
 
   private lazy var dateFormatter: DateFormatter = {
@@ -164,9 +105,91 @@ class AddBankWithDebitViewModel: ObservableObject {
     }
     return true
   }
+}
 
-  private func checkAction() {
+// MARK: - API Functions
+extension AddBankWithDebitViewModel {
+  func getDebitCardToken() async throws -> DebitCardToken {
+    let accounts = try await self.getAccountUsecase.execute()
+    let tokenResponse = try await solidDebitCardTokenUseCase.execute(accountID: accounts.first?.id ?? .empty)
+    
+    return DebitCardToken(
+      linkToken: tokenResponse.linkToken,
+      solidContactId: tokenResponse.solidContactId
+    )
+  }
+}
+
+// MARK: - View Helpers
+extension AddBankWithDebitViewModel {
+  func performAction() {
+    loading = true
+    Task { @MainActor in
+      defer {
+        self.loading = false
+      }
+      do {
+        let debitCardToken = try await getDebitCardToken()
+        let debitCardData = try generateDebitCardData()
+        try await vaultService.addDebitCardToVault(
+          debitCardToken: debitCardToken,
+          debitCardData: debitCardData
+        )
+        
+        analyticsService.track(event: AnalyticsEvent(name: .debitCardConnectionSuccess))
+        
+        // TODO: - Luan Tran will implement storeLinkedSources later
+        //        let sessionID = self.accountDataManager.sessionID
+        //        async let linkedAccountResponse = self.externalFundingRepository.getLinkedAccount(sessionId: sessionID)
+        //        let linkedSources = try await linkedAccountResponse.linkedSources
+        //        self.accountDataManager.storeLinkedSources(linkedSources)
+        
+        // self.navigation = .verifyCard(cardId: response.cardId)
+      } catch {
+        analyticsService.track(event: AnalyticsEvent(name: .debitCardFail))
+        log.error(error.localizedDescription)
+        self.toastMessage = error.localizedDescription
+      }
+    }
+  }
+
+  func dismissPopup() {
+  }
+}
+
+// MARK: - Private Functions
+private extension AddBankWithDebitViewModel {
+  func checkAction() {
     actionEnabled = validCard && validCVV && validDate
+  }
+  
+  func generateDebitCardData() throws -> DebitCardModel {
+    guard let date = self.dateFormatter.date(from: self.cardExpiryDate.removeWhitespace()) else {
+      log.error("Incomplete state")
+      throw LiquidityError.invalidData
+    }
+    
+    let month = self.monthFormatter.string(from: date)
+    let year = self.yearFormatter.string(from: date)
+    
+    let address = accountDataManager.userInfomationData
+    let vaultAddress = VGSAddressModel(
+      addressType: nil,
+      line1: address.addressLine1,
+      line2: address.addressLine2,
+      city: address.city,
+      state: address.state,
+      country: address.country,
+      postalCode: address.postalCode
+    )
+    
+    return DebitCardModel(
+      expiryMonth: month,
+      expiryYear: year,
+      cardNumber: cardNumber.removeWhitespace(),
+      cvv: cardCVV,
+      address: vaultAddress
+    )
   }
 }
 
