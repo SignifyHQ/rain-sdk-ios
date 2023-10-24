@@ -27,6 +27,7 @@ public final class AddFundsViewModel: ObservableObject {
   @LazyInjected(\.accountDataManager) var accountDataManager
   @LazyInjected(\.customerSupportService) var customerSupportService
   @LazyInjected(\.solidLinkSourceRepository) var solidLinkSourceRepository
+  @LazyInjected(\.solidAccountRepository) var solidAccountRepository
   
   lazy var createPlaidTokenUseCase: CreatePlaidTokenUseCaseProtocol = {
     CreatePlaidTokenUseCase(repository: solidLinkSourceRepository)
@@ -34,6 +35,10 @@ public final class AddFundsViewModel: ObservableObject {
   
   lazy var plaidLinkUseCase: PlaidLinkUseCaseProtocol = {
     PlaidLinkUseCase(repository: solidLinkSourceRepository)
+  }()
+  
+  lazy var getAccountUsecase: SolidGetAccountsUseCaseProtocol = {
+    SolidGetAccountsUseCase(repository: solidAccountRepository)
   }()
   
   func loading(option: FundOption) -> Bool {
@@ -53,13 +58,14 @@ public final class AddFundsViewModel: ObservableObject {
 // MARK: - ExternalLinkBank Functions
 extension AddFundsViewModel {
   func linkExternalBank() {
-    guard let accountId = accountDataManager.fiatAccountID else {
-      return
-    }
     Task { @MainActor in
       defer { self.isLoadingLinkExternalBank = false }
       self.isLoadingLinkExternalBank = true
       do {
+        let accounts = try await self.getAccountUsecase.execute()
+        guard let accountId = accounts.first?.id else {
+          return
+        }
         let response = try await self.createPlaidTokenUseCase.execute(accountId: accountId)
         let plaidResponse = try await PlaidHelper.createLinkTokenConfiguration(token: response.linkToken, onCreated: { [weak self] configuration in
           self?.plaidConfig = PlaidConfig(config: configuration)
