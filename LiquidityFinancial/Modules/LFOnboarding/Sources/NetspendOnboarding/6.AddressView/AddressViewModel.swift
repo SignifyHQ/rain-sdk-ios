@@ -10,6 +10,7 @@ import NetSpendData
 import LFServices
 import LFLocalizable
 import DevicesData
+import DevicesDomain
 
 // swiftlint:disable all
 @MainActor
@@ -89,6 +90,10 @@ final class AddressViewModel: ObservableObject {
       isAllDataFilled()
     }
   }
+
+  lazy var deviceDeregisterUseCase: DeviceDeregisterUseCaseProtocol = {
+    return DeviceDeregisterUseCase(repository: devicesRepository)
+  }()
   
   var userNameDisplay: String {
     get {
@@ -285,7 +290,7 @@ extension AddressViewModel {
       }
       isLoading = true
       do {
-        async let deregisterEntity = devicesRepository.deregister(deviceId: LFUtilities.deviceId, token: UserDefaults.lastestFCMToken)
+        async let deregisterEntity = deviceDeregisterUseCase.execute(deviceId: LFUtilities.deviceId, token: UserDefaults.lastestFCMToken)
         async let logoutEntity = accountRepository.logout()
         let deregister = try await deregisterEntity
         let logout = try await logoutEntity

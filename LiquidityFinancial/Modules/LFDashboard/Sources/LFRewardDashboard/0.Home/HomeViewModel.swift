@@ -9,6 +9,7 @@ import RewardDomain
 import LFRewards
 import DevicesData
 import LFServices
+import DevicesDomain
 
 @MainActor
 public final class HomeViewModel: ObservableObject {
@@ -29,6 +30,10 @@ public final class HomeViewModel: ObservableObject {
   @Published var tabOptions: [TabOption] = [.cash, .rewards, .account]
   @Published var popup: Popup?
   @Published var toastMessage: String?
+  
+  lazy var deviceRegisterUseCase: DeviceRegisterUseCaseProtocol = {
+    return DeviceRegisterUseCase(repository: devicesRepository)
+   }()
   
   private var subscribers: Set<AnyCancellable> = []
   
@@ -193,7 +198,7 @@ extension HomeViewModel {
     Task { @MainActor in
       do {
         let token = try await pushNotificationService.fcmToken()
-        let response = try await devicesRepository.register(deviceId: LFUtilities.deviceId, token: token)
+        let response = try await deviceRegisterUseCase.execute(deviceId: LFUtilities.deviceId, token: token)
         if response.success {
           UserDefaults.lastestFCMToken = token
         }

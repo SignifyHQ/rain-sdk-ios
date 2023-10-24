@@ -13,8 +13,8 @@ public struct EnterPassportView: View {
   @FocusState
   var keyboardFocus: Bool
 
-  @InjectedObject(\.baseOnboardingDestinationView)
-  var baseOnboardingNavigation
+  @InjectedObject(\.baseOnboardingDestinationObservable)
+  var baseOnboardingDestinationObservable
   
   let onEnterAddress: () -> Void
   public init(viewModel: EnterPassportViewModel, onEnterAddress: @escaping () -> Void) {
@@ -52,7 +52,7 @@ public struct EnterPassportView: View {
     .defaultToolBar(icon: .support, openSupportScreen: {
       viewModel.openSupportScreen()
     })
-    .navigationLink(item: $baseOnboardingNavigation.enterPassportDestinationView) { item in
+    .navigationLink(item: $baseOnboardingDestinationObservable.enterPassportDestinationView) { item in
       switch item {
       case let .address(destinationView):
         destinationView

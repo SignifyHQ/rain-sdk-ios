@@ -41,8 +41,8 @@ final class VerificationCodeViewModel: VerificationCodeViewModelProtocol {
     LoginUseCase(repository: onboardingRepository)
   }()
   
-  unowned let coordinator: BaseOnboarding.BaseOnboardingDestinationView
-  init(phoneNumber: String, requireAuth: [RequiredAuth], coordinator: BaseOnboarding.BaseOnboardingDestinationView) {
+  unowned let coordinator: BaseOnboarding.BaseOnboardingDestinationObservable
+  init(phoneNumber: String, requireAuth: [RequiredAuth], coordinator: BaseOnboarding.BaseOnboardingDestinationObservable) {
     self.requireAuth = requireAuth
     self.coordinator = coordinator
     formatPhoneNumber = Constants.Default.regionCode.rawValue + phoneNumber

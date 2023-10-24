@@ -20,7 +20,7 @@ public enum OnboardingMissingStep: String, Codable {
 // sourcery: AutoMockable
 public protocol OnboardingStateEnity {
   var missingSteps: [String] { get }
-  init(missingSteps: [String]) 
+  init(missingSteps: [String])
 }
 
 public extension OnboardingStateEnity {

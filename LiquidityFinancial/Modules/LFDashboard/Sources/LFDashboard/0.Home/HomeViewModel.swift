@@ -8,6 +8,7 @@ import AccountDomain
 import Combine
 import LFNetspendBank
 import LFServices
+import DevicesDomain
 
 @MainActor
 public final class HomeViewModel: ObservableObject {
@@ -29,6 +30,10 @@ public final class HomeViewModel: ObservableObject {
   @Published var isLoading: Bool = false
   @Published var toastMessage: String?
 
+  lazy var deviceRegisterUseCase: DeviceRegisterUseCaseProtocol = {
+    return DeviceRegisterUseCase(repository: devicesRepository)
+   }()
+  
   public init(tabOptions: [TabOption]) {
     self.tabOptions = tabOptions
     
@@ -120,7 +125,7 @@ extension HomeViewModel {
     Task { @MainActor in
       do {
         let token = try await pushNotificationService.fcmToken()
-        let response = try await devicesRepository.register(deviceId: LFUtilities.deviceId, token: token)
+        let response = try await deviceRegisterUseCase.execute(deviceId: LFUtilities.deviceId, token: token)
         if response.success {
           UserDefaults.lastestFCMToken = token
         }

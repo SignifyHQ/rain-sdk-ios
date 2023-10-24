@@ -4,6 +4,7 @@ import Factory
 import LFUtilities
 import AuthorizationManager
 import LFServices
+import DevicesDomain
 
 @MainActor
 final class ProfileViewModel: ObservableObject {
@@ -20,6 +21,10 @@ final class ProfileViewModel: ObservableObject {
   @LazyInjected(\.pushNotificationService) var pushNotificationService
   @LazyInjected(\.analyticsService) var analyticsService
   @LazyInjected(\.dashboardRepository) var dashboardRepository
+  
+  lazy var deviceDeregisterUseCase: DeviceDeregisterUseCaseProtocol = {
+   return DeviceDeregisterUseCase(repository: devicesRepository)
+  }()
   
   var name: String {
     if let firstName = accountDataManager.userInfomationData.firstName,
@@ -83,7 +88,7 @@ extension ProfileViewModel {
       }
       isLoading = true
       do {
-        async let deregisterEntity = devicesRepository.deregister(deviceId: LFUtilities.deviceId, token: UserDefaults.lastestFCMToken)
+        async let deregisterEntity = deviceDeregisterUseCase.execute(deviceId: LFUtilities.deviceId, token: UserDefaults.lastestFCMToken)
         async let logoutEntity = accountRepository.logout()
         let deregister = try await deregisterEntity
         let logout = try await logoutEntity

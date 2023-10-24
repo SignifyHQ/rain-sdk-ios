@@ -186,7 +186,7 @@ private extension SolidOnboardingFlowCoordinator {
     if accountDataManager.userCompleteOnboarding == false {
       try await handlerOnboardingStep()
     } else {
-      set(route: .dashboard)
+      try await fetchUserReviewStatus()
     }
   }
 }

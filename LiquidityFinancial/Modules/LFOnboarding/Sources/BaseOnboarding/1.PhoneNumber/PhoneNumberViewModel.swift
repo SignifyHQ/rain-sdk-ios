@@ -22,8 +22,8 @@ public protocol PhoneNumberViewModelProtocol: ObservableObject {
   var esignConsent: String { get }
   var privacyPolicy: String { get }
   
-  var coordinator: BaseOnboardingDestinationView { get }
-  init(coordinator: BaseOnboardingDestinationView)
+  var destinationObservable: BaseOnboardingDestinationObservable { get }
+  init(coordinator: BaseOnboardingDestinationObservable)
   
   func performGetOTP()
   func getURL(tappedString: String) -> String

@@ -29,7 +29,7 @@ public struct SelectRewardsView: View {
       .navigationLink(item: $viewModel.navigation) { item in
         switch item {
         case .causeFilter(let causes):
-          SelectCauseCategoriesView(viewModel: SelectCauseCategoriesViewModel(causes: causes), whereStart: whereStart)          
+          SelectCauseCategoriesView(viewModel: SelectCauseCategoriesViewModel(causes: causes), whereStart: whereStart)
         case let .selectFundraiser(cause, fundraisers):
           SelectFundraiserView(
             viewModel: SelectFundraiserViewModel(

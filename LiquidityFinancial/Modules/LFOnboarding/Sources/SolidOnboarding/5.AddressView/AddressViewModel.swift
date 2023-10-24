@@ -12,6 +12,7 @@ import SolidDomain
 import SolidData
 import RewardData
 import AccountDomain
+import DevicesDomain
 
 // swiftlint:disable all
 @MainActor
@@ -86,6 +87,10 @@ final class AddressViewModel: ObservableObject {
   }()
   lazy var solidCreatePersonUseCase: SolidCreatePersonUseCase = {
     SolidCreatePersonUseCase(repository: solidOnboardingRepository)
+  }()
+  
+  lazy var deviceDeregisterUseCase: DeviceDeregisterUseCaseProtocol = {
+   return DeviceDeregisterUseCase(repository: devicesRepository)
   }()
   
   var userNameDisplay: String {
@@ -204,7 +209,7 @@ extension AddressViewModel {
       }
       isLoading = true
       do {
-        async let deregisterEntity = devicesRepository.deregister(deviceId: LFUtilities.deviceId, token: UserDefaults.lastestFCMToken)
+        async let deregisterEntity = deviceDeregisterUseCase.execute(deviceId: LFUtilities.deviceId, token: UserDefaults.lastestFCMToken)
         async let logoutEntity = accountRepository.logout()
         let deregister = try await deregisterEntity
         let logout = try await logoutEntity

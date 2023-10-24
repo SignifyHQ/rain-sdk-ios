@@ -1,6 +1,6 @@
 import Foundation
 
-public struct NotificationTokenResponse {
+public struct APINotificationTokenResponse {
   public var success: Bool
   
   public init(success: Bool) {

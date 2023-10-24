@@ -92,6 +92,6 @@ let package = Package(
       dependencies: ["ZerohashDomain", "TestHelpers", "DomainTestHelpers"]),
     .testTarget(
       name: "SolidDomainTests",
-      dependencies: ["SolidDomain", "TestHelpers", "DomainTestHelpers", "Nimble"]),
+      dependencies: ["SolidDomain", "TestHelpers", "DomainTestHelpers", "Nimble"])
   ]
 )

@@ -31,13 +31,13 @@ final class DevicesDataTests: XCTestCase {
   // Test the register deviceID and token functionality under normal conditions.
   func test_register_happy_case() async {
     // Given the expected mock success and fail responses
-    let mockSuccessResponse = NotificationTokenResponse(success: true)
-    let mockFailResponse = NotificationTokenResponse(success: false)
+    let mockSuccessResponse = APINotificationTokenResponse(success: true)
+    let mockFailResponse = APINotificationTokenResponse(success: false)
     // And a randomly generated deviceID and a token
     let mockDeviceID = UUID().uuidString
     let mockToken = "mock_token"
     // And a mock API behaviour based on the mock input
-    self.api.registerDeviceIdTokenClosure = { deviceID, token async throws -> NotificationTokenResponse in
+    self.api.registerDeviceIdTokenClosure = { deviceID, token async throws -> APINotificationTokenResponse in
       if deviceID == mockDeviceID, token == mockToken {
         return mockSuccessResponse
       }
@@ -61,13 +61,13 @@ final class DevicesDataTests: XCTestCase {
   // Test the register deviceID and token functionality when it encounters an API error.
   func test_register_api_failed_case() async {
     // Given the expected mock success and fail responses
-    let mockSuccessResponse = NotificationTokenResponse(success: true)
-    let mockFailResponse = NotificationTokenResponse(success: false)
+    let mockSuccessResponse = APINotificationTokenResponse(success: true)
+    let mockFailResponse = APINotificationTokenResponse(success: false)
     // And a randomly generated deviceID and token
     let mockDeviceID = UUID().uuidString
     let mockToken = "mock_token"
     // And a mock API behaviour based on the mock input
-    self.api.registerDeviceIdTokenClosure = { deviceID, token async throws -> NotificationTokenResponse in
+    self.api.registerDeviceIdTokenClosure = { deviceID, token async throws -> APINotificationTokenResponse in
       if deviceID == mockDeviceID, token == mockToken {
         return mockSuccessResponse
       }
@@ -95,13 +95,13 @@ final class DevicesDataTests: XCTestCase {
   // Test the deregister deviceID and token functionality under normal conditions.
   func test_deregister_happy_case() async {
     // Given the expected mock success and fail responses
-    let mockSuccessResponse = NotificationTokenResponse(success: true)
-    let mockFailResponse = NotificationTokenResponse(success: false)
+    let mockSuccessResponse = APINotificationTokenResponse(success: true)
+    let mockFailResponse = APINotificationTokenResponse(success: false)
     // And a randomly generated deviceID and a token
     let mockDeviceID = UUID().uuidString
     let mockToken = "mock_token"
     // And a mock API behaviour based on the mock input
-    self.api.deregisterDeviceIdTokenClosure = { deviceID, token async throws -> NotificationTokenResponse in
+    self.api.deregisterDeviceIdTokenClosure = { deviceID, token async throws -> APINotificationTokenResponse in
       if deviceID == mockDeviceID, token == mockToken {
         return mockSuccessResponse
       }
@@ -125,13 +125,13 @@ final class DevicesDataTests: XCTestCase {
   // Test the deregister deviceID and token functionality when it encounters an API error.
   func test_deregister_api_failed_case() async {
     // Given the expected mock success and fail responses
-    let mockSuccessResponse = NotificationTokenResponse(success: true)
-    let mockFailResponse = NotificationTokenResponse(success: false)
+    let mockSuccessResponse = APINotificationTokenResponse(success: true)
+    let mockFailResponse = APINotificationTokenResponse(success: false)
     // And a randomly generated deviceID and token
     let mockDeviceID = UUID().uuidString
     let mockToken = "mock_token"
     // And a mock API behaviour based on the mock input
-    self.api.deregisterDeviceIdTokenClosure = { deviceID, token async throws -> NotificationTokenResponse in
+    self.api.deregisterDeviceIdTokenClosure = { deviceID, token async throws -> APINotificationTokenResponse in
       if deviceID == mockDeviceID, token == mockToken {
         return mockSuccessResponse
       }

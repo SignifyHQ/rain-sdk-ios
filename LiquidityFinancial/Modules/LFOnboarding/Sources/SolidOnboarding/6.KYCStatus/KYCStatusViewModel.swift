@@ -31,7 +31,6 @@ final class KYCStatusViewModel: ObservableObject {
   @LazyInjected(\.analyticsService) var analyticsService
   @LazyInjected(\.solidOnboardingFlowCoordinator) var solidOnboardingFlowCoordinator
   
-  
   var username: String {
     accountDataManager.userNameDisplay
   }

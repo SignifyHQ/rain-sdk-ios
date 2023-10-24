@@ -29,6 +29,7 @@ let package = Package(
     .package(name: "LFWalletAddress", path: "../LFWalletAddress"),
     .package(name: "LFCryptoChart", path: "../LFCryptoChart"),
     .package(name: "LFData", path: "../LFData"),
+    .package(name: "LFDomain", path: "../LFDomain"),
     .package(name: "LFNetwork", path: "../LFNetwork"),
     .package(name: "LFRewards", path: "../LFRewards"),
     .package(name: "LFOnboarding", path: "../LFOnboarding"),
@@ -47,7 +48,10 @@ let package = Package(
         .product(name: "DevicesData", package: "LFData"),
         .product(name: "AuthorizationManager", package: "LFNetwork"),
         .product(name: "BaseCard", package: "LFCard"),
-        .product(name: "NetspendOnboarding", package: "LFOnboarding")
+        .product(name: "LFNetSpendCard", package: "LFCard"),
+        .product(name: "LFSolidCard", package: "LFCard"),
+        .product(name: "NetspendOnboarding", package: "LFOnboarding"),
+        .product(name: "DevicesDomain", package: "LFDomain")
       ]
     ),
     .target(

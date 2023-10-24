@@ -27,14 +27,14 @@ final class NSContentViewFactory {
   
   let environmentManager: EnvironmentManager
   let flowCoordinator: OnboardingFlowCoordinatorProtocol
-  let baseOnboardingNavigation: BaseOnboardingDestinationView
+  let baseOnboardingNavigation: BaseOnboardingDestinationObservable
   let accountDataManager: AccountDataStorageProtocol
   
   init(
     container: Container,
     environment: EnvironmentManager
   ) {
-    baseOnboardingNavigation = container.baseOnboardingDestinationView.callAsFunction()
+    baseOnboardingNavigation = container.baseOnboardingDestinationObservable.callAsFunction()
     flowCoordinator = container.nsOnboardingFlowCoordinator.callAsFunction()
     accountDataManager = container.accountDataManager.callAsFunction()
     environmentManager = environment
@@ -64,7 +64,7 @@ final class NSContentViewFactory {
     case .documentInReview:
       return AnyView(documentInReviewView)
     case .zeroHash:
-      return AnyView(enterSSNView)
+      return AnyView(zeroHashView)
     case .accountReject:
       return AnyView(accountRejectView)
     case .unclear(let message):

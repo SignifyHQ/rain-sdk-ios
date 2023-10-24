@@ -10,9 +10,9 @@ import BaseOnboarding
 
 @MainActor
 final class PhoneNumberViewModel: ObservableObject, PhoneNumberViewModelProtocol {
-  unowned let coordinator: BaseOnboardingDestinationView
-  init(coordinator: BaseOnboardingDestinationView) {
-    self.coordinator = coordinator
+  unowned let destinationObservable: BaseOnboardingDestinationObservable
+  init(coordinator: BaseOnboardingDestinationObservable) {
+    self.destinationObservable = coordinator
   }
   
   @Published var isSecretMode: Bool = false
@@ -54,13 +54,13 @@ extension PhoneNumberViewModel {
         let viewModel = VerificationCodeViewModel(
           phoneNumber: phoneNumber.reformatPhone,
           requireAuth: requiredAuth,
-          coordinator: coordinator
+          coordinator: destinationObservable
         )
         let verificationCodeView = VerificationCodeView(
           viewModel: viewModel,
-          coordinator: coordinator
+          coordinator: destinationObservable
         )
-        coordinator
+        destinationObservable
           .phoneNumberDestinationView = .verificationCode(AnyView(verificationCodeView))
       } catch {
         handleError(error: error)

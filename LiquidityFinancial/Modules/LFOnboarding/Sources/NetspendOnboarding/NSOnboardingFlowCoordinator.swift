@@ -232,10 +232,13 @@ private extension NSOnboardingFlowCoordinator {
   
   func fetchZeroHashStatus() async throws {
     let result = try await zerohashRepository.getOnboardingStep()
+    if result.missingSteps.isEmpty {
+      set(route: .dashboard)
+    }
     if result.mapToEnum().contains(.createAccount) {
       set(route: .zeroHash)
     } else {
-      try await fetchUserReviewStatus()
+      set(route: .unclear("ZeroHash missing the information: \(result.missingSteps)"))
     }
   }
   
@@ -244,12 +247,14 @@ private extension NSOnboardingFlowCoordinator {
     if let accountReviewStatus = user.accountReviewStatusEnum {
       switch accountReviewStatus {
       case .approved:
-        set(route: .dashboard)
+        try await fetchZeroHashStatus()
       case .rejected:
         set(route: .accountReject)
       case .inreview, .reviewing:
         set(route: .kycReview)
       }
+    } else if user.accountReviewStatus != nil {
+      set(route: .unclear("Account status missing the information: \(String(describing: user.accountReviewStatus))"))
     }
     handleDataUser(user: user)
   }

@@ -12,9 +12,6 @@ public struct NSOnboardingContentView: View {
   @StateObject
   var viewModel = NSOnboardingContentViewModel()
   
-  @InjectedObject(\.baseOnboardingDestinationView)
-  var baseOnboardingNavigation
-  
   @Injected(\.accountDataManager)
   var accountDataManager
   

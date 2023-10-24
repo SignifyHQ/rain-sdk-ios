@@ -11,11 +11,13 @@ public class DevicesRepository: DevicesRepositoryProtocol {
     self.devicesAPI = devicesAPI
   }
   
-  public func register(deviceId: String, token: String) async throws -> NotificationTokenResponse {
+  public func register(deviceId: String, token: String) async throws -> NotificationTokenEntity {
     try await devicesAPI.register(deviceId: deviceId, token: token)
   }
   
-  public func deregister(deviceId: String, token: String) async throws -> NotificationTokenResponse {
+  public func deregister(deviceId: String, token: String) async throws -> NotificationTokenEntity {
     try await devicesAPI.deregister(deviceId: deviceId, token: token)
   }
 }
+
+extension APINotificationTokenResponse: NotificationTokenEntity {}

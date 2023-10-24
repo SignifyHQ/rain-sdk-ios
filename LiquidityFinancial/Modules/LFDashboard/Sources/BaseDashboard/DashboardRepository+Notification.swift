@@ -2,6 +2,7 @@ import Foundation
 import LFServices
 import LFUtilities
 import UIKit
+import DevicesDomain
 
 public extension DashboardRepository {
   func checkNotificationsStatus(completion: @escaping (Bool) -> Void) {
@@ -48,7 +49,7 @@ public extension DashboardRepository {
     Task { @MainActor in
       do {
         let token = try await pushNotificationService.fcmToken()
-        let response = try await devicesRepository.register(deviceId: LFUtilities.deviceId, token: token)
+        let response = try await deviceRegisterUseCase.execute(deviceId: LFUtilities.deviceId, token: token)
         if response.success {
           UserDefaults.lastestFCMToken = token
         }

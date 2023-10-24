@@ -11,6 +11,7 @@ import NetspendOnboarding
 import OnboardingDomain
 import LFServices
 import DevicesData
+import DevicesDomain
 
 extension Container {
   public var dashboardRepository: Factory<DashboardRepository> {
@@ -51,6 +52,10 @@ public final class DashboardRepository: ObservableObject {
   
   lazy var accountUseCase: AccountUseCase = {
     AccountUseCase(repository: accountRepository)
+  }()
+  
+  lazy var deviceRegisterUseCase: DeviceRegisterUseCaseProtocol = {
+    return DeviceRegisterUseCase(repository: devicesRepository)
   }()
   
   var toastMessage: ((String) -> Void)?

@@ -68,6 +68,7 @@ let package = Package(
         .product(name: "DevicesData", package: "LFData"),
         .product(name: "ZerohashData", package: "LFData"),
         .product(name: "ZerohashDomain", package: "LFDomain"),
+        .product(name: "DevicesDomain", package: "LFDomain"),
         .product(name: "SmartyStreets", package: "smartystreets-ios-sdk"),
         .product(name: "AuthorizationManager", package: "LFNetwork")
       ],
@@ -86,7 +87,8 @@ let package = Package(
         .product(name: "AuthorizationManager", package: "LFNetwork"),
         .product(name: "AccountData", package: "LFData"),
         .product(name: "DevicesData", package: "LFData"),
-        .product(name: "SolidDomain", package: "LFDomain")
+        .product(name: "SolidDomain", package: "LFDomain"),
+        .product(name: "DevicesDomain", package: "LFDomain"),
       ],
       resources: [
         .process("ZResources")

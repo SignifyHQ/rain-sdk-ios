@@ -3,10 +3,9 @@
 // swiftlint:disable all
 
 import Foundation
-import DevicesData
 import DevicesDomain
 
-public class MockDevicesAPIProtocol: DevicesAPIProtocol {
+public class MockDevicesRepositoryProtocol: DevicesRepositoryProtocol {
 
     public init() {}
 
@@ -20,10 +19,10 @@ public class MockDevicesAPIProtocol: DevicesAPIProtocol {
     }
     public var registerDeviceIdTokenReceivedArguments: (deviceId: String, token: String)?
     public var registerDeviceIdTokenReceivedInvocations: [(deviceId: String, token: String)] = []
-    public var registerDeviceIdTokenReturnValue: APINotificationTokenResponse!
-    public var registerDeviceIdTokenClosure: ((String, String) async throws -> APINotificationTokenResponse)?
+    public var registerDeviceIdTokenReturnValue: NotificationTokenEntity!
+    public var registerDeviceIdTokenClosure: ((String, String) async throws -> NotificationTokenEntity)?
 
-    public func register(deviceId: String, token: String) async throws -> APINotificationTokenResponse {
+    public func register(deviceId: String, token: String) async throws -> NotificationTokenEntity {
         if let error = registerDeviceIdTokenThrowableError {
             throw error
         }
@@ -46,10 +45,10 @@ public class MockDevicesAPIProtocol: DevicesAPIProtocol {
     }
     public var deregisterDeviceIdTokenReceivedArguments: (deviceId: String, token: String)?
     public var deregisterDeviceIdTokenReceivedInvocations: [(deviceId: String, token: String)] = []
-    public var deregisterDeviceIdTokenReturnValue: APINotificationTokenResponse!
-    public var deregisterDeviceIdTokenClosure: ((String, String) async throws -> APINotificationTokenResponse)?
+    public var deregisterDeviceIdTokenReturnValue: NotificationTokenEntity!
+    public var deregisterDeviceIdTokenClosure: ((String, String) async throws -> NotificationTokenEntity)?
 
-    public func deregister(deviceId: String, token: String) async throws -> APINotificationTokenResponse {
+    public func deregister(deviceId: String, token: String) async throws -> NotificationTokenEntity {
         if let error = deregisterDeviceIdTokenThrowableError {
             throw error
         }

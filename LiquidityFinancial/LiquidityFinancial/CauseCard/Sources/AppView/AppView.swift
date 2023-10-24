@@ -3,7 +3,7 @@ import Factory
 import NetspendOnboarding
 import LFStyleGuide
 import LFUtilities
-import LFRewardDashboard
+import LFDashboard
 import RewardData
 
 struct AppView: View {

@@ -11,8 +11,8 @@ public struct EnterSSNView: View {
   var analyticsService
   @StateObject
   var viewModel: EnterSSNViewModel
-  @InjectedObject(\.baseOnboardingDestinationView)
-  var baseOnboardingNavigation
+  @InjectedObject(\.baseOnboardingDestinationObservable)
+  var baseOnboardingDestinationObservable
   @State
   private var toastMessage: String?
   @State
@@ -53,7 +53,7 @@ public struct EnterSSNView: View {
     .popup(isPresented: $showPopup) {
       infoPopup
     }
-    .navigationLink(item: $baseOnboardingNavigation.enterSSNDestinationView) { item in
+    .navigationLink(item: $baseOnboardingDestinationObservable.enterSSNDestinationView) { item in
       switch item {
       case let .enterPassport(destinationView):
         destinationView
