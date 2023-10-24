@@ -119,6 +119,13 @@ let package = Package(
         .product(name: "CryptoChartDomain", package: "LFDomain")
       ]
     ),
+    .testTarget(
+      name: "CryptoChartDataTests",
+      dependencies: [
+        "CryptoChartData", "DataTestHelpers", "Nimble", "TestHelpers",
+        .product(name: "NetworkTestHelpers", package: "LFNetwork")
+      ]
+    ),
     .target(
       name: "DataTestHelpers",
       dependencies: [
