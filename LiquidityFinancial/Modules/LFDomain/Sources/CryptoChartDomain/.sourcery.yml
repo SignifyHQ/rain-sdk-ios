@@ -1,0 +1,8 @@
+sources:
+  - Entities
+  - RepositoryProtocol
+  - StorageProtocol
+templates:
+  - ../../../../sourcery/Templates
+output:
+  ../DomainTestHelpers/CryptoChartDomain

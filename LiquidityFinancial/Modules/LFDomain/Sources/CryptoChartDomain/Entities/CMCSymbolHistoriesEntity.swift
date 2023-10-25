@@ -1,5 +1,6 @@
 import Foundation
 
+// sourcery: AutoMockable
 public protocol CMCSymbolHistoriesEntity {
   var currency: String { get }
   var interval: String { get }

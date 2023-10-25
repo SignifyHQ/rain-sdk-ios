@@ -1,6 +1,6 @@
 import Foundation
 
-public final class CryptoChartUseCase: CryptoChartUseCaseProtocol {
+public final class GetCMCSymbolHistoriesUseCase: GetCMCSymbolHistoriesUseCaseProtocol {
   
   private let repository: CryptoChartRepositoryProtocol
   

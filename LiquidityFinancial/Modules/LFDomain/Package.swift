@@ -39,7 +39,7 @@ let package = Package(
     .package(name: "LFUtilities", path: "../LFUtilities"),
     .package(name: "TestHelpers", path: "../TestHelpers"),
     .package(url: "https://github.com/krzysztofzablocki/Sourcery.git", from: "2.0.0"),
-    .package(url:  "https://github.com/Quick/Nimble.git", from: "12.0.0")
+    .package(url: "https://github.com/Quick/Nimble.git", from: "12.0.0")
   ],
   targets: [
     .target(
@@ -90,6 +90,9 @@ let package = Package(
     .testTarget(
       name: "ZerohashDomainTests",
       dependencies: ["ZerohashDomain", "TestHelpers", "DomainTestHelpers"]),
+    .testTarget(
+      name: "CryptoChartDomainTests",
+      dependencies: ["CryptoChartDomain", "TestHelpers", "DomainTestHelpers", "Nimble"]),
     .testTarget(
       name: "SolidDomainTests",
       dependencies: ["SolidDomain", "TestHelpers", "DomainTestHelpers", "Nimble"])

@@ -1,5 +1,5 @@
 import Foundation
 
-protocol CryptoChartUseCaseProtocol {
+protocol GetCMCSymbolHistoriesUseCaseProtocol {
   func execute(symbol: String, period: String) async throws -> [CMCSymbolHistoriesEntity]
 }

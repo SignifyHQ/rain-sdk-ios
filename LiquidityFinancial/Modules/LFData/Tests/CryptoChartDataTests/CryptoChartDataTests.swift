@@ -33,8 +33,8 @@ final class CryptoChartDataTests: XCTestCase {
     super.tearDown()
   }
   
-  /// Test get CMCSymbolHistoriesSymbolPeriod and token functionality under normal conditions.
-  func test_getCMCSymbolHistoriesSymbolPeriod_happy_case() async {
+  /// Test get CMCSymbolHistorySymbolPeriod and token functionality under normal conditions.
+  func test_getCMCSymbolHistorySymbolPeriod_happy_case() async {
     // Given the expected mock success and fail responses
     let mockSuccessResponse = [
       APICMCSymbolHistories(
@@ -69,8 +69,47 @@ final class CryptoChartDataTests: XCTestCase {
     .to(equal((symbol: mockSymbol, period: mockPeriod)))
   }
   
-  // Test get CMCSymbolHistoriesSymbolPeriod deviceID and token functionality when it encounters an API error.
-  func test_getCMCSymbolHistoriesSymbolPeriod_api_failed_case() async {
+  // Test get CMCSymbolHistorySymbolPeriod functionality with wrong symbol.
+  func test_getCMCSymbolHistorySymbolPeriod_api_wrong_symbol_case() async {
+    // Given a mock error which will be thrown
+    let expectedError = TestError.fail("mock_error")
+    api.getCMCSymbolHistoriesSymbolPeriodThrowableError = expectedError
+    
+    // And a randomly generated mockWrongSymbol and mockPeriod
+    let mockWrongSymbol = "mock_wrong_symbol"
+    let mockPeriod = "mock_period"
+    
+    await expect {
+      // When calling getCMCSymbolHistory function on the repository with parameter which should throw an error
+      try await self.repository.getCMCSymbolHistories(symbol: mockWrongSymbol, period: mockPeriod).count
+    }.to(throwError { error in
+      // The error is the one we expected
+      expect(expectedError).to(equal(error))
+    })
+  }
+  
+  // Test get CMCSymbolHistorySymbolPeriod functionality with wrong period.
+  func test_getCMCSymbolHistorySymbolPeriod_api_wrong_period_case() async {
+    // Given a mock error which will be thrown
+    let expectedError = TestError.fail("mock_error")
+    api.getCMCSymbolHistoriesSymbolPeriodThrowableError = expectedError
+    
+    // And a randomly generated mockSymbol and mockWrongPeriod
+    let mockSymbol = "mock_symbol"
+    let mockWrongPeriod = "mock_wrong_period"
+    
+    await expect {
+      // When calling getCMCSymbolHistory function on the repository with parameter which should throw an error
+      try await self.repository.getCMCSymbolHistories(symbol: mockSymbol, period: mockWrongPeriod).count
+    }.to(throwError { error in
+      // The error is the one we expected
+      expect(expectedError).to(equal(error))
+    })
+  }
+
+  
+  // Test get CMCSymbolHistorySymbolPeriod functionality when it encounters an API error.
+  func test_getCMCSymbolHistorySymbolPeriod_api_failed_case() async {
     // Given a mock error which will be thrown
     let expectedError = TestError.fail("mock_error")
     api.getCMCSymbolHistoriesSymbolPeriodThrowableError = expectedError
