@@ -28,8 +28,8 @@ public final class SolidEnterCVVCodeViewModel: EnterCVVCodeViewModelProtocol {
   public let cvvCodeDigits = Int(Constants.Default.cvvCodeDigits.rawValue) ?? 3
   public var pinViewItems: [PinTextFieldViewItem] = .init()
   
-  lazy var cardUseCase: NSCardUseCaseProtocol = {
-    NSCardUseCase(repository: cardRepository)
+  lazy var verifyCardUseCase: NSVerifyCVVCodeUseCaseProtocol = {
+    NSVerifyCVVCodeUseCase(repository: cardRepository)
   }()
   
   public init(cardID: String) {
@@ -51,7 +51,7 @@ public extension SolidEnterCVVCodeViewModel {
         let request = VerifyCVVCodeParameters(
           verificationType: Constants.NetSpendKey.cvc.rawValue, encryptedData: encryptedData
         )
-        let response = try await cardUseCase.verifyCVVCode(
+        let response = try await verifyCardUseCase.execute(
           requestParam: request,
           cardID: cardID,
           sessionID: accountDataManager.sessionID

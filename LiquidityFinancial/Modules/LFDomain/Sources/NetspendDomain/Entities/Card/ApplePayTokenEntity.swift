@@ -1,5 +1,6 @@
 import Foundation
 
+// sourcery: AutoMockable
 public protocol GetApplePayTokenEntity where Self: Decodable {
   associatedtype Token: ApplePayTokenEntity
   var tokens: [Token] { get }

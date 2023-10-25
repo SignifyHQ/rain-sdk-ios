@@ -24,8 +24,9 @@ final class SolidOrderPhysicalCardViewModel: OrderPhysicalCardViewModelProtocol 
   @Published var toastMessage: String?
   
   let onOrderSuccess: ((CardModel) -> Void)?
-  lazy var cardUseCase: NSCardUseCaseProtocol = {
-    NSCardUseCase(repository: cardRepository)
+  
+  lazy var orderPhysicalCardUseCase: NSOrderPhysicalCardUseCaseProtocol = {
+    NSOrderPhysicalCardUseCase(repository: cardRepository)
   }()
   
   var coordinator: BaseCard.BaseCardDestinationObservable
@@ -66,7 +67,7 @@ extension SolidOrderPhysicalCardViewModel {
           country: shippingAddress.country,
           postalCode: shippingAddress.postalCode
         )
-        let response = try await cardUseCase.orderPhysicalCard(
+        let response = try await orderPhysicalCardUseCase.execute(
           address: address,
           sessionID: accountDataManager.sessionID
         )

@@ -12,6 +12,7 @@ import OnboardingDomain
 import LFServices
 import DevicesData
 import DevicesDomain
+import NetspendDomain
 
 extension Container {
   public var dashboardRepository: Factory<DashboardRepository> {
@@ -56,6 +57,14 @@ public final class DashboardRepository: ObservableObject {
   
   lazy var deviceRegisterUseCase: DeviceRegisterUseCaseProtocol = {
     return DeviceRegisterUseCase(repository: devicesRepository)
+  }()
+  
+  lazy var getListCardUseCase: NSGetListCardUseCaseProtocol = {
+    NSGetListCardUseCase(repository: cardRepository)
+  }()
+  
+  lazy var getCardUseCase: NSGetCardUseCaseProtocol = {
+    NSGetCardUseCase(repository: cardRepository)
   }()
   
   var toastMessage: ((String) -> Void)?
@@ -152,7 +161,7 @@ public extension DashboardRepository {
     netspendCardData.loading = true
     Task { @MainActor in
       do {
-        let cards = try await cardRepository.getListCard()
+        let cards = try await getListCardUseCase.execute()
         netspendCardData.cards = cards.map { card in
           CardModel(
             id: card.id,
@@ -184,7 +193,7 @@ public extension DashboardRepository {
     solidCardData.loading = true
     Task { @MainActor in
       do {
-        let cards = try await cardRepository.getListCard()
+        let cards = try await getListCardUseCase.execute()
         solidCardData.cards = cards.map { card in
           CardModel(
             id: card.id,
@@ -216,7 +225,7 @@ public extension DashboardRepository {
     Task { @MainActor in
       defer { netspendCardData.loading = false }
       do {
-        let entity = try await cardRepository.getCard(cardID: cardID, sessionID: accountDataManager.sessionID)
+        let entity = try await getCardUseCase.execute(cardID: cardID, sessionID: accountDataManager.sessionID)
         if let usersession = netspendDataManager.sdkSession, let cardModel = entity as? APICard {
           let encryptedData: APICardEncrypted? = cardModel.decodeData(session: usersession)
           if let encryptedData {
@@ -233,7 +242,7 @@ public extension DashboardRepository {
     Task { @MainActor in
       defer { solidCardData.loading = false }
       do {
-        let entity = try await cardRepository.getCard(cardID: cardID, sessionID: accountDataManager.sessionID)
+        let entity = try await getCardUseCase.execute(cardID: cardID, sessionID: accountDataManager.sessionID)
         if let usersession = netspendDataManager.sdkSession, let cardModel = entity as? APICard {
           let encryptedData: APICardEncrypted? = cardModel.decodeData(session: usersession)
           if let encryptedData {

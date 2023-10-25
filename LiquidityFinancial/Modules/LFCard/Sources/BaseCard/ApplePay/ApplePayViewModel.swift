@@ -8,9 +8,8 @@ final class ApplePayViewModel: ObservableObject {
   @LazyInjected(\.customerSupportService) var customerSupportService
   @LazyInjected(\.accountDataManager) var accountDataManager
 
-  private lazy var userCase: NSCardUseCase? = { [weak self] in
-    guard let self else { return nil }
-    return NSCardUseCase(repository: self.cardRepository)
+  lazy var postApplePayTokenUseCase: NSPostApplePayTokenUseCaseProtocol = {
+    NSPostApplePayTokenUseCase(repository: cardRepository)
   }()
   
   let cardModel: CardModel
@@ -23,6 +22,10 @@ final class ApplePayViewModel: ObservableObject {
 // MARK: - API
 extension ApplePayViewModel {
   func callEnrollWalletAPI(bodyData: [String: Any]) async throws -> PostApplePayTokenEntity? {
-    return try await userCase?.postApplePayToken(sessionId: accountDataManager.sessionID, cardId: cardModel.id, bodyData: bodyData)
+    try await postApplePayTokenUseCase.execute(
+      sessionId: accountDataManager.sessionID,
+      cardId: cardModel.id,
+      bodyData: bodyData
+    )
   }
 }

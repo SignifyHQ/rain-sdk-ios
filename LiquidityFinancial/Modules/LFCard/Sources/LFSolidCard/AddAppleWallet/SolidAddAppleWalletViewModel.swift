@@ -13,9 +13,8 @@ public final class SolidAddAppleWalletViewModel: AddAppleWalletViewModelProtocol
   
   @Published public var isShowApplePay: Bool = false
   
-  private lazy var userCase: NSCardUseCase? = { [weak self] in
-    guard let self else { return nil }
-    return NSCardUseCase(repository: self.cardRepository)
+  lazy var postApplePayTokenUseCase: NSPostApplePayTokenUseCaseProtocol = {
+    NSPostApplePayTokenUseCase(repository: cardRepository)
   }()
   
   public let cardModel: CardModel
@@ -34,6 +33,10 @@ public extension SolidAddAppleWalletViewModel {
   }
   
   func callEnrollWalletAPI(bodyData: [String: Any]) async throws -> PostApplePayTokenEntity? {
-    try await userCase?.postApplePayToken(sessionId: accountDataManager.sessionID, cardId: cardModel.id, bodyData: bodyData)
+    try await postApplePayTokenUseCase.execute(
+      sessionId: accountDataManager.sessionID,
+      cardId: cardModel.id,
+      bodyData: bodyData
+    )
   }
 }

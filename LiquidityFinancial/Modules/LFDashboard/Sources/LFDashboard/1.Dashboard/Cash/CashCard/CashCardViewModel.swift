@@ -19,8 +19,8 @@ final class CashCardViewModel: ObservableObject {
   @Published var toastMessage: String?
   @Published var cardActivated: CardModel?
   
-  lazy var cardUseCase: NSCardUseCaseProtocol = {
-    NSCardUseCase(repository: cardRepository)
+  lazy var createCardUseCase: NSCreateCardUseCaseProtocol = {
+    NSCreateCardUseCase(repository: cardRepository)
   }()
 }
 
@@ -31,7 +31,7 @@ extension CashCardViewModel {
       defer { isCreatingCard = false }
       isCreatingCard = true
       do {
-        _ = try await cardUseCase.createCard(sessionID: accountDataManager.sessionID)
+        _ = try await createCardUseCase.execute(sessionID: accountDataManager.sessionID)
         NotificationCenter.default.post(name: .refreshListCards, object: nil)
         onSuccess()
         analyticsService.track(event: AnalyticsEvent(name: .createCardSuccess))

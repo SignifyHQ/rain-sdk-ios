@@ -30,8 +30,8 @@ public final class SolidSetCardPinViewModel: SetCardPinViewModelProtocol {
   public let cardID: String
   public let onFinish: ((String) -> Void)?
   
-  lazy var cardUseCase: NSCardUseCaseProtocol = {
-    NSCardUseCase(repository: cardRepository)
+  lazy var setPinCardUseCase: NSSetCardPinUseCaseProtocol = {
+    NSSetCardPinUseCase(repository: cardRepository)
   }()
   
   public init(verifyID: String, cardID: String, onFinish: ((String) -> Void)? = nil) {
@@ -53,7 +53,7 @@ public extension SolidSetCardPinViewModel {
           value: [Constants.NetSpendKey.pin.rawValue: pinValue]
         )
         let request = APISetPinRequest(verifyId: verifyID, encryptedData: encryptedData)
-        _ = try await cardUseCase.setPin(
+        _ = try await setPinCardUseCase.execute(
           requestParam: request,
           cardID: cardID,
           sessionID: accountDataManager.sessionID

@@ -52,8 +52,16 @@ public final class SolidListCardsViewModel: ListCardsViewModelProtocol {
   
   public var cancellables: Set<AnyCancellable> = []
   
-  lazy var cardUseCase: NSCardUseCaseProtocol = {
-    NSCardUseCase(repository: cardRepository)
+  lazy var lockCardUseCase: NSLockCardUseCaseProtocol = {
+    NSLockCardUseCase(repository: cardRepository)
+  }()
+  
+  lazy var unLockCardUseCase: NSUnLockCardUseCaseProtocol = {
+    NSUnLockCardUseCase(repository: cardRepository)
+  }()
+  
+  lazy var closeCardUseCase: NSCloseCardUseCaseProtocol = {
+    NSCloseCardUseCase(repository: cardRepository)
   }()
   
   lazy var rewardUseCase: RewardUseCaseProtocol = {
@@ -72,7 +80,7 @@ public extension SolidListCardsViewModel {
     isLoading = true
     Task {
       do {
-        let card = try await cardUseCase.lockCard(cardID: currentCard.id, sessionID: accountDataManager.sessionID)
+        let card = try await lockCardUseCase.execute(cardID: currentCard.id, sessionID: accountDataManager.sessionID)
         updateCardStatus(status: .disabled, id: card.id)
       } catch {
         isCardLocked = false
@@ -86,7 +94,7 @@ public extension SolidListCardsViewModel {
     isLoading = true
     Task {
       do {
-        let card = try await cardUseCase.unlockCard(cardID: currentCard.id, sessionID: accountDataManager.sessionID)
+        let card = try await unLockCardUseCase.execute(cardID: currentCard.id, sessionID: accountDataManager.sessionID)
         updateCardStatus(status: .active, id: card.id)
       } catch {
         isCardLocked = true
@@ -105,7 +113,7 @@ public extension SolidListCardsViewModel {
       isLoading = true
       do {
         let request = CloseCardReasonParameters()
-        _ = try await cardUseCase.closeCard(
+        _ = try await closeCardUseCase.execute(
           reason: request, cardID: currentCard.id, sessionID: accountDataManager.sessionID
         )
         popup = .closeCardSuccessfully

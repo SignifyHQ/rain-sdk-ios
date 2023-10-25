@@ -1,5 +1,6 @@
 import Foundation
 
+// sourcery: AutoMockable
 public protocol CardEntity {
   var id: String { get }
   var expirationMonth: Int { get }
