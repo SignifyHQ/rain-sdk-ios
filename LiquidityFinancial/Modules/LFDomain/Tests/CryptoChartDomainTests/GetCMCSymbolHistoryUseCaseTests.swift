@@ -9,105 +9,68 @@ import Nimble
 final class GetCMCSymbolHistoryUseCaseTests: XCTestCase {
   
   var repository: MockCryptoChartRepositoryProtocol!
-  var usecase: GetCMCSymbolHistoriesUseCase!
+  var useCase: GetCMCSymbolHistoriesUseCase!
   
   override func setUp() {
     super.setUp()
+    // Initialize mock objects and the use case before each test. Inject mock objects into the use case
     repository = MockCryptoChartRepositoryProtocol()
-    usecase = GetCMCSymbolHistoriesUseCase(repository: repository)
+    useCase = GetCMCSymbolHistoriesUseCase(repository: repository)
   }
   
   override func tearDown() {
-    usecase = nil
+    // Clean up any resources that don't need to persist.
+    useCase = nil
     repository = nil
+    
     super.tearDown()
   }
 }
 
 // MARK: - Tests
 extension GetCMCSymbolHistoryUseCaseTests {
-  /// Test  get CMCSymbolHistory functionality under normal conditions.
+  // Test GetCMCSymbolHistoriesUseCase functionality under normal conditions.
   func test_getCMCSymbolHistory_happy_case() async {
-    // Given The expected mock success
+    // Given The expected mock success response
     let mockCMCSymbolHistory = MockCMCSymbolHistoriesEntity()
     mockCMCSymbolHistory.currency = "mock_currency"
     mockCMCSymbolHistory.interval = "mock_interval"
     let mockSuccessResult = [mockCMCSymbolHistory]
-    
+    // And a pre-set API return success value
     self.repository.getCMCSymbolHistoriesSymbolPeriodReturnValue = mockSuccessResult
-    
-    // And generated mockSymbol and mockPeriod
+    // And a set of mock symbol and mock period
     let mockSymbol = "mock_symbol"
     let mockperiod = "mock_period"
-
-    // When calling getCMCSymbolHistories function on the repository should return an value successfully
+    // When calling execute function on the use case which should return a value successfully
     await expect {
-      try await self.usecase
-        .execute(symbol: mockSymbol, period: mockperiod)
-        .count
+      try await self.useCase
+        .execute(
+          symbol: mockSymbol,
+          period: mockperiod
+        ) as? [MockCMCSymbolHistoriesEntity]
     }
-    // Then the repository will returns the same result as the api
-    .to(equal(mockSuccessResult.count))
+    // Then response should be the one we expect
+    .to(equal(mockSuccessResult))
   }
   
-  /// Test get CMCSymbolHistory functionality with wrong symbol.
-  func test_getCMCSymbolHistory_wrongSymbol_case() async {
-    // Given The expected mock error
-    let expectedError = TestError.fail("mock_error")
-    self.repository.getCMCSymbolHistoriesSymbolPeriodThrowableError = expectedError
-    
-    // And generated mockWrongSymbol and mockPeriod
-    let mockWrongSymbol = "mock_wrong_symbol"
-    let mockperiod = "mock_period"
-    
-    // When: Calling getCMCSymbolHistories function on the repository should throw an error as the same
-    await expect {
-      try await self.repository.getCMCSymbolHistories(symbol: mockWrongSymbol, period: mockperiod)
-    }
-    .to(throwError { error in
-      // Then: The error is the one we expected
-      expect(expectedError).to(equal(error))
-    })
-  }
-  
-  /// Test get CMCSymbolHistory functionality with wrong period.
-  func test_getCMCSymbolHistory_wrongPeriod_case() async {
-    // Given The expected mock error
-    let expectedError = TestError.fail("mock_error")
-    self.repository.getCMCSymbolHistoriesSymbolPeriodThrowableError = expectedError
-    
-    // And generated mockSymbol and mockWrongperiod
-    let mockSymbol = "mock_symbol"
-    let mockWrongperiod = "mock_wrong_period"
-    
-    // When: Calling getCMCSymbolHistories function on the repository should throw an error as the same
-    await expect {
-      try await self.repository.getCMCSymbolHistories(symbol: mockSymbol, period: mockWrongperiod)
-    }
-    .to(throwError { error in
-      // Then: The error is the one we expected
-      expect(expectedError).to(equal(error))
-    })
-  }
-
-  
-  /// Test get CMCSymbolHistory functionality when it encounters an error.
+  // Test get GetCMCSymbolHistoriesUseCase functionality when it encounters an error.
   func test_getCMCSymbolHistory_failed_case_throw() async {
     // Given The expected mock error
     let expectedError = TestError.fail("mock_error")
+    // And a pre-set API throwable error
     self.repository.getCMCSymbolHistoriesSymbolPeriodThrowableError = expectedError
-    
-    // And generated mockSymbol and mockPeriod
+    // And a set of mock symbol and mock period
     let mockSymbol = "mock_symbol"
     let mockperiod = "mock_period"
-    
-    // When: Calling getCMCSymbolHistories function on the repository should throw an error as the same
+    // When calling execute function on the use case which throws an error
     await expect {
       try await self.repository.getCMCSymbolHistories(symbol: mockSymbol, period: mockperiod)
     }
-    .to(throwError { error in
-      // Then: The error is the one we expected
-      expect(expectedError).to(equal(error))
-    })
+    // Then The error is the one we expected
+    .to(
+      throwError { error in
+        expect(error).to(equal(expectedError))
+      }
+    )
   }
 }

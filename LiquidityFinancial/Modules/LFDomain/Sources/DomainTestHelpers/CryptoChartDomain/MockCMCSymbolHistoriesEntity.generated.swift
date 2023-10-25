@@ -5,26 +5,37 @@
 import Foundation
 import CryptoChartDomain
 
-public class MockCMCSymbolHistoriesEntity: CMCSymbolHistoriesEntity {
-
-    public init() {}
-
-    public var currency: String {
-        get { return underlyingCurrency }
-        set(value) { underlyingCurrency = value }
-    }
-    public var underlyingCurrency: String!
-    public var interval: String {
-        get { return underlyingInterval }
-        set(value) { underlyingInterval = value }
-    }
-    public var underlyingInterval: String!
-    public var timestamp: String?
-    public var open: Double?
-    public var close: Double?
-    public var high: Double?
-    public var low: Double?
-    public var value: Double?
-    public var volume: Double?
-
+public class MockCMCSymbolHistoriesEntity: CMCSymbolHistoriesEntity, Equatable {
+  public static func == (lhs: MockCMCSymbolHistoriesEntity, rhs: MockCMCSymbolHistoriesEntity) -> Bool {
+    lhs.underlyingCurrency == rhs.underlyingCurrency &&
+    lhs.underlyingInterval == rhs.underlyingInterval &&
+    lhs.timestamp == rhs.timestamp &&
+    lhs.open == rhs.open &&
+    lhs.close == rhs.close &&
+    lhs.high == rhs.high &&
+    lhs.low == rhs.low &&
+    lhs.value == rhs.value &&
+    lhs.volume == rhs.volume
+  }
+  
+  public init() {}
+  
+  public var currency: String {
+    get { return underlyingCurrency }
+    set(value) { underlyingCurrency = value }
+  }
+  public var underlyingCurrency: String!
+  public var interval: String {
+    get { return underlyingInterval }
+    set(value) { underlyingInterval = value }
+  }
+  public var underlyingInterval: String!
+  public var timestamp: String?
+  public var open: Double?
+  public var close: Double?
+  public var high: Double?
+  public var low: Double?
+  public var value: Double?
+  public var volume: Double?
+  
 }
