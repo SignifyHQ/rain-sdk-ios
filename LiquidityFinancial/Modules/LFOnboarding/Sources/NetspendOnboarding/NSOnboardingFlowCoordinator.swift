@@ -238,7 +238,7 @@ private extension NSOnboardingFlowCoordinator {
     if result.mapToEnum().contains(.createAccount) {
       set(route: .zeroHash)
     } else {
-      set(route: .unclear("ZeroHash missing the information: \(result.missingSteps)"))
+      log.info("fetchZeroHashStatus: \(result.missingSteps)")
     }
   }
   
