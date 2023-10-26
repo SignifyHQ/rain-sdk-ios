@@ -157,6 +157,13 @@ let package = Package(
       ]
     ),
     .testTarget(
+      name: "NetSpendDataTests",
+      dependencies: [
+        "NetSpendData", "DataTestHelpers", "TestHelpers", "Nimble",
+        .product(name: "NetworkTestHelpers", package: "LFNetwork")
+      ]
+    ),
+    .testTarget(
       name: "SolidDataTests",
       dependencies: [
         "SolidData", "DataTestHelpers", "TestHelpers", "Nimble",
