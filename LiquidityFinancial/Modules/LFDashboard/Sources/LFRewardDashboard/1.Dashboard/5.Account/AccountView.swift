@@ -81,8 +81,11 @@ private extension AccountsView {
       VStack(alignment: .leading, spacing: 24) {
         connectedAccountsSection
         section(title: LFLocalizable.AccountView.connectNewAccounts) {
-          //TODO: Luan Tran
-          EmptyView()
+          AddFundsView(
+            viewModel: viewModel.addFundsViewModel,
+            achInformation: $viewModel.achInformation,
+            isDisableView: $viewModel.isDisableView
+          )
         }
         section(title: LFLocalizable.AccountView.cardAccountDetails) {
           accountDetailView

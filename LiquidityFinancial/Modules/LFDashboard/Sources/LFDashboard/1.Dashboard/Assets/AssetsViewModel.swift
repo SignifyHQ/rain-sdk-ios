@@ -10,6 +10,7 @@ import BaseDashboard
 final class AssetsViewModel: ObservableObject {
   @LazyInjected(\.accountDataManager) var accountDataManager
   @LazyInjected(\.accountRepository) var accountRepository
+  @LazyInjected(\.dashboardRepository) var dashboardRepository
   
   @Published var isLoading: Bool = false
   @Published var toastMessage: String?
@@ -36,7 +37,7 @@ final class AssetsViewModel: ObservableObject {
   }
   
   func refresh() async {
-    async let fiatAccountsEntity = self.accountRepository.getAccount(currencyType: Constants.CurrencyType.fiat.rawValue)
+    async let fiatAccountsEntity = self.dashboardRepository.getFiatAccounts()
     async let cryptoAccountsEntity = self.accountRepository.getAccount(currencyType: Constants.CurrencyType.crypto.rawValue)
     do {
       let fiatAccounts = try await fiatAccountsEntity

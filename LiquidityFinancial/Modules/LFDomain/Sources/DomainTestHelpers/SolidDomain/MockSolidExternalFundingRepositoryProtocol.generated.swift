@@ -114,4 +114,30 @@ public class MockSolidExternalFundingRepositoryProtocol: SolidExternalFundingRep
         }
     }
 
+    //MARK: - unlinkContact
+
+    public var unlinkContactIdThrowableError: Error?
+    public var unlinkContactIdCallsCount = 0
+    public var unlinkContactIdCalled: Bool {
+        return unlinkContactIdCallsCount > 0
+    }
+    public var unlinkContactIdReceivedId: String?
+    public var unlinkContactIdReceivedInvocations: [String] = []
+    public var unlinkContactIdReturnValue: SolidUnlinkContactResponseEntity!
+    public var unlinkContactIdClosure: ((String) async throws -> SolidUnlinkContactResponseEntity)?
+
+    public func unlinkContact(id: String) async throws -> SolidUnlinkContactResponseEntity {
+        if let error = unlinkContactIdThrowableError {
+            throw error
+        }
+        unlinkContactIdCallsCount += 1
+        unlinkContactIdReceivedId = id
+        unlinkContactIdReceivedInvocations.append(id)
+        if let unlinkContactIdClosure = unlinkContactIdClosure {
+            return try await unlinkContactIdClosure(id)
+        } else {
+            return unlinkContactIdReturnValue
+        }
+    }
+
 }

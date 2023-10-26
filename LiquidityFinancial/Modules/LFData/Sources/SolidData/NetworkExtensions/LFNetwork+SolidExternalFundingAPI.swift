@@ -40,4 +40,10 @@ extension LFCoreNetwork: SolidExternalFundingAPIProtocol where R == SolidExterna
       decoder: .apiDecoder
     )
   }
+  
+  public func unlinkContact(id: String) async throws -> APISolidUnlinkContactResponse {
+    let result = try await request(SolidExternalFundingRoute.unlinkContact(id: id))
+    let statusCode = result.httpResponse?.statusCode
+    return APISolidUnlinkContactResponse(success: statusCode?.isSuccess ?? false)
+  }
 }

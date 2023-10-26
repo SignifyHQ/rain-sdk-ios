@@ -13,6 +13,7 @@ final class MoveCryptoInputViewModel: ObservableObject {
   @LazyInjected(\.accountRepository) var accountRepository
   @LazyInjected(\.accountDataManager) var accountDataManager
   @LazyInjected(\.zerohashRepository) var zerohashRepository
+  @LazyInjected(\.dashboardRepository) var dashboardRepository
 
   @Published var assetModel: AssetModel
   @Published var fiatAccount: LFAccount?
@@ -113,7 +114,7 @@ private extension MoveCryptoInputViewModel {
     let cryptoId = self.assetModel.id
     Task {
       if type == .buyCrypto {
-        let fiatAccounts = try await self.accountRepository.getAccount(currencyType: Constants.CurrencyType.fiat.rawValue)
+        let fiatAccounts = try await self.dashboardRepository.getFiatAccounts()
         self.accountDataManager.addOrUpdateAccounts(fiatAccounts)
         
         if let fiatAccount = fiatAccounts.first {

@@ -1,27 +1,28 @@
 import Combine
+import ExternalFundingData
 import UIKit
 import Factory
 import LFUtilities
 import LFLocalizable
 import LFServices
-import ExternalFundingData
+import SolidData
+import SolidDomain
 
 class ConnectedAccountsViewModel: ObservableObject {
-
-  var networkEnvironment: NetworkEnvironment {
-    EnvironmentManager().networkEnvironment
-  }
   
-  @LazyInjected(\.externalFundingRepository) var externalFundingRepository
-  @LazyInjected(\.accountDataManager) var accountDataManager
   @LazyInjected(\.analyticsService) var analyticsService
   @LazyInjected(\.externalFundingDataManager) var externalFundingDataManager
+  @LazyInjected(\.solidExternalFundingRepository) var solidExternalFundingRepository
   
   @Published var linkedContacts: [LinkedSourceContact] = []
   @Published var isLoading = false
   @Published var isDeleting = false
   @Published var navigation: Navigation?
   @Published var popup: Popup?
+  
+  lazy var unlinkContactUseCase: SolidUnlinkContactUseCaseProtocol = {
+    SolidUnlinkContactUseCase(repository: solidExternalFundingRepository)
+  }()
   
   private var cancellable: Set<AnyCancellable> = []
   
@@ -66,8 +67,25 @@ extension ConnectedAccountsViewModel {
     popup = nil
   }
   
-  func deleteAccount(id: String, sourceType: String) {
-    // TODO: Implement the delete later
+  func deleteAccount(id: String) {
+    self.isDeleting = true
+    Task { @MainActor in
+      defer {
+        isDeleting = false
+        hidePopup()
+      }
+      do {
+        let response = try await unlinkContactUseCase.execute(id: id)
+        if response.success {
+          self.externalFundingDataManager.removeLinkedSource(id: id)
+          self.linkedContacts.removeAll(where: {
+            $0.sourceId == id
+          })
+        }
+      } catch {
+        log.error(error)
+      }
+    }
   }
 }
 

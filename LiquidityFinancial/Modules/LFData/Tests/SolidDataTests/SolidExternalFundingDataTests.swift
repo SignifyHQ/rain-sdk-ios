@@ -1,4 +1,5 @@
 import DataTestHelpers
+import DomainTestHelpers
 import Foundation
 import NetworkTestHelpers
 import Nimble
@@ -181,6 +182,42 @@ extension SolidExternalFundingDataTests {
     // When: Calling login function on the repository with parameters which should throw an error
     await expect {
       try await self.repository.getLinkedSources(accountID: "")
+    }
+    .to(throwError { error in
+      // Then: The error is the one we expected
+      expect(expectedError).to(equal(error))
+    })
+  }
+
+}
+
+// MARK: - Create unlinkContact Tests
+extension SolidExternalFundingDataTests {
+  /// Test the unlinkContact  functionality under normal conditions.
+  func test_unlinkContact_happy_case() async {
+    // Given: The expected mock success
+    let mockSuccessResult = APISolidUnlinkContactResponse(success: true)
+    let accountIDSuccess = "mock_account_id"
+    
+    self.api.unlinkContactIdReturnValue = mockSuccessResult
+    
+    // When: Calling unlinkContact function on the repository should return an value successfully
+    await expect {
+      try await self.repository.unlinkContact(id: accountIDSuccess).success
+    }
+    // Then: The repository will returns the same result as the api
+    .to(equal(true))
+  }
+  
+  /// Test the unlinkContact functionality when it encounters an error.
+  func test_unlinkContact_failed_case_throw() async {
+    // Given: A mock error which will be thrown
+    let expectedError = TestError.fail("mock_error")
+    self.api.unlinkContactIdThrowableError = expectedError
+    
+    // When: Calling login function on the repository with parameters which should throw an error
+    await expect {
+      try await self.repository.unlinkContact(id: "")
     }
     .to(throwError { error in
       // Then: The error is the one we expected

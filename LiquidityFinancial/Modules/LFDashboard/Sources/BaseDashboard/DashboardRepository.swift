@@ -143,12 +143,8 @@ public extension DashboardRepository {
       do {
         apiFetchListCards()
         
-        async let fiatAccountsEntity = self.accountRepository.getAccount(currencyType: Constants.CurrencyType.fiat.rawValue)
-        
-        let fiatAccounts = try await fiatAccountsEntity
-        
+        let fiatAccounts = try await getFiatAccounts()
         self.fiatData.fiatAccount = fiatAccounts
-        
         self.accountDataManager.addOrUpdateAccounts(fiatAccounts)
       } catch {
         log.error(error.localizedDescription)
@@ -275,9 +271,8 @@ public extension DashboardRepository {
       cryptoData.loading = true
       
       do {
-        async let fiatAccountsEntity = self.accountRepository.getAccount(currencyType: Constants.CurrencyType.fiat.rawValue)
         async let cryptoAccountsEntity = self.accountRepository.getAccount(currencyType: Constants.CurrencyType.crypto.rawValue)
-        let fiatAccounts = try await fiatAccountsEntity
+        let fiatAccounts = try await getFiatAccounts()
         let cryptoAccounts = try await cryptoAccountsEntity
         let accounts = fiatAccounts + cryptoAccounts
         
@@ -359,6 +354,23 @@ public extension DashboardRepository {
       }
     }
   }
+}
+
+// MARK: Account
+public extension DashboardRepository {
+  
+  func getFiatAccounts() async throws -> [LFAccount] {
+    switch LFUtilities.target {
+    case .CauseCard, .PrideCard:
+      let entity = try await solidGetAccountUseCase.execute()
+      return entity.map { item in
+        APIAccount(id: item.id, externalAccountId: item.externalAccountId, currency: item.currency, availableBalance: item.availableBalance, availableUsdBalance: item.availableUsdBalance)
+      }
+    default:
+      return try await self.accountRepository.getAccount(currencyType: Constants.CurrencyType.fiat.rawValue)
+    }
+  }
+  
 }
 
 // MARK: External Funding

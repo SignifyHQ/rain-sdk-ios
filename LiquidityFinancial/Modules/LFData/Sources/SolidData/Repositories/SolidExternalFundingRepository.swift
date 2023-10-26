@@ -29,4 +29,8 @@ public class SolidExternalFundingRepository: SolidExternalFundingRepositoryProto
     return data
   }
   
+  public func unlinkContact(id: String) async throws -> SolidUnlinkContactResponseEntity {
+    try await solidExternalFundingAPI.unlinkContact(id: id)
+  }
+  
 }

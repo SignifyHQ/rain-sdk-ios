@@ -17,6 +17,7 @@ final class CashViewModel: ObservableObject {
   @LazyInjected(\.accountRepository) var accountRepository
   @LazyInjected(\.accountDataManager) var accountDataManager
   @LazyInjected(\.externalFundingRepository) var externalFundingRepository
+  @LazyInjected(\.dashboardRepository) var dashboardRepository
   
   @Published var isCardActive: Bool = true
   @Published var isLoading: Bool = false
@@ -206,17 +207,16 @@ extension CashViewModel {
   private func refreshAccounts() async throws -> LFAccount? {
     defer { isLoading = false }
     isLoading = true
-    let accounts = try await accountRepository.getAccount(currencyType: currencyType)
+    let accounts = try await dashboardRepository.getFiatAccounts()
     if let account = accounts.first {
       self.accountID = account.id
       self.accountDataManager.fiatAccountID = account.id
       self.accountDataManager.externalAccountID = account.externalAccountId
       self.cashBalanceValue = account.availableBalance
       self.selectedAsset = AssetType(rawValue: account.currency) ?? .usd
-      return account
     }
     accountDataManager.addOrUpdateAccounts(accounts)
-    return nil
+    return accounts.first
   }
   
   private func getListConnectedAccount() throws {

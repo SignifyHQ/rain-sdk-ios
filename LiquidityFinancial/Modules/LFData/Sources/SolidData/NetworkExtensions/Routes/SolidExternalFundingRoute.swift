@@ -8,6 +8,7 @@ public enum SolidExternalFundingRoute {
   case createDebitCardToken(accountID: String)
   case createPlaidToken(accountId: String)
   case plaidLink(accountId: String, token: String, plaidAccountId: String)
+  case unlinkContact(id: String)
 }
 
 extension SolidExternalFundingRoute: LFRoute {
@@ -22,6 +23,8 @@ extension SolidExternalFundingRoute: LFRoute {
       return "/v1/solid/external-funding/linked-sources/plaid/token"
     case .plaidLink:
       return "/v1/solid/external-funding/linked-sources/plaid/link"
+    case .unlinkContact(let id):
+      return "/v1/solid/external-funding/linked-sources/\(id)"
     }
   }
   
@@ -31,6 +34,8 @@ extension SolidExternalFundingRoute: LFRoute {
       return .GET
     case .createDebitCardToken, .createPlaidToken, .plaidLink:
       return .POST
+    case .unlinkContact:
+      return .DELETE
     }
   }
   
@@ -49,6 +54,8 @@ extension SolidExternalFundingRoute: LFRoute {
       return [
         "accountId": accountId
       ]
+    case .unlinkContact:
+      return nil
     case .createDebitCardToken(let accountID):
       return [
         "liquidityAccountId": accountID
@@ -72,6 +79,8 @@ extension SolidExternalFundingRoute: LFRoute {
       return .json
     case .getLinkedSources:
       return .url
+    case .unlinkContact:
+      return nil
     }
   }
   

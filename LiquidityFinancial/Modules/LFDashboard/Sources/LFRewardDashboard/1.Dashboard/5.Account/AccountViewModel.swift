@@ -35,6 +35,7 @@ class AccountViewModel: ObservableObject {
   @Published var sheet: Sheet?
   @Published var linkedContacts: [LinkedSourceContact] = []
   
+  private(set) var addFundsViewModel = AddFundsViewModel()
   private var cancellable: Set<AnyCancellable> = []
   
   var networkEnvironment: NetworkEnvironment {

@@ -60,8 +60,10 @@ extension AddFundsViewModel {
       defer { self.isLoadingLinkExternalBank = false }
       self.isLoadingLinkExternalBank = true
       do {
-        let accounts = try await self.getAccountUsecase.execute()
-        guard let accountId = accounts.first?.id else {
+        let accounts = self.accountDataManager.accountsSubject.value.first(where: {
+          Constants.CurrencyList.fiats.contains($0.currency)
+        })
+        guard let accountId = accounts?.id else {
           return
         }
         let response = try await self.createPlaidTokenUseCase.execute(accountId: accountId)

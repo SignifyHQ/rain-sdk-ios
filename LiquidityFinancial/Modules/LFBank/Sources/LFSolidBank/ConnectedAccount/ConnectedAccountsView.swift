@@ -88,7 +88,7 @@ public struct ConnectedAccountsView: View {
       title: LFLocalizable.ConnectedView.DeletePopup.title.uppercased(),
       message: LFLocalizable.ConnectedView.DeletePopup.message,
       primary: .init(text: LFLocalizable.ConnectedView.DeletePopup.primaryButton) {
-        // TODO: Implement the delete action later
+        viewModel.deleteAccount(id: linkedSource.sourceId)
       },
       secondary: .init(text: LFLocalizable.Button.Back.title) {
         viewModel.hidePopup()

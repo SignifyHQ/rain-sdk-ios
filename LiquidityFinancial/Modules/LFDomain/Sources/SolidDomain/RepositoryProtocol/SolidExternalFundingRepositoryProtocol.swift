@@ -6,4 +6,5 @@ public protocol SolidExternalFundingRepositoryProtocol {
   func createDebitCardToken(accountID: String) async throws -> SolidDebitCardTokenEntity
   func createPlaidToken(accountID: String) async throws -> CreatePlaidTokenResponseEntity
   func linkPlaid(accountId: String, token: String, plaidAccountId: String) async throws -> any SolidContactEntity
+  func unlinkContact(id: String) async throws -> SolidUnlinkContactResponseEntity
 }

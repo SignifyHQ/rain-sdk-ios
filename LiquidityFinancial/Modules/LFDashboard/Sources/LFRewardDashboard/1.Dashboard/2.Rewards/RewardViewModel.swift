@@ -11,6 +11,7 @@ import Factory
 class RewardViewModel: ObservableObject {
   @LazyInjected(\.accountDataManager) var accountDataManager
   @LazyInjected(\.accountRepository) var accountRepository
+  @LazyInjected(\.dashboardRepository) var dashboardRepository
   
   @Published var feed: DataStatus<TransactionModel> = .idle
   @Published var navigation: Navigation?
@@ -69,7 +70,7 @@ private extension RewardViewModel {
         
         if isFirstLoad {
           feed = .loading
-          let accounts = try await accountRepository.getAccount(currencyType: currencyType)
+          let accounts = try await dashboardRepository.getFiatAccounts()
           guard let account = accounts.first else {
             // reset state for first load
             isFirstLoad = false
@@ -89,7 +90,7 @@ private extension RewardViewModel {
             let models = try await apiFetchTransactions(accountId: account.id)
             feed = .success(models)
           } else {
-            let accounts = try await accountRepository.getAccount(currencyType: currencyType)
+            let accounts = try await dashboardRepository.getFiatAccounts()
             guard let account = accounts.first else { return }
             self.account = account
             let models = try await apiFetchTransactions(accountId: account.id)
@@ -106,10 +107,6 @@ private extension RewardViewModel {
         toastMessage = error.localizedDescription
       }
     }
-  }
-  
-  func apiFetchCryptoAccount() async throws -> [LFAccount] {
-    return try await accountRepository.getAccount(currencyType: currencyType)
   }
   
   func apiFetchTransactions(accountId: String) async throws -> [TransactionModel] {
