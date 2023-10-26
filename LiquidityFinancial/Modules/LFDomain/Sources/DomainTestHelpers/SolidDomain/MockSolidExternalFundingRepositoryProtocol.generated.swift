@@ -10,6 +10,32 @@ public class MockSolidExternalFundingRepositoryProtocol: SolidExternalFundingRep
     public init() {}
 
 
+    //MARK: - getLinkedSources
+
+    public var getLinkedSourcesAccountIDThrowableError: Error?
+    public var getLinkedSourcesAccountIDCallsCount = 0
+    public var getLinkedSourcesAccountIDCalled: Bool {
+        return getLinkedSourcesAccountIDCallsCount > 0
+    }
+    public var getLinkedSourcesAccountIDReceivedAccountID: String?
+    public var getLinkedSourcesAccountIDReceivedInvocations: [String] = []
+    public var getLinkedSourcesAccountIDReturnValue: [SolidContactEntity]!
+    public var getLinkedSourcesAccountIDClosure: ((String) async throws -> [SolidContactEntity])?
+
+    public func getLinkedSources(accountID: String) async throws -> [SolidContactEntity] {
+        if let error = getLinkedSourcesAccountIDThrowableError {
+            throw error
+        }
+        getLinkedSourcesAccountIDCallsCount += 1
+        getLinkedSourcesAccountIDReceivedAccountID = accountID
+        getLinkedSourcesAccountIDReceivedInvocations.append(accountID)
+        if let getLinkedSourcesAccountIDClosure = getLinkedSourcesAccountIDClosure {
+            return try await getLinkedSourcesAccountIDClosure(accountID)
+        } else {
+            return getLinkedSourcesAccountIDReturnValue
+        }
+    }
+
     //MARK: - createDebitCardToken
 
     public var createDebitCardTokenAccountIDThrowableError: Error?

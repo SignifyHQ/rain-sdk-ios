@@ -1,14 +1,14 @@
 import Foundation
 import SolidDomain
 
-public struct SolidContact: Codable, SolidContactEntity {
+public struct APISolidContact: Codable, SolidContactEntity {
   public var name: String?
   public var last4: String
   public var type: String
   public var solidContactId: String
   
-  public var contactType: SolidContactType? {
-    SolidContactType(rawValue: type)
+  public var contactType: APISolidContactType? {
+    APISolidContactType(rawValue: type)
   }
   
   public init(name: String?, last4: String, type: String, solidContactId: String) {
@@ -19,9 +19,9 @@ public struct SolidContact: Codable, SolidContactEntity {
   }
 }
 
-public enum SolidContactType: String {
+public enum APISolidContactType: String {
   
-  case externalBank = "EXTERNAL_BANK"
-  case externalCard = "EXTERNAL_CARD"
+  case externalBank = "ACH"
+  case externalCard = "DEBIT_CARD"
   
 }

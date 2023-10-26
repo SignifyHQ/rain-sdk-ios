@@ -27,7 +27,7 @@ final class SolidGetAccountsUseCaseTests: XCTestCase {
   func test_happy_case() {
     runAsyncTest {
       // Given the expected mock success
-      let mockSuccessResult = MockAPISolidContactParameters.mockData
+      let mockSuccessResult = MockAPISolidAccountParameters.mockData
       self.repository.getAccountsReturnValue = [mockSuccessResult]
       
       // When calling getAccounts function on the repository should return an value successfully

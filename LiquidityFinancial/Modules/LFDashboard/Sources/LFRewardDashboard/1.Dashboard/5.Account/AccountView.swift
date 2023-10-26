@@ -38,7 +38,7 @@ struct AccountsView: View {
         case .depositLimits:
           TransferLimitsView()
         case .connectedAccounts:
-          ConnectedAccountsView(linkedAccount: viewModel.linkedAccount)
+          ConnectedAccountsView(linkedContacts: viewModel.linkedContacts)
         case .bankStatement:
           BankStatementView()
         case let .disputeTransaction(netspendAccountID, passcode):
@@ -162,7 +162,7 @@ private extension AccountsView {
   
   var connectedAccountsSection: some View {
     Group {
-      if !viewModel.linkedAccount.isEmpty {
+      if !viewModel.linkedContacts.isEmpty {
         section(title: LFLocalizable.AccountView.connectedAccounts) {
           connectedAccountButton
         }
@@ -186,7 +186,7 @@ private extension AccountsView {
           .fill(Colors.buttons.swiftUIColor)
           .frame(32.0)
           .overlay {
-            Text("\(viewModel.linkedAccount.count)")
+            Text("\(viewModel.linkedContacts.count)")
               .foregroundColor(Colors.label.swiftUIColor)
               .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.ultraSmall.value))
           }

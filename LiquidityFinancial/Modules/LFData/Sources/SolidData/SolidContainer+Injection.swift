@@ -10,7 +10,7 @@ extension Container {
     }
   }
   
-  public var solidLinkSourceRepository: Factory<SolidExternalFundingRepositoryProtocol> {
+  public var solidExternalFundingRepository: Factory<SolidExternalFundingRepositoryProtocol> {
     self {
       SolidExternalFundingRepository(solidExternalFundingAPI: self.solidExternalFundingAPI.callAsFunction())
     }

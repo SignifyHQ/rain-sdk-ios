@@ -10,6 +10,32 @@ public class MockSolidExternalFundingAPIProtocol: SolidExternalFundingAPIProtoco
     public init() {}
 
 
+    //MARK: - getLinkedSources
+
+    public var getLinkedSourcesAccountIdThrowableError: Error?
+    public var getLinkedSourcesAccountIdCallsCount = 0
+    public var getLinkedSourcesAccountIdCalled: Bool {
+        return getLinkedSourcesAccountIdCallsCount > 0
+    }
+    public var getLinkedSourcesAccountIdReceivedAccountId: String?
+    public var getLinkedSourcesAccountIdReceivedInvocations: [String] = []
+    public var getLinkedSourcesAccountIdReturnValue: [APISolidContact]!
+    public var getLinkedSourcesAccountIdClosure: ((String) async throws -> [APISolidContact])?
+
+    public func getLinkedSources(accountId: String) async throws -> [APISolidContact] {
+        if let error = getLinkedSourcesAccountIdThrowableError {
+            throw error
+        }
+        getLinkedSourcesAccountIdCallsCount += 1
+        getLinkedSourcesAccountIdReceivedAccountId = accountId
+        getLinkedSourcesAccountIdReceivedInvocations.append(accountId)
+        if let getLinkedSourcesAccountIdClosure = getLinkedSourcesAccountIdClosure {
+            return try await getLinkedSourcesAccountIdClosure(accountId)
+        } else {
+            return getLinkedSourcesAccountIdReturnValue
+        }
+    }
+
     //MARK: - createDebitCardToken
 
     public var createDebitCardTokenAccountIDThrowableError: Error?
@@ -71,10 +97,10 @@ public class MockSolidExternalFundingAPIProtocol: SolidExternalFundingAPIProtoco
     }
     public var plaidLinkAccountIdTokenPlaidAccountIdReceivedArguments: (accountId: String, token: String, plaidAccountId: String)?
     public var plaidLinkAccountIdTokenPlaidAccountIdReceivedInvocations: [(accountId: String, token: String, plaidAccountId: String)] = []
-    public var plaidLinkAccountIdTokenPlaidAccountIdReturnValue: SolidContact!
-    public var plaidLinkAccountIdTokenPlaidAccountIdClosure: ((String, String, String) async throws -> SolidContact)?
+    public var plaidLinkAccountIdTokenPlaidAccountIdReturnValue: APISolidContact!
+    public var plaidLinkAccountIdTokenPlaidAccountIdClosure: ((String, String, String) async throws -> APISolidContact)?
 
-    public func plaidLink(accountId: String, token: String, plaidAccountId: String) async throws -> SolidContact {
+    public func plaidLink(accountId: String, token: String, plaidAccountId: String) async throws -> APISolidContact {
         if let error = plaidLinkAccountIdTokenPlaidAccountIdThrowableError {
             throw error
         }

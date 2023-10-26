@@ -32,6 +32,9 @@ let package = Package(
       name: "CryptoChartData",
       targets: ["CryptoChartData"]),
     .library(
+      name: "ExternalFundingData",
+      targets: ["ExternalFundingData"]),
+    .library(
       name: "DataTestHelpers",
       targets: ["DataTestHelpers"])
   ],
@@ -72,6 +75,12 @@ let package = Package(
         .product(name: "SolidDomain", package: "LFDomain"),
         .product(name: "NetworkUtilities", package: "LFNetwork"),
         .product(name: "CoreNetwork", package: "LFNetwork")
+      ]
+    ),
+    .target(
+      name: "ExternalFundingData",
+      dependencies: [
+        "Factory"
       ]
     ),
     .target(

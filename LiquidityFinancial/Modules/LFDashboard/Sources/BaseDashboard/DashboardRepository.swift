@@ -13,6 +13,9 @@ import LFServices
 import DevicesData
 import DevicesDomain
 import NetspendDomain
+import ExternalFundingData
+import SolidData
+import SolidDomain
 
 extension Container {
   public var dashboardRepository: Factory<DashboardRepository> {
@@ -25,12 +28,16 @@ extension Container {
 public final class DashboardRepository: ObservableObject {
   @LazyInjected(\.accountDataManager) var accountDataManager
   @LazyInjected(\.netspendDataManager) var netspendDataManager
+  @LazyInjected(\.externalFundingDataManager) var externalFundingDataManager
   
   @LazyInjected(\.accountRepository) var accountRepository
   @LazyInjected(\.nsPersionRepository) var nsPersionRepository
   @LazyInjected(\.onboardingRepository) var onboardingRepository
   @LazyInjected(\.externalFundingRepository) var externalFundingRepository
   @LazyInjected(\.cardRepository) var cardRepository
+  
+  @LazyInjected(\.solidAccountRepository) var solidAccountRepository
+  @LazyInjected(\.solidExternalFundingRepository) var solidExternalFundingRepository
   
   @LazyInjected(\.nsOnboardingFlowCoordinator) var onboardingFlowCoordinator
   
@@ -56,7 +63,15 @@ public final class DashboardRepository: ObservableObject {
   }()
   
   lazy var deviceRegisterUseCase: DeviceRegisterUseCaseProtocol = {
-    return DeviceRegisterUseCase(repository: devicesRepository)
+    DeviceRegisterUseCase(repository: devicesRepository)
+  }()
+  
+  lazy var solidGetAccountUseCase: SolidGetAccountsUseCaseProtocol = {
+    SolidGetAccountsUseCase(repository: solidAccountRepository)
+  }()
+  
+  lazy var solidGetLinkedSourcesUseCase: SolidGetLinkedSourcesUseCaseProtocol = {
+    SolidGetLinkedSourcesUseCase(repository: solidExternalFundingRepository)
   }()
   
   lazy var getListCardUseCase: NSGetListCardUseCaseProtocol = {
@@ -128,18 +143,12 @@ public extension DashboardRepository {
       do {
         apiFetchListCards()
         
-        let sessionID = self.accountDataManager.sessionID
-        
         async let fiatAccountsEntity = self.accountRepository.getAccount(currencyType: Constants.CurrencyType.fiat.rawValue)
         
-        async let linkedAccountEntity = self.externalFundingRepository.getLinkedAccount(sessionId: sessionID)
-        
         let fiatAccounts = try await fiatAccountsEntity
-        let linkedSources = try await linkedAccountEntity.linkedSources
         
         self.fiatData.fiatAccount = fiatAccounts
         
-        self.accountDataManager.storeLinkedSources(linkedSources)
         self.accountDataManager.addOrUpdateAccounts(fiatAccounts)
       } catch {
         log.error(error.localizedDescription)
@@ -319,19 +328,6 @@ public extension DashboardRepository {
     }
   }
   
-  func apiFetchListConnectedAccount() {
-    Task { @MainActor in
-      do {
-        let sessionID = self.accountDataManager.sessionID
-        let response = try await self.externalFundingRepository.getLinkedAccount(sessionId: sessionID)
-        self.accountDataManager.storeLinkedSources(response.linkedSources)
-      } catch {
-        log.error(error.localizedDescription)
-        toastMessage?(error.localizedDescription)
-      }
-    }
-  }
-  
   func apiFetchACHInfo() {
     Task { @MainActor in
       defer { achInformationData.loading = false }
@@ -360,6 +356,62 @@ public extension DashboardRepository {
       } catch {
         log.error(error.localizedDescription)
         toastMessage?(error.localizedDescription)
+      }
+    }
+  }
+}
+
+// MARK: External Funding
+public extension DashboardRepository {
+  
+  func apiFetchListConnectedAccount() {
+    switch LFUtilities.target {
+    case .CauseCard, .PrideCard:
+      fetchSolidLinkedSources()
+    default:
+      fetchNetspendLinkedSources()
+    }
+  }
+  
+}
+
+extension DashboardRepository {
+  
+  private func fetchNetspendLinkedSources() {
+    Task { @MainActor in
+      do {
+        let sessionID = self.accountDataManager.sessionID
+        let response = try await self.externalFundingRepository.getLinkedAccount(sessionId: sessionID)
+        self.accountDataManager.storeLinkedSources(response.linkedSources)
+      } catch {
+        log.error(error.localizedDescription)
+        toastMessage?(error.localizedDescription)
+      }
+    }
+  }
+  
+}
+
+extension DashboardRepository {
+  
+  private func fetchSolidLinkedSources() {
+    Task { @MainActor in
+      do {
+        let accounts = try await self.solidGetAccountUseCase.execute()
+        guard let account = accounts.first else {
+          return
+        }
+        let response = try await self.solidGetLinkedSourcesUseCase.execute(accountID: account.id)
+        let contacts = response.compactMap({ (data: SolidContactEntity) -> LinkedSourceContact? in
+          guard let type = APISolidContactType(rawValue: data.type) else {
+            return nil
+          }
+          let sourceType: LinkedSourceContactType = type == .externalBank ? .bank : .card
+          return LinkedSourceContact(name: data.name, last4: data.last4, sourceType: sourceType, sourceId: data.solidContactId)
+        })
+        self.externalFundingDataManager.storeLinkedSources(contacts)
+      } catch {
+        log.error(error.localizedDescription)
       }
     }
   }

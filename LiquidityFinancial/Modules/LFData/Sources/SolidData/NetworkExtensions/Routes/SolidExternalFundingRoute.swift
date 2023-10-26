@@ -4,6 +4,7 @@ import AuthorizationManager
 import LFUtilities
 
 public enum SolidExternalFundingRoute {
+  case getLinkedSources(accountId: String)
   case createDebitCardToken(accountID: String)
   case createPlaidToken(accountId: String)
   case plaidLink(accountId: String, token: String, plaidAccountId: String)
@@ -13,6 +14,8 @@ extension SolidExternalFundingRoute: LFRoute {
 
   public var path: String {
     switch self {
+    case .getLinkedSources:
+      return "/v1/solid/external-funding/linked-sources"
     case .createDebitCardToken:
       return "/v1/solid/external-funding/linked-sources/debit-card/token"
     case .createPlaidToken:
@@ -24,6 +27,8 @@ extension SolidExternalFundingRoute: LFRoute {
   
   public var httpMethod: HttpMethod {
     switch self {
+    case .getLinkedSources:
+      return .GET
     case .createDebitCardToken, .createPlaidToken, .plaidLink:
       return .POST
     }
@@ -40,6 +45,10 @@ extension SolidExternalFundingRoute: LFRoute {
   
   public var parameters: Parameters? {
     switch self {
+    case .getLinkedSources(let accountId):
+      return [
+        "accountId": accountId
+      ]
     case .createDebitCardToken(let accountID):
       return [
         "liquidityAccountId": accountID
@@ -61,8 +70,8 @@ extension SolidExternalFundingRoute: LFRoute {
     switch self {
     case .createDebitCardToken, .createPlaidToken, .plaidLink:
       return .json
-    default:
-      return nil
+    case .getLinkedSources:
+      return .url
     }
   }
   

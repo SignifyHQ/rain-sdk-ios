@@ -8,6 +8,10 @@ public class SolidExternalFundingRepository: SolidExternalFundingRepositoryProto
     self.solidExternalFundingAPI = solidExternalFundingAPI
   }
   
+  public func getLinkedSources(accountID: String) async throws -> [SolidContactEntity] {
+    try await solidExternalFundingAPI.getLinkedSources(accountId: accountID)
+  }
+  
   public func createDebitCardToken(accountID: String) async throws -> SolidDebitCardTokenEntity {
     try await solidExternalFundingAPI.createDebitCardToken(accountID: accountID)
   }

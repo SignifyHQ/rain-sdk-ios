@@ -18,7 +18,7 @@ class AddBankWithDebitViewModel: ObservableObject {
   @LazyInjected(\.accountDataManager) var accountDataManager
   @LazyInjected(\.accountRepository) var accountRepository
   @LazyInjected(\.analyticsService) var analyticsService
-  @LazyInjected(\.solidLinkSourceRepository) var solidLinkSourceRepository
+  @LazyInjected(\.solidExternalFundingRepository) var solidExternalFundingRepository
   @LazyInjected(\.solidAccountRepository) var solidAccountRepository
   
   lazy var getAccountUsecase: SolidGetAccountsUseCaseProtocol = {
@@ -26,7 +26,7 @@ class AddBankWithDebitViewModel: ObservableObject {
   }()
   
   lazy var solidDebitCardTokenUseCase: SolidDebitCardTokenUseCaseProtocol = {
-    SolidDebitCardTokenUseCase(repository: solidLinkSourceRepository)
+    SolidDebitCardTokenUseCase(repository: solidExternalFundingRepository)
   }()
   
   init() {}

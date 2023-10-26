@@ -1,15 +1,15 @@
 import SwiftUI
-import NetSpendData
 import LFStyleGuide
 import LFUtilities
 import LFLocalizable
+import ExternalFundingData
 
 public struct ConnectedAccountsView: View {
   @StateObject private var viewModel: ConnectedAccountsViewModel
   
-  public init(linkedAccount: [APILinkedSourceData]) {
+  public init(linkedContacts: [LinkedSourceContact]) {
     _viewModel = .init(
-      wrappedValue: ConnectedAccountsViewModel(linkedAccount: linkedAccount)
+      wrappedValue: ConnectedAccountsViewModel(linkedContacts: linkedContacts)
     )
   }
   
@@ -36,8 +36,6 @@ public struct ConnectedAccountsView: View {
         switch item {
         case .addBankWithDebit:
           AddBankWithDebitView()
-        case .verifyAccount(let id):
-          VerifyCardView(cardId: id)
         }
       }
       .popup(item: $viewModel.popup) { item in
@@ -77,25 +75,20 @@ public struct ConnectedAccountsView: View {
 
   private var contacts: some View {
     Group {
-      ForEach(viewModel.linkedAccount, id: \.sourceId) { item in
+      ForEach(viewModel.linkedContacts, id: \.sourceId) { item in
         ConnectedAccountRow(sourceData: item) {
-          viewModel.verify(sourceData: item)
-        } deleteAction: {
           viewModel.openDeletePopup(linkedSource: item)
         }
       }
     }
   }
   
-  func deletePopup(linkedSource: APILinkedSourceData) -> some View {
+  func deletePopup(linkedSource: LinkedSourceContact) -> some View {
     LiquidityAlert(
       title: LFLocalizable.ConnectedView.DeletePopup.title.uppercased(),
       message: LFLocalizable.ConnectedView.DeletePopup.message,
       primary: .init(text: LFLocalizable.ConnectedView.DeletePopup.primaryButton) {
-        viewModel.deleteAccount(
-          id: linkedSource.sourceId,
-          sourceType: linkedSource.sourceType.rawValue
-        )
+        // TODO: Implement the delete action later
       },
       secondary: .init(text: LFLocalizable.Button.Back.title) {
         viewModel.hidePopup()

@@ -1,11 +1,10 @@
 import Combine
-import Foundation
 import UIKit
 import Factory
-import NetSpendData
 import LFUtilities
 import LFLocalizable
 import LFServices
+import ExternalFundingData
 
 class ConnectedAccountsViewModel: ObservableObject {
 
@@ -14,11 +13,11 @@ class ConnectedAccountsViewModel: ObservableObject {
   }
   
   @LazyInjected(\.externalFundingRepository) var externalFundingRepository
-  @LazyInjected(\.netspendDataManager) var netspendDataManager
   @LazyInjected(\.accountDataManager) var accountDataManager
   @LazyInjected(\.analyticsService) var analyticsService
+  @LazyInjected(\.externalFundingDataManager) var externalFundingDataManager
   
-  @Published var linkedAccount: [APILinkedSourceData] = []
+  @Published var linkedContacts: [LinkedSourceContact] = []
   @Published var isLoading = false
   @Published var isDeleting = false
   @Published var navigation: Navigation?
@@ -26,19 +25,15 @@ class ConnectedAccountsViewModel: ObservableObject {
   
   private var cancellable: Set<AnyCancellable> = []
   
-  init(linkedAccount: [APILinkedSourceData]) {
-    self.linkedAccount = linkedAccount
-    subscribeLinkedAccounts()
+  init(linkedContacts: [LinkedSourceContact]) {
+    self.linkedContacts = linkedContacts
+    subscribeLinkedContacts()
   }
   
-  func subscribeLinkedAccounts() {
-    accountDataManager.subscribeLinkedSourcesChanged { [weak self] entities in
-      guard let self = self else {
-        return
-      }
-      let linkedSources = entities.compactMap({ APILinkedSourceData(entity: $0) })
-      self.linkedAccount = linkedSources
-    }
+  func subscribeLinkedContacts() {
+    externalFundingDataManager.subscribeLinkedSourcesChanged({ [weak self] contacts in
+      self?.linkedContacts = contacts
+    })
     .store(in: &cancellable)
   }
   
@@ -50,24 +45,20 @@ extension ConnectedAccountsViewModel {
     analyticsService.track(event: AnalyticsEvent(name: .viewedAccounts))
   }
   
-  func title(for account: APILinkedSourceData) -> String {
+  func title(for account: LinkedSourceContact) -> String {
     switch account.sourceType {
-    case .externalCard:
+    case .card:
       return LFLocalizable.ConnectedView.Row.externalCard(account.last4)
-    case .externalBank:
+    case .bank:
       return LFLocalizable.ConnectedView.Row.externalBank(account.name ?? "", account.last4)
     }
-  }
-  
-  func verify(sourceData: APILinkedSourceData) {
-    navigation = .verifyAccount(id: sourceData.sourceId)
   }
   
   func addBankWithDebit() {
     navigation = .addBankWithDebit
   }
   
-  func openDeletePopup(linkedSource: APILinkedSourceData) {
+  func openDeletePopup(linkedSource: LinkedSourceContact) {
     popup = .delete(linkedSource: linkedSource)
   }
   
@@ -76,40 +67,17 @@ extension ConnectedAccountsViewModel {
   }
   
   func deleteAccount(id: String, sourceType: String) {
-    self.isDeleting = true
-    Task { @MainActor in
-      defer {
-        isDeleting = false
-        hidePopup()
-      }
-      do {
-        let sessionID = accountDataManager.sessionID
-        let response = try await externalFundingRepository.deleteLinkedAccount(
-          sessionId: sessionID,
-          sourceId: id,
-          sourceType: sourceType
-        )
-        if response.success {
-          self.accountDataManager.removeLinkedSource(id: id)
-          self.linkedAccount.removeAll(where: {
-            $0.sourceId == id
-          })
-        }
-      } catch {
-        log.error(error)
-      }
-    }
+    // TODO: Implement the delete later
   }
 }
 
 // MARK: - Types
 extension ConnectedAccountsViewModel {
   enum Navigation {
-    case verifyAccount(id: String)
     case addBankWithDebit
   }
   
   enum Popup {
-    case delete(linkedSource: APILinkedSourceData)
+    case delete(linkedSource: LinkedSourceContact)
   }
 }

@@ -15,22 +15,11 @@ public class FundCardViewModel: ObservableObject {
 
   init(kind: MoveMoneyAccountViewModel.Kind) {
     self.kind = kind
-    
-    handleFundingAgreementData()
   }
 }
 
 // MARK: Handle agreement
 extension FundCardViewModel {
-  
-  func handleFundingAgreementData() {
-    addFundsViewModel.fundingAgreementData
-      .receive(on: DispatchQueue.main)
-      .sink { [weak self] agreementData in
-        self?.openFundingAgreement(data: agreementData)
-      }
-      .store(in: &cancellable)
-  }
   
   func openFundingAgreement(data: APIAgreementData?) {
     if data == nil {

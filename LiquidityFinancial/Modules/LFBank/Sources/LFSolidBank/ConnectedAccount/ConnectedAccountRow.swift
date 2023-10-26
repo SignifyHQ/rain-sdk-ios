@@ -1,21 +1,18 @@
-import Foundation
 import SwiftUI
 import LFUtilities
 import LFStyleGuide
 import LFLocalizable
-import NetSpendData
+import ExternalFundingData
 
 struct ConnectedAccountRow: View {
   @StateObject private var viewModel: ConnectedAccountRowViewModel
   
-  let verifyAction: (() -> Void)?
   let deleteAction: (() -> Void)?
   
-  init(sourceData: APILinkedSourceData, verifyAction: (() -> Void)? = nil, deleteAction: (() -> Void)? = nil) {
+  init(sourceData: LinkedSourceContact, deleteAction: (() -> Void)? = nil) {
     _viewModel = .init(
       wrappedValue: ConnectedAccountRowViewModel(sourceData: sourceData)
     )
-    self.verifyAction = verifyAction
     self.deleteAction = deleteAction
   }
 
@@ -27,24 +24,9 @@ struct ConnectedAccountRow: View {
         Text(viewModel.title)
           .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.ultraSmall.value))
           .foregroundColor(Colors.label.swiftUIColor)
-        if viewModel.showVerified {
-          GenImages.Images.icVerified.swiftUIImage
-        }
       }
       Spacer()
       HStack(spacing: 8) {
-        if !viewModel.showVerified {
-          Button {
-            verifyAction?()
-          } label: {
-            Text(LFLocalizable.Button.Verify.title)
-              .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.ultraSmall.value))
-              .foregroundColor(Colors.primary.swiftUIColor)
-          }
-          .frame(width: 64, height: 32)
-          .background(Colors.buttons.swiftUIColor)
-          .cornerRadius(8)
-        }
         CircleButton(style: .delete)
           .onTapGesture {
             deleteAction?()

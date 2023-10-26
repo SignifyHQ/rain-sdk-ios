@@ -1,27 +1,19 @@
 import SolidDomain
 
-struct MockAPISolidContactParameters: SolidAccountEntity {
-  public let id: String
-  public let externalAccountId: String?
-  public let currency: String
-  public let availableBalance: Double
-  public let availableUsdBalance: Double
+struct MockAPISolidContactParameters: SolidContactEntity {
+  public let name: String?
+  public let last4: String
+  public let type: String
+  public let solidContactId: String
   
-  init(id: String, externalAccountId: String?, currency: String, availableBalance: Double, availableUsdBalance: Double) {
-    self.id = id
-    self.externalAccountId = externalAccountId
-    self.currency = currency
-    self.availableBalance = availableBalance
-    self.availableUsdBalance = availableUsdBalance
+  init(name: String?, last4: String, type: String, solidContactId: String) {
+    self.name = name
+    self.last4 = last4
+    self.type = type
+    self.solidContactId = solidContactId
   }
   
   static var mockData: MockAPISolidContactParameters {
-    MockAPISolidContactParameters(
-      id: "mock_id",
-      externalAccountId: "mock_external_account_id",
-      currency: "mock_currency",
-      availableBalance: 0.0,
-      availableUsdBalance: 100.0
-    )
+    MockAPISolidContactParameters(name: "mock_name", last4: "mock_last4", type: "mock_type", solidContactId: "mock_id")
   }
 }

@@ -135,12 +135,6 @@ final class CashViewModel: ObservableObject {
 // MARK: - View Helpers
 extension CashViewModel {
   func handleFundingAgreementData() {
-    addFundsViewModel.fundingAgreementData
-      .receive(on: DispatchQueue.main)
-      .sink { [weak self] agreementData in
-        self?.openFundingAgreement(data: agreementData)
-      }
-      .store(in: &cancellable)
   }
   
   func handleFundingAcceptAgreement(isAccept: Bool) {

@@ -1,4 +1,5 @@
 import Combine
+import ExternalFundingData
 import Foundation
 import UIKit
 import LFUtilities
@@ -19,6 +20,7 @@ class AccountViewModel: ObservableObject {
   @LazyInjected(\.customerSupportService) var customerSupportService
   @LazyInjected(\.pushNotificationService) var pushNotificationService
   @LazyInjected(\.dashboardRepository) var dashboardRepository
+  @LazyInjected(\.externalFundingDataManager) var externalFundingDataManager
   
   @Published var navigation: Navigation?
   @Published var isDisableView: Bool = false
@@ -31,6 +33,7 @@ class AccountViewModel: ObservableObject {
   @Published var linkedAccount: [APILinkedSourceData] = []
   @Published var achInformation: ACHModel = .default
   @Published var sheet: Sheet?
+  @Published var linkedContacts: [LinkedSourceContact] = []
   
   private var cancellable: Set<AnyCancellable> = []
   
@@ -54,7 +57,7 @@ class AccountViewModel: ObservableObject {
       }
       .store(in: &cancellable)
     
-    subscribeLinkedAccounts()
+    subscribeLinkedContacts()
     checkNotificationsStatus()
   }
 }
@@ -146,12 +149,10 @@ extension AccountViewModel {
     }
   }
   
-  func subscribeLinkedAccounts() {
-    accountDataManager.subscribeLinkedSourcesChanged { [weak self] entities in
-      guard let self = self else { return }
-      let linkedSources = entities.compactMap({ APILinkedSourceData(entity: $0) })
-      self.linkedAccount = linkedSources
-    }
+  func subscribeLinkedContacts() {
+    externalFundingDataManager.subscribeLinkedSourcesChanged({ [weak self] contacts in
+      self?.linkedContacts = contacts
+    })
     .store(in: &cancellable)
   }
 }

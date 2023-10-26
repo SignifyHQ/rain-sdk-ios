@@ -1,8 +1,8 @@
 import SolidData
 
-enum MockSolidContact {
-  static var mockSuccessData: SolidContact {
-    SolidContact(
+enum MockAPISolidContact {
+  static var mockSuccessData: APISolidContact {
+    APISolidContact(
       name: "mock_name",
       last4: "mock_last4",
       type: "mock_type",
@@ -10,8 +10,8 @@ enum MockSolidContact {
     )
   }
 
-  static var mockEmptyData: SolidContact {
-    SolidContact(
+  static var mockEmptyData: APISolidContact {
+    APISolidContact(
       name: "",
       last4: "",
       type: "",

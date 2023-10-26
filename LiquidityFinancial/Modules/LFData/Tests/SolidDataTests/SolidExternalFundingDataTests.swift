@@ -72,8 +72,8 @@ extension SolidExternalFundingDataTests {
   func test_plaid_link_happy_case() {
     runAsyncTest {
       // Given the expected mock success and fail results
-      let mockSuccessResult = MockSolidContact.mockSuccessData
-      let mockFailResult = MockSolidContact.mockEmptyData
+      let mockSuccessResult = MockAPISolidContact.mockSuccessData
+      let mockFailResult = MockAPISolidContact.mockEmptyData
       
       self.api.plaidLinkAccountIdTokenPlaidAccountIdClosure = { accountId, token, plaidId in
         if token == "mock_token" {
@@ -92,8 +92,8 @@ extension SolidExternalFundingDataTests {
   func test_plaid_link_failed_case_not_throw() {
     runAsyncTest {
       // Given the expected mock success and fail results
-      let mockSuccessResult = MockSolidContact.mockSuccessData
-      let mockFailResult = MockSolidContact.mockEmptyData
+      let mockSuccessResult = MockAPISolidContact.mockSuccessData
+      let mockFailResult = MockAPISolidContact.mockEmptyData
       
       self.api.plaidLinkAccountIdTokenPlaidAccountIdClosure = { accountId, token, plaidId in
         if token == "mock_token" {
@@ -144,6 +144,43 @@ extension SolidExternalFundingDataTests {
     // When: Calling login function on the repository with parameters which should throw an error
     await expect {
       try await self.repository.createDebitCardToken(accountID: "").linkToken
+    }
+    .to(throwError { error in
+      // Then: The error is the one we expected
+      expect(expectedError).to(equal(error))
+    })
+  }
+
+}
+
+// MARK: - Create GetContacts Tests
+extension SolidExternalFundingDataTests {
+  /// Test the getLinkedSources  functionality under normal conditions.
+  func test_getLinkedSources_happy_case() async {
+    // Given: The expected mock success
+    let mockSuccessResult = MockAPISolidContact.mockSuccessData
+    let accountIDSuccess = "mock_account_id"
+    
+    self.api.getLinkedSourcesAccountIdReturnValue = [mockSuccessResult]
+    
+    // When: Calling getLinkedSources function on the repository should return an value successfully
+    await expect {
+      try await self.repository
+        .getLinkedSources(accountID: accountIDSuccess).first?.solidContactId
+    }
+    // Then: The repository will returns the same result as the api
+    .to(equal(mockSuccessResult.solidContactId))
+  }
+  
+  /// Test the getLinkedSources functionality when it encounters an error.
+  func test_getLinkedSource_failed_case_throw() async {
+    // Given: A mock error which will be thrown
+    let expectedError = TestError.fail("mock_error")
+    self.api.getLinkedSourcesAccountIdThrowableError = expectedError
+    
+    // When: Calling login function on the repository with parameters which should throw an error
+    await expect {
+      try await self.repository.getLinkedSources(accountID: "")
     }
     .to(throwError { error in
       // Then: The error is the one we expected

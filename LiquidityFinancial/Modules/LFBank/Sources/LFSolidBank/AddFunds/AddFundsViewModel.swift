@@ -18,23 +18,21 @@ public final class AddFundsViewModel: ObservableObject {
   @Published var isLoadingLinkExternalCard: Bool = false
   @Published var isLoadingLinkExternalBank: Bool = false
   
-  public private(set) var fundingAgreementData = CurrentValueSubject<APIAgreementData?, Never>(nil)
-  
   private var nextNavigation: Navigation?
   
   @LazyInjected(\.nsPersionRepository) var nsPersionRepository
   @LazyInjected(\.externalFundingRepository) var externalFundingRepository
   @LazyInjected(\.accountDataManager) var accountDataManager
   @LazyInjected(\.customerSupportService) var customerSupportService
-  @LazyInjected(\.solidLinkSourceRepository) var solidLinkSourceRepository
+  @LazyInjected(\.solidExternalFundingRepository) var solidExternalFundingRepository
   @LazyInjected(\.solidAccountRepository) var solidAccountRepository
   
   lazy var createPlaidTokenUseCase: CreatePlaidTokenUseCaseProtocol = {
-    CreatePlaidTokenUseCase(repository: solidLinkSourceRepository)
+    CreatePlaidTokenUseCase(repository: solidExternalFundingRepository)
   }()
   
   lazy var plaidLinkUseCase: PlaidLinkUseCaseProtocol = {
-    PlaidLinkUseCase(repository: solidLinkSourceRepository)
+    PlaidLinkUseCase(repository: solidExternalFundingRepository)
   }()
   
   lazy var getAccountUsecase: SolidGetAccountsUseCaseProtocol = {

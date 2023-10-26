@@ -5,6 +5,15 @@ import LFUtilities
 
 extension LFCoreNetwork: SolidExternalFundingAPIProtocol where R == SolidExternalFundingRoute {
   
+  public func getLinkedSources(accountId: String) async throws -> [APISolidContact] {
+    try await request(
+      SolidExternalFundingRoute.getLinkedSources(accountId: accountId),
+      target: [APISolidContact].self,
+      failure: LFErrorObject.self,
+      decoder: .apiDecoder
+    )
+  }
+  
   public func createDebitCardToken(accountID: String) async throws -> APISolidDebitCardToken {
     try await request(
       SolidExternalFundingRoute.createDebitCardToken(accountID: accountID),
@@ -23,10 +32,10 @@ extension LFCoreNetwork: SolidExternalFundingAPIProtocol where R == SolidExterna
     )
   }
   
-  public func plaidLink(accountId: String, token: String, plaidAccountId: String) async throws -> SolidContact {
+  public func plaidLink(accountId: String, token: String, plaidAccountId: String) async throws -> APISolidContact {
     return try await request(
       SolidExternalFundingRoute.plaidLink(accountId: accountId, token: token, plaidAccountId: plaidAccountId),
-      target: SolidContact.self,
+      target: APISolidContact.self,
       failure: LFErrorObject.self,
       decoder: .apiDecoder
     )
