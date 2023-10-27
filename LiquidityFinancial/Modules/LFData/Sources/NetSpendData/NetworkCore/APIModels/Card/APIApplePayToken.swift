@@ -2,9 +2,15 @@ import Foundation
 import NetspendDomain
 
 public struct APIGetApplePayToken: Decodable, GetApplePayTokenEntity {
-  public typealias Token = APIApplePayToken
-  public var tokens: [Token]
+  public var tokens: [APIApplePayToken]
 }
+
+extension APIGetApplePayToken {
+  public var tokenEntities: [NetspendDomain.ApplePayTokenEntity] {
+    tokens
+  }
+}
+
 
 public struct APIApplePayToken: Decodable, ApplePayTokenEntity {
   public var cardId: String?

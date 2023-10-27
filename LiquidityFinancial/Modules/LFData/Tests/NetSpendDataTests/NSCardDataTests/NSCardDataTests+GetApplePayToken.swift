@@ -21,7 +21,7 @@ extension NSCardDataTests {
       try await self.repository.getApplePayToken(
         sessionId: self.mockValidNetSpendSessionID,
         cardId: self.mockExistCardID
-      ).tokens.first?.cardId
+      ).tokenEntities.first?.cardId
     }
     // Then the cardId received matches our expectation
     .to(equal(mockGetApplePayTokenResponse.tokens.first?.cardId))

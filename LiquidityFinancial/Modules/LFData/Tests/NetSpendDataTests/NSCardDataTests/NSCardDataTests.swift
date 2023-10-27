@@ -74,7 +74,7 @@ final class NSCardDataTests: XCTestCase {
   ]
   let mockVerifyCVVCodeResponse = APIVerifyCVVCode(id: "mock_id")
   let mockGetApplePayTokenResponse = APIGetApplePayToken(
-    tokens: [APIGetApplePayToken.Token(
+    tokens: [APIApplePayToken(
       cardId: "mock_cardId",
       walletProvider: "mock_walletProvider",
       panReferenceId: "mock_panReferenceId",

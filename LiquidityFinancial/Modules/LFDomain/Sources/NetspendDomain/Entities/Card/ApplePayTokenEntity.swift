@@ -1,12 +1,12 @@
 import Foundation
 
 // sourcery: AutoMockable
-public protocol GetApplePayTokenEntity where Self: Decodable {
-  associatedtype Token: ApplePayTokenEntity
-  var tokens: [Token] { get }
+public protocol GetApplePayTokenEntity {
+  var tokenEntities: [ApplePayTokenEntity] { get }
 }
 
-public protocol ApplePayTokenEntity where Self: Decodable {
+// sourcery: AutoMockable
+public protocol ApplePayTokenEntity {
   var cardId: String? { get }
   var walletProvider: String? { get }
   var panReferenceId: String? { get }
@@ -14,7 +14,8 @@ public protocol ApplePayTokenEntity where Self: Decodable {
   var tokenStatus: String? { get }
 }
 
-public protocol PostApplePayTokenEntity where Self: Decodable {
+// sourcery: AutoMockable
+public protocol PostApplePayTokenEntity {
   var activationData: String? { get }
   var ephemeralPublicKey: String? { get }
   var encryptedCardData: String? { get }

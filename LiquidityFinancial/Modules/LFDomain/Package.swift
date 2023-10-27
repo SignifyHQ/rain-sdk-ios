@@ -78,7 +78,7 @@ let package = Package(
     .target(
       name: "DomainTestHelpers",
       dependencies: [
-        "AccountDomain", "CryptoChartDomain", "DevicesDomain", "ZerohashDomain", "OnboardingDomain", "SolidDomain"
+        "AccountDomain", "CryptoChartDomain", "DevicesDomain", "ZerohashDomain", "OnboardingDomain", "SolidDomain", "NetspendDomain"
       ]
     ),
     .testTarget(
@@ -93,6 +93,9 @@ let package = Package(
     .testTarget(
       name: "CryptoChartDomainTests",
       dependencies: ["CryptoChartDomain", "TestHelpers", "DomainTestHelpers", "Nimble"]),
+    .testTarget(
+      name: "NetSpendDomainTests",
+      dependencies: ["NetspendDomain", "TestHelpers", "DomainTestHelpers", "Nimble"]),
     .testTarget(
       name: "SolidDomainTests",
       dependencies: ["SolidDomain", "TestHelpers", "DomainTestHelpers", "Nimble"])

@@ -44,6 +44,7 @@ let package = Package(
         .product(name: "LFBaseBank", package: "LFBank"),
         .product(name: "OnboardingData", package: "LFData"),
         .product(name: "NetSpendData", package: "LFData"),
+        .product(name: "SolidData", package: "LFData"),
         .product(name: "ZerohashData", package: "LFData"),
         .product(name: "DevicesData", package: "LFData"),
         .product(name: "ExternalFundingData", package: "LFData"),

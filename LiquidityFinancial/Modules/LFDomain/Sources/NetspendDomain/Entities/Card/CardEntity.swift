@@ -15,6 +15,7 @@ public protocol CardEntity {
   var shippingAddressEntity: ShippingAddressEntity? { get }
 }
 
+// sourcery: AutoMockable
 public protocol ShippingAddressEntity {
   var shippingStatus: String { get }
   var shipmentDate: String? { get }
@@ -23,6 +24,7 @@ public protocol ShippingAddressEntity {
   var shippingVendor: String? { get }
 }
 
+// sourcery: AutoMockable
 public protocol CardEncryptedEntity {
   var pan: String { get }
   var cvv2: String { get }

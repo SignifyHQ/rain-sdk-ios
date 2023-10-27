@@ -1,0 +1,7 @@
+sources:
+  - Entities
+  - RepositoryProtocol
+templates:
+  - ../../../../sourcery/Templates
+output:
+  ../DomainTestHelpers/NetSpendDomain
