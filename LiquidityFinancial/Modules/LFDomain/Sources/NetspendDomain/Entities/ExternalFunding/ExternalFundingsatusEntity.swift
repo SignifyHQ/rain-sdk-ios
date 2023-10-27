@@ -1,5 +1,6 @@
 import Foundation
 
+// sourcery: AutoMockable
 public protocol ExternalFundingsatusEntity {
   associatedtype APIExternalBankStatus: ExternalBankStatusEntity
   associatedtype APIExternalCardStatus: ExternalCardStatusEntity
@@ -7,6 +8,7 @@ public protocol ExternalFundingsatusEntity {
   var externalCardStatus: APIExternalCardStatus { get }
 }
 
+// sourcery: AutoMockable
 public protocol ExternalBankStatusEntity {
   var errorCode: String? { get }
   var depositStatus: String? { get }
@@ -16,6 +18,7 @@ public protocol ExternalBankStatusEntity {
   var missingSteps: [String]? { get }
 }
 
+// sourcery: AutoMockable
 public protocol ExternalCardStatusEntity {
   associatedtype Agreement: AgreementEntity
   associatedtype Limit: LimitEntity
@@ -28,6 +31,7 @@ public protocol ExternalCardStatusEntity {
 }
 
   // MARK: - Agreement
+// sourcery: AutoMockable
 public protocol AgreementEntity {
   associatedtype Document: DocumentEntity
   var id: String? { get }
@@ -37,6 +41,7 @@ public protocol AgreementEntity {
 }
 
   // MARK: - Document
+// sourcery: AutoMockable
 public protocol DocumentEntity {
   associatedtype File: FileEntity
   var type: String? { get }
@@ -44,6 +49,7 @@ public protocol DocumentEntity {
 }
 
   // MARK: - File
+// sourcery: AutoMockable
 public protocol FileEntity {
   var contentType: String? { get }
   var url: String? { get }
@@ -51,6 +57,7 @@ public protocol FileEntity {
 }
 
   // MARK: - Limit
+// sourcery: AutoMockable
 public protocol LimitEntity {
   var period: String? { get }
   var maxAmount: Double? { get }

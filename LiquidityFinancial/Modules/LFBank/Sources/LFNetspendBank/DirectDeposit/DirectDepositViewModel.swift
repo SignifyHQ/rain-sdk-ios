@@ -19,8 +19,8 @@ final class DirectDepositViewModel: ObservableObject {
   @Published var pinWheelData: PinWheelViewController.PinWheelData?
   
   private lazy var pinWheelService = PinWheelService()
-  private lazy var externalFundingUseCase: NSExternalFundingUseCaseProtocol = {
-    NSExternalFundingUseCase(repository: externalFundingRepository)
+  private lazy var getPinWheelTokenUseCase: NSGetPinWheelTokenUseCaseProtocol = {
+    NSGetPinWheelTokenUseCase(repository: externalFundingRepository)
   }()
 }
 
@@ -52,7 +52,7 @@ extension DirectDepositViewModel {
 private extension DirectDepositViewModel {
   func generatePinWheelData() async {
     do {
-      let pinwheelResponse = try await externalFundingUseCase.getPinWheelToken(
+      let pinwheelResponse = try await getPinWheelTokenUseCase.execute(
         sessionID: accountDataManager.sessionID
       )
       pinWheelData = PinWheelViewController.PinWheelData(

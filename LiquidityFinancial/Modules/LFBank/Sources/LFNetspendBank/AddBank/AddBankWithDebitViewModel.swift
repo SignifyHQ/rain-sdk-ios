@@ -20,8 +20,12 @@ class AddBankWithDebitViewModel: ObservableObject {
   @LazyInjected(\.netspendDataManager) var netspendDataManager
   @LazyInjected(\.analyticsService) var analyticsService
   
-  lazy var externalFundingUseCase: NSExternalFundingUseCaseProtocol = {
-    NSExternalFundingUseCase(repository: externalFundingRepository)
+  lazy var setExternalFundingUseCase: NSSetExternalFundingUseCaseProtocol = {
+    NSSetExternalFundingUseCase(repository: externalFundingRepository)
+  }()
+  
+  lazy var getLinkedAccountUsecase: NSGetLinkedAccountUseCaseProtocol = {
+    NSGetLinkedAccountUseCase(repository: externalFundingRepository)
   }()
   
   init() {
@@ -85,13 +89,13 @@ class AddBankWithDebitViewModel: ObservableObject {
           postalCode: postalCode,
           encryptedData: encryptedData
         )
-        let response = try await externalFundingUseCase.set(
+        let response = try await setExternalFundingUseCase.execute(
           request: request,
           sessionID: accountDataManager.sessionID
         )
         analyticsService.track(event: AnalyticsEvent(name: .debitCardConnectionSuccess))
         let sessionID = self.accountDataManager.sessionID
-        async let linkedAccountResponse = self.externalFundingRepository.getLinkedAccount(sessionId: sessionID)
+        async let linkedAccountResponse = self.getLinkedAccountUsecase.execute(sessionId: sessionID)
         let linkedSources = try await linkedAccountResponse.linkedSources
         self.accountDataManager.storeLinkedSources(linkedSources)
         

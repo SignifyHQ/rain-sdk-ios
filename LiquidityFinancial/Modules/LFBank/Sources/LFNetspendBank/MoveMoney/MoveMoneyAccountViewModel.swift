@@ -35,6 +35,26 @@ public class MoveMoneyAccountViewModel: ObservableObject {
   @Published var selectTransferInstant: Bool?
   @Published var externalCardFeeResponse: APIExternalCardFeeResponse?
   
+  lazy var getLinkedAccountUsecase: NSGetLinkedAccountUseCaseProtocol = {
+    NSGetLinkedAccountUseCase(repository: externalFundingRepository)
+  }()
+  
+  lazy var getCardRemainingAmountUseCase: NSGetCardRemainingAmountUseCaseProtocol = {
+    NSGetCardRemainingAmountUseCase(repository: externalFundingRepository)
+  }()
+  
+  lazy var getBankRemainingAmountUseCase: NSGetBankRemainingAmountUseCaseProtocol = {
+    NSGetBankRemainingAmountUseCase(repository: externalFundingRepository)
+  }()
+  
+  lazy var externalCardTransactionFeeUseCase: NSExternalCardTransactionFeeUseCaseProtocol = {
+    NSExternalCardTransactionFeeUseCase(repository: externalFundingRepository)
+  }()
+  
+  lazy var newExternalTransactionUseCase: NSNewExternalTransactionUseCaseProtocol = {
+    NSNewExternalTransactionUseCase(repository: externalFundingRepository)
+  }()
+  
   private var cancellable: Set<AnyCancellable> = []
   
   private var cardRemainingAmount = RemainingAvailableAmount.default
@@ -70,11 +90,11 @@ extension MoveMoneyAccountViewModel {
       isFetchingRemainingAmount = true
       
       do {
-        let cardRemainingAmount = try await externalFundingRepository.getCardRemainingAmount(
+        let cardRemainingAmount = try await getCardRemainingAmountUseCase.execute(
           sessionID: accountDataManager.sessionID,
           type: kind.externalTransactionType
         )
-        let bankRemainingAmount = try await externalFundingRepository.getBankRemainingAmount(
+        let bankRemainingAmount = try await getBankRemainingAmountUseCase.execute(
           sessionID: accountDataManager.sessionID,
           type: kind.externalTransactionType
         )
@@ -158,7 +178,7 @@ extension MoveMoneyAccountViewModel {
     Task { @MainActor in
       do {
         let sessionID = self.accountDataManager.sessionID
-        async let response = self.externalFundingRepository.getLinkedAccount(sessionId: sessionID)
+        async let response = self.getLinkedAccountUsecase.execute(sessionId: sessionID)
         let linkedSources = try await response.linkedSources
         self.accountDataManager.storeLinkedSources(linkedSources)
       } catch {
@@ -185,7 +205,7 @@ extension MoveMoneyAccountViewModel {
           m2mFeeRequestId: nil
         )
         let type: ExternalTransactionType = kind == .receive ? .deposit : .withdraw
-        let response = try await self.externalFundingRepository.externalCardTransactionFee(
+        let response = try await self.externalCardTransactionFeeUseCase.execute(
           parameters: parameters,
           type: type,
           sessionId: sessionID
@@ -217,7 +237,7 @@ extension MoveMoneyAccountViewModel {
           m2mFeeRequestId: self.externalCardFeeResponse?.id
         )
         let type: ExternalTransactionType = kind == .receive ? .deposit : .withdraw
-        let response = try await self.externalFundingRepository.newExternalTransaction(
+        let response = try await self.newExternalTransactionUseCase.execute(
           parameters: parameters,
           type: type,
           sessionId: sessionID

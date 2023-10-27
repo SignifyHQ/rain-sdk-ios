@@ -1,5 +1,6 @@
 import Foundation
 
+// sourcery: AutoMockable
 public protocol PinWheelTokenEntity {
   var id: String { get }
   var expires: String { get }

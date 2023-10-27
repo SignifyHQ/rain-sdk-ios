@@ -1,5 +1,6 @@
 import Foundation
 
+// sourcery: AutoMockable
 public protocol ACHInfoEntity {
   var bankName: String? { get }
   var bankAddress: String? { get }

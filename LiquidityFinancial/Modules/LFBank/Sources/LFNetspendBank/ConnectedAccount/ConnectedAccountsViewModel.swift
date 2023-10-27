@@ -6,6 +6,7 @@ import NetSpendData
 import LFUtilities
 import LFLocalizable
 import LFServices
+import NetspendDomain
 
 class ConnectedAccountsViewModel: ObservableObject {
 
@@ -23,6 +24,10 @@ class ConnectedAccountsViewModel: ObservableObject {
   @Published var isDeleting = false
   @Published var navigation: Navigation?
   @Published var popup: Popup?
+  
+  lazy var deleteLinkedAccountUsecase: NSDeleteLinkedAccountUseCaseProtocol = {
+    NSDeleteLinkedAccountUseCase(repository: externalFundingRepository)
+  }()
   
   private var cancellable: Set<AnyCancellable> = []
   
@@ -84,7 +89,7 @@ extension ConnectedAccountsViewModel {
       }
       do {
         let sessionID = accountDataManager.sessionID
-        let response = try await externalFundingRepository.deleteLinkedAccount(
+        let response = try await deleteLinkedAccountUsecase.execute(
           sessionId: sessionID,
           sourceId: id,
           sourceType: sourceType

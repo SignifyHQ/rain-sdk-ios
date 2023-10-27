@@ -7,6 +7,7 @@ import LFUtilities
 import LFLocalizable
 import LFServices
 import NetspendSdk
+import NetspendDomain
 
 class SelectBankAccountViewModel: ObservableObject {
   
@@ -35,6 +36,14 @@ class SelectBankAccountViewModel: ObservableObject {
   
   let amount: String
   let kind: MoveMoneyAccountViewModel.Kind
+  
+  lazy var getLinkedAccountUsecase: NSGetLinkedAccountUseCaseProtocol = {
+    NSGetLinkedAccountUseCase(repository: externalFundingRepository)
+  }()
+  
+  lazy var newExternalTransactionUseCase: NSNewExternalTransactionUseCaseProtocol = {
+    NSNewExternalTransactionUseCase(repository: externalFundingRepository)
+  }()
   
   private var cancellable: Set<AnyCancellable> = []
   
@@ -99,7 +108,7 @@ class SelectBankAccountViewModel: ObservableObject {
           m2mFeeRequestId: nil
         )
         let type: ExternalTransactionType = kind == .receive ? .deposit : .withdraw
-        let response = try await self.externalFundingRepository.newExternalTransaction(
+        let response = try await self.newExternalTransactionUseCase.execute(
           parameters: parameters,
           type: type,
           sessionId: sessionID
@@ -172,7 +181,7 @@ extension SelectBankAccountViewModel {
       isLoading = true
       do {
         let sessionID = self.accountDataManager.sessionID
-        async let linkedAccountResponse = self.externalFundingRepository.getLinkedAccount(sessionId: sessionID)
+        async let linkedAccountResponse = self.getLinkedAccountUsecase.execute(sessionId: sessionID)
         let linkedSources = try await linkedAccountResponse.linkedSources
         self.accountDataManager.storeLinkedSources(linkedSources)
       } catch {

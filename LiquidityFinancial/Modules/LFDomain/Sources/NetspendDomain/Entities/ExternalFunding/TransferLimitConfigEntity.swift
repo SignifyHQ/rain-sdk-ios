@@ -1,5 +1,6 @@
 import Foundation
 
+// sourcery: AutoMockable
 public protocol TransferLimitConfigEntity {
   var userId: String? { get }
   var productId: String? { get }

@@ -1,5 +1,6 @@
 import Foundation
 
+// sourcery: AutoMockable
 public protocol ExternalCardFeeEntity: Codable {
   var id: String { get }
   var currency: String { get }

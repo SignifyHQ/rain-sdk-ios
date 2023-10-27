@@ -27,6 +27,14 @@ public final class AddFundsViewModel: ObservableObject {
   @LazyInjected(\.accountDataManager) var accountDataManager
   @LazyInjected(\.customerSupportService) var customerSupportService
   
+  lazy var getLinkedAccountUsecase: NSGetLinkedAccountUseCaseProtocol = {
+    NSGetLinkedAccountUseCase(repository: externalFundingRepository)
+  }()
+  
+  lazy var getFundingStatusUseCase: NSGetFundingStatusUseCaseProtocol = {
+    NSGetFundingStatusUseCase(repository: externalFundingRepository)
+  }()
+  
   func loading(option: FundOption) -> Bool {
     switch option {
     case .debitDeposit:
@@ -80,7 +88,7 @@ extension AddFundsViewModel {
     Task { @MainActor in
       do {
         let sessionID = self.accountDataManager.sessionID
-        async let linkedAccountResponse = self.externalFundingRepository.getLinkedAccount(sessionId: sessionID)
+        async let linkedAccountResponse = self.getLinkedAccountUsecase.execute(sessionId: sessionID)
         let linkedSources = try await linkedAccountResponse.linkedSources
         self.accountDataManager.storeLinkedSources(linkedSources)
         
@@ -114,7 +122,7 @@ extension AddFundsViewModel {
         isLoadingLinkExternalCard = true
       }
       do {
-        let entity = try await self.externalFundingRepository.getFundingStatus(sessionID: accountDataManager.sessionID)
+        let entity = try await self.getFundingStatusUseCase.execute(sessionID: accountDataManager.sessionID)
         onNext(entity)
       } catch {
         log.error(error.localizedDescription)

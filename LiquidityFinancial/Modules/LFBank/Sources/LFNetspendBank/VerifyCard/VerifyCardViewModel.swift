@@ -36,6 +36,10 @@ class VerifyCardViewModel: ObservableObject {
       checkAction()
     }
   }
+  
+  lazy var verifyCardUseCase: NSVerifyCardUseCaseProtocol = {
+    NSVerifyCardUseCase(repository: externalFundingRepository)
+  }()
 
   func performAction() {
     loading = true
@@ -51,7 +55,7 @@ class VerifyCardViewModel: ObservableObject {
           return
         }
         let parameter = VerifyExternalCardParameters(transferAmount: transferAmount, cardId: cardId)
-        _ = try await externalFundingRepository.verifyCard(sessionId: session.sessionId, request: parameter)
+        _ = try await verifyCardUseCase.execute(sessionId: session.sessionId, request: parameter)
         navigation = .moveMoney
       } catch {
         log.error(error.localizedDescription)

@@ -86,6 +86,14 @@ public final class DashboardRepository: ObservableObject {
     NSGetCardUseCase(repository: cardRepository)
   }()
   
+  lazy var nsGetACHInfoUseCase: NSGetACHInfoUseCaseProtocol = {
+    NSGetACHInfoUseCase(repository: externalFundingRepository)
+  }()
+  
+  lazy var nsGetLinkedAccountUseCase: NSGetLinkedAccountUseCaseProtocol = {
+    NSGetLinkedAccountUseCase(repository: externalFundingRepository)
+  }()
+  
   var toastMessage: ((String) -> Void)?
   
   init() {}
@@ -389,7 +397,7 @@ public extension DashboardRepository {
         accountName: wireResponse.accountNumber
       )
     default:
-      let achResponse = try await externalFundingRepository.getACHInfo(sessionID: accountDataManager.sessionID)
+      let achResponse = try await nsGetACHInfoUseCase.execute(sessionID: accountDataManager.sessionID)
       let achInformation = ACHModel(
         accountNumber: achResponse.accountNumber ?? Constants.Default.undefined.rawValue,
         routingNumber: achResponse.routingNumber ?? Constants.Default.undefined.rawValue,
@@ -421,7 +429,7 @@ extension DashboardRepository {
     Task { @MainActor in
       do {
         let sessionID = self.accountDataManager.sessionID
-        let response = try await self.externalFundingRepository.getLinkedAccount(sessionId: sessionID)
+        let response = try await self.nsGetLinkedAccountUseCase.execute(sessionId: sessionID)
         self.accountDataManager.storeLinkedSources(response.linkedSources)
       } catch {
         log.error(error.localizedDescription)
