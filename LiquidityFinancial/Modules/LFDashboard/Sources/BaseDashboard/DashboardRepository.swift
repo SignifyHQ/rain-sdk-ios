@@ -74,6 +74,10 @@ public final class DashboardRepository: ObservableObject {
     SolidGetLinkedSourcesUseCase(repository: solidExternalFundingRepository)
   }()
   
+  lazy var solidGetWireTransfer: SolidGetWireTranferUseCaseProtocol = {
+    SolidGetWireTranferUseCase(repository: solidExternalFundingRepository)
+  }()
+  
   lazy var getListCardUseCase: NSGetListCardUseCaseProtocol = {
     NSGetListCardUseCase(repository: cardRepository)
   }()
@@ -328,13 +332,8 @@ public extension DashboardRepository {
       defer { achInformationData.loading = false }
       achInformationData.loading = true
       do {
-        let achResponse = try await externalFundingRepository.getACHInfo(sessionID: accountDataManager.sessionID)
-        let achInformation = ACHModel(
-          accountNumber: achResponse.accountNumber ?? Constants.Default.undefined.rawValue,
-          routingNumber: achResponse.routingNumber ?? Constants.Default.undefined.rawValue,
-          accountName: achResponse.accountName ?? Constants.Default.undefined.rawValue
-        )
-        achInformationData.model = achInformation
+        let achModel = try await getACHInformation()
+        achInformationData.model = achModel
       } catch {
         toastMessage?(error.localizedDescription)
       }
@@ -368,6 +367,35 @@ public extension DashboardRepository {
       }
     default:
       return try await self.accountRepository.getAccount(currencyType: Constants.CurrencyType.fiat.rawValue)
+    }
+  }
+  
+  func getACHInformation() async throws -> ACHModel {
+    switch LFUtilities.target {
+    case .PrideCard:
+      var account = self.accountDataManager.accountsSubject.value.first(where: {
+        Constants.CurrencyList.fiats.contains($0.currency)
+      })
+      if account == nil {
+        account = try await getFiatAccounts().first
+      }
+      guard let accountId = account?.id else {
+        return ACHModel.default
+      }
+      let wireResponse = try await solidGetWireTransfer.execute(accountId: accountId)
+      return ACHModel(
+        accountNumber: wireResponse.accountNumber,
+        routingNumber: wireResponse.routingNumber,
+        accountName: wireResponse.accountNumber
+      )
+    default:
+      let achResponse = try await externalFundingRepository.getACHInfo(sessionID: accountDataManager.sessionID)
+      let achInformation = ACHModel(
+        accountNumber: achResponse.accountNumber ?? Constants.Default.undefined.rawValue,
+        routingNumber: achResponse.routingNumber ?? Constants.Default.undefined.rawValue,
+        accountName: achResponse.accountName ?? Constants.Default.undefined.rawValue
+      )
+      return achInformation
     }
   }
   

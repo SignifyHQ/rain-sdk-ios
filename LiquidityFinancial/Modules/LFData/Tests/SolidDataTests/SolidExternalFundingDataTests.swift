@@ -226,3 +226,39 @@ extension SolidExternalFundingDataTests {
   }
 
 }
+
+// MARK: - Create getWireTransfers Tests
+extension SolidExternalFundingDataTests {
+  /// Test the getWireTransfers  functionality under normal conditions.
+  func test_getWireTransfers_happy_case() async {
+    // Given: The expected mock success
+    let mockSuccessResult = APISolidWireTransferResponse(accountNumber: "mock_account", routingNumber: "mock_routing")
+    let accountIDSuccess = "mock_account_id"
+    
+    self.api.getWireTransferAccountIdReturnValue = mockSuccessResult
+    
+    // When: Calling getWireTransfers function on the repository should return an value successfully
+    await expect {
+      try await self.repository.getWireTransfer(accountId: accountIDSuccess).accountNumber
+    }
+    // Then: The repository will returns the same result as the api
+    .to(equal(mockSuccessResult.accountNumber))
+  }
+  
+  /// Test the getWireTransfers functionality when it encounters an error.
+  func test_getWireTransfers_failed_case_throw() async {
+    // Given: A mock error which will be thrown
+    let expectedError = TestError.fail("mock_error")
+    self.api.getWireTransferAccountIdThrowableError = expectedError
+    
+    // When: Calling login function on the repository with parameters which should throw an error
+    await expect {
+      try await self.repository.getWireTransfer(accountId: "")
+    }
+    .to(throwError { error in
+      // Then: The error is the one we expected
+      expect(expectedError).to(equal(error))
+    })
+  }
+
+}

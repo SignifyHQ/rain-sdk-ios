@@ -140,4 +140,30 @@ public class MockSolidExternalFundingAPIProtocol: SolidExternalFundingAPIProtoco
         }
     }
 
+    //MARK: - getWireTransfer
+
+    public var getWireTransferAccountIdThrowableError: Error?
+    public var getWireTransferAccountIdCallsCount = 0
+    public var getWireTransferAccountIdCalled: Bool {
+        return getWireTransferAccountIdCallsCount > 0
+    }
+    public var getWireTransferAccountIdReceivedAccountId: String?
+    public var getWireTransferAccountIdReceivedInvocations: [String] = []
+    public var getWireTransferAccountIdReturnValue: APISolidWireTransferResponse!
+    public var getWireTransferAccountIdClosure: ((String) async throws -> APISolidWireTransferResponse)?
+
+    public func getWireTransfer(accountId: String) async throws -> APISolidWireTransferResponse {
+        if let error = getWireTransferAccountIdThrowableError {
+            throw error
+        }
+        getWireTransferAccountIdCallsCount += 1
+        getWireTransferAccountIdReceivedAccountId = accountId
+        getWireTransferAccountIdReceivedInvocations.append(accountId)
+        if let getWireTransferAccountIdClosure = getWireTransferAccountIdClosure {
+            return try await getWireTransferAccountIdClosure(accountId)
+        } else {
+            return getWireTransferAccountIdReturnValue
+        }
+    }
+
 }

@@ -46,4 +46,13 @@ extension LFCoreNetwork: SolidExternalFundingAPIProtocol where R == SolidExterna
     let statusCode = result.httpResponse?.statusCode
     return APISolidUnlinkContactResponse(success: statusCode?.isSuccess ?? false)
   }
+  
+  public func getWireTransfer(accountId: String) async throws -> APISolidWireTransferResponse {
+    return try await request(
+      SolidExternalFundingRoute.getWireTransfer(accountId: accountId),
+      target: APISolidWireTransferResponse.self,
+      failure: LFErrorObject.self,
+      decoder: .apiDecoder
+    )
+  }
 }

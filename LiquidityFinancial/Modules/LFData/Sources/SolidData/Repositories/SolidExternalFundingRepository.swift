@@ -33,4 +33,8 @@ public class SolidExternalFundingRepository: SolidExternalFundingRepositoryProto
     try await solidExternalFundingAPI.unlinkContact(id: id)
   }
   
+  public func getWireTransfer(accountId: String) async throws -> SolidWireTransferResponseEntity {
+    try await solidExternalFundingAPI.getWireTransfer(accountId: accountId)
+  }
+  
 }

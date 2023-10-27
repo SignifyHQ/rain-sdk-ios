@@ -14,7 +14,7 @@ import Combine
 class FiatAssetViewModel: ObservableObject {
   @LazyInjected(\.accountDataManager) var accountDataManager
   @LazyInjected(\.accountRepository) var accountRepository
-  @LazyInjected(\.externalFundingRepository) var externalFundingRepository
+  @LazyInjected(\.dashboardRepository) var dashboardRepository
   
   @Published var asset: AssetModel
   @Published var isLoadingACH: Bool = false
@@ -88,12 +88,7 @@ private extension FiatAssetViewModel {
     isLoadingACH = true
     Task {
       do {
-        let achResponse = try await externalFundingRepository.getACHInfo(sessionID: accountDataManager.sessionID)
-        achInformation = ACHModel(
-          accountNumber: achResponse.accountNumber ?? Constants.Default.undefined.rawValue,
-          routingNumber: achResponse.routingNumber ?? Constants.Default.undefined.rawValue,
-          accountName: achResponse.accountName ?? Constants.Default.undefined.rawValue
-        )
+        achInformation = try await dashboardRepository.getACHInformation()
         isLoadingACH = false
       } catch {
         isLoadingACH = false

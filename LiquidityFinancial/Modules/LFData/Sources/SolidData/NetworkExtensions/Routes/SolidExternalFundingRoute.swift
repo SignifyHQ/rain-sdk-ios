@@ -9,6 +9,7 @@ public enum SolidExternalFundingRoute {
   case createPlaidToken(accountId: String)
   case plaidLink(accountId: String, token: String, plaidAccountId: String)
   case unlinkContact(id: String)
+  case getWireTransfer(accountId: String)
 }
 
 extension SolidExternalFundingRoute: LFRoute {
@@ -25,12 +26,14 @@ extension SolidExternalFundingRoute: LFRoute {
       return "/v1/solid/external-funding/linked-sources/plaid/link"
     case .unlinkContact(let id):
       return "/v1/solid/external-funding/linked-sources/\(id)"
+    case .getWireTransfer:
+      return "/v1/solid/external-funding/linked-sources/wire-transfer"
     }
   }
   
   public var httpMethod: HttpMethod {
     switch self {
-    case .getLinkedSources:
+    case .getLinkedSources, .getWireTransfer:
       return .GET
     case .createDebitCardToken, .createPlaidToken, .plaidLink:
       return .POST
@@ -50,7 +53,7 @@ extension SolidExternalFundingRoute: LFRoute {
   
   public var parameters: Parameters? {
     switch self {
-    case .getLinkedSources(let accountId):
+    case .getLinkedSources(let accountId), .getWireTransfer(let accountId):
       return [
         "accountId": accountId
       ]
@@ -77,7 +80,7 @@ extension SolidExternalFundingRoute: LFRoute {
     switch self {
     case .createDebitCardToken, .createPlaidToken, .plaidLink:
       return .json
-    case .getLinkedSources:
+    case .getLinkedSources, .getWireTransfer:
       return .url
     case .unlinkContact:
       return nil

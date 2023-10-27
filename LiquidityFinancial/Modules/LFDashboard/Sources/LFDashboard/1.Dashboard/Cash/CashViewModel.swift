@@ -18,7 +18,6 @@ final class CashViewModel: ObservableObject {
   @LazyInjected(\.accountRepository) var accountRepository
   @LazyInjected(\.dashboardRepository) var dashboardRepository
   @LazyInjected(\.accountDataManager) var accountDataManager
-  @LazyInjected(\.externalFundingRepository) var externalFundingRepository
   
   @Published var isCardActive: Bool = true
   @Published var isLoading: Bool = false
@@ -230,12 +229,7 @@ extension CashViewModel {
   
   private func getACHInfo() async throws {
     do {
-      let achResponse = try await externalFundingRepository.getACHInfo(sessionID: accountDataManager.sessionID)
-      achInformation = ACHModel(
-        accountNumber: achResponse.accountNumber ?? Constants.Default.undefined.rawValue,
-        routingNumber: achResponse.routingNumber ?? Constants.Default.undefined.rawValue,
-        accountName: achResponse.accountName ?? Constants.Default.undefined.rawValue
-      )
+      achInformation = try await dashboardRepository.getACHInformation()
     } catch {
       log.error(error.localizedDescription)
     }

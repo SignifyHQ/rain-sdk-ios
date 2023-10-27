@@ -239,12 +239,7 @@ extension CashViewModel {
   private func getACHInfo() {
     Task {
       do {
-        let achResponse = try await externalFundingRepository.getACHInfo(sessionID: accountDataManager.sessionID)
-        achInformation = ACHModel(
-          accountNumber: achResponse.accountNumber ?? Constants.Default.undefined.rawValue,
-          routingNumber: achResponse.routingNumber ?? Constants.Default.undefined.rawValue,
-          accountName: achResponse.accountName ?? Constants.Default.undefined.rawValue
-        )
+        achInformation = try await dashboardRepository.getACHInformation()
       } catch {
         toastMessage = error.localizedDescription
       }
