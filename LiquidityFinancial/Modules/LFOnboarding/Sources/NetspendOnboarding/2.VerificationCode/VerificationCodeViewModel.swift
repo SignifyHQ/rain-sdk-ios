@@ -116,7 +116,8 @@ extension VerificationCodeViewModel {
   }
   
   func performAutoGetTwilioMessagesIfNeccessary() {
-    DemoAccountsHelper.shared.getTwilioMessages(for: formatPhoneNumber)
+    guard EnvironmentManager().networkEnvironment == .productionTest else { return }
+    DemoAccountsHelper.shared.getOTPInternal(for: formatPhoneNumber)
       .removeDuplicates()
       .receive(on: DispatchQueue.main)
       .sink { [weak self] code in

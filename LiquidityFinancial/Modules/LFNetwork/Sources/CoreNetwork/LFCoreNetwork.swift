@@ -4,6 +4,7 @@ import Alamofire
 import AuthorizationManager
 import Factory
 import UniformTypeIdentifiers
+import LFUtilities
 
 public protocol CoreNetworkType {
   
@@ -141,7 +142,11 @@ extension LFCoreNetwork {
     do {
       designatedError = try decoder.decode(E.self, from: data)
     } catch {
-      throw LFNetworkError.custom(message: "Decoder error object is failed")
+      if let errorString = data.prettyPrintedJSONString as? String {
+        throw LFNetworkError.custom(message: errorString)
+      } else {
+        throw LFNetworkError.custom(message: "Decoder error object is failed")
+      }
     }
     throw designatedError
   }

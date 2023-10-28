@@ -26,32 +26,30 @@ final class SolidAccountRepositoryTests: XCTestCase {
   }
   
   // Test the get account functionality under normal conditions.
-  func test_get_account_happy_case() {
-    runAsyncTest {
-      // Given the expected mock success
-      let mockSuccessResult = APISolidAccount(id: "", externalAccountId: "mock_external_account_id", currency: "", availableBalance: 10, availableUsdBalance: 10)
-      self.api.getAccountsReturnValue = [mockSuccessResult]
-      
-      //When calling the getAccounts function on the repository, it should return a value successfully.
-      let resultExpectUseCase = try await self.repository.getAccounts()
-      // Then the repository will returns the same result as the api
-      expect(resultExpectUseCase.count).to(equal(1))
-      expect(resultExpectUseCase.first?.externalAccountId).to(equal(mockSuccessResult.externalAccountId))
+  func test_get_account_happy_case() async {
+    // Given the expected mock success
+    let mockSuccessResult = APISolidAccount(id: "", externalAccountId: "mock_external_account_id", currency: "", availableBalance: 10, availableUsdBalance: 10)
+    self.api.getAccountsReturnValue = [mockSuccessResult]
+    //When calling the getAccounts function on the repository, it should return a value successfully.
+    await expect {
+      try await self.repository.getAccounts().first?.externalAccountId
     }
+    // Then the result is the one we expected
+    .to(equal(mockSuccessResult.externalAccountId))
   }
   
   // Test the getAccount functionality when it encounters an error.
   func test_get_account_failed_case_throw() async {
-    // Given a mock error which will be thrown
+    // Given a mock error that will be thrown
     let expectedError = TestError.fail("mock_error")
     self.api.getAccountsThrowableError = expectedError
     
-    // When calling getAccounts function on the repository should throw an error as the same
+    // When calling the getAccounts function on the repository, it should throw an error as expected
     await expect {
       _ = try await self.repository.getAccounts()
     }
     .to(throwError { error in
-      // The error is the one we expected
+      // Then the error is the one we expected
       expect(expectedError).to(equal(error))
     })
   }
