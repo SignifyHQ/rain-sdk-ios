@@ -45,8 +45,7 @@ let package = Package(
     .package(name: "LFServices", path: "../LFServices"),
     .package(name: "TestHelpers", path: "../TestHelpers"),
     .package(url: "https://github.com/hmlongco/Factory", from: "2.3.1"),
-    .package(url: "https://github.com/krzysztofzablocki/Sourcery.git", from: "2.0.0"),
-    .package(url: "https://github.com/Quick/Nimble.git", from: "12.0.0")
+    .package(url: "https://github.com/krzysztofzablocki/Sourcery.git", from: "2.0.0")
   ],
   targets: [
     .target(
@@ -131,7 +130,7 @@ let package = Package(
     .testTarget(
       name: "CryptoChartDataTests",
       dependencies: [
-        "CryptoChartData", "DataTestHelpers", "Nimble", "TestHelpers",
+        "CryptoChartData", "DataTestHelpers", "TestHelpers",
         .product(name: "NetworkTestHelpers", package: "LFNetwork")
       ]
     ),
@@ -145,28 +144,28 @@ let package = Package(
     .testTarget(
       name: "DevicesDataTests",
       dependencies: [
-        "DevicesData", "DataTestHelpers", "Nimble",
+        "DevicesData", "DataTestHelpers",
         .product(name: "NetworkTestHelpers", package: "LFNetwork")
       ]
     ),
     .testTarget(
       name: "OnboardingDataTests",
       dependencies: [
-        "OnboardingData", "DataTestHelpers", "TestHelpers", "Nimble",
+        "OnboardingData", "DataTestHelpers", "TestHelpers",
         .product(name: "NetworkTestHelpers", package: "LFNetwork")
       ]
     ),
     .testTarget(
       name: "NetSpendDataTests",
       dependencies: [
-        "NetSpendData", "DataTestHelpers", "TestHelpers", "Nimble",
+        "NetSpendData", "DataTestHelpers", "TestHelpers",
         .product(name: "NetworkTestHelpers", package: "LFNetwork")
       ]
     ),
     .testTarget(
       name: "SolidDataTests",
       dependencies: [
-        "SolidData", "DataTestHelpers", "TestHelpers", "Nimble",
+        "SolidData", "DataTestHelpers", "TestHelpers",
         .product(name: "NetworkTestHelpers", package: "LFNetwork")
       ]
     )

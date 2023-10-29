@@ -23,15 +23,9 @@ class CausesViewModel: ObservableObject {
   @LazyInjected(\.rewardRepository) var rewardRepository
   @LazyInjected(\.rewardDataManager) var rewardDataManager
   
-  private var subscribers: Set<AnyCancellable> = []
-  
   lazy var rewardUseCase: RewardUseCase = {
     RewardUseCase(repository: rewardRepository)
   }()
-  
-  init() {
-    handleSelectedFundraisersSuccess()
-  }
   
   func appearOpeations() {
     switch status {
@@ -58,21 +52,18 @@ class CausesViewModel: ObservableObject {
     let cause = self.donationCategories.first(where: { $0.id == id })
     return cause?.name
   }
+  
+  func handleSelectedFundraisersSuccess() {
+    guard self.rewardDataManager.fundraisersDetail != nil else { return }
+    LFUtilities.popToRootView()
+    self.navigation = nil
+  }
+  
 }
 
   // MARK: - API logic
 
 extension CausesViewModel {
-  private func handleSelectedFundraisersSuccess() {
-    NotificationCenter.default.publisher(for: .selectedFundraisersSuccess)
-      .receive(on: DispatchQueue.main)
-      .sink { [weak self] _ in
-        guard self?.rewardDataManager.fundraisersDetail != nil else { return }
-        self?.navigation = nil
-      }
-      .store(in: &subscribers)
-  }
-  
   private func apiFetchCategories() {
     Task {
       status = .loading

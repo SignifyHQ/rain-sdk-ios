@@ -12,11 +12,13 @@ let package = Package(
       targets: ["TestHelpers"]
     )
   ],
-  dependencies: [],
+  dependencies: [
+    .package(url: "https://github.com/Quick/Nimble.git", from: "12.0.0")
+  ],
   targets: [
     .target(
       name: "TestHelpers",
-      dependencies: []
+      dependencies: ["Nimble"]
     )
   ]
 )

@@ -36,7 +36,7 @@ let package = Package(
               .product(name: "DatadogTrace", package: "dd-sdk-ios"),
               .product(name: "DatadogRUM", package: "dd-sdk-ios"),
               .product(name: "DatadogLogs", package: "dd-sdk-ios"),
-              .product(name: "VGSCollectSDK", package: "vgs-collect-ios"),
+              .product(name: "VGSCollectSDK", package: "vgs-collect-ios")
             ],
             resources: [
               .process("Resources")

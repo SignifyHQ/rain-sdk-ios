@@ -128,7 +128,7 @@ extension QuestionsViewModel {
 }
 
 // MARK: - Private Functions
-private extension QuestionsViewModel {  
+private extension QuestionsViewModel { 
   func handlerOnboardingStep() async throws {
     let onboardingStep = try await nsOnboardingRepository.getOnboardingStep(sessionID: accountDataManager.sessionID)
     let onboardingTypes = onboardingStep.mapToEnum()

@@ -39,7 +39,7 @@ public final class SolidListCardsViewModel: ListCardsViewModelProtocol {
   @Published public var currentCard: CardModel = .virtualDefault
   @Published public var popup: ListCardPopup?
   
-  unowned public let coordinator: BaseCardDestinationObservable
+  public unowned let coordinator: BaseCardDestinationObservable
   public var isSwitchCard = true
   
   public var roundUpPurchases: Bool {

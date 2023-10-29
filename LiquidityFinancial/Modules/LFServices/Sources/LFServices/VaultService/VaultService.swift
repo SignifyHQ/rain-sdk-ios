@@ -2,10 +2,10 @@ import Foundation
 import VGSCollectSDK
 
 // MARK: - VaultService
-public class VaultService: VaultServiceProtocol {  
+public class VaultService: VaultServiceProtocol { 
   public let vgsCollect: VGSCollect
 
-  required public init(vgsID: String, vgsENV: String) {
+  public required init(vgsID: String, vgsENV: String) {
     self.vgsCollect = VGSCollect(id: vgsID, environment: vgsENV)
   }
 

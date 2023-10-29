@@ -30,7 +30,7 @@ final class SolidGetWireTranferUseCaseTest: XCTestCase {
       mockSuccessResult.accountNumber = "mock_account_number"
       mockSuccessResult.routingNumber = "mock_routing_number"
       let mockAccountId = "mock_account_id"
-      self.repository.getWireTransferReturnValue = mockSuccessResult
+      self.repository.getWireTransferAccountIdReturnValue = mockSuccessResult
       // When calling getWireTransfer function on the usecase should return an value successfully
       let resultExpectUseCase = try await self.usecase.execute(accountId: mockAccountId)
       // Then the usecase will returns the same result as the repository
@@ -43,7 +43,7 @@ final class SolidGetWireTranferUseCaseTest: XCTestCase {
   func test_failed_case_throw() async {
     // Given a mock error which will be thrown
     let expectedError = TestError.fail("mock_error")
-    self.repository.getWireTransferThrowableError = expectedError
+    self.repository.getWireTransferAccountIdThrowableError = expectedError
     let mockAccountId = "mock_account_id"
     
     // When calling getWireTransfer function on the repository should throw an error as the same

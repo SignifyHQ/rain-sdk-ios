@@ -69,7 +69,6 @@ public class SolidOnboardingFlowCoordinator: SolidOnboardingFlowCoordinatorProto
   @LazyInjected(\.analyticsService) var analyticsService
   @LazyInjected(\.solidOnboardingRepository) var solidOnboardingRepository
 
-  
   public let routeSubject: CurrentValueSubject<Route, Never>
   
   private var subscribers: Set<AnyCancellable> = []

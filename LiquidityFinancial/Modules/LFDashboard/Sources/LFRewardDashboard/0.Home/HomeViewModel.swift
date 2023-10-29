@@ -33,7 +33,7 @@ public final class HomeViewModel: ObservableObject {
   
   lazy var deviceRegisterUseCase: DeviceRegisterUseCaseProtocol = {
     return DeviceRegisterUseCase(repository: devicesRepository)
-   }()
+  }()
   
   private var subscribers: Set<AnyCancellable> = []
   
@@ -92,6 +92,7 @@ private extension HomeViewModel {
   func handleSelectRewardChange() {
     rewardDataManager
       .selectRewardChangedEvent
+      .dropFirst()
       .receive(on: DispatchQueue.main)
       .sink { [weak self] reward in
         self?.buildTabOption(with: reward)

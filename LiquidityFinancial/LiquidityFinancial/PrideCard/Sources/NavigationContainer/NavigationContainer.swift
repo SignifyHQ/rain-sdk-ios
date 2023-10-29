@@ -35,7 +35,7 @@ final class NavigationContainer {
     }
     
     transactionNavigation.registerDisputeTransactionView(type: EmptyView.self) { _ in
-      return AnyView(EmptyView())
+      AnyView(EmptyView())
     }
   }
   
@@ -44,7 +44,7 @@ final class NavigationContainer {
     dashboardNavigation.setup(container: container)
     
     dashboardNavigation.registerDisputeTransactionView(type: EmptyView.self) { _ in
-      return AnyView(EmptyView())
+      AnyView(EmptyView())
     }
   }
   

@@ -11,7 +11,7 @@ import LFRewards
 
 extension Container {
   var contenViewFactory: ParameterFactory<(EnvironmentManager), SolidContentViewFactory> {
-    self { (environment) in
+    self { environment in
       SolidContentViewFactory(container: self, environment: environment)
     }
   }

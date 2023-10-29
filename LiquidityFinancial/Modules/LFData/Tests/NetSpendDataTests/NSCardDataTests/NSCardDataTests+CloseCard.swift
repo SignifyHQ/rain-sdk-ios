@@ -122,7 +122,7 @@ private extension NSCardDataTests {
   /// Function to configure the API behaviour which should be consistent across all tests
   func configureAPIBehaviour() {
     api.closeCardReasonCardIDSessionIDClosure = { parameter, cardID, netspendSessionID async throws in
-      let isSupportedCloseCardReason = self.mockSupportedCloseCardReasons.contains(where: {$0.reason == parameter.reason})
+      let isSupportedCloseCardReason = self.mockSupportedCloseCardReasons.contains(where: { $0.reason == parameter.reason })
       let isValidNetSpendSessionID = netspendSessionID == self.mockValidNetSpendSessionID
       let isFoundCardID = self.mockExistCardID.contains(cardID)
       

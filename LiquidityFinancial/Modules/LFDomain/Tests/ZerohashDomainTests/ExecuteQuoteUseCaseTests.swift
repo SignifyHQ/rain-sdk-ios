@@ -3,6 +3,7 @@ import Foundation
 import AccountDomain
 import DomainTestHelpers
 import TestHelpers
+import Nimble
 
 @testable import ZerohashDomain
 
@@ -17,48 +18,41 @@ final class ExecuteQuoteUseCaseTests: XCTestCase {
     usecase = ExecuteQuoteUseCase(repository: repository)
   }
   
-  func test_happy_case() {
-    runAsyncTest {
-      let mockSuccessResult = MockTransactionEntity()
-      mockSuccessResult.accountId = "mock_accountID"
-      mockSuccessResult.amount = 999
-      
-      let mockFailedResult = MockTransactionEntity()
-      
-      self.repository.executeAccountIdQuoteIdClosure = { accountID, quoteId async throws -> TransactionEntity in
-        if accountID == "mock_accountId" && quoteId == "mock_quoteId" {
-          return mockSuccessResult
-        }
-        return mockFailedResult
-      }
-      
-      let result = try await self.usecase.execute(accountId: "mock_accountId", quoteId: "mock_quoteId")
-      
-      XCTAssertEqual(mockSuccessResult.accountId, result.accountId)
-      XCTAssertEqual(mockSuccessResult.amount, result.amount)
+  func test_happy_case() async {
+    // Given: Set up a mock success result with a specific accountId.
+    let mockSuccessResult = MockTransactionEntity()
+    mockSuccessResult.accountId = "mock_accountID"
+    self.repository.executeAccountIdQuoteIdReturnValue = mockSuccessResult
+    
+    // When: Call the 'execute' method on the use case with specific accountId and quoteId.
+    await expect {
+      try await self.usecase.execute(accountId: "mock_accountId", quoteId: "mock_quoteId").accountId
     }
+    // Then: Ensure that the returned accountId matches the one set in the mock success result.
+    .to(equal(mockSuccessResult.accountId))
   }
   
   func test_failed_case() async {
-    do {
-      let mockSuccessResult = MockTransactionEntity()
-      mockSuccessResult.accountId = "mock_accountID"
-      mockSuccessResult.amount = 999
-      
-      let mockFailedResult = MockTransactionEntity()
-      
-      self.repository.executeAccountIdQuoteIdClosure = { accountID, quoteId async throws -> TransactionEntity in
-        if accountID == "mock_accountId" && quoteId == "mock_quoteId" {
-          return mockSuccessResult
-        }
-        self.repository.executeAccountIdQuoteIdThrowableError = "something wrong"
-        return mockFailedResult
+    // Given: Set up a mock success result and a mock error.
+    let mockSuccessResult = MockTransactionEntity()
+    mockSuccessResult.accountId = "mock_accountID"
+    mockSuccessResult.amount = 999
+    let mockError = TestError.fail("mock_error")
+    
+    self.repository.executeAccountIdQuoteIdClosure = { accountID, quoteId async throws -> TransactionEntity in
+      if accountID == "mock_accountId" && quoteId == "mock_quoteId" {
+        return mockSuccessResult
       }
-      
-      _ = try await self.usecase.execute(accountId: "", quoteId: "")
-      
-    } catch {
-      XCTAssertEqual(self.repository.executeAccountIdQuoteIdThrowableError?.localizedDescription, error.localizedDescription)
+      throw mockError
     }
+    // When: Call the 'execute' method on the use case with empty accountId and quoteId, which triggers an error.
+    await expect {
+      try await self.usecase.execute(accountId: "", quoteId: "")
+    }.to(
+      // Then: Ensure that the use case throws the expected error.
+      throwError(closure: { error in
+        expect(error).to(equal(mockError))
+      })
+    )
   }
 }

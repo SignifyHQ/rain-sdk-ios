@@ -20,8 +20,6 @@ class PrideCardCauseViewModel: ObservableObject {
   @LazyInjected(\.rewardRepository) var rewardRepository
   @LazyInjected(\.rewardDataManager) var rewardDataManager
   
-  private var subscribers: Set<AnyCancellable> = []
-  
   lazy var rewardUseCase: RewardUseCase = {
     RewardUseCase(repository: rewardRepository)
   }()
@@ -47,21 +45,16 @@ class PrideCardCauseViewModel: ObservableObject {
     self.navigation = .fundraiserDetail(fundraiserID)
   }
 
+  func handleSelectedFundraisersSuccess() {
+    guard self.rewardDataManager.fundraisersDetail != nil else { return }
+    LFUtilities.popToRootView()
+    self.navigation = nil
+  }
 }
 
   // MARK: - API logic
 
 extension PrideCardCauseViewModel {
-  private func handleSelectedFundraisersSuccess() {
-    NotificationCenter.default.publisher(for: .selectedFundraisersSuccess)
-      .receive(on: DispatchQueue.main)
-      .sink { [weak self] _ in
-        guard self?.rewardDataManager.fundraisersDetail != nil else { return }
-        self?.navigation = nil
-      }
-      .store(in: &subscribers)
-  }
- 
   private func initData() {
     Task { @MainActor in
       do {

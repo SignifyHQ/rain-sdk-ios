@@ -3,6 +3,7 @@ import LFUtilities
 import LFStyleGuide
 import LFLocalizable
 import LFServices
+import BaseOnboarding
 
 struct KYCStatusView: View {
   @StateObject var viewModel: KYCStatusViewModel
@@ -22,10 +23,9 @@ struct KYCStatusView: View {
       .fullScreenCover(item: $viewModel.presentation) { item in
         switch item {
         case let .idv(url):
-          EmptyView()
-//          IdentityVerificationView(url: url) {
-//            viewModel.idvComplete()
-//          }
+          IdentityVerificationView(url: url) {
+            viewModel.idvComplete()
+          }
         }
       }
       .popup(item: $viewModel.toastMessage, style: .toast) {
