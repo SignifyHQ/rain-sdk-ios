@@ -9,6 +9,10 @@ import Factory
 import LFStyleGuide
 import LFTransaction
 import LFServices
+import ExternalFundingData
+import SolidDomain
+import SolidData
+import AccountData
 
 @MainActor
 public class MoveMoneyAccountViewModel: ObservableObject {
@@ -18,6 +22,9 @@ public class MoveMoneyAccountViewModel: ObservableObject {
   @LazyInjected(\.externalFundingRepository) var externalFundingRepository
   @LazyInjected(\.analyticsService) var analyticsService
   @LazyInjected(\.customerSupportService) var customerSupportService
+  @LazyInjected(\.externalFundingDataManager) var externalFundingDataManager
+  @LazyInjected(\.solidExternalFundingRepository) var solidExternalFundingRepository
+  @LazyInjected(\.solidAccountRepository) var solidAccountRepository
   
   @Published var navigation: Navigation?
   @Published var amountInput: String = Constants.Default.zeroAmount.rawValue
@@ -27,18 +34,26 @@ public class MoveMoneyAccountViewModel: ObservableObject {
   @Published var toastMessage: String?
   @Published var inlineError: String?
   @Published var numberOfShakes = 0
-  @Published var linkedAccount: [APILinkedSourceData] = []
-  @Published var selectedLinkedAccount: APILinkedSourceData?
+  @Published var linkedContacts: [LinkedSourceContact] = []
+  @Published var selectedLinkedContact: LinkedSourceContact?
   @Published var selectedValue: GridValue?
   @Published var popup: Popup?
   @Published var showTransferFeeSheet: Bool = false
   @Published var selectTransferInstant: Bool?
   @Published var externalCardFeeResponse: APIExternalCardFeeResponse?
   
+  lazy var solidCreateTransactionUseCase: SolidCreateExternalTransactionUseCaseProtocol = {
+    SolidCreateExternalTransactionUseCase(repository: solidExternalFundingRepository)
+  }()
+  
+  lazy var solidGetAccountUseCase: SolidGetAccountsUseCaseProtocol = {
+    SolidGetAccountsUseCase(repository: solidAccountRepository)
+  }()
+  
   private var cancellable: Set<AnyCancellable> = []
   
-  private var cardRemainingAmount = RemainingAvailableAmount.default
-  private var bankRemainingAmount = RemainingAvailableAmount.default
+  private var cardRemainingAmount: RemainingAvailableAmount?
+  private var bankRemainingAmount: RemainingAvailableAmount?
   
   let kind: Kind
   let recommendValues: [GridValue] = [
@@ -47,11 +62,11 @@ public class MoveMoneyAccountViewModel: ObservableObject {
     .fixed(amount: 100, currency: .usd)
   ]
 
-  init(kind: Kind, selectedAccount: APILinkedSourceData? = nil) {
+  init(kind: Kind, selectedAccount: LinkedSourceContact? = nil) {
     self.kind = kind
-    self.selectedLinkedAccount = selectedAccount
+    self.selectedLinkedContact = selectedAccount
     
-    subscribeLinkedAccounts()
+    subscribeLinkedContacts()
     getRemainingAvailableAmount()
   }
   
@@ -94,15 +109,14 @@ extension MoveMoneyAccountViewModel {
     }
   }
   
-  func subscribeLinkedAccounts() {
-    accountDataManager.subscribeLinkedSourcesChanged { [weak self] entities in
+  func subscribeLinkedContacts() {
+    externalFundingDataManager.subscribeLinkedSourcesChanged { [weak self] contacts in
       guard let self = self else {
         return
       }
-      let linkedSources = entities.compactMap({ $0.isVerified ? APILinkedSourceData(entity: $0) : nil })
-      self.linkedAccount = linkedSources
-      if self.selectedLinkedAccount == nil {
-        self.selectedLinkedAccount = linkedSources.first
+      self.linkedContacts = contacts
+      if self.selectedLinkedContact == nil {
+        self.selectedLinkedContact = contacts.first
       }
     }
     .store(in: &cancellable)
@@ -117,7 +131,6 @@ extension MoveMoneyAccountViewModel {
   func refresh() async {
     await withTaskGroup(of: Void.self) { group in
       group.addTask {
-        await self.getListConnectedAccount()
       }
     }
   }
@@ -131,14 +144,14 @@ extension MoveMoneyAccountViewModel {
   }
   
   func continueTransfer() {
-    guard let account = selectedLinkedAccount else {
+    guard let contact = selectedLinkedContact else {
       return
     }
-    switch account.sourceType {
-    case .externalBank:
+    switch contact.sourceType {
+    case .bank:
       callBioMetric()
-    case .externalCard:
-      getTransactionFee(account: account)
+    case .card:
+      getTransactionFee(contact: contact)
     }
   }
   
@@ -154,20 +167,7 @@ extension MoveMoneyAccountViewModel {
     navigation = .selectBankAccount
   }
   
-  func getListConnectedAccount() {
-    Task { @MainActor in
-      do {
-        let sessionID = self.accountDataManager.sessionID
-        async let response = self.externalFundingRepository.getLinkedAccount(sessionId: sessionID)
-        let linkedSources = try await response.linkedSources
-        self.accountDataManager.storeLinkedSources(linkedSources)
-      } catch {
-        toastMessage = error.localizedDescription
-      }
-    }
-  }
-  
-  func getTransactionFee(account: APILinkedSourceData) {
+  func getTransactionFee(contact: LinkedSourceContact) {
     guard let amount = self.amount.asDouble else {
       toastMessage = LFLocalizable.MoveMoney.Error.noContact
       return
@@ -177,21 +177,7 @@ extension MoveMoneyAccountViewModel {
       showIndicator = true
       
       do {
-        let sessionID = self.accountDataManager.sessionID
-        let parameters = ExternalTransactionParameters(
-          amount: amount,
-          sourceId: account.sourceId,
-          sourceType: account.sourceType.rawValue,
-          m2mFeeRequestId: nil
-        )
-        let type: ExternalTransactionType = kind == .receive ? .deposit : .withdraw
-        let response = try await self.externalFundingRepository.externalCardTransactionFee(
-          parameters: parameters,
-          type: type,
-          sessionId: sessionID
-        )
-        externalCardFeeResponse = APIExternalCardFeeResponse(entity: response)
-        showTransferFeeSheet = true
+        // TODO: Will implement later
       } catch {
         handleTransferError(error: error)
       }
@@ -199,7 +185,7 @@ extension MoveMoneyAccountViewModel {
   }
   
   func callTransferAPI() {
-    guard let linkedAccount = selectedLinkedAccount, let amount = self.amount.asDouble else {
+    guard let contact = selectedLinkedContact, let amount = self.amount.asDouble else {
       toastMessage = LFLocalizable.MoveMoney.Error.noContact
       return
     }
@@ -209,26 +195,26 @@ extension MoveMoneyAccountViewModel {
       }
       showIndicator = true
       do {
-        let sessionID = self.accountDataManager.sessionID
-        let parameters = ExternalTransactionParameters(
-          amount: amount,
-          sourceId: linkedAccount.sourceId,
-          sourceType: linkedAccount.sourceType.rawValue,
-          m2mFeeRequestId: self.externalCardFeeResponse?.id
-        )
-        let type: ExternalTransactionType = kind == .receive ? .deposit : .withdraw
-        let response = try await self.externalFundingRepository.newExternalTransaction(
-          parameters: parameters,
-          type: type,
-          sessionId: sessionID
-        )
+        let type: SolidExternalTransactionType = kind == .receive ? .deposit : .withdraw
+        var account = self.accountDataManager.accountsSubject.value.first(where: {
+          Constants.CurrencyList.fiats.contains($0.currency)
+        })
+        if account == nil {
+          let entity = try await solidGetAccountUseCase.execute()
+          account = entity.map { item in
+            APIAccount(id: item.id, externalAccountId: item.externalAccountId, currency: item.currency, availableBalance: item.availableBalance, availableUsdBalance: item.availableUsdBalance)
+          }.first
+        }
+        guard let accountId = account?.id else {
+          return
+        }
+        let response = try await solidCreateTransactionUseCase.execute(type: type, accountId: accountId, contactId: contact.sourceId, amount: amount)
         
         analyticsService.track(event: AnalyticsEvent(name: .sendMoneySuccess))
         
         //Push a notification for update transaction list event
         NotificationCenter.default.post(name: .moneyTransactionSuccess, object: nil)
-        
-        navigation = .transactionDetai(response.transactionId)
+        navigation = .transactionDetai(response.id)
       } catch {
         handleTransferError(error: error)
       }
@@ -261,12 +247,12 @@ extension MoveMoneyAccountViewModel {
     navigation = .addBankDebit
   }
   
-  func title(for account: APILinkedSourceData) -> String {
-    switch account.sourceType {
-    case .externalCard:
-      return LFLocalizable.ConnectedView.Row.externalCard(account.last4)
-    case .externalBank:
-      return LFLocalizable.ConnectedView.Row.externalBank(account.name ?? "", account.last4)
+  func title(for contact: LinkedSourceContact) -> String {
+    switch contact.sourceType {
+    case .card:
+      return LFLocalizable.ConnectedView.Row.externalCard(contact.last4)
+    case .bank:
+      return LFLocalizable.ConnectedView.Row.externalBank(contact.name ?? "", contact.last4)
     }
   }
   
@@ -319,10 +305,13 @@ extension MoveMoneyAccountViewModel {
   }
   
   func validateAmount(with amount: Double?) -> String? {
-    guard let sourceType = selectedLinkedAccount?.sourceType, let amountValue = amount else {
+    guard let sourceType = selectedLinkedContact?.sourceType, let amountValue = amount else {
       return nil
     }
-    let remainingAmount = sourceType == .externalCard ? cardRemainingAmount : bankRemainingAmount
+    let remainingAmount = sourceType == .card ? cardRemainingAmount : bankRemainingAmount
+    guard let remainingAmount = remainingAmount else {
+      return nil
+    }
     let isReachOut = remainingAmount.day < amountValue || remainingAmount.week < amountValue || remainingAmount.month < amountValue
     if isReachOut {
       return LFLocalizable.TransferView.limitsReached

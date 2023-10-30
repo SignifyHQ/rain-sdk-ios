@@ -138,7 +138,7 @@ private extension CashView {
         /* TODO: Remove for MVP
          changeAssetButton
          */
-        BalanceAlertView(type: .cash, hasContacts: !viewModel.linkedAccount.isEmpty, cashBalance: viewModel.cashBalanceValue) {
+        BalanceAlertView(type: .cash, hasContacts: !viewModel.linkedContacts.isEmpty, cashBalance: viewModel.cashBalanceValue) {
           viewModel.addMoneyTapped()
         }
         moveMoney

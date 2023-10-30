@@ -2,6 +2,7 @@ import Foundation
 import NetworkUtilities
 import CoreNetwork
 import LFUtilities
+import SolidDomain
 
 extension LFCoreNetwork: SolidExternalFundingAPIProtocol where R == SolidExternalFundingRoute {
   
@@ -51,6 +52,15 @@ extension LFCoreNetwork: SolidExternalFundingAPIProtocol where R == SolidExterna
     return try await request(
       SolidExternalFundingRoute.getWireTransfer(accountId: accountId),
       target: APISolidWireTransferResponse.self,
+      failure: LFErrorObject.self,
+      decoder: .apiDecoder
+    )
+  }
+  
+  public func newTransaction(type: SolidExternalTransactionType, accountId: String, contactId: String, amount: Double) async throws -> APISolidExternalTransactionResponse {
+    return try await request(
+      SolidExternalFundingRoute.newTransaction(type: type, accountId: accountId, contactId: contactId, amount: amount),
+      target: APISolidExternalTransactionResponse.self,
       failure: LFErrorObject.self,
       decoder: .apiDecoder
     )
