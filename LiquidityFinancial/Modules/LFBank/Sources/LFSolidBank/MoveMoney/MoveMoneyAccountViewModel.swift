@@ -82,16 +82,7 @@ public class MoveMoneyAccountViewModel: ObservableObject {
 
 extension MoveMoneyAccountViewModel {
   func getRemainingAvailableAmount() {
-    Task {
-      defer { isFetchingRemainingAmount = false }
-      isFetchingRemainingAmount = true
-      
-      do {
-        // TODO: Will add this later when BE done
-      } catch {
-        log.error(error.localizedDescription)
-      }
-    }
+    // TODO: Will add this later when BE done
   }
   
   func subscribeLinkedContacts() {

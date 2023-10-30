@@ -31,7 +31,7 @@ extension SolidExternalFundingRoute: LFRoute {
       return "/v1/solid/external-funding/linked-sources/\(id)"
     case .getWireTransfer:
       return "/v1/solid/external-funding/linked-sources/wire-transfer"
-    case .newTransaction(let type, let accountId, let contactId, let amount):
+    case .newTransaction(let type, _, _, _):
       switch type {
       case .withdraw:
         return "/v1/solid/external-funding/withdraw"

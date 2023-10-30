@@ -19,8 +19,6 @@ class PlaidHelper {
           continuation.resume(returning: (publicToken: publicToken, plaidAccountId: plaidAccountId))
         }
       )
-    
-      onCreated(configuration)
       
       configuration.onExit = { exit in
         if let error = exit.error {
@@ -29,6 +27,8 @@ class PlaidHelper {
           continuation.resume(throwing: LiquidityError.userCancelled)
         }
       }
+      
+      onCreated(configuration)
     })
   }
 }

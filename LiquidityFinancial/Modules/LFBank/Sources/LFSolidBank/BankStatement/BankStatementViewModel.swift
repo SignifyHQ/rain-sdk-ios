@@ -2,6 +2,7 @@ import Foundation
 import LFUtilities
 import AccountDomain
 import NetspendDomain
+import NetSpendData
 import Factory
 
 class BankStatementViewModel: ObservableObject {
@@ -49,17 +50,19 @@ class BankStatementViewModel: ObservableObject {
     Task { @MainActor in
       status = .loading
       do {
-        let sessionID = accountDataManager.sessionID
+        let sessionID = self.accountDataManager.sessionID
         let date = Date()
         let month = self.monthFormatter.string(from: date)
         let year = self.yearFormatter.string(from: date)
         
         let response = try await getStatementsUseCase.execute(
           sessionId: sessionID,
-          fromMonth: Constants.Default.statementFromMonth.rawValue,
-          fromYear: Constants.Default.statementFromYear.rawValue,
-          toMonth: month,
-          toYear: year
+          parameter: GetStatementParameters(
+            fromMonth: Constants.Default.statementFromMonth.rawValue,
+            fromYear: Constants.Default.statementFromYear.rawValue,
+            toMonth: month,
+            toYear: year
+          )
         )
         status = .success(response)
       } catch {
