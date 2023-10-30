@@ -3,6 +3,7 @@ import LFUtilities
 import LFLocalizable
 import Factory
 import NetSpendData
+import NetspendDomain
 import OnboardingData
 import AccountData
 import SwiftUI
@@ -20,7 +21,7 @@ final class UploadDocumentViewModel: ObservableObject {
   
   @LazyInjected(\.netspendDataManager) var netspendDataManager
   @LazyInjected(\.accountDataManager) var accountDataManager
-  @LazyInjected(\.nsPersionRepository) var nsPersionRepository
+  @LazyInjected(\.nsPersonRepository) var nsPersonRepository
   @LazyInjected(\.onboardingRepository) var onboardingRepository
   @LazyInjected(\.nsOnboardingFlowCoordinator) var onboardingFlowCoordinator
   
@@ -37,6 +38,10 @@ final class UploadDocumentViewModel: ObservableObject {
       checkDocumentMaxSize()
     }
   }
+  
+  lazy var uploadDocumentsUseCase: NSUploadDocumentsUseCaseProtocol = {
+    NSUploadDocumentsUseCase(repository: nsPersonRepository)
+  }()
   
   var isOpenningDocumentDisplayType: DocumentDisplayType = .none
   
@@ -139,7 +144,7 @@ extension UploadDocumentViewModel {
           DocumentParameters.Document(documentType: documentTypeSelected.rawValue, country: "US", encryptedData: encryptedData ?? "")
         ])
         let path = PathDocumentParameters(sessionId: sessionId, documentID: documentId, isUpdate: isUpdateDocument)
-        let documentEntity = try await nsPersionRepository.uploadDocuments(path: path, documentData: documentData)
+        let documentEntity = try await uploadDocumentsUseCase.execute(path: path, documentData: documentData)
         if let documentAPI = documentEntity as? APIDocumentData.RequestedDocument {
           netspendDataManager.documentData?.update(status: documentAPI.status, fromID: documentAPI.documentRequestId)
           onSuccess()

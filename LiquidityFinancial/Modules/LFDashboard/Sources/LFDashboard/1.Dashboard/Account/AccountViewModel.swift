@@ -14,7 +14,7 @@ import AccountData
 
 @MainActor
 class AccountViewModel: ObservableObject {
-  @LazyInjected(\.nsPersionRepository) var nsPersionRepository
+  @LazyInjected(\.nsPersonRepository) var nsPersonRepository
   @LazyInjected(\.externalFundingRepository) var externalFundingRepository
   @LazyInjected(\.netspendDataManager) var netspendDataManager
   @LazyInjected(\.accountDataManager) var accountDataManager
@@ -37,6 +37,10 @@ class AccountViewModel: ObservableObject {
   @Published var linkedAccount: [APILinkedSourceData] = []
   @Published var achInformation: ACHModel = .default
   @Published var assets: [AssetModel] = []
+  
+  lazy var getAuthorizationUseCase: NSGetAuthorizationCodeUseCaseProtocol = {
+    NSGetAuthorizationCodeUseCase(repository: nsPersonRepository)
+  }()
     
   private(set) var addFundsViewModel = AddFundsViewModel()
   
@@ -204,7 +208,7 @@ extension AccountViewModel {
       isDisableView = true
       do {
         let sessionID = accountDataManager.sessionID
-        let code = try await nsPersionRepository.getAuthorizationCode(sessionId: sessionID)
+        let code = try await getAuthorizationUseCase.execute(sessionId: sessionID)
         navigation = .atmLocation(code.authorizationCode)
       } catch {
         toastMessage = error.localizedDescription
@@ -222,7 +226,7 @@ extension AccountViewModel {
       isDisableView = true
       do {
         guard let session = netspendDataManager.sdkSession else { return }
-        let code = try await nsPersionRepository.getAuthorizationCode(sessionId: session.sessionId)
+        let code = try await getAuthorizationUseCase.execute(sessionId: session.sessionId)
         guard let id = accountDataManager.externalAccountID else { return }
         navigation = .disputeTransaction(id, code.authorizationCode)
       } catch {

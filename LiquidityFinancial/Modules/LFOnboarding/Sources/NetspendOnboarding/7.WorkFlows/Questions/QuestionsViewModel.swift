@@ -1,5 +1,6 @@
 import SwiftUI
 import NetSpendData
+import NetspendDomain
 import Factory
 import LFUtilities
 import AccountData
@@ -13,7 +14,7 @@ public final class QuestionsViewModel: ObservableObject {
   @LazyInjected(\.accountDataManager) var accountDataManager
   @LazyInjected(\.accountRepository) var accountRepository
   @LazyInjected(\.authorizationManager) var authorizationManager
-  @LazyInjected(\.nsPersionRepository) var nsPersionRepository
+  @LazyInjected(\.nsPersonRepository) var nsPersonRepository
   @LazyInjected(\.onboardingRepository) var onboardingRepository
   @LazyInjected(\.nsOnboardingRepository) var nsOnboardingRepository
   @LazyInjected(\.nsOnboardingFlowCoordinator) var onboardingFlowCoordinator
@@ -27,6 +28,14 @@ public final class QuestionsViewModel: ObservableObject {
   @Published var navigation: Navigation?
   @Published var popup: Popup?
   @Published var timeRemaining = Constants.kycQuestionTimeOut
+  
+  lazy var putQuestionUseCase: NSPutQuestionUseCaseProtocol = {
+    NSPutQuestionUseCase(repository: nsPersonRepository)
+  }()
+  
+  lazy var getDocumentsUseCase: NSGetDocumentsUseCaseProtocol = {
+    NSGetDocumentsUseCase(repository: nsPersonRepository)
+  }()
   
   let timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
 
@@ -110,7 +119,7 @@ extension QuestionsViewModel {
       defer { isLoading = false }
       isLoading = true
       do {
-        _ = try await nsPersionRepository.putQuestion(sessionId: session.sessionId, encryptedData: encryptedData)
+        _ = try await putQuestionUseCase.execute(sessionId: session.sessionId, encryptedData: encryptedData)
         
         try await handlerOnboardingStep()
         
@@ -140,7 +149,7 @@ private extension QuestionsViewModel {
     if onboardingTypes.contains(.identityQuestions) {
       onboardingFlowCoordinator.set(route: .unclear("You can't upload question for now, Please try it late."))
     } else if onboardingTypes.contains(.provideDocuments) {
-      let documents = try await nsPersionRepository.getDocuments(sessionId: accountDataManager.sessionID)
+      let documents = try await getDocumentsUseCase.execute(sessionId: accountDataManager.sessionID)
       guard let documents = documents as? APIDocumentData else {
         log.error("Can't map document from BE")
         return

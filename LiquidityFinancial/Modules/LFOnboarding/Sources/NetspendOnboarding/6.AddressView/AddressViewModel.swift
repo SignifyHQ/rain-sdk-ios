@@ -7,6 +7,7 @@ import Factory
 import OnboardingData
 import AccountData
 import NetSpendData
+import NetspendDomain
 import LFServices
 import LFLocalizable
 import DevicesData
@@ -32,7 +33,7 @@ final class AddressViewModel: ObservableObject {
   }
   
   @LazyInjected(\.accountDataManager) var accountDataManager
-  @LazyInjected(\.nsPersionRepository) var nsPersionRepository
+  @LazyInjected(\.nsPersonRepository) var nsPersonRepository
   @LazyInjected(\.accountRepository) var accountRepository
   @LazyInjected(\.netspendDataManager) var netspendDataManager
   @LazyInjected(\.nsOnboardingFlowCoordinator) var onboardingFlowCoordinator
@@ -94,6 +95,18 @@ final class AddressViewModel: ObservableObject {
   lazy var deviceDeregisterUseCase: DeviceDeregisterUseCaseProtocol = {
     return DeviceDeregisterUseCase(repository: devicesRepository)
   }()
+    
+  lazy var createAccountPersonUseCase: NSCreateAccountPersonUseCaseProtocol = {
+    NSCreateAccountPersonUseCase(repository: nsPersonRepository)
+  }()
+  
+  lazy var getQuestionUseCase: NSGetQuestionUseCaseProtocol = {
+    NSGetQuestionUseCase(repository: nsPersonRepository)
+  }()
+  
+  lazy var getDocumentsUseCase: NSGetDocumentsUseCaseProtocol = {
+    NSGetDocumentsUseCase(repository: nsPersonRepository)
+  }()
   
   var userNameDisplay: String {
     get {
@@ -150,7 +163,7 @@ final class AddressViewModel: ObservableObject {
       isLoading = true
       do {
         let param = try createAccountPersonParameters()
-        let person = try await nsPersionRepository.createAccountPerson(personInfo: param, sessionId: accountDataManager.sessionID)
+        let person = try await createAccountPersonUseCase.execute(personInfo: param, sessionId: accountDataManager.sessionID)
         netspendDataManager.update(accountPersonData: person)
         
         try await handlerOnboardingStep()
@@ -216,13 +229,13 @@ final class AddressViewModel: ObservableObject {
     }
     
     if onboardingTypes.contains(.identityQuestions) {
-      let questionsEncrypt = try await nsPersionRepository.getQuestion(sessionId: accountDataManager.sessionID)
+      let questionsEncrypt = try await getQuestionUseCase.execute(sessionId: accountDataManager.sessionID)
       if let usersession = netspendDataManager.sdkSession, let questionsDecode = (questionsEncrypt as? APIQuestionData)?.decodeData(session: usersession) {
         let questionsEntity = QuestionsEntity.mapObj(questionsDecode)
         navigation = .question(questionsEntity)
       }
     } else if onboardingTypes.contains(.provideDocuments) {
-      let documents = try await nsPersionRepository.getDocuments(sessionId: accountDataManager.sessionID)
+      let documents = try await getDocumentsUseCase.execute(sessionId: accountDataManager.sessionID)
       guard let documents = documents as? APIDocumentData else {
         log.error("Can't map document from BE")
         return

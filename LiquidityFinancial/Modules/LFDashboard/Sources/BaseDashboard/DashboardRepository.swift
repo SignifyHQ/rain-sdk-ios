@@ -31,7 +31,7 @@ public final class DashboardRepository: ObservableObject {
   @LazyInjected(\.externalFundingDataManager) var externalFundingDataManager
   
   @LazyInjected(\.accountRepository) var accountRepository
-  @LazyInjected(\.nsPersionRepository) var nsPersionRepository
+  @LazyInjected(\.nsPersonRepository) var nsPersonRepository
   @LazyInjected(\.onboardingRepository) var onboardingRepository
   @LazyInjected(\.externalFundingRepository) var externalFundingRepository
   @LazyInjected(\.cardRepository) var cardRepository
@@ -92,6 +92,14 @@ public final class DashboardRepository: ObservableObject {
   
   lazy var nsGetLinkedAccountUseCase: NSGetLinkedAccountUseCaseProtocol = {
     NSGetLinkedAccountUseCase(repository: externalFundingRepository)
+  }()
+  
+  lazy var getQuestionUseCase: NSGetQuestionUseCaseProtocol = {
+    NSGetQuestionUseCase(repository: nsPersonRepository)
+  }()
+  
+  lazy var getDocumentUseCase: NSGetDocumentsUseCaseProtocol = {
+    NSGetDocumentsUseCase(repository: nsPersonRepository)
   }()
   
   var toastMessage: ((String) -> Void)?

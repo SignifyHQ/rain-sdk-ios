@@ -22,7 +22,7 @@ public final class AddFundsViewModel: ObservableObject {
   
   private var nextNavigation: Navigation?
   
-  @LazyInjected(\.nsPersionRepository) var nsPersionRepository
+  @LazyInjected(\.nsPersonRepository) var nsPersonRepository
   @LazyInjected(\.externalFundingRepository) var externalFundingRepository
   @LazyInjected(\.accountDataManager) var accountDataManager
   @LazyInjected(\.customerSupportService) var customerSupportService
@@ -33,6 +33,10 @@ public final class AddFundsViewModel: ObservableObject {
   
   lazy var getFundingStatusUseCase: NSGetFundingStatusUseCaseProtocol = {
     NSGetFundingStatusUseCase(repository: externalFundingRepository)
+  }()
+  
+  lazy var getAuthorizationUseCase: NSGetAuthorizationCodeUseCaseProtocol = {
+    NSGetAuthorizationCodeUseCase(repository: nsPersonRepository)
   }()
   
   func loading(option: FundOption) -> Bool {
@@ -56,7 +60,7 @@ extension AddFundsViewModel {
       isDisableView = true
       do {
         let sessionID = accountDataManager.sessionID
-        let tokenResponse = try await nsPersionRepository.getAuthorizationCode(sessionId: sessionID)
+        let tokenResponse = try await getAuthorizationUseCase.execute(sessionId: sessionID)
         let usingParams = ["redirectUri": LFUtilities.universalLink]
         log.info("NetSpend openWithPurpose usingParams: \(usingParams)")
         let controller = try NetspendSdk.shared.openWithPurpose(

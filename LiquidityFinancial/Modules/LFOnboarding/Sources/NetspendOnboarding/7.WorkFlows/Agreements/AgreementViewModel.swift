@@ -6,13 +6,14 @@ import NetSpendData
 import LFServices
 import Factory
 import SwiftSoup
+import NetspendDomain
 
 @MainActor
 public final class AgreementViewModel: ObservableObject {
   @LazyInjected(\.customerSupportService) var customerSupportService
   @LazyInjected(\.netspendDataManager) var netspendDataManager
   @LazyInjected(\.accountDataManager) var accountDataManager
-  @LazyInjected(\.nsPersionRepository) var nsPersionRepository
+  @LazyInjected(\.nsPersonRepository) var nsPersonRepository
   @LazyInjected(\.nsOnboardingFlowCoordinator) var onboardingFlowCoordinator
   
   @Published var isNavigationPersonalInformation: Bool = false
@@ -34,6 +35,14 @@ public final class AgreementViewModel: ObservableObject {
     }
     return [condition]
   }
+  
+  lazy var getAgreementUseCase: NSGetAgreementUseCaseProtocol = {
+    NSGetAgreementUseCase(repository: nsPersonRepository)
+  }()
+  
+  lazy var postAgreementUseCase: NSPostAgreementUseCaseProtocol = {
+    NSPostAgreementUseCase(repository: nsPersonRepository)
+  }()
   
   public init(fundingAgreement: APIAgreementData? = nil, needBufferData: Bool = false) {
     self.fundingAgreement = fundingAgreement
@@ -59,7 +68,7 @@ public final class AgreementViewModel: ObservableObject {
         defer { isLoading = false }
         isLoading = true
         do {
-          let agreementData = try await nsPersionRepository.getAgreement()
+          let agreementData = try await getAgreementUseCase.execute()
           netspendDataManager.update(agreement: agreementData)
           
           if let agreementData = agreementData as? APIAgreementData {
@@ -87,7 +96,7 @@ public final class AgreementViewModel: ObservableObject {
         let body: [String: Any] = [
           "agreementIds": ids
         ]
-        let entity = try await nsPersionRepository.postAgreement(body: body)
+        let entity = try await postAgreementUseCase.execute(body: body)
         if entity {
           isAcceptAgreement = true
           onNext()

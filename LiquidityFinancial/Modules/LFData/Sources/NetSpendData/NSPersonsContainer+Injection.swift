@@ -8,7 +8,7 @@ extension Container {
     self { LFCoreNetwork<NSPersonsRoute>() }
   }
   
-  public var nsPersionRepository: Factory<NSPersonsRepository> {
+  public var nsPersonRepository: Factory<NSPersonsRepository> {
     self { NSPersonsRepository(netSpendAPI: self.netspendAPI.callAsFunction()) }
   }
   

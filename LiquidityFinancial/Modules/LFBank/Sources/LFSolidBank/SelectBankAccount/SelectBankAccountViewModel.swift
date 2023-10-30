@@ -19,7 +19,6 @@ class SelectBankAccountViewModel: ObservableObject {
   @LazyInjected(\.accountDataManager) var accountDataManager
   @LazyInjected(\.biometricsService) var biometricsService
   @LazyInjected(\.analyticsService) var analyticsService
-  @LazyInjected(\.nsPersionRepository) var nsPersionRepository
   @LazyInjected(\.customerSupportService) var customerSupportService
   
   @Published var linkedBanks: [APILinkedSourceData] = []

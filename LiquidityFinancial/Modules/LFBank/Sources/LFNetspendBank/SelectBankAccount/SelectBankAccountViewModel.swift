@@ -20,7 +20,7 @@ class SelectBankAccountViewModel: ObservableObject {
   @LazyInjected(\.accountDataManager) var accountDataManager
   @LazyInjected(\.biometricsService) var biometricsService
   @LazyInjected(\.analyticsService) var analyticsService
-  @LazyInjected(\.nsPersionRepository) var nsPersionRepository
+  @LazyInjected(\.nsPersonRepository) var nsPersonRepository
   @LazyInjected(\.customerSupportService) var customerSupportService
   
   @Published var linkedBanks: [APILinkedSourceData] = []
@@ -43,6 +43,10 @@ class SelectBankAccountViewModel: ObservableObject {
   
   lazy var newExternalTransactionUseCase: NSNewExternalTransactionUseCaseProtocol = {
     NSNewExternalTransactionUseCase(repository: externalFundingRepository)
+  }()
+  
+  lazy var getAuthorizationUseCase: NSGetAuthorizationCodeUseCaseProtocol = {
+    NSGetAuthorizationCodeUseCase(repository: nsPersonRepository)
   }()
   
   private var cancellable: Set<AnyCancellable> = []
@@ -148,7 +152,7 @@ extension SelectBankAccountViewModel {
       linkBankIndicator = true
       do {
         let sessionID = accountDataManager.sessionID
-        let tokenResponse = try await nsPersionRepository.getAuthorizationCode(sessionId: sessionID)
+        let tokenResponse = try await getAuthorizationUseCase.execute(sessionId: sessionID)
         let usingParams = ["redirectUri": LFUtilities.universalLink]
         log.info("NetSpend openWithPurpose usingParams: \(usingParams)")
         let controller = try NetspendSdk.shared.openWithPurpose(

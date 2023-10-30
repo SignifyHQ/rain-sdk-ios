@@ -9,7 +9,7 @@ import NetspendSdk
 import Factory
 
 final class PurchaseTransactionDetailViewModel: ObservableObject {
-  @LazyInjected(\.nsPersionRepository) var nsPersionRepository
+  @LazyInjected(\.nsPersonRepository) var nsPersonRepository
   @LazyInjected(\.netspendDataManager) var netspendDataManager
   @LazyInjected(\.accountDataManager) var accountDataManager
   @LazyInjected(\.customerSupportService) var customerSupportService
@@ -18,6 +18,10 @@ final class PurchaseTransactionDetailViewModel: ObservableObject {
   @Published var isLoadingDisputeTransaction: Bool = false
   @Published var toastMessage: String?
 
+  lazy var getAuthorizationUseCase: NSGetAuthorizationCodeUseCaseProtocol = {
+    NSGetAuthorizationCodeUseCase(repository: nsPersonRepository)
+  }()
+  
   let transaction: TransactionModel
   
   init(transaction: TransactionModel) {
@@ -35,7 +39,7 @@ extension PurchaseTransactionDetailViewModel {
       isLoadingDisputeTransaction = true
       do {
         guard let session = netspendDataManager.sdkSession else { return }
-        let code = try await nsPersionRepository.getAuthorizationCode(sessionId: session.sessionId)
+        let code = try await getAuthorizationUseCase.execute(sessionId: session.sessionId)
         guard let id = accountDataManager.externalAccountID else { return }
         navigation = .disputeTransaction(id, code.authorizationCode)
       } catch {

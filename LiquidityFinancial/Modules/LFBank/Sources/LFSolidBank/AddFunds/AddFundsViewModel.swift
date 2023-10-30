@@ -20,7 +20,6 @@ public final class AddFundsViewModel: ObservableObject {
   
   private var nextNavigation: Navigation?
   
-  @LazyInjected(\.nsPersionRepository) var nsPersionRepository
   @LazyInjected(\.externalFundingRepository) var externalFundingRepository
   @LazyInjected(\.accountDataManager) var accountDataManager
   @LazyInjected(\.customerSupportService) var customerSupportService

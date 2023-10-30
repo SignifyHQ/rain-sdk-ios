@@ -79,13 +79,29 @@ public class NSOnboardingFlowCoordinator: OnboardingFlowCoordinatorProtocol {
   @LazyInjected(\.authorizationManager) var authorizationManager
   @LazyInjected(\.accountDataManager) var accountDataManager
   @LazyInjected(\.onboardingRepository) var onboardingRepository
-  @LazyInjected(\.nsPersionRepository) var nsPersionRepository
+  @LazyInjected(\.nsPersonRepository) var nsPersonRepository
   @LazyInjected(\.netspendDataManager) var netspendDataManager
   @LazyInjected(\.accountRepository) var accountRepository
   @LazyInjected(\.pushNotificationService) var pushNotificationService
   @LazyInjected(\.analyticsService) var analyticsService
   @LazyInjected(\.nsOnboardingRepository) var nsOnboardingRepository
   @LazyInjected(\.zerohashRepository) var zerohashRepository
+    
+  lazy var getQuestionUseCase: NSGetQuestionUseCaseProtocol = {
+    NSGetQuestionUseCase(repository: nsPersonRepository)
+  }()
+  
+  lazy var getDocumentsUseCase: NSGetDocumentsUseCaseProtocol = {
+    NSGetDocumentsUseCase(repository: nsPersonRepository)
+  }()
+  
+  lazy var clientSessionInitUseCase: NSClientSessionInitUseCaseProtocol = {
+    NSClientSessionInitUseCase(repository: nsPersonRepository)
+  }()
+  
+  lazy var establishingPersonUseCase: NSEstablishPersonSessionUseCaseProtocol = {
+    NSEstablishPersonSessionUseCase(repository: nsPersonRepository)
+  }()
   
   public let routeSubject: CurrentValueSubject<Route, Never>
   
@@ -153,13 +169,13 @@ public class NSOnboardingFlowCoordinator: OnboardingFlowCoordinatorProtocol {
         } else if states.contains(NSOnboardingTypeEnum.acceptFeatureAgreement) {
           set(route: .featureAgreement)
         } else if states.contains(NSOnboardingTypeEnum.identityQuestions) {
-          let questionsEncrypt = try await nsPersionRepository.getQuestion(sessionId: accountDataManager.sessionID)
+          let questionsEncrypt = try await getQuestionUseCase.execute(sessionId: accountDataManager.sessionID)
           if let usersession = netspendDataManager.sdkSession, let questionsDecode = (questionsEncrypt as? APIQuestionData)?.decodeData(session: usersession) {
             let questionsEntity = QuestionsEntity.mapObj(questionsDecode)
             set(route: .question(questionsEntity))
           }
         } else if states.contains(NSOnboardingTypeEnum.provideDocuments) {
-          let documents = try await nsPersionRepository.getDocuments(sessionId: accountDataManager.sessionID)
+          let documents = try await getDocumentsUseCase.execute(sessionId: accountDataManager.sessionID)
           guard let documents = documents as? APIDocumentData else {
             log.error("Can't map document from BE")
             return
@@ -201,17 +217,17 @@ public class NSOnboardingFlowCoordinator: OnboardingFlowCoordinatorProtocol {
   
   public func refreshNetSpendSession() async throws {
     log.info("<<<<<<<<<<<<<< Refresh NetSpend Session >>>>>>>>>>>>>>>")
-    let token = try await nsPersionRepository.clientSessionInit()
+    let token = try await clientSessionInitUseCase.execute()
     netspendDataManager.update(jwkToken: token)
     
-    let sessionConnectWithJWT = await nsPersionRepository.establishingSessionWithJWKSet(jwtToken: token)
+    let sessionConnectWithJWT = await nsPersonRepository.establishingSessionWithJWKSet(jwtToken: token)
     guard let deviceData = sessionConnectWithJWT?.deviceData else { return }
     
-    let establishPersonSession = try await nsPersionRepository.establishPersonSession(deviceData: EstablishSessionParameters(encryptedData: deviceData))
+    let establishPersonSession = try await establishingPersonUseCase.execute(deviceData: EstablishSessionParameters(encryptedData: deviceData))
     netspendDataManager.update(serverSession: establishPersonSession as? APIEstablishedSessionData)
     accountDataManager.stored(sessionID: establishPersonSession.id)
     
-    let userSessionAnonymous = try nsPersionRepository.createUserSession(establishingSession: sessionConnectWithJWT, encryptedData: establishPersonSession.encryptedData)
+    let userSessionAnonymous = try nsPersonRepository.createUserSession(establishingSession: sessionConnectWithJWT, encryptedData: establishPersonSession.encryptedData)
     netspendDataManager.update(sdkSession: userSessionAnonymous)
   }
 }
@@ -279,7 +295,7 @@ extension NSOnboardingFlowCoordinator {
   
   private func handleQuestionCase() async {
     do {
-      let questionsEncrypt = try await nsPersionRepository.getQuestion(sessionId: accountDataManager.sessionID)
+      let questionsEncrypt = try await getQuestionUseCase.execute(sessionId: accountDataManager.sessionID)
       if let usersession = netspendDataManager.sdkSession, let questionsDecode = (questionsEncrypt as? APIQuestionData)?.decodeData(session: usersession) {
         let questionsEntity = QuestionsEntity.mapObj(questionsDecode)
         set(route: .question(questionsEntity))
