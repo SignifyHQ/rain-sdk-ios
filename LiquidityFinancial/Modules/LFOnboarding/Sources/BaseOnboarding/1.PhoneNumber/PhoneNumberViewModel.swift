@@ -13,7 +13,7 @@ public enum PhoneNumberNavigation {
 public protocol PhoneNumberViewModelProtocol: ObservableObject {
   var isSecretMode: Bool { get set }
   var isLoading: Bool { get set }
-  var isDisableButton: Bool { get set }
+  var isButtonDisabled: Bool { get set }
   var isShowConditions: Bool { get set }
   var phoneNumber: String { get set }
   var toastMessage: String? { get set }
@@ -26,7 +26,7 @@ public protocol PhoneNumberViewModelProtocol: ObservableObject {
   init(coordinator: BaseOnboardingDestinationObservable)
   
   func performGetOTP()
-  func getURL(tappedString: String) -> String
+  func getURL(tappedString: String) -> URL?
   func openSupportScreen()
   func onActiveSecretMode()
   func onChangedPhoneNumber(newValue: String)

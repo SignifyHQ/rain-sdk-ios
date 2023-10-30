@@ -8,6 +8,22 @@ public struct LFErrorObject: Codable, LocalizedError {
   public let code: String?
   public let errorDetail: [String: AnyCodable]?
   
+  public init(
+    requestId: String? = nil,
+    message: String,
+    key: String? = nil,
+    sysMessage: String? = nil,
+    code: String? = nil,
+    errorDetail: [String : AnyCodable]? = nil
+  ) {
+    self.requestId = requestId
+    self.message = message
+    self.key = key
+    self.sysMessage = sysMessage
+    self.code = code
+    self.errorDetail = errorDetail
+  }
+  
   public var errorDescription: String? {
     if message.isEmpty {
       return "\(sysMessage ?? ""), code: \(code ?? "")"

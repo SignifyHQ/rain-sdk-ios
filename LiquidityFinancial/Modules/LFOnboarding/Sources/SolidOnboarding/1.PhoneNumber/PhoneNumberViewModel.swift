@@ -9,7 +9,7 @@ import LFServices
 import BaseOnboarding
 
 @MainActor
-final class PhoneNumberViewModel: ObservableObject, PhoneNumberViewModelProtocol {
+final class PhoneNumberViewModel: ObservableObject, PhoneNumberViewModelProtocol {  
   unowned let destinationObservable: BaseOnboardingDestinationObservable
   init(coordinator: BaseOnboardingDestinationObservable) {
     self.destinationObservable = coordinator
@@ -17,7 +17,7 @@ final class PhoneNumberViewModel: ObservableObject, PhoneNumberViewModelProtocol
   
   @Published var isSecretMode: Bool = false
   @Published var isLoading: Bool = false
-  @Published var isDisableButton: Bool = true
+  @Published var isButtonDisabled: Bool = true
   @Published var navigation: PhoneNumberNavigation?
   @Published var isShowConditions: Bool = false
   @Published var phoneNumber: String = ""
@@ -71,14 +71,20 @@ extension PhoneNumberViewModel {
 
   // MARK: - View Helpers
 extension PhoneNumberViewModel {
-  func getURL(tappedString: String) -> String {
+  func getURL(tappedString: String) -> URL? {
     if tappedString == terms {
-      return LFUtilities.termsURL
-    } else if tappedString == esignConsent {
-      return LFUtilities.consentURL
-    } else {
-      return LFUtilities.privacyURL
+      return URL(string: LFUtilities.termsURL)
     }
+    
+    if tappedString == esignConsent {
+      return URL(string: LFUtilities.consentURL)
+    }
+    
+    if tappedString == privacyPolicy {
+      return URL(string: LFUtilities.privacyURL)
+    }
+    
+    return nil
   }
   
   func openSupportScreen() {
@@ -92,8 +98,8 @@ extension PhoneNumberViewModel {
   func onChangedPhoneNumber(newValue: String) {
     let isPhoneNumber = newValue.trimWhitespacesAndNewlines().count == Constants.MaxCharacterLimit.phoneNumber.value
     let isAllowed = !newValue.trimWhitespacesAndNewlines().isEmpty && isPhoneNumber
-    if isDisableButton == isAllowed {
-      isDisableButton = !isAllowed
+    if isButtonDisabled == isAllowed {
+      isButtonDisabled = !isAllowed
       withAnimation {
         self.isShowConditions = isAllowed
       }

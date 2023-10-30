@@ -36,14 +36,24 @@ public enum LFConfiguration {
     case invalidValue
   }
   
-    //IT SUPPORT FOR RUN CODE UI IN PREVIEWS
+  // Support for running code in previews
   static var isPreview: Bool {
     ProcessInfo.processInfo.environment["XCODE_RUNNING_FOR_PREVIEWS"] == "1"
   }
+  // Support for running code as a part of a test
+  static var isRunningTests: Bool {
+    return ProcessInfo.processInfo.environment["XCODE_RUNNING_TESTS"] != nil
+  }
   
-  public static func value<T>(for key: String) throws -> T where T: LosslessStringConvertible {
+  public static func value<T>(for key: String) throws -> T where T: LosslessStringConvertible & HasDefaultValue {
     if LFConfiguration.isPreview {
       return String(describing: "XCODE_PREVIEWS") as! T
+    } else if LFConfiguration.isRunningTests {
+      if T.self == String.self {
+        return key as! T
+      }
+      
+      return T.defaultValue
     } else {
       guard let object = Bundle.main.object(forInfoDictionaryKey: key) else {
         throw Error.missingKey
@@ -59,4 +69,20 @@ public enum LFConfiguration {
       }
     }
   }
+}
+
+public protocol HasDefaultValue {
+    static var defaultValue: Self { get }
+}
+
+extension Int: HasDefaultValue {
+    static public let defaultValue = 0
+}
+
+extension Bool: HasDefaultValue {
+    static public let defaultValue = false
+}
+
+extension String: HasDefaultValue {
+    static public let defaultValue = ""
 }

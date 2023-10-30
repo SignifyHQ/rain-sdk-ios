@@ -11,5 +11,5 @@ public class RequestOTPUseCase: RequestOTPUseCaseProtocol {
   public func execute(phoneNumber: String) async throws -> OtpEntity {
     return try await repository.requestOTP(phoneNumber: phoneNumber)
   }
-  
+
 }

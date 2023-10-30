@@ -32,7 +32,10 @@ let package = Package(
     .package(name: "LFLocalizable", path: "../LFLocalizable"),
     .package(url: "https://github.com/SwiftGen/SwiftGenPlugin", from: "6.6.2"),
     .package(name: "LFRewards", path: "../LFRewards"),
-    .package(name: "LFNetwork", path: "../LFNetwork")
+    .package(name: "LFNetwork", path: "../LFNetwork"),
+    .package(url: "https://github.com/Quick/Nimble.git", from: "12.0.0"),
+    .package(url: "https://github.com/nalexn/ViewInspector", from: "0.9.8"),
+    .package(name: "TestHelpers", path: "../TestHelpers")
   ],
   targets: [
     .target(
@@ -88,14 +91,21 @@ let package = Package(
         .product(name: "AccountData", package: "LFData"),
         .product(name: "DevicesData", package: "LFData"),
         .product(name: "SolidDomain", package: "LFDomain"),
-        .product(name: "DevicesDomain", package: "LFDomain"),
+        .product(name: "DevicesDomain", package: "LFDomain")
       ],
       resources: [
         .process("ZResources")
       ]
     ),
     .testTarget(
-      name: "LFAccountOnboardingTests",
-      dependencies: ["NetspendOnboarding"])
+      name: "PhoneNumberViewModelTests",
+      dependencies: [
+        .product(name: "DomainTestHelpers", package: "LFDomain"),
+        "NetspendOnboarding",
+        "Nimble",
+        "TestHelpers",
+        "ViewInspector"
+      ]
+    )
   ]
 )

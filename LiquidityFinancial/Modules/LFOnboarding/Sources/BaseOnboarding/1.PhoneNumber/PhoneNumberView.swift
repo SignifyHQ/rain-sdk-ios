@@ -121,7 +121,7 @@ private extension PhoneNumberView {
       links: [viewModel.terms, viewModel.esignConsent, viewModel.privacyPolicy],
       style: .fillColor(Colors.termAndPrivacy.color)
     ) { tappedString in
-      guard let url = URL(string: viewModel.getURL(tappedString: tappedString)) else { return }
+      guard let url = viewModel.getURL(tappedString: tappedString) else { return }
       openURL(url)
     }
     .accessibilityIdentifier(LFAccessibility.PhoneNumber.conditionTextTappable)
@@ -158,7 +158,7 @@ private extension PhoneNumberView {
           }
           .onAppear {
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-              if viewModel.isDisableButton {
+              if viewModel.isButtonDisabled {
                 keyboardFocus = true
               }
             }
@@ -185,7 +185,7 @@ private extension PhoneNumberView {
       secretModeView
       FullSizeButton(
         title: LFLocalizable.Button.Continue.title,
-        isDisable: viewModel.isDisableButton,
+        isDisable: viewModel.isButtonDisabled,
         isLoading: $viewModel.isLoading
       ) {
         viewModel.isLoading = true
