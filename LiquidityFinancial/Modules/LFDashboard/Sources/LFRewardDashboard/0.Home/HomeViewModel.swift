@@ -24,6 +24,7 @@ public final class HomeViewModel: ObservableObject {
   @LazyInjected(\.pushNotificationService) var pushNotificationService
   
   @LazyInjected(\.customerSupportService) var customerSupportService
+  @LazyInjected(\.dashboardRepository) var dashboardRepository
   
   @Published var tabSelected: TabOption = .cash
   @Published var navigation: Navigation?
@@ -234,16 +235,7 @@ extension HomeViewModel {
   }
   
   func getListConnectedAccount() {
-    Task { @MainActor in
-      do {
-        let sessionID = self.accountDataManager.sessionID
-        async let response = self.externalFundingRepository.getLinkedAccount(sessionId: sessionID)
-        let linkedSources = try await response.linkedSources
-        self.accountDataManager.storeLinkedSources(linkedSources)
-      } catch {
-        log.error(error.localizedDescription)
-      }
-    }
+    dashboardRepository.apiFetchListConnectedAccount()
   }
 }
 

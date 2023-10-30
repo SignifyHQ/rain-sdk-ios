@@ -65,4 +65,13 @@ extension LFCoreNetwork: SolidExternalFundingAPIProtocol where R == SolidExterna
       decoder: .apiDecoder
     )
   }
+  
+  public func estimateDebitCardFee(accountId: String, contactId: String, amount: Double) async throws -> APISolidDebitCardTransferFeeResponse {
+    return try await request(
+      SolidExternalFundingRoute.estimateDebitCardFee(accountId: accountId, contactId: contactId, amount: amount),
+      target: APISolidDebitCardTransferFeeResponse.self,
+      failure: LFErrorObject.self,
+      decoder: .apiDecoder
+    )
+  }
 }

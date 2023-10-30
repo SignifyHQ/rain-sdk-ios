@@ -74,9 +74,12 @@ public struct MoveMoneyAccountView: View {
         case .addBankDebit:
           AddBankWithDebitView()
         case .selectBankAccount:
-          EmptyView()
-          // TODO: Fix this later
-          //SelectBankAccountView(linkedAccount: viewModel.linkedAccount, kind: viewModel.kind, amount: viewModel.amount, completeAction: completeAction)
+          SelectBankAccountView(
+            linkedContacts: viewModel.linkedContacts,
+            kind: viewModel.kind,
+            amount: viewModel.amount,
+            completeAction: completeAction
+          )
         }
       }
       .background(Colors.background.swiftUIColor)
@@ -271,7 +274,7 @@ private extension MoveMoneyAccountView {
       Text(LFLocalizable.MoveMoney.addAccount)
         .frame(height: 40)
         .font(Fonts.medium.swiftUIFont(size: Constants.FontSize.small.value))
-        .foregroundColor(Colors.label.swiftUIColor)
+        .foregroundColor(Colors.whiteText.swiftUIColor)
     }
     .frame(maxWidth: .infinity)
     .background(Colors.primary.swiftUIColor.cornerRadius(8))

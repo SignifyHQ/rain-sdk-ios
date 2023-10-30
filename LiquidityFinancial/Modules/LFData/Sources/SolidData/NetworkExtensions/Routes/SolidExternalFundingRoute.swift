@@ -12,6 +12,7 @@ public enum SolidExternalFundingRoute {
   case unlinkContact(id: String)
   case getWireTransfer(accountId: String)
   case newTransaction(type: SolidExternalTransactionType, accountId: String, contactId: String, amount: Double)
+  case estimateDebitCardFee(accountId: String, contactId: String, amount: Double)
 }
 
 extension SolidExternalFundingRoute: LFRoute {
@@ -37,6 +38,8 @@ extension SolidExternalFundingRoute: LFRoute {
       case .deposit:
         return "/v1/solid/external-funding/deposit"
       }
+    case .estimateDebitCardFee:
+      return "/v1/solid/external-funding/estimate-debit-card-fee"
     }
   }
   
@@ -49,6 +52,8 @@ extension SolidExternalFundingRoute: LFRoute {
     case .unlinkContact:
       return .DELETE
     case .newTransaction:
+      return .POST
+    case .estimateDebitCardFee:
       return .POST
     }
   }
@@ -90,12 +95,18 @@ extension SolidExternalFundingRoute: LFRoute {
         "contactId": contactId,
         "amount": amount
       ]
+    case .estimateDebitCardFee(let accountId, let contactId, let amount):
+      return [
+        "liquidityAccountId": accountId,
+        "contactId": contactId,
+        "amount": amount
+      ]
     }
   }
   
   public var parameterEncoding: ParameterEncoding? {
     switch self {
-    case .createDebitCardToken, .createPlaidToken, .plaidLink, .newTransaction:
+    case .createDebitCardToken, .createPlaidToken, .plaidLink, .newTransaction, .estimateDebitCardFee:
       return .json
     case .getLinkedSources, .getWireTransfer:
       return .url

@@ -28,6 +28,7 @@ public protocol AccountDataStorageProtocol {
   var availableRewardCurrenciesSubject: CurrentValueSubject<AvailableRewardCurrenciesEntity?, Never> { get }
   var selectedRewardCurrencySubject: CurrentValueSubject<RewardCurrencyEntity?, Never> { get }
   var accountsSubject: CurrentValueSubject<[LFAccount], Never> { get }
+  var fiatAccounts: [LFAccount] { get }
   func addOrUpdateAccounts(_ accounts: [LFAccount])
   func addOrUpdateAccount(_ account: LFAccount)
   

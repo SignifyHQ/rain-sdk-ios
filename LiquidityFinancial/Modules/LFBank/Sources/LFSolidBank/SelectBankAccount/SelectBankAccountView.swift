@@ -1,23 +1,23 @@
 import SwiftUI
 import LFTransaction
-import NetSpendData
 import LFStyleGuide
 import LFUtilities
 import LFLocalizable
+import ExternalFundingData
 
 public struct SelectBankAccountView: View {
   @StateObject private var viewModel: SelectBankAccountViewModel
   private let completeAction: (() -> Void)?
   
   public init(
-    linkedAccount: [APILinkedSourceData],
+    linkedContacts: [LinkedSourceContact],
     kind: MoveMoneyAccountViewModel.Kind,
     amount: String,
     completeAction: (() -> Void)?
   ) {
     _viewModel = .init(
       wrappedValue: SelectBankAccountViewModel(
-        linkedAccount: linkedAccount,
+        linkedContacts: linkedContacts,
         amount: amount,
         kind: kind
       )
@@ -59,7 +59,7 @@ public struct SelectBankAccountView: View {
       }
       .navigationLink(item: $viewModel.navigation) { item in
         switch item {
-        case let .transactionDetai(id):
+        case let .transactionDetail(id):
           TransactionDetailView(
             accountID: viewModel.accountDataManager.fiatAccountID,
             transactionId: id,
@@ -138,7 +138,7 @@ public struct SelectBankAccountView: View {
   }
   
   @ViewBuilder
-  func bankRow(for bank: APILinkedSourceData) -> some View {
+  func bankRow(for bank: LinkedSourceContact) -> some View {
     Button {
       viewModel.selectedBank = bank
     } label: {

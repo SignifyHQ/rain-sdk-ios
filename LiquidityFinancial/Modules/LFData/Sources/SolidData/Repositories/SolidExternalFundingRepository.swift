@@ -41,4 +41,8 @@ public class SolidExternalFundingRepository: SolidExternalFundingRepositoryProto
     try await solidExternalFundingAPI.newTransaction(type: type, accountId: accountId, contactId: contactId, amount: amount)
   }
   
+  public func estimateDebitCardFee(accountId: String, contactId: String, amount: Double) async throws -> SolidDebitCardTransferFeeResponseEntity {
+    try await solidExternalFundingAPI.estimateDebitCardFee(accountId: accountId, contactId: contactId, amount: amount)
+  }
+  
 }

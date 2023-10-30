@@ -1,4 +1,7 @@
 import Combine
+import AccountData
+import SolidData
+import SolidDomain
 import Foundation
 import UIKit
 import Factory
@@ -7,6 +10,8 @@ import LFUtilities
 import LFLocalizable
 import LFServices
 import NetspendSdk
+import ExternalFundingData
+import AccountDomain
 
 class SelectBankAccountViewModel: ObservableObject {
   
@@ -15,15 +20,17 @@ class SelectBankAccountViewModel: ObservableObject {
   }
   
   @LazyInjected(\.externalFundingRepository) var externalFundingRepository
-  @LazyInjected(\.netspendDataManager) var netspendDataManager
   @LazyInjected(\.accountDataManager) var accountDataManager
   @LazyInjected(\.biometricsService) var biometricsService
   @LazyInjected(\.analyticsService) var analyticsService
   @LazyInjected(\.customerSupportService) var customerSupportService
+  @LazyInjected(\.externalFundingDataManager) var externalFundingDataManager
+  @LazyInjected(\.solidExternalFundingRepository) var solidExternalFundingRepository
+  @LazyInjected(\.solidAccountRepository) var solidAccountRepository
   
-  @Published var linkedBanks: [APILinkedSourceData] = []
+  @Published var linkedBanks: [LinkedSourceContact] = []
   @Published var navigation: Navigation?
-  @Published var selectedBank: APILinkedSourceData?
+  @Published var selectedBank: LinkedSourceContact?
   @Published var showIndicator: Bool = false
   @Published var toastMessage: String?
   @Published var popup: Popup?
@@ -35,31 +42,64 @@ class SelectBankAccountViewModel: ObservableObject {
   
   let amount: String
   let kind: MoveMoneyAccountViewModel.Kind
+  private var fiatAccount: LFAccount?
   
   private var cancellable: Set<AnyCancellable> = []
   private lazy var plaidHelper = PlaidHelper()
   
-  init(linkedAccount: [APILinkedSourceData], amount: String, kind: MoveMoneyAccountViewModel.Kind) {
-    self.linkedBanks = linkedAccount.filter({ data in
-      data.isVerified && data.sourceType == .externalBank
+  lazy var createPlaidTokenUseCase: CreatePlaidTokenUseCaseProtocol = {
+    CreatePlaidTokenUseCase(repository: solidExternalFundingRepository)
+  }()
+  
+  lazy var plaidLinkUseCase: PlaidLinkUseCaseProtocol = {
+    PlaidLinkUseCase(repository: solidExternalFundingRepository)
+  }()
+  
+  lazy var solidGetAccountUseCase: SolidGetAccountsUseCaseProtocol = {
+    SolidGetAccountsUseCase(repository: solidAccountRepository)
+  }()
+  
+  lazy var solidCreateTransactionUseCase: SolidCreateExternalTransactionUseCaseProtocol = {
+    SolidCreateExternalTransactionUseCase(repository: solidExternalFundingRepository)
+  }()
+  
+  init(linkedContacts: [LinkedSourceContact], amount: String, kind: MoveMoneyAccountViewModel.Kind) {
+    self.linkedBanks = linkedContacts.filter({ data in
+      data.sourceType == .bank
     })
     self.amount = amount
     self.kind = kind
     
-    subscribeLinkedAccounts()
+    subscribeLinkedContacts()
+    fetchDefaultFiatAccount()
   }
   
-  func subscribeLinkedAccounts() {
-    accountDataManager.subscribeLinkedSourcesChanged { [weak self] entities in
+  private func subscribeLinkedContacts() {
+    externalFundingDataManager.subscribeLinkedSourcesChanged({ [weak self] contacts in
       guard let self = self else {
         return
       }
-      let linkedSources = entities.compactMap({ APILinkedSourceData(entity: $0) })
-      self.linkedBanks = linkedSources.filter({ data in
-        data.isVerified && data.sourceType == .externalBank
+      self.linkedBanks = contacts.filter({ data in
+        data.sourceType == .bank
       })
-    }
+    })
     .store(in: &cancellable)
+  }
+  
+  private func fetchDefaultFiatAccount() {
+    Task {
+      do {
+        fiatAccount = self.accountDataManager.fiatAccounts.first
+        if fiatAccount == nil {
+          let entity = try await solidGetAccountUseCase.execute()
+          fiatAccount = entity.map { item in
+            APIAccount(id: item.id, externalAccountId: item.externalAccountId, currency: item.currency, availableBalance: item.availableBalance, availableUsdBalance: item.availableUsdBalance)
+          }.first
+        }
+      } catch {
+        log.error(error.localizedDescription)
+      }
+    }
   }
   
   func addNewBankAccount() {
@@ -82,7 +122,7 @@ class SelectBankAccountViewModel: ObservableObject {
   }
   
   func callTransferAPI() {
-    guard let selectedBank = selectedBank, let amount = self.amount.asDouble else {
+    guard let contact = selectedBank, let amount = self.amount.asDouble else {
       toastMessage = LFLocalizable.MoveMoney.Error.noContact
       return
     }
@@ -92,26 +132,17 @@ class SelectBankAccountViewModel: ObservableObject {
       }
       showIndicator = true
       do {
-        let sessionID = self.accountDataManager.sessionID
-        let parameters = ExternalTransactionParameters(
-          amount: amount,
-          sourceId: selectedBank.sourceId,
-          sourceType: selectedBank.sourceType.rawValue,
-          m2mFeeRequestId: nil
-        )
-        let type: ExternalTransactionType = kind == .receive ? .deposit : .withdraw
-        let response = try await self.externalFundingRepository.newExternalTransaction(
-          parameters: parameters,
-          type: type,
-          sessionId: sessionID
-        )
+        let type: SolidExternalTransactionType = kind == .receive ? .deposit : .withdraw
+        guard let accountId = fiatAccount?.id else {
+          return
+        }
+        let response = try await solidCreateTransactionUseCase.execute(type: type, accountId: accountId, contactId: contact.sourceId, amount: amount)
         
         analyticsService.track(event: AnalyticsEvent(name: .sendMoneySuccess))
         
-          //Push a notification for update transaction list event
+        //Push a notification for update transaction list event
         NotificationCenter.default.post(name: .moneyTransactionSuccess, object: nil)
-        
-        navigation = .transactionDetai(response.transactionId)
+        navigation = .transactionDetail(response.id)
       } catch {
         handleTransferError(error: error)
       }
@@ -134,7 +165,52 @@ class SelectBankAccountViewModel: ObservableObject {
 
   // MARK: - ExternalLinkBank Functions
 extension SelectBankAccountViewModel {
+  
   func linkExternalBank() {
+    Task { @MainActor in
+      defer { self.linkBankIndicator = false }
+      self.linkBankIndicator = true
+      do {
+        guard let accountId = fiatAccount?.id else {
+          return
+        }
+        let response = try await self.createPlaidTokenUseCase.execute(accountId: accountId)
+        let plaidResponse = try await PlaidHelper.createLinkTokenConfiguration(token: response.linkToken, onCreated: { [weak self] configuration in
+          guard let self = self else {
+            return
+          }
+          Task {
+            await MainActor.run {
+              self.plaidConfig = PlaidConfig(config: configuration)
+            }
+          }
+        })
+        let solidContact = try await self.plaidLinkUseCase.execute(
+          accountId: accountId,
+          token: plaidResponse.publicToken,
+          plaidAccountId: plaidResponse.plaidAccountId
+        )
+        guard let type = APISolidContactType(rawValue: solidContact.type) else {
+          self.onPlaidUIDisappear()
+          return
+        }
+        let sourceType: LinkedSourceContactType = type == .externalBank ? .bank : .card
+        let contact = LinkedSourceContact(
+          name: solidContact.name,
+          last4: solidContact.last4,
+          sourceType: sourceType,
+          sourceId: solidContact.solidContactId
+        )
+        self.externalFundingDataManager.addOrEditLinkedSource(contact)
+      } catch {
+        log.error(error.localizedDescription)
+        if let liquidError = error as? LiquidityError, liquidError == .userCancelled {
+          self.onPlaidUIDisappear()
+        } else {
+          self.onLinkExternalBankFailure()
+        }
+      }
+    }
   }
   
   func onPlaidUIDisappear() {
@@ -145,22 +221,6 @@ extension SelectBankAccountViewModel {
   
   func onLinkExternalBankFailure() {
     onPlaidUIDisappear()
-  }
-  
-  func onLinkExternalBankSuccess() {
-    onPlaidUIDisappear()
-    Task { @MainActor in
-      defer { isLoading = false }
-      isLoading = true
-      do {
-        let sessionID = self.accountDataManager.sessionID
-        async let linkedAccountResponse = self.externalFundingRepository.getLinkedAccount(sessionId: sessionID)
-        let linkedSources = try await linkedAccountResponse.linkedSources
-        self.accountDataManager.storeLinkedSources(linkedSources)
-      } catch {
-        log.error(error.localizedDescription)
-      }
-    }
   }
   
   func contactSupport() {
@@ -174,12 +234,12 @@ extension SelectBankAccountViewModel {
 
 extension SelectBankAccountViewModel {
   
-  func title(for account: APILinkedSourceData) -> String {
-    switch account.sourceType {
-    case .externalCard:
-      return LFLocalizable.ConnectedView.Row.externalCard(account.last4)
-    case .externalBank:
-      return LFLocalizable.ConnectedView.Row.externalBank(account.name ?? "", account.last4)
+  func title(for contact: LinkedSourceContact) -> String {
+    switch contact.sourceType {
+    case .card:
+      return LFLocalizable.ConnectedView.Row.externalCard(contact.last4)
+    case .bank:
+      return LFLocalizable.ConnectedView.Row.externalBank(contact.name ?? "", contact.last4)
     }
   }
   
@@ -188,7 +248,7 @@ extension SelectBankAccountViewModel {
   // MARK: - Types
 extension SelectBankAccountViewModel {
   enum Navigation {
-    case transactionDetai(String)
+    case transactionDetail(String)
   }
   
   enum Popup {

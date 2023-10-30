@@ -1,4 +1,3 @@
-import Foundation
 import CoreNetwork
 import Factory
 import LFUtilities
@@ -11,6 +10,8 @@ import OnboardingData
 import AccountData
 import SolidData
 import SolidDomain
+import AccountDomain
+import ExternalFundingData
 
 @MainActor
 class AddBankWithDebitViewModel: ObservableObject {
@@ -20,6 +21,7 @@ class AddBankWithDebitViewModel: ObservableObject {
   @LazyInjected(\.analyticsService) var analyticsService
   @LazyInjected(\.solidExternalFundingRepository) var solidExternalFundingRepository
   @LazyInjected(\.solidAccountRepository) var solidAccountRepository
+  @LazyInjected(\.externalFundingDataManager) var externalFundingDataManager
   
   lazy var getAccountUsecase: SolidGetAccountsUseCaseProtocol = {
     SolidGetAccountsUseCase(repository: solidAccountRepository)
@@ -29,7 +31,19 @@ class AddBankWithDebitViewModel: ObservableObject {
     SolidDebitCardTokenUseCase(repository: solidExternalFundingRepository)
   }()
   
-  init() {}
+  lazy var solidGetAccountUseCase: SolidGetAccountsUseCaseProtocol = {
+    SolidGetAccountsUseCase(repository: solidAccountRepository)
+  }()
+  
+  lazy var solidGetLinkedSourcesUseCase: SolidGetLinkedSourcesUseCaseProtocol = {
+    SolidGetLinkedSourcesUseCase(repository: solidExternalFundingRepository)
+  }()
+  
+  private var fiatAccount: LFAccount?
+  
+  init() {
+    fetchDefaultFiatAccount()
+  }
   
   @Published var loading: Bool = false
   @Published var actionEnabled: Bool = false
@@ -109,9 +123,25 @@ class AddBankWithDebitViewModel: ObservableObject {
 
 // MARK: - API Functions
 extension AddBankWithDebitViewModel {
+  private func fetchDefaultFiatAccount() {
+    Task {
+      do {
+        self.fiatAccount = self.accountDataManager.fiatAccounts.first
+        if self.fiatAccount == nil {
+          let entity = try await solidGetAccountUseCase.execute()
+          self.fiatAccount = entity.map { item in
+            APIAccount(id: item.id, externalAccountId: item.externalAccountId, currency: item.currency, availableBalance: item.availableBalance, availableUsdBalance: item.availableUsdBalance)
+          }.first
+        }
+      } catch {
+        log.error(error.localizedDescription)
+      }
+    }
+  }
+  
   func getDebitCardToken() async throws -> DebitCardToken {
-    let accounts = try await self.getAccountUsecase.execute()
-    let tokenResponse = try await solidDebitCardTokenUseCase.execute(accountID: accounts.first?.id ?? .empty)
+    let accountId = fiatAccount?.id ?? .empty
+    let tokenResponse = try await solidDebitCardTokenUseCase.execute(accountID: accountId)
     
     return DebitCardToken(
       linkToken: tokenResponse.linkToken,
@@ -138,13 +168,20 @@ extension AddBankWithDebitViewModel {
         
         analyticsService.track(event: AnalyticsEvent(name: .debitCardConnectionSuccess))
         
-        // TODO: - Luan Tran will implement storeLinkedSources later
-        //        let sessionID = self.accountDataManager.sessionID
-        //        async let linkedAccountResponse = self.externalFundingRepository.getLinkedAccount(sessionId: sessionID)
-        //        let linkedSources = try await linkedAccountResponse.linkedSources
-        //        self.accountDataManager.storeLinkedSources(linkedSources)
+        guard let account = fiatAccount else {
+          return
+        }
+        let response = try await self.solidGetLinkedSourcesUseCase.execute(accountID: account.id)
+        let contacts = response.compactMap({ (data: SolidContactEntity) -> LinkedSourceContact? in
+          guard let type = APISolidContactType(rawValue: data.type) else {
+            return nil
+          }
+          let sourceType: LinkedSourceContactType = type == .externalBank ? .bank : .card
+          return LinkedSourceContact(name: data.name, last4: data.last4, sourceType: sourceType, sourceId: data.solidContactId)
+        })
+        self.externalFundingDataManager.storeLinkedSources(contacts)
         
-        // self.navigation = .verifyCard(cardId: response.cardId)
+        self.navigation = .moveMoney
       } catch {
         analyticsService.track(event: AnalyticsEvent(name: .debitCardFail))
         log.error(error.localizedDescription)
@@ -195,6 +232,6 @@ private extension AddBankWithDebitViewModel {
 
 extension AddBankWithDebitViewModel {
   enum Navigation {
-    case verifyCard(cardId: String)
+    case moveMoney
   }
 }

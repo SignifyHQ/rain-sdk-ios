@@ -226,6 +226,12 @@ public class AccountDataManager: AccountDataStorageProtocol {
   
   public var selectedRewardCurrencySubject = CurrentValueSubject<RewardCurrencyEntity?, Never>(nil)
   
+  public var fiatAccounts: [LFAccount] {
+    accountsSubject.value.filter({
+      Constants.CurrencyList.fiats.contains($0.currency)
+    })
+  }
+  
   public func addOrUpdateAccounts(_ accounts: [LFAccount]) {
     for account in accounts {
       addOrUpdateAccount(account)

@@ -10,4 +10,5 @@ public protocol SolidExternalFundingAPIProtocol {
   func unlinkContact(id: String) async throws -> APISolidUnlinkContactResponse
   func getWireTransfer(accountId: String) async throws -> APISolidWireTransferResponse
   func newTransaction(type: SolidExternalTransactionType, accountId: String, contactId: String, amount: Double) async throws -> APISolidExternalTransactionResponse
+  func estimateDebitCardFee(accountId: String, contactId: String, amount: Double) async throws -> APISolidDebitCardTransferFeeResponse
 }

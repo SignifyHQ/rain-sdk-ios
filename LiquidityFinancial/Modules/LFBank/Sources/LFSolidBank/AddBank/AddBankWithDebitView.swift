@@ -52,8 +52,8 @@ public struct AddBankWithDebitView: View {
     .background(Colors.background.swiftUIColor)
     .navigationLink(item: $viewModel.navigation) { item in
       switch item {
-      case .verifyCard(let cardId):
-        VerifyCardView(cardId: cardId)
+      case .moveMoney:
+        MoveMoneyAccountView(kind: .receive)
       }
     }
     .popup(item: $viewModel.toastMessage, style: .toast) {

@@ -1,10 +1,11 @@
 import Combine
 import SwiftUI
 import Factory
-import NetSpendData
 import SolidDomain
 import LFUtilities
 import SolidData
+import ExternalFundingData
+import LinkKit
 
 @MainActor
 public final class AddFundsViewModel: ObservableObject {
@@ -25,6 +26,7 @@ public final class AddFundsViewModel: ObservableObject {
   @LazyInjected(\.customerSupportService) var customerSupportService
   @LazyInjected(\.solidExternalFundingRepository) var solidExternalFundingRepository
   @LazyInjected(\.solidAccountRepository) var solidAccountRepository
+  @LazyInjected(\.externalFundingDataManager) var externalFundingDataManager
   
   lazy var createPlaidTokenUseCase: CreatePlaidTokenUseCaseProtocol = {
     CreatePlaidTokenUseCase(repository: solidExternalFundingRepository)
@@ -59,32 +61,38 @@ extension AddFundsViewModel {
       defer { self.isLoadingLinkExternalBank = false }
       self.isLoadingLinkExternalBank = true
       do {
-        let accounts = self.accountDataManager.accountsSubject.value.first(where: {
-          Constants.CurrencyList.fiats.contains($0.currency)
-        })
-        guard let accountId = accounts?.id else {
+        let accounts = self.accountDataManager.fiatAccounts
+        guard let accountId = accounts.first?.id else {
           return
         }
         let response = try await self.createPlaidTokenUseCase.execute(accountId: accountId)
         let plaidResponse = try await PlaidHelper.createLinkTokenConfiguration(token: response.linkToken, onCreated: { [weak self] configuration in
-          self?.plaidConfig = PlaidConfig(config: configuration)
+          guard let self = self else {
+            return
+          }
+          Task {
+            await MainActor.run {
+              self.plaidConfig = PlaidConfig(config: configuration)
+            }
+          }
         })
         let solidContact = try await self.plaidLinkUseCase.execute(
           accountId: accountId,
           token: plaidResponse.publicToken,
           plaidAccountId: plaidResponse.plaidAccountId
         )
-        guard let linkedSource = APILinkedSourceData(
-          name: solidContact.name,
-          last4: solidContact.last4,
-          sourceType: APILinkSourceType(rawValue: solidContact.type),
-          sourceId: solidContact.solidContactId,
-          requiredFlow: nil
-        ) else {
+        guard let type = APISolidContactType(rawValue: solidContact.type) else {
           self.onPlaidUIDisappear()
           return
         }
-        self.accountDataManager.addOrEditLinkedSource(linkedSource)
+        let sourceType: LinkedSourceContactType = type == .externalBank ? .bank : .card
+        let contact = LinkedSourceContact(
+          name: solidContact.name,
+          last4: solidContact.last4,
+          sourceType: sourceType,
+          sourceId: solidContact.solidContactId
+        )
+        self.externalFundingDataManager.addOrEditLinkedSource(contact)
         
         navigation = .addMoney
       } catch {
@@ -96,7 +104,6 @@ extension AddFundsViewModel {
         }
       }
     }
-    
   }
   
   func onPlaidUIDisappear() {
@@ -107,22 +114,6 @@ extension AddFundsViewModel {
   func onLinkExternalBankFailure() {
     onPlaidUIDisappear()
     popup = .plaidLinkingError
-  }
-  
-  func onLinkExternalBankSuccess() {
-    onPlaidUIDisappear()
-    Task { @MainActor in
-      do {
-        let sessionID = self.accountDataManager.sessionID
-        async let linkedAccountResponse = self.externalFundingRepository.getLinkedAccount(sessionId: sessionID)
-        let linkedSources = try await linkedAccountResponse.linkedSources
-        self.accountDataManager.storeLinkedSources(linkedSources)
-        
-        navigation = .addMoney
-      } catch {
-        log.error(error.localizedDescription)
-      }
-    }
   }
   
   func plaidLinkingErrorPrimaryAction() {
@@ -177,11 +168,5 @@ extension AddFundsViewModel {
   
   enum Popup {
     case plaidLinkingError
-  }
-}
-
-extension APIAgreementData: Identifiable {
-  public var id: String {
-    UUID().uuidString
   }
 }

@@ -1,7 +1,6 @@
 import Combine
 import NetSpendData
 import NetspendDomain
-import Foundation
 import SwiftUI
 import LFLocalizable
 import LFUtilities
@@ -13,13 +12,12 @@ import ExternalFundingData
 import SolidDomain
 import SolidData
 import AccountData
+import AccountDomain
 
 @MainActor
 public class MoveMoneyAccountViewModel: ObservableObject {
   @LazyInjected(\.biometricsService) var biometricsService
-  @LazyInjected(\.accountRepository) var accountRepository
   @LazyInjected(\.accountDataManager) var accountDataManager
-  @LazyInjected(\.externalFundingRepository) var externalFundingRepository
   @LazyInjected(\.analyticsService) var analyticsService
   @LazyInjected(\.customerSupportService) var customerSupportService
   @LazyInjected(\.externalFundingDataManager) var externalFundingDataManager
@@ -40,7 +38,7 @@ public class MoveMoneyAccountViewModel: ObservableObject {
   @Published var popup: Popup?
   @Published var showTransferFeeSheet: Bool = false
   @Published var selectTransferInstant: Bool?
-  @Published var externalCardFeeResponse: APIExternalCardFeeResponse?
+  @Published var externalCardFeeResponse: SolidDebitCardTransferFeeResponseEntity?
   
   lazy var solidCreateTransactionUseCase: SolidCreateExternalTransactionUseCaseProtocol = {
     SolidCreateExternalTransactionUseCase(repository: solidExternalFundingRepository)
@@ -48,6 +46,10 @@ public class MoveMoneyAccountViewModel: ObservableObject {
   
   lazy var solidGetAccountUseCase: SolidGetAccountsUseCaseProtocol = {
     SolidGetAccountsUseCase(repository: solidAccountRepository)
+  }()
+  
+  lazy var solidEstimateDebitCardFeeUseCase: SolidEstimateDebitCardFeeUseCaseProtocol = {
+    SolidEstimateDebitCardFeeUseCase(repository: solidExternalFundingRepository)
   }()
   
   private var cancellable: Set<AnyCancellable> = []
@@ -71,7 +73,7 @@ public class MoveMoneyAccountViewModel: ObservableObject {
   }
   
   var instantFeeString: String {
-    guard let amount = externalCardFeeResponse?.amount, amount > 0 else {
+    guard let amount = externalCardFeeResponse?.fee, amount > 0 else {
       return LFLocalizable.MoveMoney.TransferFeePopup.free
     }
     return amount.formattedUSDAmount()
@@ -85,24 +87,7 @@ extension MoveMoneyAccountViewModel {
       isFetchingRemainingAmount = true
       
       do {
-        let cardRemainingAmount = try await externalFundingRepository.getCardRemainingAmount(
-          sessionID: accountDataManager.sessionID,
-          type: kind.externalTransactionType
-        )
-        let bankRemainingAmount = try await externalFundingRepository.getBankRemainingAmount(
-          sessionID: accountDataManager.sessionID,
-          type: kind.externalTransactionType
-        )
-        self.cardRemainingAmount = RemainingAvailableAmount(
-          from: cardRemainingAmount.map {
-            TransferLimitConfig(from: $0)
-          }
-        )
-        self.bankRemainingAmount = RemainingAvailableAmount(
-          from: bankRemainingAmount.map {
-            TransferLimitConfig(from: $0)
-          }
-        )
+        // TODO: Will add this later when BE done
       } catch {
         log.error(error.localizedDescription)
       }
@@ -177,11 +162,30 @@ extension MoveMoneyAccountViewModel {
       showIndicator = true
       
       do {
-        // TODO: Will implement later
+        guard let account = try await self.getDefaultFiatAccount() else {
+          return
+        }
+        let response = try await self.solidEstimateDebitCardFeeUseCase.execute(
+          accountId: account.id,
+          contactId: contact.sourceId,
+          amount: amount
+        )
+        self.externalCardFeeResponse = response
+        showTransferFeeSheet = true
       } catch {
         handleTransferError(error: error)
       }
     }
+  }
+  
+  private func getDefaultFiatAccount() async throws -> LFAccount? {
+    if let account = self.accountDataManager.fiatAccounts.first {
+      return account
+    }
+    let entity = try await solidGetAccountUseCase.execute()
+    return entity.map { item in
+      APIAccount(id: item.id, externalAccountId: item.externalAccountId, currency: item.currency, availableBalance: item.availableBalance, availableUsdBalance: item.availableUsdBalance)
+    }.first
   }
   
   func callTransferAPI() {
@@ -196,19 +200,10 @@ extension MoveMoneyAccountViewModel {
       showIndicator = true
       do {
         let type: SolidExternalTransactionType = kind == .receive ? .deposit : .withdraw
-        var account = self.accountDataManager.accountsSubject.value.first(where: {
-          Constants.CurrencyList.fiats.contains($0.currency)
-        })
-        if account == nil {
-          let entity = try await solidGetAccountUseCase.execute()
-          account = entity.map { item in
-            APIAccount(id: item.id, externalAccountId: item.externalAccountId, currency: item.currency, availableBalance: item.availableBalance, availableUsdBalance: item.availableUsdBalance)
-          }.first
-        }
-        guard let accountId = account?.id else {
+        guard let account = try await self.getDefaultFiatAccount() else {
           return
         }
-        let response = try await solidCreateTransactionUseCase.execute(type: type, accountId: accountId, contactId: contact.sourceId, amount: amount)
+        let response = try await solidCreateTransactionUseCase.execute(type: type, accountId: account.id, contactId: contact.sourceId, amount: amount)
         
         analyticsService.track(event: AnalyticsEvent(name: .sendMoneySuccess))
         
