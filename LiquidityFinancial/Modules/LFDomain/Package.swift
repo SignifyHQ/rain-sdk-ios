@@ -81,9 +81,6 @@ let package = Package(
       ]
     ),
     .testTarget(
-      name: "DomainTests",
-      dependencies: ["TestHelpers", "DomainTestHelpers"]),
-    .testTarget(
       name: "OnboardingDomainTests",
       dependencies: ["OnboardingDomain", "TestHelpers", "DomainTestHelpers"]),
     .testTarget(
