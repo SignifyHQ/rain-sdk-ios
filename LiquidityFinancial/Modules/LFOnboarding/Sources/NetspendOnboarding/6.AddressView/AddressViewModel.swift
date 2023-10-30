@@ -108,6 +108,10 @@ final class AddressViewModel: ObservableObject {
     NSGetDocumentsUseCase(repository: nsPersonRepository)
   }()
   
+  lazy var getOnboardingStepUseCase: NSGetOnboardingStepUseCaseProtocol = {
+    NSGetOnboardingStepUseCase(repository: nsOnboardingRepository)
+  }()
+  
   var userNameDisplay: String {
     get {
       UserDefaults.userNameDisplay
@@ -221,7 +225,7 @@ final class AddressViewModel: ObservableObject {
   }
   
   func handlerOnboardingStep() async throws {
-    let onboardingStep = try await nsOnboardingRepository.getOnboardingStep(sessionID: accountDataManager.sessionID)
+    let onboardingStep = try await getOnboardingStepUseCase.execute(sessionID: accountDataManager.sessionID)
     let onboardingTypes = onboardingStep.mapToEnum()
     if onboardingTypes.isEmpty {
       navigation = .inReview

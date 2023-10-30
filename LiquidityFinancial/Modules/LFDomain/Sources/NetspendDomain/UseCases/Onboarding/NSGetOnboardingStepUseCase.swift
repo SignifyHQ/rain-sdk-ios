@@ -1,6 +1,6 @@
 import Foundation
   
-public class NSOnboardingUseCase: NSOnboardingUseCaseProtocol {
+public class NSGetOnboardingStepUseCase: NSGetOnboardingStepUseCaseProtocol {
   
   private let repository: NSOnboardingRepositoryProtocol
   
@@ -8,7 +8,7 @@ public class NSOnboardingUseCase: NSOnboardingUseCaseProtocol {
     self.repository = repository
   }
   
-  public func getOnboardingStep(sessionID: String) async throws -> NSOnboardingStepEntity {
+  public func execute(sessionID: String) async throws -> NSOnboardingStepEntity {
     try await repository.getOnboardingStep(sessionID: sessionID)
   }
 }

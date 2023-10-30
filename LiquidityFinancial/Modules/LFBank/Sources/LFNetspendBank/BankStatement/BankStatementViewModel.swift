@@ -2,6 +2,7 @@ import Foundation
 import LFUtilities
 import AccountDomain
 import NetspendDomain
+import NetSpendData
 import Factory
 
 class BankStatementViewModel: ObservableObject {
@@ -29,6 +30,10 @@ class BankStatementViewModel: ObservableObject {
     return formatter
   }()
   
+  lazy var getStatementsUseCase: NSGetStatementsUseCaseProtocol = {
+    NSGetStatementsUseCase(repository: nsAccountRepository)
+  }()
+  
   init() {
   }
   
@@ -50,13 +55,13 @@ class BankStatementViewModel: ObservableObject {
         let month = self.monthFormatter.string(from: date)
         let year = self.yearFormatter.string(from: date)
         
-        let response = try await nsAccountRepository.getStatements(
-          sessionId: sessionID,
+        let parameter = GetStatementParameters(
           fromMonth: Constants.Default.statementFromMonth.rawValue,
           fromYear: Constants.Default.statementFromYear.rawValue,
           toMonth: month,
           toYear: year
         )
+        let response = try await getStatementsUseCase.execute(sessionId: sessionID, parameter: parameter)
         status = .success(response)
       } catch {
         status = .failure(error)

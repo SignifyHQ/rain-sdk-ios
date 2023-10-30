@@ -103,6 +103,10 @@ public class NSOnboardingFlowCoordinator: OnboardingFlowCoordinatorProtocol {
     NSEstablishPersonSessionUseCase(repository: nsPersonRepository)
   }()
   
+  lazy var getOnboardingStepUseCase: NSGetOnboardingStepUseCaseProtocol = {
+    NSGetOnboardingStepUseCase(repository: nsOnboardingRepository)
+  }()
+  
   public let routeSubject: CurrentValueSubject<Route, Never>
   
   public init() {
@@ -153,7 +157,7 @@ public class NSOnboardingFlowCoordinator: OnboardingFlowCoordinatorProtocol {
   }
   
   public func handlerOnboardingStep() async throws {
-    let onboardingStep = try await nsOnboardingRepository.getOnboardingStep(sessionID: accountDataManager.sessionID)
+    let onboardingStep = try await getOnboardingStepUseCase.execute(sessionID: accountDataManager.sessionID)
     
     if onboardingStep.processSteps.isEmpty {
       try await fetchZeroHashStatus()

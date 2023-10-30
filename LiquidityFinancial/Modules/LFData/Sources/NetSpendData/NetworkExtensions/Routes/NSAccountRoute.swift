@@ -5,7 +5,7 @@ import AuthorizationManager
 import NetspendDomain
 
 public enum NSAccountRoute {
-  case getStatements(sessionId: String, fromMonth: String, fromYear: String, toMonth: String, toYear: String)
+  case getStatements(sessionId: String, parameters: GetStatementParameters)
 }
 
 extension NSAccountRoute: LFRoute {
@@ -30,7 +30,7 @@ extension NSAccountRoute: LFRoute {
     ]
     base["Authorization"] = self.needAuthorizationKey
     switch self {
-    case let .getStatements(sessionId, _, _, _, _):
+    case let .getStatements(sessionId, _):
       base["netspendSessionId"] = sessionId
     }
     return base
@@ -38,13 +38,8 @@ extension NSAccountRoute: LFRoute {
   
   public var parameters: Parameters? {
     switch self {
-    case let .getStatements(_, fromMonth, fromYear, toMonth, toYear):
-      return GetStatementParameters(
-        fromMonth: fromMonth,
-        fromYear: fromYear,
-        toMonth: toMonth,
-        toYear: toYear
-      ).encoded()
+    case let .getStatements(_, parameters):
+      return parameters.encoded()
     }
   }
   

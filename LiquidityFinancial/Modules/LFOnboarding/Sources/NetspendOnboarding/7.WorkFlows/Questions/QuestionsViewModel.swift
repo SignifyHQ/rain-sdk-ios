@@ -37,6 +37,10 @@ public final class QuestionsViewModel: ObservableObject {
     NSGetDocumentsUseCase(repository: nsPersonRepository)
   }()
   
+  lazy var getOnboardingStepUseCase: NSGetOnboardingStepUseCaseProtocol = {
+    NSGetOnboardingStepUseCase(repository: nsOnboardingRepository)
+  }()
+  
   let timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
 
   public init(questionList: QuestionsEntity = .mockKYCQuestion) {
@@ -139,7 +143,7 @@ extension QuestionsViewModel {
 // MARK: - Private Functions
 private extension QuestionsViewModel { 
   func handlerOnboardingStep() async throws {
-    let onboardingStep = try await nsOnboardingRepository.getOnboardingStep(sessionID: accountDataManager.sessionID)
+    let onboardingStep = try await getOnboardingStepUseCase.execute(sessionID: accountDataManager.sessionID)
     let onboardingTypes = onboardingStep.mapToEnum()
     if onboardingTypes.isEmpty {
       navigation = .kycReview

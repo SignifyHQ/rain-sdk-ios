@@ -29,6 +29,10 @@ class BankStatementViewModel: ObservableObject {
     return formatter
   }()
   
+  lazy var getStatementsUseCase: NSGetStatementsUseCaseProtocol = {
+    NSGetStatementsUseCase(repository: nsAccountRepository)
+  }()
+  
   init() {
   }
   
@@ -50,7 +54,7 @@ class BankStatementViewModel: ObservableObject {
         let month = self.monthFormatter.string(from: date)
         let year = self.yearFormatter.string(from: date)
         
-        let response = try await nsAccountRepository.getStatements(
+        let response = try await getStatementsUseCase.execute(
           sessionId: sessionID,
           fromMonth: Constants.Default.statementFromMonth.rawValue,
           fromYear: Constants.Default.statementFromYear.rawValue,

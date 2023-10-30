@@ -6,15 +6,9 @@ import LFUtilities
 
 extension LFCoreNetwork: NSAccountAPIProtocol where R == NSAccountRoute {
   
-  public func getStatements(sessionId: String, fromMonth: String, fromYear: String, toMonth: String, toYear: String) async throws -> [StatementModel] {
+  public func getStatements(sessionId: String, parameters: GetStatementParameters) async throws -> [StatementModel] {
     let response = try await request(
-      NSAccountRoute.getStatements(
-        sessionId: sessionId,
-        fromMonth: fromMonth,
-        fromYear: fromYear,
-        toMonth: toMonth,
-        toYear: toYear
-      ),
+      NSAccountRoute.getStatements( sessionId: sessionId, parameters: parameters),
       target: StatementListReponse.self,
       failure: LFErrorObject.self,
       decoder: .apiDecoder

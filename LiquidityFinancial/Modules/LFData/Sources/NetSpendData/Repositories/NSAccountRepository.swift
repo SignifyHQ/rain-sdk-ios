@@ -8,13 +8,13 @@ public class NSAccountRepository: NSAccountRepositoryProtocol {
     self.accountAPI = accountAPI
   }
   
-  public func getStatements(sessionId: String, fromMonth: String, fromYear: String, toMonth: String, toYear: String) async throws -> [StatementModel] {
-    try await accountAPI.getStatements(
-      sessionId: sessionId,
-      fromMonth: fromMonth,
-      fromYear: fromYear,
-      toMonth: toMonth,
-      toYear: toYear
+  public func getStatements(sessionId: String, parameter: GetStatementParameterEntity) async throws -> [StatementModel] {
+    let requestParam = GetStatementParameters(
+      fromMonth: parameter.fromMonth,
+      fromYear: parameter.fromYear,
+      toMonth: parameter.toMonth,
+      toYear: parameter.toYear
     )
+    return try await accountAPI.getStatements(sessionId: sessionId, parameters: requestParam)
   }
 }

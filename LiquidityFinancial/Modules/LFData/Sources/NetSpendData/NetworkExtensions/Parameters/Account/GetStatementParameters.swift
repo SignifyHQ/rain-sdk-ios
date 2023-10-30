@@ -2,7 +2,7 @@ import Foundation
 import NetspendDomain
 import NetworkUtilities
 
-public struct GetStatementParameters: Parameterable {
+public struct GetStatementParameters: Parameterable, GetStatementParameterEntity {
   public let fromMonth: String
   public let fromYear: String
   public let toMonth: String
