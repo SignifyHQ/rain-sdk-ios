@@ -11,13 +11,14 @@ import LFSolidBank
 import LFTransaction
 import Combine
 import BaseCard
+import ExternalFundingData
 
 @MainActor
 final class CashViewModel: ObservableObject {
   @LazyInjected(\.accountRepository) var accountRepository
   @LazyInjected(\.accountDataManager) var accountDataManager
-  @LazyInjected(\.externalFundingRepository) var externalFundingRepository
   @LazyInjected(\.dashboardRepository) var dashboardRepository
+  @LazyInjected(\.externalFundingDataManager) var externalFundingDataManager
   
   @Published var isCardActive: Bool = true
   @Published var isLoading: Bool = false
@@ -30,10 +31,10 @@ final class CashViewModel: ObservableObject {
   @Published var selectedAsset: AssetType = .usd
   @Published var navigation: Navigation?
   @Published var transactions: [TransactionModel] = []
-  @Published var linkedAccount: [APILinkedSourceData] = []
   @Published var achInformation: ACHModel = .default
   @Published var accountID: String = .empty
   @Published var fullScreen: FullScreen?
+  @Published var linkedContacts: [LinkedSourceContact] = []
   
     //This is flag handle case when app have change scenePhase
   var shouldReloadListTransaction: Bool = false
@@ -52,13 +53,14 @@ final class CashViewModel: ObservableObject {
   let currencyType = Constants.CurrencyType.fiat.rawValue
   
   private let guestHandler: () -> Void
+  private var subscriptions = Set<AnyCancellable>()
   
   init(guestHandler: @escaping () -> Void) {
     self.guestHandler = guestHandler
     firstLoadData()
     getACHInfo()
-    handleFundingAgreementData()
     handleEventReloadTransaction()
+    subscribeLinkedContacts()
   }
   
   func refreshable() {
@@ -66,6 +68,13 @@ final class CashViewModel: ObservableObject {
     refreshAccount()
     let animation = self.transactions.isEmpty ? true : false
     refreshTransaction(withAnimation: animation, accountID: accountID)
+  }
+  
+  private func subscribeLinkedContacts() {
+    externalFundingDataManager.subscribeLinkedSourcesChanged({ [weak self] contacts in
+      self?.linkedContacts = contacts
+    })
+    .store(in: &subscriptions)
   }
   
   private func handleEventReloadTransaction() {
@@ -87,7 +96,7 @@ final class CashViewModel: ObservableObject {
         if let account = try await refreshAccounts() {
           isLoading = false
           
-          try getListConnectedAccount()
+          try dashboardRepository.apiFetchListConnectedAccount()
           
           try await loadTransactions(accountId: account.id)
           activity = transactions.isEmpty ? .addFunds : .transactions
@@ -104,7 +113,7 @@ final class CashViewModel: ObservableObject {
       do {
         defer { isLoading = false }
         isLoading = true
-        try getListConnectedAccount()
+        dashboardRepository.apiFetchListConnectedAccount()
         try await refreshAccounts()
       } catch {
         log.error(error)
@@ -135,24 +144,6 @@ final class CashViewModel: ObservableObject {
 
 // MARK: - View Helpers
 extension CashViewModel {
-  func handleFundingAgreementData() {
-  }
-  
-  func handleFundingAcceptAgreement(isAccept: Bool) {
-    if isAccept {
-      addFundsViewModel.goNextNavigation()
-    } else {
-      addFundsViewModel.stopAction()
-    }
-  }
-  
-  func openFundingAgreement(data: APIAgreementData?) {
-    if data == nil {
-      navigation = nil
-    } else {
-//      navigation = .agreement(data)
-    }
-  }
   
   func onClickedChangeAssetButton() {
     navigation = .changeAsset
@@ -160,7 +151,7 @@ extension CashViewModel {
   
   func addMoneyTapped() {
     Haptic.impact(.light).generate()
-    if linkedAccount.isEmpty {
+    if linkedContacts.isEmpty {
       fullScreen = .fundCard(.receive)
     } else {
       navigation = .addMoney
@@ -169,7 +160,7 @@ extension CashViewModel {
   
   func sendMoneyTapped() {
     Haptic.impact(.light).generate()
-    if linkedAccount.isEmpty {
+    if linkedContacts.isEmpty {
       fullScreen = .fundCard(.send)
     } else {
       navigation = .sendMoney
@@ -217,23 +208,6 @@ extension CashViewModel {
     }
     accountDataManager.addOrUpdateAccounts(accounts)
     return accounts.first
-  }
-  
-  private func getListConnectedAccount() throws {
-    Task {
-      let sessionID = self.accountDataManager.sessionID
-      let response = try await self.externalFundingRepository.getLinkedAccount(sessionId: sessionID)
-      let linkedAccount = response.linkedSources.compactMap({
-        APILinkedSourceData(
-          name: $0.name,
-          last4: $0.last4,
-          sourceType: APILinkSourceType(rawValue: $0.sourceType.rawString),
-          sourceId: $0.sourceId,
-          requiredFlow: $0.requiredFlow
-        )
-      })
-      self.linkedAccount = linkedAccount
-    }
   }
   
   private func getACHInfo() {

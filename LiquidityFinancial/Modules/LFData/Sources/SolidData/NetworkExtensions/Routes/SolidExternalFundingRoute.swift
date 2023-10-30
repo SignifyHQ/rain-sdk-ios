@@ -2,6 +2,7 @@ import CoreNetwork
 import NetworkUtilities
 import AuthorizationManager
 import LFUtilities
+import SolidDomain
 
 public enum SolidExternalFundingRoute {
   case getLinkedSources(accountId: String)
@@ -10,6 +11,7 @@ public enum SolidExternalFundingRoute {
   case plaidLink(accountId: String, token: String, plaidAccountId: String)
   case unlinkContact(id: String)
   case getWireTransfer(accountId: String)
+  case newTransaction(type: SolidExternalTransactionType, accountId: String, contactId: String, amount: Double)
 }
 
 extension SolidExternalFundingRoute: LFRoute {
@@ -28,6 +30,13 @@ extension SolidExternalFundingRoute: LFRoute {
       return "/v1/solid/external-funding/linked-sources/\(id)"
     case .getWireTransfer:
       return "/v1/solid/external-funding/linked-sources/wire-transfer"
+    case .newTransaction(let type, let accountId, let contactId, let amount):
+      switch type {
+      case .withdraw:
+        return "/v1/solid/external-funding/withdraw"
+      case .deposit:
+        return "/v1/solid/external-funding/deposit"
+      }
     }
   }
   
@@ -39,6 +48,8 @@ extension SolidExternalFundingRoute: LFRoute {
       return .POST
     case .unlinkContact:
       return .DELETE
+    case .newTransaction:
+      return .POST
     }
   }
   
@@ -73,12 +84,18 @@ extension SolidExternalFundingRoute: LFRoute {
         "publicToken": token,
         "plaidAccountId": plaidAccountId
       ]
+    case .newTransaction(_, let accountId, let contactId, let amount):
+      return [
+        "liquidityAccountId": accountId,
+        "contactId": contactId,
+        "amount": amount
+      ]
     }
   }
   
   public var parameterEncoding: ParameterEncoding? {
     switch self {
-    case .createDebitCardToken, .createPlaidToken, .plaidLink:
+    case .createDebitCardToken, .createPlaidToken, .plaidLink, .newTransaction:
       return .json
     case .getLinkedSources, .getWireTransfer:
       return .url

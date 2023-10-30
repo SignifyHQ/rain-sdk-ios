@@ -1,4 +1,5 @@
 import Foundation
+import SolidDomain
 
 // sourcery: AutoMockable
 public protocol SolidExternalFundingAPIProtocol {
@@ -8,4 +9,5 @@ public protocol SolidExternalFundingAPIProtocol {
   func plaidLink(accountId: String, token: String, plaidAccountId: String) async throws -> APISolidContact
   func unlinkContact(id: String) async throws -> APISolidUnlinkContactResponse
   func getWireTransfer(accountId: String) async throws -> APISolidWireTransferResponse
+  func newTransaction(type: SolidExternalTransactionType, accountId: String, contactId: String, amount: Double) async throws -> APISolidExternalTransactionResponse
 }

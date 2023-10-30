@@ -74,7 +74,9 @@ public struct MoveMoneyAccountView: View {
         case .addBankDebit:
           AddBankWithDebitView()
         case .selectBankAccount:
-          SelectBankAccountView(linkedAccount: viewModel.linkedAccount, kind: viewModel.kind, amount: viewModel.amount, completeAction: completeAction)
+          EmptyView()
+          // TODO: Fix this later
+          //SelectBankAccountView(linkedAccount: viewModel.linkedAccount, kind: viewModel.kind, amount: viewModel.amount, completeAction: completeAction)
         }
       }
       .background(Colors.background.swiftUIColor)
@@ -157,8 +159,8 @@ private extension MoveMoneyAccountView {
       showListView.toggle()
     } label: {
       HStack {
-        if let account = viewModel.selectedLinkedAccount {
-          Text(viewModel.title(for: account))
+        if let contact = viewModel.selectedLinkedContact {
+          Text(viewModel.title(for: contact))
             .font(Fonts.medium.swiftUIFont(size: Constants.FontSize.small.value))
             .foregroundColor(Colors.label.swiftUIColor)
         }
@@ -187,7 +189,7 @@ private extension MoveMoneyAccountView {
   @ViewBuilder var accountsList: some View {
     if showListView {
       VStack(alignment: .leading, spacing: 12) {
-        ForEach(viewModel.linkedAccount, id: \.sourceId) { item in
+        ForEach(viewModel.linkedContacts, id: \.sourceId) { item in
           HStack {
             Text(viewModel.title(for: item))
               .font(Fonts.medium.swiftUIFont(size: Constants.FontSize.small.value))
@@ -196,12 +198,12 @@ private extension MoveMoneyAccountView {
             Image(systemName: "checkmark")
               .font(Fonts.medium.swiftUIFont(size: Constants.FontSize.medium.value))
               .foregroundColor(
-                viewModel.selectedLinkedAccount?.sourceId == item.sourceId ?
+                viewModel.selectedLinkedContact?.sourceId == item.sourceId ?
                 Colors.primary.swiftUIColor : .clear
               )
           }
           .onTapGesture {
-            viewModel.selectedLinkedAccount = item
+            viewModel.selectedLinkedContact = item
             showListView.toggle()
           }
         }

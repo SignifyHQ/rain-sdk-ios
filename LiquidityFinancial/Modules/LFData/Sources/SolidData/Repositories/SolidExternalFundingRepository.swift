@@ -37,4 +37,8 @@ public class SolidExternalFundingRepository: SolidExternalFundingRepositoryProto
     try await solidExternalFundingAPI.getWireTransfer(accountId: accountId)
   }
   
+  public func newTransaction(type: SolidExternalTransactionType, accountId: String, contactId: String, amount: Double) async throws -> SolidExternalTransactionResponseEntity {
+    try await solidExternalFundingAPI.newTransaction(type: type, accountId: accountId, contactId: contactId, amount: amount)
+  }
+  
 }
