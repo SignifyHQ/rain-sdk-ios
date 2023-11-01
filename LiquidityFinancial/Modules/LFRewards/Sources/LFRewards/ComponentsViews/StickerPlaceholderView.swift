@@ -48,7 +48,7 @@ struct StickerPlaceholderView_Previews: PreviewProvider {
         .frame(100)
       
       Text("Gradient overlay")
-      StickerPlaceholderView(overlay: .gradient)
+      StickerPlaceholderView()
         .frame(100)
       
       Text("Linear overlay")

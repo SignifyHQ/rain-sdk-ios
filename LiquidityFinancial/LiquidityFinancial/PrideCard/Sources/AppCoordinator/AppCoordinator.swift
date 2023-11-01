@@ -4,7 +4,7 @@ import LFUtilities
 import SolidOnboarding
 import SwiftUI
 import AuthorizationManager
-
+import BaseOnboarding
 // swiftlint:disable let_var_whitespace
 protocol AppCoordinatorProtocol {
   var routeSubject: CurrentValueSubject<AppCoordinator.Route, Never> { get }
@@ -48,6 +48,7 @@ class AppCoordinator: AppCoordinatorProtocol {
     
     NotificationCenter.default
       .publisher(for: authorizationManager.logOutForcedName)
+      .receive(on: DispatchQueue.main)
       .sink { [weak self] _ in
         log.warning("The server has forcibly logged out the user")
         self?.logout()

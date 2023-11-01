@@ -25,7 +25,8 @@ extension SolidAccountRoute: LFRoute {
       "Content-Type": "application/json",
       "productId": NetworkUtilities.productID,
       "Authorization": self.needAuthorizationKey,
-      "Accept": "application/json"
+      "Accept": "application/json",
+      "ld-device-id": LFUtilities.deviceId
     ]
   }
   

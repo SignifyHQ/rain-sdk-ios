@@ -4,6 +4,7 @@ import NetworkUtilities
 import LFUtilities
 import Factory
 import AuthorizationManager
+import LFServices
 
 // swiftlint:disable force_unwrapping
 
@@ -13,6 +14,7 @@ extension AppDelegate {
     setupStyleGuideConfig()
     setupDataUtilitiesConfig()
     setupLFUtilitiesConfig()
+    setupLFServiceConfig()
     authorizationManagerRefresh()
   }
   
@@ -40,5 +42,9 @@ private extension AppDelegate {
     DBCustomHTTPProtocol.ignoredHosts.append("http://nexus-websocket-a.intercom.io")
     DBCustomHTTPProtocol.ignoredHosts.append("http://api.segment.io/v1/batch")
     DBCustomHTTPProtocol.ignoredHosts.append("http://ursuzkbg-ios.mobile-messenger.intercom.com")
+  }
+  
+  func setupLFServiceConfig() {
+    LFServices.initial(config: LFServices.Configuration(baseURL: APIConstants.devHost))
   }
 }

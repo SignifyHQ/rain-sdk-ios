@@ -2,6 +2,7 @@ import Foundation
 import CoreNetwork
 import NetworkUtilities
 import AuthorizationManager
+import LFUtilities
 
 public enum SolidOnboardingRoute {
   case getOnboardingStep
@@ -29,7 +30,8 @@ extension SolidOnboardingRoute: LFRoute {
   public var httpHeaders: HttpHeaders {
     var base = [
       "Content-Type": "application/json",
-      "productId": NetworkUtilities.productID
+      "productId": NetworkUtilities.productID,
+      "ld-device-id": LFUtilities.deviceId
     ]
     base["Authorization"] = self.needAuthorizationKey
     return base

@@ -33,7 +33,6 @@ let package = Package(
     .package(url: "https://github.com/SwiftGen/SwiftGenPlugin", from: "6.6.2"),
     .package(name: "LFRewards", path: "../LFRewards"),
     .package(name: "LFNetwork", path: "../LFNetwork"),
-    .package(url: "https://github.com/Quick/Nimble.git", from: "12.0.0"),
     .package(url: "https://github.com/nalexn/ViewInspector", from: "0.9.8"),
     .package(name: "TestHelpers", path: "../TestHelpers")
   ],
@@ -46,9 +45,6 @@ let package = Package(
         .product(name: "AccountDomain", package: "LFDomain"),
         .product(name: "OnboardingData", package: "LFData"),
         .product(name: "AccountData", package: "LFData")
-      ],
-      resources: [
-        .process("ZResources")
       ]
     ),
     .target(
@@ -74,9 +70,6 @@ let package = Package(
         .product(name: "DevicesDomain", package: "LFDomain"),
         .product(name: "SmartyStreets", package: "smartystreets-ios-sdk"),
         .product(name: "AuthorizationManager", package: "LFNetwork")
-      ],
-      resources: [
-        .process("ZResources")
       ]
     ),
     .target(
@@ -92,9 +85,6 @@ let package = Package(
         .product(name: "DevicesData", package: "LFData"),
         .product(name: "SolidDomain", package: "LFDomain"),
         .product(name: "DevicesDomain", package: "LFDomain")
-      ],
-      resources: [
-        .process("ZResources")
       ]
     ),
     .testTarget(
@@ -102,7 +92,6 @@ let package = Package(
       dependencies: [
         .product(name: "DomainTestHelpers", package: "LFDomain"),
         "NetspendOnboarding",
-        "Nimble",
         "TestHelpers",
         "ViewInspector"
       ]

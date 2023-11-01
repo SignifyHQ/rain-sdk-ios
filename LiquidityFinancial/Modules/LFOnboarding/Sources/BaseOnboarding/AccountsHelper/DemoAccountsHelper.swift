@@ -72,7 +72,7 @@ public class DemoAccountsHelper {
         .replace(string: "-", replacement: "")
         .replace(string: "+", replacement: "%2B")
         .trimWhitespacesAndNewlines()
-      let urlStr = (APIConstants.devHost + "/v1/admin/dev-tool/sms?to=\(number)")
+      let urlStr = APIConstants.devHost + "/v1/admin/dev-tool/sms?to=\(number)"
       guard let url = URL(string: urlStr) else {
         log.debug("Unable to get OTP internal")
         promise(.success(nil))

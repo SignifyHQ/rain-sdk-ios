@@ -6,7 +6,7 @@ final class LogMonitor: EventMonitor {
   let queue: DispatchQueue = .init(label: "com.liquidity.networklog")
   
   func request(_ request: Request, didCreateTask _: URLSessionTask) {
-    log.debug("[🚀 Firing request]: \(request.cURLDescription())")
+    log.info("[🚀 Firing request]: \(request.cURLDescription())")
   }
   
   func requestIsRetrying(_ request: Request) {
@@ -24,9 +24,9 @@ final class LogMonitor: EventMonitor {
         [Serialization Duration]: \(response.serializationDuration)
         [Result]: \(jsonString)
         """
-        log.debug(result)
+        log.info(result)
       } else {
-        log.debug("[🚩 Finished request]: \(response.debugDescription)")
+        log.info("[🚩 Finished request]: \(response.debugDescription)")
       }
     case .failure:
       log.info("[🔴 request]: \(response.debugDescription)")

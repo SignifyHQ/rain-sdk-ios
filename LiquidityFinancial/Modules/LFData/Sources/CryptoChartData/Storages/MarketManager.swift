@@ -5,6 +5,7 @@ import Factory
 import LFUtilities
 import CryptoChartDomain
 import AuthorizationManager
+import NetworkUtilities
 
 public class MarketManager {
   @LazyInjected(\.cryptoChartRepository) var cryptoChartRepository
@@ -191,7 +192,7 @@ private extension MarketManager {
 // MARK: - Websocket Handles
 private extension MarketManager {
   func startPriceWebsocket() {
-    guard let url = URL(string: "wss://api-crypto.dev.liquidity.cc/ws/cmc/\(LFUtilities.cryptoCurrency)/live") else {
+    guard let url = URL(string: "\(APIConstants.socketDevHost)/ws/cmc/\(LFUtilities.cryptoCurrency)/live") else {
       return
     }
     websocketTask = connectSocket(url: url)

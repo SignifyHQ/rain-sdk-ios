@@ -19,9 +19,7 @@ public struct CauseItemView: View {
             .resizable()
             .aspectRatio(1.0, contentMode: .fit)
         } placeholder: {
-          Rectangle()
-            .fill(ModuleColors.primary.swiftUIColor)
-            .cornerRadius(10)
+          ModuleImages.causePlaceholderImage.swiftUIImage
         }
         
         Text(cause.name)

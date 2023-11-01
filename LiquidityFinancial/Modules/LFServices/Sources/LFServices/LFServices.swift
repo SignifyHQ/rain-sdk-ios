@@ -7,6 +7,21 @@ public class LFServices {
   
   static let environment = EnvironmentManager()
   
+  public struct Configuration {
+    var baseURL: String
+    
+    public init(baseURL: String) {
+      self.baseURL = baseURL
+    }
+    
+    static var `default` = Configuration(baseURL: "")
+  }
+  
+  public static var config: Configuration = .default
+  public static func initial(config: Configuration) {
+    Self.config = config
+  }
+  
   public static var vgsConfig: (id: String, env: String) = {
     switch environment.networkEnvironment {
     case .productionLive:

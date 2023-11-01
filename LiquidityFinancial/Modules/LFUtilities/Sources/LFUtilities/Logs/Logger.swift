@@ -12,10 +12,12 @@ public let log: SwiftyBeaver.Type = {
 #if DEBUG
   console.minLevel = .verbose
 #else
-  console.minLevel = .info
+  console.minLevel = .error
 #endif
   
+#if DEBUG
   log.addDestination(console)
+#endif
   
   return log
 }()

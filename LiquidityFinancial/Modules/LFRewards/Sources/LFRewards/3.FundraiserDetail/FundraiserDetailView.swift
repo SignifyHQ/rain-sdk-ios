@@ -106,8 +106,7 @@ extension FundraiserDetailView {
             .aspectRatio(contentMode: .fill)
             .applyImageGradient()
         } placeholder: {
-          ModuleColors.buttons.swiftUIColor
-            .aspectRatio(1.44, contentMode: .fill)
+          ModuleImages.causePlaceholderImage.swiftUIImage
         }
       }
       

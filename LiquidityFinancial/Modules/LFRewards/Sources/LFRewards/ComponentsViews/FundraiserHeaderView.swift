@@ -64,7 +64,7 @@ public struct FundraiserHeaderView: View {
         .frame(width: 80, height: 80)
         .clipShape(Circle())
     } placeholder: {
-      StickerPlaceholderView(overlay: .gradient)
+      StickerPlaceholderView()
     }
     .frame(width: imageSize, height: imageSize)
     .applyIf(shareOnImageTap) {

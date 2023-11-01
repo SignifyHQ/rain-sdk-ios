@@ -341,6 +341,7 @@
 		A9CFBB772A9DA7B300269DB8 /* Orbitron-Medium.ttf in Resources */ = {isa = PBXBuildFile; fileRef = A9CFBB752A9DA7B300269DB8 /* Orbitron-Medium.ttf */; };
 		A9D6C4A52A5E5FE00038D0BB /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = A9D6C4A72A5E5FE00038D0BB /* Localizable.strings */; };
 		A9D6C4B22A5E91DF0038D0BB /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = A9D6C4B12A5E91DF0038D0BB /* LaunchScreen.storyboard */; };
+		A9F14DE82AEF7D3100D66389 /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = A9F14DE72AEF7D3100D66389 /* README.md */; };
 		E2E87F162ADEABBC00D99EBB /* LFNetspendBank in Frameworks */ = {isa = PBXBuildFile; productRef = E2E87F152ADEABBC00D99EBB /* LFNetspendBank */; };
 /* End PBXBuildFile section */
 
@@ -625,6 +626,7 @@
 		A9D6C4B12A5E91DF0038D0BB /* LaunchScreen.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = LaunchScreen.storyboard; sourceTree = "<group>"; };
 		A9D6C4B82A5F07470038D0BB /* LFData */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = LFData; path = Modules/LFData; sourceTree = "<group>"; };
 		A9D6C4B92A5F07CF0038D0BB /* LFDomain */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = LFDomain; path = Modules/LFDomain; sourceTree = "<group>"; };
+		A9F14DE72AEF7D3100D66389 /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; name = README.md; path = ../README.md; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -1060,6 +1062,7 @@
 		A97BF7B32A5C602D00B8F5CA = {
 			isa = PBXGroup;
 			children = (
+				A9F14DE72AEF7D3100D66389 /* README.md */,
 				A9D6C4B72A5F03180038D0BB /* LFModules */,
 				A97BF7BE2A5C602D00B8F5CA /* LiquidityFinancial */,
 				A97BF7CF2A5C602F00B8F5CA /* LiquidityFinancialTests */,
@@ -2109,6 +2112,7 @@
 				A9BC80482A774D4F00E4A1A0 /* Inter-Bold.ttf in Resources */,
 				A9BC80472A774D4F00E4A1A0 /* Inter-Medium.ttf in Resources */,
 				A97BF8402A5DC13000B8F5CA /* Colors.xcassets in Resources */,
+				A9F14DE82AEF7D3100D66389 /* README.md in Resources */,
 				06D40BF82A625F5400EADB75 /* LoadingMix.json in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

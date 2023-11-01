@@ -8,6 +8,7 @@ import UIKit
 import LFServices
 import LFStyleGuide
 import AuthorizationManager
+import NetworkUtilities
 
 @MainActor
 final class KYCStatusViewModel: ObservableObject {
@@ -58,7 +59,8 @@ extension KYCStatusViewModel {
       isLoading = true
       do {
         let user = try await accountRepository.getUser()
-        var request = URLRequest(url: URL(string: "https://api-crypto.dev.liquidity.cc/v1/admin/users/\(user.userID)/approve")!)
+        let urlString = APIConstants.devHost + "/v1/admin/users/\(user.userID)/approve"
+        var request = URLRequest(url: URL(string: urlString)!)
         request.httpMethod = "POST"
         let (_, response) = try await URLSession.shared.data(for: request)
         let httpResponse = response as? HTTPURLResponse

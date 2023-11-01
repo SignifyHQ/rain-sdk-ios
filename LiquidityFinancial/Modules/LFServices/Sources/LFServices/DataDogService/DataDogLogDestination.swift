@@ -1,19 +1,27 @@
 import DatadogLogs
 import SwiftyBeaver
 import LFUtilities
+import UIKit
 
 class DataDogLogDestination: BaseDestination {
   private lazy var logger: LoggerProtocol = {
-    let logger = Logger.create(
-      with: Logger.Configuration(
-        service: "liquidity.datadog.destination",
-        name: LFUtilities.appName,
-        networkInfoEnabled: true,
-        remoteLogThreshold: .info,
-        consoleLogFormat: .shortWith(prefix: "[iOS App] ")
-      )
+    let ddLogger = Logger.create(
+        with: Logger.Configuration(
+            name: "ios-liquidity-logger-new-\(LFUtilities.target?.rawValue.lowercased() ?? "")",
+            networkInfoEnabled: true,
+            remoteLogThreshold: .info,
+            consoleLogFormat: .shortWith(prefix: "[iOS App] ")
+        )
     )
-    return logger
+
+    ddLogger.addAttribute(forKey: "device-model", value: UIDevice.current.model)
+
+    #if DEBUG
+    ddLogger.addTag(withKey: "build_configuration", value: "debug")
+    #else
+    ddLogger.addTag(withKey: "build_configuration", value: "release")
+    #endif
+    return ddLogger
   }()
 
   public override var defaultHashValue: Int { 100 }

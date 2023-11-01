@@ -4,8 +4,11 @@ import SwiftUI
 extension Color {
   
   static var gradientAngular: [Color] = {
-    let colors: [Color] = gradientSet(amount: 2, name: "gradientAngular")
-    return colors + colors.reversed()
+    let colors: [Color] = [
+      ModuleColors.Gradients.Angular.gradientAngular0.swiftUIColor,
+      ModuleColors.Gradients.Angular.gradientAngular1.swiftUIColor
+    ]
+    return colors
   }()
   
   private static func gradientSet(amount: Int, name: String) -> [Color] {

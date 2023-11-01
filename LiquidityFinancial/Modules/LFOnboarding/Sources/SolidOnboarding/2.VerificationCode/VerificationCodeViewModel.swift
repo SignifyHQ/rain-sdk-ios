@@ -66,7 +66,7 @@ extension VerificationCodeViewModel {
       ? .ssn
       : isPassportCheck ? .passport : nil
       if let kind = identityVerificationKind {
-        let viewModel = IdentityVerificationCodeViewModel(phoneNumber: formatPhoneNumber, otpCode: otpCode, kind: kind)
+        let viewModel = IdentityVerificationCodeViewModel(phoneNumber: formatPhoneNumber, otpCode: code, kind: kind)
         let view = IdentityVerificationCodeView(viewModel: viewModel)
         coordinator
           .verificationDestinationView = .identityVerificationCode(AnyView(view))
@@ -126,7 +126,7 @@ extension VerificationCodeViewModel {
         guard let self else { return }
         log.debug(code ?? "performGetTwilioMessagesIfNeccessary not found")
         guard let code = code else { return }
-        self.otpCode = code
+        self.handleAfterGetOTP(formatPhoneNumber: formatPhoneNumber, code: code)
       }
       .store(in: &cancellables)
   }

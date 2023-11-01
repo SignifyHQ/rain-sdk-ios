@@ -24,14 +24,12 @@ struct AppView: View {
       case.onboardingPhone:
         SolidOnboardingContentView(onRoute: .phone)
       case .onboarding:
-//        EmptyView()
         SolidOnboardingContentView()
       case .dashboard:
         HomeView(viewModel: HomeViewModel(tabOptions: buildTabOption())) { route in
           viewModel.setDumpOutRoute(route)
         }
       case .dumpOut(let route):
-//        EmptyView()
         SolidOnboardingContentView(onRoute: route)
       }
     }
