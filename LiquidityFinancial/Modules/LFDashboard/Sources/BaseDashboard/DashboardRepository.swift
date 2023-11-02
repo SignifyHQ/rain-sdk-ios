@@ -78,6 +78,10 @@ public final class DashboardRepository: ObservableObject {
     SolidGetWireTranferUseCase(repository: solidExternalFundingRepository)
   }()
   
+  lazy var unlinkContactUseCase: SolidUnlinkContactUseCaseProtocol = {
+    SolidUnlinkContactUseCase(repository: solidExternalFundingRepository)
+  }()
+  
   lazy var getListCardUseCase: NSGetListCardUseCaseProtocol = {
     NSGetListCardUseCase(repository: cardRepository)
   }()
@@ -450,6 +454,21 @@ extension DashboardRepository {
 
 extension DashboardRepository {
   
+  private func removeUnknowContactSources(_ sources: [SolidContactEntity]) {
+    Task {
+      do {
+        for source in sources {
+          guard APISolidContactType(rawValue: source.type) == nil else {
+            continue
+          }
+          _ = try? await self.unlinkContactUseCase.execute(id: source.solidContactId)
+        }
+      } catch {
+        log.error(error.localizedDescription)
+      }
+    }
+  }
+  
   private func fetchSolidLinkedSources() {
     Task { @MainActor in
       do {
@@ -458,14 +477,17 @@ extension DashboardRepository {
           return
         }
         let response = try await self.solidGetLinkedSourcesUseCase.execute(accountID: account.id)
+        var unknownSources: [SolidContactEntity] = []
         let contacts = response.compactMap({ (data: SolidContactEntity) -> LinkedSourceContact? in
           guard let type = APISolidContactType(rawValue: data.type) else {
+            unknownSources.append(data)
             return nil
           }
           let sourceType: LinkedSourceContactType = type == .externalBank ? .bank : .card
           return LinkedSourceContact(name: data.name, last4: data.last4, sourceType: sourceType, sourceId: data.solidContactId)
         })
         self.externalFundingDataManager.storeLinkedSources(contacts)
+        self.removeUnknowContactSources(unknownSources)
       } catch {
         log.error(error.localizedDescription)
       }

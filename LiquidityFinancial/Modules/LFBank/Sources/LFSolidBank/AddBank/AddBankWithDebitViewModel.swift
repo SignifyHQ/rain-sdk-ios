@@ -39,6 +39,10 @@ class AddBankWithDebitViewModel: ObservableObject {
     SolidGetLinkedSourcesUseCase(repository: solidExternalFundingRepository)
   }()
   
+  lazy var unlinkContactUseCase: SolidUnlinkContactUseCaseProtocol = {
+    SolidUnlinkContactUseCase(repository: solidExternalFundingRepository)
+  }()
+  
   private var fiatAccount: LFAccount?
   
   init() {
@@ -158,14 +162,18 @@ extension AddBankWithDebitViewModel {
       defer {
         self.loading = false
       }
+      var isLinkedSuccessful = false
+      var solidContactId = ""
       do {
         let debitCardToken = try await getDebitCardToken()
         let debitCardData = try generateDebitCardData()
+        solidContactId = debitCardToken.solidContactId
         try await vaultService.addDebitCardToVault(
           debitCardToken: debitCardToken,
           debitCardData: debitCardData
         )
         
+        isLinkedSuccessful = true
         analyticsService.track(event: AnalyticsEvent(name: .debitCardConnectionSuccess))
         
         guard let account = fiatAccount else {
@@ -183,6 +191,9 @@ extension AddBankWithDebitViewModel {
         
         self.navigation = .moveMoney
       } catch {
+        if !isLinkedSuccessful {
+          _ = try? await self.unlinkContactUseCase.execute(id: solidContactId)
+        }
         analyticsService.track(event: AnalyticsEvent(name: .debitCardFail))
         log.error(error.localizedDescription)
         self.toastMessage = error.localizedDescription
