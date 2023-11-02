@@ -166,4 +166,56 @@ public class MockSolidExternalFundingRepositoryProtocol: SolidExternalFundingRep
         }
     }
 
+    //MARK: - newTransaction
+
+    public var newTransactionTypeAccountIdContactIdAmountThrowableError: Error?
+    public var newTransactionTypeAccountIdContactIdAmountCallsCount = 0
+    public var newTransactionTypeAccountIdContactIdAmountCalled: Bool {
+        return newTransactionTypeAccountIdContactIdAmountCallsCount > 0
+    }
+    public var newTransactionTypeAccountIdContactIdAmountReceivedArguments: (type: SolidExternalTransactionType, accountId: String, contactId: String, amount: Double)?
+    public var newTransactionTypeAccountIdContactIdAmountReceivedInvocations: [(type: SolidExternalTransactionType, accountId: String, contactId: String, amount: Double)] = []
+    public var newTransactionTypeAccountIdContactIdAmountReturnValue: SolidExternalTransactionResponseEntity!
+    public var newTransactionTypeAccountIdContactIdAmountClosure: ((SolidExternalTransactionType, String, String, Double) async throws -> SolidExternalTransactionResponseEntity)?
+
+    public func newTransaction(type: SolidExternalTransactionType, accountId: String, contactId: String, amount: Double) async throws -> SolidExternalTransactionResponseEntity {
+        if let error = newTransactionTypeAccountIdContactIdAmountThrowableError {
+            throw error
+        }
+        newTransactionTypeAccountIdContactIdAmountCallsCount += 1
+        newTransactionTypeAccountIdContactIdAmountReceivedArguments = (type: type, accountId: accountId, contactId: contactId, amount: amount)
+        newTransactionTypeAccountIdContactIdAmountReceivedInvocations.append((type: type, accountId: accountId, contactId: contactId, amount: amount))
+        if let newTransactionTypeAccountIdContactIdAmountClosure = newTransactionTypeAccountIdContactIdAmountClosure {
+            return try await newTransactionTypeAccountIdContactIdAmountClosure(type, accountId, contactId, amount)
+        } else {
+            return newTransactionTypeAccountIdContactIdAmountReturnValue
+        }
+    }
+
+    //MARK: - estimateDebitCardFee
+
+    public var estimateDebitCardFeeAccountIdContactIdAmountThrowableError: Error?
+    public var estimateDebitCardFeeAccountIdContactIdAmountCallsCount = 0
+    public var estimateDebitCardFeeAccountIdContactIdAmountCalled: Bool {
+        return estimateDebitCardFeeAccountIdContactIdAmountCallsCount > 0
+    }
+    public var estimateDebitCardFeeAccountIdContactIdAmountReceivedArguments: (accountId: String, contactId: String, amount: Double)?
+    public var estimateDebitCardFeeAccountIdContactIdAmountReceivedInvocations: [(accountId: String, contactId: String, amount: Double)] = []
+    public var estimateDebitCardFeeAccountIdContactIdAmountReturnValue: SolidDebitCardTransferFeeResponseEntity!
+    public var estimateDebitCardFeeAccountIdContactIdAmountClosure: ((String, String, Double) async throws -> SolidDebitCardTransferFeeResponseEntity)?
+
+    public func estimateDebitCardFee(accountId: String, contactId: String, amount: Double) async throws -> SolidDebitCardTransferFeeResponseEntity {
+        if let error = estimateDebitCardFeeAccountIdContactIdAmountThrowableError {
+            throw error
+        }
+        estimateDebitCardFeeAccountIdContactIdAmountCallsCount += 1
+        estimateDebitCardFeeAccountIdContactIdAmountReceivedArguments = (accountId: accountId, contactId: contactId, amount: amount)
+        estimateDebitCardFeeAccountIdContactIdAmountReceivedInvocations.append((accountId: accountId, contactId: contactId, amount: amount))
+        if let estimateDebitCardFeeAccountIdContactIdAmountClosure = estimateDebitCardFeeAccountIdContactIdAmountClosure {
+            return try await estimateDebitCardFeeAccountIdContactIdAmountClosure(accountId, contactId, amount)
+        } else {
+            return estimateDebitCardFeeAccountIdContactIdAmountReturnValue
+        }
+    }
+
 }

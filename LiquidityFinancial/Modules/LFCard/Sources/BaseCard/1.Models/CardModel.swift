@@ -57,9 +57,15 @@ public enum CardStatus: String {
       self = .active
     case "closed":
       self = .closed
+    case "canceled":
+      self = .closed
     case "disabled":
       self = .disabled
+    case "inactive":
+      self = .disabled
     case "unactivated":
+      self = .unactivated
+    case "pendingActivation":
       self = .unactivated
     default:
       self = .unactivated

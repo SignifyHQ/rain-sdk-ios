@@ -13,27 +13,27 @@ public class MockNSAccountAPIProtocol: NSAccountAPIProtocol {
 
     //MARK: - getStatements
 
-    public var getStatementsSessionIdFromMonthFromYearToMonthToYearThrowableError: Error?
-    public var getStatementsSessionIdFromMonthFromYearToMonthToYearCallsCount = 0
-    public var getStatementsSessionIdFromMonthFromYearToMonthToYearCalled: Bool {
-        return getStatementsSessionIdFromMonthFromYearToMonthToYearCallsCount > 0
+    public var getStatementsSessionIdParametersThrowableError: Error?
+    public var getStatementsSessionIdParametersCallsCount = 0
+    public var getStatementsSessionIdParametersCalled: Bool {
+        return getStatementsSessionIdParametersCallsCount > 0
     }
-    public var getStatementsSessionIdFromMonthFromYearToMonthToYearReceivedArguments: (sessionId: String, fromMonth: String, fromYear: String, toMonth: String, toYear: String)?
-    public var getStatementsSessionIdFromMonthFromYearToMonthToYearReceivedInvocations: [(sessionId: String, fromMonth: String, fromYear: String, toMonth: String, toYear: String)] = []
-    public var getStatementsSessionIdFromMonthFromYearToMonthToYearReturnValue: [StatementModel]!
-    public var getStatementsSessionIdFromMonthFromYearToMonthToYearClosure: ((String, String, String, String, String) async throws -> [StatementModel])?
+    public var getStatementsSessionIdParametersReceivedArguments: (sessionId: String, parameters: GetStatementParameters)?
+    public var getStatementsSessionIdParametersReceivedInvocations: [(sessionId: String, parameters: GetStatementParameters)] = []
+    public var getStatementsSessionIdParametersReturnValue: [StatementModel]!
+    public var getStatementsSessionIdParametersClosure: ((String, GetStatementParameters) async throws -> [StatementModel])?
 
-    public func getStatements(sessionId: String, fromMonth: String, fromYear: String, toMonth: String, toYear: String) async throws -> [StatementModel] {
-        if let error = getStatementsSessionIdFromMonthFromYearToMonthToYearThrowableError {
+    public func getStatements(sessionId: String, parameters: GetStatementParameters) async throws -> [StatementModel] {
+        if let error = getStatementsSessionIdParametersThrowableError {
             throw error
         }
-        getStatementsSessionIdFromMonthFromYearToMonthToYearCallsCount += 1
-        getStatementsSessionIdFromMonthFromYearToMonthToYearReceivedArguments = (sessionId: sessionId, fromMonth: fromMonth, fromYear: fromYear, toMonth: toMonth, toYear: toYear)
-        getStatementsSessionIdFromMonthFromYearToMonthToYearReceivedInvocations.append((sessionId: sessionId, fromMonth: fromMonth, fromYear: fromYear, toMonth: toMonth, toYear: toYear))
-        if let getStatementsSessionIdFromMonthFromYearToMonthToYearClosure = getStatementsSessionIdFromMonthFromYearToMonthToYearClosure {
-            return try await getStatementsSessionIdFromMonthFromYearToMonthToYearClosure(sessionId, fromMonth, fromYear, toMonth, toYear)
+        getStatementsSessionIdParametersCallsCount += 1
+        getStatementsSessionIdParametersReceivedArguments = (sessionId: sessionId, parameters: parameters)
+        getStatementsSessionIdParametersReceivedInvocations.append((sessionId: sessionId, parameters: parameters))
+        if let getStatementsSessionIdParametersClosure = getStatementsSessionIdParametersClosure {
+            return try await getStatementsSessionIdParametersClosure(sessionId, parameters)
         } else {
-            return getStatementsSessionIdFromMonthFromYearToMonthToYearReturnValue
+            return getStatementsSessionIdParametersReturnValue
         }
     }
 

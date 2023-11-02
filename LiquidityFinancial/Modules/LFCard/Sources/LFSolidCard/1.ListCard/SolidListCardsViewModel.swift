@@ -4,6 +4,8 @@ import Combine
 import Factory
 import NetSpendData
 import NetspendDomain
+import SolidData
+import SolidDomain
 import LFUtilities
 import OnboardingData
 import AccountData
@@ -21,6 +23,7 @@ public final class SolidListCardsViewModel: ListCardsViewModelProtocol {
   @LazyInjected(\.accountDataManager) var accountDataManager
   @LazyInjected(\.rewardDataManager) var rewardDataManager
   @LazyInjected(\.cardRepository) var cardRepository
+  @LazyInjected(\.solidCardRepository) var solidCardRepository
   @LazyInjected(\.rewardRepository) var rewardRepository
   @LazyInjected(\.customerSupportService) var customerSupportService
   @LazyInjected(\.analyticsService) var analyticsService
@@ -52,12 +55,8 @@ public final class SolidListCardsViewModel: ListCardsViewModelProtocol {
   
   public var cancellables: Set<AnyCancellable> = []
   
-  lazy var lockCardUseCase: NSLockCardUseCaseProtocol = {
-    NSLockCardUseCase(repository: cardRepository)
-  }()
-  
-  lazy var unLockCardUseCase: NSUnLockCardUseCaseProtocol = {
-    NSUnLockCardUseCase(repository: cardRepository)
+  lazy var updateCardStatusUseCase: SolidUpdateCardStatusUseCaseProtocol = {
+    SolidUpdateCardStatusUseCase(repository: solidCardRepository)
   }()
   
   lazy var closeCardUseCase: NSCloseCardUseCaseProtocol = {
@@ -80,7 +79,9 @@ public extension SolidListCardsViewModel {
     isLoading = true
     Task {
       do {
-        let card = try await lockCardUseCase.execute(cardID: currentCard.id, sessionID: accountDataManager.sessionID)
+        let cardStatus = "inactive"
+        let parameters = APISolidCardStatusParameters(cardStatus: cardStatus)
+        let card = try await updateCardStatusUseCase.execute(cardID: currentCard.id, parameters: parameters)
         updateCardStatus(status: .disabled, id: card.id)
       } catch {
         isCardLocked = false
@@ -94,7 +95,9 @@ public extension SolidListCardsViewModel {
     isLoading = true
     Task {
       do {
-        let card = try await unLockCardUseCase.execute(cardID: currentCard.id, sessionID: accountDataManager.sessionID)
+        let cardStatus = "active"
+        let parameters = APISolidCardStatusParameters(cardStatus: cardStatus)
+        let card = try await updateCardStatusUseCase.execute(cardID: currentCard.id, parameters: parameters)
         updateCardStatus(status: .active, id: card.id)
       } catch {
         isCardLocked = true

@@ -32,4 +32,30 @@ public class MockSolidCardRepositoryProtocol: SolidCardRepositoryProtocol {
         }
     }
 
+    //MARK: - updateCardStatus
+
+    public var updateCardStatusCardIDParametersThrowableError: Error?
+    public var updateCardStatusCardIDParametersCallsCount = 0
+    public var updateCardStatusCardIDParametersCalled: Bool {
+        return updateCardStatusCardIDParametersCallsCount > 0
+    }
+    public var updateCardStatusCardIDParametersReceivedArguments: (cardID: String, parameters: SolidCardStatusParametersEntity)?
+    public var updateCardStatusCardIDParametersReceivedInvocations: [(cardID: String, parameters: SolidCardStatusParametersEntity)] = []
+    public var updateCardStatusCardIDParametersReturnValue: SolidCardEntity!
+    public var updateCardStatusCardIDParametersClosure: ((String, SolidCardStatusParametersEntity) async throws -> SolidCardEntity)?
+
+    public func updateCardStatus(cardID: String, parameters: SolidCardStatusParametersEntity) async throws -> SolidCardEntity {
+        if let error = updateCardStatusCardIDParametersThrowableError {
+            throw error
+        }
+        updateCardStatusCardIDParametersCallsCount += 1
+        updateCardStatusCardIDParametersReceivedArguments = (cardID: cardID, parameters: parameters)
+        updateCardStatusCardIDParametersReceivedInvocations.append((cardID: cardID, parameters: parameters))
+        if let updateCardStatusCardIDParametersClosure = updateCardStatusCardIDParametersClosure {
+            return try await updateCardStatusCardIDParametersClosure(cardID, parameters)
+        } else {
+            return updateCardStatusCardIDParametersReturnValue
+        }
+    }
+
 }

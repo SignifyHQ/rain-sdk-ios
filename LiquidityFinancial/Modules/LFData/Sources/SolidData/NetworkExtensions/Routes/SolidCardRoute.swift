@@ -6,6 +6,7 @@ import SolidDomain
 
 public enum SolidCardRoute {
   case listCard
+  case updateCardStatus(cardID: String, parameters: APISolidCardStatusParameters)
 }
 
 extension SolidCardRoute: LFRoute {
@@ -14,6 +15,8 @@ extension SolidCardRoute: LFRoute {
     switch self {
     case .listCard:
       return "/v1/solid/cards"
+    case let .updateCardStatus(cardID, _):
+      return "/v1/solid/cards/\(cardID)/status"
     }
   }
   
@@ -21,6 +24,8 @@ extension SolidCardRoute: LFRoute {
     switch self {
     case .listCard:
       return .GET
+    case .updateCardStatus:
+      return .PATCH
     }
   }
   
@@ -38,6 +43,8 @@ extension SolidCardRoute: LFRoute {
     switch self {
     case .listCard:
       return nil
+    case let .updateCardStatus(_, parameters):
+      return parameters.encoded()
     }
   }
   
@@ -45,6 +52,8 @@ extension SolidCardRoute: LFRoute {
     switch self {
     case .listCard:
       return nil
+    case .updateCardStatus:
+      return .json
     }
   }
   

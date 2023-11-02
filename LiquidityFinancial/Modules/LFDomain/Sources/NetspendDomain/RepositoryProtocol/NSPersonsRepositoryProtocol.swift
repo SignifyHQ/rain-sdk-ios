@@ -1,5 +1,4 @@
 import Foundation
-import NetspendSdk
 
 public protocol NSPersonsRepositoryProtocol {
   func clientSessionInit() async throws -> NSJwkTokenEntity

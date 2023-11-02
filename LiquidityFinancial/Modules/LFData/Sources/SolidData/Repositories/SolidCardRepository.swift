@@ -8,6 +8,14 @@ public class SolidCardRepository: SolidCardRepositoryProtocol {
   }
   
   public func getListCard() async throws -> [SolidCardEntity] {
-    return try await cardAPI.getListCard()
+    try await cardAPI.getListCard()
   }
+  
+  public func updateCardStatus(cardID: String, parameters: SolidCardStatusParametersEntity) async throws -> SolidCardEntity {
+    guard let parameters = parameters as? APISolidCardStatusParameters else {
+      throw "Can't map paramater :\(parameters)"
+    }
+    return try await cardAPI.updateCardStatus(cardID: cardID, parameters: parameters)
+  }
+  
 }

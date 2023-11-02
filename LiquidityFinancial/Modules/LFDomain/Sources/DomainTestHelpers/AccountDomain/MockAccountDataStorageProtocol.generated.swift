@@ -64,6 +64,7 @@ public class MockAccountDataStorageProtocol: AccountDataStorageProtocol {
         set(value) { underlyingAccountsSubject = value }
     }
     public var underlyingAccountsSubject: CurrentValueSubject<[LFAccount], Never>!
+    public var fiatAccounts: [LFAccount] = []
     public var featureConfig: FeatureConfigModel?
 
     //MARK: - subscribeWalletAddressesChanged
