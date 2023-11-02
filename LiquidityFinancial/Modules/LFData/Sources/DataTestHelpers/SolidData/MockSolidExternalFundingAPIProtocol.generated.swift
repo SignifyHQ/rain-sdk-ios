@@ -4,6 +4,7 @@
 
 import Foundation
 import SolidData
+import SolidDomain
 
 public class MockSolidExternalFundingAPIProtocol: SolidExternalFundingAPIProtocol {
 
@@ -163,6 +164,58 @@ public class MockSolidExternalFundingAPIProtocol: SolidExternalFundingAPIProtoco
             return try await getWireTransferAccountIdClosure(accountId)
         } else {
             return getWireTransferAccountIdReturnValue
+        }
+    }
+
+    //MARK: - newTransaction
+
+    public var newTransactionTypeAccountIdContactIdAmountThrowableError: Error?
+    public var newTransactionTypeAccountIdContactIdAmountCallsCount = 0
+    public var newTransactionTypeAccountIdContactIdAmountCalled: Bool {
+        return newTransactionTypeAccountIdContactIdAmountCallsCount > 0
+    }
+    public var newTransactionTypeAccountIdContactIdAmountReceivedArguments: (type: SolidExternalTransactionType, accountId: String, contactId: String, amount: Double)?
+    public var newTransactionTypeAccountIdContactIdAmountReceivedInvocations: [(type: SolidExternalTransactionType, accountId: String, contactId: String, amount: Double)] = []
+    public var newTransactionTypeAccountIdContactIdAmountReturnValue: APISolidExternalTransactionResponse!
+    public var newTransactionTypeAccountIdContactIdAmountClosure: ((SolidExternalTransactionType, String, String, Double) async throws -> APISolidExternalTransactionResponse)?
+
+    public func newTransaction(type: SolidExternalTransactionType, accountId: String, contactId: String, amount: Double) async throws -> APISolidExternalTransactionResponse {
+        if let error = newTransactionTypeAccountIdContactIdAmountThrowableError {
+            throw error
+        }
+        newTransactionTypeAccountIdContactIdAmountCallsCount += 1
+        newTransactionTypeAccountIdContactIdAmountReceivedArguments = (type: type, accountId: accountId, contactId: contactId, amount: amount)
+        newTransactionTypeAccountIdContactIdAmountReceivedInvocations.append((type: type, accountId: accountId, contactId: contactId, amount: amount))
+        if let newTransactionTypeAccountIdContactIdAmountClosure = newTransactionTypeAccountIdContactIdAmountClosure {
+            return try await newTransactionTypeAccountIdContactIdAmountClosure(type, accountId, contactId, amount)
+        } else {
+            return newTransactionTypeAccountIdContactIdAmountReturnValue
+        }
+    }
+
+    //MARK: - estimateDebitCardFee
+
+    public var estimateDebitCardFeeAccountIdContactIdAmountThrowableError: Error?
+    public var estimateDebitCardFeeAccountIdContactIdAmountCallsCount = 0
+    public var estimateDebitCardFeeAccountIdContactIdAmountCalled: Bool {
+        return estimateDebitCardFeeAccountIdContactIdAmountCallsCount > 0
+    }
+    public var estimateDebitCardFeeAccountIdContactIdAmountReceivedArguments: (accountId: String, contactId: String, amount: Double)?
+    public var estimateDebitCardFeeAccountIdContactIdAmountReceivedInvocations: [(accountId: String, contactId: String, amount: Double)] = []
+    public var estimateDebitCardFeeAccountIdContactIdAmountReturnValue: APISolidDebitCardTransferFeeResponse!
+    public var estimateDebitCardFeeAccountIdContactIdAmountClosure: ((String, String, Double) async throws -> APISolidDebitCardTransferFeeResponse)?
+
+    public func estimateDebitCardFee(accountId: String, contactId: String, amount: Double) async throws -> APISolidDebitCardTransferFeeResponse {
+        if let error = estimateDebitCardFeeAccountIdContactIdAmountThrowableError {
+            throw error
+        }
+        estimateDebitCardFeeAccountIdContactIdAmountCallsCount += 1
+        estimateDebitCardFeeAccountIdContactIdAmountReceivedArguments = (accountId: accountId, contactId: contactId, amount: amount)
+        estimateDebitCardFeeAccountIdContactIdAmountReceivedInvocations.append((accountId: accountId, contactId: contactId, amount: amount))
+        if let estimateDebitCardFeeAccountIdContactIdAmountClosure = estimateDebitCardFeeAccountIdContactIdAmountClosure {
+            return try await estimateDebitCardFeeAccountIdContactIdAmountClosure(accountId, contactId, amount)
+        } else {
+            return estimateDebitCardFeeAccountIdContactIdAmountReturnValue
         }
     }
 

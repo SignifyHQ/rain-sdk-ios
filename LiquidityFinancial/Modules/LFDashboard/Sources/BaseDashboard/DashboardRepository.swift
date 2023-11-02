@@ -38,6 +38,7 @@ public final class DashboardRepository: ObservableObject {
   
   @LazyInjected(\.solidAccountRepository) var solidAccountRepository
   @LazyInjected(\.solidExternalFundingRepository) var solidExternalFundingRepository
+  @LazyInjected(\.solidCardRepository) var solidCardRepository
   
   @LazyInjected(\.nsOnboardingFlowCoordinator) var onboardingFlowCoordinator
   
@@ -82,8 +83,12 @@ public final class DashboardRepository: ObservableObject {
     SolidUnlinkContactUseCase(repository: solidExternalFundingRepository)
   }()
   
-  lazy var getListCardUseCase: NSGetListCardUseCaseProtocol = {
+  lazy var getListNSCardUseCase: NSGetListCardUseCaseProtocol = {
     NSGetListCardUseCase(repository: cardRepository)
+  }()
+  
+  lazy var getListSolidCardUseCase: SolidGetListCardUseCaseProtocol = {
+    SolidGetListCardUseCase(repository: solidCardRepository)
   }()
   
   lazy var getCardUseCase: NSGetCardUseCaseProtocol = {
@@ -190,7 +195,7 @@ public extension DashboardRepository {
     netspendCardData.loading = true
     Task { @MainActor in
       do {
-        let cards = try await getListCardUseCase.execute()
+        let cards = try await getListNSCardUseCase.execute()
         netspendCardData.cards = cards.map { card in
           CardModel(
             id: card.id,
@@ -222,16 +227,16 @@ public extension DashboardRepository {
     solidCardData.loading = true
     Task { @MainActor in
       do {
-        let cards = try await getListCardUseCase.execute()
+        let cards = try await getListSolidCardUseCase.execute()
         solidCardData.cards = cards.map { card in
           CardModel(
             id: card.id,
             cardType: CardType(rawValue: card.type) ?? .virtual,
             cardholderName: nil,
-            expiryMonth: card.expirationMonth,
-            expiryYear: card.expirationYear,
+            expiryMonth: Int(card.expirationMonth) ?? 0,
+            expiryYear: Int(card.expirationYear) ?? 0,
             last4: card.panLast4,
-            cardStatus: CardStatus(rawValue: card.status) ?? .unactivated
+            cardStatus: CardStatus(rawValue: card.cardStatus) ?? .unactivated
           )
         }
         let filteredCards = solidCardData.cards.filter({ $0.cardStatus != .closed })

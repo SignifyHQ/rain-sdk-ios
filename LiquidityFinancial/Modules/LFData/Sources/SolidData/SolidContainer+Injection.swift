@@ -44,3 +44,16 @@ extension Container {
     self { SolidAccountRepository(accountAPI: self.solidAccountAPI.callAsFunction()) }
   }
 }
+
+extension Container {
+  
+  public var solidCardAPI: Factory<SolidCardAPIProtocol> {
+    self {
+      LFCoreNetwork<SolidCardRoute>()
+    }
+  }
+  
+  public var solidCardRepository: Factory<SolidCardRepositoryProtocol> {
+    self { SolidCardRepository(cardAPI: self.solidCardAPI.callAsFunction()) }
+  }
+}
