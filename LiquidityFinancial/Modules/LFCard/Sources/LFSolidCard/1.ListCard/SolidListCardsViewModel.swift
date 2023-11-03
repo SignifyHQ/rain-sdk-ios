@@ -2,8 +2,6 @@ import Foundation
 import LFStyleGuide
 import Combine
 import Factory
-import NetSpendData
-import NetspendDomain
 import SolidData
 import SolidDomain
 import LFUtilities
@@ -22,7 +20,6 @@ public final class SolidListCardsViewModel: ListCardsViewModelProtocol {
   @LazyInjected(\.netspendDataManager) var netspendDataManager
   @LazyInjected(\.accountDataManager) var accountDataManager
   @LazyInjected(\.rewardDataManager) var rewardDataManager
-  @LazyInjected(\.cardRepository) var cardRepository
   @LazyInjected(\.solidCardRepository) var solidCardRepository
   @LazyInjected(\.rewardRepository) var rewardRepository
   @LazyInjected(\.customerSupportService) var customerSupportService
@@ -59,8 +56,8 @@ public final class SolidListCardsViewModel: ListCardsViewModelProtocol {
     SolidUpdateCardStatusUseCase(repository: solidCardRepository)
   }()
   
-  lazy var closeCardUseCase: NSCloseCardUseCaseProtocol = {
-    NSCloseCardUseCase(repository: cardRepository)
+  lazy var closeCardUseCase: SolidCloseCardUseCaseProtocol = {
+    SolidCloseCardUseCase(repository: solidCardRepository)
   }()
   
   lazy var rewardUseCase: RewardUseCaseProtocol = {
@@ -86,7 +83,7 @@ public extension SolidListCardsViewModel {
       } catch {
         isCardLocked = false
         isLoading = false
-        toastMessage = error.localizedDescription
+        handleBackendError(error: error)
       }
     }
   }
@@ -102,7 +99,7 @@ public extension SolidListCardsViewModel {
       } catch {
         isCardLocked = true
         isLoading = false
-        toastMessage = error.localizedDescription
+        handleBackendError(error: error)
       }
     }
   }
@@ -115,13 +112,12 @@ public extension SolidListCardsViewModel {
       hidePopup()
       isLoading = true
       do {
-        let request = CloseCardReasonParameters()
-        _ = try await closeCardUseCase.execute(
-          reason: request, cardID: currentCard.id, sessionID: accountDataManager.sessionID
-        )
-        popup = .closeCardSuccessfully
+        let isSuccess = try await closeCardUseCase.execute(cardID: currentCard.id)
+        if isSuccess {
+          popup = .closeCardSuccessfully
+        }
       } catch {
-        toastMessage = error.localizedDescription
+        handleBackendError(error: error)
       }
     }
   }
@@ -139,8 +135,7 @@ public extension SolidListCardsViewModel {
         let entity = try await rewardUseCase.setRoundUpDonation(body: body)
         rewardDataManager.update(roundUpDonation: entity.userRoundUpEnabled ?? false)
       } catch {
-        log.error(error.localizedDescription)
-        toastMessage = error.localizedDescription
+        handleBackendError(error: error)
       }
     }
   }

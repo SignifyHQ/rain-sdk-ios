@@ -186,4 +186,12 @@ public extension ListCardsViewModelProtocol {
   func setFullScreenCoordinator(destinationView: ListCardsDestinationObservable.FullScreen) {
     coordinator.listCardsDestinationObservable.fullScreen = destinationView
   }
+  
+  func handleBackendError(error: Error) {
+    guard let errorObject = error.asErrorObject else {
+      toastMessage = error.localizedDescription
+      return
+    }
+    toastMessage = errorObject.message
+  }
 }

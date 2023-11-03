@@ -58,4 +58,30 @@ public class MockSolidCardAPIProtocol: SolidCardAPIProtocol {
         }
     }
 
+    //MARK: - closeCard
+
+    public var closeCardCardIDThrowableError: Error?
+    public var closeCardCardIDCallsCount = 0
+    public var closeCardCardIDCalled: Bool {
+        return closeCardCardIDCallsCount > 0
+    }
+    public var closeCardCardIDReceivedCardID: String?
+    public var closeCardCardIDReceivedInvocations: [String] = []
+    public var closeCardCardIDReturnValue: Bool!
+    public var closeCardCardIDClosure: ((String) async throws -> Bool)?
+
+    public func closeCard(cardID: String) async throws -> Bool {
+        if let error = closeCardCardIDThrowableError {
+            throw error
+        }
+        closeCardCardIDCallsCount += 1
+        closeCardCardIDReceivedCardID = cardID
+        closeCardCardIDReceivedInvocations.append(cardID)
+        if let closeCardCardIDClosure = closeCardCardIDClosure {
+            return try await closeCardCardIDClosure(cardID)
+        } else {
+            return closeCardCardIDReturnValue
+        }
+    }
+
 }

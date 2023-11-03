@@ -18,4 +18,8 @@ public class SolidCardRepository: SolidCardRepositoryProtocol {
     return try await cardAPI.updateCardStatus(cardID: cardID, parameters: parameters)
   }
   
+  public func closeCard(cardID: String) async throws -> Bool {
+    try await cardAPI.closeCard(cardID: cardID)
+  }
+  
 }

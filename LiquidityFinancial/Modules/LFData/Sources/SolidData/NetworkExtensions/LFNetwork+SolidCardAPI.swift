@@ -23,4 +23,12 @@ extension LFCoreNetwork: SolidCardAPIProtocol where R == SolidCardRoute {
     )
   }
   
+  public func closeCard(cardID: String) async throws -> Bool {
+    let statusCode = try await request(
+      SolidCardRoute.closeCard(cardID: cardID)
+    ).httpResponse?.statusCode
+    
+    return statusCode?.isSuccess ?? false
+  }
+  
 }
