@@ -7,6 +7,7 @@ public struct LiquidityAlert: View {
   let image: ImageConfiguration
   let title: String
   let message: String?
+  let messageAlignment: TextAlignment
   let primary: ButtonConfiguration
   let secondPrimary: ButtonConfiguration?
   let secondary: ButtonConfiguration?
@@ -16,6 +17,7 @@ public struct LiquidityAlert: View {
     image: LiquidityAlert.ImageConfiguration = .appLogo,
     title: String,
     message: String? = nil,
+    messageAlignment: TextAlignment = .center,
     primary: LiquidityAlert.ButtonConfiguration,
     secondPrimary: LiquidityAlert.ButtonConfiguration? = nil,
     secondary: LiquidityAlert.ButtonConfiguration? = nil,
@@ -24,6 +26,7 @@ public struct LiquidityAlert: View {
     self.image = image
     self.title = title
     self.message = message
+    self.messageAlignment = messageAlignment
     self.primary = primary
     self.secondPrimary = secondPrimary
     self.secondary = secondary
@@ -57,7 +60,7 @@ private extension LiquidityAlert {
         Text(message)
           .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.medium.value))
           .foregroundColor(Colors.label.swiftUIColor.opacity(0.75))
-          .multilineTextAlignment(.center)
+          .multilineTextAlignment(messageAlignment)
           .lineSpacing(1.33)
       }
     }

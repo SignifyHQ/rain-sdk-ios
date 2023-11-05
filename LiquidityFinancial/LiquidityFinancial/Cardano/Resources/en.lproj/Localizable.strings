@@ -49,8 +49,8 @@
 "enterVerificationCode.lastXIdInvalid.message" = "SSN or Passport is invalid.";
 
 // Enter SSN
-"enter_ssn.title" = "PLEASE ENTER YOUR SSN";
-"enter_ssn.placeholder" = "Enter Social Security Number";
+"enter_ssn.title" = "PLEASE ENTER SSN";
+"enter_ssn.placeholder" = "Enter Full Social Security Number";
 "enter_ssn.bullet_one" = "Encrypted using 256-BIT SSL";
 "enter_ssn.bullet_two" = "No credit checks";
 "enter_ssn.why" = "Why do we need SSN?";
@@ -139,7 +139,7 @@
 "documentType.utilityBill.title" = "Utility Bill";
 
 // Address View
-"address_title" = "YOUR ADDRESS";
+"address_title" = "YOUR RESIDENTIAL ADDRESS";
 "addressLine1_title" = "Address line 1 ";
 "addressLine2_title" = "Address line 2";
 "enter_address" = "Enter address";

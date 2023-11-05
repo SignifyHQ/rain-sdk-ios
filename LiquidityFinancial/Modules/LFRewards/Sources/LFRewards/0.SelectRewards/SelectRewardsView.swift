@@ -62,6 +62,8 @@ public struct SelectRewardsView: View {
           .padding(.bottom, 12)
         
         continueButton
+        
+        cashbackDonationDisclosure
       }
       .padding(.horizontal, 30)
       .padding(.bottom, 10)
@@ -114,5 +116,15 @@ public struct SelectRewardsView: View {
     FullSizeButton(title: LFLocalizable.SelectRewards.continue, isDisable: !viewModel.isContinueEnabled, isLoading: $viewModel.isLoading) {
       viewModel.continueTapped()
     }
+  }
+  
+  private var cashbackDonationDisclosure: some View {
+    Text(LFLocalizable.DonationsDisclosure.second)
+      .frame(maxWidth: .infinity)
+      .font(Fonts.regular.swiftUIFont(size: 12))
+      .foregroundColor(ModuleColors.label.swiftUIColor.opacity(0.5))
+      .multilineTextAlignment(.center)
+      .padding(.top, 12)
+      .padding(.horizontal, 24)
   }
 }

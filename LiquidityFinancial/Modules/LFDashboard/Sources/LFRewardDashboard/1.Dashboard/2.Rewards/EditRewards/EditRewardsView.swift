@@ -65,6 +65,7 @@ private extension EditRewardsView {
         }
       }
       Spacer()
+      cashbackDonationDisclosure
       buttonsView
     }
     .padding([.top, .horizontal], 30)
@@ -90,4 +91,15 @@ private extension EditRewardsView {
     }
     .padding(.bottom, 24)
   }
+  
+  private var cashbackDonationDisclosure: some View {
+    Text(LFLocalizable.DonationsDisclosure.second)
+      .frame(maxWidth: .infinity)
+      .font(Fonts.regular.swiftUIFont(size: 12))
+      .foregroundColor(Colors.label.swiftUIColor.opacity(0.5))
+      .multilineTextAlignment(.center)
+      .padding(.bottom, 12)
+      .padding(.horizontal, 24)
+  }
+
 }

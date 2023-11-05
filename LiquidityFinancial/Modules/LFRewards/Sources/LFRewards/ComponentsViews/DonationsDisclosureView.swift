@@ -27,6 +27,7 @@ public struct DonationsDisclosureView: View {
     .onTapGesture {
       showPopup = true
     }
+    .frame(maxWidth: .infinity)
     .font(Fonts.regular.swiftUIFont(size: 12))
     .foregroundColor(ModuleColors.label.swiftUIColor.opacity(0.5))
     .multilineTextAlignment(.center)

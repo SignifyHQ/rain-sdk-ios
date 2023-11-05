@@ -49,6 +49,8 @@ struct ProfileView: View {
     }
     .popup(item: $viewModel.popup) { popup in
       switch popup {
+      case .noticeOfDeletion:
+        noticeOfAccountDeletionPopup
       case .deleteAccount:
         deleteAccountPopup
       case .logout:
@@ -247,6 +249,27 @@ private extension ProfileView {
         .foregroundColor(Colors.label.swiftUIColor.opacity(0.5))
     }
     .padding(.vertical, 16)
+  }
+  
+  var noticeOfAccountDeletionPopup: some View {
+    LiquidityAlert(
+      title: LFLocalizable.Profile.NoticeOfDeletion.title,
+      message: LFLocalizable.Profile.NoticeOfDeletion.message,
+      messageAlignment: .leading,
+      primary: .init(
+        text: LFLocalizable.Profile.NoticeOfDeletion.Continue.title,
+        action: {
+          viewModel.popup = .deleteAccount
+        }
+      ),
+      secondary: .init(
+        text: LFLocalizable.Profile.NoticeOfDeletion.Cancel.title,
+        action: {
+          viewModel.dismissPopup()
+        }
+      ),
+      isLoading: $viewModel.isLoading
+    )
   }
   
   var deleteAccountPopup: some View {

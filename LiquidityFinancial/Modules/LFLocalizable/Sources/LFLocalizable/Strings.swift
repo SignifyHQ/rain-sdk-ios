@@ -12,8 +12,8 @@ import Foundation
 public enum LFLocalizable {
   /// ACCOUNT UPDATE
   public static let accountUpdate = LFLocalizable.tr("Localizable", "account_update", fallback: "ACCOUNT UPDATE")
-  /// YOUR ADDRESS
-  public static let addressTitle = LFLocalizable.tr("Localizable", "address_title", fallback: "YOUR ADDRESS")
+  /// YOUR RESIDENTIAL ADDRESS
+  public static let addressTitle = LFLocalizable.tr("Localizable", "address_title", fallback: "YOUR RESIDENTIAL ADDRESS")
   /// Address line 1 
   public static let addressLine1Title = LFLocalizable.tr("Localizable", "addressLine1_title", fallback: "Address line 1 ")
   /// Address line 2
@@ -1343,6 +1343,8 @@ public enum LFLocalizable {
     public static let userDonations = LFLocalizable.tr("Localizable", "donations.user_donations", fallback: "My Donations")
   }
   public enum DonationsDisclosure {
+    /// Cash Back and Charitable donations are granted automatically at the time of transaction.
+    public static let second = LFLocalizable.tr("Localizable", "donations_disclosure.second", fallback: "Cash Back and Charitable donations are granted automatically at the time of transaction.")
     /// %@ of the donations you make are tax deductible and go to charity. 
     public static func text(_ p1: Any) -> String {
       return LFLocalizable.tr("Localizable", "donations_disclosure.text", String(describing: p1), fallback: "%@ of the donations you make are tax deductible and go to charity. ")
@@ -1439,15 +1441,15 @@ public enum LFLocalizable {
     public static let `continue` = LFLocalizable.tr("Localizable", "enter_ssn.continue", fallback: "Continue")
     /// No SSN? Tap here
     public static let noSsn = LFLocalizable.tr("Localizable", "enter_ssn.no_ssn", fallback: "No SSN? Tap here")
-    /// Enter Social Security Number
-    public static let placeholder = LFLocalizable.tr("Localizable", "enter_ssn.placeholder", fallback: "Enter Social Security Number")
-    /// PLEASE ENTER YOUR SSN
-    public static let title = LFLocalizable.tr("Localizable", "enter_ssn.title", fallback: "PLEASE ENTER YOUR SSN")
+    /// Enter Full Social Security Number
+    public static let placeholder = LFLocalizable.tr("Localizable", "enter_ssn.placeholder", fallback: "Enter Full Social Security Number")
+    /// PLEASE ENTER SSN
+    public static let title = LFLocalizable.tr("Localizable", "enter_ssn.title", fallback: "PLEASE ENTER SSN")
     /// Why do we need SSN?
     public static let why = LFLocalizable.tr("Localizable", "enter_ssn.why", fallback: "Why do we need SSN?")
     public enum Alert {
-      /// A valid SSN is required by our partners to provide cryptocurrency and banking services.
-      public static let message = LFLocalizable.tr("Localizable", "enter_ssn.alert.message", fallback: "A valid SSN is required by our partners to provide cryptocurrency and banking services.")
+      /// A valid SSN is required by our partners to provide banking services.
+      public static let message = LFLocalizable.tr("Localizable", "enter_ssn.alert.message", fallback: "A valid SSN is required by our partners to provide banking services.")
       /// Okay
       public static let okay = LFLocalizable.tr("Localizable", "enter_ssn.alert.okay", fallback: "Okay")
       /// WHY DO WE NEED SSN?
@@ -1918,6 +1920,28 @@ public enum LFLocalizable {
       public static let message = LFLocalizable.tr("Localizable", "profile.logout.message", fallback: "Are you sure you want to log out?")
       /// Log Out
       public static let title = LFLocalizable.tr("Localizable", "profile.logout.title", fallback: "Log Out")
+    }
+    public enum NoticeOfDeletion {
+      /// In order to delete your account, and comply with banking rules and regulations, we ask that you:
+      /// 
+      /// 1.Remove all funds from your account
+      /// 
+      /// 2.Allow all of your transactions to settle and complete
+      /// 
+      /// After submitting your request for deletion, you will continue to have access to your Bank Statements.
+      /// 
+      /// After this, your account data will be deleted as is permitted by law.
+      public static let message = LFLocalizable.tr("Localizable", "profile.noticeOfDeletion.message", fallback: "In order to delete your account, and comply with banking rules and regulations, we ask that you:\n\n1.Remove all funds from your account\n\n2.Allow all of your transactions to settle and complete\n\nAfter submitting your request for deletion, you will continue to have access to your Bank Statements.\n\nAfter this, your account data will be deleted as is permitted by law.")
+      /// NOTICE OF ACCOUNT DELETION
+      public static let title = LFLocalizable.tr("Localizable", "profile.noticeOfDeletion.title", fallback: "NOTICE OF ACCOUNT DELETION")
+      public enum Cancel {
+        /// Cancel
+        public static let title = LFLocalizable.tr("Localizable", "profile.noticeOfDeletion.cancel.title", fallback: "Cancel")
+      }
+      public enum Continue {
+        /// Continue, Delete Account
+        public static let title = LFLocalizable.tr("Localizable", "profile.noticeOfDeletion.continue.title", fallback: "Continue, Delete Account")
+      }
     }
     public enum Notifications {
       /// Notifications
@@ -2747,8 +2771,8 @@ public enum LFLocalizable {
         public static func subtitle(_ p1: Int) -> String {
           return LFLocalizable.tr("Localizable", "transferView.reward_type.cashback.subtitle", p1, fallback: "0.75% on every qualifying purchase")
         }
-        /// Instant Cashback
-        public static let title = LFLocalizable.tr("Localizable", "transferView.reward_type.cashback.title", fallback: "Instant Cashback")
+        /// Cashback
+        public static let title = LFLocalizable.tr("Localizable", "transferView.reward_type.cashback.title", fallback: "Cashback")
       }
       public enum Donation {
         /// 0.75% donated to a charity you choose

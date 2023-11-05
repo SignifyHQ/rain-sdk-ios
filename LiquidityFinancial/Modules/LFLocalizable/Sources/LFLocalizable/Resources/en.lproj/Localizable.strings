@@ -51,15 +51,15 @@
 "enterVerificationCode.lastXIdInvalid.message" = "SSN or Passport is invalid.";
 
 // Enter SSN
-"enter_ssn.title" = "PLEASE ENTER YOUR SSN";
-"enter_ssn.placeholder" = "Enter Social Security Number";
+"enter_ssn.title" = "PLEASE ENTER SSN";
+"enter_ssn.placeholder" = "Enter Full Social Security Number";
 "enter_ssn.bullet_one" = "Encrypted using 256-BIT SSL";
 "enter_ssn.bullet_two" = "No credit checks";
 "enter_ssn.why" = "Why do we need SSN?";
 "enter_ssn.no_ssn" = "No SSN? Tap here";
 "enter_ssn.continue" = "Continue";
 "enter_ssn.alert.title" = "WHY DO WE NEED SSN?";
-"enter_ssn.alert.message" = "A valid SSN is required by our partners to provide cryptocurrency and banking services.";
+"enter_ssn.alert.message" = "A valid SSN is required by our partners to provide banking services.";
 "enter_ssn.alert.okay" = "Okay";
 
 //... PASSPORT...
@@ -141,7 +141,7 @@
 "documentType.utilityBill.title" = "Utility Bill";
 
 // Address View
-"address_title" = "YOUR ADDRESS";
+"address_title" = "YOUR RESIDENTIAL ADDRESS";
 "addressLine1_title" = "Address line 1 ";
 "addressLine2_title" = "Address line 2";
 "enter_address" = "Enter address";
@@ -472,7 +472,7 @@ https://mn.gov/commerce/money/investments/cryptocurrency/. \n\n\n\n\n\n\n";
 "transferView.rewards_status.failed" = "Failed";
 
 // User Reward Type
-"transferView.reward_type.cashback.title" = "Instant Cashback";
+"transferView.reward_type.cashback.title" = "Cashback";
 "transferView.reward_type.cashback.subtitle" = "0.75% on every qualifying purchase";
 "transferView.reward_type.donation.title" = "Donate to Charity";
 "transferView.reward_type.donation.subtitle" = "0.75% donated to a charity you choose";
@@ -625,6 +625,10 @@ https://mn.gov/commerce/money/investments/cryptocurrency/. \n\n\n\n\n\n\n";
 "profile.referrals.message" = "Earn Doge with Friends";
 "profile.logout.title" = "Log Out";
 "profile.logout.message" = "Are you sure you want to log out?";
+"profile.noticeOfDeletion.title" = "NOTICE OF ACCOUNT DELETION";
+"profile.noticeOfDeletion.message" = "In order to delete your account, and comply with banking rules and regulations, we ask that you:\n\n1.Remove all funds from your account\n\n2.Allow all of your transactions to settle and complete\n\nAfter submitting your request for deletion, you will continue to have access to your Bank Statements.\n\nAfter this, your account data will be deleted as is permitted by law.";
+"profile.noticeOfDeletion.continue.title" = "Continue, Delete Account";
+"profile.noticeOfDeletion.cancel.title" = "Cancel";
 
 // Referral
 "referral.screen.title" = "MAKE DONATIONS WITH FRIENDS";
@@ -778,6 +782,7 @@ https://mn.gov/commerce/money/investments/cryptocurrency/. \n\n\n\n\n\n\n";
 "donations_disclosure.text" = "%@ of the donations you make are tax deductible and go to charity. ";
 "donations_disclosure.alert.title" = "DONATIONS";
 "donations_disclosure.alert.powered_by" = "Powered by ShoppingGives ";
+"donations_disclosure.second" = "Cash Back and Charitable donations are granted automatically at the time of transaction.";
 
 // Alert Attributed Text
 "alert_attributed_text.tax_deductions" = "Donations made to ShoppingGives Foundation EIN: %@.\n100%% of funds granted to designated nonprofit - %@ and %@.";

@@ -126,7 +126,7 @@ extension ProfileViewModel {
   }
   
   func deleteAccountTapped() {
-    popup = .deleteAccount
+    popup = .noticeOfDeletion
   }
   
   func deleteAccount() {
@@ -182,6 +182,7 @@ extension ProfileViewModel {
   }
   
   enum Popup {
+    case noticeOfDeletion
     case deleteAccount
     case logout
   }

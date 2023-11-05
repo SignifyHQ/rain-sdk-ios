@@ -21,10 +21,8 @@ public struct EnterSSNView: View {
   private var keyboardFocus: Bool
   
   let onEnterAddress: () -> Void
-  let onEnterPassport: () -> Void
-  public init(viewModel: EnterSSNViewModel, onEnterAddress: @escaping () -> Void, onEnterPassport: @escaping () -> Void) {
+  public init(viewModel: EnterSSNViewModel, onEnterAddress: @escaping () -> Void) {
     self.onEnterAddress = onEnterAddress
-    self.onEnterPassport = onEnterPassport
     _viewModel = .init(wrappedValue: viewModel)
   }
   
@@ -128,27 +126,14 @@ public struct EnterSSNView: View {
         .font(Fonts.regular.swiftUIFont(size: 12))
         .foregroundColor(Colors.label.swiftUIColor.opacity(0.75))
       }
-
-      VStack(spacing: 10) {
-        if viewModel.shouldEnablePassport {
-          FullSizeButton(
-            title: LFLocalizable.EnterSsn.noSsn,
-            isDisable: false,
-            type: .secondary
-          ) {
-            self.viewModel.accountDataManager.update(ssn: nil)
-            self.onEnterPassport()
-          }
-        }
-        
-        FullSizeButton(
-          title: LFLocalizable.EnterSsn.continue,
-          isDisable: !viewModel.isActionAllowed,
-          type: .primary
-        ) {
-          analyticsService.track(event: AnalyticsEvent(name: .ssnCompleted))
-          onEnterAddress()
-        }
+      
+      FullSizeButton(
+        title: LFLocalizable.EnterSsn.continue,
+        isDisable: !viewModel.isActionAllowed,
+        type: .primary
+      ) {
+        analyticsService.track(event: AnalyticsEvent(name: .ssnCompleted))
+        onEnterAddress()
       }
     }
     .ignoresSafeArea(.keyboard, edges: .bottom)

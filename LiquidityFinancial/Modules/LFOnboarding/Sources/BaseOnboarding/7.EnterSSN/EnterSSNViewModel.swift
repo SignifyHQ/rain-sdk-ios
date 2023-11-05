@@ -30,10 +30,6 @@ public final class EnterSSNViewModel: ObservableObject {
     }
   }
   
-  var shouldEnablePassport: Bool {
-    LFUtilities.charityEnabled
-  }
-  
   let isVerifySSN: Bool
   
   public init(isVerifySSN: Bool) {

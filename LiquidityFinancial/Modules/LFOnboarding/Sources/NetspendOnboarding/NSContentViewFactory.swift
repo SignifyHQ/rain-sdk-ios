@@ -156,10 +156,6 @@ private extension NSContentViewFactory {
       onEnterAddress: { [weak self] in
         guard let self else { return }
         self.baseOnboardingNavigation.enterSSNDestinationView = .address(AnyView(self.addressView))
-      },
-      onEnterPassport: { [weak self] in
-        guard let self else { return }
-        self.baseOnboardingNavigation.enterSSNDestinationView = .enterPassport(AnyView(self.enterPassportView))
       })
   }
   
