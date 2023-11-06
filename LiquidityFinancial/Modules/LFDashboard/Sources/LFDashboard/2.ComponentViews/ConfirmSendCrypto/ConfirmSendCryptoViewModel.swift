@@ -1,7 +1,7 @@
 import Foundation
 import BaseDashboard
 import Factory
-import LFServices
+import Services
 import ZerohashData
 import LFTransaction
 import LFLocalizable
@@ -68,8 +68,9 @@ class ConfirmSendCryptoViewModel: ObservableObject {
       showIndicator = true
       do {
         let transactionEntity = try await self.zerohashRepository.execute(accountId: accountId, quoteId: id)
-        let account = try await accountRepository.getAccountDetail(id: accountId)
-        self.accountDataManager.addOrUpdateAccount(account)
+        // TODO: Will add it in another PR
+        // let account = try await accountRepository.getAccountDetail(id: accountId)
+        // self.accountDataManager.addOrUpdateAccount(account)
         transaction = TransactionModel(from: transactionEntity)
         self.navigation = .transactionDetail(transaction.id)
       } catch {
@@ -89,8 +90,9 @@ class ConfirmSendCryptoViewModel: ObservableObject {
           destinationAddress: self.address,
           amount: self.amount
         )
-        let account = try await accountRepository.getAccountDetail(id: id)
-        self.accountDataManager.addOrUpdateAccount(account)
+        // TODO: Will add it in another PR
+        // let account = try await accountRepository.getAccountDetail(id: id)
+        // self.accountDataManager.addOrUpdateAccount(account)
         transaction = TransactionModel(from: transactionEntity)
         self.navigation = .transactionDetail(transaction.id)
       } catch {

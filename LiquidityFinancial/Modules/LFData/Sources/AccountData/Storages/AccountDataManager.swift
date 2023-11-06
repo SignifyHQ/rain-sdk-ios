@@ -3,6 +3,7 @@ import NetspendDomain
 import AccountDomain
 import Combine
 import LFUtilities
+import AccountService
 
 public class AccountDataManager: AccountDataStorageProtocol {
   public func update(addressEntity: AddressEntity?) {
@@ -220,25 +221,25 @@ public class AccountDataManager: AccountDataStorageProtocol {
   }
   
   // MARK: Account
-  public let accountsSubject = CurrentValueSubject<[LFAccount], Never>([])
+  public let accountsSubject = CurrentValueSubject<[AccountModel], Never>([])
   
   public var availableRewardCurrenciesSubject = CurrentValueSubject<AvailableRewardCurrenciesEntity?, Never>(nil)
   
   public var selectedRewardCurrencySubject = CurrentValueSubject<RewardCurrencyEntity?, Never>(nil)
   
-  public var fiatAccounts: [LFAccount] {
+  public var fiatAccounts: [AccountModel] {
     accountsSubject.value.filter({
-      Constants.CurrencyList.fiats.contains($0.currency)
+      $0.currency.isFiat
     })
   }
   
-  public func addOrUpdateAccounts(_ accounts: [LFAccount]) {
+  public func addOrUpdateAccounts(_ accounts: [AccountModel]) {
     for account in accounts {
       addOrUpdateAccount(account)
     }
   }
   
-  public func addOrUpdateAccount(_ account: LFAccount) {
+  public func addOrUpdateAccount(_ account: AccountModel) {
     var newValues = accountsSubject.value
     if let index = newValues.firstIndex(where: { $0.id == account.id }) {
       newValues.replaceSubrange(index...index, with: [account])

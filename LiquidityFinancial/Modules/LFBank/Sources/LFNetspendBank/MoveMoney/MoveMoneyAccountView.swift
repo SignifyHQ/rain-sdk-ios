@@ -3,7 +3,7 @@ import LFStyleGuide
 import LFUtilities
 import LFLocalizable
 import LFTransaction
-import LFServices
+import Services
 import NetSpendData
 
 public struct MoveMoneyAccountView: View {

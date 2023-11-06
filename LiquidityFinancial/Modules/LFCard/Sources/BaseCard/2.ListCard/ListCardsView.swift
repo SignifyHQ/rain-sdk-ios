@@ -4,7 +4,7 @@ import LFLocalizable
 import LFUtilities
 import LFStyleGuide
 import LFRewards
-import LFServices
+import Services
 import Factory
 
 public struct ListCardsView<

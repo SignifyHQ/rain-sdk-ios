@@ -3,7 +3,7 @@ import LFStyleGuide
 import LFUtilities
 import LFLocalizable
 import Factory
-import LFServices
+import Services
 
 public struct SelectCauseCategoriesView: View {
   @Injected(\.analyticsService) var analyticsService

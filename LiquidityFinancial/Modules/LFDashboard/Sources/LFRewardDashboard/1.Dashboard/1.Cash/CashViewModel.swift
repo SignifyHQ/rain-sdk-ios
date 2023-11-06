@@ -12,6 +12,7 @@ import LFTransaction
 import Combine
 import BaseCard
 import ExternalFundingData
+import AccountService
 
 @MainActor
 final class CashViewModel: ObservableObject {
@@ -195,7 +196,7 @@ extension CashViewModel {
   }
   
   @discardableResult
-  private func refreshAccounts() async throws -> LFAccount? {
+  private func refreshAccounts() async throws -> AccountModel? {
     defer { isLoading = false }
     isLoading = true
     let accounts = try await dashboardRepository.getFiatAccounts()
@@ -204,7 +205,7 @@ extension CashViewModel {
       self.accountDataManager.fiatAccountID = account.id
       self.accountDataManager.externalAccountID = account.externalAccountId
       self.cashBalanceValue = account.availableBalance
-      self.selectedAsset = AssetType(rawValue: account.currency) ?? .usd
+      self.selectedAsset = AssetType(rawValue: account.currency.rawValue.uppercased()) ?? .usd
     }
     accountDataManager.addOrUpdateAccounts(accounts)
     return accounts.first

@@ -3,7 +3,7 @@ import LFUtilities
 import LFStyleGuide
 import LFLocalizable
 import Factory
-import LFServices
+import Services
 
 public struct FundraiserItemView: View {
   let fundraiser: FundraiserModel

@@ -2,7 +2,7 @@ import SwiftUI
 import LFStyleGuide
 import LFUtilities
 import LFLocalizable
-import LFServices
+import Services
 
 public struct UploadDocumentView: View {
   @StateObject private var viewModel = UploadDocumentViewModel()

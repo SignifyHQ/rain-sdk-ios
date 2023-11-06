@@ -23,7 +23,8 @@ let package = Package(
       .target(
         name: "LFCryptoChart",
         dependencies: [
-          "LFUtilities", "LFStyleGuide", "LFLocalizable", "LFServices",
+          "LFUtilities", "LFStyleGuide", "LFLocalizable",
+          .product(name: "Services", package: "LFServices"),
           .product(name: "OnboardingData", package: "LFData"),
           .product(name: "NetSpendData", package: "LFData"),
           .product(name: "CryptoChartData", package: "LFData"),

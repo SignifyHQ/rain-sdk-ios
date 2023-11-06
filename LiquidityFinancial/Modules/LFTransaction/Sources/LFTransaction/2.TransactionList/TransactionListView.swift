@@ -2,7 +2,7 @@ import SwiftUI
 import LFLocalizable
 import LFStyleGuide
 import LFUtilities
-import LFServices
+import Services
 
 public struct TransactionListView: View {
   @StateObject private var viewModel: TransactionListViewModel

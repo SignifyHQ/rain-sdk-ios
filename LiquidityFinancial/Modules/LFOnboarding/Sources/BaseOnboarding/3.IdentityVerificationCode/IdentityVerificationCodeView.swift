@@ -3,7 +3,7 @@ import LFUtilities
 import LFStyleGuide
 import LFLocalizable
 import LFAccessibility
-import LFServices
+import Services
 
 public struct IdentityVerificationCodeView<ViewModel>: View where ViewModel: IdentityVerificationCodeViewProtocol {
   @StateObject private var viewModel: ViewModel

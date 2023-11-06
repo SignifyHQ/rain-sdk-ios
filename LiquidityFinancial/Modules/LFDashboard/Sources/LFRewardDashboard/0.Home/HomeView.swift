@@ -9,7 +9,7 @@ import BaseDashboard
 import SolidOnboarding
 import LFSolidBank
 import Factory
-import LFServices
+import Services
 
 public struct HomeView: View {
   

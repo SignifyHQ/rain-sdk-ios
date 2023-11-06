@@ -3,7 +3,7 @@ import SwiftUI
 import LFStyleGuide
 import LFUtilities
 import CryptoChartData
-import LFServices
+import Services
 
 public struct CryptoChartView: View {
   @StateObject private var viewModel: CryptoChartViewModel

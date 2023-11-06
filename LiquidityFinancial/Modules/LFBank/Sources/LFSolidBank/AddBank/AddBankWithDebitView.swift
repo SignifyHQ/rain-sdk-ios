@@ -2,7 +2,7 @@ import SwiftUI
 import LFLocalizable
 import LFStyleGuide
 import LFUtilities
-import LFServices
+import Services
 import Factory
 
 public struct AddBankWithDebitView: View {

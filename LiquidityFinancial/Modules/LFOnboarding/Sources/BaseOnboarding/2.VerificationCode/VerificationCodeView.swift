@@ -5,7 +5,7 @@ import LFUtilities
 import LFLocalizable
 import LFAccessibility
 import OnboardingDomain
-import LFServices
+import Services
 import Factory
 
 public struct VerificationCodeView<ViewModel: VerificationCodeViewModelProtocol>: View {

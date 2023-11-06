@@ -2,7 +2,7 @@ import Foundation
 import UIKit
 import LFLocalizable
 import LFUtilities
-import LFServices
+import Services
 import Factory
 import NetSpendData
 import NetspendDomain

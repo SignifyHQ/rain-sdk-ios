@@ -2,7 +2,7 @@ import SwiftUI
 import LFUtilities
 import LFStyleGuide
 import LFLocalizable
-import LFServices
+import Services
 import NetspendSdk
 import LFNetspendBank
 import BaseDashboard

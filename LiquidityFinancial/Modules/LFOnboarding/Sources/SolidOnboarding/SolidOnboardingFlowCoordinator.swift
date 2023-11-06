@@ -11,7 +11,7 @@ import RewardData
 import RewardDomain
 import LFStyleGuide
 import LFLocalizable
-import LFServices
+import Services
 import BaseOnboarding
 
 extension Container {

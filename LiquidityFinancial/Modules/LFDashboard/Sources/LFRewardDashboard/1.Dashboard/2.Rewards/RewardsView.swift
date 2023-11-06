@@ -4,7 +4,7 @@ import LFUtilities
 import LFLocalizable
 import LFTransaction
 import LFRewards
-import LFServices
+import Services
 
 struct RewardsView: View {
   @StateObject private var viewModel: RewardViewModel

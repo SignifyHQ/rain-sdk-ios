@@ -7,7 +7,8 @@ import LFTransaction
 import CryptoChartData
 import LFCryptoChart
 import BaseDashboard
-import LFServices
+import Services
+import AccountService
 
 @MainActor
 class CryptoAssetViewModel: ObservableObject {
@@ -69,8 +70,9 @@ class CryptoAssetViewModel: ObservableObject {
 private extension CryptoAssetViewModel {
   func getCryptoAccount() async {
     do {
+      // TODO: Will add it in another PR
       let account = try await accountRepository.getAccountDetail(id: self.asset.id)
-      self.accountDataManager.addOrUpdateAccount(account)
+      // self.accountDataManager.addOrUpdateAccount(account)
     } catch {
       toastMessage = error.localizedDescription
     }
@@ -96,7 +98,7 @@ private extension CryptoAssetViewModel {
   func observeAssetChange(id: String) {
     accountDataManager.accountsSubject
       .receive(on: DispatchQueue.main)
-      .compactMap({ (accounts: [LFAccount]) -> AssetModel? in
+      .compactMap({ (accounts: [AccountModel]) -> AssetModel? in
       guard let account = accounts.first(where: {
         $0.id == id
       }) else {

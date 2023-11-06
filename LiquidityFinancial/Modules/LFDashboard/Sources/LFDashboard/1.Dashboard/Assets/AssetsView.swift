@@ -3,7 +3,7 @@ import LFStyleGuide
 import LFLocalizable
 import LFUtilities
 import BaseDashboard
-import LFServices
+import Services
 
 struct AssetsView: View {
   @StateObject private var viewModel: AssetsViewModel

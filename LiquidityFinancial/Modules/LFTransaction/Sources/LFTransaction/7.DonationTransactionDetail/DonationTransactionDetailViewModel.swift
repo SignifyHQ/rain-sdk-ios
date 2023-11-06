@@ -1,6 +1,6 @@
 import Foundation
 import Factory
-import LFServices
+import Services
 
 class DonationTransactionDetailViewModel: ObservableObject {
   @LazyInjected(\.customerSupportService) var customerSupportService

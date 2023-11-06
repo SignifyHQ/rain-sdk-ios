@@ -3,7 +3,7 @@ import SwiftUI
 import LFStyleGuide
 import LFLocalizable
 import LFUtilities
-import LFServices
+import Services
 
 public struct TransactionDetailView: View {
   @StateObject private var viewModel: TransactionDetailViewModel

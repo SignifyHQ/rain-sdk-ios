@@ -5,7 +5,7 @@ import Factory
 import NetSpendData
 import LFUtilities
 import LFLocalizable
-import LFServices
+import Services
 import NetspendDomain
 
 class ConnectedAccountsViewModel: ObservableObject {

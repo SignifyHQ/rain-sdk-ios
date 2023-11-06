@@ -4,14 +4,13 @@ import LFUtilities
 import Combine
 import UIKit
 import LFStyleGuide
-import LFServices
+import Services
 import SwiftUI
 import OnboardingData
-import AccountData
 import SolidData
 import SolidDomain
-import AccountDomain
 import ExternalFundingData
+import AccountService
 
 @MainActor
 class AddBankWithDebitViewModel: ObservableObject {
@@ -22,17 +21,10 @@ class AddBankWithDebitViewModel: ObservableObject {
   @LazyInjected(\.solidExternalFundingRepository) var solidExternalFundingRepository
   @LazyInjected(\.solidAccountRepository) var solidAccountRepository
   @LazyInjected(\.externalFundingDataManager) var externalFundingDataManager
-  
-  lazy var getAccountUsecase: SolidGetAccountsUseCaseProtocol = {
-    SolidGetAccountsUseCase(repository: solidAccountRepository)
-  }()
+  @LazyInjected(\.accountServices) var accountServices
   
   lazy var solidDebitCardTokenUseCase: SolidDebitCardTokenUseCaseProtocol = {
     SolidDebitCardTokenUseCase(repository: solidExternalFundingRepository)
-  }()
-  
-  lazy var solidGetAccountUseCase: SolidGetAccountsUseCaseProtocol = {
-    SolidGetAccountsUseCase(repository: solidAccountRepository)
   }()
   
   lazy var solidGetLinkedSourcesUseCase: SolidGetLinkedSourcesUseCaseProtocol = {
@@ -43,7 +35,7 @@ class AddBankWithDebitViewModel: ObservableObject {
     SolidUnlinkContactUseCase(repository: solidExternalFundingRepository)
   }()
   
-  private var fiatAccount: LFAccount?
+  private var fiatAccount: AccountModel?
   
   init() {
     fetchDefaultFiatAccount()
@@ -132,10 +124,8 @@ extension AddBankWithDebitViewModel {
       do {
         self.fiatAccount = self.accountDataManager.fiatAccounts.first
         if self.fiatAccount == nil {
-          let entity = try await solidGetAccountUseCase.execute()
-          self.fiatAccount = entity.map { item in
-            APIAccount(id: item.id, externalAccountId: item.externalAccountId, currency: item.currency, availableBalance: item.availableBalance, availableUsdBalance: item.availableUsdBalance)
-          }.first
+          let accounts = try await accountServices.getFiatAccounts()
+          self.fiatAccount = accounts.first
         }
       } catch {
         log.error(error.localizedDescription)

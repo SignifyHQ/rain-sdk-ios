@@ -3,7 +3,7 @@ import LFBaseBank
 import LFStyleGuide
 import LFLocalizable
 import LFUtilities
-import LFServices
+import Services
 
 public struct DirectDepositView: View {
   @StateObject var viewModel = DirectDepositViewModel()

@@ -42,9 +42,11 @@ final class AssetsViewModel: ObservableObject {
     do {
       let fiatAccounts = try await fiatAccountsEntity
       let cryptoAccounts = try await cryptoAccountsEntity
-      let accounts = fiatAccounts + cryptoAccounts
+      //let accounts = fiatAccounts + cryptoAccounts
       
-      self.accountDataManager.accountsSubject.send(accounts)
+      // TODO: Will implement crypto account in another PR
+      //self.accountDataManager.accountsSubject.send(accounts)
+      self.accountDataManager.accountsSubject.send(fiatAccounts)
     } catch {
       toastMessage = error.localizedDescription
     }

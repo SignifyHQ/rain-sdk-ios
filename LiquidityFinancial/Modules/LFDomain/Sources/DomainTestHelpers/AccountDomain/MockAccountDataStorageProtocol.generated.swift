@@ -59,12 +59,12 @@ public class MockAccountDataStorageProtocol: AccountDataStorageProtocol {
         set(value) { underlyingSelectedRewardCurrencySubject = value }
     }
     public var underlyingSelectedRewardCurrencySubject: CurrentValueSubject<RewardCurrencyEntity?, Never>!
-    public var accountsSubject: CurrentValueSubject<[LFAccount], Never> {
+    public var accountsSubject: CurrentValueSubject<[AccountModel], Never> {
         get { return underlyingAccountsSubject }
         set(value) { underlyingAccountsSubject = value }
     }
-    public var underlyingAccountsSubject: CurrentValueSubject<[LFAccount], Never>!
-    public var fiatAccounts: [LFAccount] = []
+    public var underlyingAccountsSubject: CurrentValueSubject<[AccountModel], Never>!
+    public var fiatAccounts: [AccountModel] = []
     public var featureConfig: FeatureConfigModel?
 
     //MARK: - subscribeWalletAddressesChanged
@@ -185,7 +185,7 @@ public class MockAccountDataStorageProtocol: AccountDataStorageProtocol {
     public var addOrEditLinkedSourceCalled: Bool {
         return addOrEditLinkedSourceCallsCount > 0
     }
-    public var addOrEditLinkedSourceReceivedSource: (any LinkedSourceDataEntity)?
+    public var addOrEditLinkedSourceReceivedSource: any LinkedSourceDataEntity?
     public var addOrEditLinkedSourceReceivedInvocations: [any LinkedSourceDataEntity] = []
     public var addOrEditLinkedSourceClosure: ((any LinkedSourceDataEntity) -> Void)?
 
@@ -219,11 +219,11 @@ public class MockAccountDataStorageProtocol: AccountDataStorageProtocol {
     public var addOrUpdateAccountsCalled: Bool {
         return addOrUpdateAccountsCallsCount > 0
     }
-    public var addOrUpdateAccountsReceivedAccounts: [LFAccount]?
-    public var addOrUpdateAccountsReceivedInvocations: [[LFAccount]] = []
-    public var addOrUpdateAccountsClosure: (([LFAccount]) -> Void)?
+    public var addOrUpdateAccountsReceivedAccounts: [AccountModel]?
+    public var addOrUpdateAccountsReceivedInvocations: [[AccountModel]] = []
+    public var addOrUpdateAccountsClosure: (([AccountModel]) -> Void)?
 
-    public func addOrUpdateAccounts(_ accounts: [LFAccount]) {
+    public func addOrUpdateAccounts(_ accounts: [AccountModel]) {
         addOrUpdateAccountsCallsCount += 1
         addOrUpdateAccountsReceivedAccounts = accounts
         addOrUpdateAccountsReceivedInvocations.append(accounts)
@@ -236,11 +236,11 @@ public class MockAccountDataStorageProtocol: AccountDataStorageProtocol {
     public var addOrUpdateAccountCalled: Bool {
         return addOrUpdateAccountCallsCount > 0
     }
-    public var addOrUpdateAccountReceivedAccount: LFAccount?
-    public var addOrUpdateAccountReceivedInvocations: [LFAccount] = []
-    public var addOrUpdateAccountClosure: ((LFAccount) -> Void)?
+    public var addOrUpdateAccountReceivedAccount: AccountModel?
+    public var addOrUpdateAccountReceivedInvocations: [AccountModel] = []
+    public var addOrUpdateAccountClosure: ((AccountModel) -> Void)?
 
-    public func addOrUpdateAccount(_ account: LFAccount) {
+    public func addOrUpdateAccount(_ account: AccountModel) {
         addOrUpdateAccountCallsCount += 1
         addOrUpdateAccountReceivedAccount = account
         addOrUpdateAccountReceivedInvocations.append(account)

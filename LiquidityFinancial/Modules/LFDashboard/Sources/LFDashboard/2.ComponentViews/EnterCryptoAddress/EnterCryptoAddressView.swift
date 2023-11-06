@@ -7,7 +7,7 @@ import LFStyleGuide
 import AccountDomain
 import CodeScanner
 import LFWalletAddress
-import LFServices
+import Services
 
 struct EnterCryptoAddressView: View {
   @StateObject private var viewModel: EnterCryptoAddressViewModel

@@ -1,6 +1,6 @@
 import Foundation
 import UIKit
-import LFServices
+import Services
 import Factory
 import AuthorizationManager
 import LFUtilities

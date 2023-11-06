@@ -7,7 +7,7 @@ import LFStyleGuide
 import AccountDomain
 import AccountData
 import BaseDashboard
-import LFServices
+import Services
 import Factory
 
 // MARK: - ReceiveCryptoView

@@ -4,7 +4,7 @@ import UIKit
 import Factory
 import LFUtilities
 import LFLocalizable
-import LFServices
+import Services
 import SolidData
 import SolidDomain
 

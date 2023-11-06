@@ -34,34 +34,37 @@ let package = Package(
     .target(
       name: "BaseCard",
       dependencies: [
-        "LFUtilities", "LFStyleGuide", "LFLocalizable", "LFServices", "Factory", "LFRewards",
+        "LFUtilities", "LFStyleGuide", "LFLocalizable", "Factory", "LFRewards",
         .product(name: "OnboardingData", package: "LFData"),
         .product(name: "NetSpendData", package: "LFData"),
         .product(name: "AccountData", package: "LFData"),
         .product(name: "RewardData", package: "LFData"),
         .product(name: "RewardDomain", package: "LFDomain"),
+        .product(name: "Services", package: "LFServices"),
         .product(name: "NetspendDomain", package: "LFDomain")
       ]),
     .target(
       name: "LFNetSpendCard",
       dependencies: [
-        "BaseCard", "LFUtilities", "LFStyleGuide", "LFLocalizable", "LFServices", "Factory", "LFRewards",
+        "BaseCard", "LFUtilities", "LFStyleGuide", "LFLocalizable", "Factory", "LFRewards",
         .product(name: "OnboardingData", package: "LFData"),
         .product(name: "NetSpendData", package: "LFData"),
         .product(name: "AccountData", package: "LFData"),
         .product(name: "RewardData", package: "LFData"),
         .product(name: "RewardDomain", package: "LFDomain"),
+        .product(name: "Services", package: "LFServices"),
         .product(name: "NetspendDomain", package: "LFDomain")
       ]),
     .target(
       name: "LFSolidCard",
       dependencies: [
-        "BaseCard", "LFUtilities", "LFStyleGuide", "LFLocalizable", "LFServices", "Factory", "LFRewards",
+        "BaseCard", "LFUtilities", "LFStyleGuide", "LFLocalizable", "Factory", "LFRewards",
         .product(name: "OnboardingData", package: "LFData"),
         .product(name: "NetSpendData", package: "LFData"),
         .product(name: "AccountData", package: "LFData"),
         .product(name: "RewardData", package: "LFData"),
         .product(name: "RewardDomain", package: "LFDomain"),
+        .product(name: "Services", package: "LFServices"),
         .product(name: "NetspendDomain", package: "LFDomain")
       ]),
     .testTarget(

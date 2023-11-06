@@ -1,7 +1,7 @@
 import SwiftUI
 import LFLocalizable
 import LFUtilities
-import LFServices
+import Services
 import Factory
 
 public struct ErrorView: View {

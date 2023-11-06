@@ -9,13 +9,14 @@ import LFBaseBank
 import BaseCard
 import NetspendOnboarding
 import OnboardingDomain
-import LFServices
+import Services
 import DevicesData
 import DevicesDomain
 import NetspendDomain
 import ExternalFundingData
 import SolidData
 import SolidDomain
+import AccountService
 
 extension Container {
   public var dashboardRepository: Factory<DashboardRepository> {
@@ -46,8 +47,9 @@ public final class DashboardRepository: ObservableObject {
   @LazyInjected(\.devicesRepository) var devicesRepository
   
   @LazyInjected(\.analyticsService) var analyticsService
+  @LazyInjected(\.accountServices) var accountServices
   
-  @Published public var fiatData: (fiatAccount: [LFAccount], loading: Bool) = ([], false)
+  @Published public var fiatData: (fiatAccount: [AccountModel], loading: Bool) = ([], false)
   @Published public var cryptoData: (cryptoAccounts: [LFAccount], loading: Bool) = ([], false)
   
   @Published public var isLoadingRewardTab: Bool = false
@@ -65,10 +67,6 @@ public final class DashboardRepository: ObservableObject {
   
   lazy var deviceRegisterUseCase: DeviceRegisterUseCaseProtocol = {
     DeviceRegisterUseCase(repository: devicesRepository)
-  }()
-  
-  lazy var solidGetAccountUseCase: SolidGetAccountsUseCaseProtocol = {
-    SolidGetAccountsUseCase(repository: solidAccountRepository)
   }()
   
   lazy var solidGetLinkedSourcesUseCase: SolidGetLinkedSourcesUseCaseProtocol = {
@@ -172,9 +170,7 @@ public extension DashboardRepository {
       do {
         apiFetchListCards()
         
-        let fiatAccounts = try await getFiatAccounts()
-        self.fiatData.fiatAccount = fiatAccounts
-        self.accountDataManager.addOrUpdateAccounts(fiatAccounts)
+        _ = try await getFiatAccounts()
       } catch {
         log.error(error.localizedDescription)
         toastMessage?(error.localizedDescription)
@@ -301,11 +297,10 @@ public extension DashboardRepository {
       
       do {
         async let cryptoAccountsEntity = self.accountRepository.getAccount(currencyType: Constants.CurrencyType.crypto.rawValue)
-        let fiatAccounts = try await getFiatAccounts()
+        let fiatAccounts = try await self.getFiatAccounts()
         let cryptoAccounts = try await cryptoAccountsEntity
-        let accounts = fiatAccounts + cryptoAccounts
         
-        let assets = accounts.map { AssetModel(account: $0) }
+        let assets = fiatAccounts.map { AssetModel(account: $0) }
         getRewardCurrency(assets: assets)
         
         analyticsService.set(params: [PropertiesName.cashBalance.rawValue: fiatAccounts.first?.availableBalance ?? "0"])
@@ -314,7 +309,9 @@ public extension DashboardRepository {
         self.fiatData.fiatAccount = fiatAccounts
         self.cryptoData.cryptoAccounts = cryptoAccounts
         
-        self.accountDataManager.accountsSubject.send(accounts)
+        // TODO: Will get crypto account in another API
+        //self.accountDataManager.accountsSubject.send(accounts)
+        self.accountDataManager.accountsSubject.send(fiatAccounts)
       } catch {
         isLoadingRewardTab = false
         log.error(error.localizedDescription)
@@ -383,24 +380,18 @@ public extension DashboardRepository {
 // MARK: Account
 public extension DashboardRepository {
   
-  func getFiatAccounts() async throws -> [LFAccount] {
-    switch LFUtilities.target {
-    case .CauseCard, .PrideCard:
-      let entity = try await solidGetAccountUseCase.execute()
-      return entity.map { item in
-        APIAccount(id: item.id, externalAccountId: item.externalAccountId, currency: item.currency, availableBalance: item.availableBalance, availableUsdBalance: item.availableUsdBalance)
-      }
-    default:
-      return try await self.accountRepository.getAccount(currencyType: Constants.CurrencyType.fiat.rawValue)
-    }
+  func getFiatAccounts() async throws -> [AccountModel] {
+    let accounts = try await accountServices.getFiatAccounts()
+    
+    self.fiatData.fiatAccount = accounts
+    self.accountDataManager.addOrUpdateAccounts(accounts)
+    return accounts
   }
   
   func getACHInformation() async throws -> ACHModel {
     switch LFUtilities.target {
     case .PrideCard:
-      var account = self.accountDataManager.accountsSubject.value.first(where: {
-        Constants.CurrencyList.fiats.contains($0.currency)
-      })
+      var account = self.accountDataManager.fiatAccounts.first
       if account == nil {
         account = try await getFiatAccounts().first
       }
@@ -466,7 +457,7 @@ extension DashboardRepository {
           guard APISolidContactType(rawValue: source.type) == nil else {
             continue
           }
-          _ = try? await self.unlinkContactUseCase.execute(id: source.solidContactId)
+          _ = try await self.unlinkContactUseCase.execute(id: source.solidContactId)
         }
       } catch {
         log.error(error.localizedDescription)
@@ -477,8 +468,11 @@ extension DashboardRepository {
   private func fetchSolidLinkedSources() {
     Task { @MainActor in
       do {
-        let accounts = try await self.solidGetAccountUseCase.execute()
-        guard let account = accounts.first else {
+        var account = self.accountDataManager.fiatAccounts.first
+        if account == nil {
+          account = try await getFiatAccounts().first
+        }
+        guard let account = account else {
           return
         }
         let response = try await self.solidGetLinkedSourcesUseCase.execute(accountID: account.id)

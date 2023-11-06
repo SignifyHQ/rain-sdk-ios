@@ -25,13 +25,14 @@ let package = Package(
         .target(
             name: "LFTransaction",
             dependencies: [
-              "LFUtilities", "LFStyleGuide", "LFLocalizable", "LFServices", "Factory", "LFWalletAddress",
+              "LFUtilities", "LFStyleGuide", "LFLocalizable", "Factory", "LFWalletAddress",
               .product(name: "OnboardingData", package: "LFData"),
               .product(name: "NetSpendData", package: "LFData"),
               .product(name: "AccountData", package: "LFData"),
               .product(name: "NetspendDomain", package: "LFDomain"),
               .product(name: "ZerohashData", package: "LFData"),
               .product(name: "RewardData", package: "LFData"),
+              .product(name: "Services", package: "LFServices"),
               .product(name: "RewardDomain", package: "LFDomain")
             ]),
         .testTarget(

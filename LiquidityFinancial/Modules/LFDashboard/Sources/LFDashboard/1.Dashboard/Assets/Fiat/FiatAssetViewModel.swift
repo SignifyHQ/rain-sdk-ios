@@ -9,6 +9,7 @@ import LFBaseBank
 import LFTransaction
 import BaseDashboard
 import Combine
+import AccountService
 
 @MainActor
 class FiatAssetViewModel: ObservableObject {
@@ -54,9 +55,10 @@ class FiatAssetViewModel: ObservableObject {
 private extension FiatAssetViewModel {
   func getAccountDetail(id: String) async {
     do {
+      // TODO: Will add it in another PR
       let account = try await accountRepository.getAccountDetail(id: id)
       self.accountDataManager.fiatAccountID = account.id
-      self.accountDataManager.addOrUpdateAccount(account)
+      // self.accountDataManager.addOrUpdateAccount(account)
     } catch {
       toastMessage = error.localizedDescription
     }
@@ -112,7 +114,7 @@ private extension FiatAssetViewModel {
     accountDataManager
       .accountsSubject
       .receive(on: DispatchQueue.main)
-      .compactMap({ (accounts: [LFAccount]) -> AssetModel? in
+      .compactMap({ (accounts: [AccountModel]) -> AssetModel? in
       guard let account = accounts.first(where: {
         $0.id == id
       }) else {

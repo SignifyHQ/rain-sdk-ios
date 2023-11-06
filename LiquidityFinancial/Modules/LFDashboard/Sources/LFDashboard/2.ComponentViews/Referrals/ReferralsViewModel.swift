@@ -1,7 +1,7 @@
 import SwiftUI
 import Factory
 import LFUtilities
-import LFServices
+import Services
 
 @MainActor
 final class ReferralsViewModel: ObservableObject {

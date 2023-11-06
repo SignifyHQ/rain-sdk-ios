@@ -3,7 +3,7 @@ import SwiftUI
 import LFStyleGuide
 import LFUtilities
 import LFLocalizable
-import LFServices
+import Services
 
 struct CardView<ViewModel: CardViewModelProtocol>: View {
   @StateObject private var viewModel: ViewModel

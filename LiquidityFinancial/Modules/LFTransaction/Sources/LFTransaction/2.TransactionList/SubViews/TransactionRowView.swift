@@ -3,7 +3,7 @@ import LFLocalizable
 import LFStyleGuide
 import LFUtilities
 import Factory
-import LFServices
+import Services
 
 public struct TransactionRowView: View {
   @Injected(\.analyticsService) var analyticsService

@@ -5,7 +5,7 @@ import LFUtilities
 import AuthorizationManager
 import RewardData
 import RewardDomain
-import LFServices
+import Services
 
 @MainActor
 final class ProfileViewModel: ObservableObject {

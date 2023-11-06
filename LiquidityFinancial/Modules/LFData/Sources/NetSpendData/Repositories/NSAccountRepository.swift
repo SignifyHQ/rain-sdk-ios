@@ -17,4 +17,8 @@ public class NSAccountRepository: NSAccountRepositoryProtocol {
     )
     return try await accountAPI.getStatements(sessionId: sessionId, parameters: requestParam)
   }
+  
+  public func getAccounts() async throws -> [NSAccountEntity] {
+    return try await accountAPI.getAccounts()
+  }
 }

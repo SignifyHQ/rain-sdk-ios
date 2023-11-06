@@ -2,7 +2,7 @@ import SwiftUI
 import Factory
 import AccountData
 import LFUtilities
-import LFServices
+import Services
 
 // MARK: - SetupWalletViewModel
 

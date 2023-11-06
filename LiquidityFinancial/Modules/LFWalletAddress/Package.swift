@@ -23,7 +23,8 @@ let package = Package(
     .target(
       name: "LFWalletAddress",
       dependencies: [
-        "LFUtilities", "LFStyleGuide", "LFLocalizable", "LFServices",
+        "LFUtilities", "LFStyleGuide", "LFLocalizable",
+        .product(name: "Services", package: "LFServices"),
         .product(name: "OnboardingData", package: "LFData"),
         .product(name: "NetSpendData", package: "LFData"),
         .product(name: "ZerohashData", package: "LFData"),

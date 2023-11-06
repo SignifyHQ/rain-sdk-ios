@@ -10,7 +10,7 @@ import AccountData
 import PassKit
 import RewardData
 import RewardDomain
-import LFServices
+import Services
 import LFLocalizable
 import NetspendDomain
 

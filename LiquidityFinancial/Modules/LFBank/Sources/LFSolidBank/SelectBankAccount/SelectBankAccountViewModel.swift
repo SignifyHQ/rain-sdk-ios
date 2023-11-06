@@ -1,5 +1,4 @@
 import Combine
-import AccountData
 import SolidData
 import SolidDomain
 import Foundation
@@ -8,10 +7,10 @@ import Factory
 import NetSpendData
 import LFUtilities
 import LFLocalizable
-import LFServices
+import Services
 import NetspendSdk
 import ExternalFundingData
-import AccountDomain
+import AccountService
 
 class SelectBankAccountViewModel: ObservableObject {
   
@@ -27,6 +26,7 @@ class SelectBankAccountViewModel: ObservableObject {
   @LazyInjected(\.externalFundingDataManager) var externalFundingDataManager
   @LazyInjected(\.solidExternalFundingRepository) var solidExternalFundingRepository
   @LazyInjected(\.solidAccountRepository) var solidAccountRepository
+  @LazyInjected(\.accountServices) var accountServices
   
   @Published var linkedBanks: [LinkedSourceContact] = []
   @Published var navigation: Navigation?
@@ -42,7 +42,7 @@ class SelectBankAccountViewModel: ObservableObject {
   
   let amount: String
   let kind: MoveMoneyAccountViewModel.Kind
-  private var fiatAccount: LFAccount?
+  private var fiatAccount: AccountModel?
   
   private var cancellable: Set<AnyCancellable> = []
   private lazy var plaidHelper = PlaidHelper()
@@ -53,10 +53,6 @@ class SelectBankAccountViewModel: ObservableObject {
   
   lazy var plaidLinkUseCase: PlaidLinkUseCaseProtocol = {
     PlaidLinkUseCase(repository: solidExternalFundingRepository)
-  }()
-  
-  lazy var solidGetAccountUseCase: SolidGetAccountsUseCaseProtocol = {
-    SolidGetAccountsUseCase(repository: solidAccountRepository)
   }()
   
   lazy var solidCreateTransactionUseCase: SolidCreateExternalTransactionUseCaseProtocol = {
@@ -91,10 +87,7 @@ class SelectBankAccountViewModel: ObservableObject {
       do {
         fiatAccount = self.accountDataManager.fiatAccounts.first
         if fiatAccount == nil {
-          let entity = try await solidGetAccountUseCase.execute()
-          fiatAccount = entity.map { item in
-            APIAccount(id: item.id, externalAccountId: item.externalAccountId, currency: item.currency, availableBalance: item.availableBalance, availableUsdBalance: item.availableUsdBalance)
-          }.first
+          fiatAccount = try await accountServices.getFiatAccounts().first
         }
       } catch {
         log.error(error.localizedDescription)

@@ -3,7 +3,7 @@ import LFStyleGuide
 import LFUtilities
 import LFLocalizable
 import LFRewards
-import LFServices
+import Services
 
 struct CausesView: View {
   @StateObject private var viewModel: CausesViewModel

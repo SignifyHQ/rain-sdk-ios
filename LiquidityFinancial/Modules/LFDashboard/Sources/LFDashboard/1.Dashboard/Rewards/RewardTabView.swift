@@ -6,7 +6,7 @@ import LFLocalizable
 import LFUtilities
 import LFTransaction
 import LFNetspendBank
-import LFServices
+import Services
 
 struct RewardTabView: View {
   @StateObject private var viewModel: RewardTabViewModel

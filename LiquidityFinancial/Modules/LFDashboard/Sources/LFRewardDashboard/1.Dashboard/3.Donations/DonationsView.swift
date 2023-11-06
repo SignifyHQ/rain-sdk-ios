@@ -5,7 +5,7 @@ import LFLocalizable
 import LFRewards
 import LFTransaction
 import Combine
-import LFServices
+import Services
 
 struct DonationsView: View {
   @StateObject private var viewModel: DonationsViewModel

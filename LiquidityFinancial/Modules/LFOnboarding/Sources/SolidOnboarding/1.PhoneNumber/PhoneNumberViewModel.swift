@@ -5,7 +5,7 @@ import LFLocalizable
 import SwiftUI
 import OnboardingDomain
 import Factory
-import LFServices
+import Services
 import BaseOnboarding
 
 @MainActor

@@ -3,7 +3,7 @@ import Factory
 import RewardData
 import RewardDomain
 import LFUtilities
-import LFServices
+import Services
 
 @MainActor
 class SelectRewardsViewModel: ObservableObject {

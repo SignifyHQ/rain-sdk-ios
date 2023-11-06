@@ -7,6 +7,7 @@ import Factory
 import AccountDomain
 import Combine
 import ZerohashDomain
+import AccountService
 
 @MainActor
 final class MoveCryptoInputViewModel: ObservableObject {
@@ -16,7 +17,7 @@ final class MoveCryptoInputViewModel: ObservableObject {
   @LazyInjected(\.dashboardRepository) var dashboardRepository
 
   @Published var assetModel: AssetModel
-  @Published var fiatAccount: LFAccount?
+  @Published var fiatAccount: AccountModel?
   
   @Published var navigation: Navigation?
   @Published var isFetchingData = false
@@ -100,8 +101,7 @@ final class MoveCryptoInputViewModel: ObservableObject {
         self.assetModel = AssetModel(account: cryptoAccount)
       }
       self.fiatAccount = accounts.first(where: { account in
-        let asset = AssetModel(account: account)
-        return asset.type == .usd
+        account.currency.isFiat
       })
     })
     .store(in: &subscribers)
@@ -121,8 +121,9 @@ private extension MoveCryptoInputViewModel {
           self.accountDataManager.fiatAccountID = fiatAccount.id
         }
       }
+      // TODO: Will implement in another PR.
       let cryptoAccount = try await self.accountRepository.getAccountDetail(id: cryptoId)
-      self.accountDataManager.addOrUpdateAccount(cryptoAccount)
+      // self.accountDataManager.addOrUpdateAccount(cryptoAccount)
       self.accountDataManager.cryptoAccountID = cryptoId
       
       generateGridValues()

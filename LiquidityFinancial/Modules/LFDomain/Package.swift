@@ -38,6 +38,7 @@ let package = Package(
   dependencies: [
     .package(name: "LFUtilities", path: "../LFUtilities"),
     .package(name: "TestHelpers", path: "../TestHelpers"),
+    .package(name: "LFServices", path: "../LFServices"),
     .package(url: "https://github.com/krzysztofzablocki/Sourcery.git", from: "2.0.0")
   ],
   targets: [
@@ -47,7 +48,8 @@ let package = Package(
     .target(
       name: "AccountDomain",
       dependencies: [
-        "NetspendDomain", "LFUtilities"
+        "NetspendDomain", "LFUtilities",
+        .product(name: "AccountService", package: "LFServices")
       ]
     ),
     .target(

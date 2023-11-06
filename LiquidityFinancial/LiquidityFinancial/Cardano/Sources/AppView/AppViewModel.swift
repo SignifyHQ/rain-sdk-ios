@@ -4,6 +4,8 @@ import Combine
 import LFUtilities
 import Factory
 import NetspendOnboarding
+import NetSpendData
+import AccountService
 
 class AppViewModel: ObservableObject {
   
@@ -23,6 +25,16 @@ class AppViewModel: ObservableObject {
       .store(in: &subscribers)
     
     coordinator.routeUser()
+    
+    Task { @MainActor in
+      registerInjection()
+    }
+  }
+  
+  @MainActor func registerInjection() {
+    Container.shared.accountServices.register {
+      NetspendAccountService()
+    }
   }
   
   func setDumpOutRoute(_ route: NSOnboardingFlowCoordinator.Route) {

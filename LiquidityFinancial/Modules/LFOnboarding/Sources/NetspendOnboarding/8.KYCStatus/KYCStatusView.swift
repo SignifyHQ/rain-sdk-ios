@@ -2,7 +2,7 @@ import SwiftUI
 import LFUtilities
 import LFStyleGuide
 import LFLocalizable
-import LFServices
+import Services
 import BaseOnboarding
 
 struct KYCStatusView: View {

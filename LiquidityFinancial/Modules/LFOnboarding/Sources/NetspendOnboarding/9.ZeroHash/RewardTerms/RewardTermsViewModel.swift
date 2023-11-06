@@ -1,7 +1,7 @@
 import LFLocalizable
 import Combine
 import Factory
-import LFServices
+import Services
 
 @MainActor
 final class RewardTermsViewModel: ObservableObject {

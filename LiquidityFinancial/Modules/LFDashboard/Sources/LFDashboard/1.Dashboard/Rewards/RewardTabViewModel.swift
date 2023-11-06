@@ -5,6 +5,7 @@ import Factory
 import LFTransaction
 import Combine
 import BaseDashboard
+import AccountService
 
 @MainActor
 class RewardTabViewModel: ObservableObject {
@@ -15,7 +16,7 @@ class RewardTabViewModel: ObservableObject {
   @Published var selectedRewardCurrency: AssetType?
   @Published var toastMessage: String = ""
   @Published var isLoading: Bool = true
-  @Published var accounts: [LFAccount] = []
+  @Published var accounts: [AccountModel] = []
   @Published var navigation: Navigation?
   @Published var activity = Activity.loading
   @Published var transactions: [TransactionModel] = []
@@ -69,7 +70,7 @@ extension RewardTabViewModel {
   func fetchAllTransactions() {
     Task { @MainActor in
       guard let selectedRewardCurrency else { return }
-      accountID = accounts.first(where: { $0.currency == selectedRewardCurrency.rawValue })?.id ?? .empty
+      accountID = accounts.first(where: { $0.currency.rawValue == selectedRewardCurrency.rawValue })?.id ?? .empty
       if selectedRewardCurrency == .usd {
         currencyType = Constants.CurrencyType.fiat.rawValue
         transactionTypes = Constants.TransactionTypesRequest.rewardCashBack.types

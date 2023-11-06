@@ -3,7 +3,7 @@ import LFStyleGuide
 import LFUtilities
 import LFLocalizable
 import LFAccessibility
-import LFServices
+import Services
 
 public struct AccountLockedView<ViewModel: AccountLockedViewModelProtocol>: View {
   @StateObject private var viewModel: ViewModel

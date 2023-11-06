@@ -8,7 +8,7 @@ import OnboardingData
 import AccountData
 import NetSpendData
 import NetspendDomain
-import LFServices
+import Services
 import LFLocalizable
 import DevicesData
 import DevicesDomain

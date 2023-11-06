@@ -40,7 +40,8 @@ let package = Package(
     .target(
       name: "BaseDashboard",
       dependencies: [
-        "LFUtilities", "LFServices",
+        "LFUtilities",
+        .product(name: "Services", package: "LFServices"),
         .product(name: "LFBaseBank", package: "LFBank"),
         .product(name: "OnboardingData", package: "LFData"),
         .product(name: "NetSpendData", package: "LFData"),
@@ -59,20 +60,21 @@ let package = Package(
     .target(
       name: "LFDashboard",
       dependencies: [
-        "LFUtilities", "LFStyleGuide", "LFLocalizable", "LFAccessibility", "LFServices", "BaseDashboard", "LFTransaction", "LFCryptoChart", "CodeScanner", "LFWalletAddress",
+        "LFUtilities", "LFStyleGuide", "LFLocalizable", "LFAccessibility", "BaseDashboard", "LFTransaction", "LFCryptoChart", "CodeScanner", "LFWalletAddress",
         .product(name: "OnboardingData", package: "LFData"),
         .product(name: "LFNetspendBank", package: "LFBank"),
         .product(name: "NetSpendData", package: "LFData"),
         .product(name: "ZerohashData", package: "LFData"),
         .product(name: "DevicesData", package: "LFData"),
         .product(name: "AuthorizationManager", package: "LFNetwork"),
+        .product(name: "Services", package: "LFServices"),
         .product(name: "LFNetSpendCard", package: "LFCard")
       ]
     ),
     .target(
       name: "LFRewardDashboard",
       dependencies: [
-        "LFUtilities", "LFStyleGuide", "LFLocalizable", "LFAccessibility", "LFServices", "LFTransaction", "CodeScanner", "LFRewards", "BaseDashboard",
+        "LFUtilities", "LFStyleGuide", "LFLocalizable", "LFAccessibility", "LFTransaction", "CodeScanner", "LFRewards", "BaseDashboard",
         .product(name: "LFSolidBank", package: "LFBank"),
         .product(name: "OnboardingData", package: "LFData"),
         .product(name: "NetSpendData", package: "LFData"),
@@ -80,6 +82,7 @@ let package = Package(
         .product(name: "DevicesData", package: "LFData"),
         .product(name: "AuthorizationManager", package: "LFNetwork"),
         .product(name: "LFSolidCard", package: "LFCard"),
+        .product(name: "Services", package: "LFServices"),
         .product(name: "SolidOnboarding", package: "LFOnboarding")
       ],
       resources: [

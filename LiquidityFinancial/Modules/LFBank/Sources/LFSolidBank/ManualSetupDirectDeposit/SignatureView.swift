@@ -4,7 +4,7 @@ import UIKit
 import LFLocalizable
 import LFUtilities
 import LFStyleGuide
-import LFServices
+import Services
 
 struct SignatureView: View {
   @Environment(\.dismiss) var dismiss

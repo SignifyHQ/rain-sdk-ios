@@ -1,5 +1,5 @@
 import XCTest
-@testable import LFServices
+@testable import Services
 
 final class LFServicesTests: XCTestCase {
     func testExample() throws {

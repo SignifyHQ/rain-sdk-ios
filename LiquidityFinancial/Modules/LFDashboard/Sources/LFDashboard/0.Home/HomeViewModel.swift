@@ -7,7 +7,7 @@ import DevicesData
 import AccountDomain
 import Combine
 import LFNetspendBank
-import LFServices
+import Services
 import DevicesDomain
 
 @MainActor

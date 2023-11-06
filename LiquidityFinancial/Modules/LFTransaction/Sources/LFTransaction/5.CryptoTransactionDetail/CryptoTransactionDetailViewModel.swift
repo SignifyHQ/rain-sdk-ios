@@ -1,6 +1,6 @@
 import Foundation
 import Factory
-import LFServices
+import Services
 import ZerohashData
 
 class CryptoTransactionDetailViewModel: ObservableObject {

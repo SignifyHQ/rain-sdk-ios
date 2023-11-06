@@ -60,20 +60,24 @@ let package = Package(
     .target(
       name: "NetSpendData",
       dependencies: [
-        "LFServices", "LFUtilities", "Factory",
+        "LFUtilities", "Factory",
         .product(name: "NetspendDomain", package: "LFDomain"),
         .product(name: "NetworkUtilities", package: "LFNetwork"),
-        .product(name: "CoreNetwork", package: "LFNetwork")
+        .product(name: "CoreNetwork", package: "LFNetwork"),
+        .product(name: "AccountService", package: "LFServices"),
+        .product(name: "Services", package: "LFServices")
       ]
     ),
     .target(
       name: "SolidData",
       dependencies: [
-        "LFServices", "LFUtilities", "Factory",
+        "LFUtilities", "Factory",
         .product(name: "NetspendDomain", package: "LFDomain"),
         .product(name: "SolidDomain", package: "LFDomain"),
         .product(name: "NetworkUtilities", package: "LFNetwork"),
-        .product(name: "CoreNetwork", package: "LFNetwork")
+        .product(name: "CoreNetwork", package: "LFNetwork"),
+        .product(name: "AccountService", package: "LFServices"),
+        .product(name: "Services", package: "LFServices")
       ]
     ),
     .target(

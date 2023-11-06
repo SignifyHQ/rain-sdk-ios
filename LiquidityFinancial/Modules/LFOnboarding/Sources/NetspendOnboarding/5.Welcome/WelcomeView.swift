@@ -2,7 +2,7 @@ import Foundation
 import SwiftUI
 import LFStyleGuide
 import LFLocalizable
-import LFServices
+import Services
 import Factory
 
 struct WelcomeView: View {

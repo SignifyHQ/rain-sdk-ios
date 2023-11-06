@@ -1,6 +1,7 @@
 import Foundation
 import NetspendDomain
 import Combine
+import AccountService
 
 // sourcery: AutoMockable
 public protocol AccountDataStorageProtocol {
@@ -27,10 +28,11 @@ public protocol AccountDataStorageProtocol {
   
   var availableRewardCurrenciesSubject: CurrentValueSubject<AvailableRewardCurrenciesEntity?, Never> { get }
   var selectedRewardCurrencySubject: CurrentValueSubject<RewardCurrencyEntity?, Never> { get }
-  var accountsSubject: CurrentValueSubject<[LFAccount], Never> { get }
-  var fiatAccounts: [LFAccount] { get }
-  func addOrUpdateAccounts(_ accounts: [LFAccount])
-  func addOrUpdateAccount(_ account: LFAccount)
+  
+  var accountsSubject: CurrentValueSubject<[AccountModel], Never> { get }
+  var fiatAccounts: [AccountModel] { get }
+  func addOrUpdateAccounts(_ accounts: [AccountModel])
+  func addOrUpdateAccount(_ account: AccountModel)
   
   func update(firstName: String?)
   func update(lastName: String?)

@@ -3,7 +3,7 @@ import LFStyleGuide
 import LFUtilities
 import LFLocalizable
 import OnboardingDomain
-import LFServices
+import Services
 import BaseOnboarding
 import Factory
 

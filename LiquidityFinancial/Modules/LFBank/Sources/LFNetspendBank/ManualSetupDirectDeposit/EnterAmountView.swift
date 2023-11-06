@@ -2,7 +2,7 @@ import SwiftUI
 import LFLocalizable
 import LFUtilities
 import LFStyleGuide
-import LFServices
+import Services
 
 struct EnterAmountView: View {
   @FocusState private var keyboardFocus: Bool

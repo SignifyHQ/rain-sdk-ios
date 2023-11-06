@@ -7,12 +7,11 @@ import LFUtilities
 import Factory
 import LFStyleGuide
 import LFTransaction
-import LFServices
+import Services
 import ExternalFundingData
 import SolidDomain
 import SolidData
-import AccountData
-import AccountDomain
+import AccountService
 
 @MainActor
 public class MoveMoneyAccountViewModel: ObservableObject {
@@ -22,7 +21,7 @@ public class MoveMoneyAccountViewModel: ObservableObject {
   @LazyInjected(\.customerSupportService) var customerSupportService
   @LazyInjected(\.externalFundingDataManager) var externalFundingDataManager
   @LazyInjected(\.solidExternalFundingRepository) var solidExternalFundingRepository
-  @LazyInjected(\.solidAccountRepository) var solidAccountRepository
+  @LazyInjected(\.accountServices) var accountServices
   
   @Published var navigation: Navigation?
   @Published var amountInput: String = Constants.Default.zeroAmount.rawValue
@@ -42,10 +41,6 @@ public class MoveMoneyAccountViewModel: ObservableObject {
   
   lazy var solidCreateTransactionUseCase: SolidCreateExternalTransactionUseCaseProtocol = {
     SolidCreateExternalTransactionUseCase(repository: solidExternalFundingRepository)
-  }()
-  
-  lazy var solidGetAccountUseCase: SolidGetAccountsUseCaseProtocol = {
-    SolidGetAccountsUseCase(repository: solidAccountRepository)
   }()
   
   lazy var solidEstimateDebitCardFeeUseCase: SolidEstimateDebitCardFeeUseCaseProtocol = {
@@ -169,14 +164,11 @@ extension MoveMoneyAccountViewModel {
     }
   }
   
-  private func getDefaultFiatAccount() async throws -> LFAccount? {
+  private func getDefaultFiatAccount() async throws -> AccountModel? {
     if let account = self.accountDataManager.fiatAccounts.first {
       return account
     }
-    let entity = try await solidGetAccountUseCase.execute()
-    return entity.map { item in
-      APIAccount(id: item.id, externalAccountId: item.externalAccountId, currency: item.currency, availableBalance: item.availableBalance, availableUsdBalance: item.availableUsdBalance)
-    }.first
+    return try await accountServices.getFiatAccounts().first
   }
   
   func callTransferAPI() {

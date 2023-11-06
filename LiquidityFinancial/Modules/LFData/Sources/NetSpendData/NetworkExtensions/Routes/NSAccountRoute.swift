@@ -6,6 +6,7 @@ import NetspendDomain
 
 public enum NSAccountRoute {
   case getStatements(sessionId: String, parameters: GetStatementParameters)
+  case getAccounts
 }
 
 extension NSAccountRoute: LFRoute {
@@ -14,12 +15,15 @@ extension NSAccountRoute: LFRoute {
     switch self {
     case .getStatements:
       return "/v1/netspend/accounts/statements"
+    case .getAccounts:
+      return "/v1/netspend/accounts"
     }
   }
   
   public var httpMethod: HttpMethod {
     switch self {
-    case .getStatements: return .GET
+    case .getStatements, .getAccounts:
+      return .GET
     }
   }
   
@@ -32,6 +36,8 @@ extension NSAccountRoute: LFRoute {
     switch self {
     case let .getStatements(sessionId, _):
       base["netspendSessionId"] = sessionId
+    default:
+      break
     }
     return base
   }
@@ -40,6 +46,8 @@ extension NSAccountRoute: LFRoute {
     switch self {
     case let .getStatements(_, parameters):
       return parameters.encoded()
+    default:
+      return nil
     }
   }
   
@@ -47,6 +55,8 @@ extension NSAccountRoute: LFRoute {
     switch self {
     case .getStatements:
       return .url
+    default:
+      return .none
     }
   }
   

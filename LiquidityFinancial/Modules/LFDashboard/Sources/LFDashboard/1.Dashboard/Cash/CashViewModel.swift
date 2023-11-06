@@ -59,7 +59,7 @@ final class CashViewModel: ObservableObject {
           self?.assets = fiatData.fiatAccount.map {
             AssetModel(
               id: $0.id,
-              type: AssetType(rawValue: $0.currency.uppercased()),
+              type: AssetType(rawValue: $0.currency.rawValue.uppercased()),
               availableBalance: $0.availableBalance,
               availableUsdBalance: $0.availableUsdBalance,
               externalAccountId: $0.externalAccountId
@@ -69,7 +69,7 @@ final class CashViewModel: ObservableObject {
             self?.accountDataManager.fiatAccountID = account.id
             self?.accountDataManager.externalAccountID = account.externalAccountId
             self?.cashBalanceValue = account.availableBalance
-            self?.selectedAsset = AssetType(rawValue: account.currency) ?? .usd
+            self?.selectedAsset = AssetType(rawValue: account.currency.rawValue.uppercased()) ?? .usd
             self?.firstLoadData(with: account.id)
           }
         }
@@ -78,12 +78,12 @@ final class CashViewModel: ObservableObject {
       }
       .store(in: &cancellable)
     
-    subscribeLinkedAccounts()
+    subscribeLinkedSources()
     handleFundingAgreementData()
     handleEventReloadTransaction()
   }
   
-  func subscribeLinkedAccounts() {
+  func subscribeLinkedSources() {
     accountDataManager.subscribeLinkedSourcesChanged { [weak self] entities in
       guard let self = self else { return }
       let linkedSources = entities.compactMap({ APILinkedSourceData(entity: $0) })

@@ -5,7 +5,7 @@ import LFStyleGuide
 import LFUtilities
 import LFTransaction
 import ZerohashDomain
-import LFServices
+import Services
 
 struct ConfirmSendCryptoView: View {
   @StateObject private var viewModel: ConfirmSendCryptoViewModel

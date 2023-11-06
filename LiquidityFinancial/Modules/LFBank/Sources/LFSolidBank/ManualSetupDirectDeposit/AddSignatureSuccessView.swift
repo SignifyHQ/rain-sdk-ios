@@ -3,7 +3,7 @@ import LFLocalizable
 import LFStyleGuide
 import SwiftUI
 import MessageUI
-import LFServices
+import Services
 
 struct AddSignatureSuccessView: View {
   @StateObject var viewModel: ManualSetupViewModel

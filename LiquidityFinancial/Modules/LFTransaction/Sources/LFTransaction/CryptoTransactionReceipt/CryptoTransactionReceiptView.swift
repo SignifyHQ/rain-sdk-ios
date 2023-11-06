@@ -2,7 +2,7 @@ import SwiftUI
 import LFStyleGuide
 import LFLocalizable
 import LFUtilities
-import LFServices
+import Services
 
 struct CryptoTransactionReceiptView: View {
   @Environment(\.openURL) private var openURL

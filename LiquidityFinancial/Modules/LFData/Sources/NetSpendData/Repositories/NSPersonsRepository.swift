@@ -1,6 +1,6 @@
 import Foundation
 import CoreNetwork
-import LFServices
+import Services
 import NetspendSdk
 import FraudForce
 import LFUtilities

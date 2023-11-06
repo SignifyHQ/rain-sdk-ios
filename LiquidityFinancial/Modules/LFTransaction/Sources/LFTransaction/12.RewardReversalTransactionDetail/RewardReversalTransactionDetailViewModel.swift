@@ -1,5 +1,5 @@
 import Foundation
-import LFServices
+import Services
 import LFLocalizable
 import LFUtilities
 import LFStyleGuide

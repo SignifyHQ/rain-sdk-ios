@@ -8,7 +8,7 @@ import RewardData
 import RewardDomain
 import LFRewards
 import DevicesData
-import LFServices
+import Services
 import DevicesDomain
 
 @MainActor

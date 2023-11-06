@@ -3,7 +3,7 @@ import LFLocalizable
 import LFUtilities
 import LFStyleGuide
 import AccountData
-import LFServices
+import Services
 
 public struct EditNicknameOfWalletView: View {
   @Environment(\.dismiss) private var dismiss

@@ -37,4 +37,26 @@ public class MockNSAccountAPIProtocol: NSAccountAPIProtocol {
         }
     }
 
+    //MARK: - getAccounts
+
+    public var getAccountsThrowableError: Error?
+    public var getAccountsCallsCount = 0
+    public var getAccountsCalled: Bool {
+        return getAccountsCallsCount > 0
+    }
+    public var getAccountsReturnValue: [APINetspendAccount]!
+    public var getAccountsClosure: (() async throws -> [APINetspendAccount])?
+
+    public func getAccounts() async throws -> [APINetspendAccount] {
+        if let error = getAccountsThrowableError {
+            throw error
+        }
+        getAccountsCallsCount += 1
+        if let getAccountsClosure = getAccountsClosure {
+            return try await getAccountsClosure()
+        } else {
+            return getAccountsReturnValue
+        }
+    }
+
 }

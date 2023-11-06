@@ -6,6 +6,7 @@ import LFRewards
 import AccountData
 import AccountDomain
 import Factory
+import AccountService
 
 @MainActor
 class RewardViewModel: ObservableObject {
@@ -15,7 +16,7 @@ class RewardViewModel: ObservableObject {
   
   @Published var feed: DataStatus<TransactionModel> = .idle
   @Published var navigation: Navigation?
-  @Published var account: LFAccount?
+  @Published var account: AccountModel?
   @Published var toastMessage: String = ""
   
   private var isFirstLoad: Bool = false
