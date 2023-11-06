@@ -259,6 +259,7 @@ public extension Constants {
     case cvvCodeDigits = "3"
     case zeroAmount = "0"
     case expirationDatePlaceholder = "••/••"
+    case fullCardNumberPlaceholder = "•••• •••• •••• ••••"
     case cardNumberPlaceholder = "••••  ••••  ••••  "
     case physicalCardNumberPlaceholder = "••••  "
     case cvvPlaceholder = "•••"

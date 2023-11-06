@@ -31,4 +31,13 @@ extension LFCoreNetwork: SolidCardAPIProtocol where R == SolidCardRoute {
     return statusCode?.isSuccess ?? false
   }
   
+  public func createVGSShowToken(cardID: String) async throws -> APISolidCardShowToken {
+    try await request(
+      SolidCardRoute.createVGSShowToken(cardID: cardID),
+      target: APISolidCardShowToken.self,
+      failure: LFErrorObject.self,
+      decoder: .apiDecoder
+    )
+  }
+  
 }

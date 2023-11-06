@@ -4,43 +4,80 @@ import VGSShowSDK
 import LFUtilities
 import Services
 import UniformTypeIdentifiers
+import SolidData
+import SolidDomain
+import Factory
 import BaseCard
 
-public final class SolidCardViewModel: CardViewModelProtocol, Identifiable {
+@MainActor
+public final class SolidCardViewModel: ObservableObject, Identifiable {
+  @LazyInjected(\.solidCardRepository) var solidCardRepository
+
   @Published public var cardModel: CardModel
   @Published public var isCardAvailable = false
   @Published public var isShowCardCopyMessage = false
-  @Published public var cardNumber: String = .empty
-  @Published public var expirationTime: String = .empty
-  @Published public var cvvNumber: String = .empty
+  @Published public var toastMessage: String?
+  
+  let vgsShow: VGSShow
+  
+  lazy var createVGSShowTokenUseCase: SolidCreateVGSShowTokenUseCaseProtocol = {
+    SolidCreateVGSShowTokenUseCase(repository: solidCardRepository)
+  }()
 
   public init(cardModel: CardModel) {
+    vgsShow = VGSShow(id: LFServices.vgsConfig.id, environment: LFServices.vgsConfig.env)
     self.cardModel = cardModel
-    hideCardInformation()
+    getVGSShowTokenAPI()
+  }
+}
+
+// MARK: - API
+extension SolidCardViewModel {
+  private func getVGSShowTokenAPI() {
+    Task {
+      do {
+        let token = try await createVGSShowTokenUseCase.execute(cardID: cardModel.id)
+        revealCard(vgsShowToken: token.showToken, solidCardID: token.solidCardId)
+      } catch {
+        handleBackendError(error: error)
+      }
+    }
   }
 }
 
 // MARK: - View Helpers
-public extension SolidCardViewModel {
-  func copyAction(cardNumber: String?) {
-    guard let cardNumber else { return }
-    UIPasteboard.general.setValue(
-      cardNumber,
-      forPasteboardType: UTType.plainText.identifier
-    )
+extension SolidCardViewModel {
+  func copyAction() {
+    let cardNumberLabel = vgsShow.subscribedLabels[0] as VGSLabel
+    cardNumberLabel.copyTextToClipboard()
     isShowCardCopyMessage = true
     DispatchQueue.main.asyncAfter(deadline: .now() + 2) { [weak self] in
       self?.isShowCardCopyMessage = false
     }
   }
-  
-  func hideCardInformation() {
-    if cardModel.cardType == .physical {
-      cardNumber = "\(Constants.Default.physicalCardNumberPlaceholder.rawValue)\(cardModel.last4)"
-    } else {
-      cardNumber = "\(Constants.Default.cardNumberPlaceholder.rawValue)\(cardModel.last4)"
+}
+
+// MARK: - Private Functions
+private extension SolidCardViewModel {
+  func revealCard(vgsShowToken: String, solidCardID: String) {
+    let path = "/v1/card/\(solidCardID)/show"
+    vgsShow.customHeaders = ["sd-show-token": vgsShowToken]
+    vgsShow.request(path: path, method: .get) { [weak self] requestResult in
+      switch requestResult {
+      case let .success(code):
+        self?.isCardAvailable = true
+        log.info("VGSShow success, code: \(code)")
+      case let .failure(code, _):
+        log.error("VGSShow failed with code: \(code)")
+      }
     }
-    expirationTime = Constants.Default.expirationDatePlaceholder.rawValue
-    cvvNumber = Constants.Default.cvvPlaceholder.rawValue
+  }
+  
+  func handleBackendError(error: Error) {
+    guard let errorObject = error.asErrorObject else {
+      toastMessage = error.localizedDescription
+      return
+    }
+    toastMessage = errorObject.message
   }
 }

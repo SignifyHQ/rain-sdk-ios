@@ -71,8 +71,8 @@ struct CashCardView: View {
     }
     .navigationLink(isActive: $viewModel.isShowCardDetail) {
       ListCardsView<
+        NSCardView,
         NSListCardsViewModel,
-        NSCardViewModel,
         NSEnterCVVCodeViewModel,
         NSSetCardPinViewModel,
         NSAddAppleWalletViewModel

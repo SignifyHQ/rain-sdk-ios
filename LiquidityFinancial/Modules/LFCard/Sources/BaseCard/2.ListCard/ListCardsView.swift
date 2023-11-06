@@ -8,8 +8,8 @@ import Services
 import Factory
 
 public struct ListCardsView<
+  CardView: CardViewProtocol,
   ViewModel: ListCardsViewModelProtocol,
-  CardViewModel: CardViewModelProtocol,
   EnterCVVCodeViewModel: EnterCVVCodeViewModelProtocol,
   SetCardPinViewModel: SetCardPinViewModelProtocol,
   AddAppleWalletViewModel: AddAppleWalletViewModelProtocol
@@ -20,7 +20,7 @@ public struct ListCardsView<
   @InjectedObject(\.baseCardDestinationObservable) var baseCardDestinationObservable
   
   @State private var activeContent: ActiveContent = .verifyCvv
-  
+
   public init(viewModel: ViewModel) {
     _viewModel = .init(wrappedValue: viewModel)
   }
@@ -169,7 +169,7 @@ private extension ListCardsView {
 
   var cardDetails: some View {
     VStack(spacing: 16) {
-      cardView
+      card
       rows
       Spacer()
       buttonGroup
@@ -214,11 +214,11 @@ private extension ListCardsView {
     }
   }
   
-  var cardView: some View {
+  var card: some View {
     TabView(selection: $viewModel.currentCard) {
       ForEach(Array([viewModel.currentCard].enumerated()), id: \.element.id) { offset, item in
         CardView(
-          viewModel: CardViewModel(cardModel: item),
+          cardModel: item,
           cardMetaData: viewModel.cardMetaDatas.count > offset ? $viewModel.cardMetaDatas[offset] : .constant(nil),
           isShowCardNumber: $viewModel.isShowCardNumber,
           isLoading: $viewModel.isInit

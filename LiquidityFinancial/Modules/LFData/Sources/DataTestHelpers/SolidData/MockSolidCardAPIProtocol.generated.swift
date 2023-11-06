@@ -84,4 +84,30 @@ public class MockSolidCardAPIProtocol: SolidCardAPIProtocol {
         }
     }
 
+    //MARK: - createVGSShowToken
+
+    public var createVGSShowTokenCardIDThrowableError: Error?
+    public var createVGSShowTokenCardIDCallsCount = 0
+    public var createVGSShowTokenCardIDCalled: Bool {
+        return createVGSShowTokenCardIDCallsCount > 0
+    }
+    public var createVGSShowTokenCardIDReceivedCardID: String?
+    public var createVGSShowTokenCardIDReceivedInvocations: [String] = []
+    public var createVGSShowTokenCardIDReturnValue: APISolidCardShowToken!
+    public var createVGSShowTokenCardIDClosure: ((String) async throws -> APISolidCardShowToken)?
+
+    public func createVGSShowToken(cardID: String) async throws -> APISolidCardShowToken {
+        if let error = createVGSShowTokenCardIDThrowableError {
+            throw error
+        }
+        createVGSShowTokenCardIDCallsCount += 1
+        createVGSShowTokenCardIDReceivedCardID = cardID
+        createVGSShowTokenCardIDReceivedInvocations.append(cardID)
+        if let createVGSShowTokenCardIDClosure = createVGSShowTokenCardIDClosure {
+            return try await createVGSShowTokenCardIDClosure(cardID)
+        } else {
+            return createVGSShowTokenCardIDReturnValue
+        }
+    }
+
 }

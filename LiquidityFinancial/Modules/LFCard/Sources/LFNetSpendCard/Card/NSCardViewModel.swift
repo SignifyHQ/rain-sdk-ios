@@ -6,7 +6,7 @@ import Services
 import UniformTypeIdentifiers
 import BaseCard
 
-public final class NSCardViewModel: CardViewModelProtocol, Identifiable {
+public final class NSCardViewModel: ObservableObject, Identifiable {
   @Published public var cardModel: CardModel
   @Published public var isCardAvailable = false
   @Published public var isShowCardCopyMessage = false

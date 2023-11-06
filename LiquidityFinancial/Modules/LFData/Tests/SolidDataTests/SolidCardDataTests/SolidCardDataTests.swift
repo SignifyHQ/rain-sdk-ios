@@ -41,6 +41,8 @@ final class SolidCardDataTests: XCTestCase {
     )
   ]
   
+  let mockShowTokenResponse = APISolidCardShowToken(solidCardId: "mock_id", showToken: "mock_showToken")
+  
   // Defining mock API errors
   let expectedThrowableError = TestError.fail("mock_api_error")
   let mockCardNotFoundError = TestError.fail("mock_card_notFound_error")

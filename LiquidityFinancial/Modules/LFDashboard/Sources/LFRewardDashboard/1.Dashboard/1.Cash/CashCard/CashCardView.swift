@@ -70,8 +70,8 @@ struct CashCardView: View {
     }
     .navigationLink(isActive: $viewModel.isShowCardDetail) {
       ListCardsView<
+        SolidCardView,
         SolidListCardsViewModel,
-        SolidCardViewModel,
         SolidEnterCVVCodeViewModel,
         SolidSetCardPinViewModel,
         SolidAddAppleWalletViewModel

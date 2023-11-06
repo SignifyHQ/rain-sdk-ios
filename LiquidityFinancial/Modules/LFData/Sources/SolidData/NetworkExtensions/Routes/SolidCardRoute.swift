@@ -8,6 +8,7 @@ public enum SolidCardRoute {
   case listCard
   case updateCardStatus(cardID: String, parameters: APISolidCardStatusParameters)
   case closeCard(cardID: String)
+  case createVGSShowToken(cardID: String)
 }
 
 extension SolidCardRoute: LFRoute {
@@ -20,6 +21,8 @@ extension SolidCardRoute: LFRoute {
       return "/v1/solid/cards/\(cardID)/status"
     case let .closeCard(cardID):
       return "/v1/solid/cards/\(cardID)"
+    case let .createVGSShowToken(cardID):
+      return "/v1/solid/cards/\(cardID)/show-token"
     }
   }
   
@@ -31,6 +34,8 @@ extension SolidCardRoute: LFRoute {
       return .PATCH
     case .closeCard:
       return .DELETE
+    case .createVGSShowToken:
+      return .POST
     }
   }
   
@@ -46,7 +51,7 @@ extension SolidCardRoute: LFRoute {
   
   public var parameters: Parameters? {
     switch self {
-    case .listCard, .closeCard:
+    case .listCard, .closeCard, .createVGSShowToken:
       return nil
     case let .updateCardStatus(_, parameters):
       return parameters.encoded()
@@ -55,7 +60,7 @@ extension SolidCardRoute: LFRoute {
   
   public var parameterEncoding: ParameterEncoding? {
     switch self {
-    case .listCard, .closeCard:
+    case .listCard, .closeCard, .createVGSShowToken:
       return nil
     case .updateCardStatus:
       return .json

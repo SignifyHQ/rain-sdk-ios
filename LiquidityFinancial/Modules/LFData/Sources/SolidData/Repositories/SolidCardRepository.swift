@@ -22,4 +22,8 @@ public class SolidCardRepository: SolidCardRepositoryProtocol {
     try await cardAPI.closeCard(cardID: cardID)
   }
   
+  public func createVGSShowToken(cardID: String) async throws -> SolidCardShowTokenEntity {
+   try await cardAPI.createVGSShowToken(cardID: cardID)
+  }
+  
 }

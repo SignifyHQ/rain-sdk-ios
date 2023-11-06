@@ -4,26 +4,27 @@ import LFStyleGuide
 import LFUtilities
 import LFLocalizable
 import Services
+import BaseCard
 
-struct CardView<ViewModel: CardViewModelProtocol>: View {
-  @StateObject private var viewModel: ViewModel
-  @Binding private var isShowCardNumber: Bool
-  @Binding private var cardMetaData: CardMetaData?
-  @Binding private var isLoading: Bool
+public struct NSCardView: CardViewProtocol {
+  @StateObject private var viewModel: NSCardViewModel
+  @Binding public var isShowCardNumber: Bool
+  @Binding public var cardMetaData: CardMetaData?
+  @Binding public var isLoading: Bool
 
-  init(
-    viewModel: ViewModel,
+  public init(
+    cardModel: CardModel,
     cardMetaData: Binding<CardMetaData?>,
     isShowCardNumber: Binding<Bool>,
     isLoading: Binding<Bool>
   ) {
-    _viewModel = .init(wrappedValue: viewModel)
+    _viewModel = .init(wrappedValue: NSCardViewModel(cardModel: cardModel))
     _cardMetaData = cardMetaData
     _isShowCardNumber = isShowCardNumber
     _isLoading = isLoading
   }
   
-  var body: some View {
+  public var body: some View {
     ZStack(alignment: .bottom) {
       ZStack(alignment: .topLeading) {
         GenImages.Images.emptyCard.swiftUIImage
@@ -57,7 +58,7 @@ struct CardView<ViewModel: CardViewModelProtocol>: View {
 }
 
 // MARK: View Components
-private extension CardView {
+private extension NSCardView {
   var physicalTitleView: some View {
     HStack {
       Text(LFLocalizable.Card.Physical.name(LFUtilities.cardName))
