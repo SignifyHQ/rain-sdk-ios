@@ -16,6 +16,7 @@ class CryptoAssetViewModel: ObservableObject {
   @LazyInjected(\.accountRepository) var accountRepository
   @LazyInjected(\.marketManager) var marketManager
   @LazyInjected(\.analyticsService) var analyticsService
+  @LazyInjected(\.cryptoAccountService) var cryptoAccountService
 
   @Published var loading: Bool = false
   @Published var showTransferSheet: Bool = false
@@ -70,9 +71,8 @@ class CryptoAssetViewModel: ObservableObject {
 private extension CryptoAssetViewModel {
   func getCryptoAccount() async {
     do {
-      // TODO: Will add it in another PR
-      let account = try await accountRepository.getAccountDetail(id: self.asset.id)
-      // self.accountDataManager.addOrUpdateAccount(account)
+      let account = try await cryptoAccountService.getAccountDetail(id: self.asset.id)
+      self.accountDataManager.addOrUpdateAccount(account)
     } catch {
       toastMessage = error.localizedDescription
     }

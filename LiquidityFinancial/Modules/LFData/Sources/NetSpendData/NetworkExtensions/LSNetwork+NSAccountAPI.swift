@@ -24,4 +24,13 @@ extension LFCoreNetwork: NSAccountAPIProtocol where R == NSAccountRoute {
       decoder: .apiDecoder
     )
   }
+  
+  public func getAccountDetail(id: String) async throws -> APINetspendAccount {
+    return try await request(
+      NSAccountRoute.getAccountDetail(id: id),
+      target: APINetspendAccount.self,
+      failure: LFErrorObject.self,
+      decoder: .apiDecoder
+    )
+  }
 }

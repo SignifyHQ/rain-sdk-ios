@@ -15,6 +15,7 @@ final class MoveCryptoInputViewModel: ObservableObject {
   @LazyInjected(\.accountDataManager) var accountDataManager
   @LazyInjected(\.zerohashRepository) var zerohashRepository
   @LazyInjected(\.dashboardRepository) var dashboardRepository
+  @LazyInjected(\.cryptoAccountService) var cryptoAccountService
 
   @Published var assetModel: AssetModel
   @Published var fiatAccount: AccountModel?
@@ -121,9 +122,8 @@ private extension MoveCryptoInputViewModel {
           self.accountDataManager.fiatAccountID = fiatAccount.id
         }
       }
-      // TODO: Will implement in another PR.
-      let cryptoAccount = try await self.accountRepository.getAccountDetail(id: cryptoId)
-      // self.accountDataManager.addOrUpdateAccount(cryptoAccount)
+      let cryptoAccount = try await self.cryptoAccountService.getAccountDetail(id: cryptoId)
+      self.accountDataManager.addOrUpdateAccount(cryptoAccount)
       self.accountDataManager.cryptoAccountID = cryptoId
       
       generateGridValues()

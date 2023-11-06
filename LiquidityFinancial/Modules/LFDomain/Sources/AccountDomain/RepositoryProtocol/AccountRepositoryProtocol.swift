@@ -8,7 +8,6 @@ public protocol AccountRepositoryProtocol {
   func getSelectedRewardCurrency() async throws -> RewardCurrencyEntity
   func updateSelectedRewardCurrency(rewardCurrency: String) async throws -> RewardCurrencyEntity
   func getAccount(currencyType: String) async throws -> [LFAccount]
-  func getAccountDetail(id: String) async throws -> LFAccount
   func getTransactions(
     accountId: String, currencyType: String, transactionTypes: String, limit: Int, offset: Int
   ) async throws -> TransactionListEntity

@@ -8,7 +8,6 @@ public protocol AccountAPIProtocol {
   func getSelectedRewardCurrency() async throws -> APIRewardCurrency
   func updateSelectedRewardCurrency(rewardCurrency: String) async throws -> APIRewardCurrency
   func getAccount(currencyType: String) async throws -> [APIAccount]
-  func getAccountDetail(id: String) async throws -> APIAccount
   func getTransactions(
     accountId: String, currencyType: String, transactionTypes: String, limit: Int, offset: Int
   ) async throws -> APITransactionList

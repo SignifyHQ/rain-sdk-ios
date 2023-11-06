@@ -10,4 +10,8 @@ public class SolidAccountRepository: SolidAccountRepositoryProtocol {
   public func getAccounts() async throws -> [SolidAccountEntity] {
     return try await accountAPI.getAccounts()
   }
+  
+  public func getAccountDetail(id: String) async throws -> SolidAccountEntity {
+    return try  await accountAPI.getAccountDetail(id: id)
+  }
 }

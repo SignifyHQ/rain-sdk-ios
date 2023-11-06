@@ -47,7 +47,7 @@ public final class DashboardRepository: ObservableObject {
   @LazyInjected(\.devicesRepository) var devicesRepository
   
   @LazyInjected(\.analyticsService) var analyticsService
-  @LazyInjected(\.accountServices) var accountServices
+  @LazyInjected(\.fiatAccountService) var fiatAccountService
   
   @Published public var fiatData: (fiatAccount: [AccountModel], loading: Bool) = ([], false)
   @Published public var cryptoData: (cryptoAccounts: [LFAccount], loading: Bool) = ([], false)
@@ -381,7 +381,7 @@ public extension DashboardRepository {
 public extension DashboardRepository {
   
   func getFiatAccounts() async throws -> [AccountModel] {
-    let accounts = try await accountServices.getFiatAccounts()
+    let accounts = try await fiatAccountService.getAccounts()
     
     self.fiatData.fiatAccount = accounts
     self.accountDataManager.addOrUpdateAccounts(accounts)

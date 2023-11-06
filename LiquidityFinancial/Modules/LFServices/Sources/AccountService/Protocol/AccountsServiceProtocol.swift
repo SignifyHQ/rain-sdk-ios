@@ -2,6 +2,7 @@ import Foundation
 
 public protocol AccountsServiceProtocol {
   
-  func getFiatAccounts() async throws -> [AccountModel]
+  func getAccounts() async throws -> [AccountModel]
+  func getAccountDetail(id: String) async throws -> AccountModel
   
 }

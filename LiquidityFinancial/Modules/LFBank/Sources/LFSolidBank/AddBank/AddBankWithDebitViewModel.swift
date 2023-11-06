@@ -21,7 +21,7 @@ class AddBankWithDebitViewModel: ObservableObject {
   @LazyInjected(\.solidExternalFundingRepository) var solidExternalFundingRepository
   @LazyInjected(\.solidAccountRepository) var solidAccountRepository
   @LazyInjected(\.externalFundingDataManager) var externalFundingDataManager
-  @LazyInjected(\.accountServices) var accountServices
+  @LazyInjected(\.fiatAccountService) var fiatAccountService
   
   lazy var solidDebitCardTokenUseCase: SolidDebitCardTokenUseCaseProtocol = {
     SolidDebitCardTokenUseCase(repository: solidExternalFundingRepository)
@@ -124,7 +124,7 @@ extension AddBankWithDebitViewModel {
       do {
         self.fiatAccount = self.accountDataManager.fiatAccounts.first
         if self.fiatAccount == nil {
-          let accounts = try await accountServices.getFiatAccounts()
+          let accounts = try await fiatAccountService.getAccounts()
           self.fiatAccount = accounts.first
         }
       } catch {

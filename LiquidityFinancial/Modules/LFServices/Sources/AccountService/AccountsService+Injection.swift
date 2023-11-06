@@ -4,7 +4,13 @@ import Factory
 @MainActor
 extension Container {
   
-  public var accountServices: Factory<AccountsServiceProtocol> {
+  public var fiatAccountService: Factory<AccountsServiceProtocol> {
+    Factory(self) {
+      DefaultAccountService()
+    }
+  }
+  
+  public var cryptoAccountService: Factory<AccountsServiceProtocol> {
     Factory(self) {
       DefaultAccountService()
     }

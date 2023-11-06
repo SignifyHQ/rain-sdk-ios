@@ -32,7 +32,7 @@ class AppViewModel: ObservableObject {
   }
   
   @MainActor func registerInjection() {
-    Container.shared.accountServices.register {
+    Container.shared.fiatAccountService.register {
       SolidAccountService()
     }
   }

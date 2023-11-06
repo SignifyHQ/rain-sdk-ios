@@ -21,4 +21,8 @@ public class NSAccountRepository: NSAccountRepositoryProtocol {
   public func getAccounts() async throws -> [NSAccountEntity] {
     return try await accountAPI.getAccounts()
   }
+  
+  public func getAccountDetail(id: String) async throws -> NSAccountEntity {
+    return try await accountAPI.getAccountDetail(id: id)
+  }
 }

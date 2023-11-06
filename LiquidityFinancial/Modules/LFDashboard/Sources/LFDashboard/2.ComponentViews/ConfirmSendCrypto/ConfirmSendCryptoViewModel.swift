@@ -7,12 +7,14 @@ import LFTransaction
 import LFLocalizable
 import ZerohashDomain
 import LFUtilities
+import AccountService
 
 class ConfirmSendCryptoViewModel: ObservableObject {
   @LazyInjected(\.accountDataManager) var accountDataManager
   @LazyInjected(\.zerohashRepository) var zerohashRepository
   @LazyInjected(\.accountRepository) var accountRepository
   @LazyInjected(\.biometricsService) var biometricsService
+  @LazyInjected(\.cryptoAccountService) var cryptoAccountService
   
   @Published var showIndicator: Bool = false
   @Published var toastMessage: String?
@@ -68,9 +70,8 @@ class ConfirmSendCryptoViewModel: ObservableObject {
       showIndicator = true
       do {
         let transactionEntity = try await self.zerohashRepository.execute(accountId: accountId, quoteId: id)
-        // TODO: Will add it in another PR
-        // let account = try await accountRepository.getAccountDetail(id: accountId)
-        // self.accountDataManager.addOrUpdateAccount(account)
+        let account = try await cryptoAccountService.getAccountDetail(id: accountId)
+        self.accountDataManager.addOrUpdateAccount(account)
         transaction = TransactionModel(from: transactionEntity)
         self.navigation = .transactionDetail(transaction.id)
       } catch {
@@ -90,9 +91,8 @@ class ConfirmSendCryptoViewModel: ObservableObject {
           destinationAddress: self.address,
           amount: self.amount
         )
-        // TODO: Will add it in another PR
-        // let account = try await accountRepository.getAccountDetail(id: id)
-        // self.accountDataManager.addOrUpdateAccount(account)
+        let account = try await cryptoAccountService.getAccountDetail(id: id)
+        self.accountDataManager.addOrUpdateAccount(account)
         transaction = TransactionModel(from: transactionEntity)
         self.navigation = .transactionDetail(transaction.id)
       } catch {

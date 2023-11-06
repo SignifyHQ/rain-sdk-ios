@@ -21,7 +21,7 @@ public class MoveMoneyAccountViewModel: ObservableObject {
   @LazyInjected(\.customerSupportService) var customerSupportService
   @LazyInjected(\.externalFundingDataManager) var externalFundingDataManager
   @LazyInjected(\.solidExternalFundingRepository) var solidExternalFundingRepository
-  @LazyInjected(\.accountServices) var accountServices
+  @LazyInjected(\.fiatAccountService) var fiatAccountService
   
   @Published var navigation: Navigation?
   @Published var amountInput: String = Constants.Default.zeroAmount.rawValue
@@ -168,7 +168,7 @@ extension MoveMoneyAccountViewModel {
     if let account = self.accountDataManager.fiatAccounts.first {
       return account
     }
-    return try await accountServices.getFiatAccounts().first
+    return try await fiatAccountService.getAccounts().first
   }
   
   func callTransferAPI() {

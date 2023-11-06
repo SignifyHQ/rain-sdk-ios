@@ -16,6 +16,7 @@ class FiatAssetViewModel: ObservableObject {
   @LazyInjected(\.accountDataManager) var accountDataManager
   @LazyInjected(\.accountRepository) var accountRepository
   @LazyInjected(\.dashboardRepository) var dashboardRepository
+  @LazyInjected(\.fiatAccountService) var fiatAccountService
   
   @Published var asset: AssetModel
   @Published var isLoadingACH: Bool = false
@@ -55,10 +56,9 @@ class FiatAssetViewModel: ObservableObject {
 private extension FiatAssetViewModel {
   func getAccountDetail(id: String) async {
     do {
-      // TODO: Will add it in another PR
-      let account = try await accountRepository.getAccountDetail(id: id)
+      let account = try await fiatAccountService.getAccountDetail(id: id)
       self.accountDataManager.fiatAccountID = account.id
-      // self.accountDataManager.addOrUpdateAccount(account)
+      self.accountDataManager.addOrUpdateAccount(account)
     } catch {
       toastMessage = error.localizedDescription
     }

@@ -8,15 +8,6 @@ extension LFCoreNetwork: AccountAPIProtocol where R == AccountRoute {
     return try await request(AccountRoute.getAccount(currencyType: currencyType), target: [APIAccount].self, failure: LFErrorObject.self, decoder: .apiDecoder)
   }
   
-  public func getAccountDetail(id: String) async throws -> APIAccount {
-    try await request(
-      AccountRoute.getAccountDetail(id: id),
-      target: APIAccount.self,
-      failure: LFErrorObject.self,
-      decoder: .apiDecoder
-    )
-  }
-  
   public func getUser() async throws -> APIUser {
     return try await request(AccountRoute.getUser, target: APIUser.self, failure: LFErrorObject.self, decoder: .apiDecoder)
   }

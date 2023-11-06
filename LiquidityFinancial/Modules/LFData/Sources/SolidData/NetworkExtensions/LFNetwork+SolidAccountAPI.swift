@@ -13,4 +13,13 @@ extension LFCoreNetwork: SolidAccountAPIProtocol where R == SolidAccountRoute {
     )
   }
   
+  public func getAccountDetail(id: String) async throws -> APISolidAccount {
+    return try await request(
+      .getAccountDetail(id: id),
+      target: APISolidAccount.self,
+      failure: LFErrorObject.self,
+      decoder: .apiDecoder
+    )
+  }
+  
 }

@@ -26,7 +26,7 @@ class SelectBankAccountViewModel: ObservableObject {
   @LazyInjected(\.externalFundingDataManager) var externalFundingDataManager
   @LazyInjected(\.solidExternalFundingRepository) var solidExternalFundingRepository
   @LazyInjected(\.solidAccountRepository) var solidAccountRepository
-  @LazyInjected(\.accountServices) var accountServices
+  @LazyInjected(\.fiatAccountService) var fiatAccountService
   
   @Published var linkedBanks: [LinkedSourceContact] = []
   @Published var navigation: Navigation?
@@ -87,7 +87,7 @@ class SelectBankAccountViewModel: ObservableObject {
       do {
         fiatAccount = self.accountDataManager.fiatAccounts.first
         if fiatAccount == nil {
-          fiatAccount = try await accountServices.getFiatAccounts().first
+          fiatAccount = try await fiatAccountService.getAccounts().first
         }
       } catch {
         log.error(error.localizedDescription)
