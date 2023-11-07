@@ -4,10 +4,6 @@ import CoreNetwork
 import LFUtilities
 
 extension LFCoreNetwork: AccountAPIProtocol where R == AccountRoute {
-  public func getAccount(currencyType: String) async throws -> [APIAccount] {
-    return try await request(AccountRoute.getAccount(currencyType: currencyType), target: [APIAccount].self, failure: LFErrorObject.self, decoder: .apiDecoder)
-  }
-  
   public func getUser() async throws -> APIUser {
     return try await request(AccountRoute.getUser, target: APIUser.self, failure: LFErrorObject.self, decoder: .apiDecoder)
   }

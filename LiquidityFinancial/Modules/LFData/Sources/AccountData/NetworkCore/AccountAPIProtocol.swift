@@ -7,7 +7,6 @@ public protocol AccountAPIProtocol {
   func getAvailableRewardCurrencies() async throws -> APIAvailableRewardCurrencies
   func getSelectedRewardCurrency() async throws -> APIRewardCurrency
   func updateSelectedRewardCurrency(rewardCurrency: String) async throws -> APIRewardCurrency
-  func getAccount(currencyType: String) async throws -> [APIAccount]
   func getTransactions(
     accountId: String, currencyType: String, transactionTypes: String, limit: Int, offset: Int
   ) async throws -> APITransactionList

@@ -6,6 +6,7 @@ import Factory
 import SolidOnboarding
 import AccountService
 import SolidData
+import ZerohashData
 
 class AppViewModel: ObservableObject {
   
@@ -34,6 +35,9 @@ class AppViewModel: ObservableObject {
   @MainActor func registerInjection() {
     Container.shared.fiatAccountService.register {
       SolidAccountService()
+    }
+    Container.shared.cryptoAccountService.register {
+      ZerohashAccountService()
     }
   }
   

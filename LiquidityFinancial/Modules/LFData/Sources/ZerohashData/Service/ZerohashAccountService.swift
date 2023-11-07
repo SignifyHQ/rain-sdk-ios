@@ -1,18 +1,19 @@
+import Foundation
 import AccountService
 import Factory
-import SolidDomain
+import ZerohashDomain
 import LFUtilities
 
-public class SolidAccountService: AccountsServiceProtocol {
+public class ZerohashAccountService: AccountsServiceProtocol {
   
-  @LazyInjected(\.solidAccountRepository) var solidAccountRepository
+  @LazyInjected(\.zerohashAccountRepository) var zerohashAccountRepository
   
-  lazy var getAccountUsecase: SolidGetAccountsUseCaseProtocol = {
-    SolidGetAccountsUseCase(repository: solidAccountRepository)
+  lazy var getAccountUsecase: ZerohashGetAccountsUseCaseProtocol = {
+    ZerohashGetAccountsUseCase(repository: zerohashAccountRepository)
   }()
   
-  lazy var getAccountDetailUsecase: SolidGetAccountDetailUseCaseProtocol = {
-    SolidGetAccountDetailUseCase(repository: solidAccountRepository)
+  lazy var getAccountDetailUsecase: ZerohashGetAccountDetailUseCaseProtocol = {
+    ZerohashGetAccountDetailUseCase(repository: zerohashAccountRepository)
   }()
   
   public init() {
@@ -21,13 +22,13 @@ public class SolidAccountService: AccountsServiceProtocol {
   
   public func getAccounts() async throws -> [AccountModel] {
     let entity = try await self.getAccountUsecase.execute()
-    return entity.compactMap { solidAccount in
+    return entity.compactMap { account in
       AccountModel(
-        id: solidAccount.id,
-        externalAccountId: solidAccount.externalAccountId,
-        currency: solidAccount.currency,
-        availableBalance: solidAccount.availableBalance,
-        availableUsdBalance: solidAccount.availableUsdBalance
+        id: account.id,
+        externalAccountId: account.externalAccountId,
+        currency: account.currency,
+        availableBalance: account.availableBalance,
+        availableUsdBalance: account.availableUsdBalance
       )
     }
   }

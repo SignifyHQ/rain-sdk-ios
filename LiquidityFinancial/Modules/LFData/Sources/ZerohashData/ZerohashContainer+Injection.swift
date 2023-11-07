@@ -14,4 +14,15 @@ extension Container {
   public var zerohashRepository: Factory<ZerohashRepositoryProtocol> {
     self { ZerohashRepository(zerohashAPI: self.zerohashAPI.callAsFunction()) }
   }
+  
+  public var zerohashAccountAPI: Factory<ZerohashAccountAPIProtocol> {
+    self {
+      LFCoreNetwork<ZerohashAccountRoute>()
+    }
+  }
+  
+  public var zerohashAccountRepository: Factory<ZerohashAccountRepositoryProtocol> {
+    self { ZerohashAccountRepository(accountAPI: self.zerohashAccountAPI.callAsFunction()) }
+  }
+  
 }

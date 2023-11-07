@@ -48,9 +48,10 @@ public final class DashboardRepository: ObservableObject {
   
   @LazyInjected(\.analyticsService) var analyticsService
   @LazyInjected(\.fiatAccountService) var fiatAccountService
+  @LazyInjected(\.cryptoAccountService) var cryptoAccountService
   
   @Published public var fiatData: (fiatAccount: [AccountModel], loading: Bool) = ([], false)
-  @Published public var cryptoData: (cryptoAccounts: [LFAccount], loading: Bool) = ([], false)
+  @Published public var cryptoData: (cryptoAccounts: [AccountModel], loading: Bool) = ([], false)
   
   @Published public var isLoadingRewardTab: Bool = false
   
@@ -296,9 +297,9 @@ public extension DashboardRepository {
       cryptoData.loading = true
       
       do {
-        async let cryptoAccountsEntity = self.accountRepository.getAccount(currencyType: Constants.CurrencyType.crypto.rawValue)
         let fiatAccounts = try await self.getFiatAccounts()
-        let cryptoAccounts = try await cryptoAccountsEntity
+        let cryptoAccounts = try await self.getCryptoAccounts()
+        let accounts = fiatAccounts + cryptoAccounts
         
         let assets = fiatAccounts.map { AssetModel(account: $0) }
         getRewardCurrency(assets: assets)
@@ -309,9 +310,7 @@ public extension DashboardRepository {
         self.fiatData.fiatAccount = fiatAccounts
         self.cryptoData.cryptoAccounts = cryptoAccounts
         
-        // TODO: Will get crypto account in another API
-        //self.accountDataManager.accountsSubject.send(accounts)
-        self.accountDataManager.accountsSubject.send(fiatAccounts)
+        self.accountDataManager.accountsSubject.send(accounts)
       } catch {
         isLoadingRewardTab = false
         log.error(error.localizedDescription)
@@ -384,6 +383,14 @@ public extension DashboardRepository {
     let accounts = try await fiatAccountService.getAccounts()
     
     self.fiatData.fiatAccount = accounts
+    self.accountDataManager.addOrUpdateAccounts(accounts)
+    return accounts
+  }
+  
+  func getCryptoAccounts() async throws -> [AccountModel] {
+    let accounts = try await cryptoAccountService.getAccounts()
+    
+    self.cryptoData.cryptoAccounts = accounts
     self.accountDataManager.addOrUpdateAccounts(accounts)
     return accounts
   }

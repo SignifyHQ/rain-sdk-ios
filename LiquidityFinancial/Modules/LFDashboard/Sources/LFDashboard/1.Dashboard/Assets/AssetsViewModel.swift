@@ -38,15 +38,13 @@ final class AssetsViewModel: ObservableObject {
   
   func refresh() async {
     async let fiatAccountsEntity = self.dashboardRepository.getFiatAccounts()
-    async let cryptoAccountsEntity = self.accountRepository.getAccount(currencyType: Constants.CurrencyType.crypto.rawValue)
+    async let cryptoAccountsEntity = self.dashboardRepository.getCryptoAccounts()
     do {
       let fiatAccounts = try await fiatAccountsEntity
       let cryptoAccounts = try await cryptoAccountsEntity
-      //let accounts = fiatAccounts + cryptoAccounts
+      let accounts = fiatAccounts + cryptoAccounts
       
-      // TODO: Will implement crypto account in another PR
-      //self.accountDataManager.accountsSubject.send(accounts)
-      self.accountDataManager.accountsSubject.send(fiatAccounts)
+      self.accountDataManager.accountsSubject.send(accounts)
     } catch {
       toastMessage = error.localizedDescription
     }

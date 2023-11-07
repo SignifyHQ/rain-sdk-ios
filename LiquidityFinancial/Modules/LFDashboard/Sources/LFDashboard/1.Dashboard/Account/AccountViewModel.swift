@@ -78,7 +78,7 @@ class AccountViewModel: ObservableObject {
           let assets = cryptoData.cryptoAccounts.compactMap({
             AssetModel(
               id: $0.id,
-              type: AssetType(rawValue: $0.currency),
+              type: AssetType(rawValue: $0.currency.rawValue.uppercased()),
               availableBalance: $0.availableBalance,
               availableUsdBalance: $0.availableUsdBalance,
               externalAccountId: $0.externalAccountId

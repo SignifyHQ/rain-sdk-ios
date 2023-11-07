@@ -33,10 +33,6 @@ public class AccountRepository: AccountRepositoryProtocol {
     try await accountAPI.updateSelectedRewardCurrency(rewardCurrency: rewardCurrency)
   }
   
-  public func getAccount(currencyType: String) async throws -> [LFAccount] {
-    return try await accountAPI.getAccount(currencyType: currencyType)
-  }
-  
   public func getTransactions(
     accountId: String, currencyType: String, transactionTypes: String, limit: Int, offset: Int
   ) async throws -> TransactionListEntity {
