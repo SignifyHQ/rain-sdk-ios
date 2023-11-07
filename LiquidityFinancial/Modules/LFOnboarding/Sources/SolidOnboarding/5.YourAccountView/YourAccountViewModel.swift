@@ -24,7 +24,7 @@ class YourAccountViewModel: ObservableObject {
   
   var remoteURLs: RemoteLinks?
   
-  lazy var accountUseCase: AccountUseCase = {
+  lazy var accountUseCase: AccountUseCaseProtocol = {
     AccountUseCase(repository: accountRepository)
   }()
   

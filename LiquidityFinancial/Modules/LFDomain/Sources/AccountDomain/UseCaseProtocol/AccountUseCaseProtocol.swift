@@ -1,6 +1,6 @@
 import Foundation
 
-protocol AccountUseCaseProtocol {
+public protocol AccountUseCaseProtocol {
   func execute(
     accountId: String, currencyType: String, transactionTypes: String, limit: Int, offset: Int
   ) async throws -> TransactionListEntity
