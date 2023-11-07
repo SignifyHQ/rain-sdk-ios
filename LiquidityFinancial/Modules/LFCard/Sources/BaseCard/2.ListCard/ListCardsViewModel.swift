@@ -16,9 +16,9 @@ import NetspendDomain
 
 // MARK: - DestinationView
 public struct ListCardsDestinationObservable {
-  var navigation: Navigation?
-  var sheet: Sheet?
-  var fullScreen: FullScreen?
+  public var navigation: Navigation?
+  public var sheet: Sheet?
+  public var fullScreen: FullScreen?
   
   public enum Navigation {
     case orderPhysicalCard(AnyView)
@@ -65,8 +65,6 @@ public protocol ListCardsViewModelProtocol: ObservableObject {
   var isShowCardNumber: Bool { get set }
   var isCardLocked: Bool { get set }
   var isActive: Bool { get set }
-  var isUpdatingRoundUpPurchases: Bool { get set }
-  var isHasPhysicalCard: Bool { get set }
   var isShowListCardDropdown: Bool { get set }
   var toastMessage: String? { get set }
   var cardsList: [CardModel] { get set }
@@ -76,8 +74,6 @@ public protocol ListCardsViewModelProtocol: ObservableObject {
   
   // Properties
   var isSwitchCard: Bool { get set }
-  var roundUpPurchases: Bool { get }
-  var showRoundUpPurchases: Bool { get }
   var cancellables: Set<AnyCancellable> { get set }
   var coordinator: BaseCardDestinationObservable { get }
   
@@ -87,47 +83,23 @@ public protocol ListCardsViewModelProtocol: ObservableObject {
   func callLockCardAPI()
   func callUnLockCardAPI()
   func closeCard()
-  func callUpdateRoundUpDonationAPI(status: Bool)
   
   // View Helpers
   func title(for card: CardModel) -> String
   func onDisappear()
-  func orderPhysicalSuccess(card: CardModel)
   func activePhysicalSuccess(id: String)
   func openSupportScreen()
   func lockCardToggled()
-  func onClickedChangePinButton(activeCardView: AnyView)
   func onClickedAddToApplePay()
-  func onClickedRoundUpPurchasesInformation()
   func onChangeCurrentCard()
-  func onClickedOrderPhysicalCard()
   func onClickCloseCardButton()
   func hidePopup()
   func primaryActionCloseCardSuccessfully(completion: @escaping () -> Void)
+  func subscribeListCardsChange(_ cardData: Published<(CardData)>.Publisher)
 }
 
 // MARK: - Functions
-public extension ListCardsViewModelProtocol {
-  func subscribeListCardsChange(_ cardData: Published<(CardData)>.Publisher) {
-    cardData
-      .receive(on: DispatchQueue.main)
-      .sink { [weak self] cardData in
-        guard let self = self else {
-          return
-        }
-        self.isInit = cardData.loading
-        self.isHasPhysicalCard = cardData.cards.contains { card in
-          card.cardType == .physical
-        }
-        self.cardsList = cardData.cards.filter { $0.cardStatus != .closed }
-        self.cardMetaDatas = cardData.metaDatas
-        self.currentCard = self.cardsList.first ?? .virtualDefault
-        self.isActive = currentCard.cardStatus == .active
-        self.isCardLocked = currentCard.cardStatus == .disabled
-      }
-      .store(in: &cancellables)
-  }
-  
+public extension ListCardsViewModelProtocol {  
   func mapToCardModel(card: CardEntity) -> CardModel {
     CardModel(
       id: card.id,
@@ -138,15 +110,6 @@ public extension ListCardsViewModelProtocol {
       last4: card.panLast4,
       cardStatus: CardStatus(rawValue: card.status) ?? .unactivated
     )
-  }
-  
-  func presentActivateCardView(activeCardView: AnyView) {
-    switch currentCard.cardType {
-    case .physical:
-      setFullScreenCoordinator(destinationView: .activatePhysicalCard(activeCardView))
-    default:
-      break
-    }
   }
   
   func updateCardStatus(status: CardStatus, id: String) {

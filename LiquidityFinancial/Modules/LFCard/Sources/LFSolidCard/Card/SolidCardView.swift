@@ -6,20 +6,17 @@ import LFLocalizable
 import Services
 import BaseCard
 
-public struct SolidCardView: CardViewProtocol {
+public struct SolidCardView: View {  
   @StateObject private var viewModel: SolidCardViewModel
   @Binding public var isShowCardNumber: Bool
-  @Binding public var cardMetaData: CardMetaData?
   @Binding public var isLoading: Bool
 
   public init(
     cardModel: CardModel,
-    cardMetaData: Binding<CardMetaData?>,
     isShowCardNumber: Binding<Bool>,
     isLoading: Binding<Bool>
   ) {
     _viewModel = .init(wrappedValue: SolidCardViewModel(cardModel: cardModel))
-    _cardMetaData = cardMetaData
     _isShowCardNumber = isShowCardNumber
     _isLoading = isLoading
   }

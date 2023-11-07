@@ -7,14 +7,14 @@ import NetspendDomain
 import Factory
 import LFUtilities
 
-public struct ApplePayViewController: UIViewControllerRepresentable {
+public struct ApplePayViewController<ViewModel: ApplePayViewModelProtocol>: UIViewControllerRepresentable {
   @Environment(\.presentationMode) var presentation
-  @StateObject private var viewModel: ApplePayViewModel
+  @StateObject private var viewModel: ViewModel
   
   var onSuccess: (() -> Void)?
   
-  public init(cardModel: CardModel, onSuccess: ( () -> Void)? = nil) {
-    _viewModel = .init(wrappedValue: ApplePayViewModel(cardModel: cardModel))
+  public init(viewModel: ViewModel, onSuccess: ( () -> Void)? = nil) {
+    _viewModel = .init(wrappedValue: viewModel)
     self.onSuccess = onSuccess
   }
   
@@ -59,14 +59,14 @@ extension ApplePayViewController {
             body["nonce"] = nonceString
             body["nonceSignature"] = nonceSignatureVal
             if let cardData = try await parent.viewModel.callEnrollWalletAPI(bodyData: body) {
-              log.debug(cardData)
-              let payloadData = cardData.encryptedCardData
-              let activationcode = cardData.activationData
-              let ephemeralkey = cardData.ephemeralPublicKey
               
-              let encryptedPassData = Data(base64Encoded: payloadData ?? "", options: [])
-              let ephemeralPublicKey = Data(base64Encoded: ephemeralkey ?? "", options: [])
-              let activationData = Data(base64Encoded: activationcode ?? "", options: [])
+              let payloadData = cardData.encryptedCardData ?? .empty
+              let activationcode = cardData.activationData ?? .empty
+              let ephemeralkey = cardData.ephemeralPublicKey ?? .empty
+              
+              let encryptedPassData = Data(base64Encoded: payloadData, options: [])
+              let ephemeralPublicKey = Data(base64Encoded: ephemeralkey, options: [])
+              let activationData = Data(base64Encoded: activationcode, options: [])
               
               paymentPassRequest.activationData = activationData
               paymentPassRequest.encryptedPassData = encryptedPassData

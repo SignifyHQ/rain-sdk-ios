@@ -3,7 +3,10 @@ import LFLocalizable
 import LFUtilities
 import LFStyleGuide
 
-struct AddAppleWalletView<ViewModel: AddAppleWalletViewModelProtocol>: View {
+struct AddAppleWalletView<
+  ViewModel: AddAppleWalletViewModelProtocol,
+  ApplePayViewModel: ApplePayViewModelProtocol
+>: View {
   @StateObject private var viewModel: ViewModel
   
   init(viewModel: ViewModel) {
@@ -14,7 +17,7 @@ struct AddAppleWalletView<ViewModel: AddAppleWalletViewModelProtocol>: View {
     content
       .background(Colors.background.swiftUIColor)
       .sheet(isPresented: $viewModel.isShowApplePay) {
-        ApplePayViewController(cardModel: viewModel.cardModel) {
+        ApplePayViewController(viewModel: ApplePayViewModel(cardModel: viewModel.cardModel)) {
           viewModel.onFinish()
         }
       }

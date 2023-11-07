@@ -2,26 +2,28 @@ import Foundation
 import PassKit
 import SwiftUI
 
-struct ApplePayButton: UIViewRepresentable {
-  class Coordinator: NSObject, PKPaymentAuthorizationViewControllerDelegate {
-    func paymentAuthorizationViewControllerDidFinish(_: PKPaymentAuthorizationViewController) {}
+public struct ApplePayButton: UIViewRepresentable {
+  public init() {}
+  
+  public class Coordinator: NSObject, PKPaymentAuthorizationViewControllerDelegate {
+    public func paymentAuthorizationViewControllerDidFinish(_: PKPaymentAuthorizationViewController) {}
     
-    func paymentAuthorizationViewController(
+    public func paymentAuthorizationViewController(
       _: PKPaymentAuthorizationViewController,
       didAuthorizePayment _: PKPayment,
       handler _: @escaping (PKPaymentAuthorizationResult) -> Void
     ) {}
     
-    func paymentAuthorizationViewControllerWillAuthorizePayment(_: PKPaymentAuthorizationViewController) {}
+    public func paymentAuthorizationViewControllerWillAuthorizePayment(_: PKPaymentAuthorizationViewController) {}
   }
   
-  func makeCoordinator() -> Coordinator {
+  public func makeCoordinator() -> Coordinator {
     Coordinator()
   }
   
-  func updateUIView(_: PKAddPassButton, context _: Context) {}
+  public func updateUIView(_: PKAddPassButton, context _: Context) {}
   
-  func makeUIView(context _: Context) -> PKAddPassButton {
+  public func makeUIView(context _: Context) -> PKAddPassButton {
     let paymentButton = PKAddPassButton()
     paymentButton.addPassButtonStyle = .blackOutline
     return paymentButton

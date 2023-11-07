@@ -6,22 +6,17 @@ import LFStyleGuide
 import LFRewards
 import Services
 import Factory
+import BaseCard
 
-public struct ListCardsView<
-  CardView: CardViewProtocol,
-  ViewModel: ListCardsViewModelProtocol,
-  EnterCVVCodeViewModel: EnterCVVCodeViewModelProtocol,
-  SetCardPinViewModel: SetCardPinViewModelProtocol,
-  AddAppleWalletViewModel: AddAppleWalletViewModelProtocol
->: View {
+public struct NSListCardsView: View {
   
   @Environment(\.dismiss) private var dismiss
-  @StateObject var viewModel: ViewModel
+  @StateObject var viewModel: NSListCardsViewModel
   @InjectedObject(\.baseCardDestinationObservable) var baseCardDestinationObservable
   
   @State private var activeContent: ActiveContent = .verifyCvv
 
-  public init(viewModel: ViewModel) {
+  public init(viewModel: NSListCardsViewModel) {
     _viewModel = .init(wrappedValue: viewModel)
   }
   
@@ -73,8 +68,7 @@ public struct ListCardsView<
         confirmationCloseCardPopup
       case .closeCardSuccessfully:
         closeCardSuccessfullyPopup
-      case .roundUpPurchases:
-        roundUpPurchasesPopup
+      default: EmptyView()
       }
     }
     .popup(item: $viewModel.toastMessage, style: .toast) {
@@ -86,7 +80,7 @@ public struct ListCardsView<
 }
 
 // MARK: - ToolBar Components
-private extension ListCardsView {
+private extension NSListCardsView {
   var toolbarContent: some ToolbarContent {
     Group {
       ToolbarItem(placement: .navigationBarLeading) {
@@ -136,19 +130,19 @@ private extension ListCardsView {
 }
 
 // MARK: - Content Components
-private extension ListCardsView {
+private extension NSListCardsView {
   @ViewBuilder var changePinContent: some View {
     switch activeContent {
     case .verifyCvv:
       EnterCVVCodeView(
-        viewModel: EnterCVVCodeViewModel(cardID: viewModel.currentCard.id),
+        viewModel: NSEnterCVVCodeViewModel(cardID: viewModel.currentCard.id),
         screenTitle: LFLocalizable.EnterCVVCode.SetCardPin.title
       ) { verifyID in
         activeContent = .changePin(verifyID)
       }
     case let .changePin(verifyID):
       SetCardPinView(
-        viewModel: SetCardPinViewModel(
+        viewModel: NSSetCardPinViewModel(
           verifyID: verifyID,
           cardID: viewModel.currentCard.id,
           onFinish: nil
@@ -186,7 +180,7 @@ private extension ListCardsView {
 }
 
 // MARK: - Top Components
-private extension ListCardsView {
+private extension NSListCardsView {
   @ViewBuilder
   var cardsList: some View {
     if viewModel.isShowListCardDropdown {
@@ -217,7 +211,7 @@ private extension ListCardsView {
   var card: some View {
     TabView(selection: $viewModel.currentCard) {
       ForEach(Array([viewModel.currentCard].enumerated()), id: \.element.id) { offset, item in
-        CardView(
+        NSCardView(
           cardModel: item,
           cardMetaData: viewModel.cardMetaDatas.count > offset ? $viewModel.cardMetaDatas[offset] : .constant(nil),
           isShowCardNumber: $viewModel.isShowCardNumber,
@@ -249,14 +243,10 @@ private extension ListCardsView {
 }
 
 // MARK: - Middle Components
-private extension ListCardsView {
+private extension NSListCardsView {
   @ViewBuilder
   var rows: some View {
     VStack(alignment: .leading, spacing: 18) {
-      if viewModel.showRoundUpPurchases {
-        roundUpPurchasesView
-      }
-      
       if viewModel.currentCard.cardType != .physical || viewModel.currentCard.cardStatus != .unactivated {
         Text(LFLocalizable.ListCard.Security.title)
           .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.ultraSmall.value))
@@ -289,7 +279,10 @@ private extension ListCardsView {
             viewModel.onClickedChangePinButton(
               activeCardView: AnyView(
                 ActivatePhysicalCardView<
-                EnterCVVCodeViewModel, SetCardPinViewModel, AddAppleWalletViewModel
+                NSEnterCVVCodeViewModel,
+                NSSetCardPinViewModel,
+                NSAddAppleWalletViewModel,
+                NSApplePayViewModel
                 >(card: viewModel.currentCard) { cardID in
                   viewModel.activePhysicalSuccess(id: cardID)
                 }
@@ -345,61 +338,14 @@ private extension ListCardsView {
       }
     }
   }
-  
-  var roundUpPurchasesView: some View {
-    HStack(spacing: 12) {
-      GenImages.CommonImages.icRoundUpDonationLeft.swiftUIImage
-        .foregroundColor(Colors.label.swiftUIColor)
-      VStack(alignment: .leading, spacing: 2) {
-        Text(LFLocalizable.CardsDetail.donations)
-          .font(Fonts.regular.swiftUIFont(size: 12))
-          .foregroundColor(Colors.label.swiftUIColor.opacity(0.75))
-        
-        Text(LFLocalizable.CardsDetail.Roundup.desc)
-          .font(Fonts.regular.swiftUIFont(size: 12))
-          .foregroundColor(Colors.label.swiftUIColor)
-      }
-      Spacer()
-      Button {
-        viewModel.onClickedRoundUpPurchasesInformation()
-      } label: {
-        GenImages.CommonImages.info.swiftUIImage
-      }
-      .foregroundColor(Colors.label.swiftUIColor)
-      
-      roundUpToggle
-    }
-    .padding(14)
-    .background(Colors.secondaryBackground.swiftUIColor)
-    .cornerRadius(10)
-  }
-  
-  var roundUpToggle: some View {
-    let isOn: Binding<Bool> = .init {
-      viewModel.roundUpPurchases
-    } set: { value in
-      viewModel.callUpdateRoundUpDonationAPI(status: value)
-    }
-    return ZStack {
-      Toggle("", isOn: isOn)
-        .toggleStyle(SwitchToggleStyle(tint: Colors.primary.swiftUIColor))
-        .frame(maxWidth: 36)
-        .padding(.trailing, 12)
-        .hidden(viewModel.isUpdatingRoundUpPurchases)
-
-      LottieView(loading: .primary)
-        .frame(width: 30, height: 20)
-        .hidden(!viewModel.isUpdatingRoundUpPurchases)
-    }
-  }
 }
 
 // MARK: - Bottom Components
-private extension ListCardsView {
+private extension NSListCardsView {
   @ViewBuilder var buttonGroup: some View {
     VStack(spacing: 14) {
       if viewModel.isActive {
-        // applePay TODO: - Temporarily hide this button
+        // applePay TODO: - Temporarily hide this button because NetSpend doesn't support
         EmptyView()
       } else if viewModel.currentCard.cardStatus == .unactivated {
         activeCardButton
@@ -437,7 +383,10 @@ private extension ListCardsView {
       viewModel.presentActivateCardView(
         activeCardView: AnyView(
           ActivatePhysicalCardView<
-          EnterCVVCodeViewModel, SetCardPinViewModel, AddAppleWalletViewModel
+          NSEnterCVVCodeViewModel,
+          NSSetCardPinViewModel,
+          NSAddAppleWalletViewModel,
+          NSApplePayViewModel
           >(card: viewModel.currentCard) { cardID in
             viewModel.activePhysicalSuccess(id: cardID)
           }
@@ -448,7 +397,7 @@ private extension ListCardsView {
 }
 
 // MARK: - Popup
-private extension ListCardsView {
+private extension NSListCardsView {
   var confirmationCloseCardPopup: some View {
     LiquidityAlert(
       title: LFLocalizable.ListCard.CloseCard.title.uppercased(),
@@ -482,31 +431,10 @@ private extension ListCardsView {
       )
     )
   }
-  
-  var roundUpPurchasesPopup: some View {
-    PopupAlert {
-      VStack(spacing: 24) {
-        GenImages.Images.icLogo.swiftUIImage
-          .resizable()
-          .frame(width: 80, height: 80)
-
-        Text(LFLocalizable.CardsDetail.Roundup.title)
-          .font(Fonts.regular.swiftUIFont(size: 18))
-          .foregroundColor(Colors.label.swiftUIColor)
-
-        ShoppingGivesAlert(type: .roundUp)
-          .frame(height: 300)
-
-        FullSizeButton(title: LFLocalizable.Button.Ok.title, isDisable: false) {
-          viewModel.hidePopup()
-        }
-      }
-    }
-  }
 }
 
 // MARK: - View Types
-private extension ListCardsView {
+private extension NSListCardsView {
   enum ActiveContent {
     case verifyCvv
     case changePin(String)

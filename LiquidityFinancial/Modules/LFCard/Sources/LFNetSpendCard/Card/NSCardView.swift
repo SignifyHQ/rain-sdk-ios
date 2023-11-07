@@ -6,7 +6,7 @@ import LFLocalizable
 import Services
 import BaseCard
 
-public struct NSCardView: CardViewProtocol {
+public struct NSCardView: View {
   @StateObject private var viewModel: NSCardViewModel
   @Binding public var isShowCardNumber: Bool
   @Binding public var cardMetaData: CardMetaData?

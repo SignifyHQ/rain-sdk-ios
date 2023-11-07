@@ -69,20 +69,17 @@ struct CashCardView: View {
       activateCard(card: card)
     }
     .navigationLink(isActive: $viewModel.isShowCardDetail) {
-      ListCardsView<
-        SolidCardView,
-        SolidListCardsViewModel,
-        SolidEnterCVVCodeViewModel,
-        SolidSetCardPinViewModel,
-        SolidAddAppleWalletViewModel
-      >(viewModel: listCardViewModel)
+      SolidListCardsView(viewModel: listCardViewModel)
     }
   }
   
   @ViewBuilder func activateCard(card: CardModel) -> some View {
     if card.cardType == .physical {
       ActivatePhysicalCardView<
-        SolidEnterCVVCodeViewModel, SolidSetCardPinViewModel, SolidAddAppleWalletViewModel
+        SolidEnterCVVCodeViewModel,
+        SolidSetCardPinViewModel,
+        SolidAddAppleWalletViewModel,
+        SolidApplePayViewModel
       >(card: card)
         .embedInNavigation()
     }

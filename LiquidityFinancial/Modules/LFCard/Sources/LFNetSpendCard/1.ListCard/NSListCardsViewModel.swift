@@ -8,8 +8,6 @@ import LFUtilities
 import OnboardingData
 import AccountData
 import PassKit
-import RewardData
-import RewardDomain
 import Services
 import LFLocalizable
 import BaseCard
@@ -19,7 +17,6 @@ import SwiftUI
 public final class NSListCardsViewModel: ListCardsViewModelProtocol {
   @LazyInjected(\.netspendDataManager) var netspendDataManager
   @LazyInjected(\.accountDataManager) var accountDataManager
-  @LazyInjected(\.rewardDataManager) var rewardDataManager
   @LazyInjected(\.cardRepository) var cardRepository
   @LazyInjected(\.rewardRepository) var rewardRepository
   @LazyInjected(\.customerSupportService) var customerSupportService
@@ -30,7 +27,6 @@ public final class NSListCardsViewModel: ListCardsViewModelProtocol {
   @Published public var isShowCardNumber: Bool = false
   @Published public var isCardLocked: Bool = false
   @Published public var isActive: Bool = false
-  @Published public var isUpdatingRoundUpPurchases = false
   @Published public var isHasPhysicalCard: Bool = false
   @Published public var isShowListCardDropdown: Bool = false
   @Published public var toastMessage: String?
@@ -41,14 +37,6 @@ public final class NSListCardsViewModel: ListCardsViewModelProtocol {
   
   unowned public let coordinator: BaseCardDestinationObservable
   public var isSwitchCard = true
-  
-  public var roundUpPurchases: Bool {
-    rewardDataManager.roundUpDonation ?? false
-  }
-  
-  public var showRoundUpPurchases: Bool {
-    false //TODO: currently the feature is disable
-  }
   
   public var cancellables: Set<AnyCancellable> = []
   
@@ -62,10 +50,6 @@ public final class NSListCardsViewModel: ListCardsViewModelProtocol {
   
   lazy var closeCardUseCase: NSCloseCardUseCaseProtocol = {
     NSCloseCardUseCase(repository: cardRepository)
-  }()
-  
-  lazy var rewardUseCase: RewardUseCaseProtocol = {
-    RewardUseCase(repository: rewardRepository)
   }()
   
   public init(cardData: Published<(CardData)>.Publisher, coordinator: BaseCardDestinationObservable) {
@@ -122,25 +106,6 @@ public extension NSListCardsViewModel {
       }
     }
   }
-  
-  func callUpdateRoundUpDonationAPI(status: Bool) {
-    Task { @MainActor in
-      defer { isUpdatingRoundUpPurchases = false }
-      isUpdatingRoundUpPurchases = true
-      do {
-        let body: [String: Any] = [
-          "updateRoundUpDonationRequest": [
-            "roundUpDonation": status
-          ]
-        ]
-        let entity = try await rewardUseCase.setRoundUpDonation(body: body)
-        rewardDataManager.update(roundUpDonation: entity.userRoundUpEnabled ?? false)
-      } catch {
-        log.error(error.localizedDescription)
-        toastMessage = error.localizedDescription
-      }
-    }
-  }
 }
 
 // MARK: - View Helpers
@@ -187,10 +152,6 @@ public extension NSListCardsViewModel {
     }
   }
   
-  func onClickedRoundUpPurchasesInformation() {
-    popup = popup == .roundUpPurchases ? nil : .roundUpPurchases
-  }
-  
   func onClickedChangePinButton(activeCardView: AnyView) {
     if currentCard.cardStatus == .active {
       setFullScreenCoordinator(destinationView: .changePin)
@@ -203,7 +164,9 @@ public extension NSListCardsViewModel {
     guard currentCard.cardStatus == .active else {
       return
     }
-    let destinationView = ApplePayViewController(cardModel: currentCard)
+    let destinationView = ApplePayViewController(
+      viewModel: NSApplePayViewModel(cardModel: currentCard)
+    )
     setSheetCoordinator(
       destinationView: .applePay(AnyView(destinationView))
     )
@@ -240,5 +203,34 @@ public extension NSListCardsViewModel {
   func primaryActionCloseCardSuccessfully(completion: @escaping () -> Void) {
     updateListCard(id: currentCard.id, completion: completion)
     popup = nil
+  }
+  
+  func subscribeListCardsChange(_ cardData: Published<(CardData)>.Publisher) {
+    cardData
+      .receive(on: DispatchQueue.main)
+      .sink { [weak self] cardData in
+        guard let self = self else {
+          return
+        }
+        self.isInit = cardData.loading
+        self.isHasPhysicalCard = cardData.cards.contains { card in
+          card.cardType == .physical
+        }
+        self.cardsList = cardData.cards.filter { $0.cardStatus != .closed }
+        self.cardMetaDatas = cardData.metaDatas
+        self.currentCard = self.cardsList.first ?? .virtualDefault
+        self.isActive = currentCard.cardStatus == .active
+        self.isCardLocked = currentCard.cardStatus == .disabled
+      }
+      .store(in: &cancellables)
+  }
+  
+  func presentActivateCardView(activeCardView: AnyView) {
+    switch currentCard.cardType {
+    case .physical:
+      setFullScreenCoordinator(destinationView: .activatePhysicalCard(activeCardView))
+    default:
+      break
+    }
   }
 }

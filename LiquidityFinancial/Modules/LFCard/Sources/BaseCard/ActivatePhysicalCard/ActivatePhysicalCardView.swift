@@ -6,7 +6,8 @@ import LFStyleGuide
 public struct ActivatePhysicalCardView<
   EnterCVVCodeViewModel: EnterCVVCodeViewModelProtocol,
   SetCardPinViewModel: SetCardPinViewModelProtocol,
-  AddAppleWalletViewModel: AddAppleWalletViewModelProtocol
+  AddAppleWalletViewModel: AddAppleWalletViewModelProtocol,
+  ApplePayViewModel: ApplePayViewModelProtocol
 > : View {
   @Environment(\.dismiss) private var dismiss
   @State private var activeContent: ActiveContent = .cvvCode
@@ -44,7 +45,7 @@ private extension ActivatePhysicalCardView {
     case .activedCard:
       activedCardView
     case .addAppleWallet:
-      AddAppleWalletView(
+        AddAppleWalletView<AddAppleWalletViewModel, ApplePayViewModel>(
         viewModel: AddAppleWalletViewModel(cardModel: card) {
           dismiss()
         }

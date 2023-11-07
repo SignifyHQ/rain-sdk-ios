@@ -26,4 +26,14 @@ public class SolidCardRepository: SolidCardRepositoryProtocol {
    try await cardAPI.createVGSShowToken(cardID: cardID)
   }
   
+  public func createDigitalWalletLink(
+    cardID: String,
+    parameters: SolidApplePayParametersEntity
+  ) async throws -> SolidDigitalWalletEntity {
+    guard let parameters = parameters as? APISolidApplePayWalletParameters else {
+      throw "Can't map paramater :\(parameters)"
+    }
+    return try await cardAPI.createDigitalWalletLink(cardID: cardID, parameters: parameters)
+  }
+  
 }

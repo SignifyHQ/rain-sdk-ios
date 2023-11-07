@@ -5,31 +5,24 @@ import Factory
 import BaseCard
 
 @MainActor
-public final class SolidAddAppleWalletViewModel: AddAppleWalletViewModelProtocol {
+public final class SolidApplePayViewModel: ApplePayViewModelProtocol {
   @LazyInjected(\.solidCardRepository) var solidCardRepository
-  
-  @Published public var isShowApplePay: Bool = false
-  
+  @LazyInjected(\.accountDataManager) var accountDataManager
+
   lazy var postApplePayTokenUseCase: SolidCreateDigitalWalletUseCaseProtocol = {
     SolidCreateDigitalWalletUseCase(repository: solidCardRepository)
   }()
   
   public let cardModel: CardModel
-  public let onFinish: () -> Void
-
-  public init(cardModel: CardModel, onFinish: @escaping () -> Void) {
+  
+  public init(cardModel: CardModel) {
     self.cardModel = cardModel
-    self.onFinish = onFinish
   }
 }
 
-// MARK: - View Helpers
-public extension SolidAddAppleWalletViewModel {
-  func onClickedAddToApplePay() {
-    isShowApplePay = true
-  }
-  
-  func callEnrollWalletAPI(bodyData: [String: Any]) async throws -> DigitalWalletLinkToken? {
+// MARK: - API
+extension SolidApplePayViewModel {
+  public func callEnrollWalletAPI(bodyData: [String: Any]) async throws -> DigitalWalletLinkToken? {
     guard let certificates = bodyData["certificates"] as? [String],
         let deviceCert = certificates.first,
         let nonceSignature = bodyData["nonceSignature"] as? String,

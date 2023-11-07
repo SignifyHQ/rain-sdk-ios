@@ -20,8 +20,8 @@ public final class SolidListCardsViewModel: ListCardsViewModelProtocol {
   @LazyInjected(\.netspendDataManager) var netspendDataManager
   @LazyInjected(\.accountDataManager) var accountDataManager
   @LazyInjected(\.rewardDataManager) var rewardDataManager
-  @LazyInjected(\.solidCardRepository) var solidCardRepository
   @LazyInjected(\.rewardRepository) var rewardRepository
+  @LazyInjected(\.solidCardRepository) var solidCardRepository
   @LazyInjected(\.customerSupportService) var customerSupportService
   @LazyInjected(\.analyticsService) var analyticsService
   
@@ -31,7 +31,6 @@ public final class SolidListCardsViewModel: ListCardsViewModelProtocol {
   @Published public var isCardLocked: Bool = false
   @Published public var isActive: Bool = false
   @Published public var isUpdatingRoundUpPurchases = false
-  @Published public var isHasPhysicalCard: Bool = false
   @Published public var isShowListCardDropdown: Bool = false
   @Published public var toastMessage: String?
   @Published public var cardsList: [CardModel] = []
@@ -156,12 +155,6 @@ public extension SolidListCardsViewModel {
     NotificationCenter.default.post(name: .refreshListCards, object: nil)
   }
   
-  func orderPhysicalSuccess(card: CardModel) {
-    isHasPhysicalCard = true
-    cardMetaDatas.append(nil)
-    cardsList.append(card)
-  }
-  
   func activePhysicalSuccess(id: String) {
     guard id == currentCard.id, let index = cardsList.firstIndex(where: { $0.id == id
     }) else { return }
@@ -189,19 +182,17 @@ public extension SolidListCardsViewModel {
     popup = popup == .roundUpPurchases ? nil : .roundUpPurchases
   }
   
-  func onClickedChangePinButton(activeCardView: AnyView) {
-    if currentCard.cardStatus == .active {
-      setFullScreenCoordinator(destinationView: .changePin)
-    } else {
-      presentActivateCardView(activeCardView: activeCardView)
-    }
+  func onClickedChangePinButton() {
+    setFullScreenCoordinator(destinationView: .changePin)
   }
   
   func onClickedAddToApplePay() {
     guard currentCard.cardStatus == .active else {
       return
     }
-    let destinationView = ApplePayViewController(cardModel: currentCard)
+    let destinationView = ApplePayViewController(
+      viewModel: SolidApplePayViewModel(cardModel: currentCard)
+    )
     setSheetCoordinator(
       destinationView: .applePay(AnyView(destinationView))
     )
@@ -217,16 +208,6 @@ public extension SolidListCardsViewModel {
     }
   }
   
-  func onClickedOrderPhysicalCard() {
-    let viewModel = SolidOrderPhysicalCardViewModel(coordinator: coordinator) { card in
-      self.orderPhysicalSuccess(card: card)
-    }
-    let destinationView = OrderPhysicalCardView(viewModel: viewModel, coordinator: coordinator)
-    setNavigationCoordinator(
-      destinationView: .orderPhysicalCard(AnyView(destinationView))
-    )
-  }
-  
   func onClickCloseCardButton() {
     popup = .confirmCloseCard
   }
@@ -238,5 +219,31 @@ public extension SolidListCardsViewModel {
   func primaryActionCloseCardSuccessfully(completion: @escaping () -> Void) {
     updateListCard(id: currentCard.id, completion: completion)
     popup = nil
+  }
+  
+  func subscribeListCardsChange(_ cardData: Published<(CardData)>.Publisher) {
+    cardData
+      .receive(on: DispatchQueue.main)
+      .sink { [weak self] cardData in
+        guard let self = self else {
+          return
+        }
+        self.isInit = cardData.loading
+        self.cardsList = cardData.cards.filter { $0.cardStatus != .closed }
+        self.cardMetaDatas = cardData.metaDatas
+        self.currentCard = self.cardsList.first ?? .virtualDefault
+        self.isActive = currentCard.cardStatus == .active
+        self.isCardLocked = currentCard.cardStatus == .disabled
+      }
+      .store(in: &cancellables)
+  }
+  
+  func presentActivateCardView(activeCardView: AnyView) {
+    switch currentCard.cardType {
+    case .physical:
+      setFullScreenCoordinator(destinationView: .activatePhysicalCard(activeCardView))
+    default:
+      break
+    }
   }
 }

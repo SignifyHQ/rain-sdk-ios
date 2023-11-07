@@ -9,6 +9,7 @@ public enum SolidCardRoute {
   case updateCardStatus(cardID: String, parameters: APISolidCardStatusParameters)
   case closeCard(cardID: String)
   case createVGSShowToken(cardID: String)
+  case createDigitalWalletLink(cardID: String, parameters: APISolidDigitalWalletParameters)
 }
 
 extension SolidCardRoute: LFRoute {
@@ -23,6 +24,8 @@ extension SolidCardRoute: LFRoute {
       return "/v1/solid/cards/\(cardID)"
     case let .createVGSShowToken(cardID):
       return "/v1/solid/cards/\(cardID)/show-token"
+    case let .createDigitalWalletLink(cardID, _):
+      return "/v1/solid/cards/\(cardID)/digital-wallet-provision"
     }
   }
   
@@ -34,7 +37,7 @@ extension SolidCardRoute: LFRoute {
       return .PATCH
     case .closeCard:
       return .DELETE
-    case .createVGSShowToken:
+    case .createVGSShowToken, .createDigitalWalletLink:
       return .POST
     }
   }
@@ -55,6 +58,8 @@ extension SolidCardRoute: LFRoute {
       return nil
     case let .updateCardStatus(_, parameters):
       return parameters.encoded()
+    case let .createDigitalWalletLink(_, parameters):
+      return parameters.encoded()
     }
   }
   
@@ -62,7 +67,7 @@ extension SolidCardRoute: LFRoute {
     switch self {
     case .listCard, .closeCard, .createVGSShowToken:
       return nil
-    case .updateCardStatus:
+    case .updateCardStatus, .createDigitalWalletLink:
       return .json
     }
   }

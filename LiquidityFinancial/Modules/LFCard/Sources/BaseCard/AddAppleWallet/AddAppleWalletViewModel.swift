@@ -1,7 +1,5 @@
 import Foundation
-import NetSpendData
 import Factory
-import NetspendDomain
 
 @MainActor
 public protocol AddAppleWalletViewModelProtocol: ObservableObject {
@@ -15,7 +13,7 @@ public protocol AddAppleWalletViewModelProtocol: ObservableObject {
   init(cardModel: CardModel, onFinish: @escaping () -> Void)
   
   // API
-  func callEnrollWalletAPI(bodyData: [String: Any]) async throws -> PostApplePayTokenEntity?
+  func callEnrollWalletAPI(bodyData: [String: Any]) async throws -> DigitalWalletLinkToken?
   
   // View Helpers
   func onClickedAddToApplePay()

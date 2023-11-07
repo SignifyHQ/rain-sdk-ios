@@ -4,19 +4,19 @@ import LFUtilities
 import LFStyleGuide
 import Services
 
-struct EnterCVVCodeView<ViewModel: EnterCVVCodeViewModelProtocol>: View {
+public struct EnterCVVCodeView<ViewModel: EnterCVVCodeViewModelProtocol>: View {
   @Environment(\.dismiss) private var dismiss
   @StateObject private var viewModel: ViewModel
   let screenTitle: String
   let onDissmiss: ((String) -> Void)?
   
-  init(viewModel: ViewModel, screenTitle: String, onDissmiss: @escaping (String) -> Void) {
+  public init(viewModel: ViewModel, screenTitle: String, onDissmiss: @escaping (String) -> Void) {
     _viewModel = .init(wrappedValue: viewModel)
     self.screenTitle = screenTitle
     self.onDissmiss = onDissmiss
   }
   
-  var body: some View {
+  public var body: some View {
     content
       .background(Colors.background.swiftUIColor)
       .popup(item: $viewModel.toastMessage, style: .toast) {

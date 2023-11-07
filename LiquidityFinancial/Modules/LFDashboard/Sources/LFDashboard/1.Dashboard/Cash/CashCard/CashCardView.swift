@@ -70,13 +70,7 @@ struct CashCardView: View {
       activateCard(card: card)
     }
     .navigationLink(isActive: $viewModel.isShowCardDetail) {
-      ListCardsView<
-        NSCardView,
-        NSListCardsViewModel,
-        NSEnterCVVCodeViewModel,
-        NSSetCardPinViewModel,
-        NSAddAppleWalletViewModel
-      >(viewModel: listCardViewModel)
+      NSListCardsView(viewModel: listCardViewModel)
     }
   }
   
@@ -84,7 +78,10 @@ struct CashCardView: View {
     EmptyView()
     if card.cardType == .physical {
       ActivatePhysicalCardView<
-        NSEnterCVVCodeViewModel, NSSetCardPinViewModel, NSAddAppleWalletViewModel
+        NSEnterCVVCodeViewModel,
+        NSSetCardPinViewModel,
+        NSAddAppleWalletViewModel,
+        NSApplePayViewModel
       >(card: card)
         .embedInNavigation()
     }

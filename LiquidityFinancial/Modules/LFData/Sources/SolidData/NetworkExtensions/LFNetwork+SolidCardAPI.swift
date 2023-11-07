@@ -40,4 +40,17 @@ extension LFCoreNetwork: SolidCardAPIProtocol where R == SolidCardRoute {
     )
   }
   
+  public func createDigitalWalletLink(
+    cardID: String,
+    parameters: APISolidApplePayWalletParameters
+  ) async throws -> APISolidDigitalWallet {
+    let requestParameters = APISolidDigitalWalletParameters(wallet: "applePay", applePay: parameters)
+    return try await request(
+      SolidCardRoute.createDigitalWalletLink(cardID: cardID, parameters: requestParameters),
+      target: APISolidDigitalWallet.self,
+      failure: LFErrorObject.self,
+      decoder: .apiDecoder
+    )
+  }
+  
 }
