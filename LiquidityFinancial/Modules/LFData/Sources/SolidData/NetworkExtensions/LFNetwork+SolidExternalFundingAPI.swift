@@ -74,4 +74,13 @@ extension LFCoreNetwork: SolidExternalFundingAPIProtocol where R == SolidExterna
       decoder: .apiDecoder
     )
   }
+  
+  public func createPinwheelToken(accountId: String) async throws -> APISolidExternalPinwheelTokenResponse {
+    return try await request(
+      SolidExternalFundingRoute.createPinwheelToken(accountId: accountId),
+      target: APISolidExternalPinwheelTokenResponse.self,
+      failure: LFErrorObject.self,
+      decoder: .apiDecoder
+    )
+  }
 }

@@ -4,13 +4,15 @@ import LFLocalizable
 import LFUtilities
 import Services
 import Factory
-import NetSpendData
-import NetspendDomain
+import SolidData
+import SolidDomain
+import AccountService
 
 @MainActor
 final class DirectDepositViewModel: ObservableObject {
   @LazyInjected(\.accountDataManager) var accountDataManager
-  @LazyInjected(\.externalFundingRepository) var externalFundingRepository
+  @LazyInjected(\.solidExternalFundingRepository) var solidExternalFundingRepository
+  @LazyInjected(\.fiatAccountService) var fiatAccountService
 
   @Published var directDepositLoading: Bool = false
   @Published var isShowAllBenefits: Bool = false
@@ -19,8 +21,9 @@ final class DirectDepositViewModel: ObservableObject {
   @Published var pinWheelData: PinWheelViewController.PinWheelData?
   
   private lazy var pinWheelService = PinWheelService()
-  private lazy var getPinWheelTokenUseCase: NSGetPinWheelTokenUseCaseProtocol = {
-    NSGetPinWheelTokenUseCase(repository: externalFundingRepository)
+  
+  private lazy var createPinwheelTokenUseCase: SolidCreatePinwheelTokenUseCaseProtocol = {
+    SolidCreatePinwheelTokenUseCase(repository: solidExternalFundingRepository)
   }()
 }
 
@@ -52,12 +55,18 @@ extension DirectDepositViewModel {
 private extension DirectDepositViewModel {
   func generatePinWheelData() async {
     do {
-      let pinwheelResponse = try await getPinWheelTokenUseCase.execute(
-        sessionID: accountDataManager.sessionID
-      )
+      var account = self.accountDataManager.fiatAccounts.first
+      if account == nil {
+        let accounts = try await fiatAccountService.getAccounts()
+        account = accounts.first
+      }
+      guard let account = account else {
+        return
+      }
+      let pinwheelResponse = try await createPinwheelTokenUseCase.execute(accountId: account.id)
       pinWheelData = PinWheelViewController.PinWheelData(
         delegate: pinWheelService,
-        token: pinwheelResponse.token
+        token: pinwheelResponse.linkToken
       )
     } catch {
       toastMessage = error.localizedDescription

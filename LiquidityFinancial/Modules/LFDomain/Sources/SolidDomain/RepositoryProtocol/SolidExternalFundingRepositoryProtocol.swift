@@ -10,4 +10,5 @@ public protocol SolidExternalFundingRepositoryProtocol {
   func getWireTransfer(accountId: String) async throws -> SolidWireTransferResponseEntity
   func newTransaction(type: SolidExternalTransactionType, accountId: String, contactId: String, amount: Double) async throws -> SolidExternalTransactionResponseEntity
   func estimateDebitCardFee(accountId: String, contactId: String, amount: Double) async throws -> SolidDebitCardTransferFeeResponseEntity
+  func createPinwheelToken(accountId: String) async throws -> SolidExternalPinwheelTokenResponseEntity
 }

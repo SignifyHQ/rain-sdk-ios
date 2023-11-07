@@ -45,4 +45,8 @@ public class SolidExternalFundingRepository: SolidExternalFundingRepositoryProto
     try await solidExternalFundingAPI.estimateDebitCardFee(accountId: accountId, contactId: contactId, amount: amount)
   }
   
+  public func createPinwheelToken(accountId: String) async throws -> SolidExternalPinwheelTokenResponseEntity {
+    try await solidExternalFundingAPI.createPinwheelToken(accountId: accountId)
+  }
+  
 }
