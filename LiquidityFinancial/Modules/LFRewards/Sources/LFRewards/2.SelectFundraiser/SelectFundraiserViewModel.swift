@@ -26,8 +26,8 @@ public class SelectFundraiserViewModel: ObservableObject {
     self.showSkipButton = showSkipButton
   }
   
-  func skipAndDumpToInformation() {
-    rewardFlowCoordinator.set(route: .information)
+  func skipAndDumpToYourAccount() {
+    rewardFlowCoordinator.set(route: .yourAccount)
   }
 }
 

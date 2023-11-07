@@ -20,7 +20,7 @@ public class RewardFlowCoordinator: RewardFlowCoordinatorProtocol {
     }
     
     case selectReward
-    case information
+    case yourAccount
     
     public var id: String {
       String(describing: self)

@@ -60,6 +60,9 @@ public struct SolidOnboardingContentView: View {
       case .dashboard:
         contenViewFactory
           .createView(type: .dashboard)
+      case .yourAccount:
+        contenViewFactory
+          .createView(type: .yourAccount)
       case .information:
         contenViewFactory
           .createView(type: .information)

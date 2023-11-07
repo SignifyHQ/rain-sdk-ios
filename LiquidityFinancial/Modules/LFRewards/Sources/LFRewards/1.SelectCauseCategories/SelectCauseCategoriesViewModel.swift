@@ -54,8 +54,8 @@ public class SelectCauseCategoriesViewModel: ObservableObject {
     }
   }
   
-  func skipAndDumpToInformation() {
-    rewardFlowCoordinator.set(route: .information)
+  func skipAndDumpToYourAccount() {
+    rewardFlowCoordinator.set(route: .yourAccount)
   }
   
   // swiftlint:disable force_unwrapping

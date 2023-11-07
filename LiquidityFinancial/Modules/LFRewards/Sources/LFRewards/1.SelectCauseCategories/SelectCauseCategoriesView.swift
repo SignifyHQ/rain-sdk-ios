@@ -30,7 +30,7 @@ public struct SelectCauseCategoriesView: View {
         ToolbarItem(placement: .navigationBarTrailing) {
           if whereStart == .onboarding {
             SkipFundraiserView {
-              viewModel.skipAndDumpToInformation()
+              viewModel.skipAndDumpToYourAccount()
             }
           }
         }

@@ -25,6 +25,7 @@ final class SolidContentViewFactory {
     case selecteReward
     case kycReview
     case dashboard
+    case yourAccount
     case information
     case accountReject
     case unclear(String)
@@ -60,6 +61,8 @@ final class SolidContentViewFactory {
       return AnyView(kycReviewView)
     case .dashboard:
       return AnyView(EmptyView())
+    case .yourAccount:
+      return AnyView(YourAccountView())
     case .information:
       return AnyView(informationView)
     case .accountReject:
@@ -124,6 +127,11 @@ private extension SolidContentViewFactory {
   @MainActor
   var addressView: some View {
     AddressView()
+  }
+  
+  @MainActor
+  var yourAccountView: some View {
+    YourAccountView()
   }
   
   @MainActor

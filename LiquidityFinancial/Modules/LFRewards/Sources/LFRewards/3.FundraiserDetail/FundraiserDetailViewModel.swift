@@ -46,8 +46,8 @@ public class FundraiserDetailViewModel: ObservableObject {
     apiFetchDetailFundraiser()
   }
   
-  func skipAndDumpToInformation() {
-    rewardFlowCoordinator.set(route: .information)
+  func skipAndDumpToYourAccount() {
+    rewardFlowCoordinator.set(route: .yourAccount)
   }
   
   func apiFetchDetailFundraiser() {
@@ -129,7 +129,7 @@ public class FundraiserDetailViewModel: ObservableObject {
     case .dashboard:
       NotificationCenter.default.post(name: .selectedFundraisersSuccess, object: nil)
     case .onboarding:
-      skipAndDumpToInformation()
+      skipAndDumpToYourAccount()
     }
   }
 }

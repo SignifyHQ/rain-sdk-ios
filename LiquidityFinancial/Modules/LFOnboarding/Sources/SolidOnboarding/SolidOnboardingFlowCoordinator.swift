@@ -46,6 +46,7 @@ public class SolidOnboardingFlowCoordinator: SolidOnboardingFlowCoordinatorProto
     case selecteReward
     case kycReview
     case dashboard
+    case yourAccount
     case information
     case accountReject
     case unclear(String)
@@ -110,8 +111,8 @@ public class SolidOnboardingFlowCoordinator: SolidOnboardingFlowCoordinatorProto
 
   func handlerRewardRoute(route: RewardFlowCoordinator.Route) {
     switch route {
-    case .information:
-      set(route: .information)
+    case .yourAccount:
+      set(route: .yourAccount)
     case .selectReward:
       break //do not thing
     }

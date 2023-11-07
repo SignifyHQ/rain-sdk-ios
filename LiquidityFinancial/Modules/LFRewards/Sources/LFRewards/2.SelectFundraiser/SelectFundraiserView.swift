@@ -58,7 +58,7 @@ public struct SelectFundraiserView: View {
     Group {
       if viewModel.showSkipButton {
         SkipFundraiserView {
-          viewModel.skipAndDumpToInformation()
+          viewModel.skipAndDumpToYourAccount()
         }
       }
     }

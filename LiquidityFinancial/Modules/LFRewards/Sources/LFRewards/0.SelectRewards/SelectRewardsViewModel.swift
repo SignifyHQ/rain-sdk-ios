@@ -79,7 +79,7 @@ class SelectRewardsViewModel: ObservableObject {
   }
 
   func cashbackNavigation() {
-    rewardFlowCoordinator.set(route: .information)
+    rewardFlowCoordinator.set(route: .yourAccount)
   }
     
   private func apiSelecteRewardType(option: Option) {

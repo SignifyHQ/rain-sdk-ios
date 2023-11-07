@@ -1836,6 +1836,23 @@ public enum LFLocalizable {
       public static let title = LFLocalizable.tr("Localizable", "orderPhysicalCard.physicalCard.title", fallback: "ORDER PHYSICAL CARD")
     }
   }
+  public enum PatriotAct {
+    /// To help the government fight the funding of terrorism and money laundering activities, Section 326 of the USA PATRIOT Act requires all financial institutions to obtain, verify, and record information identifying each person who opens an account.
+    /// 
+    /// What this means to you: when you open an account or change an existing account, we will ask for information that will allow us to identify you, such as full legal name, physical address, date of birth, and other personally identifiable information that will be used to verify your identity. We may also ask to see a valid government issued photo ID (such as a Passport) or other identifying documents as well.
+    /// 
+    public static let body = LFLocalizable.tr("Localizable", "patriotAct.body", fallback: "To help the government fight the funding of terrorism and money laundering activities, Section 326 of the USA PATRIOT Act requires all financial institutions to obtain, verify, and record information identifying each person who opens an account.\n\nWhat this means to you: when you open an account or change an existing account, we will ask for information that will allow us to identify you, such as full legal name, physical address, date of birth, and other personally identifiable information that will be used to verify your identity. We may also ask to see a valid government issued photo ID (such as a Passport) or other identifying documents as well.\n")
+    /// USA PATRIOT ACT NOTICES
+    public static let title = LFLocalizable.tr("Localizable", "patriotAct.title", fallback: "USA PATRIOT ACT NOTICES")
+    public enum Agreements {
+      /// I have reviewed our full USA PATRIOT Act Notice
+      public static let partiotActNotice = LFLocalizable.tr("Localizable", "patriotAct.agreements.partiotActNotice", fallback: "I have reviewed our full USA PATRIOT Act Notice")
+    }
+    public enum Links {
+      /// USA PATRIOT Act Notice
+      public static let partiotActNotice = LFLocalizable.tr("Localizable", "patriotAct.links.partiotActNotice", fallback: "USA PATRIOT Act Notice")
+    }
+  }
   public enum PhoneNumber {
     public enum Environment {
       /// Environment
@@ -3024,6 +3041,30 @@ public enum LFLocalizable {
       public static let item2 = LFLocalizable.tr("Localizable", "welcome.how_it_works.item2", fallback: "Use your DogeCard anywhere Visa is accepted")
       /// Spend cash or Dogecoin, earn rewards
       public static let item3 = LFLocalizable.tr("Localizable", "welcome.how_it_works.item3", fallback: "Spend cash or Dogecoin, earn rewards")
+    }
+  }
+  public enum YourAccount {
+    /// By agreeing to the E-Signature Agreement, you consent to receive electronic disclosures and/or statements for your CauseCard account and consent to be legally bound to this agreement.
+    public static let body = LFLocalizable.tr("Localizable", "yourAccount.body", fallback: "By agreeing to the E-Signature Agreement, you consent to receive electronic disclosures and/or statements for your CauseCard account and consent to be legally bound to this agreement.")
+    /// Liquidity Financial, doing business as CauseCard, has partnered with Solid Financial and Lewis and Clark Bank to provide banking and card services.
+    public static let subtitle = LFLocalizable.tr("Localizable", "yourAccount.subtitle", fallback: "Liquidity Financial, doing business as CauseCard, has partnered with Solid Financial and Lewis and Clark Bank to provide banking and card services.")
+    /// YOUR ACCOUNT
+    public static let title = LFLocalizable.tr("Localizable", "yourAccount.title", fallback: "YOUR ACCOUNT")
+    public enum Agreements {
+      /// I read and agree to the: Consumer Account and Cardholder Agreement, Terms and Conditions, and Privacy Policy
+      public static let consumerTermsConditions = LFLocalizable.tr("Localizable", "yourAccount.agreements.consumerTermsConditions", fallback: "I read and agree to the: Consumer Account and Cardholder Agreement, Terms and Conditions, and Privacy Policy")
+      /// I accept the E-Signature Agreement and continue
+      public static let esignature = LFLocalizable.tr("Localizable", "yourAccount.agreements.esignature", fallback: "I accept the E-Signature Agreement and continue")
+    }
+    public enum Links {
+      /// Consumer Account and Cardholder Agreement
+      public static let consumerCardholder = LFLocalizable.tr("Localizable", "yourAccount.links.consumerCardholder", fallback: "Consumer Account and Cardholder Agreement")
+      /// E-Signature Agreement
+      public static let esignature = LFLocalizable.tr("Localizable", "yourAccount.links.esignature", fallback: "E-Signature Agreement")
+      /// Privacy Policy
+      public static let privacy = LFLocalizable.tr("Localizable", "yourAccount.links.privacy", fallback: "Privacy Policy")
+      /// Terms and Conditions
+      public static let terms = LFLocalizable.tr("Localizable", "yourAccount.links.terms", fallback: "Terms and Conditions")
     }
   }
   public enum Zerohash {
