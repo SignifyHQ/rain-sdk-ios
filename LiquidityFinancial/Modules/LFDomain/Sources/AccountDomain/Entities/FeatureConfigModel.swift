@@ -24,9 +24,34 @@ public struct FeatureConfigModel: Codable {
   }
   
   public var isSendCryptoV2Enabled: Bool {
-    guard let isSendCryptoV2Enabled = features?["isSendCryptoV2Enabled"] as? Bool else {
-      return false
-    }
-    return isSendCryptoV2Enabled
+    (features?["isSendCryptoV2Enabled"] as? Bool) ?? false
+  }
+  
+  public var remoteLinks: RemoteLinks {
+    RemoteLinks(config: features?["TERM_OF_SERVICE"]?.value as? [String: String])
+  }
+}
+
+public struct RemoteLinks {
+  private let config: [String: String]?
+  
+  init(config: [String: String]?) {
+    self.config = config
+  }
+  
+  public var esignatureLink: String? {
+    config?["esignatureLink"] as? String
+  }
+  
+  public var privacyPolicyLink: String? {
+    config?["privacyPolicyLink"] as? String
+  }
+  
+  public var termConditionLink: String? {
+    config?["termConditionLink"] as? String
+  }
+  
+  public var patriotNoticeLink: String? {
+    config?["patriotNoticeLink"] as? String
   }
 }

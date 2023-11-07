@@ -7,7 +7,9 @@ import SwiftUI
 
 struct PatriotActView: View {
   @Environment(\.openURL) var openURL
+  
   @StateObject var viewModel: PatriotActViewModel
+  
   var contentViewFactory: SolidContentViewFactory
   
   init(
@@ -80,19 +82,17 @@ extension PatriotActView {
         viewModel.isNoticeAccepted.toggle()
       }
       .padding(.bottom, 5)
-      let agreementString = LFLocalizable.PatriotAct.Agreements.partiotActNotice
-      let link = LFLocalizable.PatriotAct.Links.partiotActNotice
-
+      
       TextTappable(
-        text: agreementString,
+        text: viewModel.patriotActString,
         fontSize: Constants.FontSize.ultraSmall.value,
-        links: [link],
+        links: [viewModel.patriotActlink],
         style: .underlined(Colors.label.color)
       ) { tappedString in
-        guard let url = URL(string: LFUtilities.termsURL) else { return } // Todo(Volo): - Replace with actual URL from config
+        guard let url = viewModel.getUrl(for: tappedString) else { return }
         openURL(url)
       }
-      .frame(height: 40)
+      .frame(height: 37)
     }
     .padding(.horizontal, 30)
   }

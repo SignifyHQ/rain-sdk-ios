@@ -6,6 +6,7 @@ import SwiftUI
 
 struct YourAccountView: View {
   @Environment(\.openURL) var openURL
+  
   @StateObject private var viewModel: YourAccountViewModel = YourAccountViewModel()
   
   var body: some View {
@@ -79,19 +80,17 @@ extension YourAccountView {
           viewModel.isEsignatureAccepted.toggle()
         }
         .padding(.bottom, 5)
-        let agreementString = LFLocalizable.YourAccount.Agreements.esignature
-        let link = LFLocalizable.YourAccount.Links.esignature
-
+        
         TextTappable(
-          text: agreementString,
+          text: viewModel.esignString,
           fontSize: Constants.FontSize.ultraSmall.value,
-          links: [link],
+          links: [viewModel.esignLink],
           style: .underlined(Colors.label.color)
         ) { tappedString in
-          guard let url = URL(string: LFUtilities.termsURL) else { return } // Todo(Volo): - Replace with actual URL from config
+          guard let url = viewModel.getUrl(for: tappedString) else { return }
           openURL(url)
         }
-        .frame(height: 40)
+        .frame(height: 37)
       }
       
       HStack(spacing: 5) {
@@ -109,21 +108,17 @@ extension YourAccountView {
           viewModel.isTermsPrivacyAccepted.toggle()
         }
         .padding(.bottom, 35)
-        let agreementString = LFLocalizable.YourAccount.Agreements.consumerTermsConditions
-        let consumerLink = LFLocalizable.YourAccount.Links.consumerCardholder
-        let termsLink = LFLocalizable.YourAccount.Links.terms
-        let privacyLink = LFLocalizable.YourAccount.Links.privacy
 
         TextTappable(
-          text: agreementString,
+          text: viewModel.agreementString,
           fontSize: Constants.FontSize.ultraSmall.value,
-          links: [consumerLink, termsLink, privacyLink],
+          links: [viewModel.consumerLink, viewModel.termsLink, viewModel.privacyLink],
           style: .underlined(Colors.label.color)
         ) { tappedString in
-          guard let url = URL(string: LFUtilities.termsURL) else { return } // Todo(Volo): - Replace with actual URL from config
+          guard let url = viewModel.getUrl(for: tappedString) else { return }
           openURL(url)
         }
-        .frame(height: 70)
+        .frame(height: 67)
       }
     }
   }
