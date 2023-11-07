@@ -9,6 +9,12 @@ struct YourAccountView: View {
   
   @StateObject private var viewModel: YourAccountViewModel = YourAccountViewModel()
   
+  init(
+    viewModel: YourAccountViewModel = YourAccountViewModel()
+  ) {
+    _viewModel = .init(wrappedValue: viewModel)
+  }
+  
   var body: some View {
     VStack {
       VStack(alignment: .leading) {
