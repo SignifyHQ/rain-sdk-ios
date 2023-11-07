@@ -22,13 +22,13 @@ struct DashboardView: View {
     Group {
       switch viewModel.option {
       case .cash:
-          CashView(
-            listCardViewModel: SolidListCardsViewModel(
-              cardData: dataStorages.$solidCardData,
-              coordinator: Container().baseCardDestinationObservable.callAsFunction()
-            )
-          ) {
-          viewModel.handleGuestUser()
+        CashView(
+          listCardViewModel: SolidListCardsViewModel(
+            cardData: dataStorages.$solidCardData,
+            coordinator: Container().baseCardDestinationObservable.callAsFunction()
+          )
+        ) {
+        viewModel.handleGuestUser()
         }
       case .rewards:
         RewardsView(viewModel: .init())

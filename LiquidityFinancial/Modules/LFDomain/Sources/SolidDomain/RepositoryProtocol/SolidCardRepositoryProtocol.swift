@@ -10,4 +10,6 @@ public protocol SolidCardRepositoryProtocol {
     cardID: String,
     parameters: SolidApplePayParametersEntity
   ) async throws -> SolidDigitalWalletEntity
+  
+  func createVirtualCard(accountID: String) async throws -> SolidCardEntity
 }

@@ -36,4 +36,8 @@ public class SolidCardRepository: SolidCardRepositoryProtocol {
     return try await cardAPI.createDigitalWalletLink(cardID: cardID, parameters: parameters)
   }
   
+  public func createVirtualCard(accountID: String) async throws -> SolidCardEntity {
+    try await cardAPI.createVirtualCard(accountID: accountID)
+  }
+  
 }

@@ -32,4 +32,30 @@ public class MockSolidAccountAPIProtocol: SolidAccountAPIProtocol {
         }
     }
 
+    //MARK: - getAccountDetail
+
+    public var getAccountDetailIdThrowableError: Error?
+    public var getAccountDetailIdCallsCount = 0
+    public var getAccountDetailIdCalled: Bool {
+        return getAccountDetailIdCallsCount > 0
+    }
+    public var getAccountDetailIdReceivedId: String?
+    public var getAccountDetailIdReceivedInvocations: [String] = []
+    public var getAccountDetailIdReturnValue: APISolidAccount!
+    public var getAccountDetailIdClosure: ((String) async throws -> APISolidAccount)?
+
+    public func getAccountDetail(id: String) async throws -> APISolidAccount {
+        if let error = getAccountDetailIdThrowableError {
+            throw error
+        }
+        getAccountDetailIdCallsCount += 1
+        getAccountDetailIdReceivedId = id
+        getAccountDetailIdReceivedInvocations.append(id)
+        if let getAccountDetailIdClosure = getAccountDetailIdClosure {
+            return try await getAccountDetailIdClosure(id)
+        } else {
+            return getAccountDetailIdReturnValue
+        }
+    }
+
 }

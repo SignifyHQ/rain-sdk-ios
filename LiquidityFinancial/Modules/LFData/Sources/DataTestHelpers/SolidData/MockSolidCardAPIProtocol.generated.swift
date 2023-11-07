@@ -110,4 +110,56 @@ public class MockSolidCardAPIProtocol: SolidCardAPIProtocol {
         }
     }
 
+    //MARK: - createDigitalWalletLink
+
+    public var createDigitalWalletLinkCardIDParametersThrowableError: Error?
+    public var createDigitalWalletLinkCardIDParametersCallsCount = 0
+    public var createDigitalWalletLinkCardIDParametersCalled: Bool {
+        return createDigitalWalletLinkCardIDParametersCallsCount > 0
+    }
+    public var createDigitalWalletLinkCardIDParametersReceivedArguments: (cardID: String, parameters: APISolidApplePayWalletParameters)?
+    public var createDigitalWalletLinkCardIDParametersReceivedInvocations: [(cardID: String, parameters: APISolidApplePayWalletParameters)] = []
+    public var createDigitalWalletLinkCardIDParametersReturnValue: APISolidDigitalWallet!
+    public var createDigitalWalletLinkCardIDParametersClosure: ((String, APISolidApplePayWalletParameters) async throws -> APISolidDigitalWallet)?
+
+    public func createDigitalWalletLink(cardID: String, parameters: APISolidApplePayWalletParameters) async throws -> APISolidDigitalWallet {
+        if let error = createDigitalWalletLinkCardIDParametersThrowableError {
+            throw error
+        }
+        createDigitalWalletLinkCardIDParametersCallsCount += 1
+        createDigitalWalletLinkCardIDParametersReceivedArguments = (cardID: cardID, parameters: parameters)
+        createDigitalWalletLinkCardIDParametersReceivedInvocations.append((cardID: cardID, parameters: parameters))
+        if let createDigitalWalletLinkCardIDParametersClosure = createDigitalWalletLinkCardIDParametersClosure {
+            return try await createDigitalWalletLinkCardIDParametersClosure(cardID, parameters)
+        } else {
+            return createDigitalWalletLinkCardIDParametersReturnValue
+        }
+    }
+
+    //MARK: - createVirtualCard
+
+    public var createVirtualCardAccountIDThrowableError: Error?
+    public var createVirtualCardAccountIDCallsCount = 0
+    public var createVirtualCardAccountIDCalled: Bool {
+        return createVirtualCardAccountIDCallsCount > 0
+    }
+    public var createVirtualCardAccountIDReceivedAccountID: String?
+    public var createVirtualCardAccountIDReceivedInvocations: [String] = []
+    public var createVirtualCardAccountIDReturnValue: APISolidCard!
+    public var createVirtualCardAccountIDClosure: ((String) async throws -> APISolidCard)?
+
+    public func createVirtualCard(accountID: String) async throws -> APISolidCard {
+        if let error = createVirtualCardAccountIDThrowableError {
+            throw error
+        }
+        createVirtualCardAccountIDCallsCount += 1
+        createVirtualCardAccountIDReceivedAccountID = accountID
+        createVirtualCardAccountIDReceivedInvocations.append(accountID)
+        if let createVirtualCardAccountIDClosure = createVirtualCardAccountIDClosure {
+            return try await createVirtualCardAccountIDClosure(accountID)
+        } else {
+            return createVirtualCardAccountIDReturnValue
+        }
+    }
+
 }

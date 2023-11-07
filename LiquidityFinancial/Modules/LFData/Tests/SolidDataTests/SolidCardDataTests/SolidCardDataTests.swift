@@ -14,8 +14,11 @@ final class SolidCardDataTests: XCTestCase {
   
   // Defining mock parameters
   let mockExistCardIDs = ["mock_cardID_1", "mock_cardID_2"]
+  let mockExistAccountIDs = ["mock_accountID_1", "mock_accountID_2"]
+  let mockExistAccountID = "mock_accountID_1"
   let mockExistCardID = "mock_cardID_1"
   let mockNotExistCardID = "mock_cardID_4"
+  let mockNotExistAccountID = "mock_accountID_4"
   let mockCardStatusParameter = APISolidCardStatusParameters(cardStatus: "mock_status")
   
   // Defining mock success response
@@ -46,7 +49,8 @@ final class SolidCardDataTests: XCTestCase {
   // Defining mock API errors
   let expectedThrowableError = TestError.fail("mock_api_error")
   let mockCardNotFoundError = TestError.fail("mock_card_notFound_error")
-  
+  let mockAccountNotFoundError = TestError.fail("mock_account_notFound_error")
+
   override func setUp() {
     super.setUp()
     // Initialize mock objects and the repository before each test. Inject mock objects into the repository
