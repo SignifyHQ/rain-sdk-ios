@@ -124,58 +124,6 @@ public class MockAccountRepositoryProtocol: AccountRepositoryProtocol {
         }
     }
 
-    //MARK: - getAccount
-
-    public var getAccountCurrencyTypeThrowableError: Error?
-    public var getAccountCurrencyTypeCallsCount = 0
-    public var getAccountCurrencyTypeCalled: Bool {
-        return getAccountCurrencyTypeCallsCount > 0
-    }
-    public var getAccountCurrencyTypeReceivedCurrencyType: String?
-    public var getAccountCurrencyTypeReceivedInvocations: [String] = []
-    public var getAccountCurrencyTypeReturnValue: [LFAccount]!
-    public var getAccountCurrencyTypeClosure: ((String) async throws -> [LFAccount])?
-
-    public func getAccount(currencyType: String) async throws -> [LFAccount] {
-        if let error = getAccountCurrencyTypeThrowableError {
-            throw error
-        }
-        getAccountCurrencyTypeCallsCount += 1
-        getAccountCurrencyTypeReceivedCurrencyType = currencyType
-        getAccountCurrencyTypeReceivedInvocations.append(currencyType)
-        if let getAccountCurrencyTypeClosure = getAccountCurrencyTypeClosure {
-            return try await getAccountCurrencyTypeClosure(currencyType)
-        } else {
-            return getAccountCurrencyTypeReturnValue
-        }
-    }
-
-    //MARK: - getAccountDetail
-
-    public var getAccountDetailIdThrowableError: Error?
-    public var getAccountDetailIdCallsCount = 0
-    public var getAccountDetailIdCalled: Bool {
-        return getAccountDetailIdCallsCount > 0
-    }
-    public var getAccountDetailIdReceivedId: String?
-    public var getAccountDetailIdReceivedInvocations: [String] = []
-    public var getAccountDetailIdReturnValue: LFAccount!
-    public var getAccountDetailIdClosure: ((String) async throws -> LFAccount)?
-
-    public func getAccountDetail(id: String) async throws -> LFAccount {
-        if let error = getAccountDetailIdThrowableError {
-            throw error
-        }
-        getAccountDetailIdCallsCount += 1
-        getAccountDetailIdReceivedId = id
-        getAccountDetailIdReceivedInvocations.append(id)
-        if let getAccountDetailIdClosure = getAccountDetailIdClosure {
-            return try await getAccountDetailIdClosure(id)
-        } else {
-            return getAccountDetailIdReturnValue
-        }
-    }
-
     //MARK: - getTransactions
 
     public var getTransactionsAccountIdCurrencyTypeTransactionTypesLimitOffsetThrowableError: Error?

@@ -62,4 +62,13 @@ extension LFCoreNetwork: SolidCardAPIProtocol where R == SolidCardRoute {
     )
   }
   
+  public func updateRoundUpDonation(cardID: String, parameters: APISolidRoundUpDonationParameters) async throws -> APISolidCard {
+    try await request(
+      SolidCardRoute.updateRoundUpDonation(cardID: cardID, parameters: parameters),
+      target: APISolidCard.self,
+      failure: LFErrorObject.self,
+      decoder: .apiDecoder
+    )
+  }
+  
 }

@@ -40,5 +40,6 @@ public class MockSolidCardEntity: SolidCardEntity {
     }
     public var underlyingCardStatus: String!
     public var createdAt: String?
+    public var isRoundUpDonationEnabled: Bool?
 
 }

@@ -159,6 +159,7 @@ private extension SolidListCardsView {
   var cardDetails: some View {
     VStack(spacing: 16) {
       card
+      donationRows
       rows
       Spacer()
       buttonGroup
@@ -205,12 +206,8 @@ private extension SolidListCardsView {
   
   var card: some View {
     TabView(selection: $viewModel.currentCard) {
-      ForEach(Array([viewModel.currentCard].enumerated()), id: \.element.id) { offset, item in
-        SolidCardView(
-          cardModel: item,
-          isShowCardNumber: $viewModel.isShowCardNumber,
-          isLoading: $viewModel.isInit
-        )
+      ForEach([viewModel.currentCard], id: \.id) { item in
+        SolidCardView(cardModel: item, isShowCardNumber: $viewModel.isShowCardNumber)
           .tag(item)
       }
     }
@@ -239,12 +236,18 @@ private extension SolidListCardsView {
 // MARK: - Middle Components
 private extension SolidListCardsView {
   @ViewBuilder
-  var rows: some View {
-    VStack(alignment: .leading, spacing: 18) {
+  var donationRows: some View {
+    VStack(alignment: .leading, spacing: 10) {
       if viewModel.showRoundUpPurchases {
         roundUpPurchasesView
       }
-      
+    }
+    .padding(.top, -16)
+  }
+  
+  @ViewBuilder
+  var rows: some View {
+    VStack(alignment: .leading, spacing: 18) {
       if viewModel.currentCard.cardStatus != .unactivated {
         Text(LFLocalizable.ListCard.Security.title)
           .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.ultraSmall.value))

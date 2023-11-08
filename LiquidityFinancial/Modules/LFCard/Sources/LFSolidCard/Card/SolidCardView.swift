@@ -6,19 +6,16 @@ import LFLocalizable
 import Services
 import BaseCard
 
-public struct SolidCardView: View {  
+public struct SolidCardView: View {
   @StateObject private var viewModel: SolidCardViewModel
   @Binding public var isShowCardNumber: Bool
-  @Binding public var isLoading: Bool
 
   public init(
     cardModel: CardModel,
-    isShowCardNumber: Binding<Bool>,
-    isLoading: Binding<Bool>
+    isShowCardNumber: Binding<Bool>
   ) {
     _viewModel = .init(wrappedValue: SolidCardViewModel(cardModel: cardModel))
     _isShowCardNumber = isShowCardNumber
-    _isLoading = isLoading
   }
   
   public var body: some View {
@@ -79,7 +76,7 @@ private extension SolidCardView {
         .onTapGesture {
           viewModel.copyAction()
         }
-        .hidden(isLoading)
+        .hidden(!viewModel.isCardAvailable)
     }
     .frame(width: 180, alignment: .leading)
   }

@@ -12,4 +12,8 @@ public protocol SolidCardRepositoryProtocol {
   ) async throws -> SolidDigitalWalletEntity
   
   func createVirtualCard(accountID: String) async throws -> SolidCardEntity
+  func updateRoundUpDonation(
+    cardID: String,
+    parameters: SolidRoundUpDonationParametersEntity
+  ) async throws -> SolidCardEntity
 }

@@ -20,7 +20,6 @@ public final class SolidListCardsViewModel: ListCardsViewModelProtocol {
   @LazyInjected(\.netspendDataManager) var netspendDataManager
   @LazyInjected(\.accountDataManager) var accountDataManager
   @LazyInjected(\.rewardDataManager) var rewardDataManager
-  @LazyInjected(\.rewardRepository) var rewardRepository
   @LazyInjected(\.solidCardRepository) var solidCardRepository
   @LazyInjected(\.customerSupportService) var customerSupportService
   @LazyInjected(\.analyticsService) var analyticsService
@@ -46,7 +45,7 @@ public final class SolidListCardsViewModel: ListCardsViewModelProtocol {
   }
   
   public var showRoundUpPurchases: Bool {
-    false //TODO: currently the feature is disable
+    LFUtilities.charityEnabled && rewardDataManager.currentSelectReward?.rawString == APIRewardType.donation.rawValue
   }
   
   public var cancellables: Set<AnyCancellable> = []
@@ -59,8 +58,8 @@ public final class SolidListCardsViewModel: ListCardsViewModelProtocol {
     SolidCloseCardUseCase(repository: solidCardRepository)
   }()
   
-  lazy var rewardUseCase: RewardUseCaseProtocol = {
-    RewardUseCase(repository: rewardRepository)
+  lazy var updateRoundUpDonationUseCase: SolidUpdateRoundUpDonationUseCaseProtocol = {
+    SolidUpdateRoundUpDonationUseCase(repository: solidCardRepository)
   }()
   
   public init(cardData: Published<(CardData)>.Publisher, coordinator: BaseCardDestinationObservable) {
@@ -126,13 +125,9 @@ public extension SolidListCardsViewModel {
       defer { isUpdatingRoundUpPurchases = false }
       isUpdatingRoundUpPurchases = true
       do {
-        let body: [String: Any] = [
-          "updateRoundUpDonationRequest": [
-            "roundUpDonation": status
-          ]
-        ]
-        let entity = try await rewardUseCase.setRoundUpDonation(body: body)
-        rewardDataManager.update(roundUpDonation: entity.userRoundUpEnabled ?? false)
+        let parameters = APISolidRoundUpDonationParameters(roundUpDonation: status)
+        let response = try await updateRoundUpDonationUseCase.execute(cardID: currentCard.id, parameters: parameters)
+        rewardDataManager.update(roundUpDonation: response.isRoundUpDonationEnabled ?? !status)
       } catch {
         handleBackendError(error: error)
       }

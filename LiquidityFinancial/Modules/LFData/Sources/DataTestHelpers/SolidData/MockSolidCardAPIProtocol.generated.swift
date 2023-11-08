@@ -162,4 +162,30 @@ public class MockSolidCardAPIProtocol: SolidCardAPIProtocol {
         }
     }
 
+    //MARK: - updateRoundUpDonation
+
+    public var updateRoundUpDonationCardIDParametersThrowableError: Error?
+    public var updateRoundUpDonationCardIDParametersCallsCount = 0
+    public var updateRoundUpDonationCardIDParametersCalled: Bool {
+        return updateRoundUpDonationCardIDParametersCallsCount > 0
+    }
+    public var updateRoundUpDonationCardIDParametersReceivedArguments: (cardID: String, parameters: APISolidRoundUpDonationParameters)?
+    public var updateRoundUpDonationCardIDParametersReceivedInvocations: [(cardID: String, parameters: APISolidRoundUpDonationParameters)] = []
+    public var updateRoundUpDonationCardIDParametersReturnValue: APISolidCard!
+    public var updateRoundUpDonationCardIDParametersClosure: ((String, APISolidRoundUpDonationParameters) async throws -> APISolidCard)?
+
+    public func updateRoundUpDonation(cardID: String, parameters: APISolidRoundUpDonationParameters) async throws -> APISolidCard {
+        if let error = updateRoundUpDonationCardIDParametersThrowableError {
+            throw error
+        }
+        updateRoundUpDonationCardIDParametersCallsCount += 1
+        updateRoundUpDonationCardIDParametersReceivedArguments = (cardID: cardID, parameters: parameters)
+        updateRoundUpDonationCardIDParametersReceivedInvocations.append((cardID: cardID, parameters: parameters))
+        if let updateRoundUpDonationCardIDParametersClosure = updateRoundUpDonationCardIDParametersClosure {
+            return try await updateRoundUpDonationCardIDParametersClosure(cardID, parameters)
+        } else {
+            return updateRoundUpDonationCardIDParametersReturnValue
+        }
+    }
+
 }

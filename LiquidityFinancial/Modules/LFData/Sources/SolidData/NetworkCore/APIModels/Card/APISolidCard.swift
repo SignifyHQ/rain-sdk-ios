@@ -8,4 +8,5 @@ public struct APISolidCard: Codable, SolidCardEntity {
   public var type: String
   public var cardStatus: String
   public var createdAt: String?
+  public var isRoundUpDonationEnabled: Bool?
 }

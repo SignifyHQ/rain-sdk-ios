@@ -9,4 +9,5 @@ public protocol SolidCardEntity {
   var type: String { get }
   var cardStatus: String { get }
   var createdAt: String? { get }
+  var isRoundUpDonationEnabled: Bool? { get }
 }

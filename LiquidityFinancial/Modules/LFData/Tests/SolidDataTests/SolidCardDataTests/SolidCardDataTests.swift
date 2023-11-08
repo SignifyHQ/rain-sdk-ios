@@ -20,6 +20,7 @@ final class SolidCardDataTests: XCTestCase {
   let mockNotExistCardID = "mock_cardID_4"
   let mockNotExistAccountID = "mock_accountID_4"
   let mockCardStatusParameter = APISolidCardStatusParameters(cardStatus: "mock_status")
+  let mockRoundUpDonationParameter = APISolidRoundUpDonationParameters(roundUpDonation: false)
   
   // Defining mock success response
   let mockCardResponse = APISolidCard(
@@ -29,7 +30,8 @@ final class SolidCardDataTests: XCTestCase {
     panLast4: "mock_panLast4",
     type: "mock_type",
     cardStatus: "mock_status",
-    createdAt: "mock_createAt"
+    createdAt: "mock_createAt",
+    isRoundUpDonationEnabled: true
   )
   
   let mockListCardResponse = [
@@ -40,7 +42,8 @@ final class SolidCardDataTests: XCTestCase {
       panLast4: "mock_panLast4",
       type: "mock_type",
       cardStatus: "mock_status",
-      createdAt: "mock_createAt"
+      createdAt: "mock_createAt",
+      isRoundUpDonationEnabled: true
     )
   ]
   

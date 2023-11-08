@@ -110,4 +110,82 @@ public class MockSolidCardRepositoryProtocol: SolidCardRepositoryProtocol {
         }
     }
 
+    //MARK: - createDigitalWalletLink
+
+    public var createDigitalWalletLinkCardIDParametersThrowableError: Error?
+    public var createDigitalWalletLinkCardIDParametersCallsCount = 0
+    public var createDigitalWalletLinkCardIDParametersCalled: Bool {
+        return createDigitalWalletLinkCardIDParametersCallsCount > 0
+    }
+    public var createDigitalWalletLinkCardIDParametersReceivedArguments: (cardID: String, parameters: SolidApplePayParametersEntity)?
+    public var createDigitalWalletLinkCardIDParametersReceivedInvocations: [(cardID: String, parameters: SolidApplePayParametersEntity)] = []
+    public var createDigitalWalletLinkCardIDParametersReturnValue: SolidDigitalWalletEntity!
+    public var createDigitalWalletLinkCardIDParametersClosure: ((String, SolidApplePayParametersEntity) async throws -> SolidDigitalWalletEntity)?
+
+    public func createDigitalWalletLink(cardID: String, parameters: SolidApplePayParametersEntity) async throws -> SolidDigitalWalletEntity {
+        if let error = createDigitalWalletLinkCardIDParametersThrowableError {
+            throw error
+        }
+        createDigitalWalletLinkCardIDParametersCallsCount += 1
+        createDigitalWalletLinkCardIDParametersReceivedArguments = (cardID: cardID, parameters: parameters)
+        createDigitalWalletLinkCardIDParametersReceivedInvocations.append((cardID: cardID, parameters: parameters))
+        if let createDigitalWalletLinkCardIDParametersClosure = createDigitalWalletLinkCardIDParametersClosure {
+            return try await createDigitalWalletLinkCardIDParametersClosure(cardID, parameters)
+        } else {
+            return createDigitalWalletLinkCardIDParametersReturnValue
+        }
+    }
+
+    //MARK: - createVirtualCard
+
+    public var createVirtualCardAccountIDThrowableError: Error?
+    public var createVirtualCardAccountIDCallsCount = 0
+    public var createVirtualCardAccountIDCalled: Bool {
+        return createVirtualCardAccountIDCallsCount > 0
+    }
+    public var createVirtualCardAccountIDReceivedAccountID: String?
+    public var createVirtualCardAccountIDReceivedInvocations: [String] = []
+    public var createVirtualCardAccountIDReturnValue: SolidCardEntity!
+    public var createVirtualCardAccountIDClosure: ((String) async throws -> SolidCardEntity)?
+
+    public func createVirtualCard(accountID: String) async throws -> SolidCardEntity {
+        if let error = createVirtualCardAccountIDThrowableError {
+            throw error
+        }
+        createVirtualCardAccountIDCallsCount += 1
+        createVirtualCardAccountIDReceivedAccountID = accountID
+        createVirtualCardAccountIDReceivedInvocations.append(accountID)
+        if let createVirtualCardAccountIDClosure = createVirtualCardAccountIDClosure {
+            return try await createVirtualCardAccountIDClosure(accountID)
+        } else {
+            return createVirtualCardAccountIDReturnValue
+        }
+    }
+
+    //MARK: - updateRoundUpDonation
+
+    public var updateRoundUpDonationCardIDParametersThrowableError: Error?
+    public var updateRoundUpDonationCardIDParametersCallsCount = 0
+    public var updateRoundUpDonationCardIDParametersCalled: Bool {
+        return updateRoundUpDonationCardIDParametersCallsCount > 0
+    }
+    public var updateRoundUpDonationCardIDParametersReceivedArguments: (cardID: String, parameters: SolidRoundUpDonationParametersEntity)?
+    public var updateRoundUpDonationCardIDParametersReceivedInvocations: [(cardID: String, parameters: SolidRoundUpDonationParametersEntity)] = []
+    public var updateRoundUpDonationCardIDParametersReturnValue: SolidCardEntity!
+    public var updateRoundUpDonationCardIDParametersClosure: ((String, SolidRoundUpDonationParametersEntity) async throws -> SolidCardEntity)?
+
+    public func updateRoundUpDonation(cardID: String, parameters: SolidRoundUpDonationParametersEntity) async throws -> SolidCardEntity {
+        if let error = updateRoundUpDonationCardIDParametersThrowableError {
+            throw error
+        }
+        updateRoundUpDonationCardIDParametersCallsCount += 1
+        updateRoundUpDonationCardIDParametersReceivedArguments = (cardID: cardID, parameters: parameters)
+        updateRoundUpDonationCardIDParametersReceivedInvocations.append((cardID: cardID, parameters: parameters))
+        if let updateRoundUpDonationCardIDParametersClosure = updateRoundUpDonationCardIDParametersClosure {
+            return try await updateRoundUpDonationCardIDParametersClosure(cardID, parameters)
+        } else {
+            return updateRoundUpDonationCardIDParametersReturnValue
+        }
+    }
+
 }

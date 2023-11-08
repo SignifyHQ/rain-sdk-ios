@@ -16,15 +16,4 @@ public class MockTransactionListEntity: TransactionListEntity {
     public var underlyingTotal: Int!
     public var data: [TransactionEntity] = []
 
-    //MARK: - init
-
-    public var initTotalDataReceivedArguments: (total: Int, data: [TransactionEntity])?
-    public var initTotalDataReceivedInvocations: [(total: Int, data: [TransactionEntity])] = []
-    public var initTotalDataClosure: ((Int, [TransactionEntity]) -> Void)?
-
-    public required init(total: Int, data: [TransactionEntity]) {
-        initTotalDataReceivedArguments = (total: total, data: data)
-        initTotalDataReceivedInvocations.append((total: total, data: data))
-        initTotalDataClosure?(total, data)
-    }
 }

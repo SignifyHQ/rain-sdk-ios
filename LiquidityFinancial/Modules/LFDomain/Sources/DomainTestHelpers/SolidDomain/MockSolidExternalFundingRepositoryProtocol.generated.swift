@@ -218,4 +218,30 @@ public class MockSolidExternalFundingRepositoryProtocol: SolidExternalFundingRep
         }
     }
 
+    //MARK: - createPinwheelToken
+
+    public var createPinwheelTokenAccountIdThrowableError: Error?
+    public var createPinwheelTokenAccountIdCallsCount = 0
+    public var createPinwheelTokenAccountIdCalled: Bool {
+        return createPinwheelTokenAccountIdCallsCount > 0
+    }
+    public var createPinwheelTokenAccountIdReceivedAccountId: String?
+    public var createPinwheelTokenAccountIdReceivedInvocations: [String] = []
+    public var createPinwheelTokenAccountIdReturnValue: SolidExternalPinwheelTokenResponseEntity!
+    public var createPinwheelTokenAccountIdClosure: ((String) async throws -> SolidExternalPinwheelTokenResponseEntity)?
+
+    public func createPinwheelToken(accountId: String) async throws -> SolidExternalPinwheelTokenResponseEntity {
+        if let error = createPinwheelTokenAccountIdThrowableError {
+            throw error
+        }
+        createPinwheelTokenAccountIdCallsCount += 1
+        createPinwheelTokenAccountIdReceivedAccountId = accountId
+        createPinwheelTokenAccountIdReceivedInvocations.append(accountId)
+        if let createPinwheelTokenAccountIdClosure = createPinwheelTokenAccountIdClosure {
+            return try await createPinwheelTokenAccountIdClosure(accountId)
+        } else {
+            return createPinwheelTokenAccountIdReturnValue
+        }
+    }
+
 }
