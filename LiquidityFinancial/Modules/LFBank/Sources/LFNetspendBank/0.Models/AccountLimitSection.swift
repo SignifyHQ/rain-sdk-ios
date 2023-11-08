@@ -2,7 +2,7 @@ import Foundation
 import LFLocalizable
 import LFUtilities
 
-enum TransferLimitSection {
+enum AccountLimitSection {
   case cardDeposit
   case bankDeposit
   case cardWithdraw

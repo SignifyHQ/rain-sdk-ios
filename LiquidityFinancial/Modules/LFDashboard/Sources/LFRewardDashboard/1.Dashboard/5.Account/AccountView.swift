@@ -36,7 +36,7 @@ struct AccountsView: View {
           .navigationTitle(LFLocalizable.AccountView.atmLocationTitle)
           .foregroundColor(Colors.label.swiftUIColor)
         case .depositLimits:
-          TransferLimitsView()
+          AccountLimitsView()
         case .connectedAccounts:
           ConnectedAccountsView(linkedContacts: viewModel.linkedContacts)
         case .bankStatement:

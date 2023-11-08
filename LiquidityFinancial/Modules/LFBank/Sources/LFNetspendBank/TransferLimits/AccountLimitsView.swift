@@ -2,12 +2,13 @@ import SwiftUI
 import LFLocalizable
 import LFStyleGuide
 import LFUtilities
+import NetSpendData
 
-public struct TransferLimitsView: View {
-  @StateObject private var viewModel = TransferLimitsViewModel()
-  @State private var selectedAnnotation: TransferLimitSection?
+public struct AccountLimitsView: View {
+  @StateObject private var viewModel = AccountLimitsViewModel()
+  @State private var selectedAnnotation: AccountLimitSection?
   @State private var screenSize: CGSize = .zero
-  @State private var selectedTab: TransferLimitConfig.TransactionType = .spending
+  @State private var selectedTab: AccountLimitsType = .spending
 
   public init() {}
   
@@ -19,10 +20,10 @@ public struct TransferLimitsView: View {
       } else if viewModel.isFetchTransferLimitFail {
         failure
       } else {
-        VStack(alignment: .leading) {
+        VStack(alignment: .leading, spacing: 20) {
+          headerTabView
           ScrollView(showsIndicators: false) {
             VStack(alignment: .leading, spacing: 24) {
-              headerTabView
               transferLimitsView
             }
           }
@@ -45,7 +46,7 @@ public struct TransferLimitsView: View {
     .readGeometry { geo in
       screenSize = geo.size
     }
-    .padding(.top, 20)
+    .padding(.top, 16)
     .padding(.horizontal, 30)
     .padding(.bottom, 16)
     .frame(maxWidth: .infinity, maxHeight: .infinity)
@@ -58,7 +59,7 @@ public struct TransferLimitsView: View {
 }
 
 // MARK: - View Components
-private extension TransferLimitsView {
+private extension AccountLimitsView {
   var headerTabView: some View {
     HStack(spacing: 0) {
       tabItem(type: .spending)
@@ -71,7 +72,7 @@ private extension TransferLimitsView {
     .cornerRadius(32)
   }
   
-  func tabItem(type: TransferLimitConfig.TransactionType) -> some View {
+  func tabItem(type: AccountLimitsType) -> some View {
     HStack {
       Spacer()
       Text(type.title)
@@ -111,48 +112,48 @@ private extension TransferLimitsView {
   
   var spendingLimitsView: some View {
     VStack(alignment: .leading, spacing: 50) {
-      transferLimitSection(
-        type: TransferLimitSection.spendingLimit,
-        transferSection: viewModel.spendingTransferLimitConfigs.spending
+      acountLimitsSection(
+        type: AccountLimitSection.spendingLimit,
+        transferSection: viewModel.spendingLimits.spendingLimits
       )
-      transferLimitSection(
-        type: TransferLimitSection.financialInstitutionsLimit,
-        transferSection: viewModel.spendingTransferLimitConfigs.financialInstitutionsSpending
+      acountLimitsSection(
+        type: AccountLimitSection.financialInstitutionsLimit,
+        transferSection: viewModel.spendingLimits.financialInstitutionLimits
       )
     }
   }
   
   var depositLimitsView: some View {
     VStack(alignment: .leading, spacing: 50) {
-      transferLimitSection(
-        type: TransferLimitSection.sendToCard,
-        transferSection: viewModel.depositTransferLimitConfigs.sendToCard
+      acountLimitsSection(
+        type: AccountLimitSection.sendToCard,
+        transferSection: viewModel.depositLimits.sendToCardLimits
       )
-      transferLimitSection(
-        type: TransferLimitSection.cardDeposit,
-        transferSection: viewModel.depositTransferLimitConfigs.debitCard
+      acountLimitsSection(
+        type: AccountLimitSection.cardDeposit,
+        transferSection: viewModel.depositLimits.externalCardLimits
       )
-      transferLimitSection(
-        type: TransferLimitSection.bankDeposit,
-        transferSection: viewModel.depositTransferLimitConfigs.bankAccount
+      acountLimitsSection(
+        type: AccountLimitSection.bankDeposit,
+        transferSection: viewModel.depositLimits.externalBankLimits
       )
     }
   }
   
   var withdrawLimitsView: some View {
     VStack(alignment: .leading, spacing: 50) {
-      transferLimitSection(
-        type: TransferLimitSection.cardWithdraw,
-        transferSection: viewModel.withdrawTransferLimitConfigs.debitCard
+      acountLimitsSection(
+        type: AccountLimitSection.cardWithdraw,
+        transferSection: viewModel.withdrawalLimits.externalCardLimits
       )
-      transferLimitSection(
-        type: TransferLimitSection.bankWithdraw,
-        transferSection: viewModel.withdrawTransferLimitConfigs.bankAccount
+      acountLimitsSection(
+        type: AccountLimitSection.bankWithdraw,
+        transferSection: viewModel.withdrawalLimits.externalBankLimits
       )
     }
   }
   
-  @ViewBuilder func transferLimitSection(type: TransferLimitSection, transferSection: [TransferLimitConfig]) -> some View {
+  @ViewBuilder func acountLimitsSection(type: AccountLimitSection, transferSection: [NetspendLimitValue]) -> some View {
     if !transferSection.isEmpty {
       VStack(alignment: .leading, spacing: 24) {
         HStack(spacing: 5) {
@@ -170,21 +171,21 @@ private extension TransferLimitsView {
               }
             }
         }
-        transferLimitItem(
-          title: TransferLimitConfig.TransferPeriod.day.title,
-          value: transferSection.first { $0.period == .day }?.amount
+        accountLimitItem(
+          title: LimitsPeriodType.day.title,
+          value: transferSection.first { $0.interval == LimitsPeriodType.day.rawValue }?.amount.toDouble
         )
-        transferLimitItem(
-          title: TransferLimitConfig.TransferPeriod.week.title,
-          value: transferSection.first { $0.period == .week }?.amount
+        accountLimitItem(
+          title: LimitsPeriodType.week.title,
+          value: transferSection.first { $0.interval == LimitsPeriodType.week.rawValue }?.amount.toDouble
         )
-        transferLimitItem(
-          title: TransferLimitConfig.TransferPeriod.month.title,
-          value: transferSection.first { $0.period == .month }?.amount
+        accountLimitItem(
+          title: LimitsPeriodType.month.title,
+          value: transferSection.first { $0.interval == LimitsPeriodType.month.rawValue }?.amount.toDouble
         )
-        transferLimitItem(
-          title: TransferLimitConfig.TransferPeriod.perTransaction.title,
-          value: transferSection.first { $0.period == .perTransaction }?.amount
+        accountLimitItem(
+          title: LimitsPeriodType.perTransaction.title,
+          value: transferSection.first { $0.interval == LimitsPeriodType.perTransaction.rawValue }?.amount.toDouble
         )
       }
       .overlay(alignment: .top) {
@@ -193,7 +194,7 @@ private extension TransferLimitsView {
     }
   }
   
-  @ViewBuilder func transferLimitItem(title: String, value: Double?) -> some View {
+  @ViewBuilder func accountLimitItem(title: String, value: Double?) -> some View {
     if let limitAmount = value {
       VStack(spacing: 16) {
         HStack {
@@ -217,7 +218,7 @@ private extension TransferLimitsView {
     }
   }
   
-  @ViewBuilder func annotationView(type: TransferLimitSection) -> some View {
+  @ViewBuilder func annotationView(type: AccountLimitSection) -> some View {
     if let annotation = selectedAnnotation, selectedAnnotation == type {
       AnnotationView(
         description: annotation.message,
@@ -281,7 +282,7 @@ private extension TransferLimitsView {
 }
 
 // MARK: - View Helpers
-private extension TransferLimitsView {
+private extension AccountLimitsView {
   var gradientColor: [Color] {
     switch LFStyleGuide.target {
     case .CauseCard:

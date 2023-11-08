@@ -2,6 +2,7 @@ import Foundation
 import NetspendDomain
 
 public class NSAccountRepository: NSAccountRepositoryProtocol {
+
   private let accountAPI: NSAccountAPIProtocol
   
   public init(accountAPI: NSAccountAPIProtocol) {
@@ -25,4 +26,9 @@ public class NSAccountRepository: NSAccountRepositoryProtocol {
   public func getAccountDetail(id: String) async throws -> NSAccountEntity {
     return try await accountAPI.getAccountDetail(id: id)
   }
+  
+  public func getAccountLimits() async throws -> any NSAccountLimitsEntity {
+    return try await accountAPI.getAccountLimits()
+  }
+  
 }

@@ -1,46 +1,44 @@
 import Foundation
 import Factory
-import AccountDomain
+import SolidData
+import SolidDomain
 import LFUtilities
+import LFLocalizable
 
 @MainActor
-final class TransferLimitsViewModel: ObservableObject {
+final class AccountLimitsViewModel: ObservableObject {
+  @LazyInjected(\.solidAccountRepository) var solidAccountRepository
   @LazyInjected(\.accountRepository) var accountRepository
   
   @Published var isFetchingTransferLimit = false
   @Published var isFetchTransferLimitFail = false
   @Published var isRequesting = false
-  @Published var depositTransferLimitConfigs = TransferLimits.default
-  @Published var withdrawTransferLimitConfigs = TransferLimits.default
-  @Published var spendingTransferLimitConfigs = TransferLimits.default
+  @Published var model = AccountLimitsUIModel()
   @Published var toastMessage: String?
   @Published var popup: Popup?
 
+  lazy var getAccountLimitUseCase: SolidGetAccountLimitsUseCaseProtocol = {
+    SolidGetAccountLimitsUseCase(repository: solidAccountRepository)
+  }()
+  
   init() {
-    getTransferLimitConfigs()
+    getAccountLimits()
   }
 }
 
 // MARK: - API
-extension TransferLimitsViewModel {
-  func getTransferLimitConfigs() {
+extension AccountLimitsViewModel {
+  func getAccountLimits() {
     Task {
       defer { isFetchingTransferLimit = false }
       isFetchingTransferLimit = true
       do {
-        let user = try await accountRepository.getUser()
-        let transferLimitConfigs = user.transferLimitConfigsEntity.map {
-          TransferLimitConfig(from: $0)
+        if let accountLimits = try await getAccountLimitUseCase.execute() {
+          let model = AccountLimitsUIModel(accountLimitsEntity: accountLimits)
+          self.model = model
+        } else {
+          isFetchTransferLimitFail = true
         }
-        depositTransferLimitConfigs = TransferLimits(
-          transferLimitConfigs: transferLimitConfigs.filter({ $0.type == .deposit })
-        )
-        withdrawTransferLimitConfigs = TransferLimits(
-          transferLimitConfigs: transferLimitConfigs.filter({ $0.type == .withdraw })
-        )
-        spendingTransferLimitConfigs = TransferLimits(
-          transferLimitConfigs: transferLimitConfigs.filter({ $0.type == .spending })
-        )
       } catch {
         isFetchTransferLimitFail = true
         guard let errorObject = error.asErrorObject else {
@@ -80,14 +78,14 @@ extension TransferLimitsViewModel {
 }
 
 // MARK: - View Helpers
-extension TransferLimitsViewModel {
+extension AccountLimitsViewModel {
   func hidePopup() {
     popup = nil
   }
 }
 
 // MARK: - Types
-extension TransferLimitsViewModel {
+extension AccountLimitsViewModel {
   enum Popup {
     case createTicketSuccess
     case ticketExisted

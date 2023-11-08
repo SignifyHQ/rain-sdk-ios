@@ -8,6 +8,7 @@ public enum NSAccountRoute {
   case getStatements(sessionId: String, parameters: GetStatementParameters)
   case getAccounts
   case getAccountDetail(id: String)
+  case getAccountLimits
 }
 
 extension NSAccountRoute: LFRoute {
@@ -20,12 +21,14 @@ extension NSAccountRoute: LFRoute {
       return "/v1/netspend/accounts"
     case .getAccountDetail(let id):
       return "/v1/netspend/accounts/\(id)"
+    case .getAccountLimits:
+      return "/v1/netspend/limits"
     }
   }
   
   public var httpMethod: HttpMethod {
     switch self {
-    case .getStatements, .getAccounts, .getAccountDetail:
+    case .getStatements, .getAccounts, .getAccountDetail, .getAccountLimits:
       return .GET
     }
   }

@@ -1,41 +1,44 @@
 import Foundation
 import Factory
-import SolidData
-import SolidDomain
+import NetspendDomain
+import NetSpendData
 import LFUtilities
 import LFLocalizable
 
 @MainActor
-final class TransferLimitsViewModel: ObservableObject {
-  @LazyInjected(\.solidAccountRepository) var solidAccountRepository
+final class AccountLimitsViewModel: ObservableObject {
   @LazyInjected(\.accountRepository) var accountRepository
+  @LazyInjected(\.nsAccountRepository) var nsAccountRepository
   
   @Published var isFetchingTransferLimit = false
   @Published var isFetchTransferLimitFail = false
   @Published var isRequesting = false
-  @Published var model = AccountLimitsUIModel()
+  @Published var depositLimits = APINetspendAccountLimits.DepositLimits()
+  @Published var withdrawalLimits = APINetspendAccountLimits.WithdrawalLimits()
+  @Published var spendingLimits = APINetspendAccountLimits.SpendingLimits()
   @Published var toastMessage: String?
   @Published var popup: Popup?
 
-  lazy var getAccountLimitUseCase: SolidGetAccountLimitsUseCaseProtocol = {
-    SolidGetAccountLimitsUseCase(repository: solidAccountRepository)
+  lazy var accountLimitsUseCase: NSGetAccountLimitsUseCaseProtocol = {
+    NSGetAccountLimitsUseCase(repository: nsAccountRepository)
   }()
   
   init() {
-    getAccountLimits()
+    getTransferLimitConfigs()
   }
 }
 
 // MARK: - API
-extension TransferLimitsViewModel {
-  func getAccountLimits() {
+extension AccountLimitsViewModel {
+  func getTransferLimitConfigs() {
     Task {
       defer { isFetchingTransferLimit = false }
       isFetchingTransferLimit = true
       do {
-        if let accountLimits = try await getAccountLimitUseCase.execute() {
-          let model = AccountLimitsUIModel(accountLimitsEntity: accountLimits)
-          self.model = model
+        if let limits = try await accountLimitsUseCase.execute() as? APINetspendAccountLimits {
+          depositLimits = limits.depositLimits
+          withdrawalLimits = limits.withdrawalLimits
+          spendingLimits = limits.spendingLimits
         } else {
           isFetchTransferLimitFail = true
         }
@@ -78,14 +81,14 @@ extension TransferLimitsViewModel {
 }
 
 // MARK: - View Helpers
-extension TransferLimitsViewModel {
+extension AccountLimitsViewModel {
   func hidePopup() {
     popup = nil
   }
 }
 
 // MARK: - Types
-extension TransferLimitsViewModel {
+extension AccountLimitsViewModel {
   enum Popup {
     case createTicketSuccess
     case ticketExisted

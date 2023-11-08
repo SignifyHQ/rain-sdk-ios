@@ -3,8 +3,8 @@ import LFLocalizable
 import LFStyleGuide
 import LFUtilities
 
-public struct TransferLimitsView: View {
-  @StateObject private var viewModel = TransferLimitsViewModel()
+public struct AccountLimitsView: View {
+  @StateObject private var viewModel = AccountLimitsViewModel()
   @State private var selectedAnnotation: AccountLimitsSection?
   @State private var screenSize: CGSize = .zero
   @State private var selectedTab: TransactionType = .spending
@@ -23,7 +23,7 @@ public struct TransferLimitsView: View {
           headerTabView
           ScrollView(showsIndicators: false) {
             VStack(alignment: .leading, spacing: 24) {
-              transferLimitsView
+              accountLimitsView
             }
           }
           Spacer()
@@ -58,7 +58,7 @@ public struct TransferLimitsView: View {
 }
 
 // MARK: - View Components
-private extension TransferLimitsView {
+private extension AccountLimitsView {
   var headerTabView: some View {
     HStack(spacing: 0) {
       tabItem(type: .spending)
@@ -96,7 +96,7 @@ private extension TransferLimitsView {
     .cornerRadius(32)
   }
   
-  @ViewBuilder var transferLimitsView: some View {
+  @ViewBuilder var accountLimitsView: some View {
     switch selectedTab {
     case .deposit:
       depositLimitsView
@@ -176,11 +176,11 @@ private extension TransferLimitsView {
         sectionHeader(type: type)
           .isHidden(hidden: model.deposit.depositTotalEmpty)
         
-        transferLimitItem(
+        accountLimitItem(
           title: TransferPeriod.day.title,
           value: model.deposit.depositTotalDaily.toDouble
         )
-        transferLimitItem(
+        accountLimitItem(
           title: TransferPeriod.month.title,
           value: model.deposit.depositTotalMonthly.toDouble
         )
@@ -189,11 +189,11 @@ private extension TransferLimitsView {
         sectionHeader(type: type)
           .isHidden(hidden: model.deposit.depositCardEmpty)
         
-        transferLimitItem(
+        accountLimitItem(
           title: TransferPeriod.day.title,
           value: model.deposit.depositCardDaily?.toDouble
         )
-        transferLimitItem(
+        accountLimitItem(
           title: TransferPeriod.month.title,
           value: model.deposit.depositCardMonthly?.toDouble
         )
@@ -202,11 +202,11 @@ private extension TransferLimitsView {
         sectionHeader(type: type)
           .isHidden(hidden: model.deposit.depositAcHEmpty)
         
-        transferLimitItem(
+        accountLimitItem(
           title: TransferPeriod.day.title,
           value: model.deposit.depositAchDaily?.toDouble
         )
-        transferLimitItem(
+        accountLimitItem(
           title: TransferPeriod.month.title,
           value: model.deposit.depositAchMonthly?.toDouble
         )
@@ -216,11 +216,11 @@ private extension TransferLimitsView {
         sectionHeader(type: type)
           .isHidden(hidden: model.withdrawal.withdrawalTotalEmpty)
         
-        transferLimitItem(
+        accountLimitItem(
           title: TransferPeriod.day.title,
           value: model.withdrawal.withdrawalTotalDaily.toDouble
         )
-        transferLimitItem(
+        accountLimitItem(
           title: TransferPeriod.month.title,
           value: model.withdrawal.withdrawalTotalMonthly.toDouble
         )
@@ -229,11 +229,11 @@ private extension TransferLimitsView {
         sectionHeader(type: type)
           .isHidden(hidden: model.withdrawal.withdrawalCardEmpty)
         
-        transferLimitItem(
+        accountLimitItem(
           title: TransferPeriod.day.title,
           value: model.withdrawal.withdrawalCardDaily?.toDouble
         )
-        transferLimitItem(
+        accountLimitItem(
           title: TransferPeriod.month.title,
           value: model.withdrawal.withdrawalCardMonthly?.toDouble
         )
@@ -242,11 +242,11 @@ private extension TransferLimitsView {
         sectionHeader(type: type)
           .isHidden(hidden: model.withdrawal.withdrawalAcHEmpty)
         
-        transferLimitItem(
+        accountLimitItem(
           title: TransferPeriod.day.title,
           value: model.withdrawal.withdrawalAchDaily?.toDouble
         )
-        transferLimitItem(
+        accountLimitItem(
           title: TransferPeriod.month.title,
           value: model.withdrawal.withdrawalAchMonthly?.toDouble
         )
@@ -256,7 +256,7 @@ private extension TransferLimitsView {
         if let spendingAmount = model.spending.spendingAmount {
           sectionHeader(type: type)
           
-          transferLimitItem(
+          accountLimitItem(
             title: model.spending.title,
             value: spendingAmount.toDouble
           )
@@ -269,7 +269,7 @@ private extension TransferLimitsView {
     }
   }
   
-  @ViewBuilder func transferLimitItem(title: String, value: Double?) -> some View {
+  @ViewBuilder func accountLimitItem(title: String, value: Double?) -> some View {
     if let limitAmount = value, limitAmount > 0 {
       VStack(spacing: 16) {
         HStack {
@@ -357,7 +357,7 @@ private extension TransferLimitsView {
 }
 
 // MARK: - View Helpers
-private extension TransferLimitsView {
+private extension AccountLimitsView {
   var gradientColor: [Color] {
     switch LFStyleGuide.target {
     case .CauseCard:

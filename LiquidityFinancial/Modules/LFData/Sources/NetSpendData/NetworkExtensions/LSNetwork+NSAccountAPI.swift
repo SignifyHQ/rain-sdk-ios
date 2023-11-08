@@ -5,6 +5,14 @@ import CoreNetwork
 import LFUtilities
 
 extension LFCoreNetwork: NSAccountAPIProtocol where R == NSAccountRoute {
+  public func getAccountLimits() async throws -> APINetspendAccountLimits {
+    return try await request(
+      NSAccountRoute.getAccountLimits,
+      target: APINetspendAccountLimits.self,
+      failure: LFErrorObject.self,
+      decoder: .apiDecoder
+    )
+  }
   
   public func getStatements(sessionId: String, parameters: GetStatementParameters) async throws -> [StatementModel] {
     let response = try await request(
@@ -33,4 +41,5 @@ extension LFCoreNetwork: NSAccountAPIProtocol where R == NSAccountRoute {
       decoder: .apiDecoder
     )
   }
+  
 }
