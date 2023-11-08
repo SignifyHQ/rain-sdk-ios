@@ -7,7 +7,7 @@ public struct TransferLimitsView: View {
   @StateObject private var viewModel = TransferLimitsViewModel()
   @State private var selectedAnnotation: TransferLimitSection?
   @State private var screenSize: CGSize = .zero
-  @State private var selectedTab: TransferLimitConfig.TransactionType = .spending
+  @State private var selectedTab: TransactionType = .spending
 
   public init() {}
   
@@ -71,7 +71,7 @@ private extension TransferLimitsView {
     .cornerRadius(32)
   }
   
-  func tabItem(type: TransferLimitConfig.TransactionType) -> some View {
+  func tabItem(type: TransactionType) -> some View {
     HStack {
       Spacer()
       Text(type.title)
@@ -171,19 +171,19 @@ private extension TransferLimitsView {
             }
         }
         transferLimitItem(
-          title: TransferLimitConfig.TransferPeriod.day.title,
+          title: TransferPeriod.day.title,
           value: transferSection.first { $0.period == .day }?.amount
         )
         transferLimitItem(
-          title: TransferLimitConfig.TransferPeriod.week.title,
+          title: TransferPeriod.week.title,
           value: transferSection.first { $0.period == .week }?.amount
         )
         transferLimitItem(
-          title: TransferLimitConfig.TransferPeriod.month.title,
+          title: TransferPeriod.month.title,
           value: transferSection.first { $0.period == .month }?.amount
         )
         transferLimitItem(
-          title: TransferLimitConfig.TransferPeriod.perTransaction.title,
+          title: TransferPeriod.perTransaction.title,
           value: transferSection.first { $0.period == .perTransaction }?.amount
         )
       }

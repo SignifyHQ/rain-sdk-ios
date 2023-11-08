@@ -12,6 +12,10 @@ public class SolidAccountRepository: SolidAccountRepositoryProtocol {
   }
   
   public func getAccountDetail(id: String) async throws -> SolidAccountEntity {
-    return try  await accountAPI.getAccountDetail(id: id)
+    return try await accountAPI.getAccountDetail(id: id)
+  }
+  
+  public func getAccountLimits() async throws -> [SolidDomain.SolidAccountLimitsEntity] {
+    return try await accountAPI.getAccountLimits()
   }
 }

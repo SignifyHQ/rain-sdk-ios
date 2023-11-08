@@ -6,6 +6,7 @@ import Foundation
 import AccountDomain
 import Combine
 import NetspendDomain
+import AccountService
 
 public class MockAccountDataStorageProtocol: AccountDataStorageProtocol {
 
@@ -185,7 +186,7 @@ public class MockAccountDataStorageProtocol: AccountDataStorageProtocol {
     public var addOrEditLinkedSourceCalled: Bool {
         return addOrEditLinkedSourceCallsCount > 0
     }
-    public var addOrEditLinkedSourceReceivedSource: any LinkedSourceDataEntity?
+    public var addOrEditLinkedSourceReceivedSource: (any LinkedSourceDataEntity)?
     public var addOrEditLinkedSourceReceivedInvocations: [any LinkedSourceDataEntity] = []
     public var addOrEditLinkedSourceClosure: ((any LinkedSourceDataEntity) -> Void)?
 

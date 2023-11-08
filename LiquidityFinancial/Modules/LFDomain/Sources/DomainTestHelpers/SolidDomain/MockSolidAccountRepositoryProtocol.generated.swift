@@ -32,4 +32,52 @@ public class MockSolidAccountRepositoryProtocol: SolidAccountRepositoryProtocol 
         }
     }
 
+    //MARK: - getAccountDetail
+
+    public var getAccountDetailIdThrowableError: Error?
+    public var getAccountDetailIdCallsCount = 0
+    public var getAccountDetailIdCalled: Bool {
+        return getAccountDetailIdCallsCount > 0
+    }
+    public var getAccountDetailIdReceivedId: String?
+    public var getAccountDetailIdReceivedInvocations: [String] = []
+    public var getAccountDetailIdReturnValue: SolidAccountEntity!
+    public var getAccountDetailIdClosure: ((String) async throws -> SolidAccountEntity)?
+
+    public func getAccountDetail(id: String) async throws -> SolidAccountEntity {
+        if let error = getAccountDetailIdThrowableError {
+            throw error
+        }
+        getAccountDetailIdCallsCount += 1
+        getAccountDetailIdReceivedId = id
+        getAccountDetailIdReceivedInvocations.append(id)
+        if let getAccountDetailIdClosure = getAccountDetailIdClosure {
+            return try await getAccountDetailIdClosure(id)
+        } else {
+            return getAccountDetailIdReturnValue
+        }
+    }
+
+    //MARK: - getAccountLimits
+
+    public var getAccountLimitsThrowableError: Error?
+    public var getAccountLimitsCallsCount = 0
+    public var getAccountLimitsCalled: Bool {
+        return getAccountLimitsCallsCount > 0
+    }
+    public var getAccountLimitsReturnValue: [SolidAccountLimitsEntity]!
+    public var getAccountLimitsClosure: (() async throws -> [SolidAccountLimitsEntity])?
+
+    public func getAccountLimits() async throws -> [SolidAccountLimitsEntity] {
+        if let error = getAccountLimitsThrowableError {
+            throw error
+        }
+        getAccountLimitsCallsCount += 1
+        if let getAccountLimitsClosure = getAccountLimitsClosure {
+            return try await getAccountLimitsClosure()
+        } else {
+            return getAccountLimitsReturnValue
+        }
+    }
+
 }

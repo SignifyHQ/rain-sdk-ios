@@ -3,6 +3,15 @@ import CoreNetwork
 import LFUtilities
 
 extension LFCoreNetwork: SolidAccountAPIProtocol where R == SolidAccountRoute {
+  public func getAccountLimits() async throws -> [APISolidAccountLimits] {
+    return try await request(
+      SolidAccountRoute.getAccountLimits,
+      target: [APISolidAccountLimits].self,
+      failure: LFErrorObject.self,
+      decoder: .apiDecoder
+    )
+  }
+  
   
   public func getAccounts() async throws -> [APISolidAccount] {
     return try await request(

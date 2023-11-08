@@ -6,6 +6,7 @@ import LFUtilities
 public enum SolidAccountRoute {
   case getAccounts
   case getAccountDetail(id: String)
+  case getAccountLimits
 }
 
 extension SolidAccountRoute: LFRoute {
@@ -16,6 +17,8 @@ extension SolidAccountRoute: LFRoute {
       return "/v1/solid/accounts"
     case .getAccountDetail(let id):
       return "/v1/solid/accounts/\(id)"
+    case .getAccountLimits:
+      return "/v1/solid/accounts/limits"
     }
   }
   

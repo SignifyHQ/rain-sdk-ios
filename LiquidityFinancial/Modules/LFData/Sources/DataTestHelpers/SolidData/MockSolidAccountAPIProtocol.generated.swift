@@ -58,4 +58,25 @@ public class MockSolidAccountAPIProtocol: SolidAccountAPIProtocol {
         }
     }
 
+    //MARK: - getAccountLimits
+
+    public var getAccountLimitsThrowableError: Error?
+    public var getAccountLimitsCallsCount = 0
+    public var getAccountLimitsCalled: Bool {
+        return getAccountLimitsCallsCount > 0
+    }
+    public var getAccountLimitsReturnValue: [APISolidAccountLimits]!
+    public var getAccountLimitsClosure: (() async throws -> [APISolidAccountLimits])?
+
+    public func getAccountLimits() async throws -> [APISolidAccountLimits] {
+        if let error = getAccountLimitsThrowableError {
+            throw error
+        }
+        getAccountLimitsCallsCount += 1
+        if let getAccountLimitsClosure = getAccountLimitsClosure {
+            return try await getAccountLimitsClosure()
+        } else {
+            return getAccountLimitsReturnValue
+        }
+    }
 }

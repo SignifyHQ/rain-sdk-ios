@@ -5,9 +5,9 @@ import LFUtilities
 
 public struct TransferLimitsView: View {
   @StateObject private var viewModel = TransferLimitsViewModel()
-  @State private var selectedAnnotation: TransferLimitSection?
+  @State private var selectedAnnotation: AccountLimitsSection?
   @State private var screenSize: CGSize = .zero
-  @State private var selectedTab: TransferLimitConfig.TransactionType = .spending
+  @State private var selectedTab: TransactionType = .spending
 
   public init() {}
   
@@ -19,10 +19,10 @@ public struct TransferLimitsView: View {
       } else if viewModel.isFetchTransferLimitFail {
         failure
       } else {
-        VStack(alignment: .leading) {
+        VStack(alignment: .leading, spacing: 24) {
+          headerTabView
           ScrollView(showsIndicators: false) {
             VStack(alignment: .leading, spacing: 24) {
-              headerTabView
               transferLimitsView
             }
           }
@@ -71,7 +71,7 @@ private extension TransferLimitsView {
     .cornerRadius(32)
   }
   
-  func tabItem(type: TransferLimitConfig.TransactionType) -> some View {
+  func tabItem(type: TransactionType) -> some View {
     HStack {
       Spacer()
       Text(type.title)
@@ -111,90 +111,166 @@ private extension TransferLimitsView {
   
   var spendingLimitsView: some View {
     VStack(alignment: .leading, spacing: 50) {
-      transferLimitSection(
-        type: TransferLimitSection.spendingLimit,
-        transferSection: viewModel.spendingTransferLimitConfigs.spending
-      )
-      transferLimitSection(
-        type: TransferLimitSection.financialInstitutionsLimit,
-        transferSection: viewModel.spendingTransferLimitConfigs.financialInstitutionsSpending
+      accountLimitsSection(
+        type: AccountLimitsSection.spendingLimit,
+        model: viewModel.model
       )
     }
   }
   
   var depositLimitsView: some View {
     VStack(alignment: .leading, spacing: 50) {
-      transferLimitSection(
-        type: TransferLimitSection.sendToCard,
-        transferSection: viewModel.depositTransferLimitConfigs.sendToCard
+      accountLimitsSection(
+        type: AccountLimitsSection.totalDeposit,
+        model: viewModel.model
       )
-      transferLimitSection(
-        type: TransferLimitSection.cardDeposit,
-        transferSection: viewModel.depositTransferLimitConfigs.debitCard
+      accountLimitsSection(
+        type: AccountLimitsSection.cardDeposit,
+        model: viewModel.model
       )
-      transferLimitSection(
-        type: TransferLimitSection.bankDeposit,
-        transferSection: viewModel.depositTransferLimitConfigs.bankAccount
+      accountLimitsSection(
+        type: AccountLimitsSection.bankDeposit,
+        model: viewModel.model
       )
     }
   }
   
   var withdrawLimitsView: some View {
     VStack(alignment: .leading, spacing: 50) {
-      transferLimitSection(
-        type: TransferLimitSection.cardWithdraw,
-        transferSection: viewModel.withdrawTransferLimitConfigs.debitCard
+      accountLimitsSection(
+        type: AccountLimitsSection.totalWithdraw,
+        model: viewModel.model
       )
-      transferLimitSection(
-        type: TransferLimitSection.bankWithdraw,
-        transferSection: viewModel.withdrawTransferLimitConfigs.bankAccount
+      accountLimitsSection(
+        type: AccountLimitsSection.cardWithdraw,
+        model: viewModel.model
+      )
+      accountLimitsSection(
+        type: AccountLimitsSection.bankWithdraw,
+        model: viewModel.model
       )
     }
   }
   
-  @ViewBuilder func transferLimitSection(type: TransferLimitSection, transferSection: [TransferLimitConfig]) -> some View {
-    if !transferSection.isEmpty {
-      VStack(alignment: .leading, spacing: 24) {
-        HStack(spacing: 5) {
-          Text(type.title)
-            .foregroundColor(Colors.label.swiftUIColor)
-            .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.medium.value))
-          GenImages.CommonImages.info.swiftUIImage
-            .foregroundColor(Colors.label.swiftUIColor.opacity(0.5))
-            .onTapGesture {
-              Haptic.impact(.light).generate()
-              if selectedAnnotation == type {
-                selectedAnnotation = nil
-              } else {
-                // selectedAnnotation = type TODO: - Will be implemented later
-              }
-            }
+  private func sectionHeader(type: AccountLimitsSection) -> some View {
+    HStack(spacing: 5) {
+      Text(type.title)
+        .foregroundColor(Colors.label.swiftUIColor)
+        .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.medium.value))
+      GenImages.CommonImages.info.swiftUIImage
+        .foregroundColor(Colors.label.swiftUIColor.opacity(0.5))
+        .onTapGesture {
+          Haptic.impact(.light).generate()
+          if selectedAnnotation == type {
+            selectedAnnotation = nil
+          } else {
+            // selectedAnnotation = type TODO: - Will be implemented later
+          }
         }
+    }
+  }
+  
+  @ViewBuilder func accountLimitsSection(type: AccountLimitsSection, model: AccountLimitsUIModel) -> some View {
+    VStack(alignment: .leading, spacing: 24) {
+      if type == .totalDeposit {
+        sectionHeader(type: type)
+          .isHidden(hidden: model.deposit.depositTotalEmpty)
+        
         transferLimitItem(
-          title: TransferLimitConfig.TransferPeriod.day.title,
-          value: transferSection.first { $0.period == .day }?.amount
+          title: TransferPeriod.day.title,
+          value: model.deposit.depositTotalDaily.toDouble
         )
         transferLimitItem(
-          title: TransferLimitConfig.TransferPeriod.week.title,
-          value: transferSection.first { $0.period == .week }?.amount
-        )
-        transferLimitItem(
-          title: TransferLimitConfig.TransferPeriod.month.title,
-          value: transferSection.first { $0.period == .month }?.amount
-        )
-        transferLimitItem(
-          title: TransferLimitConfig.TransferPeriod.perTransaction.title,
-          value: transferSection.first { $0.period == .perTransaction }?.amount
+          title: TransferPeriod.month.title,
+          value: model.deposit.depositTotalMonthly.toDouble
         )
       }
-      .overlay(alignment: .top) {
-        annotationView(type: type)
+      if type == .cardDeposit {
+        sectionHeader(type: type)
+          .isHidden(hidden: model.deposit.depositCardEmpty)
+        
+        transferLimitItem(
+          title: TransferPeriod.day.title,
+          value: model.deposit.depositCardDaily?.toDouble
+        )
+        transferLimitItem(
+          title: TransferPeriod.month.title,
+          value: model.deposit.depositCardMonthly?.toDouble
+        )
       }
+      if type == .bankDeposit {
+        sectionHeader(type: type)
+          .isHidden(hidden: model.deposit.depositAcHEmpty)
+        
+        transferLimitItem(
+          title: TransferPeriod.day.title,
+          value: model.deposit.depositAchDaily?.toDouble
+        )
+        transferLimitItem(
+          title: TransferPeriod.month.title,
+          value: model.deposit.depositAchMonthly?.toDouble
+        )
+      }
+      
+      if type == .totalWithdraw {
+        sectionHeader(type: type)
+          .isHidden(hidden: model.withdrawal.withdrawalTotalEmpty)
+        
+        transferLimitItem(
+          title: TransferPeriod.day.title,
+          value: model.withdrawal.withdrawalTotalDaily.toDouble
+        )
+        transferLimitItem(
+          title: TransferPeriod.month.title,
+          value: model.withdrawal.withdrawalTotalMonthly.toDouble
+        )
+      }
+      if type == .cardWithdraw {
+        sectionHeader(type: type)
+          .isHidden(hidden: model.withdrawal.withdrawalCardEmpty)
+        
+        transferLimitItem(
+          title: TransferPeriod.day.title,
+          value: model.withdrawal.withdrawalCardDaily?.toDouble
+        )
+        transferLimitItem(
+          title: TransferPeriod.month.title,
+          value: model.withdrawal.withdrawalCardMonthly?.toDouble
+        )
+      }
+      if type == .bankWithdraw {
+        sectionHeader(type: type)
+          .isHidden(hidden: model.withdrawal.withdrawalAcHEmpty)
+        
+        transferLimitItem(
+          title: TransferPeriod.day.title,
+          value: model.withdrawal.withdrawalAchDaily?.toDouble
+        )
+        transferLimitItem(
+          title: TransferPeriod.month.title,
+          value: model.withdrawal.withdrawalAchMonthly?.toDouble
+        )
+      }
+      
+      if type == .spendingLimit {
+        if let spendingAmount = model.spending.spendingAmount {
+          sectionHeader(type: type)
+          
+          transferLimitItem(
+            title: model.spending.title,
+            value: spendingAmount.toDouble
+          )
+        }
+      }
+      
+    }
+    .overlay(alignment: .top) {
+      annotationView(type: type)
     }
   }
   
   @ViewBuilder func transferLimitItem(title: String, value: Double?) -> some View {
-    if let limitAmount = value {
+    if let limitAmount = value, limitAmount > 0 {
       VStack(spacing: 16) {
         HStack {
           Text(title)
@@ -217,7 +293,7 @@ private extension TransferLimitsView {
     }
   }
   
-  @ViewBuilder func annotationView(type: TransferLimitSection) -> some View {
+  @ViewBuilder func annotationView(type: AccountLimitsSection) -> some View {
     if let annotation = selectedAnnotation, selectedAnnotation == type {
       AnnotationView(
         description: annotation.message,
@@ -247,7 +323,7 @@ private extension TransferLimitsView {
         .foregroundColor(Colors.label.swiftUIColor)
         .multilineTextAlignment(.center)
       FullSizeButton(title: LFLocalizable.Button.Retry.title, isDisable: false) {
-        viewModel.getTransferLimitConfigs()
+        viewModel.getAccountLimits()
       }
     }
     .frame(maxWidth: .infinity)

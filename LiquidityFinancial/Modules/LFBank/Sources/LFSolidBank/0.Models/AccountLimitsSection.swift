@@ -2,14 +2,14 @@ import Foundation
 import LFLocalizable
 import LFUtilities
 
-enum TransferLimitSection {
+enum AccountLimitsSection {
   case cardDeposit
   case bankDeposit
+  case totalDeposit
   case cardWithdraw
   case bankWithdraw
-  case sendToCard
+  case totalWithdraw
   case spendingLimit
-  case financialInstitutionsLimit
   
   var title: String {
     switch self {
@@ -21,12 +21,12 @@ enum TransferLimitSection {
       return LFLocalizable.TransferLimit.CardWithdrawal.title
     case .bankWithdraw:
       return LFLocalizable.TransferLimit.BankWithdrawal.title
-    case .sendToCard:
-      return LFLocalizable.TransferLimit.SendToCard.title(LFUtilities.cardName)
+    case .totalDeposit:
+      return LFLocalizable.TransferLimit.Deposit.TotallLimits.title(LFUtilities.cardName)
     case .spendingLimit:
       return LFLocalizable.TransferLimit.SpendingLimits.title
-    case .financialInstitutionsLimit:
-      return LFLocalizable.TransferLimit.FinancialInstitutionsLimits.title
+    case .totalWithdraw:
+      return LFLocalizable.TransferLimit.Withdraw.TotallLimits.title
     }
   }
   
@@ -40,12 +40,12 @@ enum TransferLimitSection {
       return LFLocalizable.TransferLimit.CardWithdrawal.message
     case .bankWithdraw:
       return LFLocalizable.TransferLimit.BankWithdrawal.message
-    case .sendToCard:
-      return LFLocalizable.TransferLimit.SendToCard.message
+    case .totalDeposit:
+      return LFLocalizable.TransferLimit.Deposit.TotallLimits.message
     case .spendingLimit:
       return LFLocalizable.TransferLimit.SpendingLimits.message
-    case .financialInstitutionsLimit:
-      return LFLocalizable.TransferLimit.FinancialInstitutionsLimits.message
+    case .totalWithdraw:
+      return LFLocalizable.TransferLimit.Withdraw.TotallLimits.message
     }
   }
 }

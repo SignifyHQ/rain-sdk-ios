@@ -124,6 +124,32 @@ public class MockAccountAPIProtocol: AccountAPIProtocol {
         }
     }
 
+    //MARK: - getAccount
+
+    public var getAccountCurrencyTypeThrowableError: Error?
+    public var getAccountCurrencyTypeCallsCount = 0
+    public var getAccountCurrencyTypeCalled: Bool {
+        return getAccountCurrencyTypeCallsCount > 0
+    }
+    public var getAccountCurrencyTypeReceivedCurrencyType: String?
+    public var getAccountCurrencyTypeReceivedInvocations: [String] = []
+    public var getAccountCurrencyTypeReturnValue: [APIAccount]!
+    public var getAccountCurrencyTypeClosure: ((String) async throws -> [APIAccount])?
+
+    public func getAccount(currencyType: String) async throws -> [APIAccount] {
+        if let error = getAccountCurrencyTypeThrowableError {
+            throw error
+        }
+        getAccountCurrencyTypeCallsCount += 1
+        getAccountCurrencyTypeReceivedCurrencyType = currencyType
+        getAccountCurrencyTypeReceivedInvocations.append(currencyType)
+        if let getAccountCurrencyTypeClosure = getAccountCurrencyTypeClosure {
+            return try await getAccountCurrencyTypeClosure(currencyType)
+        } else {
+            return getAccountCurrencyTypeReturnValue
+        }
+    }
+
     //MARK: - getTransactions
 
     public var getTransactionsAccountIdCurrencyTypeTransactionTypesLimitOffsetThrowableError: Error?
