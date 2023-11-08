@@ -7,11 +7,12 @@ import SolidDomain
 public enum SolidCardRoute {
   case listCard
   case updateCardStatus(cardID: String, parameters: APISolidCardStatusParameters)
+  case updateRoundUpDonation(cardID: String, parameters: APISolidRoundUpDonationParameters)
   case closeCard(cardID: String)
   case createVGSShowToken(cardID: String)
   case createDigitalWalletLink(cardID: String, parameters: APISolidDigitalWalletParameters)
   case createVirtualCard(accountID: String)
-  case updateRoundUpDonation(cardID: String, parameters: APISolidRoundUpDonationParameters)
+  case createCardPinToken(cardID: String)
 }
 
 extension SolidCardRoute: LFRoute {
@@ -32,6 +33,8 @@ extension SolidCardRoute: LFRoute {
       return "/v1/solid/cards/virtual-card/\(accountID)"
     case let .updateRoundUpDonation(cardID, _):
       return "/v1/solid/cards/\(cardID)/round-up-config"
+    case let .createCardPinToken(cardID):
+      return "/v1/solid/cards/\(cardID)/pin-token"
     }
   }
   
@@ -43,7 +46,7 @@ extension SolidCardRoute: LFRoute {
       return .PATCH
     case .closeCard:
       return .DELETE
-    case .createVGSShowToken, .createDigitalWalletLink, .createVirtualCard:
+    case .createVGSShowToken, .createDigitalWalletLink, .createVirtualCard, .createCardPinToken:
       return .POST
     }
   }
@@ -60,7 +63,7 @@ extension SolidCardRoute: LFRoute {
   
   public var parameters: Parameters? {
     switch self {
-    case .listCard, .closeCard, .createVGSShowToken, .createVirtualCard:
+    case .listCard, .closeCard, .createVGSShowToken, .createVirtualCard, .createCardPinToken:
       return nil
     case let .updateCardStatus(_, parameters):
       return parameters.encoded()
@@ -73,7 +76,7 @@ extension SolidCardRoute: LFRoute {
   
   public var parameterEncoding: ParameterEncoding? {
     switch self {
-    case .listCard, .closeCard, .createVGSShowToken, .createVirtualCard:
+    case .listCard, .closeCard, .createVGSShowToken, .createVirtualCard, .createCardPinToken:
       return nil
     case .updateCardStatus, .createDigitalWalletLink, .updateRoundUpDonation:
       return .json

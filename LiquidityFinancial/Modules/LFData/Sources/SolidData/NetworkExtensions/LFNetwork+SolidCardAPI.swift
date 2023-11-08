@@ -71,4 +71,12 @@ extension LFCoreNetwork: SolidCardAPIProtocol where R == SolidCardRoute {
     )
   }
   
+  public func createCardPinToken(cardID: String) async throws -> APISolidCardPinToken {
+    try await request(
+      SolidCardRoute.createCardPinToken(cardID: cardID),
+      target: APISolidCardPinToken.self,
+      failure: LFErrorObject.self,
+      decoder: .apiDecoder
+    )
+  }
 }

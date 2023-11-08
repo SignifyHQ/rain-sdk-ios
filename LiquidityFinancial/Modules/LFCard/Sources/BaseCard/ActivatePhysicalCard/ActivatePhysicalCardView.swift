@@ -37,7 +37,7 @@ private extension ActivatePhysicalCardView {
       }
     case let .setCardPin(verifyID):
       SetCardPinView(
-        viewModel: SetCardPinViewModel(verifyID: verifyID, cardID: card.id) { cardID in
+        viewModel: SetCardPinViewModel(cardModel: card, verifyID: verifyID) { cardID in
           activeContent = .activedCard
           onSuccess?(cardID)
         }

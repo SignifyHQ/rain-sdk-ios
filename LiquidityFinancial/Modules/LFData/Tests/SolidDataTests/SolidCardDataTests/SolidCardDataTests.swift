@@ -33,7 +33,6 @@ final class SolidCardDataTests: XCTestCase {
     createdAt: "mock_createAt",
     isRoundUpDonationEnabled: true
   )
-  
   let mockListCardResponse = [
     APISolidCard(
       id: "mock_id",
@@ -46,8 +45,8 @@ final class SolidCardDataTests: XCTestCase {
       isRoundUpDonationEnabled: true
     )
   ]
-  
   let mockShowTokenResponse = APISolidCardShowToken(solidCardId: "mock_id", showToken: "mock_showToken")
+  let mockCardPinTokenResponse = APISolidCardPinToken(solidCardId: "mock_id", pinToken: "mock_cardPinToken")
   
   // Defining mock API errors
   let expectedThrowableError = TestError.fail("mock_api_error")

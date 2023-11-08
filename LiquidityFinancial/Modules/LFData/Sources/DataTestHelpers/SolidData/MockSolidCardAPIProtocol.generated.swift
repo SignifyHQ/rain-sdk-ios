@@ -162,6 +162,32 @@ public class MockSolidCardAPIProtocol: SolidCardAPIProtocol {
         }
     }
 
+    //MARK: - createCardPinToken
+
+    public var createCardPinTokenCardIDThrowableError: Error?
+    public var createCardPinTokenCardIDCallsCount = 0
+    public var createCardPinTokenCardIDCalled: Bool {
+        return createCardPinTokenCardIDCallsCount > 0
+    }
+    public var createCardPinTokenCardIDReceivedCardID: String?
+    public var createCardPinTokenCardIDReceivedInvocations: [String] = []
+    public var createCardPinTokenCardIDReturnValue: APISolidCardPinToken!
+    public var createCardPinTokenCardIDClosure: ((String) async throws -> APISolidCardPinToken)?
+
+    public func createCardPinToken(cardID: String) async throws -> APISolidCardPinToken {
+        if let error = createCardPinTokenCardIDThrowableError {
+            throw error
+        }
+        createCardPinTokenCardIDCallsCount += 1
+        createCardPinTokenCardIDReceivedCardID = cardID
+        createCardPinTokenCardIDReceivedInvocations.append(cardID)
+        if let createCardPinTokenCardIDClosure = createCardPinTokenCardIDClosure {
+            return try await createCardPinTokenCardIDClosure(cardID)
+        } else {
+            return createCardPinTokenCardIDReturnValue
+        }
+    }
+
     //MARK: - updateRoundUpDonation
 
     public var updateRoundUpDonationCardIDParametersThrowableError: Error?

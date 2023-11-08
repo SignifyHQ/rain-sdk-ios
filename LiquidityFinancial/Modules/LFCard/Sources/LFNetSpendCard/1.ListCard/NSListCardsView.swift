@@ -143,8 +143,8 @@ private extension NSListCardsView {
     case let .changePin(verifyID):
       SetCardPinView(
         viewModel: NSSetCardPinViewModel(
+          cardModel: viewModel.currentCard,
           verifyID: verifyID,
-          cardID: viewModel.currentCard.id,
           onFinish: nil
         )
       )

@@ -8,5 +8,6 @@ public protocol SolidCardAPIProtocol {
   func createVGSShowToken(cardID: String) async throws -> APISolidCardShowToken
   func createDigitalWalletLink(cardID: String, parameters: APISolidApplePayWalletParameters) async throws -> APISolidDigitalWallet
   func createVirtualCard(accountID: String) async throws -> APISolidCard
+  func createCardPinToken(cardID: String) async throws -> APISolidCardPinToken
   func updateRoundUpDonation(cardID: String, parameters: APISolidRoundUpDonationParameters) async throws -> APISolidCard
 }

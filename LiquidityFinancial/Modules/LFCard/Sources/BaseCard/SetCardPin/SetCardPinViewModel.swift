@@ -21,16 +21,13 @@ public protocol SetCardPinViewModelProtocol: ObservableObject {
   // Normal Properties
   var pinViewItems: [PinTextFieldViewItem] { get set }
   var pinCodeDigits: Int { get }
-  var verifyID: String { get }
-  var cardID: String { get }
+  var cardModel: CardModel { get }
   var onFinish: ((String) -> Void)? { get }
   
-  init(verifyID: String, cardID: String, onFinish: ((String) -> Void)?)
-  
-  // API
-  func setCardPIN()
-  
+  init(cardModel: CardModel, verifyID: String?, onFinish: ((String) -> Void)?)
+    
   // View Helpers
+  func onClickedContinueButton()
   func handleSuccessPrimaryAction(dismissScreen: @escaping () -> Void)
   func onReceivedPinCode(pinCode: String)
   func textFieldTextChange(replacementText: String, viewItem: PinTextFieldViewItem)
@@ -42,7 +39,7 @@ public extension SetCardPinViewModelProtocol {
   func onSetPinSuccess() {
     isShowIndicator = false
     if let onFinish {
-      onFinish(cardID)
+      onFinish(cardModel.id)
     } else {
       isShowSetPinSuccessPopup = true
     }

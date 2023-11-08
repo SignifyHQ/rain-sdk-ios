@@ -49,4 +49,9 @@ public class SolidCardRepository: SolidCardRepositoryProtocol {
     }
     return try await cardAPI.updateRoundUpDonation(cardID: cardID, parameters: parameters)
   }
+  
+  public func createCardPinToken(cardID: String) async throws -> SolidCardPinTokenEntity {
+    try await cardAPI.createCardPinToken(cardID: cardID)
+  }
+
 }

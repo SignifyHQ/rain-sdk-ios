@@ -27,16 +27,16 @@ public final class NSSetCardPinViewModel: SetCardPinViewModelProtocol {
   public var pinViewItems: [PinTextFieldViewItem] = .init()
   public let pinCodeDigits = Int(Constants.Default.pinCodeDigits.rawValue) ?? 4
   public let verifyID: String
-  public let cardID: String
+  public let cardModel: CardModel
   public let onFinish: ((String) -> Void)?
   
   lazy var setPinCardUseCase: NSSetCardPinUseCaseProtocol = {
     NSSetCardPinUseCase(repository: cardRepository)
   }()
   
-  public init(verifyID: String, cardID: String, onFinish: ((String) -> Void)? = nil) {
-    self.verifyID = verifyID
-    self.cardID = cardID
+  public init(cardModel: CardModel, verifyID: String?, onFinish: ((String) -> Void)? = nil) {
+    self.verifyID = verifyID ?? .empty
+    self.cardModel = cardModel
     self.onFinish = onFinish
     createTextFields()
   }
@@ -44,7 +44,7 @@ public final class NSSetCardPinViewModel: SetCardPinViewModelProtocol {
 
 // MARK: - API Handle
 public extension NSSetCardPinViewModel {
-  func setCardPIN() {
+  func onClickedContinueButton() {
     Task {
       isShowIndicator = true
       do {
@@ -55,7 +55,7 @@ public extension NSSetCardPinViewModel {
         let request = APISetPinRequest(verifyId: verifyID, encryptedData: encryptedData)
         _ = try await setPinCardUseCase.execute(
           requestParam: request,
-          cardID: cardID,
+          cardID: cardModel.id,
           sessionID: accountDataManager.sessionID
         )
         onSetPinSuccess()

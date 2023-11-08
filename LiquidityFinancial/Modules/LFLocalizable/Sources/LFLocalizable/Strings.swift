@@ -2706,6 +2706,14 @@ public enum LFLocalizable {
       /// Limits
       public static let title = LFLocalizable.tr("Localizable", "transferLimit.screen.title", fallback: "Limits")
     }
+    public enum SendToCard {
+      /// There are limits to how much you can “pull” to your card. This includes funds deposited using the app’s “Deposit” feature.
+      public static let message = LFLocalizable.tr("Localizable", "transferLimit.sendToCard.message", fallback: "There are limits to how much you can “pull” to your card. This includes funds deposited using the app’s “Deposit” feature.")
+      /// Send to %@Card
+      public static func title(_ p1: Any) -> String {
+        return LFLocalizable.tr("Localizable", "transferLimit.sendToCard.title", String(describing: p1), fallback: "Send to %@Card")
+      }
+    }
     public enum Spending {
       /// Spending
       public static let tabTitle = LFLocalizable.tr("Localizable", "transferLimit.spending.tabTitle", fallback: "Spending")

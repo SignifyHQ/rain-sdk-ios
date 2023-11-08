@@ -14,8 +14,6 @@ public struct SolidListCardsView: View {
   @StateObject var viewModel: SolidListCardsViewModel
   @InjectedObject(\.baseCardDestinationObservable) var baseCardDestinationObservable
   
-  @State private var activeContent: ActiveContent = .verifyCvv
-
   public init(viewModel: SolidListCardsViewModel) {
     _viewModel = .init(wrappedValue: viewModel)
   }
@@ -52,8 +50,10 @@ public struct SolidListCardsView: View {
         destinationView
           .embedInNavigation()
       case .changePin:
-        changePinContent
-          .embedInNavigation()
+        SetCardPinView(
+          viewModel: SolidSetCardPinViewModel(cardModel: viewModel.currentCard)
+        )
+        .embedInNavigation()
       }
     }
     .popup(item: $viewModel.popup, dismissMethods: .tapInside) { item in
@@ -126,26 +126,6 @@ private extension SolidListCardsView {
 
 // MARK: - Content Components
 private extension SolidListCardsView {
-  @ViewBuilder var changePinContent: some View {
-    switch activeContent {
-    case .verifyCvv:
-      EnterCVVCodeView(
-        viewModel: SolidEnterCVVCodeViewModel(cardID: viewModel.currentCard.id),
-        screenTitle: LFLocalizable.EnterCVVCode.SetCardPin.title
-      ) { verifyID in
-        activeContent = .changePin(verifyID)
-      }
-    case let .changePin(verifyID):
-      SetCardPinView(
-        viewModel: SolidSetCardPinViewModel(
-          verifyID: verifyID,
-          cardID: viewModel.currentCard.id,
-          onFinish: nil
-        )
-      )
-    }
-  }
-  
   var loadingView: some View {
     VStack {
       Spacer()
@@ -477,13 +457,5 @@ private extension SolidListCardsView {
         }
       }
     }
-  }
-}
-
-// MARK: - View Types
-private extension SolidListCardsView {
-  enum ActiveContent {
-    case verifyCvv
-    case changePin(String)
   }
 }

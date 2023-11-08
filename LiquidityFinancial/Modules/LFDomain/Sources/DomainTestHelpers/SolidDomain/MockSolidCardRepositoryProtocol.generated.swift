@@ -188,4 +188,30 @@ public class MockSolidCardRepositoryProtocol: SolidCardRepositoryProtocol {
         }
     }
 
+    //MARK: - createCardPinToken
+
+    public var createCardPinTokenCardIDThrowableError: Error?
+    public var createCardPinTokenCardIDCallsCount = 0
+    public var createCardPinTokenCardIDCalled: Bool {
+        return createCardPinTokenCardIDCallsCount > 0
+    }
+    public var createCardPinTokenCardIDReceivedCardID: String?
+    public var createCardPinTokenCardIDReceivedInvocations: [String] = []
+    public var createCardPinTokenCardIDReturnValue: SolidCardPinTokenEntity!
+    public var createCardPinTokenCardIDClosure: ((String) async throws -> SolidCardPinTokenEntity)?
+
+    public func createCardPinToken(cardID: String) async throws -> SolidCardPinTokenEntity {
+        if let error = createCardPinTokenCardIDThrowableError {
+            throw error
+        }
+        createCardPinTokenCardIDCallsCount += 1
+        createCardPinTokenCardIDReceivedCardID = cardID
+        createCardPinTokenCardIDReceivedInvocations.append(cardID)
+        if let createCardPinTokenCardIDClosure = createCardPinTokenCardIDClosure {
+            return try await createCardPinTokenCardIDClosure(cardID)
+        } else {
+            return createCardPinTokenCardIDReturnValue
+        }
+    }
+
 }

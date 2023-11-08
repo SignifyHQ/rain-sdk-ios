@@ -57,7 +57,7 @@ private extension SetCardPinView {
         isLoading: $viewModel.isShowIndicator
       ) {
         hideKeyboard()
-        viewModel.setCardPIN()
+        viewModel.onClickedContinueButton()
       }
     }
     .padding([.horizontal, .bottom], 30)
