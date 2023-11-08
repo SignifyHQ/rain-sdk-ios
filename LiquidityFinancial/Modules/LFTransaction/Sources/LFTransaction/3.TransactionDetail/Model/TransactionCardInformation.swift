@@ -6,6 +6,7 @@ import LFUtilities
 public struct TransactionCardInformation {
   let cardType: TransactionCardType
   let amount: String
+  let rewardAmount: String
   let message: String
   let activityItem: String
   let stickerUrl: String?
@@ -14,6 +15,7 @@ public struct TransactionCardInformation {
   public init(
     cardType: TransactionCardType,
     amount: String,
+    rewardAmount: String,
     message: String,
     activityItem: String,
     stickerUrl: String?,
@@ -21,6 +23,7 @@ public struct TransactionCardInformation {
   ) {
     self.cardType = cardType
     self.amount = amount
+    self.rewardAmount = rewardAmount
     self.message = message
     self.activityItem = activityItem
     self.color = color

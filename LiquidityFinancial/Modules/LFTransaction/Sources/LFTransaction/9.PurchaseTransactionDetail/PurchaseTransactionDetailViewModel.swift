@@ -68,6 +68,7 @@ extension PurchaseTransactionDetailViewModel {
     TransactionCardInformation(
       cardType: transaction.rewards?.type.transactionCardType ?? .unknow,
       amount: amountValue,
+      rewardAmount: rewardValue,
       message: transaction.rewards?.description ?? LFLocalizable.TransactionCard.Purchase.message(
         rewardAmount,
         amountValue,
@@ -85,6 +86,10 @@ extension PurchaseTransactionDetailViewModel {
   
   var amountValue: String {
     transaction.amount.formattedUSDAmount()
+  }
+
+  var rewardValue: String {
+    transaction.rewards?.amount?.formattedUSDAmount() ?? "N/A"
   }
   
   func openContactSupport() {

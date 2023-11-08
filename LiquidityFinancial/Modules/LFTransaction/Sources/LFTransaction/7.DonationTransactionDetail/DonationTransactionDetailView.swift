@@ -65,6 +65,7 @@ private extension DonationTransactionDetailView {
     TransactionCardInformation(
       cardType: .donation,
       amount: amountValue,
+      rewardAmount: amountValue,
       message: donation.message,
       activityItem: "", // TODO: Will be implemented in Donation Ticket
       stickerUrl: donation.stickerURL,
@@ -78,7 +79,7 @@ private extension DonationTransactionDetailView {
       minFractionDigits: Constants.FractionDigitsLimit.fiat.minFractionDigits
     )
   }
-  
+
   var totalDonation: String {
     donation.totalDonation.formattedAmount(
       prefix: Constants.CurrencyUnit.usd.rawValue,

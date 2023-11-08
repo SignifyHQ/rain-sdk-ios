@@ -48,7 +48,7 @@ private extension TransactionCardView {
     VStack(spacing: 8) {
       Text(information.title)
         .font(Fonts.medium.swiftUIFont(size: Constants.FontSize.medium.value))
-      Text(information.amount)
+      Text(information.rewardAmount)
         .font(Fonts.bold.swiftUIFont(size: 32))
     }
     .foregroundColor(textColor)
