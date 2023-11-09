@@ -5,6 +5,7 @@ import LFUtilities
 import Factory
 import NetspendOnboarding
 import AccountService
+import NetSpendData
 import ZerohashData
 
 class AppViewModel: ObservableObject {
