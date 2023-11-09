@@ -2541,6 +2541,14 @@ public enum LFLocalizable {
       /// Reward
       public static let title = LFLocalizable.tr("Localizable", "transactionDetail.reward.title", fallback: "Reward")
     }
+    public enum RewardDisclosure {
+      /// *You will earn rewards with each qualifying purchase on your CauseCard. CauseCard “rewards” are donated to the non-profit you have selected in accordance with our Terms. Qualifying Purchases do not include any other payment or transfer, including incoming transactions, outgoing transactions where you are the receiving party, peer to peer transactions, ACH Transactions, ATM transactions, fees, chargebacks, adjustments, purchases that use PIN, or wire transfers. For more information, see the Terms. Rewards Program is managed by CauseCard. CauseCard is not FDIC insured.  Rewards Program is not managed by Lewis and Clark Bank.
+      public static let description = LFLocalizable.tr("Localizable", "transactionDetail.rewardDisclosure.description", fallback: "*You will earn rewards with each qualifying purchase on your CauseCard. CauseCard “rewards” are donated to the non-profit you have selected in accordance with our Terms. Qualifying Purchases do not include any other payment or transfer, including incoming transactions, outgoing transactions where you are the receiving party, peer to peer transactions, ACH Transactions, ATM transactions, fees, chargebacks, adjustments, purchases that use PIN, or wire transfers. For more information, see the Terms. Rewards Program is managed by CauseCard. CauseCard is not FDIC insured.  Rewards Program is not managed by Lewis and Clark Bank.")
+      public enum Links {
+        /// Terms
+        public static let terms = LFLocalizable.tr("Localizable", "transactionDetail.rewardDisclosure.links.terms", fallback: "Terms")
+      }
+    }
     public enum Rewards {
       /// Rewards
       public static let title = LFLocalizable.tr("Localizable", "transactionDetail.rewards.title", fallback: "Rewards")

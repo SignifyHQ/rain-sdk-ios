@@ -63,7 +63,11 @@ public struct TextTappable: UIViewRepresentable {
     let stringarr = NSMutableAttributedString(attributedString: uiView.attributedText)
     for strlink in links {
       let link = strlink.replacingOccurrences(of: " ", with: "_")
-      stringarr.addAttribute(.link, value: String(format: "https://%@", link), range: (stringarr.string as NSString).range(of: strlink))
+      let allRanges = stringarr.string.allRanges(of: strlink)
+      
+      for range in allRanges {
+        stringarr.addAttribute(.link, value: String(format: "https://%@", link), range: range)
+      }
     }
     uiView.attributedText = stringarr
   }

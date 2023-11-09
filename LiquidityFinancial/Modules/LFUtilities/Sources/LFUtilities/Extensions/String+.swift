@@ -305,6 +305,36 @@ public extension StringProtocol where Self: RangeReplaceableCollection {
   }
 }
 
+// Find all ranges of a string in another string (used in TextTappable to add multiple links which are the same)
+extension String {
+  public func allRanges(
+    of aString: String,
+    options: String.CompareOptions = [],
+    locale: Locale? = nil
+  ) -> [NSRange] {
+    let slice = self[...]
+    
+    var previousEnd = self.startIndex
+    var ranges = [NSRange]()
+    
+    while let r = slice.range(
+      of: aString,
+      options: options,
+      range: previousEnd ..< self.endIndex,
+      locale: locale
+    ) {
+      if previousEnd != self.endIndex {
+        previousEnd = self.index(after: r.lowerBound)
+      }
+      
+      let range = NSRange(r, in: slice)
+      ranges.append(range)
+    }
+    
+    return ranges
+  }
+}
+
 // MARK: - Color
 public extension String {
   var asHexColor: Color? {
