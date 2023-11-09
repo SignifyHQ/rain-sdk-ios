@@ -2,13 +2,14 @@ import SwiftUI
 import LFLocalizable
 import LFUtilities
 import LFStyleGuide
+import BaseCard
 
-public struct ActivatePhysicalCardView<
+public struct NSActivePhysicalCardView<
   EnterCVVCodeViewModel: EnterCVVCodeViewModelProtocol,
   SetCardPinViewModel: SetCardPinViewModelProtocol,
   AddAppleWalletViewModel: AddAppleWalletViewModelProtocol,
   ApplePayViewModel: ApplePayViewModelProtocol
-> : View {
+>: View {
   @Environment(\.dismiss) private var dismiss
   @State private var activeContent: ActiveContent = .cvvCode
   let card: CardModel
@@ -25,7 +26,7 @@ public struct ActivatePhysicalCardView<
 }
 
 // MARK: - View Components
-private extension ActivatePhysicalCardView {
+private extension NSActivePhysicalCardView {
   @MainActor @ViewBuilder var content: some View {
     switch activeContent {
     case .cvvCode:
@@ -117,7 +118,7 @@ private extension ActivatePhysicalCardView {
 }
 
 // MARK: - Types
-extension ActivatePhysicalCardView {
+extension NSActivePhysicalCardView {
   enum ActiveContent {
     case cvvCode
     case setCardPin(String)

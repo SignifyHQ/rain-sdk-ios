@@ -240,9 +240,9 @@ private extension SolidListCardsView {
           isSwitchOn: $viewModel.isShowCardNumber,
           onChange: nil
         )
-        GenImages.CommonImages.dash.swiftUIImage
-          .foregroundColor(Colors.label.swiftUIColor)
         if viewModel.currentCard.cardStatus != .unactivated {
+          GenImages.CommonImages.dash.swiftUIImage
+            .foregroundColor(Colors.label.swiftUIColor)
           row(
             title: LFLocalizable.ListCard.LockCard.title,
             subtitle: LFLocalizable.ListCard.LockCard.description,
@@ -258,12 +258,10 @@ private extension SolidListCardsView {
             viewModel.onClickedChangePinButton()
           }
         }
-        if viewModel.currentCard.cardStatus != .closed && viewModel.currentCard.cardStatus != .disabled {
-          GenImages.CommonImages.dash.swiftUIImage
-            .foregroundColor(Colors.label.swiftUIColor)
-          row(title: LFLocalizable.ListCard.CloseCard.title) {
-            viewModel.onClickCloseCardButton()
-          }
+        GenImages.CommonImages.dash.swiftUIImage
+          .foregroundColor(Colors.label.swiftUIColor)
+        row(title: LFLocalizable.ListCard.CloseCard.title) {
+          viewModel.onClickCloseCardButton()
         }
       }
     }
@@ -384,18 +382,14 @@ private extension SolidListCardsView {
   var activeCardButton: some View {
     FullSizeButton(
       title: LFLocalizable.ListCard.ActivateCard.buttonTitle(viewModel.currentCard.cardType.title),
-      isDisable: false
+      isDisable: false,
+      isLoading: $viewModel.isActivatingCard
     ) {
-      viewModel.presentActivateCardView(
+      viewModel.activePhysicalCard(
         activeCardView: AnyView(
-          ActivatePhysicalCardView<
-          SolidEnterCVVCodeViewModel,
-          SolidSetCardPinViewModel,
-          SolidAddAppleWalletViewModel,
-          SolidApplePayViewModel
-          >(card: viewModel.currentCard) { cardID in
-            viewModel.activePhysicalSuccess(id: cardID)
-          }
+          SolidActivePhysicalCardView<SolidAddAppleWalletViewModel, SolidApplePayViewModel>(
+            card: viewModel.currentCard
+          )
         )
       )
     }

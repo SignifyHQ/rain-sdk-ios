@@ -15,7 +15,6 @@ final class CashCardViewModel: ObservableObject {
   @Published var isShowCardDetail = false
   @Published var isCreatingCard = false
   @Published var toastMessage: String?
-  @Published var cardActivated: CardModel?
   
   lazy var createCardUseCase: SolidCreateVirtualCardUseCaseProtocol = {
     SolidCreateVirtualCardUseCase(repository: solidCardRepository)

@@ -21,7 +21,12 @@ final class SolidCardDataTests: XCTestCase {
   let mockNotExistAccountID = "mock_accountID_4"
   let mockCardStatusParameter = APISolidCardStatusParameters(cardStatus: "mock_status")
   let mockRoundUpDonationParameter = APISolidRoundUpDonationParameters(roundUpDonation: false)
-  
+  let mockActivePhysicalParameter = APISolidActiveCardParameters(
+    expiryMonth: "mock_expiryMonth",
+    expiryYear: "mock_expiryYear",
+    last4: "mock_last4"
+  )
+
   // Defining mock success response
   let mockCardResponse = APISolidCard(
     id: "mock_id",

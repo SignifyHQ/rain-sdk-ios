@@ -22,8 +22,10 @@ extension NSCardRoute: LFRoute {
   
   public var path: String {
     switch self {
-    case .listCard, .createCard:
+    case .listCard:
       return "/v1/netspend/cards"
+    case .createCard:
+      return "/v1/netspend/cards/virtual-card"
     case let .card(cardID, _):
       return "/v1/netspend/cards/\(cardID)"
     case let .lock(cardID, _):

@@ -17,4 +17,5 @@ public protocol SolidCardRepositoryProtocol {
     parameters: SolidRoundUpDonationParametersEntity
   ) async throws -> SolidCardEntity
   func createCardPinToken(cardID: String) async throws -> SolidCardPinTokenEntity
+  func activeCard(cardID: String, parameters: SolidActiveCardParametersEntity) async throws -> SolidCardEntity
 }

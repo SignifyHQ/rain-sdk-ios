@@ -65,23 +65,8 @@ struct CashCardView: View {
         viewModel.isShowCardDetail.toggle()
       }
     }
-    .fullScreenCover(item: $viewModel.cardActivated) { card in
-      activateCard(card: card)
-    }
     .navigationLink(isActive: $viewModel.isShowCardDetail) {
       SolidListCardsView(viewModel: listCardViewModel)
-    }
-  }
-  
-  @ViewBuilder func activateCard(card: CardModel) -> some View {
-    if card.cardType == .physical {
-      ActivatePhysicalCardView<
-        SolidEnterCVVCodeViewModel,
-        SolidSetCardPinViewModel,
-        SolidAddAppleWalletViewModel,
-        SolidApplePayViewModel
-      >(card: card)
-        .embedInNavigation()
     }
   }
   

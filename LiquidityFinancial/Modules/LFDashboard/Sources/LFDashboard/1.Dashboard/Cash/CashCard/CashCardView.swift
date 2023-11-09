@@ -66,27 +66,11 @@ struct CashCardView: View {
         viewModel.isShowCardDetail.toggle()
       }
     }
-    .fullScreenCover(item: $viewModel.cardActivated) { card in
-      activateCard(card: card)
-    }
     .navigationLink(isActive: $viewModel.isShowCardDetail) {
       NSListCardsView(viewModel: listCardViewModel)
     }
   }
   
-  @ViewBuilder func activateCard(card: CardModel) -> some View {
-    EmptyView()
-    if card.cardType == .physical {
-      ActivatePhysicalCardView<
-        NSEnterCVVCodeViewModel,
-        NSSetCardPinViewModel,
-        NSAddAppleWalletViewModel,
-        NSApplePayViewModel
-      >(card: card)
-        .embedInNavigation()
-    }
-  }
-
   @ViewBuilder private var createCardButton: some View {
     if isNotLinkedCard {
       Button {

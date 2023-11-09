@@ -54,4 +54,10 @@ public class SolidCardRepository: SolidCardRepositoryProtocol {
     try await cardAPI.createCardPinToken(cardID: cardID)
   }
 
+  public func activeCard(cardID: String, parameters: SolidActiveCardParametersEntity) async throws -> SolidCardEntity {
+    guard let parameters = parameters as? APISolidActiveCardParameters else {
+      throw "Can't map paramater :\(parameters)"
+    }
+    return try await cardAPI.activeCard(cardID: cardID, parameters: parameters)
+  }
 }

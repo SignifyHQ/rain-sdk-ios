@@ -278,7 +278,7 @@ private extension NSListCardsView {
           row(title: LFLocalizable.ListCard.ChangePin.title) {
             viewModel.onClickedChangePinButton(
               activeCardView: AnyView(
-                ActivatePhysicalCardView<
+                NSActivePhysicalCardView<
                 NSEnterCVVCodeViewModel,
                 NSSetCardPinViewModel,
                 NSAddAppleWalletViewModel,
@@ -382,7 +382,7 @@ private extension NSListCardsView {
     ) {
       viewModel.presentActivateCardView(
         activeCardView: AnyView(
-          ActivatePhysicalCardView<
+          NSActivePhysicalCardView<
           NSEnterCVVCodeViewModel,
           NSSetCardPinViewModel,
           NSAddAppleWalletViewModel,

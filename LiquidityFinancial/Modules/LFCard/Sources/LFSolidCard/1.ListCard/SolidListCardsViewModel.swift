@@ -29,6 +29,7 @@ public final class SolidListCardsViewModel: ListCardsViewModelProtocol {
   @Published public var isShowCardNumber: Bool = false
   @Published public var isCardLocked: Bool = false
   @Published public var isActive: Bool = false
+  @Published public var isActivatingCard: Bool = false
   @Published public var isUpdatingRoundUpPurchases = false
   @Published public var isShowListCardDropdown: Bool = false
   @Published public var toastMessage: String?
@@ -62,6 +63,10 @@ public final class SolidListCardsViewModel: ListCardsViewModelProtocol {
     SolidUpdateRoundUpDonationUseCase(repository: solidCardRepository)
   }()
   
+  lazy var activePhysicalCardUseCase: SolidActiveCardUseCaseProtocol = {
+    SolidActiveCardUseCase(repository: solidCardRepository)
+  }()
+  
   public init(cardData: Published<(CardData)>.Publisher, coordinator: BaseCardDestinationObservable) {
     self.coordinator = coordinator
     subscribeListCardsChange(cardData)
@@ -70,6 +75,25 @@ public final class SolidListCardsViewModel: ListCardsViewModelProtocol {
 
 // MARK: - API
 public extension SolidListCardsViewModel {
+  func activePhysicalCard(activeCardView: AnyView) {
+    Task {
+      defer { isActivatingCard = false }
+      isActivatingCard = true
+      do {
+        let parameters = APISolidActiveCardParameters(
+          expiryMonth: String(currentCard.expiryMonth),
+          expiryYear: String(currentCard.expiryYear),
+          last4: currentCard.last4
+        )
+        let card = try await activePhysicalCardUseCase.execute(cardID: currentCard.id, parameters: parameters)
+        self.activePhysicalSuccess(id: card.id)
+        self.presentActivateCardView(activeCardView: activeCardView)
+      } catch {
+        handleBackendError(error: error)
+      }
+    }
+  }
+  
   func callLockCardAPI() {
     isLoading = true
     Task {

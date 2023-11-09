@@ -3,17 +3,17 @@ import LFLocalizable
 import LFUtilities
 import LFStyleGuide
 
-struct AddAppleWalletView<
+public struct AddAppleWalletView<
   ViewModel: AddAppleWalletViewModelProtocol,
   ApplePayViewModel: ApplePayViewModelProtocol
 >: View {
   @StateObject private var viewModel: ViewModel
   
-  init(viewModel: ViewModel) {
+  public init(viewModel: ViewModel) {
     _viewModel = .init(wrappedValue: viewModel)
   }
   
-  var body: some View {
+  public var body: some View {
     content
       .background(Colors.background.swiftUIColor)
       .sheet(isPresented: $viewModel.isShowApplePay) {

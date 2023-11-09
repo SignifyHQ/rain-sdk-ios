@@ -10,4 +10,5 @@ public protocol SolidCardAPIProtocol {
   func createVirtualCard(accountID: String) async throws -> APISolidCard
   func createCardPinToken(cardID: String) async throws -> APISolidCardPinToken
   func updateRoundUpDonation(cardID: String, parameters: APISolidRoundUpDonationParameters) async throws -> APISolidCard
+  func activeCard(cardID: String, parameters: APISolidActiveCardParameters) async throws -> APISolidCard
 }
