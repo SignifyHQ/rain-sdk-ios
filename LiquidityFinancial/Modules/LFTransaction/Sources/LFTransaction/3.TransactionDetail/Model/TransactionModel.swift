@@ -163,8 +163,7 @@ public extension TransactionModel {
         .cryptoDeposit,
         .refund,
         .cryptoBuy,
-        .cryptoBuyRefund,
-        .donation:
+        .cryptoBuyRefund:
       return Colors.green.swiftUIColor
     case .purchase,
         .unknown,
@@ -176,6 +175,11 @@ public extension TransactionModel {
         .cryptoGasDeduction,
         .systemFee:
       return Colors.error.swiftUIColor
+      //TODO: handle different donation detail view (Cashtab/rewardTab)
+    case .donation where rewards == nil:
+      return Colors.error.swiftUIColor
+    case .donation:
+      return Colors.green.swiftUIColor
     }
   }
   
@@ -208,6 +212,9 @@ public extension TransactionModel {
       return .fee
     case .rewardCashBack, .rewardCashBackReverse:
       return .cashback
+    //TODO: handle different donation detail view (Cashtab/rewardTab)
+    case .donation where rewards == nil:
+      return .cashback
     case .donation:
       return .donation
     case .refund, .cryptoBuyRefund:
@@ -224,9 +231,16 @@ public extension TransactionModel {
   }
   
   var estimateCompletedDate: String? {
+    //TODO: handle multiple dateFormat from the BE
     let dateFormatter = DateFormatter()
-    dateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSSSSSZ"
+    if let inputDate = completedAt, status == TransactionStatus.completed {
+      dateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ssZ"
+      if let formattedCompletionDate = dateFormatter.date(from: inputDate) {
+        return DateFormatter.monthDayDisplay.string(from: formattedCompletionDate)
+      }
+    }
     if let inputDate = dateFormatter.date(from: createdAt) {
+      dateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSSSSSZ"
       if let newDate = Calendar.current.date(byAdding: .day, value: 2, to: inputDate) {
         return DateFormatter.monthDayDisplay.string(from: newDate)
       }
