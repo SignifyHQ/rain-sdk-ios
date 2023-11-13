@@ -18,9 +18,6 @@ public struct NSOnboardingContentView: View {
   @Injected(\.customerSupportService)
   var customerSupportService
   
-  @LazyInjected(\.rewardFlowCoordinator)
-  var rewardFlowCoordinator
-  
   var contenViewFactory: NSContentViewFactory
   
   var onRoute: NSOnboardingFlowCoordinator.Route?

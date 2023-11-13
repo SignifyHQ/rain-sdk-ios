@@ -2,6 +2,7 @@ import Foundation
 
 public extension Notification.Name {
   static let selectedFundraisersSuccess = Notification.Name("com.liquidityfinancial.rewards.selectedFundraisersSuccess")
+  static let selectedReward = Notification.Name("com.liquidityfinancial.rewards.selectedReward")
   
   static let moneyTransactionSuccess = Notification.Name("com.liquidityfinancial.funding.moneyTransactionSuccess")
   

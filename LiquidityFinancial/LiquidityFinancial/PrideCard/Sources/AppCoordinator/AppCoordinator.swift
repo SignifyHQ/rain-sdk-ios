@@ -14,11 +14,23 @@ protocol AppCoordinatorProtocol {
 
 class AppCoordinator: AppCoordinatorProtocol {
   
-  enum Route {
+  enum Route: Hashable, Identifiable {
     case onboarding
     case onboardingPhone
     case dashboard
     case dumpOut(SolidOnboardingFlowCoordinator.Route)
+    
+    public static func == (lhs: AppCoordinator.Route, rhs: AppCoordinator.Route) -> Bool {
+      return lhs.hashValue == rhs.hashValue
+    }
+    
+    public var id: String {
+      String(describing: self)
+    }
+    
+    public func hash(into hasher: inout Hasher) {
+      hasher.combine(id)
+    }
   }
   
   @LazyInjected(\.authorizationManager)

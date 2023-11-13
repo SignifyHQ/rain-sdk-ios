@@ -3,10 +3,11 @@ import LFLocalizable
 import LFStyleGuide
 import LFUtilities
 import SwiftUI
+import Factory
 
 struct YourAccountView: View {
   @Environment(\.openURL) var openURL
-  
+  @Injected(\.solidOnboardingFlowCoordinator) var solidOnboardingFlowCoordinator
   @StateObject private var viewModel: YourAccountViewModel = YourAccountViewModel()
   
   init(
@@ -39,6 +40,15 @@ struct YourAccountView: View {
     )
     .navigationLink(isActive: $viewModel.shouldContinue) {
       PatriotActView()
+    }
+    .toolbar {
+      ToolbarItem(placement: .navigationBarLeading) {
+        Button {
+          solidOnboardingFlowCoordinator.set(route: .selecteReward)
+        } label: {
+          CircleButton(style: .left)
+        }
+      }
     }
   }
 }

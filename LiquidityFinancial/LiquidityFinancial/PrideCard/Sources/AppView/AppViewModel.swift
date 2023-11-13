@@ -19,6 +19,7 @@ class AppViewModel: ObservableObject {
   init() {
     coordinator
       .routeSubject
+      .removeDuplicates()
       .receive(on: DispatchQueue.main)
       .sink { [weak self] route in
         self?.setRoute(route)

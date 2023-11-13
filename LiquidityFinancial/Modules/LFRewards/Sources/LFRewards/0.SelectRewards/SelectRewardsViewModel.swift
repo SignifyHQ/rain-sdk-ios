@@ -19,7 +19,6 @@ class SelectRewardsViewModel: ObservableObject {
   @LazyInjected(\.rewardRepository) var rewardRepository
   @LazyInjected(\.rewardDataManager) var rewardDataManager
   @LazyInjected(\.analyticsService) var analyticsService
-  @LazyInjected(\.rewardFlowCoordinator) var rewardFlowCoordinator
   
   lazy var selectRewardUseCase: RewardUseCase = {
     RewardUseCase(repository: rewardRepository)
@@ -79,7 +78,7 @@ class SelectRewardsViewModel: ObservableObject {
   }
 
   func cashbackNavigation() {
-    rewardFlowCoordinator.set(route: .yourAccount)
+    NotificationCenter.default.post(name: .selectedReward, object: nil, userInfo: ["route": RewardFlowRoute.yourAccount])
   }
     
   private func apiSelecteRewardType(option: Option) {

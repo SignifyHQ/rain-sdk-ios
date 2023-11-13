@@ -56,7 +56,7 @@ let package = Package(
       resources: [
         .process("ZResources")
       ]
-    ),
+    ), 
     .target(
       name: "NetspendOnboarding",
       dependencies: [
@@ -75,7 +75,7 @@ let package = Package(
     .target(
       name: "SolidOnboarding",
       dependencies: [
-        "LFUtilities", "LFStyleGuide", "LFLocalizable", "Factory", "LFRewards",
+        "LFUtilities", "LFStyleGuide", "LFLocalizable", "Factory", "LFRewards", "BaseOnboarding", "UIComponents",
         .product(name: "SolidData", package: "LFData"),
         .product(name: "RewardData", package: "LFData"),
         .product(name: "RewardDomain", package: "LFDomain"),

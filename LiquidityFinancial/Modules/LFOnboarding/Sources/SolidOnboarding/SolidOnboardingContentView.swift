@@ -18,9 +18,6 @@ public struct SolidOnboardingContentView: View {
   @Injected(\.customerSupportService)
   var customerSupportService
   
-  @LazyInjected(\.rewardFlowCoordinator)
-  var rewardFlowCoordinator
-  
   var contenViewFactory: SolidContentViewFactory
   
   var onRoute: SolidOnboardingFlowCoordinator.Route?

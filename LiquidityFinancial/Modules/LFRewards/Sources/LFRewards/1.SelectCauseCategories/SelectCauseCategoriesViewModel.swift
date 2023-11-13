@@ -12,7 +12,6 @@ public class SelectCauseCategoriesViewModel: ObservableObject {
   
   @LazyInjected(\.rewardRepository) var rewardRepository
   @LazyInjected(\.rewardDataManager) var rewardDataManager
-  @LazyInjected(\.rewardFlowCoordinator) var rewardFlowCoordinator
   
   @Published var selected: [CauseModel] = []
   @Published var isLoading = false
@@ -55,7 +54,7 @@ public class SelectCauseCategoriesViewModel: ObservableObject {
   }
   
   func skipAndDumpToYourAccount() {
-    rewardFlowCoordinator.set(route: .yourAccount)
+    NotificationCenter.default.post(name: .selectedReward, object: nil, userInfo: ["route": RewardFlowRoute.yourAccount])
   }
   
   // swiftlint:disable force_unwrapping

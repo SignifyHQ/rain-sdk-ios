@@ -13,7 +13,7 @@ extension Container {
   var contenViewFactory: ParameterFactory<(EnvironmentManager), SolidContentViewFactory> {
     self { environment in
       SolidContentViewFactory(container: self, environment: environment)
-    }
+    }.cached
   }
 }
 

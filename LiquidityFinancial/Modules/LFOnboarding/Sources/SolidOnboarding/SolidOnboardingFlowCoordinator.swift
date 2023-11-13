@@ -39,7 +39,7 @@ public class SolidOnboardingFlowCoordinator: SolidOnboardingFlowCoordinatorProto
     public static func == (lhs: SolidOnboardingFlowCoordinator.Route, rhs: SolidOnboardingFlowCoordinator.Route) -> Bool {
       return lhs.hashValue == rhs.hashValue
     }
-
+    
     case initial
     case phone
     case accountLocked
@@ -63,24 +63,22 @@ public class SolidOnboardingFlowCoordinator: SolidOnboardingFlowCoordinatorProto
   @LazyInjected(\.authorizationManager) var authorizationManager
   @LazyInjected(\.accountDataManager) var accountDataManager
   @LazyInjected(\.onboardingRepository) var onboardingRepository
-  @LazyInjected(\.rewardFlowCoordinator) var rewardFlowCoordinator
   @LazyInjected(\.accountRepository) var accountRepository
   @LazyInjected(\.rewardDataManager) var rewardDataManager
   @LazyInjected(\.pushNotificationService) var pushNotificationService
   @LazyInjected(\.analyticsService) var analyticsService
   @LazyInjected(\.solidOnboardingRepository) var solidOnboardingRepository
-
+  
   public let routeSubject: CurrentValueSubject<Route, Never>
   
   private var subscribers: Set<AnyCancellable> = []
   
   public init() {
     self.routeSubject = .init(.initial)
-    rewardFlowCoordinator
-      .routeSubject
-      .removeDuplicates()
+    NotificationCenter.default.publisher(for: .selectedReward)
       .receive(on: DispatchQueue.main)
-      .sink { [weak self] route in
+      .sink { [weak self] notification in
+        guard let userInfo = notification.userInfo, let route = userInfo["route"] as? RewardFlowRoute else { return }
         self?.handlerRewardRoute(route: route)
       }
       .store(in: &subscribers)
@@ -108,8 +106,8 @@ public class SolidOnboardingFlowCoordinator: SolidOnboardingFlowCoordinatorProto
 #endif
     }
   }
-
-  func handlerRewardRoute(route: RewardFlowCoordinator.Route) {
+  
+  func handlerRewardRoute(route: RewardFlowRoute) {
     switch route {
     case .yourAccount:
       set(route: .yourAccount)

@@ -12,8 +12,6 @@ public class SelectFundraiserViewModel: ObservableObject {
   @Published var popup: Popup?
   @Published var showErrorAlert = false
   
-  @LazyInjected(\.rewardFlowCoordinator) var rewardFlowCoordinator
-  
   var categoryName: String {
     causeModel.name
   }
@@ -27,7 +25,7 @@ public class SelectFundraiserViewModel: ObservableObject {
   }
   
   func skipAndDumpToYourAccount() {
-    rewardFlowCoordinator.set(route: .yourAccount)
+    NotificationCenter.default.post(name: .selectedReward, object: nil, userInfo: ["route": RewardFlowRoute.yourAccount])
   }
 }
 

@@ -11,7 +11,6 @@ import LFLocalizable
 public class FundraiserDetailViewModel: ObservableObject {
   @LazyInjected(\.rewardRepository) var rewardRepository
   @LazyInjected(\.rewardDataManager) var rewardDataManager
-  @LazyInjected(\.rewardFlowCoordinator) var rewardFlowCoordinator
   
   @Published var isGeocodingAddress = false
   @Published var isSelecting = false
@@ -47,7 +46,7 @@ public class FundraiserDetailViewModel: ObservableObject {
   }
   
   func skipAndDumpToYourAccount() {
-    rewardFlowCoordinator.set(route: .yourAccount)
+    NotificationCenter.default.post(name: .selectedReward, object: nil, userInfo: ["route": RewardFlowRoute.yourAccount])
   }
   
   func apiFetchDetailFundraiser() {
