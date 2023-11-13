@@ -317,17 +317,17 @@ extension String {
     var previousEnd = self.startIndex
     var ranges = [NSRange]()
     
-    while let r = slice.range(
+    while let range = slice.range(
       of: aString,
       options: options,
       range: previousEnd ..< self.endIndex,
       locale: locale
     ) {
       if previousEnd != self.endIndex {
-        previousEnd = self.index(after: r.lowerBound)
+        previousEnd = self.index(after: range.lowerBound)
       }
       
-      let range = NSRange(r, in: slice)
+      let range = NSRange(range, in: slice)
       ranges.append(range)
     }
     

@@ -12,7 +12,6 @@ import AccountService
 class ConfirmSendCryptoViewModel: ObservableObject {
   @LazyInjected(\.accountDataManager) var accountDataManager
   @LazyInjected(\.zerohashRepository) var zerohashRepository
-  @LazyInjected(\.accountRepository) var accountRepository
   @LazyInjected(\.biometricsService) var biometricsService
   @LazyInjected(\.cryptoAccountService) var cryptoAccountService
   

@@ -18,8 +18,6 @@ public enum AccountRoute {
   case getWalletAddresses(accountId: String)
   case deleteWalletAddresses(accountId: String, walletAddress: String)
   case getReferralCampaign
-  case getTaxFile(accountId: String)
-  case getTaxFileYear(accountId: String, year: String)
   case addToWaitList(body: WaitListParameter)
   case getUserRewards
   case getFeatureConfig
@@ -54,10 +52,6 @@ extension AccountRoute: LFRoute {
       return "v1/accounts/\(accountId)/wallet-addresses/\(walletAddress)"
     case .getReferralCampaign:
       return "/v1/app/referral-campaign"
-    case .getTaxFile(accountId: let accountId):
-      return "/v1/account/\(accountId)/tax-file"
-    case .getTaxFileYear(accountId: let accountId, year: let year):
-      return "/v1/account/\(accountId)/tax-file/\(year)"
     case .addToWaitList:
       return "v1/user/add-to-wait-list"
     case .getUserRewards:
@@ -90,9 +84,7 @@ extension AccountRoute: LFRoute {
       return .PATCH
     case .deleteWalletAddresses:
       return .DELETE
-    case .getTaxFile,
-        .getTaxFileYear,
-        .getUserRewards,
+    case .getUserRewards,
         .getFeatureConfig:
       return .GET
     }
@@ -102,16 +94,10 @@ extension AccountRoute: LFRoute {
     var base = [
       "Content-Type": "application/json",
       "productId": NetworkUtilities.productID,
-      "Authorization": self.needAuthorizationKey
+      "Authorization": self.needAuthorizationKey,
+      "Accept": "application/json"
     ]
-    switch self {
-    case .getTaxFileYear:
-      base["Content-Type"] = "application/pdf"
-      return base
-    default:
-      base["Accept"] = "application/json"
-      return base
-    }
+    return base
   }
   
   public var parameters: Parameters? {
@@ -125,8 +111,6 @@ extension AccountRoute: LFRoute {
         .getAvailableRewardCurrencies,
         .getSelectedRewardCurrency,
         .getReferralCampaign,
-        .getTaxFile,
-        .getTaxFileYear,
         .getUserRewards,
         .getFeatureConfig:
       return nil
@@ -179,8 +163,6 @@ extension AccountRoute: LFRoute {
         .logout,
         .getWalletAddresses,
         .deleteWalletAddresses,
-        .getTaxFile,
-        .getTaxFileYear,
         .getUserRewards,
         .getFeatureConfig:
       return nil

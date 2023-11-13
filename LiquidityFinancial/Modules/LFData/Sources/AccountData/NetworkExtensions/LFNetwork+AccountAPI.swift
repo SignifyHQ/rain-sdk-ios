@@ -111,19 +111,6 @@ extension LFCoreNetwork: AccountAPIProtocol where R == AccountRoute {
     )
   }
   
-  public func getTaxFile(accountId: String) async throws -> [APITaxFile] {
-    return try await request(
-      AccountRoute.getTaxFile(accountId: accountId),
-      target: [APITaxFile].self,
-      failure: LFErrorObject.self,
-      decoder: .apiDecoder
-    )
-  }
-  
-  public func getTaxFileYear(accountId: String, year: String, fileName: String) async throws -> URL {
-    return try await download(AccountRoute.getTaxFileYear(accountId: accountId, year: year), fileName: fileName)
-  }
-  
   public func addToWaitList(body: WaitListParameter) async throws -> Bool {
     let result = try await request(
       AccountRoute.addToWaitList(body: body)

@@ -10,7 +10,6 @@ import AccountDomain
 @MainActor
 final class CryptoChartDetailViewModel: ObservableObject {
   @LazyInjected(\.marketManager) var marketManager
-  @LazyInjected(\.accountDataManager) var accountDataManager
   
   @Published var loading: Bool = false
   @Published var showTransferSheet: Bool = false

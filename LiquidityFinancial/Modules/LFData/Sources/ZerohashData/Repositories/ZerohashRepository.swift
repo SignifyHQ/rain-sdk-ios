@@ -32,6 +32,14 @@ public class ZerohashRepository: ZerohashRepositoryProtocol {
   public func getOnboardingStep() async throws -> ZHOnboardingStepEntity {
     return try await self.zerohashAPI.getOnboardingStep()
   }
+  
+  public func getTaxFile(accountId: String) async throws -> [any TaxFileEntity] {
+    try await self.zerohashAPI.getTaxFile(accountId: accountId)
+  }
+  
+  public func getTaxFileYear(accountId: String, year: String, fileName: String) async throws -> URL {
+    try await self.zerohashAPI.getTaxFileYear(accountId: accountId, year: year, fileName: fileName)
+  }
 }
 
 extension APIZHOnboardingStep: ZHOnboardingStepEntity {}

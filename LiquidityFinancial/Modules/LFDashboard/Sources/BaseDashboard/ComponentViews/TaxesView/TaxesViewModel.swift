@@ -1,9 +1,11 @@
 import Foundation
 import LFUtilities
 import LFLocalizable
-import AccountData
-import AccountDomain
 import Factory
+import ZerohashData
+import ZerohashDomain
+import AccountService
+import Combine
 
 @MainActor
 class TaxesViewModel: ObservableObject {
@@ -11,13 +13,29 @@ class TaxesViewModel: ObservableObject {
   @Published var loadingTaxFile: (APITaxFile)?
   @Published var navigation: Navigation?
   @Published var toastMessage: String?
+  @Published var cryptoAccount: AccountModel?
   
-  @LazyInjected(\.accountRepository) var accountRepository
+  private var cancellable: Set<AnyCancellable> = []
+  
   @LazyInjected(\.accountDataManager) var accountDataManager
+  @LazyInjected(\.zerohashRepository) var zerohashRepository
   
-  lazy var useCase: AccountUseCase = {
-    AccountUseCase(repository: accountRepository)
+  lazy var getTaxFileUseCase: GetTaxFileUseCaseProtocol = {
+    GetTaxFileUseCase(repository: zerohashRepository)
   }()
+  
+  lazy var getTaxFileYearUseCase: GetTaxFileYearUseCaseProtocol = {
+    GetTaxFileYearUseCase(repository: zerohashRepository)
+  }()
+  
+  init() {
+    accountDataManager
+      .accountsSubject.map({ accounts in
+        accounts.first(where: { !$0.currency.isFiat })
+      })
+      .assign(to: \.cryptoAccount, on: self)
+      .store(in: &cancellable)
+  }
   
   func onAppear() {
     switch status {
@@ -39,7 +57,7 @@ class TaxesViewModel: ObservableObject {
       if let url = fetchLocal(taxFile: taxFile) {
         navigation = .document(name: taxFile.name ?? "", url: url)
       } else {
-        guard let accountId = accountDataManager.cryptoAccountID else { return }
+        guard let accountId = cryptoAccount?.id else { return }
         do {
           let result = try await apiFetchDetailTaxes(accountId: accountId, taxFile: taxFile)
           log.debug(result)
@@ -57,11 +75,11 @@ class TaxesViewModel: ObservableObject {
 
 extension TaxesViewModel {
   private func apiFetchTaxes() {
-    guard let accountId = accountDataManager.cryptoAccountID else { return }
+    guard let accountId = cryptoAccount?.id else { return }
     status = .loading
     Task {
       do {
-        var taxes = try await self.useCase.getTaxFile(accountId: accountId).compactMap({ $0 as? APITaxFile })
+        var taxes = try await self.getTaxFileUseCase.execute(accountId: accountId).compactMap({ $0 as? APITaxFile })
         taxes = taxes.sorted { Int($0.year ?? .empty) ?? 0 > Int($1.year ?? .empty) ?? 0 }
         status = .success(taxes)
       } catch {
@@ -82,7 +100,7 @@ extension TaxesViewModel {
   }
   
   private func apiFetchDetailTaxes(accountId: String, taxFile: APITaxFile) async throws -> URL {
-    try await useCase.getTaxFileYear(accountId: accountId, year: taxFile.year ?? "", fileName: taxFile.storageName)
+    try await getTaxFileYearUseCase.execute(accountId: accountId, year: taxFile.year ?? "", fileName: taxFile.storageName)
   }
 }
 

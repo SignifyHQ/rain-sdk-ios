@@ -43,4 +43,17 @@ extension LFCoreNetwork: ZerohashAPIProtocol where R == ZerohashRoute {
     let result = try await request(ZerohashRoute.getOnboardingStep, target: [String].self, decoder: .apiDecoder)
     return APIZHOnboardingStep(missingSteps: result)
   }
+  
+  public func getTaxFile(accountId: String) async throws -> [APITaxFile] {
+    return try await request(
+      ZerohashRoute.getTaxFile(accountId: accountId),
+      target: [APITaxFile].self,
+      failure: LFErrorObject.self,
+      decoder: .apiDecoder
+    )
+  }
+  
+  public func getTaxFileYear(accountId: String, year: String, fileName: String) async throws -> URL {
+    return try await download(ZerohashRoute.getTaxFileYear(accountId: accountId, year: year), fileName: fileName)
+  }
 }

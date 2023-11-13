@@ -8,6 +8,8 @@ public enum ZerohashRoute {
   case lockedNetworkFee(accountId: String, destinationAddress: String, amount: Double, maxAmount: Bool)
   case executeQuote(accountId: String, quoteId: String)
   case getOnboardingStep
+  case getTaxFile(accountId: String)
+  case getTaxFileYear(accountId: String, year: String)
 }
 
 extension ZerohashRoute: LFRoute {
@@ -22,12 +24,16 @@ extension ZerohashRoute: LFRoute {
       return "v1/zerohash/accounts/\(accountId)/withdrawal/execute"
     case .getOnboardingStep:
       return "/v1/zerohash/onboarding/missing-steps"
+    case .getTaxFile(let accountId):
+      return "/v1/zerohash/accounts/\(accountId)/tax-file"
+    case .getTaxFileYear(let accountId, let year):
+      return "/v1/zerohash/accounts/\(accountId)/tax-file/\(year)"
     }
   }
   
   public var httpMethod: HttpMethod {
     switch self {
-    case .getOnboardingStep:
+    case .getOnboardingStep, .getTaxFile, .getTaxFileYear:
       return .GET
     default:
       return .POST
@@ -35,12 +41,17 @@ extension ZerohashRoute: LFRoute {
   }
   
   public var httpHeaders: HttpHeaders {
-    let base = [
+    var base = [
       "Content-Type": "application/json",
       "productId": NetworkUtilities.productID,
-      "Accept": "application/json",
       "Authorization": self.needAuthorizationKey
     ]
+    switch self {
+    case .getTaxFileYear:
+      base["Content-Type"] = "application/pdf"
+    default:
+      base["Accept"] = "application/json"
+    }
     return base
   }
   
@@ -61,14 +72,17 @@ extension ZerohashRoute: LFRoute {
       return [
         "quoteId": quoteId
       ]
-    case .getOnboardingStep:
+    case .getOnboardingStep, .getTaxFile, .getTaxFileYear:
       return nil
     }
   }
   
   public var parameterEncoding: ParameterEncoding? {
     switch self {
-    case .getOnboardingStep: return nil
+    case .getOnboardingStep,
+        .getTaxFile,
+        .getTaxFileYear:
+      return nil
     default: return .json
     }
   }

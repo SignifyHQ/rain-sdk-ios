@@ -3,7 +3,7 @@ import LFStyleGuide
 import LFUtilities
 import LFLocalizable
 import SwiftUI
-import AccountData
+import ZerohashData
 
 public struct TaxesView: View {
   public init() {}

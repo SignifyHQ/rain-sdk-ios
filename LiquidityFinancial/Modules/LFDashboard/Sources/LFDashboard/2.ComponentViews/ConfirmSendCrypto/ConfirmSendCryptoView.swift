@@ -39,7 +39,7 @@ struct ConfirmSendCryptoView: View {
         switch item {
         case let .transactionDetail(id):
           TransactionDetailView(
-            accountID: viewModel.accountDataManager.cryptoAccountID,
+            accountID: viewModel.assetModel.id,
             transactionId: id,
             kind: .crypto,
             isNewAddress: viewModel.nickname.isEmpty,

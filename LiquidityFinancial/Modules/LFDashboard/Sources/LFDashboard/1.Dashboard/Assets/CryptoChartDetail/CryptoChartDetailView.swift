@@ -260,7 +260,7 @@ private extension CryptoChartDetailView {
     switch item {
     case let .trxDetail(model):
       TransactionDetailView(
-        accountID: viewModel.accountDataManager.cryptoAccountID,
+        accountID: viewModel.asset.id,
         transactionId: model.id,
         kind: model.detailType
       )

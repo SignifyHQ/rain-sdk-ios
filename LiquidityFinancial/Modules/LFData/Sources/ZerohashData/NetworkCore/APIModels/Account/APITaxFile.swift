@@ -1,5 +1,5 @@
 import Foundation
-import AccountDomain
+import ZerohashDomain
 
 public struct APITaxFile: Decodable, Identifiable, TaxFileEntity {
   public let name, year, url: String?

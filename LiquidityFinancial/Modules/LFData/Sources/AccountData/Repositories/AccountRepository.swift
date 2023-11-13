@@ -74,14 +74,6 @@ public class AccountRepository: AccountRepositoryProtocol {
     try await accountAPI.getReferralCampaign()
   }
   
-  public func getTaxFile(accountId: String) async throws -> [any TaxFileEntity] {
-    try await accountAPI.getTaxFile(accountId: accountId)
-  }
-  
-  public func getTaxFileYear(accountId: String, year: String, fileName: String) async throws -> URL {
-    try await accountAPI.getTaxFileYear(accountId: accountId, year: year, fileName: fileName)
-  }
-  
   public func addToWaitList(waitList: String) async throws -> Bool {
     let parameter = WaitListParameter(request: WaitListParameter.Request(waitList: waitList))
     return try await accountAPI.addToWaitList(body: parameter)
