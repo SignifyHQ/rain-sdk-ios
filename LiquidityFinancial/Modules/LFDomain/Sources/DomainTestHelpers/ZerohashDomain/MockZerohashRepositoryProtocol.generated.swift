@@ -111,4 +111,56 @@ public class MockZerohashRepositoryProtocol: ZerohashRepositoryProtocol {
         }
     }
 
+    //MARK: - getTaxFile
+
+    public var getTaxFileAccountIdThrowableError: Error?
+    public var getTaxFileAccountIdCallsCount = 0
+    public var getTaxFileAccountIdCalled: Bool {
+        return getTaxFileAccountIdCallsCount > 0
+    }
+    public var getTaxFileAccountIdReceivedAccountId: String?
+    public var getTaxFileAccountIdReceivedInvocations: [String] = []
+    public var getTaxFileAccountIdReturnValue: [any TaxFileEntity]!
+    public var getTaxFileAccountIdClosure: ((String) async throws -> [any TaxFileEntity])?
+
+    public func getTaxFile(accountId: String) async throws -> [any TaxFileEntity] {
+        if let error = getTaxFileAccountIdThrowableError {
+            throw error
+        }
+        getTaxFileAccountIdCallsCount += 1
+        getTaxFileAccountIdReceivedAccountId = accountId
+        getTaxFileAccountIdReceivedInvocations.append(accountId)
+        if let getTaxFileAccountIdClosure = getTaxFileAccountIdClosure {
+            return try await getTaxFileAccountIdClosure(accountId)
+        } else {
+            return getTaxFileAccountIdReturnValue
+        }
+    }
+
+    //MARK: - getTaxFileYear
+
+    public var getTaxFileYearAccountIdYearFileNameThrowableError: Error?
+    public var getTaxFileYearAccountIdYearFileNameCallsCount = 0
+    public var getTaxFileYearAccountIdYearFileNameCalled: Bool {
+        return getTaxFileYearAccountIdYearFileNameCallsCount > 0
+    }
+    public var getTaxFileYearAccountIdYearFileNameReceivedArguments: (accountId: String, year: String, fileName: String)?
+    public var getTaxFileYearAccountIdYearFileNameReceivedInvocations: [(accountId: String, year: String, fileName: String)] = []
+    public var getTaxFileYearAccountIdYearFileNameReturnValue: URL!
+    public var getTaxFileYearAccountIdYearFileNameClosure: ((String, String, String) async throws -> URL)?
+
+    public func getTaxFileYear(accountId: String, year: String, fileName: String) async throws -> URL {
+        if let error = getTaxFileYearAccountIdYearFileNameThrowableError {
+            throw error
+        }
+        getTaxFileYearAccountIdYearFileNameCallsCount += 1
+        getTaxFileYearAccountIdYearFileNameReceivedArguments = (accountId: accountId, year: year, fileName: fileName)
+        getTaxFileYearAccountIdYearFileNameReceivedInvocations.append((accountId: accountId, year: year, fileName: fileName))
+        if let getTaxFileYearAccountIdYearFileNameClosure = getTaxFileYearAccountIdYearFileNameClosure {
+            return try await getTaxFileYearAccountIdYearFileNameClosure(accountId, year, fileName)
+        } else {
+            return getTaxFileYearAccountIdYearFileNameReturnValue
+        }
+    }
+
 }

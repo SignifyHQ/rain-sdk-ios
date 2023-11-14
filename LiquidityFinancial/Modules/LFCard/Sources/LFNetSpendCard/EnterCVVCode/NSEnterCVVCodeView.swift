@@ -4,13 +4,13 @@ import LFUtilities
 import LFStyleGuide
 import Services
 
-public struct EnterCVVCodeView<ViewModel: EnterCVVCodeViewModelProtocol>: View {
+public struct NSEnterCVVCodeView: View {
   @Environment(\.dismiss) private var dismiss
-  @StateObject private var viewModel: ViewModel
+  @StateObject private var viewModel: NSEnterCVVCodeViewModel
   let screenTitle: String
   let onDissmiss: ((String) -> Void)?
   
-  public init(viewModel: ViewModel, screenTitle: String, onDissmiss: @escaping (String) -> Void) {
+  public init(viewModel: NSEnterCVVCodeViewModel, screenTitle: String, onDissmiss: @escaping (String) -> Void) {
     _viewModel = .init(wrappedValue: viewModel)
     self.screenTitle = screenTitle
     self.onDissmiss = onDissmiss
@@ -33,7 +33,7 @@ public struct EnterCVVCodeView<ViewModel: EnterCVVCodeViewModelProtocol>: View {
 }
 
 // MARK: - View Components
-private extension EnterCVVCodeView {
+private extension NSEnterCVVCodeView {
   var content: some View {
     VStack(alignment: .leading, spacing: 50) {
       VStack(alignment: .leading, spacing: 12) {

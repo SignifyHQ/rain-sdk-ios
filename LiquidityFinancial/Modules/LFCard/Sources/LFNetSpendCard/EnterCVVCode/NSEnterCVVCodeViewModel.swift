@@ -10,7 +10,7 @@ import AccountData
 import BaseCard
 
 @MainActor
-public final class NSEnterCVVCodeViewModel: EnterCVVCodeViewModelProtocol {
+public final class NSEnterCVVCodeViewModel: ObservableObject {
   @LazyInjected(\.netspendDataManager) var netspendDataManager
   @LazyInjected(\.accountDataManager) var accountDataManager
   @LazyInjected(\.cardRepository) var cardRepository
@@ -97,5 +97,50 @@ public extension NSEnterCVVCodeViewModel {
       previousViewItem.isInFocus = true
     }
     sendPin()
+  }
+}
+
+// MARK: - Private Functions
+private extension NSEnterCVVCodeViewModel {
+  func createTextFields() {
+    for index in 0 ..< cvvCodeDigits {
+      let viewItem = PinTextFieldViewItem(
+        text: "",
+        placeHolderText: "",
+        isInFocus: index == 0,
+        tag: index
+      )
+      pinViewItems.append(viewItem)
+    }
+  }
+  
+  func nextViewItemFrom(tag: Int) -> PinTextFieldViewItem? {
+    let nextTextItemTag = tag + 1
+    if nextTextItemTag < pinViewItems.count {
+      return pinViewItems.first(where: { $0.tag == nextTextItemTag })
+    }
+    return nil
+  }
+  
+  func previousViewItemFrom(tag: Int) -> PinTextFieldViewItem? {
+    let previousTextItemTag = tag - 1
+    if previousTextItemTag >= 0 {
+      return pinViewItems.first(where: { $0.tag == previousTextItemTag })
+    }
+    return nil
+  }
+  
+  func generatePin() -> String? {
+    pinViewItems.reduce(into: "") { partialResult, textFieldViewItem in
+      partialResult.append(textFieldViewItem.text)
+    }
+  }
+  
+  func sendPin() {
+    if let pin = generatePin(), pin.count == cvvCodeDigits {
+      generatedCVV = pin
+    } else {
+      generatedCVV = ""
+    }
   }
 }

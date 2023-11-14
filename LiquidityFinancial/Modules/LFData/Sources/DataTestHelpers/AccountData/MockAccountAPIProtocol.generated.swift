@@ -4,6 +4,7 @@
 
 import Foundation
 import AccountData
+import ZerohashData
 
 public class MockAccountAPIProtocol: AccountAPIProtocol {
 

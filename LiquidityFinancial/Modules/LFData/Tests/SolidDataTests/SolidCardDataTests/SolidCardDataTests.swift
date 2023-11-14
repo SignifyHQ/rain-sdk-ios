@@ -26,6 +26,11 @@ final class SolidCardDataTests: XCTestCase {
     expiryYear: "mock_expiryYear",
     last4: "mock_last4"
   )
+  let mockApplePayWalletParameters = APISolidApplePayWalletParameters(
+    deviceCert: "mock_deviceCert",
+    nonceSignature: "mock_nonceSignature",
+    nonce: "mock_nonce"
+  )
 
   // Defining mock success response
   let mockCardResponse = APISolidCard(
@@ -52,6 +57,15 @@ final class SolidCardDataTests: XCTestCase {
   ]
   let mockShowTokenResponse = APISolidCardShowToken(solidCardId: "mock_id", showToken: "mock_showToken")
   let mockCardPinTokenResponse = APISolidCardPinToken(solidCardId: "mock_id", pinToken: "mock_cardPinToken")
+  let mockDigitalWalletResponse = APISolidDigitalWallet(
+    wallet: "mock_wallet",
+    applePay: APISolidApplePay(
+      paymentAccountReference: "mock_paymentAccountReference",
+      activationData: "mock_activationData",
+      encryptedPassData: "mock_encryptedPassData",
+      ephemeralPublicKey: "mock_ephemeralPublicKey"
+    )
+  )
   
   // Defining mock API errors
   let expectedThrowableError = TestError.fail("mock_api_error")

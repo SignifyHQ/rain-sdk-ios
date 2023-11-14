@@ -134,7 +134,7 @@ private extension NSListCardsView {
   @ViewBuilder var changePinContent: some View {
     switch activeContent {
     case .verifyCvv:
-      EnterCVVCodeView(
+      NSEnterCVVCodeView(
         viewModel: NSEnterCVVCodeViewModel(cardID: viewModel.currentCard.id),
         screenTitle: LFLocalizable.EnterCVVCode.SetCardPin.title
       ) { verifyID in
@@ -279,7 +279,6 @@ private extension NSListCardsView {
             viewModel.onClickedChangePinButton(
               activeCardView: AnyView(
                 NSActivePhysicalCardView<
-                NSEnterCVVCodeViewModel,
                 NSSetCardPinViewModel,
                 NSAddAppleWalletViewModel,
                 NSApplePayViewModel
@@ -383,7 +382,6 @@ private extension NSListCardsView {
       viewModel.presentActivateCardView(
         activeCardView: AnyView(
           NSActivePhysicalCardView<
-          NSEnterCVVCodeViewModel,
           NSSetCardPinViewModel,
           NSAddAppleWalletViewModel,
           NSApplePayViewModel

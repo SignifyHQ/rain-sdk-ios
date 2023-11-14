@@ -5,7 +5,6 @@ import LFStyleGuide
 import BaseCard
 
 public struct NSActivePhysicalCardView<
-  EnterCVVCodeViewModel: EnterCVVCodeViewModelProtocol,
   SetCardPinViewModel: SetCardPinViewModelProtocol,
   AddAppleWalletViewModel: AddAppleWalletViewModelProtocol,
   ApplePayViewModel: ApplePayViewModelProtocol
@@ -30,8 +29,8 @@ private extension NSActivePhysicalCardView {
   @MainActor @ViewBuilder var content: some View {
     switch activeContent {
     case .cvvCode:
-      EnterCVVCodeView(
-        viewModel: EnterCVVCodeViewModel(cardID: card.id),
+      NSEnterCVVCodeView(
+        viewModel: NSEnterCVVCodeViewModel(cardID: card.id),
         screenTitle: LFLocalizable.EnterCVVCode.ActiveCard.title
       ) { verifyID in
         activeContent = .setCardPin(verifyID)
