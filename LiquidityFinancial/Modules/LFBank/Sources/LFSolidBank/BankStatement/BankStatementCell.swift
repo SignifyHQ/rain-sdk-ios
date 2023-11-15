@@ -8,6 +8,7 @@ struct BankStatementCell: View {
   let leftImage: Image?
   var backGroundColor: Color
   var titleColor: Color
+  @Binding var isLoading: Bool
   var action: () -> Void = {}
 
   init(
@@ -16,6 +17,7 @@ struct BankStatementCell: View {
     leftImage: Image? = nil,
     backGroundColor: Color = Colors.secondaryBackground.swiftUIColor,
     titleColor: Color = Colors.label.swiftUIColor,
+    isLoading: Binding<Bool> = .constant(false),
     action: @escaping () -> Void = {}
   ) {
     self.title = title
@@ -24,6 +26,7 @@ struct BankStatementCell: View {
     self.backGroundColor = backGroundColor
     self.titleColor = titleColor
     self.action = action
+    _isLoading = isLoading
   }
 
   var body: some View {
@@ -49,7 +52,7 @@ struct BankStatementCell: View {
 
           Spacer()
 
-          CircleButton(style: .right)
+          trailingView
         }
         .frame(minWidth: 0, maxWidth: .infinity, alignment: .leading)
         .frame(height: 56)
@@ -60,5 +63,14 @@ struct BankStatementCell: View {
       }
     }
     .buttonStyle(PlainButtonStyle())
+  }
+  
+  @ViewBuilder var trailingView: some View {
+    if isLoading {
+      LottieView(loading: .primary)
+        .frame(width: 30, height: 20)
+    } else {
+      CircleButton(style: .right)
+    }
   }
 }

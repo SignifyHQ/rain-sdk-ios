@@ -13,6 +13,7 @@ public struct BankStatementView: View {
   
   public var body: some View {
     content
+      .padding(.top, 16)
       .toolbar {
         ToolbarItem(placement: .principal) {
           Text(LFLocalizable.BankStatement.title)
@@ -81,13 +82,13 @@ private extension BankStatementView {
     .frame(maxWidth: .infinity, maxHeight: .infinity)
   }
   
-  func statementsView(statements: [StatementModel]) -> some View {
+  func statementsView(statements: [BankStatementViewModel.UIModel]) -> some View {
     ScrollView {
       VStack {
-        ForEach(statements, id: \.period) { item in
+        ForEach(statements, id: \.id) { item in
           BankStatementCell(
             title: item.name,
-            detailTitle: LFLocalizable.BankStatement.created(viewModel.detailFor(statement: item)),
+            detailTitle: LFLocalizable.BankStatement.created(item.desc),
             backGroundColor: Colors.secondaryBackground.swiftUIColor,
             titleColor: Colors.label.swiftUIColor
           ) {
@@ -108,7 +109,7 @@ private extension BankStatementView {
         .foregroundColor(Colors.label.swiftUIColor)
         .multilineTextAlignment(.center)
       FullSizeButton(title: LFLocalizable.Button.Retry.title, isDisable: false) {
-        viewModel.getBankStatement()
+        viewModel.getBankStatements()
       }
     }
     .padding(30)

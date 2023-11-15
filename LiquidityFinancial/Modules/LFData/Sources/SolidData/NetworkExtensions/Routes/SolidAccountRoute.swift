@@ -7,6 +7,8 @@ public enum SolidAccountRoute {
   case getAccounts
   case getAccountDetail(id: String)
   case getAccountLimits
+  case getStatementItem(liquidityAccountId: String, year: String, month: String)
+  case getAllStatement(liquidityAccountId: String)
 }
 
 extension SolidAccountRoute: LFRoute {
@@ -19,6 +21,10 @@ extension SolidAccountRoute: LFRoute {
       return "/v1/solid/accounts/\(id)"
     case .getAccountLimits:
       return "/v1/solid/accounts/limits"
+    case let .getAllStatement(liquidityAccountId):
+      return "/v1/solid/accounts/\(liquidityAccountId)/statements"
+    case let .getStatementItem(liquidityAccountId, year, month):
+      return "/v1/solid/accounts/\(liquidityAccountId)/statement/\(year)/\(month)"
     }
   }
   
@@ -27,21 +33,37 @@ extension SolidAccountRoute: LFRoute {
   }
   
   public var httpHeaders: HttpHeaders {
-    [
-      "Content-Type": "application/json",
+    var base = [
       "productId": NetworkUtilities.productID,
       "Authorization": self.needAuthorizationKey,
-      "Accept": "application/json",
       "ld-device-id": LFUtilities.deviceId
     ]
+    switch self {
+    case .getAccounts, .getAccountDetail, .getAccountLimits, .getAllStatement:
+      base["Content-Type"] = "application/json"
+      base["Accept"] = "application/json"
+    case .getStatementItem:
+      base["Content-Type"] = "application/pdf"
+    }
+    return base
   }
   
   public var parameters: Parameters? {
-    nil
+    switch self {
+    case .getAccounts, .getAccountDetail, .getAccountLimits, .getAllStatement:
+      return nil
+    case .getStatementItem:
+      return ["export": "pdf"]
+    }
   }
   
   public var parameterEncoding: ParameterEncoding? {
-    .json
+    switch self {
+    case .getAccounts, .getAccountDetail, .getAccountLimits, .getAllStatement:
+      return nil
+    case .getStatementItem:
+      return .url
+    }
   }
   
 }
