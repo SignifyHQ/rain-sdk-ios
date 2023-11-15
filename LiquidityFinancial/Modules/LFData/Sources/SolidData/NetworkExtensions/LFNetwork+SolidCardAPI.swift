@@ -3,6 +3,14 @@ import CoreNetwork
 import LFUtilities
 
 extension LFCoreNetwork: SolidCardAPIProtocol where R == SolidCardRoute {
+  public func getCardLimits(cardID: String) async throws -> APISolidCardLimits {
+    return try await request(
+      SolidCardRoute.getCardLimits(cardID: cardID),
+      target: APISolidCardLimits.self,
+      failure: LFErrorObject.self,
+      decoder: .apiDecoder
+    )
+  }
   
   public func getListCard() async throws -> [APISolidCard] {
     let response = try await request(

@@ -64,7 +64,7 @@ public protocol ListCardsViewModelProtocol: ObservableObject {
   var isLoading: Bool { get set }
   var isShowCardNumber: Bool { get set }
   var isCardLocked: Bool { get set }
-  var isActive: Bool { get set }
+  var isActivePhysical: Bool { get set }
   var isShowListCardDropdown: Bool { get set }
   var toastMessage: String? { get set }
   var cardsList: [CardModel] { get set }
@@ -120,7 +120,7 @@ public extension ListCardsViewModelProtocol {
     isSwitchCard = false
     currentCard.cardStatus = status
     cardsList[index].cardStatus = status
-    isActive = status == .active
+    isActivePhysical = status == .active
   }
   
   func updateListCard(id: String, completion: @escaping () -> Void) {

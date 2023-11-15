@@ -23,7 +23,9 @@ public struct SolidListCardsView: View {
       if viewModel.isInit {
         loadingView
       } else {
-        cardDetails
+        ScrollView(showsIndicators: false) {
+          cardDetails
+        }
       }
     }
     .onChange(of: viewModel.currentCard) { _ in
@@ -135,7 +137,7 @@ private extension SolidListCardsView {
     }
     .frame(max: .infinity)
   }
-
+  
   var cardDetails: some View {
     VStack(spacing: 16) {
       card
@@ -192,8 +194,8 @@ private extension SolidListCardsView {
       }
     }
     .tabViewStyle(.page(indexDisplayMode: .never))
-    .padding(.top, 24)
-    .frame(maxHeight: 260)
+    .padding(.top, 8)
+    .frame(height: 260)
   }
   
   @ViewBuilder
@@ -240,6 +242,7 @@ private extension SolidListCardsView {
           isSwitchOn: $viewModel.isShowCardNumber,
           onChange: nil
         )
+        
         if viewModel.currentCard.cardStatus != .unactivated {
           GenImages.CommonImages.dash.swiftUIImage
             .foregroundColor(Colors.label.swiftUIColor)
@@ -251,21 +254,35 @@ private extension SolidListCardsView {
             viewModel.lockCardToggled()
           }
         }
-        if viewModel.isActive {
+        
+        if viewModel.isActivePhysical {
           GenImages.CommonImages.dash.swiftUIImage
             .foregroundColor(Colors.label.swiftUIColor)
           row(title: LFLocalizable.ListCard.ChangePin.title) {
             viewModel.onClickedChangePinButton()
           }
         }
+        
         GenImages.CommonImages.dash.swiftUIImage
           .foregroundColor(Colors.label.swiftUIColor)
         row(title: LFLocalizable.ListCard.CloseCard.title) {
           viewModel.onClickCloseCardButton()
         }
+        
+        if let cardLimitModel = viewModel.cardLimitUIModel {
+          GenImages.CommonImages.dash.swiftUIImage
+          rowLabel(title: LFLocalizable.CardsDetail.monthlyLimits, subtitle: cardLimitModel.spendLimits)
+          
+          GenImages.CommonImages.dash.swiftUIImage
+          rowLabel(title: LFLocalizable.CardsDetail.availableLimits, subtitle: cardLimitModel.availableLimits)
+          
+          GenImages.CommonImages.dash.swiftUIImage
+          rowLabel(title: LFLocalizable.CardsDetail.perTransactionLimits, subtitle: cardLimitModel.transactionLimits)
+        }
       }
     }
     .padding(.top, 8)
+    .padding(.trailing, 4)
   }
   
   func row(title: String, subtitle: String?, isSwitchOn: Binding<Bool>, onChange: ((Bool) -> Void)?) -> some View {
@@ -288,6 +305,20 @@ private extension SolidListCardsView {
         .onChange(of: isSwitchOn.wrappedValue) { value in
           onChange?(value)
         }
+    }
+  }
+  
+  func rowLabel(title: String, subtitle: String) -> some View {
+    HStack {
+      Text(title)
+        .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.medium.value))
+        .foregroundColor(Colors.label.swiftUIColor)
+      
+      Spacer()
+      
+      Text(subtitle)
+        .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.medium.value))
+        .foregroundColor(Colors.label.swiftUIColor)
     }
   }
   
@@ -345,7 +376,7 @@ private extension SolidListCardsView {
         .frame(maxWidth: 36)
         .padding(.trailing, 12)
         .hidden(viewModel.isUpdatingRoundUpPurchases)
-
+      
       LottieView(loading: .primary)
         .frame(width: 30, height: 20)
         .hidden(!viewModel.isUpdatingRoundUpPurchases)
@@ -357,7 +388,7 @@ private extension SolidListCardsView {
 private extension SolidListCardsView {
   @ViewBuilder var buttonGroup: some View {
     VStack(spacing: 14) {
-      if viewModel.isActive {
+      if viewModel.isActivePhysical {
         // applePay TODO: - Temporarily hide this button because Solid doesn't support
       } else if viewModel.currentCard.cardStatus == .unactivated {
         activeCardButton
@@ -438,14 +469,14 @@ private extension SolidListCardsView {
         GenImages.Images.icLogo.swiftUIImage
           .resizable()
           .frame(width: 80, height: 80)
-
+        
         Text(LFLocalizable.CardsDetail.Roundup.title)
           .font(Fonts.regular.swiftUIFont(size: 18))
           .foregroundColor(Colors.label.swiftUIColor)
-
+        
         ShoppingGivesAlert(type: .roundUp)
           .frame(height: 300)
-
+        
         FullSizeButton(title: LFLocalizable.Button.Ok.title, isDisable: false) {
           viewModel.hidePopup()
         }

@@ -44,4 +44,44 @@ extension LFUtilities {
       return .empty
     }
   }
+  
+  public static func getCurrencyForAmount(currency: String, amount: Double, isDecimalRequired: Bool) -> String {
+    let decimalAmountString: String
+    // let currency = Utility.localizedString(forKey: "currency")
+    let currency = currency
+    let formatter = NumberFormatter()
+    formatter.numberStyle = .decimal
+
+    if isDecimalRequired {
+      if currency == "$" {
+        formatter.maximumFractionDigits = 2
+        formatter.minimumFractionDigits = 2
+      } else {
+        formatter.maximumFractionDigits = 3
+        formatter.minimumFractionDigits = 3
+      }
+
+      formatter.generatesDecimalNumbers = true
+
+      decimalAmountString = String(describing: formatter.string(from: amount)!)
+
+    } else {
+      formatter.maximumFractionDigits = 0
+      formatter.minimumFractionDigits = 0
+      formatter.generatesDecimalNumbers = false
+
+      decimalAmountString = String(describing: formatter.string(from: amount)!)
+    }
+
+    return currency == "$" ? "\(currency)\(decimalAmountString)" : "\(decimalAmountString)"
+  }
+}
+
+public extension NumberFormatter {
+    func string(from doubleValue: Double?) -> String? {
+        if let doubleValue = doubleValue {
+            return string(from: NSNumber(value: doubleValue))
+        }
+        return nil
+    }
 }

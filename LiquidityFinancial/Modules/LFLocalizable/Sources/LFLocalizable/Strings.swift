@@ -676,8 +676,14 @@ public enum LFLocalizable {
     }
   }
   public enum CardsDetail {
+    /// Available Limit
+    public static let availableLimits = LFLocalizable.tr("Localizable", "cards_detail.available_limits", fallback: "Available Limit")
     /// Donations
     public static let donations = LFLocalizable.tr("Localizable", "cards_detail.donations", fallback: "Donations")
+    /// Monthly Spend Limit
+    public static let monthlyLimits = LFLocalizable.tr("Localizable", "cards_detail.monthly_limits", fallback: "Monthly Spend Limit")
+    /// Per Transaction Limit
+    public static let perTransactionLimits = LFLocalizable.tr("Localizable", "cards_detail.per_transaction_limits", fallback: "Per Transaction Limit")
     public enum Deals {
       /// Donate up to 8% of purchase
       public static func value(_ p1: Int) -> String {

@@ -272,7 +272,7 @@ private extension NSListCardsView {
             viewModel.lockCardToggled()
           }
         }
-        if viewModel.isActive && viewModel.currentCard.cardType != .virtual {
+        if viewModel.isActivePhysical && viewModel.currentCard.cardType != .virtual {
           GenImages.CommonImages.dash.swiftUIImage
             .foregroundColor(Colors.label.swiftUIColor)
           row(title: LFLocalizable.ListCard.ChangePin.title) {
@@ -343,7 +343,7 @@ private extension NSListCardsView {
 private extension NSListCardsView {
   @ViewBuilder var buttonGroup: some View {
     VStack(spacing: 14) {
-      if viewModel.isActive {
+      if viewModel.isActivePhysical {
         // applePay TODO: - Temporarily hide this button because NetSpend doesn't support
         EmptyView()
       } else if viewModel.currentCard.cardStatus == .unactivated {

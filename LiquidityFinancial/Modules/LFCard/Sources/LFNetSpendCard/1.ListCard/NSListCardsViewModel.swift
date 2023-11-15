@@ -26,7 +26,7 @@ public final class NSListCardsViewModel: ListCardsViewModelProtocol {
   @Published public var isLoading: Bool = false
   @Published public var isShowCardNumber: Bool = false
   @Published public var isCardLocked: Bool = false
-  @Published public var isActive: Bool = false
+  @Published public var isActivePhysical: Bool = false
   @Published public var isHasPhysicalCard: Bool = false
   @Published public var isShowListCardDropdown: Bool = false
   @Published public var toastMessage: String?
@@ -135,7 +135,7 @@ public extension NSListCardsViewModel {
     isSwitchCard = false
     currentCard.cardStatus = .active
     cardsList[index].cardStatus = .active
-    isActive = true
+    isActivePhysical = true
   }
   
   func openSupportScreen() {
@@ -173,7 +173,7 @@ public extension NSListCardsViewModel {
   }
   
   func onChangeCurrentCard() {
-    isActive = currentCard.cardStatus == .active
+    isActivePhysical = currentCard.cardStatus == .active
     isCardLocked = currentCard.cardStatus == .disabled
     if isSwitchCard {
       isShowCardNumber = false
@@ -219,7 +219,7 @@ public extension NSListCardsViewModel {
         self.cardsList = cardData.cards.filter { $0.cardStatus != .closed }
         self.cardMetaDatas = cardData.metaDatas
         self.currentCard = self.cardsList.first ?? .virtualDefault
-        self.isActive = currentCard.cardStatus == .active
+        self.isActivePhysical = currentCard.cardStatus == .active
         self.isCardLocked = currentCard.cardStatus == .disabled
       }
       .store(in: &cancellables)

@@ -26,6 +26,7 @@ struct CommonTransactionDetailView<Content: View>: View {
       }
       Spacer()
     }
+    .frame(maxWidth: .infinity)
     .scrollOnOverflow()
     .defaultToolBar(
       icon: .support,
@@ -34,7 +35,6 @@ struct CommonTransactionDetailView<Content: View>: View {
         viewModel.openSupportScreen()
       }
     )
-    .frame(maxWidth: .infinity)
     .navigationBarTitleDisplayMode(.inline)
     .padding([.top, .horizontal], 30)
     .padding(.bottom, 12)

@@ -60,4 +60,8 @@ public class SolidCardRepository: SolidCardRepositoryProtocol {
     }
     return try await cardAPI.activeCard(cardID: cardID, parameters: parameters)
   }
+  
+  public func getCardLimits(cardID: String) async throws -> SolidCardLimitsEntity {
+    return try await cardAPI.getCardLimits(cardID: cardID)
+  }
 }

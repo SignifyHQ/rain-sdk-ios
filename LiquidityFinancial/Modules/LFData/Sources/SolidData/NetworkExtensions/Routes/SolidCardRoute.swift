@@ -14,6 +14,7 @@ public enum SolidCardRoute {
   case createVirtualCard(accountID: String)
   case createCardPinToken(cardID: String)
   case activeCard(cardID: String, parameters: APISolidActiveCardParameters)
+  case getCardLimits(cardID: String)
 }
 
 extension SolidCardRoute: LFRoute {
@@ -38,12 +39,14 @@ extension SolidCardRoute: LFRoute {
       return "/v1/solid/cards/\(cardID)/pin-token"
     case let .activeCard(cardID, _):
       return "/v1/solid/cards/\(cardID)/activate"
+    case let .getCardLimits(cardID):
+      return "/v1/solid/cards/\(cardID)/limits"
     }
   }
   
   public var httpMethod: HttpMethod {
     switch self {
-    case .listCard:
+    case .listCard, .getCardLimits:
       return .GET
     case .updateCardStatus, .updateRoundUpDonation, .activeCard:
       return .PATCH
@@ -66,7 +69,7 @@ extension SolidCardRoute: LFRoute {
   
   public var parameters: Parameters? {
     switch self {
-    case .listCard, .closeCard, .createVGSShowToken, .createVirtualCard, .createCardPinToken:
+    case .listCard, .closeCard, .createVGSShowToken, .createVirtualCard, .createCardPinToken, .getCardLimits:
       return nil
     case let .updateCardStatus(_, parameters):
       return parameters.encoded()
@@ -81,7 +84,7 @@ extension SolidCardRoute: LFRoute {
   
   public var parameterEncoding: ParameterEncoding? {
     switch self {
-    case .listCard, .closeCard, .createVGSShowToken, .createVirtualCard, .createCardPinToken:
+    case .listCard, .closeCard, .createVGSShowToken, .createVirtualCard, .createCardPinToken, .getCardLimits:
       return nil
     case .updateCardStatus, .createDigitalWalletLink, .updateRoundUpDonation, .activeCard:
       return .json

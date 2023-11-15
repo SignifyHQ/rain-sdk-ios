@@ -304,6 +304,11 @@
 "cards_detail.roundup.title" = "ROUND UP";
 "cards_detail.deals.value" = "Donate up to 8% of purchase";
 
+// CARD LIMITS
+"cards_detail.monthly_limits" = "Monthly Spend Limit";
+"cards_detail.available_limits" = "Available Limit";
+"cards_detail.per_transaction_limits" = "Per Transaction Limit";
+
 // EnterCVVCode
 "enterCVVCode.setCardPin.title" = "ENTER CVV TO SET CARD PIN";
 "enterCVVCode.activeCard.title" = "ACTIVATE PHYSICAL CARD";

@@ -28,15 +28,21 @@ public final class SolidListCardsViewModel: ListCardsViewModelProtocol {
   @Published public var isLoading: Bool = false
   @Published public var isShowCardNumber: Bool = false
   @Published public var isCardLocked: Bool = false
-  @Published public var isActive: Bool = false
+  @Published public var isActivePhysical: Bool = false
   @Published public var isActivatingCard: Bool = false
   @Published public var isUpdatingRoundUpPurchases = false
   @Published public var isShowListCardDropdown: Bool = false
   @Published public var toastMessage: String?
   @Published public var cardsList: [CardModel] = []
   @Published public var cardMetaDatas: [CardMetaData?] = []
-  @Published public var currentCard: CardModel = .virtualDefault
   @Published public var popup: ListCardPopup?
+  @Published var cardLimitUIModel: SolidListCardsViewModel.CardLimitUIModel?
+  @Published public var currentCard: CardModel = .virtualDefault {
+    didSet {
+      cardLimitUIModel = nil
+      getCardLimit(cardID: currentCard.id)
+    }
+  }
   
   public unowned let coordinator: BaseCardDestinationObservable
   public var isSwitchCard = true
@@ -65,6 +71,10 @@ public final class SolidListCardsViewModel: ListCardsViewModelProtocol {
   
   lazy var activePhysicalCardUseCase: SolidActiveCardUseCaseProtocol = {
     SolidActiveCardUseCase(repository: solidCardRepository)
+  }()
+  
+  lazy var getCardLimitsUseCase: SolidGetCardLimitsUseCaseProtocol = {
+    SolidGetCardLimitsUseCase(repository: solidCardRepository)
   }()
   
   public init(cardData: Published<(CardData)>.Publisher, coordinator: BaseCardDestinationObservable) {
@@ -157,6 +167,17 @@ public extension SolidListCardsViewModel {
       }
     }
   }
+  
+  func getCardLimit(cardID: String) {
+    Task { @MainActor in
+      do {
+        let cardLimits = try await getCardLimitsUseCase.execute(cardID: cardID)
+        cardLimitUIModel = CardLimitUIModel(entity: cardLimits)
+      } catch {
+        cardLimitUIModel = nil
+      }
+    }
+  }
 }
 
 // MARK: - View Helpers
@@ -180,7 +201,7 @@ public extension SolidListCardsViewModel {
     isSwitchCard = false
     currentCard.cardStatus = .active
     cardsList[index].cardStatus = .active
-    isActive = true
+    isActivePhysical = true
   }
   
   func openSupportScreen() {
@@ -218,7 +239,7 @@ public extension SolidListCardsViewModel {
   }
   
   func onChangeCurrentCard() {
-    isActive = currentCard.cardStatus == .active
+    isActivePhysical = currentCard.cardStatus == .active
     isCardLocked = currentCard.cardStatus == .disabled
     if isSwitchCard {
       isShowCardNumber = false
@@ -251,7 +272,7 @@ public extension SolidListCardsViewModel {
         self.cardsList = cardData.cards.filter { $0.cardStatus != .closed }
         self.cardMetaDatas = cardData.metaDatas
         self.currentCard = self.cardsList.first ?? .virtualDefault
-        self.isActive = currentCard.cardStatus == .active
+        self.isActivePhysical = currentCard.cardStatus == .active
         self.isCardLocked = currentCard.cardStatus == .disabled
       }
       .store(in: &cancellables)
