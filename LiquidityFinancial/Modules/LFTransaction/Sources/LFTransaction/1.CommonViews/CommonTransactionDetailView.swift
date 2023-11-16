@@ -7,6 +7,7 @@ import LFUtilities
 struct CommonTransactionDetailView<Content: View>: View {
   @ViewBuilder let content: Content?
   @StateObject private var viewModel = CommonTransactionDetailViewModel()
+  @Environment(\.openURL) var openURL
   
   let transaction: TransactionModel
   let isCryptoBalance: Bool
@@ -25,6 +26,7 @@ struct CommonTransactionDetailView<Content: View>: View {
         content
       }
       Spacer()
+      disclosureView
     }
     .frame(maxWidth: .infinity)
     .scrollOnOverflow()
@@ -71,6 +73,21 @@ private extension CommonTransactionDetailView {
           .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.ultraSmall.value))
           .foregroundColor(Colors.label.swiftUIColor.opacity(0.6))
       }
+    }
+  }
+  
+  @ViewBuilder
+  var disclosureView: some View {
+    if viewModel.isDonationsCard {
+      TextTappable(
+        text: viewModel.disclosureString,
+        fontSize: Constants.FontSize.ultraSmall.value,
+        links: [viewModel.termsLink]
+      ) { tappedString in
+        guard let url = viewModel.getUrl(for: tappedString) else { return }
+        openURL(url)
+      }
+      .frame(height: 200)
     }
   }
 }

@@ -26,9 +26,10 @@ private extension RefundTransactionDetailView {
           .foregroundColor(Colors.label.swiftUIColor)
         TransactionInformationCell(item: item)
       }
-      Spacer()
+  
       if let status = transaction.status {
         StatusView(transactionStatus: status)
+          .padding(.top, 16)
       }
     }
   }

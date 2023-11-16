@@ -24,9 +24,6 @@ final class PurchaseTransactionDetailViewModel: ObservableObject {
   
   let transaction: TransactionModel
   
-  let disclosureString = LFLocalizable.TransactionDetail.RewardDisclosure.description
-  let termsLink = LFLocalizable.TransactionDetail.RewardDisclosure.Links.terms
-  
   init(transaction: TransactionModel) {
     self.transaction = transaction
   }
@@ -97,19 +94,6 @@ extension PurchaseTransactionDetailViewModel {
   
   func openContactSupport() {
     customerSupportService.openSupportScreen()
-  }
-  
-  var isDonationsCard: Bool {
-    LFUtilities.charityEnabled
-  }
-  
-  func getUrl(for link: String) -> URL? {
-    switch link {
-    case termsLink:
-      return URL(string: LFUtilities.termsURL)
-    default:
-      return nil
-    }
   }
 }
 

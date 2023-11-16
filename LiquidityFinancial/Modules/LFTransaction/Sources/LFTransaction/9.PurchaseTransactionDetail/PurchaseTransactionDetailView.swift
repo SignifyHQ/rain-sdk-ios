@@ -7,7 +7,6 @@ import Factory
 
 public struct PurchaseTransactionDetailView: View {
   @StateObject private var viewModel: PurchaseTransactionDetailViewModel
-  @Environment(\.openURL) var openURL
   
   @Injected(\.transactionNavigation) var transactionNavigation
   
@@ -129,18 +128,6 @@ private extension PurchaseTransactionDetailView {
             viewModel.goToReceiptScreen(receiptType: receiptType)
           }
         }
-      }
-      
-      if viewModel.isDonationsCard {
-        TextTappable(
-          text: viewModel.disclosureString,
-          fontSize: Constants.FontSize.ultraSmall.value,
-          links: [viewModel.termsLink]
-        ) { tappedString in
-          guard let url = viewModel.getUrl(for: tappedString) else { return }
-          openURL(url)
-        }
-        .frame(height: 200)
       }
     }
   }

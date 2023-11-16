@@ -28,8 +28,9 @@ private extension CashbackTransactionDetail {
           startTitle: LFLocalizable.TransferView.RewardsStatus.pending,
           completedTitle: LFLocalizable.TransferView.RewardsStatus.completed
         )
-        Spacer()
+        
         StatusView(transactionStatus: status)
+          .padding(.top, 16)
       }
     }
   }
