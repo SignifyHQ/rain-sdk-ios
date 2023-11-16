@@ -18,13 +18,13 @@ public struct NSOnboardingContentView: View {
   @Injected(\.customerSupportService)
   var customerSupportService
   
-  var contenViewFactory: NSContentViewFactory
+  var contentViewFactory: NSContentViewFactory
   
   var onRoute: NSOnboardingFlowCoordinator.Route?
   
   public init(onRoute: NSOnboardingFlowCoordinator.Route? = nil) {
     self.onRoute = onRoute
-    self.contenViewFactory = Container.shared.contenViewFactory.resolve(EnvironmentManager())
+    self.contentViewFactory = Container.shared.contenViewFactory.resolve(EnvironmentManager())
   }
   
   public var body: some View {
@@ -41,45 +41,45 @@ public struct NSOnboardingContentView: View {
     Group {
       switch route {
       case .initial:
-        contenViewFactory
+        contentViewFactory
           .createView(type: .initial)
       case .phone:
-        contenViewFactory
+        contentViewFactory
           .createView(type: .phone)
       case .accountLocked:
-        contenViewFactory
+        contentViewFactory
           .createView(type: .accountLocked)
       case .welcome:
-        contenViewFactory
+        contentViewFactory
           .createView(type: .welcome)
       case .kycReview:
-        contenViewFactory
+        contentViewFactory
           .createView(type: .kycReview)
       case .dashboard:
         EmptyView()
       case .question(let questions):
-        contenViewFactory
+        contentViewFactory
           .createView(type: .question(questions))
       case .document:
-        contenViewFactory
+        contentViewFactory
           .createView(type: .document)
       case .zeroHash:
-        contenViewFactory
+        contentViewFactory
           .createView(type: .zeroHash)
       case .information:
-        contenViewFactory
+        contentViewFactory
           .createView(type: .infomation)
       case .accountReject:
-        contenViewFactory
+        contentViewFactory
           .createView(type: .accountReject)
       case .unclear(let message):
-        contenViewFactory
+        contentViewFactory
           .createView(type: .unclear(message))
       case .agreement:
-        contenViewFactory
+        contentViewFactory
           .createView(type: .agreement)
       case .featureAgreement:
-        contenViewFactory
+        contentViewFactory
           .createView(type: .featureAgreement)
       case .popTimeUp:
         ZStack {
@@ -88,8 +88,11 @@ public struct NSOnboardingContentView: View {
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .background(Color.black.edgesIgnoringSafeArea(.all))
       case .documentInReview:
-        contenViewFactory
+        contentViewFactory
           .createView(type: .documentInReview)
+      case .forceUpdate(let model):
+        contentViewFactory
+          .createView(type: .forceUpdate(model))
       }
     }
     .onAppear {

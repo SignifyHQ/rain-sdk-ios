@@ -58,7 +58,6 @@ public final class DashboardRepository: ObservableObject {
   @Published public var netspendCardData: CardData = CardData(cards: [], metaDatas: [], loading: true)
   @Published public var solidCardData: CardData = CardData(cards: [], metaDatas: [], loading: true)
   @Published public var achInformationData: (model: ACHModel, loading: Bool) = (.default, false)
-  @Published public var featureConfig: AccountFeatureConfigData = AccountFeatureConfigData(configJSON: "", isLoading: false)
   
   private var cancellable: Set<AnyCancellable> = []
   
@@ -144,7 +143,6 @@ public extension DashboardRepository {
     apiFetchListConnectedAccount()
     apiFetchACHInfo()
     apiFetchSolidCards()
-    apiFetchFetureConfig()
   }
   
   func initData() {
@@ -152,7 +150,6 @@ public extension DashboardRepository {
     apiFetchListConnectedAccount()
     apiFetchACHInfo()
     apiFetchNetSpendCards()
-    apiFetchFetureConfig()
   }
   
   func refreshListCards() {
@@ -356,20 +353,6 @@ public extension DashboardRepository {
         let achModel = try await getACHInformation()
         achInformationData.model = achModel
       } catch {
-        toastMessage?(error.localizedDescription)
-      }
-    }
-  }
-  
-  func apiFetchFetureConfig() {
-    Task { @MainActor in
-      do {
-        defer {featureConfig.isLoading = false }
-        featureConfig.isLoading = true
-        let entity = try await accountUseCase.getFeatureConfig()
-        featureConfig.configJSON = entity.config ?? ""
-      } catch {
-        log.error(error.localizedDescription)
         toastMessage?(error.localizedDescription)
       }
     }

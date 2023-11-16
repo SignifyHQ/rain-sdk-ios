@@ -3,6 +3,16 @@ import LFUtilities
 
 // sourcery: AutoMockable
 public struct FeatureConfigModel: Codable {
+  public struct BlockingAlert: Codable {
+    public let forcedUpgrade: ForcedUpgrade?
+  }
+  
+  public struct ForcedUpgrade: Codable {
+    public let title: String
+    public let titleButton: String
+    public let description: String
+  }
+  
   public struct PlatformVersion: Codable {
     public let minVersionNumber: Int?
     public let minVersionString: String?
@@ -14,6 +24,7 @@ public struct FeatureConfigModel: Codable {
   
   public let features: [String: AnyCodable]?
   public let version: Version?
+  public let blockingAlert: BlockingAlert?
   
   public var minVersionNumber: Int {
     version?.ios?.minVersionNumber ?? 0

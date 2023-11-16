@@ -29,6 +29,7 @@ final class SolidContentViewFactory {
     case information
     case accountReject
     case unclear(String)
+    case forceUpdate(FeatureConfigModel)
   }
   
   let environmentManager: EnvironmentManager
@@ -69,6 +70,8 @@ final class SolidContentViewFactory {
       return AnyView(accountRejectView)
     case .unclear(let message):
       return AnyView(unclearView(message: message))
+    case .forceUpdate(let model):
+      return AnyView(forceUpdateView(model: model))
     }
   }
 }
@@ -151,5 +154,10 @@ private extension SolidContentViewFactory {
       viewModel: PhoneNumberViewModel(coordinator: baseOnboardingNavigation)
     )
     .environmentObject(environmentManager)
+  }
+  
+  @MainActor
+  func forceUpdateView(model: FeatureConfigModel) -> some View {
+    UpdateAppView(featureConfigModel: model)
   }
 }

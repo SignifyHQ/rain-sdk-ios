@@ -1102,6 +1102,10 @@ contact support.";
 "patriotAct.agreements.partiotActNotice" = "I have reviewed our full USA PATRIOT Act Notice";
 "patriotAct.links.partiotActNotice" = "USA PATRIOT Act Notice";
 
+// MARK: - Update app view
+"updateAppView.title" = "UPDATE APP";
+"updateAppView.message" = "You’re on an older version of the %@ app. Please update to the latest version.";
+
 // MARK: - Common
 
 // Notification Pop up

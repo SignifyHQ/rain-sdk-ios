@@ -18,13 +18,13 @@ public struct SolidOnboardingContentView: View {
   @Injected(\.customerSupportService)
   var customerSupportService
   
-  var contenViewFactory: SolidContentViewFactory
+  var contentViewFactory: SolidContentViewFactory
   
   var onRoute: SolidOnboardingFlowCoordinator.Route?
   
   public init(onRoute: SolidOnboardingFlowCoordinator.Route? = nil) {
     self.onRoute = onRoute
-    self.contenViewFactory = Container.shared.contenViewFactory.resolve(EnvironmentManager())
+    self.contentViewFactory = Container.shared.contenViewFactory.resolve(EnvironmentManager())
   }
   
   public var body: some View {
@@ -40,35 +40,38 @@ public struct SolidOnboardingContentView: View {
     Group {
       switch route {
       case .initial:
-        contenViewFactory
+        contentViewFactory
           .createView(type: .initial)
       case .phone:
-        contenViewFactory
+        contentViewFactory
           .createView(type: .phone)
       case .accountLocked:
-        contenViewFactory
+        contentViewFactory
           .createView(type: .accountLocked)
       case .selecteReward:
-        contenViewFactory
+        contentViewFactory
           .createView(type: .selecteReward)
       case .kycReview:
-        contenViewFactory
+        contentViewFactory
           .createView(type: .kycReview)
       case .dashboard:
-        contenViewFactory
+        contentViewFactory
           .createView(type: .dashboard)
       case .yourAccount:
-        contenViewFactory
+        contentViewFactory
           .createView(type: .yourAccount)
       case .information:
-        contenViewFactory
+        contentViewFactory
           .createView(type: .information)
       case .accountReject:
-        contenViewFactory
+        contentViewFactory
           .createView(type: .accountReject)
       case .unclear(let string):
-        contenViewFactory
+        contentViewFactory
           .createView(type: .unclear(string))
+      case .forceUpdate(let model):
+        contentViewFactory
+          .createView(type: .forceUpdate(model))
       }
     }
     .onAppear {

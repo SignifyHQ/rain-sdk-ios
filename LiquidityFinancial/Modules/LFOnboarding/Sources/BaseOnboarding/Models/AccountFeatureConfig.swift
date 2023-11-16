@@ -31,5 +31,10 @@ public struct AccountFeatureConfigData {
   }
   public var isLoading: Bool
   
-  var featureConfig: FeatureConfigModel?
+  public var featureConfig: FeatureConfigModel?
+  
+  public init(configJSON: String, isLoading: Bool) {
+    self.configJSON = configJSON
+    self.isLoading = isLoading
+  }
 }

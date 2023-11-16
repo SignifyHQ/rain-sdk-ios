@@ -50,6 +50,7 @@ public class SolidOnboardingFlowCoordinator: SolidOnboardingFlowCoordinatorProto
     case information
     case accountReject
     case unclear(String)
+    case forceUpdate(FeatureConfigModel)
     
     public var id: String {
       String(describing: self)
@@ -69,9 +70,15 @@ public class SolidOnboardingFlowCoordinator: SolidOnboardingFlowCoordinatorProto
   @LazyInjected(\.analyticsService) var analyticsService
   @LazyInjected(\.solidOnboardingRepository) var solidOnboardingRepository
   
+  lazy var accountUseCase: AccountUseCaseProtocol = {
+    AccountUseCase(repository: accountRepository)
+  }()
+  
   public let routeSubject: CurrentValueSubject<Route, Never>
   
   private var subscribers: Set<AnyCancellable> = []
+  
+  public var accountFeatureConfigData = AccountFeatureConfigData(configJSON: "", isLoading: false)
   
   public init() {
     self.routeSubject = .init(.initial)
@@ -94,6 +101,11 @@ public class SolidOnboardingFlowCoordinator: SolidOnboardingFlowCoordinatorProto
 #if DEBUG
       let start = CFAbsoluteTimeGetCurrent()
 #endif
+      await apiFetchFetureConfig()
+      if let model = checkForForceUpdateApp() {
+        set(route: .forceUpdate(model))
+        return
+      }
       if checkUserIsValid() {
         await apiFetchCurrentState()
       } else {
@@ -104,6 +116,29 @@ public class SolidOnboardingFlowCoordinator: SolidOnboardingFlowCoordinatorProto
       let diff = CFAbsoluteTimeGetCurrent() - start
       log.debug("Took \(diff) seconds")
 #endif
+    }
+  }
+  
+  @discardableResult
+  private func checkForForceUpdateApp() -> FeatureConfigModel? {
+    guard let configModel = accountFeatureConfigData.featureConfig else {
+      return nil
+    }
+    let needsForceUpgrade = LFUtilities.marketingVersion.compare(configModel.minVersionString, options: .numeric) == .orderedAscending
+    if needsForceUpgrade {
+      return configModel
+    }
+    return nil
+  }
+  
+  private func apiFetchFetureConfig() async {
+    do {
+      defer { accountFeatureConfigData.isLoading = false }
+      accountFeatureConfigData.isLoading = true
+      let entity = try await accountUseCase.getFeatureConfig()
+      accountFeatureConfigData.configJSON = entity.config ?? ""
+    } catch {
+      log.error(error.localizedDescription)
     }
   }
   

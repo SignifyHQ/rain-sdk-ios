@@ -345,3 +345,19 @@ public extension String {
     }
   }
 }
+
+// MARK:
+public extension String {
+  func htmlAttributedString() -> NSAttributedString? {
+    guard let data = self.data(using: .unicode, allowLossyConversion: true) else {
+      return nil
+    }
+    
+    let att = try? NSAttributedString(
+      data: data,
+      options: [.documentType: NSAttributedString.DocumentType.html, .characterEncoding:String.Encoding.utf8.rawValue],
+      documentAttributes: nil
+    )
+    return att
+  }
+}

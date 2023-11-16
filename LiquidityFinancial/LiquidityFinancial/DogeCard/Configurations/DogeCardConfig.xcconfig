@@ -15,6 +15,7 @@ PATHWARD_USER_URL = https:/$()/dogecard.co/legal#privacy-policy
 PATHWARD_PRIVACY_URL = https:/$()/dogecard.co/legal#privacy-policy
 PATHWARD_DISCLOSURE_URL = https:/$()/dogecard.co/legal#privacy-policy
 SHARE_APP_URL = https:/$()/dogecard.co/app
+APPSTORE_URL = https:/$()/apps.apple.com/us/app/dogecard/id1582868891
 
 REFERRALLINK_DEV = https:/$()/dev-dogecard.d2ap16azx4464o.amplifyapp.com
 REFERRALLINK_PRO = https:/$()/dev-dogecard.d2ap16azx4464o.amplifyapp.com

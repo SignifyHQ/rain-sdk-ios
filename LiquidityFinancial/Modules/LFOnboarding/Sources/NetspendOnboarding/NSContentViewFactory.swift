@@ -23,6 +23,7 @@ final class NSContentViewFactory {
     case document, documentInReview, zeroHash
     case accountReject, unclear(String)
     case agreement, featureAgreement
+    case forceUpdate(FeatureConfigModel)
   }
   
   let environmentManager: EnvironmentManager
@@ -75,6 +76,8 @@ final class NSContentViewFactory {
       return AnyView(featureAgreementView)
     case .initial:
       return AnyView(initialView)
+    case .forceUpdate(let model):
+      return AnyView(forceUpdateView(model: model))
     }
   }
 }
@@ -191,5 +194,10 @@ private extension NSContentViewFactory {
       viewModel: PhoneNumberViewModel(coordinator: baseOnboardingNavigation)
     )
     .environmentObject(environmentManager)
+  }
+  
+  @MainActor
+  func forceUpdateView(model: FeatureConfigModel) -> some View {
+    UpdateAppView(featureConfigModel: model)
   }
 }

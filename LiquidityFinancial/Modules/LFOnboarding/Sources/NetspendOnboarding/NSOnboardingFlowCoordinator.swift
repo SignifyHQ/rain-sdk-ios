@@ -60,6 +60,7 @@ public class NSOnboardingFlowCoordinator: OnboardingFlowCoordinatorProtocol {
     case featureAgreement
     case popTimeUp
     case documentInReview
+    case forceUpdate(FeatureConfigModel)
     
     public var id: String {
       String(describing: self)
@@ -107,7 +108,13 @@ public class NSOnboardingFlowCoordinator: OnboardingFlowCoordinatorProtocol {
     NSGetOnboardingStepUseCase(repository: nsOnboardingRepository)
   }()
   
+  lazy var accountUseCase: AccountUseCaseProtocol = {
+    AccountUseCase(repository: accountRepository)
+  }()
+  
   public let routeSubject: CurrentValueSubject<Route, Never>
+  
+  public var accountFeatureConfigData = AccountFeatureConfigData(configJSON: "", isLoading: false)
   
   public init() {
     self.routeSubject = .init(.initial)
@@ -123,6 +130,11 @@ public class NSOnboardingFlowCoordinator: OnboardingFlowCoordinatorProtocol {
 #if DEBUG
       let start = CFAbsoluteTimeGetCurrent()
 #endif
+      await apiFetchFetureConfig()
+      if let model = checkForForceUpdateApp() {
+        set(route: .forceUpdate(model))
+        return
+      }
       if checkUserIsValid() {
         await apiFetchCurrentState()
       } else {
@@ -153,6 +165,29 @@ public class NSOnboardingFlowCoordinator: OnboardingFlowCoordinatorProtocol {
       }
       
       forcedLogout()
+    }
+  }
+  
+  @discardableResult
+  private func checkForForceUpdateApp() -> FeatureConfigModel? {
+    guard let configModel = accountFeatureConfigData.featureConfig else {
+      return nil
+    }
+    let needsForceUpgrade = LFUtilities.marketingVersion.compare(configModel.minVersionString, options: .numeric) == .orderedAscending
+    if needsForceUpgrade {
+      return configModel
+    }
+    return nil
+  }
+  
+  private func apiFetchFetureConfig() async {
+    do {
+      defer { accountFeatureConfigData.isLoading = false }
+      accountFeatureConfigData.isLoading = true
+      let entity = try await accountUseCase.getFeatureConfig()
+      accountFeatureConfigData.configJSON = entity.config ?? ""
+    } catch {
+      log.error(error.localizedDescription)
     }
   }
   

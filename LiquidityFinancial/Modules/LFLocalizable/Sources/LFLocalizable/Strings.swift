@@ -2877,6 +2877,14 @@ public enum LFLocalizable {
     /// CHOOSE BETWEEN
     public static let title = LFLocalizable.tr("Localizable", "unspecified_rewards.title", fallback: "CHOOSE BETWEEN")
   }
+  public enum UpdateAppView {
+    /// You’re on an older version of the %@ app. Please update to the latest version.
+    public static func message(_ p1: Any) -> String {
+      return LFLocalizable.tr("Localizable", "updateAppView.message", String(describing: p1), fallback: "You’re on an older version of the %@ app. Please update to the latest version.")
+    }
+    /// UPDATE APP
+    public static let title = LFLocalizable.tr("Localizable", "updateAppView.title", fallback: "UPDATE APP")
+  }
   public enum UploadDocument {
     public enum AddressRequirement {
       /// 401 statement
