@@ -22,6 +22,8 @@ public enum AccountRoute {
   case getUserRewards
   case getFeatureConfig
   case createSupportTicket(title: String?, description: String?, type: String)
+  case getMigrationStatus
+  case requestMigration
 }
 
 extension AccountRoute: LFRoute {
@@ -60,6 +62,10 @@ extension AccountRoute: LFRoute {
       return "/v1/feature-config"
     case .createSupportTicket:
       return "/v1/support-tickets"
+    case .getMigrationStatus:
+      return "/v1/user/migration-status"
+    case .requestMigration:
+      return "/v1/user/request-migration"
     }
   }
   
@@ -70,7 +76,8 @@ extension AccountRoute: LFRoute {
         .createWalletAddress,
         .addToWaitList,
         .createSupportTicket,
-        .updateSelectedRewardCurrency:
+        .updateSelectedRewardCurrency,
+        .requestMigration:
       return .POST
     case .getUser,
         .getTransactions,
@@ -78,7 +85,8 @@ extension AccountRoute: LFRoute {
         .getWalletAddresses,
         .getReferralCampaign,
         .getAvailableRewardCurrencies,
-        .getSelectedRewardCurrency:
+        .getSelectedRewardCurrency,
+        .getMigrationStatus:
       return .GET
     case .updateWalletAddress:
       return .PATCH
@@ -112,7 +120,9 @@ extension AccountRoute: LFRoute {
         .getSelectedRewardCurrency,
         .getReferralCampaign,
         .getUserRewards,
-        .getFeatureConfig:
+        .getFeatureConfig,
+        .getMigrationStatus,
+        .requestMigration:
       return nil
     case .getTransactions(_, let currencyType, let transactionTypes, let limit, let offset):
       return [
@@ -164,7 +174,9 @@ extension AccountRoute: LFRoute {
         .getWalletAddresses,
         .deleteWalletAddresses,
         .getUserRewards,
-        .getFeatureConfig:
+        .getFeatureConfig,
+        .getMigrationStatus,
+        .requestMigration:
       return nil
     case .getTransactions,
         .getTransactionDetail,

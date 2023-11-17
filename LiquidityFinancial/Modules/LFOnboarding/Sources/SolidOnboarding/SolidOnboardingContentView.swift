@@ -72,6 +72,9 @@ public struct SolidOnboardingContentView: View {
       case .forceUpdate(let model):
         contentViewFactory
           .createView(type: .forceUpdate(model))
+      case .accountMigration:
+        contentViewFactory
+          .createView(type: .accountMigration)
       }
     }
     .onAppear {

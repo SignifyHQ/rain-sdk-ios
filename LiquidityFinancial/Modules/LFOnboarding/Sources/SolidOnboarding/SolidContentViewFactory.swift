@@ -30,6 +30,7 @@ final class SolidContentViewFactory {
     case accountReject
     case unclear(String)
     case forceUpdate(FeatureConfigModel)
+    case accountMigration
   }
   
   let environmentManager: EnvironmentManager
@@ -72,6 +73,8 @@ final class SolidContentViewFactory {
       return AnyView(unclearView(message: message))
     case .forceUpdate(let model):
       return AnyView(forceUpdateView(model: model))
+    case .accountMigration:
+      return AnyView(accountMigrationView)
     }
   }
 }
@@ -159,5 +162,10 @@ private extension SolidContentViewFactory {
   @MainActor
   func forceUpdateView(model: FeatureConfigModel) -> some View {
     UpdateAppView(featureConfigModel: model)
+  }
+  
+  @MainActor
+  var accountMigrationView: some View {
+    AccountMigrationView(viewModel: AccountMigrationViewModel())
   }
 }

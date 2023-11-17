@@ -856,6 +856,10 @@ contact support.";
 "updateAppView.title" = "UPDATE APP";
 "updateAppView.message" = "You’re on an older version of the %@ app. Please update to the latest version.";
 
+// MARK: - Account migration view
+"accountMigrationView.title" = "ACCOUNT IN MIGRATION";
+"accountMigrationView.description" = "Your account is currently in the migration process. Please be patient; you will be able to log in to your account soon.";
+
 // MARK: - Common
 
 // Notification Pop up

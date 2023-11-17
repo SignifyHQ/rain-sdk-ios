@@ -90,4 +90,12 @@ public class AccountRepository: AccountRepositoryProtocol {
   public func createSupportTicket(title: String? = .empty, description: String? = .empty, type: String) async throws -> SupportTicketEntity {
     try await accountAPI.createSupportTicket(title: title, description: description, type: type)
   }
+  
+  public func getMigrationStatus() async throws -> MigrationStatusEntity {
+    try await accountAPI.getMigrationStatus()
+  }
+  
+  public func requestMigration() async throws -> MigrationStatusEntity {
+    try await accountAPI.requestMigration()
+  }
 }

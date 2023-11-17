@@ -51,6 +51,7 @@ public class SolidOnboardingFlowCoordinator: SolidOnboardingFlowCoordinatorProto
     case accountReject
     case unclear(String)
     case forceUpdate(FeatureConfigModel)
+    case accountMigration
     
     public var id: String {
       String(describing: self)
@@ -72,6 +73,10 @@ public class SolidOnboardingFlowCoordinator: SolidOnboardingFlowCoordinatorProto
   
   lazy var accountUseCase: AccountUseCaseProtocol = {
     AccountUseCase(repository: accountRepository)
+  }()
+  
+  lazy var getMigrationStatusUseCase: GetMigrationStatusUseCaseProtocol = {
+    GetMigrationStatusUseCase(repository: accountRepository)
   }()
   
   public let routeSubject: CurrentValueSubject<Route, Never>
@@ -168,8 +173,11 @@ public class SolidOnboardingFlowCoordinator: SolidOnboardingFlowCoordinatorProto
   
   public func handlerOnboardingStep() async throws {
     let onboardingStep = try await solidOnboardingRepository.getOnboardingStep()
+    let status = try await getMigrationStatusUseCase.execute()
     
-    if onboardingStep.processSteps.isEmpty {
+    if status.migrationNeeded && !status.migrated {
+      set(route: .accountMigration)
+    } else if onboardingStep.processSteps.isEmpty {
       try await fetchUserReviewStatus()
     } else {
       let states = onboardingStep.mapToEnum()
@@ -194,7 +202,11 @@ public class SolidOnboardingFlowCoordinator: SolidOnboardingFlowCoordinatorProto
   
   public func fetchUserReviewStatus() async throws {
     let user = try await accountRepository.getUser()
-    if let accountReviewStatus = user.accountReviewStatusEnum {
+    let status = try await getMigrationStatusUseCase.execute()
+    
+    if status.migrationNeeded && !status.migrated {
+      set(route: .accountMigration)
+    } else if let accountReviewStatus = user.accountReviewStatusEnum {
       switch accountReviewStatus {
       case .approved:
         set(route: .dashboard)

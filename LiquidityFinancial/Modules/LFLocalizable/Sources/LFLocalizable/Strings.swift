@@ -270,6 +270,12 @@ public enum LFLocalizable {
       public static let title = LFLocalizable.tr("Localizable", "accountLocked.contactSupport.title", fallback: "CONTACT SUPPORT")
     }
   }
+  public enum AccountMigrationView {
+    /// Your account is currently in the migration process. Please be patient; you will be able to log in to your account soon.
+    public static let description = LFLocalizable.tr("Localizable", "accountMigrationView.description", fallback: "Your account is currently in the migration process. Please be patient; you will be able to log in to your account soon.")
+    /// ACCOUNT IN MIGRATION
+    public static let title = LFLocalizable.tr("Localizable", "accountMigrationView.title", fallback: "ACCOUNT IN MIGRATION")
+  }
   public enum AccountView {
     /// ATM’s Nearby
     public static let atm = LFLocalizable.tr("Localizable", "accountView.atm", fallback: "ATM’s Nearby")

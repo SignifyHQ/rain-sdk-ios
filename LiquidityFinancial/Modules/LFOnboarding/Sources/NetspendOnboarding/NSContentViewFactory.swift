@@ -24,6 +24,7 @@ final class NSContentViewFactory {
     case accountReject, unclear(String)
     case agreement, featureAgreement
     case forceUpdate(FeatureConfigModel)
+    case accountMigration
   }
   
   let environmentManager: EnvironmentManager
@@ -78,6 +79,8 @@ final class NSContentViewFactory {
       return AnyView(initialView)
     case .forceUpdate(let model):
       return AnyView(forceUpdateView(model: model))
+    case .accountMigration:
+      return AnyView(accountMigrationView)
     }
   }
 }
@@ -199,5 +202,10 @@ private extension NSContentViewFactory {
   @MainActor
   func forceUpdateView(model: FeatureConfigModel) -> some View {
     UpdateAppView(featureConfigModel: model)
+  }
+  
+  @MainActor
+  var accountMigrationView: some View {
+    AccountMigrationView(viewModel: AccountMigrationViewModel())
   }
 }

@@ -145,4 +145,22 @@ extension LFCoreNetwork: AccountAPIProtocol where R == AccountRoute {
       decoder: .apiDecoder
     )
   }
+  
+  public func getMigrationStatus() async throws -> APIMigrationStatus {
+    try await request(
+      .getMigrationStatus,
+      target: APIMigrationStatus.self,
+      failure: LFErrorObject.self,
+      decoder: .apiDecoder
+    )
+  }
+  
+  public func requestMigration() async throws -> APIMigrationStatus {
+    try await request(
+      .requestMigration,
+      target: APIMigrationStatus.self,
+      failure: LFErrorObject.self,
+      decoder: .apiDecoder
+    )
+  }
 }
