@@ -10,9 +10,9 @@ import UIComponents
 import LFRewards
 
 extension Container {
-  var contenViewFactory: ParameterFactory<(EnvironmentManager), SolidContentViewFactory> {
-    self { environment in
-      SolidContentViewFactory(container: self, environment: environment)
+  var contenViewFactory: Factory<SolidContentViewFactory> {
+    self {
+      SolidContentViewFactory(container: self)
     }.cached
   }
 }
@@ -33,19 +33,16 @@ final class SolidContentViewFactory {
     case accountMigration
   }
   
-  let environmentManager: EnvironmentManager
   let flowCoordinator: SolidOnboardingFlowCoordinatorProtocol
   let baseOnboardingNavigation: BaseOnboardingDestinationObservable
   let accountDataManager: AccountDataStorageProtocol
   
   init(
-    container: Container,
-    environment: EnvironmentManager
+    container: Container
   ) {
     baseOnboardingNavigation = container.baseOnboardingDestinationObservable.callAsFunction()
     flowCoordinator = container.solidOnboardingFlowCoordinator.callAsFunction()
     accountDataManager = container.accountDataManager.callAsFunction()
-    environmentManager = environment
   }
   
   @MainActor
@@ -156,7 +153,6 @@ private extension SolidContentViewFactory {
     PhoneNumberView(
       viewModel: PhoneNumberViewModel(coordinator: baseOnboardingNavigation)
     )
-    .environmentObject(environmentManager)
   }
   
   @MainActor

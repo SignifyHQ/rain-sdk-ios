@@ -11,13 +11,14 @@ import Services
 import NetspendSdk
 import ExternalFundingData
 import AccountService
+import EnvironmentService
 
 class SelectBankAccountViewModel: ObservableObject {
   
   var networkEnvironment: NetworkEnvironment {
-    EnvironmentManager().networkEnvironment
+    environmentService.networkEnvironment
   }
-  
+  @LazyInjected(\.environmentService) var environmentService
   @LazyInjected(\.externalFundingRepository) var externalFundingRepository
   @LazyInjected(\.accountDataManager) var accountDataManager
   @LazyInjected(\.biometricsService) var biometricsService

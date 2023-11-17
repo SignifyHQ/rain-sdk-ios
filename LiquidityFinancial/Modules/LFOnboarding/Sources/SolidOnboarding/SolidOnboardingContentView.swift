@@ -7,6 +7,7 @@ import UIComponents
 import LFRewards
 import LFLocalizable
 import BaseOnboarding
+import EnvironmentService
 
 public struct SolidOnboardingContentView: View {
   @StateObject
@@ -18,13 +19,16 @@ public struct SolidOnboardingContentView: View {
   @Injected(\.customerSupportService)
   var customerSupportService
   
+  @Injected(\.environmentService)
+  var environmentService
+  
   var contentViewFactory: SolidContentViewFactory
   
   var onRoute: SolidOnboardingFlowCoordinator.Route?
   
   public init(onRoute: SolidOnboardingFlowCoordinator.Route? = nil) {
     self.onRoute = onRoute
-    self.contentViewFactory = Container.shared.contenViewFactory.resolve(EnvironmentManager())
+    self.contentViewFactory = Container.shared.contenViewFactory.resolve()
   }
   
   public var body: some View {

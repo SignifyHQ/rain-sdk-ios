@@ -56,7 +56,7 @@ let package = Package(
       resources: [
         .process("ZResources")
       ]
-    ), 
+    ),
     .target(
       name: "NetspendOnboarding",
       dependencies: [

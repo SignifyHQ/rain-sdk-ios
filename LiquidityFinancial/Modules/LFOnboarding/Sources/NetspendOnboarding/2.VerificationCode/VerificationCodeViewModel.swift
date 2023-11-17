@@ -10,9 +10,11 @@ import AccountData
 import AccountDomain
 import LFLocalizable
 import BaseOnboarding
+import EnvironmentService
 
 @MainActor
 final class VerificationCodeViewModel: VerificationCodeViewModelProtocol {
+  @LazyInjected(\.environmentService) var environmentService
   @LazyInjected(\.accountDataManager) var accountDataManager
   @LazyInjected(\.onboardingRepository) var onboardingRepository
   @LazyInjected(\.nsOnboardingFlowCoordinator) var onboardingFlowCoordinator
@@ -116,7 +118,7 @@ extension VerificationCodeViewModel {
   }
   
   func performAutoGetTwilioMessagesIfNeccessary() {
-    guard EnvironmentManager().networkEnvironment == .productionTest else { return }
+    guard environmentService.networkEnvironment == .productionTest else { return }
     DemoAccountsHelper.shared.getOTPInternal(for: formatPhoneNumber)
       .removeDuplicates()
       .receive(on: DispatchQueue.main)

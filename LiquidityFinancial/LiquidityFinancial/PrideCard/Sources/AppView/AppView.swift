@@ -11,8 +11,6 @@ struct AppView: View {
   @StateObject var viewModel = AppViewModel()
   @Injected(\.accountDataManager) var accountDataManager
   
-  let environmentManager = EnvironmentManager()
-  
   var body: some View {
     buildContent(for: viewModel.route)
   }

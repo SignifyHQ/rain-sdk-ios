@@ -4,6 +4,7 @@ import LFLocalizable
 import LFUtilities
 
 public struct DonationTransactionDetailView: View {
+  @Environment(\.openURL) var openURL
   @StateObject private var viewModel = DonationTransactionDetailViewModel()
   let donation: DonationModel
   
@@ -17,6 +18,7 @@ public struct DonationTransactionDetailView: View {
       amountView
       TransactionCardView(information: cardInformation)
       StatusView(donationStatus: donation.status)
+      disclosureView
     }
     .scrollOnOverflow()
     .defaultToolBar(
@@ -55,6 +57,21 @@ private extension DonationTransactionDetailView {
       Text(LFLocalizable.TransactionDetail.TotalDonated.title(totalDonation))
         .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.ultraSmall.value))
         .foregroundColor(Colors.label.swiftUIColor.opacity(0.6))
+    }
+  }
+  
+  @ViewBuilder
+  var disclosureView: some View {
+    if viewModel.isDonationsCard {
+      TextTappable(
+        text: viewModel.disclosureString,
+        fontSize: Constants.FontSize.ultraSmall.value,
+        links: [viewModel.termsLink]
+      ) { tappedString in
+        guard let url = viewModel.getUrl(for: tappedString) else { return }
+        openURL(url)
+      }
+      .frame(height: 200)
     }
   }
 }

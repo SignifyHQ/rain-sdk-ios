@@ -15,7 +15,13 @@ let package = Package(
     ),
     .library(
       name: "AccountService",
-      targets: ["AccountService"])
+      targets: ["AccountService"]
+    )
+    ,
+    .library(
+      name: "EnvironmentService",
+      targets: ["EnvironmentService"]
+    )
   ],
   dependencies: [
     .package(name: "LFUtilities", path: "../LFUtilities"),
@@ -33,7 +39,7 @@ let package = Package(
     .target(
       name: "Services",
       dependencies: [
-        "LFUtilities", "Factory",
+        "LFUtilities", "Factory", "EnvironmentService",
         .product(name: "Segment", package: "analytics-ios"),
         .product(name: "VGSShowSDK", package: "vgs-show-ios"),
         .product(name: "PinwheelSDK", package: "pinwheel-ios-sdk"),
@@ -53,6 +59,10 @@ let package = Package(
     ),
     .target(
       name: "AccountService",
+      dependencies: ["LFUtilities", "Factory"]
+    ),
+    .target(
+      name: "EnvironmentService",
       dependencies: ["LFUtilities", "Factory"]
     ),
     .binaryTarget(

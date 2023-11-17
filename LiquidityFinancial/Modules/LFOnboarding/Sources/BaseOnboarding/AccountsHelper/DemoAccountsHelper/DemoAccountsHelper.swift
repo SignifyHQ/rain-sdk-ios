@@ -1,8 +1,9 @@
 import Foundation
 import SwiftUI
-import LFUtilities
 import Combine
 import NetworkUtilities
+import Factory
+import LFUtilities
 
 // AppStore reviewers and journalists need to log in into the app without the need of receiving an SMS.
 // Therefore, we are providing them with a set of numbers they can use to log in, which will already have an account set up.
@@ -10,10 +11,25 @@ import NetworkUtilities
 // and obtain the SMS code from there.
 // swiftlint:disable all
 public class DemoAccountsHelper {
-  @EnvironmentObject
-  var environmentManager: EnvironmentManager
+  @LazyInjected(\.environmentService)
+  var environmentService
+  @LazyInjected(\.authorizationManager)
+  var authorizationManager
   
   public static let shared = DemoAccountsHelper()
+  
+  var cancellable: Cancellable?
+  
+  init() {
+    cancellable = NotificationCenter.default
+      .publisher(for: authorizationManager.logOutForcedName)
+      .receive(on: DispatchQueue.main)
+      .sink { [weak self] _ in
+        log.warning("DemoAccountsHelper receive: forcibly logged out the user")
+        guard let account = self?.currentTestAccount else { return }
+        self?.didLogOut(from: account)
+      }
+  }
   
     /// Phone numbers for accounts that should be used on `.productionTest` environment.
   private let testAccounts = [
@@ -41,6 +57,8 @@ public class DemoAccountsHelper {
   private let accountSID = ConfigTwilio.accountSID
   private let authToken = ConfigTwilio.authToken
   
+  private var currentTestAccount: String?
+  
     /// Returns whether this a demo phone number for which the app should intercept SMS from Twilio API.
   public func shouldInterceptSms(number: String) -> Bool {
     testAccounts.contains(number) || liveAcounts.contains(number)
@@ -49,9 +67,11 @@ public class DemoAccountsHelper {
     /// Updates the network environment to the corresponding one if the given `number` is from a demo account.
   public func willSendOtp(for number: String) {
     if testAccounts.contains(number) {
-      environmentManager.networkEnvironment = .productionTest
+      currentTestAccount = number
+      environmentService.networkEnvironment = .productionTest
     } else if liveAcounts.contains(number) {
-      environmentManager.networkEnvironment = .productionLive
+      currentTestAccount = number
+      environmentService.networkEnvironment = .productionLive
     }
   }
   
@@ -59,7 +79,7 @@ public class DemoAccountsHelper {
     /// is able to create a _real_ account now.
   public func didLogOut(from number: String) {
     if testAccounts.contains(number) {
-      environmentManager.networkEnvironment = .productionLive
+      environmentService.networkEnvironment = .productionLive
     }
   }
   

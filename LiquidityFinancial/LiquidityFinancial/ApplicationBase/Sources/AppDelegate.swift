@@ -4,10 +4,12 @@ import Services
 import Factory
 import AuthorizationManager
 import LFUtilities
+import EnvironmentService
 
 class AppDelegate: UIResponder, UIApplicationDelegate {
   
   @LazyInjected(\.authorizationManager) var authorizationManager
+  @LazyInjected(\.environmentService) var environmentService
   
   var navigationContainer: NavigationContainer!
   
@@ -71,6 +73,6 @@ extension AppDelegate {
 
 extension AppDelegate {
   func setupServices() {
-    Container.shared.customerSupportService.resolve().setUp(environment: EnvironmentManager().networkEnvironment)
+    Container.shared.customerSupportService.resolve().setUp(environment: environmentService.networkEnvironment)
   }
 }

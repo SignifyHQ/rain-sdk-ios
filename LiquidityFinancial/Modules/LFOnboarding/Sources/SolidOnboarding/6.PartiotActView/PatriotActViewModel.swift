@@ -4,9 +4,10 @@ import AccountData
 import AccountDomain
 import LFLocalizable
 import LFUtilities
+import EnvironmentService
 
 class PatriotActViewModel: ObservableObject {
-  
+  @LazyInjected(\.environmentService) var environmentService
   @LazyInjected(\.accountRepository) var accountRepository
   @LazyInjected(\.customerSupportService) var customerSupportService
   

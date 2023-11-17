@@ -5,6 +5,7 @@ import DatadogRUM
 import DatadogLogs
 import DatadogTrace
 import DatadogCrashReporting
+import EnvironmentService
 
 //swiftlint:disable convenience_type
 final class DataDogService {

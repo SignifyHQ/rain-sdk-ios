@@ -4,18 +4,18 @@ import AccountData
 import AccountDomain
 import LFUtilities
 import Services
+import EnvironmentService
 
 @MainActor
 final class ReferralsViewModel: ObservableObject {
   @LazyInjected(\.accountDataManager) var accountDataManager
   @LazyInjected(\.accountRepository) var accountRepository
   @LazyInjected(\.analyticsService) var analyticsService
+  @LazyInjected(\.environmentService) var environmentService
 
   @Published var status = Status.loading
   @Published var showShareSheet = false
   @Published var showCopyToast = false
-  
-  private lazy var enviromentManager = EnvironmentManager()
   
   lazy var accountUseCase: AccountUseCase = {
     AccountUseCase(repository: accountRepository)
@@ -23,7 +23,7 @@ final class ReferralsViewModel: ObservableObject {
   
   private var referralLink = ""
   private var referralLinkEnvironment: String {
-    enviromentManager.networkEnvironment == .productionTest ? LFUtilities.referrallinkDev : LFUtilities.referrallinkProd
+    environmentService.networkEnvironment == .productionTest ? LFUtilities.referrallinkDev : LFUtilities.referrallinkProd
   }
 }
 

@@ -7,11 +7,12 @@ import BaseOnboarding
 import Factory
 import AccountDomain
 import UIComponents
+import EnvironmentService
 
 extension Container {
-  var contenViewFactory: ParameterFactory<(EnvironmentManager), NSContentViewFactory> {
-    self { (environment) in
-      NSContentViewFactory(container: self, environment: environment)
+  var contenViewFactory: Factory<NSContentViewFactory> {
+    self {
+      NSContentViewFactory(container: self)
     }
   }
 }
@@ -27,19 +28,16 @@ final class NSContentViewFactory {
     case accountMigration
   }
   
-  let environmentManager: EnvironmentManager
   let flowCoordinator: OnboardingFlowCoordinatorProtocol
   let baseOnboardingNavigation: BaseOnboardingDestinationObservable
   let accountDataManager: AccountDataStorageProtocol
   
   init(
-    container: Container,
-    environment: EnvironmentManager
+    container: Container
   ) {
     baseOnboardingNavigation = container.baseOnboardingDestinationObservable.callAsFunction()
     flowCoordinator = container.nsOnboardingFlowCoordinator.callAsFunction()
     accountDataManager = container.accountDataManager.callAsFunction()
-    environmentManager = environment
   }
   
   @MainActor
@@ -196,7 +194,6 @@ private extension NSContentViewFactory {
     PhoneNumberView(
       viewModel: PhoneNumberViewModel(coordinator: baseOnboardingNavigation)
     )
-    .environmentObject(environmentManager)
   }
   
   @MainActor

@@ -7,18 +7,18 @@ import LFAccessibility
 import Services
 import Combine
 import Factory
+import EnvironmentService
 
 public struct PhoneNumberView<ViewModel: PhoneNumberViewModelProtocol>: View {
   
-  @EnvironmentObject
-  var environmentManager: EnvironmentManager
   @Environment(\.openURL)
   var openURL
   @Environment(\.presentationMode)
   var presentation
   @Injected(\.analyticsService)
   var analyticsService
-  
+  @Injected(\.environmentService)
+  var environmentService
   @StateObject
   var viewModel: ViewModel
   
@@ -62,27 +62,27 @@ public struct PhoneNumberView<ViewModel: PhoneNumberViewModelProtocol>: View {
       keyboardFocus = false
     }
     .overlay(alignment: .topTrailing, content: {
-        Button {
-          keyboardFocus = false
-          DispatchQueue.main.asyncAfter(wallDeadline: .now() + 0.5) {
-            viewModel.openSupportScreen()
-          }
-        } label: {
-          GenImages.CommonImages.icChat.swiftUIImage
-            .foregroundColor(Colors.label.swiftUIColor)
+      Button {
+        keyboardFocus = false
+        DispatchQueue.main.asyncAfter(wallDeadline: .now() + 0.5) {
+          viewModel.openSupportScreen()
         }
-        .padding(.top, 28)
-        .padding(.leading, 16)
+      } label: {
+        GenImages.CommonImages.icChat.swiftUIImage
+          .foregroundColor(Colors.label.swiftUIColor)
+      }
+      .padding(.top, 28)
+      .padding(.leading, 16)
     })
     .padding(.horizontal, 26)
     .onChange(of: viewModel.phoneNumber, perform: viewModel.onChangedPhoneNumber)
     .background(Colors.background.swiftUIColor)
     .navigationBarBackButtonHidden()
     .navigationLink(item: $baseOnboardingDestinationObservable.phoneNumberDestinationView) { item in
-        switch item {
-        case let .verificationCode(destinationView):
-          destinationView
-        }
+      switch item {
+      case let .verificationCode(destinationView):
+        destinationView
+      }
     }
     .popup(item: $viewModel.toastMessage, style: .toast) {
       ToastView(toastMessage: $0)
@@ -92,17 +92,14 @@ public struct PhoneNumberView<ViewModel: PhoneNumberViewModelProtocol>: View {
     })
     .navigationBarHidden(true)
     .track(name: String(describing: type(of: self)))
-    .onReceive(environmentManager.$networkEnvironment) { environment in
-      viewModel.environmentChange(environment: environment)
-    }
   }
 }
 
-  // MARK: - View Components
+// MARK: - View Components
 private extension PhoneNumberView {
   @ViewBuilder var secretModeView: some View {
     if viewModel.isSecretMode {
-      Picker(LFLocalizable.PhoneNumber.Environment.title, selection: $environmentManager.networkEnvironment) {
+      Picker(LFLocalizable.PhoneNumber.Environment.title, selection: $viewModel.networkEnvironment) {
         Text(NetworkEnvironment.productionLive.rawValue)
           .tag(NetworkEnvironment.productionLive)
         Text(NetworkEnvironment.productionTest.rawValue)

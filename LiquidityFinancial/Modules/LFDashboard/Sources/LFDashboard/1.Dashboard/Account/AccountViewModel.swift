@@ -11,6 +11,7 @@ import LFBaseBank
 import BaseDashboard
 import AccountDomain
 import AccountData
+import EnvironmentService
 
 @MainActor
 class AccountViewModel: ObservableObject {
@@ -21,6 +22,7 @@ class AccountViewModel: ObservableObject {
   @LazyInjected(\.customerSupportService) var customerSupportService
   @LazyInjected(\.pushNotificationService) var pushNotificationService
   @LazyInjected(\.dashboardRepository) var dashboardRepository
+  @LazyInjected(\.environmentService) var environmentService
   
   @Published var navigation: Navigation?
   
@@ -47,7 +49,7 @@ class AccountViewModel: ObservableObject {
   private var cancellable: Set<AnyCancellable> = []
   
   var networkEnvironment: NetworkEnvironment {
-    EnvironmentManager().networkEnvironment
+    environmentService.networkEnvironment
   }
   
   var showAdminMenu: Bool {

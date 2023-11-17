@@ -23,7 +23,7 @@ final class ProfileViewModel: ObservableObject {
   @LazyInjected(\.dashboardRepository) var dashboardRepository
   
   lazy var deviceDeregisterUseCase: DeviceDeregisterUseCaseProtocol = {
-    return DeviceDeregisterUseCase(repository: devicesRepository)
+    DeviceDeregisterUseCase(repository: devicesRepository)
   }()
   
   var name: String {

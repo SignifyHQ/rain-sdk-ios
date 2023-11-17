@@ -1,11 +1,14 @@
 import Foundation
 import VGSShowSDK
 import LFUtilities
+import EnvironmentService
+import Factory
 
 // swiftlint:disable convenience_type
 public class LFServices {
   
-  static let environment = EnvironmentManager()
+  @LazyInjected(\.environmentService)
+  static var environmentService
   
   public struct Configuration {
     var baseURL: String
@@ -22,20 +25,20 @@ public class LFServices {
     Self.config = config
   }
   
-  public static var vgsConfig: (id: String, env: String) = {
-    switch environment.networkEnvironment {
+  public static var vgsConfig: (id: String, env: String) {
+    switch environmentService.networkEnvironment {
     case .productionLive:
       return (id: Configs.VSGID.live.id, env: VGSEnvironment.live.rawValue)
     case .productionTest:
       return (id: Configs.VSGID.sandbox.id, env: VGSEnvironment.sandbox.rawValue)
     }
-  }()
+  }
   
-  public static let segmentKey: String = {
-    switch environment.networkEnvironment {
+  public static var segmentKey: String {
+    switch environmentService.networkEnvironment {
     case .productionLive: return Configs.Segment.prodKey
     case .productionTest: return Configs.Segment.devKey
     }
-  }()
+  }
   
 }

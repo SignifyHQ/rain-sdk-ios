@@ -2,20 +2,21 @@ import SwiftUI
 import Factory
 import LFUtilities
 import Services
+import EnvironmentService
 
 @MainActor
 final class ReferralsViewModel: ObservableObject {
   @LazyInjected(\.analyticsService) var analyticsService
   @LazyInjected(\.accountDataManager) var accountDataManager
+  @LazyInjected(\.environmentService) var environmentService
   
-  private lazy var enviromentManager = EnvironmentManager()
   @Published var status = Status.loading
   @Published var showShareSheet = false
   @Published var showCopyToast = false
   
   var referralLink = ""
   private var referralLinkEnvironment: String {
-    enviromentManager.networkEnvironment == .productionTest ? LFUtilities.referrallinkDev : LFUtilities.referrallinkProd
+    environmentService.networkEnvironment == .productionTest ? LFUtilities.referrallinkDev : LFUtilities.referrallinkProd
   }
 }
 

@@ -4,6 +4,7 @@ import LFLocalizable
 import SwiftUI
 import Factory
 import Services
+import EnvironmentService
 
 public enum PhoneNumberNavigation {
   case verificationCode(AnyView)
@@ -22,6 +23,8 @@ public protocol PhoneNumberViewModelProtocol: ObservableObject {
   var esignConsent: String { get }
   var privacyPolicy: String { get }
   
+  var networkEnvironment: NetworkEnvironment { get set }
+  
   var destinationObservable: BaseOnboardingDestinationObservable { get }
   init(coordinator: BaseOnboardingDestinationObservable)
   
@@ -30,7 +33,6 @@ public protocol PhoneNumberViewModelProtocol: ObservableObject {
   func openSupportScreen()
   func onActiveSecretMode()
   func onChangedPhoneNumber(newValue: String)
-  func environmentChange(environment: NetworkEnvironment)
 }
 
 public extension String {

@@ -1,5 +1,5 @@
 import Foundation
-import LFUtilities
+import EnvironmentService
 
 public protocol CustomerSupportServiceProtocol {
   var isLoginIdentifiedSuccess: Bool { get }

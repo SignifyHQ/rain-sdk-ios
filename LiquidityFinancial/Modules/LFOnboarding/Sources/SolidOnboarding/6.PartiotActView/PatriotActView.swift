@@ -13,11 +13,10 @@ struct PatriotActView: View {
   var contentViewFactory: SolidContentViewFactory
   
   init(
-    viewModel: PatriotActViewModel = PatriotActViewModel(),
-    contentViewFactory: SolidContentViewFactory = Container.shared.contenViewFactory.callAsFunction(EnvironmentManager())
+    viewModel: PatriotActViewModel = PatriotActViewModel()
   ) {
     _viewModel = .init(wrappedValue: viewModel)
-    self.contentViewFactory = contentViewFactory
+    self.contentViewFactory = Container.shared.contenViewFactory.callAsFunction()
   }
   
   var body: some View {

@@ -7,13 +7,15 @@ import LFUtilities
 import LFLocalizable
 import Services
 import NetspendDomain
+import EnvironmentService
 
 class ConnectedAccountsViewModel: ObservableObject {
 
   var networkEnvironment: NetworkEnvironment {
-    EnvironmentManager().networkEnvironment
+    environmentService.networkEnvironment
   }
   
+  @LazyInjected(\.environmentService) var environmentService
   @LazyInjected(\.externalFundingRepository) var externalFundingRepository
   @LazyInjected(\.netspendDataManager) var netspendDataManager
   @LazyInjected(\.accountDataManager) var accountDataManager

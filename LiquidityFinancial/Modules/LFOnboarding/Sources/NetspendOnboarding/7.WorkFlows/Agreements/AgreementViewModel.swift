@@ -7,9 +7,11 @@ import Services
 import Factory
 import SwiftSoup
 import NetspendDomain
+import EnvironmentService
 
 @MainActor
 public final class AgreementViewModel: ObservableObject {
+  @LazyInjected(\.environmentService) var environmentService
   @LazyInjected(\.customerSupportService) var customerSupportService
   @LazyInjected(\.netspendDataManager) var netspendDataManager
   @LazyInjected(\.accountDataManager) var accountDataManager

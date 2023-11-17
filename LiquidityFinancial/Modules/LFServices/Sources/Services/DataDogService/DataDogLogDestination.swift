@@ -9,8 +9,7 @@ class DataDogLogDestination: BaseDestination {
         with: Logger.Configuration(
             name: "ios-liquidity-logger-new-\(LFUtilities.target?.rawValue.lowercased() ?? "")",
             networkInfoEnabled: true,
-            remoteLogThreshold: .info,
-            consoleLogFormat: .shortWith(prefix: "[iOS App] ")
+            remoteLogThreshold: .info
         )
     )
 

@@ -7,12 +7,22 @@ import OnboardingDomain
 import Factory
 import Services
 import BaseOnboarding
+import EnvironmentService
 
 @MainActor
 final class PhoneNumberViewModel: ObservableObject, PhoneNumberViewModelProtocol {
   unowned let destinationObservable: BaseOnboardingDestinationObservable
   init(coordinator: BaseOnboardingDestinationObservable) {
     self.destinationObservable = coordinator
+  }
+  
+  var networkEnvironment: NetworkEnvironment {
+    get {
+      environmentService.networkEnvironment
+    }
+    set {
+      environmentService.networkEnvironment = newValue
+    }
   }
   
   @Published var isSecretMode: Bool = false
@@ -23,6 +33,7 @@ final class PhoneNumberViewModel: ObservableObject, PhoneNumberViewModelProtocol
   @Published var phoneNumber: String = ""
   @Published var toastMessage: String?
   
+  @LazyInjected(\.environmentService) var environmentService
   @LazyInjected(\.onboardingRepository) var onboardingRepository
   @LazyInjected(\.customerSupportService) var customerSupportService
   @LazyInjected(\.solidOnboardingFlowCoordinator) var solidOnboardingFlowCoordinator
@@ -47,6 +58,10 @@ extension PhoneNumberViewModel {
       isLoading = true
       do {
         let formatPhone = Constants.Default.regionCode.rawValue + phoneNumber
+        
+        /// Updates the network environment to the corresponding one if the given `number` is from a demo account.
+        DemoAccountsHelper.shared.willSendOtp(for: formatPhone.reformatPhone)
+        
         let otpResponse = try await requestOtpUseCase.execute(phoneNumber: formatPhone.reformatPhone)
         let requiredAuth = otpResponse.requiredAuth.map {
           RequiredAuth(rawValue: $0) ?? .unknow
@@ -104,10 +119,6 @@ extension PhoneNumberViewModel {
         self.isShowConditions = isAllowed
       }
     }
-  }
-  
-  func environmentChange(environment: NetworkEnvironment) {
-    self.customerSupportService.setUp(environment: environment)
   }
 }
 

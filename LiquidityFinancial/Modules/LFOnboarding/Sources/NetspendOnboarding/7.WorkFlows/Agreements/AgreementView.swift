@@ -6,6 +6,7 @@ import OnboardingDomain
 import Services
 import BaseOnboarding
 import Factory
+import EnvironmentService
 
 public struct AgreementView: View {
   @Environment(\.dismiss) private var dismiss
@@ -28,7 +29,7 @@ public struct AgreementView: View {
     self.shouldFetchCurrentState = shouldFetchCurrentState
     self.onNext = onNext
     self.onDisappear = onDisappear
-    self.contenViewFactory = container.contenViewFactory.callAsFunction(EnvironmentManager())
+    self.contenViewFactory = container.contenViewFactory.callAsFunction()
   }
   
   public var body: some View {

@@ -4,11 +4,12 @@ import FraudForce
 import LFUtilities
 import Firebase
 import Factory
+import EnvironmentService
 
 public enum KickoffService {
   
   static var networkEnvironment: NetworkEnvironment {
-    EnvironmentManager().networkEnvironment
+    LFServices.environmentService.networkEnvironment
   }
   
   public static func kickoff(application: UIApplication, launchingOptions: [UIApplication.LaunchOptionsKey: Any]?) {

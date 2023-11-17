@@ -3,6 +3,7 @@ import Intercom
 import LFUtilities
 import Factory
 import Combine
+import EnvironmentService
 
 public class IntercomService: CustomerSupportServiceProtocol {
   
@@ -32,6 +33,14 @@ public class IntercomService: CustomerSupportServiceProtocol {
       }
     .store(in: &subscriptions)
     
+    NotificationCenter.default
+      .publisher(for: .environmentChanage)
+      .compactMap({ ($0.userInfo?[Notification.Name.environmentChanage.rawValue] as? NetworkEnvironment) })
+      .sink { [weak self] value in
+        log.debug("Setup environment for IntercomService with: \(value)")
+        self?.setUp(environment: value)
+      }
+      .store(in: &subscriptions)
   }
   
   public func pushEventLogin(with userAttributes: UserAttributes?) {
