@@ -27,9 +27,6 @@ struct EditRewardsView: View {
         ToastView(toastMessage: LFLocalizable.genericErrorMessage)
       }
       .disabled(viewModel.isLoading)
-      .onReceive(NotificationCenter.default.publisher(for: .selectedFundraisersSuccess)) { _ in
-        viewModel.handleSelectedFundraisersSuccess()
-      }
       .navigationLink(item: $viewModel.navigation) { navigation in
         switch navigation {
         case .currentRewards:

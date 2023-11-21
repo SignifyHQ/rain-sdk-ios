@@ -1,9 +1,9 @@
 import SwiftUI
 import Factory
-import NetspendOnboarding
+import SolidOnboarding
 import LFStyleGuide
 import LFUtilities
-import LFDashboard
+import LFRewardDashboard
 import RewardData
 
 struct AppView: View {
@@ -20,15 +20,15 @@ struct AppView: View {
     Group {
       switch route {
       case.onboardingPhone:
-        NSOnboardingContentView(onRoute: .phone)
+        SolidOnboardingContentView(onRoute: .phone)
       case .onboarding:
-        NSOnboardingContentView()
+        SolidOnboardingContentView()
       case .dashboard:
         HomeView(viewModel: HomeViewModel(tabOptions: buildTabOption())) { route in
           viewModel.setDumpOutRoute(route)
         }
       case .dumpOut(let route):
-        NSOnboardingContentView(onRoute: route)
+        SolidOnboardingContentView(onRoute: route)
       }
     }
     .embedInNavigation()

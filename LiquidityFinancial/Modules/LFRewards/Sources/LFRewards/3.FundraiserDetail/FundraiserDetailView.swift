@@ -106,8 +106,9 @@ extension FundraiserDetailView {
             .aspectRatio(contentMode: .fill)
             .applyImageGradient()
         } placeholder: {
-          ModuleImages.causePlaceholderImage.swiftUIImage
+          ModuleImages.bgFundraiserDetailView.swiftUIImage
         }
+        .frame(minHeight: 240)
       }
       
       Button {

@@ -22,4 +22,3 @@ public protocol SolidAccountLimitsEntity {
 public enum SolidSpendingLimitInterval: String {
   case daily, weekly, monthly, yearly, allTime, perTransaction
 }
-

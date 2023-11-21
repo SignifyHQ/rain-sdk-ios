@@ -9,6 +9,7 @@ public struct DefaultAccountService: AccountsServiceProtocol {
     []
   }
   
+  //swiftlint:disable force_unwrapping
   public func getAccountDetail(id: String) async throws -> AccountModel {
     AccountModel(
       id: "",

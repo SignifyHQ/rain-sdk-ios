@@ -99,7 +99,7 @@ public protocol ListCardsViewModelProtocol: ObservableObject {
 }
 
 // MARK: - Functions
-public extension ListCardsViewModelProtocol {  
+public extension ListCardsViewModelProtocol {
   func mapToCardModel(card: CardEntity) -> CardModel {
     CardModel(
       id: card.id,

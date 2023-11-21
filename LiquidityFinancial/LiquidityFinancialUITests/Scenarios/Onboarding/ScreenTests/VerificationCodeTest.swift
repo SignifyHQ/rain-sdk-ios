@@ -1,10 +1,7 @@
 import XCTest
 
 class VerificationCodeTest: BaseAppUITest {
-  override func setUp() {
-    super.setUp()
-  }
-  
+
   func test_uiElements_exists() {
     logoutIfNeeded()
     phoneNumberScreen

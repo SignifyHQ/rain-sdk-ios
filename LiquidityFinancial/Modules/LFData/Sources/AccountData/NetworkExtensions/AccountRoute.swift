@@ -99,13 +99,12 @@ extension AccountRoute: LFRoute {
   }
   
   public var httpHeaders: HttpHeaders {
-    var base = [
+    [
       "Content-Type": "application/json",
       "productId": NetworkUtilities.productID,
       "Authorization": self.needAuthorizationKey,
       "Accept": "application/json"
     ]
-    return base
   }
   
   public var parameters: Parameters? {

@@ -28,7 +28,7 @@ public protocol SolidOnboardingFlowCoordinatorProtocol {
   func set(route: SolidOnboardingFlowCoordinator.Route)
   func apiFetchCurrentState() async
   func handlerOnboardingStep() async throws
-  func fetchUserReviewStatus() async throws
+  func fetchUserReviewStatus(needLoadMigration: Bool) async throws
   func forcedLogout()
 }
 
@@ -173,12 +173,12 @@ public class SolidOnboardingFlowCoordinator: SolidOnboardingFlowCoordinatorProto
   
   public func handlerOnboardingStep() async throws {
     let onboardingStep = try await solidOnboardingRepository.getOnboardingStep()
-    let status = try await getMigrationStatusUseCase.execute()
+    let migrationStatus = try? await getMigrationStatusUseCase.execute()
     
-    if status.migrationNeeded && !status.migrated {
+    if let status = migrationStatus, status.migrationNeeded && !status.migrated {
       set(route: .accountMigration)
     } else if onboardingStep.processSteps.isEmpty {
-      try await fetchUserReviewStatus()
+      try await fetchUserReviewStatus(needLoadMigration: false)
     } else {
       let states = onboardingStep.mapToEnum()
       if states.isEmpty {
@@ -200,11 +200,11 @@ public class SolidOnboardingFlowCoordinator: SolidOnboardingFlowCoordinatorProto
     set(route: .phone)
   }
   
-  public func fetchUserReviewStatus() async throws {
+  public func fetchUserReviewStatus(needLoadMigration: Bool = true) async throws {
     let user = try await accountRepository.getUser()
-    let status = try await getMigrationStatusUseCase.execute()
+    let migrationStatus = try? await getMigrationStatusUseCase.execute()
     
-    if status.migrationNeeded && !status.migrated {
+    if let status = migrationStatus, status.migrationNeeded && !status.migrated && needLoadMigration {
       set(route: .accountMigration)
     } else if let accountReviewStatus = user.accountReviewStatusEnum {
       switch accountReviewStatus {

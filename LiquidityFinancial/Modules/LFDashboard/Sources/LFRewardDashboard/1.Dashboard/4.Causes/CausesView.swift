@@ -33,9 +33,6 @@ struct CausesView: View {
           )
         }
       }
-      .onReceive(NotificationCenter.default.publisher(for: .selectedFundraisersSuccess)) { _ in
-        viewModel.handleSelectedFundraisersSuccess()
-      }
       .popup(isPresented: $viewModel.showError, style: .toast) {
         ToastView(toastMessage: LFLocalizable.genericErrorMessage)
       }

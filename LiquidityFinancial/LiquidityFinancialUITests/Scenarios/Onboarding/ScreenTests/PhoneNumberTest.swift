@@ -1,9 +1,6 @@
 import XCTest
 
 class PhoneNumberTest: BaseAppUITest {
-  override func setUp() {
-    super.setUp()
-  }
   
   func test_uiElements_exists() {
     logoutIfNeeded()

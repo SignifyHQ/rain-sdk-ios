@@ -43,7 +43,7 @@ public enum LFConfiguration {
   }
   // Support for running code as a part of a test
   static var isRunningTests: Bool {
-    return ProcessInfo.processInfo.environment["XCODE_RUNNING_TESTS"] != nil
+    ProcessInfo.processInfo.environment["XCODE_RUNNING_TESTS"] != nil
   }
   
   public static func value<T>(for key: String) throws -> T where T: LosslessStringConvertible & HasDefaultValue {
@@ -73,17 +73,17 @@ public enum LFConfiguration {
 }
 
 public protocol HasDefaultValue {
-    static var defaultValue: Self { get }
+  static var defaultValue: Self { get }
 }
 
 extension Int: HasDefaultValue {
-    static public let defaultValue = 0
+  public static let defaultValue = 0
 }
 
 extension Bool: HasDefaultValue {
-    static public let defaultValue = false
+  public static let defaultValue = false
 }
 
 extension String: HasDefaultValue {
-    static public let defaultValue = ""
+  public static  let defaultValue = ""
 }

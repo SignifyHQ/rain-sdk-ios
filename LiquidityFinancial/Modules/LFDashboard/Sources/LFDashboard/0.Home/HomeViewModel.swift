@@ -31,7 +31,7 @@ public final class HomeViewModel: ObservableObject {
   @Published var toastMessage: String?
 
   lazy var deviceRegisterUseCase: DeviceRegisterUseCaseProtocol = {
-    return DeviceRegisterUseCase(repository: devicesRepository)
+    DeviceRegisterUseCase(repository: devicesRepository)
    }()
   
   public init(tabOptions: [TabOption]) {

@@ -56,9 +56,6 @@ struct DonationsView: View {
     .readGeometry { geo in
       screenSize = geo.size
     }
-    .onReceive(NotificationCenter.default.publisher(for: .selectedFundraisersSuccess)) { _ in
-      viewModel.navigation = nil
-    }
     .sheet(isPresented: $viewModel.showRoundUpDonation, content: {
       RoundUpView(
         viewModel: RoundUpViewModel(onFinish: {

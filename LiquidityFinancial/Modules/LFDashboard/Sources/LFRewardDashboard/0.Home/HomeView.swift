@@ -42,10 +42,6 @@ public struct HomeView: View {
       analyticsService.track(event: AnalyticsEvent(name: .viewedHome))
       UITabBar.appearance().backgroundColor = Color.white.uiColor
       viewModel.onAppear()
-      //TODO: Tony Review for this case on Donation App
-//      dashboardRepository.apiFetchOnboardingState { route in
-//        onChangeRoute?(route)
-//      }
     }
     .toolbar {
       ToolbarItem(placement: .navigationBarTrailing) {

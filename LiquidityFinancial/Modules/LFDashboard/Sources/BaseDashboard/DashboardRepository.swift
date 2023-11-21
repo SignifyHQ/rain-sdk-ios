@@ -380,7 +380,7 @@ public extension DashboardRepository {
   
   func getACHInformation() async throws -> ACHModel {
     switch LFUtilities.target {
-    case .PrideCard:
+    case .PrideCard, .CauseCard:
       var account = self.accountDataManager.fiatAccounts.first
       if account == nil {
         account = try await getFiatAccounts().first

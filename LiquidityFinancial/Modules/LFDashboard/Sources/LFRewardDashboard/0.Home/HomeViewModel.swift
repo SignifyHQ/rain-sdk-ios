@@ -33,7 +33,7 @@ public final class HomeViewModel: ObservableObject {
   @Published var toastMessage: String?
   
   lazy var deviceRegisterUseCase: DeviceRegisterUseCaseProtocol = {
-    return DeviceRegisterUseCase(repository: devicesRepository)
+    DeviceRegisterUseCase(repository: devicesRepository)
   }()
   
   private var subscribers: Set<AnyCancellable> = []
@@ -41,7 +41,11 @@ public final class HomeViewModel: ObservableObject {
   private var isFristLoad: Bool = true
   
   public init(tabOptions: [TabOption]) {
-    self.tabOptions = tabOptions
+    if let reward = rewardDataManager.currentSelectReward {
+      buildTabOption(with: reward)
+    } else {
+      self.tabOptions = tabOptions
+    }
     accountDataManager.userCompleteOnboarding = true
     initData()
   }

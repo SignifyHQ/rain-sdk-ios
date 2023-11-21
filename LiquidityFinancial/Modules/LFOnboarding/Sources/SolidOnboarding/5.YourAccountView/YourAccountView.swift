@@ -85,10 +85,12 @@ extension YourAccountView {
         Group {
           if viewModel.isEsignatureAccepted {
             GenImages.Images.termsCheckboxSelected.swiftUIImage
-              .resizable().frame(width: 24, height: 24)
+              .resizable()
+              .frame(width: 24, height: 24)
           } else {
             GenImages.CommonImages.termsCheckboxDeselected.swiftUIImage
-              .resizable().frame(width: 24, height: 24)
+              .resizable()
+              .frame(width: 24, height: 24)
               .foregroundColor(Colors.Buttons.highlightButton.swiftUIColor)
           }
         }
@@ -113,10 +115,12 @@ extension YourAccountView {
         Group {
           if viewModel.isTermsPrivacyAccepted {
             GenImages.Images.termsCheckboxSelected.swiftUIImage
-              .resizable().frame(width: 24, height: 24)
+              .resizable()
+              .frame(width: 24, height: 24)
           } else {
             GenImages.CommonImages.termsCheckboxDeselected.swiftUIImage
-              .resizable().frame(width: 24, height: 24)
+              .resizable()
+              .frame(width: 24, height: 24)
               .foregroundColor(Colors.Buttons.highlightButton.swiftUIColor)
           }
         }

@@ -4,12 +4,14 @@ import RewardData
 import RewardDomain
 import Factory
 import LFRewards
+import Combine
 
 @MainActor
 final class EditRewardsViewModel: ObservableObject {
   private var total: Int = 0
   private var offset = 0
   private var limit = 100
+  private var subscribers: Set<AnyCancellable> = []
   
   @Published var rowModel: [RewardsViewModel] = []
   @Published var showError = false
@@ -45,6 +47,7 @@ final class EditRewardsViewModel: ObservableObject {
       RewardsViewModel(rewardSelecting: .donation, isSelect: false)
     ]
     updateRewardSelected(rewardTypeEntity: rewardDataManager.currentSelectReward)
+    handleSelectedFundraisersSuccess()
   }
 }
 
@@ -145,10 +148,16 @@ extension EditRewardsViewModel {
   }
   
   func handleSelectedFundraisersSuccess() {
-    rewardDataManager.update(currentSelectReward: APIRewardType.donation)
-    updateRewardSelected(rewardTypeEntity: APIRewardType.donation)
-    LFUtilities.popToRootView()
-    navigation = nil
+    NotificationCenter.default.publisher(for: .selectedFundraisersSuccess)
+      .delay(for: 0.65, scheduler: RunLoop.main)
+      .sink { [weak self] _ in
+        guard let self else { return }
+        self.rewardDataManager.update(currentSelectReward: APIRewardType.donation)
+        updateRewardSelected(rewardTypeEntity: APIRewardType.donation)
+        LFUtilities.popToRootView()
+        self.navigation = nil
+      }
+      .store(in: &subscribers)
   }
   
   func onSelectedReward(_ item: RewardsViewModel) {

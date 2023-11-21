@@ -11,7 +11,6 @@ extension APIGetApplePayToken {
   }
 }
 
-
 public struct APIApplePayToken: Decodable, ApplePayTokenEntity {
   public var cardId: String?
   public var walletProvider: String?

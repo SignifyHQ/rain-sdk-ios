@@ -50,6 +50,7 @@ internal enum ModuleImages {
     internal static let shareWhatsapp = ImageAsset(name: "shareWhatsapp")
   }
   internal static let bgCashbackCard = ImageAsset(name: "bg_cashbackCard")
+  internal static let bgFundraiserDetailView = ImageAsset(name: "bg_fundraiser_detail_view")
   internal static let bgHeaderSelectReward = ImageAsset(name: "bg_header_select_reward")
   internal static let bgUnspecifiedRewards = ImageAsset(name: "bg_unspecifiedRewards")
   internal static let causePlaceholderImage = ImageAsset(name: "cause_placeholder_image")

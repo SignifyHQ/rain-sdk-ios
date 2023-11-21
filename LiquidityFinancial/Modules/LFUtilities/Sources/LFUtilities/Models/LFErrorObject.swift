@@ -14,7 +14,7 @@ public struct LFErrorObject: Codable, LocalizedError {
     key: String? = nil,
     sysMessage: String? = nil,
     code: String? = nil,
-    errorDetail: [String : AnyCodable]? = nil
+    errorDetail: [String: AnyCodable]? = nil
   ) {
     self.requestId = requestId
     self.message = message

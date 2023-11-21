@@ -3,9 +3,9 @@ import UIKit
 import Combine
 import LFUtilities
 import Factory
-import NetspendOnboarding
+import SolidOnboarding
 import AccountService
-import NetSpendData
+import SolidData
 import ZerohashData
 
 class AppViewModel: ObservableObject {
@@ -19,6 +19,7 @@ class AppViewModel: ObservableObject {
   init() {
     coordinator
       .routeSubject
+      .removeDuplicates()
       .receive(on: DispatchQueue.main)
       .sink { [weak self] route in
         self?.setRoute(route)
@@ -34,14 +35,14 @@ class AppViewModel: ObservableObject {
   
   @MainActor func registerInjection() {
     Container.shared.fiatAccountService.register {
-      NetspendAccountService()
+      SolidAccountService()
     }
     Container.shared.cryptoAccountService.register {
       ZerohashAccountService()
     }
   }
   
-  func setDumpOutRoute(_ route: NSOnboardingFlowCoordinator.Route) {
+  func setDumpOutRoute(_ route: SolidOnboardingFlowCoordinator.Route) {
     setRoute(.dumpOut(route))
   }
   

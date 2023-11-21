@@ -169,6 +169,7 @@ public extension SolidListCardsViewModel {
   }
   
   func getCardLimit(cardID: String) {
+    guard !cardID.isEmpty else { return }
     Task { @MainActor in
       do {
         let cardLimits = try await getCardLimitsUseCase.execute(cardID: cardID)

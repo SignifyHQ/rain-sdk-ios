@@ -20,6 +20,8 @@ class PrideCardCauseViewModel: ObservableObject {
   @LazyInjected(\.rewardRepository) var rewardRepository
   @LazyInjected(\.rewardDataManager) var rewardDataManager
   
+  private var subscribers: Set<AnyCancellable> = []
+  
   lazy var rewardUseCase: RewardUseCase = {
     RewardUseCase(repository: rewardRepository)
   }()
@@ -46,9 +48,14 @@ class PrideCardCauseViewModel: ObservableObject {
   }
 
   func handleSelectedFundraisersSuccess() {
-    guard self.rewardDataManager.fundraisersDetail != nil else { return }
-    LFUtilities.popToRootView()
-    self.navigation = nil
+    NotificationCenter.default.publisher(for: .selectedFundraisersSuccess)
+      .delay(for: 0.65, scheduler: RunLoop.main)
+      .sink { [weak self] _ in
+        guard let self, self.rewardDataManager.fundraisersDetail != nil else { return }
+        LFUtilities.popToRootView()
+        self.navigation = nil
+      }
+      .store(in: &subscribers)
   }
 }
 

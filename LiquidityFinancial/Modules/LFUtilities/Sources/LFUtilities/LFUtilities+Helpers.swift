@@ -63,14 +63,14 @@ extension LFUtilities {
 
       formatter.generatesDecimalNumbers = true
 
-      decimalAmountString = String(describing: formatter.string(from: amount)!)
+      decimalAmountString = String(describing: formatter.string(from: amount) ?? "N/A")
 
     } else {
       formatter.maximumFractionDigits = 0
       formatter.minimumFractionDigits = 0
       formatter.generatesDecimalNumbers = false
 
-      decimalAmountString = String(describing: formatter.string(from: amount)!)
+      decimalAmountString = String(describing: formatter.string(from: amount) ?? "N/A")
     }
 
     return currency == "$" ? "\(currency)\(decimalAmountString)" : "\(decimalAmountString)"

@@ -93,7 +93,7 @@ extension DonationsViewModel {
   func selectCharityTapped() {
     guard let causesEntity = rewardDataManager.rewardCategories else { return }
     let causes = causesEntity.data.compactMap({ CauseModel(rewardData: $0) })
-    self.navigation = .causeCategories(causes)
+    navigation = .causeCategories(causes)
   }
   
   func transactionItemTapped(donationID: String, fundraisersID: String) {
@@ -102,10 +102,11 @@ extension DonationsViewModel {
   
   func handleSelectedFundraisersSuccess() {
     NotificationCenter.default.publisher(for: .selectedFundraisersSuccess)
-      .receive(on: DispatchQueue.main)
+      .delay(for: 0.65, scheduler: RunLoop.main)
       .sink { [weak self] _ in
         guard let entity = self?.rewardDataManager.fundraisersDetail else { return }
         self?.selectedFundraiser = FundraiserDetailModel(enity: entity)
+        self?.navigation = nil
       }
       .store(in: &subscribers)
   }

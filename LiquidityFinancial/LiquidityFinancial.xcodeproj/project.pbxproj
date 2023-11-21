@@ -86,6 +86,8 @@
 		A941BEB52AD001FF00FCB01C /* LFTransaction in Frameworks */ = {isa = PBXBuildFile; productRef = A941BEB42AD001FF00FCB01C /* LFTransaction */; };
 		A941BEB72AD0020800FCB01C /* LFRewards in Frameworks */ = {isa = PBXBuildFile; productRef = A941BEB62AD0020800FCB01C /* LFRewards */; };
 		A941BEB92AD0020D00FCB01C /* BaseDashboard in Frameworks */ = {isa = PBXBuildFile; productRef = A941BEB82AD0020D00FCB01C /* BaseDashboard */; };
+		A94BF0792B0886900021D847 /* LFSolidBank in Frameworks */ = {isa = PBXBuildFile; productRef = A94BF0782B0886900021D847 /* LFSolidBank */; };
+		A94BF07B2B0886900021D847 /* LFSolidCard in Frameworks */ = {isa = PBXBuildFile; productRef = A94BF07A2B0886900021D847 /* LFSolidCard */; };
 		A94F71F52A61CAC6002ADB34 /* LFLocalizable in Frameworks */ = {isa = PBXBuildFile; productRef = A94F71F42A61CAC6002ADB34 /* LFLocalizable */; };
 		A94F71F72A61CACF002ADB34 /* LFLocalizable in Frameworks */ = {isa = PBXBuildFile; productRef = A94F71F62A61CACF002ADB34 /* LFLocalizable */; };
 		A94F71FF2A6266D0002ADB34 /* AuthorizationManager in Frameworks */ = {isa = PBXBuildFile; productRef = A94F71FE2A6266D0002ADB34 /* AuthorizationManager */; };
@@ -420,7 +422,6 @@
 		A9D6C4A52A5E5FE00038D0BB /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = A9D6C4A72A5E5FE00038D0BB /* Localizable.strings */; };
 		A9D6C4B22A5E91DF0038D0BB /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = A9D6C4B12A5E91DF0038D0BB /* LaunchScreen.storyboard */; };
 		A9F14DE82AEF7D3100D66389 /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = A9F14DE72AEF7D3100D66389 /* README.md */; };
-		E2E87F162ADEABBC00D99EBB /* LFNetspendBank in Frameworks */ = {isa = PBXBuildFile; productRef = E2E87F152ADEABBC00D99EBB /* LFNetspendBank */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -920,7 +921,7 @@
 				A941BEA12AD001BD00FCB01C /* LFTransaction in Frameworks */,
 				A9B448D12A8389B90029944C /* LFUtilities in Frameworks */,
 				A9B448D22A8389B90029944C /* iPhoneNumberField in Frameworks */,
-				E2E87F162ADEABBC00D99EBB /* LFNetspendBank in Frameworks */,
+				A94BF07B2B0886900021D847 /* LFSolidCard in Frameworks */,
 				A9B448D32A8389B90029944C /* VGSShowSDK in Frameworks */,
 				06663AFD2ADE399A00A3FF12 /* LFAccessibility in Frameworks */,
 				A9B448D42A8389B90029944C /* Lottie in Frameworks */,
@@ -931,6 +932,7 @@
 				A91D865D2A8BEC9A006D40D4 /* CoreNetwork in Frameworks */,
 				A98896712AE0EADC00C2DECB /* NetspendOnboarding in Frameworks */,
 				741493482A99150E00F0DC4D /* FirebaseMessaging in Frameworks */,
+				A94BF0792B0886900021D847 /* LFSolidBank in Frameworks */,
 				A941BEA32AD001C700FCB01C /* LFRewards in Frameworks */,
 				A9B448D92A8389B90029944C /* SmartyStreets in Frameworks */,
 			);
@@ -2288,10 +2290,11 @@
 				A941BEA22AD001C700FCB01C /* LFRewards */,
 				A989D53F2AD7B00E00197EFF /* SolidOnboarding */,
 				06663AFC2ADE399A00A3FF12 /* LFAccessibility */,
-				E2E87F152ADEABBC00D99EBB /* LFNetspendBank */,
 				A98896702AE0EADC00C2DECB /* NetspendOnboarding */,
 				A9D5825F2AF898B2006DA0BF /* AccountService */,
 				A9D582612AF898B2006DA0BF /* Services */,
+				A94BF0782B0886900021D847 /* LFSolidBank */,
+				A94BF07A2B0886900021D847 /* LFSolidCard */,
 			);
 			productName = LiquidityFinancial;
 			productReference = A9B448F02A8389B90029944C /* CauseCard.app */;
@@ -4273,6 +4276,14 @@
 			isa = XCSwiftPackageProductDependency;
 			productName = BaseDashboard;
 		};
+		A94BF0782B0886900021D847 /* LFSolidBank */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = LFSolidBank;
+		};
+		A94BF07A2B0886900021D847 /* LFSolidCard */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = LFSolidCard;
+		};
 		A94F71F42A61CAC6002ADB34 /* LFLocalizable */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = LFLocalizable;
@@ -4755,10 +4766,6 @@
 		A9D582652AF898BC006DA0BF /* Services */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = Services;
-		};
-		E2E87F152ADEABBC00D99EBB /* LFNetspendBank */ = {
-			isa = XCSwiftPackageProductDependency;
-			productName = LFNetspendBank;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

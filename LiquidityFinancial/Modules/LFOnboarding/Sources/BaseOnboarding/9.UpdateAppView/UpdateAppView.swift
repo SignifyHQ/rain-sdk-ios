@@ -126,4 +126,3 @@ extension UpdateAppView {
     .padding(.horizontal, 16)
   }
 }
-

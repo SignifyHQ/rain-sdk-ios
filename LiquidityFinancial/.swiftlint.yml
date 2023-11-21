@@ -5,13 +5,17 @@ excluded:
   - DerivedData
   - "**/generated"
   - "**/.build"
+  - "**/Tests"
   - "**/*Tests.swift"
+  - "**/*Tests+*.swift"
   - "**/DebugTools"
   - "**/LFCryptoChart"
   - "**/*/_*.swift"
   - "**/*/*.generated.swift"
   - "_*.swift"
+  - "**/Mock*.swift"
   - "*.generated.swift"
+  - "**/*UITest.swift"
 opt_in_rules:
   - array_init
   - closure_body_length
@@ -81,6 +85,7 @@ disabled_rules:
   - let_var_whitespace
   - line_length
   - generic_type_name
+  - convenience_type
   
 identifier_name:
   excluded:

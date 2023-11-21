@@ -26,7 +26,7 @@ enum LimitsPeriodType: String {
   case day
   case week
   case month
-  case perTransaction = "perTransaction"
+  case perTransaction
   
   var title: String {
     switch self {

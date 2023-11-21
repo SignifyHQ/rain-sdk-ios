@@ -53,5 +53,3 @@ public struct NetspendLimitValue: Codable, LimitValueEntity {
     self.amount = amount
   }
 }
-
-

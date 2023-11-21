@@ -1,9 +1,10 @@
 import Combine
 import Factory
 import LFUtilities
-import NetspendOnboarding
+import SolidOnboarding
 import SwiftUI
 import AuthorizationManager
+import BaseOnboarding
 
 // swiftlint:disable let_var_whitespace
 protocol AppCoordinatorProtocol {
@@ -14,17 +15,29 @@ protocol AppCoordinatorProtocol {
 
 class AppCoordinator: AppCoordinatorProtocol {
   
-  enum Route {
+  enum Route: Hashable, Identifiable {
     case onboarding
     case onboardingPhone
     case dashboard
-    case dumpOut(NSOnboardingFlowCoordinator.Route)
+    case dumpOut(SolidOnboardingFlowCoordinator.Route)
+    
+    public static func == (lhs: AppCoordinator.Route, rhs: AppCoordinator.Route) -> Bool {
+      return lhs.hashValue == rhs.hashValue
+    }
+    
+    public var id: String {
+      String(describing: self)
+    }
+    
+    public func hash(into hasher: inout Hasher) {
+      hasher.combine(id)
+    }
   }
   
   @LazyInjected(\.authorizationManager)
   private var authorizationManager
-  @LazyInjected(\.nsOnboardingFlowCoordinator)
-  private var onboardingFlowCoordinator
+  @LazyInjected(\.solidOnboardingFlowCoordinator)
+  private var solidOnboardingFlowCoordinator
   @LazyInjected(\.customerSupportService)
   private var customerSupportService
   @LazyInjected(\.accountRepository)
@@ -38,7 +51,7 @@ class AppCoordinator: AppCoordinatorProtocol {
   let routeSubject: CurrentValueSubject<Route, Never> = .init(.onboarding)
   
   init() {
-    onboardingFlowCoordinator
+    solidOnboardingFlowCoordinator
       .routeSubject
       .receive(on: DispatchQueue.main)
       .sink { [weak self] route in
@@ -48,6 +61,7 @@ class AppCoordinator: AppCoordinatorProtocol {
     
     NotificationCenter.default
       .publisher(for: authorizationManager.logOutForcedName)
+      .receive(on: DispatchQueue.main)
       .sink { [weak self] _ in
         log.warning("The server has forcibly logged out the user")
         self?.logout()
@@ -56,7 +70,7 @@ class AppCoordinator: AppCoordinatorProtocol {
       .store(in: &subscribers)
   }
   
-  private func setOnboardingRoute(_ route: NSOnboardingFlowCoordinator.Route) {
+  private func setOnboardingRoute(_ route: SolidOnboardingFlowCoordinator.Route) {
     if route == .dashboard {
       set(route: .dashboard)
     } else {
@@ -70,7 +84,7 @@ class AppCoordinator: AppCoordinatorProtocol {
   }
   
   func routeUser() {
-    onboardingFlowCoordinator.routeUser()
+    solidOnboardingFlowCoordinator.routeUser()
   }
   
   func logout() {

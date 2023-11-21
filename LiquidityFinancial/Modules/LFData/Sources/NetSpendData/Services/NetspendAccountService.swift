@@ -1,7 +1,6 @@
 import AccountService
 import Factory
 import NetspendDomain
-import NetSpendData
 import LFUtilities
 
 public class NetspendAccountService: AccountsServiceProtocol {
@@ -19,7 +18,7 @@ public class NetspendAccountService: AccountsServiceProtocol {
   public init() {
   }
   
-  public func getAccounts() async throws  -> [AccountModel] {
+  public func getAccounts() async throws -> [AccountModel] {
     let entity = try await self.getAccountUsecase.execute()
     return entity.compactMap { nsAccount in
       AccountModel(
