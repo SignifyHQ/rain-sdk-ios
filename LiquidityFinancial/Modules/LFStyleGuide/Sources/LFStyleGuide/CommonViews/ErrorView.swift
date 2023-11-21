@@ -59,8 +59,7 @@ private extension ErrorView {
     LiquidityAlert(
       title: LFLocalizable.Popup.Logout.title.uppercased(),
       primary: .init(text: LFLocalizable.Popup.Logout.primaryTitle) {
-        // TODO: Will be implemented later
-        // userManager.logout()
+        NotificationCenter.default.post(name: .forceLogoutInAnyWhere, object: nil)
         isShowLogoutPopup = false
       },
       secondary: .init(text: LFLocalizable.Popup.Logout.secondaryTitle) {

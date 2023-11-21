@@ -75,10 +75,6 @@ struct AddressView: View {
     .popup(item: $viewModel.toastMessage, style: .toast) {
       ToastView(toastMessage: $0)
     }
-    .navigationLink(item: $viewModel.navigation) { _ in
-      //TODO: Tony
-        EmptyView()
-    }
     .onAppear(perform: {
       analyticsService.track(event: AnalyticsEvent(name: .viewedAddress))
     })

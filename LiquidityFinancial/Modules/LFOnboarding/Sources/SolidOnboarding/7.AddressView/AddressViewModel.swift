@@ -17,13 +17,6 @@ import DevicesDomain
 // swiftlint:disable all
 @MainActor
 final class AddressViewModel: ObservableObject {
-  enum Navigation {
-    case pendingIDV
-    case declined
-    case inReview
-    case missingInfo
-    case home
-  }
 
   @LazyInjected(\.accountDataManager) var accountDataManager
   @LazyInjected(\.accountRepository) var accountRepository
@@ -38,7 +31,6 @@ final class AddressViewModel: ObservableObject {
   @Published var isLoading: Bool = false
   @Published var toastMessage: String?
   @Published var displaySuggestions: Bool = false
-  @Published var navigation: Navigation?
   @Published var addressList: [AddressData] = []
   @Published var isActionAllowed: Bool = false {
     didSet {
@@ -201,11 +193,6 @@ extension AddressViewModel {
     Task {
       defer {
         isLoading = false
-        authorizationManager.clearToken()
-        accountDataManager.clearUserSession()
-        authorizationManager.forcedLogout()
-        customerSupportService.pushEventLogout()
-        pushNotificationService.signOut()
       }
       isLoading = true
       do {
@@ -213,6 +200,13 @@ extension AddressViewModel {
         async let logoutEntity = accountRepository.logout()
         let deregister = try await deregisterEntity
         let logout = try await logoutEntity
+        
+        authorizationManager.clearToken()
+        accountDataManager.clearUserSession()
+        authorizationManager.forcedLogout()
+        customerSupportService.pushEventLogout()
+        pushNotificationService.signOut()
+        
         log.debug(deregister)
         log.debug(logout)
       } catch {

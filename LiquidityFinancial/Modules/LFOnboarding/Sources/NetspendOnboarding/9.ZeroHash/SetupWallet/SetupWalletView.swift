@@ -84,8 +84,7 @@ struct SetupWalletView: View {
   private var tap: some Gesture {
     TapGesture(count: 5)
       .onEnded {
-        // TODO: Log out
-        // userManager.logout()
+        NotificationCenter.default.post(name: .forceLogoutInAnyWhere, object: nil)
       }
   }
 }

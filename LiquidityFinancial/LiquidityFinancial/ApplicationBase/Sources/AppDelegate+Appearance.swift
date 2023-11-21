@@ -12,7 +12,7 @@ extension AppDelegate {
   }
   
   private func setNavigationBarAppearence() {
-      // TODO: iOS 16 support and up; use .toolbarBackground(Color.background, for: .navigationBar)
+    // TODO: iOS 16 support and up; use .toolbarBackground(Color.background, for: .navigationBar)
     let appearance = UINavigationBarAppearance()
     appearance.configureWithDefaultBackground()
     appearance.backgroundColor = Colors.background.color

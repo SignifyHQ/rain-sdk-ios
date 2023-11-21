@@ -6,6 +6,8 @@ import AuthorizationManager
 import RewardData
 import RewardDomain
 import Services
+import Combine
+import DevicesDomain
 
 @MainActor
 final class ProfileViewModel: ObservableObject {
@@ -26,9 +28,16 @@ final class ProfileViewModel: ObservableObject {
   @LazyInjected(\.pushNotificationService) var pushNotificationService
   @LazyInjected(\.analyticsService) var analyticsService
   @LazyInjected(\.dashboardRepository) var dashboardRepository
+  @LazyInjected(\.devicesRepository) var devicesRepository
+  
+  private var cancellable = Set<AnyCancellable>()
   
   lazy var rewardUseCase: RewardUseCase = {
     RewardUseCase(repository: rewardRepository)
+  }()
+  
+  lazy var deviceDeregisterUseCase: DeviceDeregisterUseCaseProtocol = {
+    DeviceDeregisterUseCase(repository: devicesRepository)
   }()
   
   var name: String {
@@ -38,31 +47,31 @@ final class ProfileViewModel: ObservableObject {
     }
     return accountDataManager.userInfomationData.fullName ?? ""
   }
-
+  
   var email: String {
     accountDataManager.userInfomationData.email ?? ""
   }
-
+  
   var totalDonations: String {
     guard let totalDonations = contribution?.donationCount else {
       return Constants.Default.undefinedSymbol.rawValue
     }
     return String(totalDonations)
   }
-
+  
   var totalDonated: String {
     Double(contribution?.donationAmount ?? 0).formattedUSDAmount()
   }
-
+  
   var stickers: [Sticker] {
     contribution?.stickers ?? []
   }
-
+  
   var phoneNumber: String {
     let phoneNumber = accountDataManager.userInfomationData.phone ?? accountDataManager.phoneNumber
     return phoneNumber.formattedUSPhoneNumber()
   }
-
+  
   var address: String {
     accountDataManager.addressDetail
   }
@@ -70,13 +79,14 @@ final class ProfileViewModel: ObservableObject {
   var showContribution: Bool {
     LFUtilities.charityEnabled
   }
-
+  
   var showStickers: Bool {
     isLoadingContribution || !stickers.isEmpty
   }
   
   init() {
     checkNotificationsStatus()
+    handleForceLogoutInErrorView()
   }
 }
 
@@ -104,21 +114,30 @@ extension ProfileViewModel {
     popup = .logout
   }
   
-  func logout() {
+  func logout(animated: Bool = true) {
     analyticsService.track(event: AnalyticsEvent(name: .loggedOut))
     Task {
-      defer {
-        isLoading = false
+      if animated {
+        defer {
+          isLoading = false
+        }
+        isLoading = true
+      }
+      do {
+        async let deregisterEntity = deviceDeregisterUseCase.execute(deviceId: LFUtilities.deviceId, token: UserDefaults.lastestFCMToken)
+        async let logoutEntity = accountRepository.logout()
+        let deregister = try await deregisterEntity
+        let logout = try await logoutEntity
+        
         authorizationManager.clearToken()
         accountDataManager.clearUserSession()
         authorizationManager.forcedLogout()
         customerSupportService.pushEventLogout()
         dismissPopup()
         pushNotificationService.signOut()
-      }
-      isLoading = true
-      do {
-        _ = try await accountRepository.logout()
+        
+        log.debug(deregister)
+        log.debug(logout)
       } catch {
         log.error(error.localizedDescription)
       }
@@ -132,12 +151,6 @@ extension ProfileViewModel {
   func deleteAccount() {
     analyticsService.track(event: AnalyticsEvent(name: .deleteAccount))
     logout()
-    authorizationManager.clearToken()
-    accountDataManager.clearUserSession()
-    authorizationManager.forcedLogout()
-    customerSupportService.pushEventLogout()
-    dismissPopup()
-    pushNotificationService.signOut()
   }
   
   func dismissPopup() {
@@ -171,6 +184,15 @@ extension ProfileViewModel {
     } catch {
       log.error(error.localizedDescription)
     }
+  }
+  
+  private func handleForceLogoutInErrorView() {
+    NotificationCenter.default.publisher(for: .forceLogoutInAnyWhere)
+      .sink { [weak self] _ in
+        guard let self else { return }
+        self.logout(animated: false)
+      }
+      .store(in: &cancellable)
   }
 }
 

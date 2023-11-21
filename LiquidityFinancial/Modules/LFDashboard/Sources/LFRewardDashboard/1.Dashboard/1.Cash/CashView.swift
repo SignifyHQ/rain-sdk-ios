@@ -8,7 +8,6 @@ import LFSolidCard
 import SolidOnboarding
 import Services
 
-// TODO: Will use or not
 struct CashView: View {
   @Environment(\.scenePhase) var scenePhase
   @StateObject private var viewModel: CashViewModel

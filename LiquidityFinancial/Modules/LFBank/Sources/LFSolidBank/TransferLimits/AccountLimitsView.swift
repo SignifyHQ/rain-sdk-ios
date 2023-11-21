@@ -299,8 +299,8 @@ private extension AccountLimitsView {
         description: annotation.message,
         corners: [.topRight, .bottomLeft, .bottomRight]
       )
-      .offset(x: screenSize.width * 0.242, y: 28)
-      .frame(width: screenSize.width * 0.52)
+      .offset(x: screenSize.width * 0.12, y: 28)
+      .frame(width: screenSize.width * 0.65)
     }
   }
   

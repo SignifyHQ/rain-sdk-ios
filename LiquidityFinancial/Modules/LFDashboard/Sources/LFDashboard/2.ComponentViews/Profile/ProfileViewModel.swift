@@ -5,6 +5,7 @@ import LFUtilities
 import AuthorizationManager
 import Services
 import DevicesDomain
+import Combine
 
 @MainActor
 final class ProfileViewModel: ObservableObject {
@@ -25,6 +26,8 @@ final class ProfileViewModel: ObservableObject {
   lazy var deviceDeregisterUseCase: DeviceDeregisterUseCaseProtocol = {
     DeviceDeregisterUseCase(repository: devicesRepository)
   }()
+  
+  private var cancellable = Set<AnyCancellable>()
   
   var name: String {
     if let firstName = accountDataManager.userInfomationData.firstName,
@@ -49,6 +52,7 @@ final class ProfileViewModel: ObservableObject {
   
   init() {
     checkNotificationsStatus()
+    handleForceLogoutInErrorView()
   }
 }
 
@@ -74,24 +78,28 @@ extension ProfileViewModel {
     popup = .logout
   }
   
-  func logout() {
+  func logout(animated: Bool = true) {
     analyticsService.track(event: AnalyticsEvent(name: .loggedOut))
     Task {
-      defer {
-        isLoading = false
+      if animated {
+        defer {
+          isLoading = false
+        }
+        isLoading = true
+      }
+      do {
+        async let deregisterEntity = deviceDeregisterUseCase.execute(deviceId: LFUtilities.deviceId, token: UserDefaults.lastestFCMToken)
+        async let logoutEntity = accountRepository.logout()
+        let deregister = try await deregisterEntity
+        let logout = try await logoutEntity
+        
         authorizationManager.clearToken()
         accountDataManager.clearUserSession()
         authorizationManager.forcedLogout()
         customerSupportService.pushEventLogout()
         dismissPopup()
         pushNotificationService.signOut()
-      }
-      isLoading = true
-      do {
-        async let deregisterEntity = deviceDeregisterUseCase.execute(deviceId: LFUtilities.deviceId, token: UserDefaults.lastestFCMToken)
-        async let logoutEntity = accountRepository.logout()
-        let deregister = try await deregisterEntity
-        let logout = try await logoutEntity
+        
         log.debug(deregister)
         log.debug(logout)
       } catch {
@@ -107,16 +115,19 @@ extension ProfileViewModel {
   func deleteAccount() {
     analyticsService.track(event: AnalyticsEvent(name: .deleteAccount))
     logout()
-    authorizationManager.clearToken()
-    accountDataManager.clearUserSession()
-    authorizationManager.forcedLogout()
-    customerSupportService.pushEventLogout()
-    dismissPopup()
-    pushNotificationService.signOut()
   }
   
   func dismissPopup() {
     popup = nil
+  }
+  
+  private func handleForceLogoutInErrorView() {
+    NotificationCenter.default.publisher(for: .forceLogoutInAnyWhere)
+      .sink { [weak self] _ in
+        guard let self else { return }
+        self.logout(animated: false)
+      }
+      .store(in: &cancellable)
   }
 }
 

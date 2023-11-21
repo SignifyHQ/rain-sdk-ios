@@ -11,4 +11,6 @@ public extension Notification.Name {
   static let refreshListCards = Notification.Name("com.liquidityfinancial.cards.refreshListCards")
   
   static let environmentChanage = Notification.Name("com.liquidityfinancial.environment.change")
+  
+  static let forceLogoutInAnyWhere = Notification.Name("com.liquidityfinancial.errorView.forceLogout")
 }

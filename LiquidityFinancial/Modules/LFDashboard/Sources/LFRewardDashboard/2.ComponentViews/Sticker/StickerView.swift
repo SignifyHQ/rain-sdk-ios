@@ -1,4 +1,5 @@
 import SwiftUI
+import LFRewards
 import LFStyleGuide
 
 struct StickerView: View {
@@ -15,7 +16,18 @@ struct StickerView: View {
       showShare = true
     }
     .sheet(isPresented: $showShare) {
-      EmptyView() // TODO: Will be implemented later
+      ShareView(viewModel: .init(
+        data: .build(
+          sticker: StickerModel(
+            id: sticker.id,
+            name: "",
+            url: sticker.stickerUrl,
+            count: sticker.donationCount,
+            backgroundColor: nil,
+            charityName: nil
+          )
+        )
+      ))
     }
   }
   
