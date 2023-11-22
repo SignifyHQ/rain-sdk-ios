@@ -74,7 +74,6 @@ public extension TransferLimitConfig {
   
   enum TransactionType: String {
     case unknown
-    case spending
     case deposit
     case withdraw
     
@@ -88,8 +87,6 @@ public extension TransferLimitConfig {
         return LFLocalizable.TransferLimit.Deposit.tabTitle
       case .withdraw:
         return LFLocalizable.TransferLimit.Withdraw.tabTitle
-      case .spending:
-        return LFLocalizable.TransferLimit.Spending.tabTitle
       default:
         return .empty
       }

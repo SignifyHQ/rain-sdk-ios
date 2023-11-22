@@ -8,7 +8,7 @@ public struct AccountLimitsView: View {
   @StateObject private var viewModel = AccountLimitsViewModel()
   @State private var selectedAnnotation: AccountLimitSection?
   @State private var screenSize: CGSize = .zero
-  @State private var selectedTab: AccountLimitsType = .spending
+  @State private var selectedTab: AccountLimitsType = .deposit
 
   public init() {}
   
@@ -62,7 +62,6 @@ public struct AccountLimitsView: View {
 private extension AccountLimitsView {
   var headerTabView: some View {
     HStack(spacing: 0) {
-      tabItem(type: .spending)
       tabItem(type: .deposit)
       tabItem(type: .withdraw)
     }
@@ -86,7 +85,7 @@ private extension AccountLimitsView {
       selectedTab = type
       selectedAnnotation = nil
     }
-    .frame(width: (screenSize.width - (screenSize.width > 0 ? 8.0 : 0)) / 3, height: 32)
+    .frame(width: (screenSize.width - (screenSize.width > 0 ? 8.0 : 0)) / 2, height: 32)
     .background(
       LinearGradient(
         colors: selectedTab == type ? gradientColor : [],
@@ -103,8 +102,6 @@ private extension AccountLimitsView {
       depositLimitsView
     case .withdraw:
       withdrawLimitsView
-    case .spending:
-      spendingLimitsView
     default:
       EmptyView()
     }
@@ -167,7 +164,7 @@ private extension AccountLimitsView {
               if selectedAnnotation == type {
                 selectedAnnotation = nil
               } else {
-                // selectedAnnotation = type TODO: - Will be implemented later
+                 selectedAnnotation = type
               }
             }
         }
@@ -222,10 +219,10 @@ private extension AccountLimitsView {
     if let annotation = selectedAnnotation, selectedAnnotation == type {
       AnnotationView(
         description: annotation.message,
-        corners: [.topRight, .bottomLeft, .bottomRight]
+        corners: [.topLeft, .topRight, .bottomLeft, .bottomRight]
       )
       .offset(x: screenSize.width * 0.242, y: 28)
-      .frame(width: screenSize.width * 0.52)
+      .frame(width: screenSize.width * 0.65)
     }
   }
   

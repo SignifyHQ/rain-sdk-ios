@@ -1,5 +1,6 @@
 import Foundation
 import NetworkUtilities
+import LFUtilities
 
 extension LFRoute {
   public var scheme: String {
@@ -18,7 +19,10 @@ extension LFRoute {
   }
   
   public var baseURL: URL {
-    APIConstants.baseDevURL
+    switch enviroment {
+    case .productionLive: return APIConstants.baseProdURL
+    case .productionTest: return APIConstants.baseDevURL
+    }
   }
   
   public var httpHeaders: HttpHeaders {
@@ -26,5 +30,9 @@ extension LFRoute {
       "Content-Type": "application/json",
       "productId": NetworkUtilities.productID
     ]
+  }
+  
+  private var enviroment: NetworkEnvironment {
+    NetworkEnvironment(rawValue: UserDefaults.environmentSelection) ?? .productionLive
   }
 }

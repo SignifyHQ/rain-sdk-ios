@@ -238,9 +238,7 @@ public extension DashboardRepository {
           NotificationCenter.default.post(name: .noLinkedCards, object: nil)
         } else {
           solidCardData.metaDatas = Array(repeating: nil, count: filteredCards.count)
-          filteredCards.map { $0.id }.enumerated().forEach { index, id in
-            apiFetchSolidCardDetail(with: id, and: index)
-          }
+          solidCardData.loading = false
         }
       } catch {
         solidCardData.loading = false
@@ -258,23 +256,6 @@ public extension DashboardRepository {
           let encryptedData: APICardEncrypted? = cardModel.decodeData(session: usersession)
           if let encryptedData {
             netspendCardData.metaDatas[index] = CardMetaData(pan: encryptedData.pan, cvv: encryptedData.cvv2)
-          }
-        }
-      } catch {
-        toastMessage?(error.localizedDescription)
-      }
-    }
-  }
-  
-  @Sendable func apiFetchSolidCardDetail(with cardID: String, and index: Int) {
-    Task { @MainActor in
-      defer { solidCardData.loading = false }
-      do {
-        let entity = try await getCardUseCase.execute(cardID: cardID, sessionID: accountDataManager.sessionID)
-        if let usersession = netspendDataManager.sdkSession, let cardModel = entity as? APICard {
-          let encryptedData: APICardEncrypted? = cardModel.decodeData(session: usersession)
-          if let encryptedData {
-            solidCardData.metaDatas[index] = CardMetaData(pan: encryptedData.pan, cvv: encryptedData.cvv2)
           }
         }
       } catch {

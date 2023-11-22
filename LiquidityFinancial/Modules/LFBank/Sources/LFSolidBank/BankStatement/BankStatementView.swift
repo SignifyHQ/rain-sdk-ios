@@ -12,28 +12,30 @@ public struct BankStatementView: View {
   public init() {}
   
   public var body: some View {
-    content
-      .padding(.top, 16)
-      .toolbar {
-        ToolbarItem(placement: .principal) {
-          Text(LFLocalizable.BankStatement.title)
-            .foregroundColor(Colors.label.swiftUIColor)
-            .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.medium.value))
-        }
+    LoadingIndicatorView(isShowing: $viewModel.isLoadingStatement) {
+      content
+    }
+    .padding(.top, 16)
+    .toolbar {
+      ToolbarItem(placement: .principal) {
+        Text(LFLocalizable.BankStatement.title)
+          .foregroundColor(Colors.label.swiftUIColor)
+          .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.medium.value))
       }
-      .background(Colors.background.swiftUIColor)
-      .navigationTitle("")
-      .navigationBarTitleDisplayMode(.inline)
-      .onAppear(perform: viewModel.onAppear)
-      .popup(item: $viewModel.toastMessage, style: .toast) {
-        ToastView(toastMessage: $0)
+    }
+    .background(Colors.background.swiftUIColor)
+    .navigationTitle("")
+    .navigationBarTitleDisplayMode(.inline)
+    .onAppear(perform: viewModel.onAppear)
+    .popup(item: $viewModel.toastMessage, style: .toast) {
+      ToastView(toastMessage: $0)
+    }
+    .navigationLink(item: $viewModel.navigation) { item in
+      switch item {
+      case let .pdfDocument(title, url):
+        DocumentViewer(title: title, url: url)
       }
-      .navigationLink(item: $viewModel.navigation) { item in
-        switch item {
-        case let .pdfDocument(title, url):
-          DocumentViewer(title: title, url: url)
-        }
-      }
+    }
   }
 }
 

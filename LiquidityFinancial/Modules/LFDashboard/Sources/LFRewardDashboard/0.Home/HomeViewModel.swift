@@ -39,6 +39,7 @@ public final class HomeViewModel: ObservableObject {
   private var subscribers: Set<AnyCancellable> = []
   
   private var isFristLoad: Bool = true
+  private var hadPushToken: Bool = false
   
   public init(tabOptions: [TabOption]) {
     if let reward = rewardDataManager.currentSelectReward {
@@ -201,11 +202,13 @@ extension HomeViewModel {
   }
   
   func pushFCMTokenIfNeed() {
+    guard hadPushToken == false else { return }
     Task { @MainActor in
       do {
         let token = try await pushNotificationService.fcmToken()
         let response = try await deviceRegisterUseCase.execute(deviceId: LFUtilities.deviceId, token: token)
         if response.success {
+          hadPushToken = true
           UserDefaults.lastestFCMToken = token
         }
       } catch {

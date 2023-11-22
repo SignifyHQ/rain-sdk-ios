@@ -6,8 +6,20 @@ import LFUtilities
 import CryptoChartDomain
 import AuthorizationManager
 import NetworkUtilities
+import EnvironmentService
 
 public class MarketManager {
+  var networkEnvironment: NetworkEnvironment {
+    get {
+      environmentService.networkEnvironment
+    }
+    set {
+      environmentService.networkEnvironment = newValue
+    }
+  }
+  
+  @LazyInjected(\.environmentService) var environmentService
+  
   @LazyInjected(\.cryptoChartRepository) var cryptoChartRepository
   @LazyInjected(\.authorizationManager) var authorizationManager
   
@@ -192,7 +204,12 @@ private extension MarketManager {
 // MARK: - Websocket Handles
 private extension MarketManager {
   func startPriceWebsocket() {
-    guard let url = URL(string: "\(APIConstants.socketDevHost)/ws/cmc/\(LFUtilities.cryptoCurrency)/live") else {
+    var hostUrlString = APIConstants.socketProdHost
+    switch networkEnvironment {
+    case .productionLive: hostUrlString = APIConstants.socketProdHost
+    case .productionTest: hostUrlString = APIConstants.socketDevHost
+    }
+    guard let url = URL(string: "\(hostUrlString)/ws/cmc/\(LFUtilities.cryptoCurrency)/live") else {
       return
     }
     websocketTask = connectSocket(url: url)

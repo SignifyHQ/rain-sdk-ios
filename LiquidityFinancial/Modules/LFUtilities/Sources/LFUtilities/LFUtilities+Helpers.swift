@@ -45,6 +45,23 @@ extension LFUtilities {
     }
   }
   
+  public static var cardFullName: String {
+    switch LFUtilities.target {
+    case .DogeCard:
+      return "DogeCard"
+    case .Avalanche:
+      return "Avalanche"
+    case .Cardano:
+      return "Cardano"
+    case .CauseCard:
+      return "CauseCard"
+    case .PrideCard:
+      return "PrideCard"
+    default:
+      return .empty
+    }
+  }
+  
   public static func getCurrencyForAmount(currency: String, amount: Double, isDecimalRequired: Bool) -> String {
     let decimalAmountString: String
     // let currency = Utility.localizedString(forKey: "currency")

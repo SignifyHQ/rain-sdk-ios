@@ -3,7 +3,6 @@ import LFLocalizable
 
 enum AccountLimitsType: String {
   case unknown
-  case spending
   case deposit
   case withdraw
   
@@ -13,8 +12,6 @@ enum AccountLimitsType: String {
       return LFLocalizable.TransferLimit.Deposit.tabTitle
     case .withdraw:
       return LFLocalizable.TransferLimit.Withdraw.tabTitle
-    case .spending:
-      return LFLocalizable.TransferLimit.Spending.tabTitle
     default:
       return .empty
     }

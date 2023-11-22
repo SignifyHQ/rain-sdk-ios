@@ -4,13 +4,20 @@ import Foundation
 public enum APIConstants {
   public static let devHost = "https://api-crypto.dev.liquidity.cc"
   public static let socketDevHost = "wss://api-crypto.dev.liquidity.cc"
+  public static let prodHost = "https://api-crypto.liquidity.cc"
+  public static let socketProdHost = "wss://api-crypto.liquidity.cc"
+  
   public static let avalencheID = "fb352b08-c759-4a6c-8a63-d9d190265447"
   public static let cardanoID = "3d126fa0-29d2-11ee-be56-0242ac120002"
   public static let dogeCardID = "1d77cffe-658a-4745-89b8-28997ab73ffc"
-  public static let causeCardID = "86cca907-8cb5-4bdf-99b3-d21811dc3038"
-  public static let prideCardID = "11c4c6d2-cafd-407f-a922-23a8b0580b21"
+  public static let causeCardID = "7f2c1a97-e378-431c-98fa-76a61b03b38b"
+  public static let prideCardID = "5ab62fe1-4d21-40c0-b50f-f8ab975ef87c"
+  
   public static var baseDevURL: URL {
     .init(string: APIConstants.devHost)!
+  }
+  public static var baseProdURL: URL {
+    .init(string: APIConstants.prodHost)!
   }
   
   public struct StatusCodes {

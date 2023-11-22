@@ -81,13 +81,13 @@ extension ProfileViewModel {
   func logout(animated: Bool = true) {
     analyticsService.track(event: AnalyticsEvent(name: .loggedOut))
     Task {
-      if animated {
-        defer {
-          isLoading = false
-        }
-        isLoading = true
-      }
       do {
+        if animated {
+          defer {
+            isLoading = false
+          }
+          isLoading = true
+        }
         async let deregisterEntity = deviceDeregisterUseCase.execute(deviceId: LFUtilities.deviceId, token: UserDefaults.lastestFCMToken)
         async let logoutEntity = accountRepository.logout()
         let deregister = try await deregisterEntity

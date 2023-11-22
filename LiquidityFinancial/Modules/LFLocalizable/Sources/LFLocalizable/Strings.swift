@@ -2648,26 +2648,34 @@ public enum LFLocalizable {
       public static let title = LFLocalizable.tr("Localizable", "transferLimit.alltime.title", fallback: "AllTime")
     }
     public enum BankDeposit {
-      /// You can “push” funds to card by sending an external transfer from your bank or Direct Deposit. 
-      public static let message = LFLocalizable.tr("Localizable", "transferLimit.bankDeposit.message", fallback: "You can “push” funds to card by sending an external transfer from your bank or Direct Deposit. ")
+      /// Connect your external bank through Plaid, and use the %@ app to deposit.
+      public static func message(_ p1: Any) -> String {
+        return LFLocalizable.tr("Localizable", "transferLimit.bankDeposit.message", String(describing: p1), fallback: "Connect your external bank through Plaid, and use the %@ app to deposit.")
+      }
       /// Bank Account Deposit Limits
       public static let title = LFLocalizable.tr("Localizable", "transferLimit.bankDeposit.title", fallback: "Bank Account Deposit Limits")
     }
     public enum BankWithdrawal {
-      /// There are limits to how much you can “pull” to your card. This includes funds deposited using the app’s “Deposit” feature.
-      public static let message = LFLocalizable.tr("Localizable", "transferLimit.bankWithdrawal.message", fallback: "There are limits to how much you can “pull” to your card. This includes funds deposited using the app’s “Deposit” feature.")
+      /// Connect your external bank through Plaid, and use the %@ app to withdrawal.
+      public static func message(_ p1: Any) -> String {
+        return LFLocalizable.tr("Localizable", "transferLimit.bankWithdrawal.message", String(describing: p1), fallback: "Connect your external bank through Plaid, and use the %@ app to withdrawal.")
+      }
       /// Bank Account Withdrawal Limits
       public static let title = LFLocalizable.tr("Localizable", "transferLimit.bankWithdrawal.title", fallback: "Bank Account Withdrawal Limits")
     }
     public enum CardDeposit {
-      /// You can “push” funds to card by sending an external transfer from your bank or Direct Deposit.
-      public static let message = LFLocalizable.tr("Localizable", "transferLimit.cardDeposit.message", fallback: "You can “push” funds to card by sending an external transfer from your bank or Direct Deposit.")
+      /// Use your bank’s Debit Card to instantly deposit funds to your %@ Account.
+      public static func message(_ p1: Any) -> String {
+        return LFLocalizable.tr("Localizable", "transferLimit.cardDeposit.message", String(describing: p1), fallback: "Use your bank’s Debit Card to instantly deposit funds to your %@ Account.")
+      }
       /// Debit Card Deposit Limits
       public static let title = LFLocalizable.tr("Localizable", "transferLimit.cardDeposit.title", fallback: "Debit Card Deposit Limits")
     }
     public enum CardWithdrawal {
-      /// There are limits to how much you can “pull” to your card. This includes funds deposited using the app’s “Deposit” feature.
-      public static let message = LFLocalizable.tr("Localizable", "transferLimit.cardWithdrawal.message", fallback: "There are limits to how much you can “pull” to your card. This includes funds deposited using the app’s “Deposit” feature.")
+      /// Use your bank’s Debit Card to instantly withdraw funds from your %@ Account.
+      public static func message(_ p1: Any) -> String {
+        return LFLocalizable.tr("Localizable", "transferLimit.cardWithdrawal.message", String(describing: p1), fallback: "Use your bank’s Debit Card to instantly withdraw funds from your %@ Account.")
+      }
       /// Debit Card Withdrawal Limits
       public static let title = LFLocalizable.tr("Localizable", "transferLimit.cardWithdrawal.title", fallback: "Debit Card Withdrawal Limits")
     }
@@ -2683,12 +2691,12 @@ public enum LFLocalizable {
       /// Deposit
       public static let tabTitle = LFLocalizable.tr("Localizable", "transferLimit.deposit.tabTitle", fallback: "Deposit")
       public enum TotallLimits {
-        /// There are limits to how much you can “pull” to your card. This includes funds deposited using the app’s “Deposit” feature.
-        public static let message = LFLocalizable.tr("Localizable", "transferLimit.deposit.totall_limits.message", fallback: "There are limits to how much you can “pull” to your card. This includes funds deposited using the app’s “Deposit” feature.")
-        /// Deposit limits to %@Card
-        public static func title(_ p1: Any) -> String {
-          return LFLocalizable.tr("Localizable", "transferLimit.deposit.totall_limits.title", String(describing: p1), fallback: "Deposit limits to %@Card")
+        /// Send external bank transfers or Direct Deposit to your %@ account using account and routing number.
+        public static func message(_ p1: Any) -> String {
+          return LFLocalizable.tr("Localizable", "transferLimit.deposit.totall_limits.message", String(describing: p1), fallback: "Send external bank transfers or Direct Deposit to your %@ account using account and routing number.")
         }
+        /// Deposit limits
+        public static let title = LFLocalizable.tr("Localizable", "transferLimit.deposit.totall_limits.title", fallback: "Deposit limits")
       }
     }
     public enum Error {
@@ -2752,8 +2760,10 @@ public enum LFLocalizable {
       /// Withdrawal
       public static let tabTitle = LFLocalizable.tr("Localizable", "transferLimit.withdraw.tabTitle", fallback: "Withdrawal")
       public enum TotallLimits {
-        /// There are limits to how much you can “pull” to your card. This includes funds deposited using the app’s “Withdrawal” feature.
-        public static let message = LFLocalizable.tr("Localizable", "transferLimit.withdraw.totall_limits.message", fallback: "There are limits to how much you can “pull” to your card. This includes funds deposited using the app’s “Withdrawal” feature.")
+        /// Withdraw external bank transfers or Direct Deposit to your %@ account using account and routing number.
+        public static func message(_ p1: Any) -> String {
+          return LFLocalizable.tr("Localizable", "transferLimit.withdraw.totall_limits.message", String(describing: p1), fallback: "Withdraw external bank transfers or Direct Deposit to your %@ account using account and routing number.")
+        }
         /// Withdrawal Limits
         public static let title = LFLocalizable.tr("Localizable", "transferLimit.withdraw.totall_limits.title", fallback: "Withdrawal Limits")
       }

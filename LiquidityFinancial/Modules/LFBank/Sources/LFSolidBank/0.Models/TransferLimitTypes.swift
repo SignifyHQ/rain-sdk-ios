@@ -44,7 +44,6 @@ public enum TransferType: String {
 
 public enum TransactionType: String {
   case unknown
-  case spending
   case deposit
   case withdraw
   
@@ -58,8 +57,6 @@ public enum TransactionType: String {
       return LFLocalizable.TransferLimit.Deposit.tabTitle
     case .withdraw:
       return LFLocalizable.TransferLimit.Withdraw.tabTitle
-    case .spending:
-      return LFLocalizable.TransferLimit.Spending.tabTitle
     default:
       return .empty
     }

@@ -30,6 +30,8 @@ public final class HomeViewModel: ObservableObject {
   @Published var isLoading: Bool = false
   @Published var toastMessage: String?
 
+  private var hadPushToken: Bool = false
+  
   lazy var deviceRegisterUseCase: DeviceRegisterUseCaseProtocol = {
     DeviceRegisterUseCase(repository: devicesRepository)
    }()
@@ -122,11 +124,13 @@ extension HomeViewModel {
   }
   
   func pushFCMTokenIfNeed() {
+    guard hadPushToken == false else { return }
     Task { @MainActor in
       do {
         let token = try await pushNotificationService.fcmToken()
         let response = try await deviceRegisterUseCase.execute(deviceId: LFUtilities.deviceId, token: token)
         if response.success {
+          hadPushToken = true
           UserDefaults.lastestFCMToken = token
         }
       } catch {
