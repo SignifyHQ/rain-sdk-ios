@@ -43,30 +43,32 @@ public struct SelectRewardsView: View {
   }
   
   private var content: some View {
-    VStack {
-      asset
-      
-      VStack(alignment: .leading, spacing: 0) {
-        GenImages.CommonImages.dash.swiftUIImage
-          .foregroundColor(ModuleColors.label.swiftUIColor)
+    ScrollView {
+      VStack {
+        asset
         
-        titles
-          .padding(.top, 32)
-        
-        options
-          .padding(.top, 16)
-        
-        Spacer(minLength: 12)
-        
-        DonationsDisclosureView()
-          .padding(.bottom, 12)
-        
-        continueButton
-        
-        cashbackDonationDisclosure
+        VStack(alignment: .leading, spacing: 0) {
+          GenImages.CommonImages.dash.swiftUIImage
+            .foregroundColor(ModuleColors.label.swiftUIColor)
+          
+          titles
+            .padding(.top, 32)
+          
+          options
+            .padding(.top, 16)
+          
+          Spacer(minLength: 12)
+          
+          DonationsDisclosureView()
+            .padding(.bottom, 12)
+          
+          continueButton
+          
+          cashbackDonationDisclosure
+        }
+        .padding(.horizontal, 30)
+        .padding(.bottom, 10)
       }
-      .padding(.horizontal, 30)
-      .padding(.bottom, 10)
     }
   }
   
