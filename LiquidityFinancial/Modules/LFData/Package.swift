@@ -65,6 +65,7 @@ let package = Package(
         .product(name: "NetworkUtilities", package: "LFNetwork"),
         .product(name: "CoreNetwork", package: "LFNetwork"),
         .product(name: "AccountService", package: "LFServices"),
+        .product(name: "BankService", package: "LFServices"),
         .product(name: "Services", package: "LFServices")
       ]
     ),
@@ -77,6 +78,7 @@ let package = Package(
         .product(name: "NetworkUtilities", package: "LFNetwork"),
         .product(name: "CoreNetwork", package: "LFNetwork"),
         .product(name: "AccountService", package: "LFServices"),
+        .product(name: "BankService", package: "LFServices"),
         .product(name: "Services", package: "LFServices")
       ]
     ),

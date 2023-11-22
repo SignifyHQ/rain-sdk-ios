@@ -8,6 +8,7 @@ import Factory
 public struct PurchaseTransactionDetailView: View {
   @StateObject private var viewModel: PurchaseTransactionDetailViewModel
   
+  @Injected(\.bankServiceConfig) var bankServiceConfig
   @Injected(\.transactionNavigation) var transactionNavigation
   
   public init(transaction: TransactionModel) {
@@ -110,13 +111,15 @@ private extension PurchaseTransactionDetailView {
           viewModel.onClickedCurrentRewardButton()
         }
         
-        FullSizeButton(
-          title: LFLocalizable.Button.DisputeTransaction.title,
-          isDisable: false,
-          isLoading: $viewModel.isLoadingDisputeTransaction,
-          type: .tertiary
-        ) {
-          viewModel.getDisputeAuthorizationCode()
+        if bankServiceConfig.supportDisputeTransaction {
+          FullSizeButton(
+            title: LFLocalizable.Button.DisputeTransaction.title,
+            isDisable: false,
+            isLoading: $viewModel.isLoadingDisputeTransaction,
+            type: .tertiary
+          ) {
+            viewModel.getDisputeAuthorizationCode()
+          }
         }
         
         if let receiptType = viewModel.transaction.receipt?.type {

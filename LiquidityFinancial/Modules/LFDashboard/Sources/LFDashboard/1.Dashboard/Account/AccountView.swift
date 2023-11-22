@@ -14,7 +14,7 @@ import Factory
 
 struct AccountsView: View {
   @Injected(\.analyticsService) var analyticsService
-  @Injected(\.bankConfig) var bankConfig
+  @Injected(\.bankServiceConfig) var bankServiceConfig
   @Injected(\.dashboardNavigation) var dashboardNavigation
   
   @Environment(\.scenePhase) var scenePhase
@@ -299,7 +299,7 @@ private extension AccountsView {
           viewModel.navigation = .debugMenu
         }
       }
-      if bankConfig.supportDisputeTransaction {
+      if bankServiceConfig.supportDisputeTransaction {
         ArrowButton(
           image: GenImages.CommonImages.Accounts.icDispute.swiftUIImage,
           title: LFLocalizable.Button.DisputeTransaction.title,

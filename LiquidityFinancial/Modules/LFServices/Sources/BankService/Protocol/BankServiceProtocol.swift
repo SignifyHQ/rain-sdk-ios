@@ -1,7 +1,5 @@
 import Foundation
 
-public protocol BankServiceConfigProtocol {
-  
+public protocol BankServiceProtocol {
   var supportDisputeTransaction: Bool { get }
-  
 }

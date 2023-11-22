@@ -6,6 +6,7 @@ import Factory
 import NetspendOnboarding
 import NetSpendData
 import AccountService
+import BankService
 import ZerohashData
 
 class AppViewModel: ObservableObject {
@@ -38,6 +39,9 @@ class AppViewModel: ObservableObject {
     }
     Container.shared.cryptoAccountService.register {
       ZerohashAccountService()
+    }
+    Container.shared.bankServiceConfig.register {
+      NetspendBankService()
     }
   }
   

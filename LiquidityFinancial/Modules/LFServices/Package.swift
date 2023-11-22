@@ -16,8 +16,11 @@ let package = Package(
     .library(
       name: "AccountService",
       targets: ["AccountService"]
-    )
-    ,
+    ),
+    .library(
+      name: "BankService",
+      targets: ["BankService"]
+    ),
     .library(
       name: "EnvironmentService",
       targets: ["EnvironmentService"]
@@ -60,6 +63,10 @@ let package = Package(
     .target(
       name: "AccountService",
       dependencies: ["LFUtilities", "Factory"]
+    ),
+    .target(
+      name: "BankService",
+      dependencies: ["Factory"]
     ),
     .target(
       name: "EnvironmentService",

@@ -5,6 +5,7 @@ import LFUtilities
 import Factory
 import SolidOnboarding
 import AccountService
+import BankService
 import SolidData
 import ZerohashData
 
@@ -39,6 +40,9 @@ class AppViewModel: ObservableObject {
     }
     Container.shared.cryptoAccountService.register {
       ZerohashAccountService()
+    }
+    Container.shared.bankServiceConfig.register {
+      SolidBankService()
     }
   }
   
