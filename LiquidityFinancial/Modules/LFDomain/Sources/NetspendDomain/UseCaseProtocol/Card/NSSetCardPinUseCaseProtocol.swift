@@ -5,5 +5,5 @@ public protocol NSSetCardPinUseCaseProtocol {
     requestParam: SetPinRequestEntity,
     cardID: String,
     sessionID: String
-  ) async throws -> CardEntity
+  ) async throws -> NSCardEntity
 }

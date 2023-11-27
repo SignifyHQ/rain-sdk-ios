@@ -19,12 +19,12 @@ extension NSCardDataTests {
     // When calling getListCard function on the repository and it should return a success response
     await expect {
       let response = try await self.repository.getListCard()
-      return response.first?.id
+      return response.first?.liquidityCardId
     }
     /* Then the first element in the response received from repository
       should contain the first element's id of mock success response
      */
-    .to(equal(mockListCardResponse.first?.id))
+    .to(equal(mockListCardResponse.first?.liquidityCardId))
   }
   
   /// Test getListCard functionality when it encounters an API error

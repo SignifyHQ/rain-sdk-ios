@@ -65,7 +65,7 @@ public extension NSListCardsViewModel {
     Task {
       do {
         let card = try await lockCardUseCase.execute(cardID: currentCard.id, sessionID: accountDataManager.sessionID)
-        updateCardStatus(status: .disabled, id: card.id)
+        updateCardStatus(status: .disabled, id: card.liquidityCardId)
       } catch {
         isCardLocked = false
         isLoading = false
@@ -79,7 +79,7 @@ public extension NSListCardsViewModel {
     Task {
       do {
         let card = try await unLockCardUseCase.execute(cardID: currentCard.id, sessionID: accountDataManager.sessionID)
-        updateCardStatus(status: .active, id: card.id)
+        updateCardStatus(status: .active, id: card.liquidityCardId)
       } catch {
         isCardLocked = true
         isLoading = false

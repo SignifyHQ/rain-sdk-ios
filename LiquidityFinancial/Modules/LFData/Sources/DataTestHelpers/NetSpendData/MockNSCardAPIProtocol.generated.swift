@@ -17,10 +17,10 @@ public class MockNSCardAPIProtocol: NSCardAPIProtocol {
     public var getListCardCalled: Bool {
         return getListCardCallsCount > 0
     }
-    public var getListCardReturnValue: [APICard]!
-    public var getListCardClosure: (() async throws -> [APICard])?
+    public var getListCardReturnValue: [NSAPICard]!
+    public var getListCardClosure: (() async throws -> [NSAPICard])?
 
-    public func getListCard() async throws -> [APICard] {
+    public func getListCard() async throws -> [NSAPICard] {
         if let error = getListCardThrowableError {
             throw error
         }
@@ -41,10 +41,10 @@ public class MockNSCardAPIProtocol: NSCardAPIProtocol {
     }
     public var createCardSessionIDReceivedSessionID: String?
     public var createCardSessionIDReceivedInvocations: [String] = []
-    public var createCardSessionIDReturnValue: APICard!
-    public var createCardSessionIDClosure: ((String) async throws -> APICard)?
+    public var createCardSessionIDReturnValue: NSAPICard!
+    public var createCardSessionIDClosure: ((String) async throws -> NSAPICard)?
 
-    public func createCard(sessionID: String) async throws -> APICard {
+    public func createCard(sessionID: String) async throws -> NSAPICard {
         if let error = createCardSessionIDThrowableError {
             throw error
         }
@@ -67,10 +67,10 @@ public class MockNSCardAPIProtocol: NSCardAPIProtocol {
     }
     public var getCardCardIDSessionIDReceivedArguments: (cardID: String, sessionID: String)?
     public var getCardCardIDSessionIDReceivedInvocations: [(cardID: String, sessionID: String)] = []
-    public var getCardCardIDSessionIDReturnValue: APICard!
-    public var getCardCardIDSessionIDClosure: ((String, String) async throws -> APICard)?
+    public var getCardCardIDSessionIDReturnValue: NSAPICard!
+    public var getCardCardIDSessionIDClosure: ((String, String) async throws -> NSAPICard)?
 
-    public func getCard(cardID: String, sessionID: String) async throws -> APICard {
+    public func getCard(cardID: String, sessionID: String) async throws -> NSAPICard {
         if let error = getCardCardIDSessionIDThrowableError {
             throw error
         }
@@ -93,10 +93,10 @@ public class MockNSCardAPIProtocol: NSCardAPIProtocol {
     }
     public var lockCardCardIDSessionIDReceivedArguments: (cardID: String, sessionID: String)?
     public var lockCardCardIDSessionIDReceivedInvocations: [(cardID: String, sessionID: String)] = []
-    public var lockCardCardIDSessionIDReturnValue: APICard!
-    public var lockCardCardIDSessionIDClosure: ((String, String) async throws -> APICard)?
+    public var lockCardCardIDSessionIDReturnValue: NSAPICard!
+    public var lockCardCardIDSessionIDClosure: ((String, String) async throws -> NSAPICard)?
 
-    public func lockCard(cardID: String, sessionID: String) async throws -> APICard {
+    public func lockCard(cardID: String, sessionID: String) async throws -> NSAPICard {
         if let error = lockCardCardIDSessionIDThrowableError {
             throw error
         }
@@ -119,10 +119,10 @@ public class MockNSCardAPIProtocol: NSCardAPIProtocol {
     }
     public var unlockCardCardIDSessionIDReceivedArguments: (cardID: String, sessionID: String)?
     public var unlockCardCardIDSessionIDReceivedInvocations: [(cardID: String, sessionID: String)] = []
-    public var unlockCardCardIDSessionIDReturnValue: APICard!
-    public var unlockCardCardIDSessionIDClosure: ((String, String) async throws -> APICard)?
+    public var unlockCardCardIDSessionIDReturnValue: NSAPICard!
+    public var unlockCardCardIDSessionIDClosure: ((String, String) async throws -> NSAPICard)?
 
-    public func unlockCard(cardID: String, sessionID: String) async throws -> APICard {
+    public func unlockCard(cardID: String, sessionID: String) async throws -> NSAPICard {
         if let error = unlockCardCardIDSessionIDThrowableError {
             throw error
         }
@@ -145,10 +145,10 @@ public class MockNSCardAPIProtocol: NSCardAPIProtocol {
     }
     public var closeCardReasonCardIDSessionIDReceivedArguments: (reason: CloseCardReasonParameters, cardID: String, sessionID: String)?
     public var closeCardReasonCardIDSessionIDReceivedInvocations: [(reason: CloseCardReasonParameters, cardID: String, sessionID: String)] = []
-    public var closeCardReasonCardIDSessionIDReturnValue: APICard!
-    public var closeCardReasonCardIDSessionIDClosure: ((CloseCardReasonParameters, String, String) async throws -> APICard)?
+    public var closeCardReasonCardIDSessionIDReturnValue: NSAPICard!
+    public var closeCardReasonCardIDSessionIDClosure: ((CloseCardReasonParameters, String, String) async throws -> NSAPICard)?
 
-    public func closeCard(reason: CloseCardReasonParameters, cardID: String, sessionID: String) async throws -> APICard {
+    public func closeCard(reason: CloseCardReasonParameters, cardID: String, sessionID: String) async throws -> NSAPICard {
         if let error = closeCardReasonCardIDSessionIDThrowableError {
             throw error
         }
@@ -171,10 +171,10 @@ public class MockNSCardAPIProtocol: NSCardAPIProtocol {
     }
     public var orderPhysicalCardAddressSessionIDReceivedArguments: (address: AddressCardParameters, sessionID: String)?
     public var orderPhysicalCardAddressSessionIDReceivedInvocations: [(address: AddressCardParameters, sessionID: String)] = []
-    public var orderPhysicalCardAddressSessionIDReturnValue: APICard!
-    public var orderPhysicalCardAddressSessionIDClosure: ((AddressCardParameters, String) async throws -> APICard)?
+    public var orderPhysicalCardAddressSessionIDReturnValue: NSAPICard!
+    public var orderPhysicalCardAddressSessionIDClosure: ((AddressCardParameters, String) async throws -> NSAPICard)?
 
-    public func orderPhysicalCard(address: AddressCardParameters, sessionID: String) async throws -> APICard {
+    public func orderPhysicalCard(address: AddressCardParameters, sessionID: String) async throws -> NSAPICard {
         if let error = orderPhysicalCardAddressSessionIDThrowableError {
             throw error
         }
@@ -223,10 +223,10 @@ public class MockNSCardAPIProtocol: NSCardAPIProtocol {
     }
     public var setPinRequestParamCardIDSessionIDReceivedArguments: (requestParam: APISetPinRequest, cardID: String, sessionID: String)?
     public var setPinRequestParamCardIDSessionIDReceivedInvocations: [(requestParam: APISetPinRequest, cardID: String, sessionID: String)] = []
-    public var setPinRequestParamCardIDSessionIDReturnValue: APICard!
-    public var setPinRequestParamCardIDSessionIDClosure: ((APISetPinRequest, String, String) async throws -> APICard)?
+    public var setPinRequestParamCardIDSessionIDReturnValue: NSAPICard!
+    public var setPinRequestParamCardIDSessionIDClosure: ((APISetPinRequest, String, String) async throws -> NSAPICard)?
 
-    public func setPin(requestParam: APISetPinRequest, cardID: String, sessionID: String) async throws -> APICard {
+    public func setPin(requestParam: APISetPinRequest, cardID: String, sessionID: String) async throws -> NSAPICard {
         if let error = setPinRequestParamCardIDSessionIDThrowableError {
             throw error
         }

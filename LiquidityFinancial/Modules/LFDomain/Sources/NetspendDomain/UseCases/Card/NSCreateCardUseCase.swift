@@ -7,7 +7,7 @@ public class NSCreateCardUseCase: NSCreateCardUseCaseProtocol {
     self.repository = repository
   }
   
-  public func execute(sessionID: String) async throws -> CardEntity {
+  public func execute(sessionID: String) async throws -> NSCardEntity {
     try await repository.createCard(sessionID: sessionID)
   }
 }

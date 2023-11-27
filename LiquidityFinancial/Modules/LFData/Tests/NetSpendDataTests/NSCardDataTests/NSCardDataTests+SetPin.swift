@@ -22,10 +22,10 @@ extension NSCardDataTests {
         requestParam: self.mockSetPin,
         cardID: self.mockExistCardID,
         sessionID: self.mockValidNetSpendSessionID
-      ).id
+      ).liquidityCardId
     }
     // Then the id received matches our expectation
-    .to(equal(mockCardResponse.id))
+    .to(equal(mockCardResponse.liquidityCardId))
   }
   
   /// Test setPin  functionality when it encounters an API error

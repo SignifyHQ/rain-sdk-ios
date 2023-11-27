@@ -44,9 +44,9 @@ public protocol OrderPhysicalCardViewModelProtocol: ObservableObject {
 }
 
 public extension OrderPhysicalCardViewModelProtocol {
-  func mapToCardModel(entity: CardEntity) -> CardModel {
+  func mapToCardModel(entity: NSCardEntity) -> CardModel {
     CardModel(
-      id: entity.id,
+      id: entity.liquidityCardId,
       cardType: CardType(rawValue: entity.type) ?? .virtual,
       cardholderName: nil,
       expiryMonth: entity.expirationMonth,

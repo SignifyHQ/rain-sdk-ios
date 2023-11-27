@@ -5,64 +5,64 @@ import CoreNetwork
 import LFUtilities
 
 extension LFCoreNetwork: NSCardAPIProtocol where R == NSCardRoute {
-  public func getListCard() async throws -> [APICard] {
+  public func getListCard() async throws -> [NSAPICard] {
     try await request(
       NSCardRoute.listCard,
-      target: [APICard].self,
+      target: [NSAPICard].self,
       failure: LFErrorObject.self,
       decoder: .apiDecoder
     )
   }
   
-  public func createCard(sessionID: String) async throws -> APICard {
+  public func createCard(sessionID: String) async throws -> NSAPICard {
     try await request(
       NSCardRoute.createCard(sessionID),
-      target: APICard.self,
+      target: NSAPICard.self,
       failure: LFErrorObject.self,
       decoder: .apiDecoder
     )
   }
   
-  public func getCard(cardID: String, sessionID: String) async throws -> APICard {
+  public func getCard(cardID: String, sessionID: String) async throws -> NSAPICard {
     try await request(
       NSCardRoute.card(cardID, sessionID),
-      target: APICard.self,
+      target: NSAPICard.self,
       failure: LFErrorObject.self,
       decoder: .apiDecoder
     )
   }
   
-  public func lockCard(cardID: String, sessionID: String) async throws -> APICard {
+  public func lockCard(cardID: String, sessionID: String) async throws -> NSAPICard {
     try await request(
       NSCardRoute.lock(cardID, sessionID),
-      target: APICard.self,
+      target: NSAPICard.self,
       failure: LFErrorObject.self,
       decoder: .apiDecoder
     )
   }
   
-  public func unlockCard(cardID: String, sessionID: String) async throws -> APICard {
+  public func unlockCard(cardID: String, sessionID: String) async throws -> NSAPICard {
     try await request(
       NSCardRoute.unlock(cardID, sessionID),
-      target: APICard.self,
+      target: NSAPICard.self,
       failure: LFErrorObject.self,
       decoder: .apiDecoder
     )
   }
   
-  public func closeCard(reason: CloseCardReasonParameters, cardID: String, sessionID: String) async throws -> APICard {
+  public func closeCard(reason: CloseCardReasonParameters, cardID: String, sessionID: String) async throws -> NSAPICard {
     try await request(
       NSCardRoute.close(reason, cardId: cardID, sessionId: sessionID),
-      target: APICard.self,
+      target: NSAPICard.self,
       failure: LFErrorObject.self,
       decoder: .apiDecoder
     )
   }
   
-  public func orderPhysicalCard(address: AddressCardParameters, sessionID: String) async throws -> APICard {
+  public func orderPhysicalCard(address: AddressCardParameters, sessionID: String) async throws -> NSAPICard {
     return try await request(
       NSCardRoute.orderPhysicalCard(address, sessionID),
-      target: APICard.self,
+      target: NSAPICard.self,
       failure: LFErrorObject.self,
       decoder: .apiDecoder
     )
@@ -77,11 +77,11 @@ extension LFCoreNetwork: NSCardAPIProtocol where R == NSCardRoute {
     )
   }
   
-  public func setPin(requestParam: APISetPinRequest, cardID: String, sessionID: String) async throws -> APICard {
+  public func setPin(requestParam: APISetPinRequest, cardID: String, sessionID: String) async throws -> NSAPICard {
     let parameters = SetPinParameters(verifyId: requestParam.verifyId, encryptedData: requestParam.encryptedData)
     return try await request(
       NSCardRoute.setPin(parameters, cardID, sessionID),
-      target: APICard.self,
+      target: NSAPICard.self,
       failure: LFErrorObject.self,
       decoder: .apiDecoder
     )

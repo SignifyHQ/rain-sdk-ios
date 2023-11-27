@@ -1,8 +1,9 @@
 import Foundation
 
 // sourcery: AutoMockable
-public protocol CardEntity {
-  var id: String { get }
+public protocol NSCardEntity {
+  var netspendCardId: String { get }
+  var liquidityCardId: String { get }
   var expirationMonth: Int { get }
   var expirationYear: Int { get }
   var panLast4: String { get }

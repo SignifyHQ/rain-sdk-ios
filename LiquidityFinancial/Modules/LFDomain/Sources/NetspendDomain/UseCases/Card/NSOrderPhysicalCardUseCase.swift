@@ -7,7 +7,7 @@ public class NSOrderPhysicalCardUseCase: NSOrderPhysicalCardUseCaseProtocol {
     self.repository = repository
   }
   
-  public func execute(address: AddressCardParametersEntity, sessionID: String) async throws -> CardEntity {
+  public func execute(address: AddressCardParametersEntity, sessionID: String) async throws -> NSCardEntity {
     try await repository.orderPhysicalCard(address: address, sessionID: sessionID)
   }
 }

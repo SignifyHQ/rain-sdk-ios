@@ -3,8 +3,9 @@ import NetspendDomain
 import NetspendSdk
 import LFUtilities
 
-public struct APICard: Decodable {
-  public let id: String
+public struct NSAPICard: Decodable {
+  public let netspendCardId: String
+  public let liquidityCardId: String
   public let expirationMonth: Int
   public let expirationYear: Int
   public let panLast4: String

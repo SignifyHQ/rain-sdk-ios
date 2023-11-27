@@ -7,7 +7,7 @@ public class NSUnLockCardUseCase: NSUnLockCardUseCaseProtocol {
     self.repository = repository
   }
   
-  public func execute(cardID: String, sessionID: String) async throws -> CardEntity {
+  public func execute(cardID: String, sessionID: String) async throws -> NSCardEntity {
     try await repository.unlockCard(cardID: cardID, sessionID: sessionID)
   }
 }

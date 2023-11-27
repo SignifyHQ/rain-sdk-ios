@@ -80,4 +80,56 @@ public class MockSolidAccountAPIProtocol: SolidAccountAPIProtocol {
         }
     }
 
+    //MARK: - getAllStatement
+
+    public var getAllStatementLiquidityAccountIdThrowableError: Error?
+    public var getAllStatementLiquidityAccountIdCallsCount = 0
+    public var getAllStatementLiquidityAccountIdCalled: Bool {
+        return getAllStatementLiquidityAccountIdCallsCount > 0
+    }
+    public var getAllStatementLiquidityAccountIdReceivedLiquidityAccountId: String?
+    public var getAllStatementLiquidityAccountIdReceivedInvocations: [String] = []
+    public var getAllStatementLiquidityAccountIdReturnValue: [APISolidAccountStatementList]!
+    public var getAllStatementLiquidityAccountIdClosure: ((String) async throws -> [APISolidAccountStatementList])?
+
+    public func getAllStatement(liquidityAccountId: String) async throws -> [APISolidAccountStatementList] {
+        if let error = getAllStatementLiquidityAccountIdThrowableError {
+            throw error
+        }
+        getAllStatementLiquidityAccountIdCallsCount += 1
+        getAllStatementLiquidityAccountIdReceivedLiquidityAccountId = liquidityAccountId
+        getAllStatementLiquidityAccountIdReceivedInvocations.append(liquidityAccountId)
+        if let getAllStatementLiquidityAccountIdClosure = getAllStatementLiquidityAccountIdClosure {
+            return try await getAllStatementLiquidityAccountIdClosure(liquidityAccountId)
+        } else {
+            return getAllStatementLiquidityAccountIdReturnValue
+        }
+    }
+
+    //MARK: - getStatement
+
+    public var getStatementLiquidityAccountIdFileNameYearMonthThrowableError: Error?
+    public var getStatementLiquidityAccountIdFileNameYearMonthCallsCount = 0
+    public var getStatementLiquidityAccountIdFileNameYearMonthCalled: Bool {
+        return getStatementLiquidityAccountIdFileNameYearMonthCallsCount > 0
+    }
+    public var getStatementLiquidityAccountIdFileNameYearMonthReceivedArguments: (liquidityAccountId: String, fileName: String, year: String, month: String)?
+    public var getStatementLiquidityAccountIdFileNameYearMonthReceivedInvocations: [(liquidityAccountId: String, fileName: String, year: String, month: String)] = []
+    public var getStatementLiquidityAccountIdFileNameYearMonthReturnValue: APISolidAccountStatementItem!
+    public var getStatementLiquidityAccountIdFileNameYearMonthClosure: ((String, String, String, String) async throws -> APISolidAccountStatementItem)?
+
+    public func getStatement(liquidityAccountId: String, fileName: String, year: String, month: String) async throws -> APISolidAccountStatementItem {
+        if let error = getStatementLiquidityAccountIdFileNameYearMonthThrowableError {
+            throw error
+        }
+        getStatementLiquidityAccountIdFileNameYearMonthCallsCount += 1
+        getStatementLiquidityAccountIdFileNameYearMonthReceivedArguments = (liquidityAccountId: liquidityAccountId, fileName: fileName, year: year, month: month)
+        getStatementLiquidityAccountIdFileNameYearMonthReceivedInvocations.append((liquidityAccountId: liquidityAccountId, fileName: fileName, year: year, month: month))
+        if let getStatementLiquidityAccountIdFileNameYearMonthClosure = getStatementLiquidityAccountIdFileNameYearMonthClosure {
+            return try await getStatementLiquidityAccountIdFileNameYearMonthClosure(liquidityAccountId, fileName, year, month)
+        } else {
+            return getStatementLiquidityAccountIdFileNameYearMonthReturnValue
+        }
+    }
+
 }

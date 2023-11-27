@@ -5,7 +5,7 @@
 import Foundation
 import NetspendDomain
 
-public class MockCardEntity: CardEntity {
+public class MockCardEntity: NSCardEntity {
 
     public init() {}
 

@@ -7,7 +7,7 @@ public class NSGetCardUseCase: NSGetCardUseCaseProtocol {
     self.repository = repository
   }
   
-  public func execute(cardID: String, sessionID: String) async throws -> CardEntity {
+  public func execute(cardID: String, sessionID: String) async throws -> NSCardEntity {
     try await repository.getCard(cardID: cardID, sessionID: sessionID)
   }
 }

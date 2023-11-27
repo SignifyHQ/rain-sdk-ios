@@ -44,8 +44,9 @@ final class NSCardDataTests: XCTestCase {
   ]
 
   // Defining mock success response
-  let mockCardResponse = APICard(
-    id: "mock_id",
+  let mockCardResponse = NSAPICard(
+    netspendCardId: "mock_netspendCardId",
+    liquidityCardId: "mock_liquidityCardId",
     expirationMonth: 10,
     expirationYear: 2024,
     panLast4: "mock_panLast4",
@@ -58,8 +59,9 @@ final class NSCardDataTests: XCTestCase {
     shippingAddress: nil
   )
   let mockListCardResponse = [
-    APICard(
-      id: "mock_id",
+    NSAPICard(
+      netspendCardId: "mock_netspendCardId",
+      liquidityCardId: "mock_liquidityCardId",
       expirationMonth: 10,
       expirationYear: 2024,
       panLast4: "mock_panLast4",

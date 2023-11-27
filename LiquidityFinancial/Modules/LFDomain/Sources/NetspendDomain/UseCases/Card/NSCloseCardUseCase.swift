@@ -11,7 +11,7 @@ public class NSCloseCardUseCase: NSCloseCardUseCaseProtocol {
     reason: CloseCardReasonEntity,
     cardID: String,
     sessionID: String
-  ) async throws -> CardEntity {
+  ) async throws -> NSCardEntity {
     try await repository.closeCard(reason: reason, cardID: cardID, sessionID: sessionID)
   }
 }

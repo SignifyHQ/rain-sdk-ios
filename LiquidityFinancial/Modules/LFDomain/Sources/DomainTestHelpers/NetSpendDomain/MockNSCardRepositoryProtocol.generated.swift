@@ -17,10 +17,10 @@ public class MockNSCardRepositoryProtocol: NSCardRepositoryProtocol {
     public var getListCardCalled: Bool {
         return getListCardCallsCount > 0
     }
-    public var getListCardReturnValue: [CardEntity]!
-    public var getListCardClosure: (() async throws -> [CardEntity])?
+    public var getListCardReturnValue: [NSCardEntity]!
+    public var getListCardClosure: (() async throws -> [NSCardEntity])?
 
-    public func getListCard() async throws -> [CardEntity] {
+    public func getListCard() async throws -> [NSCardEntity] {
         if let error = getListCardThrowableError {
             throw error
         }
@@ -41,10 +41,10 @@ public class MockNSCardRepositoryProtocol: NSCardRepositoryProtocol {
     }
     public var createCardSessionIDReceivedSessionID: String?
     public var createCardSessionIDReceivedInvocations: [String] = []
-    public var createCardSessionIDReturnValue: CardEntity!
-    public var createCardSessionIDClosure: ((String) async throws -> CardEntity)?
+    public var createCardSessionIDReturnValue: NSCardEntity!
+    public var createCardSessionIDClosure: ((String) async throws -> NSCardEntity)?
 
-    public func createCard(sessionID: String) async throws -> CardEntity {
+    public func createCard(sessionID: String) async throws -> NSCardEntity {
         if let error = createCardSessionIDThrowableError {
             throw error
         }
@@ -67,10 +67,10 @@ public class MockNSCardRepositoryProtocol: NSCardRepositoryProtocol {
     }
     public var getCardCardIDSessionIDReceivedArguments: (cardID: String, sessionID: String)?
     public var getCardCardIDSessionIDReceivedInvocations: [(cardID: String, sessionID: String)] = []
-    public var getCardCardIDSessionIDReturnValue: CardEntity!
-    public var getCardCardIDSessionIDClosure: ((String, String) async throws -> CardEntity)?
+    public var getCardCardIDSessionIDReturnValue: NSCardEntity!
+    public var getCardCardIDSessionIDClosure: ((String, String) async throws -> NSCardEntity)?
 
-    public func getCard(cardID: String, sessionID: String) async throws -> CardEntity {
+    public func getCard(cardID: String, sessionID: String) async throws -> NSCardEntity {
         if let error = getCardCardIDSessionIDThrowableError {
             throw error
         }
@@ -93,10 +93,10 @@ public class MockNSCardRepositoryProtocol: NSCardRepositoryProtocol {
     }
     public var lockCardCardIDSessionIDReceivedArguments: (cardID: String, sessionID: String)?
     public var lockCardCardIDSessionIDReceivedInvocations: [(cardID: String, sessionID: String)] = []
-    public var lockCardCardIDSessionIDReturnValue: CardEntity!
-    public var lockCardCardIDSessionIDClosure: ((String, String) async throws -> CardEntity)?
+    public var lockCardCardIDSessionIDReturnValue: NSCardEntity!
+    public var lockCardCardIDSessionIDClosure: ((String, String) async throws -> NSCardEntity)?
 
-    public func lockCard(cardID: String, sessionID: String) async throws -> CardEntity {
+    public func lockCard(cardID: String, sessionID: String) async throws -> NSCardEntity {
         if let error = lockCardCardIDSessionIDThrowableError {
             throw error
         }
@@ -119,10 +119,10 @@ public class MockNSCardRepositoryProtocol: NSCardRepositoryProtocol {
     }
     public var unlockCardCardIDSessionIDReceivedArguments: (cardID: String, sessionID: String)?
     public var unlockCardCardIDSessionIDReceivedInvocations: [(cardID: String, sessionID: String)] = []
-    public var unlockCardCardIDSessionIDReturnValue: CardEntity!
-    public var unlockCardCardIDSessionIDClosure: ((String, String) async throws -> CardEntity)?
+    public var unlockCardCardIDSessionIDReturnValue: NSCardEntity!
+    public var unlockCardCardIDSessionIDClosure: ((String, String) async throws -> NSCardEntity)?
 
-    public func unlockCard(cardID: String, sessionID: String) async throws -> CardEntity {
+    public func unlockCard(cardID: String, sessionID: String) async throws -> NSCardEntity {
         if let error = unlockCardCardIDSessionIDThrowableError {
             throw error
         }
@@ -145,10 +145,10 @@ public class MockNSCardRepositoryProtocol: NSCardRepositoryProtocol {
     }
     public var closeCardReasonCardIDSessionIDReceivedArguments: (reason: CloseCardReasonEntity, cardID: String, sessionID: String)?
     public var closeCardReasonCardIDSessionIDReceivedInvocations: [(reason: CloseCardReasonEntity, cardID: String, sessionID: String)] = []
-    public var closeCardReasonCardIDSessionIDReturnValue: CardEntity!
-    public var closeCardReasonCardIDSessionIDClosure: ((CloseCardReasonEntity, String, String) async throws -> CardEntity)?
+    public var closeCardReasonCardIDSessionIDReturnValue: NSCardEntity!
+    public var closeCardReasonCardIDSessionIDClosure: ((CloseCardReasonEntity, String, String) async throws -> NSCardEntity)?
 
-    public func closeCard(reason: CloseCardReasonEntity, cardID: String, sessionID: String) async throws -> CardEntity {
+    public func closeCard(reason: CloseCardReasonEntity, cardID: String, sessionID: String) async throws -> NSCardEntity {
         if let error = closeCardReasonCardIDSessionIDThrowableError {
             throw error
         }
@@ -171,10 +171,10 @@ public class MockNSCardRepositoryProtocol: NSCardRepositoryProtocol {
     }
     public var orderPhysicalCardAddressSessionIDReceivedArguments: (address: AddressCardParametersEntity, sessionID: String)?
     public var orderPhysicalCardAddressSessionIDReceivedInvocations: [(address: AddressCardParametersEntity, sessionID: String)] = []
-    public var orderPhysicalCardAddressSessionIDReturnValue: CardEntity!
-    public var orderPhysicalCardAddressSessionIDClosure: ((AddressCardParametersEntity, String) async throws -> CardEntity)?
+    public var orderPhysicalCardAddressSessionIDReturnValue: NSCardEntity!
+    public var orderPhysicalCardAddressSessionIDClosure: ((AddressCardParametersEntity, String) async throws -> NSCardEntity)?
 
-    public func orderPhysicalCard(address: AddressCardParametersEntity, sessionID: String) async throws -> CardEntity {
+    public func orderPhysicalCard(address: AddressCardParametersEntity, sessionID: String) async throws -> NSCardEntity {
         if let error = orderPhysicalCardAddressSessionIDThrowableError {
             throw error
         }
@@ -223,10 +223,10 @@ public class MockNSCardRepositoryProtocol: NSCardRepositoryProtocol {
     }
     public var setPinRequestParamCardIDSessionIDReceivedArguments: (requestParam: SetPinRequestEntity, cardID: String, sessionID: String)?
     public var setPinRequestParamCardIDSessionIDReceivedInvocations: [(requestParam: SetPinRequestEntity, cardID: String, sessionID: String)] = []
-    public var setPinRequestParamCardIDSessionIDReturnValue: CardEntity!
-    public var setPinRequestParamCardIDSessionIDClosure: ((SetPinRequestEntity, String, String) async throws -> CardEntity)?
+    public var setPinRequestParamCardIDSessionIDReturnValue: NSCardEntity!
+    public var setPinRequestParamCardIDSessionIDClosure: ((SetPinRequestEntity, String, String) async throws -> NSCardEntity)?
 
-    public func setPin(requestParam: SetPinRequestEntity, cardID: String, sessionID: String) async throws -> CardEntity {
+    public func setPin(requestParam: SetPinRequestEntity, cardID: String, sessionID: String) async throws -> NSCardEntity {
         if let error = setPinRequestParamCardIDSessionIDThrowableError {
             throw error
         }

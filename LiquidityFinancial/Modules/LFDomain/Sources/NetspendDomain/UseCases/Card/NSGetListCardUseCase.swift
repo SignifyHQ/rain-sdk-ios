@@ -7,7 +7,7 @@ public class NSGetListCardUseCase: NSGetListCardUseCaseProtocol {
     self.repository = repository
   }
   
-  public func execute() async throws -> [CardEntity] {
+  public func execute() async throws -> [NSCardEntity] {
     try await repository.getListCard()
   }
 }

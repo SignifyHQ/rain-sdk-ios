@@ -192,7 +192,7 @@ public extension DashboardRepository {
         let cards = try await getListNSCardUseCase.execute()
         netspendCardData.cards = cards.map { card in
           CardModel(
-            id: card.id,
+            id: card.liquidityCardId,
             cardType: CardType(rawValue: card.type) ?? .virtual,
             cardholderName: nil,
             expiryMonth: card.expirationMonth,
@@ -252,7 +252,7 @@ public extension DashboardRepository {
       defer { netspendCardData.loading = false }
       do {
         let entity = try await getCardUseCase.execute(cardID: cardID, sessionID: accountDataManager.sessionID)
-        if let usersession = netspendDataManager.sdkSession, let cardModel = entity as? APICard {
+        if let usersession = netspendDataManager.sdkSession, let cardModel = entity as? NSAPICard {
           let encryptedData: APICardEncrypted? = cardModel.decodeData(session: usersession)
           if let encryptedData {
             netspendCardData.metaDatas[index] = CardMetaData(pan: encryptedData.pan, cvv: encryptedData.cvv2)

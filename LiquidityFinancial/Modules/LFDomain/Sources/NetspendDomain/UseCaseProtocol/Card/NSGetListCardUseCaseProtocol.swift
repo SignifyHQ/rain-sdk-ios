@@ -1,5 +1,5 @@
 import Foundation
 
 public protocol NSGetListCardUseCaseProtocol {
-  func execute() async throws -> [CardEntity]
+  func execute() async throws -> [NSCardEntity]
 }

@@ -21,10 +21,10 @@ extension NSCardDataTests {
       try await self.repository.getCard(
         cardID: self.mockExistCardID,
         sessionID: self.mockValidNetSpendSessionID
-      ).id
+      ).liquidityCardId
     }
     // Then the id received matches our expectation
-    .to(equal(mockCardResponse.id))
+    .to(equal(mockCardResponse.liquidityCardId))
   }
   
   /// Test get Card functionality when it encounters an API error

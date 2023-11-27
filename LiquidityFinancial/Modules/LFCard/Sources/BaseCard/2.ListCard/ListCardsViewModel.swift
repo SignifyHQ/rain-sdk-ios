@@ -100,9 +100,9 @@ public protocol ListCardsViewModelProtocol: ObservableObject {
 
 // MARK: - Functions
 public extension ListCardsViewModelProtocol {
-  func mapToCardModel(card: CardEntity) -> CardModel {
+  func mapToCardModel(card: NSCardEntity) -> CardModel {
     CardModel(
-      id: card.id,
+      id: card.liquidityCardId,
       cardType: CardType(rawValue: card.type) ?? .virtual,
       cardholderName: nil,
       expiryMonth: card.expirationMonth,

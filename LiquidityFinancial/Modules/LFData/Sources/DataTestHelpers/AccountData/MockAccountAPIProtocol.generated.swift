@@ -325,58 +325,6 @@ public class MockAccountAPIProtocol: AccountAPIProtocol {
         }
     }
 
-    //MARK: - getTaxFile
-
-    public var getTaxFileAccountIdThrowableError: Error?
-    public var getTaxFileAccountIdCallsCount = 0
-    public var getTaxFileAccountIdCalled: Bool {
-        return getTaxFileAccountIdCallsCount > 0
-    }
-    public var getTaxFileAccountIdReceivedAccountId: String?
-    public var getTaxFileAccountIdReceivedInvocations: [String] = []
-    public var getTaxFileAccountIdReturnValue: [APITaxFile]!
-    public var getTaxFileAccountIdClosure: ((String) async throws -> [APITaxFile])?
-
-    public func getTaxFile(accountId: String) async throws -> [APITaxFile] {
-        if let error = getTaxFileAccountIdThrowableError {
-            throw error
-        }
-        getTaxFileAccountIdCallsCount += 1
-        getTaxFileAccountIdReceivedAccountId = accountId
-        getTaxFileAccountIdReceivedInvocations.append(accountId)
-        if let getTaxFileAccountIdClosure = getTaxFileAccountIdClosure {
-            return try await getTaxFileAccountIdClosure(accountId)
-        } else {
-            return getTaxFileAccountIdReturnValue
-        }
-    }
-
-    //MARK: - getTaxFileYear
-
-    public var getTaxFileYearAccountIdYearFileNameThrowableError: Error?
-    public var getTaxFileYearAccountIdYearFileNameCallsCount = 0
-    public var getTaxFileYearAccountIdYearFileNameCalled: Bool {
-        return getTaxFileYearAccountIdYearFileNameCallsCount > 0
-    }
-    public var getTaxFileYearAccountIdYearFileNameReceivedArguments: (accountId: String, year: String, fileName: String)?
-    public var getTaxFileYearAccountIdYearFileNameReceivedInvocations: [(accountId: String, year: String, fileName: String)] = []
-    public var getTaxFileYearAccountIdYearFileNameReturnValue: URL!
-    public var getTaxFileYearAccountIdYearFileNameClosure: ((String, String, String) async throws -> URL)?
-
-    public func getTaxFileYear(accountId: String, year: String, fileName: String) async throws -> URL {
-        if let error = getTaxFileYearAccountIdYearFileNameThrowableError {
-            throw error
-        }
-        getTaxFileYearAccountIdYearFileNameCallsCount += 1
-        getTaxFileYearAccountIdYearFileNameReceivedArguments = (accountId: accountId, year: year, fileName: fileName)
-        getTaxFileYearAccountIdYearFileNameReceivedInvocations.append((accountId: accountId, year: year, fileName: fileName))
-        if let getTaxFileYearAccountIdYearFileNameClosure = getTaxFileYearAccountIdYearFileNameClosure {
-            return try await getTaxFileYearAccountIdYearFileNameClosure(accountId, year, fileName)
-        } else {
-            return getTaxFileYearAccountIdYearFileNameReturnValue
-        }
-    }
-
     //MARK: - addToWaitList
 
     public var addToWaitListBodyThrowableError: Error?
@@ -470,6 +418,50 @@ public class MockAccountAPIProtocol: AccountAPIProtocol {
             return try await createSupportTicketTitleDescriptionTypeClosure(title, description, type)
         } else {
             return createSupportTicketTitleDescriptionTypeReturnValue
+        }
+    }
+
+    //MARK: - getMigrationStatus
+
+    public var getMigrationStatusThrowableError: Error?
+    public var getMigrationStatusCallsCount = 0
+    public var getMigrationStatusCalled: Bool {
+        return getMigrationStatusCallsCount > 0
+    }
+    public var getMigrationStatusReturnValue: APIMigrationStatus!
+    public var getMigrationStatusClosure: (() async throws -> APIMigrationStatus)?
+
+    public func getMigrationStatus() async throws -> APIMigrationStatus {
+        if let error = getMigrationStatusThrowableError {
+            throw error
+        }
+        getMigrationStatusCallsCount += 1
+        if let getMigrationStatusClosure = getMigrationStatusClosure {
+            return try await getMigrationStatusClosure()
+        } else {
+            return getMigrationStatusReturnValue
+        }
+    }
+
+    //MARK: - requestMigration
+
+    public var requestMigrationThrowableError: Error?
+    public var requestMigrationCallsCount = 0
+    public var requestMigrationCalled: Bool {
+        return requestMigrationCallsCount > 0
+    }
+    public var requestMigrationReturnValue: APIMigrationStatus!
+    public var requestMigrationClosure: (() async throws -> APIMigrationStatus)?
+
+    public func requestMigration() async throws -> APIMigrationStatus {
+        if let error = requestMigrationThrowableError {
+            throw error
+        }
+        requestMigrationCallsCount += 1
+        if let requestMigrationClosure = requestMigrationClosure {
+            return try await requestMigrationClosure()
+        } else {
+            return requestMigrationReturnValue
         }
     }
 

@@ -18,10 +18,10 @@ extension NSCardDataTests {
     
     // When calling createCard function on the repository and it should return a success response
     await expect {
-      try await self.repository.createCard(sessionID: self.mockValidNetSpendSessionID).id
+      try await self.repository.createCard(sessionID: self.mockValidNetSpendSessionID).liquidityCardId
     }
     // Then the id received matches our expectation
-    .to(equal(mockCardResponse.id))
+    .to(equal(mockCardResponse.liquidityCardId))
   }
   
   /// Test  createCard functionality when it encounters an API error

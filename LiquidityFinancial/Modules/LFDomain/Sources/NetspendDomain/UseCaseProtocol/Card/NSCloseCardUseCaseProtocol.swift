@@ -5,5 +5,5 @@ public protocol NSCloseCardUseCaseProtocol {
     reason: CloseCardReasonEntity,
     cardID: String,
     sessionID: String
-  ) async throws -> CardEntity
+  ) async throws -> NSCardEntity
 }

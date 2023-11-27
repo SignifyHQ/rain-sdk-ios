@@ -11,7 +11,7 @@ public class NSSetCardPinUseCase: NSSetCardPinUseCaseProtocol {
     requestParam: SetPinRequestEntity,
     cardID: String,
     sessionID: String
-  ) async throws -> CardEntity {
+  ) async throws -> NSCardEntity {
     try await repository.setPin(requestParam: requestParam, cardID: cardID, sessionID: sessionID)
   }
 }

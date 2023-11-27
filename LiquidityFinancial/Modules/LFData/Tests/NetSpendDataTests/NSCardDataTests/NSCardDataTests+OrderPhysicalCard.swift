@@ -21,10 +21,10 @@ extension NSCardDataTests {
       try await self.repository.orderPhysicalCard(
         address: self.mockAddressOrderCard,
         sessionID: self.mockValidNetSpendSessionID
-      ).id
+      ).liquidityCardId
     }
     // Then the id received matches our expectation
-    .to(equal(mockCardResponse.id))
+    .to(equal(mockCardResponse.liquidityCardId))
   }
   
   /// Test orderPhysicalCard functionality when it encounters an API error
