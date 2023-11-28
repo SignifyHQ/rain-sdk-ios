@@ -39,12 +39,12 @@ public extension DateFormatter {
   /// Example: `Oct 20 at 04:06 PM`
   static var transactionDisplayShort: DateFormatter = {
     let formatter = DateFormatter()
-    formatter.dateFormat = "MMMM d, yyyy 'at' h:mm a"
+    formatter.dateFormat = "MMM d 'at' h:mm a"
     return formatter
   }()
 
   /// A formatter used to represent dates with the display representation of its month (short), year, day and time.
-  /// Example: `Oct 20 2022 at 04:06 PM`
+  /// Example: `August 20, 2022 at 04:06 PM`
   static var transactionDisplayFull: DateFormatter = {
     let formatter = DateFormatter()
     formatter.dateFormat = "MMMM d, yyyy 'at' h:mm a"

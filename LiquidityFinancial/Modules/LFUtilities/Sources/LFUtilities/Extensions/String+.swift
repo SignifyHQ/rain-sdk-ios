@@ -239,12 +239,20 @@ public extension String {
   }
 }
 
+private extension String {
+  func formatServerDate(date: Date, includeYear: Bool) -> String {
+    includeYear
+    ? DateFormatter.transactionDisplayFull.string(from: date)
+    : DateFormatter.transactionDisplayShort.string(from: date)
+  }
+}
+
 public extension String {
   func serverToTransactionDisplay(includeYear: Bool = false) -> String {
-    guard let date = DateFormatter.server.date(from: self) else {
-      return self
-    }
-    return includeYear ? DateFormatter.transactionDisplayFull.string(from: date) : DateFormatter.transactionDisplayShort.string(from: date)
+    [DateFormatter.server, DateFormatter.serverShort]
+      .compactMap { $0.date(from: self) }
+      .first
+      .map { formatServerDate(date: $0, includeYear: includeYear) } ?? self
   }
   
   var displayDate: String? {

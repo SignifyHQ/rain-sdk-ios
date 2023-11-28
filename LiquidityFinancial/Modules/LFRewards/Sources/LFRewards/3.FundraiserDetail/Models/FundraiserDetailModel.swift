@@ -166,7 +166,7 @@ public struct FundraiserDetailModel: Equatable, Identifiable {
       userName ?? ""
     }
     public var subtitle: String {
-      transactionDateInLocalZone()
+      transactionDateInLocalZone(includeYear: true)
     }
     public var ammountFormatted: String {
       amount?.formattedAmount(minFractionDigits: 2, maxFractionDigits: 2) ?? "$0"
