@@ -23,7 +23,6 @@ public struct APIUser: Codable {
   public let referralLink, userRewardType, userAccessLevel: String?
   public let userSelectedFundraiserId: String?
   public let numberOfDevices: Int?
-  public let transferLimitConfigs: [APITransferLimitConfig]
 }
 
 extension APIAddress: AddressEntity {}
@@ -35,10 +34,6 @@ extension APIUser: LFUser {
   
   public var addressEntity: AddressEntity? {
     address
-  }
-  
-  public var transferLimitConfigsEntity: [TransferLimitConfigEntity] {
-    transferLimitConfigs
   }
 }
 
