@@ -4,6 +4,7 @@ import Factory
 import AccountData
 import AccountDomain
 import SwiftUI
+import LFUtilities
 
 @MainActor
 class EditNicknameOfWalletViewModel: ObservableObject {
@@ -53,7 +54,16 @@ extension EditNicknameOfWalletViewModel {
           self.shouldDismiss = true
         }
       } catch {
-        toastMessage = error.localizedDescription
+        guard let code = error.asErrorObject?.code else {
+          toastMessage = error.localizedDescription
+          return
+        }
+        switch code {
+        case Constants.ErrorCode.duplicatedWalletNickname.value:
+          inlineMessage = LFLocalizable.EnterNicknameOfWallet.NameExist.inlineError
+        default:
+          toastMessage = error.localizedDescription
+        }
       }
     }
   }

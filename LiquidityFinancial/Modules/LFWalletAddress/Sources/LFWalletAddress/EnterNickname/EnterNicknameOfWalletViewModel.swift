@@ -1,9 +1,9 @@
-import Foundation
 import LFLocalizable
 import Factory
 import AccountData
 import AccountDomain
 import SwiftUI
+import LFUtilities
 
 @MainActor
 class EnterNicknameOfWalletViewModel: ObservableObject {
@@ -66,11 +66,15 @@ extension EnterNicknameOfWalletViewModel {
 
 private extension EnterNicknameOfWalletViewModel {
   func handleAPIError(_ error: Error) {
-    // TODO: Need to check duplicate wallet address later
-    guard error.asErrorObject != nil else {
+    guard let code = error.asErrorObject?.code else {
       toastMessage = error.localizedDescription
       return
     }
-    inlineMessage = LFLocalizable.EnterNicknameOfWallet.NameExist.inlineError
+    switch code {
+    case Constants.ErrorCode.duplicatedWalletNickname.value:
+      inlineMessage = LFLocalizable.EnterNicknameOfWallet.NameExist.inlineError
+    default:
+      toastMessage = error.localizedDescription
+    }
   }
 }
