@@ -58,7 +58,7 @@ public struct RewardTransactionRowModel: Identifiable, Equatable {
     if status.isPending {
       return status.localizedDescription()
     } else {
-      return createdAt?.serverToTransactionDisplay(includeYear: true) ?? .empty
+      return createdAt?.serverToTransactionDisplay() ?? .empty
     }
   }
   public var ammountFormatted: String {
