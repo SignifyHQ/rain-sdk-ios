@@ -2062,8 +2062,10 @@ public enum LFLocalizable {
   public enum ReceiveCryptoView {
     /// Cryptocurrency services powered by Zero Hash
     public static let servicesInfo = LFLocalizable.tr("Localizable", "receive_crypto_view.services_info", fallback: "Cryptocurrency services powered by Zero Hash")
-    /// Doge Wallet Address
-    public static let title = LFLocalizable.tr("Localizable", "receive_crypto_view.title", fallback: "Doge Wallet Address")
+    /// %@ Wallet Address
+    public static func title(_ p1: Any) -> String {
+      return LFLocalizable.tr("Localizable", "receive_crypto_view.title", String(describing: p1), fallback: "%@ Wallet Address")
+    }
     /// Wallet Details
     public static let walletDetail = LFLocalizable.tr("Localizable", "receive_crypto_view.wallet_detail", fallback: "Wallet Details")
     public enum Copied {

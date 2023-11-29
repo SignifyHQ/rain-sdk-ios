@@ -27,6 +27,10 @@ class ReceiveCryptoViewModel: ObservableObject {
   var cryptoAddress: String {
     assetModel.externalAccountId ?? .empty
   }
+  
+  var coinTitle: String {
+    assetModel.type?.title ?? .empty
+  }
 }
 
 extension ReceiveCryptoViewModel {

@@ -106,7 +106,7 @@ private extension ReceiveCryptoView {
   
   var header: some View {
     HStack {
-      Text(LFLocalizable.ReceiveCryptoView.title.uppercased())
+      Text(LFLocalizable.ReceiveCryptoView.title(viewModel.coinTitle).uppercased())
         .foregroundColor(Colors.label.swiftUIColor)
         .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.buttonTextSize.value))
         .padding(.vertical, 30)
