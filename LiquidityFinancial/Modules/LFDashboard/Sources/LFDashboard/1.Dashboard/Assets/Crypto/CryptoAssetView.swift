@@ -202,8 +202,9 @@ private extension CryptoAssetView {
         Text(viewModel.cryptoBalance)
           .foregroundColor(Colors.label.swiftUIColor)
           .font(Fonts.bold.swiftUIFont(size: 32))
-        GenImages.Images.icCryptoCurrency.swiftUIImage
-          .foregroundColor(Colors.primary.swiftUIColor)
+        if let icon = viewModel.cryptoIconImage {
+          icon.foregroundColor(Colors.primary.swiftUIColor)
+        }
       }
       HStack(spacing: 4) {
         Text(viewModel.usdBalance)

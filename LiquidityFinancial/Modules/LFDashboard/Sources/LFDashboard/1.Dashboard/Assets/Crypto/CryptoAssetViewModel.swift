@@ -1,4 +1,5 @@
 import Combine
+import SwiftUI
 import Foundation
 import AccountDomain
 import LFUtilities
@@ -38,6 +39,10 @@ class CryptoAssetViewModel: ObservableObject {
   var filterOptionSubject = CurrentValueSubject<CryptoFilterOption, Never>(.live)
   var chartOptionSubject = CurrentValueSubject<ChartOption, Never>(.line)
   
+  var cryptoIconImage: Image? {
+    asset.type?.image
+  }
+  
   var cryptoBalance: String {
     asset.availableBalanceFormatted
   }
@@ -64,11 +69,22 @@ class CryptoAssetViewModel: ObservableObject {
     
     observeMarketManager()
     observeAssetChange(id: asset.id)
+    requestMarketData()
   }
 }
 
 // MARK: - Private Functions
 private extension CryptoAssetViewModel {
+  func requestMarketData() {
+    guard let type = asset.type else {
+      return
+    }
+    marketManager.clearData()
+    Task {
+      try? await marketManager.fetchData(cryptoCurrency: type.rawValue)
+    }
+  }
+  
   func getCryptoAccount() async {
     do {
       let account = try await cryptoAccountService.getAccountDetail(id: self.asset.id)

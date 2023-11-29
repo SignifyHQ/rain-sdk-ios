@@ -51,27 +51,47 @@ public class MarketManager {
   private var subscribers: Set<AnyCancellable> = []
   
   public init() {
-    Task {
-      do {
-        try await fetchData()
-      } catch {}
-    }
   }
 }
 
 public extension MarketManager {
   func disconnectSocket() {
     pingSocketTimer.upstream.connect().cancel()
+    websocketTask?.cancel()
+    websocketTask = nil
+    subscribers = []
   }
   
-  func fetchData() async throws {
+  func clearData() {
+    lineModelsSubject.send([:])
+    lineDatasSubject.send([:])
+    lineRangeYSubject.send([:])
+    lineRangeXSubject.send([:])
+    
+    liveLineModelsSubject.send([])
+    liveDatasSubject.send([])
+    liveRangeYSubject.send(0 ... 1)
+    liveRangeXSubject.send([])
+    
+    candleModelsSubject.send([:])
+    candleDatasSubject.send([:])
+    candleRangeYSubject.send([:])
+    candleRangeXSubject.send([:])
+    
+    liveCandleModelsSubject.send([])
+    liveCandleDatasSubject.send([])
+    liveCandleRangeYSubject.send(0 ... 1)
+    liveCandleRangeXSubject.send([])
+  }
+  
+  func fetchData(cryptoCurrency: String) async throws {
     let models = try await cryptoChartRepository.getCMCSymbolHistories(
-      symbol: LFUtilities.cryptoCurrency.uppercased(),
+      symbol: cryptoCurrency,
       period: CryptoFilterOption.live.interval
     )
     let historicalModels = HistoricalPriceModel.map(entities: models)
     guard !historicalModels.isEmpty else {
-      self.startPriceWebsocket()
+      self.startPriceWebsocket(cryptoCurrency: cryptoCurrency)
       return
     }
     let count = min(60, historicalModels.count)
@@ -113,21 +133,21 @@ public extension MarketManager {
     self.liveCandleRangeYSubject.send(candleDatas.rangeY())
     self.liveCandleModelsSubject.send(trimModels)
     
-    self.startPriceWebsocket()
+    self.startPriceWebsocket(cryptoCurrency: cryptoCurrency)
     let filterOptions: [CryptoFilterOption] = [.day, .week, .month, .year, .all]
     filterOptions.forEach { option in
-      fetchCMCSymbolHistories(option: option)
+      fetchCMCSymbolHistories(cryptoCurrency: cryptoCurrency, option: option)
     }
   }
 }
 
 // MARK: - CMCSymbolHistories Handles
 private extension MarketManager {
-  func fetchCMCSymbolHistories(option: CryptoFilterOption) {
+  func fetchCMCSymbolHistories(cryptoCurrency: String, option: CryptoFilterOption) {
     Task {
       do {
         let models = try await self.cryptoChartRepository.getCMCSymbolHistories(
-          symbol: LFUtilities.cryptoCurrency.uppercased(),
+          symbol: cryptoCurrency,
           period: option.interval
         )
         let historicalModels = HistoricalPriceModel.map(entities: models)
@@ -203,15 +223,16 @@ private extension MarketManager {
 
 // MARK: - Websocket Handles
 private extension MarketManager {
-  func startPriceWebsocket() {
+  func startPriceWebsocket(cryptoCurrency: String) {
     var hostUrlString = APIConstants.socketProdHost
     switch networkEnvironment {
     case .productionLive: hostUrlString = APIConstants.socketProdHost
     case .productionTest: hostUrlString = APIConstants.socketDevHost
     }
-    guard let url = URL(string: "\(hostUrlString)/ws/cmc/\(LFUtilities.cryptoCurrency)/live") else {
+    guard let url = URL(string: "\(hostUrlString)/ws/cmc/\(cryptoCurrency)/live") else {
       return
     }
+    websocketTask?.cancel()
     websocketTask = connectSocket(url: url)
     receivePriceMessage()
     sendPingWebsocket()
