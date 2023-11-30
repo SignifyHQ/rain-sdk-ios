@@ -16,7 +16,7 @@ public class SelectCauseCategoriesViewModel: ObservableObject {
   @Published var selected: [CauseModel] = []
   @Published var isLoading = false
   @Published var navigation: Navigation?
-  @Published var showError = false
+  @Published var showError: String?
   
   lazy var selectRewardUseCase: RewardUseCase = {
     RewardUseCase(repository: rewardRepository)
@@ -70,7 +70,7 @@ public class SelectCauseCategoriesViewModel: ObservableObject {
         self.navigation = .selectFundraiser(selected.first!, fundraiserModels)
       } catch {
         log.error(error.localizedDescription)
-        showError = true
+        showError = error.localizedDescription
       }
     }
   }

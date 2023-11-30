@@ -33,7 +33,7 @@ struct CausesView: View {
           )
         }
       }
-      .popup(isPresented: $viewModel.showError, style: .toast) {
+      .popup(item: $viewModel.showError, style: .toast) { message in
         ToastView(toastMessage: LFLocalizable.genericErrorMessage)
       }
   }

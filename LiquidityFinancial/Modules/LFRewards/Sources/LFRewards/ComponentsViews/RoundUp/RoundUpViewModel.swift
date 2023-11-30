@@ -16,7 +16,7 @@ public class RoundUpViewModel: ObservableObject {
   
   let onFinish: () -> Void
   @Published var isLoading = false
-  @Published var showError = false
+  @Published var showError: String?
   
   public init(onFinish: @escaping () -> Void) {
     self.onFinish = onFinish
@@ -37,7 +37,7 @@ public class RoundUpViewModel: ObservableObject {
         onFinish()
       } catch {
         log.error(error.localizedDescription)
-        showError = true
+        showError = error.localizedDescription
       }
     }
   }

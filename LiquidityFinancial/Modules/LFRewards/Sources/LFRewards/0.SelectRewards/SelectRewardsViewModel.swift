@@ -10,7 +10,7 @@ class SelectRewardsViewModel: ObservableObject {
   @Published var selected: Option?
   @Published var isLoading = false
   @Published var navigation: Navigation?
-  @Published var showError = false
+  @Published var showError: String?
   
   private var total: Int = 0
   private var offset = 0
@@ -52,7 +52,7 @@ class SelectRewardsViewModel: ObservableObject {
           self.navigation = .causeFilter(causeList)
         } catch {
           log.error(error.localizedDescription)
-          showError = true
+          showError = error.localizedDescription
         }
       }
     case .PrideCard:
@@ -70,7 +70,7 @@ class SelectRewardsViewModel: ObservableObject {
           }
         } catch {
           log.error(error.localizedDescription)
-          showError = true
+          showError = error.localizedDescription
         }
       }
     default: break
@@ -104,7 +104,7 @@ class SelectRewardsViewModel: ObservableObject {
         }
       } catch {
         log.error(error.localizedDescription)
-        showError = true
+        showError = error.localizedDescription
       }
     }
   }

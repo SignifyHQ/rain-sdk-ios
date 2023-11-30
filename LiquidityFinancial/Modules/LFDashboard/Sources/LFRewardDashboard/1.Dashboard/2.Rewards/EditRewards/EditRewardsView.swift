@@ -23,8 +23,8 @@ struct EditRewardsView: View {
             .foregroundColor(Colors.label.swiftUIColor)
         }
       }
-      .popup(isPresented: $viewModel.showError, style: .toast) {
-        ToastView(toastMessage: LFLocalizable.genericErrorMessage)
+      .popup(item: $viewModel.showError, style: .toast) { message in
+        ToastView(toastMessage: message)
       }
       .disabled(viewModel.isLoading)
       .navigationLink(item: $viewModel.navigation) { navigation in

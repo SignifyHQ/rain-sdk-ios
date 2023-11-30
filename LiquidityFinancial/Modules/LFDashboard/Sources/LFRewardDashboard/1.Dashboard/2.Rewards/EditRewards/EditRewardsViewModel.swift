@@ -14,7 +14,7 @@ final class EditRewardsViewModel: ObservableObject {
   private var subscribers: Set<AnyCancellable> = []
   
   @Published var rowModel: [RewardsViewModel] = []
-  @Published var showError = false
+  @Published var showError: String?
   @Published var isLoading = false
   @Published var navigation: Navigation?
 
@@ -66,7 +66,7 @@ extension EditRewardsViewModel {
       self.navigation = .selectFundraiser(causeCategories)
     } catch {
       log.error(error.localizedDescription)
-      showError = true
+      showError = error.localizedDescription
     }
   }
   
@@ -100,7 +100,7 @@ extension EditRewardsViewModel {
       } catch {
         updateRewardSelected(rewardTypeEntity: rewardDataManager.currentSelectReward)
         log.error("Failed to select reward \(error.localizedDescription)")
-        showError = true
+        showError = error.localizedDescription
       }
     }
   }

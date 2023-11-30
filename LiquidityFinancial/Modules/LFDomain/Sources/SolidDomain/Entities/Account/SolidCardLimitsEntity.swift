@@ -2,8 +2,8 @@ import Foundation
 
 public protocol SolidCardLimitsEntity {
   var solidCardId: String { get }
-  var limitAmount: Int? { get }
+  var limitAmount: Double? { get }
   var limitInterval: String? { get }
-  var availableLimit: Int? { get }
-  var platformPerTransactionLimit: Int? { get }
+  var availableLimit: Double? { get }
+  var platformPerTransactionLimit: Double? { get }
 }
