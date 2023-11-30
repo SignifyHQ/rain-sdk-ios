@@ -867,6 +867,19 @@ contact support.";
 "accountMigrationView.title" = "ACCOUNT IN MIGRATION";
 "accountMigrationView.description" = "Your account is currently in the migration process. Please be patient; you will be able to log in to your account soon.";
 
+// MARK: - Authentication View
+"authentication.create_password.title" = "create password";
+"authentication.create_password.sub_title_1" = "Create password";
+"authentication.create_password.sub_title_2" = "Enter password";
+"authentication.create_password.sub_title_3" = "Re-enter password";
+"authentication.create_password.sub_title_4" = "Re-Enter password";
+
+"authentication.create_password.desc_1" = "Must be at least 8 characters";
+"authentication.create_password.desc_2" = "Must have 1 special character including @ #$ %";
+"authentication.create_password.desc_3" = "Must be 1 lower case and 1 upper case";
+
+"authentication.create_password.warning" = "Password dont match";
+
 // MARK: - Common
 
 // Notification Pop up

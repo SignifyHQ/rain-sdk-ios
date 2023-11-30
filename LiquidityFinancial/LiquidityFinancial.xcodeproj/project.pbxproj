@@ -59,6 +59,17 @@
 		74CB167D2A9853F800C137F3 /* FirebaseAnalyticsSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 74CB167C2A9853F800C137F3 /* FirebaseAnalyticsSwift */; };
 		74CB167F2A9853F800C137F3 /* FirebaseCrashlytics in Frameworks */ = {isa = PBXBuildFile; productRef = 74CB167E2A9853F800C137F3 /* FirebaseCrashlytics */; };
 		74CB16812A9853F800C137F3 /* FirebaseMessaging in Frameworks */ = {isa = PBXBuildFile; productRef = 74CB16802A9853F800C137F3 /* FirebaseMessaging */; };
+		A90B5CAF2B16E3A90092E430 /* LFFeatureFlags in Frameworks */ = {isa = PBXBuildFile; productRef = A90B5CAE2B16E3A90092E430 /* LFFeatureFlags */; };
+		A90B5CB12B16E3B10092E430 /* LFFeatureFlags in Frameworks */ = {isa = PBXBuildFile; productRef = A90B5CB02B16E3B10092E430 /* LFFeatureFlags */; };
+		A90B5CB32B16E3BB0092E430 /* LFFeatureFlags in Frameworks */ = {isa = PBXBuildFile; productRef = A90B5CB22B16E3BB0092E430 /* LFFeatureFlags */; };
+		A90B5CB52B16E3C00092E430 /* LFFeatureFlags in Frameworks */ = {isa = PBXBuildFile; productRef = A90B5CB42B16E3C00092E430 /* LFFeatureFlags */; };
+		A90B5CB72B16E3C60092E430 /* LFFeatureFlags in Frameworks */ = {isa = PBXBuildFile; productRef = A90B5CB62B16E3C60092E430 /* LFFeatureFlags */; };
+		A90B5CB92B16E3CF0092E430 /* LFFeatureFlags in Frameworks */ = {isa = PBXBuildFile; productRef = A90B5CB82B16E3CF0092E430 /* LFFeatureFlags */; };
+		A90B5CBB2B17377D0092E430 /* LFAuthentication in Frameworks */ = {isa = PBXBuildFile; productRef = A90B5CBA2B17377D0092E430 /* LFAuthentication */; };
+		A90B5CBD2B1737960092E430 /* LFAuthentication in Frameworks */ = {isa = PBXBuildFile; productRef = A90B5CBC2B1737960092E430 /* LFAuthentication */; };
+		A90B5CBF2B17379D0092E430 /* LFAuthentication in Frameworks */ = {isa = PBXBuildFile; productRef = A90B5CBE2B17379D0092E430 /* LFAuthentication */; };
+		A90B5CC12B1737A40092E430 /* LFAuthentication in Frameworks */ = {isa = PBXBuildFile; productRef = A90B5CC02B1737A40092E430 /* LFAuthentication */; };
+		A90B5CC32B1737AB0092E430 /* LFAuthentication in Frameworks */ = {isa = PBXBuildFile; productRef = A90B5CC22B1737AB0092E430 /* LFAuthentication */; };
 		A918D76E2A77B116001AD849 /* AccountData in Frameworks */ = {isa = PBXBuildFile; productRef = A918D76D2A77B116001AD849 /* AccountData */; };
 		A91D865D2A8BEC9A006D40D4 /* CoreNetwork in Frameworks */ = {isa = PBXBuildFile; productRef = A91D865C2A8BEC9A006D40D4 /* CoreNetwork */; };
 		A91D865F2A8C7844006D40D4 /* CoreNetwork in Frameworks */ = {isa = PBXBuildFile; productRef = A91D865E2A8C7844006D40D4 /* CoreNetwork */; };
@@ -511,6 +522,8 @@
 		741AD8232AD50C7500C1317A /* NavigationContainer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NavigationContainer.swift; sourceTree = "<group>"; };
 		74CB16792A9851EB00C137F3 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		74EAF3D52A94E54E00557DEF /* LFWalletAddress */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = LFWalletAddress; path = Modules/LFWalletAddress; sourceTree = "<group>"; };
+		A90B5CAC2B16BB890092E430 /* LFFeatureFlags */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = LFFeatureFlags; path = Modules/LFFeatureFlags; sourceTree = "<group>"; };
+		A90B5CAD2B16BBF90092E430 /* LFAuthentication */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = LFAuthentication; path = Modules/LFAuthentication; sourceTree = "<group>"; };
 		A9201F242A8698FB00A6FDB6 /* LFRewards */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = LFRewards; path = Modules/LFRewards; sourceTree = "<group>"; };
 		A938373D2A63BB20009EB1DE /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = LaunchScreen.storyboard; sourceTree = "<group>"; };
 		A93837462A63DDFD009EB1DE /* AppDelegate+Appearance.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AppDelegate+Appearance.swift"; sourceTree = "<group>"; };
@@ -528,7 +541,6 @@
 		A963D4082A67F491006B9A54 /* AppCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppCoordinator.swift; sourceTree = "<group>"; };
 		A963D40A2A67F7FD006B9A54 /* AppViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppViewModel.swift; sourceTree = "<group>"; };
 		A96D4BED2B078370003E92B6 /* CauseCardNetspend.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = CauseCardNetspend.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		A96D4BEE2B078370003E92B6 /* CauseCard copy-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "CauseCard copy-Info.plist"; path = "/Users/TonyDang/WORKSPACES/ios-liquidity-v2/LiquidityFinancial/CauseCard copy-Info.plist"; sourceTree = "<absolute>"; };
 		A96D4BF12B0783AF003E92B6 /* CauseCardConfig.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = CauseCardConfig.xcconfig; sourceTree = "<group>"; };
 		A96D4BF42B0783AF003E92B6 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
 		A96D4BF52B0783AF003E92B6 /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = LaunchScreen.storyboard; sourceTree = "<group>"; };
@@ -764,6 +776,7 @@
 				A9B912E42A6B876300ABD87B /* OnboardingDomain in Frameworks */,
 				A9D582582AF89891006DA0BF /* Services in Frameworks */,
 				A9B912EE2A6B881100ABD87B /* SmartyStreets in Frameworks */,
+				A90B5CB52B16E3C00092E430 /* LFFeatureFlags in Frameworks */,
 				A989D53E2AD7AFE800197EFF /* NetspendOnboarding in Frameworks */,
 				A91D86672A8CC843006D40D4 /* NetworkUtilities in Frameworks */,
 				A953548C2A5E55B2008B0FAB /* Factory in Frameworks */,
@@ -772,6 +785,7 @@
 				A941BEB72AD0020800FCB01C /* LFRewards in Frameworks */,
 				A953548D2A5E55B2008B0FAB /* LFStyleGuide in Frameworks */,
 				06EBE2052A693C8100157B32 /* LFDashboard in Frameworks */,
+				A90B5CBF2B17379D0092E430 /* LFAuthentication in Frameworks */,
 				A9B912E22A6B876300ABD87B /* OnboardingData in Frameworks */,
 				A9B912E02A6B876300ABD87B /* NetSpendData in Frameworks */,
 				A941BEB52AD001FF00FCB01C /* LFTransaction in Frameworks */,
@@ -805,6 +819,7 @@
 				A96D4BBB2B078370003E92B6 /* VGSShowSDK in Frameworks */,
 				A96D4BBC2B078370003E92B6 /* LFAccessibility in Frameworks */,
 				A96D4BBD2B078370003E92B6 /* Lottie in Frameworks */,
+				A90B5CB92B16E3CF0092E430 /* LFFeatureFlags in Frameworks */,
 				A96D4BBE2B078370003E92B6 /* BaseDashboard in Frameworks */,
 				A96D4BBF2B078370003E92B6 /* PinwheelSDK in Frameworks */,
 				A96D4BC02B078370003E92B6 /* LFLocalizable in Frameworks */,
@@ -837,7 +852,9 @@
 				A980DF772A5FA26E000B3C09 /* LFUtilities in Frameworks */,
 				06D40C012A62AE3700EADB75 /* iPhoneNumberField in Frameworks */,
 				0603BD712A71191B00347DB2 /* VGSShowSDK in Frameworks */,
+				A90B5CBD2B1737960092E430 /* LFAuthentication in Frameworks */,
 				A989D53C2AD7AFDD00197EFF /* NetspendOnboarding in Frameworks */,
+				A90B5CB72B16E3C60092E430 /* LFFeatureFlags in Frameworks */,
 				06663AF92ADE398E00A3FF12 /* LFAccessibility in Frameworks */,
 				A97BF7EE2A5D719000B8F5CA /* Lottie in Frameworks */,
 				A91D86652A8CC813006D40D4 /* NetworkUtilities in Frameworks */,
@@ -871,11 +888,13 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A90B5CAF2B16E3A90092E430 /* LFFeatureFlags in Frameworks */,
 				A941BEA52AD001CF00FCB01C /* LFRewards in Frameworks */,
 				A99D2F2F2A9A56CF00947773 /* OnboardingDomain in Frameworks */,
 				A9D582642AF898BC006DA0BF /* AccountService in Frameworks */,
 				A99D2F302A9A56CF00947773 /* RewardDomain in Frameworks */,
 				A941BEA92AD001D700FCB01C /* LFTransaction in Frameworks */,
+				A90B5CC32B1737AB0092E430 /* LFAuthentication in Frameworks */,
 				A99D2F312A9A56CF00947773 /* Factory in Frameworks */,
 				A99D2F322A9A56CF00947773 /* AccountData in Frameworks */,
 				A99D2F332A9A56CF00947773 /* LFRewardDashboard in Frameworks */,
@@ -916,6 +935,7 @@
 				A9B448CB2A8389B90029944C /* OnboardingData in Frameworks */,
 				A9B448CE2A8389B90029944C /* LFStyleGuide in Frameworks */,
 				A9D582602AF898B2006DA0BF /* AccountService in Frameworks */,
+				A90B5CC12B1737A40092E430 /* LFAuthentication in Frameworks */,
 				A9B448CF2A8389B90029944C /* AuthorizationManager in Frameworks */,
 				A9B448D02A8389B90029944C /* NetSpendData in Frameworks */,
 				A941BEA12AD001BD00FCB01C /* LFTransaction in Frameworks */,
@@ -929,6 +949,7 @@
 				A9B448D72A8389B90029944C /* PinwheelSDK in Frameworks */,
 				A9B448D82A8389B90029944C /* LFLocalizable in Frameworks */,
 				A953E0692A9358AA00401E06 /* RewardData in Frameworks */,
+				A90B5CB12B16E3B10092E430 /* LFFeatureFlags in Frameworks */,
 				A91D865D2A8BEC9A006D40D4 /* CoreNetwork in Frameworks */,
 				A98896712AE0EADC00C2DECB /* NetspendOnboarding in Frameworks */,
 				741493482A99150E00F0DC4D /* FirebaseMessaging in Frameworks */,
@@ -951,6 +972,7 @@
 				A9B4B9442A7C0C76000ED67A /* LFUtilities in Frameworks */,
 				A9B4B9452A7C0C76000ED67A /* OnboardingDomain in Frameworks */,
 				A9B4B9472A7C0C76000ED67A /* SmartyStreets in Frameworks */,
+				A90B5CB32B16E3BB0092E430 /* LFFeatureFlags in Frameworks */,
 				A9B4B9482A7C0C76000ED67A /* Factory in Frameworks */,
 				74CB16812A9853F800C137F3 /* FirebaseMessaging in Frameworks */,
 				A989D53A2AD7AFCD00197EFF /* NetspendOnboarding in Frameworks */,
@@ -959,6 +981,7 @@
 				A9D5825E2AF898A4006DA0BF /* Services in Frameworks */,
 				A9B4B94B2A7C0C76000ED67A /* LFLocalizable in Frameworks */,
 				A9B4B94C2A7C0C76000ED67A /* LFStyleGuide in Frameworks */,
+				A90B5CBB2B17377D0092E430 /* LFAuthentication in Frameworks */,
 				A9B4B94E2A7C0C76000ED67A /* LFDashboard in Frameworks */,
 				A9B4B94F2A7C0C76000ED67A /* OnboardingData in Frameworks */,
 				A9B4B9512A7C0C76000ED67A /* NetSpendData in Frameworks */,
@@ -1214,11 +1237,11 @@
 		A95354A42A5E571D008B0FAB /* Sources */ = {
 			isa = PBXGroup;
 			children = (
-				741AD81C2AD50C0200C1317A /* NavigationContainer */,
-				A9B912D52A6B86BC00ABD87B /* DependenciesInjection */,
+				A95354A62A5E571D008B0FAB /* CardanoApp.swift */,
 				A9B912D42A6B86B700ABD87B /* AppCoordinator */,
 				A9B912D62A6B86D700ABD87B /* AppView */,
-				A95354A62A5E571D008B0FAB /* CardanoApp.swift */,
+				A9B912D52A6B86BC00ABD87B /* DependenciesInjection */,
+				741AD81C2AD50C0200C1317A /* NavigationContainer */,
 			);
 			path = Sources;
 			sourceTree = "<group>";
@@ -1360,7 +1383,6 @@
 				A97BF7D92A5C602F00B8F5CA /* LiquidityFinancialUITests */,
 				A97BF7BD2A5C602D00B8F5CA /* Products */,
 				A953545B2A5DD7F4008B0FAB /* Frameworks */,
-				A96D4BEE2B078370003E92B6 /* CauseCard copy-Info.plist */,
 			);
 			indentWidth = 2;
 			sourceTree = "<group>";
@@ -1488,11 +1510,11 @@
 		A97BF8142A5D9D2900B8F5CA /* Sources */ = {
 			isa = PBXGroup;
 			children = (
-				741AD8192AD50BBF00C1317A /* NavigationContainer */,
 				A97BF8172A5D9DE200B8F5CA /* AvalancheApp.swift */,
 				A94EFFC12A67FD1D00DD0395 /* AppCoordinator */,
 				A94EFFC02A67FD0600DD0395 /* AppView */,
 				A9D6C4BA2A5FA1570038D0BB /* DependenciesInjection */,
+				741AD8192AD50BBF00C1317A /* NavigationContainer */,
 			);
 			path = Sources;
 			sourceTree = "<group>";
@@ -1703,11 +1725,11 @@
 		A9B4490C2A838A000029944C /* Sources */ = {
 			isa = PBXGroup;
 			children = (
-				741AD8162AD50B4C00C1317A /* NavigationContainer */,
 				A9B4490D2A838A000029944C /* CauseCardApp.swift */,
-				A9B4490E2A838A000029944C /* DependenciesInjection */,
 				A9B449102A838A000029944C /* AppCoordinator */,
 				A9B449122A838A000029944C /* AppView */,
+				A9B4490E2A838A000029944C /* DependenciesInjection */,
+				741AD8162AD50B4C00C1317A /* NavigationContainer */,
 			);
 			path = Sources;
 			sourceTree = "<group>";
@@ -1783,11 +1805,11 @@
 		A9B4B9992A7C0F41000ED67A /* Sources */ = {
 			isa = PBXGroup;
 			children = (
-				741AD8222AD50C5F00C1317A /* NavigationContainer */,
 				A9B4B99A2A7C0F41000ED67A /* DogeCardApp.swift */,
-				A9B4B99B2A7C0F41000ED67A /* DependenciesInjection */,
 				A9B4B99D2A7C0F41000ED67A /* AppCoordinator */,
 				A9B4B99F2A7C0F41000ED67A /* AppView */,
+				A9B4B99B2A7C0F41000ED67A /* DependenciesInjection */,
+				741AD8222AD50C5F00C1317A /* NavigationContainer */,
 			);
 			path = Sources;
 			sourceTree = "<group>";
@@ -1983,6 +2005,8 @@
 		A9D6C4AE2A5E62F40038D0BB /* Services */ = {
 			isa = PBXGroup;
 			children = (
+				A90B5CAD2B16BBF90092E430 /* LFAuthentication */,
+				A90B5CAC2B16BB890092E430 /* LFFeatureFlags */,
 				A9D6C4B02A5E652B0038D0BB /* LFNetwork */,
 				A9D6C4AF2A5E63470038D0BB /* LFServices */,
 			);
@@ -2057,6 +2081,8 @@
 				06663AFA2ADE399400A3FF12 /* LFAccessibility */,
 				A9D582572AF89891006DA0BF /* Services */,
 				A9D582592AF89898006DA0BF /* AccountService */,
+				A90B5CB42B16E3C00092E430 /* LFFeatureFlags */,
+				A90B5CBE2B17379D0092E430 /* LFAuthentication */,
 			);
 			productName = LiquidityFinancial;
 			productReference = A95354972A5E55B2008B0FAB /* Cardano.app */;
@@ -2107,6 +2133,7 @@
 				A96D4B9A2B078370003E92B6 /* NetspendOnboarding */,
 				A96D4B9B2B078370003E92B6 /* AccountService */,
 				A96D4B9C2B078370003E92B6 /* Services */,
+				A90B5CB82B16E3CF0092E430 /* LFFeatureFlags */,
 			);
 			productName = LiquidityFinancial;
 			productReference = A96D4BED2B078370003E92B6 /* CauseCardNetspend.app */;
@@ -2154,6 +2181,8 @@
 				06663AF82ADE398E00A3FF12 /* LFAccessibility */,
 				A9D582532AF89873006DA0BF /* Services */,
 				A9D582552AF89878006DA0BF /* AccountService */,
+				A90B5CB62B16E3C60092E430 /* LFFeatureFlags */,
+				A90B5CBC2B1737960092E430 /* LFAuthentication */,
 			);
 			productName = LiquidityFinancial;
 			productReference = A97BF7BC2A5C602D00B8F5CA /* Avalanche.app */;
@@ -2244,6 +2273,8 @@
 				06663AFE2ADE39A200A3FF12 /* LFAccessibility */,
 				A9D582632AF898BC006DA0BF /* AccountService */,
 				A9D582652AF898BC006DA0BF /* Services */,
+				A90B5CAE2B16E3A90092E430 /* LFFeatureFlags */,
+				A90B5CC22B1737AB0092E430 /* LFAuthentication */,
 			);
 			productName = LiquidityFinancial;
 			productReference = A99D2F692A9A56CF00947773 /* PrideCard.app */;
@@ -2295,6 +2326,8 @@
 				A9D582612AF898B2006DA0BF /* Services */,
 				A94BF0782B0886900021D847 /* LFSolidBank */,
 				A94BF07A2B0886900021D847 /* LFSolidCard */,
+				A90B5CB02B16E3B10092E430 /* LFFeatureFlags */,
+				A90B5CC02B1737A40092E430 /* LFAuthentication */,
 			);
 			productName = LiquidityFinancial;
 			productReference = A9B448F02A8389B90029944C /* CauseCard.app */;
@@ -2338,6 +2371,8 @@
 				06663AF62ADE395D00A3FF12 /* LFAccessibility */,
 				A9D5825B2AF898A4006DA0BF /* AccountService */,
 				A9D5825D2AF898A4006DA0BF /* Services */,
+				A90B5CB22B16E3BB0092E430 /* LFFeatureFlags */,
+				A90B5CBA2B17377D0092E430 /* LFAuthentication */,
 			);
 			productName = LiquidityFinancial;
 			productReference = A9B4B9742A7C0C76000ED67A /* DogeCard.app */;
@@ -3081,7 +3116,7 @@
 				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = TX9PJZUNWS;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = NO;
-				INFOPLIST_FILE = "CauseCard copy-Info.plist";
+				INFOPLIST_FILE = "${SRCROOT}/LiquidityFinancial/CauseCardNetspend/Resources/CauseCard-Info.plist";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.finance";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
@@ -3125,7 +3160,7 @@
 				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = TX9PJZUNWS;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = NO;
-				INFOPLIST_FILE = "CauseCard copy-Info.plist";
+				INFOPLIST_FILE = "${SRCROOT}/LiquidityFinancial/CauseCardNetspend/Resources/CauseCard-Info.plist";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.finance";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
@@ -3443,12 +3478,10 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = "${SRCROOT}/LiquidityFinancial/PrideCard/Resources/PrideCard.entitlements";
 				CODE_SIGN_IDENTITY = "Apple Development";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution";
-				CODE_SIGN_STYLE = Manual;
+				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = $BITRISE_BUILD_NUMBER;
 				DEVELOPMENT_ASSET_PATHS = "";
-				DEVELOPMENT_TEAM = "";
-				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = TX9PJZUNWS;
+				DEVELOPMENT_TEAM = TX9PJZUNWS;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = "${SRCROOT}/LiquidityFinancial/PrideCard/Resources/PrideCard-Info.plist";
@@ -3469,7 +3502,6 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.liquidityfinancial.pridecard;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
-				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = "Apple Distribution PrideCard";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
 				SUPPORTS_MACCATALYST = NO;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
@@ -3487,12 +3519,10 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = "${SRCROOT}/LiquidityFinancial/PrideCard/Resources/PrideCard.entitlements";
 				CODE_SIGN_IDENTITY = "Apple Development";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution";
-				CODE_SIGN_STYLE = Manual;
+				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = $BITRISE_BUILD_NUMBER;
 				DEVELOPMENT_ASSET_PATHS = "";
-				DEVELOPMENT_TEAM = "";
-				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = TX9PJZUNWS;
+				DEVELOPMENT_TEAM = TX9PJZUNWS;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = "${SRCROOT}/LiquidityFinancial/PrideCard/Resources/PrideCard-Info.plist";
@@ -3513,7 +3543,6 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.liquidityfinancial.pridecard;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
-				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = "Apple Distribution PrideCard";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
 				SUPPORTS_MACCATALYST = NO;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
@@ -4179,6 +4208,50 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 74CB167B2A9853F800C137F3 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
 			productName = FirebaseMessaging;
+		};
+		A90B5CAE2B16E3A90092E430 /* LFFeatureFlags */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = LFFeatureFlags;
+		};
+		A90B5CB02B16E3B10092E430 /* LFFeatureFlags */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = LFFeatureFlags;
+		};
+		A90B5CB22B16E3BB0092E430 /* LFFeatureFlags */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = LFFeatureFlags;
+		};
+		A90B5CB42B16E3C00092E430 /* LFFeatureFlags */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = LFFeatureFlags;
+		};
+		A90B5CB62B16E3C60092E430 /* LFFeatureFlags */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = LFFeatureFlags;
+		};
+		A90B5CB82B16E3CF0092E430 /* LFFeatureFlags */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = LFFeatureFlags;
+		};
+		A90B5CBA2B17377D0092E430 /* LFAuthentication */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = LFAuthentication;
+		};
+		A90B5CBC2B1737960092E430 /* LFAuthentication */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = LFAuthentication;
+		};
+		A90B5CBE2B17379D0092E430 /* LFAuthentication */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = LFAuthentication;
+		};
+		A90B5CC02B1737A40092E430 /* LFAuthentication */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = LFAuthentication;
+		};
+		A90B5CC22B1737AB0092E430 /* LFAuthentication */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = LFAuthentication;
 		};
 		A918D76D2A77B116001AD849 /* AccountData */ = {
 			isa = XCSwiftPackageProductDependency;

@@ -5,6 +5,7 @@ import LFUtilities
 import Factory
 import AuthorizationManager
 import Services
+import LFFeatureFlags
 
 // swiftlint:disable force_unwrapping
 
@@ -16,6 +17,7 @@ extension AppDelegate {
     setupLFUtilitiesConfig()
     setupLFServiceConfig()
     authorizationManagerRefresh()
+    setupFeatureFlag()
   }
   
 }
@@ -46,5 +48,9 @@ private extension AppDelegate {
   
   func setupLFServiceConfig() {
     LFServices.initial(config: LFServices.Configuration(baseURL: APIConstants.devHost))
+  }
+  
+  func setupFeatureFlag() {
+    LFFeatureFlagContainer.registerViewFactory()
   }
 }

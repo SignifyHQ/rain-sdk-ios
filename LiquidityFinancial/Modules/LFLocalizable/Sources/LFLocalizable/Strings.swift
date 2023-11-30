@@ -457,6 +457,28 @@ public enum LFLocalizable {
       public static let title = LFLocalizable.tr("Localizable", "assetView.transfer_popup.title", fallback: "TRANSFER")
     }
   }
+  public enum Authentication {
+    public enum CreatePassword {
+      /// Must be at least 8 characters
+      public static let desc1 = LFLocalizable.tr("Localizable", "authentication.create_password.desc_1", fallback: "Must be at least 8 characters")
+      /// Must have 1 special character including @ #$ %
+      public static let desc2 = LFLocalizable.tr("Localizable", "authentication.create_password.desc_2", fallback: "Must have 1 special character including @ #$ %")
+      /// Must be 1 lower case and 1 upper case
+      public static let desc3 = LFLocalizable.tr("Localizable", "authentication.create_password.desc_3", fallback: "Must be 1 lower case and 1 upper case")
+      /// Create password
+      public static let subTitle1 = LFLocalizable.tr("Localizable", "authentication.create_password.sub_title_1", fallback: "Create password")
+      /// Enter password
+      public static let subTitle2 = LFLocalizable.tr("Localizable", "authentication.create_password.sub_title_2", fallback: "Enter password")
+      /// Re-enter password
+      public static let subTitle3 = LFLocalizable.tr("Localizable", "authentication.create_password.sub_title_3", fallback: "Re-enter password")
+      /// Re-Enter password
+      public static let subTitle4 = LFLocalizable.tr("Localizable", "authentication.create_password.sub_title_4", fallback: "Re-Enter password")
+      /// create password
+      public static let title = LFLocalizable.tr("Localizable", "authentication.create_password.title", fallback: "create password")
+      /// Password dont match
+      public static let warning = LFLocalizable.tr("Localizable", "authentication.create_password.warning", fallback: "Password dont match")
+    }
+  }
   public enum BalanceAlert {
     /// Deposit
     public static let cta = LFLocalizable.tr("Localizable", "balanceAlert.cta", fallback: "Deposit")
