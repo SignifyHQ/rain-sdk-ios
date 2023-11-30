@@ -28,15 +28,15 @@ class DataDogLogDestination: BaseDestination {
   override func send(_ level: SwiftyBeaver.Level, msg: String, thread: String, file: String, function: String, line: Int, context: Any? = nil) -> String? {
     switch level {
     case .verbose:
-      logger.notice(msg)
+      logger.notice("[FILE:\(file)]-[MESSAGE:\(msg)] ", attributes: ["[FILE]": file, "[FUNCTION]": function, "[LINE]": function])
     case .debug:
-      logger.debug(msg)
+      logger.debug("[FILE:\(file)]-[MESSAGE:\(msg)] ", attributes: ["[FILE]": file, "[FUNCTION]": function, "[LINE]": function])
     case .info:
-      logger.info(msg)
+      logger.info("[FILE:\(file)]-[MESSAGE:\(msg)] ", attributes: ["[FILE]": file, "[FUNCTION]": function, "[LINE]": function])
     case .warning:
-      logger.warn(msg)
+      logger.warn("[FILE:\(file)]-[MESSAGE:\(msg)] ", attributes: ["[FILE]": file, "[FUNCTION]": function, "[LINE]": function])
     case .error:
-      logger.error(msg)
+      logger.error("[FILE:\(file)]-[MESSAGE:\(msg)] ", attributes: ["[FILE]": file, "[FUNCTION]": function, "[LINE]": function])
     }
     return super.send(level, msg: msg, thread: thread, file: file, function: function, line: line)
   }

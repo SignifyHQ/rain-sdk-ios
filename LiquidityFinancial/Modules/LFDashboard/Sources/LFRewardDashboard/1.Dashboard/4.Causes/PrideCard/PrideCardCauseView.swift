@@ -26,8 +26,8 @@ struct PrideCardCauseView: View {
           )
         }
       }
-      .popup(isPresented: $viewModel.showError, style: .toast) {
-        ToastView(toastMessage: LFLocalizable.genericErrorMessage)
+      .popup(item: $viewModel.showError, style: .toast) { message in
+        ToastView(toastMessage: message)
       }
   }
   

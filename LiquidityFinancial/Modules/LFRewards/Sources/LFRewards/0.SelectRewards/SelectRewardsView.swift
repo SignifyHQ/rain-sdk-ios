@@ -23,8 +23,8 @@ public struct SelectRewardsView: View {
     content
       .background(ModuleColors.background.swiftUIColor)
       .navigationBarHidden(true)
-      .popup(isPresented: $viewModel.showError, style: .toast) {
-        ToastView(toastMessage: LFLocalizable.genericErrorMessage)
+      .popup(item: $viewModel.showError, style: .toast) { message in
+        ToastView(toastMessage: message)
       }
       .navigationLink(item: $viewModel.navigation) { item in
         switch item {

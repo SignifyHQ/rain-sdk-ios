@@ -8,8 +8,8 @@ public struct RoundUpView: View {
   public var body: some View {
     content
       .background(ModuleColors.background.swiftUIColor)
-      .popup(isPresented: $viewModel.showError, style: .toast) {
-        ToastView(toastMessage: LFLocalizable.genericErrorMessage)
+      .popup(item: $viewModel.showError, style: .toast) { message in
+        ToastView(toastMessage: message)
       }
   }
 

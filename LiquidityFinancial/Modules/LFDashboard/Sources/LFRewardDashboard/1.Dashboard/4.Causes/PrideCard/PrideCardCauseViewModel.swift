@@ -15,7 +15,7 @@ class PrideCardCauseViewModel: ObservableObject {
   
   @Published var status = Status.idle
   @Published var navigation: Navigation?
-  @Published var showError = false
+  @Published var showError: String?
   
   @LazyInjected(\.rewardRepository) var rewardRepository
   @LazyInjected(\.rewardDataManager) var rewardDataManager
@@ -76,7 +76,7 @@ extension PrideCardCauseViewModel {
       } catch {
         status = .failure
         log.error(error.localizedDescription)
-        showError = true
+        showError = error.localizedDescription
       }
     }
   }

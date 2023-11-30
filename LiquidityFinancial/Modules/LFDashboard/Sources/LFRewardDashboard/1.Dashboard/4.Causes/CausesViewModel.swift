@@ -17,7 +17,7 @@ class CausesViewModel: ObservableObject {
   @Published var donationCategories: [CauseModel] = []
   @Published var categoriesTrending: [CategoriesTrendingModel] = []
   @Published var navigation: Navigation?
-  @Published var showError = false
+  @Published var showError: String?
   @Published var isLoadingFundraisers: CauseModel?
   
   @LazyInjected(\.rewardRepository) var rewardRepository
@@ -93,7 +93,7 @@ extension CausesViewModel {
       } catch {
         status = .failure
         log.error(error.localizedDescription)
-        showError = true
+        showError = error.localizedDescription
       }
     }
   }
@@ -109,7 +109,7 @@ extension CausesViewModel {
         navigation = .selectFundraiser(cause, fundraiserModels)
       } catch {
         log.error(error.localizedDescription)
-        showError = true
+        showError = error.localizedDescription
       }
     }
   }
