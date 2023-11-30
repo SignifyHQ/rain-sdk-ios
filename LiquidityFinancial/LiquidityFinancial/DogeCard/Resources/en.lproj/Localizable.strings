@@ -881,6 +881,10 @@ contact support.";
 
 "authentication.create_password.warning" = "Password dont match";
 
+"authentication.enter_password.title" = "Enter Password";
+"authentication.enter_password.placeholder" = "Enter password";
+"authentication.enter_password.forgotPasswordButton" = "Forgot Password";
+
 // MARK: - Common
 
 // Notification Pop up

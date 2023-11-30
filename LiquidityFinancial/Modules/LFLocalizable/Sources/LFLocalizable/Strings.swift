@@ -478,6 +478,14 @@ public enum LFLocalizable {
       /// Password dont match
       public static let warning = LFLocalizable.tr("Localizable", "authentication.create_password.warning", fallback: "Password dont match")
     }
+    public enum EnterPassword {
+      /// Forgot Password
+      public static let forgotPasswordButton = LFLocalizable.tr("Localizable", "authentication.enter_password.forgotPasswordButton", fallback: "Forgot Password")
+      /// Enter password
+      public static let placeholder = LFLocalizable.tr("Localizable", "authentication.enter_password.placeholder", fallback: "Enter password")
+      /// Enter Password
+      public static let title = LFLocalizable.tr("Localizable", "authentication.enter_password.title", fallback: "Enter Password")
+    }
   }
   public enum BalanceAlert {
     /// Deposit

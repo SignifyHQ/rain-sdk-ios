@@ -11,6 +11,7 @@ public enum Constants {
     case zipcode
     case nameLimit
     case phoneNumber
+    case password
     case verificationLimit
     case ssnLength
     case passportLength
@@ -42,6 +43,8 @@ public enum Constants {
         return 20
       case .phoneNumber:
         return 14
+      case .password:
+        return 50
       case .verificationLimit:
         return 6
       case .ssnLength:
