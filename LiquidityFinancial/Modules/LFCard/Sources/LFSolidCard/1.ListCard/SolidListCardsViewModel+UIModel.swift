@@ -42,7 +42,8 @@ extension SolidListCardsViewModel {
     
     var availableLimits: String {
       if availableLimitValue != "-" {
-        return "$" + (availableLimitValue)
+        let availableLimitValue = availableLimitValue.asDouble ?? 0
+        return LFUtilities.getCurrencyForAmount(currency: "$", amount: availableLimitValue, isDecimalRequired: true)
       }
       return "-"
     }
