@@ -167,11 +167,11 @@ private extension AccountLimitsView {
         
         accountLimitItem(
           title: TransferPeriod.day.title,
-          value: model.deposit.depositTotalDaily.toDouble
+          value: model.deposit.depositTotalDaily
         )
         accountLimitItem(
           title: TransferPeriod.month.title,
-          value: model.deposit.depositTotalMonthly.toDouble
+          value: model.deposit.depositTotalMonthly
         )
       }
       if type == .cardDeposit {
@@ -180,11 +180,11 @@ private extension AccountLimitsView {
         
         accountLimitItem(
           title: TransferPeriod.day.title,
-          value: model.deposit.depositCardDaily?.toDouble
+          value: model.deposit.depositCardDaily
         )
         accountLimitItem(
           title: TransferPeriod.month.title,
-          value: model.deposit.depositCardMonthly?.toDouble
+          value: model.deposit.depositCardMonthly
         )
       }
       if type == .bankDeposit {
@@ -193,11 +193,11 @@ private extension AccountLimitsView {
         
         accountLimitItem(
           title: TransferPeriod.day.title,
-          value: model.deposit.depositAchDaily?.toDouble
+          value: model.deposit.depositAchDaily
         )
         accountLimitItem(
           title: TransferPeriod.month.title,
-          value: model.deposit.depositAchMonthly?.toDouble
+          value: model.deposit.depositAchMonthly
         )
       }
       
@@ -207,11 +207,11 @@ private extension AccountLimitsView {
         
         accountLimitItem(
           title: TransferPeriod.day.title,
-          value: model.withdrawal.withdrawalTotalDaily.toDouble
+          value: model.withdrawal.withdrawalTotalDaily
         )
         accountLimitItem(
           title: TransferPeriod.month.title,
-          value: model.withdrawal.withdrawalTotalMonthly.toDouble
+          value: model.withdrawal.withdrawalTotalMonthly
         )
       }
       if type == .cardWithdraw {
@@ -220,11 +220,11 @@ private extension AccountLimitsView {
         
         accountLimitItem(
           title: TransferPeriod.day.title,
-          value: model.withdrawal.withdrawalCardDaily?.toDouble
+          value: model.withdrawal.withdrawalCardDaily
         )
         accountLimitItem(
           title: TransferPeriod.month.title,
-          value: model.withdrawal.withdrawalCardMonthly?.toDouble
+          value: model.withdrawal.withdrawalCardMonthly
         )
       }
       if type == .bankWithdraw {
@@ -233,11 +233,11 @@ private extension AccountLimitsView {
         
         accountLimitItem(
           title: TransferPeriod.day.title,
-          value: model.withdrawal.withdrawalAchDaily?.toDouble
+          value: model.withdrawal.withdrawalAchDaily
         )
         accountLimitItem(
           title: TransferPeriod.month.title,
-          value: model.withdrawal.withdrawalAchMonthly?.toDouble
+          value: model.withdrawal.withdrawalAchMonthly
         )
       }
       

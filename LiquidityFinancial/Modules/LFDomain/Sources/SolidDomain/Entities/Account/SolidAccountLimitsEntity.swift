@@ -1,22 +1,19 @@
 import Foundation
 
 public protocol SolidAccountLimitsEntity {
-  var depositCardDaily: String? { get }
-  var depositCardMonthly: String? { get }
-  var depositAchDaily: String? { get }
-  var depositAchMonthly: String? { get }
-  var depositTotalDaily: String { get }
-  var depositTotalMonthly: String { get }
+  var depositCardDaily: Double? { get }
+  var depositCardMonthly: Double? { get }
+  var depositAchDaily: Double? { get }
+  var depositAchMonthly: Double? { get }
+  var depositTotalDaily: Double? { get }
+  var depositTotalMonthly: Double? { get }
   
-  var withdrawalCardDaily: String? { get }
-  var withdrawalCardMonthly: String? { get }
-  var withdrawalAchDaily: String? { get }
-  var withdrawalAchMonthly: String? { get }
-  var withdrawalTotalDaily: String { get }
-  var withdrawalTotalMonthly: String { get }
-  
-  var spendingAmount: String? { get }
-  var spendingLimitInterval: SolidSpendingLimitInterval? { get }
+  var withdrawalCardDaily: Double? { get }
+  var withdrawalCardMonthly: Double? { get }
+  var withdrawalAchDaily: Double? { get }
+  var withdrawalAchMonthly: Double? { get }
+  var withdrawalTotalDaily: Double? { get }
+  var withdrawalTotalMonthly: Double? { get }
 }
 
 public enum SolidSpendingLimitInterval: String {

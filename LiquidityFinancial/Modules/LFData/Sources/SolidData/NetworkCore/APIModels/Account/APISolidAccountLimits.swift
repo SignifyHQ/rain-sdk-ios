@@ -3,103 +3,80 @@ import SolidDomain
 
 // MARK: - WelcomeElement
 public struct APISolidAccountLimits: Codable, SolidAccountLimitsEntity {
-  public var depositCardDaily: String? {
-    deposit.debitCard.daily.toString
+  public var depositCardDaily: Double? {
+    deposit.debitCard?.daily
   }
   
-  public var depositCardMonthly: String? {
-    deposit.debitCard.monthly.toString
+  public var depositCardMonthly: Double? {
+    deposit.debitCard?.monthly
   }
   
-  public var depositAchDaily: String? {
-    deposit.ach.daily.toString
+  public var depositAchDaily: Double? {
+    deposit.ach?.daily
   }
   
-  public var depositAchMonthly: String? {
-    deposit.ach.monthly.toString
+  public var depositAchMonthly: Double? {
+    deposit.ach?.monthly
   }
   
-  public var depositTotalDaily: String {
-    deposit.daily.toString
+  public var depositTotalDaily: Double? {
+    deposit.daily
   }
   
-  public var depositTotalMonthly: String {
-    deposit.monthly.toString
+  public var depositTotalMonthly: Double? {
+    deposit.monthly
   }
   
-  public var withdrawalCardDaily: String? {
-    withdrawal.debitCard.daily.toString
+  public var withdrawalCardDaily: Double? {
+    withdrawal.debitCard?.daily
   }
   
-  public var withdrawalCardMonthly: String? {
-    withdrawal.debitCard.monthly.toString
+  public var withdrawalCardMonthly: Double? {
+    withdrawal.debitCard?.monthly
   }
   
-  public var withdrawalAchDaily: String? {
-    withdrawal.ach.daily.toString
+  public var withdrawalAchDaily: Double? {
+    withdrawal.ach?.daily
   }
   
-  public var withdrawalAchMonthly: String? {
-    withdrawal.ach.monthly.toString
+  public var withdrawalAchMonthly: Double? {
+    withdrawal.ach?.monthly
   }
   
-  public var withdrawalTotalDaily: String {
-    withdrawal.daily.toString
+  public var withdrawalTotalDaily: Double? {
+    withdrawal.daily
   }
   
-  public var withdrawalTotalMonthly: String {
-    withdrawal.monthly.toString
-  }
-  
-  public var spendingAmount: String? {
-    if let availableLimit = spending.availableLimit.toDouble, availableLimit > 0 {
-      return spending.availableLimit
-    }
-    return spending.limitAmount
-  }
-  
-  public var spendingLimitInterval: SolidDomain.SolidSpendingLimitInterval? {
-    SolidSpendingLimitInterval(rawValue: spending.limitInterval)
+  public var withdrawalTotalMonthly: Double? {
+    withdrawal.monthly
   }
   
   public let deposit: Deposit
   public let withdrawal: Withdrawal
-  public let spending: Spending
 }
 
 public extension APISolidAccountLimits {
   // MARK: - Deposit
   struct Deposit: Codable {
-    public let daily, monthly: Int
-    public let ach: Ach
-    public let card, debitCard: Ach
+    public let daily, monthly: Double?
+    public let ach: AchValue?
+    public let card, debitCard: CardValue?
   }
 
   // MARK: - Ach
-  struct Ach: Codable {
-    public let daily, monthly: Int
+  struct AchValue: Codable {
+    public let daily, monthly: Double?
   }
-
-  // MARK: - Spending
-  struct Spending: Codable {
-    public let limitAmount, limitInterval, availableLimit: String
+  
+  // MARK: - Card
+  struct CardValue: Codable {
+    public let daily, monthly: Double?
   }
 
   // MARK: - Withdrawal
   struct Withdrawal: Codable {
-    public let daily, monthly: Int
-    public let ach, debitCard: Ach
-  }
-}
-
-extension Int {
-  var toString: String {
-    String(self)
-  }
-}
-
-extension String {
-  var toDouble: Double? {
-    Double(self)
+    public let daily, monthly: Double?
+    public let ach: AchValue?
+    public let debitCard: CardValue?
   }
 }
