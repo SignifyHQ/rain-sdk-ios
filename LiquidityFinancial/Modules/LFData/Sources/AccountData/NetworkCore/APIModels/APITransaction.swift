@@ -15,6 +15,7 @@ public struct APITransaction: Codable, TransactionEntity {
   public let id: String
   public let accountId: String
   public let title: String?
+  public var currency: String?
   public let description: String?
   public let amount: Double
   public let currentBalance: Double?

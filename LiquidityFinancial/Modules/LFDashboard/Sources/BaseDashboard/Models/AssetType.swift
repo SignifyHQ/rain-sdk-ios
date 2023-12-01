@@ -37,4 +37,19 @@ public enum AssetType: String {
       return GenImages.CommonImages.icDoge.swiftUIImage
     }
   }
+  
+  public var filledImage: Image? {
+    switch self {
+    case .usd:
+      return GenImages.CommonImages.usdSymbol.swiftUIImage
+    case .usdc:
+      return GenImages.CommonImages.icUsdc.swiftUIImage
+    case .avax:
+      return GenImages.CommonImages.icAvaxFilled.swiftUIImage
+    case .cardano:
+      return GenImages.CommonImages.icCardanoFilled.swiftUIImage
+    case .doge:
+      return GenImages.CommonImages.icDogeFilled.swiftUIImage
+    }
+  }
 }

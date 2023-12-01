@@ -6,15 +6,16 @@ import LFUtilities
 
 struct CommonTransactionDetailView<Content: View>: View {
   @ViewBuilder let content: Content?
-  @StateObject private var viewModel = CommonTransactionDetailViewModel()
+  @StateObject private var viewModel: CommonTransactionDetailViewModel
   @Environment(\.openURL) var openURL
   
-  let transaction: TransactionModel
-  let isCryptoBalance: Bool
-  
   init(transaction: TransactionModel, content: Content? = EmptyView(), isCryptoBalance: Bool = false) {
-    self.transaction = transaction
-    self.isCryptoBalance = isCryptoBalance
+    _viewModel = .init(
+      wrappedValue: CommonTransactionDetailViewModel(
+        transaction: transaction,
+        isCryptoBalance: isCryptoBalance
+      )
+    )
     self.content = content
   }
   
@@ -32,7 +33,7 @@ struct CommonTransactionDetailView<Content: View>: View {
     .scrollOnOverflow()
     .defaultToolBar(
       icon: .support,
-      navigationTitle: transaction.title?.capitalized,
+      navigationTitle: viewModel.navigationTitle,
       openSupportScreen: {
         viewModel.openSupportScreen()
       }
@@ -48,10 +49,10 @@ struct CommonTransactionDetailView<Content: View>: View {
 private extension CommonTransactionDetailView {
   var headerTitle: some View {
     VStack(spacing: 8) {
-      Text(transaction.descriptionDisplay.uppercased())
+      Text(viewModel.descriptionDisplay)
         .foregroundColor(Colors.label.swiftUIColor)
         .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.medium.value))
-      Text(transaction.transactionDateInLocalZone(includeYear: true))
+      Text(viewModel.transactionDate)
         .foregroundColor(Colors.label.swiftUIColor.opacity(0.6))
         .font(Fonts.regular.swiftUIFont(size: 10))
     }
@@ -60,16 +61,15 @@ private extension CommonTransactionDetailView {
   var amountView: some View {
     VStack(spacing: 14) {
       HStack(spacing: 4) {
-        Text(amountValue)
+        Text(viewModel.amountValue)
           .font(Fonts.medium.swiftUIFont(size: 40))
-          .foregroundColor(transaction.colorForType)
-        if transaction.isCryptoTransaction {
-          GenImages.Images.icCoin.swiftUIImage
-            .foregroundColor(Colors.label.swiftUIColor)
+          .foregroundColor(viewModel.colorForType)
+        if let icon = viewModel.cryptoIconImage {
+          icon
         }
       }
-      if transaction.currentBalance != nil {
-        Text(LFLocalizable.TransactionDetail.BalanceCash.title(balanceValue))
+      if viewModel.currentBalance != nil {
+        Text(LFLocalizable.TransactionDetail.BalanceCash.title(viewModel.balanceValue))
           .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.ultraSmall.value))
           .foregroundColor(Colors.label.swiftUIColor.opacity(0.6))
       }
@@ -89,23 +89,5 @@ private extension CommonTransactionDetailView {
       }
       .frame(height: 200)
     }
-  }
-}
-
-// MARK: View Helpers
-private extension CommonTransactionDetailView {
-  var amountValue: String {
-    transaction.amount.formattedAmount(
-      prefix: transaction.isCryptoTransaction ? nil : Constants.CurrencyUnit.usd.rawValue,
-      minFractionDigits: 2
-    )
-  }
-  
-  var balanceValue: String {
-    let balance = transaction.currentBalance?.formattedAmount(
-      prefix: isCryptoBalance ? nil : Constants.CurrencyUnit.usd.symbol,
-      minFractionDigits: 2
-    ) ?? .empty
-    return isCryptoBalance ? "\(balance) \(LFUtilities.cryptoCurrency.uppercased())" : balance
   }
 }

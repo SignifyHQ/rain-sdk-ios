@@ -121,8 +121,8 @@ private extension MoveCryptoInputView {
         Text(viewModel.amountInput)
           .font(Fonts.bold.swiftUIFont(size: 50))
           .foregroundColor(Colors.label.swiftUIColor)
-        if viewModel.isCryptoCurrency {
-          GenImages.Images.icCryptoFilled.swiftUIImage
+        if viewModel.isCryptoCurrency, let image = viewModel.cryptoIconImage {
+          image
         }
       }
       .shakeAnimation(with: viewModel.numberOfShakes)

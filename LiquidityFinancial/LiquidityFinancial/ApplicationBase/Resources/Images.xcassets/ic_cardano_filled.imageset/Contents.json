@@ -1,0 +1,12 @@
+{
+  "images" : [
+    {
+      "filename" : "ic_cardano_filled.pdf",
+      "idiom" : "universal"
+    }
+  ],
+  "info" : {
+    "author" : "xcode",
+    "version" : 1
+  }
+}

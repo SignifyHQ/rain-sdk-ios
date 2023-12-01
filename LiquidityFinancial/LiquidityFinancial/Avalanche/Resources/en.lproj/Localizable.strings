@@ -341,15 +341,15 @@
 "directDeposit.copied.message" = "Copied to clipboard";
 
 // BuySellCrypto
-"MoveCryptoInput.buy.title" = "BUY AVAX";
+"MoveCryptoInput.buy.title" = "BUY %@";
 "MoveCryptoInput.buyAvailableBalance.subtitle" = "%@ available";
-"MoveCryptoInput.sell.title" = "SELL AVAX";
+"MoveCryptoInput.sell.title" = "SELL %@";
 "MoveCryptoInput.sellAvailableBalance.subtitle" = "%@ %@ available";
-"MoveCryptoInput.send.title" = "SEND AVAX";
+"MoveCryptoInput.send.title" = "SEND %@";
 "MoveCryptoInput.sendAvailableBalance.subtitle" = "%@ %@ available";
 "MoveCryptoInput.buy.annotation" = "You currently have %@ available to buy Avaxcoin. If this amount is less than expected, please contact support.";
 "MoveCryptoInput.sell.annotation" = "You currently have %@ Avaxcoin available to sell. AVALANCHE Rewards are not available to sell until 48 hours after they are earned.";
-"MoveCryptoInput.send.annotation" = "You currently have %@ AVAX available to send. AVAX Rewards are not available to send until 48 hours after they are earned.";
+"MoveCryptoInput.send.annotation" = "You currently have %@ %@ available to send. %@ Rewards are not available to send until 48 hours after they are earned.";
 "MoveCryptoInput.minimumCash.description" = "Minimum amount should be $0.10";
 "MoveCryptoInput.insufficientFunds.description" = "Insufficient funds";
 "MoveCryptoInput.send.estimated_fee" = "The estimated network fee is an approximation and the actual network fee applied on a withdrawal may differ.";

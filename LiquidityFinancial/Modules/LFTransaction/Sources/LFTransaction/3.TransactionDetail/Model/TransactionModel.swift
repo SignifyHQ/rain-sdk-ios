@@ -8,6 +8,7 @@ public struct TransactionModel: Identifiable {
   public var id: String
   public var accountId: String
   public var title: String?
+  public var currency: String?
   public var description: String?
   public var amount: Double
   public var currentBalance: Double?
@@ -26,6 +27,7 @@ public struct TransactionModel: Identifiable {
     id: String,
     accountId: String,
     title: String? = nil,
+    currency: String? = nil,
     description: String? = nil,
     amount: Double,
     currentBalance: Double? = nil,
@@ -43,6 +45,7 @@ public struct TransactionModel: Identifiable {
     self.id = id
     self.accountId = accountId
     self.title = title
+    self.currency = currency
     self.description = description
     self.amount = amount
     self.currentBalance = currentBalance
@@ -262,6 +265,7 @@ public extension TransactionModel {
       id: transactionEntity.id,
       accountId: transactionEntity.accountId,
       title: transactionEntity.title,
+      currency: transactionEntity.currency,
       description: transactionEntity.description,
       amount: transactionEntity.amount,
       currentBalance: transactionEntity.currentBalance,

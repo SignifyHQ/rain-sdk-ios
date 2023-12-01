@@ -11,6 +11,7 @@ public protocol TransactionEntity {
   var id: String { get }
   var accountId: String { get }
   var title: String? { get }
+  var currency: String? { get }
   var description: String? { get }
   var amount: Double { get }
   var currentBalance: Double? { get }

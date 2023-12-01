@@ -45,6 +45,10 @@ final class MoveCryptoInputViewModel: ObservableObject {
     generateGridValues()
   }
   
+  var cryptoIconImage: Image? {
+    assetModel.type?.filledImage
+  }
+  
   var address: String {
     switch type {
     case .sendCrypto(let address, _):
@@ -232,15 +236,16 @@ extension MoveCryptoInputViewModel {
   var title: String {
     switch type {
     case .buyCrypto:
-      return LFLocalizable.MoveCryptoInput.Buy.title
+      return LFLocalizable.MoveCryptoInput.Buy.title(assetModel.type?.title ?? .empty)
     case .sellCrypto:
-      return LFLocalizable.MoveCryptoInput.Sell.title
+      return LFLocalizable.MoveCryptoInput.Sell.title(assetModel.type?.title ?? .empty)
     case .sendCrypto:
-      return LFLocalizable.MoveCryptoInput.Send.title
+      return LFLocalizable.MoveCryptoInput.Send.title(assetModel.type?.title ?? .empty)
     }
   }
   
   var subtitle: String? {
+    let cryptoCurrency = assetModel.type?.title ?? .empty
     switch type {
     case .buyCrypto:
       return LFLocalizable.MoveCryptoInput.BuyAvailableBalance.subtitle(
@@ -249,12 +254,12 @@ extension MoveCryptoInputViewModel {
     case .sellCrypto:
       let balance = assetModel.availableBalance.roundTo3f()
       return LFLocalizable.MoveCryptoInput.SellAvailableBalance.subtitle(
-        "\(balance)".formattedAmount(minFractionDigits: 3, maxFractionDigits: 3), LFUtilities.cryptoCurrency.uppercased()
+        "\(balance)".formattedAmount(minFractionDigits: 3, maxFractionDigits: 3), cryptoCurrency
       )
     case .sendCrypto:
       let balance = assetModel.availableBalance.roundTo3f()
       return LFLocalizable.MoveCryptoInput.SendAvailableBalance.subtitle(
-        "\(balance)".formattedAmount(minFractionDigits: 3, maxFractionDigits: 3), LFUtilities.cryptoCurrency.uppercased()
+        "\(balance)".formattedAmount(minFractionDigits: 3, maxFractionDigits: 3), cryptoCurrency
       )
     }
   }
@@ -273,7 +278,9 @@ extension MoveCryptoInputViewModel {
     case .sendCrypto:
       let balance = assetModel.availableBalance.roundTo3f()
       return LFLocalizable.MoveCryptoInput.Send.annotation(
-        "\(balance)".formattedAmount(minFractionDigits: 3, maxFractionDigits: 3)
+        "\(balance)".formattedAmount(minFractionDigits: 3, maxFractionDigits: 3),
+        assetModel.type?.title ?? .empty,
+        assetModel.type?.title ?? .empty
       )
     }
   }

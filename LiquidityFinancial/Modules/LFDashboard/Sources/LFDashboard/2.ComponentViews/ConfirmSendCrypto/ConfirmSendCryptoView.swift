@@ -66,7 +66,7 @@ private extension ConfirmSendCryptoView {
       informationCell(
         title: LFLocalizable.ConfirmSendCryptoView.amount,
         value: viewModel.amountInput,
-        bonusValue: LFLocalizable.Crypto.value
+        bonusValue: viewModel.assetModel.type?.title ?? .empty
       )
       if !viewModel.nickname.isEmpty {
         informationCell(

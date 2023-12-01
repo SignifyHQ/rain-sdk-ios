@@ -13,9 +13,11 @@ struct EnterCryptoAddressView: View {
   @StateObject private var viewModel: EnterCryptoAddressViewModel
   
   private let completeAction: (() -> Void)?
+  private let assetModel: AssetModel
   
   init(assetModel: AssetModel, completeAction: @escaping (() -> Void)) {
     _viewModel = .init(wrappedValue: EnterCryptoAddressViewModel(asset: assetModel))
+    self.assetModel = assetModel
     self.completeAction = completeAction
   }
   
@@ -92,9 +94,13 @@ private extension EnterCryptoAddressView {
   
   @ViewBuilder var titleView: some View {
     VStack(spacing: 10) {
-      Text(LFLocalizable.EnterCryptoAddressView.title(LFLocalizable.Crypto.value.uppercased()))
-        .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.main.value))
-        .foregroundColor(Colors.label.swiftUIColor)
+      Text(
+        LFLocalizable.EnterCryptoAddressView.title(
+          assetModel.type?.title ?? .empty
+        )
+      )
+      .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.main.value))
+      .foregroundColor(Colors.label.swiftUIColor)
     }
   }
   
@@ -103,7 +109,7 @@ private extension EnterCryptoAddressView {
       placeHolderText: LFLocalizable.EnterCryptoAddressView.WalletAddress.placeholder,
       value: $viewModel.inputValue,
       textFieldTitle: LFLocalizable.EnterCryptoAddressView.WalletAddress
-        .title(LFLocalizable.Crypto.value),
+        .title(assetModel.type?.title ?? .empty),
       clearValue: {
         viewModel.clearValue()
       },
@@ -114,7 +120,7 @@ private extension EnterCryptoAddressView {
   }
   
   var warningLabel: some View {
-    Text(LFLocalizable.EnterCryptoAddressView.warning(LFLocalizable.Crypto.value))
+    Text(LFLocalizable.EnterCryptoAddressView.warning(assetModel.type?.title ?? .empty))
       .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.textFieldHeader.value))
       .foregroundColor(Colors.label.swiftUIColor.opacity(0.5))
   }
