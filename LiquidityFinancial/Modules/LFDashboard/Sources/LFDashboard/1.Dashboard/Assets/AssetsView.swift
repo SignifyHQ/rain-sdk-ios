@@ -36,6 +36,7 @@ struct AssetsView: View {
     .refreshable {
       await viewModel.refresh()
     }
+    .frame(max: .infinity)
     .background(Colors.background.swiftUIColor)
     .popup(item: $viewModel.toastMessage, style: .toast) {
       ToastView(toastMessage: $0)

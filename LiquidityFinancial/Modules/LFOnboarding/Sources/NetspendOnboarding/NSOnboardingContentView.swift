@@ -90,7 +90,7 @@ public struct NSOnboardingContentView: View {
         ZStack {
           timeIsUpPopup
         }
-        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .frame(max: .infinity)
         .background(Color.black.edgesIgnoringSafeArea(.all))
       case .documentInReview:
         contentViewFactory

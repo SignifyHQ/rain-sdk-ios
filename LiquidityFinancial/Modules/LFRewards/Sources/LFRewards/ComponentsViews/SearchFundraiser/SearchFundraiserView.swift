@@ -52,7 +52,7 @@ public struct SearchCausesView: View {
       LottieView(loading: .mix)
         .frame(width: 30, height: 20)
     }
-    .frame(maxWidth: .infinity, maxHeight: .infinity)
+    .frame(max: .infinity)
   }
   
   private var noResults: some View {

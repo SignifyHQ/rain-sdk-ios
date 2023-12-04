@@ -57,7 +57,7 @@ public struct PhoneNumberView<ViewModel: PhoneNumberViewModelProtocol>: View {
         footerView
       }
     }
-    .frame(maxWidth: .infinity, maxHeight: .infinity)
+    .frame(max: .infinity)
     .onTapGesture {
       keyboardFocus = false
     }

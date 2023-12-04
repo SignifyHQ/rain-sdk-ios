@@ -48,7 +48,7 @@ public struct AccountLimitsView: View {
     .padding(.top, 20)
     .padding(.horizontal, 30)
     .padding(.bottom, 16)
-    .frame(maxWidth: .infinity, maxHeight: .infinity)
+    .frame(max: .infinity)
     .background(Colors.background.swiftUIColor)
     .onTapGesture {
       selectedAnnotation = nil

@@ -59,7 +59,7 @@ extension TaxesView {
       LottieView(loading: .primary)
         .frame(width: 45, height: 30)
     }
-    .frame(maxWidth: .infinity, maxHeight: .infinity)
+    .frame(max: .infinity)
   }
   
   private var failure: some View {
@@ -108,7 +108,7 @@ extension TaxesView {
         .font(Fonts.regular.swiftUIFont(size: 16))
     }
     .padding(.horizontal, 30)
-    .frame(maxWidth: .infinity, maxHeight: .infinity)
+    .frame(max: .infinity)
   }
 }
 

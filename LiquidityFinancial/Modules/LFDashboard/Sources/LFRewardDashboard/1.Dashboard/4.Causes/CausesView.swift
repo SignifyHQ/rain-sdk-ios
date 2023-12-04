@@ -58,7 +58,7 @@ extension CausesView {
       LottieView(loading: .primary)
         .frame(width: 45, height: 30)
     }
-    .frame(maxWidth: .infinity, maxHeight: .infinity)
+    .frame(max: .infinity)
   }
   
   private var failure: some View {

@@ -81,7 +81,7 @@ private extension BankStatementView {
         .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.medium.value))
     }
     .padding(.horizontal, 30)
-    .frame(maxWidth: .infinity, maxHeight: .infinity)
+    .frame(max: .infinity)
   }
   
   func statementsView(statements: [BankStatementViewModel.UIModel]) -> some View {

@@ -7,7 +7,7 @@ public extension CurrencyType {
   var filledImage: Image? {
     switch self {
     case .USD:
-      return GenImages.CommonImages.usdSymbol.swiftUIImage
+      return nil
     case .USDC:
       return GenImages.CommonImages.icUsdc.swiftUIImage
     case .AVAX:

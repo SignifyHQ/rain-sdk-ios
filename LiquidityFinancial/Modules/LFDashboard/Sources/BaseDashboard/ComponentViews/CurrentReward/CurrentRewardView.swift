@@ -20,12 +20,9 @@ public struct CurrentRewardView: View {
           .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.medium.value))
       }
     }
+    .frame(max: .infinity)
     .background(Colors.background.swiftUIColor)
     .navigationBarTitleDisplayMode(.inline)
-    .frame(
-      maxWidth: .infinity,
-      maxHeight: .infinity
-    )
     .onAppear {
       viewModel.onAppear()
     }
@@ -122,7 +119,7 @@ public struct CurrentRewardView: View {
       LottieView(loading: .primary)
         .frame(width: 45, height: 30)
     }
-    .frame(maxWidth: .infinity, maxHeight: .infinity)
+    .frame(max: .infinity)
   }
   
   private var failureView: some View {
@@ -151,6 +148,6 @@ public struct CurrentRewardView: View {
         .font(Fonts.regular.swiftUIFont(size: 16))
     }
     .padding(.horizontal, 30)
-    .frame(maxWidth: .infinity, maxHeight: .infinity)
+    .frame(max: .infinity)
   }
 }

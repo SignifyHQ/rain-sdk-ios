@@ -1,4 +1,5 @@
 import SwiftUI
+import LFStyleGuide
 
 private struct ImageGradientViewModifier: ViewModifier {
   func body(content: Content) -> some View {
@@ -21,7 +22,7 @@ private struct ImageGradientView: View {
   var body: some View {
     Rectangle()
       .fill(gradient)
-      .frame(maxWidth: .infinity, maxHeight: .infinity)
+      .frame(max: .infinity)
   }
   
   private var gradient: LinearGradient {

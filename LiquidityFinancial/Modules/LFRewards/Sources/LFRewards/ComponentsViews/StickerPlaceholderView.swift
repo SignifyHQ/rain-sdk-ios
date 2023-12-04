@@ -55,7 +55,7 @@ struct StickerPlaceholderView_Previews: PreviewProvider {
       StickerPlaceholderView(overlay: .linear(.yellow, 4))
         .frame(100)
     }
-    .frame(maxWidth: .infinity, maxHeight: .infinity)
+    .frame(max: .infinity)
     .background(ModuleColors.background.swiftUIColor)
   }
 }

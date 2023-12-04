@@ -51,11 +51,6 @@ final class AssetsViewModel: ObservableObject {
   }
 }
 
-  // MARK: - API
-extension AssetsViewModel {
-  
-}
-
   // MARK: - Types
 extension AssetsViewModel {
   enum Navigation {
