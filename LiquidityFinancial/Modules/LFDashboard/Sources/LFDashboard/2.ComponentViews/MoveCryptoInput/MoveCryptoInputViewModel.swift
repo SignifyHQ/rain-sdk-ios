@@ -84,11 +84,12 @@ final class MoveCryptoInputViewModel: ObservableObject {
   }
   
   private func generateGridValues() {
+    let cryptoCurrency = assetModel.type?.title ?? .empty
     switch type {
     case .buyCrypto:
       gridValues = Constant.Buy.buildRecommend(available: fiatAccount?.availableBalance ?? 0)
     case .sellCrypto, .sendCrypto:
-      gridValues = Constant.Sell.buildRecommend(available: assetModel.availableBalance)
+      gridValues = Constant.Sell.buildRecommend(available: assetModel.availableBalance, coin: cryptoCurrency)
     }
   }
   
@@ -386,13 +387,25 @@ extension MoveCryptoInputViewModel {
     }
     
     enum Sell {
-      static func buildRecommend(available: Double) -> [GridValue] {
+      static func buildRecommend(available: Double, coin: String) -> [GridValue] {
         if available > 1_000 {
-          return [.fixed(amount: 100, currency: .crypto), .fixed(amount: 1_000, currency: .crypto), .all(amount: available, currency: .crypto)]
+          return [
+            .fixed(amount: 100, currency: .crypto(coin: coin)),
+            .fixed(amount: 1_000, currency: .crypto(coin: coin)),
+            .all(amount: available, currency: .crypto(coin: coin))
+          ]
         } else if available > 100 {
-          return [.fixed(amount: 10, currency: .crypto), .fixed(amount: 100, currency: .crypto), .all(amount: available, currency: .crypto)]
+          return [
+            .fixed(amount: 10, currency: .crypto(coin: coin)),
+            .fixed(amount: 100, currency: .crypto(coin: coin)),
+            .all(amount: available, currency: .crypto(coin: coin))
+          ]
         } else if available > 10 {
-          return [.fixed(amount: 1, currency: .crypto), .fixed(amount: 10, currency: .crypto), .all(amount: available, currency: .crypto)]
+          return [
+            .fixed(amount: 1, currency: .crypto(coin: coin)),
+            .fixed(amount: 10, currency: .crypto(coin: coin)),
+            .all(amount: available, currency: .crypto(coin: coin))
+          ]
         } else {
           return []
         }

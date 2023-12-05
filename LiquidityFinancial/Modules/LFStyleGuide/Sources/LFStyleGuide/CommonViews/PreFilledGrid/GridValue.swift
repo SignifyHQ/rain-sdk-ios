@@ -20,8 +20,8 @@ public struct GridValue: Hashable {
       switch currency {
       case .usd:
         return amount.formattedAmount(prefix: Constants.CurrencyUnit.usd.rawValue)
-      case .crypto:
-        return LFLocalizable.GridValue.crypto(amount.formattedAmount())
+      case .crypto(let coin):
+        return "\(amount.formattedAmount()) \(coin)"
       }
     case .all:
       return LFLocalizable.GridValue.all
@@ -46,7 +46,7 @@ public extension GridValue {
 public extension GridValue {
   enum Currency: Hashable {
     case usd
-    case crypto
+    case crypto(coin: String)
     
     fileprivate var maxFractionDigits: Int {
       switch self {
