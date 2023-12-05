@@ -1,8 +1,8 @@
 import Foundation
-import SwiftUI
-import LFUtilities
-import LFStyleGuide
 import LFLocalizable
+import LFStyleGuide
+import LFUtilities
+import SwiftUI
 
 public struct CreatePasswordView: View {
   
@@ -10,7 +10,7 @@ public struct CreatePasswordView: View {
     case enterPass
     case reEnterPass
   }
-
+  
   @StateObject private var viewModel = CreatePasswordViewModel()
   
   @FocusState var keyboardFocus: Focus?
@@ -28,6 +28,11 @@ public struct CreatePasswordView: View {
             titleView
             enterPassword
             reenterPassword
+            
+            if viewModel.isDontMatchErrorShown {
+              passwordMatchError
+            }
+            
             bottomView
             Spacer()
           }
@@ -50,40 +55,55 @@ public struct CreatePasswordView: View {
 }
 
 extension CreatePasswordView {
+  var passwordMatchError: some View {
+    Text(LFLocalizable.Authentication.CreatePassword.warning)
+      .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.small.value))
+      .foregroundColor(Colors.error.swiftUIColor)
+  }
+  
   var bottomView: some View {
     VStack(spacing: 8) {
       HStack {
-        GenImages.CommonImages.icPasswordCheck.swiftUIImage
+        if viewModel.isLengthCorrect {
+          GenImages.CommonImages.icPasswordCheck.swiftUIImage
+        } else {
+          circleView
+        }
         
         Text(LFLocalizable.Authentication.CreatePassword.desc1)
           .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.small.value))
           .foregroundColor(Colors.label.swiftUIColor)
+          .opacity(viewModel.isLengthCorrect ? 1 : 0.75)
         
         Spacer()
       }
       
       HStack(spacing: 8) {
-        Circle()
-          .fill(Color(red: 0.94, green: 0.76, blue: 0.23))
-          .foregroundColor(.clear)
-          .frame(width: 6, height: 6)
+        if viewModel.containsSpecialCharacters {
+          GenImages.CommonImages.icPasswordCheck.swiftUIImage
+        } else {
+          circleView
+        }
+        
         Text(LFLocalizable.Authentication.CreatePassword.desc2)
           .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.small.value))
           .foregroundColor(Colors.label.swiftUIColor)
-          .opacity(0.75)
+          .opacity(viewModel.containsSpecialCharacters ? 1 : 0.75)
         
         Spacer()
       }
       
       HStack(spacing: 8) {
-        Circle()
-          .fill(Color(red: 0.94, green: 0.76, blue: 0.23))
-          .foregroundColor(.clear)
-          .frame(width: 6, height: 6)
+        if viewModel.containsLowerAndUpperCase {
+          GenImages.CommonImages.icPasswordCheck.swiftUIImage
+        } else {
+          circleView
+        }
+        
         Text(LFLocalizable.Authentication.CreatePassword.desc3)
           .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.small.value))
           .foregroundColor(Colors.label.swiftUIColor)
-          .opacity(0.75)
+          .opacity(viewModel.containsLowerAndUpperCase ? 1 : 0.75)
         
         Spacer()
       }
@@ -93,18 +113,18 @@ extension CreatePasswordView {
   
   var titleView: some View {
     Text(LFLocalizable.Authentication.CreatePassword.title.uppercased())
-    .frame(maxWidth: .infinity)
-    .foregroundColor(Colors.label.swiftUIColor)
-    .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.main.value))
-    .padding(.top, 0)
-    .padding(.bottom, 32)
+      .frame(maxWidth: .infinity)
+      .foregroundColor(Colors.label.swiftUIColor)
+      .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.main.value))
+      .padding(.top, 0)
+      .padding(.bottom, 32)
   }
   
   var continueButtonView: some View {
     VStack(spacing: 0) {
       FullSizeButton(
         title: LFLocalizable.Button.Continue.title,
-        isDisable: !viewModel.isActionAllowed,
+        isDisable: !viewModel.isContinueEnabled,
         isLoading: $viewModel.isLoading,
         type: .primary
       ) {
@@ -126,7 +146,7 @@ extension CreatePasswordView {
       
       textField(
         placeholder: LFLocalizable.Authentication.CreatePassword.subTitle2,
-        value: $viewModel.enterPassword,
+        value: $viewModel.passwordString,
         focus: .enterPass,
         nextFocus: .reEnterPass
       )
@@ -149,10 +169,17 @@ extension CreatePasswordView {
       
       textField(
         placeholder: LFLocalizable.Authentication.CreatePassword.subTitle4,
-        value: $viewModel.reenterPassword,
+        value: $viewModel.confirmPasswordString,
         focus: .reEnterPass
       )
     }
+  }
+  
+  var circleView: some View {
+    Circle()
+      .fill(Color(red: 0.94, green: 0.76, blue: 0.23))
+      .foregroundColor(.clear)
+      .frame(width: 6, height: 6)
   }
   
   @ViewBuilder
@@ -160,7 +187,7 @@ extension CreatePasswordView {
     placeholder: String,
     value: Binding<String>,
     limit: Int = 100,
-    restriction: TextRestriction = .none,
+    restriction: TextRestriction = .password,
     keyboardType: UIKeyboardType = .alphabet,
     focus: Focus,
     nextFocus: Focus? = nil

@@ -878,7 +878,7 @@ contact support.";
 "authentication.create_password.desc_2" = "Must have 1 special character including @ #$ %";
 "authentication.create_password.desc_3" = "Must be 1 lower case and 1 upper case";
 
-"authentication.create_password.warning" = "Password dont match";
+"authentication.create_password.warning" = "Passwords don't match";
 
 "authentication.enter_password.title" = "Enter Password";
 "authentication.enter_password.placeholder" = "Enter password";

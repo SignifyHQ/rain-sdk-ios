@@ -481,8 +481,8 @@ public enum LFLocalizable {
       public static let subTitle4 = LFLocalizable.tr("Localizable", "authentication.create_password.sub_title_4", fallback: "Re-Enter password")
       /// create password
       public static let title = LFLocalizable.tr("Localizable", "authentication.create_password.title", fallback: "create password")
-      /// Password dont match
-      public static let warning = LFLocalizable.tr("Localizable", "authentication.create_password.warning", fallback: "Password dont match")
+      /// Passwords don't match
+      public static let warning = LFLocalizable.tr("Localizable", "authentication.create_password.warning", fallback: "Passwords don't match")
     }
     public enum EnterPassword {
       /// Forgot Password

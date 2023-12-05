@@ -7,7 +7,7 @@ import LFRewardDashboard
 import RewardData
 
 struct AppView: View {
-
+  
   @StateObject var viewModel = AppViewModel()
   @Injected(\.accountDataManager) var accountDataManager
   

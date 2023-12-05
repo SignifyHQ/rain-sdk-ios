@@ -369,3 +369,10 @@ public extension String {
     return att
   }
 }
+
+// Validate String based on a TextValidation condition (wrapper for NSPredicate)
+public extension String {
+  func isValid(for validation: TextValidation) -> Bool {
+    validation.predicate.evaluate(with: self)
+  }
+}

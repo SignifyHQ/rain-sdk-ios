@@ -7,6 +7,7 @@ public enum TextRestriction {
   case alphanumeric
   case alphabetsAndComma
   case decimal
+  case password
 
   public var allowedInput: String {
     switch self {
@@ -22,6 +23,8 @@ public enum TextRestriction {
       return "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ, "
     case .decimal:
       return "^[0-9]*((\\.|,)[0-9]{0,2})?$"
+    case .password:
+      return "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()-_=+[]{}|;:'\",.<>/?`~"
     }
   }
 }

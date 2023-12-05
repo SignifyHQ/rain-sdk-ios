@@ -14,7 +14,8 @@ let package = Package(
     dependencies: [
       .package(name: "LFUtilities", path: "../LFUtilities"),
       .package(name: "LFStyleGuide", path: "../LFStyleGuide"),
-      .package(name: "LFLocalizable", path: "../LFLocalizable")
+      .package(name: "LFLocalizable", path: "../LFLocalizable"),
+      .package(name: "TestHelpers", path: "../TestHelpers")
     ],
     targets: [
         .target(
@@ -24,8 +25,11 @@ let package = Package(
             ]
         ),
         .testTarget(
-            name: "LFAuthenticationTests",
-            dependencies: ["LFAuthentication"]
+            name: "CreatePasswordViewModelTests",
+            dependencies: [
+              "LFAuthentication",
+              "TestHelpers"
+            ]
         ),
     ]
 )
