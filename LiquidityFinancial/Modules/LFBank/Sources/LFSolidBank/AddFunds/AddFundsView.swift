@@ -87,15 +87,9 @@ private extension AddFundsView {
       title: LFLocalizable.PlaidLink.Popup.title,
       message: LFLocalizable.PlaidLink.Popup.description,
       primary: .init(
-        text: LFLocalizable.PlaidLink.ConnectViaDebitCard.title,
-        action: {
-          viewModel.plaidLinkingErrorPrimaryAction()
-        }
-      ),
-      secondary: .init(
         text: LFLocalizable.PlaidLink.ContactSupport.title,
         action: {
-          viewModel.plaidLinkingErrorSecondaryAction()
+          viewModel.plaidLinkingErrorPrimaryAction()
         }
       )
     )

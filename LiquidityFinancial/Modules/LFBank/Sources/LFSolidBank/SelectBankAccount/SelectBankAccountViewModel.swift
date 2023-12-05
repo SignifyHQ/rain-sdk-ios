@@ -61,9 +61,7 @@ class SelectBankAccountViewModel: ObservableObject {
   }()
   
   init(linkedContacts: [LinkedSourceContact], amount: String, kind: MoveMoneyAccountViewModel.Kind) {
-    self.linkedBanks = linkedContacts.filter({ data in
-      data.sourceType == .bank
-    })
+    self.linkedBanks = linkedContacts.filter { $0.sourceType == .bank}
     self.amount = amount
     self.kind = kind
     
@@ -76,9 +74,7 @@ class SelectBankAccountViewModel: ObservableObject {
       guard let self = self else {
         return
       }
-      self.linkedBanks = contacts.filter({ data in
-        data.sourceType == .bank
-      })
+      self.linkedBanks = contacts.filter { $0.sourceType == .bank}
     })
     .store(in: &cancellable)
   }

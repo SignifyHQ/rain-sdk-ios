@@ -246,7 +246,7 @@
 "cashTab.waysToAdd.title" = "More ways to deposit";
 
 // CashCardView
-"cashCard.balance.title" = "%@ Balance";
+"cashCard.balance.title" = "Balance";
 
 // ChangeAssetView
 "changeAsset.screen.title" = "Change asset";

@@ -22,11 +22,7 @@ public struct ConnectedAccountsView: View {
             .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.medium.value))
         }
         ToolbarItem(placement: .navigationBarTrailing) {
-          Button {
-            viewModel.addBankWithDebit()
-          } label: {
-            CircleButton(style: .plus)
-          }
+          trailingToolbarButton
         }
       }
       .background(Colors.background.swiftUIColor)
@@ -34,22 +30,31 @@ public struct ConnectedAccountsView: View {
       .navigationBarTitleDisplayMode(.inline)
       .navigationLink(item: $viewModel.navigation) { item in
         switch item {
-        case .addBankWithDebit:
-          AddBankWithDebitView()
+        case .addMoney:
+          MoveMoneyAccountView(kind: .receive)
         }
+      }
+      .sheet(item: $viewModel.plaidConfig) { item in
+        PlaidLinkView(configuration: item.config)
       }
       .popup(item: $viewModel.popup) { item in
         switch item {
         case let .delete(data):
           deletePopup(linkedSource: data)
+        case .plaidLinkingError:
+          plaidLinkingErrorPopup
         }
       }
+      .disabled(viewModel.isDisableView)
       .onAppear {
         viewModel.trackAccountViewAppear()
       }
   }
+}
 
-  private var content: some View {
+ // MARK: - Private View Components
+private extension ConnectedAccountsView {
+  var content: some View {
     VStack(spacing: 10) {
       if viewModel.isLoading {
         loading
@@ -64,7 +69,7 @@ public struct ConnectedAccountsView: View {
     .background(Colors.background.swiftUIColor)
   }
   
-  private var loading: some View {
+  var loading: some View {
     Group {
       LottieView(loading: .primary)
         .frame(width: 30, height: 25)
@@ -72,8 +77,23 @@ public struct ConnectedAccountsView: View {
     }
     .frame(maxWidth: .infinity)
   }
+  
+  var trailingToolbarButton: some View {
+    ZStack {
+      if viewModel.isLoadingLinkExternalBank {
+        LottieView(loading: .primary)
+          .frame(width: 30, height: 25)
+      } else {
+        Button {
+          viewModel.linkExternalBank()
+        } label: {
+          CircleButton(style: .plus)
+        }
+      }
+    }
+  }
 
-  private var contacts: some View {
+  var contacts: some View {
     Group {
       ForEach(viewModel.linkedContacts, id: \.sourceId) { item in
         ConnectedAccountRow(sourceData: item) {
@@ -94,6 +114,19 @@ public struct ConnectedAccountsView: View {
         viewModel.hidePopup()
       },
       isLoading: $viewModel.isDeleting
+    )
+  }
+  
+  var plaidLinkingErrorPopup: some View {
+    LiquidityAlert(
+      title: LFLocalizable.PlaidLink.Popup.title,
+      message: LFLocalizable.PlaidLink.Popup.description,
+      primary: .init(
+        text: LFLocalizable.PlaidLink.ContactSupport.title,
+        action: {
+          viewModel.plaidLinkingErrorPrimaryAction()
+        }
+      )
     )
   }
 }

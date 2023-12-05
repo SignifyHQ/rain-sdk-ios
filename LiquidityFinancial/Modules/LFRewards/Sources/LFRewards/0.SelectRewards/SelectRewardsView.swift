@@ -13,7 +13,8 @@ public enum RewardWhereStart {
 public struct SelectRewardsView: View {
   @StateObject private var viewModel = SelectRewardsViewModel()
   @Injected(\.rewardNavigation) var rewardNavigation
-  
+  @State private var showPopup = false
+
   let whereStart: RewardWhereStart
   public init(whereStart: RewardWhereStart = .onboarding) {
     self.whereStart = whereStart
@@ -22,6 +23,9 @@ public struct SelectRewardsView: View {
   public var body: some View {
     content
       .background(ModuleColors.background.swiftUIColor)
+      .popup(isPresented: $showPopup) {
+        alert
+      }
       .navigationBarHidden(true)
       .popup(item: $viewModel.showError, style: .toast) { message in
         ToastView(toastMessage: message)
@@ -41,38 +45,28 @@ public struct SelectRewardsView: View {
         }
       }
   }
-  
-  private var content: some View {
+}
+
+ // MARK: - Private View Components
+private extension SelectRewardsView {
+  var content: some View {
     ScrollView {
-      VStack {
+      VStack(spacing: 28) {
         asset
-        
-        VStack(alignment: .leading, spacing: 0) {
+        VStack(alignment: .leading, spacing: 28) {
           GenImages.CommonImages.dash.swiftUIImage
             .foregroundColor(ModuleColors.label.swiftUIColor)
-          
+            .padding(.bottom, 4)
           titles
-            .padding(.top, 32)
-          
           options
-            .padding(.top, 16)
-          
-          Spacer(minLength: 12)
-          
-          DonationsDisclosureView()
-            .padding(.bottom, 12)
-          
-          continueButton
-          
-          cashbackDonationDisclosure
+          bottomView
         }
         .padding(.horizontal, 30)
-        .padding(.bottom, 10)
       }
     }
   }
   
-  private var asset: some View {
+  var asset: some View {
     Group {
       switch LFUtilities.target {
       case .CauseCard:
@@ -88,7 +82,7 @@ public struct SelectRewardsView: View {
     }
   }
   
-  private var titles: some View {
+  var titles: some View {
     VStack(alignment: .leading, spacing: 4) {
       Text(LFLocalizable.SelectRewards.title.uppercased())
         .font(Fonts.regular.swiftUIFont(size: 18))
@@ -100,7 +94,7 @@ public struct SelectRewardsView: View {
     .fixedSize(horizontal: false, vertical: true)
   }
   
-  private var options: some View {
+  var options: some View {
     func option(_ item: SelectRewardsViewModel.Option) -> some View {
       UserRewardRowView(type: .short, reward: item.userRewardType, selection: viewModel.selection(item))
         .onTapGesture {
@@ -114,19 +108,59 @@ public struct SelectRewardsView: View {
     }
   }
   
-  private var continueButton: some View {
-    FullSizeButton(title: LFLocalizable.SelectRewards.continue, isDisable: !viewModel.isContinueEnabled, isLoading: $viewModel.isLoading) {
-      viewModel.continueTapped()
+  var bottomView: some View {
+    VStack(spacing: 20) {
+      cashbackDonationDisclosure
+      FullSizeButton(title: LFLocalizable.SelectRewards.continue, isDisable: !viewModel.isContinueEnabled, isLoading: $viewModel.isLoading) {
+        viewModel.continueTapped()
+      }
+    }
+    .padding(.bottom, 20)
+  }
+  
+  var cashbackDonationDisclosure: some View {
+    Group {
+      Text("\(LFLocalizable.DonationsDisclosure.second) ")
+      +
+      Text(LFLocalizable.DonationsDisclosure.text("100%"))
+      +
+      Text(GenImages.CommonImages.info.swiftUIImage)
+    }
+    .font(Fonts.regular.swiftUIFont(size: 12))
+    .foregroundColor(ModuleColors.label.swiftUIColor.opacity(0.75))
+    .lineSpacing(2)
+    .multilineTextAlignment(.center)
+    .padding(.horizontal, 22)
+    .onTapGesture {
+      showPopup = true
     }
   }
   
-  private var cashbackDonationDisclosure: some View {
-    Text(LFLocalizable.DonationsDisclosure.second)
-      .frame(maxWidth: .infinity)
-      .font(Fonts.regular.swiftUIFont(size: 12))
-      .foregroundColor(ModuleColors.label.swiftUIColor.opacity(0.5))
-      .multilineTextAlignment(.center)
-      .padding(.top, 12)
-      .padding(.horizontal, 24)
+  var alert: some View {
+    PopupAlert {
+      VStack(spacing: 16) {
+        GenImages.Images.icLogo.swiftUIImage
+          .resizable()
+          .frame(width: 80, height: 80)
+        
+        Text(LFLocalizable.DonationsDisclosure.Alert.title)
+          .font(Fonts.regular.swiftUIFont(size: 18))
+          .foregroundColor(ModuleColors.label.swiftUIColor)
+          .padding(.top, 8)
+        
+        VStack(spacing: 0) {
+          ShoppingGivesAlert(type: .taxDeductions)
+            .frame(height: 156)
+          Text(LFLocalizable.DonationsDisclosure.Alert.poweredBy)
+        }
+        .font(Fonts.regular.swiftUIFont(size: 16))
+        .foregroundColor(ModuleColors.label.swiftUIColor.opacity(0.75))
+        .lineSpacing(1.33)
+        .multilineTextAlignment(.center)
+        FullSizeButton(title: LFLocalizable.Button.Ok.title, isDisable: false, type: .primary) {
+          showPopup = false
+        }
+      }
+    }
   }
 }

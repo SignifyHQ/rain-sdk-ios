@@ -118,11 +118,6 @@ extension AddFundsViewModel {
   
   func plaidLinkingErrorPrimaryAction() {
     popup = nil
-    navigation = .addBankDebit
-  }
-  
-  func plaidLinkingErrorSecondaryAction() {
-    popup = nil
     customerSupportService.openSupportScreen()
   }
   

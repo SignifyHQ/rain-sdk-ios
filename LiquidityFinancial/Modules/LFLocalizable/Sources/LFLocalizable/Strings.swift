@@ -741,10 +741,8 @@ public enum LFLocalizable {
   }
   public enum CashCard {
     public enum Balance {
-      /// %@ Balance
-      public static func title(_ p1: Any) -> String {
-        return LFLocalizable.tr("Localizable", "cashCard.balance.title", String(describing: p1), fallback: "%@ Balance")
-      }
+      /// Balance
+      public static let title = LFLocalizable.tr("Localizable", "cashCard.balance.title", fallback: "Balance")
     }
   }
   public enum CashTab {

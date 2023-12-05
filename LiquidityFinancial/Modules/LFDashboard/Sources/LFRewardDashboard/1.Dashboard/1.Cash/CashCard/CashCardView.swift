@@ -103,7 +103,7 @@ struct CashCardView: View {
   private var balance: some View {
     HStack {
       VStack(alignment: .leading, spacing: 2) {
-        Text(LFLocalizable.CashCard.Balance.title(assetType.title))
+        Text(LFLocalizable.CashCard.Balance.title)
           .foregroundColor(Colors.contrast.swiftUIColor)
           .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.ultraSmall.value))
         

@@ -86,9 +86,9 @@ extension MoveMoneyAccountViewModel {
       guard let self = self else {
         return
       }
-      self.linkedContacts = contacts
+      self.linkedContacts = contacts.filter { $0.sourceType == .bank }
       if self.selectedLinkedContact == nil {
-        self.selectedLinkedContact = contacts.first
+        self.selectedLinkedContact = self.linkedContacts.first
       }
     }
     .store(in: &cancellable)

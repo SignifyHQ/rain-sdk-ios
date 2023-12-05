@@ -158,7 +158,7 @@ extension AccountViewModel {
   
   func subscribeLinkedContacts() {
     externalFundingDataManager.subscribeLinkedSourcesChanged({ [weak self] contacts in
-      self?.linkedContacts = contacts
+      self?.linkedContacts = contacts.filter { $0.sourceType == .bank}
     })
     .store(in: &cancellable)
   }
