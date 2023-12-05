@@ -28,6 +28,7 @@ private extension RefundTransactionDetailView {
       }
   
       if let status = transaction.status {
+        Spacer()
         StatusView(transactionStatus: status)
           .padding(.top, 16)
       }

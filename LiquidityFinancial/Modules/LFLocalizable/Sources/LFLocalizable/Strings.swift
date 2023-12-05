@@ -2530,8 +2530,8 @@ public enum LFLocalizable {
       public static let title = LFLocalizable.tr("Localizable", "transactionDetail.buy.title", fallback: "BUY")
     }
     public enum CurrentReward {
-      /// Current Reward
-      public static let title = LFLocalizable.tr("Localizable", "transactionDetail.currentReward.title", fallback: "Current Reward")
+      /// Current Rewards
+      public static let title = LFLocalizable.tr("Localizable", "transactionDetail.currentReward.title", fallback: "Current Rewards")
     }
     public enum CurrentRewards {
       /// Current rewards

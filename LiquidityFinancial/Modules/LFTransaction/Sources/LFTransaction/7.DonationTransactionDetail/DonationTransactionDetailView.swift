@@ -17,6 +17,7 @@ public struct DonationTransactionDetailView: View {
       headerTitle
       amountView
       TransactionCardView(information: cardInformation)
+      Spacer()
       StatusView(donationStatus: donation.status)
       disclosureView
     }

@@ -677,7 +677,7 @@ https://mn.gov/commerce/money/investments/cryptocurrency/. \n\n\n\n\n\n\n";
 "transactionDetail.price.title" = "Price";
 "transactionDetail.fee.title" = "Fee";
 "transactionDetail.rewards.title" = "Rewards";
-"transactionDetail.currentReward.title" = "Current Reward";
+"transactionDetail.currentReward.title" = "Current Rewards";
 
 // Transfer debit suggestion
 "transferDebitSuggestion.title" = "Get Faster Deposits";

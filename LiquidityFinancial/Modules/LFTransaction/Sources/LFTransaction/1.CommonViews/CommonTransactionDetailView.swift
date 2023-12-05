@@ -25,8 +25,9 @@ struct CommonTransactionDetailView<Content: View>: View {
       amountView
       if let content = content {
         content
+      } else {
+        Spacer()
       }
-      Spacer()
       disclosureView
     }
     .frame(maxWidth: .infinity)
@@ -40,7 +41,7 @@ struct CommonTransactionDetailView<Content: View>: View {
     )
     .navigationBarTitleDisplayMode(.inline)
     .padding([.top, .horizontal], 30)
-    .padding(.bottom, 12)
+    .padding(.bottom, 20)
     .background(Colors.background.swiftUIColor)
   }
 }
