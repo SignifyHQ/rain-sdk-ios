@@ -2529,6 +2529,10 @@ public enum LFLocalizable {
       /// BUY
       public static let title = LFLocalizable.tr("Localizable", "transactionDetail.buy.title", fallback: "BUY")
     }
+    public enum CancelDeposit {
+      /// Cancel Deposit
+      public static let button = LFLocalizable.tr("Localizable", "transactionDetail.cancelDeposit.button", fallback: "Cancel Deposit")
+    }
     public enum CurrentReward {
       /// Current Rewards
       public static let title = LFLocalizable.tr("Localizable", "transactionDetail.currentReward.title", fallback: "Current Rewards")

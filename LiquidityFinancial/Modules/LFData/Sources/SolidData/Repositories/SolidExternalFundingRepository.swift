@@ -49,4 +49,8 @@ public class SolidExternalFundingRepository: SolidExternalFundingRepositoryProto
     try await solidExternalFundingAPI.createPinwheelToken(accountId: accountId)
   }
   
+  public func cancelACHTransaction(liquidityTransactionID: String) async throws -> SolidExternalTransactionResponseEntity {
+    try await solidExternalFundingAPI.cancelACHTransaction(liquidityTransactionID: liquidityTransactionID)
+  }
+  
 }

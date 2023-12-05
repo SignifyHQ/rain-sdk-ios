@@ -28,24 +28,6 @@ private extension WithdrawTransactionDetailView {
           completedTitle: LFLocalizable.TransferView.Status.Deposit.completed
         )
       }
-      
-      if let fee = transaction.fee {
-        VStack(spacing: 0) {
-          GenImages.CommonImages.dash.swiftUIImage
-            .foregroundColor(Colors.label.swiftUIColor)
-            .padding(.bottom, 16)
-          HStack {
-            Text(LFLocalizable.TransferView.Status.transferFee)
-              .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.medium.value))
-              .foregroundColor(Colors.label.swiftUIColor)
-            Spacer()
-            Text(fee > 0 ? fee.formattedUSDAmount() : LFLocalizable.TransferView.Status.free)
-              .font(Fonts.bold.swiftUIFont(size: Constants.FontSize.medium.value))
-              .foregroundColor(Colors.label.swiftUIColor)
-          }
-        }
-      }
-      
       if let status = transaction.status {
         Spacer()
         StatusView(transactionStatus: status)

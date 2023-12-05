@@ -83,4 +83,13 @@ extension LFCoreNetwork: SolidExternalFundingAPIProtocol where R == SolidExterna
       decoder: .apiDecoder
     )
   }
+  
+  public func cancelACHTransaction(liquidityTransactionID: String) async throws -> APISolidExternalTransactionResponse {
+    try await request(
+      SolidExternalFundingRoute.cancelACHTransaction(liquidityTransactionID: liquidityTransactionID),
+      target: APISolidExternalTransactionResponse.self,
+      failure: LFErrorObject.self,
+      decoder: .apiDecoder
+    )
+  }
 }

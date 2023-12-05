@@ -30,6 +30,7 @@ private extension CashbackTransactionDetail {
         )
         Spacer()
         StatusView(transactionStatus: status)
+          .padding(.bottom, 16)
       }
     }
   }

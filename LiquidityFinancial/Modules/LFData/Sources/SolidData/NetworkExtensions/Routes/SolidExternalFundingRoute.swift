@@ -14,6 +14,7 @@ public enum SolidExternalFundingRoute {
   case newTransaction(type: SolidExternalTransactionType, accountId: String, contactId: String, amount: Double)
   case estimateDebitCardFee(accountId: String, contactId: String, amount: Double)
   case createPinwheelToken(accountId: String)
+  case cancelACHTransaction(liquidityTransactionID: String)
 }
 
 extension SolidExternalFundingRoute: LFRoute {
@@ -43,6 +44,8 @@ extension SolidExternalFundingRoute: LFRoute {
       }
     case .estimateDebitCardFee:
       return "/v1/solid/external-funding/estimate-debit-card-fee"
+    case .cancelACHTransaction:
+      return "/v1/solid/external-funding/cancel-ach"
     }
   }
   
@@ -57,6 +60,8 @@ extension SolidExternalFundingRoute: LFRoute {
     case .newTransaction:
       return .POST
     case .estimateDebitCardFee:
+      return .POST
+    case .cancelACHTransaction:
       return .POST
     }
   }
@@ -105,12 +110,22 @@ extension SolidExternalFundingRoute: LFRoute {
         "contactId": contactId,
         "amount": amount
       ]
+    case .cancelACHTransaction(let liquidityTransactionID):
+      return [
+        "liquidityTransactionId": liquidityTransactionID,
+      ]
     }
   }
   
   public var parameterEncoding: ParameterEncoding? {
     switch self {
-    case .createDebitCardToken, .createPlaidToken, .plaidLink, .newTransaction, .estimateDebitCardFee, .createPinwheelToken:
+    case .createDebitCardToken,
+        .createPlaidToken,
+        .plaidLink,
+        .newTransaction,
+        .estimateDebitCardFee,
+        .createPinwheelToken,
+        .cancelACHTransaction:
       return .json
     case .getLinkedSources, .getWireTransfer:
       return .url

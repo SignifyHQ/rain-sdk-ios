@@ -11,4 +11,5 @@ public protocol SolidExternalFundingRepositoryProtocol {
   func newTransaction(type: SolidExternalTransactionType, accountId: String, contactId: String, amount: Double) async throws -> SolidExternalTransactionResponseEntity
   func estimateDebitCardFee(accountId: String, contactId: String, amount: Double) async throws -> SolidDebitCardTransferFeeResponseEntity
   func createPinwheelToken(accountId: String) async throws -> SolidExternalPinwheelTokenResponseEntity
+  func cancelACHTransaction(liquidityTransactionID: String) async throws -> SolidExternalTransactionResponseEntity
 }

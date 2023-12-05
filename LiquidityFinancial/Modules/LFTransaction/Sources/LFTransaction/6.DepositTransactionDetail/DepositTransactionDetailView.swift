@@ -17,6 +17,9 @@ struct DepositTransactionDetailView: View {
   
   var body: some View {
     CommonTransactionDetailView(transaction: transaction, content: content)
+      .popup(item: $viewModel.toastMessage, style: .toast) {
+        ToastView(toastMessage: $0)
+      }
   }
 }
 
@@ -35,23 +38,6 @@ private extension DepositTransactionDetailView {
         )
       }
       
-      if let fee = transaction.fee {
-        VStack(spacing: 0) {
-          GenImages.CommonImages.dash.swiftUIImage
-            .foregroundColor(Colors.label.swiftUIColor)
-            .padding(.bottom, 16)
-          HStack {
-            Text(LFLocalizable.TransferView.Status.transferFee)
-              .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.medium.value))
-              .foregroundColor(Colors.label.swiftUIColor)
-            Spacer()
-            Text(fee > 0 ? fee.formattedUSDAmount() : LFLocalizable.TransferView.Status.free)
-              .font(Fonts.bold.swiftUIFont(size: Constants.FontSize.medium.value))
-              .foregroundColor(Colors.label.swiftUIColor)
-          }
-        }
-      }
-      
       if let status = transaction.status {
         footerView(status: status)
       }
@@ -64,18 +50,27 @@ private extension DepositTransactionDetailView {
     }
   }
   
-  @ViewBuilder func footerView(status: TransactionStatus) -> some View {
-    if transaction.isACHTransaction && !viewModel.linkedAccount.contains(where: { $0.sourceType == .externalCard }) {
-      Group {
+  func footerView(status: TransactionStatus) -> some View {
+    let hasExternalCardLinked = viewModel.linkedAccount.contains(where: { $0.sourceType == .externalCard })
+    let shouldShowFasterDepositCard = transaction.isACHTransaction && !hasExternalCardLinked
+  
+    return VStack(spacing: 16) {
+      if shouldShowFasterDepositCard {
         fasterDepositCard
-        StatusView(transactionStatus: status)
-          .padding(.top, -24)
-      }
-      .padding(.bottom, 16)
-    } else {
-      Group {
+      } else {
         Spacer()
-        StatusView(transactionStatus: status)
+      }
+      StatusView(transactionStatus: status)
+        .padding(.bottom, status == .pending ? 0 : 16)
+      if status == .pending {
+        FullSizeButton(
+          title: LFLocalizable.TransactionDetail.CancelDeposit.button,
+          isDisable: false,
+          isLoading: $viewModel.isCancelingDeposit,
+          type: .secondary
+        ) {
+          viewModel.cancelDepositTransaction(id: transaction.id)
+        }
       }
     }
   }

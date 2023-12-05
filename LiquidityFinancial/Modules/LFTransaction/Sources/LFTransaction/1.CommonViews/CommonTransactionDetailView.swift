@@ -28,7 +28,7 @@ struct CommonTransactionDetailView<Content: View>: View {
       } else {
         Spacer()
       }
-      disclosureView
+      disclosureView()
     }
     .frame(maxWidth: .infinity)
     .scrollOnOverflow()
@@ -78,8 +78,9 @@ private extension CommonTransactionDetailView {
   }
   
   @ViewBuilder
-  var disclosureView: some View {
-    if viewModel.isDonationsCard {
+  func disclosureView() -> some View {
+    let isTransferBalanceTransaction = viewModel.transaction.type == .deposit || viewModel.transaction.type == .withdraw
+    if viewModel.isDonationsCard && !isTransferBalanceTransaction {
       TextTappable(
         text: viewModel.disclosureString,
         fontSize: Constants.FontSize.ultraSmall.value,
@@ -89,6 +90,7 @@ private extension CommonTransactionDetailView {
         openURL(url)
       }
       .frame(height: 200)
+      .padding(.top, -20)
     }
   }
 }
