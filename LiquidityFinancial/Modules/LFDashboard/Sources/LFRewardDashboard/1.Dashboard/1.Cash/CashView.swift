@@ -47,9 +47,9 @@ struct CashView: View {
           transactionTypes: Constants.TransactionTypesRequest.fiat.types
         )
       case .addMoney:
-        MoveMoneyAccountView(kind: .receive)
+        MoveMoneyAccountView(kind: .receive, cashBalance: viewModel.cashBalanceValue)
       case .sendMoney:
-        MoveMoneyAccountView(kind: .send)
+        MoveMoneyAccountView(kind: .send, cashBalance: viewModel.cashBalanceValue)
       case let .transactionDetail(transaction):
         TransactionDetailView(
           accountID: viewModel.accountID,

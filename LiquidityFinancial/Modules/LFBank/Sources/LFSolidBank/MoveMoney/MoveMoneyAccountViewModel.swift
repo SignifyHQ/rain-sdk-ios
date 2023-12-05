@@ -59,9 +59,10 @@ public class MoveMoneyAccountViewModel: ObservableObject {
     .fixed(amount: 100, currency: .usd)
   ]
 
-  init(kind: Kind, selectedAccount: LinkedSourceContact? = nil) {
+  init(kind: Kind, selectedAccount: LinkedSourceContact? = nil, cashBalance: Double? = nil) {
     self.kind = kind
     self.selectedLinkedContact = selectedAccount
+    self.cashBalanceValue = cashBalance?.formattedUSDAmount() ?? Constants.Default.zeroAmount.rawValue
     
     subscribeLinkedContacts()
     getRemainingAvailableAmount()
@@ -102,8 +103,19 @@ extension MoveMoneyAccountViewModel {
   func refresh() async {
     await withTaskGroup(of: Void.self) { group in
       group.addTask {
+        try? await self.refreshAccount()
       }
     }
+  }
+  
+  private func refreshAccount() async throws {
+    guard let accountId = try? await getDefaultFiatAccount()?.id else {
+      return
+    }
+    let account = try await fiatAccountService.getAccountDetail(id: accountId)
+    self.accountDataManager.addOrUpdateAccount(account)
+    let usdAmount = account.availableUsdBalance.formattedUSDAmount()
+    self.cashBalanceValue = usdAmount
   }
   
   func callBioMetric() {
@@ -235,15 +247,11 @@ extension MoveMoneyAccountViewModel {
   }
   
   var subtitle: String {
-    LFLocalizable.MoveMoney.AvailableBalance.subtitle(
-      cashBalanceValue.formattedUSDAmount()
-    )
+    LFLocalizable.MoveMoney.AvailableBalance.subtitle(cashBalanceValue)
   }
 
   var annotationString: String {
-    LFLocalizable.MoveMoney.Withdraw.annotation(
-      cashBalanceValue.formattedUSDAmount()
-    )
+    LFLocalizable.MoveMoney.Withdraw.annotation(cashBalanceValue)
   }
 
   var isAmountActionAllowed: Bool {

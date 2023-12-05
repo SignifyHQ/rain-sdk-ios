@@ -13,9 +13,13 @@ public struct MoveMoneyAccountView: View {
   @State private var screenSize: CGSize = .zero
   private let completeAction: (() -> Void)?
 
-  public init(kind: MoveMoneyAccountViewModel.Kind, completeAction: (() -> Void)? = nil) {
+  public init(
+    kind: MoveMoneyAccountViewModel.Kind,
+    cashBalance: Double? = nil,
+    completeAction: (() -> Void)? = nil
+  ) {
     _viewModel = .init(
-      wrappedValue: MoveMoneyAccountViewModel(kind: kind)
+      wrappedValue: MoveMoneyAccountViewModel(kind: kind, cashBalance: cashBalance)
     )
     self.completeAction = completeAction
   }
