@@ -23,21 +23,37 @@ public class MoveMoneyAccountViewModel: ObservableObject {
   @LazyInjected(\.solidExternalFundingRepository) var solidExternalFundingRepository
   @LazyInjected(\.fiatAccountService) var fiatAccountService
   
-  @Published var navigation: Navigation?
-  @Published var amountInput: String = Constants.Default.zeroAmount.rawValue
-  @Published var cashBalanceValue: String = Constants.Default.zeroAmount.rawValue
-  @Published var isFetchingRemainingAmount: Bool = false
-  @Published var showIndicator: Bool = false
+  @Published var isFetchingRemainingAmount = false
+  @Published var showIndicator = false
+  @Published var isDisableView = false
+  @Published var isLoadingLinkExternalBank = false
+  @Published var selectTransferInstant: Bool?
+
   @Published var toastMessage: String?
   @Published var inlineError: String?
+  @Published var amountInput = Constants.Default.zeroAmount.rawValue
+  @Published var cashBalanceValue = Constants.Default.zeroAmount.rawValue
+  
   @Published var numberOfShakes = 0
+  
   @Published var linkedContacts: [LinkedSourceContact] = []
   @Published var selectedLinkedContact: LinkedSourceContact?
   @Published var selectedValue: GridValue?
+  @Published var navigation: Navigation?
   @Published var popup: Popup?
-  @Published var showTransferFeeSheet: Bool = false
-  @Published var selectTransferInstant: Bool?
+  @Published var sheet: Sheet?
   @Published var externalCardFeeResponse: SolidDebitCardTransferFeeResponseEntity?
+  
+  private var cardRemainingAmount: RemainingAvailableAmount?
+  private var bankRemainingAmount: RemainingAvailableAmount?
+  private var cancellable: Set<AnyCancellable> = []
+  
+  let kind: Kind
+  let recommendValues: [GridValue] = [
+    .fixed(amount: 10, currency: .usd),
+    .fixed(amount: 50, currency: .usd),
+    .fixed(amount: 100, currency: .usd)
+  ]
   
   lazy var solidCreateTransactionUseCase: SolidCreateExternalTransactionUseCaseProtocol = {
     SolidCreateExternalTransactionUseCase(repository: solidExternalFundingRepository)
@@ -47,18 +63,14 @@ public class MoveMoneyAccountViewModel: ObservableObject {
     SolidEstimateDebitCardFeeUseCase(repository: solidExternalFundingRepository)
   }()
   
-  private var cancellable: Set<AnyCancellable> = []
+  lazy var createPlaidTokenUseCase: CreatePlaidTokenUseCaseProtocol = {
+    CreatePlaidTokenUseCase(repository: solidExternalFundingRepository)
+  }()
   
-  private var cardRemainingAmount: RemainingAvailableAmount?
-  private var bankRemainingAmount: RemainingAvailableAmount?
+  lazy var plaidLinkUseCase: PlaidLinkUseCaseProtocol = {
+    PlaidLinkUseCase(repository: solidExternalFundingRepository)
+  }()
   
-  let kind: Kind
-  let recommendValues: [GridValue] = [
-    .fixed(amount: 10, currency: .usd),
-    .fixed(amount: 50, currency: .usd),
-    .fixed(amount: 100, currency: .usd)
-  ]
-
   init(kind: Kind, selectedAccount: LinkedSourceContact? = nil, cashBalance: Double? = nil) {
     self.kind = kind
     self.selectedLinkedContact = selectedAccount
@@ -67,87 +79,12 @@ public class MoveMoneyAccountViewModel: ObservableObject {
     subscribeLinkedContacts()
     getRemainingAvailableAmount()
   }
-  
-  var instantFeeString: String {
-    guard let amount = externalCardFeeResponse?.fee, amount > 0 else {
-      return LFLocalizable.MoveMoney.TransferFeePopup.free
-    }
-    return amount.formattedUSDAmount()
-  }
 }
 
+// MARK: - API
 extension MoveMoneyAccountViewModel {
   func getRemainingAvailableAmount() {
     // TODO: Will add this later when BE done
-  }
-  
-  func subscribeLinkedContacts() {
-    externalFundingDataManager.subscribeLinkedSourcesChanged { [weak self] contacts in
-      guard let self = self else {
-        return
-      }
-      self.linkedContacts = contacts.filter { $0.sourceType == .bank }
-      if self.selectedLinkedContact == nil {
-        self.selectedLinkedContact = self.linkedContacts.first
-      }
-    }
-    .store(in: &cancellable)
-  }
-  
-  func appearOperations() {
-    Task {
-      await refresh()
-    }
-  }
-  
-  func refresh() async {
-    await withTaskGroup(of: Void.self) { group in
-      group.addTask {
-        try? await self.refreshAccount()
-      }
-    }
-  }
-  
-  private func refreshAccount() async throws {
-    guard let accountId = try? await getDefaultFiatAccount()?.id else {
-      return
-    }
-    let account = try await fiatAccountService.getAccountDetail(id: accountId)
-    self.accountDataManager.addOrUpdateAccount(account)
-    let usdAmount = account.availableUsdBalance.formattedUSDAmount()
-    self.cashBalanceValue = usdAmount
-  }
-  
-  func callBioMetric() {
-    Task {
-      if await biometricsService.authenticateWithBiometrics() {
-        callTransferAPI()
-      }
-    }
-  }
-  
-  func continueTransfer() {
-    guard let contact = selectedLinkedContact else {
-      return
-    }
-    switch contact.sourceType {
-    case .bank:
-      callBioMetric()
-    case .card:
-      getTransactionFee(contact: contact)
-    }
-  }
-  
-  func continueTransferFeePopup() {
-    guard let selectTransferInstant = selectTransferInstant else {
-      return
-    }
-    showTransferFeeSheet = false
-    if selectTransferInstant {
-      callBioMetric()
-      return
-    }
-    navigation = .selectBankAccount
   }
   
   func getTransactionFee(contact: LinkedSourceContact) {
@@ -169,18 +106,66 @@ extension MoveMoneyAccountViewModel {
           amount: amount
         )
         self.externalCardFeeResponse = response
-        showTransferFeeSheet = true
+        sheet = .transferFee
       } catch {
         handleTransferError(error: error)
       }
     }
   }
   
-  private func getDefaultFiatAccount() async throws -> AccountModel? {
-    if let account = self.accountDataManager.fiatAccounts.first {
-      return account
+  func linkExternalBank() {
+    Task { @MainActor in
+      defer { self.isLoadingLinkExternalBank = false }
+      self.isLoadingLinkExternalBank = true
+      do {
+        let accounts = self.accountDataManager.fiatAccounts
+        guard let accountId = accounts.first?.id else {
+          return
+        }
+        let response = try await self.createPlaidTokenUseCase.execute(accountId: accountId)
+        let plaidResponse = try await PlaidHelper.createLinkTokenConfiguration(token: response.linkToken, onCreated: { [weak self] configuration in
+          guard let self else { return }
+          Task {
+            await MainActor.run {
+              self.sheet = .plaid(PlaidConfig(config: configuration))
+              self.isLoadingLinkExternalBank = false
+            }
+          }
+        })
+        let solidContact = try await self.plaidLinkUseCase.execute(
+          accountId: accountId,
+          token: plaidResponse.publicToken,
+          plaidAccountId: plaidResponse.plaidAccountId
+        )
+        addLinkedExternalBank(solidContact: solidContact)
+      } catch {
+        handleLinkBankFailure(error: error)
+      }
     }
-    return try await fiatAccountService.getAccounts().first
+  }
+  
+  func continueTransfer() {
+    guard let contact = selectedLinkedContact else {
+      return
+    }
+    switch contact.sourceType {
+    case .bank:
+      callBioMetric()
+    case .card:
+      getTransactionFee(contact: contact)
+    }
+  }
+  
+  func continueTransferFeePopup() {
+    guard let selectTransferInstant = selectTransferInstant else {
+      return
+    }
+    sheet = nil
+    if selectTransferInstant {
+      callBioMetric()
+      return
+    }
+    navigation = .selectBankAccount
   }
   
   func callTransferAPI() {
@@ -210,31 +195,44 @@ extension MoveMoneyAccountViewModel {
       }
     }
   }
-  
-  func handleTransferError(error: Error) {
-    guard let errorObject = error.asErrorObject else {
-      toastMessage = error.localizedDescription
-      return
-    }
-    switch errorObject.code {
-    case Constants.ErrorCode.transferLimitExceeded.value:
-      popup = .limitReached
-    case Constants.ErrorCode.amountTooLow.value:
-      popup = .amountTooLow
-    case Constants.ErrorCode.bankTransferRequestLimitReached.value:
-      popup = .bankLimits
-    case Constants.ErrorCode.insufficientFunds.value:
-      popup = .insufficientFunds
-    default:
-      toastMessage = errorObject.message
-    }
-  }
 }
 
 // MARK: UI Helpers
 extension MoveMoneyAccountViewModel {
-  func navigateAddAccount() {
-    navigation = .addBankDebit
+  var subtitle: String {
+    LFLocalizable.MoveMoney.AvailableBalance.subtitle(cashBalanceValue)
+  }
+  
+  var annotationString: String {
+    LFLocalizable.MoveMoney.Withdraw.annotation(cashBalanceValue)
+  }
+  
+  var isAmountActionAllowed: Bool {
+    guard let amount = amount.asDouble else {
+      return false
+    }
+    
+    return !(amount.isZero || inlineError.isNotNil)
+  }
+  
+  var amount: String {
+    amountInput.removeDollarSign().removeGroupingSeparator().convertToDecimalFormat()
+  }
+  
+  var transferFeePopupTitle: String {
+    let title = kind == .receive
+    ? LFLocalizable.MoveMoney.Deposit.title
+    : LFLocalizable.MoveMoney.Withdraw.title
+    
+    return LFLocalizable.MoveMoney.TransferFeePopup.title(title.uppercased())
+  }
+  
+  var instantFeeString: String {
+    guard let amount = externalCardFeeResponse?.fee, amount > 0 else {
+      return LFLocalizable.MoveMoney.TransferFeePopup.free
+    }
+    
+    return amount.formattedUSDAmount()
   }
   
   func title(for contact: LinkedSourceContact) -> String {
@@ -246,23 +244,10 @@ extension MoveMoneyAccountViewModel {
     }
   }
   
-  var subtitle: String {
-    LFLocalizable.MoveMoney.AvailableBalance.subtitle(cashBalanceValue)
-  }
-
-  var annotationString: String {
-    LFLocalizable.MoveMoney.Withdraw.annotation(cashBalanceValue)
-  }
-
-  var isAmountActionAllowed: Bool {
-    guard let amount = amount.asDouble else {
-      return false
+  func appearOperations() {
+    Task {
+      await refresh()
     }
-    return !(amount.isZero || inlineError.isNotNil)
-  }
-
-  var amount: String {
-    amountInput.removeDollarSign().removeGroupingSeparator().convertToDecimalFormat()
   }
   
   func resetSelectedValue() {
@@ -274,12 +259,12 @@ extension MoveMoneyAccountViewModel {
     }
     amountInput = amount == selectedAmount ? Constants.Default.zeroAmount.rawValue : amountInput
   }
-
+  
   func onSelectedGridItem(_ gridValue: GridValue) {
     selectedValue = gridValue
     amountInput = gridValue.formattedInput
   }
-
+  
   func validateAmountInput() {
     numberOfShakes = 0
     inlineError = validateAmount(with: amount.asDouble)
@@ -313,18 +298,118 @@ extension MoveMoneyAccountViewModel {
     popup = nil
   }
   
-  var transferFeePopupTitle: String {
-    let title = kind == .receive ? LFLocalizable.MoveMoney.Deposit.title : LFLocalizable.MoveMoney.Withdraw.title
-    return LFLocalizable.MoveMoney.TransferFeePopup.title(title.uppercased())
+  func plaidLinkingErrorPrimaryAction() {
+    popup = nil
+    customerSupportService.openSupportScreen()
+  }
+}
+
+// MARK: - Private Functions
+private extension MoveMoneyAccountViewModel {
+  func handleTransferError(error: Error) {
+    guard let errorObject = error.asErrorObject else {
+      toastMessage = error.localizedDescription
+      return
+    }
+    switch errorObject.code {
+    case Constants.ErrorCode.transferLimitExceeded.value:
+      popup = .limitReached
+    case Constants.ErrorCode.amountTooLow.value:
+      popup = .amountTooLow
+    case Constants.ErrorCode.bankTransferRequestLimitReached.value:
+      popup = .bankLimits
+    case Constants.ErrorCode.insufficientFunds.value:
+      popup = .insufficientFunds
+    default:
+      toastMessage = errorObject.message
+    }
+  }
+  
+  func addLinkedExternalBank(solidContact: SolidContactEntity) {
+    guard let type = APISolidContactType(rawValue: solidContact.type) else {
+      self.onPlaidUIDisappear()
+      return
+    }
+    let contact = LinkedSourceContact(
+      name: solidContact.name,
+      last4: solidContact.last4,
+      sourceType: type == .externalBank ? .bank : .card,
+      sourceId: solidContact.solidContactId
+    )
+    self.externalFundingDataManager.addOrEditLinkedSource(contact)
+  }
+  
+  func onPlaidUIDisappear() {
+    isLoadingLinkExternalBank = false
+    isDisableView = false
+  }
+  
+  func onLinkExternalBankFailure() {
+    onPlaidUIDisappear()
+    popup = .plaidLinkingError
+  }
+  
+  func handleLinkBankFailure(error: Error) {
+    if let liquidError = error as? LiquidityError, liquidError == .userCancelled {
+      self.onPlaidUIDisappear()
+    } else {
+      self.onLinkExternalBankFailure()
+    }
+  }
+  
+  func getDefaultFiatAccount() async throws -> AccountModel? {
+    if let account = self.accountDataManager.fiatAccounts.first {
+      return account
+    }
+    return try await fiatAccountService.getAccounts().first
+  }
+  
+  func refreshAccount() async throws {
+    guard let accountId = try? await getDefaultFiatAccount()?.id else {
+      return
+    }
+    let account = try await fiatAccountService.getAccountDetail(id: accountId)
+    self.accountDataManager.addOrUpdateAccount(account)
+    let usdAmount = account.availableUsdBalance.formattedUSDAmount()
+    self.cashBalanceValue = usdAmount
+  }
+  
+  func subscribeLinkedContacts() {
+    externalFundingDataManager.subscribeLinkedSourcesChanged { [weak self] contacts in
+      guard let self = self else {
+        return
+      }
+      self.linkedContacts = contacts.filter { $0.sourceType == .bank }
+      if self.selectedLinkedContact == nil {
+        self.selectedLinkedContact = self.linkedContacts.first
+      }
+    }
+    .store(in: &cancellable)
+  }
+  
+  func callBioMetric() {
+    Task {
+      if await biometricsService.authenticateWithBiometrics() {
+        callTransferAPI()
+      }
+    }
+  }
+  
+  func refresh() async {
+    await withTaskGroup(of: Void.self) { group in
+      group.addTask {
+        try? await self.refreshAccount()
+      }
+    }
   }
 }
 
 // MARK: - Types
-public extension MoveMoneyAccountViewModel {
-  enum Kind {
+extension MoveMoneyAccountViewModel {
+  public enum Kind {
     case send
     case receive
-
+    
     var externalTransactionType: String {
       switch self {
       case .receive:
@@ -337,7 +422,6 @@ public extension MoveMoneyAccountViewModel {
   
   enum Navigation {
     case transactionDetai(String)
-    case addBankDebit
     case selectBankAccount
   }
   
@@ -346,5 +430,29 @@ public extension MoveMoneyAccountViewModel {
     case amountTooLow
     case bankLimits
     case insufficientFunds
+    case plaidLinkingError
+  }
+  
+  enum Sheet: Identifiable {
+    case transferFee
+    case plaid(PlaidConfig)
+    
+    var id: String {
+      switch self {
+      case .transferFee:
+        return "transferFee"
+      case .plaid:
+        return "plaid"
+      }
+    }
+    
+    var isShowTranserFee: Bool {
+      switch self {
+      case .transferFee:
+        return true
+      case .plaid:
+        return false
+      }
+    }
   }
 }

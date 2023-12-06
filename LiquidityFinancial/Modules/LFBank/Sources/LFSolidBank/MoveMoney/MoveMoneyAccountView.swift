@@ -26,11 +26,16 @@ public struct MoveMoneyAccountView: View {
 
   public var body: some View {
     content
-      .blur(radius: viewModel.showTransferFeeSheet ? 16 : 0)
-      .sheet(isPresented: $viewModel.showTransferFeeSheet) {
-        transferFeeSheet
-          .customPresentationDetents(height: 272)
-          .ignoresSafeArea(edges: .bottom)
+      .blur(radius: viewModel.sheet?.isShowTranserFee ?? false ? 16 : 0)
+      .sheet(item: $viewModel.sheet) { sheet in
+        switch sheet {
+        case .transferFee:
+          transferFeeSheet
+            .customPresentationDetents(height: 272)
+            .ignoresSafeArea(edges: .bottom)
+        case .plaid(let plaidConfig):
+          PlaidLinkView(configuration: plaidConfig.config)
+        }
       }
       .popup(item: $viewModel.popup) { item in
         switch item {
@@ -42,6 +47,8 @@ public struct MoveMoneyAccountView: View {
           bankLimitsPopup
         case .insufficientFunds:
           insufficientFundsPopup
+        case .plaidLinkingError:
+          plaidLinkingErrorPopup
         }
       }
       .popup(item: $viewModel.toastMessage, style: .toast) {
@@ -62,7 +69,7 @@ public struct MoveMoneyAccountView: View {
         showAnnotationView = false
       }
       .navigationBarTitleDisplayMode(.inline)
-      .navigationBarHidden(viewModel.showTransferFeeSheet)
+      .navigationBarHidden(viewModel.sheet?.isShowTranserFee ?? false)
       .overlay(popupBackground)
       .popup(item: $viewModel.toastMessage, style: .toast) {
         ToastView(toastMessage: $0)
@@ -75,8 +82,6 @@ public struct MoveMoneyAccountView: View {
             transactionId: id,
             kind: viewModel.kind == .receive ? .deposit : .withdraw
           )
-        case .addBankDebit:
-          AddBankWithDebitView()
         case .selectBankAccount:
           SelectBankAccountView(
             linkedContacts: viewModel.linkedContacts,
@@ -87,12 +92,12 @@ public struct MoveMoneyAccountView: View {
         }
       }
       .background(Colors.background.swiftUIColor)
+      .disabled(viewModel.isDisableView)
       .track(name: String(describing: type(of: self)))
   }
 }
 
-// MARK: View
-
+ // MARK: Private View Components
 private extension MoveMoneyAccountView {
   var content: some View {
     VStack(spacing: .zero) {
@@ -115,7 +120,7 @@ private extension MoveMoneyAccountView {
   }
   
   @ViewBuilder var popupBackground: some View {
-    if viewModel.showTransferFeeSheet {
+    if viewModel.sheet?.isShowTranserFee ?? false {
       Colors.background.swiftUIColor.opacity(0.5).ignoresSafeArea()
     }
   }
@@ -272,16 +277,14 @@ private extension MoveMoneyAccountView {
   }
 
   var addAccountButton: some View {
-    Button {
-      viewModel.navigateAddAccount()
-    } label: {
-      Text(LFLocalizable.MoveMoney.addAccount)
-        .frame(height: 40)
-        .font(Fonts.medium.swiftUIFont(size: Constants.FontSize.small.value))
-        .foregroundColor(Colors.whiteText.swiftUIColor)
+    FullSizeButton(
+      title: LFLocalizable.MoveMoney.addAccount,
+      isDisable: false,
+      isLoading: $viewModel.isLoadingLinkExternalBank
+    ) {
+      viewModel.linkExternalBank()
     }
     .frame(maxWidth: .infinity)
-    .background(Colors.primary.swiftUIColor.cornerRadius(8))
   }
 }
 
@@ -455,6 +458,19 @@ private extension MoveMoneyAccountView {
         text: LFLocalizable.Button.Ok.title,
         action: {
           viewModel.hidePopup()
+        }
+      )
+    )
+  }
+  
+  var plaidLinkingErrorPopup: some View {
+    LiquidityAlert(
+      title: LFLocalizable.PlaidLink.Popup.title,
+      message: LFLocalizable.PlaidLink.Popup.description,
+      primary: .init(
+        text: LFLocalizable.PlaidLink.ContactSupport.title,
+        action: {
+          viewModel.plaidLinkingErrorPrimaryAction()
         }
       )
     )
