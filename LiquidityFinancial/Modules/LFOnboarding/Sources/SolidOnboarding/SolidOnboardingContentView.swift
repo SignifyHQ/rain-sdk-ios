@@ -81,6 +81,8 @@ public struct SolidOnboardingContentView: View {
           .createView(type: .accountMigration)
       }
     }
+    .padding(.top, 12)
+    .background(Colors.background.swiftUIColor)
     .onAppear {
       customerSupportService.loginUnidentifiedUser()
     }

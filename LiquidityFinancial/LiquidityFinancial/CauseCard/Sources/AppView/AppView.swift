@@ -31,6 +31,8 @@ struct AppView: View {
         SolidOnboardingContentView(onRoute: route)
       }
     }
+    .navigationBarTitleDisplayMode(.inline)
+    .navigationBarBackButtonHidden(true)
     .embedInNavigation()
   }
   

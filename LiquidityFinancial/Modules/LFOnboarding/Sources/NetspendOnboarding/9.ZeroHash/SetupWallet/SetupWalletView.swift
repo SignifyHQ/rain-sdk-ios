@@ -152,7 +152,7 @@ extension SetupWalletView {
     }
     .ignoresSafeArea(.keyboard, edges: .bottom)
     .padding(.bottom, 12)
-    .padding(.horizontal, 32)
+    .padding(.horizontal, 30)
   }
 }
 

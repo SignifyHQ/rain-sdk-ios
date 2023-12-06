@@ -22,7 +22,7 @@ struct YourAccountView: View {
         title
         terms
       }
-      .padding(.horizontal, 32)
+      .padding(.horizontal, 30)
       .padding(.bottom, 12)
       
       agreements

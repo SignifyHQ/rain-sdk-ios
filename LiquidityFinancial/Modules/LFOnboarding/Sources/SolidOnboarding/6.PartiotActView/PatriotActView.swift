@@ -25,7 +25,7 @@ struct PatriotActView: View {
         title
         notice
       }
-      .padding(.horizontal, 32)
+      .padding(.horizontal, 30)
       
       Spacer()
       

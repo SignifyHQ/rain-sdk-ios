@@ -35,7 +35,7 @@ public struct PersonalInformationView: View {
         .onChange(of: keyboardFocus) {
           proxy.scrollTo($0)
         }
-        .padding(.horizontal, 32)
+        .padding(.horizontal, 30)
       }
       VStack {
         FullSizeButton(
