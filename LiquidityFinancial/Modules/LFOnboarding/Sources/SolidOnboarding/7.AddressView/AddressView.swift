@@ -69,9 +69,13 @@ struct AddressView: View {
     .onTapGesture {
       viewModel.stopSuggestions()
     }
-    .defaultToolBar(icon: .support, openSupportScreen: {
-      viewModel.openSupportScreen()
-    })
+    .defaultToolBar(
+      icon: .support,
+      openSupportScreen: {
+        viewModel.openSupportScreen()
+      },
+      edgeInsets: EdgeInsets(top: 0, leading: 0, bottom: 12, trailing: 0)
+    )
     .popup(item: $viewModel.toastMessage, style: .toast) {
       ToastView(toastMessage: $0)
     }

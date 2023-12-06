@@ -49,9 +49,13 @@ public struct EnterPassportView: View {
     .onTapGesture {
       viewModel.hidePassportTypes()
     }
-    .defaultToolBar(icon: .support, openSupportScreen: {
-      viewModel.openSupportScreen()
-    })
+    .defaultToolBar(
+      icon: .support,
+      openSupportScreen: {
+        viewModel.openSupportScreen()
+      },
+      edgeInsets: EdgeInsets(top: 0, leading: 0, bottom: 12, trailing: 0)
+    )
     .navigationLink(item: $baseOnboardingDestinationObservable.enterPassportDestinationView) { item in
       switch item {
       case let .address(destinationView):

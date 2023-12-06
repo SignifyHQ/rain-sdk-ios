@@ -42,9 +42,13 @@ public struct EnterSSNView: View {
     .padding(.horizontal, 30)
     .background(Colors.background.swiftUIColor)
     .navigationTitle("")
-    .defaultToolBar(icon: .support, openSupportScreen: {
-      viewModel.openSupportScreen()
-    })
+    .defaultToolBar(
+      icon: .support,
+      openSupportScreen: {
+        viewModel.openSupportScreen()
+      },
+      edgeInsets: EdgeInsets(top: 0, leading: 0, bottom: 12, trailing: 0)
+    )
     .popup(item: $toastMessage, style: .toast) {
       ToastView(toastMessage: $0)
     }

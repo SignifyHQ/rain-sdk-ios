@@ -38,7 +38,8 @@ struct PatriotActView: View {
       icon: .support,
       openSupportScreen: {
         viewModel.openSupportScreen()
-      }
+      },
+      edgeInsets: EdgeInsets(top: 0, leading: 0, bottom: 12, trailing: 0)
     )
     .navigationLink(isActive: $viewModel.shouldContinue) {
       contentViewFactory
@@ -53,6 +54,7 @@ extension PatriotActView {
       .foregroundColor(Colors.label.swiftUIColor)
       .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.main.value))
       .padding(.bottom, 12)
+      .padding(.top, 12)
   }
   
   private var notice: some View {

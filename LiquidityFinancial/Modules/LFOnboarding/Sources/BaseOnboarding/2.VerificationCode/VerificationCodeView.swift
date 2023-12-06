@@ -36,9 +36,13 @@ public struct VerificationCodeView<ViewModel: VerificationCodeViewModelProtocol>
     .padding(.bottom, 16)
     .padding(.top, 8)
     .padding(.horizontal, 30)
-    .defaultToolBar(icon: .support, openSupportScreen: {
-      viewModel.openSupportScreen()
-    })
+    .defaultToolBar(
+      icon: .support,
+      openSupportScreen: {
+        viewModel.openSupportScreen()
+      },
+      edgeInsets: EdgeInsets(top: 0, leading: 0, bottom: 12, trailing: 0)
+    )
     .background(Colors.background.swiftUIColor)
     .popup(item: $viewModel.toastMessage, style: .toast) {
       ToastView(toastMessage: $0)
