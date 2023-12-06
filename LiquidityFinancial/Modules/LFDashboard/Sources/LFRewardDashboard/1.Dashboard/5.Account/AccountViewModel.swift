@@ -94,13 +94,6 @@ extension AccountViewModel {
   func openReward() {
     navigation = .rewards
   }
-  
-  func getLastFourDigits(from value: String) -> String {
-    let showCount = 4
-    let lastIndex = value.count
-
-    return lastIndex >= showCount ? value.substring(start: lastIndex - showCount, end: lastIndex) : value
-  }
 }
 
 // MARK: - API
@@ -161,6 +154,10 @@ extension AccountViewModel {
       self?.linkedContacts = contacts.filter { $0.sourceType == .bank}
     })
     .store(in: &cancellable)
+  }
+  
+  func getUrl() -> URL? {
+    URL(string: LFUtilities.termsURL)
   }
 }
 

@@ -27,7 +27,8 @@ public struct DonationTransactionDetailView: View {
       navigationTitle: LFLocalizable.TransactionCard.Donation.title,
       openSupportScreen: {
         viewModel.openSupportScreen()
-      }
+      },
+      edgeInsets: EdgeInsets(top: 0, leading: 0, bottom: 12, trailing: 0)
     )
     .frame(maxWidth: .infinity)
     .navigationBarTitleDisplayMode(.inline)

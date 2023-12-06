@@ -16,7 +16,6 @@ public final class AddFundsViewModel: ObservableObject {
   @Published var navigation: Navigation?
   @Published var plaidConfig: PlaidConfig?
   
-  @Published var isLoadingLinkExternalCard: Bool = false
   @Published var isLoadingLinkExternalBank: Bool = false
   
   private var nextNavigation: Navigation?
@@ -42,8 +41,6 @@ public final class AddFundsViewModel: ObservableObject {
   
   func loading(option: FundOption) -> Bool {
     switch option {
-    case .debitDeposit:
-      return isLoadingLinkExternalCard
     case .oneTime:
       return isLoadingLinkExternalBank
     default:
@@ -143,8 +140,6 @@ extension AddFundsViewModel {
     switch navigation {
     case .linkExternalBank:
       linkExternalBank()
-    case .addBankDebit:
-      self.navigation = navigation
     default:
       self.navigation = navigation
     }
@@ -155,7 +150,6 @@ extension AddFundsViewModel {
 extension AddFundsViewModel {
   enum Navigation {
     case bankTransfers
-    case addBankDebit
     case addMoney
     case directDeposit
     case linkExternalBank

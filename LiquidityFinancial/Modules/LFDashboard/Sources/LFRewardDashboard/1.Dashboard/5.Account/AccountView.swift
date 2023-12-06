@@ -10,6 +10,7 @@ import Factory
 struct AccountsView: View {
   @StateObject private var viewModel: AccountViewModel
   @Environment(\.scenePhase) var scenePhase
+  @Environment(\.openURL) var openURL
   
   @Injected(\.transactionNavigation) var transactionNavigation
   @Injected(\.bankServiceConfig) var bankServiceConfig
@@ -121,9 +122,7 @@ private extension AccountsView {
       accountDetailCell(
         image: GenImages.CommonImages.icAccountNumber.swiftUIImage,
         title: LFLocalizable.AccountView.AccountNumber.title,
-        value: LFLocalizable.AccountView.HiddenValue.title(
-          viewModel.getLastFourDigits(from: viewModel.achInformation.accountNumber)
-        )
+        value: viewModel.achInformation.accountNumber
       ) {
         UIPasteboard.general.string = viewModel.achInformation.accountNumber
         viewModel.toastMessage = LFLocalizable.Toast.Copy.message
@@ -244,15 +243,14 @@ private extension AccountsView {
           viewModel.notificationTapped()
         }
       }
-      /* TODO: Remove for MVP
-       ArrowButton(
-       image: GenImages.CommonImages.Accounts.legal.swiftUIImage,
-       title: LFLocalizable.AccountView.legal,
-       value: nil
-       ) {
-       viewModel.openLegal.toggle()
-       }
-       */
+      ArrowButton(
+        image: GenImages.CommonImages.Accounts.legal.swiftUIImage,
+        title: LFLocalizable.AccountView.legal,
+        value: nil
+      ) {
+        guard let url = viewModel.getUrl() else { return }
+        openURL(url)
+      }
       if viewModel.showAdminMenu {
         ArrowButton(
           image: GenImages.CommonImages.personAndBackgroundDotted.swiftUIImage,

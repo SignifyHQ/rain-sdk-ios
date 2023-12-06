@@ -10,13 +10,13 @@ public struct AddFundsView: View {
   @Binding private var isDisableView: Bool
   @Binding private var achInformation: ACHModel
   
-  private var options: [FundOption] = [.directDeposit, .debitDeposit, .oneTime]
+  private var options: [FundOption] = [.directDeposit, .oneTime]
 
   public init(
     viewModel: AddFundsViewModel,
     achInformation: Binding<ACHModel>,
     isDisableView: Binding<Bool>,
-    options: [FundOption] = [.directDeposit, .debitDeposit, .oneTime]
+    options: [FundOption] = [.directDeposit, .oneTime]
   ) {
     _achInformation = achInformation
     _isDisableView = isDisableView
@@ -37,8 +37,6 @@ public struct AddFundsView: View {
           switch item {
           case .bankTransfers:
             BankTransfersView(achInformation: $achInformation)
-          case .addBankDebit:
-            AddBankWithDebitView()
           case .addMoney:
             MoveMoneyAccountView(kind: .receive)
           case .directDeposit:
@@ -70,11 +68,7 @@ private extension AddFundsView {
           image: option.image,
           title: option.title,
           value: option.subtitle,
-          isLoading: option == .debitDeposit ?
-          $viewModel.isLoadingLinkExternalCard :
-            (option == .oneTime ?
-             $viewModel.isLoadingLinkExternalBank : .constant(false)
-            )
+          isLoading: option == .oneTime ? $viewModel.isLoadingLinkExternalBank : .constant(false)
         ) {
           viewModel.selectedAddOption(navigation: option.navigation)
         }

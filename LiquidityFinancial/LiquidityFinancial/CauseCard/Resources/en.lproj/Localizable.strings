@@ -509,7 +509,7 @@
 "accountView.routingNumber.title" = "Routing Number";
 "accountView.accountNumber.title" = "Account Number";
 "accountView.notifications" = "Enable Notifications";
-"accountView.disclosure.message" = "The CauseCard pre-paid debit card is established by Pathward, National Association Member FDIC, pursuant to license by Visa. Netspend is a service provider to Pathward.";
+"accountView.disclosure.message" = "CauseCard is a financial technology company, not a bank. CauseCard accounts are provided by Lewis and Clark Bank, Member FDIC.";
 
 // PlaidLink Popup
 "plaidLink.popup.title" = "WE’RE SORRY";

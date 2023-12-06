@@ -37,7 +37,8 @@ struct CommonTransactionDetailView<Content: View>: View {
       navigationTitle: viewModel.navigationTitle,
       openSupportScreen: {
         viewModel.openSupportScreen()
-      }
+      },
+      edgeInsets: EdgeInsets(top: 0, leading: 0, bottom: 12, trailing: 0)
     )
     .navigationBarTitleDisplayMode(.inline)
     .padding([.top, .horizontal], 30)
