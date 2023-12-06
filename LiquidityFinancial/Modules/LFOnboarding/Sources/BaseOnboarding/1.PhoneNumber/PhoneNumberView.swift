@@ -77,6 +77,7 @@ public struct PhoneNumberView<ViewModel: PhoneNumberViewModelProtocol>: View {
     .padding(.horizontal, 26)
     .onChange(of: viewModel.phoneNumber, perform: viewModel.onChangedPhoneNumber)
     .background(Colors.background.swiftUIColor)
+    .navigationBarTitleDisplayMode(.inline)
     .navigationBarBackButtonHidden()
     .navigationLink(item: $baseOnboardingDestinationObservable.phoneNumberDestinationView) { item in
       switch item {
@@ -198,7 +199,7 @@ private extension PhoneNumberView {
   
   @ViewBuilder
   var footerView: some View {
-    VStack(spacing: 12) {
+    VStack(spacing: 5) {
       secretModeView
       FullSizeButton(
         title: LFLocalizable.Button.Continue.title,
@@ -210,7 +211,10 @@ private extension PhoneNumberView {
         viewModel.performGetOTP()
       }
       .accessibilityIdentifier(LFAccessibility.PhoneNumber.continueButton)
-      conditionView
+      
+      if viewModel.isShowConditions {
+        conditionView
+      }
     }
     .padding(.bottom, 12)
   }
