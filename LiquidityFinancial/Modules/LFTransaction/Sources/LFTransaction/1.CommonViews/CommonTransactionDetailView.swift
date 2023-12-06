@@ -7,7 +7,7 @@ import LFUtilities
 struct CommonTransactionDetailView<Content: View>: View {
   @ViewBuilder let content: Content?
   @StateObject private var viewModel: CommonTransactionDetailViewModel
-  @Environment(\.openURL) var openURL
+  @State var openSafariType: CommonTransactionDetailViewModel.OpenSafariType?
   
   init(transaction: TransactionModel, content: Content? = EmptyView(), isCryptoBalance: Bool = false) {
     _viewModel = .init(
@@ -44,6 +44,12 @@ struct CommonTransactionDetailView<Content: View>: View {
     .padding([.top, .horizontal], 30)
     .padding(.bottom, 20)
     .background(Colors.background.swiftUIColor)
+    .fullScreenCover(item: $openSafariType, content: { type in
+      switch type {
+      case .disclosure(let url):
+        SFSafariViewWrapper(url: url)
+      }
+    })
   }
 }
 
@@ -89,7 +95,7 @@ private extension CommonTransactionDetailView {
         links: [viewModel.termsLink]
       ) { tappedString in
         guard let url = viewModel.getUrl(for: tappedString) else { return }
-        openURL(url)
+        openSafariType = .disclosure(url)
       }
       .frame(height: 200)
       .padding(.top, -20)

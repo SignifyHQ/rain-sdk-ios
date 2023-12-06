@@ -8,11 +8,11 @@ import Factory
 struct SetupWalletView: View {
   @Injected(\.analyticsService)
   var analyticsService
-  @Environment(\.openURL)
-  var openURL
   @StateObject
   var viewModel = SetupWalletViewModel()
 
+  @State var openSafariType: SetupWalletViewModel.OpenSafariType?
+  
   var body: some View {
     GeometryReader { geo in
       Colors.background.swiftUIColor.edgesIgnoringSafeArea(.all)
@@ -79,6 +79,16 @@ struct SetupWalletView: View {
     .onAppear {
       analyticsService.track(event: AnalyticsEvent(name: .viewsWalletSetup))
     }
+    .fullScreenCover(item: $openSafariType, content: { type in
+      switch type {
+      case .zerohashURL(let uRL):
+        SFSafariViewWrapper(url: uRL)
+      case .disclosureURL(let uRL):
+        SFSafariViewWrapper(url: uRL)
+      case .walletPrivacyURL(let uRL):
+        SFSafariViewWrapper(url: uRL)
+      }
+    })
   }
 
   private var tap: some Gesture {
@@ -122,15 +132,15 @@ extension SetupWalletView {
       ) { tappedString in
         if tappedString == strUserAgreement {
           if let url = URL(string: LFUtilities.zerohashURL) {
-            openURL(url)
+            openSafariType = .zerohashURL(url)
           }
         } else if tappedString == strDiscloures {
           if let url = URL(string: LFUtilities.disclosureURL) {
-            openURL(url)
+            openSafariType = .disclosureURL(url)
           }
         } else {
           if let url = URL(string: LFUtilities.walletPrivacyURL) {
-            openURL(url)
+            openSafariType = .walletPrivacyURL(url)
           }
         }
       }

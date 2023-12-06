@@ -4,8 +4,9 @@ import LFLocalizable
 import LFUtilities
 
 public struct DonationTransactionDetailView: View {
-  @Environment(\.openURL) var openURL
   @StateObject private var viewModel = DonationTransactionDetailViewModel()
+  @State var openSafariType: DonationTransactionDetailViewModel.OpenSafariType?
+  
   let donation: DonationModel
   
   public init(donation: DonationModel) {
@@ -35,6 +36,12 @@ public struct DonationTransactionDetailView: View {
     .padding([.top, .horizontal], 30)
     .padding(.bottom, 12)
     .background(Colors.background.swiftUIColor)
+    .fullScreenCover(item: $openSafariType, content: { type in
+      switch type {
+      case .disclosure(let url):
+        SFSafariViewWrapper(url: url)
+      }
+    })
   }
 }
 
@@ -72,7 +79,7 @@ private extension DonationTransactionDetailView {
         links: [viewModel.termsLink]
       ) { tappedString in
         guard let url = viewModel.getUrl(for: tappedString) else { return }
-        openURL(url)
+        openSafariType = .disclosure(url)
       }
       .frame(height: 200)
     }

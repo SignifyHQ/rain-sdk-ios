@@ -5,7 +5,7 @@ import LFUtilities
 import Services
 
 struct CryptoTransactionReceiptView: View {
-  @Environment(\.openURL) private var openURL
+  @State var openSafariType: CryptoTransactionReceiptViewModel.OpenSafariType?
   @StateObject private var viewModel: CryptoTransactionReceiptViewModel
   
   init(accountID: String, receipt: CryptoReceipt) {
@@ -33,6 +33,12 @@ struct CryptoTransactionReceiptView: View {
     .navigationBarTitleDisplayMode(.inline)
     .defaultToolBar(navigationTitle: LFLocalizable.CryptoReceipt.Navigation.title)
     .track(name: String(describing: type(of: self)))
+    .fullScreenCover(item: $openSafariType, content: { type in
+      switch type {
+      case .disclosure(let url):
+        SFSafariViewWrapper(url: url)
+      }
+    })
   }
 }
 
@@ -40,7 +46,7 @@ struct CryptoTransactionReceiptView: View {
 private extension CryptoTransactionReceiptView {
   func openLink(value: String) {
     if let url = URL(string: value.trimWhitespacesAndNewlines()) {
-      openURL(url)
+      openSafariType = .disclosure(url)
     }
   }
   

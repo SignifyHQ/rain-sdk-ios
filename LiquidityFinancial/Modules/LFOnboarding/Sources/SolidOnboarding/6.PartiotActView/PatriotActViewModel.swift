@@ -7,6 +7,17 @@ import LFUtilities
 import EnvironmentService
 
 class PatriotActViewModel: ObservableObject {
+  enum OpenSafariType: Identifiable {
+    var id: String {
+      switch self {
+      case .privacy(let url):
+        return url.absoluteString
+      }
+    }
+    
+    case privacy(URL)
+  }
+  
   @LazyInjected(\.environmentService) var environmentService
   @LazyInjected(\.accountRepository) var accountRepository
   @LazyInjected(\.customerSupportService) var customerSupportService

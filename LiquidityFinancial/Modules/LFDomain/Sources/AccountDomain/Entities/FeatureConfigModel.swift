@@ -62,6 +62,10 @@ public struct RemoteLinks {
     config?["termConditionLink"] as? String
   }
   
+  public var consumerAccountLink: String? {
+    config?["consumerAccountLink"] as? String
+  }
+  
   public var patriotNoticeLink: String? {
     config?["patriotNoticeLink"] as? String
   }

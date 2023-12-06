@@ -11,6 +11,17 @@ import EnvironmentService
 
 @MainActor
 public final class AgreementViewModel: ObservableObject {
+  enum OpenSafariType: Identifiable {
+    var id: String {
+      switch self {
+      case .condition(let url):
+        return url.absoluteString
+      }
+    }
+    
+    case condition(URL)
+  }
+  
   @LazyInjected(\.environmentService) var environmentService
   @LazyInjected(\.customerSupportService) var customerSupportService
   @LazyInjected(\.netspendDataManager) var netspendDataManager

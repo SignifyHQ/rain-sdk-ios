@@ -5,7 +5,21 @@ import LFLocalizable
 
 public struct ShoppingGivesAlert: View {
   
-  @Environment(\.openURL) private var openURL
+  enum OpenSafariType: Identifiable {
+    var id: String {
+      switch self {
+      case .term(let url):
+        return url.absoluteString
+      case .privacy(let url):
+        return url.absoluteString
+      }
+    }
+    
+    case term(URL)
+    case privacy(URL)
+  }
+  
+  @State var openSafariType: OpenSafariType?
   
   let type: Kind
   public init(type: Kind) {
@@ -14,6 +28,14 @@ public struct ShoppingGivesAlert: View {
   
   public var body: some View {
     TextTappable(attributedText: attributedText, linkTextAttributes: linkAttributes, links: [terms, privacy, ein], openLink: openLink(value:))
+      .fullScreenCover(item: $openSafariType, content: { type in
+        switch type {
+        case .term(let url):
+          SFSafariViewWrapper(url: url)
+        case .privacy(let url):
+          SFSafariViewWrapper(url: url)
+        }
+      })
   }
   
   private var attributedText: NSAttributedString {
@@ -70,14 +92,11 @@ public struct ShoppingGivesAlert: View {
   }
   
   private func openLink(value: String) {
-    var url: URL?
-    if value == terms {
-      url = .init(string: "https://shoppinggives.com/terms-of-use/consumer/")
-    } else if value == privacy {
-      url = .init(string: "https://shoppinggives.com/privacy-policy/")
+    if value == terms, let url = URL(string: "https://shoppinggives.com/terms-of-use/consumer/") {
+      openSafariType = .term(url)
     }
-    if let url {
-      openURL(url)
+    if value == privacy, let url = URL(string: "https://shoppinggives.com/privacy-policy/") {
+      openSafariType = .privacy(url)
     }
   }
 }

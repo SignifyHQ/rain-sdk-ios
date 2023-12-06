@@ -26,7 +26,6 @@ struct AddressView: View {
   }
 
   @Environment(\.dismiss) var dismiss
-  @Environment(\.openURL) var openURL
   @FocusState var keyboardFocus: Focus?
 
   var body: some View {

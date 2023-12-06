@@ -9,6 +9,20 @@ import LFLocalizable
 
 @MainActor
 public class FundraiserDetailViewModel: ObservableObject {
+  enum OpenSafariType: Identifiable {
+    var id: String {
+      switch self {
+      case .charityURL(let url):
+        return url.absoluteString
+      case .fullcharityURL(let url):
+        return url.absoluteString
+      }
+    }
+    
+    case charityURL(URL)
+    case fullcharityURL(URL)
+  }
+  
   @LazyInjected(\.rewardRepository) var rewardRepository
   @LazyInjected(\.rewardDataManager) var rewardDataManager
   

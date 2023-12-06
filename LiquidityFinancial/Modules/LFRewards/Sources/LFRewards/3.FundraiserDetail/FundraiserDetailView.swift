@@ -11,8 +11,9 @@ public struct FundraiserDetailView: View {
   }
   
   @Environment(\.dismiss) private var dismiss
-  @Environment(\.openURL) private var openUrl
   @StateObject private var viewModel: FundraiserDetailViewModel
+  
+  @State var openSafariType: FundraiserDetailViewModel.OpenSafariType?
   
   private var charity: FundraiserDetailModel.Charity? {
     viewModel.fundraiserDetail?.charity
@@ -43,6 +44,14 @@ public struct FundraiserDetailView: View {
       .onAppear {
         viewModel.onAppear()
       }
+      .fullScreenCover(item: $openSafariType, content: { type in
+        switch type {
+        case .charityURL(let url):
+          SFSafariViewWrapper(url: url)
+        case .fullcharityURL(let url):
+          SFSafariViewWrapper(url: url)
+        }
+      })
   }
   
   private var content: some View {
@@ -225,7 +234,7 @@ extension FundraiserDetailView {
       
       if let urlStr = charity?.url, let url = URL(string: urlStr) {
         Button {
-          openUrl(url)
+          openSafariType = .charityURL(url)
         } label: {
           detail(image: ModuleImages.icWebsite.swiftUIImage, title: LFLocalizable.FundraiserDetail.website) {
             CircleButton(style: .right)
@@ -235,7 +244,7 @@ extension FundraiserDetailView {
       
       if let url = viewModel.fundraiserDetail?.fullCharityNavigatorUrl {
         Button {
-          openUrl(url)
+          openSafariType = .fullcharityURL(url)
         } label: {
           detail(image: ModuleImages.icNavigation.swiftUIImage, title: LFLocalizable.FundraiserDetail.navigator) {
             CircleButton(style: .right)

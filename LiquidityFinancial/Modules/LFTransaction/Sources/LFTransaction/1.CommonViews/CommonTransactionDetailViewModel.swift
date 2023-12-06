@@ -7,6 +7,17 @@ import LFStyleGuide
 
 @MainActor
 public final class CommonTransactionDetailViewModel: ObservableObject {
+  enum OpenSafariType: Identifiable {
+    var id: String {
+      switch self {
+      case .disclosure(let url):
+        return url.absoluteString
+      }
+    }
+    
+    case disclosure(URL)
+  }
+  
   @LazyInjected(\.customerSupportService) var customerSupportService
   
   let disclosureString = LFLocalizable.TransactionDetail.RewardDisclosure.description

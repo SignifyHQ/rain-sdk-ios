@@ -10,9 +10,7 @@ import Factory
 import EnvironmentService
 
 public struct PhoneNumberView<ViewModel: PhoneNumberViewModelProtocol>: View {
-  
-  @Environment(\.openURL)
-  var openURL
+
   @Environment(\.presentationMode)
   var presentation
   @Injected(\.analyticsService)
@@ -25,6 +23,8 @@ public struct PhoneNumberView<ViewModel: PhoneNumberViewModelProtocol>: View {
   @InjectedObject(\.baseOnboardingDestinationObservable)
   var baseOnboardingDestinationObservable
   
+  @State var openSafariType: OpenSafariType?
+
   public init(viewModel: ViewModel) {
     _viewModel = .init(wrappedValue: viewModel)
   }
@@ -90,6 +90,22 @@ public struct PhoneNumberView<ViewModel: PhoneNumberViewModelProtocol>: View {
     .onAppear(perform: {
       analyticsService.track(event: AnalyticsEvent(name: .phoneVerified))
     })
+    .fullScreenCover(item: $openSafariType, content: { type in
+      switch type {
+      case .consent:
+        if let url = viewModel.getURL(tappedString: viewModel.esignConsent) {
+          SFSafariViewWrapper(url: url)
+        }
+      case .term:
+        if let url = viewModel.getURL(tappedString: viewModel.terms) {
+          SFSafariViewWrapper(url: url)
+        }
+      case .privacy:
+        if let url = viewModel.getURL(tappedString: viewModel.privacyPolicy) {
+          SFSafariViewWrapper(url: url)
+        }
+      }
+    })
     .navigationBarHidden(true)
     .track(name: String(describing: type(of: self)))
   }
@@ -118,8 +134,12 @@ private extension PhoneNumberView {
       links: [viewModel.terms, viewModel.esignConsent, viewModel.privacyPolicy],
       style: .fillColor(Colors.termAndPrivacy.color)
     ) { tappedString in
-      guard let url = viewModel.getURL(tappedString: tappedString) else { return }
-      openURL(url)
+      switch tappedString {
+      case viewModel.terms: openSafariType = .term
+      case viewModel.privacyPolicy: openSafariType = .privacy
+      case viewModel.esignConsent: openSafariType = .consent
+      default: break
+      }
     }
     .accessibilityIdentifier(LFAccessibility.PhoneNumber.conditionTextTappable)
     .frame(height: 50)
@@ -204,8 +224,7 @@ private extension PhoneNumberView {
       links: [LFLocalizable.Term.PrivacyPolicy.attributeText],
       style: .fillColor(Colors.termAndPrivacy.color)
     ) { _ in
-      guard let url = URL(string: LFUtilities.privacyURL) else { return }
-      openURL(url)
+      openSafariType = .privacy
     }
     .accessibilityIdentifier(LFAccessibility.PhoneNumber.voipTermTextTappable)
     .frame(height: 90)

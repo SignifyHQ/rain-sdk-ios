@@ -4,6 +4,17 @@ import LFLocalizable
 
 @MainActor
 class MoreWaysToSupportViewModel: ObservableObject {
+  enum OpenSafariType: Identifiable {
+    var id: String {
+      switch self {
+      case .socialURL(let url):
+        return url.absoluteString
+      }
+    }
+    
+    case socialURL(URL)
+  }
+  
   let fundraiser: FundraiserDetailModel
   let social: [Social]
   @Published var navigation: Navigation?

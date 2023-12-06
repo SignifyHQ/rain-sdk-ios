@@ -6,9 +6,10 @@ import LFUtilities
 import SwiftUI
 
 struct PatriotActView: View {
-  @Environment(\.openURL) var openURL
   
   @StateObject var viewModel: PatriotActViewModel
+  
+  @State var openSafariType: PatriotActViewModel.OpenSafariType?
   
   var contentViewFactory: SolidContentViewFactory
   
@@ -45,6 +46,12 @@ struct PatriotActView: View {
       contentViewFactory
         .createView(type: .information)
     }
+    .fullScreenCover(item: $openSafariType, content: { type in
+      switch type {
+      case .privacy(let url):
+        SFSafariViewWrapper(url: url)
+      }
+    })
   }
 }
 
@@ -93,7 +100,7 @@ extension PatriotActView {
         style: .underlined(Colors.label.color)
       ) { tappedString in
         guard let url = viewModel.getUrl(for: tappedString) else { return }
-        openURL(url)
+        openSafariType = .privacy(url)
       }
       .frame(height: 37)
     }

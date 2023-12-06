@@ -5,7 +5,7 @@ import LFUtilities
 import Services
 
 struct DonationTransactionReceiptView: View {
-  @Environment(\.openURL) private var openURL
+  @State var openSafariType: DonationTransactionReceiptViewModel.OpenSafariType?
   @StateObject private var viewModel: DonationTransactionReceiptViewModel
   
   private let receipt: DonationReceipt
@@ -38,6 +38,12 @@ struct DonationTransactionReceiptView: View {
     .navigationBarTitleDisplayMode(.inline)
     .defaultToolBar(navigationTitle: LFLocalizable.DonationReceipt.Navigation.title)
     .track(name: String(describing: type(of: self)))
+    .fullScreenCover(item: $openSafariType, content: { type in
+      switch type {
+      case .disclosure(let url):
+        SFSafariViewWrapper(url: url)
+      }
+    })
   }
 }
 
@@ -45,7 +51,7 @@ struct DonationTransactionReceiptView: View {
 private extension DonationTransactionReceiptView {
   func openLink(value: String) {
     if let url = URL(string: value.trimWhitespacesAndNewlines()) {
-      openURL(url)
+      openSafariType = .disclosure(url)
     }
   }
   

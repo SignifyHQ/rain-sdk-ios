@@ -4,6 +4,17 @@ import LFLocalizable
 
 @MainActor
 final class CryptoTransactionReceiptViewModel: ObservableObject {
+  enum OpenSafariType: Identifiable {
+    var id: String {
+      switch self {
+      case .disclosure(let url):
+        return url.absoluteString
+      }
+    }
+    
+    case disclosure(URL)
+  }
+  
   let receiptData: [TransactionRowData]
   
   init(accountID: String, receipt: CryptoReceipt) {

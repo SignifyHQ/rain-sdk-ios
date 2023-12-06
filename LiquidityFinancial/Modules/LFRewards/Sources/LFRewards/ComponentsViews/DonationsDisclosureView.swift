@@ -15,7 +15,6 @@ public struct DonationsDisclosureView: View {
   }
   
   @State private var showPopup = false
-  @Environment(\.openURL) private var openURL
   
   private var content: some View {
     Group {

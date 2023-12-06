@@ -7,6 +7,23 @@ import Services
 // MARK: - SetupWalletViewModel
 
 class SetupWalletViewModel: ObservableObject {
+  enum OpenSafariType: Identifiable {
+    var id: String {
+      switch self {
+      case .zerohashURL(let url):
+        return url.absoluteString
+      case .disclosureURL(let url):
+        return url.absoluteString
+      case .walletPrivacyURL(let url):
+        return url.absoluteString
+      }
+    }
+    
+    case zerohashURL(URL)
+    case disclosureURL(URL)
+    case walletPrivacyURL(URL)
+  }
+  
   @Published var showIndicator = false
   @Published var toastMessage: String?
   @Published var selection: Int?

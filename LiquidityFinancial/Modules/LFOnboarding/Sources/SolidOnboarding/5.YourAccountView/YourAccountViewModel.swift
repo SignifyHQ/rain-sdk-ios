@@ -7,6 +7,17 @@ import LFUtilities
 
 class YourAccountViewModel: ObservableObject {
   
+  enum OpenSafariType: Identifiable {
+    var id: String {
+      switch self {
+      case .agreement(let url):
+        return url.absoluteString
+      }
+    }
+    
+    case agreement(URL)
+  }
+  
   @LazyInjected(\.accountRepository) var accountRepository
   @LazyInjected(\.customerSupportService) var customerSupportService
   
@@ -50,7 +61,7 @@ class YourAccountViewModel: ObservableObject {
     case esignLink:
       return URL(string: remoteURLs?.esignatureLink ?? LFUtilities.termsURL)
     case consumerLink:
-      return URL(string: remoteURLs?.termConditionLink ?? LFUtilities.termsURL)
+      return URL(string: remoteURLs?.consumerAccountLink ?? LFUtilities.termsURL)
     case termsLink:
       return URL(string: remoteURLs?.termConditionLink ?? LFUtilities.termsURL)
     case privacyLink:

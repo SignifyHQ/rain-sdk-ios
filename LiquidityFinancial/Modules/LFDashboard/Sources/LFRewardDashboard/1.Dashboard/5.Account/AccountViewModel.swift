@@ -14,6 +14,17 @@ import EnvironmentService
 
 @MainActor
 class AccountViewModel: ObservableObject {
+  enum OpenSafariType: Identifiable {
+    var id: String {
+      switch self {
+      case .legal(let url):
+        return url.absoluteString
+      }
+    }
+    
+    case legal(URL)
+  }
+  
   @LazyInjected(\.nsPersonRepository) var nsPersonRepository
   @LazyInjected(\.externalFundingRepository) var externalFundingRepository
   @LazyInjected(\.netspendDataManager) var netspendDataManager

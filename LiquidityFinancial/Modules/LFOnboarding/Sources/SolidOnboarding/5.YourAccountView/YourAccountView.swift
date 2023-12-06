@@ -6,9 +6,10 @@ import SwiftUI
 import Factory
 
 struct YourAccountView: View {
-  @Environment(\.openURL) var openURL
   @Injected(\.solidOnboardingFlowCoordinator) var solidOnboardingFlowCoordinator
   @StateObject private var viewModel: YourAccountViewModel = YourAccountViewModel()
+  
+  @State var openSafariType: YourAccountViewModel.OpenSafariType?
   
   init(
     viewModel: YourAccountViewModel = YourAccountViewModel()
@@ -50,6 +51,12 @@ struct YourAccountView: View {
         }
       }
     }
+    .fullScreenCover(item: $openSafariType, content: { type in
+      switch type {
+      case .agreement(let url):
+        SFSafariViewWrapper(url: url)
+      }
+    })
   }
 }
 
@@ -106,7 +113,7 @@ extension YourAccountView {
           style: .underlined(Colors.label.color)
         ) { tappedString in
           guard let url = viewModel.getUrl(for: tappedString) else { return }
-          openURL(url)
+          openSafariType = .agreement(url)
         }
         .frame(height: 37)
       }
@@ -136,7 +143,7 @@ extension YourAccountView {
           style: .underlined(Colors.label.color)
         ) { tappedString in
           guard let url = viewModel.getUrl(for: tappedString) else { return }
-          openURL(url)
+          openSafariType = .agreement(url)
         }
         .frame(height: 67)
       }

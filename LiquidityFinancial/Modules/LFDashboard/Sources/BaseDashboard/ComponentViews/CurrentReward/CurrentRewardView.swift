@@ -8,7 +8,7 @@ import AccountData
 public struct CurrentRewardView: View {
   
   @StateObject private var viewModel = CurrentRewardViewModel()
-  @Environment(\.openURL) var openURL
+  @State var openSafariType: CurrentRewardViewModel.OpenSafariType?
   
   public init() {}
   
@@ -27,6 +27,12 @@ public struct CurrentRewardView: View {
       .onAppear {
         viewModel.onAppear()
       }
+      .fullScreenCover(item: $openSafariType, content: { type in
+        switch type {
+        case .disclosure(let url):
+          SFSafariViewWrapper(url: url)
+        }
+      })
   }
 }
 
@@ -164,7 +170,7 @@ private extension CurrentRewardView {
         style: .fillColor(Colors.darkText.color)
       ) { tappedString in
         guard let url = viewModel.getUrl(for: tappedString) else { return }
-        openURL(url)
+        openSafariType = .disclosure(url)
       }
       .frame(height: 200)
     }

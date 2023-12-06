@@ -5,7 +5,8 @@ import LFLocalizable
 
 struct MoreWaysToSupportView: View {
   @StateObject private var viewModel: MoreWaysToSupportViewModel
-  @Environment(\.openURL) private var openURL
+  
+  @State var openSafariType: MoreWaysToSupportViewModel.OpenSafariType?
   
   init(viewModel: MoreWaysToSupportViewModel) {
     _viewModel = .init(wrappedValue: viewModel)
@@ -33,6 +34,12 @@ struct MoreWaysToSupportView: View {
       .popup(item: $viewModel.toastMessage, style: .toast) { message in
         ToastView(toastMessage: message)
       }
+      .fullScreenCover(item: $openSafariType, content: { type in
+        switch type {
+        case .socialURL(let url):
+          SFSafariViewWrapper(url: url)
+        }
+      })
   }
   
   private var content: some View {
@@ -180,7 +187,7 @@ extension MoreWaysToSupportView {
   
   private func socialItem(item: MoreWaysToSupportViewModel.Social) -> some View {
     Button {
-      openURL(item.url)
+      openSafariType = .socialURL(item.url)
     } label: {
       ZStack {
         Circle()

@@ -7,6 +7,17 @@ import AccountDomain
 
 final class CurrentRewardViewModel: ObservableObject {
 
+  enum OpenSafariType: Identifiable {
+    var id: String {
+      switch self {
+      case .disclosure(let url):
+        return url.absoluteString
+      }
+    }
+    
+    case disclosure(URL)
+  }
+  
   struct UserRewardsModel: Identifiable, Equatable {
     var id: String {
       UUID().uuidString

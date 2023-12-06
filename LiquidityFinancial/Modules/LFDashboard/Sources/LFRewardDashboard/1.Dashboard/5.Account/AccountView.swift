@@ -10,7 +10,7 @@ import Factory
 struct AccountsView: View {
   @StateObject private var viewModel: AccountViewModel
   @Environment(\.scenePhase) var scenePhase
-  @Environment(\.openURL) var openURL
+  @State var openSafariType: AccountViewModel.OpenSafariType?
   
   @Injected(\.transactionNavigation) var transactionNavigation
   @Injected(\.bankServiceConfig) var bankServiceConfig
@@ -70,6 +70,12 @@ struct AccountsView: View {
       .onChange(of: scenePhase, perform: { newValue in
         if newValue == .active {
           viewModel.checkNotificationsStatus()
+        }
+      })
+      .fullScreenCover(item: $openSafariType, content: { type in
+        switch type {
+        case .legal(let url):
+          SFSafariViewWrapper(url: url)
         }
       })
   }
@@ -249,7 +255,7 @@ private extension AccountsView {
         value: nil
       ) {
         guard let url = viewModel.getUrl() else { return }
-        openURL(url)
+        openSafariType = .legal(url)
       }
       if viewModel.showAdminMenu {
         ArrowButton(

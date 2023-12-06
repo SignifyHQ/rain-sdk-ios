@@ -10,8 +10,9 @@ import EnvironmentService
 
 public struct AgreementView: View {
   @Environment(\.dismiss) private var dismiss
-  @Environment(\.openURL) var openURL
   @StateObject var viewModel: AgreementViewModel
+  
+  @State var openSafariType: AgreementViewModel.OpenSafariType?
   
   var shouldFetchCurrentState: Bool = false
   var onNext: (() -> Void)?
@@ -62,6 +63,12 @@ public struct AgreementView: View {
     .onAppear {
       self.viewModel.checkData(needBufferData: false)
     }
+    .fullScreenCover(item: $openSafariType, content: { type in
+      switch type {
+      case .condition(let url):
+        SFSafariViewWrapper(url: url)
+      }
+    })
     .track(name: String(describing: type(of: self)))
   }
 }
@@ -169,7 +176,7 @@ private extension AgreementView {
         guard let url = URL(string: viewModel.getURL(tappedString: tappedString)) else {
           return
         }
-        openURL(url)
+        openSafariType = .condition(url)
       }
       .frame(minHeight: 80)
       .fixedSize(horizontal: false, vertical: true)

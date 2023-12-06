@@ -10,6 +10,16 @@ public enum PhoneNumberNavigation {
   case verificationCode(AnyView)
 }
 
+enum OpenSafariType: String, Identifiable {
+  var id: String {
+    self.rawValue
+  }
+  
+  case term
+  case consent
+  case privacy
+}
+
 @MainActor
 public protocol PhoneNumberViewModelProtocol: ObservableObject {
   var isSecretMode: Bool { get set }
