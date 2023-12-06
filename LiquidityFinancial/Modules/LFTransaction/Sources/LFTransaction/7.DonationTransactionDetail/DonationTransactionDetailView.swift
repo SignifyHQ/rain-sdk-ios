@@ -66,6 +66,7 @@ private extension DonationTransactionDetailView {
     if viewModel.isDonationsCard {
       TextTappable(
         text: viewModel.disclosureString,
+        textColor: Colors.label.color.withAlphaComponent(0.6),
         fontSize: Constants.FontSize.ultraSmall.value,
         links: [viewModel.termsLink]
       ) { tappedString in

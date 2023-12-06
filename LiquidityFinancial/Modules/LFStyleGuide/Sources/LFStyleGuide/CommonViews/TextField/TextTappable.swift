@@ -6,11 +6,17 @@ public struct TextTappable: UIViewRepresentable {
   public init(
     text: String,
     textAlignment: NSTextAlignment = .natural,
+    textColor: UIColor = Colors.label.color,
     fontSize: CGFloat = Constants.FontSize.small.value,
     links: [String],
     style: AttributeStyle = .fillColor(Colors.primary.color),
     openLink: @escaping (String) -> Void) {
-      attributedText = Self.buildAttributedText(text: text, textAlignment: textAlignment, fontSize: fontSize)
+      attributedText = Self.buildAttributedText(
+        text: text,
+        textColor: textColor,
+        textAlignment: textAlignment,
+        fontSize: fontSize
+      )
       linkTextAttributes = Self.buildLinkTextAttributes(fontSize: fontSize, style: style)
       self.links = links
       self.openLink = openLink
@@ -76,13 +82,19 @@ public struct TextTappable: UIViewRepresentable {
     Coordinator(parent: self)
   }
   
-  private static func buildAttributedText(text: String, textAlignment: NSTextAlignment, fontSize: CGFloat) -> NSAttributedString {
+  private static func buildAttributedText(
+    text: String,
+    textColor: UIColor,
+    textAlignment: NSTextAlignment,
+    fontSize: CGFloat
+  ) -> NSAttributedString {
     let titleParagraphStyle = NSMutableParagraphStyle()
     titleParagraphStyle.alignment = textAlignment
+    titleParagraphStyle.lineSpacing = 2
     
     let regularAttributes: [NSAttributedString.Key: Any] = [
       .font: Fonts.regular.font(size: fontSize),
-      .foregroundColor: Colors.label.color,
+      .foregroundColor: textColor,
       .paragraphStyle: titleParagraphStyle
     ]
     return NSMutableAttributedString(string: text, attributes: regularAttributes)

@@ -712,7 +712,7 @@ https://mn.gov/commerce/money/investments/cryptocurrency/. \n\n\n\n\n\n\n";
 "transactionDetail.fee.title" = "Fee";
 "transactionDetail.rewards.title" = "Rewards";
 "transactionDetail.currentReward.title" = "Current Rewards";
-"transactionDetail.rewardDisclosure.description" = "*You will earn rewards with each qualifying purchase on your CauseCard. CauseCard “rewards” are donated to the non-profit you have selected in accordance with our Terms. Qualifying Purchases do not include any other payment or transfer, including incoming transactions, outgoing transactions where you are the receiving party, peer to peer transactions, ACH Transactions, ATM transactions, fees, chargebacks, adjustments, purchases that use PIN, or wire transfers. For more information, see the Terms. Rewards Program is managed by CauseCard. CauseCard is not FDIC insured.  Rewards Program is not managed by Lewis and Clark Bank.";
+"transactionDetail.rewardDisclosure.description" = "*You will earn rewards with each qualifying purchase on your CauseCard. CauseCard “rewards” are donated to the non-profit you have selected in accordance with our Terms. Qualifying Purchases do not include any other payment or transfer, including incoming transactions, outgoing transactions where you are the receiving party, peer to peer transactions, ACH Transactions, ATM transactions, fees, chargebacks, adjustments, purchases that use PIN, or wire transfers. For more information, see the Terms. Rewards Program is managed by CauseCard. CauseCard is not FDIC insured. Rewards Program is not managed by Lewis and Clark Bank.";
 "transactionDetail.rewardDisclosure.links.terms" = "Terms";
 "transactionDetail.cancelDeposit.button" = "Cancel Deposit";
 

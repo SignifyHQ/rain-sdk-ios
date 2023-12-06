@@ -8,75 +8,77 @@ import AccountData
 public struct CurrentRewardView: View {
   
   @StateObject private var viewModel = CurrentRewardViewModel()
+  @Environment(\.openURL) var openURL
   
   public init() {}
   
   public var body: some View {
     stateContentView
-    .toolbar {
-      ToolbarItem(placement: .principal) {
-        Text(LFLocalizable.AccountView.rewards)
-          .foregroundColor(Colors.label.swiftUIColor)
-          .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.medium.value))
+      .toolbar {
+        ToolbarItem(placement: .principal) {
+          Text(LFLocalizable.AccountView.rewards)
+            .foregroundColor(Colors.label.swiftUIColor)
+            .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.medium.value))
+        }
       }
-    }
-    .frame(max: .infinity)
-    .background(Colors.background.swiftUIColor)
-    .navigationBarTitleDisplayMode(.inline)
-    .onAppear {
-      viewModel.onAppear()
-    }
+      .frame(max: .infinity)
+      .background(Colors.background.swiftUIColor)
+      .navigationBarTitleDisplayMode(.inline)
+      .onAppear {
+        viewModel.onAppear()
+      }
   }
-  
+}
+
+// MARK: - Private View Components
+private extension CurrentRewardView {
   func contentView(rewards: [APIUserRewards], specialrewards: [APIUserRewards]) -> some View {
-    ScrollView {
-      VStack(alignment: .leading, spacing: 24) {
-        if !rewards.isEmpty {
-          section(title: LFLocalizable.Account.Reward.Session.normal) {
-            ForEach(rewards) { item in
-              rowView(
-                title: LFLocalizable.Account.SpendingReward.normal(item.title),
-                desc: LFLocalizable.Account.Reward.Item.descUpToBack("\(item.returnRate ?? 0.0)")
-              ) {
-                
-              }
+    VStack(alignment: .leading, spacing: 24) {
+      if !rewards.isEmpty {
+        section(title: LFLocalizable.Account.Reward.Session.normal) {
+          ForEach(rewards) { item in
+            rowView(
+              title: LFLocalizable.Account.SpendingReward.normal(item.title),
+              desc: LFLocalizable.Account.Reward.Item.descUpToBack("\(item.returnRate ?? 0.0)")
+            ) {
+              
             }
           }
         }
-        
-        if !specialrewards.isEmpty {
-          section(title: LFLocalizable.Account.Reward.Session.special) {
-            ForEach(specialrewards) { item in
-              rowView(title: item.name ?? "", desc: LFLocalizable.Account.Reward.Item.descUpToBack("\(item.returnRate ?? 0.0)")) {
-                
-              }
-            }
-          }
-        }
-        
-        Spacer()
-          .frame(maxHeight: .infinity)
       }
-      .padding(.top, 30)
-      .padding(.bottom, 12)
-      .padding(.horizontal, 30.0)
+      
+      if !specialrewards.isEmpty {
+        section(title: LFLocalizable.Account.Reward.Session.special) {
+          ForEach(specialrewards) { item in
+            rowView(title: item.name ?? "", desc: LFLocalizable.Account.Reward.Item.descUpToBack("\(item.returnRate ?? 0.0)")) {
+              
+            }
+          }
+        }
+      }
+      Spacer()
+      disclosureView
     }
+    .padding(.top, 30)
+    .padding(.bottom, 12)
+    .padding(.horizontal, 30)
+    .scrollOnOverflow()
   }
   
   @ViewBuilder
   var stateContentView: some View {
     Group {
       switch viewModel.status {
-      case .idle, .loading:
-        loadingView
-      case let .success(model):
-        if model.isEmpty {
-          emptyView
-        } else {
-          contentView(rewards: model.first?.rewards ?? [], specialrewards: model.first?.pecialrewards ?? [])
-        }
-      case .failure:
-        failureView
+        case .idle, .loading:
+          loadingView
+        case let .success(model):
+          if model.isEmpty {
+            emptyView
+          } else {
+            contentView(rewards: model.first?.rewards ?? [], specialrewards: model.first?.pecialrewards ?? [])
+          }
+        case .failure:
+          failureView
       }
     }
   }
@@ -122,7 +124,7 @@ public struct CurrentRewardView: View {
     .frame(max: .infinity)
   }
   
-  private var failureView: some View {
+  var failureView: some View {
     VStack(spacing: 32) {
       Spacer()
       Text(LFLocalizable.Account.Reward.error)
@@ -137,7 +139,7 @@ public struct CurrentRewardView: View {
     .frame(maxWidth: .infinity)
   }
   
-  private var emptyView: some View {
+  var emptyView: some View {
     VStack(spacing: 10) {
       Text(LFLocalizable.Account.Reward.Empty.title)
         .foregroundColor(Colors.label.swiftUIColor)
@@ -149,5 +151,22 @@ public struct CurrentRewardView: View {
     }
     .padding(.horizontal, 30)
     .frame(max: .infinity)
+  }
+  
+  @ViewBuilder
+  var disclosureView: some View {
+    if LFUtilities.charityEnabled {
+      TextTappable(
+        text: viewModel.disclosureString,
+        textColor: Colors.label.color.withAlphaComponent(0.6),
+        fontSize: Constants.FontSize.ultraSmall.value,
+        links: [viewModel.termsLink],
+        style: .fillColor(Colors.darkText.color)
+      ) { tappedString in
+        guard let url = viewModel.getUrl(for: tappedString) else { return }
+        openURL(url)
+      }
+      .frame(height: 200)
+    }
   }
 }

@@ -20,6 +20,9 @@ final class CurrentRewardViewModel: ObservableObject {
   @Published var isLoading: Bool = false
   @Published var status: DataStatus<UserRewardsModel> = .idle
   
+  let disclosureString = LFLocalizable.TransactionDetail.RewardDisclosure.description
+  let termsLink = LFLocalizable.TransactionDetail.RewardDisclosure.Links.terms
+  
   lazy var accountUseCase: AccountUseCase = {
     AccountUseCase(repository: accountRepository)
   }()
@@ -45,6 +48,15 @@ final class CurrentRewardViewModel: ObservableObject {
   
   func retryTapped() {
     apiFetchUserRewards()
+  }
+  
+  func getUrl(for link: String) -> URL? {
+    switch link {
+    case termsLink:
+      return URL(string: LFUtilities.termsURL)
+    default:
+      return nil
+    }
   }
 }
 
