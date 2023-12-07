@@ -72,8 +72,7 @@ private extension SelectRewardsView {
       case .CauseCard:
         ModuleImages.bgHeaderSelectReward.swiftUIImage
           .resizable()
-          .aspectRatio(contentMode: .fit)
-          .layoutPriority(1)
+          .frame(width: 375, height: 290)
       case .PrideCard:
         HeaderSelectRewardView()
       default:
@@ -125,12 +124,13 @@ private extension SelectRewardsView {
       Text(LFLocalizable.DonationsDisclosure.text("100%"))
       +
       Text(GenImages.CommonImages.info.swiftUIImage)
+        .baselineOffset(-3)
     }
     .font(Fonts.regular.swiftUIFont(size: 12))
     .foregroundColor(ModuleColors.label.swiftUIColor.opacity(0.75))
     .lineSpacing(2)
     .multilineTextAlignment(.center)
-    .padding(.horizontal, 22)
+    .padding(.horizontal, 0)
     .onTapGesture {
       showPopup = true
     }
