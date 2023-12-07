@@ -22,7 +22,7 @@ class CryptoAssetViewModel: ObservableObject {
   @Published var loading: Bool = false
   @Published var showTransferSheet: Bool = false
   @Published var cryptoPrice: String = "0.00"
-  @Published var closePrice: Double = 0
+  @Published var closePrice: Double? = nil
   @Published var changePercent: Double = 0
   @Published var showCryptoDetail: Bool = false
   @Published var toastMessage: String = ""
@@ -40,7 +40,7 @@ class CryptoAssetViewModel: ObservableObject {
   var chartOptionSubject = CurrentValueSubject<ChartOption, Never>(.line)
   
   var cryptoIconImage: Image? {
-    asset.type?.image
+    asset.type?.lineImage
   }
   
   var cryptoBalance: String {
@@ -52,8 +52,12 @@ class CryptoAssetViewModel: ObservableObject {
   }
   
   var fluctuationAmmount: String {
+    guard let closePrice = closePrice else {
+      return .empty
+    }
     let value = closePrice * asset.availableBalance - (asset.availableUsdBalance ?? 0)
-    return "(\(value.formattedUSDAmount())"
+    print("FluctuationAmmount: \(closePrice) \(asset.availableBalance) \(asset.availableUsdBalance)")
+    return "(\(value.formattedUSDAmount()))"
   }
   
   var isPositivePrice: Bool {
@@ -153,7 +157,7 @@ private extension CryptoAssetViewModel {
     
     marketManager.liveLineModelsSubject.map { models in
       guard let value = models.last?.close else {
-        return 0
+        return nil
       }
       return value
     }

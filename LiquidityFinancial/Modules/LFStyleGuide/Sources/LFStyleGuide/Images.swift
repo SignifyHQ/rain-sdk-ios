@@ -66,6 +66,7 @@ public enum GenImages {
     public static let icDocument = ImageAsset(name: "ic_document")
     public static let icDoge = ImageAsset(name: "ic_doge")
     public static let icDogeFilled = ImageAsset(name: "ic_doge_filled")
+    public static let icDogeLine = ImageAsset(name: "ic_doge_line")
     public static let icEdit = ImageAsset(name: "ic_edit")
     public static let icError = ImageAsset(name: "ic_error")
     public static let icFlash = ImageAsset(name: "ic_flash")

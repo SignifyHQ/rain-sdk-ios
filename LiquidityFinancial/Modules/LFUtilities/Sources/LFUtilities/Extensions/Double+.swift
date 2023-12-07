@@ -60,10 +60,11 @@ public extension Double {
     formatter.minimumFractionDigits = Constants.FractionDigitsLimit.fiat.minFractionDigits
     formatter.maximumFractionDigits = Constants.FractionDigitsLimit.fiat.maxFractionDigits
     let value = absoluteValue ? abs(self) : self
-    guard let result = formatter.string(from: value) else {
+    let isNegative = value < 0.0
+    guard let result = formatter.string(from: abs(value)) else {
       return String.empty
     }
-    return "\(Constants.CurrencyUnit.usd.symbol)\(result)"
+    return "\(isNegative ? "-" : "")\(Constants.CurrencyUnit.usd.symbol)\(result)"
   }
 
   /// Returns a String crypto display of the current value
