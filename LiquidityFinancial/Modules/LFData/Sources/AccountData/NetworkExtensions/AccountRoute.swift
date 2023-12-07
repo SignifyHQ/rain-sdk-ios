@@ -44,8 +44,8 @@ extension AccountRoute: LFRoute {
       return "/v1/user/selected-reward-currency"
     case .getTransactions(let accountId, _, _, _, _):
       return "/v1/transactions/\(accountId)"
-    case let .getTransactionDetail(accountId, transactionId):
-      return "/v1/transactions/\(accountId)/transactions/\(transactionId)"
+    case let .getTransactionDetail(_, transactionId):
+      return "/v1/transactions/detail/\(transactionId)"
     case .createWalletAddress(let accountId, _, _), .getWalletAddresses(let accountId):
       return "v1/accounts/\(accountId)/wallet-addresses"
     case let .updateWalletAddress(accountId, _, walletAddress, _):
