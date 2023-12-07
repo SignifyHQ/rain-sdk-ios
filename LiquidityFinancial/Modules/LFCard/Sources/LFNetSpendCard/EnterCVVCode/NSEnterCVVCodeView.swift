@@ -83,8 +83,5 @@ private extension NSEnterCVVCodeView {
         .frame(width: 58, height: 70)
       }
     }
-    .onChange(of: viewModel.generatedCVV) { cvvCode in
-      viewModel.onReceivedCVVCode(cvvCode: cvvCode)
-    }
   }
 }

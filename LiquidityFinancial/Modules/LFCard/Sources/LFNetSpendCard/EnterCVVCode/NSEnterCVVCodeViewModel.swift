@@ -21,7 +21,6 @@ public final class NSEnterCVVCodeViewModel: ObservableObject {
   @Published public var isCVVCodeEntered: Bool = false
   
   @Published public var generatedCVV: String = .empty
-  @Published public var cvvCodeValue: String = .empty
   @Published public var toastMessage: String?
   
   public let cardID: String
@@ -34,7 +33,9 @@ public final class NSEnterCVVCodeViewModel: ObservableObject {
   
   public init(cardID: String) {
     self.cardID = cardID
+    
     createTextFields()
+    observeCVVInput()
   }
 }
 
@@ -46,7 +47,7 @@ public extension NSEnterCVVCodeViewModel {
       do {
         guard let session = netspendDataManager.sdkSession else { return }
         let encryptedData = try session.encryptWithJWKSet(
-          value: [Constants.NetSpendKey.verificationValue.rawValue: cvvCodeValue]
+          value: [Constants.NetSpendKey.verificationValue.rawValue: generatedCVV]
         )
         let request = VerifyCVVCodeParameters(
           verificationType: Constants.NetSpendKey.cvc.rawValue, encryptedData: encryptedData
@@ -68,9 +69,13 @@ public extension NSEnterCVVCodeViewModel {
 
 // MARK: - View Helpers
 public extension NSEnterCVVCodeViewModel {
-  func onReceivedCVVCode(cvvCode: String) {
-    isCVVCodeEntered = (cvvCode.count == cvvCodeDigits)
-    cvvCodeValue = cvvCode
+  func observeCVVInput() {
+    $generatedCVV
+      .map { [weak self] cvv in
+        guard let self else { return false }
+        return cvv.count == cvvCodeDigits
+      }
+      .assign(to: &$isCVVCodeEntered)
   }
   
   func textFieldTextChange(replacementText: String, viewItem: PinTextFieldViewItem) {
@@ -137,10 +142,8 @@ private extension NSEnterCVVCodeViewModel {
   }
   
   func sendPin() {
-    if let pin = generatePin(), pin.count == cvvCodeDigits {
+    if let pin = generatePin() {
       generatedCVV = pin
-    } else {
-      generatedCVV = ""
     }
   }
 }
