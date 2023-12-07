@@ -43,9 +43,9 @@ public struct CreatePasswordView: View {
     }
     .navigationTitle("")
     .background(Colors.background.swiftUIColor)
-    .defaultToolBar(icon: .support, openSupportScreen: {
+    .defaultToolBar(icon: .support) {
       viewModel.openSupportScreen()
-    })
+    }
     .popup(item: $viewModel.toastMessage, style: .toast) {
       ToastView(toastMessage: $0)
     }

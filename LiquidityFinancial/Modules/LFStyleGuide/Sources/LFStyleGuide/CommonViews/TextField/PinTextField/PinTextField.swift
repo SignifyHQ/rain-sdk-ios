@@ -32,6 +32,7 @@ public struct PinTextField: UIViewRepresentable {
     textField.borderStyle = .none
     textField.backDelegate = context.coordinator
     textField.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
+    textField.tintColor = Colors.label.color
     textField.textColor = Colors.label.color
     let toolbar = UIToolbar()
     toolbar.sizeToFit()

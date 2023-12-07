@@ -1,0 +1,122 @@
+//
+//  ResetPasswordViewModel.swift
+//  
+//
+//  Created by Volodymyr Davydenko on 06.12.2023.
+//
+
+import Combine
+import Factory
+import Foundation
+import LFStyleGuide
+
+public final class ResetPasswordViewModel: ObservableObject {
+  @LazyInjected(\.customerSupportService) var customerSupportService
+  
+  @Published var isLoading: Bool = false
+  @Published var toastMessage: String?
+  @Published public var isOTPCodeEntered: Bool = false
+  
+  @Published public var generatedOTP: String = .empty
+  
+  public var otpViewItems: [PinTextFieldViewItem] = .init()
+  
+  init() {
+    createTextFields()
+    observeOTPInput()
+  }
+  
+  func openSupportScreen() {
+    customerSupportService.openSupportScreen()
+  }
+  
+  func didTapResetCodeButton() {
+    
+  }
+  
+  func didTapContinueButton() {
+  }
+}
+
+// MARK: - View Helpers
+public extension ResetPasswordViewModel {
+  func observeOTPInput() {
+    $generatedOTP
+      .map { otp in
+        otp.count == 6
+      }
+      .assign(to: &$isOTPCodeEntered)
+  }
+  
+  func textFieldTextChange(replacementText: String, viewItem: PinTextFieldViewItem) {
+    if replacementText.isEmpty, viewItem.text.isEmpty {
+      if let previousViewItem = previousViewItemFrom(tag: viewItem.tag) {
+        previousViewItem.text = .empty
+        viewItem.isInFocus = false
+        previousViewItem.isInFocus = true
+      }
+    } else {
+      if let nextViewItem = nextViewItemFrom(tag: viewItem.tag) {
+        viewItem.isInFocus = false
+        nextViewItem.isInFocus = true
+      }
+    }
+    viewItem.text = replacementText
+    
+    sendOTP()
+  }
+  
+  func onTextFieldBackPressed(viewItem: PinTextFieldViewItem) {
+    if let previousViewItem = previousViewItemFrom(tag: viewItem.tag) {
+      previousViewItem.text = .empty
+      viewItem.isInFocus = false
+      previousViewItem.isInFocus = true
+    }
+    
+    sendOTP()
+  }
+}
+
+// MARK: - Private Functions
+private extension ResetPasswordViewModel {
+  func createTextFields() {
+    for index in 0 ..< 6 {
+      let viewItem = PinTextFieldViewItem(
+        text: "",
+        placeHolderText: "",
+        isInFocus: index == 0,
+        tag: index
+      )
+      
+      otpViewItems.append(viewItem)
+    }
+  }
+  
+  func nextViewItemFrom(tag: Int) -> PinTextFieldViewItem? {
+    let nextTextItemTag = tag + 1
+    if nextTextItemTag < otpViewItems.count {
+      return otpViewItems.first(where: { $0.tag == nextTextItemTag })
+    }
+    return nil
+  }
+  
+  func previousViewItemFrom(tag: Int) -> PinTextFieldViewItem? {
+    let previousTextItemTag = tag - 1
+    if previousTextItemTag >= 0 {
+      return otpViewItems.first(where: { $0.tag == previousTextItemTag })
+    }
+    return nil
+  }
+  
+  func generateOtp() -> String? {
+    otpViewItems.reduce(into: "") { partialResult, textFieldViewItem in
+      partialResult.append(textFieldViewItem.text)
+    }
+  }
+
+  func sendOTP() {
+    if let otp = generateOtp() {
+      generatedOTP = otp
+    }
+  }
+}

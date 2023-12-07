@@ -885,6 +885,12 @@ contact support.";
 "authentication.enter_password.placeholder" = "Enter password";
 "authentication.enter_password.forgotPasswordButton" = "Forgot Password";
 
+"authentication.reset_password.title" = "RESET PASSWORD";
+"authentication.reset_password.subtitle" = "Please check your email for a link";
+"authentication.reset_password.or" = "OR";
+"authentication.reset_password.enter_code" = "ENTER 6 DIGIT CODE";
+"authentication.reset_password.resend_code_button.title" = "Resend Code";
+
 // MARK: - Common
 
 // Notification Pop up

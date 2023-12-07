@@ -492,6 +492,20 @@ public enum LFLocalizable {
       /// Enter Password
       public static let title = LFLocalizable.tr("Localizable", "authentication.enter_password.title", fallback: "Enter Password")
     }
+    public enum ResetPassword {
+      /// ENTER 6 DIGIT CODE
+      public static let enterCode = LFLocalizable.tr("Localizable", "authentication.reset_password.enter_code", fallback: "ENTER 6 DIGIT CODE")
+      /// OR
+      public static let or = LFLocalizable.tr("Localizable", "authentication.reset_password.or", fallback: "OR")
+      /// Please check your email for a link
+      public static let subtitle = LFLocalizable.tr("Localizable", "authentication.reset_password.subtitle", fallback: "Please check your email for a link")
+      /// RESET PASSWORD
+      public static let title = LFLocalizable.tr("Localizable", "authentication.reset_password.title", fallback: "RESET PASSWORD")
+      public enum ResendCodeButton {
+        /// Resend Code
+        public static let title = LFLocalizable.tr("Localizable", "authentication.reset_password.resend_code_button.title", fallback: "Resend Code")
+      }
+    }
   }
   public enum BalanceAlert {
     /// Deposit
