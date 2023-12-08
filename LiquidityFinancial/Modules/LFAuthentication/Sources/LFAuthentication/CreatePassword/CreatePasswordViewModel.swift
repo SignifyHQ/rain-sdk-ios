@@ -1,3 +1,5 @@
+import AccountData
+import AccountDomain
 import Combine
 import Factory
 import Foundation
@@ -6,7 +8,11 @@ import LFStyleGuide
 import LFUtilities
 import Services
 
+@MainActor
 public final class CreatePasswordViewModel: ObservableObject {
+  @LazyInjected(\.accountDataManager) var accountDataManager
+  @LazyInjected(\.accountRepository) var accountRepository
+  
   @LazyInjected(\.customerSupportService) var customerSupportService
   
   @Published var isLoading: Bool = false
@@ -23,6 +29,14 @@ public final class CreatePasswordViewModel: ObservableObject {
   @Published var isDontMatchErrorShown: Bool = false
   @Published var isContinueEnabled: Bool = false
   
+  lazy var createPasswordUseCase: CreatePasswordUseCaseProtocol = {
+    CreatePasswordUseCase(repository: accountRepository)
+  }()
+  
+  lazy var getUserUseCase: GetUserUseCaseProtocol = {
+    GetUserUseCase(repository: accountRepository, dataManager: accountDataManager)
+  }()
+
   init() {
     observePasswordInput()
     observePasswordValidation()
@@ -30,6 +44,24 @@ public final class CreatePasswordViewModel: ObservableObject {
   
   func openSupportScreen() {
     customerSupportService.openSupportScreen()
+  }
+  
+  func createPassword() {
+    Task {
+      defer {
+        isLoading = false
+      }
+      
+      isLoading = true
+      
+      do {
+        try await createPasswordUseCase.execute(password: passwordString)
+        let _ = try await getUserUseCase.execute()
+      } catch {
+        toastMessage = error.userFriendlyMessage
+        log.error(error.localizedDescription)
+      }
+    }
   }
   
   func observePasswordInput() {
@@ -82,6 +114,6 @@ public final class CreatePasswordViewModel: ObservableObject {
   }
   
   func actionContinue() {
-    
+    createPassword()
   }
 }

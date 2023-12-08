@@ -4,6 +4,8 @@ import Foundation
 public protocol AccountAPIProtocol {
   func createZeroHashAccount() async throws -> APIZeroHashAccount
   func getUser() async throws -> APIUser
+  func createPassword(password: String) async throws
+  func changePassword(oldPassword: String, newPassword: String) async throws
   func getAvailableRewardCurrencies() async throws -> APIAvailableRewardCurrencies
   func getSelectedRewardCurrency() async throws -> APIRewardCurrency
   func updateSelectedRewardCurrency(rewardCurrency: String) async throws -> APIRewardCurrency

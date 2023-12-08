@@ -21,6 +21,14 @@ public class AccountRepository: AccountRepositoryProtocol {
     return try await accountAPI.getUser()
   }
   
+  public func createPassword(password: String) async throws {
+    try await accountAPI.createPassword(password: password)
+  }
+  
+  public func changePassword(oldPassword: String, newPassword: String) async throws {
+    try await accountAPI.changePassword(oldPassword: oldPassword, newPassword: newPassword)
+  }
+  
   public func getAvailableRewardCurrrencies() async throws -> AvailableRewardCurrenciesEntity {
     try await accountAPI.getAvailableRewardCurrencies()
   }

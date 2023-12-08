@@ -39,7 +39,7 @@ extension SolidCardViewModel {
         let token = try await createVGSShowTokenUseCase.execute(cardID: cardModel.id)
         revealCard(vgsShowToken: token.showToken, solidCardID: token.solidCardId)
       } catch {
-        handleBackendError(error: error)
+        toastMessage = error.userFriendlyMessage
       }
     }
   }
@@ -71,13 +71,5 @@ private extension SolidCardViewModel {
         log.error("VGSShow failed with code: \(code)")
       }
     }
-  }
-  
-  func handleBackendError(error: Error) {
-    guard let errorObject = error.asErrorObject else {
-      toastMessage = error.localizedDescription
-      return
-    }
-    toastMessage = errorObject.message
   }
 }

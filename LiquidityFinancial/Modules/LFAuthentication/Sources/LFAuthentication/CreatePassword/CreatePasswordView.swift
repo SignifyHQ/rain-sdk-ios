@@ -150,6 +150,7 @@ extension CreatePasswordView {
         focus: .enterPass,
         nextFocus: .reEnterPass
       )
+      .disabled(viewModel.isLoading)
       .onAppear {
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
           keyboardFocus = .enterPass
@@ -172,6 +173,7 @@ extension CreatePasswordView {
         value: $viewModel.confirmPasswordString,
         focus: .reEnterPass
       )
+      .disabled(viewModel.isLoading)
     }
   }
   

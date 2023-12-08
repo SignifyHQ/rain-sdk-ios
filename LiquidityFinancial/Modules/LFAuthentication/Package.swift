@@ -12,6 +12,8 @@ let package = Package(
             targets: ["LFAuthentication"]),
     ],
     dependencies: [
+      .package(name: "LFData", path: "../LFData"),
+      .package(name: "LFDomain", path: "../LFDomain"),
       .package(name: "LFUtilities", path: "../LFUtilities"),
       .package(name: "LFStyleGuide", path: "../LFStyleGuide"),
       .package(name: "LFLocalizable", path: "../LFLocalizable"),
@@ -21,7 +23,11 @@ let package = Package(
         .target(
             name: "LFAuthentication",
             dependencies: [
-              "LFUtilities", "LFStyleGuide", "LFLocalizable"
+              .product(name: "AccountData", package: "LFData"),
+              .product(name: "AccountDomain", package: "LFDomain"),
+              "LFUtilities",
+              "LFStyleGuide",
+              "LFLocalizable"
             ]
         ),
         .testTarget(

@@ -99,7 +99,7 @@ public extension SolidListCardsViewModel {
         self.activePhysicalSuccess(id: card.id)
         self.presentActivateCardView(activeCardView: activeCardView)
       } catch {
-        handleBackendError(error: error)
+        toastMessage = error.userFriendlyMessage
       }
     }
   }
@@ -115,7 +115,7 @@ public extension SolidListCardsViewModel {
       } catch {
         isCardLocked = false
         isLoading = false
-        handleBackendError(error: error)
+        toastMessage = error.userFriendlyMessage
       }
     }
   }
@@ -131,7 +131,7 @@ public extension SolidListCardsViewModel {
       } catch {
         isCardLocked = true
         isLoading = false
-        handleBackendError(error: error)
+        toastMessage = error.userFriendlyMessage
       }
     }
   }
@@ -149,7 +149,7 @@ public extension SolidListCardsViewModel {
           popup = .closeCardSuccessfully
         }
       } catch {
-        handleBackendError(error: error)
+        toastMessage = error.userFriendlyMessage
       }
     }
   }
@@ -163,7 +163,7 @@ public extension SolidListCardsViewModel {
         let response = try await updateRoundUpDonationUseCase.execute(cardID: currentCard.id, parameters: parameters)
         rewardDataManager.update(roundUpDonation: response.isRoundUpDonationEnabled ?? !status)
       } catch {
-        handleBackendError(error: error)
+        toastMessage = error.userFriendlyMessage
       }
     }
   }

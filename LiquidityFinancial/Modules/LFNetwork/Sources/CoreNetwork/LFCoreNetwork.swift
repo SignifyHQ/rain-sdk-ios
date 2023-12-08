@@ -16,6 +16,7 @@ public protocol CoreNetworkType {
   func request(_ route: R) async throws -> Response
   func request<T>(_ route: R, target: T.Type, decoder: JSONDecoder) async throws -> T where T: Decodable
   func request<T, E>(_ route: R, target: T.Type, failure: E.Type, decoder: JSONDecoder) async throws -> T where T: Decodable, E: DesignatedError
+  func requestNoResponse<E>(_ route: R, failure: E.Type, decoder: JSONDecoder) async throws where E: Decodable, E: Error
   func download(_ route: R, fileName: String, type: UTType) async throws -> URL
 }
 
@@ -90,6 +91,19 @@ public final class LFCoreNetwork<R: LFRoute>: CoreNetworkType {
     let response = await dataRequest.validate().serializingDecodable(target).response
     if let value = response.value {
       return value
+    }
+    if let data = response.data {
+      throw try decodeError(failure: failure, from: data, decoder: decoder)
+    }
+    throw LFNetworkError.custom(message: response.error?.localizedDescription ?? "Unknown error")
+  }
+  
+  public func requestNoResponse<E>(_ route: R, failure: E.Type, decoder: JSONDecoder) async throws where E: Decodable, E: Error {
+    let request = LFURLRequest(route: route, auth: authorizationManager)
+    let dataRequest = session.request(request, interceptor: buildInterceptor(from: route))
+    let response = await dataRequest.validate().serializingData().response
+    if (response.response?.statusCode ?? 500).isSuccess {
+      return
     }
     if let data = response.data {
       throw try decodeError(failure: failure, from: data, decoder: decoder)

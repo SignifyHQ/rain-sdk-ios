@@ -29,7 +29,23 @@ final class LogMonitor: EventMonitor {
         log.info("[🚩 Finished request]: \(response.debugDescription)")
       }
     case .failure:
-      log.info("[🔴 request]: \(response.debugDescription)")
+      // Handle success cases with empty response
+      guard let statusCode = response.response?.statusCode,
+            statusCode.isSuccess,
+            response.data == nil
+      else {
+        log.info("[🔴 request]: \(response.debugDescription)")
+        
+        return
+      }
+      
+      let networkDuration = response.metrics.map { "\($0.taskInterval.duration)s" } ?? "None"
+      let result = """
+      [🚩 Finished no response request]: \(request.description)
+      [Network Duration]: \(networkDuration)
+      """
+      
+      log.info(result)
     }
   }
 }

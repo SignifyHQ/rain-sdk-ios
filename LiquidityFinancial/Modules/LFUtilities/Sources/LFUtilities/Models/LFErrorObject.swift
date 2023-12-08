@@ -36,4 +36,13 @@ public extension Error {
   var asErrorObject: LFErrorObject? {
     self as? LFErrorObject
   }
+  
+  var userFriendlyMessage: String {
+    guard let errorObject = self.asErrorObject
+    else {
+      return self.localizedDescription
+    }
+    
+    return errorObject.message
+  }
 }

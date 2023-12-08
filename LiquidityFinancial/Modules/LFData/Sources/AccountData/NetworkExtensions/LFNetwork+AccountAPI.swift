@@ -8,6 +8,22 @@ extension LFCoreNetwork: AccountAPIProtocol where R == AccountRoute {
     return try await request(AccountRoute.getUser, target: APIUser.self, failure: LFErrorObject.self, decoder: .apiDecoder)
   }
   
+  public func createPassword(password: String) async throws {
+    try await requestNoResponse(
+      AccountRoute.createPassword(password: password),
+      failure: LFErrorObject.self,
+      decoder: .apiDecoder
+    )
+  }
+  
+  public func changePassword(oldPassword: String, newPassword: String) async throws {
+    try await requestNoResponse(
+      AccountRoute.changePassword(oldPassword: oldPassword, newPassword: newPassword),
+      failure: LFErrorObject.self,
+      decoder: .apiDecoder
+    )
+  }
+  
   public func getAvailableRewardCurrencies() async throws -> APIAvailableRewardCurrencies {
     try await request(
       AccountRoute.getAvailableRewardCurrencies,

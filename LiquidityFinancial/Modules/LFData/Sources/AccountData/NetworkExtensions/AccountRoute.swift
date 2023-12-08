@@ -7,6 +7,8 @@ import Factory
 public enum AccountRoute {
   case createZeroHashAccount
   case getUser
+  case createPassword(password: String)
+  case changePassword(oldPassword: String, newPassword: String)
   case getAvailableRewardCurrencies
   case getSelectedRewardCurrency
   case updateSelectedRewardCurrency(rewardCurrency: String)
@@ -36,6 +38,10 @@ extension AccountRoute: LFRoute {
       return "/v1/zerohash/accounts"
     case .getUser:
       return "/v1/user"
+    case .createPassword:
+      return "v1/user/create-password"
+    case .changePassword:
+      return "v1/user/change-password"
     case .getAvailableRewardCurrencies:
       return "/v1/user/available-reward-currencies"
     case .getSelectedRewardCurrency:
@@ -71,7 +77,9 @@ extension AccountRoute: LFRoute {
   
   public var httpMethod: HttpMethod {
     switch self {
-    case .createZeroHashAccount,
+    case .createPassword,
+        .changePassword,
+        .createZeroHashAccount,
         .logout,
         .createWalletAddress,
         .addToWaitList,
@@ -123,6 +131,19 @@ extension AccountRoute: LFRoute {
         .getMigrationStatus,
         .requestMigration:
       return nil
+    case .createPassword(let password):
+      return [
+        "request": [
+          "password": password
+        ]
+      ]
+    case .changePassword(let oldPassword, let newPassword):
+      return [
+        "request": [
+          "oldPassword": oldPassword,
+          "newPassword": newPassword
+        ]
+      ]
     case .getTransactions(_, let currencyType, let transactionTypes, let limit, let offset):
       return [
         "currencyType": currencyType,
@@ -159,7 +180,9 @@ extension AccountRoute: LFRoute {
   
   public var parameterEncoding: ParameterEncoding? {
     switch self {
-    case .createWalletAddress,
+    case .createPassword,
+        .changePassword,
+        .createWalletAddress,
         .updateWalletAddress,
         .addToWaitList,
         .createSupportTicket,
