@@ -92,7 +92,8 @@ private extension CommonTransactionDetailView {
         text: viewModel.disclosureString,
         textColor: Colors.label.color.withAlphaComponent(0.6),
         fontSize: Constants.FontSize.ultraSmall.value,
-        links: [viewModel.termsLink]
+        links: [viewModel.termsLink],
+        style: .fillColor(Colors.darkText.color)
       ) { tappedString in
         guard let url = viewModel.getUrl(for: tappedString) else { return }
         openSafariType = .disclosure(url)

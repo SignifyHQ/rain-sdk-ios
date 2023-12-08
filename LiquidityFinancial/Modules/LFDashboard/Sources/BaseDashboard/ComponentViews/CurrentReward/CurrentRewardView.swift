@@ -75,16 +75,16 @@ private extension CurrentRewardView {
   var stateContentView: some View {
     Group {
       switch viewModel.status {
-        case .idle, .loading:
-          loadingView
-        case let .success(model):
-          if model.isEmpty {
-            emptyView
-          } else {
-            contentView(rewards: model.first?.rewards ?? [], specialrewards: model.first?.pecialrewards ?? [])
-          }
-        case .failure:
-          failureView
+      case .idle, .loading:
+        loadingView
+      case let .success(model):
+        if model.isEmpty {
+          emptyView
+        } else {
+          contentView(rewards: model.first?.rewards ?? [], specialrewards: model.first?.pecialrewards ?? [])
+        }
+      case .failure:
+        failureView
       }
     }
   }
