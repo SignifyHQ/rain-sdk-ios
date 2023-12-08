@@ -464,6 +464,16 @@ public enum LFLocalizable {
     }
   }
   public enum Authentication {
+    public enum BiometricsBackup {
+      public enum BiomericsButton {
+        /// Login with FaceID
+        public static let title = LFLocalizable.tr("Localizable", "authentication.biometrics_backup.biomerics_button.title", fallback: "Login with FaceID")
+      }
+      public enum PasswordButton {
+        /// Login with Password
+        public static let title = LFLocalizable.tr("Localizable", "authentication.biometrics_backup.password_button.title", fallback: "Login with Password")
+      }
+    }
     public enum BiometricsLocalizedReason {
       /// Unlock your account
       public static let title = LFLocalizable.tr("Localizable", "authentication.biometrics_localized_reason.title", fallback: "Unlock your account")

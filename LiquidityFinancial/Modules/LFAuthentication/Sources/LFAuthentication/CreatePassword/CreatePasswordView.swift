@@ -11,9 +11,11 @@ public struct CreatePasswordView: View {
     case reEnterPass
   }
   
-  @StateObject private var viewModel = CreatePasswordViewModel()
+  @StateObject
+  private var viewModel = CreatePasswordViewModel()
   
-  @FocusState var keyboardFocus: Focus?
+  @FocusState
+  var keyboardFocus: Focus?
   
   public init() {
     UITableView.appearance().backgroundColor = UIColor(Colors.background.swiftUIColor)

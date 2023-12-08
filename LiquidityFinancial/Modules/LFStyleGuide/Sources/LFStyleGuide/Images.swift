@@ -99,6 +99,7 @@ public enum GenImages {
     public static let icWellcome3 = ImageAsset(name: "ic_wellcome_3")
     public static let icXMark = ImageAsset(name: "ic_xMark")
     public static let icXError = ImageAsset(name: "ic_x_error")
+    public static let imgFaceID = ImageAsset(name: "imgFaceID")
     public static let info = ImageAsset(name: "info")
     public static let map = ImageAsset(name: "map")
     public static let netspend = ImageAsset(name: "netspend")
