@@ -464,6 +464,10 @@ public enum LFLocalizable {
     }
   }
   public enum Authentication {
+    public enum BiometricsLocalizedReason {
+      /// Unlock your account
+      public static let title = LFLocalizable.tr("Localizable", "authentication.biometrics_localized_reason.title", fallback: "Unlock your account")
+    }
     public enum CreatePassword {
       /// Must be at least 8 characters
       public static let desc1 = LFLocalizable.tr("Localizable", "authentication.create_password.desc_1", fallback: "Must be at least 8 characters")

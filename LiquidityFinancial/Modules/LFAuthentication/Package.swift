@@ -10,6 +10,9 @@ let package = Package(
         .library(
             name: "LFAuthentication",
             targets: ["LFAuthentication"]),
+        .library(
+          name: "BiometricsManager",
+          targets: ["BiometricsManager"])
     ],
     dependencies: [
       .package(name: "LFData", path: "../LFData"),
@@ -17,7 +20,8 @@ let package = Package(
       .package(name: "LFUtilities", path: "../LFUtilities"),
       .package(name: "LFStyleGuide", path: "../LFStyleGuide"),
       .package(name: "LFLocalizable", path: "../LFLocalizable"),
-      .package(name: "TestHelpers", path: "../TestHelpers")
+      .package(name: "TestHelpers", path: "../TestHelpers"),
+      .package(url: "https://github.com/hmlongco/Factory", from: "2.3.1")
     ],
     targets: [
         .target(
@@ -30,12 +34,18 @@ let package = Package(
               "LFLocalizable"
             ]
         ),
+        .target(
+          name: "BiometricsManager",
+          dependencies: [
+            "Factory", "LFLocalizable"
+          ]
+        ),
         .testTarget(
             name: "CreatePasswordViewModelTests",
             dependencies: [
               "LFAuthentication",
               "TestHelpers"
             ]
-        ),
+        )
     ]
 )

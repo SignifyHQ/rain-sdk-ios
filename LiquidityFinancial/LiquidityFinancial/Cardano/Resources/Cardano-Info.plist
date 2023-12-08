@@ -77,6 +77,10 @@
 	</dict>
 	<key>NSCameraUsageDescription</key>
 	<string>Used to capture user for KYC purposes</string>
+	<key>Privacy - Touch ID Usage Description</key>
+	<string>Cardano will use Touch ID to unlock your account.</string>
+	<key>NSFaceIDUsageDescription</key>
+	<string>Cardano will use Face ID to unlock your account.</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>Used to surface nearby ATMs for the user</string>
 	<key>NSPhotoLibraryUsageDescription</key>

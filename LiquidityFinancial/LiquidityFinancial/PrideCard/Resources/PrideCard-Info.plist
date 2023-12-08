@@ -78,7 +78,9 @@
 	<key>NSCameraUsageDescription</key>
 	<string>Used to capture user for KYC purposes</string>
 	<key>NSFaceIDUsageDescription</key>
-	<string>Application uses face ID to authorize sensitive transactions.</string>
+	<string>PrideCard will use Face ID to unlock your account</string>
+	<key>Privacy - Touch ID Usage Description</key>
+	<string>PrideCard will use Touch ID to unlock your account</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>Used to surface nearby ATMs for the user</string>
 	<key>NSPhotoLibraryAddUsageDescription</key>

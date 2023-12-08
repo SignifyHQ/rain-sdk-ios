@@ -892,6 +892,8 @@ contact support.";
 "authentication.reset_password.enter_code" = "ENTER 6 DIGIT CODE";
 "authentication.reset_password.resend_code_button.title" = "Resend Code";
 
+"authentication.biometrics_localized_reason.title" = "Unlock your account";
+
 // MARK: - Common
 
 // Notification Pop up
