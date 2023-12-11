@@ -43,7 +43,6 @@ final class CryptoChartDetailViewModel: ObservableObject {
   init(asset: AssetModel) {
     self.asset = asset
     observeMarketManager()
-    subscribeToUserTransactionNotifications()
   }
   
   deinit {
@@ -57,10 +56,6 @@ final class CryptoChartDetailViewModel: ObservableObject {
   }
   
   func refresh(includeAccounts: Bool = true) async {
-      // TODO: - Will be implemented later
-  }
-  
-  private func subscribeToUserTransactionNotifications() {
       // TODO: - Will be implemented later
   }
   

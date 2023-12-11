@@ -77,16 +77,11 @@ public class MoveMoneyAccountViewModel: ObservableObject {
     self.cashBalanceValue = cashBalance?.formattedUSDAmount() ?? Constants.Default.zeroAmount.rawValue
     
     subscribeLinkedContacts()
-    getRemainingAvailableAmount()
   }
 }
 
 // MARK: - API
 extension MoveMoneyAccountViewModel {
-  func getRemainingAvailableAmount() {
-    // TODO: Will add this later when BE done
-  }
-  
   func getTransactionFee(contact: LinkedSourceContact) {
     guard let amount = self.amount.asDouble else {
       toastMessage = LFLocalizable.MoveMoney.Error.noContact

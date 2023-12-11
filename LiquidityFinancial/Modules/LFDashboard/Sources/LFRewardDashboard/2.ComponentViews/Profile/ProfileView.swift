@@ -1,4 +1,5 @@
 import SwiftUI
+import LFSolidBank
 import LFStyleGuide
 import LFLocalizable
 import LFUtilities
@@ -42,7 +43,7 @@ struct ProfileView: View {
     .navigationLink(item: $viewModel.navigation) { navigation in
       switch navigation {
       case .depositLimits:
-        EmptyView() // TODO: Will be implemented later
+        AccountLimitsView()
       case .referrals:
         ReferralsView()
       }
