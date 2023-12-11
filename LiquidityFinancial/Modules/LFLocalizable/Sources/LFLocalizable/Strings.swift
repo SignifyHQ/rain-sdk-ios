@@ -474,9 +474,17 @@ public enum LFLocalizable {
         public static let title = LFLocalizable.tr("Localizable", "authentication.biometrics_backup.password_button.title", fallback: "Login with Password")
       }
     }
+    public enum BiometricsFaceID {
+      /// Face ID
+      public static let title = LFLocalizable.tr("Localizable", "authentication.biometrics_faceID.title", fallback: "Face ID")
+    }
     public enum BiometricsLocalizedReason {
       /// Unlock your account
       public static let title = LFLocalizable.tr("Localizable", "authentication.biometrics_localized_reason.title", fallback: "Unlock your account")
+    }
+    public enum BiometricsTouchID {
+      /// Touch ID
+      public static let title = LFLocalizable.tr("Localizable", "authentication.biometrics_touchID.title", fallback: "Touch ID")
     }
     public enum CreatePassword {
       /// Must be at least 8 characters
@@ -518,6 +526,64 @@ public enum LFLocalizable {
       public enum ResendCodeButton {
         /// Resend Code
         public static let title = LFLocalizable.tr("Localizable", "authentication.reset_password.resend_code_button.title", fallback: "Resend Code")
+      }
+    }
+    public enum Security {
+      /// Security
+      public static let title = LFLocalizable.tr("Localizable", "authentication.security.title", fallback: "Security")
+    }
+    public enum SecurityAuthenticationApp {
+      /// Authentication App
+      public static let title = LFLocalizable.tr("Localizable", "authentication.security_authenticationApp.title", fallback: "Authentication App")
+    }
+    public enum SecurityChangePassword {
+      /// Change
+      public static let title = LFLocalizable.tr("Localizable", "authentication.security_changePassword.title", fallback: "Change")
+    }
+    public enum SecurityEmail {
+      /// Email
+      public static let title = LFLocalizable.tr("Localizable", "authentication.security_email.title", fallback: "Email")
+    }
+    public enum SecurityMfa {
+      /// MFA
+      public static let title = LFLocalizable.tr("Localizable", "authentication.security_mfa.title", fallback: "MFA")
+    }
+    public enum SecurityPassword {
+      /// Password
+      public static let title = LFLocalizable.tr("Localizable", "authentication.security_password.title", fallback: "Password")
+    }
+    public enum SecurityPhone {
+      /// Phone
+      public static let title = LFLocalizable.tr("Localizable", "authentication.security_phone.title", fallback: "Phone")
+    }
+    public enum SecurityRequireMFAFor {
+      /// Adding External Bank
+      public static let addingExternalBank = LFLocalizable.tr("Localizable", "authentication.security_requireMFAFor.addingExternalBank", fallback: "Adding External Bank")
+      /// New Device Login
+      public static let newDeviceLogin = LFLocalizable.tr("Localizable", "authentication.security_requireMFAFor.newDeviceLogin", fallback: "New Device Login")
+      /// Require MFA for
+      public static let title = LFLocalizable.tr("Localizable", "authentication.security_requireMFAFor.title", fallback: "Require MFA for")
+      /// Withdrawal over %@
+      public static func withdrawal(_ p1: Any) -> String {
+        return LFLocalizable.tr("Localizable", "authentication.security_requireMFAFor.withdrawal", String(describing: p1), fallback: "Withdrawal over %@")
+      }
+    }
+    public enum SecurityVerified {
+      /// Verified
+      public static let title = LFLocalizable.tr("Localizable", "authentication.security_verified.title", fallback: "Verified")
+    }
+    public enum SecurityVerify {
+      /// Verify
+      public static let title = LFLocalizable.tr("Localizable", "authentication.security_verify.title", fallback: "Verify")
+    }
+    public enum SetupBiometrics {
+      /// %@ will use %@ to unlock your account.
+      public static func description(_ p1: Any, _ p2: Any) -> String {
+        return LFLocalizable.tr("Localizable", "authentication.setup_biometrics.description", String(describing: p1), String(describing: p2), fallback: "%@ will use %@ to unlock your account.")
+      }
+      /// Do you want to allow “%@“ to use %@?
+      public static func title(_ p1: Any, _ p2: Any) -> String {
+        return LFLocalizable.tr("Localizable", "authentication.setup_biometrics.title", String(describing: p1), String(describing: p2), fallback: "Do you want to allow “%@“ to use %@?")
       }
     }
   }
@@ -620,6 +686,10 @@ public enum LFLocalizable {
     public enum Done {
       /// Done
       public static let title = LFLocalizable.tr("Localizable", "button.done.title", fallback: "Done")
+    }
+    public enum DonotAllow {
+      /// Don't Allow
+      public static let title = LFLocalizable.tr("Localizable", "button.donotAllow.title", fallback: "Don't Allow")
     }
     public enum Logout {
       /// Log Out
@@ -2055,6 +2125,10 @@ public enum LFLocalizable {
     public enum Rewards {
       /// Current Rewards
       public static let title = LFLocalizable.tr("Localizable", "profile.rewards.title", fallback: "Current Rewards")
+    }
+    public enum Security {
+      /// Security
+      public static let title = LFLocalizable.tr("Localizable", "profile.security.title", fallback: "Security")
     }
     public enum Stickers {
       /// Stickers

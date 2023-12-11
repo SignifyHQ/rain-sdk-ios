@@ -584,6 +584,7 @@
 "profile.phoneNumber.title" = "Phone Number";
 "profile.email.title" = "Email";
 "profile.address.title" = "Address";
+"profile.security.title" = "Security";
 "profile.depositLimits.title" = "Deposit Limits";
 "profile.help.title" = "Help & support";
 "profile.rewards.title" = "Current Rewards";
@@ -1072,8 +1073,26 @@ contact support.";
 
 "authentication.biometrics_backup.biomerics_button.title" = "Login with FaceID";
 "authentication.biometrics_backup.password_button.title" = "Login with Password";
-
 "authentication.biometrics_localized_reason.title" = "Unlock your account";
+"authentication.biometrics_faceID.title" = "Face ID";
+"authentication.biometrics_touchID.title" = "Touch ID";
+
+"authentication.security.title" = "Security";
+"authentication.security_email.title" = "Email";
+"authentication.security_phone.title" = "Phone";
+"authentication.security_password.title" = "Password";
+"authentication.security_mfa.title" = "MFA";
+"authentication.security_authenticationApp.title" = "Authentication App";
+"authentication.security_requireMFAFor.title" = "Require MFA for";
+"authentication.security_requireMFAFor.newDeviceLogin" = "New Device Login";
+"authentication.security_requireMFAFor.withdrawal" = "Withdrawal over %@";
+"authentication.security_requireMFAFor.addingExternalBank" = "Adding External Bank";
+"authentication.security_verify.title" = "Verify";
+"authentication.security_verified.title" = "Verified";
+"authentication.security_changePassword.title" = "Change";
+
+"authentication.setup_biometrics.title" = "Do you want to allow “%@“ to use %@?";
+"authentication.setup_biometrics.description" = "%@ will use %@ to unlock your account.";
 
 // MARK: - Common
 
@@ -1112,6 +1131,7 @@ contact support.";
 "button.disputeTransaction.title" = "Dispute a Transaction";
 "button.contactSupport.title" = "Contact Support";
 "button.save.title" = "Save";
+"button.donotAllow.title" = "Don't Allow";
 
 // Grid Value
 "grid_value.crypto" = "%@ ADA";

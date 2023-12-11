@@ -82,8 +82,16 @@ public class AccountDataManager: AccountDataStorageProtocol {
     self.userInfomationData.phone = phone
   }
   
+  public func update(phoneVerified: Bool?) {
+    self.userInfomationData.phoneVerified = phoneVerified
+  }
+  
   public func update(email: String?) {
     self.userInfomationData.email = email
+  }
+  
+  public func update(emailVerified: Bool?) {
+    self.userInfomationData.emailVerified = emailVerified
   }
   
   public func update(fullName: String?) {

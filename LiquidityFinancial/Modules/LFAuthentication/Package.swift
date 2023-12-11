@@ -31,7 +31,8 @@ let package = Package(
               .product(name: "AccountDomain", package: "LFDomain"),
               "LFUtilities",
               "LFStyleGuide",
-              "LFLocalizable"
+              "LFLocalizable",
+              "BiometricsManager"
             ]
         ),
         .target(

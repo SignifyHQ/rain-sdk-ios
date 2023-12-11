@@ -114,6 +114,10 @@ extension ProfileViewModel {
     popup = .logout
   }
   
+  func didTapSecurityButton() {
+    navigation = .securityHub
+  }
+  
   func logout(animated: Bool = true) {
     analyticsService.track(event: AnalyticsEvent(name: .loggedOut))
     Task {
@@ -201,6 +205,7 @@ extension ProfileViewModel {
   enum Navigation {
     case depositLimits
     case referrals
+    case securityHub
   }
   
   enum Popup {

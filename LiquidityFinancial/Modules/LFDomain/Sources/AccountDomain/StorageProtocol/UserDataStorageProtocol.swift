@@ -37,7 +37,9 @@ public protocol AccountDataStorageProtocol {
   func update(firstName: String?)
   func update(lastName: String?)
   func update(phone: String?)
+  func update(phoneVerified: Bool?)
   func update(email: String?)
+  func update(emailVerified: Bool?)
   func update(fullName: String?)
   func update(addressEntity: AddressEntity?)
   func update(dateOfBirth: String?)
@@ -76,7 +78,9 @@ public protocol UserInfomationDataProtocol {
   var middleName: String? { get set }
   var agreementIDS: [String] { get set }
   var phone: String? { get set }
+  var phoneVerified: Bool? { get set }
   var email: String? { get set }
+  var emailVerified: Bool? { get set }
   var fullName: String? { get set }
   var dateOfBirth: String? { get set }
   var addressLine1: String? { get set }

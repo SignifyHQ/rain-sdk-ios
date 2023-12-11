@@ -33,6 +33,7 @@ let package = Package(
     .package(name: "LFNetwork", path: "../LFNetwork"),
     .package(name: "LFRewards", path: "../LFRewards"),
     .package(name: "LFOnboarding", path: "../LFOnboarding"),
+    .package(name: "LFAuthentication", path: "../LFAuthentication"),
     .package(url: "https://github.com/twostraws/CodeScanner", from: "2.0.0"),
     .package(url: "https://github.com/SwiftGen/SwiftGenPlugin", from: "6.6.2")
   ],
@@ -68,7 +69,8 @@ let package = Package(
         .product(name: "DevicesData", package: "LFData"),
         .product(name: "AuthorizationManager", package: "LFNetwork"),
         .product(name: "Services", package: "LFServices"),
-        .product(name: "LFNetSpendCard", package: "LFCard")
+        .product(name: "LFNetSpendCard", package: "LFCard"),
+        .product(name: "LFAuthentication", package: "LFAuthentication")
       ]
     ),
     .target(
@@ -83,7 +85,8 @@ let package = Package(
         .product(name: "AuthorizationManager", package: "LFNetwork"),
         .product(name: "LFSolidCard", package: "LFCard"),
         .product(name: "Services", package: "LFServices"),
-        .product(name: "SolidOnboarding", package: "LFOnboarding")
+        .product(name: "SolidOnboarding", package: "LFOnboarding"),
+        .product(name: "BiometricsManager", package: "LFAuthentication")
       ],
       resources: [
         .process("ZResources")

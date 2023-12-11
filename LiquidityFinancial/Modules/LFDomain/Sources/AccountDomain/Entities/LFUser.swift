@@ -15,7 +15,9 @@ public protocol LFUser {
   var lastName: String? { get }
   var fullName: String? { get }
   var phone: String? { get }
+  var phoneVerified: Bool? { get }
   var email: String? { get }
+  var emailVerified: Bool? { get }
   var addressEntity: AddressEntity? { get }
   var referralLink: String? { get }
   var userRewardType: String? { get }

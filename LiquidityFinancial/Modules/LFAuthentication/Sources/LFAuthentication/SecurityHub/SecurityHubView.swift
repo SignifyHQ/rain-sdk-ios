@@ -1,0 +1,162 @@
+import SwiftUI
+import LFUtilities
+import LFStyleGuide
+import LFLocalizable
+
+public struct SecurityHubView: View {
+  @StateObject private var viewModel = SecurityHubViewModel()
+  
+  public init() {}
+  
+  public var body: some View {
+    ScrollView(showsIndicators: false) {
+      VStack(alignment: .leading, spacing: 24) {
+        Text(LFLocalizable.Authentication.Security.title.uppercased())
+          .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.main.value))
+          .foregroundColor(Colors.label.swiftUIColor)
+        firstSectionView
+      }
+      .padding(.horizontal, 30)
+      .padding(.bottom, 16)
+      .popup(item: $viewModel.toastMessage, style: .toast) {
+        ToastView(toastMessage: $0)
+      }
+    }
+    .background(Colors.background.swiftUIColor)
+  }
+}
+
+// MARK: - Private View Components
+private extension SecurityHubView {
+  var firstSectionView: some View {
+    VStack(spacing: 16) {
+      GenImages.CommonImages.dash.swiftUIImage
+        .foregroundColor(Colors.label.swiftUIColor)
+        .padding(.bottom, 8)
+      textInformationCell(
+        title: LFLocalizable.Authentication.SecurityEmail.title,
+        value: viewModel.email.value,
+        trailingView: textWithAction(
+          title: viewModel.email.status,
+          isEnable: !viewModel.email.isVerified
+        ) {
+          viewModel.didTapEmailVerifyButton()
+        }
+      )
+      textInformationCell(
+        title: LFLocalizable.Authentication.SecurityPhone.title,
+        value: viewModel.phone.value,
+        trailingView: textWithAction(
+          title: viewModel.phone.status,
+          isEnable: !viewModel.email.isVerified
+        ) {
+          viewModel.didTapPhoneVerifyButton()
+        }
+      )
+      textInformationCell(
+        title: LFLocalizable.Authentication.SecurityPassword.title,
+        value: Constants.hiddenPassword,
+        trailingView: textWithAction(
+          title: LFLocalizable.Authentication.SecurityChangePassword.title,
+          isEnable: true,
+          action: {}
+        )
+      )
+      if viewModel.isBiometricsCapability {
+        fullSizeToggleButton(title: viewModel.biometricType.title)
+      }
+    }
+  }
+  
+  func textInformationCell<SubContent: View>(
+    title: String,
+    value: String,
+    trailingView: SubContent,
+    hasBottomLine: Bool = true
+  ) -> some View {
+    VStack(alignment: .leading, spacing: 12) {
+      Text(title)
+        .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.ultraSmall.value))
+        .foregroundColor(Colors.label.swiftUIColor.opacity(0.75))
+      HStack {
+        Text(value)
+          .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.medium.value))
+          .foregroundColor(Colors.label.swiftUIColor)
+        Spacer()
+        trailingView
+      }
+      Rectangle()
+        .frame(maxWidth: .infinity)
+        .frame(height: 1)
+        .foregroundColor(
+          Colors.label.swiftUIColor.opacity(hasBottomLine ? 0.15 : 0)
+        )
+    }
+  }
+  
+  func textWithAction(
+    title: String,
+    isEnable: Bool,
+    action: @escaping () -> Void
+  ) -> some View {
+    Button {
+      action()
+    } label: {
+      Text(title)
+        .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.medium.value))
+        .foregroundStyle(
+          isEnable
+          ? LinearGradient(
+            colors: gradientColor,
+            startPoint: .leading,
+            endPoint: .trailing
+          )
+          : LinearGradient(
+            colors: [Colors.label.swiftUIColor],
+            startPoint: .leading,
+            endPoint: .trailing
+          )
+        )
+        .overlay(alignment: .bottom) {
+          Rectangle()
+            .frame(height: 1)
+            .foregroundStyle(
+              LinearGradient(
+                colors: gradientColor,
+                startPoint: .leading,
+                endPoint: .trailing
+              )
+              .opacity(isEnable ? 1 : 0)
+            )
+            .offset(y: 1)
+        }
+    }
+    .disabled(!isEnable)
+  }
+  
+  func fullSizeToggleButton(title: String) -> some View {
+    HStack {
+      Text(title)
+        .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.medium.value))
+        .foregroundColor(Colors.label.swiftUIColor)
+      Spacer()
+      Toggle("", isOn: .constant(true))
+        .toggleStyle(GradientToggleStyle())
+    }
+    .padding(.horizontal, 16)
+    .frame(height: 56)
+    .background(Colors.secondaryBackground.swiftUIColor.cornerRadius(10))
+  }
+  
+  var gradientColor: [Color] {
+    switch LFStyleGuide.target {
+    case .CauseCard:
+      return [
+        Colors.Gradients.Button.gradientButton0.swiftUIColor,
+        Colors.Gradients.Button.gradientButton1.swiftUIColor
+      ]
+    default:
+      return [Colors.tertiary.swiftUIColor]
+    }
+  }
+}

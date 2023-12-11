@@ -296,6 +296,10 @@ public extension Constants {
   
   static let kycQuestionTimeOut = 600
   
+  static let withdrawalMFAThreshold = 1000.0
+  
+  static let hiddenPassword = "*********"
+  
   static var supportedStates: [String] = ["NY", "New York", "HI", "Hawaii"]
   
   static let netSpendSDKLinkBankErrors = ["error", "failedToLinkBank", "externalLinkBankError"]

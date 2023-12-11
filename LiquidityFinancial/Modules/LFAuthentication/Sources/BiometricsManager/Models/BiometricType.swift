@@ -1,5 +1,6 @@
 import Foundation
 import LocalAuthentication
+import LFLocalizable
 
 public enum BiometricType {
   case none
@@ -17,6 +18,17 @@ public enum BiometricType {
       return .faceID
     @unknown default:
       return .unknown
+    }
+  }
+  
+  public var title: String {
+    switch self {
+    case .faceID:
+      return LFLocalizable.Authentication.BiometricsFaceID.title
+    case .touchID:
+      return LFLocalizable.Authentication.BiometricsTouchID.title
+    default:
+      return ""
     }
   }
 }
