@@ -24,6 +24,15 @@ extension LFCoreNetwork: AccountAPIProtocol where R == AccountRoute {
     )
   }
   
+  public func loginWithPassword(phoneNumber: String, password: String) async throws -> APIPasswordLoginTokens {
+    try await request(
+      AccountRoute.loginWithPassword(phoneNumber: phoneNumber, password: password),
+      target: APIPasswordLoginTokens.self,
+      failure: LFErrorObject.self,
+      decoder: .apiDecoder
+    )
+  }
+  
   public func getAvailableRewardCurrencies() async throws -> APIAvailableRewardCurrencies {
     try await request(
       AccountRoute.getAvailableRewardCurrencies,

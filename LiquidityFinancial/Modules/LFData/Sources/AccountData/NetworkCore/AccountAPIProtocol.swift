@@ -6,6 +6,7 @@ public protocol AccountAPIProtocol {
   func getUser() async throws -> APIUser
   func createPassword(password: String) async throws
   func changePassword(oldPassword: String, newPassword: String) async throws
+  func loginWithPassword(phoneNumber: String, password: String) async throws -> APIPasswordLoginTokens
   func getAvailableRewardCurrencies() async throws -> APIAvailableRewardCurrencies
   func getSelectedRewardCurrency() async throws -> APIRewardCurrency
   func updateSelectedRewardCurrency(rewardCurrency: String) async throws -> APIRewardCurrency

@@ -29,6 +29,10 @@ public class AccountRepository: AccountRepositoryProtocol {
     try await accountAPI.changePassword(oldPassword: oldPassword, newPassword: newPassword)
   }
   
+  public func loginWithPassword(phoneNumner: String, password: String) async throws -> PasswordLoginTokensEntity {
+    try await accountAPI.loginWithPassword(phoneNumber: phoneNumner, password: phoneNumner)
+  }
+  
   public func getAvailableRewardCurrrencies() async throws -> AvailableRewardCurrenciesEntity {
     try await accountAPI.getAvailableRewardCurrencies()
   }

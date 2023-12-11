@@ -1,3 +1,5 @@
+import AccountData
+import AccountDomain
 import Foundation
 import LFUtilities
 import LFLocalizable
@@ -5,17 +7,26 @@ import LFStyleGuide
 import Factory
 import Services
 
+@MainActor
 public final class EnterPasswordViewModel: ObservableObject {
+  @LazyInjected(\.accountDataManager) var accountDataManager
+  @LazyInjected(\.accountRepository) var accountRepository
+  
   @LazyInjected(\.customerSupportService) var customerSupportService
   
-  @Published var isVerifyingPassword: Bool = false
-  @Published var isDisableContinueButton: Bool = true
+  @Published var isLoading: Bool = false
   @Published var toastMessage: String?
   
-  @Published var password: String = "" {
-    didSet {
-      isAllDataFilled()
-    }
+  @Published var password: String = ""
+  
+  @Published var isDisableContinueButton: Bool = true
+  
+  lazy var loginWithPasswordUseCase: PasswordLoginUseCaseProtocol = {
+    PasswordLoginUseCase(repository: accountRepository, dataManager: accountDataManager)
+  }()
+  
+  init() {
+    observePasswordInput()
   }
 }
 
@@ -26,6 +37,19 @@ extension EnterPasswordViewModel {
   }
   
   func didTapContinueButton() {
+    Task {
+      defer {
+        isLoading = false
+      }
+      
+      isLoading = true
+      do {
+        let _ = try await loginWithPasswordUseCase.execute(password: password)
+      } catch {
+        toastMessage = error.userFriendlyMessage
+        log.error(error.localizedDescription)
+      }
+    }
   }
   
   func didTapForgotPasswordButton() {
@@ -34,7 +58,11 @@ extension EnterPasswordViewModel {
 
 // MARK: - Private Functions
 private extension EnterPasswordViewModel {
-  func isAllDataFilled() {
-    isDisableContinueButton = password.trimWhitespacesAndNewlines().isEmpty
+  private func observePasswordInput() {
+    $password
+      .map { passwordString in
+        passwordString.trimWhitespacesAndNewlines().isEmpty
+      }
+      .assign(to: &$isDisableContinueButton)
   }
 }

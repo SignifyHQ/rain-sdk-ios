@@ -57,6 +57,7 @@ private extension EnterPasswordView {
           )
           .focused($isFocused)
       }
+      .disabled(viewModel.isLoading)
       .onAppear {
         isFocused = true
       }
@@ -72,10 +73,12 @@ private extension EnterPasswordView {
           .foregroundColor(Colors.primary.swiftUIColor)
           .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.ultraSmall.value))
       }
+      .disabled(viewModel.isLoading)
+      
       FullSizeButton(
         title: LFLocalizable.Button.Continue.title,
         isDisable: viewModel.isDisableContinueButton,
-        isLoading: $viewModel.isVerifyingPassword,
+        isLoading: $viewModel.isLoading,
         type: .primary
       ) {
         viewModel.didTapContinueButton()

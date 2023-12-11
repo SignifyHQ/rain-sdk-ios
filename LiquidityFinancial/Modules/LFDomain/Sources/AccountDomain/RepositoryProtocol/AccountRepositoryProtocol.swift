@@ -6,6 +6,7 @@ public protocol AccountRepositoryProtocol {
   func getUser() async throws -> LFUser
   func createPassword(password: String) async throws
   func changePassword(oldPassword: String, newPassword: String) async throws
+  func loginWithPassword(phoneNumner: String, password: String) async throws -> PasswordLoginTokensEntity
   func getAvailableRewardCurrrencies() async throws -> AvailableRewardCurrenciesEntity
   func getSelectedRewardCurrency() async throws -> RewardCurrencyEntity
   func updateSelectedRewardCurrency(rewardCurrency: String) async throws -> RewardCurrencyEntity

@@ -1,14 +1,16 @@
-import Foundation
-import CoreNetwork
-import NetworkUtilities
 import AuthorizationManager
+import CoreNetwork
 import Factory
+import Foundation
+import LFUtilities
+import NetworkUtilities
 
 public enum AccountRoute {
   case createZeroHashAccount
   case getUser
   case createPassword(password: String)
   case changePassword(oldPassword: String, newPassword: String)
+  case loginWithPassword(phoneNumber: String, password: String)
   case getAvailableRewardCurrencies
   case getSelectedRewardCurrency
   case updateSelectedRewardCurrency(rewardCurrency: String)
@@ -42,6 +44,8 @@ extension AccountRoute: LFRoute {
       return "v1/user/create-password"
     case .changePassword:
       return "v1/user/change-password"
+    case .loginWithPassword:
+      return "/v1/auth/login"
     case .getAvailableRewardCurrencies:
       return "/v1/user/available-reward-currencies"
     case .getSelectedRewardCurrency:
@@ -79,6 +83,7 @@ extension AccountRoute: LFRoute {
     switch self {
     case .createPassword,
         .changePassword,
+        .loginWithPassword,
         .createZeroHashAccount,
         .logout,
         .createWalletAddress,
@@ -107,12 +112,18 @@ extension AccountRoute: LFRoute {
   }
   
   public var httpHeaders: HttpHeaders {
-    [
+    var base = [
       "Content-Type": "application/json",
       "productId": NetworkUtilities.productID,
       "Authorization": self.needAuthorizationKey,
       "Accept": "application/json"
     ]
+    
+    if case .loginWithPassword = self {
+      base["ld-device-id"] = LFUtilities.deviceId
+    }
+    
+    return base
   }
   
   public var parameters: Parameters? {
@@ -143,6 +154,11 @@ extension AccountRoute: LFRoute {
           "oldPassword": oldPassword,
           "newPassword": newPassword
         ]
+      ]
+    case .loginWithPassword(let phoneNumber, let password):
+      return [
+        "phoneNumber": phoneNumber,
+        "password": password
       ]
     case .getTransactions(_, let currencyType, let transactionTypes, let limit, let offset):
       return [
@@ -182,6 +198,7 @@ extension AccountRoute: LFRoute {
     switch self {
     case .createPassword,
         .changePassword,
+        .loginWithPassword,
         .createWalletAddress,
         .updateWalletAddress,
         .addToWaitList,
