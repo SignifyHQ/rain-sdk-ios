@@ -11,6 +11,8 @@ public final class SecurityHubViewModel: ObservableObject {
   @LazyInjected(\.biometricsManager) var biometricsManager
 
   @Published var toastMessage: String?
+  @Published var navigation: Navigation?
+  
   @Published var biometricType: BiometricType = .none
   
   private var cancellables: Set<AnyCancellable> = []
@@ -48,6 +50,16 @@ extension SecurityHubViewModel {
   }
   
   func didTapPhoneVerifyButton() {
+  }
+  
+  func didTapChangePasswordButton() {
+    navigation = .changePassword
+  }
+}
+
+extension SecurityHubViewModel {
+  enum Navigation {
+    case changePassword
   }
 }
 

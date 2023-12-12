@@ -14,12 +14,21 @@ public struct SecurityHubView: View {
         Text(LFLocalizable.Authentication.Security.title.uppercased())
           .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.main.value))
           .foregroundColor(Colors.label.swiftUIColor)
+          .frame(maxWidth: .infinity, alignment: .center)
         firstSectionView
       }
       .padding(.horizontal, 30)
       .padding(.bottom, 16)
       .popup(item: $viewModel.toastMessage, style: .toast) {
         ToastView(toastMessage: $0)
+      }
+    }
+    .navigationLink(
+      item: $viewModel.navigation
+    ) { navigation in
+      switch navigation {
+      case .changePassword:
+        ChangePasswordView()
       }
     }
     .background(Colors.background.swiftUIColor)
@@ -59,7 +68,9 @@ private extension SecurityHubView {
         trailingView: textWithAction(
           title: LFLocalizable.Authentication.SecurityChangePassword.title,
           isEnable: true,
-          action: {}
+          action: {
+            viewModel.didTapChangePasswordButton()
+          }
         )
       )
       if viewModel.isBiometricsCapability {

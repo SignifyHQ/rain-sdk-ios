@@ -47,6 +47,13 @@ let package = Package(
               "LFAuthentication",
               "TestHelpers"
             ]
-        )
+        ),
+        .testTarget(
+          name: "ChangePasswordViewModelTests",
+          dependencies: [
+            "LFAuthentication",
+            "TestHelpers"
+          ]
+      )
     ]
 )

@@ -486,6 +486,22 @@ public enum LFLocalizable {
       /// Touch ID
       public static let title = LFLocalizable.tr("Localizable", "authentication.biometrics_touchID.title", fallback: "Touch ID")
     }
+    public enum ChangePassword {
+      /// CHANGE PASSWORD
+      public static let title = LFLocalizable.tr("Localizable", "authentication.change_password.title", fallback: "CHANGE PASSWORD")
+      public enum Current {
+        /// Enter your current password
+        public static let placeholder = LFLocalizable.tr("Localizable", "authentication.change_password.current.placeholder", fallback: "Enter your current password")
+        /// Current password
+        public static let title = LFLocalizable.tr("Localizable", "authentication.change_password.current.title", fallback: "Current password")
+      }
+      public enum New {
+        /// Create new password
+        public static let placeholder = LFLocalizable.tr("Localizable", "authentication.change_password.new.placeholder", fallback: "Create new password")
+        /// New password
+        public static let title = LFLocalizable.tr("Localizable", "authentication.change_password.new.title", fallback: "New password")
+      }
+    }
     public enum CreatePassword {
       /// Must be at least 8 characters
       public static let desc1 = LFLocalizable.tr("Localizable", "authentication.create_password.desc_1", fallback: "Must be at least 8 characters")
