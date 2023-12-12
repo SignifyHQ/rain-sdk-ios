@@ -10,6 +10,9 @@ public enum AccountRoute {
   case getUser
   case createPassword(password: String)
   case changePassword(oldPassword: String, newPassword: String)
+  case resetPasswordRequest(phoneNumber: String)
+  case resetPasswordVerify(phoneNumber: String, code: String)
+  case resetPassword(phoneNumber: String, password: String, token: String)
   case loginWithPassword(phoneNumber: String, password: String)
   case getAvailableRewardCurrencies
   case getSelectedRewardCurrency
@@ -42,6 +45,12 @@ extension AccountRoute: LFRoute {
       return "/v1/user"
     case .createPassword:
       return "v1/user/create-password"
+    case .resetPasswordRequest:
+      return "/v1/auth/reset-password/otp/request"
+    case .resetPasswordVerify:
+      return "/v1/auth/reset-password/otp/verify"
+    case .resetPassword:
+      return "/v1/auth/reset-password"
     case .changePassword:
       return "v1/user/change-password"
     case .loginWithPassword:
@@ -83,6 +92,9 @@ extension AccountRoute: LFRoute {
     switch self {
     case .createPassword,
         .changePassword,
+        .resetPasswordRequest,
+        .resetPasswordVerify,
+        .resetPassword,
         .loginWithPassword,
         .createZeroHashAccount,
         .logout,
@@ -155,6 +167,21 @@ extension AccountRoute: LFRoute {
           "newPassword": newPassword
         ]
       ]
+    case .resetPasswordRequest(let phoneNumber):
+      return [
+        "phoneNumber": phoneNumber
+      ]
+    case .resetPasswordVerify(let phoneNumber, let code):
+      return [
+        "phoneNumber": phoneNumber,
+        "code": code
+      ]
+    case .resetPassword(let phoneNumber, let password, let token):
+      return [
+        "phone": phoneNumber,
+        "token": token,
+        "password": password
+      ]
     case .loginWithPassword(let phoneNumber, let password):
       return [
         "phoneNumber": phoneNumber,
@@ -198,6 +225,9 @@ extension AccountRoute: LFRoute {
     switch self {
     case .createPassword,
         .changePassword,
+        .resetPasswordRequest,
+        .resetPasswordVerify,
+        .resetPassword,
         .loginWithPassword,
         .createWalletAddress,
         .updateWalletAddress,

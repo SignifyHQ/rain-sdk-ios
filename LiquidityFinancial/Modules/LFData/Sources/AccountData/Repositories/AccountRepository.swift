@@ -4,7 +4,6 @@ import AccountDomain
 import LFUtilities
 
 public class AccountRepository: AccountRepositoryProtocol {
-  
   private let accountAPI: AccountAPIProtocol
   private let auth: AuthorizationManagerProtocol
   
@@ -27,6 +26,18 @@ public class AccountRepository: AccountRepositoryProtocol {
   
   public func changePassword(oldPassword: String, newPassword: String) async throws {
     try await accountAPI.changePassword(oldPassword: oldPassword, newPassword: newPassword)
+  }
+  
+  public func resetPasswordRequest(phoneNumber: String) async throws {
+    try await accountAPI.resetPasswordRequest(phoneNumber: phoneNumber)
+  }
+  
+  public func resetPasswordVerify(phoneNumber: String, code: String) async throws {
+    try await accountAPI.resetPasswordVerify(phoneNumber: phoneNumber, code: code)
+  }
+  
+  public func resetPassword(phoneNumber: String, password: String, token: String) async throws {
+    try await accountAPI.resetPassword(phoneNumber: phoneNumber, password: password, token: token)
   }
   
   public func loginWithPassword(phoneNumner: String, password: String) async throws -> PasswordLoginTokensEntity {

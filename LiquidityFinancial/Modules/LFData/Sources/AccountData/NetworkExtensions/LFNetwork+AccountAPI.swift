@@ -24,6 +24,30 @@ extension LFCoreNetwork: AccountAPIProtocol where R == AccountRoute {
     )
   }
   
+  public func resetPasswordRequest(phoneNumber: String) async throws {
+    try await requestNoResponse(
+      AccountRoute.resetPasswordRequest(phoneNumber: phoneNumber),
+      failure: LFErrorObject.self,
+      decoder: .apiDecoder
+    )
+  }
+  
+  public func resetPasswordVerify(phoneNumber: String, code: String) async throws {
+    try await requestNoResponse(
+      AccountRoute.resetPasswordVerify(phoneNumber: phoneNumber, code: code),
+      failure: LFErrorObject.self,
+      decoder: .apiDecoder
+    )
+  }
+  
+  public func resetPassword(phoneNumber: String, password: String, token: String) async throws {
+    try await requestNoResponse(
+      AccountRoute.resetPassword(phoneNumber: phoneNumber, password: password, token: token),
+      failure: LFErrorObject.self,
+      decoder: .apiDecoder
+    )
+  }
+  
   public func loginWithPassword(phoneNumber: String, password: String) async throws -> APIPasswordLoginTokens {
     try await request(
       AccountRoute.loginWithPassword(phoneNumber: phoneNumber, password: password),
