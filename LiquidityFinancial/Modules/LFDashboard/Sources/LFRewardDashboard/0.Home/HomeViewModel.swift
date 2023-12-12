@@ -30,6 +30,7 @@ public final class HomeViewModel: ObservableObject {
   @Published var navigation: Navigation?
   @Published var tabOptions: [TabOption] = [.cash, .rewards, .account]
   @Published var popup: Popup?
+  @Published var blockingPopup: BlockingPopup?
   @Published var toastMessage: String?
   
   lazy var deviceRegisterUseCase: DeviceRegisterUseCaseProtocol = {
@@ -62,6 +63,7 @@ public final class HomeViewModel: ObservableObject {
   func onAppear() {
     logincustomerSupportService()
     checkShouldShowNotification()
+    checkIfPasswordIsSet()
   }
 }
 
@@ -149,6 +151,7 @@ private extension HomeViewModel {
       do {
         let user = try await accountRepository.getUser()
         handleDataUser(user: user)
+        checkIfPasswordIsSet()
       } catch {
         log.error(error.localizedDescription)
       }
@@ -201,6 +204,23 @@ extension HomeViewModel {
     }
   }
   
+  // TODO(Volodymyr): Enable this code before release or handle with feature flag later
+  func checkIfPasswordIsSet() {
+//    guard let userID = accountDataManager.userInfomationData.userID,
+//          userID.isEmpty == false
+//    else {
+//      return
+//    }
+//
+//    let userData = accountDataManager.userInfomationData as? UserInfomationData
+//    let missingSteps = userData?.missingStepsEnum ?? []
+//
+//    if missingSteps.contains(.createPassword),
+//       blockingPopup != .enhancedSecurity {
+//      blockingPopup = .enhancedSecurity
+//    }
+  }
+  
   func pushFCMTokenIfNeed() {
     guard hadPushToken == false else { return }
     Task { @MainActor in
@@ -230,9 +250,18 @@ extension HomeViewModel {
       }
     }
   }
+  
+  func enhancedSecurityPopupAction() {
+    clearBlockingPopup()
+    navigation = .createPassword
+  }
 
   func clearPopup() {
     popup = nil
+  }
+  
+  func clearBlockingPopup() {
+    blockingPopup = nil
   }
   
   func openTransactionId(_ id: String, accountId: String) {
@@ -272,9 +301,14 @@ extension HomeViewModel {
     case editRewards
     case profile
     case transactionDetail(id: String, accountId: String)
+    case createPassword
   }
   
   enum Popup {
     case notifications
+  }
+  
+  enum BlockingPopup {
+    case enhancedSecurity
   }
 }

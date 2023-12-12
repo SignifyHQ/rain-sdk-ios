@@ -17,6 +17,7 @@ public struct UserInfomationData: Codable, UserInfomationDataProtocol {
   public var userSelectedFundraiserID: String?
   public var userRoundUpEnabled: Bool?
   public var accountReviewStatus: String?
+  public var missingSteps: [String]?
   
   public init() {}
   
@@ -42,6 +43,7 @@ public struct UserInfomationData: Codable, UserInfomationDataProtocol {
     self.userAccessLevel = enity.userAccessLevel
     self.userRoundUpEnabled = enity.userRoundUpEnabled
     self.userSelectedFundraiserID = enity.userSelectedFundraiserId
+    self.missingSteps = enity.missingSteps
   }
   
   public enum AccessLevel: String {
@@ -50,5 +52,17 @@ public struct UserInfomationData: Codable, UserInfomationDataProtocol {
   
   public var accessLevel: AccessLevel {
     AccessLevel(rawValue: userAccessLevel ?? "") ?? .NONE
+  }
+  
+  public enum MissingStepsEnum: String {
+    case createPassword = "CREATE_PASSWORD"
+  }
+  
+  public var missingStepsEnum: [MissingStepsEnum]? {
+    guard let value = missingSteps else { return nil }
+    return value
+      .compactMap { string in
+        MissingStepsEnum(rawValue: string)
+      }
   }
 }

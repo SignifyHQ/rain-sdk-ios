@@ -142,6 +142,10 @@ public class AccountDataManager: AccountDataStorageProtocol {
     self.userInfomationData.referralLink = referralLink
   }
   
+  public func update(missingSteps: [String]?) {
+    self.userInfomationData.missingSteps = missingSteps
+  }
+  
   public func stored(phone: String) {
     UserDefaults.phoneNumber = phone
   }

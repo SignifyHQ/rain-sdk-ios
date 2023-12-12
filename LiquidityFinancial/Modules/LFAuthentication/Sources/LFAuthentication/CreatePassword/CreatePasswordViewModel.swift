@@ -17,11 +17,10 @@ public final class CreatePasswordViewModel: ObservableObject {
   
   @Published var isLoading: Bool = false
   @Published var toastMessage: String?
+  @Published var shouldDismiss: Bool = false
   
   @Published var passwordString: String = ""
-  @Published var confirmPasswordString: String = ""
   
-  @Published var doPasswordsMatch: Bool = false
   @Published var isLengthCorrect: Bool = false
   @Published var containsSpecialCharacters: Bool = false
   @Published var containsLowerAndUpperCase: Bool = false
@@ -34,7 +33,7 @@ public final class CreatePasswordViewModel: ObservableObject {
   }()
   
   lazy var getUserUseCase: GetUserUseCaseProtocol = {
-    GetUserUseCase(repository: accountRepository, dataManager: accountDataManager)
+    GetUserUseCase(repository: accountRepository)
   }()
 
   init() {
@@ -56,7 +55,10 @@ public final class CreatePasswordViewModel: ObservableObject {
       
       do {
         try await createPasswordUseCase.execute(password: passwordString)
-        let _ = try await getUserUseCase.execute()
+        let user = try await getUserUseCase.execute()
+        accountDataManager.update(missingSteps: user.missingSteps)
+        
+        shouldDismiss = true
       } catch {
         toastMessage = error.userFriendlyMessage
         log.error(error.localizedDescription)
@@ -65,13 +67,6 @@ public final class CreatePasswordViewModel: ObservableObject {
   }
   
   func observePasswordInput() {
-    Publishers
-      .CombineLatest($passwordString, $confirmPasswordString)
-      .map { passwordString, confirmPasswordString in
-        passwordString == confirmPasswordString
-      }
-      .assign(to: &$doPasswordsMatch)
-    
     $passwordString
       .map { password in
         password.count >= 8
@@ -93,22 +88,9 @@ public final class CreatePasswordViewModel: ObservableObject {
   
   func observePasswordValidation() {
     Publishers
-      .CombineLatest3($passwordString, $confirmPasswordString, $doPasswordsMatch)
-      .map { passwordString, confirmPasswordString, doPasswordsMatch in
-        guard !passwordString.isEmpty,
-              !confirmPasswordString.isEmpty
-        else {
-          return false
-        }
-        
-        return !doPasswordsMatch
-      }
-      .assign(to: &$isDontMatchErrorShown)
-    
-    Publishers
-      .CombineLatest4($doPasswordsMatch, $isLengthCorrect, $containsSpecialCharacters, $containsLowerAndUpperCase)
-      .map { doPasswordsMatch, isLengthCorrect, containsSpecialCharacters, containsLowerAndUpperCase in
-        doPasswordsMatch && isLengthCorrect && containsSpecialCharacters && containsLowerAndUpperCase
+      .CombineLatest3($isLengthCorrect, $containsSpecialCharacters, $containsLowerAndUpperCase)
+      .map { isLengthCorrect, containsSpecialCharacters, containsLowerAndUpperCase in
+        isLengthCorrect && containsSpecialCharacters && containsLowerAndUpperCase
       }
       .assign(to: &$isContinueEnabled)
   }

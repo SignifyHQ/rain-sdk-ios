@@ -3,6 +3,7 @@ import XCTest
 @testable import LFAuthentication
 
 // Test cases for CreatePasswordViewModelTests
+@MainActor
 final class CreatePasswordViewModelTests: XCTestCase {
   
   var viewModel: CreatePasswordViewModel!
@@ -82,34 +83,10 @@ final class CreatePasswordViewModelTests: XCTestCase {
     expect(self.viewModel.containsLowerAndUpperCase).to(beTrue())
   }
   
-  // Testing password validation when passwords match but conditions are not met
-  func test_isContinueEnabled_withMatchingButInvalidInput_shouldFail() {
-    // Given the password string which does not contain a special character
-    viewModel.passwordString = "CorrectPassword"
-    // And the confirm password string which matches the password string
-    viewModel.confirmPasswordString = "CorrectPassword"
-    // When observing the password input and validation
-    // Then the isContinueEnabled var should be equal to false (Continue button not active)
-    expect(self.viewModel.isContinueEnabled).to(beFalse())
-  }
-  
-  // Testing password validation when conditions are met but passwords don't match
-  func test_isContinueEnabled_withValidButNotMatchingInput_shouldFail() {
-    // Given the password string which meets all the conditions
-    viewModel.passwordString = "CorrectPassword$"
-    // And the confirm password string which also meets all the conditions but doesn't match the password string
-    viewModel.confirmPasswordString = "CorrectPassword#"
-    // When observing the password input and validation
-    // Then the isContinueEnabled var should be equal to false (Continue button not active)
-    expect(self.viewModel.isContinueEnabled).to(beFalse())
-  }
-  
   // Testing password validation when all contitions are met
   func test_isContinueEnabled_withValidInput_shouldSucceed() {
     // Given the password string which meets all conditions
     viewModel.passwordString = "CorrectPassword$"
-    // And the confirm password string which is equal to the password string
-    viewModel.confirmPasswordString = "CorrectPassword$"
     // When observing the password input and validation
     // Then the isContinueEnabled var should be equal to true (Continue button is active)
     expect(self.viewModel.isContinueEnabled).to(beTrue())

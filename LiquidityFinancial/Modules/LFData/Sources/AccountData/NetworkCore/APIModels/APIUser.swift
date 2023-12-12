@@ -23,6 +23,7 @@ public struct APIUser: Codable {
   public let referralLink, userRewardType, userAccessLevel: String?
   public let userSelectedFundraiserId: String?
   public let numberOfDevices: Int?
+  public let missingSteps: [String]?
 }
 
 extension APIAddress: AddressEntity {}

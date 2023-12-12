@@ -5,6 +5,7 @@ import LFUtilities
 import SwiftUI
 
 public struct CreatePasswordView: View {
+  @Environment(\.dismiss) var dismiss
   
   enum Focus: Int, Hashable {
     case enterPass
@@ -29,7 +30,6 @@ public struct CreatePasswordView: View {
           VStack(alignment: .leading) {
             titleView
             enterPassword
-            reenterPassword
             
             if viewModel.isDontMatchErrorShown {
               passwordMatchError
@@ -45,9 +45,18 @@ public struct CreatePasswordView: View {
     }
     .navigationTitle("")
     .background(Colors.background.swiftUIColor)
-    .defaultToolBar(icon: .support) {
-      viewModel.openSupportScreen()
-    }
+    .defaultToolBar(
+      icon: .support,
+      openSupportScreen: {
+        viewModel.openSupportScreen()
+      }
+    )
+    .onChange(
+      of: viewModel.shouldDismiss,
+      perform: { _ in
+        dismiss()
+      }
+    )
     .popup(item: $viewModel.toastMessage, style: .toast) {
       ToastView(toastMessage: $0)
     }
@@ -152,30 +161,13 @@ extension CreatePasswordView {
         focus: .enterPass,
         nextFocus: .reEnterPass
       )
+      .tint(Colors.label.swiftUIColor)
       .disabled(viewModel.isLoading)
       .onAppear {
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
           keyboardFocus = .enterPass
         }
       }
-    }
-  }
-  
-  var reenterPassword: some View {
-    VStack(alignment: .leading) {
-      Text(LFLocalizable.Authentication.CreatePassword.subTitle3)
-        .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.textFieldHeader.value))
-        .foregroundColor(Colors.label.swiftUIColor)
-        .opacity(0.75)
-        .padding(.top, 16)
-        .padding(.leading, 4)
-      
-      textField(
-        placeholder: LFLocalizable.Authentication.CreatePassword.subTitle4,
-        value: $viewModel.confirmPasswordString,
-        focus: .reEnterPass
-      )
-      .disabled(viewModel.isLoading)
     }
   }
   

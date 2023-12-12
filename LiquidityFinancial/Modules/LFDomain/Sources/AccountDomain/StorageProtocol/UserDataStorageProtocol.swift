@@ -54,6 +54,7 @@ public protocol AccountDataStorageProtocol {
   func update(country: String?)
   func update(userID: String?)
   func update(referralLink: String?)
+  func update(missingSteps: [String]?)
   func stored(phone: String)
   func stored(sessionID: String)
   func clearUserSession()
@@ -98,4 +99,5 @@ public protocol UserInfomationDataProtocol {
   var userSelectedFundraiserID: String? { get set }
   var userRoundUpEnabled: Bool? { get set }
   var accountReviewStatus: String? { get set }
+  var missingSteps: [String]? { get set }
 }

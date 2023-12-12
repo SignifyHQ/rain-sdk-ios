@@ -586,6 +586,15 @@ public enum LFLocalizable {
         return LFLocalizable.tr("Localizable", "authentication.setup_biometrics.title", String(describing: p1), String(describing: p2), fallback: "Do you want to allow “%@“ to use %@?")
       }
     }
+    public enum SetupEnhancedSecurity {
+      /// We are improving the safety and security of our products by adding several new features aimed to keep you and your financial information safe.
+      /// 
+      /// • SET UP FaceID or TouchID
+      /// • Create Password
+      public static let body = LFLocalizable.tr("Localizable", "authentication.setup_enhanced_security.body", fallback: "We are improving the safety and security of our products by adding several new features aimed to keep you and your financial information safe.\n\n• SET UP FaceID or TouchID\n• Create Password")
+      /// SETUP ENHANCED SECURITY
+      public static let title = LFLocalizable.tr("Localizable", "authentication.setup_enhanced_security.title", fallback: "SETUP ENHANCED SECURITY")
+    }
   }
   public enum BalanceAlert {
     /// Deposit

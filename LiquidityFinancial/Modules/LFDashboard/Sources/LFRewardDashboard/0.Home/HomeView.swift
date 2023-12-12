@@ -10,6 +10,7 @@ import SolidOnboarding
 import LFSolidBank
 import Factory
 import Services
+import LFAuthentication
 
 public struct HomeView: View {
   
@@ -66,12 +67,20 @@ public struct HomeView: View {
           accountID: accountId,
           transactionId: id
         )
+      case .createPassword:
+        CreatePasswordView()
       }
     }
     .popup(item: $viewModel.popup) { popup in
       switch popup {
       case .notifications:
         notificationsPopup
+      }
+    }
+    .popup(item: $viewModel.blockingPopup, dismissMethods: []) { popup in
+      switch popup {
+      case .enhancedSecurity:
+        enhancedSecurityPopup
       }
     }
     .onChange(of: scenePhase, perform: { newValue in
@@ -161,5 +170,15 @@ private extension HomeView {
       )
     )
   }
-
+  
+  private var enhancedSecurityPopup: some View {
+    LiquidityAlert(
+      title: LFLocalizable.Authentication.SetupEnhancedSecurity.title,
+      message: LFLocalizable.Authentication.SetupEnhancedSecurity.body,
+      primary: .init(
+        text: LFLocalizable.Button.Continue.title,
+        action: viewModel.enhancedSecurityPopupAction
+      )
+    )
+  }
 }

@@ -1048,6 +1048,9 @@ contact support.";
 "accountMigrationView.description" = "Your account is currently in the migration process. Please be patient; you will be able to log in to your account soon.";
 
 // MARK: - Authentication View
+"authentication.setup_enhanced_security.title" = "SETUP ENHANCED SECURITY";
+"authentication.setup_enhanced_security.body" = "We are improving the safety and security of our products by adding several new features aimed to keep you and your financial information safe.\n\n• SET UP FaceID or TouchID\n• Create Password";
+
 "authentication.create_password.title" = "create password";
 "authentication.create_password.sub_title_1" = "Create password";
 "authentication.create_password.sub_title_2" = "Enter password";
