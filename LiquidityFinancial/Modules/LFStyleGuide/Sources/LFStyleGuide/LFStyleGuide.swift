@@ -25,6 +25,7 @@ extension LFStyleGuide {
       case CauseCard
       case PrideCard
       case CauseCardNetspend
+      case DogeCardNobank
     }
   }
   

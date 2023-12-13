@@ -18,7 +18,7 @@ public final class NetworkUtilities {
     switch NetworkUtilities.target {
     case .Avalanche: return APIConstants.avalencheID
     case .Cardano: return APIConstants.cardanoID
-    case .DogeCard: return APIConstants.dogeCardID
+    case .DogeCard, .DogeCardNobank: return APIConstants.dogeCardID
     case .CauseCard, .CauseCardNetspend: return APIConstants.causeCardID
     case .PrideCard: return APIConstants.prideCardID
     case .none:
@@ -37,6 +37,7 @@ extension NetworkUtilities {
       case CauseCard
       case PrideCard
       case CauseCardNetspend
+      case DogeCardNobank
     }
   }
   

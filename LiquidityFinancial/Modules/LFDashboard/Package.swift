@@ -14,6 +14,9 @@ let package = Package(
       name: "LFRewardDashboard",
       targets: ["LFRewardDashboard"]),
     .library(
+      name: "LFNoBankDashboard",
+      targets: ["LFNoBankDashboard"]),
+    .library(
       name: "BaseDashboard",
       targets: ["BaseDashboard"])
   ],
@@ -93,6 +96,21 @@ let package = Package(
       ],
       plugins: [
         .plugin(name: "SwiftGenPlugin", package: "SwiftGenPlugin")
+      ]
+    ),
+    .target(
+      name: "LFNoBankDashboard",
+      dependencies: [
+        "LFUtilities", "LFStyleGuide", "LFLocalizable", "LFAccessibility", "BaseDashboard", "LFTransaction", "LFCryptoChart", "CodeScanner", "LFWalletAddress",
+        .product(name: "OnboardingData", package: "LFData"),
+        .product(name: "LFNetspendBank", package: "LFBank"),
+        .product(name: "NetSpendData", package: "LFData"),
+        .product(name: "ZerohashData", package: "LFData"),
+        .product(name: "DevicesData", package: "LFData"),
+        .product(name: "AuthorizationManager", package: "LFNetwork"),
+        .product(name: "Services", package: "LFServices"),
+        .product(name: "LFNetSpendCard", package: "LFCard"),
+        .product(name: "LFAuthentication", package: "LFAuthentication")
       ]
     ),
     .testTarget(

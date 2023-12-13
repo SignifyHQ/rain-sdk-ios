@@ -39,6 +39,7 @@ extension LFUtilities {
       case CauseCard
       case PrideCard
       case CauseCardNetspend
+      case DogeCardNobank
     }
   }
   
