@@ -266,16 +266,6 @@ private extension AccountsView {
           viewModel.navigation = .debugMenu
         }
       }
-      if bankServiceConfig.supportDisputeTransaction {
-        ArrowButton(
-          image: GenImages.CommonImages.Accounts.icDispute.swiftUIImage,
-          title: LFLocalizable.Button.DisputeTransaction.title,
-          value: nil,
-          isLoading: $viewModel.isLoadingDisputeTransaction
-        ) {
-          viewModel.getDisputeAuthorizationCode()
-        }
-      }
     }
   }
 }

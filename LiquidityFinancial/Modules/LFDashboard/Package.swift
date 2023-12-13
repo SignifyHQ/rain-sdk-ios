@@ -89,7 +89,8 @@ let package = Package(
         .product(name: "LFSolidCard", package: "LFCard"),
         .product(name: "Services", package: "LFServices"),
         .product(name: "SolidOnboarding", package: "LFOnboarding"),
-        .product(name: "BiometricsManager", package: "LFAuthentication")
+        .product(name: "BiometricsManager", package: "LFAuthentication"),
+        .product(name: "LFAuthentication", package: "LFAuthentication")
       ],
       resources: [
         .process("ZResources")

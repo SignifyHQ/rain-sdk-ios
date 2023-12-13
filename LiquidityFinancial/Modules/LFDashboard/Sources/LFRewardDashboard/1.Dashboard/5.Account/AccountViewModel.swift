@@ -25,9 +25,7 @@ class AccountViewModel: ObservableObject {
     case legal(URL)
   }
   
-  @LazyInjected(\.nsPersonRepository) var nsPersonRepository
   @LazyInjected(\.externalFundingRepository) var externalFundingRepository
-  @LazyInjected(\.netspendDataManager) var netspendDataManager
   @LazyInjected(\.accountDataManager) var accountDataManager
   @LazyInjected(\.customerSupportService) var customerSupportService
   @LazyInjected(\.pushNotificationService) var pushNotificationService
@@ -47,10 +45,6 @@ class AccountViewModel: ObservableObject {
   @Published var achInformation: ACHModel = .default
   @Published var sheet: Sheet?
   @Published var linkedContacts: [LinkedSourceContact] = []
-  
-  lazy var getAuthorizationUseCase: NSGetAuthorizationCodeUseCaseProtocol = {
-    NSGetAuthorizationCodeUseCase(repository: nsPersonRepository)
-  }()
   
   private(set) var addFundsViewModel = AddFundsViewModel()
   private var cancellable: Set<AnyCancellable> = []
@@ -121,43 +115,6 @@ extension AccountViewModel {
   
   func pushFCMTokenIfNeed() {
     dashboardRepository.pushFCMTokenIfNeed()
-  }
-  
-  func getATMAuthorizationCode() {
-    Task {
-      defer {
-        isLoading = false
-        isDisableView = false
-      }
-      isLoading = true
-      isDisableView = true
-      do {
-        let sessionID = accountDataManager.sessionID
-        let code = try await getAuthorizationUseCase.execute(sessionId: sessionID)
-        navigation = .atmLocation(code.authorizationCode)
-      } catch {
-        toastMessage = error.localizedDescription
-      }
-    }
-  }
-  
-  func getDisputeAuthorizationCode() {
-    Task {
-      defer {
-        isLoadingDisputeTransaction = false
-        isDisableView = false
-      }
-      isLoadingDisputeTransaction = true
-      isDisableView = true
-      do {
-        guard let session = netspendDataManager.sdkSession else { return }
-        let code = try await getAuthorizationUseCase.execute(sessionId: session.sessionId)
-        guard let id = accountDataManager.externalAccountID else { return }
-        navigation = .disputeTransaction(id, code.authorizationCode)
-      } catch {
-        toastMessage = error.localizedDescription
-      }
-    }
   }
   
   func subscribeLinkedContacts() {
