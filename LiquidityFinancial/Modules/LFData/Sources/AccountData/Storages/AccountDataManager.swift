@@ -50,6 +50,15 @@ public class AccountDataManager: AccountDataStorageProtocol {
     }
   }
   
+  public var isBiometricUsageEnabled: Bool {
+    get {
+      UserDefaults.isBiometricUsageEnabled
+    }
+    set {
+      UserDefaults.isBiometricUsageEnabled = newValue
+    }
+  }
+  
   public var addressDetail: String {
     let userData = self.userInfomationData
     let stateCode = "\(userData.state ?? "") - \(userData.postalCode ?? "")"

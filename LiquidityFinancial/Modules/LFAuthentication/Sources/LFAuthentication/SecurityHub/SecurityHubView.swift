@@ -5,12 +5,14 @@ import LFLocalizable
 
 public struct SecurityHubView: View {
   @StateObject private var viewModel = SecurityHubViewModel()
+  @Environment(\.dismiss) private var dismiss
   
   public init() {}
   
   public var body: some View {
     ScrollView(showsIndicators: false) {
       VStack(alignment: .leading, spacing: 24) {
+        customNavigationBar
         Text(LFLocalizable.Authentication.Security.title.uppercased())
           .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.main.value))
           .foregroundColor(Colors.label.swiftUIColor)
@@ -19,10 +21,20 @@ public struct SecurityHubView: View {
       }
       .padding(.horizontal, 30)
       .padding(.bottom, 16)
-      .popup(item: $viewModel.toastMessage, style: .toast) {
-        ToastView(toastMessage: $0)
-      }
     }
+    .popup(item: $viewModel.toastMessage, style: .toast) {
+      ToastView(toastMessage: $0)
+    }
+    .popup(
+      item: $viewModel.popup,
+      dismissAction: {
+        viewModel.resetBiometricToggleState()
+      }) { item in
+        switch item {
+        case .biometric:
+          setupBiometricsPopup
+        }
+      }
     .navigationLink(
       item: $viewModel.navigation
     ) { navigation in
@@ -31,12 +43,27 @@ public struct SecurityHubView: View {
         ChangePasswordView()
       }
     }
+    .blur(radius: viewModel.popup != nil ? 16 : 0)
+    .navigationBarBackButtonHidden()
     .background(Colors.background.swiftUIColor)
   }
 }
 
 // MARK: - Private View Components
 private extension SecurityHubView {
+  var customNavigationBar: some View {
+    HStack {
+      Button {
+        dismiss()
+      } label: {
+        GenImages.CommonImages.icBack.swiftUIImage
+      }
+      .padding(.leading, 20)
+      Spacer()
+    }
+    .padding(.horizontal, -30)
+  }
+  
   var firstSectionView: some View {
     VStack(spacing: 16) {
       GenImages.CommonImages.dash.swiftUIImage
@@ -74,7 +101,12 @@ private extension SecurityHubView {
         )
       )
       if viewModel.isBiometricsCapability {
-        fullSizeToggleButton(title: viewModel.biometricType.title)
+        fullSizeToggleButton(
+          title: viewModel.biometricType.title,
+          isOn: $viewModel.isBiometricEnabled
+        ) {
+          viewModel.didBiometricToggleStateChanged()
+        }
       }
     }
   }
@@ -145,20 +177,35 @@ private extension SecurityHubView {
     .disabled(!isEnable)
   }
   
-  func fullSizeToggleButton(title: String) -> some View {
+  func fullSizeToggleButton(title: String, isOn: Binding<Bool>, toggleAction: (() -> Void)?) -> some View {
     HStack {
       Text(title)
         .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.medium.value))
         .foregroundColor(Colors.label.swiftUIColor)
       Spacer()
-      Toggle("", isOn: .constant(true))
-        .toggleStyle(GradientToggleStyle())
+      Toggle("", isOn: isOn)
+        .toggleStyle(GradientToggleStyle(didToggleStateChanged: toggleAction))
     }
     .padding(.horizontal, 16)
     .frame(height: 56)
     .background(Colors.secondaryBackground.swiftUIColor.cornerRadius(10))
   }
   
+  var setupBiometricsPopup: some View {
+    SetupBiometricPopup(
+      biometricType: viewModel.biometricType,
+      primaryAction: {
+        viewModel.allowBiometricAuthentication()
+      },
+      secondaryAction: {
+        viewModel.declineBiometricAuthentication()
+      }
+    )
+  }
+}
+
+// MARK: - View Helpers
+private extension SecurityHubView {
   var gradientColor: [Color] {
     switch LFStyleGuide.target {
     case .CauseCard:

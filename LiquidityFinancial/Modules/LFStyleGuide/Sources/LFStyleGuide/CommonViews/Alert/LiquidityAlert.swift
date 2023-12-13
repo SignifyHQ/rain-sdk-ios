@@ -127,6 +127,11 @@ extension LiquidityAlert {
     let asset: Image
     let size: CGSize
     
+    public init(asset: Image, size: CGSize) {
+      self.asset = asset
+      self.size = size
+    }
+    
     public static var appLogo: Self {
       .init(asset: GenImages.Images.icLogo.swiftUIImage, size: .init(80))
     }

@@ -4,17 +4,20 @@ import Foundation
 import BiometricsManager
 import LFLocalizable
 import LFUtilities
+import SwiftUI
 
 @MainActor
 public final class SecurityHubViewModel: ObservableObject {
   @LazyInjected(\.accountDataManager) var accountDataManager
   @LazyInjected(\.biometricsManager) var biometricsManager
 
+  @Published var isBiometricEnabled: Bool = false
   @Published var toastMessage: String?
-  @Published var navigation: Navigation?
   
   @Published var biometricType: BiometricType = .none
-  
+  @Published var navigation: Navigation?
+  @Published var popup: Popup?
+
   private var cancellables: Set<AnyCancellable> = []
 
   var email: SecurityInformation {
@@ -55,11 +58,43 @@ extension SecurityHubViewModel {
   func didTapChangePasswordButton() {
     navigation = .changePassword
   }
-}
-
-extension SecurityHubViewModel {
-  enum Navigation {
-    case changePassword
+  
+  func resetBiometricToggleState() {
+    isBiometricEnabled = accountDataManager.isBiometricUsageEnabled
+  }
+  
+  func declineBiometricAuthentication() {
+    popup = nil
+    isBiometricEnabled = false
+  }
+  
+  func didBiometricToggleStateChanged() {
+    if isBiometricEnabled {
+      withAnimation {
+        popup = .biometric
+      }
+    } else {
+      accountDataManager.isBiometricUsageEnabled = false
+    }
+  }
+  
+  func allowBiometricAuthentication() {
+    popup = nil
+    biometricsManager.performBiometricsCheck()
+      .sink(receiveCompletion: { [weak self] completion in
+        guard let self else { return }
+        switch completion {
+        case .finished:
+          log.debug("Biometrics capabxility check completed.")
+        case .failure(let error):
+          self.handleBiometricAuthenticationError(error: error)
+        }
+      }, receiveValue: { [weak self] result in
+        guard let self else { return }
+        self.biometricType = result.type
+        self.accountDataManager.isBiometricUsageEnabled = result.isEnabled
+      })
+      .store(in: &cancellables)
   }
 }
 
@@ -74,20 +109,53 @@ private extension SecurityHubViewModel {
         case .failure(let error):
           self?.toastMessage = error.errorDescription
         }
-      }, receiveValue: { [weak self] biometricType in
-        self?.biometricType = biometricType
+      }, receiveValue: { [weak self] result in
+        guard let self else { return }
+        self.biometricType = result.type
+        self.accountDataManager.isBiometricUsageEnabled = self.accountDataManager.isBiometricUsageEnabled && result.isEnabled
+        self.isBiometricEnabled = self.accountDataManager.isBiometricUsageEnabled
       })
       .store(in: &cancellables)
   }
+  
+  func openDeviceSettings() {
+    if let url = URL(string: UIApplication.openSettingsURLString) {
+      UIApplication.shared.open(url, options: [:], completionHandler: nil)
+    }
+  }
+  
+  func handleBiometricAuthenticationError(error: BiometricError) {
+    accountDataManager.isBiometricUsageEnabled = false
+    isBiometricEnabled = false
+    switch error {
+    case .biometryNotAvailable:
+      openDeviceSettings()
+    case .userCancel:
+      break
+    default:
+      toastMessage = error.localizedDescription
+    }
+  }
 }
 
-struct SecurityInformation {
-  let value: String
-  let isVerified: Bool
+// MARK: - Types
+extension SecurityHubViewModel {
+  struct SecurityInformation {
+    let value: String
+    let isVerified: Bool
+    
+    var status: String {
+      isVerified
+      ? LFLocalizable.Authentication.SecurityVerified.title
+      : LFLocalizable.Authentication.SecurityVerify.title
+    }
+  }
   
-  var status: String {
-    isVerified
-    ? LFLocalizable.Authentication.SecurityVerified.title
-    : LFLocalizable.Authentication.SecurityVerify.title
+  enum Navigation {
+    case changePassword
+  }
+  
+  enum Popup {
+    case biometric
   }
 }

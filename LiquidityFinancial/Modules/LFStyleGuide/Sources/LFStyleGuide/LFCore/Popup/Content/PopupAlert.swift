@@ -12,9 +12,11 @@ public struct PopupAlert<Content: View>: View {
   private var dismiss
   
   private let content: () -> Content
+  private let padding: CGFloat
 
-  public init(@ViewBuilder content: @escaping () -> Content) {
+  public init(padding: CGFloat = 30, @ViewBuilder content: @escaping () -> Content) {
     self.content = content
+    self.padding = padding
   }
 
   public var body: some View {
@@ -24,7 +26,7 @@ public struct PopupAlert<Content: View>: View {
           .multilineTextAlignment(textAlignment)
           .fixedSize(horizontal: false, vertical: true)
       }
-      .padding([.horizontal, .bottom], 30)
+      .padding([.horizontal, .bottom], padding)
       .padding(.top, 20)
       .frame(width: preferredWidth)
       .background(Colors.secondaryBackground.swiftUIColor)

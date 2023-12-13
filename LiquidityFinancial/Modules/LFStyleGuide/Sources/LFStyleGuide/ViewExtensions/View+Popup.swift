@@ -9,17 +9,20 @@ public extension View {
   ///   - style: The style of the popup.
   ///   - dismissMethods: An option set specifying the dismissal methods for the
   ///     popup.
+  ///   - dismissAction: An action to perform when popup dismiss by user
   ///   - content: A closure returning the content of the popup.
   func popup<Content: View>(
     isPresented: Binding<Bool>,
     style: Popup.Style = .alert,
     dismissMethods: Popup.DismissMethods = [.tapOutside],
+    dismissAction: (() -> Void)? = nil,
     @ViewBuilder content: @escaping () -> Content
   ) -> some View {
     modifier(PopupViewModifier(
       isPresented: isPresented,
       style: style,
       dismissMethods: dismissMethods,
+      dismissAction: dismissAction,
       content: content
     ))
   }
@@ -34,11 +37,13 @@ public extension View {
   ///   - style: The style of the popup.
   ///   - dismissMethods: An option set specifying the dismissal methods for the
   ///     popup.
+  ///   - dismissAction: An action to perform when popup dismiss by user
   ///   - content: A closure returning the content of the popup.
   func popup<Item, Content: View>(
     item: Binding<Item?>,
     style: Popup.Style = .alert,
     dismissMethods: Popup.DismissMethods = [.tapOutside],
+    dismissAction: (() -> Void)? = nil,
     @ViewBuilder content: @escaping (Item) -> Content
   ) -> some View {
     popup(
@@ -51,6 +56,7 @@ public extension View {
       },
       style: style,
       dismissMethods: dismissMethods,
+      dismissAction: dismissAction,
       content: {
         if let item = item.wrappedValue {
           content(item)
@@ -66,18 +72,20 @@ private struct PopupViewModifier<PopupContent: View>: ViewModifier {
     isPresented: Binding<Bool>,
     style: Popup.Style,
     dismissMethods: Popup.DismissMethods,
+    dismissAction: (() -> Void)? = nil,
     @ViewBuilder content: @escaping () -> PopupContent
   ) {
     _isPresented = isPresented
     self.style = style
     self.dismissMethods = dismissMethods
+    self.dismissAction = dismissAction
     self.content = content
   }
   
   func body(content: Content) -> some View {
     content
       .window(isPresented: $isPresented, style: style.windowStyle) {
-        popupContent
+        popupContent(dismissAction: dismissAction)
       }
       .onChange(of: isPresented) { isPresented in
         if isPresented {
@@ -103,7 +111,10 @@ private struct PopupViewModifier<PopupContent: View>: ViewModifier {
   /// A property indicating all of the ways popup can be dismissed.
   private let dismissMethods: Popup.DismissMethods
   
-  private var popupContent: some View {
+  /// An action to perform when popup dismiss by user
+  private let dismissAction: (() -> Void)?
+  
+  private func popupContent(dismissAction: (() -> Void)?) -> some View {
     ZStack {
       if isPresented {
         if style.allowDimming {
@@ -112,6 +123,7 @@ private struct PopupViewModifier<PopupContent: View>: ViewModifier {
             .frame(max: .infinity)
             .ignoresSafeArea()
             .onTapGestureIf(dismissMethods.contains(.tapOutside)) {
+              dismissAction?()
               isPresented = false
             }
             .zIndex(1)
@@ -122,6 +134,7 @@ private struct PopupViewModifier<PopupContent: View>: ViewModifier {
           .frame(max: .infinity, alignment: style.alignment)
           .ignoresSafeArea(edges: style.ignoresSafeAreaEdges)
           .onTapGestureIf(dismissMethods.contains(.tapInside)) {
+            dismissAction?()
             isPresented = false
           }
           .zIndex(2)
@@ -130,7 +143,12 @@ private struct PopupViewModifier<PopupContent: View>: ViewModifier {
     }
     .animation(style.animation, value: isPresented)
     .popupDismissAction(
-      dismissMethods.contains(.xmark) ? PopupDismissAction { isPresented = false } : nil
+      dismissMethods.contains(.xmark)
+      ? PopupDismissAction {
+        dismissAction?()
+        isPresented = false
+      }
+      : nil
     )
   }
   

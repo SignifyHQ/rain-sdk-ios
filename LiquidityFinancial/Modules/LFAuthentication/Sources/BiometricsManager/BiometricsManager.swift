@@ -17,12 +17,14 @@ class BiometricsManager: BiometricsManagerProtocol {
 
 // MARK: - Functions
 extension BiometricsManager {
-  func checkBiometricsCapability() -> AnyPublisher<BiometricType, BiometricError> {
-    let isCapability = context.canEvaluatePolicy(policy, error: &error)
+  func checkBiometricsCapability() -> AnyPublisher<Biometric, BiometricError> {
+    let isBiometricEnabled = context.canEvaluatePolicy(policy, error: &error)
     let biometryType = BiometricType.getType(from: context.biometryType)
+    let isSupportedBiometric = !(biometryType == .none || biometryType == .unknown)
     
-    if isCapability {
-      return Just(biometryType)
+    if isSupportedBiometric {
+      let result = Biometric(isEnabled: isBiometricEnabled, type: biometryType)
+      return Just(result)
         .setFailureType(to: BiometricError.self)
         .eraseToAnyPublisher()
     } else {
@@ -31,18 +33,18 @@ extension BiometricsManager {
     }
   }
   
-  func performBiometricsCheck() -> AnyPublisher<BiometricType, BiometricError> {
+  func performBiometricsCheck() -> AnyPublisher<Biometric, BiometricError> {
     checkBiometricsCapability()
-      .flatMap { [weak self] type -> AnyPublisher<BiometricType, BiometricError> in
+      .flatMap { [weak self] biometric -> AnyPublisher<Biometric, BiometricError> in
         guard let self = self else {
           return Fail(error: BiometricError.unknown).eraseToAnyPublisher()
         }
         
-        if type == .none {
+        if biometric.type == .none {
           return Fail(error: BiometricError.biometricError(from: self.error))
             .eraseToAnyPublisher()
         } else {
-          return self.performBiometricEvaluation(type: type)
+          return self.performBiometricEvaluation(biometric: biometric)
             .eraseToAnyPublisher()
         }
       }
@@ -52,7 +54,7 @@ extension BiometricsManager {
 
 // MARK: - Private Helper Functions
 private extension BiometricsManager {
-  func performBiometricEvaluation(type: BiometricType) -> AnyPublisher<BiometricType, BiometricError> {
+  func performBiometricEvaluation(biometric: Biometric) -> AnyPublisher<Biometric, BiometricError> {
     Future { promise in
       self.context.evaluatePolicy(self.policy, localizedReason: self.localizedReason) { success, error in
         DispatchQueue.main.async {
@@ -62,7 +64,7 @@ private extension BiometricsManager {
             return
           }
           
-          promise(.success(type))
+          promise(.success(biometric))
         }
       }
     }

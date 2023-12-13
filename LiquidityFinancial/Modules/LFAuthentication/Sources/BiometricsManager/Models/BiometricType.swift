@@ -16,7 +16,7 @@ public enum BiometricType {
       return .touchID
     case .faceID:
       return .faceID
-    @unknown default:
+    default:
       return .unknown
     }
   }

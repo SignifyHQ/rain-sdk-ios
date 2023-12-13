@@ -15,4 +15,5 @@ public extension Key {
   static let showRoundUpForCause: Key = "showRoundUpForCause"
   static let userCompleteOnboarding: Key = "userCompleteOnboarding"
   static let isFirstRun: Key = "isFirstRun"
+  static let isBiometricUsageEnabled: Key = "isBiometricUsageEnabled"
 }

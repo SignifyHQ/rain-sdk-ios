@@ -2,7 +2,11 @@ import Foundation
 import SwiftUI
 
 public struct GradientToggleStyle: ToggleStyle {
-  public init() {}
+  private let action: (() -> Void)?
+  
+  public init(didToggleStateChanged: (() -> Void)? = nil) {
+    self.action = didToggleStateChanged
+  }
   
   public func makeBody(configuration: Configuration) -> some View {
     ZStack {
@@ -29,6 +33,7 @@ public struct GradientToggleStyle: ToggleStyle {
           DragGesture().onEnded { _ in
             withAnimation {
               configuration.isOn.toggle()
+              action?()
             }
           }
         )
@@ -37,6 +42,7 @@ public struct GradientToggleStyle: ToggleStyle {
     .onTapGesture {
       withAnimation {
         configuration.isOn.toggle()
+        action?()
       }
     }
   }

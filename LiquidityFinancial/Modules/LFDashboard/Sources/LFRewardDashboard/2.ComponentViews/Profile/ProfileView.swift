@@ -209,6 +209,7 @@ private extension ProfileView {
         ArrowButton(image: GenImages.CommonImages.icWarning.swiftUIImage, title: LFLocalizable.Profile.DepositLimits.title, value: nil) {
           viewModel.depositLimitsTapped()
         }*/
+        /* TODO: - Will enable after implement feature flag
         ArrowButton(
           image: GenImages.CommonImages.icSecurity.swiftUIImage,
           title: LFLocalizable.Profile.Security.title,
@@ -216,6 +217,7 @@ private extension ProfileView {
         ) {
           viewModel.didTapSecurityButton()
         }
+         */
         ArrowButton(image: GenImages.CommonImages.icQuestion.swiftUIImage, title: LFLocalizable.Profile.Help.title, value: nil) {
           viewModel.helpTapped()
         }

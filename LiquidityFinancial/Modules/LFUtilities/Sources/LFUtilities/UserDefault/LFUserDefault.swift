@@ -6,31 +6,41 @@ import UIKit
 public struct LFUserDefault<T: PropertyListValue> {
   
   public let key: Key
-  
+    
   public let defaultValue: T
   
+  public let parameter: String
+  
   public var wrappedValue: T {
-    get { container.value(forKey: key.rawValue) as? T ?? defaultValue }
-    set { container.set(newValue, forKey: key.rawValue) }
+    get { container.value(forKey: dynamicKey) as? T ?? defaultValue }
+    set { container.set(newValue, forKey: dynamicKey) }
   }
   
   public var isExist: Bool {
-    container.object(forKey: key.rawValue) != nil
+    container.object(forKey: dynamicKey) != nil
   }
   
   public var projectedValue: LFUserDefault<T> { self }
   
   var container: UserDefaults = .standard
 
-  public init(key: Key, defaultValue: T) {
+  public init(key: Key, defaultValue: T, parameter: String = .empty) {
     self.key = key
     self.defaultValue = defaultValue
+    self.parameter = parameter
   }
 
   public func observe(change: @escaping (T?, T?) -> Void) -> NSObject {
-    UserDefaultsObservation(key: key) { old, new in
+    UserDefaultsObservation(key: Key(stringLiteral: dynamicKey)) { old, new in
       change(old as? T, new as? T)
     }
+  }
+  
+  private var dynamicKey: String {
+    if parameter.isEmpty {
+      return key.rawValue
+    }
+    return "\(key.rawValue)_for_\(parameter)"
   }
 }
 

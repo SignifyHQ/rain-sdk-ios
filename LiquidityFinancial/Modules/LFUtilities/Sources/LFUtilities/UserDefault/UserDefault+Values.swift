@@ -44,4 +44,6 @@ public extension UserDefaults {
   @LFUserDefault(key: Key.isFirstRun, defaultValue: true)
   static var isFirstRun: Bool
   
+  @LFUserDefault(key: Key.isBiometricUsageEnabled, defaultValue: false, parameter: UserDefaults.phoneNumber)
+  static var isBiometricUsageEnabled: Bool
 }
