@@ -1,6 +1,6 @@
 import Foundation
 import Factory
-import LFDashboard
+import LFNoBankDashboard
 
 @MainActor
 extension Container {

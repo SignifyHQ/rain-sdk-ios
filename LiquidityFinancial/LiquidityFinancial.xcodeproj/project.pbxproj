@@ -122,6 +122,7 @@
 		743156442B28368C00D141F4 /* AppViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 743155DE2B28309B00D141F4 /* AppViewModel.swift */; };
 		743156452B28368C00D141F4 /* NavigationContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 743155DB2B28309B00D141F4 /* NavigationContainer.swift */; };
 		743156462B2841F100D141F4 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 743155E22B28309B00D141F4 /* LaunchScreen.storyboard */; };
+		743156482B295A0800D141F4 /* LFNoBankDashboard in Frameworks */ = {isa = PBXBuildFile; productRef = 743156472B295A0800D141F4 /* LFNoBankDashboard */; };
 		749091172A6584C300071B41 /* SmartyStreets in Frameworks */ = {isa = PBXBuildFile; productRef = 749091162A6584C300071B41 /* SmartyStreets */; };
 		74BC08632A8CC6F500EFD00C /* CodeScanner in Frameworks */ = {isa = PBXBuildFile; productRef = 74BC08622A8CC6F500EFD00C /* CodeScanner */; };
 		74BC08652A8CC75100EFD00C /* CodeScanner in Frameworks */ = {isa = PBXBuildFile; productRef = 74BC08642A8CC75100EFD00C /* CodeScanner */; };
@@ -896,6 +897,7 @@
 				743155A42B281CB700D141F4 /* LFLocalizable in Frameworks */,
 				743155A52B281CB700D141F4 /* LFStyleGuide in Frameworks */,
 				743155A62B281CB700D141F4 /* LFAuthentication in Frameworks */,
+				743156482B295A0800D141F4 /* LFNoBankDashboard in Frameworks */,
 				743155A72B281CB700D141F4 /* LFDashboard in Frameworks */,
 				743155A82B281CB700D141F4 /* OnboardingData in Frameworks */,
 				743155A92B281CB700D141F4 /* NetSpendData in Frameworks */,
@@ -2360,6 +2362,7 @@
 				743155852B281CB700D141F4 /* LFFeatureFlags */,
 				743155862B281CB700D141F4 /* LFAuthentication */,
 				743155872B281CB700D141F4 /* BiometricsManager */,
+				743156472B295A0800D141F4 /* LFNoBankDashboard */,
 			);
 			productName = LiquidityFinancial;
 			productReference = 743155CF2B281CB700D141F4 /* DogeCardNobank.app */;
@@ -4864,6 +4867,10 @@
 		743155872B281CB700D141F4 /* BiometricsManager */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = BiometricsManager;
+		};
+		743156472B295A0800D141F4 /* LFNoBankDashboard */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = LFNoBankDashboard;
 		};
 		749091162A6584C300071B41 /* SmartyStreets */ = {
 			isa = XCSwiftPackageProductDependency;
