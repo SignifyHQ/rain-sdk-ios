@@ -17,7 +17,6 @@ extension AppDelegate {
     setupLFUtilitiesConfig()
     setupLFServiceConfig()
     authorizationManagerRefresh()
-    setupFeatureFlag()
   }
   
 }
@@ -48,9 +47,5 @@ private extension AppDelegate {
   
   func setupLFServiceConfig() {
     LFServices.initial(config: LFServices.Configuration(baseURL: APIConstants.devHost))
-  }
-  
-  func setupFeatureFlag() {
-    LFFeatureFlagContainer.registerViewFactory()
   }
 }

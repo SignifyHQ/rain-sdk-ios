@@ -6,6 +6,10 @@ struct PrideCardApp: App {
   @UIApplicationDelegateAdaptor(AppDelegate.self)
   var appDelegate
   
+  init() {
+    LFFeatureFlagContainer.registerViewFactoryPridecard()
+  }
+  
   @State var showFeatureFlagsHubView = false
 
   var body: some Scene {
@@ -18,6 +22,7 @@ struct PrideCardApp: App {
         }
         .sheet(isPresented: $showFeatureFlagsHubView, content: {
           LFFeatureFlagsHubView()
+            .embedInNavigation()
         })
       #endif
     }

@@ -36,7 +36,10 @@ public final class CreatePasswordViewModel: ObservableObject {
     GetUserUseCase(repository: accountRepository)
   }()
 
-  init() {
+  let onActionContinue: () -> Void
+  
+  init(onActionContinue: @escaping () -> Void) {
+    self.onActionContinue = onActionContinue
     observePasswordInput()
     observePasswordValidation()
   }
@@ -57,8 +60,7 @@ public final class CreatePasswordViewModel: ObservableObject {
         try await createPasswordUseCase.execute(password: passwordString)
         let user = try await getUserUseCase.execute()
         accountDataManager.update(missingSteps: user.missingSteps)
-        
-        shouldDismiss = true
+        onActionContinue()
       } catch {
         toastMessage = error.userFriendlyMessage
         log.error(error.localizedDescription)

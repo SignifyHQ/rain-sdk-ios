@@ -68,7 +68,9 @@ public struct HomeView: View {
           transactionId: id
         )
       case .createPassword:
-        CreatePasswordView()
+        CreatePasswordView(onActionContinue: {
+          
+        })
       }
     }
     .popup(item: $viewModel.popup) { popup in

@@ -8,6 +8,7 @@ import Factory
 import AccountDomain
 import UIComponents
 import LFRewards
+import LFAuthentication
 
 extension Container {
   var contenViewFactory: Factory<SolidContentViewFactory> {
@@ -23,6 +24,7 @@ final class SolidContentViewFactory {
     case phone
     case accountLocked
     case selecteReward
+    case createPassword
     case kycReview
     case dashboard
     case yourAccount
@@ -72,11 +74,21 @@ final class SolidContentViewFactory {
       return AnyView(forceUpdateView(model: model))
     case .accountMigration:
       return AnyView(accountMigrationView)
+    case .createPassword:
+      return AnyView(createPasswordView)
     }
   }
 }
 
 private extension SolidContentViewFactory {
+  @MainActor
+  var createPasswordView: some View {
+    CreatePasswordView(onActionContinue: { [weak self] in
+      guard let self else { return }
+      flowCoordinator.set(route: .selecteReward)
+    })
+  }
+  
   @MainActor
   var initialView: some View {
     InitialView()

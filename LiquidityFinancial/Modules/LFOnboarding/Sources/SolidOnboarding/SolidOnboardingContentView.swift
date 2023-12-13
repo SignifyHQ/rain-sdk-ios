@@ -8,6 +8,7 @@ import LFRewards
 import LFLocalizable
 import BaseOnboarding
 import EnvironmentService
+import LFAuthentication
 
 public struct SolidOnboardingContentView: View {
   @StateObject
@@ -79,6 +80,9 @@ public struct SolidOnboardingContentView: View {
       case .accountMigration:
         contentViewFactory
           .createView(type: .accountMigration)
+      case .createPassword:
+        contentViewFactory
+          .createView(type: .createPassword)
       }
     }
     .padding(.top, 12)

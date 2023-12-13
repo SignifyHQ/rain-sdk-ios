@@ -13,6 +13,8 @@ import LFStyleGuide
 import LFLocalizable
 import Services
 import BaseOnboarding
+import LFFeatureFlags
+import LFAuthentication
 
 extension Container {
   public var solidOnboardingFlowCoordinator: Factory<SolidOnboardingFlowCoordinatorProtocol> {
@@ -22,6 +24,7 @@ extension Container {
   }
 }
 
+//swiftlint: disable identifier_name
 public protocol SolidOnboardingFlowCoordinatorProtocol {
   var routeSubject: CurrentValueSubject<SolidOnboardingFlowCoordinator.Route, Never> { get }
   func routeUser()
@@ -44,6 +47,7 @@ public class SolidOnboardingFlowCoordinator: SolidOnboardingFlowCoordinatorProto
     case phone
     case accountLocked
     case selecteReward
+    case createPassword
     case kycReview
     case dashboard
     case yourAccount
@@ -78,6 +82,21 @@ public class SolidOnboardingFlowCoordinator: SolidOnboardingFlowCoordinatorProto
   lazy var getMigrationStatusUseCase: GetMigrationStatusUseCaseProtocol = {
     GetMigrationStatusUseCase(repository: accountRepository)
   }()
+  
+  lazy var getUserUseCase: GetUserUseCaseProtocol = {
+    GetUserUseCase(repository: accountRepository)
+  }()
+  
+  var enableMultiFactorAuthenticationFlag: Bool {
+    switch LFUtilities.target {
+    case .PrideCard:
+      return LFFeatureFlagContainer.enableMultiFactorAuthenticationFlagPrideCard.value
+    case .CauseCard:
+      return LFFeatureFlagContainer.enableMultiFactorAuthenticationFlagCauseCard.value
+    default:
+      return false
+    }
+  }
   
   public let routeSubject: CurrentValueSubject<Route, Never>
   
@@ -185,7 +204,7 @@ public class SolidOnboardingFlowCoordinator: SolidOnboardingFlowCoordinatorProto
         set(route: .dashboard)
       } else {
         if states.contains(.createAccount) {
-          set(route: .selecteReward)
+          try await handleUserMissingStep()
         } else if states.contains(.accountRejected) {
           set(route: .accountReject)
         } else if states.contains(.accountInReview) {
@@ -200,8 +219,23 @@ public class SolidOnboardingFlowCoordinator: SolidOnboardingFlowCoordinatorProto
     set(route: .phone)
   }
   
+  func handleUserMissingStep() async throws {
+    if enableMultiFactorAuthenticationFlag {
+      let user = try await getUserUseCase.execute()
+      accountDataManager.update(missingSteps: user.missingSteps)
+      let userInfomationData = accountDataManager.userInfomationData as? UserInfomationData
+      if let userInfomationUnwrap = userInfomationData,
+         let missingStep = userInfomationUnwrap.missingStepsEnum?.first,
+         missingStep == .createPassword {
+        set(route: .createPassword)
+        return
+      }
+    }
+    set(route: .selecteReward)
+  }
+  
   public func fetchUserReviewStatus(needLoadMigration: Bool = true) async throws {
-    let user = try await accountRepository.getUser()
+    let user = try await getUserUseCase.execute()
     let migrationStatus = try? await getMigrationStatusUseCase.execute()
     
     if let status = migrationStatus, status.migrationNeeded && !status.migrated && needLoadMigration {

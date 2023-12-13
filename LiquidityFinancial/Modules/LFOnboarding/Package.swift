@@ -34,13 +34,15 @@ let package = Package(
     .package(name: "LFRewards", path: "../LFRewards"),
     .package(name: "LFNetwork", path: "../LFNetwork"),
     .package(url: "https://github.com/nalexn/ViewInspector", from: "0.9.8"),
-    .package(name: "TestHelpers", path: "../TestHelpers")
+    .package(name: "TestHelpers", path: "../TestHelpers"),
+    .package(name: "LFFeatureFlags", path: "../LFFeatureFlags"),
+    .package(name: "LFAuthentication", path: "../LFAuthentication")
   ],
   targets: [
     .target(
       name: "BaseOnboarding",
       dependencies: [
-        "LFUtilities", "LFStyleGuide", "LFLocalizable", "Factory", "iPhoneNumberField",
+        "LFUtilities", "LFStyleGuide", "LFLocalizable", "Factory", "iPhoneNumberField", "LFFeatureFlags",
         .product(name: "OnboardingDomain", package: "LFDomain"),
         .product(name: "AccountDomain", package: "LFDomain"),
         .product(name: "OnboardingData", package: "LFData"),
@@ -60,7 +62,7 @@ let package = Package(
     .target(
       name: "NetspendOnboarding",
       dependencies: [
-        "UIComponents", "SwiftSoup", "LFRewards", "BaseOnboarding",
+        "UIComponents", "SwiftSoup", "LFRewards", "BaseOnboarding", "LFFeatureFlags",
         .product(name: "OnboardingData", package: "LFData"),
         .product(name: "AccountData", package: "LFData"),
         .product(name: "RewardData", package: "LFData"),
@@ -69,13 +71,15 @@ let package = Package(
         .product(name: "ZerohashDomain", package: "LFDomain"),
         .product(name: "DevicesDomain", package: "LFDomain"),
         .product(name: "SmartyStreets", package: "smartystreets-ios-sdk"),
-        .product(name: "AuthorizationManager", package: "LFNetwork")
+        .product(name: "AuthorizationManager", package: "LFNetwork"),
+        .product(name: "BiometricsManager", package: "LFAuthentication"),
+        .product(name: "LFAuthentication", package: "LFAuthentication")
       ]
     ),
     .target(
       name: "SolidOnboarding",
       dependencies: [
-        "LFUtilities", "LFStyleGuide", "LFLocalizable", "Factory", "LFRewards", "BaseOnboarding", "UIComponents",
+        "LFUtilities", "LFStyleGuide", "LFLocalizable", "Factory", "LFRewards", "BaseOnboarding", "UIComponents", "LFFeatureFlags",
         .product(name: "SolidData", package: "LFData"),
         .product(name: "RewardData", package: "LFData"),
         .product(name: "RewardDomain", package: "LFDomain"),
@@ -84,7 +88,9 @@ let package = Package(
         .product(name: "AccountData", package: "LFData"),
         .product(name: "DevicesData", package: "LFData"),
         .product(name: "SolidDomain", package: "LFDomain"),
-        .product(name: "DevicesDomain", package: "LFDomain")
+        .product(name: "DevicesDomain", package: "LFDomain"),
+        .product(name: "BiometricsManager", package: "LFAuthentication"),
+        .product(name: "LFAuthentication", package: "LFAuthentication")
       ]
     ),
     .testTarget(

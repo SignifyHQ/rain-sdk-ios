@@ -3,8 +3,6 @@ import Combine
 
 @propertyWrapper
 public struct LFFeatureFlag<F: LFFeatureFlagType>: DynamicProperty {
-  @StateObject private var registration: Registration
-  private let featureFlag: F
   
   public var wrappedValue: F.Value {
     registration.value
@@ -14,9 +12,12 @@ public struct LFFeatureFlag<F: LFFeatureFlagType>: DynamicProperty {
     featureFlag
   }
   
+  private var registration: Registration
+  private let featureFlag: F
+  
   public init(_ featureFlag: F) {
     self.featureFlag = featureFlag
-    self._registration = StateObject(wrappedValue: Registration(featureFlag))
+    self.registration = Registration(featureFlag)
   }
   
   private class Registration: ObservableObject {

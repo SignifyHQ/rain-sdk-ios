@@ -20,38 +20,19 @@ public struct LFFeatureFlagsHubView: View {
   }
   
   public var body: some View {
-    NavigationView {
-      VStack {
-        Form {
-          ForEach(groupedFlags, id: \.0) { groupName, factories in
-            Section(header: Text(groupName ?? "")) {
-              ForEach(factories, id: \.id) { factory in
-                factory.makeView()
-              }
+    VStack {
+      Text("Feature Flags")
+        .font(.title2)
+        .padding(.top)
+      Form {
+        ForEach(groupedFlags, id: \.0) { groupName, factories in
+          Section(header: Text(groupName ?? "")) {
+            ForEach(factories, id: \.id) { factory in
+              factory.makeView()
             }
           }
         }
       }
-      .navigationTitle("Feature Flags")
-      .font(.title2)
-    }
-    .navigationBarTitleDisplayMode(.inline)
-    .onAppear {
-      let appearance = UINavigationBarAppearance()
-      let textColor = UIColor(Color.black)
-      
-      appearance.backgroundColor = UIColor(Color.white)
-      appearance.largeTitleTextAttributes = [
-        .font: UIFont.systemFont(ofSize: 32, weight: .bold),
-        .foregroundColor: textColor
-      ]
-      appearance.titleTextAttributes = [
-        .font: UIFont.systemFont(ofSize: 24, weight: .bold),
-        .foregroundColor: textColor
-      ]
-      
-      UINavigationBar.appearance().standardAppearance = appearance
-      UINavigationBar.appearance().scrollEdgeAppearance = appearance
     }
   }
 }
