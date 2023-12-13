@@ -73,7 +73,7 @@ final class CashViewModel: ObservableObject {
   
   private func subscribeLinkedContacts() {
     externalFundingDataManager.subscribeLinkedSourcesChanged({ [weak self] contacts in
-      self?.linkedContacts = contacts.filter { $0.sourceType == .bank}
+      self?.linkedContacts = contacts.filter { $0.sourceType == .bank }
     })
     .store(in: &subscriptions)
   }
@@ -97,7 +97,7 @@ final class CashViewModel: ObservableObject {
         if let account = try await refreshAccounts() {
           isLoading = false
           
-          try dashboardRepository.apiFetchListConnectedAccount()
+          dashboardRepository.apiFetchListConnectedAccount()
           
           try await loadTransactions(accountId: account.id)
           activity = transactions.isEmpty ? .addFunds : .transactions

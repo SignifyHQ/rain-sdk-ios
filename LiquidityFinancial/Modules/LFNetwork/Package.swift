@@ -24,7 +24,7 @@ let package = Package(
     .package(name: "LFUtilities", path: "../LFUtilities"),
     .package(name: "LFDomain", path: "../LFDomain"),
     .package(url: "https://github.com/hmlongco/Factory", from: "2.3.1"),
-    .package(url: "https://github.com/Alamofire/Alamofire.git", .upToNextMajor(from: "5.7.1")),
+    .package(url: "https://github.com/Alamofire/Alamofire.git", .upToNextMajor(from: "5.8.1")),
     .package(url: "https://github.com/krzysztofzablocki/Sourcery.git", from: "2.0.0")
   ],
   targets: [

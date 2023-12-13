@@ -39,7 +39,6 @@ public final class DashboardRepository: ObservableObject {
   
   @LazyInjected(\.solidAccountRepository) var solidAccountRepository
   @LazyInjected(\.solidExternalFundingRepository) var solidExternalFundingRepository
-  @LazyInjected(\.solidCardRepository) var solidCardRepository
   
   @LazyInjected(\.nsOnboardingFlowCoordinator) var onboardingFlowCoordinator
   
@@ -83,10 +82,6 @@ public final class DashboardRepository: ObservableObject {
   
   lazy var getListNSCardUseCase: NSGetListCardUseCaseProtocol = {
     NSGetListCardUseCase(repository: cardRepository)
-  }()
-  
-  lazy var getListSolidCardUseCase: SolidGetListCardUseCaseProtocol = {
-    SolidGetListCardUseCase(repository: solidCardRepository)
   }()
   
   lazy var getCardUseCase: NSGetCardUseCaseProtocol = {
@@ -142,7 +137,6 @@ public extension DashboardRepository {
   func initRewardData() {
     apiFetchListConnectedAccount()
     apiFetchACHInfo()
-    apiFetchSolidCards()
   }
   
   func initData() {
@@ -176,10 +170,11 @@ public extension DashboardRepository {
     }
   }
   
+  //TODO: We should remove the logic of refreshing the list card after migration of the Crypto App here
   func apiFetchListCards() {
     switch LFUtilities.target {
     case .CauseCard, .PrideCard:
-      apiFetchSolidCards()
+      break
     default:
       apiFetchNetSpendCards()
     }
@@ -212,36 +207,6 @@ public extension DashboardRepository {
         }
       } catch {
         netspendCardData.loading = false
-        toastMessage?(error.localizedDescription)
-      }
-    }
-  }
-    
-  func apiFetchSolidCards() {
-    solidCardData.loading = true
-    Task { @MainActor in
-      do {
-        let cards = try await getListSolidCardUseCase.execute()
-        solidCardData.cards = cards.map { card in
-          CardModel(
-            id: card.id,
-            cardType: CardType(rawValue: card.type) ?? .virtual,
-            cardholderName: nil,
-            expiryMonth: Int(card.expirationMonth) ?? 0,
-            expiryYear: Int(card.expirationYear) ?? 0,
-            last4: card.panLast4,
-            cardStatus: CardStatus(rawValue: card.cardStatus) ?? .unactivated
-          )
-        }
-        let filteredCards = solidCardData.cards.filter({ $0.cardStatus != .closed })
-        if filteredCards.isEmpty {
-          NotificationCenter.default.post(name: .noLinkedCards, object: nil)
-        } else {
-          solidCardData.metaDatas = Array(repeating: nil, count: filteredCards.count)
-          solidCardData.loading = false
-        }
-      } catch {
-        solidCardData.loading = false
         toastMessage?(error.localizedDescription)
       }
     }

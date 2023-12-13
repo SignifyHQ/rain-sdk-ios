@@ -94,6 +94,16 @@ extension PushNotificationsService: UNUserNotificationCenterDelegate {
   // MARK: MessagingDelegate
 extension PushNotificationsService: MessagingDelegate {
   public func messaging(_: Messaging, didReceiveRegistrationToken fcmToken: String?) {
-    log.info("notification didReceiveRegistrationToken: \(fcmToken ?? "empty")")
+    if let fcmToken = fcmToken {
+      log.info("notification didReceiveRegistrationToken: \(fcmToken)")
+      let dataDict: [String: String] = ["token": fcmToken]
+      NotificationCenter.default.post(
+        name: Notification.Name.didReceiveRegistrationToken,
+        object: nil,
+        userInfo: dataDict
+      )
+    } else {
+      log.error("notification didReceiveRegistrationToken: is empty")
+    }
   }
 }

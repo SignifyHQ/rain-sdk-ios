@@ -6,13 +6,15 @@ import SolidData
 
 extension SolidListCardsViewModel {
   struct CardLimitUIModel {
+    var id: String
     var solidCardID: String
     var limitAmount: Double
     var limitInterval: String
     var availableLimit: Double
     var platformPerTransactionLimit: Double
     
-    init(entity: SolidCardLimitsEntity) {
+    init(entity: SolidCardLimitsEntity, cardID: String) {
+      self.id = cardID
       self.solidCardID = entity.solidCardId
       self.limitAmount = entity.limitAmount ?? 0
       self.limitInterval = entity.limitInterval ?? ""

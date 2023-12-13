@@ -77,8 +77,6 @@ public protocol ListCardsViewModelProtocol: ObservableObject {
   var cancellables: Set<AnyCancellable> { get set }
   var coordinator: BaseCardDestinationObservable { get }
   
-  init(cardData: Published<(CardData)>.Publisher, coordinator: BaseCardDestinationObservable)
-  
   // API
   func callLockCardAPI()
   func callUnLockCardAPI()
@@ -86,7 +84,6 @@ public protocol ListCardsViewModelProtocol: ObservableObject {
   
   // View Helpers
   func title(for card: CardModel) -> String
-  func onDisappear()
   func activePhysicalSuccess(id: String)
   func openSupportScreen()
   func lockCardToggled()
@@ -95,7 +92,11 @@ public protocol ListCardsViewModelProtocol: ObservableObject {
   func onClickCloseCardButton()
   func hidePopup()
   func primaryActionCloseCardSuccessfully(completion: @escaping () -> Void)
-  func subscribeListCardsChange(_ cardData: Published<(CardData)>.Publisher)
+}
+
+public extension ListCardsViewModelProtocol {
+  func subscribeListCardsChange(_ cardData: Published<(CardData)>.Publisher) {}
+  func onDisappear() {}
 }
 
 // MARK: - Functions

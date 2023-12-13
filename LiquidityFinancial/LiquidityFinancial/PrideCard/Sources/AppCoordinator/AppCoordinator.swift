@@ -70,14 +70,6 @@ class AppCoordinator: AppCoordinatorProtocol {
       .store(in: &subscribers)
   }
   
-  private func setOnboardingRoute(_ route: SolidOnboardingFlowCoordinator.Route) {
-    if route == .dashboard {
-      set(route: .dashboard)
-    } else {
-      set(route: .onboarding)
-    }
-  }
-  
   func set(route: Route) {
     log.info("AppCoordinator route: \(route), with current route: \(routeSubject.value)")
     routeSubject.send(route)
@@ -92,5 +84,18 @@ class AppCoordinator: AppCoordinatorProtocol {
     accountDataManager.clearUserSession()
     customerSupportService.pushEventLogout()
     pushNotificationService.signOut()
+  }
+  
+  private func setOnboardingRoute(_ route: SolidOnboardingFlowCoordinator.Route) {
+    if route == .dashboard {
+      setUpPushNotification()
+      set(route: .dashboard)
+    } else {
+      set(route: .onboarding)
+    }
+  }
+  
+  private func setUpPushNotification() {
+    pushNotificationService.setUp()
   }
 }

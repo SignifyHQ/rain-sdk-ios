@@ -126,7 +126,7 @@ extension VerificationCodeViewModel {
       .receive(on: DispatchQueue.main)
       .sink { [weak self] code in
         guard let self else { return }
-        log.debug(code ?? "performGetTwilioMessagesIfNeccessary not found")
+        log.debug("OTPInternal :\(code ?? "performGetTwilioMessagesIfNeccessary not found")")
         guard let code = code else { return }
         self.handleAfterGetOTP(formatPhoneNumber: formatPhoneNumber, code: code)
       }

@@ -74,6 +74,7 @@ private extension HomeViewModel {
     handleSelectRewardChange()
     handleSelectedFundraisersSuccess()
     getListConnectedAccount()
+    handleFCMTokenRefresh()
   }
   
   func logincustomerSupportService() {
@@ -85,6 +86,14 @@ private extension HomeViewModel {
       userAttributes = UserAttributes(phone: accountDataManager.phoneNumber, email: accountDataManager.userEmail)
     }
     customerSupportService.loginIdentifiedUser(userAttributes: userAttributes)
+  }
+  
+  func handleFCMTokenRefresh() {
+    NotificationCenter.default.publisher(for: .didReceiveRegistrationToken)
+      .sink { [weak self] _ in
+        self?.apiPushdeviceRegister()
+      }
+      .store(in: &subscribers)
   }
   
   func handleSelectedFundraisersSuccess() {
@@ -171,6 +180,20 @@ private extension HomeViewModel {
     }
   }
 
+  func apiPushdeviceRegister() {
+    Task { @MainActor in
+      do {
+        let token = try await pushNotificationService.fcmToken()
+        let response = try await deviceRegisterUseCase.execute(deviceId: LFUtilities.deviceId, token: token)
+        if response.success {
+          hadPushToken = true
+          UserDefaults.lastestFCMToken = token
+        }
+      } catch {
+        log.error(error)
+      }
+    }
+  }
 }
 
 // MARK: Notifications
@@ -223,18 +246,7 @@ extension HomeViewModel {
   
   func pushFCMTokenIfNeed() {
     guard hadPushToken == false else { return }
-    Task { @MainActor in
-      do {
-        let token = try await pushNotificationService.fcmToken()
-        let response = try await deviceRegisterUseCase.execute(deviceId: LFUtilities.deviceId, token: token)
-        if response.success {
-          hadPushToken = true
-          UserDefaults.lastestFCMToken = token
-        }
-      } catch {
-        log.error(error)
-      }
-    }
+    apiPushdeviceRegister()
   }
   
   func notificationsPopupAction() {

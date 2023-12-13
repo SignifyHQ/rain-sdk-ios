@@ -36,13 +36,10 @@ public final class SolidListCardsViewModel: ListCardsViewModelProtocol {
   @Published public var cardsList: [CardModel] = []
   @Published public var cardMetaDatas: [CardMetaData?] = []
   @Published public var popup: ListCardPopup?
+  @Published public var currentCard: CardModel = .virtualDefault
+  
   @Published var cardLimitUIModel: SolidListCardsViewModel.CardLimitUIModel?
-  @Published public var currentCard: CardModel = .virtualDefault {
-    didSet {
-      cardLimitUIModel = nil
-      getCardLimit(cardID: currentCard.id)
-    }
-  }
+  private var cardLimitUIModelList: [CardLimitUIModel] = []
   
   public unowned let coordinator: BaseCardDestinationObservable
   public var isSwitchCard = true
@@ -77,9 +74,30 @@ public final class SolidListCardsViewModel: ListCardsViewModelProtocol {
     SolidGetCardLimitsUseCase(repository: solidCardRepository)
   }()
   
-  public init(cardData: Published<(CardData)>.Publisher, coordinator: BaseCardDestinationObservable) {
+  lazy var getListSolidCardUseCase: SolidGetListCardUseCaseProtocol = {
+    SolidGetListCardUseCase(repository: solidCardRepository)
+  }()
+  
+  private var subscribers: Set<AnyCancellable> = []
+  
+  public init(coordinator: BaseCardDestinationObservable) {
     self.coordinator = coordinator
-    subscribeListCardsChange(cardData)
+    apiFetchSolidCards()
+    observeCardsList()
+    observeRefreshListCards()
+  }
+  
+  func onAppear() {
+    handleCurrentCardLimit()
+  }
+  
+  private func observeRefreshListCards() {
+    NotificationCenter.default.publisher(for: .refreshListCards)
+      .sink { [weak self] _ in
+        guard let self else { return }
+        apiFetchSolidCards()
+      }
+      .store(in: &subscribers)
   }
 }
 
@@ -168,15 +186,83 @@ public extension SolidListCardsViewModel {
     }
   }
   
-  func getCardLimit(cardID: String) {
-    guard !cardID.isEmpty else { return }
+  func apiFetchSolidCards() {
+    isInit = true
     Task { @MainActor in
       do {
-        let cardLimits = try await getCardLimitsUseCase.execute(cardID: cardID)
-        cardLimitUIModel = CardLimitUIModel(entity: cardLimits)
+        let cards = try await getListSolidCardUseCase.execute()
+        let cardsArr = cards.map { card in
+          CardModel(
+            id: card.id,
+            cardType: CardType(rawValue: card.type) ?? .virtual,
+            cardholderName: nil,
+            expiryMonth: Int(card.expirationMonth) ?? 0,
+            expiryYear: Int(card.expirationYear) ?? 0,
+            last4: card.panLast4,
+            cardStatus: CardStatus(rawValue: card.cardStatus) ?? .unactivated
+          )
+        }
+        let filteredCards = cardsArr.filter({ $0.cardStatus != .closed })
+        if filteredCards.isEmpty {
+          NotificationCenter.default.post(name: .noLinkedCards, object: nil)
+        } else {
+          cardMetaDatas = Array(repeating: nil, count: filteredCards.count)
+          isInit = false
+        }
+        currentCard = cardsArr.first ?? .virtualDefault
+        cardsList = cardsArr
+        isActivePhysical = currentCard.cardStatus == .active
+        isCardLocked = currentCard.cardStatus == .disabled
+        
       } catch {
-        cardLimitUIModel = nil
+        isInit = false
+        toastMessage = error.userFriendlyMessage
       }
+    }
+  }
+}
+
+// MARK: - Card Limits
+extension SolidListCardsViewModel {
+  private func observeCardsList() {
+    $cardsList
+      .removeDuplicates()
+      .sink { [weak self] items in
+        guard let self, items.isNotEmpty else { return }
+        handleListCardLimit()
+      }
+      .store(in: &subscribers)
+  }
+  
+  func handleListCardLimit() {
+    Task { @MainActor in
+      await apiFetchAllCardLimit()
+      handleCurrentCardLimit()
+    }
+  }
+  
+  func handleCurrentCardLimit() {
+    cardLimitUIModel = nil
+    guard let cardLimit = cardLimitUIModelList.first(where: { $0.id == currentCard.id }) else { return }
+    cardLimitUIModel = cardLimit
+  }
+  
+  private func apiFetchAllCardLimit() async {
+    await cardsList.concurrentForEach { [weak self] cardItem in
+      guard let self else { return }
+      if let model = await getItemCardLimit(cardID: cardItem.id) {
+        cardLimitUIModelList.append(model)
+      }
+    }
+  }
+  
+  private func getItemCardLimit(cardID: String) async -> CardLimitUIModel? {
+    guard !cardID.isEmpty else { return nil }
+    do {
+      let cardLimits = try await getCardLimitsUseCase.execute(cardID: cardID)
+      return CardLimitUIModel(entity: cardLimits, cardID: cardID)
+    } catch {
+      return nil
     }
   }
 }
@@ -192,10 +278,6 @@ public extension SolidListCardsViewModel {
     }
   }
   
-  func onDisappear() {
-    NotificationCenter.default.post(name: .refreshListCards, object: nil)
-  }
-  
   func activePhysicalSuccess(id: String) {
     guard id == currentCard.id, let index = cardsList.firstIndex(where: { $0.id == id
     }) else { return }
@@ -208,7 +290,7 @@ public extension SolidListCardsViewModel {
   func openSupportScreen() {
     customerSupportService.openSupportScreen()
   }
-
+  
   func lockCardToggled() {
     if currentCard.cardStatus == .active && isCardLocked {
       analyticsService.track(event: AnalyticsEvent(name: .tapsLockCard))
@@ -243,10 +325,11 @@ public extension SolidListCardsViewModel {
     isActivePhysical = currentCard.cardStatus == .active
     isCardLocked = currentCard.cardStatus == .disabled
     if isSwitchCard {
-      isShowCardNumber = false
+      resetActionShowCardNumber()
     } else {
       isSwitchCard = true
     }
+    handleCurrentCardLimit()
   }
   
   func onClickCloseCardButton() {
@@ -257,26 +340,13 @@ public extension SolidListCardsViewModel {
     popup = nil
   }
   
+  func resetActionShowCardNumber() {
+    isShowCardNumber = false
+  }
+  
   func primaryActionCloseCardSuccessfully(completion: @escaping () -> Void) {
     updateListCard(id: currentCard.id, completion: completion)
     popup = nil
-  }
-  
-  func subscribeListCardsChange(_ cardData: Published<(CardData)>.Publisher) {
-    cardData
-      .receive(on: DispatchQueue.main)
-      .sink { [weak self] cardData in
-        guard let self = self else {
-          return
-        }
-        self.isInit = cardData.loading
-        self.cardsList = cardData.cards.filter { $0.cardStatus != .closed }
-        self.cardMetaDatas = cardData.metaDatas
-        self.currentCard = self.cardsList.first ?? .virtualDefault
-        self.isActivePhysical = currentCard.cardStatus == .active
-        self.isCardLocked = currentCard.cardStatus == .disabled
-      }
-      .store(in: &cancellables)
   }
   
   func presentActivateCardView(activeCardView: AnyView) {

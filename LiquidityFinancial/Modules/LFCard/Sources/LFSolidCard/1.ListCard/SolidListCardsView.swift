@@ -31,6 +31,9 @@ public struct SolidListCardsView: View {
     .onChange(of: viewModel.currentCard) { _ in
       viewModel.onChangeCurrentCard()
     }
+    .onAppear(perform: {
+      viewModel.handleCurrentCardLimit()
+    })
     .padding(.horizontal, 30)
     .padding(.bottom, 16)
     .background(Colors.background.swiftUIColor)
@@ -82,7 +85,7 @@ private extension SolidListCardsView {
     Group {
       ToolbarItem(placement: .navigationBarLeading) {
         Button {
-          viewModel.onDisappear()
+          viewModel.resetActionShowCardNumber()
           dismiss()
         } label: {
           GenImages.CommonImages.icBack.swiftUIImage

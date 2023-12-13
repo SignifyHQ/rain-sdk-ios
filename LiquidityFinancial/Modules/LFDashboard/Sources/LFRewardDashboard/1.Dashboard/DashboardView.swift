@@ -10,7 +10,7 @@ import Factory
 struct DashboardView: View {
   @StateObject private var viewModel: DashboardViewModel
   private var dataStorages: DashboardRepository
-
+  
   init(dataStorages: DashboardRepository, option: TabOption, tabRedirection: @escaping ((TabOption) -> Void)) {
     self.dataStorages = dataStorages
     _viewModel = .init(
@@ -24,11 +24,10 @@ struct DashboardView: View {
       case .cash:
         CashView(
           listCardViewModel: SolidListCardsViewModel(
-            cardData: dataStorages.$solidCardData,
             coordinator: Container().baseCardDestinationObservable.callAsFunction()
           )
         ) {
-        viewModel.handleGuestUser()
+          viewModel.handleGuestUser()
         }
       case .rewards:
         RewardsView(viewModel: .init())

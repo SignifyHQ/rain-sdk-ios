@@ -13,4 +13,6 @@ public extension Notification.Name {
   static let environmentChanage = Notification.Name("com.liquidityfinancial.environment.change")
   
   static let forceLogoutInAnyWhere = Notification.Name("com.liquidityfinancial.errorView.forceLogout")
+  
+  static let didReceiveRegistrationToken = Notification.Name("com.liquidityfinancial.didReceiveRegistrationToken")
 }
