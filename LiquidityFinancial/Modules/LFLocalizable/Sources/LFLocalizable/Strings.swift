@@ -92,6 +92,14 @@ public enum LFLocalizable {
   public static let zeroHashTransactiondetail = LFLocalizable.tr("Localizable", "Zero_hash_transactiondetail", fallback: "Cryptocurrency services powered by Zero Hash")
   /// Zip code
   public static let zipcode = LFLocalizable.tr("Localizable", "zipcode", fallback: "Zip code")
+  public enum BlockingFiatView {
+    /// DogeCard checking accounts and cards have been temporarily turned off while we onboard to our new banking partners.  Any balance, or credit to your accounts or cards will be mailed to your address on file.
+    /// 
+    /// We will be in touch shortly to invite you to get your new card.
+    public static let description = LFLocalizable.tr("Localizable", "BlockingFiatView.description", fallback: "DogeCard checking accounts and cards have been temporarily turned off while we onboard to our new banking partners.  Any balance, or credit to your accounts or cards will be mailed to your address on file.\n\nWe will be in touch shortly to invite you to get your new card.")
+    /// BANKING PARTNER UPDATE
+    public static let title = LFLocalizable.tr("Localizable", "BlockingFiatView.title", fallback: "BANKING PARTNER UPDATE")
+  }
   public enum ChangeRewardView {
     /// How would you like your rewards?
     public static let caption = LFLocalizable.tr("Localizable", "ChangeRewardView.caption", fallback: "How would you like your rewards?")

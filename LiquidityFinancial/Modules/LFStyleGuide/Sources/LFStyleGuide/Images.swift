@@ -143,6 +143,7 @@ public enum GenImages {
       public static let txOther = ImageAsset(name: "txOther")
     }
     public static let availableCard = ImageAsset(name: "availableCard")
+    public static let bgDashboardBlockCash = ImageAsset(name: "bg-dashboard-block-cash")
     public static let cashbackCard = ImageAsset(name: "cashbackCard")
     public static let connectBankBanner = ImageAsset(name: "connectBankBanner")
     public static let connectedAppleWallet = ImageAsset(name: "connectedAppleWallet")

@@ -9,6 +9,7 @@ import ZerohashDomain
 import LFUtilities
 import AccountService
 import BiometricsManager
+import Combine
 
 class ConfirmSendCryptoViewModel: ObservableObject {
   @LazyInjected(\.accountDataManager) var accountDataManager
@@ -30,6 +31,8 @@ class ConfirmSendCryptoViewModel: ObservableObject {
   var fee: Double? {
     feeLockedResponse?.fee
   }
+  
+  private var cancellables: Set<AnyCancellable> = []
 
   init(assetModel: AssetModel, amount: Double, address: String, nickname: String, feeLockedResponse: APILockedNetworkFeeResponse?) {
     self.assetModel = assetModel
@@ -59,7 +62,7 @@ class ConfirmSendCryptoViewModel: ObservableObject {
           self.callTransferAPI()
         }
       })
-      .store(in: &cancellable)
+      .store(in: &cancellables)
   }
   
   private func callTransferAPI() {

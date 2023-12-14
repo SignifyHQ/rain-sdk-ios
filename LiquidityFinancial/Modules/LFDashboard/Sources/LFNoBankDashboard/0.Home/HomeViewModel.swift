@@ -42,6 +42,13 @@ public final class HomeViewModel: ObservableObject {
     initData()
     accountDataManager.userCompleteOnboarding = true
     checkGoTransactionDetail()
+    if #available(iOS 15, *) {
+      let appearance = UINavigationBarAppearance()
+      appearance.backgroundColor = .clear
+      appearance.configureWithTransparentBackground()
+      UINavigationBar.appearance().standardAppearance = appearance
+      UINavigationBar.appearance().scrollEdgeAppearance = appearance
+    }
   }
 }
 
