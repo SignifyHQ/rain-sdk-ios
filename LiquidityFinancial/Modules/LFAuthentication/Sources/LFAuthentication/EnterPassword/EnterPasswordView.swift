@@ -10,11 +10,16 @@ public struct EnterPasswordView: View {
   @FocusState
   private var isFocused: Bool
   
-  public init() {}
+  @Binding var shouldDismissRoot: Bool
   
   public var body: some View {
     VStack {
       enterPasswordTextFieldView
+      
+      if viewModel.isInlineErrorShown {
+        wrongPasswordErrorMessage
+      }
+      
       Spacer()
       buttonGroupView
     }
@@ -30,7 +35,7 @@ public struct EnterPasswordView: View {
     .navigationLink(item: $viewModel.navigation) { navigation in
       switch navigation {
       case .recoverPassword:
-        ResetPasswordView()
+        ResetPasswordView(shouldDismissRoot: $shouldDismissRoot)
       }
     }
     .track(name: String(describing: type(of: self)))
@@ -69,6 +74,13 @@ private extension EnterPasswordView {
         isFocused = true
       }
     }
+  }
+  
+  var wrongPasswordErrorMessage: some View {
+    Text(LFLocalizable.Authentication.EnterPassword.Error.wrongPassword)
+      .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.small.value))
+      .foregroundColor(Colors.error.swiftUIColor)
+      .frame(maxWidth: .infinity, alignment: .leading)
   }
   
   var buttonGroupView: some View {

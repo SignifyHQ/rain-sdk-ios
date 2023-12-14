@@ -18,6 +18,7 @@ public final class EnterPasswordViewModel: ObservableObject {
   
   @Published var isLoading: Bool = false
   @Published var toastMessage: String?
+  @Published var isInlineErrorShown: Bool = false
   
   @Published var password: String = ""
   
@@ -45,10 +46,17 @@ extension EnterPasswordViewModel {
       }
       
       isLoading = true
+      isInlineErrorShown = false
+      
       do {
         let _ = try await loginWithPasswordUseCase.execute(password: password)
       } catch {
-        toastMessage = error.userFriendlyMessage
+        if error.inlineError == .invalidCredentials {
+          isInlineErrorShown = true
+        } else {
+          toastMessage = error.userFriendlyMessage
+        }
+        
         log.error(error.localizedDescription)
       }
     }

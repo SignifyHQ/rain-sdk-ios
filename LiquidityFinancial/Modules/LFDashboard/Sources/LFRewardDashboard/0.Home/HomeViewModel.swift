@@ -65,6 +65,7 @@ public final class HomeViewModel: ObservableObject {
   @Published var popup: Popup?
   @Published var blockingPopup: BlockingPopup?
   @Published var toastMessage: String?
+  @Published var shouldShowBiometricsFallback: Bool = false
   
   private var subscribers: Set<AnyCancellable> = []
   
@@ -263,10 +264,10 @@ extension HomeViewModel {
       else {
         return
       }
-
+      
       let userData = accountDataManager.userInfomationData as? UserInfomationData
       let missingSteps = userData?.missingStepsEnum ?? []
-
+      
       if missingSteps.contains(.createPassword),
          blockingPopup != .enhancedSecurity {
         blockingPopup = .enhancedSecurity

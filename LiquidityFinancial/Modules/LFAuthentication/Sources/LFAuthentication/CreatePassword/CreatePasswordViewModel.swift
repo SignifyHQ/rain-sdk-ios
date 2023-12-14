@@ -28,8 +28,14 @@ public final class CreatePasswordViewModel: ObservableObject {
   @Published var isDontMatchErrorShown: Bool = false
   @Published var isContinueEnabled: Bool = false
   
+  private var resetPasswordToken: String?
+  
   lazy var createPasswordUseCase: CreatePasswordUseCaseProtocol = {
     CreatePasswordUseCase(repository: accountRepository)
+  }()
+  
+  lazy var resetPasswordUserCase: ResetPasswordUseCaseProtocol = {
+    ResetPasswordUseCase(repository: accountRepository, dataManager: accountDataManager)
   }()
   
   lazy var getUserUseCase: GetUserUseCaseProtocol = {
@@ -38,8 +44,13 @@ public final class CreatePasswordViewModel: ObservableObject {
 
   let onActionContinue: (_ viewModel: CreatePasswordViewModel) -> Void
   
-  init(onActionContinue: @escaping (_ viewModel: CreatePasswordViewModel) -> Void) {
+  init(
+    resetPasswordToken: String? = nil,
+    onActionContinue: @escaping (_ viewModel: CreatePasswordViewModel) -> Void
+  ) {
+    self.resetPasswordToken = resetPasswordToken
     self.onActionContinue = onActionContinue
+    
     observePasswordInput()
     observePasswordValidation()
   }
@@ -57,9 +68,14 @@ public final class CreatePasswordViewModel: ObservableObject {
       isLoading = true
       
       do {
-        try await createPasswordUseCase.execute(password: passwordString)
-        let user = try await getUserUseCase.execute()
-        accountDataManager.update(missingSteps: user.missingSteps)
+        if let resetPasswordToken {
+          try await resetPasswordUserCase.execute(password: passwordString, token: resetPasswordToken)
+        } else {
+          try await createPasswordUseCase.execute(password: passwordString)
+          let user = try await getUserUseCase.execute()
+          accountDataManager.update(missingSteps: user.missingSteps)
+        }
+        
         onActionContinue(self)
       } catch {
         toastMessage = error.userFriendlyMessage

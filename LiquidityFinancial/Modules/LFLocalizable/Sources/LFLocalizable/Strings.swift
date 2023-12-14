@@ -541,6 +541,10 @@ public enum LFLocalizable {
       public static let placeholder = LFLocalizable.tr("Localizable", "authentication.enter_password.placeholder", fallback: "Enter password")
       /// Enter Password
       public static let title = LFLocalizable.tr("Localizable", "authentication.enter_password.title", fallback: "Enter Password")
+      public enum Error {
+        /// Wrong password
+        public static let wrongPassword = LFLocalizable.tr("Localizable", "authentication.enter_password.error.wrong_password", fallback: "Wrong password")
+      }
     }
     public enum ResetPassword {
       /// ENTER 6 DIGIT CODE
@@ -617,9 +621,9 @@ public enum LFLocalizable {
     public enum SetupEnhancedSecurity {
       /// We are improving the safety and security of our products by adding several new features aimed to keep you and your financial information safe.
       /// 
-      /// • SET UP FaceID or TouchID
       /// • Create Password
-      public static let body = LFLocalizable.tr("Localizable", "authentication.setup_enhanced_security.body", fallback: "We are improving the safety and security of our products by adding several new features aimed to keep you and your financial information safe.\n\n• SET UP FaceID or TouchID\n• Create Password")
+      /// • SET UP FaceID or TouchID
+      public static let body = LFLocalizable.tr("Localizable", "authentication.setup_enhanced_security.body", fallback: "We are improving the safety and security of our products by adding several new features aimed to keep you and your financial information safe.\n\n• Create Password\n• SET UP FaceID or TouchID")
       /// SETUP ENHANCED SECURITY
       public static let title = LFLocalizable.tr("Localizable", "authentication.setup_enhanced_security.title", fallback: "SETUP ENHANCED SECURITY")
     }

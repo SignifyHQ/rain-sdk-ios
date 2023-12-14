@@ -60,8 +60,8 @@ public final class ResetPasswordViewModel: ObservableObject {
       isLoading = true
       
       do {
-        let token = try await resetPasswordVerifyUseCase.execute(code: generatedOTP)
-        navigaion = .createPassword
+        let response = try await resetPasswordVerifyUseCase.execute(code: generatedOTP)
+        navigaion = .resetPassword(token: response.token)
       } catch {
         toastMessage = error.userFriendlyMessage
         log.error(error.localizedDescription)
@@ -130,7 +130,7 @@ public extension ResetPasswordViewModel {
 
 extension ResetPasswordViewModel {
   enum Navigation {
-    case createPassword
+    case resetPassword(token: String)
   }
 }
 

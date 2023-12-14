@@ -11,24 +11,38 @@ import LFUtilities
 import LFLocalizable
 
 public struct BiometricsBackupView: View {
+  @Environment(\.dismiss)
+  var dismiss
+  
   @StateObject
   private var viewModel = BiometricsBackupViewModel()
+  
+  @State
+  var shouldDismiss: Bool = false
   
   public init() {}
   
   public var body: some View {
-    content
-      .background(Colors.background.swiftUIColor)
-      .navigationLink(
-        item: $viewModel.navigation,
-        destination: { navigation in
-          switch navigation {
-          case .passwordLogin:
-            EnterPasswordView()
+    NavigationView {
+      content
+        .background(Colors.background.swiftUIColor)
+        .navigationLink(
+          item: $viewModel.navigation,
+          destination: { navigation in
+            switch navigation {
+            case .passwordLogin:
+              EnterPasswordView(shouldDismissRoot: $shouldDismiss)
+            }
           }
-        }
-      )
-      .track(name: String(describing: type(of: self)))
+        )
+        .onChange(
+          of: shouldDismiss,
+          perform: { _ in
+            dismiss()
+          }
+        )
+        .track(name: String(describing: type(of: self)))
+    }
   }
 }
 

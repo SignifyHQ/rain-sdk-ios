@@ -45,4 +45,18 @@ public extension Error {
     
     return errorObject.message
   }
+  
+  var inlineError: InlineError? {
+    guard let errorObject = self.asErrorObject,
+          let inlineErorr = InlineError(rawValue: errorObject.code ?? "")
+    else {
+      return nil
+    }
+    
+    return inlineErorr
+  }
+}
+
+public enum InlineError: String {
+  case invalidCredentials = "credentials_invalid"
 }

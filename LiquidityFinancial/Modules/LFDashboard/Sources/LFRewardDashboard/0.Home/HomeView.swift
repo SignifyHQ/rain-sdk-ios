@@ -80,6 +80,9 @@ public struct HomeView: View {
         enhancedSecurityPopup
       }
     }
+    .fullScreenCover(isPresented: $viewModel.shouldShowBiometricsFallback) {
+      BiometricsBackupView()
+    }
     .onChange(of: scenePhase, perform: { newValue in
       if newValue == .active {
         viewModel.checkGoTransactionDetail()

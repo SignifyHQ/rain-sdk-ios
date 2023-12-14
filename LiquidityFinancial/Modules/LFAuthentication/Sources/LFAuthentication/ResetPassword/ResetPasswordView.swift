@@ -11,12 +11,14 @@ import LFUtilities
 import LFLocalizable
 
 public struct ResetPasswordView: View {
+  @StateObject
+  private var viewModel = ResetPasswordViewModel()
   
-  @StateObject private var viewModel = ResetPasswordViewModel()
+  @State
+  private var viewDidLoad: Bool = false
   
-  @State private var viewDidLoad: Bool = false
-  
-  public init() {}
+  @Binding
+  var shouldDismissRoot: Bool
   
   public var body: some View {
     content
@@ -33,9 +35,9 @@ public struct ResetPasswordView: View {
       }
       .navigationLink(item: $viewModel.navigaion) { navigation in
         switch navigation {
-        case .createPassword:
-          CreatePasswordView { viewModel in
-            viewModel.shouldDismiss = true
+        case .resetPassword(let token):
+          CreatePasswordView(resetPasswordToken: token) { _ in
+            shouldDismissRoot = true
           }
         }
       }
