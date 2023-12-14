@@ -73,6 +73,7 @@ let package = Package(
         .product(name: "AuthorizationManager", package: "LFNetwork"),
         .product(name: "Services", package: "LFServices"),
         .product(name: "LFNetSpendCard", package: "LFCard"),
+        .product(name: "BiometricsManager", package: "LFAuthentication"),
         .product(name: "LFAuthentication", package: "LFAuthentication")
       ]
     ),
@@ -111,6 +112,7 @@ let package = Package(
         .product(name: "AuthorizationManager", package: "LFNetwork"),
         .product(name: "Services", package: "LFServices"),
         .product(name: "LFNetSpendCard", package: "LFCard"),
+        .product(name: "BiometricsManager", package: "LFAuthentication"),
         .product(name: "LFAuthentication", package: "LFAuthentication")
       ]
     ),

@@ -522,6 +522,10 @@ public enum LFLocalizable {
       /// Passwords don't match
       public static let warning = LFLocalizable.tr("Localizable", "authentication.create_password.warning", fallback: "Passwords don't match")
     }
+    public enum DeviceLocalizedReason {
+      /// Authorize sensitive transactions.
+      public static let title = LFLocalizable.tr("Localizable", "authentication.device_localized_reason.title", fallback: "Authorize sensitive transactions.")
+    }
     public enum EnterPassword {
       /// Forgot Password
       public static let forgotPasswordButton = LFLocalizable.tr("Localizable", "authentication.enter_password.forgotPasswordButton", fallback: "Forgot Password")

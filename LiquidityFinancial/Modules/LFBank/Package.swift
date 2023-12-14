@@ -26,7 +26,8 @@ let package = Package(
       .package(name: "LFData", path: "../LFData"),
       .package(name: "LFNetwork", path: "../LFNetwork"),
       .package(name: "LFTransaction", path: "../LFTransaction"),
-      .package(name: "NetspendOnboarding", path: "../LFOnboarding")
+      .package(name: "NetspendOnboarding", path: "../LFOnboarding"),
+      .package(name: "LFAuthentication", path: "../LFAuthentication")
     ],
     targets: [
         .target(
@@ -40,7 +41,8 @@ let package = Package(
               .product(name: "OnboardingDomain", package: "LFDomain"),
               .product(name: "AccountDomain", package: "LFDomain"),
               .product(name: "Services", package: "LFServices"),
-              .product(name: "AuthorizationManager", package: "LFNetwork")
+              .product(name: "AuthorizationManager", package: "LFNetwork"),
+              .product(name: "BiometricsManager", package: "LFAuthentication")
             ]),
         .target(
             name: "LFBaseBank",
@@ -53,13 +55,15 @@ let package = Package(
               .product(name: "OnboardingDomain", package: "LFDomain"),
               .product(name: "AccountDomain", package: "LFDomain"),
               .product(name: "Services", package: "LFServices"),
-              .product(name: "AuthorizationManager", package: "LFNetwork")
+              .product(name: "AuthorizationManager", package: "LFNetwork"),
+              .product(name: "BiometricsManager", package: "LFAuthentication")
             ]),
         .target(
             name: "LFSolidBank",
             dependencies: [
               "LFUtilities", "LFStyleGuide", "LFLocalizable", "LFTransaction", "NetspendOnboarding", "LFBaseBank",
               .product(name: "OnboardingData", package: "LFData"),
+              .product(name: "ExternalFundingData", package: "LFData"),
               .product(name: "NetSpendData", package: "LFData"),
               .product(name: "SolidData", package: "LFData"),
               .product(name: "SolidDomain", package: "LFDomain"),
@@ -68,7 +72,8 @@ let package = Package(
               .product(name: "OnboardingDomain", package: "LFDomain"),
               .product(name: "AccountDomain", package: "LFDomain"),
               .product(name: "Services", package: "LFServices"),
-              .product(name: "AuthorizationManager", package: "LFNetwork")
+              .product(name: "AuthorizationManager", package: "LFNetwork"),
+              .product(name: "BiometricsManager", package: "LFAuthentication")
             ]),
         .testTarget(
             name: "LFBankTests",

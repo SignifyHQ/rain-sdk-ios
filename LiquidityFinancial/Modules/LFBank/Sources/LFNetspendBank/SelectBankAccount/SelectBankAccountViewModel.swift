@@ -9,6 +9,7 @@ import Services
 import NetspendSdk
 import NetspendDomain
 import EnvironmentService
+import BiometricsManager
 
 class SelectBankAccountViewModel: ObservableObject {
   
@@ -19,7 +20,7 @@ class SelectBankAccountViewModel: ObservableObject {
   @LazyInjected(\.externalFundingRepository) var externalFundingRepository
   @LazyInjected(\.netspendDataManager) var netspendDataManager
   @LazyInjected(\.accountDataManager) var accountDataManager
-  @LazyInjected(\.biometricsService) var biometricsService
+  @LazyInjected(\.biometricsManager) var biometricsManager
   @LazyInjected(\.analyticsService) var analyticsService
   @LazyInjected(\.nsPersonRepository) var nsPersonRepository
   @LazyInjected(\.customerSupportService) var customerSupportService
@@ -50,7 +51,7 @@ class SelectBankAccountViewModel: ObservableObject {
     NSGetAuthorizationCodeUseCase(repository: nsPersonRepository)
   }()
   
-  private var cancellable: Set<AnyCancellable> = []
+  private var cancellables: Set<AnyCancellable> = []
   
   init(linkedAccount: [APILinkedSourceData], amount: String, kind: MoveMoneyAccountViewModel.Kind) {
     self.linkedBanks = linkedAccount.filter({ data in
@@ -72,7 +73,7 @@ class SelectBankAccountViewModel: ObservableObject {
         data.isVerified && data.sourceType == .externalBank
       })
     }
-    .store(in: &cancellable)
+    .store(in: &cancellables)
   }
   
   func addNewBankAccount() {
@@ -87,11 +88,22 @@ class SelectBankAccountViewModel: ObservableObject {
   }
   
   func callBioMetric() {
-    Task {
-      if await biometricsService.authenticateWithBiometrics() {
-        callTransferAPI()
-      }
-    }
+    biometricsManager.performDeviceAuthentication()
+      .sink(receiveCompletion: { [weak self] completion in
+        guard let self else { return }
+        switch completion {
+        case .finished:
+          log.debug("Device authentication check completed.")
+        case .failure(let error):
+          self.toastMessage = error.localizedDescription
+        }
+      }, receiveValue: { [weak self] result in
+        guard let self else { return }
+        if result {
+          self.callTransferAPI()
+        }
+      })
+      .store(in: &cancellables)
   }
   
   func callTransferAPI() {

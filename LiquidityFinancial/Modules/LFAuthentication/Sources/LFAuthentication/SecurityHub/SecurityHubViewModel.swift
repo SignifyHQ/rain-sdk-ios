@@ -80,7 +80,7 @@ extension SecurityHubViewModel {
   
   func allowBiometricAuthentication() {
     popup = nil
-    biometricsManager.performBiometricsCheck()
+    biometricsManager.performBiometricsAuthentication()
       .sink(receiveCompletion: { [weak self] completion in
         guard let self else { return }
         switch completion {

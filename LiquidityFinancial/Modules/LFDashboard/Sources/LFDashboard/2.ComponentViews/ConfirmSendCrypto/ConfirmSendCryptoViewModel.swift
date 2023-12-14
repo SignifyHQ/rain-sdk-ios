@@ -1,5 +1,6 @@
 import Foundation
 import BaseDashboard
+import Combine
 import Factory
 import Services
 import ZerohashData
@@ -8,11 +9,12 @@ import LFLocalizable
 import ZerohashDomain
 import LFUtilities
 import AccountService
+import BiometricsManager
 
 class ConfirmSendCryptoViewModel: ObservableObject {
   @LazyInjected(\.accountDataManager) var accountDataManager
   @LazyInjected(\.zerohashRepository) var zerohashRepository
-  @LazyInjected(\.biometricsService) var biometricsService
+  @LazyInjected(\.biometricsManager) var biometricsManager
   @LazyInjected(\.cryptoAccountService) var cryptoAccountService
   
   @Published var showIndicator: Bool = false
@@ -29,6 +31,8 @@ class ConfirmSendCryptoViewModel: ObservableObject {
   var fee: Double? {
     feeLockedResponse?.fee
   }
+  
+  private var cancellables: Set<AnyCancellable> = []
 
   init(assetModel: AssetModel, amount: Double, address: String, nickname: String, feeLockedResponse: APILockedNetworkFeeResponse?) {
     self.assetModel = assetModel
@@ -43,11 +47,22 @@ class ConfirmSendCryptoViewModel: ObservableObject {
   }
   
   func callBioMetric() {
-    Task {
-      if await biometricsService.authenticateWithBiometrics() {
-        callTransferAPI()
-      }
-    }
+    biometricsManager.performDeviceAuthentication()
+      .sink(receiveCompletion: { [weak self] completion in
+        guard let self else { return }
+        switch completion {
+        case .finished:
+          log.debug("Device authentication check completed.")
+        case .failure(let error):
+          self.toastMessage = error.localizedDescription
+        }
+      }, receiveValue: { [weak self] result in
+        guard let self else { return }
+        if result {
+          self.callTransferAPI()
+        }
+      })
+      .store(in: &cancellables)
   }
   
   private func callTransferAPI() {

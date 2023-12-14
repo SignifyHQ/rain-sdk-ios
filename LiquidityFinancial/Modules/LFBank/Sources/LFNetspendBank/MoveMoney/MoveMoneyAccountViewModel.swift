@@ -9,10 +9,11 @@ import Factory
 import LFStyleGuide
 import LFTransaction
 import Services
+import BiometricsManager
 
 @MainActor
 public class MoveMoneyAccountViewModel: ObservableObject {
-  @LazyInjected(\.biometricsService) var biometricsService
+  @LazyInjected(\.biometricsManager) var biometricsManager
   @LazyInjected(\.accountRepository) var accountRepository
   @LazyInjected(\.accountDataManager) var accountDataManager
   @LazyInjected(\.externalFundingRepository) var externalFundingRepository
@@ -143,11 +144,22 @@ extension MoveMoneyAccountViewModel {
   }
   
   func callBioMetric() {
-    Task {
-      if await biometricsService.authenticateWithBiometrics() {
-        callTransferAPI()
-      }
-    }
+    biometricsManager.performDeviceAuthentication()
+      .sink(receiveCompletion: { [weak self] completion in
+        guard let self else { return }
+        switch completion {
+          case .finished:
+            log.debug("Device authentication check completed.")
+          case .failure(let error):
+            self.toastMessage = error.localizedDescription
+        }
+      }, receiveValue: { [weak self] result in
+        guard let self else { return }
+        if result {
+          self.callTransferAPI()
+        }
+      })
+      .store(in: &cancellable)
   }
   
   func continueTransfer() {

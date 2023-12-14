@@ -12,10 +12,11 @@ import ExternalFundingData
 import SolidDomain
 import SolidData
 import AccountService
+import BiometricsManager
 
 @MainActor
 public class MoveMoneyAccountViewModel: ObservableObject {
-  @LazyInjected(\.biometricsService) var biometricsService
+  @LazyInjected(\.biometricsManager) var biometricsManager
   @LazyInjected(\.accountDataManager) var accountDataManager
   @LazyInjected(\.analyticsService) var analyticsService
   @LazyInjected(\.customerSupportService) var customerSupportService
@@ -383,11 +384,22 @@ private extension MoveMoneyAccountViewModel {
   }
   
   func callBioMetric() {
-    Task {
-      if await biometricsService.authenticateWithBiometrics() {
-        callTransferAPI()
-      }
-    }
+    biometricsManager.performDeviceAuthentication()
+      .sink(receiveCompletion: { [weak self] completion in
+        guard let self else { return }
+        switch completion {
+          case .finished:
+            log.debug("Device authentication check completed.")
+          case .failure(let error):
+            self.toastMessage = error.localizedDescription
+        }
+      }, receiveValue: { [weak self] result in
+        guard let self else { return }
+        if result {
+          self.callTransferAPI()
+        }
+      })
+      .store(in: &cancellable)
   }
   
   func refresh() async {

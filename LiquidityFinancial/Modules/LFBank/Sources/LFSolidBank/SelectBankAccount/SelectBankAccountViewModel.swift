@@ -12,6 +12,7 @@ import NetspendSdk
 import ExternalFundingData
 import AccountService
 import EnvironmentService
+import BiometricsManager
 
 class SelectBankAccountViewModel: ObservableObject {
   
@@ -21,7 +22,7 @@ class SelectBankAccountViewModel: ObservableObject {
   @LazyInjected(\.environmentService) var environmentService
   @LazyInjected(\.externalFundingRepository) var externalFundingRepository
   @LazyInjected(\.accountDataManager) var accountDataManager
-  @LazyInjected(\.biometricsService) var biometricsService
+  @LazyInjected(\.biometricsManager) var biometricsManager
   @LazyInjected(\.analyticsService) var analyticsService
   @LazyInjected(\.customerSupportService) var customerSupportService
   @LazyInjected(\.externalFundingDataManager) var externalFundingDataManager
@@ -104,11 +105,22 @@ class SelectBankAccountViewModel: ObservableObject {
   }
   
   func callBioMetric() {
-    Task {
-      if await biometricsService.authenticateWithBiometrics() {
-        callTransferAPI()
-      }
-    }
+    biometricsManager.performDeviceAuthentication()
+      .sink(receiveCompletion: { [weak self] completion in
+        guard let self else { return }
+        switch completion {
+          case .finished:
+            log.debug("Device authentication check completed.")
+          case .failure(let error):
+            self.toastMessage = error.localizedDescription
+        }
+      }, receiveValue: { [weak self] result in
+        guard let self else { return }
+        if result {
+          self.callTransferAPI()
+        }
+      })
+      .store(in: &cancellable)
   }
   
   func callTransferAPI() {
