@@ -52,6 +52,9 @@ public struct SolidCardView: View {
       cardCopyMessageView
     }
     .track(name: String(describing: type(of: self)))
+    .onAppear {
+      viewModel.getVGSShowTokenAPI()
+    }
   }
 }
 

@@ -27,14 +27,14 @@ public final class SolidCardViewModel: ObservableObject, Identifiable {
   public init(cardModel: CardModel) {
     vgsShow = VGSShow(id: LFServices.vgsConfig.id, environment: LFServices.vgsConfig.env)
     self.cardModel = cardModel
-    getVGSShowTokenAPI()
   }
 }
 
 // MARK: - API
 extension SolidCardViewModel {
-  private func getVGSShowTokenAPI() {
+  func getVGSShowTokenAPI() {
     Task {
+      isCardAvailable = false
       do {
         let token = try await createVGSShowTokenUseCase.execute(cardID: cardModel.id)
         revealCard(vgsShowToken: token.showToken, solidCardID: token.solidCardId)
