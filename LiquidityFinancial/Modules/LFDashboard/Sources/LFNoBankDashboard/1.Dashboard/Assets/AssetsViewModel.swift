@@ -23,6 +23,7 @@ final class AssetsViewModel: ObservableObject {
     accountDataManager
       .accountsSubject.map({ accounts in
         accounts.map({ AssetModel(account: $0) })
+          .filter({ $0.type != .usd })
       })
       .assign(to: \.assets, on: self)
       .store(in: &cancellable)
@@ -30,19 +31,15 @@ final class AssetsViewModel: ObservableObject {
   
   func onClickedAsset(asset: AssetModel) {
     if asset.type == .usd {
-      navigation = .usd(asset)
-    } else {
-      navigation = .crypto(asset)
+      return
     }
+    navigation = .crypto(asset)
   }
   
   func refresh() async {
-    async let fiatAccountsEntity = self.dashboardRepository.getFiatAccounts()
     async let cryptoAccountsEntity = self.dashboardRepository.getCryptoAccounts()
     do {
-      let fiatAccounts = try await fiatAccountsEntity
-      let cryptoAccounts = try await cryptoAccountsEntity
-      let accounts = fiatAccounts + cryptoAccounts
+      let accounts = try await cryptoAccountsEntity
       
       self.accountDataManager.accountsSubject.send(accounts)
     } catch {
@@ -54,7 +51,6 @@ final class AssetsViewModel: ObservableObject {
   // MARK: - Types
 extension AssetsViewModel {
   enum Navigation {
-    case usd(AssetModel)
     case crypto(AssetModel)
   }
 }

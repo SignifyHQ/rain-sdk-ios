@@ -43,8 +43,6 @@ struct AssetsView: View {
     }
     .navigationLink(item: $viewModel.navigation) { item in
       switch item {
-      case let .usd(asset):
-        FiatAssetView(asset: asset)
       case let .crypto(asset):
         CryptoAssetView(asset: asset)
       }
@@ -73,9 +71,7 @@ private extension AssetsView {
                 .font(Fonts.Inter.bold.swiftUIFont(size: Constants.FontSize.medium.value))
             }
             
-            let font = asset.type == .usd ?
-            Fonts.Inter.bold.swiftUIFont(size: Constants.FontSize.medium.value) :
-            Fonts.Inter.regular.swiftUIFont(size: Constants.FontSize.ultraSmall.value)
+            let font = Fonts.Inter.regular.swiftUIFont(size: Constants.FontSize.ultraSmall.value)
             
             Text(asset.availableBalanceFormatted)
               .foregroundColor(Colors.label.swiftUIColor)

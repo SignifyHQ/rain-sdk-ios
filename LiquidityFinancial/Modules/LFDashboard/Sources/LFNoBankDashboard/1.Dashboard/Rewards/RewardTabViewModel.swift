@@ -41,6 +41,7 @@ class RewardTabViewModel: ObservableObject {
         guard let self, let rewardCurrencies else { return }
         self.availableRewardCurrencies = rewardCurrencies.availableRewardCurrencies
           .compactMap { AssetType(rawValue: $0) }
+          .filter({ $0 != .usd })
           .sorted { $0.index < $1.index }
       }
       .store(in: &cancellable)
@@ -72,12 +73,10 @@ extension RewardTabViewModel {
       guard let selectedRewardCurrency else { return }
       accountID = accounts.first(where: { $0.currency.rawValue == selectedRewardCurrency.rawValue })?.id ?? .empty
       if selectedRewardCurrency == .usd {
-        currencyType = Constants.CurrencyType.fiat.rawValue
-        transactionTypes = Constants.TransactionTypesRequest.rewardCashBack.types
-      } else {
-        currencyType = Constants.CurrencyType.crypto.rawValue
-        transactionTypes = Constants.TransactionTypesRequest.rewardCryptoBack.types
+        return
       }
+      currencyType = Constants.CurrencyType.crypto.rawValue
+      transactionTypes = Constants.TransactionTypesRequest.rewardCryptoBack.types
       await apiLoadTransactions()
     }
   }
