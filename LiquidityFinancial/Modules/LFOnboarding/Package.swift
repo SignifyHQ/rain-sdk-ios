@@ -36,7 +36,8 @@ let package = Package(
     .package(url: "https://github.com/nalexn/ViewInspector", from: "0.9.8"),
     .package(name: "TestHelpers", path: "../TestHelpers"),
     .package(name: "LFFeatureFlags", path: "../LFFeatureFlags"),
-    .package(name: "LFAuthentication", path: "../LFAuthentication")
+    .package(name: "LFAuthentication", path: "../LFAuthentication"),
+    .package(name: "LFServices", path: "../LFServices"),
   ],
   targets: [
     .target(
@@ -90,7 +91,8 @@ let package = Package(
         .product(name: "SolidDomain", package: "LFDomain"),
         .product(name: "DevicesDomain", package: "LFDomain"),
         .product(name: "BiometricsManager", package: "LFAuthentication"),
-        .product(name: "LFAuthentication", package: "LFAuthentication")
+        .product(name: "LFAuthentication", package: "LFAuthentication"),
+        .product(name: "AccountService", package: "LFServices"),
       ]
     ),
     .testTarget(

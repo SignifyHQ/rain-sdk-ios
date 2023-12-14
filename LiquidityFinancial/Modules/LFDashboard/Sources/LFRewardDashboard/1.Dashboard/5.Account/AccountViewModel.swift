@@ -11,6 +11,9 @@ import LFBaseBank
 import LFSolidBank
 import AccountData
 import EnvironmentService
+import SolidData
+import SolidDomain
+import AccountService
 
 @MainActor
 class AccountViewModel: ObservableObject {
@@ -36,15 +39,22 @@ class AccountViewModel: ObservableObject {
   @Published var navigation: Navigation?
   @Published var isDisableView: Bool = false
   @Published var isLoadingACH: Bool = false
-  @Published var isLoadingDisputeTransaction: Bool = false
+  @Published var isLoadingLinkedSources: Bool = false
   @Published var isLoading: Bool = false
   @Published var openLegal = false
   @Published var notificationsEnabled = false
   @Published var toastMessage: String?
-  @Published var linkedAccount: [APILinkedSourceData] = []
   @Published var achInformation: ACHModel = .default
   @Published var sheet: Sheet?
   @Published var linkedContacts: [LinkedSourceContact] = []
+  
+  @Injected(\.solidAccountRepository) var solidAccountRepository
+  @Injected(\.solidExternalFundingRepository) var solidExternalFundingRepository
+  @Injected(\.fiatAccountService) var fiatAccountService
+  
+  lazy var solidGetWireTransfer: SolidGetWireTranferUseCaseProtocol = {
+    SolidGetWireTranferUseCase(repository: solidExternalFundingRepository)
+  }()
   
   private(set) var addFundsViewModel = AddFundsViewModel()
   private var cancellable: Set<AnyCancellable> = []
@@ -60,17 +70,13 @@ class AccountViewModel: ObservableObject {
     return false
   }
   
-  init(achInformationData: Published<(model: ACHModel, loading: Bool)>.Publisher) {
-    achInformationData
-      .receive(on: DispatchQueue.main)
-      .sink { [weak self] achModel in
-        self?.isLoadingACH = achModel.loading
-        self?.achInformation = achModel.model
-      }
-      .store(in: &cancellable)
-    
+  init() {
     subscribeLinkedContacts()
     checkNotificationsStatus()
+  }
+  
+  func onAppear() {
+    handleACHData()
   }
 }
 
@@ -119,7 +125,7 @@ extension AccountViewModel {
   
   func subscribeLinkedContacts() {
     externalFundingDataManager.subscribeLinkedSourcesChanged({ [weak self] contacts in
-      self?.linkedContacts = contacts.filter { $0.sourceType == .bank}
+      self?.linkedContacts = contacts.filter { $0.sourceType == .bank }
     })
     .store(in: &cancellable)
   }
@@ -157,5 +163,50 @@ extension AccountViewModel {
       self
     }
     case legal
+  }
+}
+
+// MARK: - ACH
+extension AccountViewModel {
+  func handleACHData() {
+    guard
+      achInformation.accountNumber == Constants.Default.undefined.rawValue ||
+        achInformation.routingNumber == Constants.Default.undefined.rawValue
+    else { return }
+    
+    Task { @MainActor in
+      do {
+        defer { isLoadingACH = false }
+        isLoadingACH = true
+        
+        let achModel = try await getACHInformation()
+        achInformation = achModel
+        
+      } catch {
+        log.error(error.localizedDescription)
+      }
+    }
+  }
+  
+  private func getFiatAccounts() async throws -> [AccountModel] {
+    let accounts = try await fiatAccountService.getAccounts()
+    self.accountDataManager.addOrUpdateAccounts(accounts)
+    return accounts
+  }
+  
+  private func getACHInformation() async throws -> ACHModel {
+    var account = self.accountDataManager.fiatAccounts.first
+    if account == nil {
+      account = try await getFiatAccounts().first
+    }
+    guard let accountId = account?.id else {
+      return ACHModel.default
+    }
+    let wireResponse = try await solidGetWireTransfer.execute(accountId: accountId)
+    return ACHModel(
+      accountNumber: wireResponse.accountNumber,
+      routingNumber: wireResponse.routingNumber,
+      accountName: wireResponse.accountNumber
+    )
   }
 }

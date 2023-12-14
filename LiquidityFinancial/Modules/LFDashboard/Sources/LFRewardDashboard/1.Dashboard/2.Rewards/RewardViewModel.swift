@@ -10,14 +10,14 @@ import AccountService
 
 @MainActor
 class RewardViewModel: ObservableObject {
-  @LazyInjected(\.accountDataManager) var accountDataManager
-  @LazyInjected(\.accountRepository) var accountRepository
-  @LazyInjected(\.dashboardRepository) var dashboardRepository
+  @Injected(\.accountDataManager) var accountDataManager
+  @Injected(\.accountRepository) var accountRepository
+  @Injected(\.fiatAccountService) var fiatAccountService
   
   @Published var feed: DataStatus<TransactionModel> = .idle
   @Published var navigation: Navigation?
-  @Published var account: AccountModel?
   @Published var toastMessage: String = ""
+  @Published var fiatAccountID: String = ""
   
   private var isFirstLoad: Bool = false
   private var isLoading: Bool = false
@@ -26,7 +26,6 @@ class RewardViewModel: ObservableObject {
   
   init() {
     isFirstLoad = true
-    subscribeToUserTransactionNotifications()
   }
   
   deinit {
@@ -59,8 +58,14 @@ extension RewardViewModel {
   // MARK: - API logic
 
 private extension RewardViewModel {
-  func subscribeToUserTransactionNotifications() {
-    
+  private func fetchFiatAccountID() async throws -> String {
+    var account = self.accountDataManager.fiatAccounts.first
+    if account == nil {
+      let listAccount = try await fiatAccountService.getAccounts()
+      self.accountDataManager.addOrUpdateAccounts(listAccount)
+      account = listAccount.first
+    }
+    return account?.id ?? ""
   }
   
   func apiRefreshData() {
@@ -69,10 +74,13 @@ private extension RewardViewModel {
         defer { isLoading = false }
         isLoading = true
         
+        let accountID = try await fetchFiatAccountID()
+        fiatAccountID = accountID
+        
         if isFirstLoad {
           feed = .loading
-          let accounts = try await dashboardRepository.getFiatAccounts()
-          guard let account = accounts.first else {
+
+          guard accountID.isEmpty == false else {
             // reset state for first load
             isFirstLoad = false
             
@@ -80,23 +88,13 @@ private extension RewardViewModel {
             return
           }
           
-          self.account = account
-          let models = try await apiFetchTransactions(accountId: account.id)
+          let models = try await apiFetchTransactions(accountId: accountID)
           feed = .success(models)
           
           // reset state for first load
           isFirstLoad = false
         } else {
-          if let account = account {
-            let models = try await apiFetchTransactions(accountId: account.id)
-            feed = .success(models)
-          } else {
-            let accounts = try await dashboardRepository.getFiatAccounts()
-            guard let account = accounts.first else { return }
-            self.account = account
-            let models = try await apiFetchTransactions(accountId: account.id)
-            feed = .success(models)
-          }
+
         }
       } catch {
         if isFirstLoad {
@@ -111,6 +109,7 @@ private extension RewardViewModel {
   }
   
   func apiFetchTransactions(accountId: String) async throws -> [TransactionModel] {
+    guard accountId.isEmpty == false else { return [] }
     let transactions = try await accountRepository.getTransactions(
       accountId: accountId,
       currencyType: currencyType,

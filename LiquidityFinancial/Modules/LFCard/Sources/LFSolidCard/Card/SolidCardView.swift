@@ -14,7 +14,8 @@ public struct SolidCardView: View {
     cardModel: CardModel,
     isShowCardNumber: Binding<Bool>
   ) {
-    _viewModel = .init(wrappedValue: SolidCardViewModel(cardModel: cardModel))
+    let cardViewModel = SolidCardViewModel(cardModel: cardModel)
+    _viewModel = .init(wrappedValue: cardViewModel)
     _isShowCardNumber = isShowCardNumber
   }
   

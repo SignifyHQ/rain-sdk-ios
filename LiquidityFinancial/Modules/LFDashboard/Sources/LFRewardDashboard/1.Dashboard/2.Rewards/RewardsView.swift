@@ -38,12 +38,12 @@ struct RewardsView: View {
           TransactionListView(
             type: .cashback,
             currencyType: viewModel.currencyType,
-            accountID: viewModel.account?.id ?? .empty,
+            accountID: viewModel.fiatAccountID,
             transactionTypes: Constants.TransactionTypesRequest.rewardCashBack.types
           )
         case let .transactionDetail(transaction):
           TransactionDetailView(
-            accountID: viewModel.account?.id ?? .empty,
+            accountID: viewModel.fiatAccountID,
             transactionId: transaction.id,
             kind: .cashback,
             isPopToRoot: false

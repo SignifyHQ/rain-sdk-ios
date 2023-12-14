@@ -13,8 +13,6 @@ import Services
 import LFAuthentication
 
 public struct HomeView: View {
-  
-  @Injected(\.dashboardRepository) var dashboardRepository
   @Injected(\.analyticsService) var analyticsService
   
   @Environment(\.scenePhase) var scenePhase
@@ -26,9 +24,6 @@ public struct HomeView: View {
   public init(viewModel: HomeViewModel, onChangeRoute: ((SolidOnboardingFlowCoordinator.Route) -> Void)? = nil) {
     _viewModel = .init(wrappedValue: viewModel)
     self.onChangeRoute = onChangeRoute
-    dashboardRepository.load { toastMessage in
-      viewModel.toastMessage = toastMessage
-    }
   }
   
   public var body: some View {
@@ -88,7 +83,7 @@ public struct HomeView: View {
     .onChange(of: scenePhase, perform: { newValue in
       if newValue == .active {
         viewModel.checkGoTransactionDetail()
-        viewModel.getListConnectedAccount()
+        viewModel.refreshLinkedSources()
       }
     })
   }
@@ -97,7 +92,7 @@ public struct HomeView: View {
 // MARK: - View Components
 private extension HomeView {
   func loadTabView(option: TabOption) -> some View {
-    DashboardView(dataStorages: dashboardRepository, option: option) { option in
+    DashboardView(option: option) { option in
       viewModel.tabSelected = option
     }.tabItem {
       tabItem(option: option)

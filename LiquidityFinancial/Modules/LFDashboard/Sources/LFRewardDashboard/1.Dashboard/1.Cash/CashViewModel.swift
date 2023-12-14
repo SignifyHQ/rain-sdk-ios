@@ -13,13 +13,18 @@ import Combine
 import BaseCard
 import ExternalFundingData
 import AccountService
+import SolidDomain
+import SolidData
 
 @MainActor
 final class CashViewModel: ObservableObject {
   @LazyInjected(\.accountRepository) var accountRepository
   @LazyInjected(\.accountDataManager) var accountDataManager
-  @LazyInjected(\.dashboardRepository) var dashboardRepository
   @LazyInjected(\.externalFundingDataManager) var externalFundingDataManager
+  
+  @Injected(\.solidAccountRepository) var solidAccountRepository
+  @Injected(\.solidExternalFundingRepository) var solidExternalFundingRepository
+  @Injected(\.fiatAccountService) var fiatAccountService
   
   @Published var isCardActive: Bool = true
   @Published var isLoading: Bool = false
@@ -36,6 +41,10 @@ final class CashViewModel: ObservableObject {
   @Published var accountID: String = .empty
   @Published var fullScreen: FullScreen?
   @Published var linkedContacts: [LinkedSourceContact] = []
+  
+  lazy var solidGetWireTransfer: SolidGetWireTranferUseCaseProtocol = {
+    SolidGetWireTranferUseCase(repository: solidExternalFundingRepository)
+  }()
   
     //This is flag handle case when app have change scenePhase
   var shouldReloadListTransaction: Bool = false
@@ -59,7 +68,7 @@ final class CashViewModel: ObservableObject {
   init(guestHandler: @escaping () -> Void) {
     self.guestHandler = guestHandler
     firstLoadData()
-    getACHInfo()
+    handleACHInfo()
     handleEventReloadTransaction()
     subscribeLinkedContacts()
   }
@@ -69,6 +78,7 @@ final class CashViewModel: ObservableObject {
     refreshAccount()
     let animation = self.transactions.isEmpty ? true : false
     refreshTransaction(withAnimation: animation, accountID: accountID)
+    NotificationCenter.default.post(name: .refreshListCards, object: nil)
   }
   
   private func subscribeLinkedContacts() {
@@ -96,9 +106,6 @@ final class CashViewModel: ObservableObject {
         isLoading = true
         if let account = try await refreshAccounts() {
           isLoading = false
-          
-          dashboardRepository.apiFetchListConnectedAccount()
-          
           try await loadTransactions(accountId: account.id)
           activity = transactions.isEmpty ? .addFunds : .transactions
         }
@@ -114,7 +121,6 @@ final class CashViewModel: ObservableObject {
       do {
         defer { isLoading = false }
         isLoading = true
-        dashboardRepository.apiFetchListConnectedAccount()
         try await refreshAccounts()
       } catch {
         log.error(error)
@@ -199,7 +205,7 @@ extension CashViewModel {
   private func refreshAccounts() async throws -> AccountModel? {
     defer { isLoading = false }
     isLoading = true
-    let accounts = try await dashboardRepository.getFiatAccounts()
+    let accounts = try await getFiatAccounts()
     if let account = accounts.first {
       self.accountID = account.id
       self.accountDataManager.fiatAccountID = account.id
@@ -207,19 +213,41 @@ extension CashViewModel {
       self.cashBalanceValue = account.availableBalance
       self.selectedAsset = AssetType(rawValue: account.currency.rawValue.uppercased()) ?? .usd
     }
-    accountDataManager.addOrUpdateAccounts(accounts)
     return accounts.first
   }
   
-  private func getACHInfo() {
+  private func handleACHInfo() {
     Task {
       do {
-        achInformation = try await dashboardRepository.getACHInformation()
+        achInformation = try await getACHInformation()
       } catch {
         toastMessage = error.localizedDescription
       }
     }
   }
+   
+   private func getFiatAccounts() async throws -> [AccountModel] {
+     var accounts = self.accountDataManager.fiatAccounts
+     if accounts.isEmpty {
+       accounts = try await fiatAccountService.getAccounts()
+       self.accountDataManager.addOrUpdateAccounts(accounts)
+     }
+     return accounts
+   }
+   
+   private func getACHInformation() async throws -> ACHModel {
+     let account = try await getFiatAccounts().first
+     guard let accountId = account?.id else {
+       return ACHModel.default
+     }
+     let wireResponse = try await solidGetWireTransfer.execute(accountId: accountId)
+     return ACHModel(
+       accountNumber: wireResponse.accountNumber,
+       routingNumber: wireResponse.routingNumber,
+       accountName: wireResponse.accountNumber
+     )
+   }
+   
 }
 
 // MARK: - Types

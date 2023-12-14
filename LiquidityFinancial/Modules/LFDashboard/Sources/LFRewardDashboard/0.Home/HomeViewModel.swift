@@ -10,21 +10,42 @@ import LFRewards
 import DevicesData
 import Services
 import DevicesDomain
+import AccountService
+import SolidData
+import SolidDomain
+import ExternalFundingData
 
 @MainActor
 public final class HomeViewModel: ObservableObject {
   @LazyInjected(\.accountDataManager) var accountDataManager
   @LazyInjected(\.rewardDataManager) var rewardDataManager
-  
   @LazyInjected(\.accountRepository) var accountRepository
   @LazyInjected(\.onboardingRepository) var onboardingRepository
   @LazyInjected(\.devicesRepository) var devicesRepository
   @LazyInjected(\.externalFundingRepository) var externalFundingRepository
-  
   @LazyInjected(\.pushNotificationService) var pushNotificationService
-  
   @LazyInjected(\.customerSupportService) var customerSupportService
-  @LazyInjected(\.dashboardRepository) var dashboardRepository
+  
+  @Injected(\.solidAccountRepository) var solidAccountRepository
+  @Injected(\.solidExternalFundingRepository) var solidExternalFundingRepository
+  @Injected(\.fiatAccountService) var fiatAccountService
+  @Injected(\.externalFundingDataManager) var externalFundingDataManager
+  
+  lazy var solidGetWireTransfer: SolidGetWireTranferUseCaseProtocol = {
+    SolidGetWireTranferUseCase(repository: solidExternalFundingRepository)
+  }()
+  
+  lazy var solidGetLinkedSourcesUseCase: SolidGetLinkedSourcesUseCaseProtocol = {
+    SolidGetLinkedSourcesUseCase(repository: solidExternalFundingRepository)
+  }()
+  
+  lazy var unlinkContactUseCase: SolidUnlinkContactUseCaseProtocol = {
+    SolidUnlinkContactUseCase(repository: solidExternalFundingRepository)
+  }()
+  
+  lazy var deviceRegisterUseCase: DeviceRegisterUseCaseProtocol = {
+    DeviceRegisterUseCase(repository: devicesRepository)
+  }()
   
   @Published var tabSelected: TabOption = .cash
   @Published var navigation: Navigation?
@@ -32,10 +53,6 @@ public final class HomeViewModel: ObservableObject {
   @Published var popup: Popup?
   @Published var blockingPopup: BlockingPopup?
   @Published var toastMessage: String?
-  
-  lazy var deviceRegisterUseCase: DeviceRegisterUseCaseProtocol = {
-    DeviceRegisterUseCase(repository: devicesRepository)
-  }()
   
   private var subscribers: Set<AnyCancellable> = []
   
@@ -71,9 +88,9 @@ public final class HomeViewModel: ObservableObject {
 private extension HomeViewModel {
   func initData() {
     apiFetchUser()
+    refreshLinkedSources()
     handleSelectRewardChange()
     handleSelectedFundraisersSuccess()
-    getListConnectedAccount()
     handleFCMTokenRefresh()
   }
   
@@ -281,9 +298,56 @@ extension HomeViewModel {
       navigation = .transactionDetail(id: id, accountId: accountId)
     }
   }
+}
+
+// MARK: - LinkedSources
+extension HomeViewModel {
+  func refreshLinkedSources() {
+    Task { @MainActor in
+      do {
+        try await fetchSolidLinkedSources()
+      } catch {
+        toastMessage = error.localizedDescription
+        log.error(error.localizedDescription)
+      }
+    }
+  }
   
-  func getListConnectedAccount() {
-    dashboardRepository.apiFetchListConnectedAccount()
+  private func getFiatAccounts() async throws -> [AccountModel] {
+    let accounts = try await fiatAccountService.getAccounts()
+    self.accountDataManager.addOrUpdateAccounts(accounts)
+    return accounts
+  }
+  
+  private func removeUnknowContactSources(_ sources: [SolidContactEntity]) async {
+    let contactModel = sources.compactMap({ $0 as? APISolidContact })
+    await contactModel.concurrentForEach { source in
+      if APISolidContactType(rawValue: source.type) == nil {
+        _ = try? await self.unlinkContactUseCase.execute(id: source.solidContactId)
+      }
+    }
+  }
+  
+  private func fetchSolidLinkedSources() async throws {
+    var account = self.accountDataManager.fiatAccounts.first
+    if account == nil {
+      account = try await getFiatAccounts().first
+    }
+    guard let account = account else {
+      return
+    }
+    let response = try await self.solidGetLinkedSourcesUseCase.execute(accountID: account.id)
+    var unknownSources: [SolidContactEntity] = []
+    let contacts = response.compactMap({ (data: SolidContactEntity) -> LinkedSourceContact? in
+      guard let type = APISolidContactType(rawValue: data.type) else {
+        unknownSources.append(data)
+        return nil
+      }
+      let sourceType: LinkedSourceContactType = type == .externalBank ? .bank : .card
+      return LinkedSourceContact(name: data.name, last4: data.last4, sourceType: sourceType, sourceId: data.solidContactId)
+    })
+    self.externalFundingDataManager.storeLinkedSources(contacts)
+    await self.removeUnknowContactSources(unknownSources)
   }
 }
 

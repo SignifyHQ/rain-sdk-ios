@@ -24,7 +24,6 @@ extension Container {
   }
 }
 
-//swiftlint: disable identifier_name
 public protocol SolidOnboardingFlowCoordinatorProtocol {
   var routeSubject: CurrentValueSubject<SolidOnboardingFlowCoordinator.Route, Never> { get }
   func routeUser()
@@ -74,6 +73,7 @@ public class SolidOnboardingFlowCoordinator: SolidOnboardingFlowCoordinatorProto
   @LazyInjected(\.pushNotificationService) var pushNotificationService
   @LazyInjected(\.analyticsService) var analyticsService
   @LazyInjected(\.solidOnboardingRepository) var solidOnboardingRepository
+  @LazyInjected(\.fiatAccountService) var fiatAccountService
   
   lazy var accountUseCase: AccountUseCaseProtocol = {
     AccountUseCase(repository: accountRepository)
@@ -236,6 +236,7 @@ public class SolidOnboardingFlowCoordinator: SolidOnboardingFlowCoordinatorProto
   
   public func fetchUserReviewStatus(needLoadMigration: Bool = true) async throws {
     let user = try await getUserUseCase.execute()
+    
     let migrationStatus = try? await getMigrationStatusUseCase.execute()
     
     if let status = migrationStatus, status.migrationNeeded && !status.migrated && needLoadMigration {
@@ -243,6 +244,10 @@ public class SolidOnboardingFlowCoordinator: SolidOnboardingFlowCoordinatorProto
     } else if let accountReviewStatus = user.accountReviewStatusEnum {
       switch accountReviewStatus {
       case .approved:
+        
+        // It is a buffer task that helps prepare data before the user enters the app
+        await apiFetchFiatAccounts()
+        
         set(route: .dashboard)
       case .rejected:
         set(route: .accountReject)
@@ -271,6 +276,12 @@ private extension SolidOnboardingFlowCoordinator {
 }
 
 extension SolidOnboardingFlowCoordinator {
+  
+  private func apiFetchFiatAccounts() async {
+    guard let accounts = try? await fiatAccountService.getAccounts() else { return }
+    self.accountDataManager.addOrUpdateAccounts(accounts)
+  }
+  
   private func handleDataUser(user: LFUser) {
     accountDataManager.storeUser(user: user)
     trackUserInformation(user: user)

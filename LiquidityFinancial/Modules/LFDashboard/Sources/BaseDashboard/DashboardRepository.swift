@@ -110,38 +110,23 @@ public final class DashboardRepository: ObservableObject {
   
   public init(toastMessage: @escaping (String) -> Void) {
     self.toastMessage = toastMessage
-    switch LFUtilities.target {
-    case .CauseCard, .PrideCard:
-      initRewardData()
-    default:
-      initData()
-    }
+    initData()
     refreshListCards()
   }
   
   public func load(toastMessage: @escaping (String) -> Void) {
     self.toastMessage = toastMessage
-    switch LFUtilities.target {
-    case .CauseCard, .PrideCard:
-      initRewardData()
-    default:
-      initData()
-    }
+    initData()
     refreshListCards()
   }
 }
 
   // MARK: API init data tab content
 public extension DashboardRepository {
-  
-  func initRewardData() {
-    apiFetchListConnectedAccount()
-    apiFetchACHInfo()
-  }
-  
+
   func initData() {
     apiFetchAssetFromAccounts()
-    apiFetchListConnectedAccount()
+    fetchNetspendLinkedSources()
     apiFetchACHInfo()
     apiFetchNetSpendCards()
   }
@@ -325,44 +310,13 @@ public extension DashboardRepository {
   }
   
   func getACHInformation() async throws -> ACHModel {
-    switch LFUtilities.target {
-    case .PrideCard, .CauseCard:
-      var account = self.accountDataManager.fiatAccounts.first
-      if account == nil {
-        account = try await getFiatAccounts().first
-      }
-      guard let accountId = account?.id else {
-        return ACHModel.default
-      }
-      let wireResponse = try await solidGetWireTransfer.execute(accountId: accountId)
-      return ACHModel(
-        accountNumber: wireResponse.accountNumber,
-        routingNumber: wireResponse.routingNumber,
-        accountName: wireResponse.accountNumber
-      )
-    default:
-      let achResponse = try await nsGetACHInfoUseCase.execute(sessionID: accountDataManager.sessionID)
-      let achInformation = ACHModel(
-        accountNumber: achResponse.accountNumber ?? Constants.Default.undefined.rawValue,
-        routingNumber: achResponse.routingNumber ?? Constants.Default.undefined.rawValue,
-        accountName: achResponse.accountName ?? Constants.Default.undefined.rawValue
-      )
-      return achInformation
-    }
-  }
-  
-}
-
-// MARK: External Funding
-public extension DashboardRepository {
-  
-  func apiFetchListConnectedAccount() {
-    switch LFUtilities.target {
-    case .CauseCard, .PrideCard:
-      fetchSolidLinkedSources()
-    default:
-      fetchNetspendLinkedSources()
-    }
+    let achResponse = try await nsGetACHInfoUseCase.execute(sessionID: accountDataManager.sessionID)
+    let achInformation = ACHModel(
+      accountNumber: achResponse.accountNumber ?? Constants.Default.undefined.rawValue,
+      routingNumber: achResponse.routingNumber ?? Constants.Default.undefined.rawValue,
+      accountName: achResponse.accountName ?? Constants.Default.undefined.rawValue
+    )
+    return achInformation
   }
   
 }
@@ -382,50 +336,4 @@ extension DashboardRepository {
     }
   }
   
-}
-
-extension DashboardRepository {
-  
-  private func removeUnknowContactSources(_ sources: [SolidContactEntity]) {
-    Task {
-      do {
-        for source in sources {
-          guard APISolidContactType(rawValue: source.type) == nil else {
-            continue
-          }
-          _ = try await self.unlinkContactUseCase.execute(id: source.solidContactId)
-        }
-      } catch {
-        log.error(error.localizedDescription)
-      }
-    }
-  }
-  
-  private func fetchSolidLinkedSources() {
-    Task { @MainActor in
-      do {
-        var account = self.accountDataManager.fiatAccounts.first
-        if account == nil {
-          account = try await getFiatAccounts().first
-        }
-        guard let account = account else {
-          return
-        }
-        let response = try await self.solidGetLinkedSourcesUseCase.execute(accountID: account.id)
-        var unknownSources: [SolidContactEntity] = []
-        let contacts = response.compactMap({ (data: SolidContactEntity) -> LinkedSourceContact? in
-          guard let type = APISolidContactType(rawValue: data.type) else {
-            unknownSources.append(data)
-            return nil
-          }
-          let sourceType: LinkedSourceContactType = type == .externalBank ? .bank : .card
-          return LinkedSourceContact(name: data.name, last4: data.last4, sourceType: sourceType, sourceId: data.solidContactId)
-        })
-        self.externalFundingDataManager.storeLinkedSources(contacts)
-        self.removeUnknowContactSources(unknownSources)
-      } catch {
-        log.error(error.localizedDescription)
-      }
-    }
-  }
 }

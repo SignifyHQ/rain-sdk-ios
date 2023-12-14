@@ -9,10 +9,8 @@ import Factory
 
 struct DashboardView: View {
   @StateObject private var viewModel: DashboardViewModel
-  private var dataStorages: DashboardRepository
   
-  init(dataStorages: DashboardRepository, option: TabOption, tabRedirection: @escaping ((TabOption) -> Void)) {
-    self.dataStorages = dataStorages
+  init(option: TabOption, tabRedirection: @escaping ((TabOption) -> Void)) {
     _viewModel = .init(
       wrappedValue: DashboardViewModel(option: option, tabRedirection: tabRedirection)
     )
@@ -45,7 +43,7 @@ struct DashboardView: View {
         default: CausesView(viewModel: CausesViewModel())
         }
       case .account:
-        AccountsView(viewModel: AccountViewModel(achInformationData: dataStorages.$achInformationData))
+        AccountsView(viewModel: AccountViewModel())
       }
     }
     .popup(item: $viewModel.toastMessage, style: .toast) {
