@@ -14,6 +14,7 @@ import AccountService
 import SolidData
 import SolidDomain
 import ExternalFundingData
+import LFFeatureFlags
 
 @MainActor
 public final class HomeViewModel: ObservableObject {
@@ -46,6 +47,17 @@ public final class HomeViewModel: ObservableObject {
   lazy var deviceRegisterUseCase: DeviceRegisterUseCaseProtocol = {
     DeviceRegisterUseCase(repository: devicesRepository)
   }()
+  
+  var enableMultiFactorAuthenticationFlag: Bool {
+    switch LFUtilities.target {
+    case .PrideCard:
+      return LFFeatureFlagContainer.enableMultiFactorAuthenticationFlagPrideCard.value
+    case .CauseCard:
+      return LFFeatureFlagContainer.enableMultiFactorAuthenticationFlagCauseCard.value
+    default:
+      return false
+    }
+  }
   
   @Published var tabSelected: TabOption = .cash
   @Published var navigation: Navigation?
@@ -244,21 +256,22 @@ extension HomeViewModel {
     }
   }
   
-  // TODO(Volodymyr): Enable this code before release or handle with feature flag later
   func checkIfPasswordIsSet() {
-//    guard let userID = accountDataManager.userInfomationData.userID,
-//          userID.isEmpty == false
-//    else {
-//      return
-//    }
-//
-//    let userData = accountDataManager.userInfomationData as? UserInfomationData
-//    let missingSteps = userData?.missingStepsEnum ?? []
-//
-//    if missingSteps.contains(.createPassword),
-//       blockingPopup != .enhancedSecurity {
-//      blockingPopup = .enhancedSecurity
-//    }
+    if enableMultiFactorAuthenticationFlag {
+      guard let userID = accountDataManager.userInfomationData.userID,
+            userID.isEmpty == false
+      else {
+        return
+      }
+
+      let userData = accountDataManager.userInfomationData as? UserInfomationData
+      let missingSteps = userData?.missingStepsEnum ?? []
+
+      if missingSteps.contains(.createPassword),
+         blockingPopup != .enhancedSecurity {
+        blockingPopup = .enhancedSecurity
+      }
+    }
   }
   
   func pushFCMTokenIfNeed() {

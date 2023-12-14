@@ -17,7 +17,7 @@ public final class CreatePasswordViewModel: ObservableObject {
   
   @Published var isLoading: Bool = false
   @Published var toastMessage: String?
-  @Published var shouldDismiss: Bool = false
+  @Published public var shouldDismiss: Bool = false
   
   @Published var passwordString: String = ""
   
@@ -36,9 +36,9 @@ public final class CreatePasswordViewModel: ObservableObject {
     GetUserUseCase(repository: accountRepository)
   }()
 
-  let onActionContinue: () -> Void
+  let onActionContinue: (_ viewModel: CreatePasswordViewModel) -> Void
   
-  init(onActionContinue: @escaping () -> Void) {
+  init(onActionContinue: @escaping (_ viewModel: CreatePasswordViewModel) -> Void) {
     self.onActionContinue = onActionContinue
     observePasswordInput()
     observePasswordValidation()
@@ -60,7 +60,7 @@ public final class CreatePasswordViewModel: ObservableObject {
         try await createPasswordUseCase.execute(password: passwordString)
         let user = try await getUserUseCase.execute()
         accountDataManager.update(missingSteps: user.missingSteps)
-        onActionContinue()
+        onActionContinue(self)
       } catch {
         toastMessage = error.userFriendlyMessage
         log.error(error.localizedDescription)

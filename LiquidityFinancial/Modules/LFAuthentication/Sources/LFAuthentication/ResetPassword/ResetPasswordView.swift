@@ -34,7 +34,9 @@ public struct ResetPasswordView: View {
       .navigationLink(item: $viewModel.navigaion) { navigation in
         switch navigation {
         case .createPassword:
-          CreatePasswordView()
+          CreatePasswordView { viewModel in
+            viewModel.shouldDismiss = true
+          }
         }
       }
       .onAppear(

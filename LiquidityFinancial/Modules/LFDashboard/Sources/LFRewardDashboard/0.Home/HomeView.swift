@@ -63,9 +63,9 @@ public struct HomeView: View {
           transactionId: id
         )
       case .createPassword:
-        CreatePasswordView(onActionContinue: {
-          
-        })
+        CreatePasswordView { viewModel in
+          viewModel.shouldDismiss = true
+        }
       }
     }
     .popup(item: $viewModel.popup) { popup in

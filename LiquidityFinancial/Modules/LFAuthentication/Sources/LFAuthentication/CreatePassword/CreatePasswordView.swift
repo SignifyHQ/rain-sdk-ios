@@ -18,7 +18,7 @@ public struct CreatePasswordView: View {
   @FocusState
   var keyboardFocus: Focus?
     
-  public init(onActionContinue: @escaping () -> Void) {
+  public init(onActionContinue: @escaping (_ viewModel: CreatePasswordViewModel) -> Void) {
     _viewModel = .init(wrappedValue: CreatePasswordViewModel(onActionContinue: onActionContinue))
     UITableView.appearance().backgroundColor = UIColor(Colors.background.swiftUIColor)
     UITableView.appearance().separatorInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 15)
