@@ -27,6 +27,12 @@ public struct EnterPasswordView: View {
     .popup(item: $viewModel.toastMessage, style: .toast) {
       ToastView(toastMessage: $0)
     }
+    .navigationLink(item: $viewModel.navigation) { navigation in
+      switch navigation {
+      case .recoverPassword:
+        ResetPasswordView()
+      }
+    }
     .track(name: String(describing: type(of: self)))
   }
 }
@@ -41,6 +47,7 @@ private extension EnterPasswordView {
       TextFieldWrapper {
         SecureField("", text: $viewModel.password)
           .keyboardType(.alphabet)
+          .tint(Colors.label.swiftUIColor)
           .restrictInput(value: $viewModel.password, restriction: .none)
           .modifier(
             PlaceholderStyle(

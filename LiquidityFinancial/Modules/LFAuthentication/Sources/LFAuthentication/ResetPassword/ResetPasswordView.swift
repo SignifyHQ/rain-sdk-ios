@@ -14,17 +14,37 @@ public struct ResetPasswordView: View {
   
   @StateObject private var viewModel = ResetPasswordViewModel()
   
+  @State private var viewDidLoad: Bool = false
+  
   public init() {}
   
   public var body: some View {
     content
       .background(Colors.background.swiftUIColor)
-      .defaultToolBar(icon: .support) {
-        viewModel.openSupportScreen()
-      }
+      .navigationBarBackButtonHidden(viewModel.isLoading)
+      .defaultToolBar(
+        icon: .support,
+        openSupportScreen: {
+          viewModel.openSupportScreen()
+        }
+      )
       .popup(item: $viewModel.toastMessage, style: .toast) {
         ToastView(toastMessage: $0)
       }
+      .navigationLink(item: $viewModel.navigaion) { navigation in
+        switch navigation {
+        case .createPassword:
+          CreatePasswordView()
+        }
+      }
+      .onAppear(
+        perform: {
+          if !viewDidLoad {
+            viewDidLoad = true
+            viewModel.requestOTP()
+          }
+        }
+      )
       .adaptToKeyboard()
       .ignoresSafeArea(edges: .bottom)
       .track(name: String(describing: type(of: self)))
@@ -54,33 +74,35 @@ private extension ResetPasswordView {
   
   var topView: some View {
     VStack(spacing: 12) {
-      Text(LFLocalizable.Authentication.ResetPassword.title)
-        .foregroundColor(Colors.label.swiftUIColor)
-        .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.main.value))
-      Text(LFLocalizable.Authentication.ResetPassword.subtitle)
-        .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.medium.value))
-        .foregroundColor(Colors.label.swiftUIColor.opacity(0.75))
+      // Volodymyr: Commenting out for now while we are using SMS and not Email
       
-      HStack {
-        GenImages.CommonImages.dash.swiftUIImage
-          .resizable()
-          .frame(height: 1)
-          .foregroundColor(Colors.label.swiftUIColor)
-        
-        Spacer()
-        
-        Text(LFLocalizable.Authentication.ResetPassword.or)
-          .foregroundColor(Colors.label.swiftUIColor.opacity(0.75))
-          .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.main.value))
-        
-        Spacer()
-        
-        GenImages.CommonImages.dash.swiftUIImage
-          .resizable()
-          .frame(height: 1)
-          .foregroundColor(Colors.label.swiftUIColor)
-      }
-      .padding(.vertical)
+//      Text(LFLocalizable.Authentication.ResetPassword.title)
+//        .foregroundColor(Colors.label.swiftUIColor)
+//        .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.main.value))
+//      Text(LFLocalizable.Authentication.ResetPassword.subtitle)
+//        .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.medium.value))
+//        .foregroundColor(Colors.label.swiftUIColor.opacity(0.75))
+      
+//      HStack {
+//        GenImages.CommonImages.dash.swiftUIImage
+//          .resizable()
+//          .frame(height: 1)
+//          .foregroundColor(Colors.label.swiftUIColor)
+//
+//        Spacer()
+//
+//        Text(LFLocalizable.Authentication.ResetPassword.or)
+//          .foregroundColor(Colors.label.swiftUIColor.opacity(0.75))
+//          .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.main.value))
+//
+//        Spacer()
+//
+//        GenImages.CommonImages.dash.swiftUIImage
+//          .resizable()
+//          .frame(height: 1)
+//          .foregroundColor(Colors.label.swiftUIColor)
+//      }
+//      .padding(.vertical)
       
       Text(LFLocalizable.Authentication.ResetPassword.enterCode)
         .foregroundColor(Colors.label.swiftUIColor)
@@ -116,16 +138,18 @@ private extension ResetPasswordView {
         .frame(height: 70)
       }
     }
+    .disabled(viewModel.isLoading)
   }
   
   var resendCodeButton: some View {
     Button {
-      viewModel.didTapResetCodeButton()
+      viewModel.didTapResendCodeButton()
     } label: {
       Text(LFLocalizable.Authentication.ResetPassword.ResendCodeButton.title)
         .foregroundColor(Colors.primary.swiftUIColor)
         .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.ultraSmall.value))
     }
+    .disabled(viewModel.isLoading)
   }
 }
 

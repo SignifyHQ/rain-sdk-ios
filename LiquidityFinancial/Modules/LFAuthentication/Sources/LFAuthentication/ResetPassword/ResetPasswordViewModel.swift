@@ -5,13 +5,22 @@
 //  Created by Volodymyr Davydenko on 06.12.2023.
 //
 
+import AccountData
+import AccountDomain
 import Combine
 import Factory
 import Foundation
 import LFStyleGuide
+import LFUtilities
 
+@MainActor
 public final class ResetPasswordViewModel: ObservableObject {
+  @LazyInjected(\.accountDataManager) var accountDataManager
+  @LazyInjected(\.accountRepository) var accountRepository
+  
   @LazyInjected(\.customerSupportService) var customerSupportService
+  
+  @Published var navigaion: Navigation?
   
   @Published var isLoading: Bool = false
   @Published var toastMessage: String?
@@ -20,6 +29,14 @@ public final class ResetPasswordViewModel: ObservableObject {
   @Published public var generatedOTP: String = .empty
   
   public var otpViewItems: [PinTextFieldViewItem] = .init()
+  
+  lazy var resetPasswordRequestUseCase: ResetPasswordRequestUseCaseProtocol = {
+    ResetPasswordRequestUseCase(repository: accountRepository, dataManager: accountDataManager)
+  }()
+  
+  lazy var resetPasswordVerifyUseCase: ResetPasswordVerifyUseCaseProtocol = {
+    ResetPasswordVerifyUseCase(repository: accountRepository, dataManager: accountDataManager)
+  }()
   
   init() {
     createTextFields()
@@ -30,11 +47,43 @@ public final class ResetPasswordViewModel: ObservableObject {
     customerSupportService.openSupportScreen()
   }
   
-  func didTapResetCodeButton() {
-    
+  func didTapResendCodeButton() {
+    requestOTP()
   }
   
   func didTapContinueButton() {
+    Task {
+      defer {
+        isLoading = false
+      }
+      
+      isLoading = true
+      
+      do {
+        let token = try await resetPasswordVerifyUseCase.execute(code: generatedOTP)
+        navigaion = .createPassword
+      } catch {
+        toastMessage = error.userFriendlyMessage
+        log.error(error.localizedDescription)
+      }
+    }
+  }
+  
+  func requestOTP() {
+    Task {
+      defer {
+        isLoading = false
+      }
+      
+      isLoading = true
+      
+      do {
+        try await resetPasswordRequestUseCase.execute()
+      } catch {
+        toastMessage = error.userFriendlyMessage
+        log.error(error.localizedDescription)
+      }
+    }
   }
 }
 
@@ -77,6 +126,14 @@ public extension ResetPasswordViewModel {
   }
 }
 
+// MARK: - Enums
+
+extension ResetPasswordViewModel {
+  enum Navigation {
+    case createPassword
+  }
+}
+
 // MARK: - Private Functions
 private extension ResetPasswordViewModel {
   func createTextFields() {
@@ -84,7 +141,7 @@ private extension ResetPasswordViewModel {
       let viewItem = PinTextFieldViewItem(
         text: "",
         placeHolderText: "",
-        isInFocus: index == 0,
+        isInFocus: false,
         tag: index
       )
       

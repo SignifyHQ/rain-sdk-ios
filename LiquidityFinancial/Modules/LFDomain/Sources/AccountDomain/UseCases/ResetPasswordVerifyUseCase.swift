@@ -13,7 +13,7 @@ public final class ResetPasswordVerifyUseCase: ResetPasswordVerifyUseCaseProtoco
     self.dataManager = dataManager
   }
   
-  public func execute(code: String) async throws {
+  public func execute(code: String) async throws -> PasswordResetTokenEntity {
     let phoneNumber = dataManager.phoneNumber
     return try await repository.resetPasswordVerify(phoneNumber: phoneNumber, code: code)
   }

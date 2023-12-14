@@ -14,6 +14,8 @@ public final class EnterPasswordViewModel: ObservableObject {
   
   @LazyInjected(\.customerSupportService) var customerSupportService
   
+  @Published var navigation: Navigation?
+  
   @Published var isLoading: Bool = false
   @Published var toastMessage: String?
   
@@ -53,6 +55,15 @@ extension EnterPasswordViewModel {
   }
   
   func didTapForgotPasswordButton() {
+    navigation = .recoverPassword
+  }
+}
+
+// MARK: - Enums
+
+extension EnterPasswordViewModel {
+  enum Navigation {
+    case recoverPassword
   }
 }
 

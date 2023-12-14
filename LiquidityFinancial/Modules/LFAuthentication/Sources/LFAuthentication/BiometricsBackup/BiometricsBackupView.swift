@@ -11,7 +11,6 @@ import LFUtilities
 import LFLocalizable
 
 public struct BiometricsBackupView: View {
-  
   @StateObject
   private var viewModel = BiometricsBackupViewModel()
   
@@ -20,6 +19,15 @@ public struct BiometricsBackupView: View {
   public var body: some View {
     content
       .background(Colors.background.swiftUIColor)
+      .navigationLink(
+        item: $viewModel.navigation,
+        destination: { navigation in
+          switch navigation {
+          case .passwordLogin:
+            EnterPasswordView()
+          }
+        }
+      )
       .track(name: String(describing: type(of: self)))
   }
 }

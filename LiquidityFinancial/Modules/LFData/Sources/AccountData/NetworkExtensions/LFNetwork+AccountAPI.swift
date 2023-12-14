@@ -32,9 +32,10 @@ extension LFCoreNetwork: AccountAPIProtocol where R == AccountRoute {
     )
   }
   
-  public func resetPasswordVerify(phoneNumber: String, code: String) async throws {
-    try await requestNoResponse(
+  public func resetPasswordVerify(phoneNumber: String, code: String) async throws -> APIPasswordResetToken {
+    try await request(
       AccountRoute.resetPasswordVerify(phoneNumber: phoneNumber, code: code),
+      target: APIPasswordResetToken.self,
       failure: LFErrorObject.self,
       decoder: .apiDecoder
     )

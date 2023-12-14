@@ -32,7 +32,7 @@ public class AccountRepository: AccountRepositoryProtocol {
     try await accountAPI.resetPasswordRequest(phoneNumber: phoneNumber)
   }
   
-  public func resetPasswordVerify(phoneNumber: String, code: String) async throws {
+  public func resetPasswordVerify(phoneNumber: String, code: String) async throws -> PasswordResetTokenEntity {
     try await accountAPI.resetPasswordVerify(phoneNumber: phoneNumber, code: code)
   }
   
