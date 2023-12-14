@@ -323,7 +323,7 @@ public extension DashboardRepository {
 
 extension DashboardRepository {
   
-  private func fetchNetspendLinkedSources() {
+  public func fetchNetspendLinkedSources() {
     Task { @MainActor in
       do {
         let sessionID = self.accountDataManager.sessionID

@@ -106,7 +106,7 @@ final class CashViewModel: ObservableObject {
   func onRefresh() {
     
     dashboardRepository.refreshCash()
-    dashboardRepository.apiFetchListConnectedAccount()
+    dashboardRepository.fetchNetspendLinkedSources()
     
     guard let accountID = accountDataManager.fiatAccountID else { return }
     guard activity != .loading else { return }
