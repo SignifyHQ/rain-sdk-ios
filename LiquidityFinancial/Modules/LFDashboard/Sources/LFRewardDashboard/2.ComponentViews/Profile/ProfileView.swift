@@ -209,21 +209,14 @@ private extension ProfileView {
         ArrowButton(image: GenImages.CommonImages.icWarning.swiftUIImage, title: LFLocalizable.Profile.DepositLimits.title, value: nil) {
           viewModel.depositLimitsTapped()
         }*/
-        /* TODO: - Will enable after implement feature flag
-        ArrowButton(
-          image: GenImages.CommonImages.icSecurity.swiftUIImage,
-          title: LFLocalizable.Profile.Security.title,
-          value: nil
-        ) {
-          viewModel.didTapSecurityButton()
-        }
-         */
-        ArrowButton(
-          image: GenImages.CommonImages.icSecurity.swiftUIImage,
-          title: LFLocalizable.Profile.Security.title,
-          value: nil
-        ) {
-          viewModel.didTapSecurityButton()
+        if viewModel.enableMultiFactorAuthenticationFlag {
+          ArrowButton(
+            image: GenImages.CommonImages.icSecurity.swiftUIImage,
+            title: LFLocalizable.Profile.Security.title,
+            value: nil
+          ) {
+            viewModel.didTapSecurityButton()
+          }
         }
         ArrowButton(image: GenImages.CommonImages.icQuestion.swiftUIImage, title: LFLocalizable.Profile.Help.title, value: nil) {
           viewModel.helpTapped()

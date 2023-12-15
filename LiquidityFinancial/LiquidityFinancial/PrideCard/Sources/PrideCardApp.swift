@@ -6,11 +6,12 @@ struct PrideCardApp: App {
   @UIApplicationDelegateAdaptor(AppDelegate.self)
   var appDelegate
   
+  @State var showFeatureFlagsHubView = false
+  
   init() {
     LFFeatureFlagContainer.registerViewFactoryPridecard()
   }
   
-  @State var showFeatureFlagsHubView = false
 
   var body: some Scene {
     WindowGroup {

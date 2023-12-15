@@ -8,6 +8,10 @@ struct CauseCardApp: App {
   
   @State var showFeatureFlagsHubView = false
   
+  init() {
+    LFFeatureFlagContainer.registerViewFactoryCausecard()
+  }
+  
   var body: some Scene {
     WindowGroup {
       AppView()
