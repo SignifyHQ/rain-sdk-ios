@@ -29,12 +29,13 @@ public struct SecurityHubView: View {
       item: $viewModel.popup,
       dismissAction: {
         viewModel.resetBiometricToggleState()
-      }) { item in
+      },
+      content: { item in
         switch item {
         case .biometric:
           setupBiometricsPopup
         }
-      }
+      })
     .navigationLink(
       item: $viewModel.navigation
     ) { navigation in

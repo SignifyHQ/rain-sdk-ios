@@ -1,6 +1,8 @@
 import Foundation
 import LocalAuthentication
 import LFLocalizable
+import LFStyleGuide
+import SwiftUI
 
 public enum BiometricType {
   case none
@@ -29,6 +31,17 @@ public enum BiometricType {
       return LFLocalizable.Authentication.BiometricsTouchID.title
     default:
       return ""
+    }
+  }
+  
+  public var image: Image? {
+    switch self {
+    case .faceID:
+      return GenImages.CommonImages.faceID.swiftUIImage
+    case .touchID:
+      return GenImages.CommonImages.touchID.swiftUIImage
+    default:
+      return nil
     }
   }
 }

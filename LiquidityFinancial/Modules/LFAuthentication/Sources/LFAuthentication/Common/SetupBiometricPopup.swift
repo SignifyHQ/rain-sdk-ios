@@ -24,10 +24,13 @@ public struct SetupBiometricPopup: View {
   public var body: some View {
     PopupAlert(padding: 16) {
       VStack(spacing: 32) {
-        biometricLogo
-          .resizable()
-          .frame(64)
-          .padding(.top, 38)
+        if let biometricLogo = biometricType.image {
+          biometricLogo
+            .resizable()
+            .frame(64)
+            .foregroundColor(Colors.label.swiftUIColor)
+            .padding(.top, 38)
+        }
         contextView
         buttonGroup
       }
@@ -69,17 +72,6 @@ private extension SetupBiometricPopup {
         isDisable: false,
         action: primaryAction
       )
-    }
-  }
-  
-  var biometricLogo: Image {
-    switch biometricType {
-    case .faceID:
-      return GenImages.CommonImages.faceID.swiftUIImage
-    case .touchID:
-      return GenImages.CommonImages.touchID.swiftUIImage
-    default:
-      return GenImages.Images.icLogo.swiftUIImage
     }
   }
 }

@@ -38,7 +38,7 @@ let package = Package(
         .target(
           name: "BiometricsManager",
           dependencies: [
-            "Factory", "LFLocalizable"
+            "Factory", "LFLocalizable", "LFStyleGuide"
           ]
         ),
         .testTarget(

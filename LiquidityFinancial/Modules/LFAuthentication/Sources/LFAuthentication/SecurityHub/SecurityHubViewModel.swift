@@ -112,7 +112,6 @@ private extension SecurityHubViewModel {
       }, receiveValue: { [weak self] result in
         guard let self else { return }
         self.biometricType = result.type
-        self.accountDataManager.isBiometricUsageEnabled = self.accountDataManager.isBiometricUsageEnabled && result.isEnabled
         self.isBiometricEnabled = self.accountDataManager.isBiometricUsageEnabled
       })
       .store(in: &cancellables)

@@ -1,10 +1,3 @@
-//
-//  BiometricsBackupView.swift
-//  
-//
-//  Created by Volodymyr Davydenko on 08.12.2023.
-//
-
 import SwiftUI
 import LFStyleGuide
 import LFUtilities
@@ -23,37 +16,43 @@ public struct BiometricsBackupView: View {
   public init() {}
   
   public var body: some View {
-    NavigationView {
-      content
-        .background(Colors.background.swiftUIColor)
-        .navigationLink(
-          item: $viewModel.navigation,
-          destination: { navigation in
-            switch navigation {
-            case .passwordLogin:
-              EnterPasswordView(shouldDismissRoot: $shouldDismiss)
-            }
+    content
+      .background(Colors.background.swiftUIColor)
+      .navigationLink(
+        item: $viewModel.navigation,
+        destination: { navigation in
+          switch navigation {
+          case .passwordLogin:
+            EnterPasswordView(shouldDismissRoot: $shouldDismiss)
           }
-        )
-        .onChange(
-          of: shouldDismiss,
-          perform: { _ in
-            dismiss()
-          }
-        )
-        .track(name: String(describing: type(of: self)))
-    }
+        }
+      )
+      .popup(item: $viewModel.toastMessage, style: .toast) {
+        ToastView(toastMessage: $0)
+      }
+      .onChange(
+        of: shouldDismiss,
+        perform: { _ in
+          dismiss()
+        }
+      )
+      .track(name: String(describing: type(of: self)))
+      .embedInNavigation()
   }
 }
 
 // MARK: - View Components
 private extension BiometricsBackupView {
   var content: some View {
-    VStack(alignment: .center) {
+    VStack {
       Spacer()
       
-      GenImages.CommonImages.imgFaceID.swiftUIImage
-        .foregroundColor(Colors.label.swiftUIColor)
+      if let image = viewModel.biometricType.image, viewModel.isBiometricEnabled {
+        image
+          .resizable()
+          .foregroundColor(Colors.label.swiftUIColor)
+          .frame(100)
+      }
       
       Spacer()
       
@@ -64,12 +63,14 @@ private extension BiometricsBackupView {
   
   var buttonGroup: some View {
     VStack(spacing: 12) {
-      FullSizeButton(
-        title: LFLocalizable.Authentication.BiometricsBackup.BiomericsButton.title,
-        isDisable: false,
-        type: .primary
-      ) {
-        viewModel.didTapBiometricsLogin()
+      if viewModel.isBiometricEnabled {
+        FullSizeButton(
+          title: LFLocalizable.Authentication.BiometricsBackup.BiomericsButton.title(viewModel.biometricType.title),
+          isDisable: false,
+          type: .primary
+        ) {
+          viewModel.didTapBiometricsLogin()
+        }
       }
       
       FullSizeButton(
@@ -82,4 +83,3 @@ private extension BiometricsBackupView {
     }
   }
 }
-

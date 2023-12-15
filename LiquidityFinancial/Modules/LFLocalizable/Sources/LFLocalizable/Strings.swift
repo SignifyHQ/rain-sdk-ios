@@ -474,8 +474,10 @@ public enum LFLocalizable {
   public enum Authentication {
     public enum BiometricsBackup {
       public enum BiomericsButton {
-        /// Login with FaceID
-        public static let title = LFLocalizable.tr("Localizable", "authentication.biometrics_backup.biomerics_button.title", fallback: "Login with FaceID")
+        /// Login with %@
+        public static func title(_ p1: Any) -> String {
+          return LFLocalizable.tr("Localizable", "authentication.biometrics_backup.biomerics_button.title", String(describing: p1), fallback: "Login with %@")
+        }
       }
       public enum PasswordButton {
         /// Login with Password
