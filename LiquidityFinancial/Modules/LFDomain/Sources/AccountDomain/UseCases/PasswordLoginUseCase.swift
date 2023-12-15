@@ -1,4 +1,5 @@
 import Foundation
+import OnboardingDomain
 
 public final class PasswordLoginUseCase: PasswordLoginUseCaseProtocol {
   
@@ -13,7 +14,7 @@ public final class PasswordLoginUseCase: PasswordLoginUseCaseProtocol {
     self.dataManager = dataManager
   }
   
-  public func execute(password: String) async throws -> PasswordLoginTokensEntity {
+  public func execute(password: String) async throws -> AccessTokensEntity {
     let phoneNumber = dataManager.phoneNumber
     return try await repository.loginWithPassword(phoneNumner: phoneNumber, password: password)
   }

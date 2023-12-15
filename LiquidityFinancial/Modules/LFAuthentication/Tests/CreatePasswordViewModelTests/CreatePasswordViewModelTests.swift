@@ -11,7 +11,7 @@ final class CreatePasswordViewModelTests: XCTestCase {
   override func setUp() {
     super.setUp()
     
-    viewModel = CreatePasswordViewModel()
+    viewModel = CreatePasswordViewModel(purpose: .createNewUser) {}
   }
   
   override func tearDown() {

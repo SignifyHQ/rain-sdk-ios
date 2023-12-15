@@ -41,7 +41,10 @@ public struct SecurityHubView: View {
     ) { navigation in
       switch navigation {
       case .changePassword:
-        ChangePasswordView()
+        EnterPasswordView(
+          purpose: .changePassword,
+          shouldDismissRoot: .constant(false)
+        )
       }
     }
     .blur(radius: viewModel.popup != nil ? 16 : 0)

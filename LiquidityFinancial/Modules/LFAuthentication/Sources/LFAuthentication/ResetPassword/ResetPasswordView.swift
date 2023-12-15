@@ -36,7 +36,7 @@ public struct ResetPasswordView: View {
       .navigationLink(item: $viewModel.navigaion) { navigation in
         switch navigation {
         case .resetPassword(let token):
-          CreatePasswordView(resetPasswordToken: token) { _ in
+          CreatePasswordView(purpose: .resetPassword(token: token)) {
             shouldDismissRoot = true
           }
         }
@@ -78,36 +78,12 @@ private extension ResetPasswordView {
   
   var topView: some View {
     VStack(spacing: 12) {
-      // Volodymyr: Commenting out for now while we are using SMS and not Email
-      
-//      Text(LFLocalizable.Authentication.ResetPassword.title)
-//        .foregroundColor(Colors.label.swiftUIColor)
-//        .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.main.value))
-//      Text(LFLocalizable.Authentication.ResetPassword.subtitle)
-//        .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.medium.value))
-//        .foregroundColor(Colors.label.swiftUIColor.opacity(0.75))
-      
-//      HStack {
-//        GenImages.CommonImages.dash.swiftUIImage
-//          .resizable()
-//          .frame(height: 1)
-//          .foregroundColor(Colors.label.swiftUIColor)
-//
-//        Spacer()
-//
-//        Text(LFLocalizable.Authentication.ResetPassword.or)
-//          .foregroundColor(Colors.label.swiftUIColor.opacity(0.75))
-//          .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.main.value))
-//
-//        Spacer()
-//
-//        GenImages.CommonImages.dash.swiftUIImage
-//          .resizable()
-//          .frame(height: 1)
-//          .foregroundColor(Colors.label.swiftUIColor)
-//      }
-//      .padding(.vertical)
-      
+      Text(LFLocalizable.Authentication.ResetPassword.title)
+        .foregroundColor(Colors.label.swiftUIColor)
+        .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.main.value))
+      Text(LFLocalizable.Authentication.ResetPassword.subtitle)
+        .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.medium.value))
+        .foregroundColor(Colors.label.swiftUIColor.opacity(0.75))
       Text(LFLocalizable.Authentication.ResetPassword.enterCode)
         .foregroundColor(Colors.label.swiftUIColor)
         .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.main.value))

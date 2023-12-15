@@ -1,4 +1,5 @@
 import Foundation
+import OnboardingDomain
 
 // sourcery: AutoMockable
 public protocol AccountRepositoryProtocol {
@@ -9,7 +10,7 @@ public protocol AccountRepositoryProtocol {
   func resetPasswordRequest(phoneNumber: String) async throws
   func resetPasswordVerify(phoneNumber: String, code: String) async throws -> PasswordResetTokenEntity
   func resetPassword(phoneNumber: String, password: String, token: String) async throws
-  func loginWithPassword(phoneNumner: String, password: String) async throws -> PasswordLoginTokensEntity
+  func loginWithPassword(phoneNumner: String, password: String) async throws -> AccessTokensEntity
   func getAvailableRewardCurrrencies() async throws -> AvailableRewardCurrenciesEntity
   func getSelectedRewardCurrency() async throws -> RewardCurrencyEntity
   func updateSelectedRewardCurrency(rewardCurrency: String) async throws -> RewardCurrencyEntity

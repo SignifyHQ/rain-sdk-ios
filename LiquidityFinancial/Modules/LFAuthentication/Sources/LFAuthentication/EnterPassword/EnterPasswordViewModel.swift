@@ -15,6 +15,7 @@ public final class EnterPasswordViewModel: ObservableObject {
   @LazyInjected(\.customerSupportService) var customerSupportService
   
   @Published var navigation: Navigation?
+  @Published var shouldDismissFlow: Bool?
   
   @Published var isLoading: Bool = false
   @Published var toastMessage: String?
@@ -24,11 +25,16 @@ public final class EnterPasswordViewModel: ObservableObject {
   
   @Published var isDisableContinueButton: Bool = true
   
+  var purpose: EnterPasswordPurpose
+  
   lazy var loginWithPasswordUseCase: PasswordLoginUseCaseProtocol = {
     PasswordLoginUseCase(repository: accountRepository, dataManager: accountDataManager)
   }()
   
-  init() {
+  init(
+    purpose: EnterPasswordPurpose
+  ) {
+    self.purpose = purpose
     observePasswordInput()
   }
 }
@@ -50,6 +56,13 @@ extension EnterPasswordViewModel {
       
       do {
         let _ = try await loginWithPasswordUseCase.execute(password: password)
+        
+        switch purpose {
+        case .biometricsFallback:
+          shouldDismissFlow = true
+        case .changePassword:
+          navigation = .changePassword
+        }
       } catch {
         if error.inlineError == .invalidCredentials {
           isInlineErrorShown = true
@@ -72,7 +85,13 @@ extension EnterPasswordViewModel {
 extension EnterPasswordViewModel {
   enum Navigation {
     case recoverPassword
+    case changePassword
   }
+}
+
+public enum EnterPasswordPurpose {
+  case biometricsFallback
+  case changePassword
 }
 
 // MARK: - Private Functions

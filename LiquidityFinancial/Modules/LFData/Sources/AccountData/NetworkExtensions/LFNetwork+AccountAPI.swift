@@ -2,6 +2,7 @@ import Foundation
 import NetworkUtilities
 import CoreNetwork
 import LFUtilities
+import OnboardingData
 
 extension LFCoreNetwork: AccountAPIProtocol where R == AccountRoute {
   public func getUser() async throws -> APIUser {
@@ -49,10 +50,10 @@ extension LFCoreNetwork: AccountAPIProtocol where R == AccountRoute {
     )
   }
   
-  public func loginWithPassword(phoneNumber: String, password: String) async throws -> APIPasswordLoginTokens {
+  public func loginWithPassword(phoneNumber: String, password: String) async throws -> APIAccessTokens {
     try await request(
       AccountRoute.loginWithPassword(phoneNumber: phoneNumber, password: password),
-      target: APIPasswordLoginTokens.self,
+      target: APIAccessTokens.self,
       failure: LFErrorObject.self,
       decoder: .apiDecoder
     )

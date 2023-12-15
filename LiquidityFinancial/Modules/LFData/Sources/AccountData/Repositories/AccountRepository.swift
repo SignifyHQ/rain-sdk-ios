@@ -1,6 +1,7 @@
 import Foundation
 import AuthorizationManager
 import AccountDomain
+import OnboardingDomain
 import LFUtilities
 
 public class AccountRepository: AccountRepositoryProtocol {
@@ -40,8 +41,11 @@ public class AccountRepository: AccountRepositoryProtocol {
     try await accountAPI.resetPassword(phoneNumber: phoneNumber, password: password, token: token)
   }
   
-  public func loginWithPassword(phoneNumner: String, password: String) async throws -> PasswordLoginTokensEntity {
-    try await accountAPI.loginWithPassword(phoneNumber: phoneNumner, password: phoneNumner)
+  public func loginWithPassword(phoneNumner: String, password: String) async throws -> AccessTokensEntity {
+    let tokens = try await accountAPI.loginWithPassword(phoneNumber: phoneNumner, password: password)
+    auth.refreshWith(apiToken: tokens)
+    
+    return tokens
   }
   
   public func getAvailableRewardCurrrencies() async throws -> AvailableRewardCurrenciesEntity {

@@ -17,12 +17,12 @@ public struct CreatePasswordView: View {
   
   @FocusState
   var keyboardFocus: Focus?
-    
+  
   public init(
-    resetPasswordToken: String? = nil,
-    onActionContinue: @escaping (_ viewModel: CreatePasswordViewModel) -> Void
+    purpose: CreatePasswordPurpose,
+    onActionContinue: @escaping () -> Void
   ) {
-    _viewModel = .init(wrappedValue: CreatePasswordViewModel(resetPasswordToken: resetPasswordToken, onActionContinue: onActionContinue))
+    _viewModel = .init(wrappedValue: CreatePasswordViewModel(purpose: purpose, onActionContinue: onActionContinue))
     UITableView.appearance().backgroundColor = UIColor(Colors.background.swiftUIColor)
     UITableView.appearance().separatorInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 15)
   }
@@ -55,14 +55,14 @@ public struct CreatePasswordView: View {
         viewModel.openSupportScreen()
       }
     )
-    .onChange(
-      of: viewModel.shouldDismiss,
-      perform: { _ in
-        dismiss()
-      }
-    )
     .popup(item: $viewModel.toastMessage, style: .toast) {
       ToastView(toastMessage: $0)
+    }
+    .popup(
+      isPresented: $viewModel.shouldShowConfirmationPopup,
+      dismissMethods: []
+    ) {
+      successConfirmationPopup
     }
     .navigationBarBackButtonHidden(viewModel.isLoading)
     .track(name: String(describing: type(of: self)))
@@ -207,5 +207,27 @@ extension CreatePasswordView {
           keyboardFocus = nextFocus
         }
     }
+  }
+}
+
+extension CreatePasswordView {
+  private var successConfirmationPopup: some View {
+    LiquidityAlert(
+      title: viewModel.successMessage(),
+      primary: .init(
+        text: LFLocalizable.Button.Continue.title,
+        action: {
+          switch viewModel.purpose {
+          case .changePassword:
+            dismiss()
+            viewModel.onActionContinue()
+          case .createExistingUser:
+            dismiss()
+          case .createNewUser, .resetPassword:
+            viewModel.onActionContinue()
+          }
+        }
+      )
+    )
   }
 }

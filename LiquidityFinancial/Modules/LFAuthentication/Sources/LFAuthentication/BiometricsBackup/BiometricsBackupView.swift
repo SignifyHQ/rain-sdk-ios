@@ -23,7 +23,10 @@ public struct BiometricsBackupView: View {
         destination: { navigation in
           switch navigation {
           case .passwordLogin:
-            EnterPasswordView(shouldDismissRoot: $shouldDismiss)
+            EnterPasswordView(
+              purpose: .biometricsFallback,
+              shouldDismissRoot: $shouldDismiss
+            )
           }
         }
       )
@@ -47,7 +50,7 @@ private extension BiometricsBackupView {
     VStack {
       Spacer()
       
-      if let image = viewModel.biometricType.image, viewModel.isBiometricEnabled {
+      if let image = viewModel.biometricType.image {
         image
           .resizable()
           .foregroundColor(Colors.label.swiftUIColor)
@@ -63,14 +66,12 @@ private extension BiometricsBackupView {
   
   var buttonGroup: some View {
     VStack(spacing: 12) {
-      if viewModel.isBiometricEnabled {
-        FullSizeButton(
-          title: LFLocalizable.Authentication.BiometricsBackup.BiomericsButton.title(viewModel.biometricType.title),
-          isDisable: false,
-          type: .primary
-        ) {
-          viewModel.didTapBiometricsLogin()
-        }
+      FullSizeButton(
+        title: LFLocalizable.Authentication.BiometricsBackup.BiomericsButton.title(viewModel.biometricType.title),
+        isDisable: false,
+        type: .primary
+      ) {
+        viewModel.didTapBiometricsLogin()
       }
       
       FullSizeButton(

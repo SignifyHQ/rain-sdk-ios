@@ -17,7 +17,7 @@ public final class CreatePasswordViewModel: ObservableObject {
   
   @Published var isLoading: Bool = false
   @Published var toastMessage: String?
-  @Published public var shouldDismiss: Bool = false
+  @Published var shouldShowConfirmationPopup: Bool = false
   
   @Published var passwordString: String = ""
   
@@ -28,7 +28,7 @@ public final class CreatePasswordViewModel: ObservableObject {
   @Published var isDontMatchErrorShown: Bool = false
   @Published var isContinueEnabled: Bool = false
   
-  private var resetPasswordToken: String?
+  var purpose: CreatePasswordPurpose
   
   lazy var createPasswordUseCase: CreatePasswordUseCaseProtocol = {
     CreatePasswordUseCase(repository: accountRepository)
@@ -42,13 +42,13 @@ public final class CreatePasswordViewModel: ObservableObject {
     GetUserUseCase(repository: accountRepository)
   }()
 
-  let onActionContinue: (_ viewModel: CreatePasswordViewModel) -> Void
+  let onActionContinue: () -> Void
   
   init(
-    resetPasswordToken: String? = nil,
-    onActionContinue: @escaping (_ viewModel: CreatePasswordViewModel) -> Void
+    purpose: CreatePasswordPurpose,
+    onActionContinue: @escaping () -> Void
   ) {
-    self.resetPasswordToken = resetPasswordToken
+    self.purpose = purpose
     self.onActionContinue = onActionContinue
     
     observePasswordInput()
@@ -68,15 +68,23 @@ public final class CreatePasswordViewModel: ObservableObject {
       isLoading = true
       
       do {
-        if let resetPasswordToken {
-          try await resetPasswordUserCase.execute(password: passwordString, token: resetPasswordToken)
-        } else {
+        switch purpose {
+        case .createNewUser, .createExistingUser, .changePassword:
           try await createPasswordUseCase.execute(password: passwordString)
           let user = try await getUserUseCase.execute()
           accountDataManager.update(missingSteps: user.missingSteps)
+        case .resetPassword(let token):
+          try await resetPasswordUserCase.execute(password: passwordString, token: token)
         }
         
-        onActionContinue(self)
+        // In onboarding should continue flow on success
+        if case .createNewUser = purpose {
+          onActionContinue()
+        }
+        // In all other cases should show a confirmation popup first
+        else {
+          shouldShowConfirmationPopup = true
+        }
       } catch {
         toastMessage = error.userFriendlyMessage
         log.error(error.localizedDescription)
@@ -116,4 +124,24 @@ public final class CreatePasswordViewModel: ObservableObject {
   func actionContinue() {
     createPassword()
   }
+  
+  func successMessage() -> String {
+    switch purpose {
+    case .createExistingUser:
+      return LFLocalizable.Authentication.CreatePassword.SuccessPopup.title
+    case .changePassword:
+      return LFLocalizable.Authentication.ChangePassword.SuccessPopup.title
+    case .resetPassword:
+      return LFLocalizable.Authentication.ResetPassword.SuccessPopup.title
+    case .createNewUser:
+      return ""
+    }
+  }
+}
+
+public enum CreatePasswordPurpose {
+  case createNewUser
+  case createExistingUser
+  case resetPassword(token: String)
+  case changePassword
 }

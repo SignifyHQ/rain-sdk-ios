@@ -876,10 +876,11 @@ contact support.";
 "authentication.setup_enhanced_security.body" = "We are improving the safety and security of our products by adding several new features aimed to keep you and your financial information safe.\n\n• Create Password\n• SET UP FaceID or TouchID";
 
 "authentication.create_password.title" = "create password";
-"authentication.create_password.sub_title_1" = "Create password";
-"authentication.create_password.sub_title_2" = "Enter password";
+"authentication.create_password.sub_title_1" = "Create a new password";
+"authentication.create_password.sub_title_2" = "Enter new password";
 "authentication.create_password.sub_title_3" = "Re-enter password";
 "authentication.create_password.sub_title_4" = "Re-Enter password";
+"authentication.create_password.success_popup.title" = "PASSWORD CREATED SUCCESSFULLY!";
 
 "authentication.create_password.desc_1" = "Must be at least 8 characters";
 "authentication.create_password.desc_2" = "Must have 1 special character including @ #$ %";
@@ -893,16 +894,18 @@ contact support.";
 "authentication.enter_password.forgotPasswordButton" = "Forgot Password";
 
 "authentication.reset_password.title" = "RESET PASSWORD";
-"authentication.reset_password.subtitle" = "Please check your email for a link";
+"authentication.reset_password.subtitle" = "Please check your email for 6 Digit Code";
 "authentication.reset_password.or" = "OR";
 "authentication.reset_password.enter_code" = "ENTER 6 DIGIT CODE";
 "authentication.reset_password.resend_code_button.title" = "Resend Code";
+"authentication.reset_password.success_popup.title" = "PASSWORD RESET SUCCESSFULLY!";
 
 "authentication.change_password.title" = "CHANGE PASSWORD";
-"authentication.change_password.current.title" = "Current password";
-"authentication.change_password.current.placeholder" = "Enter your current password";
+"authentication.change_password.current.title" = "Enter your current password";
+"authentication.change_password.current.placeholder" = "Enter current password";
 "authentication.change_password.new.title" = "New password";
 "authentication.change_password.new.placeholder" = "Create new password";
+"authentication.change_password.success_popup.title" = "PASSWORD CHANGED SUCCESSFULLY!";
 
 "authentication.biometrics_backup.biomerics_button.title" = "Login with %@";
 "authentication.biometrics_backup.password_button.title" = "Login with Password";

@@ -500,16 +500,20 @@ public enum LFLocalizable {
       /// CHANGE PASSWORD
       public static let title = LFLocalizable.tr("Localizable", "authentication.change_password.title", fallback: "CHANGE PASSWORD")
       public enum Current {
+        /// Enter current password
+        public static let placeholder = LFLocalizable.tr("Localizable", "authentication.change_password.current.placeholder", fallback: "Enter current password")
         /// Enter your current password
-        public static let placeholder = LFLocalizable.tr("Localizable", "authentication.change_password.current.placeholder", fallback: "Enter your current password")
-        /// Current password
-        public static let title = LFLocalizable.tr("Localizable", "authentication.change_password.current.title", fallback: "Current password")
+        public static let title = LFLocalizable.tr("Localizable", "authentication.change_password.current.title", fallback: "Enter your current password")
       }
       public enum New {
         /// Create new password
         public static let placeholder = LFLocalizable.tr("Localizable", "authentication.change_password.new.placeholder", fallback: "Create new password")
         /// New password
         public static let title = LFLocalizable.tr("Localizable", "authentication.change_password.new.title", fallback: "New password")
+      }
+      public enum SuccessPopup {
+        /// PASSWORD CHANGED SUCCESSFULLY!
+        public static let title = LFLocalizable.tr("Localizable", "authentication.change_password.success_popup.title", fallback: "PASSWORD CHANGED SUCCESSFULLY!")
       }
     }
     public enum CreatePassword {
@@ -519,10 +523,10 @@ public enum LFLocalizable {
       public static let desc2 = LFLocalizable.tr("Localizable", "authentication.create_password.desc_2", fallback: "Must have 1 special character including @ #$ %")
       /// Must be 1 lower case and 1 upper case
       public static let desc3 = LFLocalizable.tr("Localizable", "authentication.create_password.desc_3", fallback: "Must be 1 lower case and 1 upper case")
-      /// Create password
-      public static let subTitle1 = LFLocalizable.tr("Localizable", "authentication.create_password.sub_title_1", fallback: "Create password")
-      /// Enter password
-      public static let subTitle2 = LFLocalizable.tr("Localizable", "authentication.create_password.sub_title_2", fallback: "Enter password")
+      /// Create a new password
+      public static let subTitle1 = LFLocalizable.tr("Localizable", "authentication.create_password.sub_title_1", fallback: "Create a new password")
+      /// Enter new password
+      public static let subTitle2 = LFLocalizable.tr("Localizable", "authentication.create_password.sub_title_2", fallback: "Enter new password")
       /// Re-enter password
       public static let subTitle3 = LFLocalizable.tr("Localizable", "authentication.create_password.sub_title_3", fallback: "Re-enter password")
       /// Re-Enter password
@@ -531,6 +535,10 @@ public enum LFLocalizable {
       public static let title = LFLocalizable.tr("Localizable", "authentication.create_password.title", fallback: "create password")
       /// Passwords don't match
       public static let warning = LFLocalizable.tr("Localizable", "authentication.create_password.warning", fallback: "Passwords don't match")
+      public enum SuccessPopup {
+        /// PASSWORD CREATED SUCCESSFULLY!
+        public static let title = LFLocalizable.tr("Localizable", "authentication.create_password.success_popup.title", fallback: "PASSWORD CREATED SUCCESSFULLY!")
+      }
     }
     public enum DeviceLocalizedReason {
       /// Authorize sensitive transactions.
@@ -553,13 +561,17 @@ public enum LFLocalizable {
       public static let enterCode = LFLocalizable.tr("Localizable", "authentication.reset_password.enter_code", fallback: "ENTER 6 DIGIT CODE")
       /// OR
       public static let or = LFLocalizable.tr("Localizable", "authentication.reset_password.or", fallback: "OR")
-      /// Please check your email for a link
-      public static let subtitle = LFLocalizable.tr("Localizable", "authentication.reset_password.subtitle", fallback: "Please check your email for a link")
+      /// Please check your email for 6 Digit Code
+      public static let subtitle = LFLocalizable.tr("Localizable", "authentication.reset_password.subtitle", fallback: "Please check your email for 6 Digit Code")
       /// RESET PASSWORD
       public static let title = LFLocalizable.tr("Localizable", "authentication.reset_password.title", fallback: "RESET PASSWORD")
       public enum ResendCodeButton {
         /// Resend Code
         public static let title = LFLocalizable.tr("Localizable", "authentication.reset_password.resend_code_button.title", fallback: "Resend Code")
+      }
+      public enum SuccessPopup {
+        /// PASSWORD RESET SUCCESSFULLY!
+        public static let title = LFLocalizable.tr("Localizable", "authentication.reset_password.success_popup.title", fallback: "PASSWORD RESET SUCCESSFULLY!")
       }
     }
     public enum Security {
