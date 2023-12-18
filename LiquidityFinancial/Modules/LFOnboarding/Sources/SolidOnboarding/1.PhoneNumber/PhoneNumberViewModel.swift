@@ -14,6 +14,7 @@ final class PhoneNumberViewModel: ObservableObject, PhoneNumberViewModelProtocol
   unowned let destinationObservable: BaseOnboardingDestinationObservable
   init(coordinator: BaseOnboardingDestinationObservable) {
     self.destinationObservable = coordinator
+    UserDefaults.isStartedWithLoginFlow = true
   }
   
   var networkEnvironment: NetworkEnvironment {

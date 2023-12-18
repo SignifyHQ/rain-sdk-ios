@@ -16,4 +16,5 @@ public extension Key {
   static let userCompleteOnboarding: Key = "userCompleteOnboarding"
   static let isFirstRun: Key = "isFirstRun"
   static let isBiometricUsageEnabled: Key = "isBiometricUsageEnabled"
+  static let isStartedWithLoginFlow: Key = "isStartedWithLoginFlow"
 }

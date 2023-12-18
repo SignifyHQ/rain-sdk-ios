@@ -1090,6 +1090,11 @@ contact support.";
 "authentication.device_localized_reason.title" = "Authorize sensitive transactions.";
 "authentication.biometrics_faceID.title" = "Face ID";
 "authentication.biometrics_touchID.title" = "Touch ID";
+"authentication.biometrics_enable_localizedFallback.title" = "Try Again";
+"authentication.biometrics_authentication_localizedFallback.title" = "Use Backup Options";
+"authentication.biometrics_backup_localizedFallback.title" = "Use Password Instead";
+"authentication.biometrics_lockout_error.title" = "%@ attempts exceeded";
+"authentication.biometrics_lockout_error.message" = "Unable to use %@";
 
 "authentication.security.title" = "Security";
 "authentication.security_email.title" = "Email";

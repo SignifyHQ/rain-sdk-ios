@@ -80,7 +80,8 @@ extension SecurityHubViewModel {
   
   func allowBiometricAuthentication() {
     popup = nil
-    biometricsManager.performBiometricsAuthentication()
+    biometricsManager.performBiometricsAuthentication(purpose: .enable)
+      .receive(on: DispatchQueue.main)
       .sink(receiveCompletion: { [weak self] completion in
         guard let self else { return }
         switch completion {
@@ -96,18 +97,23 @@ extension SecurityHubViewModel {
       })
       .store(in: &cancellables)
   }
+  
+  func hidePopup() {
+    popup = nil
+  }
 }
 
 // MARK: - Private Functions
 private extension SecurityHubViewModel {
   func checkBiometricsCapability() {
-    biometricsManager.checkBiometricsCapability()
-      .sink(receiveCompletion: { [weak self] completion in
+    biometricsManager.checkBiometricsCapability(purpose: .enable)
+      .receive(on: DispatchQueue.main)
+      .sink(receiveCompletion: { completion in
         switch completion {
         case .finished:
           log.debug("Biometrics capability check completed.")
         case .failure(let error):
-          self?.toastMessage = error.errorDescription
+          log.error("Biometrics error: \(error.localizedDescription)")
         }
       }, receiveValue: { [weak self] result in
         guard let self else { return }
@@ -129,6 +135,8 @@ private extension SecurityHubViewModel {
     switch error {
     case .biometryNotAvailable:
       openDeviceSettings()
+    case .biometryLockout:
+      popup = .biometricsLockout
     case .userCancel:
       break
     default:
@@ -156,5 +164,6 @@ extension SecurityHubViewModel {
   
   enum Popup {
     case biometric
+    case biometricsLockout
   }
 }

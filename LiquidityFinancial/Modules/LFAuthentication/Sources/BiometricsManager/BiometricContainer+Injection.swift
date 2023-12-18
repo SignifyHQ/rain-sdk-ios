@@ -5,9 +5,10 @@ import LocalAuthentication
 extension Container {
   
   public var biometricsManager: Factory<BiometricsManagerProtocol> {
-    Factory(self) {
-      BiometricsManager(context: LAContext())
+    self {
+      BiometricsManager()
     }
+    .singleton
   }
   
 }

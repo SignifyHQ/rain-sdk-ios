@@ -6,16 +6,16 @@ import LFLocalizable
 class BiometricsManager: BiometricsManagerProtocol {
   private var error: NSError?
   
-  private let context: LAContext
+  private var context = LAContext()
   
-  init(context: LAContext) {
-    self.context = context
-  }
+  init() {}
 }
 
 // MARK: - Functions
 extension BiometricsManager {
-  func checkBiometricsCapability() -> AnyPublisher<Biometric, BiometricError> {
+  func checkBiometricsCapability(purpose: BiometricsPurpose) -> AnyPublisher<Biometric, BiometricError> {
+    setupContext(for: purpose)
+    
     let isBiometricEnabled = context.canEvaluatePolicy(.deviceOwnerAuthenticationWithBiometrics, error: &error)
     let biometryType = BiometricType.getType(from: context.biometryType)
     let isSupportedBiometric = !(biometryType == .none || biometryType == .unknown)
@@ -31,8 +31,8 @@ extension BiometricsManager {
       .eraseToAnyPublisher()
   }
   
-  func performBiometricsAuthentication() -> AnyPublisher<Biometric, BiometricError> {
-    checkBiometricsCapability()
+  func performBiometricsAuthentication(purpose: BiometricsPurpose) -> AnyPublisher<Biometric, BiometricError> {
+    checkBiometricsCapability(purpose: purpose)
       .flatMap { [weak self] biometric -> AnyPublisher<Biometric, BiometricError> in
         guard let self else {
           return Fail(error: BiometricError.unknown).eraseToAnyPublisher()
@@ -50,7 +50,9 @@ extension BiometricsManager {
   }
   
   func performDeviceAuthentication() -> AnyPublisher<Bool, BiometricError> {
-    Future { [weak self] promise in
+    context = LAContext()
+    
+    return Future { [weak self] promise in
       guard let self else {
         promise(.failure(.unknown))
         return
@@ -100,5 +102,11 @@ private extension BiometricsManager {
       }
     }
     .eraseToAnyPublisher()
+  }
+  
+  func setupContext(for purpose: BiometricsPurpose) {
+    error = nil
+    context = LAContext()
+    context.localizedFallbackTitle = purpose.localizedFallbackTitle
   }
 }

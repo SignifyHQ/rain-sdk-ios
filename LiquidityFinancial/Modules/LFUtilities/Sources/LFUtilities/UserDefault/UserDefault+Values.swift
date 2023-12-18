@@ -46,4 +46,7 @@ public extension UserDefaults {
   
   @LFUserDefault(key: Key.isBiometricUsageEnabled, defaultValue: false, parameter: UserDefaults.phoneNumber)
   static var isBiometricUsageEnabled: Bool
+  
+  @LFUserDefault(key: Key.isStartedWithLoginFlow, defaultValue: true)
+  static var isStartedWithLoginFlow: Bool
 }

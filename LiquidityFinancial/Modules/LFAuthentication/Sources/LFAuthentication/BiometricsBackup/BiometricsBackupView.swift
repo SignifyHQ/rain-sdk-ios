@@ -25,7 +25,7 @@ public struct BiometricsBackupView: View {
           case .passwordLogin:
             EnterPasswordView(
               purpose: .biometricsFallback,
-              shouldDismissRoot: $shouldDismiss
+              shouldDismissRoot: $viewModel.shouldDismiss
             )
           }
         }
@@ -33,12 +33,15 @@ public struct BiometricsBackupView: View {
       .popup(item: $viewModel.toastMessage, style: .toast) {
         ToastView(toastMessage: $0)
       }
-      .onChange(
-        of: shouldDismiss,
-        perform: { _ in
-          dismiss()
+      .popup(item: $viewModel.popup) { popup in
+        switch popup {
+        case .biometricsLockout:
+          biometricLockoutPopup
         }
-      )
+      }
+      .onChange(of: $viewModel.shouldDismiss.wrappedValue) { _ in
+        dismiss()
+      }
       .track(name: String(describing: type(of: self)))
       .embedInNavigation()
   }
@@ -82,5 +85,15 @@ private extension BiometricsBackupView {
         viewModel.didTapPasswordLogin()
       }
     }
+  }
+  
+  var biometricLockoutPopup: some View {
+    LiquidityAlert(
+      title: LFLocalizable.Authentication.BiometricsLockoutError.title(viewModel.biometricType.title),
+      message: LFLocalizable.Authentication.BiometricsLockoutError.message(viewModel.biometricType.title),
+      primary: .init(text: LFLocalizable.Button.Ok.title) {
+        viewModel.hidePopup()
+      }
+    )
   }
 }

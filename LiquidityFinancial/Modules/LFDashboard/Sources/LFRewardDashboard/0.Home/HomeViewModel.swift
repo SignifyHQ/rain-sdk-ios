@@ -15,10 +15,12 @@ import SolidData
 import SolidDomain
 import ExternalFundingData
 import LFFeatureFlags
+import BiometricsManager
 
 @MainActor
 public final class HomeViewModel: ObservableObject {
   @LazyInjected(\.accountDataManager) var accountDataManager
+  @LazyInjected(\.biometricsManager) var biometricsManager
   @LazyInjected(\.rewardDataManager) var rewardDataManager
   @LazyInjected(\.accountRepository) var accountRepository
   @LazyInjected(\.onboardingRepository) var onboardingRepository
@@ -66,7 +68,7 @@ public final class HomeViewModel: ObservableObject {
   @Published var blockingPopup: BlockingPopup?
   @Published var toastMessage: String?
   @Published var shouldShowBiometricsFallback: Bool = false
-  
+
   private var subscribers: Set<AnyCancellable> = []
   
   private var isFristLoad: Bool = true
@@ -80,6 +82,8 @@ public final class HomeViewModel: ObservableObject {
     }
     accountDataManager.userCompleteOnboarding = true
     initData()
+    authenticateWithBiometrics()
+    UserDefaults.isStartedWithLoginFlow = false
   }
   
   var showGearButton: Bool {
@@ -381,6 +385,27 @@ extension HomeViewModel {
   
   func onClickedSearchButton() {
     navigation = .searchCauses
+  }
+  
+  func authenticateWithBiometrics() {
+    let isEnableAuthenticateWithBiometrics = UserDefaults.isBiometricUsageEnabled && !UserDefaults.isStartedWithLoginFlow
+
+    if enableMultiFactorAuthenticationFlag, isEnableAuthenticateWithBiometrics {
+      biometricsManager.performBiometricsAuthentication(purpose: .authentication)
+        .receive(on: DispatchQueue.main)
+        .sink(receiveCompletion: { [weak self] completion in
+          guard let self else { return }
+          switch completion {
+          case .finished:
+            log.debug("Biometrics capabxility check completed.")
+          case .failure(let error):
+            log.error("Biometrics error: \(error.localizedDescription)")
+            // In all cases of authentication failure, we will take the user to the biometrics backup screen
+            self.shouldShowBiometricsFallback = true
+          }
+        }, receiveValue: { _ in })
+        .store(in: &subscribers)
+    }
   }
 }
 

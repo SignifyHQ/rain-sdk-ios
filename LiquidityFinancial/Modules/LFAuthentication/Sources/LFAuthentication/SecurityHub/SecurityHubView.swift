@@ -34,6 +34,8 @@ public struct SecurityHubView: View {
         switch item {
         case .biometric:
           setupBiometricsPopup
+        case .biometricsLockout:
+          biometricLockoutPopup
         }
       })
     .navigationLink(
@@ -203,6 +205,16 @@ private extension SecurityHubView {
       },
       secondaryAction: {
         viewModel.declineBiometricAuthentication()
+      }
+    )
+  }
+  
+  var biometricLockoutPopup: some View {
+    LiquidityAlert(
+      title: LFLocalizable.Authentication.BiometricsLockoutError.title(viewModel.biometricType.title),
+      message: LFLocalizable.Authentication.BiometricsLockoutError.message(viewModel.biometricType.title),
+      primary: .init(text: LFLocalizable.Button.Ok.title) {
+        viewModel.hidePopup()
       }
     )
   }

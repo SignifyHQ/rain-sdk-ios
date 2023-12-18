@@ -10,6 +10,7 @@ import NetspendOnboarding
 import LFNetspendBank
 import Factory
 import LFNetSpendCard
+import LFAuthentication
 
 public struct HomeView: View {
   @Injected(\.dashboardRepository) var dashboardRepository
@@ -91,6 +92,9 @@ public struct HomeView: View {
       dashboardRepository.apiFetchOnboardingState { route in
         onChangeRoute?(route)
       }
+    }
+    .fullScreenCover(isPresented: $viewModel.shouldShowBiometricsFallback) {
+      BiometricsBackupView()
     }
     .onChange(of: scenePhase, perform: { newValue in
       if newValue == .active {

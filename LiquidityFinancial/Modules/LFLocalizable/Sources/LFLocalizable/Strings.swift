@@ -472,6 +472,10 @@ public enum LFLocalizable {
     }
   }
   public enum Authentication {
+    public enum BiometricsAuthenticationLocalizedFallback {
+      /// Use Backup Options
+      public static let title = LFLocalizable.tr("Localizable", "authentication.biometrics_authentication_localizedFallback.title", fallback: "Use Backup Options")
+    }
     public enum BiometricsBackup {
       public enum BiomericsButton {
         /// Login with %@
@@ -484,6 +488,14 @@ public enum LFLocalizable {
         public static let title = LFLocalizable.tr("Localizable", "authentication.biometrics_backup.password_button.title", fallback: "Login with Password")
       }
     }
+    public enum BiometricsBackupLocalizedFallback {
+      /// Use Password Instead
+      public static let title = LFLocalizable.tr("Localizable", "authentication.biometrics_backup_localizedFallback.title", fallback: "Use Password Instead")
+    }
+    public enum BiometricsEnableLocalizedFallback {
+      /// Try Again
+      public static let title = LFLocalizable.tr("Localizable", "authentication.biometrics_enable_localizedFallback.title", fallback: "Try Again")
+    }
     public enum BiometricsFaceID {
       /// Face ID
       public static let title = LFLocalizable.tr("Localizable", "authentication.biometrics_faceID.title", fallback: "Face ID")
@@ -491,6 +503,16 @@ public enum LFLocalizable {
     public enum BiometricsLocalizedReason {
       /// Unlock your account
       public static let title = LFLocalizable.tr("Localizable", "authentication.biometrics_localized_reason.title", fallback: "Unlock your account")
+    }
+    public enum BiometricsLockoutError {
+      /// Unable to use %@
+      public static func message(_ p1: Any) -> String {
+        return LFLocalizable.tr("Localizable", "authentication.biometrics_lockout_error.message", String(describing: p1), fallback: "Unable to use %@")
+      }
+      /// %@ attempts exceeded
+      public static func title(_ p1: Any) -> String {
+        return LFLocalizable.tr("Localizable", "authentication.biometrics_lockout_error.title", String(describing: p1), fallback: "%@ attempts exceeded")
+      }
     }
     public enum BiometricsTouchID {
       /// Touch ID
