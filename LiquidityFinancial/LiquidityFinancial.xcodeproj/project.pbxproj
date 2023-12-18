@@ -593,8 +593,7 @@
 		741AD81A2AD50BD500C1317A /* NavigationContainer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NavigationContainer.swift; sourceTree = "<group>"; };
 		741AD81D2AD50C1B00C1317A /* NavigationContainer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NavigationContainer.swift; sourceTree = "<group>"; };
 		741AD8232AD50C7500C1317A /* NavigationContainer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NavigationContainer.swift; sourceTree = "<group>"; };
-		743155CF2B281CB700D141F4 /* DogeCardNobank.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = DogeCardNobank.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		743155D02B281CB800D141F4 /* DogeCard copy-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "DogeCard copy-Info.plist"; path = "/Users/luantran/app/iOS-liquidity-v2/LiquidityFinancial/DogeCard copy-Info.plist"; sourceTree = "<absolute>"; };
+		743155CF2B281CB700D141F4 /* DogeCard.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = DogeCard.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		743155D32B28309B00D141F4 /* DogeCardConfig.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = DogeCardConfig.xcconfig; sourceTree = "<group>"; };
 		743155D62B28309B00D141F4 /* DashboardContainer+Injection.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "DashboardContainer+Injection.swift"; sourceTree = "<group>"; };
 		743155D82B28309B00D141F4 /* AppCoordinator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppCoordinator.swift; sourceTree = "<group>"; };
@@ -1657,7 +1656,6 @@
 				A97BF7D92A5C602F00B8F5CA /* LiquidityFinancialUITests */,
 				A97BF7BD2A5C602D00B8F5CA /* Products */,
 				A953545B2A5DD7F4008B0FAB /* Frameworks */,
-				743155D02B281CB800D141F4 /* DogeCard copy-Info.plist */,
 			);
 			indentWidth = 2;
 			sourceTree = "<group>";
@@ -1674,7 +1672,7 @@
 				A9B448F02A8389B90029944C /* CauseCard.app */,
 				A99D2F692A9A56CF00947773 /* PrideCard.app */,
 				A96D4BED2B078370003E92B6 /* CauseCardNetspend.app */,
-				743155CF2B281CB700D141F4 /* DogeCardNobank.app */,
+				743155CF2B281CB700D141F4 /* DogeCard.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -2365,7 +2363,7 @@
 				743156472B295A0800D141F4 /* LFNoBankDashboard */,
 			);
 			productName = LiquidityFinancial;
-			productReference = 743155CF2B281CB700D141F4 /* DogeCardNobank.app */;
+			productReference = 743155CF2B281CB700D141F4 /* DogeCard.app */;
 			productType = "com.apple.product-type.application";
 		};
 		A953547C2A5E55B2008B0FAB /* Cardano */ = {
@@ -3455,7 +3453,7 @@
 				);
 				MARKETING_VERSION = 3.0.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.liquidityfinancial.dogeking;
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_NAME = DogeCard;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = "Apple Distribution DogeKing";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
@@ -3500,7 +3498,7 @@
 				);
 				MARKETING_VERSION = 3.0.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.liquidityfinancial.dogeking;
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_NAME = DogeCard;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = "Apple Distribution DogeKing";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";

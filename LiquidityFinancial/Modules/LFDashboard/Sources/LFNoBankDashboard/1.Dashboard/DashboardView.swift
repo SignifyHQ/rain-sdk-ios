@@ -22,12 +22,7 @@ struct DashboardView: View {
     Group {
       switch option {
       case .cash:
-        if #available(iOS 16.0, *) {
-          BlockingFiatView()
-            .toolbarBackground(.hidden, for: .navigationBar)
-        } else {
-          BlockingFiatView()
-        }
+        BlockingFiatView()
       case .rewards:
         RewardTabView()
       case .assets:

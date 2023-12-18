@@ -27,7 +27,6 @@ public final class HomeViewModel: ObservableObject {
   @Published var navigation: Navigation?
   @Published var popup: Popup?
   
-  @Published var isLoading: Bool = false
   @Published var toastMessage: String?
 
   private var hadPushToken: Bool = false
@@ -41,14 +40,6 @@ public final class HomeViewModel: ObservableObject {
     
     initData()
     accountDataManager.userCompleteOnboarding = true
-    checkGoTransactionDetail()
-    if #available(iOS 15, *) {
-      let appearance = UINavigationBarAppearance()
-      appearance.backgroundColor = .clear
-      appearance.configureWithTransparentBackground()
-      UINavigationBar.appearance().standardAppearance = appearance
-      UINavigationBar.appearance().scrollEdgeAppearance = appearance
-    }
   }
 }
 
@@ -82,7 +73,6 @@ extension HomeViewModel {
   
   func onAppear() {
     checkShouldShowNotification()
-    checkGoTransactionDetail()
     logincustomerSupportService()
   }
   
@@ -100,16 +90,6 @@ extension HomeViewModel {
 
 // MARK: Notifications
 extension HomeViewModel {
-  
-  func checkGoTransactionDetail() {
-    guard let event = pushNotificationService.event else {
-      return
-    }
-    switch event {
-    case let .transaction(id, accountId):
-      openTransactionId(id, accountId: accountId)
-    }
-  }
   
   func checkShouldShowNotification() {
     Task { @MainActor in
@@ -163,13 +143,6 @@ extension HomeViewModel {
   func clearPopup() {
     popup = nil
   }
-  
-  func openTransactionId(_ id: String, accountId: String) {
-    Task { @MainActor in
-      navigation = .transactionDetail(id: id, accountId: accountId)
-      pushNotificationService.clearSelection()
-    }
-  }
 }
 
 // MARK: - View Helpers
@@ -191,7 +164,6 @@ extension HomeViewModel {
 extension HomeViewModel {
   enum Navigation {
     case profile
-    case transactionDetail(id: String, accountId: String)
   }
   
   enum Popup {

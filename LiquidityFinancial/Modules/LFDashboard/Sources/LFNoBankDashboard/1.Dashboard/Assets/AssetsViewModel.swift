@@ -21,10 +21,12 @@ final class AssetsViewModel: ObservableObject {
   
   init() {
     accountDataManager
-      .accountsSubject.map({ accounts in
+      .accountsSubject
+      .map({ accounts in
         accounts.map({ AssetModel(account: $0) })
           .filter({ $0.type != .usd })
       })
+      .receive(on: DispatchQueue.main)
       .assign(to: \.assets, on: self)
       .store(in: &cancellable)
   }

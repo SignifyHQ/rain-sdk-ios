@@ -35,7 +35,7 @@ struct BlockingFiatView: View {
               .multilineTextAlignment(.center)
           }
           .padding(.top, 12)
-          .padding(.horizontal, 26)
+          .padding(.horizontal, 16)
           
           FullSizeButton(
             title: LFLocalizable.Button.ContactSupport.title,
@@ -44,7 +44,7 @@ struct BlockingFiatView: View {
             customerSupportService.openSupportScreen()
           }
           .padding(.top, 20)
-          .padding(.bottom, 8)
+          .padding(.bottom, 16)
         }
         .fixedSize(horizontal: false, vertical: true)
         .padding(.horizontal, 16)

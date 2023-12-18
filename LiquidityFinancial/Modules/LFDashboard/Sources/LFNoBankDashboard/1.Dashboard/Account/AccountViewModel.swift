@@ -9,6 +9,17 @@ import EnvironmentService
 
 @MainActor
 class AccountViewModel: ObservableObject {
+  enum OpenSafariType: Identifiable {
+    var id: String {
+      switch self {
+      case .legal(let url):
+        return url.absoluteString
+      }
+    }
+    
+    case legal(URL)
+  }
+  
   @LazyInjected(\.accountDataManager) var accountDataManager
   @LazyInjected(\.customerSupportService) var customerSupportService
   @LazyInjected(\.pushNotificationService) var pushNotificationService
@@ -111,6 +122,14 @@ extension AccountViewModel {
   
   func pushFCMTokenIfNeed() {
     dashboardRepository.pushFCMTokenIfNeed()
+  }
+  
+  func getUrl() -> URL? {
+    URL(string: LFUtilities.termsURL)
+  }
+  
+  func helpTapped() {
+    customerSupportService.openSupportScreen()
   }
 }
 

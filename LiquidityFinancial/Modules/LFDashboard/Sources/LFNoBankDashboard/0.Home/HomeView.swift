@@ -24,9 +24,7 @@ public struct HomeView: View {
     _viewModel = .init(wrappedValue: viewModel)
     
     self.onChangeRoute = onChangeRoute
-    dashboardRepository.load { toastMessage in
-      viewModel.toastMessage = toastMessage
-    }
+    dashboardRepository.load { _ in }
   }
   
   public var body: some View {
@@ -73,11 +71,6 @@ public struct HomeView: View {
       switch item {
       case .profile:
         ProfileView()
-      case .transactionDetail(let id, let accountId):
-        TransactionDetailView(
-          accountID: accountId,
-          transactionId: id
-        )
       }
     }
     .popup(item: $viewModel.popup) { popup in
@@ -88,13 +81,9 @@ public struct HomeView: View {
     }
     .onAppear {
       viewModel.onAppear()
-      dashboardRepository.apiFetchOnboardingState { route in
-        onChangeRoute?(route)
-      }
     }
     .onChange(of: scenePhase, perform: { newValue in
       if newValue == .active {
-        viewModel.checkGoTransactionDetail()
         dashboardRepository.fetchNetspendLinkedSources()
       }
     })

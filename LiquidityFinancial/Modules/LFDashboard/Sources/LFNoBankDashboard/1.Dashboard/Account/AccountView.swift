@@ -12,6 +12,8 @@ struct AccountsView: View {
   
   @StateObject private var viewModel: AccountViewModel
   
+  @State var openSafariType: AccountViewModel.OpenSafariType?
+  
   init(viewModel: AccountViewModel) {
     _viewModel = .init(wrappedValue: viewModel)
   }
@@ -43,6 +45,12 @@ struct AccountsView: View {
       .popup(item: $viewModel.toastMessage, style: .toast) {
         ToastView(toastMessage: $0)
       }
+      .fullScreenCover(item: $openSafariType, content: { type in
+        switch type {
+        case .legal(let url):
+          SFSafariViewWrapper(url: url)
+        }
+      })
       .background(Colors.background.swiftUIColor)
   }
 }
@@ -113,6 +121,17 @@ private extension AccountsView {
         ) {
           viewModel.notificationTapped()
         }
+      }
+      ArrowButton(
+        image: GenImages.CommonImages.Accounts.legal.swiftUIImage,
+        title: LFLocalizable.AccountView.legal,
+        value: nil
+      ) {
+        guard let url = viewModel.getUrl() else { return }
+        openSafariType = .legal(url)
+      }
+      ArrowButton(image: GenImages.CommonImages.icQuestion.swiftUIImage, title: LFLocalizable.Profile.Help.title, value: nil) {
+        viewModel.helpTapped()
       }
       if viewModel.showAdminMenu {
         ArrowButton(
