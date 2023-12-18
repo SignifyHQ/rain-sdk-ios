@@ -16,6 +16,8 @@ import SolidDomain
 import ExternalFundingData
 import LFFeatureFlags
 import BiometricsManager
+import LFLocalizable
+import SwiftUI
 
 @MainActor
 public final class HomeViewModel: ObservableObject {
@@ -61,6 +63,7 @@ public final class HomeViewModel: ObservableObject {
     }
   }
   
+  @Published var biometricType: BiometricType = .none
   @Published var tabSelected: TabOption = .cash
   @Published var navigation: Navigation?
   @Published var tabOptions: [TabOption] = [.cash, .rewards, .account]
@@ -82,6 +85,7 @@ public final class HomeViewModel: ObservableObject {
     }
     accountDataManager.userCompleteOnboarding = true
     initData()
+    checkBiometricsCapability()
     authenticateWithBiometrics()
     UserDefaults.isStartedWithLoginFlow = false
   }
@@ -182,6 +186,29 @@ private extension HomeViewModel {
       tabSelected = .cash
     }
   }
+  
+  func checkBiometricsCapability() {
+    biometricsManager.checkBiometricsCapability(purpose: .enable)
+      .receive(on: DispatchQueue.main)
+      .sink(receiveCompletion: { completion in
+        switch completion {
+        case .finished:
+          log.debug("Biometrics capability check completed.")
+        case .failure(let error):
+          log.error("Biometrics error: \(error.localizedDescription)")
+        }
+      }, receiveValue: { [weak self] result in
+        guard let self else { return }
+        self.biometricType = result.type
+      })
+      .store(in: &subscribers)
+  }
+  
+  func openDeviceSettings() {
+    if let url = URL(string: UIApplication.openSettingsURLString) {
+      UIApplication.shared.open(url, options: [:], completionHandler: nil)
+    }
+  }
 }
 
 // MARK: - API User
@@ -272,9 +299,14 @@ extension HomeViewModel {
       let userData = accountDataManager.userInfomationData as? UserInfomationData
       let missingSteps = userData?.missingStepsEnum ?? []
       
-      if missingSteps.contains(.createPassword),
-         blockingPopup != .enhancedSecurity {
-        blockingPopup = .enhancedSecurity
+      guard blockingPopup != .passwordEnhancedSecurity else {
+        return
+      }
+      
+      if missingSteps.contains(.createPassword) {
+        blockingPopup = .passwordEnhancedSecurity
+      } else if !accountDataManager.isBiometricUsageEnabled {
+        popup = .biometricEnhancedSecurity
       }
     }
   }
@@ -301,6 +333,10 @@ extension HomeViewModel {
   func enhancedSecurityPopupAction() {
     clearBlockingPopup()
     navigation = .createPassword
+  }
+  
+  func setupBiometricSecurity() {
+    popup = .biometricSetup
   }
 
   func clearPopup() {
@@ -407,6 +443,37 @@ extension HomeViewModel {
         .store(in: &subscribers)
     }
   }
+  
+  func allowBiometricAuthentication() {
+    popup = nil
+    biometricsManager.performBiometricsAuthentication(purpose: .enable)
+      .receive(on: DispatchQueue.main)
+      .sink(receiveCompletion: { [weak self] completion in
+        guard let self else { return }
+        switch completion {
+        case .finished:
+          log.debug("Biometrics capabxility check completed.")
+        case .failure(let error):
+          self.handleBiometricAuthenticationError(error: error)
+        }
+      }, receiveValue: { [weak self] result in
+        guard let self else { return }
+        self.accountDataManager.isBiometricUsageEnabled = result.isEnabled
+      })
+      .store(in: &subscribers)
+  }
+  
+  func handleBiometricAuthenticationError(error: BiometricError) {
+    accountDataManager.isBiometricUsageEnabled = false
+    switch error {
+    case .biometryNotAvailable:
+      openDeviceSettings()
+    case .biometryLockout:
+      popup = .biometricsLockout
+    default:
+      break
+    }
+  }
 }
 
 // MARK: - Types
@@ -421,9 +488,12 @@ extension HomeViewModel {
   
   enum Popup {
     case notifications
+    case biometricEnhancedSecurity
+    case biometricSetup
+    case biometricsLockout
   }
   
   enum BlockingPopup {
-    case enhancedSecurity
+    case passwordEnhancedSecurity
   }
 }

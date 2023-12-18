@@ -70,12 +70,18 @@ public struct HomeView: View {
       switch popup {
       case .notifications:
         notificationsPopup
+      case .biometricEnhancedSecurity:
+        biometricEnhancedSecurityPopup
+      case .biometricSetup:
+        setupBiometricsPopup
+      case .biometricsLockout:
+        biometricLockoutPopup
       }
     }
     .popup(item: $viewModel.blockingPopup, dismissMethods: []) { popup in
       switch popup {
-      case .enhancedSecurity:
-        enhancedSecurityPopup
+      case .passwordEnhancedSecurity:
+        passwordEnhancedSecurityPopup
       }
     }
     .fullScreenCover(isPresented: $viewModel.shouldShowBiometricsFallback) {
@@ -154,7 +160,7 @@ private extension HomeView {
     }
   }
   
-  private var notificationsPopup: some View {
+  var notificationsPopup: some View {
     LiquidityAlert(
       title: LFLocalizable.NotificationPopup.title,
       message: LFLocalizable.NotificationPopup.subtitle,
@@ -169,14 +175,51 @@ private extension HomeView {
     )
   }
   
-  private var enhancedSecurityPopup: some View {
+  var passwordEnhancedSecurityPopup: some View {
     LiquidityAlert(
       title: LFLocalizable.Authentication.SetupEnhancedSecurity.title,
-      message: LFLocalizable.Authentication.SetupEnhancedSecurity.body,
+      message: LFLocalizable.Authentication.SetupEnhancedSecurity.fullStep,
       primary: .init(
         text: LFLocalizable.Button.Continue.title,
         action: viewModel.enhancedSecurityPopupAction
       )
+    )
+  }
+  
+  var biometricEnhancedSecurityPopup: some View {
+    LiquidityAlert(
+      title: LFLocalizable.Authentication.SetupEnhancedSecurity.title,
+      message: LFLocalizable.Authentication.SetupEnhancedSecurity.biometricsStep,
+      primary: .init(
+        text: LFLocalizable.Button.Continue.title,
+        action: viewModel.setupBiometricSecurity
+      ),
+      secondary: .init(
+        text: LFLocalizable.Button.NotNow.title,
+        action: viewModel.clearPopup
+      )
+    )
+  }
+  
+  var setupBiometricsPopup: some View {
+    SetupBiometricPopup(
+      biometricType: viewModel.biometricType,
+      primaryAction: {
+        viewModel.allowBiometricAuthentication()
+      },
+      secondaryAction: {
+        viewModel.clearPopup()
+      }
+    )
+  }
+  
+  var biometricLockoutPopup: some View {
+    LiquidityAlert(
+      title: LFLocalizable.Authentication.BiometricsLockoutError.title(viewModel.biometricType.title),
+      message: LFLocalizable.Authentication.BiometricsLockoutError.message(viewModel.biometricType.title),
+      primary: .init(text: LFLocalizable.Button.Ok.title) {
+        viewModel.clearPopup()
+      }
     )
   }
 }
