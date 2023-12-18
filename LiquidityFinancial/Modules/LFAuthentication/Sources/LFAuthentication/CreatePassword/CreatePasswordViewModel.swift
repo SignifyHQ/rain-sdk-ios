@@ -144,4 +144,13 @@ public enum CreatePasswordPurpose {
   case createExistingUser
   case resetPassword(token: String)
   case changePassword
+  
+  var screenTitle: String {
+    switch self {
+    case .changePassword:
+      return LFLocalizable.Authentication.ChangePassword.title
+    default:
+      return LFLocalizable.Authentication.CreatePassword.title.uppercased()
+    }
+  }
 }

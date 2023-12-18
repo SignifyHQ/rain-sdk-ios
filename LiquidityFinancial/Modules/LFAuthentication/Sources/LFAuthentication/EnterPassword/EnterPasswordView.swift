@@ -24,7 +24,7 @@ public struct EnterPasswordView: View {
   
   public var body: some View {
     VStack {
-      enterPasswordTextFieldView
+      topView
       
       if viewModel.isInlineErrorShown {
         wrongPasswordErrorMessage
@@ -62,11 +62,25 @@ public struct EnterPasswordView: View {
 
 // MARK: - View Components
 private extension EnterPasswordView {
-  var enterPasswordTextFieldView: some View {
+  var topView: some View {
     VStack(alignment: .leading, spacing: 24) {
-      Text(LFLocalizable.Authentication.EnterPassword.title.uppercased())
+      Text(viewModel.purpose == .changePassword ? LFLocalizable.Authentication.ChangePassword.title : LFLocalizable.Authentication.EnterPassword.title.uppercased())
         .foregroundColor(Colors.label.swiftUIColor)
         .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.main.value))
+      
+      enterPasswordTextFieldView
+    }
+  }
+  
+  var enterPasswordTextFieldView: some View {
+    VStack(alignment: .leading) {
+      if viewModel.purpose == .changePassword {
+        Text(LFLocalizable.Authentication.ChangePassword.Current.title)
+          .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.textFieldHeader.value))
+          .foregroundColor(Colors.label.swiftUIColor)
+          .opacity(0.75)
+      }
+      
       TextFieldWrapper {
         SecureField("", text: $viewModel.password)
           .keyboardType(.alphabet)
@@ -75,7 +89,7 @@ private extension EnterPasswordView {
           .modifier(
             PlaceholderStyle(
               showPlaceHolder: $viewModel.password.wrappedValue.isEmpty,
-              placeholder: LFLocalizable.Authentication.EnterPassword.placeholder
+              placeholder: viewModel.purpose == .changePassword ? LFLocalizable.Authentication.ChangePassword.Current.placeholder : LFLocalizable.Authentication.EnterPassword.placeholder
             )
           )
           .primaryFieldStyle()

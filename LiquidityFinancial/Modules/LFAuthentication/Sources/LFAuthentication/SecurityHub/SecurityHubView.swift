@@ -16,7 +16,6 @@ public struct SecurityHubView: View {
         Text(LFLocalizable.Authentication.Security.title.uppercased())
           .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.main.value))
           .foregroundColor(Colors.label.swiftUIColor)
-          .frame(maxWidth: .infinity, alignment: .center)
         firstSectionView
       }
       .padding(.horizontal, 30)
@@ -79,7 +78,8 @@ private extension SecurityHubView {
         title: LFLocalizable.Authentication.SecurityEmail.title,
         value: viewModel.email.value,
         trailingView: textWithAction(
-          title: viewModel.email.status,
+          // We are not verifying the email yet, will hide for now
+          title: "",
           isEnable: !viewModel.email.isVerified
         ) {
           viewModel.didTapEmailVerifyButton()

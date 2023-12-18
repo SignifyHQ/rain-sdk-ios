@@ -32,8 +32,7 @@ public struct CreatePasswordView: View {
       ScrollView {
         ZStack {
           VStack(alignment: .leading) {
-            titleView
-            enterPassword
+            topView
             
             if viewModel.isDontMatchErrorShown {
               passwordMatchError
@@ -42,7 +41,7 @@ public struct CreatePasswordView: View {
             bottomView
             Spacer()
           }
-          .padding(.horizontal, 32)
+          .padding(.horizontal, 30)
         }
       }
       continueButtonView
@@ -70,6 +69,40 @@ public struct CreatePasswordView: View {
 }
 
 extension CreatePasswordView {
+  var topView: some View {
+    VStack(spacing: 24) {
+      Text(viewModel.purpose.screenTitle)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .foregroundColor(Colors.label.swiftUIColor)
+        .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.main.value))
+      
+      enterPassword
+    }
+  }
+  
+  var enterPassword: some View {
+    VStack(alignment: .leading) {
+      Text(LFLocalizable.Authentication.CreatePassword.subTitle1)
+        .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.textFieldHeader.value))
+        .foregroundColor(Colors.label.swiftUIColor)
+        .opacity(0.75)
+      
+      textField(
+        placeholder: LFLocalizable.Authentication.CreatePassword.subTitle2,
+        value: $viewModel.passwordString,
+        focus: .enterPass,
+        nextFocus: .reEnterPass
+      )
+      .tint(Colors.label.swiftUIColor)
+      .disabled(viewModel.isLoading)
+      .onAppear {
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+          keyboardFocus = .enterPass
+        }
+      }
+    }
+  }
+  
   var passwordMatchError: some View {
     Text(LFLocalizable.Authentication.CreatePassword.warning)
       .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.small.value))
@@ -126,15 +159,6 @@ extension CreatePasswordView {
     .padding(.vertical, 18)
   }
   
-  var titleView: some View {
-    Text(LFLocalizable.Authentication.CreatePassword.title.uppercased())
-      .frame(maxWidth: .infinity)
-      .foregroundColor(Colors.label.swiftUIColor)
-      .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.main.value))
-      .padding(.top, 0)
-      .padding(.bottom, 32)
-  }
-  
   var continueButtonView: some View {
     VStack(spacing: 0) {
       FullSizeButton(
@@ -149,30 +173,6 @@ extension CreatePasswordView {
     }
     .padding(.horizontal, 30)
     .padding(.bottom, 12)
-  }
-  
-  var enterPassword: some View {
-    VStack(alignment: .leading) {
-      Text(LFLocalizable.Authentication.CreatePassword.subTitle1)
-        .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.textFieldHeader.value))
-        .foregroundColor(Colors.label.swiftUIColor)
-        .opacity(0.75)
-        .padding(.leading, 4)
-      
-      textField(
-        placeholder: LFLocalizable.Authentication.CreatePassword.subTitle2,
-        value: $viewModel.passwordString,
-        focus: .enterPass,
-        nextFocus: .reEnterPass
-      )
-      .tint(Colors.label.swiftUIColor)
-      .disabled(viewModel.isLoading)
-      .onAppear {
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-          keyboardFocus = .enterPass
-        }
-      }
-    }
   }
   
   var circleView: some View {
