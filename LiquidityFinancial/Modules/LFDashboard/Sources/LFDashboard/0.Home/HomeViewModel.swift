@@ -46,7 +46,6 @@ public final class HomeViewModel: ObservableObject {
     initData()
     accountDataManager.userCompleteOnboarding = true
     checkGoTransactionDetail()
-    authenticateWithBiometrics()
     UserDefaults.isStartedWithLoginFlow = false
   }
 }
@@ -183,29 +182,6 @@ extension HomeViewModel {
   
   func onClickedGearButton() {
     
-  }
-  
-  func authenticateWithBiometrics() {
-    let isEnableAuthenticateWithBiometrics = UserDefaults.isBiometricUsageEnabled && !UserDefaults.isStartedWithLoginFlow
-    // TODO: - Will remove this condition when implement feature flag for target
-    let enableMultiFactorAuthenticationFlag = false
-    
-    if enableMultiFactorAuthenticationFlag, isEnableAuthenticateWithBiometrics {
-      biometricsManager.performBiometricsAuthentication(purpose: .authentication)
-        .receive(on: DispatchQueue.main)
-        .sink(receiveCompletion: { [weak self] completion in
-          guard let self else { return }
-          switch completion {
-          case .finished:
-            log.debug("Biometrics capabxility check completed.")
-          case .failure(let error):
-            log.error("Biometrics error: \(error.localizedDescription)")
-            // In all cases of authentication failure, we will take the user to the biometrics backup screen
-            self.shouldShowBiometricsFallback = true
-          }
-        }, receiveValue: { _ in })
-        .store(in: &subscribers)
-    }
   }
 }
 

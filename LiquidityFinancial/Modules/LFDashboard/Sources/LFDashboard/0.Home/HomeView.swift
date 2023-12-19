@@ -93,9 +93,6 @@ public struct HomeView: View {
         onChangeRoute?(route)
       }
     }
-    .fullScreenCover(isPresented: $viewModel.shouldShowBiometricsFallback) {
-      BiometricsBackupView()
-    }
     .onChange(of: scenePhase, perform: { newValue in
       if newValue == .active {
         viewModel.checkGoTransactionDetail()

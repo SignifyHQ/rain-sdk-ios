@@ -67,10 +67,12 @@ public final class HomeViewModel: ObservableObject {
   @Published var tabSelected: TabOption = .cash
   @Published var navigation: Navigation?
   @Published var tabOptions: [TabOption] = [.cash, .rewards, .account]
+  @Published var popupQueue: [ActionRequestPopup] = []
   @Published var popup: Popup?
   @Published var blockingPopup: BlockingPopup?
   @Published var toastMessage: String?
   @Published var shouldShowBiometricsFallback: Bool = false
+  @Published var isShowingRequiredActionPrompt: Bool = false
 
   private var subscribers: Set<AnyCancellable> = []
   
@@ -87,7 +89,7 @@ public final class HomeViewModel: ObservableObject {
     initData()
     checkBiometricsCapability()
     authenticateWithBiometrics()
-    UserDefaults.isStartedWithLoginFlow = false
+    observeActionRequestPopupChange()
   }
   
   var showGearButton: Bool {
@@ -101,7 +103,6 @@ public final class HomeViewModel: ObservableObject {
   func onAppear() {
     logincustomerSupportService()
     checkShouldShowNotification()
-    checkIfPasswordIsSet()
   }
 }
 
@@ -209,6 +210,32 @@ private extension HomeViewModel {
       UIApplication.shared.open(url, options: [:], completionHandler: nil)
     }
   }
+  
+  func showNextActionRequestPopup() {
+    guard let nextPopup = popupQueue.first else {
+      return
+    }
+    switch nextPopup {
+    case .notifications:
+      popup = .notifications
+    case .passwordEnhancedSecurity:
+      blockingPopup = .passwordEnhancedSecurity
+    case .biometricEnhancedSecurity:
+      popup = .biometricEnhancedSecurity
+    }
+  }
+  
+  func observeActionRequestPopupChange() {
+    Publishers.CombineLatest($popupQueue, $isShowingRequiredActionPrompt)
+      .receive(on: DispatchQueue.main)
+      .sink { [weak self] _ in
+        guard let self, !self.isShowingRequiredActionPrompt else {
+          return
+        }
+        self.showNextActionRequestPopup()
+      }
+      .store(in: &subscribers)
+  }
 }
 
 // MARK: - API User
@@ -221,7 +248,7 @@ private extension HomeViewModel {
       do {
         let user = try await accountRepository.getUser()
         handleDataUser(user: user)
-        checkIfPasswordIsSet()
+        showEnhanceSecurityPopupIfNeed()
       } catch {
         log.error(error.localizedDescription)
       }
@@ -271,13 +298,14 @@ extension HomeViewModel {
   
   func checkShouldShowNotification() {
     Task { @MainActor in
+      defer { showEnhanceSecurityPopupIfNeed() }
       do {
         let status = try await pushNotificationService.notificationSettingStatus()
         if status == .notDetermined {
           if UserDefaults.didShowPushTokenPopup {
             return
           }
-          popup = .notifications
+          popupQueue.append(.notifications)
           UserDefaults.didShowPushTokenPopup = true
         } else if status == .authorized {
           self.pushFCMTokenIfNeed()
@@ -288,26 +316,28 @@ extension HomeViewModel {
     }
   }
   
-  func checkIfPasswordIsSet() {
-    if enableMultiFactorAuthenticationFlag {
-      guard let userID = accountDataManager.userInfomationData.userID,
-            userID.isEmpty == false
-      else {
-        return
-      }
-      
-      let userData = accountDataManager.userInfomationData as? UserInfomationData
-      let missingSteps = userData?.missingStepsEnum ?? []
-      
-      guard blockingPopup != .passwordEnhancedSecurity else {
-        return
-      }
-      
-      if missingSteps.contains(.createPassword) {
-        blockingPopup = .passwordEnhancedSecurity
-      } else if !accountDataManager.isBiometricUsageEnabled {
-        popup = .biometricEnhancedSecurity
-      }
+  func showEnhanceSecurityPopupIfNeed() {
+    guard let userID = accountDataManager.userInfomationData.userID, !userID.isEmpty,
+          enableMultiFactorAuthenticationFlag,
+          blockingPopup != .passwordEnhancedSecurity
+    else {
+      UserDefaults.isStartedWithLoginFlow = false
+      return
+    }
+    
+    let userData = accountDataManager.userInfomationData as? UserInfomationData
+    let missingSteps = userData?.missingStepsEnum ?? []
+    
+    // Only show the biometric enhance security popup if it is a new session
+    let isShowBiometricSecurityPopup = !accountDataManager.isBiometricUsageEnabled && UserDefaults.isStartedWithLoginFlow
+    
+    UserDefaults.isStartedWithLoginFlow = false
+    
+    if missingSteps.contains(.createPassword) {
+      popupQueue.append(.passwordEnhancedSecurity)
+      UserDefaults.isStartedWithLoginFlow = true
+    } else if isShowBiometricSecurityPopup {
+      popupQueue.append(.biometricEnhancedSecurity)
     }
   }
   
@@ -317,10 +347,14 @@ extension HomeViewModel {
   }
   
   func notificationsPopupAction() {
-    clearPopup()
     Task { @MainActor in
+      // Need to dismiss current popup to show device alert
+      isShowingRequiredActionPrompt = true
+      clearPopup()
+      
       do {
         let success = try await pushNotificationService.requestPermission()
+        self.isShowingRequiredActionPrompt = false
         if success {
           self.pushFCMTokenIfNeed()
         }
@@ -340,10 +374,24 @@ extension HomeViewModel {
   }
 
   func clearPopup() {
+    switch popup {
+    case .notifications:
+      popupQueue.removeAll { $0 == .notifications }
+    case .biometricEnhancedSecurity:
+      popupQueue.removeAll { $0 == .biometricEnhancedSecurity }
+    default: break
+    }
+    
     popup = nil
   }
   
   func clearBlockingPopup() {
+    switch blockingPopup {
+    case .passwordEnhancedSecurity:
+      popupQueue.removeAll { $0 == .passwordEnhancedSecurity }
+    default: break
+    }
+    
     blockingPopup = nil
   }
   
@@ -445,7 +493,7 @@ extension HomeViewModel {
   }
   
   func allowBiometricAuthentication() {
-    popup = nil
+    clearPopup()
     biometricsManager.performBiometricsAuthentication(purpose: .enable)
       .receive(on: DispatchQueue.main)
       .sink(receiveCompletion: { [weak self] completion in
@@ -495,5 +543,11 @@ extension HomeViewModel {
   
   enum BlockingPopup {
     case passwordEnhancedSecurity
+  }
+  
+  enum ActionRequestPopup {
+    case notifications
+    case passwordEnhancedSecurity
+    case biometricEnhancedSecurity
   }
 }
