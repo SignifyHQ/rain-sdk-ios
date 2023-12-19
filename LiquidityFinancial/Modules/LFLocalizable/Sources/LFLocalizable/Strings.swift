@@ -93,6 +93,8 @@ public enum LFLocalizable {
   /// Zip code
   public static let zipcode = LFLocalizable.tr("Localizable", "zipcode", fallback: "Zip code")
   public enum BlockingFiatView {
+    /// ATTENTION
+    public static let attention = LFLocalizable.tr("Localizable", "BlockingFiatView.attention", fallback: "ATTENTION")
     /// DogeCard checking accounts and cards have been temporarily turned off while we onboard to our new banking partners.  Any balance, or credit to your accounts or cards will be mailed to your address on file.
     /// 
     /// We will be in touch shortly to invite you to get your new card.

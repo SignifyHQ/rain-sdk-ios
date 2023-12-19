@@ -15,7 +15,7 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "743155672B281CB700D141F4"
-               BuildableName = "DogeCardNobank.app"
+               BuildableName = "DogeCard.app"
                BlueprintName = "DogeCardNobank"
                ReferencedContainer = "container:LiquidityFinancial.xcodeproj">
             </BuildableReference>
@@ -44,7 +44,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "743155672B281CB700D141F4"
-            BuildableName = "DogeCardNobank.app"
+            BuildableName = "DogeCard.app"
             BlueprintName = "DogeCardNobank"
             ReferencedContainer = "container:LiquidityFinancial.xcodeproj">
          </BuildableReference>
@@ -61,7 +61,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "743155672B281CB700D141F4"
-            BuildableName = "DogeCardNobank.app"
+            BuildableName = "DogeCard.app"
             BlueprintName = "DogeCardNobank"
             ReferencedContainer = "container:LiquidityFinancial.xcodeproj">
          </BuildableReference>

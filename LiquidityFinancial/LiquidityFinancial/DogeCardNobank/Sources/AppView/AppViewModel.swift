@@ -1,13 +1,12 @@
-import Foundation
 import UIKit
 import Combine
 import LFUtilities
 import Factory
-import NetspendOnboarding
 import AccountService
 import BankService
 import NetSpendData
 import ZerohashData
+import NoBankOnboarding
 
 class AppViewModel: ObservableObject {
   
@@ -45,7 +44,7 @@ class AppViewModel: ObservableObject {
     }
   }
   
-  func setDumpOutRoute(_ route: NSOnboardingFlowCoordinator.Route) {
+  func setDumpOutRoute(_ route: NoBankOnboardingFlowCoordinator.Route) {
     setRoute(.dumpOut(route))
   }
   

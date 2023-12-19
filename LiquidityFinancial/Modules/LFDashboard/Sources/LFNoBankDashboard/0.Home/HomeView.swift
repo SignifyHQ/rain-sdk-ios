@@ -6,7 +6,7 @@ import LFStyleGuide
 import LFUtilities
 import Combine
 import BaseDashboard
-import NetspendOnboarding
+import NoBankOnboarding
 import LFNetspendBank
 import Factory
 import LFNetSpendCard
@@ -18,9 +18,9 @@ public struct HomeView: View {
   
   @StateObject private var viewModel: HomeViewModel
   
-  var onChangeRoute: ((NSOnboardingFlowCoordinator.Route) -> Void)?
+  var onChangeRoute: ((NoBankOnboardingFlowCoordinator.Route) -> Void)?
   
-  public init(viewModel: HomeViewModel, onChangeRoute: ((NSOnboardingFlowCoordinator.Route) -> Void)? = nil) {
+  public init(viewModel: HomeViewModel, onChangeRoute: ((NoBankOnboardingFlowCoordinator.Route) -> Void)? = nil) {
     _viewModel = .init(wrappedValue: viewModel)
     
     self.onChangeRoute = onChangeRoute
@@ -82,11 +82,6 @@ public struct HomeView: View {
     .onAppear {
       viewModel.onAppear()
     }
-    .onChange(of: scenePhase, perform: { newValue in
-      if newValue == .active {
-        dashboardRepository.fetchNetspendLinkedSources()
-      }
-    })
   }
 }
 

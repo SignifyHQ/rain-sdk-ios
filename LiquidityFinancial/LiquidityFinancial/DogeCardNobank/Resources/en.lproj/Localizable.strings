@@ -940,6 +940,7 @@ contact support.";
 
 // BlockingFiat
 "BlockingFiatView.title" = "BANKING PARTNER UPDATE";
+"BlockingFiatView.attention" = "ATTENTION";
 "BlockingFiatView.description" = "DogeCard checking accounts and cards have been temporarily turned off while we onboard to our new banking partners.  Any balance, or credit to your accounts or cards will be mailed to your address on file.
 
 We will be in touch shortly to invite you to get your new card.";

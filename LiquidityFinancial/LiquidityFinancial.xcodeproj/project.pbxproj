@@ -72,7 +72,6 @@
 		7431559D2B281CB700D141F4 /* LFFeatureFlags in Frameworks */ = {isa = PBXBuildFile; productRef = 743155852B281CB700D141F4 /* LFFeatureFlags */; };
 		7431559E2B281CB700D141F4 /* Factory in Frameworks */ = {isa = PBXBuildFile; productRef = 743155682B281CB700D141F4 /* Factory */; };
 		7431559F2B281CB700D141F4 /* FirebaseMessaging in Frameworks */ = {isa = PBXBuildFile; productRef = 7431557C2B281CB700D141F4 /* FirebaseMessaging */; };
-		743155A02B281CB700D141F4 /* NetspendOnboarding in Frameworks */ = {isa = PBXBuildFile; productRef = 743155812B281CB700D141F4 /* NetspendOnboarding */; };
 		743155A12B281CB700D141F4 /* LFTransaction in Frameworks */ = {isa = PBXBuildFile; productRef = 7431557E2B281CB700D141F4 /* LFTransaction */; };
 		743155A22B281CB700D141F4 /* CodeScanner in Frameworks */ = {isa = PBXBuildFile; productRef = 7431557A2B281CB700D141F4 /* CodeScanner */; };
 		743155A32B281CB700D141F4 /* Services in Frameworks */ = {isa = PBXBuildFile; productRef = 743155842B281CB700D141F4 /* Services */; };
@@ -132,6 +131,7 @@
 		74CB167D2A9853F800C137F3 /* FirebaseAnalyticsSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 74CB167C2A9853F800C137F3 /* FirebaseAnalyticsSwift */; };
 		74CB167F2A9853F800C137F3 /* FirebaseCrashlytics in Frameworks */ = {isa = PBXBuildFile; productRef = 74CB167E2A9853F800C137F3 /* FirebaseCrashlytics */; };
 		74CB16812A9853F800C137F3 /* FirebaseMessaging in Frameworks */ = {isa = PBXBuildFile; productRef = 74CB16802A9853F800C137F3 /* FirebaseMessaging */; };
+		74FAC2B02B2F044500C74E55 /* NoBankOnboarding in Frameworks */ = {isa = PBXBuildFile; productRef = 74FAC2AF2B2F044500C74E55 /* NoBankOnboarding */; };
 		A90B5CAF2B16E3A90092E430 /* LFFeatureFlags in Frameworks */ = {isa = PBXBuildFile; productRef = A90B5CAE2B16E3A90092E430 /* LFFeatureFlags */; };
 		A90B5CB12B16E3B10092E430 /* LFFeatureFlags in Frameworks */ = {isa = PBXBuildFile; productRef = A90B5CB02B16E3B10092E430 /* LFFeatureFlags */; };
 		A90B5CB32B16E3BB0092E430 /* LFFeatureFlags in Frameworks */ = {isa = PBXBuildFile; productRef = A90B5CB22B16E3BB0092E430 /* LFFeatureFlags */; };
@@ -889,10 +889,10 @@
 				7431559D2B281CB700D141F4 /* LFFeatureFlags in Frameworks */,
 				7431559E2B281CB700D141F4 /* Factory in Frameworks */,
 				7431559F2B281CB700D141F4 /* FirebaseMessaging in Frameworks */,
-				743155A02B281CB700D141F4 /* NetspendOnboarding in Frameworks */,
 				743155A12B281CB700D141F4 /* LFTransaction in Frameworks */,
 				743155A22B281CB700D141F4 /* CodeScanner in Frameworks */,
 				743155A32B281CB700D141F4 /* Services in Frameworks */,
+				74FAC2B02B2F044500C74E55 /* NoBankOnboarding in Frameworks */,
 				743155A42B281CB700D141F4 /* LFLocalizable in Frameworks */,
 				743155A52B281CB700D141F4 /* LFStyleGuide in Frameworks */,
 				743155A62B281CB700D141F4 /* LFAuthentication in Frameworks */,
@@ -2353,7 +2353,6 @@
 				7431557E2B281CB700D141F4 /* LFTransaction */,
 				7431557F2B281CB700D141F4 /* BaseDashboard */,
 				743155802B281CB700D141F4 /* LFRewards */,
-				743155812B281CB700D141F4 /* NetspendOnboarding */,
 				743155822B281CB700D141F4 /* LFAccessibility */,
 				743155832B281CB700D141F4 /* AccountService */,
 				743155842B281CB700D141F4 /* Services */,
@@ -2361,6 +2360,7 @@
 				743155862B281CB700D141F4 /* LFAuthentication */,
 				743155872B281CB700D141F4 /* BiometricsManager */,
 				743156472B295A0800D141F4 /* LFNoBankDashboard */,
+				74FAC2AF2B2F044500C74E55 /* NoBankOnboarding */,
 			);
 			productName = LiquidityFinancial;
 			productReference = 743155CF2B281CB700D141F4 /* DogeCard.app */;
@@ -4838,10 +4838,6 @@
 			isa = XCSwiftPackageProductDependency;
 			productName = LFRewards;
 		};
-		743155812B281CB700D141F4 /* NetspendOnboarding */ = {
-			isa = XCSwiftPackageProductDependency;
-			productName = NetspendOnboarding;
-		};
 		743155822B281CB700D141F4 /* LFAccessibility */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = LFAccessibility;
@@ -4909,6 +4905,10 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 74CB167B2A9853F800C137F3 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
 			productName = FirebaseMessaging;
+		};
+		74FAC2AF2B2F044500C74E55 /* NoBankOnboarding */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = NoBankOnboarding;
 		};
 		A90B5CAE2B16E3A90092E430 /* LFFeatureFlags */ = {
 			isa = XCSwiftPackageProductDependency;

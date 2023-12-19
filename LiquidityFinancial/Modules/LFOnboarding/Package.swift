@@ -18,6 +18,9 @@ let package = Package(
     ),
     .library(
       name: "SolidOnboarding", targets: ["SolidOnboarding"]
+    ),
+    .library(
+      name: "NoBankOnboarding", targets: ["NoBankOnboarding"]
     )
   ],
   dependencies: [
@@ -62,6 +65,23 @@ let package = Package(
     ),
     .target(
       name: "NetspendOnboarding",
+      dependencies: [
+        "UIComponents", "SwiftSoup", "LFRewards", "BaseOnboarding", "LFFeatureFlags",
+        .product(name: "OnboardingData", package: "LFData"),
+        .product(name: "AccountData", package: "LFData"),
+        .product(name: "RewardData", package: "LFData"),
+        .product(name: "DevicesData", package: "LFData"),
+        .product(name: "ZerohashData", package: "LFData"),
+        .product(name: "ZerohashDomain", package: "LFDomain"),
+        .product(name: "DevicesDomain", package: "LFDomain"),
+        .product(name: "SmartyStreets", package: "smartystreets-ios-sdk"),
+        .product(name: "AuthorizationManager", package: "LFNetwork"),
+        .product(name: "BiometricsManager", package: "LFAuthentication"),
+        .product(name: "LFAuthentication", package: "LFAuthentication")
+      ]
+    ),
+    .target(
+      name: "NoBankOnboarding",
       dependencies: [
         "UIComponents", "SwiftSoup", "LFRewards", "BaseOnboarding", "LFFeatureFlags",
         .product(name: "OnboardingData", package: "LFData"),
