@@ -58,5 +58,5 @@ public extension Error {
 }
 
 public enum InlineError: String {
-  case invalidCredentials = "credentials_invalid"
+  case invalidCredentials = "invalid_auth_password"
 }
