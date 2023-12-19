@@ -87,17 +87,6 @@ public class SolidOnboardingFlowCoordinator: SolidOnboardingFlowCoordinatorProto
     GetUserUseCase(repository: accountRepository)
   }()
   
-  var enableMultiFactorAuthenticationFlag: Bool {
-    switch LFUtilities.target {
-    case .PrideCard:
-      return LFFeatureFlagContainer.enableMultiFactorAuthenticationFlagPrideCard.value
-    case .CauseCard:
-      return LFFeatureFlagContainer.enableMultiFactorAuthenticationFlagCauseCard.value
-    default:
-      return false
-    }
-  }
-  
   public let routeSubject: CurrentValueSubject<Route, Never>
   
   private var subscribers: Set<AnyCancellable> = []
@@ -220,7 +209,7 @@ public class SolidOnboardingFlowCoordinator: SolidOnboardingFlowCoordinatorProto
   }
   
   func handleUserMissingStep() async throws {
-    if enableMultiFactorAuthenticationFlag {
+    if LFFeatureFlagContainer.isPasswordLoginFeatureFlagEnabled {
       let user = try await getUserUseCase.execute()
       accountDataManager.update(missingSteps: user.missingSteps)
       let userInfomationData = accountDataManager.userInfomationData as? UserInfomationData

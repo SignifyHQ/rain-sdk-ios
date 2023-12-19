@@ -5,6 +5,7 @@ import LFLocalizable
 import LFUtilities
 import LFAccessibility
 import LFAuthentication
+import LFFeatureFlags
 
 struct ProfileView: View {
   @StateObject private var viewModel = ProfileViewModel()
@@ -209,7 +210,7 @@ private extension ProfileView {
         ArrowButton(image: GenImages.CommonImages.icWarning.swiftUIImage, title: LFLocalizable.Profile.DepositLimits.title, value: nil) {
           viewModel.depositLimitsTapped()
         }*/
-        if viewModel.enableMultiFactorAuthenticationFlag {
+        if LFFeatureFlagContainer.isPasswordLoginFeatureFlagEnabled {
           ArrowButton(
             image: GenImages.CommonImages.icSecurity.swiftUIImage,
             title: LFLocalizable.Profile.Security.title,

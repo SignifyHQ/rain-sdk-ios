@@ -41,14 +41,22 @@ final class LFFeatureFlagsController: ObservableObject {
   @Published
   private(set) var viewFactories: [FeatureFlagViewFactory] = []
   
-  func addViewFactory<F: LFFeatureFlagType>(_ flag: F) {
-    if viewFactories.contains(where: { $0.id == flag.id }) == false {
-      viewFactories.append(FeatureFlagViewFactory(flag))
+  func addViewFactory<F: LFFeatureFlagType>(_ flags: [F]) {
+    flags.forEach { flag in
+      if viewFactories.contains(where: { $0.id == flag.id }) == false {
+        viewFactories.append(FeatureFlagViewFactory(flag))
+      }
     }
   }
   
-  func removeViewFactory<F: LFFeatureFlagType>(_ flag: F) {
-    viewFactories.removeAll(where: { $0.id == flag.id })
+  func removeViewFactory<F: LFFeatureFlagType>(_ flags: [F]) {
+    viewFactories.removeAll(
+      where: {
+        flags
+          .map { flag in flag.id }
+          .contains($0.id)
+      }
+    )
   }
   
   private var publishers: [String: Any] = [:]

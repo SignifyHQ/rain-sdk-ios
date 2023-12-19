@@ -8,7 +8,6 @@ import RewardDomain
 import Services
 import Combine
 import DevicesDomain
-import LFFeatureFlags
 
 @MainActor
 final class ProfileViewModel: ObservableObject {
@@ -83,17 +82,6 @@ final class ProfileViewModel: ObservableObject {
   
   var showStickers: Bool {
     isLoadingContribution || !stickers.isEmpty
-  }
-  
-  var enableMultiFactorAuthenticationFlag: Bool {
-    switch LFUtilities.target {
-    case .PrideCard:
-      return LFFeatureFlagContainer.enableMultiFactorAuthenticationFlagPrideCard.value
-    case .CauseCard:
-      return LFFeatureFlagContainer.enableMultiFactorAuthenticationFlagCauseCard.value
-    default:
-      return false
-    }
   }
   
   init() {

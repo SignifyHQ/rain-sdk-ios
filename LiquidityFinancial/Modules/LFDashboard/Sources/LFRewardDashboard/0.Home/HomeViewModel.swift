@@ -52,17 +52,6 @@ public final class HomeViewModel: ObservableObject {
     DeviceRegisterUseCase(repository: devicesRepository)
   }()
   
-  var enableMultiFactorAuthenticationFlag: Bool {
-    switch LFUtilities.target {
-    case .PrideCard:
-      return LFFeatureFlagContainer.enableMultiFactorAuthenticationFlagPrideCard.value
-    case .CauseCard:
-      return LFFeatureFlagContainer.enableMultiFactorAuthenticationFlagCauseCard.value
-    default:
-      return false
-    }
-  }
-  
   @Published var biometricType: BiometricType = .none
   @Published var tabSelected: TabOption = .cash
   @Published var navigation: Navigation?
@@ -318,7 +307,7 @@ extension HomeViewModel {
   
   func showEnhanceSecurityPopupIfNeed() {
     guard let userID = accountDataManager.userInfomationData.userID, !userID.isEmpty,
-          enableMultiFactorAuthenticationFlag,
+          LFFeatureFlagContainer.isPasswordLoginFeatureFlagEnabled,
           blockingPopup != .passwordEnhancedSecurity
     else {
       UserDefaults.isStartedWithLoginFlow = false
@@ -474,14 +463,15 @@ extension HomeViewModel {
   func authenticateWithBiometrics() {
     let isEnableAuthenticateWithBiometrics = UserDefaults.isBiometricUsageEnabled && !UserDefaults.isStartedWithLoginFlow
 
-    if enableMultiFactorAuthenticationFlag, isEnableAuthenticateWithBiometrics {
+    if LFFeatureFlagContainer.isPasswordLoginFeatureFlagEnabled,
+       isEnableAuthenticateWithBiometrics {
       biometricsManager.performBiometricsAuthentication(purpose: .authentication)
         .receive(on: DispatchQueue.main)
         .sink(receiveCompletion: { [weak self] completion in
           guard let self else { return }
           switch completion {
           case .finished:
-            log.debug("Biometrics capabxility check completed.")
+            log.debug("Biometrics capability check completed.")
           case .failure(let error):
             log.error("Biometrics error: \(error.localizedDescription)")
             // In all cases of authentication failure, we will take the user to the biometrics backup screen
