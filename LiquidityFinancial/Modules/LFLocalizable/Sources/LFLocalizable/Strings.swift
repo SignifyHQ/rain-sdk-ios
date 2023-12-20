@@ -204,9 +204,9 @@ public enum LFLocalizable {
       }
     }
     public enum Send {
-      /// You currently have %@ %@ available to send. %@ Rewards are not available to send until 48 hours after they are earned.
-      public static func annotation(_ p1: Any, _ p2: Any, _ p3: Any) -> String {
-        return LFLocalizable.tr("Localizable", "MoveCryptoInput.send.annotation", String(describing: p1), String(describing: p2), String(describing: p3), fallback: "You currently have %@ %@ available to send. %@ Rewards are not available to send until 48 hours after they are earned.")
+      /// You currently have %@ %@ available to send. If this amount is less than expected, please contact support.
+      public static func annotation(_ p1: Any, _ p2: Any) -> String {
+        return LFLocalizable.tr("Localizable", "MoveCryptoInput.send.annotation", String(describing: p1), String(describing: p2), fallback: "You currently have %@ %@ available to send. If this amount is less than expected, please contact support.")
       }
       /// The estimated network fee is an approximation and the actual network fee applied on a withdrawal may differ.
       public static let estimatedFee = LFLocalizable.tr("Localizable", "MoveCryptoInput.send.estimated_fee", fallback: "The estimated network fee is an approximation and the actual network fee applied on a withdrawal may differ.")

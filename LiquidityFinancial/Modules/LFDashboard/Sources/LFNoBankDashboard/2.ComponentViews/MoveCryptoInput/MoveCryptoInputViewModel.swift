@@ -280,7 +280,6 @@ extension MoveCryptoInputViewModel {
       let balance = assetModel.availableBalance.roundTo3f()
       return LFLocalizable.MoveCryptoInput.Send.annotation(
         "\(balance)".formattedAmount(minFractionDigits: 3, maxFractionDigits: 3),
-        assetModel.type?.title ?? .empty,
         assetModel.type?.title ?? .empty
       )
     }
