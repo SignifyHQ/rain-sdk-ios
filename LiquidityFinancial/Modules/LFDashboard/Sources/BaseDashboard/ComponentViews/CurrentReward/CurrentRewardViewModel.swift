@@ -38,6 +38,11 @@ final class CurrentRewardViewModel: ObservableObject {
     AccountUseCase(repository: accountRepository)
   }()
   
+  let notIncludeFiat: Bool
+  init(notIncludeFiat: Bool) {
+    self.notIncludeFiat = notIncludeFiat
+  }
+  
   func onAppear() {
     apiFetchUserRewards()
   }
@@ -47,8 +52,15 @@ final class CurrentRewardViewModel: ObservableObject {
       do {
         status = .loading
         let entity = try await self.accountUseCase.getUserRewards().compactMap({ $0 as? APIUserRewards })
-        let model = UserRewardsModel(rewards: entity.filter({ ($0.specialPromo ?? false) == false }),
-                                     pecialrewards: entity.filter({ ($0.specialPromo ?? false) == true }))
+        var model: UserRewardsModel
+        if notIncludeFiat {
+          let rewards = entity.filter({ ($0.name ?? "").contains("USD") == false })
+          model = UserRewardsModel(rewards: rewards.filter({ ($0.specialPromo ?? false) == false }),
+                                       pecialrewards: rewards.filter({ ($0.specialPromo ?? false) == true }))
+        } else {
+          model = UserRewardsModel(rewards: entity.filter({ ($0.specialPromo ?? false) == false }),
+                                       pecialrewards: entity.filter({ ($0.specialPromo ?? false) == true }))
+        }
         status = .success([model])
       } catch {
         status = .failure(error.localizedDescription)

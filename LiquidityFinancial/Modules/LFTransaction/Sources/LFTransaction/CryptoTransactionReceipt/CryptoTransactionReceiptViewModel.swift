@@ -28,7 +28,10 @@ final class CryptoTransactionReceiptViewModel: ObservableObject {
       .init(title: LFLocalizable.CryptoReceipt.OrderType.title, value: receipt.orderType.title),
       .init(
         title: LFLocalizable.CryptoReceipt.Amount.title,
-        markValue: receipt.size?.formattedAmount(minFractionDigits: 2),
+        markValue: receipt.size?.formattedAmount(
+          minFractionDigits: Constants.FractionDigitsLimit.crypto.minFractionDigits,
+          maxFractionDigits: Constants.FractionDigitsLimit.crypto.maxFractionDigits
+        ),
         value: receipt.currency),
       .init(
         title: LFLocalizable.CryptoReceipt.ExchangeRate.title,
@@ -45,7 +48,7 @@ final class CryptoTransactionReceiptViewModel: ObservableObject {
         markValue: receipt.fee?.formattedUSDAmount() ?? "$0",
         value: Constants.CurrencyUnit.usd.description
       ),
-      .init(title: LFLocalizable.CryptoReceipt.DateAndTime.title, value: receipt.createdAt.serverToTransactionDisplay(includeYear: true)),
+      .init(title: LFLocalizable.CryptoReceipt.DateAndTime.title, value: receipt.createdAt.serverToReceiptDisplay()),
       .init(title: LFLocalizable.CryptoReceipt.AccountID.title, markValue: accountID)
     ]
   }

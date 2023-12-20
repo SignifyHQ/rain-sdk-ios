@@ -25,6 +25,7 @@ public struct ShortTransactionsView: View {
     VStack(alignment: .leading, spacing: 10) {
       HStack(alignment: .bottom) {
         Text(title)
+          .opacity(transactions.isEmpty ? 0 : 1)
         Spacer()
         seeAllTransactions
           .opacity(transactions.isEmpty ? 0 : 1)

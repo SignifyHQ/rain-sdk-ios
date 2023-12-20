@@ -255,6 +255,13 @@ public extension String {
       .map { formatServerDate(date: $0, includeYear: includeYear) } ?? self
   }
   
+  func serverToReceiptDisplay() -> String {
+    [DateFormatter.server, DateFormatter.serverShort]
+      .compactMap { $0.date(from: self) }
+      .first
+      .map { DateFormatter.receiptDisplayFull.string(from: $0) } ?? self
+  }
+  
   var displayDate: String? {
     guard let date = DateFormatter.server.date(from: self) else {
       return nil

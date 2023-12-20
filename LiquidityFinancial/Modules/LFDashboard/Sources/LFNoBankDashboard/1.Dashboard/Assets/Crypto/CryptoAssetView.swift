@@ -280,7 +280,7 @@ private extension CryptoAssetView {
   var cryptoTransfer: some View {
     VStack(spacing: 10) {
       RoundedRectangle(cornerRadius: 4)
-        .foregroundColor(Colors.label.swiftUIColor.opacity(0.75))
+        .foregroundColor(Colors.label.swiftUIColor.opacity(0.35))
         .frame(width: 32, height: 4)
         .padding(.top, 6)
       Text(LFLocalizable.AssetView.TransferPopup.title)

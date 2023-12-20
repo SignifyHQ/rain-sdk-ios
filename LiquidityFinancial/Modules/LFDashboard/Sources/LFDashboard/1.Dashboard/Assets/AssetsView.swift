@@ -26,9 +26,9 @@ struct AssetsView: View {
           }
           .padding(.top, 24)
           Spacer()
-          Text(LFLocalizable.AssetView.disclosure)
-            .font(Fonts.Inter.extraLight.swiftUIFont(size: 10))
-            .foregroundColor(Colors.whiteText.swiftUIColor)
+          Text(LFLocalizable.Zerohash.Disclosure.description)
+            .font(Fonts.regular.swiftUIFont(size: 10))
+            .foregroundColor(Colors.label.swiftUIColor.opacity(0.5))
             .padding(.bottom, 8)
         }
       }

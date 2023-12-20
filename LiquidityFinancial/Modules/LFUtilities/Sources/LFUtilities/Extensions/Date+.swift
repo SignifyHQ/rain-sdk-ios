@@ -43,6 +43,13 @@ public extension DateFormatter {
     return formatter
   }()
 
+  /// A formatter used to represent dates with the display: `Aug 20, 2022, 04:06:55`.
+  static var receiptDisplayFull: DateFormatter = {
+    let formatter = DateFormatter()
+    formatter.dateFormat = "d MMM, yyyy, HH:mm:ss"
+    return formatter
+  }()
+  
   /// A formatter used to represent dates with the display representation of its month (short), year, day and time.
   /// Example: `August 20, 2022 at 04:06 PM`
   static var transactionDisplayFull: DateFormatter = {

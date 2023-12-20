@@ -25,40 +25,26 @@ public struct HomeView: View {
     
     self.onChangeRoute = onChangeRoute
     dashboardRepository.load { _ in }
+    
+    UITabBar.appearance().isHidden = true
   }
   
   public var body: some View {
-    TabView(selection: $viewModel.tabSelected) {
-      ForEach(viewModel.tabOptions, id: \.self) { option in
-        if #available(iOS 17.0, *) {
-          loadTabView(option: option)
-            .toolbar(.visible, for: .tabBar)
-            .toolbarBackground(Colors.secondaryBackground.swiftUIColor, for: .tabBar)
-        } else {
-          loadTabView(option: option)
+    ZStack {
+      VStack {
+        TabView(selection: $viewModel.tabSelected) {
+          ForEach(viewModel.tabOptions, id: \.self) { option in
+            loadTabView(option: option)
+          }
         }
       }
+      VStack(alignment: .center) {
+        Spacer()
+        CustomTabBar(selectedTab: $viewModel.tabSelected)
+      }
+      .ignoresSafeArea()
     }
     .navigationBarTitleDisplayMode(.inline)
-    .tint(Colors.tabbarSelected.swiftUIColor)
-    .onAppear {
-      UITabBar.appearance().backgroundColor = Colors.secondaryBackground.swiftUIColor.uiColor
-      UITabBar.appearance().unselectedItemTintColor = Colors.tabbarUnselected.swiftUIColor.uiColor
-      UITabBarItem.appearance().setTitleTextAttributes(
-        [
-          NSAttributedString.Key.font: Fonts.orbitronMedium.font(size: 10),
-          NSAttributedString.Key.foregroundColor: Colors.label.swiftUIColor.opacity(0.75).uiColor
-        ],
-        for: .normal
-      )
-      UITabBarItem.appearance().setTitleTextAttributes(
-        [
-          NSAttributedString.Key.font: Fonts.orbitronMedium.font(size: 10),
-          NSAttributedString.Key.foregroundColor: Colors.label.swiftUIColor.uiColor
-        ],
-        for: .selected
-      )
-    }
     .toolbar {
       ToolbarItem(placement: .navigationBarTrailing) {
         trailingNavigationBarView
@@ -88,10 +74,8 @@ public struct HomeView: View {
 // MARK: - View Components
 private extension HomeView {
   func loadTabView(option: TabOption) -> some View {
-    DashboardView(option: option).tabItem {
-      tabItem(option: option)
-    }
-    .tag(option)
+    DashboardView(option: option)
+      .tag(option)
   }
   
   var leadingNavigationBarView: some View {

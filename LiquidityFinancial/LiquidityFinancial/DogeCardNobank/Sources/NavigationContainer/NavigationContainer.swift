@@ -27,7 +27,7 @@ final class NavigationContainer {
     transactionNavigation.setup(container: container)
     
     transactionNavigation.registerCurrentReward(type: CurrentRewardView.self) { _ in
-      AnyView(CurrentRewardView())
+      AnyView(CurrentRewardView(notIncludeFiat: true))
     }
     
     transactionNavigation.registerAddBankDebit(type: AddBankWithDebitView.self) { _ in

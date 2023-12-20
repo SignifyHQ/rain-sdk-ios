@@ -30,7 +30,7 @@ struct EditRewardsView: View {
       .navigationLink(item: $viewModel.navigation) { navigation in
         switch navigation {
         case .currentRewards:
-          CurrentRewardView()
+          CurrentRewardView(notIncludeFiat: true)
         case let .selectFundraiser(causes):
           SelectCauseCategoriesView(
             viewModel: SelectCauseCategoriesViewModel(causes: causes),

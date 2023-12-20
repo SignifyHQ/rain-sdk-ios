@@ -28,7 +28,7 @@ struct AccountsView: View {
         case .taxes:
           TaxesView()
         case .rewards:
-          CurrentRewardView()
+          CurrentRewardView(notIncludeFiat: true)
         case .wallet(asset: let asset):
           ReceiveCryptoView(assetModel: asset)
         }

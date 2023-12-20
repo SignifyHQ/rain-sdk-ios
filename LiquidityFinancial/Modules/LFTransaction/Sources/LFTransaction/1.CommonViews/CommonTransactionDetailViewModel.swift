@@ -58,10 +58,18 @@ public final class CommonTransactionDetailViewModel: ObservableObject {
     transaction.colorForType
   }
   
+  var fontForType: SwiftUI.Font {
+    if transaction.isCryptoTransaction {
+      return Fonts.bold.swiftUIFont(size: 50)
+    }
+    return Fonts.medium.swiftUIFont(size: 40)
+  }
+  
   var amountValue: String {
     transaction.amount.formattedAmount(
       prefix: transaction.isCryptoTransaction ? nil : Constants.CurrencyUnit.usd.rawValue,
-      minFractionDigits: 2
+      minFractionDigits: transaction.isCryptoTransaction ? Constants.FractionDigitsLimit.crypto.minFractionDigits : Constants.FractionDigitsLimit.fiat.minFractionDigits,
+      maxFractionDigits: transaction.isCryptoTransaction ? Constants.FractionDigitsLimit.crypto.maxFractionDigits : Constants.FractionDigitsLimit.fiat.maxFractionDigits
     )
   }
   
@@ -72,10 +80,11 @@ public final class CommonTransactionDetailViewModel: ObservableObject {
   var balanceValue: String {
     let cryptoCurrency = transaction.currency ?? .empty
     let balance = transaction.currentBalance?.formattedAmount(
-      prefix: isCryptoBalance ? nil : Constants.CurrencyUnit.usd.symbol,
-      minFractionDigits: 2
+      prefix: transaction.isCryptoTransaction ? nil : Constants.CurrencyUnit.usd.symbol,
+      minFractionDigits: transaction.isCryptoTransaction ? Constants.FractionDigitsLimit.crypto.minFractionDigits : Constants.FractionDigitsLimit.fiat.minFractionDigits,
+      maxFractionDigits: transaction.isCryptoTransaction ? Constants.FractionDigitsLimit.crypto.maxFractionDigits : Constants.FractionDigitsLimit.fiat.minFractionDigits
     ) ?? .empty
-    return isCryptoBalance ? "\(balance) \(cryptoCurrency.uppercased())" : balance
+    return transaction.isCryptoTransaction ? "\(balance) \(cryptoCurrency.uppercased())" : balance
   }
   
   func openSupportScreen() {

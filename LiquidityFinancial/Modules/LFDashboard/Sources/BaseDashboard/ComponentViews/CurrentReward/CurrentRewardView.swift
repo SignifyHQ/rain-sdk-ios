@@ -7,10 +7,12 @@ import AccountData
 
 public struct CurrentRewardView: View {
   
-  @StateObject private var viewModel = CurrentRewardViewModel()
+  @StateObject private var viewModel: CurrentRewardViewModel
   @State var openSafariType: CurrentRewardViewModel.OpenSafariType?
   
-  public init() {}
+  public init(notIncludeFiat: Bool = false) {
+    _viewModel = .init(wrappedValue: CurrentRewardViewModel(notIncludeFiat: notIncludeFiat))
+  }
   
   public var body: some View {
     stateContentView

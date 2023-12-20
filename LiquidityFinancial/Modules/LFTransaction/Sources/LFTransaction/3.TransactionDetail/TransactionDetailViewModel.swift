@@ -146,7 +146,7 @@ extension TransactionDetailViewModel {
       TransactionInformation(
         title: LFLocalizable.TransactionDetail.Balance.title,
         value: LFUtilities.cryptoCurrency,
-        markValue: transaction.currentBalance?.formattedAmount(minFractionDigits: 2)
+        markValue: transaction.balanceFormatted
       )
     ]
   }

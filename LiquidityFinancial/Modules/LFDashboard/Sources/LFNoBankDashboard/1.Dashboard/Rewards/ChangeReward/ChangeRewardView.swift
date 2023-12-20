@@ -28,7 +28,7 @@ struct ChangeRewardView: View {
       .navigationLink(item: $viewModel.navigation) { item in
         switch item {
         case .currentRewards:
-          CurrentRewardView()
+          CurrentRewardView(notIncludeFiat: true)
         }
       }
       .defaultToolBar(navigationTitle: LFLocalizable.ChangeRewardView.title)

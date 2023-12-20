@@ -26,8 +26,12 @@ public struct GasFeeTransactionDetailView: View {
 // MARK: - View Components
 private extension GasFeeTransactionDetailView {
   var content: some View {
-    VStack(spacing: 10) {
+    VStack(spacing: 16) {
       Spacer()
+      if let status = viewModel.transaction.status {
+        StatusView(transactionStatus: status)
+      }
+      
       if let receiptType = viewModel.transaction.receipt?.type {
         FullSizeButton(
           title: LFLocalizable.TransactionDetail.Receipt.button,
@@ -37,6 +41,10 @@ private extension GasFeeTransactionDetailView {
           viewModel.goToReceiptScreen(receiptType: receiptType)
         }
       }
+      
+      Text(LFLocalizable.Zerohash.Disclosure.description)
+        .font(Fonts.regular.swiftUIFont(size: 10))
+        .foregroundColor(Colors.label.swiftUIColor.opacity(0.5))
     }
   }
 }

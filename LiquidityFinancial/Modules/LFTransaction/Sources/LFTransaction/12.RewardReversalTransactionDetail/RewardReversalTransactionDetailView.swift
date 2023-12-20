@@ -46,10 +46,10 @@ private extension RewardReversalTransactionDetailView {
   var footer: some View {
     VStack(spacing: 16) {
       if let receiptType = viewModel.transaction.receipt?.type {
-        ArrowButton(
-          image: GenImages.CommonImages.Accounts.bankStatements.swiftUIImage,
+        FullSizeButton(
           title: LFLocalizable.TransactionDetail.Receipt.button,
-          value: nil
+          isDisable: false,
+          type: .secondary
         ) {
           viewModel.goToReceiptScreen(receiptType: receiptType)
         }
