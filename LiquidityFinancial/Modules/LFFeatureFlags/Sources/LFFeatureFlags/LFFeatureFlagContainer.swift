@@ -30,11 +30,11 @@ public struct LFFeatureFlagContainer {
   
   // MARK: Define feature flag for each target
   static let enablePasswordLoginFlagPrideCard = ToggleFeatureFlag(
-    title: "Password-Login-PrideCard", defaultValue: false, group: "Authentication"
+    title: "Password-Login-PrideCard", defaultValue: true, group: "Authentication"
   )
   
   static let enablePasswordLoginFlagCauseCard = ToggleFeatureFlag(
-    title: "Password-Login-CauseCard", defaultValue: false, group: "Authentication"
+    title: "Password-Login-CauseCard", defaultValue: true, group: "Authentication"
   )
   
   static let enablePasswordLoginFlagDogeCard = ToggleFeatureFlag(
