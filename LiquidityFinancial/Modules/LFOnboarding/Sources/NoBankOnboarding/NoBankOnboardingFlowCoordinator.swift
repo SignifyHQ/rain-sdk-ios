@@ -104,12 +104,7 @@ public class NoBankOnboardingFlowCoordinator: OnboardingFlowCoordinatorProtocol 
         set(route: .forceUpdate(model))
         return
       }
-      if checkUserIsValid() {
-        await apiFetchCurrentState()
-      } else {
-        log.info("<<<<<<<<<<<<<< User change phone login to device >>>>>>>>>>>>>>>")
-        forcedLogout()
-      }
+      await apiFetchCurrentState()
 #if DEBUG
       let diff = CFAbsoluteTimeGetCurrent() - start
       log.debug("Took \(diff) seconds")
@@ -161,10 +156,6 @@ public class NoBankOnboardingFlowCoordinator: OnboardingFlowCoordinatorProtocol 
 }
 
 private extension NoBankOnboardingFlowCoordinator {
-  func checkUserIsValid() -> Bool {
-    accountDataManager.sessionID.isEmpty == false
-  }
-  
   func fetchZeroHashStatus() async throws {
     let result = try await zerohashRepository.getOnboardingStep()
     if result.missingSteps.isEmpty {
