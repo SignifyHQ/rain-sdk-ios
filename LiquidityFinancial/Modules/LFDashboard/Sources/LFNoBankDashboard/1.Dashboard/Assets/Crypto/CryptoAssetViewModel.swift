@@ -56,7 +56,6 @@ class CryptoAssetViewModel: ObservableObject {
       return .empty
     }
     let value = closePrice * asset.availableBalance - (asset.availableUsdBalance ?? 0)
-    print("FluctuationAmmount: \(closePrice) \(asset.availableBalance) \(asset.availableUsdBalance)")
     return "(\(value.formattedUSDAmount()))"
   }
   

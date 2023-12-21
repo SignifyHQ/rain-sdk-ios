@@ -104,9 +104,6 @@ extension EnterCryptoAddressViewModel {
     if walletSelected?.address != inputValue {
       walletSelected = nil
     }
-    guard walletSelected == nil else {
-      return
-    }
     walletsFilter = wallets.filter { wallet in
       guard let nickname = wallet.nickname else {
         return false
