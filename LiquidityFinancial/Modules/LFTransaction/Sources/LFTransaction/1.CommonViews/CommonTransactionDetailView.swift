@@ -66,6 +66,13 @@ private extension CommonTransactionDetailView {
     }
   }
   
+  var cryptoImageText: Text {
+    if let image = viewModel.cryptoIconImage {
+      return Text(image)
+    }
+    return Text("")
+  }
+  
   var amountView: some View {
     VStack(spacing: 14) {
       HStack(alignment: .bottom, spacing: 4) {
@@ -73,7 +80,7 @@ private extension CommonTransactionDetailView {
           .font(viewModel.fontForType)
           .foregroundColor(viewModel.colorForType)
         + Text(" ")
-        + Text(viewModel.cryptoIconImage ?? Image(""))
+        + cryptoImageText
       }
       if viewModel.currentBalance != nil {
         Text(LFLocalizable.TransactionDetail.BalanceCash.title(viewModel.balanceValue))
