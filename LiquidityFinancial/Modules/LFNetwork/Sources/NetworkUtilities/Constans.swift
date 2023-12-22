@@ -9,7 +9,7 @@ public enum APIConstants {
   
   public static let avalencheID = "fb352b08-c759-4a6c-8a63-d9d190265447"
   public static let cardanoID = "3d126fa0-29d2-11ee-be56-0242ac120002"
-  public static let dogeCardID = "1d77cffe-658a-4745-89b8-28997ab73ffc"
+  public static let dogeCardID = "9827b8f0-7be4-47b7-871b-99be386f49d4"
   public static let causeCardID = "7f2c1a97-e378-431c-98fa-76a61b03b38b"
   public static let prideCardID = "5ab62fe1-4d21-40c0-b50f-f8ab975ef87c"
   
