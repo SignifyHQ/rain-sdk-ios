@@ -10,6 +10,33 @@ public struct SecurityHubView: View {
   public init() {}
   
   public var body: some View {
+    if #available(iOS 16.0, *) {
+      content
+        .navigationLink(
+          isActive: $viewModel.isChangePasswordFlowPresented
+        ) {
+          EnterPasswordView(
+            purpose: .changePassword,
+            isFlowPresented: $viewModel.isChangePasswordFlowPresented
+          )
+        }
+    } else {
+      content
+        .navigationLink(
+          isActive: $viewModel.isChangePasswordFlowPresented
+        ) {
+          EnterPasswordView(
+            purpose: .changePassword,
+            isFlowPresented: $viewModel.isChangePasswordFlowPresented
+          )
+        }
+    }
+  }
+}
+
+// MARK: - Private View Components
+private extension SecurityHubView {
+  var content: some View {
     ScrollView(showsIndicators: false) {
       VStack(alignment: .leading, spacing: 24) {
         customNavigationBar
@@ -37,25 +64,11 @@ public struct SecurityHubView: View {
           biometricLockoutPopup
         }
       })
-    .navigationLink(
-      item: $viewModel.navigation
-    ) { navigation in
-      switch navigation {
-      case .changePassword:
-        EnterPasswordView(
-          purpose: .changePassword,
-          shouldDismissRoot: .constant(false)
-        )
-      }
-    }
     .blur(radius: viewModel.popup != nil ? 16 : 0)
     .navigationBarBackButtonHidden()
     .background(Colors.background.swiftUIColor)
   }
-}
-
-// MARK: - Private View Components
-private extension SecurityHubView {
+  
   var customNavigationBar: some View {
     HStack {
       Button {
@@ -102,7 +115,7 @@ private extension SecurityHubView {
           title: LFLocalizable.Authentication.SecurityChangePassword.title,
           isEnable: true,
           action: {
-            viewModel.didTapChangePasswordButton()
+            viewModel.isChangePasswordFlowPresented = true
           }
         )
       )

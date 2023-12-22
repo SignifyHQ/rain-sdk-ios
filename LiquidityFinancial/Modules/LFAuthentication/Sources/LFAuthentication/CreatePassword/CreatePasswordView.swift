@@ -218,12 +218,9 @@ extension CreatePasswordView {
         text: LFLocalizable.Button.Continue.title,
         action: {
           switch viewModel.purpose {
-          case .changePassword:
-            dismiss()
-            viewModel.onActionContinue()
           case .createExistingUser:
             dismiss()
-          case .createNewUser, .resetPassword:
+          case .createNewUser, .resetPassword, .changePassword:
             viewModel.onActionContinue()
           }
         }

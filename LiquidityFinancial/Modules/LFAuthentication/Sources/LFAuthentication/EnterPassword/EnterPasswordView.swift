@@ -5,21 +5,19 @@ import LFStyleGuide
 import LFLocalizable
 
 public struct EnterPasswordView: View {
-  @Environment(\.dismiss) var dismiss
-  
   @StateObject
   private var viewModel: EnterPasswordViewModel
   @FocusState
   private var isFocused: Bool
   
-  @Binding var shouldDismissRoot: Bool
+  @Binding var isFlowPresented: Bool
   
   public init(
     purpose: EnterPasswordPurpose,
-    shouldDismissRoot: Binding<Bool>
+    isFlowPresented: Binding<Bool>
   ) {
     _viewModel = .init(wrappedValue: EnterPasswordViewModel(purpose: purpose))
-    _shouldDismissRoot = .init(projectedValue: shouldDismissRoot)
+    _isFlowPresented = .init(projectedValue: isFlowPresented)
   }
   
   public var body: some View {
@@ -43,19 +41,23 @@ public struct EnterPasswordView: View {
     .popup(item: $viewModel.toastMessage, style: .toast) {
       ToastView(toastMessage: $0)
     }
-    .navigationLink(item: $viewModel.navigation) { navigation in
+    .navigationLink(
+      item: $viewModel.navigation
+    ) { navigation in
       switch navigation {
       case .recoverPassword:
-        ResetPasswordView(shouldDismissRoot: $shouldDismissRoot)
+        ResetPasswordView(isFlowPresented: $isFlowPresented)
       case .changePassword:
         CreatePasswordView(purpose: .changePassword) {
-          dismiss()
+          isFlowPresented = false
         }
       }
     }
-    .onChange(of: viewModel.shouldDismissFlow, perform: { _ in
-      shouldDismissRoot = true
-    })
+    .onChange(
+      of: viewModel.shouldDismissFlow
+    ) { _ in
+      isFlowPresented = false
+    }
     .track(name: String(describing: type(of: self)))
   }
 }
@@ -117,16 +119,14 @@ private extension EnterPasswordView {
   
   var buttonGroupView: some View {
     VStack(spacing: 32) {
-      if viewModel.purpose == .biometricsFallback {
-        Button {
-          viewModel.didTapForgotPasswordButton()
-        } label: {
-          Text(LFLocalizable.Authentication.EnterPassword.forgotPasswordButton)
-            .foregroundColor(Colors.primary.swiftUIColor)
-            .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.ultraSmall.value))
-        }
-        .disabled(viewModel.isLoading)
+      Button {
+        viewModel.didTapForgotPasswordButton()
+      } label: {
+        Text(LFLocalizable.Authentication.EnterPassword.forgotPasswordButton)
+          .foregroundColor(Colors.primary.swiftUIColor)
+          .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.ultraSmall.value))
       }
+      .disabled(viewModel.isLoading)
       
       FullSizeButton(
         title: LFLocalizable.Button.Continue.title,

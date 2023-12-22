@@ -18,7 +18,7 @@ public struct ResetPasswordView: View {
   private var viewDidLoad: Bool = false
   
   @Binding
-  var shouldDismissRoot: Bool
+  var isFlowPresented: Bool
   
   public var body: some View {
     content
@@ -37,7 +37,7 @@ public struct ResetPasswordView: View {
         switch navigation {
         case .resetPassword(let token):
           CreatePasswordView(purpose: .resetPassword(token: token)) {
-            shouldDismissRoot = true
+            isFlowPresented = false
           }
         }
       }

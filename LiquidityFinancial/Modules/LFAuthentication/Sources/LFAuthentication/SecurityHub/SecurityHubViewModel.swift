@@ -18,6 +18,9 @@ public final class SecurityHubViewModel: ObservableObject {
   @Published var navigation: Navigation?
   @Published var popup: Popup?
 
+  @Published
+  var isChangePasswordFlowPresented: Bool = false
+  
   private var cancellables: Set<AnyCancellable> = []
 
   var email: SecurityInformation {

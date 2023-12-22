@@ -10,7 +10,7 @@ public final class BiometricsBackupViewModel: ObservableObject {
   @LazyInjected(\.accountDataManager) var accountDataManager
   @LazyInjected(\.biometricsManager) var biometricsManager
   
-  @Published var shouldDismiss: Bool = false
+  @Published var isFlowPresented: Bool = true
   @Published var toastMessage: String?
   @Published var biometricType: BiometricType = .none
   @Published var navigation: Navigation?
@@ -38,7 +38,7 @@ extension BiometricsBackupViewModel {
         }
       }, receiveValue: { [weak self] _ in
         guard let self else { return }
-        self.shouldDismiss = true
+        self.isFlowPresented = false
       })
       .store(in: &cancellables)
   }

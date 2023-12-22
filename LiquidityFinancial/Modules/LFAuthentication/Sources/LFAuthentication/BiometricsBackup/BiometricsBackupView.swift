@@ -10,9 +10,6 @@ public struct BiometricsBackupView: View {
   @StateObject
   private var viewModel = BiometricsBackupViewModel()
   
-  @State
-  var shouldDismiss: Bool = false
-  
   public init() {}
   
   public var body: some View {
@@ -25,7 +22,7 @@ public struct BiometricsBackupView: View {
           case .passwordLogin:
             EnterPasswordView(
               purpose: .biometricsFallback,
-              shouldDismissRoot: $viewModel.shouldDismiss
+              isFlowPresented: $viewModel.isFlowPresented
             )
           }
         }
@@ -39,7 +36,7 @@ public struct BiometricsBackupView: View {
           biometricLockoutPopup
         }
       }
-      .onChange(of: $viewModel.shouldDismiss.wrappedValue) { _ in
+      .onChange(of: $viewModel.isFlowPresented.wrappedValue) { _ in
         dismiss()
       }
       .track(name: String(describing: type(of: self)))
