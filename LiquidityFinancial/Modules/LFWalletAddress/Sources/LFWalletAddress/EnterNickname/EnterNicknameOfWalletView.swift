@@ -7,9 +7,15 @@ import Services
 public struct EnterNicknameOfWalletView: View {
   @Environment(\.dismiss) private var dismiss
   @StateObject private var viewModel: EnterNicknameOfWalletViewModel
+  let popAction: (() -> Void)?
   
-  public init(accountId: String, walletAddress: String) {
+  public init(
+    accountId: String,
+    walletAddress: String,
+    popAction: (() -> Void)? = nil
+  ) {
     _viewModel = .init(wrappedValue: EnterNicknameOfWalletViewModel(accountId: accountId, walletAddress: walletAddress))
+    self.popAction = popAction
   }
 
   public var body: some View {
@@ -18,7 +24,7 @@ public struct EnterNicknameOfWalletView: View {
         viewModel.onEditingWalletName()
       }
       .onChange(of: viewModel.shouldDismiss, perform: { _ in
-        dismiss()
+        popAction?()
       })
       .popup(item: $viewModel.toastMessage, style: .toast) {
         ToastView(toastMessage: $0)

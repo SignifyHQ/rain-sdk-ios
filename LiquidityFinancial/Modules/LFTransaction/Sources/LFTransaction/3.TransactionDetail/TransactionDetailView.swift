@@ -62,7 +62,7 @@ public struct TransactionDetailView: View {
             LFUtilities.popToRootView()
           }
         } label: {
-          CircleButton(style: .xmark)
+          GenImages.CommonImages.icBack.swiftUIImage
         }
         .opacity(isPopToRoot ? 1 : 0)
       }
@@ -86,7 +86,8 @@ extension TransactionDetailView {
         transaction: viewModel.transaction,
         transactionInfos: transactionInfo ?? viewModel.cryptoTransactions,
         isNewAddress: isNewAddress ?? false,
-        walletAddress: walletAddress ?? .empty
+        walletAddress: walletAddress ?? .empty,
+        popAction: popAction
       )
     case .withdraw:
       WithdrawTransactionDetailView(transaction: viewModel.transaction)

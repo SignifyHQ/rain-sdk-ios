@@ -6,12 +6,14 @@ import LFWalletAddress
 
 struct CryptoTransactionDetailView: View {
   @StateObject private var viewModel: CryptoTransactionDetailViewModel
+  let popAction: (() -> Void)?
   
   init(
     transaction: TransactionModel,
     transactionInfos: [TransactionInformation],
     isNewAddress: Bool = false,
-    walletAddress: String = ""
+    walletAddress: String = "",
+    popAction: (() -> Void)? = nil
   ) {
     _viewModel = .init(
       wrappedValue: CryptoTransactionDetailViewModel(
@@ -21,6 +23,7 @@ struct CryptoTransactionDetailView: View {
         address: walletAddress
       )
     )
+    self.popAction = popAction
   }
   
   var body: some View {
@@ -49,7 +52,11 @@ private extension CryptoTransactionDetailView {
       case .receipt(let cryptoReceipt):
         CryptoTransactionReceiptView(accountID: viewModel.transaction.accountId, receipt: cryptoReceipt)
       case .saveAddress:
-        EnterNicknameOfWalletView(accountId: viewModel.transaction.accountId, walletAddress: viewModel.walletAddress)
+          EnterNicknameOfWalletView(
+            accountId: viewModel.transaction.accountId,
+            walletAddress: viewModel.walletAddress,
+            popAction: popAction
+          )
       }
     }
     .popup(isPresented: $viewModel.showSaveWalletAddressPopup) {
