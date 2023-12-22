@@ -70,8 +70,6 @@ public struct HomeView: View {
       switch popup {
       case .notifications:
         notificationsPopup
-      case .biometricEnhancedSecurity:
-        biometricEnhancedSecurityPopup
       case .biometricSetup:
         setupBiometricsPopup
       case .biometricsLockout:
@@ -182,21 +180,6 @@ private extension HomeView {
       primary: .init(
         text: LFLocalizable.Button.Continue.title,
         action: viewModel.enhancedSecurityPopupAction
-      )
-    )
-  }
-  
-  var biometricEnhancedSecurityPopup: some View {
-    LiquidityAlert(
-      title: LFLocalizable.Authentication.SetupEnhancedSecurity.title,
-      message: LFLocalizable.Authentication.SetupEnhancedSecurity.biometricsStep,
-      primary: .init(
-        text: LFLocalizable.Button.Continue.title,
-        action: viewModel.setupBiometricSecurity
-      ),
-      secondary: .init(
-        text: LFLocalizable.Button.NotNow.title,
-        action: viewModel.clearPopup
       )
     )
   }

@@ -209,8 +209,8 @@ private extension HomeViewModel {
       popup = .notifications
     case .passwordEnhancedSecurity:
       blockingPopup = .passwordEnhancedSecurity
-    case .biometricEnhancedSecurity:
-      popup = .biometricEnhancedSecurity
+    case .biometricSetup:
+      popup = .biometricSetup
     }
   }
   
@@ -326,7 +326,7 @@ extension HomeViewModel {
       popupQueue.append(.passwordEnhancedSecurity)
       UserDefaults.isStartedWithLoginFlow = true
     } else if isShowBiometricSecurityPopup {
-      popupQueue.append(.biometricEnhancedSecurity)
+      popupQueue.append(.biometricSetup)
     }
   }
   
@@ -357,17 +357,13 @@ extension HomeViewModel {
     clearBlockingPopup()
     navigation = .createPassword
   }
-  
-  func setupBiometricSecurity() {
-    popup = .biometricSetup
-  }
 
   func clearPopup() {
     switch popup {
     case .notifications:
       popupQueue.removeAll { $0 == .notifications }
-    case .biometricEnhancedSecurity:
-      popupQueue.removeAll { $0 == .biometricEnhancedSecurity }
+    case .biometricSetup:
+      popupQueue.removeAll { $0 == .biometricSetup }
     default: break
     }
     
@@ -526,7 +522,6 @@ extension HomeViewModel {
   
   enum Popup {
     case notifications
-    case biometricEnhancedSecurity
     case biometricSetup
     case biometricsLockout
   }
@@ -538,6 +533,6 @@ extension HomeViewModel {
   enum ActionRequestPopup {
     case notifications
     case passwordEnhancedSecurity
-    case biometricEnhancedSecurity
+    case biometricSetup
   }
 }
