@@ -42,9 +42,11 @@ public struct HomeView: View {
     .toolbar {
       ToolbarItem(placement: .navigationBarTrailing) {
         trailingNavigationBarView
+          .blur(radius: viewModel.blurRadius)
       }
       ToolbarItem(placement: .navigationBarLeading) {
         leadingNavigationBarView
+          .blur(radius: viewModel.blurRadius)
       }
     }
     .navigationLink(item: $viewModel.navigation) { item in
