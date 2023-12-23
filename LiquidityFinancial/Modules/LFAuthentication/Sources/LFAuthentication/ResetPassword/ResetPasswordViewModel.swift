@@ -98,7 +98,26 @@ public extension ResetPasswordViewModel {
   }
   
   func textFieldTextChange(replacementText: String, viewItem: PinTextFieldViewItem) {
-    if replacementText.isEmpty, viewItem.text.isEmpty {
+    guard replacementText.count <= 1
+    else {
+      otpViewItems
+        .forEach { item in
+          if let index = replacementText.index(
+            replacementText.startIndex,
+            offsetBy: item.tag,
+            limitedBy: replacementText.endIndex
+          ) {
+            let characterAtIndex = replacementText[index]
+            item.text = String(characterAtIndex)
+          }
+        }
+      
+      sendOTP()
+      return
+    }
+    
+    if replacementText.isEmpty,
+       viewItem.text.isEmpty {
       if let previousViewItem = previousViewItemFrom(tag: viewItem.tag) {
         previousViewItem.text = .empty
         viewItem.isInFocus = false
