@@ -62,6 +62,9 @@ public final class HomeViewModel: ObservableObject {
   @Published var toastMessage: String?
   @Published var shouldShowBiometricsFallback: Bool = false
   @Published var isShowingRequiredActionPrompt: Bool = false
+  
+  @Published var isVerifyingBiometrics: Bool = false
+  @Published var blurRadius: CGFloat = 0
 
   private var subscribers: Set<AnyCancellable> = []
   
@@ -461,12 +464,16 @@ extension HomeViewModel {
 
     if LFFeatureFlagContainer.isPasswordLoginFeatureFlagEnabled,
        isEnableAuthenticateWithBiometrics {
+      isVerifyingBiometrics = true
+      blurRadius = 8
+      
       biometricsManager.performBiometricsAuthentication(purpose: .authentication)
         .receive(on: DispatchQueue.main)
         .sink(receiveCompletion: { [weak self] completion in
           guard let self else { return }
           switch completion {
           case .finished:
+            isVerifyingBiometrics = false
             log.debug("Biometrics capability check completed.")
           case .failure(let error):
             log.error("Biometrics error: \(error.localizedDescription)")

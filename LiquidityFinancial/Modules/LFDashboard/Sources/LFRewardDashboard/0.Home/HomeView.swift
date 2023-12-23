@@ -82,7 +82,12 @@ public struct HomeView: View {
         passwordEnhancedSecurityPopup
       }
     }
-    .fullScreenCover(isPresented: $viewModel.shouldShowBiometricsFallback) {
+    .fullScreenCover(
+      isPresented: $viewModel.shouldShowBiometricsFallback,
+      onDismiss: {
+        viewModel.isVerifyingBiometrics = false
+      }
+    ) {
       BiometricsBackupView()
     }
     .onChange(of: scenePhase, perform: { newValue in
@@ -91,6 +96,12 @@ public struct HomeView: View {
         viewModel.refreshLinkedSources()
       }
     })
+    .blur(radius: viewModel.blurRadius)
+    .onChange(of: viewModel.isVerifyingBiometrics) { isVerifying in
+      withAnimation(.easeInOut(duration: 0.2)) {
+        viewModel.blurRadius = viewModel.isVerifyingBiometrics ? 8 : 0
+      }
+    }
   }
 }
 
