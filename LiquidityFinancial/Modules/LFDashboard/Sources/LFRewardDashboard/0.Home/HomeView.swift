@@ -98,7 +98,7 @@ public struct HomeView: View {
         viewModel.refreshLinkedSources()
       }
     })
-    .blur(radius: viewModel.blurRadius)
+    .blur(radius: viewModel.blurRadius, opaque: true)
     .onChange(of: viewModel.isVerifyingBiometrics) { isVerifying in
       withAnimation(.easeInOut(duration: 0.2)) {
         viewModel.blurRadius = viewModel.isVerifyingBiometrics ? 8 : 0
