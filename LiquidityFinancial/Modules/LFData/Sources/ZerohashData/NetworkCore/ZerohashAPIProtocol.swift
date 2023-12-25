@@ -10,4 +10,6 @@ public protocol ZerohashAPIProtocol {
   func getOnboardingStep() async throws -> APIZHOnboardingStep
   func getTaxFile(accountId: String) async throws -> [APITaxFile]
   func getTaxFileYear(accountId: String, year: String, fileName: String) async throws -> URL
+  func sellCrypto(accountId: String, quoteId: String) async throws -> APISellCrypto
+  func getSellQuote(accountId: String, amount: String?, quantity: String?) async throws -> APIGetSellQuote
 }

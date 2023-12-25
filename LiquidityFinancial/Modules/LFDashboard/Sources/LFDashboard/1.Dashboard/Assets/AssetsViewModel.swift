@@ -21,7 +21,9 @@ final class AssetsViewModel: ObservableObject {
   
   init() {
     accountDataManager
-      .accountsSubject.map({ accounts in
+      .accountsSubject
+      .receive(on: DispatchQueue.main)
+      .map({ accounts in
         accounts.map({ AssetModel(account: $0) })
       })
       .assign(to: \.assets, on: self)

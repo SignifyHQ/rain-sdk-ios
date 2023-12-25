@@ -10,6 +10,11 @@ public class MockSolidExternalFundingAPIProtocol: SolidExternalFundingAPIProtoco
 
     public init() {}
 
+    public var cancelACHTransactionReturnValue: APISolidExternalTransactionResponse!
+    public func cancelACHTransaction(liquidityTransactionID: String) async throws -> SolidData.APISolidExternalTransactionResponse {
+      return cancelACHTransactionReturnValue
+    }
+  
 
     //MARK: - getLinkedSources
 

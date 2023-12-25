@@ -62,32 +62,6 @@ public class MockOnboardingAPIProtocol: OnboardingAPIProtocol {
         }
     }
 
-    //MARK: - getOnboardingState
-
-    public var getOnboardingStateSessionIdThrowableError: Error?
-    public var getOnboardingStateSessionIdCallsCount = 0
-    public var getOnboardingStateSessionIdCalled: Bool {
-        return getOnboardingStateSessionIdCallsCount > 0
-    }
-    public var getOnboardingStateSessionIdReceivedSessionId: String?
-    public var getOnboardingStateSessionIdReceivedInvocations: [String] = []
-    public var getOnboardingStateSessionIdReturnValue: APIOnboardingState!
-    public var getOnboardingStateSessionIdClosure: ((String) async throws -> APIOnboardingState)?
-
-    public func getOnboardingState(sessionId: String) async throws -> APIOnboardingState {
-        if let error = getOnboardingStateSessionIdThrowableError {
-            throw error
-        }
-        getOnboardingStateSessionIdCallsCount += 1
-        getOnboardingStateSessionIdReceivedSessionId = sessionId
-        getOnboardingStateSessionIdReceivedInvocations.append(sessionId)
-        if let getOnboardingStateSessionIdClosure = getOnboardingStateSessionIdClosure {
-            return try await getOnboardingStateSessionIdClosure(sessionId)
-        } else {
-            return getOnboardingStateSessionIdReturnValue
-        }
-    }
-
     //MARK: - refreshToken
 
     public var refreshTokenTokenThrowableError: Error?

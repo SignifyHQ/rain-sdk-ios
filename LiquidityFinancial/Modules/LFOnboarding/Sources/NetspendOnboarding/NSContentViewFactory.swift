@@ -98,9 +98,7 @@ private extension NSContentViewFactory {
   
   @MainActor
   var agreementView: some View {
-    AgreementView(viewModel: AgreementViewModel(needBufferData: true)) { [weak self] in
-      log.info("after accept agreement will fetch missing step and go next:\(self?.flowCoordinator.routeSubject.value ?? .agreement)")
-    }
+    AgreementView(viewModel: AgreementViewModel(needBufferData: true))
   }
   
   @MainActor

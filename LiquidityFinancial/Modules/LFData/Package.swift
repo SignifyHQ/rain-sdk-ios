@@ -174,6 +174,14 @@ let package = Package(
         "SolidData", "DataTestHelpers", "TestHelpers",
         .product(name: "NetworkTestHelpers", package: "LFNetwork")
       ]
+    ),
+    .testTarget(
+      name: "ZerohashDataTests",
+      dependencies: [
+        "ZerohashData", "DataTestHelpers", "TestHelpers",
+        .product(name: "NetworkTestHelpers", package: "LFNetwork")
+      ]
     )
   ]
 )
+

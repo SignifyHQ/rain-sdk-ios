@@ -10,6 +10,8 @@ public enum ZerohashRoute {
   case getOnboardingStep
   case getTaxFile(accountId: String)
   case getTaxFileYear(accountId: String, year: String)
+  case sellCrypto(accountId: String, quoteId: String)
+  case getSellQuote(accountId: String, amount: String?, quantity: String?)
 }
 
 extension ZerohashRoute: LFRoute {
@@ -28,12 +30,16 @@ extension ZerohashRoute: LFRoute {
       return "/v1/zerohash/accounts/\(accountId)/tax-file"
     case .getTaxFileYear(let accountId, let year):
       return "/v1/zerohash/accounts/\(accountId)/tax-file/\(year)"
+    case .sellCrypto(accountId: let accountId, quoteId: _):
+      return "/v1/zerohash/accounts/\(accountId)/sell"
+    case .getSellQuote(accountId: let accountId, amount: _, quantity: _):
+      return "/v1/zerohash/accounts/\(accountId)/sell/quote"
     }
   }
   
   public var httpMethod: HttpMethod {
     switch self {
-    case .getOnboardingStep, .getTaxFile, .getTaxFileYear:
+    case .getOnboardingStep, .getTaxFile, .getTaxFileYear, .getSellQuote:
       return .GET
     default:
       return .POST
@@ -57,6 +63,14 @@ extension ZerohashRoute: LFRoute {
   
   public var parameters: Parameters? {
     switch self {
+    case let .getSellQuote(_, amount, quantity):
+      if let amount = amount, let quantity = quantity {
+        return [
+          "amount": amount,
+          "quantity": quantity
+        ]
+      }
+      return nil
     case let .sendCrypto(_, destinationAddress, amount):
       return [
         "destinationAddress": destinationAddress,
@@ -72,6 +86,10 @@ extension ZerohashRoute: LFRoute {
       return [
         "quoteId": quoteId
       ]
+    case .sellCrypto(_, let quoteId):
+      return [
+        "quoteId": quoteId
+      ]
     case .getOnboardingStep, .getTaxFile, .getTaxFileYear:
       return nil
     }
@@ -83,7 +101,10 @@ extension ZerohashRoute: LFRoute {
         .getTaxFile,
         .getTaxFileYear:
       return nil
-    default: return .json
+    case .getSellQuote:
+      return .url
+    default:
+      return .json
     }
   }
   

@@ -16,17 +16,3 @@ public enum OnboardingMissingStep: String, Codable {
   case identityScan = "identity_scan"
   case acceptFeatureAgreement = "accept_feature_agreement"
 }
-
-// sourcery: AutoMockable
-public protocol OnboardingStateEnity {
-  var missingSteps: [String] { get }
-  init(missingSteps: [String])
-}
-
-public extension OnboardingStateEnity {
-  func mapToEnum() -> [OnboardingMissingStep] {
-    var steps = [OnboardingMissingStep]()
-    steps = missingSteps.compactMap { OnboardingMissingStep(rawValue: $0) }
-    return steps
-  }
-}

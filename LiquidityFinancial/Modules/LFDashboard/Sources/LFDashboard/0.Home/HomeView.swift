@@ -89,9 +89,6 @@ public struct HomeView: View {
     }
     .onAppear {
       viewModel.onAppear()
-      dashboardRepository.apiFetchOnboardingState { route in
-        onChangeRoute?(route)
-      }
     }
     .onChange(of: scenePhase, perform: { newValue in
       if newValue == .active {

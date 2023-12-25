@@ -63,6 +63,7 @@ let package = Package(
         .product(name: "NetSpendData", package: "LFData"),
         .product(name: "AccountData", package: "LFData"),
         .product(name: "RewardData", package: "LFData"),
+        .product(name: "SolidData", package: "LFData"),
         .product(name: "RewardDomain", package: "LFDomain"),
         .product(name: "Services", package: "LFServices"),
         .product(name: "NetspendDomain", package: "LFDomain")

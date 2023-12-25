@@ -21,10 +21,6 @@ public class OnboardingRepository: OnboardingRepositoryProtocol {
     return try await onboardingAPI.requestOTP(phoneNumber: phoneNumber)
   }
   
-  public func onboardingState(sessionId: String) async throws -> OnboardingStateEnity {
-    return try await onboardingAPI.getOnboardingState(sessionId: sessionId)
-  }
-  
   public func getOnboardingProcess() async throws -> OnboardingProcess {
     return try await onboardingAPI.getOnboardingProcess()
   }
@@ -33,7 +29,5 @@ public class OnboardingRepository: OnboardingRepositoryProtocol {
 extension APIAccessTokens: AccessTokensEntity {}
 
 extension APIOtp: OtpEntity {}
-
-extension APIOnboardingState: OnboardingStateEnity {}
 
 extension APIOnboardingProcess: OnboardingProcess {}

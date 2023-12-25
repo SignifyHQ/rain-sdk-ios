@@ -8,6 +8,7 @@ import AccountDomain
 import Combine
 import ZerohashDomain
 import AccountService
+import ZerohashData
 
 @MainActor
 final class MoveCryptoInputViewModel: ObservableObject {
@@ -33,9 +34,14 @@ final class MoveCryptoInputViewModel: ObservableObject {
     }
   }
   
+  private lazy var getSellCryptoQouteUseCase: GetSellQuoteUseCaseProtocol = {
+    return GetSellQuoteUseCase(repository: zerohashRepository)
+  }()
+
+  private var subscribers: Set<AnyCancellable> = []
+  
   let type: Kind
   var gridValues: [GridValue] = []
-  private var subscribers: Set<AnyCancellable> = []
   
   init(type: Kind, assetModel: AssetModel) {
     self.type = type
@@ -148,6 +154,7 @@ private extension MoveCryptoInputViewModel {
         )
         navigation = .confirmSend(lockedFeeResponse: lockedResponse)
       } catch {
+        log.error(error)
         self.toastMessage = error.localizedDescription
       }
     }
@@ -173,22 +180,20 @@ private extension MoveCryptoInputViewModel {
   }
   
   func fetchSellCryptoQuote(amount: String) {
-    //    guard let account = accountManager.cryptoAccount else { return }
-    //    isPerformingAction = true
-    //    Task {
-    //      do {
-    //        let quote: CryptoQuoteDetail = try await networkService.handle(request: Endpoints.sellCryptoQuote(walletID: account.id, paymentType: "quantity", amtValue: amount))
-    //        if let cashAccount = accountManager.cashAccount {
-    //          navigation = .detail(.init(type: .sellCrypto(quote: quote, cryptoAccount: account, cashAccount: cashAccount)))
-    //        } else {
-    //          log.error(LiquidityError.logic, "Unable to show BuySellDetailView without accounts")
-    //        }
-    //      } catch {
-    //        log.error(error, "failed to get sell quote for crypto")
-    //        toastMessage = error.localizedDescription
-    //      }
-    //      isPerformingAction = false
-    //    }
+    Task { @MainActor in
+      defer { isPerformingAction = false }
+      isPerformingAction = true
+      do {
+        let accountID = assetModel.id
+        let entity = try await getSellCryptoQouteUseCase.execute(accountId: accountID, amount: amount, quantity: "quantity")
+        navigation = .detail
+        //TODO: We will handle the next step after implementing UI Detail
+        log.debug(entity)
+      } catch {
+        log.error(error)
+        self.toastMessage = error.localizedDescription
+      }
+    }
   }
 }
 

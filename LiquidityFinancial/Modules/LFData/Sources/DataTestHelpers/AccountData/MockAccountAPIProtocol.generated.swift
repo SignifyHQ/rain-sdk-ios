@@ -5,6 +5,7 @@
 import Foundation
 import AccountData
 import ZerohashData
+import OnboardingData
 
 public class MockAccountAPIProtocol: AccountAPIProtocol {
 
@@ -52,6 +53,142 @@ public class MockAccountAPIProtocol: AccountAPIProtocol {
             return try await getUserClosure()
         } else {
             return getUserReturnValue
+        }
+    }
+
+    //MARK: - createPassword
+
+    public var createPasswordPasswordThrowableError: Error?
+    public var createPasswordPasswordCallsCount = 0
+    public var createPasswordPasswordCalled: Bool {
+        return createPasswordPasswordCallsCount > 0
+    }
+    public var createPasswordPasswordReceivedPassword: String?
+    public var createPasswordPasswordReceivedInvocations: [String] = []
+    public var createPasswordPasswordClosure: ((String) async throws -> Void)?
+
+    public func createPassword(password: String) async throws {
+        if let error = createPasswordPasswordThrowableError {
+            throw error
+        }
+        createPasswordPasswordCallsCount += 1
+        createPasswordPasswordReceivedPassword = password
+        createPasswordPasswordReceivedInvocations.append(password)
+        try await createPasswordPasswordClosure?(password)
+    }
+
+    //MARK: - changePassword
+
+    public var changePasswordOldPasswordNewPasswordThrowableError: Error?
+    public var changePasswordOldPasswordNewPasswordCallsCount = 0
+    public var changePasswordOldPasswordNewPasswordCalled: Bool {
+        return changePasswordOldPasswordNewPasswordCallsCount > 0
+    }
+    public var changePasswordOldPasswordNewPasswordReceivedArguments: (oldPassword: String, newPassword: String)?
+    public var changePasswordOldPasswordNewPasswordReceivedInvocations: [(oldPassword: String, newPassword: String)] = []
+    public var changePasswordOldPasswordNewPasswordClosure: ((String, String) async throws -> Void)?
+
+    public func changePassword(oldPassword: String, newPassword: String) async throws {
+        if let error = changePasswordOldPasswordNewPasswordThrowableError {
+            throw error
+        }
+        changePasswordOldPasswordNewPasswordCallsCount += 1
+        changePasswordOldPasswordNewPasswordReceivedArguments = (oldPassword: oldPassword, newPassword: newPassword)
+        changePasswordOldPasswordNewPasswordReceivedInvocations.append((oldPassword: oldPassword, newPassword: newPassword))
+        try await changePasswordOldPasswordNewPasswordClosure?(oldPassword, newPassword)
+    }
+
+    //MARK: - resetPasswordRequest
+
+    public var resetPasswordRequestPhoneNumberThrowableError: Error?
+    public var resetPasswordRequestPhoneNumberCallsCount = 0
+    public var resetPasswordRequestPhoneNumberCalled: Bool {
+        return resetPasswordRequestPhoneNumberCallsCount > 0
+    }
+    public var resetPasswordRequestPhoneNumberReceivedPhoneNumber: String?
+    public var resetPasswordRequestPhoneNumberReceivedInvocations: [String] = []
+    public var resetPasswordRequestPhoneNumberClosure: ((String) async throws -> Void)?
+
+    public func resetPasswordRequest(phoneNumber: String) async throws {
+        if let error = resetPasswordRequestPhoneNumberThrowableError {
+            throw error
+        }
+        resetPasswordRequestPhoneNumberCallsCount += 1
+        resetPasswordRequestPhoneNumberReceivedPhoneNumber = phoneNumber
+        resetPasswordRequestPhoneNumberReceivedInvocations.append(phoneNumber)
+        try await resetPasswordRequestPhoneNumberClosure?(phoneNumber)
+    }
+
+    //MARK: - resetPasswordVerify
+
+    public var resetPasswordVerifyPhoneNumberCodeThrowableError: Error?
+    public var resetPasswordVerifyPhoneNumberCodeCallsCount = 0
+    public var resetPasswordVerifyPhoneNumberCodeCalled: Bool {
+        return resetPasswordVerifyPhoneNumberCodeCallsCount > 0
+    }
+    public var resetPasswordVerifyPhoneNumberCodeReceivedArguments: (phoneNumber: String, code: String)?
+    public var resetPasswordVerifyPhoneNumberCodeReceivedInvocations: [(phoneNumber: String, code: String)] = []
+    public var resetPasswordVerifyPhoneNumberCodeReturnValue: APIPasswordResetToken!
+    public var resetPasswordVerifyPhoneNumberCodeClosure: ((String, String) async throws -> APIPasswordResetToken)?
+
+    public func resetPasswordVerify(phoneNumber: String, code: String) async throws -> APIPasswordResetToken {
+        if let error = resetPasswordVerifyPhoneNumberCodeThrowableError {
+            throw error
+        }
+        resetPasswordVerifyPhoneNumberCodeCallsCount += 1
+        resetPasswordVerifyPhoneNumberCodeReceivedArguments = (phoneNumber: phoneNumber, code: code)
+        resetPasswordVerifyPhoneNumberCodeReceivedInvocations.append((phoneNumber: phoneNumber, code: code))
+        if let resetPasswordVerifyPhoneNumberCodeClosure = resetPasswordVerifyPhoneNumberCodeClosure {
+            return try await resetPasswordVerifyPhoneNumberCodeClosure(phoneNumber, code)
+        } else {
+            return resetPasswordVerifyPhoneNumberCodeReturnValue
+        }
+    }
+
+    //MARK: - resetPassword
+
+    public var resetPasswordPhoneNumberPasswordTokenThrowableError: Error?
+    public var resetPasswordPhoneNumberPasswordTokenCallsCount = 0
+    public var resetPasswordPhoneNumberPasswordTokenCalled: Bool {
+        return resetPasswordPhoneNumberPasswordTokenCallsCount > 0
+    }
+    public var resetPasswordPhoneNumberPasswordTokenReceivedArguments: (phoneNumber: String, password: String, token: String)?
+    public var resetPasswordPhoneNumberPasswordTokenReceivedInvocations: [(phoneNumber: String, password: String, token: String)] = []
+    public var resetPasswordPhoneNumberPasswordTokenClosure: ((String, String, String) async throws -> Void)?
+
+    public func resetPassword(phoneNumber: String, password: String, token: String) async throws {
+        if let error = resetPasswordPhoneNumberPasswordTokenThrowableError {
+            throw error
+        }
+        resetPasswordPhoneNumberPasswordTokenCallsCount += 1
+        resetPasswordPhoneNumberPasswordTokenReceivedArguments = (phoneNumber: phoneNumber, password: password, token: token)
+        resetPasswordPhoneNumberPasswordTokenReceivedInvocations.append((phoneNumber: phoneNumber, password: password, token: token))
+        try await resetPasswordPhoneNumberPasswordTokenClosure?(phoneNumber, password, token)
+    }
+
+    //MARK: - loginWithPassword
+
+    public var loginWithPasswordPhoneNumberPasswordThrowableError: Error?
+    public var loginWithPasswordPhoneNumberPasswordCallsCount = 0
+    public var loginWithPasswordPhoneNumberPasswordCalled: Bool {
+        return loginWithPasswordPhoneNumberPasswordCallsCount > 0
+    }
+    public var loginWithPasswordPhoneNumberPasswordReceivedArguments: (phoneNumber: String, password: String)?
+    public var loginWithPasswordPhoneNumberPasswordReceivedInvocations: [(phoneNumber: String, password: String)] = []
+    public var loginWithPasswordPhoneNumberPasswordReturnValue: APIAccessTokens!
+    public var loginWithPasswordPhoneNumberPasswordClosure: ((String, String) async throws -> APIAccessTokens)?
+
+    public func loginWithPassword(phoneNumber: String, password: String) async throws -> APIAccessTokens {
+        if let error = loginWithPasswordPhoneNumberPasswordThrowableError {
+            throw error
+        }
+        loginWithPasswordPhoneNumberPasswordCallsCount += 1
+        loginWithPasswordPhoneNumberPasswordReceivedArguments = (phoneNumber: phoneNumber, password: password)
+        loginWithPasswordPhoneNumberPasswordReceivedInvocations.append((phoneNumber: phoneNumber, password: password))
+        if let loginWithPasswordPhoneNumberPasswordClosure = loginWithPasswordPhoneNumberPasswordClosure {
+            return try await loginWithPasswordPhoneNumberPasswordClosure(phoneNumber, password)
+        } else {
+            return loginWithPasswordPhoneNumberPasswordReturnValue
         }
     }
 

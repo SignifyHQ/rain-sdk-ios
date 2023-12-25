@@ -7,7 +7,6 @@ import LFUtilities
 public enum OnboardingRoute {
   case otp(OTPParameters)
   case login(LoginParameters)
-  case onboardingState(sessionId: String)
   case refreshToken(token: String)
   case getOnboardingProcess
 }
@@ -20,8 +19,6 @@ extension OnboardingRoute: LFRoute {
       return "/v1/password-less/otp/request"
     case .login:
       return "/v1/password-less/login"
-    case .onboardingState:
-      return "/v1/app/onboarding-state"
     case .refreshToken:
       return "/v1/password-less/refresh-token"
     case .getOnboardingProcess:
@@ -32,7 +29,7 @@ extension OnboardingRoute: LFRoute {
   public var httpMethod: HttpMethod {
     switch self {
     case .login, .otp, .refreshToken: return .POST
-    case .onboardingState, .getOnboardingProcess: return .GET
+    case .getOnboardingProcess: return .GET
     }
   }
   
@@ -46,11 +43,6 @@ extension OnboardingRoute: LFRoute {
       return base
     case .otp, .login:
       base["ld-device-id"] = LFUtilities.deviceId
-      return base
-    case .onboardingState(let sessionId):
-      base["Accept"] = "application/json"
-      base["Authorization"] = self.needAuthorizationKey
-      base["netspendSessionId"] = sessionId
       return base
     case .getOnboardingProcess:
       base["Accept"] = "application/json"
@@ -72,7 +64,7 @@ extension OnboardingRoute: LFRoute {
         ]
       }
       return body
-    case .onboardingState, .getOnboardingProcess:
+    case .getOnboardingProcess:
       return nil
     }
   }
@@ -80,7 +72,7 @@ extension OnboardingRoute: LFRoute {
   public var parameterEncoding: ParameterEncoding? {
     switch self {
     case .login, .otp, .refreshToken: return .json
-    case .onboardingState, .getOnboardingProcess: return nil
+    case .getOnboardingProcess: return nil
     }
   }
   

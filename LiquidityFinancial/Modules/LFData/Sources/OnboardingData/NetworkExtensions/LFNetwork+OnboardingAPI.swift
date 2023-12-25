@@ -28,10 +28,6 @@ extension LFCoreNetwork: OnboardingAPIProtocol where R == OnboardingRoute {
     )
   }
   
-  public func getOnboardingState(sessionId: String) async throws -> APIOnboardingState {
-    return try await request(OnboardingRoute.onboardingState(sessionId: sessionId), target: APIOnboardingState.self, failure: LFErrorObject.self, decoder: .apiDecoder)
-  }
-  
   public func refreshToken(token: String) async throws -> Bool {
     let result = try await request(OnboardingRoute.refreshToken(token: token))
     return (result.httpResponse?.statusCode ?? 500).isSuccess

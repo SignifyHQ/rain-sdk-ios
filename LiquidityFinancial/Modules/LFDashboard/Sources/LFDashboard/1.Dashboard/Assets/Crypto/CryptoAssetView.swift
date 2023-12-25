@@ -93,10 +93,16 @@ private extension CryptoAssetView {
         .onTapGesture {
           viewModel.cryptoChartTapped()
         }
+        
         BalanceAlertView(type: .crypto, hasContacts: true, cryptoBalance: viewModel.asset.availableBalance) {
           viewModel.walletRowTapped()
         }
-        transferButton
+        
+        HStack {
+          cryptoButtons
+        }
+        .frame(height: 76)
+        
         walletAddressButton
         activity
         Spacer()

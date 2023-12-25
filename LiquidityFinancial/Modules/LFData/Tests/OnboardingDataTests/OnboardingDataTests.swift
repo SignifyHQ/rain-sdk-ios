@@ -94,36 +94,4 @@ final class OnboardingDataTests: XCTestCase {
       expect(expectedError).to(equal(error))
     })
   }
-  
-  // Test retrieving the onboarding state under normal conditions.
-  func test_get_onboarding_state_happy_case() async {
-    // Given the expected mock success and fail results
-    let mockSuccessResult = APIOnboardingState(missingSteps: ["mock_missingSteps_1", "mock_missingSteps_2"])
-    self.api.getOnboardingStateSessionIdReturnValue = mockSuccessResult
-    let sessionID = UUID().uuidString
-    // When calling onboardingState function with parameter which should return missingSteps successfully
-    await expect {
-      try await self.repository.onboardingState(sessionId: sessionID).missingSteps
-    }
-    // Then the missingSteps received are the ones we expected
-    .to(equal(mockSuccessResult.missingSteps))
-    // And verify the input parameter should be correctly
-    expect(self.api.getOnboardingStateSessionIdReceivedSessionId).to(equal(sessionID))
-  }
-  
-  // Test retrieving the onboarding state when an error condition is encountered.
-  func test_get_onboarding_state_failed_case() async {
-    // Given a mock error which will be thrown
-    let expectedError = TestError.fail("mock_error")
-    api.getOnboardingStateSessionIdThrowableError = expectedError
-    // And a random pre-set sessionID
-    let sessionID = UUID().uuidString
-    await expect {
-      // When calling onboardingState function on the repository with parameter which should throw an error
-      try await self.repository.onboardingState(sessionId: sessionID).missingSteps
-    }.to(throwError { error in
-      // The error is the one we expected
-      expect(expectedError).to(equal(error))
-    })
-  }
 }

@@ -40,6 +40,14 @@ public class ZerohashRepository: ZerohashRepositoryProtocol {
   public func getTaxFileYear(accountId: String, year: String, fileName: String) async throws -> URL {
     try await self.zerohashAPI.getTaxFileYear(accountId: accountId, year: year, fileName: fileName)
   }
+  
+  public func getSellQuote(accountId: String, amount: String?, quantity: String?) async throws -> GetSellQuoteEntity {
+    try await self.zerohashAPI.getSellQuote(accountId: accountId, amount: amount, quantity: quantity)
+  }
+  
+  public func sellCrypto(accountId: String, quoteId: String) async throws -> SellCryptoEntity {
+    try await self.zerohashAPI.sellCrypto(accountId: accountId, quoteId: quoteId)
+  }
 }
 
 extension APIZHOnboardingStep: ZHOnboardingStepEntity {}

@@ -164,4 +164,56 @@ public class MockZerohashAPIProtocol: ZerohashAPIProtocol {
         }
     }
 
+    //MARK: - sellCrypto
+
+    public var sellCryptoAccountIdQuoteIdThrowableError: Error?
+    public var sellCryptoAccountIdQuoteIdCallsCount = 0
+    public var sellCryptoAccountIdQuoteIdCalled: Bool {
+        return sellCryptoAccountIdQuoteIdCallsCount > 0
+    }
+    public var sellCryptoAccountIdQuoteIdReceivedArguments: (accountId: String, quoteId: String)?
+    public var sellCryptoAccountIdQuoteIdReceivedInvocations: [(accountId: String, quoteId: String)] = []
+    public var sellCryptoAccountIdQuoteIdReturnValue: APISellCrypto!
+    public var sellCryptoAccountIdQuoteIdClosure: ((String, String) async throws -> APISellCrypto)?
+
+    public func sellCrypto(accountId: String, quoteId: String) async throws -> APISellCrypto {
+        if let error = sellCryptoAccountIdQuoteIdThrowableError {
+            throw error
+        }
+        sellCryptoAccountIdQuoteIdCallsCount += 1
+        sellCryptoAccountIdQuoteIdReceivedArguments = (accountId: accountId, quoteId: quoteId)
+        sellCryptoAccountIdQuoteIdReceivedInvocations.append((accountId: accountId, quoteId: quoteId))
+        if let sellCryptoAccountIdQuoteIdClosure = sellCryptoAccountIdQuoteIdClosure {
+            return try await sellCryptoAccountIdQuoteIdClosure(accountId, quoteId)
+        } else {
+            return sellCryptoAccountIdQuoteIdReturnValue
+        }
+    }
+
+    //MARK: - getSellQuote
+
+    public var getSellQuoteAccountIdAmountQuantityThrowableError: Error?
+    public var getSellQuoteAccountIdAmountQuantityCallsCount = 0
+    public var getSellQuoteAccountIdAmountQuantityCalled: Bool {
+        return getSellQuoteAccountIdAmountQuantityCallsCount > 0
+    }
+    public var getSellQuoteAccountIdAmountQuantityReceivedArguments: (accountId: String, amount: String?, quantity: String?)?
+    public var getSellQuoteAccountIdAmountQuantityReceivedInvocations: [(accountId: String, amount: String?, quantity: String?)] = []
+    public var getSellQuoteAccountIdAmountQuantityReturnValue: APIGetSellQuote!
+    public var getSellQuoteAccountIdAmountQuantityClosure: ((String, String?, String?) async throws -> APIGetSellQuote)?
+
+    public func getSellQuote(accountId: String, amount: String?, quantity: String?) async throws -> APIGetSellQuote {
+        if let error = getSellQuoteAccountIdAmountQuantityThrowableError {
+            throw error
+        }
+        getSellQuoteAccountIdAmountQuantityCallsCount += 1
+        getSellQuoteAccountIdAmountQuantityReceivedArguments = (accountId: accountId, amount: amount, quantity: quantity)
+        getSellQuoteAccountIdAmountQuantityReceivedInvocations.append((accountId: accountId, amount: amount, quantity: quantity))
+        if let getSellQuoteAccountIdAmountQuantityClosure = getSellQuoteAccountIdAmountQuantityClosure {
+            return try await getSellQuoteAccountIdAmountQuantityClosure(accountId, amount, quantity)
+        } else {
+            return getSellQuoteAccountIdAmountQuantityReturnValue
+        }
+    }
+
 }
