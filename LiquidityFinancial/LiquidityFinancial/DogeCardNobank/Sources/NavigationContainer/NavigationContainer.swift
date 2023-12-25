@@ -1,5 +1,5 @@
 import Foundation
-import LFDashboard
+import LFNoBankDashboard
 import BaseDashboard
 import LFTransaction
 import LFUtilities

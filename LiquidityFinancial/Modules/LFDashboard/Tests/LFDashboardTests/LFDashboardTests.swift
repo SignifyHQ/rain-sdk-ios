@@ -1,5 +1,4 @@
 import XCTest
-@testable import LFDashboard
 
 final class LFDashboardTests: XCTestCase {
     func testExample() throws {

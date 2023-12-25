@@ -3,7 +3,7 @@ import Factory
 import NetspendOnboarding
 import LFStyleGuide
 import LFUtilities
-import LFDashboard
+import LFNetspendDashboard
 
 struct AppView: View {
   

@@ -8,8 +8,8 @@ let package = Package(
   platforms: [.iOS(.v15), .macOS(.v10_14)],
   products: [
     .library(
-      name: "LFDashboard",
-      targets: ["LFDashboard"]),
+      name: "LFNetspendDashboard",
+      targets: ["LFNetspendDashboard"]),
     .library(
       name: "LFRewardDashboard",
       targets: ["LFRewardDashboard"]),
@@ -57,12 +57,11 @@ let package = Package(
         .product(name: "BaseCard", package: "LFCard"),
         .product(name: "LFNetSpendCard", package: "LFCard"),
         .product(name: "LFSolidCard", package: "LFCard"),
-        .product(name: "NetspendOnboarding", package: "LFOnboarding"),
         .product(name: "DevicesDomain", package: "LFDomain")
       ]
     ),
     .target(
-      name: "LFDashboard",
+      name: "LFNetspendDashboard",
       dependencies: [
         "LFUtilities", "LFStyleGuide", "LFLocalizable", "LFAccessibility", "BaseDashboard", "LFTransaction", "LFCryptoChart", "CodeScanner", "LFWalletAddress",
         .product(name: "OnboardingData", package: "LFData"),
@@ -74,7 +73,8 @@ let package = Package(
         .product(name: "Services", package: "LFServices"),
         .product(name: "LFNetSpendCard", package: "LFCard"),
         .product(name: "BiometricsManager", package: "LFAuthentication"),
-        .product(name: "LFAuthentication", package: "LFAuthentication")
+        .product(name: "LFAuthentication", package: "LFAuthentication"),
+        .product(name: "NetspendOnboarding", package: "LFOnboarding")
       ]
     ),
     .target(
@@ -113,11 +113,12 @@ let package = Package(
         .product(name: "Services", package: "LFServices"),
         .product(name: "LFNetSpendCard", package: "LFCard"),
         .product(name: "BiometricsManager", package: "LFAuthentication"),
+        .product(name: "NoBankOnboarding", package: "LFOnboarding"),
         .product(name: "LFAuthentication", package: "LFAuthentication")
       ]
     ),
     .testTarget(
       name: "LFDashboardTests",
-      dependencies: ["LFDashboard"])
+      dependencies: ["LFNetspendDashboard"])
   ]
 )
