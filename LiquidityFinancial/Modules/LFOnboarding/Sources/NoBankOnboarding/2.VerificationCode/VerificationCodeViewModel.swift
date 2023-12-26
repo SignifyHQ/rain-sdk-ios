@@ -122,6 +122,7 @@ extension VerificationCodeViewModel {
     DemoAccountsHelper.shared.getOTPInternal(for: formatPhoneNumber)
       .removeDuplicates()
       .receive(on: DispatchQueue.main)
+      .delay(for: 1, scheduler: RunLoop.main)
       .sink { [weak self] code in
         guard let self else { return }
         log.debug(code ?? "performGetTwilioMessagesIfNeccessary not found")

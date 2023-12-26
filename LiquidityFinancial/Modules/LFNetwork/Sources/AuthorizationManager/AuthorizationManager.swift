@@ -52,6 +52,17 @@ public class AuthorizationManager {
   }
   private var session = URLSession.shared
   
+  private var enviroment: NetworkEnvironment {
+    NetworkEnvironment(rawValue: UserDefaults.environmentSelection) ?? .productionLive
+  }
+  
+  public var baseURL: URL {
+    switch enviroment {
+    case .productionLive: return APIConstants.baseProdURL
+    case .productionTest: return APIConstants.baseDevURL
+    }
+  }
+  
   public init() {}
   
   public func forcedLogout() {
@@ -65,7 +76,7 @@ public extension AuthorizationManager {
     guard let refreshToken = refreshToken else {
       throw AuthError.missingToken
     }
-    var components = URLComponents(string: APIConstants.baseDevURL.absoluteString)!
+    var components = URLComponents(string: baseURL.absoluteString)!
     components.path = "/v1/password-less/refresh-token"
     
     var body: [String: Any] {
@@ -94,11 +105,7 @@ public extension AuthorizationManager {
       throw AuthError.invalidBody
     }
     
-    log.debug("AuthorizationManager: refreshToken \n \(request)")
-    
     let (data, response) = try await session.data(for: request)
-    
-    log.debug("AuthorizationManager: refreshToken \n \(response)")
     
     if let statusCode = (response as? HTTPURLResponse)?.statusCode, statusCode == APIConstants.StatusCodes.unauthorized {
       throw AuthError.unauthorized

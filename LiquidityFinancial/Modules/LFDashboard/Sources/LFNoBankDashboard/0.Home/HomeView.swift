@@ -33,6 +33,7 @@ public struct HomeView: View {
       ForEach(viewModel.tabOptions, id: \.self) { option in
         DashboardView(option: option)
           .opacity(viewModel.tabSelected == option ? 1 : 0)
+          .padding(.bottom, 50)
       }
       tabBarItems
     }

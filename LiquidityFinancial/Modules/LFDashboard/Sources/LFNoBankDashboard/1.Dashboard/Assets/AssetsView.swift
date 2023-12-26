@@ -8,12 +8,12 @@ import Services
 struct AssetsView: View {
   @StateObject private var viewModel: AssetsViewModel
   
-  init(viewModel: AssetsViewModel) {
-    self._viewModel = .init(wrappedValue: viewModel)
+  init() {
+    _viewModel = .init(wrappedValue: AssetsViewModel())
   }
   
   var body: some View {
-    ZStack {
+    Group {
       if viewModel.isLoading {
         LottieView(loading: .primary)
           .frame(width: 30, height: 20)
@@ -24,19 +24,20 @@ struct AssetsView: View {
               assetCell(asset: asset)
             }
           }
-          .padding(.top, 24)
           Spacer()
           Text(LFLocalizable.Zerohash.Disclosure.description)
             .font(Fonts.regular.swiftUIFont(size: 10))
             .foregroundColor(Colors.label.swiftUIColor.opacity(0.5))
             .padding(.bottom, 8)
         }
+        .padding(.top, 5)
+        .refreshable {
+          await viewModel.refresh()
+        }
       }
     }
-    .refreshable {
-      await viewModel.refresh()
-    }
     .frame(max: .infinity)
+    .navigationBarTitleDisplayMode(.inline)
     .background(Colors.background.swiftUIColor)
     .popup(item: $viewModel.toastMessage, style: .toast) {
       ToastView(toastMessage: $0)

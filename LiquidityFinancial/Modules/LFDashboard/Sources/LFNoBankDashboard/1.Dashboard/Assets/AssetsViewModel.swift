@@ -12,7 +12,7 @@ final class AssetsViewModel: ObservableObject {
   @LazyInjected(\.accountRepository) var accountRepository
   @LazyInjected(\.dashboardRepository) var dashboardRepository
   
-  @Published var isLoading: Bool = false
+  @Published var isLoading: Bool = true
   @Published var toastMessage: String?
   @Published var assets: [AssetModel] = []
   @Published var navigation: Navigation?
@@ -26,8 +26,13 @@ final class AssetsViewModel: ObservableObject {
         accounts.map({ AssetModel(account: $0) })
           .filter({ $0.type != .usd })
       })
+      .removeDuplicates()
       .receive(on: DispatchQueue.main)
-      .assign(to: \.assets, on: self)
+      .sink(receiveValue: { [weak self] assets in
+        guard let self else { return }
+        self.assets = assets
+        self.isLoading = false
+      })
       .store(in: &cancellable)
   }
   

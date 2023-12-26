@@ -103,7 +103,7 @@ extension PushNotificationsService: MessagingDelegate {
         userInfo: dataDict
       )
     } else {
-      log.error("notification didReceiveRegistrationToken: is empty")
+      log.info("notification didReceiveRegistrationToken: is empty")
     }
   }
 }

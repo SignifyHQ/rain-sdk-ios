@@ -26,7 +26,7 @@ struct DashboardView: View {
       case .rewards:
         RewardTabView()
       case .assets:
-        AssetsView(viewModel: AssetsViewModel())
+        AssetsView()
       case .account:
         AccountsView(viewModel: AccountViewModel())
       }

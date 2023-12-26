@@ -76,7 +76,7 @@ public class IntercomService: CustomerSupportServiceProtocol {
       case .success:
         log.info("IntercomService login UnidentifiedUser is success")
       case .failure(let error):
-        log.error(error.localizedDescription)
+        log.info(error.localizedDescription)
       }
     }
   }
