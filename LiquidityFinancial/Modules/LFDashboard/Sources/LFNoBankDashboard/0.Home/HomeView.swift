@@ -28,37 +28,15 @@ public struct HomeView: View {
   }
   
   public var body: some View {
-    TabView(selection: $viewModel.tabSelected) {
+    ZStack(alignment: .bottom) {
+      // Ensure each TabOptionView is initialized only once
       ForEach(viewModel.tabOptions, id: \.self) { option in
-        if #available(iOS 17.0, *) {
-          loadTabView(option: option)
-            .toolbar(.visible, for: .tabBar)
-            .toolbarBackground(Colors.secondaryBackground.swiftUIColor, for: .tabBar)
-        } else {
-          loadTabView(option: option)
-        }
+        DashboardView(option: option)
+          .opacity(viewModel.tabSelected == option ? 1 : 0)
       }
+      tabBarItems
     }
     .navigationBarTitleDisplayMode(.inline)
-    .tint(Colors.tabbarSelected.swiftUIColor)
-    .onAppear {
-      UITabBar.appearance().backgroundColor = Colors.secondaryBackground.swiftUIColor.uiColor
-      UITabBar.appearance().unselectedItemTintColor = Colors.tabbarUnselected.swiftUIColor.uiColor
-      UITabBarItem.appearance().setTitleTextAttributes(
-        [
-          NSAttributedString.Key.font: Fonts.orbitronMedium.font(size: 10),
-          NSAttributedString.Key.foregroundColor: Colors.label.swiftUIColor.opacity(0.75).uiColor
-        ],
-        for: .normal
-      )
-      UITabBarItem.appearance().setTitleTextAttributes(
-        [
-          NSAttributedString.Key.font: Fonts.orbitronMedium.font(size: 10),
-          NSAttributedString.Key.foregroundColor: Colors.label.swiftUIColor.uiColor
-        ],
-        for: .selected
-      )
-    }
     .toolbar {
       ToolbarItem(placement: .navigationBarTrailing) {
         trailingNavigationBarView
@@ -87,11 +65,19 @@ public struct HomeView: View {
 
 // MARK: - View Components
 private extension HomeView {
-  func loadTabView(option: TabOption) -> some View {
-    DashboardView(option: option).tabItem {
-      tabItem(option: option)
+  var tabBarItems: some View {
+    HStack(spacing: 0) {
+      ForEach(viewModel.tabOptions, id: \.self) { option in
+        tabItem(option: option)
+        if option != viewModel.tabOptions.last {
+          Spacer()
+        }
+      }
     }
-    .tag(option)
+    .padding(.horizontal, 32)
+    .padding(.bottom, 2)
+    .padding(.top, 4)
+    .background(Colors.secondaryBackground.swiftUIColor)
   }
   
   var leadingNavigationBarView: some View {
@@ -140,7 +126,7 @@ private extension HomeView {
     }
   }
   
-  private var notificationsPopup: some View {
+  var notificationsPopup: some View {
     LiquidityAlert(
       title: LFLocalizable.NotificationPopup.title,
       message: LFLocalizable.NotificationPopup.subtitle,
