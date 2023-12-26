@@ -16,6 +16,7 @@ class ConfirmSendCryptoViewModel: ObservableObject {
   @LazyInjected(\.zerohashRepository) var zerohashRepository
   @LazyInjected(\.biometricsManager) var biometricsManager
   @LazyInjected(\.cryptoAccountService) var cryptoAccountService
+  @LazyInjected(\.analyticsService) var analyticsService
   
   @Published var showIndicator: Bool = false
   @Published var toastMessage: String?
@@ -74,6 +75,7 @@ class ConfirmSendCryptoViewModel: ObservableObject {
   }
   
   func confirmButtonClicked() {
+    analyticsService.track(event: AnalyticsEvent(name: .tapsSendCrypto))
     callBioMetric()
   }
   

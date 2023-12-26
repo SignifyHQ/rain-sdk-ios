@@ -340,6 +340,24 @@
 "directDeposit.secondBenefit.title" = "3 ATM fees covered each month you direct deposit $300+";
 "directDeposit.copied.message" = "Copied to clipboard";
 
+// BuySellCrypto confirm
+"confirmBuySellCrypto.buy.title" = "CONFIRM YOUR AVAX PURCHASE OF %@";
+"confirmBuySellCrypto.sell.title" = "CONFIRM YOUR AVAX SELL OF %@";
+"confirmBuySellCrypto.orderType.title" = "Order Type";
+"confirmBuySellCrypto.buy.text" = "BUY";
+"confirmBuySellCrypto.sell.text" = "SELL";
+"confirmBuySellCrypto.amount.title" = "Amount";
+"confirmBuySellCrypto.amount.value_crypto" = "%@ AVAX";
+"confirmBuySellCrypto.exchangeRate.title" = "Exchange Rate";
+"confirmBuySellCrypto.price.value" = "%@";
+"confirmBuySellCrypto.symbol.title" = "Symbol";
+"confirmBuySellCrypto.fee.title" = "Fees";
+"confirmBuySellCrypto.total.title" = "Total";
+"confirmBuySellCrypto.total.value" = "%@";
+"confirmBuySellCrypto.disclosure.crypto" = "Orders may not be canceled or reversed once submitted by you. Also, if a withdrawal request is being made, you are requesting an on-chain transaction that is not reversible or recallable. You are responsible for reviewing the recipient address and ensuring it is the correct address for the selected asset for withdrawal.";
+"confirmBuySellCrypto.disclosure.donation" = "100%% of funds are tax deductible and granted to designated nonprofit: %@. EIN: %@.\n\nDonations made to ShoppingGives Foundation\nEIN: 83-1352270";
+"confirmBuySellCrypto.confirm" = "Confirm";
+
 // BuySellCrypto
 "MoveCryptoInput.buy.title" = "BUY %@";
 "MoveCryptoInput.buyAvailableBalance.subtitle" = "%@ available";

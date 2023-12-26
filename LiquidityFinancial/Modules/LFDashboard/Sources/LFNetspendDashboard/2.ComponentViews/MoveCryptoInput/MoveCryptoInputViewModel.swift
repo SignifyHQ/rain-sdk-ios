@@ -161,22 +161,7 @@ private extension MoveCryptoInputViewModel {
   }
   
   func fetchBuyCryptoQuote(amount: String) {
-    //    guard let account = accountManager.cryptoAccount else { return }
-    //    isPerformingAction = true
-    //    Task {
-    //      do {
-    //        let quote: CryptoQuoteDetail = try await networkService.handle(request: Endpoints.createCryptoQuote(walletID: account.id, paymentType: "amount", amtValue: amount))
-    //        if let cashAccount = accountManager.cashAccount {
-    //          navigation = .detail(.init(type: .buyCrypto(quote: quote, cryptoAccount: account, cashAccount: cashAccount)))
-    //        } else {
-    //          log.error(LiquidityError.logic, "Unable to show BuySellDetailView without accounts")
-    //        }
-    //      } catch {
-    //        log.error(error, "failed to get buy quote for crypto")
-    //        toastMessage = error.localizedDescription
-    //      }
-    //      isPerformingAction = false
-    //    }
+
   }
   
   func fetchSellCryptoQuote(amount: String) {
@@ -185,9 +170,8 @@ private extension MoveCryptoInputViewModel {
       isPerformingAction = true
       do {
         let accountID = assetModel.id
-        let entity = try await getSellCryptoQouteUseCase.execute(accountId: accountID, amount: amount, quantity: "quantity")
-        navigation = .detail
-        //TODO: We will handle the next step after implementing UI Detail
+        let entity = try await getSellCryptoQouteUseCase.execute(accountId: accountID, amount: nil, quantity: amount)
+        navigation = .confirmSell(entity, accountId: accountID)
         log.debug(entity)
       } catch {
         log.error(error)
@@ -367,7 +351,8 @@ extension MoveCryptoInputViewModel {
   }
   
   enum Navigation {
-    case detail
+    case confirmSell(GetSellQuoteEntity, accountId: String)
+    case confirmBuy(GetSellQuoteEntity, accountId: String)
     case confirmSend(lockedFeeResponse: APILockedNetworkFeeResponse? = nil)
   }
 }

@@ -1019,6 +1019,75 @@ public enum LFLocalizable {
       public static let title = LFLocalizable.tr("Localizable", "changeAsset.screen.title", fallback: "Change asset")
     }
   }
+  public enum ConfirmBuySellCrypto {
+    /// Confirm
+    public static let confirm = LFLocalizable.tr("Localizable", "confirmBuySellCrypto.confirm", fallback: "Confirm")
+    public enum Amount {
+      /// Amount
+      public static let title = LFLocalizable.tr("Localizable", "confirmBuySellCrypto.amount.title", fallback: "Amount")
+      /// %@ DOGE
+      public static func valueCrypto(_ p1: Any) -> String {
+        return LFLocalizable.tr("Localizable", "confirmBuySellCrypto.amount.value_crypto", String(describing: p1), fallback: "%@ DOGE")
+      }
+    }
+    public enum Buy {
+      /// BUY
+      public static let text = LFLocalizable.tr("Localizable", "confirmBuySellCrypto.buy.text", fallback: "BUY")
+      /// CONFIRM YOUR DOGE PURCHASE OF %@
+      public static func title(_ p1: Any) -> String {
+        return LFLocalizable.tr("Localizable", "confirmBuySellCrypto.buy.title", String(describing: p1), fallback: "CONFIRM YOUR DOGE PURCHASE OF %@")
+      }
+    }
+    public enum Disclosure {
+      /// Orders may not be canceled or reversed once submitted by you. Also, if a withdrawal request is being made, you are requesting an on-chain transaction that is not reversible or recallable. You are responsible for reviewing the recipient address and ensuring it is the correct address for the selected asset for withdrawal.
+      public static let crypto = LFLocalizable.tr("Localizable", "confirmBuySellCrypto.disclosure.crypto", fallback: "Orders may not be canceled or reversed once submitted by you. Also, if a withdrawal request is being made, you are requesting an on-chain transaction that is not reversible or recallable. You are responsible for reviewing the recipient address and ensuring it is the correct address for the selected asset for withdrawal.")
+      /// 100%% of funds are tax deductible and granted to designated nonprofit: %@. EIN: %@.
+      /// 
+      /// Donations made to ShoppingGives Foundation
+      /// EIN: 83-1352270
+      public static func donation(_ p1: Any, _ p2: Any) -> String {
+        return LFLocalizable.tr("Localizable", "confirmBuySellCrypto.disclosure.donation", String(describing: p1), String(describing: p2), fallback: "100%% of funds are tax deductible and granted to designated nonprofit: %@. EIN: %@.\n\nDonations made to ShoppingGives Foundation\nEIN: 83-1352270")
+      }
+    }
+    public enum ExchangeRate {
+      /// Exchange Rate
+      public static let title = LFLocalizable.tr("Localizable", "confirmBuySellCrypto.exchangeRate.title", fallback: "Exchange Rate")
+    }
+    public enum Fee {
+      /// Fees
+      public static let title = LFLocalizable.tr("Localizable", "confirmBuySellCrypto.fee.title", fallback: "Fees")
+    }
+    public enum OrderType {
+      /// Order Type
+      public static let title = LFLocalizable.tr("Localizable", "confirmBuySellCrypto.orderType.title", fallback: "Order Type")
+    }
+    public enum Price {
+      /// %@
+      public static func value(_ p1: Any) -> String {
+        return LFLocalizable.tr("Localizable", "confirmBuySellCrypto.price.value", String(describing: p1), fallback: "%@")
+      }
+    }
+    public enum Sell {
+      /// SELL
+      public static let text = LFLocalizable.tr("Localizable", "confirmBuySellCrypto.sell.text", fallback: "SELL")
+      /// CONFIRM YOUR DOGE SELL OF %@
+      public static func title(_ p1: Any) -> String {
+        return LFLocalizable.tr("Localizable", "confirmBuySellCrypto.sell.title", String(describing: p1), fallback: "CONFIRM YOUR DOGE SELL OF %@")
+      }
+    }
+    public enum Symbol {
+      /// Symbol
+      public static let title = LFLocalizable.tr("Localizable", "confirmBuySellCrypto.symbol.title", fallback: "Symbol")
+    }
+    public enum Total {
+      /// Total
+      public static let title = LFLocalizable.tr("Localizable", "confirmBuySellCrypto.total.title", fallback: "Total")
+      /// %@
+      public static func value(_ p1: Any) -> String {
+        return LFLocalizable.tr("Localizable", "confirmBuySellCrypto.total.value", String(describing: p1), fallback: "%@")
+      }
+    }
+  }
   public enum ConnectedView {
     /// Connected Accounts
     public static let title = LFLocalizable.tr("Localizable", "connectedView.title", fallback: "Connected Accounts")

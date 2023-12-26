@@ -70,6 +70,16 @@ extension ZerohashRoute: LFRoute {
           "quantity": quantity
         ]
       }
+      if let amount = amount {
+        return [
+          "amount": amount
+        ]
+      }
+      if let quantity = quantity {
+        return [
+          "quantity": quantity
+        ]
+      }
       return nil
     case let .sendCrypto(_, destinationAddress, amount):
       return [

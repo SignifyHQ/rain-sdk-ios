@@ -59,4 +59,35 @@ final class ZerohashRepositoryTests: XCTestCase {
       expect(expectedError).to(equal(error))
     })
   }
+  
+  // Test the functionality of `sellCrypto` under expected conditions.
+  func test_SellCrypto_happy_case() async {
+    // Given the expected mock success and fail results
+    var mockSuccessResult = APISellCrypto()
+    mockSuccessResult.id = "mock_id"
+    self.api.sellCryptoAccountIdQuoteIdReturnValue = mockSuccessResult
+    
+    await expect {
+      // When calling `sellCrypto` function with parameters which should return `id` successfully
+      try await self.repository.sellCrypto(accountId: "mock_account_id", quoteId: "mock_qoute_id").id
+    }
+    // Then the `sellCrypto` received matches our expectation
+    .to(equal(mockSuccessResult.id))
+  }
+  
+  // Test the `sellCrypto` functionality when it encounters an error.
+  func test_SellCrypto_failed_case() async {
+    // Given a mock error which will be thrown
+    let expectedError = TestError.fail("mock_error")
+    
+    self.api.sellCryptoAccountIdQuoteIdThrowableError = expectedError
+    // When calling the `getSellCryptoQoute` functionality on the repository with parameters which should throw an error
+    await expect {
+      try await self.repository.sellCrypto(accountId: "mock_account_id", quoteId: "mock_qoute_id")
+    }
+    .to(throwError { error in
+      // The error is the one we expected
+      expect(expectedError).to(equal(error))
+    })
+  }
 }

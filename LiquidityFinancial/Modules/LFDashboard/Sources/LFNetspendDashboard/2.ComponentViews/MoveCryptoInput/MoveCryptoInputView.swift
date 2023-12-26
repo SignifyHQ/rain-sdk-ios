@@ -43,8 +43,10 @@ struct MoveCryptoInputView: View {
     .navigationBarTitleDisplayMode(.inline)
     .navigationLink(item: $viewModel.navigation) { navigation in
       switch navigation {
-      case .detail:
-        EmptyView()
+      case .confirmSell(let quoteEntity, let accountID):
+        ConfirmBuySellCryptoView(viewModel: ConfirmBuySellCryptoViewModel(type: .sellCrypto(quote: quoteEntity, accountID: accountID)))
+      case .confirmBuy(let quoteEntity, let accountID):
+        ConfirmBuySellCryptoView(viewModel: ConfirmBuySellCryptoViewModel(type: .buyCrypto(quote: quoteEntity, accountID: accountID)))
       case .confirmSend(let lockedFeeResponse):
         ConfirmSendCryptoView(
           assetModel: viewModel.assetModel,
