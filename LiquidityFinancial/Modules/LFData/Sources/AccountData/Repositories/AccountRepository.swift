@@ -129,4 +129,8 @@ public class AccountRepository: AccountRepositoryProtocol {
   public func getSecretKey() async throws -> SecretKeyEntity {
     try await accountAPI.getSecretKey()
   }
+  
+  public func enableMFA(code: String) async throws -> EnableMFAEntity {
+    try await accountAPI.enableMFA(code: code)
+  }
 }

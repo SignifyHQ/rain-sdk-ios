@@ -15,13 +15,24 @@ final class SetupAuthenticatorAppViewModel: ObservableObject {
   @LazyInjected(\.customerSupportService) var customerSupportService
 
   @Published var isInit: Bool = false
+  @Published var isVerifyingTOTP: Bool = false
   @Published var verificationCode: String = .empty
+  @Published var recoveryCode: String = .empty
   @Published var secretKey: String = .empty
   @Published var qrCode = UIImage()
   @Published var toastMessage: String?
+  @Published var popup: Popup?
+  
+  var isDisableVerifyButton: Bool {
+    verificationCode.trimWhitespacesAndNewlines().count != Constants.MaxCharacterLimit.mfaCode.value
+  }
   
   lazy var getSecretKeyUseCase: GetSecretKeyUseCaseProtocol = {
     GetSecretKeyUseCase(repository: accountRepository)
+  }()
+  
+  lazy var enableMFAUseCase: EnableMFAUseCaseProtocol = {
+    EnableMFAUseCase(repository: accountRepository)
   }()
   
   init() {
@@ -41,13 +52,24 @@ extension SetupAuthenticatorAppViewModel {
         secretKey = response.secretKey.trimmingCharacters(in: ["="])
         qrCode = generateQRCode()
       } catch {
-        log.error(error.localizedDescription)
-        toastMessage = error.userFriendlyMessage
+        handleError(error: error)
       }
     }
   }
   
   func enableMFAAuthentication() {
+    Task {
+      defer { isVerifyingTOTP = false }
+      isVerifyingTOTP = true
+      
+      do {
+        let response = try await enableMFAUseCase.execute(code: verificationCode)
+        recoveryCode = response.recoveryCode
+        popup = .recoveryCode
+      } catch {
+        handleError(error: error)
+      }
+    }
   }
 }
 
@@ -57,9 +79,17 @@ extension SetupAuthenticatorAppViewModel {
     customerSupportService.openSupportScreen()
   }
   
-  func copyAddress() {
-    UIPasteboard.general.string = secretKey
+  func copyText(text: String) {
+    UIPasteboard.general.string = text
     toastMessage = LFLocalizable.Toast.Copy.message
+  }
+  
+  func didRecoveryCodeSave() {
+    popup = .mfaTurnedOn
+  }
+  
+  func hidePopup() {
+    popup = nil
   }
 }
 
@@ -89,5 +119,18 @@ private extension SetupAuthenticatorAppViewModel {
     }
     
     return nil
+  }
+  
+  func handleError(error: Error) {
+    log.error(error.localizedDescription)
+    toastMessage = error.userFriendlyMessage
+  }
+}
+
+// MARK: - Types
+extension SetupAuthenticatorAppViewModel {
+  enum Popup {
+    case recoveryCode
+    case mfaTurnedOn
   }
 }

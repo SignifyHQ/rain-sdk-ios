@@ -680,6 +680,16 @@ public enum LFLocalizable {
       public static let enterCodePlaceHolder = LFLocalizable.tr("Localizable", "authentication.setup_mfa.enter_code_placeHolder", fallback: "Enter Code")
       /// Enter Code
       public static let enterCodeTitle = LFLocalizable.tr("Localizable", "authentication.setup_mfa.enter_code_title", fallback: "Enter Code")
+      /// MFA TURNED ON
+      public static let mfaTurnedOn = LFLocalizable.tr("Localizable", "authentication.setup_mfa.mfa_turnedOn", fallback: "MFA TURNED ON")
+      /// I have safely recorded this code
+      public static let recoveryCodeCheckBoxTitle = LFLocalizable.tr("Localizable", "authentication.setup_mfa.recoveryCode_checkBox_title", fallback: "I have safely recorded this code")
+      /// Copy code
+      public static let recoveryCodeCopyCodeButton = LFLocalizable.tr("Localizable", "authentication.setup_mfa.recoveryCode_copyCode_button", fallback: "Copy code")
+      /// Copy this recovery code and keep it somewhere  safe, You’ll need it if you ever need to log in without your device
+      public static let recoveryCodePopupMessage = LFLocalizable.tr("Localizable", "authentication.setup_mfa.recoveryCode_popup_message", fallback: "Copy this recovery code and keep it somewhere  safe, You’ll need it if you ever need to log in without your device")
+      /// Almost there!
+      public static let recoveryCodePopupTitle = LFLocalizable.tr("Localizable", "authentication.setup_mfa.recoveryCode_popup_title", fallback: "Almost there!")
       /// Open the app and scan the QR Code image below or enter your key manually:
       public static let scanQrCodeDescription = LFLocalizable.tr("Localizable", "authentication.setup_mfa.scan_qrCode_description", fallback: "Open the app and scan the QR Code image below or enter your key manually:")
       /// Scan QR code
@@ -811,6 +821,10 @@ public enum LFLocalizable {
     public enum Ok {
       /// OK
       public static let title = LFLocalizable.tr("Localizable", "button.ok.title", fallback: "OK")
+    }
+    public enum Okay {
+      /// Okay
+      public static let title = LFLocalizable.tr("Localizable", "button.okay.title", fallback: "Okay")
     }
     public enum Retry {
       /// Retry

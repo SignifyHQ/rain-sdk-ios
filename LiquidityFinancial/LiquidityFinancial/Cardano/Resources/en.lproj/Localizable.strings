@@ -963,6 +963,11 @@ contact support.";
 "authentication.setup_mfa.verify_2faCode_description" = "Open the app and scan the QR Code image below or enter your key manually:";
 "authentication.setup_mfa.enter_code_title" = "Enter Code";
 "authentication.setup_mfa.enter_code_placeHolder" = "Enter Code";
+"authentication.setup_mfa.recoveryCode_popup_title" = "Almost there!";
+"authentication.setup_mfa.recoveryCode_popup_message" = "Copy this recovery code and keep it somewhere  safe, You’ll need it if you ever need to log in without your device";
+"authentication.setup_mfa.recoveryCode_copyCode_button" = "Copy code";
+"authentication.setup_mfa.recoveryCode_checkBox_title" = "I have safely recorded this code";
+"authentication.setup_mfa.mfa_turnedOn" = "MFA TURNED ON";
 
 // MARK: - Common
 
@@ -989,6 +994,7 @@ contact support.";
 "button.continue.title" = "Continue";
 "button.logout.title" = "Log Out";
 "button.ok.title" = "OK";
+"button.okay.title" = "Okay";
 "button.skip.title" = "Skip";
 "button.notNow.title" = "Not now";
 "button.done.title" = "Done";

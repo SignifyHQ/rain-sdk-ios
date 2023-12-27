@@ -223,4 +223,13 @@ extension LFCoreNetwork: AccountAPIProtocol where R == AccountRoute {
       decoder: .apiDecoder
     )
   }
+  
+  public func enableMFA(code: String) async throws -> APIEnableMFA {
+    try await request(
+      AccountRoute.enableMFA(code: code),
+      target: APIEnableMFA.self,
+      failure: LFErrorObject.self,
+      decoder: .apiDecoder
+    )
+  }
 }

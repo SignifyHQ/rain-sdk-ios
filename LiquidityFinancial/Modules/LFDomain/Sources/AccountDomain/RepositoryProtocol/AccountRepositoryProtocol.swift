@@ -31,4 +31,5 @@ public protocol AccountRepositoryProtocol {
   func getMigrationStatus() async throws -> MigrationStatusEntity
   func requestMigration() async throws -> MigrationStatusEntity
   func getSecretKey() async throws -> SecretKeyEntity
+  func enableMFA(code: String) async throws -> EnableMFAEntity
 }

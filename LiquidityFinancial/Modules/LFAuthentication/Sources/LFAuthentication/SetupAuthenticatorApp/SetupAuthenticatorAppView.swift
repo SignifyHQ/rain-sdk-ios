@@ -6,6 +6,8 @@ import LFLocalizable
 struct SetupAuthenticatorAppView: View {
   @Environment(\.dismiss) private var dismiss
   @StateObject private var viewModel = SetupAuthenticatorAppViewModel()
+  @State private var isSavedRecoveryCode = false
+  @State private var dismissMethods: Popup.DismissMethods = []
   
   var body: some View {
     ZStack {
@@ -19,6 +21,14 @@ struct SetupAuthenticatorAppView: View {
     .padding(.bottom, 16)
     .popup(item: $viewModel.toastMessage, style: .toast) {
       ToastView(toastMessage: $0)
+    }
+    .popup(item: $viewModel.popup, dismissMethods: dismissMethods) { item in
+      switch item {
+      case .recoveryCode:
+        recoveryCodePopup
+      case .mfaTurnedOn:
+        mfaTurnedOnPopup
+      }
     }
     .defaultToolBar(
       icon: .support,
@@ -38,9 +48,10 @@ private extension SetupAuthenticatorAppView {
         instructionView
         FullSizeButton(
           title: LFLocalizable.Button.Verify.title,
-          isDisable: viewModel.verificationCode.trimWhitespacesAndNewlines().isEmpty,
-          isLoading: .constant(false)
+          isDisable: viewModel.isDisableVerifyButton,
+          isLoading: $viewModel.isVerifyingTOTP
         ) {
+          dismissMethods = []
           viewModel.enableMFAAuthentication()
         }
       }
@@ -112,7 +123,7 @@ private extension SetupAuthenticatorAppView {
       TextFieldWrapper {
         TextField("", text: $viewModel.verificationCode)
           .primaryFieldStyle()
-          .keyboardType(.default)
+          .keyboardType(.numberPad)
           .modifier(
             PlaceholderStyle(
               showPlaceHolder: viewModel.verificationCode.isEmpty,
@@ -155,11 +166,102 @@ private extension SetupAuthenticatorAppView {
         .frame(24)
         .foregroundColor(Colors.primary.swiftUIColor)
         .onTapGesture {
-          viewModel.copyAddress()
+          viewModel.copyText(text: viewModel.secretKey)
         }
     }
     .frame(maxWidth: .infinity)
     .padding(.top, 12)
     .padding([.horizontal, .bottom], 16)
+  }
+  
+  var mfaTurnedOnPopup: some View {
+    LiquidityAlert(
+      title: LFLocalizable.Authentication.SetupMfa.mfaTurnedOn.uppercased(),
+      primary: .init(text: LFLocalizable.Button.Okay.title) {
+        viewModel.hidePopup()
+        dismiss()
+      }
+    )
+  }
+}
+
+// MARK: - Recovery Popup
+private extension SetupAuthenticatorAppView {
+  var recoveryCodePopup: some View {
+    PopupAlert(padding: 16) {
+      VStack(spacing: 32) {
+        GenImages.Images.icLogo.swiftUIImage
+          .resizable()
+          .frame(100)
+        VStack(alignment: .leading, spacing: 24) {
+          recoveryCodeTitleView
+          recoveryCodeView
+        }
+        FullSizeButton(title: LFLocalizable.Button.Continue.title, isDisable: !isSavedRecoveryCode) {
+          dismissMethods = [.tapOutside]
+          viewModel.didRecoveryCodeSave()
+        }
+        .padding(.bottom, 8)
+      }
+    }
+  }
+
+  var recoveryCodeTitleView: some View {
+    VStack(spacing: 16) {
+      Text(LFLocalizable.Authentication.SetupMfa.recoveryCodePopupTitle.uppercased())
+        .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.main.value))
+        .foregroundColor(Colors.label.swiftUIColor)
+        .multilineTextAlignment(.center)
+      Text(LFLocalizable.Authentication.SetupMfa.recoveryCodePopupMessage)
+        .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.medium.value))
+        .foregroundColor(Colors.label.swiftUIColor.opacity(0.75))
+        .multilineTextAlignment(.center)
+        .lineSpacing(1.33)
+    }
+  }
+  
+  var recoveryCodeView: some View {
+    VStack(spacing: 8) {
+      RoundedRectangle(cornerRadius: 10)
+        .stroke(Colors.label.swiftUIColor.opacity(0.25), lineWidth: 1)
+        .frame(height: 40)
+        .overlay {
+          Text(viewModel.recoveryCode)
+            .font(Fonts.medium.swiftUIFont(size: Constants.FontSize.medium.value))
+            .foregroundColor(Colors.label.swiftUIColor)
+        }
+      FullSizeButton(
+        title: LFLocalizable.Authentication.SetupMfa.recoveryCodeCopyCodeButton,
+        isDisable: false,
+        type: .secondary
+      ) {
+        viewModel.copyText(text: viewModel.recoveryCode)
+      }
+      recoveryCheckBox
+    }
+  }
+  
+  var recoveryCheckBox: some View {
+    HStack(spacing: 10) {
+      RoundedRectangle(cornerRadius: 2)
+        .stroke(Colors.label.swiftUIColor, lineWidth: 1.5)
+        .frame(18)
+        .overlay {
+          ZStack {
+            if isSavedRecoveryCode {
+              GenImages.CommonImages.icCheckmark.swiftUIImage
+                .foregroundColor(Colors.label.swiftUIColor)
+            }
+          }
+        }
+        .onTapGesture {
+          isSavedRecoveryCode.toggle()
+        }
+      Text(LFLocalizable.Authentication.SetupMfa.recoveryCodeCheckBoxTitle)
+        .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.small.value))
+        .foregroundColor(Colors.label.swiftUIColor.opacity(0.75))
+      Spacer()
+    }
+    .padding([.horizontal, .top], 4)
   }
 }

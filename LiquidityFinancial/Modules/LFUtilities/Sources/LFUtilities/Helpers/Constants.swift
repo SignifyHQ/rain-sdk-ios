@@ -73,7 +73,7 @@ public enum Constants {
       case .fullPassportLength:
         return 20
       case .mfaCode:
-        return 20
+        return 6
       case .any:
         return 200
       }
