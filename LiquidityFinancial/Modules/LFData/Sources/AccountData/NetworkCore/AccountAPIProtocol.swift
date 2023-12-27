@@ -30,4 +30,5 @@ public protocol AccountAPIProtocol {
   func createSupportTicket(title: String?, description: String?, type: String) async throws -> APISupportTicket
   func getMigrationStatus() async throws -> APIMigrationStatus
   func requestMigration() async throws -> APIMigrationStatus
+  func getSecretKey() async throws -> APISecretKey
 }

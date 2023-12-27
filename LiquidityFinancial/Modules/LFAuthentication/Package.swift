@@ -21,7 +21,8 @@ let package = Package(
       .package(name: "LFStyleGuide", path: "../LFStyleGuide"),
       .package(name: "LFLocalizable", path: "../LFLocalizable"),
       .package(name: "TestHelpers", path: "../TestHelpers"),
-      .package(url: "https://github.com/hmlongco/Factory", from: "2.3.1")
+      .package(url: "https://github.com/hmlongco/Factory", from: "2.3.1"),
+      .package(name: "LFFeatureFlags", path: "../LFFeatureFlags")
     ],
     targets: [
         .target(
@@ -32,7 +33,8 @@ let package = Package(
               "LFUtilities",
               "LFStyleGuide",
               "LFLocalizable",
-              "BiometricsManager"
+              "BiometricsManager",
+              "LFFeatureFlags"
             ]
         ),
         .target(

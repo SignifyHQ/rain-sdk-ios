@@ -2,6 +2,7 @@ import SwiftUI
 import LFUtilities
 import LFStyleGuide
 import LFLocalizable
+import LFFeatureFlags
 
 public struct SecurityHubView: View {
   @StateObject private var viewModel = SecurityHubViewModel()
@@ -10,27 +11,21 @@ public struct SecurityHubView: View {
   public init() {}
   
   public var body: some View {
-    if #available(iOS 16.0, *) {
-      content
-        .navigationLink(
-          isActive: $viewModel.isChangePasswordFlowPresented
-        ) {
-          EnterPasswordView(
-            purpose: .changePassword,
-            isFlowPresented: $viewModel.isChangePasswordFlowPresented
-          )
+    content
+      .navigationLink(
+        isActive: $viewModel.isChangePasswordFlowPresented
+      ) {
+        EnterPasswordView(
+          purpose: .changePassword,
+          isFlowPresented: $viewModel.isChangePasswordFlowPresented
+        )
+      }
+      .navigationLink(item: $viewModel.navigation) { item in
+        switch item {
+        case .turnOnMFA:
+          SetupAuthenticatorAppView()
         }
-    } else {
-      content
-        .navigationLink(
-          isActive: $viewModel.isChangePasswordFlowPresented
-        ) {
-          EnterPasswordView(
-            purpose: .changePassword,
-            isFlowPresented: $viewModel.isChangePasswordFlowPresented
-          )
-        }
-    }
+      }
   }
 }
 
@@ -119,6 +114,13 @@ private extension SecurityHubView {
           }
         )
       )
+      if LFFeatureFlagContainer.isMultiFactorAuthFeatureFlagEnabled {
+        textInformationCell(
+          title: LFLocalizable.Authentication.SecurityMfa.title,
+          value: LFLocalizable.Authentication.SecurityAuthenticationApp.title,
+          trailingView: mfaToggleButton
+        )
+      }
       if viewModel.isBiometricsCapability {
         fullSizeToggleButton(
           title: viewModel.biometricType.title,
@@ -203,11 +205,20 @@ private extension SecurityHubView {
         .foregroundColor(Colors.label.swiftUIColor)
       Spacer()
       Toggle("", isOn: isOn)
-        .toggleStyle(GradientToggleStyle(didToggleStateChanged: toggleAction))
+        .toggleStyle(GradientToggleStyle(didToggleStateChange: toggleAction))
     }
     .padding(.horizontal, 16)
     .frame(height: 56)
     .background(Colors.secondaryBackground.swiftUIColor.cornerRadius(10))
+  }
+  
+  var mfaToggleButton: some View {
+    Toggle("", isOn: $viewModel.isMFAEnabled)
+      .toggleStyle(
+        GradientToggleStyle(didToggleStateChange: {
+          viewModel.didMFAToggleStateChange()
+        })
+      )
   }
   
   var setupBiometricsPopup: some View {

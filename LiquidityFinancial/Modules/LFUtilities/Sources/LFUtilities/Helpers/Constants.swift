@@ -25,6 +25,7 @@ public enum Constants {
     case cryptoLimit
     case cvv
     case fullPassportLength
+    case mfaCode
     case any
     
     public var value: Int {
@@ -70,6 +71,8 @@ public enum Constants {
       case .cvv:
         return 4
       case .fullPassportLength:
+        return 20
+      case .mfaCode:
         return 20
       case .any:
         return 200

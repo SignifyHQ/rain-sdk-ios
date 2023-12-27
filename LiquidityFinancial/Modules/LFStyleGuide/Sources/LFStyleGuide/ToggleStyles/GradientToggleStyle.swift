@@ -4,8 +4,8 @@ import SwiftUI
 public struct GradientToggleStyle: ToggleStyle {
   private let action: (() -> Void)?
   
-  public init(didToggleStateChanged: (() -> Void)? = nil) {
-    self.action = didToggleStateChanged
+  public init(didToggleStateChange: (() -> Void)? = nil) {
+    self.action = didToggleStateChange
   }
   
   public func makeBody(configuration: Configuration) -> some View {

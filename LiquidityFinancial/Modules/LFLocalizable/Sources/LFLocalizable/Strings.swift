@@ -669,6 +669,28 @@ public enum LFLocalizable {
       /// SETUP ENHANCED SECURITY
       public static let title = LFLocalizable.tr("Localizable", "authentication.setup_enhanced_security.title", fallback: "SETUP ENHANCED SECURITY")
     }
+    public enum SetupMfa {
+      /// We highly recommend that you enable Two-Factor Authentication. It ties your login information to a mobile device, making it much harder for someone to hack into your account.
+      public static let description = LFLocalizable.tr("Localizable", "authentication.setup_mfa.description", fallback: "We highly recommend that you enable Two-Factor Authentication. It ties your login information to a mobile device, making it much harder for someone to hack into your account.")
+      /// You must have Google Authenticator or Authy installed on your phone.
+      public static let downloadAppDescription = LFLocalizable.tr("Localizable", "authentication.setup_mfa.download_app_description", fallback: "You must have Google Authenticator or Authy installed on your phone.")
+      /// Download App
+      public static let downloadAppTitle = LFLocalizable.tr("Localizable", "authentication.setup_mfa.download_app_title", fallback: "Download App")
+      /// Enter Code
+      public static let enterCodePlaceHolder = LFLocalizable.tr("Localizable", "authentication.setup_mfa.enter_code_placeHolder", fallback: "Enter Code")
+      /// Enter Code
+      public static let enterCodeTitle = LFLocalizable.tr("Localizable", "authentication.setup_mfa.enter_code_title", fallback: "Enter Code")
+      /// Open the app and scan the QR Code image below or enter your key manually:
+      public static let scanQrCodeDescription = LFLocalizable.tr("Localizable", "authentication.setup_mfa.scan_qrCode_description", fallback: "Open the app and scan the QR Code image below or enter your key manually:")
+      /// Scan QR code
+      public static let scanQrCodeTitle = LFLocalizable.tr("Localizable", "authentication.setup_mfa.scan_qrCode_title", fallback: "Scan QR code")
+      /// TURN ON MFA WITH AUTHENTICATOR APP
+      public static let title = LFLocalizable.tr("Localizable", "authentication.setup_mfa.title", fallback: "TURN ON MFA WITH AUTHENTICATOR APP")
+      /// Open the app and scan the QR Code image below or enter your key manually:
+      public static let verify2faCodeDescription = LFLocalizable.tr("Localizable", "authentication.setup_mfa.verify_2faCode_description", fallback: "Open the app and scan the QR Code image below or enter your key manually:")
+      /// Verify your 2FA code
+      public static let verify2faCodeTitle = LFLocalizable.tr("Localizable", "authentication.setup_mfa.verify_2faCode_title", fallback: "Verify your 2FA code")
+    }
   }
   public enum BalanceAlert {
     /// Deposit

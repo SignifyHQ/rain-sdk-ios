@@ -30,4 +30,5 @@ public protocol AccountRepositoryProtocol {
   func createSupportTicket(title: String?, description: String?, type: String) async throws -> SupportTicketEntity
   func getMigrationStatus() async throws -> MigrationStatusEntity
   func requestMigration() async throws -> MigrationStatusEntity
+  func getSecretKey() async throws -> SecretKeyEntity
 }

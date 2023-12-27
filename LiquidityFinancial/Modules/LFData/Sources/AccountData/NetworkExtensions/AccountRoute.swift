@@ -31,6 +31,7 @@ public enum AccountRoute {
   case createSupportTicket(title: String?, description: String?, type: String)
   case getMigrationStatus
   case requestMigration
+  case getSecretKey
 }
 
 extension AccountRoute: LFRoute {
@@ -85,6 +86,8 @@ extension AccountRoute: LFRoute {
       return "/v1/user/migration-status"
     case .requestMigration:
       return "/v1/user/request-migration"
+    case .getSecretKey:
+      return "/v1/mfa/secret-key"
     }
   }
   
@@ -111,7 +114,8 @@ extension AccountRoute: LFRoute {
         .getReferralCampaign,
         .getAvailableRewardCurrencies,
         .getSelectedRewardCurrency,
-        .getMigrationStatus:
+        .getMigrationStatus,
+        .getSecretKey:
       return .GET
     case .updateWalletAddress:
       return .PATCH
@@ -152,7 +156,8 @@ extension AccountRoute: LFRoute {
         .getUserRewards,
         .getFeatureConfig,
         .getMigrationStatus,
-        .requestMigration:
+        .requestMigration,
+        .getSecretKey:
       return nil
     case .createPassword(let password):
       return [
@@ -245,7 +250,8 @@ extension AccountRoute: LFRoute {
         .getUserRewards,
         .getFeatureConfig,
         .getMigrationStatus,
-        .requestMigration:
+        .requestMigration,
+        .getSecretKey:
       return nil
     case .getTransactions,
         .getTransactionDetail,

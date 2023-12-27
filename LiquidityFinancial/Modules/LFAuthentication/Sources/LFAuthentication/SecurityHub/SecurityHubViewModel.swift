@@ -11,6 +11,7 @@ public final class SecurityHubViewModel: ObservableObject {
   @LazyInjected(\.accountDataManager) var accountDataManager
   @LazyInjected(\.biometricsManager) var biometricsManager
 
+  @Published var isMFAEnabled: Bool = false
   @Published var isBiometricEnabled: Bool = false
   @Published var toastMessage: String?
   
@@ -59,7 +60,6 @@ extension SecurityHubViewModel {
   }
   
   func didTapChangePasswordButton() {
-    navigation = .changePassword
   }
   
   func resetBiometricToggleState() {
@@ -69,6 +69,12 @@ extension SecurityHubViewModel {
   func declineBiometricAuthentication() {
     popup = nil
     isBiometricEnabled = false
+  }
+  
+  func didMFAToggleStateChange() {
+    if isMFAEnabled {
+      navigation = .turnOnMFA
+    }
   }
   
   func didBiometricToggleStateChanged() {
@@ -162,7 +168,7 @@ extension SecurityHubViewModel {
   }
   
   enum Navigation {
-    case changePassword
+    case turnOnMFA
   }
   
   enum Popup {

@@ -1,0 +1,14 @@
+import Foundation
+
+public final class GetSecretKeyUseCase: GetSecretKeyUseCaseProtocol {
+  
+  private let repository: AccountRepositoryProtocol
+  
+  public init(repository: AccountRepositoryProtocol) {
+    self.repository = repository
+  }
+  
+  public func execute() async throws -> SecretKeyEntity {
+    try await repository.getSecretKey()
+  }
+}

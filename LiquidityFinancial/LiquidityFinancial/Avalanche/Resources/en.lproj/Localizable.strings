@@ -955,6 +955,17 @@ contact support.";
 "authentication.setup_biometrics.title" = "Do you want to allow “%@“ to use %@?";
 "authentication.setup_biometrics.description" = "%@ will use %@ to unlock your account.";
 
+"authentication.setup_mfa.title" = "TURN ON MFA WITH AUTHENTICATOR APP";
+"authentication.setup_mfa.description" = "We highly recommend that you enable Two-Factor Authentication. It ties your login information to a mobile device, making it much harder for someone to hack into your account.";
+"authentication.setup_mfa.download_app_title" = "Download App";
+"authentication.setup_mfa.download_app_description" = "You must have Google Authenticator or Authy installed on your phone.";
+"authentication.setup_mfa.scan_qrCode_title" = "Scan QR code";
+"authentication.setup_mfa.scan_qrCode_description" = "Open the app and scan the QR Code image below or enter your key manually:";
+"authentication.setup_mfa.verify_2faCode_title" = "Verify your 2FA code";
+"authentication.setup_mfa.verify_2faCode_description" = "Open the app and scan the QR Code image below or enter your key manually:";
+"authentication.setup_mfa.enter_code_title" = "Enter Code";
+"authentication.setup_mfa.enter_code_placeHolder" = "Enter Code";
+
 // MARK: - Common
 
 // Notification Pop up

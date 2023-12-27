@@ -214,4 +214,13 @@ extension LFCoreNetwork: AccountAPIProtocol where R == AccountRoute {
       decoder: .apiDecoder
     )
   }
+  
+  public func getSecretKey() async throws -> APISecretKey {
+    try await request(
+      AccountRoute.getSecretKey,
+      target: APISecretKey.self,
+      failure: LFErrorObject.self,
+      decoder: .apiDecoder
+    )
+  }
 }
