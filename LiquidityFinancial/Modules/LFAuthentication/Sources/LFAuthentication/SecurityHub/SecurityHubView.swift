@@ -24,6 +24,8 @@ public struct SecurityHubView: View {
         switch item {
         case .turnOnMFA:
           SetupAuthenticatorAppView()
+        case .verifyEmail:
+          VerifyEmailView()
         }
       }
   }
@@ -82,17 +84,13 @@ private extension SecurityHubView {
       GenImages.CommonImages.dash.swiftUIImage
         .foregroundColor(Colors.label.swiftUIColor)
         .padding(.bottom, 8)
+      
       textInformationCell(
         title: LFLocalizable.Authentication.SecurityEmail.title,
         value: viewModel.email.value,
-        trailingView: textWithAction(
-          // We are not verifying the email yet, will hide for now
-          title: "",
-          isEnable: !viewModel.email.isVerified
-        ) {
-          viewModel.didTapEmailVerifyButton()
-        }
+        trailingView: emailRowTrailingView
       )
+      
       textInformationCell(
         title: LFLocalizable.Authentication.SecurityPhone.title,
         value: viewModel.phone.value,
@@ -129,6 +127,21 @@ private extension SecurityHubView {
           viewModel.didBiometricToggleStateChanged()
         }
       }
+    }
+  }
+  
+  @ViewBuilder
+  var emailRowTrailingView: some View {
+    if LFFeatureFlagContainer.isMultiFactorAuthFeatureFlagEnabled {
+      textWithAction(
+        // TODO(Volodymyr): Update with missing_steps when it's available
+        title: LFLocalizable.Authentication.SecurityVerify.title,
+        isEnable: true
+      ) {
+        viewModel.didTapEmailVerifyButton()
+      }
+    } else {
+      EmptyView()
     }
   }
   

@@ -969,6 +969,10 @@ contact support.";
 "authentication.setup_mfa.recoveryCode_checkBox_title" = "I have safely recorded this code";
 "authentication.setup_mfa.mfa_turnedOn" = "MFA TURNED ON";
 
+"authentication.verify_email.title" = "ENTER CODE FROM EMAIL";
+"authentication.verify_email.description" = "PLEASE CHECK YOUR EMAIL FOR A 6 DIGIT CODE";
+"authentication.verify_email.success_popup.title" = "EMAIL VERIFIED SUCCESSFULLY";
+
 // MARK: - Common
 
 // Notification Pop up

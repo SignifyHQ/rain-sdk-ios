@@ -701,6 +701,16 @@ public enum LFLocalizable {
       /// Verify your 2FA code
       public static let verify2faCodeTitle = LFLocalizable.tr("Localizable", "authentication.setup_mfa.verify_2faCode_title", fallback: "Verify your 2FA code")
     }
+    public enum VerifyEmail {
+      /// PLEASE CHECK YOUR EMAIL FOR A 6 DIGIT CODE
+      public static let description = LFLocalizable.tr("Localizable", "authentication.verify_email.description", fallback: "PLEASE CHECK YOUR EMAIL FOR A 6 DIGIT CODE")
+      /// ENTER CODE FROM EMAIL
+      public static let title = LFLocalizable.tr("Localizable", "authentication.verify_email.title", fallback: "ENTER CODE FROM EMAIL")
+      public enum SuccessPopup {
+        /// EMAIL VERIFIED SUCCESSFULLY
+        public static let title = LFLocalizable.tr("Localizable", "authentication.verify_email.success_popup.title", fallback: "EMAIL VERIFIED SUCCESSFULLY")
+      }
+    }
   }
   public enum BalanceAlert {
     /// Deposit

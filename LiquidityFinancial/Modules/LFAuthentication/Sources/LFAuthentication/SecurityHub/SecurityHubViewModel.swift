@@ -54,6 +54,7 @@ extension SecurityHubViewModel {
 // MARK: - View Helper Functions
 extension SecurityHubViewModel {
   func didTapEmailVerifyButton() {
+    navigation = .verifyEmail
   }
   
   func didTapPhoneVerifyButton() {
@@ -169,6 +170,7 @@ extension SecurityHubViewModel {
   
   enum Navigation {
     case turnOnMFA
+    case verifyEmail
   }
   
   enum Popup {

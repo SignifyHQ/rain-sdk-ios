@@ -215,7 +215,7 @@ extension CreatePasswordView {
     LiquidityAlert(
       title: viewModel.successMessage(),
       primary: .init(
-        text: LFLocalizable.Button.Continue.title,
+        text: LFLocalizable.Button.Ok.title,
         action: {
           switch viewModel.purpose {
           case .createExistingUser:
