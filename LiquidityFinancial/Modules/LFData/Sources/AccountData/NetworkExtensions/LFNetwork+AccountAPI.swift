@@ -232,4 +232,14 @@ extension LFCoreNetwork: AccountAPIProtocol where R == AccountRoute {
       decoder: .apiDecoder
     )
   }
+  
+  public func disableMFA(code: String) async throws -> APIDisableMFA {
+    try await request(
+      AccountRoute.disableMFA(code: code),
+      target: APIDisableMFA.self,
+      failure: LFErrorObject.self,
+      decoder: .apiDecoder
+    )
+  }
+
 }

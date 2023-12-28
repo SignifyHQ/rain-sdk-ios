@@ -32,4 +32,5 @@ public protocol AccountAPIProtocol {
   func requestMigration() async throws -> APIMigrationStatus
   func getSecretKey() async throws -> APISecretKey
   func enableMFA(code: String) async throws -> APIEnableMFA
+  func disableMFA(code: String) async throws -> APIDisableMFA
 }

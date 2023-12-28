@@ -580,6 +580,16 @@ public enum LFLocalizable {
         public static let wrongPassword = LFLocalizable.tr("Localizable", "authentication.enter_password.error.wrong_password", fallback: "Wrong password")
       }
     }
+    public enum EnterTotp {
+      /// Lost your device? 
+      public static let bottomDisclosure = LFLocalizable.tr("Localizable", "authentication.enter_totp.bottom_disclosure", fallback: "Lost your device? ")
+      /// MFA TURNED OFF
+      public static let mfaTurnedOff = LFLocalizable.tr("Localizable", "authentication.enter_totp.mfa_turnedOff", fallback: "MFA TURNED OFF")
+      /// ENTER Code from authenticator app
+      public static let title = LFLocalizable.tr("Localizable", "authentication.enter_totp.title", fallback: "ENTER Code from authenticator app")
+      /// Use Recovery Code
+      public static let useRecoveryCodeAttributeText = LFLocalizable.tr("Localizable", "authentication.enter_totp.use_recovery_code_attributeText", fallback: "Use Recovery Code")
+    }
     public enum ResetPassword {
       /// ENTER 6 DIGIT CODE
       public static let enterCode = LFLocalizable.tr("Localizable", "authentication.reset_password.enter_code", fallback: "ENTER 6 DIGIT CODE")

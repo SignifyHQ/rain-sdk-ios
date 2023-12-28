@@ -191,6 +191,7 @@ public extension Constants {
     case userInactive = "user_inactive"
     case credentialsInvalid = "credentials_invalid"
     case invalidSSN = "invalid_ssn"
+    case invalidTOTP = "invalid_totp"
     case ticketExisted = "increase_limit_ticket_existed"
     case transferLimitExceeded = "transfer_limit_exceeded"
     case bankTransferRequestLimitReached = "bank_transfer_request_limit_reached"

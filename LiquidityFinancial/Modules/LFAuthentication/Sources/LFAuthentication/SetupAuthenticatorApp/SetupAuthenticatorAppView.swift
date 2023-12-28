@@ -37,6 +37,7 @@ struct SetupAuthenticatorAppView: View {
       }
     )
     .background(Colors.background.swiftUIColor)
+    .track(name: String(describing: type(of: self)))
   }
 }
 

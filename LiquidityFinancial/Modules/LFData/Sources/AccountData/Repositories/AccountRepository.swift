@@ -133,4 +133,8 @@ public class AccountRepository: AccountRepositoryProtocol {
   public func enableMFA(code: String) async throws -> EnableMFAEntity {
     try await accountAPI.enableMFA(code: code)
   }
+  
+  public func disableMFA(code: String) async throws -> DisableMFAEntity {
+    try await accountAPI.disableMFA(code: code)
+  }
 }

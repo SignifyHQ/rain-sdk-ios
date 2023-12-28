@@ -22,8 +22,10 @@ public struct SecurityHubView: View {
       }
       .navigationLink(item: $viewModel.navigation) { item in
         switch item {
-        case .turnOnMFA:
+        case .setUpMFA:
           SetupAuthenticatorAppView()
+        case .enterTOTPCode:
+          EnterTOTPCodeView(purpose: .disableMFA)
         case .verifyEmail:
           VerifyEmailView()
         }

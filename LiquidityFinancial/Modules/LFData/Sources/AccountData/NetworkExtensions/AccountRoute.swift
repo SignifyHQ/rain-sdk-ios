@@ -33,6 +33,7 @@ public enum AccountRoute {
   case requestMigration
   case getSecretKey
   case enableMFA(code: String)
+  case disableMFA(code: String)
 }
 
 extension AccountRoute: LFRoute {
@@ -91,6 +92,8 @@ extension AccountRoute: LFRoute {
       return "/v1/mfa/secret-key"
     case .enableMFA:
       return "/v1/mfa/enable"
+    case .disableMFA:
+      return "/v1/mfa/disable"
     }
   }
   
@@ -109,7 +112,8 @@ extension AccountRoute: LFRoute {
         .createSupportTicket,
         .updateSelectedRewardCurrency,
         .requestMigration,
-        .enableMFA:
+        .enableMFA,
+        .disableMFA:
       return .POST
     case .getUser,
         .getTransactions,
@@ -231,6 +235,10 @@ extension AccountRoute: LFRoute {
       return [
         "code": code
       ]
+    case let .disableMFA(code):
+      return [
+        "code": code
+      ]
     }
   }
   
@@ -247,7 +255,8 @@ extension AccountRoute: LFRoute {
         .addToWaitList,
         .createSupportTicket,
         .updateSelectedRewardCurrency,
-        .enableMFA:
+        .enableMFA,
+        .disableMFA:
       return .json
     case .createZeroHashAccount,
         .getAvailableRewardCurrencies,

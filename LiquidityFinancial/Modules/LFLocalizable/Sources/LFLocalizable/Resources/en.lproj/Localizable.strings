@@ -1222,6 +1222,11 @@ contact support.";
 "authentication.verify_email.description" = "PLEASE CHECK YOUR EMAIL FOR A 6 DIGIT CODE";
 "authentication.verify_email.success_popup.title" = "EMAIL VERIFIED SUCCESSFULLY";
 
+"authentication.enter_totp.title" = "ENTER Code from authenticator app";
+"authentication.enter_totp.bottom_disclosure" = "Lost your device? ";
+"authentication.enter_totp.use_recovery_code_attributeText" = "Use Recovery Code";
+"authentication.enter_totp.mfa_turnedOff" = "MFA TURNED OFF";
+
 // MARK: - Common
 
 // Notification Pop up

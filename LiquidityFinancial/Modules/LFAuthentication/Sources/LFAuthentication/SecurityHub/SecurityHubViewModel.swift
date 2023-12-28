@@ -73,9 +73,11 @@ extension SecurityHubViewModel {
   }
   
   func didMFAToggleStateChange() {
-    if isMFAEnabled {
-      navigation = .turnOnMFA
+    guard isMFAEnabled else {
+      navigation = .enterTOTPCode
+      return
     }
+    navigation = .setUpMFA
   }
   
   func didBiometricToggleStateChanged() {
@@ -169,7 +171,8 @@ extension SecurityHubViewModel {
   }
   
   enum Navigation {
-    case turnOnMFA
+    case setUpMFA
+    case enterTOTPCode
     case verifyEmail
   }
   

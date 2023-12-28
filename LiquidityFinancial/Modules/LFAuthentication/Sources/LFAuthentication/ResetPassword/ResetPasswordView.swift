@@ -132,4 +132,3 @@ private extension ResetPasswordView {
     .disabled(viewModel.isLoading)
   }
 }
-
