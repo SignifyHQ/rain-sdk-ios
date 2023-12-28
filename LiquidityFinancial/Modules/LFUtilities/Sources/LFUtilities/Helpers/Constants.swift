@@ -26,6 +26,7 @@ public enum Constants {
     case cvv
     case fullPassportLength
     case mfaCode
+    case recoveryCode
     case any
     
     public var value: Int {
@@ -74,6 +75,8 @@ public enum Constants {
         return 20
       case .mfaCode:
         return 6
+      case .recoveryCode:
+        return 50
       case .any:
         return 200
       }

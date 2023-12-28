@@ -33,7 +33,7 @@ public struct EnterTOTPCodeView: View {
       .navigationLink(item: $viewModel.navigation) { item in
         switch item {
         case .recoveryCode:
-          EmptyView() // TODO: - Will implemented in another ticket
+          RecoveryCodeView()
         }
       }
       .defaultToolBar(icon: .support, openSupportScreen: {

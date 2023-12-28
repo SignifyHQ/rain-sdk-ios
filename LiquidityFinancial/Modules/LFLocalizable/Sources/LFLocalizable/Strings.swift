@@ -590,6 +590,14 @@ public enum LFLocalizable {
       /// Use Recovery Code
       public static let useRecoveryCodeAttributeText = LFLocalizable.tr("Localizable", "authentication.enter_totp.use_recovery_code_attributeText", fallback: "Use Recovery Code")
     }
+    public enum RecoveryCode {
+      /// Enter recovery code
+      public static let enterCodePlaceholder = LFLocalizable.tr("Localizable", "authentication.recovery_code.enter_code_placeholder", fallback: "Enter recovery code")
+      /// MFA RECOVERED
+      public static let mfaRecovered = LFLocalizable.tr("Localizable", "authentication.recovery_code.mfa_recovered", fallback: "MFA RECOVERED")
+      /// ENTER RECOVERY CODE
+      public static let title = LFLocalizable.tr("Localizable", "authentication.recovery_code.title", fallback: "ENTER RECOVERY CODE")
+    }
     public enum ResetPassword {
       /// ENTER 6 DIGIT CODE
       public static let enterCode = LFLocalizable.tr("Localizable", "authentication.reset_password.enter_code", fallback: "ENTER 6 DIGIT CODE")

@@ -1138,6 +1138,10 @@ contact support.";
 "authentication.enter_totp.use_recovery_code_attributeText" = "Use Recovery Code";
 "authentication.enter_totp.mfa_turnedOff" = "MFA TURNED OFF";
 
+"authentication.recovery_code.title" = "ENTER RECOVERY CODE";
+"authentication.recovery_code.enter_code_placeholder" = "Enter recovery code";
+"authentication.recovery_code.mfa_recovered" = "MFA RECOVERED";
+
 // MARK: - Common
 
 // Notification Pop up
