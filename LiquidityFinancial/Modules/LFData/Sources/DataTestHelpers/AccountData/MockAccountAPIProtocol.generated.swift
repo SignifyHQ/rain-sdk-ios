@@ -602,4 +602,78 @@ public class MockAccountAPIProtocol: AccountAPIProtocol {
         }
     }
 
+    //MARK: - getSecretKey
+
+    public var getSecretKeyThrowableError: Error?
+    public var getSecretKeyCallsCount = 0
+    public var getSecretKeyCalled: Bool {
+        return getSecretKeyCallsCount > 0
+    }
+    public var getSecretKeyReturnValue: APISecretKey!
+    public var getSecretKeyClosure: (() async throws -> APISecretKey)?
+
+    public func getSecretKey() async throws -> APISecretKey {
+        if let error = getSecretKeyThrowableError {
+            throw error
+        }
+        getSecretKeyCallsCount += 1
+        if let getSecretKeyClosure = getSecretKeyClosure {
+            return try await getSecretKeyClosure()
+        } else {
+            return getSecretKeyReturnValue
+        }
+    }
+
+    //MARK: - enableMFA
+
+    public var enableMFACodeThrowableError: Error?
+    public var enableMFACodeCallsCount = 0
+    public var enableMFACodeCalled: Bool {
+        return enableMFACodeCallsCount > 0
+    }
+    public var enableMFACodeReceivedCode: String?
+    public var enableMFACodeReceivedInvocations: [String] = []
+    public var enableMFACodeReturnValue: APIEnableMFA!
+    public var enableMFACodeClosure: ((String) async throws -> APIEnableMFA)?
+
+    public func enableMFA(code: String) async throws -> APIEnableMFA {
+        if let error = enableMFACodeThrowableError {
+            throw error
+        }
+        enableMFACodeCallsCount += 1
+        enableMFACodeReceivedCode = code
+        enableMFACodeReceivedInvocations.append(code)
+        if let enableMFACodeClosure = enableMFACodeClosure {
+            return try await enableMFACodeClosure(code)
+        } else {
+            return enableMFACodeReturnValue
+        }
+    }
+
+    //MARK: - disableMFA
+
+    public var disableMFACodeThrowableError: Error?
+    public var disableMFACodeCallsCount = 0
+    public var disableMFACodeCalled: Bool {
+        return disableMFACodeCallsCount > 0
+    }
+    public var disableMFACodeReceivedCode: String?
+    public var disableMFACodeReceivedInvocations: [String] = []
+    public var disableMFACodeReturnValue: APIDisableMFA!
+    public var disableMFACodeClosure: ((String) async throws -> APIDisableMFA)?
+
+    public func disableMFA(code: String) async throws -> APIDisableMFA {
+        if let error = disableMFACodeThrowableError {
+            throw error
+        }
+        disableMFACodeCallsCount += 1
+        disableMFACodeReceivedCode = code
+        disableMFACodeReceivedInvocations.append(code)
+        if let disableMFACodeClosure = disableMFACodeClosure {
+            return try await disableMFACodeClosure(code)
+        } else {
+            return disableMFACodeReturnValue
+        }
+    }
+
 }

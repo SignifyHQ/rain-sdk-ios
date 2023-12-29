@@ -6,6 +6,20 @@ import AccountData
 import ZerohashDomain
 
 extension LFCoreNetwork: ZerohashAPIProtocol where R == ZerohashRoute {
+  public func buyCrypto(accountId: String, quoteId: String) async throws -> APIBuyCrypto {
+    return try await request(ZerohashRoute.buyCrypto(accountId: accountId, quoteId: quoteId),
+                             target: APIBuyCrypto.self,
+                             failure: LFErrorObject.self,
+                             decoder: .apiDecoder)
+  }
+  
+  public func getBuyQuote(accountId: String, amount: String?, quantity: String?) async throws -> APIGetBuyQuote {
+    return try await request(ZerohashRoute.getBuyQuote(accountId: accountId, amount: amount, quantity: quantity),
+                             target: APIGetBuyQuote.self,
+                             failure: LFErrorObject.self,
+                             decoder: .apiDecoder)
+  }
+  
   public func sellCrypto(accountId: String, quoteId: String) async throws -> APISellCrypto {
     return try await request(ZerohashRoute.sellCrypto(accountId: accountId, quoteId: quoteId),
                              target: APISellCrypto.self,

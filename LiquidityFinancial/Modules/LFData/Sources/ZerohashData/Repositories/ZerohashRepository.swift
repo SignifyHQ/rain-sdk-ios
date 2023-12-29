@@ -48,6 +48,14 @@ public class ZerohashRepository: ZerohashRepositoryProtocol {
   public func sellCrypto(accountId: String, quoteId: String) async throws -> SellCryptoEntity {
     try await self.zerohashAPI.sellCrypto(accountId: accountId, quoteId: quoteId)
   }
+  
+  public func buyCrypto(accountId: String, quoteId: String) async throws -> BuyCryptoEntity {
+    try await self.zerohashAPI.buyCrypto(accountId: accountId, quoteId: quoteId)
+  }
+  
+  public func getBuyQuote(accountId: String, amount: String?, quantity: String?) async throws -> GetBuyQuoteEntity {
+    try await self.zerohashAPI.getBuyQuote(accountId: accountId, amount: amount, quantity: quantity)
+  }
 }
 
 extension APIZHOnboardingStep: ZHOnboardingStepEntity {}

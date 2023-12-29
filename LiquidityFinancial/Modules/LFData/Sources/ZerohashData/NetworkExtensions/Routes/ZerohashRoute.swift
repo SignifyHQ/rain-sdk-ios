@@ -12,6 +12,8 @@ public enum ZerohashRoute {
   case getTaxFileYear(accountId: String, year: String)
   case sellCrypto(accountId: String, quoteId: String)
   case getSellQuote(accountId: String, amount: String?, quantity: String?)
+  case buyCrypto(accountId: String, quoteId: String)
+  case getBuyQuote(accountId: String, amount: String?, quantity: String?)
 }
 
 extension ZerohashRoute: LFRoute {
@@ -34,12 +36,16 @@ extension ZerohashRoute: LFRoute {
       return "/v1/zerohash/accounts/\(accountId)/sell"
     case .getSellQuote(accountId: let accountId, amount: _, quantity: _):
       return "/v1/zerohash/accounts/\(accountId)/sell/quote"
+    case .buyCrypto(accountId: let accountId, quoteId: _):
+      return "/v1/zerohash/accounts/\(accountId)/buy"
+    case .getBuyQuote(accountId: let accountId, amount: _, quantity: _):
+      return "/v1/zerohash/accounts/\(accountId)/buy/quote"
     }
   }
   
   public var httpMethod: HttpMethod {
     switch self {
-    case .getOnboardingStep, .getTaxFile, .getTaxFileYear, .getSellQuote:
+    case .getOnboardingStep, .getTaxFile, .getTaxFileYear, .getSellQuote, .getBuyQuote:
       return .GET
     default:
       return .POST
@@ -102,6 +108,28 @@ extension ZerohashRoute: LFRoute {
       ]
     case .getOnboardingStep, .getTaxFile, .getTaxFileYear:
       return nil
+    case .buyCrypto(accountId: _, quoteId: let quoteId):
+      return [
+        "quoteId": quoteId
+      ]
+    case .getBuyQuote(accountId: _, amount: let amount, quantity: let quantity):
+      if let amount = amount, let quantity = quantity {
+        return [
+          "amount": amount,
+          "quantity": quantity
+        ]
+      }
+      if let amount = amount {
+        return [
+          "amount": amount
+        ]
+      }
+      if let quantity = quantity {
+        return [
+          "quantity": quantity
+        ]
+      }
+      return nil
     }
   }
   
@@ -111,7 +139,7 @@ extension ZerohashRoute: LFRoute {
         .getTaxFile,
         .getTaxFileYear:
       return nil
-    case .getSellQuote:
+    case .getSellQuote, .getBuyQuote:
       return .url
     default:
       return .json

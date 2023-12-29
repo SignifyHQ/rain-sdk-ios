@@ -32,8 +32,16 @@ struct ConfirmBuySellCryptoView: View {
               TransactionInformation(title: LFLocalizable.TransactionDetail.Fee.title, value: "0", markValue: Constants.CurrencyUnit.usd.rawValue)
             ]
           )
-        case .buyTransactionDetail(_):
-          EmptyView()
+        case .buyTransactionDetail(let entity):
+          TransactionDetailView(
+            accountID: entity.accountID,
+            transactionId: entity.id ?? "",
+            kind: .crypto,
+            transactionInfo: [
+              TransactionInformation(title: LFLocalizable.TransactionDetail.TransactionType.title, value: LFLocalizable.TransactionDetail.Buy.title),
+              TransactionInformation(title: LFLocalizable.TransactionDetail.Fee.title, value: "0", markValue: Constants.CurrencyUnit.usd.rawValue)
+            ]
+          )
         }
       }
       .track(name: String(describing: type(of: self)))

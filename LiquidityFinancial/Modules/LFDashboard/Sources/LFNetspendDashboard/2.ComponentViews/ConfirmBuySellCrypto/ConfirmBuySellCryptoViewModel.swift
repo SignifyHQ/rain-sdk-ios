@@ -27,6 +27,10 @@ class ConfirmBuySellCryptoViewModel: ObservableObject {
     return SellCryptoUseCase(repository: zerohashRepository)
   }()
   
+  private lazy var buyCryptoUseCase: BuyCryptoUseCaseProtocol = {
+    return BuyCryptoUseCase(repository: zerohashRepository)
+  }()
+  
   private var cancellables: Set<AnyCancellable> = []
 
   let type: Kind
@@ -81,14 +85,16 @@ class ConfirmBuySellCryptoViewModel: ObservableObject {
   
   func confirmButtonClicked() {
     switch type {
-    case .buyCrypto(let quote, _):
+    case .buyCrypto(let quote, let accountID):
       analyticsService.track(event: AnalyticsEvent(name: .tapsConfirmBuy))
-      break
+      callBioMetric {
+        self.apiBuyCrypto(accountId: accountID, quoteId: quote.id ?? "")
+      }
     case .sellCrypto(let quote, let accountID):
       analyticsService.track(event: AnalyticsEvent(name: .tapsConfirmSell))
-//      callBioMetric {
+      callBioMetric {
         self.apiSellCrypto(accountId: accountID, quoteId: quote.id ?? "")
-//      }
+      }
     }
   }
 }
@@ -105,7 +111,8 @@ extension ConfirmBuySellCryptoViewModel {
         case .finished:
           log.debug("Device authentication check completed.")
         case .failure(let error):
-          self.toastMessage = error.localizedDescription
+          log.error(error.userFriendlyMessage)
+          self.toastMessage = error.userFriendlyMessage
         }
       }, receiveValue: { result in
         if result {
@@ -128,6 +135,25 @@ extension ConfirmBuySellCryptoViewModel {
       } catch {
         analyticsService.track(event: AnalyticsEvent(name: .sellCryptoError))
         Haptic.notification(.error).generate()
+        log.error(error.userFriendlyMessage)
+        toastMessage = error.userFriendlyMessage
+      }
+    }
+  }
+  
+  func apiBuyCrypto(accountId: String, quoteId: String) {
+    Task { @MainActor in
+      defer { showIndicator = false }
+      showIndicator = true
+      do {
+        let entity = try await buyCryptoUseCase.execute(accountId: accountId, quoteId: quoteId)
+        //TODO: Need handle refresh external list -> Tab Asset Total coin -> Detail Total coin
+        navigation = .buyTransactionDetail(entity)
+        analyticsService.track(event: AnalyticsEvent(name: .buyCryptoSuccess))
+        Haptic.notification(.success).generate()
+      } catch {
+        analyticsService.track(event: AnalyticsEvent(name: .buyCryptoError))
+        Haptic.notification(.error).generate()
         log.error(error.localizedDescription)
         toastMessage = error.localizedDescription
       }
@@ -139,11 +165,11 @@ extension ConfirmBuySellCryptoViewModel {
 extension ConfirmBuySellCryptoViewModel {
   enum Navigation {
     case sellTransactionDetail(SellCryptoEntity)
-    case buyTransactionDetail(SellCryptoEntity)
+    case buyTransactionDetail(BuyCryptoEntity)
   }
   
   enum Kind {
-    case buyCrypto(quote: GetSellQuoteEntity, accountID: String)
+    case buyCrypto(quote: GetBuyQuoteEntity, accountID: String)
     case sellCrypto(quote: GetSellQuoteEntity, accountID: String)
   }
   

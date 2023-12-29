@@ -81,9 +81,71 @@ final class ZerohashRepositoryTests: XCTestCase {
     let expectedError = TestError.fail("mock_error")
     
     self.api.sellCryptoAccountIdQuoteIdThrowableError = expectedError
-    // When calling the `getSellCryptoQoute` functionality on the repository with parameters which should throw an error
+    // When calling the `sellCrypto` functionality on the repository with parameters which should throw an error
     await expect {
       try await self.repository.sellCrypto(accountId: "mock_account_id", quoteId: "mock_qoute_id")
+    }
+    .to(throwError { error in
+      // The error is the one we expected
+      expect(expectedError).to(equal(error))
+    })
+  }
+  
+  // Test the functionality of `buyCrypto` under expected conditions.
+  func test_BuyCrypto_happy_case() async {
+    // Given the expected mock success and fail results
+    var mockSuccessResult = APIBuyCrypto()
+    mockSuccessResult.id = "mock_id"
+    self.api.buyCryptoAccountIdQuoteIdReturnValue = mockSuccessResult
+    
+    await expect {
+      // When calling `buyCrypto` function with parameters which should return `id` successfully
+      try await self.repository.buyCrypto(accountId: "mock_account_id", quoteId: "mock_qoute_id").id
+    }
+    // Then the `buyCrypto` received matches our expectation
+    .to(equal(mockSuccessResult.id))
+  }
+  
+  // Test the `buyCrypto` functionality when it encounters an error.
+  func test_BuyCrypto_failed_case() async {
+    // Given a mock error which will be thrown
+    let expectedError = TestError.fail("mock_error")
+    
+    self.api.buyCryptoAccountIdQuoteIdThrowableError = expectedError
+    // When calling the `buyCrypto` functionality on the repository with parameters which should throw an error
+    await expect {
+      try await self.repository.buyCrypto(accountId: "mock_account_id", quoteId: "mock_qoute_id")
+    }
+    .to(throwError { error in
+      // The error is the one we expected
+      expect(expectedError).to(equal(error))
+    })
+  }
+  
+  // Test the functionality of `getBuyCryptoQoute` under expected conditions.
+  func test_buyCryptoQoute_happy_case() async {
+    // Given the expected mock success and fail results
+    var mockSuccessResult = APIGetBuyQuote()
+    mockSuccessResult.id = "mock_id"
+    self.api.getBuyQuoteAccountIdAmountQuantityReturnValue = mockSuccessResult
+    
+    await expect {
+      // When calling `getBuyCryptoQoute` function with parameters which should return `id` successfully
+      try await self.repository.getBuyQuote(accountId:"mock_account_id", amount: "mock_amount", quantity: "mock_quantity").id
+    }
+    // Then the `getBuyCryptoQoute` received matches our expectation
+    .to(equal(mockSuccessResult.id))
+  }
+
+  // Test the `getBuyCryptoQoute` functionality when it encounters an error.
+  func test_getBuyCryptoQoute_failed_case() async {
+    // Given a mock error which will be thrown
+    let expectedError = TestError.fail("mock_error")
+    
+    self.api.getBuyQuoteAccountIdAmountQuantityThrowableError = expectedError
+    // When calling the `getBuyCryptoQoute` functionality on the repository with parameters which should throw an error
+    await expect {
+      try await self.repository.getBuyQuote(accountId:"mock_account_id", amount: "mock_amount", quantity: "mock_quantity")
     }
     .to(throwError { error in
       // The error is the one we expected

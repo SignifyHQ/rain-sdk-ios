@@ -122,6 +122,8 @@ extension VerificationCodeViewModel {
     DemoAccountsHelper.shared.getOTPInternal(for: formatPhoneNumber)
       .removeDuplicates()
       .receive(on: DispatchQueue.main)
+      // It only works on dev, fix case on simulator auto pop back
+      .delay(for: .seconds(0.65), scheduler: RunLoop.main)
       .sink { [weak self] code in
         guard let self else { return }
         log.debug(code ?? "performGetTwilioMessagesIfNeccessary not found")

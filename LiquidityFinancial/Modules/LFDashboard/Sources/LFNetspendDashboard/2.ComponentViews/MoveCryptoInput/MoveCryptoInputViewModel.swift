@@ -37,6 +37,10 @@ final class MoveCryptoInputViewModel: ObservableObject {
   private lazy var getSellCryptoQouteUseCase: GetSellQuoteUseCaseProtocol = {
     return GetSellQuoteUseCase(repository: zerohashRepository)
   }()
+  
+  private lazy var getBuyCryptoQouteUseCase: GetBuyQuoteUseCaseProtocol = {
+    return GetBuyQuoteUseCase(repository: zerohashRepository)
+  }()
 
   private var subscribers: Set<AnyCancellable> = []
   
@@ -161,7 +165,18 @@ private extension MoveCryptoInputViewModel {
   }
   
   func fetchBuyCryptoQuote(amount: String) {
-
+    Task { @MainActor in
+      defer { isPerformingAction = false }
+      isPerformingAction = true
+      do {
+        let accountID = assetModel.id
+        let entity = try await getBuyCryptoQouteUseCase.execute(accountId: accountID, amount: nil, quantity: amount)
+        navigation = .confirmBuy(entity, accountId: accountID)
+      } catch {
+        log.error(error)
+        self.toastMessage = error.userFriendlyMessage
+      }
+    }
   }
   
   func fetchSellCryptoQuote(amount: String) {
@@ -172,10 +187,9 @@ private extension MoveCryptoInputViewModel {
         let accountID = assetModel.id
         let entity = try await getSellCryptoQouteUseCase.execute(accountId: accountID, amount: nil, quantity: amount)
         navigation = .confirmSell(entity, accountId: accountID)
-        log.debug(entity)
       } catch {
         log.error(error)
-        self.toastMessage = error.localizedDescription
+        self.toastMessage = error.userFriendlyMessage
       }
     }
   }
@@ -352,7 +366,7 @@ extension MoveCryptoInputViewModel {
   
   enum Navigation {
     case confirmSell(GetSellQuoteEntity, accountId: String)
-    case confirmBuy(GetSellQuoteEntity, accountId: String)
+    case confirmBuy(GetBuyQuoteEntity, accountId: String)
     case confirmSend(lockedFeeResponse: APILockedNetworkFeeResponse? = nil)
   }
 }

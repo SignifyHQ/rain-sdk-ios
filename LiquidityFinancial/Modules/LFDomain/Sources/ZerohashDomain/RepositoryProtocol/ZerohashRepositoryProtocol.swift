@@ -11,4 +11,6 @@ public protocol ZerohashRepositoryProtocol {
   func getTaxFileYear(accountId: String, year: String, fileName: String) async throws -> URL
   func sellCrypto(accountId: String, quoteId: String) async throws -> SellCryptoEntity
   func getSellQuote(accountId: String, amount: String?, quantity: String?) async throws -> GetSellQuoteEntity
+  func buyCrypto(accountId: String, quoteId: String) async throws -> BuyCryptoEntity
+  func getBuyQuote(accountId: String, amount: String?, quantity: String?) async throws -> GetBuyQuoteEntity
 }
