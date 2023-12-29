@@ -48,6 +48,14 @@ public class AccountRepository: AccountRepositoryProtocol {
     return tokens
   }
   
+  public func verifyEmailRequest() async throws {
+    try await accountAPI.verifyEmailRequest()
+  }
+  
+  public func verifyEmail(code: String) async throws {
+    try await accountAPI.verifyEmail(code: code)
+  }
+  
   public func getAvailableRewardCurrrencies() async throws -> AvailableRewardCurrenciesEntity {
     try await accountAPI.getAvailableRewardCurrencies()
   }

@@ -14,6 +14,8 @@ public enum AccountRoute {
   case resetPasswordVerify(phoneNumber: String, code: String)
   case resetPassword(phoneNumber: String, password: String, token: String)
   case loginWithPassword(phoneNumber: String, password: String)
+  case verifyEmailRequest
+  case verifyEmail(code: String)
   case getAvailableRewardCurrencies
   case getSelectedRewardCurrency
   case updateSelectedRewardCurrency(rewardCurrency: String)
@@ -58,6 +60,10 @@ extension AccountRoute: LFRoute {
       return "v1/user/change-password"
     case .loginWithPassword:
       return "/v1/auth/login"
+    case .verifyEmailRequest:
+      return "v1/user/request-verify-email"
+    case .verifyEmail:
+      return "v1/user/verify-email"
     case .getAvailableRewardCurrencies:
       return "/v1/user/available-reward-currencies"
     case .getSelectedRewardCurrency:
@@ -105,6 +111,8 @@ extension AccountRoute: LFRoute {
         .resetPasswordVerify,
         .resetPassword,
         .loginWithPassword,
+        .verifyEmailRequest,
+        .verifyEmail,
         .createZeroHashAccount,
         .logout,
         .createWalletAddress,
@@ -154,6 +162,7 @@ extension AccountRoute: LFRoute {
     switch self {
     case .createZeroHashAccount,
         .getUser,
+        .verifyEmailRequest,
         .getTransactionDetail,
         .logout,
         .getWalletAddresses,
@@ -199,6 +208,10 @@ extension AccountRoute: LFRoute {
       return [
         "phoneNumber": phoneNumber,
         "password": password
+      ]
+    case .verifyEmail(let code):
+      return [
+        "code": code
       ]
     case .getTransactions(_, let currencyType, let transactionTypes, let limit, let offset):
       return [
@@ -250,6 +263,7 @@ extension AccountRoute: LFRoute {
         .resetPasswordVerify,
         .resetPassword,
         .loginWithPassword,
+        .verifyEmail,
         .createWalletAddress,
         .updateWalletAddress,
         .addToWaitList,
@@ -262,6 +276,7 @@ extension AccountRoute: LFRoute {
         .getAvailableRewardCurrencies,
         .getSelectedRewardCurrency,
         .getUser,
+        .verifyEmailRequest,
         .logout,
         .getWalletAddresses,
         .deleteWalletAddresses,

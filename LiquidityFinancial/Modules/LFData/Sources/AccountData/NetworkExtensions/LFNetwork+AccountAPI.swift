@@ -59,6 +59,22 @@ extension LFCoreNetwork: AccountAPIProtocol where R == AccountRoute {
     )
   }
   
+  public func verifyEmailRequest() async throws {
+    try await requestNoResponse(
+      AccountRoute.verifyEmailRequest,
+      failure: LFErrorObject.self,
+      decoder: .apiDecoder
+    )
+  }
+  
+  public func verifyEmail(code: String) async throws {
+    try await requestNoResponse(
+      AccountRoute.verifyEmail(code: code),
+      failure: LFErrorObject.self,
+      decoder: .apiDecoder
+    )
+  }
+  
   public func getAvailableRewardCurrencies() async throws -> APIAvailableRewardCurrencies {
     try await request(
       AccountRoute.getAvailableRewardCurrencies,

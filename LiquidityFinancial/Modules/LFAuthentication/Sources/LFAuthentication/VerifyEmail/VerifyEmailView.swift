@@ -1,10 +1,3 @@
-//
-//  VerifyEmailView.swift
-//  
-//
-//  Created by Volodymyr Davydenko on 27.12.2023.
-//
-
 import SwiftUI
 import LFStyleGuide
 import LFUtilities
@@ -45,7 +38,7 @@ public struct VerifyEmailView: View {
         perform: {
           if !viewDidLoad {
             viewDidLoad = true
-            // Request OTP email
+            viewModel.requestOTP()
           }
         }
       )

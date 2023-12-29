@@ -1,10 +1,3 @@
-//
-//  VerifyEmailViewModel.swift
-//  
-//
-//  Created by Volodymyr Davydenko on 27.12.2023.
-//
-
 import AccountData
 import AccountDomain
 import Combine
@@ -29,6 +22,14 @@ public final class VerifyEmailViewModel: ObservableObject {
   
   public var otpViewItems: [PinTextFieldViewItem] = .init()
   
+  lazy var verifyEmailRequestUseCase: VerifyEmailRequestUseCaseProtocol = {
+    VerifyEmailRequestUseCase(repository: accountRepository)
+  }()
+  
+  lazy var verifyEmailUseCase: VerifyEmailUseCaseProtocol = {
+    VerifyEmailUseCase(repository: accountRepository)
+  }()
+  
   init() {
     createTextFields()
     observeOTPInput()
@@ -39,7 +40,7 @@ public final class VerifyEmailViewModel: ObservableObject {
   }
   
   func didTapResendCodeButton() {
-    // Request OTP email
+    requestOTP()
   }
   
   func didTapContinueButton() {
@@ -50,8 +51,15 @@ public final class VerifyEmailViewModel: ObservableObject {
       
       isLoading = true
       
-      // Execute Verify OTP here
-      shouldPresentConfirmation = true
+      do {
+        try await verifyEmailUseCase.execute(code: generatedOTP)
+        // TODO(Volodymyr): update missing steps here
+        
+        shouldPresentConfirmation = true
+      } catch {
+        toastMessage = error.userFriendlyMessage
+        log.error(error.localizedDescription)
+      }
     }
   }
   
@@ -63,7 +71,12 @@ public final class VerifyEmailViewModel: ObservableObject {
       
       isLoading = true
       
-      // Execute Request OTP here
+      do {
+        try await verifyEmailRequestUseCase.execute()
+      } catch {
+        toastMessage = error.userFriendlyMessage
+        log.error(error.localizedDescription)
+      }
     }
   }
 }

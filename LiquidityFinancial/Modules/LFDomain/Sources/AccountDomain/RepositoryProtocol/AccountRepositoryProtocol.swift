@@ -11,6 +11,8 @@ public protocol AccountRepositoryProtocol {
   func resetPasswordVerify(phoneNumber: String, code: String) async throws -> PasswordResetTokenEntity
   func resetPassword(phoneNumber: String, password: String, token: String) async throws
   func loginWithPassword(phoneNumner: String, password: String) async throws -> AccessTokensEntity
+  func verifyEmailRequest() async throws
+  func verifyEmail(code: String) async throws
   func getAvailableRewardCurrrencies() async throws -> AvailableRewardCurrenciesEntity
   func getSelectedRewardCurrency() async throws -> RewardCurrencyEntity
   func updateSelectedRewardCurrency(rewardCurrency: String) async throws -> RewardCurrencyEntity
