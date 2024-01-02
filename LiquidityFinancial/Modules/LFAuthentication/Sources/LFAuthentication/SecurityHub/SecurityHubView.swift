@@ -30,6 +30,9 @@ public struct SecurityHubView: View {
           VerifyEmailView()
         }
       }
+      .onAppear {
+        viewModel.checkEmailVerificationStatus()
+      }
   }
 }
 
@@ -136,9 +139,8 @@ private extension SecurityHubView {
   var emailRowTrailingView: some View {
     if LFFeatureFlagContainer.isMultiFactorAuthFeatureFlagEnabled {
       textWithAction(
-        // TODO(Volodymyr): Update with missing_steps when it's available
-        title: LFLocalizable.Authentication.SecurityVerify.title,
-        isEnable: true
+        title: viewModel.shouldVerifyEmail ? LFLocalizable.Authentication.SecurityVerify.title : LFLocalizable.Authentication.SecurityVerified.title,
+        isEnable: viewModel.shouldVerifyEmail
       ) {
         viewModel.didTapEmailVerifyButton()
       }

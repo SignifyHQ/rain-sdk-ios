@@ -56,6 +56,7 @@ public struct UserInfomationData: Codable, UserInfomationDataProtocol {
   
   public enum MissingStepsEnum: String {
     case createPassword = "CREATE_PASSWORD"
+    case verifyEmail = "VERIFY_EMAIL"
   }
   
   public var missingStepsEnum: [MissingStepsEnum]? {

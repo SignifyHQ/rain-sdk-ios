@@ -30,6 +30,10 @@ public final class VerifyEmailViewModel: ObservableObject {
     VerifyEmailUseCase(repository: accountRepository)
   }()
   
+  lazy var getUserUseCase: GetUserUseCaseProtocol = {
+    GetUserUseCase(repository: accountRepository)
+  }()
+  
   init() {
     createTextFields()
     observeOTPInput()
@@ -53,7 +57,8 @@ public final class VerifyEmailViewModel: ObservableObject {
       
       do {
         try await verifyEmailUseCase.execute(code: generatedOTP)
-        // TODO(Volodymyr): update missing steps here
+        let user = try await getUserUseCase.execute()
+        accountDataManager.update(missingSteps: user.missingSteps)
         
         shouldPresentConfirmation = true
       } catch {

@@ -1,3 +1,4 @@
+import AccountData
 import Combine
 import Factory
 import Foundation
@@ -13,6 +14,7 @@ public final class SecurityHubViewModel: ObservableObject {
 
   @Published var isMFAEnabled: Bool = false
   @Published var isBiometricEnabled: Bool = false
+  @Published var shouldVerifyEmail: Bool = false
   @Published var toastMessage: String?
   
   @Published var biometricType: BiometricType = .none
@@ -112,6 +114,13 @@ extension SecurityHubViewModel {
   
   func hidePopup() {
     popup = nil
+  }
+  
+  func checkEmailVerificationStatus() {
+    let userData = accountDataManager.userInfomationData as? UserInfomationData
+    let missingSteps = userData?.missingStepsEnum ?? []
+    
+    shouldVerifyEmail = missingSteps.contains(.verifyEmail)
   }
 }
 

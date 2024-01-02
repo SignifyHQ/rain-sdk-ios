@@ -212,10 +212,11 @@ public class SolidOnboardingFlowCoordinator: SolidOnboardingFlowCoordinatorProto
     if LFFeatureFlagContainer.isPasswordLoginFeatureFlagEnabled {
       let user = try await getUserUseCase.execute()
       accountDataManager.update(missingSteps: user.missingSteps)
+      
       let userInfomationData = accountDataManager.userInfomationData as? UserInfomationData
       if let userInfomationUnwrap = userInfomationData,
-         let missingStep = userInfomationUnwrap.missingStepsEnum?.first,
-         missingStep == .createPassword {
+         let missingSteps = userInfomationUnwrap.missingStepsEnum,
+         missingSteps.contains(.createPassword) {
         set(route: .createPassword)
         return
       }
