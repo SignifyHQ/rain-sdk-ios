@@ -9,6 +9,7 @@ import LFLocalizable
 
 @MainActor
 final class EnterTOTPCodeViewModel: ObservableObject {
+  @LazyInjected(\.accountDataManager) var accountDataManager
   @LazyInjected(\.accountRepository) var accountRepository
   @LazyInjected(\.customerSupportService) var customerSupportService
 
@@ -46,6 +47,7 @@ extension EnterTOTPCodeViewModel {
         let response = try await disableMFAUseCase.execute(code: totpCode)
         if response.success {
           popup = .mfaTurnedOff
+          accountDataManager.update(mfaEnabled: false)
         }
       } catch {
         handleError(error: error)

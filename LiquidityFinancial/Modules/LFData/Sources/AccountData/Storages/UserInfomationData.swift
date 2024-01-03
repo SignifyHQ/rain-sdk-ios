@@ -7,7 +7,7 @@ public struct UserInfomationData: Codable, UserInfomationDataProtocol {
   public var firstName, lastName, middleName: String?
   public var agreementIDS: [String] = []
   public var phone, email, fullName, dateOfBirth: String?
-  public var phoneVerified, emailVerified: Bool?
+  public var phoneVerified, emailVerified, mfaEnabled: Bool?
   public var addressLine1, addressLine2, city, state: String?
   public var country, postalCode, encryptedData: String?
   public var ssn, passport: String?
@@ -21,29 +21,30 @@ public struct UserInfomationData: Codable, UserInfomationDataProtocol {
   
   public init() {}
   
-  public init(enity: LFUser) {
-    self.userID = enity.userID
-    self.firstName = enity.firstName
-    self.lastName = enity.lastName
-    self.fullName = enity.fullName
-    self.phone = enity.phone
-    self.phoneVerified = enity.phoneVerified
-    self.email = enity.email
-    self.emailVerified = enity.emailVerified
-    //self.dateOfBirth = enity.firstName
-    self.addressLine1 = enity.addressEntity?.line1
-    self.addressLine2 = enity.addressEntity?.line2
-    self.city = enity.addressEntity?.city
-    self.state = enity.addressEntity?.state
-    self.country = enity.addressEntity?.country
-    self.postalCode = enity.addressEntity?.postalCode
-    self.accountReviewStatus = enity.accountReviewStatus
-    self.referralLink = enity.referralLink
-    self.userRewardType = enity.userRewardType
-    self.userAccessLevel = enity.userAccessLevel
-    self.userRoundUpEnabled = enity.userRoundUpEnabled
-    self.userSelectedFundraiserID = enity.userSelectedFundraiserId
-    self.missingSteps = enity.missingSteps
+  public init(entity: LFUser) {
+    self.userID = entity.userID
+    self.firstName = entity.firstName
+    self.lastName = entity.lastName
+    self.fullName = entity.fullName
+    self.phone = entity.phone
+    self.phoneVerified = entity.phoneVerified
+    self.email = entity.email
+    self.emailVerified = entity.emailVerified
+    self.mfaEnabled = entity.mfaEnabled
+    //self.dateOfBirth = entity.firstName
+    self.addressLine1 = entity.addressEntity?.line1
+    self.addressLine2 = entity.addressEntity?.line2
+    self.city = entity.addressEntity?.city
+    self.state = entity.addressEntity?.state
+    self.country = entity.addressEntity?.country
+    self.postalCode = entity.addressEntity?.postalCode
+    self.accountReviewStatus = entity.accountReviewStatus
+    self.referralLink = entity.referralLink
+    self.userRewardType = entity.userRewardType
+    self.userAccessLevel = entity.userAccessLevel
+    self.userRoundUpEnabled = entity.userRoundUpEnabled
+    self.userSelectedFundraiserID = entity.userSelectedFundraiserId
+    self.missingSteps = entity.missingSteps
   }
   
   public enum AccessLevel: String {

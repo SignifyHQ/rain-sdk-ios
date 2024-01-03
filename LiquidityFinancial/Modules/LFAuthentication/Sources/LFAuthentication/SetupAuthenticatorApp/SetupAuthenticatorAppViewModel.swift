@@ -64,6 +64,8 @@ extension SetupAuthenticatorAppViewModel {
       
       do {
         let response = try await enableMFAUseCase.execute(code: verificationCode)
+        
+        accountDataManager.update(mfaEnabled: true)
         recoveryCode = response.recoveryCode
         popup = .recoveryCode
       } catch {

@@ -31,7 +31,7 @@ public struct SecurityHubView: View {
         }
       }
       .onAppear {
-        viewModel.checkEmailVerificationStatus()
+        viewModel.onAppear()
       }
   }
 }

@@ -116,6 +116,11 @@ extension SecurityHubViewModel {
     popup = nil
   }
   
+  func onAppear() {
+    checkEmailVerificationStatus()
+    isMFAEnabled = accountDataManager.userInfomationData.mfaEnabled ?? false
+  }
+  
   func checkEmailVerificationStatus() {
     let userData = accountDataManager.userInfomationData as? UserInfomationData
     let missingSteps = userData?.missingStepsEnum ?? []

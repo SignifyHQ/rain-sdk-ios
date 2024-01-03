@@ -10,6 +10,7 @@ public struct APIUser: Codable {
   public let phoneVerified: Bool?
   public let email: String?
   public let emailVerified: Bool?
+  public let mfaEnabled: Bool?
   public let dateOfBirth: String?
   public let address: APIAddress?
   public let createdAt, modifiedAt, productId, idType: String?

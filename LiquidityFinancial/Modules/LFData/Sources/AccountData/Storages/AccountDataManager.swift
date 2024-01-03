@@ -103,6 +103,10 @@ public class AccountDataManager: AccountDataStorageProtocol {
     self.userInfomationData.emailVerified = emailVerified
   }
   
+  public func update(mfaEnabled: Bool?) {
+    self.userInfomationData.mfaEnabled = mfaEnabled
+  }
+  
   public func update(fullName: String?) {
     self.userInfomationData.fullName = fullName
   }
@@ -175,7 +179,7 @@ public class AccountDataManager: AccountDataStorageProtocol {
   }
   
   public func storeUser(user: LFUser) {
-    userInfomationData = UserInfomationData(enity: user)
+    userInfomationData = UserInfomationData(entity: user)
     if let fullName = userInfomationData.fullName, fullName.isEmpty {
       update(fullName: (userInfomationData.firstName ?? "") + " " + (userInfomationData.lastName ?? ""))
     }
