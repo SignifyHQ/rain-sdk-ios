@@ -1,0 +1,49 @@
+/*
+ AccessibilityIdentifier.strings
+*/
+
+// MARK: - Common
+
+/// PopUp
+"popup.title" = "popupTitle";
+"popup.message" = "popupMessage";
+"popup.primaryButton" = "popupPrimaryButton";
+"popup.secondaryButton" = "popupSecondaryButton";
+
+// MARK: - Onboarding
+
+/// PhoneNumberScreen
+"phoneNumber.logoImage" = "icLogo";
+"phoneNumber.headerTitle" = "phoneNumberTitle";
+"phoneNumber.textField" = "phoneNumberTextField";
+"phoneNumber.voipTermTextTappable" = "voipTermTextTappable";
+"phoneNumber.conditionTextTappable" = "conditionTextTappable";
+"phoneNumber.continueButton" = "continueButton";
+
+/// VerificationCodeScreen
+"verificationCode.headerTitle" = "verificationCodeTitle";
+"verificationCode.headerDescription" = "verificationCodeDescription";
+"verificationCode.resendTimerText" = "resendTimer";
+"verificationCode.verificationCodeTextField" = "verificationCodeTextField";
+"verificationCode.resendButton" = "resendButton";
+
+/// IdentityVerificationCode
+"identityVerificationCode.headerTitle" = "identityVerificationCodeTitle";
+"identityVerificationCode.ssnSecureField" = "ssnSecureField";
+"identityVerificationCode.continueButton" = "continueButton";
+
+/// AccountLockedScreen
+"accountLockedScreen.lockedImage" = "lockedImage";
+"accountLockedScreen.contactSupportTitle" = "contactSupportTitle";
+"accountLockedScreen.contactSupportDescription" = "contactSupportDescription";
+"accountLockedScreen.contactSupportButton" = "contactSupportButton";
+"accountLockedScreen.logoutButton" = "logoutButton";
+
+// MARK: - Dashboard
+
+/// HomeScreen
+"homeScreen.tabView" = "Tab Bar";
+"homeScreen.profileButton" = "profileButton";
+
+/// ProfileScreen
+"profileScreen.logoutButton" = "logoutButton";

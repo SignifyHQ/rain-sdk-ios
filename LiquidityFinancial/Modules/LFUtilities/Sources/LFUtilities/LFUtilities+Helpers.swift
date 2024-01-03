@@ -40,6 +40,8 @@ extension LFUtilities {
       return "Cause"
     case .PrideCard:
       return "Pride"
+    case .PawsCard:
+      return "Paws"
     default:
       return .empty
     }
@@ -57,6 +59,8 @@ extension LFUtilities {
       return "CauseCard"
     case .PrideCard:
       return "PrideCard"
+    case .PawsCard:
+      return "PawsCard"
     default:
       return .empty
     }

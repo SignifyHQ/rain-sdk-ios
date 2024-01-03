@@ -21,6 +21,8 @@ public final class NetworkUtilities {
     case .DogeCard, .DogeCardNobank: return APIConstants.dogeCardID
     case .CauseCard, .CauseCardNetspend: return APIConstants.causeCardID
     case .PrideCard: return APIConstants.prideCardID
+    // TODO: Will update after when having paws product id 
+    case .PawsCard: return APIConstants.prideCardID
     case .none:
       fatalError("Wrong the target name. It must right for setup the API")
     }
@@ -38,6 +40,7 @@ extension NetworkUtilities {
       case PrideCard
       case CauseCardNetspend
       case DogeCardNobank
+      case PawsCard
     }
   }
   

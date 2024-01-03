@@ -61,7 +61,7 @@ public struct GradientToggleStyle: ToggleStyle {
   
   var circleColor: Color {
     switch LFStyleGuide.target {
-    case .CauseCard, .PrideCard:
+    case .CauseCard, .PrideCard, .PawsCard:
       return Colors.buttons.swiftUIColor
     default:
       return Colors.whiteText.swiftUIColor

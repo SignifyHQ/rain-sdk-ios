@@ -40,6 +40,7 @@ extension LFUtilities {
       case PrideCard
       case CauseCardNetspend
       case DogeCardNobank
+      case PawsCard
     }
   }
   
