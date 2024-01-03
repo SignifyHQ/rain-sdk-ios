@@ -7,7 +7,6 @@ struct SetupAuthenticatorAppView: View {
   @Environment(\.dismiss) private var dismiss
   @StateObject private var viewModel = SetupAuthenticatorAppViewModel()
   @State private var isSavedRecoveryCode = false
-  @State private var dismissMethods: Popup.DismissMethods = []
   
   var body: some View {
     ZStack {
@@ -22,14 +21,24 @@ struct SetupAuthenticatorAppView: View {
     .popup(item: $viewModel.toastMessage, style: .toast) {
       ToastView(toastMessage: $0)
     }
-    .popup(item: $viewModel.popup, dismissMethods: dismissMethods) { item in
+    .popup(item: $viewModel.blockPopup, dismissMethods: []) { item in
       switch item {
       case .recoveryCode:
         recoveryCodePopup
-      case .mfaTurnedOn:
-        mfaTurnedOnPopup
       }
     }
+    .popup(
+      item: $viewModel.popup,
+      dismissAction: {
+        dismissAction()
+      },
+      content: { item in
+        switch item {
+        case .mfaTurnedOn:
+          mfaTurnedOnPopup
+        }
+      }
+    )
     .defaultToolBar(
       icon: .support,
       openSupportScreen: {
@@ -52,7 +61,7 @@ private extension SetupAuthenticatorAppView {
           isDisable: viewModel.isDisableVerifyButton,
           isLoading: $viewModel.isVerifyingTOTP
         ) {
-          dismissMethods = []
+          hideKeyboard()
           viewModel.enableMFAAuthentication()
         }
       }
@@ -137,6 +146,7 @@ private extension SetupAuthenticatorAppView {
             length: Constants.MaxCharacterLimit.mfaCode.value
           )
       }
+      .disabled(viewModel.isVerifyingTOTP)
     }
   }
   
@@ -179,8 +189,7 @@ private extension SetupAuthenticatorAppView {
     LiquidityAlert(
       title: LFLocalizable.Authentication.SetupMfa.mfaTurnedOn.uppercased(),
       primary: .init(text: LFLocalizable.Button.Okay.title) {
-        viewModel.hidePopup()
-        dismiss()
+        dismissAction()
       }
     )
   }
@@ -199,7 +208,6 @@ private extension SetupAuthenticatorAppView {
           recoveryCodeView
         }
         FullSizeButton(title: LFLocalizable.Button.Continue.title, isDisable: !isSavedRecoveryCode) {
-          dismissMethods = [.tapOutside]
           viewModel.didRecoveryCodeSave()
         }
         .padding(.bottom, 8)
@@ -264,5 +272,18 @@ private extension SetupAuthenticatorAppView {
       Spacer()
     }
     .padding([.horizontal, .top], 4)
+  }
+}
+
+// MARK: - View Helpers
+private extension SetupAuthenticatorAppView {
+  func dismissAction() {
+    switch viewModel.popup {
+    case .mfaTurnedOn:
+      viewModel.hidePopup()
+      dismiss()
+    default:
+      break
+    }
   }
 }

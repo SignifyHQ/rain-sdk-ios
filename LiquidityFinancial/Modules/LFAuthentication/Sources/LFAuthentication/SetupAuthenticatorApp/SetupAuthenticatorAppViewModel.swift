@@ -22,6 +22,7 @@ final class SetupAuthenticatorAppViewModel: ObservableObject {
   @Published var qrCode = UIImage()
   @Published var toastMessage: String?
   @Published var popup: Popup?
+  @Published var blockPopup: BlockPopup?
   
   var isDisableVerifyButton: Bool {
     verificationCode.trimWhitespacesAndNewlines().count != Constants.MaxCharacterLimit.mfaCode.value
@@ -67,7 +68,7 @@ extension SetupAuthenticatorAppViewModel {
         
         accountDataManager.update(mfaEnabled: true)
         recoveryCode = response.recoveryCode
-        popup = .recoveryCode
+        blockPopup = .recoveryCode
       } catch {
         handleError(error: error)
       }
@@ -87,6 +88,7 @@ extension SetupAuthenticatorAppViewModel {
   }
   
   func didRecoveryCodeSave() {
+    blockPopup = nil
     popup = .mfaTurnedOn
   }
   
@@ -132,7 +134,10 @@ private extension SetupAuthenticatorAppViewModel {
 // MARK: - Types
 extension SetupAuthenticatorAppViewModel {
   enum Popup {
-    case recoveryCode
     case mfaTurnedOn
+  }
+  
+  enum BlockPopup {
+    case recoveryCode
   }
 }
