@@ -8,17 +8,26 @@ public struct EnterTOTPCodeView: View {
   @Environment(\.dismiss) private var dismiss
   @StateObject private var viewModel: EnterTOTPCodeViewModel
   
-  public init(purpose: EnterTOTPCodePurpose) {
+  @Binding var isFlowPresented: Bool
+  
+  public init(
+    purpose: EnterTOTPCodePurpose,
+    isFlowPresented: Binding<Bool>
+  ) {
     _viewModel = .init(
       wrappedValue: EnterTOTPCodeViewModel(
         purpose: purpose
       )
     )
+    _isFlowPresented = .init(projectedValue: isFlowPresented)
   }
   
   public var body: some View {
     content
-      .popup(item: $viewModel.toastMessage, style: .toast) {
+      .popup(
+        item: $viewModel.toastMessage,
+        style: .toast
+      ) {
         ToastView(toastMessage: $0)
       }
       .popup(
@@ -39,12 +48,18 @@ public struct EnterTOTPCodeView: View {
       .navigationLink(item: $viewModel.navigation) { item in
         switch item {
         case .recoveryCode:
-          RecoveryCodeView()
+          RecoveryCodeView {
+            isFlowPresented = false
+          }
         }
       }
-      .defaultToolBar(icon: .support, openSupportScreen: {
-        viewModel.openSupportScreen()
-      })
+      .defaultToolBar(
+        icon: .support,
+        openSupportScreen: {
+          viewModel.openSupportScreen()
+        }
+      )
+      .navigationBarBackButtonHidden(viewModel.isVerifying)
       .track(name: String(describing: type(of: self)))
   }
 }
@@ -59,15 +74,20 @@ private extension EnterTOTPCodeView {
         .multilineTextAlignment(.center)
         .lineLimit(2)
         .padding(.horizontal, 30)
+      
       GenImages.CommonImages.dash.swiftUIImage
         .foregroundColor(Colors.label.swiftUIColor.opacity(0.5))
-      PinCodeView(code: $viewModel.totpCode, codeLength: viewModel.totpCodeLength)
+      
+      PinCodeView(code: $viewModel.totpCode, isDisabled: $viewModel.isVerifying, codeLength: viewModel.totpCodeLength)
+      
       if let errorMessage = viewModel.errorMessage {
         Text(errorMessage)
           .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.small.value))
           .foregroundColor(Colors.error.swiftUIColor)
       }
+      
       Spacer()
+      
       bottomView
     }
   }
@@ -88,8 +108,10 @@ private extension EnterTOTPCodeView {
           .onTapGesture {
             viewModel.didUseRecoveryCodeLinkTap()
           }
+          .disabled(viewModel.isVerifying)
       }
       .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.ultraSmall.value))
+      
       FullSizeButton(
         title: LFLocalizable.Button.Continue.title,
         isDisable: !viewModel.isTOTPCodeEntered,

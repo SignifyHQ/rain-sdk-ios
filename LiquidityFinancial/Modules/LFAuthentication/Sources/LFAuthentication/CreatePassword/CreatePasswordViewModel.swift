@@ -125,6 +125,10 @@ public final class CreatePasswordViewModel: ObservableObject {
     createPassword()
   }
   
+  func dismissPopup() {
+    shouldShowConfirmationPopup = false
+  }
+  
   func successMessage() -> String {
     switch purpose {
     case .createExistingUser:

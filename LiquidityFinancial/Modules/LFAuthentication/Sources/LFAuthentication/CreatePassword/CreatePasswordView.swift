@@ -217,6 +217,8 @@ extension CreatePasswordView {
       primary: .init(
         text: LFLocalizable.Button.Ok.title,
         action: {
+          viewModel.dismissPopup()
+          
           switch viewModel.purpose {
           case .createExistingUser:
             dismiss()

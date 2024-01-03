@@ -24,6 +24,9 @@ public final class SecurityHubViewModel: ObservableObject {
   @Published
   var isChangePasswordFlowPresented: Bool = false
   
+  @Published
+  var isVerifyTOPTFlowPresented: Bool = false
+  
   private var cancellables: Set<AnyCancellable> = []
 
   var email: SecurityInformation {
@@ -76,7 +79,7 @@ extension SecurityHubViewModel {
   
   func didMFAToggleStateChange() {
     guard isMFAEnabled else {
-      navigation = .enterTOTPCode
+      isVerifyTOPTFlowPresented = true
       return
     }
     navigation = .setUpMFA
@@ -186,7 +189,6 @@ extension SecurityHubViewModel {
   
   enum Navigation {
     case setUpMFA
-    case enterTOTPCode
     case verifyEmail
   }
   

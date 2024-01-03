@@ -41,6 +41,7 @@ public struct PinCodeView: View {
         .cornerRadius(pinCodeConfig.radius)
         .frame(minWidth: 0, maxWidth: .infinity)
         .frame(height: pinCodeConfig.height)
+        .disabled(isDisabled)
       }
     }
     .onAppear {

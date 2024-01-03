@@ -5,28 +5,46 @@ import LFStyleGuide
 import LFLocalizable
 
 struct RecoveryCodeView: View {
-  @StateObject private var viewModel = RecoveryCodeViewModel()
+  @StateObject private var viewModel: RecoveryCodeViewModel
+  @FocusState var isTextFieldInFocus: Bool
   
-  init() {
+  init(
+    onActionContinue: @escaping () -> Void
+  ) {
+    _viewModel = .init(
+      wrappedValue: RecoveryCodeViewModel(
+        onActionContinue: onActionContinue
+      )
+    )
   }
   
   var body: some View {
     content
-      .popup(item: $viewModel.toastMessage, style: .toast) {
+      .popup(
+        item: $viewModel.toastMessage,
+        style: .toast
+      ) {
         ToastView(toastMessage: $0)
       }
-      .popup(item: $viewModel.popup) { item in
+      .popup(
+        item: $viewModel.popup,
+        dismissAction: dismissAction
+      ) { item in
         switch item {
-        case .mfaRecovered:
-          mfaRecoveredPopup
+        case .mfaTurnedOff:
+          mfaDisabledPopup
         }
       }
       .padding(.horizontal, 30)
       .padding(.vertical, 16)
       .background(Colors.background.swiftUIColor)
-      .defaultToolBar(icon: .support, openSupportScreen: {
-        viewModel.openSupportScreen()
-      })
+      .defaultToolBar(
+        icon: .support,
+        openSupportScreen: {
+          viewModel.openSupportScreen()
+        }
+      )
+      .navigationBarBackButtonHidden(viewModel.isVerifying)
       .track(name: String(describing: type(of: self)))
   }
 }
@@ -38,13 +56,17 @@ private extension RecoveryCodeView {
       Text(LFLocalizable.Authentication.RecoveryCode.title.uppercased())
         .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.main.value))
         .foregroundColor(Colors.label.swiftUIColor)
+      
       recoveryCodeView
+      
       Spacer()
+      
       FullSizeButton(
         title: LFLocalizable.Button.Continue.title,
         isDisable: viewModel.recoveryCode.trimWhitespacesAndNewlines().isEmpty,
         isLoading: $viewModel.isVerifying
       ) {
+        isTextFieldInFocus = false
         viewModel.didContinueButtonTap()
       }
     }
@@ -68,6 +90,9 @@ private extension RecoveryCodeView {
             length: Constants.MaxCharacterLimit.recoveryCode.value
           )
       }
+      .focused($isTextFieldInFocus)
+      .disabled(viewModel.isVerifying)
+      
       if let inlineErrorMessage = viewModel.inlineErrorMessage {
         Text(inlineErrorMessage)
           .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.small.value))
@@ -76,12 +101,26 @@ private extension RecoveryCodeView {
     }
   }
   
-  var mfaRecoveredPopup: some View {
+  var mfaDisabledPopup: some View {
     LiquidityAlert(
-      title: LFLocalizable.Authentication.RecoveryCode.mfaRecovered.uppercased(),
+      title: LFLocalizable.Authentication.EnterTotp.mfaTurnedOff.uppercased(),
       primary: .init(text: LFLocalizable.Button.Okay.title) {
-        viewModel.hidePopup()
+        dismissAction()
       }
     )
+  }
+}
+
+// MARK: - View Helpers
+
+extension RecoveryCodeView {
+  private func dismissAction() {
+    switch viewModel.popup {
+    case .mfaTurnedOff:
+      viewModel.hidePopup()
+      viewModel.onActionContinue()
+    default:
+      break
+    }
   }
 }

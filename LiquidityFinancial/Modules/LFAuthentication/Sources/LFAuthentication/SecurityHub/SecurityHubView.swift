@@ -20,12 +20,18 @@ public struct SecurityHubView: View {
           isFlowPresented: $viewModel.isChangePasswordFlowPresented
         )
       }
+      .navigationLink(
+        isActive: $viewModel.isVerifyTOPTFlowPresented
+      ) {
+        EnterTOTPCodeView(
+          purpose: .disableMFA,
+          isFlowPresented: $viewModel.isVerifyTOPTFlowPresented
+        )
+      }
       .navigationLink(item: $viewModel.navigation) { item in
         switch item {
         case .setUpMFA:
           SetupAuthenticatorAppView()
-        case .enterTOTPCode:
-          EnterTOTPCodeView(purpose: .disableMFA)
         case .verifyEmail:
           VerifyEmailView()
         }
