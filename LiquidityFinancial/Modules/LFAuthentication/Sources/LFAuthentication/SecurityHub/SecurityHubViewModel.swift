@@ -139,7 +139,7 @@ private extension SecurityHubViewModel {
         case .finished:
           log.debug("Biometrics capability check completed.")
         case .failure(let error):
-          log.error("Biometrics error: \(error.localizedDescription)")
+          log.error("Biometrics error: \(error.userFriendlyMessage)")
         }
       }, receiveValue: { [weak self] result in
         guard let self else { return }
@@ -166,7 +166,7 @@ private extension SecurityHubViewModel {
     case .userCancel:
       break
     default:
-      toastMessage = error.localizedDescription
+      toastMessage = error.userFriendlyMessage
     }
   }
 }

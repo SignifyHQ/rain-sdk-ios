@@ -110,7 +110,7 @@ extension MoveMoneyAccountViewModel {
           }
         )
       } catch {
-        log.error(error.localizedDescription)
+        log.error(error.userFriendlyMessage)
       }
     }
   }
@@ -151,7 +151,7 @@ extension MoveMoneyAccountViewModel {
           case .finished:
             log.debug("Device authentication check completed.")
           case .failure(let error):
-            self.toastMessage = error.localizedDescription
+            self.toastMessage = error.userFriendlyMessage
         }
       }, receiveValue: { [weak self] result in
         guard let self else { return }
@@ -194,7 +194,7 @@ extension MoveMoneyAccountViewModel {
         let linkedSources = try await response.linkedSources
         self.accountDataManager.storeLinkedSources(linkedSources)
       } catch {
-        toastMessage = error.localizedDescription
+        toastMessage = error.userFriendlyMessage
       }
     }
   }
@@ -269,7 +269,7 @@ extension MoveMoneyAccountViewModel {
   
   func handleTransferError(error: Error) {
     guard let errorObject = error.asErrorObject else {
-      toastMessage = error.localizedDescription
+      toastMessage = error.userFriendlyMessage
       return
     }
     switch errorObject.code {

@@ -70,7 +70,7 @@ extension EnterPasswordViewModel {
           toastMessage = error.userFriendlyMessage
         }
         
-        log.error(error.localizedDescription)
+        log.error(error.userFriendlyMessage)
       }
     }
   }

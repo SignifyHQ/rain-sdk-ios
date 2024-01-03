@@ -93,7 +93,7 @@ private extension CryptoAssetViewModel {
       let account = try await cryptoAccountService.getAccountDetail(id: self.asset.id)
       self.accountDataManager.addOrUpdateAccount(account)
     } catch {
-      toastMessage = error.localizedDescription
+      toastMessage = error.userFriendlyMessage
     }
   }
   
@@ -109,7 +109,7 @@ private extension CryptoAssetViewModel {
       self.transactions = transactions.data.compactMap({ TransactionModel(from: $0) })
       activity = .transactions
     } catch {
-      toastMessage = error.localizedDescription
+      toastMessage = error.userFriendlyMessage
       activity = .failure
     }
   }

@@ -53,7 +53,7 @@ public final class ChangePasswordViewModel: ObservableObject {
         shouldDismiss = true
       } catch {
         toastMessage = error.userFriendlyMessage
-        log.error(error.localizedDescription)
+        log.error(error.userFriendlyMessage)
       }
     }
   }

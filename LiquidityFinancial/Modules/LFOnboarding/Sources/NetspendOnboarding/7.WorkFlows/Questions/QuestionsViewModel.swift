@@ -84,7 +84,7 @@ extension QuestionsViewModel {
         onCompletion()
       } catch {
         onCompletion()
-        log.error(error.localizedDescription)
+        log.error(error.userFriendlyMessage)
       }
     }
   }
@@ -128,13 +128,13 @@ extension QuestionsViewModel {
         try await handlerOnboardingStep()
         
       } catch {
-        if error.localizedDescription.contains("identity_verification_questions_not_available") {
+        if error.userFriendlyMessage.contains("identity_verification_questions_not_available") {
           onboardingFlowCoordinator.set(route: .popTimeUp)
           return
         }
         
         log.error(error)
-        toastMessage = error.localizedDescription
+        toastMessage = error.userFriendlyMessage
       }
     }
   }

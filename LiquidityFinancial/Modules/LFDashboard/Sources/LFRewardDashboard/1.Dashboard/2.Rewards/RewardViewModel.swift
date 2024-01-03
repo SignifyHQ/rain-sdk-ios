@@ -102,8 +102,8 @@ private extension RewardViewModel {
           // reset state for first load
           isFirstLoad = false
         }
-        log.error(error.localizedDescription)
-        toastMessage = error.localizedDescription
+        log.error(error.userFriendlyMessage)
+        toastMessage = error.userFriendlyMessage
       }
     }
   }

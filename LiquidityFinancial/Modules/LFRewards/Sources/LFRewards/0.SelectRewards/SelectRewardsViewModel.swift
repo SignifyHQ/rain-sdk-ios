@@ -51,8 +51,8 @@ class SelectRewardsViewModel: ObservableObject {
           let causeList = try await apiFetchCategories()
           self.navigation = .causeFilter(causeList)
         } catch {
-          log.error(error.localizedDescription)
-          showError = error.localizedDescription
+          log.error(error.userFriendlyMessage)
+          showError = error.userFriendlyMessage
         }
       }
     case .PrideCard:
@@ -69,8 +69,8 @@ class SelectRewardsViewModel: ObservableObject {
             self.navigation = .causeFilter(causeList)
           }
         } catch {
-          log.error(error.localizedDescription)
-          showError = error.localizedDescription
+          log.error(error.userFriendlyMessage)
+          showError = error.userFriendlyMessage
         }
       }
     default: break
@@ -103,8 +103,8 @@ class SelectRewardsViewModel: ObservableObject {
           donationNavigation()
         }
       } catch {
-        log.error(error.localizedDescription)
-        showError = error.localizedDescription
+        log.error(error.userFriendlyMessage)
+        showError = error.userFriendlyMessage
       }
     }
   }

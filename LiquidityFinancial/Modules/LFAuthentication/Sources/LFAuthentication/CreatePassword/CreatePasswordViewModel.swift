@@ -87,7 +87,7 @@ public final class CreatePasswordViewModel: ObservableObject {
         }
       } catch {
         toastMessage = error.userFriendlyMessage
-        log.error(error.localizedDescription)
+        log.error(error.userFriendlyMessage)
       }
     }
   }

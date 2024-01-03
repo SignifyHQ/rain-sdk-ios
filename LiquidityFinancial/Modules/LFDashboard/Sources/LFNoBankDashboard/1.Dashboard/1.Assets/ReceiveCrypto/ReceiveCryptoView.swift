@@ -60,7 +60,7 @@ struct ReceiveCryptoView: View {
             applicationActivities: viewModel.getApplicationActivities()
           ) { activityType, finished, activityItems, error in
             if let error = error {
-              print(error.localizedDescription)
+              print(error.userFriendlyMessage)
               return
             }
             if let activityType = activityType {

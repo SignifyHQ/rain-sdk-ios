@@ -112,7 +112,7 @@ extension VerificationCodeViewModel {
         isShowLoading = false
       } catch {
         isShowLoading = false
-        toastMessage = error.localizedDescription
+        toastMessage = error.userFriendlyMessage
       }
     }
   }
@@ -152,7 +152,7 @@ extension VerificationCodeViewModel {
   func handleError(error: Error) {
     isShowLoading = false
     guard let code = error.asErrorObject?.code else {
-      toastMessage = error.localizedDescription
+      toastMessage = error.userFriendlyMessage
       return
     }
     switch code {
@@ -161,7 +161,7 @@ extension VerificationCodeViewModel {
     case Constants.ErrorCode.credentialsInvalid.value:
       toastMessage = LFLocalizable.VerificationCode.OtpInvalid.message
     default:
-      toastMessage = error.localizedDescription
+      toastMessage = error.userFriendlyMessage
     }
   }
 }
@@ -174,7 +174,7 @@ private extension VerificationCodeViewModel {
     do {
       try await onboardingFlowCoordinator.apiFetchCurrentState()
     } catch {
-      log.error(error.localizedDescription)
+      log.error(error.userFriendlyMessage)
       onboardingFlowCoordinator.forcedLogout()
     }
   }

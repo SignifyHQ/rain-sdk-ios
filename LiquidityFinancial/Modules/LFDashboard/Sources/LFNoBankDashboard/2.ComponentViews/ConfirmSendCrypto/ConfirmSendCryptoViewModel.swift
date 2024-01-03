@@ -54,7 +54,7 @@ class ConfirmSendCryptoViewModel: ObservableObject {
           case .finished:
             log.debug("Device authentication check completed.")
           case .failure(let error):
-            self.toastMessage = error.localizedDescription
+            self.toastMessage = error.userFriendlyMessage
         }
       }, receiveValue: { [weak self] result in
         guard let self else { return }
@@ -89,7 +89,7 @@ class ConfirmSendCryptoViewModel: ObservableObject {
         transaction = TransactionModel(from: transactionEntity)
         self.navigation = .transactionDetail(transaction.id)
       } catch {
-        self.toastMessage = error.localizedDescription
+        self.toastMessage = error.userFriendlyMessage
       }
     }
   }
@@ -110,7 +110,7 @@ class ConfirmSendCryptoViewModel: ObservableObject {
         transaction = TransactionModel(from: transactionEntity)
         self.navigation = .transactionDetail(transaction.id)
       } catch {
-        self.toastMessage = error.localizedDescription
+        self.toastMessage = error.userFriendlyMessage
       }
     }
   }

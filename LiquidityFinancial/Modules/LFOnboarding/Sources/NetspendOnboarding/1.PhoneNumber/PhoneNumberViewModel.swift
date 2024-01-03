@@ -128,14 +128,14 @@ extension PhoneNumberViewModel {
 private extension PhoneNumberViewModel {
   func handleError(error: Error) {
     guard let code = error.asErrorObject?.code else {
-      toastMessage = error.localizedDescription
+      toastMessage = error.userFriendlyMessage
       return
     }
     switch code {
     case Constants.ErrorCode.userInactive.value:
       onboardingFlowCoordinator.set(route: .accountLocked)
     default:
-      toastMessage = error.localizedDescription
+      toastMessage = error.userFriendlyMessage
     }
   }
 }

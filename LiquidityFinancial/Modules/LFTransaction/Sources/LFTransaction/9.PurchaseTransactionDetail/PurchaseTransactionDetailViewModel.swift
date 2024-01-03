@@ -43,7 +43,7 @@ extension PurchaseTransactionDetailViewModel {
         guard let id = accountDataManager.externalAccountID else { return }
         navigation = .disputeTransaction(id, code.authorizationCode)
       } catch {
-        toastMessage = error.localizedDescription
+        toastMessage = error.userFriendlyMessage
       }
     }
   }

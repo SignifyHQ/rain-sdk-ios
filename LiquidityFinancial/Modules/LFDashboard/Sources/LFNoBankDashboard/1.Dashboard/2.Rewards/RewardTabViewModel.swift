@@ -98,7 +98,7 @@ extension RewardTabViewModel {
       self.transactions = transactions.data.compactMap({ TransactionModel(from: $0) })
       activity = .transactions
     } catch {
-      toastMessage = error.localizedDescription
+      toastMessage = error.userFriendlyMessage
       if transactions.isEmpty {
         activity = .failure
       }

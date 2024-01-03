@@ -77,7 +77,7 @@ final class SolidCreatePersonUseCaseTests: XCTestCase {
       
     } catch {
       // Then the description of the caught error is the one we expected
-      expect(self.repository.createPersonParametersThrowableError?.localizedDescription).to(equal(error.localizedDescription))
+      expect(self.repository.createPersonParametersThrowableError?.localizedDescription).to(equal(error.userFriendlyMessage))
     }
   }
 }

@@ -214,7 +214,7 @@ extension AccountViewModel {
         let code = try await getAuthorizationUseCase.execute(sessionId: sessionID)
         navigation = .atmLocation(code.authorizationCode)
       } catch {
-        toastMessage = error.localizedDescription
+        toastMessage = error.userFriendlyMessage
       }
     }
   }
@@ -233,7 +233,7 @@ extension AccountViewModel {
         guard let id = accountDataManager.externalAccountID else { return }
         navigation = .disputeTransaction(id, code.authorizationCode)
       } catch {
-        toastMessage = error.localizedDescription
+        toastMessage = error.userFriendlyMessage
       }
     }
   }

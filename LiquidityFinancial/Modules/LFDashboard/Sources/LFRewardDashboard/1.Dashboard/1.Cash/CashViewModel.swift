@@ -143,7 +143,7 @@ final class CashViewModel: ObservableObject {
           activity = .addFunds
         }
         log.error(error)
-        toastMessage = error.localizedDescription
+        toastMessage = error.userFriendlyMessage
       }
     }
   }
@@ -221,7 +221,7 @@ extension CashViewModel {
       do {
         achInformation = try await getACHInformation()
       } catch {
-        toastMessage = error.localizedDescription
+        toastMessage = error.userFriendlyMessage
       }
     }
   }

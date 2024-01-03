@@ -92,8 +92,8 @@ extension CausesViewModel {
         status = .success(data)
       } catch {
         status = .failure
-        log.error(error.localizedDescription)
-        showError = error.localizedDescription
+        log.error(error.userFriendlyMessage)
+        showError = error.userFriendlyMessage
       }
     }
   }
@@ -108,8 +108,8 @@ extension CausesViewModel {
         rewardDataManager.update(fundraisers: fundraisers)
         navigation = .selectFundraiser(cause, fundraiserModels)
       } catch {
-        log.error(error.localizedDescription)
-        showError = error.localizedDescription
+        log.error(error.userFriendlyMessage)
+        showError = error.userFriendlyMessage
       }
     }
   }

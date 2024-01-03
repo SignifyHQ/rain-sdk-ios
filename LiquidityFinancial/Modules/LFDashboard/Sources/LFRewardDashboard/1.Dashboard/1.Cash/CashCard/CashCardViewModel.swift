@@ -39,7 +39,7 @@ extension CashCardViewModel {
         NotificationCenter.default.post(name: .refreshListCards, object: nil)
         onSuccess()
       } catch {
-        toastMessage = error.localizedDescription
+        toastMessage = error.userFriendlyMessage
       }
     }
   }

@@ -53,7 +53,7 @@ extension DepositTransactionDetailViewModel {
         _ = try await solidCancelDepositTransactionUseCase.execute(liquidityTransactionID: id)
       } catch {
         guard let errorObject = error.asErrorObject else {
-          toastMessage = error.localizedDescription
+          toastMessage = error.userFriendlyMessage
           return
         }
         toastMessage = errorObject.message

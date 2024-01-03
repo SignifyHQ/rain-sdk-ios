@@ -134,8 +134,8 @@ extension DonationsViewModel {
       let model = contribution.data.compactMap({ ContributionModel(entity: $0) })
       self.contributionData = .success(model.compactMap({ RewardTransactionRowModel(contribution: $0) }))
     } catch {
-      self.contributionData = .failure(error.localizedDescription)
-      log.error(error.localizedDescription)
+      self.contributionData = .failure(error.userFriendlyMessage)
+      log.error(error.userFriendlyMessage)
     }
   }
   
@@ -150,8 +150,8 @@ extension DonationsViewModel {
       let latestDonations = self.selectedFundraiser?.latestDonations ?? []
       self.latestDonationData = .success(latestDonations.compactMap({ RewardTransactionRowModel(latestDonation: $0) }))
     } catch {
-      self.latestDonationData = .failure(error.localizedDescription)
-      log.error(error.localizedDescription)
+      self.latestDonationData = .failure(error.userFriendlyMessage)
+      log.error(error.userFriendlyMessage)
     }
   }
 }

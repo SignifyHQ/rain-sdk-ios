@@ -45,7 +45,7 @@ extension ChangeRewardViewModel {
         accountDataManager.selectedRewardCurrencySubject.send(response)
       } catch {
         selectedRewardCurrency = previousRewardCurrency
-        toastMessage = error.localizedDescription
+        toastMessage = error.userFriendlyMessage
       }
     }
   }

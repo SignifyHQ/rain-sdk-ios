@@ -82,7 +82,7 @@ private extension TransactionListViewModel {
       self.total = transactions.total
       self.transactions += transactions.data.compactMap({ TransactionModel(from: $0) })
     } catch {
-      log.error(error.localizedDescription)
+      log.error(error.userFriendlyMessage)
     }
   }
 }

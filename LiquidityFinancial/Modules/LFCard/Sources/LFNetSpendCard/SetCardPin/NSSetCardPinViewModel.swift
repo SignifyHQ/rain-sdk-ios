@@ -61,7 +61,7 @@ public extension NSSetCardPinViewModel {
         onSetPinSuccess()
       } catch {
         isShowIndicator = false
-        toastMessage = error.localizedDescription
+        toastMessage = error.userFriendlyMessage
       }
     }
   }

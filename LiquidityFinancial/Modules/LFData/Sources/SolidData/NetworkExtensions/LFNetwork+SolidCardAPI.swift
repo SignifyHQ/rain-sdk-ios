@@ -32,11 +32,16 @@ extension LFCoreNetwork: SolidCardAPIProtocol where R == SolidCardRoute {
   }
   
   public func closeCard(cardID: String) async throws -> Bool {
-    let statusCode = try await request(
+    let response = try await request(
       SolidCardRoute.closeCard(cardID: cardID)
-    ).httpResponse?.statusCode
+    )
     
-    return statusCode?.isSuccess ?? false
+    let statusCode = (response.httpResponse?.statusCode ?? 500).isSuccess
+    if !statusCode, let data = response.data {
+      try LFCoreNetwork.processingStringError(data)
+    }
+    
+    return statusCode
   }
   
   public func createVGSShowToken(cardID: String) async throws -> APISolidCardShowToken {

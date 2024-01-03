@@ -162,9 +162,9 @@ public class NSOnboardingFlowCoordinator: OnboardingFlowCoordinatorProtocol {
         try await apiFetchAndUpdateForStart()
       }
     } catch {
-      log.error(error.localizedDescription)
+      log.error(error.userFriendlyMessage)
       
-      if error.localizedDescription.contains("identity_verification_questions_not_available") {
+      if error.userFriendlyMessage.contains("identity_verification_questions_not_available") {
         set(route: .popTimeUp)
         return
       }
@@ -192,7 +192,7 @@ public class NSOnboardingFlowCoordinator: OnboardingFlowCoordinatorProtocol {
       let entity = try await accountUseCase.getFeatureConfig()
       accountFeatureConfigData.configJSON = entity.config ?? ""
     } catch {
-      log.error(error.localizedDescription)
+      log.error(error.userFriendlyMessage)
     }
   }
   

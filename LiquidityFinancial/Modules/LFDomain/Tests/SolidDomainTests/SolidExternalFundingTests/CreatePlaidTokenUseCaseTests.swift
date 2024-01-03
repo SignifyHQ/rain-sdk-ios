@@ -49,7 +49,7 @@ final class CreatePlaidTokenUseCaseTests: XCTestCase {
       
     } catch {
       // Then the description of the caught error is the one we expected
-      expect(self.repository.createPlaidTokenAccountIDThrowableError?.localizedDescription).to(equal(error.localizedDescription))
+      expect(self.repository.createPlaidTokenAccountIDThrowableError?.localizedDescription).to(equal(error.userFriendlyMessage))
     }
   }
 }

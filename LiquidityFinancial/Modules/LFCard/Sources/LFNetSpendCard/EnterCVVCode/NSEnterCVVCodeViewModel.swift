@@ -61,7 +61,7 @@ public extension NSEnterCVVCodeViewModel {
         completion(response.id)
       } catch {
         isShowIndicator = false
-        toastMessage = error.localizedDescription
+        toastMessage = error.userFriendlyMessage
       }
     }
   }

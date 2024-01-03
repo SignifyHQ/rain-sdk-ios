@@ -69,8 +69,8 @@ public class SelectCauseCategoriesViewModel: ObservableObject {
         rewardDataManager.update(fundraisers: fundraisers)
         self.navigation = .selectFundraiser(selected.first!, fundraiserModels)
       } catch {
-        log.error(error.localizedDescription)
-        showError = error.localizedDescription
+        log.error(error.userFriendlyMessage)
+        showError = error.userFriendlyMessage
       }
     }
   }

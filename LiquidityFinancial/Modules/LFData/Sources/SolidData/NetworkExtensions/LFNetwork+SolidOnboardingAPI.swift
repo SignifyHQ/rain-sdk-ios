@@ -9,14 +9,8 @@ extension LFCoreNetwork: SolidOnboardingAPIProtocol where R == SolidOnboardingRo
       SolidOnboardingRoute.createPerson(parameters: parameters)
     )
     let status = (result.httpResponse?.statusCode ?? 500).isSuccess
-    if !status {
-      if let data = result.data {
-        do {
-          throw try JSONDecoder().decode(LFErrorObject.self, from: data)
-        } catch {
-          throw LFNetworkError.custom(message: "Decoder error object is failed")
-        }
-      }
+    if !status, let data = result.data {
+      try LFCoreNetwork.processingStringError(data)
     }
     return status
   }

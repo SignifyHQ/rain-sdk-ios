@@ -95,7 +95,7 @@ public extension IdentityVerificationCodeViewModel {
   
   func handleError(error: Error) {
     guard let errorObject = error.asErrorObject else {
-      toastMessage = error.localizedDescription
+      toastMessage = error.userFriendlyMessage
       return
     }
     switch errorObject.code {
@@ -106,7 +106,7 @@ public extension IdentityVerificationCodeViewModel {
     case Constants.ErrorCode.invalidSSN.value:
       errorMessage = errorObject.message
     default:
-      toastMessage = error.localizedDescription
+      toastMessage = error.userFriendlyMessage
     }
   }
 }
@@ -130,7 +130,7 @@ private extension IdentityVerificationCodeViewModel {
       try await solidOnboardingFlowCoordinator.handlerOnboardingStep()
       
     } catch {
-      log.error(error.localizedDescription)
+      log.error(error.userFriendlyMessage)
       
       solidOnboardingFlowCoordinator.forcedLogout()
     }

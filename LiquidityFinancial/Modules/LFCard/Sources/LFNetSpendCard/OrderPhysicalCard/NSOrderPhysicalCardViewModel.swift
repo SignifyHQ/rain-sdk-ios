@@ -78,8 +78,8 @@ extension NSOrderPhysicalCardViewModel {
         self.isShowOrderSuccessPopup = true
       } catch {
         self.isOrderingCard = false
-        log.error(error.localizedDescription)
-        self.toastMessage = error.localizedDescription
+        log.error(error.userFriendlyMessage)
+        self.toastMessage = error.userFriendlyMessage
       }
     }
   }

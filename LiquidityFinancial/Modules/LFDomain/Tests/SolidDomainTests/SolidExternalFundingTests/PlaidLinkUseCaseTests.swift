@@ -48,7 +48,7 @@ final class PlaidLinkUseCaseTests: XCTestCase {
       
     } catch {
       // Then the description of the caught error is the one we expected
-      expect(self.repository.linkPlaidAccountIdTokenPlaidAccountIdThrowableError?.localizedDescription).to(equal(error.localizedDescription))
+      expect(self.repository.linkPlaidAccountIdTokenPlaidAccountIdThrowableError?.localizedDescription).to(equal(error.userFriendlyMessage))
     }
   }
 }

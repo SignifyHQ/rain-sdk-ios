@@ -180,7 +180,7 @@ extension AccountViewModel {
         achInformation = achModel
         
       } catch {
-        log.error(error.localizedDescription)
+        log.error(error.userFriendlyMessage)
       }
     }
   }

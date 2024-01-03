@@ -76,7 +76,7 @@ extension ApplePayViewController {
               handler(paymentPassRequest)
             }
           } catch {
-            log.error(error.localizedDescription)
+            log.error(error.userFriendlyMessage)
           }
         }
       }

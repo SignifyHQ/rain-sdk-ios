@@ -106,6 +106,10 @@ extension LFCoreNetwork: RewardAPIProtocol where R == RewardRoute {
   
   public func postDonationsSuggest(name: String) async throws -> Bool {
     let response = try await request(RewardRoute.donationsSuggest(name: name))
-    return (response.httpResponse?.statusCode ?? 500).isSuccess
+    let statusCode = (response.httpResponse?.statusCode ?? 500).isSuccess
+    if !statusCode, let data = response.data {
+      try LFCoreNetwork.processingStringError(data)
+    }
+    return statusCode
   }
 }

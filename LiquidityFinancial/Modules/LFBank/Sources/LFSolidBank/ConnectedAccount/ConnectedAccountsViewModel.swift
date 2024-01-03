@@ -160,7 +160,7 @@ extension ConnectedAccountsViewModel {
   }
   
   func handleLinkBankFailure(error: Error) {
-    log.error(error.localizedDescription)
+    log.error(error.userFriendlyMessage)
     if let liquidError = error as? LiquidityError, liquidError == .userCancelled {
       self.onPlaidUIDisappear()
     } else {

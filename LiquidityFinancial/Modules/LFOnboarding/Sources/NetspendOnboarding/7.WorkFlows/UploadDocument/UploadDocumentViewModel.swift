@@ -153,8 +153,8 @@ extension UploadDocumentViewModel {
           toastMessage = "Can't map RequestedUploadDocument from BE"
         }
       } catch {
-        log.error(error.localizedDescription)
-        toastMessage = error.localizedDescription
+        log.error(error.userFriendlyMessage)
+        toastMessage = error.userFriendlyMessage
       }
     }
   }
@@ -185,7 +185,7 @@ extension UploadDocumentViewModel {
         }
       }
     case let .failure(error):
-      toastMessage = error.localizedDescription
+      toastMessage = error.userFriendlyMessage
     }
   }
   

@@ -93,7 +93,7 @@ extension AddFundsViewModel {
         
         navigation = .addMoney
       } catch {
-        log.error(error.localizedDescription)
+        log.error(error.userFriendlyMessage)
         if let liquidError = error as? LiquidityError, liquidError == .userCancelled {
           self.onPlaidUIDisappear()
         } else {

@@ -44,8 +44,8 @@ class SetupWalletViewModel: ObservableObject {
         log.debug(zeroHashAccount)
         analyticsService.track(event: AnalyticsEvent(name: .walletSetupSuccess))
       } catch {
-        toastMessage = error.localizedDescription
-        log.error(error.localizedDescription)
+        toastMessage = error.userFriendlyMessage
+        log.error(error.userFriendlyMessage)
       }
     }
   }

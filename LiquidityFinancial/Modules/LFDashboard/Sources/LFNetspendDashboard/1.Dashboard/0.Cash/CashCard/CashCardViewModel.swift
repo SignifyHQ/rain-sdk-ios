@@ -35,7 +35,7 @@ extension CashCardViewModel {
         onSuccess()
         analyticsService.track(event: AnalyticsEvent(name: .createCardSuccess))
       } catch {
-        toastMessage = error.localizedDescription
+        toastMessage = error.userFriendlyMessage
         analyticsService.track(event: AnalyticsEvent(name: .createCardError))
       }
     }

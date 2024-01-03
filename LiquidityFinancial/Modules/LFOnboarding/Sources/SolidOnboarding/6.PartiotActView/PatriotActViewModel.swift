@@ -46,7 +46,7 @@ class PatriotActViewModel: ObservableObject {
         
         remoteURLs = AccountFeatureConfig(configJSON: configJSON).featureConfig?.remoteLinks
       } catch {
-        log.debug(error.localizedDescription)
+        log.debug(error.userFriendlyMessage)
       }
     }
   }

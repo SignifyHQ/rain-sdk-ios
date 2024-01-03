@@ -66,7 +66,7 @@ private extension FiatAssetViewModel {
       self.accountDataManager.fiatAccountID = account.id
       self.accountDataManager.addOrUpdateAccount(account)
     } catch {
-      toastMessage = error.localizedDescription
+      toastMessage = error.userFriendlyMessage
     }
   }
   
@@ -87,7 +87,7 @@ private extension FiatAssetViewModel {
         activity = .transactions
       }
     } catch {
-      toastMessage = error.localizedDescription
+      toastMessage = error.userFriendlyMessage
       activity = .failure
     }
   }
@@ -100,7 +100,7 @@ private extension FiatAssetViewModel {
         isLoadingACH = false
       } catch {
         isLoadingACH = false
-        toastMessage = error.localizedDescription
+        toastMessage = error.userFriendlyMessage
       }
     }
   }

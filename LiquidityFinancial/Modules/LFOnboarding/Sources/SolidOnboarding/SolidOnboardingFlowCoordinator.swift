@@ -151,7 +151,7 @@ public class SolidOnboardingFlowCoordinator: SolidOnboardingFlowCoordinatorProto
       let entity = try await accountUseCase.getFeatureConfig()
       accountFeatureConfigData.configJSON = entity.config ?? ""
     } catch {
-      log.error(error.localizedDescription)
+      log.error(error.userFriendlyMessage)
     }
   }
   
@@ -173,7 +173,7 @@ public class SolidOnboardingFlowCoordinator: SolidOnboardingFlowCoordinatorProto
         try await apiFetchAndUpdateForStart()
       }
     } catch {
-      log.error(error.localizedDescription)
+      log.error(error.userFriendlyMessage)
       
       forcedLogout()
     }

@@ -102,8 +102,8 @@ class AddBankWithDebitViewModel: ObservableObject {
         self.navigation = .verifyCard(cardId: response.cardId)
       } catch {
         analyticsService.track(event: AnalyticsEvent(name: .debitCardFail))
-        log.error(error.localizedDescription)
-        self.toastMessage = error.localizedDescription
+        log.error(error.userFriendlyMessage)
+        self.toastMessage = error.userFriendlyMessage
       }
     }
   }

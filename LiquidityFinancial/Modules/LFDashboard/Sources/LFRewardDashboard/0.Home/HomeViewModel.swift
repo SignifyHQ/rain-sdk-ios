@@ -188,7 +188,7 @@ private extension HomeViewModel {
         case .finished:
           log.debug("Biometrics capability check completed.")
         case .failure(let error):
-          log.error("Biometrics error: \(error.localizedDescription)")
+          log.error("Biometrics error: \(error.userFriendlyMessage)")
         }
       }, receiveValue: { [weak self] result in
         guard let self else { return }
@@ -242,7 +242,7 @@ private extension HomeViewModel {
         handleDataUser(user: user)
         showEnhanceSecurityPopupIfNeed()
       } catch {
-        log.error(error.localizedDescription)
+        log.error(error.userFriendlyMessage)
       }
     }
   }
@@ -397,8 +397,8 @@ extension HomeViewModel {
       do {
         try await fetchSolidLinkedSources()
       } catch {
-        toastMessage = error.localizedDescription
-        log.error(error.localizedDescription)
+        toastMessage = error.userFriendlyMessage
+        log.error(error.userFriendlyMessage)
       }
     }
   }
@@ -476,7 +476,7 @@ extension HomeViewModel {
             isVerifyingBiometrics = false
             log.debug("Biometrics capability check completed.")
           case .failure(let error):
-            log.error("Biometrics error: \(error.localizedDescription)")
+            log.error("Biometrics error: \(error.userFriendlyMessage)")
             // In all cases of authentication failure, we will take the user to the biometrics backup screen
             self.shouldShowBiometricsFallback = true
           }

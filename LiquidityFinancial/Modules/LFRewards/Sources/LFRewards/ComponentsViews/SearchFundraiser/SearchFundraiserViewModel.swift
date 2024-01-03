@@ -82,7 +82,7 @@ public class SearchFundraiserViewModel: ObservableObject {
         fundraisers.append(contentsOf: entity.data.compactMap({ FundraiserModel(fundraiserData: $0) }))
         pagingState = .loaded
       } catch {
-        log.error(error.localizedDescription)
+        log.error(error.userFriendlyMessage)
         pagingState = .failure
       }
     }

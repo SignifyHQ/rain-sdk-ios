@@ -58,8 +58,8 @@ class VerifyCardViewModel: ObservableObject {
         _ = try await verifyCardUseCase.execute(sessionId: session.sessionId, request: parameter)
         navigation = .moveMoney
       } catch {
-        log.error(error.localizedDescription)
-        self.toastMessage = error.localizedDescription
+        log.error(error.userFriendlyMessage)
+        self.toastMessage = error.userFriendlyMessage
       }
     }
   }

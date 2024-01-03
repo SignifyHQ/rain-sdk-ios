@@ -24,7 +24,7 @@ public class SuggestCauseViewModel: ObservableObject {
         _ = try await rewardUseCase.postDonationsSuggest(name: name)
         showSuccess = true
       } catch {
-        log.error(error.localizedDescription)
+        log.error(error.userFriendlyMessage)
       }
     }
   }

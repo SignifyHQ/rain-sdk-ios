@@ -94,7 +94,7 @@ public extension IdentityVerificationCodeViewModel {
   
   func handleError(error: Error) {
     guard let errorObject = error.asErrorObject else {
-      toastMessage = error.localizedDescription
+      toastMessage = error.userFriendlyMessage
       return
     }
     switch errorObject.code {
@@ -105,7 +105,7 @@ public extension IdentityVerificationCodeViewModel {
     case Constants.ErrorCode.invalidSSN.value:
       errorMessage = errorObject.message
     default:
-      toastMessage = error.localizedDescription
+      toastMessage = error.userFriendlyMessage
     }
   }
 }
@@ -131,9 +131,9 @@ private extension IdentityVerificationCodeViewModel {
       try await onboardingFlowCoordinator.handlerOnboardingStep()
       
     } catch {
-      log.error(error.localizedDescription)
+      log.error(error.userFriendlyMessage)
       
-      if error.localizedDescription.contains("identity_verification_questions_not_available") {
+      if error.userFriendlyMessage.contains("identity_verification_questions_not_available") {
         onboardingFlowCoordinator.set(route: .popTimeUp)
         return
       }

@@ -36,8 +36,8 @@ public class RoundUpViewModel: ObservableObject {
         rewardDataManager.update(roundUpDonation: entity.userRoundUpEnabled ?? false)
         onFinish()
       } catch {
-        log.error(error.localizedDescription)
-        showError = error.localizedDescription
+        log.error(error.userFriendlyMessage)
+        showError = error.userFriendlyMessage
       }
     }
   }

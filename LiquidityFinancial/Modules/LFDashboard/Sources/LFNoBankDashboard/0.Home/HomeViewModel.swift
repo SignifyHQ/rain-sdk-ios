@@ -59,7 +59,7 @@ extension HomeViewModel {
           accountDataManager.update(fullName: firstName + " " + lastName)
         }
       } catch {
-        log.error(error.localizedDescription)
+        log.error(error.userFriendlyMessage)
       }
     }
   }

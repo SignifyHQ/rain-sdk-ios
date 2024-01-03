@@ -63,8 +63,8 @@ final class CurrentRewardViewModel: ObservableObject {
         }
         status = .success([model])
       } catch {
-        status = .failure(error.localizedDescription)
-        log.error(error.localizedDescription)
+        status = .failure(error.userFriendlyMessage)
+        log.error(error.userFriendlyMessage)
       }
     }
   }

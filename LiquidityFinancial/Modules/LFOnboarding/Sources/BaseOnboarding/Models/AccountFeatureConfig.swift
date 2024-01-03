@@ -24,7 +24,7 @@ public struct AccountFeatureConfigData {
           let obj = try JSONDecoder().decode(FeatureConfigModel.self, from: jsonData)
           self.featureConfig = obj
         } catch {
-          log.debug(error.localizedDescription)
+          log.debug(error.userFriendlyMessage)
         }
       }
     }

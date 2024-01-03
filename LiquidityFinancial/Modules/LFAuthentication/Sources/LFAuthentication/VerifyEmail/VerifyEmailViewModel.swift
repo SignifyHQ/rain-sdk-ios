@@ -63,7 +63,7 @@ public final class VerifyEmailViewModel: ObservableObject {
         shouldPresentConfirmation = true
       } catch {
         toastMessage = error.userFriendlyMessage
-        log.error(error.localizedDescription)
+        log.error(error.userFriendlyMessage)
       }
     }
   }
@@ -80,7 +80,7 @@ public final class VerifyEmailViewModel: ObservableObject {
         try await verifyEmailRequestUseCase.execute()
       } catch {
         toastMessage = error.userFriendlyMessage
-        log.error(error.localizedDescription)
+        log.error(error.userFriendlyMessage)
       }
     }
   }

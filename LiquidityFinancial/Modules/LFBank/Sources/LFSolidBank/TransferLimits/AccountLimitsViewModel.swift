@@ -42,7 +42,7 @@ extension AccountLimitsViewModel {
       } catch {
         isFetchTransferLimitFail = true
         guard let errorObject = error.asErrorObject else {
-          toastMessage = error.localizedDescription
+          toastMessage = error.userFriendlyMessage
           return
         }
         toastMessage = errorObject.message
@@ -63,7 +63,7 @@ extension AccountLimitsViewModel {
         popup = .createTicketSuccess
       } catch {
         guard let errorObject = error.asErrorObject else {
-          toastMessage = error.localizedDescription
+          toastMessage = error.userFriendlyMessage
           return
         }
         switch errorObject.code {

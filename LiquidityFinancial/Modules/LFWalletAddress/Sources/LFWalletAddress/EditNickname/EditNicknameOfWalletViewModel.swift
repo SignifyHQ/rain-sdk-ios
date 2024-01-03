@@ -55,14 +55,14 @@ extension EditNicknameOfWalletViewModel {
         }
       } catch {
         guard let code = error.asErrorObject?.code else {
-          toastMessage = error.localizedDescription
+          toastMessage = error.userFriendlyMessage
           return
         }
         switch code {
         case Constants.ErrorCode.duplicatedWalletNickname.value:
           inlineMessage = LFLocalizable.EnterNicknameOfWallet.NameExist.inlineError
         default:
-          toastMessage = error.localizedDescription
+          toastMessage = error.userFriendlyMessage
         }
       }
     }

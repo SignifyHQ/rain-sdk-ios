@@ -154,8 +154,8 @@ extension ConfirmBuySellCryptoViewModel {
       } catch {
         analyticsService.track(event: AnalyticsEvent(name: .buyCryptoError))
         Haptic.notification(.error).generate()
-        log.error(error.localizedDescription)
-        toastMessage = error.localizedDescription
+        log.error(error.userFriendlyMessage)
+        toastMessage = error.userFriendlyMessage
       }
     }
   }

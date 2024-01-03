@@ -142,7 +142,7 @@ final class AddressViewModel: ObservableObject {
         }
       } catch {
         log.error(error)
-        toastMessage = error.localizedDescription
+        toastMessage = error.userFriendlyMessage
       }
     }
   }
@@ -210,7 +210,7 @@ extension AddressViewModel {
         log.debug(deregister)
         log.debug(logout)
       } catch {
-        log.error(error.localizedDescription)
+        log.error(error.userFriendlyMessage)
       }
     }
   }

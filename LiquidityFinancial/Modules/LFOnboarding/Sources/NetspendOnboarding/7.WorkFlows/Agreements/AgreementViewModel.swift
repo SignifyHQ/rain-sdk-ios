@@ -89,7 +89,7 @@ public final class AgreementViewModel: ObservableObject {
           }
         } catch {
           log.error(error)
-          toastMessage = error.localizedDescription
+          toastMessage = error.userFriendlyMessage
         }
       }
     }
@@ -115,8 +115,8 @@ public final class AgreementViewModel: ObservableObject {
           onNext()
         }
       } catch {
-        log.error(error.localizedDescription)
-        toastMessage = error.localizedDescription
+        log.error(error.userFriendlyMessage)
+        toastMessage = error.userFriendlyMessage
       }
     }
   }

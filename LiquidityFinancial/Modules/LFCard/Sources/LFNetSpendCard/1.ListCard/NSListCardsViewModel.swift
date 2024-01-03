@@ -89,7 +89,7 @@ public extension NSListCardsViewModel {
       } catch {
         isCardLocked = false
         isLoading = false
-        toastMessage = error.localizedDescription
+        toastMessage = error.userFriendlyMessage
       }
     }
   }
@@ -103,7 +103,7 @@ public extension NSListCardsViewModel {
       } catch {
         isCardLocked = true
         isLoading = false
-        toastMessage = error.localizedDescription
+        toastMessage = error.userFriendlyMessage
       }
     }
   }
@@ -122,7 +122,7 @@ public extension NSListCardsViewModel {
         )
         popup = .closeCardSuccessfully
       } catch {
-        toastMessage = error.localizedDescription
+        toastMessage = error.userFriendlyMessage
       }
     }
   }

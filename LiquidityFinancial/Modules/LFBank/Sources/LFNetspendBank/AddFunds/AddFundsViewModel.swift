@@ -71,7 +71,7 @@ extension AddFundsViewModel {
         controller.view.isHidden = true
         self.netspendController = controller
       } catch {
-        toastMessage = error.localizedDescription
+        toastMessage = error.userFriendlyMessage
       }
     }
   }
@@ -98,7 +98,7 @@ extension AddFundsViewModel {
         
         navigation = .addMoney
       } catch {
-        log.error(error.localizedDescription)
+        log.error(error.userFriendlyMessage)
       }
     }
   }
@@ -129,7 +129,7 @@ extension AddFundsViewModel {
         let entity = try await self.getFundingStatusUseCase.execute(sessionID: accountDataManager.sessionID)
         onNext(entity)
       } catch {
-        log.error(error.localizedDescription)
+        log.error(error.userFriendlyMessage)
         isLoadingLinkExternalBank = false
       }
     }

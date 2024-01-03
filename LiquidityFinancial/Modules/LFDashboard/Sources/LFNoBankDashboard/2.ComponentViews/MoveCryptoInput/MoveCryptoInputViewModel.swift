@@ -148,7 +148,7 @@ private extension MoveCryptoInputViewModel {
         )
         navigation = .confirmSend(lockedFeeResponse: lockedResponse)
       } catch {
-        self.toastMessage = error.localizedDescription
+        self.toastMessage = error.userFriendlyMessage
       }
     }
   }

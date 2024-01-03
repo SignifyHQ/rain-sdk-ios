@@ -73,7 +73,7 @@ public class FundraiserDetailViewModel: ObservableObject {
         fundraiserDetail = FundraiserDetailModel(enity: enity)
         rewardDataManager.update(fundraisersDetail: enity)
       } catch {
-        log.error(error.localizedDescription)
+        log.error(error.userFriendlyMessage)
       }
     }
   }
@@ -94,7 +94,7 @@ public class FundraiserDetailViewModel: ObservableObject {
         let message = LFLocalizable.FundraiserSelection.allowedBeforeAccountCreation(fundraiserDetail?.name ?? "")
         popup = .selectSuccess(message)
       } catch {
-        log.error(error.localizedDescription)
+        log.error(error.userFriendlyMessage)
         popup = .selectError
       }
     }

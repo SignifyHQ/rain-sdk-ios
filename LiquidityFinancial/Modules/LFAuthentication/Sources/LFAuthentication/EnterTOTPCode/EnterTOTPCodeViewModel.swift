@@ -104,16 +104,16 @@ private extension EnterTOTPCodeViewModel {
   }
   
   func handleError(error: Error) {
-    log.error(error.localizedDescription)
+    log.error(error.userFriendlyMessage)
     guard let errorObject = error.asErrorObject else {
-      toastMessage = error.localizedDescription
+      toastMessage = error.userFriendlyMessage
       return
     }
     switch errorObject.code {
     case Constants.ErrorCode.invalidTOTP.value:
       errorMessage = errorObject.message
     default:
-      toastMessage = error.localizedDescription
+      toastMessage = error.userFriendlyMessage
     }
   }
 }

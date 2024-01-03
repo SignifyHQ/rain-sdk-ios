@@ -72,8 +72,8 @@ extension KYCStatusViewModel {
         log.debug("approved dashboard state: \(httpResponse?.statusCode ?? 000)")
         self.toastMessage = "You have been approved by the Dashboard. Please click the button Check Status and go Next Step"
       } catch {
-        self.toastMessage = error.localizedDescription
-        log.error(error.localizedDescription)
+        self.toastMessage = error.userFriendlyMessage
+        log.error(error.userFriendlyMessage)
       }
     }
   }
@@ -120,7 +120,7 @@ extension KYCStatusViewModel {
         }
       } catch {
         
-        log.error(error.localizedDescription)
+        log.error(error.userFriendlyMessage)
         
         onboardingFlowCoordinator.forcedLogout()
       }

@@ -67,7 +67,7 @@ final class SolidOnboardingUseCaseTests: XCTestCase {
       
     } catch {
       // Then the description of the caught error is the one we expected
-      expect(self.repository.getOnboardingStepThrowableError?.localizedDescription).to(equal(error.localizedDescription))
+      expect(self.repository.getOnboardingStepThrowableError?.localizedDescription).to(equal(error.userFriendlyMessage))
     }
   }
 }

@@ -87,7 +87,7 @@ class BankStatementViewModel: ObservableObject {
           month: statement.month)
         navigation = .pdfDocument(statement.title, result.url)
       } catch {
-        toastMessage = error.localizedDescription
+        toastMessage = error.userFriendlyMessage
       }
     }
   }

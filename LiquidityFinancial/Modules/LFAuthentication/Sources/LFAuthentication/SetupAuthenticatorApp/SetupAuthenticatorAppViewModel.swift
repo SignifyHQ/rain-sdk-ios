@@ -124,7 +124,7 @@ private extension SetupAuthenticatorAppViewModel {
   }
   
   func handleError(error: Error) {
-    log.error(error.localizedDescription)
+    log.error(error.userFriendlyMessage)
     toastMessage = error.userFriendlyMessage
   }
 }

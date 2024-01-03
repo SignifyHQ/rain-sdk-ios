@@ -64,7 +64,7 @@ public final class ResetPasswordViewModel: ObservableObject {
         navigaion = .resetPassword(token: response.token)
       } catch {
         toastMessage = error.userFriendlyMessage
-        log.error(error.localizedDescription)
+        log.error(error.userFriendlyMessage)
       }
     }
   }
@@ -81,7 +81,7 @@ public final class ResetPasswordViewModel: ObservableObject {
         try await resetPasswordRequestUseCase.execute()
       } catch {
         toastMessage = error.userFriendlyMessage
-        log.error(error.localizedDescription)
+        log.error(error.userFriendlyMessage)
       }
     }
   }

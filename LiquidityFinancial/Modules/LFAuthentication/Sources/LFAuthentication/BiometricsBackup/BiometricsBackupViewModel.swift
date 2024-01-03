@@ -62,7 +62,7 @@ private extension BiometricsBackupViewModel {
         case .finished:
           log.debug("Biometrics capability check completed.")
         case .failure(let error):
-          log.error("Biometrics capability error: \(error.localizedDescription)")
+          log.error("Biometrics capability error: \(error.userFriendlyMessage)")
         }
       }, receiveValue: { [weak self] result in
         guard let self else { return }
@@ -78,7 +78,7 @@ private extension BiometricsBackupViewModel {
   }
   
   func handleBiometricAuthenticationError(error: BiometricError) {
-    log.error("Biometrics error: \(error.localizedDescription)")
+    log.error("Biometrics error: \(error.userFriendlyMessage)")
     switch error {
     case .biometryNotAvailable:
       self.openDeviceSettings()

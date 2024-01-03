@@ -128,7 +128,7 @@ extension AddBankWithDebitViewModel {
           self.fiatAccount = accounts.first
         }
       } catch {
-        log.error(error.localizedDescription)
+        log.error(error.userFriendlyMessage)
       }
     }
   }
@@ -185,8 +185,8 @@ extension AddBankWithDebitViewModel {
           _ = try? await self.unlinkContactUseCase.execute(id: solidContactId)
         }
         analyticsService.track(event: AnalyticsEvent(name: .debitCardFail))
-        log.error(error.localizedDescription)
-        self.toastMessage = error.localizedDescription
+        log.error(error.userFriendlyMessage)
+        self.toastMessage = error.userFriendlyMessage
       }
     }
   }

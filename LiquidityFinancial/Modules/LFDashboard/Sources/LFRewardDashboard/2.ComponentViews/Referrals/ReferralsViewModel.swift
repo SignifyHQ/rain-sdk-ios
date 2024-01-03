@@ -39,7 +39,7 @@ extension ReferralsViewModel {
 //        let entity = try await accountRepository.getReferralCampaign()
 //      } catch {
 //        self.status = .failure
-//        log.error(error.localizedDescription)
+//        log.error(error.userFriendlyMessage)
 //      }
 //    }
     

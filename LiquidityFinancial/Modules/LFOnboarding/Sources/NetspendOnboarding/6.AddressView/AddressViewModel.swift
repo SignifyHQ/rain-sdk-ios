@@ -175,7 +175,7 @@ final class AddressViewModel: ObservableObject {
         
       } catch {
         log.error(error)
-        toastMessage = error.localizedDescription
+        toastMessage = error.userFriendlyMessage
       }
     }
   }
@@ -287,9 +287,9 @@ extension AddressViewModel {
         _ = try await accountRepository.addToWaitList(waitList: "CRYPTO_PRODUCT") //support crypto product only
         popup = .waitlistJoined
       } catch {
-        log.error(error.localizedDescription)
+        log.error(error.userFriendlyMessage)
         popup = nil
-        toastMessage = error.localizedDescription
+        toastMessage = error.userFriendlyMessage
       }
     }
   }
@@ -314,7 +314,7 @@ extension AddressViewModel {
         log.debug(deregister)
         log.debug(logout)
       } catch {
-        log.error(error.localizedDescription)
+        log.error(error.userFriendlyMessage)
       }
     }
   }

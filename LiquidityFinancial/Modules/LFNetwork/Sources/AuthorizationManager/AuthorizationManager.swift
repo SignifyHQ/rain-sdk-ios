@@ -126,7 +126,7 @@ extension AuthorizationManager {
         let credential = OAuthCredential(accessToken: fetchAccessToken(), refreshToken: fetchRefreshToken(), expiresIn: expiresAt)
         completion(.success(credential))
       } catch {
-        log.error(error.localizedDescription)
+        log.error(error.userFriendlyMessage)
         completion(.failure(error))
         if error is AuthError {
           forcedLogout() //The server has forcibly logged out the user

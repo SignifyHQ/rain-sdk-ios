@@ -243,7 +243,7 @@ private extension MarketManager {
       .sink(receiveValue: { [weak self] _ in
         self?.websocketTask?.sendPing(pongReceiveHandler: { error in
           if let error = error {
-            log.error("Websocket pong receive \(error.localizedDescription)")
+            log.error("Websocket pong receive \(error.userFriendlyMessage)")
           } else {
             log.info("Websocket ping success")
           }

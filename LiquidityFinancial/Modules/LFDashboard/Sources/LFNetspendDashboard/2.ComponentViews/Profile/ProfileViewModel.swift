@@ -110,7 +110,7 @@ extension ProfileViewModel {
         log.debug(deregister)
         log.debug(logout)
       } catch {
-        log.error(error.localizedDescription)
+        log.error(error.userFriendlyMessage)
       }
     }
   }

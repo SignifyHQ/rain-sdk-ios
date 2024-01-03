@@ -65,8 +65,8 @@ extension EditRewardsViewModel {
       let causeCategories = categories.data.compactMap({ CauseModel(rewardData: $0) })
       self.navigation = .selectFundraiser(causeCategories)
     } catch {
-      log.error(error.localizedDescription)
-      showError = error.localizedDescription
+      log.error(error.userFriendlyMessage)
+      showError = error.userFriendlyMessage
     }
   }
   
@@ -99,8 +99,8 @@ extension EditRewardsViewModel {
         }
       } catch {
         updateRewardSelected(rewardTypeEntity: rewardDataManager.currentSelectReward)
-        log.error("Failed to select reward \(error.localizedDescription)")
-        showError = error.localizedDescription
+        log.error("Failed to select reward \(error.userFriendlyMessage)")
+        showError = error.userFriendlyMessage
       }
     }
   }

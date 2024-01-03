@@ -35,7 +35,7 @@ class WelcomeViewModel: ObservableObject {
         isPushToAgreementView = true
       } catch {
         log.error(error)
-        toastMessage = error.localizedDescription
+        toastMessage = error.userFriendlyMessage
       }
     }
   }

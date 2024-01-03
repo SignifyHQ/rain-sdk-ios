@@ -81,8 +81,14 @@ public final class LFCoreNetwork<R: LFRoute>: CoreNetworkType {
   public func request<T>(_ route: R, target: T.Type, decoder: JSONDecoder) async throws -> T where T: Decodable {
     let request = LFURLRequest(route: route, auth: authorizationManager)
     let dataRequest = session.request(request, interceptor: buildInterceptor(from: route))
-    let value = try await dataRequest.validate().serializingDecodable(target).value
-    return value
+    let response = await dataRequest.validate().serializingDecodable(target).response
+    if let value = response.value {
+      return value
+    }
+    if let data = response.data {
+      throw try decodeError(failure: LFErrorObject.self, from: data, decoder: decoder)
+    }
+    throw LFNetworkError.custom(message: response.error?.localizedDescription ?? "Unknown error")
   }
   
   public func request<T, E>(_ route: R, target: T.Type, failure: E.Type, decoder: JSONDecoder) async throws -> T where T: Decodable, E: Decodable, E: Error {
@@ -157,11 +163,25 @@ extension LFCoreNetwork {
       designatedError = try decoder.decode(E.self, from: data)
     } catch {
       if let errorString = data.prettyPrintedJSONString as? String {
+        if let message = errorString.components(separatedBy: ",").first {
+          throw LFNetworkError.custom(message: message.replace(string: "{", replacement: ""))
+        }
         throw LFNetworkError.custom(message: errorString)
       } else {
         throw LFNetworkError.custom(message: "Decoder error object is failed")
       }
     }
     throw designatedError
+  }
+  
+  public static func processingStringError(_ data: Data) throws {
+    if let errorString = data.prettyPrintedJSONString as? String {
+      if let message = errorString.components(separatedBy: ",").first {
+        throw LFNetworkError.custom(message: message.replace(string: "{", replacement: ""))
+      }
+      throw LFNetworkError.custom(message: errorString)
+    } else {
+      throw LFNetworkError.custom(message: "Decoder error object is failed")
+    }
   }
 }

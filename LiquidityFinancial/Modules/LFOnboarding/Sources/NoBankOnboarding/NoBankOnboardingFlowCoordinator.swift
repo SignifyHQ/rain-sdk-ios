@@ -121,7 +121,7 @@ public class NoBankOnboardingFlowCoordinator: OnboardingFlowCoordinatorProtocol 
         try await fetchUserReviewStatus()
       }
     } catch {
-      log.error(error.localizedDescription)
+      log.error(error.userFriendlyMessage)
       forcedLogout()
     }
   }
@@ -145,7 +145,7 @@ public class NoBankOnboardingFlowCoordinator: OnboardingFlowCoordinatorProtocol 
       let entity = try await accountUseCase.getFeatureConfig()
       accountFeatureConfigData.configJSON = entity.config ?? ""
     } catch {
-      log.error(error.localizedDescription)
+      log.error(error.userFriendlyMessage)
     }
   }
   

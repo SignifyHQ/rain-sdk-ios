@@ -50,7 +50,7 @@ final class AssetsViewModel: ObservableObject {
       
       self.accountDataManager.accountsSubject.send(accounts)
     } catch {
-      toastMessage = error.localizedDescription
+      toastMessage = error.userFriendlyMessage
     }
   }
 }

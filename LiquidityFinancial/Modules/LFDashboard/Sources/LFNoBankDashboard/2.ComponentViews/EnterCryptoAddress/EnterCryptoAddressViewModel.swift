@@ -77,7 +77,7 @@ final class EnterCryptoAddressViewModel: ObservableObject {
     case let .success(result):
       inputValue = result.string
     case let .failure(error):
-      log.error("Scanning failed: \(error.localizedDescription)")
+      log.error("Scanning failed: \(error.userFriendlyMessage)")
     }
   }
 }
@@ -95,7 +95,7 @@ extension EnterCryptoAddressViewModel {
         walletsFilter = walletAddresses
         accountDataManager.storeWalletAddresses(response)
       } catch {
-        toastMessage = error.localizedDescription
+        toastMessage = error.userFriendlyMessage
       }
     }
   }
@@ -147,7 +147,7 @@ extension EnterCryptoAddressViewModel {
           popup = nil
         }
       } catch {
-        toastMessage = error.localizedDescription
+        toastMessage = error.userFriendlyMessage
       }
     }
   }

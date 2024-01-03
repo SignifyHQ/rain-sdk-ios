@@ -75,8 +75,8 @@ extension PrideCardCauseViewModel {
         }
       } catch {
         status = .failure
-        log.error(error.localizedDescription)
-        showError = error.localizedDescription
+        log.error(error.userFriendlyMessage)
+        showError = error.userFriendlyMessage
       }
     }
   }

@@ -100,7 +100,7 @@ extension DBCustomHTTPProtocol: URLSessionDataDelegate {
 
   public func urlSession(_ session: URLSession, task: URLSessionTask, didCompleteWithError error: Error?) {
     if let error = error {
-      currentRequest?.errorClientDescription = error.localizedDescription
+      currentRequest?.errorClientDescription = error.userFriendlyMessage
       client?.urlProtocol(self, didFailWithError: error)
     } else {
       client?.urlProtocolDidFinishLoading(self)
@@ -114,7 +114,7 @@ extension DBCustomHTTPProtocol: URLSessionDataDelegate {
 
   public func urlSession(_ session: URLSession, didBecomeInvalidWithError error: Error?) {
     guard let error = error else { return }
-    currentRequest?.errorClientDescription = error.localizedDescription
+    currentRequest?.errorClientDescription = error.userFriendlyMessage
     client?.urlProtocol(self, didFailWithError: error)
   }
 

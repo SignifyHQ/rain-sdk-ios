@@ -25,7 +25,11 @@ extension LFCoreNetwork: NSPersonsAPIProtocol where R == NSPersonsRoute {
   
   public func putQuestion(sessionId: String, encryptedData: String) async throws -> Bool {
     let result = try await request(NSPersonsRoute.putQuestions(sessionId: sessionId, encryptData: encryptedData))
-    return (result.httpResponse?.statusCode ?? 500).isSuccess
+    let statusCode = (result.httpResponse?.statusCode ?? 500).isSuccess
+    if !statusCode, let data = result.data {
+      try LFCoreNetwork.processingStringError(data)
+    }
+    return statusCode
   }
   
   public func getWorkflows() async throws -> APIWorkflowsData {
@@ -46,7 +50,11 @@ extension LFCoreNetwork: NSPersonsAPIProtocol where R == NSPersonsRoute {
   
   public func postAgreement(body: [String: Any]) async throws -> Bool {
     let result = try await request(NSPersonsRoute.postAgreements(body))
-    return (result.httpResponse?.statusCode ?? 500).isSuccess
+    let statusCode = (result.httpResponse?.statusCode ?? 500).isSuccess
+    if !statusCode, let data = result.data {
+      try LFCoreNetwork.processingStringError(data)
+    }
+    return statusCode
   }
   
   public func getSession(sessionId: String) async throws -> APISessionData {

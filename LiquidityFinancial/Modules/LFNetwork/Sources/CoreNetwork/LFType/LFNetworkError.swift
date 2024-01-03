@@ -27,8 +27,8 @@ extension LFNetworkError: CustomDebugStringConvertible {
   public var debugDescription: String {
     switch self {
     case .decoding: return "Failed to decode object"
-    case let .designated(error): return error.localizedDescription
-    case let .underlying(error): return error.localizedDescription
+    case let .designated(error): return error.userFriendlyMessage
+    case let .underlying(error): return error.userFriendlyMessage
     case .unAuthorized: return "unauthorized"
     case .custom(let message): return message
     }

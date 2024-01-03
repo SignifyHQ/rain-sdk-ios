@@ -60,7 +60,7 @@ private extension VaultService {
       completion(.success(()))
     case let .failure(_, data, _, error):
       if let error = error {
-        completion(.failure(.unknownError(message: error.localizedDescription)))
+        completion(.failure(.unknownError(message: error.userFriendlyMessage)))
       } else if let data = data {
         if let error = try? JSONDecoder().decode(ValidationError.self, from: data) {
           completion(.failure(.validationError(message: error.message)))

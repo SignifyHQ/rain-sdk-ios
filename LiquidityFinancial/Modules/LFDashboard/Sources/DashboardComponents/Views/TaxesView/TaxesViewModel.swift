@@ -64,7 +64,7 @@ class TaxesViewModel: ObservableObject {
           navigation = .document(name: taxFile.name ?? "", url: result)
         } catch {
           toastMessage = "We can get detail the taxes right now so please try it late"
-          log.error("Failed to fetch tax document: \(error.localizedDescription)")
+          log.error("Failed to fetch tax document: \(error.userFriendlyMessage)")
         }
       }
     }
@@ -83,7 +83,7 @@ extension TaxesViewModel {
         taxes = taxes.sorted { Int($0.year ?? .empty) ?? 0 > Int($1.year ?? .empty) ?? 0 }
         status = .success(taxes)
       } catch {
-        log.error("Failed to fetch taxes: \(error.localizedDescription)")
+        log.error("Failed to fetch taxes: \(error.userFriendlyMessage)")
         status = .failure(error)
       }
     }

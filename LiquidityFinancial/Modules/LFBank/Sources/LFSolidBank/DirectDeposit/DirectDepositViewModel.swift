@@ -69,7 +69,7 @@ private extension DirectDepositViewModel {
         token: pinwheelResponse.linkToken
       )
     } catch {
-      toastMessage = error.localizedDescription
+      toastMessage = error.userFriendlyMessage
     }
   }
   

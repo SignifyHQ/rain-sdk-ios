@@ -8,7 +8,7 @@ public extension Data {
         return dictFromJSON
       }
     } catch {
-      print(error.localizedDescription)
+      print(error.userFriendlyMessage)
     }
     return nil
   }

@@ -9,15 +9,21 @@ extension LFCoreNetwork: DevicesAPIProtocol where R == DeviceRoute {
     let result = try await request(
       DeviceRoute.register(deviceId: deviceId, token: token)
     )
-    let statusCode = result.httpResponse?.statusCode ?? 500
-    return APINotificationTokenResponse(success: statusCode.isSuccess)
+    let statusCode = (result.httpResponse?.statusCode ?? 500).isSuccess
+    if !statusCode, let data = result.data {
+      try LFCoreNetwork.processingStringError(data)
+    }
+    return APINotificationTokenResponse(success: statusCode)
   }
   
   public func deregister(deviceId: String, token: String) async throws -> APINotificationTokenResponse {
     let result = try await request(
       DeviceRoute.deregister(deviceId: deviceId, token: token)
     )
-    let statusCode = result.httpResponse?.statusCode ?? 500
-    return APINotificationTokenResponse(success: statusCode.isSuccess)
+    let statusCode = (result.httpResponse?.statusCode ?? 500).isSuccess
+    if !statusCode, let data = result.data {
+      try LFCoreNetwork.processingStringError(data)
+    }
+    return APINotificationTokenResponse(success: statusCode)
   }
 }

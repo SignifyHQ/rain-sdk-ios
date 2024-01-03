@@ -53,7 +53,7 @@ extension SolidSetCardPinViewModel {
         setCardPIN(pinToken: response.pinToken, solidCardID: response.solidCardId)
       } catch {
         isShowIndicator = false
-        toastMessage = error.localizedDescription
+        toastMessage = error.userFriendlyMessage
       }
     }
   }
