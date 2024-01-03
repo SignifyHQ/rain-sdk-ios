@@ -1,5 +1,4 @@
 import SwiftUI
-import BaseDashboard
 import AccountData
 import LFLocalizable
 import LFUtilities
@@ -8,6 +7,7 @@ import AccountDomain
 import CodeScanner
 import LFWalletAddress
 import Services
+import DashboardComponents
 
 struct EnterCryptoAddressView: View {
   @StateObject private var viewModel: EnterCryptoAddressViewModel

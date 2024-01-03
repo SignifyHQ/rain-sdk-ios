@@ -1,5 +1,4 @@
 import SwiftUI
-import BaseDashboard
 import AccountData
 import LFLocalizable
 import LFUtilities
@@ -7,6 +6,7 @@ import Factory
 import AccountDomain
 import CodeScanner
 import Combine
+import DashboardComponents
 
 @MainActor
 final class EnterCryptoAddressViewModel: ObservableObject {

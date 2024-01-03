@@ -34,9 +34,3 @@ final class DashboardViewModel: ObservableObject {
     }
   }
 }
-
-extension DashboardViewModel {
-  func handleGuestUser() {
-
-  }
-}

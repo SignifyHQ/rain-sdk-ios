@@ -1,6 +1,6 @@
 import Foundation
 import LFNoBankDashboard
-import BaseDashboard
+import DashboardComponents
 import LFTransaction
 import LFUtilities
 import Factory

@@ -1,5 +1,4 @@
 import SwiftUI
-import BaseDashboard
 import LFLocalizable
 import LFUtilities
 import LFStyleGuide
@@ -8,15 +7,16 @@ import AccountDomain
 import Combine
 import ZerohashDomain
 import AccountService
+import DashboardComponents
 
 @MainActor
 final class MoveCryptoInputViewModel: ObservableObject {
   @LazyInjected(\.accountRepository) var accountRepository
   @LazyInjected(\.accountDataManager) var accountDataManager
   @LazyInjected(\.zerohashRepository) var zerohashRepository
-  @LazyInjected(\.dashboardRepository) var dashboardRepository
   @LazyInjected(\.cryptoAccountService) var cryptoAccountService
-
+  @LazyInjected(\.fiatAccountService) var fiatAccountService
+  
   @Published var assetModel: AssetModel
   @Published var fiatAccount: AccountModel?
   
@@ -120,7 +120,7 @@ private extension MoveCryptoInputViewModel {
     let cryptoId = self.assetModel.id
     Task {
       if type == .buyCrypto {
-        let fiatAccounts = try await self.dashboardRepository.getFiatAccounts()
+        let fiatAccounts = try await getFiatAccounts()
         self.accountDataManager.addOrUpdateAccounts(fiatAccounts)
         
         if let fiatAccount = fiatAccounts.first {
@@ -153,42 +153,14 @@ private extension MoveCryptoInputViewModel {
     }
   }
   
-  func fetchBuyCryptoQuote(amount: String) {
-    //    guard let account = accountManager.cryptoAccount else { return }
-    //    isPerformingAction = true
-    //    Task {
-    //      do {
-    //        let quote: CryptoQuoteDetail = try await networkService.handle(request: Endpoints.createCryptoQuote(walletID: account.id, paymentType: "amount", amtValue: amount))
-    //        if let cashAccount = accountManager.cashAccount {
-    //          navigation = .detail(.init(type: .buyCrypto(quote: quote, cryptoAccount: account, cashAccount: cashAccount)))
-    //        } else {
-    //          log.error(LiquidityError.logic, "Unable to show BuySellDetailView without accounts")
-    //        }
-    //      } catch {
-    //        log.error(error, "failed to get buy quote for crypto")
-    //        toastMessage = error.localizedDescription
-    //      }
-    //      isPerformingAction = false
-    //    }
-  }
+  func fetchBuyCryptoQuote(amount: String) {}
   
-  func fetchSellCryptoQuote(amount: String) {
-    //    guard let account = accountManager.cryptoAccount else { return }
-    //    isPerformingAction = true
-    //    Task {
-    //      do {
-    //        let quote: CryptoQuoteDetail = try await networkService.handle(request: Endpoints.sellCryptoQuote(walletID: account.id, paymentType: "quantity", amtValue: amount))
-    //        if let cashAccount = accountManager.cashAccount {
-    //          navigation = .detail(.init(type: .sellCrypto(quote: quote, cryptoAccount: account, cashAccount: cashAccount)))
-    //        } else {
-    //          log.error(LiquidityError.logic, "Unable to show BuySellDetailView without accounts")
-    //        }
-    //      } catch {
-    //        log.error(error, "failed to get sell quote for crypto")
-    //        toastMessage = error.localizedDescription
-    //      }
-    //      isPerformingAction = false
-    //    }
+  func fetchSellCryptoQuote(amount: String) {}
+  
+  func getFiatAccounts() async throws -> [AccountModel] {
+    let accounts = try await fiatAccountService.getAccounts()
+    self.accountDataManager.addOrUpdateAccounts(accounts)
+    return accounts
   }
 }
 

@@ -2,7 +2,6 @@ import SwiftUI
 import LFStyleGuide
 import LFLocalizable
 import LFUtilities
-import BaseDashboard
 import LFSolidCard
 import LFRewards
 import Factory
@@ -24,9 +23,7 @@ struct DashboardView: View {
           listCardViewModel: SolidListCardsViewModel(
             coordinator: Container().baseCardDestinationObservable.callAsFunction()
           )
-        ) {
-          viewModel.handleGuestUser()
-        }
+        ) { }
       case .rewards:
         RewardsView(viewModel: .init())
       case .noneReward:

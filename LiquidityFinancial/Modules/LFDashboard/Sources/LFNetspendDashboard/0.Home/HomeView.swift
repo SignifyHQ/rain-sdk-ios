@@ -5,7 +5,7 @@ import LFAccessibility
 import LFStyleGuide
 import LFUtilities
 import Combine
-import BaseDashboard
+import DashboardComponents
 import NetspendOnboarding
 import LFNetspendBank
 import Factory
@@ -13,32 +13,33 @@ import LFNetSpendCard
 import LFAuthentication
 
 public struct HomeView: View {
-  @Injected(\.dashboardRepository) var dashboardRepository
   
-  @Environment(\.scenePhase) var scenePhase
+  @Environment(\.scenePhase) 
+  var scenePhase
   
-  @StateObject private var viewModel: HomeViewModel
+  @StateObject
+  private var viewModel: HomeViewModel
+  
+  let dashboardRepo: DashboardRepository
   
   var onChangeRoute: ((NSOnboardingFlowCoordinator.Route) -> Void)?
   
-  public init(viewModel: HomeViewModel, onChangeRoute: ((NSOnboardingFlowCoordinator.Route) -> Void)? = nil) {
-    _viewModel = .init(wrappedValue: viewModel)
-    
+  public init(onChangeRoute: ((NSOnboardingFlowCoordinator.Route) -> Void)? = nil) {
+    let dashboardRepo = DashboardRepository()
+    _viewModel = .init(wrappedValue: HomeViewModel(dashboardRepository: dashboardRepo, tabOptions: TabOption.allCases))
+    self.dashboardRepo = dashboardRepo
     self.onChangeRoute = onChangeRoute
-    dashboardRepository.load { toastMessage in
-      viewModel.toastMessage = toastMessage
-    }
   }
   
   public var body: some View {
     TabView(selection: $viewModel.tabSelected) {
       ForEach(viewModel.tabOptions, id: \.self) { option in
         if #available(iOS 17.0, *) {
-          loadTabView(option: option)
+          loadTabView(option: option, dashboardRepo: dashboardRepo)
             .toolbar(.visible, for: .tabBar)
             .toolbarBackground(Colors.secondaryBackground.swiftUIColor, for: .tabBar)
         } else {
-          loadTabView(option: option)
+          loadTabView(option: option, dashboardRepo: dashboardRepo)
         }
       }
     }
@@ -93,7 +94,6 @@ public struct HomeView: View {
     .onChange(of: scenePhase, perform: { newValue in
       if newValue == .active {
         viewModel.checkGoTransactionDetail()
-        dashboardRepository.fetchNetspendLinkedSources()
       }
     })
   }
@@ -101,8 +101,8 @@ public struct HomeView: View {
 
 // MARK: - View Components
 private extension HomeView {
-  func loadTabView(option: TabOption) -> some View {
-    DashboardView(option: option).tabItem {
+  func loadTabView(option: TabOption, dashboardRepo: DashboardRepository) -> some View {
+    DashboardView(option: option, dashboardRepo: dashboardRepo).tabItem {
       tabItem(option: option)
     }
     .tag(option)

@@ -12,7 +12,7 @@ import DevicesDomain
 import BiometricsManager
 
 @MainActor
-public final class HomeViewModel: ObservableObject {
+final class HomeViewModel: ObservableObject {
   @LazyInjected(\.accountDataManager) var accountDataManager
   @LazyInjected(\.biometricsManager) var biometricsManager
 
@@ -40,8 +40,15 @@ public final class HomeViewModel: ObservableObject {
     DeviceRegisterUseCase(repository: devicesRepository)
    }()
   
-  public init(tabOptions: [TabOption]) {
+  let dashboardRepository: DashboardRepository
+  init(dashboardRepository: DashboardRepository, tabOptions: [TabOption]) {
+    self.dashboardRepository = dashboardRepository
     self.tabOptions = tabOptions
+    
+    self.dashboardRepository.toastMessage = { [weak self] message in
+      guard let self else { return }
+      self.toastMessage = message
+    }
     
     initData()
     accountDataManager.userCompleteOnboarding = true
@@ -82,6 +89,7 @@ extension HomeViewModel {
     checkShouldShowNotification()
     checkGoTransactionDetail()
     logincustomerSupportService()
+    dashboardRepository.onAppear()
   }
   
   func logincustomerSupportService() {

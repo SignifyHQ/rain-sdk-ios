@@ -5,7 +5,7 @@ import PackageDescription
 
 let package = Package(
   name: "LFDashboard",
-  platforms: [.iOS(.v15), .macOS(.v10_14)],
+  platforms: [.iOS(.v15)],
   products: [
     .library(
       name: "LFNetspendDashboard",
@@ -17,8 +17,8 @@ let package = Package(
       name: "LFNoBankDashboard",
       targets: ["LFNoBankDashboard"]),
     .library(
-      name: "BaseDashboard",
-      targets: ["BaseDashboard"])
+      name: "DashboardComponents",
+      targets: ["DashboardComponents"])
   ],
   dependencies: [
     .package(name: "LFUtilities", path: "../LFUtilities"),
@@ -42,33 +42,26 @@ let package = Package(
   ],
   targets: [
     .target(
-      name: "BaseDashboard",
+      name: "DashboardComponents",
       dependencies: [
-        "LFUtilities",
+        "LFUtilities", "LFStyleGuide",
         .product(name: "Services", package: "LFServices"),
-        .product(name: "LFBaseBank", package: "LFBank"),
-        .product(name: "OnboardingData", package: "LFData"),
-        .product(name: "NetSpendData", package: "LFData"),
-        .product(name: "SolidData", package: "LFData"),
         .product(name: "ZerohashData", package: "LFData"),
-        .product(name: "DevicesData", package: "LFData"),
-        .product(name: "ExternalFundingData", package: "LFData"),
-        .product(name: "AuthorizationManager", package: "LFNetwork"),
-        .product(name: "BaseCard", package: "LFCard"),
-        .product(name: "LFNetSpendCard", package: "LFCard"),
-        .product(name: "LFSolidCard", package: "LFCard"),
-        .product(name: "DevicesDomain", package: "LFDomain")
+        .product(name: "AccountData", package: "LFData"),
+        .product(name: "AccountDomain", package: "LFDomain"),
+        .product(name: "AccountService", package: "LFServices")
       ]
     ),
     .target(
       name: "LFNetspendDashboard",
       dependencies: [
-        "LFUtilities", "LFStyleGuide", "LFLocalizable", "LFAccessibility", "BaseDashboard", "LFTransaction", "LFCryptoChart", "CodeScanner", "LFWalletAddress",
+        "LFUtilities", "LFStyleGuide", "LFLocalizable", "LFAccessibility", "DashboardComponents", "LFTransaction", "LFCryptoChart", "CodeScanner", "LFWalletAddress",
         .product(name: "OnboardingData", package: "LFData"),
         .product(name: "LFNetspendBank", package: "LFBank"),
         .product(name: "NetSpendData", package: "LFData"),
         .product(name: "ZerohashData", package: "LFData"),
         .product(name: "DevicesData", package: "LFData"),
+        .product(name: "ExternalFundingData", package: "LFData"),
         .product(name: "AuthorizationManager", package: "LFNetwork"),
         .product(name: "Services", package: "LFServices"),
         .product(name: "LFNetSpendCard", package: "LFCard"),
@@ -80,11 +73,9 @@ let package = Package(
     .target(
       name: "LFRewardDashboard",
       dependencies: [
-        "LFUtilities", "LFStyleGuide", "LFLocalizable", "LFAccessibility", "LFTransaction", "CodeScanner", "LFRewards", "BaseDashboard",
+        "LFUtilities", "LFStyleGuide", "LFLocalizable", "LFAccessibility", "LFTransaction", "CodeScanner", "LFRewards", "DashboardComponents",
         .product(name: "LFSolidBank", package: "LFBank"),
         .product(name: "OnboardingData", package: "LFData"),
-        .product(name: "NetSpendData", package: "LFData"),
-        .product(name: "ZerohashData", package: "LFData"),
         .product(name: "DevicesData", package: "LFData"),
         .product(name: "AuthorizationManager", package: "LFNetwork"),
         .product(name: "LFSolidCard", package: "LFCard"),
@@ -103,7 +94,7 @@ let package = Package(
     .target(
       name: "LFNoBankDashboard",
       dependencies: [
-        "LFUtilities", "LFStyleGuide", "LFLocalizable", "LFAccessibility", "BaseDashboard", "LFTransaction", "LFCryptoChart", "CodeScanner", "LFWalletAddress",
+        "LFUtilities", "LFStyleGuide", "LFLocalizable", "LFAccessibility", "DashboardComponents", "LFTransaction", "LFCryptoChart", "CodeScanner", "LFWalletAddress",
         .product(name: "OnboardingData", package: "LFData"),
         .product(name: "LFNetspendBank", package: "LFBank"),
         .product(name: "NetSpendData", package: "LFData"),

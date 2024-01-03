@@ -1,9 +1,9 @@
 import SwiftUI
-import BaseDashboard
 import LFLocalizable
 import LFUtilities
 import LFStyleGuide
 import Services
+import DashboardComponents
 
 struct MoveCryptoInputView: View {
   @StateObject private var viewModel: MoveCryptoInputViewModel

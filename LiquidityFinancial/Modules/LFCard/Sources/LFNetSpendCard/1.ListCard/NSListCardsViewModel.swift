@@ -52,9 +52,29 @@ public final class NSListCardsViewModel: ListCardsViewModelProtocol {
     NSCloseCardUseCase(repository: cardRepository)
   }()
   
-  public init(cardData: Published<(CardData)>.Publisher, coordinator: BaseCardDestinationObservable) {
+  lazy var getListNSCardUseCase: NSGetListCardUseCaseProtocol = {
+    NSGetListCardUseCase(repository: cardRepository)
+  }()
+  
+  lazy var getCardUseCase: NSGetCardUseCaseProtocol = {
+    NSGetCardUseCase(repository: cardRepository)
+  }()
+  
+  private var subscribers: Set<AnyCancellable> = []
+  
+  public init(coordinator: BaseCardDestinationObservable) {
     self.coordinator = coordinator
-    subscribeListCardsChange(cardData)
+    apiFetchNetSpendCards()
+    observeRefreshListCards()
+  }
+  
+  private func observeRefreshListCards() {
+    NotificationCenter.default.publisher(for: .refreshListCards)
+      .sink { [weak self] _ in
+        guard let self else { return }
+        apiFetchNetSpendCards()
+      }
+      .store(in: &subscribers)
   }
 }
 
@@ -205,32 +225,73 @@ public extension NSListCardsViewModel {
     popup = nil
   }
   
-  func subscribeListCardsChange(_ cardData: Published<(CardData)>.Publisher) {
-    cardData
-      .receive(on: DispatchQueue.main)
-      .sink { [weak self] cardData in
-        guard let self = self else {
-          return
-        }
-        self.isInit = cardData.loading
-        self.isHasPhysicalCard = cardData.cards.contains { card in
-          card.cardType == .physical
-        }
-        self.cardsList = cardData.cards.filter { $0.cardStatus != .closed }
-        self.cardMetaDatas = cardData.metaDatas
-        self.currentCard = self.cardsList.first ?? .virtualDefault
-        self.isActivePhysical = currentCard.cardStatus == .active
-        self.isCardLocked = currentCard.cardStatus == .disabled
-      }
-      .store(in: &cancellables)
-  }
-  
   func presentActivateCardView(activeCardView: AnyView) {
     switch currentCard.cardType {
     case .physical:
       setFullScreenCoordinator(destinationView: .activatePhysicalCard(activeCardView))
     default:
       break
+    }
+  }
+}
+
+// MARK: API
+extension NSListCardsViewModel {
+  func apiFetchNetSpendCards() {
+    isInit = true
+    Task { @MainActor in
+      do {
+        
+        let cards = try await getListNSCardUseCase.execute()
+        cardsList = cards.map { card in
+          CardModel(
+            id: card.liquidityCardId,
+            cardType: CardType(rawValue: card.type) ?? .virtual,
+            cardholderName: nil,
+            expiryMonth: card.expirationMonth,
+            expiryYear: card.expirationYear,
+            last4: card.panLast4,
+            cardStatus: CardStatus(rawValue: card.status) ?? .unactivated
+          )
+        }
+        
+        isHasPhysicalCard = cardsList.contains { card in
+          card.cardType == .physical
+        }
+        currentCard = cardsList.first ?? .virtualDefault
+        isActivePhysical = currentCard.cardStatus == .active
+        isCardLocked = currentCard.cardStatus == .disabled
+        
+        let filteredCards = cardsList.filter({ $0.cardStatus != .closed })
+        if filteredCards.isEmpty {
+          NotificationCenter.default.post(name: .noLinkedCards, object: nil)
+        } else {
+          cardMetaDatas = Array(repeating: nil, count: filteredCards.count)
+          filteredCards.map { $0.id }.enumerated().forEach { index, id in
+            apiFetchNetSpendCardDetail(with: id, and: index)
+          }
+        }
+      } catch {
+        isInit = false
+        toastMessage = error.userFriendlyMessage
+      }
+    }
+  }
+  
+  func apiFetchNetSpendCardDetail(with cardID: String, and index: Int) {
+    Task { @MainActor in
+      defer { isInit = false }
+      do {
+        let entity = try await getCardUseCase.execute(cardID: cardID, sessionID: accountDataManager.sessionID)
+        if let usersession = netspendDataManager.sdkSession, let cardModel = entity as? NSAPICard {
+          let encryptedData: APICardEncrypted? = cardModel.decodeData(session: usersession)
+          if let encryptedData {
+            cardMetaDatas[index] = CardMetaData(pan: encryptedData.pan, cvv: encryptedData.cvv2)
+          }
+        }
+      } catch {
+        toastMessage = error.userFriendlyMessage
+      }
     }
   }
 }

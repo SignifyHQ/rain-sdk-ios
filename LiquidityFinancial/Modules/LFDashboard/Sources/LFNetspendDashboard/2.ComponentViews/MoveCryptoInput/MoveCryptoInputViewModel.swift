@@ -1,5 +1,4 @@
 import SwiftUI
-import BaseDashboard
 import LFLocalizable
 import LFUtilities
 import LFStyleGuide
@@ -9,15 +8,16 @@ import Combine
 import ZerohashDomain
 import AccountService
 import ZerohashData
+import DashboardComponents
 
 @MainActor
 final class MoveCryptoInputViewModel: ObservableObject {
   @LazyInjected(\.accountRepository) var accountRepository
   @LazyInjected(\.accountDataManager) var accountDataManager
   @LazyInjected(\.zerohashRepository) var zerohashRepository
-  @LazyInjected(\.dashboardRepository) var dashboardRepository
   @LazyInjected(\.cryptoAccountService) var cryptoAccountService
-
+  @LazyInjected(\.fiatAccountService) var fiatAccountService
+  
   @Published var assetModel: AssetModel
   @Published var fiatAccount: AccountModel?
   
@@ -130,7 +130,7 @@ private extension MoveCryptoInputViewModel {
     let cryptoId = self.assetModel.id
     Task {
       if type == .buyCrypto {
-        let fiatAccounts = try await self.dashboardRepository.getFiatAccounts()
+        let fiatAccounts = try await getFiatAccounts()
         self.accountDataManager.addOrUpdateAccounts(fiatAccounts)
         
         if let fiatAccount = fiatAccounts.first {
@@ -192,6 +192,12 @@ private extension MoveCryptoInputViewModel {
         self.toastMessage = error.userFriendlyMessage
       }
     }
+  }
+  
+  func getFiatAccounts() async throws -> [AccountModel] {
+    let accounts = try await fiatAccountService.getAccounts()
+    self.accountDataManager.addOrUpdateAccounts(accounts)
+    return accounts
   }
 }
 

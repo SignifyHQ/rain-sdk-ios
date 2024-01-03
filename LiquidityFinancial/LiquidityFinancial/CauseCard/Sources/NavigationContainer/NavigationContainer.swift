@@ -1,6 +1,6 @@
 import Foundation
 import LFRewardDashboard
-import BaseDashboard
+import DashboardComponents
 import LFTransaction
 import LFUtilities
 import Factory
@@ -12,14 +12,11 @@ final class NavigationContainer {
   
   @LazyInjected(\.transactionNavigation) var transactionNavigation
   @LazyInjected(\.rewardNavigation) var rewardNavigation
-  @LazyInjected(\.dashboardNavigation) var dashboardNavigation
   
   @MainActor
   func registerModuleNavigation() {
     let container = DIContainerAnyView()
     registerTransactionModuleNavigation(container: container)
-    
-    registerDashboardModuleNavigation(container: container)
   }
   
   @MainActor
@@ -38,14 +35,4 @@ final class NavigationContainer {
       AnyView(EmptyView())
     }
   }
-  
-  @MainActor
-  func registerDashboardModuleNavigation(container: DIContainerAnyView) {
-    dashboardNavigation.setup(container: container)
-    
-    dashboardNavigation.registerDisputeTransactionView(type: EmptyView.self) { _ in
-      AnyView(EmptyView())
-    }
-  }
-  
 }

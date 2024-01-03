@@ -5,7 +5,6 @@ import LFAccessibility
 import LFStyleGuide
 import LFUtilities
 import LFRewards
-import BaseDashboard
 import SolidOnboarding
 import LFSolidBank
 import Factory

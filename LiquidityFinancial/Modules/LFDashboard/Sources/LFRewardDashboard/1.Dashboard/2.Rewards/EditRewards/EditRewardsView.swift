@@ -4,7 +4,7 @@ import LFLocalizable
 import LFUtilities
 import LFRewards
 import LFTransaction
-import BaseDashboard
+import DashboardComponents
 
 struct EditRewardsView: View {
   @StateObject private var viewModel: EditRewardsViewModel

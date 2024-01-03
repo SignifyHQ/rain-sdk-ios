@@ -3,19 +3,21 @@ import LFStyleGuide
 import LFLocalizable
 import LFUtilities
 import LFNetspendBank
-import BaseDashboard
 import LFNetSpendCard
 import Factory
 import BaseCard
 
 struct DashboardView: View {
   
-  @Injected(\.dashboardRepository) var dashboardRepository
+  @Environment(\.scenePhase)
+  var scenePhase
   
+  let dashboardRepo: DashboardRepository
   let option: TabOption
   
-  init(option: TabOption) {
+  init(option: TabOption, dashboardRepo: DashboardRepository) {
     self.option = option
+    self.dashboardRepo = dashboardRepo
   }
   
   var body: some View {
@@ -23,19 +25,23 @@ struct DashboardView: View {
       switch option {
       case .cash:
         CashView(
-          viewModel: CashViewModel(),
+          viewModel: CashViewModel(dashboardRepository: dashboardRepo),
           listCardViewModel: NSListCardsViewModel(
-            cardData: dashboardRepository.$netspendCardData,
             coordinator: Container().baseCardDestinationObservable.callAsFunction()
           )
         )
       case .rewards:
-        RewardTabView()
+        RewardTabView(viewModel: RewardTabViewModel(dashboardRepo: dashboardRepo))
       case .assets:
-        AssetsView(viewModel: AssetsViewModel())
+        AssetsView(viewModel: AssetsViewModel(dashboardRepository: dashboardRepo))
       case .account:
-        AccountsView(viewModel: AccountViewModel())
+        AccountsView(viewModel: AccountViewModel(dashboardRepository: dashboardRepo))
       }
     }
+    .onChange(of: scenePhase, perform: { newValue in
+      if newValue == .active {
+        dashboardRepo.fetchNetspendLinkedSources()
+      }
+    })
   }
 }

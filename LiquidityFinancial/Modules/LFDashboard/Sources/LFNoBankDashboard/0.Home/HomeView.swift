@@ -5,33 +5,34 @@ import LFAccessibility
 import LFStyleGuide
 import LFUtilities
 import Combine
-import BaseDashboard
 import NoBankOnboarding
 import LFNetspendBank
 import Factory
 import LFNetSpendCard
 
 public struct HomeView: View {
-  @Injected(\.dashboardRepository) var dashboardRepository
   
   @Environment(\.scenePhase) var scenePhase
   
   @StateObject private var viewModel: HomeViewModel
   
+  let dashboardRepo: DashboardRepository
+  
   var onChangeRoute: ((NoBankOnboardingFlowCoordinator.Route) -> Void)?
   
-  public init(viewModel: HomeViewModel, onChangeRoute: ((NoBankOnboardingFlowCoordinator.Route) -> Void)? = nil) {
-    _viewModel = .init(wrappedValue: viewModel)
+  public init(onChangeRoute: ((NoBankOnboardingFlowCoordinator.Route) -> Void)? = nil) {
+    let dashboardRepo = DashboardRepository()
+    self.dashboardRepo = dashboardRepo
+    _viewModel = .init(wrappedValue: HomeViewModel(dashboardRepository: dashboardRepo, tabOptions: TabOption.allCases))
     
     self.onChangeRoute = onChangeRoute
-    dashboardRepository.load { _ in }
   }
   
   public var body: some View {
     ZStack(alignment: .bottom) {
       // Ensure each TabOptionView is initialized only once
       ForEach(viewModel.tabOptions, id: \.self) { option in
-        DashboardView(option: option)
+        DashboardView(option: option, dashboardRepo: dashboardRepo)
           .opacity(viewModel.tabSelected == option ? 1 : 0)
           .padding(.bottom, 50)
       }

@@ -6,6 +6,7 @@ import AuthorizationManager
 import Services
 import DevicesDomain
 import Combine
+import DashboardComponents
 
 @MainActor
 final class ProfileViewModel: ObservableObject {
@@ -21,10 +22,12 @@ final class ProfileViewModel: ObservableObject {
   @LazyInjected(\.devicesRepository) var devicesRepository
   @LazyInjected(\.pushNotificationService) var pushNotificationService
   @LazyInjected(\.analyticsService) var analyticsService
-  @LazyInjected(\.dashboardRepository) var dashboardRepository
   
   lazy var deviceDeregisterUseCase: DeviceDeregisterUseCaseProtocol = {
     DeviceDeregisterUseCase(repository: devicesRepository)
+  }()
+  lazy var deviceRegisterUseCase: DeviceRegisterUseCaseProtocol = {
+    DeviceRegisterUseCase(repository: devicesRepository)
   }()
   
   private var cancellable = Set<AnyCancellable>()
@@ -137,18 +140,68 @@ extension ProfileViewModel {
 
 extension ProfileViewModel {
   func checkNotificationsStatus() {
-    dashboardRepository.checkNotificationsStatus { @MainActor [weak self] status in
+    checkNotificationsStatus { @MainActor [weak self] status in
       self?.notificationsEnabled = status
+    }
+  }
+}
+
+// MARK: Notification
+extension ProfileViewModel {
+  func checkNotificationsStatus(completion: @escaping (Bool) -> Void) {
+    Task { @MainActor in
+      do {
+        let status = try await pushNotificationService.notificationSettingStatus()
+        completion(status == .authorized)
+      } catch {
+        completion(false)
+        log.error(error.userFriendlyMessage)
+      }
     }
   }
   
   func notificationTapped() {
-    dashboardRepository.notificationTapped()
+    Task { @MainActor in
+      do {
+        let status = try await pushNotificationService.notificationSettingStatus()
+        switch status {
+        case .authorized:
+          break
+        case .notDetermined:
+          let success = try await pushNotificationService.requestPermission()
+          if success {
+            break
+          }
+          return
+        case .denied:
+          if let settingsUrl = URL(string: UIApplication.openSettingsURLString), UIApplication.shared.canOpenURL(settingsUrl) {
+            await UIApplication.shared.open(settingsUrl)
+          }
+          return
+        default:
+          return
+        }
+        self.pushFCMTokenIfNeed()
+      } catch {
+        log.error(error)
+      }
+    }
   }
   
   func pushFCMTokenIfNeed() {
-    dashboardRepository.pushFCMTokenIfNeed()
+    Task { @MainActor in
+      do {
+        let token = try await pushNotificationService.fcmToken()
+        let response = try await deviceRegisterUseCase.execute(deviceId: LFUtilities.deviceId, token: token)
+        if response.success {
+          UserDefaults.lastestFCMToken = token
+        }
+      } catch {
+        log.error(error.userFriendlyMessage)
+      }
+    }
   }
+
 }
 
 // MARK: - Types

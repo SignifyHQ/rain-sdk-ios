@@ -1,5 +1,4 @@
 import Foundation
-import BaseDashboard
 import Factory
 import Services
 import ZerohashData
@@ -10,6 +9,7 @@ import LFUtilities
 import AccountService
 import BiometricsManager
 import Combine
+import DashboardComponents
 
 class ConfirmSendCryptoViewModel: ObservableObject {
   @LazyInjected(\.accountDataManager) var accountDataManager

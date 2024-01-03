@@ -14,7 +14,6 @@ struct AccountsView: View {
   
   @Injected(\.transactionNavigation) var transactionNavigation
   @Injected(\.bankServiceConfig) var bankServiceConfig
-  @Injected(\.dashboardNavigation) var dashboardNavigation
   
   init(viewModel: AccountViewModel) {
     _viewModel = .init(wrappedValue: viewModel)
@@ -42,14 +41,6 @@ struct AccountsView: View {
           ConnectedAccountsView(linkedContacts: viewModel.linkedContacts)
         case .bankStatement:
           BankStatementView()
-        case let .disputeTransaction(netspendAccountID, passcode):
-          dashboardNavigation.resolveDisputeTransactionView(
-            id: netspendAccountID,
-            passcode: passcode
-          ) {
-            viewModel.navigation = nil
-          }?
-            .navigationBarHidden(true)
         case .rewards:
           transactionNavigation.resolveCurrentReward()
         }

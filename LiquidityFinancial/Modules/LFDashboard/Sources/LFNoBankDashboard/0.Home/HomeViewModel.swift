@@ -11,7 +11,7 @@ import Services
 import DevicesDomain
 
 @MainActor
-public final class HomeViewModel: ObservableObject {
+final class HomeViewModel: ObservableObject {
   @LazyInjected(\.accountDataManager) var accountDataManager
   
   @LazyInjected(\.accountRepository) var accountRepository
@@ -35,7 +35,9 @@ public final class HomeViewModel: ObservableObject {
     DeviceRegisterUseCase(repository: devicesRepository)
    }()
   
-  public init(tabOptions: [TabOption]) {
+  let dashboardRepository: DashboardRepository
+  init(dashboardRepository: DashboardRepository, tabOptions: [TabOption]) {
+    self.dashboardRepository = dashboardRepository
     self.tabOptions = tabOptions
     
     initData()
@@ -74,6 +76,7 @@ extension HomeViewModel {
   func onAppear() {
     checkShouldShowNotification()
     logincustomerSupportService()
+    dashboardRepository.onAppear()
   }
   
   func logincustomerSupportService() {

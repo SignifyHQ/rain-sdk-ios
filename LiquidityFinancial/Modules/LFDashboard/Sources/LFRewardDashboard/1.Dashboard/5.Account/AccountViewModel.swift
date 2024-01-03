@@ -14,6 +14,8 @@ import EnvironmentService
 import SolidData
 import SolidDomain
 import AccountService
+import DevicesData
+import DevicesDomain
 
 @MainActor
 class AccountViewModel: ObservableObject {
@@ -32,7 +34,6 @@ class AccountViewModel: ObservableObject {
   @LazyInjected(\.accountDataManager) var accountDataManager
   @LazyInjected(\.customerSupportService) var customerSupportService
   @LazyInjected(\.pushNotificationService) var pushNotificationService
-  @LazyInjected(\.dashboardRepository) var dashboardRepository
   @LazyInjected(\.externalFundingDataManager) var externalFundingDataManager
   @LazyInjected(\.environmentService) var environmentService
   
@@ -49,11 +50,16 @@ class AccountViewModel: ObservableObject {
   @Published var linkedContacts: [LinkedSourceContact] = []
   
   @Injected(\.solidAccountRepository) var solidAccountRepository
+  @Injected(\.devicesRepository) var devicesRepository
   @Injected(\.solidExternalFundingRepository) var solidExternalFundingRepository
   @Injected(\.fiatAccountService) var fiatAccountService
   
   lazy var solidGetWireTransfer: SolidGetWireTranferUseCaseProtocol = {
     SolidGetWireTranferUseCase(repository: solidExternalFundingRepository)
+  }()
+  
+  lazy var deviceRegisterUseCase: DeviceRegisterUseCaseProtocol = {
+    DeviceRegisterUseCase(repository: devicesRepository)
   }()
   
   private(set) var addFundsViewModel = AddFundsViewModel()
@@ -110,17 +116,9 @@ extension AccountViewModel {
 // MARK: - API
 extension AccountViewModel {
   func checkNotificationsStatus() {
-    dashboardRepository.checkNotificationsStatus { @MainActor [weak self] status in
+    checkNotificationsStatus { @MainActor [weak self] status in
       self?.notificationsEnabled = status
     }
-  }
-  
-  func notificationTapped() {
-    dashboardRepository.notificationTapped()
-  }
-  
-  func pushFCMTokenIfNeed() {
-    dashboardRepository.pushFCMTokenIfNeed()
   }
   
   func subscribeLinkedContacts() {
@@ -143,7 +141,6 @@ extension AccountViewModel {
     case depositLimits
     case connectedAccounts
     case bankStatement
-    case disputeTransaction(String, String)
     case rewards
   }
   
@@ -208,5 +205,62 @@ extension AccountViewModel {
       routingNumber: wireResponse.routingNumber,
       accountName: wireResponse.accountNumber
     )
+  }
+}
+
+// MARK: Notification
+extension AccountViewModel {
+  func checkNotificationsStatus(completion: @escaping (Bool) -> Void) {
+    Task { @MainActor in
+      do {
+        let status = try await pushNotificationService.notificationSettingStatus()
+        completion(status == .authorized)
+      } catch {
+        completion(false)
+        log.error(error.userFriendlyMessage)
+      }
+    }
+  }
+  
+  func notificationTapped() {
+    Task { @MainActor in
+      do {
+        let status = try await pushNotificationService.notificationSettingStatus()
+        switch status {
+        case .authorized:
+          break
+        case .notDetermined:
+          let success = try await pushNotificationService.requestPermission()
+          if success {
+            break
+          }
+          return
+        case .denied:
+          if let settingsUrl = URL(string: UIApplication.openSettingsURLString), UIApplication.shared.canOpenURL(settingsUrl) {
+            await UIApplication.shared.open(settingsUrl)
+          }
+          return
+        default:
+          return
+        }
+        self.pushFCMTokenIfNeed()
+      } catch {
+        log.error(error)
+      }
+    }
+  }
+  
+  func pushFCMTokenIfNeed() {
+    Task { @MainActor in
+      do {
+        let token = try await pushNotificationService.fcmToken()
+        let response = try await deviceRegisterUseCase.execute(deviceId: LFUtilities.deviceId, token: token)
+        if response.success {
+          UserDefaults.lastestFCMToken = token
+        }
+      } catch {
+        log.error(error.userFriendlyMessage)
+      }
+    }
   }
 }

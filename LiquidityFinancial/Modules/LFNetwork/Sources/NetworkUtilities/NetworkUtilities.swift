@@ -19,7 +19,7 @@ public final class NetworkUtilities {
     case .Avalanche: return APIConstants.avalencheID
     case .Cardano: return APIConstants.cardanoID
     case .DogeCard, .DogeCardNobank: return APIConstants.dogeCardID
-    case .CauseCard, .CauseCardNetspend: return APIConstants.causeCardID
+    case .CauseCard: return APIConstants.causeCardID
     case .PrideCard: return APIConstants.prideCardID
     // TODO: Will update after when having paws product id 
     case .PawsCard: return APIConstants.prideCardID
@@ -38,7 +38,6 @@ extension NetworkUtilities {
       case DogeCard
       case CauseCard
       case PrideCard
-      case CauseCardNetspend
       case DogeCardNobank
       case PawsCard
     }

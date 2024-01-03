@@ -23,7 +23,7 @@ struct AppView: View {
       case .onboarding:
         NSOnboardingContentView()
       case .dashboard:
-        HomeView(viewModel: HomeViewModel(tabOptions: TabOption.allCases)) { route in
+        HomeView { route in
           viewModel.setDumpOutRoute(route)
         }
       case .dumpOut(let route):

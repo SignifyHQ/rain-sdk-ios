@@ -3,18 +3,17 @@ import LFStyleGuide
 import LFLocalizable
 import LFUtilities
 import LFNetspendBank
-import BaseDashboard
 import LFNetSpendCard
 import Factory
 import BaseCard
 
 struct DashboardView: View {
   
-  @Injected(\.dashboardRepository) var dashboardRepository
-  
+  let dashboardRepository: DashboardRepository
   let option: TabOption
   
-  init(option: TabOption) {
+  init(option: TabOption, dashboardRepo: DashboardRepository) {
+    self.dashboardRepository = dashboardRepo
     self.option = option
   }
   
@@ -24,11 +23,11 @@ struct DashboardView: View {
       case .cash:
         BlockingFiatView()
       case .rewards:
-        RewardTabView()
+        RewardTabView(dashboardRepo: dashboardRepository)
       case .assets:
-        AssetsView()
+        AssetsView(dashboardRepo: dashboardRepository)
       case .account:
-        AccountsView(viewModel: AccountViewModel())
+        AccountsView(dashboardRepo: dashboardRepository)
       }
     }
   }
