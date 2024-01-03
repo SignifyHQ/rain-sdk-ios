@@ -9,7 +9,7 @@ public class TransactionListViewModel: ObservableObject {
   
   private var offset = 0
   private var total = 0
-  private var limit = 50
+  private var limit = 100
   
   @Published var transactions: [TransactionModel] = []
   @Published var transactionDetail: TransactionModel?
@@ -30,6 +30,7 @@ public class TransactionListViewModel: ObservableObject {
     self.currencyType = currencyType
     self.accountID = accountID
     self.transactionTypes = transactionTypes
+    self.initData()
   }
   
   var filteredTransactions: [TransactionModel] {
@@ -38,7 +39,7 @@ public class TransactionListViewModel: ObservableObject {
     }
   }
   
-  func onAppear() {
+  func initData() {
     Task {
       defer { isLoading = false }
       isLoading = true
@@ -49,7 +50,7 @@ public class TransactionListViewModel: ObservableObject {
   func loadMoreIfNeccessary(transaction: TransactionModel) {
     guard
       let lastObject = transactions.last,
-      lastObject.id == transaction.id
+      lastObject.id == transaction.id && !isLoadingMore
     else {
       return
     }

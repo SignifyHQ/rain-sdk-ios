@@ -4,7 +4,7 @@ import SwiftUI
 import LFStyleGuide
 import LFUtilities
 
-public struct TransactionModel: Identifiable {
+public struct TransactionModel: Identifiable, Hashable, Equatable {
   public var id: String
   public var accountId: String
   public var title: String?
@@ -59,6 +59,14 @@ public struct TransactionModel: Identifiable {
     self.receipt = receipt
     self.externalTransaction = externalTransaction
     self.note = note
+  }
+  
+  public func hash(into hasher: inout Hasher) {
+    hasher.combine(id)
+  }
+  
+  public static func == (lhs: TransactionModel, rhs: TransactionModel) -> Bool {
+    return lhs.id == rhs.id
   }
 }
 
@@ -215,7 +223,7 @@ public extension TransactionModel {
       return .fee
     case .rewardCashBack, .rewardCashBackReverse:
       return .cashback
-    //TODO: handle different donation detail view (Cashtab/rewardTab)
+      //TODO: handle different donation detail view (Cashtab/rewardTab)
     case .donation where rewards == nil:
       return .cashback
     case .donation:
@@ -250,12 +258,6 @@ public extension TransactionModel {
       return nil
     }
     return nil
-  }
-}
-
-extension TransactionModel: Equatable {
-  public static func == (lhs: TransactionModel, rhs: TransactionModel) -> Bool {
-    lhs.id == rhs.id
   }
 }
 
@@ -304,7 +306,7 @@ public extension TransactionModel {
       description: reward.description
     )
   }
-      
+  
   static func generateExternalTransaction(externalTransactionEntity: ExternalTransactionEntity?) -> ExternalTransaction? {
     guard let externalTransaction = externalTransactionEntity else {
       return nil

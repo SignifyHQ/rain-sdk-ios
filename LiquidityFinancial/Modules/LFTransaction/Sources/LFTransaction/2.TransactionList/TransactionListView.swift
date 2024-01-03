@@ -39,7 +39,6 @@ public struct TransactionListView: View {
           .foregroundColor(Colors.label.swiftUIColor)
       }
     }
-    .onAppear(perform: viewModel.onAppear)
     .navigationLink(item: $viewModel.transactionDetail) { item in
       TransactionDetailView(
         accountID: viewModel.accountID,
@@ -58,22 +57,25 @@ private extension TransactionListView {
     VStack(spacing: 10) {
       SearchBar(searchText: $viewModel.searchText)
         .padding(.bottom, 5)
-      ScrollView {
+      List {
         ForEach(viewModel.filteredTransactions) { transaction in
           TransactionRowView(item: transaction) {
             viewModel.selectedTransaction(transaction)
           }
+          .listRowInsets(EdgeInsets())
           .onAppear {
             viewModel.loadMoreIfNeccessary(transaction: transaction)
           }
         }
       }
+      .listStyle(PlainListStyle())
+      
       if viewModel.isLoadingMore {
         LottieView(loading: .mix)
           .frame(width: 30, height: 20)
       }
     }
-    .padding(.horizontal, 30)
+    .padding(.horizontal, 24)
   }
   
   var loading: some View {
