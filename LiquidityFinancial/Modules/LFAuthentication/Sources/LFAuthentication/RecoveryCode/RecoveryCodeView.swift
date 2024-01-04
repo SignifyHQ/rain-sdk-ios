@@ -8,13 +8,9 @@ struct RecoveryCodeView: View {
   @StateObject private var viewModel: RecoveryCodeViewModel
   @FocusState var isTextFieldInFocus: Bool
   
-  init(
-    onActionContinue: @escaping () -> Void
-  ) {
+  init(purpose: RecoveryCodePurpose) {
     _viewModel = .init(
-      wrappedValue: RecoveryCodeViewModel(
-        onActionContinue: onActionContinue
-      )
+      wrappedValue: RecoveryCodeViewModel(purpose: purpose)
     )
   }
   
@@ -28,7 +24,7 @@ struct RecoveryCodeView: View {
       }
       .popup(
         item: $viewModel.popup,
-        dismissAction: dismissAction
+        dismissAction: viewModel.dismissAction
       ) { item in
         switch item {
         case .mfaTurnedOff:
@@ -105,22 +101,8 @@ private extension RecoveryCodeView {
     LiquidityAlert(
       title: LFLocalizable.Authentication.EnterTotp.mfaTurnedOff.uppercased(),
       primary: .init(text: LFLocalizable.Button.Okay.title) {
-        dismissAction()
+        viewModel.dismissAction()
       }
     )
-  }
-}
-
-// MARK: - View Helpers
-
-extension RecoveryCodeView {
-  private func dismissAction() {
-    switch viewModel.popup {
-    case .mfaTurnedOff:
-      viewModel.hidePopup()
-      viewModel.onActionContinue()
-    default:
-      break
-    }
   }
 }

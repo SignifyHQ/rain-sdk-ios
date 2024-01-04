@@ -1,16 +1,20 @@
 import AccountData
 import AccountDomain
+import OnboardingDomain
+import OnboardingData
 import Combine
 import Foundation
 import Factory
 import LFStyleGuide
 import LFUtilities
 import LFLocalizable
+import LFFeatureFlags
 
 @MainActor
 final class EnterTOTPCodeViewModel: ObservableObject {
   @LazyInjected(\.accountDataManager) var accountDataManager
   @LazyInjected(\.accountRepository) var accountRepository
+  @LazyInjected(\.onboardingRepository) var onboardingRepository
   @LazyInjected(\.customerSupportService) var customerSupportService
 
   @Published var isTOTPCodeEntered: Bool = false
@@ -30,6 +34,12 @@ final class EnterTOTPCodeViewModel: ObservableObject {
     DisableMFAUseCase(repository: accountRepository)
   }()
   
+  lazy var loginUseCase: LoginUseCaseProtocol = {
+    LoginUseCase(repository: onboardingRepository)
+  }()
+  
+  private var subscribers: Set<AnyCancellable> = []
+
   init(purpose: EnterTOTPCodePurpose) {
     self.purpose = purpose
     observeTOTPInput()
@@ -55,8 +65,36 @@ extension EnterTOTPCodeViewModel {
     }
   }
   
-  private func loginWithTOTPCode() {
-    // TODO: - Will implemented in another ticket
+  private func loginWithTOTPCode(parameters: LoginParameters, completion: @escaping (() -> Void)) {
+    Task {
+      isVerifying = true
+
+      NotificationCenter.default
+        .publisher(for: .didLoginComplete)
+        .sink { [weak self] _ in
+          guard let self else {
+            return
+          }
+          self.isVerifying = false
+        }
+        .store(in: &subscribers)
+      
+      do {
+        let parameters = LoginParameters(
+          phoneNumber: parameters.phoneNumber,
+          otpCode: parameters.code,
+          verification: Verification(type: parameters.verification?.type ?? .empty, secret: totpCode)
+        )
+        _ = try await loginUseCase.execute(
+          isNewAuth: LFFeatureFlagContainer.isMultiFactorAuthFeatureFlagEnabled,
+          parameters: parameters
+        )
+        completion()
+      } catch {
+        isVerifying = false
+        handleError(error: error)
+      }
+    }
   }
 }
 
@@ -66,8 +104,22 @@ extension EnterTOTPCodeViewModel {
     customerSupportService.openSupportScreen()
   }
   
-  func didUseRecoveryCodeLinkTap() {
-    navigation = .recoveryCode
+  func didUseRecoveryCodeLinkTap(popToPreviousView: @escaping (() -> Void)) {
+    var recoveryCodePurpose: RecoveryCodePurpose
+    
+    switch purpose {
+    case .disableMFA:
+      recoveryCodePurpose = .disableMFA(completion: popToPreviousView)
+    case let .login(parameters, fallbackType, completion):
+      let parameters = LoginParameters(
+        phoneNumber: parameters.phoneNumber,
+        otpCode: parameters.code,
+        verification: Verification(type: fallbackType, secret: .empty)
+      )
+      recoveryCodePurpose = .login(parameters: parameters, completion: completion)
+    }
+    
+    navigation = .recoveryCode(purpose: recoveryCodePurpose)
   }
   
   func hidePopup() {
@@ -78,8 +130,8 @@ extension EnterTOTPCodeViewModel {
     switch purpose {
     case .disableMFA:
       disableMFAAuthentication()
-    case .login:
-      loginWithTOTPCode()
+    case let .login(parameters, _, completion):
+      loginWithTOTPCode(parameters: parameters, completion: completion)
     }
   }
 }
@@ -105,13 +157,10 @@ private extension EnterTOTPCodeViewModel {
   
   func handleError(error: Error) {
     log.error(error.userFriendlyMessage)
-    guard let errorObject = error.asErrorObject else {
-      toastMessage = error.userFriendlyMessage
-      return
-    }
-    switch errorObject.code {
-    case Constants.ErrorCode.invalidTOTP.value:
-      errorMessage = errorObject.message
+    
+    switch error.inlineError {
+    case .invalidTOTP, .verificationInvalid, .otpIncorrect:
+      errorMessage = error.userFriendlyMessage
     default:
       toastMessage = error.userFriendlyMessage
     }
@@ -121,7 +170,7 @@ private extension EnterTOTPCodeViewModel {
 // MARK: - Types
 extension EnterTOTPCodeViewModel {
   enum Navigation {
-    case recoveryCode
+    case recoveryCode(purpose: RecoveryCodePurpose)
   }
   
   enum Popup {
@@ -131,5 +180,16 @@ extension EnterTOTPCodeViewModel {
 
 public enum EnterTOTPCodePurpose {
   case disableMFA
-  case login
+  case login(parameters: LoginParameters, fallbackType: String, completion: (() -> Void))
+  
+  public static func == (lhs: EnterTOTPCodePurpose, rhs: EnterTOTPCodePurpose) -> Bool {
+    switch (lhs, rhs) {
+    case (.disableMFA, .disableMFA):
+      return true
+    case let (.login(lhsParameters, _, _), .login(rhsParameters, _, _)):
+      return lhsParameters.phoneNumber == rhsParameters.phoneNumber
+    default:
+      return false
+    }
+  }
 }

@@ -59,6 +59,7 @@ public extension Error {
 
 public enum InlineError: String {
   case invalidCredentials = "invalid_auth_password"
+  case invalidTOTP = "invalid_totp"
   case otpIncorrect = "credentials_invalid"
   case verificationInvalid = "verification_invalid"
 }

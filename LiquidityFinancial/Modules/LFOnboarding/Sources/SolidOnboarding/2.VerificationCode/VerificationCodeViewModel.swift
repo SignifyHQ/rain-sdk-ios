@@ -190,7 +190,16 @@ private extension VerificationCodeViewModel {
   }
   
   func handleMFAVerification() {
-    let view = EnterTOTPCodeView(purpose: .login, isFlowPresented: .constant(false))
+    let parameters = LoginParameters(
+      phoneNumber: formatPhoneNumber,
+      otpCode: otpCode,
+      verification: Verification(type: VerificationType.totp.rawValue, secret: .empty)
+    )
+    let purpose = EnterTOTPCodePurpose.login(parameters: parameters, fallbackType: VerificationType.recoveryCode.rawValue) {
+      self.handleLoginSuccess()
+    }
+    let view = EnterTOTPCodeView(purpose: purpose, isFlowPresented: .constant(false))
+    
     coordinator.verificationDestinationView = .identityVerificationCode(AnyView(view))
   }
   

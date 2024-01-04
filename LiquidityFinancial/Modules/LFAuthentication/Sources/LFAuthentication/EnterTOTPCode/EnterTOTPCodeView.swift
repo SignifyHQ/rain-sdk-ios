@@ -47,10 +47,8 @@ public struct EnterTOTPCodeView: View {
       .background(Colors.background.swiftUIColor)
       .navigationLink(item: $viewModel.navigation) { item in
         switch item {
-        case .recoveryCode:
-          RecoveryCodeView {
-            isFlowPresented = false
-          }
+        case let .recoveryCode(purpose):
+          RecoveryCodeView(purpose: purpose)
         }
       }
       .defaultToolBar(
@@ -106,7 +104,9 @@ private extension EnterTOTPCodeView {
             )
           )
           .onTapGesture {
-            viewModel.didUseRecoveryCodeLinkTap()
+            viewModel.didUseRecoveryCodeLinkTap {
+              isFlowPresented = false
+            }
           }
           .disabled(viewModel.isVerifying)
       }
