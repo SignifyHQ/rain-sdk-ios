@@ -8,8 +8,11 @@ public class LoginUseCase: LoginUseCaseProtocol {
     self.repository = repository
   }
   
-  public func execute(phoneNumber: String, otpCode: String, lastID: String) async throws -> AccessTokensEntity {
-    return try await repository.login(phoneNumber: phoneNumber, otpCode: otpCode, lastID: lastID)
+  public func execute(isNewAuth: Bool, parameters: LoginParametersEntity) async throws -> AccessTokensEntity {
+    guard isNewAuth else {
+      return try await repository.login(parameters: parameters)
+    }
+    return try await repository.newLogin(parameters: parameters)
   }
   
 }

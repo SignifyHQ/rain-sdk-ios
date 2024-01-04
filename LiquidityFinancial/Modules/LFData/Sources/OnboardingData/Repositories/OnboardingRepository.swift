@@ -11,14 +11,44 @@ public class OnboardingRepository: OnboardingRepositoryProtocol {
     self.auth = auth
   }
   
-  public func login(phoneNumber: String, otpCode: String, lastID: String) async throws -> AccessTokensEntity {
-    let accessTokens = try await onboardingAPI.login(phoneNumber: phoneNumber, otpCode: otpCode, lastID: lastID)
+  public func login(parameters: LoginParametersEntity) async throws -> AccessTokensEntity {
+    let requestParameters = LoginParameters(
+      phoneNumber: parameters.phoneNumber,
+      otpCode: parameters.code,
+      lastID: parameters.lastXId,
+      verification: parameters.verificationEntity as? Verification
+    )
+    
+    let accessTokens = try await onboardingAPI.login(parameters: requestParameters)
+    
     auth.refreshWith(apiToken: accessTokens)
     return accessTokens
   }
   
-  public func requestOTP(phoneNumber: String) async throws -> OtpEntity {
-    return try await onboardingAPI.requestOTP(phoneNumber: phoneNumber)
+  public func newLogin(parameters: LoginParametersEntity) async throws -> AccessTokensEntity {
+    let requestParameters = LoginParameters(
+      phoneNumber: parameters.phoneNumber,
+      otpCode: parameters.code,
+      lastID: parameters.lastXId,
+      verification: parameters.verificationEntity as? Verification
+    )
+    
+    let accessTokens = try await onboardingAPI.newLogin(parameters: requestParameters)
+    
+    auth.refreshWith(apiToken: accessTokens)
+    return accessTokens
+  }
+  
+  public func requestOTP(parameters: OTPParametersEntity) async throws -> OtpEntity {
+    let requestParameters = OTPParameters(phoneNumber: parameters.phoneNumber)
+    
+    return try await onboardingAPI.requestOTP(parameters: requestParameters)
+  }
+  
+  public func newRequestOTP(parameters: OTPParametersEntity) async throws -> OtpEntity {
+    let requestParameters = OTPParameters(phoneNumber: parameters.phoneNumber)
+    
+    return try await onboardingAPI.newRequestOTP(parameters: requestParameters)
   }
   
   public func getOnboardingProcess() async throws -> OnboardingProcess {

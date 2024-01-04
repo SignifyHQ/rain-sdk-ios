@@ -1,7 +1,8 @@
 import Foundation
 import NetworkUtilities
+import OnboardingDomain
 
-public struct OTPParameters: Parameterable {
+public struct OTPParameters: Parameterable, OTPParametersEntity {
   
   public let phoneNumber: String
   

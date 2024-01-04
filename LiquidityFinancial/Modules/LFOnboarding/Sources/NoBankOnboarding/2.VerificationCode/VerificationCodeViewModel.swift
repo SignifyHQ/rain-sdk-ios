@@ -1,6 +1,7 @@
 import Foundation
 import LFUtilities
 import OnboardingDomain
+import OnboardingData
 import Combine
 import SwiftUI
 import Factory
@@ -52,12 +53,12 @@ final class VerificationCodeViewModel: VerificationCodeViewModelProtocol {
 
   // MARK: API
 extension VerificationCodeViewModel {
-  func handleAfterGetOTP(formatPhoneNumber: String, code: String) {
+  func handleAfterGetOTP() {
     guard !isShowLoading else { return }
     isShowLoading = true
     if requireAuth.count == 1 && requireAuth.contains(where: { $0 == .otp }) {
       analyticsService.track(event: AnalyticsEvent(name: .viewSignUpLogin))
-      performVerifyOTPCode(formatPhoneNumber: formatPhoneNumber, code: code)
+      performVerifyOTPCode()
     } else {
       isShowLoading = false
       let isSSNCheck = requireAuth.contains(where: { $0 == .ssn })
@@ -66,7 +67,7 @@ extension VerificationCodeViewModel {
       ? .ssn
       : isPassportCheck ? .passport : nil
       if let kind = identityVerificationKind {
-        let viewModel = IdentityVerificationCodeViewModel(phoneNumber: formatPhoneNumber, otpCode: code, kind: kind)
+        let viewModel = IdentityVerificationCodeViewModel(phoneNumber: formatPhoneNumber, otpCode: otpCode, kind: kind)
         let view = IdentityVerificationCodeView(viewModel: viewModel)
         coordinator
           .verificationDestinationView = .identityVerificationCode(AnyView(view))
@@ -74,13 +75,16 @@ extension VerificationCodeViewModel {
     }
   }
   
-  func performVerifyOTPCode(formatPhoneNumber: String, code: String) {
+  func performVerifyOTPCode() {
     Task {
     #if DEBUG
       let start = CFAbsoluteTimeGetCurrent()
     #endif
       do {
-        _ = try await loginUseCase.execute(phoneNumber: formatPhoneNumber, otpCode: code, lastID: .empty)
+        let parameters = LoginParameters(phoneNumber: formatPhoneNumber, otpCode: otpCode)
+
+        // All crypto apps are still using the old authentication flow. The new authentication flow will be applied later.
+        _ = try await loginUseCase.execute(isNewAuth: false, parameters: parameters)
         accountDataManager.update(phone: formatPhoneNumber)
         accountDataManager.stored(phone: formatPhoneNumber)
         
@@ -103,12 +107,16 @@ extension VerificationCodeViewModel {
     }
   }
   
-  func performGetOTP(formatPhoneNumber: String) {
+  func performGetOTP() {
     Task {
       defer { isShowLoading = false }
       isShowLoading = true
       do {
-        _ = try await requestOtpUseCase.execute(phoneNumber: formatPhoneNumber)
+        let parameters = OTPParameters(phoneNumber: formatPhoneNumber)
+        
+        // All crypto apps are still using the old authentication flow. The new authentication flow will be applied later.
+        _ = try await requestOtpUseCase.execute(isNewAuth: false, parameters: parameters)
+        
         isShowLoading = false
       } catch {
         isShowLoading = false
@@ -126,8 +134,9 @@ extension VerificationCodeViewModel {
       .sink { [weak self] code in
         guard let self else { return }
         log.debug(code ?? "performGetTwilioMessagesIfNeccessary not found")
-        guard let code = code else { return }
-        self.handleAfterGetOTP(formatPhoneNumber: formatPhoneNumber, code: code)
+        guard let code else { return }
+        self.otpCode = code
+        self.handleAfterGetOTP()
       }
       .store(in: &cancellables)
   }
@@ -141,12 +150,12 @@ extension VerificationCodeViewModel {
 extension VerificationCodeViewModel {
   func onChangedOTPCode() {
     if otpCode.count == Constants.MaxCharacterLimit.verificationLimit.value {
-      handleAfterGetOTP(formatPhoneNumber: formatPhoneNumber, code: otpCode)
+      handleAfterGetOTP()
     }
   }
   
   func resendOTP() {
-    performGetOTP(formatPhoneNumber: formatPhoneNumber)
+    performGetOTP()
   }
   
   func handleError(error: Error) {

@@ -27,9 +27,9 @@ public protocol VerificationCodeViewModelProtocol: ObservableObject {
   var coordinator: BaseOnboardingDestinationObservable { get }
   init(phoneNumber: String, requireAuth: [RequiredAuth], coordinator: BaseOnboardingDestinationObservable)
   
-  func handleAfterGetOTP(formatPhoneNumber: String, code: String)
-  func performVerifyOTPCode(formatPhoneNumber: String, code: String)
-  func performGetOTP(formatPhoneNumber: String)
+  func handleAfterGetOTP()
+  func performVerifyOTPCode()
+  func performGetOTP()
   func performAutoGetTwilioMessagesIfNeccessary()
   func openSupportScreen()
   func onChangedOTPCode()

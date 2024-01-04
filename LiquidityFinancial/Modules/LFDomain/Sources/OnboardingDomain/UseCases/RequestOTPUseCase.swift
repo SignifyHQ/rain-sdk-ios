@@ -8,8 +8,11 @@ public class RequestOTPUseCase: RequestOTPUseCaseProtocol {
     self.repository = repository
   }
   
-  public func execute(phoneNumber: String) async throws -> OtpEntity {
-    return try await repository.requestOTP(phoneNumber: phoneNumber)
+  public func execute(isNewAuth: Bool, parameters: OTPParametersEntity) async throws -> OtpEntity {
+    guard isNewAuth else {
+      return try await repository.requestOTP(parameters: parameters)
+    }
+    return try await repository.newRequestOTP(parameters: parameters)
   }
 
 }

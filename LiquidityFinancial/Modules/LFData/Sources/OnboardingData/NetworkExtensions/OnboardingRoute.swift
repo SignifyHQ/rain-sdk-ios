@@ -5,8 +5,10 @@ import AuthorizationManager
 import LFUtilities
 
 public enum OnboardingRoute {
-  case otp(OTPParameters)
-  case login(LoginParameters)
+  case requestOtp(parameters: OTPParameters)
+  case login(parameters: LoginParameters)
+  case newRequestOTP(parameters: OTPParameters)
+  case newLogin(parameters: LoginParameters)
   case refreshToken(token: String)
   case getOnboardingProcess
 }
@@ -15,10 +17,14 @@ extension OnboardingRoute: LFRoute {
 
   public var path: String {
     switch self {
-    case .otp:
+    case .requestOtp:
       return "/v1/password-less/otp/request"
     case .login:
       return "/v1/password-less/login"
+    case .newRequestOTP:
+      return "/v2/auth/otp/request"
+    case .newLogin:
+      return "/v2/auth/login"
     case .refreshToken:
       return "/v1/password-less/refresh-token"
     case .getOnboardingProcess:
@@ -28,7 +34,7 @@ extension OnboardingRoute: LFRoute {
   
   public var httpMethod: HttpMethod {
     switch self {
-    case .login, .otp, .refreshToken: return .POST
+    case .login, .requestOtp, .newRequestOTP, .newLogin, .refreshToken: return .POST
     case .getOnboardingProcess: return .GET
     }
   }
@@ -41,7 +47,7 @@ extension OnboardingRoute: LFRoute {
     switch self {
     case .refreshToken:
       return base
-    case .otp, .login:
+    case .requestOtp, .login, .newRequestOTP, .newLogin:
       base["ld-device-id"] = LFUtilities.deviceId
       return base
     case .getOnboardingProcess:
@@ -53,9 +59,9 @@ extension OnboardingRoute: LFRoute {
   
   public var parameters: Parameters? {
     switch self {
-    case .otp(let otpParameters):
+    case let .requestOtp(otpParameters), let .newRequestOTP(otpParameters):
       return otpParameters.encoded()
-    case .login(let loginParameters):
+    case let .login(loginParameters), let .newLogin(loginParameters):
       return loginParameters.encoded()
     case .refreshToken(let refreshToken):
       var body: [String: Any] {
@@ -71,7 +77,7 @@ extension OnboardingRoute: LFRoute {
   
   public var parameterEncoding: ParameterEncoding? {
     switch self {
-    case .login, .otp, .refreshToken: return .json
+    case .login, .requestOtp, .newRequestOTP, .newLogin, .refreshToken: return .json
     case .getOnboardingProcess: return nil
     }
   }

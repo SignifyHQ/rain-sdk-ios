@@ -1,6 +1,7 @@
 import Foundation
 import LFUtilities
 import OnboardingDomain
+import OnboardingData
 import Combine
 import SwiftUI
 import Factory
@@ -12,6 +13,8 @@ import BaseOnboarding
 import SolidData
 import SolidDomain
 import EnvironmentService
+import LFAuthentication
+import LFFeatureFlags
 
 @MainActor
 final class VerificationCodeViewModel: VerificationCodeViewModelProtocol {
@@ -54,43 +57,37 @@ final class VerificationCodeViewModel: VerificationCodeViewModelProtocol {
 
   // MARK: API
 extension VerificationCodeViewModel {
-  func handleAfterGetOTP(formatPhoneNumber: String, code: String) {
+  func handleAfterGetOTP() {
     guard !isShowLoading else { return }
     isShowLoading = true
-    if requireAuth.count == 1 && requireAuth.contains(where: { $0 == .otp }) {
-      analyticsService.track(event: AnalyticsEvent(name: .viewSignUpLogin))
-      performVerifyOTPCode(formatPhoneNumber: formatPhoneNumber, code: code)
-    } else {
-      isShowLoading = false
-      let isSSNCheck = requireAuth.contains(where: { $0 == .ssn })
-      let isPassportCheck = requireAuth.contains(where: { $0 == .passport })
-      let identityVerificationKind: IdentityVerificationCodeKind? = isSSNCheck
-      ? .ssn
-      : isPassportCheck ? .passport : nil
-      if let kind = identityVerificationKind {
-        let viewModel = IdentityVerificationCodeViewModel(phoneNumber: formatPhoneNumber, otpCode: code, kind: kind)
-        let view = IdentityVerificationCodeView(viewModel: viewModel)
-        coordinator
-          .verificationDestinationView = .identityVerificationCode(AnyView(view))
+    
+    guard requireAuth.contains(.otp), requireAuth.count == 1 else {
+      if let kind = requireAuth.first(where: { $0 != .otp }) {
+        handleNewDeviceVerification(kind: kind)
       }
+      return
     }
+    
+    analyticsService.track(event: AnalyticsEvent(name: .viewSignUpLogin))
+    performVerifyOTPCode()
   }
   
-  func performVerifyOTPCode(formatPhoneNumber: String, code: String) {
+  func performVerifyOTPCode() {
     Task {
     #if DEBUG
       let start = CFAbsoluteTimeGetCurrent()
     #endif
       do {
-        _ = try await loginUseCase.execute(phoneNumber: formatPhoneNumber, otpCode: code, lastID: .empty)
-        accountDataManager.update(phone: formatPhoneNumber)
-        accountDataManager.stored(phone: formatPhoneNumber)
+        let parameters = LoginParameters(
+          phoneNumber: formatPhoneNumber,
+          otpCode: otpCode
+        )
+        _ = try await loginUseCase.execute(
+          isNewAuth: LFFeatureFlagContainer.isMultiFactorAuthFeatureFlagEnabled,
+          parameters: parameters
+        )
         
-        await checkOnboardingState()
-        
-        analyticsService.set(params: ["phoneVerified": true])
-        analyticsService.track(event: AnalyticsEvent(name: .loggedIn))
-        
+        self.handleLoginSuccess()
         self.isShowLoading = false
         
       } catch {
@@ -105,12 +102,16 @@ extension VerificationCodeViewModel {
     }
   }
   
-  func performGetOTP(formatPhoneNumber: String) {
+  func performGetOTP() {
     Task {
       defer { isShowLoading = false }
       isShowLoading = true
       do {
-        _ = try await requestOtpUseCase.execute(phoneNumber: formatPhoneNumber)
+        let parameters = OTPParameters(phoneNumber: formatPhoneNumber)
+        _ = try await requestOtpUseCase.execute(
+          isNewAuth: LFFeatureFlagContainer.isMultiFactorAuthFeatureFlagEnabled,
+          parameters: parameters
+        )
         isShowLoading = false
       } catch {
         isShowLoading = false
@@ -121,14 +122,16 @@ extension VerificationCodeViewModel {
   
   func performAutoGetTwilioMessagesIfNeccessary() {
     guard environmentService.networkEnvironment == .productionTest else { return }
+    
     DemoAccountsHelper.shared.getOTPInternal(for: formatPhoneNumber)
       .removeDuplicates()
       .receive(on: DispatchQueue.main)
       .sink { [weak self] code in
         guard let self else { return }
         log.debug("OTPInternal :\(code ?? "performGetTwilioMessagesIfNeccessary not found")")
-        guard let code = code else { return }
-        self.handleAfterGetOTP(formatPhoneNumber: formatPhoneNumber, code: code)
+        guard let code else { return }
+        self.otpCode = code
+        self.handleAfterGetOTP()
       }
       .store(in: &cancellables)
   }
@@ -142,12 +145,12 @@ extension VerificationCodeViewModel {
 extension VerificationCodeViewModel {
   func onChangedOTPCode() {
     if otpCode.count == Constants.MaxCharacterLimit.verificationLimit.value {
-      handleAfterGetOTP(formatPhoneNumber: formatPhoneNumber, code: otpCode)
+      handleAfterGetOTP()
     }
   }
   
   func resendOTP() {
-    performGetOTP(formatPhoneNumber: formatPhoneNumber)
+    performGetOTP()
   }
   
   func handleError(error: Error) {
@@ -169,17 +172,72 @@ extension VerificationCodeViewModel {
 
   // MARK: Private Functions
 private extension VerificationCodeViewModel {
+  func handleNewDeviceVerification(kind: RequiredAuth) {
+    isShowLoading = false
+    
+    switch kind {
+    case .mfa:
+      handleMFAVerification()
+    case .password:
+      handlePasswordVerification()
+    case .ssn:
+      handleIdentifyVerification(kind: .ssn)
+    case .passport:
+      handleIdentifyVerification(kind: .passport)
+    default:
+      break
+    }
+  }
   
-  @MainActor
-  func checkOnboardingState() async {
-    do {
+  func handleMFAVerification() {
+    let view = EnterTOTPCodeView(purpose: .login, isFlowPresented: .constant(false))
+    coordinator.verificationDestinationView = .identityVerificationCode(AnyView(view))
+  }
+  
+  func handlePasswordVerification() {
+    let parameters = LoginParameters(
+      phoneNumber: formatPhoneNumber,
+      otpCode: otpCode,
+      verification: Verification(type: VerificationType.password.rawValue, secret: .empty)
+    )
+    let purpose = EnterPasswordPurpose.login(parameters: parameters) {
+      self.handleLoginSuccess()
+    }
+    let view = EnterPasswordView(purpose: purpose, isFlowPresented: .constant(false))
+    
+    coordinator.verificationDestinationView = .identityVerificationCode(AnyView(view))
+  }
+  
+  func handleIdentifyVerification(kind: IdentityVerificationCodeKind) {
+    let viewModel = IdentityVerificationCodeViewModel(phoneNumber: formatPhoneNumber, otpCode: otpCode, kind: kind)
+    let view = IdentityVerificationCodeView(viewModel: viewModel)
+    coordinator.verificationDestinationView = .identityVerificationCode(AnyView(view))
+  }
+  
+  func handleLoginSuccess() {
+    accountDataManager.update(phone: formatPhoneNumber)
+    accountDataManager.stored(phone: formatPhoneNumber)
+    checkOnboardingState()
+  }
+  
+  func checkOnboardingState() {
+    Task {
+      defer {
+        NotificationCenter.default.post(name: .didLoginComplete, object: nil)
+      }
       
-      try await solidOnboardingFlowCoordinator.handlerOnboardingStep()
-      
-    } catch {
-      log.error(error.userFriendlyMessage)
-      
-      solidOnboardingFlowCoordinator.forcedLogout()
+      do {
+        try await solidOnboardingFlowCoordinator.handlerOnboardingStep()
+        
+        analyticsService.set(params: ["phoneVerified": true])
+        analyticsService.track(event: AnalyticsEvent(name: .loggedIn))
+      } catch {
+        log.error(error.localizedDescription)
+        
+        analyticsService.set(params: ["phoneVerified": false])
+        analyticsService.track(event: AnalyticsEvent(name: .phoneVerificationError))
+        solidOnboardingFlowCoordinator.forcedLogout()
+      }
     }
   }
 }

@@ -55,7 +55,11 @@ public extension IdentityVerificationCodeViewModel {
       defer { self.isLoading = false}
       self.isLoading = true
       do {
-        _ = try await loginUseCase.execute(phoneNumber: phoneNumber, otpCode: otpCode, lastID: lastId)
+        let parameters = LoginParameters(phoneNumber: phoneNumber, otpCode: otpCode, lastID: lastId)
+        
+        // All crypto apps are still using the old authentication flow. The new authentication flow will be applied later.
+        _ = try await loginUseCase.execute(isNewAuth: false, parameters: parameters)
+        
         accountDataManager.update(phone: phoneNumber)
         accountDataManager.stored(phone: phoneNumber)
         

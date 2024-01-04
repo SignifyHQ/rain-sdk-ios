@@ -4,10 +4,12 @@ import LFUtilities
 import LFLocalizable
 import SwiftUI
 import OnboardingDomain
+import OnboardingData
 import Factory
 import Services
 import BaseOnboarding
 import EnvironmentService
+import LFFeatureFlags
 
 @MainActor
 final class PhoneNumberViewModel: ObservableObject, PhoneNumberViewModelProtocol {
@@ -63,7 +65,12 @@ extension PhoneNumberViewModel {
         /// Updates the network environment to the corresponding one if the given `number` is from a demo account.
         DemoAccountsHelper.shared.willSendOtp(for: formatPhone.reformatPhone)
         
-        let otpResponse = try await requestOtpUseCase.execute(phoneNumber: formatPhone.reformatPhone)
+        let parameters = OTPParameters(phoneNumber: formatPhone.reformatPhone)
+        
+        let otpResponse = try await requestOtpUseCase.execute(
+          isNewAuth: LFFeatureFlagContainer.isMultiFactorAuthFeatureFlagEnabled,
+          parameters: parameters
+        )
         let requiredAuth = otpResponse.requiredAuth.map {
           RequiredAuth(rawValue: $0) ?? .unknow
         }
@@ -76,6 +83,7 @@ extension PhoneNumberViewModel {
           viewModel: viewModel,
           coordinator: destinationObservable
         )
+        
         destinationObservable
           .phoneNumberDestinationView = .verificationCode(AnyView(verificationCodeView))
       } catch {

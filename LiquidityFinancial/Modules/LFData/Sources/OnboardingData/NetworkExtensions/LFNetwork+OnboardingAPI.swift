@@ -9,19 +9,36 @@ extension LFCoreNetwork: OnboardingAPIProtocol where R == OnboardingRoute {
     return APIOnboardingProcess(processSteps: result)
   }
   
-  public func login(phoneNumber: String, otpCode: String, lastID: String) async throws -> APIAccessTokens {
-    let requestParams = LoginParameters(phoneNumber: phoneNumber, otpCode: otpCode, lastID: lastID)
-    return try await request(
-      OnboardingRoute.login(requestParams),
+  public func login(parameters: LoginParameters) async throws -> APIAccessTokens {
+    try await request(
+      OnboardingRoute.login(parameters: parameters),
       target: APIAccessTokens.self,
       failure: LFErrorObject.self,
       decoder: .apiDecoder
     )
   }
   
-  public func requestOTP(phoneNumber: String) async throws -> APIOtp {
+  public func newLogin(parameters: LoginParameters) async throws -> APIAccessTokens {
+    try await request(
+      OnboardingRoute.newLogin(parameters: parameters),
+      target: APIAccessTokens.self,
+      failure: LFErrorObject.self,
+      decoder: .apiDecoder
+    )
+  }
+  
+  public func requestOTP(parameters: OTPParameters) async throws -> APIOtp {
     return try await request(
-      OnboardingRoute.otp(OTPParameters(phoneNumber: phoneNumber)),
+      OnboardingRoute.requestOtp(parameters: parameters),
+      target: APIOtp.self,
+      failure: LFErrorObject.self,
+      decoder: .apiDecoder
+    )
+  }
+  
+  public func newRequestOTP(parameters: OTPParameters) async throws -> APIOtp {
+    return try await request(
+      OnboardingRoute.newRequestOTP(parameters: parameters),
       target: APIOtp.self,
       failure: LFErrorObject.self,
       decoder: .apiDecoder

@@ -5,4 +5,6 @@ public enum RequiredAuth: String {
   case otp = "OTP"
   case ssn = "LAST_4_SSN"
   case passport = "LAST_5_PASSPORT"
+  case password = "PASSWORD"
+  case mfa = "MFA"
 }

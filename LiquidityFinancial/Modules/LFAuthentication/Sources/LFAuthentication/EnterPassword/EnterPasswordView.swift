@@ -24,9 +24,7 @@ public struct EnterPasswordView: View {
     VStack {
       topView
       
-      if viewModel.isInlineErrorShown {
-        wrongPasswordErrorMessage
-      }
+      wrongPasswordErrorMessage
       
       Spacer()
       buttonGroupView
@@ -110,11 +108,14 @@ private extension EnterPasswordView {
     }
   }
   
+  @ViewBuilder
   var wrongPasswordErrorMessage: some View {
-    Text(LFLocalizable.Authentication.EnterPassword.Error.wrongPassword)
-      .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.small.value))
-      .foregroundColor(Colors.error.swiftUIColor)
-      .frame(maxWidth: .infinity, alignment: .leading)
+    if let inlineError = viewModel.inlineErrorMessage {
+      Text(inlineError)
+        .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.small.value))
+        .foregroundColor(Colors.error.swiftUIColor)
+        .frame(maxWidth: .infinity, alignment: .leading)
+    }
   }
   
   var buttonGroupView: some View {

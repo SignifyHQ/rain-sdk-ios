@@ -10,6 +10,7 @@ import BaseOnboarding
 import RewardData
 import SolidData
 import SolidDomain
+import LFFeatureFlags
 
 @MainActor
 public final class IdentityVerificationCodeViewModel: IdentityVerificationCodeViewProtocol {
@@ -55,8 +56,17 @@ public extension IdentityVerificationCodeViewModel {
     Task {
       defer { self.isLoading = false}
       self.isLoading = true
+      
       do {
-        _ = try await loginUseCase.execute(phoneNumber: phoneNumber, otpCode: otpCode, lastID: lastId)
+        let isNewAuth = LFFeatureFlagContainer.isMultiFactorAuthFeatureFlagEnabled
+        let parameters = LoginParameters(
+          phoneNumber: phoneNumber,
+          otpCode: otpCode,
+          lastID: isNewAuth ? nil : lastId,
+          verification: isNewAuth ? Verification(type: VerificationType.last4X.rawValue, secret: lastId) : nil
+        )
+        
+        _ = try await loginUseCase.execute(isNewAuth: isNewAuth, parameters: parameters)
         accountDataManager.update(phone: phoneNumber)
         accountDataManager.stored(phone: phoneNumber)
         

@@ -2,7 +2,9 @@ import Foundation
 
 // sourcery: AutoMockable
 public protocol OnboardingRepositoryProtocol {
-  func login(phoneNumber: String, otpCode: String, lastID: String) async throws -> AccessTokensEntity
-  func requestOTP(phoneNumber: String) async throws -> OtpEntity
+  func login(parameters: LoginParametersEntity) async throws -> AccessTokensEntity
+  func newLogin(parameters: LoginParametersEntity) async throws -> AccessTokensEntity
+  func requestOTP(parameters: OTPParametersEntity) async throws -> OtpEntity
+  func newRequestOTP(parameters: OTPParametersEntity) async throws -> OtpEntity
   func getOnboardingProcess() async throws -> OnboardingProcess
 }

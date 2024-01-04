@@ -1,5 +1,5 @@
 import Foundation
 
 public protocol LoginUseCaseProtocol {
-  func execute(phoneNumber: String, otpCode: String, lastID: String) async throws -> AccessTokensEntity
+  func execute(isNewAuth: Bool, parameters: LoginParametersEntity) async throws -> AccessTokensEntity
 }

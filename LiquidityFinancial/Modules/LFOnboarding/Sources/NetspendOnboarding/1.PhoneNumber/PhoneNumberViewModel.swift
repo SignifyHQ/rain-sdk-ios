@@ -4,6 +4,7 @@ import LFUtilities
 import LFLocalizable
 import SwiftUI
 import OnboardingDomain
+import OnboardingData
 import Factory
 import Services
 import BaseOnboarding
@@ -64,7 +65,10 @@ extension PhoneNumberViewModel {
         /// Updates the network environment to the corresponding one if the given `number` is from a demo account.
         DemoAccountsHelper.shared.willSendOtp(for: formatPhone.reformatPhone)
         
-        let otpResponse = try await requestOtpUseCase.execute(phoneNumber: formatPhone.reformatPhone)
+        let parameters = OTPParameters(phoneNumber: formatPhone.reformatPhone)
+        
+        // All crypto apps are still using the old authentication flow. The new authentication flow will be applied later.
+        let otpResponse = try await requestOtpUseCase.execute(isNewAuth: false, parameters: parameters)
         let requiredAuth = otpResponse.requiredAuth.map {
           RequiredAuth(rawValue: $0) ?? .unknow
         }

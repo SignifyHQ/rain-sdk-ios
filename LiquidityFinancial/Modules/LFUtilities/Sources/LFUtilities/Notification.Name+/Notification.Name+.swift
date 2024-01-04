@@ -15,4 +15,6 @@ public extension Notification.Name {
   static let forceLogoutInAnyWhere = Notification.Name("com.liquidityfinancial.errorView.forceLogout")
   
   static let didReceiveRegistrationToken = Notification.Name("com.liquidityfinancial.didReceiveRegistrationToken")
+  
+  static let didLoginComplete = Notification.Name("com.liquidityfinancial.didLoginComplete")
 }
