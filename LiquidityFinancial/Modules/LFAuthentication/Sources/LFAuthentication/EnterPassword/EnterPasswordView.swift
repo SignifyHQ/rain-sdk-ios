@@ -43,8 +43,15 @@ public struct EnterPasswordView: View {
       item: $viewModel.navigation
     ) { navigation in
       switch navigation {
-      case .recoverPassword:
-        ResetPasswordView(isFlowPresented: $isFlowPresented)
+      case let .recoverPassword(purpose):
+        ResetPasswordView(purpose: purpose) {
+          switch purpose {
+          case .resetPassword:
+            isFlowPresented = false
+          case .login:
+            viewModel.navigation = nil
+          }
+        }
       case .changePassword:
         CreatePasswordView(purpose: .changePassword) {
           isFlowPresented = false

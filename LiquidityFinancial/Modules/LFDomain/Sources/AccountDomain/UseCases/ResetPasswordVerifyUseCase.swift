@@ -3,18 +3,12 @@ import Foundation
 public final class ResetPasswordVerifyUseCase: ResetPasswordVerifyUseCaseProtocol {
   
   private let repository: AccountRepositoryProtocol
-  private let dataManager: AccountDataStorageProtocol
   
-  public init(
-    repository: AccountRepositoryProtocol,
-    dataManager: AccountDataStorageProtocol
-  ) {
+  public init(repository: AccountRepositoryProtocol) {
     self.repository = repository
-    self.dataManager = dataManager
   }
   
-  public func execute(code: String) async throws -> PasswordResetTokenEntity {
-    let phoneNumber = dataManager.phoneNumber
-    return try await repository.resetPasswordVerify(phoneNumber: phoneNumber, code: code)
+  public func execute(phoneNumber: String, code: String) async throws -> PasswordResetTokenEntity {
+    try await repository.resetPasswordVerify(phoneNumber: phoneNumber, code: code)
   }
 }

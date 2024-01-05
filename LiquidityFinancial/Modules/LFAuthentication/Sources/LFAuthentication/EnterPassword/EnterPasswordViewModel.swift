@@ -42,9 +42,7 @@ public final class EnterPasswordViewModel: ObservableObject {
   
   private var subscribers: Set<AnyCancellable> = []
 
-  init(
-    purpose: EnterPasswordPurpose
-  ) {
+  init(purpose: EnterPasswordPurpose) {
     self.purpose = purpose
     observePasswordInput()
   }
@@ -126,7 +124,16 @@ extension EnterPasswordViewModel {
   }
   
   func didTapForgotPasswordButton() {
-    navigation = .recoverPassword
+    switch purpose {
+    case .biometricsFallback, .changePassword:
+      navigation = .recoverPassword(
+        purpose: .resetPassword
+      )
+    case let .login(parameters, _):
+      navigation = .recoverPassword(
+        purpose: .login(phoneNumber: parameters.phoneNumber)
+      )
+    }
   }
 }
 
@@ -162,7 +169,7 @@ private extension EnterPasswordViewModel {
 
 extension EnterPasswordViewModel {
   enum Navigation {
-    case recoverPassword
+    case recoverPassword(purpose: ResetPasswordPurpose)
     case changePassword
   }
 }

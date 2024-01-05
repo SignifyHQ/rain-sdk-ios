@@ -35,7 +35,7 @@ public final class CreatePasswordViewModel: ObservableObject {
   }()
   
   lazy var resetPasswordUserCase: ResetPasswordUseCaseProtocol = {
-    ResetPasswordUseCase(repository: accountRepository, dataManager: accountDataManager)
+    ResetPasswordUseCase(repository: accountRepository)
   }()
   
   lazy var getUserUseCase: GetUserUseCaseProtocol = {
@@ -73,8 +73,9 @@ public final class CreatePasswordViewModel: ObservableObject {
           try await createPasswordUseCase.execute(password: passwordString)
           let user = try await getUserUseCase.execute()
           accountDataManager.update(missingSteps: user.missingSteps)
-        case .resetPassword(let token):
-          try await resetPasswordUserCase.execute(password: passwordString, token: token)
+        case let .resetPassword(token, phoneNumber):
+          let phoneNumber = phoneNumber ?? accountDataManager.phoneNumber
+          try await resetPasswordUserCase.execute(phoneNumber: phoneNumber, password: passwordString, token: token)
         }
         
         // In onboarding should continue flow on success
@@ -146,7 +147,7 @@ public final class CreatePasswordViewModel: ObservableObject {
 public enum CreatePasswordPurpose {
   case createNewUser
   case createExistingUser
-  case resetPassword(token: String)
+  case resetPassword(token: String, phoneNumber: String?)
   case changePassword
   
   var screenTitle: String {

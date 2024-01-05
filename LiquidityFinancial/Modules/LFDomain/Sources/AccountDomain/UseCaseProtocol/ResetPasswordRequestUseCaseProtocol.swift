@@ -1,5 +1,5 @@
 import Foundation
 
 public protocol ResetPasswordRequestUseCaseProtocol {
-  func execute() async throws
+  func execute(phoneNumber: String) async throws
 }

@@ -1,10 +1,3 @@
-//
-//  ResetPasswordView.swift
-//  
-//
-//  Created by Volodymyr Davydenko on 06.12.2023.
-//
-
 import SwiftUI
 import LFStyleGuide
 import LFUtilities
@@ -12,13 +5,17 @@ import LFLocalizable
 
 public struct ResetPasswordView: View {
   @StateObject
-  private var viewModel = ResetPasswordViewModel()
+  private var viewModel: ResetPasswordViewModel
   
   @State
   private var viewDidLoad: Bool = false
   
-  @Binding
-  var isFlowPresented: Bool
+  let onActionContinue: (() -> Void)?
+  
+  public init(purpose: ResetPasswordPurpose, onActionContinue: (() -> Void)?) {
+    _viewModel = .init(wrappedValue: ResetPasswordViewModel(purpose: purpose))
+    self.onActionContinue = onActionContinue
+  }
   
   public var body: some View {
     content
@@ -33,11 +30,11 @@ public struct ResetPasswordView: View {
       .popup(item: $viewModel.toastMessage, style: .toast) {
         ToastView(toastMessage: $0)
       }
-      .navigationLink(item: $viewModel.navigaion) { navigation in
+      .navigationLink(item: $viewModel.navigation) { navigation in
         switch navigation {
-        case .resetPassword(let token):
-          CreatePasswordView(purpose: .resetPassword(token: token)) {
-            isFlowPresented = false
+        case let .resetPassword(purpose):
+          CreatePasswordView(purpose: purpose) {
+            onActionContinue?()
           }
         }
       }

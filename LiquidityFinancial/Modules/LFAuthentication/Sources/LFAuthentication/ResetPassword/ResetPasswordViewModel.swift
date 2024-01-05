@@ -1,10 +1,3 @@
-//
-//  ResetPasswordViewModel.swift
-//  
-//
-//  Created by Volodymyr Davydenko on 06.12.2023.
-//
-
 import AccountData
 import AccountDomain
 import Combine
@@ -20,25 +13,27 @@ public final class ResetPasswordViewModel: ObservableObject {
   
   @LazyInjected(\.customerSupportService) var customerSupportService
   
-  @Published var navigaion: Navigation?
+  @Published var navigation: Navigation?
   
   @Published var isLoading: Bool = false
   @Published var toastMessage: String?
   @Published public var isOTPCodeEntered: Bool = false
-  
   @Published public var generatedOTP: String = .empty
   
+  let purpose: ResetPasswordPurpose
+
   public var otpViewItems: [PinTextFieldViewItem] = .init()
   
   lazy var resetPasswordRequestUseCase: ResetPasswordRequestUseCaseProtocol = {
-    ResetPasswordRequestUseCase(repository: accountRepository, dataManager: accountDataManager)
+    ResetPasswordRequestUseCase(repository: accountRepository)
   }()
   
   lazy var resetPasswordVerifyUseCase: ResetPasswordVerifyUseCaseProtocol = {
-    ResetPasswordVerifyUseCase(repository: accountRepository, dataManager: accountDataManager)
+    ResetPasswordVerifyUseCase(repository: accountRepository)
   }()
   
-  init() {
+  init(purpose: ResetPasswordPurpose) {
+    self.purpose = purpose
     createTextFields()
     observeOTPInput()
   }
@@ -53,35 +48,31 @@ public final class ResetPasswordViewModel: ObservableObject {
   
   func didTapContinueButton() {
     Task {
-      defer {
-        isLoading = false
-      }
-      
+      defer { isLoading = false }
       isLoading = true
       
       do {
-        let response = try await resetPasswordVerifyUseCase.execute(code: generatedOTP)
-        navigaion = .resetPassword(token: response.token)
+        let phoneNumber = getPhoneNumber()
+        let response = try await resetPasswordVerifyUseCase.execute(phoneNumber: phoneNumber, code: generatedOTP)
+        navigation = .resetPassword(
+          purpose: .resetPassword(token: response.token, phoneNumber: phoneNumber)
+        )
       } catch {
-        toastMessage = error.userFriendlyMessage
-        log.error(error.userFriendlyMessage)
+        handleError(error: error)
       }
     }
   }
   
   func requestOTP() {
     Task {
-      defer {
-        isLoading = false
-      }
-      
+      defer { isLoading = false }
       isLoading = true
       
       do {
-        try await resetPasswordRequestUseCase.execute()
+        let phoneNumber = getPhoneNumber()
+        try await resetPasswordRequestUseCase.execute(phoneNumber: phoneNumber)
       } catch {
-        toastMessage = error.userFriendlyMessage
-        log.error(error.userFriendlyMessage)
+        handleError(error: error)
       }
     }
   }
@@ -89,14 +80,6 @@ public final class ResetPasswordViewModel: ObservableObject {
 
 // MARK: - View Helpers
 public extension ResetPasswordViewModel {
-  func observeOTPInput() {
-    $generatedOTP
-      .map { otp in
-        otp.count == 6
-      }
-      .assign(to: &$isOTPCodeEntered)
-  }
-  
   func textFieldTextChange(replacementText: String, viewItem: PinTextFieldViewItem) {
     guard replacementText.count <= 1
     else {
@@ -149,12 +132,36 @@ public extension ResetPasswordViewModel {
 
 extension ResetPasswordViewModel {
   enum Navigation {
-    case resetPassword(token: String)
+    case resetPassword(purpose: CreatePasswordPurpose)
+  }
+}
+
+public enum ResetPasswordPurpose: Equatable {
+  case resetPassword
+  case login(phoneNumber: String)
+  
+  public static func == (lhs: ResetPasswordPurpose, rhs: ResetPasswordPurpose) -> Bool {
+    switch (lhs, rhs) {
+    case (.resetPassword, .resetPassword):
+      return true
+    case let (.login(lhsphoneNumber), .login(rhsphoneNumber)):
+      return lhsphoneNumber == rhsphoneNumber
+    default:
+      return false
+    }
   }
 }
 
 // MARK: - Private Functions
 private extension ResetPasswordViewModel {
+  func observeOTPInput() {
+    $generatedOTP
+      .map { otp in
+        otp.count == 6
+      }
+      .assign(to: &$isOTPCodeEntered)
+  }
+  
   func createTextFields() {
     for index in 0 ..< 6 {
       let viewItem = PinTextFieldViewItem(
@@ -193,6 +200,20 @@ private extension ResetPasswordViewModel {
   func sendOTP() {
     if let otp = generateOtp() {
       generatedOTP = otp
+    }
+  }
+  
+  func handleError(error: Error) {
+    toastMessage = error.userFriendlyMessage
+    log.error(error.userFriendlyMessage)
+  }
+  
+  func getPhoneNumber() -> String {
+    switch purpose {
+    case .resetPassword:
+      return accountDataManager.phoneNumber
+    case let .login(phoneNumber):
+      return phoneNumber
     }
   }
 }
