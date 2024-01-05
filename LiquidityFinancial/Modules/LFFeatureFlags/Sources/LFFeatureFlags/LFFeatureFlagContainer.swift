@@ -42,11 +42,11 @@ public struct LFFeatureFlagContainer {
   )
   
   static let enableMultiFactorAuthFlagPrideCard = ToggleFeatureFlag(
-    title: "MFA-PrideCard", defaultValue: false, group: "Authentication"
+    title: "MFA-PrideCard", defaultValue: true, group: "Authentication"
   )
   
   static let enableMultiFactorAuthFlagCauseCard = ToggleFeatureFlag(
-    title: "MFA-CauseCard", defaultValue: false, group: "Authentication"
+    title: "MFA-CauseCard", defaultValue: true, group: "Authentication"
   )
   
   static let enableMultiFactorAuthFlagDogeCard = ToggleFeatureFlag(
