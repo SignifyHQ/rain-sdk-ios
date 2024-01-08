@@ -29,7 +29,7 @@ public struct PinCodeView: View {
           viewItem: item,
           isShown: true,
           onTextChange: { value in
-            textFieldTextChange(replacementText: value, viewItem: item)
+            didTextFieldTextChange(replacementText: value, viewItem: item)
           },
           onBackPressed: { item in
             onTextFieldBackPressed(viewItem: item)
@@ -85,16 +85,22 @@ extension PinCodeView {
         tag: index
       )
     }
+    setFocusToTextField(withTag: 0)
   }
   
-  func textFieldTextChange(replacementText: String, viewItem: PinTextFieldViewItem) {
+  func didTextFieldTextChange(replacementText: String, viewItem: PinTextFieldViewItem) {
+    guard replacementText.isStringValidNumber() else {
+      return
+    }
+    
     guard replacementText.count <= 1 else {
       updateTextFieldsForMultipleCharacters(replacementText)
       sendCode()
       return
     }
     
-    if replacementText.isEmpty, viewItem.text.isEmpty {
+    // Handling user deletion at any position without triggering deleteBackward action
+    if replacementText.isEmpty, !viewItem.text.isEmpty {
       handleEmptyText(viewItem)
     } else {
       handleNonEmptyText(replacementText, viewItem)
@@ -106,12 +112,11 @@ extension PinCodeView {
   
   func handleEmptyText(_ viewItem: PinTextFieldViewItem) {
     guard let previousViewItem = previousViewItemFrom(tag: viewItem.tag) else {
+      setFocusToTextField(withTag: viewItem.tag)
       return
     }
     
-    previousViewItem.text = ""
-    viewItem.isInFocus = false
-    previousViewItem.isInFocus = true
+    setFocusToTextField(withTag: previousViewItem.tag)
   }
   
   func handleNonEmptyText(_ replacementText: String, _ viewItem: PinTextFieldViewItem) {
@@ -119,30 +124,31 @@ extension PinCodeView {
       return
     }
     
-    viewItem.isInFocus = false
-    nextViewItem.isInFocus = true
+    setFocusToTextField(withTag: nextViewItem.tag)
+  }
+  
+  func setFocusToTextField(withTag tag: Int) {
+    codeViewItems.forEach {
+      $0.isInFocus = $0.tag == tag
+    }
   }
   
   func updateTextFieldsForMultipleCharacters(_ replacementText: String) {
-    codeViewItems.forEach { item in
-      let index = replacementText.index(
-        replacementText.startIndex,
-        offsetBy: item.tag,
-        limitedBy: replacementText.endIndex
-      )
-      
-      guard let index else {
+    replacementText.enumerated().forEach { index, character in
+      guard let item = codeViewItems.first(where: { $0.tag == index }) else {
         return
       }
-      item.text = String(replacementText[index])
+      item.text = String(character)
     }
+    
+    let tag = replacementText.count >= codeLength ? codeLength - 1 : replacementText.count
+    setFocusToTextField(withTag: tag)
   }
   
   func onTextFieldBackPressed(viewItem: PinTextFieldViewItem) {
     if let previousViewItem = previousViewItemFrom(tag: viewItem.tag) {
       previousViewItem.text = .empty
-      viewItem.isInFocus = false
-      previousViewItem.isInFocus = true
+      setFocusToTextField(withTag: previousViewItem.tag)
     }
     
     sendCode()

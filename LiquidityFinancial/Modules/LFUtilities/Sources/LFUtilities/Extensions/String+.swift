@@ -82,6 +82,10 @@ public extension String {
     let pred = NSPredicate(format: "SELF MATCHES %@", regex)
     return pred.evaluate(with: self)
   }
+  
+  func isStringValidNumber() -> Bool {
+    self.rangeOfCharacter(from: CharacterSet.decimalDigits.inverted) == nil
+  }
 
   func replace(string: String, replacement: String) -> String {
     replacingOccurrences(of: string, with: replacement, options: NSString.CompareOptions.literal, range: nil)

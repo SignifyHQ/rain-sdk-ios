@@ -76,7 +76,11 @@ private extension EnterTOTPCodeView {
       GenImages.CommonImages.dash.swiftUIImage
         .foregroundColor(Colors.label.swiftUIColor.opacity(0.5))
       
-      PinCodeView(code: $viewModel.totpCode, isDisabled: $viewModel.isVerifying, codeLength: viewModel.totpCodeLength)
+      PinCodeView(
+        code: $viewModel.totpCode,
+        isDisabled: $viewModel.isVerifying,
+        codeLength: viewModel.totpCodeLength
+      )
       
       if let errorMessage = viewModel.errorMessage {
         Text(errorMessage)
