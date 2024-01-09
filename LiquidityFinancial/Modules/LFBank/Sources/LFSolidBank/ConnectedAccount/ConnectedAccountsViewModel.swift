@@ -41,7 +41,7 @@ class ConnectedAccountsViewModel: ObservableObject {
   private var cancellable: Set<AnyCancellable> = []
   
   init(linkedContacts: [LinkedSourceContact]) {
-    self.linkedContacts = linkedContacts.filter { $0.sourceType == .bank}
+    self.linkedContacts = linkedContacts.filter{ $0.sourceType == .bank }
     subscribeLinkedContacts()
   }
   

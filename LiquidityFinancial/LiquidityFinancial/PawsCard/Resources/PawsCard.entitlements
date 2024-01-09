@@ -6,7 +6,7 @@
 	<string>development</string>
 	<key>com.apple.developer.associated-domains</key>
 	<array>
-		<string>applinks:pridecard.cc</string>
+		<string>applinks:pawscard.cc</string>
 	</array>
 	<key>com.apple.developer.networking.wifi-info</key>
 	<true/>

@@ -12,6 +12,7 @@ public enum APIConstants {
   public static let dogeCardID = "9827b8f0-7be4-47b7-871b-99be386f49d4"
   public static let causeCardID = "7f2c1a97-e378-431c-98fa-76a61b03b38b"
   public static let prideCardID = "5ab62fe1-4d21-40c0-b50f-f8ab975ef87c"
+  public static let pawsCardID = "323993bf-b8e0-4872-9968-90774663fbf9"
   
   public static var baseDevURL: URL {
     .init(string: APIConstants.devHost)!

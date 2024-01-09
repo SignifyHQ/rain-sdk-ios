@@ -365,7 +365,7 @@ public extension String {
   }
 }
 
-// MARK:
+// MARK: HTML
 public extension String {
   func htmlAttributedString() -> NSAttributedString? {
     guard let data = self.data(using: .unicode, allowLossyConversion: true) else {

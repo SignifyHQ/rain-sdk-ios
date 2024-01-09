@@ -9,7 +9,7 @@ import Services
 import DashboardComponents
 
 struct RewardTabView: View {
-  @StateObject 
+  @StateObject
   private var viewModel: RewardTabViewModel
   
   init(dashboardRepo: DashboardRepository) {

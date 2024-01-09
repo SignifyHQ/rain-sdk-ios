@@ -1,10 +1,3 @@
-//
-//  File.swift
-//  
-//
-//  Created by Volodymyr Davydenko on 08.12.2023.
-//
-
 import AccountDomain
 import Foundation
 

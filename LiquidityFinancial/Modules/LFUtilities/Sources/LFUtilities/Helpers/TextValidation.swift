@@ -1,10 +1,3 @@
-//
-//  TextValidation.swift
-//  
-//
-//  Created by Volodymyr Davydenko on 05.12.2023.
-//
-
 import Foundation
 
 public enum TextValidation {

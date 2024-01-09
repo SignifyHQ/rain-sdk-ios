@@ -86,9 +86,9 @@ private extension SolidContentViewFactory {
     CreatePasswordView(
       purpose: .createNewUser,
       onActionContinue: { [weak self] in
-      guard let self else { return }
-      flowCoordinator.set(route: .selecteReward)
-    })
+        guard let self else { return }
+        flowCoordinator.set(route: .selecteReward)
+      })
   }
   
   @MainActor

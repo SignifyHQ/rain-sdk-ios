@@ -22,8 +22,12 @@ internal typealias AssetImageTypeAlias = ImageAsset.Image
 
 // swiftlint:disable identifier_name line_length nesting type_body_length type_name
 internal enum ModuleImages {
-  internal static let bgHeaderSelectReward = ImageAsset(name: "bg_header_select_reward")
-  internal static let bgUnspecifiedRewards = ImageAsset(name: "bg_unspecifiedRewards")
+  internal static let causeBgHeaderSelectReward = ImageAsset(name: "cause_bg_header_select_reward")
+  internal static let causeBgUnspecifiedRewards = ImageAsset(name: "cause_bg_unspecifiedRewards")
+  internal static let pawsBgHeaderSelectReward = ImageAsset(name: "paws_bg_header_select_reward")
+  internal static let pawsBgUnspecifiedRewards = ImageAsset(name: "paws_bg_unspecifiedRewards")
+  internal static let prideBgHeaderSelectReward = ImageAsset(name: "pride_bg_header_select_reward")
+  internal static let prideBgUnspecifiedRewards = ImageAsset(name: "pride_bg_unspecifiedRewards")
 }
 // swiftlint:enable identifier_name line_length nesting type_body_length type_name
 

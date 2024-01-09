@@ -12,6 +12,8 @@ public struct LFFeatureFlagContainer {
       return enablePasswordLoginFlagPrideCard.value
     case .CauseCard:
       return enablePasswordLoginFlagCauseCard.value
+    case .PawsCard:
+      return enablePasswordLoginFlagPawsCard.value
     default:
       return false
     }
@@ -23,6 +25,8 @@ public struct LFFeatureFlagContainer {
       return enableMultiFactorAuthFlagPrideCard.value
     case .CauseCard:
       return enableMultiFactorAuthFlagCauseCard.value
+    case .PawsCard:
+      return enableMultiFactorAuthFlagPawsCard.value
     default:
       return false
     }
@@ -41,6 +45,10 @@ public struct LFFeatureFlagContainer {
     title: "Password-Login-DogeCard", defaultValue: false, group: "Authentication"
   )
   
+  static let enablePasswordLoginFlagPawsCard = ToggleFeatureFlag(
+    title: "Password-Login-PawsCard", defaultValue: false, group: "Authentication"
+  )
+  
   static let enableMultiFactorAuthFlagPrideCard = ToggleFeatureFlag(
     title: "MFA-PrideCard", defaultValue: true, group: "Authentication"
   )
@@ -53,7 +61,30 @@ public struct LFFeatureFlagContainer {
     title: "MFA-DogeCard", defaultValue: false, group: "Authentication"
   )
   
+  static let enableMultiFactorAuthFlagPawsCard = ToggleFeatureFlag(
+    title: "MFA-PawsCard", defaultValue: false, group: "Authentication"
+  )
+  
   // MARK: register/unregister the feature flag (It supports show hub flag setting UI)
+  // PawsCard
+  public static func registerViewFactoryPawscard() {
+    LFFeatureFlagsController.shared.addViewFactory(
+      [
+        LFFeatureFlagContainer.enablePasswordLoginFlagPawsCard,
+        LFFeatureFlagContainer.enableMultiFactorAuthFlagPawsCard
+      ]
+    )
+  }
+  
+  public static func unregisterViewFactoryPawscard() {
+    LFFeatureFlagsController.shared.removeViewFactory(
+      [
+        LFFeatureFlagContainer.enablePasswordLoginFlagPawsCard,
+        LFFeatureFlagContainer.enableMultiFactorAuthFlagPawsCard
+      ]
+    )
+  }
+  
   // PrideCard
   public static func registerViewFactoryPridecard() {
     LFFeatureFlagsController.shared.addViewFactory(

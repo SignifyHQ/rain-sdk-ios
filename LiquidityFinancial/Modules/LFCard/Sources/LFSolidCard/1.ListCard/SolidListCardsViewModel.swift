@@ -49,7 +49,7 @@ public final class SolidListCardsViewModel: ListCardsViewModelProtocol {
   }
   
   public var showRoundUpPurchases: Bool {
-    LFUtilities.charityEnabled && rewardDataManager.currentSelectReward?.rawString == APIRewardType.donation.rawValue
+    rewardDataManager.currentSelectReward?.rawString == APIRewardType.donation.rawValue
   }
   
   public var cancellables: Set<AnyCancellable> = []

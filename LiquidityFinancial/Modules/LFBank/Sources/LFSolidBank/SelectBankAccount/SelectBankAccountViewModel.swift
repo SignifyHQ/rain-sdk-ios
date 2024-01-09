@@ -62,7 +62,7 @@ class SelectBankAccountViewModel: ObservableObject {
   }()
   
   init(linkedContacts: [LinkedSourceContact], amount: String, kind: MoveMoneyAccountViewModel.Kind) {
-    self.linkedBanks = linkedContacts.filter { $0.sourceType == .bank}
+    self.linkedBanks = linkedContacts.filter { $0.sourceType == .bank }
     self.amount = amount
     self.kind = kind
     
@@ -75,7 +75,7 @@ class SelectBankAccountViewModel: ObservableObject {
       guard let self = self else {
         return
       }
-      self.linkedBanks = contacts.filter { $0.sourceType == .bank}
+      self.linkedBanks = contacts.filter { $0.sourceType == .bank }
     })
     .store(in: &cancellable)
   }
@@ -109,10 +109,10 @@ class SelectBankAccountViewModel: ObservableObject {
       .sink(receiveCompletion: { [weak self] completion in
         guard let self else { return }
         switch completion {
-          case .finished:
-            log.debug("Device authentication check completed.")
-          case .failure(let error):
-            self.toastMessage = error.userFriendlyMessage
+        case .finished:
+          log.debug("Device authentication check completed.")
+        case .failure(let error):
+          self.toastMessage = error.userFriendlyMessage
         }
       }, receiveValue: { [weak self] result in
         guard let self else { return }

@@ -2,7 +2,7 @@ import SwiftUI
 import LFStyleGuide
 import LFUtilities
 import LFLocalizable
-import PridecardRewards
+import RewardComponents
 import Factory
 
 public enum RewardWhereStart {
@@ -68,16 +68,7 @@ private extension SelectRewardsView {
   
   var asset: some View {
     Group {
-      switch LFUtilities.target {
-      case .CauseCard:
-        ModuleImages.bgHeaderSelectReward.swiftUIImage
-          .resizable()
-          .frame(width: 375, height: 290)
-      case .PrideCard:
-        HeaderSelectRewardView()
-      default:
-        EmptyView()
-      }
+      HeaderSelectRewardView()
     }
   }
   

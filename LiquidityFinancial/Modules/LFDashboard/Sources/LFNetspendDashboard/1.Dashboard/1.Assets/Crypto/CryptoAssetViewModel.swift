@@ -22,7 +22,7 @@ class CryptoAssetViewModel: ObservableObject {
   @Published var loading: Bool = false
   @Published var showTransferSheet: Bool = false
   @Published var cryptoPrice: String = "0.00"
-  @Published var closePrice: Double? = nil
+  @Published var closePrice: Double?
   @Published var changePercent: Double = 0
   @Published var showCryptoDetail: Bool = false
   @Published var toastMessage: String = ""

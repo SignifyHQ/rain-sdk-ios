@@ -11,8 +11,8 @@ let package = Package(
             name: "LFRewards",
             targets: ["LFRewards"]),
         .library(
-          name: "PridecardRewards",
-          targets: ["PridecardRewards"])
+          name: "RewardComponents",
+          targets: ["RewardComponents"])
     ],
     dependencies: [
       .package(url: "https://github.com/hmlongco/Factory", from: "2.3.1"),
@@ -27,7 +27,7 @@ let package = Package(
         .target(
             name: "LFRewards",
             dependencies: [
-              "LFUtilities", "LFStyleGuide", "LFLocalizable", "Factory", "PridecardRewards",
+              "LFUtilities", "LFStyleGuide", "LFLocalizable", "Factory", "RewardComponents",
               .product(name: "NetSpendData", package: "LFData"),
               .product(name: "RewardData", package: "LFData"),
               .product(name: "RewardDomain", package: "LFDomain")
@@ -40,7 +40,7 @@ let package = Package(
             ]
         ),
         .target(
-          name: "PridecardRewards",
+          name: "RewardComponents",
           dependencies: [
             "LFUtilities", "LFStyleGuide", "LFLocalizable"
           ],

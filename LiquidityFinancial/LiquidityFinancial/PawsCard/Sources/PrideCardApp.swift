@@ -1,5 +1,6 @@
 import SwiftUI
 import LFFeatureFlags
+import LFUtilities
 
 @main
 struct PrideCardApp: App {
@@ -12,7 +13,6 @@ struct PrideCardApp: App {
     LFFeatureFlagContainer.registerViewFactoryPridecard()
   }
   
-
   var body: some Scene {
     WindowGroup {
       AppView()

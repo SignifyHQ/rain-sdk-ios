@@ -57,7 +57,7 @@ class ConfirmBuySellCryptoViewModel: ObservableObject {
         .init(title: LFLocalizable.ConfirmBuySellCrypto.ExchangeRate.title, value: LFLocalizable.ConfirmBuySellCrypto.Price.value(quote.price?.formattedAmount(minFractionDigits: 2, maxFractionDigits: 6) ?? "")),
         .init(title: LFLocalizable.ConfirmBuySellCrypto.Symbol.title, value: quote.cryptoCurrency ?? ""),
         .init(title: LFLocalizable.ConfirmBuySellCrypto.Fee.title, value: "$0"),
-        .init(title: LFLocalizable.ConfirmBuySellCrypto.Total.title, value: LFLocalizable.ConfirmBuySellCrypto.Total.value(total(of: quote.quantity, price: quote.price))),
+        .init(title: LFLocalizable.ConfirmBuySellCrypto.Total.title, value: LFLocalizable.ConfirmBuySellCrypto.Total.value(total(of: quote.quantity, price: quote.price)))
       ]
     case let .sellCrypto(quote, _):
       return [
@@ -66,7 +66,7 @@ class ConfirmBuySellCryptoViewModel: ObservableObject {
         .init(title: LFLocalizable.ConfirmBuySellCrypto.ExchangeRate.title, value: LFLocalizable.ConfirmBuySellCrypto.Price.value(quote.price?.formattedAmount(minFractionDigits: 2, maxFractionDigits: 6) ?? "")),
         .init(title: LFLocalizable.ConfirmBuySellCrypto.Symbol.title, value: quote.cryptoCurrency ?? ""),
         .init(title: LFLocalizable.ConfirmBuySellCrypto.Fee.title, value: "$0"),
-        .init(title: LFLocalizable.ConfirmBuySellCrypto.Total.title, value: LFLocalizable.ConfirmBuySellCrypto.Total.value(total(of: quote.quantity, price: quote.price))),
+        .init(title: LFLocalizable.ConfirmBuySellCrypto.Total.title, value: LFLocalizable.ConfirmBuySellCrypto.Total.value(total(of: quote.quantity, price: quote.price)))
       ]
     }
   }

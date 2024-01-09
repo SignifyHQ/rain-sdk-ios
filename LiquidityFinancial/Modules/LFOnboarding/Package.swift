@@ -40,7 +40,7 @@ let package = Package(
     .package(name: "TestHelpers", path: "../TestHelpers"),
     .package(name: "LFFeatureFlags", path: "../LFFeatureFlags"),
     .package(name: "LFAuthentication", path: "../LFAuthentication"),
-    .package(name: "LFServices", path: "../LFServices"),
+    .package(name: "LFServices", path: "../LFServices")
   ],
   targets: [
     .target(
@@ -112,7 +112,7 @@ let package = Package(
         .product(name: "DevicesDomain", package: "LFDomain"),
         .product(name: "BiometricsManager", package: "LFAuthentication"),
         .product(name: "LFAuthentication", package: "LFAuthentication"),
-        .product(name: "AccountService", package: "LFServices"),
+        .product(name: "AccountService", package: "LFServices")
       ]
     ),
     .testTarget(

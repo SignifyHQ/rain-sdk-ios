@@ -51,10 +51,10 @@ class ConfirmSendCryptoViewModel: ObservableObject {
       .sink(receiveCompletion: { [weak self] completion in
         guard let self else { return }
         switch completion {
-          case .finished:
-            log.debug("Device authentication check completed.")
-          case .failure(let error):
-            self.toastMessage = error.userFriendlyMessage
+        case .finished:
+          log.debug("Device authentication check completed.")
+        case .failure(let error):
+          self.toastMessage = error.userFriendlyMessage
         }
       }, receiveValue: { [weak self] result in
         guard let self else { return }

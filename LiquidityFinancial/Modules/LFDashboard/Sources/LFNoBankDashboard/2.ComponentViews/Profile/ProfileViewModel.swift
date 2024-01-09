@@ -201,7 +201,6 @@ extension ProfileViewModel {
 
 }
 
-
 // MARK: - Types
 extension ProfileViewModel {
   enum Navigation {

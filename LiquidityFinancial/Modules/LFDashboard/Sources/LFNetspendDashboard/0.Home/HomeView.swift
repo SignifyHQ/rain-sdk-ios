@@ -14,7 +14,7 @@ import LFAuthentication
 
 public struct HomeView: View {
   
-  @Environment(\.scenePhase) 
+  @Environment(\.scenePhase)
   var scenePhase
   
   @StateObject

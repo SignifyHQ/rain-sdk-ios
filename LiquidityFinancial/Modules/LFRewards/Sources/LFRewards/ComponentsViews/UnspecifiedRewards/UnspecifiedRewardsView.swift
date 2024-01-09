@@ -2,7 +2,7 @@ import SwiftUI
 import LFStyleGuide
 import LFUtilities
 import LFLocalizable
-import PridecardRewards
+import RewardComponents
 
 public struct UnspecifiedRewardsView: View {
   @State private var showEditRewards = false
@@ -55,15 +55,7 @@ public struct UnspecifiedRewardsView: View {
   
   private var bgHeaderView: some View {
     Group {
-      switch LFUtilities.target {
-      case .PrideCard:
-        HeaderUnspecifiedRewardsView()
-      case .CauseCard:
-        ModuleImages.bgUnspecifiedRewards.swiftUIImage
-          .resizable()
-          .frame(width: 315, height: 177)
-      default: EmptyView()
-      }
+      HeaderUnspecifiedRewardsView()
     }
   }
   

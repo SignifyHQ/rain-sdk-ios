@@ -12,7 +12,6 @@ struct PrideCardApp: App {
     LFFeatureFlagContainer.registerViewFactoryPridecard()
   }
   
-
   var body: some Scene {
     WindowGroup {
       AppView()

@@ -1,6 +1,6 @@
 import Foundation
 import LFRewardDashboard
-import BaseDashboard
+import DashboardComponents
 import LFTransaction
 import LFUtilities
 import Factory
@@ -18,8 +18,6 @@ final class NavigationContainer {
   func registerModuleNavigation() {
     let container = DIContainerAnyView()
     registerTransactionModuleNavigation(container: container)
-    
-    registerDashboardModuleNavigation(container: container)
   }
   
   @MainActor
@@ -35,15 +33,6 @@ final class NavigationContainer {
     }
     
     transactionNavigation.registerDisputeTransactionView(type: EmptyView.self) { _ in
-      AnyView(EmptyView())
-    }
-  }
-  
-  @MainActor
-  func registerDashboardModuleNavigation(container: DIContainerAnyView) {
-    dashboardNavigation.setup(container: container)
-    
-    dashboardNavigation.registerDisputeTransactionView(type: EmptyView.self) { _ in
       AnyView(EmptyView())
     }
   }

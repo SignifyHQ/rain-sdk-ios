@@ -79,10 +79,6 @@ final class ProfileViewModel: ObservableObject {
     accountDataManager.addressDetail
   }
   
-  var showContribution: Bool {
-    LFUtilities.charityEnabled
-  }
-  
   var showStickers: Bool {
     isLoadingContribution || !stickers.isEmpty
   }
@@ -229,7 +225,6 @@ extension ProfileViewModel {
     }
   }
 }
-
 
 extension ProfileViewModel {
   private func loadContribution() async {

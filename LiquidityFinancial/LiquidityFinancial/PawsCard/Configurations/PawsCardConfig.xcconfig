@@ -3,7 +3,7 @@
 
 #include "LiquidityFinancial/ApplicationBase/Configurations/LiquidityFinancialConfig.xcconfig"
 
-APP_NAME = PrideCard
+APP_NAME = PawsCard
 APP_BUNDLE_ID = com.liquidityfinancial.pawscard
 
 TERMS_URL = https:/$()/paywithpride.com/legal

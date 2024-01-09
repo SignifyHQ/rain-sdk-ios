@@ -55,7 +55,7 @@ class SelectRewardsViewModel: ObservableObject {
           showError = error.userFriendlyMessage
         }
       }
-    case .PrideCard:
+    case .PrideCard, .PawsCard:
       Task { @MainActor in
         do {
           defer { isLoading = false }
@@ -65,7 +65,7 @@ class SelectRewardsViewModel: ObservableObject {
             let fundraisers = try await apiFetchCategoriesFundraisers(causeItem: causeItem)
             self.navigation = .selectFundraiser(causeItem, fundraisers)
           } else {
-              //This cause never happen
+            //This cause never happen
             self.navigation = .causeFilter(causeList)
           }
         } catch {

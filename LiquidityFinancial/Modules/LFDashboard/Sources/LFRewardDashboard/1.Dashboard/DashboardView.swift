@@ -36,7 +36,7 @@ struct DashboardView: View {
       case .causes:
         switch LFUtilities.target {
         case .CauseCard: CausesView(viewModel: CausesViewModel())
-        case .PrideCard: PrideCardCauseView(viewModel: PrideCardCauseViewModel())
+        case .PrideCard, .PawsCard: PrideCardCauseView(viewModel: PrideCardCauseViewModel())
         default: CausesView(viewModel: CausesViewModel())
         }
       case .account:
