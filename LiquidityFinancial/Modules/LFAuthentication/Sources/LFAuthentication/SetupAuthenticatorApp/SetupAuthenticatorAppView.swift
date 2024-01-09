@@ -8,6 +8,8 @@ struct SetupAuthenticatorAppView: View {
   @StateObject private var viewModel = SetupAuthenticatorAppViewModel()
   @State private var isSavedRecoveryCode = false
   
+  private let bottomAnchorID = "bottomAnchorID"
+  
   var body: some View {
     ZStack {
       if viewModel.isInit {
@@ -27,18 +29,6 @@ struct SetupAuthenticatorAppView: View {
         recoveryCodePopup
       }
     }
-    .popup(
-      item: $viewModel.popup,
-      dismissAction: {
-        dismissAction()
-      },
-      content: { item in
-        switch item {
-        case .mfaTurnedOn:
-          mfaTurnedOnPopup
-        }
-      }
-    )
     .defaultToolBar(
       icon: .support,
       openSupportScreen: {
@@ -53,18 +43,29 @@ struct SetupAuthenticatorAppView: View {
 private extension SetupAuthenticatorAppView {
   var content: some View {
     ScrollView(showsIndicators: false) {
-      VStack(alignment: .leading, spacing: 32) {
-        headerView
-        instructionView
-        FullSizeButton(
-          title: LFLocalizable.Button.Verify.title,
-          isDisable: viewModel.isDisableVerifyButton,
-          isLoading: $viewModel.isVerifyingTOTP
-        ) {
-          hideKeyboard()
-          viewModel.enableMFAAuthentication()
+      ScrollViewReader { proxy in
+        VStack(alignment: .leading, spacing: 32) {
+          headerView
+          instructionView
+          FullSizeButton(
+            title: LFLocalizable.Button.Verify.title,
+            isDisable: viewModel.isDisableVerifyButton,
+            isLoading: $viewModel.isVerifyingTOTP
+          ) {
+            hideKeyboard()
+            viewModel.enableMFAAuthentication()
+          }
+          .id(bottomAnchorID)
+        }
+        .onChange(of: viewModel.isShownKeyboard) { _ in
+          if viewModel.isShownKeyboard {
+            proxy.scrollTo(bottomAnchorID, anchor: .top)
+          }
         }
       }
+    }
+    .onAppear {
+      viewModel.observeKeyboard()
     }
   }
   
@@ -184,15 +185,6 @@ private extension SetupAuthenticatorAppView {
     .padding(.top, 12)
     .padding([.horizontal, .bottom], 16)
   }
-  
-  var mfaTurnedOnPopup: some View {
-    LiquidityAlert(
-      title: LFLocalizable.Authentication.SetupMfa.mfaTurnedOn.uppercased(),
-      primary: .init(text: LFLocalizable.Button.Okay.title) {
-        dismissAction()
-      }
-    )
-  }
 }
 
 // MARK: - Recovery Popup
@@ -208,7 +200,8 @@ private extension SetupAuthenticatorAppView {
           recoveryCodeView
         }
         FullSizeButton(title: LFLocalizable.Button.Continue.title, isDisable: !isSavedRecoveryCode) {
-          viewModel.didRecoveryCodeSave()
+          viewModel.hidePopup()
+          dismiss()
         }
         .padding(.bottom, 8)
       }
@@ -272,18 +265,5 @@ private extension SetupAuthenticatorAppView {
       Spacer()
     }
     .padding([.horizontal, .top], 4)
-  }
-}
-
-// MARK: - View Helpers
-private extension SetupAuthenticatorAppView {
-  func dismissAction() {
-    switch viewModel.popup {
-    case .mfaTurnedOn:
-      viewModel.hidePopup()
-      dismiss()
-    default:
-      break
-    }
   }
 }

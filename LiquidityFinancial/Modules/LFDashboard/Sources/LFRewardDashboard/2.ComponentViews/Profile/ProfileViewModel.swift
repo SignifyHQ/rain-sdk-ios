@@ -83,6 +83,13 @@ final class ProfileViewModel: ObservableObject {
     isLoadingContribution || !stickers.isEmpty
   }
   
+  var isShowWarningSecurityIcon: Bool {
+    let isMFAEnabled = accountDataManager.userInfomationData.mfaEnabled ?? false
+    let isEmailVerified = accountDataManager.userInfomationData.emailVerified ?? false
+    
+    return !(isMFAEnabled && isEmailVerified && accountDataManager.isBiometricUsageEnabled)
+  }
+  
   init() {
     checkNotificationsStatus()
     handleForceLogoutInErrorView()

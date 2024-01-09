@@ -23,7 +23,6 @@ final class EnterTOTPCodeViewModel: ObservableObject {
   @Published var toastMessage: String?
   @Published var errorMessage: String?
   @Published var navigation: Navigation?
-  @Published var popup: Popup?
   
   let totpCodeLength = Constants.MaxCharacterLimit.mfaCode.value
   
@@ -48,7 +47,7 @@ final class EnterTOTPCodeViewModel: ObservableObject {
 
 // MARK: - APIs
 extension EnterTOTPCodeViewModel {
-  private func disableMFAAuthentication() {
+  private func disableMFAAuthentication(completion: @escaping (() -> Void)) {
     Task {
       defer { isVerifying = false }
       isVerifying = true
@@ -56,8 +55,8 @@ extension EnterTOTPCodeViewModel {
       do {
         let response = try await disableMFAUseCase.execute(code: totpCode)
         if response.success {
-          popup = .mfaTurnedOff
           accountDataManager.update(mfaEnabled: false)
+          completion()
         }
       } catch {
         handleError(error: error)
@@ -122,14 +121,10 @@ extension EnterTOTPCodeViewModel {
     navigation = .recoveryCode(purpose: recoveryCodePurpose)
   }
   
-  func hidePopup() {
-    popup = nil
-  }
-  
-  func didContinueButtonTap() {
+  func didContinueButtonTap(completion: @escaping (() -> Void)) {
     switch purpose {
     case .disableMFA:
-      disableMFAAuthentication()
+      disableMFAAuthentication(completion: completion)
     case let .login(parameters, _, completion):
       loginWithTOTPCode(parameters: parameters, completion: completion)
     }
@@ -171,10 +166,6 @@ private extension EnterTOTPCodeViewModel {
 extension EnterTOTPCodeViewModel {
   enum Navigation {
     case recoveryCode(purpose: RecoveryCodePurpose)
-  }
-  
-  enum Popup {
-    case mfaTurnedOff
   }
 }
 

@@ -14,7 +14,6 @@ public final class VerifyEmailViewModel: ObservableObject {
   @LazyInjected(\.customerSupportService) var customerSupportService
   
   @Published var isLoading: Bool = false
-  @Published var shouldPresentConfirmation: Bool = false
   @Published var toastMessage: String?
   @Published public var isOTPCodeEntered: Bool = false
   
@@ -46,7 +45,7 @@ public final class VerifyEmailViewModel: ObservableObject {
     requestOTP()
   }
   
-  func didTapContinueButton() {
+  func didTapContinueButton(completion: @escaping (() -> Void)) {
     Task {
       defer {
         isLoading = false
@@ -59,7 +58,7 @@ public final class VerifyEmailViewModel: ObservableObject {
         let user = try await getUserUseCase.execute()
         accountDataManager.update(missingSteps: user.missingSteps)
         
-        shouldPresentConfirmation = true
+        completion()
       } catch {
         toastMessage = error.userFriendlyMessage
         log.error(error.userFriendlyMessage)

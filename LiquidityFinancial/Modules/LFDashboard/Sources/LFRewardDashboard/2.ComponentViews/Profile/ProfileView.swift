@@ -212,7 +212,9 @@ private extension ProfileView {
         }*/
         if LFFeatureFlagContainer.isPasswordLoginFeatureFlagEnabled {
           ArrowButton(
-            image: GenImages.CommonImages.icSecurity.swiftUIImage,
+            image: viewModel.isShowWarningSecurityIcon
+            ? GenImages.CommonImages.icWarningSecurity.swiftUIImage
+            : GenImages.CommonImages.icSecurity.swiftUIImage,
             title: LFLocalizable.Profile.Security.title,
             value: nil
           ) {

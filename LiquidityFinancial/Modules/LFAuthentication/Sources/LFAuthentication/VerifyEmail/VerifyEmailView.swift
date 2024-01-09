@@ -29,11 +29,6 @@ public struct VerifyEmailView: View {
       ) {
         ToastView(toastMessage: $0)
       }
-      .popup(
-        isPresented: $viewModel.shouldPresentConfirmation
-      ) {
-        successConfirmationPopup
-      }
       .onAppear(
         perform: {
           if !viewDidLoad {
@@ -63,7 +58,9 @@ private extension VerifyEmailView {
         isLoading: $viewModel.isLoading
       ) {
         hideKeyboard()
-        viewModel.didTapContinueButton()
+        viewModel.didTapContinueButton {
+          dismiss()
+        }
       }
     }
     .padding([.horizontal, .bottom], 30)
@@ -103,17 +100,5 @@ private extension VerifyEmailView {
         .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.ultraSmall.value))
     }
     .disabled(viewModel.isLoading)
-  }
-  
-  private var successConfirmationPopup: some View {
-    LiquidityAlert(
-      title: LFLocalizable.Authentication.VerifyEmail.SuccessPopup.title,
-      primary: .init(
-        text: LFLocalizable.Button.Ok.title,
-        action: {
-          dismiss()
-        }
-      )
-    )
   }
 }

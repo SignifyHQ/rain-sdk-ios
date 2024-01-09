@@ -30,18 +30,6 @@ public struct EnterTOTPCodeView: View {
       ) {
         ToastView(toastMessage: $0)
       }
-      .popup(
-        item: $viewModel.popup,
-        dismissAction: {
-          dismissAction()
-        },
-        content: { item in
-          switch item {
-          case .mfaTurnedOff:
-            mfaTurnedOffPopup
-          }
-        }
-      )
       .padding(.horizontal, 30)
       .padding(.bottom, 16)
       .background(Colors.background.swiftUIColor)
@@ -121,18 +109,11 @@ private extension EnterTOTPCodeView {
         isDisable: !viewModel.isTOTPCodeEntered,
         isLoading: $viewModel.isVerifying
       ) {
-        viewModel.didContinueButtonTap()
+        viewModel.didContinueButtonTap {
+          dismiss()
+        }
       }
     }
-  }
-  
-  var mfaTurnedOffPopup: some View {
-    LiquidityAlert(
-      title: LFLocalizable.Authentication.EnterTotp.mfaTurnedOff.uppercased(),
-      primary: .init(text: LFLocalizable.Button.Okay.title) {
-        dismissAction()
-      }
-    )
   }
 }
 
@@ -147,16 +128,6 @@ private extension EnterTOTPCodeView {
       ]
     default:
       return [Colors.tertiary.swiftUIColor]
-    }
-  }
-  
-  func dismissAction() {
-    switch viewModel.popup {
-    case .mfaTurnedOff:
-      viewModel.hidePopup()
-      dismiss()
-    default:
-      break
     }
   }
 }

@@ -96,6 +96,7 @@ public enum GenImages {
     public static let icUser = ImageAsset(name: "ic_user")
     public static let icWallet = ImageAsset(name: "ic_wallet")
     public static let icWarning = ImageAsset(name: "ic_warning")
+    public static let icWarningSecurity = ImageAsset(name: "ic_warning_security")
     public static let icWellcome1 = ImageAsset(name: "ic_wellcome_1")
     public static let icWellcome2 = ImageAsset(name: "ic_wellcome_2")
     public static let icWellcome3 = ImageAsset(name: "ic_wellcome_3")

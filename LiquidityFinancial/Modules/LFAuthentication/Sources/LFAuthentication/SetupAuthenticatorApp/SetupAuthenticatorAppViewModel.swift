@@ -16,12 +16,12 @@ final class SetupAuthenticatorAppViewModel: ObservableObject {
 
   @Published var isInit: Bool = false
   @Published var isVerifyingTOTP: Bool = false
+  @Published var isShownKeyboard = false
   @Published var verificationCode: String = .empty
   @Published var recoveryCode: String = .empty
   @Published var secretKey: String = .empty
   @Published var qrCode = UIImage()
   @Published var toastMessage: String?
-  @Published var popup: Popup?
   @Published var blockPopup: BlockPopup?
   
   var isDisableVerifyButton: Bool {
@@ -87,13 +87,18 @@ extension SetupAuthenticatorAppViewModel {
     toastMessage = LFLocalizable.Toast.Copy.message
   }
   
-  func didRecoveryCodeSave() {
+  func hidePopup() {
     blockPopup = nil
-    popup = .mfaTurnedOn
   }
   
-  func hidePopup() {
-    popup = nil
+  func observeKeyboard() {
+    NotificationCenter.default.addObserver(forName: UIResponder.keyboardWillShowNotification, object: nil, queue: .main) { _ in
+      self.isShownKeyboard = true
+    }
+
+    NotificationCenter.default.addObserver(forName: UIResponder.keyboardWillHideNotification, object: nil, queue: .main) { _ in
+      self.isShownKeyboard = false
+    }
   }
 }
 
@@ -133,10 +138,6 @@ private extension SetupAuthenticatorAppViewModel {
 
 // MARK: - Types
 extension SetupAuthenticatorAppViewModel {
-  enum Popup {
-    case mfaTurnedOn
-  }
-  
   enum BlockPopup {
     case recoveryCode
   }
