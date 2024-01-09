@@ -8,6 +8,10 @@ struct DogeCardApp: App {
   
   @State var showFeatureFlagsHubView = false
   
+  init() {
+    LFFeatureFlagContainer.registerViewFactoryDogecard()
+  }
+  
   var body: some Scene {
     WindowGroup {
       AppView()

@@ -14,6 +14,8 @@ public struct LFFeatureFlagContainer {
       return enablePasswordLoginFlagCauseCard.value
     case .PawsCard:
       return enablePasswordLoginFlagPawsCard.value
+    case .DogeCard:
+      return enablePasswordLoginFlagDogeCard.value
     default:
       return false
     }
@@ -27,6 +29,8 @@ public struct LFFeatureFlagContainer {
       return enableMultiFactorAuthFlagCauseCard.value
     case .PawsCard:
       return enableMultiFactorAuthFlagPawsCard.value
+    case .DogeCard:
+      return enableMultiFactorAuthFlagDogeCard.value
     default:
       return false
     }
