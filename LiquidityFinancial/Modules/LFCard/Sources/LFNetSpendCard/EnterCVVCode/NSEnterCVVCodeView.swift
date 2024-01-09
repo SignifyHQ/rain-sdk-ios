@@ -47,7 +47,11 @@ private extension NSEnterCVVCodeView {
       .padding(.top, 16)
       HStack {
         Spacer()
-        cvvCodeView
+        PinCodeView(
+          code: $viewModel.generatedCVV,
+          isDisabled: $viewModel.isShowIndicator,
+          codeLength: viewModel.cvvCodeDigits
+        )
         Spacer()
       }
       Spacer()
@@ -63,25 +67,5 @@ private extension NSEnterCVVCodeView {
       }
     }
     .padding([.horizontal, .bottom], 30)
-  }
-  
-  var cvvCodeView: some View {
-    HStack(spacing: 10) {
-      ForEach(viewModel.pinViewItems) { item in
-        PinTextField(
-          viewItem: item,
-          isShown: viewModel.isShown,
-          onTextChange: { value in
-            viewModel.textFieldTextChange(replacementText: value, viewItem: item)
-          },
-          onBackPressed: { item in
-            viewModel.onTextFieldBackPressed(viewItem: item)
-          }
-        )
-        .background(item.text.isEmpty ? Colors.buttons.swiftUIColor : Colors.secondaryBackground.swiftUIColor)
-        .cornerRadius(10)
-        .frame(width: 58, height: 70)
-      }
-    }
   }
 }

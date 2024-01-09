@@ -20,7 +20,7 @@ public final class VerifyEmailViewModel: ObservableObject {
   
   @Published public var generatedOTP: String = .empty
   
-  public var otpViewItems: [PinTextFieldViewItem] = .init()
+  let otpCodeLength = Constants.MaxCharacterLimit.otpCode.value
   
   lazy var verifyEmailRequestUseCase: VerifyEmailRequestUseCaseProtocol = {
     VerifyEmailRequestUseCase(repository: accountRepository)
@@ -35,7 +35,6 @@ public final class VerifyEmailViewModel: ObservableObject {
   }()
   
   init() {
-    createTextFields()
     observeOTPInput()
   }
   
@@ -86,104 +85,16 @@ public final class VerifyEmailViewModel: ObservableObject {
   }
 }
 
-// MARK: - View Helpers
-public extension VerifyEmailViewModel {
-  func observeOTPInput() {
-    $generatedOTP
-      .map { otp in
-        otp.count == 6
-      }
-      .assign(to: &$isOTPCodeEntered)
-  }
-  
-  func textFieldTextChange(replacementText: String, viewItem: PinTextFieldViewItem) {
-    guard replacementText.count <= 1
-    else {
-      otpViewItems
-        .forEach { item in
-          if let index = replacementText.index(
-            replacementText.startIndex,
-            offsetBy: item.tag,
-            limitedBy: replacementText.endIndex
-          ) {
-            let characterAtIndex = replacementText[index]
-            item.text = String(characterAtIndex)
-          }
-        }
-      
-      sendOTP()
-      return
-    }
-    
-    if replacementText.isEmpty,
-       viewItem.text.isEmpty {
-      if let previousViewItem = previousViewItemFrom(tag: viewItem.tag) {
-        previousViewItem.text = .empty
-        viewItem.isInFocus = false
-        previousViewItem.isInFocus = true
-      }
-    } else {
-      if let nextViewItem = nextViewItemFrom(tag: viewItem.tag) {
-        viewItem.isInFocus = false
-        nextViewItem.isInFocus = true
-      }
-    }
-    viewItem.text = replacementText
-    
-    sendOTP()
-  }
-  
-  func onTextFieldBackPressed(viewItem: PinTextFieldViewItem) {
-    if let previousViewItem = previousViewItemFrom(tag: viewItem.tag) {
-      previousViewItem.text = .empty
-      viewItem.isInFocus = false
-      previousViewItem.isInFocus = true
-    }
-    
-    sendOTP()
-  }
-}
-
 // MARK: - Private Functions
 private extension VerifyEmailViewModel {
-  func createTextFields() {
-    for index in 0 ..< 6 {
-      let viewItem = PinTextFieldViewItem(
-        text: "",
-        placeHolderText: "",
-        isInFocus: false,
-        tag: index
-      )
-      
-      otpViewItems.append(viewItem)
-    }
-  }
-  
-  func nextViewItemFrom(tag: Int) -> PinTextFieldViewItem? {
-    let nextTextItemTag = tag + 1
-    if nextTextItemTag < otpViewItems.count {
-      return otpViewItems.first(where: { $0.tag == nextTextItemTag })
-    }
-    return nil
-  }
-  
-  func previousViewItemFrom(tag: Int) -> PinTextFieldViewItem? {
-    let previousTextItemTag = tag - 1
-    if previousTextItemTag >= 0 {
-      return otpViewItems.first(where: { $0.tag == previousTextItemTag })
-    }
-    return nil
-  }
-  
-  func generateOtp() -> String? {
-    otpViewItems.reduce(into: "") { partialResult, textFieldViewItem in
-      partialResult.append(textFieldViewItem.text)
-    }
-  }
-
-  func sendOTP() {
-    if let otp = generateOtp() {
-      generatedOTP = otp
-    }
+  func observeOTPInput() {
+    $generatedOTP
+      .map { [weak self] otp in
+        guard let self else {
+          return false
+        }
+        return otp.count == self.otpCodeLength
+      }
+      .assign(to: &$isOTPCodeEntered)
   }
 }

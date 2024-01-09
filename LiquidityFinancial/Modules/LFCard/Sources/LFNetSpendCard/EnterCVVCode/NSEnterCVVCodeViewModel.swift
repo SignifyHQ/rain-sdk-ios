@@ -25,7 +25,6 @@ public final class NSEnterCVVCodeViewModel: ObservableObject {
   
   public let cardID: String
   public let cvvCodeDigits = Int(Constants.Default.cvvCodeDigits.rawValue) ?? 3
-  public var pinViewItems: [PinTextFieldViewItem] = .init()
   
   lazy var verifyCardUseCase: NSVerifyCVVCodeUseCaseProtocol = {
     NSVerifyCVVCodeUseCase(repository: cardRepository)
@@ -33,8 +32,6 @@ public final class NSEnterCVVCodeViewModel: ObservableObject {
   
   public init(cardID: String) {
     self.cardID = cardID
-    
-    createTextFields()
     observeCVVInput()
   }
 }
@@ -72,78 +69,11 @@ public extension NSEnterCVVCodeViewModel {
   func observeCVVInput() {
     $generatedCVV
       .map { [weak self] cvv in
-        guard let self else { return false }
+        guard let self else {
+          return false
+        }
         return cvv.count == cvvCodeDigits
       }
       .assign(to: &$isCVVCodeEntered)
-  }
-  
-  func textFieldTextChange(replacementText: String, viewItem: PinTextFieldViewItem) {
-    if replacementText.isEmpty, viewItem.text.isEmpty {
-      if let previousViewItem = previousViewItemFrom(tag: viewItem.tag) {
-        previousViewItem.text = .empty
-        viewItem.isInFocus = false
-        previousViewItem.isInFocus = true
-      }
-    } else {
-      if let nextViewItem = nextViewItemFrom(tag: viewItem.tag) {
-        viewItem.isInFocus = false
-        nextViewItem.isInFocus = true
-      }
-    }
-    viewItem.text = replacementText
-    sendPin()
-  }
-  
-  func onTextFieldBackPressed(viewItem: PinTextFieldViewItem) {
-    if let previousViewItem = previousViewItemFrom(tag: viewItem.tag) {
-      previousViewItem.text = .empty
-      viewItem.isInFocus = false
-      previousViewItem.isInFocus = true
-    }
-    sendPin()
-  }
-}
-
-// MARK: - Private Functions
-private extension NSEnterCVVCodeViewModel {
-  func createTextFields() {
-    for index in 0 ..< cvvCodeDigits {
-      let viewItem = PinTextFieldViewItem(
-        text: "",
-        placeHolderText: "",
-        isInFocus: index == 0,
-        tag: index
-      )
-      pinViewItems.append(viewItem)
-    }
-  }
-  
-  func nextViewItemFrom(tag: Int) -> PinTextFieldViewItem? {
-    let nextTextItemTag = tag + 1
-    if nextTextItemTag < pinViewItems.count {
-      return pinViewItems.first(where: { $0.tag == nextTextItemTag })
-    }
-    return nil
-  }
-  
-  func previousViewItemFrom(tag: Int) -> PinTextFieldViewItem? {
-    let previousTextItemTag = tag - 1
-    if previousTextItemTag >= 0 {
-      return pinViewItems.first(where: { $0.tag == previousTextItemTag })
-    }
-    return nil
-  }
-  
-  func generatePin() -> String? {
-    pinViewItems.reduce(into: "") { partialResult, textFieldViewItem in
-      partialResult.append(textFieldViewItem.text)
-    }
-  }
-  
-  func sendPin() {
-    if let pin = generatePin() {
-      generatedCVV = pin
-    }
   }
 }

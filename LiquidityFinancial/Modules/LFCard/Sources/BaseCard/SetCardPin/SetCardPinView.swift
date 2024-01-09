@@ -42,7 +42,11 @@ private extension SetCardPinView {
         .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.main.value))
         .padding(.top, 16)
       VStack(spacing: 20) {
-        pinView
+        PinCodeView(
+          code: $viewModel.pinValue,
+          isDisabled: $viewModel.isShowIndicator,
+          codeLength: viewModel.pinCodeDigits
+        )
         Text(LFLocalizable.SetCardPin.Screen.description)
           .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.textFieldHeader.value))
           .foregroundColor(Colors.label.swiftUIColor.opacity(0.5))
@@ -61,29 +65,6 @@ private extension SetCardPinView {
       }
     }
     .padding([.horizontal, .bottom], 30)
-  }
-  
-  var pinView: some View {
-    HStack(spacing: 10) {
-      ForEach(viewModel.pinViewItems) { item in
-        PinTextField(
-          viewItem: item,
-          isShown: viewModel.isShown,
-          onTextChange: { value in
-            viewModel.textFieldTextChange(replacementText: value, viewItem: item)
-          },
-          onBackPressed: { item in
-            viewModel.onTextFieldBackPressed(viewItem: item)
-          }
-        )
-        .background(item.text.isEmpty ? Colors.secondaryBackground.swiftUIColor : Colors.buttons.swiftUIColor)
-        .cornerRadius(10)
-        .frame(width: 58, height: 70)
-      }
-    }
-    .onChange(of: viewModel.generatedPin) { pinCode in
-      viewModel.onReceivedPinCode(pinCode: pinCode)
-    }
   }
   
   var successPopup: some View {

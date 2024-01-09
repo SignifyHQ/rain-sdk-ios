@@ -1,13 +1,13 @@
 import SwiftUI
 import LFUtilities
 
-public struct PinTextField: UIViewRepresentable {
+struct PinTextField: UIViewRepresentable {
   @ObservedObject var viewItem: PinTextFieldViewItem
   let isShown: Bool
   var onTextChange: (String) -> Void
   var onBackPressed: (PinTextFieldViewItem) -> Void
   
-  public init(
+  init(
     viewItem: PinTextFieldViewItem,
     isShown: Bool,
     onTextChange: @escaping (String) -> Void,
@@ -19,7 +19,7 @@ public struct PinTextField: UIViewRepresentable {
     self.onBackPressed = onBackPressed
   }
   
-  public func makeUIView(context: UIViewRepresentableContext<PinTextField>) -> BackPressTextField {
+  func makeUIView(context: UIViewRepresentableContext<PinTextField>) -> BackPressTextField {
     let textField = BackPressTextField(frame: .zero)
     textField.isSecureTextEntry = false
     textField.keyboardType = .numberPad
@@ -40,11 +40,11 @@ public struct PinTextField: UIViewRepresentable {
     return textField
   }
   
-  public func updateUIView(_ uiView: BackPressTextField, context _: Context) {
+  func updateUIView(_ uiView: BackPressTextField, context _: Context) {
     updateResponder(textField: uiView)
   }
   
-  public func makeCoordinator() -> Coordinator {
+  func makeCoordinator() -> Coordinator {
     Coordinator(self)
   }
   
@@ -60,19 +60,19 @@ public struct PinTextField: UIViewRepresentable {
 }
 
 extension PinTextField {
-  public final class Coordinator: NSObject, UITextFieldDelegate, BackPressTextFieldDelegate {
+  final class Coordinator: NSObject, UITextFieldDelegate, BackPressTextFieldDelegate {
     private let parent: PinTextField
     
-    public init(_ textField: PinTextField) {
+    init(_ textField: PinTextField) {
       parent = textField
     }
     
-    public func textField(_: UITextField, shouldChangeCharactersIn _: NSRange, replacementString string: String) -> Bool {
+    func textField(_: UITextField, shouldChangeCharactersIn _: NSRange, replacementString string: String) -> Bool {
       parent.onTextChange(string)
       return false
     }
     
-    public func backPressed(textfield _: BackPressTextField) {
+    func backPressed(textfield _: BackPressTextField) {
       parent.onBackPressed(parent.viewItem)
     }
   }

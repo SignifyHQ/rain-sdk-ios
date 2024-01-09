@@ -20,11 +20,9 @@ public final class NSSetCardPinViewModel: SetCardPinViewModelProtocol {
   @Published public var isShowIndicator: Bool = false
   @Published public var isPinEntered: Bool = false
 
-  @Published public var generatedPin: String = .empty
   @Published public var pinValue: String = .empty
   @Published public var toastMessage: String?
   
-  public var pinViewItems: [PinTextFieldViewItem] = .init()
   public let pinCodeDigits = Int(Constants.Default.pinCodeDigits.rawValue) ?? 4
   public let verifyID: String
   public let cardModel: CardModel
@@ -38,7 +36,8 @@ public final class NSSetCardPinViewModel: SetCardPinViewModelProtocol {
     self.verifyID = verifyID ?? .empty
     self.cardModel = cardModel
     self.onFinish = onFinish
-    createTextFields()
+    
+    observePinCodeInput()
   }
 }
 
@@ -75,34 +74,14 @@ public extension NSSetCardPinViewModel {
     dismissScreen()
   }
   
-  func onReceivedPinCode(pinCode: String) {
-    isPinEntered = (pinCode.count == pinCodeDigits)
-    pinValue = pinCode
-  }
-  
-  func textFieldTextChange(replacementText: String, viewItem: PinTextFieldViewItem) {
-    if replacementText.isEmpty, viewItem.text.isEmpty {
-      if let previousViewItem = previousViewItemFrom(tag: viewItem.tag) {
-        previousViewItem.text = ""
-        viewItem.isInFocus = false
-        previousViewItem.isInFocus = true
+  func observePinCodeInput() {
+    $pinValue
+      .map { [weak self] otp in
+        guard let self else {
+          return false
+        }
+        return otp.count == self.pinCodeDigits
       }
-    } else {
-      if let nextViewItem = nextViewItemFrom(tag: viewItem.tag) {
-        viewItem.isInFocus = false
-        nextViewItem.isInFocus = true
-      }
-    }
-    viewItem.text = replacementText
-    sendPin()
-  }
-  
-  func onTextFieldBackPressed(viewItem: PinTextFieldViewItem) {
-    if let previousViewItem = previousViewItemFrom(tag: viewItem.tag) {
-      previousViewItem.text = ""
-      viewItem.isInFocus = false
-      previousViewItem.isInFocus = true
-    }
-    sendPin()
+      .assign(to: &$isPinEntered)
   }
 }

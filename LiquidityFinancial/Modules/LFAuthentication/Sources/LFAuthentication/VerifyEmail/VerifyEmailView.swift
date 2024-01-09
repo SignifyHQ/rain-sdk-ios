@@ -84,32 +84,14 @@ private extension VerifyEmailView {
   
   var middleView: some View {
     VStack {
-      otpCodeView
+      PinCodeView(
+        code: $viewModel.generatedOTP,
+        isDisabled: $viewModel.isLoading,
+        codeLength: viewModel.otpCodeLength
+      )
       resendCodeButton
         .padding(.top)
     }
-  }
-  
-  var otpCodeView: some View {
-    HStack(spacing: 10) {
-      ForEach(viewModel.otpViewItems) { item in
-        PinTextField(
-          viewItem: item,
-          isShown: true,
-          onTextChange: { value in
-            viewModel.textFieldTextChange(replacementText: value, viewItem: item)
-          },
-          onBackPressed: { item in
-            viewModel.onTextFieldBackPressed(viewItem: item)
-          }
-        )
-        .background(item.text.isEmpty ? Colors.buttons.swiftUIColor : Colors.secondaryBackground.swiftUIColor)
-        .cornerRadius(10)
-        .frame(minWidth: 0, maxWidth: .infinity)
-        .frame(height: 70)
-      }
-    }
-    .disabled(viewModel.isLoading)
   }
   
   var resendCodeButton: some View {
