@@ -26,16 +26,20 @@ public struct HomeView: View {
   }
   
   public var body: some View {
-    TabView(selection: $viewModel.tabSelected) {
+    ZStack(alignment: .bottom) {
+      // Ensure each TabOptionView is initialized only once
       ForEach(viewModel.tabOptions, id: \.self) { option in
-        loadTabView(option: option)
+        DashboardView(option: option) { option in
+          viewModel.tabSelected = option
+        }
+        .opacity(viewModel.tabSelected == option ? 1 : 0)
+        .padding(.bottom, 50)
       }
+      tabBarItems
     }
     .navigationBarTitleDisplayMode(.inline)
-    .tint(ModuleColors.tabarHighlight.swiftUIColor)
     .onAppear {
       analyticsService.track(event: AnalyticsEvent(name: .viewedHome))
-      UITabBar.appearance().backgroundColor = Color.white.uiColor
       viewModel.onAppear()
     }
     .toolbar {
@@ -87,20 +91,21 @@ public struct HomeView: View {
       isPresented: $viewModel.shouldShowBiometricsFallback,
       onDismiss: {
         viewModel.isVerifyingBiometrics = false
+      },
+      content: {
+        BiometricsBackupView()
       }
-    ) {
-      BiometricsBackupView()
-    }
+    )
     .onChange(of: scenePhase, perform: { newValue in
       if newValue == .active {
         viewModel.checkGoTransactionDetail()
         viewModel.refreshLinkedSources()
       }
     })
-    .blur(radius: viewModel.blurRadius, opaque: true)
+    .blur(radius: viewModel.blurRadius)
     .onChange(of: viewModel.isVerifyingBiometrics) { isVerifying in
       withAnimation(.easeInOut(duration: 0.2)) {
-        viewModel.blurRadius = viewModel.isVerifyingBiometrics ? 8 : 0
+        viewModel.blurRadius = isVerifying ? 8 : 0
       }
     }
   }
@@ -108,15 +113,6 @@ public struct HomeView: View {
 
 // MARK: - View Components
 private extension HomeView {
-  func loadTabView(option: TabOption) -> some View {
-    DashboardView(option: option) { option in
-      viewModel.tabSelected = option
-    }.tabItem {
-      tabItem(option: option)
-    }
-    .tag(option)
-  }
-  
   var leadingNavigationBarView: some View {
     Text(viewModel.tabSelected.title.uppercased())
       .font(Fonts.Montserrat.black.swiftUIFont(size: Constants.FontSize.navigationBar.value))
@@ -124,15 +120,30 @@ private extension HomeView {
       .padding(.leading, 12)
   }
   
+  var tabBarItems: some View {
+    HStack(spacing: 0) {
+      ForEach(viewModel.tabOptions, id: \.self) { option in
+        tabItem(option: option)
+        if option != viewModel.tabOptions.last {
+          Spacer()
+        }
+      }
+    }
+    .padding(.horizontal, 32)
+    .padding(.bottom, 2)
+    .padding(.top, 4)
+    .background(Colors.secondaryBackground.swiftUIColor)
+  }
+  
   func tabItem(option: TabOption) -> some View {
     VStack(spacing: 4) {
       option.imageAsset
         .foregroundColor(
-          option == viewModel.tabSelected ? ModuleColors.tabarHighlight.swiftUIColor : ModuleColors.tabarUnhighlight.swiftUIColor
+          option == viewModel.tabSelected ? Colors.label.swiftUIColor : Colors.label.swiftUIColor.opacity(0.5)
         )
       Text(option.title)
         .foregroundColor(
-          option == viewModel.tabSelected ? ModuleColors.tabarHighlight.swiftUIColor : ModuleColors.tabarUnhighlight.swiftUIColor
+          option == viewModel.tabSelected ? Colors.label.swiftUIColor : Colors.label.swiftUIColor.opacity(0.5)
         )
         .font(Fonts.Montserrat.medium.swiftUIFont(size: 10))
     }
