@@ -155,7 +155,6 @@
 		743DA89B2B43F213000F5AD8 /* PawsCard-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 743DA86B2B43F213000F5AD8 /* PawsCard-Info.plist */; };
 		743DA89C2B43F213000F5AD8 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 743DA86C2B43F213000F5AD8 /* Localizable.strings */; };
 		743DA89E2B43F213000F5AD8 /* AccessibilityIdentifier.strings in Resources */ = {isa = PBXBuildFile; fileRef = 743DA86F2B43F213000F5AD8 /* AccessibilityIdentifier.strings */; };
-		743DA89F2B43F213000F5AD8 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 743DA8702B43F213000F5AD8 /* GoogleService-Info.plist */; };
 		743DA8A02B43F213000F5AD8 /* TwinkleCircle.json in Resources */ = {isa = PBXBuildFile; fileRef = 743DA8722B43F213000F5AD8 /* TwinkleCircle.json */; };
 		743DA8A12B43F213000F5AD8 /* LoadingPrimary.json in Resources */ = {isa = PBXBuildFile; fileRef = 743DA8732B43F213000F5AD8 /* LoadingPrimary.json */; };
 		743DA8A22B43F213000F5AD8 /* Welcome.json in Resources */ = {isa = PBXBuildFile; fileRef = 743DA8742B43F213000F5AD8 /* Welcome.json */; };
@@ -190,6 +189,7 @@
 		743DA8BF2B43F213000F5AD8 /* AppViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 743DA8992B43F213000F5AD8 /* AppViewModel.swift */; };
 		743DA8C02B43F213000F5AD8 /* PrideCardApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 743DA89A2B43F213000F5AD8 /* PrideCardApp.swift */; };
 		745396BE2B4513F500B1B651 /* LaunchScreenPaws.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 745396BD2B4513F500B1B651 /* LaunchScreenPaws.storyboard */; };
+		746874422B4E39E100E960F8 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 746874412B4E39E100E960F8 /* GoogleService-Info.plist */; };
 		749091172A6584C300071B41 /* SmartyStreets in Frameworks */ = {isa = PBXBuildFile; productRef = 749091162A6584C300071B41 /* SmartyStreets */; };
 		74BC08632A8CC6F500EFD00C /* CodeScanner in Frameworks */ = {isa = PBXBuildFile; productRef = 74BC08622A8CC6F500EFD00C /* CodeScanner */; };
 		74BC08652A8CC75100EFD00C /* CodeScanner in Frameworks */ = {isa = PBXBuildFile; productRef = 74BC08642A8CC75100EFD00C /* CodeScanner */; };
@@ -632,7 +632,6 @@
 		743DA86B2B43F213000F5AD8 /* PawsCard-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "PawsCard-Info.plist"; sourceTree = "<group>"; };
 		743DA86D2B43F213000F5AD8 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
 		743DA86F2B43F213000F5AD8 /* AccessibilityIdentifier.strings */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.strings; path = AccessibilityIdentifier.strings; sourceTree = "<group>"; };
-		743DA8702B43F213000F5AD8 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		743DA8722B43F213000F5AD8 /* TwinkleCircle.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = TwinkleCircle.json; sourceTree = "<group>"; };
 		743DA8732B43F213000F5AD8 /* LoadingPrimary.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = LoadingPrimary.json; sourceTree = "<group>"; };
 		743DA8742B43F213000F5AD8 /* Welcome.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = Welcome.json; sourceTree = "<group>"; };
@@ -668,6 +667,7 @@
 		743DA8992B43F213000F5AD8 /* AppViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppViewModel.swift; sourceTree = "<group>"; };
 		743DA89A2B43F213000F5AD8 /* PrideCardApp.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PrideCardApp.swift; sourceTree = "<group>"; };
 		745396BD2B4513F500B1B651 /* LaunchScreenPaws.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = LaunchScreenPaws.storyboard; sourceTree = "<group>"; };
+		746874412B4E39E100E960F8 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		74CB16792A9851EB00C137F3 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		74EAF3D52A94E54E00557DEF /* LFWalletAddress */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = LFWalletAddress; path = Modules/LFWalletAddress; sourceTree = "<group>"; };
 		A90B5CAC2B16BB890092E430 /* LFFeatureFlags */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = LFFeatureFlags; path = Modules/LFFeatureFlags; sourceTree = "<group>"; };
@@ -1448,7 +1448,7 @@
 				743DA86C2B43F213000F5AD8 /* Localizable.strings */,
 				745396BD2B4513F500B1B651 /* LaunchScreenPaws.storyboard */,
 				743DA86F2B43F213000F5AD8 /* AccessibilityIdentifier.strings */,
-				743DA8702B43F213000F5AD8 /* GoogleService-Info.plist */,
+				746874412B4E39E100E960F8 /* GoogleService-Info.plist */,
 				743DA8712B43F213000F5AD8 /* Lottie */,
 				743DA87B2B43F213000F5AD8 /* PawsCard.entitlements */,
 				743DA87C2B43F213000F5AD8 /* Fonts */,
@@ -2804,13 +2804,13 @@
 				743DA8A02B43F213000F5AD8 /* TwinkleCircle.json in Resources */,
 				743DA8AC2B43F213000F5AD8 /* Montserrat-Medium.ttf in Resources */,
 				743DA8A22B43F213000F5AD8 /* Welcome.json in Resources */,
+				746874422B4E39E100E960F8 /* GoogleService-Info.plist in Resources */,
 				743DA8AA2B43F213000F5AD8 /* Lato-LightItalic.ttf in Resources */,
 				743DA8BA2B43F213000F5AD8 /* Images.xcassets in Resources */,
 				743DA8B52B43F213000F5AD8 /* Lato-Light.ttf in Resources */,
 				743DA8B12B43F213000F5AD8 /* Lato-BlackItalic.ttf in Resources */,
 				743DA8A42B43F213000F5AD8 /* LoadingHeart.json in Resources */,
 				743DA8A62B43F213000F5AD8 /* TwinkleContrast.json in Resources */,
-				743DA89F2B43F213000F5AD8 /* GoogleService-Info.plist in Resources */,
 				743DA89C2B43F213000F5AD8 /* Localizable.strings in Resources */,
 				743DA8A52B43F213000F5AD8 /* ApplePay.json in Resources */,
 				743DA8042B43E14C000F5AD8 /* Images.xcassets in Resources */,
