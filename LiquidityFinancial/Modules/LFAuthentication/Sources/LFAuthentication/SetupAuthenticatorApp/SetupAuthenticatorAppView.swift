@@ -8,7 +8,7 @@ struct SetupAuthenticatorAppView: View {
   @StateObject private var viewModel = SetupAuthenticatorAppViewModel()
   @State private var isSavedRecoveryCode = false
   
-  private let bottomAnchorID = "bottomAnchorID"
+  private let continueButtonID = "continueButtonID"
   
   var body: some View {
     ZStack {
@@ -19,7 +19,6 @@ struct SetupAuthenticatorAppView: View {
       }
     }
     .padding(.horizontal, 30)
-    .padding(.bottom, 16)
     .popup(item: $viewModel.toastMessage, style: .toast) {
       ToastView(toastMessage: $0)
     }
@@ -42,30 +41,21 @@ struct SetupAuthenticatorAppView: View {
 
 private extension SetupAuthenticatorAppView {
   var content: some View {
-    ScrollView(showsIndicators: false) {
-      ScrollViewReader { proxy in
-        VStack(alignment: .leading, spacing: 32) {
-          headerView
-          instructionView
-          FullSizeButton(
-            title: LFLocalizable.Button.Verify.title,
-            isDisable: viewModel.isDisableVerifyButton,
-            isLoading: $viewModel.isVerifyingTOTP
-          ) {
-            hideKeyboard()
-            viewModel.enableMFAAuthentication()
-          }
-          .id(bottomAnchorID)
+    AdaptiveKeyboardScrollView(destinationViewID: continueButtonID) {
+      VStack(alignment: .leading, spacing: 32) {
+        headerView
+        instructionView
+        FullSizeButton(
+          title: LFLocalizable.Button.Verify.title,
+          isDisable: viewModel.isDisableVerifyButton,
+          isLoading: $viewModel.isVerifyingTOTP
+        ) {
+          hideKeyboard()
+          viewModel.enableMFAAuthentication()
         }
-        .onChange(of: viewModel.isShownKeyboard) { _ in
-          if viewModel.isShownKeyboard {
-            proxy.scrollTo(bottomAnchorID, anchor: .top)
-          }
-        }
+        .padding(.bottom, 16)
       }
-    }
-    .onAppear {
-      viewModel.observeKeyboard()
+      .id(continueButtonID)
     }
   }
   

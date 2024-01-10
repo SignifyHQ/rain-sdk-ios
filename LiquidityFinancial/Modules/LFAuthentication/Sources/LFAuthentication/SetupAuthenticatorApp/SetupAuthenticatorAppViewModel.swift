@@ -16,7 +16,6 @@ final class SetupAuthenticatorAppViewModel: ObservableObject {
 
   @Published var isInit: Bool = false
   @Published var isVerifyingTOTP: Bool = false
-  @Published var isShownKeyboard = false
   @Published var verificationCode: String = .empty
   @Published var recoveryCode: String = .empty
   @Published var secretKey: String = .empty
@@ -89,16 +88,6 @@ extension SetupAuthenticatorAppViewModel {
   
   func hidePopup() {
     blockPopup = nil
-  }
-  
-  func observeKeyboard() {
-    NotificationCenter.default.addObserver(forName: UIResponder.keyboardWillShowNotification, object: nil, queue: .main) { _ in
-      self.isShownKeyboard = true
-    }
-
-    NotificationCenter.default.addObserver(forName: UIResponder.keyboardWillHideNotification, object: nil, queue: .main) { _ in
-      self.isShownKeyboard = false
-    }
   }
 }
 
