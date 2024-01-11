@@ -62,12 +62,15 @@ private extension TransactionListView {
           TransactionRowView(item: transaction) {
             viewModel.selectedTransaction(transaction)
           }
-          .listRowInsets(EdgeInsets())
+          .listRowSeparator(.hidden)
+          .listRowInsets(EdgeInsets(top: 5, leading: 0, bottom: 5, trailing: 0))
+          .listRowBackground(Colors.background.swiftUIColor)
           .onAppear {
             viewModel.loadMoreIfNeccessary(transaction: transaction)
           }
         }
       }
+      .background(Colors.background.swiftUIColor)
       .listStyle(PlainListStyle())
       
       if viewModel.isLoadingMore {

@@ -35,7 +35,7 @@ public struct FeatureConfigModel: Codable {
   }
   
   public var isSendCryptoV2Enabled: Bool {
-    (features?["isSendCryptoV2Enabled"] as? Bool) ?? false
+    (features?["IS_SEND_CRYPTO_V2_ENABLED"]?.value as? Bool) ?? false
   }
   
   public var remoteLinks: RemoteLinks {

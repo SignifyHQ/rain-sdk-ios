@@ -144,6 +144,7 @@ public class NoBankOnboardingFlowCoordinator: OnboardingFlowCoordinatorProtocol 
       accountFeatureConfigData.isLoading = true
       let entity = try await accountUseCase.getFeatureConfig()
       accountFeatureConfigData.configJSON = entity.config ?? ""
+      accountDataManager.featureConfig = accountFeatureConfigData.featureConfig
     } catch {
       log.error(error.userFriendlyMessage)
     }
