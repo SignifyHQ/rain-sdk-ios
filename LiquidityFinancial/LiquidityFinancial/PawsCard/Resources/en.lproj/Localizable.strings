@@ -1096,6 +1096,8 @@ contact support.";
 "authentication.biometrics_backup_localizedFallback.title" = "Use Password Instead";
 "authentication.biometrics_lockout_error.title" = "%@ attempts exceeded";
 "authentication.biometrics_lockout_error.message" = "Unable to use %@";
+"authentication.biometrics_notEnrolled.title" = "%@ is not enrolled";
+"authentication.biometrics_notEnrolled.message" = "%@ is not enabled on your device. Please go to your phone’s settings to turn it on";
 
 "authentication.security.title" = "Security";
 "authentication.security_email.title" = "Email";

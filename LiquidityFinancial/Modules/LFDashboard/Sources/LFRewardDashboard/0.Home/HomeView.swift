@@ -79,6 +79,8 @@ public struct HomeView: View {
         setupBiometricsPopup
       case .biometricsLockout:
         biometricLockoutPopup
+      case .biometricNotEnrolled:
+        biometricNotEnrolledPopup
       }
     }
     .popup(item: $viewModel.blockingPopup, dismissMethods: []) { popup in
@@ -98,8 +100,7 @@ public struct HomeView: View {
     )
     .onChange(of: scenePhase, perform: { newValue in
       if newValue == .active {
-        viewModel.checkGoTransactionDetail()
-        viewModel.refreshLinkedSources()
+        viewModel.onChangeScenePhaseIsActive()
       }
     })
     .blur(radius: viewModel.blurRadius)
@@ -211,7 +212,7 @@ private extension HomeView {
     SetupBiometricPopup(
       biometricType: viewModel.biometricType,
       primaryAction: {
-        viewModel.allowBiometricAuthentication()
+        viewModel.onClickedSetupBiometricPrimaryButton()
       },
       secondaryAction: {
         viewModel.clearPopup()
@@ -223,6 +224,16 @@ private extension HomeView {
     LiquidityAlert(
       title: LFLocalizable.Authentication.BiometricsLockoutError.title(viewModel.biometricType.title),
       message: LFLocalizable.Authentication.BiometricsLockoutError.message(viewModel.biometricType.title),
+      primary: .init(text: LFLocalizable.Button.Ok.title) {
+        viewModel.clearPopup()
+      }
+    )
+  }
+  
+  var biometricNotEnrolledPopup: some View {
+    LiquidityAlert(
+      title: LFLocalizable.Authentication.BiometricsNotEnrolled.title(viewModel.biometricType.title).uppercased(),
+      message: LFLocalizable.Authentication.BiometricsNotEnrolled.message(viewModel.biometricType.title),
       primary: .init(text: LFLocalizable.Button.Ok.title) {
         viewModel.clearPopup()
       }

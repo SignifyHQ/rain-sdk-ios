@@ -516,6 +516,16 @@ public enum LFLocalizable {
         return LFLocalizable.tr("Localizable", "authentication.biometrics_lockout_error.title", String(describing: p1), fallback: "%@ attempts exceeded")
       }
     }
+    public enum BiometricsNotEnrolled {
+      /// %@ is not enabled on your device. Please go to your phone’s settings to turn it on
+      public static func message(_ p1: Any) -> String {
+        return LFLocalizable.tr("Localizable", "authentication.biometrics_notEnrolled.message", String(describing: p1), fallback: "%@ is not enabled on your device. Please go to your phone’s settings to turn it on")
+      }
+      /// %@ is not enrolled
+      public static func title(_ p1: Any) -> String {
+        return LFLocalizable.tr("Localizable", "authentication.biometrics_notEnrolled.title", String(describing: p1), fallback: "%@ is not enrolled")
+      }
+    }
     public enum BiometricsTouchID {
       /// Touch ID
       public static let title = LFLocalizable.tr("Localizable", "authentication.biometrics_touchID.title", fallback: "Touch ID")

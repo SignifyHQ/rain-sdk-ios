@@ -70,6 +70,8 @@ private extension SecurityHubView {
           setupBiometricsPopup
         case .biometricsLockout:
           biometricLockoutPopup
+        case .biometricNotEnrolled:
+          biometricNotEnrolledPopup
         }
       })
     .blur(radius: viewModel.popup != nil ? 16 : 0)
@@ -107,11 +109,11 @@ private extension SecurityHubView {
         value: viewModel.phone.value,
         trailingView: textWithAction(
           title: viewModel.phone.status,
-          isEnable: !viewModel.email.isVerified
+          isEnable: false
         ) {
-          viewModel.didTapPhoneVerifyButton()
         }
       )
+      
       textInformationCell(
         title: LFLocalizable.Authentication.SecurityPassword.title,
         value: Constants.hiddenPassword,
@@ -123,6 +125,7 @@ private extension SecurityHubView {
           }
         )
       )
+      
       if LFFeatureFlagContainer.isMultiFactorAuthFeatureFlagEnabled {
         textInformationCell(
           title: LFLocalizable.Authentication.SecurityMfa.title,
@@ -260,6 +263,16 @@ private extension SecurityHubView {
     LiquidityAlert(
       title: LFLocalizable.Authentication.BiometricsLockoutError.title(viewModel.biometricType.title),
       message: LFLocalizable.Authentication.BiometricsLockoutError.message(viewModel.biometricType.title),
+      primary: .init(text: LFLocalizable.Button.Ok.title) {
+        viewModel.hidePopup()
+      }
+    )
+  }
+  
+  var biometricNotEnrolledPopup: some View {
+    LiquidityAlert(
+      title: LFLocalizable.Authentication.BiometricsNotEnrolled.title(viewModel.biometricType.title).uppercased(),
+      message: LFLocalizable.Authentication.BiometricsNotEnrolled.message(viewModel.biometricType.title),
       primary: .init(text: LFLocalizable.Button.Ok.title) {
         viewModel.hidePopup()
       }

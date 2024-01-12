@@ -78,7 +78,7 @@ private extension BiometricsBackupViewModel {
   }
   
   func handleBiometricAuthenticationError(error: BiometricError) {
-    log.error("Biometrics error: \(error.userFriendlyMessage)")
+    log.error("Biometrics error: \(error.localizedDescription)")
     switch error {
     case .biometryNotAvailable:
       self.openDeviceSettings()

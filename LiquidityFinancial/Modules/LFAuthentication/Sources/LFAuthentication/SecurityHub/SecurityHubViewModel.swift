@@ -62,12 +62,6 @@ extension SecurityHubViewModel {
     navigation = .verifyEmail
   }
   
-  func didTapPhoneVerifyButton() {
-  }
-  
-  func didTapChangePasswordButton() {
-  }
-  
   func resetBiometricToggleState() {
     isBiometricEnabled = accountDataManager.isBiometricUsageEnabled
   }
@@ -142,7 +136,7 @@ private extension SecurityHubViewModel {
         case .finished:
           log.debug("Biometrics capability check completed.")
         case .failure(let error):
-          log.error("Biometrics error: \(error.userFriendlyMessage)")
+          log.error("Biometrics error: \(error.localizedDescription)")
         }
       }, receiveValue: { [weak self] result in
         guard let self else { return }
@@ -166,6 +160,8 @@ private extension SecurityHubViewModel {
       openDeviceSettings()
     case .biometryLockout:
       popup = .biometricsLockout
+    case .biometryNotEnrolled:
+      popup = .biometricNotEnrolled
     case .userCancel:
       break
     default:
@@ -195,5 +191,6 @@ extension SecurityHubViewModel {
   enum Popup {
     case biometric
     case biometricsLockout
+    case biometricNotEnrolled
   }
 }
