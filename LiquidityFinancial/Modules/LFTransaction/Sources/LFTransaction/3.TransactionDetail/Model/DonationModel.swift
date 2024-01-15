@@ -1,4 +1,5 @@
 import Foundation
+import LFUtilities
 
 public struct DonationModel: Identifiable {
   public let id: String
@@ -26,6 +27,7 @@ public struct DonationModel: Identifiable {
   )
   
   func transactionDateInLocalZone(includeYear: Bool = false) -> String {
-    createdAt.serverToTransactionDisplay(includeYear: includeYear)
+    let dateFormat: LiquidityDateFormatter = includeYear ? .fullTransactionDate : .shortTransactionDate
+    return createdAt.parsingDateStringToNewFormat(toDateFormat: dateFormat) ?? .empty
   }
 }

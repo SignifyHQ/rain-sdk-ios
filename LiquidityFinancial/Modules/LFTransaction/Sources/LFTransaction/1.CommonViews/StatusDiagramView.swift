@@ -60,10 +60,13 @@ private extension StatusDiagramView {
   }
   
   var startDate: String {
-    transaction.createdAt.displayDate ?? "-"
+    transaction.createdAt.parsingDateStringToNewFormat(toDateFormat: .monthDayAbbrev) ?? "-"
   }
   
   var endDate: String {
-    transaction.completedAt?.displayDate ?? transaction.estimateCompletedDate ?? "-"
+    guard let completedDate = transaction.completedAt?.parsingDateStringToNewFormat(toDateFormat: .monthDayAbbrev) else {
+      return transaction.estimateCompletedDate ?? "-"
+    }
+    return completedDate
   }
 }

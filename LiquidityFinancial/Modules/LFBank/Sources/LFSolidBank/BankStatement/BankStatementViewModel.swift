@@ -133,10 +133,7 @@ extension BankStatementViewModel {
     }
     
     var desc: String {
-      guard let date = DateFormatter.serverShort.date(from: createdAt) else {
-        return .empty
-      }
-      return DateFormatter.monthDayYearDisplay.string(from: date)
+      createdAt.parsingDateStringToNewFormat(toDateFormat: .monthDayYearAbbrev) ?? .empty
     }
     
     var storageName: String {
@@ -144,10 +141,7 @@ extension BankStatementViewModel {
     }
     
     var title: String {
-      if let date = DateFormatter.yearMonth.date(from: identifiable) {
-        return DateFormatter.monthYearDisplay.string(from: date)
-      }
-      return identifiable
+      identifiable.parsingDateStringToNewFormat(toDateFormat: .fullMonthYear) ?? identifiable
     }
 
     var identifiable: String {

@@ -114,10 +114,7 @@ extension TaxesView {
 
 private extension APITaxFile {
   var createAtDate: Date {
-    if let date = DateFormatter.server.date(from: createdAt ?? "") {
-      return date
-    }
-    return Date()
+    LiquidityDateFormatter.iso8601WithMilliseconds.parseToDate(from: createdAt ?? "") ?? Date()
   }
   
   var value: String {

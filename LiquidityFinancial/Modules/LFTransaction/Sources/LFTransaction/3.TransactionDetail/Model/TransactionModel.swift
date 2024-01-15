@@ -158,7 +158,8 @@ public extension TransactionModel {
   }
   
   func transactionDateInLocalZone(includeYear: Bool = false) -> String {
-    createdAt.serverToTransactionDisplay(includeYear: includeYear)
+    let dateFormat: LiquidityDateFormatter = includeYear ? .fullTransactionDate : .shortTransactionDate
+    return createdAt.parsingDateStringToNewFormat(toDateFormat: dateFormat) ?? .empty
   }
   
   var colorForType: Color {
@@ -242,22 +243,12 @@ public extension TransactionModel {
   }
   
   var estimateCompletedDate: String? {
-    //TODO: handle multiple dateFormat from the BE
-    let dateFormatter = DateFormatter()
-    if let inputDate = completedAt, status == TransactionStatus.completed {
-      dateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ssZ"
-      if let formattedCompletionDate = dateFormatter.date(from: inputDate) {
-        return DateFormatter.monthDayDisplay.string(from: formattedCompletionDate)
-      }
-    }
-    if let inputDate = dateFormatter.date(from: createdAt) {
-      dateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSSSSSZ"
-      if let newDate = Calendar.current.date(byAdding: .day, value: 2, to: inputDate) {
-        return DateFormatter.monthDayDisplay.string(from: newDate)
-      }
+    guard let format = LiquidityDateFormatter.getDateFormat(from: createdAt),
+          let inputDate = format.parseToDate(from: createdAt),
+          let twoDaysLaterDate = Calendar.current.date(byAdding: .day, value: 2, to: inputDate) else {
       return nil
     }
-    return nil
+    return LiquidityDateFormatter.monthDayAbbrev.parseToString(from: twoDaysLaterDate)
   }
 }
 

@@ -338,7 +338,7 @@ extension NSOnboardingFlowCoordinator {
     guard let data = try? JSONEncoder().encode(userModel) else { return }
     let dictionary = (try? JSONSerialization.jsonObject(with: data, options: .fragmentsAllowed)).flatMap { $0 as? [String: Any] }
     var values = dictionary ?? [:]
-    values["birthday"] = userModel.dateOfBirth?.getDate()
+    values["birthday"] = LiquidityDateFormatter.simpleDate.parseToDate(from: userModel.dateOfBirth ?? "")
     values["avatar"] = userModel.profileImage ?? ""
     values["idNumber"] = "REDACTED"
     analyticsService.set(params: values)

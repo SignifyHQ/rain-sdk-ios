@@ -92,13 +92,13 @@ extension Array where Element == HistoricalPriceModel {
         continue
       }
       let timestampValue = model.timestamp
-      ?? model.lastUpdated?.convertTimestampToDouble(dateFormat: Constants.DateFormat.iso8601WithTimeZone.rawValue)
+      ?? model.lastUpdated?.convertTimestampToDouble(dateFormat: LiquidityDateFormatter.iso8601WithTimeZone.rawValue)
       ?? 0
       var data = CandleData(low: low, high: high, open: open, close: close, xValue: timestampValue)
       if indexes.contains(where: { $0 == index }) {
         data.shouldGridLine = true
         let date = Date(timeIntervalSince1970: Double(timestampValue / 1_000))
-        data.gridTitle = DateFormatter.chartGridDisplay.string(from: date)
+        data.gridTitle = LiquidityDateFormatter.chartGridDateTime.parseToString(from: date)
       }
       datas.append(data)
       index += 1
@@ -116,14 +116,13 @@ extension Array where Element == HistoricalPriceModel {
       }
       let model = self[index]
       let timestampValue = model.timestamp
-      ?? model.lastUpdated?.convertTimestampToDouble(dateFormat: Constants.DateFormat.iso8601WithTimeZone.rawValue)
+      ?? model.lastUpdated?.convertTimestampToDouble(dateFormat: LiquidityDateFormatter.iso8601WithTimeZone.rawValue)
       ?? 0
       let date = Date(timeIntervalSince1970: TimeInterval(timestampValue))
+      let dateString = LiquidityDateFormatter.chartGridDateTime.parseToString(from: date)
+      
       return (
-        DateFormatter.chartGridDisplay.string(from: date).convertToNewDateFormat(
-          from: Constants.DateFormat.normal.rawValue,
-          to: option.datetimeFormat
-        ),
+        dateString.parsingDateStringToNewFormat(toDateFormat: option.datetimeFormat) ?? .empty,
         offset
       )
     }

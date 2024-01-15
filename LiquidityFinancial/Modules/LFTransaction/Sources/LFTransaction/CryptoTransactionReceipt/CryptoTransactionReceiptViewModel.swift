@@ -48,7 +48,10 @@ final class CryptoTransactionReceiptViewModel: ObservableObject {
         markValue: receipt.fee?.formattedUSDAmount() ?? "$0",
         value: Constants.CurrencyUnit.usd.description
       ),
-      .init(title: LFLocalizable.CryptoReceipt.DateAndTime.title, value: receipt.createdAt.serverToReceiptDisplay()),
+      .init(
+        title: LFLocalizable.CryptoReceipt.DateAndTime.title,
+        value: receipt.createdAt.parsingDateStringToNewFormat(toDateFormat: .fullReceiptDateTime) ?? .empty
+      ),
       .init(title: LFLocalizable.CryptoReceipt.AccountID.title, markValue: accountID)
     ]
   }

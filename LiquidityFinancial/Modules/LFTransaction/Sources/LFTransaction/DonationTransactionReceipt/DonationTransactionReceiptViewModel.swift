@@ -42,7 +42,7 @@ final class DonationTransactionReceiptViewModel: ObservableObject {
       ),
       .init(
         title: LFLocalizable.DonationReceipt.DateAndTime.title,
-        value: receipt.createdAt.serverToTransactionDisplay(includeYear: true)
+        value: receipt.createdAt.parsingDateStringToNewFormat(toDateFormat: .fullTransactionDate)
       ),
       .init(title: LFLocalizable.CryptoReceipt.AccountID.title, value: accountID)
     ]

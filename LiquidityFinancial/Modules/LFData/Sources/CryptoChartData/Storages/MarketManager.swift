@@ -291,9 +291,9 @@ private extension MarketManager {
   func handlePriceValueForLineChart(priceModel: HistoricalPriceModel) {
     var newPrices = self.liveLineModelsSubject.value
     if let lastValue = newPrices.last,
-       let lastOpenTime = lastValue.timeOpen?.convertTimestampToDouble(dateFormat: Constants.DateFormat.iso8601WithTimeZone.rawValue) {
+       let lastOpenTime = lastValue.timeOpen?.convertTimestampToDouble(dateFormat: LiquidityDateFormatter.iso8601WithTimeZone.rawValue) {
       if lastOpenTime > priceModel.timeOpen?.convertTimestampToDouble(
-        dateFormat: Constants.DateFormat.iso8601WithTimeZone.rawValue
+        dateFormat: LiquidityDateFormatter.iso8601WithTimeZone.rawValue
       ) ?? 0 {
         return
       }
@@ -322,10 +322,10 @@ private extension MarketManager {
     var candleDatas = self.liveCandleDatasSubject.value
     if let lastModel = newValue.last, var lastCandleData = candleDatas.last {
       let openTimeValue = priceModel.timeOpen?.convertTimestampToDouble(
-        dateFormat: Constants.DateFormat.iso8601WithTimeZone.rawValue
+        dateFormat: LiquidityDateFormatter.iso8601WithTimeZone.rawValue
       ) ?? 0
       let lastTimeValue = lastModel.lastUpdated?.convertTimestampToDouble(
-        dateFormat: Constants.DateFormat.iso8601WithTimeZone.rawValue
+        dateFormat: LiquidityDateFormatter.iso8601WithTimeZone.rawValue
       ) ?? 0
       if openTimeValue <= lastTimeValue {
         newValue.removeLast()
@@ -404,10 +404,10 @@ private extension MarketManager {
       }
       
       let startTimeStamp = startModel.timestamp ?? startModel.lastUpdated?.convertTimestampToDouble(
-        dateFormat: Constants.DateFormat.iso8601WithTimeZone.rawValue
+        dateFormat: LiquidityDateFormatter.iso8601WithTimeZone.rawValue
       ) ?? 0
       let endTimeStamp = endModel.timestamp ?? startModel.lastUpdated?.convertTimestampToDouble(
-        dateFormat: Constants.DateFormat.iso8601WithTimeZone.rawValue
+        dateFormat: LiquidityDateFormatter.iso8601WithTimeZone.rawValue
       ) ?? 0
       let timestamp = (startTimeStamp + endTimeStamp) / 2
       

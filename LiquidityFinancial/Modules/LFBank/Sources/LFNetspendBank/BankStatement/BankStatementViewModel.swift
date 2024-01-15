@@ -77,10 +77,7 @@ class BankStatementViewModel: ObservableObject {
   }
   
   func detailFor(statement: StatementModel) -> String {
-    guard let date = DateFormatter.serverShort.date(from: statement.createdAt) else {
-      return .empty
-    }
-    return DateFormatter.monthDayYearDisplay.string(from: date)
+    statement.createdAt.parsingDateStringToNewFormat(toDateFormat: .monthDayYearAbbrev) ?? .empty
   }
   
 }

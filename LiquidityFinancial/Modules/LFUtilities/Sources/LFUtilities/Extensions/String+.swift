@@ -242,35 +242,13 @@ public extension String {
     return String(dropLast(prefix.count))
   }
 }
-
-private extension String {
-  func formatServerDate(date: Date, includeYear: Bool) -> String {
-    includeYear
-    ? DateFormatter.transactionDisplayFull.string(from: date)
-    : DateFormatter.transactionDisplayShort.string(from: date)
-  }
-}
-
+  
 public extension String {
-  func serverToTransactionDisplay(includeYear: Bool = false) -> String {
-    [DateFormatter.server, DateFormatter.serverShort]
-      .compactMap { $0.date(from: self) }
-      .first
-      .map { formatServerDate(date: $0, includeYear: includeYear) } ?? self
-  }
-  
-  func serverToReceiptDisplay() -> String {
-    [DateFormatter.server, DateFormatter.serverShort]
-      .compactMap { $0.date(from: self) }
-      .first
-      .map { DateFormatter.receiptDisplayFull.string(from: $0) } ?? self
-  }
-  
-  var displayDate: String? {
-    guard let date = DateFormatter.server.date(from: self) else {
+  func parsingDateStringToNewFormat(toDateFormat outputFormat: LiquidityDateFormatter) -> String? {
+    guard let format = LiquidityDateFormatter.getDateFormat(from: self), let inputDate = format.parseToDate(from: self) else {
       return nil
     }
-    return DateFormatter.monthDayDisplay.string(from: date)
+    return outputFormat.parseToString(from: inputDate)
   }
   
   func convertTimestampToDouble(dateFormat: String) -> Double {
@@ -282,28 +260,6 @@ public extension String {
       return unixTimestamp
     }
     return .zero
-  }
-  
-  func convertToNewDateFormat(from inputFormat: String, to outputFormat: String) -> String {
-    let inputDateFormatter = DateFormatter()
-    inputDateFormatter.dateFormat = inputFormat
-    
-    if let inputDate = inputDateFormatter.date(from: self) {
-      let outputDateFormatter = DateFormatter()
-      outputDateFormatter.dateFormat = outputFormat
-      outputDateFormatter.timeZone = TimeZone(identifier: "UTC")
-      return outputDateFormatter.string(from: inputDate)
-    } else {
-      return self
-    }
-  }
-  
-  func getDate() -> Date? {
-    let dateFormatter = DateFormatter()
-    dateFormatter.dateFormat = "yyyy-MM-dd"
-    dateFormatter.timeZone = TimeZone.current
-    dateFormatter.locale = Locale.current
-    return dateFormatter.date(from: self)
   }
 }
 

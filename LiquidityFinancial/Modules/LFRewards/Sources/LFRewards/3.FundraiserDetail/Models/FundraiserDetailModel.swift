@@ -3,6 +3,7 @@ import RewardData
 import RewardDomain
 import NetworkUtilities
 import LFStyleGuide
+import LFUtilities
 
 // MARK: - Fundraiser
 public typealias LFCharityModel = FundraiserDetailModel.Charity
@@ -173,7 +174,8 @@ public struct FundraiserDetailModel: Equatable, Identifiable {
     }
     
     func transactionDateInLocalZone(includeYear: Bool = false) -> String {
-      createdAt?.serverToTransactionDisplay(includeYear: includeYear) ?? ""
+      let dateFormat: LiquidityDateFormatter = includeYear ? .fullTransactionDate : .shortTransactionDate
+      return createdAt?.parsingDateStringToNewFormat(toDateFormat: dateFormat) ?? .empty
     }
   }
   

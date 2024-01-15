@@ -56,20 +56,20 @@ extension CryptoFilterOption {
     }
   }
   
-  public var datetimeFormat: String {
+  public var datetimeFormat: LiquidityDateFormatter {
     switch self {
     case .live:
-      return Constants.DateFormat.periodSeparated.rawValue
+      return .periodSeparated
     case .day:
-      return Constants.DateFormat.hour.rawValue
+      return LiquidityDateFormatter.hour
     case .week:
-      return Constants.DateFormat.periodSeparated.rawValue
+      return .periodSeparated
     case .month:
-      return Constants.DateFormat.periodSeparated.rawValue
+      return .periodSeparated
     case .year:
-      return Constants.DateFormat.periodSeparated.rawValue
+      return .periodSeparated
     case .all:
-      return Constants.DateFormat.year.rawValue
+      return .yearOnly
     }
   }
 }

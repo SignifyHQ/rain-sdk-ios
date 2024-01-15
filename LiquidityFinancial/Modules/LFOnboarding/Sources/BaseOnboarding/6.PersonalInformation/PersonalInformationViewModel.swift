@@ -41,7 +41,10 @@ public final class PersonalInformationViewModel: ObservableObject {
       accountDataManager.update(firstName: firstName)
       accountDataManager.update(lastName: lastName)
       accountDataManager.update(fullName: firstName + " " + lastName)
-      accountDataManager.update(dateOfBirth: dateCheck?.getDateString())
+      if let dateCheck {
+        let dateOfBirth = LiquidityDateFormatter.simpleDate.parseToString(from: dateCheck)
+        accountDataManager.update(dateOfBirth: dateOfBirth)
+      }
       accountDataManager.userNameDisplay = firstName
       accountDataManager.userEmail = email
       if accountDataManager.userInfomationData.phone == nil {

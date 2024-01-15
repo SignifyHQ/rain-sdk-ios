@@ -1,4 +1,5 @@
 import SwiftUI
+import LFUtilities
 
 // swiftlint:disable force_unwrapping
 public struct DateTextField: UIViewRepresentable {
@@ -75,7 +76,7 @@ public struct DateTextField: UIViewRepresentable {
   public func updateUIView(_ uiView: UITextField, context _: Context) {
     // date = datePicker.date
     if let selectedDate = date {
-      uiView.text = DateFormatter.textField.string(from: selectedDate)
+      uiView.text = LiquidityDateFormatter.textFieldDate.parseToString(from: selectedDate)
     }
   }
 

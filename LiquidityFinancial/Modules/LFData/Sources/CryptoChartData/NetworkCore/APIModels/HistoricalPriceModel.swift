@@ -74,7 +74,7 @@ public extension HistoricalPriceModel {
       currency: entity.currency,
       interval: entity.interval,
       timestamp: entity.timestamp?.convertTimestampToDouble(
-        dateFormat: Constants.DateFormat.iso8601WithTimeZone.rawValue
+        dateFormat: LiquidityDateFormatter.iso8601WithTimeZone.rawValue
       ) ?? 0,
       changePercentage: nil,
       timeOpen: nil,

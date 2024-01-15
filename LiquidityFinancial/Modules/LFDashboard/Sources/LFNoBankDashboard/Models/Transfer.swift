@@ -17,6 +17,6 @@ struct Transfer {
     guard let transDate = transferredAt?.nilIfEmpty else {
       return ""
     }
-    return transDate.serverToTransactionDisplay()
+    return transDate.parsingDateStringToNewFormat(toDateFormat: .shortTransactionDate) ?? .empty
   }
 }
