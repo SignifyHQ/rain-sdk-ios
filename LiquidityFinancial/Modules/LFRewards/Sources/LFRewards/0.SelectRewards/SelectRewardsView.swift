@@ -59,6 +59,7 @@ private extension SelectRewardsView {
             .padding(.bottom, 4)
           titles
           options
+          Spacer()
           bottomView
         }
         .padding(.horizontal, 30)
@@ -105,14 +106,12 @@ private extension SelectRewardsView {
         viewModel.continueTapped()
       }
     }
-    .padding(.bottom, 20)
+    .padding(.bottom, 16)
   }
   
   var cashbackDonationDisclosure: some View {
     Group {
       Text("\(LFLocalizable.DonationsDisclosure.second) ")
-      +
-      Text(LFLocalizable.DonationsDisclosure.text("100%"))
       +
       Text(GenImages.CommonImages.info.swiftUIImage)
         .baselineOffset(-3)

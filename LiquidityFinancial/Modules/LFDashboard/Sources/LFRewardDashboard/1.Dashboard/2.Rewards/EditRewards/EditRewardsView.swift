@@ -96,7 +96,6 @@ private extension EditRewardsView {
       .foregroundColor(Colors.label.swiftUIColor.opacity(0.5))
       .multilineTextAlignment(.center)
       .padding(.bottom, 12)
-      .padding(.horizontal, 24)
   }
 
 }

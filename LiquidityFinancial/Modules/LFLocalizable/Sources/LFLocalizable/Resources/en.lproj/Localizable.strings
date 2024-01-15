@@ -809,7 +809,7 @@ https://mn.gov/commerce/money/investments/cryptocurrency/. \n\n\n\n\n\n\n";
 "donations_disclosure.text" = "%@ of the donations you make are tax deductible and go to charity. ";
 "donations_disclosure.alert.title" = "DONATIONS";
 "donations_disclosure.alert.powered_by" = "Powered by ShoppingGives ";
-"donations_disclosure.second" = "Cash Back and Charitable donations are granted automatically at the time of transaction.";
+"donations_disclosure.second" = "Cash Back and Charitable donations are granted automatically at the time of transaction. 100%% of the donations you make are tax deductible and go to charity";
 
 // Alert Attributed Text
 "alert_attributed_text.tax_deductions" = "Donations made to ShoppingGives Foundation EIN: %@.\n100%% of funds granted to designated nonprofit - %@ and %@.";

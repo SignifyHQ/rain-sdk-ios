@@ -1713,8 +1713,8 @@ public enum LFLocalizable {
     public static let userDonations = LFLocalizable.tr("Localizable", "donations.user_donations", fallback: "My Donations")
   }
   public enum DonationsDisclosure {
-    /// Cash Back and Charitable donations are granted automatically at the time of transaction.
-    public static let second = LFLocalizable.tr("Localizable", "donations_disclosure.second", fallback: "Cash Back and Charitable donations are granted automatically at the time of transaction.")
+    /// Cash Back and Charitable donations are granted automatically at the time of transaction. 100%% of the donations you make are tax deductible and go to charity
+    public static let second = LFLocalizable.tr("Localizable", "donations_disclosure.second", fallback: "Cash Back and Charitable donations are granted automatically at the time of transaction. 100%% of the donations you make are tax deductible and go to charity")
     /// %@ of the donations you make are tax deductible and go to charity. 
     public static func text(_ p1: Any) -> String {
       return LFLocalizable.tr("Localizable", "donations_disclosure.text", String(describing: p1), fallback: "%@ of the donations you make are tax deductible and go to charity. ")
