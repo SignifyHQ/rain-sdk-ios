@@ -10,7 +10,7 @@ public protocol RewardUseCaseProtocol {
   func getContributionList(limit: Int, offset: Int) async throws -> ContributionListEntity
   func getContribution(contributionID: String) async throws -> ContributionEntity
   func getCategoriesTrending() async throws -> CategoriesFundraisersListEntity
-  func postDonationsSuggest(name: String) async throws -> Bool
+  func postDonationsSuggest(name: String) async throws -> CauseSuggestionResponseEntity
   func getUserDonationSummary() async throws -> any UserDonationSummaryEntity
   func searchFundraisers(texts: [String], limit: Int, offset: Int) async throws -> CategoriesFundraisersListEntity
 }

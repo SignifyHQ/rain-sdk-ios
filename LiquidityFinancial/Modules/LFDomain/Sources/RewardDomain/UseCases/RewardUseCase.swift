@@ -44,7 +44,7 @@ public final class RewardUseCase: RewardUseCaseProtocol {
     return try await self.repository.getCategoriesTrending()
   }
   
-  public func postDonationsSuggest(name: String) async throws -> Bool {
+  public func postDonationsSuggest(name: String) async throws -> CauseSuggestionResponseEntity {
     return try await self.repository.postDonationsSuggest(name: name)
   }
   

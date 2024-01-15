@@ -15,16 +15,19 @@ public class SuggestCauseViewModel: ObservableObject {
   
   @Published var isLoading: Bool = false
   @Published var showSuccess: Bool = false
-
+  @Published var toastMessage: String?
+  
   func submitCause(name: String) {
     Task { @MainActor in
+      defer { isLoading = false }
+      isLoading = true
+      
       do {
-        defer { isLoading = false }
-        isLoading = true
         _ = try await rewardUseCase.postDonationsSuggest(name: name)
         showSuccess = true
       } catch {
         log.error(error.userFriendlyMessage)
+        toastMessage = error.userFriendlyMessage
       }
     }
   }

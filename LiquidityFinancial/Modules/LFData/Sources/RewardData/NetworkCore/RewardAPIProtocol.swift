@@ -14,7 +14,7 @@ public protocol RewardAPIProtocol {
   func getContributionList(limit: Int, offset: Int) async throws -> APIContributionList
   func getContribution(contributionID: String) async throws -> APIContribution
   func getCategoriesTrending() async throws -> APICategoriesFundraisersList
-  func postDonationsSuggest(name: String) async throws -> Bool
+  func postDonationsSuggest(name: String) async throws -> APICauseSuggestionResponse
   func getUserDonationSummary() async throws -> APIUserDonationSummary
   func searchFundraisers(texts: [String], limit: Int, offset: Int) async throws -> APICategoriesFundraisersList
 }

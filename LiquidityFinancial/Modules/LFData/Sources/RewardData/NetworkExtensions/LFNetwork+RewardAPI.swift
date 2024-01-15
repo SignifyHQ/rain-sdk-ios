@@ -104,12 +104,12 @@ extension LFCoreNetwork: RewardAPIProtocol where R == RewardRoute {
     return APICategoriesFundraisersList(total: listModel.total, data: listModel.data)
   }
   
-  public func postDonationsSuggest(name: String) async throws -> Bool {
-    let response = try await request(RewardRoute.donationsSuggest(name: name))
-    let statusCode = (response.httpResponse?.statusCode ?? 500).isSuccess
-    if !statusCode, let data = response.data {
-      try LFCoreNetwork.processingStringError(data)
-    }
-    return statusCode
+  public func postDonationsSuggest(name: String) async throws -> APICauseSuggestionResponse {
+    try await request(
+      RewardRoute.donationsSuggest(name: name),
+      target: APICauseSuggestionResponse.self,
+      failure: LFErrorObject.self,
+      decoder: .apiDecoder
+    )
   }
 }

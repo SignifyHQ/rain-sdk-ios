@@ -35,6 +35,9 @@ public struct SuggestCauseView: View {
           }
         }
       }
+      .popup(item: $viewModel.toastMessage, style: .toast) {
+        ToastView(toastMessage: $0)
+      }
       .popup(isPresented: $viewModel.showSuccess, dismissMethods: []) {
         successPopup
       }
