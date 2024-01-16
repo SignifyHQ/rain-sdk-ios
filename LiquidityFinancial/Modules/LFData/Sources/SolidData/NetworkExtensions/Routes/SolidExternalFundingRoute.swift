@@ -112,7 +112,7 @@ extension SolidExternalFundingRoute: LFRoute {
       ]
     case .cancelACHTransaction(let liquidityTransactionID):
       return [
-        "liquidityTransactionId": liquidityTransactionID,
+        "liquidityTransactionId": liquidityTransactionID
       ]
     }
   }

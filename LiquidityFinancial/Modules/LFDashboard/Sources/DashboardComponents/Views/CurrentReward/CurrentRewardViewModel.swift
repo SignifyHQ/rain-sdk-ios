@@ -56,10 +56,10 @@ final class CurrentRewardViewModel: ObservableObject {
         if notIncludeFiat {
           let rewards = entity.filter({ ($0.name ?? "").contains("USD") == false })
           model = UserRewardsModel(rewards: rewards.filter({ ($0.specialPromo ?? false) == false }),
-                                       pecialrewards: rewards.filter({ ($0.specialPromo ?? false) == true }))
+                                   pecialrewards: rewards.filter({ ($0.specialPromo ?? false) == true }))
         } else {
           model = UserRewardsModel(rewards: entity.filter({ ($0.specialPromo ?? false) == false }),
-                                       pecialrewards: entity.filter({ ($0.specialPromo ?? false) == true }))
+                                   pecialrewards: entity.filter({ ($0.specialPromo ?? false) == true }))
         }
         status = .success([model])
       } catch {

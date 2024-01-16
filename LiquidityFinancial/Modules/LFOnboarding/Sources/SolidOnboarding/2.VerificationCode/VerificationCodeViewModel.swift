@@ -87,8 +87,9 @@ extension VerificationCodeViewModel {
           parameters: parameters
         )
         
-        self.handleLoginSuccess()
-        self.isShowLoading = false
+        self.handleLoginSuccess {
+          self.isShowLoading = false
+        }
         
       } catch {
         analyticsService.set(params: ["phoneVerified": false])
@@ -223,16 +224,14 @@ private extension VerificationCodeViewModel {
     coordinator.verificationDestinationView = .identityVerificationCode(AnyView(view))
   }
   
-  func handleLoginSuccess() {
+  func handleLoginSuccess(onCompletion: (() -> Void)? = nil) {
     accountDataManager.update(phone: formatPhoneNumber)
     accountDataManager.stored(phone: formatPhoneNumber)
-    checkOnboardingState()
-  }
-  
-  func checkOnboardingState() {
+    
     Task {
       defer {
         NotificationCenter.default.post(name: .didLoginComplete, object: nil)
+        onCompletion?()
       }
       
       do {

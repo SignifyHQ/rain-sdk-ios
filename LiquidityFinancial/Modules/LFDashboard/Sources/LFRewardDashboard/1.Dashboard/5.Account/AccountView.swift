@@ -27,14 +27,6 @@ struct AccountsView: View {
         switch item {
         case .debugMenu:
           DBAdminMenuView(environment: viewModel.networkEnvironment.title)
-        case .atmLocation(let authorizationCode):
-          NetspendLocationViewController(
-            withPasscode: authorizationCode,
-            onClose: {
-              viewModel.navigation = nil
-            })
-          .navigationTitle(LFLocalizable.AccountView.atmLocationTitle)
-          .foregroundColor(Colors.label.swiftUIColor)
         case .depositLimits:
           AccountLimitsView()
         case .connectedAccounts:

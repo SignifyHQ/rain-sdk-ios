@@ -24,11 +24,11 @@ class ConfirmBuySellCryptoViewModel: ObservableObject {
   @Published var navigation: Navigation?
   
   private lazy var sellCryptoUseCase: SellCryptoUseCaseProtocol = {
-    return SellCryptoUseCase(repository: zerohashRepository)
+    SellCryptoUseCase(repository: zerohashRepository)
   }()
   
   private lazy var buyCryptoUseCase: BuyCryptoUseCaseProtocol = {
-    return BuyCryptoUseCase(repository: zerohashRepository)
+    BuyCryptoUseCase(repository: zerohashRepository)
   }()
   
   private var cancellables: Set<AnyCancellable> = []

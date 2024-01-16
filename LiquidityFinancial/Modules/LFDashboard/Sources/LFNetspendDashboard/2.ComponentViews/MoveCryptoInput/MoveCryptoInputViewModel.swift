@@ -35,11 +35,11 @@ final class MoveCryptoInputViewModel: ObservableObject {
   }
   
   private lazy var getSellCryptoQouteUseCase: GetSellQuoteUseCaseProtocol = {
-    return GetSellQuoteUseCase(repository: zerohashRepository)
+    GetSellQuoteUseCase(repository: zerohashRepository)
   }()
   
   private lazy var getBuyCryptoQouteUseCase: GetBuyQuoteUseCaseProtocol = {
-    return GetBuyQuoteUseCase(repository: zerohashRepository)
+    GetBuyQuoteUseCase(repository: zerohashRepository)
   }()
 
   private var subscribers: Set<AnyCancellable> = []

@@ -34,7 +34,6 @@ extension LFCoreNetwork: ZerohashAPIProtocol where R == ZerohashRoute {
                              decoder: .apiDecoder)
   }
   
-  
   public func sendCrypto(accountId: String, destinationAddress: String, amount: Double) async throws -> APITransaction {
     return try await request(
       ZerohashRoute.sendCrypto(accountId: accountId, destinationAddress: destinationAddress, amount: amount),

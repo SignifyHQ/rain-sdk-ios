@@ -137,7 +137,6 @@ extension AccountViewModel {
 extension AccountViewModel {
   enum Navigation {
     case debugMenu
-    case atmLocation(String)
     case depositLimits
     case connectedAccounts
     case bankStatement

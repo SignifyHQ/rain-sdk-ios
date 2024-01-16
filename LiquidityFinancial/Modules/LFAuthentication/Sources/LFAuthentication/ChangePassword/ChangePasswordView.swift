@@ -1,10 +1,3 @@
-//
-//  ChangePasswordView.swift
-//  
-//
-//  Created by Volodymyr Davydenko on 12.12.2023.
-//
-
 import Foundation
 import LFLocalizable
 import LFStyleGuide

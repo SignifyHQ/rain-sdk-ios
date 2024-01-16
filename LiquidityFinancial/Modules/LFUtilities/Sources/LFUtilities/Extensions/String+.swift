@@ -330,7 +330,7 @@ public extension String {
     
     let att = try? NSAttributedString(
       data: data,
-      options: [.documentType: NSAttributedString.DocumentType.html, .characterEncoding:String.Encoding.utf8.rawValue],
+      options: [.documentType: NSAttributedString.DocumentType.html, .characterEncoding: String.Encoding.utf8.rawValue],
       documentAttributes: nil
     )
     return att
