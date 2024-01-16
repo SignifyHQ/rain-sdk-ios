@@ -14,8 +14,6 @@ class DonationsViewModel: ObservableObject {
   private var offset = 0
   private var limit = 100
   
-  let tabRedirection: TabRedirection
-  
   @Published var showRoundUpDonation: Bool = false
   @Published var status = Status.idle
   @Published var isLoading = true
@@ -50,9 +48,9 @@ class DonationsViewModel: ObservableObject {
     RewardUseCase(repository: rewardRepository)
   }()
   
-  init(tabRedirection: @escaping TabRedirection) {
-    self.tabRedirection = tabRedirection
-    self.handleSelectedFundraisersSuccess()
+  init() {
+    handleSelectedFundraisersSuccess()
+    onAppear()
   }
   
   deinit {
@@ -67,11 +65,11 @@ extension DonationsViewModel {
     switch selectedOption {
     case .fundraiserDonations:
       Task { @MainActor in
-        await apiFetchFundraiserDetail()
+        await apiFetchFundraiserDetail(isPullToRefresh: true)
       }
     case .userDonations:
       Task { @MainActor in
-        await apiFetchContribution()
+        await apiFetchContribution(isPullToRefresh: true)
       }
     }
   }
@@ -127,8 +125,11 @@ extension DonationsViewModel {
     await apiFetchFundraiserDetail()
   }
   
-  private func apiFetchContribution() async {
-    self.contributionData = .loading
+  private func apiFetchContribution(isPullToRefresh: Bool = false) async {
+    if !isPullToRefresh {
+      self.contributionData = .loading
+    }
+    
     do {
       let contribution = try await rewardUseCase.getContributionList(limit: limit, offset: offset)
       let model = contribution.data.compactMap({ ContributionModel(entity: $0) })
@@ -139,9 +140,12 @@ extension DonationsViewModel {
     }
   }
   
-  private func apiFetchFundraiserDetail() async {
+  private func apiFetchFundraiserDetail(isPullToRefresh: Bool = false) async {
     guard let selectedFundraiserID = rewardDataManager.selectedFundraiserID else { return }
-    self.latestDonationData = .loading
+    if !isPullToRefresh {
+      self.latestDonationData = .loading
+    }
+    
     do {
       let enity = try await rewardUseCase.getFundraisersDetail(fundraiserID: selectedFundraiserID)
       self.selectedFundraiser = FundraiserDetailModel(enity: enity)

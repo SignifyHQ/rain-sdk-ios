@@ -10,13 +10,29 @@ import LFSolidBank
 import Factory
 import Services
 import LFAuthentication
-
+import LFSolidCard
+  
 public struct HomeView: View {
   @Injected(\.analyticsService) var analyticsService
-  
   @Environment(\.scenePhase) var scenePhase
-  
   @StateObject private var viewModel: HomeViewModel
+  
+  // Ensure each TabOptionView is initialized only once
+  let cashView = CashView(
+    listCardViewModel: SolidListCardsViewModel(
+      coordinator: Container().baseCardDestinationObservable.callAsFunction()
+    )
+  )
+  let rewardsView = RewardsView(viewModel: .init())
+  let unspecifiedRewardsView = UnspecifiedRewardsView(
+    destination: AnyView(
+      EditRewardsView(viewModel: EditRewardsViewModel())
+    )
+  )
+  let donationsView = DonationsView(viewModel: .init())
+  let causesView = CausesView(viewModel: CausesViewModel())
+  let prideView = PrideCardCauseView(viewModel: PrideCardCauseViewModel())
+  let accountView = AccountsView(viewModel: AccountViewModel())
   
   var onChangeRoute: ((SolidOnboardingFlowCoordinator.Route) -> Void)?
 
@@ -27,14 +43,7 @@ public struct HomeView: View {
   
   public var body: some View {
     ZStack(alignment: .bottom) {
-      // Ensure each TabOptionView is initialized only once
-      ForEach(viewModel.tabOptions, id: \.self) { option in
-        DashboardView(option: option) { option in
-          viewModel.tabSelected = option
-        }
-        .opacity(viewModel.tabSelected == option ? 1 : 0)
-        .padding(.bottom, 50)
-      }
+      dashboardView
       tabBarItems
     }
     .navigationBarTitleDisplayMode(.inline)
@@ -114,6 +123,30 @@ public struct HomeView: View {
 
 // MARK: - View Components
 private extension HomeView {
+  var dashboardView: some View {
+    Group {
+      switch viewModel.tabSelected {
+      case .cash:
+        cashView
+      case .rewards:
+        rewardsView
+      case .noneReward:
+        unspecifiedRewardsView
+      case .donation:
+        donationsView
+      case .causes:
+        switch LFUtilities.target {
+        case .CauseCard: causesView
+        case .PrideCard, .PawsCard: prideView
+        default: causesView
+        }
+      case .account:
+        accountView
+      }
+    }
+    .padding(.bottom, 50)
+  }
+  
   var leadingNavigationBarView: some View {
     Text(viewModel.tabSelected.title.uppercased())
       .font(Fonts.Montserrat.black.swiftUIFont(size: Constants.FontSize.navigationBar.value))

@@ -20,8 +20,11 @@ public struct UnspecifiedRewardsView: View {
         destination
       }
   }
-  
-  private var content: some View {
+}
+
+// MARK: - Private View Components
+private extension UnspecifiedRewardsView {
+  var content: some View {
     VStack {
       ZStack(alignment: .top) {
         VStack(spacing: 0) {
@@ -53,13 +56,13 @@ public struct UnspecifiedRewardsView: View {
     }
   }
   
-  private var bgHeaderView: some View {
+  var bgHeaderView: some View {
     Group {
       HeaderUnspecifiedRewardsView()
     }
   }
   
-  private var info: some View {
+  var info: some View {
     VStack(alignment: .leading, spacing: 16) {
       Text(LFLocalizable.UnspecifiedRewards.title.uppercased())
         .font(Fonts.regular.swiftUIFont(size: 18))
@@ -76,7 +79,7 @@ public struct UnspecifiedRewardsView: View {
     .padding(16)
   }
   
-  private func row(item: UserRewardType) -> some View {
+  func row(item: UserRewardType) -> some View {
     HStack(spacing: 8) {
       item.image
       if let title = item.title {

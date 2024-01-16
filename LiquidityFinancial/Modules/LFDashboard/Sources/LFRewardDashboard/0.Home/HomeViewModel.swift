@@ -492,7 +492,6 @@ private extension HomeViewModel {
   func handleSelectRewardChange() {
     rewardDataManager
       .selectRewardChangedEvent
-      .dropFirst()
       .receive(on: DispatchQueue.main)
       .sink { [weak self] reward in
         self?.buildTabOption(with: reward)

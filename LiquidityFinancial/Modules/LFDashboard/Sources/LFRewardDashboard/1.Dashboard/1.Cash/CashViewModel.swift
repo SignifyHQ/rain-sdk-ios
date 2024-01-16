@@ -15,6 +15,7 @@ import ExternalFundingData
 import AccountService
 import SolidDomain
 import SolidData
+import SwiftUI
 
 @MainActor
 final class CashViewModel: ObservableObject {
@@ -26,7 +27,6 @@ final class CashViewModel: ObservableObject {
   @Injected(\.solidExternalFundingRepository) var solidExternalFundingRepository
   @Injected(\.fiatAccountService) var fiatAccountService
   
-  @Published var isCardActive: Bool = true
   @Published var isLoading: Bool = false
   @Published var isOpeningPlaidView: Bool = false
   @Published var isDisableView: Bool = false
@@ -62,11 +62,9 @@ final class CashViewModel: ObservableObject {
   
   let currencyType = Constants.CurrencyType.fiat.rawValue
   
-  private let guestHandler: () -> Void
   private var subscriptions = Set<AnyCancellable>()
   
-  init(guestHandler: @escaping () -> Void) {
-    self.guestHandler = guestHandler
+  init() {
     firstLoadData()
     handleACHInfo()
     handleEventReloadTransaction()
@@ -94,6 +92,7 @@ final class CashViewModel: ObservableObject {
         guard let self else { return }
         guard let accountID = self.accountDataManager.fiatAccountID else { return }
         let animation = self.transactions.isEmpty ? true : false
+        self.refreshAccount()
         self.refreshTransaction(withAnimation: animation, accountID: accountID)
       }
       .store(in: &cancellable)
@@ -151,17 +150,12 @@ final class CashViewModel: ObservableObject {
 
 // MARK: - View Helpers
 extension CashViewModel {
-  
-  func onClickedChangeAssetButton() {
-    navigation = .changeAsset
-  }
-  
   func addMoneyTapped() {
     Haptic.impact(.light).generate()
     if linkedContacts.isEmpty {
       fullScreen = .fundCard(.receive)
     } else {
-      navigation = .addMoney
+      navigation = .moveMoney(kind: .receive)
     }
   }
   
@@ -170,7 +164,7 @@ extension CashViewModel {
     if linkedContacts.isEmpty {
       fullScreen = .fundCard(.send)
     } else {
-      navigation = .sendMoney
+      navigation = .moveMoney(kind: .send)
     }
   }
   
@@ -183,14 +177,20 @@ extension CashViewModel {
     navigation = .transactions
   }
   
-  func guestCardTapped() {
-    guestHandler()
+  func handleScenePhaseChange(scenePhase: ScenePhase) {
+    switch scenePhase {
+    case .background:
+      handleBackgroundPhase()
+    case .active:
+      handleActivePhase()
+    default: break
+    }
   }
 }
 
 // MARK: - Private Functions
- extension CashViewModel {
-  private func loadTransactions(accountId: String) async throws {
+private extension CashViewModel {
+  func loadTransactions(accountId: String) async throws {
     let transactions = try await accountRepository.getTransactions(
       accountId: accountId,
       currencyType: currencyType,
@@ -202,7 +202,7 @@ extension CashViewModel {
   }
   
   @discardableResult
-  private func refreshAccounts() async throws -> AccountModel? {
+  func refreshAccounts() async throws -> AccountModel? {
     defer { isLoading = false }
     isLoading = true
     let accounts = try await getFiatAccounts()
@@ -216,7 +216,7 @@ extension CashViewModel {
     return accounts.first
   }
   
-  private func handleACHInfo() {
+  func handleACHInfo() {
     Task {
       do {
         achInformation = try await getACHInformation()
@@ -226,16 +226,13 @@ extension CashViewModel {
     }
   }
    
-   private func getFiatAccounts() async throws -> [AccountModel] {
-     var accounts = self.accountDataManager.fiatAccounts
-     if accounts.isEmpty {
-       accounts = try await fiatAccountService.getAccounts()
-       self.accountDataManager.addOrUpdateAccounts(accounts)
-     }
-     return accounts
-   }
+  func getFiatAccounts() async throws -> [AccountModel] {
+    let accounts = try await fiatAccountService.getAccounts()
+    self.accountDataManager.addOrUpdateAccounts(accounts)
+    return accounts
+  }
    
-   private func getACHInformation() async throws -> ACHModel {
+  func getACHInformation() async throws -> ACHModel {
      let account = try await getFiatAccounts().first
      guard let accountId = account?.id else {
        return ACHModel.default
@@ -247,7 +244,19 @@ extension CashViewModel {
        accountName: wireResponse.accountNumber
      )
    }
-   
+  
+  func handleBackgroundPhase() {
+    shouldReloadListTransaction = true
+  }
+  
+  func handleActivePhase() {
+    guard shouldReloadListTransaction else {
+      return
+    }
+    
+    shouldReloadListTransaction = false
+    refreshable()
+  }
 }
 
 // MARK: - Types
@@ -259,12 +268,9 @@ extension CashViewModel {
   }
   
   enum Navigation {
-    case bankStatements
-    case changeAsset
     case transactions
     case transactionDetail(TransactionModel)
-    case addMoney
-    case sendMoney
+    case moveMoney(kind: MoveMoneyAccountViewModel.Kind)
   }
   
   enum FullScreen: Identifiable {

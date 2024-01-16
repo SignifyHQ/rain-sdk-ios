@@ -16,9 +16,6 @@ struct CausesView: View {
     content
       .track(name: String(describing: type(of: self)))
       .background(Colors.background.swiftUIColor)
-      .onAppear {
-        viewModel.appearOpeations()
-      }
       .navigationLink(item: $viewModel.navigation) { navigation in
         switch navigation {
         case let .fundraiserDetail(fundraiserID):
@@ -37,8 +34,11 @@ struct CausesView: View {
         ToastView(toastMessage: LFLocalizable.genericErrorMessage)
       }
   }
+}
   
-  private var content: some View {
+// MARK: - Private View Components
+private extension CausesView {
+  var content: some View {
     Group {
       switch viewModel.status {
       case .idle, .loading:
@@ -50,10 +50,8 @@ struct CausesView: View {
       }
     }
   }
-}
-
-extension CausesView {
-  private var loading: some View {
+  
+  var loading: some View {
     Group {
       LottieView(loading: .primary)
         .frame(width: 45, height: 30)
@@ -61,7 +59,7 @@ extension CausesView {
     .frame(max: .infinity)
   }
   
-  private var failure: some View {
+  var failure: some View {
     VStack(spacing: 32) {
       Spacer()
       Text(LFLocalizable.Causes.error)
@@ -75,10 +73,8 @@ extension CausesView {
     .padding(30)
     .frame(maxWidth: .infinity)
   }
-}
-
-extension CausesView {
-  private func success(data: CausesViewModel.Data) -> some View {
+  
+  func success(data: CausesViewModel.Data) -> some View {
     ScrollView(showsIndicators: false) {
       VStack(alignment: .leading, spacing: 24) {
         if !data.trending.isEmpty {
@@ -113,14 +109,14 @@ extension CausesView {
     }
   }
   
-  private func explore(items: [CauseModel]) -> some View {
+  func explore(items: [CauseModel]) -> some View {
     VStack(alignment: .leading, spacing: 12) {
-      title(text: "causes.explore".localizedString)
+      title(text: LFLocalizable.Causes.explore)
       exploreGrid(items: items)
     }
   }
   
-  private func exploreGrid(items: [CauseModel]) -> some View {
+  func exploreGrid(items: [CauseModel]) -> some View {
     LazyVGrid(columns: .init(repeating: .init(.flexible()), count: 3), spacing: 12) {
       ForEach(items) { cause in
         Button {
@@ -132,7 +128,7 @@ extension CausesView {
     }
   }
   
-  private func trendingItem(item: CategoriesTrendingModel) -> some View {
+  func trendingItem(item: CategoriesTrendingModel) -> some View {
     Button {
       viewModel.selected(fundraiser: item)
     } label: {
@@ -145,7 +141,7 @@ extension CausesView {
     .padding(.trailing, 6)
   }
   
-  private func fundraiserItem(item: CategoriesTrendingModel) -> some View {
+  func fundraiserItem(item: CategoriesTrendingModel) -> some View {
     HStack(spacing: 12) {
       CachedAsyncImage(url: item.stickerURL) { image in
         image
@@ -177,7 +173,7 @@ extension CausesView {
     .padding(.top, 6)
   }
   
-  private var newBadge: some View {
+  var newBadge: some View {
     Text(LFLocalizable.Causes.new)
       .font(Fonts.regular.swiftUIFont(size: 10))
       .foregroundColor(Colors.label.swiftUIColor)
@@ -188,7 +184,7 @@ extension CausesView {
       .padding(.trailing, -6)
   }
   
-  private func title(text: String) -> some View {
+  func title(text: String) -> some View {
     Text(text)
       .font(Fonts.regular.swiftUIFont(size: 12))
       .foregroundColor(Colors.label.swiftUIColor.opacity(0.75))

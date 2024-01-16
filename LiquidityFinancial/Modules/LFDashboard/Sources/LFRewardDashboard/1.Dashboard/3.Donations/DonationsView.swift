@@ -21,6 +21,45 @@ struct DonationsView: View {
   }
   
   var body: some View {
+    content
+      .background(Colors.background.swiftUIColor)
+      .refreshable {
+        viewModel.refresh()
+      }
+      .readGeometry { geo in
+        screenSize = geo.size
+      }
+      .sheet(isPresented: $viewModel.showRoundUpDonation, content: {
+        RoundUpView(
+          viewModel: RoundUpViewModel(onFinish: {
+            viewModel.showRoundUpDonation.toggle()
+          })
+        )
+      })
+      .navigationLink(item: $viewModel.navigation) { navigation in
+        switch navigation {
+        case .causeCategories(let causes):
+          SelectCauseCategoriesView(
+            viewModel: SelectCauseCategoriesViewModel(causes: causes),
+            whereStart: .dashboard
+          )
+        case .transactionDetail(let donationID, let fundraisersID):
+          TransactionDetailView(
+            accountID: viewModel.accountDataManager.fiatAccountID,
+            transactionId: donationID,
+            fundraisersId: fundraisersID,
+            kind: .donation,
+            isPopToRoot: false
+          )
+        }
+      }
+      .track(name: String(describing: type(of: self)))
+  }
+}
+
+// MARK: - Private View Components
+private extension DonationsView {
+  var content: some View {
     Group {
       if viewModel.isLoading {
         loading
@@ -45,48 +84,9 @@ struct DonationsView: View {
         }
       }
     }
-    .track(name: String(describing: type(of: self)))
-    .background(Colors.background.swiftUIColor)
-    .onAppear {
-      viewModel.onAppear()
-    }
-    .refreshable {
-      viewModel.refresh()
-    }
-    .readGeometry { geo in
-      screenSize = geo.size
-    }
-    .sheet(isPresented: $viewModel.showRoundUpDonation, content: {
-      RoundUpView(
-        viewModel: RoundUpViewModel(onFinish: {
-          viewModel.showRoundUpDonation.toggle()
-        })
-      )
-    })
-    .navigationLink(item: $viewModel.navigation) { navigation in
-      switch navigation {
-      case .causeCategories(let causes):
-        SelectCauseCategoriesView(
-          viewModel: SelectCauseCategoriesViewModel(causes: causes),
-          whereStart: .dashboard
-        )
-      case .transactionDetail(let donationID, let fundraisersID):
-        TransactionDetailView(
-          accountID: viewModel.accountDataManager.fiatAccountID,
-          transactionId: donationID,
-          fundraisersId: fundraisersID,
-          kind: .donation,
-          isPopToRoot: false
-        )
-      }
-    }
   }
-}
-
-  // MARK: - Subviews
-
-extension DonationsView {
-  private var loading: some View {
+  
+  var loading: some View {
     Group {
       LottieView(loading: .primary)
         .frame(width: 45, height: 30)
@@ -94,7 +94,7 @@ extension DonationsView {
     .frame(max: .infinity)
   }
   
-  private var selectFundraiser: some View {
+  var selectFundraiser: some View {
     ZStack(alignment: .top) {
       VStack(spacing: 0) {
         Spacer()
@@ -118,7 +118,7 @@ extension DonationsView {
     }
   }
   
-  private func selectedFundraiser(_ fundraiser: FundraiserDetailModel) -> some View {
+  func selectedFundraiser(_ fundraiser: FundraiserDetailModel) -> some View {
     VStack(spacing: 16) {
       FundraiserHeaderView(fundraiser: fundraiser, imageSize: 88, shareOnImageTap: true)
       GenImages.CommonImages.dash.swiftUIImage
@@ -132,7 +132,7 @@ extension DonationsView {
     .cornerRadius(10)
   }
   
-  private var segmentControl: some View {
+  var segmentControl: some View {
     HStack(spacing: 0) {
       ForEach(DonationsViewModel.Option.allCases) { option in
         Text(option.title)
@@ -159,7 +159,7 @@ extension DonationsView {
     .cornerRadius(32)
   }
   
-  private var feed: some View {
+  var feed: some View {
     Group {
       switch viewModel.selectedOption {
       case .userDonations:
@@ -170,7 +170,7 @@ extension DonationsView {
     }
   }
   
-  private func handleFeed(feed: DataStatus<RewardTransactionRowModel>) -> some View {
+  func handleFeed(feed: DataStatus<RewardTransactionRowModel>) -> some View {
     Group {
       switch feed {
       case .failure,
@@ -199,7 +199,7 @@ extension DonationsView {
     }
   }
   
-  private func transactions(items: [RewardTransactionRowModel]) -> some View {
+  func transactions(items: [RewardTransactionRowModel]) -> some View {
     Group {
       if items.isEmpty {
         emptyView

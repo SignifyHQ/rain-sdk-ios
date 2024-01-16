@@ -14,9 +14,6 @@ struct PrideCardCauseView: View {
   var body: some View {
     content
       .background(Colors.background.swiftUIColor)
-      .onAppear {
-        viewModel.appearOpeations()
-      }
       .navigationLink(item: $viewModel.navigation) { navigation in
         switch navigation {
         case let .fundraiserDetail(fundraiserID):
@@ -30,8 +27,11 @@ struct PrideCardCauseView: View {
         ToastView(toastMessage: message)
       }
   }
+}
   
-  private var content: some View {
+// MARK: - Private View Components
+extension PrideCardCauseView {
+  var content: some View {
     Group {
       switch viewModel.status {
       case .idle, .loading:
@@ -43,10 +43,8 @@ struct PrideCardCauseView: View {
       }
     }
   }
-}
-
-extension PrideCardCauseView {
-  private var loading: some View {
+  
+  var loading: some View {
     Group {
       LottieView(loading: .primary)
         .frame(width: 45, height: 30)
@@ -54,7 +52,7 @@ extension PrideCardCauseView {
     .frame(max: .infinity)
   }
   
-  private var failure: some View {
+  var failure: some View {
     VStack(spacing: 32) {
       Spacer()
       Text(LFLocalizable.Causes.error)
@@ -68,10 +66,8 @@ extension PrideCardCauseView {
     .padding(30)
     .frame(maxWidth: .infinity)
   }
-}
-
-extension PrideCardCauseView {
-  private func success(data: [FundraiserModel]) -> some View {
+  
+  func success(data: [FundraiserModel]) -> some View {
     ScrollView(showsIndicators: false) {
       VStack(alignment: .leading, spacing: 24) {
         Group {
@@ -88,7 +84,7 @@ extension PrideCardCauseView {
     .padding(.top, 20)
   }
   
-  private func item(fundraiser: FundraiserModel) -> some View {
+  func item(fundraiser: FundraiserModel) -> some View {
     VStack(spacing: 16) {
       FundraiserItemView(fundraiser: fundraiser) { fundraiserID in
         viewModel.selectedItem(fundraiserID: fundraiserID)
@@ -98,7 +94,7 @@ extension PrideCardCauseView {
     .cornerRadius(10)
   }
   
-  private func title(text: String) -> some View {
+  func title(text: String) -> some View {
     Text(text)
       .font(Fonts.regular.swiftUIFont(size: 12))
       .foregroundColor(Colors.label.swiftUIColor.opacity(0.75))

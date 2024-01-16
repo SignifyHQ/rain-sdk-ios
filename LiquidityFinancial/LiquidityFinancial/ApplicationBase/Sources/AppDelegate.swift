@@ -16,7 +16,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
   var orientationLock = UIInterfaceOrientationMask.portrait
   
   func application(_ application: UIApplication, didFinishLaunchingWithOptions options: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
-    setUpAppearence()
+    setUpAppearance()
     setupConfigs()
     setupNavigaton()
     KickoffService.kickoff(application: application, launchingOptions: options)

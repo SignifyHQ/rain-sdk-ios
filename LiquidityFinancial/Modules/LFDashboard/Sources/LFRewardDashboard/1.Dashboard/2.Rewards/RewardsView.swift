@@ -15,6 +15,10 @@ struct RewardsView: View {
     max(20, screenSize.height / 2 - 200)
   }
   
+  private var item: UserRewardType {
+    .cashBack
+  }
+  
   init(viewModel: RewardViewModel) {
     _viewModel = StateObject(wrappedValue: viewModel)
   }
@@ -23,9 +27,6 @@ struct RewardsView: View {
     content
       .track(name: String(describing: type(of: self)))
       .background(Colors.background.swiftUIColor)
-      .onAppear {
-        viewModel.onAppear()
-      }
       .refreshable {
         viewModel.refresh()
       }
@@ -51,20 +52,29 @@ struct RewardsView: View {
         }
       }
   }
-  
-  private var content: some View {
-    ScrollView(showsIndicators: false) {
-      VStack(spacing: 12) {
-        header
-        feed
-        Spacer()
+}
+
+// MARK: - Private View Components
+private extension RewardsView {
+  var content: some View {
+    Group {
+      if viewModel.isFirstLoading {
+        loadingView
+      } else {
+        ScrollView(showsIndicators: false) {
+          VStack(spacing: 12) {
+            header
+            feed
+            Spacer()
+          }
+          .padding(.vertical, 16)
+          .padding(.horizontal, 30)
+        }
       }
-      .padding(.vertical, 16)
-      .padding(.horizontal, 30)
     }
   }
   
-  private var header: some View {
+  var header: some View {
     HStack(spacing: 16) {
       ZStack {
         Circle()
@@ -100,22 +110,23 @@ struct RewardsView: View {
     .cornerRadius(10)
   }
   
-  private var item: UserRewardType {
-    .cashBack
-  }
-  
-  private var feed: some View {
+  var feed: some View {
     Group {
       switch viewModel.feed {
-      case .idle, .failure:
-        transactions([])
-      case .loading:
-        LottieView(loading: .mix)
-          .frame(width: 30, height: 20)
       case let .success(items):
         transactions(items)
+      default:
+        transactions([])
       }
     }
+  }
+  
+  var loadingView: some View {
+    Group {
+      LottieView(loading: .primary)
+        .frame(width: 45, height: 30)
+    }
+    .frame(max: .infinity)
   }
   
   var emptyView: some View {
@@ -132,7 +143,7 @@ struct RewardsView: View {
     }
   }
   
-  private func transactions(_ items: [TransactionModel]) -> some View {
+  func transactions(_ items: [TransactionModel]) -> some View {
     Group {
       if items.isEmpty {
         emptyView
@@ -156,7 +167,7 @@ struct RewardsView: View {
     }
   }
   
-  private var seeAllTransactions: some View {
+  var seeAllTransactions: some View {
     Button {
       viewModel.seeAllTransactionsTapped()
     } label: {

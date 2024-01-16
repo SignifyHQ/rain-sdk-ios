@@ -13,7 +13,6 @@ struct CashCardView: View {
   let showLoadingIndicator: Bool
   let cashBalance: Double
   let assetType: AssetType
-  let orderCardAction: () -> Void
   let listCardViewModel: SolidListCardsViewModel
   
   private var isCardAvailable: Bool {
@@ -29,15 +28,13 @@ struct CashCardView: View {
     showLoadingIndicator: Bool,
     cashBalance: Double,
     assetType: AssetType,
-    listCardViewModel: SolidListCardsViewModel,
-    orderCardAction: @escaping () -> Void
+    listCardViewModel: SolidListCardsViewModel
   ) {
     _isNotLinkedCard = isNoLinkedCard
     self.isPOFlow = isPOFlow
     self.cashBalance = cashBalance
     self.assetType = assetType
     self.showLoadingIndicator = showLoadingIndicator
-    self.orderCardAction = orderCardAction
     self.listCardViewModel = listCardViewModel
     _viewModel = .init(wrappedValue: CashCardViewModel())
   }

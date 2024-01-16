@@ -61,9 +61,6 @@ struct AccountsView: View {
           SFSafariViewWrapper(url: url)
         }
       })
-      .onAppear {
-        viewModel.onAppear()
-      }
   }
 }
 

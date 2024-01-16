@@ -28,6 +28,7 @@ class PrideCardCauseViewModel: ObservableObject {
   
   init() {
     handleSelectedFundraisersSuccess()
+    appearOpeations()
   }
   
   func appearOpeations() {

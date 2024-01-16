@@ -2,8 +2,6 @@ import SwiftUI
 import LFStyleGuide
 import LFLocalizable
 
-typealias TabRedirection = (TabOption) -> Void
-
 public enum TabOption: Int, CaseIterable, Hashable {
   case cash
   case donation

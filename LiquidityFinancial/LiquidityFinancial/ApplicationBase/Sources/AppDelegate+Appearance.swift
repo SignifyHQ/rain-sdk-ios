@@ -6,12 +6,12 @@ import NetworkUtilities
 extension AppDelegate {
   
   // MARK: Appearance
-  func setUpAppearence() {
-    setNavigationBarAppearence()
-    setRefreshControlAppearence()
+  func setUpAppearance() {
+    setNavigationBarAppearance()
+    setRefreshControlAppearance()
   }
   
-  private func setNavigationBarAppearence() {
+  private func setNavigationBarAppearance() {
     // TODO: iOS 16 support and up; use .toolbarBackground(Color.background, for: .navigationBar)
     let appearance = UINavigationBarAppearance()
     appearance.configureWithDefaultBackground()
@@ -25,7 +25,7 @@ extension AppDelegate {
     UINavigationBar.appearance().scrollEdgeAppearance = appearance
   }
   
-  private func setRefreshControlAppearence() {
+  private func setRefreshControlAppearance() {
     UIRefreshControl.appearance().tintColor = .clear
     UIRefreshControl.appearance().addSubview(RefreshAnimationView.shared)
   }

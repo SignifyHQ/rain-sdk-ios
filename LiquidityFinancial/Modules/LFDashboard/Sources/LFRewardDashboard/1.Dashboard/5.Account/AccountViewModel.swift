@@ -79,9 +79,6 @@ class AccountViewModel: ObservableObject {
   init() {
     subscribeLinkedContacts()
     checkNotificationsStatus()
-  }
-  
-  func onAppear() {
     handleACHData()
   }
 }

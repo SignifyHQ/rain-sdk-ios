@@ -31,6 +31,7 @@ class CausesViewModel: ObservableObject {
   
   init() {
     handleSelectedFundraisersSuccess()
+    appearOpeations()
   }
   
   func appearOpeations() {
