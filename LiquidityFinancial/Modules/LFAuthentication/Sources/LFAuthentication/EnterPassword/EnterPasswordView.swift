@@ -8,7 +8,9 @@ public struct EnterPasswordView: View {
   @StateObject
   private var viewModel: EnterPasswordViewModel
   @FocusState
-  private var isFocused: Bool
+  private var isSecureFieldFocused: Bool?
+  @State
+  private var isInputSecured: Bool = true
   
   @Binding var isFlowPresented: Bool
   
@@ -65,6 +67,11 @@ public struct EnterPasswordView: View {
     }
     .track(name: String(describing: type(of: self)))
   }
+  
+  private func toggleSecuredInput() {
+    isInputSecured.toggle()
+    isSecureFieldFocused = isInputSecured
+  }
 }
 
 // MARK: - View Components
@@ -89,7 +96,16 @@ private extension EnterPasswordView {
       }
       
       TextFieldWrapper {
-        SecureField("", text: $viewModel.password)
+        HStack {
+          Group {
+            SecureField("", text: $viewModel.password)
+              .focused($isSecureFieldFocused, equals: true)
+              .isHidden(hidden: !isInputSecured)
+            
+            TextField("", text: $viewModel.password)
+              .focused($isSecureFieldFocused, equals: false)
+              .isHidden(hidden: isInputSecured)
+          }
           .keyboardType(.alphabet)
           .tint(Colors.label.swiftUIColor)
           .restrictInput(value: $viewModel.password, restriction: .none)
@@ -106,13 +122,27 @@ private extension EnterPasswordView {
             value: $viewModel.password,
             length: Constants.MaxCharacterLimit.password.value
           )
-          .focused($isFocused)
+          
+          Spacer()
+          
+          Button {
+            toggleSecuredInput()
+          } label: {
+            showHideImage
+              .swiftUIImage
+              .foregroundColor(Colors.label.swiftUIColor)
+          }
+        }
       }
       .disabled(viewModel.isLoading)
       .onAppear {
-        isFocused = true
+        isSecureFieldFocused = isInputSecured
       }
     }
+  }
+  
+  private var showHideImage: ImageAsset {
+    isInputSecured ? GenImages.CommonImages.icPasswordShow : GenImages.CommonImages.icPasswordHide
   }
   
   @ViewBuilder

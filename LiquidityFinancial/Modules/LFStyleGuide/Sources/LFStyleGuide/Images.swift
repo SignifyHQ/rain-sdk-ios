@@ -78,6 +78,8 @@ public enum GenImages {
     public static let icMap = ImageAsset(name: "ic_map")
     public static let icNotification = ImageAsset(name: "ic_notification")
     public static let icPasswordCheck = ImageAsset(name: "ic_password_check")
+    public static let icPasswordHide = ImageAsset(name: "ic_password_hide")
+    public static let icPasswordShow = ImageAsset(name: "ic_password_show")
     public static let icPhone = ImageAsset(name: "ic_phone")
     public static let icProfile = ImageAsset(name: "ic_profile")
     public static let icQuestion = ImageAsset(name: "ic_question")
