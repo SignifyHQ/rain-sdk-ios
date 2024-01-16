@@ -28,17 +28,25 @@ public struct FundCardView: View {
       }
       .background(Colors.background.swiftUIColor)
   }
-  
-  private var content: some View {
+}
+
+// MARK: - Private View Components
+private extension FundCardView {
+  var content: some View {
     VStack(spacing: 0) {
-      header
+      GenImages.Images.fundCard.swiftUIImage
       
       VStack(spacing: 16) {
-        title
-        message
-        actions
+        Text(LFLocalizable.FundCard.title)
+          .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.large.value))
+          .foregroundColor(Colors.label.swiftUIColor)
+        Text(LFLocalizable.FundCard.message)
+          .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.medium.value))
+          .foregroundColor(Colors.label.swiftUIColor.opacity(0.75))
+          .lineSpacing(1.25)
+        actionsView
         Spacer()
-        skip
+        skipButton
       }
       .multilineTextAlignment(.center)
       .padding(.bottom, 16)
@@ -46,26 +54,7 @@ public struct FundCardView: View {
     }
   }
   
-  private var header: some View {
-    ZStack {
-      GenImages.Images.fundCard.swiftUIImage
-    }
-  }
-  
-  private var title: some View {
-    Text(LFLocalizable.FundCard.title)
-      .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.large.value))
-      .foregroundColor(Colors.label.swiftUIColor)
-  }
-  
-  private var message: some View {
-    Text(LFLocalizable.FundCard.message)
-      .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.medium.value))
-      .foregroundColor(Colors.label.swiftUIColor.opacity(0.75))
-      .lineSpacing(1.25)
-  }
-  
-  private var actions: some View {
+  var actionsView: some View {
     AddFundsView(
       viewModel: viewModel.addFundsViewModel,
       achInformation: $viewModel.achInformation,
@@ -76,7 +65,7 @@ public struct FundCardView: View {
     .fixedSize(horizontal: false, vertical: true)
   }
   
-  private var skip: some View {
+  var skipButton: some View {
     FullSizeButton(
       title: LFLocalizable.Button.Skip.title,
       isDisable: false,
