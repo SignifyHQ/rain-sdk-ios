@@ -7,16 +7,13 @@ import SwiftUI
 public struct CreatePasswordView: View {
   @Environment(\.dismiss) var dismiss
   
-  enum Focus: Int, Hashable {
-    case enterPass
-    case reEnterPass
-  }
-  
   @StateObject
   private var viewModel: CreatePasswordViewModel
   
   @FocusState
-  var keyboardFocus: Focus?
+  private var isSecureFieldFocused: Bool?
+  @State
+  private var isInputSecured: Bool = true
   
   public init(
     purpose: CreatePasswordPurpose,
@@ -66,6 +63,11 @@ public struct CreatePasswordView: View {
     .navigationBarBackButtonHidden(viewModel.isLoading)
     .track(name: String(describing: type(of: self)))
   }
+  
+  private func toggleSecuredInput() {
+    isInputSecured.toggle()
+    isSecureFieldFocused = isInputSecured
+  }
 }
 
 extension CreatePasswordView {
@@ -87,20 +89,54 @@ extension CreatePasswordView {
         .foregroundColor(Colors.label.swiftUIColor)
         .opacity(0.75)
       
-      textField(
-        placeholder: LFLocalizable.Authentication.CreatePassword.subTitle2,
-        value: $viewModel.passwordString,
-        focus: .enterPass,
-        nextFocus: .reEnterPass
-      )
-      .tint(Colors.label.swiftUIColor)
-      .disabled(viewModel.isLoading)
-      .onAppear {
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-          keyboardFocus = .enterPass
+      TextFieldWrapper {
+        HStack {
+          Group {
+            SecureField("", text: $viewModel.passwordString)
+              .focused($isSecureFieldFocused, equals: true)
+              .isHidden(hidden: !isInputSecured)
+            
+            TextField("", text: $viewModel.passwordString)
+              .focused($isSecureFieldFocused, equals: false)
+              .isHidden(hidden: isInputSecured)
+          }
+          .keyboardType(.alphabet)
+          .tint(Colors.label.swiftUIColor)
+          .restrictInput(value: $viewModel.passwordString, restriction: .none)
+          .modifier(
+            PlaceholderStyle(
+              showPlaceHolder: $viewModel.passwordString.wrappedValue.isEmpty,
+              placeholder: LFLocalizable.Authentication.CreatePassword.subTitle2
+            )
+          )
+          .primaryFieldStyle()
+          .autocapitalization(.none)
+          .autocorrectionDisabled()
+          .limitInputLength(
+            value: $viewModel.passwordString,
+            length: Constants.MaxCharacterLimit.password.value
+          )
+          
+          Spacer()
+          
+          Button {
+            toggleSecuredInput()
+          } label: {
+            showHideImage
+              .swiftUIImage
+              .foregroundColor(Colors.label.swiftUIColor)
+          }
         }
       }
+      .disabled(viewModel.isLoading)
+      .onAppear {
+        isSecureFieldFocused = isInputSecured
+      }
     }
+  }
+  
+  private var showHideImage: ImageAsset {
+    isInputSecured ? GenImages.CommonImages.icPasswordShow : GenImages.CommonImages.icPasswordHide
   }
   
   var passwordMatchError: some View {
@@ -168,7 +204,7 @@ extension CreatePasswordView {
         type: .primary
       ) {
         viewModel.actionContinue()
-        keyboardFocus = nil
+        //keyboardFocus = nil
       }
     }
     .padding(.horizontal, 30)
@@ -180,33 +216,6 @@ extension CreatePasswordView {
       .fill(Color(red: 0.94, green: 0.76, blue: 0.23))
       .foregroundColor(.clear)
       .frame(width: 6, height: 6)
-  }
-  
-  @ViewBuilder
-  func textField(
-    placeholder: String,
-    value: Binding<String>,
-    limit: Int = 100,
-    restriction: TextRestriction = .password,
-    keyboardType: UIKeyboardType = .alphabet,
-    focus: Focus,
-    nextFocus: Focus? = nil
-  ) -> some View {
-    TextFieldWrapper {
-      SecureField("", text: value)
-        .keyboardType(keyboardType)
-        .restrictInput(value: value, restriction: restriction)
-        .modifier(PlaceholderStyle(showPlaceHolder: value.wrappedValue.isEmpty, placeholder: placeholder))
-        .primaryFieldStyle()
-        .autocapitalization(.none)
-        .autocorrectionDisabled()
-        .limitInputLength(value: value, length: limit)
-        .submitLabel(nextFocus == nil ? .done : .next)
-        .focused($keyboardFocus, equals: focus)
-        .onSubmit {
-          keyboardFocus = nextFocus
-        }
-    }
   }
 }
 
