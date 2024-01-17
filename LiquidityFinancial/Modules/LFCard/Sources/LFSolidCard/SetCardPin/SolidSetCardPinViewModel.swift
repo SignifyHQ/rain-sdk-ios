@@ -60,20 +60,20 @@ extension SolidSetCardPinViewModel {
   func setCardPIN(pinToken: String, solidCardID: String) {
     let param = [
       "pin": pinValue,
-      "expiryMonth": String(cardModel.expiryMonth),
+      "expiryMonth": convertToMonthString(expiryMonth: cardModel.expiryMonth),
       "expiryYear": String(cardModel.expiryYear),
       "last4": cardModel.last4
     ] as [String: Any]
     
-    vgsSetCardPin(solidCardID: solidCardID, tokenID: pinToken, params: param) { status, error in
-      guard let error else {
-        if status {
-          self.onSetPinSuccess()
-        }
-        return
+    vgsSetCardPin(solidCardID: solidCardID, tokenID: pinToken, params: param) { [weak self] status, error in
+      guard let self else { return }
+      
+      if let error {
+        self.isShowIndicator = false
+        self.toastMessage = error.localizedString
+      } else if status {
+        self.onSetPinSuccess()
       }
-      self.isShowIndicator = false
-      self.toastMessage = error.localizedString
     }
   }
   
@@ -84,36 +84,24 @@ extension SolidSetCardPinViewModel {
     completion: @escaping (Bool, String?) -> Void
   ) {
     let path = "/v1/card/\(solidCardID)/pin"
+    vgsCollect.customHeaders = ["sd-pin-token": tokenID]
 
-    vgsCollect.customHeaders = [
-      "sd-pin-token": tokenID
-    ]
-
-    vgsCollect.sendData(path: path, method: .post, extraData: params as [String: Any]) { response in
-
+    vgsCollect.sendData(path: path, method: .post, extraData: params as [String: Any]) { [weak self] response in
+      guard let self else {
+        completion(false, nil)
+        return
+      }
+      
       switch response {
       case let .success(_, data, _):
-        if let data = data, let jsonData = try? JSONSerialization.jsonObject(with: data, options: []) as? [String: Any] {
-          log.debug(jsonData)
-          completion(true, nil)
-        } else {
-          completion(true, nil)
-        }
-        return
-      case let .failure(code, _, _, error):
-        var errorMsg = "Error: Wrong Request, code: "
-        switch code {
-        case 400 ..< 499:
-          errorMsg += String(code)
-        case VGSErrorType.inputDataIsNotValid.rawValue:
-          if let error = error as? VGSError {
-            errorMsg += String(code)
-          }
-        default:
-          errorMsg += String(code)
-        }
-        completion(false, errorMsg)
-        return
+        self.handleVGSSetPinSuccess(data: data, completion: completion)
+      case let .failure(code, data, _, error):
+        self.handleVGSSetPinFailure(
+          code: code,
+          data: data,
+          error: error,
+          completion: completion
+        )
       }
     }
   }
@@ -136,5 +124,44 @@ public extension SolidSetCardPinViewModel {
         return otp.count == self.pinCodeDigits
       }
       .assign(to: &$isPinEntered)
+  }
+}
+
+// MARK: - Private Functions
+private extension SolidSetCardPinViewModel {
+  func handleVGSSetPinSuccess(data: Data?, completion: @escaping (Bool, String?) -> Void) {
+    if let jsonData = try? JSONSerialization.jsonObject(with: data ?? Data(), options: []) as? [String: Any] {
+      log.debug(jsonData)
+    }
+    completion(true, nil)
+  }
+
+  func handleVGSSetPinFailure(
+    code: Int,
+    data: Data?,
+    error: Error?,
+    completion: @escaping (Bool, String?) -> Void
+  ) {
+    guard let data, let jsonData = try? JSONSerialization.jsonObject(with: data, options: []) as? [String: Any] else {
+      var errorMsg = "Error: Wrong Request, code: "
+      switch code {
+      case 400 ..< 499:
+        errorMsg += String(code)
+      case VGSErrorType.inputDataIsNotValid.rawValue where error is VGSError:
+        errorMsg += String(code)
+      default:
+        errorMsg += String(code)
+      }
+      completion(false, errorMsg)
+      return
+    }
+    
+    let errorMessage = jsonData["message"] as? String
+    log.error(jsonData)
+    completion(false, errorMessage)
+  }
+  
+  func convertToMonthString(expiryMonth: Int) -> String {
+    expiryMonth > 9 ? "\(expiryMonth)" : "0\(expiryMonth)"
   }
 }
