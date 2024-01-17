@@ -4,6 +4,8 @@
 <dict>
 	<key>AGREEMENT_URL</key>
 	<string>$(AGREEMENT_URL)</string>
+	<key>APPSTORE_URL</key>
+	<string>$(APPSTORE_URL)</string>
 	<key>APP_BUNDLE_ID</key>
 	<string>$(APP_BUNDLE_ID)</string>
 	<key>APP_NAME</key>
@@ -79,8 +81,6 @@
 	<string>Used to capture user for KYC purposes</string>
 	<key>NSFaceIDUsageDescription</key>
 	<string>PrideCard will use Face ID to unlock your account</string>
-	<key>Privacy - Touch ID Usage Description</key>
-	<string>PrideCard will use Touch ID to unlock your account</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>Used to surface nearby ATMs for the user</string>
 	<key>NSPhotoLibraryAddUsageDescription</key>
@@ -95,14 +95,18 @@
 	<string>$(PATHWARD_USER_URL)</string>
 	<key>PRIVACY_URL</key>
 	<string>$(PRIVACY_URL)</string>
+	<key>Privacy - Touch ID Usage Description</key>
+	<string>PrideCard will use Touch ID to unlock your account</string>
 	<key>REFERRALLINK_DEV</key>
 	<string>$(REFERRALLINK_DEV)</string>
 	<key>REFERRALLINK_PRO</key>
 	<string>$(REFERRALLINK_PRO)</string>
+	<key>SEGMENT_DEV_KEY</key>
+	<string>${SEGMENT_DEV_KEY}</string>
+	<key>SEGMENT_PROD_KEY</key>
+	<string>${SEGMENT_PROD_KEY}</string>
 	<key>SHARE_APP_URL</key>
 	<string>$(SHARE_APP_URL)</string>
-	<key>APPSTORE_URL</key>
-	<string>$(APPSTORE_URL)</string>
 	<key>TERMS_URL</key>
 	<string>$(TERMS_URL)</string>
 	<key>UIApplicationSceneManifest</key>
@@ -134,6 +138,8 @@
 	<array>
 		<string>UIInterfaceOrientationPortrait</string>
 	</array>
+	<key>UIUserInterfaceStyle</key>
+	<string>Light</string>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<false/>
 	<key>UNIVERSAL_LINK</key>
@@ -142,9 +148,5 @@
 	<string>$(WALLET_PRIVACY_URL)</string>
 	<key>ZEROHASH_URL</key>
 	<string>$(ZEROHASH_URL)</string>
-	<key>SEGMENT_DEV_KEY</key>
-	<string>${SEGMENT_DEV_KEY}</string>
-	<key>SEGMENT_PROD_KEY</key>
-	<string>${SEGMENT_PROD_KEY}</string>
 </dict>
 </plist>

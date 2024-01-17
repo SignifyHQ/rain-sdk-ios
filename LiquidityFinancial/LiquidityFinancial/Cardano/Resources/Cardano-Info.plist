@@ -77,8 +77,6 @@
 	</dict>
 	<key>NSCameraUsageDescription</key>
 	<string>Used to capture user for KYC purposes</string>
-	<key>Privacy - Touch ID Usage Description</key>
-	<string>Cardano will use Touch ID to unlock your account.</string>
 	<key>NSFaceIDUsageDescription</key>
 	<string>Cardano will use Face ID to unlock your account.</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
@@ -93,6 +91,8 @@
 	<string>$(PATHWARD_USER_URL)</string>
 	<key>PRIVACY_URL</key>
 	<string>$(PRIVACY_URL)</string>
+	<key>Privacy - Touch ID Usage Description</key>
+	<string>Cardano will use Touch ID to unlock your account.</string>
 	<key>REFERRALLINK_DEV</key>
 	<string>$(REFERRALLINK_DEV)</string>
 	<key>REFERRALLINK_PRO</key>
@@ -130,6 +130,8 @@
 	<array>
 		<string>UIInterfaceOrientationPortrait</string>
 	</array>
+	<key>UIUserInterfaceStyle</key>
+	<string>Dark</string>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<false/>
 	<key>UNIVERSAL_LINK</key>
