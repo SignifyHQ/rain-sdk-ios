@@ -9,7 +9,8 @@ struct AssetsView: View {
   @StateObject private var viewModel: AssetsViewModel
   
   init(dashboardRepo: DashboardRepository) {
-    _viewModel = .init(wrappedValue: AssetsViewModel(dashboardRepo: dashboardRepo))
+    let assetsViewModel = AssetsViewModel(dashboardRepo: dashboardRepo)
+    _viewModel = .init(wrappedValue: assetsViewModel)
   }
   
   var body: some View {

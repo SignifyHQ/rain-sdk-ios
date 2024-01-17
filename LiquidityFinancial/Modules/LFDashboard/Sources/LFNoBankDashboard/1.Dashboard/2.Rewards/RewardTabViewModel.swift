@@ -92,7 +92,7 @@ extension RewardTabViewModel {
         accountId: accountID,
         currencyType: currencyType,
         transactionTypes: transactionTypes,
-        limit: 50,
+        limit: 20,
         offset: 0
       )
       self.transactions = transactions.data.compactMap({ TransactionModel(from: $0) })

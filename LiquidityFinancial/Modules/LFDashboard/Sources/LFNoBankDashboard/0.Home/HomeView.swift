@@ -16,26 +16,34 @@ public struct HomeView: View {
   
   @StateObject private var viewModel: HomeViewModel
   
-  let dashboardRepo: DashboardRepository
+  // Ensure each TabOptionView is initialized only once
+  let blockingFiatView = BlockingFiatView()
+  let rewardTabView: RewardTabView
+  let assetsView: AssetsView
+  let accountView: AccountsView
   
   var onChangeRoute: ((NoBankOnboardingFlowCoordinator.Route) -> Void)?
   
   public init(onChangeRoute: ((NoBankOnboardingFlowCoordinator.Route) -> Void)? = nil) {
-    let dashboardRepo = DashboardRepository()
-    self.dashboardRepo = dashboardRepo
-    _viewModel = .init(wrappedValue: HomeViewModel(dashboardRepository: dashboardRepo, tabOptions: TabOption.allCases))
+    let dashboardRepository = DashboardRepository()
+
+    rewardTabView = RewardTabView(dashboardRepo: dashboardRepository)
+    assetsView = AssetsView(dashboardRepo: dashboardRepository)
+    accountView = AccountsView(dashboardRepo: dashboardRepository)
+    
+    _viewModel = .init(
+      wrappedValue: HomeViewModel(
+        dashboardRepository: dashboardRepository,
+        tabOptions: TabOption.allCases
+      )
+    )
     
     self.onChangeRoute = onChangeRoute
   }
   
   public var body: some View {
     ZStack(alignment: .bottom) {
-      // Ensure each TabOptionView is initialized only once
-      ForEach(viewModel.tabOptions, id: \.self) { option in
-        DashboardView(option: option, dashboardRepo: dashboardRepo)
-          .opacity(viewModel.tabSelected == option ? 1 : 0)
-          .padding(.bottom, 50)
-      }
+      dashboardView
       tabBarItems
     }
     .navigationBarTitleDisplayMode(.inline)
@@ -67,6 +75,22 @@ public struct HomeView: View {
 
 // MARK: - View Components
 private extension HomeView {
+  var dashboardView: some View {
+    Group {
+      switch viewModel.tabSelected {
+      case .cash:
+        blockingFiatView
+      case .rewards:
+       rewardTabView
+      case .assets:
+       assetsView
+      case .account:
+        accountView
+      }
+    }
+    .padding(.bottom, 50)
+  }
+  
   var tabBarItems: some View {
     HStack(spacing: 0) {
       ForEach(viewModel.tabOptions, id: \.self) { option in

@@ -20,25 +20,39 @@ public struct HomeView: View {
   @StateObject
   private var viewModel: HomeViewModel
   
-  let dashboardRepo: DashboardRepository
+  // Ensure each TabOptionView is initialized only once
+  let cashView: CashView
+  let rewardsTabView: RewardTabView
+  let assetsView: AssetsView
+  let accountsView: AccountsView
   
   var onChangeRoute: ((NSOnboardingFlowCoordinator.Route) -> Void)?
   
   public init(onChangeRoute: ((NSOnboardingFlowCoordinator.Route) -> Void)? = nil) {
-    let dashboardRepo = DashboardRepository()
-    _viewModel = .init(wrappedValue: HomeViewModel(dashboardRepository: dashboardRepo, tabOptions: TabOption.allCases))
-    self.dashboardRepo = dashboardRepo
+    let dashboardRepository = DashboardRepository()
+    
+    cashView = CashView(
+      viewModel: CashViewModel(dashboardRepository: dashboardRepository),
+      listCardViewModel: NSListCardsViewModel(
+        coordinator: Container().baseCardDestinationObservable.callAsFunction()
+      )
+    )
+    rewardsTabView = RewardTabView(viewModel: RewardTabViewModel(dashboardRepo: dashboardRepository))
+    assetsView = AssetsView(viewModel: AssetsViewModel(dashboardRepository: dashboardRepository))
+    accountsView = AccountsView(viewModel: AccountViewModel(dashboardRepository: dashboardRepository))
+    
+    _viewModel = .init(
+      wrappedValue: HomeViewModel(
+        dashboardRepository: dashboardRepository,
+        tabOptions: TabOption.allCases
+      )
+    )
     self.onChangeRoute = onChangeRoute
   }
   
   public var body: some View {
     ZStack(alignment: .bottom) {
-      // Ensure each TabOptionView is initialized only once
-      ForEach(viewModel.tabOptions, id: \.self) { option in
-        DashboardView(option: option, dashboardRepo: dashboardRepo)
-          .opacity(viewModel.tabSelected == option ? 1 : 0)
-          .padding(.bottom, 50)
-      }
+      dashboardView
       tabBarItems
     }
     .navigationBarTitleDisplayMode(.inline)
@@ -73,6 +87,7 @@ public struct HomeView: View {
     .onChange(of: scenePhase, perform: { newValue in
       if newValue == .active {
         viewModel.checkGoTransactionDetail()
+        viewModel.dashboardRepository.fetchNetspendLinkedSources()
       }
     })
   }
@@ -80,6 +95,22 @@ public struct HomeView: View {
 
 // MARK: - View Components
 private extension HomeView {
+  var dashboardView: some View {
+    Group {
+      switch viewModel.tabSelected {
+      case .cash:
+        cashView
+      case .rewards:
+        rewardsTabView
+      case .assets:
+        assetsView
+      case .account:
+        accountsView
+      }
+    }
+    .padding(.bottom, 50)
+  }
+  
   var tabBarItems: some View {
     HStack(spacing: 0) {
       ForEach(viewModel.tabOptions, id: \.self) { option in

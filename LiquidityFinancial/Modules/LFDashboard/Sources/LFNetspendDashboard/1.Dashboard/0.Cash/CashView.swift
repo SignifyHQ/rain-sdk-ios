@@ -35,9 +35,6 @@ struct CashView: View {
     .background(Colors.background.swiftUIColor)
     .navigationLink(item: $viewModel.navigation) { navigation in
       switch navigation {
-      case .bankStatements:
-        EmptyView()
-          // BankStatementsListView()
       case .changeAsset:
         ChangeAssetView(
           selectedAsset: $viewModel.selectedAsset,
@@ -51,10 +48,8 @@ struct CashView: View {
           accountID: viewModel.accountDataManager.fiatAccountID,
           transactionTypes: Constants.TransactionTypesRequest.fiat.types
         )
-      case .addMoney:
-        MoveMoneyAccountView(kind: .receive)
-      case .sendMoney:
-        MoveMoneyAccountView(kind: .send)
+      case let .moveMoney(kind):
+        MoveMoneyAccountView(kind: kind)
       case let .transactionDetail(transaction):
         TransactionDetailView(
           accountID: viewModel.accountDataManager.fiatAccountID,

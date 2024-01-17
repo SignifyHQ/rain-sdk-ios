@@ -87,7 +87,7 @@ private extension RewardViewModel {
       accountId: accountId,
       currencyType: currencyType,
       transactionTypes: Constants.TransactionTypesRequest.rewardCashBack.types,
-      limit: 50,
+      limit: 20,
       offset: 0
     )
     return transactions.data.compactMap({ TransactionModel(from: $0) })

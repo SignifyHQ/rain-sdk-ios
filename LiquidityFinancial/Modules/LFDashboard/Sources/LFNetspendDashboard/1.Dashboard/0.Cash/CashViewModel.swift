@@ -49,7 +49,7 @@ final class CashViewModel: ObservableObject {
   var shouldReloadListTransaction: Bool = false
   
   var transactionLimitEntity: Int {
-    100
+    20
   }
   
   var transactionLimitOffset: Int {
@@ -202,7 +202,7 @@ extension CashViewModel {
     if linkedAccount.isEmpty {
       fullScreen = .fundCard(.receive)
     } else {
-      navigation = .addMoney
+      navigation = .moveMoney(kind: .receive)
     }
   }
   
@@ -211,7 +211,7 @@ extension CashViewModel {
     if linkedAccount.isEmpty {
       fullScreen = .fundCard(.send)
     } else {
-      navigation = .sendMoney
+      navigation = .moveMoney(kind: .send)
     }
   }
   
@@ -260,12 +260,10 @@ extension CashViewModel {
   }
   
   enum Navigation {
-    case bankStatements
     case changeAsset
     case transactions
     case transactionDetail(TransactionModel)
-    case addMoney
-    case sendMoney
+    case moveMoney(kind: MoveMoneyAccountViewModel.Kind)
     case agreement(APIAgreementData?)
   }
   

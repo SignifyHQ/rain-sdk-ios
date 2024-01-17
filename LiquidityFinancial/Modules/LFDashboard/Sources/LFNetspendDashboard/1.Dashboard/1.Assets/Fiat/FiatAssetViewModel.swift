@@ -76,7 +76,7 @@ private extension FiatAssetViewModel {
         accountId: accountId,
         currencyType: currencyType,
         transactionTypes: Constants.TransactionTypesRequest.fiat.types,
-        limit: 50,
+        limit: 20,
         offset: 0
       )
       let transactionsModel = transactions.data.compactMap({ TransactionModel(from: $0) })

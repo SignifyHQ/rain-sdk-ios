@@ -13,7 +13,8 @@ struct RewardTabView: View {
   private var viewModel: RewardTabViewModel
   
   init(dashboardRepo: DashboardRepository) {
-    _viewModel = .init(wrappedValue: RewardTabViewModel(dashboardRepo: dashboardRepo))
+    let rewardTabViewModel = RewardTabViewModel(dashboardRepo: dashboardRepo)
+    _viewModel = .init(wrappedValue: rewardTabViewModel)
   }
   
   var body: some View {
@@ -69,7 +70,7 @@ private extension RewardTabView {
     }
   }
   
-  private var loading: some View {
+  var loading: some View {
     Group {
       LottieView(loading: .primary)
         .frame(width: 30, height: 25)

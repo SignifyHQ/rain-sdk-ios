@@ -15,7 +15,8 @@ struct AccountsView: View {
   @State var openSafariType: AccountViewModel.OpenSafariType?
   
   init(dashboardRepo: DashboardRepository) {
-    _viewModel = .init(wrappedValue: AccountViewModel(dashboardRepo: dashboardRepo))
+    let accountViewModel = AccountViewModel(dashboardRepo: dashboardRepo)
+    _viewModel = .init(wrappedValue: accountViewModel)
   }
   
   var body: some View {

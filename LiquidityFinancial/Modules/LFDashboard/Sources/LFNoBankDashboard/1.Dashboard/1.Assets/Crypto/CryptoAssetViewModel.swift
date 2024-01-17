@@ -103,7 +103,7 @@ private extension CryptoAssetViewModel {
         accountId: accountId,
         currencyType: currencyType,
         transactionTypes: Constants.TransactionTypesRequest.crypto.types,
-        limit: 50,
+        limit: 20,
         offset: 0
       )
       self.transactions = transactions.data.compactMap({ TransactionModel(from: $0) })
