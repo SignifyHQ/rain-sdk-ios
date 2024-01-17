@@ -33,7 +33,7 @@ public class MoveMoneyAccountViewModel: ObservableObject {
   @Published var toastMessage: String?
   @Published var inlineError: String?
   @Published var amountInput = Constants.Default.zeroAmount.rawValue
-  @Published var cashBalanceValue = Constants.Default.zeroAmount.rawValue
+  @Published var cashBalanceStringValue = Constants.Default.zeroAmount.rawValue
   
   @Published var numberOfShakes = 0
   
@@ -44,17 +44,17 @@ public class MoveMoneyAccountViewModel: ObservableObject {
   @Published var popup: Popup?
   @Published var sheet: Sheet?
   @Published var externalCardFeeResponse: SolidDebitCardTransferFeeResponseEntity?
-  
-  private var cardRemainingAmount: RemainingAvailableAmount?
-  private var bankRemainingAmount: RemainingAvailableAmount?
+
   private var cancellable: Set<AnyCancellable> = []
   
+  var cashBalance: Double?
   let kind: Kind
-  let recommendValues: [GridValue] = [
-    .fixed(amount: 10, currency: .usd),
-    .fixed(amount: 50, currency: .usd),
-    .fixed(amount: 100, currency: .usd)
-  ]
+  var recommendValues: [GridValue] {
+    if kind == .send {
+      return buildRecommend(available: cashBalance ?? 0)
+    }
+    return []
+  }
   
   lazy var solidCreateTransactionUseCase: SolidCreateExternalTransactionUseCaseProtocol = {
     SolidCreateExternalTransactionUseCase(repository: solidExternalFundingRepository)
@@ -75,7 +75,8 @@ public class MoveMoneyAccountViewModel: ObservableObject {
   init(kind: Kind, selectedAccount: LinkedSourceContact? = nil, cashBalance: Double? = nil) {
     self.kind = kind
     self.selectedLinkedContact = selectedAccount
-    self.cashBalanceValue = cashBalance?.formattedUSDAmount() ?? Constants.Default.zeroAmount.rawValue
+    self.cashBalance = cashBalance
+    self.cashBalanceStringValue = cashBalance?.formattedUSDAmount() ?? Constants.Default.zeroAmount.rawValue
     
     subscribeLinkedContacts()
   }
@@ -196,11 +197,11 @@ extension MoveMoneyAccountViewModel {
 // MARK: UI Helpers
 extension MoveMoneyAccountViewModel {
   var subtitle: String {
-    LFLocalizable.MoveMoney.AvailableBalance.subtitle(cashBalanceValue)
+    LFLocalizable.MoveMoney.AvailableBalance.subtitle(cashBalanceStringValue)
   }
   
   var annotationString: String {
-    LFLocalizable.MoveMoney.Withdraw.annotation(cashBalanceValue)
+    LFLocalizable.MoveMoney.Withdraw.annotation(cashBalanceStringValue)
   }
   
   var isAmountActionAllowed: Bool {
@@ -242,7 +243,11 @@ extension MoveMoneyAccountViewModel {
   
   func appearOperations() {
     Task {
-      await refresh()
+      do {
+        try await self.refreshAccount()
+      } catch {
+        log.error(error.userFriendlyMessage)
+      }
     }
   }
   
@@ -272,14 +277,8 @@ extension MoveMoneyAccountViewModel {
   }
   
   func validateAmount(with amount: Double?) -> String? {
-    guard let sourceType = selectedLinkedContact?.sourceType, let amountValue = amount else {
-      return nil
-    }
-    let remainingAmount = sourceType == .card ? cardRemainingAmount : bankRemainingAmount
-    guard let remainingAmount = remainingAmount else {
-      return nil
-    }
-    let isReachOut = remainingAmount.day < amountValue || remainingAmount.week < amountValue || remainingAmount.month < amountValue
+    guard kind == .send, let amountValue = amount else { return nil }
+    let isReachOut = amountValue > cashBalance ?? 0
     if isReachOut {
       return LFLocalizable.TransferView.limitsReached
     }
@@ -297,6 +296,30 @@ extension MoveMoneyAccountViewModel {
   func plaidLinkingErrorPrimaryAction() {
     popup = nil
     customerSupportService.openSupportScreen()
+  }
+  
+  func buildRecommend(available: Double) -> [GridValue] {
+    if available > 1_000 {
+      return [
+        .fixed(amount: 100, currency: .usd),
+        .fixed(amount: 1_000, currency: .usd),
+        .all(amount: available, currency: .usd)
+      ]
+    } else if available > 100 {
+      return [
+        .fixed(amount: 10, currency: .usd),
+        .fixed(amount: 100, currency: .usd),
+        .all(amount: available, currency: .usd)
+      ]
+    } else if available > 10 {
+      return [
+        .fixed(amount: 1, currency: .usd),
+        .fixed(amount: 10, currency: .usd),
+        .all(amount: available, currency: .usd)
+      ]
+    } else {
+      return []
+    }
   }
 }
 
@@ -367,7 +390,8 @@ private extension MoveMoneyAccountViewModel {
     let account = try await fiatAccountService.getAccountDetail(id: accountId)
     self.accountDataManager.addOrUpdateAccount(account)
     let usdAmount = account.availableUsdBalance.formattedUSDAmount()
-    self.cashBalanceValue = usdAmount
+    self.cashBalanceStringValue = usdAmount
+    self.cashBalance = account.availableBalance
   }
   
   func subscribeLinkedContacts() {
@@ -400,14 +424,6 @@ private extension MoveMoneyAccountViewModel {
         }
       })
       .store(in: &cancellable)
-  }
-  
-  func refresh() async {
-    await withTaskGroup(of: Void.self) { group in
-      group.addTask {
-        try? await self.refreshAccount()
-      }
-    }
   }
 }
 
