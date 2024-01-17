@@ -50,7 +50,7 @@ final class CashViewModel: ObservableObject {
   var shouldReloadListTransaction: Bool = false
   
   var transactionLimitEntity: Int {
-    100
+    20
   }
   
   var transactionLimitOffset: Int {

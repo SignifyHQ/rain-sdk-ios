@@ -51,33 +51,33 @@ public struct TransactionListView: View {
   }
 }
 
-// MARK: - View Components
+// MARK: - Private View Components
 private extension TransactionListView {
   var content: some View {
     VStack(spacing: 10) {
       SearchBar(searchText: $viewModel.searchText)
         .padding(.bottom, 5)
-      List {
-        ForEach(viewModel.filteredTransactions) { transaction in
-          TransactionRowView(item: transaction) {
-            viewModel.selectedTransaction(transaction)
-          }
-          .listRowSeparator(.hidden)
-          .listRowInsets(EdgeInsets(top: 5, leading: 0, bottom: 5, trailing: 0))
-          .listRowBackground(Colors.background.swiftUIColor)
-          .onAppear {
-            viewModel.loadMoreIfNeccessary(transaction: transaction)
+      ScrollView(showsIndicators: false) {
+        LazyVStack {
+          ForEach(viewModel.filteredTransactions) { transaction in
+            TransactionRowView(item: transaction) {
+              viewModel.selectedTransaction(transaction)
+            }
+            .listRowSeparator(.hidden)
+            .listRowInsets(EdgeInsets(top: 5, leading: 0, bottom: 5, trailing: 0))
+            .listRowBackground(Colors.background.swiftUIColor)
+            .onAppear {
+              viewModel.loadMoreIfNeccessary(transaction: transaction)
+            }
           }
         }
-      }
-      .background(Colors.background.swiftUIColor)
-      .listStyle(PlainListStyle())
-      
-      if viewModel.isLoadingMore {
-        LottieView(loading: .mix)
-          .frame(width: 30, height: 20)
+        if viewModel.isLoadingMore {
+          LottieView(loading: .mix)
+            .frame(width: 30, height: 20)
+        }
       }
     }
+    .background(Colors.background.swiftUIColor)
     .padding(.horizontal, 24)
   }
   

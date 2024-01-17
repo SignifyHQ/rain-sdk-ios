@@ -9,7 +9,7 @@ public class TransactionListViewModel: ObservableObject {
   
   private var offset = 0
   private var total = 0
-  private var limit = 100
+  private var limit = 20
   
   @Published var transactions: [TransactionModel] = []
   @Published var transactionDetail: TransactionModel?
@@ -50,11 +50,12 @@ public class TransactionListViewModel: ObservableObject {
   func loadMoreIfNeccessary(transaction: TransactionModel) {
     guard
       let lastObject = transactions.last,
-      lastObject.id == transaction.id && !isLoadingMore
+      lastObject.id == transaction.id && !isLoadingMore,
+      total > 0,
+      total != transactions.count
     else {
       return
     }
-    if total <= 0 { return }
     let offset = transactions.count
     Task {
       defer { isLoadingMore = false }
