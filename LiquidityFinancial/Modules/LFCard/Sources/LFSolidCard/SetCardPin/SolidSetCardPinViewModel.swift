@@ -60,7 +60,7 @@ extension SolidSetCardPinViewModel {
   func setCardPIN(pinToken: String, solidCardID: String) {
     let param = [
       "pin": pinValue,
-      "expiryMonth": convertToMonthString(expiryMonth: cardModel.expiryMonth),
+      "expiryMonth": convertMonthIntToString(monthNumber: cardModel.expiryMonth),
       "expiryYear": String(cardModel.expiryYear),
       "last4": cardModel.last4
     ] as [String: Any]
@@ -161,7 +161,15 @@ private extension SolidSetCardPinViewModel {
     completion(false, errorMessage)
   }
   
-  func convertToMonthString(expiryMonth: Int) -> String {
-    expiryMonth > 9 ? "\(expiryMonth)" : "0\(expiryMonth)"
+  func convertMonthIntToString(monthNumber: Int) -> String? {
+    switch monthNumber {
+    case 1...9:
+      // Convert to valid VGS expiryDate format: MM/YYYY
+      return "0" + "\(monthNumber)"
+    case 10...12:
+      return "\(monthNumber)"
+    default:
+      return nil
+    }
   }
 }

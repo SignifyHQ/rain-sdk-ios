@@ -109,7 +109,7 @@ public extension SolidListCardsViewModel {
       isActivatingCard = true
       do {
         let parameters = APISolidActiveCardParameters(
-          expiryMonth: String(currentCard.expiryMonth),
+          expiryMonth: convertMonthIntToString(monthNumber: currentCard.expiryMonth) ?? .empty,
           expiryYear: String(currentCard.expiryYear),
           last4: currentCard.last4
         )
@@ -355,6 +355,21 @@ public extension SolidListCardsViewModel {
       setFullScreenCoordinator(destinationView: .activatePhysicalCard(activeCardView))
     default:
       break
+    }
+  }
+}
+
+// MARK: - Private Functions
+private extension SolidListCardsViewModel {
+  func convertMonthIntToString(monthNumber: Int) -> String? {
+    switch monthNumber {
+    case 1...9:
+      // Convert to valid VGS expiryDate format: MM/YYYY
+      return "0" + "\(monthNumber)"
+    case 10...12:
+      return "\(monthNumber)"
+    default:
+      return nil
     }
   }
 }
