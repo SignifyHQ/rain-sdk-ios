@@ -1297,6 +1297,7 @@ We will be in touch shortly to invite you to get your new card.";
 
 //...COMMON...
 "generic_ErrorMessage" = "Something went wrong, please try again.";
+"internetConnection_errorMessage" = "Couldn't reach server. Check your internet connection.";
 
 // Crypto
 "crypto.value" = "Doge";

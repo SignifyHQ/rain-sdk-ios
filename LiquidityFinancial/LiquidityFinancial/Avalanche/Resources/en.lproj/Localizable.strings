@@ -1043,6 +1043,7 @@ contact support.";
 
   //...COMMON...
 "generic_ErrorMessage" = "Something went wrong, please try again.";
+"internetConnection_errorMessage" = "Couldn't reach server. Check your internet connection.";
 
 "share.email" = "Email";
 "share.facebook" = "Facebook";

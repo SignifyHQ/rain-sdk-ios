@@ -48,6 +48,8 @@ public enum LFLocalizable {
   public static let firstName = LFLocalizable.tr("Localizable", "first_name", fallback: "First name")
   /// Something went wrong, please try again.
   public static let genericErrorMessage = LFLocalizable.tr("Localizable", "generic_ErrorMessage", fallback: "Something went wrong, please try again.")
+  /// Couldn't reach server. Check your internet connection.
+  public static let internetConnectionErrorMessage = LFLocalizable.tr("Localizable", "internetConnection_errorMessage", fallback: "Couldn't reach server. Check your internet connection.")
   /// Join waitlist
   public static let joinWaitlist = LFLocalizable.tr("Localizable", "join_waitlist", fallback: "Join waitlist")
   /// Last name

@@ -1200,6 +1200,7 @@ contact support.";
 
 //...COMMON...
 "generic_ErrorMessage" = "Something went wrong, please try again.";
+"internetConnection_errorMessage" = "Couldn't reach server. Check your internet connection.";
 
 // Crypto
 "crypto.value" = "Cause";

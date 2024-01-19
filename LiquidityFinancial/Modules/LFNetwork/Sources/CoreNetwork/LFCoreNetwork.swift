@@ -5,6 +5,7 @@ import AuthorizationManager
 import Factory
 import UniformTypeIdentifiers
 import LFUtilities
+import LFLocalizable
 
 public protocol CoreNetworkType {
   
@@ -75,6 +76,12 @@ public final class LFCoreNetwork<R: LFRoute>: CoreNetworkType {
     let request = LFURLRequest(route: route, auth: authorizationManager)
     let dataRequest = session.request(request, interceptor: buildInterceptor(from: route))
     let stringResponse = await dataRequest.validate().serializingData().response
+    
+    if !(stringResponse.response?.statusCode ?? 500).isSuccess, let error = stringResponse.error {
+      let errorMessage = error.isSessionTaskError ? LFLocalizable.internetConnectionErrorMessage : error.localizedDescription
+      throw LFNetworkError.custom(message: errorMessage)
+    }
+    
     return Response(httpResponse: stringResponse.response, data: stringResponse.data)
   }
   
@@ -88,7 +95,12 @@ public final class LFCoreNetwork<R: LFRoute>: CoreNetworkType {
     if let data = response.data {
       throw try decodeError(failure: LFErrorObject.self, from: data, decoder: decoder)
     }
-    throw LFNetworkError.custom(message: response.error?.localizedDescription ?? "Unknown error")
+    guard let error = response.error else {
+      throw LFNetworkError.custom(message: "Unknown error")
+    }
+    
+    let errorMessage = error.isSessionTaskError ? LFLocalizable.internetConnectionErrorMessage : error.localizedDescription
+    throw LFNetworkError.custom(message: errorMessage)
   }
   
   public func request<T, E>(_ route: R, target: T.Type, failure: E.Type, decoder: JSONDecoder) async throws -> T where T: Decodable, E: Decodable, E: Error {
@@ -101,7 +113,12 @@ public final class LFCoreNetwork<R: LFRoute>: CoreNetworkType {
     if let data = response.data {
       throw try decodeError(failure: failure, from: data, decoder: decoder)
     }
-    throw LFNetworkError.custom(message: response.error?.localizedDescription ?? "Unknown error")
+    guard let error = response.error else {
+      throw LFNetworkError.custom(message: "Unknown error")
+    }
+    
+    let errorMessage = error.isSessionTaskError ? LFLocalizable.internetConnectionErrorMessage : error.localizedDescription
+    throw LFNetworkError.custom(message: errorMessage)
   }
   
   public func requestNoResponse<E>(_ route: R, failure: E.Type, decoder: JSONDecoder) async throws where E: Decodable, E: Error {
@@ -114,7 +131,12 @@ public final class LFCoreNetwork<R: LFRoute>: CoreNetworkType {
     if let data = response.data {
       throw try decodeError(failure: failure, from: data, decoder: decoder)
     }
-    throw LFNetworkError.custom(message: response.error?.localizedDescription ?? "Unknown error")
+    guard let error = response.error else {
+      throw LFNetworkError.custom(message: "Unknown error")
+    }
+    
+    let errorMessage = error.isSessionTaskError ? LFLocalizable.internetConnectionErrorMessage : error.localizedDescription
+    throw LFNetworkError.custom(message: errorMessage)
   }
   
   public func download(_ route: R, fileName: String, type: UTType = .pdf) async throws -> URL {
@@ -129,7 +151,19 @@ public final class LFCoreNetwork<R: LFRoute>: CoreNetworkType {
       
       return (temporaryURL, options)
     }
-    return try await downloadRequest.validate().serializingDownloadedFileURL().value
+    
+    let response = await downloadRequest.validate().serializingDownloadedFileURL().response
+    
+    if let value = response.value {
+      return value
+    }
+    
+    guard let error = response.error else {
+      throw LFNetworkError.custom(message: "Unknown error")
+    }
+    
+    let errorMessage = error.isSessionTaskError ? LFLocalizable.internetConnectionErrorMessage : error.localizedDescription
+    throw LFNetworkError.custom(message: errorMessage)
   }
 }
 
