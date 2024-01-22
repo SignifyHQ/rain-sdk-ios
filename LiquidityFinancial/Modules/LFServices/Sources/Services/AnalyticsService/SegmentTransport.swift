@@ -16,6 +16,9 @@ class SegmentTransport: AnalyticsTransportProtocol {
     Analytics.shared().group(LFUtilities.appName, traits: [:])
   }
   
+  func setUp(environment: String) {
+  }
+  
   func track(event: EventType) {
     Analytics.shared().track(event.name, properties: event.params)
   }

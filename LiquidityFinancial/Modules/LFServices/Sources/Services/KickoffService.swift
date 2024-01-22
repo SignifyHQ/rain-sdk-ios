@@ -15,7 +15,7 @@ public enum KickoffService {
   public static func kickoff(application: UIApplication, launchingOptions: [UIApplication.LaunchOptionsKey: Any]?) {
     kickoffFirebase()
     kickoffNetspend()
-    kickoffDataDog()
+    kickoffAnalytics()
     kickoffPushNotifications(application: application)
   }
   
@@ -30,6 +30,7 @@ public enum KickoffService {
   private static func kickoffAnalytics() {
     // firing here to ensure all analytics is setup.
     Container.shared.analyticsService.callAsFunction().track(event: AnalyticsEvent(name: .appLaunch))
+    Container.shared.analyticsService.resolve().setUp(environment: networkEnvironment.rawValue)
   }
 }
 
@@ -52,12 +53,5 @@ extension KickoffService {
   private static func kickoffPushNotifications(application: UIApplication) {
     Container.shared.pushNotificationService.resolve().setUp()
     application.registerForRemoteNotifications()
-  }
-}
-
-// MARK: DataDoge
-extension KickoffService {
-  private static func kickoffDataDog() {
-    DataDogService.kickoffDataDog(networkEnvironment: networkEnvironment)
   }
 }

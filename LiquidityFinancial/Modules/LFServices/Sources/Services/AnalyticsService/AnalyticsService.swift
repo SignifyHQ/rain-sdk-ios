@@ -16,6 +16,7 @@ extension Container {
 // MARK: - AnalyticsServiceProtocol
 
 public protocol AnalyticsServiceProtocol {
+  func setUp(environment: String)
   func addTransport(_ transport: AnalyticsTransportProtocol)
   func track(event: EventType)
   func track(screen: String, appear: Bool)
@@ -33,6 +34,12 @@ public class AnalyticsService {
 
 // MARK: AnalyticsServiceProtocol
 extension AnalyticsService: AnalyticsServiceProtocol {
+  public func setUp(environment: String) {
+    for transport in services {
+      transport.setUp(environment: environment)
+    }
+  }
+  
   public func addTransport(_ transport: AnalyticsTransportProtocol) {
     analyticsQueue.async {
       self.services.append(transport)
