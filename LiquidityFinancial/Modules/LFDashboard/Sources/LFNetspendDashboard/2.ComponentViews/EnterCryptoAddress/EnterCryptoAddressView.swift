@@ -5,9 +5,8 @@ import LFUtilities
 import LFStyleGuide
 import AccountDomain
 import CodeScanner
-import LFWalletAddress
 import Services
-import DashboardComponents
+import GeneralFeature
 
 struct EnterCryptoAddressView: View {
   @StateObject private var viewModel: EnterCryptoAddressViewModel

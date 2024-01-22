@@ -2,9 +2,8 @@ import SwiftUI
 import LFUtilities
 import LFStyleGuide
 import LFLocalizable
-import LFNetSpendCard
-import DashboardComponents
-import BaseCard
+import NetspendFeature
+import GeneralFeature
 
 struct CashCardView: View {
   @StateObject private var viewModel: CashCardViewModel

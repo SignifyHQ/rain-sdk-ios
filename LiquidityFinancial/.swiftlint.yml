@@ -9,7 +9,7 @@ excluded:
   - "**/*Tests.swift"
   - "**/*Tests+*.swift"
   - "**/DebugTools"
-  - "**/LFCryptoChart"
+  - "**/DashboardFeatures/GeneralFeature/CryptoChart"
   - "**/*/_*.swift"
   - "**/*/*.generated.swift"
   - "_*.swift"

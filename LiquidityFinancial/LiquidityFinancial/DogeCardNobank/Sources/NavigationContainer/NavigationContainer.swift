@@ -1,12 +1,11 @@
 import Foundation
 import LFNoBankDashboard
-import DashboardComponents
-import LFTransaction
+import GeneralFeature
 import LFUtilities
 import Factory
-import LFNetspendBank
 import SwiftUI
 import NoBankOnboarding
+import NetspendFeature
 
 final class NavigationContainer {
   

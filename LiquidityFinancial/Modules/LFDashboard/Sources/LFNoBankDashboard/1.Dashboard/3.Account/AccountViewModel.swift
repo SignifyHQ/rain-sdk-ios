@@ -5,7 +5,7 @@ import Factory
 import AccountDomain
 import AccountData
 import EnvironmentService
-import DashboardComponents
+import GeneralFeature
 
 @MainActor
 class AccountViewModel: ObservableObject {

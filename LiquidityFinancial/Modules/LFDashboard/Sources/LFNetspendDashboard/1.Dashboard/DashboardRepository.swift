@@ -8,13 +8,12 @@ import NetSpendData
 import NetspendDomain
 import DevicesData
 import DevicesDomain
-import LFBaseBank
-import BaseCard
 import NetspendOnboarding
 import Services
 import AccountService
 import UIKit
-import DashboardComponents
+import GeneralFeature
+import NetspendFeature
 
 final class DashboardRepository: ObservableObject {
   @LazyInjected(\.accountDataManager) var accountDataManager

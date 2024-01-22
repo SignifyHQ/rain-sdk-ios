@@ -3,7 +3,7 @@ import LFLocalizable
 import LFUtilities
 import LFStyleGuide
 import Services
-import DashboardComponents
+import GeneralFeature
 
 struct MoveCryptoInputView: View {
   @StateObject private var viewModel: MoveCryptoInputViewModel

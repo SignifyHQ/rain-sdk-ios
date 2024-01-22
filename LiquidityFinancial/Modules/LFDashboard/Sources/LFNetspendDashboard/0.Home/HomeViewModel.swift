@@ -6,7 +6,6 @@ import LFUtilities
 import DevicesData
 import AccountDomain
 import Combine
-import LFNetspendBank
 import Services
 import DevicesDomain
 import BiometricsManager

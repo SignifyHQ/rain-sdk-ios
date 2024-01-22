@@ -4,12 +4,10 @@ import Foundation
 import AccountDomain
 import LFUtilities
 import Factory
-import LFTransaction
 import CryptoChartData
-import LFCryptoChart
 import Services
 import AccountService
-import DashboardComponents
+import GeneralFeature
 
 @MainActor
 class CryptoAssetViewModel: ObservableObject {

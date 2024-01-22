@@ -4,13 +4,11 @@ import AccountData
 import NetSpendData
 import LFUtilities
 import Factory
-import LFNetspendBank
-import LFBaseBank
-import LFTransaction
-import DashboardComponents
+import GeneralFeature
 import Combine
 import AccountService
 import NetspendDomain
+import NetspendFeature
 
 @MainActor
 class FiatAssetViewModel: ObservableObject {

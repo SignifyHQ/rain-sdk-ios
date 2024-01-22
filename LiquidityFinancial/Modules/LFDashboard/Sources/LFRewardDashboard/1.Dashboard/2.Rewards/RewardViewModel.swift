@@ -1,12 +1,13 @@
 import Foundation
 import LFUtilities
 import LFLocalizable
-import LFTransaction
 import LFRewards
 import AccountData
 import AccountDomain
 import Factory
 import AccountService
+import GeneralFeature
+import SolidFeature
 
 @MainActor
 class RewardViewModel: ObservableObject {

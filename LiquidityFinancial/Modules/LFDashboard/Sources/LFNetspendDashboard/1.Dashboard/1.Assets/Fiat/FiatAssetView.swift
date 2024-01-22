@@ -3,9 +3,8 @@ import SwiftUI
 import LFStyleGuide
 import LFLocalizable
 import LFUtilities
-import LFNetspendBank
-import LFTransaction
-import DashboardComponents
+import GeneralFeature
+import NetspendFeature
 
 struct FiatAssetView: View {
   @StateObject private var viewModel: FiatAssetViewModel

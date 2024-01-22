@@ -3,7 +3,8 @@ import SwiftUI
 import LFStyleGuide
 import LFUtilities
 import LFLocalizable
-import LFTransaction
+import NetspendFeature
+import GeneralFeature
 
 struct ConfirmBuySellCryptoView: View {
   

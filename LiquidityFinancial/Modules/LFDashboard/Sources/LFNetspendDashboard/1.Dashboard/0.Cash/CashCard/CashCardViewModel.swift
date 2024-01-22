@@ -1,12 +1,11 @@
 import LFUtilities
 import Foundation
 import AccountData
-import LFNetSpendCard
+import NetspendFeature
 import NetSpendData
 import NetspendDomain
 import Factory
 import Services
-import BaseCard
 
 @MainActor
 final class CashCardViewModel: ObservableObject {

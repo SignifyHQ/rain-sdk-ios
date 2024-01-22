@@ -3,10 +3,7 @@ import SwiftUI
 import LFStyleGuide
 import LFLocalizable
 import LFUtilities
-import LFTransaction
-import LFCryptoChart
-import LFNetspendBank
-import DashboardComponents
+import GeneralFeature
 
 struct CryptoAssetView: View {
   @StateObject private var viewModel: CryptoAssetViewModel

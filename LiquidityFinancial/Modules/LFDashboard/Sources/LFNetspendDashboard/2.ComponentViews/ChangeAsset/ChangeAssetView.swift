@@ -2,7 +2,7 @@ import SwiftUI
 import LFStyleGuide
 import LFLocalizable
 import LFUtilities
-import DashboardComponents
+import GeneralFeature
 
 struct ChangeAssetView: View {
   @Binding var selectedAsset: AssetType

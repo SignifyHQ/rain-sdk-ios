@@ -3,10 +3,8 @@ import SwiftUI
 import LFStyleGuide
 import LFLocalizable
 import LFUtilities
-import LFTransaction
-import LFNetspendBank
 import Services
-import DashboardComponents
+import GeneralFeature
 
 struct RewardTabView: View {
   @StateObject

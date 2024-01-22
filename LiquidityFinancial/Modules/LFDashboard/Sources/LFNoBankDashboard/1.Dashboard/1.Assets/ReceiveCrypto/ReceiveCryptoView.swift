@@ -8,7 +8,7 @@ import AccountDomain
 import AccountData
 import Services
 import Factory
-import DashboardComponents
+import GeneralFeature
 
 // MARK: - ReceiveCryptoView
 

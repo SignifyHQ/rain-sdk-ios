@@ -3,13 +3,12 @@ import Combine
 import Factory
 import Services
 import ZerohashData
-import LFTransaction
 import LFLocalizable
 import ZerohashDomain
 import LFUtilities
 import AccountService
 import BiometricsManager
-import DashboardComponents
+import GeneralFeature
 
 class ConfirmSendCryptoViewModel: ObservableObject {
   @LazyInjected(\.accountDataManager) var accountDataManager

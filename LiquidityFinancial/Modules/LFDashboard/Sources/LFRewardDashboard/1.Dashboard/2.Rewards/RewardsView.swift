@@ -2,9 +2,10 @@ import SwiftUI
 import LFStyleGuide
 import LFUtilities
 import LFLocalizable
-import LFTransaction
 import LFRewards
 import Services
+import GeneralFeature
+import SolidFeature
 
 struct RewardsView: View {
   @StateObject private var viewModel: RewardViewModel

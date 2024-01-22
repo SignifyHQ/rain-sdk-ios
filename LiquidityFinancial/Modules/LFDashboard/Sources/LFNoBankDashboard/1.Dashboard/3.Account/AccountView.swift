@@ -3,7 +3,8 @@ import LFUtilities
 import LFStyleGuide
 import LFLocalizable
 import Factory
-import DashboardComponents
+import GeneralFeature
+import NetspendFeature
 
 struct AccountsView: View {
   @Injected(\.analyticsService) var analyticsService

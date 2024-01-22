@@ -1,10 +1,9 @@
 import Foundation
 import LFRewardDashboard
-import DashboardComponents
-import LFTransaction
+import GeneralFeature
 import LFUtilities
 import Factory
-import LFSolidBank
+import SolidFeature
 import SwiftUI
 import LFRewards
 

@@ -1,8 +1,7 @@
 import Combine
-import DashboardComponents
+import GeneralFeature
 import SwiftUI
 import LFUtilities
-import LFTransaction
 import CryptoChartData
 import Factory
 import AccountDomain

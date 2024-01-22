@@ -6,7 +6,7 @@ import AuthorizationManager
 import Services
 import DevicesDomain
 import Combine
-import DashboardComponents
+import GeneralFeature
 
 @MainActor
 final class ProfileViewModel: ObservableObject {

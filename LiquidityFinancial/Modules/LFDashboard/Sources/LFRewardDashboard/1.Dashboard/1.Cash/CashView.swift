@@ -2,10 +2,9 @@ import SwiftUI
 import LFUtilities
 import LFStyleGuide
 import LFLocalizable
-import LFSolidBank
-import LFTransaction
-import LFSolidCard
-  
+import GeneralFeature
+import SolidFeature
+
 struct CashView: View {
   @Environment(\.scenePhase) var scenePhase
   @StateObject private var viewModel: CashViewModel

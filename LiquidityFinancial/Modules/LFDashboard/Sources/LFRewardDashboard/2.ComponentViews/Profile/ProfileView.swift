@@ -1,11 +1,12 @@
 import SwiftUI
-import LFSolidBank
 import LFStyleGuide
 import LFLocalizable
 import LFUtilities
 import LFAccessibility
 import LFAuthentication
 import LFFeatureFlags
+import GeneralFeature
+import SolidFeature
 
 struct ProfileView: View {
   @StateObject private var viewModel = ProfileViewModel()

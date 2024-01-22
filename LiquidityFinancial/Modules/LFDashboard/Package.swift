@@ -17,8 +17,14 @@ let package = Package(
       name: "LFNoBankDashboard",
       targets: ["LFNoBankDashboard"]),
     .library(
-      name: "DashboardComponents",
-      targets: ["DashboardComponents"])
+      name: "GeneralFeature",
+      targets: ["GeneralFeature"]),
+    .library(
+      name: "SolidFeature",
+      targets: ["SolidFeature"]),
+    .library(
+      name: "NetspendFeature",
+      targets: ["NetspendFeature"])
   ],
   dependencies: [
     .package(name: "LFUtilities", path: "../LFUtilities"),
@@ -26,11 +32,6 @@ let package = Package(
     .package(name: "LFLocalizable", path: "../LFLocalizable"),
     .package(name: "LFAccessibility", path: "../LFAccessibility"),
     .package(name: "LFServices", path: "../LFServices"),
-    .package(name: "LFCard", path: "../LFCard"),
-    .package(name: "LFBank", path: "../LFBank"),
-    .package(name: "LFTransaction", path: "../LFTransaction"),
-    .package(name: "LFWalletAddress", path: "../LFWalletAddress"),
-    .package(name: "LFCryptoChart", path: "../LFCryptoChart"),
     .package(name: "LFData", path: "../LFData"),
     .package(name: "LFDomain", path: "../LFDomain"),
     .package(name: "LFNetwork", path: "../LFNetwork"),
@@ -42,29 +43,77 @@ let package = Package(
   ],
   targets: [
     .target(
-      name: "DashboardComponents",
+      name: "GeneralFeature",
       dependencies: [
-        "LFUtilities", "LFStyleGuide",
-        .product(name: "Services", package: "LFServices"),
+        "LFUtilities", "LFStyleGuide", "LFLocalizable",
         .product(name: "ZerohashData", package: "LFData"),
+        .product(name: "ZerohashDomain", package: "LFDomain"),
+        .product(name: "RewardData", package: "LFData"),
+        .product(name: "RewardDomain", package: "LFDomain"),
+        .product(name: "CryptoChartData", package: "LFData"),
+        .product(name: "OnboardingData", package: "LFData"),
+        .product(name: "ExternalFundingData", package: "LFData"),
+        .product(name: "SolidData", package: "LFData"),
+        .product(name: "SolidDomain", package: "LFDomain"),
         .product(name: "AccountData", package: "LFData"),
+        .product(name: "OnboardingDomain", package: "LFDomain"),
         .product(name: "AccountDomain", package: "LFDomain"),
-        .product(name: "AccountService", package: "LFServices")
-      ]
+        .product(name: "Services", package: "LFServices"),
+        .product(name: "AuthorizationManager", package: "LFNetwork"),
+        .product(name: "BiometricsManager", package: "LFAuthentication")
+      ],
+      path: "Sources/DashboardFeatures/GeneralFeature"
+    ),
+    .target(
+      name: "SolidFeature",
+      dependencies: [
+        "LFUtilities", "LFStyleGuide", "LFLocalizable", "GeneralFeature", "LFRewards",
+        .product(name: "RewardData", package: "LFData"),
+        .product(name: "OnboardingData", package: "LFData"),
+        .product(name: "ExternalFundingData", package: "LFData"),
+        .product(name: "SolidData", package: "LFData"),
+        .product(name: "RewardDomain", package: "LFDomain"),
+        .product(name: "SolidDomain", package: "LFDomain"),
+        .product(name: "AccountData", package: "LFData"),
+        .product(name: "OnboardingDomain", package: "LFDomain"),
+        .product(name: "AccountDomain", package: "LFDomain"),
+        .product(name: "Services", package: "LFServices"),
+        .product(name: "AuthorizationManager", package: "LFNetwork"),
+        .product(name: "BiometricsManager", package: "LFAuthentication")
+      ],
+      path: "Sources/DashboardFeatures/SolidFeature"
+    ),
+    .target(
+      name: "NetspendFeature",
+      dependencies: [
+        "LFUtilities", "LFStyleGuide", "LFLocalizable", "GeneralFeature",
+        .product(name: "ZerohashData", package: "LFData"),
+        .product(name: "OnboardingData", package: "LFData"),
+        .product(name: "ExternalFundingData", package: "LFData"),
+        .product(name: "NetSpendData", package: "LFData"),
+        .product(name: "AccountData", package: "LFData"),
+        .product(name: "ZerohashDomain", package: "LFDomain"),
+        .product(name: "NetspendDomain", package: "LFDomain"),
+        .product(name: "OnboardingDomain", package: "LFDomain"),
+        .product(name: "AccountDomain", package: "LFDomain"),
+        .product(name: "Services", package: "LFServices"),
+        .product(name: "AuthorizationManager", package: "LFNetwork"),
+        .product(name: "NetspendOnboarding", package: "LFOnboarding"),
+        .product(name: "BiometricsManager", package: "LFAuthentication")
+      ],
+      path: "Sources/DashboardFeatures/NetspendFeature"
     ),
     .target(
       name: "LFNetspendDashboard",
       dependencies: [
-        "LFUtilities", "LFStyleGuide", "LFLocalizable", "LFAccessibility", "DashboardComponents", "LFTransaction", "LFCryptoChart", "CodeScanner", "LFWalletAddress",
+        "LFUtilities", "LFStyleGuide", "LFLocalizable", "LFAccessibility", "NetspendFeature","CodeScanner",
         .product(name: "OnboardingData", package: "LFData"),
-        .product(name: "LFNetspendBank", package: "LFBank"),
         .product(name: "NetSpendData", package: "LFData"),
         .product(name: "ZerohashData", package: "LFData"),
         .product(name: "DevicesData", package: "LFData"),
         .product(name: "ExternalFundingData", package: "LFData"),
         .product(name: "AuthorizationManager", package: "LFNetwork"),
         .product(name: "Services", package: "LFServices"),
-        .product(name: "LFNetSpendCard", package: "LFCard"),
         .product(name: "BiometricsManager", package: "LFAuthentication"),
         .product(name: "LFAuthentication", package: "LFAuthentication"),
         .product(name: "NetspendOnboarding", package: "LFOnboarding")
@@ -73,16 +122,14 @@ let package = Package(
     .target(
       name: "LFRewardDashboard",
       dependencies: [
-        "LFUtilities", "LFStyleGuide", "LFLocalizable", "LFAccessibility", "LFTransaction", "CodeScanner", "LFRewards", "DashboardComponents",
-        .product(name: "LFSolidBank", package: "LFBank"),
+        "LFUtilities", "LFStyleGuide", "LFLocalizable", "LFAccessibility", "CodeScanner", "LFRewards", "SolidFeature",
         .product(name: "OnboardingData", package: "LFData"),
         .product(name: "DevicesData", package: "LFData"),
         .product(name: "AuthorizationManager", package: "LFNetwork"),
-        .product(name: "LFSolidCard", package: "LFCard"),
         .product(name: "Services", package: "LFServices"),
-        .product(name: "SolidOnboarding", package: "LFOnboarding"),
         .product(name: "BiometricsManager", package: "LFAuthentication"),
-        .product(name: "LFAuthentication", package: "LFAuthentication")
+        .product(name: "LFAuthentication", package: "LFAuthentication"),
+        .product(name: "SolidOnboarding", package: "LFOnboarding")
       ],
       resources: [
         .process("ZResources")
@@ -94,15 +141,13 @@ let package = Package(
     .target(
       name: "LFNoBankDashboard",
       dependencies: [
-        "LFUtilities", "LFStyleGuide", "LFLocalizable", "LFAccessibility", "DashboardComponents", "LFTransaction", "LFCryptoChart", "CodeScanner", "LFWalletAddress",
+        "LFUtilities", "LFStyleGuide", "LFLocalizable", "LFAccessibility", "NetspendFeature", "CodeScanner",
         .product(name: "OnboardingData", package: "LFData"),
-        .product(name: "LFNetspendBank", package: "LFBank"),
         .product(name: "NetSpendData", package: "LFData"),
         .product(name: "ZerohashData", package: "LFData"),
         .product(name: "DevicesData", package: "LFData"),
         .product(name: "AuthorizationManager", package: "LFNetwork"),
         .product(name: "Services", package: "LFServices"),
-        .product(name: "LFNetSpendCard", package: "LFCard"),
         .product(name: "BiometricsManager", package: "LFAuthentication"),
         .product(name: "NoBankOnboarding", package: "LFOnboarding"),
         .product(name: "LFAuthentication", package: "LFAuthentication")

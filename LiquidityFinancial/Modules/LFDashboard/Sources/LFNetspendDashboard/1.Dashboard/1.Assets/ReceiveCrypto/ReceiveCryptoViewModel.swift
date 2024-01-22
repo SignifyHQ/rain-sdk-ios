@@ -1,5 +1,5 @@
 import Foundation
-import DashboardComponents
+import GeneralFeature
 import AccountDomain
 import LFUtilities
 import Factory

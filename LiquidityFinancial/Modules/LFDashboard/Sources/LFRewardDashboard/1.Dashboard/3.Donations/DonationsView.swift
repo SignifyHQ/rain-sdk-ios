@@ -3,9 +3,10 @@ import LFStyleGuide
 import LFUtilities
 import LFLocalizable
 import LFRewards
-import LFTransaction
 import Combine
 import Services
+import SolidFeature
+import GeneralFeature
 
 struct DonationsView: View {
   @StateObject private var viewModel: DonationsViewModel

@@ -4,11 +4,6 @@ import Foundation
 import UIKit
 import LFUtilities
 import Factory
-import NetSpendData
-import NetspendDomain
-import NetspendSdk
-import LFBaseBank
-import LFSolidBank
 import AccountData
 import EnvironmentService
 import SolidData
@@ -16,6 +11,8 @@ import SolidDomain
 import AccountService
 import DevicesData
 import DevicesDomain
+import GeneralFeature
+import SolidFeature
 
 @MainActor
 class AccountViewModel: ObservableObject {

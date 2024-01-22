@@ -2,10 +2,9 @@ import Foundation
 import AccountDomain
 import LFUtilities
 import Factory
-import LFTransaction
 import Combine
 import AccountService
-import DashboardComponents
+import GeneralFeature
 
 @MainActor
 class RewardTabViewModel: ObservableObject {

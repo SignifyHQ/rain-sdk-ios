@@ -1,15 +1,12 @@
 import Combine
-import DashboardComponents
+import GeneralFeature
 import SwiftUI
 import CryptoChartData
 import AccountDomain
-import LFCryptoChart
 import LFStyleGuide
 import LFUtilities
 import LFLocalizable
-import LFTransaction
-import LFWalletAddress
-import LFNetspendBank
+import NetspendFeature
 
 struct CryptoChartDetailView: View {
   @StateObject private var viewModel: CryptoChartDetailViewModel

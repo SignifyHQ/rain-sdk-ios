@@ -5,7 +5,7 @@ import Factory
 import CoreImage.CIFilterBuiltins
 import UIKit
 import LFLocalizable
-import DashboardComponents
+import GeneralFeature
 
 @MainActor
 class ReceiveCryptoViewModel: ObservableObject {

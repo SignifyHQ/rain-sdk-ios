@@ -6,12 +6,11 @@ import Factory
 import NetSpendData
 import NetspendDomain
 import NetspendSdk
-import LFNetspendBank
-import LFBaseBank
 import AccountDomain
 import AccountData
 import EnvironmentService
-import DashboardComponents
+import GeneralFeature
+import NetspendFeature
 
 @MainActor
 class AccountViewModel: ObservableObject {

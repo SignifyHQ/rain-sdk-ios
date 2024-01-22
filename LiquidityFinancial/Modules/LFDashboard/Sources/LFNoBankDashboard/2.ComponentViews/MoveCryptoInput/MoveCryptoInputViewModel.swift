@@ -7,7 +7,7 @@ import AccountDomain
 import Combine
 import ZerohashDomain
 import AccountService
-import DashboardComponents
+import GeneralFeature
 
 @MainActor
 final class MoveCryptoInputViewModel: ObservableObject {

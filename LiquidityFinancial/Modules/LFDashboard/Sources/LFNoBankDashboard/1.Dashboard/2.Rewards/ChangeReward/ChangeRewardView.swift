@@ -3,8 +3,7 @@ import SwiftUI
 import LFStyleGuide
 import LFLocalizable
 import LFUtilities
-import LFTransaction
-import DashboardComponents
+import GeneralFeature
 
 struct ChangeRewardView: View {
   @Environment(\.dismiss) private var dismiss

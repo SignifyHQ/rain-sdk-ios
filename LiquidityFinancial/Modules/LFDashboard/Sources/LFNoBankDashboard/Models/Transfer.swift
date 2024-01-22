@@ -1,6 +1,7 @@
 import Foundation
 import LFUtilities
-import LFTransaction
+import GeneralFeature
+import NetspendFeature
 
 struct Transfer {
   var id: String?

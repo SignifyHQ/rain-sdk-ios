@@ -3,8 +3,7 @@ import LFStyleGuide
 import LFLocalizable
 import LFUtilities
 import LFRewards
-import LFTransaction
-import DashboardComponents
+import GeneralFeature
 
 struct EditRewardsView: View {
   @StateObject private var viewModel: EditRewardsViewModel

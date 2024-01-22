@@ -2,10 +2,9 @@ import SwiftUI
 import LFLocalizable
 import LFStyleGuide
 import LFUtilities
-import LFTransaction
 import ZerohashDomain
 import Services
-import DashboardComponents
+import GeneralFeature
 
 struct ConfirmSendCryptoView: View {
   @StateObject private var viewModel: ConfirmSendCryptoViewModel

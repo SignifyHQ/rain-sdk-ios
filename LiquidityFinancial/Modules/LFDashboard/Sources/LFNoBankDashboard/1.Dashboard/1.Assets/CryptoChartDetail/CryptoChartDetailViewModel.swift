@@ -1,11 +1,10 @@
 import Combine
 import SwiftUI
 import LFUtilities
-import LFTransaction
 import CryptoChartData
 import Factory
 import AccountDomain
-import DashboardComponents
+import GeneralFeature
 
 @MainActor
 final class CryptoChartDetailViewModel: ObservableObject {

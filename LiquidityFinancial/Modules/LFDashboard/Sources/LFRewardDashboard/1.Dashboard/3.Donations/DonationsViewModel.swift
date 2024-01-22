@@ -1,7 +1,6 @@
 import SwiftUI
 import LFLocalizable
 import LFUtilities
-import LFTransaction
 import LFRewards
 import Factory
 import RewardData

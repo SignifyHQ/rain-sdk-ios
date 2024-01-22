@@ -1,17 +1,16 @@
 import SwiftUI
-import LFTransaction
 import LFLocalizable
 import LFAccessibility
 import LFStyleGuide
 import LFUtilities
 import LFRewards
-import SolidOnboarding
-import LFSolidBank
 import Factory
 import Services
 import LFAuthentication
-import LFSolidCard
-  
+import GeneralFeature
+import SolidFeature
+import SolidOnboarding
+
 public struct HomeView: View {
   @Injected(\.analyticsService) var analyticsService
   @Environment(\.scenePhase) var scenePhase

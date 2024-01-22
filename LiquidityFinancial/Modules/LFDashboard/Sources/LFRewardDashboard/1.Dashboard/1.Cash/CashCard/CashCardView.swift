@@ -2,8 +2,8 @@ import SwiftUI
 import LFUtilities
 import LFStyleGuide
 import LFLocalizable
-import LFSolidCard
-import BaseCard
+import GeneralFeature
+import SolidFeature
 
 struct CashCardView: View {
   @StateObject private var viewModel: CashCardViewModel

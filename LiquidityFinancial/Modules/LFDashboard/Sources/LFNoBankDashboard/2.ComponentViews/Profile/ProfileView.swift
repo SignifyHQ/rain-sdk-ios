@@ -1,10 +1,10 @@
 import SwiftUI
-import LFNetspendBank
 import LFStyleGuide
 import LFLocalizable
 import LFUtilities
 import LFAccessibility
 import LFAuthentication
+import NetspendFeature
 
 struct ProfileView: View {
   @StateObject private var viewModel = ProfileViewModel()

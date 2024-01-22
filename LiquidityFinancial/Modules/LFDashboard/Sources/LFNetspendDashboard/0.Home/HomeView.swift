@@ -1,15 +1,13 @@
 import SwiftUI
-import LFTransaction
 import LFLocalizable
 import LFAccessibility
 import LFStyleGuide
 import LFUtilities
 import Combine
-import DashboardComponents
+import GeneralFeature
 import NetspendOnboarding
-import LFNetspendBank
 import Factory
-import LFNetSpendCard
+import NetspendFeature
 import LFAuthentication
 
 public struct HomeView: View {

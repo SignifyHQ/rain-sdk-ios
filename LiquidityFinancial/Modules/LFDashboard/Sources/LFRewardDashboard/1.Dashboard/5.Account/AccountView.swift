@@ -3,9 +3,9 @@ import LFUtilities
 import LFStyleGuide
 import LFLocalizable
 import Services
-import LFSolidBank
-import LFTransaction
 import Factory
+import GeneralFeature
+import SolidFeature
 
 struct AccountsView: View {
   @StateObject private var viewModel: AccountViewModel

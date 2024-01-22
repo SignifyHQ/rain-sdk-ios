@@ -6,7 +6,7 @@ import LFLocalizable
 import LFStyleGuide
 import AccountDomain
 import AccountData
-import DashboardComponents
+import GeneralFeature
 import Services
 import Factory
 

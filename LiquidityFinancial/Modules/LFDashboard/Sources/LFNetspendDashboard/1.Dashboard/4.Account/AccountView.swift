@@ -4,13 +4,12 @@ import LFStyleGuide
 import LFLocalizable
 import Services
 import NetspendSdk
-import LFNetspendBank
 import NetspendOnboarding
 import AccountData
 import AccountDomain
-import LFTransaction
 import Factory
-import DashboardComponents
+import GeneralFeature
+import NetspendFeature
 
 struct AccountsView: View {
   @Injected(\.analyticsService) var analyticsService

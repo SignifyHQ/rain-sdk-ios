@@ -2,11 +2,10 @@ import SwiftUI
 import LFUtilities
 import LFStyleGuide
 import LFLocalizable
-import LFNetspendBank
-import LFTransaction
-import LFNetSpendCard
+import NetspendFeature
 import NetspendOnboarding
 import Services
+import GeneralFeature
 
 struct CashView: View {
   @Environment(\.scenePhase) var scenePhase

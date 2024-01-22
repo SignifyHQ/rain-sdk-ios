@@ -3,7 +3,7 @@ import LFStyleGuide
 import LFLocalizable
 import LFUtilities
 import Services
-import DashboardComponents
+import GeneralFeature
 
 struct AssetsView: View {
   @StateObject private var viewModel: AssetsViewModel

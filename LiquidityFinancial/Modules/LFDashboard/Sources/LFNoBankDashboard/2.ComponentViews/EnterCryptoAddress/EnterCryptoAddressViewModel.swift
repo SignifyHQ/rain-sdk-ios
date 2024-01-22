@@ -6,7 +6,7 @@ import Factory
 import AccountDomain
 import CodeScanner
 import Combine
-import DashboardComponents
+import GeneralFeature
 
 @MainActor
 final class EnterCryptoAddressViewModel: ObservableObject {
