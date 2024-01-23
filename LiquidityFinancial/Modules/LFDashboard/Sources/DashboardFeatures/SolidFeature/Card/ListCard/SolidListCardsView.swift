@@ -1,17 +1,15 @@
-import Combine
 import SwiftUI
 import LFLocalizable
 import LFUtilities
 import LFStyleGuide
 import LFRewards
 import Services
-import Factory
 
 public struct SolidListCardsView: View {
-  
-  @Environment(\.dismiss) private var dismiss
-  @StateObject var viewModel: SolidListCardsViewModel
-  @InjectedObject(\.baseCardDestinationObservable) var baseCardDestinationObservable
+  @Environment(\.dismiss)
+  private var dismiss
+  @StateObject
+  var viewModel: SolidListCardsViewModel
   
   public init(viewModel: SolidListCardsViewModel) {
     _viewModel = .init(wrappedValue: viewModel)
@@ -22,17 +20,15 @@ public struct SolidListCardsView: View {
       if viewModel.isInit {
         loadingView
       } else {
-        ScrollView(showsIndicators: false) {
-          cardDetails
-        }
+        content
       }
     }
     .onChange(of: viewModel.currentCard) { _ in
       viewModel.onChangeCurrentCard()
     }
-    .onAppear(perform: {
-      viewModel.handleCurrentCardLimit()
-    })
+    .onAppear {
+      viewModel.onAppear()
+    }
     .padding(.horizontal, 30)
     .padding(.bottom, 16)
     .background(Colors.background.swiftUIColor)
@@ -42,13 +38,13 @@ public struct SolidListCardsView: View {
     .onTapGesture {
       viewModel.isShowListCardDropdown = false
     }
-    .sheet(item: $baseCardDestinationObservable.listCardsDestinationObservable.sheet) { item in
+    .sheet(item: $viewModel.sheet) { item in
       switch item {
       case let .applePay(destinationView):
         destinationView
       }
     }
-    .fullScreenCover(item: $baseCardDestinationObservable.listCardsDestinationObservable.fullScreen) { item in
+    .fullScreenCover(item: $viewModel.fullScreen) { item in
       switch item {
       case let .activatePhysicalCard(destinationView):
         destinationView
@@ -140,22 +136,24 @@ private extension SolidListCardsView {
     .frame(max: .infinity)
   }
   
-  var cardDetails: some View {
-    VStack(spacing: 16) {
-      card
-      donationRows
-      rows
-      Spacer()
-      buttonGroup
-    }
-    .overlay {
-      if viewModel.isLoading {
-        ProgressView().progressViewStyle(.circular)
-          .tint(Colors.primary.swiftUIColor)
+  var content: some View {
+    ScrollView(showsIndicators: false) {
+      VStack(spacing: 16) {
+        card
+        donationRows
+        rows
+        Spacer()
+        buttonGroup
       }
+      .overlay {
+        if viewModel.isLoading {
+          ProgressView().progressViewStyle(.circular)
+            .tint(Colors.primary.swiftUIColor)
+        }
+      }
+      .disabled(viewModel.isLoading)
+      .padding(.bottom, 10)
     }
-    .disabled(viewModel.isLoading)
-    .padding(.bottom, 10)
   }
 }
 
@@ -420,9 +418,7 @@ private extension SolidListCardsView {
     ) {
       viewModel.activePhysicalCard(
         activeCardView: AnyView(
-          SolidActivePhysicalCardView<SolidAddAppleWalletViewModel, SolidApplePayViewModel>(
-            card: viewModel.currentCard
-          )
+          SolidActivePhysicalCardView(card: viewModel.currentCard)
         )
       )
     }

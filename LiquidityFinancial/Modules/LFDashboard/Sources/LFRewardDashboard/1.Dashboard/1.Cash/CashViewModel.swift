@@ -28,7 +28,6 @@ final class CashViewModel: ObservableObject {
   @Published var cashBalanceValue: Double = 0
   @Published var toastMessage: String?
   @Published var activity = Activity.loading
-  @Published var cashCardDetails = CardModel.virtualDefault // MOCK DATA
   @Published var selectedAsset: AssetType = .usd
   @Published var navigation: Navigation?
   @Published var transactions: [TransactionModel] = []

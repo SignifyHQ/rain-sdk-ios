@@ -3,19 +3,18 @@ import LFLocalizable
 import LFUtilities
 import LFStyleGuide
 
-public struct SolidActivePhysicalCardView<
-  AddAppleWalletViewModel: AddAppleWalletViewModelProtocol,
-  ApplePayViewModel: ApplePayViewModelProtocol
->: View {
-  @Environment(\.dismiss) private var dismiss
-  @State private var activeContent: ActiveContent = .activedCard
+struct SolidActivePhysicalCardView: View {
+  @Environment(\.dismiss)
+  private var dismiss
+  @State
+  private var activeContent: ActiveContent = .activedCard
   let card: CardModel
   
-  public init(card: CardModel) {
+  init(card: CardModel) {
     self.card = card
   }
   
-  public var body: some View {
+  var body: some View {
     content
   }
 }
@@ -27,8 +26,8 @@ private extension SolidActivePhysicalCardView {
     case .activedCard:
       activedCardView
     case .addAppleWallet:
-        AddAppleWalletView<AddAppleWalletViewModel, ApplePayViewModel>(
-        viewModel: AddAppleWalletViewModel(cardModel: card) {
+      AddAppleWalletView(
+        viewModel: SolidAddAppleWalletViewModel(cardModel: card) {
           dismiss()
         }
       )
@@ -44,31 +43,10 @@ private extension SolidActivePhysicalCardView {
           GenImages.Images.connectedAppleWallet.swiftUIImage
           GenImages.Images.connectedAppleWalletShadow.swiftUIImage
         }
-        VStack(spacing: 16) {
-          Text(LFLocalizable.CardActivated.CardActived.title)
-            .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.large.value))
-            .foregroundColor(Colors.label.swiftUIColor)
-            .multilineTextAlignment(.center)
-          Text(LFLocalizable.CardActivated.CardActived.description)
-            .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.medium.value))
-            .foregroundColor(Colors.label.swiftUIColor.opacity(0.75))
-            .multilineTextAlignment(.center)
-            .lineLimit(3)
-            .fixedSize(horizontal: false, vertical: true)
-        }
+        activedCardTextView
       }
       Spacer()
-      VStack(spacing: 10) {
-        // applePay TODO: - Temporarily hide this button
-        FullSizeButton(
-          title: LFLocalizable.Button.Skip.title,
-          isDisable: false,
-          type: .secondary
-        ) {
-          dismiss()
-        }
-      }
-      .padding(.bottom, 16)
+      buttonGroupView
     }
     .padding(.horizontal, 30)
     .background(Colors.background.swiftUIColor)
@@ -80,6 +58,21 @@ private extension SolidActivePhysicalCardView {
       }
       .padding(.top, 16)
       .padding(.leading, 16)
+    }
+  }
+  
+  var activedCardTextView: some View {
+    VStack(spacing: 16) {
+      Text(LFLocalizable.CardActivated.CardActived.title)
+        .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.large.value))
+        .foregroundColor(Colors.label.swiftUIColor)
+        .multilineTextAlignment(.center)
+      Text(LFLocalizable.CardActivated.CardActived.description)
+        .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.medium.value))
+        .foregroundColor(Colors.label.swiftUIColor.opacity(0.75))
+        .multilineTextAlignment(.center)
+        .lineLimit(3)
+        .fixedSize(horizontal: false, vertical: true)
     }
   }
   
@@ -95,6 +88,20 @@ private extension SolidActivePhysicalCardView {
             .stroke(Colors.label.swiftUIColor, lineWidth: 1)
         )
     }
+  }
+  
+  var buttonGroupView: some View {
+    VStack(spacing: 10) {
+      // applePay TODO: - Temporarily hide this button
+      FullSizeButton(
+        title: LFLocalizable.Button.Skip.title,
+        isDisable: false,
+        type: .secondary
+      ) {
+        dismiss()
+      }
+    }
+    .padding(.bottom, 16)
   }
 }
 

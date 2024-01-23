@@ -5,60 +5,50 @@ import LFUtilities
 import LFLocalizable
 import Services
 
-public struct SolidCardView: View {
-  @StateObject private var viewModel: SolidCardViewModel
-  @Binding public var isShowCardNumber: Bool
-
-  public init(
-    cardModel: CardModel,
-    isShowCardNumber: Binding<Bool>
-  ) {
+struct SolidCardView: View {
+  @StateObject
+  private var viewModel: SolidCardViewModel
+  @Binding
+  private var isShowCardNumber: Bool
+  
+  init(cardModel: CardModel, isShowCardNumber: Binding<Bool>) {
     let cardViewModel = SolidCardViewModel(cardModel: cardModel)
     _viewModel = .init(wrappedValue: cardViewModel)
     _isShowCardNumber = isShowCardNumber
   }
   
-  public var body: some View {
+  var body: some View {
     ZStack(alignment: .bottom) {
-      ZStack(alignment: .topLeading) {
-        GenImages.Images.emptyCard.swiftUIImage
-          .resizable()
-          .aspectRatio(contentMode: .fit)
-        Text(viewModel.cardModel.cardType.title)
-          .font(Fonts.semiBold.swiftUIFont(size: Constants.FontSize.small.value))
-          .foregroundColor(Colors.contrast.swiftUIColor)
-          .padding(.top, 15)
-          .padding(.leading, 10)
-      }
+      emptyCardView
       headerTitleView
-      ZStack(alignment: .leading) {
-        VGSShowView(
-          vgsShow: viewModel.vgsShow,
-          cardModel: $viewModel.cardModel,
-          showCardNumber: $isShowCardNumber,
-          labelColor: Colors.contrast.swiftUIColor
-        )
-        .frame(height: 30)
-        .opacity(viewModel.isCardAvailable ? 1 : 0)
-        LottieView(loading: .contrast)
-          .frame(width: 28, height: 15, alignment: .leading)
-          .hidden(viewModel.isCardAvailable)
-      }
-      .padding(EdgeInsets(top: 50, leading: 20, bottom: 15, trailing: 20))
+      cardInformationView
     }
     .cornerRadius(9)
     .overlay {
       cardCopyMessageView
     }
-    .track(name: String(describing: type(of: self)))
     .onAppear {
       viewModel.getVGSShowTokenAPI()
     }
+    .track(name: String(describing: type(of: self)))
   }
 }
 
 // MARK: View Components
 private extension SolidCardView {
+  var emptyCardView: some View {
+    ZStack(alignment: .topLeading) {
+      GenImages.Images.emptyCard.swiftUIImage
+        .resizable()
+        .aspectRatio(contentMode: .fit)
+      Text(viewModel.cardModel.cardType.title)
+        .font(Fonts.semiBold.swiftUIFont(size: Constants.FontSize.small.value))
+        .foregroundColor(Colors.contrast.swiftUIColor)
+        .padding(.top, 15)
+        .padding(.leading, 10)
+    }
+  }
+  
   var headerTitleView: some View {
     HStack {
       cardNumberView
@@ -68,6 +58,23 @@ private extension SolidCardView {
     .foregroundColor(Colors.contrast.swiftUIColor.opacity(0.75))
     .padding(.top, -60)
     .padding(.horizontal, 20)
+  }
+  
+  var cardInformationView: some View {
+    ZStack(alignment: .leading) {
+      VGSShowView(
+        vgsShow: viewModel.vgsShow,
+        cardModel: $viewModel.cardModel,
+        showCardNumber: $isShowCardNumber,
+        labelColor: Colors.contrast.swiftUIColor
+      )
+      .frame(height: 30)
+      .opacity(viewModel.isCardAvailable ? 1 : 0)
+      LottieView(loading: .contrast)
+        .frame(width: 28, height: 15, alignment: .leading)
+        .hidden(viewModel.isCardAvailable)
+    }
+    .padding(EdgeInsets(top: 50, leading: 20, bottom: 15, trailing: 20))
   }
   
   var cardNumberView: some View {
@@ -93,7 +100,8 @@ private extension SolidCardView {
     }
   }
   
-  @ViewBuilder var cardCopyMessageView: some View {
+  @ViewBuilder
+  var cardCopyMessageView: some View {
     if viewModel.isShowCardCopyMessage {
       Text(LFLocalizable.Card.CopyToClipboard.title)
         .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.ultraSmall.value))

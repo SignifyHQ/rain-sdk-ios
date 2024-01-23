@@ -18,9 +18,7 @@ public struct HomeView: View {
   
   // Ensure each TabOptionView is initialized only once
   let cashView = CashView(
-    listCardViewModel: SolidListCardsViewModel(
-      coordinator: Container().baseCardDestinationObservable.callAsFunction()
-    )
+    listCardViewModel: SolidListCardsViewModel()
   )
   let rewardsView = RewardsView(viewModel: .init())
   let unspecifiedRewardsView = UnspecifiedRewardsView(

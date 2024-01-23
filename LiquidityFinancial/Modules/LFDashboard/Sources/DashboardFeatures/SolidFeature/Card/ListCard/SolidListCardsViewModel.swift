@@ -1,12 +1,9 @@
 import Foundation
-import LFStyleGuide
 import Combine
 import Factory
 import SolidData
 import SolidDomain
 import LFUtilities
-import OnboardingData
-import AccountData
 import PassKit
 import RewardData
 import RewardDomain
@@ -15,43 +12,11 @@ import LFLocalizable
 import SwiftUI
 
 @MainActor
-public final class SolidListCardsViewModel: ListCardsViewModelProtocol {
-  @LazyInjected(\.netspendDataManager) var netspendDataManager
-  @LazyInjected(\.accountDataManager) var accountDataManager
+public final class SolidListCardsViewModel: ObservableObject {
   @LazyInjected(\.rewardDataManager) var rewardDataManager
   @LazyInjected(\.solidCardRepository) var solidCardRepository
   @LazyInjected(\.customerSupportService) var customerSupportService
   @LazyInjected(\.analyticsService) var analyticsService
-  
-  @Published public var isInit: Bool = false
-  @Published public var isLoading: Bool = false
-  @Published public var isShowCardNumber: Bool = false
-  @Published public var isCardLocked: Bool = false
-  @Published public var isActivePhysical: Bool = false
-  @Published public var isActivatingCard: Bool = false
-  @Published public var isUpdatingRoundUpPurchases = false
-  @Published public var isShowListCardDropdown: Bool = false
-  @Published public var toastMessage: String?
-  @Published public var cardsList: [CardModel] = []
-  @Published public var cardMetaDatas: [CardMetaData?] = []
-  @Published public var popup: ListCardPopup?
-  @Published public var currentCard: CardModel = .virtualDefault
-  
-  @Published var cardLimitUIModel: SolidListCardsViewModel.CardLimitUIModel?
-  private var cardLimitUIModelList: [CardLimitUIModel] = []
-  
-  public unowned let coordinator: BaseCardDestinationObservable
-  public var isSwitchCard = true
-  
-  public var roundUpPurchases: Bool {
-    rewardDataManager.roundUpDonation ?? false
-  }
-  
-  public var showRoundUpPurchases: Bool {
-    rewardDataManager.currentSelectReward?.rawString == APIRewardType.donation.rawValue
-  }
-  
-  public var cancellables: Set<AnyCancellable> = []
   
   lazy var updateCardStatusUseCase: SolidUpdateCardStatusUseCaseProtocol = {
     SolidUpdateCardStatusUseCase(repository: solidCardRepository)
@@ -77,35 +42,50 @@ public final class SolidListCardsViewModel: ListCardsViewModelProtocol {
     SolidGetListCardUseCase(repository: solidCardRepository)
   }()
   
+  @Published var isInit: Bool = false
+  @Published var isLoading: Bool = false
+  @Published var isShowCardNumber: Bool = false
+  @Published var isCardLocked: Bool = false
+  @Published var isActivePhysical: Bool = false
+  @Published var isActivatingCard: Bool = false
+  @Published var isUpdatingRoundUpPurchases = false
+  @Published var isShowListCardDropdown: Bool = false
+  @Published var toastMessage: String?
+  
+  @Published var currentCard: CardModel = .virtualDefault
+  @Published var cardsList: [CardModel] = []
+  @Published var popup: ListCardPopup?
+  @Published var sheet: Sheet?
+  @Published var fullScreen: FullScreen?
+  @Published var cardLimitUIModel: SolidListCardsViewModel.CardLimitUIModel?
+  
+  var isSwitchCard = true
+  
+  var roundUpPurchases: Bool {
+    rewardDataManager.roundUpDonation ?? false
+  }
+  
+  var showRoundUpPurchases: Bool {
+    rewardDataManager.currentSelectReward?.rawString == APIRewardType.donation.rawValue
+  }
+  
+  private var cardLimitUIModelList: [CardLimitUIModel] = []
   private var subscribers: Set<AnyCancellable> = []
   
-  public init(coordinator: BaseCardDestinationObservable) {
-    self.coordinator = coordinator
+  public init() {
     apiFetchSolidCards()
     observeCardsList()
     observeRefreshListCards()
   }
-  
-  func onAppear() {
-    handleCurrentCardLimit()
-  }
-  
-  private func observeRefreshListCards() {
-    NotificationCenter.default.publisher(for: .refreshListCards)
-      .sink { [weak self] _ in
-        guard let self else { return }
-        apiFetchSolidCards()
-      }
-      .store(in: &subscribers)
-  }
 }
 
 // MARK: - API
-public extension SolidListCardsViewModel {
+extension SolidListCardsViewModel {
   func activePhysicalCard(activeCardView: AnyView) {
     Task {
       defer { isActivatingCard = false }
       isActivatingCard = true
+      
       do {
         let parameters = APISolidActiveCardParameters(
           expiryMonth: convertMonthIntToString(monthNumber: currentCard.expiryMonth) ?? .empty,
@@ -155,11 +135,10 @@ public extension SolidListCardsViewModel {
   
   func closeCard() {
     Task {
-      defer {
-        isLoading = false
-      }
+      defer { isLoading = false }
       hidePopup()
       isLoading = true
+      
       do {
         let isSuccess = try await closeCardUseCase.execute(cardID: currentCard.id)
         if isSuccess {
@@ -175,6 +154,7 @@ public extension SolidListCardsViewModel {
     Task { @MainActor in
       defer { isUpdatingRoundUpPurchases = false }
       isUpdatingRoundUpPurchases = true
+      
       do {
         let parameters = APISolidRoundUpDonationParameters(roundUpDonation: status)
         let response = try await updateRoundUpDonationUseCase.execute(cardID: currentCard.id, parameters: parameters)
@@ -205,7 +185,6 @@ public extension SolidListCardsViewModel {
         if filteredCards.isEmpty {
           NotificationCenter.default.post(name: .noLinkedCards, object: nil)
         } else {
-          cardMetaDatas = Array(repeating: nil, count: filteredCards.count)
           isInit = false
         }
         currentCard = cardsArr.first ?? .virtualDefault
@@ -219,19 +198,6 @@ public extension SolidListCardsViewModel {
       }
     }
   }
-}
-
-// MARK: - Card Limits
-extension SolidListCardsViewModel {
-  private func observeCardsList() {
-    $cardsList
-      .removeDuplicates()
-      .sink { [weak self] items in
-        guard let self, items.isNotEmpty else { return }
-        handleListCardLimit()
-      }
-      .store(in: &subscribers)
-  }
   
   func handleListCardLimit() {
     Task { @MainActor in
@@ -240,13 +206,7 @@ extension SolidListCardsViewModel {
     }
   }
   
-  func handleCurrentCardLimit() {
-    cardLimitUIModel = nil
-    guard let cardLimit = cardLimitUIModelList.first(where: { $0.id == currentCard.id }) else { return }
-    cardLimitUIModel = cardLimit
-  }
-  
-  private func apiFetchAllCardLimit() async {
+  func apiFetchAllCardLimit() async {
     await cardsList.concurrentForEach { [weak self] cardItem in
       guard let self else { return }
       if let model = await getItemCardLimit(cardID: cardItem.id) {
@@ -255,7 +215,7 @@ extension SolidListCardsViewModel {
     }
   }
   
-  private func getItemCardLimit(cardID: String) async -> CardLimitUIModel? {
+  func getItemCardLimit(cardID: String) async -> CardLimitUIModel? {
     guard !cardID.isEmpty else { return nil }
     do {
       let cardLimits = try await getCardLimitsUseCase.execute(cardID: cardID)
@@ -267,7 +227,11 @@ extension SolidListCardsViewModel {
 }
 
 // MARK: - View Helpers
-public extension SolidListCardsViewModel {
+extension SolidListCardsViewModel {
+  func onAppear() {
+    handleCurrentCardLimit()
+  }
+  
   func title(for card: CardModel) -> String {
     switch card.cardType {
     case .virtual:
@@ -305,7 +269,7 @@ public extension SolidListCardsViewModel {
   }
   
   func onClickedChangePinButton() {
-    setFullScreenCoordinator(destinationView: .changePin)
+    fullScreen = .changePin
   }
   
   func onClickedAddToApplePay() {
@@ -315,9 +279,7 @@ public extension SolidListCardsViewModel {
     let destinationView = ApplePayViewController(
       viewModel: SolidApplePayViewModel(cardModel: currentCard)
     )
-    setSheetCoordinator(
-      destinationView: .applePay(AnyView(destinationView))
-    )
+    sheet = .applePay(AnyView(destinationView))
   }
   
   func onChangeCurrentCard() {
@@ -351,7 +313,7 @@ public extension SolidListCardsViewModel {
   func presentActivateCardView(activeCardView: AnyView) {
     switch currentCard.cardType {
     case .physical:
-      setFullScreenCoordinator(destinationView: .activatePhysicalCard(activeCardView))
+      fullScreen = .activatePhysicalCard(activeCardView)
     default:
       break
     }
@@ -360,6 +322,59 @@ public extension SolidListCardsViewModel {
 
 // MARK: - Private Functions
 private extension SolidListCardsViewModel {
+  func observeRefreshListCards() {
+    NotificationCenter.default.publisher(for: .refreshListCards)
+      .sink { [weak self] _ in
+        guard let self else { return }
+        apiFetchSolidCards()
+      }
+      .store(in: &subscribers)
+  }
+  
+  func observeCardsList() {
+    $cardsList
+      .removeDuplicates()
+      .sink { [weak self] items in
+        guard let self, items.isNotEmpty else { return }
+        handleListCardLimit()
+      }
+      .store(in: &subscribers)
+  }
+  
+  func handleCurrentCardLimit() {
+    cardLimitUIModel = nil
+    guard let cardLimit = cardLimitUIModelList.first(where: { $0.id == currentCard.id }) else { return }
+    cardLimitUIModel = cardLimit
+  }
+  
+  func updateCardStatus(status: CardStatus, id: String) {
+    isLoading = false
+    guard let index = cardsList.firstIndex(where: { $0.id == id }), id == currentCard.id else {
+      return
+    }
+    
+    isSwitchCard = false
+    currentCard.cardStatus = status
+    cardsList[index].cardStatus = status
+    isActivePhysical = status == .active
+  }
+  
+  func updateListCard(id: String, completion: @escaping () -> Void) {
+    isLoading = false
+    
+    guard let index = cardsList.firstIndex(where: { $0.id == id }) else {
+      return
+    }
+    cardsList.remove(at: index)
+    
+    guard let firstCard = cardsList.first else {
+      NotificationCenter.default.post(name: .noLinkedCards, object: nil)
+      completion()
+      return
+    }
+    currentCard = firstCard
+  }
+  
   func convertMonthIntToString(monthNumber: Int) -> String? {
     switch monthNumber {
     case 1...9:
@@ -370,5 +385,39 @@ private extension SolidListCardsViewModel {
     default:
       return nil
     }
+  }
+}
+
+// MARK: - Types
+extension SolidListCardsViewModel {
+  enum Sheet: Identifiable {
+    case applePay(AnyView)
+    
+    var id: String {
+      switch self {
+      case .applePay:
+        return "applePay"
+      }
+    }
+  }
+  
+  enum FullScreen: Identifiable {
+    case changePin
+    case activatePhysicalCard(AnyView)
+    
+    var id: String {
+      switch self {
+      case .changePin:
+        return "changePin"
+      case .activatePhysicalCard:
+        return "activatePhysicalCard"
+      }
+    }
+  }
+  
+  enum ListCardPopup {
+    case confirmCloseCard
+    case closeCardSuccessfully
+    case roundUpPurchases
   }
 }

@@ -4,30 +4,22 @@ import SolidData
 import Factory
 
 @MainActor
-public final class SolidAddAppleWalletViewModel: AddAppleWalletViewModelProtocol {
+final class SolidApplePayViewModel: ObservableObject {
   @LazyInjected(\.solidCardRepository) var solidCardRepository
-  
-  @Published public var isShowApplePay: Bool = false
   
   lazy var postApplePayTokenUseCase: SolidCreateDigitalWalletUseCaseProtocol = {
     SolidCreateDigitalWalletUseCase(repository: solidCardRepository)
   }()
   
-  public let cardModel: CardModel
-  public let onFinish: () -> Void
-
-  public init(cardModel: CardModel, onFinish: @escaping () -> Void) {
+  let cardModel: CardModel
+  
+  init(cardModel: CardModel) {
     self.cardModel = cardModel
-    self.onFinish = onFinish
   }
 }
 
-// MARK: - View Helpers
-public extension SolidAddAppleWalletViewModel {
-  func onClickedAddToApplePay() {
-    isShowApplePay = true
-  }
-  
+// MARK: - API
+extension SolidApplePayViewModel {
   func callEnrollWalletAPI(bodyData: [String: Any]) async throws -> DigitalWalletLinkToken? {
     guard let certificates = bodyData["certificates"] as? [String],
         let deviceCert = certificates.first,
@@ -36,6 +28,7 @@ public extension SolidAddAppleWalletViewModel {
     else {
       return nil
     }
+    
     let parameters = APISolidApplePayWalletParameters(
       deviceCert: deviceCert,
       nonceSignature: nonceSignature,
@@ -45,6 +38,7 @@ public extension SolidAddAppleWalletViewModel {
       cardID: cardModel.id,
       parameters: parameters
     )
+    
     return DigitalWalletLinkToken(
       activationData: response.applePayEntity?.activationData,
       ephemeralPublicKey: response.applePayEntity?.ephemeralPublicKey,

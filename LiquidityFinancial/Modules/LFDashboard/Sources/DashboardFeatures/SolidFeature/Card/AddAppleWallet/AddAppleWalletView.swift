@@ -3,21 +3,18 @@ import LFLocalizable
 import LFUtilities
 import LFStyleGuide
 
-public struct AddAppleWalletView<
-  ViewModel: AddAppleWalletViewModelProtocol,
-  ApplePayViewModel: ApplePayViewModelProtocol
->: View {
-  @StateObject private var viewModel: ViewModel
+struct AddAppleWalletView: View {
+  @StateObject private var viewModel: SolidAddAppleWalletViewModel
   
-  public init(viewModel: ViewModel) {
+  init(viewModel: SolidAddAppleWalletViewModel) {
     _viewModel = .init(wrappedValue: viewModel)
   }
   
-  public var body: some View {
+  var body: some View {
     content
       .background(Colors.background.swiftUIColor)
       .sheet(isPresented: $viewModel.isShowApplePay) {
-        ApplePayViewController(viewModel: ApplePayViewModel(cardModel: viewModel.cardModel)) {
+        ApplePayViewController(viewModel: SolidApplePayViewModel(cardModel: viewModel.cardModel)) {
           viewModel.onFinish()
         }
       }
@@ -35,7 +32,7 @@ private extension AddAppleWalletView {
         information
         Spacer()
           .frame(minHeight: 36)
-        buttons
+        buttonGroupView
       }
       .padding(.horizontal, 30)
     }
@@ -57,7 +54,7 @@ private extension AddAppleWalletView {
     .multilineTextAlignment(.center)
   }
   
-  var buttons: some View {
+  var buttonGroupView: some View {
     VStack(spacing: 10) {
       Button {
         viewModel.onClickedAddToApplePay()

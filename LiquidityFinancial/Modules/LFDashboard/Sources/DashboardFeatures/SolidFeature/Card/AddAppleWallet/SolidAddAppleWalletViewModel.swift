@@ -4,24 +4,31 @@ import SolidData
 import Factory
 
 @MainActor
-public final class SolidApplePayViewModel: ApplePayViewModelProtocol {
+final class SolidAddAppleWalletViewModel: ObservableObject {
   @LazyInjected(\.solidCardRepository) var solidCardRepository
-  @LazyInjected(\.accountDataManager) var accountDataManager
-
+  
   lazy var postApplePayTokenUseCase: SolidCreateDigitalWalletUseCaseProtocol = {
     SolidCreateDigitalWalletUseCase(repository: solidCardRepository)
   }()
   
-  public let cardModel: CardModel
+  @Published var isShowApplePay: Bool = false
   
-  public init(cardModel: CardModel) {
+  let cardModel: CardModel
+  let onFinish: () -> Void
+
+  init(cardModel: CardModel, onFinish: @escaping () -> Void) {
     self.cardModel = cardModel
+    self.onFinish = onFinish
   }
 }
 
-// MARK: - API
-extension SolidApplePayViewModel {
-  public func callEnrollWalletAPI(bodyData: [String: Any]) async throws -> DigitalWalletLinkToken? {
+// MARK: - View Helpers
+extension SolidAddAppleWalletViewModel {
+  func onClickedAddToApplePay() {
+    isShowApplePay = true
+  }
+  
+  func callEnrollWalletAPI(bodyData: [String: Any]) async throws -> DigitalWalletLinkToken? {
     guard let certificates = bodyData["certificates"] as? [String],
         let deviceCert = certificates.first,
         let nonceSignature = bodyData["nonceSignature"] as? String,
@@ -29,6 +36,7 @@ extension SolidApplePayViewModel {
     else {
       return nil
     }
+    
     let parameters = APISolidApplePayWalletParameters(
       deviceCert: deviceCert,
       nonceSignature: nonceSignature,
@@ -38,6 +46,7 @@ extension SolidApplePayViewModel {
       cardID: cardModel.id,
       parameters: parameters
     )
+    
     return DigitalWalletLinkToken(
       activationData: response.applePayEntity?.activationData,
       ephemeralPublicKey: response.applePayEntity?.ephemeralPublicKey,

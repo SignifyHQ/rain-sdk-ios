@@ -1,26 +1,26 @@
 import Foundation
+import Factory
 import PassKit
 import SwiftUI
 import LFLocalizable
-import NetSpendData
-import NetspendDomain
-import Factory
 import LFUtilities
 
-public struct ApplePayViewController<ViewModel: ApplePayViewModelProtocol>: UIViewControllerRepresentable {
-  @Environment(\.presentationMode) var presentation
-  @StateObject private var viewModel: ViewModel
+struct ApplePayViewController: UIViewControllerRepresentable {
+  @Environment(\.presentationMode)
+  var presentation
+  @StateObject
+  private var viewModel: SolidApplePayViewModel
   
   var onSuccess: (() -> Void)?
   
-  public init(viewModel: ViewModel, onSuccess: ( () -> Void)? = nil) {
+  init(viewModel: SolidApplePayViewModel, onSuccess: ( () -> Void)? = nil) {
     _viewModel = .init(wrappedValue: viewModel)
     self.onSuccess = onSuccess
   }
   
-  public func updateUIViewController(_: PKAddPaymentPassViewController, context _: Context) {}
+  func updateUIViewController(_: PKAddPaymentPassViewController, context _: Context) {}
   
-  public func makeUIViewController(context: Context) -> PKAddPaymentPassViewController {
+  func makeUIViewController(context: Context) -> PKAddPaymentPassViewController {
     let request = PKAddPaymentPassRequestConfiguration(encryptionScheme: .ECC_V2)
     request?.cardholderName = viewModel.cardModel.cardholderName
     request?.primaryAccountSuffix = viewModel.cardModel.last4
@@ -33,20 +33,26 @@ public struct ApplePayViewController<ViewModel: ApplePayViewModelProtocol>: UIVi
     return PKAddPaymentPassViewController()
   }
   
-  public func makeCoordinator() -> Coordinator {
+  func makeCoordinator() -> Coordinator {
     Coordinator(self)
   }
 }
 
 extension ApplePayViewController {
-  public class Coordinator: NSObject, PKAddPaymentPassViewControllerDelegate {
+  class Coordinator: NSObject, PKAddPaymentPassViewControllerDelegate {
     var parent: ApplePayViewController
     
     init(_ parent: ApplePayViewController) {
       self.parent = parent
     }
     
-    public func addPaymentPassViewController(_: PKAddPaymentPassViewController, generateRequestWithCertificateChain certificates: [Data], nonce: Data, nonceSignature: Data, completionHandler handler: @escaping (PKAddPaymentPassRequest) -> Void) {
+    func addPaymentPassViewController(
+      _: PKAddPaymentPassViewController,
+      generateRequestWithCertificateChain certificates: [Data],
+      nonce: Data,
+      nonceSignature: Data,
+      completionHandler handler: @escaping (PKAddPaymentPassRequest) -> Void
+    ) {
       if PKAddPaymentPassViewController.canAddPaymentPass() {
         Task { @MainActor in
           do {
@@ -82,7 +88,7 @@ extension ApplePayViewController {
       }
     }
     
-    public func addPaymentPassViewController(_: PKAddPaymentPassViewController, didFinishAdding _: PKPaymentPass?, error: Error?) {
+    func addPaymentPassViewController(_: PKAddPaymentPassViewController, didFinishAdding _: PKPaymentPass?, error: Error?) {
       parent.presentation.wrappedValue.dismiss()
       if error == nil {
         parent.onSuccess?()

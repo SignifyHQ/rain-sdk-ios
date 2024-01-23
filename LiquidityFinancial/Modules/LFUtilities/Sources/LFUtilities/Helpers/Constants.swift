@@ -25,6 +25,7 @@ public enum Constants {
     case cryptoLimit
     case cvv
     case fullPassportLength
+    case cardPinCode
     case otpCode
     case mfaCode
     case recoveryCode
@@ -74,6 +75,8 @@ public enum Constants {
         return 4
       case .fullPassportLength:
         return 20
+      case .cardPinCode:
+        return 4
       case .otpCode:
         return 6
       case .mfaCode:

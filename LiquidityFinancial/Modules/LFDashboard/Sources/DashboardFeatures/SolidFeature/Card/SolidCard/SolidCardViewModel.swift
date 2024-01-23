@@ -9,22 +9,21 @@ import SolidDomain
 import Factory
 
 @MainActor
-public final class SolidCardViewModel: ObservableObject, Identifiable {
+final class SolidCardViewModel: ObservableObject, Identifiable {
   @LazyInjected(\.solidCardRepository) var solidCardRepository
-
-  @Published public var cardModel: CardModel
-  @Published public var isCardAvailable = false
-  @Published public var isShowCardCopyMessage = false
-  @Published public var toastMessage: String?
-  
-  let vgsShow: VGSShow
   
   lazy var createVGSShowTokenUseCase: SolidCreateVGSShowTokenUseCaseProtocol = {
     SolidCreateVGSShowTokenUseCase(repository: solidCardRepository)
   }()
-
-  public init(cardModel: CardModel) {
-    vgsShow = VGSShow(id: LFServices.vgsConfig.id, environment: LFServices.vgsConfig.env)
+  
+  @Published public var isCardAvailable = false
+  @Published public var isShowCardCopyMessage = false
+  @Published public var toastMessage: String?
+  @Published public var cardModel: CardModel
+  
+  let vgsShow = VGSShow(id: LFServices.vgsConfig.id, environment: LFServices.vgsConfig.env)
+  
+  init(cardModel: CardModel) {
     self.cardModel = cardModel
   }
 }

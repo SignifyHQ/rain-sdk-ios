@@ -4,17 +4,17 @@ import LFUtilities
 import LFStyleGuide
 import Services
 
-public struct SetCardPinView<ViewModel: SetCardPinViewModelProtocol>: View {
+struct SetCardPinView: View {
   @Environment(\.dismiss)
   private var dismiss
   @StateObject
-  private var viewModel: ViewModel
-    
-  public init(viewModel: ViewModel) {
+  private var viewModel: SolidSetCardPinViewModel
+  
+  init(viewModel: SolidSetCardPinViewModel) {
     _viewModel = .init(wrappedValue: viewModel)
   }
   
-  public var body: some View {
+  var body: some View {
     content
       .background(Colors.background.swiftUIColor)
       .popup(isPresented: $viewModel.isShowSetPinSuccessPopup) {

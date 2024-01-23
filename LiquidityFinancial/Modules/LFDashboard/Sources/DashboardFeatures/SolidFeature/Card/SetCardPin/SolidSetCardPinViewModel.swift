@@ -1,49 +1,42 @@
 import Combine
 import Foundation
-import UIKit
 import LFStyleGuide
 import LFUtilities
 import SolidData
 import SolidDomain
 import Factory
-import AccountData
 import Services
 import VGSCollectSDK
 
 @MainActor
-public final class SolidSetCardPinViewModel: SetCardPinViewModelProtocol {
-  @LazyInjected(\.netspendDataManager) var netspendDataManager
-  @LazyInjected(\.accountDataManager) var accountDataManager
+final class SolidSetCardPinViewModel: ObservableObject {
   @LazyInjected(\.solidCardRepository) var solidCardRepository
   
-  @Published public  var isShowSetPinSuccessPopup: Bool = false
-  @Published public var isShown: Bool = true
-  @Published public var isShowIndicator: Bool = false
-  @Published public var isPinEntered: Bool = false
-
-  @Published public var pinValue: String = .empty
-  @Published public var toastMessage: String?
-  
-  public let pinCodeDigits = Int(Constants.Default.pinCodeDigits.rawValue) ?? 4
-  public let cardModel: CardModel
-  public let onFinish: ((String) -> Void)?
-  var vgsCollect = VGSCollect(id: LFServices.vgsConfig.id, environment: LFServices.vgsConfig.env)
-
   lazy var getPinTokenUseCase: SolidCreateCardPinTokenUseCaseProtocol = {
     SolidCreateCardPinTokenUseCase(repository: solidCardRepository)
   }()
   
-  public init(cardModel: CardModel, verifyID: String? = nil, onFinish: ((String) -> Void)? = nil) {
+  @Published var isShowSetPinSuccessPopup: Bool = false
+  @Published var isShowIndicator: Bool = false
+  @Published var isPinEntered: Bool = false
+  
+  @Published var pinValue: String = .empty
+  @Published var toastMessage: String?
+  
+  let pinCodeDigits = Constants.MaxCharacterLimit.cardPinCode.value
+  let cardModel: CardModel
+  
+  private var vgsCollect = VGSCollect(id: LFServices.vgsConfig.id, environment: LFServices.vgsConfig.env)
+  
+  init(cardModel: CardModel) {
     self.cardModel = cardModel
-    self.onFinish = onFinish
-    
     observePinCodeInput()
   }
 }
 
 // MARK: - API Handle
-extension SolidSetCardPinViewModel {
-  public func onClickedContinueButton() {
+private extension SolidSetCardPinViewModel {
+  func getCardPinToken() {
     Task {
       isShowIndicator = true
       do {
@@ -84,7 +77,7 @@ extension SolidSetCardPinViewModel {
   ) {
     let path = "/v1/card/\(solidCardID)/pin"
     vgsCollect.customHeaders = ["sd-pin-token": tokenID]
-
+    
     vgsCollect.sendData(path: path, method: .post, extraData: params as [String: Any]) { [weak self] response in
       guard let self else {
         completion(false, nil)
@@ -107,13 +100,19 @@ extension SolidSetCardPinViewModel {
 }
 
 // MARK: - View Helpers
-public extension SolidSetCardPinViewModel {
-  func handleSuccessPrimaryAction(dismissScreen: @escaping () -> Void) {
-    isShowSetPinSuccessPopup = false
-    isShown = false
-    dismissScreen()
+extension SolidSetCardPinViewModel {
+  func onClickedContinueButton() {
+    getCardPinToken()
   }
   
+  func handleSuccessPrimaryAction(dismissScreen: @escaping () -> Void) {
+    isShowSetPinSuccessPopup = false
+    dismissScreen()
+  }
+}
+
+// MARK: - Private Functions
+private extension SolidSetCardPinViewModel {
   func observePinCodeInput() {
     $pinValue
       .map { [weak self] otp in
@@ -124,17 +123,19 @@ public extension SolidSetCardPinViewModel {
       }
       .assign(to: &$isPinEntered)
   }
-}
-
-// MARK: - Private Functions
-private extension SolidSetCardPinViewModel {
+  
+  func onSetPinSuccess() {
+    isShowIndicator = false
+    isShowSetPinSuccessPopup = true
+  }
+  
   func handleVGSSetPinSuccess(data: Data?, completion: @escaping (Bool, String?) -> Void) {
     if let jsonData = try? JSONSerialization.jsonObject(with: data ?? Data(), options: []) as? [String: Any] {
       log.debug(jsonData)
     }
     completion(true, nil)
   }
-
+  
   func handleVGSSetPinFailure(
     code: Int,
     data: Data?,
