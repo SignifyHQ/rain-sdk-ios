@@ -6,7 +6,6 @@ import AccountData
 import UIComponents
 import LFRewards
 import LFLocalizable
-import BaseOnboarding
 import EnvironmentService
 import LFAuthentication
 
@@ -77,9 +76,6 @@ public struct SolidOnboardingContentView: View {
       case .forceUpdate(let model):
         contentViewFactory
           .createView(type: .forceUpdate(model))
-      case .accountMigration:
-        contentViewFactory
-          .createView(type: .accountMigration)
       case .createPassword:
         contentViewFactory
           .createView(type: .createPassword)

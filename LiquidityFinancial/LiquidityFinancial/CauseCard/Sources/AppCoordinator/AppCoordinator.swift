@@ -4,7 +4,6 @@ import LFUtilities
 import SolidOnboarding
 import SwiftUI
 import AuthorizationManager
-import BaseOnboarding
 
 // swiftlint:disable let_var_whitespace
 protocol AppCoordinatorProtocol {

@@ -4,9 +4,8 @@ import LFUtilities
 import LFStyleGuide
 import AccountData
 import UIComponents
-import LFRewards
 import LFLocalizable
-import BaseOnboarding
+import UIComponents
 import Services
 import EnvironmentService
 
@@ -98,9 +97,6 @@ public struct NSOnboardingContentView: View {
       case .forceUpdate(let model):
         contentViewFactory
           .createView(type: .forceUpdate(model))
-      case .accountMigration:
-        contentViewFactory
-          .createView(type: .accountMigration)
       }
     }
     .onAppear {

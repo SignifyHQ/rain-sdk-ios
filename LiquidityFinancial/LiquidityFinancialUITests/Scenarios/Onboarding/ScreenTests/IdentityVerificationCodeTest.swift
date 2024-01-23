@@ -1,9 +1,6 @@
 import XCTest
 
 class IdentityVerificationCodeTest: BaseAppUITest {
-  override func setUp() {
-    super.setUp()
-  }
   
   func test_uiElements_exists() {
     if !phoneNumberScreen.phoneNumberTextField.waitForExistence(timeout: 3.0) {

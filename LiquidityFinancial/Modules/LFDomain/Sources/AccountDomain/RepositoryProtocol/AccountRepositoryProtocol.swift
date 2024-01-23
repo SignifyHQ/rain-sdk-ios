@@ -30,8 +30,6 @@ public protocol AccountRepositoryProtocol {
   func getUserRewards() async throws -> [UserRewardsEntity]
   func getFeatureConfig() async throws -> AccountFeatureConfigEntity
   func createSupportTicket(title: String?, description: String?, type: String) async throws -> SupportTicketEntity
-  func getMigrationStatus() async throws -> MigrationStatusEntity
-  func requestMigration() async throws -> MigrationStatusEntity
   func getSecretKey() async throws -> SecretKeyEntity
   func enableMFA(code: String) async throws -> EnableMFAEntity
   func disableMFA(code: String) async throws -> DisableMFAEntity

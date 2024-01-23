@@ -8,23 +8,19 @@ import OnboardingDomain
 import Services
 import Factory
 
-public struct VerificationCodeView<ViewModel: VerificationCodeViewModelProtocol>: View {
+struct VerificationCodeView: View {
   @StateObject
-  var viewModel: ViewModel
+  var viewModel: VerificationCodeViewModel
   @FocusState
   var keyboardFocus: Bool
   @Injected(\.analyticsService)
   var analyticsService
   
-  @ObservedObject
-  var coordinator: BaseOnboardingDestinationObservable
-  
-  public init(viewModel: ViewModel, coordinator: BaseOnboardingDestinationObservable) {
+  init(viewModel: VerificationCodeViewModel) {
     _viewModel = .init(wrappedValue: viewModel)
-    self.coordinator = coordinator
   }
   
-  public var body: some View {
+  var body: some View {
     VStack(alignment: .leading, spacing: 28) {
       headerTitle
       enterCodeTextField
@@ -54,7 +50,7 @@ public struct VerificationCodeView<ViewModel: VerificationCodeViewModelProtocol>
       viewModel.isResendButonTimerOn = false
       analyticsService.track(event: AnalyticsEvent(name: .phoneVerified))
     }
-    .navigationLink(item: $coordinator.verificationDestinationView) { item in
+    .navigationLink(item: $viewModel.navigation) { item in
       switch item {
       case let .identityVerificationCode(destinationView):
         destinationView

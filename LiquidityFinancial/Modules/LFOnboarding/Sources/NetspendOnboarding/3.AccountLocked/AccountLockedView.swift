@@ -5,14 +5,14 @@ import LFLocalizable
 import LFAccessibility
 import Services
 
-public struct AccountLockedView<ViewModel: AccountLockedViewModelProtocol>: View {
-  @StateObject private var viewModel: ViewModel
+struct AccountLockedView: View {
+  @StateObject private var viewModel: AccountLockedViewModel
   
-  public init(viewModel: ViewModel) {
+  init(viewModel: AccountLockedViewModel) {
     _viewModel = .init(wrappedValue: viewModel)
   }
   
-  public var body: some View {
+  var body: some View {
     VStack(spacing: 24) {
       GenImages.Images.lockedAccount.swiftUIImage
         .accessibilityIdentifier(LFAccessibility.AccountLockedScreen.lockedImage)

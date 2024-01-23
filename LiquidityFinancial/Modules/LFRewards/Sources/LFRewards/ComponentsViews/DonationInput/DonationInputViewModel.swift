@@ -172,7 +172,7 @@ extension DonationInputViewModel {
 //      return nil
 //    }
 //    return balanceStr.asDouble
-    return 0
+    0
   }
 }
 

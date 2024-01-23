@@ -8,13 +8,10 @@ import OnboardingData
 import AccountData
 import AccountDomain
 import OnboardingDomain
-import LFRewards
-import RewardData
-import RewardDomain
 import LFStyleGuide
 import LFLocalizable
 import Services
-import BaseOnboarding
+import UIComponents
 import ZerohashDomain
 import ZerohashData
 
@@ -47,7 +44,6 @@ public class NoBankOnboardingFlowCoordinator: OnboardingFlowCoordinatorProtocol 
     case accountLocked
     case dashboard
     case forceUpdate(FeatureConfigModel)
-    case accountMigration
     case noBankPopup
     
     public var id: String {
@@ -75,10 +71,6 @@ public class NoBankOnboardingFlowCoordinator: OnboardingFlowCoordinatorProtocol 
   
   lazy var accountUseCase: AccountUseCaseProtocol = {
     AccountUseCase(repository: accountRepository)
-  }()
-  
-  lazy var getMigrationStatusUseCase: GetMigrationStatusUseCaseProtocol = {
-    GetMigrationStatusUseCase(repository: accountRepository)
   }()
   
   public let routeSubject: CurrentValueSubject<Route, Never>
@@ -168,10 +160,7 @@ private extension NoBankOnboardingFlowCoordinator {
   
   func fetchUserReviewStatus() async throws {
     let user = try await accountRepository.getUser()
-    let status = try await getMigrationStatusUseCase.execute()
-    if status.migrationNeeded && !status.migrated {
-      set(route: .accountMigration)
-    } else if let accountReviewStatus = user.accountReviewStatusEnum {
+    if let accountReviewStatus = user.accountReviewStatusEnum {
       switch accountReviewStatus {
       case .approved:
         set(route: .dashboard)

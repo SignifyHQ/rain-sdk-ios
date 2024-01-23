@@ -10,11 +10,15 @@ import Services
 import AccountData
 import AccountDomain
 import LFLocalizable
-import BaseOnboarding
+import UIComponents
 import EnvironmentService
 
 @MainActor
-final class VerificationCodeViewModel: VerificationCodeViewModelProtocol {
+final class VerificationCodeViewModel: ObservableObject {
+  enum VerificationCodeNavigation {
+    case identityVerificationCode(AnyView)
+  }
+  
   @LazyInjected(\.environmentService) var environmentService
   @LazyInjected(\.accountDataManager) var accountDataManager
   @LazyInjected(\.onboardingRepository) var onboardingRepository
@@ -42,10 +46,8 @@ final class VerificationCodeViewModel: VerificationCodeViewModelProtocol {
     LoginUseCase(repository: onboardingRepository)
   }()
   
-  unowned let coordinator: BaseOnboarding.BaseOnboardingDestinationObservable
-  init(phoneNumber: String, requireAuth: [RequiredAuth], coordinator: BaseOnboarding.BaseOnboardingDestinationObservable) {
+  init(phoneNumber: String, requireAuth: [RequiredAuth]) {
     self.requireAuth = requireAuth
-    self.coordinator = coordinator
     formatPhoneNumber = Constants.Default.regionCode.rawValue + phoneNumber
     performAutoGetTwilioMessagesIfNeccessary()
   }
@@ -69,8 +71,7 @@ extension VerificationCodeViewModel {
       if let kind = identityVerificationKind {
         let viewModel = IdentityVerificationCodeViewModel(phoneNumber: formatPhoneNumber, otpCode: otpCode, kind: kind)
         let view = IdentityVerificationCodeView(viewModel: viewModel)
-        coordinator
-          .verificationDestinationView = .identityVerificationCode(AnyView(view))
+        navigation = .identityVerificationCode(AnyView(view))
       }
     }
   }
@@ -180,11 +181,6 @@ private extension VerificationCodeViewModel {
   
   @MainActor
   func checkOnboardingState() async {
-    do {
-      try await onboardingFlowCoordinator.apiFetchCurrentState()
-    } catch {
-      log.error(error.userFriendlyMessage)
-      onboardingFlowCoordinator.forcedLogout()
-    }
+    await onboardingFlowCoordinator.apiFetchCurrentState()
   }
 }

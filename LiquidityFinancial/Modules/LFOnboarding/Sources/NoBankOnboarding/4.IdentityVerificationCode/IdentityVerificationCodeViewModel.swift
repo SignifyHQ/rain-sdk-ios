@@ -6,12 +6,11 @@ import AccountData
 import AccountDomain
 import OnboardingDomain
 import OnboardingData
-import BaseOnboarding
+import UIComponents
 import NetSpendData
-import RewardData
 
 @MainActor
-public final class IdentityVerificationCodeViewModel: IdentityVerificationCodeViewProtocol {
+public final class IdentityVerificationCodeViewModel: ObservableObject {
   @LazyInjected(\.customerSupportService) var customerSupportService
   @LazyInjected(\.accountDataManager) var accountDataManager
   @LazyInjected(\.onboardingRepository) var onboardingRepository

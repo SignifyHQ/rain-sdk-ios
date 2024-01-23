@@ -9,7 +9,7 @@ import Combine
 import Factory
 import EnvironmentService
 
-public struct PhoneNumberView<ViewModel: PhoneNumberViewModelProtocol>: View {
+struct PhoneNumberView: View {
 
   @Environment(\.presentationMode)
   var presentation
@@ -18,20 +18,20 @@ public struct PhoneNumberView<ViewModel: PhoneNumberViewModelProtocol>: View {
   @Injected(\.environmentService)
   var environmentService
   @StateObject
-  var viewModel: ViewModel
+  var viewModel: PhoneNumberViewModel
   
-  @InjectedObject(\.baseOnboardingDestinationObservable)
-  var baseOnboardingDestinationObservable
+  @InjectedObject(\.onboardingDestinationObservable)
+  var onboardingDestinationObservable
   
-  @State var openSafariType: OpenSafariType?
+  @State var openSafariType: PhoneNumberViewModel.OpenSafariType?
 
-  public init(viewModel: ViewModel) {
+  init(viewModel: PhoneNumberViewModel) {
     _viewModel = .init(wrappedValue: viewModel)
   }
   
   @FocusState private var keyboardFocus: Bool
   
-  public var body: some View {
+  var body: some View {
     ZStack {
       VStack {
         Rectangle()
@@ -79,7 +79,7 @@ public struct PhoneNumberView<ViewModel: PhoneNumberViewModelProtocol>: View {
     .background(Colors.background.swiftUIColor)
     .navigationBarTitleDisplayMode(.inline)
     .navigationBarBackButtonHidden()
-    .navigationLink(item: $baseOnboardingDestinationObservable.phoneNumberDestinationView) { item in
+    .navigationLink(item: $viewModel.navigation) { item in
       switch item {
       case let .verificationCode(destinationView):
         destinationView

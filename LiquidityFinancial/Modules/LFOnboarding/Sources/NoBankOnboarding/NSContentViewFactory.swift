@@ -3,7 +3,7 @@ import LFUtilities
 import LFStyleGuide
 import LFLocalizable
 import SwiftUI
-import BaseOnboarding
+import UIComponents
 import Factory
 import AccountDomain
 import UIComponents
@@ -19,21 +19,21 @@ extension Container {
 
 final class NSContentViewFactory {
   enum ViewType {
-    case initial, phone
+    case initial
+    case phone
     case accountLocked
     case forceUpdate(FeatureConfigModel)
-    case accountMigration
     case noBankPopup
   }
   
   let flowCoordinator: OnboardingFlowCoordinatorProtocol
-  let baseOnboardingNavigation: BaseOnboardingDestinationObservable
+  let baseOnboardingNavigation: OnboardingDestinationObservable
   let accountDataManager: AccountDataStorageProtocol
   
   init(
     container: Container
   ) {
-    baseOnboardingNavigation = container.baseOnboardingDestinationObservable.callAsFunction()
+    baseOnboardingNavigation = container.onboardingDestinationObservable.callAsFunction()
     flowCoordinator = container.noBankOnboardingFlowCoordinator.callAsFunction()
     accountDataManager = container.accountDataManager.callAsFunction()
   }
@@ -49,8 +49,6 @@ final class NSContentViewFactory {
       return AnyView(initialView)
     case .forceUpdate(let model):
       return AnyView(forceUpdateView(model: model))
-    case .accountMigration:
-      return AnyView(accountMigrationView)
     case .noBankPopup:
       return AnyView(blockingFiatView)
     }
@@ -71,18 +69,13 @@ private extension NSContentViewFactory {
   @MainActor
   var phoneNumberView: some View {
     PhoneNumberView(
-      viewModel: PhoneNumberViewModel(coordinator: baseOnboardingNavigation)
+      viewModel: PhoneNumberViewModel()
     )
   }
   
   @MainActor
   func forceUpdateView(model: FeatureConfigModel) -> some View {
     UpdateAppView(featureConfigModel: model)
-  }
-  
-  @MainActor
-  var accountMigrationView: some View {
-    AccountMigrationView(viewModel: AccountMigrationViewModel())
   }
   
   @MainActor

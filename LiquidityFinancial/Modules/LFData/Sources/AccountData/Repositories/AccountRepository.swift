@@ -126,14 +126,6 @@ public class AccountRepository: AccountRepositoryProtocol {
     try await accountAPI.createSupportTicket(title: title, description: description, type: type)
   }
   
-  public func getMigrationStatus() async throws -> MigrationStatusEntity {
-    try await accountAPI.getMigrationStatus()
-  }
-  
-  public func requestMigration() async throws -> MigrationStatusEntity {
-    try await accountAPI.requestMigration()
-  }
-  
   public func getSecretKey() async throws -> SecretKeyEntity {
     try await accountAPI.getSecretKey()
   }

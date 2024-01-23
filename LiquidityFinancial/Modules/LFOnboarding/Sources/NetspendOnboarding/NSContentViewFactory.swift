@@ -3,7 +3,6 @@ import LFUtilities
 import LFStyleGuide
 import LFLocalizable
 import SwiftUI
-import BaseOnboarding
 import Factory
 import AccountDomain
 import UIComponents
@@ -25,17 +24,16 @@ final class NSContentViewFactory {
     case accountReject, unclear(String)
     case agreement, featureAgreement
     case forceUpdate(FeatureConfigModel)
-    case accountMigration
   }
   
   let flowCoordinator: OnboardingFlowCoordinatorProtocol
-  let baseOnboardingNavigation: BaseOnboardingDestinationObservable
+  let baseOnboardingNavigation: OnboardingDestinationObservable
   let accountDataManager: AccountDataStorageProtocol
   
   init(
     container: Container
   ) {
-    baseOnboardingNavigation = container.baseOnboardingDestinationObservable.callAsFunction()
+    baseOnboardingNavigation = container.onboardingDestinationObservable.callAsFunction()
     flowCoordinator = container.nsOnboardingFlowCoordinator.callAsFunction()
     accountDataManager = container.accountDataManager.callAsFunction()
   }
@@ -77,8 +75,6 @@ final class NSContentViewFactory {
       return AnyView(initialView)
     case .forceUpdate(let model):
       return AnyView(forceUpdateView(model: model))
-    case .accountMigration:
-      return AnyView(accountMigrationView)
     }
   }
 }
@@ -190,17 +186,12 @@ private extension NSContentViewFactory {
   @MainActor
   var phoneNumberView: some View {
     PhoneNumberView(
-      viewModel: PhoneNumberViewModel(coordinator: baseOnboardingNavigation)
+      viewModel: PhoneNumberViewModel()
     )
   }
   
   @MainActor
   func forceUpdateView(model: FeatureConfigModel) -> some View {
     UpdateAppView(featureConfigModel: model)
-  }
-  
-  @MainActor
-  var accountMigrationView: some View {
-    AccountMigrationView(viewModel: AccountMigrationViewModel())
   }
 }

@@ -17,8 +17,8 @@ public struct PersonalInformationView: View {
   @StateObject
   var viewModel: PersonalInformationViewModel
 
-  @InjectedObject(\.baseOnboardingDestinationObservable)
-  var baseOnboardingDestinationObservable
+  @InjectedObject(\.onboardingDestinationObservable)
+  var onboardingDestinationObservable
   
   let onEnterSSN: () -> Void
   public init(viewModel: PersonalInformationViewModel, onEnterSSN: @escaping () -> Void) {
@@ -65,7 +65,7 @@ public struct PersonalInformationView: View {
     .popup(item: $toastMessage, style: .toast) {
       ToastView(toastMessage: $0)
     }
-    .navigationLink(item: $baseOnboardingDestinationObservable.personalInformationDestinationView, destination: { item in
+    .navigationLink(item: $onboardingDestinationObservable.personalInformationDestinationView, destination: { item in
       switch item {
       case .enterSSN(let view):
         view

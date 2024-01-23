@@ -10,7 +10,6 @@ import NetspendFeature
 final class NavigationContainer {
   
   @LazyInjected(\.transactionNavigation) var transactionNavigation
-  @LazyInjected(\.rewardNavigation) var rewardNavigation
   @LazyInjected(\.dashboardNavigation) var dashboardNavigation
   
   @MainActor

@@ -6,28 +6,27 @@ import AccountData
 import AccountDomain
 import OnboardingDomain
 import OnboardingData
-import BaseOnboarding
+import UIComponents
 import NetSpendData
-import RewardData
 
 @MainActor
-public final class IdentityVerificationCodeViewModel: IdentityVerificationCodeViewProtocol {
+final class IdentityVerificationCodeViewModel: ObservableObject {
   @LazyInjected(\.customerSupportService) var customerSupportService
   @LazyInjected(\.accountDataManager) var accountDataManager
   @LazyInjected(\.onboardingRepository) var onboardingRepository
   @LazyInjected(\.nsOnboardingFlowCoordinator) var onboardingFlowCoordinator
 
-  @Published public var isDisableButton: Bool = true
-  @Published public var isShowLogoutPopup: Bool = false
-  @Published public var isLoading: Bool = false
-  @Published public var errorMessage: String?
-  @Published public var toastMessage: String?
-  @Published public var ssn: String = "" {
+  @Published var isDisableButton: Bool = true
+  @Published var isShowLogoutPopup: Bool = false
+  @Published var isLoading: Bool = false
+  @Published var errorMessage: String?
+  @Published var toastMessage: String?
+  @Published var ssn: String = "" {
     didSet {
       checkSSNFilled()
     }
   }
-  @Published public var passport: String = "" {
+  @Published var passport: String = "" {
     didSet {
       checkPassportFilled()
     }
@@ -37,11 +36,11 @@ public final class IdentityVerificationCodeViewModel: IdentityVerificationCodeVi
     LoginUseCase(repository: onboardingRepository)
   }()
   
-  public var phoneNumber: String
-  public var otpCode: String
-  public var kind: IdentityVerificationCodeKind
+  var phoneNumber: String
+  var otpCode: String
+  var kind: IdentityVerificationCodeKind
   
-  public init(phoneNumber: String, otpCode: String, kind: IdentityVerificationCodeKind) {
+   init(phoneNumber: String, otpCode: String, kind: IdentityVerificationCodeKind) {
     self.phoneNumber = phoneNumber
     self.otpCode = otpCode
     self.kind = kind
@@ -49,7 +48,7 @@ public final class IdentityVerificationCodeViewModel: IdentityVerificationCodeVi
 }
 
 // MARK: - API
-public extension IdentityVerificationCodeViewModel {
+extension IdentityVerificationCodeViewModel {
   func login() {
     Task {
       defer { self.isLoading = false}
@@ -76,7 +75,7 @@ public extension IdentityVerificationCodeViewModel {
 }
 
 // MARK: - View Helpers
-public extension IdentityVerificationCodeViewModel {
+extension IdentityVerificationCodeViewModel {
   var title: String {
     switch kind {
     case .ssn:

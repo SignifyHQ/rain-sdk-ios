@@ -3,7 +3,7 @@ import LFUtilities
 import LFStyleGuide
 import LFLocalizable
 import SwiftUI
-import BaseOnboarding
+import UIComponents
 import Factory
 import AccountDomain
 import UIComponents
@@ -32,17 +32,16 @@ final class SolidContentViewFactory {
     case accountReject
     case unclear(String)
     case forceUpdate(FeatureConfigModel)
-    case accountMigration
   }
   
   let flowCoordinator: SolidOnboardingFlowCoordinatorProtocol
-  let baseOnboardingNavigation: BaseOnboardingDestinationObservable
+  let baseOnboardingNavigation: OnboardingDestinationObservable
   let accountDataManager: AccountDataStorageProtocol
   
   init(
     container: Container
   ) {
-    baseOnboardingNavigation = container.baseOnboardingDestinationObservable.callAsFunction()
+    baseOnboardingNavigation = container.onboardingDestinationObservable.callAsFunction()
     flowCoordinator = container.solidOnboardingFlowCoordinator.callAsFunction()
     accountDataManager = container.accountDataManager.callAsFunction()
   }
@@ -72,8 +71,6 @@ final class SolidContentViewFactory {
       return AnyView(unclearView(message: message))
     case .forceUpdate(let model):
       return AnyView(forceUpdateView(model: model))
-    case .accountMigration:
-      return AnyView(accountMigrationView)
     case .createPassword:
       return AnyView(createPasswordView)
     }
@@ -165,17 +162,12 @@ private extension SolidContentViewFactory {
   @MainActor
   var phoneNumberView: some View {
     PhoneNumberView(
-      viewModel: PhoneNumberViewModel(coordinator: baseOnboardingNavigation)
+      viewModel: PhoneNumberViewModel()
     )
   }
   
   @MainActor
   func forceUpdateView(model: FeatureConfigModel) -> some View {
     UpdateAppView(featureConfigModel: model)
-  }
-  
-  @MainActor
-  var accountMigrationView: some View {
-    AccountMigrationView(viewModel: AccountMigrationViewModel())
   }
 }

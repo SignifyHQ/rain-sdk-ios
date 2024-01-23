@@ -1,4 +1,4 @@
-import BaseOnboarding
+import UIComponents
 import Combine
 import DomainTestHelpers
 import Factory
@@ -13,7 +13,7 @@ import XCTest
 // Test cases for the PhoneNumberViewModel
 final class PhoneNumberViewModelTests: XCTestCase {
   
-  var coordinator: BaseOnboardingDestinationObservable!
+  var coordinator: OnboardingDestinationObservable!
   var viewModel: PhoneNumberViewModel!
   var mockOnboardingRepository: MockOnboardingRepositoryProtocol!
   
@@ -32,8 +32,8 @@ final class PhoneNumberViewModelTests: XCTestCase {
     // Setting environment variable XCODE_RUNNING_TESTS in order to be able to use the configurations when running the tests
     setenv("XCODE_RUNNING_TESTS", "1", 1)
     // Initialize mock coordinator and the viewModel before each test. Inject coordinator into the viewModel
-    coordinator = BaseOnboardingDestinationObservable()
-    viewModel = PhoneNumberViewModel(coordinator: coordinator)
+    coordinator = OnboardingDestinationObservable()
+    viewModel = PhoneNumberViewModel()
     // Initialize mock onboarding repository
     mockOnboardingRepository = MockOnboardingRepositoryProtocol()
     // Register mock onboarding repository in the container
@@ -83,11 +83,11 @@ final class PhoneNumberViewModelTests: XCTestCase {
     // Then the toast message should initially be nil
     expect(self.viewModel.toastMessage).to(beNil())
     // And the phone number destination view should initially be nil
-    expect(self.viewModel.destinationObservable.phoneNumberDestinationView).to(beNil())
+    expect(self.viewModel.navigation).to(beNil())
     // And eventually the toast message should remain nil
     await expect(self.viewModel.toastMessage).toEventually(beNil())
     // And eventually the phone number destination view should become a kind of 'PhoneNumberNavigation'
-    await expect(self.viewModel.destinationObservable.phoneNumberDestinationView).toEventually(beAKindOf(PhoneNumberNavigation.self))
+    await expect(self.viewModel.navigation).toEventually(beAKindOf(PhoneNumberViewModel.Navigation.self))
   }
   
   // Test performGetOTP with input which should make server throw an error

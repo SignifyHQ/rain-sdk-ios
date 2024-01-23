@@ -3,7 +3,7 @@ import LFUtilities
 import LFStyleGuide
 import LFLocalizable
 import Services
-import BaseOnboarding
+import UIComponents
 
 struct KYCStatusView: View {
   @StateObject var viewModel: KYCStatusViewModel

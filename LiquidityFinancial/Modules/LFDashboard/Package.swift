@@ -106,7 +106,7 @@ let package = Package(
     .target(
       name: "LFNetspendDashboard",
       dependencies: [
-        "LFUtilities", "LFStyleGuide", "LFLocalizable", "LFAccessibility", "NetspendFeature","CodeScanner",
+        "LFUtilities", "LFStyleGuide", "LFLocalizable", "LFAccessibility", "NetspendFeature", "CodeScanner",
         .product(name: "OnboardingData", package: "LFData"),
         .product(name: "NetSpendData", package: "LFData"),
         .product(name: "ZerohashData", package: "LFData"),

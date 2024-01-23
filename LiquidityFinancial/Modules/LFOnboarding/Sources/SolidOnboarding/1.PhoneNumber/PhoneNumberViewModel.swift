@@ -7,15 +7,27 @@ import OnboardingDomain
 import OnboardingData
 import Factory
 import Services
-import BaseOnboarding
+import UIComponents
 import EnvironmentService
 import LFFeatureFlags
 
 @MainActor
-final class PhoneNumberViewModel: ObservableObject, PhoneNumberViewModelProtocol {
-  unowned let destinationObservable: BaseOnboardingDestinationObservable
-  init(coordinator: BaseOnboardingDestinationObservable) {
-    self.destinationObservable = coordinator
+final class PhoneNumberViewModel: ObservableObject {
+  enum OpenSafariType: String, Identifiable {
+    var id: String {
+      self.rawValue
+    }
+    
+    case term
+    case consent
+    case privacy
+  }
+  
+  enum Navigation {
+    case verificationCode(AnyView)
+  }
+  
+  init() {
     UserDefaults.isStartedWithLoginFlow = true
   }
   
@@ -31,7 +43,7 @@ final class PhoneNumberViewModel: ObservableObject, PhoneNumberViewModelProtocol
   @Published var isSecretMode: Bool = false
   @Published var isLoading: Bool = false
   @Published var isButtonDisabled: Bool = true
-  @Published var navigation: PhoneNumberNavigation?
+  @Published var navigation: Navigation?
   @Published var isShowConditions: Bool = false
   @Published var phoneNumber: String = ""
   @Published var toastMessage: String?
@@ -76,16 +88,13 @@ extension PhoneNumberViewModel {
         }
         let viewModel = VerificationCodeViewModel(
           phoneNumber: phoneNumber.reformatPhone,
-          requireAuth: requiredAuth,
-          coordinator: destinationObservable
+          requireAuth: requiredAuth
         )
         let verificationCodeView = VerificationCodeView(
-          viewModel: viewModel,
-          coordinator: destinationObservable
+          viewModel: viewModel
         )
         
-        destinationObservable
-          .phoneNumberDestinationView = .verificationCode(AnyView(verificationCodeView))
+        navigation = .verificationCode(AnyView(verificationCodeView))
       } catch {
         handleError(error: error)
       }

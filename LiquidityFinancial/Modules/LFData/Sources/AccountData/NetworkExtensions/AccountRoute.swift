@@ -31,8 +31,6 @@ public enum AccountRoute {
   case getUserRewards
   case getFeatureConfig
   case createSupportTicket(title: String?, description: String?, type: String)
-  case getMigrationStatus
-  case requestMigration
   case getSecretKey
   case enableMFA(code: String)
   case disableMFA(code: String)
@@ -90,10 +88,6 @@ extension AccountRoute: LFRoute {
       return "/v1/feature-config"
     case .createSupportTicket:
       return "/v1/support-tickets"
-    case .getMigrationStatus:
-      return "/v1/user/migration-status"
-    case .requestMigration:
-      return "/v1/user/request-migration"
     case .getSecretKey:
       return "/v1/mfa/secret-key"
     case .enableMFA:
@@ -119,7 +113,6 @@ extension AccountRoute: LFRoute {
         .addToWaitList,
         .createSupportTicket,
         .updateSelectedRewardCurrency,
-        .requestMigration,
         .enableMFA,
         .disableMFA:
       return .POST
@@ -130,7 +123,6 @@ extension AccountRoute: LFRoute {
         .getReferralCampaign,
         .getAvailableRewardCurrencies,
         .getSelectedRewardCurrency,
-        .getMigrationStatus,
         .getSecretKey:
       return .GET
     case .updateWalletAddress:
@@ -172,8 +164,6 @@ extension AccountRoute: LFRoute {
         .getReferralCampaign,
         .getUserRewards,
         .getFeatureConfig,
-        .getMigrationStatus,
-        .requestMigration,
         .getSecretKey:
       return nil
     case .createPassword(let password):
@@ -282,8 +272,6 @@ extension AccountRoute: LFRoute {
         .deleteWalletAddresses,
         .getUserRewards,
         .getFeatureConfig,
-        .getMigrationStatus,
-        .requestMigration,
         .getSecretKey:
       return nil
     case .getTransactions,

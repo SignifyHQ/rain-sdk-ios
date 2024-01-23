@@ -5,19 +5,17 @@ import LFLocalizable
 import LFAccessibility
 import Services
 
-public struct AccountMigrationView<ViewModel: AccountMigrationViewModelProtocol>: View {
-  @StateObject private var viewModel: ViewModel
+struct AccountLockedView: View {
+  @StateObject private var viewModel: AccountLockedViewModel
   
-  public init(viewModel: ViewModel) {
+  init(viewModel: AccountLockedViewModel) {
     _viewModel = .init(wrappedValue: viewModel)
   }
   
   public var body: some View {
     VStack(spacing: 24) {
-      GenImages.Images.icLogo.swiftUIImage
-        .resizable()
-        .scaledToFit()
-        .frame(width: 80, height: 80)
+      GenImages.Images.lockedAccount.swiftUIImage
+        .accessibilityIdentifier(LFAccessibility.AccountLockedScreen.lockedImage)
       descriptionView
       Spacer()
       buttonGroupView
@@ -25,9 +23,6 @@ public struct AccountMigrationView<ViewModel: AccountMigrationViewModelProtocol>
     .padding(.horizontal, 30)
     .padding(.bottom, 16)
     .background(Colors.background.swiftUIColor)
-    .onAppear {
-      viewModel.requestMigration()
-    }
     .defaultToolBar(icon: .support, openSupportScreen: {
       viewModel.openSupportScreen()
     })
@@ -36,14 +31,14 @@ public struct AccountMigrationView<ViewModel: AccountMigrationViewModelProtocol>
 }
 
 // MARK: - View Components
-private extension AccountMigrationView {
+private extension AccountLockedView {
   var descriptionView: some View {
     VStack(spacing: 12) {
-      Text(LFLocalizable.AccountMigrationView.title)
+      Text(LFLocalizable.AccountLocked.ContactSupport.title)
         .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.large.value))
         .foregroundColor(Colors.label.swiftUIColor)
         .accessibilityIdentifier(LFAccessibility.AccountLockedScreen.contactSupportTitle)
-      Text(LFLocalizable.AccountMigrationView.description)
+      Text(LFLocalizable.AccountLocked.ContactSupport.description)
         .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.medium.value))
         .foregroundColor(Colors.label.swiftUIColor.opacity(0.75))
         .multilineTextAlignment(.center)

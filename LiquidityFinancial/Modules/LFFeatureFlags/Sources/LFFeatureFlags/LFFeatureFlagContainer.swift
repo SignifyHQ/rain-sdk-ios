@@ -2,7 +2,7 @@ import Foundation
 import LFUtilities
 
 // All feature flags we must define inside the `LFFeatureFlagContainer`
-//swiftlint: disable identifier_name
+//swiftlint: disable superfluous_disable_command
 public struct LFFeatureFlagContainer {
   
   // MARK: Expose feature flag

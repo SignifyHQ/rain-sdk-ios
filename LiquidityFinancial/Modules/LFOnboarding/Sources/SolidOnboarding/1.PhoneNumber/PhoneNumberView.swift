@@ -1,0 +1,239 @@
+import iPhoneNumberField
+import SwiftUI
+import LFStyleGuide
+import LFUtilities
+import LFLocalizable
+import LFAccessibility
+import Services
+import Combine
+import Factory
+import EnvironmentService
+
+struct PhoneNumberView: View {
+
+  @Environment(\.presentationMode)
+  var presentation
+  @Injected(\.analyticsService)
+  var analyticsService
+  @Injected(\.environmentService)
+  var environmentService
+  @StateObject
+  var viewModel: PhoneNumberViewModel
+  
+  @State var openSafariType: PhoneNumberViewModel.OpenSafariType?
+
+  init(viewModel: PhoneNumberViewModel) {
+    _viewModel = .init(wrappedValue: viewModel)
+  }
+  
+  @FocusState private var keyboardFocus: Bool
+  
+  var body: some View {
+    ZStack {
+      VStack {
+        Rectangle()
+          .fill(.clear)
+          .frame(maxWidth: .infinity)
+          .frame(height: 60)
+        
+        GenImages.Images.icLogo.swiftUIImage
+          .resizable()
+          .scaledToFit()
+          .frame(width: 120, height: 120)
+          .accessibilityIdentifier(LFAccessibility.PhoneNumber.logoImage)
+          .onTapGesture(count: ViewConstant.magicTapCount) {
+            viewModel.onActiveSecretMode()
+          }
+        
+        phoneNumberView
+        
+        voipTermView
+        
+        Spacer()
+        
+        footerView
+      }
+    }
+    .frame(max: .infinity)
+    .onTapGesture {
+      keyboardFocus = false
+    }
+    .overlay(alignment: .topTrailing, content: {
+      Button {
+        keyboardFocus = false
+        DispatchQueue.main.asyncAfter(wallDeadline: .now() + 0.5) {
+          viewModel.openSupportScreen()
+        }
+      } label: {
+        GenImages.CommonImages.icChat.swiftUIImage
+          .foregroundColor(Colors.label.swiftUIColor)
+      }
+      .padding(.top, 28)
+      .padding(.leading, 16)
+    })
+    .padding(.horizontal, 26)
+    .onChange(of: viewModel.phoneNumber, perform: viewModel.onChangedPhoneNumber)
+    .background(Colors.background.swiftUIColor)
+    .navigationBarTitleDisplayMode(.inline)
+    .navigationBarBackButtonHidden()
+    .navigationLink(item: $viewModel.navigation) { item in
+      switch item {
+      case let .verificationCode(destinationView):
+        destinationView
+      }
+    }
+    .popup(item: $viewModel.toastMessage, style: .toast) {
+      ToastView(toastMessage: $0)
+    }
+    .onAppear(perform: {
+      analyticsService.track(event: AnalyticsEvent(name: .phoneVerified))
+    })
+    .fullScreenCover(item: $openSafariType, content: { type in
+      switch type {
+      case .consent:
+        if let url = viewModel.getURL(tappedString: viewModel.esignConsent) {
+          SFSafariViewWrapper(url: url)
+        }
+      case .term:
+        if let url = viewModel.getURL(tappedString: viewModel.terms) {
+          SFSafariViewWrapper(url: url)
+        }
+      case .privacy:
+        if let url = viewModel.getURL(tappedString: viewModel.privacyPolicy) {
+          SFSafariViewWrapper(url: url)
+        }
+      }
+    })
+    .navigationBarHidden(true)
+    .track(name: String(describing: type(of: self)))
+  }
+}
+
+// MARK: - View Components
+private extension PhoneNumberView {
+  @ViewBuilder var secretModeView: some View {
+    if viewModel.isSecretMode {
+      Picker(LFLocalizable.PhoneNumber.Environment.title, selection: $viewModel.networkEnvironment) {
+        Text(NetworkEnvironment.productionLive.rawValue)
+          .tag(NetworkEnvironment.productionLive)
+        Text(NetworkEnvironment.productionTest.rawValue)
+          .tag(NetworkEnvironment.productionTest)
+      }
+      .pickerStyle(.segmented)
+    }
+  }
+  
+  @ViewBuilder
+  var conditionView: some View {
+    TextTappable(
+      text: LFLocalizable.Term.PrivacyPolicy.description,
+      textAlignment: .center,
+      fontSize: Constants.FontSize.ultraSmall.value,
+      links: [viewModel.terms, viewModel.esignConsent, viewModel.privacyPolicy],
+      style: .fillColor(Colors.termAndPrivacy.color)
+    ) { tappedString in
+      switch tappedString {
+      case viewModel.terms: openSafariType = .term
+      case viewModel.privacyPolicy: openSafariType = .privacy
+      case viewModel.esignConsent: openSafariType = .consent
+      default: break
+      }
+    }
+    .accessibilityIdentifier(LFAccessibility.PhoneNumber.conditionTextTappable)
+    .frame(height: 50)
+  }
+  
+  var phoneNumberTextField: some View {
+    TextFieldWrapper {
+      HStack {
+        Text(Constants.Default.regionCode.rawValue)
+          .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.main.value))
+          .foregroundColor(Colors.label.swiftUIColor)
+          .frame(height: 32)
+          .padding(.horizontal, 8)
+          .background(Colors.secondaryBackground.swiftUIColor.cornerRadius(4))
+        iPhoneNumberField(LFLocalizable.PhoneNumber.TextField.description, text: $viewModel.phoneNumber)
+          .placeholderColor(Colors.label.swiftUIColor.opacity(0.75))
+          .maximumDigits(ViewConstant.maxDigits)
+          .defaultRegion(Constants.Default.region.rawValue)
+          .flagHidden(true)
+          .foregroundColor(Colors.label.swiftUIColor)
+          .focused($keyboardFocus)
+          .frame(
+            maxWidth: .infinity,
+            minHeight: 44,
+            alignment: .center
+          )
+          .toolbar {
+            ToolbarItemGroup(placement: .keyboard) {
+              Button("Done") {
+                keyboardFocus = false
+              }
+            }
+          }
+          .onAppear {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+              if viewModel.isButtonDisabled {
+                keyboardFocus = true
+              }
+            }
+          }
+      }
+    }
+    .accessibilityIdentifier(LFAccessibility.PhoneNumber.textField)
+  }
+  
+  var phoneNumberView: some View {
+    VStack(alignment: .leading, spacing: 12) {
+      Text(LFLocalizable.PhoneNumber.TextField.title.uppercased())
+        .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.main.value))
+        .foregroundColor(Colors.label.swiftUIColor)
+        .accessibilityIdentifier(LFAccessibility.PhoneNumber.headerTitle)
+      phoneNumberTextField
+    }
+    .padding(.top, 24)
+  }
+  
+  @ViewBuilder
+  var footerView: some View {
+    VStack(spacing: 5) {
+      secretModeView
+      FullSizeButton(
+        title: LFLocalizable.Button.Continue.title,
+        isDisable: viewModel.isButtonDisabled,
+        isLoading: $viewModel.isLoading
+      ) {
+        viewModel.isLoading = true
+        keyboardFocus = false
+        viewModel.performGetOTP()
+      }
+      .accessibilityIdentifier(LFAccessibility.PhoneNumber.continueButton)
+      
+      if viewModel.isShowConditions {
+        conditionView
+      }
+    }
+    .padding(.bottom, 12)
+  }
+  
+  @ViewBuilder
+  var voipTermView: some View {
+    TextTappable(
+      text: LFLocalizable.Term.TermsVoip.description,
+      textAlignment: .center,
+      fontSize: Constants.FontSize.ultraSmall.value,
+      links: [LFLocalizable.Term.PrivacyPolicy.attributeText],
+      style: .fillColor(Colors.termAndPrivacy.color)
+    ) { _ in
+      openSafariType = .privacy
+    }
+    .accessibilityIdentifier(LFAccessibility.PhoneNumber.voipTermTextTappable)
+    .frame(height: 90)
+  }
+}
+
+// MARK: View Constants
+enum ViewConstant {
+  static let maxDigits = 10
+  static let magicTapCount = 5
+}

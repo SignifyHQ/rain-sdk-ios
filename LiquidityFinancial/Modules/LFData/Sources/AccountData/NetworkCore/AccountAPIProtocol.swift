@@ -30,8 +30,6 @@ public protocol AccountAPIProtocol {
   func getUserRewards() async throws -> [APIUserRewards]
   func getFeatureConfig() async throws -> APIAccountFeatureConfig
   func createSupportTicket(title: String?, description: String?, type: String) async throws -> APISupportTicket
-  func getMigrationStatus() async throws -> APIMigrationStatus
-  func requestMigration() async throws -> APIMigrationStatus
   func getSecretKey() async throws -> APISecretKey
   func enableMFA(code: String) async throws -> APIEnableMFA
   func disableMFA(code: String) async throws -> APIDisableMFA

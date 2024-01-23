@@ -12,7 +12,7 @@ import RewardDomain
 import LFStyleGuide
 import LFLocalizable
 import Services
-import BaseOnboarding
+import UIComponents
 import LFFeatureFlags
 import LFAuthentication
 
@@ -54,7 +54,6 @@ public class SolidOnboardingFlowCoordinator: SolidOnboardingFlowCoordinatorProto
     case accountReject
     case unclear(String)
     case forceUpdate(FeatureConfigModel)
-    case accountMigration
     
     public var id: String {
       String(describing: self)
@@ -77,10 +76,6 @@ public class SolidOnboardingFlowCoordinator: SolidOnboardingFlowCoordinatorProto
   
   lazy var accountUseCase: AccountUseCaseProtocol = {
     AccountUseCase(repository: accountRepository)
-  }()
-  
-  lazy var getMigrationStatusUseCase: GetMigrationStatusUseCaseProtocol = {
-    GetMigrationStatusUseCase(repository: accountRepository)
   }()
   
   lazy var getUserUseCase: GetUserUseCaseProtocol = {
@@ -181,11 +176,8 @@ public class SolidOnboardingFlowCoordinator: SolidOnboardingFlowCoordinatorProto
   
   public func handlerOnboardingStep() async throws {
     let onboardingStep = try await solidOnboardingRepository.getOnboardingStep()
-    let migrationStatus = try? await getMigrationStatusUseCase.execute()
     
-    if let status = migrationStatus, status.migrationNeeded && !status.migrated {
-      set(route: .accountMigration)
-    } else if onboardingStep.processSteps.isEmpty {
+    if onboardingStep.processSteps.isEmpty {
       try await fetchUserReviewStatus(needLoadMigration: false)
     } else {
       let states = onboardingStep.mapToEnum()
@@ -227,11 +219,7 @@ public class SolidOnboardingFlowCoordinator: SolidOnboardingFlowCoordinatorProto
   public func fetchUserReviewStatus(needLoadMigration: Bool = true) async throws {
     let user = try await getUserUseCase.execute()
     
-    let migrationStatus = try? await getMigrationStatusUseCase.execute()
-    
-    if let status = migrationStatus, status.migrationNeeded && !status.migrated && needLoadMigration {
-      set(route: .accountMigration)
-    } else if let accountReviewStatus = user.accountReviewStatusEnum {
+    if let accountReviewStatus = user.accountReviewStatusEnum {
       switch accountReviewStatus {
       case .approved:
         

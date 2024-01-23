@@ -2,10 +2,9 @@ import Foundation
 import Combine
 import Factory
 import Services
-import BaseOnboarding
 
 @MainActor
-final class AccountLockedViewModel: AccountLockedViewModelProtocol {
+final class AccountLockedViewModel: ObservableObject {
   @LazyInjected(\.customerSupportService) var customerSupportService
   @LazyInjected(\.nsOnboardingFlowCoordinator) var onboardingFlowCoordinator
 

@@ -298,7 +298,7 @@ public extension Constants {
   
   static let kycQuestionTimeOut = 600
   
-  static let withdrawalMFAThreshold = 1000.0
+  static let withdrawalMFAThreshold = 1_000.0
   
   static let hiddenPassword = "*********"
   

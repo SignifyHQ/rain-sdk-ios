@@ -4,7 +4,7 @@ import LFUtilities
 import LFLocalizable
 import OnboardingDomain
 import Services
-import BaseOnboarding
+import UIComponents
 import Factory
 import EnvironmentService
 

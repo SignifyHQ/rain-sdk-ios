@@ -5,17 +5,17 @@ import LFLocalizable
 import LFAccessibility
 import Services
 
-public struct IdentityVerificationCodeView<ViewModel>: View where ViewModel: IdentityVerificationCodeViewProtocol {
-  @StateObject private var viewModel: ViewModel
+struct IdentityVerificationCodeView: View {
+  @StateObject private var viewModel: IdentityVerificationCodeViewModel
   @State var selection: Int?
   @State var showIndicator = false
   @FocusState var keyboardFocus: Bool
   
-  public init(viewModel: ViewModel) {
+  init(viewModel: IdentityVerificationCodeViewModel) {
     _viewModel = .init(wrappedValue: viewModel)
   }
   
-  public var body: some View {
+  var body: some View {
     VStack(alignment: .leading, spacing: 28) {
       Text(viewModel.title)
         .foregroundColor(Colors.label.swiftUIColor)

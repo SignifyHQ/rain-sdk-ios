@@ -8,13 +8,10 @@ import OnboardingData
 import AccountData
 import AccountDomain
 import OnboardingDomain
-import LFRewards
-import RewardData
-import RewardDomain
 import LFStyleGuide
 import LFLocalizable
 import Services
-import BaseOnboarding
+import UIComponents
 import ZerohashDomain
 import ZerohashData
 
@@ -61,7 +58,6 @@ public class NSOnboardingFlowCoordinator: OnboardingFlowCoordinatorProtocol {
     case popTimeUp
     case documentInReview
     case forceUpdate(FeatureConfigModel)
-    case accountMigration
     
     public var id: String {
       String(describing: self)
@@ -111,10 +107,6 @@ public class NSOnboardingFlowCoordinator: OnboardingFlowCoordinatorProtocol {
   
   lazy var accountUseCase: AccountUseCaseProtocol = {
     AccountUseCase(repository: accountRepository)
-  }()
-  
-  lazy var getMigrationStatusUseCase: GetMigrationStatusUseCaseProtocol = {
-    GetMigrationStatusUseCase(repository: accountRepository)
   }()
   
   public let routeSubject: CurrentValueSubject<Route, Never>
@@ -284,10 +276,7 @@ private extension NSOnboardingFlowCoordinator {
   
   func apiFetchAndUpdateForStart() async throws {
     try await refreshNetSpendSession()
-    let status = try await getMigrationStatusUseCase.execute()
-    if status.migrationNeeded && !status.migrated {
-      set(route: .accountMigration)
-    } else if accountDataManager.userCompleteOnboarding == false {
+    if accountDataManager.userCompleteOnboarding == false {
       try await handlerOnboardingStep()
     } else {
       set(route: .dashboard)
@@ -308,10 +297,7 @@ private extension NSOnboardingFlowCoordinator {
   
   func fetchUserReviewStatus() async throws {
     let user = try await accountRepository.getUser()
-    let status = try await getMigrationStatusUseCase.execute()
-    if status.migrationNeeded && !status.migrated {
-      set(route: .accountMigration)
-    } else if let accountReviewStatus = user.accountReviewStatusEnum {
+    if let accountReviewStatus = user.accountReviewStatusEnum {
       switch accountReviewStatus {
       case .approved:
         try await fetchZeroHashStatus()

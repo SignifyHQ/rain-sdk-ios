@@ -13,8 +13,8 @@ public struct EnterPassportView: View {
   @FocusState
   var keyboardFocus: Bool
 
-  @InjectedObject(\.baseOnboardingDestinationObservable)
-  var baseOnboardingDestinationObservable
+  @InjectedObject(\.onboardingDestinationObservable)
+  var onboardingDestinationObservable
   
   let onEnterAddress: () -> Void
   public init(viewModel: EnterPassportViewModel, onEnterAddress: @escaping () -> Void) {
@@ -56,7 +56,7 @@ public struct EnterPassportView: View {
       },
       edgeInsets: EdgeInsets(top: 0, leading: 0, bottom: 12, trailing: 0)
     )
-    .navigationLink(item: $baseOnboardingDestinationObservable.enterPassportDestinationView) { item in
+    .navigationLink(item: $onboardingDestinationObservable.enterPassportDestinationView) { item in
       switch item {
       case let .address(destinationView):
         destinationView
