@@ -6,7 +6,7 @@ struct WhatsappShareItem: ShareItem {
   let data: ShareItemData
 
   var name: String {
-    LFLocalizable.Share.whatsapp
+    L10N.Common.Share.whatsapp
   }
 
   var image: Image {

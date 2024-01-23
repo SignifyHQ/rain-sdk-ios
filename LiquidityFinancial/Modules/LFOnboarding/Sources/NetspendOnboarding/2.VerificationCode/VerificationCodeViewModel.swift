@@ -172,7 +172,7 @@ extension VerificationCodeViewModel {
     case Constants.ErrorCode.userInactive.value:
       onboardingFlowCoordinator.set(route: .accountLocked)
     case Constants.ErrorCode.credentialsInvalid.value:
-      toastMessage = LFLocalizable.VerificationCode.OtpInvalid.message
+      toastMessage = L10N.Common.VerificationCode.OtpInvalid.message
     default:
       toastMessage = error.userFriendlyMessage
     }

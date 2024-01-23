@@ -53,9 +53,9 @@ final class PhoneNumberViewModel: ObservableObject {
   @LazyInjected(\.customerSupportService) var customerSupportService
   @LazyInjected(\.solidOnboardingFlowCoordinator) var solidOnboardingFlowCoordinator
   
-  let terms = LFLocalizable.Term.Terms.attributeText
-  let esignConsent = LFLocalizable.Term.EsignConsent.attributeText
-  let privacyPolicy = LFLocalizable.Term.PrivacyPolicy.attributeText
+  let terms = L10N.Common.Term.Terms.attributeText
+  let esignConsent = L10N.Common.Term.EsignConsent.attributeText
+  let privacyPolicy = L10N.Common.Term.PrivacyPolicy.attributeText
   
   lazy var requestOtpUseCase: RequestOTPUseCaseProtocol = {
     RequestOTPUseCase(repository: onboardingRepository)

@@ -71,11 +71,11 @@ struct CryptoChartDetailView: View {
 private extension CryptoChartDetailView {
   var selectInfoDetailView: some View {
     VStack(alignment: .leading, spacing: 8) {
-      selectInfoCell(title: LFLocalizable.CryptoChartDetail.Open.title, value: viewModel.openPrice)
-      selectInfoCell(title: LFLocalizable.CryptoChartDetail.Close.title, value: viewModel.closePrice)
-      selectInfoCell(title: LFLocalizable.CryptoChartDetail.High.title, value: viewModel.highPrice)
-      selectInfoCell(title: LFLocalizable.CryptoChartDetail.Low.title, value: viewModel.lowPrice)
-      selectInfoCell(title: LFLocalizable.CryptoChartDetail.Volume.title, value: viewModel.volumePrice)
+      selectInfoCell(title: L10N.Common.CryptoChartDetail.Open.title, value: viewModel.openPrice)
+      selectInfoCell(title: L10N.Common.CryptoChartDetail.Close.title, value: viewModel.closePrice)
+      selectInfoCell(title: L10N.Common.CryptoChartDetail.High.title, value: viewModel.highPrice)
+      selectInfoCell(title: L10N.Common.CryptoChartDetail.Low.title, value: viewModel.lowPrice)
+      selectInfoCell(title: L10N.Common.CryptoChartDetail.Volume.title, value: viewModel.volumePrice)
     }
   }
   
@@ -98,7 +98,7 @@ private extension CryptoChartDetailView {
         .foregroundColor(balanceTitleColor)
         .font(Fonts.bold.swiftUIFont(size: 30))
       HStack(spacing: 8) {
-        Text(LFLocalizable.CryptoChartDetail.Change.title)
+        Text(L10N.Common.CryptoChartDetail.Change.title)
           .foregroundColor(Colors.whiteText.swiftUIColor.opacity(0.5))
           .font(Fonts.regular.swiftUIFont(size: 10))
         HStack(spacing: 4) {
@@ -165,7 +165,7 @@ private extension CryptoChartDetailView {
       HStack(spacing: 8) {
         GenImages.CommonImages.transfer.swiftUIImage
           .foregroundColor(Colors.label.swiftUIColor)
-        Text(LFLocalizable.AssetView.Transfer.title)
+        Text(L10N.Common.AssetView.Transfer.title)
           .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.ultraSmall.value))
           .foregroundColor(Colors.label.swiftUIColor)
         Spacer()
@@ -181,13 +181,13 @@ private extension CryptoChartDetailView {
   
   var actionButtons: some View {
     HStack(spacing: 10) {
-      iconTextButton(title: LFLocalizable.CryptoChartDetail.Buy.title, image: GenImages.CommonImages.buy.swiftUIImage) {
+      iconTextButton(title: L10N.Common.CryptoChartDetail.Buy.title, image: GenImages.CommonImages.buy.swiftUIImage) {
         viewModel.buyButtonTapped()
       }
-      iconTextButton(title: LFLocalizable.CryptoChartDetail.Sell.title, image: GenImages.CommonImages.sell.swiftUIImage) {
+      iconTextButton(title: L10N.Common.CryptoChartDetail.Sell.title, image: GenImages.CommonImages.sell.swiftUIImage) {
         viewModel.sellButtonTapped()
       }
-      iconTextButton(title: LFLocalizable.CryptoChartDetail.Transfer.title.uppercased(), image: GenImages.CommonImages.transfer.swiftUIImage) {
+      iconTextButton(title: L10N.Common.CryptoChartDetail.Transfer.title.uppercased(), image: GenImages.CommonImages.transfer.swiftUIImage) {
         viewModel.transferButtonTapped()
       }
     }
@@ -229,14 +229,14 @@ private extension CryptoChartDetailView {
           .foregroundColor(viewModel.isPositivePrice ? Colors.green.swiftUIColor : Colors.error.swiftUIColor)
           .font(Fonts.bold.swiftUIFont(size: Constants.FontSize.ultraSmall.value))
       }
-      Text(LFLocalizable.CryptoChartDetail.Today.title)
+      Text(L10N.Common.CryptoChartDetail.Today.title)
         .foregroundColor(Colors.whiteText.swiftUIColor.opacity(0.5))
         .font(Fonts.bold.swiftUIFont(size: Constants.FontSize.ultraSmall.value))
     }
   }
   
   var disclosure: some View {
-    Text(LFLocalizable.Zerohash.Disclosure.description)
+    Text(L10N.Common.Zerohash.Disclosure.description)
       .foregroundColor(Colors.label.swiftUIColor.opacity(0.5))
       .font(Fonts.regular.swiftUIFont(size: 10))
       .padding(.horizontal, 20)
@@ -245,9 +245,9 @@ private extension CryptoChartDetailView {
   
   var transferBalancePopup: some View {
     LiquidityAlert(
-      title: LFLocalizable.CryptoChartDetail.TransferBalance.title(LFUtilities.cryptoCurrency.uppercased()),
+      title: L10N.Common.CryptoChartDetail.TransferBalance.title(LFUtilities.cryptoCurrency.uppercased()),
       message: .empty,
-      primary: .init(text: LFLocalizable.Button.Ok.title.uppercased()) {
+      primary: .init(text: L10N.Common.Button.Ok.title.uppercased()) {
         viewModel.clearPopup()
       }
     )
@@ -290,14 +290,14 @@ private extension CryptoChartDetailView {
         .foregroundColor(Colors.label.swiftUIColor.opacity(0.75))
         .frame(width: 32, height: 4)
         .padding(.top, 6)
-      Text(LFLocalizable.CryptoChartDetail.TransferCoin.title)
+      Text(L10N.Common.CryptoChartDetail.TransferCoin.title)
         .foregroundColor(Colors.label.swiftUIColor)
         .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.main.value))
         .padding(.vertical, 14)
-      transferCell(with: GenImages.CommonImages.sell.swiftUIImage, and: LFLocalizable.CryptoChartDetail.Send.title) {
+      transferCell(with: GenImages.CommonImages.sell.swiftUIImage, and: L10N.Common.CryptoChartDetail.Send.title) {
         viewModel.sendButtonTapped()
       }
-      transferCell(with: GenImages.CommonImages.buy.swiftUIImage, and: LFLocalizable.CryptoChartDetail.Receive.title) {
+      transferCell(with: GenImages.CommonImages.buy.swiftUIImage, and: L10N.Common.CryptoChartDetail.Receive.title) {
         viewModel.receiveButtonTapped()
       }
       Spacer()

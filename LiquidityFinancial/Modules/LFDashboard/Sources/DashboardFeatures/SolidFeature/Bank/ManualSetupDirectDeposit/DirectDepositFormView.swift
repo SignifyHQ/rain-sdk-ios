@@ -10,19 +10,19 @@ struct DirectDepositFormView: View {
   
   var body: some View {
     VStack(alignment: .leading, spacing: 20) {
-      Text(LFLocalizable.DirectDeposit.Form.title)
+      Text(L10N.Common.DirectDeposit.Form.title)
         .foregroundColor(Colors.label.swiftUIColor)
         .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.main.value))
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding(.top, 15)
-      Text(LFLocalizable.DirectDeposit.Form.description)
+      Text(L10N.Common.DirectDeposit.Form.description)
         .foregroundColor(Colors.label.swiftUIColor.opacity(0.75))
         .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.medium.value))
         .lineSpacing(1.7)
         .multilineTextAlignment(.leading)
       Spacer()
       FullSizeButton(
-        title: LFLocalizable.Button.Continue.title,
+        title: L10N.Common.Button.Continue.title,
         isDisable: false
       ) {
         isNavigateToEnterEmployerName = true

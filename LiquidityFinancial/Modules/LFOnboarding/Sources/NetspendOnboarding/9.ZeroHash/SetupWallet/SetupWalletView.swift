@@ -32,14 +32,14 @@ struct SetupWalletView: View {
         
         VStack {
           VStack {
-            Text(LFLocalizable.SetUpWallet.title)
+            Text(L10N.Common.SetUpWallet.title)
               .foregroundColor(Colors.label.swiftUIColor)
               .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.main.value))
               .padding(.horizontal, 35)
               .frame(width: geo.size.width, alignment: .leading)
               .padding(.bottom, 20)
               .padding(.top, 15)
-            Text(LFLocalizable.SetUpWallet.info(LFUtilities.appName))
+            Text(L10N.Common.SetUpWallet.info(LFUtilities.appName))
               .foregroundColor(Colors.label.swiftUIColor)
               .opacity(0.75)
               .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.medium.value))
@@ -119,10 +119,10 @@ extension SetupWalletView {
       }
       .padding(.leading, 20)
       .padding(.bottom, 130)
-      let strMessage = LFLocalizable.SetUpWallet.termsAndCondition
-      let strUserAgreement = LFLocalizable.SetUpWallet.userAgreement
-      let strPrivacy = LFLocalizable.SetUpWallet.solidPrivacyPolicy
-      let strDiscloures = LFLocalizable.SetUpWallet.regulatoryDisclosures
+      let strMessage = L10N.Common.SetUpWallet.termsAndCondition
+      let strUserAgreement = L10N.Common.SetUpWallet.userAgreement
+      let strPrivacy = L10N.Common.SetUpWallet.solidPrivacyPolicy
+      let strDiscloures = L10N.Common.SetUpWallet.regulatoryDisclosures
 
       TextTappable(
         text: strMessage,
@@ -153,7 +153,7 @@ extension SetupWalletView {
   private var bottom: some View {
     VStack {
       FullSizeButton(
-        title: LFLocalizable.Button.Continue.title,
+        title: L10N.Common.Button.Continue.title,
         isDisable: !viewModel.isTermsAgreed,
         isLoading: $viewModel.showIndicator
       ) {

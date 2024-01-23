@@ -24,7 +24,7 @@ public struct SelectFundraiserView: View {
         }
       }
       .popup(isPresented: $viewModel.showErrorAlert, style: .toast) {
-        ToastView(toastMessage: LFLocalizable.SelectFundraiser.error)
+        ToastView(toastMessage: L10N.Common.SelectFundraiser.error)
       }
   }
 
@@ -48,7 +48,7 @@ public struct SelectFundraiserView: View {
 
   private var title: some View {
     VStack(alignment: .leading, spacing: 8) {
-      Text(LFLocalizable.SelectFundraiser.causes(viewModel.categoryName.uppercased()))
+      Text(L10N.Common.SelectFundraiser.causes(viewModel.categoryName.uppercased()))
         .font(Fonts.regular.swiftUIFont(size: 24))
         .foregroundColor(ModuleColors.label.swiftUIColor)
     }

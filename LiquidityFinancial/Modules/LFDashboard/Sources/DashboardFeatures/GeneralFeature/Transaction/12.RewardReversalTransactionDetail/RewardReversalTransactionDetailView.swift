@@ -47,14 +47,14 @@ private extension RewardReversalTransactionDetailView {
     VStack(spacing: 16) {
       if let receiptType = viewModel.transaction.receipt?.type {
         FullSizeButton(
-          title: LFLocalizable.TransactionDetail.Receipt.button,
+          title: L10N.Common.TransactionDetail.Receipt.button,
           isDisable: false,
           type: .secondary
         ) {
           viewModel.goToReceiptScreen(receiptType: receiptType)
         }
       }
-      Text(LFLocalizable.Zerohash.Disclosure.description)
+      Text(L10N.Common.Zerohash.Disclosure.description)
         .font(Fonts.regular.swiftUIFont(size: 10))
         .foregroundColor(Colors.label.swiftUIColor.opacity(0.5))
     }

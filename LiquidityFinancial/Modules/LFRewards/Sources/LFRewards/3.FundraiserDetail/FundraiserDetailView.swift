@@ -165,7 +165,7 @@ extension FundraiserDetailView {
   private var confidence: some View {
     VStack(alignment: .leading, spacing: 16) {
       
-      title(LFLocalizable.FundraiserDetail.confidence)
+      title(L10N.Common.FundraiserDetail.confidence)
       
       HStack(spacing: 8) {
         ForEach(0 ..< 4) { index in
@@ -198,11 +198,11 @@ extension FundraiserDetailView {
   private var details: some View {
     VStack(alignment: .leading, spacing: 10) {
       
-      title(LFLocalizable.FundraiserDetail.details)
+      title(L10N.Common.FundraiserDetail.details)
         .padding(.bottom, 2)
       
-      detail(image: ModuleImages.icCharityStatus.swiftUIImage, title: LFLocalizable.FundraiserDetail.status) {
-        Text(LFLocalizable.FundraiserDetail.active)
+      detail(image: ModuleImages.icCharityStatus.swiftUIImage, title: L10N.Common.FundraiserDetail.status) {
+        Text(L10N.Common.FundraiserDetail.active)
           .font(Fonts.regular.swiftUIFont(size: 12))
           .foregroundColor(ModuleColors.green.swiftUIColor)
           .padding(.horizontal, 20)
@@ -211,7 +211,7 @@ extension FundraiserDetailView {
           .cornerRadius(5)
       }
       
-      detail(image: ModuleImages.icEin.swiftUIImage, title: LFLocalizable.FundraiserDetail.ein) {
+      detail(image: ModuleImages.icEin.swiftUIImage, title: L10N.Common.FundraiserDetail.ein) {
         Text(charity?.ein ?? "")
           .font(Fonts.regular.swiftUIFont(size: 14))
           .foregroundColor(ModuleColors.primary.swiftUIColor)
@@ -221,7 +221,7 @@ extension FundraiserDetailView {
         Button {
           viewModel.navigateToAddress()
         } label: {
-          detail(image: ModuleImages.icAddress.swiftUIImage, title: LFLocalizable.FundraiserDetail.address) {
+          detail(image: ModuleImages.icAddress.swiftUIImage, title: L10N.Common.FundraiserDetail.address) {
             if viewModel.isGeocodingAddress {
               LottieView(loading: .mix)
                 .frame(width: 30, height: 20)
@@ -236,7 +236,7 @@ extension FundraiserDetailView {
         Button {
           openSafariType = .charityURL(url)
         } label: {
-          detail(image: ModuleImages.icWebsite.swiftUIImage, title: LFLocalizable.FundraiserDetail.website) {
+          detail(image: ModuleImages.icWebsite.swiftUIImage, title: L10N.Common.FundraiserDetail.website) {
             CircleButton(style: .right)
           }
         }
@@ -246,7 +246,7 @@ extension FundraiserDetailView {
         Button {
           openSafariType = .fullcharityURL(url)
         } label: {
-          detail(image: ModuleImages.icNavigation.swiftUIImage, title: LFLocalizable.FundraiserDetail.navigator) {
+          detail(image: ModuleImages.icNavigation.swiftUIImage, title: L10N.Common.FundraiserDetail.navigator) {
             CircleButton(style: .right)
           }
         }
@@ -281,7 +281,7 @@ extension FundraiserDetailView {
       if !viewModel.latestDonations.isEmpty {
         VStack(alignment: .leading, spacing: 10) {
           
-          title(LFLocalizable.FundraiserDetail.latestDonations)
+          title(L10N.Common.FundraiserDetail.latestDonations)
             .padding(.bottom, 2)
           
           ForEach(viewModel.latestDonations) { transaction in
@@ -298,7 +298,7 @@ extension FundraiserDetailView {
 extension FundraiserDetailView {
   private var select: some View {
     Group {
-      FullSizeButton(title: LFLocalizable.SelectCause.title, isDisable: false, isLoading: $viewModel.isSelecting) {
+      FullSizeButton(title: L10N.Common.SelectCause.title, isDisable: false, isLoading: $viewModel.isSelecting) {
         viewModel.apiSelectFundraiser(fundraiserId: viewModel.fundraiserID)
       }
     }
@@ -314,27 +314,27 @@ extension FundraiserDetailView {
 extension FundraiserDetailView {
   private func selectSuccessPopup(message: String) -> some View {
     LiquidityAlert(
-      title: LFLocalizable.FundraiserDetail.Success.title,
+      title: L10N.Common.FundraiserDetail.Success.title,
       message: message,
-      primary: .init(text: LFLocalizable.Button.Continue.title) { viewModel.selectSuccessPrimary() },
+      primary: .init(text: L10N.Common.Button.Continue.title) { viewModel.selectSuccessPrimary() },
       secondary: nil
     )
   }
   
   private var selectErrorPopup: some View {
     LiquidityAlert(
-      title: LFLocalizable.FundraiserDetail.Error.title,
-      message: LFLocalizable.FundraiserDetail.Error.select,
-      primary: .init(text: LFLocalizable.Button.Ok.title) { viewModel.dismissPopup() },
+      title: L10N.Common.FundraiserDetail.Error.title,
+      message: L10N.Common.FundraiserDetail.Error.select,
+      primary: .init(text: L10N.Common.Button.Ok.title) { viewModel.dismissPopup() },
       secondary: nil
     )
   }
   
   private var geocodeErrorPopup: some View {
     LiquidityAlert(
-      title: LFLocalizable.FundraiserDetail.Error.title,
-      message: LFLocalizable.FundraiserDetail.Error.geocode,
-      primary: .init(text: LFLocalizable.Button.Ok.title) { viewModel.dismissPopup() },
+      title: L10N.Common.FundraiserDetail.Error.title,
+      message: L10N.Common.FundraiserDetail.Error.geocode,
+      primary: .init(text: L10N.Common.Button.Ok.title) { viewModel.dismissPopup() },
       secondary: nil
     )
   }

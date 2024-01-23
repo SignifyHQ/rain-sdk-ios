@@ -37,7 +37,7 @@ struct NSSetCardPinView: View {
 private extension NSSetCardPinView {
   var content: some View {
     VStack(alignment: .leading, spacing: 50) {
-      Text(LFLocalizable.SetCardPin.Screen.title)
+      Text(L10N.Common.SetCardPin.Screen.title)
         .foregroundColor(Colors.label.swiftUIColor)
         .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.main.value))
         .padding(.top, 16)
@@ -47,7 +47,7 @@ private extension NSSetCardPinView {
           isDisabled: $viewModel.isShowIndicator,
           codeLength: viewModel.pinCodeDigits
         )
-        Text(LFLocalizable.SetCardPin.Screen.description)
+        Text(L10N.Common.SetCardPin.Screen.description)
           .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.textFieldHeader.value))
           .foregroundColor(Colors.label.swiftUIColor.opacity(0.5))
           .padding(.horizontal, 20)
@@ -56,7 +56,7 @@ private extension NSSetCardPinView {
       .padding(.horizontal, 16)
       Spacer()
       FullSizeButton(
-        title: LFLocalizable.Button.Continue.title,
+        title: L10N.Common.Button.Continue.title,
         isDisable: !viewModel.isPinEntered,
         isLoading: $viewModel.isShowIndicator
       ) {
@@ -69,9 +69,9 @@ private extension NSSetCardPinView {
   
   var successPopup: some View {
     LiquidityAlert(
-      title: LFLocalizable.SetCardPin.Popup.title,
-      message: LFLocalizable.SetCardPin.Popup.successMessage,
-      primary: .init(text: LFLocalizable.Button.Ok.title) {
+      title: L10N.Common.SetCardPin.Popup.title,
+      message: L10N.Common.SetCardPin.Popup.successMessage,
+      primary: .init(text: L10N.Common.Button.Ok.title) {
         viewModel.handleSuccessPrimaryAction {
           hideKeyboard()
           dismiss()

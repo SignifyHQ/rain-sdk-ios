@@ -130,7 +130,7 @@ struct CardView: View {
     Group {
       switch type {
       case .donation, .cashback:
-        FullSizeButton(title: LFLocalizable.FundraiserActions.share, isDisable: false, type: type.shareButtonType, fontSize: 12, cornerRadius: 32) {
+        FullSizeButton(title: L10N.Common.FundraiserActions.share, isDisable: false, type: type.shareButtonType, fontSize: 12, cornerRadius: 32) {
 
         }
         .frame(height: 34)
@@ -151,7 +151,11 @@ struct CardView: View {
       sheet = .fundraiser(.init(data: .build(from: data.fundraiserDetail, donation: data.donation)))
     case let .cashback(data):
       let reward = data.cashback.formattedUSDAmount(absoluteValue: true)
-      let item = LFLocalizable.CardShare.cashback(reward, LFUtilities.shareAppUrl)
+      let item = L10N.Common.CardShare.cashback(
+        reward,
+        LFUtilities.shareAppUrl,
+        L10N.Custom.Card.name
+      )
       sheet = .activityItems([item])
     case .shareDonation:
       break
@@ -163,9 +167,9 @@ private extension CardView.Kind {
   var title: String? {
     switch self {
     case .donation:
-      return LFLocalizable.CardShare.Title.donation
+      return L10N.Common.CardShare.Title.donation
     case .cashback:
-      return LFLocalizable.CardShare.Title.cashback
+      return L10N.Common.CardShare.Title.cashback
     case .shareDonation:
       return nil
     }
@@ -185,7 +189,7 @@ private extension CardView.Kind {
   var message: String? {
     switch self {
     case let .donation(data):
-      return LFLocalizable.CardShare.Message.donation(data.fundraiserDetail.charityName, data.fundraiserDetail.name)
+      return L10N.Common.CardShare.Message.donation(data.fundraiserDetail.charityName, data.fundraiserDetail.name)
     case let .shareDonation(data):
       return data.includeDonation ? data.messageDonation : data.messageGeneric
     case .cashback:

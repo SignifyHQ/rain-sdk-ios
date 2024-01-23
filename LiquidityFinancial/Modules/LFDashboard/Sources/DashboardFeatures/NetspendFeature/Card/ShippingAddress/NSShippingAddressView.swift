@@ -47,7 +47,7 @@ private extension NSShippingAddressView {
   var content: some View {
     VStack(alignment: .leading, spacing: 32) {
       Text(
-        LFLocalizable.ShippingAddress.Screen.title(LFUtilities.appName.uppercased())
+        L10N.Common.ShippingAddress.Screen.title(LFUtilities.appName.uppercased())
       )
       .foregroundColor(Colors.label.swiftUIColor)
       .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.main.value))
@@ -73,7 +73,7 @@ private extension NSShippingAddressView {
   
   var button: some View {
     FullSizeButton(
-      title: LFLocalizable.ShippingAddress.Confirm.buttonTitle,
+      title: L10N.Common.ShippingAddress.Confirm.buttonTitle,
       isDisable: viewModel.isDisableButton
     ) {
       keyboardFocus = nil
@@ -115,7 +115,7 @@ private extension NSShippingAddressView {
   
   var cityTextField: some View {
     VStack(alignment: .leading) {
-      Text(LFLocalizable.city)
+      Text(L10N.Common.city)
         .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.textFieldHeader.value))
         .foregroundColor(Colors.label.swiftUIColor)
         .opacity(0.75)
@@ -123,7 +123,7 @@ private extension NSShippingAddressView {
         .padding(.leading, 4)
       
       textField(
-        placeholder: LFLocalizable.enterCity,
+        placeholder: L10N.Common.enterCity,
         value: $viewModel.city,
         focus: .city,
         nextFocus: .state
@@ -133,7 +133,7 @@ private extension NSShippingAddressView {
   
   var stateTextField: some View {
     VStack(alignment: .leading) {
-      Text(LFLocalizable.state)
+      Text(L10N.Common.state)
         .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.textFieldHeader.value))
         .foregroundColor(Colors.label.swiftUIColor)
         .opacity(0.75)
@@ -141,7 +141,7 @@ private extension NSShippingAddressView {
         .padding(.leading, 4)
       
       textField(
-        placeholder: LFLocalizable.enterState,
+        placeholder: L10N.Common.enterState,
         value: $viewModel.state,
         limit: 2,
         restriction: .alphabets,
@@ -153,7 +153,7 @@ private extension NSShippingAddressView {
   
   var zipCodeTextField: some View {
     VStack(alignment: .leading) {
-      Text(LFLocalizable.zipcode)
+      Text(L10N.Common.zipcode)
         .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.textFieldHeader.value))
         .foregroundColor(Colors.label.swiftUIColor)
         .opacity(0.75)
@@ -161,7 +161,7 @@ private extension NSShippingAddressView {
         .padding(.leading, 4)
       
       textField(
-        placeholder: LFLocalizable.enterZipcode,
+        placeholder: L10N.Common.enterZipcode,
         value: $viewModel.zipCode,
         limit: 11,
         keyboardType: .numberPad,
@@ -172,14 +172,14 @@ private extension NSShippingAddressView {
   
   var mainAddressTextField: some View {
     VStack(alignment: .leading) {
-      Text(LFLocalizable.addressLine1Title)
+      Text(L10N.Common.addressLine1Title)
         .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.textFieldHeader.value))
         .foregroundColor(Colors.label.swiftUIColor)
         .opacity(0.75)
         .padding(.leading, 4)
       
       textField(
-        placeholder: LFLocalizable.enterAddress,
+        placeholder: L10N.Common.enterAddress,
         value: $viewModel.mainAddress,
         focus: .address1,
         nextFocus: .address2
@@ -194,7 +194,7 @@ private extension NSShippingAddressView {
   
   var subAddressTextField: some View {
     VStack(alignment: .leading) {
-      Text(LFLocalizable.addressLine2Title)
+      Text(L10N.Common.addressLine2Title)
         .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.textFieldHeader.value))
         .foregroundColor(Colors.label.swiftUIColor)
         .opacity(0.75)
@@ -202,7 +202,7 @@ private extension NSShippingAddressView {
         .padding(.leading, 4)
       
       textField(
-        placeholder: LFLocalizable.enterAddress,
+        placeholder: L10N.Common.enterAddress,
         value: $viewModel.subAddress,
         focus: .address2,
         nextFocus: .city

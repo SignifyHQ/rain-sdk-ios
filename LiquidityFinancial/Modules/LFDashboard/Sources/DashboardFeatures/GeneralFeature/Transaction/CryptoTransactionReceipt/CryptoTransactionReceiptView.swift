@@ -31,7 +31,7 @@ struct CryptoTransactionReceiptView: View {
     .padding(.top, 36)
     .background(Colors.background.swiftUIColor)
     .navigationBarTitleDisplayMode(.inline)
-    .defaultToolBar(navigationTitle: LFLocalizable.CryptoReceipt.Navigation.title)
+    .defaultToolBar(navigationTitle: L10N.Common.CryptoReceipt.Navigation.title)
     .track(name: String(describing: type(of: self)))
     .fullScreenCover(item: $openSafariType, content: { type in
       switch type {
@@ -66,9 +66,9 @@ private extension CryptoTransactionReceiptView {
     VStack(spacing: 30) {
       HStack(spacing: 4) {
         TextTappable(
-          text: LFLocalizable.CryptoReceipt.CardType.link,
+          text: L10N.Custom.CryptoReceipt.CardType.link,
           textAlignment: .center,
-          links: [LFLocalizable.CryptoReceipt.CardType.link],
+          links: [L10N.Custom.CryptoReceipt.CardType.link],
           openLink: openLink(value:)
         )
         .frame(maxWidth: 136)
@@ -76,16 +76,16 @@ private extension CryptoTransactionReceiptView {
           .frame(width: 1, height: 20)
           .foregroundColor(Colors.label.swiftUIColor)
           .padding(.trailing, 6)
-        Text(LFLocalizable.CryptoReceipt.Phonenumber.link)
+        Text(L10N.Common.CryptoReceipt.Phonenumber.link)
           .font(Fonts.bold.swiftUIFont(size: Constants.FontSize.ultraSmall.value))
           .foregroundColor(Colors.label.swiftUIColor)
       }
       .padding(.horizontal, 16)
       .ignoresSafeArea(.keyboard, edges: .bottom)
       TextTappable(
-        text: LFLocalizable.CryptoReceipt.Zerohash.description,
+        text: L10N.Common.CryptoReceipt.Zerohash.description,
         textAlignment: .center,
-        links: [LFLocalizable.CryptoReceipt.Zerohash.link],
+        links: [L10N.Common.CryptoReceipt.Zerohash.link],
         openLink: openLink(value:)
       )
     }
@@ -94,44 +94,44 @@ private extension CryptoTransactionReceiptView {
   var secondSectionView: some View {
     VStack(spacing: 16) {
       textLabelTappableCell(
-        title: LFLocalizable.CryptoReceipt.Cancellation.title.uppercased(),
-        attributedText: LFLocalizable.CryptoReceipt.Cancellation.description
+        title: L10N.Common.CryptoReceipt.Cancellation.title.uppercased(),
+        attributedText: L10N.Common.CryptoReceipt.Cancellation.description
       )
       textLabelTappableCell(
-        title: LFLocalizable.CryptoReceipt.Liability.title.uppercased(),
-        attributedText: LFLocalizable.CryptoReceipt.Liability.description.localizedString
+        title: L10N.Common.CryptoReceipt.Liability.title.uppercased(),
+        attributedText: L10N.Common.CryptoReceipt.Liability.description.localizedString
       )
       textLabelTappableCell(
-        title: LFLocalizable.CryptoReceipt.Beware.title.uppercased(),
-        attributedText: LFLocalizable.CryptoReceipt.Beware.description,
-        links: [LFLocalizable.CryptoReceipt.ConsumerTools.link]
+        title: L10N.Common.CryptoReceipt.Beware.title.uppercased(),
+        attributedText: L10N.Common.CryptoReceipt.Beware.description,
+        links: [L10N.Common.CryptoReceipt.ConsumerTools.link]
       )
       textLabelTappableCell(
-        title: LFLocalizable.CryptoReceipt.PriceRisk.title.uppercased(),
-        attributedText: LFLocalizable.CryptoReceipt.PriceRisk.description
+        title: L10N.Common.CryptoReceipt.PriceRisk.title.uppercased(),
+        attributedText: L10N.Common.CryptoReceipt.PriceRisk.description
       )
       textLabelTappableCell(
-        title: LFLocalizable.CryptoReceipt.Illinois.title,
-        attributedText: LFLocalizable.CryptoReceipt.Illinois.description,
-        links: [LFLocalizable.CryptoReceipt.IllinoisCustomer.link]
+        title: L10N.Common.CryptoReceipt.Illinois.title,
+        attributedText: L10N.Common.CryptoReceipt.Illinois.description,
+        links: [L10N.Common.CryptoReceipt.IllinoisCustomer.link]
       )
       textLabelTappableCell(
-        title: LFLocalizable.CryptoReceipt.MaineCustomers.title,
-        attributedText: LFLocalizable.CryptoReceipt.MaineCustomers.description,
-        links: [LFLocalizable.CryptoReceipt.MaineCustomer.link]
+        title: L10N.Common.CryptoReceipt.MaineCustomers.title,
+        attributedText: L10N.Common.CryptoReceipt.MaineCustomers.description,
+        links: [L10N.Common.CryptoReceipt.MaineCustomer.link]
       )
       textLabelTappableCell(
-        title: LFLocalizable.CryptoReceipt.MinnesotaCustomers.title,
-        attributedText: LFLocalizable.CryptoReceipt.MinnesotaCustomers.description,
+        title: L10N.Common.CryptoReceipt.MinnesotaCustomers.title,
+        attributedText: L10N.Common.CryptoReceipt.MinnesotaCustomers.description,
         links: [
-          LFLocalizable.CryptoReceipt.MinnesotaCustomerFraud.link,
-          LFLocalizable.CryptoReceipt.MinnesotaCustomerCryptocurrency.link
+          L10N.Common.CryptoReceipt.MinnesotaCustomerFraud.link,
+          L10N.Common.CryptoReceipt.MinnesotaCustomerCryptocurrency.link
         ]
       )
       textLabelTappableCell(
-        title: LFLocalizable.CryptoReceipt.TexasCustomers.title,
-        attributedText: LFLocalizable.CryptoReceipt.TexasCustomers.description,
-        links: [LFLocalizable.CryptoReceipt.TexasCustomer.link]
+        title: L10N.Common.CryptoReceipt.TexasCustomers.title,
+        attributedText: L10N.Common.CryptoReceipt.TexasCustomers.description,
+        links: [L10N.Common.CryptoReceipt.TexasCustomer.link]
       )
     }
   }

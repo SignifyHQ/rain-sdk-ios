@@ -43,7 +43,7 @@ public struct QuestionsView: View {
       .transition(.slide)
       
       FullSizeButton(
-        title: LFLocalizable.Button.Continue.title,
+        title: L10N.Common.Button.Continue.title,
         isDisable: !viewModel.isEnableContinue,
         isLoading: $viewModel.isLoading,
         type: .primary
@@ -86,13 +86,13 @@ private extension QuestionsView {
   var headerView: some View {
     VStack(alignment: .leading, spacing: 24) {
       VStack(alignment: .leading, spacing: 12) {
-        Text(LFLocalizable.Kyc.Question.title.uppercased())
+        Text(L10N.Common.Kyc.Question.title.uppercased())
           .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.main.value))
           .foregroundColor(Colors.label.swiftUIColor)
-        Text(LFLocalizable.Kyc.Question.desc)
+        Text(L10N.Common.Kyc.Question.desc)
           .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.medium.value))
           .foregroundColor(Colors.label.swiftUIColor.opacity(0.75))
-        Text(LFLocalizable.Kyc.Question.timeDesc)
+        Text(L10N.Common.Kyc.Question.timeDesc)
           .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.ultraSmall.value))
           .foregroundColor(Colors.primary.swiftUIColor)
       }
@@ -107,12 +107,12 @@ private extension QuestionsView {
   
   var timeIsUpPopup: some View {
     LiquidityAlert(
-      title: LFLocalizable.Kyc.TimeIsUp.title,
-      message: LFLocalizable.Kyc.TimeIsUp.message,
-      primary: .init(text: LFLocalizable.Button.ContactSupport.title) {
+      title: L10N.Common.Kyc.TimeIsUp.title,
+      message: L10N.Common.Kyc.TimeIsUp.message,
+      primary: .init(text: L10N.Common.Button.ContactSupport.title) {
         viewModel.contactSupport()
       },
-      secondary: .init(text: LFLocalizable.Button.NotNow.title) {
+      secondary: .init(text: L10N.Common.Button.NotNow.title) {
         viewModel.logout()
       }
     )

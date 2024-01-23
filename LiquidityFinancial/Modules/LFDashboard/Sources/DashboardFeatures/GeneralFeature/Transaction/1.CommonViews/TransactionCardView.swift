@@ -15,7 +15,7 @@ struct TransactionCardView: View {
       Button {
         // Temporarily hidden
       } label: {
-        Text(LFLocalizable.TransactionCard.Share.title)
+        Text(L10N.Common.TransactionCard.Share.title)
           .font(Fonts.bold.swiftUIFont(size: Constants.FontSize.ultraSmall.value))
           .foregroundColor(shareTextColor)
       }

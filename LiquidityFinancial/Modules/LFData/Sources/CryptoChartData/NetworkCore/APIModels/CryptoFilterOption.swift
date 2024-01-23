@@ -42,17 +42,17 @@ extension CryptoFilterOption {
   public var title: String {
     switch self {
     case .live:
-      return LFLocalizable.CryptoChart.Filter.live
+      return L10N.Common.CryptoChart.Filter.live
     case .day:
-      return LFLocalizable.CryptoChart.Filter.day
+      return L10N.Common.CryptoChart.Filter.day
     case .week:
-      return LFLocalizable.CryptoChart.Filter.week
+      return L10N.Common.CryptoChart.Filter.week
     case .month:
-      return LFLocalizable.CryptoChart.Filter.month
+      return L10N.Common.CryptoChart.Filter.month
     case .year:
-      return LFLocalizable.CryptoChart.Filter.year
+      return L10N.Common.CryptoChart.Filter.year
     case .all:
-      return LFLocalizable.CryptoChart.Filter.all
+      return L10N.Common.CryptoChart.Filter.all
     }
   }
   

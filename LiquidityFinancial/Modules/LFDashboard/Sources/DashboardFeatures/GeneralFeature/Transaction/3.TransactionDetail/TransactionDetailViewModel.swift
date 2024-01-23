@@ -59,8 +59,8 @@ private extension TransactionDetailViewModel {
         let donationDetail = fundraisers.latestDonations?.first { $0.id == transactionId }
         donation = DonationModel(
           id: transactionId,
-          title: LFLocalizable.TransactionCard.Donation.header(fundraisers.fundraiser?.name ?? .empty),
-          message: LFLocalizable.TransactionCard.Donation.message(
+          title: L10N.Common.TransactionCard.Donation.header(fundraisers.fundraiser?.name ?? .empty),
+          message: L10N.Common.TransactionCard.Donation.message(
             fundraisers.fundraiser?.name ?? .empty,
             fundraisers.charity?.name ?? .empty
           ),
@@ -114,7 +114,7 @@ extension TransactionDetailViewModel {
   var cryptoTransactions: [TransactionInformation] {
     [
       TransactionInformation(
-        title: LFLocalizable.TransactionDetail.OrderType.title,
+        title: L10N.Common.TransactionDetail.OrderType.title,
         value: transaction.type.title
       )
     ]
@@ -123,7 +123,7 @@ extension TransactionDetailViewModel {
   var refundCryptoTransactions: [TransactionInformation] {
     [
       TransactionInformation(
-        title: LFLocalizable.TransactionDetail.Rewards.title,
+        title: L10N.Common.TransactionDetail.Rewards.title,
         value: LFUtilities.cryptoCurrency,
         markValue: transaction.rewards?.amount?.formattedAmount(minFractionDigits: 2, maxFractionDigits: 2)
       )
@@ -133,7 +133,7 @@ extension TransactionDetailViewModel {
   var refundTransactions: [TransactionInformation] {
     [
       TransactionInformation(
-        title: LFLocalizable.TransactionDetail.Donation.title,
+        title: L10N.Common.TransactionDetail.Donation.title,
         value: transaction.rewards?.amount?.formattedAmount(
           prefix: Constants.CurrencyUnit.usd.rawValue, minFractionDigits: 2
         ) ?? .empty
@@ -144,7 +144,7 @@ extension TransactionDetailViewModel {
   var rewardTransactions: [TransactionInformation] {
     [
       TransactionInformation(
-        title: LFLocalizable.TransactionDetail.Balance.title,
+        title: L10N.Common.TransactionDetail.Balance.title,
         value: LFUtilities.cryptoCurrency,
         markValue: transaction.balanceFormatted
       )

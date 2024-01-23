@@ -75,10 +75,10 @@ private extension SelectRewardsView {
   
   var titles: some View {
     VStack(alignment: .leading, spacing: 4) {
-      Text(LFLocalizable.SelectRewards.title.uppercased())
+      Text(L10N.Common.SelectRewards.title.uppercased())
         .font(Fonts.regular.swiftUIFont(size: 18))
         .foregroundColor(ModuleColors.label.swiftUIColor)
-      Text(LFLocalizable.SelectRewards.subtitle)
+      Text(L10N.Common.SelectRewards.subtitle)
         .font(Fonts.regular.swiftUIFont(size: 12))
         .foregroundColor(ModuleColors.label.swiftUIColor.opacity(0.75))
     }
@@ -102,7 +102,7 @@ private extension SelectRewardsView {
   var bottomView: some View {
     VStack(spacing: 20) {
       cashbackDonationDisclosure
-      FullSizeButton(title: LFLocalizable.SelectRewards.continue, isDisable: !viewModel.isContinueEnabled, isLoading: $viewModel.isLoading) {
+      FullSizeButton(title: L10N.Common.SelectRewards.continue, isDisable: !viewModel.isContinueEnabled, isLoading: $viewModel.isLoading) {
         viewModel.continueTapped()
       }
     }
@@ -111,7 +111,7 @@ private extension SelectRewardsView {
   
   var cashbackDonationDisclosure: some View {
     Group {
-      Text("\(LFLocalizable.DonationsDisclosure.second) ")
+      Text("\(L10N.Common.DonationsDisclosure.second) ")
       +
       Text(GenImages.CommonImages.info.swiftUIImage)
         .baselineOffset(-3)
@@ -133,7 +133,7 @@ private extension SelectRewardsView {
           .resizable()
           .frame(width: 80, height: 80)
         
-        Text(LFLocalizable.DonationsDisclosure.Alert.title)
+        Text(L10N.Common.DonationsDisclosure.Alert.title)
           .font(Fonts.regular.swiftUIFont(size: 18))
           .foregroundColor(ModuleColors.label.swiftUIColor)
           .padding(.top, 8)
@@ -141,13 +141,13 @@ private extension SelectRewardsView {
         VStack(spacing: 0) {
           ShoppingGivesAlert(type: .taxDeductions)
             .frame(height: 156)
-          Text(LFLocalizable.DonationsDisclosure.Alert.poweredBy)
+          Text(L10N.Common.DonationsDisclosure.Alert.poweredBy)
         }
         .font(Fonts.regular.swiftUIFont(size: 16))
         .foregroundColor(ModuleColors.label.swiftUIColor.opacity(0.75))
         .lineSpacing(1.33)
         .multilineTextAlignment(.center)
-        FullSizeButton(title: LFLocalizable.Button.Ok.title, isDisable: false, type: .primary) {
+        FullSizeButton(title: L10N.Common.Button.Ok.title, isDisable: false, type: .primary) {
           showPopup = false
         }
       }

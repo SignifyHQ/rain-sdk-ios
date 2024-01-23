@@ -77,7 +77,7 @@ public class MoveMoneyAccountViewModel: ObservableObject {
   
   var instantFeeString: String {
     guard let amount = externalCardFeeResponse?.amount, amount > 0 else {
-      return LFLocalizable.MoveMoney.TransferFeePopup.free
+      return L10N.Common.MoveMoney.TransferFeePopup.free
     }
     return amount.formattedUSDAmount()
   }
@@ -200,7 +200,7 @@ extension MoveMoneyAccountViewModel {
   
   func getTransactionFee(account: APILinkedSourceData) {
     guard let amount = self.amount.asDouble else {
-      toastMessage = LFLocalizable.MoveMoney.Error.noContact
+      toastMessage = L10N.Common.MoveMoney.Error.noContact
       return
     }
     Task { @MainActor in
@@ -231,7 +231,7 @@ extension MoveMoneyAccountViewModel {
   
   func callTransferAPI() {
     guard let linkedAccount = selectedLinkedAccount, let amount = self.amount.asDouble else {
-      toastMessage = LFLocalizable.MoveMoney.Error.noContact
+      toastMessage = L10N.Common.MoveMoney.Error.noContact
       return
     }
     Task { @MainActor in
@@ -295,20 +295,20 @@ extension MoveMoneyAccountViewModel {
   func title(for account: APILinkedSourceData) -> String {
     switch account.sourceType {
     case .externalCard:
-      return LFLocalizable.ConnectedView.Row.externalCard(account.last4)
+      return L10N.Common.ConnectedView.Row.externalCard(account.last4)
     case .externalBank:
-      return LFLocalizable.ConnectedView.Row.externalBank(account.name ?? "", account.last4)
+      return L10N.Common.ConnectedView.Row.externalBank(account.name ?? "", account.last4)
     }
   }
   
   var subtitle: String {
-    LFLocalizable.MoveMoney.AvailableBalance.subtitle(
+    L10N.Common.MoveMoney.AvailableBalance.subtitle(
       cashBalanceValue.formattedUSDAmount()
     )
   }
 
   var annotationString: String {
-    LFLocalizable.MoveMoney.Withdraw.annotation(
+    L10N.Common.MoveMoney.Withdraw.annotation(
       cashBalanceValue.formattedUSDAmount()
     )
   }
@@ -356,7 +356,7 @@ extension MoveMoneyAccountViewModel {
     let remainingAmount = sourceType == .externalCard ? cardRemainingAmount : bankRemainingAmount
     let isReachOut = remainingAmount.day < amountValue || remainingAmount.week < amountValue || remainingAmount.month < amountValue
     if isReachOut {
-      return LFLocalizable.TransferView.limitsReached
+      return L10N.Common.TransferView.limitsReached
     }
     return nil
   }
@@ -370,8 +370,8 @@ extension MoveMoneyAccountViewModel {
   }
   
   var transferFeePopupTitle: String {
-    let title = kind == .receive ? LFLocalizable.MoveMoney.Deposit.title : LFLocalizable.MoveMoney.Withdraw.title
-    return LFLocalizable.MoveMoney.TransferFeePopup.title(title.uppercased())
+    let title = kind == .receive ? L10N.Common.MoveMoney.Deposit.title : L10N.Common.MoveMoney.Withdraw.title
+    return L10N.Common.MoveMoney.TransferFeePopup.title(title.uppercased())
   }
 }
 

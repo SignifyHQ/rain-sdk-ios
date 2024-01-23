@@ -138,11 +138,11 @@ private extension KYCStatusView {
         .frame(width: 56, height: 56)
         
         VStack(spacing: 12) {
-          Text(LFLocalizable.KycStatus.WaitingVerification.title)
+          Text(L10N.Common.KycStatus.WaitingVerification.title)
             .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.main.value))
             .foregroundColor(Colors.label.swiftUIColor)
           
-          Text(LFLocalizable.KycStatus.WaitingVerification.message)
+          Text(L10N.Common.KycStatus.WaitingVerification.message)
             .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.medium.value))
             .foregroundColor(Colors.label.swiftUIColor.opacity(0.75))
             .lineSpacing(1.7)
@@ -158,11 +158,11 @@ private extension KYCStatusView {
     LiquidityAlert(
       title: "[Tool Kit] - Pass review from Dashboard.",
       message: "Click ok and we call service help you can pass a review of the Dashboard.",
-      primary: .init(text: LFLocalizable.Button.Ok.title) {
+      primary: .init(text: L10N.Common.Button.Ok.title) {
         viewModel.closePopup()
         viewModel.magicPassKYC()
       },
-      secondary: .init(text: LFLocalizable.Button.Skip.title, action: {
+      secondary: .init(text: L10N.Common.Button.Skip.title, action: {
         viewModel.closePopup()
       })
     )
@@ -170,9 +170,9 @@ private extension KYCStatusView {
   
   var inReviewPopup: some View {
     LiquidityAlert(
-      title: LFLocalizable.KycStatus.InReview.Popup.title,
-      message: LFLocalizable.KycStatus.InReview.Popup.message,
-      primary: .init(text: LFLocalizable.Button.Ok.title) {
+      title: L10N.Common.KycStatus.InReview.Popup.title,
+      message: L10N.Common.KycStatus.InReview.Popup.message,
+      primary: .init(text: L10N.Common.Button.Ok.title) {
         viewModel.closePopup()
       }
     )

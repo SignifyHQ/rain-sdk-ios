@@ -214,14 +214,14 @@ private extension HomeView {
   
   var notificationsPopup: some View {
     LiquidityAlert(
-      title: LFLocalizable.NotificationPopup.title,
-      message: LFLocalizable.NotificationPopup.subtitle,
+      title: L10N.Common.NotificationPopup.title,
+      message: L10N.Common.NotificationPopup.subtitle,
       primary: .init(
-        text: LFLocalizable.NotificationPopup.action,
+        text: L10N.Common.NotificationPopup.action,
         action: viewModel.notificationsPopupAction
       ),
       secondary: .init(
-        text: LFLocalizable.NotificationPopup.dismiss,
+        text: L10N.Common.NotificationPopup.dismiss,
         action: viewModel.clearPopup
       )
     )
@@ -229,10 +229,10 @@ private extension HomeView {
   
   var passwordEnhancedSecurityPopup: some View {
     LiquidityAlert(
-      title: LFLocalizable.Authentication.SetupEnhancedSecurity.title,
-      message: LFLocalizable.Authentication.SetupEnhancedSecurity.fullStep,
+      title: L10N.Common.Authentication.SetupEnhancedSecurity.title,
+      message: L10N.Common.Authentication.SetupEnhancedSecurity.fullStep,
       primary: .init(
-        text: LFLocalizable.Button.Continue.title,
+        text: L10N.Common.Button.Continue.title,
         action: viewModel.enhancedSecurityPopupAction
       )
     )
@@ -252,9 +252,9 @@ private extension HomeView {
   
   var biometricLockoutPopup: some View {
     LiquidityAlert(
-      title: LFLocalizable.Authentication.BiometricsLockoutError.title(viewModel.biometricType.title),
-      message: LFLocalizable.Authentication.BiometricsLockoutError.message(viewModel.biometricType.title),
-      primary: .init(text: LFLocalizable.Button.Ok.title) {
+      title: L10N.Common.Authentication.BiometricsLockoutError.title(viewModel.biometricType.title),
+      message: L10N.Common.Authentication.BiometricsLockoutError.message(viewModel.biometricType.title),
+      primary: .init(text: L10N.Common.Button.Ok.title) {
         viewModel.clearPopup()
       }
     )
@@ -262,9 +262,9 @@ private extension HomeView {
   
   var biometricNotEnrolledPopup: some View {
     LiquidityAlert(
-      title: LFLocalizable.Authentication.BiometricsNotEnrolled.title(viewModel.biometricType.title).uppercased(),
-      message: LFLocalizable.Authentication.BiometricsNotEnrolled.message(viewModel.biometricType.title),
-      primary: .init(text: LFLocalizable.Button.Ok.title) {
+      title: L10N.Common.Authentication.BiometricsNotEnrolled.title(viewModel.biometricType.title).uppercased(),
+      message: L10N.Common.Authentication.BiometricsNotEnrolled.message(viewModel.biometricType.title),
+      primary: .init(text: L10N.Common.Button.Ok.title) {
         viewModel.clearPopup()
       }
     )

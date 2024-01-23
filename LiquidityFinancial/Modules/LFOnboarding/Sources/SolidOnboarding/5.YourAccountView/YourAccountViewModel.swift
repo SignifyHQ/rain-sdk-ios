@@ -25,13 +25,13 @@ class YourAccountViewModel: ObservableObject {
   @Published var isEsignatureAccepted: Bool = false
   @Published var isTermsPrivacyAccepted: Bool = false
   
-  let esignString = LFLocalizable.YourAccount.Agreements.esignature
-  let agreementString = LFLocalizable.YourAccount.Agreements.consumerTermsConditions
+  let esignString = L10N.Common.YourAccount.Agreements.esignature
+  let agreementString = L10N.Common.YourAccount.Agreements.consumerTermsConditions
   
-  let esignLink = LFLocalizable.YourAccount.Links.esignature
-  let consumerLink = LFLocalizable.YourAccount.Links.consumerCardholder
-  let termsLink = LFLocalizable.YourAccount.Links.terms
-  let privacyLink = LFLocalizable.YourAccount.Links.privacy
+  let esignLink = L10N.Common.YourAccount.Links.esignature
+  let consumerLink = L10N.Common.YourAccount.Links.consumerCardholder
+  let termsLink = L10N.Common.YourAccount.Links.terms
+  let privacyLink = L10N.Common.YourAccount.Links.privacy
   
   var remoteURLs: RemoteLinks?
   

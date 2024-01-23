@@ -47,7 +47,7 @@ extension DirectDepositViewModel {
     let pasteboard = UIPasteboard.general
     pasteboard.string = text
     Haptic.impact(.medium).generate()
-    toastMessage = LFLocalizable.DirectDeposit.Copied.message
+    toastMessage = L10N.Common.DirectDeposit.Copied.message
   }
 }
 

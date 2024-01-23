@@ -54,7 +54,7 @@ public struct EnterTOTPCodeView: View {
 private extension EnterTOTPCodeView {
   var content: some View {
     VStack(spacing: 24) {
-      Text(LFLocalizable.Authentication.EnterTotp.title.uppercased())
+      Text(L10N.Common.Authentication.EnterTotp.title.uppercased())
         .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.main.value))
         .foregroundColor(Colors.label.swiftUIColor)
         .multilineTextAlignment(.center)
@@ -85,9 +85,9 @@ private extension EnterTOTPCodeView {
   var bottomView: some View {
     VStack(spacing: 20) {
       HStack(spacing: 0) {
-        Text(LFLocalizable.Authentication.EnterTotp.bottomDisclosure)
+        Text(L10N.Common.Authentication.EnterTotp.bottomDisclosure)
           .foregroundColor(Colors.label.swiftUIColor.opacity(0.75))
-        Text(LFLocalizable.Authentication.EnterTotp.useRecoveryCodeAttributeText)
+        Text(L10N.Common.Authentication.EnterTotp.useRecoveryCodeAttributeText)
           .foregroundStyle(
             LinearGradient(
               colors: gradientColor,
@@ -105,7 +105,7 @@ private extension EnterTOTPCodeView {
       .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.ultraSmall.value))
       
       FullSizeButton(
-        title: LFLocalizable.Button.Continue.title,
+        title: L10N.Common.Button.Continue.title,
         isDisable: !viewModel.isTOTPCodeEntered,
         isLoading: $viewModel.isVerifying
       ) {

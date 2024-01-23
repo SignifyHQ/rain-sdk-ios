@@ -23,9 +23,9 @@ extension ReferralCampaign {
   var periodDisplay: String {
     switch timeUnit {
     case .day:
-      return LFLocalizable.Referral.Campaign.day(period)
+      return L10N.Common.Referral.Campaign.day(period)
     case .week:
-      return LFLocalizable.Referral.Campaign.day(period)
+      return L10N.Common.Referral.Campaign.day(period)
     }
   }
   

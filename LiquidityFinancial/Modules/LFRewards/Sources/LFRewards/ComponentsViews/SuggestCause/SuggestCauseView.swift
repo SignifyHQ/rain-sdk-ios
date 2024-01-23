@@ -9,7 +9,7 @@ public struct SuggestCauseButton: View {
   public init() {}
   
   public var body: some View {
-    FullSizeButton(title: LFLocalizable.SuggestCause.title, isDisable: false, type: .secondary) {
+    FullSizeButton(title: L10N.Common.SuggestCause.title, isDisable: false, type: .secondary) {
       showInput = true
     }
     .fullScreenCover(isPresented: $showInput) {
@@ -52,12 +52,12 @@ public struct SuggestCauseView: View {
 
   private var content: some View {
     VStack(alignment: .leading, spacing: 15) {
-      Text(LFLocalizable.SuggestCause.title.uppercased())
+      Text(L10N.Common.SuggestCause.title.uppercased())
         .font(Fonts.regular.swiftUIFont(size: 18))
         .foregroundColor(ModuleColors.label.swiftUIColor)
         .padding(.bottom, 5)
       
-      Text(LFLocalizable.SuggestCause.tellMore)
+      Text(L10N.Common.SuggestCause.tellMore)
         .font(Fonts.regular.swiftUIFont(size: 12))
         .foregroundColor(ModuleColors.label.swiftUIColor.opacity(0.75))
       
@@ -75,9 +75,9 @@ public struct SuggestCauseView: View {
     VStack(alignment: .leading, spacing: 0) {
       Group {
         if #available(iOS 16.0, *) {
-          TextField(LFLocalizable.SuggestCause.placeholder, text: $input, axis: .vertical)
+          TextField(L10N.Common.SuggestCause.placeholder, text: $input, axis: .vertical)
         } else {
-          TextField(LFLocalizable.SuggestCause.placeholder, text: $input)
+          TextField(L10N.Common.SuggestCause.placeholder, text: $input)
         }
       }
       .primaryFieldStyle()
@@ -97,7 +97,7 @@ public struct SuggestCauseView: View {
       Spacer()
         .frame(height: 4)
       
-      Text(LFLocalizable.SuggestCause.maxCharacters)
+      Text(L10N.Common.SuggestCause.maxCharacters)
         .font(Fonts.regular.swiftUIFont(size: 12))
         .foregroundColor(ModuleColors.label.swiftUIColor.opacity(0.5))
         .padding(.leading, 10)
@@ -105,7 +105,7 @@ public struct SuggestCauseView: View {
   }
   
   private var submit: some View {
-    FullSizeButton(title: LFLocalizable.SuggestCause.submit, isDisable: !isSubmitEnabled, isLoading: $viewModel.isLoading) {
+    FullSizeButton(title: L10N.Common.SuggestCause.submit, isDisable: !isSubmitEnabled, isLoading: $viewModel.isLoading) {
       viewModel.submitCause(name: input)
     }
   }
@@ -116,9 +116,9 @@ public struct SuggestCauseView: View {
   
   private var successPopup: some View {
     LiquidityAlert(
-      title: LFLocalizable.SuggestCause.Alert.title,
-      message: LFLocalizable.SuggestCause.Alert.message,
-      primary: .init(text: LFLocalizable.Button.Ok.title, action: dismissPopup),
+      title: L10N.Common.SuggestCause.Alert.title,
+      message: L10N.Common.SuggestCause.Alert.message,
+      primary: .init(text: L10N.Common.Button.Ok.title, action: dismissPopup),
       secondary: nil
     )
   }

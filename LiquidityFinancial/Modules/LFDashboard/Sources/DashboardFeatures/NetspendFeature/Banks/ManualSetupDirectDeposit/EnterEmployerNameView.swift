@@ -14,7 +14,7 @@ struct EnterEmployerNameView: View {
   
   var body: some View {
     VStack(alignment: .leading, spacing: 30) {
-      Text(LFLocalizable.DirectDeposit.EmployerName.title)
+      Text(L10N.Common.DirectDeposit.EmployerName.title)
         .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.main.value))
         .foregroundColor(Colors.label.swiftUIColor)
         .padding(.top, 15)
@@ -24,7 +24,7 @@ struct EnterEmployerNameView: View {
       employerNameTextField
       Spacer()
       FullSizeButton(
-        title: LFLocalizable.Button.Continue.title,
+        title: L10N.Common.Button.Continue.title,
         isDisable: viewModel.employerName.trimWhitespacesAndNewlines().isEmpty
       ) {
         isNavigateToDepositPaycheck = true
@@ -45,7 +45,7 @@ struct EnterEmployerNameView: View {
 private extension EnterEmployerNameView {
   var employerNameTextField: some View {
     VStack(alignment: .leading, spacing: 12) {
-      Text(LFLocalizable.DirectDeposit.EmployerName.textFieldTitle)
+      Text(L10N.Common.DirectDeposit.EmployerName.textFieldTitle)
         .foregroundColor(Colors.label.swiftUIColor.opacity(0.75))
         .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.ultraSmall.value))
       TextFieldWrapper {
@@ -53,7 +53,7 @@ private extension EnterEmployerNameView {
           .keyboardType(.alphabet)
           .restrictInput(value: $viewModel.employerName, restriction: .alphabets)
           .modifier(
-            PlaceholderStyle(showPlaceHolder: $viewModel.employerName.wrappedValue.isEmpty, placeholder: LFLocalizable.DirectDeposit.EmployerName.textFieldPlaceholder)
+            PlaceholderStyle(showPlaceHolder: $viewModel.employerName.wrappedValue.isEmpty, placeholder: L10N.Common.DirectDeposit.EmployerName.textFieldPlaceholder)
           )
           .primaryFieldStyle()
           .autocorrectionDisabled()

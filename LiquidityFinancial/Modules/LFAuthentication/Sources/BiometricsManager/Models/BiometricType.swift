@@ -26,9 +26,9 @@ public enum BiometricType {
   public var title: String {
     switch self {
     case .faceID:
-      return LFLocalizable.Authentication.BiometricsFaceID.title
+      return L10N.Common.Authentication.BiometricsFaceID.title
     case .touchID:
-      return LFLocalizable.Authentication.BiometricsTouchID.title
+      return L10N.Common.Authentication.BiometricsTouchID.title
     default:
       return ""
     }

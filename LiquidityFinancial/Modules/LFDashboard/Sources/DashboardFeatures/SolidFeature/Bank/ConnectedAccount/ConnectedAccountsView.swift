@@ -17,7 +17,7 @@ public struct ConnectedAccountsView: View {
     content
       .toolbar {
         ToolbarItem(placement: .principal) {
-          Text(LFLocalizable.ConnectedView.title)
+          Text(L10N.Common.ConnectedView.title)
             .foregroundColor(Colors.label.swiftUIColor)
             .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.medium.value))
         }
@@ -105,12 +105,12 @@ private extension ConnectedAccountsView {
   
   func deletePopup(linkedSource: LinkedSourceContact) -> some View {
     LiquidityAlert(
-      title: LFLocalizable.ConnectedView.DeletePopup.title.uppercased(),
-      message: LFLocalizable.ConnectedView.DeletePopup.message,
-      primary: .init(text: LFLocalizable.ConnectedView.DeletePopup.primaryButton) {
+      title: L10N.Common.ConnectedView.DeletePopup.title.uppercased(),
+      message: L10N.Common.ConnectedView.DeletePopup.message,
+      primary: .init(text: L10N.Common.ConnectedView.DeletePopup.primaryButton) {
         viewModel.deleteAccount(id: linkedSource.sourceId)
       },
-      secondary: .init(text: LFLocalizable.Button.Back.title) {
+      secondary: .init(text: L10N.Common.Button.Back.title) {
         viewModel.hidePopup()
       },
       isLoading: $viewModel.isDeleting
@@ -119,10 +119,10 @@ private extension ConnectedAccountsView {
   
   var plaidLinkingErrorPopup: some View {
     LiquidityAlert(
-      title: LFLocalizable.PlaidLink.Popup.title,
-      message: LFLocalizable.PlaidLink.Popup.description,
+      title: L10N.Common.PlaidLink.Popup.title,
+      message: L10N.Common.PlaidLink.Popup.description,
       primary: .init(
-        text: LFLocalizable.PlaidLink.ContactSupport.title,
+        text: L10N.Common.PlaidLink.ContactSupport.title,
         action: {
           viewModel.plaidLinkingErrorPrimaryAction()
         }

@@ -55,7 +55,7 @@ extension ChangePasswordView {
           circleView
         }
         
-        Text(LFLocalizable.Authentication.CreatePassword.desc1)
+        Text(L10N.Common.Authentication.CreatePassword.desc1)
           .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.small.value))
           .foregroundColor(Colors.label.swiftUIColor)
           .opacity(viewModel.isLengthCorrect ? 1 : 0.75)
@@ -70,7 +70,7 @@ extension ChangePasswordView {
           circleView
         }
         
-        Text(LFLocalizable.Authentication.CreatePassword.desc2)
+        Text(L10N.Common.Authentication.CreatePassword.desc2)
           .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.small.value))
           .foregroundColor(Colors.label.swiftUIColor)
           .opacity(viewModel.containsSpecialCharacters ? 1 : 0.75)
@@ -85,7 +85,7 @@ extension ChangePasswordView {
           circleView
         }
         
-        Text(LFLocalizable.Authentication.CreatePassword.desc3)
+        Text(L10N.Common.Authentication.CreatePassword.desc3)
           .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.small.value))
           .foregroundColor(Colors.label.swiftUIColor)
           .opacity(viewModel.containsLowerAndUpperCase ? 1 : 0.75)
@@ -97,7 +97,7 @@ extension ChangePasswordView {
   }
   
   var titleView: some View {
-    Text(LFLocalizable.Authentication.ChangePassword.title)
+    Text(L10N.Common.Authentication.ChangePassword.title)
       .frame(maxWidth: .infinity)
       .foregroundColor(Colors.label.swiftUIColor)
       .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.main.value))
@@ -108,7 +108,7 @@ extension ChangePasswordView {
   var continueButtonView: some View {
     VStack(spacing: 0) {
       FullSizeButton(
-        title: LFLocalizable.Button.Continue.title,
+        title: L10N.Common.Button.Continue.title,
         isDisable: !viewModel.isContinueEnabled,
         isLoading: $viewModel.isLoading,
         type: .primary
@@ -123,14 +123,14 @@ extension ChangePasswordView {
   
   var enterPassword: some View {
     VStack(alignment: .leading) {
-      Text(LFLocalizable.Authentication.ChangePassword.Current.title)
+      Text(L10N.Common.Authentication.ChangePassword.Current.title)
         .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.textFieldHeader.value))
         .foregroundColor(Colors.label.swiftUIColor)
         .opacity(0.75)
         .padding(.leading, 4)
       
       textField(
-        placeholder: LFLocalizable.Authentication.ChangePassword.Current.placeholder,
+        placeholder: L10N.Common.Authentication.ChangePassword.Current.placeholder,
         value: $viewModel.oldPasswordString,
         focus: .oldPassword,
         nextFocus: .newPassword
@@ -147,7 +147,7 @@ extension ChangePasswordView {
   
   var reenterPassword: some View {
     VStack(alignment: .leading) {
-      Text(LFLocalizable.Authentication.ChangePassword.New.title)
+      Text(L10N.Common.Authentication.ChangePassword.New.title)
         .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.textFieldHeader.value))
         .foregroundColor(Colors.label.swiftUIColor)
         .opacity(0.75)
@@ -155,7 +155,7 @@ extension ChangePasswordView {
         .padding(.leading, 4)
       
       textField(
-        placeholder: LFLocalizable.Authentication.ChangePassword.New.placeholder,
+        placeholder: L10N.Common.Authentication.ChangePassword.New.placeholder,
         value: $viewModel.newPasswordString,
         focus: .newPassword
       )

@@ -19,7 +19,7 @@ public struct DonationsDisclosureView: View {
   private var content: some View {
     Group {
       
-      Text(LFLocalizable.DonationsDisclosure.text("100%"))
+      Text(L10N.Common.DonationsDisclosure.text("100%"))
       +
       Text(GenImages.CommonImages.info.swiftUIImage)
     }
@@ -40,7 +40,7 @@ public struct DonationsDisclosureView: View {
           .resizable()
           .frame(width: 80, height: 80)
         
-        Text(LFLocalizable.DonationsDisclosure.Alert.title)
+        Text(L10N.Common.DonationsDisclosure.Alert.title)
           .font(Fonts.regular.swiftUIFont(size: 18))
           .foregroundColor(ModuleColors.label.swiftUIColor)
           .padding(.top, 8)
@@ -48,13 +48,13 @@ public struct DonationsDisclosureView: View {
         VStack(spacing: 0) {
           ShoppingGivesAlert(type: .taxDeductions)
             .frame(height: 156)
-          Text(LFLocalizable.DonationsDisclosure.Alert.poweredBy)
+          Text(L10N.Common.DonationsDisclosure.Alert.poweredBy)
         }
         .font(Fonts.regular.swiftUIFont(size: 16))
         .foregroundColor(ModuleColors.label.swiftUIColor.opacity(0.75))
         .lineSpacing(1.33)
         .multilineTextAlignment(.center)
-        FullSizeButton(title: LFLocalizable.Button.Ok.title, isDisable: false, type: .primary) {
+        FullSizeButton(title: L10N.Common.Button.Ok.title, isDisable: false, type: .primary) {
           showPopup = false
         }
       }

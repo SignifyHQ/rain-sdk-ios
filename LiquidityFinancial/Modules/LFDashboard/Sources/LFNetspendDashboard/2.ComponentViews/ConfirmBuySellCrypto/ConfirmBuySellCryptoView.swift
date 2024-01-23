@@ -29,8 +29,8 @@ struct ConfirmBuySellCryptoView: View {
             transactionId: entity.id ?? "",
             kind: .crypto,
             transactionInfo: [
-              TransactionInformation(title: LFLocalizable.TransactionDetail.TransactionType.title, value: LFLocalizable.TransactionDetail.Sell.title),
-              TransactionInformation(title: LFLocalizable.TransactionDetail.Fee.title, value: "0", markValue: Constants.CurrencyUnit.usd.rawValue)
+              TransactionInformation(title: L10N.Common.TransactionDetail.TransactionType.title, value: L10N.Common.TransactionDetail.Sell.title),
+              TransactionInformation(title: L10N.Common.TransactionDetail.Fee.title, value: "0", markValue: Constants.CurrencyUnit.usd.rawValue)
             ]
           )
         case .buyTransactionDetail(let entity):
@@ -39,8 +39,8 @@ struct ConfirmBuySellCryptoView: View {
             transactionId: entity.id ?? "",
             kind: .crypto,
             transactionInfo: [
-              TransactionInformation(title: LFLocalizable.TransactionDetail.TransactionType.title, value: LFLocalizable.TransactionDetail.Buy.title),
-              TransactionInformation(title: LFLocalizable.TransactionDetail.Fee.title, value: "0", markValue: Constants.CurrencyUnit.usd.rawValue)
+              TransactionInformation(title: L10N.Common.TransactionDetail.TransactionType.title, value: L10N.Common.TransactionDetail.Buy.title),
+              TransactionInformation(title: L10N.Common.TransactionDetail.Fee.title, value: "0", markValue: Constants.CurrencyUnit.usd.rawValue)
             ]
           )
         }
@@ -94,7 +94,7 @@ extension ConfirmBuySellCryptoView {
   
   var continueButton: some View {
     FullSizeButton(
-      title: LFLocalizable.Button.Confirm.title,
+      title: L10N.Common.Button.Confirm.title,
       isDisable: false,
       isLoading: $viewModel.showIndicator
     ) {
@@ -110,7 +110,7 @@ extension ConfirmBuySellCryptoView {
   }
 
   var cryptoDisclosure: some View {
-    Text(LFLocalizable.Zerohash.Disclosure.description)
+    Text(L10N.Common.Zerohash.Disclosure.description)
       .font(Fonts.regular.swiftUIFont(size: 10))
       .foregroundColor(Colors.label.swiftUIColor.opacity(0.5))
       .fixedSize(horizontal: false, vertical: true)

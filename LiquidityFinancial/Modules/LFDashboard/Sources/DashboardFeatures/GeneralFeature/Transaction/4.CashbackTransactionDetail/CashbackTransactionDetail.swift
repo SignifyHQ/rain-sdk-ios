@@ -25,8 +25,8 @@ private extension CashbackTransactionDetail {
       if let status = transaction.status {
         StatusDiagramView(
           transaction: transaction,
-          startTitle: LFLocalizable.TransferView.RewardsStatus.pending,
-          completedTitle: LFLocalizable.TransferView.RewardsStatus.completed
+          startTitle: L10N.Common.TransferView.RewardsStatus.pending,
+          completedTitle: L10N.Common.TransferView.RewardsStatus.completed
         )
         Spacer()
         StatusView(transactionStatus: status)

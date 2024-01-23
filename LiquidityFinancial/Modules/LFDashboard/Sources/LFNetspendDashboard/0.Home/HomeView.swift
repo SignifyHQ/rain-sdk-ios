@@ -170,14 +170,14 @@ private extension HomeView {
   
   private var notificationsPopup: some View {
     LiquidityAlert(
-      title: LFLocalizable.NotificationPopup.title,
-      message: LFLocalizable.NotificationPopup.subtitle,
+      title: L10N.Common.NotificationPopup.title,
+      message: L10N.Common.NotificationPopup.subtitle,
       primary: .init(
-        text: LFLocalizable.NotificationPopup.action,
+        text: L10N.Common.NotificationPopup.action,
         action: viewModel.notificationsPopupAction
       ),
       secondary: .init(
-        text: LFLocalizable.NotificationPopup.dismiss,
+        text: L10N.Common.NotificationPopup.dismiss,
         action: viewModel.clearPopup
       )
     )

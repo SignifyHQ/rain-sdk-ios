@@ -108,19 +108,19 @@ private extension CryptoAssetView {
   var cryptoButtons: some View {
     HStack(spacing: 10) {
       iconTextButton(
-        title: LFLocalizable.AssetView.Buy.title,
+        title: L10N.Common.AssetView.Buy.title,
         image: GenImages.CommonImages.buy.swiftUIImage
       ) {
         viewModel.onClickedBuyButton()
       }
       iconTextButton(
-        title: LFLocalizable.AssetView.Sell.title,
+        title: L10N.Common.AssetView.Sell.title,
         image: GenImages.CommonImages.sell.swiftUIImage
       ) {
         viewModel.onClickedSellButton()
       }
       iconTextButton(
-        title: LFLocalizable.AssetView.Transfer.title,
+        title: L10N.Common.AssetView.Transfer.title,
         image: GenImages.CommonImages.transfer.swiftUIImage
       ) {
         viewModel.transferButtonTapped()
@@ -136,7 +136,7 @@ private extension CryptoAssetView {
       HStack(spacing: 8) {
         GenImages.CommonImages.transfer.swiftUIImage
           .foregroundColor(Colors.label.swiftUIColor)
-        Text(LFLocalizable.AssetView.Transfer.title)
+        Text(L10N.Common.AssetView.Transfer.title)
           .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.ultraSmall.value))
           .foregroundColor(Colors.label.swiftUIColor)
         Spacer()
@@ -156,7 +156,7 @@ private extension CryptoAssetView {
       HStack(spacing: 8) {
         GenImages.CommonImages.walletAddress.swiftUIImage
           .foregroundColor(Colors.label.swiftUIColor)
-        Text(LFLocalizable.AssetView.walletAddress)
+        Text(L10N.Common.AssetView.walletAddress)
           .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.ultraSmall.value))
           .foregroundColor(Colors.label.swiftUIColor)
         Spacer()
@@ -181,7 +181,7 @@ private extension CryptoAssetView {
       case .transactions:
         ShortTransactionsView(
           transactions: $viewModel.transactions,
-          title: LFLocalizable.CashTab.LastestTransaction.title,
+          title: L10N.Common.CashTab.LastestTransaction.title,
           onTapTransactionCell: viewModel.transactionItemTapped,
           seeAllAction: {
             viewModel.onClickedSeeAllButton()
@@ -243,7 +243,7 @@ private extension CryptoAssetView {
           .foregroundColor(viewModel.isPositivePrice ? Colors.green.swiftUIColor : Colors.error.swiftUIColor)
           .font(Fonts.bold.swiftUIFont(size: Constants.FontSize.small.value))
       }
-      Text(LFLocalizable.AssetView.today)
+      Text(L10N.Common.AssetView.today)
         .foregroundColor(Colors.whiteText.swiftUIColor)
         .opacity(0.5)
         .font(Fonts.bold.swiftUIFont(size: Constants.FontSize.small.value))
@@ -251,7 +251,7 @@ private extension CryptoAssetView {
   }
   
   var disclosure: some View {
-    Text(LFLocalizable.AssetView.disclosure)
+    Text(L10N.Common.AssetView.disclosure)
       .foregroundColor(Colors.label.swiftUIColor.opacity(0.5))
       .font(Fonts.bold.swiftUIFont(size: 10))
       .padding(.horizontal, 20)
@@ -280,19 +280,19 @@ private extension CryptoAssetView {
         .foregroundColor(Colors.label.swiftUIColor.opacity(0.35))
         .frame(width: 32, height: 4)
         .padding(.top, 6)
-      Text(LFLocalizable.AssetView.TransferPopup.title)
+      Text(L10N.Common.AssetView.TransferPopup.title)
         .foregroundColor(Colors.label.swiftUIColor)
         .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.main.value))
         .padding(.vertical, 14)
       transferCell(
         with: GenImages.CommonImages.sell.swiftUIImage,
-        and: LFLocalizable.AssetView.Send.title
+        and: L10N.Common.AssetView.Send.title
       ) {
         viewModel.sendButtonTapped()
       }
       transferCell(
         with: GenImages.CommonImages.buy.swiftUIImage,
-        and: LFLocalizable.AssetView.Receive.title
+        and: L10N.Common.AssetView.Receive.title
       ) {
         viewModel.receiveButtonTapped()
       }

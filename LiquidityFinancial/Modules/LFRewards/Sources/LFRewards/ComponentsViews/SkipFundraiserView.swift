@@ -16,7 +16,7 @@ struct SkipFundraiserView: View {
     Button {
       destination()
     } label: {
-      Text(LFLocalizable.Button.Skip.title)
+      Text(L10N.Common.Button.Skip.title)
         .font(Fonts.bold.swiftUIFont(size: 12))
         .foregroundColor(ModuleColors.label.swiftUIColor)
         .padding(.horizontal, 20)

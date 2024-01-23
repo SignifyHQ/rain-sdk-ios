@@ -114,6 +114,19 @@ extension NSListCardsViewModel {
       }
     }
   }
+}
+
+// MARK: - View Helpers
+public extension NSListCardsViewModel {
+  
+  func title(for card: CardModel) -> String {
+    switch card.cardType {
+    case .virtual:
+      return L10N.Common.Card.Virtual.title + " **** " + card.last4
+    case .physical:
+      return L10N.Common.Card.Physical.title + " **** " + card.last4
+    }
+  }
   
   func apiFetchNetSpendCards() {
     isInit = true

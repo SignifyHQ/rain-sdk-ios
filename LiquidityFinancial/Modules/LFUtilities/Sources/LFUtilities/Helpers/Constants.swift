@@ -308,55 +308,55 @@ public extension Constants {
   static let netSpendSDKLinkBankErrors = ["error", "failedToLinkBank", "externalLinkBankError"]
   
   static let pathwardAttributeInformation = [
-    LFLocalizable.Question.PathwardCondition.userAgreement: LFUtilities.pathwardUserAgreement,
-    LFLocalizable.Question.PathwardCondition.privacyPolicy: LFUtilities.pathwardPrivacyPolicy,
-    LFLocalizable.Question.PathwardCondition.regulatoryDisclosures: LFUtilities.pathwardRegulatoryDisclosure
+    L10N.Common.Question.PathwardCondition.userAgreement: LFUtilities.pathwardUserAgreement,
+    L10N.Common.Question.PathwardCondition.privacyPolicy: LFUtilities.pathwardPrivacyPolicy,
+    L10N.Common.Question.PathwardCondition.regulatoryDisclosures: LFUtilities.pathwardRegulatoryDisclosure
   ]
   
   static let identifyVerification = [
-    LFLocalizable.UploadDocument.IdentifyRequirement.idCard,
-    LFLocalizable.UploadDocument.IdentifyRequirement.greenCard,
-    LFLocalizable.UploadDocument.IdentifyRequirement.usPassport,
-    LFLocalizable.UploadDocument.IdentifyRequirement.driverLicense,
-    LFLocalizable.UploadDocument.IdentifyRequirement.govermentOrMilitaryCard,
-    LFLocalizable.UploadDocument.IdentifyRequirement.foreignPassport,
-    LFLocalizable.UploadDocument.IdentifyRequirement.visa,
-    LFLocalizable.UploadDocument.IdentifyRequirement.matriculaConsular
+    L10N.Common.UploadDocument.IdentifyRequirement.idCard,
+    L10N.Common.UploadDocument.IdentifyRequirement.greenCard,
+    L10N.Common.UploadDocument.IdentifyRequirement.usPassport,
+    L10N.Common.UploadDocument.IdentifyRequirement.driverLicense,
+    L10N.Common.UploadDocument.IdentifyRequirement.govermentOrMilitaryCard,
+    L10N.Common.UploadDocument.IdentifyRequirement.foreignPassport,
+    L10N.Common.UploadDocument.IdentifyRequirement.visa,
+    L10N.Common.UploadDocument.IdentifyRequirement.matriculaConsular
   ]
   
   static let addressVerification = [
-    LFLocalizable.UploadDocument.AddressRequirement.utility,
-    LFLocalizable.UploadDocument.AddressRequirement.payStub,
-    LFLocalizable.UploadDocument.AddressRequirement.bankStatement,
-    LFLocalizable.UploadDocument.AddressRequirement.idMatching,
-    LFLocalizable.UploadDocument.AddressRequirement._401Statement,
-    LFLocalizable.UploadDocument.AddressRequirement.mortgae
+    L10N.Common.UploadDocument.AddressRequirement.utility,
+    L10N.Common.UploadDocument.AddressRequirement.payStub,
+    L10N.Common.UploadDocument.AddressRequirement.bankStatement,
+    L10N.Common.UploadDocument.AddressRequirement.idMatching,
+    L10N.Common.UploadDocument.AddressRequirement._401Statement,
+    L10N.Common.UploadDocument.AddressRequirement.mortgae
   ]
   
   static let secondaryDocument = [
-    LFLocalizable.UploadDocument.SecondaryRequirement.utility,
-    LFLocalizable.UploadDocument.SecondaryRequirement.earnings,
-    LFLocalizable.UploadDocument.SecondaryRequirement.cellPhone,
-    LFLocalizable.UploadDocument.SecondaryRequirement.creditCard,
-    LFLocalizable.UploadDocument.SecondaryRequirement.bankStatement,
-    LFLocalizable.UploadDocument.SecondaryRequirement.collectionsLetter,
-    LFLocalizable.UploadDocument.SecondaryRequirement.schoolRecords,
-    LFLocalizable.UploadDocument.SecondaryRequirement.insurance,
-    LFLocalizable.UploadDocument.SecondaryRequirement.medical,
-    LFLocalizable.UploadDocument.SecondaryRequirement.mortgae,
-    LFLocalizable.UploadDocument.SecondaryRequirement._401Statement,
-    LFLocalizable.UploadDocument.SecondaryRequirement.medicaid
+    L10N.Common.UploadDocument.SecondaryRequirement.utility,
+    L10N.Common.UploadDocument.SecondaryRequirement.earnings,
+    L10N.Common.UploadDocument.SecondaryRequirement.cellPhone,
+    L10N.Common.UploadDocument.SecondaryRequirement.creditCard,
+    L10N.Common.UploadDocument.SecondaryRequirement.bankStatement,
+    L10N.Common.UploadDocument.SecondaryRequirement.collectionsLetter,
+    L10N.Common.UploadDocument.SecondaryRequirement.schoolRecords,
+    L10N.Common.UploadDocument.SecondaryRequirement.insurance,
+    L10N.Common.UploadDocument.SecondaryRequirement.medical,
+    L10N.Common.UploadDocument.SecondaryRequirement.mortgae,
+    L10N.Common.UploadDocument.SecondaryRequirement._401Statement,
+    L10N.Common.UploadDocument.SecondaryRequirement.medicaid
   ]
   
   static let proofOfNameChange = [
-    LFLocalizable.UploadDocument.ProofRequirement.oldLicense,
-    LFLocalizable.UploadDocument.ProofRequirement.newStateID,
-    LFLocalizable.UploadDocument.ProofRequirement.oldLicense,
-    LFLocalizable.UploadDocument.ProofRequirement.newLicense
+    L10N.Common.UploadDocument.ProofRequirement.oldLicense,
+    L10N.Common.UploadDocument.ProofRequirement.newStateID,
+    L10N.Common.UploadDocument.ProofRequirement.oldLicense,
+    L10N.Common.UploadDocument.ProofRequirement.newLicense
   ]
   
   static let ssnDocument = [
-    LFLocalizable.UploadDocument.SsnRequirement.socialSecurity
+    L10N.Common.UploadDocument.SsnRequirement.socialSecurity
   ]
 }
 

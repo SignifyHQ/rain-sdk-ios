@@ -19,12 +19,12 @@ struct RewardTermsView: View {
       ScrollView {
         VStack(alignment: .leading, spacing: 24) {
           Spacer(minLength: 8)
-          Text(LFLocalizable.RewardTerms.enrollTitle)
+          Text(L10N.Common.RewardTerms.enrollTitle)
             .foregroundColor(Colors.label.swiftUIColor)
             .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.main.value))
           rewardDetails
           FullSizeButton(
-            title: LFLocalizable.RewardTerms.enrollCta,
+            title: L10N.Common.RewardTerms.enrollCta,
             isDisable: false
           ) {
             analyticsService.track(event: AnalyticsEvent(name: .rewardTermsAccepted))
@@ -75,20 +75,20 @@ extension RewardTermsView {
       }
       VStack(alignment: .leading) {
         buildRow(
-          title: LFLocalizable.RewardTerms.amountTitle,
-          subtitle: LFLocalizable.RewardTerms.amountDescription
+          title: L10N.Common.RewardTerms.amountTitle,
+          subtitle: L10N.Common.RewardTerms.amountDescription
         )
         Divider()
           .overlay(Colors.label.swiftUIColor.opacity(0.2))
         buildRow(
-          title: LFLocalizable.RewardTerms.feesTitle,
-          subtitle: LFLocalizable.RewardTerms.feesDescription
+          title: L10N.Common.RewardTerms.feesTitle,
+          subtitle: L10N.Common.RewardTerms.feesDescription
         )
         Divider()
           .overlay(Colors.label.swiftUIColor.opacity(0.2))
         buildRow(
-          title: LFLocalizable.RewardTerms.exchangeRateTitle,
-          subtitle: LFLocalizable.RewardTerms.exchangeRateDescription
+          title: L10N.Common.RewardTerms.exchangeRateTitle,
+          subtitle: L10N.Common.RewardTerms.exchangeRateDescription
         )
       }
     }

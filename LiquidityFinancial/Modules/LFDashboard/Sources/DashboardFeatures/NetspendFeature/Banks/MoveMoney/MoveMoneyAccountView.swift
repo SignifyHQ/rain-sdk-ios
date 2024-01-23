@@ -237,7 +237,7 @@ private extension MoveMoneyAccountView {
 
   var bottomView: some View {
     FullSizeButton(
-      title: LFLocalizable.Button.Continue.title,
+      title: L10N.Common.Button.Continue.title,
       isDisable: !viewModel.isAmountActionAllowed,
       isLoading: $viewModel.showIndicator
     ) {
@@ -266,7 +266,7 @@ private extension MoveMoneyAccountView {
     Button {
       viewModel.navigateAddAccount()
     } label: {
-      Text(LFLocalizable.MoveMoney.addAccount)
+      Text(L10N.Common.MoveMoney.addAccount)
         .frame(height: 40)
         .font(Fonts.medium.swiftUIFont(size: Constants.FontSize.small.value))
         .foregroundColor(Colors.label.swiftUIColor)
@@ -282,9 +282,9 @@ private extension MoveMoneyAccountView {
   var title: String {
     switch viewModel.kind {
     case .receive:
-      return LFLocalizable.MoveMoney.Deposit.title
+      return L10N.Common.MoveMoney.Deposit.title
     case .send:
-      return LFLocalizable.MoveMoney.Withdraw.title
+      return L10N.Common.MoveMoney.Withdraw.title
     }
   }
   
@@ -302,7 +302,7 @@ private extension MoveMoneyAccountView {
         viewModel.selectTransferInstant = true
       } label: {
         HStack(spacing: 12) {
-          Text(LFLocalizable.MoveMoney.TransferFeePopup.instant)
+          Text(L10N.Common.MoveMoney.TransferFeePopup.instant)
             .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.small.value))
             .foregroundColor(Colors.label.swiftUIColor)
           Spacer()
@@ -341,17 +341,17 @@ private extension MoveMoneyAccountView {
       } label: {
         HStack(spacing: 12) {
           HStack(spacing: 12) {
-            Text(LFLocalizable.MoveMoney.TransferFeePopup.normal)
+            Text(L10N.Common.MoveMoney.TransferFeePopup.normal)
               .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.small.value))
               .foregroundColor(Colors.label.swiftUIColor)
             
-            Text(LFLocalizable.MoveMoney.TransferFeePopup.normalDays)
+            Text(L10N.Common.MoveMoney.TransferFeePopup.normalDays)
               .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.small.value))
               .foregroundColor(Colors.label.swiftUIColor.opacity(0.6))
           }
           Spacer()
           HStack(spacing: 8) {
-            Text(LFLocalizable.MoveMoney.TransferFeePopup.free)
+            Text(L10N.Common.MoveMoney.TransferFeePopup.free)
               .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.small.value))
               .foregroundColor(Colors.primary.swiftUIColor)
             
@@ -381,7 +381,7 @@ private extension MoveMoneyAccountView {
       }
       
       FullSizeButton(
-        title: LFLocalizable.Button.Continue.title,
+        title: L10N.Common.Button.Continue.title,
         isDisable: viewModel.selectTransferInstant == nil,
         isLoading: $viewModel.showIndicator
       ) {
@@ -395,16 +395,16 @@ private extension MoveMoneyAccountView {
   
   var depositLimitReachedPopup: some View {
     LiquidityAlert(
-      title: LFLocalizable.TransferView.LimitsReachedPopup.title.uppercased(),
-      message: LFLocalizable.TransferView.LimitsReachedPopup.message,
+      title: L10N.Common.TransferView.LimitsReachedPopup.title.uppercased(),
+      message: L10N.Common.TransferView.LimitsReachedPopup.message,
       primary: .init(
-        text: LFLocalizable.Button.ContactSupport.title,
+        text: L10N.Common.Button.ContactSupport.title,
         action: {
           viewModel.contactSupport()
         }
       ),
       secondary: .init(
-        text: LFLocalizable.Button.Skip.title,
+        text: L10N.Common.Button.Skip.title,
         action: {
           viewModel.hidePopup()
         }
@@ -414,10 +414,10 @@ private extension MoveMoneyAccountView {
   
   var amountTooLowPopup: some View {
     LiquidityAlert(
-      title: LFLocalizable.TransferView.AmountTooLow.title.uppercased(),
-      message: LFLocalizable.TransferView.AmountTooLow.message,
+      title: L10N.Common.TransferView.AmountTooLow.title.uppercased(),
+      message: L10N.Common.TransferView.AmountTooLow.message,
       primary: .init(
-        text: LFLocalizable.Button.Ok.title,
+        text: L10N.Common.Button.Ok.title,
         action: {
           viewModel.hidePopup()
         }
@@ -427,10 +427,10 @@ private extension MoveMoneyAccountView {
   
   var bankLimitsPopup: some View {
     LiquidityAlert(
-      title: LFLocalizable.TransferView.BankLimits.title.uppercased(),
-      message: LFLocalizable.TransferView.BankLimits.message,
+      title: L10N.Common.TransferView.BankLimits.title.uppercased(),
+      message: L10N.Common.TransferView.BankLimits.message,
       primary: .init(
-        text: LFLocalizable.Button.Ok.title,
+        text: L10N.Common.Button.Ok.title,
         action: {
           viewModel.hidePopup()
         }
@@ -440,10 +440,10 @@ private extension MoveMoneyAccountView {
   
   var insufficientFundsPopup: some View {
     LiquidityAlert(
-      title: LFLocalizable.TransferView.InsufficientFundsPopup.title.uppercased(),
-      message: LFLocalizable.TransferView.InsufficientFundsPopup.message(title.lowercased()),
+      title: L10N.Common.TransferView.InsufficientFundsPopup.title.uppercased(),
+      message: L10N.Common.TransferView.InsufficientFundsPopup.message(title.lowercased()),
       primary: .init(
-        text: LFLocalizable.Button.Ok.title,
+        text: L10N.Common.Button.Ok.title,
         action: {
           viewModel.hidePopup()
         }

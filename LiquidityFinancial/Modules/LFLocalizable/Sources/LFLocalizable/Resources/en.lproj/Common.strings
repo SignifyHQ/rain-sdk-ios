@@ -1,11 +1,4 @@
-"button.title.text" = "Trade Now and Get\nYour Life";
-
-"screen.title.text" = "Hello i live in Package LFLocalizable";
-
 // MARK: - Screens
-
-// Initial Screen
-"initial.label.title" = "%@ Card";
 
 // PhoneNumber Screen
 "phoneNumber.textField.title" = "Phone Number";
@@ -14,11 +7,8 @@
 
 // Wellcome Screen
 "welcome.header.title" = "WELCOME!";
-"welcome.header.desc" = "The DogeCard is an easy way to spend cash or Dogecoin, and earn rewards.  Here is how: ";
 "welcome.how_it_works" = "HOW IT WORKS:";
 "welcome.how_it_works.item1" = "Create an account";
-"welcome.how_it_works.item2" = "Use your DogeCard anywhere Visa is accepted";
-"welcome.how_it_works.item3" = "Spend cash or Dogecoin, earn rewards";
 "welcome.button.order_card" = "Order Card";
 
 // VerificationCode Screen
@@ -30,11 +20,11 @@
 "verificationCode.otpInvalid.message" = "OTP is invalid. Please resend OTP";
 
 // Personal information
-"addPersonalInformation.title" = "Add personal information";
+"addPersonalInformation.title" = "ADD PERSONAL INFORMATION";
 "name_exceed_message" = "First name and Last name should not be more than 23 characters";
-"first_name" = "First name";
+"first_name" = "Legal First name";
 "enter_firstName" = "Enter first name";
-"last_name" = "Last name";
+"last_name" = "Legal Last name";
 "enter_lastName" = "Enter last name";
 "email" = "Email";
 "enter_emailAddress" = "Enter email address";
@@ -59,7 +49,6 @@
 "enter_ssn.no_ssn" = "No SSN? Tap here";
 "enter_ssn.continue" = "Continue";
 "enter_ssn.alert.title" = "WHY DO WE NEED SSN?";
-"enter_ssn.alert.message" = "A valid SSN is required by our partners to provide banking services.";
 "enter_ssn.alert.okay" = "Okay";
 
 //... PASSPORT...
@@ -232,7 +221,6 @@
 "rewards.no_rewards" = "No rewards yet";
 
 // Home
-"home.cashTab.title" = "Cash";
 "home.rewardsTab.title" = "Rewards";
 "home.assetsTab.title" = "Assets";
 "home.accountTab.title" = "Account";
@@ -302,7 +290,7 @@
 "cards_detail.donations" = "Donations";
 "cards_detail.roundup.desc" = "Round up purchases";
 "cards_detail.roundup.title" = "ROUND UP";
-"cards_detail.deals.value" = "Donate up to 8% of purchase";
+"cards_detail.deals.value" = "Donate up to 8%% of purchase";
 
 // CARD LIMITS
 "cards_detail.monthly_limits" = "Monthly Spend Limit";
@@ -422,7 +410,6 @@ https://mn.gov/commerce/money/investments/cryptocurrency/. \n\n\n\n\n\n\n";
 "cryptoReceipt.minnesotaCustomerFraud.link" = "https://mn.gov/commerce/money/fraud/";
 "cryptoReceipt.minnesotaCustomerCryptocurrency.link" = "https://mn.gov/commerce/money/investments/cryptocurrency";
 "cryptoReceipt.texasCustomer.link" = "www.dob.texas.gov.";
-"cryptoReceipt.cardType.link" = "doge@zerohash.com";
 "cryptoReceipt.zerohash.link" = "www.zerohash.com";
 "cryptoReceipt.phonenumber.link" = "855-744-7333";
 
@@ -495,7 +482,7 @@ https://mn.gov/commerce/money/investments/cryptocurrency/. \n\n\n\n\n\n\n";
 "transferView.rewards_status.failed" = "Failed";
 
 // User Reward Type
-"transferView.reward_type.cashback.title" = "Cashback";
+"transferView.reward_type.cashback.title" = "Instant Cashback";
 "transferView.reward_type.cashback.subtitle" = "0.75% on every qualifying purchase";
 "transferView.reward_type.donation.title" = "Donate to Charity";
 "transferView.reward_type.donation.subtitle" = "0.75% donated to a charity you choose";
@@ -540,7 +527,6 @@ https://mn.gov/commerce/money/investments/cryptocurrency/. \n\n\n\n\n\n\n";
 "accountView.direct_deposit.title" = "Direct Deposit";
 "accountView.direct_deposit.subtitle" = "Deposit part, or all of your paycheck";
 "accountView.bank_transfers.title" = "Bank Transfers";
-"accountView.bank_transfers.subtitle" = "Send from your bank to AvalancheCard";
 "accountView.debit_deposits.title" = "Instant Deposits";
 "accountView.debit_deposits.subtitle" = "Use your Debit Card";
 "accountView.one_time_transfers.title" = "Bank Transfers";
@@ -558,7 +544,6 @@ https://mn.gov/commerce/money/investments/cryptocurrency/. \n\n\n\n\n\n\n";
 "accountView.routingNumber.title" = "Routing Number";
 "accountView.accountNumber.title" = "Account Number";
 "accountView.notifications" = "Enable Notifications";
-"accountView.disclosure.message" = "The DogeCard pre-paid debit card is established by Pathward, National Association Member FDIC, pursuant to license by Visa. Netspend is a service provider to Pathward. Cryptocurrency services provided by Zero Hash. Cryptocurrency is not insured by, or subject to the protections of the FDIC.";
 
 // PlaidLink Popup
 "plaidLink.popup.title" = "WE’RE SORRY";
@@ -607,8 +592,8 @@ https://mn.gov/commerce/money/investments/cryptocurrency/. \n\n\n\n\n\n\n";
 "directDeposit.pdf.firstDescription" = "I,";
 "directDeposit.pdf.secondDescription" = "authorize,";
 "directDeposit.pdf.thirdDescription" = "to directly deposit my wages";
-"directDeposit.pdf.fourthDescription" = "less lawful withholdings and deductions), or earnings, as applicable, to my CauseCard account, including employer receives written notification from me of its termination of my employment or enagement";
-"directDeposit.pdf.fifthDescription" = "\n This authorization replaces any previous direct deposit authorization and shall remain in effect until my employer receives written notification from me of its termination. The information for my %@Card account is provided above";
+"directDeposit.pdf.fourthDescription" = "less lawful withholdings and deductions), or earnings, as applicable, to my %@ account, including employer receives written notification from me of its termination of my employment or enagement";
+"directDeposit.pdf.fifthDescription" = "\n This authorization replaces any previous direct deposit authorization and shall remain in effect until my employer receives written notification from me of its termination. The information for my %@ account is provided above";
 "directDeposit.pdf.sixthDescription" = "I wish to deposit";
 "directDeposit.pdf.signature" = "Signature";
 "directDeposit.pdf.date" = "Date";
@@ -618,8 +603,8 @@ https://mn.gov/commerce/money/investments/cryptocurrency/. \n\n\n\n\n\n\n";
 "bankTransfers.screen.title" = "BANK TRANSFERS";
 "bankTransfers.howTo.title" = "How to transfer money from your bank to %@Card:";
 "bankTransfers.bulletOne.title" = "Login to your bank, and find the transfers section of your bank’s app or website";
-"bankTransfers.bulletTwo.title" = "If it’s your first transfer, you’ll need to add your CauseCard as an external account. Enter you routing and account number, and select Checking as account type.";
-"bankTransfers.bulletThree.title" = "Select CauseCard as the recipient and transfer up to $25k at a time.";
+"bankTransfers.bulletTwo.title" = "If it’s your first transfer, you’ll need to add your %@ as an external account. Enter you routing and account number, and select Checking as account type.";
+"bankTransfers.bulletThree.title" = "Select %@ as the recipient and transfer up to $25k at a time.";
 "bankTransfers.routingNumber.title" = "Rounting number";
 "bankTransfers.accountNumber.title" = "Account number";
 "bankTransfers.disclosure.message" = "Some banks require a one-time test deposit to verify your account. If so, check your %@Card transactions after 1-2 days, and enter the test deposit amounts in the bank’s app or website.";
@@ -646,7 +631,6 @@ https://mn.gov/commerce/money/investments/cryptocurrency/. \n\n\n\n\n\n\n";
 "profile.contributionToast.message" = "Failed to load your donations";
 "profile.deleteAccount.message" = "Are you sure you want to delete your account?";
 "profile.referrals.title" = "Invite Friends";
-"profile.referrals.message" = "Earn Doge with Friends";
 "profile.logout.title" = "Log Out";
 "profile.logout.message" = "Are you sure you want to log out?";
 "profile.noticeOfDeletion.title" = "NOTICE OF ACCOUNT DELETION";
@@ -657,7 +641,6 @@ https://mn.gov/commerce/money/investments/cryptocurrency/. \n\n\n\n\n\n\n";
 // Referral
 "referral.screen.title" = "MAKE DONATIONS WITH FRIENDS";
 "referral.info.message" = "Send your invite link to a friend, and we will match their donations for the first %@, or up to %@. This is tax deductable donations in your name.";
-"referral.example.crypto" = "If the friend you invited earns 500 %@ in a week, you will also get 500 AVAX. Your bonus will be paid each Friday to your %@Card wallet.";
 "referral.example.donation" = "If your friend donates %@ in the first %@, we will donate %@ to your selected cause. The donation will be made in your name and is tax deductable.";
 "referral.example.title" = "HOW IT WORKS";
 "referral.campaign.day" = "%d days";
@@ -694,7 +677,6 @@ https://mn.gov/commerce/money/investments/cryptocurrency/. \n\n\n\n\n\n\n";
 
 // VERIFY CARD
 "verify_card.title" = "Verify card ownership";
-"verify_card.detail" = "Check your card activity for 1 pending micro-transaction from AvalancheCard. Enter the one amount in the fields below. Once verified, this transaction will be canceled";
 "verify_card.amount.title" = "Amount";
 "verify_card.amount.placeholder" = "Enter amount";
 "verify_card.button.verifyCard" = "Verify Card";
@@ -731,7 +713,6 @@ https://mn.gov/commerce/money/investments/cryptocurrency/. \n\n\n\n\n\n\n";
 "transactionDetail.fee.title" = "Fee";
 "transactionDetail.rewards.title" = "Rewards";
 "transactionDetail.currentReward.title" = "Current Rewards";
-"transactionDetail.rewardDisclosure.description" = "*You will earn rewards with each qualifying purchase on your CauseCard. CauseCard “rewards” are donated to the non-profit you have selected in accordance with our Terms. Qualifying Purchases do not include any other payment or transfer, including incoming transactions, outgoing transactions where you are the receiving party, peer to peer transactions, ACH Transactions, ATM transactions, fees, chargebacks, adjustments, purchases that use PIN, or wire transfers. For more information, see the Terms. Rewards Program is managed by CauseCard. CauseCard is not FDIC insured. Rewards Program is not managed by Lewis and Clark Bank.";
 "transactionDetail.rewardDisclosure.links.terms" = "Terms";
 "transactionDetail.cancelDeposit.button" = "Cancel Deposit";
 
@@ -781,7 +762,6 @@ https://mn.gov/commerce/money/investments/cryptocurrency/. \n\n\n\n\n\n\n";
 "balanceAlert.low.message" = "Your balance is below %@";
 "balanceAlert.negative.title" = "Negative Balance";
 "balanceAlert.negative.message.cash" = "Please deposit cash";
-"balanceAlert.negative.message.crypto" = "Please deposit Doge";
 "balanceAlert.cta" = "Deposit";
 
 // MARK: - Rewards
@@ -813,7 +793,7 @@ https://mn.gov/commerce/money/investments/cryptocurrency/. \n\n\n\n\n\n\n";
 
 // Alert Attributed Text
 "alert_attributed_text.tax_deductions" = "Donations made to ShoppingGives Foundation EIN: %@.\n100%% of funds granted to designated nonprofit - %@ and %@.";
-"alert_attributed_text.round_up" = "Round up spare change to the nearest dollar when you use your CauseCard. It's an easy way to make a big impact over time.\n\nRound up donations made to ShoppingGives Foundation EIN: %@. 100%% of funds granted to designated nonprofit - %@ and %@.";
+"alert_attributed_text.round_up" = "Round up spare change to the nearest dollar when you use your %@. It's an easy way to make a big impact over time.\n\nRound up donations made to ShoppingGives Foundation EIN: %@. 100%% of funds granted to designated nonprofit - %@ and %@.";
 "alert_attributed_text.ein" = "83-01252270";
 "alert_attributed_text.terms" = "Terms & Conditions";
 "alert_attributed_text.privacy" = "Privacy Policy";
@@ -904,7 +884,6 @@ https://mn.gov/commerce/money/investments/cryptocurrency/. \n\n\n\n\n\n\n";
 "fundraise.share_donation.generic" = "We're raising money for %@ using %@. Join us in supporting %@.";
 
 // Share
-"cause.share.card.fundraiser" = "I'm using CauseCard to support %@ by making passive donations through my everyday purchases.";
 "cause.share.include_donations" = "Include donations";
 "share.email" = "Email";
 "share.facebook" = "Facebook";
@@ -923,8 +902,8 @@ https://mn.gov/commerce/money/investments/cryptocurrency/. \n\n\n\n\n\n\n";
 "card_share.title.cashback" = "Cashback";
 "card_share.message.donation" = "Supporting %@ - %@.";
 "card_share.title" = "Share";
-"card_share.crypto" = "I earned %@ by using my Visa CauseCard. Get one here: %@";
-"card_share.cashback" = "I earned %@ back by using my Visa CauseCard. Get one here: %@";
+"card_share.crypto" = "I earned %@ by using my Visa %@. Get one here: %@";
+"card_share.cashback" = "I earned %@ back by using my Visa %@. Get one here: %@";
 
 // Fundraiser Detail
 "fundraiser_detail.tags" = "Tags";
@@ -958,7 +937,7 @@ https://mn.gov/commerce/money/investments/cryptocurrency/. \n\n\n\n\n\n\n";
 "round_up.title" = "ROUND UPS";
 "round_up.message" = "Round up spare change to the nearest dollar when you use your %@. It's easy way to make a big impact over time.";
 "round_up.item_one" = "Select a cause you'd like to support. You can change anytime.";
-"round_up.item_two" = "Spend with your CauseCard.";
+"round_up.item_two" = "Spend with your %@.";
 "round_up.item_three" = "Your spare change will be donated to your selected cause.";
 "round_up.continue" = "Continue";
 "round_up.skip" = "Skip";
@@ -1041,9 +1020,6 @@ https://mn.gov/commerce/money/investments/cryptocurrency/. \n\n\n\n\n\n\n";
 "cryptoChartDetail.transferBalance.title" = "YOU DON'T HAVE ANY %@ TO TRANSFER AT THIS TIME.";
 "cryptoChartDetail.transferCoin.title" = "Transfer";
 
-"fundCard.title" = "FUND YOUR DOGECARD";
-"fundCard.message" = "DogeCard is a Pre-paid Debit Card, which means there are no credit checks, interest payments or overdrafts. However, you have to deposit money to your account before you can use. Start by connecting your bank:";
-
 // Taxes
 "taxes.navigation_title" = "Taxes";
 "taxes.error" = "We were unable to load Taxes right now.\nPlease try again.";
@@ -1107,8 +1083,8 @@ contact support.";
 // MARK: - Your Account
 
 "yourAccount.title" = "YOUR ACCOUNT";
-"yourAccount.subtitle" = "Liquidity Financial, doing business as CauseCard, has partnered with Solid Financial and Lewis and Clark Bank to provide banking and card services.";
-"yourAccount.body" = "By agreeing to the E-Signature Agreement, you consent to receive electronic disclosures and/or statements for your CauseCard account and consent to be legally bound to this agreement.";
+"yourAccount.subtitle" = "Liquidity Financial, doing business as %@, has partnered with Solid Financial and Lewis and Clark Bank to provide banking and card services.";
+"yourAccount.body" = "By agreeing to the E-Signature Agreement, you consent to receive electronic disclosures and/or statements for your %@ account and consent to be legally bound to this agreement.";
 "yourAccount.agreements.esignature" = "I accept the E-Signature Agreement and continue";
 "yourAccount.agreements.consumerTermsConditions" = "I read and agree to the: Consumer Account and Cardholder Agreement, Terms and Conditions, and Privacy Policy";
 "yourAccount.links.esignature" = "E-Signature Agreement";
@@ -1283,7 +1259,6 @@ We will be in touch shortly to invite you to get your new card.";
 "button.donotAllow.title" = "Don't Allow";
 
 // Grid Value
-"grid_value.crypto" = "%@ AVAX";
 "grid_value.all" = "All";
 
 // Textfield

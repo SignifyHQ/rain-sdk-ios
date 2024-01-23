@@ -65,12 +65,12 @@ private extension CryptoTransactionDetailView {
   
   private var saveWalletAddressPopup: some View {
     LiquidityAlert(
-      title: LFLocalizable.TransactionDetail.SaveWalletPopup.title,
-      message: LFLocalizable.TransactionDetail.SaveWalletPopup.description,
-      primary: .init(text: LFLocalizable.TransactionDetail.SaveWalletPopup.button) {
+      title: L10N.Common.TransactionDetail.SaveWalletPopup.title,
+      message: L10N.Common.TransactionDetail.SaveWalletPopup.description,
+      primary: .init(text: L10N.Common.TransactionDetail.SaveWalletPopup.button) {
         viewModel.navigatedToEnterWalletNicknameScreen()
       },
-      secondary: .init(text: LFLocalizable.Button.NotNow.title) {
+      secondary: .init(text: L10N.Common.Button.NotNow.title) {
         viewModel.dismissPopup()
       }
     )
@@ -80,14 +80,14 @@ private extension CryptoTransactionDetailView {
     VStack(spacing: 16) {
       if let cryptoReceipt = viewModel.transaction.cryptoReceipt {
         FullSizeButton(
-          title: LFLocalizable.TransactionDetail.Receipt.button,
+          title: L10N.Common.TransactionDetail.Receipt.button,
           isDisable: false,
           type: .secondary
         ) {
           viewModel.goToReceiptScreen(cryptoReceipt: cryptoReceipt)
         }
       }
-      Text(LFLocalizable.Zerohash.Disclosure.description)
+      Text(L10N.Common.Zerohash.Disclosure.description)
         .font(Fonts.regular.swiftUIFont(size: 10))
         .foregroundColor(Colors.label.swiftUIColor.opacity(0.5))
     }

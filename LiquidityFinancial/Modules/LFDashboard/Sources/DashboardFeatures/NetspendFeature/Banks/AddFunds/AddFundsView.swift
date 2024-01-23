@@ -93,16 +93,16 @@ private extension AddFundsView {
   
   var plaidLinkingErrorPopup: some View {
     LiquidityAlert(
-      title: LFLocalizable.PlaidLink.Popup.title,
-      message: LFLocalizable.PlaidLink.Popup.description,
+      title: L10N.Common.PlaidLink.Popup.title,
+      message: L10N.Common.PlaidLink.Popup.description,
       primary: .init(
-        text: LFLocalizable.PlaidLink.ConnectViaDebitCard.title,
+        text: L10N.Common.PlaidLink.ConnectViaDebitCard.title,
         action: {
           viewModel.plaidLinkingErrorPrimaryAction()
         }
       ),
       secondary: .init(
-        text: LFLocalizable.PlaidLink.ContactSupport.title,
+        text: L10N.Common.PlaidLink.ContactSupport.title,
         action: {
           viewModel.plaidLinkingErrorSecondaryAction()
         }

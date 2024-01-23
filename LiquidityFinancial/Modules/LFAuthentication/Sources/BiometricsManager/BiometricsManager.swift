@@ -59,7 +59,7 @@ extension BiometricsManager {
       }
       
       let policy: LAPolicy = .deviceOwnerAuthentication
-      let localizedReason = LFLocalizable.Authentication.DeviceLocalizedReason.title
+      let localizedReason = L10N.Common.Authentication.DeviceLocalizedReason.title
       let canEvaluatePolicy = self.context.canEvaluatePolicy(policy, error: &self.error)
 
       guard canEvaluatePolicy else {
@@ -87,7 +87,7 @@ private extension BiometricsManager {
   func performBiometricEvaluation(biometric: Biometric) -> AnyPublisher<Biometric, BiometricError> {
     Future { promise in
       let policy: LAPolicy = .deviceOwnerAuthenticationWithBiometrics
-      let localizedReason = LFLocalizable.Authentication.BiometricsLocalizedReason.title
+      let localizedReason = L10N.Common.Authentication.BiometricsLocalizedReason.title
       
       self.context.evaluatePolicy(policy, localizedReason: localizedReason) { success, error in
         DispatchQueue.main.async {

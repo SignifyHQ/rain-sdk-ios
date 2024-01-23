@@ -30,9 +30,9 @@ public extension UserRewardType {
   var title: String? {
     switch self {
     case .cashBack:
-      return LFLocalizable.UserRewardType.Cashback.title
+      return L10N.Common.UserRewardType.Cashback.title
     case .donation:
-      return LFLocalizable.UserRewardType.Donation.title
+      return L10N.Common.UserRewardType.Donation.title
     default:
       return nil
     }
@@ -41,9 +41,9 @@ public extension UserRewardType {
   func subtitle(param: Float) -> String? {
     switch self {
     case .cashBack:
-      return LFLocalizable.UserRewardType.Cashback.subtitle(param)
+      return L10N.Common.UserRewardType.Cashback.subtitle(param)
     case .donation:
-      return LFLocalizable.UserRewardType.Donation.subtitle(param)
+      return L10N.Common.UserRewardType.Donation.subtitle(param)
     default:
       return nil
     }

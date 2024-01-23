@@ -27,35 +27,35 @@ public enum KYCState: Equatable {
     switch self {
     case .pendingIDV:
       return KYCInformation(
-        title: LFLocalizable.KycStatus.IdentityVerification.title,
-        message: LFLocalizable.KycStatus.IdentityVerification.message,
-        primary: LFLocalizable.Button.Continue.title
+        title: L10N.Common.KycStatus.IdentityVerification.title,
+        message: L10N.Common.KycStatus.IdentityVerification.message,
+        primary: L10N.Common.Button.Continue.title
       )
     case .reject:
       return KYCInformation(
-        title: LFLocalizable.KycStatus.Fail.title,
-        message: LFLocalizable.KycStatus.Fail.message,
-        primary: LFLocalizable.Button.Done.title
+        title: L10N.Common.KycStatus.Fail.title,
+        message: L10N.Common.KycStatus.Fail.message,
+        primary: L10N.Common.Button.Done.title
       )
     case .missingInfo:
       return KYCInformation(
-        title: LFLocalizable.KycStatus.Fail.title,
-        message: LFLocalizable.KycStatus.MissingInfo.message,
-        primary: LFLocalizable.Button.Done.title
+        title: L10N.Common.KycStatus.Fail.title,
+        message: L10N.Common.KycStatus.MissingInfo.message,
+        primary: L10N.Common.Button.Done.title
       )
     case let .inReview(username):
       return KYCInformation(
-        title: LFLocalizable.KycStatus.InReview.title,
-        message: LFLocalizable.KycStatus.InReview.message(username),
-        primary: LFLocalizable.KycStatus.InReview.primaryTitle,
-        secondary: LFLocalizable.KycStatus.InReview.secondaryTitle
+        title: L10N.Common.KycStatus.InReview.title,
+        message: L10N.Common.KycStatus.InReview.message(username),
+        primary: L10N.Common.KycStatus.InReview.primaryTitle,
+        secondary: L10N.Common.KycStatus.InReview.secondaryTitle
       )
     case let .common(messagekey):
       return KYCInformation(
-        title: LFLocalizable.KycStatus.Fail.title,
-        message: LFLocalizable.KycStatus.Fail.Unclear.message(messagekey),
-        primary: LFLocalizable.KycStatus.InReview.primaryTitle,
-        secondary: LFLocalizable.KycStatus.InReview.secondaryTitle
+        title: L10N.Common.KycStatus.Fail.title,
+        message: L10N.Common.KycStatus.Fail.Unclear.message(messagekey),
+        primary: L10N.Common.KycStatus.InReview.primaryTitle,
+        secondary: L10N.Common.KycStatus.InReview.secondaryTitle
       )
     default:
       return nil

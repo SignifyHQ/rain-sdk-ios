@@ -17,7 +17,7 @@ public struct ConnectedAccountsView: View {
     content
       .toolbar {
         ToolbarItem(placement: .principal) {
-          Text(LFLocalizable.ConnectedView.title)
+          Text(L10N.Common.ConnectedView.title)
             .foregroundColor(Colors.label.swiftUIColor)
             .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.medium.value))
         }
@@ -89,15 +89,15 @@ public struct ConnectedAccountsView: View {
   
   func deletePopup(linkedSource: APILinkedSourceData) -> some View {
     LiquidityAlert(
-      title: LFLocalizable.ConnectedView.DeletePopup.title.uppercased(),
-      message: LFLocalizable.ConnectedView.DeletePopup.message,
-      primary: .init(text: LFLocalizable.ConnectedView.DeletePopup.primaryButton) {
+      title: L10N.Common.ConnectedView.DeletePopup.title.uppercased(),
+      message: L10N.Common.ConnectedView.DeletePopup.message,
+      primary: .init(text: L10N.Common.ConnectedView.DeletePopup.primaryButton) {
         viewModel.deleteAccount(
           id: linkedSource.sourceId,
           sourceType: linkedSource.sourceType.rawValue
         )
       },
-      secondary: .init(text: LFLocalizable.Button.Back.title) {
+      secondary: .init(text: L10N.Common.Button.Back.title) {
         viewModel.hidePopup()
       },
       isLoading: $viewModel.isDeleting

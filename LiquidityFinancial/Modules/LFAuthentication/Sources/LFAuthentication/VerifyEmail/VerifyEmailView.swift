@@ -53,7 +53,7 @@ private extension VerifyEmailView {
       Spacer()
       
       FullSizeButton(
-        title: LFLocalizable.Button.Continue.title,
+        title: L10N.Common.Button.Continue.title,
         isDisable: !viewModel.isOTPCodeEntered,
         isLoading: $viewModel.isLoading
       ) {
@@ -68,10 +68,10 @@ private extension VerifyEmailView {
   
   var topView: some View {
     VStack(spacing: 12) {
-      Text(LFLocalizable.Authentication.VerifyEmail.title)
+      Text(L10N.Common.Authentication.VerifyEmail.title)
         .foregroundColor(Colors.label.swiftUIColor)
         .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.main.value))
-      Text(LFLocalizable.Authentication.VerifyEmail.description)
+      Text(L10N.Common.Authentication.VerifyEmail.description)
         .multilineTextAlignment(.center)
         .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.medium.value))
         .foregroundColor(Colors.label.swiftUIColor)
@@ -95,7 +95,7 @@ private extension VerifyEmailView {
     Button {
       viewModel.didTapResendCodeButton()
     } label: {
-      Text(LFLocalizable.Authentication.ResetPassword.ResendCodeButton.title)
+      Text(L10N.Common.Authentication.ResetPassword.ResendCodeButton.title)
         .foregroundColor(Colors.primary.swiftUIColor)
         .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.ultraSmall.value))
     }

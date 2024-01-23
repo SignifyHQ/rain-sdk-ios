@@ -88,7 +88,7 @@ struct ReceiveCryptoView: View {
           }
         }
         ToolbarItem(placement: .principal) {
-          Text(LFLocalizable.ReceiveCryptoView.walletDetail)
+          Text(L10N.Common.ReceiveCryptoView.walletDetail)
             .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.medium.value))
             .foregroundColor(Colors.label.swiftUIColor)
         }
@@ -106,7 +106,7 @@ private extension ReceiveCryptoView {
   
   var header: some View {
     HStack {
-      Text(LFLocalizable.ReceiveCryptoView.title(viewModel.coinTitle).uppercased())
+      Text(L10N.Common.ReceiveCryptoView.title(viewModel.coinTitle).uppercased())
         .foregroundColor(Colors.label.swiftUIColor)
         .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.buttonTextSize.value))
         .padding(.vertical, 30)
@@ -150,11 +150,11 @@ private extension ReceiveCryptoView {
   var bottomView: some View {
     VStack {
       VStack {
-        FullSizeButton(title: LFLocalizable.Button.Share.title, isDisable: false, type: .secondary, icon: GenImages.CommonImages.icShare.swiftUIImage) {
+        FullSizeButton(title: L10N.Common.Button.Share.title, isDisable: false, type: .secondary, icon: GenImages.CommonImages.icShare.swiftUIImage) {
           analyticsService.track(event: AnalyticsEvent(name: .tapsShareWalletAddress))
           viewModel.shareTap()
         }
-        Text(LFLocalizable.ReceiveCryptoView.servicesInfo)
+        Text(L10N.Common.ReceiveCryptoView.servicesInfo)
           .foregroundColor(Colors.label.swiftUIColor.opacity(0.50))
           .font(Fonts.regular.swiftUIFont(size: 10))
           .multilineTextAlignment(.center)

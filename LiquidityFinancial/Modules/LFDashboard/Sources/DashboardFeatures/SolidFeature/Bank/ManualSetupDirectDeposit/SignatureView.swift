@@ -20,15 +20,15 @@ struct SignatureView: View {
       Spacer()
       SignatureDrawView(drawing: $drawing)
       HStack {
-        FullSizeButton(title: LFLocalizable.Button.Back.title, isDisable: false, type: .secondary) {
+        FullSizeButton(title: L10N.Common.Button.Back.title, isDisable: false, type: .secondary) {
           dismiss()
         }
-        FullSizeButton(title: LFLocalizable.Button.Continue.title, isDisable: false) {
+        FullSizeButton(title: L10N.Common.Button.Continue.title, isDisable: false) {
           extractImageAndHandle()
           if viewModel.signatureImage != nil {
             isNavigateToSuccessView = true
           } else {
-            toastMessage = LFLocalizable.DirectDeposit.Signature.toastMessage
+            toastMessage = L10N.Common.DirectDeposit.Signature.toastMessage
           }
         }
       }
@@ -87,7 +87,7 @@ struct SignatureDrawView: View {
           drawingBounds = bounds
         }
       if drawing.isEmpty {
-        Text(LFLocalizable.DirectDeposit.AddSignature.placeholder)
+        Text(L10N.Common.DirectDeposit.AddSignature.placeholder)
           .foregroundColor(Colors.label.swiftUIColor.opacity(0.75))
           .font(Fonts.regular.swiftUIFont(size: 44))
           .frame(maxWidth: .infinity, alignment: .center)

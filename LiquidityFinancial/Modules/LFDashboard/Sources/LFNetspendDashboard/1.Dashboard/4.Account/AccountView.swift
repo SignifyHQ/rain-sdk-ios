@@ -36,7 +36,7 @@ struct AccountsView: View {
           NetspendLocationViewController(withPasscode: authorizationCode, onClose: {
             viewModel.navigation = nil
           })
-          .navigationTitle(LFLocalizable.AccountView.atmLocationTitle)
+          .navigationTitle(L10N.Common.AccountView.atmLocationTitle)
           .foregroundColor(Colors.label.swiftUIColor)
         case .depositLimits:
           AccountLimitsView()
@@ -93,7 +93,7 @@ private extension AccountsView {
         
         connectedAccountsSection
         
-        section(title: LFLocalizable.AccountView.connectNewAccounts) {
+        section(title: L10N.Common.AccountView.connectNewAccounts) {
           AddFundsView(
             viewModel: viewModel.addFundsViewModel,
             achInformation: $viewModel.achInformation,
@@ -101,19 +101,19 @@ private extension AccountsView {
           )
         }
         
-        section(title: LFLocalizable.AccountView.cardAccountDetails) {
+        section(title: L10N.Common.AccountView.cardAccountDetails) {
           accountDetailView
         }
         
         if viewModel.assets.isNotEmpty {
-          section(title: LFLocalizable.AccountView.wallets) {
+          section(title: L10N.Common.AccountView.wallets) {
             ForEach(viewModel.assets, id: \.externalAccountId) { asset in
               assetCell(asset: asset)
             }
           }
         }
         
-        section(title: LFLocalizable.AccountView.shortcuts) {
+        section(title: L10N.Common.AccountView.shortcuts) {
           shortcutSection
         }
         
@@ -127,7 +127,7 @@ private extension AccountsView {
   }
   
   var bottomDisclosure: some View {
-    Text(LFLocalizable.AccountView.Disclosure.message)
+    Text(L10N.Custom.AccountView.Disclosure.message)
       .font(Fonts.regular.swiftUIFont(size: 10))
       .foregroundColor(Colors.label.swiftUIColor.opacity(0.75))
   }
@@ -136,22 +136,22 @@ private extension AccountsView {
     VStack(spacing: 10) {
       accountDetailCell(
         image: GenImages.CommonImages.icRoutingNumber.swiftUIImage,
-        title: LFLocalizable.AccountView.RoutingNumber.title,
+        title: L10N.Common.AccountView.RoutingNumber.title,
         value: viewModel.achInformation.routingNumber
       ) {
         UIPasteboard.general.string = viewModel.achInformation.routingNumber
-        viewModel.toastMessage = LFLocalizable.Toast.Copy.message
+        viewModel.toastMessage = L10N.Common.Toast.Copy.message
       }
       accountDetailCell(
         image: GenImages.CommonImages.icAccountNumber.swiftUIImage,
-        title: LFLocalizable.AccountView.AccountNumber.title,
-        value: LFLocalizable.AccountView.HiddenValue.title(
+        title: L10N.Common.AccountView.AccountNumber.title,
+        value: L10N.Common.AccountView.HiddenValue.title(
           viewModel.getLastFourDigits(from: viewModel.achInformation.accountNumber)
         )
       ) {
         analyticsService.track(event: AnalyticsEvent(name: .viewsAccountAndRouting))
         UIPasteboard.general.string = viewModel.achInformation.accountNumber
-        viewModel.toastMessage = LFLocalizable.Toast.Copy.message
+        viewModel.toastMessage = L10N.Common.Toast.Copy.message
       }
     }
     .foregroundColor(Colors.label.swiftUIColor)
@@ -185,7 +185,7 @@ private extension AccountsView {
   var connectedAccountsSection: some View {
     Group {
       if !viewModel.linkedAccount.isEmpty {
-        section(title: LFLocalizable.AccountView.connectedAccounts) {
+        section(title: L10N.Common.AccountView.connectedAccounts) {
           connectedAccountButton
         }
       }
@@ -199,7 +199,7 @@ private extension AccountsView {
       HStack(spacing: 4) {
         GenImages.CommonImages.Accounts.connectedAccounts.swiftUIImage
           .foregroundColor(Colors.label.swiftUIColor)
-        Text(LFLocalizable.AccountView.connectedAccounts)
+        Text(L10N.Common.AccountView.connectedAccounts)
           .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.ultraSmall.value))
           .foregroundColor(Colors.label.swiftUIColor)
           .padding(.leading, 8)
@@ -235,14 +235,14 @@ private extension AccountsView {
     VStack {
       ArrowButton(
         image: GenImages.CommonImages.Accounts.limits.swiftUIImage,
-        title: LFLocalizable.AccountView.depositLimits,
+        title: L10N.Common.AccountView.depositLimits,
         value: nil
       ) {
         viewModel.onClickedDepositLimitsButton()
       }
       ArrowButton(
         image: GenImages.CommonImages.icRewards.swiftUIImage,
-        title: LFLocalizable.AccountView.rewards,
+        title: L10N.Common.AccountView.rewards,
         value: nil
       ) {
         viewModel.openReward()
@@ -250,7 +250,7 @@ private extension AccountsView {
       /* TODO: Remove for MVP
        ArrowButton(
        image: GenImages.CommonImages.Accounts.atm.swiftUIImage,
-       title: LFLocalizable.AccountView.atm,
+       title: L10N.Common.AccountView.atm,
        value: nil,
        isLoading: $viewModel.isLoading
        ) {
@@ -259,14 +259,14 @@ private extension AccountsView {
        */
       ArrowButton(
         image: GenImages.CommonImages.Accounts.bankStatements.swiftUIImage,
-        title: LFLocalizable.AccountView.bankStatements,
+        title: L10N.Common.AccountView.bankStatements,
         value: nil
       ) {
         viewModel.bankStatementTapped()
       }
       ArrowButton(
         image: GenImages.CommonImages.Accounts.tax.swiftUIImage,
-        title: LFLocalizable.AccountView.taxes,
+        title: L10N.Common.AccountView.taxes,
         value: nil
       ) {
         viewModel.openTaxes()
@@ -274,7 +274,7 @@ private extension AccountsView {
       if !viewModel.notificationsEnabled {
         ArrowButton(
           image: GenImages.CommonImages.Accounts.notifications.swiftUIImage,
-          title: LFLocalizable.AccountView.notifications,
+          title: L10N.Common.AccountView.notifications,
           value: nil
         ) {
           viewModel.notificationTapped()
@@ -283,7 +283,7 @@ private extension AccountsView {
       /* TODO: Remove for MVP
        ArrowButton(
        image: GenImages.CommonImages.Accounts.legal.swiftUIImage,
-       title: LFLocalizable.AccountView.legal,
+       title: L10N.Common.AccountView.legal,
        value: nil
        ) {
        viewModel.openLegal()
@@ -301,7 +301,7 @@ private extension AccountsView {
       if bankServiceConfig.supportDisputeTransaction {
         ArrowButton(
           image: GenImages.CommonImages.Accounts.icDispute.swiftUIImage,
-          title: LFLocalizable.Button.DisputeTransaction.title,
+          title: L10N.Common.Button.DisputeTransaction.title,
           value: nil,
           isLoading: $viewModel.isLoadingDisputeTransaction
         ) {
@@ -326,13 +326,13 @@ private extension AccountsView {
       } label: {
         HStack(spacing: 8) {
           assetType.image
-          Text(LFLocalizable.AccountView.Wallet.title(assetType.title))
+          Text(L10N.Common.AccountView.Wallet.title(assetType.title))
             .foregroundColor(Colors.label.swiftUIColor)
             .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.medium.value))
           Spacer()
           HStack(spacing: 0) {
             Text(
-              LFLocalizable.AccountView.HiddenValue.title(
+              L10N.Common.AccountView.HiddenValue.title(
                 viewModel.getLastFourDigits(from: asset.externalAccountId ?? .empty)
               )
             )

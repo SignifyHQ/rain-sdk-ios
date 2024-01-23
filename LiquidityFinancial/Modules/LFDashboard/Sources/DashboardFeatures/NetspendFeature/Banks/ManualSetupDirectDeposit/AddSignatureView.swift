@@ -12,18 +12,18 @@ struct AddSignatureView: View {
   
   var body: some View {
     VStack(alignment: .leading, spacing: 20) {
-      Text(LFLocalizable.DirectDeposit.AddSignature.title)
+      Text(L10N.Common.DirectDeposit.AddSignature.title)
         .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.main.value))
         .foregroundColor(Colors.label.swiftUIColor)
         .multilineTextAlignment(.leading)
         .padding(.top, 16)
-      Text(LFLocalizable.DirectDeposit.AddSignature.description)
+      Text(L10N.Common.DirectDeposit.AddSignature.description)
         .foregroundColor(Colors.label.swiftUIColor.opacity(0.75))
         .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.medium.value))
         .multilineTextAlignment(.leading)
         .lineSpacing(2)
       Spacer()
-      FullSizeButton(title: LFLocalizable.DirectDeposit.AddSignature.buttonTitle, isDisable: false) {
+      FullSizeButton(title: L10N.Common.DirectDeposit.AddSignature.buttonTitle, isDisable: false) {
         isNavigateToSignatureView = true
       }
     }

@@ -18,7 +18,7 @@ public struct CurrentRewardView: View {
     stateContentView
       .toolbar {
         ToolbarItem(placement: .principal) {
-          Text(LFLocalizable.AccountView.rewards)
+          Text(L10N.Common.AccountView.rewards)
             .foregroundColor(Colors.label.swiftUIColor)
             .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.medium.value))
         }
@@ -43,11 +43,11 @@ private extension CurrentRewardView {
   func contentView(rewards: [APIUserRewards], specialrewards: [APIUserRewards]) -> some View {
     VStack(alignment: .leading, spacing: 24) {
       if !rewards.isEmpty {
-        section(title: LFLocalizable.Account.Reward.Session.normal) {
+        section(title: L10N.Common.Account.Reward.Session.normal) {
           ForEach(rewards) { item in
             rowView(
-              title: LFLocalizable.Account.SpendingReward.normal(item.title),
-              desc: LFLocalizable.Account.Reward.Item.descUpToBack("\(item.returnRate ?? 0.0)")
+              title: L10N.Common.Account.SpendingReward.normal(item.title),
+              desc: L10N.Common.Account.Reward.Item.descUpToBack("\(item.returnRate ?? 0.0)")
             ) {
               
             }
@@ -56,9 +56,9 @@ private extension CurrentRewardView {
       }
       
       if !specialrewards.isEmpty {
-        section(title: LFLocalizable.Account.Reward.Session.special) {
+        section(title: L10N.Common.Account.Reward.Session.special) {
           ForEach(specialrewards) { item in
-            rowView(title: item.name ?? "", desc: LFLocalizable.Account.Reward.Item.descUpToBack("\(item.returnRate ?? 0.0)")) {
+            rowView(title: item.name ?? "", desc: L10N.Common.Account.Reward.Item.descUpToBack("\(item.returnRate ?? 0.0)")) {
               
             }
           }
@@ -135,11 +135,11 @@ private extension CurrentRewardView {
   var failureView: some View {
     VStack(spacing: 32) {
       Spacer()
-      Text(LFLocalizable.Account.Reward.error)
+      Text(L10N.Common.Account.Reward.error)
         .font(Fonts.medium.swiftUIFont(size: 14))
         .foregroundColor(Colors.label.swiftUIColor)
         .multilineTextAlignment(.center)
-      FullSizeButton(title: LFLocalizable.Account.Reward.retry, isDisable: false) {
+      FullSizeButton(title: L10N.Common.Account.Reward.retry, isDisable: false) {
         viewModel.retryTapped()
       }
     }
@@ -149,11 +149,11 @@ private extension CurrentRewardView {
   
   var emptyView: some View {
     VStack(spacing: 10) {
-      Text(LFLocalizable.Account.Reward.Empty.title)
+      Text(L10N.Common.Account.Reward.Empty.title)
         .foregroundColor(Colors.label.swiftUIColor)
         .font(Fonts.regular.swiftUIFont(size: 24))
       
-      Text(LFLocalizable.Account.Reward.Empty.message)
+      Text(L10N.Common.Account.Reward.Empty.message)
         .foregroundColor(Colors.label.swiftUIColor.opacity(0.75))
         .font(Fonts.regular.swiftUIFont(size: 16))
     }

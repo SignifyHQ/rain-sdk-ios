@@ -70,17 +70,17 @@ private extension AccountsView {
     ScrollView {
       VStack(alignment: .leading, spacing: 24) {
         connectedAccountsSection
-        section(title: LFLocalizable.AccountView.connectNewAccounts) {
+        section(title: L10N.Common.AccountView.connectNewAccounts) {
           AddFundsView(
             viewModel: viewModel.addFundsViewModel,
             achInformation: $viewModel.achInformation,
             isDisableView: $viewModel.isDisableView
           )
         }
-        section(title: LFLocalizable.AccountView.cardAccountDetails) {
+        section(title: L10N.Common.AccountView.cardAccountDetails) {
           accountDetailView
         }
-        section(title: LFLocalizable.AccountView.shortcuts) {
+        section(title: L10N.Common.AccountView.shortcuts) {
           shortcutSection
         }
         bottomDisclosure
@@ -93,7 +93,7 @@ private extension AccountsView {
   }
   
   var bottomDisclosure: some View {
-    Text(LFLocalizable.AccountView.Disclosure.message)
+    Text(L10N.Custom.AccountView.Disclosure.message)
       .font(Fonts.regular.swiftUIFont(size: 10))
       .foregroundColor(Colors.label.swiftUIColor.opacity(0.75))
   }
@@ -102,19 +102,19 @@ private extension AccountsView {
     VStack(spacing: 10) {
       accountDetailCell(
         image: GenImages.CommonImages.icRoutingNumber.swiftUIImage,
-        title: LFLocalizable.AccountView.RoutingNumber.title,
+        title: L10N.Common.AccountView.RoutingNumber.title,
         value: viewModel.achInformation.routingNumber
       ) {
         UIPasteboard.general.string = viewModel.achInformation.routingNumber
-        viewModel.toastMessage = LFLocalizable.Toast.Copy.message
+        viewModel.toastMessage = L10N.Common.Toast.Copy.message
       }
       accountDetailCell(
         image: GenImages.CommonImages.icAccountNumber.swiftUIImage,
-        title: LFLocalizable.AccountView.AccountNumber.title,
+        title: L10N.Common.AccountView.AccountNumber.title,
         value: viewModel.achInformation.accountNumber
       ) {
         UIPasteboard.general.string = viewModel.achInformation.accountNumber
-        viewModel.toastMessage = LFLocalizable.Toast.Copy.message
+        viewModel.toastMessage = L10N.Common.Toast.Copy.message
       }
     }
     .foregroundColor(Colors.label.swiftUIColor)
@@ -154,7 +154,7 @@ private extension AccountsView {
   var connectedAccountsSection: some View {
     Group {
       if !viewModel.linkedContacts.isEmpty {
-        section(title: LFLocalizable.AccountView.connectedAccounts) {
+        section(title: L10N.Common.AccountView.connectedAccounts) {
           connectedAccountButton
         }
       }
@@ -168,7 +168,7 @@ private extension AccountsView {
       HStack(spacing: 4) {
         GenImages.CommonImages.Accounts.connectedAccounts.swiftUIImage
           .foregroundColor(Colors.label.swiftUIColor)
-        Text(LFLocalizable.AccountView.connectedAccounts)
+        Text(L10N.Common.AccountView.connectedAccounts)
           .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.ultraSmall.value))
           .foregroundColor(Colors.label.swiftUIColor)
           .padding(.leading, 8)
@@ -204,21 +204,21 @@ private extension AccountsView {
     VStack {
       ArrowButton(
         image: GenImages.CommonImages.Accounts.limits.swiftUIImage,
-        title: LFLocalizable.AccountView.depositLimits,
+        title: L10N.Common.AccountView.depositLimits,
         value: nil
       ) {
         viewModel.onClickedDepositLimitsButton()
       }
       ArrowButton(
         image: GenImages.CommonImages.icRewards.swiftUIImage,
-        title: LFLocalizable.AccountView.rewards,
+        title: L10N.Common.AccountView.rewards,
         value: nil
       ) {
         viewModel.openReward()
       }
       ArrowButton(
         image: GenImages.CommonImages.Accounts.bankStatements.swiftUIImage,
-        title: LFLocalizable.AccountView.bankStatements,
+        title: L10N.Common.AccountView.bankStatements,
         value: nil
       ) {
         viewModel.bankStatementTapped()
@@ -226,7 +226,7 @@ private extension AccountsView {
       if !viewModel.notificationsEnabled {
         ArrowButton(
           image: GenImages.CommonImages.Accounts.notifications.swiftUIImage,
-          title: LFLocalizable.AccountView.notifications,
+          title: L10N.Common.AccountView.notifications,
           value: nil
         ) {
           viewModel.notificationTapped()
@@ -234,7 +234,7 @@ private extension AccountsView {
       }
       ArrowButton(
         image: GenImages.CommonImages.Accounts.legal.swiftUIImage,
-        title: LFLocalizable.AccountView.legal,
+        title: L10N.Common.AccountView.legal,
         value: nil
       ) {
         guard let url = viewModel.getUrl() else { return }

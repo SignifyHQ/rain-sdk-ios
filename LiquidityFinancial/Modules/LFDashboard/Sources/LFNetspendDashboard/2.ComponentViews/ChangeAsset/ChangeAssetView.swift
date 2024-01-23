@@ -11,7 +11,7 @@ struct ChangeAssetView: View {
 
   var body: some View {
     VStack(alignment: .leading, spacing: 20) {
-      Text(LFLocalizable.ChangeAsset.Screen.message)
+      Text(L10N.Common.ChangeAsset.Screen.message)
         .foregroundColor(Colors.label.swiftUIColor.opacity(0.75))
         .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.medium.value))
       VStack(spacing: 10) {
@@ -25,7 +25,7 @@ struct ChangeAssetView: View {
     .padding(.horizontal, 30)
     .frame(maxWidth: .infinity)
     .background(Colors.background.swiftUIColor)
-    .defaultToolBar(navigationTitle: LFLocalizable.ChangeAsset.Screen.title)
+    .defaultToolBar(navigationTitle: L10N.Common.ChangeAsset.Screen.title)
   }
 }
 

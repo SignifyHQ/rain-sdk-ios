@@ -42,9 +42,9 @@ class ConfirmBuySellCryptoViewModel: ObservableObject {
   var title: String {
     switch type {
     case let .buyCrypto(quote, _):
-      return LFLocalizable.ConfirmBuySellCrypto.Buy.title(total(of: quote.quantity, price: quote.price))
+      return L10N.Common.ConfirmBuySellCrypto.Buy.title(total(of: quote.quantity, price: quote.price))
     case let .sellCrypto(quote, _):
-      return LFLocalizable.ConfirmBuySellCrypto.Sell.title(total(of: quote.quantity, price: quote.price))
+      return L10N.Common.ConfirmBuySellCrypto.Sell.title(total(of: quote.quantity, price: quote.price))
     }
   }
   
@@ -52,27 +52,27 @@ class ConfirmBuySellCryptoViewModel: ObservableObject {
     switch type {
     case let .buyCrypto(quote, _):
       return [
-        .init(title: LFLocalizable.ConfirmBuySellCrypto.OrderType.title, value: LFLocalizable.ConfirmBuySellCrypto.Buy.text),
-        .init(title: LFLocalizable.ConfirmBuySellCrypto.Amount.title, value: LFLocalizable.ConfirmBuySellCrypto.Amount.valueCrypto(quote.quantity ?? 0.0)),
-        .init(title: LFLocalizable.ConfirmBuySellCrypto.ExchangeRate.title, value: LFLocalizable.ConfirmBuySellCrypto.Price.value(quote.price?.formattedAmount(minFractionDigits: 2, maxFractionDigits: 6) ?? "")),
-        .init(title: LFLocalizable.ConfirmBuySellCrypto.Symbol.title, value: quote.cryptoCurrency ?? ""),
-        .init(title: LFLocalizable.ConfirmBuySellCrypto.Fee.title, value: "$0"),
-        .init(title: LFLocalizable.ConfirmBuySellCrypto.Total.title, value: LFLocalizable.ConfirmBuySellCrypto.Total.value(total(of: quote.quantity, price: quote.price)))
+        .init(title: L10N.Common.ConfirmBuySellCrypto.OrderType.title, value: L10N.Common.ConfirmBuySellCrypto.Buy.text),
+        .init(title: L10N.Common.ConfirmBuySellCrypto.Amount.title, value: L10N.Common.ConfirmBuySellCrypto.Amount.valueCrypto(quote.quantity ?? 0.0)),
+        .init(title: L10N.Common.ConfirmBuySellCrypto.ExchangeRate.title, value: L10N.Common.ConfirmBuySellCrypto.Price.value(quote.price?.formattedAmount(minFractionDigits: 2, maxFractionDigits: 6) ?? "")),
+        .init(title: L10N.Common.ConfirmBuySellCrypto.Symbol.title, value: quote.cryptoCurrency ?? ""),
+        .init(title: L10N.Common.ConfirmBuySellCrypto.Fee.title, value: "$0"),
+        .init(title: L10N.Common.ConfirmBuySellCrypto.Total.title, value: L10N.Common.ConfirmBuySellCrypto.Total.value(total(of: quote.quantity, price: quote.price)))
       ]
     case let .sellCrypto(quote, _):
       return [
-        .init(title: LFLocalizable.ConfirmBuySellCrypto.OrderType.title, value: LFLocalizable.ConfirmBuySellCrypto.Sell.text),
-        .init(title: LFLocalizable.ConfirmBuySellCrypto.Amount.title, value: LFLocalizable.ConfirmBuySellCrypto.Amount.valueCrypto(quote.quantity ?? 0.0)),
-        .init(title: LFLocalizable.ConfirmBuySellCrypto.ExchangeRate.title, value: LFLocalizable.ConfirmBuySellCrypto.Price.value(quote.price?.formattedAmount(minFractionDigits: 2, maxFractionDigits: 6) ?? "")),
-        .init(title: LFLocalizable.ConfirmBuySellCrypto.Symbol.title, value: quote.cryptoCurrency ?? ""),
-        .init(title: LFLocalizable.ConfirmBuySellCrypto.Fee.title, value: "$0"),
-        .init(title: LFLocalizable.ConfirmBuySellCrypto.Total.title, value: LFLocalizable.ConfirmBuySellCrypto.Total.value(total(of: quote.quantity, price: quote.price)))
+        .init(title: L10N.Common.ConfirmBuySellCrypto.OrderType.title, value: L10N.Common.ConfirmBuySellCrypto.Sell.text),
+        .init(title: L10N.Common.ConfirmBuySellCrypto.Amount.title, value: L10N.Common.ConfirmBuySellCrypto.Amount.valueCrypto(quote.quantity ?? 0.0)),
+        .init(title: L10N.Common.ConfirmBuySellCrypto.ExchangeRate.title, value: L10N.Common.ConfirmBuySellCrypto.Price.value(quote.price?.formattedAmount(minFractionDigits: 2, maxFractionDigits: 6) ?? "")),
+        .init(title: L10N.Common.ConfirmBuySellCrypto.Symbol.title, value: quote.cryptoCurrency ?? ""),
+        .init(title: L10N.Common.ConfirmBuySellCrypto.Fee.title, value: "$0"),
+        .init(title: L10N.Common.ConfirmBuySellCrypto.Total.title, value: L10N.Common.ConfirmBuySellCrypto.Total.value(total(of: quote.quantity, price: quote.price)))
       ]
     }
   }
   
   var disclosure: String {
-    LFLocalizable.ConfirmBuySellCrypto.Disclosure.crypto
+    L10N.Common.ConfirmBuySellCrypto.Disclosure.crypto
   }
   
   func total(of quantity: Double?, price: Double?) -> String {

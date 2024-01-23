@@ -13,34 +13,34 @@ enum AccountLimitsSection {
   var title: String {
     switch self {
     case .cardDeposit:
-      return LFLocalizable.TransferLimit.CardDeposit.title
+      return L10N.Common.TransferLimit.CardDeposit.title
     case .bankDeposit:
-      return LFLocalizable.TransferLimit.BankDeposit.title
+      return L10N.Common.TransferLimit.BankDeposit.title
     case .cardWithdraw:
-      return LFLocalizable.TransferLimit.CardWithdrawal.title
+      return L10N.Common.TransferLimit.CardWithdrawal.title
     case .bankWithdraw:
-      return LFLocalizable.TransferLimit.BankWithdrawal.title
+      return L10N.Common.TransferLimit.BankWithdrawal.title
     case .totalDeposit:
-      return LFLocalizable.TransferLimit.Deposit.TotallLimits.title
+      return L10N.Common.TransferLimit.Deposit.TotallLimits.title
     case .totalWithdraw:
-      return LFLocalizable.TransferLimit.Withdraw.TotallLimits.title
+      return L10N.Common.TransferLimit.Withdraw.TotallLimits.title
     }
   }
   
   var message: String {
     switch self {
     case .cardDeposit:
-      return LFLocalizable.TransferLimit.CardDeposit.message(LFUtilities.cardFullName)
+      return L10N.Common.TransferLimit.CardDeposit.message(LFUtilities.cardFullName)
     case .bankDeposit:
-      return LFLocalizable.TransferLimit.BankDeposit.message(LFUtilities.cardFullName)
+      return L10N.Common.TransferLimit.BankDeposit.message(LFUtilities.cardFullName)
     case .cardWithdraw:
-      return LFLocalizable.TransferLimit.CardWithdrawal.message(LFUtilities.cardFullName)
+      return L10N.Common.TransferLimit.CardWithdrawal.message(LFUtilities.cardFullName)
     case .bankWithdraw:
-      return LFLocalizable.TransferLimit.BankWithdrawal.message(LFUtilities.cardFullName)
+      return L10N.Common.TransferLimit.BankWithdrawal.message(LFUtilities.cardFullName)
     case .totalDeposit:
-      return LFLocalizable.TransferLimit.Deposit.TotallLimits.message(LFUtilities.cardFullName)
+      return L10N.Common.TransferLimit.Deposit.TotallLimits.message(LFUtilities.cardFullName)
     case .totalWithdraw:
-      return LFLocalizable.TransferLimit.Withdraw.TotallLimits.message(LFUtilities.cardFullName)
+      return L10N.Common.TransferLimit.Withdraw.TotallLimits.message(LFUtilities.cardFullName)
     }
   }
 }

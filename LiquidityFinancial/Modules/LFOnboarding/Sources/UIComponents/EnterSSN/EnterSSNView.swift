@@ -29,7 +29,7 @@ public struct EnterSSNView: View {
   public var body: some View {
     VStack {
       VStack(alignment: .leading) {
-        Text(LFLocalizable.EnterSsn.title)
+        Text(L10N.Common.EnterSsn.title)
           .foregroundColor(Colors.label.swiftUIColor)
           .font(Fonts.regular.swiftUIFont(size: 18))
           .padding(.vertical, 12)
@@ -82,7 +82,7 @@ public struct EnterSSNView: View {
         .modifier(
           PlaceholderStyle(
             showPlaceHolder: viewModel.ssn.isEmpty,
-            placeholder: LFLocalizable.EnterSsn.placeholder
+            placeholder: L10N.Common.EnterSsn.placeholder
           )
         )
         .onAppear {
@@ -99,7 +99,7 @@ public struct EnterSSNView: View {
         GenImages.CommonImages.icLock.swiftUIImage
           .frame(width: 24, height: 24)
           .foregroundColor(Colors.label.swiftUIColor)
-        Text(LFLocalizable.EnterSsn.bulletOne)
+        Text(L10N.Common.EnterSsn.bulletOne)
           .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.ultraSmall.value))
           .foregroundColor(Colors.label.swiftUIColor)
           .opacity(0.75)
@@ -108,7 +108,7 @@ public struct EnterSSNView: View {
         GenImages.CommonImages.icTicketCircle.swiftUIImage
           .frame(width: 24, height: 24)
           .foregroundColor(Colors.label.swiftUIColor)
-        Text(LFLocalizable.EnterSsn.bulletTwo)
+        Text(L10N.Common.EnterSsn.bulletTwo)
           .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.ultraSmall.value))
           .foregroundColor(Colors.label.swiftUIColor)
           .opacity(0.75)
@@ -124,7 +124,7 @@ public struct EnterSSNView: View {
         showPopup = true
       } label: {
         HStack(spacing: 4) {
-          Text(LFLocalizable.EnterSsn.why)
+          Text(L10N.Common.EnterSsn.why)
           GenImages.CommonImages.info.swiftUIImage
         }
         .font(Fonts.regular.swiftUIFont(size: 12))
@@ -132,7 +132,7 @@ public struct EnterSSNView: View {
       }
       
       FullSizeButton(
-        title: LFLocalizable.EnterSsn.continue,
+        title: L10N.Common.EnterSsn.continue,
         isDisable: !viewModel.isActionAllowed,
         type: .primary
       ) {
@@ -146,9 +146,9 @@ public struct EnterSSNView: View {
 
   private var infoPopup: some View {
     LiquidityAlert(
-      title: LFLocalizable.EnterSsn.Alert.title,
-      message: LFLocalizable.EnterSsn.Alert.message,
-      primary: .init(text: LFLocalizable.EnterSsn.Alert.okay) { showPopup = false },
+      title: L10N.Common.EnterSsn.Alert.title,
+      message: L10N.Custom.EnterSsn.Alert.message,
+      primary: .init(text: L10N.Common.EnterSsn.Alert.okay) { showPopup = false },
       secondary: nil
     )
   }

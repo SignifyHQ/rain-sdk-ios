@@ -9,7 +9,7 @@ public struct SearchCausesView: View {
       .background(Colors.background.swiftUIColor)
       .toolbar {
         ToolbarItem(placement: .principal) {
-          Text(LFLocalizable.SearchCauses.navigationTitle)
+          Text(L10N.Common.SearchCauses.navigationTitle)
             .font(Fonts.regular.swiftUIFont(size: 16))
             .foregroundColor(Colors.label.swiftUIColor)
         }
@@ -59,7 +59,7 @@ public struct SearchCausesView: View {
     VStack(spacing: 8) {
       Spacer()
       Image(systemName: "magnifyingglass")
-      Text(LFLocalizable.SearchCauses.noResults)
+      Text(L10N.Common.SearchCauses.noResults)
         .font(Fonts.regular.swiftUIFont(size: 12))
       Spacer()
     }

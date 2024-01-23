@@ -25,8 +25,8 @@ class PatriotActViewModel: ObservableObject {
   @Published var shouldContinue: Bool = false
   @Published var isNoticeAccepted: Bool = false
   
-  let patriotActString = LFLocalizable.PatriotAct.Agreements.partiotActNotice
-  let patriotActlink = LFLocalizable.PatriotAct.Links.partiotActNotice
+  let patriotActString = L10N.Common.PatriotAct.Agreements.partiotActNotice
+  let patriotActlink = L10N.Common.PatriotAct.Links.partiotActNotice
   
   var remoteURLs: RemoteLinks?
   

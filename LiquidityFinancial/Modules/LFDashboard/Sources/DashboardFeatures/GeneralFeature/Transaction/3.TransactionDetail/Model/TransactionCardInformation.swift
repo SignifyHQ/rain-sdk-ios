@@ -35,11 +35,11 @@ public extension TransactionCardInformation {
   var title: String {
     switch cardType {
     case .cashback:
-      return LFLocalizable.TransactionCard.Cashback.title
+      return L10N.Common.TransactionCard.Cashback.title
     case .donation:
-      return LFLocalizable.TransactionCard.Donation.title
+      return L10N.Common.TransactionCard.Donation.title
     case .crypto:
-      return LFLocalizable.TransactionCard.Crypto.title(LFUtilities.cardName)
+      return L10N.Common.TransactionCard.Crypto.title(LFUtilities.cardName)
     default:
       return .empty
     }

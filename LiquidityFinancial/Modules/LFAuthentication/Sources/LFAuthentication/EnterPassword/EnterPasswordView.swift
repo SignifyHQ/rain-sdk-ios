@@ -78,7 +78,7 @@ public struct EnterPasswordView: View {
 private extension EnterPasswordView {
   var topView: some View {
     VStack(alignment: .leading, spacing: 24) {
-      Text(viewModel.purpose == .changePassword ? LFLocalizable.Authentication.ChangePassword.title : LFLocalizable.Authentication.EnterPassword.title.uppercased())
+      Text(viewModel.purpose == .changePassword ? L10N.Common.Authentication.ChangePassword.title : L10N.Common.Authentication.EnterPassword.title.uppercased())
         .foregroundColor(Colors.label.swiftUIColor)
         .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.main.value))
       
@@ -89,7 +89,7 @@ private extension EnterPasswordView {
   var enterPasswordTextFieldView: some View {
     VStack(alignment: .leading) {
       if viewModel.purpose == .changePassword {
-        Text(LFLocalizable.Authentication.ChangePassword.Current.title)
+        Text(L10N.Common.Authentication.ChangePassword.Current.title)
           .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.textFieldHeader.value))
           .foregroundColor(Colors.label.swiftUIColor)
           .opacity(0.75)
@@ -112,7 +112,7 @@ private extension EnterPasswordView {
           .modifier(
             PlaceholderStyle(
               showPlaceHolder: $viewModel.password.wrappedValue.isEmpty,
-              placeholder: viewModel.purpose == .changePassword ? LFLocalizable.Authentication.ChangePassword.Current.placeholder : LFLocalizable.Authentication.EnterPassword.placeholder
+              placeholder: viewModel.purpose == .changePassword ? L10N.Common.Authentication.ChangePassword.Current.placeholder : L10N.Common.Authentication.EnterPassword.placeholder
             )
           )
           .primaryFieldStyle()
@@ -160,14 +160,14 @@ private extension EnterPasswordView {
       Button {
         viewModel.didTapForgotPasswordButton()
       } label: {
-        Text(LFLocalizable.Authentication.EnterPassword.forgotPasswordButton)
+        Text(L10N.Common.Authentication.EnterPassword.forgotPasswordButton)
           .foregroundColor(Colors.primary.swiftUIColor)
           .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.ultraSmall.value))
       }
       .disabled(viewModel.isLoading)
       
       FullSizeButton(
-        title: LFLocalizable.Button.Continue.title,
+        title: L10N.Common.Button.Continue.title,
         isDisable: viewModel.isDisableContinueButton,
         isLoading: $viewModel.isLoading,
         type: .primary

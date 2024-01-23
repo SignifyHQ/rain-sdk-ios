@@ -18,11 +18,11 @@ struct DocumentTypeView: View {
           .foregroundColor(Colors.label.swiftUIColor.opacity(0.25))
           .frame(width: 32, height: 4)
           .padding(.top, 6)
-        Text(LFLocalizable.DocumentType.BottomSheet.title)
+        Text(L10N.Common.DocumentType.BottomSheet.title)
           .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.main.value))
           .foregroundColor(Colors.label.swiftUIColor)
         documentTypeList
-        FullSizeButton(title: LFLocalizable.DocumentType.Button.title, isDisable: false) {
+        FullSizeButton(title: L10N.Common.DocumentType.Button.title, isDisable: false) {
           action()
         }
         .padding(.bottom, 16)

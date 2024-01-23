@@ -78,7 +78,7 @@ public final class LFCoreNetwork<R: LFRoute>: CoreNetworkType {
     let stringResponse = await dataRequest.validate().serializingData().response
     
     if !(stringResponse.response?.statusCode ?? 500).isSuccess, let error = stringResponse.error {
-      let errorMessage = error.isSessionTaskError ? LFLocalizable.internetConnectionErrorMessage : error.localizedDescription
+      let errorMessage = error.isSessionTaskError ? L10N.Common.internetConnectionErrorMessage : error.localizedDescription
       throw LFNetworkError.custom(message: errorMessage)
     }
     
@@ -99,7 +99,7 @@ public final class LFCoreNetwork<R: LFRoute>: CoreNetworkType {
       throw LFNetworkError.custom(message: "Unknown error")
     }
     
-    let errorMessage = error.isSessionTaskError ? LFLocalizable.internetConnectionErrorMessage : error.localizedDescription
+    let errorMessage = error.isSessionTaskError ? L10N.Common.internetConnectionErrorMessage : error.localizedDescription
     throw LFNetworkError.custom(message: errorMessage)
   }
   
@@ -117,7 +117,7 @@ public final class LFCoreNetwork<R: LFRoute>: CoreNetworkType {
       throw LFNetworkError.custom(message: "Unknown error")
     }
     
-    let errorMessage = error.isSessionTaskError ? LFLocalizable.internetConnectionErrorMessage : error.localizedDescription
+    let errorMessage = error.isSessionTaskError ? L10N.Common.internetConnectionErrorMessage : error.localizedDescription
     throw LFNetworkError.custom(message: errorMessage)
   }
   
@@ -135,7 +135,7 @@ public final class LFCoreNetwork<R: LFRoute>: CoreNetworkType {
       throw LFNetworkError.custom(message: "Unknown error")
     }
     
-    let errorMessage = error.isSessionTaskError ? LFLocalizable.internetConnectionErrorMessage : error.localizedDescription
+    let errorMessage = error.isSessionTaskError ? L10N.Common.internetConnectionErrorMessage : error.localizedDescription
     throw LFNetworkError.custom(message: errorMessage)
   }
   
@@ -162,7 +162,7 @@ public final class LFCoreNetwork<R: LFRoute>: CoreNetworkType {
       throw LFNetworkError.custom(message: "Unknown error")
     }
     
-    let errorMessage = error.isSessionTaskError ? LFLocalizable.internetConnectionErrorMessage : error.localizedDescription
+    let errorMessage = error.isSessionTaskError ? L10N.Common.internetConnectionErrorMessage : error.localizedDescription
     throw LFNetworkError.custom(message: errorMessage)
   }
 }

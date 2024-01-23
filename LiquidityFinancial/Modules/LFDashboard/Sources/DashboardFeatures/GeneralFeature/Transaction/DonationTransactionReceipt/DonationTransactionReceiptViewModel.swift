@@ -19,32 +19,32 @@ final class DonationTransactionReceiptViewModel: ObservableObject {
   
   init(accountID: String, receipt: DonationReceipt) {
     receiptData = [
-      .init(title: LFLocalizable.DonationReceipt.TransactionNumber.title, value: receipt.id),
+      .init(title: L10N.Common.DonationReceipt.TransactionNumber.title, value: receipt.id),
       .init(
-        title: LFLocalizable.DonationReceipt.Reward.title,
+        title: L10N.Common.DonationReceipt.Reward.title,
         value: receipt.rewardsDonation?.formattedUSDAmount()
       ),
       .init(
-        title: LFLocalizable.DonationReceipt.Roundup.title,
+        title: L10N.Common.DonationReceipt.Roundup.title,
         value: receipt.roundUpDonation?.formattedUSDAmount()
       ),
       .init(
-        title: LFLocalizable.DonationReceipt.OneTime.title,
+        title: L10N.Common.DonationReceipt.OneTime.title,
         value: receipt.oneTimeDonation?.formattedUSDAmount()
       ),
       .init(
-        title: LFLocalizable.DonationReceipt.Total.title,
+        title: L10N.Common.DonationReceipt.Total.title,
         value: receipt.totalDonation?.formattedUSDAmount()
       ),
       .init(
-        title: LFLocalizable.DonationReceipt.Fee.title,
+        title: L10N.Common.DonationReceipt.Fee.title,
         value: receipt.fee?.formattedUSDAmount() ?? "$0"
       ),
       .init(
-        title: LFLocalizable.DonationReceipt.DateAndTime.title,
+        title: L10N.Common.DonationReceipt.DateAndTime.title,
         value: receipt.createdAt.parsingDateStringToNewFormat(toDateFormat: .fullTransactionDate)
       ),
-      .init(title: LFLocalizable.CryptoReceipt.AccountID.title, value: accountID)
+      .init(title: L10N.Common.CryptoReceipt.AccountID.title, value: accountID)
     ]
   }
 }

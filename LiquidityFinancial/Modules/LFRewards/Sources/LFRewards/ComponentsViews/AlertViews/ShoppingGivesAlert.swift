@@ -73,22 +73,22 @@ public struct ShoppingGivesAlert: View {
   private var format: String {
     switch type {
     case .taxDeductions:
-      return LFLocalizable.AlertAttributedText.taxDeductions(ein, terms, privacy)
+      return L10N.Common.AlertAttributedText.taxDeductions(ein, terms, privacy)
     case .roundUp:
-      return LFLocalizable.AlertAttributedText.roundUp(ein, terms, privacy)
+      return L10N.Common.AlertAttributedText.roundUp(L10N.Custom.Card.name, ein, terms, privacy)
     }
   }
   
   private var ein: String {
-    LFLocalizable.AlertAttributedText.ein
+    L10N.Common.AlertAttributedText.ein
   }
   
   private var terms: String {
-    LFLocalizable.AlertAttributedText.terms
+    L10N.Common.AlertAttributedText.terms
   }
   
   private var privacy: String {
-    LFLocalizable.AlertAttributedText.privacy
+    L10N.Common.AlertAttributedText.privacy
   }
   
   private func openLink(value: String) {

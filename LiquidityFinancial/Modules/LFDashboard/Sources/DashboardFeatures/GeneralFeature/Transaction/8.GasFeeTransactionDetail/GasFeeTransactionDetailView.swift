@@ -34,7 +34,7 @@ private extension GasFeeTransactionDetailView {
       
       if let receiptType = viewModel.transaction.receipt?.type {
         FullSizeButton(
-          title: LFLocalizable.TransactionDetail.Receipt.button,
+          title: L10N.Common.TransactionDetail.Receipt.button,
           isDisable: false,
           type: .secondary
         ) {
@@ -42,7 +42,7 @@ private extension GasFeeTransactionDetailView {
         }
       }
       
-      Text(LFLocalizable.Zerohash.Disclosure.description)
+      Text(L10N.Common.Zerohash.Disclosure.description)
         .font(Fonts.regular.swiftUIFont(size: 10))
         .foregroundColor(Colors.label.swiftUIColor.opacity(0.5))
     }

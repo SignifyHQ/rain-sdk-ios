@@ -77,7 +77,7 @@ public struct AgreementView: View {
 private extension AgreementView {
   @ViewBuilder var footer: some View {
     if viewModel.isTransferTerms {
-      Text(LFLocalizable.Question.TransferTerms.diclosure)
+      Text(L10N.Common.Question.TransferTerms.diclosure)
         .foregroundColor(Colors.label.swiftUIColor.opacity(0.5))
         .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.ultraSmall.value))
         .multilineTextAlignment(.leading)
@@ -185,7 +185,7 @@ private extension AgreementView {
   
   var continueButton: some View {
     FullSizeButton(
-      title: LFLocalizable.Button.Continue.title,
+      title: L10N.Common.Button.Continue.title,
       isDisable: viewModel.isDisableButton,
       isLoading: $viewModel.isAcceptAgreementLoading
     ) {

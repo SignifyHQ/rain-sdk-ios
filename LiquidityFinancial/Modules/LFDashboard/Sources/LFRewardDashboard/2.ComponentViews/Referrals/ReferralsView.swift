@@ -16,15 +16,15 @@ struct ReferralsView: View {
         ShareSheetView(activityItems: viewModel.activityItems)
       }
       .popup(isPresented: $viewModel.showCopyToast, style: .toast) {
-        ToastView(toastMessage: LFLocalizable.Referral.Toast.message)
+        ToastView(toastMessage: L10N.Common.Referral.Toast.message)
       }
   }
   
   private func example(_ campaign: ReferralCampaign) -> String {
     if LFUtilities.cryptoEnabled {
-      return LFLocalizable.Referral.Example.crypto(LFUtilities.appName, LFUtilities.appName)
+      return L10N.Custom.Referral.Example.crypto(LFUtilities.appName, LFUtilities.appName)
     } else {
-      return LFLocalizable.Referral.Example.donation(
+      return L10N.Common.Referral.Example.donation(
         campaign.inviterBonusDisplay, campaign.periodDisplay, campaign.inviterBonusDisplay
       )
     }
@@ -57,12 +57,12 @@ private extension ReferralsView {
   
   func referralsContext(campaign: ReferralCampaign) -> some View {
     VStack(spacing: 12) {
-      Text(LFLocalizable.Referral.Screen.title)
+      Text(L10N.Common.Referral.Screen.title)
         .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.large.value))
         .foregroundColor(Colors.label.swiftUIColor)
         .padding(.horizontal, 48)
         .frame(minHeight: 60)
-      Text(LFLocalizable.Referral.Info.message(campaign.periodDisplay, campaign.inviterBonusDisplay))
+      Text(L10N.Common.Referral.Info.message(campaign.periodDisplay, campaign.inviterBonusDisplay))
         .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.medium.value))
         .foregroundColor(Colors.label.swiftUIColor.opacity(0.75))
         .padding(.horizontal, 12)
@@ -72,10 +72,10 @@ private extension ReferralsView {
   
   var buttonGroupView: some View {
     VStack(spacing: 10) {
-      FullSizeButton(title: LFLocalizable.Referral.Send.buttonTitle, isDisable: false) {
+      FullSizeButton(title: L10N.Common.Referral.Send.buttonTitle, isDisable: false) {
         viewModel.sendTapped()
       }
-      FullSizeButton(title: LFLocalizable.Referral.Copy.buttonTitle, isDisable: false, type: .contrast) {
+      FullSizeButton(title: L10N.Common.Referral.Copy.buttonTitle, isDisable: false, type: .contrast) {
         viewModel.copyTapped()
       }
     }
@@ -84,7 +84,7 @@ private extension ReferralsView {
   
   func howItWorkView(campaign: ReferralCampaign) -> some View {
     VStack(spacing: 10) {
-      Text(LFLocalizable.Referral.Example.title)
+      Text(L10N.Common.Referral.Example.title)
         .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.medium.value))
         .foregroundColor(Colors.label.swiftUIColor)
         .lineSpacing(1.17)
@@ -128,10 +128,10 @@ private extension ReferralsView {
         .resizable()
         .frame(180)
       Spacer()
-      Text(LFLocalizable.Referral.Error.message)
+      Text(L10N.Common.Referral.Error.message)
         .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.ultraSmall.value))
         .foregroundColor(Colors.label.swiftUIColor)
-      FullSizeButton(title: LFLocalizable.Button.Retry.title, isDisable: false) {
+      FullSizeButton(title: L10N.Common.Button.Retry.title, isDisable: false) {
         viewModel.retry()
       }
     }

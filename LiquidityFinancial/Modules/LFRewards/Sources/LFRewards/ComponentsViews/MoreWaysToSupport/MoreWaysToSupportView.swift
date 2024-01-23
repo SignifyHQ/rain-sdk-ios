@@ -17,7 +17,7 @@ struct MoreWaysToSupportView: View {
       .background(ModuleColors.background.swiftUIColor)
       .toolbar {
         ToolbarItem(placement: .principal) {
-          Text(LFLocalizable.MoreWaysToSupport.title)
+          Text(L10N.Common.MoreWaysToSupport.title)
             .font(Fonts.regular.swiftUIFont(size: 16))
             .foregroundColor(ModuleColors.label.swiftUIColor)
         }
@@ -59,14 +59,14 @@ struct MoreWaysToSupportView: View {
   
   private var share: some View {
     VStack(spacing: 16) {
-      header(title: LFLocalizable.MoreWaysToSupport.Share.title, message: nil)
+      header(title: L10N.Common.MoreWaysToSupport.Share.title, message: nil)
       
       HStack(spacing: 12) {
         // TODO: - Will be uncomment later. Temporarily hide this feature
-        //        shareItem(image: ModuleImages.icReferrals.swiftUIImage, text: LFLocalizable.MoreWaysToSupport.Share.friends) {
+        //        shareItem(image: ModuleImages.icReferrals.swiftUIImage, text: L10N.Common.MoreWaysToSupport.Share.friends) {
         //          viewModel.inviteFriendsTapped()
         //        }
-        shareItem(image: ModuleImages.icShared.swiftUIImage, text: LFLocalizable.MoreWaysToSupport.Share.cause) {
+        shareItem(image: ModuleImages.icShared.swiftUIImage, text: L10N.Common.MoreWaysToSupport.Share.cause) {
           viewModel.shareCauseTapped()
         }
       }
@@ -78,8 +78,8 @@ struct MoreWaysToSupportView: View {
       if let url = viewModel.fundraiser.stickerUrl {
         VStack(spacing: 16) {
           header(
-            title: LFLocalizable.MoreWaysToSupport.Photo.title,
-            message: LFLocalizable.MoreWaysToSupport.Photo.message
+            title: L10N.Common.MoreWaysToSupport.Photo.title,
+            message: L10N.Common.MoreWaysToSupport.Photo.message
           )
           
           ZStack(alignment: .bottomTrailing) {
@@ -105,8 +105,8 @@ struct MoreWaysToSupportView: View {
       if !viewModel.social.isEmpty {
         VStack(spacing: 16) {
           header(
-            title: LFLocalizable.MoreWaysToSupport.News.title,
-            message: LFLocalizable.MoreWaysToSupport.News.message(viewModel.fundraiser.charityName)
+            title: L10N.Common.MoreWaysToSupport.News.title,
+            message: L10N.Common.MoreWaysToSupport.News.message(viewModel.fundraiser.charityName)
           )
           
           HStack(spacing: 16) {
@@ -122,10 +122,10 @@ struct MoreWaysToSupportView: View {
   private var employer: some View {
     VStack(spacing: 16) {
       header(
-        title: LFLocalizable.MoreWaysToSupport.Employer.title,
-        message: LFLocalizable.MoreWaysToSupport.Employer.message
+        title: L10N.Common.MoreWaysToSupport.Employer.title,
+        message: L10N.Common.MoreWaysToSupport.Employer.message
       )
-      FullSizeButton(title: LFLocalizable.MoreWaysToSupport.Employer.action, isDisable: false) {
+      FullSizeButton(title: L10N.Common.MoreWaysToSupport.Employer.action, isDisable: false) {
         viewModel.getTaxableDonationsTapped()
       }
     }

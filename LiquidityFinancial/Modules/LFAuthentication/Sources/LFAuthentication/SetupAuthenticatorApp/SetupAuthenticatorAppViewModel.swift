@@ -83,7 +83,7 @@ extension SetupAuthenticatorAppViewModel {
   
   func copyText(text: String) {
     UIPasteboard.general.string = text
-    toastMessage = LFLocalizable.Toast.Copy.message
+    toastMessage = L10N.Common.Toast.Copy.message
   }
   
   func hidePopup() {

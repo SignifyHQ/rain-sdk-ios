@@ -6,19 +6,19 @@ extension NetSpendDocumentType {
   var title: String {
     switch self {
     case .foreignId:
-      return LFLocalizable.DocumentType.ForeignID.title
+      return L10N.Common.DocumentType.ForeignID.title
     case .other:
-      return LFLocalizable.DocumentType.Other.title
+      return L10N.Common.DocumentType.Other.title
     case .passport:
-      return LFLocalizable.DocumentType.Passport.title
+      return L10N.Common.DocumentType.Passport.title
     case .payStubDatedWithin30Days:
-      return LFLocalizable.DocumentType.PayStub.title
+      return L10N.Common.DocumentType.PayStub.title
     case .socialSecurityCard:
-      return LFLocalizable.DocumentType.SocialSecurityCard.title
+      return L10N.Common.DocumentType.SocialSecurityCard.title
     case .stateIssuedPhotoId:
-      return LFLocalizable.DocumentType.StateID.title
+      return L10N.Common.DocumentType.StateID.title
     case .utilityBill:
-      return LFLocalizable.DocumentType.UtilityBill.title
+      return L10N.Common.DocumentType.UtilityBill.title
     }
   }
   

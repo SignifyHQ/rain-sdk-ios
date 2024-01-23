@@ -40,7 +40,7 @@ private extension EditNicknameOfWalletView {
       nicknameTextField
       Spacer()
       FullSizeButton(
-        title: LFLocalizable.EnterNicknameOfWallet.saveButton,
+        title: L10N.Common.EnterNicknameOfWallet.saveButton,
         isDisable: !viewModel.isActionAllowed,
         isLoading: $viewModel.showIndicator
       ) {
@@ -53,7 +53,7 @@ private extension EditNicknameOfWalletView {
   
   var nicknameTextField: some View {
     VStack(alignment: .leading) {
-      Text(LFLocalizable.EnterNicknameOfWallet.textFieldTitle)
+      Text(L10N.Common.EnterNicknameOfWallet.textFieldTitle)
         .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.textFieldHeader.value))
         .foregroundColor(Colors.label.swiftUIColor)
         .opacity(0.75)
@@ -63,7 +63,7 @@ private extension EditNicknameOfWalletView {
       TextFieldWrapper {
         TextField("", text: $viewModel.walletNickname)
           .keyboardType(.alphabet)
-          .modifier(PlaceholderStyle(showPlaceHolder: $viewModel.walletNickname.wrappedValue.isEmpty, placeholder: LFLocalizable.EnterNicknameOfWallet.placeholder))
+          .modifier(PlaceholderStyle(showPlaceHolder: $viewModel.walletNickname.wrappedValue.isEmpty, placeholder: L10N.Common.EnterNicknameOfWallet.placeholder))
           .primaryFieldStyle()
           .autocorrectionDisabled()
           .limitInputLength(value: $viewModel.walletNickname, length: Constants.MaxCharacterLimit.nameLimit.value)
@@ -76,7 +76,7 @@ private extension EditNicknameOfWalletView {
           .foregroundColor(Colors.error.swiftUIColor)
           .shakeAnimation(with: viewModel.numberOfShakes)
       } else {
-        Text(LFLocalizable.EnterNicknameOfWallet.disclosures)
+        Text(L10N.Common.EnterNicknameOfWallet.disclosures)
           .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.textFieldHeader.value))
           .foregroundColor(Colors.label.swiftUIColor)
           .opacity(0.5)
@@ -86,10 +86,10 @@ private extension EditNicknameOfWalletView {
 
   var headerTitle: some View {
     VStack(alignment: .leading, spacing: 16) {
-      Text(LFLocalizable.EditNicknameOfWallet.saveTitle)
+      Text(L10N.Common.EditNicknameOfWallet.saveTitle)
         .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.main.value))
         .foregroundColor(Colors.label.swiftUIColor)
-      Text(LFLocalizable.EnterNicknameOfWallet.editNickname(viewModel.wallet.address))
+      Text(L10N.Common.EnterNicknameOfWallet.editNickname(viewModel.wallet.address))
         .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.medium.value))
         .foregroundColor(Colors.label.swiftUIColor.opacity(0.75))
         .multilineTextAlignment(.leading)

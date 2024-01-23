@@ -84,9 +84,9 @@ public extension IdentityVerificationCodeViewModel {
   var title: String {
     switch kind {
     case .ssn:
-      return LFLocalizable.EnterVerificationCode.Last4SSN.screenTitle
+      return L10N.Common.EnterVerificationCode.Last4SSN.screenTitle
     case .passport:
-      return LFLocalizable.EnterVerificationCode.Last5Passport.screenTitle
+      return L10N.Common.EnterVerificationCode.Last5Passport.screenTitle
     }
   }
   
@@ -112,7 +112,7 @@ public extension IdentityVerificationCodeViewModel {
     case Constants.ErrorCode.userInactive.value:
       solidOnboardingFlowCoordinator.set(route: .accountLocked)
     case Constants.ErrorCode.credentialsInvalid.value:
-      toastMessage = LFLocalizable.EnterVerificationCode.CodeInvalid.message
+      toastMessage = L10N.Common.EnterVerificationCode.CodeInvalid.message
     case Constants.ErrorCode.invalidSSN.value:
       errorMessage = errorObject.message
     default:

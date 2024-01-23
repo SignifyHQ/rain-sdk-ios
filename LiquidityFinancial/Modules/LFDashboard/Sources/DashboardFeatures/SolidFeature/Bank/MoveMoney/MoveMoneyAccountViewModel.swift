@@ -85,7 +85,7 @@ public class MoveMoneyAccountViewModel: ObservableObject {
 extension MoveMoneyAccountViewModel {
   func getTransactionFee(contact: LinkedSourceContact) {
     guard let amount = self.amount.asDouble else {
-      toastMessage = LFLocalizable.MoveMoney.Error.noContact
+      toastMessage = L10N.Common.MoveMoney.Error.noContact
       return
     }
     Task { @MainActor in
@@ -166,7 +166,7 @@ extension MoveMoneyAccountViewModel {
   
   func callTransferAPI() {
     guard let contact = selectedLinkedContact, let amount = self.amount.asDouble else {
-      toastMessage = LFLocalizable.MoveMoney.Error.noContact
+      toastMessage = L10N.Common.MoveMoney.Error.noContact
       return
     }
     Task { @MainActor in
@@ -196,11 +196,11 @@ extension MoveMoneyAccountViewModel {
 // MARK: UI Helpers
 extension MoveMoneyAccountViewModel {
   var subtitle: String {
-    LFLocalizable.MoveMoney.AvailableBalance.subtitle(cashBalanceStringValue)
+    L10N.Common.MoveMoney.AvailableBalance.subtitle(cashBalanceStringValue)
   }
   
   var annotationString: String {
-    LFLocalizable.MoveMoney.Withdraw.annotation(cashBalanceStringValue)
+    L10N.Common.MoveMoney.Withdraw.annotation(cashBalanceStringValue)
   }
   
   var isAmountActionAllowed: Bool {
@@ -217,15 +217,15 @@ extension MoveMoneyAccountViewModel {
   
   var transferFeePopupTitle: String {
     let title = kind == .receive
-    ? LFLocalizable.MoveMoney.Deposit.title
-    : LFLocalizable.MoveMoney.Withdraw.title
+    ? L10N.Common.MoveMoney.Deposit.title
+    : L10N.Common.MoveMoney.Withdraw.title
     
-    return LFLocalizable.MoveMoney.TransferFeePopup.title(title.uppercased())
+    return L10N.Common.MoveMoney.TransferFeePopup.title(title.uppercased())
   }
   
   var instantFeeString: String {
     guard let amount = externalCardFeeResponse?.fee, amount > 0 else {
-      return LFLocalizable.MoveMoney.TransferFeePopup.free
+      return L10N.Common.MoveMoney.TransferFeePopup.free
     }
     
     return amount.formattedUSDAmount()
@@ -234,9 +234,9 @@ extension MoveMoneyAccountViewModel {
   func title(for contact: LinkedSourceContact) -> String {
     switch contact.sourceType {
     case .card:
-      return LFLocalizable.ConnectedView.Row.externalCard(contact.last4)
+      return L10N.Common.ConnectedView.Row.externalCard(contact.last4)
     case .bank:
-      return LFLocalizable.ConnectedView.Row.externalBank(contact.name ?? "", contact.last4)
+      return L10N.Common.ConnectedView.Row.externalBank(contact.name ?? "", contact.last4)
     }
   }
   
@@ -279,7 +279,7 @@ extension MoveMoneyAccountViewModel {
     guard kind == .send, let amountValue = amount else { return nil }
     let isReachOut = amountValue > cashBalance ?? 0
     if isReachOut {
-      return LFLocalizable.TransferView.limitsReached
+      return L10N.Common.TransferView.limitsReached
     }
     return nil
   }

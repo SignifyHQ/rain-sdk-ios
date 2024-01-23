@@ -210,13 +210,13 @@ private extension AgreementViewModel {
 extension AgreementViewModel {
   var title: String {
     isTransferTerms
-    ? LFLocalizable.Question.TransferTerms.title
-    : LFLocalizable.Question.AccountTerms.title
+    ? L10N.Common.Question.TransferTerms.title
+    : L10N.Common.Question.AccountTerms.title
   }
   
   var description: String {
     isTransferTerms
-    ? LFLocalizable.Question.TransferTerms.description
-    : LFLocalizable.Question.AccountTerms.description(LFUtilities.appName)
+    ? L10N.Common.Question.TransferTerms.description
+    : L10N.Common.Question.AccountTerms.description(LFUtilities.appName)
   }
 }

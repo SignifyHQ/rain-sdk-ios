@@ -24,7 +24,7 @@ struct NSApplePayViewController: UIViewControllerRepresentable {
     let request = PKAddPaymentPassRequestConfiguration(encryptionScheme: .ECC_V2)
     request?.cardholderName = viewModel.cardModel.cardholderName
     request?.primaryAccountSuffix = viewModel.cardModel.last4
-    request?.localizedDescription = LFLocalizable.AddToWallet.ApplePay.message
+    request?.localizedDescription = L10N.Common.AddToWallet.ApplePay.message
     request?.primaryAccountIdentifier = viewModel.cardModel.id
     request?.paymentNetwork = PKPaymentNetwork.visa
     if let request, let apm = PKAddPaymentPassViewController(requestConfiguration: request, delegate: context.coordinator) {

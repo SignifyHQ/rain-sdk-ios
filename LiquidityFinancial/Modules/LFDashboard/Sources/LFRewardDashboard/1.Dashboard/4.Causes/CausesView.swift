@@ -31,7 +31,7 @@ struct CausesView: View {
         }
       }
       .popup(item: $viewModel.showError, style: .toast) { _ in
-        ToastView(toastMessage: LFLocalizable.genericErrorMessage)
+        ToastView(toastMessage: L10N.Common.genericErrorMessage)
       }
   }
 }
@@ -62,11 +62,11 @@ private extension CausesView {
   var failure: some View {
     VStack(spacing: 32) {
       Spacer()
-      Text(LFLocalizable.Causes.error)
+      Text(L10N.Common.Causes.error)
         .font(Fonts.medium.swiftUIFont(size: 14))
         .foregroundColor(Colors.label.swiftUIColor)
         .multilineTextAlignment(.center)
-      FullSizeButton(title: LFLocalizable.Causes.retry, isDisable: false) {
+      FullSizeButton(title: L10N.Common.Causes.retry, isDisable: false) {
         viewModel.retryTapped()
       }
     }
@@ -94,7 +94,7 @@ private extension CausesView {
   
   private func trending(items: [CategoriesTrendingModel]) -> some View {
     VStack(alignment: .leading, spacing: 6) {
-      title(text: LFLocalizable.Causes.trending)
+      title(text: L10N.Common.Causes.trending)
         .padding(.horizontal, 30)
       
       ScrollView(.horizontal, showsIndicators: false) {
@@ -111,7 +111,7 @@ private extension CausesView {
   
   func explore(items: [CauseModel]) -> some View {
     VStack(alignment: .leading, spacing: 12) {
-      title(text: LFLocalizable.Causes.explore)
+      title(text: L10N.Common.Causes.explore)
       exploreGrid(items: items)
     }
   }
@@ -174,7 +174,7 @@ private extension CausesView {
   }
   
   var newBadge: some View {
-    Text(LFLocalizable.Causes.new)
+    Text(L10N.Common.Causes.new)
       .font(Fonts.regular.swiftUIFont(size: 10))
       .foregroundColor(Colors.label.swiftUIColor)
       .padding(.horizontal, 6)

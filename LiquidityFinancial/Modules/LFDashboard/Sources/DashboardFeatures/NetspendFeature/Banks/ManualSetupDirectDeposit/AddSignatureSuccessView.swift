@@ -18,19 +18,19 @@ struct AddSignatureSuccessView: View {
         .resizable()
         .frame(104)
         .padding(.top, 10)
-      Text(LFLocalizable.DirectDeposit.ManualSetup.successTitle)
+      Text(L10N.Common.DirectDeposit.ManualSetup.successTitle)
         .padding()
         .foregroundColor(Colors.label.swiftUIColor)
         .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.large.value))
         .multilineTextAlignment(.center)
-      Text(LFLocalizable.DirectDeposit.ManualSetup.description)
+      Text(L10N.Common.DirectDeposit.ManualSetup.description)
         .foregroundColor(Colors.label.swiftUIColor.opacity(0.75))
         .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.medium.value))
         .multilineTextAlignment(.center)
       Spacer()
       VStack {
         emailFormButton
-        FullSizeButton(title: LFLocalizable.DirectDeposit.ViewForm.buttonTitle, isDisable: false, type: .secondary) {
+        FullSizeButton(title: L10N.Common.DirectDeposit.ViewForm.buttonTitle, isDisable: false, type: .secondary) {
           isNavigationViewForm = true
         }
       }
@@ -58,17 +58,17 @@ struct AddSignatureSuccessView: View {
 // MARK: - View Components
 private extension AddSignatureSuccessView {
   var emailFormButton: some View {
-    FullSizeButton(title: LFLocalizable.DirectDeposit.EmailForm.buttonTitle, isDisable: false) {
+    FullSizeButton(title: L10N.Common.DirectDeposit.EmailForm.buttonTitle, isDisable: false) {
       if MFMailComposeViewController.canSendMail() {
         isShowingMailView.toggle()
       } else {
-        toastMessage = LFLocalizable.DirectDeposit.Mail.toastMessage
+        toastMessage = L10N.Common.DirectDeposit.Mail.toastMessage
       }
     }
     .padding(.bottom, 5)
     .sheet(isPresented: $isShowingMailView) {
       MailView(result: $result) { composer in
-        composer.setSubject(LFLocalizable.DirectDeposit.Toolbal.title)
+        composer.setSubject(L10N.Common.DirectDeposit.Toolbal.title)
         guard let documentDirectory = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first else { return }
         let outputFileURL = documentDirectory.appendingPathComponent(Constants.Default.documentName.rawValue).path
         if let fileData = NSData(contentsOfFile: outputFileURL) {

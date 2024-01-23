@@ -65,14 +65,14 @@ private extension AccountsView {
       VStack(alignment: .leading, spacing: 24) {
         
         if viewModel.assets.isNotEmpty {
-          section(title: LFLocalizable.AccountView.wallets) {
+          section(title: L10N.Common.AccountView.wallets) {
             ForEach(viewModel.assets, id: \.externalAccountId) { asset in
               assetCell(asset: asset)
             }
           }
         }
         
-        section(title: LFLocalizable.AccountView.shortcuts) {
+        section(title: L10N.Common.AccountView.shortcuts) {
           shortcutSection
         }
         
@@ -85,7 +85,7 @@ private extension AccountsView {
   }
   
   var bottomDisclosure: some View {
-    Text(LFLocalizable.AccountView.Disclosure.message)
+    Text(L10N.Custom.AccountView.Disclosure.message)
       .font(Fonts.regular.swiftUIFont(size: 10))
       .foregroundColor(Colors.label.swiftUIColor.opacity(0.75))
   }
@@ -103,14 +103,14 @@ private extension AccountsView {
     VStack {
       ArrowButton(
         image: GenImages.CommonImages.icRewards.swiftUIImage,
-        title: LFLocalizable.AccountView.rewards,
+        title: L10N.Common.AccountView.rewards,
         value: nil
       ) {
         viewModel.openReward()
       }
       ArrowButton(
         image: GenImages.CommonImages.Accounts.tax.swiftUIImage,
-        title: LFLocalizable.AccountView.taxes,
+        title: L10N.Common.AccountView.taxes,
         value: nil
       ) {
         viewModel.openTaxes()
@@ -118,7 +118,7 @@ private extension AccountsView {
       if !viewModel.notificationsEnabled {
         ArrowButton(
           image: GenImages.CommonImages.Accounts.notifications.swiftUIImage,
-          title: LFLocalizable.AccountView.notifications,
+          title: L10N.Common.AccountView.notifications,
           value: nil
         ) {
           viewModel.notificationTapped()
@@ -126,13 +126,13 @@ private extension AccountsView {
       }
       ArrowButton(
         image: GenImages.CommonImages.Accounts.legal.swiftUIImage,
-        title: LFLocalizable.AccountView.legal,
+        title: L10N.Common.AccountView.legal,
         value: nil
       ) {
         guard let url = viewModel.getUrl() else { return }
         openSafariType = .legal(url)
       }
-      ArrowButton(image: GenImages.CommonImages.icQuestion.swiftUIImage, title: LFLocalizable.Profile.Help.title, value: nil) {
+      ArrowButton(image: GenImages.CommonImages.icQuestion.swiftUIImage, title: L10N.Common.Profile.Help.title, value: nil) {
         viewModel.helpTapped()
       }
       if viewModel.showAdminMenu {
@@ -162,13 +162,13 @@ private extension AccountsView {
       } label: {
         HStack(spacing: 8) {
           assetType.image
-          Text(LFLocalizable.AccountView.Wallet.title(assetType.title))
+          Text(L10N.Common.AccountView.Wallet.title(assetType.title))
             .foregroundColor(Colors.label.swiftUIColor)
             .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.medium.value))
           Spacer()
           HStack(spacing: 0) {
             Text(
-              LFLocalizable.AccountView.HiddenValue.title(
+              L10N.Common.AccountView.HiddenValue.title(
                 viewModel.getLastFourDigits(from: asset.externalAccountId ?? .empty)
               )
             )

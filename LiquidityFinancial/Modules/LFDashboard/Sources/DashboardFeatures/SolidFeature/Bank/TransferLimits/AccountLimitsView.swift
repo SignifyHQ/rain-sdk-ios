@@ -53,7 +53,7 @@ public struct AccountLimitsView: View {
     .onTapGesture {
       selectedAnnotation = nil
     }
-    .defaultToolBar(navigationTitle: LFLocalizable.TransferLimit.Screen.title)
+    .defaultToolBar(navigationTitle: L10N.Common.TransferLimit.Screen.title)
   }
 }
 
@@ -284,7 +284,7 @@ private extension AccountLimitsView {
   
   var requestLimitIncreaseButton: some View {
     FullSizeButton(
-      title: LFLocalizable.TransferLimit.RequestLimitIncrease.title,
+      title: L10N.Common.TransferLimit.RequestLimitIncrease.title,
       isDisable: false,
       isLoading: $viewModel.isRequesting
     ) {
@@ -296,11 +296,11 @@ private extension AccountLimitsView {
   var failure: some View {
     VStack(spacing: 32) {
       Spacer()
-      Text(LFLocalizable.TransferLimit.Error.title)
+      Text(L10N.Common.TransferLimit.Error.title)
         .font(Fonts.medium.swiftUIFont(size: 14))
         .foregroundColor(Colors.label.swiftUIColor)
         .multilineTextAlignment(.center)
-      FullSizeButton(title: LFLocalizable.Button.Retry.title, isDisable: false) {
+      FullSizeButton(title: L10N.Common.Button.Retry.title, isDisable: false) {
         viewModel.getAccountLimits()
       }
     }
@@ -309,10 +309,10 @@ private extension AccountLimitsView {
   
   var createTicketSuccessPopup: some View {
     LiquidityAlert(
-      title: LFLocalizable.TransferLimit.CreateSupportTicket.title,
-      message: LFLocalizable.TransferLimit.IncreaseLimit.message,
+      title: L10N.Common.TransferLimit.CreateSupportTicket.title,
+      message: L10N.Common.TransferLimit.IncreaseLimit.message,
       primary: .init(
-        text: LFLocalizable.Button.Ok.title,
+        text: L10N.Common.Button.Ok.title,
         action: {
           viewModel.hidePopup()
         }
@@ -322,10 +322,10 @@ private extension AccountLimitsView {
   
   var ticketExistedPopup: some View {
     LiquidityAlert(
-      title: LFLocalizable.TransferLimit.CreateSupportTicket.title,
-      message: LFLocalizable.TransferLimit.IncreaseLimitInReview.message,
+      title: L10N.Common.TransferLimit.CreateSupportTicket.title,
+      message: L10N.Common.TransferLimit.IncreaseLimitInReview.message,
       primary: .init(
-        text: LFLocalizable.Button.Ok.title,
+        text: L10N.Common.Button.Ok.title,
         action: {
           viewModel.hidePopup()
         }

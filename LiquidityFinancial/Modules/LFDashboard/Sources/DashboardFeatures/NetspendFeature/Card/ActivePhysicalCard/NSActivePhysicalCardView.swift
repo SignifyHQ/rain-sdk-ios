@@ -26,7 +26,7 @@ private extension NSActivePhysicalCardView {
     case .cvvCode:
       NSEnterCVVCodeView(
         viewModel: NSEnterCVVCodeViewModel(cardID: card.id),
-        screenTitle: LFLocalizable.EnterCVVCode.ActiveCard.title
+        screenTitle: L10N.Common.EnterCVVCode.ActiveCard.title
       ) { verifyID in
         activeContent = .setCardPin(verifyID)
       }

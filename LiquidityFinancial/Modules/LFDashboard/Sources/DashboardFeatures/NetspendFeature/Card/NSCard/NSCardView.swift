@@ -60,7 +60,7 @@ struct NSCardView: View {
 private extension NSCardView {
   var physicalTitleView: some View {
     HStack {
-      Text(LFLocalizable.Card.Physical.name(LFUtilities.cardName))
+      Text(L10N.Common.Card.Physical.name(LFUtilities.cardName))
         .font(Fonts.bold.swiftUIFont(size: Constants.FontSize.medium.value))
         .foregroundColor(Colors.contrast.swiftUIColor)
     }
@@ -84,7 +84,7 @@ private extension NSCardView {
   var trailingCardView: some View {
     HStack(spacing: 24) {
       VStack(alignment: .leading, spacing: 6) {
-        Text(LFLocalizable.Card.Exp.title)
+        Text(L10N.Common.Card.Exp.title)
           .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.ultraSmall.value))
         Text(viewModel.expirationTime)
           .foregroundColor(Colors.contrast.swiftUIColor)
@@ -92,7 +92,7 @@ private extension NSCardView {
           .hidden(isLoading)
       }
       VStack(alignment: .leading, spacing: 6) {
-        Text(LFLocalizable.Card.Cvv.title)
+        Text(L10N.Common.Card.Cvv.title)
           .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.ultraSmall.value))
         Text(viewModel.cvvNumber)
           .foregroundColor(Colors.contrast.swiftUIColor)
@@ -105,7 +105,7 @@ private extension NSCardView {
   var cardNumberView: some View {
     VStack(alignment: .leading, spacing: 6) {
       HStack(spacing: 8) {
-        Text(LFLocalizable.Card.CardNumber.title)
+        Text(L10N.Common.Card.CardNumber.title)
           .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.ultraSmall.value))
           .hidden(viewModel.cardModel.cardType == .physical)
         GenImages.CommonImages.icCopy.swiftUIImage
@@ -128,7 +128,7 @@ private extension NSCardView {
   
   @ViewBuilder var cardCopyMessageView: some View {
     if viewModel.isShowCardCopyMessage {
-      Text(LFLocalizable.Card.CopyToClipboard.title)
+      Text(L10N.Common.Card.CopyToClipboard.title)
         .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.ultraSmall.value))
         .foregroundColor(Colors.label.swiftUIColor)
         .frame(maxWidth: .infinity)

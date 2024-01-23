@@ -96,13 +96,13 @@ private extension CashView {
   var moveMoney: some View {
     HStack(spacing: 6) {
       iconTextButton(
-        title: LFLocalizable.CashTab.Deposit.title,
+        title: L10N.Common.CashTab.Deposit.title,
         image: GenImages.CommonImages.addMoney.swiftUIImage
       ) {
         viewModel.addMoneyTapped()
       }
       iconTextButton(
-        title: LFLocalizable.CashTab.Withdraw.title,
+        title: L10N.Common.CashTab.Withdraw.title,
         image: GenImages.CommonImages.sendMoney.swiftUIImage
       ) {
         viewModel.sendMoneyTapped()
@@ -116,7 +116,7 @@ private extension CashView {
       Button {
         viewModel.addMoneyTapped()
       } label: {
-        Text(LFLocalizable.CashTab.Deposit.title)
+        Text(L10N.Common.CashTab.Deposit.title)
           .font(Fonts.bold.swiftUIFont(size: Constants.FontSize.ultraSmall.value))
           .foregroundColor(Colors.whiteText.swiftUIColor)
       }
@@ -138,7 +138,7 @@ private extension CashView {
       case .transactions:
         ShortTransactionsView(
           transactions: $viewModel.transactions,
-          title: LFLocalizable.CashTab.LastestTransaction.title,
+          title: L10N.Common.CashTab.LastestTransaction.title,
           onTapTransactionCell: viewModel.transactionItemTapped,
           seeAllAction: {
             viewModel.onClickedSeeAllButton()
@@ -150,7 +150,7 @@ private extension CashView {
   
   var addFundsView: some View {
     VStack(alignment: .leading, spacing: 10) {
-      Text(LFLocalizable.CashTab.WaysToAdd.title)
+      Text(L10N.Common.CashTab.WaysToAdd.title)
         .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.ultraSmall.value))
         .foregroundColor(Colors.label.swiftUIColor.opacity(0.75))
         .padding(.top, 16)

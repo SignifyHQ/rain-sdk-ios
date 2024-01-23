@@ -79,11 +79,11 @@ public struct SelectCauseCategoriesView: View {
   private var title: some View {
     VStack(alignment: .leading, spacing: 8) {
       
-      Text(LFLocalizable.CausesFilter.title)
+      Text(L10N.Common.CausesFilter.title)
         .font(Fonts.regular.swiftUIFont(size: 24))
         .foregroundColor(ModuleColors.label.swiftUIColor)
       
-      Text(LFLocalizable.CausesFilter.subtitle)
+      Text(L10N.Common.CausesFilter.subtitle)
         .font(Fonts.regular.swiftUIFont(size: 16))
         .foregroundColor(ModuleColors.label.swiftUIColor.opacity(0.75))
     }
@@ -111,7 +111,7 @@ public struct SelectCauseCategoriesView: View {
   }
   
   private var continueButton: some View {
-    FullSizeButton(title: LFLocalizable.CausesFilter.continue, isDisable: $viewModel.selected.isEmpty, isLoading: $viewModel.isLoading) {
+    FullSizeButton(title: L10N.Common.CausesFilter.continue, isDisable: $viewModel.selected.isEmpty, isLoading: $viewModel.isLoading) {
       viewModel.continueTapped()
     }
   }

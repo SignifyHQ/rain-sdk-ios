@@ -60,9 +60,9 @@ extension ConnectedAccountsViewModel {
   func title(for account: APILinkedSourceData) -> String {
     switch account.sourceType {
     case .externalCard:
-      return LFLocalizable.ConnectedView.Row.externalCard(account.last4)
+      return L10N.Common.ConnectedView.Row.externalCard(account.last4)
     case .externalBank:
-      return LFLocalizable.ConnectedView.Row.externalBank(account.name ?? "", account.last4)
+      return L10N.Common.ConnectedView.Row.externalBank(account.name ?? "", account.last4)
     }
   }
   

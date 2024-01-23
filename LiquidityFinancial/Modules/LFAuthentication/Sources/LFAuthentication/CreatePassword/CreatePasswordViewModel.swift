@@ -133,11 +133,11 @@ public final class CreatePasswordViewModel: ObservableObject {
   func successMessage() -> String {
     switch purpose {
     case .createExistingUser:
-      return LFLocalizable.Authentication.CreatePassword.SuccessPopup.title
+      return L10N.Common.Authentication.CreatePassword.SuccessPopup.title
     case .changePassword:
-      return LFLocalizable.Authentication.ChangePassword.SuccessPopup.title
+      return L10N.Common.Authentication.ChangePassword.SuccessPopup.title
     case .resetPassword:
-      return LFLocalizable.Authentication.ResetPassword.SuccessPopup.title
+      return L10N.Common.Authentication.ResetPassword.SuccessPopup.title
     case .createNewUser:
       return ""
     }
@@ -153,9 +153,9 @@ public enum CreatePasswordPurpose {
   var screenTitle: String {
     switch self {
     case .changePassword:
-      return LFLocalizable.Authentication.ChangePassword.title
+      return L10N.Common.Authentication.ChangePassword.title
     default:
-      return LFLocalizable.Authentication.CreatePassword.title.uppercased()
+      return L10N.Common.Authentication.CreatePassword.title.uppercased()
     }
   }
 }

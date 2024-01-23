@@ -20,8 +20,8 @@ public final class CommonTransactionDetailViewModel: ObservableObject {
   
   @LazyInjected(\.customerSupportService) var customerSupportService
   
-  let disclosureString = LFLocalizable.TransactionDetail.RewardDisclosure.description
-  let termsLink = LFLocalizable.TransactionDetail.RewardDisclosure.Links.terms
+  let disclosureString = L10N.Custom.TransactionDetail.RewardDisclosure.description
+  let termsLink = L10N.Common.TransactionDetail.RewardDisclosure.Links.terms
   
   let transaction: TransactionModel
   let isCryptoBalance: Bool

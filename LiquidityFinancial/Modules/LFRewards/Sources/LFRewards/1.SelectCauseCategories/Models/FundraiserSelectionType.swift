@@ -20,9 +20,9 @@ enum FundraiserSelectionType {
     case .notAllowed:
       return ""
     case .allowed:
-      return LFLocalizable.FundraiserSelection.allowed(param)
+      return L10N.Common.FundraiserSelection.allowed(param)
     case .allowedBeforeAccountCreation:
-      return LFLocalizable.FundraiserSelection.allowedBeforeAccountCreation(param)
+      return L10N.Common.FundraiserSelection.allowedBeforeAccountCreation(param)
     }
   }
   

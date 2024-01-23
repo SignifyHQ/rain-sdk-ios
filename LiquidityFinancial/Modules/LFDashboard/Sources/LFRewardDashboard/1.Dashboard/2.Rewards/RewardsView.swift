@@ -94,7 +94,7 @@ private extension RewardsView {
           .font(Fonts.regular.swiftUIFont(size: 16))
           .foregroundColor(Colors.label.swiftUIColor)
         if item == .cashBack {
-          Text(LFLocalizable.UserRewardType.Cashback.description)
+          Text(L10N.Common.UserRewardType.Cashback.description)
             .font(Fonts.regular.swiftUIFont(size: 12))
             .foregroundColor(Colors.label.swiftUIColor.opacity(0.75))
         } else {
@@ -137,7 +137,7 @@ private extension RewardsView {
         .resizable()
         .aspectRatio(contentMode: .fit)
         .padding(.horizontal, 40)
-      Text(LFLocalizable.RewardTabView.noRewards)
+      Text(L10N.Common.RewardTabView.noRewards)
         .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.medium.value))
         .foregroundColor(Colors.label.swiftUIColor)
       Spacer(minLength: emptySpaceHeight)
@@ -151,7 +151,7 @@ private extension RewardsView {
       } else {
         LazyVStack(alignment: .leading, spacing: 10) {
           HStack(alignment: .bottom) {
-            Text(LFLocalizable.Cashback.latest)
+            Text(L10N.Common.Cashback.latest)
             Spacer()
             seeAllTransactions
               .opacity(items.isEmpty ? 0 : 1)
@@ -173,7 +173,7 @@ private extension RewardsView {
       viewModel.seeAllTransactionsTapped()
     } label: {
       HStack(spacing: 8) {
-        Text(LFLocalizable.Cashback.seeAll)
+        Text(L10N.Common.Cashback.seeAll)
         GenImages.CommonImages.icRightArrow.swiftUIImage
       }
       .frame(height: 30, alignment: .bottom)

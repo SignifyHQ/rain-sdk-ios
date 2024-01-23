@@ -57,7 +57,7 @@ struct PatriotActView: View {
 
 extension PatriotActView {
   private var title: some View {
-    Text(LFLocalizable.PatriotAct.title)
+    Text(L10N.Common.PatriotAct.title)
       .foregroundColor(Colors.label.swiftUIColor)
       .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.main.value))
       .padding(.bottom, 12)
@@ -66,7 +66,7 @@ extension PatriotActView {
   
   private var notice: some View {
     Group {
-      Text(LFLocalizable.PatriotAct.body)
+      Text(L10N.Common.PatriotAct.body)
         .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.medium.value))
         .foregroundColor(Colors.label.swiftUIColor.opacity(0.75))
         .lineSpacing(1.33)
@@ -109,7 +109,7 @@ extension PatriotActView {
   
   private var continueButton: some View {
     FullSizeButton(
-      title: LFLocalizable.Button.Continue.title,
+      title: L10N.Common.Button.Continue.title,
       isDisable: !viewModel.isNoticeAccepted,
       type: .primary
     ) {

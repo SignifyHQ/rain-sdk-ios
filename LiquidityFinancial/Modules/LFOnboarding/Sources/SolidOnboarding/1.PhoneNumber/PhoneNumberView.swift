@@ -113,7 +113,7 @@ struct PhoneNumberView: View {
 private extension PhoneNumberView {
   @ViewBuilder var secretModeView: some View {
     if viewModel.isSecretMode {
-      Picker(LFLocalizable.PhoneNumber.Environment.title, selection: $viewModel.networkEnvironment) {
+      Picker(L10N.Common.PhoneNumber.Environment.title, selection: $viewModel.networkEnvironment) {
         Text(NetworkEnvironment.productionLive.rawValue)
           .tag(NetworkEnvironment.productionLive)
         Text(NetworkEnvironment.productionTest.rawValue)
@@ -126,7 +126,7 @@ private extension PhoneNumberView {
   @ViewBuilder
   var conditionView: some View {
     TextTappable(
-      text: LFLocalizable.Term.PrivacyPolicy.description,
+      text: L10N.Common.Term.PrivacyPolicy.description,
       textAlignment: .center,
       fontSize: Constants.FontSize.ultraSmall.value,
       links: [viewModel.terms, viewModel.esignConsent, viewModel.privacyPolicy],
@@ -152,7 +152,7 @@ private extension PhoneNumberView {
           .frame(height: 32)
           .padding(.horizontal, 8)
           .background(Colors.secondaryBackground.swiftUIColor.cornerRadius(4))
-        iPhoneNumberField(LFLocalizable.PhoneNumber.TextField.description, text: $viewModel.phoneNumber)
+        iPhoneNumberField(L10N.Common.PhoneNumber.TextField.description, text: $viewModel.phoneNumber)
           .placeholderColor(Colors.label.swiftUIColor.opacity(0.75))
           .maximumDigits(ViewConstant.maxDigits)
           .defaultRegion(Constants.Default.region.rawValue)
@@ -185,7 +185,7 @@ private extension PhoneNumberView {
   
   var phoneNumberView: some View {
     VStack(alignment: .leading, spacing: 12) {
-      Text(LFLocalizable.PhoneNumber.TextField.title.uppercased())
+      Text(L10N.Common.PhoneNumber.TextField.title.uppercased())
         .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.main.value))
         .foregroundColor(Colors.label.swiftUIColor)
         .accessibilityIdentifier(LFAccessibility.PhoneNumber.headerTitle)
@@ -199,7 +199,7 @@ private extension PhoneNumberView {
     VStack(spacing: 5) {
       secretModeView
       FullSizeButton(
-        title: LFLocalizable.Button.Continue.title,
+        title: L10N.Common.Button.Continue.title,
         isDisable: viewModel.isButtonDisabled,
         isLoading: $viewModel.isLoading
       ) {
@@ -219,10 +219,10 @@ private extension PhoneNumberView {
   @ViewBuilder
   var voipTermView: some View {
     TextTappable(
-      text: LFLocalizable.Term.TermsVoip.description,
+      text: L10N.Common.Term.TermsVoip.description,
       textAlignment: .center,
       fontSize: Constants.FontSize.ultraSmall.value,
-      links: [LFLocalizable.Term.PrivacyPolicy.attributeText],
+      links: [L10N.Common.Term.PrivacyPolicy.attributeText],
       style: .fillColor(Colors.termAndPrivacy.color)
     ) { _ in
       openSafariType = .privacy

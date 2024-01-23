@@ -157,7 +157,7 @@ final class AddressViewModel: ObservableObject {
 
   func actionContinue() {
     guard isStateValid else {
-      let message = LFLocalizable.waitlistMessage(accountDataManager.userInfomationData.firstName ?? "")
+      let message = L10N.Common.waitlistMessage(accountDataManager.userInfomationData.firstName ?? "")
       popup = .waitlist(message)
       return
     }

@@ -28,11 +28,11 @@ struct DirectDepositPDFView: View {
 private extension DirectDepositPDFView {
   var authenticationView: some View {
     VStack(alignment: .leading, spacing: 10) {
-      Text(LFLocalizable.DirectDeposit.Pdf.authorization)
+      Text(L10N.Common.DirectDeposit.Pdf.authorization)
         .font(Fonts.bold.swiftUIFont(size: 11))
         .padding(.top, 10)
       HStack {
-        Text(LFLocalizable.DirectDeposit.Pdf.firstDescription)
+        Text(L10N.Common.DirectDeposit.Pdf.firstDescription)
           .font(Fonts.regular.swiftUIFont(size: 11))
           .padding(.top, -8)
         VStack {
@@ -43,7 +43,7 @@ private extension DirectDepositPDFView {
             .frame(width: 150, alignment: .leading)
             .padding(.top, -10)
         }
-        Text(LFLocalizable.DirectDeposit.Pdf.secondDescription)
+        Text(L10N.Common.DirectDeposit.Pdf.secondDescription)
           .font(Fonts.regular.swiftUIFont(size: 11))
           .padding(.top, -8)
         VStack {
@@ -54,18 +54,18 @@ private extension DirectDepositPDFView {
             .frame(width: 140, alignment: .leading)
             .padding(.top, -10)
         }
-        Text(LFLocalizable.DirectDeposit.Pdf.thirdDescription)
+        Text(L10N.Common.DirectDeposit.Pdf.thirdDescription)
           .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.ultraSmall.value))
           .padding(.top, -8)
       }
       .padding(.top, 0)
       VStack {
-        Text(LFLocalizable.DirectDeposit.Pdf.fourthDescription)
+        Text(L10N.Common.DirectDeposit.Pdf.fourthDescription(L10N.Custom.Card.name))
           .frame(minWidth: 0, maxWidth: .infinity, alignment: .leading)
           .font(Fonts.regular.swiftUIFont(size: 11))
           .lineSpacing(3)
         
-        Text(LFLocalizable.DirectDeposit.Pdf.fifthDescription(LFUtilities.appName))
+        Text(L10N.Common.DirectDeposit.Pdf.fifthDescription(LFUtilities.appName))
           .font(Fonts.regular.swiftUIFont(size: 11))
           .lineSpacing(3)
           .frame(minWidth: 0, maxWidth: .infinity, alignment: .leading)
@@ -80,7 +80,7 @@ private extension DirectDepositPDFView {
   
   var paycheckDepositView: some View {
     HStack {
-      Text(LFLocalizable.DirectDeposit.Pdf.sixthDescription)
+      Text(L10N.Common.DirectDeposit.Pdf.sixthDescription)
         .font(Fonts.regular.swiftUIFont(size: 11))
         .foregroundColor(Colors.darkText.swiftUIColor)
       Spacer()
@@ -97,7 +97,7 @@ private extension DirectDepositPDFView {
         Spacer()
         paycheckDepositCell(
           isSelected: viewModel.selectedPaychekOption == .optionFullPayCheck,
-          text: LFLocalizable.DirectDeposit.Pdf.entirePaycheck
+          text: L10N.Common.DirectDeposit.Pdf.entirePaycheck
         )
       }
     }
@@ -151,8 +151,8 @@ private extension DirectDepositPDFView {
         .padding(.top, -10)
 
       HStack(spacing: 50) {
-        numberInformation(title: LFLocalizable.DirectDeposit.RoutingNumber.title, value: viewModel.achInformation.routingNumber)
-        numberInformation(title: LFLocalizable.DirectDeposit.AccountNumber.title, value: viewModel.achInformation.accountNumber)
+        numberInformation(title: L10N.Common.DirectDeposit.RoutingNumber.title, value: viewModel.achInformation.routingNumber)
+        numberInformation(title: L10N.Common.DirectDeposit.AccountNumber.title, value: viewModel.achInformation.accountNumber)
         Spacer()
       }
     }
@@ -181,9 +181,9 @@ private extension DirectDepositPDFView {
         .foregroundColor(Colors.darkText.swiftUIColor.opacity(0.5))
         .padding(.top, -10)
       HStack {
-        Text(LFLocalizable.DirectDeposit.Pdf.signature)
+        Text(L10N.Common.DirectDeposit.Pdf.signature)
         Spacer()
-        Text(LFLocalizable.DirectDeposit.Pdf.date)
+        Text(L10N.Common.DirectDeposit.Pdf.date)
       }
       .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.ultraSmall.value))
       .foregroundColor(Colors.separator.swiftUIColor)
@@ -195,7 +195,7 @@ private extension DirectDepositPDFView {
 
   var footerView: some View {
     HStack {
-      Text("\(LFUtilities.appName) | \(Constants.Default.companyInformation.rawValue) \(LFLocalizable.DirectDeposit.Pdf.emailText(LFUtilities.appName))")
+      Text("\(LFUtilities.appName) | \(Constants.Default.companyInformation.rawValue) \(L10N.Common.DirectDeposit.Pdf.emailText(LFUtilities.appName))")
         .frame(width: 270.0, height: 50.0, alignment: .leading)
         .font(Fonts.regular.swiftUIFont(size: 10))
         .foregroundColor(Colors.separator.swiftUIColor)
@@ -207,7 +207,7 @@ private extension DirectDepositPDFView {
 
   var payToTheOrderOfView: some View {
     HStack {
-      Text(LFLocalizable.DirectDeposit.Pdf.payTo)
+      Text(L10N.Common.DirectDeposit.Pdf.payTo)
         .font(Fonts.regular.swiftUIFont(size: 10))
         .foregroundColor(Colors.separator.swiftUIColor)
         .frame(width: 85.0, height: 45.0, alignment: .leading)
@@ -246,7 +246,7 @@ private extension DirectDepositPDFView {
           .scaledToFill()
           .frame(45.0, alignment: .leading)
         Spacer()
-        Text(LFLocalizable.DirectDeposit.Pdf.formText)
+        Text(L10N.Common.DirectDeposit.Pdf.formText)
           .foregroundColor(Colors.pdfTitleBold.swiftUIColor)
           .font(Fonts.bold.swiftUIFont(size: Constants.FontSize.medium.value))
       }
@@ -258,7 +258,7 @@ private extension DirectDepositPDFView {
       }
       Divider()
         .foregroundColor(Colors.darkText.swiftUIColor.opacity(0.5))
-      Text(LFLocalizable.DirectDeposit.Pdf.customName)
+      Text(L10N.Common.DirectDeposit.Pdf.customName)
         .foregroundColor(Colors.separator.swiftUIColor)
         .font(Fonts.bold.swiftUIFont(size: 10))
         .frame(maxWidth: .infinity, alignment: .leading)

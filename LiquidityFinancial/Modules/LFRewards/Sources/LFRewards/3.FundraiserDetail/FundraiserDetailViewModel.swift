@@ -91,7 +91,7 @@ public class FundraiserDetailViewModel: ObservableObject {
         let entity = try await rewardUseCase.selectFundraiser(body: body)
         rewardDataManager.update(selectedFundraiserID: entity.userSelectedFundraiserId ?? "")
         
-        let message = LFLocalizable.FundraiserSelection.allowedBeforeAccountCreation(fundraiserDetail?.name ?? "")
+        let message = L10N.Common.FundraiserSelection.allowedBeforeAccountCreation(fundraiserDetail?.name ?? "")
         popup = .selectSuccess(message)
       } catch {
         log.error(error.userFriendlyMessage)

@@ -67,7 +67,7 @@ private extension BiometricsBackupView {
   var buttonGroup: some View {
     VStack(spacing: 12) {
       FullSizeButton(
-        title: LFLocalizable.Authentication.BiometricsBackup.BiomericsButton.title(viewModel.biometricType.title),
+        title: L10N.Common.Authentication.BiometricsBackup.BiomericsButton.title(viewModel.biometricType.title),
         isDisable: false,
         type: .primary
       ) {
@@ -75,7 +75,7 @@ private extension BiometricsBackupView {
       }
       
       FullSizeButton(
-        title: LFLocalizable.Authentication.BiometricsBackup.PasswordButton.title,
+        title: L10N.Common.Authentication.BiometricsBackup.PasswordButton.title,
         isDisable: false,
         type: .secondary
       ) {
@@ -86,9 +86,9 @@ private extension BiometricsBackupView {
   
   var biometricLockoutPopup: some View {
     LiquidityAlert(
-      title: LFLocalizable.Authentication.BiometricsLockoutError.title(viewModel.biometricType.title),
-      message: LFLocalizable.Authentication.BiometricsLockoutError.message(viewModel.biometricType.title),
-      primary: .init(text: LFLocalizable.Button.Ok.title) {
+      title: L10N.Common.Authentication.BiometricsLockoutError.title(viewModel.biometricType.title),
+      message: L10N.Common.Authentication.BiometricsLockoutError.message(viewModel.biometricType.title),
+      primary: .init(text: L10N.Common.Button.Ok.title) {
         viewModel.hidePopup()
       }
     )

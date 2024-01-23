@@ -45,14 +45,14 @@ struct VerifyCardView: View {
 private extension VerifyCardView {
   
   var title: some View {
-    Text(LFLocalizable.VerifyCard.title.uppercased())
+    Text(L10N.Common.VerifyCard.title.uppercased())
       .foregroundColor(Colors.label.swiftUIColor)
       .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.main.value))
       .padding(.vertical, 15)
   }
   
   var detail: some View {
-    Text(LFLocalizable.VerifyCard.detail)
+    Text(L10N.Custom.VerifyCard.detail)
       .foregroundColor(Colors.label.swiftUIColor)
       .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.medium.value))
       .padding(.vertical, 15)
@@ -60,9 +60,9 @@ private extension VerifyCardView {
   
   var amount: some View {
     VStack(alignment: .leading) {
-      header(text: LFLocalizable.VerifyCard.Amount.title)
+      header(text: L10N.Common.VerifyCard.Amount.title)
       cardTextField(
-        placeholder: LFLocalizable.VerifyCard.Amount.placeholder,
+        placeholder: L10N.Common.VerifyCard.Amount.placeholder,
         value: $viewModel.amount,
         formatters: [
           DecimalFormatter()
@@ -79,7 +79,7 @@ private extension VerifyCardView {
  
   var verifyButton: some View {
     FullSizeButton(
-      title: LFLocalizable.VerifyCard.Button.verifyCard,
+      title: L10N.Common.VerifyCard.Button.verifyCard,
       isDisable: !viewModel.actionEnabled,
       isLoading: $viewModel.loading
     ) {
@@ -91,7 +91,7 @@ private extension VerifyCardView {
   
   var contactSupport: some View {
     FullSizeButton(
-      title: LFLocalizable.Button.ContactSupport.title,
+      title: L10N.Common.Button.ContactSupport.title,
       isDisable: false,
       type: .secondary
     ) {

@@ -39,11 +39,11 @@ public struct ShareItemData {
       backgroundColor = fundraiserDetail.fundraiser?.backgroundColor?.asHexColor ?? ModuleColors.separator.swiftUIColor
       imageUrl = fundraiserDetail.stickerUrl
       
-      messageGeneric = LFLocalizable.Fundraise.ShareDonation.generic(fundraiserDetail.charityName, LFUtilities.appName, fundraiserDetail.name)
+      messageGeneric = L10N.Common.Fundraise.ShareDonation.generic(fundraiserDetail.charityName, LFUtilities.appName, fundraiserDetail.name)
       if let donation {
         let amount = donation.formattedUSDAmount(absoluteValue: true)
         
-        messageDonation = LFLocalizable.Fundraise.ShareDonation.amount(amount, fundraiserDetail.charityName, LFUtilities.appName, fundraiserDetail.name)
+        messageDonation = L10N.Common.Fundraise.ShareDonation.amount(amount, fundraiserDetail.charityName, LFUtilities.appName, fundraiserDetail.name)
       } else {
         messageDonation = messageGeneric
       }
@@ -70,7 +70,7 @@ extension ShareItemData {
   public static func build(from fundraiserDetail: FundraiserDetailModel, donation: Double? = nil) -> Self {
     .init(
       card: .init(fundraiserDetail: fundraiserDetail, donation: donation),
-      message: String(format: LFLocalizable.Cause.Share.Card.fundraiser(fundraiserDetail.name)),
+      message: String(format: L10N.Custom.Cause.Share.Card.fundraiser(fundraiserDetail.name)),
       attachmentUrl: fundraiserDetail.charityUrl ?? .init(string: LFUtilities.shareAppUrl),
       showAmountToggle: donation != nil
     )
@@ -80,11 +80,11 @@ extension ShareItemData {
     .init(
       card: .init(
         title: sticker.name,
-        message: LFLocalizable.Fundraise.ShareDonation.generic(sticker.name, LFUtilities.appName, sticker.charityName ?? sticker.name),
+        message: L10N.Common.Fundraise.ShareDonation.generic(sticker.name, LFUtilities.appName, sticker.charityName ?? sticker.name),
         backgroundColor: sticker.backgroundColor?.asHexColor,
         imageUrl: sticker.url
       ),
-      message: LFLocalizable.Cause.Share.Card.fundraiser(sticker.name),
+      message: L10N.Custom.Cause.Share.Card.fundraiser(sticker.name),
       attachmentUrl: .init(string: LFUtilities.shareAppUrl),
       showAmountToggle: false
     )

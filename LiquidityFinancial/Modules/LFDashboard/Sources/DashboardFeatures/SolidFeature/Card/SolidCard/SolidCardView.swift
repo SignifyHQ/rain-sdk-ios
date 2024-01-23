@@ -79,7 +79,7 @@ private extension SolidCardView {
   
   var cardNumberView: some View {
     HStack(spacing: 8) {
-      Text(LFLocalizable.Card.CardNumber.title)
+      Text(L10N.Common.Card.CardNumber.title)
         .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.ultraSmall.value))
       GenImages.CommonImages.icCopy.swiftUIImage
         .foregroundColor(Colors.contrast.swiftUIColor)
@@ -93,9 +93,9 @@ private extension SolidCardView {
   
   var trailingCardView: some View {
     HStack(spacing: 32) {
-      Text(LFLocalizable.Card.Exp.title)
+      Text(L10N.Common.Card.Exp.title)
         .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.ultraSmall.value))
-      Text(LFLocalizable.Card.Cvv.title)
+      Text(L10N.Common.Card.Cvv.title)
         .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.ultraSmall.value))
     }
   }
@@ -103,7 +103,7 @@ private extension SolidCardView {
   @ViewBuilder
   var cardCopyMessageView: some View {
     if viewModel.isShowCardCopyMessage {
-      Text(LFLocalizable.Card.CopyToClipboard.title)
+      Text(L10N.Common.Card.CopyToClipboard.title)
         .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.ultraSmall.value))
         .foregroundColor(Colors.label.swiftUIColor)
         .frame(maxWidth: .infinity)

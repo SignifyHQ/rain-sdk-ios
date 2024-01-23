@@ -49,7 +49,7 @@ extension EditNicknameOfWalletViewModel {
           nickname: walletNickname
         )
         accountDataManager.addOrEditWalletAddress(walletAddress)
-        toastMessage = LFLocalizable.EnterNicknameOfWallet.walletWasSaved
+        toastMessage = L10N.Common.EnterNicknameOfWallet.walletWasSaved
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
           self.shouldDismiss = true
         }
@@ -60,7 +60,7 @@ extension EditNicknameOfWalletViewModel {
         }
         switch code {
         case Constants.ErrorCode.duplicatedWalletNickname.value:
-          inlineMessage = LFLocalizable.EnterNicknameOfWallet.NameExist.inlineError
+          inlineMessage = L10N.Common.EnterNicknameOfWallet.NameExist.inlineError
         default:
           toastMessage = error.userFriendlyMessage
         }

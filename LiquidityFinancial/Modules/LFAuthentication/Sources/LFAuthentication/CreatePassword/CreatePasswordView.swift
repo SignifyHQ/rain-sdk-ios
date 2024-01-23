@@ -84,7 +84,7 @@ extension CreatePasswordView {
   
   var enterPassword: some View {
     VStack(alignment: .leading) {
-      Text(LFLocalizable.Authentication.CreatePassword.subTitle1)
+      Text(L10N.Common.Authentication.CreatePassword.subTitle1)
         .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.textFieldHeader.value))
         .foregroundColor(Colors.label.swiftUIColor)
         .opacity(0.75)
@@ -106,7 +106,7 @@ extension CreatePasswordView {
           .modifier(
             PlaceholderStyle(
               showPlaceHolder: $viewModel.passwordString.wrappedValue.isEmpty,
-              placeholder: LFLocalizable.Authentication.CreatePassword.subTitle2
+              placeholder: L10N.Common.Authentication.CreatePassword.subTitle2
             )
           )
           .primaryFieldStyle()
@@ -140,7 +140,7 @@ extension CreatePasswordView {
   }
   
   var passwordMatchError: some View {
-    Text(LFLocalizable.Authentication.CreatePassword.warning)
+    Text(L10N.Common.Authentication.CreatePassword.warning)
       .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.small.value))
       .foregroundColor(Colors.error.swiftUIColor)
   }
@@ -154,7 +154,7 @@ extension CreatePasswordView {
           circleView
         }
         
-        Text(LFLocalizable.Authentication.CreatePassword.desc1)
+        Text(L10N.Common.Authentication.CreatePassword.desc1)
           .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.small.value))
           .foregroundColor(Colors.label.swiftUIColor)
           .opacity(viewModel.isLengthCorrect ? 1 : 0.75)
@@ -169,7 +169,7 @@ extension CreatePasswordView {
           circleView
         }
         
-        Text(LFLocalizable.Authentication.CreatePassword.desc2)
+        Text(L10N.Common.Authentication.CreatePassword.desc2)
           .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.small.value))
           .foregroundColor(Colors.label.swiftUIColor)
           .opacity(viewModel.containsSpecialCharacters ? 1 : 0.75)
@@ -184,7 +184,7 @@ extension CreatePasswordView {
           circleView
         }
         
-        Text(LFLocalizable.Authentication.CreatePassword.desc3)
+        Text(L10N.Common.Authentication.CreatePassword.desc3)
           .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.small.value))
           .foregroundColor(Colors.label.swiftUIColor)
           .opacity(viewModel.containsLowerAndUpperCase ? 1 : 0.75)
@@ -198,7 +198,7 @@ extension CreatePasswordView {
   var continueButtonView: some View {
     VStack(spacing: 0) {
       FullSizeButton(
-        title: LFLocalizable.Button.Continue.title,
+        title: L10N.Common.Button.Continue.title,
         isDisable: !viewModel.isContinueEnabled,
         isLoading: $viewModel.isLoading,
         type: .primary
@@ -224,7 +224,7 @@ extension CreatePasswordView {
     LiquidityAlert(
       title: viewModel.successMessage(),
       primary: .init(
-        text: LFLocalizable.Button.Ok.title,
+        text: L10N.Common.Button.Ok.title,
         action: {
           viewModel.dismissPopup()
           

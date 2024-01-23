@@ -64,11 +64,11 @@ private extension BalanceAlertView {
     } label: {
       HStack {
         VStack(alignment: .leading, spacing: 2) {
-          Text(LFLocalizable.BalanceAlert.Low.title)
+          Text(L10N.Common.BalanceAlert.Low.title)
             .font(Fonts.bold.swiftUIFont(size: Constants.FontSize.medium.value))
           
           Text(
-            LFLocalizable.BalanceAlert.Low.message(
+            L10N.Common.BalanceAlert.Low.message(
               Constants.lowBalanceThreshold.formattedUSDAmount()
             )
           )
@@ -78,7 +78,7 @@ private extension BalanceAlertView {
         
         Spacer()
         
-        Text(LFLocalizable.BalanceAlert.cta)
+        Text(L10N.Common.BalanceAlert.cta)
           .font(Fonts.bold.swiftUIFont(size: Constants.FontSize.ultraSmall.value))
           .foregroundColor(Colors.contrast.swiftUIColor)
           .padding(.horizontal, 22)
@@ -114,19 +114,19 @@ private extension BalanceAlertView {
     } label: {
       HStack {
         VStack(alignment: .leading, spacing: 2) {
-          Text(LFLocalizable.BalanceAlert.Negative.title)
+          Text(L10N.Common.BalanceAlert.Negative.title)
             .font(Fonts.bold.swiftUIFont(size: Constants.FontSize.medium.value))
           if type == .cash {
-            Text(LFLocalizable.BalanceAlert.Negative.Message.cash)
+            Text(L10N.Common.BalanceAlert.Negative.Message.cash)
               .font(Fonts.bold.swiftUIFont(size: Constants.FontSize.ultraSmall.value))
           } else {
-            Text(LFLocalizable.BalanceAlert.Negative.Message.crypto)
+            Text(L10N.Custom.BalanceAlert.Negative.Message.crypto)
               .font(Fonts.bold.swiftUIFont(size: Constants.FontSize.ultraSmall.value))
           }
         }
         .foregroundColor(Colors.label.swiftUIColor)
         Spacer()
-        Text(LFLocalizable.BalanceAlert.cta)
+        Text(L10N.Common.BalanceAlert.cta)
           .font(Fonts.bold.swiftUIFont(size: Constants.FontSize.ultraSmall.value))
           .foregroundColor(Colors.background.swiftUIColor)
           .padding(.horizontal, 22)

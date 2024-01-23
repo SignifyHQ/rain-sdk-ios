@@ -41,12 +41,12 @@ class MoreWaysToSupportViewModel: ObservableObject {
         let (data, _) = try await URLSession.shared.data(from: url)
         if let image = UIImage(data: data) {
           let imageSaver = ImageSaver { error in
-            self.toastMessage = error != nil ? LFLocalizable.MoreWaysToSupport.Photo.error : LFLocalizable.MoreWaysToSupport.Photo.success
+            self.toastMessage = error != nil ? L10N.Common.MoreWaysToSupport.Photo.error : L10N.Common.MoreWaysToSupport.Photo.success
           }
           imageSaver.writeToPhotoAlbum(image: image)
         }
       } catch {
-        toastMessage = LFLocalizable.MoreWaysToSupport.Photo.error
+        toastMessage = L10N.Common.MoreWaysToSupport.Photo.error
       }
     }
   }

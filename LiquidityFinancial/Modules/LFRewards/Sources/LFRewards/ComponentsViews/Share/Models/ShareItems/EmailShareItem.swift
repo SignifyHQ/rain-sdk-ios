@@ -10,7 +10,7 @@ struct EmailShareItem: ShareItem {
   private let mailComposeDelegate = MailDelegate()
 
   var name: String {
-    LFLocalizable.Share.email
+    L10N.Common.Share.email
   }
 
   var image: Image {

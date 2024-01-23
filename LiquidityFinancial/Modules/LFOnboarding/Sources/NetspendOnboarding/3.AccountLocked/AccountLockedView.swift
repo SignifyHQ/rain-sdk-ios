@@ -34,11 +34,11 @@ struct AccountLockedView: View {
 private extension AccountLockedView {
   var descriptionView: some View {
     VStack(spacing: 12) {
-      Text(LFLocalizable.AccountLocked.ContactSupport.title)
+      Text(L10N.Common.AccountLocked.ContactSupport.title)
         .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.large.value))
         .foregroundColor(Colors.label.swiftUIColor)
         .accessibilityIdentifier(LFAccessibility.AccountLockedScreen.contactSupportTitle)
-      Text(LFLocalizable.AccountLocked.ContactSupport.description)
+      Text(L10N.Common.AccountLocked.ContactSupport.description)
         .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.medium.value))
         .foregroundColor(Colors.label.swiftUIColor.opacity(0.75))
         .multilineTextAlignment(.center)
@@ -50,7 +50,7 @@ private extension AccountLockedView {
   var buttonGroupView: some View {
     VStack(spacing: 10) {
       FullSizeButton(
-        title: LFLocalizable.Button.ContactSupport.title,
+        title: L10N.Common.Button.ContactSupport.title,
         isDisable: false,
         textColor: Colors.contrast.swiftUIColor
       ) {
@@ -58,7 +58,7 @@ private extension AccountLockedView {
       }
       .accessibilityIdentifier(LFAccessibility.AccountLockedScreen.contactSupportButton)
       FullSizeButton(
-        title: LFLocalizable.Button.Logout.title,
+        title: L10N.Common.Button.Logout.title,
         isDisable: false,
         type: .secondary,
         textColor: Colors.error.swiftUIColor

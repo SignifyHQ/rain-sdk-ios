@@ -17,7 +17,7 @@ struct EditRewardsView: View {
       .background(Colors.background.swiftUIColor)
       .toolbar {
         ToolbarItem(placement: .principal) {
-          Text(LFLocalizable.EditRewards.navigationTitle)
+          Text(L10N.Common.EditRewards.navigationTitle)
             .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.medium.value))
             .foregroundColor(Colors.label.swiftUIColor)
         }
@@ -46,7 +46,7 @@ struct EditRewardsView: View {
 private extension EditRewardsView {
   var content: some View {
     VStack(alignment: .leading, spacing: 10) {
-      Text(LFLocalizable.EditRewards.title)
+      Text(L10N.Common.EditRewards.title)
         .font(Fonts.regular.swiftUIFont(size: 16))
         .foregroundColor(Colors.label.swiftUIColor.opacity(0.75))
         .padding(.bottom, 2)
@@ -71,14 +71,14 @@ private extension EditRewardsView {
     VStack(spacing: 16) {
       ArrowButton(
         image: GenImages.CommonImages.icRewards.swiftUIImage,
-        title: LFLocalizable.ChangeRewardView.currentRewards,
+        title: L10N.Common.ChangeRewardView.currentRewards,
         value: nil,
         fontSize: Constants.FontSize.medium.value
       ) {
         viewModel.onClickedCurrentRewardsButton()
       }
       FullSizeButton(
-        title: LFLocalizable.Button.Save.title,
+        title: L10N.Common.Button.Save.title,
         isDisable: viewModel.isDisableButton,
         isLoading: $viewModel.isLoading
       ) {
@@ -89,7 +89,7 @@ private extension EditRewardsView {
   }
   
   private var cashbackDonationDisclosure: some View {
-    Text(LFLocalizable.DonationsDisclosure.second)
+    Text(L10N.Common.DonationsDisclosure.second)
       .frame(maxWidth: .infinity)
       .font(Fonts.regular.swiftUIFont(size: 12))
       .foregroundColor(Colors.label.swiftUIColor.opacity(0.5))

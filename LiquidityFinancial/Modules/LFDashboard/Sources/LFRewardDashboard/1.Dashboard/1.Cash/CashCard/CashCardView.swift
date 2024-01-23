@@ -83,7 +83,7 @@ struct CashCardView: View {
         } else {
           HStack {
             Spacer()
-            Text(LFLocalizable.CashTab.CreateCard.buttonTitle)
+            Text(L10N.Common.CashTab.CreateCard.buttonTitle)
               .foregroundColor(Colors.darkText.swiftUIColor)
               .font(Fonts.medium.swiftUIFont(size: Constants.FontSize.small.value))
             Spacer()
@@ -100,7 +100,7 @@ struct CashCardView: View {
   private var balance: some View {
     HStack {
       VStack(alignment: .leading, spacing: 2) {
-        Text(LFLocalizable.CashCard.Balance.title)
+        Text(L10N.Common.CashCard.Balance.title)
           .foregroundColor(Colors.contrast.swiftUIColor)
           .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.ultraSmall.value))
         

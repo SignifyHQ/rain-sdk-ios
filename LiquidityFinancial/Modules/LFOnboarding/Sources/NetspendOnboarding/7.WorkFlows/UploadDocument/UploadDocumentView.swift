@@ -67,13 +67,13 @@ public struct UploadDocumentView: View {
 private extension UploadDocumentView {
   var headerTitle: some View {
     VStack(spacing: 2) {
-      Text(LFLocalizable.UploadDocument.Upload.title)
+      Text(L10N.Common.UploadDocument.Upload.title)
         .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.large.value))
         .foregroundColor(Colors.label.swiftUIColor)
         .padding(.bottom, 28)
       GenImages.CommonImages.dash.swiftUIImage
         .foregroundColor(Colors.label.swiftUIColor.opacity(0.75))
-      Text(LFLocalizable.UploadDocument.Upload.description)
+      Text(L10N.Common.UploadDocument.Upload.description)
         .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.medium.value))
         .multilineTextAlignment(.center)
         .foregroundColor(Colors.label.swiftUIColor.opacity(0.75))
@@ -87,7 +87,7 @@ private extension UploadDocumentView {
       Text("Front of the Document")
         .font(Fonts.medium.swiftUIFont(size: Constants.FontSize.ultraSmall.value))
         .foregroundColor(Colors.label.swiftUIColor)
-      Text(LFLocalizable.UploadDocument.MaxSize.description(Constants.Default.maxSize.rawValue))
+      Text(L10N.Common.UploadDocument.MaxSize.description(Constants.Default.maxSize.rawValue))
         .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.ultraSmall.value))
         .foregroundColor(Colors.label.swiftUIColor.opacity(0.75))
     }
@@ -101,7 +101,7 @@ private extension UploadDocumentView {
       Text("Back of the Document")
         .font(Fonts.medium.swiftUIFont(size: Constants.FontSize.ultraSmall.value))
         .foregroundColor(Colors.label.swiftUIColor)
-      Text(LFLocalizable.UploadDocument.MaxSize.description(Constants.Default.maxSize.rawValue))
+      Text(L10N.Common.UploadDocument.MaxSize.description(Constants.Default.maxSize.rawValue))
         .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.ultraSmall.value))
         .foregroundColor(Colors.label.swiftUIColor.opacity(0.75))
     }
@@ -158,7 +158,7 @@ private extension UploadDocumentView {
   
   var uploadButton: some View {
     FullSizeButton(
-      title: LFLocalizable.UploadDocument.Button.title,
+      title: L10N.Common.UploadDocument.Button.title,
       isDisable: viewModel.isDisableButton,
       isLoading: $viewModel.isLoading
     ) {
@@ -201,9 +201,9 @@ private extension UploadDocumentView {
   
   var documentUploadedPopup: some View {
     LiquidityAlert(
-      title: LFLocalizable.Popup.UploadDocument.title,
-      message: LFLocalizable.Popup.UploadDocument.description,
-      primary: .init(text: LFLocalizable.Button.Ok.title) {
+      title: L10N.Common.Popup.UploadDocument.title,
+      message: L10N.Common.Popup.UploadDocument.description,
+      primary: .init(text: L10N.Common.Button.Ok.title) {
         viewModel.onClickedDocumentUploadedPrimaryButton()
       }
     )
@@ -228,7 +228,7 @@ private extension UploadDocumentView {
   
   var documentRequirementView: some View {
     VStack(alignment: .leading, spacing: 16) {
-      Text(LFLocalizable.UploadDocument.Requirement.title)
+      Text(L10N.Common.UploadDocument.Requirement.title)
         .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.main.value))
         .foregroundColor(Colors.label.swiftUIColor)
       VStack(alignment: .leading, spacing: 24) {

@@ -20,7 +20,7 @@ public struct TaxesView: View {
       }
       .toolbar {
         ToolbarItem(placement: .principal) {
-          Text(LFLocalizable.Taxes.navigationTitle)
+          Text(L10N.Common.Taxes.navigationTitle)
             .font(Fonts.regular.swiftUIFont(size: 16))
             .foregroundColor(Colors.label.swiftUIColor)
         }
@@ -66,11 +66,11 @@ extension TaxesView {
   private var failure: some View {
     VStack(spacing: 32) {
       Spacer()
-      Text(LFLocalizable.Taxes.error)
+      Text(L10N.Common.Taxes.error)
         .font(Fonts.medium.swiftUIFont(size: 14))
         .foregroundColor(Colors.label.swiftUIColor)
         .multilineTextAlignment(.center)
-      FullSizeButton(title: LFLocalizable.Taxes.retry, isDisable: false) {
+      FullSizeButton(title: L10N.Common.Taxes.retry, isDisable: false) {
         viewModel.retryTapped()
       }
     }
@@ -100,11 +100,11 @@ extension TaxesView {
       GenImages.CommonImages.icSearch.swiftUIImage
         .foregroundColor(Colors.label.swiftUIColor)
         .padding(.bottom, 12)
-      Text(LFLocalizable.Taxes.Empty.title)
+      Text(L10N.Common.Taxes.Empty.title)
         .foregroundColor(Colors.label.swiftUIColor)
         .font(Fonts.regular.swiftUIFont(size: 24))
       
-      Text(LFLocalizable.Taxes.Empty.message)
+      Text(L10N.Common.Taxes.Empty.message)
         .foregroundColor(Colors.label.swiftUIColor.opacity(0.75))
         .font(Fonts.regular.swiftUIFont(size: 16))
     }
@@ -119,7 +119,7 @@ private extension APITaxFile {
   }
   
   var value: String {
-    LFLocalizable.Taxes.value(createAtDate)
+    L10N.Common.Taxes.value(createAtDate)
   }
 }
 

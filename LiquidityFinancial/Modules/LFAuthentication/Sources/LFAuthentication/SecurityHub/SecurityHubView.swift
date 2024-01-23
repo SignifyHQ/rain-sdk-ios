@@ -48,7 +48,7 @@ private extension SecurityHubView {
     ScrollView(showsIndicators: false) {
       VStack(alignment: .leading, spacing: 24) {
         customNavigationBar
-        Text(LFLocalizable.Authentication.Security.title.uppercased())
+        Text(L10N.Common.Authentication.Security.title.uppercased())
           .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.main.value))
           .foregroundColor(Colors.label.swiftUIColor)
         firstSectionView
@@ -99,13 +99,13 @@ private extension SecurityHubView {
         .padding(.bottom, 8)
       
       textInformationCell(
-        title: LFLocalizable.Authentication.SecurityEmail.title,
+        title: L10N.Common.Authentication.SecurityEmail.title,
         value: viewModel.email.value,
         trailingView: emailRowTrailingView
       )
       
       textInformationCell(
-        title: LFLocalizable.Authentication.SecurityPhone.title,
+        title: L10N.Common.Authentication.SecurityPhone.title,
         value: viewModel.phone.value,
         trailingView: textWithAction(
           title: viewModel.phone.status,
@@ -115,10 +115,10 @@ private extension SecurityHubView {
       )
       
       textInformationCell(
-        title: LFLocalizable.Authentication.SecurityPassword.title,
+        title: L10N.Common.Authentication.SecurityPassword.title,
         value: Constants.hiddenPassword,
         trailingView: textWithAction(
-          title: LFLocalizable.Authentication.SecurityChangePassword.title,
+          title: L10N.Common.Authentication.SecurityChangePassword.title,
           isEnable: true,
           action: {
             viewModel.isChangePasswordFlowPresented = true
@@ -128,8 +128,8 @@ private extension SecurityHubView {
       
       if LFFeatureFlagContainer.isMultiFactorAuthFeatureFlagEnabled {
         textInformationCell(
-          title: LFLocalizable.Authentication.SecurityMfa.title,
-          value: LFLocalizable.Authentication.SecurityAuthenticationApp.title,
+          title: L10N.Common.Authentication.SecurityMfa.title,
+          value: L10N.Common.Authentication.SecurityAuthenticationApp.title,
           trailingView: mfaToggleButton
         )
       }
@@ -148,7 +148,7 @@ private extension SecurityHubView {
   var emailRowTrailingView: some View {
     if LFFeatureFlagContainer.isMultiFactorAuthFeatureFlagEnabled {
       textWithAction(
-        title: viewModel.shouldVerifyEmail ? LFLocalizable.Authentication.SecurityVerify.title : LFLocalizable.Authentication.SecurityVerified.title,
+        title: viewModel.shouldVerifyEmail ? L10N.Common.Authentication.SecurityVerify.title : L10N.Common.Authentication.SecurityVerified.title,
         isEnable: viewModel.shouldVerifyEmail
       ) {
         viewModel.didTapEmailVerifyButton()
@@ -261,9 +261,9 @@ private extension SecurityHubView {
   
   var biometricLockoutPopup: some View {
     LiquidityAlert(
-      title: LFLocalizable.Authentication.BiometricsLockoutError.title(viewModel.biometricType.title),
-      message: LFLocalizable.Authentication.BiometricsLockoutError.message(viewModel.biometricType.title),
-      primary: .init(text: LFLocalizable.Button.Ok.title) {
+      title: L10N.Common.Authentication.BiometricsLockoutError.title(viewModel.biometricType.title),
+      message: L10N.Common.Authentication.BiometricsLockoutError.message(viewModel.biometricType.title),
+      primary: .init(text: L10N.Common.Button.Ok.title) {
         viewModel.hidePopup()
       }
     )
@@ -271,9 +271,9 @@ private extension SecurityHubView {
   
   var biometricNotEnrolledPopup: some View {
     LiquidityAlert(
-      title: LFLocalizable.Authentication.BiometricsNotEnrolled.title(viewModel.biometricType.title).uppercased(),
-      message: LFLocalizable.Authentication.BiometricsNotEnrolled.message(viewModel.biometricType.title),
-      primary: .init(text: LFLocalizable.Button.Ok.title) {
+      title: L10N.Common.Authentication.BiometricsNotEnrolled.title(viewModel.biometricType.title).uppercased(),
+      message: L10N.Common.Authentication.BiometricsNotEnrolled.message(viewModel.biometricType.title),
+      primary: .init(text: L10N.Common.Button.Ok.title) {
         viewModel.hidePopup()
       }
     )

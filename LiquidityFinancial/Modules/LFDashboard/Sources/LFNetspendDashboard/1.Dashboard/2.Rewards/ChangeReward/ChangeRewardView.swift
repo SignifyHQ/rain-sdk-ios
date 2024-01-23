@@ -30,7 +30,7 @@ struct ChangeRewardView: View {
           CurrentRewardView()
         }
       }
-      .defaultToolBar(navigationTitle: LFLocalizable.ChangeRewardView.title)
+      .defaultToolBar(navigationTitle: L10N.Common.ChangeRewardView.title)
       .background(Colors.background.swiftUIColor)
   }
 }
@@ -39,7 +39,7 @@ struct ChangeRewardView: View {
 private extension ChangeRewardView {
   var content: some View {
     VStack(alignment: .leading, spacing: 20) {
-      Text(LFLocalizable.ChangeRewardView.caption)
+      Text(L10N.Common.ChangeRewardView.caption)
         .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.medium.value))
         .foregroundColor(Colors.label.swiftUIColor.opacity(0.75))
       VStack(spacing: 10) {
@@ -58,14 +58,14 @@ private extension ChangeRewardView {
     VStack(spacing: 16) {
       ArrowButton(
         image: GenImages.CommonImages.icRewards.swiftUIImage,
-        title: LFLocalizable.ChangeRewardView.currentRewards,
+        title: L10N.Common.ChangeRewardView.currentRewards,
         value: nil,
         fontSize: Constants.FontSize.medium.value
       ) {
         viewModel.onClickedCurrentRewardsButton()
       }
       FullSizeButton(
-        title: LFLocalizable.Button.Save.title,
+        title: L10N.Common.Button.Save.title,
         isDisable: viewModel.isDisableButton,
         isLoading: $viewModel.isChangingCurrency
       ) {

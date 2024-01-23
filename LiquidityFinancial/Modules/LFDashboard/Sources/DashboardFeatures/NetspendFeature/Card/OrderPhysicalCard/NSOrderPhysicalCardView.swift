@@ -53,7 +53,7 @@ private extension NSOrderPhysicalCardView {
   var physicalCardView: some View {
     VStack(spacing: 36) {
       GenImages.Images.physicalCard.swiftUIImage
-      Text(LFLocalizable.OrderPhysicalCard.PhysicalCard.title)
+      Text(L10N.Common.OrderPhysicalCard.PhysicalCard.title)
         .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.large.value))
         .foregroundColor(Colors.label.swiftUIColor)
     }
@@ -61,7 +61,7 @@ private extension NSOrderPhysicalCardView {
   
   var cardReceivingAddress: some View {
     VStack(alignment: .leading, spacing: 20) {
-      Text(LFLocalizable.OrderPhysicalCard.Address.title)
+      Text(L10N.Common.OrderPhysicalCard.Address.title)
         .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.main.value))
         .foregroundColor(Colors.label.swiftUIColor)
       HStack(alignment: .top, spacing: 12) {
@@ -81,7 +81,7 @@ private extension NSOrderPhysicalCardView {
   
   var feesCell: some View {
     HStack {
-      Text(LFLocalizable.OrderPhysicalCard.Fees.title)
+      Text(L10N.Common.OrderPhysicalCard.Fees.title)
         .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.medium.value))
         .foregroundColor(Colors.label.swiftUIColor.opacity(0.75))
       Spacer()
@@ -94,14 +94,14 @@ private extension NSOrderPhysicalCardView {
   var buttonGroup: some View {
     VStack(spacing: 10) {
       FullSizeButton(
-        title: LFLocalizable.OrderPhysicalCard.EditAddress.buttonTitle,
+        title: L10N.Common.OrderPhysicalCard.EditAddress.buttonTitle,
         isDisable: false,
         type: .secondary
       ) {
         viewModel.onClickedEditAddressButton(shippingAddress: $viewModel.shippingAddress)
       }
       FullSizeButton(
-        title: LFLocalizable.Button.Continue.title,
+        title: L10N.Common.Button.Continue.title,
         isDisable: false,
         isLoading: $viewModel.isOrderingCard
       ) {
@@ -113,9 +113,9 @@ private extension NSOrderPhysicalCardView {
   
   var orderPhysicalCardSuccessPopup: some View {
     LiquidityAlert(
-      title: LFLocalizable.OrderPhysicalCard.OrderedSuccess.title,
-      message: LFLocalizable.OrderPhysicalCard.OrderedSuccess.message,
-      primary: .init(text: LFLocalizable.Button.Ok.title) {
+      title: L10N.Common.OrderPhysicalCard.OrderedSuccess.title,
+      message: L10N.Common.OrderPhysicalCard.OrderedSuccess.message,
+      primary: .init(text: L10N.Common.Button.Ok.title) {
         viewModel.primaryOrderSuccessAction()
         dismiss()
       }

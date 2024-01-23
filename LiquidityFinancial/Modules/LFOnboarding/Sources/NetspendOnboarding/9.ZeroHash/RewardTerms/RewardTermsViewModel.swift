@@ -9,11 +9,11 @@ final class RewardTermsViewModel: ObservableObject {
   @LazyInjected(\.customerSupportService) var customerSupportService
   
   var disclaimerText: String {
-    LFLocalizable.RewardTerms.disclosuresFirst + "\n\n" +
-    LFLocalizable.RewardTerms.disclosuresSecond + "\n\n" +
-    LFLocalizable.RewardTerms.disclosuresThird + "\n\n" +
-    LFLocalizable.RewardTerms.disclosuresFourth + "\n\n" +
-    LFLocalizable.RewardTerms.disclosuresFifth
+    L10N.Common.RewardTerms.disclosuresFirst + "\n\n" +
+    L10N.Common.RewardTerms.disclosuresSecond + "\n\n" +
+    L10N.Common.RewardTerms.disclosuresThird + "\n\n" +
+    L10N.Common.RewardTerms.disclosuresFourth + "\n\n" +
+    L10N.Common.RewardTerms.disclosuresFifth
   }
   
   func onClickedContinueButton() {

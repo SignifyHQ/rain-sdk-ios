@@ -41,13 +41,13 @@ public struct FundCardView: View {
   }
   
   private var title: some View {
-    Text(LFLocalizable.FundCard.title)
+    Text(L10N.Custom.FundCard.title)
       .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.large.value))
       .foregroundColor(Colors.label.swiftUIColor)
   }
   
   private var message: some View {
-    Text(LFLocalizable.FundCard.message)
+    Text(L10N.Custom.FundCard.message)
       .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.medium.value))
       .foregroundColor(Colors.label.swiftUIColor.opacity(0.75))
       .lineSpacing(1.25)
@@ -66,7 +66,7 @@ public struct FundCardView: View {
   
   private var skip: some View {
     FullSizeButton(
-      title: LFLocalizable.Button.Skip.title,
+      title: L10N.Common.Button.Skip.title,
       isDisable: false,
       type: .secondary
     ) {

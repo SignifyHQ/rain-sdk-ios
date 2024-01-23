@@ -10,23 +10,23 @@ struct PaycheckDepositView: View {
   
   var body: some View {
     VStack {
-      Text(LFLocalizable.DirectDeposit.Paycheck.title)
+      Text(L10N.Common.DirectDeposit.Paycheck.title)
         .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.main.value))
         .foregroundColor(Colors.label.swiftUIColor)
         .padding(.top, 16)
       Spacer()
       VStack(spacing: 12) {
-        FullSizeButton(title: LFLocalizable.DirectDeposit.Paycheck.full, isDisable: false) {
+        FullSizeButton(title: L10N.Common.DirectDeposit.Paycheck.full, isDisable: false) {
           viewModel.selectedPaychekOption = .optionFullPayCheck
           navigation = .signature
         }
         
-        FullSizeButton(title: LFLocalizable.DirectDeposit.Paycheck.enterPercentage, isDisable: false, type: .secondary) {
+        FullSizeButton(title: L10N.Common.DirectDeposit.Paycheck.enterPercentage, isDisable: false, type: .secondary) {
           viewModel.selectedPaychekOption = .optionPercentage
           navigation = .percentage
         }
         
-        FullSizeButton(title: LFLocalizable.DirectDeposit.Paycheck.enterAmount, isDisable: false, type: .secondary) {
+        FullSizeButton(title: L10N.Common.DirectDeposit.Paycheck.enterAmount, isDisable: false, type: .secondary) {
           viewModel.selectedPaychekOption = .optionAmount
           navigation = .amount
         }

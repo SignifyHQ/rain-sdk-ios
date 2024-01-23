@@ -33,8 +33,8 @@ private extension DepositTransactionDetailView {
       if transaction.status != nil {
         StatusDiagramView(
           transaction: transaction,
-          startTitle: LFLocalizable.TransferView.Status.Deposit.started,
-          completedTitle: LFLocalizable.TransferView.Status.Deposit.completed
+          startTitle: L10N.Common.TransferView.Status.Deposit.started,
+          completedTitle: L10N.Common.TransferView.Status.Deposit.completed
         )
       }
       
@@ -64,7 +64,7 @@ private extension DepositTransactionDetailView {
         .padding(.bottom, status == .pending ? 0 : 16)
       if status == .pending {
         FullSizeButton(
-          title: LFLocalizable.TransactionDetail.CancelDeposit.button,
+          title: L10N.Common.TransactionDetail.CancelDeposit.button,
           isDisable: false,
           isLoading: $viewModel.isCancelingDeposit,
           type: .secondary
@@ -89,17 +89,17 @@ private extension DepositTransactionDetailView {
   
   var fasterDepositInformation: some View {
     VStack(alignment: .center, spacing: 12) {
-      Text(LFLocalizable.TransferDebitSuggestion.title)
+      Text(L10N.Common.TransferDebitSuggestion.title)
         .font(Fonts.bold.swiftUIFont(size: Constants.FontSize.medium.value))
         .foregroundColor(Colors.background.swiftUIColor)
-      Text(LFLocalizable.TransferDebitSuggestion.Body.title)
+      Text(L10N.Common.TransferDebitSuggestion.Body.title)
         .font(Fonts.medium.swiftUIFont(size: Constants.FontSize.small.value))
         .foregroundColor(Colors.background.swiftUIColor)
         .multilineTextAlignment(.center)
         .padding(.horizontal, 24)
         .padding(.bottom, 4)
       FullSizeButton(
-        title: LFLocalizable.TransferDebitSuggestion.Connect.title,
+        title: L10N.Common.TransferDebitSuggestion.Connect.title,
         isDisable: false,
         type: .white,
         fontSize: Constants.FontSize.ultraSmall.value,

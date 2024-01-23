@@ -11,7 +11,7 @@ class ProfileScreen: BaseScreen {
   func tapLogoutButton() {
     self.logoutButton.tap()
     XCTAssert(popupTitle.waitForExistence(timeout: 3.0))
-    if popupTitle.label.elementsEqual(LFLocalizable.Profile.Logout.message.uppercased()) {
+    if popupTitle.label.elementsEqual(L10N.Common.Profile.Logout.message.uppercased()) {
       popupPrimaryButton.tap()
     }
   }

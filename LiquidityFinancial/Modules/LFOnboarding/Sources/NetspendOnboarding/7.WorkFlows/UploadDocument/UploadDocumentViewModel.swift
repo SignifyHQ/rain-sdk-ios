@@ -47,23 +47,23 @@ final class UploadDocumentViewModel: ObservableObject {
   
   let documentRequirements: [DocumentRequirement] = [
     DocumentRequirement(
-      title: LFLocalizable.UploadDocument.IdentifyRequirement.title,
+      title: L10N.Common.UploadDocument.IdentifyRequirement.title,
       details: Constants.identifyVerification
     ),
     DocumentRequirement(
-      title: LFLocalizable.UploadDocument.AddressRequirement.title,
+      title: L10N.Common.UploadDocument.AddressRequirement.title,
       details: Constants.addressVerification
     ),
     DocumentRequirement(
-      title: LFLocalizable.UploadDocument.SecondaryRequirement.title,
+      title: L10N.Common.UploadDocument.SecondaryRequirement.title,
       details: Constants.secondaryDocument
     ),
     DocumentRequirement(
-      title: LFLocalizable.UploadDocument.ProofRequirement.title,
+      title: L10N.Common.UploadDocument.ProofRequirement.title,
       details: Constants.proofOfNameChange
     ),
     DocumentRequirement(
-      title: LFLocalizable.UploadDocument.SsnRequirement.title,
+      title: L10N.Common.UploadDocument.SsnRequirement.title,
       details: Constants.ssnDocument
     )
   ]

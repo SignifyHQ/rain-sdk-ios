@@ -38,7 +38,7 @@ public struct DirectDepositView: View {
     .blur(radius: viewModel.isShowAllBenefits ? 24 : 0)
     .toolbar {
       ToolbarItem(placement: .principal) {
-        Text(LFLocalizable.DirectDeposit.Screen.title)
+        Text(L10N.Common.DirectDeposit.Screen.title)
           .foregroundColor(Colors.label.swiftUIColor)
           .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.medium.value))
       }
@@ -66,9 +66,9 @@ private extension DirectDepositView {
   var automaticSetup: some View {
     VStack(spacing: 8) {
       sectionTitle(
-        setupType: LFLocalizable.DirectDeposit.AutomationSetup.title,
-        title: LFLocalizable.DirectDeposit.FindYourEmployer.title,
-        description: LFLocalizable.DirectDeposit.AutomationSetup.description
+        setupType: L10N.Common.DirectDeposit.AutomationSetup.title,
+        title: L10N.Common.DirectDeposit.FindYourEmployer.title,
+        description: L10N.Common.DirectDeposit.AutomationSetup.description
       )
       companyIcons
         .padding(.horizontal, 60)
@@ -76,7 +76,7 @@ private extension DirectDepositView {
         .padding(.bottom, 24)
       
       FullSizeButton(
-        title: LFLocalizable.DirectDeposit.GetStarted.buttonTitle,
+        title: L10N.Common.DirectDeposit.GetStarted.buttonTitle,
         isDisable: false,
         isLoading: $viewModel.directDepositLoading
       ) {
@@ -114,15 +114,15 @@ private extension DirectDepositView {
   var manualSetup: some View {
     VStack(spacing: 8) {
       sectionTitle(
-        setupType: LFLocalizable.DirectDeposit.ManualSetup.title,
-        title: LFLocalizable.DirectDeposit.UseAccountDetails.title,
-        description: LFLocalizable.DirectDeposit.ManualSetup.description
+        setupType: L10N.Common.DirectDeposit.ManualSetup.title,
+        title: L10N.Common.DirectDeposit.UseAccountDetails.title,
+        description: L10N.Common.DirectDeposit.ManualSetup.description
       )
       VStack(alignment: .leading) {
         numberCell(
           icon: GenImages.CommonImages.icRoutingNumber.swiftUIImage,
-          iconDescription: LFLocalizable.DirectDeposit.RoutingNumber.title,
-          title: LFLocalizable.DirectDeposit.RoutingNumber.title,
+          iconDescription: L10N.Common.DirectDeposit.RoutingNumber.title,
+          title: L10N.Common.DirectDeposit.RoutingNumber.title,
           value: achInformation.routingNumber
         )
         .onTapGesture {
@@ -130,8 +130,8 @@ private extension DirectDepositView {
         }
         numberCell(
           icon: GenImages.CommonImages.icAccountNumber.swiftUIImage,
-          iconDescription: LFLocalizable.DirectDeposit.AccountNumber.title,
-          title: LFLocalizable.DirectDeposit.AccountNumber.title,
+          iconDescription: L10N.Common.DirectDeposit.AccountNumber.title,
+          title: L10N.Common.DirectDeposit.AccountNumber.title,
           value: achInformation.accountNumber
         )
         .onTapGesture {
@@ -199,17 +199,17 @@ private extension DirectDepositView {
           .frame(width: 33, height: 4)
           .cornerRadius(4)
           .padding(.top, -22)
-        Text(LFLocalizable.DirectDeposit.Benefits.bottomSheetTitle)
+        Text(L10N.Common.DirectDeposit.Benefits.bottomSheetTitle)
           .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.main.value))
           .foregroundColor(Colors.label.swiftUIColor)
           .multilineTextAlignment(.center)
         VStack(alignment: .leading, spacing: 28) {
-          benefitCell(icon: GenImages.CommonImages.icFlash.swiftUIImage, label: LFLocalizable.DirectDeposit.FirstBenefit.title)
-          benefitCell(icon: GenImages.CommonImages.icWallet.swiftUIImage, label: LFLocalizable.DirectDeposit.SecondBenefit.title)
+          benefitCell(icon: GenImages.CommonImages.icFlash.swiftUIImage, label: L10N.Common.DirectDeposit.FirstBenefit.title)
+          benefitCell(icon: GenImages.CommonImages.icWallet.swiftUIImage, label: L10N.Common.DirectDeposit.SecondBenefit.title)
         }
         .padding(.top, 24)
         .padding(.bottom, 40)
-        FullSizeButton(title: LFLocalizable.Button.Done.title, isDisable: false, type: .secondary) {
+        FullSizeButton(title: L10N.Common.Button.Done.title, isDisable: false, type: .secondary) {
           viewModel.isShowAllBenefits = false
         }
         Spacer()

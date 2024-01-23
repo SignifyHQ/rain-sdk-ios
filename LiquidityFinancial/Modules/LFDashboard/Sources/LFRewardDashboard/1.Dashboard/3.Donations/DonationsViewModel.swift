@@ -183,9 +183,9 @@ extension DonationsViewModel {
     var title: String {
       switch self {
       case .userDonations:
-        return LFLocalizable.Donations.userDonations
+        return L10N.Common.Donations.userDonations
       case .fundraiserDonations:
-        return LFLocalizable.Donations.fundraiserDonations
+        return L10N.Common.Donations.fundraiserDonations
       }
     }
   }

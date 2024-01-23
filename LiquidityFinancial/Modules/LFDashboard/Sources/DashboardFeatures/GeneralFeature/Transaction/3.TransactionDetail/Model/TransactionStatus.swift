@@ -14,11 +14,11 @@ public enum TransactionStatus: String, Codable {
   public func localizedDescription() -> String {
     switch self {
     case .completed:
-      return LFLocalizable.TransferView.RewardsStatus.completed
+      return L10N.Common.TransferView.RewardsStatus.completed
     case .pending:
-      return LFLocalizable.TransferView.RewardsStatus.pending
+      return L10N.Common.TransferView.RewardsStatus.pending
     case .failed:
-      return LFLocalizable.TransferView.RewardsStatus.failed
+      return L10N.Common.TransferView.RewardsStatus.failed
     default:
       return .empty
     }

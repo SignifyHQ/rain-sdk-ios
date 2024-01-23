@@ -49,7 +49,7 @@ struct RecoveryCodeView: View {
 private extension RecoveryCodeView {
   var content: some View {
     VStack(alignment: .leading, spacing: 24) {
-      Text(LFLocalizable.Authentication.RecoveryCode.title.uppercased())
+      Text(L10N.Common.Authentication.RecoveryCode.title.uppercased())
         .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.main.value))
         .foregroundColor(Colors.label.swiftUIColor)
       
@@ -58,7 +58,7 @@ private extension RecoveryCodeView {
       Spacer()
       
       FullSizeButton(
-        title: LFLocalizable.Button.Continue.title,
+        title: L10N.Common.Button.Continue.title,
         isDisable: viewModel.recoveryCode.trimWhitespacesAndNewlines().isEmpty,
         isLoading: $viewModel.isVerifying
       ) {
@@ -77,7 +77,7 @@ private extension RecoveryCodeView {
           .modifier(
             PlaceholderStyle(
               showPlaceHolder: viewModel.recoveryCode.isEmpty,
-              placeholder: LFLocalizable.Authentication.RecoveryCode.enterCodePlaceholder
+              placeholder: L10N.Common.Authentication.RecoveryCode.enterCodePlaceholder
             )
           )
           .autocorrectionDisabled()
@@ -99,8 +99,8 @@ private extension RecoveryCodeView {
   
   var mfaDisabledPopup: some View {
     LiquidityAlert(
-      title: LFLocalizable.Authentication.EnterTotp.mfaTurnedOff.uppercased(),
-      primary: .init(text: LFLocalizable.Button.Okay.title) {
+      title: L10N.Common.Authentication.EnterTotp.mfaTurnedOff.uppercased(),
+      primary: .init(text: L10N.Common.Button.Okay.title) {
         viewModel.dismissAction()
       }
     )

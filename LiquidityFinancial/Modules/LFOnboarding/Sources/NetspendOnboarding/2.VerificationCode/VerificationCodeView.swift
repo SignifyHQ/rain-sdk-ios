@@ -65,12 +65,12 @@ struct VerificationCodeView: View {
 private extension VerificationCodeView {
   var headerTitle: some View {
     VStack(alignment: .leading, spacing: 12) {
-      Text(LFLocalizable.VerificationCode.EnterCode.screenTitle)
+      Text(L10N.Common.VerificationCode.EnterCode.screenTitle)
         .foregroundColor(Colors.label.swiftUIColor)
         .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.main.value))
         .accessibilityIdentifier(LFAccessibility.VerificationCode.headerTitle)
       HStack(spacing: 4) {
-        Text(LFLocalizable.VerificationCode.SendTo.textFieldTitle("+1"))
+        Text(L10N.Common.VerificationCode.SendTo.textFieldTitle("+1"))
           .foregroundColor(Colors.label.swiftUIColor.opacity(0.75))
           .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.medium.value))
         iPhoneNumberField("", text: $viewModel.formatPhoneNumber)
@@ -86,7 +86,7 @@ private extension VerificationCodeView {
   var enterCodeTextField: some View {
     TextFieldWrapper(errorValue: $viewModel.errorMessage) {
       TextField(
-        LFLocalizable.VerificationCode.EnterCode.textFieldPlaceholder,
+        L10N.Common.VerificationCode.EnterCode.textFieldPlaceholder,
         text: $viewModel.otpCode
       )
       .limitInputLength(value: $viewModel.otpCode, length: 6)
@@ -120,7 +120,7 @@ private extension VerificationCodeView {
   
   var resendCodeButton: some View {
     FullSizeButton(
-      title: LFLocalizable.VerificationCode.Resend.buttonTitle,
+      title: L10N.Common.VerificationCode.Resend.buttonTitle,
       isDisable: viewModel.isResendButonTimerOn,
       isLoading: $viewModel.isShowLoading,
       type: .secondary

@@ -40,10 +40,10 @@ private extension SolidAddAppleWalletView {
   
   var information: some View {
     VStack(spacing: 16) {
-      Text(LFLocalizable.AddToWallet.ApplePay.title)
+      Text(L10N.Common.AddToWallet.ApplePay.title)
         .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.large.value))
         .foregroundColor(Colors.label.swiftUIColor)
-      Text(LFLocalizable.AddToWallet.ApplePay.description(LFUtilities.appName, LFUtilities.appName))
+      Text(L10N.Common.AddToWallet.ApplePay.description(LFUtilities.appName, LFUtilities.appName))
         .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.medium.value))
         .foregroundColor(Colors.label.swiftUIColor.opacity(0.75))
         .multilineTextAlignment(.center)
@@ -68,7 +68,7 @@ private extension SolidAddAppleWalletView {
           )
       }
       FullSizeButton(
-        title: LFLocalizable.Button.Skip.title,
+        title: L10N.Common.Button.Skip.title,
         isDisable: false,
         type: .secondary
       ) {

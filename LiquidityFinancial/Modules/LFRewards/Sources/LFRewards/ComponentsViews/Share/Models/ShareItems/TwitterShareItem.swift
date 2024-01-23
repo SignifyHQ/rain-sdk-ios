@@ -6,7 +6,7 @@ struct TwitterShareItem: ShareItem {
   let data: ShareItemData
 
   var name: String {
-    LFLocalizable.Share.twitter
+    L10N.Common.Share.twitter
   }
 
   var image: Image {

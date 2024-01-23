@@ -25,7 +25,7 @@ public struct DonationTransactionDetailView: View {
     .scrollOnOverflow()
     .defaultToolBar(
       icon: .support,
-      navigationTitle: LFLocalizable.TransactionCard.Donation.title,
+      navigationTitle: L10N.Common.TransactionCard.Donation.title,
       openSupportScreen: {
         viewModel.openSupportScreen()
       },
@@ -63,7 +63,7 @@ private extension DonationTransactionDetailView {
       Text(amountValue)
         .font(Fonts.medium.swiftUIFont(size: 40))
         .foregroundColor(Colors.green.swiftUIColor)
-      Text(LFLocalizable.TransactionDetail.TotalDonated.title(totalDonation))
+      Text(L10N.Common.TransactionDetail.TotalDonated.title(totalDonation))
         .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.ultraSmall.value))
         .foregroundColor(Colors.label.swiftUIColor.opacity(0.6))
     }

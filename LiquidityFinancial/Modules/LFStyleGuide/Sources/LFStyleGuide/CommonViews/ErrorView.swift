@@ -21,7 +21,7 @@ public struct ErrorView: View {
         .resizable()
         .scaledToFit()
         .frame(120)
-      Text(LFLocalizable.Error.WeAreSorry.title)
+      Text(L10N.Common.Error.WeAreSorry.title)
         .padding()
         .foregroundColor(Colors.label.swiftUIColor)
         .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.large.value))
@@ -33,7 +33,7 @@ public struct ErrorView: View {
         .padding(.horizontal, 30)
       Spacer()
       FullSizeButton(
-        title: LFLocalizable.Button.Logout.title,
+        title: L10N.Common.Button.Logout.title,
         isDisable: false,
         type: .secondary
       ) {
@@ -57,12 +57,12 @@ public struct ErrorView: View {
 private extension ErrorView {
   var logoutPopup: some View {
     LiquidityAlert(
-      title: LFLocalizable.Popup.Logout.title.uppercased(),
-      primary: .init(text: LFLocalizable.Popup.Logout.primaryTitle) {
+      title: L10N.Common.Popup.Logout.title.uppercased(),
+      primary: .init(text: L10N.Common.Popup.Logout.primaryTitle) {
         NotificationCenter.default.post(name: .forceLogoutInAnyWhere, object: nil)
         isShowLogoutPopup = false
       },
-      secondary: .init(text: LFLocalizable.Popup.Logout.secondaryTitle) {
+      secondary: .init(text: L10N.Common.Popup.Logout.secondaryTitle) {
         isShowLogoutPopup = false
       }
     )

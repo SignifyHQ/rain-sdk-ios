@@ -63,7 +63,7 @@ private extension IdentityVerificationCodeView {
           )
           .placeholderStyle(
             showPlaceholder: viewModel.ssn.isEmpty,
-            placeholder: LFLocalizable.EnterVerificationCode.Last4SSN.placeholder
+            placeholder: L10N.Common.EnterVerificationCode.Last4SSN.placeholder
           )
           .onAppear {
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
@@ -88,7 +88,7 @@ private extension IdentityVerificationCodeView {
           )
           .placeholderStyle(
             showPlaceholder: viewModel.passport.isEmpty,
-            placeholder: LFLocalizable.EnterVerificationCode.Last5Passport.placeholder
+            placeholder: L10N.Common.EnterVerificationCode.Last5Passport.placeholder
           )
           .onAppear {
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
@@ -103,7 +103,7 @@ private extension IdentityVerificationCodeView {
     HStack {
       GenImages.CommonImages.icLock.swiftUIImage
         .foregroundColor(Colors.label.swiftUIColor)
-      Text(LFLocalizable.EnterVerificationCode.Encrypt.cellText)
+      Text(L10N.Common.EnterVerificationCode.Encrypt.cellText)
         .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.ultraSmall.value))
         .foregroundColor(Colors.label.swiftUIColor.opacity(0.75))
     }
@@ -111,7 +111,7 @@ private extension IdentityVerificationCodeView {
   
   var continueButton: some View {
     FullSizeButton(
-      title: LFLocalizable.Button.Continue.title,
+      title: L10N.Common.Button.Continue.title,
       isDisable: viewModel.isDisableButton,
       isLoading: $viewModel.isLoading
     ) {

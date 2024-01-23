@@ -47,7 +47,7 @@ private extension NSEnterCVVCodeView {
         Text(screenTitle)
           .foregroundColor(Colors.label.swiftUIColor)
           .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.main.value))
-        Text(LFLocalizable.EnterCVVCode.Screen.description)
+        Text(L10N.Common.EnterCVVCode.Screen.description)
           .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.medium.value))
           .foregroundColor(Colors.label.swiftUIColor.opacity(0.75))
       }
@@ -63,7 +63,7 @@ private extension NSEnterCVVCodeView {
       }
       Spacer()
       FullSizeButton(
-        title: LFLocalizable.Button.Continue.title,
+        title: L10N.Common.Button.Continue.title,
         isDisable: !viewModel.isCVVCodeEntered,
         isLoading: $viewModel.isShowIndicator
       ) {

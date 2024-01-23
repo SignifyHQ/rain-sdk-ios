@@ -16,12 +16,12 @@ public struct UpdateAppView: View {
   }
   
   var title: String {
-    let str = featureConfigModel.blockingAlert?.forcedUpgrade?.title ?? LFLocalizable.UpdateAppView.title
+    let str = featureConfigModel.blockingAlert?.forcedUpgrade?.title ?? L10N.Common.UpdateAppView.title
     return str.uppercased()
   }
   
   var description: AttributedString {
-    let defaultMessage = LFLocalizable.UpdateAppView.message(LFUtilities.bundleName)
+    let defaultMessage = L10N.Common.UpdateAppView.message(LFUtilities.bundleName)
     
     let stringDynamic = featureConfigModel.blockingAlert?.forcedUpgrade?.description ?? defaultMessage
     var attribute = AttributedString(stringDynamic.htmlAttributedString() ?? NSAttributedString(string: defaultMessage))
@@ -30,7 +30,7 @@ public struct UpdateAppView: View {
   }
   
   var titleButton: String {
-    featureConfigModel.blockingAlert?.forcedUpgrade?.titleButton ?? LFLocalizable.Button.Continue.title
+    featureConfigModel.blockingAlert?.forcedUpgrade?.titleButton ?? L10N.Common.Button.Continue.title
   }
   
   public var body: some View {
@@ -81,14 +81,14 @@ public struct UpdateAppView: View {
 
       VStack(spacing: 8) {
         FullSizeButton(
-          title: LFLocalizable.EnterSsn.continue,
+          title: L10N.Common.EnterSsn.continue,
           isDisable: false,
           type: .primary
         ) {
           openAppStore()
         }
 
-        underlinedButton(title: LFLocalizable.Button.ContactSupport.title, action: {
+        underlinedButton(title: L10N.Common.Button.ContactSupport.title, action: {
           customerSupportService.openSupportScreen()
         })
       }

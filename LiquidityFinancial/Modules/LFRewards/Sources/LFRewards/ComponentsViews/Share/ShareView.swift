@@ -22,7 +22,7 @@ public struct ShareView: View {
         }
         
         ToolbarItem(placement: .principal) {
-          Text(LFLocalizable.FundraiserActions.share)
+          Text(L10N.Common.FundraiserActions.share)
             .font(Fonts.regular.swiftUIFont(size: 16))
             .foregroundColor(ModuleColors.label.swiftUIColor)
         }
@@ -61,7 +61,7 @@ public struct ShareView: View {
     Group {
       if viewModel.data.showAmountToggle {
         HStack {
-          Text(LFLocalizable.Share.includeDonations)
+          Text(L10N.Common.Share.includeDonations)
             .font(Fonts.regular.swiftUIFont(size: 16))
             .foregroundColor(ModuleColors.label.swiftUIColor)
           Spacer()
@@ -79,7 +79,7 @@ public struct ShareView: View {
   private var bottom: some View {
     VStack(spacing: 28) {
       items
-      FullSizeButton(title: LFLocalizable.Share.cancel, isDisable: false, type: .secondary) {
+      FullSizeButton(title: L10N.Common.Share.cancel, isDisable: false, type: .secondary) {
         dismiss()
       }
       .padding(.horizontal, 30)
@@ -135,7 +135,7 @@ public struct ShareView: View {
     } label: {
       VStack(spacing: 8) {
         moreImage
-        Text(LFLocalizable.Share.more)
+        Text(L10N.Common.Share.more)
           .font(Fonts.regular.swiftUIFont(size: 12))
           .foregroundColor(ModuleColors.label.swiftUIColor)
       }

@@ -31,7 +31,7 @@ struct FundraiserStatusView: View {
         .font(Fonts.medium.swiftUIFont(size: 12))
         .foregroundColor(ModuleColors.label.swiftUIColor)
       
-      Text(LFLocalizable.FundraiserStatus.raised)
+      Text(L10N.Common.FundraiserStatus.raised)
         .font(Fonts.regular.swiftUIFont(size: 12))
         .foregroundColor(ModuleColors.label.swiftUIColor)
     }
@@ -44,7 +44,7 @@ struct FundraiserStatusView: View {
   }
   
   private var donations: some View {
-    Text(LFLocalizable.FundraiserStatus.donations(Int(fundraiser.currentDonations).roundedWithAbbreviations))
+    Text(L10N.Common.FundraiserStatus.donations(Int(fundraiser.currentDonations).roundedWithAbbreviations))
       .font(Fonts.regular.swiftUIFont(size: 12))
       .foregroundColor(ModuleColors.label.swiftUIColor.opacity(0.75))
   }

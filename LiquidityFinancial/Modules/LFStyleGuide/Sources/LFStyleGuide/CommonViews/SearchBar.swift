@@ -13,7 +13,7 @@ public struct SearchBar: View {
     VStack(spacing: 15) {
       HStack(spacing: 12) {
         TextField("", text: $searchText)
-          .modifier(PlaceholderStyle(showPlaceHolder: searchText.isEmpty, placeholder: LFLocalizable.Textfield.Search.placeholder))
+          .modifier(PlaceholderStyle(showPlaceHolder: searchText.isEmpty, placeholder: L10N.Common.Textfield.Search.placeholder))
           .foregroundColor(Colors.label.swiftUIColor)
           .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.medium.value))
           .autocapitalization(.none)

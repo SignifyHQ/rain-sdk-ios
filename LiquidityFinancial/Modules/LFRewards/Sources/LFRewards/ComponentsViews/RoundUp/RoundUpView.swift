@@ -44,14 +44,14 @@ public struct RoundUpView: View {
   }
 
   private var title: some View {
-    Text(LFLocalizable.RoundUp.title)
+    Text(L10N.Common.RoundUp.title)
       .font(Fonts.regular.swiftUIFont(size: 24))
       .foregroundColor(ModuleColors.label.swiftUIColor)
   }
 
   private var message: some View {
     Text(
-      LFLocalizable.RoundUp.message(LFUtilities.appName)
+      L10N.Common.RoundUp.message(LFUtilities.appName)
     )
     .font(Fonts.regular.swiftUIFont(size: 16))
     .foregroundColor(ModuleColors.label.swiftUIColor.opacity(0.75))
@@ -79,19 +79,19 @@ public struct RoundUpView: View {
     }
 
     return Group {
-      item(image: ModuleImages.RoundUps.roundUpsCause.swiftUIImage, text: LFLocalizable.RoundUp.itemOne)
-      item(image: ModuleImages.RoundUps.roundUpsCard.swiftUIImage, text: LFLocalizable.RoundUp.itemTwo)
-      item(image: ModuleImages.RoundUps.roundUpsCycle.swiftUIImage, text: LFLocalizable.RoundUp.itemThree)
+      item(image: ModuleImages.RoundUps.roundUpsCause.swiftUIImage, text: L10N.Common.RoundUp.itemOne)
+      item(image: ModuleImages.RoundUps.roundUpsCard.swiftUIImage, text: L10N.Common.RoundUp.itemTwo(L10N.Custom.Card.name))
+      item(image: ModuleImages.RoundUps.roundUpsCycle.swiftUIImage, text: L10N.Common.RoundUp.itemThree)
     }
   }
 
   private var buttons: some View {
     VStack(spacing: 10) {
       DonationsDisclosureView()
-      FullSizeButton(title: LFLocalizable.RoundUp.continue, isDisable: false, isLoading: $viewModel.isLoading) {
+      FullSizeButton(title: L10N.Common.RoundUp.continue, isDisable: false, isLoading: $viewModel.isLoading) {
         viewModel.continueTapped()
       }
-      FullSizeButton(title: LFLocalizable.RoundUp.skip, isDisable: !viewModel.isLoading, type: .secondary) {
+      FullSizeButton(title: L10N.Common.RoundUp.skip, isDisable: !viewModel.isLoading, type: .secondary) {
         viewModel.skipTapped()
       }
     }

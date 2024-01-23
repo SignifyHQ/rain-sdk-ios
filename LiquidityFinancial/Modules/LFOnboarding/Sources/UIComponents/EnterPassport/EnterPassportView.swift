@@ -27,7 +27,7 @@ public struct EnterPassportView: View {
       ScrollView {
         VStack(alignment: .leading) {
           
-          Text(LFLocalizable.passportHeading)
+          Text(L10N.Common.passportHeading)
             .foregroundColor(Colors.label.swiftUIColor)
             .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.main.value))
             .padding(.vertical, 12)
@@ -73,11 +73,11 @@ private extension EnterPassportView {
     VStack(alignment: .leading) {
       infoBullet(
         image: GenImages.CommonImages.icLock.swiftUIImage,
-        description: LFLocalizable.passportEncryptInfo
+        description: L10N.Common.passportEncryptInfo
       )
       infoBullet(
         image: GenImages.CommonImages.icTicketCircle.swiftUIImage,
-        description: LFLocalizable.passportNoCreditCheckInfo
+        description: L10N.Common.passportNoCreditCheckInfo
       )
     }
     .padding(.top, 20)
@@ -112,7 +112,7 @@ private extension EnterPassportView {
           .modifier(
             PlaceholderStyle(
               showPlaceHolder: viewModel.passport.isEmpty,
-              placeholder: LFLocalizable.passportPlaceholder
+              placeholder: L10N.Common.passportPlaceholder
             )
           )
           .onAppear {
@@ -174,7 +174,7 @@ private extension EnterPassportView {
   
   var continueButton: some View {
     VStack {
-      FullSizeButton(title: LFLocalizable.Button.Continue.title,
+      FullSizeButton(title: L10N.Common.Button.Continue.title,
                      isDisable: !viewModel.isActionAllowed) {
         self.onEnterAddress()
       }

@@ -11,13 +11,13 @@ public enum TabOption: String, CaseIterable {
   var title: String {
     switch self {
     case .cash:
-      return LFLocalizable.Home.CashTab.title
+      return L10N.Custom.Home.CashTab.title
     case .rewards:
-      return LFLocalizable.Home.RewardsTab.title
+      return L10N.Common.Home.RewardsTab.title
     case .assets:
-      return LFLocalizable.Home.AssetsTab.title
+      return L10N.Common.Home.AssetsTab.title
     case .account:
-      return LFLocalizable.Home.AccountTab.title
+      return L10N.Common.Home.AccountTab.title
     }
   }
   

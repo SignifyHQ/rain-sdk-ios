@@ -235,9 +235,9 @@ extension SolidListCardsViewModel {
   func title(for card: CardModel) -> String {
     switch card.cardType {
     case .virtual:
-      return LFLocalizable.Card.Virtual.title + " **** " + card.last4
+      return L10N.Common.Card.Virtual.title + " **** " + card.last4
     case .physical:
-      return LFLocalizable.Card.Physical.title + " **** " + card.last4
+      return L10N.Common.Card.Physical.title + " **** " + card.last4
     }
   }
   

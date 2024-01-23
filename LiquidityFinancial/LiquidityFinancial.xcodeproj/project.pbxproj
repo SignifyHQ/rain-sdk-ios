@@ -195,6 +195,13 @@
 		74CB167D2A9853F800C137F3 /* FirebaseAnalyticsSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 74CB167C2A9853F800C137F3 /* FirebaseAnalyticsSwift */; };
 		74CB167F2A9853F800C137F3 /* FirebaseCrashlytics in Frameworks */ = {isa = PBXBuildFile; productRef = 74CB167E2A9853F800C137F3 /* FirebaseCrashlytics */; };
 		74CB16812A9853F800C137F3 /* FirebaseMessaging in Frameworks */ = {isa = PBXBuildFile; productRef = 74CB16802A9853F800C137F3 /* FirebaseMessaging */; };
+		74DDA7932B58BF6C0011211F /* LFLocalizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 74DDA7912B58BF6C0011211F /* LFLocalizable.strings */; };
+		74DDA7942B58BF6C0011211F /* LFLocalizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 74DDA7912B58BF6C0011211F /* LFLocalizable.strings */; };
+		74DDA7952B58BF6C0011211F /* LFLocalizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 74DDA7912B58BF6C0011211F /* LFLocalizable.strings */; };
+		74DDA7962B58BF6C0011211F /* LFLocalizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 74DDA7912B58BF6C0011211F /* LFLocalizable.strings */; };
+		74DDA7972B58BF6C0011211F /* LFLocalizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 74DDA7912B58BF6C0011211F /* LFLocalizable.strings */; };
+		74DDA7982B58BF6C0011211F /* LFLocalizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 74DDA7912B58BF6C0011211F /* LFLocalizable.strings */; };
+		74DDA7992B58BF6C0011211F /* LFLocalizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 74DDA7912B58BF6C0011211F /* LFLocalizable.strings */; };
 		74FAC2B02B2F044500C74E55 /* NoBankOnboarding in Frameworks */ = {isa = PBXBuildFile; productRef = 74FAC2AF2B2F044500C74E55 /* NoBankOnboarding */; };
 		A90B5CAF2B16E3A90092E430 /* LFFeatureFlags in Frameworks */ = {isa = PBXBuildFile; productRef = A90B5CAE2B16E3A90092E430 /* LFFeatureFlags */; };
 		A90B5CB12B16E3B10092E430 /* LFFeatureFlags in Frameworks */ = {isa = PBXBuildFile; productRef = A90B5CB02B16E3B10092E430 /* LFFeatureFlags */; };
@@ -2068,6 +2075,7 @@
 		A9B4BA092A7C107D000ED67A /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				74DDA7912B58BF6C0011211F /* LFLocalizable.strings */,
 				A9B4BA0A2A7C107D000ED67A /* Images.xcassets */,
 			);
 			path = Resources;
@@ -2726,6 +2734,7 @@
 				7431562A2B28365F00D141F4 /* LoadingPrimary.json in Resources */,
 				743156292B28365F00D141F4 /* TwinkleContrast.json in Resources */,
 				743156352B28366700D141F4 /* Lato-Black.ttf in Resources */,
+				74DDA7982B58BF6C0011211F /* LFLocalizable.strings in Resources */,
 				743156272B28365600D141F4 /* GoogleService-Info.plist in Resources */,
 				743156252B28364700D141F4 /* Localizable.strings in Resources */,
 				743156342B28366600D141F4 /* Orbitron-Medium.ttf in Resources */,
@@ -2745,6 +2754,7 @@
 				743DA8B62B43F213000F5AD8 /* Lato-Medium.ttf in Resources */,
 				743DA8A02B43F213000F5AD8 /* TwinkleCircle.json in Resources */,
 				743DA8AC2B43F213000F5AD8 /* Montserrat-Medium.ttf in Resources */,
+				74DDA7992B58BF6C0011211F /* LFLocalizable.strings in Resources */,
 				743DA8A22B43F213000F5AD8 /* Welcome.json in Resources */,
 				746874422B4E39E100E960F8 /* GoogleService-Info.plist in Resources */,
 				743DA8AA2B43F213000F5AD8 /* Lato-LightItalic.ttf in Resources */,
@@ -2803,6 +2813,7 @@
 				A9BC802E2A774D0500E4A1A0 /* Chivo-ExtraBold.ttf in Resources */,
 				A9BC80302A774D0500E4A1A0 /* Chivo-MediumItalic.ttf in Resources */,
 				A9BC802D2A774D0500E4A1A0 /* Chivo-Bold.ttf in Resources */,
+				74DDA7942B58BF6C0011211F /* LFLocalizable.strings in Resources */,
 				A9BC80282A774D0500E4A1A0 /* Chivo-Italic.ttf in Resources */,
 				A9BC80352A774D0500E4A1A0 /* Chivo-ExtraLightItalic.ttf in Resources */,
 				A9BC80322A774D0500E4A1A0 /* Chivo-ExtraBoldItalic.ttf in Resources */,
@@ -2816,6 +2827,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				A97BF83E2A5DBCF200B8F5CA /* Images.xcassets in Resources */,
+				74DDA7932B58BF6C0011211F /* LFLocalizable.strings in Resources */,
 				A9CFBB762A9DA7B300269DB8 /* Orbitron-Bold.ttf in Resources */,
 				A9BC80432A774D4F00E4A1A0 /* Inter-Light.ttf in Resources */,
 				A9BC80452A774D4F00E4A1A0 /* Inter-SemiBold.ttf in Resources */,
@@ -2866,6 +2878,7 @@
 				A99D2FB22A9A56F200947773 /* Montserrat-Black.ttf in Resources */,
 				A9C479102AA1DB280055F812 /* TwinkleCircle.json in Resources */,
 				A99D2FA82A9A56F200947773 /* Lato-Italic.ttf in Resources */,
+				74DDA7972B58BF6C0011211F /* LFLocalizable.strings in Resources */,
 				A99D2FB92A9A56F200947773 /* Images.xcassets in Resources */,
 				A99D2FAC2A9A56F200947773 /* Lato-Bold.ttf in Resources */,
 				A99D2FA92A9A56F200947773 /* Lato-LightItalic.ttf in Resources */,
@@ -2906,6 +2919,7 @@
 				A9B449542A8392AB0029944C /* Lato-Medium.ttf in Resources */,
 				A9B449512A8392AB0029944C /* Lato-MediumItalic.ttf in Resources */,
 				A9BBDD2F2AA341720022B2AC /* LoadingHeart.json in Resources */,
+				74DDA7962B58BF6C0011211F /* LFLocalizable.strings in Resources */,
 				A9B449502A8392AB0029944C /* Lato-Black.ttf in Resources */,
 				A9B449252A838A010029944C /* Colors.xcassets in Resources */,
 				A9BBDD312AA341720022B2AC /* TwinkleContrast.json in Resources */,
@@ -2945,6 +2959,7 @@
 				74CB167A2A9851EB00C137F3 /* GoogleService-Info.plist in Resources */,
 				A9B4BA2E2A7C1EF8000ED67A /* Orbitron-Bold.ttf in Resources */,
 				A9B4BA202A7C1EF8000ED67A /* Lato-LightItalic.ttf in Resources */,
+				74DDA7952B58BF6C0011211F /* LFLocalizable.strings in Resources */,
 				A9B4BA2C2A7C1EF8000ED67A /* Lato-Medium.ttf in Resources */,
 				A9B4BA0D2A7C107D000ED67A /* Images.xcassets in Resources */,
 				A9B4B9EF2A7C0F41000ED67A /* Colors.xcassets in Resources */,
@@ -3307,6 +3322,14 @@
 				743DA86D2B43F213000F5AD8 /* en */,
 			);
 			name = Localizable.strings;
+			sourceTree = "<group>";
+		};
+		74DDA7912B58BF6C0011211F /* LFLocalizable.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				74DDA7922B58BF6C0011211F /* en */,
+			);
+			name = LFLocalizable.strings;
 			sourceTree = "<group>";
 		};
 		A99D2F6F2A9A56F200947773 /* Localizable.strings */ = {

@@ -36,7 +36,7 @@ struct DonationTransactionReceiptView: View {
     .padding(.top, 36)
     .background(Colors.background.swiftUIColor)
     .navigationBarTitleDisplayMode(.inline)
-    .defaultToolBar(navigationTitle: LFLocalizable.DonationReceipt.Navigation.title)
+    .defaultToolBar(navigationTitle: L10N.Common.DonationReceipt.Navigation.title)
     .track(name: String(describing: type(of: self)))
     .fullScreenCover(item: $openSafariType, content: { type in
       switch type {
@@ -57,8 +57,8 @@ private extension DonationTransactionReceiptView {
   
   var footerView: some View {
     VStack(spacing: 16) {
-      Text(LFLocalizable.DonationReceipt.Fundraiser.title(receipt.fundraiserName))
-      Text(LFLocalizable.DonationReceipt.Charity.title(receipt.charityName, charityEIN))
+      Text(L10N.Common.DonationReceipt.Fundraiser.title(receipt.fundraiserName))
+      Text(L10N.Common.DonationReceipt.Charity.title(receipt.charityName, charityEIN))
       links
       Text(donationAddress)
     }
@@ -71,8 +71,8 @@ private extension DonationTransactionReceiptView {
   }
   
   private var links: some View {
-    let terms = LFLocalizable.DonationReceipt.Terms.title
-    let privacy = LFLocalizable.DonationReceipt.Privacy.title
+    let terms = L10N.Common.DonationReceipt.Terms.title
+    let privacy = L10N.Common.DonationReceipt.Privacy.title
     let text = "\(terms) | \(privacy)"
     let titleParagraphStyle = NSMutableParagraphStyle()
     titleParagraphStyle.alignment = .center

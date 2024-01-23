@@ -62,7 +62,7 @@ private extension ResetPasswordView {
       Spacer()
       
       FullSizeButton(
-        title: LFLocalizable.Button.Continue.title,
+        title: L10N.Common.Button.Continue.title,
         isDisable: !viewModel.isOTPCodeEntered,
         isLoading: $viewModel.isLoading
       ) {
@@ -75,13 +75,13 @@ private extension ResetPasswordView {
   
   var topView: some View {
     VStack(spacing: 12) {
-      Text(LFLocalizable.Authentication.ResetPassword.title)
+      Text(L10N.Common.Authentication.ResetPassword.title)
         .foregroundColor(Colors.label.swiftUIColor)
         .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.main.value))
-      Text(LFLocalizable.Authentication.ResetPassword.subtitle)
+      Text(L10N.Common.Authentication.ResetPassword.subtitle)
         .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.medium.value))
         .foregroundColor(Colors.label.swiftUIColor.opacity(0.75))
-      Text(LFLocalizable.Authentication.ResetPassword.enterCode)
+      Text(L10N.Common.Authentication.ResetPassword.enterCode)
         .foregroundColor(Colors.label.swiftUIColor)
         .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.main.value))
     }
@@ -104,7 +104,7 @@ private extension ResetPasswordView {
     Button {
       viewModel.didTapResendCodeButton()
     } label: {
-      Text(LFLocalizable.Authentication.ResetPassword.ResendCodeButton.title)
+      Text(L10N.Common.Authentication.ResetPassword.ResendCodeButton.title)
         .foregroundColor(Colors.primary.swiftUIColor)
         .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.ultraSmall.value))
     }

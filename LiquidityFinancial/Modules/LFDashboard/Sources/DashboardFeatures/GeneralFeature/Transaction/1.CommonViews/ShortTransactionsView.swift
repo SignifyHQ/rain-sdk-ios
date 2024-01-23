@@ -52,7 +52,7 @@ private extension ShortTransactionsView {
       seeAllAction()
     } label: {
       HStack(spacing: 8) {
-        Text(LFLocalizable.AssetView.seeAll)
+        Text(L10N.Common.AssetView.seeAll)
         GenImages.CommonImages.icRightArrow.swiftUIImage
       }
       .frame(height: 30, alignment: .bottom)
@@ -68,7 +68,7 @@ private extension ShortTransactionsView {
         VStack(spacing: 8) {
           GenImages.CommonImages.icSearch.swiftUIImage
             .foregroundColor(Colors.label.swiftUIColor)
-          Text(LFLocalizable.CashTab.NoTransactionYet.title)
+          Text(L10N.Common.CashTab.NoTransactionYet.title)
             .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.ultraSmall.value))
             .foregroundColor(Colors.label.swiftUIColor.opacity(0.75))
         }

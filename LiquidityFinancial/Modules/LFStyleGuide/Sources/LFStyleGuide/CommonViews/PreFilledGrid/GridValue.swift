@@ -24,7 +24,7 @@ public struct GridValue: Hashable {
         return "\(amount.formattedAmount()) \(coin)"
       }
     case .all:
-      return LFLocalizable.GridValue.all
+      return L10N.Common.GridValue.all
     }
   }
   

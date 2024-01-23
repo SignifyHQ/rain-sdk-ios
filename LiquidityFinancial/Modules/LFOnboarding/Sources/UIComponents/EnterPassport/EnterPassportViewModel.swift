@@ -58,9 +58,9 @@ extension EnterPassportViewModel {
   func getPassportTypeTitle(type: PassportType) -> String {
     switch type {
     case .international:
-      return LFLocalizable.passportTypeInternational.localizedString
+      return L10N.Common.passportTypeInternational.localizedString
     case .us:
-      return LFLocalizable.passportTypeUs.localizedString
+      return L10N.Common.passportTypeUs.localizedString
     }
   }
 

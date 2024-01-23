@@ -136,7 +136,7 @@ private extension NSListCardsView {
     case .verifyCvv:
       NSEnterCVVCodeView(
         viewModel: NSEnterCVVCodeViewModel(cardID: viewModel.currentCard.id),
-        screenTitle: LFLocalizable.EnterCVVCode.SetCardPin.title
+        screenTitle: L10N.Common.EnterCVVCode.SetCardPin.title
       ) { verifyID in
         activeContent = .changePin(verifyID)
       }
@@ -248,14 +248,14 @@ private extension NSListCardsView {
   var rows: some View {
     VStack(alignment: .leading, spacing: 18) {
       if viewModel.currentCard.cardType != .physical || viewModel.currentCard.cardStatus != .unactivated {
-        Text(LFLocalizable.ListCard.Security.title)
+        Text(L10N.Common.ListCard.Security.title)
           .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.ultraSmall.value))
           .foregroundColor(Colors.label.swiftUIColor.opacity(0.75))
       }
       VStack(spacing: 16) {
         if viewModel.currentCard.cardType != .physical {
           row(
-            title: LFLocalizable.ListCard.ShowCardNumber.title.localizedString,
+            title: L10N.Common.ListCard.ShowCardNumber.title.localizedString,
             subtitle: nil,
             isSwitchOn: $viewModel.isShowCardNumber,
             onChange: nil
@@ -265,8 +265,8 @@ private extension NSListCardsView {
         }
         if viewModel.currentCard.cardStatus != .unactivated {
           row(
-            title: LFLocalizable.ListCard.LockCard.title,
-            subtitle: LFLocalizable.ListCard.LockCard.description,
+            title: L10N.Common.ListCard.LockCard.title,
+            subtitle: L10N.Common.ListCard.LockCard.description,
             isSwitchOn: $viewModel.isCardLocked
           ) { _ in
             viewModel.lockCardToggled()
@@ -275,7 +275,7 @@ private extension NSListCardsView {
         if viewModel.isActivePhysical && viewModel.currentCard.cardType != .virtual {
           GenImages.CommonImages.dash.swiftUIImage
             .foregroundColor(Colors.label.swiftUIColor)
-          row(title: LFLocalizable.ListCard.ChangePin.title) {
+          row(title: L10N.Common.ListCard.ChangePin.title) {
             viewModel.onClickedChangePinButton(
               activeCardView: AnyView(
                 NSActivePhysicalCardView(card: viewModel.currentCard) { cardID in
@@ -288,7 +288,7 @@ private extension NSListCardsView {
         if viewModel.currentCard.cardStatus != .closed && viewModel.currentCard.cardStatus != .disabled {
           GenImages.CommonImages.dash.swiftUIImage
             .foregroundColor(Colors.label.swiftUIColor)
-          row(title: LFLocalizable.ListCard.CloseCard.title) {
+          row(title: L10N.Common.ListCard.CloseCard.title) {
             viewModel.onClickCloseCardButton()
           }
         }
@@ -347,7 +347,7 @@ private extension NSListCardsView {
       }
       if !viewModel.isHasPhysicalCard {
         FullSizeButton(
-          title: LFLocalizable.ListCard.OrderPhysicalCard.title,
+          title: L10N.Common.ListCard.OrderPhysicalCard.title,
           isDisable: false
         ) {
           viewModel.onClickedOrderPhysicalCard()
@@ -372,7 +372,7 @@ private extension NSListCardsView {
   
   var activeCardButton: some View {
     FullSizeButton(
-      title: LFLocalizable.ListCard.ActivateCard.buttonTitle(viewModel.currentCard.cardType.title),
+      title: L10N.Common.ListCard.ActivateCard.buttonTitle(viewModel.currentCard.cardType.title),
       isDisable: false
     ) {
       viewModel.presentActivateCardView(
@@ -390,16 +390,16 @@ private extension NSListCardsView {
 private extension NSListCardsView {
   var confirmationCloseCardPopup: some View {
     LiquidityAlert(
-      title: LFLocalizable.ListCard.CloseCard.title.uppercased(),
-      message: LFLocalizable.ListCard.CloseCard.message,
+      title: L10N.Common.ListCard.CloseCard.title.uppercased(),
+      message: L10N.Common.ListCard.CloseCard.message,
       primary: .init(
-        text: LFLocalizable.Button.Ok.title,
+        text: L10N.Common.Button.Ok.title,
         action: {
           viewModel.closeCard()
         }
       ),
       secondary: .init(
-        text: LFLocalizable.Button.NotNow.title,
+        text: L10N.Common.Button.NotNow.title,
         action: {
           viewModel.hidePopup()
         }
@@ -409,10 +409,10 @@ private extension NSListCardsView {
   
   var closeCardSuccessfullyPopup: some View {
     LiquidityAlert(
-      title: LFLocalizable.ListCard.CardClosed.title,
-      message: LFLocalizable.ListCard.CardClosed.message,
+      title: L10N.Common.ListCard.CardClosed.title,
+      message: L10N.Common.ListCard.CardClosed.message,
       primary: .init(
-        text: LFLocalizable.Button.Ok.title,
+        text: L10N.Common.Button.Ok.title,
         action: {
           viewModel.primaryActionCloseCardSuccessfully {
             dismiss()

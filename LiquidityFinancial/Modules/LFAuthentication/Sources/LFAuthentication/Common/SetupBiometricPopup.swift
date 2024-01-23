@@ -43,14 +43,14 @@ private extension SetupBiometricPopup {
   var contextView: some View {
     VStack(spacing: 12) {
       Text(
-        LFLocalizable.Authentication.SetupBiometrics.title(LFUtilities.cardFullName, biometricType.title)
+        L10N.Common.Authentication.SetupBiometrics.title(LFUtilities.cardFullName, biometricType.title)
           .uppercased()
       )
       .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.main.value))
       .foregroundColor(Colors.label.swiftUIColor)
       .multilineTextAlignment(.center)
       Text(
-        LFLocalizable.Authentication.SetupBiometrics.description(LFUtilities.cardFullName, biometricType.title)
+        L10N.Common.Authentication.SetupBiometrics.description(LFUtilities.cardFullName, biometricType.title)
       )
       .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.medium.value))
       .foregroundColor(Colors.label.swiftUIColor.opacity(0.75))
@@ -62,13 +62,13 @@ private extension SetupBiometricPopup {
   var buttonGroup: some View {
     HStack(spacing: 12) {
       FullSizeButton(
-        title: LFLocalizable.Button.DonotAllow.title,
+        title: L10N.Common.Button.DonotAllow.title,
         isDisable: false,
         type: .secondary,
         action: secondaryAction
       )
       FullSizeButton(
-        title: LFLocalizable.Button.Ok.title,
+        title: L10N.Common.Button.Ok.title,
         isDisable: false,
         action: primaryAction
       )

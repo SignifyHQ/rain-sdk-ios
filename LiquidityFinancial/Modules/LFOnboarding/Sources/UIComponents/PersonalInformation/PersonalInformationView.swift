@@ -39,7 +39,7 @@ public struct PersonalInformationView: View {
       }
       VStack {
         FullSizeButton(
-          title: LFLocalizable.Button.Continue.title,
+          title: L10N.Common.Button.Continue.title,
           isDisable: !viewModel.isActionAllowed
         ) {
           if (viewModel.firstName + " " + viewModel.lastName).count > 23 {
@@ -107,17 +107,17 @@ public struct PersonalInformationView: View {
   
   private var contentView: some View {
     VStack(alignment: .leading) {
-      Text(LFLocalizable.AddPersonalInformation.title.uppercased())
+      Text(L10N.Common.AddPersonalInformation.title.uppercased())
         .font(Fonts.regular.swiftUIFont(size: 18))
         .foregroundColor(Colors.label.swiftUIColor)
         .padding(.vertical, 16)
       
-      Text(LFLocalizable.firstName)
+      Text(L10N.Common.firstName)
         .font(Fonts.regular.swiftUIFont(size: 12))
         .foregroundColor(Colors.label.swiftUIColor)
         .opacity(0.75)
       textField(
-        placeholder: LFLocalizable.enterFirstName,
+        placeholder: L10N.Common.enterFirstName,
         value: $viewModel.firstName,
         restriction: .alphabets,
         keyboardType: .alphabet,
@@ -129,13 +129,13 @@ public struct PersonalInformationView: View {
         }
       }
       
-      Text(LFLocalizable.lastName)
+      Text(L10N.Common.lastName)
         .font(Fonts.regular.swiftUIFont(size: 12))
         .foregroundColor(Colors.label.swiftUIColor)
         .opacity(0.75)
         .padding(.top, 24)
       textField(
-        placeholder: LFLocalizable.enterLastName,
+        placeholder: L10N.Common.enterLastName,
         value: $viewModel.lastName,
         restriction: .alphabets,
         keyboardType: .alphabet,
@@ -143,13 +143,13 @@ public struct PersonalInformationView: View {
         nextFocus: .email
       )
       
-      Text(LFLocalizable.email)
+      Text(L10N.Common.email)
         .font(Fonts.regular.swiftUIFont(size: 12))
         .foregroundColor(Colors.label.swiftUIColor)
         .opacity(0.75)
         .padding(.top, 24)
       textField(
-        placeholder: LFLocalizable.enterEmailAddress,
+        placeholder: L10N.Common.enterEmailAddress,
         value: $viewModel.email,
         keyboardType: .emailAddress,
         focus: .email,
@@ -157,13 +157,13 @@ public struct PersonalInformationView: View {
         textInputAutocapitalization: .never
       )
       
-      Text(LFLocalizable.dob)
+      Text(L10N.Common.dob)
         .font(Fonts.regular.swiftUIFont(size: 12))
         .foregroundColor(Colors.label.swiftUIColor)
         .opacity(0.75)
         .padding(.top, 24)
       DatePickerTextField(
-        placeHolderText: LFLocalizable.dobFormat,
+        placeHolderText: L10N.Common.dobFormat,
         value: $viewModel.dateCheck,
         dateValue: $viewModel.dob
       ).focused($keyboardFocus, equals: .dob)

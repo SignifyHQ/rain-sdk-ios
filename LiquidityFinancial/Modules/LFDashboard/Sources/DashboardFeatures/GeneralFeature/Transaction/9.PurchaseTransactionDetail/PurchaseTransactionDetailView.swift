@@ -52,7 +52,7 @@ private extension PurchaseTransactionDetailView {
         
         VStack(spacing: 12) {
           HStack {
-            Text(LFLocalizable.rewards)
+            Text(L10N.Common.rewards)
               .foregroundColor(Colors.label.swiftUIColor)
               .font(Fonts.regular.swiftUIFont(size: 16))
             
@@ -95,7 +95,7 @@ private extension PurchaseTransactionDetailView {
             .padding(.bottom, 16)
           
           FullSizeButton(
-            title: LFLocalizable.Button.ContactSupport.title,
+            title: L10N.Common.Button.ContactSupport.title,
             isDisable: false,
             type: .tertiary
           ) {
@@ -104,7 +104,7 @@ private extension PurchaseTransactionDetailView {
         }
         
         FullSizeButton(
-          title: LFLocalizable.TransactionDetail.CurrentReward.title,
+          title: L10N.Common.TransactionDetail.CurrentReward.title,
           isDisable: false,
           type: .tertiary
         ) {
@@ -113,7 +113,7 @@ private extension PurchaseTransactionDetailView {
         
         if bankServiceConfig.supportDisputeTransaction {
           FullSizeButton(
-            title: LFLocalizable.Button.DisputeTransaction.title,
+            title: L10N.Common.Button.DisputeTransaction.title,
             isDisable: false,
             isLoading: $viewModel.isLoadingDisputeTransaction,
             type: .tertiary
@@ -124,7 +124,7 @@ private extension PurchaseTransactionDetailView {
         
         if let receiptType = viewModel.transaction.receipt?.type {
           FullSizeButton(
-            title: LFLocalizable.TransactionDetail.Receipt.button,
+            title: L10N.Common.TransactionDetail.Receipt.button,
             isDisable: false,
             type: .secondary
           ) {

@@ -106,12 +106,12 @@ public struct NSOnboardingContentView: View {
   
   private var timeIsUpPopup: some View {
     LiquidityAlert(
-      title: LFLocalizable.Kyc.TimeIsUp.title,
-      message: LFLocalizable.Kyc.TimeIsUp.message,
-      primary: .init(text: LFLocalizable.Button.ContactSupport.title) {
+      title: L10N.Common.Kyc.TimeIsUp.title,
+      message: L10N.Common.Kyc.TimeIsUp.message,
+      primary: .init(text: L10N.Common.Button.ContactSupport.title) {
         viewModel.contactSupport()
       },
-      secondary: .init(text: LFLocalizable.Button.NotNow.title) {
+      secondary: .init(text: L10N.Common.Button.NotNow.title) {
         viewModel.forcedLogout()
       }
     )

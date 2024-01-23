@@ -55,11 +55,11 @@ extension PrideCardCauseView {
   var failure: some View {
     VStack(spacing: 32) {
       Spacer()
-      Text(LFLocalizable.Causes.error)
+      Text(L10N.Common.Causes.error)
         .font(Fonts.medium.swiftUIFont(size: 14))
         .foregroundColor(Colors.label.swiftUIColor)
         .multilineTextAlignment(.center)
-      FullSizeButton(title: LFLocalizable.Causes.retry, isDisable: false) {
+      FullSizeButton(title: L10N.Common.Causes.retry, isDisable: false) {
         viewModel.retryTapped()
       }
     }

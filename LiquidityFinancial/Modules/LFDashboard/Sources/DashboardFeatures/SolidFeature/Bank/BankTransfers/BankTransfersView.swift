@@ -16,13 +16,13 @@ struct BankTransfersView: View {
           bankTransfersView
           GenImages.CommonImages.dash.swiftUIImage
             .foregroundColor(Colors.label.swiftUIColor)
-          Text(LFLocalizable.BankTransfers.Disclosure.message(LFUtilities.appName))
+          Text(L10N.Common.BankTransfers.Disclosure.message(LFUtilities.appName))
             .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.medium.value))
             .foregroundColor(Colors.label.swiftUIColor.opacity(0.75))
         }
       }
       .padding(.bottom, 16)
-      FullSizeButton(title: LFLocalizable.Button.Done.title, isDisable: false) {
+      FullSizeButton(title: L10N.Common.Button.Done.title, isDisable: false) {
         dismiss()
       }
       .padding(.bottom, 20)
@@ -30,7 +30,7 @@ struct BankTransfersView: View {
     .padding(.horizontal, 30)
     .background(Colors.background.swiftUIColor)
     .popup(isPresented: $showToast, style: .toast) {
-      ToastView(toastMessage: LFLocalizable.Toast.Copy.message)
+      ToastView(toastMessage: L10N.Common.Toast.Copy.message)
     }
     .track(name: String(describing: type(of: self)))
   }
@@ -40,8 +40,8 @@ struct BankTransfersView: View {
 private extension BankTransfersView {
   var bankTransfersView: some View {
     VStack(alignment: .leading, spacing: 12) {
-      sectionTitle(text: LFLocalizable.BankTransfers.Screen.title)
-      Text(LFLocalizable.BankTransfers.HowTo.title(LFUtilities.appName))
+      sectionTitle(text: L10N.Common.BankTransfers.Screen.title)
+      Text(L10N.Common.BankTransfers.HowTo.title(LFUtilities.appName))
       .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.medium.value))
       .foregroundColor(Colors.label.swiftUIColor.opacity(0.75))
       .padding(.bottom, 4)
@@ -57,10 +57,10 @@ private extension BankTransfersView {
   
   var howToTransferView: some View {
     VStack(alignment: .leading, spacing: 16) {
-      bulletItem(text: LFLocalizable.BankTransfers.BulletOne.title)
-      bulletItem(text: LFLocalizable.BankTransfers.BulletOne.title)
+      bulletItem(text: L10N.Common.BankTransfers.BulletOne.title)
+      bulletItem(text: L10N.Common.BankTransfers.BulletOne.title)
       accountInformation
-      bulletItem(text: LFLocalizable.BankTransfers.BulletThree.title)
+      bulletItem(text: L10N.Common.BankTransfers.BulletThree.title(L10N.Custom.Card.name))
     }
   }
   
@@ -80,13 +80,13 @@ private extension BankTransfersView {
     HStack {
       accountDetail(
         image: GenImages.CommonImages.icRoutingNumber.swiftUIImage,
-        title: LFLocalizable.BankTransfers.RoutingNumber.title,
+        title: L10N.Common.BankTransfers.RoutingNumber.title,
         value: achInformation.routingNumber
       )
       Spacer()
       accountDetail(
         image: GenImages.CommonImages.icAccountNumber.swiftUIImage,
-        title: LFLocalizable.BankTransfers.AccountNumber.title,
+        title: L10N.Common.BankTransfers.AccountNumber.title,
         value: achInformation.accountNumber
       )
     }

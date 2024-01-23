@@ -14,38 +14,38 @@ enum AccountLimitSection {
   var title: String {
     switch self {
     case .cardDeposit:
-      return LFLocalizable.TransferLimit.CardDeposit.title
+      return L10N.Common.TransferLimit.CardDeposit.title
     case .bankDeposit:
-      return LFLocalizable.TransferLimit.BankDeposit.title
+      return L10N.Common.TransferLimit.BankDeposit.title
     case .cardWithdraw:
-      return LFLocalizable.TransferLimit.CardWithdrawal.title
+      return L10N.Common.TransferLimit.CardWithdrawal.title
     case .bankWithdraw:
-      return LFLocalizable.TransferLimit.BankWithdrawal.title
+      return L10N.Common.TransferLimit.BankWithdrawal.title
     case .sendToCard:
-      return LFLocalizable.TransferLimit.SendToCard.title(LFUtilities.cardFullName)
+      return L10N.Common.TransferLimit.SendToCard.title(LFUtilities.cardFullName)
     case .spendingLimit:
-      return LFLocalizable.TransferLimit.SpendingLimits.title
+      return L10N.Common.TransferLimit.SpendingLimits.title
     case .financialInstitutionsLimit:
-      return LFLocalizable.TransferLimit.FinancialInstitutionsLimits.title
+      return L10N.Common.TransferLimit.FinancialInstitutionsLimits.title
     }
   }
   
   var message: String {
     switch self {
     case .cardDeposit:
-      return LFLocalizable.TransferLimit.CardDeposit.message(LFUtilities.cardFullName)
+      return L10N.Common.TransferLimit.CardDeposit.message(LFUtilities.cardFullName)
     case .bankDeposit:
-      return LFLocalizable.TransferLimit.BankDeposit.message(LFUtilities.cardFullName)
+      return L10N.Common.TransferLimit.BankDeposit.message(LFUtilities.cardFullName)
     case .cardWithdraw:
-      return LFLocalizable.TransferLimit.CardWithdrawal.message(LFUtilities.cardFullName)
+      return L10N.Common.TransferLimit.CardWithdrawal.message(LFUtilities.cardFullName)
     case .bankWithdraw:
-      return LFLocalizable.TransferLimit.BankWithdrawal.message(LFUtilities.cardFullName)
+      return L10N.Common.TransferLimit.BankWithdrawal.message(LFUtilities.cardFullName)
     case .sendToCard:
-      return LFLocalizable.TransferLimit.SendToCard.message
+      return L10N.Common.TransferLimit.SendToCard.message
     case .spendingLimit:
-      return LFLocalizable.TransferLimit.SpendingLimits.message
+      return L10N.Common.TransferLimit.SpendingLimits.message
     case .financialInstitutionsLimit:
-      return LFLocalizable.TransferLimit.FinancialInstitutionsLimits.message
+      return L10N.Common.TransferLimit.FinancialInstitutionsLimits.message
     }
   }
 }

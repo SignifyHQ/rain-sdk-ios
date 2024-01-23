@@ -22,8 +22,8 @@ class DonationTransactionDetailViewModel: ObservableObject {
     LFUtilities.charityEnabled
   }
   
-  let disclosureString = LFLocalizable.TransactionDetail.RewardDisclosure.description
-  let termsLink = LFLocalizable.TransactionDetail.RewardDisclosure.Links.terms
+  let disclosureString = L10N.Custom.TransactionDetail.RewardDisclosure.description
+  let termsLink = L10N.Common.TransactionDetail.RewardDisclosure.Links.terms
   
   @Published var navigation: Navigation?
   

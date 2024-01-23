@@ -31,8 +31,8 @@ final class CurrentRewardViewModel: ObservableObject {
   @Published var isLoading: Bool = false
   @Published var status: DataStatus<UserRewardsModel> = .idle
   
-  let disclosureString = LFLocalizable.TransactionDetail.RewardDisclosure.description
-  let termsLink = LFLocalizable.TransactionDetail.RewardDisclosure.Links.terms
+  let disclosureString = L10N.Custom.TransactionDetail.RewardDisclosure.description
+  let termsLink = L10N.Common.TransactionDetail.RewardDisclosure.Links.terms
   
   lazy var accountUseCase: AccountUseCase = {
     AccountUseCase(repository: accountRepository)
@@ -86,7 +86,7 @@ final class CurrentRewardViewModel: ObservableObject {
 extension APIUserRewards {
   var title: String {
     switch LFUtilities.target {
-    case .CauseCard, .PrideCard: return LFLocalizable.Account.Reward.Item.title
+    case .CauseCard, .PrideCard: return L10N.Common.Account.Reward.Item.title
     default: return name ?? ""
     }
   }

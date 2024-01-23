@@ -40,7 +40,7 @@ public struct AddBankWithDebitView: View {
       Spacer()
       
       FullSizeButton(
-        title: LFLocalizable.Button.Continue.title,
+        title: L10N.Common.Button.Continue.title,
         isDisable: !viewModel.actionEnabled,
         isLoading: $viewModel.loading
       ) {
@@ -70,7 +70,7 @@ public struct AddBankWithDebitView: View {
 private extension AddBankWithDebitView {
   
   var title: some View {
-    Text(LFLocalizable.AddBankWithDebit.title)
+    Text(L10N.Common.AddBankWithDebit.title)
       .foregroundColor(Colors.label.swiftUIColor)
       .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.main.value))
       .padding(.vertical, 15)
@@ -78,9 +78,9 @@ private extension AddBankWithDebitView {
   
   var cardNumber: some View {
     VStack(alignment: .leading) {
-      header(text: LFLocalizable.AddBankWithDebit.cardNumber)
+      header(text: L10N.Common.AddBankWithDebit.cardNumber)
       cardTextField(
-        placeholder: LFLocalizable.AddBankWithDebit.cardNumberPlaceholder,
+        placeholder: L10N.Common.AddBankWithDebit.cardNumberPlaceholder,
         value: $viewModel.cardNumber,
         formatters: [
           TextLimitFormatter(limit: Constants.MaxCharacterLimit.cardLength.value),
@@ -100,9 +100,9 @@ private extension AddBankWithDebitView {
   
   var expiresView: some View {
     VStack(alignment: .leading) {
-      header(text: LFLocalizable.AddBankWithDebit.expires)
+      header(text: L10N.Common.AddBankWithDebit.expires)
       textField(
-        placeholder: LFLocalizable.AddBankWithDebit.expiresPlaceholder,
+        placeholder: L10N.Common.AddBankWithDebit.expiresPlaceholder,
         value: $viewModel.cardExpiryDate,
         errorValue: $viewModel.dateError,
         formatters: [
@@ -118,9 +118,9 @@ private extension AddBankWithDebitView {
   
   var cvvView: some View {
     VStack(alignment: .leading) {
-      header(text: LFLocalizable.AddBankWithDebit.cvv)
+      header(text: L10N.Common.AddBankWithDebit.cvv)
       textField(
-        placeholder: LFLocalizable.AddBankWithDebit.cvvPlaceholder,
+        placeholder: L10N.Common.AddBankWithDebit.cvvPlaceholder,
         value: $viewModel.cardCVV,
         formatters: [
           TextLimitFormatter(limit: 4),

@@ -143,7 +143,7 @@ extension EnterCryptoAddressViewModel {
         )
         if response.success {
           accountDataManager.removeWalletAddress(id: wallet.id)
-          toastMessage = LFLocalizable.EnterCryptoAddressView.DeleteSuccess.message
+          toastMessage = L10N.Common.EnterCryptoAddressView.DeleteSuccess.message
           popup = nil
         }
       } catch {

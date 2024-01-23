@@ -103,7 +103,7 @@ private extension DonationsView {
         VStack(spacing: 0) {
           Spacer()
             .frame(height: 105)
-          FullSizeButton(title: LFLocalizable.Donations.selectFundraiser, isDisable: false) {
+          FullSizeButton(title: L10N.Common.Donations.selectFundraiser, isDisable: false) {
             viewModel.selectCharityTapped()
           }
           .padding(.horizontal, 16)
@@ -193,7 +193,7 @@ private extension DonationsView {
         .resizable()
         .aspectRatio(contentMode: .fit)
         .padding(.horizontal, 40)
-      Text(LFLocalizable.RewardTabView.noRewards)
+      Text(L10N.Common.RewardTabView.noRewards)
         .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.medium.value))
         .foregroundColor(Colors.label.swiftUIColor)
       Spacer(minLength: emptySpaceHeight)

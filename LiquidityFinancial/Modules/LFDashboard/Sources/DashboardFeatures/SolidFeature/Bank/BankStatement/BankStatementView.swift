@@ -18,7 +18,7 @@ public struct BankStatementView: View {
     .padding(.top, 16)
     .toolbar {
       ToolbarItem(placement: .principal) {
-        Text(LFLocalizable.BankStatement.title)
+        Text(L10N.Common.BankStatement.title)
           .foregroundColor(Colors.label.swiftUIColor)
           .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.medium.value))
       }
@@ -72,10 +72,10 @@ private extension BankStatementView {
       GenImages.CommonImages.icSearch.swiftUIImage
         .foregroundColor(Colors.label.swiftUIColor)
         .padding(.bottom, 12)
-      Text(LFLocalizable.BankStatement.emptyTitle)
+      Text(L10N.Common.BankStatement.emptyTitle)
         .foregroundColor(Colors.label.swiftUIColor)
         .font(Fonts.regular.swiftUIFont(size: 24))
-      Text(LFLocalizable.BankStatement.emptyInfo)
+      Text(L10N.Common.BankStatement.emptyInfo)
         .foregroundColor(Colors.label.swiftUIColor)
         .opacity(0.75)
         .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.medium.value))
@@ -90,7 +90,7 @@ private extension BankStatementView {
         ForEach(statements, id: \.id) { item in
           BankStatementCell(
             title: item.name,
-            detailTitle: LFLocalizable.BankStatement.created(item.desc),
+            detailTitle: L10N.Common.BankStatement.created(item.desc),
             backGroundColor: Colors.secondaryBackground.swiftUIColor,
             titleColor: Colors.label.swiftUIColor
           ) {
@@ -106,11 +106,11 @@ private extension BankStatementView {
   var failure: some View {
     VStack(spacing: 32) {
       Spacer()
-      Text(LFLocalizable.BankStatement.error)
+      Text(L10N.Common.BankStatement.error)
         .font(Fonts.medium.swiftUIFont(size: 14))
         .foregroundColor(Colors.label.swiftUIColor)
         .multilineTextAlignment(.center)
-      FullSizeButton(title: LFLocalizable.Button.Retry.title, isDisable: false) {
+      FullSizeButton(title: L10N.Common.Button.Retry.title, isDisable: false) {
         viewModel.getBankStatements()
       }
     }

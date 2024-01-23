@@ -171,7 +171,7 @@ private extension MoveCryptoInputView {
   
   var continueButton: some View {
     FullSizeButton(
-      title: LFLocalizable.Button.Continue.title,
+      title: L10N.Common.Button.Continue.title,
       isDisable: !viewModel.isActionAllowed,
       isLoading: $viewModel.isPerformingAction
     ) {
@@ -181,7 +181,7 @@ private extension MoveCryptoInputView {
   
   @ViewBuilder var cryptoDisclosure: some View {
     if viewModel.showCryptoDisclosure {
-      Text(LFLocalizable.Zerohash.Disclosure.description)
+      Text(L10N.Common.Zerohash.Disclosure.description)
         .font(Fonts.regular.swiftUIFont(size: 10))
         .foregroundColor(Colors.label.swiftUIColor.opacity(0.5))
         .fixedSize(horizontal: false, vertical: true)
@@ -190,7 +190,7 @@ private extension MoveCryptoInputView {
   
   @ViewBuilder var estimatedFeeDescription: some View {
     if viewModel.showEstimatedFeeDescription {
-      Text(LFLocalizable.MoveCryptoInput.Send.estimatedFee)
+      Text(L10N.Common.MoveCryptoInput.Send.estimatedFee)
         .multilineTextAlignment(.center)
         .font(Fonts.regular.swiftUIFont(size: 10))
         .foregroundColor(Colors.label.swiftUIColor.opacity(0.5))

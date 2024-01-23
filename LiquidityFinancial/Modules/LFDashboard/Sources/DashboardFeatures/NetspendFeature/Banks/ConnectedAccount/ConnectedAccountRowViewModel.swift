@@ -16,9 +16,9 @@ class ConnectedAccountRowViewModel: ObservableObject {
   var title: String {
     switch sourceData.sourceType {
     case .externalCard:
-      return LFLocalizable.ConnectedView.Row.externalCard(sourceData.last4)
+      return L10N.Common.ConnectedView.Row.externalCard(sourceData.last4)
     case .externalBank:
-      return LFLocalizable.ConnectedView.Row.externalBank(sourceData.name ?? "", sourceData.last4)
+      return L10N.Common.ConnectedView.Row.externalBank(sourceData.name ?? "", sourceData.last4)
     }
   }
   

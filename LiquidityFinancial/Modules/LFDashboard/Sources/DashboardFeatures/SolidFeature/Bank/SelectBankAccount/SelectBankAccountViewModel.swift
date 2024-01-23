@@ -125,7 +125,7 @@ class SelectBankAccountViewModel: ObservableObject {
   
   func callTransferAPI() {
     guard let contact = selectedBank, let amount = self.amount.asDouble else {
-      toastMessage = LFLocalizable.MoveMoney.Error.noContact
+      toastMessage = L10N.Common.MoveMoney.Error.noContact
       return
     }
     Task { @MainActor in
@@ -239,9 +239,9 @@ extension SelectBankAccountViewModel {
   func title(for contact: LinkedSourceContact) -> String {
     switch contact.sourceType {
     case .card:
-      return LFLocalizable.ConnectedView.Row.externalCard(contact.last4)
+      return L10N.Common.ConnectedView.Row.externalCard(contact.last4)
     case .bank:
-      return LFLocalizable.ConnectedView.Row.externalBank(contact.name ?? "", contact.last4)
+      return L10N.Common.ConnectedView.Row.externalBank(contact.name ?? "", contact.last4)
     }
   }
   

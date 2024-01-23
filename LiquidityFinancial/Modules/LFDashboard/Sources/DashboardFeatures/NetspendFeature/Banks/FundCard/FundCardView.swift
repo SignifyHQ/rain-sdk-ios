@@ -37,10 +37,10 @@ private extension FundCardView {
       GenImages.Images.fundCard.swiftUIImage
       
       VStack(spacing: 16) {
-        Text(LFLocalizable.FundCard.title)
+        Text(L10N.Custom.FundCard.title)
           .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.large.value))
           .foregroundColor(Colors.label.swiftUIColor)
-        Text(LFLocalizable.FundCard.message)
+        Text(L10N.Custom.FundCard.message)
           .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.medium.value))
           .foregroundColor(Colors.label.swiftUIColor.opacity(0.75))
           .lineSpacing(1.25)
@@ -67,7 +67,7 @@ private extension FundCardView {
   
   var skipButton: some View {
     FullSizeButton(
-      title: LFLocalizable.Button.Skip.title,
+      title: L10N.Common.Button.Skip.title,
       isDisable: false,
       type: .secondary
     ) {

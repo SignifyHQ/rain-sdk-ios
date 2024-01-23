@@ -231,13 +231,13 @@ private extension SolidListCardsView {
   var rows: some View {
     VStack(alignment: .leading, spacing: 18) {
       if viewModel.currentCard.cardStatus != .unactivated {
-        Text(LFLocalizable.ListCard.Security.title)
+        Text(L10N.Common.ListCard.Security.title)
           .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.ultraSmall.value))
           .foregroundColor(Colors.label.swiftUIColor.opacity(0.75))
       }
       VStack(spacing: 16) {
         row(
-          title: LFLocalizable.ListCard.ShowCardNumber.title.localizedString,
+          title: L10N.Common.ListCard.ShowCardNumber.title.localizedString,
           subtitle: nil,
           isSwitchOn: $viewModel.isShowCardNumber,
           onChange: nil
@@ -247,8 +247,8 @@ private extension SolidListCardsView {
           GenImages.CommonImages.dash.swiftUIImage
             .foregroundColor(Colors.label.swiftUIColor)
           row(
-            title: LFLocalizable.ListCard.LockCard.title,
-            subtitle: LFLocalizable.ListCard.LockCard.description,
+            title: L10N.Common.ListCard.LockCard.title,
+            subtitle: L10N.Common.ListCard.LockCard.description,
             isSwitchOn: $viewModel.isCardLocked
           ) { _ in
             viewModel.lockCardToggled()
@@ -258,26 +258,26 @@ private extension SolidListCardsView {
         if viewModel.isActivePhysical {
           GenImages.CommonImages.dash.swiftUIImage
             .foregroundColor(Colors.label.swiftUIColor)
-          row(title: LFLocalizable.ListCard.ChangePin.title) {
+          row(title: L10N.Common.ListCard.ChangePin.title) {
             viewModel.onClickedChangePinButton()
           }
         }
         
         GenImages.CommonImages.dash.swiftUIImage
           .foregroundColor(Colors.label.swiftUIColor)
-        row(title: LFLocalizable.ListCard.CloseCard.title) {
+        row(title: L10N.Common.ListCard.CloseCard.title) {
           viewModel.onClickCloseCardButton()
         }
         
         if let cardLimitModel = viewModel.cardLimitUIModel {
           GenImages.CommonImages.dash.swiftUIImage
-          rowLabel(title: LFLocalizable.CardsDetail.monthlyLimits, subtitle: cardLimitModel.spendLimits)
+          rowLabel(title: L10N.Common.CardsDetail.monthlyLimits, subtitle: cardLimitModel.spendLimits)
           
           GenImages.CommonImages.dash.swiftUIImage
-          rowLabel(title: LFLocalizable.CardsDetail.availableLimits, subtitle: cardLimitModel.availableLimits)
+          rowLabel(title: L10N.Common.CardsDetail.availableLimits, subtitle: cardLimitModel.availableLimits)
           
           GenImages.CommonImages.dash.swiftUIImage
-          rowLabel(title: LFLocalizable.CardsDetail.perTransactionLimits, subtitle: cardLimitModel.transactionLimits)
+          rowLabel(title: L10N.Common.CardsDetail.perTransactionLimits, subtitle: cardLimitModel.transactionLimits)
         }
       }
     }
@@ -341,11 +341,11 @@ private extension SolidListCardsView {
       GenImages.CommonImages.icRoundUpDonationLeft.swiftUIImage
         .foregroundColor(Colors.label.swiftUIColor)
       VStack(alignment: .leading, spacing: 2) {
-        Text(LFLocalizable.CardsDetail.donations)
+        Text(L10N.Common.CardsDetail.donations)
           .font(Fonts.regular.swiftUIFont(size: 12))
           .foregroundColor(Colors.label.swiftUIColor.opacity(0.75))
         
-        Text(LFLocalizable.CardsDetail.Roundup.desc)
+        Text(L10N.Common.CardsDetail.Roundup.desc)
           .font(Fonts.regular.swiftUIFont(size: 12))
           .foregroundColor(Colors.label.swiftUIColor)
       }
@@ -412,7 +412,7 @@ private extension SolidListCardsView {
   
   var activeCardButton: some View {
     FullSizeButton(
-      title: LFLocalizable.ListCard.ActivateCard.buttonTitle(viewModel.currentCard.cardType.title),
+      title: L10N.Common.ListCard.ActivateCard.buttonTitle(viewModel.currentCard.cardType.title),
       isDisable: false,
       isLoading: $viewModel.isActivatingCard
     ) {
@@ -429,16 +429,16 @@ private extension SolidListCardsView {
 private extension SolidListCardsView {
   var confirmationCloseCardPopup: some View {
     LiquidityAlert(
-      title: LFLocalizable.ListCard.CloseCard.title.uppercased(),
-      message: LFLocalizable.ListCard.CloseCard.message,
+      title: L10N.Common.ListCard.CloseCard.title.uppercased(),
+      message: L10N.Common.ListCard.CloseCard.message,
       primary: .init(
-        text: LFLocalizable.Button.Ok.title,
+        text: L10N.Common.Button.Ok.title,
         action: {
           viewModel.closeCard()
         }
       ),
       secondary: .init(
-        text: LFLocalizable.Button.NotNow.title,
+        text: L10N.Common.Button.NotNow.title,
         action: {
           viewModel.hidePopup()
         }
@@ -448,10 +448,10 @@ private extension SolidListCardsView {
   
   var closeCardSuccessfullyPopup: some View {
     LiquidityAlert(
-      title: LFLocalizable.ListCard.CardClosed.title,
-      message: LFLocalizable.ListCard.CardClosed.message,
+      title: L10N.Common.ListCard.CardClosed.title,
+      message: L10N.Common.ListCard.CardClosed.message,
       primary: .init(
-        text: LFLocalizable.Button.Ok.title,
+        text: L10N.Common.Button.Ok.title,
         action: {
           viewModel.primaryActionCloseCardSuccessfully {
             dismiss()
@@ -468,14 +468,14 @@ private extension SolidListCardsView {
           .resizable()
           .frame(width: 80, height: 80)
         
-        Text(LFLocalizable.CardsDetail.Roundup.title)
+        Text(L10N.Common.CardsDetail.Roundup.title)
           .font(Fonts.regular.swiftUIFont(size: 18))
           .foregroundColor(Colors.label.swiftUIColor)
         
         ShoppingGivesAlert(type: .roundUp)
           .frame(height: 300)
         
-        FullSizeButton(title: LFLocalizable.Button.Ok.title, isDisable: false) {
+        FullSizeButton(title: L10N.Common.Button.Ok.title, isDisable: false) {
           viewModel.hidePopup()
         }
       }

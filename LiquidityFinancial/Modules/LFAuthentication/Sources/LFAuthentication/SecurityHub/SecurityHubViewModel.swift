@@ -178,8 +178,8 @@ extension SecurityHubViewModel {
     
     var status: String {
       isVerified
-      ? LFLocalizable.Authentication.SecurityVerified.title
-      : LFLocalizable.Authentication.SecurityVerify.title
+      ? L10N.Common.Authentication.SecurityVerified.title
+      : L10N.Common.Authentication.SecurityVerify.title
     }
   }
   

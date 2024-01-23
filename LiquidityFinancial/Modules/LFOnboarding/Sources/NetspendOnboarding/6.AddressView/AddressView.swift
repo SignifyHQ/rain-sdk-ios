@@ -153,7 +153,7 @@ private extension AddressView {
   
   var title: some View {
     Text(
-      LFLocalizable.addressTitle
+      L10N.Common.addressTitle
     )
     .foregroundColor(Colors.label.swiftUIColor)
     .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.main.value))
@@ -162,14 +162,14 @@ private extension AddressView {
   
   var addressLine1: some View {
     VStack(alignment: .leading) {
-      Text(LFLocalizable.addressLine1Title)
+      Text(L10N.Common.addressLine1Title)
         .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.textFieldHeader.value))
         .foregroundColor(Colors.label.swiftUIColor)
         .opacity(0.75)
         .padding(.leading, 4)
       
       textField(
-        placeholder: LFLocalizable.enterAddress,
+        placeholder: L10N.Common.enterAddress,
         value: $viewModel.addressLine1,
         focus: .address1,
         nextFocus: .address2
@@ -184,7 +184,7 @@ private extension AddressView {
   
   var addressLine2: some View {
     VStack(alignment: .leading) {
-      Text(LFLocalizable.addressLine2Title)
+      Text(L10N.Common.addressLine2Title)
         .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.textFieldHeader.value))
         .foregroundColor(Colors.label.swiftUIColor)
         .opacity(0.75)
@@ -192,7 +192,7 @@ private extension AddressView {
         .padding(.leading, 4)
       
       textField(
-        placeholder: LFLocalizable.enterAddress,
+        placeholder: L10N.Common.enterAddress,
         value: $viewModel.addressLine2,
         focus: .address2,
         nextFocus: .city
@@ -202,7 +202,7 @@ private extension AddressView {
   
   var city: some View {
     VStack(alignment: .leading) {
-      Text(LFLocalizable.city)
+      Text(L10N.Common.city)
         .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.textFieldHeader.value))
         .foregroundColor(Colors.label.swiftUIColor)
         .opacity(0.75)
@@ -210,7 +210,7 @@ private extension AddressView {
         .padding(.leading, 4)
       
       textField(
-        placeholder: LFLocalizable.enterCity,
+        placeholder: L10N.Common.enterCity,
         value: $viewModel.city,
         focus: .city,
         nextFocus: .state
@@ -220,7 +220,7 @@ private extension AddressView {
   
   var state: some View {
     VStack(alignment: .leading) {
-      Text(LFLocalizable.state)
+      Text(L10N.Common.state)
         .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.textFieldHeader.value))
         .foregroundColor(Colors.label.swiftUIColor)
         .opacity(0.75)
@@ -228,7 +228,7 @@ private extension AddressView {
         .padding(.leading, 4)
       
       textField(
-        placeholder: LFLocalizable.enterState,
+        placeholder: L10N.Common.enterState,
         value: $viewModel.state,
         limit: 2,
         restriction: .alphabets,
@@ -240,7 +240,7 @@ private extension AddressView {
   
   var zipCode: some View {
     VStack(alignment: .leading) {
-      Text(LFLocalizable.zipcode)
+      Text(L10N.Common.zipcode)
         .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.textFieldHeader.value))
         .foregroundColor(Colors.label.swiftUIColor)
         .opacity(0.75)
@@ -248,7 +248,7 @@ private extension AddressView {
         .padding(.leading, 4)
       
       textField(
-        placeholder: LFLocalizable.enterZipcode,
+        placeholder: L10N.Common.enterZipcode,
         value: $viewModel.zipCode,
         limit: 11,
         keyboardType: .numberPad,
@@ -260,7 +260,7 @@ private extension AddressView {
   var bottom: some View {
     VStack(spacing: 0) {
       FullSizeButton(
-        title: LFLocalizable.Button.Continue.title,
+        title: L10N.Common.Button.Continue.title,
         isDisable: !viewModel.isActionAllowed,
         isLoading: $viewModel.isLoading,
         type: .primary
@@ -301,12 +301,12 @@ private extension AddressView {
   
   private func waitlistPopup(message: String) -> some View {
     LiquidityAlert(
-      title: LFLocalizable.accountUpdate,
+      title: L10N.Common.accountUpdate,
       message: message,
-      primary: .init(text: LFLocalizable.joinWaitlist) {
+      primary: .init(text: L10N.Common.joinWaitlist) {
         viewModel.actionJoinWaitList()
       },
-      secondary: .init(text: LFLocalizable.cancelAccount) {
+      secondary: .init(text: L10N.Common.cancelAccount) {
         viewModel.actionLogout()
       }
     )
@@ -314,9 +314,9 @@ private extension AddressView {
   
   private var waitlistJoinedPopup: some View {
     LiquidityAlert(
-      title: LFLocalizable.waitlistJoinedTitle,
-      message: LFLocalizable.waitlistJoinedMessage,
-      primary: .init(text: LFLocalizable.Button.Ok.title.uppercased()) {
+      title: L10N.Common.waitlistJoinedTitle,
+      message: L10N.Common.waitlistJoinedMessage,
+      primary: .init(text: L10N.Common.Button.Ok.title.uppercased()) {
         viewModel.actionLogout()
       }
     )

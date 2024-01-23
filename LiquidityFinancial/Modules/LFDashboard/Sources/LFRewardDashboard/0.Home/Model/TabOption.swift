@@ -13,17 +13,17 @@ public enum TabOption: Int, CaseIterable, Hashable {
   var title: String {
     switch self {
     case .cash:
-      return LFLocalizable.Home.CashTab.title
+      return L10N.Custom.Home.CashTab.title
     case .rewards:
-      return LFLocalizable.Home.RewardsTab.title
+      return L10N.Common.Home.RewardsTab.title
     case .donation:
-      return LFLocalizable.Home.DonationTab.title
+      return L10N.Common.Home.DonationTab.title
     case .causes:
-      return LFLocalizable.Home.CauseTab.title
+      return L10N.Common.Home.CauseTab.title
     case .account:
-      return LFLocalizable.Home.AccountTab.title
+      return L10N.Common.Home.AccountTab.title
     case .noneReward:
-      return LFLocalizable.Home.RewardsTab.title
+      return L10N.Common.Home.RewardsTab.title
     }
   }
   

@@ -83,7 +83,7 @@ private extension CommonTransactionDetailView {
         + cryptoImageText
       }
       if viewModel.currentBalance != nil {
-        Text(LFLocalizable.TransactionDetail.BalanceCash.title(viewModel.balanceValue))
+        Text(L10N.Common.TransactionDetail.BalanceCash.title(viewModel.balanceValue))
           .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.ultraSmall.value))
           .foregroundColor(Colors.label.swiftUIColor.opacity(0.6))
       }

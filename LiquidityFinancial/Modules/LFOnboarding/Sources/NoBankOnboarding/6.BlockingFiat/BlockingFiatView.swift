@@ -30,12 +30,12 @@ struct BlockingFiatView: View {
             .padding(.top, 32)
           
           VStack(spacing: 16) {
-            Text(LFLocalizable.BlockingFiatView.attention)
+            Text(L10N.Common.BlockingFiatView.attention)
               .font(Fonts.bold.swiftUIFont(size: Constants.FontSize.main.value))
               .foregroundColor(Colors.label.swiftUIColor)
               .padding(.top, 16)
             
-            Text(LFLocalizable.BlockingFiatView.description)
+            Text(L10N.Common.BlockingFiatView.description)
               .font(Fonts.regular.swiftUIFont(fixedSize: Constants.FontSize.medium.value))
               .foregroundColor(Colors.label.swiftUIColor)
               .multilineTextAlignment(.center)
@@ -44,7 +44,7 @@ struct BlockingFiatView: View {
           .padding(.horizontal, 26)
           
           FullSizeButton(
-            title: LFLocalizable.Button.ContactSupport.title,
+            title: L10N.Common.Button.ContactSupport.title,
             isDisable: false
           ) {
             customerSupportService.openSupportScreen()
@@ -53,7 +53,7 @@ struct BlockingFiatView: View {
           .padding(.bottom, 8)
           
           FullSizeButton(
-            title: LFLocalizable.Button.Logout.title,
+            title: L10N.Common.Button.Logout.title,
             isDisable: false,
             type: .secondary
           ) {

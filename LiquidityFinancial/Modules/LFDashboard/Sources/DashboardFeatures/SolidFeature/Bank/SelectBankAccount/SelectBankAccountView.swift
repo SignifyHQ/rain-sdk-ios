@@ -29,7 +29,7 @@ public struct SelectBankAccountView: View {
     content
       .toolbar {
         ToolbarItem(placement: .principal) {
-          Text(LFLocalizable.SelectBankAccount.title)
+          Text(L10N.Common.SelectBankAccount.title)
             .foregroundColor(Colors.label.swiftUIColor)
             .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.medium.value))
         }
@@ -108,7 +108,7 @@ public struct SelectBankAccountView: View {
       VStack(alignment: .center, spacing: 24) {
         GenImages.Images.connectBankBanner.swiftUIImage
         FullSizeButton(
-          title: LFLocalizable.SelectBankAccount.connectABank,
+          title: L10N.Common.SelectBankAccount.connectABank,
           isDisable: false,
           isLoading: $viewModel.linkBankIndicator
         ) {
@@ -129,7 +129,7 @@ public struct SelectBankAccountView: View {
   
   var bottomView: some View {
     FullSizeButton(
-      title: LFLocalizable.Button.Continue.title,
+      title: L10N.Common.Button.Continue.title,
       isDisable: viewModel.selectedBank == nil,
       isLoading: $viewModel.showIndicator
     ) {
@@ -178,16 +178,16 @@ public struct SelectBankAccountView: View {
   
   var depositLimitReachedPopup: some View {
     LiquidityAlert(
-      title: LFLocalizable.TransferView.LimitsReachedPopup.title,
-      message: LFLocalizable.TransferView.LimitsReachedPopup.message,
+      title: L10N.Common.TransferView.LimitsReachedPopup.title,
+      message: L10N.Common.TransferView.LimitsReachedPopup.message,
       primary: .init(
-        text: LFLocalizable.Button.ContactSupport.title,
+        text: L10N.Common.Button.ContactSupport.title,
         action: {
           viewModel.contactSupport()
         }
       ),
       secondary: .init(
-        text: LFLocalizable.Button.Skip.title,
+        text: L10N.Common.Button.Skip.title,
         action: {
           viewModel.hidePopup()
         }

@@ -246,11 +246,11 @@ extension MoveCryptoInputViewModel {
   var title: String {
     switch type {
     case .buyCrypto:
-      return LFLocalizable.MoveCryptoInput.Buy.title(assetModel.type?.title ?? .empty)
+      return L10N.Common.MoveCryptoInput.Buy.title(assetModel.type?.title ?? .empty)
     case .sellCrypto:
-      return LFLocalizable.MoveCryptoInput.Sell.title(assetModel.type?.title ?? .empty)
+      return L10N.Common.MoveCryptoInput.Sell.title(assetModel.type?.title ?? .empty)
     case .sendCrypto:
-      return LFLocalizable.MoveCryptoInput.Send.title(assetModel.type?.title ?? .empty)
+      return L10N.Common.MoveCryptoInput.Send.title(assetModel.type?.title ?? .empty)
     }
   }
   
@@ -258,17 +258,17 @@ extension MoveCryptoInputViewModel {
     let cryptoCurrency = assetModel.type?.title ?? .empty
     switch type {
     case .buyCrypto:
-      return LFLocalizable.MoveCryptoInput.BuyAvailableBalance.subtitle(
+      return L10N.Common.MoveCryptoInput.BuyAvailableBalance.subtitle(
         fiatAccount?.availableBalance.formattedUSDAmount() ?? "$0.00"
       )
     case .sellCrypto:
       let balance = assetModel.availableBalance.roundTo3f()
-      return LFLocalizable.MoveCryptoInput.SellAvailableBalance.subtitle(
+      return L10N.Common.MoveCryptoInput.SellAvailableBalance.subtitle(
         "\(balance)".formattedAmount(minFractionDigits: 3, maxFractionDigits: 3), cryptoCurrency
       )
     case .sendCrypto:
       let balance = assetModel.availableBalance.roundTo3f()
-      return LFLocalizable.MoveCryptoInput.SendAvailableBalance.subtitle(
+      return L10N.Common.MoveCryptoInput.SendAvailableBalance.subtitle(
         "\(balance)".formattedAmount(minFractionDigits: 3, maxFractionDigits: 3), cryptoCurrency
       )
     }
@@ -277,17 +277,17 @@ extension MoveCryptoInputViewModel {
   var annotationString: String {
     switch type {
     case .buyCrypto:
-      return LFLocalizable.MoveCryptoInput.Buy.annotation(
+      return L10N.Common.MoveCryptoInput.Buy.annotation(
         fiatAccount?.availableBalance.formattedUSDAmount() ?? "$0.00"
       )
     case .sellCrypto:
       let balance = assetModel.availableBalance.roundTo3f()
-      return LFLocalizable.MoveCryptoInput.Sell.annotation(
+      return L10N.Common.MoveCryptoInput.Sell.annotation(
         "\(balance)".formattedAmount(minFractionDigits: 3, maxFractionDigits: 3)
       )
     case .sendCrypto:
       let balance = assetModel.availableBalance.roundTo3f()
-      return LFLocalizable.MoveCryptoInput.Send.annotation(
+      return L10N.Common.MoveCryptoInput.Send.annotation(
         "\(balance)".formattedAmount(minFractionDigits: 3, maxFractionDigits: 3),
         assetModel.type?.title ?? .empty
       )
@@ -336,9 +336,9 @@ extension MoveCryptoInputViewModel {
   func validateAmount(with availableBalance: Double?) -> String? {
     guard let balance = availableBalance else { return nil }
     if type != .sellCrypto, amount > 0, amount < 0.10 {
-      return LFLocalizable.MoveCryptoInput.MinimumCash.description
+      return L10N.Common.MoveCryptoInput.MinimumCash.description
     }
-    return balance < amount ? LFLocalizable.MoveCryptoInput.InsufficientFunds.description : nil
+    return balance < amount ? L10N.Common.MoveCryptoInput.InsufficientFunds.description : nil
   }
   
   var isMaxAmount: Bool {

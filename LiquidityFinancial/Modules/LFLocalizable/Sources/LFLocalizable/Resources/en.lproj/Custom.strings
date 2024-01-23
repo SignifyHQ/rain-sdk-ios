@@ -1,0 +1,42 @@
+// Initial Screen
+"initial.label.title" = "%@ Card";
+"card.name" = "Card";
+
+// Wellcome Screen
+"welcome.header.desc" = "The DogeCard is an easy way to spend cash or Dogecoin, and earn rewards. Here is how: ";
+"welcome.how_it_works.item2" = "Use your DogeCard anywhere Visa is accepted";
+"welcome.how_it_works.item3" = "Spend cash or Dogecoin, earn rewards";
+
+// Enter SSN
+"enter_ssn.alert.message" = "A valid SSN is required by our partners to provide banking services.";
+
+// Home
+"home.cashTab.title" = "Cash";
+
+// CryptoReceipt
+"cryptoReceipt.cardType.link" = "cardano@zerohash.com";
+
+// Account view
+"accountView.bank_transfers.subtitle" = "Send from your bank to AvalancheCard";
+"accountView.disclosure.message" = "The DogeCard pre-paid debit card is established by Pathward, National Association Member FDIC, pursuant to license by Visa. Netspend is a service provider to Pathward. Cryptocurrency services provided by Zero Hash. Cryptocurrency is not insured by, or subject to the protections of the FDIC.";
+
+// Referral
+"referral.example.crypto" = "If the friend you invited earns 500 %@ in a week, you will also get 500 AVAX. Your bonus will be paid each Friday to your %@Card wallet.";
+
+// Verify card
+"verify_card.detail" = "Check your card activity for 1 pending micro-transaction from AvalancheCard. Enter the one amount in the fields below. Once verified, this transaction will be canceled";
+
+// Grid Value
+"grid_value.crypto" = "%@ AVAX";
+
+// Transaction detail
+"transactionDetail.rewardDisclosure.description" = "*You will earn rewards with each qualifying purchase on your CauseCard. CauseCard “rewards” are donated to the non-profit you have selected in accordance with our Terms. Qualifying Purchases do not include any other payment or transfer, including incoming transactions, outgoing transactions where you are the receiving party, peer to peer transactions, ACH Transactions, ATM transactions, fees, chargebacks, adjustments, purchases that use PIN, or wire transfers. For more information, see the Terms. Rewards Program is managed by CauseCard. CauseCard is not FDIC insured. Rewards Program is not managed by Lewis and Clark Bank.";
+
+// Balance Alert
+"balanceAlert.negative.message.crypto" = "Please deposit Doge";
+
+// Fundcard
+"fundCard.title" = "FUND YOUR DOGECARD";
+"fundCard.message" = "DogeCard is a Pre-paid Debit Card, which means there are no credit checks, interest payments or overdrafts. However, you have to deposit money to your account before you can use. Start by connecting your bank:";
+
+"cause.share.card.fundraiser" = "I'm using CauseCard to support %@ by making passive donations through my everyday purchases.";

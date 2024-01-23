@@ -9,7 +9,7 @@ struct MessagesShareItem: ShareItem {
   private let messageComposeDelegate = MessageDelegate()
 
   var name: String {
-    LFLocalizable.Share.messages
+    L10N.Common.Share.messages
   }
 
   var image: Image {

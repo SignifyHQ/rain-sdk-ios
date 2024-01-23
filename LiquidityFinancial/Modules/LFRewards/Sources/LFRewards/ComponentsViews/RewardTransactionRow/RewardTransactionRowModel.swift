@@ -83,9 +83,9 @@ extension RewardTransactionRowModel {
     public func localizedDescription() -> String {
       switch self {
       case .completed:
-        return LFLocalizable.TransferView.RewardsStatus.completed
+        return L10N.Common.TransferView.RewardsStatus.completed
       case .pending:
-        return LFLocalizable.TransferView.RewardsStatus.pending
+        return L10N.Common.TransferView.RewardsStatus.pending
       default:
         return .empty
       }

@@ -94,7 +94,7 @@ private extension EnterCryptoAddressView {
   @ViewBuilder var titleView: some View {
     VStack(spacing: 10) {
       Text(
-        LFLocalizable.EnterCryptoAddressView.title(
+        L10N.Common.EnterCryptoAddressView.title(
           assetModel.type?.title ?? .empty
         )
       )
@@ -105,9 +105,9 @@ private extension EnterCryptoAddressView {
   
   var textField: some View {
     WalletAddressTextField(
-      placeHolderText: LFLocalizable.EnterCryptoAddressView.WalletAddress.placeholder,
+      placeHolderText: L10N.Common.EnterCryptoAddressView.WalletAddress.placeholder,
       value: $viewModel.inputValue,
-      textFieldTitle: LFLocalizable.EnterCryptoAddressView.WalletAddress
+      textFieldTitle: L10N.Common.EnterCryptoAddressView.WalletAddress
         .title(assetModel.type?.title ?? .empty),
       clearValue: {
         viewModel.clearValue()
@@ -119,7 +119,7 @@ private extension EnterCryptoAddressView {
   }
   
   var warningLabel: some View {
-    Text(LFLocalizable.EnterCryptoAddressView.warning(assetModel.type?.title ?? .empty))
+    Text(L10N.Common.EnterCryptoAddressView.warning(assetModel.type?.title ?? .empty))
       .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.textFieldHeader.value))
       .foregroundColor(Colors.label.swiftUIColor.opacity(0.5))
   }
@@ -212,7 +212,7 @@ private extension EnterCryptoAddressView {
   
   var continueButton: some View {
     FullSizeButton(
-      title: LFLocalizable.Button.Continue.title,
+      title: L10N.Common.Button.Continue.title,
       isDisable: !viewModel.isActionAllowed
     ) {
       viewModel.continueButtonTapped()
@@ -220,14 +220,14 @@ private extension EnterCryptoAddressView {
   }
   
   @ViewBuilder var cryptoDisclosure: some View {
-    Text(LFLocalizable.Zerohash.Disclosure.description)
+    Text(L10N.Common.Zerohash.Disclosure.description)
       .font(Fonts.regular.swiftUIFont(size: 10))
       .foregroundColor(Colors.label.swiftUIColor.opacity(0.5))
       .fixedSize(horizontal: false, vertical: true)
   }
   
   @ViewBuilder var estimatedFeeDescription: some View {
-    Text(LFLocalizable.MoveCryptoInput.Send.estimatedFee)
+    Text(L10N.Common.MoveCryptoInput.Send.estimatedFee)
       .multilineTextAlignment(.center)
       .font(Fonts.regular.swiftUIFont(size: 10))
       .foregroundColor(Colors.label.swiftUIColor.opacity(0.5))
@@ -236,12 +236,12 @@ private extension EnterCryptoAddressView {
   
   func deletePopup(wallet: APIWalletAddress) -> some View {
     LiquidityAlert(
-      title: LFLocalizable.EnterCryptoAddressView.DeletePopup.title.uppercased(),
-      message: LFLocalizable.EnterCryptoAddressView.DeletePopup.message(wallet.nickname ?? ""),
-      primary: .init(text: LFLocalizable.EnterCryptoAddressView.DeletePopup.primaryButton) {
+      title: L10N.Common.EnterCryptoAddressView.DeletePopup.title.uppercased(),
+      message: L10N.Common.EnterCryptoAddressView.DeletePopup.message(wallet.nickname ?? ""),
+      primary: .init(text: L10N.Common.EnterCryptoAddressView.DeletePopup.primaryButton) {
         viewModel.handleDelete(wallet: wallet)
       },
-      secondary: .init(text: LFLocalizable.Button.Back.title) {
+      secondary: .init(text: L10N.Common.Button.Back.title) {
         viewModel.hidePopup()
       },
       isLoading: $viewModel.showIndicator

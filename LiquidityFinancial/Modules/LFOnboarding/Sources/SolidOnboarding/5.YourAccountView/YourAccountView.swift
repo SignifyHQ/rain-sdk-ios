@@ -62,7 +62,7 @@ struct YourAccountView: View {
 
 extension YourAccountView {
   private var title: some View {
-    Text(LFLocalizable.YourAccount.title)
+    Text(L10N.Common.YourAccount.title)
       .foregroundColor(Colors.label.swiftUIColor)
       .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.main.value))
       .padding(.bottom, 12)
@@ -70,7 +70,7 @@ extension YourAccountView {
   
   private var terms: some View {
     Group {
-      Text(LFLocalizable.YourAccount.subtitle)
+      Text(L10N.Common.YourAccount.subtitle(L10N.Custom.Card.name))
         .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.medium.value))
         .foregroundColor(Colors.label.swiftUIColor.opacity(0.75))
         .lineSpacing(1.33)
@@ -78,7 +78,7 @@ extension YourAccountView {
       
       Spacer()
       
-      Text(LFLocalizable.YourAccount.body)
+      Text(L10N.Common.YourAccount.body(L10N.Custom.Card.name))
         .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.medium.value))
         .foregroundColor(Colors.label.swiftUIColor.opacity(0.75))
         .lineSpacing(1.33)
@@ -153,7 +153,7 @@ extension YourAccountView {
   private var continueButton: some View {
     VStack(spacing: 0) {
       FullSizeButton(
-        title: LFLocalizable.Button.Continue.title,
+        title: L10N.Common.Button.Continue.title,
         isDisable: !(viewModel.isEsignatureAccepted && viewModel.isTermsPrivacyAccepted),
         type: .primary
       ) {

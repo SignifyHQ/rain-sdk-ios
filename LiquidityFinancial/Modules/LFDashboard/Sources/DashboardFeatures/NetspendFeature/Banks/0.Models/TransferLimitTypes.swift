@@ -16,13 +16,13 @@ public enum TransferPeriod: String {
   public var title: String {
     switch self {
     case .day:
-      return LFLocalizable.TransferLimit.Daily.title
+      return L10N.Common.TransferLimit.Daily.title
     case .week:
-      return LFLocalizable.TransferLimit.Weekly.title
+      return L10N.Common.TransferLimit.Weekly.title
     case .month:
-      return LFLocalizable.TransferLimit.Monthly.title
+      return L10N.Common.TransferLimit.Monthly.title
     case .perTransaction:
-      return LFLocalizable.TransferLimit.PerTransaction.title
+      return L10N.Common.TransferLimit.PerTransaction.title
     default:
       return .empty
     }
@@ -54,9 +54,9 @@ public enum TransactionLimitType: String {
   public var title: String {
     switch self {
     case .deposit:
-      return LFLocalizable.TransferLimit.Deposit.tabTitle
+      return L10N.Common.TransferLimit.Deposit.tabTitle
     case .withdraw:
-      return LFLocalizable.TransferLimit.Withdraw.tabTitle
+      return L10N.Common.TransferLimit.Withdraw.tabTitle
     default:
       return .empty
     }

@@ -8,7 +8,7 @@ struct FacebookShareItem: ShareItem {
   let subject: PassthroughSubject<ShareItemAction, Never>
 
   var name: String {
-    LFLocalizable.Share.facebook
+    L10N.Common.Share.facebook
   }
 
   var image: Image {

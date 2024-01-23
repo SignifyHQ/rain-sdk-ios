@@ -24,7 +24,7 @@ struct ProfileView: View {
     .background(Colors.background.swiftUIColor)
     .toolbar {
       ToolbarItem(placement: .principal) {
-        Text(LFLocalizable.Profile.Toolbar.title)
+        Text(L10N.Common.Profile.Toolbar.title)
           .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.medium.value))
           .foregroundColor(Colors.label.swiftUIColor)
       }
@@ -103,45 +103,45 @@ private extension ProfileView {
   
   var accountSettings: some View {
     VStack(alignment: .leading, spacing: 12) {
-      Text(LFLocalizable.Profile.Accountsettings.title)
+      Text(L10N.Common.Profile.Accountsettings.title)
         .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.ultraSmall.value))
         .foregroundColor(Colors.label.swiftUIColor.opacity(0.75))
         .padding(.leading, 10)
       VStack(spacing: 10) {
         informationCell(
           image: GenImages.CommonImages.icPhone.swiftUIImage,
-          title: LFLocalizable.Profile.PhoneNumber.title,
+          title: L10N.Common.Profile.PhoneNumber.title,
           value: viewModel.phoneNumber
         )
         informationCell(
           image: GenImages.CommonImages.icMail.swiftUIImage,
-          title: LFLocalizable.Profile.Email.title,
+          title: L10N.Common.Profile.Email.title,
           value: viewModel.email
         )
         informationCell(
           image: GenImages.CommonImages.icMap.swiftUIImage,
-          title: LFLocalizable.Profile.Address.title,
+          title: L10N.Common.Profile.Address.title,
           value: viewModel.address
         )
         /* TODO: Remove for MVP
-        ArrowButton(image: GenImages.CommonImages.icWarning.swiftUIImage, title: LFLocalizable.Profile.DepositLimits.title, value: nil) {
+        ArrowButton(image: GenImages.CommonImages.icWarning.swiftUIImage, title: L10N.Common.Profile.DepositLimits.title, value: nil) {
           viewModel.depositLimitsTapped()
         }*/
         /* TODO: - Will enable after implement feature flag
         ArrowButton(
           image: GenImages.CommonImages.icSecurity.swiftUIImage,
-          title: LFLocalizable.Profile.Security.title,
+          title: L10N.Common.Profile.Security.title,
           value: nil
         ) {
           viewModel.didTapSecurityButton()
         }*/
-        ArrowButton(image: GenImages.CommonImages.icQuestion.swiftUIImage, title: LFLocalizable.Profile.Help.title, value: nil) {
+        ArrowButton(image: GenImages.CommonImages.icQuestion.swiftUIImage, title: L10N.Common.Profile.Help.title, value: nil) {
           viewModel.helpTapped()
         }
         if !viewModel.notificationsEnabled {
           ArrowButton(
             image: GenImages.CommonImages.icNotification.swiftUIImage,
-            title: LFLocalizable.Profile.Notifications.title,
+            title: L10N.Common.Profile.Notifications.title,
             value: nil
           ) {
             viewModel.notificationTapped()
@@ -154,7 +154,7 @@ private extension ProfileView {
   var bottom: some View {
     VStack(spacing: 16) {
       VStack(spacing: 10) {
-        FullSizeButton(title: LFLocalizable.Profile.Logout.title, isDisable: false, type: .secondary) {
+        FullSizeButton(title: L10N.Common.Profile.Logout.title, isDisable: false, type: .secondary) {
           viewModel.logoutTapped()
         }
         .accessibilityIdentifier(LFAccessibility.ProfileScreen.logoutButton)
@@ -162,7 +162,7 @@ private extension ProfileView {
           Rectangle()
             .fill(Colors.label.swiftUIColor.opacity(0.5))
             .frame(height: 1)
-          Text(LFLocalizable.Profile.Or.title)
+          Text(L10N.Common.Profile.Or.title)
             .font(Fonts.regular.swiftUIFont(size: 10))
             .foregroundColor(Colors.label.swiftUIColor.opacity(0.5))
           Rectangle()
@@ -170,11 +170,11 @@ private extension ProfileView {
             .frame(height: 1)
         }
         .padding(.horizontal, 12)
-        FullSizeButton(title: LFLocalizable.Profile.DeleteAccount.title, isDisable: false, type: .destructive) {
+        FullSizeButton(title: L10N.Common.Profile.DeleteAccount.title, isDisable: false, type: .destructive) {
           viewModel.deleteAccountTapped()
         }
       }
-      Text(LFLocalizable.Profile.Version.title(LFUtilities.marketingVersion))
+      Text(L10N.Common.Profile.Version.title(LFUtilities.marketingVersion))
         .font(Fonts.regular.swiftUIFont(size: 10))
         .foregroundColor(Colors.label.swiftUIColor.opacity(0.5))
     }
@@ -183,17 +183,17 @@ private extension ProfileView {
   
   var deleteAccountPopup: some View {
     LiquidityAlert(
-      title: LFLocalizable.Profile.DeleteAccount.message.uppercased(),
-      primary: .init(text: LFLocalizable.Button.Yes.title, action: { viewModel.deleteAccount() }),
-      secondary: .init(text: LFLocalizable.Button.No.title, action: { viewModel.dismissPopup() })
+      title: L10N.Common.Profile.DeleteAccount.message.uppercased(),
+      primary: .init(text: L10N.Common.Button.Yes.title, action: { viewModel.deleteAccount() }),
+      secondary: .init(text: L10N.Common.Button.No.title, action: { viewModel.dismissPopup() })
     )
   }
   
   var logoutPopup: some View {
     LiquidityAlert(
-      title: LFLocalizable.Profile.Logout.message.uppercased(),
-      primary: .init(text: LFLocalizable.Button.Yes.title, action: { viewModel.logout() }),
-      secondary: .init(text: LFLocalizable.Button.No.title, action: { viewModel.dismissPopup() })
+      title: L10N.Common.Profile.Logout.message.uppercased(),
+      primary: .init(text: L10N.Common.Button.Yes.title, action: { viewModel.logout() }),
+      secondary: .init(text: L10N.Common.Button.No.title, action: { viewModel.dismissPopup() })
     )
   }
   

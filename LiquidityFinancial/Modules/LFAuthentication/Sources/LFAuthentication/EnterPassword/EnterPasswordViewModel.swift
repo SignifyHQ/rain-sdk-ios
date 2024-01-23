@@ -156,7 +156,7 @@ private extension EnterPasswordViewModel {
 
     switch error.inlineError {
     case .invalidCredentials, .verificationInvalid:
-      inlineErrorMessage = LFLocalizable.Authentication.EnterPassword.Error.wrongPassword
+      inlineErrorMessage = L10N.Common.Authentication.EnterPassword.Error.wrongPassword
     case .otpIncorrect:
       inlineErrorMessage = error.userFriendlyMessage
     default:

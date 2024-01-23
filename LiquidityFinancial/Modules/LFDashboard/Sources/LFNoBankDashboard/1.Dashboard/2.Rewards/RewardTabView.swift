@@ -94,7 +94,7 @@ private extension RewardTabView {
               Text(assetType.title.uppercased())
                 .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.medium.value))
                 .foregroundColor(Colors.label.swiftUIColor)
-              Text(LFLocalizable.RewardTabView.EarningRewards.description(assetType.title.uppercased()))
+              Text(L10N.Common.RewardTabView.EarningRewards.description(assetType.title.uppercased()))
                 .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.ultraSmall.value))
                 .foregroundColor(Colors.label.swiftUIColor.opacity(0.75))
             }
@@ -124,7 +124,7 @@ private extension RewardTabView {
         } else {
           ShortTransactionsView(
             transactions: $viewModel.transactions,
-            title: LFLocalizable.RewardTabView.lastestRewards,
+            title: L10N.Common.RewardTabView.lastestRewards,
             onTapTransactionCell: viewModel.transactionItemTapped,
             seeAllAction: {
               viewModel.onClickedSeeAllButton()
@@ -142,7 +142,7 @@ private extension RewardTabView {
       VStack(alignment: .center, spacing: 12) {
         Spacer(minLength: 120)
         GenImages.Images.emptyRewards.swiftUIImage
-        Text(LFLocalizable.RewardTabView.noRewards)
+        Text(L10N.Common.RewardTabView.noRewards)
           .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.medium.value))
           .foregroundColor(Colors.label.swiftUIColor)
         Spacer(minLength: 120)
@@ -162,7 +162,7 @@ private extension RewardTabView {
   
   var selectTypeContentView: some View {
     VStack(alignment: .leading) {
-      Text(LFLocalizable.RewardTabView.FirstReward.title)
+      Text(L10N.Common.RewardTabView.FirstReward.title)
         .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.main.value))
         .foregroundColor(Colors.label.swiftUIColor)
       Spacer().frame(height: 16)
@@ -173,7 +173,7 @@ private extension RewardTabView {
       }
       Spacer().frame(height: 16)
       FullSizeButton(
-        title: LFLocalizable.RewardTabView.FirstReward.select,
+        title: L10N.Common.RewardTabView.FirstReward.select,
         isDisable: false
       ) {
         viewModel.onClickedChangeReward()

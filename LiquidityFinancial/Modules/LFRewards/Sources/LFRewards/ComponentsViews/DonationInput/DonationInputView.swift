@@ -144,7 +144,7 @@ struct DonationInputView: View {
   }
   
   private var continueButton: some View {
-    FullSizeButton(title: LFLocalizable.Button.Continue.title, isDisable: viewModel.isActionAllowed, isLoading: $viewModel.isPerformingAction) {
+    FullSizeButton(title: L10N.Common.Button.Continue.title, isDisable: viewModel.isActionAllowed, isLoading: $viewModel.isPerformingAction) {
       viewModel.continueButtonTapped()
     }
   }

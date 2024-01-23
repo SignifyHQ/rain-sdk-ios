@@ -28,7 +28,7 @@ struct ConfirmSendCryptoView: View {
       .background(Colors.background.swiftUIColor)
       .toolbar {
         ToolbarItem(placement: .principal) {
-          Text(LFLocalizable.ConfirmSendCryptoView.title)
+          Text(L10N.Common.ConfirmSendCryptoView.title)
             .foregroundColor(Colors.label.swiftUIColor)
             .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.medium.value))
         }
@@ -63,24 +63,24 @@ private extension ConfirmSendCryptoView {
   var content: some View {
     VStack(spacing: 16) {
       informationCell(
-        title: LFLocalizable.ConfirmSendCryptoView.amount,
+        title: L10N.Common.ConfirmSendCryptoView.amount,
         value: viewModel.amountInput,
         bonusValue: viewModel.assetModel.type?.title ?? .empty
       )
       if !viewModel.nickname.isEmpty {
         informationCell(
-          title: LFLocalizable.ConfirmSendCryptoView.to,
+          title: L10N.Common.ConfirmSendCryptoView.to,
           value: viewModel.nickname
         )
       }
       informationCell(
-        title: LFLocalizable.ConfirmSendCryptoView.walletAddress,
+        title: L10N.Common.ConfirmSendCryptoView.walletAddress,
         value: viewModel.address,
         isLastItem: true
       )
       if let fee = viewModel.fee {
         informationCell(
-          title: LFLocalizable.ConfirmSendCryptoView.fee,
+          title: L10N.Common.ConfirmSendCryptoView.fee,
           value: fee.roundTo3fStr()
         )
       }
@@ -103,7 +103,7 @@ private extension ConfirmSendCryptoView {
   
   var continueButton: some View {
     FullSizeButton(
-      title: LFLocalizable.Button.Confirm.title,
+      title: L10N.Common.Button.Confirm.title,
       isDisable: false,
       isLoading: $viewModel.showIndicator
     ) {
@@ -136,14 +136,14 @@ private extension ConfirmSendCryptoView {
   }
   
   @ViewBuilder var cryptoDisclosure: some View {
-    Text(LFLocalizable.Zerohash.Disclosure.description)
+    Text(L10N.Common.Zerohash.Disclosure.description)
       .font(Fonts.regular.swiftUIFont(size: 10))
       .foregroundColor(Colors.label.swiftUIColor.opacity(0.5))
       .fixedSize(horizontal: false, vertical: true)
   }
   
   @ViewBuilder var estimatedFeeDescription: some View {
-    Text(LFLocalizable.MoveCryptoInput.Send.estimatedFee)
+    Text(L10N.Common.MoveCryptoInput.Send.estimatedFee)
       .multilineTextAlignment(.center)
       .font(Fonts.regular.swiftUIFont(size: 10))
       .foregroundColor(Colors.label.swiftUIColor.opacity(0.5))

@@ -30,13 +30,13 @@ public enum TransactionType: String, Codable {
   public var title: String {
     switch self {
     case .cryptoBuy:
-      return LFLocalizable.TransactionDetail.Buy.title
+      return L10N.Common.TransactionDetail.Buy.title
     case .cryptoSell:
-      return LFLocalizable.TransactionDetail.Sell.title
+      return L10N.Common.TransactionDetail.Sell.title
     case .cryptoWidthDraw:
-      return LFLocalizable.TransactionDetail.Send.title
+      return L10N.Common.TransactionDetail.Send.title
     case .cryptoDeposit:
-      return LFLocalizable.TransactionDetail.Receive.title
+      return L10N.Common.TransactionDetail.Receive.title
     default:
       return rawValue
     }

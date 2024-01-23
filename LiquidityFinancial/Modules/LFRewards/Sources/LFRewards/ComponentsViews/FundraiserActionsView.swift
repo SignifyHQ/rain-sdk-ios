@@ -100,11 +100,11 @@ extension FundraiserActionsView {
       switch self {
       case .share:
         
-        return LFLocalizable.FundraiserActions.share
+        return L10N.Common.FundraiserActions.share
       case .donate:
-        return LFLocalizable.FundraiserActions.donate
+        return L10N.Common.FundraiserActions.donate
       case .more:
-        return LFLocalizable.FundraiserActions.more
+        return L10N.Common.FundraiserActions.more
       }
     }
   }

@@ -31,7 +31,7 @@ private extension RewardTransactionDetailView {
         .padding(.bottom, 6)
       if viewModel.cardInformation.cardType == .crypto {
         FullSizeButton(
-          title: LFLocalizable.TransactionDetail.CurrentReward.title,
+          title: L10N.Common.TransactionDetail.CurrentReward.title,
           isDisable: false,
           type: .tertiary
         ) {
@@ -40,7 +40,7 @@ private extension RewardTransactionDetailView {
       }
       if let receiptType = viewModel.transaction.receipt?.type {
         FullSizeButton(
-          title: LFLocalizable.TransactionDetail.Receipt.button,
+          title: L10N.Common.TransactionDetail.Receipt.button,
           isDisable: false,
           type: .secondary
         ) {

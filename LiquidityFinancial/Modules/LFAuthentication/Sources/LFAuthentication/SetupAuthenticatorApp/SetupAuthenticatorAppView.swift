@@ -46,7 +46,7 @@ private extension SetupAuthenticatorAppView {
         headerView
         instructionView
         FullSizeButton(
-          title: LFLocalizable.Button.Verify.title,
+          title: L10N.Common.Button.Verify.title,
           isDisable: viewModel.isDisableVerifyButton,
           isLoading: $viewModel.isVerifyingTOTP
         ) {
@@ -71,12 +71,12 @@ private extension SetupAuthenticatorAppView {
   
   var headerView: some View {
     VStack(spacing: 24) {
-      Text(LFLocalizable.Authentication.SetupMfa.title)
+      Text(L10N.Common.Authentication.SetupMfa.title)
         .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.main.value))
         .foregroundColor(Colors.label.swiftUIColor)
       GenImages.CommonImages.dash.swiftUIImage
         .foregroundColor(Colors.label.swiftUIColor.opacity(0.5))
-      Text(LFLocalizable.Authentication.SetupMfa.description)
+      Text(L10N.Common.Authentication.SetupMfa.description)
         .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.medium.value))
         .foregroundColor(Colors.label.swiftUIColor.opacity(0.75))
     }
@@ -85,17 +85,17 @@ private extension SetupAuthenticatorAppView {
   var instructionView: some View {
     VStack(alignment: .leading, spacing: 20) {
       setupStep(
-        title: LFLocalizable.Authentication.SetupMfa.downloadAppTitle,
-        description: LFLocalizable.Authentication.SetupMfa.downloadAppDescription
+        title: L10N.Common.Authentication.SetupMfa.downloadAppTitle,
+        description: L10N.Common.Authentication.SetupMfa.downloadAppDescription
       )
       setupStep(
-        title: LFLocalizable.Authentication.SetupMfa.scanQrCodeTitle,
-        description: LFLocalizable.Authentication.SetupMfa.scanQrCodeDescription
+        title: L10N.Common.Authentication.SetupMfa.scanQrCodeTitle,
+        description: L10N.Common.Authentication.SetupMfa.scanQrCodeDescription
       )
       qrImageView
       setupStep(
-        title: LFLocalizable.Authentication.SetupMfa.verify2faCodeTitle,
-        description: LFLocalizable.Authentication.SetupMfa.verify2faCodeDescription
+        title: L10N.Common.Authentication.SetupMfa.verify2faCodeTitle,
+        description: L10N.Common.Authentication.SetupMfa.verify2faCodeDescription
       )
       enterVerificationCodeView
     }
@@ -118,7 +118,7 @@ private extension SetupAuthenticatorAppView {
   
   var enterVerificationCodeView: some View {
     VStack(alignment: .leading, spacing: 12) {
-      Text(LFLocalizable.Authentication.SetupMfa.enterCodeTitle)
+      Text(L10N.Common.Authentication.SetupMfa.enterCodeTitle)
         .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.textFieldHeader.value))
         .foregroundColor(Colors.label.swiftUIColor.opacity(0.75))
       TextFieldWrapper {
@@ -128,7 +128,7 @@ private extension SetupAuthenticatorAppView {
           .modifier(
             PlaceholderStyle(
               showPlaceHolder: viewModel.verificationCode.isEmpty,
-              placeholder: LFLocalizable.Authentication.SetupMfa.enterCodePlaceHolder
+              placeholder: L10N.Common.Authentication.SetupMfa.enterCodePlaceHolder
             )
           )
           .autocorrectionDisabled()
@@ -189,7 +189,7 @@ private extension SetupAuthenticatorAppView {
           recoveryCodeTitleView
           recoveryCodeView
         }
-        FullSizeButton(title: LFLocalizable.Button.Continue.title, isDisable: !isSavedRecoveryCode) {
+        FullSizeButton(title: L10N.Common.Button.Continue.title, isDisable: !isSavedRecoveryCode) {
           viewModel.hidePopup()
           dismiss()
         }
@@ -200,11 +200,11 @@ private extension SetupAuthenticatorAppView {
 
   var recoveryCodeTitleView: some View {
     VStack(spacing: 16) {
-      Text(LFLocalizable.Authentication.SetupMfa.recoveryCodePopupTitle.uppercased())
+      Text(L10N.Common.Authentication.SetupMfa.recoveryCodePopupTitle.uppercased())
         .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.main.value))
         .foregroundColor(Colors.label.swiftUIColor)
         .multilineTextAlignment(.center)
-      Text(LFLocalizable.Authentication.SetupMfa.recoveryCodePopupMessage)
+      Text(L10N.Common.Authentication.SetupMfa.recoveryCodePopupMessage)
         .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.medium.value))
         .foregroundColor(Colors.label.swiftUIColor.opacity(0.75))
         .multilineTextAlignment(.center)
@@ -223,7 +223,7 @@ private extension SetupAuthenticatorAppView {
             .foregroundColor(Colors.label.swiftUIColor)
         }
       FullSizeButton(
-        title: LFLocalizable.Authentication.SetupMfa.recoveryCodeCopyCodeButton,
+        title: L10N.Common.Authentication.SetupMfa.recoveryCodeCopyCodeButton,
         isDisable: false,
         type: .secondary
       ) {
@@ -249,7 +249,7 @@ private extension SetupAuthenticatorAppView {
         .onTapGesture {
           isSavedRecoveryCode.toggle()
         }
-      Text(LFLocalizable.Authentication.SetupMfa.recoveryCodeCheckBoxTitle)
+      Text(L10N.Common.Authentication.SetupMfa.recoveryCodeCheckBoxTitle)
         .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.small.value))
         .foregroundColor(Colors.label.swiftUIColor.opacity(0.75))
       Spacer()

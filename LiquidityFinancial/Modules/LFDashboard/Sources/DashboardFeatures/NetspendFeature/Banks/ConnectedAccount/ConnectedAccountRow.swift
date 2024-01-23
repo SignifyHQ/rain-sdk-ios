@@ -37,7 +37,7 @@ struct ConnectedAccountRow: View {
           Button {
             verifyAction?()
           } label: {
-            Text(LFLocalizable.Button.Verify.title)
+            Text(L10N.Common.Button.Verify.title)
               .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.ultraSmall.value))
               .foregroundColor(Colors.primary.swiftUIColor)
           }

@@ -37,7 +37,7 @@ extension ReceiveCryptoViewModel {
   
   func copyAddress() {
     UIPasteboard.general.string = cryptoAddress
-    toastMessage = LFLocalizable.ReceiveCryptoView.Copied.info
+    toastMessage = L10N.Common.ReceiveCryptoView.Copied.info
   }
   
   func shareTap() {

@@ -120,14 +120,14 @@ extension ConfirmSendCryptoViewModel {
   var cryptoTransactions: [TransactionInformation] {
     var transactionInfors = [
       TransactionInformation(
-        title: LFLocalizable.TransactionDetail.OrderType.title,
-        value: LFLocalizable.ConfirmSendCryptoView.Send.title.uppercased()
+        title: L10N.Common.TransactionDetail.OrderType.title,
+        value: L10N.Common.ConfirmSendCryptoView.Send.title.uppercased()
       )
     ]
     if transaction.currentBalance != nil {
       transactionInfors.append(
         TransactionInformation(
-          title: LFLocalizable.TransactionDetail.Balance.title,
+          title: L10N.Common.TransactionDetail.Balance.title,
           value: LFUtilities.cryptoCurrency.uppercased(),
           markValue: transaction.currentBalance?.formattedAmount(
             minFractionDigits: Constants.FractionDigitsLimit.crypto.minFractionDigits
@@ -138,14 +138,14 @@ extension ConfirmSendCryptoViewModel {
     if !nickname.isEmpty {
       transactionInfors.append(
         TransactionInformation(
-          title: LFLocalizable.TransactionDetail.Nickname.title,
+          title: L10N.Common.TransactionDetail.Nickname.title,
           value: nickname
         )
       )
     }
     transactionInfors.append(
       TransactionInformation(
-        title: LFLocalizable.TransactionDetail.WalletAddress.title,
+        title: L10N.Common.TransactionDetail.WalletAddress.title,
         value: address
       )
     )

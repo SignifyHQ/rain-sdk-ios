@@ -39,14 +39,14 @@ private extension UnspecifiedRewardsView {
           .cornerRadius(10)
           
           HStack(alignment: .bottom) {
-            Text(LFLocalizable.Cashback.latest)
+            Text(L10N.Common.Cashback.latest)
             Spacer()
           }
           .font(Fonts.regular.swiftUIFont(size: 12))
           .foregroundColor(Colors.label.swiftUIColor.opacity(0.75))
           .padding(.top, 16)
           
-          EmptyListView(text: LFLocalizable.Rewards.noRewards)
+          EmptyListView(text: L10N.Common.Rewards.noRewards)
             .padding(.top, 100)
         }
 
@@ -64,7 +64,7 @@ private extension UnspecifiedRewardsView {
   
   var info: some View {
     VStack(alignment: .leading, spacing: 16) {
-      Text(LFLocalizable.UnspecifiedRewards.title.uppercased())
+      Text(L10N.Common.UnspecifiedRewards.title.uppercased())
         .font(Fonts.regular.swiftUIFont(size: 18))
         .foregroundColor(Colors.label.swiftUIColor)
       
@@ -72,7 +72,7 @@ private extension UnspecifiedRewardsView {
         row(item: .cashBack)
         row(item: .donation)
       }
-      FullSizeButton(title: LFLocalizable.UnspecifiedRewards.cta, isDisable: false) {
+      FullSizeButton(title: L10N.Common.UnspecifiedRewards.cta, isDisable: false) {
         showEditRewards = true
       }
     }

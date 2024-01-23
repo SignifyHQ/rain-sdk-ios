@@ -28,7 +28,7 @@ struct EnterAmountView: View {
       }
       .focused($keyboardFocus)
       Spacer()
-      FullSizeButton(title: LFLocalizable.Button.Continue.title, isDisable: viewModel.isDisableAmountContinueButton) {
+      FullSizeButton(title: L10N.Common.Button.Continue.title, isDisable: viewModel.isDisableAmountContinueButton) {
         isNavigateToSignatureView = true
       }
     }
@@ -38,7 +38,7 @@ struct EnterAmountView: View {
     .background(Colors.background.swiftUIColor)
     .toolbar {
       ToolbarItem(placement: .principal) {
-        Text(LFLocalizable.DirectDeposit.Toolbal.title)
+        Text(L10N.Common.DirectDeposit.Toolbal.title)
           .foregroundColor(Colors.label.swiftUIColor)
           .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.medium.value))
       }

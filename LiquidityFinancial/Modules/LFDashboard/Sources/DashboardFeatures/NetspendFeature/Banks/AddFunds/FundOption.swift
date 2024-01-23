@@ -29,28 +29,28 @@ extension FundOption {
   var title: String {
     switch self {
     case .directDeposit:
-      return LFLocalizable.AccountView.DirectDeposit.title
+      return L10N.Common.AccountView.DirectDeposit.title
     case .bankTransfers:
-      return LFLocalizable.AccountView.BankTransfers.title
+      return L10N.Common.AccountView.BankTransfers.title
     case .debitDeposit, .debitDepositFunds:
-      return LFLocalizable.AccountView.DebitDeposits.title
+      return L10N.Common.AccountView.DebitDeposits.title
     case .oneTime:
-      return LFLocalizable.AccountView.OneTimeTransfers.title
+      return L10N.Common.AccountView.OneTimeTransfers.title
     }
   }
   
   var subtitle: String {
     switch self {
     case .directDeposit:
-      return LFLocalizable.AccountView.DirectDeposit.subtitle
+      return L10N.Common.AccountView.DirectDeposit.subtitle
     case .bankTransfers:
-      return LFLocalizable.AccountView.BankTransfers.subtitle
+      return L10N.Custom.AccountView.BankTransfers.subtitle
     case .debitDeposit:
-      return LFLocalizable.AccountView.DebitDeposits.subtitle
+      return L10N.Common.AccountView.DebitDeposits.subtitle
     case .oneTime:
-      return LFLocalizable.AccountView.OneTimeTransfers.subtitle
+      return L10N.Common.AccountView.OneTimeTransfers.subtitle
     case .debitDepositFunds:
-      return LFLocalizable.AccountView.DebitDepositsFunds.subtitle
+      return L10N.Common.AccountView.DebitDepositsFunds.subtitle
     }
   }
   

@@ -12,11 +12,11 @@ public enum BiometricsPurpose {
   var localizedFallbackTitle: String {
     switch self {
     case .enable:
-      return LFLocalizable.Authentication.BiometricsEnableLocalizedFallback.title
+      return L10N.Common.Authentication.BiometricsEnableLocalizedFallback.title
     case .authentication:
-      return LFLocalizable.Authentication.BiometricsAuthenticationLocalizedFallback.title
+      return L10N.Common.Authentication.BiometricsAuthenticationLocalizedFallback.title
     case .backup:
-      return LFLocalizable.Authentication.BiometricsBackupLocalizedFallback.title
+      return L10N.Common.Authentication.BiometricsBackupLocalizedFallback.title
     }
   }
 }
