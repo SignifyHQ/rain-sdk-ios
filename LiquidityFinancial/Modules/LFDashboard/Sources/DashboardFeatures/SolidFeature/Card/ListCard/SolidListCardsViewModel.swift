@@ -276,7 +276,7 @@ extension SolidListCardsViewModel {
     guard currentCard.cardStatus == .active else {
       return
     }
-    let destinationView = ApplePayViewController(
+    let destinationView = SolidApplePayViewController(
       viewModel: SolidApplePayViewModel(cardModel: currentCard)
     )
     sheet = .applePay(AnyView(destinationView))

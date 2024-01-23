@@ -31,9 +31,7 @@ public struct HomeView: View {
     
     cashView = CashView(
       viewModel: CashViewModel(dashboardRepository: dashboardRepository),
-      listCardViewModel: NSListCardsViewModel(
-        coordinator: Container().baseCardDestinationObservable.callAsFunction()
-      )
+      listCardViewModel: NSListCardsViewModel()
     )
     rewardsTabView = RewardTabView(viewModel: RewardTabViewModel(dashboardRepo: dashboardRepository))
     assetsView = AssetsView(viewModel: AssetsViewModel(dashboardRepository: dashboardRepository))

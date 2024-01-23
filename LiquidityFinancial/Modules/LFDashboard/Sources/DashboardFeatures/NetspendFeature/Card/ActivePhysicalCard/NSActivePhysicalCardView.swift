@@ -3,15 +3,15 @@ import LFLocalizable
 import LFUtilities
 import LFStyleGuide
 
-struct SolidActivePhysicalCardView: View {
-  @Environment(\.dismiss)
-  private var dismiss
-  @State
-  private var activeContent: ActiveContent = .activedCard
+struct NSActivePhysicalCardView: View {
+  @Environment(\.dismiss) private var dismiss
+  @State private var activeContent: ActiveContent = .cvvCode
   let card: CardModel
+  let onSuccess: ((String) -> Void)?
   
-  init(card: CardModel) {
+  init(card: CardModel, onSuccess: ((String) -> Void)? = nil) {
     self.card = card
+    self.onSuccess = onSuccess
   }
   
   var body: some View {
@@ -20,14 +20,28 @@ struct SolidActivePhysicalCardView: View {
 }
 
 // MARK: - View Components
-private extension SolidActivePhysicalCardView {
+private extension NSActivePhysicalCardView {
   @MainActor @ViewBuilder var content: some View {
     switch activeContent {
+    case .cvvCode:
+      NSEnterCVVCodeView(
+        viewModel: NSEnterCVVCodeViewModel(cardID: card.id),
+        screenTitle: LFLocalizable.EnterCVVCode.ActiveCard.title
+      ) { verifyID in
+        activeContent = .setCardPin(verifyID)
+      }
+    case let .setCardPin(verifyID):
+      NSSetCardPinView(
+        viewModel: NSSetCardPinViewModel(cardModel: card, verifyID: verifyID) { cardID in
+          activeContent = .activedCard
+          onSuccess?(cardID)
+        }
+      )
     case .activedCard:
       activedCardView
     case .addAppleWallet:
-      SolidAddAppleWalletView(
-        viewModel: SolidAddAppleWalletViewModel(cardModel: card) {
+        NSAddAppleWalletView(
+        viewModel: NSAddAppleWalletViewModel(cardModel: card) {
           dismiss()
         }
       )
@@ -61,6 +75,20 @@ private extension SolidActivePhysicalCardView {
     }
   }
   
+  var applePay: some View {
+    Button {
+      activeContent = .addAppleWallet
+    } label: {
+      ApplePayButton()
+        .frame(height: 40)
+        .cornerRadius(10)
+        .overlay(
+          RoundedRectangle(cornerRadius: 10)
+            .stroke(Colors.label.swiftUIColor, lineWidth: 1)
+        )
+    }
+  }
+  
   var activedCardTextView: some View {
     VStack(spacing: 16) {
       Text(LFLocalizable.CardActivated.CardActived.title)
@@ -73,20 +101,6 @@ private extension SolidActivePhysicalCardView {
         .multilineTextAlignment(.center)
         .lineLimit(3)
         .fixedSize(horizontal: false, vertical: true)
-    }
-  }
-  
-  var applePay: some View {
-    Button {
-      activeContent = .addAppleWallet
-    } label: {
-      ApplePayButton()
-        .frame(height: 40)
-        .cornerRadius(10)
-        .overlay(
-          RoundedRectangle(cornerRadius: 10)
-            .stroke(Colors.label.swiftUIColor, lineWidth: 1)
-        )
     }
   }
   
@@ -106,8 +120,10 @@ private extension SolidActivePhysicalCardView {
 }
 
 // MARK: - Types
-extension SolidActivePhysicalCardView {
+extension NSActivePhysicalCardView {
   enum ActiveContent {
+    case cvvCode
+    case setCardPin(String)
     case activedCard
     case addAppleWallet
   }

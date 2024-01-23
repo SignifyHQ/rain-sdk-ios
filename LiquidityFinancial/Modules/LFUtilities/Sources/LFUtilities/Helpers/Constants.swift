@@ -25,6 +25,7 @@ public enum Constants {
     case cryptoLimit
     case cvv
     case fullPassportLength
+    case cvvCode
     case cardPinCode
     case otpCode
     case mfaCode
@@ -75,6 +76,8 @@ public enum Constants {
         return 4
       case .fullPassportLength:
         return 20
+      case .cvvCode:
+        return 3
       case .cardPinCode:
         return 4
       case .otpCode:
@@ -261,8 +264,6 @@ public extension Constants {
     case maxSize = "20"
     case capacityUnit = "Mb"
     case dotSymbol = "•"
-    case pinCodeDigits = "4"
-    case cvvCodeDigits = "3"
     case zeroAmount = "0"
     case expirationDatePlaceholder = "••/••"
     case fullCardNumberPlaceholder = "•••• •••• •••• ••••"
