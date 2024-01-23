@@ -91,11 +91,11 @@ private extension NSActivePhysicalCardView {
   
   var activedCardTextView: some View {
     VStack(spacing: 16) {
-      Text(LFLocalizable.CardActivated.CardActived.title)
+      Text(L10N.Common.CardActivated.CardActived.title)
         .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.large.value))
         .foregroundColor(Colors.label.swiftUIColor)
         .multilineTextAlignment(.center)
-      Text(LFLocalizable.CardActivated.CardActived.description)
+      Text(L10N.Common.CardActivated.CardActived.description)
         .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.medium.value))
         .foregroundColor(Colors.label.swiftUIColor.opacity(0.75))
         .multilineTextAlignment(.center)
@@ -108,7 +108,7 @@ private extension NSActivePhysicalCardView {
     VStack(spacing: 10) {
       // applePay TODO: - Temporarily hide this button
       FullSizeButton(
-        title: LFLocalizable.Button.Skip.title,
+        title: L10N.Common.Button.Skip.title,
         isDisable: false,
         type: .secondary
       ) {

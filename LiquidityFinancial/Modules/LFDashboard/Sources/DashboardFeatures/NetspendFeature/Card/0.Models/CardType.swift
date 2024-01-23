@@ -17,9 +17,9 @@ enum CardType {
   var title: String {
     switch self {
     case .virtual:
-      return LFLocalizable.Card.Virtual.title
+      return L10N.Common.Card.Virtual.title
     case .physical:
-      return LFLocalizable.Card.Physical.title
+      return L10N.Common.Card.Physical.title
     }
   }
 }
