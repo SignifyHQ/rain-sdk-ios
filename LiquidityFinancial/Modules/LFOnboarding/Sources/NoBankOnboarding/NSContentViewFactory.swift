@@ -3,10 +3,10 @@ import LFUtilities
 import LFStyleGuide
 import LFLocalizable
 import SwiftUI
-import UIComponents
+import OnboardingComponents
 import Factory
 import AccountDomain
-import UIComponents
+import OnboardingComponents
 import EnvironmentService
 
 extension Container {

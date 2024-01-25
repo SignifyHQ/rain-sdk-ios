@@ -1,0 +1,179 @@
+[
+  {
+    "goal" : 0,
+    "currency" : "USD",
+    "isLive" : true,
+    "id" : "a52fb85e-73b5-454c-82ac-7ca56fa3015f",
+    "categories" : [
+      "d91930a8-d0ea-49e4-a496-f5bf30545bc6",
+      "2f1fdd48-8722-4874-84da-dd6bf42488bf",
+      "29fa61fa-2bed-4994-8bfc-92910ff82b7f"
+    ],
+    "isFeatured" : false,
+    "description" : "Fund The Trevor Project, which provides 24\/7 crisis support services to LGBTQ+ young people.",
+    "createdAt" : "2023-08-06T02:56:34.378023Z",
+    "name" : "Help LGBTQ+ Youth in Crisis",
+    "backgroundColor" : "#bfbaf9"
+  },
+  {
+    "createdAt" : "2023-08-06T02:56:34.378023Z",
+    "goal" : 0,
+    "currency" : "USD",
+    "id" : "ff951d41-dbcf-489f-a990-9a6183fe2940",
+    "isLive" : true,
+    "categories" : [
+      "2f1fdd48-8722-4874-84da-dd6bf42488bf",
+      "2976e2f6-3540-4125-8eaa-6e27f29ff8f9"
+    ],
+    "isFeatured" : false,
+    "description" : "Help the National Abortion Federation raise money for travel, lodging and procedures for safe abortion access.",
+    "stickerUrl" : "https:\/\/cdn.dev.liquidity.cc\/donations\/2023-08-05T17:14:49.486528025Z-ff951d41-dbcf-489f-a990-9a6183fe2940-sticker.png",
+    "name" : "Safe Abortion Access For Everyone",
+    "backgroundColor" : "#D15356"
+  },
+  {
+    "createdAt" : "2023-08-06T02:56:34.378023Z",
+    "goal" : 0,
+    "currency" : "USD",
+    "id" : "984188c9-9a81-4837-909c-4b55bc0519c2",
+    "isLive" : true,
+    "categories" : [
+      "2976e2f6-3540-4125-8eaa-6e27f29ff8f9",
+      "2f1fdd48-8722-4874-84da-dd6bf42488bf"
+    ],
+    "isFeatured" : false,
+    "description" : "Support Equality Now as they work to protect and promote the rights of all women and girls around the world.",
+    "stickerUrl" : "https:\/\/cdn.dev.liquidity.cc\/donations\/2023-08-05T17:15:01.500339452Z-984188c9-9a81-4837-909c-4b55bc0519c2-sticker.png",
+    "name" : "A Better World for Women and Girls",
+    "backgroundColor" : "#0d1666"
+  },
+  {
+    "createdAt" : "2023-08-06T02:56:34.378023Z",
+    "goal" : 0,
+    "currency" : "USD",
+    "id" : "c9bba9a4-c42c-4c88-a951-0716ef5ebf44",
+    "isLive" : true,
+    "categories" : [
+      "b8bf9d22-0549-48f9-a250-e52b69d74556",
+      "2f1fdd48-8722-4874-84da-dd6bf42488bf"
+    ],
+    "isFeatured" : false,
+    "description" : "The Way Station is responding to the crisis in East Palestine, Ohio by providing food, clothing, water, and more.",
+    "stickerUrl" : "https:\/\/cdn.dev.liquidity.cc\/donations\/2023-08-05T17:15:03.603511805Z-c9bba9a4-c42c-4c88-a951-0716ef5ebf44-sticker.png",
+    "name" : "Assist Those Affected By The Ohio Train Derailment",
+    "backgroundColor" : "#325186"
+  },
+  {
+    "createdAt" : "2023-08-06T02:56:34.378023Z",
+    "goal" : 0,
+    "currency" : "USD",
+    "id" : "6510bbd1-03d8-431a-b163-f1e208575d9a",
+    "isLive" : true,
+    "categories" : [
+      "b8bf9d22-0549-48f9-a250-e52b69d74556",
+      "2f1fdd48-8722-4874-84da-dd6bf42488bf"
+    ],
+    "isFeatured" : false,
+    "description" : "Support CORE in aiding Ukraine and providing a rapid response to the humanitarian crisis.",
+    "stickerUrl" : "https:\/\/cdn.dev.liquidity.cc\/donations\/2023-08-05T17:15:12.476476492Z-6510bbd1-03d8-431a-b163-f1e208575d9a-sticker.png",
+    "name" : "Peace For Ukraine",
+    "backgroundColor" : "#0b3d90"
+  },
+  {
+    "createdAt" : "2023-08-06T02:56:33.503407Z",
+    "goal" : 0,
+    "currency" : "USD",
+    "id" : "30662454-55ee-494f-8e02-01f8843a8418",
+    "isLive" : true,
+    "categories" : [
+      "34aacb4b-0efe-4b94-981a-4388bb142b47",
+      "2f1fdd48-8722-4874-84da-dd6bf42488bf"
+    ],
+    "isFeatured" : false,
+    "description" : "Prevent violence in schools, homes, and communities with Sandy Hook Promise.",
+    "stickerUrl" : "https:\/\/cdn.dev.liquidity.cc\/donations\/2023-08-05T17:13:37.452969432Z-30662454-55ee-494f-8e02-01f8843a8418-sticker.png",
+    "name" : "Protect Children From Gun Violence",
+    "backgroundColor" : "#217CB5"
+  },
+  {
+    "createdAt" : "2023-08-06T02:56:33.503407Z",
+    "goal" : 0,
+    "currency" : "USD",
+    "id" : "6108ee88-b078-48bc-9f76-39a62dd0ce12",
+    "isLive" : true,
+    "categories" : [
+      "34aacb4b-0efe-4b94-981a-4388bb142b47",
+      "2f1fdd48-8722-4874-84da-dd6bf42488bf"
+    ],
+    "isFeatured" : false,
+    "description" : "Help T.E.A.C.H. educate sick children in hospitals.",
+    "stickerUrl" : "https:\/\/cdn.dev.liquidity.cc\/donations\/2023-08-05T17:13:47.357400663Z-6108ee88-b078-48bc-9f76-39a62dd0ce12-sticker.png",
+    "name" : "Help Educate Children in Hospitals",
+    "backgroundColor" : "#ff2600"
+  },
+  {
+    "createdAt" : "2023-08-06T02:56:33.503407Z",
+    "goal" : 0,
+    "currency" : "USD",
+    "id" : "36faed0d-a9ec-4943-8cf4-db8d1aa145c2",
+    "isLive" : true,
+    "categories" : [
+      "2f1fdd48-8722-4874-84da-dd6bf42488bf",
+      "29fa61fa-2bed-4994-8bfc-92910ff82b7f"
+    ],
+    "isFeatured" : false,
+    "description" : "Help Equality Florida fund the lawsuit against the State of Florida over the newly-signed ‘Don’t Say Gay’ bill.",
+    "stickerUrl" : "https:\/\/cdn.dev.liquidity.cc\/donations\/2023-08-05T17:13:55.872488229Z-36faed0d-a9ec-4943-8cf4-db8d1aa145c2-sticker.png",
+    "name" : "It's OK to Say Gay",
+    "backgroundColor" : "#98b356"
+  },
+  {
+    "createdAt" : "2023-08-06T02:56:33.503407Z",
+    "goal" : 0,
+    "currency" : "USD",
+    "id" : "77b3a706-fc91-4bad-9d8d-a0aaef5e0b0e",
+    "isLive" : true,
+    "categories" : [
+      "008abe1e-f508-4ee5-b352-2e11109f7229",
+      "2f1fdd48-8722-4874-84da-dd6bf42488bf"
+    ],
+    "isFeatured" : false,
+    "description" : "Help those affected by the devastating tornadoes in the Southeast US.",
+    "stickerUrl" : "https:\/\/cdn.dev.liquidity.cc\/donations\/2023-08-05T17:14:16.865279030Z-77b3a706-fc91-4bad-9d8d-a0aaef5e0b0e-sticker.png",
+    "name" : "Tornadoes Hit The Southeast",
+    "backgroundColor" : "#417dd6"
+  },
+  {
+    "createdAt" : "2023-08-06T02:56:33.503407Z",
+    "goal" : 0,
+    "currency" : "USD",
+    "id" : "eb1e05c6-6499-473d-8658-2a548d50ce41",
+    "isLive" : true,
+    "categories" : [
+      "2f1fdd48-8722-4874-84da-dd6bf42488bf",
+      "b8bf9d22-0549-48f9-a250-e52b69d74556"
+    ],
+    "isFeatured" : false,
+    "description" : "Support the NAACP Empowerment Programs in addressing key concerns of the Black Community.",
+    "stickerUrl" : "https:\/\/cdn.dev.liquidity.cc\/donations\/2023-08-05T17:14:18.526743689Z-eb1e05c6-6499-473d-8658-2a548d50ce41-sticker.png",
+    "name" : "Dismantle Racism and Disrupt Inequality",
+    "backgroundColor" : "#00214a"
+  },
+  {
+    "createdAt" : "2023-08-06T02:56:33.503407Z",
+    "goal" : 0,
+    "currency" : "USD",
+    "id" : "3ee4c958-946d-4748-8aa9-c06bb9aa4fa1",
+    "isLive" : true,
+    "categories" : [
+      "2976e2f6-3540-4125-8eaa-6e27f29ff8f9",
+      "34aacb4b-0efe-4b94-981a-4388bb142b47",
+      "2f1fdd48-8722-4874-84da-dd6bf42488bf"
+    ],
+    "isFeatured" : false,
+    "description" : "Take care of sick and needy babies and families with Newborns in Need.",
+    "stickerUrl" : "https:\/\/cdn.dev.liquidity.cc\/donations\/2023-08-05T17:14:22.906777173Z-3ee4c958-946d-4748-8aa9-c06bb9aa4fa1-sticker.png",
+    "name" : "Provide For Newborns In Need",
+    "backgroundColor" : "#e63f3d"
+  }
+]

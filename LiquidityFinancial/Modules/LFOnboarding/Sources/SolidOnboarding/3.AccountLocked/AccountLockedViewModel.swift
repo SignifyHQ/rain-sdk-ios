@@ -4,11 +4,11 @@ import Factory
 import Services
 
 @MainActor
-final class AccountLockedViewModel: ObservableObject {
+public final class AccountLockedViewModel: ObservableObject {
   @LazyInjected(\.customerSupportService) var customerSupportService
   @LazyInjected(\.solidOnboardingFlowCoordinator) var solidOnboardingFlowCoordinator
 
-  init() {}
+  public init() {}
   
   func openSupportScreen() {
     customerSupportService.openSupportScreen()

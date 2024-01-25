@@ -42,9 +42,3 @@ struct AppView: View {
     return [firstTab, TabOption.rewards, TabOption.account]
   }
 }
-
-struct ContentView_Previews: PreviewProvider {
-  static var previews: some View {
-    AppView()
-  }
-}

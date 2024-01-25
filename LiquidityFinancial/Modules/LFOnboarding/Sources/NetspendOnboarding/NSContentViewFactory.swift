@@ -5,7 +5,7 @@ import LFLocalizable
 import SwiftUI
 import Factory
 import AccountDomain
-import UIComponents
+import OnboardingComponents
 import EnvironmentService
 
 extension Container {

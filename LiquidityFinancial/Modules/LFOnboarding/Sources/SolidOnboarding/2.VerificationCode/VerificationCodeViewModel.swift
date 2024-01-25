@@ -9,7 +9,7 @@ import Services
 import AccountData
 import AccountDomain
 import LFLocalizable
-import UIComponents
+import OnboardingComponents
 import SolidData
 import SolidDomain
 import EnvironmentService
@@ -17,7 +17,7 @@ import LFAuthentication
 import LFFeatureFlags
 
 @MainActor
-final class VerificationCodeViewModel: ObservableObject {
+public final class VerificationCodeViewModel: ObservableObject {
   enum VerificationCodeNavigation {
     case identityVerificationCode(AnyView)
   }
@@ -50,7 +50,7 @@ final class VerificationCodeViewModel: ObservableObject {
     LoginUseCase(repository: onboardingRepository)
   }()
   
-  init(phoneNumber: String, requireAuth: [RequiredAuth]) {
+  public init(phoneNumber: String, requireAuth: [RequiredAuth]) {
     self.requireAuth = requireAuth
     formatPhoneNumber = Constants.Default.regionCode.rawValue + phoneNumber
     performAutoGetTwilioMessagesIfNeccessary()

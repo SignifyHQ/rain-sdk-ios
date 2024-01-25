@@ -1,5 +1,5 @@
 input_dir: ZResources
-#output_dir: ${DERIVED_SOURCES_DIR}
+output_dir: ${DERIVED_SOURCES_DIR}
 
 ## Generate constants for Assets Catalogs, including constants for images, colors
 xcassets:

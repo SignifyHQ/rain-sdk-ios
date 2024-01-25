@@ -1,0 +1,38 @@
+{
+  "blockingAlert": {
+    "forcedUpgrade": {
+      "description": "You're on an older version of the <a href='https://www.getcausecard.com/legal'><span style='color:black'> CauseCard <span></a> app. Please update to the latest version.",
+      "title": "Update App",
+      "titleButton": "Continue"
+    },
+    "generic": {},
+    "termsOfService": {}
+  },
+  "features": {
+    "ARREAR": {
+      "accessLevel": "LIVE"
+    },
+    "DISABLED_FIAT": false,
+    "TERM_OF_SERVICE": {
+      "esignatureLink": "https://getcausecard.com/legal#evolve-e-consent",
+      "patriotNoticeLink": "https://getcausecard.com/legal#usa-patriot-act-notice",
+      "consumerAccountLink": "https://getcausecard.com/legal#consumer-account",
+      "privacyPolicyLink": "https://getcausecard.com/legal#privacy-policy",
+      "termConditionLink": "https://getcausecard.com/legal"
+    }
+  },
+  "version": {
+    "android": {
+      "currentVersionNumber": 10,
+      "currentVersionString": "",
+      "minVersionNumber": 2,
+      "minVersionString": ""
+    },
+    "ios": {
+      "currentVersionNumber": 200,
+      "currentVersionString": "2.0.0",
+      "minVersionNumber": 200,
+      "minVersionString": "2.0.0"
+    }
+  }
+}

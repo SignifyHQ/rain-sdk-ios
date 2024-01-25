@@ -1,0 +1,97 @@
+{
+  "currentDonatedCount": 60,
+  "fundraiser": {
+    "createdAt": "2023-08-06T02:56:33.503407Z",
+    "goal": 0,
+    "currency": "USD",
+    "id": "77b3a706-fc91-4bad-9d8d-a0aaef5e0b0e",
+    "isLive": true,
+    "categories": [
+      "2f1fdd48-8722-4874-84da-dd6bf42488bf",
+      "008abe1e-f508-4ee5-b352-2e11109f7229"
+    ],
+    "isFeatured": false,
+    "description": "Help those affected by the devastating tornadoes in the Southeast US.",
+    "stickerUrl": "https://cdn.dev.liquidity.cc/donations/2023-08-05T17:14:16.865279030Z-77b3a706-fc91-4bad-9d8d-a0aaef5e0b0e-sticker.png",
+    "name": "Tornadoes Hit The Southeast",
+    "backgroundColor": "#417dd6"
+  },
+  "latestDonations": [
+    {
+      "userId": "5c20f003-d217-4c8d-a11e-77241680f1a0",
+      "amount": 0.059999999999999998,
+      "userName": "D",
+      "id": "6f1b5f83-44f4-45f3-9f55-598d5334735b",
+      "fundraiserId": "77b3a706-fc91-4bad-9d8d-a0aaef5e0b0e",
+      "title": "Donation by D",
+      "status": "COMPLETED",
+      "createdAt": "2023-11-09T09:28:12.648214Z",
+      "stickerUrl": "https://cdn.dev.liquidity.cc/donations/2023-08-05T17:14:16.865279030Z-77b3a706-fc91-4bad-9d8d-a0aaef5e0b0e-sticker.png"
+    },
+    {
+      "userId": "5c20f003-d217-4c8d-a11e-77241680f1a0",
+      "amount": 1,
+      "userName": "D",
+      "id": "7354aea7-8359-4a00-b447-5191f96849f5",
+      "fundraiserId": "77b3a706-fc91-4bad-9d8d-a0aaef5e0b0e",
+      "title": "Donation by D",
+      "status": "COMPLETED",
+      "createdAt": "2023-05-26T08:34:17.049424Z",
+      "stickerUrl": "https://cdn.dev.liquidity.cc/donations/2023-08-05T17:14:16.865279030Z-77b3a706-fc91-4bad-9d8d-a0aaef5e0b0e-sticker.png"
+    },
+    {
+      "userId": "5c20f003-d217-4c8d-a11e-77241680f1a0",
+      "amount": 1,
+      "userName": "D",
+      "id": "abe8f1ef-10e8-4abb-8c41-05618191b827",
+      "fundraiserId": "77b3a706-fc91-4bad-9d8d-a0aaef5e0b0e",
+      "title": "Donation by D",
+      "status": "COMPLETED",
+      "createdAt": "2023-05-26T08:30:06.031446Z",
+      "stickerUrl": "https://cdn.dev.liquidity.cc/donations/2023-08-05T17:14:16.865279030Z-77b3a706-fc91-4bad-9d8d-a0aaef5e0b0e-sticker.png"
+    },
+    {
+      "userId": "693e8162-2079-45dc-aca5-e4336ca0d343",
+      "amount": 0.22,
+      "userName": "M",
+      "id": "6a664b09-914a-4bdb-9cb4-344494495923",
+      "fundraiserId": "77b3a706-fc91-4bad-9d8d-a0aaef5e0b0e",
+      "title": "Donation by M",
+      "status": "COMPLETED",
+      "createdAt": "2023-05-10T15:15:56.687116Z",
+      "stickerUrl": "https://cdn.dev.liquidity.cc/donations/2023-08-05T17:14:16.865279030Z-77b3a706-fc91-4bad-9d8d-a0aaef5e0b0e-sticker.png"
+    },
+    {
+      "userId": "693e8162-2079-45dc-aca5-e4336ca0d343",
+      "amount": 0.029999999999999999,
+      "userName": "M",
+      "id": "81ae561a-76ce-4e66-9f79-d11991ab2dc0",
+      "fundraiserId": "77b3a706-fc91-4bad-9d8d-a0aaef5e0b0e",
+      "title": "Donation by M",
+      "status": "COMPLETED",
+      "createdAt": "2023-05-10T15:15:52.808233Z",
+      "stickerUrl": "https://cdn.dev.liquidity.cc/donations/2023-08-05T17:14:16.865279030Z-77b3a706-fc91-4bad-9d8d-a0aaef5e0b0e-sticker.png"
+    }
+  ],
+  "currentDonatedAmount": 14.720000000000001,
+  "charity": {
+    "id": "0c9af0ca-674e-49e7-92a4-d960753af74f",
+    "productId": "7f2c1a97-e378-431c-98fa-76a61b03b38b",
+    "description": "WHAT'S HAPPENING: \n\nAt least 26 people were killed and dozens injured after powerful storms and at least one tornado pummeled the Southeast on Friday night, ripping roofs off homes, nearly leveling some neighborhoods and knocking out power for thousands. \n\nHOW TO HELP:\n\nSupport the The Salvation Army (Alabama, Louisiana, Mississippi Division)  in deploying their canteens to Rolling Fork, Amory, Silver City, and Winona, Mississippi. These mobile units distribute ready-to-eat meals and water to people in need.",
+    "facebookUrl": "",
+    "headerUrl": "",
+    "instagramUrl": "",
+    "confidence": 0,
+    "emailListUrl": "",
+    "url": "",
+    "logoUrl": "https://cdn.shopping.gives/charity-logos/download_77c0d_20200708.png",
+    "tags": [
+      ""
+    ],
+    "twitterUrl": "",
+    "address": "615 Slaters Lane",
+    "headerImageUrl": "",
+    "ein": "222406433",
+    "name": "Salvation Army National Corp"
+  }
+}

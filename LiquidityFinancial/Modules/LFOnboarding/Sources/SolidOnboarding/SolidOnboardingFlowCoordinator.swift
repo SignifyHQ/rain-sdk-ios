@@ -12,7 +12,7 @@ import RewardDomain
 import LFStyleGuide
 import LFLocalizable
 import Services
-import UIComponents
+import OnboardingComponents
 import LFFeatureFlags
 import LFAuthentication
 

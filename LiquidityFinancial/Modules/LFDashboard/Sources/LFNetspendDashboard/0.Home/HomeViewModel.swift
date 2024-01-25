@@ -10,6 +10,7 @@ import Services
 import DevicesDomain
 import BiometricsManager
 
+//swiftlint:disable file_length
 @MainActor
 final class HomeViewModel: ObservableObject {
   @LazyInjected(\.accountDataManager) var accountDataManager

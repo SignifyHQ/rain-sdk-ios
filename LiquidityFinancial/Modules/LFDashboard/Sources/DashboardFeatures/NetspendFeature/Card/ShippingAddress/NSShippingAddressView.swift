@@ -9,7 +9,7 @@ struct NSShippingAddressView: View {
   private var dismiss
   @StateObject
   private var viewModel: NSShippingAddressViewModel
-  @FocusState 
+  @FocusState
   var keyboardFocus: Focus?
   
   enum Focus: Int, Hashable {

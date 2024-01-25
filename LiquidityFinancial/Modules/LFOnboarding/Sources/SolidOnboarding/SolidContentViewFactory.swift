@@ -3,10 +3,9 @@ import LFUtilities
 import LFStyleGuide
 import LFLocalizable
 import SwiftUI
-import UIComponents
+import OnboardingComponents
 import Factory
 import AccountDomain
-import UIComponents
 import LFRewards
 import LFAuthentication
 
@@ -161,9 +160,7 @@ private extension SolidContentViewFactory {
   
   @MainActor
   var phoneNumberView: some View {
-    PhoneNumberView(
-      viewModel: PhoneNumberViewModel()
-    )
+    PhoneNumberView()
   }
   
   @MainActor

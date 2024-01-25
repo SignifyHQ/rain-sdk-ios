@@ -11,7 +11,7 @@ let package = Package(
       name: "NetspendOnboarding", targets: ["NetspendOnboarding"]
     ),
     .library(
-      name: "UIComponents", targets: ["UIComponents"]
+      name: "OnboardingComponents", targets: ["OnboardingComponents"]
     ),
     .library(
       name: "SolidOnboarding", targets: ["SolidOnboarding"]
@@ -41,7 +41,7 @@ let package = Package(
   ],
   targets: [
     .target(
-      name: "UIComponents",
+      name: "OnboardingComponents",
       dependencies: [
         "LFUtilities", "LFStyleGuide", "LFLocalizable", "Factory", "iPhoneNumberField", "LFFeatureFlags",
         .product(name: "NetSpendData", package: "LFData"),
@@ -57,7 +57,7 @@ let package = Package(
     .target(
       name: "NetspendOnboarding",
       dependencies: [
-        "UIComponents", "SwiftSoup", "LFFeatureFlags",
+        "OnboardingComponents", "SwiftSoup", "LFFeatureFlags",
         .product(name: "OnboardingData", package: "LFData"),
         .product(name: "AccountData", package: "LFData"),
         .product(name: "DevicesData", package: "LFData"),
@@ -73,7 +73,7 @@ let package = Package(
     .target(
       name: "NoBankOnboarding",
       dependencies: [
-        "UIComponents", "SwiftSoup", "LFFeatureFlags",
+        "OnboardingComponents", "SwiftSoup", "LFFeatureFlags",
         .product(name: "OnboardingData", package: "LFData"),
         .product(name: "AccountData", package: "LFData"),
         .product(name: "DevicesData", package: "LFData"),
@@ -89,7 +89,7 @@ let package = Package(
     .target(
       name: "SolidOnboarding",
       dependencies: [
-        "LFUtilities", "LFStyleGuide", "LFLocalizable", "Factory", "LFRewards", "UIComponents", "LFFeatureFlags",
+        "LFUtilities", "LFStyleGuide", "LFLocalizable", "Factory", "LFRewards", "OnboardingComponents", "LFFeatureFlags",
         .product(name: "SolidData", package: "LFData"),
         .product(name: "RewardData", package: "LFData"),
         .product(name: "RewardDomain", package: "LFDomain"),

@@ -1,4 +1,4 @@
-import UIComponents
+import OnboardingComponents
 import Combine
 import DomainTestHelpers
 import Factory

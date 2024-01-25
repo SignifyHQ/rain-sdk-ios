@@ -5,7 +5,7 @@ import Foundation
 import LFLocalizable
 import LFUtilities
 
-class YourAccountViewModel: ObservableObject {
+public class YourAccountViewModel: ObservableObject {
   
   enum OpenSafariType: Identifiable {
     var id: String {
@@ -39,7 +39,7 @@ class YourAccountViewModel: ObservableObject {
     AccountUseCase(repository: accountRepository)
   }()
   
-  init() {
+  public init() {
     getFeatureConfig()
   }
   

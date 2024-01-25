@@ -5,7 +5,7 @@ import LFStyleGuide
 import LFUtilities
 import SwiftUI
 
-struct PatriotActView: View {
+public struct PatriotActView: View {
   
   @StateObject var viewModel: PatriotActViewModel
   
@@ -13,14 +13,14 @@ struct PatriotActView: View {
   
   var contentViewFactory: SolidContentViewFactory
   
-  init(
+  public init(
     viewModel: PatriotActViewModel = PatriotActViewModel()
   ) {
     _viewModel = .init(wrappedValue: viewModel)
     self.contentViewFactory = Container.shared.contenViewFactory.callAsFunction()
   }
   
-  var body: some View {
+  public var body: some View {
     VStack {
       VStack(alignment: .leading) {
         title

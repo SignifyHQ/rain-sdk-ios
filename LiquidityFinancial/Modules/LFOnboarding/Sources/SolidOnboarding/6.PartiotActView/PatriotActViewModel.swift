@@ -6,7 +6,7 @@ import LFLocalizable
 import LFUtilities
 import EnvironmentService
 
-class PatriotActViewModel: ObservableObject {
+public class PatriotActViewModel: ObservableObject {
   enum OpenSafariType: Identifiable {
     var id: String {
       switch self {
@@ -34,7 +34,7 @@ class PatriotActViewModel: ObservableObject {
     AccountUseCase(repository: accountRepository)
   }()
   
-  init() {
+  public init() {
     getFeatureConfig()
   }
   

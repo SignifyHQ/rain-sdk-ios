@@ -10,7 +10,7 @@ import Services
 import AccountData
 import AccountDomain
 import LFLocalizable
-import UIComponents
+import OnboardingComponents
 import EnvironmentService
 
 @MainActor

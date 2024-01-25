@@ -8,7 +8,7 @@ import OnboardingDomain
 import Services
 import Factory
 
-struct VerificationCodeView: View {
+public struct VerificationCodeView: View {
   @StateObject
   var viewModel: VerificationCodeViewModel
   @FocusState
@@ -16,11 +16,11 @@ struct VerificationCodeView: View {
   @Injected(\.analyticsService)
   var analyticsService
   
-  init(viewModel: VerificationCodeViewModel) {
+  public init(viewModel: VerificationCodeViewModel) {
     _viewModel = .init(wrappedValue: viewModel)
   }
   
-  var body: some View {
+  public var body: some View {
     VStack(alignment: .leading, spacing: 28) {
       headerTitle
       enterCodeTextField

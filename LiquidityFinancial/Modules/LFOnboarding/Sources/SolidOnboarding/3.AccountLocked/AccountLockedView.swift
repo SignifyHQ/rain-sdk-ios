@@ -5,10 +5,10 @@ import LFLocalizable
 import LFAccessibility
 import Services
 
-struct AccountLockedView: View {
+public struct AccountLockedView: View {
   @StateObject private var viewModel: AccountLockedViewModel
   
-  init(viewModel: AccountLockedViewModel) {
+  public init(viewModel: AccountLockedViewModel) {
     _viewModel = .init(wrappedValue: viewModel)
   }
   

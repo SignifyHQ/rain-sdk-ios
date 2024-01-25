@@ -6,13 +6,13 @@ import LFUtilities
 import Services
 import Factory
 
-struct AddressView: View {
+public struct AddressView: View {
   @Injected(\.analyticsService)
   var analyticsService
   
   @StateObject private var viewModel = AddressViewModel()
 
-  init() {
+  public init() {
     UITableView.appearance().backgroundColor = UIColor(Colors.background.swiftUIColor)
     UITableView.appearance().separatorInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 15)
   }
@@ -28,7 +28,7 @@ struct AddressView: View {
   @Environment(\.dismiss) var dismiss
   @FocusState var keyboardFocus: Focus?
 
-  var body: some View {
+  public var body: some View {
     VStack {
       ScrollViewReader { proxy in
         ScrollView {

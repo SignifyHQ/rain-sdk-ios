@@ -3,9 +3,8 @@ import Factory
 import LFUtilities
 import LFStyleGuide
 import AccountData
-import UIComponents
+import OnboardingComponents
 import LFLocalizable
-import UIComponents
 import Services
 import EnvironmentService
 
@@ -38,8 +37,7 @@ public struct NSOnboardingContentView: View {
       buildContent(for: viewModel.route)
     }
   }
-  
-  //swiftlint:disable function_body_length
+
   @ViewBuilder
   private func buildContent(for route: NSOnboardingFlowCoordinator.Route) -> some View {
     Group {

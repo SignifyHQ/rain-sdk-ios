@@ -11,7 +11,7 @@ import AuthorizationManager
 import NetworkUtilities
 
 @MainActor
-final class KYCStatusViewModel: ObservableObject {
+public final class KYCStatusViewModel: ObservableObject {
   enum Navigation {
     case passport
     case address
@@ -38,7 +38,7 @@ final class KYCStatusViewModel: ObservableObject {
   private var fetchCount = 0
   private var autoRefreshTimer: Timer?
   
-  init(state: KYCState) {
+  public init(state: KYCState) {
     _state = .init(initialValue: state)
   }
   

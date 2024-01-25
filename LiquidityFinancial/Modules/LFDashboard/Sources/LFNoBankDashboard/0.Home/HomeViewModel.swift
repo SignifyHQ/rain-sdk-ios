@@ -9,6 +9,7 @@ import Combine
 import Services
 import DevicesDomain
 
+//swiftlint:disable file_length
 @MainActor
 final class HomeViewModel: ObservableObject {
   @LazyInjected(\.accountDataManager) var accountDataManager

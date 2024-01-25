@@ -236,7 +236,7 @@ extension NSListCardsViewModel {
   }
   
   func onClickedOrderPhysicalCard() {
-    let viewModel = NSOrderPhysicalCardViewModel() { card in
+    let viewModel = NSOrderPhysicalCardViewModel { card in
       self.orderPhysicalSuccess(card: card)
     }
     let destinationView = NSOrderPhysicalCardView(viewModel: viewModel)
@@ -259,7 +259,7 @@ extension NSListCardsViewModel {
   func presentActivateCardView(activeCardView: AnyView) {
     switch currentCard.cardType {
     case .physical:
-      fullScreen =  .activatePhysicalCard(activeCardView)
+      fullScreen = .activatePhysicalCard(activeCardView)
     default:
       break
     }

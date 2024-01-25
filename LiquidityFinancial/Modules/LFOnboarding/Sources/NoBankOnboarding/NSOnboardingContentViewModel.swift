@@ -5,7 +5,7 @@ import Factory
 import OnboardingData
 import LFUtilities
 import AuthorizationManager
-import UIComponents
+import OnboardingComponents
 
 class NSOnboardingContentViewModel: ObservableObject {
   @LazyInjected(\.noBankOnboardingFlowCoordinator) var onboardingFlowCoordinator

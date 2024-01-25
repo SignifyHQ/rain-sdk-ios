@@ -158,7 +158,6 @@ private extension AccountLimitsView {
     }
   }
   
-  //swiftlint:disable function_body_length
   @ViewBuilder func accountLimitsSection(type: AccountLimitsSection, model: AccountLimitsUIModel) -> some View {
     VStack(alignment: .leading, spacing: 24) {
       if type == .totalDeposit {

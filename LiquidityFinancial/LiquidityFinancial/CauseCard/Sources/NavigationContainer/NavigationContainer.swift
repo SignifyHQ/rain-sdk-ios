@@ -29,9 +29,5 @@ final class NavigationContainer {
     transactionNavigation.registerAddBankDebit(type: AddBankWithDebitView.self) { _ in
       AnyView(AddBankWithDebitView())
     }
-    
-    transactionNavigation.registerDisputeTransactionView(type: EmptyView.self) { _ in
-      AnyView(EmptyView())
-    }
   }
 }

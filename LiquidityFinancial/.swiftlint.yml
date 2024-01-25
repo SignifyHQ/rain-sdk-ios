@@ -86,6 +86,7 @@ disabled_rules:
   - line_length
   - generic_type_name
   - convenience_type
+  - unneeded_synthesized_initializer
   
 identifier_name:
   excluded:
@@ -115,6 +116,7 @@ implicit_return:
     - closure
     - getter
 
+function_body_length: 100
 closure_body_length: 100
 cyclomatic_complexity: 30
 file_length: 550

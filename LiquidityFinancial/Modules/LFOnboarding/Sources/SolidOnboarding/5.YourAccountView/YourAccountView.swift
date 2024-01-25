@@ -5,19 +5,19 @@ import LFUtilities
 import SwiftUI
 import Factory
 
-struct YourAccountView: View {
+public struct YourAccountView: View {
   @Injected(\.solidOnboardingFlowCoordinator) var solidOnboardingFlowCoordinator
   @StateObject private var viewModel: YourAccountViewModel = YourAccountViewModel()
   
   @State var openSafariType: YourAccountViewModel.OpenSafariType?
   
-  init(
+  public init(
     viewModel: YourAccountViewModel = YourAccountViewModel()
   ) {
     _viewModel = .init(wrappedValue: viewModel)
   }
   
-  var body: some View {
+  public var body: some View {
     VStack {
       VStack(alignment: .leading) {
         title

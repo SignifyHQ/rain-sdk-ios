@@ -17,6 +17,7 @@ import LFFeatureFlags
 import BiometricsManager
 import SwiftUI
 
+//swiftlint:disable file_length
 @MainActor
 public final class HomeViewModel: ObservableObject {
   @LazyInjected(\.accountDataManager) var accountDataManager

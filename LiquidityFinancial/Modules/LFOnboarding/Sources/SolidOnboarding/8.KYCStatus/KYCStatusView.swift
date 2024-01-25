@@ -3,12 +3,12 @@ import LFUtilities
 import LFStyleGuide
 import LFLocalizable
 import Services
-import UIComponents
+import OnboardingComponents
 
-struct KYCStatusView: View {
+public struct KYCStatusView: View {
   @StateObject var viewModel: KYCStatusViewModel
   
-  init(viewModel: KYCStatusViewModel) {
+  public init(viewModel: KYCStatusViewModel) {
     _viewModel = .init(wrappedValue: viewModel)
   }
   

@@ -9,7 +9,7 @@ import Combine
 import Factory
 import EnvironmentService
 
-struct PhoneNumberView: View {
+public struct PhoneNumberView: View {
 
   @Environment(\.presentationMode)
   var presentation
@@ -22,13 +22,13 @@ struct PhoneNumberView: View {
   
   @State var openSafariType: PhoneNumberViewModel.OpenSafariType?
 
-  init(viewModel: PhoneNumberViewModel) {
-    _viewModel = .init(wrappedValue: viewModel)
+  public init() {
+    _viewModel = .init(wrappedValue: PhoneNumberViewModel())
   }
   
   @FocusState private var keyboardFocus: Bool
   
-  var body: some View {
+  public var body: some View {
     ZStack {
       VStack {
         Rectangle()
