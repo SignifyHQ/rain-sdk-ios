@@ -24,7 +24,7 @@ public enum TabOption: String, CaseIterable {
   var imageAsset: Image {
     switch self {
     case .cash:
-      return GenImages.CommonImages.icCash.swiftUIImage
+      return GenImages.CommonImages.icHomeCards.swiftUIImage
     case .rewards:
       return GenImages.CommonImages.icRewards.swiftUIImage
     case .assets:

@@ -3,6 +3,7 @@ import LFStyleGuide
 import LFLocalizable
 
 public enum TabOption: Int, CaseIterable, Hashable {
+  case cards
   case cash
   case donation
   case rewards
@@ -12,6 +13,8 @@ public enum TabOption: Int, CaseIterable, Hashable {
   
   var title: String {
     switch self {
+    case .cards:
+      return L10N.Common.Home.CardsTab.title
     case .cash:
       return L10N.Custom.Home.CashTab.title
     case .rewards:
@@ -29,6 +32,8 @@ public enum TabOption: Int, CaseIterable, Hashable {
   
   var imageAsset: Image {
     switch self {
+    case .cards:
+      return GenImages.CommonImages.icHomeCards.swiftUIImage
     case .cash:
       return ModuleImages.icHomeCash.swiftUIImage
     case .rewards:

@@ -221,6 +221,8 @@
 "rewards.no_rewards" = "No rewards yet";
 
 // Home
+
+"home.cardsTab.title" = "Cards";
 "home.rewardsTab.title" = "Rewards";
 "home.assetsTab.title" = "Assets";
 "home.accountTab.title" = "Account";
@@ -279,6 +281,8 @@
 "listCard.activateCard.primary" = "Activate Card";
 
 // CARD
+"card.openCards.title" = "Open Cards";
+"card.closeCards.title" = "Closed Cards";
 "card.virtual.title" = "Virtual";
 "card.physical.title" = "Physical";
 "card.cardNumber.title" = "Card Number";

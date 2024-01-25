@@ -10,13 +10,16 @@ import LFAuthentication
 import GeneralFeature
 import SolidFeature
 import SolidOnboarding
+import LFFeatureFlags
 
 public struct HomeView: View {
-  @Injected(\.analyticsService) var analyticsService
+  @Environment(\.dismiss) var dismiss
   @Environment(\.scenePhase) var scenePhase
   @StateObject private var viewModel: HomeViewModel
+  @Injected(\.analyticsService) var analyticsService
   
   // Ensure each TabOptionView is initialized only once
+  let cardsView = CardsTabView()
   let cashView = CashView(
     listCardViewModel: SolidListCardsViewModel()
   )
@@ -57,6 +60,9 @@ public struct HomeView: View {
         leadingNavigationBarView
           .blur(radius: viewModel.blurRadius)
       }
+    }
+    .onChange(of: LFFeatureFlagContainer.isFirstPhaseVirtualCardFeatureFlagEnabled) { _ in
+      viewModel.configureTabOption(with: viewModel.tabOptions)
     }
     .navigationLink(item: $viewModel.navigation) { item in
       switch item {
@@ -123,6 +129,8 @@ private extension HomeView {
   var dashboardView: some View {
     Group {
       switch viewModel.tabSelected {
+      case .cards:
+        cardsView
       case .cash:
         cashView
       case .rewards:

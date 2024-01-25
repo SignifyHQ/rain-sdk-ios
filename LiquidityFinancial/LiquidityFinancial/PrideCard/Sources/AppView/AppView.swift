@@ -3,6 +3,7 @@ import Factory
 import SolidOnboarding
 import LFStyleGuide
 import LFUtilities
+import LFFeatureFlags
 import LFRewardDashboard
 import RewardData
 
@@ -37,7 +38,8 @@ struct AppView: View {
   }
   
   func buildTabOption() -> [TabOption] {
-    return [TabOption.cash, TabOption.rewards, TabOption.account]
+    let firstTab: TabOption = LFFeatureFlagContainer.isFirstPhaseVirtualCardFeatureFlagEnabled ? .cards : .cash
+    return [firstTab, TabOption.rewards, TabOption.account]
   }
 }
 

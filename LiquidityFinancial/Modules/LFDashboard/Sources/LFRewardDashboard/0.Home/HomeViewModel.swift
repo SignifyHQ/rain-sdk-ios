@@ -79,11 +79,7 @@ public final class HomeViewModel: ObservableObject {
   }
   
   public init(tabOptions: [TabOption]) {
-    if let reward = rewardDataManager.currentSelectReward {
-      buildTabOption(with: reward)
-    } else {
-      self.tabOptions = tabOptions
-    }
+    configureTabOption(with: tabOptions)
     accountDataManager.userCompleteOnboarding = true
     initData()
     checkBiometricsCapability()
@@ -123,6 +119,17 @@ extension HomeViewModel {
   func onClickedSetupBiometricPrimaryButton() {
     clearPopup()
     allowBiometricAuthentication()
+  }
+  
+  func configureTabOption(with tabOptions: [TabOption]) {
+    if tabSelected == .cash || tabSelected == .cards {
+      tabSelected = LFFeatureFlagContainer.isFirstPhaseVirtualCardFeatureFlagEnabled ? .cards : .cash
+    }
+    if let reward = rewardDataManager.currentSelectReward {
+      buildTabOption(with: reward)
+    } else {
+      self.tabOptions = tabOptions
+    }
   }
 }
 
@@ -502,9 +509,11 @@ private extension HomeViewModel {
   }
   
   func buildTabOption(with reward: SelectRewardTypeEntity) {
-    let rewardList: [TabOption] = [.cash, .rewards, .account]
-    let noneRewardList: [TabOption] = [.cash, .noneReward, .account]
-    let donationList: [TabOption] = [.cash, .donation, .causes, .account]
+    let firstTab: TabOption = LFFeatureFlagContainer.isFirstPhaseVirtualCardFeatureFlagEnabled ? .cards : .cash
+    let rewardList: [TabOption] = [firstTab, .rewards, .account]
+    let noneRewardList: [TabOption] = [firstTab, .noneReward, .account]
+    let donationList: [TabOption] = [firstTab, .donation, .causes, .account]
+    
     switch reward.rawString {
     case UserRewardType.cashBack.rawValue:
       tabOptions = rewardList

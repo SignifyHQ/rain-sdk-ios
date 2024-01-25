@@ -5,6 +5,7 @@ import LFStyleGuide
 import LFUtilities
 import LFRewardDashboard
 import RewardData
+import LFFeatureFlags
 
 struct AppView: View {
 
@@ -37,7 +38,8 @@ struct AppView: View {
   }
   
   func buildTabOption() -> [TabOption] {
-    return [TabOption.cash, TabOption.rewards, TabOption.account]
+    let firstTab = LFFeatureFlagContainer.isFirstPhaseVirtualCardFeatureFlagEnabled ? .cards : .cash
+    return [firstTab, TabOption.rewards, TabOption.account]
   }
 }
 
