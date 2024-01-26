@@ -16,6 +16,7 @@ final class RecoveryCodeViewModel: ObservableObject {
   @LazyInjected(\.accountRepository) var accountRepository
   @LazyInjected(\.onboardingRepository) var onboardingRepository
   @LazyInjected(\.customerSupportService) var customerSupportService
+  @LazyInjected(\.featureFlagManager) var featureFlagManager
 
   @Published var recoveryCode: String = .empty
   
@@ -113,7 +114,7 @@ extension RecoveryCodeViewModel {
           verification: Verification(type: parameters.verification?.type ?? .empty, secret: recoveryCode)
         )
         _ = try await loginUseCase.execute(
-          isNewAuth: LFFeatureFlagContainer.isMultiFactorAuthFeatureFlagEnabled,
+          isNewAuth: featureFlagManager.isFeatureFlagEnabled(.mfa),
           parameters: parameters
         )
         completion()

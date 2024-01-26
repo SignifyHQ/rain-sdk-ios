@@ -9,22 +9,11 @@ struct PrideCardApp: App {
   @State var showFeatureFlagsHubView = false
   
   init() {
-    LFFeatureFlagContainer.registerViewFactoryPridecard()
   }
   
   var body: some Scene {
     WindowGroup {
       AppView()
-      #if DEBUG
-        .onShake {
-          hideKeyboard()
-          showFeatureFlagsHubView.toggle()
-        }
-        .sheet(isPresented: $showFeatureFlagsHubView, content: {
-          LFFeatureFlagsHubView()
-            .embedInNavigation()
-        })
-      #endif
     }
   }
 }

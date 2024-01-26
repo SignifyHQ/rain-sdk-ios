@@ -18,6 +18,7 @@ public final class EnterPasswordViewModel: ObservableObject {
   @LazyInjected(\.onboardingRepository) var onboardingRepository
 
   @LazyInjected(\.customerSupportService) var customerSupportService
+  @LazyInjected(\.featureFlagManager) var featureFlagManager
   
   @Published var navigation: Navigation?
   @Published var shouldDismissFlow: Bool?
@@ -96,7 +97,7 @@ extension EnterPasswordViewModel {
           verification: Verification(type: parameters.verification?.type ?? .empty, secret: password)
         )
         _ = try await loginUseCase.execute(
-          isNewAuth: LFFeatureFlagContainer.isMultiFactorAuthFeatureFlagEnabled,
+          isNewAuth: featureFlagManager.isFeatureFlagEnabled(.mfa),
           parameters: parameters
         )
         completion()

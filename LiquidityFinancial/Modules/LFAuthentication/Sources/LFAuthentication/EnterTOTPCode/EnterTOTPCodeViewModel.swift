@@ -16,6 +16,7 @@ final class EnterTOTPCodeViewModel: ObservableObject {
   @LazyInjected(\.accountRepository) var accountRepository
   @LazyInjected(\.onboardingRepository) var onboardingRepository
   @LazyInjected(\.customerSupportService) var customerSupportService
+  @LazyInjected(\.featureFlagManager) var featureFlagManager
 
   @Published var isTOTPCodeEntered: Bool = false
   @Published var isVerifying: Bool = false
@@ -85,7 +86,7 @@ extension EnterTOTPCodeViewModel {
           verification: Verification(type: parameters.verification?.type ?? .empty, secret: totpCode)
         )
         _ = try await loginUseCase.execute(
-          isNewAuth: LFFeatureFlagContainer.isMultiFactorAuthFeatureFlagEnabled,
+          isNewAuth: featureFlagManager.isFeatureFlagEnabled(.mfa),
           parameters: parameters
         )
         completion()

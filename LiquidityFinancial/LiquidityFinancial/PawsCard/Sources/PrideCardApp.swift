@@ -10,7 +10,6 @@ struct PrideCardApp: App {
   @State var showFeatureFlagsHubView = false
   
   init() {
-    LFFeatureFlagContainer.registerViewFactoryPridecard()
   }
   
   var body: some Scene {

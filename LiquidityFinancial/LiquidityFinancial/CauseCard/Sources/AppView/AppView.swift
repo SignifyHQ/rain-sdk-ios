@@ -11,6 +11,7 @@ struct AppView: View {
 
   @StateObject var viewModel = AppViewModel()
   @Injected(\.accountDataManager) var accountDataManager
+  @Injected(\.featureFlagManager) var featureFlagManager
   
   var body: some View {
     buildContent(for: viewModel.route)
@@ -38,7 +39,7 @@ struct AppView: View {
   }
   
   func buildTabOption() -> [TabOption] {
-    let firstTab = LFFeatureFlagContainer.isFirstPhaseVirtualCardFeatureFlagEnabled ? .cards : .cash
+    let firstTab: TabOption = featureFlagManager.isFeatureFlagEnabled(.virtualCardPhrase1) ? .cards : .cash
     return [firstTab, TabOption.rewards, TabOption.account]
   }
 }

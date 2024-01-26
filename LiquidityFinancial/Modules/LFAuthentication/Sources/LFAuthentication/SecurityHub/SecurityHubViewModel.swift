@@ -6,11 +6,13 @@ import BiometricsManager
 import LFLocalizable
 import LFUtilities
 import SwiftUI
+import LFFeatureFlags
 
 @MainActor
 public final class SecurityHubViewModel: ObservableObject {
   @LazyInjected(\.accountDataManager) var accountDataManager
   @LazyInjected(\.biometricsManager) var biometricsManager
+  @LazyInjected(\.featureFlagManager) var featureFlagManager
 
   @Published var isMFAEnabled: Bool = false
   @Published var isBiometricEnabled: Bool = false
@@ -45,6 +47,10 @@ public final class SecurityHubViewModel: ObservableObject {
   
   var isBiometricsCapability: Bool {
     !(biometricType == .none || biometricType == .unknown)
+  }
+  
+  var isMultiFactor: Bool {
+    featureFlagManager.isFeatureFlagEnabled(.mfa)
   }
   
   public init() {

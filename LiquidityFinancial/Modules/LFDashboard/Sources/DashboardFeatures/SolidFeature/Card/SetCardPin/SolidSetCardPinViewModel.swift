@@ -52,7 +52,7 @@ private extension SolidSetCardPinViewModel {
   func setCardPIN(pinToken: String, solidCardID: String) {
     let param = [
       "pin": pinValue,
-      "expiryMonth": convertMonthIntToString(monthNumber: cardModel.expiryMonth),
+      "expiryMonth": convertMonthIntToString(monthNumber: cardModel.expiryMonth) ?? "",
       "expiryYear": String(cardModel.expiryYear),
       "last4": cardModel.last4
     ] as [String: Any]

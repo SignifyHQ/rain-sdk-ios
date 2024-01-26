@@ -61,7 +61,7 @@ public struct HomeView: View {
           .blur(radius: viewModel.blurRadius)
       }
     }
-    .onChange(of: LFFeatureFlagContainer.isFirstPhaseVirtualCardFeatureFlagEnabled) { _ in
+    .onChange(of: viewModel.isVirtualCardEnabled) { _ in
       viewModel.configureTabOption(with: viewModel.tabOptions)
     }
     .navigationLink(item: $viewModel.navigation) { item in

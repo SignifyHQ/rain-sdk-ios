@@ -211,7 +211,7 @@ private extension ProfileView {
         ArrowButton(image: GenImages.CommonImages.icWarning.swiftUIImage, title: L10N.Common.Profile.DepositLimits.title, value: nil) {
           viewModel.depositLimitsTapped()
         }*/
-        if LFFeatureFlagContainer.isPasswordLoginFeatureFlagEnabled {
+        if viewModel.isPasswordLoginEnabled {
           ArrowButton(
             image: viewModel.isShowWarningSecurityIcon
             ? GenImages.CommonImages.icWarningSecurity.swiftUIImage

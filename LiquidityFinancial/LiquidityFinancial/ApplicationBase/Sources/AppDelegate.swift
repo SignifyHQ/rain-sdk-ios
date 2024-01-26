@@ -22,11 +22,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     KickoffService.kickoff(application: application, launchingOptions: options)
     UserDefaults.isFirstRun = false
     setupServices()
+    fetchFeatureFlags()
     return true
   }
   
   func applicationDidBecomeActive(_ application: UIApplication) {
-    
+    fetchFeatureFlags()
   }
   
   func application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
@@ -75,4 +76,13 @@ extension AppDelegate {
   func setupServices() {
     Container.shared.customerSupportService.resolve().setUp(environment: environmentService.networkEnvironment)
   }
+}
+
+extension AppDelegate {
+  
+  func fetchFeatureFlags() {
+    print("Luan featureFlag")
+    Container.shared.featureFlagManager.resolve().fetchEnabledFeatureFlags()
+  }
+  
 }

@@ -18,6 +18,7 @@ public final class IdentityVerificationCodeViewModel: ObservableObject {
   @LazyInjected(\.accountDataManager) var accountDataManager
   @LazyInjected(\.onboardingRepository) var onboardingRepository
   @LazyInjected(\.solidOnboardingFlowCoordinator) var solidOnboardingFlowCoordinator
+  @LazyInjected(\.featureFlagManager) var featureFlagManager
 
   @Published public var isDisableButton: Bool = true
   @Published public var isShowLogoutPopup: Bool = false
@@ -58,7 +59,7 @@ public extension IdentityVerificationCodeViewModel {
       self.isLoading = true
       
       do {
-        let isNewAuth = LFFeatureFlagContainer.isMultiFactorAuthFeatureFlagEnabled
+        let isNewAuth = featureFlagManager.isFeatureFlagEnabled(.mfa)
         let parameters = LoginParameters(
           phoneNumber: phoneNumber,
           otpCode: otpCode,

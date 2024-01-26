@@ -3,8 +3,11 @@ import LFUtilities
 import LFStyleGuide
 import LFLocalizable
 import LFFeatureFlags
+import Factory
 
 public struct SecurityHubView: View {
+  @LazyInjected(\.featureFlagManager) var featureFlagManager
+  
   @StateObject private var viewModel = SecurityHubViewModel()
   @Environment(\.dismiss) private var dismiss
   
@@ -126,7 +129,7 @@ private extension SecurityHubView {
         )
       )
       
-      if LFFeatureFlagContainer.isMultiFactorAuthFeatureFlagEnabled {
+      if viewModel.isMultiFactor {
         textInformationCell(
           title: L10N.Common.Authentication.SecurityMfa.title,
           value: L10N.Common.Authentication.SecurityAuthenticationApp.title,
@@ -146,7 +149,7 @@ private extension SecurityHubView {
   
   @ViewBuilder
   var emailRowTrailingView: some View {
-    if LFFeatureFlagContainer.isMultiFactorAuthFeatureFlagEnabled {
+    if viewModel.isMultiFactor {
       textWithAction(
         title: viewModel.shouldVerifyEmail ? L10N.Common.Authentication.SecurityVerify.title : L10N.Common.Authentication.SecurityVerified.title,
         isEnable: viewModel.shouldVerifyEmail

@@ -8,6 +8,7 @@ import RewardDomain
 import Services
 import Combine
 import DevicesDomain
+import LFFeatureFlags
 
 @MainActor
 final class ProfileViewModel: ObservableObject {
@@ -28,6 +29,7 @@ final class ProfileViewModel: ObservableObject {
   @LazyInjected(\.pushNotificationService) var pushNotificationService
   @LazyInjected(\.analyticsService) var analyticsService
   @LazyInjected(\.devicesRepository) var devicesRepository
+  @LazyInjected(\.featureFlagManager) var featureFlagManager
   
   private var cancellable = Set<AnyCancellable>()
   
@@ -68,6 +70,10 @@ final class ProfileViewModel: ObservableObject {
   
   var stickers: [Sticker] {
     contribution?.stickers ?? []
+  }
+  
+  var isPasswordLoginEnabled: Bool {
+    featureFlagManager.isFeatureFlagEnabled(.passwordLogin)
   }
   
   var phoneNumber: String {

@@ -73,6 +73,7 @@ public class SolidOnboardingFlowCoordinator: SolidOnboardingFlowCoordinatorProto
   @LazyInjected(\.analyticsService) var analyticsService
   @LazyInjected(\.solidOnboardingRepository) var solidOnboardingRepository
   @LazyInjected(\.fiatAccountService) var fiatAccountService
+  @LazyInjected(\.featureFlagManager) var featureFlagManager
   
   lazy var accountUseCase: AccountUseCaseProtocol = {
     AccountUseCase(repository: accountRepository)
@@ -201,7 +202,7 @@ public class SolidOnboardingFlowCoordinator: SolidOnboardingFlowCoordinatorProto
   }
   
   func handleUserMissingStep() async throws {
-    if LFFeatureFlagContainer.isPasswordLoginFeatureFlagEnabled {
+    if featureFlagManager.isFeatureFlagEnabled(.passwordLogin) {
       let user = try await getUserUseCase.execute()
       accountDataManager.update(missingSteps: user.missingSteps)
       

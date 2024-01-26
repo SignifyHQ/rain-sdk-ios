@@ -9,21 +9,11 @@ struct DogeCardApp: App {
   @State var showFeatureFlagsHubView = false
   
   init() {
-    LFFeatureFlagContainer.registerViewFactoryDogecard()
   }
   
   var body: some Scene {
     WindowGroup {
       AppView()
-      #if DEBUG
-        .onShake {
-          hideKeyboard()
-          showFeatureFlagsHubView.toggle()
-        }
-        .sheet(isPresented: $showFeatureFlagsHubView, content: {
-          LFFeatureFlagsHubView()
-        })
-      #endif
     }
   }
 }

@@ -6,7 +6,6 @@ import SwiftUI
 import OnboardingComponents
 import Factory
 import AccountDomain
-import OnboardingComponents
 import EnvironmentService
 
 extension Container {

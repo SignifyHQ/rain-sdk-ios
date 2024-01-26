@@ -29,6 +29,9 @@ let package = Package(
       name: "DevicesData",
       targets: ["DevicesData"]),
     .library(
+      name: "FeatureFlagData",
+      targets: ["FeatureFlagData"]),
+    .library(
       name: "CryptoChartData",
       targets: ["CryptoChartData"]),
     .library(
@@ -120,6 +123,15 @@ let package = Package(
       dependencies: [
         "Factory",
         .product(name: "DevicesDomain", package: "LFDomain"),
+        .product(name: "NetworkUtilities", package: "LFNetwork"),
+        .product(name: "CoreNetwork", package: "LFNetwork")
+      ]
+    ),
+    .target(
+      name: "FeatureFlagData",
+      dependencies: [
+        "Factory",
+        .product(name: "FeatureFlagDomain", package: "LFDomain"),
         .product(name: "NetworkUtilities", package: "LFNetwork"),
         .product(name: "CoreNetwork", package: "LFNetwork")
       ]

@@ -4,6 +4,7 @@ import LFUtilities
 import NetspendOnboarding
 import SwiftUI
 import AuthorizationManager
+import LFFeatureFlags
 
 // swiftlint:disable let_var_whitespace
 protocol AppCoordinatorProtocol {
@@ -33,6 +34,8 @@ class AppCoordinator: AppCoordinatorProtocol {
   private var accountDataManager
   @LazyInjected(\.pushNotificationService)
   private var pushNotificationService
+  @LazyInjected(\.featureFlagManager)
+  private var featureFlagManager
   
   private var subscribers: Set<AnyCancellable> = []
   let routeSubject: CurrentValueSubject<Route, Never> = .init(.onboarding)
@@ -58,6 +61,7 @@ class AppCoordinator: AppCoordinatorProtocol {
   
   private func setOnboardingRoute(_ route: NSOnboardingFlowCoordinator.Route) {
     if route == .dashboard {
+      fetchFeatureFlags()
       set(route: .dashboard)
     } else {
       set(route: .onboarding)
@@ -67,6 +71,10 @@ class AppCoordinator: AppCoordinatorProtocol {
   func set(route: Route) {
     log.info("AppCoordinator route: \(route), with current route: \(routeSubject.value)")
     routeSubject.send(route)
+  }
+  
+  private func fetchFeatureFlags() {
+    featureFlagManager.fetchEnabledFeatureFlags()
   }
   
   func routeUser() {

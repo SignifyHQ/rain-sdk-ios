@@ -11,15 +11,6 @@ struct CardanoApp: App {
   var body: some Scene {
     WindowGroup {
       AppView()
-    #if DEBUG
-      .onShake {
-        hideKeyboard()
-        showFeatureFlagsHubView.toggle()
-      }
-      .sheet(isPresented: $showFeatureFlagsHubView, content: {
-        LFFeatureFlagsHubView()
-      })
-    #endif
     }
   }
 }

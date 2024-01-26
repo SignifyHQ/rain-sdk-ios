@@ -26,6 +26,9 @@ let package = Package(
       name: "DevicesDomain",
       targets: ["DevicesDomain"]),
     .library(
+      name: "FeatureFlagDomain",
+      targets: ["FeatureFlagDomain"]),
+    .library(
       name: "CryptoChartDomain",
       targets: ["CryptoChartDomain"]),
     .library(
@@ -66,6 +69,10 @@ let package = Package(
     ),
     .target(
       name: "DevicesDomain",
+      dependencies: []
+    ),
+    .target(
+      name: "FeatureFlagDomain",
       dependencies: []
     ),
     .target(

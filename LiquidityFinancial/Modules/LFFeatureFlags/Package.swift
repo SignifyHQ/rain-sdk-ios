@@ -16,7 +16,9 @@ let package = Package(
     dependencies: [
       .package(url: "https://github.com/hmlongco/Factory", from: "2.3.1"),
       .package(name: "LFUtilities", path: "../LFUtilities"),
-      .package(name: "LFStyleGuide", path: "../LFStyleGuide")
+      .package(name: "LFStyleGuide", path: "../LFStyleGuide"),
+      .package(name: "LFDomain", path: "../LFDomain"),
+      .package(name: "LFData", path: "../LFData")
     ],
     targets: [
         // Targets are the basic building blocks of a package, defining a module or a test suite.
@@ -24,7 +26,9 @@ let package = Package(
         .target(
             name: "LFFeatureFlags",
             dependencies: [
-              "Factory", "LFUtilities", "LFStyleGuide"
+              "Factory", "LFUtilities", "LFStyleGuide",
+              .product(name: "FeatureFlagData", package: "LFData"),
+              .product(name: "FeatureFlagDomain", package: "LFDomain")
             ]
         ),
         .testTarget(

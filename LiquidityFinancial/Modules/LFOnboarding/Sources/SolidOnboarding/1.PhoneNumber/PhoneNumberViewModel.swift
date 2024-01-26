@@ -52,6 +52,7 @@ final class PhoneNumberViewModel: ObservableObject {
   @LazyInjected(\.onboardingRepository) var onboardingRepository
   @LazyInjected(\.customerSupportService) var customerSupportService
   @LazyInjected(\.solidOnboardingFlowCoordinator) var solidOnboardingFlowCoordinator
+  @LazyInjected(\.featureFlagManager) var featureFlagManager
   
   let terms = L10N.Common.Term.Terms.attributeText
   let esignConsent = L10N.Common.Term.EsignConsent.attributeText
@@ -80,7 +81,7 @@ extension PhoneNumberViewModel {
         let parameters = OTPParameters(phoneNumber: formatPhone.reformatPhone)
         
         let otpResponse = try await requestOtpUseCase.execute(
-          isNewAuth: LFFeatureFlagContainer.isMultiFactorAuthFeatureFlagEnabled,
+          isNewAuth: featureFlagManager.isFeatureFlagEnabled(.mfa),
           parameters: parameters
         )
         let requiredAuth = otpResponse.requiredAuth.map {

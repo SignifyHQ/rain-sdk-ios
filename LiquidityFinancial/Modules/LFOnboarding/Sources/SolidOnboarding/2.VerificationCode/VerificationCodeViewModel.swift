@@ -28,6 +28,7 @@ public final class VerificationCodeViewModel: ObservableObject {
   @LazyInjected(\.solidOnboardingFlowCoordinator) var solidOnboardingFlowCoordinator
   @LazyInjected(\.customerSupportService) var customerSupportService
   @LazyInjected(\.analyticsService) var analyticsService
+  @LazyInjected(\.featureFlagManager) var featureFlagManager
   
   @Published var isNavigationToWelcome: Bool = false
   @Published var isResendButonTimerOn = false
@@ -85,7 +86,7 @@ extension VerificationCodeViewModel {
           otpCode: otpCode
         )
         _ = try await loginUseCase.execute(
-          isNewAuth: LFFeatureFlagContainer.isMultiFactorAuthFeatureFlagEnabled,
+          isNewAuth: featureFlagManager.isFeatureFlagEnabled(.mfa),
           parameters: parameters
         )
         
@@ -112,7 +113,7 @@ extension VerificationCodeViewModel {
       do {
         let parameters = OTPParameters(phoneNumber: formatPhoneNumber)
         _ = try await requestOtpUseCase.execute(
-          isNewAuth: LFFeatureFlagContainer.isMultiFactorAuthFeatureFlagEnabled,
+          isNewAuth: featureFlagManager.isFeatureFlagEnabled(.mfa),
           parameters: parameters
         )
         isShowLoading = false

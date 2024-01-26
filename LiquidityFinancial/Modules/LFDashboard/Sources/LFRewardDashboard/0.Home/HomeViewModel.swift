@@ -37,6 +37,8 @@ public final class HomeViewModel: ObservableObject {
   @Injected(\.fiatAccountService) var fiatAccountService
   @Injected(\.externalFundingDataManager) var externalFundingDataManager
   
+  @LazyInjected(\.featureFlagManager) var featureFlagManager
+  
   lazy var solidGetWireTransfer: SolidGetWireTranferUseCaseProtocol = {
     SolidGetWireTranferUseCase(repository: solidExternalFundingRepository)
   }()
@@ -77,6 +79,10 @@ public final class HomeViewModel: ObservableObject {
   
   var showSearchButton: Bool {
     tabSelected == .causes
+  }
+  
+  var isVirtualCardEnabled: Bool {
+    featureFlagManager.isFeatureFlagEnabled(.virtualCardPhrase1)
   }
   
   public init(tabOptions: [TabOption]) {
@@ -124,7 +130,7 @@ extension HomeViewModel {
   
   func configureTabOption(with tabOptions: [TabOption]) {
     if tabSelected == .cash || tabSelected == .cards {
-      tabSelected = LFFeatureFlagContainer.isFirstPhaseVirtualCardFeatureFlagEnabled ? .cards : .cash
+      tabSelected = featureFlagManager.isFeatureFlagEnabled(.virtualCardPhrase1) ? .cards : .cash
     }
     if let reward = rewardDataManager.currentSelectReward {
       buildTabOption(with: reward)
@@ -298,7 +304,7 @@ private extension HomeViewModel {
   func authenticateWithBiometrics() {
     let isEnableAuthenticateWithBiometrics = UserDefaults.isBiometricUsageEnabled && !UserDefaults.isStartedWithLoginFlow
 
-    if LFFeatureFlagContainer.isPasswordLoginFeatureFlagEnabled,
+    if featureFlagManager.isFeatureFlagEnabled(.passwordLogin),
        isEnableAuthenticateWithBiometrics {
       isVerifyingBiometrics = true
       blurRadius = 8
@@ -363,7 +369,7 @@ private extension HomeViewModel {
 extension HomeViewModel {
   private func showEnhanceSecurityPopupIfNeed() {
     guard let userID = accountDataManager.userInfomationData.userID, !userID.isEmpty,
-          LFFeatureFlagContainer.isPasswordLoginFeatureFlagEnabled,
+          featureFlagManager.isFeatureFlagEnabled(.passwordLogin),
           blockingPopup != .passwordEnhancedSecurity
     else {
       UserDefaults.isStartedWithLoginFlow = false
@@ -510,7 +516,7 @@ private extension HomeViewModel {
   }
   
   func buildTabOption(with reward: SelectRewardTypeEntity) {
-    let firstTab: TabOption = LFFeatureFlagContainer.isFirstPhaseVirtualCardFeatureFlagEnabled ? .cards : .cash
+    let firstTab: TabOption = featureFlagManager.isFeatureFlagEnabled(.virtualCardPhrase1) ? .cards : .cash
     let rewardList: [TabOption] = [firstTab, .rewards, .account]
     let noneRewardList: [TabOption] = [firstTab, .noneReward, .account]
     let donationList: [TabOption] = [firstTab, .donation, .causes, .account]
