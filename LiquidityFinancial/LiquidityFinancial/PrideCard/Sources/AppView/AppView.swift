@@ -11,7 +11,7 @@ struct AppView: View {
   
   @StateObject var viewModel = AppViewModel()
   @Injected(\.accountDataManager) var accountDataManager
-  @LazyInjected(\.featureFlagManager) var featureFlagManager
+  @Injected(\.featureFlagManager) var featureFlagManager
   
   var body: some View {
     buildContent(for: viewModel.route)

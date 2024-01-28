@@ -81,7 +81,6 @@ extension AppDelegate {
 extension AppDelegate {
   
   func fetchFeatureFlags() {
-    print("Luan featureFlag")
     Container.shared.featureFlagManager.resolve().fetchEnabledFeatureFlags()
   }
   
