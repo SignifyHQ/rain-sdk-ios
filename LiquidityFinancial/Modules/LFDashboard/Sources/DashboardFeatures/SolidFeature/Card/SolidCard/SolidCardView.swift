@@ -103,7 +103,7 @@ private extension SolidCardView {
   @ViewBuilder
   var cardCopyMessageView: some View {
     if viewModel.isShowCardCopyMessage {
-      Text(L10N.Common.Card.CopyToClipboard.title)
+      Text(L10N.Common.Card.CardNumberCopied.title)
         .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.ultraSmall.value))
         .foregroundColor(Colors.label.swiftUIColor)
         .frame(maxWidth: .infinity)

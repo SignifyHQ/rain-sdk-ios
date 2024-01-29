@@ -14,12 +14,10 @@ final class CardsTabViewModel: ObservableObject {
     SolidGetListCardUseCase(repository: solidCardRepository)
   }()
   
-  @Published var isInitiating: Bool = false
   @Published var toastMessage: String?
 
   @Published var selectedTab: CardListType = .open
   @Published var status: DataStatus<CardModel> = .idle
-  @Published var filteredCardsList: [CardModel] = []
   
   @Published var navigation: Navigation?
   
@@ -34,7 +32,7 @@ final class CardsTabViewModel: ObservableObject {
   }
 }
 
-// MARK: - API Hanlder
+// MARK: - API Handler
 private extension CardsTabViewModel {
   func apiFetchSolidCards() {
     Task {
@@ -50,14 +48,14 @@ private extension CardsTabViewModel {
   }
 }
 
-// MARK: - View Helpers
+// MARK: - View Handler
 extension CardsTabViewModel {
   func refresh() {
     apiFetchSolidCards()
   }
   
-  func navigateToCardDetail(card: CardModel) {
-    navigation = .cardDetail(card: card)
+  func navigateToCardDetail(card: CardModel, cardsList: [CardModel]) {
+    navigation = .cardDetail(card: card, cardsList: cardsList)
   }
 }
 
@@ -89,7 +87,7 @@ private extension CardsTabViewModel {
     entities.map {
       CardModel(
         id: $0.id,
-        cardName: "Default CardName", // Update later after the api is available
+        cardName: "New Card", // Update later after the api is available
         cardType: CardType(rawValue: $0.type) ?? .virtual,
         cardholderName: nil,
         expiryMonth: Int($0.expirationMonth) ?? 0,
@@ -129,6 +127,6 @@ extension CardsTabViewModel {
   }
   
   enum Navigation {
-    case cardDetail(card: CardModel)
+    case cardDetail(card: CardModel, cardsList: [CardModel])
   }
 }

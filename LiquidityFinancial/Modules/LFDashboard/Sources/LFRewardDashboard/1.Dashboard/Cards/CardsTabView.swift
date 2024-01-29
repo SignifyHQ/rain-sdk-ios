@@ -22,8 +22,10 @@ struct CardsTabView: View {
     }
     .navigationLink(item: $viewModel.navigation) { navigation in
       switch navigation {
-      case let .cardDetail(card):
-        EmptyView() // TODO: - Will be implemented in another PR
+      case let .cardDetail(card, cardsList):
+        CardDetailView(
+          viewModel: CardDetailViewModel(currentCard: card, cardsList: cardsList)
+        )
       }
     }
     .popup(item: $viewModel.toastMessage, style: .toast) {
@@ -101,6 +103,7 @@ private extension CardsTabView {
       VStack(spacing: 20) {
         ForEach(cardsList) { card in
           Button {
+            viewModel.navigateToCardDetail(card: card, cardsList: cardsList)
           } label: {
             CardCellView(cardModel: card)
               .padding(.horizontal, 30)

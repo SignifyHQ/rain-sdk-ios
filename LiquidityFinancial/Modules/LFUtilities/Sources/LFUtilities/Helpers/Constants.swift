@@ -263,9 +263,13 @@ public extension Constants {
     case ssnPlaceholder = "* * * *"
     case maxSize = "20"
     case capacityUnit = "Mb"
+    case asterisk = "*"
     case dotSymbol = "•"
     case zeroAmount = "0"
+    case cardNumberPattern = "(\\d{4})(\\d{4})(\\d{4})(\\d{4})"
+    case cardNumberTemplate = "$1            $2            $3            $4"
     case expirationDatePlaceholder = "••/••"
+    case expirationDateAsteriskPlaceholder = "**/**"
     case fullCardNumberPlaceholder = "•••• •••• •••• ••••"
     case cardNumberPlaceholder = "••••  ••••  ••••  "
     case physicalCardNumberPlaceholder = "••••  "
@@ -280,6 +284,8 @@ public extension Constants {
     case walletAddressPlaceholder = "************"
     case statementFromMonth = "1"
     case statementFromYear = "2023"
+    case cvvContentPath = "cvv"
+    case cardNumberContentPath = "cardNumber"
   }
 }
 

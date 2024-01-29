@@ -33,7 +33,7 @@ private extension CardCellView {
         .foregroundColor(cardModel.textColor)
     } else {
       Text(cardModel.cardName)
-        .foregroundColor(Colors.label.swiftUIColor)
+        .foregroundColor(cardModel.textColor)
         .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.small.value))
         .lineLimit(2)
         .multilineTextAlignment(.leading)
@@ -42,8 +42,8 @@ private extension CardCellView {
   
   var trailingView: some View {
     VStack(alignment: .trailing, spacing: 8) {
-      if cardModel.cardStatus == .disabled {
-        GenImages.Images.icPause.swiftUIImage
+      if cardModel.cardStatus == .disabled || cardModel.cardStatus == .unactivated {
+        GenImages.Images.icCirclePause.swiftUIImage
       }
       Text(cardModel.cardType.title)
       Text("****\(cardModel.last4)")

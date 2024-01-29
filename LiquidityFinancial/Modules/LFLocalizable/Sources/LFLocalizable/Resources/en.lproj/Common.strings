@@ -283,12 +283,17 @@
 // CARD
 "card.openCards.title" = "Open Cards";
 "card.closeCards.title" = "Closed Cards";
+"card.closed.title" = "CLOSED";
 "card.virtual.title" = "Virtual";
 "card.physical.title" = "Physical";
+"card.cardType.title" = "Card Type";
+"card.cardName.title" = "Card Name";
 "card.cardNumber.title" = "Card Number";
+"card.latestTransaction.title" = "Latest Transactions";
 "card.exp.title" = "Exp";
 "card.cvv.title" = "CVV";
-"card.copyToClipboard.title" = "Card number copied to clipboard";
+"card.cardNumberCopied.title" = "Card number copied to clipboard";
+"card.expAndCVVCodeCopied.title" = "Expiry Date and CVV code copied to clipboard";
 "card.physical.name" = "%@Card";
 
 "cards_detail.donations" = "Donations";
