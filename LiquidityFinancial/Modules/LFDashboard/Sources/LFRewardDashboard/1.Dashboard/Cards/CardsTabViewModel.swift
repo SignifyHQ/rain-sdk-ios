@@ -29,6 +29,7 @@ final class CardsTabViewModel: ObservableObject {
   init() {
     apiFetchSolidCards()
     observeSelectedTab()
+    observeDidCardsListChangeNotification()
   }
 }
 
@@ -54,8 +55,13 @@ extension CardsTabViewModel {
     apiFetchSolidCards()
   }
   
-  func navigateToCardDetail(card: CardModel, cardsList: [CardModel]) {
-    navigation = .cardDetail(card: card, cardsList: cardsList)
+  func navigateToCardDetail(card: CardModel, filterredCards: [CardModel]) {
+    let viewModel = CardDetailViewModel(
+      currentCard: card,
+      cardsList: cardsList,
+      filterredCards: filterredCards
+    )
+    navigation = .cardDetail(viewModel: viewModel)
   }
 }
 
@@ -67,6 +73,18 @@ private extension CardsTabViewModel {
       .sink { [weak self] tab in
         guard let self, !cardsList.isEmpty else { return }
         self.filterCardsList(with: tab)
+      }
+      .store(in: &subscribers)
+  }
+  
+  func observeDidCardsListChangeNotification() {
+    NotificationCenter.default.publisher(for: .didCardsListChange)
+      .sink { [weak self] notification in
+        guard let self, let cardsList = notification.userInfo?[Constants.UserInfoKey.cards] as? [CardModel] else {
+          return
+        }
+        self.cardsList = cardsList
+        filterCardsList(with: self.selectedTab)
       }
       .store(in: &subscribers)
   }
@@ -102,31 +120,8 @@ private extension CardsTabViewModel {
 }
 
 // MARK: - Types
-extension CardsTabViewModel {
-  enum CardListType: Identifiable {
-    case open
-    case closed
-    
-    var id: String {
-      switch self {
-      case .open:
-        return "open"
-      case .closed:
-        return "closed"
-      }
-    }
-    
-    var title: String {
-      switch self {
-      case .open:
-        return L10N.Common.Card.OpenCards.title
-      case .closed:
-        return L10N.Common.Card.CloseCards.title
-      }
-    }
-  }
-  
+extension CardsTabViewModel {  
   enum Navigation {
-    case cardDetail(card: CardModel, cardsList: [CardModel])
+    case cardDetail(viewModel: CardDetailViewModel)
   }
 }

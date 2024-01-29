@@ -22,10 +22,8 @@ struct CardsTabView: View {
     }
     .navigationLink(item: $viewModel.navigation) { navigation in
       switch navigation {
-      case let .cardDetail(card, cardsList):
-        CardDetailView(
-          viewModel: CardDetailViewModel(currentCard: card, cardsList: cardsList)
-        )
+      case let .cardDetail(viewModel):
+        CardDetailView(viewModel: viewModel)
       }
     }
     .popup(item: $viewModel.toastMessage, style: .toast) {
@@ -55,8 +53,8 @@ private extension CardsTabView {
       switch viewModel.status {
       case .idle:
         loadingView
-      case let .success(cardsList):
-        makeListCardView(cardsList: cardsList)
+      case let .success(filterredCards):
+        makeListCardView(filterredCards: filterredCards)
       case .loading, .failure:
         EmptyView()
       }
@@ -65,7 +63,7 @@ private extension CardsTabView {
   
   func makeHeaderTabView(width: CGFloat) -> some View {
     HStack(spacing: 0) {
-      ForEach(viewModel.cardListType) { type in
+      ForEach(viewModel.cardListType, id: \.self) { type in
         makeTabItem(type: type, width: (width - 8) / 2)
       }
     }
@@ -76,7 +74,7 @@ private extension CardsTabView {
     .padding(.horizontal, 30)
   }
   
-  func makeTabItem(type: CardsTabViewModel.CardListType, width: CGFloat) -> some View {
+  func makeTabItem(type: CardListType, width: CGFloat) -> some View {
     HStack {
       Spacer()
       Text(type.title)
@@ -98,12 +96,12 @@ private extension CardsTabView {
     .cornerRadius(32)
   }
   
-  func makeListCardView(cardsList: [CardModel]) -> some View {
+  func makeListCardView(filterredCards: [CardModel]) -> some View {
     ScrollView(showsIndicators: false) {
       VStack(spacing: 20) {
-        ForEach(cardsList) { card in
+        ForEach(filterredCards) { card in
           Button {
-            viewModel.navigateToCardDetail(card: card, cardsList: cardsList)
+            viewModel.navigateToCardDetail(card: card, filterredCards: filterredCards)
           } label: {
             CardCellView(cardModel: card)
               .padding(.horizontal, 30)

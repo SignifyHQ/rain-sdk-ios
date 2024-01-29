@@ -7,9 +7,13 @@ import VGSShowSDK
 struct VGSCardView: View {
   @StateObject
   private var viewModel: VGSCardViewModel
+  @Binding
+  private var card: CardModel
   
-  init(viewModel: VGSCardViewModel) {
-    _viewModel = .init(wrappedValue: viewModel)
+  init(card: Binding<CardModel>) {
+    let cardViewModel = VGSCardViewModel(card: card.wrappedValue)
+    _viewModel = .init(wrappedValue: cardViewModel)
+    _card = card
   }
   
   var body: some View {
@@ -56,7 +60,7 @@ private extension VGSCardView {
   
   @ViewBuilder
   var topTrailingCardView: some View {
-    if viewModel.card.cardStatus == .closed {
+    if card.cardStatus == .closed {
       Text(L10N.Common.Card.Closed.title)
         .foregroundColor(viewModel.card.textColor)
         .font(Fonts.bold.swiftUIFont(size: Constants.FontSize.small.value))
@@ -67,7 +71,7 @@ private extension VGSCardView {
             .opacity(0.5)
             .cornerRadius(4)
         )
-    } else if viewModel.card.cardStatus == .disabled || viewModel.card.cardStatus == .unactivated {
+    } else if card.cardStatus == .disabled || card.cardStatus == .unactivated {
       GenImages.Images.icCirclePause.swiftUIImage
         .resizable()
         .frame(32)

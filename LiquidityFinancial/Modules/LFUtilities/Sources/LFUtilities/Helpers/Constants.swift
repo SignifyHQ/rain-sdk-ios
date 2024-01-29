@@ -300,6 +300,13 @@ public extension Constants {
   }
 }
 
+// MARK: - Notification
+public extension Constants {
+  enum UserInfoKey: String {
+    case cards
+  }
+}
+
 public extension Constants {
   static let lowBalanceThreshold = 5.0
   

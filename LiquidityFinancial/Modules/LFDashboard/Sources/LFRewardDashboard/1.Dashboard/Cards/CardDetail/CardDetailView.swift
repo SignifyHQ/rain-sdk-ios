@@ -17,13 +17,6 @@ struct CardDetailView: View {
   
   var body: some View {
     content
-      .padding(.top, 24)
-      .padding(.horizontal, 30)
-      .padding(.bottom, 16)
-      .background(Colors.background.swiftUIColor)
-      .navigationBarBackButtonHidden(true)
-      .toolbar { toolbarContent }
-      .overlay(cardDropdownListView, alignment: .top)
       .popup(item: $viewModel.toastMessage, style: .toast) {
         ToastView(toastMessage: $0)
       }
@@ -125,12 +118,29 @@ private extension CardDetailView {
         transactionListView
       }
     }
+    .padding(.top, 24)
+    .padding(.horizontal, 30)
+    .padding(.bottom, 16)
+    .background(Colors.background.swiftUIColor)
+    .navigationBarBackButtonHidden(true)
+    .toolbar { toolbarContent }
+    .overlay(cardDropdownListView, alignment: .top)
+    .overlay { apiLoadingView }
+    .disabled(viewModel.isCallingAPI)
+  }
+  
+  @ViewBuilder
+  var apiLoadingView: some View {
+    if viewModel.isCallingAPI {
+      ProgressView().progressViewStyle(.circular)
+        .tint(Colors.primary.swiftUIColor)
+    }
   }
   
   var cardView: some View {
     TabView(selection: $viewModel.currentCard) {
       ForEach([viewModel.currentCard], id: \.id) { item in
-        VGSCardView(viewModel: VGSCardViewModel(card: item))
+        VGSCardView(card: $viewModel.currentCard)
           .tag(item)
       }
     }
@@ -198,12 +208,12 @@ private extension CardDetailView {
             viewModel.onClickedTrashButton()
           }
         if viewModel.currentCard.cardStatus != .unactivated {
-          viewModel.lockCardIcon.swiftUIImage
+          viewModel.spendingStatusIcon.swiftUIImage
             .resizable()
             .frame(24)
             .foregroundColor(Colors.label.swiftUIColor.opacity(0.5))
             .onTapGesture {
-              viewModel.onClickedLockCardButton()
+              viewModel.updateCardSpendingStatus()
             }
         }
       }

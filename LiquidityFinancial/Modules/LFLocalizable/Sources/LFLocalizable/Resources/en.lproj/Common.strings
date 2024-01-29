@@ -289,6 +289,8 @@
 "card.cardType.title" = "Card Type";
 "card.cardName.title" = "Card Name";
 "card.cardNumber.title" = "Card Number";
+"card.cardPause.title" = "Card Paused";
+"card.cardResume.title" = "Card Resumed";
 "card.latestTransaction.title" = "Latest Transactions";
 "card.exp.title" = "Exp";
 "card.cvv.title" = "CVV";
