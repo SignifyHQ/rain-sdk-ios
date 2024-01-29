@@ -20,6 +20,12 @@ struct CardDetailView: View {
       .popup(item: $viewModel.toastMessage, style: .toast) {
         ToastView(toastMessage: $0)
       }
+      .popup(item: $viewModel.popup) { item in
+        switch item {
+        case .confirmationCloseCard:
+          confirmationCloseCardPopup
+        }
+      }
       .track(name: String(describing: type(of: self)))
   }
 }
@@ -162,6 +168,7 @@ private extension CardDetailView {
       }
       iconButtonGroup
     }
+    .disabled(viewModel.isCardClosed)
   }
   
   var transactionListView: some View {
@@ -189,10 +196,7 @@ private extension CardDetailView {
     }
     .foregroundColor(Colors.label.swiftUIColor)
     .onTapGesture {
-      guard viewModel.isCardClosed else {
-        action?()
-        return
-      }
+      action?()
     }
   }
   
@@ -218,5 +222,27 @@ private extension CardDetailView {
         }
       }
     }
+  }
+}
+
+// MARK: - Popup
+private extension CardDetailView {
+  var confirmationCloseCardPopup: some View {
+    LiquidityAlert(
+      title: L10N.Common.Card.CloseCardConfirmation.title,
+      message: L10N.Common.Card.CloseCardConfirmation.message,
+      primary: .init(
+        text: L10N.Common.Card.CloseCardConfirmation.primaryButton,
+        action: {
+          viewModel.closeCardAPI()
+        }
+      ),
+      secondary: .init(
+        text: L10N.Common.Button.Cancel.title,
+        action: {
+          viewModel.hidePopup()
+        }
+      )
+    )
   }
 }

@@ -41,6 +41,10 @@ final class VGSCardViewModel: ObservableObject {
 private extension VGSCardViewModel {
   func getVGSShowTokenAPI() {
     Task {
+      guard card.cardStatus != .closed else {
+        isCardAvailable = true
+        return
+      }
       isCardAvailable = false
       
       do {
@@ -55,7 +59,7 @@ private extension VGSCardViewModel {
 
 // MARK: - View Handler
 extension VGSCardViewModel {
-  func onDisappear() {
+  func hideSensitiveData() {
     isShowCardNumber = false
     isShowExpDateAndCVVCode = false
   }

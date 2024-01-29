@@ -120,10 +120,28 @@ private extension CardsTabView {
               .allowsHitTesting(false)
           }
         }
+        .padding(.bottom, 4)
+        createNewCardButton
       }
     }
     .refreshable {
       viewModel.refresh()
+    }
+  }
+  
+  @ViewBuilder
+  var createNewCardButton: some View {
+    if viewModel.isShowCreateNewCardButton {
+      FullSizeButton(
+        title: L10N.Common.Card.CreateNewCard.title,
+        isDisable: false,
+        isLoading: $viewModel.isCreatingCard,
+        type: .secondary,
+        icon: GenImages.CommonImages.icNewCard.swiftUIImage
+      ) {
+        viewModel.createNewCardAPI()
+      }
+      .padding(.horizontal, 30)
     }
   }
 }

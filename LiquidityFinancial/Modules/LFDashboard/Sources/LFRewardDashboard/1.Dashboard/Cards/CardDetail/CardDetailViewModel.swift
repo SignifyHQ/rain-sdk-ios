@@ -21,6 +21,10 @@ final class CardDetailViewModel: ObservableObject {
     SolidUpdateCardStatusUseCase(repository: solidCardRepository)
   }()
   
+  lazy var closeCardUseCase: SolidCloseCardUseCaseProtocol = {
+    SolidCloseCardUseCase(repository: solidCardRepository)
+  }()
+  
   @Published var isCardAvailable = false
   @Published var isShowListCardDropdown: Bool = false
   @Published var isCardClosed: Bool = false
@@ -33,7 +37,8 @@ final class CardDetailViewModel: ObservableObject {
   @Published var transactionsList: [TransactionModel] = []
   @Published var currentCard: CardModel = .default
   @Published var navigation: Navigation?
-  
+  @Published var popup: Popup?
+
   private var subscribers: Set<AnyCancellable> = []
   
   init(currentCard: CardModel, cardsList: [CardModel], filterredCards: [CardModel]) {
@@ -45,8 +50,8 @@ final class CardDetailViewModel: ObservableObject {
 }
 
 // MARK: - API Handler
-private extension CardDetailViewModel {
-  func updateCardStatusAPI(with status: CardSpendingStatus) {
+extension CardDetailViewModel {
+  private func updateCardStatusAPI(with status: CardSpendingStatus) {
     Task {
       defer { isCallingAPI = false}
       isCallingAPI = true
@@ -56,6 +61,23 @@ private extension CardDetailViewModel {
         let card = try await updateCardStatusUseCase.execute(cardID: currentCard.id, parameters: parameters)
         toastMessage = status.toastMessage
         updateCardStatus(status: status.mapToCardStatus(), id: card.id)
+      } catch {
+        toastMessage = error.userFriendlyMessage
+      }
+    }
+  }
+  
+  func closeCardAPI() {
+    Task {
+      defer { isCallingAPI = false}
+      isCallingAPI = true
+      hidePopup()
+      
+      do {
+        let isSuccess = try await closeCardUseCase.execute(cardID: currentCard.id)
+        if isSuccess {
+          updateCardStatus(status: .closed, id: currentCard.id)
+        }
       } catch {
         toastMessage = error.userFriendlyMessage
       }
@@ -83,6 +105,7 @@ extension CardDetailViewModel {
   }
   
   func onClickedTrashButton() {
+    popup = .confirmationCloseCard
   }
   
   func updateCardSpendingStatus() {
@@ -97,6 +120,10 @@ extension CardDetailViewModel {
   
   func navigateToEditCardName() {
     navigation = .editCardName
+  }
+  
+  func hidePopup() {
+    popup = nil
   }
 }
 
@@ -139,6 +166,10 @@ extension CardDetailViewModel {
   enum Navigation {
     case editCardName
     case transactionDetail(TransactionModel)
+  }
+  
+  enum Popup {
+    case confirmationCloseCard
   }
   
   enum CardSpendingStatus: String {

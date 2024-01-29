@@ -18,8 +18,13 @@ struct VGSCardView: View {
   
   var body: some View {
     content
+      .onChange(of: card.cardStatus) { newValue in
+        if newValue == .closed {
+          viewModel.hideSensitiveData()
+        }
+      }
       .onDisappear {
-        viewModel.onDisappear()
+        viewModel.hideSensitiveData()
       }
       .popup(item: $viewModel.toastMessage, style: .toast) {
         ToastView(toastMessage: $0)
@@ -119,6 +124,7 @@ private extension VGSCardView {
       .padding(.top, 18)
     }
     .opacity(viewModel.isCardAvailable ? 1 : 0)
+    .disabled(card.cardStatus == .closed)
   }
   
   var secureCardNumber: some View {

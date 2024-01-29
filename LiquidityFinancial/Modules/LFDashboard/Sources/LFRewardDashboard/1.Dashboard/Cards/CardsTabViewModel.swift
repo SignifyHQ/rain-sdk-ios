@@ -1,5 +1,6 @@
 import Foundation
 import Factory
+import AccountData
 import SolidData
 import SolidDomain
 import LFUtilities
@@ -9,11 +10,18 @@ import Combine
 @MainActor
 final class CardsTabViewModel: ObservableObject {
   @LazyInjected(\.solidCardRepository) var solidCardRepository
-  
+  @LazyInjected(\.accountDataManager) var accountDataManager
+
   lazy var getListSolidCardUseCase: SolidGetListCardUseCaseProtocol = {
     SolidGetListCardUseCase(repository: solidCardRepository)
   }()
   
+  lazy var createVirtualCardUseCase: SolidCreateVirtualCardUseCaseProtocol = {
+    SolidCreateVirtualCardUseCase(repository: solidCardRepository)
+  }()
+  
+  @Published var isCreatingCard: Bool = false
+  @Published var isShowCreateNewCardButton: Bool = false
   @Published var toastMessage: String?
 
   @Published var selectedTab: CardListType = .open
@@ -34,15 +42,40 @@ final class CardsTabViewModel: ObservableObject {
 }
 
 // MARK: - API Handler
-private extension CardsTabViewModel {
-  func apiFetchSolidCards() {
+extension CardsTabViewModel {
+   private func apiFetchSolidCards(completion: (() -> Void)? = nil) {
     Task {
+      defer {
+        completion?()
+      }
+      
       do {
         let cards = try await getListSolidCardUseCase.execute()
         cardsList = mapToListCardModel(from: cards)
         filterCardsList(with: selectedTab)
       } catch {
         status = .failure(error)
+        toastMessage = error.userFriendlyMessage
+      }
+    }
+  }
+  
+  func createNewCardAPI() {
+    // TODO: MinhNguyen - Will update the create new card logic in phase 2
+    Task {
+      isCreatingCard = true
+      
+      do {
+        let accounts = self.accountDataManager.fiatAccounts
+        guard let accountID = accounts.first?.id else {
+          return
+        }
+        _ = try await createVirtualCardUseCase.execute(accountID: accountID)
+        apiFetchSolidCards {
+          self.isCreatingCard = false
+        }
+      } catch {
+        isCreatingCard = false
         toastMessage = error.userFriendlyMessage
       }
     }
@@ -70,8 +103,9 @@ private extension CardsTabViewModel {
   func observeSelectedTab() {
     $selectedTab
       .receive(on: DispatchQueue.main)
+      .dropFirst()
       .sink { [weak self] tab in
-        guard let self, !cardsList.isEmpty else { return }
+        guard let self else { return }
         self.filterCardsList(with: tab)
       }
       .store(in: &subscribers)
@@ -94,8 +128,11 @@ private extension CardsTabViewModel {
     switch selectedTab {
     case .open:
       cards = cardsList.filter({ $0.cardStatus != .closed })
+      // TODO: MinhNguyen - Will update the display logic in phase 2
+      isShowCreateNewCardButton = cards.isEmpty
     case .closed:
       cards = cardsList.filter({ $0.cardStatus == .closed })
+      isShowCreateNewCardButton = false
     }
     
     status = .success(cards)
@@ -105,14 +142,14 @@ private extension CardsTabViewModel {
     entities.map {
       CardModel(
         id: $0.id,
-        cardName: "New Card", // Update later after the api is available
+        cardName: "New Card", // TODO: MinhNguyen - Update later after the api is available
         cardType: CardType(rawValue: $0.type) ?? .virtual,
         cardholderName: nil,
         expiryMonth: Int($0.expirationMonth) ?? 0,
         expiryYear: Int($0.expirationYear) ?? 0,
         last4: $0.panLast4,
-        popularBackgroundColor: nil, // Update in phase 3
-        popularTextColor: nil, // Update in phase 3
+        popularBackgroundColor: nil, // TODO: MinhNguyen - Update in phase 3
+        popularTextColor: nil, // TODO: MinhNguyen - Update in phase 3
         cardStatus: CardStatus(rawValue: $0.cardStatus) ?? .unactivated
       )
     }
@@ -120,7 +157,7 @@ private extension CardsTabViewModel {
 }
 
 // MARK: - Types
-extension CardsTabViewModel {  
+extension CardsTabViewModel {
   enum Navigation {
     case cardDetail(viewModel: CardDetailViewModel)
   }

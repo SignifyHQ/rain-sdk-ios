@@ -291,7 +291,11 @@
 "card.cardNumber.title" = "Card Number";
 "card.cardPause.title" = "Card Paused";
 "card.cardResume.title" = "Card Resumed";
+"card.createNewCard.title" = "Create new card";
 "card.latestTransaction.title" = "Latest Transactions";
+"card.closeCardConfirmation.title" = "CLOSE CARD";
+"card.closeCardConfirmation.message" = "Are you sure? This can't be undone.";
+"card.closeCardConfirmation.primaryButton" = "Yes, Close Card";
 "card.exp.title" = "Exp";
 "card.cvv.title" = "CVV";
 "card.cardNumberCopied.title" = "Card number copied to clipboard";
@@ -1268,6 +1272,7 @@ We will be in touch shortly to invite you to get your new card.";
 "button.contactSupport.title" = "Contact Support";
 "button.save.title" = "Save";
 "button.donotAllow.title" = "Don't Allow";
+"button.cancel.title" = "Cancel";
 
 // Grid Value
 "grid_value.all" = "All";
