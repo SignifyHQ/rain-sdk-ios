@@ -5,14 +5,14 @@ import LFLocalizable
 import LFRewards
 import Services
 
-struct CausesView: View {
+public struct CausesView: View {
   @StateObject private var viewModel: CausesViewModel
   
-  init(viewModel: CausesViewModel) {
+  public init(viewModel: CausesViewModel) {
     _viewModel = StateObject(wrappedValue: viewModel)
   }
   
-  var body: some View {
+  public var body: some View {
     content
       .track(name: String(describing: type(of: self)))
       .background(Colors.background.swiftUIColor)

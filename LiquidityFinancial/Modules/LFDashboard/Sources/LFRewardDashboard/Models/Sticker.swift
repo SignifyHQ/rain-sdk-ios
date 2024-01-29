@@ -3,12 +3,11 @@ import RewardDomain
 
 // MARK: - Sticker
 
-struct Sticker: Hashable, Identifiable {
-  var id: String = UUID().uuidString
+public struct Sticker: Hashable {
   let fundraiserID, stickerURL: String?
   let donationCount: Int?
   
-  init(entity: DonationStickerEntity) {
+  public init(entity: DonationStickerEntity) {
     self.fundraiserID = entity.fundraiserId
     self.stickerURL = entity.stickerUrl
     self.donationCount = entity.donationCount
@@ -16,5 +15,11 @@ struct Sticker: Hashable, Identifiable {
   
   var stickerUrl: URL? {
     URL(string: stickerURL ?? "")
+  }
+}
+
+extension Sticker: Identifiable {
+  public var id: String {
+    UUID().uuidString
   }
 }

@@ -5,14 +5,13 @@ import LFLocalizable
 import GeneralFeature
 import SolidFeature
 
-struct CashCardView: View {
+public struct CashCardView: View {
   @StateObject private var viewModel: CashCardViewModel
   @Binding var isNotLinkedCard: Bool
   
   let isPOFlow: Bool
   let showLoadingIndicator: Bool
   let cashBalance: Double
-  let assetType: AssetType
   let listCardViewModel: SolidListCardsViewModel
   
   private var isCardAvailable: Bool {
@@ -22,24 +21,22 @@ struct CashCardView: View {
     isCardAvailable && !isNotLinkedCard ? GenImages.Images.availableCard.swiftUIImage : GenImages.Images.unavailableCard.swiftUIImage
   }
 
-  init(
+  public init(
     isNoLinkedCard: Binding<Bool>,
     isPOFlow: Bool,
     showLoadingIndicator: Bool,
     cashBalance: Double,
-    assetType: AssetType,
     listCardViewModel: SolidListCardsViewModel
   ) {
     _isNotLinkedCard = isNoLinkedCard
     self.isPOFlow = isPOFlow
     self.cashBalance = cashBalance
-    self.assetType = assetType
     self.showLoadingIndicator = showLoadingIndicator
     self.listCardViewModel = listCardViewModel
     _viewModel = .init(wrappedValue: CashCardViewModel())
   }
   
-  var body: some View {
+  public var body: some View {
     ZStack(alignment: .bottom) {
       ZStack(alignment: .bottomLeading) {
         cardImageAsset

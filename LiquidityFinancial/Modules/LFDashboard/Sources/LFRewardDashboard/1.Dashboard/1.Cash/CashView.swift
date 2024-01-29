@@ -5,20 +5,20 @@ import LFLocalizable
 import GeneralFeature
 import SolidFeature
 
-struct CashView: View {
+public struct CashView: View {
   @Environment(\.scenePhase) var scenePhase
   @StateObject private var viewModel: CashViewModel
   @State private var isNotLinkedCard = false
   
   let listCardViewModel: SolidListCardsViewModel
   
-  init(listCardViewModel: SolidListCardsViewModel) {
+  public init(listCardViewModel: SolidListCardsViewModel) {
     let cashViewModel = CashViewModel()
     _viewModel = .init(wrappedValue: cashViewModel)
     self.listCardViewModel = listCardViewModel
   }
   
-  var body: some View {
+  public var body: some View {
     content
       .disabled(viewModel.isDisableView)
       .background(Colors.background.swiftUIColor)
@@ -68,7 +68,6 @@ private extension CashView {
           isPOFlow: true, // !userManager.isGuest
           showLoadingIndicator: viewModel.isLoading,
           cashBalance: viewModel.cashBalanceValue,
-          assetType: viewModel.selectedAsset,
           listCardViewModel: listCardViewModel
         )
         .overlay(alignment: .bottom) {

@@ -3,14 +3,14 @@ import LFLocalizable
 import LFUtilities
 import LFStyleGuide
 
-struct BalanceAlertView: View {
+public struct BalanceAlertView: View {
   let type: Kind
   let cashBalance: Double?
   let cryptoBalance: Double?
   let hasContacts: Bool
   let action: () -> Void
   
-  init(
+  public init(
     type: Kind,
     hasContacts: Bool,
     cashBalance: Double? = nil,
@@ -42,7 +42,7 @@ struct BalanceAlertView: View {
     }
   }
   
-  var body: some View {
+  public var body: some View {
     Group {
       switch status {
       case .hidden:
@@ -179,7 +179,7 @@ private extension BalanceAlertView {
 }
 
 // MARK: - Types
-extension BalanceAlertView {
+public extension BalanceAlertView {
   enum Kind: String {
     case cash
     case crypto

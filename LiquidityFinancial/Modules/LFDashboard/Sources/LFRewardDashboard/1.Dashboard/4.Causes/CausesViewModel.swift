@@ -8,7 +8,7 @@ import LFLocalizable
 import Combine
 
 @MainActor
-class CausesViewModel: ObservableObject {
+public class CausesViewModel: ObservableObject {
   private var total: Int = 0
   private var offset = 0
   private var limit = 100
@@ -29,7 +29,7 @@ class CausesViewModel: ObservableObject {
     RewardUseCase(repository: rewardRepository)
   }()
   
-  init() {
+  public init() {
     handleSelectedFundraisersSuccess()
     appearOpeations()
   }

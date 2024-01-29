@@ -2,12 +2,18 @@ import SwiftUI
 import LFRewards
 import LFStyleGuide
 
-struct StickerView: View {
+public struct StickerView: View {
   @State private var showShare = false
   let type: Kind
   let sticker: Sticker
   
-  var body: some View {
+  public init(showShare: Bool = false, type: Kind, sticker: Sticker) {
+    self.showShare = showShare
+    self.type = type
+    self.sticker = sticker
+  }
+  
+  public var body: some View {
     ZStack(alignment: type == .profile ? .topTrailing : .top) {
       image
       counter
@@ -65,7 +71,7 @@ struct StickerView: View {
 }
 
 // MARK: - Types
-extension StickerView {
+public extension StickerView {
   enum Kind {
     case profile
     case transaction

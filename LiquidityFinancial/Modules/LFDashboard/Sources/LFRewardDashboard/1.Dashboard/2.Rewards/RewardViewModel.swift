@@ -10,7 +10,7 @@ import GeneralFeature
 import SolidFeature
 
 @MainActor
-class RewardViewModel: ObservableObject {
+public class RewardViewModel: ObservableObject {
   @Injected(\.accountDataManager) var accountDataManager
   @Injected(\.accountRepository) var accountRepository
   @Injected(\.fiatAccountService) var fiatAccountService
@@ -23,7 +23,7 @@ class RewardViewModel: ObservableObject {
   
   let currencyType = Constants.CurrencyType.fiat.rawValue
   
-  init() {
+  public init() {
     apiRefreshData()
   }
   

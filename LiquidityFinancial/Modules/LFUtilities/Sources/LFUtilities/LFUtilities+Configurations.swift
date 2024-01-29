@@ -38,7 +38,7 @@ public enum LFConfiguration {
   }
   
   // Support for running code in previews
-  static var isPreview: Bool {
+  public static var isPreview: Bool {
     ProcessInfo.processInfo.environment["XCODE_RUNNING_FOR_PREVIEWS"] == "1"
   }
   // Support for running code as a part of a test
@@ -47,9 +47,7 @@ public enum LFConfiguration {
   }
   
   public static func value<T>(for key: String) throws -> T where T: LosslessStringConvertible & HasDefaultValue {
-    if LFConfiguration.isPreview {
-      return String(describing: "XCODE_PREVIEWS") as! T
-    } else if LFConfiguration.isRunningTests {
+    if LFConfiguration.isRunningTests {
       if T.self == String.self {
         return key as! T
       }

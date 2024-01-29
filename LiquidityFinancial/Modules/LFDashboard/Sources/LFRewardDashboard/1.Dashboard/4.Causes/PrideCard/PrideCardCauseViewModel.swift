@@ -8,7 +8,7 @@ import LFLocalizable
 import Combine
 
 @MainActor
-class PrideCardCauseViewModel: ObservableObject {
+public class PrideCardCauseViewModel: ObservableObject {
   private var total: Int = 0
   private var offset = 0
   private var limit = 100
@@ -26,7 +26,7 @@ class PrideCardCauseViewModel: ObservableObject {
     RewardUseCase(repository: rewardRepository)
   }()
   
-  init() {
+  public init() {
     handleSelectedFundraisersSuccess()
     appearOpeations()
   }

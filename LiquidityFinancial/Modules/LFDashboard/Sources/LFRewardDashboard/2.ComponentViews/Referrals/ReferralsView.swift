@@ -3,10 +3,12 @@ import LFUtilities
 import LFStyleGuide
 import LFLocalizable
 
-struct ReferralsView: View {
+public struct ReferralsView: View {
   @StateObject private var viewModel = ReferralsViewModel()
   
-  var body: some View {
+  public init() {}
+  
+  public var body: some View {
     content
       .background(Colors.background.swiftUIColor)
       .onAppear {

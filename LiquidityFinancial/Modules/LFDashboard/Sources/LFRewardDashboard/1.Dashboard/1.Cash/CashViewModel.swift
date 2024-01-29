@@ -13,7 +13,7 @@ import GeneralFeature
 import SolidFeature
 
 @MainActor
-final class CashViewModel: ObservableObject {
+public final class CashViewModel: ObservableObject {
   @LazyInjected(\.accountRepository) var accountRepository
   @LazyInjected(\.accountDataManager) var accountDataManager
   @LazyInjected(\.externalFundingDataManager) var externalFundingDataManager
@@ -28,7 +28,6 @@ final class CashViewModel: ObservableObject {
   @Published var cashBalanceValue: Double = 0
   @Published var toastMessage: String?
   @Published var activity = Activity.loading
-  @Published var selectedAsset: AssetType = .usd
   @Published var navigation: Navigation?
   @Published var transactions: [TransactionModel] = []
   @Published var achInformation: ACHModel = .default
@@ -58,7 +57,7 @@ final class CashViewModel: ObservableObject {
   
   private var subscriptions = Set<AnyCancellable>()
   
-  init() {
+  public init() {
     firstLoadData()
     handleACHInfo()
     handleEventReloadTransaction()
@@ -205,7 +204,6 @@ private extension CashViewModel {
       self.accountDataManager.fiatAccountID = account.id
       self.accountDataManager.externalAccountID = account.externalAccountId
       self.cashBalanceValue = account.availableBalance
-      self.selectedAsset = AssetType(rawValue: account.currency.rawValue.uppercased()) ?? .usd
     }
     return accounts.first
   }

@@ -8,7 +8,7 @@ import Services
 import SolidFeature
 import GeneralFeature
 
-struct DonationsView: View {
+public struct DonationsView: View {
   @StateObject private var viewModel: DonationsViewModel
   @State private var screenSize: CGSize = .zero
   
@@ -17,11 +17,11 @@ struct DonationsView: View {
     max(20, screenSize.height / 2 - 280)
   }
   
-  init(viewModel: DonationsViewModel) {
+  public init(viewModel: DonationsViewModel) {
     _viewModel = StateObject(wrappedValue: viewModel)
   }
   
-  var body: some View {
+  public var body: some View {
     content
       .background(Colors.background.swiftUIColor)
       .refreshable {

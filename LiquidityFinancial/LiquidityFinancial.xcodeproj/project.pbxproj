@@ -250,6 +250,8 @@
 		A963D3FB2A67081D006B9A54 /* NetSpendData in Frameworks */ = {isa = PBXBuildFile; productRef = A963D3FA2A67081D006B9A54 /* NetSpendData */; };
 		A963D4092A67F491006B9A54 /* AppCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = A963D4082A67F491006B9A54 /* AppCoordinator.swift */; };
 		A963D40B2A67F7FD006B9A54 /* AppViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A963D40A2A67F7FD006B9A54 /* AppViewModel.swift */; };
+		A96DA1AB2B67546E005F6747 /* HomePreview.swift in Sources */ = {isa = PBXBuildFile; fileRef = A96DA1AA2B67546E005F6747 /* HomePreview.swift */; };
+		A96DA1AD2B67666C005F6747 /* PreviewHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = A96DA1AC2B67666C005F6747 /* PreviewHelpers.swift */; };
 		A978F6472B60F2E80060D102 /* 2.VerificationCodeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A978F6462B60F2E80060D102 /* 2.VerificationCodeView.swift */; };
 		A978F6492B60F2F00060D102 /* 3.AccountLockedView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A978F6482B60F2F00060D102 /* 3.AccountLockedView.swift */; };
 		A978F64B2B60F3100060D102 /* 4.IdentityVerificationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A978F64A2B60F3100060D102 /* 4.IdentityVerificationView.swift */; };
@@ -517,6 +519,16 @@
 		A9EBA6D12B5A668600A80879 /* NetspendFeature in Frameworks */ = {isa = PBXBuildFile; productRef = A9EBA6D02B5A668600A80879 /* NetspendFeature */; };
 		A9EBA6D32B5A669000A80879 /* NetspendFeature in Frameworks */ = {isa = PBXBuildFile; productRef = A9EBA6D22B5A669000A80879 /* NetspendFeature */; };
 		A9F14DE82AEF7D3100D66389 /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = A9F14DE72AEF7D3100D66389 /* README.md */; };
+		A9F99B4E2B6785010099DB85 /* CardPreview.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9F99B4D2B6785010099DB85 /* CardPreview.swift */; };
+		A9F99B502B6785100099DB85 /* TabCashPreview.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9F99B4F2B6785100099DB85 /* TabCashPreview.swift */; };
+		A9F99B522B67852C0099DB85 /* TabRewardPreview.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9F99B512B67852C0099DB85 /* TabRewardPreview.swift */; };
+		A9F99B542B67854D0099DB85 /* TabAccountPreview.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9F99B532B67854D0099DB85 /* TabAccountPreview.swift */; };
+		A9F99B562B679D950099DB85 /* ProfilePreview.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9F99B552B679D950099DB85 /* ProfilePreview.swift */; };
+		A9F99B582B679F7E0099DB85 /* BalanceAlertPreview.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9F99B572B679F7E0099DB85 /* BalanceAlertPreview.swift */; };
+		A9F99B5A2B679FC40099DB85 /* ReferralsPreview.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9F99B592B679FC40099DB85 /* ReferralsPreview.swift */; };
+		A9F99B5C2B67A58E0099DB85 /* DonationPreview.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9F99B5B2B67A58E0099DB85 /* DonationPreview.swift */; };
+		A9F99B5E2B67A5A50099DB85 /* CausesPreview.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9F99B5D2B67A5A50099DB85 /* CausesPreview.swift */; };
+		A9F99B602B67BF440099DB85 /* CardsTabPreview.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9F99B5F2B67BF440099DB85 /* CardsTabPreview.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -706,6 +718,8 @@
 		A95D41902A6E35750095596B /* Cardano.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Cardano.entitlements; sourceTree = "<group>"; };
 		A963D4082A67F491006B9A54 /* AppCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppCoordinator.swift; sourceTree = "<group>"; };
 		A963D40A2A67F7FD006B9A54 /* AppViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppViewModel.swift; sourceTree = "<group>"; };
+		A96DA1AA2B67546E005F6747 /* HomePreview.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomePreview.swift; sourceTree = "<group>"; };
+		A96DA1AC2B67666C005F6747 /* PreviewHelpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreviewHelpers.swift; sourceTree = "<group>"; };
 		A978F6462B60F2E80060D102 /* 2.VerificationCodeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = 2.VerificationCodeView.swift; sourceTree = "<group>"; };
 		A978F6482B60F2F00060D102 /* 3.AccountLockedView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = 3.AccountLockedView.swift; sourceTree = "<group>"; };
 		A978F64A2B60F3100060D102 /* 4.IdentityVerificationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = 4.IdentityVerificationView.swift; sourceTree = "<group>"; };
@@ -895,6 +909,16 @@
 		A9D6C4B82A5F07470038D0BB /* LFData */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = LFData; path = Modules/LFData; sourceTree = "<group>"; };
 		A9D6C4B92A5F07CF0038D0BB /* LFDomain */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = LFDomain; path = Modules/LFDomain; sourceTree = "<group>"; };
 		A9F14DE72AEF7D3100D66389 /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; name = README.md; path = ../README.md; sourceTree = "<group>"; };
+		A9F99B4D2B6785010099DB85 /* CardPreview.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardPreview.swift; sourceTree = "<group>"; };
+		A9F99B4F2B6785100099DB85 /* TabCashPreview.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TabCashPreview.swift; sourceTree = "<group>"; };
+		A9F99B512B67852C0099DB85 /* TabRewardPreview.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TabRewardPreview.swift; sourceTree = "<group>"; };
+		A9F99B532B67854D0099DB85 /* TabAccountPreview.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TabAccountPreview.swift; sourceTree = "<group>"; };
+		A9F99B552B679D950099DB85 /* ProfilePreview.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfilePreview.swift; sourceTree = "<group>"; };
+		A9F99B572B679F7E0099DB85 /* BalanceAlertPreview.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BalanceAlertPreview.swift; sourceTree = "<group>"; };
+		A9F99B592B679FC40099DB85 /* ReferralsPreview.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReferralsPreview.swift; sourceTree = "<group>"; };
+		A9F99B5B2B67A58E0099DB85 /* DonationPreview.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DonationPreview.swift; sourceTree = "<group>"; };
+		A9F99B5D2B67A5A50099DB85 /* CausesPreview.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CausesPreview.swift; sourceTree = "<group>"; };
+		A9F99B5F2B67BF440099DB85 /* CardsTabPreview.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardsTabPreview.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -1990,6 +2014,18 @@
 		A9AF0B8B2B60F0BD0023E8FD /* Dashboard */ = {
 			isa = PBXGroup;
 			children = (
+				A96DA1AA2B67546E005F6747 /* HomePreview.swift */,
+				A96DA1AC2B67666C005F6747 /* PreviewHelpers.swift */,
+				A9F99B4D2B6785010099DB85 /* CardPreview.swift */,
+				A9F99B4F2B6785100099DB85 /* TabCashPreview.swift */,
+				A9F99B512B67852C0099DB85 /* TabRewardPreview.swift */,
+				A9F99B532B67854D0099DB85 /* TabAccountPreview.swift */,
+				A9F99B552B679D950099DB85 /* ProfilePreview.swift */,
+				A9F99B572B679F7E0099DB85 /* BalanceAlertPreview.swift */,
+				A9F99B592B679FC40099DB85 /* ReferralsPreview.swift */,
+				A9F99B5B2B67A58E0099DB85 /* DonationPreview.swift */,
+				A9F99B5D2B67A5A50099DB85 /* CausesPreview.swift */,
+				A9F99B5F2B67BF440099DB85 /* CardsTabPreview.swift */,
 			);
 			path = Dashboard;
 			sourceTree = "<group>";
@@ -3348,22 +3384,34 @@
 			buildActionMask = 2147483647;
 			files = (
 				A95BD6592B6219C400431D4F /* 2.SelectCauseCategoriesView.swift in Sources */,
+				A9F99B5A2B679FC40099DB85 /* ReferralsPreview.swift in Sources */,
 				741AD8202AD50C4700C1317A /* NavigationContainer.swift in Sources */,
+				A9F99B562B679D950099DB85 /* ProfilePreview.swift in Sources */,
 				A95BD6662B6225AA00431D4F /* 4.FundraiserDetailView.swift in Sources */,
+				A9F99B542B67854D0099DB85 /* TabAccountPreview.swift in Sources */,
 				A9B4492A2A838A010029944C /* AppView.swift in Sources */,
 				A978F6672B6118830060D102 /* 1.SelectRewardsView.swift in Sources */,
 				A978F6492B60F2F00060D102 /* 3.AccountLockedView.swift in Sources */,
 				A9B449292A838A010029944C /* AppCoordinator.swift in Sources */,
+				A9F99B522B67852C0099DB85 /* TabRewardPreview.swift in Sources */,
 				A978F6592B6107EB0060D102 /* 11.InitialView.swift in Sources */,
+				A9F99B582B679F7E0099DB85 /* BalanceAlertPreview.swift in Sources */,
 				A978F6572B6107CF0060D102 /* 10.PersonalInformation.swift in Sources */,
+				A9F99B5C2B67A58E0099DB85 /* DonationPreview.swift in Sources */,
 				A978F6512B60F60F0060D102 /* 7.AddressView.swift in Sources */,
 				A9B4492B2A838A010029944C /* AppViewModel.swift in Sources */,
+				A96DA1AB2B67546E005F6747 /* HomePreview.swift in Sources */,
 				A9B448BD2A8389B90029944C /* AppDelegate+Configs.swift in Sources */,
 				A978F64F2B60F6040060D102 /* 6.PatriotActView.swift in Sources */,
+				A9F99B5E2B67A5A50099DB85 /* CausesPreview.swift in Sources */,
 				A978F64D2B60F3220060D102 /* 5.YourAccountView.swift in Sources */,
+				A9F99B602B67BF440099DB85 /* CardsTabPreview.swift in Sources */,
+				A96DA1AD2B67666C005F6747 /* PreviewHelpers.swift in Sources */,
+				A9F99B4E2B6785010099DB85 /* CardPreview.swift in Sources */,
 				A9B448BE2A8389B90029944C /* OnboardingContainer+Injection.swift in Sources */,
 				A95BD6602B62221200431D4F /* 3.SelectFundraiserView.swift in Sources */,
 				A9AF0B8D2B60F0ED0023E8FD /* 1.PhoneNumberView.swift in Sources */,
+				A9F99B502B6785100099DB85 /* TabCashPreview.swift in Sources */,
 				A9B449272A838A010029944C /* CauseCardApp.swift in Sources */,
 				A978F6472B60F2E80060D102 /* 2.VerificationCodeView.swift in Sources */,
 				A978F65B2B6108020060D102 /* 12.UpdateAppView.swift in Sources */,

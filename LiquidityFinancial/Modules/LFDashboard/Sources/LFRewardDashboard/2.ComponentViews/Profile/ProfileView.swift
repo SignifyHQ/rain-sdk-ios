@@ -8,11 +8,13 @@ import LFFeatureFlags
 import GeneralFeature
 import SolidFeature
 
-struct ProfileView: View {
+public struct ProfileView: View {
   @StateObject private var viewModel = ProfileViewModel()
   @Environment(\.scenePhase) var scenePhase
   
-  var body: some View {
+  public init() {}
+  
+  public var body: some View {
     ScrollView(showsIndicators: false) {
       VStack(spacing: 24) {
         contact

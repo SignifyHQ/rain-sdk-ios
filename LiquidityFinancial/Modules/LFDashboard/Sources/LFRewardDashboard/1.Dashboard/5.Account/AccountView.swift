@@ -7,7 +7,7 @@ import Factory
 import GeneralFeature
 import SolidFeature
 
-struct AccountsView: View {
+public struct AccountsView: View {
   @StateObject private var viewModel: AccountViewModel
   @Environment(\.scenePhase) var scenePhase
   @State var openSafariType: AccountViewModel.OpenSafariType?
@@ -15,11 +15,11 @@ struct AccountsView: View {
   @Injected(\.transactionNavigation) var transactionNavigation
   @Injected(\.bankServiceConfig) var bankServiceConfig
   
-  init(viewModel: AccountViewModel) {
+  public init(viewModel: AccountViewModel) {
     _viewModel = .init(wrappedValue: viewModel)
   }
   
-  var body: some View {
+  public var body: some View {
     content
       .track(name: String(describing: type(of: self)))
       .disabled(viewModel.isDisableView)

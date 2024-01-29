@@ -5,14 +5,14 @@ import LFUtilities
 import LFRewards
 import GeneralFeature
 
-struct EditRewardsView: View {
+public struct EditRewardsView: View {
   @StateObject private var viewModel: EditRewardsViewModel
 
-  init(viewModel: EditRewardsViewModel) {
+  public init(viewModel: EditRewardsViewModel) {
     _viewModel = StateObject(wrappedValue: viewModel)
   }
   
-  var body: some View {
+  public var body: some View {
     content
       .background(Colors.background.swiftUIColor)
       .toolbar {

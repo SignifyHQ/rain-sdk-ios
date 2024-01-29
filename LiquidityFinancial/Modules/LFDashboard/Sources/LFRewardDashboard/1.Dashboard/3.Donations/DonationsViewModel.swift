@@ -8,7 +8,7 @@ import RewardDomain
 import Combine
 
 @MainActor
-class DonationsViewModel: ObservableObject {
+public class DonationsViewModel: ObservableObject {
   private var total: Int = 0
   private var offset = 0
   private var limit = 100
@@ -47,7 +47,7 @@ class DonationsViewModel: ObservableObject {
     RewardUseCase(repository: rewardRepository)
   }()
   
-  init() {
+  public init() {
     handleSelectedFundraisersSuccess()
     onAppear()
   }

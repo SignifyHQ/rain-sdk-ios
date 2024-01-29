@@ -7,7 +7,7 @@ import LFRewards
 import Combine
 
 @MainActor
-final class EditRewardsViewModel: ObservableObject {
+public final class EditRewardsViewModel: ObservableObject {
   private var total: Int = 0
   private var offset = 0
   private var limit = 100
@@ -41,7 +41,7 @@ final class EditRewardsViewModel: ObservableObject {
     RewardUseCase(repository: rewardRepository)
   }()
   
-  init() {
+  public init() {
     rowModel = [
       RewardsViewModel(rewardSelecting: .cashBack, isSelect: false),
       RewardsViewModel(rewardSelecting: .donation, isSelect: false)

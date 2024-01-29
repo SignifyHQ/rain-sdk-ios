@@ -4,14 +4,14 @@ import LFUtilities
 import LFLocalizable
 import LFRewards
 
-struct PrideCardCauseView: View {
+public struct PrideCardCauseView: View {
   @StateObject private var viewModel: PrideCardCauseViewModel
   
-  init(viewModel: PrideCardCauseViewModel) {
+  public init(viewModel: PrideCardCauseViewModel) {
     _viewModel = StateObject(wrappedValue: viewModel)
   }
   
-  var body: some View {
+  public var body: some View {
     content
       .background(Colors.background.swiftUIColor)
       .navigationLink(item: $viewModel.navigation) { navigation in

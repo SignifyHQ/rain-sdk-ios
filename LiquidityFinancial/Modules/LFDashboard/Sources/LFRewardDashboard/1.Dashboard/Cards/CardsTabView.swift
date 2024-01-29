@@ -3,16 +3,16 @@ import LFUtilities
 import LFStyleGuide
 import LFLocalizable
 
-struct CardsTabView: View {
+public struct CardsTabView: View {
   @StateObject
   private var viewModel: CardsTabViewModel
   
-  init() {
+  public init() {
     let cardsTabViewModel = CardsTabViewModel()
     _viewModel = .init(wrappedValue: cardsTabViewModel)
   }
   
-  var body: some View {
+  public var body: some View {
     GeometryReader { proxy in
       VStack(spacing: 32) {
         makeHeaderTabView(width: proxy.size.width - 60)

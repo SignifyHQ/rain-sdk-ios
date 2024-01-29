@@ -6,7 +6,7 @@ import SolidDomain
 import Factory
 
 @MainActor
-final class CashCardViewModel: ObservableObject {
+public final class CashCardViewModel: ObservableObject {
   @LazyInjected(\.solidCardRepository) var solidCardRepository
   @LazyInjected(\.accountDataManager) var accountDataManager
 
@@ -18,8 +18,7 @@ final class CashCardViewModel: ObservableObject {
     SolidCreateVirtualCardUseCase(repository: solidCardRepository)
   }()
   
-  init() {
-  }
+  public init() {}
 }
 
 // MARK: API Functions

@@ -7,7 +7,7 @@ import Services
 import GeneralFeature
 import SolidFeature
 
-struct RewardsView: View {
+public struct RewardsView: View {
   @StateObject private var viewModel: RewardViewModel
   @State private var screenSize: CGSize = .zero
   
@@ -20,11 +20,11 @@ struct RewardsView: View {
     .cashBack
   }
   
-  init(viewModel: RewardViewModel) {
+  public init(viewModel: RewardViewModel) {
     _viewModel = StateObject(wrappedValue: viewModel)
   }
   
-  var body: some View {
+  public var body: some View {
     content
       .track(name: String(describing: type(of: self)))
       .background(Colors.background.swiftUIColor)

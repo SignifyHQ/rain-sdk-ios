@@ -15,7 +15,7 @@ import GeneralFeature
 import SolidFeature
 
 @MainActor
-class AccountViewModel: ObservableObject {
+public class AccountViewModel: ObservableObject {
   enum OpenSafariType: Identifiable {
     var id: String {
       switch self {
@@ -73,7 +73,7 @@ class AccountViewModel: ObservableObject {
     return false
   }
   
-  init() {
+  public init() {
     subscribeLinkedContacts()
     checkNotificationsStatus()
     handleACHData()

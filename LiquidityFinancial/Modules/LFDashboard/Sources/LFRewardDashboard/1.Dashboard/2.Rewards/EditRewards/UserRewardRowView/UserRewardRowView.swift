@@ -4,12 +4,12 @@ import LFUtilities
 import LFLocalizable
 import LFRewards
 
-struct UserRewardRowView: View {
+public struct UserRewardRowView: View {
   let type: Kind
   let reward: UserRewardType
   let selection: Selection
   
-  var body: some View {
+  public var body: some View {
     HStack(spacing: 0) {
       ZStack {
         Circle()
