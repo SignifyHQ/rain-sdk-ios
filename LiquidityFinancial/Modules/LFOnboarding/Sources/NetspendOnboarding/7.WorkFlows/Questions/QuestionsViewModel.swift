@@ -6,6 +6,7 @@ import LFUtilities
 import AccountData
 import OnboardingData
 import AuthorizationManager
+import LFFeatureFlags
 
 // swiftlint:disable superfluous_disable_command
 @MainActor
@@ -20,6 +21,7 @@ public final class QuestionsViewModel: ObservableObject {
   @LazyInjected(\.nsOnboardingFlowCoordinator) var onboardingFlowCoordinator
   @LazyInjected(\.customerSupportService) var customerSupportService
   @LazyInjected(\.pushNotificationService) var pushNotificationService
+  @LazyInjected(\.featureFlagManager) var featureFlagManager
 
   @Published var isLoading: Bool = false
   @Published var isEnableContinue: Bool = false
@@ -72,6 +74,7 @@ extension QuestionsViewModel {
       self?.authorizationManager.forcedLogout()
       self?.popup = nil
       self?.pushNotificationService.signOut()
+      self?.featureFlagManager.signOut()
     }
   }
   

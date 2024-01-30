@@ -151,6 +151,7 @@ extension ProfileViewModel {
         customerSupportService.pushEventLogout()
         dismissPopup()
         pushNotificationService.signOut()
+        featureFlagManager.signOut()
         
         log.debug(deregister)
         log.debug(logout)

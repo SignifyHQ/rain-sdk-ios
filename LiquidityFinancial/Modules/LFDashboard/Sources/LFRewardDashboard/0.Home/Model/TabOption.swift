@@ -10,6 +10,7 @@ public enum TabOption: Int, CaseIterable, Hashable {
   case noneReward
   case causes
   case account
+  case cashAsset
   
   var title: String {
     switch self {
@@ -27,6 +28,8 @@ public enum TabOption: Int, CaseIterable, Hashable {
       return L10N.Common.Home.AccountTab.title
     case .noneReward:
       return L10N.Common.Home.RewardsTab.title
+    case .cashAsset:
+      return L10N.Custom.Home.CashTab.title
     }
   }
   
@@ -46,6 +49,8 @@ public enum TabOption: Int, CaseIterable, Hashable {
       return ModuleImages.icHomeAccount.swiftUIImage
     case .noneReward:
       return ModuleImages.icHomeRewards.swiftUIImage
+    case .cashAsset:
+      return ModuleImages.icHomeCash.swiftUIImage
     }
   }
 }

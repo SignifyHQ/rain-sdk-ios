@@ -1249,6 +1249,9 @@ contact support.";
 
 We will be in touch shortly to invite you to get your new card.";
 
+// Cast Asset
+"cashAsset.funding_accounts.title" = "Funding Accounts";
+
 // Title
 "error.weAreSorry.title" = "WE’RE SORRY";
 

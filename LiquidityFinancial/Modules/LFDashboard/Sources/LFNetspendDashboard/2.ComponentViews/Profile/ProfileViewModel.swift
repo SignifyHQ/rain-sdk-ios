@@ -7,6 +7,7 @@ import Services
 import DevicesDomain
 import Combine
 import GeneralFeature
+import LFFeatureFlags
 
 @MainActor
 final class ProfileViewModel: ObservableObject {
@@ -22,6 +23,7 @@ final class ProfileViewModel: ObservableObject {
   @LazyInjected(\.devicesRepository) var devicesRepository
   @LazyInjected(\.pushNotificationService) var pushNotificationService
   @LazyInjected(\.analyticsService) var analyticsService
+  @LazyInjected(\.featureFlagManager) var featureFlagManager
   
   lazy var deviceDeregisterUseCase: DeviceDeregisterUseCaseProtocol = {
     DeviceDeregisterUseCase(repository: devicesRepository)
@@ -106,6 +108,7 @@ extension ProfileViewModel {
         customerSupportService.pushEventLogout()
         dismissPopup()
         pushNotificationService.signOut()
+        featureFlagManager.signOut()
         
         log.debug(deregister)
         log.debug(logout)

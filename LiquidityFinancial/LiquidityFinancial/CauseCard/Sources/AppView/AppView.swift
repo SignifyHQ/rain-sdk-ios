@@ -39,7 +39,20 @@ struct AppView: View {
   }
   
   func buildTabOption() -> [TabOption] {
-    let firstTab: TabOption = featureFlagManager.isFeatureFlagEnabled(.virtualCardPhrase1) ? .cards : .cash
-    return [firstTab, TabOption.rewards, TabOption.account]
+    var options: [TabOption] = []
+    
+    if featureFlagManager.isFeatureFlagEnabled(.virtualCardPhrase1) {
+      options.append(.cards)
+    }
+    if featureFlagManager.isFeatureFlagEnabled(.donationAssets) {
+      options.append(.cashAsset)
+    }
+    if options.isEmpty {
+      options.append(.cash)
+    }
+    
+    options.append(contentsOf: [.rewards, .account])
+    
+    return options
   }
 }

@@ -9,7 +9,7 @@ import Combine
 class FeatureFlagManager: FeatureFlagManagerProtocol {
   @LazyInjected(\.featureFlagRepository) var featureFlagRepository
   
-  var featureFlags = CurrentValueSubject<[FeatureFlagModel], Never>([])
+  var featureFlagsSubject = CurrentValueSubject<[FeatureFlagModel], Never>([])
   
   private var subscriptions = Set<AnyCancellable>()
   
@@ -32,15 +32,21 @@ class FeatureFlagManager: FeatureFlagManagerProtocol {
     Task {
       do {
         let response = try await listFeatureFlagUseCase.execute()
-        self.featureFlags.send(response.data)
+        self.featureFlagsSubject.send(response.data)
       } catch {
         log.error(error)
       }
     }
   }
   
+  func signOut() {
+    featureFlagsSubject.send([])
+    // Fetch again to get all feature-flag enabled for all user
+    fetchEnabledFeatureFlags()
+  }
+  
   func isFeatureFlagEnabled(_ key: FeatureFlagKey) -> Bool {
-    featureFlags.value.first(where: { $0.key.uppercased().starts(with: key.rawValue.uppercased()) })?.enabled ?? false
+    featureFlagsSubject.value.first(where: { $0.key.uppercased().starts(with: key.rawValue.uppercased()) })?.enabled ?? false
   }
   
 }

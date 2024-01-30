@@ -288,5 +288,6 @@ extension SolidOnboardingFlowCoordinator {
     accountDataManager.clearUserSession()
     authorizationManager.clearToken()
     pushNotificationService.signOut()
+    featureFlagManager.signOut()
   }
 }

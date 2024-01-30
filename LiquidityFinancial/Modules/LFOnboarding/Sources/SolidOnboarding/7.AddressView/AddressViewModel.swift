@@ -27,6 +27,7 @@ final class AddressViewModel: ObservableObject {
   @LazyInjected(\.analyticsService) var analyticsService
   @LazyInjected(\.authorizationManager) var authorizationManager
   @LazyInjected(\.solidOnboardingFlowCoordinator) var solidOnboardingFlowCoordinator
+  @LazyInjected(\.featureFlagManager) var featureFlagManager
   
   @Published var isLoading: Bool = false
   @Published var toastMessage: String?
@@ -206,6 +207,7 @@ extension AddressViewModel {
         authorizationManager.forcedLogout()
         customerSupportService.pushEventLogout()
         pushNotificationService.signOut()
+        featureFlagManager.signOut()
         
         log.debug(deregister)
         log.debug(logout)

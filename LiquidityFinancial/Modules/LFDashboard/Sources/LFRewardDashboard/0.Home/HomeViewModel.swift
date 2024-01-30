@@ -129,13 +129,13 @@ extension HomeViewModel {
   }
   
   func configureTabOption(with tabOptions: [TabOption]) {
-    if tabSelected == .cash || tabSelected == .cards {
-      tabSelected = featureFlagManager.isFeatureFlagEnabled(.virtualCardPhrase1) ? .cards : .cash
-    }
     if let reward = rewardDataManager.currentSelectReward {
       buildTabOption(with: reward)
-    } else {
+    } else if !tabOptions.elementsEqual(self.tabOptions) {
       self.tabOptions = tabOptions
+    }
+    if !self.tabOptions.contains(tabSelected), let firstOption = self.tabOptions.first {
+      tabSelected = firstOption
     }
   }
 }
@@ -472,6 +472,7 @@ private extension HomeViewModel {
     handleSelectRewardChange()
     handleSelectedFundraisersSuccess()
     handleFCMTokenRefresh()
+    handleFeatureFlagChange()
   }
   
   func logincustomerSupportService() {
@@ -515,21 +516,45 @@ private extension HomeViewModel {
       .store(in: &subscribers)
   }
   
+  func handleFeatureFlagChange() {
+    featureFlagManager
+      .featureFlagsSubject
+      .receive(on: DispatchQueue.main)
+      .sink(receiveValue: { [weak self] _ in
+        guard let self else {
+          return
+        }
+        self.configureTabOption(with: self.tabOptions)
+      })
+      .store(in: &subscribers)
+  }
+  
   func buildTabOption(with reward: SelectRewardTypeEntity) {
-    let firstTab: TabOption = featureFlagManager.isFeatureFlagEnabled(.virtualCardPhrase1) ? .cards : .cash
-    let rewardList: [TabOption] = [firstTab, .rewards, .account]
-    let noneRewardList: [TabOption] = [firstTab, .noneReward, .account]
-    let donationList: [TabOption] = [firstTab, .donation, .causes, .account]
+    var options: [TabOption] = []
+    
+    if featureFlagManager.isFeatureFlagEnabled(.virtualCardPhrase1) {
+      options.append(.cards)
+    }
+    if featureFlagManager.isFeatureFlagEnabled(.donationAssets) {
+      options.append(.cashAsset)
+    }
+    if options.isEmpty {
+      options.append(.cash)
+    }
     
     switch reward.rawString {
     case UserRewardType.cashBack.rawValue:
-      tabOptions = rewardList
+      options.append(.rewards)
     case UserRewardType.donation.rawValue:
-      tabOptions = donationList
-    case UserRewardType.none.rawValue:
-      tabOptions = noneRewardList
+      options.append(contentsOf: [.donation, .causes])
     default:
-      tabOptions = noneRewardList
+      options.append(.noneReward)
+    }
+    
+    options.append(.account)
+    
+    if !options.elementsEqual(self.tabOptions) {
+      self.tabOptions = options
     }
   }
   

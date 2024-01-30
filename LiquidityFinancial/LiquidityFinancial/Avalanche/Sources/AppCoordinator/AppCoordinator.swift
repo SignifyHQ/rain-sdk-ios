@@ -86,5 +86,6 @@ class AppCoordinator: AppCoordinatorProtocol {
     accountDataManager.clearUserSession()
     customerSupportService.pushEventLogout()
     pushNotificationService.signOut()
+    featureFlagManager.signOut()
   }
 }

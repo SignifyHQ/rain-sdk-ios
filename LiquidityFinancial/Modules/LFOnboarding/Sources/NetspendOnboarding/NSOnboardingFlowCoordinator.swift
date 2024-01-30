@@ -14,6 +14,7 @@ import Services
 import OnboardingComponents
 import ZerohashDomain
 import ZerohashData
+import LFFeatureFlags
 
 extension Container {
   public var nsOnboardingFlowCoordinator: Factory<OnboardingFlowCoordinatorProtocol> {
@@ -84,6 +85,7 @@ public class NSOnboardingFlowCoordinator: OnboardingFlowCoordinatorProtocol {
   @LazyInjected(\.analyticsService) var analyticsService
   @LazyInjected(\.nsOnboardingRepository) var nsOnboardingRepository
   @LazyInjected(\.zerohashRepository) var zerohashRepository
+  @LazyInjected(\.featureFlagManager) var featureFlagManager
     
   lazy var getQuestionUseCase: NSGetQuestionUseCaseProtocol = {
     NSGetQuestionUseCase(repository: nsPersonRepository)
@@ -350,5 +352,6 @@ extension NSOnboardingFlowCoordinator {
     accountDataManager.clearUserSession()
     authorizationManager.clearToken()
     pushNotificationService.signOut()
+    featureFlagManager.signOut()
   }
 }

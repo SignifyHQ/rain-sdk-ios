@@ -33,6 +33,7 @@ public struct HomeView: View {
   let causesView = CausesView(viewModel: CausesViewModel())
   let prideView = PrideCardCauseView(viewModel: PrideCardCauseViewModel())
   let accountView = AccountsView(viewModel: AccountViewModel())
+  let cashAssetView = CashAssetView()
   
   var onChangeRoute: ((SolidOnboardingFlowCoordinator.Route) -> Void)?
 
@@ -133,6 +134,8 @@ private extension HomeView {
         cardsView
       case .cash:
         cashView
+      case .cashAsset:
+        cashAssetView
       case .rewards:
         rewardsView
       case .noneReward:

@@ -14,6 +14,7 @@ import Services
 import OnboardingComponents
 import ZerohashDomain
 import ZerohashData
+import LFFeatureFlags
 
 extension Container {
   public var noBankOnboardingFlowCoordinator: Factory<OnboardingFlowCoordinatorProtocol> {
@@ -68,6 +69,7 @@ public class NoBankOnboardingFlowCoordinator: OnboardingFlowCoordinatorProtocol 
   @LazyInjected(\.analyticsService) var analyticsService
   @LazyInjected(\.nsOnboardingRepository) var nsOnboardingRepository
   @LazyInjected(\.zerohashRepository) var zerohashRepository
+  @LazyInjected(\.featureFlagManager) var featureFlagManager
   
   lazy var accountUseCase: AccountUseCaseProtocol = {
     AccountUseCase(repository: accountRepository)
@@ -198,5 +200,6 @@ extension NoBankOnboardingFlowCoordinator {
     accountDataManager.clearUserSession()
     authorizationManager.clearToken()
     pushNotificationService.signOut()
+    featureFlagManager.signOut()
   }
 }

@@ -12,6 +12,7 @@ import Services
 import LFLocalizable
 import DevicesData
 import DevicesDomain
+import LFFeatureFlags
 
 // swiftlint:disable all
 @MainActor
@@ -43,6 +44,7 @@ final class AddressViewModel: ObservableObject {
   @LazyInjected(\.pushNotificationService) var pushNotificationService
   @LazyInjected(\.analyticsService) var analyticsService
   @LazyInjected(\.nsOnboardingRepository) var nsOnboardingRepository
+  @LazyInjected(\.featureFlagManager) var featureFlagManager
   
   @Published var isLoading: Bool = false
   @Published var popup: Popup?
@@ -304,6 +306,7 @@ extension AddressViewModel {
         customerSupportService.pushEventLogout()
         popup = nil
         pushNotificationService.signOut()
+        featureFlagManager.signOut()
       }
       isLoading = true
       do {
