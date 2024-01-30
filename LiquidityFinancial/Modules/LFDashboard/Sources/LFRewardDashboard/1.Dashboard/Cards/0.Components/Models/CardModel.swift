@@ -5,7 +5,7 @@ import SwiftUI
 
 struct CardModel: Identifiable, Hashable {
   let id: String
-  let cardName: String
+  var cardName: String
   let cardType: CardType
   let cardholderName: String?
   let expiryMonth: Int

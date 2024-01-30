@@ -26,6 +26,19 @@ struct CardDetailView: View {
           confirmationCloseCardPopup
         }
       }
+      .navigationLink(item: $viewModel.navigation) { item in
+        switch item {
+        case .editCardName:
+          EditCardNameView(
+            viewModel: EditCardNameViewModel(cardName: viewModel.currentCard.cardName) { cardName in
+              viewModel.handleUpdateCardNameSuccessfully(with: cardName)
+            }
+          )
+        case let .transactionDetail(transaction):
+          // TODO: MinhNguyen - Will implement in ENG-3968
+          EmptyView()
+        }
+      }
       .track(name: String(describing: type(of: self)))
   }
 }

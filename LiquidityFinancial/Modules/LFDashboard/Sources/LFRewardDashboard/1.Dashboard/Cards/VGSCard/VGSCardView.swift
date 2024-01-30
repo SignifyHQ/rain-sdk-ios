@@ -48,7 +48,7 @@ private extension VGSCardView {
     .padding(16)
     .frame(height: 192)
     .background(
-      viewModel.card.backgroundColor.cornerRadius(8)
+      card.backgroundColor.cornerRadius(8)
     )
     .overlay {
       copyMessageView
@@ -67,7 +67,7 @@ private extension VGSCardView {
   var topTrailingCardView: some View {
     if card.cardStatus == .closed {
       Text(L10N.Common.Card.Closed.title)
-        .foregroundColor(viewModel.card.textColor)
+        .foregroundColor(card.textColor)
         .font(Fonts.bold.swiftUIFont(size: Constants.FontSize.small.value))
         .padding(.vertical, 6)
         .padding(.horizontal, 16)
@@ -85,16 +85,16 @@ private extension VGSCardView {
   
   @ViewBuilder
   var cardBrandView: some View {
-    if viewModel.card.isDisplayLogo {
+    if card.isDisplayLogo {
       // TODO: - We will handle merchantLocked logo later
       GenImages.Images.icContrastLogo.swiftUIImage
         .resizable()
         .frame(40)
         .scaledToFit()
-        .foregroundColor(viewModel.card.textColor)
+        .foregroundColor(card.textColor)
     } else {
-      Text(viewModel.card.cardName)
-        .foregroundColor(viewModel.card.textColor)
+      Text(card.cardName)
+        .foregroundColor(card.textColor)
         .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.main.value))
         .lineLimit(1)
     }
@@ -105,16 +105,16 @@ private extension VGSCardView {
       isShowCardNumber: $viewModel.isShowCardNumber,
       isShowExpDateAndCVVCode: $viewModel.isShowExpDateAndCVVCode,
       vgsShow: viewModel.vgsShow,
-      cardModel: viewModel.card,
-      labelColor: viewModel.card.textColor,
+      cardModel: card,
+      labelColor: card.textColor,
       copyAction: {
-        viewModel.copyToClipboard(from: .expDateAndCVV)
+        viewModel.copyToClipboard(type: .expDateAndCVV, card: card)
       }
     )
     .frame(height: 76)
     .overlay(alignment: .bottomTrailing) {
       GenImages.CommonImages.logoVisa.swiftUIImage
-        .foregroundColor(viewModel.card.textColor)
+        .foregroundColor(card.textColor)
     }
     .overlay(alignment: .top) {
       VStack(alignment: .leading, spacing: 8) {
@@ -138,11 +138,11 @@ private extension VGSCardView {
         Spacer()
       }
       .opacity(viewModel.isShowCardNumber ? 0 : 1)
-      Text(viewModel.card.last4)
+      Text(card.last4)
         .opacity(viewModel.isShowCardNumber ? 0 : 1)
     }
     .font(Fonts.medium.swiftUIFont(size: Constants.FontSize.medium.value))
-    .foregroundColor(viewModel.card.textColor)
+    .foregroundColor(card.textColor)
     .frame(height: 27)
     .background(
       Colors.whiteText.swiftUIColor
@@ -153,7 +153,7 @@ private extension VGSCardView {
     .offset(y: -3)
     .onTapGesture {
       guard viewModel.isShowCardNumber else { return }
-      viewModel.copyToClipboard(from: .cardNumber)
+      viewModel.copyToClipboard(type: .cardNumber, card: card)
     }
   }
   
@@ -169,7 +169,7 @@ private extension VGSCardView {
         }
     }
     .font(Fonts.medium.swiftUIFont(size: Constants.FontSize.medium.value))
-    .foregroundColor(viewModel.card.textColor.opacity(0.75))
+    .foregroundColor(card.textColor.opacity(0.75))
     .opacity(viewModel.isShowExpDateAndCVVCode ? 0 : 1)
   }
   
@@ -178,7 +178,7 @@ private extension VGSCardView {
     if let message = viewModel.copyMessage {
       Text(message)
         .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.ultraSmall.value))
-        .foregroundColor(viewModel.card.textColor)
+        .foregroundColor(card.textColor)
         .frame(maxWidth: .infinity)
         .frame(height: 20, alignment: .center)
         .background(Colors.whiteText.swiftUIColor.opacity(0.25))

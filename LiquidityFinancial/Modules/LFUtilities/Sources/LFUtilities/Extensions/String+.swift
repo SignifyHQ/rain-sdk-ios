@@ -2,6 +2,12 @@ import SwiftUI
 
 // MARK: - Transform Extension
 public extension String {
+  func removeRedundantWhiteSpace() -> String {
+    self
+      .replacingOccurrences(of: "\\s+", with: " ", options: .regularExpression, range: nil)
+      .trimmingCharacters(in: .whitespacesAndNewlines)
+  }
+  
   func trimWhitespacesAndNewlines() -> String {
     trimmingCharacters(in: .whitespacesAndNewlines)
   }

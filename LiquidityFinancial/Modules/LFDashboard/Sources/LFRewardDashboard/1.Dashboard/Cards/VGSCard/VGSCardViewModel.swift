@@ -25,21 +25,19 @@ final class VGSCardViewModel: ObservableObject {
   @Published var copyMessage: String?
   @Published var toastMessage: String?
 
-  let card: CardModel
   let vgsShow = VGSShow(id: LFServices.vgsConfig.id, environment: LFServices.vgsConfig.env)
   private let pasteboard = UIPasteboard.general
   
   private var subscribers: Set<AnyCancellable> = []
   
   init(card: CardModel) {
-    self.card = card
-    getVGSShowTokenAPI()
+    getVGSShowTokenAPI(card: card)
   }
 }
 
 // MARK: - API Handler
 private extension VGSCardViewModel {
-  func getVGSShowTokenAPI() {
+  func getVGSShowTokenAPI(card: CardModel) {
     Task {
       guard card.cardStatus != .closed else {
         isCardAvailable = true
@@ -64,7 +62,7 @@ extension VGSCardViewModel {
     isShowExpDateAndCVVCode = false
   }
   
-  func copyToClipboard(from type: VGSLabelType) {
+  func copyToClipboard(type: VGSLabelType, card: CardModel) {
     let vgsText = getVGSLabelText(with: type.rawValue)
     
     switch type {

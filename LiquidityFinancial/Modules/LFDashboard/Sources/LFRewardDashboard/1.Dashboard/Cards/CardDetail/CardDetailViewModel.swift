@@ -125,6 +125,16 @@ extension CardDetailViewModel {
   func hidePopup() {
     popup = nil
   }
+  
+  func handleUpdateCardNameSuccessfully(with cardName: String) {
+    guard let index = cardsList.firstIndex(where: { $0.id == currentCard.id })  else {
+      return
+    }
+    
+    currentCard.cardName = cardName
+    cardsList[index].cardName = cardName
+    postDidCardsListChangeNotification()
+  }
 }
 
 // MARK: - Private Functions
