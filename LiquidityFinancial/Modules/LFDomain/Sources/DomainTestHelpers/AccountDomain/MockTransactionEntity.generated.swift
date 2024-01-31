@@ -20,6 +20,7 @@ public class MockTransactionEntity: TransactionEntity {
     }
     public var underlyingAccountId: String!
     public var title: String?
+    public var currency: String?
     public var description: String?
     public var amount: Double {
         get { return underlyingAmount }

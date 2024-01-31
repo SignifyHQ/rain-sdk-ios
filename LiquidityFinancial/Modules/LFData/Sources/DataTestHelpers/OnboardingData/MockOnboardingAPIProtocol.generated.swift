@@ -12,53 +12,105 @@ public class MockOnboardingAPIProtocol: OnboardingAPIProtocol {
 
     //MARK: - login
 
-    public var loginPhoneNumberOtpCodeLastIDThrowableError: Error?
-    public var loginPhoneNumberOtpCodeLastIDCallsCount = 0
-    public var loginPhoneNumberOtpCodeLastIDCalled: Bool {
-        return loginPhoneNumberOtpCodeLastIDCallsCount > 0
+    public var loginParametersThrowableError: Error?
+    public var loginParametersCallsCount = 0
+    public var loginParametersCalled: Bool {
+        return loginParametersCallsCount > 0
     }
-    public var loginPhoneNumberOtpCodeLastIDReceivedArguments: (phoneNumber: String, otpCode: String, lastID: String)?
-    public var loginPhoneNumberOtpCodeLastIDReceivedInvocations: [(phoneNumber: String, otpCode: String, lastID: String)] = []
-    public var loginPhoneNumberOtpCodeLastIDReturnValue: APIAccessTokens!
-    public var loginPhoneNumberOtpCodeLastIDClosure: ((String, String, String) async throws -> APIAccessTokens)?
+    public var loginParametersReceivedParameters: LoginParameters?
+    public var loginParametersReceivedInvocations: [LoginParameters] = []
+    public var loginParametersReturnValue: APIAccessTokens!
+    public var loginParametersClosure: ((LoginParameters) async throws -> APIAccessTokens)?
 
-    public func login(phoneNumber: String, otpCode: String, lastID: String) async throws -> APIAccessTokens {
-        if let error = loginPhoneNumberOtpCodeLastIDThrowableError {
+    public func login(parameters: LoginParameters) async throws -> APIAccessTokens {
+        if let error = loginParametersThrowableError {
             throw error
         }
-        loginPhoneNumberOtpCodeLastIDCallsCount += 1
-        loginPhoneNumberOtpCodeLastIDReceivedArguments = (phoneNumber: phoneNumber, otpCode: otpCode, lastID: lastID)
-        loginPhoneNumberOtpCodeLastIDReceivedInvocations.append((phoneNumber: phoneNumber, otpCode: otpCode, lastID: lastID))
-        if let loginPhoneNumberOtpCodeLastIDClosure = loginPhoneNumberOtpCodeLastIDClosure {
-            return try await loginPhoneNumberOtpCodeLastIDClosure(phoneNumber, otpCode, lastID)
+        loginParametersCallsCount += 1
+        loginParametersReceivedParameters = parameters
+        loginParametersReceivedInvocations.append(parameters)
+        if let loginParametersClosure = loginParametersClosure {
+            return try await loginParametersClosure(parameters)
         } else {
-            return loginPhoneNumberOtpCodeLastIDReturnValue
+            return loginParametersReturnValue
+        }
+    }
+
+    //MARK: - newLogin
+
+    public var newLoginParametersThrowableError: Error?
+    public var newLoginParametersCallsCount = 0
+    public var newLoginParametersCalled: Bool {
+        return newLoginParametersCallsCount > 0
+    }
+    public var newLoginParametersReceivedParameters: LoginParameters?
+    public var newLoginParametersReceivedInvocations: [LoginParameters] = []
+    public var newLoginParametersReturnValue: APIAccessTokens!
+    public var newLoginParametersClosure: ((LoginParameters) async throws -> APIAccessTokens)?
+
+    public func newLogin(parameters: LoginParameters) async throws -> APIAccessTokens {
+        if let error = newLoginParametersThrowableError {
+            throw error
+        }
+        newLoginParametersCallsCount += 1
+        newLoginParametersReceivedParameters = parameters
+        newLoginParametersReceivedInvocations.append(parameters)
+        if let newLoginParametersClosure = newLoginParametersClosure {
+            return try await newLoginParametersClosure(parameters)
+        } else {
+            return newLoginParametersReturnValue
         }
     }
 
     //MARK: - requestOTP
 
-    public var requestOTPPhoneNumberThrowableError: Error?
-    public var requestOTPPhoneNumberCallsCount = 0
-    public var requestOTPPhoneNumberCalled: Bool {
-        return requestOTPPhoneNumberCallsCount > 0
+    public var requestOTPParametersThrowableError: Error?
+    public var requestOTPParametersCallsCount = 0
+    public var requestOTPParametersCalled: Bool {
+        return requestOTPParametersCallsCount > 0
     }
-    public var requestOTPPhoneNumberReceivedPhoneNumber: String?
-    public var requestOTPPhoneNumberReceivedInvocations: [String] = []
-    public var requestOTPPhoneNumberReturnValue: APIOtp!
-    public var requestOTPPhoneNumberClosure: ((String) async throws -> APIOtp)?
+    public var requestOTPParametersReceivedParameters: OTPParameters?
+    public var requestOTPParametersReceivedInvocations: [OTPParameters] = []
+    public var requestOTPParametersReturnValue: APIOtp!
+    public var requestOTPParametersClosure: ((OTPParameters) async throws -> APIOtp)?
 
-    public func requestOTP(phoneNumber: String) async throws -> APIOtp {
-        if let error = requestOTPPhoneNumberThrowableError {
+    public func requestOTP(parameters: OTPParameters) async throws -> APIOtp {
+        if let error = requestOTPParametersThrowableError {
             throw error
         }
-        requestOTPPhoneNumberCallsCount += 1
-        requestOTPPhoneNumberReceivedPhoneNumber = phoneNumber
-        requestOTPPhoneNumberReceivedInvocations.append(phoneNumber)
-        if let requestOTPPhoneNumberClosure = requestOTPPhoneNumberClosure {
-            return try await requestOTPPhoneNumberClosure(phoneNumber)
+        requestOTPParametersCallsCount += 1
+        requestOTPParametersReceivedParameters = parameters
+        requestOTPParametersReceivedInvocations.append(parameters)
+        if let requestOTPParametersClosure = requestOTPParametersClosure {
+            return try await requestOTPParametersClosure(parameters)
         } else {
-            return requestOTPPhoneNumberReturnValue
+            return requestOTPParametersReturnValue
+        }
+    }
+
+    //MARK: - newRequestOTP
+
+    public var newRequestOTPParametersThrowableError: Error?
+    public var newRequestOTPParametersCallsCount = 0
+    public var newRequestOTPParametersCalled: Bool {
+        return newRequestOTPParametersCallsCount > 0
+    }
+    public var newRequestOTPParametersReceivedParameters: OTPParameters?
+    public var newRequestOTPParametersReceivedInvocations: [OTPParameters] = []
+    public var newRequestOTPParametersReturnValue: APIOtp!
+    public var newRequestOTPParametersClosure: ((OTPParameters) async throws -> APIOtp)?
+
+    public func newRequestOTP(parameters: OTPParameters) async throws -> APIOtp {
+        if let error = newRequestOTPParametersThrowableError {
+            throw error
+        }
+        newRequestOTPParametersCallsCount += 1
+        newRequestOTPParametersReceivedParameters = parameters
+        newRequestOTPParametersReceivedInvocations.append(parameters)
+        if let newRequestOTPParametersClosure = newRequestOTPParametersClosure {
+            return try await newRequestOTPParametersClosure(parameters)
+        } else {
+            return newRequestOTPParametersReturnValue
         }
     }
 

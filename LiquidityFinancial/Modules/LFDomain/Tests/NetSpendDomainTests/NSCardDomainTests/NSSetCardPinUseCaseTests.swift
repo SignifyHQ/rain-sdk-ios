@@ -32,8 +32,8 @@ extension NSSetCardPinUseCaseTests {
   // Test setPin functionality under normal conditions.
   func test_setPin_shouldReturnSuccessResponse() async {
     // Given the expected mock success response
-    let mockSuccessResult = MockCardEntity()
-    mockSuccessResult.id = "mock_cardID"
+    let mockSuccessResult = MockNSCardEntity()
+    mockSuccessResult.netspendCardId = "mock_cardID"
     // And a pre-set API return success value
     self.repository.setPinRequestParamCardIDSessionIDReturnValue = mockSuccessResult
     // And a set of mock parameters
@@ -46,10 +46,10 @@ extension NSSetCardPinUseCaseTests {
         requestParam: mockRequestParam,
         cardID: mockCardID,
         sessionID: mockSessionID
-      ).id
+      ).netspendCardId
     }
     // Then response should be the one we expect
-    .to(equal(mockSuccessResult.id))
+    .to(equal(mockSuccessResult.netspendCardId))
   }
   
   // Test setPin functionality when it encounters an error.

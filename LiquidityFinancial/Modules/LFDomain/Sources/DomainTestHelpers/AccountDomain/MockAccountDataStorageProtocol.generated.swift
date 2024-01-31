@@ -50,6 +50,11 @@ public class MockAccountDataStorageProtocol: AccountDataStorageProtocol {
         set(value) { underlyingUserCompleteOnboarding = value }
     }
     public var underlyingUserCompleteOnboarding: Bool!
+    public var isBiometricUsageEnabled: Bool {
+        get { return underlyingIsBiometricUsageEnabled }
+        set(value) { underlyingIsBiometricUsageEnabled = value }
+    }
+    public var underlyingIsBiometricUsageEnabled: Bool!
     public var availableRewardCurrenciesSubject: CurrentValueSubject<AvailableRewardCurrenciesEntity?, Never> {
         get { return underlyingAvailableRewardCurrenciesSubject }
         set(value) { underlyingAvailableRewardCurrenciesSubject = value }
@@ -301,6 +306,23 @@ public class MockAccountDataStorageProtocol: AccountDataStorageProtocol {
 
     //MARK: - update
 
+    public var updatePhoneVerifiedCallsCount = 0
+    public var updatePhoneVerifiedCalled: Bool {
+        return updatePhoneVerifiedCallsCount > 0
+    }
+    public var updatePhoneVerifiedReceivedPhoneVerified: Bool?
+    public var updatePhoneVerifiedReceivedInvocations: [Bool?] = []
+    public var updatePhoneVerifiedClosure: ((Bool?) -> Void)?
+
+    public func update(phoneVerified: Bool?) {
+        updatePhoneVerifiedCallsCount += 1
+        updatePhoneVerifiedReceivedPhoneVerified = phoneVerified
+        updatePhoneVerifiedReceivedInvocations.append(phoneVerified)
+        updatePhoneVerifiedClosure?(phoneVerified)
+    }
+
+    //MARK: - update
+
     public var updateEmailCallsCount = 0
     public var updateEmailCalled: Bool {
         return updateEmailCallsCount > 0
@@ -314,6 +336,40 @@ public class MockAccountDataStorageProtocol: AccountDataStorageProtocol {
         updateEmailReceivedEmail = email
         updateEmailReceivedInvocations.append(email)
         updateEmailClosure?(email)
+    }
+
+    //MARK: - update
+
+    public var updateEmailVerifiedCallsCount = 0
+    public var updateEmailVerifiedCalled: Bool {
+        return updateEmailVerifiedCallsCount > 0
+    }
+    public var updateEmailVerifiedReceivedEmailVerified: Bool?
+    public var updateEmailVerifiedReceivedInvocations: [Bool?] = []
+    public var updateEmailVerifiedClosure: ((Bool?) -> Void)?
+
+    public func update(emailVerified: Bool?) {
+        updateEmailVerifiedCallsCount += 1
+        updateEmailVerifiedReceivedEmailVerified = emailVerified
+        updateEmailVerifiedReceivedInvocations.append(emailVerified)
+        updateEmailVerifiedClosure?(emailVerified)
+    }
+
+    //MARK: - update
+
+    public var updateMfaEnabledCallsCount = 0
+    public var updateMfaEnabledCalled: Bool {
+        return updateMfaEnabledCallsCount > 0
+    }
+    public var updateMfaEnabledReceivedMfaEnabled: Bool?
+    public var updateMfaEnabledReceivedInvocations: [Bool?] = []
+    public var updateMfaEnabledClosure: ((Bool?) -> Void)?
+
+    public func update(mfaEnabled: Bool?) {
+        updateMfaEnabledCallsCount += 1
+        updateMfaEnabledReceivedMfaEnabled = mfaEnabled
+        updateMfaEnabledReceivedInvocations.append(mfaEnabled)
+        updateMfaEnabledClosure?(mfaEnabled)
     }
 
     //MARK: - update
@@ -552,6 +608,23 @@ public class MockAccountDataStorageProtocol: AccountDataStorageProtocol {
         updateReferralLinkReceivedReferralLink = referralLink
         updateReferralLinkReceivedInvocations.append(referralLink)
         updateReferralLinkClosure?(referralLink)
+    }
+
+    //MARK: - update
+
+    public var updateMissingStepsCallsCount = 0
+    public var updateMissingStepsCalled: Bool {
+        return updateMissingStepsCallsCount > 0
+    }
+    public var updateMissingStepsReceivedMissingSteps: [String]?
+    public var updateMissingStepsReceivedInvocations: [[String]?] = []
+    public var updateMissingStepsClosure: (([String]?) -> Void)?
+
+    public func update(missingSteps: [String]?) {
+        updateMissingStepsCallsCount += 1
+        updateMissingStepsReceivedMissingSteps = missingSteps
+        updateMissingStepsReceivedInvocations.append(missingSteps)
+        updateMissingStepsClosure?(missingSteps)
     }
 
     //MARK: - stored

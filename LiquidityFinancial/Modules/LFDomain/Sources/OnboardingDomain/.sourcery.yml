@@ -1,6 +1,7 @@
 sources:
   - Entities
   - RepositoryProtocol
+  - UseCaseProtocol
 templates:
   - ../../../../sourcery/Templates
 output:

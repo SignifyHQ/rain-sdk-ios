@@ -250,10 +250,10 @@ public class MockRewardAPIProtocol: RewardAPIProtocol {
     }
     public var postDonationsSuggestNameReceivedName: String?
     public var postDonationsSuggestNameReceivedInvocations: [String] = []
-    public var postDonationsSuggestNameReturnValue: Bool!
-    public var postDonationsSuggestNameClosure: ((String) async throws -> Bool)?
+    public var postDonationsSuggestNameReturnValue: APICauseSuggestionResponse!
+    public var postDonationsSuggestNameClosure: ((String) async throws -> APICauseSuggestionResponse)?
 
-    public func postDonationsSuggest(name: String) async throws -> Bool {
+    public func postDonationsSuggest(name: String) async throws -> APICauseSuggestionResponse {
         if let error = postDonationsSuggestNameThrowableError {
             throw error
         }

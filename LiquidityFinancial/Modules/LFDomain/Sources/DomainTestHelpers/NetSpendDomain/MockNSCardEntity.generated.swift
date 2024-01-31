@@ -5,15 +5,20 @@
 import Foundation
 import NetspendDomain
 
-public class MockCardEntity: NSCardEntity {
+public class MockNSCardEntity: NSCardEntity {
 
     public init() {}
 
-    public var id: String {
-        get { return underlyingId }
-        set(value) { underlyingId = value }
+    public var netspendCardId: String {
+        get { return underlyingNetspendCardId }
+        set(value) { underlyingNetspendCardId = value }
     }
-    public var underlyingId: String!
+    public var underlyingNetspendCardId: String!
+    public var liquidityCardId: String {
+        get { return underlyingLiquidityCardId }
+        set(value) { underlyingLiquidityCardId = value }
+    }
+    public var underlyingLiquidityCardId: String!
     public var expirationMonth: Int {
         get { return underlyingExpirationMonth }
         set(value) { underlyingExpirationMonth = value }

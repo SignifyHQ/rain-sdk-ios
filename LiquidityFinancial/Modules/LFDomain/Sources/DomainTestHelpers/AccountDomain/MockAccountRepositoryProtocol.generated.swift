@@ -5,6 +5,7 @@
 import Foundation
 import AccountDomain
 import ZerohashDomain
+import OnboardingDomain
 
 public class MockAccountRepositoryProtocol: AccountRepositoryProtocol {
 
@@ -53,6 +54,180 @@ public class MockAccountRepositoryProtocol: AccountRepositoryProtocol {
         } else {
             return getUserReturnValue
         }
+    }
+
+    //MARK: - createPassword
+
+    public var createPasswordPasswordThrowableError: Error?
+    public var createPasswordPasswordCallsCount = 0
+    public var createPasswordPasswordCalled: Bool {
+        return createPasswordPasswordCallsCount > 0
+    }
+    public var createPasswordPasswordReceivedPassword: String?
+    public var createPasswordPasswordReceivedInvocations: [String] = []
+    public var createPasswordPasswordClosure: ((String) async throws -> Void)?
+
+    public func createPassword(password: String) async throws {
+        if let error = createPasswordPasswordThrowableError {
+            throw error
+        }
+        createPasswordPasswordCallsCount += 1
+        createPasswordPasswordReceivedPassword = password
+        createPasswordPasswordReceivedInvocations.append(password)
+        try await createPasswordPasswordClosure?(password)
+    }
+
+    //MARK: - changePassword
+
+    public var changePasswordOldPasswordNewPasswordThrowableError: Error?
+    public var changePasswordOldPasswordNewPasswordCallsCount = 0
+    public var changePasswordOldPasswordNewPasswordCalled: Bool {
+        return changePasswordOldPasswordNewPasswordCallsCount > 0
+    }
+    public var changePasswordOldPasswordNewPasswordReceivedArguments: (oldPassword: String, newPassword: String)?
+    public var changePasswordOldPasswordNewPasswordReceivedInvocations: [(oldPassword: String, newPassword: String)] = []
+    public var changePasswordOldPasswordNewPasswordClosure: ((String, String) async throws -> Void)?
+
+    public func changePassword(oldPassword: String, newPassword: String) async throws {
+        if let error = changePasswordOldPasswordNewPasswordThrowableError {
+            throw error
+        }
+        changePasswordOldPasswordNewPasswordCallsCount += 1
+        changePasswordOldPasswordNewPasswordReceivedArguments = (oldPassword: oldPassword, newPassword: newPassword)
+        changePasswordOldPasswordNewPasswordReceivedInvocations.append((oldPassword: oldPassword, newPassword: newPassword))
+        try await changePasswordOldPasswordNewPasswordClosure?(oldPassword, newPassword)
+    }
+
+    //MARK: - resetPasswordRequest
+
+    public var resetPasswordRequestPhoneNumberThrowableError: Error?
+    public var resetPasswordRequestPhoneNumberCallsCount = 0
+    public var resetPasswordRequestPhoneNumberCalled: Bool {
+        return resetPasswordRequestPhoneNumberCallsCount > 0
+    }
+    public var resetPasswordRequestPhoneNumberReceivedPhoneNumber: String?
+    public var resetPasswordRequestPhoneNumberReceivedInvocations: [String] = []
+    public var resetPasswordRequestPhoneNumberClosure: ((String) async throws -> Void)?
+
+    public func resetPasswordRequest(phoneNumber: String) async throws {
+        if let error = resetPasswordRequestPhoneNumberThrowableError {
+            throw error
+        }
+        resetPasswordRequestPhoneNumberCallsCount += 1
+        resetPasswordRequestPhoneNumberReceivedPhoneNumber = phoneNumber
+        resetPasswordRequestPhoneNumberReceivedInvocations.append(phoneNumber)
+        try await resetPasswordRequestPhoneNumberClosure?(phoneNumber)
+    }
+
+    //MARK: - resetPasswordVerify
+
+    public var resetPasswordVerifyPhoneNumberCodeThrowableError: Error?
+    public var resetPasswordVerifyPhoneNumberCodeCallsCount = 0
+    public var resetPasswordVerifyPhoneNumberCodeCalled: Bool {
+        return resetPasswordVerifyPhoneNumberCodeCallsCount > 0
+    }
+    public var resetPasswordVerifyPhoneNumberCodeReceivedArguments: (phoneNumber: String, code: String)?
+    public var resetPasswordVerifyPhoneNumberCodeReceivedInvocations: [(phoneNumber: String, code: String)] = []
+    public var resetPasswordVerifyPhoneNumberCodeReturnValue: PasswordResetTokenEntity!
+    public var resetPasswordVerifyPhoneNumberCodeClosure: ((String, String) async throws -> PasswordResetTokenEntity)?
+
+    public func resetPasswordVerify(phoneNumber: String, code: String) async throws -> PasswordResetTokenEntity {
+        if let error = resetPasswordVerifyPhoneNumberCodeThrowableError {
+            throw error
+        }
+        resetPasswordVerifyPhoneNumberCodeCallsCount += 1
+        resetPasswordVerifyPhoneNumberCodeReceivedArguments = (phoneNumber: phoneNumber, code: code)
+        resetPasswordVerifyPhoneNumberCodeReceivedInvocations.append((phoneNumber: phoneNumber, code: code))
+        if let resetPasswordVerifyPhoneNumberCodeClosure = resetPasswordVerifyPhoneNumberCodeClosure {
+            return try await resetPasswordVerifyPhoneNumberCodeClosure(phoneNumber, code)
+        } else {
+            return resetPasswordVerifyPhoneNumberCodeReturnValue
+        }
+    }
+
+    //MARK: - resetPassword
+
+    public var resetPasswordPhoneNumberPasswordTokenThrowableError: Error?
+    public var resetPasswordPhoneNumberPasswordTokenCallsCount = 0
+    public var resetPasswordPhoneNumberPasswordTokenCalled: Bool {
+        return resetPasswordPhoneNumberPasswordTokenCallsCount > 0
+    }
+    public var resetPasswordPhoneNumberPasswordTokenReceivedArguments: (phoneNumber: String, password: String, token: String)?
+    public var resetPasswordPhoneNumberPasswordTokenReceivedInvocations: [(phoneNumber: String, password: String, token: String)] = []
+    public var resetPasswordPhoneNumberPasswordTokenClosure: ((String, String, String) async throws -> Void)?
+
+    public func resetPassword(phoneNumber: String, password: String, token: String) async throws {
+        if let error = resetPasswordPhoneNumberPasswordTokenThrowableError {
+            throw error
+        }
+        resetPasswordPhoneNumberPasswordTokenCallsCount += 1
+        resetPasswordPhoneNumberPasswordTokenReceivedArguments = (phoneNumber: phoneNumber, password: password, token: token)
+        resetPasswordPhoneNumberPasswordTokenReceivedInvocations.append((phoneNumber: phoneNumber, password: password, token: token))
+        try await resetPasswordPhoneNumberPasswordTokenClosure?(phoneNumber, password, token)
+    }
+
+    //MARK: - loginWithPassword
+
+    public var loginWithPasswordPhoneNumnerPasswordThrowableError: Error?
+    public var loginWithPasswordPhoneNumnerPasswordCallsCount = 0
+    public var loginWithPasswordPhoneNumnerPasswordCalled: Bool {
+        return loginWithPasswordPhoneNumnerPasswordCallsCount > 0
+    }
+    public var loginWithPasswordPhoneNumnerPasswordReceivedArguments: (phoneNumner: String, password: String)?
+    public var loginWithPasswordPhoneNumnerPasswordReceivedInvocations: [(phoneNumner: String, password: String)] = []
+    public var loginWithPasswordPhoneNumnerPasswordReturnValue: AccessTokensEntity!
+    public var loginWithPasswordPhoneNumnerPasswordClosure: ((String, String) async throws -> AccessTokensEntity)?
+
+    public func loginWithPassword(phoneNumner: String, password: String) async throws -> AccessTokensEntity {
+        if let error = loginWithPasswordPhoneNumnerPasswordThrowableError {
+            throw error
+        }
+        loginWithPasswordPhoneNumnerPasswordCallsCount += 1
+        loginWithPasswordPhoneNumnerPasswordReceivedArguments = (phoneNumner: phoneNumner, password: password)
+        loginWithPasswordPhoneNumnerPasswordReceivedInvocations.append((phoneNumner: phoneNumner, password: password))
+        if let loginWithPasswordPhoneNumnerPasswordClosure = loginWithPasswordPhoneNumnerPasswordClosure {
+            return try await loginWithPasswordPhoneNumnerPasswordClosure(phoneNumner, password)
+        } else {
+            return loginWithPasswordPhoneNumnerPasswordReturnValue
+        }
+    }
+
+    //MARK: - verifyEmailRequest
+
+    public var verifyEmailRequestThrowableError: Error?
+    public var verifyEmailRequestCallsCount = 0
+    public var verifyEmailRequestCalled: Bool {
+        return verifyEmailRequestCallsCount > 0
+    }
+    public var verifyEmailRequestClosure: (() async throws -> Void)?
+
+    public func verifyEmailRequest() async throws {
+        if let error = verifyEmailRequestThrowableError {
+            throw error
+        }
+        verifyEmailRequestCallsCount += 1
+        try await verifyEmailRequestClosure?()
+    }
+
+    //MARK: - verifyEmail
+
+    public var verifyEmailCodeThrowableError: Error?
+    public var verifyEmailCodeCallsCount = 0
+    public var verifyEmailCodeCalled: Bool {
+        return verifyEmailCodeCallsCount > 0
+    }
+    public var verifyEmailCodeReceivedCode: String?
+    public var verifyEmailCodeReceivedInvocations: [String] = []
+    public var verifyEmailCodeClosure: ((String) async throws -> Void)?
+
+    public func verifyEmail(code: String) async throws {
+        if let error = verifyEmailCodeThrowableError {
+            throw error
+        }
+        verifyEmailCodeCallsCount += 1
+        verifyEmailCodeReceivedCode = code
+        verifyEmailCodeReceivedInvocations.append(code)
+        try await verifyEmailCodeClosure?(code)
     }
 
     //MARK: - getAvailableRewardCurrrencies
@@ -325,58 +500,6 @@ public class MockAccountRepositoryProtocol: AccountRepositoryProtocol {
         }
     }
 
-    //MARK: - getTaxFile
-
-    public var getTaxFileAccountIdThrowableError: Error?
-    public var getTaxFileAccountIdCallsCount = 0
-    public var getTaxFileAccountIdCalled: Bool {
-        return getTaxFileAccountIdCallsCount > 0
-    }
-    public var getTaxFileAccountIdReceivedAccountId: String?
-    public var getTaxFileAccountIdReceivedInvocations: [String] = []
-    public var getTaxFileAccountIdReturnValue: [any TaxFileEntity]!
-    public var getTaxFileAccountIdClosure: ((String) async throws -> [any TaxFileEntity])?
-
-    public func getTaxFile(accountId: String) async throws -> [any TaxFileEntity] {
-        if let error = getTaxFileAccountIdThrowableError {
-            throw error
-        }
-        getTaxFileAccountIdCallsCount += 1
-        getTaxFileAccountIdReceivedAccountId = accountId
-        getTaxFileAccountIdReceivedInvocations.append(accountId)
-        if let getTaxFileAccountIdClosure = getTaxFileAccountIdClosure {
-            return try await getTaxFileAccountIdClosure(accountId)
-        } else {
-            return getTaxFileAccountIdReturnValue
-        }
-    }
-
-    //MARK: - getTaxFileYear
-
-    public var getTaxFileYearAccountIdYearFileNameThrowableError: Error?
-    public var getTaxFileYearAccountIdYearFileNameCallsCount = 0
-    public var getTaxFileYearAccountIdYearFileNameCalled: Bool {
-        return getTaxFileYearAccountIdYearFileNameCallsCount > 0
-    }
-    public var getTaxFileYearAccountIdYearFileNameReceivedArguments: (accountId: String, year: String, fileName: String)?
-    public var getTaxFileYearAccountIdYearFileNameReceivedInvocations: [(accountId: String, year: String, fileName: String)] = []
-    public var getTaxFileYearAccountIdYearFileNameReturnValue: URL!
-    public var getTaxFileYearAccountIdYearFileNameClosure: ((String, String, String) async throws -> URL)?
-
-    public func getTaxFileYear(accountId: String, year: String, fileName: String) async throws -> URL {
-        if let error = getTaxFileYearAccountIdYearFileNameThrowableError {
-            throw error
-        }
-        getTaxFileYearAccountIdYearFileNameCallsCount += 1
-        getTaxFileYearAccountIdYearFileNameReceivedArguments = (accountId: accountId, year: year, fileName: fileName)
-        getTaxFileYearAccountIdYearFileNameReceivedInvocations.append((accountId: accountId, year: year, fileName: fileName))
-        if let getTaxFileYearAccountIdYearFileNameClosure = getTaxFileYearAccountIdYearFileNameClosure {
-            return try await getTaxFileYearAccountIdYearFileNameClosure(accountId, year, fileName)
-        } else {
-            return getTaxFileYearAccountIdYearFileNameReturnValue
-        }
-    }
-
     //MARK: - addToWaitList
 
     public var addToWaitListWaitListThrowableError: Error?
@@ -470,6 +593,80 @@ public class MockAccountRepositoryProtocol: AccountRepositoryProtocol {
             return try await createSupportTicketTitleDescriptionTypeClosure(title, description, type)
         } else {
             return createSupportTicketTitleDescriptionTypeReturnValue
+        }
+    }
+
+    //MARK: - getSecretKey
+
+    public var getSecretKeyThrowableError: Error?
+    public var getSecretKeyCallsCount = 0
+    public var getSecretKeyCalled: Bool {
+        return getSecretKeyCallsCount > 0
+    }
+    public var getSecretKeyReturnValue: SecretKeyEntity!
+    public var getSecretKeyClosure: (() async throws -> SecretKeyEntity)?
+
+    public func getSecretKey() async throws -> SecretKeyEntity {
+        if let error = getSecretKeyThrowableError {
+            throw error
+        }
+        getSecretKeyCallsCount += 1
+        if let getSecretKeyClosure = getSecretKeyClosure {
+            return try await getSecretKeyClosure()
+        } else {
+            return getSecretKeyReturnValue
+        }
+    }
+
+    //MARK: - enableMFA
+
+    public var enableMFACodeThrowableError: Error?
+    public var enableMFACodeCallsCount = 0
+    public var enableMFACodeCalled: Bool {
+        return enableMFACodeCallsCount > 0
+    }
+    public var enableMFACodeReceivedCode: String?
+    public var enableMFACodeReceivedInvocations: [String] = []
+    public var enableMFACodeReturnValue: EnableMFAEntity!
+    public var enableMFACodeClosure: ((String) async throws -> EnableMFAEntity)?
+
+    public func enableMFA(code: String) async throws -> EnableMFAEntity {
+        if let error = enableMFACodeThrowableError {
+            throw error
+        }
+        enableMFACodeCallsCount += 1
+        enableMFACodeReceivedCode = code
+        enableMFACodeReceivedInvocations.append(code)
+        if let enableMFACodeClosure = enableMFACodeClosure {
+            return try await enableMFACodeClosure(code)
+        } else {
+            return enableMFACodeReturnValue
+        }
+    }
+
+    //MARK: - disableMFA
+
+    public var disableMFACodeThrowableError: Error?
+    public var disableMFACodeCallsCount = 0
+    public var disableMFACodeCalled: Bool {
+        return disableMFACodeCallsCount > 0
+    }
+    public var disableMFACodeReceivedCode: String?
+    public var disableMFACodeReceivedInvocations: [String] = []
+    public var disableMFACodeReturnValue: DisableMFAEntity!
+    public var disableMFACodeClosure: ((String) async throws -> DisableMFAEntity)?
+
+    public func disableMFA(code: String) async throws -> DisableMFAEntity {
+        if let error = disableMFACodeThrowableError {
+            throw error
+        }
+        disableMFACodeCallsCount += 1
+        disableMFACodeReceivedCode = code
+        disableMFACodeReceivedInvocations.append(code)
+        if let disableMFACodeClosure = disableMFACodeClosure {
+            return try await disableMFACodeClosure(code)
+        } else {
+            return disableMFACodeReturnValue
         }
     }
 

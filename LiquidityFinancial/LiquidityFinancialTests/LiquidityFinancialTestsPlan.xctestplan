@@ -1,0 +1,106 @@
+{
+  "configurations" : [
+    {
+      "id" : "BBB36C4C-E29C-4DB1-882C-B55F2C1E22E2",
+      "name" : "Configuration 1",
+      "options" : {
+
+      }
+    }
+  ],
+  "defaultOptions" : {
+    "targetForVariableExpansion" : {
+      "containerPath" : "container:LiquidityFinancial.xcodeproj",
+      "identifier" : "A9B448A22A8389B90029944C",
+      "name" : "CauseCard"
+    },
+    "testTimeoutsEnabled" : true
+  },
+  "testTargets" : [
+    {
+      "target" : {
+        "containerPath" : "container:Modules\/LFAuthentication",
+        "identifier" : "AuthenticationTests",
+        "name" : "AuthenticationTests"
+      }
+    },
+    {
+      "target" : {
+        "containerPath" : "container:Modules\/LFData",
+        "identifier" : "CryptoChartDataTests",
+        "name" : "CryptoChartDataTests"
+      }
+    },
+    {
+      "target" : {
+        "containerPath" : "container:Modules\/LFData",
+        "identifier" : "DevicesDataTests",
+        "name" : "DevicesDataTests"
+      }
+    },
+    {
+      "target" : {
+        "containerPath" : "container:Modules\/LFData",
+        "identifier" : "NetSpendDataTests",
+        "name" : "NetSpendDataTests"
+      }
+    },
+    {
+      "target" : {
+        "containerPath" : "container:Modules\/LFData",
+        "identifier" : "OnboardingDataTests",
+        "name" : "OnboardingDataTests"
+      }
+    },
+    {
+      "target" : {
+        "containerPath" : "container:Modules\/LFData",
+        "identifier" : "SolidDataTests",
+        "name" : "SolidDataTests"
+      }
+    },
+    {
+      "target" : {
+        "containerPath" : "container:Modules\/LFData",
+        "identifier" : "ZerohashDataTests",
+        "name" : "ZerohashDataTests"
+      }
+    },
+    {
+      "target" : {
+        "containerPath" : "container:Modules\/LFDomain",
+        "identifier" : "CryptoChartDomainTests",
+        "name" : "CryptoChartDomainTests"
+      }
+    },
+    {
+      "target" : {
+        "containerPath" : "container:Modules\/LFDomain",
+        "identifier" : "NetSpendDomainTests",
+        "name" : "NetSpendDomainTests"
+      }
+    },
+    {
+      "target" : {
+        "containerPath" : "container:Modules\/LFDomain",
+        "identifier" : "OnboardingDomainTests",
+        "name" : "OnboardingDomainTests"
+      }
+    },
+    {
+      "target" : {
+        "containerPath" : "container:Modules\/LFDomain",
+        "identifier" : "SolidDomainTests",
+        "name" : "SolidDomainTests"
+      }
+    },
+    {
+      "target" : {
+        "containerPath" : "container:Modules\/LFDomain",
+        "identifier" : "ZerohashDomainTests",
+        "name" : "ZerohashDomainTests"
+      }
+    }
+  ],
+  "version" : 1
+}

@@ -192,6 +192,44 @@ public class MockAccountAPIProtocol: AccountAPIProtocol {
         }
     }
 
+    //MARK: - verifyEmailRequest
+
+    public var verifyEmailRequestThrowableError: Error?
+    public var verifyEmailRequestCallsCount = 0
+    public var verifyEmailRequestCalled: Bool {
+        return verifyEmailRequestCallsCount > 0
+    }
+    public var verifyEmailRequestClosure: (() async throws -> Void)?
+
+    public func verifyEmailRequest() async throws {
+        if let error = verifyEmailRequestThrowableError {
+            throw error
+        }
+        verifyEmailRequestCallsCount += 1
+        try await verifyEmailRequestClosure?()
+    }
+
+    //MARK: - verifyEmail
+
+    public var verifyEmailCodeThrowableError: Error?
+    public var verifyEmailCodeCallsCount = 0
+    public var verifyEmailCodeCalled: Bool {
+        return verifyEmailCodeCallsCount > 0
+    }
+    public var verifyEmailCodeReceivedCode: String?
+    public var verifyEmailCodeReceivedInvocations: [String] = []
+    public var verifyEmailCodeClosure: ((String) async throws -> Void)?
+
+    public func verifyEmail(code: String) async throws {
+        if let error = verifyEmailCodeThrowableError {
+            throw error
+        }
+        verifyEmailCodeCallsCount += 1
+        verifyEmailCodeReceivedCode = code
+        verifyEmailCodeReceivedInvocations.append(code)
+        try await verifyEmailCodeClosure?(code)
+    }
+
     //MARK: - getAvailableRewardCurrencies
 
     public var getAvailableRewardCurrenciesThrowableError: Error?
@@ -555,50 +593,6 @@ public class MockAccountAPIProtocol: AccountAPIProtocol {
             return try await createSupportTicketTitleDescriptionTypeClosure(title, description, type)
         } else {
             return createSupportTicketTitleDescriptionTypeReturnValue
-        }
-    }
-
-    //MARK: - getMigrationStatus
-
-    public var getMigrationStatusThrowableError: Error?
-    public var getMigrationStatusCallsCount = 0
-    public var getMigrationStatusCalled: Bool {
-        return getMigrationStatusCallsCount > 0
-    }
-    public var getMigrationStatusReturnValue: APIMigrationStatus!
-    public var getMigrationStatusClosure: (() async throws -> APIMigrationStatus)?
-
-    public func getMigrationStatus() async throws -> APIMigrationStatus {
-        if let error = getMigrationStatusThrowableError {
-            throw error
-        }
-        getMigrationStatusCallsCount += 1
-        if let getMigrationStatusClosure = getMigrationStatusClosure {
-            return try await getMigrationStatusClosure()
-        } else {
-            return getMigrationStatusReturnValue
-        }
-    }
-
-    //MARK: - requestMigration
-
-    public var requestMigrationThrowableError: Error?
-    public var requestMigrationCallsCount = 0
-    public var requestMigrationCalled: Bool {
-        return requestMigrationCallsCount > 0
-    }
-    public var requestMigrationReturnValue: APIMigrationStatus!
-    public var requestMigrationClosure: (() async throws -> APIMigrationStatus)?
-
-    public func requestMigration() async throws -> APIMigrationStatus {
-        if let error = requestMigrationThrowableError {
-            throw error
-        }
-        requestMigrationCallsCount += 1
-        if let requestMigrationClosure = requestMigrationClosure {
-            return try await requestMigrationClosure()
-        } else {
-            return requestMigrationReturnValue
         }
     }
 

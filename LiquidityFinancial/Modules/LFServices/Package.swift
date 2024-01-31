@@ -5,7 +5,7 @@ import PackageDescription
 
 let package = Package(
   name: "LFServices",
-  platforms: [.iOS(.v15), .macOS(.v10_14)],
+  platforms: [.iOS(.v15)],
   products: [
     .library(
       name: "Services",
@@ -36,7 +36,7 @@ let package = Package(
     .package(url: "https://github.com/firebase/firebase-ios-sdk", from: "10.0.0"),
     .package(url: "https://github.com/segmentio/analytics-ios", from: "4.1.8"),
     .package(url: "https://github.com/Datadog/dd-sdk-ios.git", from: "2.4.0"),
-    .package(url: "https://github.com/verygoodsecurity/vgs-collect-ios.git", from: "1.15.1")
+    .package(url: "https://github.com/verygoodsecurity/vgs-collect-ios.git", .exact("1.15.3"))
   ],
   targets: [
     .target(

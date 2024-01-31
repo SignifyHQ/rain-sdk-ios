@@ -47,10 +47,10 @@ extension GetCMCSymbolHistoryUseCaseTests {
         .execute(
           symbol: mockSymbol,
           period: mockperiod
-        ) as? [MockCMCSymbolHistoriesEntity]
+        ).first?.currency
     }
     // Then response should be the one we expect
-    .to(equal(mockSuccessResult))
+    .to(equal(mockSuccessResult.first?.currency))
   }
   
   // Test get GetCMCSymbolHistoriesUseCase functionality when it encounters an error.

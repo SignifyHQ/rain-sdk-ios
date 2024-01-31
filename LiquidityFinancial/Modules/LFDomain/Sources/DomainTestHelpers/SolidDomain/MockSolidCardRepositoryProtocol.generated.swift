@@ -240,4 +240,30 @@ public class MockSolidCardRepositoryProtocol: SolidCardRepositoryProtocol {
         }
     }
 
+    //MARK: - getCardLimits
+
+    public var getCardLimitsCardIDThrowableError: Error?
+    public var getCardLimitsCardIDCallsCount = 0
+    public var getCardLimitsCardIDCalled: Bool {
+        return getCardLimitsCardIDCallsCount > 0
+    }
+    public var getCardLimitsCardIDReceivedCardID: String?
+    public var getCardLimitsCardIDReceivedInvocations: [String] = []
+    public var getCardLimitsCardIDReturnValue: SolidCardLimitsEntity!
+    public var getCardLimitsCardIDClosure: ((String) async throws -> SolidCardLimitsEntity)?
+
+    public func getCardLimits(cardID: String) async throws -> SolidCardLimitsEntity {
+        if let error = getCardLimitsCardIDThrowableError {
+            throw error
+        }
+        getCardLimitsCardIDCallsCount += 1
+        getCardLimitsCardIDReceivedCardID = cardID
+        getCardLimitsCardIDReceivedInvocations.append(cardID)
+        if let getCardLimitsCardIDClosure = getCardLimitsCardIDClosure {
+            return try await getCardLimitsCardIDClosure(cardID)
+        } else {
+            return getCardLimitsCardIDReturnValue
+        }
+    }
+
 }

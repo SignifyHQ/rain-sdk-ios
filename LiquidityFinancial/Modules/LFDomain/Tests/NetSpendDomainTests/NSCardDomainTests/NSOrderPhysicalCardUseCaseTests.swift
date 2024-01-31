@@ -32,8 +32,8 @@ extension NSOrderPhysicalCardUseCaseTests {
   // Test orderPhysicalCard functionality under normal conditions.
   func test_orderPhysicalCard_shouldReturnSuccessResponse() async {
     // Given the expected mock success response
-    let mockSuccessResult = MockCardEntity()
-    mockSuccessResult.id = "mock_cardID"
+    let mockSuccessResult = MockNSCardEntity()
+    mockSuccessResult.netspendCardId = "mock_cardID"
     // And a pre-set API return success value
     self.repository.orderPhysicalCardAddressSessionIDReturnValue = mockSuccessResult
     // And a set of mock parameters
@@ -44,10 +44,10 @@ extension NSOrderPhysicalCardUseCaseTests {
       try await self.useCase.execute(
         address: mockAddress,
         sessionID: mockSessionID
-      ).id
+      ).netspendCardId
     }
     // Then response should be the one we expect
-    .to(equal(mockSuccessResult.id))
+    .to(equal(mockSuccessResult.netspendCardId))
   }
   
   // Test orderPhysicalCard functionality when it encounters an error.

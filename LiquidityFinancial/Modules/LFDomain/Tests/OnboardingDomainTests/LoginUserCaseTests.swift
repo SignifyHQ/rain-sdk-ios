@@ -21,10 +21,12 @@ final class LoginUserCaseTests: XCTestCase {
     // Given: Set up a mock success result with an access token.
     let mockSuccessResult = MockAccessTokensEntity()
     mockSuccessResult.accessToken = "mock_accessToken"
-    self.repository.loginPhoneNumberOtpCodeLastIDReturnValue = mockSuccessResult
+    self.repository.loginParametersReturnValue = mockSuccessResult
     // When: Call the 'execute' method on the use case with specific phoneNumber, otpCode, and lastID, and retrieve the access token.
+    let parameters = MockLoginParametersEntity()
+    parameters.phoneNumber = "999999999"
     await expect {
-      try await self.usecase.execute(phoneNumber: "123456789", otpCode: "1234", lastID: "9999").accessToken
+      try await self.usecase.execute(isNewAuth: false, parameters: parameters).accessToken
     }
     // Then: Ensure that the returned access token matches the one set in the mock success result.
     .to(equal(mockSuccessResult.accessToken))
@@ -33,10 +35,12 @@ final class LoginUserCaseTests: XCTestCase {
   func test_failed_case() async {
     // Given: Set up a mock error.
     let mockError = TestError.fail("mock_error")
-    self.repository.loginPhoneNumberOtpCodeLastIDThrowableError = mockError
+    self.repository.loginParametersThrowableError = mockError
     // When: Call the 'execute' method on the use case with empty phoneNumber, otpCode, and lastID, which triggers an error.
+    let parameters = MockLoginParametersEntity()
+    parameters.phoneNumber = "999999999"
     await expect {
-      try await self.usecase.execute(phoneNumber: "", otpCode: "", lastID: "")
+      try await self.usecase.execute(isNewAuth: false, parameters: parameters)
     }
     // Then: Ensure that the use case throws the expected error.
     .to(

@@ -5,7 +5,7 @@ import PackageDescription
 
 let package = Package(
   name: "LFData",
-  platforms: [.iOS(.v15), .macOS(.v10_14)],
+  platforms: [.iOS(.v15)],
   products: [
     .library(
       name: "OnboardingData",
@@ -162,7 +162,7 @@ let package = Package(
     .testTarget(
       name: "DevicesDataTests",
       dependencies: [
-        "DevicesData", "DataTestHelpers",
+        "DevicesData", "DataTestHelpers", "TestHelpers",
         .product(name: "NetworkTestHelpers", package: "LFNetwork")
       ]
     ),

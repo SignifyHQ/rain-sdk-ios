@@ -61,10 +61,10 @@ final class SolidAccountRepositoryTests: XCTestCase {
     self.api.getAccountLimitsReturnValue = [mockSuccessResult]
     //When calling the getAccount limits function on the repository, it should return a value successfully.
     await expect {
-      try await self.repository.getAccountLimits().first?.spendingAmount
+      try await self.repository.getAccountLimits().first?.depositAchMonthly
     }
     // Then the result is the one we expected
-    .to(equal(mockSuccessResult.spendingAmount))
+    .to(equal(mockSuccessResult.depositAchMonthly))
   }
   
   

@@ -32,8 +32,8 @@ extension NSGetCardUseCaseTests {
   // Test getCard functionality under normal conditions.
   func test_getCard_shouldReturnSuccessResponse() async {
     // Given the expected mock success response
-    let mockSuccessResult = MockCardEntity()
-    mockSuccessResult.id = "mock_cardID"
+    let mockSuccessResult = MockNSCardEntity()
+    mockSuccessResult.netspendCardId = "mock_cardID"
     // And a pre-set API return success value
     self.repository.getCardCardIDSessionIDReturnValue = mockSuccessResult
     // And a set of mock parameters
@@ -41,10 +41,10 @@ extension NSGetCardUseCaseTests {
     let mockSessionID = "mock_sessionID"
     // When calling execute function on the use case
     await expect {
-      try await self.useCase.execute(cardID: mockCardID, sessionID: mockSessionID).id
+      try await self.useCase.execute(cardID: mockCardID, sessionID: mockSessionID).netspendCardId
     }
     // Then response should be the one we expect
-    .to(equal(mockSuccessResult.id))
+    .to(equal(mockSuccessResult.netspendCardId))
   }
   
   // Test getCard functionality when it encounters an error.

@@ -244,4 +244,30 @@ public class MockSolidExternalFundingRepositoryProtocol: SolidExternalFundingRep
         }
     }
 
+    //MARK: - cancelACHTransaction
+
+    public var cancelACHTransactionLiquidityTransactionIDThrowableError: Error?
+    public var cancelACHTransactionLiquidityTransactionIDCallsCount = 0
+    public var cancelACHTransactionLiquidityTransactionIDCalled: Bool {
+        return cancelACHTransactionLiquidityTransactionIDCallsCount > 0
+    }
+    public var cancelACHTransactionLiquidityTransactionIDReceivedLiquidityTransactionID: String?
+    public var cancelACHTransactionLiquidityTransactionIDReceivedInvocations: [String] = []
+    public var cancelACHTransactionLiquidityTransactionIDReturnValue: SolidExternalTransactionResponseEntity!
+    public var cancelACHTransactionLiquidityTransactionIDClosure: ((String) async throws -> SolidExternalTransactionResponseEntity)?
+
+    public func cancelACHTransaction(liquidityTransactionID: String) async throws -> SolidExternalTransactionResponseEntity {
+        if let error = cancelACHTransactionLiquidityTransactionIDThrowableError {
+            throw error
+        }
+        cancelACHTransactionLiquidityTransactionIDCallsCount += 1
+        cancelACHTransactionLiquidityTransactionIDReceivedLiquidityTransactionID = liquidityTransactionID
+        cancelACHTransactionLiquidityTransactionIDReceivedInvocations.append(liquidityTransactionID)
+        if let cancelACHTransactionLiquidityTransactionIDClosure = cancelACHTransactionLiquidityTransactionIDClosure {
+            return try await cancelACHTransactionLiquidityTransactionIDClosure(liquidityTransactionID)
+        } else {
+            return cancelACHTransactionLiquidityTransactionIDReturnValue
+        }
+    }
+
 }

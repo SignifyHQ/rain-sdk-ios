@@ -32,18 +32,18 @@ extension NSCreateCardUseCaseTests {
   // Test createCard functionality under normal conditions.
   func test_createCard_shouldReturnSuccessResponse() async {
     // Given the expected mock success response
-    let mockSuccessResult = MockCardEntity()
-    mockSuccessResult.id = "mock_cardID"
+    let mockSuccessResult = MockNSCardEntity()
+    mockSuccessResult.netspendCardId = "mock_cardID"
     // And a pre-set API return success value
     self.repository.createCardSessionIDReturnValue = mockSuccessResult
     // And a set of mock parameters
     let mockSessionID = "mock_sessionID"
     // When calling execute function on the use case
     await expect {
-      try await self.useCase.execute(sessionID: mockSessionID).id
+      try await self.useCase.execute(sessionID: mockSessionID).netspendCardId
     }
     // Then response should be the one we expect
-    .to(equal(mockSuccessResult.id))
+    .to(equal(mockSuccessResult.netspendCardId))
   }
   
   // Test createCard functionality when it encounters an error.
@@ -56,7 +56,7 @@ extension NSCreateCardUseCaseTests {
     let mockSessionID = "mock_sessionID"
     // When calling execute function on the use case
     await expect {
-      try await self.useCase.execute(sessionID: mockSessionID).id
+      try await self.useCase.execute(sessionID: mockSessionID).netspendCardId
     }
     // Then the error is the one we expected
     .to(

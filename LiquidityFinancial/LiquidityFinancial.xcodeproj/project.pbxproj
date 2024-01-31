@@ -7,7 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		0603BD712A71191B00347DB2 /* VGSShowSDK in Frameworks */ = {isa = PBXBuildFile; productRef = 0603BD702A71191B00347DB2 /* VGSShowSDK */; };
 		06154BA22B21C6FD00CABABB /* BiometricsManager in Frameworks */ = {isa = PBXBuildFile; productRef = 06154BA12B21C6FD00CABABB /* BiometricsManager */; };
 		06154BA42B21C73500CABABB /* BiometricsManager in Frameworks */ = {isa = PBXBuildFile; productRef = 06154BA32B21C73500CABABB /* BiometricsManager */; };
 		06154BA62B21C73C00CABABB /* BiometricsManager in Frameworks */ = {isa = PBXBuildFile; productRef = 06154BA52B21C73C00CABABB /* BiometricsManager */; };
@@ -560,19 +559,19 @@
 			remoteGlobalIDString = A99D2F042A9A56CF00947773;
 			remoteInfo = PrideCard;
 		};
-		A97BF7CD2A5C602F00B8F5CA /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = A97BF7B42A5C602D00B8F5CA /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = A97BF7BB2A5C602D00B8F5CA;
-			remoteInfo = LiquidityFinancial;
-		};
 		A97BF7D72A5C602F00B8F5CA /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = A97BF7B42A5C602D00B8F5CA /* Project object */;
 			proxyType = 1;
 			remoteGlobalIDString = A97BF7BB2A5C602D00B8F5CA;
 			remoteInfo = LiquidityFinancial;
+		};
+		A98779CA2B69F78100F342DD /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = A97BF7B42A5C602D00B8F5CA /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = A9B448A22A8389B90029944C;
+			remoteInfo = CauseCard;
 		};
 /* End PBXContainerItemProxy section */
 
@@ -749,6 +748,8 @@
 		A97BF83C2A5DA8A900B8F5CA /* LiquidityFinancialConfig.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = LiquidityFinancialConfig.xcconfig; sourceTree = "<group>"; };
 		A97BF83D2A5DBCF200B8F5CA /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
 		A97BF83F2A5DC13000B8F5CA /* Colors.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Colors.xcassets; sourceTree = "<group>"; };
+		A98779CC2B6A0BC100F342DD /* XCTest.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = XCTest.framework; path = Platforms/iPhoneOS.platform/Developer/Library/Frameworks/XCTest.framework; sourceTree = DEVELOPER_DIR; };
+		A98779D02B6A30EE00F342DD /* LiquidityFinancialTestsPlan.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = LiquidityFinancialTestsPlan.xctestplan; sourceTree = "<group>"; };
 		A989D5382AD79A4E00197EFF /* LFOnboarding */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = LFOnboarding; path = Modules/LFOnboarding; sourceTree = "<group>"; };
 		A99D2F692A9A56CF00947773 /* PrideCard.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = PrideCard.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		A99D2F6D2A9A56F200947773 /* PrideCardConfig.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = PrideCardConfig.xcconfig; sourceTree = "<group>"; };
@@ -1038,7 +1039,6 @@
 				06154BA42B21C73500CABABB /* BiometricsManager in Frameworks */,
 				A980DF772A5FA26E000B3C09 /* LFUtilities in Frameworks */,
 				06D40C012A62AE3700EADB75 /* iPhoneNumberField in Frameworks */,
-				0603BD712A71191B00347DB2 /* VGSShowSDK in Frameworks */,
 				A9A07D132B392F010057E882 /* LFNetspendDashboard in Frameworks */,
 				A90B5CBD2B1737960092E430 /* LFAuthentication in Frameworks */,
 				A989D53C2AD7AFDD00197EFF /* NetspendOnboarding in Frameworks */,
@@ -1611,6 +1611,7 @@
 		A953545B2A5DD7F4008B0FAB /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				A98779CC2B6A0BC100F342DD /* XCTest.framework */,
 				A9D191702AD9E32200AA31DF /* CoreTelephony.framework */,
 			);
 			name = Frameworks;
@@ -1752,6 +1753,7 @@
 			isa = PBXGroup;
 			children = (
 				A97BF7D02A5C602F00B8F5CA /* LiquidityFinancialTests.swift */,
+				A98779D02B6A30EE00F342DD /* LiquidityFinancialTestsPlan.xctestplan */,
 			);
 			path = LiquidityFinancialTests;
 			sourceTree = "<group>";
@@ -2573,7 +2575,6 @@
 				06D40C002A62AE3700EADB75 /* iPhoneNumberField */,
 				749091162A6584C300071B41 /* SmartyStreets */,
 				A963D3FA2A67081D006B9A54 /* NetSpendData */,
-				0603BD702A71191B00347DB2 /* VGSShowSDK */,
 				A918D76D2A77B116001AD849 /* AccountData */,
 				06FB47072A7AAE430050304C /* PinwheelSDK */,
 				A91D86622A8C7858006D40D4 /* CoreNetwork */,
@@ -2607,7 +2608,7 @@
 			buildRules = (
 			);
 			dependencies = (
-				A97BF7CE2A5C602F00B8F5CA /* PBXTargetDependency */,
+				A98779CB2B69F78100F342DD /* PBXTargetDependency */,
 			);
 			name = LiquidityFinancialTests;
 			productName = LiquidityFinancialTests;
@@ -2798,7 +2799,6 @@
 					};
 					A97BF7CB2A5C602F00B8F5CA = {
 						CreatedOnToolsVersion = 14.3;
-						TestTargetID = A97BF7BB2A5C602D00B8F5CA;
 					};
 					A97BF7D52A5C602F00B8F5CA = {
 						CreatedOnToolsVersion = 14.3;
@@ -2820,7 +2820,6 @@
 				A9E6B1CD2A5DD1A2008ED988 /* XCRemoteSwiftPackageReference "SwiftGenPlugin" */,
 				06D40BFF2A62AE3700EADB75 /* XCRemoteSwiftPackageReference "iPhoneNumberField" */,
 				749091152A6584C300071B41 /* XCRemoteSwiftPackageReference "smartystreets-ios-sdk" */,
-				0603BD6F2A71191B00347DB2 /* XCRemoteSwiftPackageReference "vgs-show-ios" */,
 				06FB47062A7AAE430050304C /* XCRemoteSwiftPackageReference "pinwheel-ios-sdk" */,
 				74BC08612A8CC6F500EFD00C /* XCRemoteSwiftPackageReference "CodeScanner" */,
 				74CB167B2A9853F800C137F3 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
@@ -3464,15 +3463,15 @@
 			target = A99D2F042A9A56CF00947773 /* PrideCard */;
 			targetProxy = 0619EF612AD7F9970032A0A6 /* PBXContainerItemProxy */;
 		};
-		A97BF7CE2A5C602F00B8F5CA /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = A97BF7BB2A5C602D00B8F5CA /* Avalanche */;
-			targetProxy = A97BF7CD2A5C602F00B8F5CA /* PBXContainerItemProxy */;
-		};
 		A97BF7D82A5C602F00B8F5CA /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = A97BF7BB2A5C602D00B8F5CA /* Avalanche */;
 			targetProxy = A97BF7D72A5C602F00B8F5CA /* PBXContainerItemProxy */;
+		};
+		A98779CB2B69F78100F342DD /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = A9B448A22A8389B90029944C /* CauseCard */;
+			targetProxy = A98779CA2B69F78100F342DD /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -4019,8 +4018,6 @@
 		A97BF7E42A5C602F00B8F5CA /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
-				BUNDLE_LOADER = "$(TEST_HOST)";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = TX9PJZUNWS;
@@ -4032,15 +4029,12 @@
 				SWIFT_EMIT_LOC_STRINGS = NO;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/LiquidityFinancial.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/LiquidityFinancial";
 			};
 			name = Debug;
 		};
 		A97BF7E52A5C602F00B8F5CA /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
-				BUNDLE_LOADER = "$(TEST_HOST)";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = TX9PJZUNWS;
@@ -4052,7 +4046,6 @@
 				SWIFT_EMIT_LOC_STRINGS = NO;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/LiquidityFinancial.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/LiquidityFinancial";
 			};
 			name = Release;
 		};
@@ -4456,14 +4449,6 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
-		0603BD6F2A71191B00347DB2 /* XCRemoteSwiftPackageReference "vgs-show-ios" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/verygoodsecurity/vgs-show-ios.git";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 1.0.0;
-			};
-		};
 		06D40BFF2A62AE3700EADB75 /* XCRemoteSwiftPackageReference "iPhoneNumberField" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/MojtabaHs/iPhoneNumberField.git";
@@ -4795,11 +4780,6 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		0603BD702A71191B00347DB2 /* VGSShowSDK */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 0603BD6F2A71191B00347DB2 /* XCRemoteSwiftPackageReference "vgs-show-ios" */;
-			productName = VGSShowSDK;
-		};
 		06154BA12B21C6FD00CABABB /* BiometricsManager */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = BiometricsManager;

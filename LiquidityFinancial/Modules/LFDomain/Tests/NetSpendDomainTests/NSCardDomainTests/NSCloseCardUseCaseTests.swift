@@ -32,8 +32,8 @@ extension NSCloseCardUseCaseTests {
   // Test closeCard functionality under normal conditions.
   func test_closeCard_shouldReturnSuccessResponse() async {
     // Given the expected mock success response
-    let mockSuccessResult = MockCardEntity()
-    mockSuccessResult.id = "mock_cardID"
+    let mockSuccessResult = MockNSCardEntity()
+    mockSuccessResult.netspendCardId = "mock_cardID"
     // And a pre-set API return success value
     self.repository.closeCardReasonCardIDSessionIDReturnValue = mockSuccessResult
     // And a set of mock parameters
@@ -47,10 +47,10 @@ extension NSCloseCardUseCaseTests {
           reason: mockReason,
           cardID: mockCardID,
           sessionID: mockSessionID
-        ).id
+        ).netspendCardId
     }
     // Then response should be the one we expect
-    .to(equal(mockSuccessResult.id))
+    .to(equal(mockSuccessResult.netspendCardId))
   }
   
   // Test closeCard functionality when it encounters an error.

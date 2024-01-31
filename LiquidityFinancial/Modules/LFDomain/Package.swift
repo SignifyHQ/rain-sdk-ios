@@ -5,7 +5,7 @@ import PackageDescription
 
 let package = Package(
   name: "LFDomain",
-  platforms: [.iOS(.v15), .macOS(.v10_14)],
+  platforms: [.iOS(.v15)],
   products: [
     .library(
       name: "OnboardingDomain",

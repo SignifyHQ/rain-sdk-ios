@@ -33,7 +33,7 @@ final class SolidGetAccountLimitsUseCaseTest: XCTestCase {
       try await self.usecase.execute()?.depositTotalDaily
     }
     // Then the repository will returns the same result as the api
-    .to(equal("10.00"))
+    .to(equal(10.00))
   }
   
   // Test the getAccount functionality when it encounters an error.

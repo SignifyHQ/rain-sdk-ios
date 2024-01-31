@@ -13,79 +13,105 @@ public class MockOnboardingRepositoryProtocol: OnboardingRepositoryProtocol {
 
     //MARK: - login
 
-    public var loginPhoneNumberOtpCodeLastIDThrowableError: Error?
-    public var loginPhoneNumberOtpCodeLastIDCallsCount = 0
-    public var loginPhoneNumberOtpCodeLastIDCalled: Bool {
-        return loginPhoneNumberOtpCodeLastIDCallsCount > 0
+    public var loginParametersThrowableError: Error?
+    public var loginParametersCallsCount = 0
+    public var loginParametersCalled: Bool {
+        return loginParametersCallsCount > 0
     }
-    public var loginPhoneNumberOtpCodeLastIDReceivedArguments: (phoneNumber: String, otpCode: String, lastID: String)?
-    public var loginPhoneNumberOtpCodeLastIDReceivedInvocations: [(phoneNumber: String, otpCode: String, lastID: String)] = []
-    public var loginPhoneNumberOtpCodeLastIDReturnValue: AccessTokensEntity!
-    public var loginPhoneNumberOtpCodeLastIDClosure: ((String, String, String) async throws -> AccessTokensEntity)?
+    public var loginParametersReceivedParameters: LoginParametersEntity?
+    public var loginParametersReceivedInvocations: [LoginParametersEntity] = []
+    public var loginParametersReturnValue: AccessTokensEntity!
+    public var loginParametersClosure: ((LoginParametersEntity) async throws -> AccessTokensEntity)?
 
-    public func login(phoneNumber: String, otpCode: String, lastID: String) async throws -> AccessTokensEntity {
-        if let error = loginPhoneNumberOtpCodeLastIDThrowableError {
+    public func login(parameters: LoginParametersEntity) async throws -> AccessTokensEntity {
+        if let error = loginParametersThrowableError {
             throw error
         }
-        loginPhoneNumberOtpCodeLastIDCallsCount += 1
-        loginPhoneNumberOtpCodeLastIDReceivedArguments = (phoneNumber: phoneNumber, otpCode: otpCode, lastID: lastID)
-        loginPhoneNumberOtpCodeLastIDReceivedInvocations.append((phoneNumber: phoneNumber, otpCode: otpCode, lastID: lastID))
-        if let loginPhoneNumberOtpCodeLastIDClosure = loginPhoneNumberOtpCodeLastIDClosure {
-            return try await loginPhoneNumberOtpCodeLastIDClosure(phoneNumber, otpCode, lastID)
+        loginParametersCallsCount += 1
+        loginParametersReceivedParameters = parameters
+        loginParametersReceivedInvocations.append(parameters)
+        if let loginParametersClosure = loginParametersClosure {
+            return try await loginParametersClosure(parameters)
         } else {
-            return loginPhoneNumberOtpCodeLastIDReturnValue
+            return loginParametersReturnValue
+        }
+    }
+
+    //MARK: - newLogin
+
+    public var newLoginParametersThrowableError: Error?
+    public var newLoginParametersCallsCount = 0
+    public var newLoginParametersCalled: Bool {
+        return newLoginParametersCallsCount > 0
+    }
+    public var newLoginParametersReceivedParameters: LoginParametersEntity?
+    public var newLoginParametersReceivedInvocations: [LoginParametersEntity] = []
+    public var newLoginParametersReturnValue: AccessTokensEntity!
+    public var newLoginParametersClosure: ((LoginParametersEntity) async throws -> AccessTokensEntity)?
+
+    public func newLogin(parameters: LoginParametersEntity) async throws -> AccessTokensEntity {
+        if let error = newLoginParametersThrowableError {
+            throw error
+        }
+        newLoginParametersCallsCount += 1
+        newLoginParametersReceivedParameters = parameters
+        newLoginParametersReceivedInvocations.append(parameters)
+        if let newLoginParametersClosure = newLoginParametersClosure {
+            return try await newLoginParametersClosure(parameters)
+        } else {
+            return newLoginParametersReturnValue
         }
     }
 
     //MARK: - requestOTP
 
-    public var requestOTPPhoneNumberThrowableError: Error?
-    public var requestOTPPhoneNumberCallsCount = 0
-    public var requestOTPPhoneNumberCalled: Bool {
-        return requestOTPPhoneNumberCallsCount > 0
+    public var requestOTPParametersThrowableError: Error?
+    public var requestOTPParametersCallsCount = 0
+    public var requestOTPParametersCalled: Bool {
+        return requestOTPParametersCallsCount > 0
     }
-    public var requestOTPPhoneNumberReceivedPhoneNumber: String?
-    public var requestOTPPhoneNumberReceivedInvocations: [String] = []
-    public var requestOTPPhoneNumberReturnValue: OtpEntity!
-    public var requestOTPPhoneNumberClosure: ((String) async throws -> OtpEntity)?
+    public var requestOTPParametersReceivedParameters: OTPParametersEntity?
+    public var requestOTPParametersReceivedInvocations: [OTPParametersEntity] = []
+    public var requestOTPParametersReturnValue: OtpEntity!
+    public var requestOTPParametersClosure: ((OTPParametersEntity) async throws -> OtpEntity)?
 
-    public func requestOTP(phoneNumber: String) async throws -> OtpEntity {
-        if let error = requestOTPPhoneNumberThrowableError {
+    public func requestOTP(parameters: OTPParametersEntity) async throws -> OtpEntity {
+        if let error = requestOTPParametersThrowableError {
             throw error
         }
-        requestOTPPhoneNumberCallsCount += 1
-        requestOTPPhoneNumberReceivedPhoneNumber = phoneNumber
-        requestOTPPhoneNumberReceivedInvocations.append(phoneNumber)
-        if let requestOTPPhoneNumberClosure = requestOTPPhoneNumberClosure {
-            return try await requestOTPPhoneNumberClosure(phoneNumber)
+        requestOTPParametersCallsCount += 1
+        requestOTPParametersReceivedParameters = parameters
+        requestOTPParametersReceivedInvocations.append(parameters)
+        if let requestOTPParametersClosure = requestOTPParametersClosure {
+            return try await requestOTPParametersClosure(parameters)
         } else {
-            return requestOTPPhoneNumberReturnValue
+            return requestOTPParametersReturnValue
         }
     }
 
-    //MARK: - onboardingState
+    //MARK: - newRequestOTP
 
-    public var onboardingStateSessionIdThrowableError: Error?
-    public var onboardingStateSessionIdCallsCount = 0
-    public var onboardingStateSessionIdCalled: Bool {
-        return onboardingStateSessionIdCallsCount > 0
+    public var newRequestOTPParametersThrowableError: Error?
+    public var newRequestOTPParametersCallsCount = 0
+    public var newRequestOTPParametersCalled: Bool {
+        return newRequestOTPParametersCallsCount > 0
     }
-    public var onboardingStateSessionIdReceivedSessionId: String?
-    public var onboardingStateSessionIdReceivedInvocations: [String] = []
-    public var onboardingStateSessionIdReturnValue: OnboardingStateEnity!
-    public var onboardingStateSessionIdClosure: ((String) async throws -> OnboardingStateEnity)?
+    public var newRequestOTPParametersReceivedParameters: OTPParametersEntity?
+    public var newRequestOTPParametersReceivedInvocations: [OTPParametersEntity] = []
+    public var newRequestOTPParametersReturnValue: OtpEntity!
+    public var newRequestOTPParametersClosure: ((OTPParametersEntity) async throws -> OtpEntity)?
 
-    public func onboardingState(sessionId: String) async throws -> OnboardingStateEnity {
-        if let error = onboardingStateSessionIdThrowableError {
+    public func newRequestOTP(parameters: OTPParametersEntity) async throws -> OtpEntity {
+        if let error = newRequestOTPParametersThrowableError {
             throw error
         }
-        onboardingStateSessionIdCallsCount += 1
-        onboardingStateSessionIdReceivedSessionId = sessionId
-        onboardingStateSessionIdReceivedInvocations.append(sessionId)
-        if let onboardingStateSessionIdClosure = onboardingStateSessionIdClosure {
-            return try await onboardingStateSessionIdClosure(sessionId)
+        newRequestOTPParametersCallsCount += 1
+        newRequestOTPParametersReceivedParameters = parameters
+        newRequestOTPParametersReceivedInvocations.append(parameters)
+        if let newRequestOTPParametersClosure = newRequestOTPParametersClosure {
+            return try await newRequestOTPParametersClosure(parameters)
         } else {
-            return onboardingStateSessionIdReturnValue
+            return newRequestOTPParametersReturnValue
         }
     }
 

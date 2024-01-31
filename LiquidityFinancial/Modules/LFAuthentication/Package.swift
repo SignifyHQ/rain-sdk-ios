@@ -44,18 +44,11 @@ let package = Package(
           ]
         ),
         .testTarget(
-            name: "CreatePasswordViewModelTests",
+            name: "AuthenticationTests",
             dependencies: [
               "LFAuthentication",
               "TestHelpers"
             ]
-        ),
-        .testTarget(
-          name: "ChangePasswordViewModelTests",
-          dependencies: [
-            "LFAuthentication",
-            "TestHelpers"
-          ]
-      )
+        )
     ]
 )
