@@ -43,7 +43,7 @@ private extension CardCellView {
   var trailingView: some View {
     VStack(alignment: .trailing, spacing: 8) {
       if cardModel.cardStatus == .disabled || cardModel.cardStatus == .unactivated {
-        GenImages.Images.icCirclePause.swiftUIImage
+        CirclePauseIconView(size: .small, backgroundColor: cardModel.textColor)
       }
       Text(cardModel.cardType.title)
       Text("****\(cardModel.last4)")

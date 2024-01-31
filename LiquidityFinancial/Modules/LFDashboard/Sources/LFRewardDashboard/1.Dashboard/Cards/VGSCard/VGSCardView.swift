@@ -29,6 +29,16 @@ struct VGSCardView: View {
       .popup(item: $viewModel.toastMessage, style: .toast) {
         ToastView(toastMessage: $0)
       }
+      .popup(item: $viewModel.popup) { popup in
+        switch popup {
+        case .biometryNotAvailable:
+          biometricNotAvailablePopup
+        case let .biometryLockout(title, message):
+          commonBiometricErrorPopup(title: title, message: message)
+        case let .biometryNotEnrolled(title, message):
+          commonBiometricErrorPopup(title: title, message: message)
+        }
+      }
   }
 }
 
@@ -40,13 +50,13 @@ private extension VGSCardView {
       Spacer()
       sensitiveCardDataView
       if !viewModel.isCardAvailable {
-        // TODO: We will custom this animation to support multi-color
         LottieView(loading: .contrast)
           .frame(width: 28, height: 15, alignment: .leading)
+          .colorMultiply(card.textColor)
       }
     }
     .padding(16)
-    .frame(height: 192)
+    .aspectRatio(1.62, contentMode: .fit)
     .background(
       card.backgroundColor.cornerRadius(8)
     )
@@ -77,9 +87,7 @@ private extension VGSCardView {
             .cornerRadius(4)
         )
     } else if card.cardStatus == .disabled || card.cardStatus == .unactivated {
-      GenImages.Images.icCirclePause.swiftUIImage
-        .resizable()
-        .frame(32)
+      CirclePauseIconView(size: .medium, backgroundColor: card.textColor)
     }
   }
   
@@ -133,7 +141,7 @@ private extension VGSCardView {
         Text(String(repeating: Constants.Default.asterisk.rawValue, count: 4))
           .contentShape(Rectangle())
           .onTapGesture {
-            viewModel.showCardNumber()
+            viewModel.onClickAsteriskSymbol(type: .cardNumber, card: card)
           }
         Spacer()
       }
@@ -161,11 +169,11 @@ private extension VGSCardView {
     HStack(alignment: .top, spacing: 90) {
       Text(Constants.Default.expirationDateAsteriskPlaceholder.rawValue)
         .onTapGesture {
-          viewModel.showExpDateAndCVVCode()
+          viewModel.onClickAsteriskSymbol(type: .expDateAndCVV, card: card)
         }
       Text(String(repeating: Constants.Default.asterisk.rawValue, count: 3))
         .onTapGesture {
-          viewModel.showExpDateAndCVVCode()
+          viewModel.onClickAsteriskSymbol(type: .expDateAndCVV, card: card)
         }
     }
     .font(Fonts.medium.swiftUIFont(size: Constants.FontSize.medium.value))
@@ -183,5 +191,34 @@ private extension VGSCardView {
         .frame(height: 20, alignment: .center)
         .background(Colors.whiteText.swiftUIColor.opacity(0.25))
     }
+  }
+}
+
+// MARK: - Popup
+private extension VGSCardView {
+  func commonBiometricErrorPopup(title: String, message: String) -> some View {
+    LiquidityAlert(
+      title: title.uppercased(),
+      message: message,
+      primary: .init(text: L10N.Common.Button.Ok.title) {
+        viewModel.hidePopup()
+      }
+    )
+  }
+  
+  var biometricNotAvailablePopup: some View {
+    LiquidityAlert(
+      title: L10N.Common.Authentication.BiometricsNotAvailable.title(viewModel.biometricType.title),
+      message: L10N.Common.Authentication.BiometricsNotAvailable.message(
+        viewModel.biometricType.title,
+        LFUtilities.cardFullName
+      ),
+      primary: .init(text: L10N.Common.Button.Ok.title) {
+        viewModel.openDeviceSettings()
+      },
+      secondary: .init(text: L10N.Common.Button.NotNow.title) {
+        viewModel.hidePopup()
+      }
+    )
   }
 }

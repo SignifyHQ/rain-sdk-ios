@@ -137,9 +137,8 @@ private extension CardDetailView {
         transactionListView
       }
     }
-    .padding(.top, 24)
+    .padding(.vertical, 16)
     .padding(.horizontal, 30)
-    .padding(.bottom, 16)
     .background(Colors.background.swiftUIColor)
     .navigationBarBackButtonHidden(true)
     .toolbar { toolbarContent }
@@ -164,7 +163,7 @@ private extension CardDetailView {
       }
     }
     .tabViewStyle(.page(indexDisplayMode: .never))
-    .frame(height: 192)
+    .frame(height: 240)
   }
   
   var cardConfigurationsView: some View {

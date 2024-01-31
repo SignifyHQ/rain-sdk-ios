@@ -6,15 +6,19 @@ import SolidDomain
 import LFStyleGuide
 import LFUtilities
 import LFLocalizable
+import LFFeatureFlags
 import GeneralFeature
 import VGSShowSDK
 import Services
 import SwiftUI
+import BiometricsManager
 
 @MainActor
 final class VGSCardViewModel: ObservableObject {
   @LazyInjected(\.solidCardRepository) var solidCardRepository
-  
+  @LazyInjected(\.biometricsManager) var biometricsManager
+  @LazyInjected(\.featureFlagManager) var featureFlagManager
+
   lazy var createVGSShowTokenUseCase: SolidCreateVGSShowTokenUseCaseProtocol = {
     SolidCreateVGSShowTokenUseCase(repository: solidCardRepository)
   }()
@@ -24,6 +28,9 @@ final class VGSCardViewModel: ObservableObject {
   @Published var isShowExpDateAndCVVCode = false
   @Published var copyMessage: String?
   @Published var toastMessage: String?
+  
+  @Published var biometricType: BiometricType = .none
+  @Published var popup: Popup?
 
   let vgsShow = VGSShow(id: LFServices.vgsConfig.id, environment: LFServices.vgsConfig.env)
   private let pasteboard = UIPasteboard.general
@@ -31,6 +38,7 @@ final class VGSCardViewModel: ObservableObject {
   private var subscribers: Set<AnyCancellable> = []
   
   init(card: CardModel) {
+    checkBiometricsCapability()
     getVGSShowTokenAPI(card: card)
   }
 }
@@ -79,12 +87,33 @@ extension VGSCardViewModel {
     }
   }
   
-  func showCardNumber() {
-    isShowCardNumber = true
+  func onClickAsteriskSymbol(type: VGSLabelType, card: CardModel) {
+    let isEnableAuthenticateWithBiometrics = UserDefaults.isBiometricUsageEnabled && featureFlagManager.isFeatureFlagEnabled(.passwordLogin)
+    guard isEnableAuthenticateWithBiometrics else {
+      showSensitiveCardData(type: type)
+      return
+    }
+    
+    authenticateWithBiometrics(type: type, card: card)
   }
   
-  func showExpDateAndCVVCode() {
-    isShowExpDateAndCVVCode = true
+  func showSensitiveCardData(type: VGSLabelType) {
+    switch type {
+    case .cardNumber:
+      isShowCardNumber = true
+    case .expDateAndCVV:
+      isShowExpDateAndCVVCode = true
+    }
+  }
+  
+  func openDeviceSettings() {
+    if let url = URL(string: UIApplication.openSettingsURLString) {
+      UIApplication.shared.open(url, options: [:], completionHandler: nil)
+    }
+  }
+  
+  func hidePopup() {
+    popup = nil
   }
 }
 
@@ -116,6 +145,61 @@ private extension VGSCardViewModel {
     
     return pasteboard.string ?? .empty
   }
+  
+  func checkBiometricsCapability() {
+    biometricsManager.checkBiometricsCapability(purpose: .enable)
+      .receive(on: DispatchQueue.main)
+      .sink(receiveCompletion: { completion in
+        switch completion {
+        case .finished:
+          log.debug("Biometrics capability check completed.")
+        case .failure(let error):
+          log.error("Biometrics capability error: \(error)")
+        }
+      }, receiveValue: { [weak self] result in
+        guard let self else { return }
+        self.biometricType = result.type
+      })
+      .store(in: &subscribers)
+  }
+  
+  func authenticateWithBiometrics(type: VGSLabelType, card: CardModel) {
+    biometricsManager.performBiometricsAuthentication(purpose: .enable)
+      .receive(on: DispatchQueue.main)
+      .sink(receiveCompletion: { [weak self] completion in
+        switch completion {
+        case .finished:
+          log.debug("Biometrics authenticate completed.")
+        case .failure(let error):
+          self?.handleBiometricAuthenticationError(error: error)
+        }
+      }, receiveValue: { [weak self] _ in
+        guard let self else { return }
+        self.showSensitiveCardData(type: type)
+        self.copyToClipboard(type: type, card: card)
+      })
+      .store(in: &subscribers)
+  }
+  
+  func handleBiometricAuthenticationError(error: BiometricError) {
+    log.error("Biometrics error: \(error.localizedDescription)")
+    switch error {
+    case .biometryNotAvailable:
+      popup = .biometryNotAvailable
+    case .biometryNotEnrolled:
+      popup = .biometryNotEnrolled(
+        title: L10N.Common.Authentication.BiometricsNotEnrolled.title(biometricType.title),
+        message: L10N.Common.Authentication.BiometricsNotEnrolled.message(biometricType.title)
+      )
+    case .biometryLockout:
+      self.popup = .biometryLockout(
+        title: L10N.Common.Authentication.BiometricsLockoutError.title(biometricType.title),
+        message: L10N.Common.Authentication.BiometricsLockoutError.message(biometricType.title)
+      )
+    default:
+      break
+    }
+  }
 }
 
 // MARK: - Types
@@ -123,5 +207,11 @@ extension VGSCardViewModel {
   enum VGSLabelType: Int {
     case cardNumber
     case expDateAndCVV
+  }
+  
+  enum Popup {
+    case biometryLockout(title: String, message: String)
+    case biometryNotEnrolled(title: String, message: String)
+    case biometryNotAvailable
   }
 }
