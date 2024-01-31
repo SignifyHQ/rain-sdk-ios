@@ -1229,6 +1229,16 @@ contact support.";
 "authentication.recovery_code.enter_code_placeholder" = "Enter recovery code";
 "authentication.recovery_code.mfa_recovered" = "MFA RECOVERED";
 
+// Account and Rounting
+"AccountRountingNumber.screen.title" = "ACCOUNT AND ROUTING NUMBER";
+"AccountRountingNumber.howTo.title" = "How to transfer money from your bank to %@:";
+"AccountRountingNumber.bulletOne.title" = "Login to your bank, and find the transfers section of your bank’s app or website";
+"AccountRountingNumber.bulletTwo.title" = "If it’s your first transfer, you’ll need to add your %@ as an external account. Enter you routing and account number, and select Checking as account type.";
+"AccountRountingNumber.bulletThree.title" = "Enter your account and routing number, verify micro-deposits.";
+"AccountRountingNumber.bulletFour.title" = "Send funds to %@";
+"AccountRountingNumber.routingNumber.title" = "Rounting number";
+"AccountRountingNumber.accountNumber.title" = "Account number";
+
 // MARK: - Common
 
 // Notification Pop up
@@ -1253,6 +1263,7 @@ We will be in touch shortly to invite you to get your new card.";
 
 // Cast Asset
 "cashAsset.funding_accounts.title" = "Funding Accounts";
+"cashAsset.account_rounting_number.title" = "Account and Routing Number";
 
 // Title
 "error.weAreSorry.title" = "WE’RE SORRY";

@@ -212,6 +212,10 @@ extension CashAssetViewModel {
     Haptic.impact(.light).generate()
     navigation = .transactionDetail(transaction)
   }
+  
+  func accountRountingTapped() {
+    navigation = .accountRounting
+  }
 }
 
 // MARK: - Types
@@ -228,6 +232,7 @@ extension CashAssetViewModel {
     case sendMoney
     case transactions
     case transactionDetail(TransactionModel)
+    case accountRounting
   }
   
   enum FullScreen: Identifiable {
