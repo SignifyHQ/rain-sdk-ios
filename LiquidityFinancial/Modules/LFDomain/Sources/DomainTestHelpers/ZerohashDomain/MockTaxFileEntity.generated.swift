@@ -3,7 +3,6 @@
 // swiftlint:disable all
 
 import Foundation
-import AccountDomain
 import ZerohashDomain
 
 public class MockTaxFileEntity: TaxFileEntity {

@@ -12,23 +12,27 @@ public class MockSolidCardAPIProtocol: SolidCardAPIProtocol {
 
     //MARK: - getListCard
 
-    public var getListCardThrowableError: Error?
-    public var getListCardCallsCount = 0
-    public var getListCardCalled: Bool {
-        return getListCardCallsCount > 0
+    public var getListCardIsContainClosedCardThrowableError: Error?
+    public var getListCardIsContainClosedCardCallsCount = 0
+    public var getListCardIsContainClosedCardCalled: Bool {
+        return getListCardIsContainClosedCardCallsCount > 0
     }
-    public var getListCardReturnValue: [APISolidCard]!
-    public var getListCardClosure: (() async throws -> [APISolidCard])?
+    public var getListCardIsContainClosedCardReceivedIsContainClosedCard: Bool?
+    public var getListCardIsContainClosedCardReceivedInvocations: [Bool] = []
+    public var getListCardIsContainClosedCardReturnValue: [APISolidCard]!
+    public var getListCardIsContainClosedCardClosure: ((Bool) async throws -> [APISolidCard])?
 
-    public func getListCard() async throws -> [APISolidCard] {
-        if let error = getListCardThrowableError {
+    public func getListCard(isContainClosedCard: Bool) async throws -> [APISolidCard] {
+        if let error = getListCardIsContainClosedCardThrowableError {
             throw error
         }
-        getListCardCallsCount += 1
-        if let getListCardClosure = getListCardClosure {
-            return try await getListCardClosure()
+        getListCardIsContainClosedCardCallsCount += 1
+        getListCardIsContainClosedCardReceivedIsContainClosedCard = isContainClosedCard
+        getListCardIsContainClosedCardReceivedInvocations.append(isContainClosedCard)
+        if let getListCardIsContainClosedCardClosure = getListCardIsContainClosedCardClosure {
+            return try await getListCardIsContainClosedCardClosure(isContainClosedCard)
         } else {
-            return getListCardReturnValue
+            return getListCardIsContainClosedCardReturnValue
         }
     }
 

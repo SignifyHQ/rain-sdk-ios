@@ -34,10 +34,10 @@ extension SolidGetListCardUseCaseTests {
     mockCardEntity.id = "mock_cardID"
     let mockSuccessResult = [mockCardEntity]
     // And a pre-set API return success value
-    self.repository.getListCardReturnValue = mockSuccessResult
+    self.repository.getListCardIsContainClosedCardReturnValue = mockSuccessResult
     // When calling execute function on the use case
     await expect {
-      try await self.useCase.execute().first?.id
+      try await self.useCase.execute(isContainClosedCard: false).first?.id
     }
     // Then response should be the one we expect
     .to(equal(mockSuccessResult.first?.id))
@@ -48,10 +48,10 @@ extension SolidGetListCardUseCaseTests {
     // Given the expected mock error
     let expectedError = TestError.fail("mock_error")
     // And a pre-set API throwable error
-    self.repository.getListCardThrowableError = expectedError
+    self.repository.getListCardIsContainClosedCardThrowableError = expectedError
     // When calling execute function on the use case
     await expect {
-      try await self.useCase.execute()
+      try await self.useCase.execute(isContainClosedCard: false)
     }
     // Then the error is the one we expected
     .to(

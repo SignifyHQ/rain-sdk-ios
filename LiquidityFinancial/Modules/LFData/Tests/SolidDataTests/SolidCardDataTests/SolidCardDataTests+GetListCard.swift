@@ -13,11 +13,11 @@ extension SolidCardDataTests {
   /// Test  getListCard functionality under normal conditions
   func test_getListCard_shouldReturnSuccessResponse() async {
     // Given a mock success response will be return
-    self.api.getListCardReturnValue = mockListCardResponse
+    self.api.getListCardIsContainClosedCardReturnValue = mockListCardResponse
     
     // When calling getListCard function on the repository and it should return a success response
     await expect {
-      let response = try await self.repository.getListCard()
+      let response = try await self.repository.getListCard(isContainClosedCard: false)
       return response.first?.id
     }
     /* Then the first element in the response received from repository
@@ -29,11 +29,11 @@ extension SolidCardDataTests {
   /// Test getListCard functionality when it encounters an API error
   func test_getListCard_shouldThrowError() async {
     // Given a mock error which will be thrown
-    self.api.getListCardThrowableError = expectedThrowableError
+    self.api.getListCardIsContainClosedCardThrowableError = expectedThrowableError
     
     // When calling getListCard function on the repository and it throws an error
     await expect {
-      try await self.repository.getListCard()
+      try await self.repository.getListCard(isContainClosedCard: false)
     }
     // Then an error should be thrown
     .to(

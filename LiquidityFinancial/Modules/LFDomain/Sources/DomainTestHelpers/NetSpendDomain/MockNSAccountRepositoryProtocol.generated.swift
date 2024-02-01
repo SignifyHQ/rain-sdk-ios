@@ -91,7 +91,7 @@ public class MockNSAccountRepositoryProtocol: NSAccountRepositoryProtocol {
     public var getAccountLimitsCalled: Bool {
         return getAccountLimitsCallsCount > 0
     }
-  public var getAccountLimitsReturnValue: (any NSAccountLimitsEntity)?
+    public var getAccountLimitsReturnValue: (any NSAccountLimitsEntity)?
     public var getAccountLimitsClosure: (() async throws -> any NSAccountLimitsEntity)?
 
     public func getAccountLimits() async throws -> any NSAccountLimitsEntity {

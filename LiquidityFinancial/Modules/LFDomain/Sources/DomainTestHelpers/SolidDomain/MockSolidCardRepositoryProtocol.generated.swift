@@ -12,23 +12,27 @@ public class MockSolidCardRepositoryProtocol: SolidCardRepositoryProtocol {
 
     //MARK: - getListCard
 
-    public var getListCardThrowableError: Error?
-    public var getListCardCallsCount = 0
-    public var getListCardCalled: Bool {
-        return getListCardCallsCount > 0
+    public var getListCardIsContainClosedCardThrowableError: Error?
+    public var getListCardIsContainClosedCardCallsCount = 0
+    public var getListCardIsContainClosedCardCalled: Bool {
+        return getListCardIsContainClosedCardCallsCount > 0
     }
-    public var getListCardReturnValue: [SolidCardEntity]!
-    public var getListCardClosure: (() async throws -> [SolidCardEntity])?
+    public var getListCardIsContainClosedCardReceivedIsContainClosedCard: Bool?
+    public var getListCardIsContainClosedCardReceivedInvocations: [Bool] = []
+    public var getListCardIsContainClosedCardReturnValue: [SolidCardEntity]!
+    public var getListCardIsContainClosedCardClosure: ((Bool) async throws -> [SolidCardEntity])?
 
-    public func getListCard() async throws -> [SolidCardEntity] {
-        if let error = getListCardThrowableError {
+    public func getListCard(isContainClosedCard: Bool) async throws -> [SolidCardEntity] {
+        if let error = getListCardIsContainClosedCardThrowableError {
             throw error
         }
-        getListCardCallsCount += 1
-        if let getListCardClosure = getListCardClosure {
-            return try await getListCardClosure()
+        getListCardIsContainClosedCardCallsCount += 1
+        getListCardIsContainClosedCardReceivedIsContainClosedCard = isContainClosedCard
+        getListCardIsContainClosedCardReceivedInvocations.append(isContainClosedCard)
+        if let getListCardIsContainClosedCardClosure = getListCardIsContainClosedCardClosure {
+            return try await getListCardIsContainClosedCardClosure(isContainClosedCard)
         } else {
-            return getListCardReturnValue
+            return getListCardIsContainClosedCardReturnValue
         }
     }
 
