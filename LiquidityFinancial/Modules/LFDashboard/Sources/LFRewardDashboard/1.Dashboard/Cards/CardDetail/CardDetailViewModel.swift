@@ -119,7 +119,10 @@ extension CardDetailViewModel {
   }
   
   func navigateToEditCardName() {
-    navigation = .editCardName
+    let viewModel = EditCardNameViewModel(cardID: currentCard.id, cardName: currentCard.cardName) { cardName in
+      self.handleUpdateCardNameSuccessfully(with: cardName)
+    }
+    navigation = .editCardName(viewModel: viewModel)
   }
   
   func hidePopup() {
@@ -179,7 +182,7 @@ private extension CardDetailViewModel {
 // MARK: - Types
 extension CardDetailViewModel {
   enum Navigation {
-    case editCardName
+    case editCardName(viewModel: EditCardNameViewModel)
     case transactionDetail(TransactionModel)
   }
   

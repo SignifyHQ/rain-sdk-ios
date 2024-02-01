@@ -142,7 +142,7 @@ private extension CardsTabViewModel {
     entities.map {
       CardModel(
         id: $0.id,
-        cardName: .empty, // TODO: MinhNguyen - Update later after the api is available
+        cardName: $0.name,
         cardType: CardType(rawValue: $0.type) ?? .virtual,
         cardholderName: nil,
         expiryMonth: Int($0.expirationMonth) ?? 0,

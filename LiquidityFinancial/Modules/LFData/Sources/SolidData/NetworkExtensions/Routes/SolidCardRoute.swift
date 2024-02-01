@@ -15,6 +15,7 @@ public enum SolidCardRoute {
   case createCardPinToken(cardID: String)
   case activeCard(cardID: String, parameters: APISolidActiveCardParameters)
   case getCardLimits(cardID: String)
+  case updateCardName(cardID: String, parameters: APISolidCardNameParameters)
 }
 
 extension SolidCardRoute: LFRoute {
@@ -41,6 +42,8 @@ extension SolidCardRoute: LFRoute {
       return "/v1/solid/cards/\(cardID)/activate"
     case let .getCardLimits(cardID):
       return "/v1/solid/cards/\(cardID)/limits"
+    case let .updateCardName(cardID, _):
+      return "/v1/solid/cards/\(cardID)/name"
     }
   }
   
@@ -48,7 +51,7 @@ extension SolidCardRoute: LFRoute {
     switch self {
     case .listCard, .getCardLimits:
       return .GET
-    case .updateCardStatus, .updateRoundUpDonation, .activeCard:
+    case .updateCardStatus, .updateRoundUpDonation, .activeCard, .updateCardName:
       return .PATCH
     case .closeCard:
       return .DELETE
@@ -83,6 +86,8 @@ extension SolidCardRoute: LFRoute {
       return [
         "showClosed": "\(isContainClosedCard)"
       ]
+    case let .updateCardName(_, parameters):
+      return parameters.encoded()
     }
   }
   
@@ -90,7 +95,7 @@ extension SolidCardRoute: LFRoute {
     switch self {
     case .closeCard, .createVGSShowToken, .createVirtualCard, .createCardPinToken, .getCardLimits:
       return nil
-    case .updateCardStatus, .createDigitalWalletLink, .updateRoundUpDonation, .activeCard:
+    case .updateCardStatus, .createDigitalWalletLink, .updateRoundUpDonation, .activeCard, .updateCardName:
       return .json
     case .listCard:
       return .url

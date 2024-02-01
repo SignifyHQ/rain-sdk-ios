@@ -14,6 +14,7 @@ public class MockSolidCardEntity: SolidCardEntity {
         set(value) { underlyingId = value }
     }
     public var underlyingId: String!
+    public var name: String?
     public var expirationMonth: String {
         get { return underlyingExpirationMonth }
         set(value) { underlyingExpirationMonth = value }

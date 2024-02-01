@@ -101,4 +101,13 @@ extension LFCoreNetwork: SolidCardAPIProtocol where R == SolidCardRoute {
       decoder: .apiDecoder
     )
   }
+  
+  public func updateCardName(cardID: String, parameters: APISolidCardNameParameters) async throws -> APISolidCard {
+    try await request(
+      SolidCardRoute.updateCardName(cardID: cardID, parameters: parameters),
+      target: APISolidCard.self,
+      failure: LFErrorObject.self,
+      decoder: .apiDecoder
+    )
+  }
 }

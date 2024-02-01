@@ -64,4 +64,11 @@ public class SolidCardRepository: SolidCardRepositoryProtocol {
   public func getCardLimits(cardID: String) async throws -> SolidCardLimitsEntity {
     return try await cardAPI.getCardLimits(cardID: cardID)
   }
+  
+  public func updateCardName(cardID: String, parameters: SolidCardNameParametersEntity) async throws -> SolidCardEntity {
+    guard let parameters = parameters as? APISolidCardNameParameters else {
+      throw "Can't map paramater :\(parameters)"
+    }
+    return try await cardAPI.updateCardName(cardID: cardID, parameters: parameters)
+  }
 }

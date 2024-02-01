@@ -299,6 +299,7 @@
 "card.editCardName.disclosure" = "Name your card to easily find it later";
 "card.editCardName.placeholder" = "Enter CardName";
 "card.editCardName.specialCharactersError" = "CardName can't contain special characters";
+"card.editCardName.cardNameExisted" = "The card name existed!";
 "card.exp.title" = "Exp";
 "card.cvv.title" = "CVV";
 "card.cardNumberCopied.title" = "Card number copied to clipboard";

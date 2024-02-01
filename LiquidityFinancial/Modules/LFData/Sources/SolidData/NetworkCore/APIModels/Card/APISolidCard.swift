@@ -2,6 +2,7 @@ import SolidDomain
 
 public struct APISolidCard: Codable, SolidCardEntity {
   public var id: String
+  public var name: String?
   public var expirationMonth: String
   public var expirationYear: String
   public var panLast4: String

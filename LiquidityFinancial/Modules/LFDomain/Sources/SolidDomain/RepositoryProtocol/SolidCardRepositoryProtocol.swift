@@ -19,4 +19,5 @@ public protocol SolidCardRepositoryProtocol {
   func createCardPinToken(cardID: String) async throws -> SolidCardPinTokenEntity
   func activeCard(cardID: String, parameters: SolidActiveCardParametersEntity) async throws -> SolidCardEntity
   func getCardLimits(cardID: String) async throws -> SolidCardLimitsEntity
+  func updateCardName(cardID: String, parameters: SolidCardNameParametersEntity) async throws -> SolidCardEntity
 }

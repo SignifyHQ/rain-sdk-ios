@@ -31,12 +31,8 @@ struct CardDetailView: View {
       }
       .navigationLink(item: $viewModel.navigation) { item in
         switch item {
-        case .editCardName:
-          EditCardNameView(
-            viewModel: EditCardNameViewModel(cardName: viewModel.currentCard.cardName) { cardName in
-              viewModel.handleUpdateCardNameSuccessfully(with: cardName)
-            }
-          )
+        case let .editCardName(viewModel):
+          EditCardNameView(viewModel: viewModel)
         case let .transactionDetail(transaction):
           // TODO: MinhNguyen - Will implement in ENG-3968
           EmptyView()
@@ -183,7 +179,7 @@ private extension CardDetailView {
       )
       makeCardConfigurationCell(
         title: L10N.Common.Card.CardName.title,
-        value: viewModel.currentCard.cardName
+        value: viewModel.currentCard.displayCardName
       ) {
         viewModel.navigateToEditCardName()
       }
@@ -216,6 +212,7 @@ private extension CardDetailView {
       GenImages.CommonImages.dash.swiftUIImage
     }
     .foregroundColor(Colors.label.swiftUIColor)
+    .contentShape(Rectangle())
     .onTapGesture {
       action?()
     }

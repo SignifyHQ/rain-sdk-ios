@@ -270,4 +270,30 @@ public class MockSolidCardAPIProtocol: SolidCardAPIProtocol {
         }
     }
 
+    //MARK: - updateCardName
+
+    public var updateCardNameCardIDParametersThrowableError: Error?
+    public var updateCardNameCardIDParametersCallsCount = 0
+    public var updateCardNameCardIDParametersCalled: Bool {
+        return updateCardNameCardIDParametersCallsCount > 0
+    }
+    public var updateCardNameCardIDParametersReceivedArguments: (cardID: String, parameters: APISolidCardNameParameters)?
+    public var updateCardNameCardIDParametersReceivedInvocations: [(cardID: String, parameters: APISolidCardNameParameters)] = []
+    public var updateCardNameCardIDParametersReturnValue: APISolidCard!
+    public var updateCardNameCardIDParametersClosure: ((String, APISolidCardNameParameters) async throws -> APISolidCard)?
+
+    public func updateCardName(cardID: String, parameters: APISolidCardNameParameters) async throws -> APISolidCard {
+        if let error = updateCardNameCardIDParametersThrowableError {
+            throw error
+        }
+        updateCardNameCardIDParametersCallsCount += 1
+        updateCardNameCardIDParametersReceivedArguments = (cardID: cardID, parameters: parameters)
+        updateCardNameCardIDParametersReceivedInvocations.append((cardID: cardID, parameters: parameters))
+        if let updateCardNameCardIDParametersClosure = updateCardNameCardIDParametersClosure {
+            return try await updateCardNameCardIDParametersClosure(cardID, parameters)
+        } else {
+            return updateCardNameCardIDParametersReturnValue
+        }
+    }
+
 }

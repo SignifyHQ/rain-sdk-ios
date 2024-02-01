@@ -9,8 +9,13 @@ import Services
 
 @MainActor
 final class EditCardNameViewModel: ObservableObject {
+  @LazyInjected(\.solidCardRepository) var solidCardRepository
   @LazyInjected(\.customerSupportService) var customerSupportService
-
+  
+  lazy var updateCardNameUseCase: SolidUpdateCardNameUseCaseProtocol = {
+    SolidUpdateCardNameUseCase(repository: solidCardRepository)
+  }()
+  
   @Published var isDisableButton: Bool = true
   @Published var isShowDisclosure: Bool = false
   @Published var isUpdatingCardName: Bool = false
@@ -19,11 +24,13 @@ final class EditCardNameViewModel: ObservableObject {
   
   private let onSuccess: (String) -> Void
   private let currentCardName: String
+  private let cardID: String
   
   private var subscribers: Set<AnyCancellable> = []
 
-  init(cardName: String, onSuccess: @escaping ((String) -> Void)) {
+  init(cardID: String, cardName: String, onSuccess: @escaping ((String) -> Void)) {
     self.currentCardName = cardName
+    self.cardID = cardID
     self.cardName = cardName
     self.onSuccess = onSuccess
     observeCardName()
@@ -38,13 +45,14 @@ extension EditCardNameViewModel {
       isUpdatingCardName = true
       
       do {
-        // TODO: MinhNguyen - Will implement in ENG-3938
-        let parameter = cardName.removeRedundantWhiteSpace()
-        print("Debug >> \(parameter)")
-        onSuccess(parameter)
+        let parameter = APISolidCardNameParameters(
+          name: cardName.removeRedundantWhiteSpace()
+        )
+        let card = try await updateCardNameUseCase.execute(cardID: cardID, parameters: parameter)
+        onSuccess(card.name ?? cardName)
         completion()
       } catch {
-        inlineErrorMessage = error.userFriendlyMessage
+        handleAPIError(error: error)
       }
     }
   }
@@ -83,6 +91,21 @@ private extension EditCardNameViewModel {
     } else {
       isDisableButton = name == currentCardName || name.trimWhitespacesAndNewlines().isEmpty
       inlineErrorMessage = nil
+    }
+  }
+  
+  func handleAPIError(error: Error) {
+    log.error(error.userFriendlyMessage )
+    guard let errorCode = error.asErrorObject?.code else {
+      inlineErrorMessage = error.userFriendlyMessage
+      return
+    }
+    
+    switch errorCode {
+    case Constants.ErrorCode.cardNameConflict.value:
+      inlineErrorMessage = L10N.Common.Card.EditCardName.cardNameExisted
+    default:
+      inlineErrorMessage = error.userFriendlyMessage
     }
   }
 }

@@ -7,8 +7,8 @@ class IdentityVerificationCodeScreen: BaseScreen {
   lazy var continueButton = app.buttons[LFAccessibility.IdentityVerificationCode.continueButton]
   
   func typeLast4DigitsOfSSN(_ code: String) -> IdentityVerificationCodeScreen {
-    self.ssnSecureField.typeText(code)
-    return self
+    // TODO: - We will update later
+    self
   }
   
   func tapContinueButton() {

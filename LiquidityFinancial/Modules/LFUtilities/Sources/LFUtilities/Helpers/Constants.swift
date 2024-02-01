@@ -211,6 +211,7 @@ public extension Constants {
     case insufficientFunds = "insufficient_funds"
     case accountCreationInProgress = "crypto_account_creation_in_progress"
     case duplicatedWalletNickname = "duplicated_wallet_nickname"
+    case cardNameConflict = "card_name_conflict"
     
     public var value: String {
       rawValue

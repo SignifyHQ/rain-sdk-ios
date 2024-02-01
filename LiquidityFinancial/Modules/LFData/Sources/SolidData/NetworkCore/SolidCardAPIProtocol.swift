@@ -12,4 +12,5 @@ public protocol SolidCardAPIProtocol {
   func updateRoundUpDonation(cardID: String, parameters: APISolidRoundUpDonationParameters) async throws -> APISolidCard
   func activeCard(cardID: String, parameters: APISolidActiveCardParameters) async throws -> APISolidCard
   func getCardLimits(cardID: String) async throws -> APISolidCardLimits
+  func updateCardName(cardID: String, parameters: APISolidCardNameParameters) async throws -> APISolidCard
 }
