@@ -10,6 +10,7 @@ import SolidFeature
 import SolidDomain
 import SolidData
 import Dispatch
+import ExternalFundingData
 
 @MainActor
 class CashAssetViewModel: ObservableObject {
@@ -18,6 +19,7 @@ class CashAssetViewModel: ObservableObject {
   @LazyInjected(\.externalFundingRepository) var externalFundingRepository
   @LazyInjected(\.fiatAccountService) var fiatAccountService
   @LazyInjected(\.solidExternalFundingRepository) var solidExternalFundingRepository
+  @LazyInjected(\.externalFundingDataManager) var externalFundingDataManager
   
   @Published var assetModel: AssetModel?
   @Published var isDisableView: Bool = false
@@ -29,10 +31,10 @@ class CashAssetViewModel: ObservableObject {
   @Published var navigation: Navigation?
   @Published var activity = Activity.loading
   @Published var transactions: [TransactionModel] = []
-  @Published var linkedAccount: [APILinkedSourceData] = []
   @Published var fullScreen: FullScreen?
   @Published var isLoadingACH: Bool = false
   @Published var achInformation: ACHModel = .default
+  @Published var linkedContacts: [LinkedSourceContact] = []
   
   let currencyType = Constants.CurrencyType.fiat.rawValue
   
@@ -52,7 +54,7 @@ class CashAssetViewModel: ObservableObject {
   }
   
   init() {
-    subscribeLinkedAccounts()
+    subscribeLinkedContacts()
     subscribeAssetChange()
     handleACHData()
   }
@@ -135,14 +137,10 @@ private extension CashAssetViewModel {
     }
   }
   
-  func subscribeLinkedAccounts() {
-    accountDataManager.subscribeLinkedSourcesChanged { [weak self] entities in
-      guard let self = self else {
-        return
-      }
-      let linkedSources = entities.compactMap({ APILinkedSourceData(entity: $0) })
-      self.linkedAccount = linkedSources
-    }
+  func subscribeLinkedContacts() {
+    externalFundingDataManager.subscribeLinkedSourcesChanged({ [weak self] contacts in
+      self?.linkedContacts = contacts
+    })
     .store(in: &cancellable)
   }
   
@@ -188,7 +186,7 @@ extension CashAssetViewModel {
   
   func addMoneyTapped() {
     Haptic.impact(.light).generate()
-    if linkedAccount.isEmpty {
+    if linkedContacts.isEmpty {
       fullScreen = .fundCard(.receive)
     } else {
       navigation = .addMoney
@@ -197,7 +195,7 @@ extension CashAssetViewModel {
   
   func sendMoneyTapped() {
     Haptic.impact(.light).generate()
-    if linkedAccount.isEmpty {
+    if linkedContacts.isEmpty {
       fullScreen = .fundCard(.send)
     } else {
       navigation = .sendMoney
@@ -216,6 +214,10 @@ extension CashAssetViewModel {
   func accountRountingTapped() {
     navigation = .accountRounting
   }
+  
+  func fundingAccountTapped() {
+    navigation = .fundingAccount
+  }
 }
 
 // MARK: - Types
@@ -233,6 +235,7 @@ extension CashAssetViewModel {
     case transactions
     case transactionDetail(TransactionModel)
     case accountRounting
+    case fundingAccount
   }
   
   enum FullScreen: Identifiable {

@@ -44,6 +44,8 @@ struct CashAssetView: View {
             )
         case .accountRounting:
           AccountRountingNumberView(achInformation: $viewModel.achInformation)
+        case .fundingAccount:
+          FundingAccountsView(linkedContacts: viewModel.linkedContacts, achInformation: $viewModel.achInformation)
         }
       }
       .fullScreenCover(item: $viewModel.fullScreen) { item in
@@ -71,7 +73,9 @@ private extension CashAssetView {
         balance
         moveMoney
         actionView
-        fundsView
+        if viewModel.linkedContacts.isEmpty {
+          fundsView
+        }
         if viewModel.activity != .empty {
           activity
         }
@@ -115,6 +119,15 @@ private extension CashAssetView {
   
   var actionView: some View {
     VStack(alignment: .leading, spacing: 10) {
+      if viewModel.linkedContacts.isNotEmpty {
+        ArrowButton(
+          image: GenImages.CommonImages.Assets.funding.swiftUIImage,
+          title: L10N.Common.CashAsset.FundingAccounts.title,
+          value: nil
+        ) {
+          viewModel.fundingAccountTapped()
+        }
+      }
       ArrowButton(
         image: GenImages.CommonImages.Assets.rounting.swiftUIImage,
         title: L10N.Common.CashAsset.AccountRountingNumber.title,

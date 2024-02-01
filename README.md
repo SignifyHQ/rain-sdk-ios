@@ -15,12 +15,13 @@
     3.Please wait for Xcode to automatically synchronize all dependencies. When this process is complete, you will no longer see the spinning circle, and the status will be "running" in the tab bar at the top.
 
 ## How to Set Up Mock Class Generation and Run Unit Tests
-Here's how to set up and run unit tests using the mock framework Sourcery [https://github.com/krzysztofzablocki/Sourcery]:
-    1. Select the target for which you want to write unit tests (UT).
-    2. Create a file named .sourcery.yml in the target where you intend to generate mock data. This file is hidden, and you can also copy it from the pre-existing files I've created.
-    3. Edit the gen-mocks.sh file; you need to add the target where UT should be executed as a source. Simply follow the same syntax I've previously established.
-    4. Run the batch script [gen-mocks.sh] located in the BuildScripts folder. First, make it executable with the command [chmod +x gen-mocks.sh], and then run it with [./gen-mocks.sh].
-    5. After having mock data, they continue to run unitest as normal
+Here's how to set up and run unit tests using the mock framework [Sourcery](https://github.com/krzysztofzablocki/Sourcery):
+
+1. Select the target for which you want to write unit tests (UT).
+2. Create a file named .sourcery.yml in the target where you intend to generate mock data. This file is hidden, and you can also copy it from the pre-existing files I've created.
+3. Edit the gen-mocks.sh file; you need to add the target where UT should be executed as a source. Simply follow the same syntax I've previously established.
+4. Run the batch script [gen-mocks.sh] located in the BuildScripts folder. First, make it executable with the command [chmod +x gen-mocks.sh], and then run it with [./gen-mocks.sh].
+5. After having mock data, they continue to run unitest as normal
 If you're running this process for the first time, please follow all four steps. In subsequent runs, you can simply execute [./gen-mocks.sh].
 Starting from Xcode 14, you can trigger the command plugin from the contextual menu.
 
