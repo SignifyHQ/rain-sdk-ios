@@ -2,7 +2,7 @@ import Foundation
 
 // sourcery: AutoMockable
 public protocol SolidCardAPIProtocol {
-  func getListCard() async throws -> [APISolidCard]
+  func getListCard(isContainClosedCard: Bool) async throws -> [APISolidCard]
   func updateCardStatus(cardID: String, parameters: APISolidCardStatusParameters) async throws -> APISolidCard
   func closeCard(cardID: String) async throws -> Bool
   func createVGSShowToken(cardID: String) async throws -> APISolidCardShowToken

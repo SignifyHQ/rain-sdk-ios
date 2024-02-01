@@ -14,10 +14,9 @@ public struct CardsTabView: View {
   
   public var body: some View {
     GeometryReader { proxy in
-      VStack(spacing: 32) {
+      VStack {
         makeHeaderTabView(width: proxy.size.width - 60)
         mainContent
-        Spacer()
       }
     }
     .navigationLink(item: $viewModel.navigation) { navigation in
@@ -30,7 +29,6 @@ public struct CardsTabView: View {
       ToastView(toastMessage: $0)
     }
     .padding(.top, 24)
-    .padding(.bottom, 16)
     .frame(max: .infinity)
     .background(Colors.background.swiftUIColor)
     .track(name: String(describing: type(of: self)))
@@ -123,6 +121,8 @@ private extension CardsTabView {
         .padding(.bottom, 4)
         createNewCardButton
       }
+      .padding(.top, 32)
+      .padding(.bottom, 16)
     }
     .refreshable {
       viewModel.refresh()

@@ -1,5 +1,5 @@
 import Foundation
 
 public protocol SolidGetListCardUseCaseProtocol {
-  func execute() async throws -> [SolidCardEntity]
+  func execute(isContainClosedCard: Bool) async throws -> [SolidCardEntity]
 }

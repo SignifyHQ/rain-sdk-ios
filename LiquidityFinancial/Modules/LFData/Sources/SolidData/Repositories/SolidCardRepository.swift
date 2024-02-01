@@ -7,8 +7,8 @@ public class SolidCardRepository: SolidCardRepositoryProtocol {
     self.cardAPI = cardAPI
   }
   
-  public func getListCard() async throws -> [SolidCardEntity] {
-    try await cardAPI.getListCard()
+  public func getListCard(isContainClosedCard: Bool) async throws -> [SolidCardEntity] {
+    try await cardAPI.getListCard(isContainClosedCard: isContainClosedCard)
   }
   
   public func updateCardStatus(cardID: String, parameters: SolidCardStatusParametersEntity) async throws -> SolidCardEntity {

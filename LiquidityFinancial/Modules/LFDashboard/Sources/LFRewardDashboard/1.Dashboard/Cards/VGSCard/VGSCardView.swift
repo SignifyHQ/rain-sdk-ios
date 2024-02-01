@@ -101,7 +101,7 @@ private extension VGSCardView {
         .scaledToFit()
         .foregroundColor(card.textColor)
     } else {
-      Text(card.cardName)
+      Text(card.displayCardName)
         .foregroundColor(card.textColor)
         .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.main.value))
         .lineLimit(1)

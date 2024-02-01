@@ -8,7 +8,7 @@ public class SolidGetListCardUseCase: SolidGetListCardUseCaseProtocol {
     self.repository = repository
   }
   
-  public func execute() async throws -> [SolidCardEntity] {
-    try await self.repository.getListCard()
+  public func execute(isContainClosedCard: Bool) async throws -> [SolidCardEntity] {
+    try await self.repository.getListCard(isContainClosedCard: isContainClosedCard)
   }
 }

@@ -32,7 +32,7 @@ private extension CardCellView {
         .scaledToFit()
         .foregroundColor(cardModel.textColor)
     } else {
-      Text(cardModel.cardName)
+      Text(cardModel.displayCardName)
         .foregroundColor(cardModel.textColor)
         .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.small.value))
         .lineLimit(2)

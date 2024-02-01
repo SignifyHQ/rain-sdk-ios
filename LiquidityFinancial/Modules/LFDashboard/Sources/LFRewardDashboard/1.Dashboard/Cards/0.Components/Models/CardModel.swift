@@ -17,7 +17,7 @@ struct CardModel: Identifiable, Hashable {
   
   init(
     id: String,
-    cardName: String,
+    cardName: String?,
     cardType: CardType,
     cardholderName: String?,
     expiryMonth: Int,
@@ -28,7 +28,7 @@ struct CardModel: Identifiable, Hashable {
     cardStatus: CardStatus
   ) {
     self.id = id
-    self.cardName = cardName
+    self.cardName = cardName ?? .empty
     self.cardType = cardType
     self.cardholderName = cardholderName
     self.expiryMonth = expiryMonth
@@ -55,6 +55,10 @@ struct CardModel: Identifiable, Hashable {
 
 // MARK: - Computed Properties
 extension CardModel {
+  var displayCardName: String {
+    cardName.isEmpty ? cardType.title : cardName
+  }
+  
   var isDisplayLogo: Bool {
     // TODO: - We will check merchantLocked type in phase 3
     cardType == .physical
@@ -67,7 +71,7 @@ extension CardModel {
   }
   
   var titleWithTheLastFourDigits: String {
-    "\(cardName.prefix(10)) **** \(last4)"
+    "\(displayCardName.prefix(10)) **** \(last4)"
   }
   
   var backgroundColor: Color {

@@ -50,7 +50,7 @@ extension CardsTabViewModel {
       }
       
       do {
-        let cards = try await getListSolidCardUseCase.execute()
+        let cards = try await getListSolidCardUseCase.execute(isContainClosedCard: true)
         cardsList = mapToListCardModel(from: cards)
         filterCardsList(with: selectedTab)
       } catch {
@@ -142,7 +142,7 @@ private extension CardsTabViewModel {
     entities.map {
       CardModel(
         id: $0.id,
-        cardName: "New Card", // TODO: MinhNguyen - Update later after the api is available
+        cardName: .empty, // TODO: MinhNguyen - Update later after the api is available
         cardType: CardType(rawValue: $0.type) ?? .virtual,
         cardholderName: nil,
         expiryMonth: Int($0.expirationMonth) ?? 0,

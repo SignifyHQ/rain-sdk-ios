@@ -169,7 +169,7 @@ extension SolidListCardsViewModel {
     isInit = true
     Task { @MainActor in
       do {
-        let cards = try await getListSolidCardUseCase.execute()
+        let cards = try await getListSolidCardUseCase.execute(isContainClosedCard: false)
         let cardsArr = cards.map { card in
           CardModel(
             id: card.id,

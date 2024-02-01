@@ -11,6 +11,9 @@ struct CardDetailView: View {
   @StateObject
   private var viewModel: CardDetailViewModel
   
+  @State
+  private var dropdownListHeight: CGFloat = .zero
+  
   init(viewModel: CardDetailViewModel) {
     _viewModel = .init(wrappedValue: viewModel)
   }
@@ -72,7 +75,7 @@ private extension CardDetailView {
   
   @ViewBuilder
   var switchCardButton: some View {
-    if viewModel.cardsList.count > 1 {
+    if viewModel.filterredCards.count > 1 {
       Button {
         viewModel.isShowListCardDropdown.toggle()
       } label: {
@@ -99,26 +102,32 @@ private extension CardDetailView {
   @ViewBuilder
   var cardDropdownListView: some View {
     if viewModel.isShowListCardDropdown {
-      VStack(alignment: .leading, spacing: 12) {
-        ForEach(viewModel.cardsList, id: \.id) { card in
-          HStack {
-            Text(card.titleWithTheLastFourDigits)
-              .foregroundColor(Colors.label.swiftUIColor)
-            Spacer()
-            GenImages.CommonImages.icCheckmark.swiftUIImage
-              .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.medium.value))
-              .foregroundColor(viewModel.currentCard.id == card.id ? Colors.primary.swiftUIColor : .clear)
-          }
-          .font(Fonts.bold.swiftUIFont(size: Constants.FontSize.ultraSmall.value))
-          .frame(height: 14)
-          .onTapGesture {
-            viewModel.onSwitchedCard(to: card)
+      ScrollView(showsIndicators: true) {
+        VStack(alignment: .leading, spacing: 12) {
+          ForEach(viewModel.filterredCards, id: \.id) { card in
+            HStack {
+              Text(card.titleWithTheLastFourDigits)
+                .foregroundColor(Colors.label.swiftUIColor)
+              Spacer()
+              GenImages.CommonImages.icCheckmark.swiftUIImage
+                .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.medium.value))
+                .foregroundColor(viewModel.currentCard.id == card.id ? Colors.primary.swiftUIColor : .clear)
+            }
+            .font(Fonts.bold.swiftUIFont(size: Constants.FontSize.ultraSmall.value))
+            .frame(height: 14)
+            .onTapGesture {
+              viewModel.onSwitchedCard(to: card)
+            }
           }
         }
+        .readGeometry { proxy in
+          dropdownListHeight = proxy.size.height
+        }
+        .padding(.horizontal, 12)
       }
       .padding(.vertical, 12)
-      .padding(.horizontal, 16)
-      .frame(width: 168)
+      .padding(.horizontal, 4)
+      .frame(width: 168, height: dropdownListHeight > 300 ? 300 : (dropdownListHeight + 24))
       .background(
         Colors.buttons.swiftUIColor.cornerRadius(16)
       )

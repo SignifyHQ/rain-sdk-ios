@@ -12,9 +12,9 @@ extension LFCoreNetwork: SolidCardAPIProtocol where R == SolidCardRoute {
     )
   }
   
-  public func getListCard() async throws -> [APISolidCard] {
+  public func getListCard(isContainClosedCard: Bool) async throws -> [APISolidCard] {
     let response = try await request(
-      SolidCardRoute.listCard,
+      SolidCardRoute.listCard(isContainClosedCard: isContainClosedCard),
       target: APIListObject<APISolidCard>.self,
       failure: LFErrorObject.self,
       decoder: .apiDecoder

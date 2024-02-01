@@ -127,12 +127,14 @@ extension CardDetailViewModel {
   }
   
   func handleUpdateCardNameSuccessfully(with cardName: String) {
-    guard let index = cardsList.firstIndex(where: { $0.id == currentCard.id })  else {
+    guard let index = cardsList.firstIndex(where: { $0.id == currentCard.id }),
+          let filterredCardsIndex = filterredCards.firstIndex(where: { $0.id == currentCard.id }) else {
       return
     }
     
     currentCard.cardName = cardName
     cardsList[index].cardName = cardName
+    filterredCards[filterredCardsIndex].cardName = cardName
     postDidCardsListChangeNotification()
   }
 }
@@ -161,12 +163,15 @@ private extension CardDetailViewModel {
   }
     
   func updateCardStatus(status: CardStatus, id: String) {
-    guard let index = cardsList.firstIndex(where: { $0.id == id }), id == currentCard.id else {
+    guard let index = cardsList.firstIndex(where: { $0.id == id }),
+          let filterredCardsIndex = filterredCards.firstIndex(where: { $0.id == id }),
+          id == currentCard.id else {
       return
     }
     
     currentCard.cardStatus = status
     cardsList[index].cardStatus = status
+    filterredCards[filterredCardsIndex].cardStatus = status
     postDidCardsListChangeNotification()
   }
 }

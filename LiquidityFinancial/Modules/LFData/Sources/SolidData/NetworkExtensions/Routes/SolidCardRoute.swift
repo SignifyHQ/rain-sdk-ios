@@ -5,7 +5,7 @@ import LFUtilities
 import SolidDomain
 
 public enum SolidCardRoute {
-  case listCard
+  case listCard(isContainClosedCard: Bool)
   case updateCardStatus(cardID: String, parameters: APISolidCardStatusParameters)
   case updateRoundUpDonation(cardID: String, parameters: APISolidRoundUpDonationParameters)
   case closeCard(cardID: String)
@@ -69,7 +69,7 @@ extension SolidCardRoute: LFRoute {
   
   public var parameters: Parameters? {
     switch self {
-    case .listCard, .closeCard, .createVGSShowToken, .createVirtualCard, .createCardPinToken, .getCardLimits:
+    case .closeCard, .createVGSShowToken, .createVirtualCard, .createCardPinToken, .getCardLimits:
       return nil
     case let .updateCardStatus(_, parameters):
       return parameters.encoded()
@@ -79,15 +79,21 @@ extension SolidCardRoute: LFRoute {
       return parameters.encoded()
     case let .activeCard(_, parameters):
       return parameters.encoded()
+    case let .listCard(isContainClosedCard):
+      return [
+        "showClosed": "\(isContainClosedCard)"
+      ]
     }
   }
   
   public var parameterEncoding: ParameterEncoding? {
     switch self {
-    case .listCard, .closeCard, .createVGSShowToken, .createVirtualCard, .createCardPinToken, .getCardLimits:
+    case .closeCard, .createVGSShowToken, .createVirtualCard, .createCardPinToken, .getCardLimits:
       return nil
     case .updateCardStatus, .createDigitalWalletLink, .updateRoundUpDonation, .activeCard:
       return .json
+    case .listCard:
+      return .url
     }
   }
   
