@@ -46,6 +46,14 @@ struct CashAssetView: View {
           AccountRountingNumberView(achInformation: $viewModel.achInformation)
         case .fundingAccount:
           FundingAccountsView(linkedContacts: viewModel.linkedContacts, achInformation: $viewModel.achInformation)
+        case .depositWithdrawalLimits:
+          AccountLimitsView()
+        case .allCards:
+          CardsTabView(title: L10N.Common.CashAsset.ConnectedCards.title.uppercased())
+        case .cardDetail(let viewModel):
+          CardDetailView(viewModel: viewModel)
+        case .bankStatements:
+          BankStatementView()
         }
       }
       .fullScreenCover(item: $viewModel.fullScreen) { item in
@@ -76,8 +84,12 @@ private extension CashAssetView {
         if viewModel.linkedContacts.isEmpty {
           fundsView
         }
+        if viewModel.filteredCardsList.isNotEmpty {
+          connectedCards
+        }
         if viewModel.activity != .empty {
           activity
+          bankStatements
         }
       }
       .padding(.top, 26)
@@ -135,6 +147,25 @@ private extension CashAssetView {
       ) {
         viewModel.accountRountingTapped()
       }
+      if viewModel.linkedContacts.isNotEmpty || viewModel.transactions.isNotEmpty {
+        ArrowButton(
+          image: GenImages.CommonImages.Assets.depositWithdrawalLimits.swiftUIImage,
+          title: L10N.Common.CashAsset.DepositWithdrawalLimits.title,
+          value: nil
+        ) {
+          viewModel.depositWithdrawalLimitsTapped()
+        }
+      }
+    }
+  }
+  
+  var bankStatements: some View {
+    ArrowButton(
+      image: GenImages.CommonImages.Accounts.bankStatements.swiftUIImage,
+      title: L10N.Common.CashAsset.BankStatements.title,
+      value: nil
+    ) {
+      viewModel.bankStatementsTapped()
     }
   }
   
@@ -149,6 +180,79 @@ private extension CashAssetView {
         isDisableView: $viewModel.isDisableView,
         options: [.directDeposit, .oneTime]
       )
+    }
+  }
+  
+  var createCard: some View {
+    Button {
+      // TODO: Will navigate to create card
+    } label: {
+      VStack(spacing: 8) {
+        ZStack {
+          GenImages.CommonImages.Assets.createCard.swiftUIImage
+        }
+        .frame(width: 80, height: 80)
+        .background(Colors.secondaryBackground.swiftUIColor)
+        .cornerRadius(16)
+        
+        Text(L10N.Common.CashAsset.CreateCard.title)
+          .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.small.value))
+          .foregroundColor(Colors.label.swiftUIColor)
+      }
+    }
+  }
+  
+  var connectedCardHeader: some View {
+    HStack(alignment: .bottom) {
+      Text(L10N.Common.CashAsset.ConnectedCards.title)
+      Spacer()
+      Button {
+        viewModel.seeAllConnectedCards()
+      } label: {
+        HStack(spacing: 8) {
+          Text(L10N.Common.AssetView.seeAll)
+          GenImages.CommonImages.icRightArrow.swiftUIImage
+        }
+        .frame(height: 30, alignment: .bottom)
+      }
+    }
+    .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.ultraSmall.value))
+    .foregroundColor(Colors.label.swiftUIColor.opacity(0.75))
+  }
+  
+  func cardView(card: CardModel, action: @escaping () -> Void) -> some View {
+    VStack(spacing: 8) {
+      Button {
+        action()
+      } label: {
+        ZStack {
+          GenImages.CommonImages.Assets.assetCard.swiftUIImage
+        }
+        .frame(width: 80, height: 80)
+        .background(Colors.secondaryBackground.swiftUIColor)
+        .cornerRadius(16)
+      }
+      
+      Text(card.cardName)
+        .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.small.value))
+    }
+  }
+  
+  var connectedCards: some View {
+    VStack(alignment: .leading, spacing: 12) {
+      connectedCardHeader
+      
+      ScrollView(.horizontal) {
+        HStack(spacing: 24) {
+          createCard
+          
+          ForEach(viewModel.filteredCardsList) { card in
+            cardView(card: card) {
+              viewModel.navigateToCardDetail(card: card)
+            }
+          }
+        }
+      }
     }
   }
   

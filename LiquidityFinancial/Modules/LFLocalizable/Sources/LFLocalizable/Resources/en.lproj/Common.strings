@@ -1265,6 +1265,10 @@ We will be in touch shortly to invite you to get your new card.";
 // Cast Asset
 "cashAsset.funding_accounts.title" = "Funding Accounts";
 "cashAsset.account_rounting_number.title" = "Account and Routing Number";
+"cashAsset.deposit_withdrawal_limits.title" = "Deposit and Withdrawal Limits";
+"cashAsset.connected_cards.title" = "Connected Cards";
+"cashAsset.create_card.title" = "Create Card";
+"cashAsset.bank_statements.title" = "Bank Statements";
 
 // Funding Accounts
 "fundingAccounts.title" = "Funding Accounts";

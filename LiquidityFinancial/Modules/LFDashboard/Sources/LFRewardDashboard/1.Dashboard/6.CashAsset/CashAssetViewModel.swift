@@ -11,6 +11,7 @@ import SolidDomain
 import SolidData
 import Dispatch
 import ExternalFundingData
+import NotificationCenter
 
 @MainActor
 class CashAssetViewModel: ObservableObject {
@@ -20,6 +21,7 @@ class CashAssetViewModel: ObservableObject {
   @LazyInjected(\.fiatAccountService) var fiatAccountService
   @LazyInjected(\.solidExternalFundingRepository) var solidExternalFundingRepository
   @LazyInjected(\.externalFundingDataManager) var externalFundingDataManager
+  @LazyInjected(\.solidCardRepository) var solidCardRepository
   
   @Published var assetModel: AssetModel?
   @Published var isDisableView: Bool = false
@@ -37,12 +39,18 @@ class CashAssetViewModel: ObservableObject {
   @Published var linkedContacts: [LinkedSourceContact] = []
   
   let currencyType = Constants.CurrencyType.fiat.rawValue
+  private(set) var cardsList: [CardModel] = []
+  private(set) var filteredCardsList: [CardModel] = []
   
   private(set) var addFundsViewModel = AddFundsViewModel()
   private var cancellable: Set<AnyCancellable> = []
   
   lazy var solidGetWireTransfer: SolidGetWireTranferUseCaseProtocol = {
     SolidGetWireTranferUseCase(repository: solidExternalFundingRepository)
+  }()
+  
+  lazy var getListSolidCardUseCase: SolidGetListCardUseCaseProtocol = {
+    SolidGetListCardUseCase(repository: solidCardRepository)
   }()
 
   var usdBalance: String {
@@ -54,14 +62,32 @@ class CashAssetViewModel: ObservableObject {
   }
   
   init() {
+    apiFetchSolidCards()
     subscribeLinkedContacts()
     subscribeAssetChange()
     handleACHData()
+    observeDidCardsListChangeNotification()
   }
 }
 
 // MARK: - Private Functions
 private extension CashAssetViewModel {
+  private func apiFetchSolidCards(completion: (() -> Void)? = nil) {
+    Task {
+      defer {
+        completion?()
+      }
+      
+      do {
+        let cards = try await getListSolidCardUseCase.execute(isContainClosedCard: true)
+        cardsList = mapToListCardModel(from: cards)
+        filteredCardsList = cardsList.filter({ $0.cardStatus != .closed })
+      } catch {
+        toastMessage = error.userFriendlyMessage
+      }
+    }
+  }
+  
   func handleACHData() {
     guard
       achInformation.accountNumber == Constants.Default.undefined.rawValue ||
@@ -160,6 +186,34 @@ private extension CashAssetViewModel {
     .store(in: &cancellable)
   }
   
+  func observeDidCardsListChangeNotification() {
+    NotificationCenter.default.publisher(for: .didCardsListChange)
+      .sink { [weak self] notification in
+        guard let self, let cardsList = notification.userInfo?[Constants.UserInfoKey.cards] as? [CardModel] else {
+          return
+        }
+        self.cardsList = cardsList
+        self.filteredCardsList = cardsList.filter({ $0.cardStatus != .closed })
+      }
+      .store(in: &cancellable)
+  }
+  
+  func mapToListCardModel(from entities: [SolidCardEntity]) -> [CardModel] {
+    entities.map {
+      CardModel(
+        id: $0.id,
+        cardName: "Card \($0.panLast4)", // TODO: MinhNguyen - Update later after the api is available
+        cardType: CardType(rawValue: $0.type) ?? .virtual,
+        cardholderName: nil,
+        expiryMonth: Int($0.expirationMonth) ?? 0,
+        expiryYear: Int($0.expirationYear) ?? 0,
+        last4: $0.panLast4,
+        popularBackgroundColor: nil, // TODO: MinhNguyen - Update in phase 3
+        popularTextColor: nil, // TODO: MinhNguyen - Update in phase 3
+        cardStatus: CardStatus(rawValue: $0.cardStatus) ?? .unactivated
+      )
+    }
+  }
 }
 
 // MARK: - View Helpers
@@ -180,6 +234,9 @@ extension CashAssetViewModel {
       }
       group.addTask {
         await self.loadTransactions(accountId: id)
+      }
+      group.addTask {
+        await self.apiFetchSolidCards()
       }
     }
   }
@@ -218,6 +275,27 @@ extension CashAssetViewModel {
   func fundingAccountTapped() {
     navigation = .fundingAccount
   }
+  
+  func depositWithdrawalLimitsTapped() {
+    navigation = .depositWithdrawalLimits
+  }
+  
+  func bankStatementsTapped() {
+    navigation = .bankStatements
+  }
+  
+  func seeAllConnectedCards() {
+    navigation = .allCards
+  }
+  
+  func navigateToCardDetail(card: CardModel) {
+    let viewModel = CardDetailViewModel(
+      currentCard: card,
+      cardsList: cardsList,
+      filterredCards: filteredCardsList
+    )
+    navigation = .cardDetail(viewModel)
+  }
 }
 
 // MARK: - Types
@@ -236,6 +314,10 @@ extension CashAssetViewModel {
     case transactionDetail(TransactionModel)
     case accountRounting
     case fundingAccount
+    case depositWithdrawalLimits
+    case allCards
+    case cardDetail(CardDetailViewModel)
+    case bankStatements
   }
   
   enum FullScreen: Identifiable {

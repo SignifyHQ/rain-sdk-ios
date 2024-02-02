@@ -6,10 +6,12 @@ import LFLocalizable
 public struct CardsTabView: View {
   @StateObject
   private var viewModel: CardsTabViewModel
+  private var title: String = ""
   
-  public init() {
+  public init(title: String = "") {
     let cardsTabViewModel = CardsTabViewModel()
     _viewModel = .init(wrappedValue: cardsTabViewModel)
+    self.title = title
   }
   
   public var body: some View {
@@ -17,6 +19,13 @@ public struct CardsTabView: View {
       VStack {
         makeHeaderTabView(width: proxy.size.width - 60)
         mainContent
+      }
+    }
+    .toolbar {
+      ToolbarItem(placement: .principal) {
+        Text(title)
+          .foregroundColor(Colors.label.swiftUIColor)
+          .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.medium.value))
       }
     }
     .navigationLink(item: $viewModel.navigation) { navigation in
