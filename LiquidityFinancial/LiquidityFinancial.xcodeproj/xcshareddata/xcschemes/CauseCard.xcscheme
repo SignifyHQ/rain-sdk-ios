@@ -30,16 +30,6 @@
                reference = "container:CauseCard.xctestplan">
             </TestPlanReference>
          </BuildActionEntry>
-         <BuildActionEntry
-            buildForTesting = "YES"
-            buildForRunning = "YES"
-            buildForProfiling = "NO"
-            buildForArchiving = "NO"
-            buildForAnalyzing = "NO">
-            <TestPlanReference
-               reference = "container:LiquidityFinancialTests/LiquidityFinancialTestsPlan.xctestplan">
-            </TestPlanReference>
-         </BuildActionEntry>
       </BuildActionEntries>
    </BuildAction>
    <TestAction
@@ -49,10 +39,7 @@
       shouldUseLaunchSchemeArgsEnv = "YES">
       <TestPlans>
          <TestPlanReference
-            reference = "container:LiquidityFinancialUITests/CauseCard.xctestplan">
-         </TestPlanReference>
-         <TestPlanReference
-            reference = "container:LiquidityFinancialTests/LiquidityFinancialTestsPlan.xctestplan"
+            reference = "container:LiquidityFinancialUITests/CauseCard.xctestplan"
             default = "YES">
          </TestPlanReference>
       </TestPlans>
