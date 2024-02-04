@@ -174,10 +174,11 @@ private extension CashAssetViewModel {
     accountDataManager
       .accountsSubject
       .receive(on: DispatchQueue.main)
-      .compactMap({ (accounts: [AccountModel]) -> AssetModel? in
+      .compactMap({ [weak self] (accounts: [AccountModel]) -> AssetModel? in
         guard let model = accounts.first(where: { model in
           model.currency == .USD
         }) else {
+          self?.clearData()
           return nil
         }
         return AssetModel(account: model)
@@ -218,6 +219,15 @@ private extension CashAssetViewModel {
 
 // MARK: - View Helpers
 extension CashAssetViewModel {
+  func clearData() {
+    assetModel = nil
+    activity = .empty
+    cardsList = []
+    filteredCardsList = []
+    achInformation = .default
+    linkedContacts = []
+  }
+  
   func refreshData() {
     Task {
       await refresh()

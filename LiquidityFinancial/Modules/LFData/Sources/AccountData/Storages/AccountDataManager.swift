@@ -176,6 +176,7 @@ public class AccountDataManager: AccountDataStorageProtocol {
     UserDefaults.userNameDisplay = ""
     UserDefaults.userCompleteOnboarding = false
     userInfomationData = UserInfomationData()
+    accountsSubject.send([])
   }
   
   public func storeUser(user: LFUser) {

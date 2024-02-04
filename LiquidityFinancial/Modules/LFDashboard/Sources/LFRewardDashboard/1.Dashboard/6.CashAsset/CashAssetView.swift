@@ -244,7 +244,8 @@ private extension CashAssetView {
       
       ScrollView(.horizontal) {
         HStack(spacing: 24) {
-          createCard
+          // TODO: Temporarily hidden for release, will reopen when Phase 2 is ready
+          // createCard
           
           ForEach(viewModel.filteredCardsList) { card in
             cardView(card: card) {
