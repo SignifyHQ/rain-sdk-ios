@@ -22,6 +22,7 @@ class CashAssetViewModel: ObservableObject {
   @LazyInjected(\.solidExternalFundingRepository) var solidExternalFundingRepository
   @LazyInjected(\.externalFundingDataManager) var externalFundingDataManager
   @LazyInjected(\.solidCardRepository) var solidCardRepository
+  @LazyInjected(\.featureFlagManager) var featureFlagManager
   
   @Published var assetModel: AssetModel?
   @Published var isDisableView: Bool = false
@@ -203,7 +204,7 @@ private extension CashAssetViewModel {
     entities.map {
       CardModel(
         id: $0.id,
-        cardName: "Card \($0.panLast4)", // TODO: MinhNguyen - Update later after the api is available
+        cardName: ($0.name?.isEmpty ?? true) ? "Card \($0.panLast4)" : $0.name,
         cardType: CardType(rawValue: $0.type) ?? .virtual,
         cardholderName: nil,
         expiryMonth: Int($0.expirationMonth) ?? 0,
@@ -299,12 +300,18 @@ extension CashAssetViewModel {
   }
   
   func navigateToCardDetail(card: CardModel) {
-    let viewModel = CardDetailViewModel(
-      currentCard: card,
-      cardsList: cardsList,
-      filterredCards: filteredCardsList
-    )
-    navigation = .cardDetail(viewModel)
+    if featureFlagManager.isFeatureFlagEnabled(.virtualCardPhrase1) {
+      let viewModel = CardDetailViewModel(
+        currentCard: card,
+        cardsList: cardsList,
+        filterredCards: filteredCardsList
+      )
+      navigation = .cardDetail(viewModel)
+      return
+    }
+    
+    let viewModel = SolidListCardsViewModel(selectCardId: card.id)
+    navigation = .cardListDetail(viewModel)
   }
 }
 
@@ -328,6 +335,7 @@ extension CashAssetViewModel {
     case allCards
     case cardDetail(CardDetailViewModel)
     case bankStatements
+    case cardListDetail(SolidListCardsViewModel)
   }
   
   enum FullScreen: Identifiable {

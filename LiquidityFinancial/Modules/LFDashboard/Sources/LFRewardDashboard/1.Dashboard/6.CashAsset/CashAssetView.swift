@@ -52,6 +52,8 @@ struct CashAssetView: View {
           CardsTabView(title: L10N.Common.CashAsset.ConnectedCards.title.uppercased())
         case .cardDetail(let viewModel):
           CardDetailView(viewModel: viewModel)
+        case .cardListDetail(let viewModel):
+          SolidListCardsView(viewModel: viewModel)
         case .bankStatements:
           BankStatementView()
         }

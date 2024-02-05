@@ -1302,6 +1302,7 @@ We will be in touch shortly to invite you to get your new card.";
 "button.save.title" = "Save";
 "button.donotAllow.title" = "Don't Allow";
 "button.cancel.title" = "Cancel";
+"button.close.title" = "Close";
 
 // Grid Value
 "grid_value.all" = "All";

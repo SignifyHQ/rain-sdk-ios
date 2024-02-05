@@ -113,7 +113,7 @@ private extension FundingAccountsView {
       primary: .init(text: L10N.Common.ConnectedView.DeletePopup.primaryButton) {
         viewModel.deleteAccount(id: linkedSource.sourceId)
       },
-      secondary: .init(text: L10N.Common.Button.Back.title) {
+      secondary: .init(text: L10N.Common.Button.Close.title) {
         viewModel.hidePopup()
       },
       isLoading: $viewModel.isDeleting

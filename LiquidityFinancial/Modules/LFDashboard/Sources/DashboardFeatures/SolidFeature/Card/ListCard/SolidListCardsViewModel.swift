@@ -72,7 +72,16 @@ public final class SolidListCardsViewModel: ObservableObject {
   private var cardLimitUIModelList: [CardLimitUIModel] = []
   private var subscribers: Set<AnyCancellable> = []
   
-  public init() {
+  public init(selectCardId: String? = nil) {
+    self.currentCard = CardModel(
+      id: selectCardId ?? .empty,
+      cardType: .virtual,
+      cardholderName: CardModel.virtualDefault.cardholderName,
+      expiryMonth: CardModel.virtualDefault.expiryMonth,
+      expiryYear: CardModel.virtualDefault.expiryYear,
+      last4: CardModel.virtualDefault.last4,
+      cardStatus: CardModel.virtualDefault.cardStatus
+    )
     apiFetchSolidCards()
     observeCardsList()
     observeRefreshListCards()
@@ -187,7 +196,8 @@ extension SolidListCardsViewModel {
         } else {
           isInit = false
         }
-        currentCard = cardsArr.first ?? .virtualDefault
+        let oldId = currentCard.id
+        currentCard = cardsArr.first(where: { $0.id == oldId }) ?? cardsArr.first ?? .virtualDefault
         cardsList = cardsArr
         isActivePhysical = currentCard.cardStatus == .active
         isCardLocked = currentCard.cardStatus == .disabled

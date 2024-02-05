@@ -27,10 +27,6 @@ public struct AccountRountingNumberView: View {
         }
       }
       .padding(.bottom, 16)
-      FullSizeButton(title: L10N.Common.Button.Done.title, isDisable: false) {
-        dismiss()
-      }
-      .padding(.bottom, 20)
     }
     .padding(.horizontal, 30)
     .background(Colors.background.swiftUIColor)
