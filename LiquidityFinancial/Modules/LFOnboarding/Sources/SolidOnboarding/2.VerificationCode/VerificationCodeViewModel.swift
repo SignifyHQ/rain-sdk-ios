@@ -77,9 +77,6 @@ extension VerificationCodeViewModel {
   
   func performVerifyOTPCode() {
     Task {
-    #if DEBUG
-      let start = CFAbsoluteTimeGetCurrent()
-    #endif
       do {
         let parameters = LoginParameters(
           phoneNumber: formatPhoneNumber,
@@ -99,10 +96,6 @@ extension VerificationCodeViewModel {
         analyticsService.track(event: AnalyticsEvent(name: .phoneVerificationError))
         handleError(error: error)
       }
-    #if DEBUG
-      let diff = CFAbsoluteTimeGetCurrent() - start
-      log.debug("Took \(diff) seconds")
-    #endif
     }
   }
   
@@ -116,9 +109,7 @@ extension VerificationCodeViewModel {
           isNewAuth: featureFlagManager.isFeatureFlagEnabled(.mfa),
           parameters: parameters
         )
-        isShowLoading = false
       } catch {
-        isShowLoading = false
         toastMessage = error.userFriendlyMessage
       }
     }

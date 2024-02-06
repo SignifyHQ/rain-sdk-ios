@@ -1,5 +1,5 @@
 import Foundation
 
 public protocol ListFeatureFlagUseCaseProtocol {
-  func execute() async throws -> APIListFeatureFlagResponse
+  func execute() async throws -> ListFeatureFlagEntity
 }

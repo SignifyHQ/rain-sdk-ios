@@ -10,7 +10,7 @@ public class FeatureFlagRepository: FeatureFlagRepositoryProtocol {
     self.featureFlagAPI = featureFlagAPI
   }
   
-  public func list() async throws -> APIListFeatureFlagResponse {
+  public func list() async throws -> ListFeatureFlagEntity {
     try await featureFlagAPI.list()
   }
 }

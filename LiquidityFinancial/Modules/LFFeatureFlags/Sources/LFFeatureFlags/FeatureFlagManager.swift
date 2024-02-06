@@ -9,7 +9,7 @@ import Combine
 class FeatureFlagManager: FeatureFlagManagerProtocol {
   @LazyInjected(\.featureFlagRepository) var featureFlagRepository
   
-  var featureFlagsSubject = CurrentValueSubject<[FeatureFlagModel], Never>([])
+  var featureFlagsSubject = CurrentValueSubject<[FeatureFlagEntity], Never>([])
   
   private var subscriptions = Set<AnyCancellable>()
   
@@ -32,7 +32,7 @@ class FeatureFlagManager: FeatureFlagManagerProtocol {
     Task {
       do {
         let response = try await listFeatureFlagUseCase.execute()
-        self.featureFlagsSubject.send(response.data)
+        self.featureFlagsSubject.send(response.items)
       } catch {
         log.error(error)
       }

@@ -8,7 +8,7 @@ public class ListFeatureFlagUseCase: ListFeatureFlagUseCaseProtocol {
     self.repository = repository
   }
   
-  public func execute() async throws -> APIListFeatureFlagResponse {
+  public func execute() async throws -> ListFeatureFlagEntity {
     return try await repository.list()
   }
   

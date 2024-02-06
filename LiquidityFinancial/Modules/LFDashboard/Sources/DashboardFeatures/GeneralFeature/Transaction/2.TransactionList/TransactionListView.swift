@@ -73,11 +73,13 @@ private extension TransactionListView {
             }
           }
         }
+        .background(Color.clear)
         if viewModel.isLoadingMore {
           LottieView(loading: .mix)
             .frame(width: 30, height: 20)
         }
       }
+      .background(Color.clear)
     }
     .background(Colors.background.swiftUIColor)
     .padding(.horizontal, 24)

@@ -6,8 +6,11 @@ import LFUtilities
 import Nimble
 import TestHelpers
 import XCTest
+import LFStyleGuide
+import NetworkUtilities
+import LFFeatureFlags
 
-@testable import NetspendOnboarding
+@testable import SolidOnboarding
 
 @MainActor
 // Test cases for the PhoneNumberViewModel
@@ -16,6 +19,7 @@ final class PhoneNumberViewModelTests: XCTestCase {
   var coordinator: OnboardingDestinationObservable!
   var viewModel: PhoneNumberViewModel!
   var mockOnboardingRepository: MockOnboardingRepositoryProtocol!
+  var featureFlagManager: MockFeatureFlagManager!
   
   // Defining mock repository test input, success response and errors
   let mockValidPhoneNumberFormat = "(205) 858-5000"
@@ -31,40 +35,57 @@ final class PhoneNumberViewModelTests: XCTestCase {
     super.setUp()
     // Setting environment variable XCODE_RUNNING_TESTS in order to be able to use the configurations when running the tests
     setenv("XCODE_RUNNING_TESTS", "1", 1)
+    
+    LFUtilities.initial(target: "CauseCard")
+    LFStyleGuide.initial(target: "CauseCard")
+    NetworkUtilities.initial(target: "CauseCard")
+    
     // Initialize mock coordinator and the viewModel before each test. Inject coordinator into the viewModel
     coordinator = OnboardingDestinationObservable()
     viewModel = PhoneNumberViewModel()
-    // Initialize mock onboarding repository
+    // Initialize mocks
     mockOnboardingRepository = MockOnboardingRepositoryProtocol()
-    // Register mock onboarding repository in the container
+    featureFlagManager = MockFeatureFlagManager()
+    // Register mocks in the container
     Container.shared.onboardingRepository.register {
       self.mockOnboardingRepository
     }
-    
+    Container.shared.featureFlagManager.register {
+      self.featureFlagManager
+    }
     cancellables = []
   }
   
   override func tearDown() {
     // Clean and reset up any resources that don't need to persist.
     Container.shared.onboardingRepository.reset()
+    Container.shared.featureFlagManager.reset()
     mockOnboardingRepository = nil
     viewModel = nil
     coordinator = nil
-    
+    featureFlagManager = nil
     cancellables = nil
     
     super.tearDown()
   }
   
+  // Configuring mock featureFlag behaviour
+  private func configureMockFeatureFlag(featureKey: FeatureFlagKey, enabled: Bool) {
+    var model = MockFeatureFlagModel()
+    model.key = featureKey.rawValue
+    model.enabled = enabled
+    featureFlagManager.fetchEnabledFeatureFlagsReturnValue = [model]
+  }
+  
   // Configuring mock repository behaviour
   private func configureMockRepositoryBehaviour(shouldThrowGenericError: Bool = false) {
-    mockOnboardingRepository.requestOTPPhoneNumberClosure = { phoneNumber async throws in
+    mockOnboardingRepository.requestOTPParametersClosure = { entity async throws in
       // If the repository should through a generic error (e.g. when network issue occurs) throw 'mockGenericError'
       guard !shouldThrowGenericError else {
         throw self.mockGenericError
       }
       // If the phone number provided is invalid (not supported, blocked, etc.) the repository should throw 'mockServerError'
-      guard phoneNumber != self.mockInvalidPhoneNumberReformat else {
+      guard entity.phoneNumber != self.mockInvalidPhoneNumberReformat else {
         throw self.mockServerError
       }
       // Otherwise, the repository should return 'mockSuccessResponse'
@@ -76,6 +97,7 @@ final class PhoneNumberViewModelTests: XCTestCase {
   func test_performGetOTP_whenPhoneNumberIsValid_shouldPresentOTPScreen() async {
     // Given the expected API behaviour
     configureMockRepositoryBehaviour()
+    configureMockFeatureFlag(featureKey: .mfa, enabled: false)
     // And a valid phone number input
     viewModel.phoneNumber = mockValidPhoneNumberFormat
     // When calling performGetOTP function in view model
@@ -93,6 +115,7 @@ final class PhoneNumberViewModelTests: XCTestCase {
   // Test performGetOTP with input which should make server throw an error
   func test_performGetOTP_whenPhoneNumberIsInvalid_shouldReturnServerError() async {
     // Given the expected API behaviour
+    configureMockFeatureFlag(featureKey: .mfa, enabled: false)
     configureMockRepositoryBehaviour()
     // And a phone number input which should make the mock repository thow a server error
     viewModel.phoneNumber = mockInvalidPhoneNumberFormat
@@ -101,12 +124,13 @@ final class PhoneNumberViewModelTests: XCTestCase {
     // Then the toast message should initially be nil
     expect(self.viewModel.toastMessage).to(beNil())
     // And eventually should become equal to 'mockServerError' localized description
-    await expect(self.viewModel.toastMessage).toEventually(equal(mockServerError.localizedDescription))
+    await expect(self.viewModel.toastMessage).toEventually(equal(mockServerError.message))
   }
   
   // Test performGetOTP when a network error occurs
   func test_performGetOTP_whenNetworkErrorOccurs_shouldReturnGenericError() async {
     // Given the expected API behaviour which throws a generic error
+    configureMockFeatureFlag(featureKey: .mfa, enabled: false)
     configureMockRepositoryBehaviour(shouldThrowGenericError: true)
     // And a valid phone number input
     viewModel.phoneNumber = mockValidPhoneNumberFormat
@@ -209,6 +233,7 @@ final class PhoneNumberViewModelTests: XCTestCase {
       }
       .store(in: &cancellables)
     // Given the expected API behaviour
+    configureMockFeatureFlag(featureKey: .mfa, enabled: false)
     configureMockRepositoryBehaviour()
     // And any phone number input
     viewModel.phoneNumber = mockValidPhoneNumberFormat

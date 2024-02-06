@@ -105,12 +105,16 @@ let package = Package(
       ]
     ),
     .testTarget(
-      name: "PhoneNumberViewModelTests",
+      name: "SolidOnboardingTests",
       dependencies: [
         .product(name: "DomainTestHelpers", package: "LFDomain"),
-        "NetspendOnboarding",
+        .product(name: "EnvironmentService", package: "LFServices"),
+        .product(name: "LFAuthentication", package: "LFAuthentication"),
+        "SolidOnboarding",
         "TestHelpers",
-        "ViewInspector"
+        "ViewInspector",
+        "Factory",
+        "LFLocalizable"
       ]
     )
   ]

@@ -4,7 +4,7 @@ import FeatureFlagDomain
 
 public protocol FeatureFlagManagerProtocol {
   
-  var featureFlagsSubject: CurrentValueSubject<[FeatureFlagModel], Never> { get }
+  var featureFlagsSubject: CurrentValueSubject<[FeatureFlagEntity], Never> { get }
   
   func fetchEnabledFeatureFlags()
   func isFeatureFlagEnabled(_ key: FeatureFlagKey) -> Bool
