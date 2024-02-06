@@ -2,6 +2,7 @@ import SwiftUI
 import LFUtilities
 import LFStyleGuide
 import LFLocalizable
+import SolidFeature
 
 public struct CardsTabView: View {
   @StateObject
@@ -32,6 +33,8 @@ public struct CardsTabView: View {
       switch navigation {
       case let .cardDetail(viewModel):
         CardDetailView(viewModel: viewModel)
+      case let .cardListDetail(viewModel):
+        SolidListCardsView(viewModel: viewModel)
       }
     }
     .popup(item: $viewModel.toastMessage, style: .toast) {

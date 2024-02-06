@@ -1,4 +1,5 @@
 import Foundation
+import SolidFeature
 import Factory
 import AccountData
 import SolidData
@@ -11,6 +12,7 @@ import Combine
 final class CardsTabViewModel: ObservableObject {
   @LazyInjected(\.solidCardRepository) var solidCardRepository
   @LazyInjected(\.accountDataManager) var accountDataManager
+  @LazyInjected(\.featureFlagManager) var featureFlagManager
 
   lazy var getListSolidCardUseCase: SolidGetListCardUseCaseProtocol = {
     SolidGetListCardUseCase(repository: solidCardRepository)
@@ -89,12 +91,18 @@ extension CardsTabViewModel {
   }
   
   func navigateToCardDetail(card: CardModel, filterredCards: [CardModel]) {
-    let viewModel = CardDetailViewModel(
-      currentCard: card,
-      cardsList: cardsList,
-      filterredCards: filterredCards
-    )
-    navigation = .cardDetail(viewModel: viewModel)
+    if featureFlagManager.isFeatureFlagEnabled(.virtualCardPhrase1) {
+      let viewModel = CardDetailViewModel(
+        currentCard: card,
+        cardsList: cardsList,
+        filterredCards: filterredCards
+      )
+      navigation = .cardDetail(viewModel)
+      return
+    }
+    
+    let viewModel = SolidListCardsViewModel(selectCardId: card.id)
+    navigation = .cardListDetail(viewModel)
   }
 }
 
@@ -159,6 +167,7 @@ private extension CardsTabViewModel {
 // MARK: - Types
 extension CardsTabViewModel {
   enum Navigation {
-    case cardDetail(viewModel: CardDetailViewModel)
+    case cardDetail(CardDetailViewModel)
+    case cardListDetail(SolidListCardsViewModel)
   }
 }
