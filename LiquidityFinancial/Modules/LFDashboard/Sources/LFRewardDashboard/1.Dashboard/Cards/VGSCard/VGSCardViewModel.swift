@@ -28,6 +28,7 @@ final class VGSCardViewModel: ObservableObject {
   @Published var isShowExpDateAndCVVCode = false
   @Published var copyMessage: String?
   @Published var toastMessage: String?
+  @Published var animationTask: DispatchWorkItem?
   
   @Published var biometricType: BiometricType = .none
   @Published var popup: Popup?
@@ -71,6 +72,11 @@ extension VGSCardViewModel {
   }
   
   func copyToClipboard(type: VGSLabelType, card: CardModel) {
+    animationTask?.cancel()
+    animationTask = DispatchWorkItem { [weak self] in
+      self?.copyMessage = nil
+    }
+    
     let vgsText = getVGSLabelText(with: type.rawValue)
     
     switch type {
@@ -82,9 +88,8 @@ extension VGSCardViewModel {
       copyMessage = L10N.Common.Card.ExpAndCVVCodeCopied.title
     }
     
-    DispatchQueue.main.asyncAfter(deadline: .now() + 2) { [weak self] in
-      self?.copyMessage = nil
-    }
+    guard let animationTaskUnwrap = animationTask else { return }
+    DispatchQueue.main.asyncAfter(deadline: .now() + 2.0, execute: animationTaskUnwrap)
   }
   
   func onClickAsteriskSymbol(type: VGSLabelType, card: CardModel) {
