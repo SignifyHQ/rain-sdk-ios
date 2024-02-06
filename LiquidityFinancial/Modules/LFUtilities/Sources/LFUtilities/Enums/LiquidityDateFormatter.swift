@@ -22,7 +22,6 @@ public enum LiquidityDateFormatter: String, CaseIterable {
   public var dateFormatter: DateFormatter {
     let formatter = DateFormatter()
     formatter.dateFormat = rawValue
-    formatter.timeZone = TimeZone(abbreviation: "UTC")
     formatter.locale = Locale.current
     return formatter
   }
