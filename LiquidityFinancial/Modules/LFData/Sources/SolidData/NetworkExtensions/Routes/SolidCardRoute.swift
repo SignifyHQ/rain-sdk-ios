@@ -16,6 +16,7 @@ public enum SolidCardRoute {
   case activeCard(cardID: String, parameters: APISolidActiveCardParameters)
   case getCardLimits(cardID: String)
   case updateCardName(cardID: String, parameters: APISolidCardNameParameters)
+  case getCardTransactions(parameters: APISolidCardTransactionsParameters)
 }
 
 extension SolidCardRoute: LFRoute {
@@ -44,12 +45,14 @@ extension SolidCardRoute: LFRoute {
       return "/v1/solid/cards/\(cardID)/limits"
     case let .updateCardName(cardID, _):
       return "/v1/solid/cards/\(cardID)/name"
+    case .getCardTransactions:
+      return "/v1/transactions/by-card-id"
     }
   }
   
   public var httpMethod: HttpMethod {
     switch self {
-    case .listCard, .getCardLimits:
+    case .listCard, .getCardLimits, .getCardTransactions:
       return .GET
     case .updateCardStatus, .updateRoundUpDonation, .activeCard, .updateCardName:
       return .PATCH
@@ -88,6 +91,8 @@ extension SolidCardRoute: LFRoute {
       ]
     case let .updateCardName(_, parameters):
       return parameters.encoded()
+    case let .getCardTransactions(parameters):
+      return parameters.encoded()
     }
   }
   
@@ -97,7 +102,7 @@ extension SolidCardRoute: LFRoute {
       return nil
     case .updateCardStatus, .createDigitalWalletLink, .updateRoundUpDonation, .activeCard, .updateCardName:
       return .json
-    case .listCard:
+    case .listCard, .getCardTransactions:
       return .url
     }
   }

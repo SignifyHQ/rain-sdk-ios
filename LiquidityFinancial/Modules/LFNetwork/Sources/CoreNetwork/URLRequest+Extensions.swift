@@ -20,7 +20,16 @@ extension URLRequest {
         var urlComponents = URLComponents(url: route.url, resolvingAgainstBaseURL: false)
         let queryItems = urlComponents?.queryItems ?? [URLQueryItem]()
           // TODO: Handling casting `parameters`' values properly (i.e. `Any` to `String`)
-        let encodedQueryItems = parameters.map { URLQueryItem(name: $0.key, value: $0.value as? String) }
+          
+        let encodedQueryItems: [URLQueryItem] = parameters.flatMap { key, value in
+          guard let arrayValue = value as? [Any] else {
+            return [URLQueryItem(name: key, value: "\(value)")]
+          }
+          
+          return arrayValue.map { element in
+            URLQueryItem(name: key, value: "\(element)")
+          }
+        }
         urlComponents?.queryItems = queryItems + encodedQueryItems
         url = urlComponents?.url ?? url
       }

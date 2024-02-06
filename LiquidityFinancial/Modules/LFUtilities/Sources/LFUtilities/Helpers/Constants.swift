@@ -268,7 +268,7 @@ public extension Constants {
     case dotSymbol = "•"
     case zeroAmount = "0"
     case cardNumberPattern = "(\\d{4})(\\d{4})(\\d{4})(\\d{4})"
-    case cardNumberTemplate = "$1            $2            $3            $4"
+    case cardNumberTemplate = "$1 $2 $3 $4"
     case expirationDatePlaceholder = "••/••"
     case expirationDateAsteriskPlaceholder = "**/**"
     case fullCardNumberPlaceholder = "•••• •••• •••• ••••"
@@ -371,6 +371,16 @@ public extension Constants {
   
   static let ssnDocument = [
     L10N.Common.UploadDocument.SsnRequirement.socialSecurity
+  ]
+  
+  static let shortTransactionLimit = 20
+  static let transactionOffset = 0
+  static let transactionsTypeKey = "transactionTypes"
+  static let transactionsTypes = [
+    "PURCHASE", "DEPOSIT", "WITHDRAW",
+    "SYSTEM_FEE", "REFUND", "CRYPTO_BUY",
+    "CRYPTO_SELL", "DONATION", "OTHER",
+    "REWARD_CASHBACK", "REWARD_CASHBACK_REVERSE"
   ]
 }
 

@@ -1,4 +1,5 @@
 import SolidDomain
+import AccountDomain
 
 public class SolidCardRepository: SolidCardRepositoryProtocol {
   private let cardAPI: SolidCardAPIProtocol
@@ -70,5 +71,13 @@ public class SolidCardRepository: SolidCardRepositoryProtocol {
       throw "Can't map paramater :\(parameters)"
     }
     return try await cardAPI.updateCardName(cardID: cardID, parameters: parameters)
+  }
+  
+  public func getCardTransactions(parameters: SolidCardTransactionParametersEntity) async throws -> TransactionListEntity {
+    guard let parameters = parameters as? APISolidCardTransactionsParameters else {
+      throw "Can't map paramater :\(parameters)"
+    }
+    
+    return try await cardAPI.getCardTransactions(parameters: parameters)
   }
 }

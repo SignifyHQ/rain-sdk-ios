@@ -4,6 +4,7 @@
 
 import Foundation
 import SolidData
+import AccountData
 
 public class MockSolidCardAPIProtocol: SolidCardAPIProtocol {
 
@@ -293,6 +294,32 @@ public class MockSolidCardAPIProtocol: SolidCardAPIProtocol {
             return try await updateCardNameCardIDParametersClosure(cardID, parameters)
         } else {
             return updateCardNameCardIDParametersReturnValue
+        }
+    }
+
+    //MARK: - getCardTransactions
+
+    public var getCardTransactionsParametersThrowableError: Error?
+    public var getCardTransactionsParametersCallsCount = 0
+    public var getCardTransactionsParametersCalled: Bool {
+        return getCardTransactionsParametersCallsCount > 0
+    }
+    public var getCardTransactionsParametersReceivedParameters: APISolidCardTransactionsParameters?
+    public var getCardTransactionsParametersReceivedInvocations: [APISolidCardTransactionsParameters] = []
+    public var getCardTransactionsParametersReturnValue: APITransactionList!
+    public var getCardTransactionsParametersClosure: ((APISolidCardTransactionsParameters) async throws -> APITransactionList)?
+
+    public func getCardTransactions(parameters: APISolidCardTransactionsParameters) async throws -> APITransactionList {
+        if let error = getCardTransactionsParametersThrowableError {
+            throw error
+        }
+        getCardTransactionsParametersCallsCount += 1
+        getCardTransactionsParametersReceivedParameters = parameters
+        getCardTransactionsParametersReceivedInvocations.append(parameters)
+        if let getCardTransactionsParametersClosure = getCardTransactionsParametersClosure {
+            return try await getCardTransactionsParametersClosure(parameters)
+        } else {
+            return getCardTransactionsParametersReturnValue
         }
     }
 

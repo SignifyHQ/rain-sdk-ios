@@ -159,7 +159,7 @@ extension VGSShowUIView {
         pattern: Constants.Default.cardNumberPattern.rawValue,
         options: []
       )
-      let template = Constants.Default.cardNumberTemplate.rawValue
+      let template = createCardNumberTemplate(repetitions: 3)
       
       // Add transformation regex to your label.
       label.addTransformationRegex(regex, template: template)
@@ -172,6 +172,16 @@ extension VGSShowUIView {
     let spacedTextArray = Array(repeating: pattern, count: repetitions)
     let result = spacedTextArray.joined(separator: spacing)
     return result
+  }
+  
+  func createCardNumberTemplate(repetitions: Int) -> String {
+    let cardNumberWithSpacingWidth = 242.0
+    let remainingWidth = (UIScreen.main.bounds.width - cardNumberWithSpacingWidth)
+    let spaceWidth = remainingWidth / CGFloat(repetitions)
+    let numberOfSpaceCharacters = Int(spaceWidth / 4)
+    let spaceText = String(repeating: " ", count: numberOfSpaceCharacters)
+    
+    return Constants.Default.cardNumberTemplate.rawValue.replace(string: " ", replacement: spaceText)
   }
   
   @objc func copiedToClipboard() {

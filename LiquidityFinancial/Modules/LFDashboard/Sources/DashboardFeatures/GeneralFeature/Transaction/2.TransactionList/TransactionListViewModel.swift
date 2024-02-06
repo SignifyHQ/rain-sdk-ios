@@ -3,32 +3,47 @@ import Factory
 import AccountData
 import AccountDomain
 import LFUtilities
+import SolidData
+import SolidDomain
 
 @MainActor
 public class TransactionListViewModel: ObservableObject {
-  
-  private var offset = 0
-  private var total = 0
-  private var limit = 20
+  @LazyInjected(\.solidCardRepository) var solidCardRepository
+  @LazyInjected(\.accountRepository) var accountRepository
+  @LazyInjected(\.accountDataManager) var accountDataManager
+    
+  lazy var getCardTransactionsUseCase: SolidGetCardTransactionsUseCaseProtocol = {
+    SolidGetCardTransactionsUseCase(repository: solidCardRepository)
+  }()
   
   @Published var transactions: [TransactionModel] = []
   @Published var transactionDetail: TransactionModel?
   @Published var isLoading = false
   @Published var isLoadingMore = false
   @Published var searchText = ""
-  
-  @LazyInjected(\.accountRepository) var accountRepository
-  @LazyInjected(\.accountDataManager) var accountDataManager
-    
-  let type: Kind
+  @Published var toastMessage: String?
+
+  let filterType: FilterType
+  let cardID: String
   let currencyType: String
   let accountID: String
   let transactionTypes: String
   
-  public init(type: Kind, currencyType: String, accountID: String, transactionTypes: String) {
-    self.type = type
+  private var offset = 0
+  private var total = 0
+  private var limit = 20
+  
+  public init(
+    filterType: FilterType,
+    currencyType: String,
+    accountID: String,
+    cardID: String,
+    transactionTypes: String
+  ) {
+    self.filterType = filterType
     self.currencyType = currencyType
     self.accountID = accountID
+    self.cardID = cardID
     self.transactionTypes = transactionTypes
     self.initData()
   }
@@ -57,6 +72,7 @@ public class TransactionListViewModel: ObservableObject {
       return
     }
     let offset = transactions.count
+    
     Task {
       defer { isLoadingMore = false }
       isLoadingMore = true
@@ -71,6 +87,15 @@ public class TransactionListViewModel: ObservableObject {
 
 private extension TransactionListViewModel {
   func loadTransactions(offset: Int) async {
+    switch filterType {
+    case .account:
+      await loadAccountTransactions(offset: offset)
+    case .card:
+      await loadCardTransactions(offset: offset)
+    }
+  }
+  
+  func loadAccountTransactions(offset: Int) async {
     do {
       if accountID.isEmpty { log.error("Missing account id") }
       let transactions = try await accountRepository.getTransactions(
@@ -86,13 +111,30 @@ private extension TransactionListViewModel {
       log.error(error.userFriendlyMessage)
     }
   }
+  
+  func loadCardTransactions(offset: Int) async {
+    do {
+      let parameters = APISolidCardTransactionsParameters(
+        cardId: cardID,
+        currencyType: Constants.CurrencyType.fiat.rawValue,
+        transactionTypes: Constants.transactionsTypes,
+        limit: limit,
+        offset: offset
+      )
+      let transactions = try await getCardTransactionsUseCase.execute(parameters: parameters)
+      
+      self.total = transactions.total
+      self.transactions += transactions.data.compactMap({ TransactionModel(from: $0) })
+    } catch {
+      log.error(error.userFriendlyMessage)
+      toastMessage = error.userFriendlyMessage
+    }
+  }
 }
 
 extension TransactionListViewModel {
-  public enum Kind {
-    case cash
-    case crypto
-    case donations
-    case cashback
+  public enum FilterType {
+    case account
+    case card
   }
 }

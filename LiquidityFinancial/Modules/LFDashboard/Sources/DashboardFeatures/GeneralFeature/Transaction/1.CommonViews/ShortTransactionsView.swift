@@ -22,16 +22,17 @@ public struct ShortTransactionsView: View {
   }
   
   public var body: some View {
-    VStack(alignment: .leading, spacing: 10) {
+    VStack(alignment: .leading, spacing: 12) {
       HStack(alignment: .bottom) {
         Text(title)
           .opacity(transactions.isEmpty ? 0 : 1)
+          .foregroundColor(Colors.label.swiftUIColor.opacity(0.75))
         Spacer()
         seeAllTransactions
           .opacity(transactions.isEmpty ? 0 : 1)
+          .foregroundColor(Colors.label.swiftUIColor)
       }
-      .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.ultraSmall.value))
-      .foregroundColor(Colors.label.swiftUIColor.opacity(0.75))
+      .font(Fonts.bold.swiftUIFont(size: Constants.FontSize.ultraSmall.value))
       if transactions.isEmpty {
         noTransactionsYetView
       } else {

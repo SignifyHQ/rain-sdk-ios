@@ -91,6 +91,7 @@ extension VGSCardViewModel {
     let isEnableAuthenticateWithBiometrics = UserDefaults.isBiometricUsageEnabled && featureFlagManager.isFeatureFlagEnabled(.passwordLogin)
     guard isEnableAuthenticateWithBiometrics else {
       showSensitiveCardData(type: type)
+      copyToClipboard(type: type, card: card)
       return
     }
     

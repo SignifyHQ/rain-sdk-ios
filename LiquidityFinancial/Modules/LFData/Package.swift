@@ -75,8 +75,9 @@ let package = Package(
     .target(
       name: "SolidData",
       dependencies: [
-        "LFUtilities", "Factory",
+        "LFUtilities", "Factory", "AccountData",
         .product(name: "NetspendDomain", package: "LFDomain"),
+        .product(name: "AccountDomain", package: "LFDomain"),
         .product(name: "SolidDomain", package: "LFDomain"),
         .product(name: "NetworkUtilities", package: "LFNetwork"),
         .product(name: "CoreNetwork", package: "LFNetwork"),

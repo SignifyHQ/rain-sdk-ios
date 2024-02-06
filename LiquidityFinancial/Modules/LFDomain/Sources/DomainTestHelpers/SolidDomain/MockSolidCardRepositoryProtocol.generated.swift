@@ -4,6 +4,7 @@
 
 import Foundation
 import SolidDomain
+import AccountDomain
 
 public class MockSolidCardRepositoryProtocol: SolidCardRepositoryProtocol {
 
@@ -293,6 +294,32 @@ public class MockSolidCardRepositoryProtocol: SolidCardRepositoryProtocol {
             return try await updateCardNameCardIDParametersClosure(cardID, parameters)
         } else {
             return updateCardNameCardIDParametersReturnValue
+        }
+    }
+
+    //MARK: - getCardTransactions
+
+    public var getCardTransactionsParametersThrowableError: Error?
+    public var getCardTransactionsParametersCallsCount = 0
+    public var getCardTransactionsParametersCalled: Bool {
+        return getCardTransactionsParametersCallsCount > 0
+    }
+    public var getCardTransactionsParametersReceivedParameters: SolidCardTransactionParametersEntity?
+    public var getCardTransactionsParametersReceivedInvocations: [SolidCardTransactionParametersEntity] = []
+    public var getCardTransactionsParametersReturnValue: TransactionListEntity!
+    public var getCardTransactionsParametersClosure: ((SolidCardTransactionParametersEntity) async throws -> TransactionListEntity)?
+
+    public func getCardTransactions(parameters: SolidCardTransactionParametersEntity) async throws -> TransactionListEntity {
+        if let error = getCardTransactionsParametersThrowableError {
+            throw error
+        }
+        getCardTransactionsParametersCallsCount += 1
+        getCardTransactionsParametersReceivedParameters = parameters
+        getCardTransactionsParametersReceivedInvocations.append(parameters)
+        if let getCardTransactionsParametersClosure = getCardTransactionsParametersClosure {
+            return try await getCardTransactionsParametersClosure(parameters)
+        } else {
+            return getCardTransactionsParametersReturnValue
         }
     }
 

@@ -26,7 +26,7 @@ struct RewardTabView: View {
           )
         case let .transactions(isCrypto):
           TransactionListView(
-            type: isCrypto ? .crypto : .cashback,
+            filterType: .account,
             currencyType: viewModel.currencyType,
             accountID: viewModel.accountID,
             transactionTypes: viewModel.transactionTypes

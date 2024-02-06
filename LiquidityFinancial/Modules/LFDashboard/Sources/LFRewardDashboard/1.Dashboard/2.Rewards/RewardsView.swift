@@ -38,7 +38,7 @@ public struct RewardsView: View {
         switch navigation {
         case .transactions:
           TransactionListView(
-            type: .cashback,
+            filterType: .account,
             currencyType: viewModel.currencyType,
             accountID: viewModel.fiatAccountID,
             transactionTypes: Constants.TransactionTypesRequest.rewardCashBack.types

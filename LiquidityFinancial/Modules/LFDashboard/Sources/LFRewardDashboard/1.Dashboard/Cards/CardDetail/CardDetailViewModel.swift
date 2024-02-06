@@ -1,6 +1,7 @@
 import Foundation
 import Combine
 import Factory
+import AccountData
 import SolidData
 import SolidDomain
 import LFStyleGuide
@@ -16,6 +17,7 @@ final class CardDetailViewModel: ObservableObject {
   @LazyInjected(\.solidCardRepository) var solidCardRepository
   @LazyInjected(\.customerSupportService) var customerSupportService
   @LazyInjected(\.analyticsService) var analyticsService
+  @LazyInjected(\.accountDataManager) var accountDataManager
 
   lazy var updateCardStatusUseCase: SolidUpdateCardStatusUseCaseProtocol = {
     SolidUpdateCardStatusUseCase(repository: solidCardRepository)
@@ -25,26 +27,34 @@ final class CardDetailViewModel: ObservableObject {
     SolidCloseCardUseCase(repository: solidCardRepository)
   }()
   
+  lazy var getCardTransactionsUseCase: SolidGetCardTransactionsUseCaseProtocol = {
+    SolidGetCardTransactionsUseCase(repository: solidCardRepository)
+  }()
+  
   @Published var isCardAvailable = false
   @Published var isShowListCardDropdown: Bool = false
   @Published var isCardClosed: Bool = false
+  @Published var isFetchingTransactions: Bool = false
   @Published var isCallingAPI: Bool = false
   @Published var toastMessage: String?
   
   @Published var spendingStatusIcon = GenImages.CommonImages.icPause
   @Published var cardsList: [CardModel] = []
   @Published var filterredCards: [CardModel] = []
-  @Published var transactionsList: [TransactionModel] = []
   @Published var currentCard: CardModel = .default
+  @Published var status: DataStatus<TransactionModel> = .idle
   @Published var navigation: Navigation?
   @Published var popup: Popup?
-
+  
+  var accountID: String = .empty
+  
   private var subscribers: Set<AnyCancellable> = []
   
   init(currentCard: CardModel, cardsList: [CardModel], filterredCards: [CardModel]) {
     self.cardsList = cardsList
     self.currentCard = currentCard
     self.filterredCards = filterredCards
+    self.accountID = accountDataManager.fiatAccountID ?? .empty
     observeCurrentCard()
   }
 }
@@ -62,6 +72,31 @@ extension CardDetailViewModel {
         toastMessage = status.toastMessage
         updateCardStatus(status: status.mapToCardStatus(), id: card.id)
       } catch {
+        log.error(error.userFriendlyMessage)
+        toastMessage = error.userFriendlyMessage
+      }
+    }
+  }
+  
+  private func getCardTransactions() {
+    Task {
+      status = .idle
+      
+      do {
+        let parameters = APISolidCardTransactionsParameters(
+          cardId: currentCard.id,
+          currencyType: Constants.CurrencyType.fiat.rawValue,
+          transactionTypes: Constants.transactionsTypes,
+          limit: Constants.shortTransactionLimit,
+          offset: Constants.transactionOffset
+        )
+        let response = try await getCardTransactionsUseCase.execute(parameters: parameters)
+        
+        let transactions = response.data.compactMap({ TransactionModel(from: $0) })
+        status = .success(transactions)
+      } catch {
+        status = .failure(error)
+        log.error(error.userFriendlyMessage)
         toastMessage = error.userFriendlyMessage
       }
     }
@@ -79,6 +114,7 @@ extension CardDetailViewModel {
           updateCardStatus(status: .closed, id: currentCard.id)
         }
       } catch {
+        log.error(error.userFriendlyMessage)
         toastMessage = error.userFriendlyMessage
       }
     }
@@ -102,6 +138,7 @@ extension CardDetailViewModel {
   }
   
   func onClickedSeeAllButton() {
+    navigation = .transactions
   }
   
   func onClickedTrashButton() {
@@ -149,6 +186,7 @@ private extension CardDetailViewModel {
       .receive(on: DispatchQueue.main)
       .sink { [weak self] card in
         guard let self else { return }
+        self.getCardTransactions()
         self.isCardClosed = card.cardStatus == .closed
         self.spendingStatusIcon = card.cardStatus == .disabled
         ? GenImages.CommonImages.icPlay
@@ -184,6 +222,7 @@ extension CardDetailViewModel {
   enum Navigation {
     case editCardName(viewModel: EditCardNameViewModel)
     case transactionDetail(TransactionModel)
+    case transactions
   }
   
   enum Popup {

@@ -34,8 +34,18 @@ struct CardDetailView: View {
         case let .editCardName(viewModel):
           EditCardNameView(viewModel: viewModel)
         case let .transactionDetail(transaction):
-          // TODO: MinhNguyen - Will implement in ENG-3968
-          EmptyView()
+          TransactionDetailView(
+            accountID: viewModel.accountID,
+            transactionId: transaction.id,
+            kind: transaction.detailType,
+            isPopToRoot: false
+          )
+        case .transactions:
+          TransactionListView(
+            filterType: .card,
+            currencyType: Constants.CurrencyType.fiat.rawValue,
+            cardID: viewModel.currentCard.id
+          )
         }
       }
       .track(name: String(describing: type(of: self)))
@@ -189,14 +199,24 @@ private extension CardDetailView {
   }
   
   var transactionListView: some View {
-    ShortTransactionsView(
-      transactions: $viewModel.transactionsList,
-      title: L10N.Common.Card.LatestTransaction.title,
-      onTapTransactionCell: viewModel.onClickedTransactionRow,
-      seeAllAction: {
-        viewModel.onClickedSeeAllButton()
+    Group {
+      switch viewModel.status {
+      case .idle:
+        LottieView(loading: .primary)
+          .frame(width: 30, height: 20)
+      case let .success(filterredCards):
+        ShortTransactionsView(
+          transactions: .constant(filterredCards),
+          title: L10N.Common.Card.LatestTransaction.title,
+          onTapTransactionCell: viewModel.onClickedTransactionRow,
+          seeAllAction: {
+            viewModel.onClickedSeeAllButton()
+          }
+        )
+      case .loading, .failure:
+        EmptyView()
       }
-    )
+    }
   }
   
   func makeCardConfigurationCell(title: String, value: String, action: (() -> Void)? = nil) -> some View {

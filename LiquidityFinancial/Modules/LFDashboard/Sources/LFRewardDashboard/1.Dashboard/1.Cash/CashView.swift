@@ -26,7 +26,7 @@ public struct CashView: View {
         switch navigation {
         case .transactions:
           TransactionListView(
-            type: .cash,
+            filterType: .account,
             currencyType: viewModel.currencyType,
             accountID: viewModel.accountID,
             transactionTypes: Constants.TransactionTypesRequest.fiat.types

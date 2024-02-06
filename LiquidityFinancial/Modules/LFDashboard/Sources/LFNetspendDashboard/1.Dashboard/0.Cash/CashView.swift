@@ -42,7 +42,7 @@ struct CashView: View {
         )
       case .transactions:
         TransactionListView(
-          type: .cash,
+          filterType: .account,
           currencyType: viewModel.currencyType,
           accountID: viewModel.accountDataManager.fiatAccountID,
           transactionTypes: Constants.TransactionTypesRequest.fiat.types

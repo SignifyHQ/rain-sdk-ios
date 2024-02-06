@@ -1,6 +1,7 @@
 import NetworkUtilities
 import CoreNetwork
 import LFUtilities
+import AccountData
 
 extension LFCoreNetwork: SolidCardAPIProtocol where R == SolidCardRoute {
   public func getCardLimits(cardID: String) async throws -> APISolidCardLimits {
@@ -109,5 +110,16 @@ extension LFCoreNetwork: SolidCardAPIProtocol where R == SolidCardRoute {
       failure: LFErrorObject.self,
       decoder: .apiDecoder
     )
+  }
+  
+  public func getCardTransactions(parameters: APISolidCardTransactionsParameters) async throws -> APITransactionList {
+    let response = try await request(
+      SolidCardRoute.getCardTransactions(parameters: parameters),
+      target: APIListObject<APITransaction>.self,
+      failure: LFErrorObject.self,
+      decoder: .apiDecoder
+    )
+    
+    return APITransactionList(total: response.total, data: response.data)
   }
 }

@@ -81,7 +81,9 @@ let package = Package(
     ),
     .target(
       name: "SolidDomain",
-      dependencies: []
+      dependencies: [
+        "AccountDomain"
+      ]
     ),
     .target(
       name: "DomainTestHelpers",

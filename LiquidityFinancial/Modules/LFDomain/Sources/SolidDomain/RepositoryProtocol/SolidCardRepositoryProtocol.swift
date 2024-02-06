@@ -1,4 +1,5 @@
 import Foundation
+import AccountDomain
 
 // sourcery: AutoMockable
 public protocol SolidCardRepositoryProtocol {
@@ -20,4 +21,5 @@ public protocol SolidCardRepositoryProtocol {
   func activeCard(cardID: String, parameters: SolidActiveCardParametersEntity) async throws -> SolidCardEntity
   func getCardLimits(cardID: String) async throws -> SolidCardLimitsEntity
   func updateCardName(cardID: String, parameters: SolidCardNameParametersEntity) async throws -> SolidCardEntity
+  func getCardTransactions(parameters: SolidCardTransactionParametersEntity) async throws -> TransactionListEntity
 }

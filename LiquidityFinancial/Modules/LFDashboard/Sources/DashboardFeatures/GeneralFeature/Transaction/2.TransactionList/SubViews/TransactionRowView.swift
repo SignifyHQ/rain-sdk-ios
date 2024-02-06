@@ -46,15 +46,15 @@ private extension TransactionRowView {
   var center: some View {
     VStack(alignment: .leading, spacing: 4) {
       Text(item.titleDisplay)
-        .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.medium.value))
+        .font(Fonts.bold.swiftUIFont(size: Constants.FontSize.medium.value))
         .foregroundColor(Colors.label.swiftUIColor)
         .multilineTextAlignment(.leading)
         .minimumScaleFactor(0.7)
         .allowsTightening(true)
         .lineLimit(2)
       Text(item.subtitle)
-        .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.ultraSmall.value))
-        .foregroundColor(Colors.label.swiftUIColor.opacity(0.6))
+        .font(Fonts.bold.swiftUIFont(size: Constants.FontSize.ultraSmall.value))
+        .foregroundColor(Colors.label.swiftUIColor.opacity(0.75))
         .lineLimit(1)
     }
   }
@@ -69,8 +69,8 @@ private extension TransactionRowView {
         .lineLimit(1)
       if let balanceFormatted = item.balanceFormatted {
         Text(balanceFormatted)
-          .font(Fonts.regular.swiftUIFont(size: 10))
-          .foregroundColor(Colors.label.swiftUIColor.opacity(0.6))
+          .font(Fonts.bold.swiftUIFont(size: Constants.FontSize.ultraSmall.value))
+          .foregroundColor(Colors.label.swiftUIColor.opacity(0.75))
       }
     }
   }
