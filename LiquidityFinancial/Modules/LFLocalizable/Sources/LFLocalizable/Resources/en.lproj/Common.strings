@@ -1081,6 +1081,7 @@ contact support.";
 "transferLimit.bankWithdrawal.title" = "Bank Account Withdrawal Limits";
 "transferLimit.spendingLimits.title" = "Spending Limits";
 "transferLimit.financialInstitutionsLimits.title" = "Financial Institutions Spending Limits";
+"transferLimit.createSupportTicket.success" = "Success!";
 
 "transferLimit.cardDeposit.message" = "Use your bank’s Debit Card to instantly deposit funds to your %@ Account.";
 "transferLimit.cardWithdrawal.message" = "Use your bank’s Debit Card to instantly withdraw funds from your %@ Account.";

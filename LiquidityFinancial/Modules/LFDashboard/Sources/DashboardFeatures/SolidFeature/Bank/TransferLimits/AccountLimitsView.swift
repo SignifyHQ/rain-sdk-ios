@@ -308,7 +308,7 @@ private extension AccountLimitsView {
   
   var createTicketSuccessPopup: some View {
     LiquidityAlert(
-      title: L10N.Common.TransferLimit.CreateSupportTicket.title,
+      title: L10N.Common.TransferLimit.CreateSupportTicket.success,
       message: L10N.Common.TransferLimit.IncreaseLimit.message,
       primary: .init(
         text: L10N.Common.Button.Ok.title,

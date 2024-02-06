@@ -52,7 +52,12 @@ public class MoveMoneyAccountViewModel: ObservableObject {
     if kind == .send {
       return buildRecommend(available: cashBalance ?? 0)
     }
-    return []
+    return
+    [
+      .fixed(amount: 10, currency: .usd),
+      .fixed(amount: 50, currency: .usd),
+      .fixed(amount: 100, currency: .usd)
+    ]
   }
   
   lazy var solidCreateTransactionUseCase: SolidCreateExternalTransactionUseCaseProtocol = {
