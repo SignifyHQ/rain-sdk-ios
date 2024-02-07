@@ -208,14 +208,16 @@ private extension CashAssetView {
     HStack(alignment: .bottom) {
       Text(L10N.Common.CashAsset.ConnectedCards.title)
       Spacer()
-      Button {
-        viewModel.seeAllConnectedCards()
-      } label: {
-        HStack(spacing: 8) {
-          Text(L10N.Common.AssetView.seeAll)
-          GenImages.CommonImages.icRightArrow.swiftUIImage
+      if viewModel.showAllConnectedCard {
+        Button {
+          viewModel.seeAllConnectedCards()
+        } label: {
+          HStack(spacing: 8) {
+            Text(L10N.Common.AssetView.seeAll)
+            GenImages.CommonImages.icRightArrow.swiftUIImage
+          }
+          .frame(height: 30, alignment: .bottom)
         }
-        .frame(height: 30, alignment: .bottom)
       }
     }
     .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.ultraSmall.value))

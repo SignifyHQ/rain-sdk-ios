@@ -8,6 +8,7 @@ import EnvironmentService
 public class IntercomService: CustomerSupportServiceProtocol {
   
   public private(set) var isLoginIdentifiedSuccess: Bool = false
+  private var isLoginSuccess: Bool = false
   
   private var subscriptions = Set<AnyCancellable>()
   
@@ -67,14 +68,19 @@ public class IntercomService: CustomerSupportServiceProtocol {
   }
   
   public func logout() {
+    guard isLoginSuccess else {
+      return
+    }
     Intercom.logout()
+    isLoginSuccess = false
+    isLoginIdentifiedSuccess = false
   }
   
   public func loginUnidentifiedUser() {
-    Intercom.loginUnidentifiedUser { result in
+    Intercom.loginUnidentifiedUser { [weak self] result in
       switch result {
       case .success:
-        log.info("IntercomService login UnidentifiedUser is success")
+        self?.isLoginSuccess = true
       case .failure(let error):
         log.info(error.userFriendlyMessage)
       }
@@ -95,6 +101,7 @@ public class IntercomService: CustomerSupportServiceProtocol {
       case .success:
         log.info("IntercomService login IdentifiedUser is success: \(userAttributes.phone)")
         self?.isLoginIdentifiedSuccess = true
+        self?.isLoginSuccess = true
       case .failure(let error):
         log.error(error.userFriendlyMessage)
       }

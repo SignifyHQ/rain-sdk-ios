@@ -69,6 +69,10 @@ class CashAssetViewModel: ObservableObject {
     handleACHData()
     observeDidCardsListChangeNotification()
   }
+  
+  var showAllConnectedCard: Bool {
+    featureFlagManager.isFeatureFlagEnabled(.virtualCardPhrase1)
+  }
 }
 
 // MARK: - Private Functions
