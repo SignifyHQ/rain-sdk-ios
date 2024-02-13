@@ -10,7 +10,7 @@ struct ConfirmSendCryptoView: View {
   @StateObject private var viewModel: ConfirmSendCryptoViewModel
   private let completeAction: (() -> Void)?
   
-  init(assetModel: AssetModel, amount: Double, address: String, nickname: String, feeLockedResponse: APILockedNetworkFeeResponse? = nil, completeAction: (() -> Void)? = nil) {
+  init(assetModel: AssetModel, amount: Double, address: String, nickname: String, feeLockedResponse: APILockedNetworkFeeResponse, completeAction: (() -> Void)? = nil) {
     _viewModel = .init(
       wrappedValue: ConfirmSendCryptoViewModel(
         assetModel: assetModel,
@@ -78,12 +78,10 @@ private extension ConfirmSendCryptoView {
         value: viewModel.address,
         isLastItem: true
       )
-      if let fee = viewModel.fee {
-        informationCell(
-          title: L10N.Common.ConfirmSendCryptoView.fee,
-          value: fee.roundTo3fStr()
-        )
-      }
+      informationCell(
+        title: L10N.Common.ConfirmSendCryptoView.fee,
+        value: viewModel.fee.roundTo3fStr()
+      )
       Spacer()
       footer
     }

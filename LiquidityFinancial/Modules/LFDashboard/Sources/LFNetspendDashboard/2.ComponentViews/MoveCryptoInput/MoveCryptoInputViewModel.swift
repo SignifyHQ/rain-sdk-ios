@@ -85,11 +85,7 @@ final class MoveCryptoInputViewModel: ObservableObject {
     case .sellCrypto:
       fetchSellCryptoQuote(amount: "\(amount)")
     case .sendCrypto:
-      if accountDataManager.featureConfig?.isSendCryptoV2Enabled ?? false {
-        fetchSendCryptoQuote(amount: amount, address: address)
-      } else {
-        navigation = .confirmSend()
-      }
+      fetchSendCryptoQuote(amount: amount, address: address)
     }
   }
   
@@ -373,7 +369,7 @@ extension MoveCryptoInputViewModel {
   enum Navigation {
     case confirmSell(GetSellQuoteEntity, accountId: String)
     case confirmBuy(GetBuyQuoteEntity, accountId: String)
-    case confirmSend(lockedFeeResponse: APILockedNetworkFeeResponse? = nil)
+    case confirmSend(lockedFeeResponse: APILockedNetworkFeeResponse)
   }
 }
 

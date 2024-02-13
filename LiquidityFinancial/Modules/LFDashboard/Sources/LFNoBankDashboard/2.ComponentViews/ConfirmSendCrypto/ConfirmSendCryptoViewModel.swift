@@ -25,15 +25,15 @@ class ConfirmSendCryptoViewModel: ObservableObject {
   let address: String
   let nickname: String
   let assetModel: AssetModel
-  let feeLockedResponse: APILockedNetworkFeeResponse?
+  let feeLockedResponse: APILockedNetworkFeeResponse
   
-  var fee: Double? {
-    feeLockedResponse?.fee
+  var fee: Double {
+    feeLockedResponse.fee
   }
   
   private var cancellables: Set<AnyCancellable> = []
 
-  init(assetModel: AssetModel, amount: Double, address: String, nickname: String, feeLockedResponse: APILockedNetworkFeeResponse?) {
+  init(assetModel: AssetModel, amount: Double, address: String, nickname: String, feeLockedResponse: APILockedNetworkFeeResponse) {
     self.assetModel = assetModel
     self.amount = amount
     self.address = address
@@ -58,18 +58,10 @@ class ConfirmSendCryptoViewModel: ObservableObject {
       }, receiveValue: { [weak self] result in
         guard let self else { return }
         if result {
-          self.callTransferAPI()
+          self.executeQuote(id: feeLockedResponse.quoteId)
         }
       })
       .store(in: &cancellables)
-  }
-  
-  private func callTransferAPI() {
-    if let quoteId = feeLockedResponse?.quoteId {
-      executeQuote(id: quoteId)
-    } else {
-      sendCrypto()
-    }
   }
   
   func confirmButtonClicked() {
@@ -84,27 +76,6 @@ class ConfirmSendCryptoViewModel: ObservableObject {
       do {
         let transactionEntity = try await self.zerohashRepository.execute(accountId: accountId, quoteId: id)
         let account = try await cryptoAccountService.getAccountDetail(id: accountId)
-        self.accountDataManager.addOrUpdateAccount(account)
-        transaction = TransactionModel(from: transactionEntity)
-        self.navigation = .transactionDetail(transaction.id)
-      } catch {
-        self.toastMessage = error.userFriendlyMessage
-      }
-    }
-  }
-  
-  func sendCrypto() {
-    let id = assetModel.id
-    Task { @MainActor in
-      defer { showIndicator = false }
-      showIndicator = true
-      do {
-        let transactionEntity = try await self.zerohashRepository.sendCrypto(
-          accountId: id,
-          destinationAddress: self.address,
-          amount: self.amount
-        )
-        let account = try await cryptoAccountService.getAccountDetail(id: id)
         self.accountDataManager.addOrUpdateAccount(account)
         transaction = TransactionModel(from: transactionEntity)
         self.navigation = .transactionDetail(transaction.id)
