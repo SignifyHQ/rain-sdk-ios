@@ -8,6 +8,7 @@ import AccountService
 import BankService
 import SolidData
 import ZerohashData
+import Services
 
 class AppViewModel: ObservableObject {
   
@@ -43,6 +44,9 @@ class AppViewModel: ObservableObject {
     }
     Container.shared.bankServiceConfig.register {
       SolidBankService()
+    }
+    Container.shared.customerSupportService.register {
+      EmailService()
     }
   }
   

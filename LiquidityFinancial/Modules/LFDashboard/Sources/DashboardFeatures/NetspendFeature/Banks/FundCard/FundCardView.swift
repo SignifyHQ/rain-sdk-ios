@@ -58,8 +58,7 @@ private extension FundCardView {
     AddFundsView(
       viewModel: viewModel.addFundsViewModel,
       achInformation: $viewModel.achInformation,
-      isDisableView: $viewModel.isDisableView,
-      options: [.debitDepositFunds, .oneTime]
+      isDisableView: $viewModel.isDisableView
     )
     .padding(.top, 8)
     .fixedSize(horizontal: false, vertical: true)

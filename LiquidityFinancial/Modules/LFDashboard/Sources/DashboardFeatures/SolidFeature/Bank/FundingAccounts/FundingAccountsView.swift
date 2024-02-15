@@ -74,8 +74,7 @@ private extension FundingAccountsView {
           AddFundsView(
             viewModel: viewModel.addFundsViewModel,
             achInformation: $achInformation,
-            isDisableView: $viewModel.isDisableView,
-            options: [.directDeposit, .oneTime]
+            isDisableView: $viewModel.isDisableView
           )
         }
       }

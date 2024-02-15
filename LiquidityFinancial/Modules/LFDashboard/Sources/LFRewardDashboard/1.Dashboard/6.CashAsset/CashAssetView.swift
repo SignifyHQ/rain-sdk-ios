@@ -180,7 +180,7 @@ private extension CashAssetView {
         viewModel: viewModel.addFundsViewModel,
         achInformation: $viewModel.achInformation,
         isDisableView: $viewModel.isDisableView,
-        options: [.directDeposit, .oneTime]
+        options: [.oneTime]
       )
     }
   }

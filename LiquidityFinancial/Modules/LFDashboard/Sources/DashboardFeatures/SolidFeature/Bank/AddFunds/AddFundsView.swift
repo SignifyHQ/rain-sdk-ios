@@ -9,13 +9,13 @@ public struct AddFundsView: View {
   @Binding private var isDisableView: Bool
   @Binding private var achInformation: ACHModel
   
-  private var options: [FundOption] = [.directDeposit, .oneTime]
+  private var options: [FundOption] = [.oneTime]
 
   public init(
     viewModel: AddFundsViewModel,
     achInformation: Binding<ACHModel>,
     isDisableView: Binding<Bool>,
-    options: [FundOption] = [.directDeposit, .oneTime]
+    options: [FundOption] = [.oneTime]
   ) {
     _achInformation = achInformation
     _isDisableView = isDisableView

@@ -10,3 +10,11 @@ public protocol CustomerSupportServiceProtocol {
   func pushEventLogin(with userAttributes: UserAttributes?)
   func pushEventLogout()
 }
+
+public extension CustomerSupportServiceProtocol {
+  func setUp(environment: NetworkEnvironment) {}
+  func loginUnidentifiedUser() {}
+  func loginIdentifiedUser(userAttributes: UserAttributes) {}
+  func pushEventLogin(with userAttributes: UserAttributes?) {}
+  func pushEventLogout() {}
+}
