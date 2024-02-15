@@ -122,7 +122,7 @@ private extension CardsTabView {
               .frame(height: 40)
               .foregroundStyle(
                 LinearGradient(
-                  colors: [.clear, Colors.label.swiftUIColor.opacity(0.1)],
+                  colors: [.clear, Colors.label.swiftUIColor.opacity(0.08)],
                   startPoint: .top,
                   endPoint: .bottom
                 )
