@@ -178,32 +178,32 @@ extension SelectBankAccountViewModel {
         }
         let response = try await self.createPlaidTokenUseCase.execute(accountId: accountId)
         let plaidResponse = try await PlaidHelper.createLinkTokenConfiguration(token: response.linkToken, onCreated: { [weak self] configuration in
-          guard let self = self else {
-            return
-          }
-          Task {
-            await MainActor.run {
-              self.plaidConfig = PlaidConfig(config: configuration)
-            }
+          guard let self = self else { return }
+          Task { @MainActor in
+            self.plaidConfig = PlaidConfig(config: configuration)
           }
         })
-        let solidContact = try await self.plaidLinkUseCase.execute(
-          accountId: accountId,
-          token: plaidResponse.publicToken,
-          plaidAccountId: plaidResponse.plaidAccountId
-        )
-        guard let type = APISolidContactType(rawValue: solidContact.type) else {
-          self.onPlaidUIDisappear()
-          return
+        
+        let solidContacts = try await plaidResponse.plaidAccountIds.asyncMap { plaidAccountId in
+          try await self.plaidLinkUseCase.execute(
+            accountId: accountId,
+            token: plaidResponse.publicToken,
+            plaidAccountId: plaidAccountId
+          )
         }
-        let sourceType: LinkedSourceContactType = type == .externalBank ? .bank : .card
-        let contact = LinkedSourceContact(
-          name: solidContact.name,
-          last4: solidContact.last4,
-          sourceType: sourceType,
-          sourceId: solidContact.solidContactId
-        )
-        self.externalFundingDataManager.addOrEditLinkedSource(contact)
+        
+        solidContacts.forEach { contact in
+          if let type = APISolidContactType(rawValue: contact.type) {
+            let sourceType: LinkedSourceContactType = type == .externalBank ? .bank : .card
+            let contact = LinkedSourceContact(
+              name: contact.name,
+              last4: contact.last4,
+              sourceType: sourceType,
+              sourceId: contact.solidContactId
+            )
+            self.externalFundingDataManager.addOrEditLinkedSource(contact)
+          }
+        }
       } catch {
         log.error(error.userFriendlyMessage)
         if let liquidError = error as? LiquidityError, liquidError == .userCancelled {

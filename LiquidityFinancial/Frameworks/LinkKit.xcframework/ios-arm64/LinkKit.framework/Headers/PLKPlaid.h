@@ -61,6 +61,7 @@ typedef NS_ENUM(NSInteger, PLKEventNameValue) {
     PLKEventNameValueIdentityVerificationPassStep,
     PLKEventNameValueIdentityVerificationFailStep,
     PLKEventNameValueIdentityVerificationPendingReviewStep,
+    PLKEventNameValueIdentityVerificationPendingReviewSession,
     PLKEventNameValueIdentityVerificationCreateSession,
     PLKEventNameValueIdentityVerificationResumeSession,
     PLKEventNameValueIdentityVerificationPassSession,
@@ -68,6 +69,19 @@ typedef NS_ENUM(NSInteger, PLKEventNameValue) {
     PLKEventNameValueIdentityVerificationOpenUI,
     PLKEventNameValueIdentityVerificationResumeUI,
     PLKEventNameValueIdentityVerificationCloseUI,
+    PLKEventNameValueSelectFilteredInstitution,
+    PLKEventNameValueSelectBrand,
+    PLKEventNameValueSelectAuthType,
+    PLKEventNameValueSubmitAccountNumber,
+    PLKEventNameValueSubmitDocuments,
+    PLKEventNameValueSubmitDocumentsSuccess,
+    PLKEventNameValueSubmitDocumentsError,
+    PLKEventNameValueSubmitRoutingNumber,
+    PLKEventNameValueViewDataTypes,
+    PLKEventNameValueSubmitPhone,
+    PLKEventNameValueSkipSubmitPhone,
+    PLKEventNameValueVerifyPhone,
+    PLKEventNameValueConnectNewInstitution,
     // Add new enum cases directly above this line to avoid breaking API changes
 };
 
@@ -81,6 +95,7 @@ typedef NS_ENUM(NSInteger, PLKExitStatusValue) {
     PLKExitStatusValueRequiresCredentials,
     PLKExitStatusValueInstitutionNotFound,
     PLKExitStatusValueRequiresAccountSelection,
+    PLKExitStatusValueContinueToThridParty
     // Add new enum cases directly above this line to avoid breaking API changes
 };
 
@@ -121,6 +136,15 @@ typedef NS_ENUM(NSInteger, PLKViewNameValue) {
     PLKViewNameValueRiskCheck,
     PLKViewNameValueScreening,
     PLKViewNameValueVerifySMS,
+    PLKViewNameValueDataTransparency,
+    PLKViewNameValueDataTransparencyConsent,
+    PLKViewNameValueSelectAuthType,
+    PLKViewNameValueSelectBrand,
+    PLKViewNameValueNumbersSelectInstitution,
+    PLKViewNameValueSubmitPhone,
+    PLKViewNameValueVerifyPhone,
+    PLKViewNameValueSelectSavedInstitution,
+    PLKViewNameValueSelectSavedAccount,
     // Add new enum cases directly above this line to avoid breaking API changes
 };
 
@@ -493,6 +517,11 @@ static NSString *const kPLKDefaultErrorDomain = @"com.plaid.link";
 @property(nonatomic, readonly, nullable, copy) NSString *institutionID;
 @property(nonatomic, readonly, nullable, copy) NSString *institutionName;
 @property(nonatomic, readonly, nullable, copy) NSString *institutionSearchQuery;
+@property(nonatomic, readonly, nullable, copy) NSString *accountNumberMask;
+@property(nonatomic, readonly, nullable, copy) NSString *isUpdateMode;
+@property(nonatomic, readonly, nullable, copy) NSString *matchReason;
+@property(nonatomic, readonly, nullable, copy) NSString *routingNumber;
+@property(nonatomic, readonly, nullable, copy) NSString *selection;
 @property(nonatomic, readonly, copy) NSString *linkSessionID;
 @property(nonatomic, readonly) PLKMFAType mfaType;
 @property(nonatomic, readonly, nullable, copy) NSString *requestID;
@@ -645,6 +674,15 @@ options:(NSDictionary<NSString *, NSString *> *)options  DEPRECATED_MSG_ATTRIBUT
 - (void)openWithPresentationHandler:(PLKPresentationHandler)presentationHandler
                    dismissalHandler:(PLKDismissalHandler)dismissalHandler
                             options:(NSDictionary<NSString *, NSString *> *)options;
+
+- (void)createEmbeddedView:(PLKPresentationHandler)presentationHandler
+          dismissalHandler:(PLKDismissalHandler)dismissalHandler
+           errorCompletion:(void (^) (NSError *))onError
+         successCompletion:(void (^) (UIView *))onSuccess;
+
+- (void) createEmbeddedView:(UIViewController *)viewController
+            errorCompletion:(void (^) (NSError *))onError
+          successCompletion:(void (^) (UIView *))onSuccess;
 
 - (NSError * __nullable)continueFromRedirectUri:(NSURL *)redirectUri DEPRECATED_MSG_ATTRIBUTE("continueFromRedirectUri: is deprecated in favor continueWithRedirectUri:");
 - (void)continueWithRedirectUri:(NSURL *)redirectUri DEPRECATED_MSG_ATTRIBUTE("This function will be removed in LinkKit V5.0.0. This function should only be used if your app crashed or was killed during an out-of-process OAuth flow. Use `resumeAfterTermination(from redirectUri: URL)`");

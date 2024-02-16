@@ -110,19 +110,23 @@ extension ConnectedAccountsViewModel {
         let response = try await self.createPlaidTokenUseCase.execute(accountId: accountId)
         let plaidResponse = try await PlaidHelper.createLinkTokenConfiguration(token: response.linkToken, onCreated: { [weak self] configuration in
           guard let self else { return }
-          Task {
-            await MainActor.run {
-              self.plaidConfig = PlaidConfig(config: configuration)
-              self.isLoadingLinkExternalBank = false
-            }
+          Task { @MainActor in
+            self.plaidConfig = PlaidConfig(config: configuration)
           }
         })
-        let solidContact = try await self.plaidLinkUseCase.execute(
-          accountId: accountId,
-          token: plaidResponse.publicToken,
-          plaidAccountId: plaidResponse.plaidAccountId
-        )
-        addLinkedExternalBank(solidContact: solidContact)
+        
+        let solidContacts = try await plaidResponse.plaidAccountIds.asyncMap { plaidAccountId in
+          try await self.plaidLinkUseCase.execute(
+            accountId: accountId,
+            token: plaidResponse.publicToken,
+            plaidAccountId: plaidAccountId
+          )
+        }
+      
+        solidContacts.forEach { contact in
+          addLinkedExternalBank(solidContact: contact)
+        }
+        
         navigation = .addMoney
       } catch {
         handleLinkBankFailure(error: error)

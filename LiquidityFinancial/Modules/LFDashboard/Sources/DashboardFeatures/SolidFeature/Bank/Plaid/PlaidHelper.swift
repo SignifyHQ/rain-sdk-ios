@@ -3,7 +3,7 @@ import LFUtilities
 
 class PlaidHelper {
   
-  typealias PlaidResponse = (publicToken: String, plaidAccountId: String)
+  typealias PlaidResponse = (publicToken: String, plaidAccountIds: [String])
 
   static func createLinkTokenConfiguration(token: String, onCreated: ((LinkTokenConfiguration) -> Void)) async throws -> PlaidResponse {
     return try await withCheckedThrowingContinuation({ (continuation: CheckedContinuation<PlaidResponse, Error>) in
@@ -12,11 +12,12 @@ class PlaidHelper {
         token: token,
         onSuccess: { success in
           let publicToken = success.publicToken
-          guard let plaidAccountId = success.metadata.accounts.first?.id else {
+          let plaidAccountIds = success.metadata.accounts.compactMap({ $0.id })
+          guard plaidAccountIds.isNotEmpty else {
             continuation.resume(throwing: LiquidityError.invalidData)
             return
           }
-          continuation.resume(returning: (publicToken: publicToken, plaidAccountId: plaidAccountId))
+          continuation.resume(returning: (publicToken: publicToken, plaidAccountIds: plaidAccountIds))
         }
       )
       
