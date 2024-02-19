@@ -532,10 +532,12 @@ private extension HomeViewModel {
   func buildTabOption(with reward: SelectRewardTypeEntity) {
     var options: [TabOption] = []
     
+    if featureFlagManager.isFeatureFlagEnabled(.virtualCardPhrase1) {
+      options.append(.cards)
+    }
+    
     if featureFlagManager.isFeatureFlagEnabled(.donationAssets) {
       options.append(.cashAsset)
-    } else if featureFlagManager.isFeatureFlagEnabled(.virtualCardPhrase1) {
-      options.append(.cards)
     } else {
       options.append(.cash)
     }
