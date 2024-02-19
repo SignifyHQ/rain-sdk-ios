@@ -305,6 +305,8 @@
 "card.cardNumberCopied.title" = "Card number copied to clipboard";
 "card.expAndCVVCodeCopied.title" = "Expiry Date and CVV code copied to clipboard";
 "card.physical.name" = "%@Card";
+"card.noOpenCard.title" = "No open cards yet";
+"card.noClosedCard.title" = "No closed cards yet";
 
 "cards_detail.donations" = "Donations";
 "cards_detail.roundup.desc" = "Round up purchases";

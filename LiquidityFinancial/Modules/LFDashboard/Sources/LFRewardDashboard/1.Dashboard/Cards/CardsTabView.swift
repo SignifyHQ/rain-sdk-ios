@@ -109,28 +109,32 @@ private extension CardsTabView {
   func makeListCardView(filterredCards: [CardModel]) -> some View {
     ScrollView(showsIndicators: false) {
       VStack(spacing: 20) {
-        ForEach(filterredCards) { card in
-          Button {
-            viewModel.navigateToCardDetail(card: card, filterredCards: filterredCards)
-          } label: {
-            CardCellView(cardModel: card)
-              .padding(.horizontal, 30)
-          }
-          .overlay(alignment: .bottom) {
-            Rectangle()
-              .frame(maxWidth: .infinity)
-              .frame(height: 40)
-              .foregroundStyle(
-                LinearGradient(
-                  colors: [.clear, Colors.label.swiftUIColor.opacity(0.08)],
-                  startPoint: .top,
-                  endPoint: .bottom
+        if filterredCards.isEmpty {
+          noCardYetView
+        } else {
+          ForEach(filterredCards) { card in
+            Button {
+              viewModel.navigateToCardDetail(card: card, filterredCards: filterredCards)
+            } label: {
+              CardCellView(cardModel: card)
+                .padding(.horizontal, 30)
+            }
+            .overlay(alignment: .bottom) {
+              Rectangle()
+                .frame(maxWidth: .infinity)
+                .frame(height: 40)
+                .foregroundStyle(
+                  LinearGradient(
+                    colors: [.clear, Colors.label.swiftUIColor.opacity(0.08)],
+                    startPoint: .top,
+                    endPoint: .bottom
+                  )
                 )
-              )
-              .allowsHitTesting(false)
+                .allowsHitTesting(false)
+            }
           }
+          .padding(.bottom, 4)
         }
-        .padding(.bottom, 4)
         createNewCardButton
       }
       .padding(.top, 32)
@@ -138,6 +142,26 @@ private extension CardsTabView {
     }
     .refreshable {
       viewModel.refresh()
+    }
+  }
+  
+  var noCardYetView: some View {
+    VStack {
+      Spacer()
+        .frame(minHeight: UIScreen.main.bounds.size.height * 0.12)
+      HStack {
+        Spacer()
+        VStack(spacing: 8) {
+          GenImages.CommonImages.icSearch.swiftUIImage
+            .foregroundColor(Colors.label.swiftUIColor)
+          Text(viewModel.noCardTitle)
+            .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.ultraSmall.value))
+            .foregroundColor(Colors.label.swiftUIColor.opacity(0.75))
+        }
+        Spacer()
+      }
+      Spacer()
+        .frame(minHeight: UIScreen.main.bounds.size.height * 0.12)
     }
   }
   

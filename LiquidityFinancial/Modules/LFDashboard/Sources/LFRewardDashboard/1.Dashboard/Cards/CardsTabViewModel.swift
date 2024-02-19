@@ -41,6 +41,10 @@ final class CardsTabViewModel: ObservableObject {
     observeSelectedTab()
     observeDidCardsListChangeNotification()
   }
+  
+  var noCardTitle: String {
+    selectedTab == .open ? L10N.Common.Card.NoOpenCard.title : L10N.Common.Card.NoClosedCard.title
+  }
 }
 
 // MARK: - API Handler
