@@ -1,11 +1,11 @@
 import Foundation
 import LFLocalizable
 
-enum CardType {
+public enum CardType {
   case virtual
   case physical
   
-  init?(rawValue: String) {
+  public init?(rawValue: String) {
     switch rawValue {
     case "virtual":
       self = .virtual
@@ -16,7 +16,7 @@ enum CardType {
     }
   }
   
-  var title: String {
+  public var title: String {
     switch self {
     case .virtual:
       return L10N.Common.Card.Virtual.title

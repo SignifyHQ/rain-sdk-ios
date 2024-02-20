@@ -1,12 +1,12 @@
 import Foundation
   
-enum CardStatus: String {
+public enum CardStatus: String {
   case active
   case closed
   case disabled
   case unactivated
   
-  init?(rawValue: String) {
+  public init?(rawValue: String) {
     switch rawValue {
     case "active":
       self = .active

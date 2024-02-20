@@ -18,28 +18,23 @@ final class CardsTabViewModel: ObservableObject {
     SolidGetListCardUseCase(repository: solidCardRepository)
   }()
   
-  lazy var createVirtualCardUseCase: SolidCreateVirtualCardUseCaseProtocol = {
-    SolidCreateVirtualCardUseCase(repository: solidCardRepository)
-  }()
-  
-  @Published var isCreatingCard: Bool = false
-  @Published var isShowCreateNewCardButton: Bool = false
   @Published var toastMessage: String?
 
   @Published var selectedTab: CardListType = .open
   @Published var status: DataStatus<CardModel> = .idle
-  
+  @Published var cardsList: [CardModel] = []
+
   @Published var navigation: Navigation?
   
   let cardListType: [CardListType] = [.open, .closed]
   
-  private var cardsList: [CardModel] = []
   private var subscribers: Set<AnyCancellable> = []
 
   init() {
     apiFetchSolidCards()
     observeSelectedTab()
     observeDidCardsListChangeNotification()
+    observeDidCardCreateSuccessNotification()
   }
   
   var noCardTitle: String {
@@ -65,27 +60,6 @@ extension CardsTabViewModel {
       }
     }
   }
-  
-  func createNewCardAPI() {
-    // TODO: MinhNguyen - Will update the create new card logic in phase 2
-    Task {
-      isCreatingCard = true
-      
-      do {
-        let accounts = self.accountDataManager.fiatAccounts
-        guard let accountID = accounts.first?.id else {
-          return
-        }
-        _ = try await createVirtualCardUseCase.execute(accountID: accountID)
-        apiFetchSolidCards {
-          self.isCreatingCard = false
-        }
-      } catch {
-        isCreatingCard = false
-        toastMessage = error.userFriendlyMessage
-      }
-    }
-  }
 }
 
 // MARK: - View Handler
@@ -107,6 +81,16 @@ extension CardsTabViewModel {
     
     let viewModel = SolidListCardsViewModel(selectCardId: card.id)
     navigation = .cardListDetail(viewModel)
+  }
+  
+  func onClickedCreateNewCardButton() {
+    let cards = cardsList.filter({ $0.cardStatus != .closed && $0.cardType == .virtual })
+    
+    if cards.count < 5 {
+      navigation = .createCard
+    } else {
+      toastMessage = L10N.Common.Card.CreateCardLimit.toastMessage
+    }
   }
 }
 
@@ -135,16 +119,31 @@ private extension CardsTabViewModel {
       .store(in: &subscribers)
   }
   
+  func observeDidCardCreateSuccessNotification() {
+    NotificationCenter.default.publisher(for: .didCardCreateSuccess)
+      .sink { [weak self] notification in
+        guard let self, let card = notification.userInfo?[Constants.UserInfoKey.card] as? CardModel else {
+          return
+        }
+        didCardCreateSuccess(card: card)
+      }
+      .store(in: &subscribers)
+  }
+  
+  func didCardCreateSuccess(card: CardModel) {
+    let filterredCards = cardsList.filter({ $0.cardStatus != .closed })
+    
+    apiFetchSolidCards()
+    navigateToCardDetail(card: card, filterredCards: filterredCards)
+  }
+  
   func filterCardsList(with selectedTab: CardListType) {
     var cards = [CardModel]()
     switch selectedTab {
     case .open:
       cards = cardsList.filter({ $0.cardStatus != .closed })
-      // TODO: MinhNguyen - Will update the display logic in phase 2
-      isShowCreateNewCardButton = cards.isEmpty
     case .closed:
       cards = cardsList.filter({ $0.cardStatus == .closed })
-      isShowCreateNewCardButton = false
     }
     
     status = .success(cards)
@@ -173,5 +172,6 @@ extension CardsTabViewModel {
   enum Navigation {
     case cardDetail(CardDetailViewModel)
     case cardListDetail(SolidListCardsViewModel)
+    case createCard
   }
 }

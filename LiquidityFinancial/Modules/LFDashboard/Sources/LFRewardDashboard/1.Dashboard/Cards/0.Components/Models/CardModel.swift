@@ -3,19 +3,19 @@ import LFUtilities
 import LFStyleGuide
 import SwiftUI
 
-struct CardModel: Identifiable, Hashable {
-  let id: String
-  var cardName: String
-  let cardType: CardType
-  let cardholderName: String?
-  let expiryMonth: Int
-  let expiryYear: Int
-  let last4: String
-  let popularBackgroundColor: String?
-  let popularTextColor: String?
-  var cardStatus: CardStatus
+public struct CardModel: Identifiable, Hashable {
+  public let id: String
+  public var cardName: String
+  public let cardType: CardType
+  public let cardholderName: String?
+  public let expiryMonth: Int
+  public let expiryYear: Int
+  public let last4: String
+  public let popularBackgroundColor: String?
+  public let popularTextColor: String?
+  public var cardStatus: CardStatus
   
-  init(
+  public init(
     id: String,
     cardName: String?,
     cardType: CardType,
@@ -39,7 +39,7 @@ struct CardModel: Identifiable, Hashable {
     self.cardStatus = cardStatus
   }
   
-  static let `default` = CardModel(
+  public static let `default` = CardModel(
     id: .empty,
     cardName: .empty,
     cardType: .virtual,

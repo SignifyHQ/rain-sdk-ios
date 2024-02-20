@@ -307,6 +307,11 @@
 "card.physical.name" = "%@Card";
 "card.noOpenCard.title" = "No open cards yet";
 "card.noClosedCard.title" = "No closed cards yet";
+"card.createCard.title" = "CREATE CARD";
+"card.createCard.cardNameTitle" = "Card Name (optinal)";
+"card.createCard.cardNameDisclosure" = "Name your card to easily find it later";
+"card.createCard.cardNamePlaceholder" = "Enter CardName";
+"card.createCardLimit.toastMessage" = "You have reached the maximum of 5 open cards";
 
 "cards_detail.donations" = "Donations";
 "cards_detail.roundup.desc" = "Round up purchases";

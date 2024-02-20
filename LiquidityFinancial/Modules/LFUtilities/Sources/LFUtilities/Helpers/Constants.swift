@@ -305,6 +305,7 @@ public extension Constants {
 public extension Constants {
   enum UserInfoKey: String {
     case cards
+    case card
   }
 }
 

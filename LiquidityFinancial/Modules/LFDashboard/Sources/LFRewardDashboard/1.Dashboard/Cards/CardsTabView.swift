@@ -7,11 +7,20 @@ import SolidFeature
 public struct CardsTabView: View {
   @StateObject
   private var viewModel: CardsTabViewModel
+  @Binding var cardsList: [CardModel]
+  @Binding var isOpenCardsTab: Bool
+  
   private var title: String = ""
   
-  public init(title: String = "") {
+  public init(
+    cardsList: Binding<[CardModel]> = .constant([]),
+    isOpenCardsTab: Binding<Bool> = .constant(false),
+    title: String = ""
+  ) {
     let cardsTabViewModel = CardsTabViewModel()
     _viewModel = .init(wrappedValue: cardsTabViewModel)
+    _cardsList = cardsList
+    _isOpenCardsTab = isOpenCardsTab
     self.title = title
   }
   
@@ -35,7 +44,15 @@ public struct CardsTabView: View {
         CardDetailView(viewModel: viewModel)
       case let .cardListDetail(viewModel):
         SolidListCardsView(viewModel: viewModel)
+      case .createCard:
+        CreateCardView(viewModel: CreateCardViewModel())
       }
+    }
+    .onChange(of: viewModel.selectedTab) { _ in
+      isOpenCardsTab = viewModel.selectedTab == .open
+    }
+    .onChange(of: viewModel.cardsList) { cards in
+      cardsList = cards
     }
     .popup(item: $viewModel.toastMessage, style: .toast) {
       ToastView(toastMessage: $0)
@@ -167,15 +184,14 @@ private extension CardsTabView {
   
   @ViewBuilder
   var createNewCardButton: some View {
-    if viewModel.isShowCreateNewCardButton {
+    if viewModel.selectedTab == .open {
       FullSizeButton(
         title: L10N.Common.Card.CreateNewCard.title,
         isDisable: false,
-        isLoading: $viewModel.isCreatingCard,
         type: .secondary,
         icon: GenImages.CommonImages.icNewCard.swiftUIImage
       ) {
-        viewModel.createNewCardAPI()
+        viewModel.onClickedCreateNewCardButton()
       }
       .padding(.horizontal, 30)
     }

@@ -3,6 +3,7 @@ import Factory
 import AccountData
 import AccountDomain
 import LFUtilities
+import LFLocalizable
 import RewardData
 import RewardDomain
 import LFRewards
@@ -57,6 +58,7 @@ public final class HomeViewModel: ObservableObject {
   
   @Published var shouldShowBiometricsFallback: Bool = false
   @Published var isShowingRequiredActionPrompt: Bool = false
+  @Published var isOpenCardsTab: Bool = true
   @Published var isVerifyingBiometrics: Bool = false
   @Published var toastMessage: String?
   @Published var blurRadius: CGFloat = 0
@@ -66,12 +68,17 @@ public final class HomeViewModel: ObservableObject {
   @Published var navigation: Navigation?
   @Published var tabOptions: [TabOption] = [.cash, .rewards, .account]
   @Published var popupQueue: [ActionRequestPopup] = []
+  @Published var cardsList: [CardModel] = []
   @Published var popup: Popup?
   @Published var blockingPopup: BlockingPopup?
   
   private var isFristLoad: Bool = true
   private var hadPushToken: Bool = false
   private var subscribers: Set<AnyCancellable> = []
+  
+  var showCreateCardButton: Bool {
+    tabSelected == .cards && isOpenCardsTab
+  }
   
   var showGearButton: Bool {
     tabSelected == .rewards || tabSelected == .donation
@@ -136,6 +143,16 @@ extension HomeViewModel {
     }
     if !self.tabOptions.contains(tabSelected), let firstOption = self.tabOptions.first {
       tabSelected = firstOption
+    }
+  }
+  
+  func onClickedCreateNewCardButton() {
+    let cards = cardsList.filter({ $0.cardStatus != .closed && $0.cardType == .virtual })
+    
+    if cards.count < 5 {
+      navigation = .createCard
+    } else {
+      toastMessage = L10N.Common.Card.CreateCardLimit.toastMessage
     }
   }
 }
@@ -581,6 +598,7 @@ extension HomeViewModel {
     case profile
     case transactionDetail(id: String, accountId: String)
     case createPassword
+    case createCard
   }
   
   enum Popup {

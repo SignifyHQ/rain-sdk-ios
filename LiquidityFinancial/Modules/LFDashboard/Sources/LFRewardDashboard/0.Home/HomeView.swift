@@ -19,7 +19,7 @@ public struct HomeView: View {
   @Injected(\.analyticsService) var analyticsService
   
   // Ensure each TabOptionView is initialized only once
-  let cardsView = CardsTabView()
+  var cardsView = CardsTabView()
   let cashView = CashView(
     listCardViewModel: SolidListCardsViewModel()
   )
@@ -40,6 +40,7 @@ public struct HomeView: View {
   public init(viewModel: HomeViewModel, onChangeRoute: ((SolidOnboardingFlowCoordinator.Route) -> Void)? = nil) {
     _viewModel = .init(wrappedValue: viewModel)
     self.onChangeRoute = onChangeRoute
+    cardsView = CardsTabView(cardsList: $viewModel.cardsList, isOpenCardsTab: $viewModel.isOpenCardsTab)
   }
   
   public var body: some View {
@@ -53,12 +54,12 @@ public struct HomeView: View {
       viewModel.onAppear()
     }
     .toolbar {
-      ToolbarItem(placement: .navigationBarTrailing) {
-        trailingNavigationBarView
-          .blur(radius: viewModel.blurRadius)
-      }
       ToolbarItem(placement: .navigationBarLeading) {
         leadingNavigationBarView
+          .blur(radius: viewModel.blurRadius)
+      }
+      ToolbarItem(placement: .navigationBarTrailing) {
+        trailingNavigationBarView
           .blur(radius: viewModel.blurRadius)
       }
     }
@@ -82,6 +83,8 @@ public struct HomeView: View {
         )
       case .createPassword:
         CreatePasswordView(purpose: .createExistingUser) {}
+      case .createCard:
+        CreateCardView(viewModel: CreateCardViewModel())
       }
     }
     .popup(item: $viewModel.popup) { popup in
@@ -95,6 +98,9 @@ public struct HomeView: View {
       case .biometricNotEnrolled:
         biometricNotEnrolledPopup
       }
+    }
+    .popup(item: $viewModel.toastMessage, style: .toast) {
+      ToastView(toastMessage: $0)
     }
     .popup(item: $viewModel.blockingPopup, dismissMethods: []) { popup in
       switch popup {
@@ -204,6 +210,16 @@ private extension HomeView {
             .foregroundColor(Colors.label.swiftUIColor)
         }
       }
+      
+      if viewModel.showCreateCardButton {
+        Button {
+          viewModel.onClickedCreateNewCardButton()
+        } label: {
+          GenImages.CommonImages.icNewCard.swiftUIImage
+            .foregroundColor(Colors.label.swiftUIColor)
+        }
+      }
+      
       if viewModel.showGearButton {
         Button {
           viewModel.onClickedGearButton()
