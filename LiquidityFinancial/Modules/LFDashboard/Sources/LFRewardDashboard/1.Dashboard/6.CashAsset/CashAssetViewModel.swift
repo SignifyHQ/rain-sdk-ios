@@ -208,7 +208,7 @@ private extension CashAssetViewModel {
     entities.map {
       CardModel(
         id: $0.id,
-        cardName: ($0.name?.isEmpty ?? true) ? "Card \($0.panLast4)" : $0.name,
+        cardName: $0.name,
         cardType: CardType(rawValue: $0.type) ?? .virtual,
         cardholderName: nil,
         expiryMonth: Int($0.expirationMonth) ?? 0,

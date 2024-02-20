@@ -237,7 +237,7 @@ private extension CashAssetView {
         .cornerRadius(16)
       }
       
-      Text(card.cardName)
+      Text(card.displayCardName)
         .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.small.value))
     }
   }

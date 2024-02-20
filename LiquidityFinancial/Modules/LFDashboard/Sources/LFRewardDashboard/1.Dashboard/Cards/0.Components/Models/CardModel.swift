@@ -56,7 +56,7 @@ public struct CardModel: Identifiable, Hashable {
 // MARK: - Computed Properties
 extension CardModel {
   var displayCardName: String {
-    cardName.isEmpty ? cardType.title : cardName
+    cardName.isEmpty ? titleWithTheLastFourDigits : cardName
   }
   
   var isDisplayLogo: Bool {
@@ -71,7 +71,8 @@ extension CardModel {
   }
   
   var titleWithTheLastFourDigits: String {
-    "\(displayCardName.prefix(10)) **** \(last4)"
+    let cardName = cardName.isEmpty ? cardType.title : cardName
+    return "\(cardName.prefix(10)) **** \(last4)"
   }
   
   var backgroundColor: Color {

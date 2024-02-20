@@ -93,19 +93,10 @@ private extension VGSCardView {
   
   @ViewBuilder
   var cardBrandView: some View {
-    if card.isDisplayLogo {
-      // TODO: - We will handle merchantLocked logo later
-      GenImages.Images.icContrastLogo.swiftUIImage
-        .resizable()
-        .frame(40)
-        .scaledToFit()
-        .foregroundColor(card.textColor)
-    } else {
-      Text(card.displayCardName)
-        .foregroundColor(card.textColor)
-        .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.main.value))
-        .lineLimit(1)
-    }
+    Text(card.displayCardName)
+      .foregroundColor(card.textColor)
+      .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.main.value))
+      .lineLimit(1)
   }
   
   var sensitiveCardDataView: some View {
