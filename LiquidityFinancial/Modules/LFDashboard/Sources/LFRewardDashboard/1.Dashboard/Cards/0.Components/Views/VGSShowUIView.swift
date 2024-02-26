@@ -8,11 +8,18 @@ import VGSShowSDK
 
 class VGSShowUIView: UIView {
   private let labelColor: UIColor
-  private let copyAction: (() -> Void)
+  private let copyExpiryDateAction: (() -> Void)
+  private let copyCVVCodeAction: (() -> Void)
 
-  init(frame: CGRect, labelColor: UIColor, copyAction: @escaping () -> Void) {
+  init(
+    frame: CGRect,
+    labelColor: UIColor,
+    copyExpiryDateAction: @escaping () -> Void,
+    copyCVVCodeAction: @escaping () -> Void
+  ) {
     self.labelColor = labelColor
-    self.copyAction = copyAction
+    self.copyExpiryDateAction = copyExpiryDateAction
+    self.copyCVVCodeAction = copyCVVCodeAction
     super.init(frame: frame)
     
     addSubview(mainStackView)
@@ -97,7 +104,7 @@ class VGSShowUIView: UIView {
     label.textAlignment = .center
     
     // Add a tap gesture recognizer to the label
-    let tapGesture = UITapGestureRecognizer(target: self, action: #selector(copiedToClipboard))
+    let tapGesture = UITapGestureRecognizer(target: self, action: #selector(copiedCVVCodeToClipboard))
     label.isUserInteractionEnabled = true
     label.addGestureRecognizer(tapGesture)
     
@@ -118,7 +125,7 @@ class VGSShowUIView: UIView {
     label.textAlignment = .left
     
     // Add a tap gesture recognizer to the label
-    let tapGesture = UITapGestureRecognizer(target: self, action: #selector(copiedToClipboard))
+    let tapGesture = UITapGestureRecognizer(target: self, action: #selector(copiedExpiryDateToClipboard))
     label.isUserInteractionEnabled = true
     label.addGestureRecognizer(tapGesture)
     
@@ -184,8 +191,12 @@ extension VGSShowUIView {
     return Constants.Default.cardNumberTemplate.rawValue.replace(string: " ", replacement: spaceText)
   }
   
-  @objc func copiedToClipboard() {
-    copyAction()
+  @objc func copiedExpiryDateToClipboard() {
+    copyExpiryDateAction()
+  }
+  
+  @objc func copiedCVVCodeToClipboard() {
+    copyCVVCodeAction()
   }
 }
 

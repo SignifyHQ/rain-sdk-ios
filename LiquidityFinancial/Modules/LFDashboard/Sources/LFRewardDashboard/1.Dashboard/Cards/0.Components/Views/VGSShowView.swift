@@ -12,13 +12,15 @@ struct VGSShowView: UIViewRepresentable {
   let vgsShow: VGSShow
   let cardModel: CardModel
   let labelColor: Color
-  let copyAction: (() -> Void)
+  let copyExpiryDateAction: (() -> Void)
+  let copyCVVCodeAction: (() -> Void)
 
   func makeUIView(context _: UIViewRepresentableContext<VGSShowView>) -> VGSShowUIView {
     let vgsShowUIView = VGSShowUIView(
       frame: .zero,
       labelColor: labelColor.uiColor,
-      copyAction: copyAction
+      copyExpiryDateAction: copyExpiryDateAction,
+      copyCVVCodeAction: copyCVVCodeAction
     )
     vgsShowUIView.bindToShowVGS(vgsShow)
     return vgsShowUIView

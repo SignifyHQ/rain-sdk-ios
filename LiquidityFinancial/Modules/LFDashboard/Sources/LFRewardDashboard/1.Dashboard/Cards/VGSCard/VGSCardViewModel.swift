@@ -77,15 +77,18 @@ extension VGSCardViewModel {
       self?.copyMessage = nil
     }
     
-    let vgsText = getVGSLabelText(with: type.rawValue)
-    
     switch type {
     case .cardNumber:
-      pasteboard.string = vgsText
+      pasteboard.string = getVGSLabelText(with: type.rawValue)
       copyMessage = L10N.Common.Card.CardNumberCopied.title
-    case .expDateAndCVV:
-      pasteboard.string = "\(card.expirationDate) \(vgsText)"
-      copyMessage = L10N.Common.Card.ExpAndCVVCodeCopied.title
+    case .expDate:
+      if isShowExpDateAndCVVCode {
+        pasteboard.string = "\(card.expirationDate)"
+        copyMessage = L10N.Common.Card.ExpiryDateCopied.title
+      }
+    case .cvvCode:
+      pasteboard.string = getVGSLabelText(with: type.rawValue)
+      copyMessage = L10N.Common.Card.CvvCodeCopied.title
     }
     
     guard let animationTaskUnwrap = animationTask else { return }
@@ -107,7 +110,7 @@ extension VGSCardViewModel {
     switch type {
     case .cardNumber:
       isShowCardNumber = true
-    case .expDateAndCVV:
+    case .expDate, .cvvCode:
       isShowExpDateAndCVVCode = true
     }
   }
@@ -143,7 +146,7 @@ private extension VGSCardViewModel {
   }
   
   func getVGSLabelText(with index: Int) -> String {
-    guard index <= vgsShow.subscribedLabels.count else {
+    guard index < vgsShow.subscribedLabels.count else {
       return .empty
     }
     let text = vgsShow.subscribedLabels[index] as VGSLabel
@@ -212,7 +215,8 @@ private extension VGSCardViewModel {
 extension VGSCardViewModel {
   enum VGSLabelType: Int {
     case cardNumber
-    case expDateAndCVV
+    case cvvCode
+    case expDate
   }
   
   enum Popup {

@@ -106,8 +106,11 @@ private extension VGSCardView {
       vgsShow: viewModel.vgsShow,
       cardModel: card,
       labelColor: card.textColor,
-      copyAction: {
-        viewModel.copyToClipboard(type: .expDateAndCVV, card: card)
+      copyExpiryDateAction: {
+        viewModel.copyToClipboard(type: .expDate, card: card)
+      },
+      copyCVVCodeAction: {
+        viewModel.copyToClipboard(type: .cvvCode, card: card)
       }
     )
     .frame(height: 76)
@@ -160,11 +163,11 @@ private extension VGSCardView {
     HStack(alignment: .top, spacing: 90) {
       Text(Constants.Default.expirationDateAsteriskPlaceholder.rawValue)
         .onTapGesture {
-          viewModel.onClickAsteriskSymbol(type: .expDateAndCVV, card: card)
+          viewModel.onClickAsteriskSymbol(type: .expDate, card: card)
         }
       Text(String(repeating: Constants.Default.asterisk.rawValue, count: 3))
         .onTapGesture {
-          viewModel.onClickAsteriskSymbol(type: .expDateAndCVV, card: card)
+          viewModel.onClickAsteriskSymbol(type: .cvvCode, card: card)
         }
     }
     .font(Fonts.medium.swiftUIFont(size: Constants.FontSize.medium.value))
