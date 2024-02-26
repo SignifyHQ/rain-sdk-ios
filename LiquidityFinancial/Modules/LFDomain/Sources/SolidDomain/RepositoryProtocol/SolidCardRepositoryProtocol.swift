@@ -12,7 +12,7 @@ public protocol SolidCardRepositoryProtocol {
     parameters: SolidApplePayParametersEntity
   ) async throws -> SolidDigitalWalletEntity
   
-  func createVirtualCard(accountID: String) async throws -> SolidCardEntity
+  func createVirtualCard(accountID: String, parameters: SolidCreateVirtualCardParametersEntity) async throws -> SolidCardEntity
   func updateRoundUpDonation(
     cardID: String,
     parameters: SolidRoundUpDonationParametersEntity

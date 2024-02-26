@@ -67,9 +67,9 @@ extension LFCoreNetwork: SolidCardAPIProtocol where R == SolidCardRoute {
     )
   }
   
-  public func createVirtualCard(accountID: String) async throws -> APISolidCard {
+  public func createVirtualCard(accountID: String, parameters: APISolidCreateVirtualCardParameters) async throws -> APISolidCard {
     try await request(
-      SolidCardRoute.createVirtualCard(accountID: accountID),
+      SolidCardRoute.createVirtualCard(accountID: accountID, parameters: parameters),
       target: APISolidCard.self,
       failure: LFErrorObject.self,
       decoder: .apiDecoder

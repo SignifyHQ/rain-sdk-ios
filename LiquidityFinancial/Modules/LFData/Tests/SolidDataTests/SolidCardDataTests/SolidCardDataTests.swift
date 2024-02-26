@@ -31,6 +31,7 @@ final class SolidCardDataTests: XCTestCase {
     nonceSignature: "mock_nonceSignature",
     nonce: "mock_nonce"
   )
+  let mockCreateVirtualCardParameters = APISolidCreateVirtualCardParameters(name: "mock_name")
 
   // Defining mock success response
   let mockCardResponse = APISolidCard(

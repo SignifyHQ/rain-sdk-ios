@@ -37,8 +37,14 @@ public class SolidCardRepository: SolidCardRepositoryProtocol {
     return try await cardAPI.createDigitalWalletLink(cardID: cardID, parameters: parameters)
   }
   
-  public func createVirtualCard(accountID: String) async throws -> SolidCardEntity {
-    try await cardAPI.createVirtualCard(accountID: accountID)
+  public func createVirtualCard(
+    accountID: String,
+    parameters: SolidCreateVirtualCardParametersEntity
+  ) async throws -> SolidCardEntity {
+    guard let parameters = parameters as? APISolidCreateVirtualCardParameters else {
+      throw "Can't map paramater :\(parameters)"
+    }
+    return try await cardAPI.createVirtualCard(accountID: accountID, parameters: parameters)
   }
   
   public func updateRoundUpDonation(

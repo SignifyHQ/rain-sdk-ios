@@ -36,24 +36,14 @@ extension CreateCardViewModel {
       isCreatingCard = true
       
       do {
-        // TODO: MinhNguyen - Call the new create card API after
         let accounts = self.accountDataManager.fiatAccounts
         guard let accountID = accounts.first?.id else {
           return
         }
-        let card = try await createVirtualCardUseCase.execute(accountID: accountID)
-        let cardModel = CardModel(
-          id: card.id,
-          cardName: card.name,
-          cardType: CardType(rawValue: card.type) ?? .virtual,
-          cardholderName: nil,
-          expiryMonth: Int(card.expirationMonth) ?? 0,
-          expiryYear: Int(card.expirationYear) ?? 0,
-          last4: card.panLast4,
-          popularBackgroundColor: nil, // TODO: MinhNguyen - Update in phase 3
-          popularTextColor: nil, // TODO: MinhNguyen - Update in phase 3
-          cardStatus: CardStatus(rawValue: card.cardStatus) ?? .unactivated
-        )
+        
+        let parameters = APISolidCreateVirtualCardParameters(name: cardName)
+        let card = try await createVirtualCardUseCase.execute(accountID: accountID, parameters: parameters)
+        let cardModel = convertToCardModel(entity: card)
         
         postDidCardCreateSuccessNotification(card: cardModel)
       } catch {
@@ -116,6 +106,21 @@ private extension CreateCardViewModel {
       name: .didCardCreateSuccess,
       object: nil,
       userInfo: [Constants.UserInfoKey.card: card]
+    )
+  }
+  
+  func convertToCardModel(entity: SolidCardEntity) -> CardModel {
+    CardModel(
+      id: entity.id,
+      cardName: entity.name,
+      cardType: CardType(rawValue: entity.type) ?? .virtual,
+      cardholderName: nil,
+      expiryMonth: Int(entity.expirationMonth) ?? 0,
+      expiryYear: Int(entity.expirationYear) ?? 0,
+      last4: entity.panLast4,
+      popularBackgroundColor: nil, // TODO: MinhNguyen - Update in phase 3
+      popularTextColor: nil, // TODO: MinhNguyen - Update in phase 3
+      cardStatus: CardStatus(rawValue: entity.cardStatus) ?? .unactivated
     )
   }
 }

@@ -316,6 +316,8 @@ public extension Constants {
   
   static let withdrawalMFAThreshold = 1_000.0
   
+  static let maxVirtualCard = 2
+  
   static let hiddenPassword = "*********"
   
   static var supportedStates: [String] = ["NY", "New York", "HI", "Hawaii"]

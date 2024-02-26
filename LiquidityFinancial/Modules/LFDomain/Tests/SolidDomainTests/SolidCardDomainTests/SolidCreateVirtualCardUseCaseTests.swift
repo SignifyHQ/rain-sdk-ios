@@ -33,12 +33,13 @@ extension SolidCreateVirtualCardUseCaseTests {
     let mockSuccessResult = MockSolidCardEntity()
     mockSuccessResult.id = "mock_cardID"
     // And a pre-set API return success value
-    self.repository.createVirtualCardAccountIDReturnValue = mockSuccessResult
+    self.repository.createVirtualCardAccountIDParametersReturnValue = mockSuccessResult
     // And a set of mock parameters
     let mockAccountID = "mockAccountID"
+    let mockCreateVirtualCardParameters = MockSolidCreateVirtualCardParametersEntity()
     // When calling execute function on the use case
     await expect {
-      try await self.useCase.execute(accountID: mockAccountID).id
+      try await self.useCase.execute(accountID: mockAccountID, parameters: mockCreateVirtualCardParameters).id
     }
     // Then response should be the one we expect
     .to(equal(mockSuccessResult.id))
@@ -49,13 +50,14 @@ extension SolidCreateVirtualCardUseCaseTests {
     // Given the expected mock error
     let expectedError = TestError.fail("mock_error")
     // And a pre-set API throwable error
-    self.repository.createVirtualCardAccountIDThrowableError = expectedError
+    self.repository.createVirtualCardAccountIDParametersThrowableError = expectedError
     // And a set of mock parameters
     // And a set of mock parameters
     let mockAccountID = "mockAccountID"
+    let mockCreateVirtualCardParameters = MockSolidCreateVirtualCardParametersEntity()
     // When calling execute function on the use case
     await expect {
-      try await self.useCase.execute(accountID: mockAccountID)
+      try await self.useCase.execute(accountID: mockAccountID, parameters: mockCreateVirtualCardParameters)
     }
     // Then the error is the one we expected
     .to(

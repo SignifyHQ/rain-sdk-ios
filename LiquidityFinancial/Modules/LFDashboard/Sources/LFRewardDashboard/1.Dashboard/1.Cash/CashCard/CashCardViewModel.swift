@@ -32,7 +32,8 @@ extension CashCardViewModel {
         guard let accountID = accounts.first?.id else {
           return
         }
-        _ = try await createCardUseCase.execute(accountID: accountID)
+        let parameters = APISolidCreateVirtualCardParameters(name: nil)
+        _ = try await createCardUseCase.execute(accountID: accountID, parameters: parameters)
         NotificationCenter.default.post(name: .refreshListCards, object: nil)
         onSuccess()
       } catch {

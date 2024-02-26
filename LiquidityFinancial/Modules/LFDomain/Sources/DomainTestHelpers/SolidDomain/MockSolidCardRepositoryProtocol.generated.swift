@@ -143,27 +143,27 @@ public class MockSolidCardRepositoryProtocol: SolidCardRepositoryProtocol {
 
     //MARK: - createVirtualCard
 
-    public var createVirtualCardAccountIDThrowableError: Error?
-    public var createVirtualCardAccountIDCallsCount = 0
-    public var createVirtualCardAccountIDCalled: Bool {
-        return createVirtualCardAccountIDCallsCount > 0
+    public var createVirtualCardAccountIDParametersThrowableError: Error?
+    public var createVirtualCardAccountIDParametersCallsCount = 0
+    public var createVirtualCardAccountIDParametersCalled: Bool {
+        return createVirtualCardAccountIDParametersCallsCount > 0
     }
-    public var createVirtualCardAccountIDReceivedAccountID: String?
-    public var createVirtualCardAccountIDReceivedInvocations: [String] = []
-    public var createVirtualCardAccountIDReturnValue: SolidCardEntity!
-    public var createVirtualCardAccountIDClosure: ((String) async throws -> SolidCardEntity)?
+    public var createVirtualCardAccountIDParametersReceivedArguments: (accountID: String, parameters: SolidCreateVirtualCardParametersEntity)?
+    public var createVirtualCardAccountIDParametersReceivedInvocations: [(accountID: String, parameters: SolidCreateVirtualCardParametersEntity)] = []
+    public var createVirtualCardAccountIDParametersReturnValue: SolidCardEntity!
+    public var createVirtualCardAccountIDParametersClosure: ((String, SolidCreateVirtualCardParametersEntity) async throws -> SolidCardEntity)?
 
-    public func createVirtualCard(accountID: String) async throws -> SolidCardEntity {
-        if let error = createVirtualCardAccountIDThrowableError {
+    public func createVirtualCard(accountID: String, parameters: SolidCreateVirtualCardParametersEntity) async throws -> SolidCardEntity {
+        if let error = createVirtualCardAccountIDParametersThrowableError {
             throw error
         }
-        createVirtualCardAccountIDCallsCount += 1
-        createVirtualCardAccountIDReceivedAccountID = accountID
-        createVirtualCardAccountIDReceivedInvocations.append(accountID)
-        if let createVirtualCardAccountIDClosure = createVirtualCardAccountIDClosure {
-            return try await createVirtualCardAccountIDClosure(accountID)
+        createVirtualCardAccountIDParametersCallsCount += 1
+        createVirtualCardAccountIDParametersReceivedArguments = (accountID: accountID, parameters: parameters)
+        createVirtualCardAccountIDParametersReceivedInvocations.append((accountID: accountID, parameters: parameters))
+        if let createVirtualCardAccountIDParametersClosure = createVirtualCardAccountIDParametersClosure {
+            return try await createVirtualCardAccountIDParametersClosure(accountID, parameters)
         } else {
-            return createVirtualCardAccountIDReturnValue
+            return createVirtualCardAccountIDParametersReturnValue
         }
     }
 

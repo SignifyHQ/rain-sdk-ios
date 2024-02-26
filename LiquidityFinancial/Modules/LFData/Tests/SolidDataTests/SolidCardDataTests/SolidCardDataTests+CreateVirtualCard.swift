@@ -17,7 +17,10 @@ extension SolidCardDataTests {
     
     // When calling createVirtualCard function on the repository and it should return a success response
     await expect {
-      try await self.repository.createVirtualCard(accountID: self.mockExistAccountID).id
+      try await self.repository.createVirtualCard(
+        accountID: self.mockExistAccountID,
+        parameters: self.mockCreateVirtualCardParameters
+      ).id
     }
     // Then the status received matches our expectation
     .to(equal(self.mockCardResponse.id))
@@ -26,11 +29,14 @@ extension SolidCardDataTests {
   /// Test createVirtualCard functionality when it encounters an API error
   func test_createVirtualCard_shouldThrowError() async {
     // Given a mock error which will be thrown
-    self.api.createVirtualCardAccountIDThrowableError = expectedThrowableError
+    self.api.createVirtualCardAccountIDParametersThrowableError = expectedThrowableError
     
     // When calling createVirtualCard function on the repository
     await expect {
-      try await self.repository.createVirtualCard(accountID: self.mockExistAccountID)
+      try await self.repository.createVirtualCard(
+        accountID: self.mockExistAccountID,
+        parameters: self.mockCreateVirtualCardParameters
+      )
     }
     // Then an error should be thrown
     .to(
@@ -47,7 +53,10 @@ extension SolidCardDataTests {
     configureAPIBehaviour()
     // When calling createVirtualCard function on the repository
     await expect {
-      try await self.repository.createVirtualCard(accountID: self.mockNotExistAccountID)
+      try await self.repository.createVirtualCard(
+        accountID: self.mockNotExistAccountID,
+        parameters: self.mockCreateVirtualCardParameters
+      )
     }
     // Then an error should be thrown
     .to(
@@ -63,7 +72,7 @@ extension SolidCardDataTests {
 private extension SolidCardDataTests {
   /// Function to configure the API behaviour which should be consistent across all tests
   func configureAPIBehaviour() {
-    api.createVirtualCardAccountIDClosure = { accountID async throws in
+    api.createVirtualCardAccountIDParametersClosure = { accountID, _ async throws in
       
       if self.mockExistAccountIDs.contains(accountID) {
         // Return a success mock response

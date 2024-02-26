@@ -86,7 +86,7 @@ extension CardsTabViewModel {
   func onClickedCreateNewCardButton() {
     let cards = cardsList.filter({ $0.cardStatus != .closed && $0.cardType == .virtual })
     
-    if cards.count < 5 {
+    if cards.count < Constants.maxVirtualCard {
       navigation = .createCard
     } else {
       toastMessage = L10N.Common.Card.CreateCardLimit.toastMessage
@@ -131,10 +131,10 @@ private extension CardsTabViewModel {
   }
   
   func didCardCreateSuccess(card: CardModel) {
-    let filterredCards = cardsList.filter({ $0.cardStatus != .closed })
-    
-    apiFetchSolidCards()
-    navigateToCardDetail(card: card, filterredCards: filterredCards)
+    apiFetchSolidCards {
+      let filterredCards = self.cardsList.filter({ $0.cardStatus != .closed })
+      self.navigateToCardDetail(card: card, filterredCards: filterredCards)
+    }
   }
   
   func filterCardsList(with selectedTab: CardListType) {

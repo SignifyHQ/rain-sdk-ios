@@ -7,7 +7,10 @@ public class SolidCreateVirtualCardUseCase: SolidCreateVirtualCardUseCaseProtoco
     self.repository = repository
   }
   
-  public func execute(accountID: String) async throws -> SolidCardEntity {
-    try await self.repository.createVirtualCard(accountID: accountID)
+  public func execute(
+    accountID: String,
+    parameters: SolidCreateVirtualCardParametersEntity
+  ) async throws -> SolidCardEntity {
+    try await self.repository.createVirtualCard(accountID: accountID, parameters: parameters)
   }
 }

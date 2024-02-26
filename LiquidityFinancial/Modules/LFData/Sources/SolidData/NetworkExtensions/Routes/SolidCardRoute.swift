@@ -11,7 +11,7 @@ public enum SolidCardRoute {
   case closeCard(cardID: String)
   case createVGSShowToken(cardID: String)
   case createDigitalWalletLink(cardID: String, parameters: APISolidDigitalWalletParameters)
-  case createVirtualCard(accountID: String)
+  case createVirtualCard(accountID: String, parameters: APISolidCreateVirtualCardParameters)
   case createCardPinToken(cardID: String)
   case activeCard(cardID: String, parameters: APISolidActiveCardParameters)
   case getCardLimits(cardID: String)
@@ -33,7 +33,7 @@ extension SolidCardRoute: LFRoute {
       return "/v1/solid/cards/\(cardID)/show-token"
     case let .createDigitalWalletLink(cardID, _):
       return "/v1/solid/cards/\(cardID)/digital-wallet-provision"
-    case let .createVirtualCard(accountID):
+    case let .createVirtualCard(accountID, _):
       return "/v1/solid/cards/virtual-card/\(accountID)"
     case let .updateRoundUpDonation(cardID, _):
       return "/v1/solid/cards/\(cardID)/round-up-config"
@@ -75,13 +75,15 @@ extension SolidCardRoute: LFRoute {
   
   public var parameters: Parameters? {
     switch self {
-    case .closeCard, .createVGSShowToken, .createVirtualCard, .createCardPinToken, .getCardLimits:
+    case .closeCard, .createVGSShowToken, .createCardPinToken, .getCardLimits:
       return nil
     case let .updateCardStatus(_, parameters):
       return parameters.encoded()
     case let .updateRoundUpDonation(_, parameters):
       return parameters.encoded()
     case let .createDigitalWalletLink(_, parameters):
+      return parameters.encoded()
+    case let .createVirtualCard(_, parameters):
       return parameters.encoded()
     case let .activeCard(_, parameters):
       return parameters.encoded()
@@ -98,9 +100,14 @@ extension SolidCardRoute: LFRoute {
   
   public var parameterEncoding: ParameterEncoding? {
     switch self {
-    case .closeCard, .createVGSShowToken, .createVirtualCard, .createCardPinToken, .getCardLimits:
+    case .closeCard, .createVGSShowToken, .createCardPinToken, .getCardLimits:
       return nil
-    case .updateCardStatus, .createDigitalWalletLink, .updateRoundUpDonation, .activeCard, .updateCardName:
+    case .updateCardStatus,
+        .createDigitalWalletLink,
+        .updateRoundUpDonation,
+        .activeCard,
+        .updateCardName,
+        .createVirtualCard:
       return .json
     case .listCard, .getCardTransactions:
       return .url
