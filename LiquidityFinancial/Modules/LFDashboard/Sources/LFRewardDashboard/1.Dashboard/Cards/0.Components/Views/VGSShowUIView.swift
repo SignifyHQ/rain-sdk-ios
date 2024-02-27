@@ -144,15 +144,15 @@ extension VGSShowUIView {
     vgsShow.subscribe(cvvVGSLabel)
   }
 
-  func bindToShowData(cardData: CardModel, isShowCardNumber: Bool, isShowExpDateAndCVVCode: Bool) {
+  func bindToShowData(cardData: CardModel, isShowCardNumber: Bool, isShowExpDate: Bool, isShowCVVCode: Bool) {
     topSpacer.isHidden = isShowCardNumber
     cardNumberVGSLabel.isHidden = !isShowCardNumber
     cardNumberVGSLabel.isSecureText = !isShowCardNumber
     
-    cvvVGSLabel.isHidden = !isShowExpDateAndCVVCode
-    cvvVGSLabel.isSecureText = !isShowExpDateAndCVVCode
+    cvvVGSLabel.isHidden = !isShowCVVCode
+    cvvVGSLabel.isSecureText = !isShowCVVCode
     
-    expirationDateVGSLabel.text = isShowExpDateAndCVVCode
+    expirationDateVGSLabel.text = isShowExpDate
     ? cardData.expirationDate
     : .empty
     

@@ -102,7 +102,8 @@ private extension VGSCardView {
   var sensitiveCardDataView: some View {
     VGSShowView(
       isShowCardNumber: $viewModel.isShowCardNumber,
-      isShowExpDateAndCVVCode: $viewModel.isShowExpDateAndCVVCode,
+      isShowExpDate: $viewModel.isShowExpDate,
+      isShowCVVCode: $viewModel.isShowCVVCode,
       vgsShow: viewModel.vgsShow,
       cardModel: card,
       labelColor: card.textColor,
@@ -162,17 +163,20 @@ private extension VGSCardView {
   var secureExpDateAndCVVCode: some View {
     HStack(alignment: .top, spacing: 90) {
       Text(Constants.Default.expirationDateAsteriskPlaceholder.rawValue)
+        .frame(40)
         .onTapGesture {
           viewModel.onClickAsteriskSymbol(type: .expDate, card: card)
         }
+        .opacity(viewModel.isShowExpDate ? 0 : 1)
       Text(String(repeating: Constants.Default.asterisk.rawValue, count: 3))
+        .frame(40)
         .onTapGesture {
           viewModel.onClickAsteriskSymbol(type: .cvvCode, card: card)
         }
+        .opacity(viewModel.isShowCVVCode ? 0 : 1)
     }
     .font(Fonts.medium.swiftUIFont(size: Constants.FontSize.medium.value))
     .foregroundColor(card.textColor.opacity(0.75))
-    .opacity(viewModel.isShowExpDateAndCVVCode ? 0 : 1)
   }
   
   @ViewBuilder

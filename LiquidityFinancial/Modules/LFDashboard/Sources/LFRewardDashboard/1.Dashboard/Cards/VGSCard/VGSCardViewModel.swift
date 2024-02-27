@@ -25,7 +25,9 @@ final class VGSCardViewModel: ObservableObject {
   
   @Published var isCardAvailable = false
   @Published var isShowCardNumber = false
-  @Published var isShowExpDateAndCVVCode = false
+  @Published var isShowExpDate = false
+  @Published var isShowCVVCode = false
+
   @Published var copyMessage: String?
   @Published var toastMessage: String?
   @Published var animationTask: DispatchWorkItem?
@@ -68,7 +70,8 @@ private extension VGSCardViewModel {
 extension VGSCardViewModel {
   func hideSensitiveData() {
     isShowCardNumber = false
-    isShowExpDateAndCVVCode = false
+    isShowExpDate = false
+    isShowCVVCode = false
   }
   
   func copyToClipboard(type: VGSLabelType, card: CardModel) {
@@ -82,7 +85,7 @@ extension VGSCardViewModel {
       pasteboard.string = getVGSLabelText(with: type.rawValue)
       copyMessage = L10N.Common.Card.CardNumberCopied.title
     case .expDate:
-      if isShowExpDateAndCVVCode {
+      if isShowExpDate {
         pasteboard.string = "\(card.expirationDate)"
         copyMessage = L10N.Common.Card.ExpiryDateCopied.title
       }
@@ -97,21 +100,24 @@ extension VGSCardViewModel {
   
   func onClickAsteriskSymbol(type: VGSLabelType, card: CardModel) {
     let isEnableAuthenticateWithBiometrics = UserDefaults.isBiometricUsageEnabled && featureFlagManager.isFeatureFlagEnabled(.passwordLogin)
-    guard isEnableAuthenticateWithBiometrics else {
+    let isAuthenticatedWithBiometrics = isShowCardNumber || isShowExpDate || isShowCVVCode
+    
+    if isEnableAuthenticateWithBiometrics, !isAuthenticatedWithBiometrics {
+      authenticateWithBiometrics(type: type, card: card)
+    } else {
       showSensitiveCardData(type: type)
       copyToClipboard(type: type, card: card)
-      return
     }
-    
-    authenticateWithBiometrics(type: type, card: card)
   }
   
   func showSensitiveCardData(type: VGSLabelType) {
     switch type {
     case .cardNumber:
       isShowCardNumber = true
-    case .expDate, .cvvCode:
-      isShowExpDateAndCVVCode = true
+    case .expDate:
+      isShowExpDate = true
+    case .cvvCode:
+      isShowCVVCode = true
     }
   }
   

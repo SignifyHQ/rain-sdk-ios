@@ -7,7 +7,8 @@ import VGSShowSDK
 /// Wrapper for UIKit view with VGSShow views.
 struct VGSShowView: UIViewRepresentable {
   @Binding var isShowCardNumber: Bool
-  @Binding var isShowExpDateAndCVVCode: Bool
+  @Binding var isShowExpDate: Bool
+  @Binding var isShowCVVCode: Bool
   
   let vgsShow: VGSShow
   let cardModel: CardModel
@@ -30,7 +31,8 @@ struct VGSShowView: UIViewRepresentable {
     uiView.bindToShowData(
       cardData: cardModel,
       isShowCardNumber: isShowCardNumber,
-      isShowExpDateAndCVVCode: isShowExpDateAndCVVCode
+      isShowExpDate: isShowExpDate,
+      isShowCVVCode: isShowCVVCode
     )
   }
 }
