@@ -41,6 +41,7 @@ extension CreateCardViewModel {
           return
         }
         
+        let cardName = cardName.trimWhitespacesAndNewlines().isEmpty ? nil : cardName.removeRedundantWhiteSpace()
         let parameters = APISolidCreateVirtualCardParameters(name: cardName)
         let card = try await createVirtualCardUseCase.execute(accountID: accountID, parameters: parameters)
         let cardModel = convertToCardModel(entity: card)

@@ -84,7 +84,7 @@ extension SolidCardRoute: LFRoute {
     case let .createDigitalWalletLink(_, parameters):
       return parameters.encoded()
     case let .createVirtualCard(_, parameters):
-      return parameters.encoded()
+      return parameters.name != nil ? parameters.encoded() : nil
     case let .activeCard(_, parameters):
       return parameters.encoded()
     case let .listCard(isContainClosedCard):

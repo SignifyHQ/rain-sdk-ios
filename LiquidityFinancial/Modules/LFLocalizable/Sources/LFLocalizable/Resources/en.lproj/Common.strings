@@ -303,7 +303,7 @@
 "card.exp.title" = "Exp";
 "card.cvv.title" = "CVV";
 "card.cardNumberCopied.title" = "Card number copied to clipboard";
-"card.expiryDateCopied.title" = "Expiry Date copied to clipboard";
+"card.expiryDateCopied.title" = "Expiration date copied to clipboard";
 "card.cvvCodeCopied.title" = "CVV code copied to clipboard";
 "card.physical.name" = "%@Card";
 "card.noOpenCard.title" = "No open cards yet";
