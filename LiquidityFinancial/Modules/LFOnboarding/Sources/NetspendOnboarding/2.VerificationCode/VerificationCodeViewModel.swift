@@ -71,7 +71,12 @@ extension VerificationCodeViewModel {
       if let kind = identityVerificationKind {
         let viewModel = IdentityVerificationCodeViewModel(phoneNumber: formatPhoneNumber, otpCode: otpCode, kind: kind)
         let view = IdentityVerificationCodeView(viewModel: viewModel)
-        navigation = .identityVerificationCode(AnyView(view))
+        let delayTime = environmentService.networkEnvironment == .productionTest ? 0.5 : 0
+        
+        // Make sure we don't navigate immediately when the parent view has just appeared
+        DispatchQueue.main.asyncAfter(deadline: .now() + delayTime) {
+          self.navigation = .identityVerificationCode(AnyView(view))
+        }
       }
     }
   }
@@ -140,7 +145,6 @@ extension VerificationCodeViewModel {
         log.debug(code ?? "performGetTwilioMessagesIfNeccessary not found")
         guard let code else { return }
         self.otpCode = code
-        self.handleAfterGetOTP()
       }
       .store(in: &cancellables)
   }

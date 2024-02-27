@@ -126,7 +126,6 @@ extension VerificationCodeViewModel {
         log.debug("OTPInternal :\(code ?? "performGetTwilioMessagesIfNeccessary not found")")
         guard let code else { return }
         self.otpCode = code
-        self.handleAfterGetOTP()
       }
       .store(in: &cancellables)
   }
@@ -195,7 +194,7 @@ private extension VerificationCodeViewModel {
     }
     let view = EnterTOTPCodeView(purpose: purpose, isFlowPresented: .constant(false))
     
-    navigation = .identityVerificationCode(AnyView(view))
+    navigateToIdentityVerificationCodeScreen(view: AnyView(view))
   }
   
   func handlePasswordVerification() {
@@ -209,13 +208,13 @@ private extension VerificationCodeViewModel {
     }
     let view = EnterPasswordView(purpose: purpose, isFlowPresented: .constant(false))
     
-    navigation = .identityVerificationCode(AnyView(view))
+    navigateToIdentityVerificationCodeScreen(view: AnyView(view))
   }
   
   func handleIdentifyVerification(kind: IdentityVerificationCodeKind) {
     let viewModel = IdentityVerificationCodeViewModel(phoneNumber: formatPhoneNumber, otpCode: otpCode, kind: kind)
     let view = IdentityVerificationCodeView(viewModel: viewModel)
-    navigation = .identityVerificationCode(AnyView(view))
+    navigateToIdentityVerificationCodeScreen(view: AnyView(view))
   }
   
   func handleLoginSuccess(onCompletion: (() -> Void)? = nil) {
@@ -240,6 +239,15 @@ private extension VerificationCodeViewModel {
         analyticsService.track(event: AnalyticsEvent(name: .phoneVerificationError))
         solidOnboardingFlowCoordinator.forcedLogout()
       }
+    }
+  }
+  
+  func navigateToIdentityVerificationCodeScreen(view: AnyView) {
+    let delayTime = environmentService.networkEnvironment == .productionTest ? 0.5 : 0
+
+    // Make sure we don't navigate immediately when the parent view has just appeared
+    DispatchQueue.main.asyncAfter(deadline: .now() + delayTime) {
+      self.navigation = .identityVerificationCode(view)
     }
   }
 }
