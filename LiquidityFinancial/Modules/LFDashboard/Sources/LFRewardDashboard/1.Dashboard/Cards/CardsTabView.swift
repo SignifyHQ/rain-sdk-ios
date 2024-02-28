@@ -126,9 +126,7 @@ private extension CardsTabView {
   func makeListCardView(filterredCards: [CardModel]) -> some View {
     ScrollView(showsIndicators: false) {
       VStack(spacing: 20) {
-        if filterredCards.isEmpty {
-          noCardYetView
-        } else {
+        if !filterredCards.isEmpty {
           ForEach(filterredCards) { card in
             Button {
               viewModel.navigateToCardDetail(card: card, filterredCards: filterredCards)
@@ -153,6 +151,9 @@ private extension CardsTabView {
           .padding(.bottom, 4)
         }
         createNewCardButton
+        if filterredCards.isEmpty {
+          noCardYetView
+        }
       }
       .padding(.top, 32)
       .padding(.bottom, 16)

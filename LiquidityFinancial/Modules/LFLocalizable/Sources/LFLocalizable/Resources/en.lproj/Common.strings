@@ -306,12 +306,12 @@
 "card.expiryDateCopied.title" = "Expiration date copied to clipboard";
 "card.cvvCodeCopied.title" = "CVV code copied to clipboard";
 "card.physical.name" = "%@Card";
-"card.noOpenCard.title" = "No open cards yet";
-"card.noClosedCard.title" = "No closed cards yet";
+"card.noOpenCard.title" = "No open cards";
+"card.noClosedCard.title" = "No closed cards";
 "card.createCard.title" = "CREATE CARD";
 "card.createCard.cardNameTitle" = "Card Name (optinal)";
 "card.createCard.cardNameDisclosure" = "Name your card to easily find it later";
-"card.createCard.cardNamePlaceholder" = "Enter CardName";
+"card.createCard.cardNamePlaceholder" = "Enter card name";
 "card.createCardLimit.toastMessage" = "You have reached the maximum of 2 open cards";
 
 "cards_detail.donations" = "Donations";
