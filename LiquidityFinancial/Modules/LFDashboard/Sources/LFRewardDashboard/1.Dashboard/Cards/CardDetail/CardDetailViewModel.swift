@@ -112,6 +112,7 @@ extension CardDetailViewModel {
         let isSuccess = try await closeCardUseCase.execute(cardID: currentCard.id)
         if isSuccess {
           updateCardStatus(status: .closed, id: currentCard.id)
+          toastMessage = L10N.Common.Card.CardClosed.title
         }
       } catch {
         log.error(error.userFriendlyMessage)

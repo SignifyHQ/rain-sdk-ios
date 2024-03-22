@@ -291,6 +291,7 @@
 "card.cardNumber.title" = "Card Number";
 "card.cardPause.title" = "Card Paused";
 "card.cardResume.title" = "Card Resumed";
+"card.cardClosed.title" = "Card Closed";
 "card.createNewCard.title" = "Create new card";
 "card.latestTransaction.title" = "Latest Transactions";
 "card.closeCardConfirmation.title" = "CLOSE CARD";
