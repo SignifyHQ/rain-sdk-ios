@@ -15,12 +15,10 @@ public enum NetworkEnvironment: String, Hashable {
   }
   
   public static var defaultEnvironment: NetworkEnvironment {
-    // Temporarily use .productionTest as default env for demo purposes
-    .productionTest
-//#if DEBUG
-//    return .productionTest
-//#else
-//    return .productionLive
-//#endif
+#if DEBUG
+    return .productionTest
+#else
+    return .productionLive
+#endif
   }
 }

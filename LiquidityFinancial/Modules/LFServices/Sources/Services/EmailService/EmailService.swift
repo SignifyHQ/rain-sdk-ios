@@ -11,21 +11,21 @@ public class EmailService: CustomerSupportServiceProtocol {
   var toEmail: String {
     switch LFUtilities.target {
     case .CauseCard:
-      "help@getcausecard.com"
+      return "help@getcausecard.com"
     case .PrideCard:
-      "help@paywithpride.com"
+      return "help@paywithpride.com"
     case .DogeCard:
-      ""
+      return "help@dogecard.com"
     case .PawsCard:
-      ""
+      return ""
     case .Avalanche:
-      ""
+      return ""
     case .Cardano:
-      ""
+      return ""
     case .DogeCardNobank:
-      ""
+      return "help@dogecard.com"
     case .none:
-      ""
+      return ""
     }
   }
   
@@ -40,21 +40,21 @@ public class EmailService: CustomerSupportServiceProtocol {
   var subject: String {
     switch LFUtilities.target {
     case .CauseCard:
-      "CauseCard Support Request - \(currentDate)"
+      return "CauseCard Support Request - \(currentDate)"
     case .PrideCard:
-      "PrideCard Support Request - \(currentDate)"
+      return "PrideCard Support Request - \(currentDate)"
     case .DogeCard:
-      ""
+      return "DogeCard Support Request - \(currentDate)"
     case .PawsCard:
-      ""
+      return ""
     case .Avalanche:
-      ""
+      return ""
     case .Cardano:
-      ""
+      return ""
     case .DogeCardNobank:
-      ""
+      return "DogeCard Support Request - \(currentDate)"
     case .none:
-      ""
+      return ""
     }
   }
   

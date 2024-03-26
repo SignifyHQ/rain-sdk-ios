@@ -6,7 +6,7 @@ extension Container {
   
   public var customerSupportService: Factory<CustomerSupportServiceProtocol> {
     self {
-      IntercomService()
+      EmailService()
     }.singleton
   }
   
