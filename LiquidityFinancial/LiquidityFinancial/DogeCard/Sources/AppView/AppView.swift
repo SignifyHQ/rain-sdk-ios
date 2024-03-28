@@ -1,6 +1,6 @@
 import SwiftUI
 import Factory
-import NetspendOnboarding
+import RainOnboarding
 import LFStyleGuide
 import LFUtilities
 import LFNetspendDashboard
@@ -19,15 +19,15 @@ struct AppView: View {
     Group {
       switch route {
       case.onboardingPhone:
-        NSOnboardingContentView(onRoute: .phone)
+        RainOnboardingContentView(onRoute: .phone)
       case .onboarding:
-        NSOnboardingContentView()
+        RainOnboardingContentView()
       case .dashboard:
         HomeView { route in
           viewModel.setDumpOutRoute(route)
         }
       case .dumpOut(let route):
-        NSOnboardingContentView(onRoute: route)
+        RainOnboardingContentView(onRoute: route)
       }
     }
     .embedInNavigation()

@@ -7,7 +7,7 @@ import OnboardingDomain
 import OnboardingData
 import Factory
 import Services
-import OnboardingComponents
+import BaseOnboarding
 import EnvironmentService
 
 @MainActor

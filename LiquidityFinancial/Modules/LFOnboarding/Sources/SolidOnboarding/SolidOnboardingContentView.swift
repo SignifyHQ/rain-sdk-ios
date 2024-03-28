@@ -3,7 +3,7 @@ import Factory
 import LFUtilities
 import LFStyleGuide
 import AccountData
-import OnboardingComponents
+import BaseOnboarding
 import LFRewards
 import LFLocalizable
 import EnvironmentService

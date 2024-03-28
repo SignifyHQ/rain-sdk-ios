@@ -1,5 +1,5 @@
 import SwiftUI
-import NetspendOnboarding
+import RainOnboarding
 import LFLocalizable
 import LFUtilities
 import LFStyleGuide
@@ -15,17 +15,6 @@ public struct FundCardView: View {
   
   public var body: some View {
     content
-      .navigationLink(item: $viewModel.navigation) { item in
-        switch item {
-        case .agreement(let data):
-          AgreementView(
-            viewModel: AgreementViewModel(fundingAgreement: data),
-            onNext: {
-            }, onDisappear: { isAcceptAgreement in
-              self.viewModel.handleFundingAcceptAgreement(isAccept: isAcceptAgreement)
-            }, shouldFetchCurrentState: false)
-        }
-      }
       .background(Colors.background.swiftUIColor)
   }
 }

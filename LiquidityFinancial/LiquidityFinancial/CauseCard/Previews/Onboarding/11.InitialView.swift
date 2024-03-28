@@ -1,6 +1,6 @@
 import SwiftUI
 import SolidOnboarding
-import OnboardingComponents
+import BaseOnboarding
 
 // MARK: Preview View
 #Preview {

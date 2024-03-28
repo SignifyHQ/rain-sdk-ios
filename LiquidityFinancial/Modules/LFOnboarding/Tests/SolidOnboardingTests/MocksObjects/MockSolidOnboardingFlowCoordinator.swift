@@ -24,7 +24,7 @@ class MockSolidOnboardingFlowCoordinator: SolidOnboardingFlowCoordinatorProtocol
     apiFetchCurrentStateCalled = true
   }
   
-  func handlerOnboardingStep() async throws {
+  func handleOnboardingStep() async throws {
     if let error = handlerOnboardingStepThrowError {
       throw error
     }
@@ -35,7 +35,7 @@ class MockSolidOnboardingFlowCoordinator: SolidOnboardingFlowCoordinatorProtocol
     fetchUserReviewStatusCalled = true
   }
   
-  func forcedLogout() {
+  func forceLogout() {
     forcedLogoutCalled = true
   }
 }

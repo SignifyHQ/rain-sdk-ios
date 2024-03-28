@@ -1,7 +1,7 @@
 import Combine
 import Factory
 import LFUtilities
-import NetspendOnboarding
+import RainOnboarding
 import SwiftUI
 import AuthorizationManager
 import LFFeatureFlags
@@ -19,12 +19,12 @@ class AppCoordinator: AppCoordinatorProtocol {
     case onboarding
     case onboardingPhone
     case dashboard
-    case dumpOut(NSOnboardingFlowCoordinator.Route)
+    case dumpOut(RainOnboardingFlowCoordinator.Route)
   }
   
   @LazyInjected(\.authorizationManager)
   private var authorizationManager
-  @Injected(\.nsOnboardingFlowCoordinator)
+  @Injected(\.rainOnboardingFlowCoordinator)
   private var onboardingFlowCoordinator
   @LazyInjected(\.customerSupportService)
   private var customerSupportService
@@ -59,7 +59,7 @@ class AppCoordinator: AppCoordinatorProtocol {
       .store(in: &subscribers)
   }
   
-  private func setOnboardingRoute(_ route: NSOnboardingFlowCoordinator.Route) {
+  private func setOnboardingRoute(_ route: RainOnboardingFlowCoordinator.Route) {
     if route == .dashboard {
       fetchFeatureFlags()
       set(route: .dashboard)

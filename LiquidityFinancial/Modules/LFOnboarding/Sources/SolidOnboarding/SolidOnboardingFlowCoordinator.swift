@@ -12,7 +12,7 @@ import RewardDomain
 import LFStyleGuide
 import LFLocalizable
 import Services
-import OnboardingComponents
+import BaseOnboarding
 import LFFeatureFlags
 import LFAuthentication
 
@@ -29,9 +29,9 @@ public protocol SolidOnboardingFlowCoordinatorProtocol {
   func routeUser()
   func set(route: SolidOnboardingFlowCoordinator.Route)
   func apiFetchCurrentState() async
-  func handlerOnboardingStep() async throws
+  func handleOnboardingStep() async throws
   func fetchUserReviewStatus(needLoadMigration: Bool) async throws
-  func forcedLogout()
+  func forceLogout()
 }
 
 public class SolidOnboardingFlowCoordinator: SolidOnboardingFlowCoordinatorProtocol {
@@ -119,7 +119,7 @@ public class SolidOnboardingFlowCoordinator: SolidOnboardingFlowCoordinatorProto
         await apiFetchCurrentState()
       } else {
         log.info("<<<<<<<<<<<<<< User change phone login to device >>>>>>>>>>>>>>>")
-        forcedLogout()
+        forceLogout()
       }
 #if DEBUG
       let diff = CFAbsoluteTimeGetCurrent() - start
@@ -171,11 +171,11 @@ public class SolidOnboardingFlowCoordinator: SolidOnboardingFlowCoordinatorProto
     } catch {
       log.error(error.userFriendlyMessage)
       
-      forcedLogout()
+      forceLogout()
     }
   }
   
-  public func handlerOnboardingStep() async throws {
+  public func handleOnboardingStep() async throws {
     let onboardingStep = try await solidOnboardingRepository.getOnboardingStep()
     
     if onboardingStep.processSteps.isEmpty {
@@ -196,7 +196,7 @@ public class SolidOnboardingFlowCoordinator: SolidOnboardingFlowCoordinatorProto
     }
   }
   
-  public func forcedLogout() {
+  public func forceLogout() {
     clearUserData()
     set(route: .phone)
   }
@@ -247,7 +247,7 @@ private extension SolidOnboardingFlowCoordinator {
   
   func apiFetchAndUpdateForStart() async throws {
     if accountDataManager.userCompleteOnboarding == false {
-      try await handlerOnboardingStep()
+      try await handleOnboardingStep()
     } else {
       try await fetchUserReviewStatus()
     }

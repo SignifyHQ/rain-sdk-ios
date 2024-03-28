@@ -6,7 +6,7 @@ import AccountData
 import AccountDomain
 import OnboardingDomain
 import OnboardingData
-import OnboardingComponents
+import BaseOnboarding
 import NetSpendData
 
 @MainActor

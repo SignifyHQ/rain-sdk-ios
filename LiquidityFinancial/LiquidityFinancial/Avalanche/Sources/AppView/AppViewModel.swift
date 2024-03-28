@@ -3,7 +3,7 @@ import UIKit
 import Combine
 import LFUtilities
 import Factory
-import NetspendOnboarding
+import RainOnboarding
 import AccountService
 import BankService
 import NetSpendData
@@ -45,7 +45,7 @@ class AppViewModel: ObservableObject {
     }
   }
   
-  func setDumpOutRoute(_ route: NSOnboardingFlowCoordinator.Route) {
+  func setDumpOutRoute(_ route: RainOnboardingFlowCoordinator.Route) {
     setRoute(.dumpOut(route))
   }
   

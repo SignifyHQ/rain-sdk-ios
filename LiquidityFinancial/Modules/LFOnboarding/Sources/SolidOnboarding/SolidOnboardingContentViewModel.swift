@@ -5,7 +5,7 @@ import Factory
 import OnboardingData
 import LFUtilities
 import AuthorizationManager
-import OnboardingComponents
+import BaseOnboarding
 
 class SolidOnboardingContentViewModel: ObservableObject {
   @LazyInjected(\.solidOnboardingFlowCoordinator) var solidOnboardingFlowCoordinator

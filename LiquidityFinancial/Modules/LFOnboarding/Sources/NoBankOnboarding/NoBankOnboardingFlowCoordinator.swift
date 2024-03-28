@@ -11,7 +11,7 @@ import OnboardingDomain
 import LFStyleGuide
 import LFLocalizable
 import Services
-import OnboardingComponents
+import BaseOnboarding
 import ZerohashDomain
 import ZerohashData
 import LFFeatureFlags

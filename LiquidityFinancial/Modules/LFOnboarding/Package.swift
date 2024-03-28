@@ -8,10 +8,10 @@ let package = Package(
   platforms: [.iOS(.v15)],
   products: [
     .library(
-      name: "NetspendOnboarding", targets: ["NetspendOnboarding"]
+      name: "BaseOnboarding", targets: ["BaseOnboarding"]
     ),
     .library(
-      name: "OnboardingComponents", targets: ["OnboardingComponents"]
+      name: "RainOnboarding", targets: ["RainOnboarding"]
     ),
     .library(
       name: "SolidOnboarding", targets: ["SolidOnboarding"]
@@ -41,23 +41,24 @@ let package = Package(
   ],
   targets: [
     .target(
-      name: "OnboardingComponents",
+      name: "BaseOnboarding",
       dependencies: [
         "LFUtilities", "LFStyleGuide", "LFLocalizable", "Factory", "iPhoneNumberField", "LFFeatureFlags",
         .product(name: "NetSpendData", package: "LFData"),
         .product(name: "OnboardingDomain", package: "LFDomain"),
         .product(name: "AccountDomain", package: "LFDomain"),
         .product(name: "OnboardingData", package: "LFData"),
-        .product(name: "AccountData", package: "LFData")
+        .product(name: "AccountData", package: "LFData"),
+        .product(name: "LFAuthentication", package: "LFAuthentication")
       ],
       resources: [
         .process("ZResources")
       ]
     ),
     .target(
-      name: "NetspendOnboarding",
+      name: "RainOnboarding",
       dependencies: [
-        "OnboardingComponents", "SwiftSoup", "LFFeatureFlags",
+        "BaseOnboarding", "SwiftSoup", "LFFeatureFlags",
         .product(name: "OnboardingData", package: "LFData"),
         .product(name: "AccountData", package: "LFData"),
         .product(name: "DevicesData", package: "LFData"),
@@ -73,7 +74,7 @@ let package = Package(
     .target(
       name: "NoBankOnboarding",
       dependencies: [
-        "OnboardingComponents", "SwiftSoup", "LFFeatureFlags",
+        "BaseOnboarding", "SwiftSoup", "LFFeatureFlags",
         .product(name: "OnboardingData", package: "LFData"),
         .product(name: "AccountData", package: "LFData"),
         .product(name: "DevicesData", package: "LFData"),
@@ -89,7 +90,7 @@ let package = Package(
     .target(
       name: "SolidOnboarding",
       dependencies: [
-        "LFUtilities", "LFStyleGuide", "LFLocalizable", "Factory", "LFRewards", "OnboardingComponents", "LFFeatureFlags",
+        "LFUtilities", "LFStyleGuide", "LFLocalizable", "Factory", "LFRewards", "BaseOnboarding", "LFFeatureFlags",
         .product(name: "SolidData", package: "LFData"),
         .product(name: "RewardData", package: "LFData"),
         .product(name: "RewardDomain", package: "LFDomain"),

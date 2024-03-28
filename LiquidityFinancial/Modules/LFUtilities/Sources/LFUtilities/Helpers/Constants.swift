@@ -212,6 +212,7 @@ public extension Constants {
     case accountCreationInProgress = "crypto_account_creation_in_progress"
     case duplicatedWalletNickname = "duplicated_wallet_nickname"
     case cardNameConflict = "card_name_conflict"
+    case questionsNotAvailable = "identity_verification_questions_not_available"
     
     public var value: String {
       rawValue
@@ -393,4 +394,12 @@ public extension Constants {
   static var smartyStreetsId = "105107630856945597"
   static var smartyStreetsLicense = "us-autocomplete-pro-cloud"
   
+}
+
+// MARK: - TwilioConfig
+public extension Constants {
+  enum TwilioConfig {
+    static public let accountSID: String = "AC68f2ed096d5c2536322ec7096bbac0ff"
+    static public let authToken: String = "1d91cb73db18174e52b775ab9e25fbf2"
+  }
 }

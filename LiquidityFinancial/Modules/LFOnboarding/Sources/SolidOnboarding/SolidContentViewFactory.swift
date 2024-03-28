@@ -3,7 +3,7 @@ import LFUtilities
 import LFStyleGuide
 import LFLocalizable
 import SwiftUI
-import OnboardingComponents
+import BaseOnboarding
 import Factory
 import AccountDomain
 import LFRewards
@@ -109,7 +109,13 @@ private extension SolidContentViewFactory {
   
   @MainActor
   var accountLockedView: some View {
-    AccountLockedView(viewModel: AccountLockedViewModel())
+    AccountLockedView(
+      viewModel: AccountLockedViewModel(
+        setRouteToPhoneNumber: { [weak self] in
+          self?.flowCoordinator.set(route: .phone)
+        }
+      )
+    )
   }
   
   @MainActor
@@ -121,16 +127,6 @@ private extension SolidContentViewFactory {
   var enterSSNView: some View {
     EnterSSNView(
       viewModel: EnterSSNViewModel(isVerifySSN: true),
-      onEnterAddress: { [weak self] in
-        guard let self else { return }
-        self.baseOnboardingNavigation.enterSSNDestinationView = .address(AnyView(self.addressView))
-      })
-  }
-  
-  @MainActor
-  var enterPassportView: some View {
-    EnterPassportView(
-      viewModel: EnterPassportViewModel(),
       onEnterAddress: { [weak self] in
         guard let self else { return }
         self.baseOnboardingNavigation.enterSSNDestinationView = .address(AnyView(self.addressView))
@@ -160,7 +156,16 @@ private extension SolidContentViewFactory {
   
   @MainActor
   var phoneNumberView: some View {
-    PhoneNumberView()
+    PhoneNumberView(
+      viewModel: PhoneNumberViewModel(
+        handleOnboardingStep: flowCoordinator.handleOnboardingStep,
+        forceLogout: flowCoordinator.forceLogout,
+        setRouteToAccountLocked: { [weak self] in
+          self?.flowCoordinator.set(route: .accountLocked)
+        },
+        setRouteToPopTimeUp: nil
+      )
+    )
   }
   
   @MainActor

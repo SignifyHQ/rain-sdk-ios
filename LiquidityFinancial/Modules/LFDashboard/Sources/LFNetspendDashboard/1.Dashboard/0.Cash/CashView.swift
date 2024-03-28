@@ -3,7 +3,7 @@ import LFUtilities
 import LFStyleGuide
 import LFLocalizable
 import NetspendFeature
-import NetspendOnboarding
+import RainOnboarding
 import Services
 import GeneralFeature
 
@@ -56,14 +56,6 @@ struct CashView: View {
           kind: transaction.detailType,
           isPopToRoot: false
         )
-      case .agreement(let data):
-        AgreementView(
-          viewModel: AgreementViewModel(fundingAgreement: data),
-          onNext: {
-            //self.viewModel.addFundsViewModel.fundingAgreementData.send(nil)
-          }, onDisappear: { isAcceptAgreement in
-            self.viewModel.handleFundingAcceptAgreement(isAccept: isAcceptAgreement)
-          }, shouldFetchCurrentState: false)
       }
     }
     .fullScreenCover(item: $viewModel.fullScreen) { item in

@@ -64,8 +64,6 @@ class AccountViewModel: ObservableObject {
     
     subscribeACHInformation()
     
-    subscribeFundingAgreementData()
-    
     subscribeLinkedAccounts()
     
     checkNotificationsStatus()
@@ -111,15 +109,6 @@ class AccountViewModel: ObservableObject {
     }
     .store(in: &cancellable)
   }
-  
-  func subscribeFundingAgreementData() {
-    addFundsViewModel.fundingAgreementData
-      .receive(on: DispatchQueue.main)
-      .sink { [weak self] agreementData in
-        self?.openFundingAgreement(data: agreementData)
-      }
-      .store(in: &cancellable)
-  }
 }
 
   // MARK: - View Helpers
@@ -161,14 +150,6 @@ extension AccountViewModel {
   
   func openTaxes() {
     navigation = .taxes
-  }
-  
-  func openFundingAgreement(data: APIAgreementData?) {
-    if data == nil {
-      navigation = nil
-    } else {
-      navigation = .agreement(data)
-    }
   }
   
   func openLegal() {
@@ -250,7 +231,6 @@ extension AccountViewModel {
     case taxes
     case wallet(asset: AssetModel)
     case rewards
-    case agreement(APIAgreementData?)
   }
   
   enum Sheet: Hashable, Identifiable {

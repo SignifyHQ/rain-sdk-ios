@@ -5,7 +5,7 @@ import LFStyleGuide
 import LFUtilities
 import Combine
 import GeneralFeature
-import NetspendOnboarding
+import RainOnboarding
 import Factory
 import NetspendFeature
 import LFAuthentication
@@ -24,9 +24,9 @@ public struct HomeView: View {
   let assetsView: AssetsView
   let accountsView: AccountsView
   
-  var onChangeRoute: ((NSOnboardingFlowCoordinator.Route) -> Void)?
+  var onChangeRoute: ((RainOnboardingFlowCoordinator.Route) -> Void)?
   
-  public init(onChangeRoute: ((NSOnboardingFlowCoordinator.Route) -> Void)? = nil) {
+  public init(onChangeRoute: ((RainOnboardingFlowCoordinator.Route) -> Void)? = nil) {
     let dashboardRepository = DashboardRepository()
     
     cashView = CashView(

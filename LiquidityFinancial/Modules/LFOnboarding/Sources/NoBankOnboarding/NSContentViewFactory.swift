@@ -3,7 +3,7 @@ import LFUtilities
 import LFStyleGuide
 import LFLocalizable
 import SwiftUI
-import OnboardingComponents
+import BaseOnboarding
 import Factory
 import AccountDomain
 import EnvironmentService

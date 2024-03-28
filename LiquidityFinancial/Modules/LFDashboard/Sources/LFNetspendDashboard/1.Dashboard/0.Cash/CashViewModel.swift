@@ -87,7 +87,6 @@ final class CashViewModel: ObservableObject {
       .store(in: &cancellable)
     
     subscribeLinkedSources()
-    handleFundingAgreementData()
     handleEventReloadTransaction()
   }
   
@@ -163,28 +162,11 @@ final class CashViewModel: ObservableObject {
 
 // MARK: - View Helpers
 extension CashViewModel {
-  func handleFundingAgreementData() {
-    addFundsViewModel.fundingAgreementData
-      .receive(on: DispatchQueue.main)
-      .sink { [weak self] agreementData in
-        self?.openFundingAgreement(data: agreementData)
-      }
-      .store(in: &cancellable)
-  }
-  
   func handleFundingAcceptAgreement(isAccept: Bool) {
     if isAccept {
       addFundsViewModel.goNextNavigation()
     } else {
       addFundsViewModel.stopAction()
-    }
-  }
-  
-  func openFundingAgreement(data: APIAgreementData?) {
-    if data == nil {
-      navigation = nil
-    } else {
-      navigation = .agreement(data)
     }
   }
   
@@ -259,7 +241,6 @@ extension CashViewModel {
     case transactions
     case transactionDetail(TransactionModel)
     case moveMoney(kind: MoveMoneyAccountViewModel.Kind)
-    case agreement(APIAgreementData?)
   }
   
   enum FullScreen: Identifiable {

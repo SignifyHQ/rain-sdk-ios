@@ -1,9 +1,17 @@
 import SwiftUI
 import SolidOnboarding
 import LFUtilities
+import BaseOnboarding
 
 // MARK: Preview View
 #Preview {
-  PhoneNumberView()
-    .embedInNavigation()
+  PhoneNumberView(
+    viewModel: PhoneNumberViewModel(
+      handleOnboardingStep: nil,
+      forceLogout: nil,
+      setRouteToAccountLocked: nil,
+      setRouteToPopTimeUp: nil
+    )
+  )
+  .embedInNavigation()
 }

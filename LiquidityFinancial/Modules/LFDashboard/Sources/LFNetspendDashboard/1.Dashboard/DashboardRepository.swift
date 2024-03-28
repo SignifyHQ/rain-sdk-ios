@@ -8,7 +8,7 @@ import NetSpendData
 import NetspendDomain
 import DevicesData
 import DevicesDomain
-import NetspendOnboarding
+import RainOnboarding
 import Services
 import AccountService
 import UIKit

@@ -1,6 +1,6 @@
 import SwiftUI
 import SolidOnboarding
-import OnboardingComponents
+import BaseOnboarding
 import LFUtilities
 import AccountData
 import AccountDomain

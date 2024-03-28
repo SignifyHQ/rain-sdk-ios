@@ -98,7 +98,7 @@ let package = Package(
         .product(name: "AccountDomain", package: "LFDomain"),
         .product(name: "Services", package: "LFServices"),
         .product(name: "AuthorizationManager", package: "LFNetwork"),
-        .product(name: "NetspendOnboarding", package: "LFOnboarding"),
+        .product(name: "RainOnboarding", package: "LFOnboarding"),
         .product(name: "BiometricsManager", package: "LFAuthentication")
       ],
       path: "Sources/DashboardFeatures/NetspendFeature"
@@ -116,7 +116,7 @@ let package = Package(
         .product(name: "Services", package: "LFServices"),
         .product(name: "BiometricsManager", package: "LFAuthentication"),
         .product(name: "LFAuthentication", package: "LFAuthentication"),
-        .product(name: "NetspendOnboarding", package: "LFOnboarding")
+        .product(name: "RainOnboarding", package: "LFOnboarding")
       ]
     ),
     .target(

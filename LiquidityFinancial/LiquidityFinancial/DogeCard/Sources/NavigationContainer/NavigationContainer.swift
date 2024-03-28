@@ -3,7 +3,7 @@ import GeneralFeature
 import LFUtilities
 import Factory
 import SwiftUI
-import NetspendOnboarding
+import RainOnboarding
 import NetspendFeature
 
 final class NavigationContainer {

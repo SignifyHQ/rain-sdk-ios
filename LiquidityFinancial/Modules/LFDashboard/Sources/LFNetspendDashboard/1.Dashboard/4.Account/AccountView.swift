@@ -4,7 +4,7 @@ import LFStyleGuide
 import LFLocalizable
 import Services
 import NetspendSdk
-import NetspendOnboarding
+import RainOnboarding
 import AccountData
 import AccountDomain
 import Factory
@@ -58,14 +58,6 @@ struct AccountsView: View {
           CurrentRewardView()
         case .wallet(asset: let asset):
           ReceiveCryptoView(assetModel: asset)
-        case .agreement(let data):
-          AgreementView(
-            viewModel: AgreementViewModel(fundingAgreement: data),
-            onNext: {
-              //self.viewModel.addFundsViewModel.fundingAgreementData.send(nil)
-            }, onDisappear: { isAcceptAgreement in
-              self.viewModel.handleFundingAcceptAgreement(isAccept: isAcceptAgreement)
-            }, shouldFetchCurrentState: false)
         }
       }
       .sheet(item: $viewModel.sheet, content: { sheet in
