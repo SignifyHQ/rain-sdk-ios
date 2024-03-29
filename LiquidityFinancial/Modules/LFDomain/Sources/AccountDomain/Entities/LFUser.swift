@@ -2,7 +2,7 @@ import Foundation
 import NetspendDomain
 
 // sourcery: AutoMockable
-public enum AccountReviewStatusEnum: String {
+public enum AccountReviewStatus: String {
   case approved
   case rejected
   case inreview
@@ -30,8 +30,8 @@ public protocol LFUser {
 }
 
 public extension LFUser {
-  var accountReviewStatusEnum: AccountReviewStatusEnum? {
+  var accountReviewStatusEnum: AccountReviewStatus? {
     guard let value = accountReviewStatus else { return nil }
-    return AccountReviewStatusEnum(rawValue: value)
+    return AccountReviewStatus(rawValue: value)
   }
 }

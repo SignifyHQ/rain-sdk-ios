@@ -35,6 +35,9 @@ let package = Package(
       name: "SolidDomain",
       targets: ["SolidDomain"]),
     .library(
+      name: "RainDomain",
+      targets: ["RainDomain"]),
+    .library(
       name: "DomainTestHelpers",
       targets: ["DomainTestHelpers"])
   ],
@@ -86,9 +89,15 @@ let package = Package(
       ]
     ),
     .target(
+      name: "RainDomain",
+      dependencies: [
+        "AccountDomain"
+      ]
+    ),
+    .target(
       name: "DomainTestHelpers",
       dependencies: [
-        "AccountDomain", "CryptoChartDomain", "DevicesDomain", "ZerohashDomain", "OnboardingDomain", "SolidDomain", "NetspendDomain"
+        "AccountDomain", "CryptoChartDomain", "DevicesDomain", "ZerohashDomain", "OnboardingDomain", "SolidDomain", "NetspendDomain", "RainDomain"
       ]
     ),
     .testTarget(

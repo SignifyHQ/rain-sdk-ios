@@ -399,7 +399,33 @@ public extension Constants {
 // MARK: - TwilioConfig
 public extension Constants {
   enum TwilioConfig {
-    static public let accountSID: String = "AC68f2ed096d5c2536322ec7096bbac0ff"
-    static public let authToken: String = "1d91cb73db18174e52b775ab9e25fbf2"
+    public static let accountSID = "AC68f2ed096d5c2536322ec7096bbac0ff"
+    public static let authToken = "1d91cb73db18174e52b775ab9e25fbf2"
+  }
+}
+
+// MARK: - Debug Log
+public extension Constants {
+  enum DebugLog {
+    case setRoute(fromRoute: String, toRoute: String)
+    case switchPhone
+    case takeTime(time: CFAbsoluteTime)
+    case missingAccountStatus(status: String)
+    case unauthorized
+    
+    public var value: String {
+      switch self {
+      case let .setRoute(fromRoute, toRoute):
+        "OnboardingFlowCoordinator will route to: \(toRoute), from current route: \(fromRoute)"
+      case .switchPhone:
+        "The user switches from phone login to device login."
+      case let .takeTime(time):
+        "Operation took \(time) seconds"
+      case let .missingAccountStatus(status):
+        "Account status information is missing: \(status)"
+      case .unauthorized:
+        "<<<<<<<<<<<<<< 401 Unauthorized: Clear user data and perform logout. >>>>>>>>>>>>>>>"
+      }
+    }
   }
 }

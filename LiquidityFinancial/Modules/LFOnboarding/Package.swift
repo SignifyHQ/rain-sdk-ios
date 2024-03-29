@@ -59,11 +59,11 @@ let package = Package(
       name: "RainOnboarding",
       dependencies: [
         "BaseOnboarding", "SwiftSoup", "LFFeatureFlags",
+        .product(name: "RainData", package: "LFData"),
+        .product(name: "RainDomain", package: "LFDomain"),
         .product(name: "OnboardingData", package: "LFData"),
         .product(name: "AccountData", package: "LFData"),
         .product(name: "DevicesData", package: "LFData"),
-        .product(name: "ZerohashData", package: "LFData"),
-        .product(name: "ZerohashDomain", package: "LFDomain"),
         .product(name: "DevicesDomain", package: "LFDomain"),
         .product(name: "SmartyStreets", package: "smartystreets-ios-sdk"),
         .product(name: "AuthorizationManager", package: "LFNetwork"),

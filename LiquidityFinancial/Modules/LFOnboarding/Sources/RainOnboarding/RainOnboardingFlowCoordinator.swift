@@ -2,8 +2,8 @@ import SwiftUI
 import LFUtilities
 import Combine
 import Factory
-import NetSpendData
-import NetspendDomain
+import RainData
+import RainDomain
 import OnboardingData
 import AccountData
 import AccountDomain
@@ -28,8 +28,9 @@ public protocol OnboardingFlowCoordinatorProtocol {
   var routeSubject: CurrentValueSubject<RainOnboardingFlowCoordinator.Route, Never> { get }
   func routeUser()
   func set(route: RainOnboardingFlowCoordinator.Route)
-  func apiFetchCurrentState() async
-  func handleOnboardingStep() async throws
+  func fetchCurrentState() async
+  func fetchOnboardingMissingSteps() async throws
+  func fetchUserReviewStatus() async throws
   func forceLogout()
 }
 
@@ -41,12 +42,17 @@ public class RainOnboardingFlowCoordinator: OnboardingFlowCoordinatorProtocol {
   
   @LazyInjected(\.accountRepository) var accountRepository
   @LazyInjected(\.onboardingRepository) var onboardingRepository
+  @LazyInjected(\.rainOnboardingRepository) var rainOnboardingRepository
   
   @LazyInjected(\.pushNotificationService) var pushNotificationService
   @LazyInjected(\.analyticsService) var analyticsService
   
   lazy var accountUseCase: AccountUseCaseProtocol = {
     AccountUseCase(repository: accountRepository)
+  }()
+  
+  lazy var getOnboardingMissingSteps: RainGetOnboardingMissingStepsUseCaseProtocol = {
+    RainGetOnboardingMissingStepsUseCase(repository: rainOnboardingRepository)
   }()
   
   public let routeSubject: CurrentValueSubject<Route, Never>
@@ -58,47 +64,17 @@ public class RainOnboardingFlowCoordinator: OnboardingFlowCoordinatorProtocol {
   }
 }
 
-// MARK: - Public Functions
+// MARK: - Protocol API Functions
 public extension RainOnboardingFlowCoordinator {
-  func set(route: Route) {
-    log.info("OnboardingFlowCoordinator route: \(route), with current route: \(routeSubject.value)")
-    routeSubject.send(route)
-  }
-  
-  func routeUser() {
-    Task { @MainActor in
-#if DEBUG
-      let start = CFAbsoluteTimeGetCurrent()
-#endif
-      await apiFetchFetureConfig()
-      
-      if let model = checkForForceUpdateApp() {
-        set(route: .forceUpdate(model))
-        return
-      }
-      
-      if checkUserIsValid() {
-        await apiFetchCurrentState()
-      } else {
-        log.info("<<<<<<<<<<<<<< The user changes phone login to the device >>>>>>>>>>>>>>>")
-        forceLogout()
-      }
-#if DEBUG
-      let diff = CFAbsoluteTimeGetCurrent() - start
-      log.debug("Took \(diff) seconds")
-#endif
-    }
-  }
-
-  func apiFetchCurrentState() async {
+  func fetchCurrentState() async {
     do {
       guard authorizationManager.isTokenValid() else {
         try await authorizationManager.refreshToken()
-        try await apiFetchAndUpdateForStart()
+        try await fetchAndUpdateForStart()
         return
       }
       
-      try await apiFetchAndUpdateForStart()
+      try await fetchAndUpdateForStart()
     } catch {
       log.error(error.userFriendlyMessage)
       guard error.userFriendlyMessage.contains(Constants.ErrorCode.questionsNotAvailable.value) else {
@@ -110,12 +86,90 @@ public extension RainOnboardingFlowCoordinator {
     }
   }
   
-  func handleOnboardingStep() async throws {
-    /*
-        1. Get onboarding missing steps.
-        2. If there are no remaining onboarding steps to complete, it proceeds to fetch the rain status.
-        3. If there are remaining onboarding steps, it processes each step and takes appropriate actions.
-     */
+  func fetchOnboardingMissingSteps() async throws {
+    // TODO: - Will uncomment after this api available
+    // let missingSteps = try await getOnboardingMissingSteps.execute()
+    // let processSteps = missingSteps.processSteps
+    
+    // TODO: - Will remove after the getOnboardingMissingSteps api available
+    let processSteps = ["create_wallet_portal"]
+    
+    guard !processSteps.isEmpty else {
+      // If there are no remaining onboarding steps to complete, it proceeds to fetch the rain review status.
+      try await fetchUserReviewStatus()
+      return
+    }
+    
+    let steps = processSteps.compactMap {
+      RainOnboardingMissingSteps(rawValue: $0)
+    }
+    
+    guard !steps.isEmpty else {
+      // There is no value that matches the steps that need to be taken, bringing the user to the dashboard
+      set(route: .dashboard)
+      return
+    }
+    
+    handleOnboardingMissingSteps(from: steps)
+  }
+  
+  func fetchUserReviewStatus() async throws {
+    // TODO: - Call the get user v2 api instead
+    let user = try await accountRepository.getUser()
+    handleDataUser(user: user)
+
+    guard let accountReviewStatus = user.accountReviewStatusEnum else {
+      handleUnclearAccountReviewStatus(user: user)
+      return
+    }
+    
+    switch accountReviewStatus {
+    case .approved:
+      // It is a buffer task that helps prepare data before the user enters the app
+      // await apiFetchAccounts()
+      set(route: .dashboard)
+    case .rejected:
+      set(route: .accountReject)
+    case .inreview, .reviewing:
+      set(route: .kycReview)
+    }
+  }
+}
+
+// MARK: - Protocol Functions
+public extension RainOnboardingFlowCoordinator {
+  func set(route: Route) {
+    log.info(
+      Constants.DebugLog.setRoute(fromRoute: route.id, toRoute: routeSubject.value.id).value
+    )
+    routeSubject.send(route)
+  }
+  
+  func routeUser() {
+    Task { @MainActor in
+      #if DEBUG
+      let start = CFAbsoluteTimeGetCurrent()
+      #endif
+      
+      await fetchFetureConfig()
+      
+      if let model = checkForForceUpdateApp() {
+        set(route: .forceUpdate(model))
+        return
+      }
+      
+      if checkUserIsValid() {
+        await fetchCurrentState()
+      } else {
+        log.info(Constants.DebugLog.switchPhone.value)
+        forceLogout()
+      }
+      
+      #if DEBUG
+      let diff = CFAbsoluteTimeGetCurrent() - start
+      log.debug(Constants.DebugLog.takeTime(time: diff).value)
+      #endif
+    }
   }
   
   func forceLogout() {
@@ -124,70 +178,33 @@ public extension RainOnboardingFlowCoordinator {
   }
 }
 
-// MARK: - Private Functions
+// MARK: - Private API Functions
 private extension RainOnboardingFlowCoordinator {
-  func checkUserIsValid() -> Bool {
-    accountDataManager.sessionID.isEmpty == false
-  }
-  
-  func apiFetchAndUpdateForStart() async throws {
+  func fetchAndUpdateForStart() async throws {
     guard accountDataManager.userCompleteOnboarding else {
-      try await handleOnboardingStep()
+      try await fetchOnboardingMissingSteps()
       return
     }
     
     set(route: .dashboard)
   }
   
-  func fetchUserReviewStatus() async throws {
-    let user = try await accountRepository.getUser()
-    
-    guard let accountReviewStatus = user.accountReviewStatusEnum else {
-      if let accountReviewStatus = user.accountReviewStatus {
-        let description = "Account status missing the information: \(String(describing: accountReviewStatus))"
-        set(route: .unclear(description))
-      }
-      handleDataUser(user: user)
-      return
+  func fetchFetureConfig() async {
+    do {
+      defer { accountFeatureConfigData.isLoading = false }
+      accountFeatureConfigData.isLoading = true
+      
+      let entity = try await accountUseCase.getFeatureConfig()
+      accountFeatureConfigData.configJSON = entity.config ?? .empty
+      accountDataManager.featureConfig = accountFeatureConfigData.featureConfig
+    } catch {
+      log.error(error.userFriendlyMessage)
     }
-    
-    switch accountReviewStatus {
-    case .approved:
-      // TODO: Fetch Rain Status
-      print("TODO: Fetch Rain Status")
-    case .rejected:
-      set(route: .accountReject)
-    case .inreview, .reviewing:
-      set(route: .kycReview)
-    }
-    
-    handleDataUser(user: user)
   }
-  
-  func handleDataUser(user: LFUser) {
-    accountDataManager.storeUser(user: user)
-    trackUserInformation(user: user)
-  }
-  
-  func trackUserInformation(user: LFUser) {
-    guard let userModel = user as? APIUser else { return }
-    guard let data = try? JSONEncoder().encode(userModel) else { return }
-    let dictionary = (try? JSONSerialization.jsonObject(with: data, options: .fragmentsAllowed)).flatMap { $0 as? [String: Any] }
-    var values = dictionary ?? [:]
-    values["birthday"] = LiquidityDateFormatter.simpleDate.parseToDate(from: userModel.dateOfBirth ?? "")
-    values["avatar"] = userModel.profileImage ?? ""
-    values["idNumber"] = "REDACTED"
-    analyticsService.set(params: values)
-  }
-  
-  func clearUserData() {
-    log.info("<<<<<<<<<<<<<< 401 Unauthorized: Clear user data and perform logout. >>>>>>>>>>>>>>>")
-    accountDataManager.clearUserSession()
-    authorizationManager.clearToken()
-    pushNotificationService.signOut()
-    featureFlagManager.signOut()
-  }
-  
+}
+
+// MARK: - Private Functions
+private extension RainOnboardingFlowCoordinator {
   @discardableResult
   func checkForForceUpdateApp() -> FeatureConfigModel? {
     guard let configModel = accountFeatureConfigData.featureConfig else {
@@ -204,17 +221,63 @@ private extension RainOnboardingFlowCoordinator {
     return configModel
   }
   
-  func apiFetchFetureConfig() async {
-    do {
-      defer { accountFeatureConfigData.isLoading = false }
-      accountFeatureConfigData.isLoading = true
-      
-      let entity = try await accountUseCase.getFeatureConfig()
-      accountFeatureConfigData.configJSON = entity.config ?? ""
-      accountDataManager.featureConfig = accountFeatureConfigData.featureConfig
-    } catch {
-      log.error(error.userFriendlyMessage)
+  func handleDataUser(user: LFUser) {
+    accountDataManager.storeUser(user: user)
+    trackUserInformation(user: user)
+  }
+  
+  func trackUserInformation(user: LFUser) {
+    guard let userModel = user as? APIUser,
+          let data = try? JSONEncoder().encode(userModel) else {
+      return
     }
+    
+    let dictionary = (
+      try? JSONSerialization.jsonObject(with: data, options: .fragmentsAllowed)
+    ).flatMap { $0 as? [String: Any] }
+    
+    var values = dictionary ?? [:]
+    values["birthday"] = LiquidityDateFormatter.simpleDate.parseToDate(from: userModel.dateOfBirth ?? "")
+    values["avatar"] = userModel.profileImage ?? ""
+    values["idNumber"] = "REDACTED"
+    
+    analyticsService.set(params: values)
+  }
+  
+  func clearUserData() {
+    log.info(Constants.DebugLog.unauthorized.value)
+    accountDataManager.clearUserSession()
+    authorizationManager.clearToken()
+    pushNotificationService.signOut()
+    featureFlagManager.signOut()
+  }
+  
+  func handleOnboardingMissingSteps(from steps: [RainOnboardingMissingSteps]) {
+    if steps.contains(.createPortalWallet) {
+      // TODO: - Create Portal Wallet
+    } else if steps.contains(.createRainUser) {
+      // TODO: - Create Rain User
+    } else if steps.contains(.needInformation) {
+      // TODO: - Provide more information
+    } else if steps.contains(.needVerification) {
+      // TODO: - Redirect the user to a separate page to perform some additinal verification
+    }
+  }
+  
+  func handleUnclearAccountReviewStatus(user: LFUser) {
+    guard let reviewStatus = user.accountReviewStatus else {
+      return
+    }
+    
+    // There is data returned but does not match specific values
+    let description = Constants.DebugLog.missingAccountStatus(
+      status: String(describing: reviewStatus)
+    ).value
+    set(route: .unclear(description))
+  }
+  
+  func checkUserIsValid() -> Bool {
+    accountDataManager.sessionID.isEmpty == false
   }
 }
 

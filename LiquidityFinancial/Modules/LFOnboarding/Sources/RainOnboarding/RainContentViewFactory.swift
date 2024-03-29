@@ -23,9 +23,7 @@ final class RainContentViewFactory {
   let baseOnboardingNavigation: OnboardingDestinationObservable
   let accountDataManager: AccountDataStorageProtocol
   
-  init(
-    container: Container
-  ) {
+  init(container: Container) {
     baseOnboardingNavigation = container.onboardingDestinationObservable.callAsFunction()
     flowCoordinator = container.rainOnboardingFlowCoordinator.callAsFunction()
     accountDataManager = container.accountDataManager.callAsFunction()
@@ -118,7 +116,8 @@ private extension RainContentViewFactory {
       onEnterAddress: { [weak self] in
         guard let self else { return }
         self.baseOnboardingNavigation.enterSSNDestinationView = .address(AnyView(self.addressView))
-      })
+      }
+    )
   }
   
   @MainActor
@@ -141,7 +140,7 @@ private extension RainContentViewFactory {
   var phoneNumberView: some View {
     PhoneNumberView(
       viewModel: PhoneNumberViewModel(
-        handleOnboardingStep: flowCoordinator.handleOnboardingStep,
+        handleOnboardingStep: flowCoordinator.fetchOnboardingMissingSteps,
         forceLogout: flowCoordinator.forceLogout,
         setRouteToAccountLocked: { [weak self] in
           self?.flowCoordinator.set(route: .accountLocked)
