@@ -56,4 +56,37 @@ enum Configs {
       "pub691559048fc10b3b4d3096efed1e69be"
     }
   }
+  
+  enum PortalNetwork {
+    case ethSepolia
+    case ethGoerli
+    case ethMainnet
+    case polygonMumbai
+    case polygonMainnet
+    
+    var chainID: Int {
+      switch self {
+      case .ethSepolia:
+        return 11_155_111
+      case .ethGoerli:
+        return 5
+      case .ethMainnet:
+        return 1
+      case .polygonMumbai:
+        return 80_001
+      case .polygonMainnet:
+        return 137
+      }
+    }
+    
+    static func configGateway(alchemyAPIKey: String) -> [Int: String] {
+      [
+        PortalNetwork.ethSepolia.chainID: "https://eth-sepolia.g.alchemy.com/v2/\(alchemyAPIKey)",
+        PortalNetwork.ethGoerli.chainID: "https://eth-goerli.g.alchemy.com/v2/\(alchemyAPIKey)",
+        PortalNetwork.ethMainnet.chainID: "https://eth-mainnet.g.alchemy.com/v2/\(alchemyAPIKey)",
+        PortalNetwork.polygonMumbai.chainID: "https://polygon-mumbai.g.alchemy.com/v2/\(alchemyAPIKey)",
+        PortalNetwork.polygonMainnet.chainID: "https://polygon-mainnet.g.alchemy.com/v2/\(alchemyAPIKey)"
+      ]
+    }
+  }
 }

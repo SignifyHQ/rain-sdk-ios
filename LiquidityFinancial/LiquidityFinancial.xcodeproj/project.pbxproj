@@ -2823,6 +2823,7 @@
 				06FB47062A7AAE430050304C /* XCRemoteSwiftPackageReference "pinwheel-ios-sdk" */,
 				74BC08612A8CC6F500EFD00C /* XCRemoteSwiftPackageReference "CodeScanner" */,
 				74CB167B2A9853F800C137F3 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
+				0679F1E12BBA4AC8002A8F9C /* XCRemoteSwiftPackageReference "PortalSwift" */,
 			);
 			productRefGroup = A97BF7BD2A5C602D00B8F5CA /* Products */;
 			projectDirPath = "";
@@ -4449,6 +4450,14 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
+		0679F1E12BBA4AC8002A8F9C /* XCRemoteSwiftPackageReference "PortalSwift" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/portal-hq/PortalSwift.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 3.0.5;
+			};
+		};
 		06D40BFF2A62AE3700EADB75 /* XCRemoteSwiftPackageReference "iPhoneNumberField" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/MojtabaHs/iPhoneNumberField.git";

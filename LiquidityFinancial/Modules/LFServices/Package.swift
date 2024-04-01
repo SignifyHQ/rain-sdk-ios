@@ -36,7 +36,8 @@ let package = Package(
     .package(url: "https://github.com/firebase/firebase-ios-sdk", from: "10.0.0"),
     .package(url: "https://github.com/segmentio/analytics-ios", from: "4.1.8"),
     .package(url: "https://github.com/Datadog/dd-sdk-ios.git", from: "2.4.0"),
-    .package(url: "https://github.com/verygoodsecurity/vgs-collect-ios.git", .exact("1.15.3"))
+    .package(url: "https://github.com/verygoodsecurity/vgs-collect-ios.git", .exact("1.15.3")),
+    .package(url: "https://github.com/portal-hq/PortalSwift", from: "3.0.5")
   ],
   targets: [
     .target(
@@ -54,7 +55,8 @@ let package = Package(
         .product(name: "DatadogRUM", package: "dd-sdk-ios"),
         .product(name: "DatadogLogs", package: "dd-sdk-ios"),
         .product(name: "DatadogCrashReporting", package: "dd-sdk-ios"),
-        .product(name: "VGSCollectSDK", package: "vgs-collect-ios")
+        .product(name: "VGSCollectSDK", package: "vgs-collect-ios"),
+        .product(name: "PortalSwift", package: "PortalSwift")
       ],
       resources: [
         .process("Resources")
