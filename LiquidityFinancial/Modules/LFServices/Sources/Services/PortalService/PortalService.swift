@@ -66,34 +66,58 @@ public extension PortalService {
   }
   
   func backup(
-    backupMethod: BackupMethods.RawValue,
-    clientID: String,
+    backupMethod: BackupMethods,
     backupConfigs: BackupConfigs? = nil
-  ) -> AnyPublisher<String, Error> {
-    Future<String, Error> { [weak self] promise in
+  ) async throws -> String {
+    try await withCheckedThrowingContinuation { [weak self] (continuation: CheckedContinuation<String, Error>) in
       guard let self else { return }
       
-      self.portal?.backupWallet(method: backupMethod, backupConfigs: backupConfigs) { result in
+      self.portal?.backupWallet(
+        method: backupMethod.rawValue,
+        backupConfigs: backupConfigs
+      ) { result in
         if let error = result.error {
           log.error("Portal Swift: Error backing up wallet \(error)")
-          promise(.failure(error))
+          continuation.resume(throwing: error)
           return
         }
         
         guard let data = result.data else {
           log.error("Portal Swift: Error backing up wallet No Data")
-          promise(.failure(PortalError.noData))
+          continuation.resume(throwing: PortalError.noData)
           return
         }
         
-        // TODO: - Push cipher text to our server
-        // Will remove bellow code later
-        promise(.success(data))
-        
+        log.debug("Portal Swift: Wallet backup success")
+        continuation.resume(returning: data)
       } progress: { status in
         log.debug("Backup Wallet Status: \(status)")
       }
     }
-    .eraseToAnyPublisher()
+  }
+  
+  func recover(
+    backupMethod: BackupMethods,
+    cipherText: String
+  ) async throws {
+    try await withCheckedThrowingContinuation { [weak self] (continuation: CheckedContinuation<Void, Error>) in
+      guard let self else { return }
+      
+      self.portal?.recoverWallet(
+        cipherText: cipherText,
+        method: backupMethod.rawValue
+      ) { result -> Void in
+        if let error = result.error {
+          log.error("Portal Swift: Error backing up wallet \(error)")
+          continuation.resume(throwing: error)
+          return
+        }
+        
+        log.debug("Portal Swift: Wallet recover success")
+        continuation.resume(returning: ())
+      } progress: { status in
+        log.debug("Recover Status: \(status)")
+      }
+    }
   }
 }

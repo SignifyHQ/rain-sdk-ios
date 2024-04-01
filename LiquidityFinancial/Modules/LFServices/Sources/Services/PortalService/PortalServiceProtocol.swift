@@ -8,8 +8,11 @@ public protocol PortalServiceProtocol {
   func registerPortal(sessionToken: String, alchemyAPIKey: String) -> AnyPublisher<Bool, Error>
   func createWallet() -> AnyPublisher<String, Error>
   func backup(
-    backupMethod: BackupMethods.RawValue,
-    clientID: String,
+    backupMethod: BackupMethods,
     backupConfigs: BackupConfigs?
-  ) -> AnyPublisher<String, Error>
+  ) async throws -> String
+  func recover(
+    backupMethod: BackupMethods,
+    cipherText: String
+  ) async throws
 }
