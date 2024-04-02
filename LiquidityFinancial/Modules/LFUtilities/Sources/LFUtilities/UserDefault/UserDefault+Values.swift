@@ -20,6 +20,9 @@ public extension UserDefaults {
   @LFUserDefault(key: Key.bearerRefreshToken, defaultValue: "")
   static var bearerRefreshToken: String
   
+  @LFUserDefault(key: Key.portalSessionToken, defaultValue: "")
+  static var portalSessionToken: String
+  
   @LFUserDefault(key: Key.environmentSelection, defaultValue: "")
   static var environmentSelection: String
   

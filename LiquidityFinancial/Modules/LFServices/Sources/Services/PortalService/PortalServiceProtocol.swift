@@ -5,8 +5,8 @@ import PortalSwift
 // MARK: - PortalServiceProtocol
 
 public protocol PortalServiceProtocol {
-  func registerPortal(sessionToken: String, alchemyAPIKey: String) -> AnyPublisher<Bool, Error>
-  func createWallet() -> AnyPublisher<String, Error>
+  func registerPortal(sessionToken: String, alchemyAPIKey: String) async throws
+  func createWallet() async throws -> String
   func backup(
     backupMethod: BackupMethods,
     backupConfigs: BackupConfigs?

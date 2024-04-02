@@ -23,12 +23,16 @@ public enum VerificationCodeNavigation {
 @MainActor
 public final class VerificationCodeViewModel: ObservableObject {
   @InjectedObject(\.onboardingDestinationObservable) var onboardingDestinationObservable
+  
+  @LazyInjected(\.authorizationManager) var authorizationManager
   @LazyInjected(\.accountDataManager) var accountDataManager
   @LazyInjected(\.featureFlagManager) var featureFlagManager
   @LazyInjected(\.onboardingRepository) var onboardingRepository
   @LazyInjected(\.customerSupportService) var customerSupportService
+  @LazyInjected(\.accountRepository) var accountRepository
   @LazyInjected(\.analyticsService) var analyticsService
   @LazyInjected(\.environmentService) var environmentService
+  @LazyInjected(\.portalService) var portalService
 
   @Published var isNavigationToWelcome: Bool = false
   @Published var isResendButonTimerOn = false
@@ -47,6 +51,10 @@ public final class VerificationCodeViewModel: ObservableObject {
   
   lazy var loginUseCase: LoginUseCaseProtocol = {
     LoginUseCase(repository: onboardingRepository)
+  }()
+  
+  lazy var refreshPortalToken: RefreshPortalSessionTokenUseCaseProtocol = {
+    RefreshPortalSessionTokenUseCase(repository: accountRepository)
   }()
   
   private var requireAuth: [RequiredAuth]
@@ -114,10 +122,12 @@ extension VerificationCodeViewModel {
         )
         let isNewAuth = LFUtilities.cryptoEnabled ? false : featureFlagManager.isFeatureFlagEnabled(.mfa)
         
-        _ = try await loginUseCase.execute(
+        let response = try await loginUseCase.execute(
           isNewAuth: isNewAuth,
           parameters: parameters
         )
+        
+        setupPortal(portalToken: response.portalSessionToken)
         
         handleLoginSuccess {
           self.isShowLoading = false
@@ -308,6 +318,39 @@ private extension VerificationCodeViewModel {
     // Make sure we don't navigate immediately when the parent view has just appeared
     DispatchQueue.main.asyncAfter(deadline: .now() + delayTime) {
       self.onboardingDestinationObservable.verificationCodeDestinationView = .identityVerificationCode(view)
+    }
+  }
+  
+  func setupPortal(portalToken: String?) {
+    guard let portalToken else {
+      return
+    }
+    
+    Task {
+      do {
+        // TODO: - alchemyAPIKey will be implemented later
+        try await portalService.registerPortal(sessionToken: portalToken, alchemyAPIKey: "")
+      } catch {
+        guard let portalError = error as? LFPortalError, portalError == .expirationToken else {
+          self.toastMessage = error.userFriendlyMessage
+          return
+        }
+        
+        refreshPortalSessionToken()
+      }
+    }
+  }
+  
+  func refreshPortalSessionToken() {
+    Task {
+      do {
+        let token = try await refreshPortalToken.execute()
+        
+        authorizationManager.savePortalSessionToken(token: token.clientSessionToken)
+        setupPortal(portalToken: token.clientSessionToken)
+      } catch {
+        toastMessage = error.userFriendlyMessage
+      }
     }
   }
 }

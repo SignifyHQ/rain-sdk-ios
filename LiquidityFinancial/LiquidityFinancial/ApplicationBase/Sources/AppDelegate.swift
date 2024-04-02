@@ -5,12 +5,20 @@ import Factory
 import AuthorizationManager
 import LFUtilities
 import EnvironmentService
+import AccountData
+import AccountDomain
 
 class AppDelegate: UIResponder, UIApplicationDelegate {
   
   @LazyInjected(\.authorizationManager) var authorizationManager
   @LazyInjected(\.environmentService) var environmentService
+  @LazyInjected(\.portalService) var portalService
+  @LazyInjected(\.accountRepository) var accountRepository
   
+  lazy var refreshPortalToken: RefreshPortalSessionTokenUseCaseProtocol = {
+    RefreshPortalSessionTokenUseCase(repository: accountRepository)
+  }()
+
   var navigationContainer: NavigationContainer!
   
   var orientationLock = UIInterfaceOrientationMask.portrait

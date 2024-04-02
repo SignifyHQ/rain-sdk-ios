@@ -34,6 +34,7 @@ public enum AccountRoute {
   case getSecretKey
   case enableMFA(code: String)
   case disableMFA(code: String)
+  case refreshPortalSessionToken
 }
 
 extension AccountRoute: LFRoute {
@@ -94,6 +95,8 @@ extension AccountRoute: LFRoute {
       return "/v1/mfa/enable"
     case .disableMFA:
       return "/v1/mfa/disable"
+    case .refreshPortalSessionToken:
+      return "refreshPortalSessionToken"
     }
   }
   
@@ -123,15 +126,15 @@ extension AccountRoute: LFRoute {
         .getReferralCampaign,
         .getAvailableRewardCurrencies,
         .getSelectedRewardCurrency,
-        .getSecretKey:
+        .getSecretKey,
+        .getUserRewards,
+        .getFeatureConfig,
+        .refreshPortalSessionToken:
       return .GET
     case .updateWalletAddress:
       return .PATCH
     case .deleteWalletAddresses:
       return .DELETE
-    case .getUserRewards,
-        .getFeatureConfig:
-      return .GET
     }
   }
   
@@ -164,7 +167,8 @@ extension AccountRoute: LFRoute {
         .getReferralCampaign,
         .getUserRewards,
         .getFeatureConfig,
-        .getSecretKey:
+        .getSecretKey,
+        .refreshPortalSessionToken:
       return nil
     case .createPassword(let password):
       return [
@@ -272,7 +276,8 @@ extension AccountRoute: LFRoute {
         .deleteWalletAddresses,
         .getUserRewards,
         .getFeatureConfig,
-        .getSecretKey:
+        .getSecretKey,
+        .refreshPortalSessionToken:
       return nil
     case .getTransactions,
         .getTransactionDetail,

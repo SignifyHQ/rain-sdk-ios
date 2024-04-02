@@ -8,12 +8,14 @@ struct AuthorizationAccessToken: Decodable, AccessTokensEntity {
   var accessToken: String
   var tokenType: String
   var refreshToken: String
+  var portalSessionToken: String?
   var expiresIn: Int
   
-  init(accessToken: String, tokenType: String, refreshToken: String, expiresIn: Int) {
+  init(accessToken: String, tokenType: String, refreshToken: String, portalSessionToken: String?, expiresIn: Int) {
     self.accessToken = accessToken
     self.tokenType = tokenType
     self.refreshToken = refreshToken
+    self.portalSessionToken = portalSessionToken
     self.expiresIn = expiresIn
   }
   
@@ -26,6 +28,7 @@ struct AuthorizationAccessToken: Decodable, AccessTokensEntity {
     case refreshToken = "refresh_token"
     case tokenType = "token_type"
     case expiresIn = "expires_in"
+    case portalSessionToken = "portal_session_token"
   }
   
   var expiresAt: Date {
@@ -186,6 +189,15 @@ extension AuthorizationManager: AuthorizationManagerProtocol {
     refreshToken = getRefreshToken()
     expiresAt = getExpirationDate()
   }
+  
+  public func savePortalSessionToken(token: String?) {
+    guard let token else {
+      return
+    }
+    
+    UserDefaults.portalSessionToken = token
+  }
+
 }
 
   // MARK: - Token Expiration
@@ -210,6 +222,7 @@ private extension AuthorizationManager {
   
   func clear() {
     UserDefaults.accessTokenExpiresAt = 0
-    UserDefaults.bearerAccessToken = ""
+    UserDefaults.bearerAccessToken = .empty
+    UserDefaults.portalSessionToken = .empty
   }
 }

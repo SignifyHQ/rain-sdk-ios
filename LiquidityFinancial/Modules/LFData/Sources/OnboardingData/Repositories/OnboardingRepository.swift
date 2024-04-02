@@ -22,6 +22,8 @@ public class OnboardingRepository: OnboardingRepositoryProtocol {
     let accessTokens = try await onboardingAPI.login(parameters: requestParameters)
     
     auth.refreshWith(apiToken: accessTokens)
+    auth.savePortalSessionToken(token: accessTokens.portalSessionToken)
+    
     return accessTokens
   }
   
@@ -36,6 +38,8 @@ public class OnboardingRepository: OnboardingRepositoryProtocol {
     let accessTokens = try await onboardingAPI.newLogin(parameters: requestParameters)
     
     auth.refreshWith(apiToken: accessTokens)
+    auth.savePortalSessionToken(token: accessTokens.portalSessionToken)
+    
     return accessTokens
   }
   

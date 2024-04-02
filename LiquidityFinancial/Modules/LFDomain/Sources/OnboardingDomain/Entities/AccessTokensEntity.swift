@@ -8,5 +8,7 @@ public protocol AccessTokensEntity {
   var expiresIn: Int { get set }
   var expiresAt: Date { get }
   var bearerAccessToken: String { get }
-  init(accessToken: String, tokenType: String, refreshToken: String, expiresIn: Int)
+  var portalSessionToken: String? { get }
+  
+  init(accessToken: String, tokenType: String, refreshToken: String, portalSessionToken: String?, expiresIn: Int)
 }

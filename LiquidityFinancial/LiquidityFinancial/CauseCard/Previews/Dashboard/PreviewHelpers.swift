@@ -18,6 +18,7 @@ struct PreviewHelpers {
       accessToken: "",
       tokenType: "Bearer",
       refreshToken: "",
+      portalSessionToken: "",
       expiresIn: 86_400
     )
     Container.shared.authorizationManager.resolve().refreshWith(apiToken: accessToken)

@@ -5,11 +5,19 @@ public struct APIAccessTokens: Decodable, Equatable {
   public var tokenType: String
   public var refreshToken: String
   public var expiresIn: Int
+  public var portalSessionToken: String?
   
-  public init(accessToken: String, tokenType: String, refreshToken: String, expiresIn: Int) {
+  public init(
+    accessToken: String,
+    tokenType: String,
+    refreshToken: String,
+    portalSessionToken: String?,
+    expiresIn: Int
+  ) {
     self.accessToken = accessToken
     self.tokenType = tokenType
     self.refreshToken = refreshToken
+    self.portalSessionToken = portalSessionToken
     self.expiresIn = expiresIn
   }
   
@@ -22,6 +30,7 @@ public struct APIAccessTokens: Decodable, Equatable {
     case refreshToken = "refresh_token"
     case tokenType = "token_type"
     case expiresIn = "expires_in"
+    case portalSessionToken = "portal_session_token"
   }
   
   public var expiresAt: Date {

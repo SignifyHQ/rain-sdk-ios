@@ -33,4 +33,5 @@ public protocol AccountAPIProtocol {
   func getSecretKey() async throws -> APISecretKey
   func enableMFA(code: String) async throws -> APIEnableMFA
   func disableMFA(code: String) async throws -> APIDisableMFA
+  func refreshPortalSessionToken() async throws -> APIPortalSessionToken
 }

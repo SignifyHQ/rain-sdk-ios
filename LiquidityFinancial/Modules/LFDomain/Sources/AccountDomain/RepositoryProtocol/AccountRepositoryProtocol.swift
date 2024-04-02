@@ -33,4 +33,5 @@ public protocol AccountRepositoryProtocol {
   func getSecretKey() async throws -> SecretKeyEntity
   func enableMFA(code: String) async throws -> EnableMFAEntity
   func disableMFA(code: String) async throws -> DisableMFAEntity
+  func refreshPortalSessionToken() async throws -> PortalSessionTokenEntity
 }

@@ -17,6 +17,7 @@ extension AppDelegate {
     setupLFUtilitiesConfig()
     setupLFServiceConfig()
     authorizationManagerRefresh()
+    setupPortal()
   }
   
 }
@@ -47,5 +48,42 @@ private extension AppDelegate {
   
   func setupLFServiceConfig() {
     LFServices.initial(config: LFServices.Configuration(baseURL: APIConstants.devHost))
+  }
+  
+  func setupPortal() {
+    let clientSessionToken = UserDefaults.portalSessionToken
+    guard !clientSessionToken.trimWhitespacesAndNewlines().isEmpty else {
+      return
+    }
+    
+    // TODO: - alchemyAPIKey will be implemented later
+    Task {
+      do {
+        _ = try await portalService.registerPortal(
+          sessionToken: clientSessionToken,
+          alchemyAPIKey: .empty
+        )
+      } catch {
+        refreshPortalSessionToken()
+        log.error("An error occurred while creating the portal instance \(error)")
+      }
+    }
+  }
+  
+  func refreshPortalSessionToken() {
+    Task {
+      do {
+        let token = try await refreshPortalToken.execute()
+        
+        authorizationManager.savePortalSessionToken(token: token.clientSessionToken)
+        _ = try await portalService.registerPortal(
+          sessionToken: token.clientSessionToken,
+          alchemyAPIKey: .empty
+        )
+        
+      } catch {
+        log.error("An error occurred while refreshing the portal client session \(error)")
+      }
+    }
   }
 }

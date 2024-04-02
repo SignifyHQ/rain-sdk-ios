@@ -43,7 +43,9 @@ public class AccountRepository: AccountRepositoryProtocol {
   
   public func loginWithPassword(phoneNumner: String, password: String) async throws -> AccessTokensEntity {
     let tokens = try await accountAPI.loginWithPassword(phoneNumber: phoneNumner, password: password)
+    
     auth.refreshWith(apiToken: tokens)
+    auth.savePortalSessionToken(token: tokens.portalSessionToken)
     
     return tokens
   }
@@ -137,4 +139,9 @@ public class AccountRepository: AccountRepositoryProtocol {
   public func disableMFA(code: String) async throws -> DisableMFAEntity {
     try await accountAPI.disableMFA(code: code)
   }
+  
+  public func refreshPortalSessionToken() async throws -> PortalSessionTokenEntity {
+    try await accountAPI.refreshPortalSessionToken()
+  }
+
 }

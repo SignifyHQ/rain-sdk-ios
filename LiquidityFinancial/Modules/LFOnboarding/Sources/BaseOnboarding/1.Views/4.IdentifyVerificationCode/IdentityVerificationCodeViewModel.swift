@@ -9,13 +9,17 @@ import OnboardingData
 import NetSpendData
 import Combine
 import LFFeatureFlags
+import Services
 
 @MainActor
 public final class IdentityVerificationCodeViewModel: ObservableObject {
+  @LazyInjected(\.authorizationManager) var authorizationManager
   @LazyInjected(\.accountDataManager) var accountDataManager
   @LazyInjected(\.onboardingRepository) var onboardingRepository
+  @LazyInjected(\.accountRepository) var accountRepository
   @LazyInjected(\.customerSupportService) var customerSupportService
   @LazyInjected(\.featureFlagManager) var featureFlagManager
+  @LazyInjected(\.portalService) var portalService
 
   @Published var isDisableButton: Bool = true
   @Published var isShowLogoutPopup: Bool = false
@@ -27,6 +31,10 @@ public final class IdentityVerificationCodeViewModel: ObservableObject {
   
   lazy var loginUseCase: LoginUseCaseProtocol = {
     LoginUseCase(repository: onboardingRepository)
+  }()
+  
+  lazy var refreshPortalToken: RefreshPortalSessionTokenUseCaseProtocol = {
+    RefreshPortalSessionTokenUseCase(repository: accountRepository)
   }()
   
   private let phoneNumber: String
@@ -82,10 +90,12 @@ extension IdentityVerificationCodeViewModel {
           lastID: isNewAuth ? nil : lastId,
           verification: verification
         )
-        _ = try await loginUseCase.execute(
+        let response = try await loginUseCase.execute(
           isNewAuth: isNewAuth,
           parameters: parameters
         )
+        
+        setupPortal(portalToken: response.portalSessionToken)
         
         accountDataManager.update(phone: phoneNumber)
         accountDataManager.stored(phone: phoneNumber)
@@ -185,6 +195,39 @@ private extension IdentityVerificationCodeViewModel {
       errorMessage = errorObject.message
     default:
       toastMessage = errorObject.message
+    }
+  }
+  
+  func setupPortal(portalToken: String?) {
+    guard let portalToken else {
+      return
+    }
+    
+    Task {
+      do {
+        // TODO: - alchemyAPIKey will be implemented later
+        try await portalService.registerPortal(sessionToken: portalToken, alchemyAPIKey: "")
+      } catch {
+        guard let portalError = error as? LFPortalError, portalError == .expirationToken else {
+          self.toastMessage = error.userFriendlyMessage
+          return
+        }
+        
+        refreshPortalSessionToken()
+      }
+    }
+  }
+  
+  func refreshPortalSessionToken() {
+    Task {
+      do {
+        let token = try await refreshPortalToken.execute()
+        
+        authorizationManager.savePortalSessionToken(token: token.clientSessionToken)
+        setupPortal(portalToken: token.clientSessionToken)
+      } catch {
+        toastMessage = error.userFriendlyMessage
+      }
     }
   }
 }

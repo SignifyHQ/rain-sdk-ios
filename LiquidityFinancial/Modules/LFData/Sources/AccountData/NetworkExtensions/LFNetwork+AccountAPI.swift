@@ -239,5 +239,14 @@ extension LFCoreNetwork: AccountAPIProtocol where R == AccountRoute {
       decoder: .apiDecoder
     )
   }
+  
+  public func refreshPortalSessionToken() async throws -> APIPortalSessionToken {
+    try await request(
+      AccountRoute.refreshPortalSessionToken,
+      target: APIPortalSessionToken.self,
+      failure: LFErrorObject.self,
+      decoder: .apiDecoder
+    )
+  }
 
 }

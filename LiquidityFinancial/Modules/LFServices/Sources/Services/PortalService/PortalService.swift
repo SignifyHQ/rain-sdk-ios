@@ -15,8 +15,8 @@ public class PortalService: PortalServiceProtocol {
 
 // MARK: - Public Functions
 public extension PortalService {
-  func registerPortal(sessionToken: String, alchemyAPIKey: String = "") -> AnyPublisher<Bool, Error> {
-    Future<Bool, Error> { [weak self] promise in
+  func registerPortal(sessionToken: String, alchemyAPIKey: String = "") async throws {
+    try await withCheckedThrowingContinuation { [weak self] (continuation: CheckedContinuation<Void, Error>) in
       guard let self else { return }
       
       do {
@@ -37,32 +37,35 @@ public extension PortalService {
           gatewayConfig: gatewayConfig
         )
         
-        promise(.success(true))
+        continuation.resume(returning: ())
       } catch {
-        promise(.failure(error))
+        continuation.resume(
+          throwing: self.handlePortalError(error: error)
+        )
       }
     }
-    .eraseToAnyPublisher()
   }
   
-  func createWallet() -> AnyPublisher<String, Error> {
-    Future<String, Error> { [weak self] promise in
+  func createWallet() async throws -> String {
+    try await withCheckedThrowingContinuation { [weak self] (continuation: CheckedContinuation<String, Error>) in
       guard let self else { return }
       
       self.portal?.createWallet(
         completion: { addressResult in
           guard let error = addressResult.error else {
-            promise(.success(addressResult.data ?? "N/A"))
+            continuation.resume(returning: addressResult.data ?? "N/A")
             return
           }
-          promise(.failure(error))
+          
+          continuation.resume(
+            throwing: self.handlePortalError(error: error)
+          )
         },
         progress: { status in
           log.debug("Wallet Creation Status: \(status)")
         }
       )
     }
-    .eraseToAnyPublisher()
   }
   
   func backup(
@@ -78,13 +81,15 @@ public extension PortalService {
       ) { result in
         if let error = result.error {
           log.error("Portal Swift: Error backing up wallet \(error)")
-          continuation.resume(throwing: error)
+          continuation.resume(
+            throwing: self.handlePortalError(error: error)
+          )
           return
         }
         
         guard let data = result.data else {
           log.error("Portal Swift: Error backing up wallet No Data")
-          continuation.resume(throwing: PortalError.noData)
+          continuation.resume(throwing: LFPortalError.noData)
           return
         }
         
@@ -109,7 +114,9 @@ public extension PortalService {
       ) { result -> Void in
         if let error = result.error {
           log.error("Portal Swift: Error backing up wallet \(error)")
-          continuation.resume(throwing: error)
+          continuation.resume(
+            throwing: self.handlePortalError(error: error)
+          )
           return
         }
         
@@ -119,5 +126,20 @@ public extension PortalService {
         log.debug("Recover Status: \(status)")
       }
     }
+  }
+}
+
+// MARK: - Private Functions
+private extension PortalService {
+  func handlePortalError(error: Error) -> Error {
+    if let portalMpcError = error as? PortalMpcError, portalMpcError.code == 320 {
+      return LFPortalError.expirationToken
+    }
+    
+    if let portalError = error as? PortalError, portalError.code == PortalErrorCodes.INVALID_API_KEY.rawValue {
+      return LFPortalError.expirationToken
+    }
+    
+    return error
   }
 }
