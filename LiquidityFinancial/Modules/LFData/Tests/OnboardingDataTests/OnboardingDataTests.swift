@@ -34,7 +34,13 @@ final class OnboardingDataTests: XCTestCase {
   // Test the login functionality under normal conditions.
   func test_login_happy_case() async {
     // Given the expected mock success and fail results
-    let mockResult = APIAccessTokens(accessToken: "mock_accesstoken", tokenType: "mock_tokenType", refreshToken: "mock_refreshToken", expiresIn: 123456789)
+    let mockResult = APIAccessTokens(
+      accessToken: "mock_accesstoken",
+      tokenType: "mock_tokenType",
+      refreshToken: "mock_refreshToken",
+      portalSessionToken: "mock_portalSessionToken",
+      expiresIn: 123456789
+    )
     self.api.loginParametersReturnValue = mockResult
     
     // When calling login function on the repository with parameters which should return an access token successfully

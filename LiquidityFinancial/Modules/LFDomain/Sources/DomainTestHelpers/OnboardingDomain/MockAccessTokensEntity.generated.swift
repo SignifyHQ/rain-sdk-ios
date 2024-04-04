@@ -39,16 +39,17 @@ public class MockAccessTokensEntity: AccessTokensEntity {
         set(value) { underlyingBearerAccessToken = value }
     }
     public var underlyingBearerAccessToken: String!
+    public var portalSessionToken: String?
 
     //MARK: - init
 
-    public var initAccessTokenTokenTypeRefreshTokenExpiresInReceivedArguments: (accessToken: String, tokenType: String, refreshToken: String, expiresIn: Int)?
-    public var initAccessTokenTokenTypeRefreshTokenExpiresInReceivedInvocations: [(accessToken: String, tokenType: String, refreshToken: String, expiresIn: Int)] = []
-    public var initAccessTokenTokenTypeRefreshTokenExpiresInClosure: ((String, String, String, Int) -> Void)?
+    public var initAccessTokenTokenTypeRefreshTokenPortalSessionTokenExpiresInReceivedArguments: (accessToken: String, tokenType: String, refreshToken: String, portalSessionToken: String?, expiresIn: Int)?
+    public var initAccessTokenTokenTypeRefreshTokenPortalSessionTokenExpiresInReceivedInvocations: [(accessToken: String, tokenType: String, refreshToken: String, portalSessionToken: String?, expiresIn: Int)] = []
+    public var initAccessTokenTokenTypeRefreshTokenPortalSessionTokenExpiresInClosure: ((String, String, String, String?, Int) -> Void)?
 
-    public required init(accessToken: String, tokenType: String, refreshToken: String, expiresIn: Int) {
-        initAccessTokenTokenTypeRefreshTokenExpiresInReceivedArguments = (accessToken: accessToken, tokenType: tokenType, refreshToken: refreshToken, expiresIn: expiresIn)
-        initAccessTokenTokenTypeRefreshTokenExpiresInReceivedInvocations.append((accessToken: accessToken, tokenType: tokenType, refreshToken: refreshToken, expiresIn: expiresIn))
-        initAccessTokenTokenTypeRefreshTokenExpiresInClosure?(accessToken, tokenType, refreshToken, expiresIn)
+    public required init(accessToken: String, tokenType: String, refreshToken: String, portalSessionToken: String?, expiresIn: Int) {
+        initAccessTokenTokenTypeRefreshTokenPortalSessionTokenExpiresInReceivedArguments = (accessToken: accessToken, tokenType: tokenType, refreshToken: refreshToken, portalSessionToken: portalSessionToken, expiresIn: expiresIn)
+        initAccessTokenTokenTypeRefreshTokenPortalSessionTokenExpiresInReceivedInvocations.append((accessToken: accessToken, tokenType: tokenType, refreshToken: refreshToken, portalSessionToken: portalSessionToken, expiresIn: expiresIn))
+        initAccessTokenTokenTypeRefreshTokenPortalSessionTokenExpiresInClosure?(accessToken, tokenType, refreshToken, portalSessionToken, expiresIn)
     }
 }

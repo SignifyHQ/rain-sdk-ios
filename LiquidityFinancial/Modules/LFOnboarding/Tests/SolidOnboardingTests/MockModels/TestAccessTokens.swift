@@ -2,6 +2,8 @@ import Foundation
 import OnboardingDomain
 
 struct TestAccessTokens: AccessTokensEntity {
+  var portalSessionToken: String?
+    
   var accessToken: String
   
   var tokenType: String
@@ -18,11 +20,12 @@ struct TestAccessTokens: AccessTokensEntity {
     "Bearer " + accessToken
   }
   
-  init(accessToken: String, tokenType: String, refreshToken: String, expiresIn: Int) {
+  init(accessToken: String, tokenType: String, refreshToken: String, portalSessionToken: String?, expiresIn: Int) {
     self.accessToken = accessToken
     self.tokenType = tokenType
     self.refreshToken = refreshToken
     self.expiresIn = expiresIn
+    self.portalSessionToken = portalSessionToken
   }
   
 }

@@ -87,6 +87,23 @@ public class MockAuthorizationManagerProtocol: AuthorizationManagerProtocol {
         refreshWithApiTokenClosure?(apiToken)
     }
 
+    //MARK: - savePortalSessionToken
+
+    public var savePortalSessionTokenTokenCallsCount = 0
+    public var savePortalSessionTokenTokenCalled: Bool {
+        return savePortalSessionTokenTokenCallsCount > 0
+    }
+    public var savePortalSessionTokenTokenReceivedToken: String?
+    public var savePortalSessionTokenTokenReceivedInvocations: [String?] = []
+    public var savePortalSessionTokenTokenClosure: ((String?) -> Void)?
+
+    public func savePortalSessionToken(token: String?) {
+        savePortalSessionTokenTokenCallsCount += 1
+        savePortalSessionTokenTokenReceivedToken = token
+        savePortalSessionTokenTokenReceivedInvocations.append(token)
+        savePortalSessionTokenTokenClosure?(token)
+    }
+
     //MARK: - refreshToken
 
     public var refreshTokenThrowableError: Error?

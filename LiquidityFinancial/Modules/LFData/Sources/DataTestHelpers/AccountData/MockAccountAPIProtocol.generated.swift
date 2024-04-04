@@ -374,6 +374,53 @@ public class MockAccountAPIProtocol: AccountAPIProtocol {
         }
     }
 
+    //MARK: - backupWallet
+
+    public var backupWalletCipherMethodThrowableError: Error?
+    public var backupWalletCipherMethodCallsCount = 0
+    public var backupWalletCipherMethodCalled: Bool {
+        return backupWalletCipherMethodCallsCount > 0
+    }
+    public var backupWalletCipherMethodReceivedArguments: (cipher: String, method: String)?
+    public var backupWalletCipherMethodReceivedInvocations: [(cipher: String, method: String)] = []
+    public var backupWalletCipherMethodClosure: ((String, String) async throws -> Void)?
+
+    public func backupWallet(cipher: String, method: String) async throws {
+        if let error = backupWalletCipherMethodThrowableError {
+            throw error
+        }
+        backupWalletCipherMethodCallsCount += 1
+        backupWalletCipherMethodReceivedArguments = (cipher: cipher, method: method)
+        backupWalletCipherMethodReceivedInvocations.append((cipher: cipher, method: method))
+        try await backupWalletCipherMethodClosure?(cipher, method)
+    }
+
+    //MARK: - restoreWallet
+
+    public var restoreWalletMethodThrowableError: Error?
+    public var restoreWalletMethodCallsCount = 0
+    public var restoreWalletMethodCalled: Bool {
+        return restoreWalletMethodCallsCount > 0
+    }
+    public var restoreWalletMethodReceivedMethod: String?
+    public var restoreWalletMethodReceivedInvocations: [String] = []
+    public var restoreWalletMethodReturnValue: APIWalletRestore!
+    public var restoreWalletMethodClosure: ((String) async throws -> APIWalletRestore)?
+
+    public func restoreWallet(method: String) async throws -> APIWalletRestore {
+        if let error = restoreWalletMethodThrowableError {
+            throw error
+        }
+        restoreWalletMethodCallsCount += 1
+        restoreWalletMethodReceivedMethod = method
+        restoreWalletMethodReceivedInvocations.append(method)
+        if let restoreWalletMethodClosure = restoreWalletMethodClosure {
+            return try await restoreWalletMethodClosure(method)
+        } else {
+            return restoreWalletMethodReturnValue
+        }
+    }
+
     //MARK: - createWalletAddresses
 
     public var createWalletAddressesAccountIdAddressNicknameThrowableError: Error?
@@ -667,6 +714,28 @@ public class MockAccountAPIProtocol: AccountAPIProtocol {
             return try await disableMFACodeClosure(code)
         } else {
             return disableMFACodeReturnValue
+        }
+    }
+
+    //MARK: - refreshPortalSessionToken
+
+    public var refreshPortalSessionTokenThrowableError: Error?
+    public var refreshPortalSessionTokenCallsCount = 0
+    public var refreshPortalSessionTokenCalled: Bool {
+        return refreshPortalSessionTokenCallsCount > 0
+    }
+    public var refreshPortalSessionTokenReturnValue: APIPortalSessionToken!
+    public var refreshPortalSessionTokenClosure: (() async throws -> APIPortalSessionToken)?
+
+    public func refreshPortalSessionToken() async throws -> APIPortalSessionToken {
+        if let error = refreshPortalSessionTokenThrowableError {
+            throw error
+        }
+        refreshPortalSessionTokenCallsCount += 1
+        if let refreshPortalSessionTokenClosure = refreshPortalSessionTokenClosure {
+            return try await refreshPortalSessionTokenClosure()
+        } else {
+            return refreshPortalSessionTokenReturnValue
         }
     }
 
