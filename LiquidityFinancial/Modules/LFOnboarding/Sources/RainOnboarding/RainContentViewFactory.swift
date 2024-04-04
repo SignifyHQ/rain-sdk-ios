@@ -35,26 +35,20 @@ extension RainContentViewFactory {
   @MainActor
   func createView(type: ViewType) -> some View {
     switch type {
-    case .infomation:
-      return AnyView(informationView)
-    case .address:
-      return AnyView(addressView)
+    case .initial:
+      return AnyView(initialView)
     case .phone:
       return AnyView(phoneNumberView)
-    case .ssn:
-      return AnyView(enterSSNView)
     case .accountLocked:
       return AnyView(accountLockedView)
-    case .welcome:
-      return AnyView(welcomeView)
+    case let .welcome(type):
+      return AnyView(welcomeView(type: type))
     case .kycReview:
       return AnyView(kycReviewView)
     case .accountReject:
       return AnyView(accountRejectView)
     case .unclear(let message):
       return AnyView(unclearView(message: message))
-    case .initial:
-      return AnyView(initialView)
     case .forceUpdate(let model):
       return AnyView(forceUpdateView(model: model))
     }
@@ -100,12 +94,34 @@ private extension RainContentViewFactory {
   }
   
   @MainActor
-  var welcomeView: some View {
+  func welcomeView(type: WelcomeType) -> some View {
+    let destinationView = AnyView(welcomeDestinationView(type: type))
+    
     switch LFUtilities.target {
     case .DogeCard:
-      return AnyView(DogeCardWelcomeView(destination: AnyView(EmptyView())))
+      return AnyView(DogeCardWelcomeView(destination: destinationView))
     default:
-      return AnyView(WelcomeView())
+      return AnyView(WelcomeView(destinationView: destinationView))
+    }
+  }
+  
+  @MainActor
+  func welcomeDestinationView(type: WelcomeType) -> some View {
+    switch type {
+    case .createWallet:
+      return AnyView(CreateWalletView())
+    case .personalInformation:
+      return AnyView(
+        PersonalInformationView(
+          viewModel: PersonalInformationViewModel(),
+          onEnterSSN: { [weak self] in
+            guard let self else { return }
+            self.baseOnboardingNavigation.personalInformationDestinationView = .enterSSN(
+              AnyView(self.enterSSNView)
+            )
+          }
+        )
+      )
     }
   }
   
@@ -115,23 +131,9 @@ private extension RainContentViewFactory {
       viewModel: EnterSSNViewModel(isVerifySSN: true),
       onEnterAddress: { [weak self] in
         guard let self else { return }
-        self.baseOnboardingNavigation.enterSSNDestinationView = .address(AnyView(self.addressView))
-      }
-    )
-  }
-  
-  @MainActor
-  var addressView: some View {
-    AddressView()
-  }
-  
-  @MainActor
-  var informationView: some View {
-    PersonalInformationView(
-      viewModel: PersonalInformationViewModel(),
-      onEnterSSN: { [weak self] in
-        guard let self else { return }
-        self.baseOnboardingNavigation.personalInformationDestinationView = .enterSSN(AnyView(self.enterSSNView))
+        self.baseOnboardingNavigation.enterSSNDestinationView = .address(
+          AnyView(AddressView())
+        )
       }
     )
   }
@@ -144,9 +146,6 @@ private extension RainContentViewFactory {
         forceLogout: flowCoordinator.forceLogout,
         setRouteToAccountLocked: { [weak self] in
           self?.flowCoordinator.set(route: .accountLocked)
-        },
-        setRouteToPopTimeUp: { [weak self] in
-          self?.flowCoordinator.set(route: .popTimeUp)
         }
       )
     )
@@ -161,9 +160,15 @@ private extension RainContentViewFactory {
 // MARK: - Types
 extension RainContentViewFactory {
   enum ViewType {
-    case initial, infomation, address, phone, ssn
-    case accountLocked, welcome, kycReview
-    case accountReject, unclear(String)
+    case initial, phone, kycReview
+    case accountLocked, accountReject
+    case unclear(String)
+    case welcome(WelcomeType)
     case forceUpdate(FeatureConfigModel)
+  }
+  
+  enum WelcomeType {
+    case createWallet
+    case personalInformation
   }
 }

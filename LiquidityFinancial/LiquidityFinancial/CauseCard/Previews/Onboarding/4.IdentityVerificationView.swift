@@ -11,8 +11,7 @@ import BaseOnboarding
       kind: .ssn,
       handleOnboardingStep: nil,
       forceLogout: nil,
-      setRouteToAccountLocked: nil,
-      setRouteToPopTimeUp: nil
+      setRouteToAccountLocked: nil
     )
   )
 }

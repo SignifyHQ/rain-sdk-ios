@@ -64,8 +64,12 @@ private extension AppDelegate {
           alchemyAPIKey: .empty
         )
       } catch {
-        refreshPortalSessionToken()
         log.error("An error occurred while creating the portal instance \(error)")
+        guard let portalError = error as? LFPortalError, portalError == .expirationToken else {
+          return
+        }
+        
+        refreshPortalSessionToken()
       }
     }
   }

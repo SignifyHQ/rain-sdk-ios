@@ -38,32 +38,30 @@ private extension RainOnboardingContentView {
       case .phone:
         contentViewFactory
           .createView(type: .phone)
-      case .accountLocked:
+      case .createWallet:
         contentViewFactory
-          .createView(type: .accountLocked)
-      case .welcome:
+          .createView(
+            type: .welcome(RainContentViewFactory.WelcomeType.createWallet)
+          )
+      case .personalInformation:
         contentViewFactory
-          .createView(type: .welcome)
+          .createView(
+            type: .welcome(RainContentViewFactory.WelcomeType.personalInformation)
+          )
       case .kycReview:
         contentViewFactory
           .createView(type: .kycReview)
       case .dashboard:
         EmptyView()
-      case .information:
+      case .accountLocked:
         contentViewFactory
-          .createView(type: .infomation)
+          .createView(type: .accountLocked)
       case .accountReject:
         contentViewFactory
           .createView(type: .accountReject)
       case .unclear(let message):
         contentViewFactory
           .createView(type: .unclear(message))
-      case .popTimeUp:
-        ZStack {
-          timeIsUpPopup
-        }
-        .frame(max: .infinity)
-        .background(Color.black.edgesIgnoringSafeArea(.all))
       case .forceUpdate(let model):
         contentViewFactory
           .createView(type: .forceUpdate(model))
@@ -72,18 +70,5 @@ private extension RainOnboardingContentView {
     .onAppear {
       viewModel.onAppear()
     }
-  }
-  
-  var timeIsUpPopup: some View {
-    LiquidityAlert(
-      title: L10N.Common.Kyc.TimeIsUp.title,
-      message: L10N.Common.Kyc.TimeIsUp.message,
-      primary: .init(text: L10N.Common.Button.ContactSupport.title) {
-        viewModel.contactSupport()
-      },
-      secondary: .init(text: L10N.Common.Button.NotNow.title) {
-        viewModel.forcedLogout()
-      }
-    )
   }
 }

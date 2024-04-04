@@ -9,8 +9,7 @@ import BaseOnboarding
     viewModel: PhoneNumberViewModel(
       handleOnboardingStep: nil,
       forceLogout: nil,
-      setRouteToAccountLocked: nil,
-      setRouteToPopTimeUp: nil
+      setRouteToAccountLocked: nil
     )
   )
   .embedInNavigation()

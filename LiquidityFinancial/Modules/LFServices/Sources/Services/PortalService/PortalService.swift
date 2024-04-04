@@ -49,8 +49,12 @@ public extension PortalService {
   func createWallet() async throws -> String {
     try await withCheckedThrowingContinuation { [weak self] (continuation: CheckedContinuation<String, Error>) in
       guard let self else { return }
+      guard let portal = self.portal else {
+        continuation.resume(throwing: LFPortalError.portalInstanceUnavailable)
+        return
+      }
       
-      self.portal?.createWallet(
+      portal.createWallet(
         completion: { addressResult in
           guard let error = addressResult.error else {
             continuation.resume(returning: addressResult.data ?? "N/A")
@@ -74,8 +78,12 @@ public extension PortalService {
   ) async throws -> String {
     try await withCheckedThrowingContinuation { [weak self] (continuation: CheckedContinuation<String, Error>) in
       guard let self else { return }
+      guard let portal = self.portal else {
+        continuation.resume(throwing: LFPortalError.portalInstanceUnavailable)
+        return
+      }
       
-      self.portal?.backupWallet(
+      portal.backupWallet(
         method: backupMethod.rawValue,
         backupConfigs: backupConfigs
       ) { result in
@@ -89,7 +97,7 @@ public extension PortalService {
         
         guard let data = result.data else {
           log.error("Portal Swift: Error backing up wallet No Data")
-          continuation.resume(throwing: LFPortalError.noData)
+          continuation.resume(throwing: LFPortalError.dataUnavailable)
           return
         }
         
@@ -107,8 +115,12 @@ public extension PortalService {
   ) async throws {
     try await withCheckedThrowingContinuation { [weak self] (continuation: CheckedContinuation<Void, Error>) in
       guard let self else { return }
+      guard let portal = self.portal else {
+        continuation.resume(throwing: LFPortalError.portalInstanceUnavailable)
+        return
+      }
       
-      self.portal?.recoverWallet(
+      portal.recoverWallet(
         cipherText: cipherText,
         method: backupMethod.rawValue
       ) { result -> Void in

@@ -162,8 +162,7 @@ private extension SolidContentViewFactory {
         forceLogout: flowCoordinator.forceLogout,
         setRouteToAccountLocked: { [weak self] in
           self?.flowCoordinator.set(route: .accountLocked)
-        },
-        setRouteToPopTimeUp: nil
+        }
       )
     )
   }

@@ -1,6 +1,7 @@
 import Foundation
 
 public enum LFPortalError: Error {
-  case noData
+  case dataUnavailable
+  case portalInstanceUnavailable
   case expirationToken
 }

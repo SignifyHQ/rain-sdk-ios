@@ -77,12 +77,7 @@ public extension RainOnboardingFlowCoordinator {
       try await fetchAndUpdateForStart()
     } catch {
       log.error(error.userFriendlyMessage)
-      guard error.userFriendlyMessage.contains(Constants.ErrorCode.questionsNotAvailable.value) else {
-        forceLogout()
-        return
-      }
-      
-      set(route: .popTimeUp)
+      forceLogout()
     }
   }
   
@@ -254,9 +249,9 @@ private extension RainOnboardingFlowCoordinator {
   
   func handleOnboardingMissingSteps(from steps: [RainOnboardingMissingSteps]) {
     if steps.contains(.createPortalWallet) {
-      // TODO: - Create Portal Wallet
+      set(route: .createWallet)
     } else if steps.contains(.createRainUser) {
-      // TODO: - Create Rain User
+      set(route: .personalInformation)
     } else if steps.contains(.needInformation) {
       // TODO: - Provide more information
     } else if steps.contains(.needVerification) {
@@ -286,14 +281,13 @@ public extension RainOnboardingFlowCoordinator {
   enum Route: Hashable, Identifiable {
     case initial
     case phone
-    case accountLocked
-    case welcome
+    case createWallet
+    case personalInformation
     case kycReview
     case dashboard
-    case information
+    case accountLocked
     case accountReject
     case unclear(String)
-    case popTimeUp
     case forceUpdate(FeatureConfigModel)
     
     public var id: String {

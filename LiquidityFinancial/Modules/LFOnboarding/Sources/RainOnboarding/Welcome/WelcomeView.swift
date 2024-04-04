@@ -7,40 +7,36 @@ import Factory
 
 struct WelcomeView: View {
   @StateObject var viewModel = WelcomeViewModel()
+  private var destinationView: AnyView
   
-  public var body: some View {
+  init(destinationView: AnyView) {
+    self.destinationView = destinationView
+  }
+  
+  var body: some View {
     VStack(spacing: 12) {
       staticTop
-        .padding(.top, 20)
       GenImages.CommonImages.dash.swiftUIImage
         .foregroundColor(Colors.label.swiftUIColor)
         .padding(.vertical, 12)
-      
-      ScrollView(showsIndicators: true) {
-        VStack(alignment: .leading, spacing: 24) {
-          Text(L10N.Common.Welcome.howItWorks)
-            .font(Fonts.regular.swiftUIFont(size: 18))
-            .foregroundColor(Colors.label.swiftUIColor)
-          items
-          Spacer()
-        }
-        .padding(.horizontal, 30)
-      }
-      
-      buttons
-        .padding(.horizontal, 30)
-        .padding(.bottom, 12)
+      mainContent
+      continueButton
     }
+    .padding(.horizontal, 30)
+    .padding(.bottom, 12)
     .background(Colors.background.swiftUIColor)
     .onAppear {
       viewModel.onAppear()
+    }
+    .navigationLink(isActive: $viewModel.isPushToNextStep) {
+      destinationView
     }
     .navigationBarBackButtonHidden(true)
     .track(name: String(describing: type(of: self)))
   }
 }
 
-// MARK: - Private View Components
+// MARK: - View Components
 private extension WelcomeView {
   var staticTop: some View {
     VStack(spacing: 12) {
@@ -55,16 +51,14 @@ private extension WelcomeView {
         .foregroundColor(Colors.label.swiftUIColor)
         .fixedSize(horizontal: false, vertical: true)
         .multilineTextAlignment(.center)
-        .padding(.horizontal, 30)
       
       Text(L10N.Custom.Welcome.Header.desc)
         .font(Fonts.regular.swiftUIFont(fixedSize: 16))
         .foregroundColor(Colors.label.swiftUIColor.opacity(0.75))
         .fixedSize(horizontal: false, vertical: true)
         .multilineTextAlignment(.center)
-        .padding(.horizontal, 30)
-      
     }
+    .padding(.top, 20)
   }
   
   func item(image: Image, text: String) -> some View {
@@ -83,37 +77,38 @@ private extension WelcomeView {
     .frame(maxWidth: .infinity)
   }
   
-  var buttons: some View {
-    VStack(spacing: 10) {
-      FullSizeButton(
-        title: L10N.Common.Button.Continue.title,
-        isDisable: viewModel.isLoading,
-        isLoading: $viewModel.isLoading
-      ) {
-        Task {
-          await viewModel.perfromInitialAccount()
+  var mainContent: some View {
+    ScrollView(showsIndicators: false) {
+      VStack(alignment: .leading, spacing: 24) {
+        Text(L10N.Common.Welcome.howItWorks)
+          .font(Fonts.regular.swiftUIFont(size: 18))
+          .foregroundColor(Colors.label.swiftUIColor)
+        VStack(spacing: 25) {
+          item(
+            image: GenImages.CommonImages.icWellcome1.swiftUIImage,
+            text: L10N.Common.Welcome.HowItWorks.item1
+          )
+          item(
+            image: GenImages.CommonImages.icWellcome2.swiftUIImage,
+            text: L10N.Custom.Welcome.HowItWorks.item2
+          )
+          item(
+            image: GenImages.CommonImages.icWellcome3.swiftUIImage,
+            text: L10N.Custom.Welcome.HowItWorks.item3
+          )
         }
+        Spacer()
       }
     }
   }
   
-  var items: some View {
-    VStack(spacing: 25) {
-      item(image: GenImages.CommonImages.icWellcome1.swiftUIImage, text: L10N.Common.Welcome.HowItWorks.item1)
-      
-      item(image: GenImages.CommonImages.icWellcome2.swiftUIImage, text: L10N.Custom.Welcome.HowItWorks.item2)
-      
-      item(image: GenImages.CommonImages.icWellcome3.swiftUIImage, text: L10N.Custom.Welcome.HowItWorks.item3)
+  var continueButton: some View {
+    FullSizeButton(
+      title: L10N.Common.Button.Continue.title,
+      isDisable: false,
+      isLoading: .constant(false)
+    ) {
+      viewModel.onClickedContinueButton()
     }
   }
 }
-
-#if DEBUG
-struct WelcomeView_Previews: PreviewProvider {
-  static var previews: some View {
-    WelcomeView()
-      .previewLayout(PreviewLayout.sizeThatFits)
-      .previewDisplayName("Default preview")
-  }
-}
-#endif

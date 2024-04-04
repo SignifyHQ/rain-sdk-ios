@@ -10,8 +10,7 @@ import BaseOnboarding
       requireAuth: [],
       handleOnboardingStep: nil,
       forceLogout: nil,
-      setRouteToAccountLocked: nil,
-      setRouteToPopTimeUp: nil
+      setRouteToAccountLocked: nil
     )
   )
 }

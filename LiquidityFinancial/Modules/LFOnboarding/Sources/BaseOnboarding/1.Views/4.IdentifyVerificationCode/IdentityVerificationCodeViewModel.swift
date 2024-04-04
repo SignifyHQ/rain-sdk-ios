@@ -44,7 +44,6 @@ public final class IdentityVerificationCodeViewModel: ObservableObject {
   private let handleOnboardingStep: (() async throws -> Void)?
   private let forceLogout: (() -> Void)?
   private let setRouteToAccountLocked: (() -> Void)?
-  private let setRouteToPopTimeUp: (() -> Void)?
   
   private var cancellables: Set<AnyCancellable> = []
 
@@ -54,8 +53,7 @@ public final class IdentityVerificationCodeViewModel: ObservableObject {
     kind: IdentityVerificationCodeKind,
     handleOnboardingStep: (() async throws -> Void)?,
     forceLogout: (() -> Void)?,
-    setRouteToAccountLocked: (() -> Void)?,
-    setRouteToPopTimeUp: (() -> Void)? = nil
+    setRouteToAccountLocked: (() -> Void)?
   ) {
     self.phoneNumber = phoneNumber
     self.otpCode = otpCode
@@ -63,7 +61,6 @@ public final class IdentityVerificationCodeViewModel: ObservableObject {
     self.handleOnboardingStep = handleOnboardingStep
     self.forceLogout = forceLogout
     self.setRouteToAccountLocked = setRouteToAccountLocked
-    self.setRouteToPopTimeUp = setRouteToPopTimeUp
     
     observeSSNInput()
     observePassportInput()
@@ -112,13 +109,7 @@ extension IdentityVerificationCodeViewModel {
       try await handleOnboardingStep?()
     } catch {
       log.error(error.userFriendlyMessage)
-      
-      guard error.userFriendlyMessage.contains(Constants.ErrorCode.questionsNotAvailable.value) else {
-        forceLogout?()
-        return
-      }
-      
-      setRouteToPopTimeUp?()
+      forceLogout?()
     }
   }
 }

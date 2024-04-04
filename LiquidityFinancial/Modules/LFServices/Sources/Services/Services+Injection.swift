@@ -23,6 +23,7 @@ extension Container {
     self {
       PortalService()
     }
+    .singleton
   }
   
 }

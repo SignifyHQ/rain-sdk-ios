@@ -63,21 +63,18 @@ public final class VerificationCodeViewModel: ObservableObject {
   private let handleOnboardingStep: (() async throws -> Void)?
   private let forceLogout: (() -> Void)?
   private let setRouteToAccountLocked: (() -> Void)?
-  private let setRouteToPopTimeUp: (() -> Void)?
 
   public init(
     phoneNumber: String,
     requireAuth: [RequiredAuth],
     handleOnboardingStep: (() async throws -> Void)?,
     forceLogout: (() -> Void)?,
-    setRouteToAccountLocked: (() -> Void)?,
-    setRouteToPopTimeUp: (() -> Void)?
+    setRouteToAccountLocked: (() -> Void)?
   ) {
     self.requireAuth = requireAuth
     self.handleOnboardingStep = handleOnboardingStep
     self.forceLogout = forceLogout
     self.setRouteToAccountLocked = setRouteToAccountLocked
-    self.setRouteToPopTimeUp = setRouteToPopTimeUp
     
     phoneNumberWithRegionCode = Constants.Default.regionCode.rawValue + phoneNumber
     observePasswordInput()
@@ -155,13 +152,7 @@ extension VerificationCodeViewModel {
         analyticsLoginEvent(isSuccess: true, eventName: .loggedIn)
       } catch {
         log.error(error.localizedDescription)
-        analyticsLoginEvent(isSuccess: false, eventName: .phoneVerificationError)
-        
-        if error.userFriendlyMessage.contains(Constants.ErrorCode.questionsNotAvailable.value) {
-          setRouteToPopTimeUp?()
-          return
-        }
-        
+        analyticsLoginEvent(isSuccess: false, eventName: .phoneVerificationError)        
         forceLogout?()
       }
     }
@@ -304,8 +295,7 @@ private extension VerificationCodeViewModel {
       kind: kind,
       handleOnboardingStep: self.handleOnboardingStep,
       forceLogout: self.forceLogout,
-      setRouteToAccountLocked: self.setRouteToAccountLocked,
-      setRouteToPopTimeUp: self.setRouteToPopTimeUp
+      setRouteToAccountLocked: self.setRouteToAccountLocked
     )
     let view = IdentityVerificationCodeView(viewModel: viewModel)
     
