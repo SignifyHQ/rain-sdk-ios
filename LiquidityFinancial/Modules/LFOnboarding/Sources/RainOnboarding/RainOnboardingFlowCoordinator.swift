@@ -55,6 +55,10 @@ public class RainOnboardingFlowCoordinator: OnboardingFlowCoordinatorProtocol {
     RainGetOnboardingMissingStepsUseCase(repository: rainOnboardingRepository)
   }()
   
+  lazy var getUserUseCase: GetUserUseCaseProtocol = {
+    GetUserUseCase(repository: accountRepository)
+  }()
+  
   public let routeSubject: CurrentValueSubject<Route, Never>
   
   public var accountFeatureConfigData = AccountFeatureConfigData(configJSON: "", isLoading: false)
@@ -109,8 +113,7 @@ public extension RainOnboardingFlowCoordinator {
   }
   
   func fetchUserReviewStatus() async throws {
-    // TODO: - Call the get user v2 api instead
-    let user = try await accountRepository.getUser()
+    let user = try await getUserUseCase.execute()
     handleDataUser(user: user)
 
     guard let accountReviewStatus = user.accountReviewStatusEnum else {

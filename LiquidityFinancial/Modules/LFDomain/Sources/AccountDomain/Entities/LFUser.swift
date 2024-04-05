@@ -15,18 +15,19 @@ public protocol LFUser {
   var lastName: String? { get }
   var fullName: String? { get }
   var phone: String? { get }
-  var phoneVerified: Bool? { get }
   var email: String? { get }
+  var phoneVerified: Bool? { get }
   var emailVerified: Bool? { get }
   var mfaEnabled: Bool? { get }
   var addressEntity: AddressEntity? { get }
+  var accountReviewStatus: String? { get }
   var referralLink: String? { get }
   var userRewardType: String? { get }
   var userAccessLevel: String? { get }
   var userSelectedFundraiserId: String? { get }
   var userRoundUpEnabled: Bool? { get }
-  var accountReviewStatus: String? { get }
   var missingSteps: [String]? { get }
+  var portalClientId: String? { get }
 }
 
 public extension LFUser {

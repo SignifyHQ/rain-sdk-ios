@@ -48,7 +48,7 @@ extension AccountRoute: LFRoute {
     case .createZeroHashAccount:
       return "/v1/zerohash/accounts"
     case .getUser:
-      return "/v1/user"
+      return "/v2/user"
     case .createPassword:
       return "v1/user/create-password"
     case .resetPasswordRequest:

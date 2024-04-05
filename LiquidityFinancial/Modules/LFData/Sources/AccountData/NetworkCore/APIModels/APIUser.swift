@@ -25,6 +25,7 @@ public struct APIUser: Codable {
   public let userSelectedFundraiserId: String?
   public let numberOfDevices: Int?
   public let missingSteps: [String]?
+  public let portalClientId: String?
 }
 
 extension APIAddress: AddressEntity {}

@@ -6,7 +6,12 @@ import OnboardingData
 
 extension LFCoreNetwork: AccountAPIProtocol where R == AccountRoute {
   public func getUser() async throws -> APIUser {
-    return try await request(AccountRoute.getUser, target: APIUser.self, failure: LFErrorObject.self, decoder: .apiDecoder)
+    try await request(
+      AccountRoute.getUser,
+      target: APIUser.self,
+      failure: LFErrorObject.self,
+      decoder: .apiDecoder
+    )
   }
   
   public func createPassword(password: String) async throws {
