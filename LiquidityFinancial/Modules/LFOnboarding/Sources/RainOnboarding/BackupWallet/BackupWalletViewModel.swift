@@ -1,11 +1,12 @@
-import SwiftUI
-import Factory
 import AccountData
-import LFUtilities
-import Services
-import LFLocalizable
-import AuthorizationManager
 import AccountDomain
+import AuthorizationManager
+import Factory
+import LFLocalizable
+import LFUtilities
+import PortalSwift
+import Services
+import SwiftUI
 
 @MainActor
 final class BackupWalletViewModel: ObservableObject {
@@ -18,7 +19,8 @@ final class BackupWalletViewModel: ObservableObject {
   @Published var isLoading = false
   @Published var toastMessage: String?
   @Published var isNavigateToPersonalInformation = false
-  @Published var selectedMethod: BackupMethods?
+  @Published var passwordString: String = ""
+  @Published var selectedMethod: BackupMethod?
   
   lazy var refreshPortalToken: RefreshPortalSessionTokenUseCaseProtocol = {
     RefreshPortalSessionTokenUseCase(repository: accountRepository)
@@ -29,16 +31,31 @@ final class BackupWalletViewModel: ObservableObject {
 
 // MARK: - View Handle
 extension BackupWalletViewModel {
-  func onSelectedBackupMethod(method: BackupMethods) {
+  func onBackupMethodSelected(method: BackupMethod) {
     selectedMethod = method
   }
   
-  func onClickedBackupButton() {
-    // TODO: - Will be implemented later
-    isNavigateToPersonalInformation = true
+  func onBackupButtonTap() {
+    guard let selectedMethod else { return }
+    
+    Task {
+      isLoading = true
+  
+      do {
+        let cipher = try await portalService.backup(
+          backupMethod: selectedMethod.portalBackupMethod,
+          backupConfigs: selectedMethod.backupConfig(with: passwordString)
+        )
+        
+        isLoading = false
+        isNavigateToPersonalInformation = true
+      } catch {
+        handlePortalError(error: error)
+      }
+    }
   }
   
-  func onClickedBackupLaterButton() {
+  func onBackupLaterButtonTap() {
     isNavigateToPersonalInformation = true
   }
   
@@ -47,11 +64,75 @@ extension BackupWalletViewModel {
   }
 }
 
+// MARK: - Private Functions
+private extension BackupWalletViewModel {
+  func handlePortalError(error: Error) {
+    guard let portalError = error as? LFPortalError else {
+      toastMessage = error.userFriendlyMessage
+      isLoading = false
+      return
+    }
+    
+    switch portalError {
+    case .expirationToken:
+      refreshPortalSessionToken()
+    default:
+      toastMessage = portalError.userFriendlyMessage
+      isLoading = false
+    }
+  }
+  
+  //TODO: - Will move the refresh token logic to PortalRepository(?)
+  func refreshPortalSessionToken() {
+    Task {
+      do {
+        let token = try await refreshPortalToken.execute()
+        
+        authorizationManager.savePortalSessionToken(token: token.clientSessionToken)
+        _ = try await portalService.registerPortal(
+          sessionToken: token.clientSessionToken,
+          alchemyAPIKey: .empty
+        )
+        
+        onBackupButtonTap()
+      } catch {
+        isLoading = false
+        log.error("An error occurred while refreshing the portal client session \(error)")
+      }
+    }
+  }
+}
+
 // MARK: - Types
 extension BackupWalletViewModel {
-  enum BackupMethods {
+  enum BackupMethod {
     case password
     case iCloud
+    
+    var portalBackupMethod: BackupMethods {
+      switch self {
+      case .iCloud:
+        return .iCloud
+      case .password:
+        return .Password
+      }
+    }
+    
+    func backupConfig(
+      with password: String?
+    ) -> BackupConfigs? {
+      switch self {
+      case .iCloud:
+        return nil
+      case .password:
+        guard let password,
+              let passwordStorage = try? PasswordStorageConfig(password: password) else {
+          return nil
+        }
+        
+        return BackupConfigs(passwordStorage: passwordStorage)
+      }
+    }
     
     var title: String {
       switch self {

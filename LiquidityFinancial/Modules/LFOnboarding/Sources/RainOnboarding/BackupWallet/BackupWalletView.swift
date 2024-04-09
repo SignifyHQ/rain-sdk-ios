@@ -78,7 +78,7 @@ private extension BackupWalletView {
     }
   }
   
-  func backupMethodItem(method: BackupWalletViewModel.BackupMethods) -> some View {
+  func backupMethodItem(method: BackupWalletViewModel.BackupMethod) -> some View {
     HStack(spacing: 12) {
       CircleSelected(isSelected: viewModel.selectedMethod == method)
       Text(method.title)
@@ -87,8 +87,9 @@ private extension BackupWalletView {
         .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.medium.value))
     }
     .onTapGesture {
-      viewModel.onSelectedBackupMethod(method: method)
+      viewModel.onBackupMethodSelected(method: method)
     }
+    .disabled(viewModel.isLoading)
   }
   
   var buttonGroup: some View {
@@ -98,14 +99,14 @@ private extension BackupWalletView {
         isDisable: false,
         type: .tertiary
       ) {
-        viewModel.onClickedBackupLaterButton()
+        viewModel.onBackupLaterButtonTap()
       }
       FullSizeButton(
         title: L10N.Common.Button.Continue.title,
         isDisable: viewModel.selectedMethod == nil,
         isLoading: $viewModel.isLoading
       ) {
-        viewModel.onClickedBackupButton()
+        viewModel.onBackupButtonTap()
       }
     }
     .padding(.bottom, 12)

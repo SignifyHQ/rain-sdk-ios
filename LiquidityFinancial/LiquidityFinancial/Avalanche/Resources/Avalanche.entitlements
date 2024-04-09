@@ -8,6 +8,8 @@
 	<array>
 		<string>applinks:avalanche.cc</string>
 	</array>
+	<key>com.apple.developer.icloud-container-identifiers</key>
+	<array/>
 	<key>com.apple.developer.networking.wifi-info</key>
 	<true/>
 	<key>com.apple.developer.pass-type-identifiers</key>
@@ -16,5 +18,7 @@
 	</array>
 	<key>com.apple.developer.payment-pass-provisioning</key>
 	<true/>
+	<key>com.apple.developer.ubiquity-kvstore-identifier</key>
+	<string>$(TeamIdentifierPrefix)$(CFBundleIdentifier)</string>
 </dict>
 </plist>
