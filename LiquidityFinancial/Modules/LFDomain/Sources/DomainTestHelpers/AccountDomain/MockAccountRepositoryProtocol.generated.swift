@@ -739,4 +739,21 @@ public class MockAccountRepositoryProtocol: AccountRepositoryProtocol {
         }
     }
 
+    //MARK: - verifyAndUpdatePortalWalletAddress
+
+    public var verifyAndUpdatePortalWalletAddressThrowableError: Error?
+    public var verifyAndUpdatePortalWalletAddressCallsCount = 0
+    public var verifyAndUpdatePortalWalletAddressCalled: Bool {
+        return verifyAndUpdatePortalWalletAddressCallsCount > 0
+    }
+    public var verifyAndUpdatePortalWalletAddressClosure: (() async throws -> Void)?
+
+    public func verifyAndUpdatePortalWalletAddress() async throws {
+        if let error = verifyAndUpdatePortalWalletAddressThrowableError {
+            throw error
+        }
+        verifyAndUpdatePortalWalletAddressCallsCount += 1
+        try await verifyAndUpdatePortalWalletAddressClosure?()
+    }
+
 }

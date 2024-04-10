@@ -15,4 +15,5 @@ public protocol PortalServiceProtocol {
     backupMethod: BackupMethods,
     cipherText: String
   ) async throws
+  func checkWalletAddressExists() -> Bool
 }

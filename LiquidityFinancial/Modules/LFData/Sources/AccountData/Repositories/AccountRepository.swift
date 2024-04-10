@@ -151,5 +151,9 @@ public class AccountRepository: AccountRepositoryProtocol {
   public func refreshPortalSessionToken() async throws -> PortalSessionTokenEntity {
     try await accountAPI.refreshPortalSessionToken()
   }
+  
+  public func verifyAndUpdatePortalWalletAddress() async throws {
+    try await accountAPI.verifyAndUpdatePortalWalletAddress()
+  }
 
 }

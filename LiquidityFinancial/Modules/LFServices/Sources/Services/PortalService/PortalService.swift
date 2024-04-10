@@ -139,19 +139,48 @@ public extension PortalService {
       }
     }
   }
+  
+  
+}
+
+// MARK: - Helper
+public extension PortalService {
+  func checkWalletAddressExists() -> Bool {
+    guard let address = portal?.address else {
+      return false
+    }
+    
+    return !address.isEmpty
+  }
 }
 
 // MARK: - Private Functions
 private extension PortalService {
   func handlePortalError(error: Error) -> Error {
-    if let portalMpcError = error as? PortalMpcError, portalMpcError.code == 320 {
-      return LFPortalError.expirationToken
-    }
-    
     if let portalError = error as? PortalError, portalError.code == PortalErrorCodes.INVALID_API_KEY.rawValue {
       return LFPortalError.expirationToken
     }
     
-    return error
+    guard let portalMpcError = error as? PortalMpcError else {
+      return error
+    }
+    
+    switch portalMpcError.code {
+    case 320:
+      return LFPortalError.expirationToken
+    case PortalErrorCodes.INVALID_API_KEY.rawValue:
+      return LFPortalError.expirationToken
+    case PortalErrorCodes.BAD_REQUEST.rawValue:
+      return portalMpcError.message.contains(PortalErrorMessage.walletAlreadyExists) ? LFPortalError.walletAlreadyExists : portalMpcError
+    default:
+      return portalMpcError
+    }
+  }
+}
+
+// MARK: - PortalErrorMessage
+extension PortalService {
+  enum PortalErrorMessage {
+    static let walletAlreadyExists = "Wallet already exists"
   }
 }

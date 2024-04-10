@@ -86,12 +86,8 @@ public extension RainOnboardingFlowCoordinator {
   }
   
   func fetchOnboardingMissingSteps() async throws {
-    // TODO: - Will uncomment after this api available
-    // let missingSteps = try await getOnboardingMissingSteps.execute()
-    // let processSteps = missingSteps.processSteps
-    
-    // TODO: - Will remove after the getOnboardingMissingSteps api available
-    let processSteps = ["create_wallet_portal"]
+    let missingSteps = try await getOnboardingMissingSteps.execute()
+    let processSteps = missingSteps.processSteps
     
     guard !processSteps.isEmpty else {
       // If there are no remaining onboarding steps to complete, it proceeds to fetch the rain review status.

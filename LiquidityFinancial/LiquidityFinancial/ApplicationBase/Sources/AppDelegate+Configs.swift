@@ -41,9 +41,7 @@ private extension AppDelegate {
   
   func setupLFUtilitiesConfig() {
     LFUtilities.initial(target: target)
-    DBCustomHTTPProtocol.ignoredHosts.append("http://nexus-websocket-a.intercom.io")
     DBCustomHTTPProtocol.ignoredHosts.append("http://api.segment.io/v1/batch")
-    DBCustomHTTPProtocol.ignoredHosts.append("http://ursuzkbg-ios.mobile-messenger.intercom.com")
   }
   
   func setupLFServiceConfig() {

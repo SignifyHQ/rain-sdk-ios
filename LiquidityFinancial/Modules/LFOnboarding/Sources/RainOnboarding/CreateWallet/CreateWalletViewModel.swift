@@ -22,8 +22,12 @@ final class CreateWalletViewModel: ObservableObject {
   @Published var isNavigateToBackupWalletView = false
   @Published var openSafariType: OpenSafariType?
   
-  lazy var refreshPortalToken: RefreshPortalSessionTokenUseCaseProtocol = {
+  lazy var refreshPortalTokenUseCase: RefreshPortalSessionTokenUseCaseProtocol = {
     RefreshPortalSessionTokenUseCase(repository: accountRepository)
+  }()
+  
+  lazy var verifyAndUpdatePortalWalletUseCase: VerifyAndUpdatePortalWalletUseCaseProtocol = {
+    VerifyAndUpdatePortalWalletUseCase(repository: accountRepository)
   }()
   
   let strMessage = L10N.Common.CreateWallet.termsAndCondition
@@ -34,23 +38,46 @@ final class CreateWalletViewModel: ObservableObject {
   init() {}
 }
 
+// MARK: - API Handle
+extension CreateWalletViewModel {
+  func createPortalWallet() async {
+    do {
+      let walletAddress = try await portalService.createWallet()
+      log.debug("Portal wallet creation successful: \(walletAddress)")
+      await verifyAndUpdatePortalWallet()
+      
+    } catch {
+      log.error(error.localizedDescription)
+      handlePortalError(error: error)
+    }
+  }
+  
+  func verifyAndUpdatePortalWallet() async {
+    do {
+      _ = try await verifyAndUpdatePortalWalletUseCase.execute()
+      
+      showIndicator = false
+      analyticsService.track(event: AnalyticsEvent(name: .walletSetupSuccess))
+      isNavigateToBackupWalletView = true
+    } catch {
+      log.error(error.localizedDescription)
+      showIndicator = false
+      toastMessage = error.userFriendlyMessage
+    }
+  }
+}
+
 // MARK: - View Handle
 extension CreateWalletViewModel {
-  func createPortalWallet() {
+  func onCreatePortalWalletTapped() {
     Task {
       showIndicator = true
-      
-      do {
-        let walletAddress = try await portalService.createWallet()
-        
-        showIndicator = false
-        log.debug("Portal wallet creation successful: \(walletAddress)")
-        analyticsService.track(event: AnalyticsEvent(name: .walletSetupSuccess))
-        isNavigateToBackupWalletView = true
-      } catch {
-        log.error(error.localizedDescription)
-        handlePortalError(error: error)
+      guard portalService.checkWalletAddressExists() else {
+        await self.createPortalWallet()
+        return
       }
+      
+      await verifyAndUpdatePortalWallet()
     }
   }
   
@@ -96,6 +123,10 @@ private extension CreateWalletViewModel {
     switch portalError {
     case .expirationToken:
       refreshPortalSessionToken()
+    case .walletAlreadyExists:
+      Task {
+        await verifyAndUpdatePortalWallet()
+      }
     default:
       toastMessage = portalError.localizedDescription
       showIndicator = false
@@ -105,14 +136,15 @@ private extension CreateWalletViewModel {
   func refreshPortalSessionToken() {
     Task {
       do {
-        let token = try await refreshPortalToken.execute()
+        let token = try await refreshPortalTokenUseCase.execute()
         
         authorizationManager.savePortalSessionToken(token: token.clientSessionToken)
         _ = try await portalService.registerPortal(
           sessionToken: token.clientSessionToken,
           alchemyAPIKey: .empty
         )
-        createPortalWallet()
+        
+        await createPortalWallet()
       } catch {
         showIndicator = false
         log.error("An error occurred while refreshing the portal client session \(error)")

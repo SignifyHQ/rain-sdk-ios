@@ -271,4 +271,11 @@ extension LFCoreNetwork: AccountAPIProtocol where R == AccountRoute {
     )
   }
 
+  public func verifyAndUpdatePortalWalletAddress() async throws {
+    try await requestNoResponse(
+      AccountRoute.verifyAndUpdatePortalWallet,
+      failure: LFErrorObject.self,
+      decoder: .apiDecoder
+    )
+  }
 }

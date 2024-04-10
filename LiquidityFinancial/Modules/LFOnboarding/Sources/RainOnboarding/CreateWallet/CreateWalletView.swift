@@ -124,7 +124,7 @@ private extension CreateWalletView {
       isDisable: !viewModel.isTermsAgreed,
       isLoading: $viewModel.showIndicator
     ) {
-      viewModel.createPortalWallet()
+      viewModel.onCreatePortalWalletTapped()
     }
     .ignoresSafeArea(.keyboard, edges: .bottom)
     .padding(.bottom, 12)

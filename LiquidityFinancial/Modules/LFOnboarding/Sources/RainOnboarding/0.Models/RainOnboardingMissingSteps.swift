@@ -2,8 +2,8 @@ import Foundation
 import RainDomain
 
 enum RainOnboardingMissingSteps: String {
-  case createPortalWallet = "create_wallet_portal"
-  case createRainUser = "create_rain_user"
-  case needInformation = "rain_user_need_information"
-  case needVerification = "rain_user_need_verification"
+  case createPortalWallet = "portal_create_wallet"
+  case createRainUser = "rain_create_user"
+  case needInformation = "rain_user_needs_information"
+  case needVerification = "rain_user_needs_verification"
 }
