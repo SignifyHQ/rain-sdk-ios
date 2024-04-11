@@ -1,5 +1,5 @@
 import Foundation
-import AccountDomain
+import PortalDomain
 
 public struct APIWalletRestore: WalletRestoreEntitiy, Codable {
   public let backupMethod: String

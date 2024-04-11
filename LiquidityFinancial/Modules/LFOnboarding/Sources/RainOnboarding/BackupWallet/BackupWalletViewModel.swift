@@ -1,6 +1,5 @@
-import AccountData
-import AccountDomain
-import AuthorizationManager
+import PortalData
+import PortalDomain
 import Factory
 import LFLocalizable
 import LFUtilities
@@ -10,8 +9,7 @@ import SwiftUI
 
 @MainActor
 final class BackupWalletViewModel: ObservableObject {
-  @LazyInjected(\.authorizationManager) var authorizationManager
-  @LazyInjected(\.accountRepository) var accountRepository
+  @LazyInjected(\.portalRepository) var portalRepository
   @LazyInjected(\.customerSupportService) var customerSupportService
   @LazyInjected(\.analyticsService) var analyticsService
   @LazyInjected(\.portalService) var portalService
@@ -22,12 +20,12 @@ final class BackupWalletViewModel: ObservableObject {
   @Published var passwordString: String = ""
   @Published var selectedMethod: BackupMethod?
   
-  lazy var refreshPortalToken: RefreshPortalSessionTokenUseCaseProtocol = {
-    RefreshPortalSessionTokenUseCase(repository: accountRepository)
+  lazy var backupPortalWalletUseCase: BackupPortalWalletUseCaseProtocol = {
+    BackupPortalWalletUseCase(repository: portalRepository)
   }()
   
   lazy var walletBackupUseCase: WalletBackupUseCaseProtocol = {
-    WalletBackupUseCase(repository: accountRepository)
+    WalletBackupUseCase(repository: portalRepository)
   }()
   
   init() {}
@@ -46,13 +44,12 @@ extension BackupWalletViewModel {
       isLoading = true
   
       do {
-        let cipher = try await portalService.backup(
+        let cipher = try await backupPortalWalletUseCase.execute(
           backupMethod: selectedMethod.portalBackupMethod,
           backupConfigs: selectedMethod.backupConfig(with: passwordString)
         )
         
-        try await walletBackupUseCase
-          .execute(
+        try await walletBackupUseCase.execute(
             cipher: cipher,
             method: selectedMethod.portalBackupMethod.rawValue
           )
@@ -62,7 +59,8 @@ extension BackupWalletViewModel {
         
         log.debug("Portal wallet cipher text saved successfully")
       } catch {
-        handlePortalError(error: error)
+        isLoading = false
+        toastMessage = error.userFriendlyMessage
       }
     }
   }
@@ -73,45 +71,6 @@ extension BackupWalletViewModel {
   
   func openSupportScreen() {
     customerSupportService.openSupportScreen()
-  }
-}
-
-// MARK: - Private Functions
-private extension BackupWalletViewModel {
-  func handlePortalError(error: Error) {
-    guard let portalError = error as? LFPortalError else {
-      toastMessage = error.userFriendlyMessage
-      isLoading = false
-      return
-    }
-    
-    switch portalError {
-    case .expirationToken:
-      refreshPortalSessionToken()
-    default:
-      toastMessage = portalError.userFriendlyMessage
-      isLoading = false
-    }
-  }
-  
-  //TODO: - Will move the refresh token logic to PortalRepository(?)
-  func refreshPortalSessionToken() {
-    Task {
-      do {
-        let token = try await refreshPortalToken.execute()
-        
-        authorizationManager.savePortalSessionToken(token: token.clientSessionToken)
-        _ = try await portalService.registerPortal(
-          sessionToken: token.clientSessionToken,
-          alchemyAPIKey: .empty
-        )
-        
-        onBackupButtonTap()
-      } catch {
-        isLoading = false
-        log.error("An error occurred while refreshing the portal client session \(error)")
-      }
-    }
   }
 }
 

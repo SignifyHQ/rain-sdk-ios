@@ -5,18 +5,18 @@ import Factory
 import AuthorizationManager
 import LFUtilities
 import EnvironmentService
-import AccountData
-import AccountDomain
+import PortalData
+import PortalDomain
 
 class AppDelegate: UIResponder, UIApplicationDelegate {
   
   @LazyInjected(\.authorizationManager) var authorizationManager
   @LazyInjected(\.environmentService) var environmentService
   @LazyInjected(\.portalService) var portalService
-  @LazyInjected(\.accountRepository) var accountRepository
+  @LazyInjected(\.portalRepository) var portalRepository
   
-  lazy var refreshPortalToken: RefreshPortalSessionTokenUseCaseProtocol = {
-    RefreshPortalSessionTokenUseCase(repository: accountRepository)
+  lazy var registerPortalUsecase: RegisterPortalUseCaseProtocol = {
+    RegisterPortalUseCase(repository: portalRepository)
   }()
 
   var navigationContainer: NavigationContainer!

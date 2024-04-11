@@ -22,8 +22,6 @@ public enum AccountRoute {
   case getTransactions(accountId: String, currencyType: String, transactionTypes: String, limit: Int, offset: Int)
   case getTransactionDetail(accountId: String, transactionId: String)
   case logout
-  case backupWallet(cipher: String, method: String)
-  case restoreWallet(method: String)
   case createWalletAddress(accountId: String, address: String, nickname: String)
   case updateWalletAddress(accountId: String, walletId: String, walletAddress: String, nickname: String)
   case getWalletAddresses(accountId: String)
@@ -36,8 +34,6 @@ public enum AccountRoute {
   case getSecretKey
   case enableMFA(code: String)
   case disableMFA(code: String)
-  case refreshPortalSessionToken
-  case verifyAndUpdatePortalWallet
 }
 
 extension AccountRoute: LFRoute {
@@ -76,8 +72,6 @@ extension AccountRoute: LFRoute {
       return "/v1/transactions/\(accountId)"
     case let .getTransactionDetail(_, transactionId):
       return "/v1/transactions/detail/\(transactionId)"
-    case .backupWallet, .restoreWallet:
-      return "/v1/portal/backup"
     case .createWalletAddress(let accountId, _, _), .getWalletAddresses(let accountId):
       return "v1/accounts/\(accountId)/wallet-addresses"
     case let .updateWalletAddress(accountId, _, walletAddress, _):
@@ -100,10 +94,6 @@ extension AccountRoute: LFRoute {
       return "/v1/mfa/enable"
     case .disableMFA:
       return "/v1/mfa/disable"
-    case .refreshPortalSessionToken:
-      return "/v1/portal/clients/refresh-session"
-    case .verifyAndUpdatePortalWallet:
-      return "/v1/portal/clients/verify-and-update-wallet-address"
     }
   }
   
@@ -119,27 +109,23 @@ extension AccountRoute: LFRoute {
         .verifyEmail,
         .createZeroHashAccount,
         .logout,
-        .backupWallet,
         .createWalletAddress,
         .addToWaitList,
         .createSupportTicket,
         .updateSelectedRewardCurrency,
         .enableMFA,
-        .disableMFA,
-        .verifyAndUpdatePortalWallet:
+        .disableMFA:
       return .POST
     case .getUser,
         .getTransactions,
         .getTransactionDetail,
-        .restoreWallet,
         .getWalletAddresses,
         .getReferralCampaign,
         .getAvailableRewardCurrencies,
         .getSelectedRewardCurrency,
         .getSecretKey,
         .getUserRewards,
-        .getFeatureConfig,
-        .refreshPortalSessionToken:
+        .getFeatureConfig:
       return .GET
     case .updateWalletAddress:
       return .PATCH
@@ -177,9 +163,7 @@ extension AccountRoute: LFRoute {
         .getReferralCampaign,
         .getUserRewards,
         .getFeatureConfig,
-        .getSecretKey,
-        .refreshPortalSessionToken,
-        .verifyAndUpdatePortalWallet:
+        .getSecretKey:
       return nil
     case .createPassword(let password):
       return [
@@ -225,15 +209,6 @@ extension AccountRoute: LFRoute {
         "limit": String(limit),
         "offset": String(offset)
       ]
-    case .backupWallet(let cipher, let method):
-      return [
-        "backupMethod": method,
-        "cipherText": cipher
-      ]
-    case .restoreWallet(let method):
-      return [
-        "backupMethod": method
-      ]
     case .createWalletAddress(_, let address, let nickname):
       return [
         "nickname": nickname,
@@ -278,7 +253,6 @@ extension AccountRoute: LFRoute {
         .resetPassword,
         .loginWithPassword,
         .verifyEmail,
-        .backupWallet,
         .createWalletAddress,
         .updateWalletAddress,
         .addToWaitList,
@@ -297,12 +271,9 @@ extension AccountRoute: LFRoute {
         .deleteWalletAddresses,
         .getUserRewards,
         .getFeatureConfig,
-        .getSecretKey,
-        .refreshPortalSessionToken,
-        .verifyAndUpdatePortalWallet:
+        .getSecretKey:
       return nil
-    case  .restoreWallet,
-        .getTransactions,
+    case .getTransactions,
         .getTransactionDetail,
         .getReferralCampaign:
       return .url

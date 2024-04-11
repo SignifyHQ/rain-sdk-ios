@@ -4,6 +4,8 @@ import LFLocalizable
 import Factory
 import AccountData
 import AccountDomain
+import PortalDomain
+import PortalData
 import OnboardingDomain
 import OnboardingData
 import NetSpendData
@@ -13,10 +15,9 @@ import Services
 
 @MainActor
 public final class IdentityVerificationCodeViewModel: ObservableObject {
-  @LazyInjected(\.authorizationManager) var authorizationManager
   @LazyInjected(\.accountDataManager) var accountDataManager
   @LazyInjected(\.onboardingRepository) var onboardingRepository
-  @LazyInjected(\.accountRepository) var accountRepository
+  @LazyInjected(\.portalRepository) var portalRepository
   @LazyInjected(\.customerSupportService) var customerSupportService
   @LazyInjected(\.featureFlagManager) var featureFlagManager
   @LazyInjected(\.portalService) var portalService
@@ -33,8 +34,8 @@ public final class IdentityVerificationCodeViewModel: ObservableObject {
     LoginUseCase(repository: onboardingRepository)
   }()
   
-  lazy var refreshPortalToken: RefreshPortalSessionTokenUseCaseProtocol = {
-    RefreshPortalSessionTokenUseCase(repository: accountRepository)
+  lazy var registerPortalUseCase: RegisterPortalUseCaseProtocol = {
+    RegisterPortalUseCase(repository: portalRepository)
   }()
   
   private let phoneNumber: String
@@ -190,33 +191,13 @@ private extension IdentityVerificationCodeViewModel {
   }
   
   func setupPortal(portalToken: String?) {
-    guard let portalToken else {
-      return
-    }
+    guard let portalToken else { return }
     
     Task {
       do {
-        // TODO: - alchemyAPIKey will be implemented later
-        try await portalService.registerPortal(sessionToken: portalToken, alchemyAPIKey: "")
+        try await registerPortalUseCase.execute(portalToken: portalToken)
       } catch {
-        guard let portalError = error as? LFPortalError, portalError == .expirationToken else {
-          self.toastMessage = error.userFriendlyMessage
-          return
-        }
-        
-        refreshPortalSessionToken()
-      }
-    }
-  }
-  
-  func refreshPortalSessionToken() {
-    Task {
-      do {
-        let token = try await refreshPortalToken.execute()
-        
-        authorizationManager.savePortalSessionToken(token: token.clientSessionToken)
-        setupPortal(portalToken: token.clientSessionToken)
-      } catch {
+        log.error(error.userFriendlyMessage)
         toastMessage = error.userFriendlyMessage
       }
     }

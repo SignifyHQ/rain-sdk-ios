@@ -2,9 +2,9 @@ import Foundation
 
 public final class WalletBackupUseCase: WalletBackupUseCaseProtocol {
   
-  private let repository: AccountRepositoryProtocol
+  private let repository: PortalRepositoryProtocol
   
-  public init(repository: AccountRepositoryProtocol) {
+  public init(repository: PortalRepositoryProtocol) {
     self.repository = repository
   }
   

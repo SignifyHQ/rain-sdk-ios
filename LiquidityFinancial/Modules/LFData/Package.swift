@@ -41,6 +41,9 @@ let package = Package(
       name: "RainData",
       targets: ["RainData"]),
     .library(
+      name: "PortalData",
+      targets: ["PortalData"]),
+    .library(
       name: "DataTestHelpers",
       targets: ["DataTestHelpers"])
   ],
@@ -168,9 +171,19 @@ let package = Package(
       ]
     ),
     .target(
+      name: "PortalData",
+      dependencies: [
+        "LFUtilities", "Factory",
+        .product(name: "PortalDomain", package: "LFDomain"),
+        .product(name: "NetworkUtilities", package: "LFNetwork"),
+        .product(name: "CoreNetwork", package: "LFNetwork"),
+        .product(name: "Services", package: "LFServices")
+      ]
+    ),
+    .target(
       name: "DataTestHelpers",
       dependencies: [
-        "OnboardingData", "NetSpendData", "AccountData", "RewardData", "ZerohashData", "DevicesData", "CryptoChartData", "SolidData", "RainData",
+        "OnboardingData", "NetSpendData", "AccountData", "RewardData", "ZerohashData", "DevicesData", "CryptoChartData", "SolidData", "RainData", "PortalData",
         .product(name: "NetspendDomain", package: "LFDomain")
       ]
     ),

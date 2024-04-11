@@ -38,6 +38,9 @@ let package = Package(
       name: "RainDomain",
       targets: ["RainDomain"]),
     .library(
+      name: "PortalDomain",
+      targets: ["PortalDomain"]),
+    .library(
       name: "DomainTestHelpers",
       targets: ["DomainTestHelpers"])
   ],
@@ -95,9 +98,15 @@ let package = Package(
       ]
     ),
     .target(
+      name: "PortalDomain",
+      dependencies: [
+        .product(name: "Services", package: "LFServices"),
+      ]
+    ),
+    .target(
       name: "DomainTestHelpers",
       dependencies: [
-        "AccountDomain", "CryptoChartDomain", "DevicesDomain", "ZerohashDomain", "OnboardingDomain", "SolidDomain", "NetspendDomain", "RainDomain"
+        "AccountDomain", "CryptoChartDomain", "DevicesDomain", "ZerohashDomain", "OnboardingDomain", "SolidDomain", "NetspendDomain", "RainDomain", "PortalDomain"
       ]
     ),
     .testTarget(

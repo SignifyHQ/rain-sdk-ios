@@ -21,8 +21,6 @@ public protocol AccountAPIProtocol {
   ) async throws -> APITransactionList
   func getTransactionDetail(accountId: String, transactionId: String) async throws -> APITransaction
   func logout() async throws -> Bool
-  func backupWallet(cipher: String, method: String) async throws
-  func restoreWallet(method: String) async throws -> APIWalletRestore
   func createWalletAddresses(accountId: String, address: String, nickname: String) async throws -> APIWalletAddress
   func updateWalletAddresses(accountId: String, walletId: String, walletAddress: String, nickname: String) async throws -> APIWalletAddress
   func getWalletAddresses(accountId: String) async throws -> [APIWalletAddress]
@@ -35,6 +33,4 @@ public protocol AccountAPIProtocol {
   func getSecretKey() async throws -> APISecretKey
   func enableMFA(code: String) async throws -> APIEnableMFA
   func disableMFA(code: String) async throws -> APIDisableMFA
-  func refreshPortalSessionToken() async throws -> APIPortalSessionToken
-  func verifyAndUpdatePortalWalletAddress() async throws
 }

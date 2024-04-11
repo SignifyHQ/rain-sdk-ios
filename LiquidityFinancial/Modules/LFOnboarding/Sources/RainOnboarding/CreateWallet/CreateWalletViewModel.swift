@@ -1,17 +1,15 @@
 import SwiftUI
 import Factory
-import AccountData
+import PortalData
+import PortalDomain
 import LFUtilities
 import Services
 import LFLocalizable
-import AuthorizationManager
-import AccountDomain
 
-// MARK: - SetupWalletViewModel
+// MARK: - CreateWalletViewModel
 @MainActor
 final class CreateWalletViewModel: ObservableObject {
-  @LazyInjected(\.accountRepository) var accountRepository
-  @LazyInjected(\.authorizationManager) var authorizationManager
+  @LazyInjected(\.portalRepository) var portalRepository
   @LazyInjected(\.customerSupportService) var customerSupportService
   @LazyInjected(\.analyticsService) var analyticsService
   @LazyInjected(\.portalService) var portalService
@@ -22,12 +20,12 @@ final class CreateWalletViewModel: ObservableObject {
   @Published var isNavigateToBackupWalletView = false
   @Published var openSafariType: OpenSafariType?
   
-  lazy var refreshPortalTokenUseCase: RefreshPortalSessionTokenUseCaseProtocol = {
-    RefreshPortalSessionTokenUseCase(repository: accountRepository)
+  lazy var createPortalWalletUseCase: CreatePortalWalletUseCaseProtocol = {
+    CreatePortalWalletUseCase(repository: portalRepository)
   }()
   
   lazy var verifyAndUpdatePortalWalletUseCase: VerifyAndUpdatePortalWalletUseCaseProtocol = {
-    VerifyAndUpdatePortalWalletUseCase(repository: accountRepository)
+    VerifyAndUpdatePortalWalletUseCase(repository: portalRepository)
   }()
   
   let strMessage = L10N.Common.CreateWallet.termsAndCondition
@@ -42,7 +40,7 @@ final class CreateWalletViewModel: ObservableObject {
 extension CreateWalletViewModel {
   func createPortalWallet() async {
     do {
-      let walletAddress = try await portalService.createWallet()
+      let walletAddress = try await createPortalWalletUseCase.execute()
       log.debug("Portal wallet creation successful: \(walletAddress)")
       await verifyAndUpdatePortalWallet()
       
@@ -121,8 +119,6 @@ private extension CreateWalletViewModel {
     }
     
     switch portalError {
-    case .expirationToken:
-      refreshPortalSessionToken()
     case .walletAlreadyExists:
       Task {
         await verifyAndUpdatePortalWallet()
@@ -130,25 +126,6 @@ private extension CreateWalletViewModel {
     default:
       toastMessage = portalError.localizedDescription
       showIndicator = false
-    }
-  }
-  
-  func refreshPortalSessionToken() {
-    Task {
-      do {
-        let token = try await refreshPortalTokenUseCase.execute()
-        
-        authorizationManager.savePortalSessionToken(token: token.clientSessionToken)
-        _ = try await portalService.registerPortal(
-          sessionToken: token.clientSessionToken,
-          alchemyAPIKey: .empty
-        )
-        
-        await createPortalWallet()
-      } catch {
-        showIndicator = false
-        log.error("An error occurred while refreshing the portal client session \(error)")
-      }
     }
   }
 }

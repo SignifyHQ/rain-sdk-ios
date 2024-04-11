@@ -54,37 +54,11 @@ private extension AppDelegate {
       return
     }
     
-    // TODO: - alchemyAPIKey will be implemented later
     Task {
       do {
-        _ = try await portalService.registerPortal(
-          sessionToken: clientSessionToken,
-          alchemyAPIKey: .empty
-        )
+        try await registerPortalUsecase.execute(portalToken: clientSessionToken)
       } catch {
         log.error("An error occurred while creating the portal instance \(error)")
-        guard let portalError = error as? LFPortalError, portalError == .expirationToken else {
-          return
-        }
-        
-        refreshPortalSessionToken()
-      }
-    }
-  }
-  
-  func refreshPortalSessionToken() {
-    Task {
-      do {
-        let token = try await refreshPortalToken.execute()
-        
-        authorizationManager.savePortalSessionToken(token: token.clientSessionToken)
-        _ = try await portalService.registerPortal(
-          sessionToken: token.clientSessionToken,
-          alchemyAPIKey: .empty
-        )
-        
-      } catch {
-        log.error("An error occurred while refreshing the portal client session \(error)")
       }
     }
   }

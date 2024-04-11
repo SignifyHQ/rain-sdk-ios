@@ -86,14 +86,6 @@ public class AccountRepository: AccountRepositoryProtocol {
     return try await accountAPI.logout()
   }
   
-  public func backupWallet(cipher: String, method: String) async throws {
-    try await accountAPI.backupWallet(cipher: cipher, method: method)
-  }
-  
-  public func restoreWallet(method: String) async throws -> WalletRestoreEntitiy {
-    try await accountAPI.restoreWallet(method: method)
-  }
-  
   public func createWalletAddresses(accountId: String, address: String, nickname: String) async throws -> WalletAddressEntity {
     try await accountAPI.createWalletAddresses(accountId: accountId, address: address, nickname: nickname)
   }
@@ -146,14 +138,6 @@ public class AccountRepository: AccountRepositoryProtocol {
   
   public func disableMFA(code: String) async throws -> DisableMFAEntity {
     try await accountAPI.disableMFA(code: code)
-  }
-  
-  public func refreshPortalSessionToken() async throws -> PortalSessionTokenEntity {
-    try await accountAPI.refreshPortalSessionToken()
-  }
-  
-  public func verifyAndUpdatePortalWalletAddress() async throws {
-    try await accountAPI.verifyAndUpdatePortalWalletAddress()
   }
 
 }

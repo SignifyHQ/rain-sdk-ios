@@ -135,23 +135,6 @@ extension LFCoreNetwork: AccountAPIProtocol where R == AccountRoute {
     return (result.httpResponse?.statusCode ?? 500).isSuccess
   }
   
-  public func backupWallet(cipher: String, method: String) async throws {
-    try await requestNoResponse(
-      AccountRoute.backupWallet(cipher: cipher, method: method),
-      failure: LFErrorObject.self,
-      decoder: .apiDecoder
-    )
-  }
-  
-  public func restoreWallet(method: String) async throws -> APIWalletRestore {
-    try await request(
-      AccountRoute.restoreWallet(method: method),
-      target: APIWalletRestore.self,
-      failure: LFErrorObject.self,
-      decoder: .apiDecoder
-    )
-  }
-  
   public func createWalletAddresses(accountId: String, address: String, nickname: String) async throws -> APIWalletAddress {
     try await request(
       AccountRoute.createWalletAddress(accountId: accountId, address: address, nickname: nickname),
@@ -257,23 +240,6 @@ extension LFCoreNetwork: AccountAPIProtocol where R == AccountRoute {
     try await request(
       AccountRoute.disableMFA(code: code),
       target: APIDisableMFA.self,
-      failure: LFErrorObject.self,
-      decoder: .apiDecoder
-    )
-  }
-  
-  public func refreshPortalSessionToken() async throws -> APIPortalSessionToken {
-    try await request(
-      AccountRoute.refreshPortalSessionToken,
-      target: APIPortalSessionToken.self,
-      failure: LFErrorObject.self,
-      decoder: .apiDecoder
-    )
-  }
-
-  public func verifyAndUpdatePortalWalletAddress() async throws {
-    try await requestNoResponse(
-      AccountRoute.verifyAndUpdatePortalWallet,
       failure: LFErrorObject.self,
       decoder: .apiDecoder
     )
