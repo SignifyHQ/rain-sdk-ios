@@ -26,6 +26,10 @@ final class BackupWalletViewModel: ObservableObject {
     RefreshPortalSessionTokenUseCase(repository: accountRepository)
   }()
   
+  lazy var walletBackupUseCase: WalletBackupUseCaseProtocol = {
+    WalletBackupUseCase(repository: accountRepository)
+  }()
+  
   init() {}
 }
 
@@ -47,8 +51,16 @@ extension BackupWalletViewModel {
           backupConfigs: selectedMethod.backupConfig(with: passwordString)
         )
         
+        try await walletBackupUseCase
+          .execute(
+            cipher: cipher,
+            method: selectedMethod.portalBackupMethod.rawValue
+          )
+        
         isLoading = false
         isNavigateToPersonalInformation = true
+        
+        log.debug("Portal wallet cipher text saved successfully")
       } catch {
         handlePortalError(error: error)
       }
