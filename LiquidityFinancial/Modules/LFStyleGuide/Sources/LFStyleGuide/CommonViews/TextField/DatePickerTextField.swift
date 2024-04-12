@@ -1,4 +1,5 @@
 import SwiftUI
+import LFUtilities
 
 public struct DatePickerTextField: View {
   public init(placeHolderText: String, value: Binding<Date?>, dateValue: Binding<String>) {
@@ -13,7 +14,7 @@ public struct DatePickerTextField: View {
 
   public var body: some View {
     TextFieldWrapper {
-      DateTextField(placeholder: "mm / dd / yyyy", date: $value)
+      DateTextField(date: $value, placeholder: Constants.DateTextField.placeholder)
         .font(Fonts.regular.swiftUIFont(size: 16))
     }
   }

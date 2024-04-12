@@ -29,18 +29,7 @@ public struct PersonalInformationView: View {
         }
         .padding(.horizontal, 30)
       }
-      VStack {
-        FullSizeButton(
-          title: L10N.Common.Button.Continue.title,
-          isDisable: !viewModel.isActionAllowed
-        ) {
-          viewModel.onClickedContinueButton {
-            onEnterSSN()
-          }
-        }
-      }
-      .padding(.bottom, 12)
-      .padding([.horizontal], 32)
+      continueButton
     }
     .background(Colors.background.swiftUIColor)
     .navigationTitle("")
@@ -54,13 +43,16 @@ public struct PersonalInformationView: View {
     .popup(item: $viewModel.toastMessage, style: .toast) {
       ToastView(toastMessage: $0)
     }
-    .navigationLink(item: $onboardingDestinationObservable.personalInformationDestinationView, destination: { item in
+    .navigationLink(item: $onboardingDestinationObservable.personalInformationDestinationView) { item in
       switch item {
       case .enterSSN(let view):
         view
       }
-    })
+    }
     .onAppear {
+      DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+        keyboardFocus = .firstName
+      }
       viewModel.onAppear()
     }
     .track(name: String(describing: type(of: self)))
@@ -69,33 +61,6 @@ public struct PersonalInformationView: View {
 
 // MARK: - View Components
 private extension PersonalInformationView {
-  func textField(
-    placeholder: String,
-    value: Binding<String>,
-    limit: Int = 200,
-    restriction: TextRestriction = .none,
-    keyboardType: UIKeyboardType = .alphabet,
-    focus: Focus,
-    nextFocus: Focus? = nil,
-    textInputAutocapitalization: TextInputAutocapitalization = .sentences
-  ) -> some View {
-    TextFieldWrapper {
-      TextField("", text: value)
-        .keyboardType(keyboardType)
-        .restrictInput(value: value, restriction: restriction)
-        .modifier(PlaceholderStyle(showPlaceHolder: value.wrappedValue.isEmpty, placeholder: placeholder))
-        .primaryFieldStyle()
-        .autocorrectionDisabled()
-        .limitInputLength(value: value, length: limit)
-        .submitLabel(nextFocus == nil ? .done : .next)
-        .focused($keyboardFocus, equals: focus)
-        .textInputAutocapitalization(textInputAutocapitalization)
-        .onSubmit {
-          keyboardFocus = nextFocus
-        }
-    }
-  }
-  
   var contentView: some View {
     VStack(alignment: .leading) {
       Text(L10N.Common.AddPersonalInformation.title.uppercased())
@@ -103,29 +68,18 @@ private extension PersonalInformationView {
         .foregroundColor(Colors.label.swiftUIColor)
         .padding(.vertical, 16)
       
-      Text(L10N.Common.firstName)
-        .font(Fonts.regular.swiftUIFont(size: 12))
-        .foregroundColor(Colors.label.swiftUIColor)
-        .opacity(0.75)
-      textField(
+      textFieldInputView(
+        title: L10N.Common.firstName,
         placeholder: L10N.Common.enterFirstName,
         value: $viewModel.firstName,
         restriction: .alphabets,
         keyboardType: .alphabet,
         focus: .firstName,
         nextFocus: .lastName
-      ).onAppear {
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-          keyboardFocus = .firstName
-        }
-      }
+      )
       
-      Text(L10N.Common.lastName)
-        .font(Fonts.regular.swiftUIFont(size: 12))
-        .foregroundColor(Colors.label.swiftUIColor)
-        .opacity(0.75)
-        .padding(.top, 24)
-      textField(
+      textFieldInputView(
+        title: L10N.Common.lastName,
         placeholder: L10N.Common.enterLastName,
         value: $viewModel.lastName,
         restriction: .alphabets,
@@ -134,12 +88,8 @@ private extension PersonalInformationView {
         nextFocus: .email
       )
       
-      Text(L10N.Common.email)
-        .font(Fonts.regular.swiftUIFont(size: 12))
-        .foregroundColor(Colors.label.swiftUIColor)
-        .opacity(0.75)
-        .padding(.top, 24)
-      textField(
+      textFieldInputView(
+        title: L10N.Common.email,
         placeholder: L10N.Common.enterEmailAddress,
         value: $viewModel.email,
         keyboardType: .emailAddress,
@@ -156,9 +106,60 @@ private extension PersonalInformationView {
       DatePickerTextField(
         placeHolderText: L10N.Common.dobFormat,
         value: $viewModel.dateCheck,
-        dateValue: $viewModel.dob
-      ).focused($keyboardFocus, equals: .dob)
+        dateValue: $viewModel.dateOfBirth
+      )
+      .focused($keyboardFocus, equals: .dob)
     }
+  }
+  
+  func textFieldInputView(
+    title: String,
+    placeholder: String,
+    value: Binding<String>,
+    limit: Int = 200,
+    restriction: TextRestriction = .none,
+    keyboardType: UIKeyboardType = .alphabet,
+    focus: Focus,
+    nextFocus: Focus? = nil,
+    textInputAutocapitalization: TextInputAutocapitalization = .sentences
+  ) -> some View {
+    VStack(alignment: .leading) {
+      Text(title)
+        .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.textFieldHeader.value))
+        .foregroundColor(Colors.label.swiftUIColor)
+        .opacity(0.75)
+        .padding(.top, 24)
+      TextFieldWrapper {
+        TextField("", text: value)
+          .keyboardType(keyboardType)
+          .restrictInput(value: value, restriction: restriction)
+          .modifier(
+            PlaceholderStyle(showPlaceHolder: value.wrappedValue.isEmpty, placeholder: placeholder)
+          )
+          .primaryFieldStyle()
+          .autocorrectionDisabled()
+          .limitInputLength(value: value, length: limit)
+          .submitLabel(nextFocus == nil ? .done : .next)
+          .focused($keyboardFocus, equals: focus)
+          .textInputAutocapitalization(textInputAutocapitalization)
+          .onSubmit {
+            keyboardFocus = nextFocus
+          }
+      }
+    }
+  }
+  
+  var continueButton: some View {
+    FullSizeButton(
+      title: L10N.Common.Button.Continue.title,
+      isDisable: !viewModel.isActionAllowed
+    ) {
+      viewModel.onClickedContinueButton {
+        onEnterSSN()
+      }
+    }
+    .padding(.bottom, 12)
+    .padding(.horizontal, 32)
   }
 }
 

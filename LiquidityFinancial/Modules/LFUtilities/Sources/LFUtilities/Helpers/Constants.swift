@@ -429,3 +429,15 @@ public extension Constants {
     }
   }
 }
+
+
+// MARK: - DateTextField
+public extension Constants {
+  enum DateTextField {
+    public static let placeholder = "mm / dd / yyyy"
+    public static let maxYearOffset = -18
+    public static let maxMonthOffset = -1
+    public static let minYearOffset = -100
+    public static let initialYearOffset = -20
+  }
+}

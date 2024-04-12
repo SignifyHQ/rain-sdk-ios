@@ -14,8 +14,6 @@ public enum PersonalInformationNavigation {
 // MARK: - PersonalInformationViewModel
 @MainActor
 public final class PersonalInformationViewModel: ObservableObject {
-  @InjectedObject(\.onboardingDestinationObservable) var onboardingDestinationObservable
-  
   @LazyInjected(\.accountDataManager) var accountDataManager
   @LazyInjected(\.customerSupportService) var customerSupportService
   @LazyInjected(\.analyticsService) var analyticsService
@@ -24,10 +22,9 @@ public final class PersonalInformationViewModel: ObservableObject {
   @Published var firstName: String = .empty
   @Published var lastName: String = .empty
   @Published var email: String = .empty
-  @Published var dob: String = .empty
+  @Published var dateOfBirth: String = .empty
   @Published var dateCheck: Date?
   @Published var toastMessage: String?
-  @Published var errorObj: Error?
   
   private var fullName: String = .empty
   private var cancellables = Set<AnyCancellable>()
@@ -63,7 +60,7 @@ extension PersonalInformationViewModel {
 // MARK: - Private Functions
 private extension PersonalInformationViewModel {
   func observeUserInput() {
-    Publishers.CombineLatest4($firstName, $lastName, $email, $dob)
+    Publishers.CombineLatest4($firstName, $lastName, $email, $dateOfBirth)
       .receive(on: DispatchQueue.main)
       .sink { [weak self] _, _, _, _ in
         self?.isAllDataFilled()
