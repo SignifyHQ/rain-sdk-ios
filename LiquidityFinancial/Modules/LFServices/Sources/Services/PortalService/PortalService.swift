@@ -9,8 +9,7 @@ public class PortalService: PortalServiceProtocol {
   
   public var portal: Portal?
   
-  public init() {
-  }
+  public init() {}
 }
 
 // MARK: - Public Functions
@@ -151,6 +150,10 @@ public extension PortalService {
     }
     
     return !address.isEmpty
+  }
+  
+  public func getWalletAddress() -> String {
+    return portal?.address ?? .empty
   }
 }
 

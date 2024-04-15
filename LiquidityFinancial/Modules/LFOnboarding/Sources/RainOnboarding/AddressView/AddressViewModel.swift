@@ -6,172 +6,75 @@ import LFUtilities
 import Factory
 import OnboardingData
 import AccountData
-import NetSpendData
-import NetspendDomain
+import RainData
+import RainDomain
 import Services
 import LFLocalizable
 import DevicesData
 import DevicesDomain
 import LFFeatureFlags
+import FraudForce
 
-// swiftlint:disable all
 @MainActor
 final class AddressViewModel: ObservableObject {
-  enum Navigation {
-    case pendingIDV
-    case declined
-    case inReview
-    case missingInfo
-    case home
-  }
+  @LazyInjected(\.rainOnboardingFlowCoordinator) var onboardingFlowCoordinator
   
-  enum Popup {
-    case waitlist(String)
-    case waitlistJoined
-  }
+  @LazyInjected(\.devicesRepository) var devicesRepository
+  @LazyInjected(\.accountRepository) var accountRepository
   
   @LazyInjected(\.accountDataManager) var accountDataManager
-  @LazyInjected(\.nsPersonRepository) var nsPersonRepository
-  @LazyInjected(\.accountRepository) var accountRepository
-  @LazyInjected(\.netspendDataManager) var netspendDataManager
-  @LazyInjected(\.rainOnboardingFlowCoordinator) var onboardingFlowCoordinator
-  @LazyInjected(\.customerSupportService) var customerSupportService
+  @LazyInjected(\.featureFlagManager) var featureFlagManager
   @LazyInjected(\.authorizationManager) var authorizationManager
-  @LazyInjected(\.devicesRepository) var devicesRepository
+  
+  @LazyInjected(\.customerSupportService) var customerSupportService
+  @LazyInjected(\.portalService) var portalService
   @LazyInjected(\.pushNotificationService) var pushNotificationService
   @LazyInjected(\.analyticsService) var analyticsService
-  @LazyInjected(\.nsOnboardingRepository) var nsOnboardingRepository
-  @LazyInjected(\.featureFlagManager) var featureFlagManager
   
   @Published var isLoading: Bool = false
-  @Published var popup: Popup?
-  @Published var toastMessage: String?
   @Published var displaySuggestions: Bool = false
-  @Published var navigation: Navigation?
+  @Published var shouldEnableContinueButton: Bool = false
+
+  @Published var addressLine1: String = .empty
+  @Published var addressLine2: String = .empty
+  @Published var city: String = .empty
+  @Published var state: String = .empty
+  @Published var zipCode: String = .empty
+  @Published var toastMessage: String?
+  
+  @Published var popup: Popup?
   @Published var addressList: [AddressData] = []
-  @Published var isActionAllowed: Bool = false {
-    didSet {
-      guard isActionAllowed else { return }
-      accountDataManager.update(addressLine1: addressLine1)
-      accountDataManager.update(addressLine2: addressLine2)
-      accountDataManager.update(city: city)
-      accountDataManager.update(state: state)
-      accountDataManager.update(postalCode: zipCode)
-      accountDataManager.update(country: "US")
-    }
-  }
-  
-  @Published var addressLine1: String = "" {
-    didSet {
-      isAllDataFilled()
-    }
-  }
-  
-  @Published var addressLine2: String = "" {
-    didSet {
-      isAllDataFilled()
-    }
-  }
-  
-  @Published var city: String = "" {
-    didSet {
-      isAllDataFilled()
-    }
-  }
-  
-  @Published var state: String = "" {
-    didSet {
-      isAllDataFilled()
-    }
-  }
-  
-  @Published var zipCode: String = "" {
-    didSet {
-      isAllDataFilled()
-    }
-  }
 
   lazy var deviceDeregisterUseCase: DeviceDeregisterUseCaseProtocol = {
     return DeviceDeregisterUseCase(repository: devicesRepository)
   }()
-    
-  lazy var createAccountPersonUseCase: NSCreateAccountPersonUseCaseProtocol = {
-    NSCreateAccountPersonUseCase(repository: nsPersonRepository)
-  }()
   
-  lazy var getQuestionUseCase: NSGetQuestionUseCaseProtocol = {
-    NSGetQuestionUseCase(repository: nsPersonRepository)
-  }()
-  
-  lazy var getDocumentsUseCase: NSGetDocumentsUseCaseProtocol = {
-    NSGetDocumentsUseCase(repository: nsPersonRepository)
-  }()
-  
-  lazy var getOnboardingStepUseCase: NSGetOnboardingStepUseCaseProtocol = {
-    NSGetOnboardingStepUseCase(repository: nsOnboardingRepository)
-  }()
-  
-  var userNameDisplay: String {
-    get {
-      UserDefaults.userNameDisplay
-    }
-    set {
-      UserDefaults.userNameDisplay = newValue
-    }
-  }
-  
-  private var subscriptions = Set<AnyCancellable>()
+  private var isStateValid = true
   private var pauseAutocomplete = false
-  private var isSuggesionTapped: Bool = false
-  private var workflowData: APIWorkflowsData?
+  private var cancellables = Set<AnyCancellable>()
   
   init() {
-    $addressLine1
-      .debounce(for: .seconds(0.5), scheduler: RunLoop.main)
-      .dropFirst(2)
-      .removeDuplicates()
-      .sink { [weak self] value in
-        guard let self = self else { return }
-        guard !self.pauseAutocomplete else {
-          self.pauseAutocomplete = false
-          return
-        }
-        self.fetchAddress(query: value.capitalized)
-      }
-      .store(in: &subscriptions)
+    observeUserInput()
+    observeAddressSuggestion()
   }
+}
 
-  func stopSuggestions() {
-    displaySuggestions = false
-  }
-
-  func select(suggestion: AddressData) {
-    pauseAutocomplete = true
-    addressLine1 = suggestion.addressline1
-    city = suggestion.city
-    state = suggestion.state
-    zipCode = suggestion.zipcode
-    displaySuggestions = false
-  }
-
-  func actionContinue() {
-    guard isStateValid else {
-      let message = L10N.Common.waitlistMessage(accountDataManager.userInfomationData.firstName ?? "")
-      popup = .waitlist(message)
-      return
-    }
-    
-    Task { @MainActor in
+// MARK: - API Handle
+extension AddressViewModel {
+  private func createRainUser() {
+    Task {
       defer { isLoading = false }
       isLoading = true
+      
       do {
-        let param = try createRainPersonParameters()
-        let person = try await createAccountPersonUseCase.execute(personInfo: param, sessionId: accountDataManager.sessionID)
-        netspendDataManager.update(accountPersonData: person)
+        let parameters = createRainPersonParameters()
         
-        try await handlerOnboardingStep()
+        /*
+         1. Create Rain User through the API
+         2. Handle Rain Application Status
+         */
+        
         analyticsService.track(event: AnalyticsEvent(name: .addressCompleted))
-        
       } catch {
         log.error(error)
         toastMessage = error.userFriendlyMessage
@@ -179,71 +82,15 @@ final class AddressViewModel: ObservableObject {
     }
   }
   
-  func openSupportScreen() {
-    customerSupportService.openSupportScreen()
-  }
-  
-  func handlerOnboardingStep() async throws {
-    let onboardingStep = try await getOnboardingStepUseCase.execute(sessionID: accountDataManager.sessionID)
-    let onboardingTypes = onboardingStep.mapToEnum()
-    if onboardingTypes.isEmpty {
-      navigation = .inReview
-      return
-    }
-    
-    if onboardingTypes.contains(.identityQuestions) {
-      let questionsEncrypt = try await getQuestionUseCase.execute(sessionId: accountDataManager.sessionID)
-      if let usersession = netspendDataManager.sdkSession, let questionsDecode = (questionsEncrypt as? APIQuestionData)?.decodeData(session: usersession) {
-        // let questionsEntity = QuestionsEntity.mapObj(questionsDecode)
-        // navigation = .question(questionsEntity)
-      }
-    } else if onboardingTypes.contains(.provideDocuments) {
-      let documents = try await getDocumentsUseCase.execute(sessionId: accountDataManager.sessionID)
-      guard let documents = documents as? APIDocumentData else {
-        log.error("Can't map document from BE")
-        return
-      }
-      netspendDataManager.update(documentData: documents)
-      // navigation = .document
-    } else if onboardingTypes.contains(.KYCData) {
-      navigation = .missingInfo
-    } else if onboardingTypes.contains(.primaryPersonKYCApprove) {
-      navigation = .inReview
-    } else if onboardingTypes.contains(.acceptAgreement) {
-      // navigation = .agreement
-    } else if onboardingTypes.contains(.expectedUse) {
-      navigation = .missingInfo
-    } else if onboardingTypes.contains(.identityScan) {
-      navigation = .missingInfo
-    } else if onboardingTypes.contains(.acceptFeatureAgreement) {
-      // navigation = .agreement
-    }
-  }
-}
-
-extension AddressViewModel {
-  func actionJoinWaitList() {
-    callUpdateAPIToJoinWaitlist()
-  }
-  
-  func actionLogout() {
-    logout()
-  }
-  
-  private var isStateValid: Bool {
-    if LFUtilities.cryptoEnabled {
-      return !Constants.supportedStates.contains(state.uppercased())
-    } else {
-      return true
-    }
-  }
-  
-  private func callUpdateAPIToJoinWaitlist() {
-    Task { @MainActor in
+  func joinWaitlist() {
+    Task {
       defer { isLoading = false }
       isLoading = true
+      
       do {
-        _ = try await accountRepository.addToWaitList(waitList: "CRYPTO_PRODUCT") //support crypto product only
+        let waitList = "CRYPTO_PRODUCT" //support crypto product only
+        _ = try await accountRepository.addToWaitList(waitList: waitList)
+        
         popup = .waitlistJoined
       } catch {
         log.error(error.userFriendlyMessage)
@@ -252,8 +99,31 @@ extension AddressViewModel {
       }
     }
   }
+}
+
+// MARK: - View Handle
+extension AddressViewModel {
+  func onAppear() {
+    analyticsService.track(event: AnalyticsEvent(name: .viewedAddress))
+  }
   
-  private func logout() {
+  func openSupportScreen() {
+    customerSupportService.openSupportScreen()
+  }
+  
+  func onContinueButtonTapped() {
+    updateUserInformation()
+    
+    guard isStateValid else {
+      let message = L10N.Common.waitlistMessage(accountDataManager.userInfomationData.firstName ?? .empty)
+      popup = .waitlist(message)
+      return
+    }
+    
+    createRainUser()
+  }
+  
+  func logout() {
     Task {
       defer {
         isLoading = false
@@ -266,101 +136,162 @@ extension AddressViewModel {
         featureFlagManager.signOut()
       }
       isLoading = true
+      
       do {
-        async let deregisterEntity = deviceDeregisterUseCase.execute(deviceId: LFUtilities.deviceId, token: UserDefaults.lastestFCMToken)
-        async let logoutEntity = accountRepository.logout()
-        let deregister = try await deregisterEntity
-        let logout = try await logoutEntity
-        log.debug(deregister)
-        log.debug(logout)
+        let deregisterEntity = try await deviceDeregisterUseCase.execute(
+          deviceId: LFUtilities.deviceId,
+          token: UserDefaults.lastestFCMToken
+        )
+        let logoutEntity = try await accountRepository.logout()
+        
+        log.debug(deregisterEntity)
+        log.debug(logoutEntity)
       } catch {
         log.error(error.userFriendlyMessage)
       }
     }
   }
-}
-
-private extension AddressViewModel {
-  func isAllDataFilled() {
-    isActionAllowed = (!addressLine1.trimWhitespacesAndNewlines().isEmpty) &&
-    (!city.trimWhitespacesAndNewlines().isEmpty) &&
-    (!state.trimWhitespacesAndNewlines().isEmpty) &&
-    (!zipCode.trimWhitespacesAndNewlines().isEmpty)
+  
+  func stopSuggestions() {
+    displaySuggestions = false
   }
   
-  func createRainPersonParameters() throws -> AccountPersonParameters {
-    // TODO: - Will change when integrating with Rain
-    var governmentID: String = .empty
-    var typeGovernmentID: String = .empty
-    
-    if let ssn = accountDataManager.userInfomationData.ssn {
-      typeGovernmentID = IdNumberType.ssn.rawValue
-      governmentID = ssn
-    } else if let passport = accountDataManager.userInfomationData.passport {
-      typeGovernmentID = IdNumberType.passport.rawValue
-      governmentID = passport
-    }
-    let agreementIDS = netspendDataManager.agreement?.listAgreementID.compactMap { $0 } ?? []
-    let encryptedData = try netspendDataManager.sdkSession?.encryptWithJWKSet(value: [
-      "date_of_birth": accountDataManager.userInfomationData.dateOfBirth ?? "",
-      "government_id": [
-        "type": typeGovernmentID,
-        "value": governmentID
-      ]
-    ])
-    let param = AccountPersonParameters(
-      firstName: accountDataManager.userInfomationData.firstName ?? "",
-      lastName: accountDataManager.userInfomationData.lastName ?? "",
-      middleName: .empty,
-      agreementIDS: agreementIDS,
-      phone: accountDataManager.userInfomationData.phone ?? "",
-      email: accountDataManager.userInfomationData.email ?? "",
-      fullName: accountDataManager.userInfomationData.fullName ?? "",
-      dateOfBirth: accountDataManager.userInfomationData.dateOfBirth ?? "",
-      addressLine1: accountDataManager.userInfomationData.addressLine1 ?? "",
-      addressLine2: accountDataManager.userInfomationData.addressLine2 ?? "",
-      city: accountDataManager.userInfomationData.city ?? "",
-      state: accountDataManager.userInfomationData.state ?? "",
-      country: accountDataManager.userInfomationData.country ?? "",
-      postalCode: accountDataManager.userInfomationData.postalCode ?? "",
-      encryptedData: encryptedData ?? "",
-      idNumber: governmentID,
-      idNumberType: typeGovernmentID
-    )
-    return param
+  func select(suggestion: AddressData) {
+    pauseAutocomplete = true
+    addressLine1 = suggestion.addressline1
+    city = suggestion.city
+    state = suggestion.state
+    zipCode = suggestion.zipcode
+    displaySuggestions = false
   }
 }
 
-extension AddressViewModel {
-  func fetchAddress(query: String) {
+// MARK: - Private Functions
+private extension AddressViewModel {
+  func observeUserInput() {
+    Publishers.CombineLatest4($addressLine1, $addressLine2, $city, $zipCode)
+      .receive(on: DispatchQueue.main)
+      .sink { [weak self] _, _, _, _ in
+        self?.isAllDataFilled()
+      }
+      .store(in: &cancellables)
+    
+    $state
+      .receive(on: DispatchQueue.main)
+      .sink { [weak self] state in
+        guard let self else { return }
+        
+        self.isAllDataFilled()
+        self.checkStateValid(state: state.uppercased())
+      }
+      .store(in: &cancellables)
+  }
+  
+  func observeAddressSuggestion() {
+    $addressLine1
+      .debounce(for: .seconds(0.5), scheduler: RunLoop.main)
+      .dropFirst(2)
+      .removeDuplicates()
+      .sink { [weak self] value in
+        guard let self = self else { return }
+        guard !self.pauseAutocomplete else {
+          self.pauseAutocomplete = false
+          return
+        }
+        
+        self.fetchAddressSuggestion(query: value.capitalized)
+      }
+      .store(in: &cancellables)
+  }
+  
+  func isAllDataFilled() {
+    let requiredFields: [String] = [
+      addressLine1.trimWhitespacesAndNewlines(),
+      city.trimWhitespacesAndNewlines(),
+      state.trimWhitespacesAndNewlines(),
+      zipCode.trimWhitespacesAndNewlines()
+    ]
+    
+    shouldEnableContinueButton = requiredFields.allSatisfy { !$0.isEmpty }
+  }
+  
+  func checkStateValid(state: String) {
+    guard LFUtilities.cryptoEnabled else {
+      self.isStateValid = true
+      return
+    }
+    
+    isStateValid = !Constants.unSupportedStates.contains(state)
+  }
+  
+  func updateUserInformation() {
+    accountDataManager.update(addressLine1: addressLine1)
+    accountDataManager.update(addressLine2: addressLine2)
+    accountDataManager.update(city: city)
+    accountDataManager.update(state: state)
+    accountDataManager.update(postalCode: zipCode)
+    accountDataManager.update(country: Constants.Default.region.rawValue.uppercased())
+  }
+  
+  func createRainPersonParameters() -> RainPersonParameters {
+    return RainPersonParameters(
+      firstName: accountDataManager.userInfomationData.firstName ?? .empty,
+      lastName: accountDataManager.userInfomationData.lastName ?? .empty,
+      dateOfBirth: accountDataManager.userInfomationData.dateOfBirth ?? .empty,
+      nationalId: accountDataManager.userInfomationData.ssn ?? .empty,
+      countryOfIssue: Constants.Default.region.rawValue.uppercased(),
+      email: accountDataManager.userInfomationData.email ?? .empty,
+      phoneCountryCode: Constants.Default.regionCode.rawValue,
+      phone: accountDataManager.userInfomationData.phone ?? .empty,
+      addressLine1: accountDataManager.userInfomationData.addressLine1 ?? .empty,
+      addressLine2: accountDataManager.userInfomationData.addressLine2 ?? .empty,
+      city: accountDataManager.userInfomationData.city ?? .empty,
+      state: accountDataManager.userInfomationData.state ?? .empty,
+      country: accountDataManager.userInfomationData.country ?? .empty,
+      postalCode: accountDataManager.userInfomationData.postalCode ?? .empty,
+      walletAddress: portalService.getWalletAddress(),
+      iovationBlackbox: FraudForce.blackbox()
+    )
+  }
+  
+  func fetchAddressSuggestion(query: String) {
     guard query.count > 2 else {
       displaySuggestions = false
       return
     }
+    
     let id = Constants.smartyStreetsId
     let hostname = Constants.smartyStreetsHostName
     let client = ClientBuilder(id: id, hostname: hostname)
       .withLicenses(licenses: [Constants.smartyStreetsLicense])
       .buildUSAutocompleteProApiClient()
-
+    
     DispatchQueue.global(qos: .userInitiated).async { [weak self] in
       var lookup = USAutocompleteProLookup().withSearch(search: query)
       var error: NSError?
       _ = client.sendLookup(lookup: &lookup, error: &error)
-
+      
       let suggestions: [AddressData] = lookup.result?.suggestions?.map {
         AddressData(
-          addressline1: $0.streetLine ?? "",
-          city: $0.city ?? "",
-          state: $0.state ?? "",
-          zipcode: $0.zipcode ?? ""
+          addressline1: $0.streetLine ?? .empty,
+          city: $0.city ?? .empty,
+          state: $0.state ?? .empty,
+          zipcode: $0.zipcode ?? .empty
         )
       } ?? []
-
+      
       DispatchQueue.main.async {
         self?.addressList = suggestions
         self?.displaySuggestions = !suggestions.isEmpty
       }
     }
+  }
+}
+
+// MARK: - Types
+extension AddressViewModel {
+  enum Popup {
+    case waitlist(String)
+    case waitlistJoined
   }
 }

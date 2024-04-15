@@ -6,52 +6,33 @@ import LFUtilities
 import Services
 import Factory
 
-public struct AddressView: View {
-  @Injected(\.analyticsService)
-  var analyticsService
-  
+struct AddressView: View {
+  @Environment(\.dismiss) var dismiss
+  @FocusState var keyboardFocus: Focus?
   @StateObject private var viewModel = AddressViewModel()
-
-  public init() {
+  
+  init() {
     UITableView.appearance().backgroundColor = UIColor(Colors.background.swiftUIColor)
     UITableView.appearance().separatorInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 15)
   }
-
-  enum Focus: Int, Hashable {
-    case address1
-    case address2
-    case city
-    case state
-    case zip
-  }
-
-  @Environment(\.dismiss) var dismiss
-  @FocusState var keyboardFocus: Focus?
-
-  public var body: some View {
+  
+  var body: some View {
     VStack {
       ScrollViewReader { proxy in
         ScrollView {
           ZStack {
             VStack(alignment: .leading) {
-              title
-              
-              addressLine1
-              addressLine2
-              city
-
-              HStack {
-                state
-                Spacer(minLength: 25)
-                zipCode
-              }
-              .padding(.top, 16)
+              Text(L10N.Common.addressTitle)
+                .foregroundColor(Colors.label.swiftUIColor)
+                .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.main.value))
+                .padding(.vertical, 16)
+              textFieldView
             }
             .onChange(of: keyboardFocus) {
               proxy.scrollTo($0)
             }
             .padding(.horizontal, 32)
-
+            
             if viewModel.displaySuggestions {
               if #available(iOS 16.0, *) {
                 listView().scrollContentBackground(.hidden)
@@ -62,7 +43,7 @@ public struct AddressView: View {
           }
         }
       }
-      bottom
+      continueButton
     }
     .navigationTitle("")
     .background(Colors.background.swiftUIColor)
@@ -83,28 +64,18 @@ public struct AddressView: View {
         waitlistJoinedPopup
       }
     }
-    .navigationLink(item: $viewModel.navigation) { navigation in
-      switch navigation {
-      case .pendingIDV:
-        KYCStatusView(viewModel: KYCStatusViewModel(state: .pendingIDV))
-      case .declined:
-        KYCStatusView(viewModel: KYCStatusViewModel(state: .reject))
-      case .inReview:
-        KYCStatusView(viewModel: KYCStatusViewModel(state: .inReview(viewModel.userNameDisplay)))
-      case .missingInfo:
-        KYCStatusView(viewModel: KYCStatusViewModel(state: .missingInfo))
-      default:
-        EmptyView()
+    .onAppear {
+      viewModel.onAppear()
+      DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+        keyboardFocus = .address1
       }
     }
-    .onAppear(perform: {
-      analyticsService.track(event: AnalyticsEvent(name: .viewedAddress))
-    })
     .navigationBarBackButtonHidden(viewModel.isLoading)
     .track(name: String(describing: type(of: self)))
   }
 }
 
+// MARK: - View Components
 private extension AddressView {
   func listView() -> some View {
     List(viewModel.addressList, id: \.id) { item in
@@ -143,130 +114,8 @@ private extension AddressView {
     .floatingShadow()
   }
   
-  var title: some View {
-    Text(
-      L10N.Common.addressTitle
-    )
-    .foregroundColor(Colors.label.swiftUIColor)
-    .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.main.value))
-    .padding(.vertical, 16)
-  }
-  
-  var addressLine1: some View {
-    VStack(alignment: .leading) {
-      Text(L10N.Common.addressLine1Title)
-        .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.textFieldHeader.value))
-        .foregroundColor(Colors.label.swiftUIColor)
-        .opacity(0.75)
-        .padding(.leading, 4)
-      
-      textField(
-        placeholder: L10N.Common.enterAddress,
-        value: $viewModel.addressLine1,
-        focus: .address1,
-        nextFocus: .address2
-      )
-      .onAppear {
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-          keyboardFocus = .address1
-        }
-      }
-    }
-  }
-  
-  var addressLine2: some View {
-    VStack(alignment: .leading) {
-      Text(L10N.Common.addressLine2Title)
-        .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.textFieldHeader.value))
-        .foregroundColor(Colors.label.swiftUIColor)
-        .opacity(0.75)
-        .padding(.top, 16)
-        .padding(.leading, 4)
-      
-      textField(
-        placeholder: L10N.Common.enterAddress,
-        value: $viewModel.addressLine2,
-        focus: .address2,
-        nextFocus: .city
-      )
-    }
-  }
-  
-  var city: some View {
-    VStack(alignment: .leading) {
-      Text(L10N.Common.city)
-        .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.textFieldHeader.value))
-        .foregroundColor(Colors.label.swiftUIColor)
-        .opacity(0.75)
-        .padding(.top, 16)
-        .padding(.leading, 4)
-      
-      textField(
-        placeholder: L10N.Common.enterCity,
-        value: $viewModel.city,
-        focus: .city,
-        nextFocus: .state
-      )
-    }
-  }
-  
-  var state: some View {
-    VStack(alignment: .leading) {
-      Text(L10N.Common.state)
-        .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.textFieldHeader.value))
-        .foregroundColor(Colors.label.swiftUIColor)
-        .opacity(0.75)
-        .multilineTextAlignment(.leading)
-        .padding(.leading, 4)
-      
-      textField(
-        placeholder: L10N.Common.enterState,
-        value: $viewModel.state,
-        limit: 2,
-        restriction: .alphabets,
-        focus: .state,
-        nextFocus: .zip
-      )
-    }
-  }
-  
-  var zipCode: some View {
-    VStack(alignment: .leading) {
-      Text(L10N.Common.zipcode)
-        .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.textFieldHeader.value))
-        .foregroundColor(Colors.label.swiftUIColor)
-        .opacity(0.75)
-        .multilineTextAlignment(.leading)
-        .padding(.leading, 4)
-      
-      textField(
-        placeholder: L10N.Common.enterZipcode,
-        value: $viewModel.zipCode,
-        limit: 11,
-        keyboardType: .numberPad,
-        focus: .zip
-      )
-    }
-  }
-  
-  var bottom: some View {
-    VStack(spacing: 0) {
-      FullSizeButton(
-        title: L10N.Common.Button.Continue.title,
-        isDisable: !viewModel.isActionAllowed,
-        isLoading: $viewModel.isLoading,
-        type: .primary
-      ) {
-        viewModel.actionContinue()
-        keyboardFocus = nil
-      }
-    }
-    .padding(.horizontal, 30)
-    .padding(.bottom, 12)
-  }
-  
-  @ViewBuilder
-  func textField(
+  func textFieldInputView(
+    title: String,
     placeholder: String,
     value: Binding<String>,
     limit: Int = 200,
@@ -275,43 +124,125 @@ private extension AddressView {
     focus: Focus,
     nextFocus: Focus? = nil
   ) -> some View {
-    TextFieldWrapper {
-      TextField("", text: value)
-        .keyboardType(keyboardType)
-        .restrictInput(value: value, restriction: restriction)
-        .modifier(PlaceholderStyle(showPlaceHolder: value.wrappedValue.isEmpty, placeholder: placeholder))
-        .primaryFieldStyle()
-        .autocorrectionDisabled()
-        .limitInputLength(value: value, length: limit)
-        .submitLabel(nextFocus == nil ? .done : .next)
-        .focused($keyboardFocus, equals: focus)
-        .onSubmit {
-          keyboardFocus = nextFocus
-        }
+    VStack(alignment: .leading) {
+      Text(title)
+        .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.textFieldHeader.value))
+        .foregroundColor(Colors.label.swiftUIColor)
+        .opacity(0.75)
+        .padding(.leading, 4)
+      
+      TextFieldWrapper {
+        TextField("", text: value)
+          .keyboardType(keyboardType)
+          .restrictInput(value: value, restriction: restriction)
+          .modifier(PlaceholderStyle(showPlaceHolder: value.wrappedValue.isEmpty, placeholder: placeholder))
+          .primaryFieldStyle()
+          .autocorrectionDisabled()
+          .limitInputLength(value: value, length: limit)
+          .submitLabel(nextFocus == nil ? .done : .next)
+          .focused($keyboardFocus, equals: focus)
+          .onSubmit {
+            keyboardFocus = nextFocus
+          }
+      }
     }
   }
   
-  private func waitlistPopup(message: String) -> some View {
+  var textFieldView: some View {
+    VStack(alignment: .leading, spacing: 20) {
+      textFieldInputView(
+        title: L10N.Common.addressLine1Title,
+        placeholder: L10N.Common.enterAddress,
+        value: $viewModel.addressLine1,
+        focus: .address1,
+        nextFocus: .address2
+      )
+      
+      textFieldInputView(
+        title: L10N.Common.addressLine2Title,
+        placeholder: L10N.Common.enterAddress,
+        value: $viewModel.addressLine2,
+        focus: .address2,
+        nextFocus: .city
+      )
+      
+      textFieldInputView(
+        title: L10N.Common.city,
+        placeholder: L10N.Common.enterCity,
+        value: $viewModel.city,
+        focus: .city,
+        nextFocus: .state
+      )
+      
+      HStack {
+        textFieldInputView(
+          title: L10N.Common.state,
+          placeholder: L10N.Common.enterState,
+          value: $viewModel.state,
+          limit: 2,
+          restriction: .alphabets,
+          focus: .state,
+          nextFocus: .zip
+        )
+        Spacer(minLength: 25)
+        textFieldInputView(
+          title: L10N.Common.zipcode,
+          placeholder: L10N.Common.enterZipcode,
+          value: $viewModel.zipCode,
+          limit: 11,
+          keyboardType: .numberPad,
+          focus: .zip
+        )
+      }
+    }
+  }
+  
+  var continueButton: some View {
+    FullSizeButton(
+      title: L10N.Common.Button.Continue.title,
+      isDisable: !viewModel.shouldEnableContinueButton,
+      isLoading: $viewModel.isLoading,
+      type: .primary
+    ) {
+      viewModel.onContinueButtonTapped()
+      keyboardFocus = nil
+    }
+    .padding(.horizontal, 30)
+    .padding(.bottom, 12)
+  }
+  
+  func waitlistPopup(message: String) -> some View {
     LiquidityAlert(
       title: L10N.Common.accountUpdate,
       message: message,
       primary: .init(text: L10N.Common.joinWaitlist) {
-        viewModel.actionJoinWaitList()
+        viewModel.joinWaitlist()
       },
       secondary: .init(text: L10N.Common.cancelAccount) {
-        viewModel.actionLogout()
+        viewModel.logout()
       }
     )
   }
   
-  private var waitlistJoinedPopup: some View {
+  var waitlistJoinedPopup: some View {
     LiquidityAlert(
       title: L10N.Common.waitlistJoinedTitle,
       message: L10N.Common.waitlistJoinedMessage,
       primary: .init(text: L10N.Common.Button.Ok.title.uppercased()) {
-        viewModel.actionLogout()
+        viewModel.logout()
       }
     )
+  }
+}
+
+// MARK: - Focus Keyboard
+extension AddressView {
+  enum Focus: Int, Hashable {
+    case address1
+    case address2
+    case city
+    case state
+    case zip
   }
 }
 

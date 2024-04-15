@@ -16,4 +16,5 @@ public protocol PortalServiceProtocol {
     cipherText: String
   ) async throws
   func checkWalletAddressExists() -> Bool
+  func getWalletAddress() -> String
 }
