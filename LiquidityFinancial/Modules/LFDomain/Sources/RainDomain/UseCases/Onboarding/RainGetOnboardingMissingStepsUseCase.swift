@@ -2,9 +2,9 @@ import Foundation
   
 public class RainGetOnboardingMissingStepsUseCase: RainGetOnboardingMissingStepsUseCaseProtocol {
   
-  private let repository: RainOnboardingRepositoryProtocol
+  private let repository: RainRepositoryProtocol
   
-  public init(repository: RainOnboardingRepositoryProtocol) {
+  public init(repository: RainRepositoryProtocol) {
     self.repository = repository
   }
   

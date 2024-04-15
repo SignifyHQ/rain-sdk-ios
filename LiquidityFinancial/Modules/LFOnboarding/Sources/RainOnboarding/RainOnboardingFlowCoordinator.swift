@@ -42,7 +42,7 @@ public class RainOnboardingFlowCoordinator: OnboardingFlowCoordinatorProtocol {
   
   @LazyInjected(\.accountRepository) var accountRepository
   @LazyInjected(\.onboardingRepository) var onboardingRepository
-  @LazyInjected(\.rainOnboardingRepository) var rainOnboardingRepository
+  @LazyInjected(\.rainRepository) var rainRepository
   
   @LazyInjected(\.pushNotificationService) var pushNotificationService
   @LazyInjected(\.analyticsService) var analyticsService
@@ -52,7 +52,7 @@ public class RainOnboardingFlowCoordinator: OnboardingFlowCoordinatorProtocol {
   }()
   
   lazy var getOnboardingMissingSteps: RainGetOnboardingMissingStepsUseCaseProtocol = {
-    RainGetOnboardingMissingStepsUseCase(repository: rainOnboardingRepository)
+    RainGetOnboardingMissingStepsUseCase(repository: rainRepository)
   }()
   
   lazy var getUserUseCase: GetUserUseCaseProtocol = {
@@ -251,10 +251,6 @@ private extension RainOnboardingFlowCoordinator {
       set(route: .createWallet)
     } else if steps.contains(.createRainUser) {
       set(route: .personalInformation)
-    } else if steps.contains(.needInformation) {
-      // TODO: - Provide more information
-    } else if steps.contains(.needVerification) {
-      // TODO: - Redirect the user to a separate page to perform some additinal verification
     }
   }
   

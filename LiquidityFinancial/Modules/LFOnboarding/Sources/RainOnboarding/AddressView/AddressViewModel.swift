@@ -6,6 +6,7 @@ import LFUtilities
 import Factory
 import OnboardingData
 import AccountData
+import AccountDomain
 import RainData
 import RainDomain
 import Services
@@ -21,6 +22,7 @@ final class AddressViewModel: ObservableObject {
   
   @LazyInjected(\.devicesRepository) var devicesRepository
   @LazyInjected(\.accountRepository) var accountRepository
+  @LazyInjected(\.rainRepository) var rainRepository
   
   @LazyInjected(\.accountDataManager) var accountDataManager
   @LazyInjected(\.featureFlagManager) var featureFlagManager
@@ -49,6 +51,14 @@ final class AddressViewModel: ObservableObject {
     return DeviceDeregisterUseCase(repository: devicesRepository)
   }()
   
+  lazy var createRainAccount: CreateRainAccountUseCaseProtocol = {
+    return CreateRainAccountUseCase(repository: rainRepository)
+  }()
+  
+  lazy var getUserUseCase: GetUserUseCaseProtocol = {
+    GetUserUseCase(repository: accountRepository)
+  }()
+  
   private var isStateValid = true
   private var pauseAutocomplete = false
   private var cancellables = Set<AnyCancellable>()
@@ -67,14 +77,10 @@ extension AddressViewModel {
       isLoading = true
       
       do {
-        let parameters = createRainPersonParameters()
-        
-        /*
-         1. Create Rain User through the API
-         2. Handle Rain Application Status
-         */
-        
-        analyticsService.track(event: AnalyticsEvent(name: .addressCompleted))
+        // TODO: - Will be uncommented when the API available
+        // let parameters = createRainPersonParameters()
+        // _ = try await createRainAccount.execute(parameters: parameters)
+        // _ = try await fetchUserReviewStatus()
       } catch {
         log.error(error)
         toastMessage = error.userFriendlyMessage
@@ -99,6 +105,19 @@ extension AddressViewModel {
       }
     }
   }
+  
+  func fetchUserReviewStatus() async throws {
+    let user = try await getUserUseCase.execute()
+    handleDataUser(user: user)
+    
+    // TODO: Will updated when the ticket ENG-4205 done
+    guard let accountReviewStatus = RainApplicationStatus(rawValue: user.accountReviewStatus ?? .empty) else {
+      handleUnclearAccountReviewStatus(user: user)
+      return
+    }
+    
+    handleRainApplicationStatus(status: accountReviewStatus)
+  }
 }
 
 // MARK: - View Handle
@@ -113,7 +132,8 @@ extension AddressViewModel {
   
   func onContinueButtonTapped() {
     updateUserInformation()
-    
+    analyticsService.track(event: AnalyticsEvent(name: .addressCompleted))
+
     guard isStateValid else {
       let message = L10N.Common.waitlistMessage(accountDataManager.userInfomationData.firstName ?? .empty)
       popup = .waitlist(message)
@@ -233,23 +253,27 @@ private extension AddressViewModel {
     accountDataManager.update(country: Constants.Default.region.rawValue.uppercased())
   }
   
-  func createRainPersonParameters() -> RainPersonParameters {
-    return RainPersonParameters(
+  func createRainPersonParameters() -> APIRainPersonParameters {
+    let rainAddress = RainAddressParameters(
+      line1: accountDataManager.userInfomationData.addressLine1 ?? .empty,
+      line2: accountDataManager.userInfomationData.addressLine2 ?? .empty,
+      city: accountDataManager.userInfomationData.city ?? .empty,
+      region: accountDataManager.userInfomationData.state ?? .empty,
+      postalCode: accountDataManager.userInfomationData.postalCode ?? .empty,
+      countryCode: Constants.Default.region.rawValue.uppercased(),
+      country: accountDataManager.userInfomationData.country ?? .empty
+    )
+    
+    return APIRainPersonParameters(
       firstName: accountDataManager.userInfomationData.firstName ?? .empty,
       lastName: accountDataManager.userInfomationData.lastName ?? .empty,
-      dateOfBirth: accountDataManager.userInfomationData.dateOfBirth ?? .empty,
+      birthDate: accountDataManager.userInfomationData.dateOfBirth ?? .empty,
       nationalId: accountDataManager.userInfomationData.ssn ?? .empty,
       countryOfIssue: Constants.Default.region.rawValue.uppercased(),
       email: accountDataManager.userInfomationData.email ?? .empty,
+      address: rainAddress,
       phoneCountryCode: Constants.Default.regionCode.rawValue,
       phone: accountDataManager.userInfomationData.phone ?? .empty,
-      addressLine1: accountDataManager.userInfomationData.addressLine1 ?? .empty,
-      addressLine2: accountDataManager.userInfomationData.addressLine2 ?? .empty,
-      city: accountDataManager.userInfomationData.city ?? .empty,
-      state: accountDataManager.userInfomationData.state ?? .empty,
-      country: accountDataManager.userInfomationData.country ?? .empty,
-      postalCode: accountDataManager.userInfomationData.postalCode ?? .empty,
-      walletAddress: portalService.getWalletAddress(),
       iovationBlackbox: FraudForce.blackbox()
     )
   }
@@ -285,6 +309,61 @@ private extension AddressViewModel {
         self?.displaySuggestions = !suggestions.isEmpty
       }
     }
+  }
+  
+  func handleRainApplicationStatus(status: RainApplicationStatus) {
+    switch status {
+    case .approve:
+      // It is a buffer task that helps prepare data before the user enters the app
+      // await apiFetchAccounts()
+      onboardingFlowCoordinator.set(route: .dashboard)
+    case .inReview:
+      onboardingFlowCoordinator.set(route: .kycReview)
+    case .rejected:
+      onboardingFlowCoordinator.set(route: .accountReject)
+    case .needInformation:
+      // TODO: Handle later
+      break
+    case .needVerification:
+      // TODO: Handle later
+      break
+    }
+  }
+  
+  func handleDataUser(user: LFUser) {
+    accountDataManager.storeUser(user: user)
+    trackUserInformation(user: user)
+  }
+  
+  func trackUserInformation(user: LFUser) {
+    guard let userModel = user as? APIUser,
+          let data = try? JSONEncoder().encode(userModel) else {
+      return
+    }
+    
+    let dictionary = (
+      try? JSONSerialization.jsonObject(with: data, options: .fragmentsAllowed)
+    ).flatMap { $0 as? [String: Any] }
+    
+    var values = dictionary ?? [:]
+    values["birthday"] = LiquidityDateFormatter.simpleDate.parseToDate(from: userModel.dateOfBirth ?? "")
+    values["avatar"] = userModel.profileImage ?? ""
+    values["idNumber"] = "REDACTED"
+    
+    analyticsService.set(params: values)
+  }
+  
+  func handleUnclearAccountReviewStatus(user: LFUser) {
+    guard let reviewStatus = user.accountReviewStatus else {
+      return
+    }
+    
+    // There is data returned but does not match specific values
+    let description = Constants.DebugLog.missingAccountStatus(
+      status: String(describing: reviewStatus)
+    ).value
+    
+    onboardingFlowCoordinator.set(route:  .unclear(description))
   }
 }
 

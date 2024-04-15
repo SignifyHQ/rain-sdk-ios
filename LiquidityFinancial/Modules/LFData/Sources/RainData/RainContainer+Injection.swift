@@ -5,16 +5,16 @@ import RainDomain
 
 // MARK: - RainOnboarding
 extension Container {
-  public var rainOnboardingAPI: Factory<RainOnboardingAPIProtocol> {
+  public var rainAPI: Factory<RainAPIProtocol> {
     self {
       LFCoreNetwork<RainOnboardingRoute>()
     }
   }
   
-  public var rainOnboardingRepository: Factory<RainOnboardingRepositoryProtocol> {
+  public var rainRepository: Factory<RainRepositoryProtocol> {
     self {
-      RainOnboardingRepository(
-        onboardingAPI: self.rainOnboardingAPI.callAsFunction()
+      RainRepository(
+        rainAPI: self.rainAPI.callAsFunction()
       )
     }
   }
