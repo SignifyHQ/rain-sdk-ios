@@ -318,7 +318,7 @@ private extension AddressViewModel {
       // await apiFetchAccounts()
       onboardingFlowCoordinator.set(route: .dashboard)
     case .inReview:
-      onboardingFlowCoordinator.set(route: .kycReview)
+      onboardingFlowCoordinator.set(route: .accountInReview)
     case .rejected:
       onboardingFlowCoordinator.set(route: .accountReject)
     case .needInformation:

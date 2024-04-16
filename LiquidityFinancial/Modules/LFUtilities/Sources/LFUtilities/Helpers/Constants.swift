@@ -412,6 +412,7 @@ public extension Constants {
     case takeTime(time: CFAbsoluteTime)
     case missingAccountStatus(status: String)
     case unauthorized
+    case dashboardApproved(statusCode: NSInteger)
     
     public var value: String {
       switch self {
@@ -425,6 +426,8 @@ public extension Constants {
         "Account status information is missing: \(status)"
       case .unauthorized:
         "<<<<<<<<<<<<<< 401 Unauthorized: Clear user data and perform logout. >>>>>>>>>>>>>>>"
+      case let .dashboardApproved(statusCode):
+        "Approved dashboard state: \(statusCode)"
       }
     }
   }

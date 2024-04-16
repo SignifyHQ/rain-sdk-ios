@@ -125,7 +125,7 @@ public extension RainOnboardingFlowCoordinator {
     case .rejected:
       set(route: .accountReject)
     case .inreview, .reviewing:
-      set(route: .kycReview)
+      set(route: .accountInReview)
     }
   }
 }
@@ -278,7 +278,7 @@ public extension RainOnboardingFlowCoordinator {
     case phone
     case createWallet
     case personalInformation
-    case kycReview
+    case accountInReview
     case dashboard
     case accountLocked
     case accountReject

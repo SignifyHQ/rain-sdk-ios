@@ -48,9 +48,9 @@ private extension RainOnboardingContentView {
           .createView(
             type: .welcome(RainContentViewFactory.WelcomeType.personalInformation)
           )
-      case .kycReview:
+      case .accountInReview:
         contentViewFactory
-          .createView(type: .kycReview)
+          .createView(type: .accountInReview)
       case .dashboard:
         EmptyView()
       case .accountLocked:

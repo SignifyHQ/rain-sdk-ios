@@ -43,8 +43,8 @@ extension RainContentViewFactory {
       return AnyView(accountLockedView)
     case let .welcome(type):
       return AnyView(welcomeView(type: type))
-    case .kycReview:
-      return AnyView(kycReviewView)
+    case .accountInReview:
+      return AnyView(accountInReviewView)
     case .accountReject:
       return AnyView(accountRejectView)
     case .unclear(let message):
@@ -64,22 +64,25 @@ private extension RainContentViewFactory {
   
   @MainActor
   func unclearView(message: String) -> some View {
-    KYCStatusView(viewModel: KYCStatusViewModel(state: .common(message)))
+    AccountReviewStatusView(
+      viewModel: AccountReviewStatusViewModel(state: .unclear(message))
+    )
   }
   
   @MainActor
   var accountRejectView: some View {
-    KYCStatusView(viewModel: KYCStatusViewModel(state: .reject))
+    AccountReviewStatusView(
+      viewModel: AccountReviewStatusViewModel(state: .reject)
+    )
   }
   
   @MainActor
-  var documentInReviewView: some View {
-    KYCStatusView(viewModel: KYCStatusViewModel(state: .documentInReview))
-  }
-  
-  @MainActor
-  var kycReviewView: some View {
-    KYCStatusView(viewModel: KYCStatusViewModel(state: .inReview(accountDataManager.userNameDisplay)))
+  var accountInReviewView: some View {
+    AccountReviewStatusView(
+      viewModel: AccountReviewStatusViewModel(
+        state: .inReview(accountDataManager.userNameDisplay)
+      )
+    )
   }
   
   @MainActor
@@ -160,7 +163,7 @@ private extension RainContentViewFactory {
 // MARK: - Types
 extension RainContentViewFactory {
   enum ViewType {
-    case initial, phone, kycReview
+    case initial, phone, accountInReview
     case accountLocked, accountReject
     case unclear(String)
     case welcome(WelcomeType)

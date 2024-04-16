@@ -1,6 +1,6 @@
 import Foundation
 
-struct KYCInformation {
+struct AccountReviewInformation {
   let title: String
   let message: String
   let primary: String

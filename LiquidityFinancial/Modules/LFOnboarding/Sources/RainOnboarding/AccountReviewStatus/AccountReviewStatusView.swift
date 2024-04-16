@@ -5,14 +5,14 @@ import LFLocalizable
 import Services
 import BaseOnboarding
 
-struct KYCStatusView: View {
-  @StateObject var viewModel: KYCStatusViewModel
+struct AccountReviewStatusView: View {
+  @StateObject var viewModel: AccountReviewStatusViewModel
   
-  init(viewModel: KYCStatusViewModel) {
+  init(viewModel: AccountReviewStatusViewModel) {
     _viewModel = .init(wrappedValue: viewModel)
   }
   
-  public var body: some View {
+  var body: some View {
     makeContentView(with: viewModel.state)
       .track(name: String(describing: type(of: self)))
       .background(Colors.background.swiftUIColor)
@@ -42,17 +42,19 @@ struct KYCStatusView: View {
   }
 }
 
-  // MARK: - View Components
-private extension KYCStatusView {
+// MARK: - View Components
+private extension AccountReviewStatusView {
   @ViewBuilder
-  func makeContentView(with state: KYCState) -> some View {
+  func makeContentView(with state: AccountReviewStatus) -> some View {
     switch state {
     case .idle:
       loadingView
-    case .inVerify:
-      kycWaitView
-    case .reject, .pendingIDV, .inReview, .missingInfo, .common, .documentInReview:
-      informationView(info: state.kycInformation)
+    case .reject,
+        .identityVerification,
+        .inReview,
+        .missingInformation,
+        .unclear:
+      informationView(info: state.accountReviewInformation)
     }
   }
   
@@ -71,14 +73,15 @@ private extension KYCStatusView {
     }
   }
   
-  @ViewBuilder func informationView(info: KYCInformation?) -> some View {
+  @ViewBuilder
+  func informationView(info: AccountReviewInformation?) -> some View {
     if let info {
       VStack {
         Spacer()
         GenImages.Images.icLogo.swiftUIImage
           .resizable()
           .scaledToFit()
-          .frame(width: 124, height: 124)
+          .frame(124)
           .onLongPressGesture(minimumDuration: 2) {
             viewModel.openMagicPopup()
           }
@@ -91,7 +94,7 @@ private extension KYCStatusView {
     }
   }
   
-  func contextView(info: KYCInformation) -> some View {
+  func contextView(info: AccountReviewInformation) -> some View {
     VStack(spacing: 12) {
       Text(info.title)
         .padding()
@@ -106,7 +109,7 @@ private extension KYCStatusView {
     .lineSpacing(1.17)
   }
   
-  func buttonGroup(info: KYCInformation) -> some View {
+  func buttonGroup(info: AccountReviewInformation) -> some View {
     VStack(spacing: 12) {
       if let secondary = info.secondary {
         FullSizeButton(title: secondary, isDisable: false, type: .secondary) {
@@ -120,58 +123,23 @@ private extension KYCStatusView {
     .padding(.bottom, 16)
   }
   
-  var kycWaitView: some View {
-    Colors.background.swiftUIColor
-      .popup(isPresented: .constant(true)) {
-        waitingPopup
-      }
-  }
-  
-  var waitingPopup: some View {
-    PopupAlert {
-      VStack(spacing: 32) {
-        GradientIndicatorView(
-          isVisible: .constant(true),
-          colors: [Color.clear, Colors.primary.swiftUIColor],
-          lineWidth: 10
-        )
-        .frame(width: 56, height: 56)
-        
-        VStack(spacing: 12) {
-          Text(L10N.Common.KycStatus.WaitingVerification.title)
-            .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.main.value))
-            .foregroundColor(Colors.label.swiftUIColor)
-          
-          Text(L10N.Common.KycStatus.WaitingVerification.message)
-            .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.medium.value))
-            .foregroundColor(Colors.label.swiftUIColor.opacity(0.75))
-            .lineSpacing(1.7)
-        }
-        .multilineTextAlignment(.center)
-        .padding(.horizontal, 20)
-      }
-      .padding(.vertical, 20)
-    }
-  }
-  
   var magicPopup: some View {
     LiquidityAlert(
-      title: "[Tool Kit] - Pass review from Dashboard.",
-      message: "Click ok and we call service help you can pass a review of the Dashboard.",
+      title: L10N.Common.Popup.ToolKit.passReviewTitle,
+      message: L10N.Common.Popup.ToolKit.passReviewMessage,
       primary: .init(text: L10N.Common.Button.Ok.title) {
-        viewModel.closePopup()
-        viewModel.magicPassKYC()
+        viewModel.onMagicPopupPrimaryButtonTapped()
       },
-      secondary: .init(text: L10N.Common.Button.Skip.title, action: {
+      secondary: .init(text: L10N.Common.Button.Skip.title) {
         viewModel.closePopup()
-      })
+      }
     )
   }
   
   var inReviewPopup: some View {
     LiquidityAlert(
-      title: L10N.Common.KycStatus.InReview.Popup.title,
-      message: L10N.Common.KycStatus.InReview.Popup.message,
+      title: L10N.Common.ApplicationReviewStatus.InReview.Popup.title,
+      message: L10N.Common.ApplicationReviewStatus.InReview.Popup.message,
       primary: .init(text: L10N.Common.Button.Ok.title) {
         viewModel.closePopup()
       }
