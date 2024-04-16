@@ -30,8 +30,8 @@ public class PortalRepository: PortalRepositoryProtocol {
   
   public func registerPortal(portalToken: String) async throws {
     do {
-      // TODO: - alchemyAPIKey will be implemented later
-      try await portalService.registerPortal(sessionToken: portalToken, alchemyAPIKey: "")
+      // TODO: - alchemyAPIKey will be implemented later (using test key for now)
+      try await portalService.registerPortal(sessionToken: portalToken, alchemyAPIKey: "qp4a1AAZ24ot7dH5PwqBFwBEnOtIRYz_")
     } catch {
       guard let portalError = error as? LFPortalError, portalError == .expirationToken else {
         throw error

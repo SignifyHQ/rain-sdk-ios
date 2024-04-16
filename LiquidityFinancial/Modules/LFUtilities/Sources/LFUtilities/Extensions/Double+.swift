@@ -25,6 +25,10 @@ public extension Double {
   func roundTo3fStr() -> String {
     String(format: "%.3f", self)
   }
+  
+  func weiToEth() -> Double {
+    self / pow(10, 18)
+  }
 }
 
 public extension Double {

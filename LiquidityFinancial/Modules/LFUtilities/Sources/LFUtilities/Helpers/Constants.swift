@@ -417,17 +417,17 @@ public extension Constants {
     public var value: String {
       switch self {
       case let .setRoute(fromRoute, toRoute):
-        "OnboardingFlowCoordinator will route to: \(toRoute), from current route: \(fromRoute)"
+        return "OnboardingFlowCoordinator will route to: \(toRoute), from current route: \(fromRoute)"
       case .switchPhone:
-        "The user switches from phone login to device login."
+        return "The user switches from phone login to device login."
       case let .takeTime(time):
-        "Operation took \(time) seconds"
+        return "Operation took \(time) seconds"
       case let .missingAccountStatus(status):
-        "Account status information is missing: \(status)"
+        return "Account status information is missing: \(status)"
       case .unauthorized:
-        "<<<<<<<<<<<<<< 401 Unauthorized: Clear user data and perform logout. >>>>>>>>>>>>>>>"
+        return "<<<<<<<<<<<<<< 401 Unauthorized: Clear user data and perform logout. >>>>>>>>>>>>>>>"
       case let .dashboardApproved(statusCode):
-        "Approved dashboard state: \(statusCode)"
+        return "Approved dashboard state: \(statusCode)"
       }
     }
   }

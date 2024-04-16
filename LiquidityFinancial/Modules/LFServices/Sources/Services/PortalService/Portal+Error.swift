@@ -5,4 +5,5 @@ public enum LFPortalError: Error {
   case portalInstanceUnavailable
   case expirationToken
   case walletAlreadyExists
+  case unexpected
 }

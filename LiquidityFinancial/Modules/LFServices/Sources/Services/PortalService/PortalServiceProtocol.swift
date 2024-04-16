@@ -15,6 +15,8 @@ public protocol PortalServiceProtocol {
     backupMethod: BackupMethods,
     cipherText: String
   ) async throws
+  func getBalances(
+  ) async throws -> [PortalBalance]
   func checkWalletAddressExists() -> Bool
-  func getWalletAddress() -> String
+  var walletAddress: String? { get }
 }

@@ -14,7 +14,7 @@ public class PortalService: PortalServiceProtocol {
 
 // MARK: - Public Functions
 public extension PortalService {
-  func registerPortal(sessionToken: String, alchemyAPIKey: String = "") async throws {
+  func registerPortal(sessionToken: String, alchemyAPIKey: String) async throws {
     try await withCheckedThrowingContinuation { [weak self] (continuation: CheckedContinuation<Void, Error>) in
       guard let self else { return }
       
@@ -25,8 +25,8 @@ public extension PortalService {
         let keychain = PortalKeychain()
         let gatewayConfig = Configs.PortalNetwork.configGateway(alchemyAPIKey: alchemyAPIKey)
         let chainId = self.environmentService.networkEnvironment == .productionLive
-        ? Configs.PortalNetwork.ethGoerli.chainID
-        : Configs.PortalNetwork.ethMainnet.chainID
+        ? Configs.PortalNetwork.ethMainnet.chainID
+        : Configs.PortalNetwork.ethSepolia.chainID
         
         portal = try Portal(
           apiKey: sessionToken,
@@ -139,33 +139,100 @@ public extension PortalService {
     }
   }
   
-  
+  func getBalances(
+  ) async throws -> [PortalBalance] {
+    try await withCheckedThrowingContinuation { [weak self] (continuation: CheckedContinuation<[PortalBalance], Error>) in
+      guard let self else {
+        continuation.resume(throwing: LFPortalError.unexpected)
+        return
+      }
+      
+      guard let portal = self.portal else {
+        continuation.resume(throwing: LFPortalError.portalInstanceUnavailable)
+        return
+      }
+      
+      do {
+        // Fetching ERC20 token balances for wallet
+        try portal.api.getBalances { result in
+          guard let erc20Balances = result.data
+          else {
+            log.error("Portal Swift: Error fetching ERC20 wallet balances \(result.error ?? "")")
+            continuation.resume(throwing: self.handlePortalError(error: result.error))
+            
+            return
+          }
+          
+          var portalBalances = erc20Balances.compactMap { balance in
+            PortalBalance(
+              token: PortalToken(
+                contractAddress: balance.contractAddress,
+                // TODO(Volo): Figure out how to handle symbol and name
+                symbol: "",
+                name: ""
+              ),
+              balance: balance.balance.asDouble
+            )
+          }
+          
+          // Fetching Eth balance for wallet
+          portal.ethGetBalance { result in
+            guard let ethBalanceResponse = result.data?.result as? ETHGatewayResponse
+            else {
+              log.error("Portal Swift: Error fetching ETH wallet balances \(result.error ?? "")")
+              continuation.resume(throwing: self.handlePortalError(error: result.error))
+              
+              return
+            }
+            
+            let ethBalance = ethBalanceResponse.result?.asDouble?.weiToEth()
+            portalBalances.append(
+              PortalBalance(
+                token: PortalToken(
+                  // Contract address will be blank for non-ERC20 tokens
+                  // TODO(Volo): Figure out how to handle symbol and name
+                  contractAddress: "",
+                  symbol: "ETH",
+                  name: "Ethereum"
+                ),
+                balance: ethBalance
+              )
+            )
+            
+            log.debug("Portal Swift: Wallet balances for \(self.walletAddress ?? "-/-") fetched successfully")
+            continuation.resume(returning: portalBalances)
+            
+            return
+          }
+        }
+      } catch {
+        log.error("Portal Swift: API error fetching wallet balances \(error)")
+        continuation.resume(throwing: self.handlePortalError(error: error))
+      }
+    }
+  }
 }
 
 // MARK: - Helper
 public extension PortalService {
   func checkWalletAddressExists() -> Bool {
-    guard let address = portal?.address else {
-      return false
-    }
-    
-    return !address.isEmpty
+    !(walletAddress ?? "").isEmpty
   }
   
-  public func getWalletAddress() -> String {
-    return portal?.address ?? .empty
+  var walletAddress: String? {
+    portal?.address
   }
 }
 
 // MARK: - Private Functions
 private extension PortalService {
-  func handlePortalError(error: Error) -> Error {
+  func handlePortalError(error: Error?) -> Error {
     if let portalError = error as? PortalError, portalError.code == PortalErrorCodes.INVALID_API_KEY.rawValue {
       return LFPortalError.expirationToken
     }
     
     guard let portalMpcError = error as? PortalMpcError else {
-      return error
+      return error ?? LFPortalError.unexpected
     }
     
     switch portalMpcError.code {
