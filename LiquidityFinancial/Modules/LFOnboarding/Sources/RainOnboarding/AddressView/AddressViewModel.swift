@@ -79,8 +79,8 @@ extension AddressViewModel {
       do {
         // TODO: - Will be uncommented when the API available
         // let parameters = createRainPersonParameters()
-        // _ = try await createRainAccount.execute(parameters: parameters)
-        // _ = try await fetchUserReviewStatus()
+        // try await createRainAccount.execute(parameters: parameters)
+        // try await onboardingFlowCoordinator.fetchOnboardingMissingSteps()
       } catch {
         log.error(error)
         toastMessage = error.userFriendlyMessage
@@ -104,19 +104,6 @@ extension AddressViewModel {
         toastMessage = error.userFriendlyMessage
       }
     }
-  }
-  
-  func fetchUserReviewStatus() async throws {
-    let user = try await getUserUseCase.execute()
-    handleDataUser(user: user)
-    
-    // TODO: Will updated when the ticket ENG-4205 done
-    guard let accountReviewStatus = RainApplicationStatus(rawValue: user.accountReviewStatus ?? .empty) else {
-      handleUnclearAccountReviewStatus(user: user)
-      return
-    }
-    
-    handleRainApplicationStatus(status: accountReviewStatus)
   }
 }
 
@@ -309,61 +296,6 @@ private extension AddressViewModel {
         self?.displaySuggestions = !suggestions.isEmpty
       }
     }
-  }
-  
-  func handleRainApplicationStatus(status: RainApplicationStatus) {
-    switch status {
-    case .approve:
-      // It is a buffer task that helps prepare data before the user enters the app
-      // await apiFetchAccounts()
-      onboardingFlowCoordinator.set(route: .dashboard)
-    case .inReview:
-      onboardingFlowCoordinator.set(route: .accountInReview)
-    case .rejected:
-      onboardingFlowCoordinator.set(route: .accountReject)
-    case .needInformation:
-      // TODO: Handle later
-      break
-    case .needVerification:
-      // TODO: Handle later
-      break
-    }
-  }
-  
-  func handleDataUser(user: LFUser) {
-    accountDataManager.storeUser(user: user)
-    trackUserInformation(user: user)
-  }
-  
-  func trackUserInformation(user: LFUser) {
-    guard let userModel = user as? APIUser,
-          let data = try? JSONEncoder().encode(userModel) else {
-      return
-    }
-    
-    let dictionary = (
-      try? JSONSerialization.jsonObject(with: data, options: .fragmentsAllowed)
-    ).flatMap { $0 as? [String: Any] }
-    
-    var values = dictionary ?? [:]
-    values["birthday"] = LiquidityDateFormatter.simpleDate.parseToDate(from: userModel.dateOfBirth ?? "")
-    values["avatar"] = userModel.profileImage ?? ""
-    values["idNumber"] = "REDACTED"
-    
-    analyticsService.set(params: values)
-  }
-  
-  func handleUnclearAccountReviewStatus(user: LFUser) {
-    guard let reviewStatus = user.accountReviewStatus else {
-      return
-    }
-    
-    // There is data returned but does not match specific values
-    let description = Constants.DebugLog.missingAccountStatus(
-      status: String(describing: reviewStatus)
-    ).value
-    
-    onboardingFlowCoordinator.set(route:  .unclear(description))
   }
 }
 

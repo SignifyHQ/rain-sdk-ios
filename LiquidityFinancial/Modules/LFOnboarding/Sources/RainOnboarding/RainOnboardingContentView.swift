@@ -59,6 +59,12 @@ private extension RainOnboardingContentView {
       case .accountReject:
         contentViewFactory
           .createView(type: .accountReject)
+      case .missingInformation:
+        contentViewFactory
+          .createView(type: .missingInformation)
+      case .identifyVerification:
+        contentViewFactory
+          .createView(type: .identifyVerification)
       case .unclear(let message):
         contentViewFactory
           .createView(type: .unclear(message))

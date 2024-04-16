@@ -47,6 +47,10 @@ extension RainContentViewFactory {
       return AnyView(accountInReviewView)
     case .accountReject:
       return AnyView(accountRejectView)
+    case .missingInformation:
+      return AnyView(missingInformationView)
+    case .identifyVerification:
+      return AnyView(identifyVerificationView)
     case .unclear(let message):
       return AnyView(unclearView(message: message))
     case .forceUpdate(let model):
@@ -155,6 +159,24 @@ private extension RainContentViewFactory {
   }
   
   @MainActor
+  var missingInformationView: some View {
+    AccountReviewStatusView(
+      viewModel: AccountReviewStatusViewModel(
+        state: .missingInformation
+      )
+    )
+  }
+  
+  @MainActor
+  var identifyVerificationView: some View {
+    AccountReviewStatusView(
+      viewModel: AccountReviewStatusViewModel(
+        state: .identityVerification
+      )
+    )
+  }
+  
+  @MainActor
   func forceUpdateView(model: FeatureConfigModel) -> some View {
     UpdateAppView(featureConfigModel: model)
   }
@@ -165,6 +187,7 @@ extension RainContentViewFactory {
   enum ViewType {
     case initial, phone, accountInReview
     case accountLocked, accountReject
+    case missingInformation, identifyVerification
     case unclear(String)
     case welcome(WelcomeType)
     case forceUpdate(FeatureConfigModel)

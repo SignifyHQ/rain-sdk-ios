@@ -90,7 +90,7 @@ public extension RainOnboardingFlowCoordinator {
     let processSteps = missingSteps.processSteps
     
     guard !processSteps.isEmpty else {
-      // If there are no remaining onboarding steps to complete, it proceeds to fetch the rain review status.
+      // If there are no remaining onboarding steps to complete, it proceeds to fetch the account review status.
       try await fetchUserReviewStatus()
       return
     }
@@ -251,6 +251,10 @@ private extension RainOnboardingFlowCoordinator {
       set(route: .createWallet)
     } else if steps.contains(.createRainUser) {
       set(route: .personalInformation)
+    } else if steps.contains(.needsInformation) {
+      set(route: .missingInformation)
+    } else if steps.contains(.needsVerification) {
+      set(route: .identifyVerification)
     }
   }
   
@@ -280,6 +284,8 @@ public extension RainOnboardingFlowCoordinator {
     case personalInformation
     case accountInReview
     case dashboard
+    case missingInformation
+    case identifyVerification
     case accountLocked
     case accountReject
     case unclear(String)

@@ -98,7 +98,11 @@ extension AccountReviewStatusViewModel {
     case .reject:
       forcedLogout()
     case .missingInformation:
-      forcedLogout()
+      // TODO: - Will be implemented in ENG-4232
+      break
+    case .identityVerification:
+      // TODO: - Will be implemented in ENG-4184
+      break
     default:
       break
     }

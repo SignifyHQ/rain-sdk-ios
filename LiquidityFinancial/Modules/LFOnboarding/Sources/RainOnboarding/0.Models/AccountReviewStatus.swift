@@ -42,7 +42,7 @@ public enum AccountReviewStatus: Equatable {
       return AccountReviewInformation(
         title: L10N.Common.ApplicationReviewStatus.Fail.title,
         message: L10N.Common.ApplicationReviewStatus.MissingInformation.message,
-        primary: L10N.Common.Button.Done.title
+        primary: L10N.Common.Button.Continue.title
       )
     case .identityVerification:
       return AccountReviewInformation(
