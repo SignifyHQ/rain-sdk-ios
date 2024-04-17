@@ -23,4 +23,14 @@ extension LFCoreNetwork: RainAPIProtocol where R == RainOnboardingRoute {
       decoder: .apiDecoder
     )
   }
+  
+  public func getExternalVerificationLink() async throws -> APIRainExternalVerificationLink {
+    try await request(
+      RainOnboardingRoute.getExternalVerificationLink,
+      target: APIRainExternalVerificationLink.self,
+      failure: LFErrorObject.self,
+      decoder: .apiDecoder
+    )
+  }
+
 }

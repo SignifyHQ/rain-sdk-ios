@@ -18,4 +18,8 @@ public class RainRepository: RainRepositoryProtocol {
     }
     return try await rainAPI.createRainAccount(parameters: parameters)
   }
+  
+  public func getExternalVerificationLink() async throws -> RainExternalVerificationLinkEntity {
+    try await rainAPI.getExternalVerificationLink()
+  }
 }

@@ -16,8 +16,14 @@ public struct IdentityVerificationView: View {
   
   public var body: some View {
     PersonaView(hostedURL: url, successCallback: succcessCallback)
-      .defaultToolBar(icon: .xMark)
-      .embedInNavigation()
+      .overlay(alignment: .topTrailing) {
+        Button {
+          dismiss()
+        } label: {
+          CircleButton(style: .xmark)
+            .padding(12)
+        }
+      }
   }
 }
 
@@ -41,7 +47,7 @@ private struct PersonaView: UIViewRepresentable {
     webView.scrollView.bounces = false
     webView.translatesAutoresizingMaskIntoConstraints = false
     
-    let redirectURI = "&redirect-uri=\(LFUtilities.personaCallback)"
+    let redirectURI = "&redirect=\(LFUtilities.personaCallback)"
     let strHostedURL = hostedURL.absoluteString + redirectURI
     if let url = URL(string: strHostedURL) {
       webView.load(URLRequest(url: url))

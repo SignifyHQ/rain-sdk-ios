@@ -77,10 +77,9 @@ extension AddressViewModel {
       isLoading = true
       
       do {
-        // TODO: - Will be uncommented when the API available
-        // let parameters = createRainPersonParameters()
-        // try await createRainAccount.execute(parameters: parameters)
-        // try await onboardingFlowCoordinator.fetchOnboardingMissingSteps()
+         let parameters = createRainPersonParameters()
+         _ = try await createRainAccount.execute(parameters: parameters)
+         try await onboardingFlowCoordinator.fetchOnboardingMissingSteps()
       } catch {
         log.error(error)
         toastMessage = error.userFriendlyMessage

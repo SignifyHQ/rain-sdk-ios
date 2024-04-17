@@ -4,6 +4,7 @@ import LFUtilities
 import OnboardingData
 import AccountData
 import AccountDomain
+import RainDomain
 import OnboardingDomain
 import UIKit
 import Services
@@ -19,6 +20,7 @@ final class AccountReviewStatusViewModel: ObservableObject {
   @LazyInjected(\.accountDataManager) var accountDataManager
   @LazyInjected(\.authorizationManager) var authorizationManager
   @LazyInjected(\.accountRepository) var accountRepository
+  @LazyInjected(\.rainRepository) var rainRepository
   @LazyInjected(\.customerSupportService) var customerSupportService
   
   @Published var isLoading: Bool = false
@@ -31,6 +33,10 @@ final class AccountReviewStatusViewModel: ObservableObject {
   
   lazy var getUserUseCase: GetUserUseCaseProtocol = {
     GetUserUseCase(repository: accountRepository)
+  }()
+  
+  lazy var getExternalVerificationLinkUseCase: GetExternalVerificationLinkUseCaseProtocol = {
+    GetExternalVerificationLinkUseCase(repository: rainRepository)
   }()
   
   var username: String {
@@ -78,6 +84,30 @@ extension AccountReviewStatusViewModel {
       }
     }
   }
+  
+  private func getExternalVerificationLink() {
+    Task {
+      defer { isLoading = false }
+      isLoading = true
+      
+      do {
+        let response = try await getExternalVerificationLinkUseCase.execute()
+        
+        guard let userID = response.paramsEntity?.userId else {
+          return
+        }
+        let urlString = "\(response.url)?userId=\(userID)"
+        
+        guard let url = URL(string: urlString) else {
+          return
+        }
+        
+        presentation = .idv(url)
+      } catch {
+        log.error(error.userFriendlyMessage)
+      }
+    }
+  }
 }
 
 // MARK: - View Handle
@@ -101,15 +131,20 @@ extension AccountReviewStatusViewModel {
       // TODO: - Will be implemented in ENG-4232
       break
     case .identityVerification:
-      // TODO: - Will be implemented in ENG-4184
-      break
+      getExternalVerificationLink()
     default:
       break
     }
   }
   
   func idvComplete() {
-    presentation = nil
+    Task {
+      do {
+        try await rainOnboardingFlowCoordinator.fetchOnboardingMissingSteps()
+      } catch {
+        log.error(error.userFriendlyMessage)
+      }
+    }
   }
   
   func secondaryAction() {

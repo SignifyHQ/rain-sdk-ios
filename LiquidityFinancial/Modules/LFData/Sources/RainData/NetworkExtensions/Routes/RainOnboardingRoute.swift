@@ -6,6 +6,7 @@ import LFUtilities
 
 public enum RainOnboardingRoute {
   case getOnboardingMissingSteps
+  case getExternalVerificationLink
   case createAccount(parameters: APIRainPersonParameters)
 }
 
@@ -14,6 +15,8 @@ extension RainOnboardingRoute: LFRoute {
     switch self {
     case .getOnboardingMissingSteps:
       return "/v1/rain/onboarding/missing-steps"
+    case .getExternalVerificationLink:
+      return "/v1/rain/person/application-external-verification-link"
     case .createAccount:
       return "/v1/rain/person/create-account"
     }
@@ -21,8 +24,11 @@ extension RainOnboardingRoute: LFRoute {
   
   public var httpMethod: HttpMethod {
     switch self {
-    case .getOnboardingMissingSteps: return .GET
-    case .createAccount: return .POST
+    case .getOnboardingMissingSteps,
+        .getExternalVerificationLink:
+      return .GET
+    case .createAccount:
+      return .POST
     }
   }
   
@@ -38,7 +44,8 @@ extension RainOnboardingRoute: LFRoute {
   
   public var parameters: Parameters? {
     switch self {
-    case .getOnboardingMissingSteps:
+    case .getOnboardingMissingSteps,
+        .getExternalVerificationLink:
       return nil
     case let .createAccount(parameters):
       return parameters.encoded()
@@ -47,7 +54,8 @@ extension RainOnboardingRoute: LFRoute {
   
   public var parameterEncoding: ParameterEncoding? {
     switch self {
-    case .getOnboardingMissingSteps:
+    case .getOnboardingMissingSteps,
+        .getExternalVerificationLink:
       return nil
     case .createAccount:
       return .json
