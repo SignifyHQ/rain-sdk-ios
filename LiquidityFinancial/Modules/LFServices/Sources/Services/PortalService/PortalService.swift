@@ -14,7 +14,7 @@ public class PortalService: PortalServiceProtocol {
 
 // MARK: - Public Functions
 public extension PortalService {
-  func registerPortal(sessionToken: String, alchemyAPIKey: String) async throws {
+  func registerPortal(sessionToken: String) async throws {
     try await withCheckedThrowingContinuation { [weak self] (continuation: CheckedContinuation<Void, Error>) in
       guard let self else { return }
       
@@ -23,7 +23,7 @@ public extension PortalService {
           icloud: ICloudStorage(), passwordStorage: PasswordStorage()
         )
         let keychain = PortalKeychain()
-        let gatewayConfig = Configs.PortalNetwork.configGateway(alchemyAPIKey: alchemyAPIKey)
+        let gatewayConfig = Configs.PortalNetwork.configGateway(alchemyAPIKey: LFServices.alchemyAPIKey)
         let chainId = self.environmentService.networkEnvironment == .productionLive
         ? Configs.PortalNetwork.ethMainnet.chainID
         : Configs.PortalNetwork.ethSepolia.chainID

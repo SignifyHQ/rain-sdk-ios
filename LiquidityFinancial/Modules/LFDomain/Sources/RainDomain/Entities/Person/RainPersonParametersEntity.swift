@@ -11,6 +11,6 @@ public protocol RainPersonParametersEntity {
   var email: String { get }
   var addressEntity: RainAddressParametersEntity { get }
   var phoneCountryCode: String { get }
-  var phone: String { get }
+  var phoneNumber: String { get }
   var iovationBlackbox: String { get }
 }

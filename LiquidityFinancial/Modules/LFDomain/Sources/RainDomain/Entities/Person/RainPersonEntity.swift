@@ -3,6 +3,6 @@ import Foundation
 // sourcery: AutoMockable
 public protocol RainPersonEntity {
   var liquidityUserId: String { get }
-  var internalPersonId: String { get }
-  var externalPersonId: String { get }
+  var rainInternalPersonId: String { get }
+  var rainExternalPersonId: String { get }
 }

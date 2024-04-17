@@ -259,7 +259,7 @@ private extension AddressViewModel {
       email: accountDataManager.userInfomationData.email ?? .empty,
       address: rainAddress,
       phoneCountryCode: Constants.Default.regionCode.rawValue,
-      phone: accountDataManager.userInfomationData.phone ?? .empty,
+      phoneNumber: accountDataManager.userInfomationData.phone ?? .empty,
       iovationBlackbox: FraudForce.blackbox()
     )
   }

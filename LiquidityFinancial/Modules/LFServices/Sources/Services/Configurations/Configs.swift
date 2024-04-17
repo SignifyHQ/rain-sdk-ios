@@ -39,6 +39,16 @@ enum Configs {
     }
   }
   
+  enum Alchemy {
+    static var prodKey: String {
+      (try? LFConfiguration.value(for: "ALCHEMY_PROD_KEY")) ?? .empty
+    }
+    
+    static var devKey: String {
+      (try? LFConfiguration.value(for: "ALCHEMY_DEV_KEY")) ?? .empty
+    }
+  }
+  
   enum PortalNetwork {
     case ethSepolia
     case ethGoerli

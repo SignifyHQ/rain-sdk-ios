@@ -3,8 +3,8 @@ import RainDomain
 
 public struct APIRainPerson: Decodable {
   public let liquidityUserId: String
-  public let internalPersonId: String
-  public let externalPersonId: String
+  public let rainInternalPersonId: String
+  public let rainExternalPersonId: String
 }
 
 extension APIRainPerson: RainPersonEntity {}

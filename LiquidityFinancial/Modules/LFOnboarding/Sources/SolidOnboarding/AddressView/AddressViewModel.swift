@@ -172,7 +172,7 @@ final class AddressViewModel: ObservableObject {
     )
     let solidCreatePersonRequest = SolidCreatePersonRequest(
       firstName: accountDataManager.userInfomationData.firstName,
-      middleName: "",
+      middleName: .empty,
       lastName: accountDataManager.userInfomationData.lastName,
       email: accountDataManager.userInfomationData.email,
       phone: accountDataManager.userInfomationData.phone,

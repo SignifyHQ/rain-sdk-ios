@@ -24,3 +24,7 @@ UNIVERSAL_LINK = https:/$()/avalanche.cc/plaid
 CHARITY_ENABLED = false
 CRYPTO_ENABLED = true
 CRYPTO_FRACTION_DIGITS = 8
+
+// TODO: - AlchemyAPIKey will be replaced later (using test key for now)
+ALCHEMY_PROD_KEY =
+ALCHEMY_DEV_KEY = qp4a1AAZ24ot7dH5PwqBFwBEnOtIRYz_

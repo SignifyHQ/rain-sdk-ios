@@ -26,6 +26,10 @@
 	<string>$BITRISE_BUILD_NUMBER</string>
 	<key>CHARITY_ENABLED</key>
 	<string>$(CHARITY_ENABLED)</string>
+	<key>ALCHEMY_PROD_KEY</key>
+	<string>$(ALCHEMY_PROD_KEY)</string>
+	<key>ALCHEMY_DEV_KEY</key>
+	<string>$(ALCHEMY_DEV_KEY)</string>
 	<key>CONSENT_URL</key>
 	<string>$(CONSENT_URL)</string>
 	<key>CRYPTO_ENABLED</key>

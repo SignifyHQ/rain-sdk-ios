@@ -12,7 +12,7 @@ public struct APIRainPersonParameters: Parameterable, RainPersonParametersEntity
   public let email: String
   public let address: RainAddressParameters
   public let phoneCountryCode: String
-  public let phone: String
+  public let phoneNumber: String
   public let iovationBlackbox: String
   
   public var addressEntity: RainDomain.RainAddressParametersEntity {
@@ -28,7 +28,7 @@ public struct APIRainPersonParameters: Parameterable, RainPersonParametersEntity
     email: String,
     address: RainAddressParameters,
     phoneCountryCode: String,
-    phone: String,
+    phoneNumber: String,
     iovationBlackbox: String
   ) {
     self.firstName = firstName
@@ -39,7 +39,7 @@ public struct APIRainPersonParameters: Parameterable, RainPersonParametersEntity
     self.email = email
     self.address = address
     self.phoneCountryCode = phoneCountryCode
-    self.phone = phone
+    self.phoneNumber = phoneNumber
     self.iovationBlackbox = iovationBlackbox
   }
 }
