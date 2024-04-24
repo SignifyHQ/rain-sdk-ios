@@ -73,13 +73,9 @@ private extension AssetsView {
                 .font(Fonts.Inter.bold.swiftUIFont(size: Constants.FontSize.medium.value))
             }
             
-            let font = asset.type == .usd ?
-            Fonts.Inter.bold.swiftUIFont(size: Constants.FontSize.medium.value) :
-            Fonts.Inter.regular.swiftUIFont(size: Constants.FontSize.ultraSmall.value)
-            
             Text(asset.availableBalanceFormatted)
               .foregroundColor(Colors.label.swiftUIColor)
-              .font(font)
+              .font(Fonts.Inter.bold.swiftUIFont(size: Constants.FontSize.medium.value))
           }
           .padding(.trailing, 8)
         }

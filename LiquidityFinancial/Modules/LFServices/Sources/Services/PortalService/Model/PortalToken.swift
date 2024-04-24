@@ -1,7 +1,7 @@
 import Foundation
 
 public struct PortalToken {
-  var contractAddress: String
-  var symbol: String
-  var name: String
+  public var contractAddress: String
+  public var symbol: String
+  public var name: String
 }

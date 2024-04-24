@@ -6,6 +6,13 @@ import Services
 
 @MainActor
 extension Container {
+  public var portalStorage: Factory<PortalStorageProtocol> {
+    self {
+      PortalStorage()
+    }
+    .singleton
+  }
+  
   public var portalAPI: Factory<PortalAPIProtocol> {
     self {
       LFCoreNetwork<PortalRoute>()
@@ -15,6 +22,7 @@ extension Container {
   public var portalRepository: Factory<PortalRepositoryProtocol> {
     self {
       PortalRepository(
+        portalStorage: self.portalStorage.callAsFunction(),
         portalAPI: self.portalAPI.callAsFunction(),
         portalService: self.portalService.callAsFunction()
       )

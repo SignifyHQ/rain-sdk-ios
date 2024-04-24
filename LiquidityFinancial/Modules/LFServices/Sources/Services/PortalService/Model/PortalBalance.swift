@@ -1,6 +1,6 @@
 import Foundation
 
 public struct PortalBalance {
-  var token: PortalToken
-  var balance: Double?
+  public var token: PortalToken
+  public var balance: Double
 }

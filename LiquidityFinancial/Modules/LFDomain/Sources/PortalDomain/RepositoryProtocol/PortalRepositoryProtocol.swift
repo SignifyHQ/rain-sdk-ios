@@ -10,4 +10,5 @@ public protocol PortalRepositoryProtocol {
   func registerPortal(portalToken: String) async throws
   func createPortalWallet() async throws -> String
   func backupPortalWallet(backupMethod: BackupMethods, backupConfigs: BackupConfigs?) async throws -> String
+  func refreshBalances() async throws
 }

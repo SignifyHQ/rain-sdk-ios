@@ -100,7 +100,7 @@ let package = Package(
     .target(
       name: "PortalDomain",
       dependencies: [
-        .product(name: "Services", package: "LFServices"),
+        .product(name: "Services", package: "LFServices")
       ]
     ),
     .target(

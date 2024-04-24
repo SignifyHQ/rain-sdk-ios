@@ -1,6 +1,7 @@
 import Foundation
 import SwiftUI
 import AccountDomain
+import PortalDomain
 import LFUtilities
 import Factory
 import Combine
@@ -8,28 +9,42 @@ import GeneralFeature
 
 @MainActor
 final class AssetsViewModel: ObservableObject {
-  @LazyInjected(\.accountDataManager) var accountDataManager
+  @LazyInjected(\.portalStorage) var portalStorage
+  @LazyInjected(\.portalRepository) var portalRepository
   @LazyInjected(\.accountRepository) var accountRepository
+  
+  let dashboardRepository: DashboardRepository
   
   @Published var isLoading: Bool = false
   @Published var toastMessage: String?
   @Published var assets: [AssetModel] = []
   @Published var navigation: Navigation?
   
-  private var cancellable: Set<AnyCancellable> = []
+  lazy var refreshPortalBalancesUseCase: RefreshPortalBalancesUseCaseProtocol = {
+    RefreshPortalBalancesUseCase(repository: portalRepository)
+  }()
   
-  let dashboardRepository: DashboardRepository
-  init(dashboardRepository: DashboardRepository) {
+  init(
+    dashboardRepository: DashboardRepository
+  ) {
     self.dashboardRepository = dashboardRepository
     
-    accountDataManager
-      .accountsSubject
+    Task {
+      await refresh()
+    }
+    
+    portalStorage
+      .cryptoBalances()
       .receive(on: DispatchQueue.main)
-      .map({ accounts in
-        accounts.map({ AssetModel(account: $0) })
-      })
-      .assign(to: \.assets, on: self)
-      .store(in: &cancellable)
+      .map { balances in
+        balances.map {
+          AssetModel(portalBalance: $0)
+        }
+        .sorted {
+          ($0.type?.rawValue ?? "") < ($1.type?.rawValue ?? "")
+        }
+      }
+      .assign(to: &$assets)
   }
   
   func onClickedAsset(asset: AssetModel) {
@@ -41,14 +56,8 @@ final class AssetsViewModel: ObservableObject {
   }
   
   func refresh() async {
-    async let fiatAccountsEntity = self.dashboardRepository.getFiatAccounts()
-    async let cryptoAccountsEntity = self.dashboardRepository.getCryptoAccounts()
     do {
-      let fiatAccounts = try await fiatAccountsEntity
-      let cryptoAccounts = try await cryptoAccountsEntity
-      let accounts = fiatAccounts + cryptoAccounts
-      
-      self.accountDataManager.accountsSubject.send(accounts)
+      try await refreshPortalBalancesUseCase.execute()
     } catch {
       toastMessage = error.userFriendlyMessage
     }

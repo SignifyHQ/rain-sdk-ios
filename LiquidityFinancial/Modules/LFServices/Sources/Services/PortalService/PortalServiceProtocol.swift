@@ -11,6 +11,10 @@ public protocol PortalServiceProtocol {
     backupMethod: BackupMethods,
     backupConfigs: BackupConfigs?
   ) async throws -> String
+  func confirmWalletBackupStorage(
+    backupMethod: BackupMethods,
+    stored: Bool
+  ) async throws
   func recover(
     backupMethod: BackupMethods,
     cipherText: String

@@ -2,12 +2,19 @@ import Foundation
 import Services
 import PortalDomain
 import PortalSwift
+import LFUtilities
 
-public class PortalRepository: PortalRepositoryProtocol {  
+public class PortalRepository: PortalRepositoryProtocol {
+  private let portalStorage: PortalStorageProtocol
   private let portalAPI: PortalAPIProtocol
   private let portalService: PortalServiceProtocol
 
-  public init(portalAPI: PortalAPIProtocol, portalService: PortalServiceProtocol) {
+  public init(
+    portalStorage: PortalStorageProtocol,
+    portalAPI: PortalAPIProtocol,
+    portalService: PortalServiceProtocol
+  ) {
+    self.portalStorage = portalStorage
     self.portalAPI = portalAPI
     self.portalService = portalService
   }
@@ -70,6 +77,10 @@ public class PortalRepository: PortalRepositoryProtocol {
     }
   }
   
+  public func refreshBalances() async throws {
+    let balances = try await portalService.getBalances()
+    portalStorage.store(balances: balances)
+  }
 }
 
 // MARK: - Private Functions

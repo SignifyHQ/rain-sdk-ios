@@ -36,8 +36,10 @@ public extension PortalService {
           gatewayConfig: gatewayConfig
         )
         
+        log.debug("Portal Swift: Registered Portal successfully")
         continuation.resume(returning: ())
       } catch {
+        log.error("Portal Swift: Error registering Portal \(error)")
         continuation.resume(
           throwing: self.handlePortalError(error: error)
         )
@@ -108,6 +110,39 @@ public extension PortalService {
     }
   }
   
+  func confirmWalletBackupStorage(
+    backupMethod: BackupMethods,
+    stored: Bool
+  ) async throws {
+    try await withCheckedThrowingContinuation { [weak self] (continuation: CheckedContinuation<Void, Error>) in
+      guard let self else { return }
+      guard let portal = self.portal else {
+        continuation.resume(throwing: LFPortalError.portalInstanceUnavailable)
+        return
+      }
+      
+      do {
+        try portal.api.storedClientBackupShare(
+          success: stored,
+          backupMethod: backupMethod.rawValue,
+          completion: { result -> Void in
+            if let error = result.error {
+              log.error("Portal Swift: Error confirming backup share storage \(error)")
+              continuation.resume(throwing: self.handlePortalError(error: error))
+              return
+            }
+            
+            log.debug("Portal Swift: Backup share storage success")
+            continuation.resume(returning: ())
+          }
+        )
+      } catch {
+        log.error("Portal Swift: SDK Error confirming backup share storage \(error)")
+        continuation.resume(throwing: self.handlePortalError(error: error))
+      }
+    }
+  }
+  
   func recover(
     backupMethod: BackupMethods,
     cipherText: String
@@ -167,11 +202,11 @@ public extension PortalService {
             PortalBalance(
               token: PortalToken(
                 contractAddress: balance.contractAddress,
-                // TODO(Volo): Figure out how to handle symbol and name
-                symbol: "",
-                name: ""
+                // TODO(Volo): Hardcoding symbol/name for now, will update
+                symbol: "USDC",
+                name: "USDC"
               ),
-              balance: balance.balance.asDouble
+              balance: balance.balance.asDouble ?? 0
             )
           }
           
@@ -190,12 +225,12 @@ public extension PortalService {
               PortalBalance(
                 token: PortalToken(
                   // Contract address will be blank for non-ERC20 tokens
-                  // TODO(Volo): Figure out how to handle symbol and name
+                  // TODO(Volo): Hardcoding symbol/name for now, will update
                   contractAddress: "",
-                  symbol: "ETH",
-                  name: "Ethereum"
+                  symbol: "AVAX",
+                  name: "Avalanche"
                 ),
-                balance: ethBalance
+                balance: ethBalance ?? 0
               )
             )
             

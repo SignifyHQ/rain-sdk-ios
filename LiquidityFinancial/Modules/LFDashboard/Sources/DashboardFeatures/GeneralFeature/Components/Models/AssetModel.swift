@@ -1,6 +1,7 @@
 import Foundation
 import LFUtilities
 import AccountService
+import Services
 
 public struct AssetModel: Hashable {
   public let id: String
@@ -23,6 +24,15 @@ public struct AssetModel: Hashable {
     self.availableBalance = account.availableBalance
     self.availableUsdBalance = account.availableUsdBalance
     self.externalAccountId = account.externalAccountId
+  }
+  
+  public init(portalBalance: PortalBalance) {
+    self.id = portalBalance.token.contractAddress
+    self.type = AssetType(rawValue: portalBalance.token.symbol.uppercased())
+    self.availableBalance = portalBalance.balance
+    // TODO(Volo): Need to figure out how to get the USD prices and balances
+    self.availableUsdBalance = nil
+    self.externalAccountId = nil
   }
   
   public var availableBalanceFormatted: String {
