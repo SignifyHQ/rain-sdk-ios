@@ -271,7 +271,7 @@ private extension RainOnboardingFlowCoordinator {
   }
   
   func checkUserIsValid() -> Bool {
-    accountDataManager.sessionID.isEmpty == false
+    !accountDataManager.phoneNumber.isEmpty
   }
 }
 
