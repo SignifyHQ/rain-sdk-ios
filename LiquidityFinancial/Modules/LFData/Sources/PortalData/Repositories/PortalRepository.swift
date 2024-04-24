@@ -77,9 +77,9 @@ public class PortalRepository: PortalRepositoryProtocol {
     }
   }
   
-  public func refreshBalances() async throws {
-    let balances = try await portalService.getBalances()
-    portalStorage.store(balances: balances)
+  public func refreshAssets() async throws {
+    let assets = try await portalService.getAssets()
+    portalStorage.store(assets: assets)
   }
 }
 

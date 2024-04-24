@@ -1,6 +1,6 @@
 import Foundation
 
-public final class RefreshPortalBalancesUseCase: RefreshPortalBalancesUseCaseProtocol {
+public final class RefreshPortalAssetsUseCase: RefreshPortalAssetsUseCaseProtocol {
   private let repository: PortalRepositoryProtocol
   
   public init(repository: PortalRepositoryProtocol) {
@@ -8,6 +8,6 @@ public final class RefreshPortalBalancesUseCase: RefreshPortalBalancesUseCasePro
   }
   
   public func execute() async throws {
-    try await repository.refreshBalances()
+    try await repository.refreshAssets()
   }
 }

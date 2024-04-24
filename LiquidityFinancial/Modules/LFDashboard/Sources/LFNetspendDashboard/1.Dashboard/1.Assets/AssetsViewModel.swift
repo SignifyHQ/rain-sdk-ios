@@ -20,8 +20,8 @@ final class AssetsViewModel: ObservableObject {
   @Published var assets: [AssetModel] = []
   @Published var navigation: Navigation?
   
-  lazy var refreshPortalBalancesUseCase: RefreshPortalBalancesUseCaseProtocol = {
-    RefreshPortalBalancesUseCase(repository: portalRepository)
+  lazy var refreshPortalAssetsUseCase: RefreshPortalAssetsUseCaseProtocol = {
+    RefreshPortalAssetsUseCase(repository: portalRepository)
   }()
   
   init(
@@ -34,11 +34,11 @@ final class AssetsViewModel: ObservableObject {
     }
     
     portalStorage
-      .cryptoBalances()
+      .cryptoAssets()
       .receive(on: DispatchQueue.main)
-      .map { balances in
-        balances.map {
-          AssetModel(portalBalance: $0)
+      .map { assets in
+        assets.map {
+          AssetModel(portalAsset: $0)
         }
         .sorted {
           ($0.type?.rawValue ?? "") < ($1.type?.rawValue ?? "")
@@ -57,7 +57,7 @@ final class AssetsViewModel: ObservableObject {
   
   func refresh() async {
     do {
-      try await refreshPortalBalancesUseCase.execute()
+      try await refreshPortalAssetsUseCase.execute()
     } catch {
       toastMessage = error.userFriendlyMessage
     }

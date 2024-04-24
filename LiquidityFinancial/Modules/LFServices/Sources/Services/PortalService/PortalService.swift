@@ -174,9 +174,9 @@ public extension PortalService {
     }
   }
   
-  func getBalances(
-  ) async throws -> [PortalBalance] {
-    try await withCheckedThrowingContinuation { [weak self] (continuation: CheckedContinuation<[PortalBalance], Error>) in
+  func getAssets(
+  ) async throws -> [PortalAsset] {
+    try await withCheckedThrowingContinuation { [weak self] (continuation: CheckedContinuation<[PortalAsset], Error>) in
       guard let self else {
         continuation.resume(throwing: LFPortalError.unexpected)
         return
@@ -199,14 +199,15 @@ public extension PortalService {
           }
           
           var portalBalances = erc20Balances.compactMap { balance in
-            PortalBalance(
+            PortalAsset(
               token: PortalToken(
                 contractAddress: balance.contractAddress,
                 // TODO(Volo): Hardcoding symbol/name for now, will update
                 symbol: "USDC",
                 name: "USDC"
               ),
-              balance: balance.balance.asDouble ?? 0
+              balance: balance.balance.asDouble ?? 0,
+              walletAddress: self.walletAddress
             )
           }
           
@@ -222,7 +223,7 @@ public extension PortalService {
             
             let ethBalance = ethBalanceResponse.result?.asDouble?.weiToEth()
             portalBalances.append(
-              PortalBalance(
+              PortalAsset(
                 token: PortalToken(
                   // Contract address will be blank for non-ERC20 tokens
                   // TODO(Volo): Hardcoding symbol/name for now, will update
@@ -230,7 +231,8 @@ public extension PortalService {
                   symbol: "AVAX",
                   name: "Avalanche"
                 ),
-                balance: ethBalance ?? 0
+                balance: ethBalance ?? 0,
+                walletAddress: self.walletAddress
               )
             )
             

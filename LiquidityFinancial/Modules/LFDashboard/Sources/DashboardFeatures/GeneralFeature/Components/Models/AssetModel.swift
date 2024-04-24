@@ -26,13 +26,13 @@ public struct AssetModel: Hashable {
     self.externalAccountId = account.externalAccountId
   }
   
-  public init(portalBalance: PortalBalance) {
-    self.id = portalBalance.token.contractAddress
-    self.type = AssetType(rawValue: portalBalance.token.symbol.uppercased())
-    self.availableBalance = portalBalance.balance
+  public init(portalAsset: PortalAsset) {
+    self.id = portalAsset.token.contractAddress
+    self.type = AssetType(rawValue: portalAsset.token.symbol.uppercased())
+    self.availableBalance = portalAsset.balance
+    self.externalAccountId = portalAsset.walletAddress
     // TODO(Volo): Need to figure out how to get the USD prices and balances
     self.availableUsdBalance = nil
-    self.externalAccountId = nil
   }
   
   public var availableBalanceFormatted: String {

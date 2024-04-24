@@ -5,27 +5,27 @@ import Services
 
 public class PortalStorage: PortalStorageProtocol {
   
-  private var cryptoBalancesSubject: CurrentValueSubject<[PortalBalance], Never> = CurrentValueSubject([])
+  private var cryptoAssetsSubject: CurrentValueSubject<[PortalAsset], Never> = CurrentValueSubject([])
   
-  public func cryptoBalances() -> AnyPublisher<[PortalBalance], Never> {
-    cryptoBalancesSubject.eraseToAnyPublisher()
+  public func cryptoAssets() -> AnyPublisher<[PortalAsset], Never> {
+    cryptoAssetsSubject.eraseToAnyPublisher()
   }
   
-  public func cryptoBalance(
-    for symbol: String
-  ) -> AnyPublisher<PortalBalance?, Never> {
-    cryptoBalancesSubject
-      .map { cryptoBalances in
-        cryptoBalances.first { balance in
-          balance.token.symbol == symbol
+  public func cryptoAsset(
+    with symbol: String
+  ) -> AnyPublisher<PortalAsset?, Never> {
+    cryptoAssetsSubject
+      .map { cryptoAssets in
+        cryptoAssets.first { asset in
+          asset.token.symbol == symbol
         }
       }
       .eraseToAnyPublisher()
   }
   
   public func store(
-    balances: [PortalBalance]
+    assets: [PortalAsset]
   ) {
-    cryptoBalancesSubject.send(balances)
+    cryptoAssetsSubject.send(assets)
   }
 }
