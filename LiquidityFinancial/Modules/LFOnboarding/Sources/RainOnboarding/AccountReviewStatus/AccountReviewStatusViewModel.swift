@@ -22,6 +22,7 @@ final class AccountReviewStatusViewModel: ObservableObject {
   @LazyInjected(\.accountRepository) var accountRepository
   @LazyInjected(\.rainRepository) var rainRepository
   @LazyInjected(\.customerSupportService) var customerSupportService
+  @LazyInjected(\.analyticsService) var analyticsService
   
   @Published var isLoading: Bool = false
   @Published var toastMessage: String?
@@ -68,8 +69,7 @@ extension AccountReviewStatusViewModel {
         
         switch accountReviewStatus {
         case .approved:
-          break
-          // try await fetchZeroHashStatus()
+          handleApprovedAccountReview()
         case .rejected:
           state = AccountReviewStatus.reject
         case .inreview, .reviewing:
@@ -123,7 +123,7 @@ extension AccountReviewStatusViewModel {
   
   func primaryAction() {
     switch state {
-    case .inReview:
+    case .inReview, .unclear:
       fetchAccountReviewStatus()
     case .reject:
       forcedLogout()
@@ -207,6 +207,11 @@ private extension AccountReviewStatusViewModel {
       status: String(describing: reviewStatus)
     ).value
     rainOnboardingFlowCoordinator.set(route: .unclear(description))
+  }
+  
+  func handleApprovedAccountReview() {
+    analyticsService.track(event: AnalyticsEvent(name: .kycStatusViewPass))
+    rainOnboardingFlowCoordinator.set(route: .dashboard)
   }
 }
 
