@@ -77,6 +77,31 @@ public class PortalRepository: PortalRepositoryProtocol {
     }
   }
   
+  public func recoverPortalWallet(
+    backupMethod: BackupMethods,
+    backupConfigs: BackupConfigs?,
+    cipherText: String
+  ) async throws {
+    do {
+      try await portalService.recover(
+        backupMethod: backupMethod,
+        backupConfigs: backupConfigs,
+        cipherText: cipherText
+      )
+    } catch {
+      guard let portalError = error as? LFPortalError, portalError == .expirationToken else {
+        throw error
+      }
+      
+      _ = try await refreshPortalSessionToken()
+      try await recoverPortalWallet(
+        backupMethod: backupMethod,
+        backupConfigs: backupConfigs,
+        cipherText: cipherText
+      )
+    }
+  }
+  
   public func refreshAssets() async throws {
     let assets = try await portalService.getAssets()
     portalStorage.store(assets: assets)

@@ -145,6 +145,7 @@ public extension PortalService {
   
   func recover(
     backupMethod: BackupMethods,
+    backupConfigs: BackupConfigs?,
     cipherText: String
   ) async throws {
     try await withCheckedThrowingContinuation { [weak self] (continuation: CheckedContinuation<Void, Error>) in
@@ -156,7 +157,8 @@ public extension PortalService {
       
       portal.recoverWallet(
         cipherText: cipherText,
-        method: backupMethod.rawValue
+        method: backupMethod.rawValue,
+        backupConfigs: backupConfigs
       ) { result -> Void in
         if let error = result.error {
           log.error("Portal Swift: Error backing up wallet \(error)")
