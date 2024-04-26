@@ -6,7 +6,8 @@ import Factory
 
 public class PortalService: PortalServiceProtocol {
   @LazyInjected(\.environmentService) var environmentService
-  
+  @Injected(\.cloudKitService) var cloudKitService
+
   public var portal: Portal?
   
   public init() {}
@@ -55,6 +56,12 @@ public extension PortalService {
         return
       }
       
+      // We will automatically backup using iCloud after creating the wallet, checking the account status here will save the user's waiting time.
+      if !cloudKitService.isICloudAccountAvailable {
+        continuation.resume(throwing: LFPortalError.iCloudAccountUnavailable)
+        return
+      }
+      
       portal.createWallet(
         completion: { addressResult in
           guard let error = addressResult.error else {
@@ -81,6 +88,11 @@ public extension PortalService {
       guard let self else { return }
       guard let portal = self.portal else {
         continuation.resume(throwing: LFPortalError.portalInstanceUnavailable)
+        return
+      }
+      
+      if backupMethod == .iCloud, !cloudKitService.isICloudAccountAvailable {
+        continuation.resume(throwing: LFPortalError.iCloudAccountUnavailable)
         return
       }
       
@@ -152,6 +164,11 @@ public extension PortalService {
       guard let self else { return }
       guard let portal = self.portal else {
         continuation.resume(throwing: LFPortalError.portalInstanceUnavailable)
+        return
+      }
+      
+      if backupMethod == .iCloud, !cloudKitService.isICloudAccountAvailable {
+        continuation.resume(throwing: LFPortalError.iCloudAccountUnavailable)
         return
       }
       

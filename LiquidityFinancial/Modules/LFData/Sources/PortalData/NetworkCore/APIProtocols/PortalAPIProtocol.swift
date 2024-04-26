@@ -6,4 +6,5 @@ public protocol PortalAPIProtocol {
   func restoreWallet(method: String) async throws -> APIWalletRestore
   func refreshPortalSessionToken() async throws -> APIPortalSessionToken
   func verifyAndUpdatePortalWalletAddress() async throws
+  func getBackupMethods() async throws -> APIPortalBackupMethods
 }

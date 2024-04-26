@@ -2,6 +2,7 @@ import SwiftUI
 import Factory
 import PortalData
 import PortalDomain
+import PortalSwift
 import LFUtilities
 import Services
 import LFLocalizable
@@ -15,17 +16,31 @@ final class CreateWalletViewModel: ObservableObject {
   @LazyInjected(\.portalService) var portalService
   
   @Published var showIndicator = false
-  @Published var toastMessage: String?
   @Published var isTermsAgreed = false
-  @Published var isNavigateToBackupWalletView = false
+  @Published var isNavigateToPersonalInformation = false
+  @Published var loadingText: String = .empty
+  @Published var toastMessage: String?
+  @Published var popup: Popup?
   @Published var openSafariType: OpenSafariType?
   
   lazy var createPortalWalletUseCase: CreatePortalWalletUseCaseProtocol = {
     CreatePortalWalletUseCase(repository: portalRepository)
   }()
   
+  lazy var backupPortalWalletUseCase: BackupPortalWalletUseCaseProtocol = {
+    BackupPortalWalletUseCase(repository: portalRepository)
+  }()
+  
+  lazy var walletBackupUseCase: WalletBackupUseCaseProtocol = {
+    WalletBackupUseCase(repository: portalRepository)
+  }()
+  
   lazy var verifyAndUpdatePortalWalletUseCase: VerifyAndUpdatePortalWalletUseCaseProtocol = {
     VerifyAndUpdatePortalWalletUseCase(repository: portalRepository)
+  }()
+  
+  lazy var getBackupMethodsUseCase: GetBackupMethodsUseCaseProtocol = {
+    GetBackupMethodsUseCase(repository: portalRepository)
   }()
   
   let strMessage = L10N.Common.CreateWallet.termsAndCondition
@@ -40,11 +55,13 @@ final class CreateWalletViewModel: ObservableObject {
 extension CreateWalletViewModel {
   func createPortalWallet() async {
     do {
+      loadingText = "Creating Portal Wallet"
       let walletAddress = try await createPortalWalletUseCase.execute()
       log.debug("Portal wallet creation successful: \(walletAddress)")
-      await verifyAndUpdatePortalWallet()
       
+      await backupPortalWalletByIcloud()
     } catch {
+      loadingText = .empty
       log.error(error.localizedDescription)
       handlePortalError(error: error)
     }
@@ -52,15 +69,48 @@ extension CreateWalletViewModel {
   
   func verifyAndUpdatePortalWallet() async {
     do {
+      loadingText = "Verifying Portal Wallet"
       _ = try await verifyAndUpdatePortalWalletUseCase.execute()
       
       showIndicator = false
       analyticsService.track(event: AnalyticsEvent(name: .walletSetupSuccess))
-      isNavigateToBackupWalletView = true
+      isNavigateToPersonalInformation = true
     } catch {
+      loadingText = .empty
       log.error(error.localizedDescription)
       showIndicator = false
       toastMessage = error.userFriendlyMessage
+    }
+  }
+  
+  func backupPortalWalletByIcloud() async {
+    do {
+      loadingText = "Backing Up Portal Wallet"
+      let cipher = try await backupPortalWalletUseCase.execute(
+        backupMethod: .iCloud,
+        backupConfigs: nil
+      )
+      
+      try await walletBackupUseCase.execute(
+        cipher: cipher,
+        method: BackupMethods.iCloud.rawValue
+      )
+      
+      log.debug("Portal wallet cipher text saved successfully")
+      await verifyAndUpdatePortalWallet()
+    } catch {
+      loadingText = .empty
+      showIndicator = false
+      toastMessage = error.userFriendlyMessage
+    }
+  }
+  
+  func checkBackupStatus() async -> Bool {
+    do {
+      let response = try await getBackupMethodsUseCase.execute()
+      return !response.backupMethods.isEmpty
+    } catch {
+      return false
     }
   }
 }
@@ -70,8 +120,15 @@ extension CreateWalletViewModel {
   func onCreatePortalWalletTapped() {
     Task {
       showIndicator = true
+      async let isBackedUp = checkBackupStatus()
+      
       guard portalService.checkWalletAddressExists() else {
         await self.createPortalWallet()
+        return
+      }
+      
+      guard await isBackedUp else {
+        await self.backupPortalWalletByIcloud()
         return
       }
       
@@ -107,6 +164,19 @@ extension CreateWalletViewModel {
       break
     }
   }
+  
+  func openDeviceSettings() {
+    let mainSettingURL = URL(string:"App-Prefs:root=General&path=ManagedConfigurationList")
+    guard let mainSettingURL, UIApplication.shared.canOpenURL(mainSettingURL) else {
+      return
+    }
+    
+    UIApplication.shared.open(mainSettingURL)
+  }
+  
+  func hidePopup() {
+    popup = nil
+  }
 }
 
 // MARK: - Private Functions
@@ -123,6 +193,9 @@ private extension CreateWalletViewModel {
       Task {
         await verifyAndUpdatePortalWallet()
       }
+    case .iCloudAccountUnavailable:
+      showIndicator = false
+      popup = .settingICloud
     default:
       toastMessage = portalError.localizedDescription
       showIndicator = false
@@ -147,5 +220,9 @@ extension CreateWalletViewModel {
     case portalURL(URL)
     case disclosureURL(URL)
     case walletPrivacyURL(URL)
+  }
+  
+  enum Popup {
+    case settingICloud
   }
 }

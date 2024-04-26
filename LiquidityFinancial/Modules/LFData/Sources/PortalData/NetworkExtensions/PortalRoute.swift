@@ -9,6 +9,7 @@ public enum PortalRoute {
   case restoreWallet(method: String)
   case refreshPortalSessionToken
   case verifyAndUpdatePortalWallet
+  case backupMethods
 }
 
 extension PortalRoute: LFRoute {
@@ -20,6 +21,8 @@ extension PortalRoute: LFRoute {
       return "/v1/portal/clients/refresh-session"
     case .verifyAndUpdatePortalWallet:
       return "/v1/portal/clients/verify-and-update-wallet-address"
+    case .backupMethods:
+      return "/v1/portal/backup/methods"
     }
   }
   
@@ -29,7 +32,8 @@ extension PortalRoute: LFRoute {
         .verifyAndUpdatePortalWallet:
       return .POST
     case .restoreWallet,
-        .refreshPortalSessionToken:
+        .refreshPortalSessionToken,
+        .backupMethods:
       return .GET
     }
   }
@@ -47,7 +51,8 @@ extension PortalRoute: LFRoute {
   public var parameters: Parameters? {
     switch self {
     case .refreshPortalSessionToken,
-        .verifyAndUpdatePortalWallet:
+        .verifyAndUpdatePortalWallet,
+        .backupMethods:
       return nil
     case .backupWallet(let cipher, let method):
       return [
@@ -68,7 +73,8 @@ extension PortalRoute: LFRoute {
     case .restoreWallet:
       return .url
     case .refreshPortalSessionToken,
-        .verifyAndUpdatePortalWallet:
+        .verifyAndUpdatePortalWallet,
+        .backupMethods:
       return nil
     }
   }

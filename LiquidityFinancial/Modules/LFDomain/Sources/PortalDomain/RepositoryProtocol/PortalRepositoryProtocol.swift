@@ -19,4 +19,5 @@ public protocol PortalRepositoryProtocol {
     cipherText: String
   ) async throws
   func refreshAssets() async throws
+  func getPortalBackupMethods() async throws -> PortalBackupMethodsEntity
 }

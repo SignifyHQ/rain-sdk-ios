@@ -10,7 +10,7 @@ import EnvironmentService
 
 // MARK: - DIContainer
 extension Container {
-  var contenViewFactory: Factory<RainContentViewFactory> {
+  var contentViewFactory: Factory<RainContentViewFactory> {
     self {
       RainContentViewFactory(container: self)
     }

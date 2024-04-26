@@ -4,20 +4,44 @@ import LFStyleGuide
 import LFUtilities
 import Services
 import Factory
+import BaseOnboarding
 
 struct CreateWalletView: View {
   @StateObject var viewModel = CreateWalletViewModel()
-  
+  @Injected(\.contentViewFactory) var contentViewFactory
+
   var body: some View {
     content
       .popup(item: $viewModel.toastMessage, style: .toast) {
         ToastView(toastMessage: $0)
       }
+      .popup(item: $viewModel.popup) { popup in
+        switch popup {
+        case .settingICloud:
+          settingICloudPopup
+        }
+      }
       .defaultToolBar(icon: .support) {
         viewModel.openSupportScreen()
       }
-      .navigationLink(isActive: $viewModel.isNavigateToBackupWalletView) {
-        BackupWalletView()
+      .navigationLink(isActive: $viewModel.isNavigateToPersonalInformation) {
+        let enterSSNView = EnterSSNView(
+          viewModel: EnterSSNViewModel(isVerifySSN: true),
+          onEnterAddress: {
+            contentViewFactory.baseOnboardingNavigation.enterSSNDestinationView = .address(
+              AnyView(AddressView())
+            )
+          }
+        )
+        
+        PersonalInformationView(
+          viewModel: PersonalInformationViewModel(),
+          onEnterSSN: {
+            contentViewFactory.baseOnboardingNavigation.personalInformationDestinationView = .enterSSN(
+              AnyView(enterSSNView)
+            )
+          }
+        )
       }
       .navigationBarBackButtonHidden(viewModel.showIndicator)
       .track(name: String(describing: type(of: self)))
@@ -119,14 +143,34 @@ private extension CreateWalletView {
   }
   
   var continueButton: some View {
-    FullSizeButton(
-      title: L10N.Common.Button.Continue.title,
-      isDisable: !viewModel.isTermsAgreed,
-      isLoading: $viewModel.showIndicator
-    ) {
-      viewModel.onCreatePortalWalletTapped()
+    VStack(spacing: 4) {
+      FullSizeButton(
+        title: L10N.Common.Button.Continue.title,
+        isDisable: !viewModel.isTermsAgreed,
+        isLoading: $viewModel.showIndicator
+      ) {
+        viewModel.onCreatePortalWalletTapped()
+      }
+      Text(viewModel.loadingText)
+        .foregroundColor(Colors.label.swiftUIColor)
+        .opacity(0.75)
+        .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.medium.value))
     }
     .ignoresSafeArea(.keyboard, edges: .bottom)
     .padding(.bottom, 12)
+  }
+  
+  var settingICloudPopup: some View {
+    LiquidityAlert(
+      title: L10N.Common.CreateWallet.SignInToIcloud.title,
+      message: L10N.Common.CreateWallet.SignInToIcloud.message,
+      primary: .init(text: L10N.Common.Button.Ok.title) {
+        viewModel.hidePopup()
+        viewModel.openDeviceSettings()
+      },
+      secondary: .init(text: L10N.Common.Button.NotNow.title) {
+        viewModel.hidePopup()
+      }
+    )
   }
 }

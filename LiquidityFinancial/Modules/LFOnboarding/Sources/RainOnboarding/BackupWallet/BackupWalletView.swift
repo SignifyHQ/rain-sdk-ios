@@ -8,7 +8,7 @@ import BaseOnboarding
 
 struct BackupWalletView: View {
   @StateObject var viewModel = BackupWalletViewModel()
-  @Injected(\.contenViewFactory) var contenViewFactory
+  @Injected(\.contentViewFactory) var contentViewFactory
   
   var body: some View {
     VStack(alignment: .leading, spacing: 32) {
@@ -26,7 +26,7 @@ struct BackupWalletView: View {
       let enterSSNView = EnterSSNView(
         viewModel: EnterSSNViewModel(isVerifySSN: true),
         onEnterAddress: {
-          contenViewFactory.baseOnboardingNavigation.enterSSNDestinationView = .address(
+          contentViewFactory.baseOnboardingNavigation.enterSSNDestinationView = .address(
             AnyView(AddressView())
           )
         }
@@ -35,7 +35,7 @@ struct BackupWalletView: View {
       PersonalInformationView(
         viewModel: PersonalInformationViewModel(),
         onEnterSSN: {
-          contenViewFactory.baseOnboardingNavigation.personalInformationDestinationView = .enterSSN(
+          contentViewFactory.baseOnboardingNavigation.personalInformationDestinationView = .enterSSN(
             AnyView(enterSSNView)
           )
         }

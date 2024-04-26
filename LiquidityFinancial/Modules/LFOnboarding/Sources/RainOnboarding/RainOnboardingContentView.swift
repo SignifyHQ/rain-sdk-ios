@@ -15,7 +15,7 @@ public struct RainOnboardingContentView: View {
   
   public init(onRoute: RainOnboardingFlowCoordinator.Route? = nil) {
     self.onRoute = onRoute
-    self.contentViewFactory = Container.shared.contenViewFactory.resolve()
+    self.contentViewFactory = Container.shared.contentViewFactory.resolve()
   }
   
   public var body: some View {

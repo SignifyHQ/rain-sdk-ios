@@ -169,6 +169,8 @@
 "createWallet.walletUseragreement" = "Portal and Portal Liquidity Services User Agreement";
 "createWallet.regulatoryDisclosures" = "Regulatory Disclosures";
 "createWallet.privacyPolicy" = "Privacy Policy";
+"createWallet.signInToIcloud.title" = "Sign in to iCloud";
+"createWallet.signInToIcloud.message" = "Please sign in to your iCloud account on this device.";
 
 // Backup Wallet
 "backupWallet.title" = "BACKUP YOUR WALLET";

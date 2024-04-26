@@ -20,7 +20,12 @@ public class PortalRepository: PortalRepositoryProtocol {
   }
   
   public func backupWallet(cipher: String, method: String) async throws {
-    try await portalAPI.backupWallet(cipher: cipher, method: method)
+    do {
+      try await portalAPI.backupWallet(cipher: cipher, method: method)
+      try await portalService.confirmWalletBackupStorage(backupMethod: BackupMethods(rawValue: method) ?? .Unknown, stored: true)
+    } catch {
+      throw error
+    }
   }
   
   public func restoreWallet(method: String) async throws -> WalletRestoreEntitiy {
@@ -106,6 +111,11 @@ public class PortalRepository: PortalRepositoryProtocol {
     let assets = try await portalService.getAssets()
     portalStorage.store(assets: assets)
   }
+  
+  public func getPortalBackupMethods() async throws -> PortalBackupMethodsEntity {
+    try await portalAPI.getBackupMethods()
+  }
+
 }
 
 // MARK: - Private Functions

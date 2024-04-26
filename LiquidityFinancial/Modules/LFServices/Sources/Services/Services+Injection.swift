@@ -26,4 +26,11 @@ extension Container {
     .singleton
   }
   
+  public var cloudKitService: Factory<CloudKitServiceProtocol> {
+    self {
+      CloudKitService()
+    }
+    .singleton
+  }
+  
 }

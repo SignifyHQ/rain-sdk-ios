@@ -38,4 +38,13 @@ extension LFCoreNetwork: PortalAPIProtocol where R == PortalRoute {
       decoder: .apiDecoder
     )
   }
+  
+  public func getBackupMethods() async throws -> APIPortalBackupMethods {
+    try await request(
+      PortalRoute.backupMethods,
+      target: APIPortalBackupMethods.self,
+      failure: LFErrorObject.self,
+      decoder: .apiDecoder
+    )
+  }
 }
