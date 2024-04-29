@@ -96,7 +96,7 @@ extension CreateWalletViewModel {
         method: BackupMethods.iCloud.rawValue
       )
       
-      log.debug("Portal wallet cipher text saved successfully")
+      log.debug(Constants.DebugLog.cipherTextSavedSuccessfully.value)
       await verifyAndUpdatePortalWallet()
     } catch {
       loadingText = .empty
@@ -108,7 +108,10 @@ extension CreateWalletViewModel {
   func checkBackupStatus() async -> Bool {
     do {
       let response = try await getBackupMethodsUseCase.execute()
-      return !response.backupMethods.isEmpty
+      let backupMethods = response.backupMethods.map {
+        BackupMethods(rawValue: $0)
+      }
+      return backupMethods.contains(.iCloud)
     } catch {
       return false
     }

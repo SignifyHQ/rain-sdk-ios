@@ -27,6 +27,7 @@ public enum Constants {
     case fullPassportLength
     case cvvCode
     case cardPinCode
+    case backupPinCode
     case otpCode
     case mfaCode
     case recoveryCode
@@ -78,6 +79,8 @@ public enum Constants {
         return 20
       case .cvvCode:
         return 3
+      case .backupPinCode:
+        return 4
       case .cardPinCode:
         return 4
       case .otpCode:
@@ -413,6 +416,7 @@ public extension Constants {
     case missingAccountStatus(status: String)
     case unauthorized
     case dashboardApproved(statusCode: NSInteger)
+    case cipherTextSavedSuccessfully
     
     public var value: String {
       switch self {
@@ -428,6 +432,8 @@ public extension Constants {
         return "<<<<<<<<<<<<<< 401 Unauthorized: Clear user data and perform logout. >>>>>>>>>>>>>>>"
       case let .dashboardApproved(statusCode):
         return "Approved dashboard state: \(statusCode)"
+      case .cipherTextSavedSuccessfully:
+        return "Portal wallet cipher text saved successfully"
       }
     }
   }

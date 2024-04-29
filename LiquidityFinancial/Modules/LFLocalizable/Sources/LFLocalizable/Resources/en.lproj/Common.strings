@@ -173,12 +173,27 @@
 "createWallet.signInToIcloud.message" = "Please sign in to your iCloud account on this device.";
 
 // Backup Wallet
-"backupWallet.title" = "BACKUP YOUR WALLET";
-"backupWallet.description" = "Backing up your wallet helps securely store and protect your cryptocurrency assets in case of device loss or other emergencies.";
-"backupWallet.selectBackupMethod.title" = "Select a backup method";
-"backupWallet.passwordMethod.title" = "Password";
-"backupWallet.iCloudMethod.title" = "iCloud";
-"backupWallet.backupLater.button" = "Backup Later";
+"backupWallet.title" = "BACKUP";
+"backupWallet.iCloudMethod.title" = "Backup using iCloud";
+"backupWallet.iCloudMethod.description" = "Store your backup key securely on iCloud";
+"backupWallet.passwordMethod.title" = "Backup using PIN";
+"backupWallet.passwordMethod.description" = "Save your PIN in a secure location, manually";
+"backupWallet.active.title" = "Active";
+"backupWallet.setupPinCode.title" = "Set up PIN";
+"backupWallet.disclosure.title" = "Backing up helps you recover your account in case you lose ore reset your device";
+
+// Baclup By PinCode
+"backupByPinCode.setup.title" = "set up your backup pin";
+"backupByPinCode.confirm.title" = "confirm backup pin";
+"backupByPinCode.setup.description" = "We’ll use this pin to recover your account in case you reset or lose access to this device";
+"backupByPinCode.confirm.description" = "Just making sure that you remember your pin correctly";
+"backupByPinCode.setup.buttonTitle" = "Next";
+"backupByPinCode.confirm.buttonTitle" = "Confirm PIN";
+"backupByPinCode.wrongCode.error" = "Wrong Code";
+"backupByPinCode.pinCreatedPopup.title" = "PIN created successfully";
+"backupByPinCode.pinSecurePopup.title" = "keep your backup pin secure";
+"backupByPinCode.pinSecurePopup.message" = "Sharing your Backup PIN with anyone can put your Avalanche account and everything within it at risk.\nKeep your backup PIN as safely as you would keep your car or house keys.";
+"backupByPinCode.pinSecurePopup.primaryButton" = "Agree and Continue";
 
 // Set Up Account
 "question.accountTerms.title" = "ACCOUNT TERMS";
@@ -597,6 +612,8 @@ https://mn.gov/commerce/money/investments/cryptocurrency/. \n\n\n\n\n\n\n";
 "accountView.routingNumber.title" = "Routing Number";
 "accountView.accountNumber.title" = "Account Number";
 "accountView.notifications" = "Enable Notifications";
+"accountView.walletBackup.section" = "Wallet Backup";
+"accountView.walletBackup.title" = "Backup";
 
 // PlaidLink Popup
 "plaidLink.popup.title" = "WE’RE SORRY";

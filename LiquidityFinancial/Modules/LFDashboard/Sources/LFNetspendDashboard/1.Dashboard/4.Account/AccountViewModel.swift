@@ -140,6 +140,10 @@ extension AccountViewModel {
     navigation = .depositLimits
   }
   
+  func backupSectionTapped() {
+    navigation = .backup
+  }
+  
   func bankStatementTapped() {
     navigation = .bankStatement
   }
@@ -229,6 +233,7 @@ extension AccountViewModel {
     case bankStatement
     case disputeTransaction(String, String)
     case taxes
+    case backup
     case wallet(asset: AssetModel)
     case rewards
   }

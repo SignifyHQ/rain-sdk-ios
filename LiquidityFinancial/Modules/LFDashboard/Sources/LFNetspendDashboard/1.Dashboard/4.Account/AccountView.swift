@@ -58,6 +58,8 @@ struct AccountsView: View {
           CurrentRewardView()
         case .wallet(asset: let asset):
           ReceiveCryptoView(assetModel: asset)
+        case .backup:
+          BackupWalletView()
         }
       }
       .sheet(item: $viewModel.sheet, content: { sheet in
@@ -104,6 +106,8 @@ private extension AccountsView {
             }
           }
         }
+        
+        walletBackupSection
         
         section(title: L10N.Common.AccountView.shortcuts) {
           shortcutSection
@@ -220,6 +224,18 @@ private extension AccountsView {
         .foregroundColor(Colors.label.swiftUIColor.opacity(0.75))
         .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.ultraSmall.value))
       content()
+    }
+  }
+  
+  var walletBackupSection: some View {
+    section(title: L10N.Common.AccountView.WalletBackup.section) {
+      ArrowButton(
+        image: GenImages.CommonImages.Accounts.legal.swiftUIImage,
+        title: L10N.Common.AccountView.WalletBackup.title,
+        value: nil
+      ) {
+        viewModel.backupSectionTapped()
+      }
     }
   }
   
