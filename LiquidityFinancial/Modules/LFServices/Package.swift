@@ -36,7 +36,7 @@ let package = Package(
     .package(url: "https://github.com/segmentio/analytics-ios", from: "4.1.8"),
     .package(url: "https://github.com/Datadog/dd-sdk-ios.git", from: "2.4.0"),
     .package(url: "https://github.com/verygoodsecurity/vgs-collect-ios.git", .exact("1.15.3")),
-    .package(url: "https://github.com/portal-hq/PortalSwift", from: "3.0.5")
+    .package(url: "https://github.com/portal-hq/PortalSwift", from: "3.0.8")
   ],
   targets: [
     .target(

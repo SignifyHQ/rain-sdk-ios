@@ -80,7 +80,7 @@ private extension ConfirmSendCryptoView {
       )
       informationCell(
         title: L10N.Common.ConfirmSendCryptoView.fee,
-        value: viewModel.fee.roundTo3fStr()
+        value: viewModel.fee.formattedAmount(minFractionDigits: 2, maxFractionDigits: 18)
       )
       Spacer()
       footer

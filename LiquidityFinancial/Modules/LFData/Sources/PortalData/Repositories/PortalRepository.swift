@@ -82,6 +82,20 @@ public class PortalRepository: PortalRepositoryProtocol {
     }
   }
   
+  public func estimateFee(
+    to address: String,
+    amount: Double
+  ) async throws {
+    try await portalService.estimateFee(to: address, amount: amount)
+  }
+  
+  public func send(
+    to address: String,
+    amount: Double
+  ) async throws {
+    try await portalService.send(to: address, amount: amount)
+  }  
+    
   public func recoverPortalWallet(
     backupMethod: BackupMethods,
     backupConfigs: BackupConfigs?,

@@ -2,19 +2,17 @@ import Foundation
 import Combine
 import Factory
 import Services
-import ZerohashData
-import LFLocalizable
+import PortalDomain
 import ZerohashDomain
+import LFLocalizable
 import LFUtilities
 import AccountService
 import BiometricsManager
 import GeneralFeature
 
 class ConfirmSendCryptoViewModel: ObservableObject {
-  @LazyInjected(\.accountDataManager) var accountDataManager
-  @LazyInjected(\.zerohashRepository) var zerohashRepository
+  @LazyInjected(\.portalRepository) var portalRepository
   @LazyInjected(\.biometricsManager) var biometricsManager
-  @LazyInjected(\.cryptoAccountService) var cryptoAccountService
   @LazyInjected(\.analyticsService) var analyticsService
   
   @Published var showIndicator: Bool = false
@@ -28,13 +26,23 @@ class ConfirmSendCryptoViewModel: ObservableObject {
   let assetModel: AssetModel
   let feeLockedResponse: APILockedNetworkFeeResponse
   
+  lazy var sendEthUseCase: SendEthUseCaseProtocol = {
+    SendEthUseCase(repository: portalRepository)
+  }()
+  
   var fee: Double {
     feeLockedResponse.fee
   }
   
   private var cancellables: Set<AnyCancellable> = []
 
-  init(assetModel: AssetModel, amount: Double, address: String, nickname: String, feeLockedResponse: APILockedNetworkFeeResponse) {
+  init(
+    assetModel: AssetModel,
+    amount: Double,
+    address: String,
+    nickname: String,
+    feeLockedResponse: APILockedNetworkFeeResponse
+  ) {
     self.assetModel = assetModel
     self.amount = amount
     self.address = address
@@ -43,7 +51,7 @@ class ConfirmSendCryptoViewModel: ObservableObject {
   }
   
   var amountInput: String {
-    amount.roundTo3fStr()
+    amount.formattedAmount(minFractionDigits: 2, maxFractionDigits: 18)
   }
   
   func callBioMetric() {
@@ -59,7 +67,7 @@ class ConfirmSendCryptoViewModel: ObservableObject {
       }, receiveValue: { [weak self] result in
         guard let self else { return }
         if result {
-          self.executeQuote(id: feeLockedResponse.quoteId)
+          self.executeSend()
         }
       })
       .store(in: &cancellables)
@@ -70,17 +78,14 @@ class ConfirmSendCryptoViewModel: ObservableObject {
     callBioMetric()
   }
   
-  func executeQuote(id: String) {
-    let accountId = assetModel.id
+  func executeSend() {
     Task { @MainActor in
       defer { showIndicator = false }
       showIndicator = true
       do {
-        let transactionEntity = try await self.zerohashRepository.execute(accountId: accountId, quoteId: id)
-        let account = try await cryptoAccountService.getAccountDetail(id: accountId)
-        self.accountDataManager.addOrUpdateAccount(account)
-        transaction = TransactionModel(from: transactionEntity)
-        self.navigation = .transactionDetail(transaction.id)
+        try await sendEthUseCase.executeSend(to: address, amount: amount)
+        // TODO(Volo): Refactor transaction detail for Portal Send
+        self.navigation = .transactionDetail("id")
       } catch {
         self.toastMessage = error.userFriendlyMessage
       }

@@ -34,7 +34,8 @@ public extension PortalService {
           backup: backupOptions,
           chainId: chainId,
           keychain: keychain,
-          gatewayConfig: gatewayConfig
+          gatewayConfig: gatewayConfig,
+          autoApprove: true
         )
         
         log.debug("Portal Swift: Registered Portal successfully")
@@ -193,6 +194,86 @@ public extension PortalService {
     }
   }
   
+  func send(
+    to address: String,
+    amount: Double
+  ) async throws {
+    try await withCheckedThrowingContinuation { [weak self] (continuation: CheckedContinuation<Void, Error>) in
+      guard let self
+      else {
+        continuation.resume(throwing: LFPortalError.unexpected)
+        return
+      }
+      
+      guard let walletAddress
+      else {
+        log.error("Portal Swift: Error sending transaction. Wallet missing)")
+        continuation.resume(throwing: LFPortalError.walletMissing)
+        
+        return
+      }
+      
+      self.portal?.ethSendTransaction(
+        transaction: ETHTransactionParam(
+          from: walletAddress,
+          to: address,
+          value: amount.ethToWei.toHexString
+        )
+      ) { (result: Result<TransactionCompletionResult>) in
+        if let error = result.error {
+          log.error("Portal Swift: Error sending transaction. \(error)")
+          continuation.resume(throwing: self.handlePortalError(error: error))
+          
+          return
+        }
+
+        let txHash = (result.data?.result as? Result<Any>)?.data ?? "-/-"
+        log.debug("Portal Swift: Send transaction success.txHash: \(txHash)")
+        continuation.resume(returning: ())
+      }
+    }
+  }
+  
+  func estimateFee(
+    to address: String,
+    amount: Double
+  ) async throws {
+    try await withCheckedThrowingContinuation { [weak self] (continuation: CheckedContinuation<Void, Error>) in
+      guard let self
+      else {
+        continuation.resume(throwing: LFPortalError.unexpected)
+        return
+      }
+      
+      guard let walletAddress
+      else {
+        log.error("Portal Swift: Error estimating fee. Wallet missing)")
+        continuation.resume(throwing: LFPortalError.walletMissing)
+        
+        return
+      }
+      
+      self.portal?.ethEstimateGas(
+        transaction: ETHTransactionParam(
+          from: walletAddress,
+          to: address,
+          value: amount.ethToWei.toHexString
+        )
+      ) { result in
+        if let error = result.error {
+          log.error("Portal Swift: Error estimating fee. \(error)")
+          continuation.resume(throwing: self.handlePortalError(error: error))
+          
+          return
+        }
+
+        print(result)
+        //log.debug("Portal Swift: Send transaction success.txHash: \(result)")
+        continuation.resume(returning: ())
+      }
+    }
+  }
+  
   func getAssets(
   ) async throws -> [PortalAsset] {
     try await withCheckedThrowingContinuation { [weak self] (continuation: CheckedContinuation<[PortalAsset], Error>) in
@@ -202,6 +283,7 @@ public extension PortalService {
       }
       
       guard let portal = self.portal else {
+        log.error("Portal Swift: Error fetching wallet balances. Portal instance unavailable")
         continuation.resume(throwing: LFPortalError.portalInstanceUnavailable)
         return
       }
@@ -240,7 +322,7 @@ public extension PortalService {
               return
             }
             
-            let ethBalance = ethBalanceResponse.result?.asDouble?.weiToEth()
+            let ethBalance = ethBalanceResponse.result?.asDouble?.weiToEth
             portalBalances.append(
               PortalAsset(
                 token: PortalToken(

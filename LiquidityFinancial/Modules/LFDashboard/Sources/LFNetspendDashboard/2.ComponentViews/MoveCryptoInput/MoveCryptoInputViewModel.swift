@@ -146,13 +146,9 @@ private extension MoveCryptoInputViewModel {
       defer { isPerformingAction = false }
       isPerformingAction = true
       do {
-        let lockedResponse = try await self.zerohashRepository.lockedNetworkFee(
-          accountId: assetModel.id,
-          destinationAddress: address,
-          amount: amount,
-          maxAmount: isMaxAmount
-        )
-        navigation = .confirmSend(lockedFeeResponse: lockedResponse)
+        // TODO(Volo): Hardcoding this for testing until Portal SDK fee issue is resolved. Need to refactor fee after
+        let feeResponse = APILockedNetworkFeeResponse(quoteId: "", amount: amount, maxAmount: false, fee: 0.000003)
+        navigation = .confirmSend(lockedFeeResponse: feeResponse)
       } catch {
         log.error(error)
         self.toastMessage = error.userFriendlyMessage
@@ -331,9 +327,10 @@ extension MoveCryptoInputViewModel {
   
   func validateAmount(with availableBalance: Double?) -> String? {
     guard let balance = availableBalance else { return nil }
-    if type != .sellCrypto, amount > 0, amount < 0.10 {
-      return L10N.Common.MoveCryptoInput.MinimumCash.description
+    if type != .sellCrypto, amount > 0, amount < 0.0001 {
+      return L10N.Common.MoveCryptoInput.MinimumCrypto.description(assetModel.type?.title ?? .empty)
     }
+    
     return balance < amount ? L10N.Common.MoveCryptoInput.InsufficientFunds.description : nil
   }
   

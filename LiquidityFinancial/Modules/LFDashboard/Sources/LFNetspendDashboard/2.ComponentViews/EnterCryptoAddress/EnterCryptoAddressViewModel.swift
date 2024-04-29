@@ -41,7 +41,9 @@ final class EnterCryptoAddressViewModel: ObservableObject {
   init(asset: AssetModel) {
     self.asset = asset
     
-    getSavedWallets()
+    // TODO(Volo): Need to fix or remove this
+    //getSavedWallets()
+    
     accountDataManager
       .subscribeWalletAddressesChanged({ [weak self] wallets in
         guard let self = self else {

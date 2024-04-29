@@ -27,7 +27,7 @@ public struct AssetModel: Hashable {
   }
   
   public init(portalAsset: PortalAsset) {
-    self.id = portalAsset.token.contractAddress
+    self.id = portalAsset.walletAddress ?? ""
     self.type = AssetType(rawValue: portalAsset.token.symbol.uppercased())
     self.availableBalance = portalAsset.balance
     self.externalAccountId = portalAsset.walletAddress

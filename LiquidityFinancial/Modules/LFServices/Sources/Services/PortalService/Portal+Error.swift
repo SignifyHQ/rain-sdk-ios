@@ -7,4 +7,5 @@ public enum LFPortalError: Error {
   case walletAlreadyExists
   case iCloudAccountUnavailable
   case unexpected
+  case walletMissing
 }
