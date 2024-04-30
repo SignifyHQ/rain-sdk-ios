@@ -227,7 +227,7 @@ public extension PortalService {
           return
         }
 
-        let txHash = (result.data?.result as? Result<Any>)?.data ?? "-/-"
+        let txHash = (result.data?.result) ?? "-/-"
         log.debug("Portal Swift: Send transaction success.txHash: \(txHash)")
         continuation.resume(returning: ())
       }
@@ -237,8 +237,8 @@ public extension PortalService {
   func estimateFee(
     to address: String,
     amount: Double
-  ) async throws {
-    try await withCheckedThrowingContinuation { [weak self] (continuation: CheckedContinuation<Void, Error>) in
+  ) async throws -> Double {
+    try await withCheckedThrowingContinuation { [weak self] (continuation: CheckedContinuation<Double, Error>) in
       guard let self
       else {
         continuation.resume(throwing: LFPortalError.unexpected)
@@ -261,15 +261,43 @@ public extension PortalService {
         )
       ) { result in
         if let error = result.error {
-          log.error("Portal Swift: Error estimating fee. \(error)")
+          log.error("Portal Swift: Error estimating gas. \(error)")
           continuation.resume(throwing: self.handlePortalError(error: error))
           
           return
         }
+        
+        guard let rpcResponse = result.data?.result as? PortalProviderRpcResponse,
+              let gas = rpcResponse.result?.asDouble
+            else {
+          log.error("Portal Swift: Error estimating gas. Unexpected")
+          continuation.resume(throwing: LFPortalError.unexpected)
+          
+          return
+        }
+        
+        self.portal?.ethGasPrice { result in
+          if let error = result.error {
+            log.error("Portal Swift: Error estimating gas price. \(error)")
+            continuation.resume(throwing: self.handlePortalError(error: error))
+            
+            return
+          }
 
-        print(result)
-        //log.debug("Portal Swift: Send transaction success.txHash: \(result)")
-        continuation.resume(returning: ())
+          guard let rpcResponse = result.data?.result as? PortalProviderRpcResponse,
+                let gasPrice = rpcResponse.result?.asDouble?.weiToEth
+          else {
+            log.error("Portal Swift: Error estimating gas price. Unexpected")
+            continuation.resume(throwing: LFPortalError.unexpected)
+            
+            return
+          }
+          
+          let txFee: Double = gas * gasPrice
+          
+          log.debug("Portal Swift: Transaction fee estimation success. TxFee: \(txFee)")
+          continuation.resume(returning: (txFee))
+        }
       }
     }
   }

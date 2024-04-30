@@ -9,11 +9,14 @@ import ZerohashDomain
 import AccountService
 import ZerohashData
 import GeneralFeature
+import PortalData
+import PortalDomain
 
 @MainActor
 final class MoveCryptoInputViewModel: ObservableObject {
   @LazyInjected(\.accountRepository) var accountRepository
   @LazyInjected(\.accountDataManager) var accountDataManager
+  @LazyInjected(\.portalRepository) var portalRepository
   @LazyInjected(\.zerohashRepository) var zerohashRepository
   @LazyInjected(\.cryptoAccountService) var cryptoAccountService
   @LazyInjected(\.fiatAccountService) var fiatAccountService
@@ -42,6 +45,10 @@ final class MoveCryptoInputViewModel: ObservableObject {
     GetBuyQuoteUseCase(repository: zerohashRepository)
   }()
 
+  private lazy var sendEthUseCase: SendEthUseCaseProtocol = {
+      SendEthUseCase(repository: portalRepository)
+    }()
+  
   private var subscribers: Set<AnyCancellable> = []
   
   let type: Kind
@@ -146,8 +153,9 @@ private extension MoveCryptoInputViewModel {
       defer { isPerformingAction = false }
       isPerformingAction = true
       do {
-        // TODO(Volo): Hardcoding this for testing until Portal SDK fee issue is resolved. Need to refactor fee after
-        let feeResponse = APILockedNetworkFeeResponse(quoteId: "", amount: amount, maxAmount: false, fee: 0.000003)
+        let txFee = try await sendEthUseCase.estimateFee(to: address, amount: amount)
+        // TODO(Volo): Refactor fee response for Portal
+        let feeResponse = APILockedNetworkFeeResponse(quoteId: "", amount: amount, maxAmount: false, fee: txFee)
         navigation = .confirmSend(lockedFeeResponse: feeResponse)
       } catch {
         log.error(error)

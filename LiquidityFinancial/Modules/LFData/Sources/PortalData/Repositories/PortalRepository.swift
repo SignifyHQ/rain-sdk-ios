@@ -85,7 +85,7 @@ public class PortalRepository: PortalRepositoryProtocol {
   public func estimateFee(
     to address: String,
     amount: Double
-  ) async throws {
+  ) async throws -> Double {
     try await portalService.estimateFee(to: address, amount: amount)
   }
   

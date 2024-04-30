@@ -37,6 +37,8 @@ class DataDogLogDestination: BaseDestination {
       logger.warn("[FILE:\(file)]-[MESSAGE:\(msg)] ", attributes: ["[FILE]": file, "[FUNCTION]": function, "[LINE]": line])
     case .error:
       logger.error("[FILE:\(file)]-[MESSAGE:\(msg)] ", attributes: ["[FILE]": file, "[FUNCTION]": function, "[LINE]": line])
+    case .critical, .fault:
+      logger.critical("[FILE:\(file)]-[MESSAGE:\(msg)] ", attributes: ["[FILE]": file, "[FUNCTION]": function, "[LINE]": line])
     }
     return super.send(level, msg: msg, thread: thread, file: file, function: function, line: line)
   }
