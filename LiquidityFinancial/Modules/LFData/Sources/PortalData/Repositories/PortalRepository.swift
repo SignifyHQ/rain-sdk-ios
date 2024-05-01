@@ -121,9 +121,9 @@ public class PortalRepository: PortalRepositoryProtocol {
     }
   }
   
-  public func refreshAssets() async throws {
-    let assets = try await portalService.getAssets()
-    portalStorage.store(assets: assets)
+  public func refreshBalances() async throws {
+    let balances = try await portalService.refreshBalances()
+    portalStorage.update(walletAddress: balances.walletAddress, balances: balances.balances)
   }
   
   public func getPortalBackupMethods() async throws -> PortalBackupMethodsEntity {

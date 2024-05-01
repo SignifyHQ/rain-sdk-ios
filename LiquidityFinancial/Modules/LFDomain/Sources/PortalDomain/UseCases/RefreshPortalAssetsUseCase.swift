@@ -8,6 +8,6 @@ public final class RefreshPortalAssetsUseCase: RefreshPortalAssetsUseCaseProtoco
   }
   
   public func execute() async throws {
-    try await repository.refreshAssets()
+    try await repository.refreshBalances()
   }
 }

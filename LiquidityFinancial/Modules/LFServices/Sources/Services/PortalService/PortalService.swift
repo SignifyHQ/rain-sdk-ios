@@ -9,8 +9,15 @@ public class PortalService: PortalServiceProtocol {
   @Injected(\.cloudKitService) var cloudKitService
 
   public var portal: Portal?
+  private var chainId: Int = 0
   
-  public init() {}
+  init() {
+    chainId = environmentService.networkEnvironment == .productionLive
+    ? Configs.PortalNetwork.ethMainnet.chainID
+    : Configs.PortalNetwork.ethSepolia.chainID
+  }
+  
+  //public init() {}
 }
 
 // MARK: - Public Functions
@@ -25,9 +32,6 @@ public extension PortalService {
         )
         let keychain = PortalKeychain()
         let gatewayConfig = Configs.PortalNetwork.configGateway(alchemyAPIKey: LFServices.alchemyAPIKey)
-        let chainId = self.environmentService.networkEnvironment == .productionLive
-        ? Configs.PortalNetwork.ethMainnet.chainID
-        : Configs.PortalNetwork.ethSepolia.chainID
         
         portal = try Portal(
           apiKey: sessionToken,
@@ -226,7 +230,7 @@ public extension PortalService {
           
           return
         }
-
+        
         let txHash = (result.data?.result) ?? "-/-"
         log.debug("Portal Swift: Send transaction success.txHash: \(txHash)")
         continuation.resume(returning: ())
@@ -269,7 +273,7 @@ public extension PortalService {
         
         guard let rpcResponse = result.data?.result as? PortalProviderRpcResponse,
               let gas = rpcResponse.result?.asDouble
-            else {
+        else {
           log.error("Portal Swift: Error estimating gas. Unexpected")
           continuation.resume(throwing: LFPortalError.unexpected)
           
@@ -283,7 +287,7 @@ public extension PortalService {
             
             return
           }
-
+          
           guard let rpcResponse = result.data?.result as? PortalProviderRpcResponse,
                 let gasPrice = rpcResponse.result?.asDouble?.weiToEth
           else {
@@ -302,9 +306,20 @@ public extension PortalService {
     }
   }
   
-  func getAssets(
-  ) async throws -> [PortalAsset] {
-    try await withCheckedThrowingContinuation { [weak self] (continuation: CheckedContinuation<[PortalAsset], Error>) in
+  func refreshBalances(
+  ) async throws -> (walletAddress: String?, balances: [String: Double]) {
+    guard let portal = portal else {
+      log.error("Portal Swift: Error fetching wallet balances. Portal instance unavailable")
+      throw(LFPortalError.portalInstanceUnavailable)
+    }
+    
+    // Fetching ERC20 token balances for wallet
+    let erc20Balances = try await portal.api.getBalances("eip155:\(chainId)")
+    var portalBalances = erc20Balances.reduce(into: [String: Double]()) { partialResult, balance in
+      partialResult[balance.contractAddress] = balance.balance.asDouble
+    }
+    
+    return try await withCheckedThrowingContinuation { [weak self] (continuation: CheckedContinuation<(walletAddress: String?, balances: [String: Double]), Error>) in
       guard let self else {
         continuation.resume(throwing: LFPortalError.unexpected)
         return
@@ -316,64 +331,23 @@ public extension PortalService {
         return
       }
       
-      do {
-        // Fetching ERC20 token balances for wallet
-        try portal.api.getBalances { result in
-          guard let erc20Balances = result.data
-          else {
-            log.error("Portal Swift: Error fetching ERC20 wallet balances \(result.error ?? "")")
-            continuation.resume(throwing: self.handlePortalError(error: result.error))
-            
-            return
-          }
+      // Fetching Eth balance for wallet
+      portal.ethGetBalance { result in
+        guard let ethBalanceResponse = result.data?.result as? ETHGatewayResponse
+        else {
+          log.error("Portal Swift: Error fetching ETH wallet balances \(result.error ?? "")")
+          continuation.resume(throwing: self.handlePortalError(error: result.error))
           
-          var portalBalances = erc20Balances.compactMap { balance in
-            PortalAsset(
-              token: PortalToken(
-                contractAddress: balance.contractAddress,
-                // TODO(Volo): Hardcoding symbol/name for now, will update
-                symbol: "USDC",
-                name: "USDC"
-              ),
-              balance: balance.balance.asDouble ?? 0,
-              walletAddress: self.walletAddress
-            )
-          }
-          
-          // Fetching Eth balance for wallet
-          portal.ethGetBalance { result in
-            guard let ethBalanceResponse = result.data?.result as? ETHGatewayResponse
-            else {
-              log.error("Portal Swift: Error fetching ETH wallet balances \(result.error ?? "")")
-              continuation.resume(throwing: self.handlePortalError(error: result.error))
-              
-              return
-            }
-            
-            let ethBalance = ethBalanceResponse.result?.asDouble?.weiToEth
-            portalBalances.append(
-              PortalAsset(
-                token: PortalToken(
-                  // Contract address will be blank for non-ERC20 tokens
-                  // TODO(Volo): Hardcoding symbol/name for now, will update
-                  contractAddress: "",
-                  symbol: "AVAX",
-                  name: "Avalanche"
-                ),
-                balance: ethBalance ?? 0,
-                walletAddress: self.walletAddress
-              )
-            )
-            
-            log.debug("Portal Swift: Wallet balances for \(self.walletAddress ?? "-/-") fetched successfully")
-            continuation.resume(returning: portalBalances)
-            
-            return
-          }
+          return
         }
-      } catch {
-        log.error("Portal Swift: API error fetching wallet balances \(error)")
-        continuation.resume(throwing: self.handlePortalError(error: error))
+        
+        let ethBalance = ethBalanceResponse.result?.asDouble?.weiToEth
+        portalBalances[""] = ethBalance
+        
+        log.debug("Portal Swift: Wallet balances for \(self.walletAddress ?? "-/-") fetched successfully")
+        continuation.resume(returning: (walletAddress: self.walletAddress, balances: portalBalances))
+        
+        return
       }
     }
   }
