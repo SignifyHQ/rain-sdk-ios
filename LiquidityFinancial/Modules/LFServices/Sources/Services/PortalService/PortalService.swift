@@ -203,46 +203,24 @@ public extension PortalService {
     contractAddress: String?,
     amount: Double
   ) async throws {
-    let value = contractAddress == nil ? amount : 0
-    let toAddress = contractAddress ?? address
+    // Build params from the inputs
+    let transaction = try await buildEthTransaction(to: address, contractAddress: contractAddress, amount: amount)
     
-    let tx = try await buildErc20Transaction(contractAddress: contractAddress, toAddress: address, amount: amount)
-    
-    try await withCheckedThrowingContinuation { [weak self] (continuation: CheckedContinuation<Void, Error>) in
-      guard let self
-      else {
-        continuation.resume(throwing: LFPortalError.unexpected)
-        return
-      }
-      
-      guard let walletAddress
-      else {
-        log.error("Portal Swift: Error sending transaction. Wallet missing)")
-        continuation.resume(throwing: LFPortalError.walletMissing)
-        
-        return
-      }
-      
-      self.portal?.ethSendTransaction(
-        transaction: ETHTransactionParam(
-          from: walletAddress,
-          to: toAddress,
-          value: value.ethToWei.toHexString,
-          data: tx ?? ""
-        )
-      ) { (result: Result<TransactionCompletionResult>) in
-        if let error = result.error {
-          log.error("Portal Swift: Error sending transaction. \(error)")
-          continuation.resume(throwing: self.handlePortalError(error: error))
-          
-          return
-        }
-        
-        let txHash = (result.data?.result) ?? "-/-"
-        log.debug("Portal Swift: Send transaction success.txHash: \(txHash)")
-        continuation.resume(returning: ())
-      }
+    // Throw an error if Portal clent instance is not ready
+    guard let portal = portal else {
+      log.error("Portal Swift: Error sending transaction for \(transaction.walletAddress). Portal instance is unavailable")
+      throw(LFPortalError.portalInstanceUnavailable)
     }
+    
+    // Send the transaction to the blockchain
+    let ethSendResponse = try await portal.request(
+      "eip155:\(chainId)",
+      withMethod: .eth_sendTransaction,
+      andParams: [transaction.transactionParams]
+    )
+    
+    let txHash = ethSendResponse.result as? String ?? "-/-"
+    log.debug("Portal Swift: Send transaction success for \(transaction.walletAddress). txHash: \(txHash)")
   }
   
   func estimateFee(
@@ -250,74 +228,128 @@ public extension PortalService {
     contractAddress: String?,
     amount: Double
   ) async throws -> Double {
+    // Build transaction from the inputs
+    let transaction = try await buildEthTransaction(to: address, contractAddress: contractAddress, amount: amount)
+    
+    // Throw an error if Portal clent instance is not ready
+    guard let portal = portal else {
+      log.error("Portal Swift: Error estimating fee for \(transaction.walletAddress). Portal instance is unavailable")
+      throw(LFPortalError.portalInstanceUnavailable)
+    }
+    
+    // Fetch estimated gas for the transaction
+    let ethEstimateGasResonse = try await portal.request(
+      "eip155:\(chainId)",
+      withMethod: .eth_estimateGas,
+      andParams: [transaction.transactionParams]
+    )
+    guard let ethEstimateGasRpcResponse = ethEstimateGasResonse.result as? PortalProviderRpcResponse,
+          let gas = ethEstimateGasRpcResponse.result?.asDouble
+    else {
+      log.error("Portal Swift: Error estimating gas for \(transaction.walletAddress). Unexpected RPC response")
+      throw(LFPortalError.unexpected)
+    }
+    
+    // Fetch current gas price
+    let ethEstimateGasPriceResonse = try await portal.request(
+      "eip155:\(chainId)",
+      withMethod: .eth_gasPrice,
+      andParams: []
+    )
+    guard let ethEstimateGasPriceRpcResponse = ethEstimateGasPriceResonse.result as? PortalProviderRpcResponse,
+          let gasPrice = ethEstimateGasPriceRpcResponse.result?.asDouble?.weiToEth
+    else {
+      log.error("Portal Swift: Error estimating gas price for \(transaction.walletAddress). Unexpected RPC response")
+      throw(LFPortalError.unexpected)
+    }
+    
+    // Calculate the total fees
+    let txFee: Double = gas * gasPrice
+    
+    log.debug("Portal Swift: Transaction fee estimation success for \(transaction.walletAddress). tx fee: \(txFee)")
+    return(txFee)
+  }
+  
+  func refreshBalances(
+  ) async throws -> (walletAddress: String?, balances: [String: Double]) {
+    guard let walletAddress
+    else {
+      log.error("Portal Swift: Error fetching wallet balances. Wallet missing)")
+      throw(LFPortalError.walletMissing)
+    }
+    
+    // Throw an error if Portal clent instance is not ready
+    guard let portal = portal else {
+      log.error("Portal Swift: Error fetching wallet balances for \(walletAddress). Portal instance is unavailable")
+      throw(LFPortalError.portalInstanceUnavailable)
+    }
+    
+    // Fetch ERC20 token balances for wallet
+    let erc20Balances = try await portal.api.getBalances("eip155:\(chainId)")
+    var portalBalances = erc20Balances.reduce(into: [String: Double]()) { partialResult, balance in
+      partialResult[balance.contractAddress] = balance.balance.asDouble
+    }
+    
+    // Fetch ETH token balance for wallet
+    let ethBalanceResponse = try await portal
+      .request(
+        "eip155:\(chainId)",
+        withMethod: .eth_getBalance,
+        andParams: [walletAddress, "latest"]
+      )
+    guard let ethBalanceRpcResponse = ethBalanceResponse.result as? PortalProviderRpcResponse
+    else {
+      log.error("Portal Swift: Error fetching ETH wallet balances for \(walletAddress). Unexpected RPC response")
+      throw(LFPortalError.unexpected)
+    }
+    
+    let ethBalance = ethBalanceRpcResponse.result?.asDouble?.weiToEth
+    portalBalances[""] = ethBalance
+    
+    log.debug("Portal Swift: Wallet balances for \(walletAddress) fetched successfully")
+    return(walletAddress: walletAddress, balances: portalBalances)
+  }
+}
+
+// MARK: - Helper
+public extension PortalService {
+  func checkWalletAddressExists() -> Bool {
+    !(walletAddress ?? "").isEmpty
+  }
+  
+  var walletAddress: String? {
+    portal?.address
+  }
+}
+
+// MARK: - Private Functions
+private extension PortalService {
+  private func buildEthTransaction(
+    to address: String,
+    contractAddress: String?,
+    amount: Double
+  ) async throws -> (walletAddress: String, transactionParams: ETHTransactionParam) {
+    guard let walletAddress
+    else {
+      log.error("Portal Swift: Error estimating fee. Wallet missing)")
+      throw(LFPortalError.walletMissing)
+    }
+    
+    // If sending ERC20 token, the value parameter should be 0 because it's encoded in the tx hash
     let value = contractAddress == nil ? amount : 0
+    // If sending ERC20 token, the toAddress should be the address of token contract, the recipient address is encoded in the tx hash
     let toAddress = contractAddress ?? address
     
+    // Build transaction params. In case of sendind native token, tx will be nil
     let tx = try await buildErc20Transaction(contractAddress: contractAddress, toAddress: address, amount: amount)
+    let transactionParams = ETHTransactionParam(
+      from: walletAddress,
+      to: toAddress,
+      value: value.ethToWei.toHexString,
+      data: tx ?? ""
+    )
     
-    return try await withCheckedThrowingContinuation { [weak self] (continuation: CheckedContinuation<Double, Error>) in
-      guard let self
-      else {
-        continuation.resume(throwing: LFPortalError.unexpected)
-        return
-      }
-      
-      guard let walletAddress
-      else {
-        log.error("Portal Swift: Error estimating fee. Wallet missing)")
-        continuation.resume(throwing: LFPortalError.walletMissing)
-        
-        return
-      }
-      
-      self.portal?.ethEstimateGas(
-        transaction: ETHTransactionParam(
-          from: walletAddress,
-          to: toAddress,
-          value: value.ethToWei.toHexString,
-          data: tx ?? ""
-        )
-      ) { result in
-        if let error = result.error {
-          log.error("Portal Swift: Error estimating gas. \(error)")
-          continuation.resume(throwing: self.handlePortalError(error: error))
-          
-          return
-        }
-        
-        guard let rpcResponse = result.data?.result as? PortalProviderRpcResponse,
-              let gas = rpcResponse.result?.asDouble
-        else {
-          log.error("Portal Swift: Error estimating gas. Unexpected")
-          continuation.resume(throwing: LFPortalError.unexpected)
-          
-          return
-        }
-        
-        self.portal?.ethGasPrice { result in
-          if let error = result.error {
-            log.error("Portal Swift: Error estimating gas price. \(error)")
-            continuation.resume(throwing: self.handlePortalError(error: error))
-            
-            return
-          }
-          
-          guard let rpcResponse = result.data?.result as? PortalProviderRpcResponse,
-                let gasPrice = rpcResponse.result?.asDouble?.weiToEth
-          else {
-            log.error("Portal Swift: Error estimating gas price. Unexpected")
-            continuation.resume(throwing: LFPortalError.unexpected)
-            
-            return
-          }
-          
-          let txFee: Double = gas * gasPrice
-          
-          log.debug("Portal Swift: Transaction fee estimation success. TxFee: \(txFee)")
-          continuation.resume(returning: (txFee))
-        }
-      }
-    }
+    return (walletAddress: walletAddress, transactionParams: transactionParams)
   }
   
   private func buildErc20Transaction(
@@ -326,24 +358,30 @@ public extension PortalService {
     amount: Double
   ) async throws -> String? {
     try await withCheckedThrowingContinuation { [weak self] (continuation: CheckedContinuation<String?, Error>) in
+      guard let self
+      else {
+        continuation.resume(throwing: LFPortalError.unexpected)
+        return
+      }
+      
       guard let contractAddress
       else {
         continuation.resume(returning: nil)
         return
       }
       
-      guard let gatewayUrl = self?.portal?.gatewayConfig[11_155_111]
+      guard let gatewayUrl = portal?.gatewayConfig[chainId]
       else {
-        log.error("Portal Swift: Error building ERC20 transaction. Gateway URL unavailable")
+        log.error("Portal Swift: Error building ERC20 transaction. Gateway URL is unavailable")
         continuation.resume(throwing: LFPortalError.unexpected)
         
         return
       }
       
-      guard let walletAddressString = self?.walletAddress,
+      guard let walletAddressString = walletAddress,
             let ethereumFromAddress = try? EthereumAddress(hex: walletAddressString, eip55: false)
       else {
-        log.error("Portal Swift: Error building ERC20 transaction. Wallet address unavailable")
+        log.error("Portal Swift: Error building ERC20 transaction. Wallet address is unavailable")
         continuation.resume(throwing: LFPortalError.unexpected)
         
         return
@@ -351,7 +389,7 @@ public extension PortalService {
       
       guard let ethereumToAddress = try? EthereumAddress(hex: toAddress, eip55: false)
       else {
-        log.error("Portal Swift: Error building ERC20 transaction. ToAddress invalid")
+        log.error("Portal Swift: Error building ERC20 transaction. ToAddress is invalid")
         continuation.resume(throwing: LFPortalError.unexpected)
         
         return
@@ -393,67 +431,7 @@ public extension PortalService {
     }
   }
   
-  func refreshBalances(
-  ) async throws -> (walletAddress: String?, balances: [String: Double]) {
-    guard let portal = portal else {
-      log.error("Portal Swift: Error fetching wallet balances. Portal instance unavailable")
-      throw(LFPortalError.portalInstanceUnavailable)
-    }
-    
-    // Fetching ERC20 token balances for wallet
-    let erc20Balances = try await portal.api.getBalances("eip155:\(chainId)")
-    var portalBalances = erc20Balances.reduce(into: [String: Double]()) { partialResult, balance in
-      partialResult[balance.contractAddress] = balance.balance.asDouble
-    }
-    
-    return try await withCheckedThrowingContinuation { [weak self] (continuation: CheckedContinuation<(walletAddress: String?, balances: [String: Double]), Error>) in
-      guard let self else {
-        continuation.resume(throwing: LFPortalError.unexpected)
-        return
-      }
-      
-      guard let portal = self.portal else {
-        log.error("Portal Swift: Error fetching wallet balances. Portal instance unavailable")
-        continuation.resume(throwing: LFPortalError.portalInstanceUnavailable)
-        return
-      }
-      
-      // Fetching Eth balance for wallet
-      portal.ethGetBalance { result in
-        guard let ethBalanceResponse = result.data?.result as? ETHGatewayResponse
-        else {
-          log.error("Portal Swift: Error fetching ETH wallet balances \(result.error ?? "")")
-          continuation.resume(throwing: self.handlePortalError(error: result.error))
-          
-          return
-        }
-        
-        let ethBalance = ethBalanceResponse.result?.asDouble?.weiToEth
-        portalBalances[""] = ethBalance
-        
-        log.debug("Portal Swift: Wallet balances for \(self.walletAddress ?? "-/-") fetched successfully")
-        continuation.resume(returning: (walletAddress: self.walletAddress, balances: portalBalances))
-        
-        return
-      }
-    }
-  }
-}
-
-// MARK: - Helper
-public extension PortalService {
-  func checkWalletAddressExists() -> Bool {
-    !(walletAddress ?? "").isEmpty
-  }
-  
-  var walletAddress: String? {
-    portal?.address
-  }
-}
-
-// MARK: - Private Functions
-private extension PortalService {
-  func handlePortalError(error: Error?) -> Error {
+  private func handlePortalError(error: Error?) -> Error {
     if let portalError = error as? PortalError, portalError.code == PortalErrorCodes.INVALID_API_KEY.rawValue {
       return LFPortalError.expirationToken
     }
