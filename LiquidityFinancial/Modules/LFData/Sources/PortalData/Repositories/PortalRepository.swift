@@ -84,16 +84,18 @@ public class PortalRepository: PortalRepositoryProtocol {
   
   public func estimateFee(
     to address: String,
+    contractAddress: String?,
     amount: Double
   ) async throws -> Double {
-    try await portalService.estimateFee(to: address, amount: amount)
+    try await portalService.estimateFee(to: address, contractAddress: contractAddress, amount: amount)
   }
   
   public func send(
     to address: String,
+    contractAddress: String?,
     amount: Double
   ) async throws {
-    try await portalService.send(to: address, amount: amount)
+    try await portalService.send(to: address, contractAddress: contractAddress, amount: amount)
   }  
     
   public func recoverPortalWallet(

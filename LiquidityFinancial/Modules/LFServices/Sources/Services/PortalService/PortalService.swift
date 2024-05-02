@@ -1,8 +1,10 @@
-import PortalSwift
 import Combine
-import LFUtilities
 import EnvironmentService
 import Factory
+import LFUtilities
+import PortalSwift
+import Web3
+import Web3ContractABI
 
 public class PortalService: PortalServiceProtocol {
   @LazyInjected(\.environmentService) var environmentService
@@ -16,8 +18,6 @@ public class PortalService: PortalServiceProtocol {
     ? Configs.PortalNetwork.ethMainnet.chainID
     : Configs.PortalNetwork.ethSepolia.chainID
   }
-  
-  //public init() {}
 }
 
 // MARK: - Public Functions
@@ -200,8 +200,14 @@ public extension PortalService {
   
   func send(
     to address: String,
+    contractAddress: String?,
     amount: Double
   ) async throws {
+    let value = contractAddress == nil ? amount : 0
+    let toAddress = contractAddress ?? address
+    
+    let tx = try await buildErc20Transaction(contractAddress: contractAddress, toAddress: address, amount: amount)
+    
     try await withCheckedThrowingContinuation { [weak self] (continuation: CheckedContinuation<Void, Error>) in
       guard let self
       else {
@@ -220,8 +226,9 @@ public extension PortalService {
       self.portal?.ethSendTransaction(
         transaction: ETHTransactionParam(
           from: walletAddress,
-          to: address,
-          value: amount.ethToWei.toHexString
+          to: toAddress,
+          value: value.ethToWei.toHexString,
+          data: tx ?? ""
         )
       ) { (result: Result<TransactionCompletionResult>) in
         if let error = result.error {
@@ -240,9 +247,15 @@ public extension PortalService {
   
   func estimateFee(
     to address: String,
+    contractAddress: String?,
     amount: Double
   ) async throws -> Double {
-    try await withCheckedThrowingContinuation { [weak self] (continuation: CheckedContinuation<Double, Error>) in
+    let value = contractAddress == nil ? amount : 0
+    let toAddress = contractAddress ?? address
+    
+    let tx = try await buildErc20Transaction(contractAddress: contractAddress, toAddress: address, amount: amount)
+    
+    return try await withCheckedThrowingContinuation { [weak self] (continuation: CheckedContinuation<Double, Error>) in
       guard let self
       else {
         continuation.resume(throwing: LFPortalError.unexpected)
@@ -260,8 +273,9 @@ public extension PortalService {
       self.portal?.ethEstimateGas(
         transaction: ETHTransactionParam(
           from: walletAddress,
-          to: address,
-          value: amount.ethToWei.toHexString
+          to: toAddress,
+          value: value.ethToWei.toHexString,
+          data: tx ?? ""
         )
       ) { result in
         if let error = result.error {
@@ -303,6 +317,79 @@ public extension PortalService {
           continuation.resume(returning: (txFee))
         }
       }
+    }
+  }
+  
+  private func buildErc20Transaction(
+    contractAddress: String?,
+    toAddress: String,
+    amount: Double
+  ) async throws -> String? {
+    try await withCheckedThrowingContinuation { [weak self] (continuation: CheckedContinuation<String?, Error>) in
+      guard let contractAddress
+      else {
+        continuation.resume(returning: nil)
+        return
+      }
+      
+      guard let gatewayUrl = self?.portal?.gatewayConfig[11_155_111]
+      else {
+        log.error("Portal Swift: Error building ERC20 transaction. Gateway URL unavailable")
+        continuation.resume(throwing: LFPortalError.unexpected)
+        
+        return
+      }
+      
+      guard let walletAddressString = self?.walletAddress,
+            let ethereumFromAddress = try? EthereumAddress(hex: walletAddressString, eip55: false)
+      else {
+        log.error("Portal Swift: Error building ERC20 transaction. Wallet address unavailable")
+        continuation.resume(throwing: LFPortalError.unexpected)
+        
+        return
+      }
+      
+      guard let ethereumToAddress = try? EthereumAddress(hex: toAddress, eip55: false)
+      else {
+        log.error("Portal Swift: Error building ERC20 transaction. ToAddress invalid")
+        continuation.resume(throwing: LFPortalError.unexpected)
+        
+        return
+      }
+      
+      let web3 = Web3(rpcURL: gatewayUrl)
+      let contract = web3.eth.Contract(
+        type: GenericERC20Contract.self,
+        address: EthereumAddress(hexString: contractAddress)
+      )
+      
+      let conversionFactor: Double = 1e6
+      let value = BigUInt(amount * conversionFactor)
+      guard let tx = contract
+        .transfer(
+          to: ethereumToAddress,
+          value: value
+        )
+          .createTransaction(
+            nonce: nil,
+            gasPrice: nil,
+            maxFeePerGas: nil,
+            maxPriorityFeePerGas: nil,
+            gasLimit: nil,
+            from: ethereumFromAddress,
+            value: 0,
+            accessList: [:],
+            transactionType: .legacy
+          )
+      else {
+        log.error("Portal Swift: Error building ERC20 transaction. Could not build transaction")
+        continuation.resume(throwing: LFPortalError.unexpected)
+        
+        return
+      }
+
+      continuation.resume(returning: tx.data.hex())
+      return
     }
   }
   

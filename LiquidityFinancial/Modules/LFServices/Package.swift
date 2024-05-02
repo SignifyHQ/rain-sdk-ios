@@ -36,7 +36,8 @@ let package = Package(
     .package(url: "https://github.com/segmentio/analytics-ios", from: "4.1.8"),
     .package(url: "https://github.com/Datadog/dd-sdk-ios.git", from: "2.4.0"),
     .package(url: "https://github.com/verygoodsecurity/vgs-collect-ios.git", .exact("1.15.3")),
-    .package(url: "https://github.com/portal-hq/PortalSwift", .exact("3.1.1-beta"))
+    .package(url: "https://github.com/portal-hq/PortalSwift", .exact("3.1.1-beta")),
+    .package(url: "https://github.com/Boilertalk/Web3.swift.git", from: "0.6.0")
   ],
   targets: [
     .target(
@@ -54,7 +55,10 @@ let package = Package(
         .product(name: "DatadogLogs", package: "dd-sdk-ios"),
         .product(name: "DatadogCrashReporting", package: "dd-sdk-ios"),
         .product(name: "VGSCollectSDK", package: "vgs-collect-ios"),
-        .product(name: "PortalSwift", package: "PortalSwift")
+        .product(name: "PortalSwift", package: "PortalSwift"),
+        .product(name: "Web3", package: "Web3.swift"),
+        .product(name: "Web3PromiseKit", package: "Web3.swift"),
+        .product(name: "Web3ContractABI", package: "Web3.swift")
       ],
       resources: [
         .process("Resources")

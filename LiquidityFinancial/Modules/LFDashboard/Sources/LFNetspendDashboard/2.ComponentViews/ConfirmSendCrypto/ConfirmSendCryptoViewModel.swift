@@ -83,7 +83,7 @@ class ConfirmSendCryptoViewModel: ObservableObject {
       defer { showIndicator = false }
       showIndicator = true
       do {
-        try await sendEthUseCase.executeSend(to: address, amount: amount)
+        try await sendEthUseCase.executeSend(to: address, contractAddress: assetModel.id.nilIfEmpty, amount: amount)
         // TODO(Volo): Refactor transaction detail for Portal Send
         self.navigation = .transactionDetail("id")
       } catch {

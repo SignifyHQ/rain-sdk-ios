@@ -9,8 +9,8 @@ public protocol PortalRepositoryProtocol {
   func verifyAndUpdatePortalWalletAddress() async throws
   func registerPortal(portalToken: String) async throws
   func createPortalWallet() async throws -> String
-  func send(to address: String, amount: Double) async throws
-  func estimateFee(to address: String, amount: Double) async throws -> Double
+  func send(to address: String, contractAddress: String?, amount: Double) async throws
+  func estimateFee(to address: String, contractAddress: String?, amount: Double) async throws -> Double
   func backupPortalWallet(
     backupMethod: BackupMethods,
     backupConfigs: BackupConfigs?

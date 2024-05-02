@@ -63,7 +63,9 @@ public struct CardFormatter: TextFormatter {
   public init() {}
   
   public func format(text: String) -> String {
-    String(text.removeWhitespace().inserting(separator: " ", every: 4))
+    text.removeWhitespace().inserting(separator: " ", every: 4)
+    // Changing it because Xcode complained about the code below for some reason
+    //String(text.removeWhitespace().inserting(separator: " ", every: 4))
   }
 }
 
@@ -72,7 +74,9 @@ public struct ExpirationFormatter: TextFormatter {
   public init() {}
   
   public func format(text: String) -> String {
-    String(text.removeWhitespace().inserting(separator: " / ", every: 2))
+    text.removeWhitespace().inserting(separator: " / ", every: 2)
+    // Changing it because Xcode complained about the code below for some reason
+    //String(text.removeWhitespace().inserting(separator: " / ", every: 2))
   }
 }
 

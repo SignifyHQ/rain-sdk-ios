@@ -153,7 +153,7 @@ private extension MoveCryptoInputViewModel {
       defer { isPerformingAction = false }
       isPerformingAction = true
       do {
-        let txFee = try await sendEthUseCase.estimateFee(to: address, amount: amount)
+        let txFee = try await sendEthUseCase.estimateFee(to: address, contractAddress: assetModel.id.nilIfEmpty, amount: amount)
         // TODO(Volo): Refactor fee response for Portal
         let feeResponse = APILockedNetworkFeeResponse(quoteId: "", amount: amount, maxAmount: false, fee: txFee)
         navigation = .confirmSend(lockedFeeResponse: feeResponse)
