@@ -162,11 +162,10 @@
 
 // Create Wallet
 "createWallet.title" = "CREATE YOUR WALLET";
-"createWallet.info" = "%@ has partnered with Portal to offer cryptocurrency services.";
-"createWallet.termsAndCondition" = "I agree to the Portal and Portal Liquidity Services User Agreement, and I have read and understand the Portal Privacy Policy and Regulatory Disclosures. I understand that the value of any cryptocurrency, including digital assets pegged to fiat currency, commodities, or any other asset, may go to zero.";
+"createWallet.info" = "%@ has partnered with Portal to offer wallets.";
+"createWallet.termsAndCondition" = "I agree to the Portal Services User Agreement, and I have read and understand the Portal Privacy Policy and Regulatory Disclosures.";
 "createWallet.riskDisclosure" = "The value of any cryptocurrency, including digital assets pegged to fiat currency, commodities, or any other asset, may go to zero.";
-"createWallet.userAgreement" = "Portal and Portal Liquidity Services User Agreement";
-"createWallet.walletUseragreement" = "Portal and Portal Liquidity Services User Agreement";
+"createWallet.userAgreement" = "Portal Services User Agreement";
 "createWallet.regulatoryDisclosures" = "Regulatory Disclosures";
 "createWallet.privacyPolicy" = "Privacy Policy";
 "createWallet.signInToIcloud.title" = "Sign in to iCloud";

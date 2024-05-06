@@ -102,7 +102,8 @@ private extension CreateWalletView {
       GenImages.CommonImages.portal.swiftUIImage
         .resizable()
         .scaledToFit()
-        .frame(width: 173, height: 36)
+        .frame(width: 158, height: 40)
+        .padding(.trailing, 16)
     }
     .padding(16)
     .background(Colors.secondaryBackground.swiftUIColor)
@@ -125,7 +126,7 @@ private extension CreateWalletView {
         .onTapGesture {
           viewModel.isTermsAgreed.toggle()
         }
-        .padding(.bottom, 130)
+        .padding(.bottom, 24)
       TextTappable(
         text: viewModel.strMessage,
         fontSize: Constants.FontSize.ultraSmall.value,
@@ -133,12 +134,12 @@ private extension CreateWalletView {
           viewModel.strUserAgreement,
           viewModel.strPrivacy,
           viewModel.strDiscloures
-        ],
-        style: .underlined(Colors.cryptoTermsUnderline.color)
+        ]
       ) { tappedString in
         viewModel.onClickedTermLink(link: tappedString)
       }
-      .frame(height: 170)
+      .frame(height: 80)
+      .padding(.bottom, -20)
     }
   }
   
