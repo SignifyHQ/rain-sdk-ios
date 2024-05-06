@@ -1,7 +1,7 @@
 import Foundation
 import PortalSwift
 
-public final class BackupPortalWalletUseCase: BackupPortalWalletUseCaseProtocol {
+public final class BackupWalletUseCase: BackupWalletUseCaseProtocol {
   private let repository: PortalRepositoryProtocol
   
   public init(repository: PortalRepositoryProtocol) {
@@ -10,8 +10,8 @@ public final class BackupPortalWalletUseCase: BackupPortalWalletUseCaseProtocol 
   
   public func execute(
     backupMethod: BackupMethods,
-    backupConfigs: BackupConfigs?
-  ) async throws -> String {
-    try await repository.backupPortalWallet(backupMethod: backupMethod, backupConfigs: backupConfigs)
+    password: String?
+  ) async throws {
+    try await repository.backupWallet(backupMethod: backupMethod, password: password)
   }
 }

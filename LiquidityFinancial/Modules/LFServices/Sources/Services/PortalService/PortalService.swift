@@ -23,178 +23,101 @@ public class PortalService: PortalServiceProtocol {
 // MARK: - Public Functions
 public extension PortalService {
   func registerPortal(sessionToken: String) async throws {
-    try await withCheckedThrowingContinuation { [weak self] (continuation: CheckedContinuation<Void, Error>) in
-      guard let self else { return }
+    do {
+      let withRpcConfig = Configs.PortalNetwork.configRPC(alchemyAPIKey: LFServices.alchemyAPIKey)
       
-      do {
-        let backupOptions = BackupOptions(
-          icloud: ICloudStorage(), passwordStorage: PasswordStorage()
-        )
-        let keychain = PortalKeychain()
-        let gatewayConfig = Configs.PortalNetwork.configGateway(alchemyAPIKey: LFServices.alchemyAPIKey)
-        
-        portal = try Portal(
-          apiKey: sessionToken,
-          backup: backupOptions,
-          chainId: chainId,
-          keychain: keychain,
-          gatewayConfig: gatewayConfig,
-          autoApprove: true
-        )
-        
-        log.debug("Portal Swift: Registered Portal successfully")
-        continuation.resume(returning: ())
-      } catch {
-        log.error("Portal Swift: Error registering Portal \(error)")
-        continuation.resume(
-          throwing: self.handlePortalError(error: error)
-        )
-      }
+      portal = try Portal(
+        sessionToken,
+        withRpcConfig: withRpcConfig,
+        autoApprove: true,
+        iCloud: ICloudStorage(),
+        keychain: PortalKeychain(),
+        passwords: PasswordStorage()
+      )
+      
+      log.debug("Portal Swift: Registered Portal successfully")
+    } catch {
+      log.error("Portal Swift: Error registering Portal \(error)")
+      throw handlePortalError(error: error)
     }
   }
   
   func createWallet() async throws -> String {
-    try await withCheckedThrowingContinuation { [weak self] (continuation: CheckedContinuation<String, Error>) in
-      guard let self else { return }
-      guard let portal = self.portal else {
-        continuation.resume(throwing: LFPortalError.portalInstanceUnavailable)
-        return
+    guard let portal else {
+      throw LFPortalError.portalInstanceUnavailable
+    }
+    
+    // We will automatically backup using iCloud after creating the wallet, checking the account status here will save the user's waiting time.
+    if !cloudKitService.isICloudAccountAvailable {
+      throw LFPortalError.iCloudAccountUnavailable
+    }
+    
+    do {
+      let addresses = try await portal.createWallet { status in
+        log.debug("Wallet Creation Status: \(status)")
       }
-      
-      // We will automatically backup using iCloud after creating the wallet, checking the account status here will save the user's waiting time.
-      if !cloudKitService.isICloudAccountAvailable {
-        continuation.resume(throwing: LFPortalError.iCloudAccountUnavailable)
-        return
-      }
-      
-      portal.createWallet(
-        completion: { addressResult in
-          guard let error = addressResult.error else {
-            continuation.resume(returning: addressResult.data ?? "N/A")
-            return
-          }
-          
-          continuation.resume(
-            throwing: self.handlePortalError(error: error)
-          )
-        },
-        progress: { status in
-          log.debug("Wallet Creation Status: \(status)")
-        }
-      )
+      return addresses.ethereum ?? "N/A"
+    } catch {
+      throw handlePortalError(error: error)
     }
   }
   
   func backup(
     backupMethod: BackupMethods,
-    backupConfigs: BackupConfigs? = nil
-  ) async throws -> String {
-    try await withCheckedThrowingContinuation { [weak self] (continuation: CheckedContinuation<String, Error>) in
-      guard let self else { return }
-      guard let portal = self.portal else {
-        continuation.resume(throwing: LFPortalError.portalInstanceUnavailable)
-        return
-      }
-      
-      if backupMethod == .iCloud, !cloudKitService.isICloudAccountAvailable {
-        continuation.resume(throwing: LFPortalError.iCloudAccountUnavailable)
-        return
-      }
-      
-      portal.backupWallet(
-        method: backupMethod.rawValue,
-        backupConfigs: backupConfigs
-      ) { result in
-        if let error = result.error {
-          log.error("Portal Swift: Error backing up wallet \(error)")
-          continuation.resume(
-            throwing: self.handlePortalError(error: error)
-          )
-          return
-        }
-        
-        guard let data = result.data else {
-          log.error("Portal Swift: Error backing up wallet No Data")
-          continuation.resume(throwing: LFPortalError.dataUnavailable)
-          return
-        }
-        
-        log.debug("Portal Swift: Wallet backup success")
-        continuation.resume(returning: data)
-      } progress: { status in
+    password: String? = nil
+  ) async throws -> (String, () async throws -> Void) {
+    guard let portal else {
+      throw LFPortalError.portalInstanceUnavailable
+    }
+    
+    if backupMethod == .iCloud, !cloudKitService.isICloudAccountAvailable {
+      throw LFPortalError.iCloudAccountUnavailable
+    }
+    
+    if let password, backupMethod == .Password {
+      try portal.setPassword(password)
+    }
+    
+    do {
+      let (cipherText, storageCallback) = try await portal.backupWallet(backupMethod) { status in
         log.debug("Backup Wallet Status: \(status)")
       }
-    }
-  }
-  
-  func confirmWalletBackupStorage(
-    backupMethod: BackupMethods,
-    stored: Bool
-  ) async throws {
-    try await withCheckedThrowingContinuation { [weak self] (continuation: CheckedContinuation<Void, Error>) in
-      guard let self else { return }
-      guard let portal = self.portal else {
-        continuation.resume(throwing: LFPortalError.portalInstanceUnavailable)
-        return
-      }
       
-      do {
-        try portal.api.storedClientBackupShare(
-          success: stored,
-          backupMethod: backupMethod.rawValue,
-          completion: { result -> Void in
-            if let error = result.error {
-              log.error("Portal Swift: Error confirming backup share storage \(error)")
-              continuation.resume(throwing: self.handlePortalError(error: error))
-              return
-            }
-            
-            log.debug("Portal Swift: Backup share storage success")
-            continuation.resume(returning: ())
-          }
-        )
-      } catch {
-        log.error("Portal Swift: SDK Error confirming backup share storage \(error)")
-        continuation.resume(throwing: self.handlePortalError(error: error))
-      }
+      log.debug("Portal Swift: Wallet backup success")
+      return (cipherText, storageCallback)
+    } catch {
+      log.error("Portal Swift: Error backing up wallet \(error)")
+      throw handlePortalError(error: error)
     }
   }
   
   func recover(
     backupMethod: BackupMethods,
-    backupConfigs: BackupConfigs?,
+    password: String? = nil,
     cipherText: String
   ) async throws {
-    try await withCheckedThrowingContinuation { [weak self] (continuation: CheckedContinuation<Void, Error>) in
-      guard let self else { return }
-      guard let portal = self.portal else {
-        continuation.resume(throwing: LFPortalError.portalInstanceUnavailable)
-        return
-      }
-      
-      if backupMethod == .iCloud, !cloudKitService.isICloudAccountAvailable {
-        continuation.resume(throwing: LFPortalError.iCloudAccountUnavailable)
-        return
-      }
-      
-      portal.recoverWallet(
-        cipherText: cipherText,
-        method: backupMethod.rawValue,
-        backupConfigs: backupConfigs
-      ) { result -> Void in
-        if let error = result.error {
-          log.error("Portal Swift: Error backing up wallet \(error)")
-          continuation.resume(
-            throwing: self.handlePortalError(error: error)
-          )
-          return
-        }
-        
-        log.debug("Portal Swift: Wallet recover success")
-        continuation.resume(returning: ())
-      } progress: { status in
+    guard let portal else {
+      throw LFPortalError.portalInstanceUnavailable
+    }
+    
+    if backupMethod == .iCloud, !cloudKitService.isICloudAccountAvailable {
+      throw LFPortalError.iCloudAccountUnavailable
+    }
+    
+    if let password, backupMethod == .Password {
+      try portal.setPassword(password)
+    }
+    
+    do {
+      _ = try await portal.recoverWallet(backupMethod, withCipherText: cipherText) { status in
         log.debug("Recover Status: \(status)")
       }
+      
+      log.debug("Portal Swift: Wallet recover success")
+      
+    } catch {
+      log.error("Portal Swift: Error backing up wallet \(error)")
+      throw handlePortalError(error: error)
     }
   }
   
@@ -313,8 +236,18 @@ public extension PortalService {
 
 // MARK: - Helper
 public extension PortalService {
-  func checkWalletAddressExists() -> Bool {
-    !(walletAddress ?? "").isEmpty
+  func getWalletAddress() async -> String? {
+    do {
+      guard let portal else {
+        return nil
+      }
+      
+      // Currently, we only use eip55 address
+      let addresses = try await portal.addresses
+      return addresses[PortalNamespace.eip155] ?? nil
+    } catch {
+      return nil
+    }
   }
   
   var walletAddress: String? {
@@ -431,11 +364,7 @@ private extension PortalService {
     }
   }
   
-  private func handlePortalError(error: Error?) -> Error {
-    if let portalError = error as? PortalError, portalError.code == PortalErrorCodes.INVALID_API_KEY.rawValue {
-      return LFPortalError.expirationToken
-    }
-    
+  func handlePortalError(error: Error?) -> Error {
     guard let portalMpcError = error as? PortalMpcError else {
       return error ?? LFPortalError.unexpected
     }
@@ -446,7 +375,7 @@ private extension PortalService {
     case PortalErrorCodes.INVALID_API_KEY.rawValue:
       return LFPortalError.expirationToken
     case PortalErrorCodes.BAD_REQUEST.rawValue:
-      return portalMpcError.message.contains(PortalErrorMessage.walletAlreadyExists) ? LFPortalError.walletAlreadyExists : portalMpcError
+      return portalMpcError.message.lowercased().contains(PortalErrorMessage.walletAlreadyExists) ? LFPortalError.walletAlreadyExists : portalMpcError
     default:
       return portalMpcError
     }
@@ -456,6 +385,6 @@ private extension PortalService {
 // MARK: - PortalErrorMessage
 extension PortalService {
   enum PortalErrorMessage {
-    static let walletAlreadyExists = "Wallet already exists"
+    static let walletAlreadyExists = "wallet already exists"
   }
 }

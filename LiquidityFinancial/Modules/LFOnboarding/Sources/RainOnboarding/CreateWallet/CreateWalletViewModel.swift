@@ -27,12 +27,8 @@ final class CreateWalletViewModel: ObservableObject {
     CreatePortalWalletUseCase(repository: portalRepository)
   }()
   
-  lazy var backupPortalWalletUseCase: BackupPortalWalletUseCaseProtocol = {
-    BackupPortalWalletUseCase(repository: portalRepository)
-  }()
-  
-  lazy var walletBackupUseCase: WalletBackupUseCaseProtocol = {
-    WalletBackupUseCase(repository: portalRepository)
+  lazy var backupWalletUseCase: BackupWalletUseCaseProtocol = {
+    BackupWalletUseCase(repository: portalRepository)
   }()
   
   lazy var verifyAndUpdatePortalWalletUseCase: VerifyAndUpdatePortalWalletUseCaseProtocol = {
@@ -55,7 +51,7 @@ final class CreateWalletViewModel: ObservableObject {
 extension CreateWalletViewModel {
   func createPortalWallet() async {
     do {
-      loadingText = "Creating Portal Wallet"
+      loadingText = L10N.Common.CreateWallet.CreatePortalWallet.title
       let walletAddress = try await createPortalWalletUseCase.execute()
       log.debug("Portal wallet creation successful: \(walletAddress)")
       
@@ -69,7 +65,7 @@ extension CreateWalletViewModel {
   
   func verifyAndUpdatePortalWallet() async {
     do {
-      loadingText = "Verifying Portal Wallet"
+      loadingText = L10N.Common.CreateWallet.VerifyPortalWallet.title
       _ = try await verifyAndUpdatePortalWalletUseCase.execute()
       
       showIndicator = false
@@ -85,23 +81,15 @@ extension CreateWalletViewModel {
   
   func backupPortalWalletByIcloud() async {
     do {
-      loadingText = "Backing Up Portal Wallet"
-      let cipher = try await backupPortalWalletUseCase.execute(
-        backupMethod: .iCloud,
-        backupConfigs: nil
-      )
-      
-      try await walletBackupUseCase.execute(
-        cipher: cipher,
-        method: BackupMethods.iCloud.rawValue
-      )
+      loadingText = L10N.Common.CreateWallet.BackupPortalWallet.title
+      try await backupWalletUseCase.execute(backupMethod: .iCloud, password: nil)
       
       log.debug(Constants.DebugLog.cipherTextSavedSuccessfully.value)
       await verifyAndUpdatePortalWallet()
     } catch {
       loadingText = .empty
       showIndicator = false
-      toastMessage = error.userFriendlyMessage
+      handlePortalError(error: error)
     }
   }
   
@@ -123,19 +111,13 @@ extension CreateWalletViewModel {
   func onCreatePortalWalletTapped() {
     Task {
       showIndicator = true
-      async let isBackedUp = checkBackupStatus()
       
-      guard portalService.checkWalletAddressExists() else {
+      guard let walletAddress = await portalService.getWalletAddress(), !walletAddress.isEmpty else {
         await self.createPortalWallet()
         return
       }
       
-      guard await isBackedUp else {
-        await self.backupPortalWalletByIcloud()
-        return
-      }
-      
-      await verifyAndUpdatePortalWallet()
+      await handleWalletCreationSuccess()
     }
   }
   
@@ -184,6 +166,17 @@ extension CreateWalletViewModel {
 
 // MARK: - Private Functions
 private extension CreateWalletViewModel {
+  func handleWalletCreationSuccess() async {
+    async let isBackedUp = checkBackupStatus()
+    
+    guard await isBackedUp else {
+      await self.backupPortalWalletByIcloud()
+      return
+    }
+    
+    await verifyAndUpdatePortalWallet()
+  }
+  
   func handlePortalError(error: Error) {
     guard let portalError = error as? LFPortalError else {
       toastMessage = error.localizedDescription
@@ -194,7 +187,7 @@ private extension CreateWalletViewModel {
     switch portalError {
     case .walletAlreadyExists:
       Task {
-        await verifyAndUpdatePortalWallet()
+        await handleWalletCreationSuccess()
       }
     case .iCloudAccountUnavailable:
       showIndicator = false

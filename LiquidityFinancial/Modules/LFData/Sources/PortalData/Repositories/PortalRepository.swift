@@ -19,19 +19,6 @@ public class PortalRepository: PortalRepositoryProtocol {
     self.portalService = portalService
   }
   
-  public func backupWallet(cipher: String, method: String) async throws {
-    do {
-      try await portalAPI.backupWallet(cipher: cipher, method: method)
-      try await portalService.confirmWalletBackupStorage(backupMethod: BackupMethods(rawValue: method) ?? .Unknown, stored: true)
-    } catch {
-      throw error
-    }
-  }
-  
-  public func restoreWallet(method: String) async throws -> WalletRestoreEntitiy {
-    try await portalAPI.restoreWallet(method: method)
-  }
-
   public func refreshPortalSessionToken() async throws -> PortalSessionTokenEntity {
     try await portalAPI.refreshPortalSessionToken()
   }
@@ -66,19 +53,21 @@ public class PortalRepository: PortalRepositoryProtocol {
     }
   }
   
-  public func backupPortalWallet(backupMethod: BackupMethods, backupConfigs: BackupConfigs?) async throws -> String {
+  public func backupWallet(backupMethod: BackupMethods, password: String?) async throws {
     do {
-      return try await portalService.backup(
+      let (cipherText, storageCallback) = try await portalService.backup(
         backupMethod: backupMethod,
-        backupConfigs: backupConfigs
+        password: password
       )
+      try await portalAPI.backupWallet(cipher: cipherText, method: backupMethod.rawValue)
+      try await storageCallback()
     } catch {
       guard let portalError = error as? LFPortalError, portalError == .expirationToken else {
         throw error
       }
       
       _ = try await refreshPortalSessionToken()
-      return try await backupPortalWallet(backupMethod: backupMethod, backupConfigs: backupConfigs)
+      return try await backupWallet(backupMethod: backupMethod, password: password)
     }
   }
   
@@ -98,16 +87,14 @@ public class PortalRepository: PortalRepositoryProtocol {
     try await portalService.send(to: address, contractAddress: contractAddress, amount: amount)
   }  
     
-  public func recoverPortalWallet(
-    backupMethod: BackupMethods,
-    backupConfigs: BackupConfigs?,
-    cipherText: String
-  ) async throws {
+  public func recoverWallet(backupMethod: BackupMethods, password: String?) async throws {
     do {
+      let response = try await portalAPI.restoreWallet(method: backupMethod.rawValue)
+
       try await portalService.recover(
         backupMethod: backupMethod,
-        backupConfigs: backupConfigs,
-        cipherText: cipherText
+        password: password,
+        cipherText: response.cipherText
       )
     } catch {
       guard let portalError = error as? LFPortalError, portalError == .expirationToken else {
@@ -115,11 +102,7 @@ public class PortalRepository: PortalRepositoryProtocol {
       }
       
       _ = try await refreshPortalSessionToken()
-      try await recoverPortalWallet(
-        backupMethod: backupMethod,
-        backupConfigs: backupConfigs,
-        cipherText: cipherText
-      )
+      try await recoverWallet(backupMethod: backupMethod, password: password)
     }
   }
   

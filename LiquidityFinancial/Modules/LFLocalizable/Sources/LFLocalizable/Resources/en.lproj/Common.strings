@@ -171,6 +171,9 @@
 "createWallet.privacyPolicy" = "Privacy Policy";
 "createWallet.signInToIcloud.title" = "Sign in to iCloud";
 "createWallet.signInToIcloud.message" = "Please sign in to your iCloud account on this device.";
+"createWallet.createPortalWallet.title" = "Creating Portal Wallet";
+"createWallet.backupPortalWallet.title" = "Backing Up Portal Wallet";
+"createWallet.verifyPortalWallet.title" = "Verifying Portal Wallet";
 
 // Backup Wallet
 "backupWallet.title" = "BACKUP";

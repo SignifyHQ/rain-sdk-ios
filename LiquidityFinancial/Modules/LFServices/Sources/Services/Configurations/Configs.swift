@@ -71,13 +71,10 @@ enum Configs {
       }
     }
     
-    static func configGateway(alchemyAPIKey: String) -> [Int: String] {
+    static func configRPC(alchemyAPIKey: String) -> [String: String] {
       [
-        PortalNetwork.ethSepolia.chainID: "https://eth-sepolia.g.alchemy.com/v2/\(alchemyAPIKey)",
-        PortalNetwork.ethGoerli.chainID: "https://eth-goerli.g.alchemy.com/v2/\(alchemyAPIKey)",
-        PortalNetwork.ethMainnet.chainID: "https://eth-mainnet.g.alchemy.com/v2/\(alchemyAPIKey)",
-        PortalNetwork.polygonMumbai.chainID: "https://polygon-mumbai.g.alchemy.com/v2/\(alchemyAPIKey)",
-        PortalNetwork.polygonMainnet.chainID: "https://polygon-mainnet.g.alchemy.com/v2/\(alchemyAPIKey)"
+        "eip155:1": "https://eth-sepolia.g.alchemy.com/v2/\(alchemyAPIKey)",
+        "eip155:11155111": "https://eth-mainnet.g.alchemy.com/v2/\(alchemyAPIKey)"
       ]
     }
   }

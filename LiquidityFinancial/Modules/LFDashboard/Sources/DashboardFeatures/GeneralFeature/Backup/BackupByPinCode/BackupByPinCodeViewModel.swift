@@ -22,12 +22,8 @@ public final class BackupByPinCodeViewModel: ObservableObject {
   @Published var popup: Popup?
   @Published var navigation: Navigation?
   
-  lazy var backupPortalWalletUseCase: BackupPortalWalletUseCaseProtocol = {
-    BackupPortalWalletUseCase(repository: portalRepository)
-  }()
-  
-  lazy var walletBackupUseCase: WalletBackupUseCaseProtocol = {
-    WalletBackupUseCase(repository: portalRepository)
+  lazy var backupWalletUseCase: BackupWalletUseCaseProtocol = {
+    BackupWalletUseCase(repository: portalRepository)
   }()
   
   let pinCodeLength = Constants.MaxCharacterLimit.backupPinCode.value
@@ -86,17 +82,7 @@ extension BackupByPinCodeViewModel {
       defer { isLoading = false }
       
       do {
-        let cipher = try await backupPortalWalletUseCase.execute(
-          backupMethod: .Password,
-          backupConfigs: BackupConfigs(
-            passwordStorage: PasswordStorageConfig(password: self.pinCode)
-          )
-        )
-        
-        try await walletBackupUseCase.execute(
-          cipher: cipher,
-          method: BackupMethods.Password.rawValue
-        )
+        try await backupWalletUseCase.execute(backupMethod: .Password, password: pinCode)
         
         popup = .pinCreated
         log.debug(Constants.DebugLog.cipherTextSavedSuccessfully.value)
