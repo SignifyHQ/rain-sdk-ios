@@ -46,6 +46,7 @@ public class RainOnboardingFlowCoordinator: OnboardingFlowCoordinatorProtocol {
   
   @LazyInjected(\.pushNotificationService) var pushNotificationService
   @LazyInjected(\.analyticsService) var analyticsService
+  @LazyInjected(\.portalService) var portalService
   
   lazy var accountUseCase: AccountUseCaseProtocol = {
     AccountUseCase(repository: accountRepository)
@@ -119,9 +120,7 @@ public extension RainOnboardingFlowCoordinator {
     
     switch accountReviewStatus {
     case .approved:
-      // It is a buffer task that helps prepare data before the user enters the app
-      // await apiFetchAccounts()
-      set(route: .dashboard)
+      handleApprovedAccountReviewStatus()
     case .rejected:
       set(route: .accountReject)
     case .inreview, .reviewing:
@@ -213,6 +212,18 @@ private extension RainOnboardingFlowCoordinator {
     }
     
     return configModel
+  }
+  
+  func handleApprovedAccountReviewStatus() {
+    Task {
+      if await portalService.isWalletOnDevice() {
+        // It is a buffer task that helps prepare data before the user enters the app
+        // await apiFetchAccounts()
+        set(route: .dashboard)
+      } else {
+        NotificationCenter.default.post(name: .needRecoverWallet, object: nil)
+      }
+    }
   }
   
   func handleDataUser(user: LFUser) {

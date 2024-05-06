@@ -13,7 +13,7 @@ public struct VerificationCodeView: View {
   
   @FocusState var keyboardFocus: Bool
   @StateObject var viewModel: VerificationCodeViewModel
-  
+    
   public init(viewModel: VerificationCodeViewModel) {
     _viewModel = .init(wrappedValue: viewModel)
   }
@@ -47,6 +47,8 @@ public struct VerificationCodeView: View {
     .navigationLink(item: $onboardingDestinationObservable.verificationCodeDestinationView) { item in
       switch item {
       case let .identityVerificationCode(destinationView):
+        destinationView
+      case let .recoverWallet(destinationView):
         destinationView
       }
     }

@@ -23,4 +23,6 @@ public extension Notification.Name {
   static let didCardCreateSuccess = Notification.Name("com.liquidityfinancial.cards.didCardCreateSuccess")
   
   static let didBackupByPasswordSuccess = Notification.Name("com.liquidityfinancial.didBackupByPasswordSuccess")
+  
+  static let needRecoverWallet = Notification.Name("com.liquidityfinancial.needRecoverWallet")
 }

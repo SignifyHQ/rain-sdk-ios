@@ -19,6 +19,7 @@ import LFAuthentication
 // MARK: - VerificationCodeNavigation
 public enum VerificationCodeNavigation {
   case identityVerificationCode(AnyView)
+  case recoverWallet(AnyView)
 }
 
 // MARK: - VerificationCodeViewModel
@@ -70,7 +71,8 @@ public final class VerificationCodeViewModel: ObservableObject {
     requireAuth: [RequiredAuth],
     handleOnboardingStep: (() async throws -> Void)?,
     forceLogout: (() -> Void)?,
-    setRouteToAccountLocked: (() -> Void)?
+    setRouteToAccountLocked: (() -> Void)?,
+    recoverWalletView: AnyView? = nil
   ) {
     self.requireAuth = requireAuth
     self.handleOnboardingStep = handleOnboardingStep
@@ -80,6 +82,7 @@ public final class VerificationCodeViewModel: ObservableObject {
     phoneNumberWithRegionCode = Constants.Default.regionCode.rawValue + phoneNumber
     observePasswordInput()
     performAutoGetOTPFromTwilioIfNeccessary()
+    setUpNeedRecoverWalletObserver(destinationView: recoverWalletView)
   }
 }
 
@@ -125,7 +128,7 @@ extension VerificationCodeViewModel {
           parameters: parameters
         )
         
-        setupPortal(portalToken: response.portalSessionToken)
+        await setupPortal(portalToken: response.portalSessionToken)
         
         handleLoginSuccess {
           self.isShowLoading = false
@@ -153,7 +156,7 @@ extension VerificationCodeViewModel {
         analyticsLoginEvent(isSuccess: true, eventName: .loggedIn)
       } catch {
         log.error(error.localizedDescription)
-        analyticsLoginEvent(isSuccess: false, eventName: .phoneVerificationError)        
+        analyticsLoginEvent(isSuccess: false, eventName: .phoneVerificationError)
         forceLogout?()
       }
     }
@@ -174,6 +177,16 @@ extension VerificationCodeViewModel {
 
 // MARK: - Private Functions
 private extension VerificationCodeViewModel {
+  func setUpNeedRecoverWalletObserver(destinationView: AnyView?) {
+    NotificationCenter.default
+      .publisher(for: .needRecoverWallet)
+      .sink { [weak self] _ in
+        guard let destinationView else { return }
+        self?.onboardingDestinationObservable.verificationCodeDestinationView = .recoverWallet(destinationView)
+      }
+      .store(in: &cancellables)
+  }
+  
   func handleAfterGetOTP() {
     guard !isShowLoading else { return }
     isShowLoading = true
@@ -312,16 +325,14 @@ private extension VerificationCodeViewModel {
     }
   }
   
-  func setupPortal(portalToken: String?) {
+  func setupPortal(portalToken: String?) async {
     guard let portalToken else { return }
     
-    Task {
-      do {
-        try await registerPortalUseCase.execute(portalToken: portalToken)
-      } catch {
-        log.error(error.userFriendlyMessage)
-        toastMessage = error.userFriendlyMessage
-      }
+    do {
+      try await registerPortalUseCase.execute(portalToken: portalToken)
+    } catch {
+      log.error(error.userFriendlyMessage)
+      toastMessage = error.userFriendlyMessage
     }
   }
 }

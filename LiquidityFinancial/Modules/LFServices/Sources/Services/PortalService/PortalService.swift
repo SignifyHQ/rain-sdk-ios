@@ -250,6 +250,17 @@ public extension PortalService {
     }
   }
   
+  func isWalletOnDevice() async -> Bool {
+    do {
+      guard let portal else {
+        return false
+      }
+      return try await portal.isWalletOnDevice()
+    } catch {
+      return false
+    }
+  }
+  
   var walletAddress: String? {
     portal?.address
   }

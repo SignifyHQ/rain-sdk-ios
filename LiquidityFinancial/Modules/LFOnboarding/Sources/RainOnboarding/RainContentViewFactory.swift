@@ -153,7 +153,8 @@ private extension RainContentViewFactory {
         forceLogout: flowCoordinator.forceLogout,
         setRouteToAccountLocked: { [weak self] in
           self?.flowCoordinator.set(route: .accountLocked)
-        }
+        },
+        recoverWalletView: AnyView(RecoverWalletView(recoverMethod: .iCloud))
       )
     )
   }

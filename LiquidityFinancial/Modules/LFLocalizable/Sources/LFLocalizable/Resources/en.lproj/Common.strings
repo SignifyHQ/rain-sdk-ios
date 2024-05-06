@@ -1295,6 +1295,24 @@ contact support.";
 "AccountRountingNumber.routingNumber.title" = "Rounting number";
 "AccountRountingNumber.accountNumber.title" = "Account number";
 
+// RecoverWallet
+"recoverWallet.title" = "Recover %@ backup";
+"recoverWallet.description" = "You previously backed up your AvalancheCard Wallet via %@. Complete recovery to access your funds.";
+"recoverWallet.startRecovery.buttonTitle" = "Start Recovery";
+
+// iCloudBackupNotFound
+"iCloudBackupNotFound.title" = "icloud backup not found";
+"iCloudBackupNotFound.description" = "We couldn’t find an acount backup on your iCloud. Switch to the correct iCloud account and try again.";
+"iCloudBackupNotFound.tryAnotherMethod.title" = "Try another method";
+
+// EnterPinCode
+"enterPinCode.title" = "enter your backup pin";
+"enterPinCode.description" = "We’ll use this pin to make sure it’s you who’s trying to recover your account";
+
+// RecoveryComplete
+"recoveryComplete.title" = "Recovery complete";
+"recoveryComplete.message" = "Your account recovery is complete.\nJust like that.";
+
 // MARK: - Common
 
 // Notification Pop up
