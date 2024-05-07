@@ -122,6 +122,7 @@ private extension CashView {
         BalanceAlertView(type: .cash, hasContacts: !viewModel.linkedAccount.isEmpty, cashBalance: viewModel.cashBalanceValue) {
           viewModel.addMoneyTapped()
         }
+        addToBalanceButton
         activity
       }
       .padding(.horizontal, 30)
@@ -181,6 +182,12 @@ private extension CashView {
         achInformation: $viewModel.achInformation,
         isDisableView: $viewModel.isDisableView
       )
+    }
+  }
+  
+  var addToBalanceButton: some View {
+    FullSizeButton(title: L10N.Common.CashTab.AddToBalance.title, isDisable: false, type: .secondary) {
+      viewModel.addToBalanceButtonTapped()
     }
   }
 }

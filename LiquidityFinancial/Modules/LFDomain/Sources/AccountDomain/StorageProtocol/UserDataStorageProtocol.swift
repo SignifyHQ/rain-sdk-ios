@@ -2,6 +2,7 @@ import Foundation
 import NetspendDomain
 import Combine
 import AccountService
+import RainDomain
 
 // sourcery: AutoMockable
 public protocol AccountDataStorageProtocol {
@@ -21,6 +22,11 @@ public protocol AccountDataStorageProtocol {
   func storeWalletAddresses(_ addresses: [WalletAddressEntity])
   func addOrEditWalletAddress(_ address: WalletAddressEntity)
   func removeWalletAddress(id: String)
+  
+  var smartContractsSubject: CurrentValueSubject<[RainSmartContractEntity], Never> { get }
+  var smartContracts: [RainSmartContractEntity] { get }
+  func subscribeSmartContractsChanged(_ completion: @escaping ([RainSmartContractEntity]) -> Void) -> Cancellable
+  func storeSmartContracts(_ smartContracts: [RainSmartContractEntity])
   
   func subscribeLinkedSourcesChanged(_ completion: @escaping ([any LinkedSourceDataEntity]) -> Void) -> Cancellable
   func storeLinkedSources(_ sources: [any LinkedSourceDataEntity])

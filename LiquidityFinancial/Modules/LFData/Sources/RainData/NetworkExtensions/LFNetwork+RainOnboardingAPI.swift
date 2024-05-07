@@ -3,10 +3,10 @@ import NetworkUtilities
 import CoreNetwork
 import LFUtilities
 
-extension LFCoreNetwork: RainAPIProtocol where R == RainOnboardingRoute {
+extension LFCoreNetwork: RainAPIProtocol where R == RainRoute {
   public func getOnboardingMissingSteps() async throws -> APIRainOnboardingMissingSteps {
     let result = try await request(
-      RainOnboardingRoute.getOnboardingMissingSteps,
+      RainRoute.getOnboardingMissingSteps,
       target: [String].self,
       failure: LFErrorObject.self,
       decoder: .apiDecoder
@@ -17,7 +17,7 @@ extension LFCoreNetwork: RainAPIProtocol where R == RainOnboardingRoute {
   
   public func createRainAccount(parameters: APIRainPersonParameters) async throws -> APIRainPerson {
     try await request(
-      RainOnboardingRoute.createAccount(parameters: parameters),
+      RainRoute.createAccount(parameters: parameters),
       target: APIRainPerson.self,
       failure: LFErrorObject.self,
       decoder: .apiDecoder
@@ -26,11 +26,20 @@ extension LFCoreNetwork: RainAPIProtocol where R == RainOnboardingRoute {
   
   public func getExternalVerificationLink() async throws -> APIRainExternalVerificationLink {
     try await request(
-      RainOnboardingRoute.getExternalVerificationLink,
+      RainRoute.getExternalVerificationLink,
       target: APIRainExternalVerificationLink.self,
       failure: LFErrorObject.self,
       decoder: .apiDecoder
     )
   }
-
+  
+  public func getSmartContracts() async throws -> [APIRainSmartContract] {
+    try await request(
+      RainRoute.getSmartContracts,
+      target: [APIRainSmartContract].self,
+      failure: LFErrorObject.self,
+      decoder: .apiDecoder
+    )
+  }
+  
 }

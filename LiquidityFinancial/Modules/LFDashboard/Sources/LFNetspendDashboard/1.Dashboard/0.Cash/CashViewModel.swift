@@ -30,14 +30,6 @@ final class CashViewModel: ObservableObject {
   @Published var achInformation: ACHModel = .default
   @Published var fullScreen: FullScreen?
   
-  lazy var getListNSCardUseCase: NSGetListCardUseCaseProtocol = {
-    NSGetListCardUseCase(repository: cardRepository)
-  }()
-  
-  lazy var getCardUseCase: NSGetCardUseCaseProtocol = {
-    NSGetCardUseCase(repository: cardRepository)
-  }()
-  
   let currencyType = Constants.CurrencyType.fiat.rawValue
   
   //This is flag handle case when app have change scenePhase
@@ -203,6 +195,9 @@ extension CashViewModel {
   
   func guestCardTapped() {
     
+  }
+  
+  func addToBalanceButtonTapped() {
   }
 }
 

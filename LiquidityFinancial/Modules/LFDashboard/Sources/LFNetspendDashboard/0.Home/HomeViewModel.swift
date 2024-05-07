@@ -5,6 +5,8 @@ import AccountData
 import LFUtilities
 import DevicesData
 import AccountDomain
+import RainData
+import RainDomain
 import Combine
 import Services
 import DevicesDomain
@@ -18,7 +20,8 @@ final class HomeViewModel: ObservableObject {
 
   @LazyInjected(\.accountRepository) var accountRepository
   @LazyInjected(\.devicesRepository) var devicesRepository
-  
+  @LazyInjected(\.rainRepository) var rainRepository
+
   @LazyInjected(\.pushNotificationService) var pushNotificationService
   
   @LazyInjected(\.customerSupportService) var customerSupportService
@@ -39,6 +42,10 @@ final class HomeViewModel: ObservableObject {
   lazy var deviceRegisterUseCase: DeviceRegisterUseCaseProtocol = {
     DeviceRegisterUseCase(repository: devicesRepository)
    }()
+  
+  lazy var getSmartContractsUseCase: GetSmartContractsUseCaseProtocol = {
+    GetSmartContractsUseCase(repository: rainRepository)
+  }()
   
   let dashboardRepository: DashboardRepository
   init(dashboardRepository: DashboardRepository, tabOptions: [TabOption]) {
@@ -83,6 +90,7 @@ extension HomeViewModel {
   
   func initData() {
     apiFetchUser()
+    fetchSmartContract()
   }
   
   func onAppear() {
@@ -101,6 +109,17 @@ extension HomeViewModel {
       userAttributes = UserAttributes(phone: accountDataManager.phoneNumber, email: accountDataManager.userEmail)
     }
     customerSupportService.loginIdentifiedUser(userAttributes: userAttributes)
+  }
+  
+  func fetchSmartContract() {
+    Task {
+      do {
+        let response = try await getSmartContractsUseCase.execute()
+        accountDataManager.storeSmartContracts(response)
+      } catch {
+        log.error(error.userFriendlyMessage)
+      }
+    }
   }
 }
 

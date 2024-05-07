@@ -276,6 +276,7 @@
 "cashTab.deposit.title" = "Deposit";
 "cashTab.withdraw.title" = "Withdraw";
 "cashTab.waysToAdd.title" = "More ways to deposit";
+"cashTab.addToBalance.title" = "Add to Balance";
 
 // CashCardView
 "cashCard.balance.title" = "Balance";

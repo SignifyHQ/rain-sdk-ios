@@ -7,7 +7,7 @@ import RainDomain
 extension Container {
   public var rainAPI: Factory<RainAPIProtocol> {
     self {
-      LFCoreNetwork<RainOnboardingRoute>()
+      LFCoreNetwork<RainRoute>()
     }
   }
   

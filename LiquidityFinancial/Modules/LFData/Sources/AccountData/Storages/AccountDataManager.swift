@@ -1,6 +1,7 @@
 import Foundation
 import NetspendDomain
 import AccountDomain
+import RainDomain
 import Combine
 import LFUtilities
 import AccountService
@@ -184,6 +185,23 @@ public class AccountDataManager: AccountDataStorageProtocol {
     if let fullName = userInfomationData.fullName, fullName.isEmpty {
       update(fullName: (userInfomationData.firstName ?? "") + " " + (userInfomationData.lastName ?? ""))
     }
+  }
+  
+  // MARK: Smart Contracts
+  public let smartContractsSubject = CurrentValueSubject<[RainSmartContractEntity], Never>([])
+  
+  public var smartContracts: [RainSmartContractEntity] {
+    smartContractsSubject.value
+  }
+  
+  public func subscribeSmartContractsChanged(_ completion: @escaping ([RainSmartContractEntity]) -> Void) -> Cancellable {
+    smartContractsSubject
+      .receive(on: DispatchQueue.main)
+      .sink(receiveValue: completion)
+  }
+  
+  public func storeSmartContracts(_ smartContracts: [RainSmartContractEntity]) {
+    smartContractsSubject.send(smartContracts)
   }
   
   // MARK: Wallet addresses

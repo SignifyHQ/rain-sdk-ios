@@ -57,7 +57,7 @@ let package = Package(
     .target(
       name: "AccountDomain",
       dependencies: [
-        "NetspendDomain", "LFUtilities",
+        "NetspendDomain", "LFUtilities", "RainDomain",
         .product(name: "AccountService", package: "LFServices")
       ]
     ),
@@ -94,7 +94,6 @@ let package = Package(
     .target(
       name: "RainDomain",
       dependencies: [
-        "AccountDomain"
       ]
     ),
     .target(
