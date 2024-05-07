@@ -59,6 +59,9 @@ private extension RainOnboardingContentView {
       case .accountReject:
         contentViewFactory
           .createView(type: .accountReject)
+      case .recoverWallet:
+        contentViewFactory
+          .createView(type: .recoverWallet)
       case .missingInformation:
         contentViewFactory
           .createView(type: .missingInformation)

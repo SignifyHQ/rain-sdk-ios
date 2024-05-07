@@ -47,6 +47,8 @@ extension RainContentViewFactory {
       return AnyView(accountInReviewView)
     case .accountReject:
       return AnyView(accountRejectView)
+    case .recoverWallet:
+      return AnyView(recoverWalletView)
     case .missingInformation:
       return AnyView(missingInformationView)
     case .identifyVerification:
@@ -153,8 +155,7 @@ private extension RainContentViewFactory {
         forceLogout: flowCoordinator.forceLogout,
         setRouteToAccountLocked: { [weak self] in
           self?.flowCoordinator.set(route: .accountLocked)
-        },
-        recoverWalletView: AnyView(RecoverWalletView(recoverMethod: .iCloud))
+        }
       )
     )
   }
@@ -178,6 +179,11 @@ private extension RainContentViewFactory {
   }
   
   @MainActor
+  var recoverWalletView: some View {
+    RecoverWalletView(recoverMethod: .iCloud)
+  }
+  
+  @MainActor
   func forceUpdateView(model: FeatureConfigModel) -> some View {
     UpdateAppView(featureConfigModel: model)
   }
@@ -186,7 +192,7 @@ private extension RainContentViewFactory {
 // MARK: - Types
 extension RainContentViewFactory {
   enum ViewType {
-    case initial, phone, accountInReview
+    case initial, phone, accountInReview, recoverWallet
     case accountLocked, accountReject
     case missingInformation, identifyVerification
     case unclear(String)

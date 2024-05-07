@@ -42,9 +42,17 @@ struct RecoverWalletView: View {
     .popup(item: $viewModel.toastMessage, style: .toast) {
       ToastView(toastMessage: $0)
     }
-    .defaultToolBar(icon: .support, openSupportScreen: {
-      viewModel.openSupportScreen()
-    })
+    .defaultToolBar(
+      icon: .both,
+      onDismiss: {
+        viewModel.onboardingFlowCoordinator.set(route: .phone)
+      },
+      openSupportScreen: {
+        viewModel.openSupportScreen()
+      }
+    )
+    .navigationBarTitleDisplayMode(.inline)
+    .navigationBarBackButtonHidden()
     .background(Colors.background.swiftUIColor)
     .track(name: String(describing: type(of: self)))
   }

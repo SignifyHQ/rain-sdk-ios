@@ -101,8 +101,7 @@ public extension RainOnboardingFlowCoordinator {
     }
     
     guard !steps.isEmpty else {
-      // There is no value that matches the steps that need to be taken, bringing the user to the dashboard
-      set(route: .dashboard)
+      handleOnboardingCompletion()
       return
     }
     
@@ -120,7 +119,7 @@ public extension RainOnboardingFlowCoordinator {
     
     switch accountReviewStatus {
     case .approved:
-      handleApprovedAccountReviewStatus()
+      handleOnboardingCompletion()
     case .rejected:
       set(route: .accountReject)
     case .inreview, .reviewing:
@@ -179,7 +178,7 @@ private extension RainOnboardingFlowCoordinator {
       return
     }
     
-    set(route: .dashboard)
+    handleOnboardingCompletion()
   }
   
   func fetchFetureConfig() async {
@@ -214,14 +213,14 @@ private extension RainOnboardingFlowCoordinator {
     return configModel
   }
   
-  func handleApprovedAccountReviewStatus() {
+  func handleOnboardingCompletion() {
     Task {
       if await portalService.isWalletOnDevice() {
         // It is a buffer task that helps prepare data before the user enters the app
         // await apiFetchAccounts()
         set(route: .dashboard)
       } else {
-        NotificationCenter.default.post(name: .needRecoverWallet, object: nil)
+        set(route: .recoverWallet)
       }
     }
   }
@@ -299,6 +298,7 @@ public extension RainOnboardingFlowCoordinator {
     case identifyVerification
     case accountLocked
     case accountReject
+    case recoverWallet
     case unclear(String)
     case forceUpdate(FeatureConfigModel)
     

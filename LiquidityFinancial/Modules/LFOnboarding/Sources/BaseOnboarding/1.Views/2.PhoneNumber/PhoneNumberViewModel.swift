@@ -57,20 +57,17 @@ public final class PhoneNumberViewModel: ObservableObject {
   private let handleOnboardingStep: (() async throws -> Void)?
   private let forceLogout: (() -> Void)?
   private let setRouteToAccountLocked: (() -> Void)?
-  private let recoverWalletView: AnyView?
   
   private var cancellables: Set<AnyCancellable> = []
   
   public init(
     handleOnboardingStep: (() async throws -> Void)?,
     forceLogout: (() -> Void)?,
-    setRouteToAccountLocked: (() -> Void)?,
-    recoverWalletView: AnyView? = nil
+    setRouteToAccountLocked: (() -> Void)?
   ) {
     self.handleOnboardingStep = handleOnboardingStep
     self.forceLogout = forceLogout
     self.setRouteToAccountLocked = setRouteToAccountLocked
-    self.recoverWalletView = recoverWalletView
     
     UserDefaults.isStartedWithLoginFlow = true
     observePasswordInput()
@@ -175,8 +172,7 @@ private extension PhoneNumberViewModel {
       requireAuth: requiredAuth,
       handleOnboardingStep: self.handleOnboardingStep,
       forceLogout: self.forceLogout,
-      setRouteToAccountLocked: self.setRouteToAccountLocked,
-      recoverWalletView: self.recoverWalletView
+      setRouteToAccountLocked: self.setRouteToAccountLocked
     )
     let verificationCodeView = AnyView(VerificationCodeView(viewModel: viewModel))
     

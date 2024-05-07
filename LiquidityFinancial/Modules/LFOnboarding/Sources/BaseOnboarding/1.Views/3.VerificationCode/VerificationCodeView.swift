@@ -48,8 +48,6 @@ public struct VerificationCodeView: View {
       switch item {
       case let .identityVerificationCode(destinationView):
         destinationView
-      case let .recoverWallet(destinationView):
-        destinationView
       }
     }
     .navigationBarBackButtonHidden(viewModel.isShowLoading)

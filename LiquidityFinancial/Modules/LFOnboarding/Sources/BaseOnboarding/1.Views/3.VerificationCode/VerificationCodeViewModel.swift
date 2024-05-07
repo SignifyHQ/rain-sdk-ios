@@ -19,7 +19,6 @@ import LFAuthentication
 // MARK: - VerificationCodeNavigation
 public enum VerificationCodeNavigation {
   case identityVerificationCode(AnyView)
-  case recoverWallet(AnyView)
 }
 
 // MARK: - VerificationCodeViewModel
@@ -71,8 +70,7 @@ public final class VerificationCodeViewModel: ObservableObject {
     requireAuth: [RequiredAuth],
     handleOnboardingStep: (() async throws -> Void)?,
     forceLogout: (() -> Void)?,
-    setRouteToAccountLocked: (() -> Void)?,
-    recoverWalletView: AnyView? = nil
+    setRouteToAccountLocked: (() -> Void)?
   ) {
     self.requireAuth = requireAuth
     self.handleOnboardingStep = handleOnboardingStep
@@ -82,7 +80,6 @@ public final class VerificationCodeViewModel: ObservableObject {
     phoneNumberWithRegionCode = Constants.Default.regionCode.rawValue + phoneNumber
     observePasswordInput()
     performAutoGetOTPFromTwilioIfNeccessary()
-    setUpNeedRecoverWalletObserver(destinationView: recoverWalletView)
   }
 }
 
@@ -177,16 +174,6 @@ extension VerificationCodeViewModel {
 
 // MARK: - Private Functions
 private extension VerificationCodeViewModel {
-  func setUpNeedRecoverWalletObserver(destinationView: AnyView?) {
-    NotificationCenter.default
-      .publisher(for: .needRecoverWallet)
-      .sink { [weak self] _ in
-        guard let destinationView else { return }
-        self?.onboardingDestinationObservable.verificationCodeDestinationView = .recoverWallet(destinationView)
-      }
-      .store(in: &cancellables)
-  }
-  
   func handleAfterGetOTP() {
     guard !isShowLoading else { return }
     isShowLoading = true
