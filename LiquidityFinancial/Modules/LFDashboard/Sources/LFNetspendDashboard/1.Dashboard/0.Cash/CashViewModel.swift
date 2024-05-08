@@ -8,13 +8,16 @@ import AccountData
 import LFUtilities
 import Combine
 import GeneralFeature
+import LFLocalizable
+import Services
 
 @MainActor
 final class CashViewModel: ObservableObject {
   @LazyInjected(\.accountRepository) var accountRepository
   @LazyInjected(\.accountDataManager) var accountDataManager
   @LazyInjected(\.cardRepository) var cardRepository
-  
+  @LazyInjected(\.portalStorage) var portalStorage
+
   @Published var isCardActive: Bool = true
   @Published var isLoading: Bool = false
   @Published var isOpeningPlaidView: Bool = false
@@ -26,6 +29,7 @@ final class CashViewModel: ObservableObject {
   @Published var navigation: Navigation?
   @Published var transactions: [TransactionModel] = []
   @Published var assets: [AssetModel] = []
+  @Published var collateralAsset: AssetModel?
   @Published var linkedAccount: [APILinkedSourceData] = []
   @Published var achInformation: ACHModel = .default
   @Published var fullScreen: FullScreen?
@@ -80,6 +84,7 @@ final class CashViewModel: ObservableObject {
     
     subscribeLinkedSources()
     handleEventReloadTransaction()
+    getCollateralAsset()
   }
   
   func subscribeLinkedSources() {
@@ -198,12 +203,17 @@ extension CashViewModel {
   }
   
   func addToBalanceButtonTapped() {
+    guard let collateralAsset else {
+      toastMessage = L10N.Common.MoveCryptoInput.SendCollateral.errorMessage
+      return
+    }
+    navigation = .addToBalance(assetCollateral: collateralAsset)
   }
 }
 
 // MARK: - Private Functions
- extension CashViewModel {
-  private func loadTransactions(accountId: String) async throws {
+private extension CashViewModel {
+  func loadTransactions(accountId: String) async throws {
     let transactions = try await accountRepository.getTransactions(
       accountId: accountId,
       currencyType: currencyType,
@@ -214,13 +224,25 @@ extension CashViewModel {
     self.transactions = transactions.data.compactMap({ TransactionModel(from: $0) })
   }
   
-  private func getACHInfo() async throws {
+  func getACHInfo() async throws {
     do {
       achInformation = try await dashboardRepository.getACHInformation()
     } catch {
       log.error(error.userFriendlyMessage)
     }
   }
+  
+  func getCollateralAsset() {
+    portalStorage
+      .cryptoAsset(with: AssetType.usdc.title)
+      .receive(on: DispatchQueue.main)
+      .map { asset in
+        guard let asset else { return nil }
+        return AssetModel(portalAsset: asset)
+      }
+      .assign(to: &$collateralAsset)
+  }
+   
 }
 
 // MARK: - Types
@@ -236,6 +258,7 @@ extension CashViewModel {
     case transactions
     case transactionDetail(TransactionModel)
     case moveMoney(kind: MoveMoneyAccountViewModel.Kind)
+    case addToBalance(assetCollateral: AssetModel)
   }
   
   enum FullScreen: Identifiable {

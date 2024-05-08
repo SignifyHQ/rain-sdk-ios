@@ -33,10 +33,10 @@ extension LFCoreNetwork: RainAPIProtocol where R == RainRoute {
     )
   }
   
-  public func getSmartContracts() async throws -> [APIRainSmartContract] {
+  public func getCollateralContract() async throws -> APIRainCollateralContract {
     try await request(
-      RainRoute.getSmartContracts,
-      target: [APIRainSmartContract].self,
+      RainRoute.getCollateralContract,
+      target: APIRainCollateralContract.self,
       failure: LFErrorObject.self,
       decoder: .apiDecoder
     )

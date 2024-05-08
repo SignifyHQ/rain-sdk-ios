@@ -433,13 +433,21 @@
 "MoveCryptoInput.sellAvailableBalance.subtitle" = "%@ %@ available";
 "MoveCryptoInput.send.title" = "SEND %@";
 "MoveCryptoInput.sendAvailableBalance.subtitle" = "%@ %@ available";
+"MoveCryptoInput.sendCollateral.title" = "Add To Balance";
+"MoveCryptoInput.sendCollateralAvailableBalance.subtitle" = "%@ %@ available";
 "MoveCryptoInput.buy.annotation" = "You currently have %@ available to buy Dogecoin. If this amount is less than expected, please contact support.";
 "MoveCryptoInput.sell.annotation" = "You currently have %@ Dogecoin available to sell. Doge Rewards are not available to sell until 48 hours after they are earned.";
 "MoveCryptoInput.send.annotation" = "You currently have %@ %@ available to send. If this amount is less than expected, please contact support.";
+"MoveCryptoInput.sendCollateral.annotation" = "You currently have %@ %@ available to add. If this amount is less than expected, please contact support.";
 "MoveCryptoInput.minimumCash.description" = "Minimum amount should be $0.10";
 "MoveCryptoInput.minimumCrypto.description" = "Minimum amount should be 0.0001%@";
 "MoveCryptoInput.insufficientFunds.description" = "Insufficient funds";
 "MoveCryptoInput.send.estimated_fee" = "The estimated network fee is an approximation and the actual network fee applied on a withdrawal may differ.";
+"MoveCryptoInput.sendCollateral.errorMessage" = "Unable to Add Collateral at the Moment. Apologies for the inconvenience.";
+"MoveCryptoInput.sendCollateralPopup.title" = "confirm transaction";
+"MoveCryptoInput.sendCollateralPopup.message" = "You sure you want to add %@ %@ to your balance?";
+"MoveCryptoInput.usdcUnsupported.errorMessage" = "USDC token cannot be utilized as collateral in the current contract";
+"MoveCryptoInput.noCollateralContract.errorMessage" = "The account does not have a collateral contract.";
 
 // CryptoReceipt
 "cryptoReceipt.navigation.title" = "Receipt";

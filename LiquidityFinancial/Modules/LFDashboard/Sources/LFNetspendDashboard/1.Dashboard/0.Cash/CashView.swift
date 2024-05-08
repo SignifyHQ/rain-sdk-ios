@@ -30,6 +30,9 @@ struct CashView: View {
         ErrorView(message: L10N.Common.CashTab.DeActiveError.message)
       }
     }
+    .popup(item: $viewModel.toastMessage, style: .toast) {
+      ToastView(toastMessage: $0)
+    }
     .track(name: String(describing: type(of: self)))
     .background(Colors.background.swiftUIColor)
     .navigationLink(item: $viewModel.navigation) { navigation in
@@ -56,6 +59,8 @@ struct CashView: View {
           kind: transaction.detailType,
           isPopToRoot: false
         )
+      case let .addToBalance(asset):
+        MoveCryptoInputView(type: .sendCollateral, assetModel: asset)
       }
     }
     .fullScreenCover(item: $viewModel.fullScreen) { item in

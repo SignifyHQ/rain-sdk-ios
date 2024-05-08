@@ -43,8 +43,8 @@ final class HomeViewModel: ObservableObject {
     DeviceRegisterUseCase(repository: devicesRepository)
    }()
   
-  lazy var getSmartContractsUseCase: GetSmartContractsUseCaseProtocol = {
-    GetSmartContractsUseCase(repository: rainRepository)
+  lazy var getCollateralContractUseCase: GetCollateralUseCaseProtocol = {
+    GetCollateralUseCase(repository: rainRepository)
   }()
   
   let dashboardRepository: DashboardRepository
@@ -90,7 +90,7 @@ extension HomeViewModel {
   
   func initData() {
     apiFetchUser()
-    fetchSmartContract()
+    fetchCollateralContract()
   }
   
   func onAppear() {
@@ -111,11 +111,11 @@ extension HomeViewModel {
     customerSupportService.loginIdentifiedUser(userAttributes: userAttributes)
   }
   
-  func fetchSmartContract() {
+  func fetchCollateralContract() {
     Task {
       do {
-        let response = try await getSmartContractsUseCase.execute()
-        accountDataManager.storeSmartContracts(response)
+        let response = try await getCollateralContractUseCase.execute()
+        accountDataManager.storeCollateralContract(response)
       } catch {
         log.error(error.userFriendlyMessage)
       }

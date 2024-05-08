@@ -23,7 +23,7 @@ public class RainRepository: RainRepositoryProtocol {
     try await rainAPI.getExternalVerificationLink()
   }
   
-  public func getSmartContracts() async throws -> [RainSmartContractEntity] {
-    try await rainAPI.getSmartContracts()
+  public func getCollateralContract() async throws -> RainCollateralContractEntity {
+    try await rainAPI.getCollateralContract()
   }
 }

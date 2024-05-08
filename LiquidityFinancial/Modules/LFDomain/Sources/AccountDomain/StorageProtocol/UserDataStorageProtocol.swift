@@ -23,10 +23,10 @@ public protocol AccountDataStorageProtocol {
   func addOrEditWalletAddress(_ address: WalletAddressEntity)
   func removeWalletAddress(id: String)
   
-  var smartContractsSubject: CurrentValueSubject<[RainSmartContractEntity], Never> { get }
-  var smartContracts: [RainSmartContractEntity] { get }
-  func subscribeSmartContractsChanged(_ completion: @escaping ([RainSmartContractEntity]) -> Void) -> Cancellable
-  func storeSmartContracts(_ smartContracts: [RainSmartContractEntity])
+  var collateralContractSubject: CurrentValueSubject<RainCollateralContractEntity?, Never> { get }
+  var collateralContract: RainCollateralContractEntity? { get }
+  func subscribeCollateralContractChanged(_ completion: @escaping (RainCollateralContractEntity?) -> Void) -> Cancellable
+  func storeCollateralContract(_ collateralContract: RainCollateralContractEntity?)
   
   func subscribeLinkedSourcesChanged(_ completion: @escaping ([any LinkedSourceDataEntity]) -> Void) -> Cancellable
   func storeLinkedSources(_ sources: [any LinkedSourceDataEntity])

@@ -188,20 +188,20 @@ public class AccountDataManager: AccountDataStorageProtocol {
   }
   
   // MARK: Smart Contracts
-  public let smartContractsSubject = CurrentValueSubject<[RainSmartContractEntity], Never>([])
+  public let collateralContractSubject = CurrentValueSubject<RainCollateralContractEntity?, Never>(nil)
   
-  public var smartContracts: [RainSmartContractEntity] {
-    smartContractsSubject.value
+  public var collateralContract: RainCollateralContractEntity? {
+    collateralContractSubject.value
   }
   
-  public func subscribeSmartContractsChanged(_ completion: @escaping ([RainSmartContractEntity]) -> Void) -> Cancellable {
-    smartContractsSubject
+  public func subscribeCollateralContractChanged(_ completion: @escaping (RainCollateralContractEntity?) -> Void) -> Cancellable {
+    collateralContractSubject
       .receive(on: DispatchQueue.main)
       .sink(receiveValue: completion)
   }
   
-  public func storeSmartContracts(_ smartContracts: [RainSmartContractEntity]) {
-    smartContractsSubject.send(smartContracts)
+  public func storeCollateralContract(_ collateralContract: RainCollateralContractEntity?) {
+    collateralContractSubject.send(collateralContract)
   }
   
   // MARK: Wallet addresses

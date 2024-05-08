@@ -25,7 +25,9 @@ final class MoveCryptoInputViewModel: ObservableObject {
   @Published var fiatAccount: AccountModel?
   
   @Published var navigation: Navigation?
+  @Published var popup: Popup?
   @Published var isFetchingData = false
+  @Published var isLoading = false
   @Published var isPerformingAction = false
   @Published var amountInput = "0"
   @Published var numberOfShakes = 0
@@ -93,6 +95,8 @@ final class MoveCryptoInputViewModel: ObservableObject {
       fetchSellCryptoQuote(amount: "\(amount)")
     case .sendCrypto:
       fetchSendCryptoQuote(amount: amount, address: address)
+    case .sendCollateral:
+      popup = .confirmSendCollateral
     }
   }
   
@@ -101,7 +105,7 @@ final class MoveCryptoInputViewModel: ObservableObject {
     switch type {
     case .buyCrypto:
       gridValues = Constant.Buy.buildRecommend(available: fiatAccount?.availableBalance ?? 0)
-    case .sellCrypto, .sendCrypto:
+    case .sellCrypto, .sendCrypto, .sendCollateral:
       gridValues = Constant.Sell.buildRecommend(available: assetModel.availableBalance, coin: cryptoCurrency)
     }
   }
@@ -207,7 +211,7 @@ extension MoveCryptoInputViewModel {
     switch type {
     case .buyCrypto:
       return true
-    case .sellCrypto, .sendCrypto:
+    case .sellCrypto, .sendCrypto, .sendCollateral:
       return false
     }
   }
@@ -216,7 +220,7 @@ extension MoveCryptoInputViewModel {
     switch type {
     case .buyCrypto:
       return false
-    case .sellCrypto, .sendCrypto:
+    case .sellCrypto, .sendCrypto, .sendCollateral:
       return true
     }
   }
@@ -225,7 +229,7 @@ extension MoveCryptoInputViewModel {
     switch type {
     case .buyCrypto:
       return 2
-    case .sellCrypto, .sendCrypto:
+    case .sellCrypto, .sendCrypto, .sendCollateral:
       return LFUtilities.cryptoFractionDigits
     }
   }
@@ -236,7 +240,7 @@ extension MoveCryptoInputViewModel {
   
   var showEstimatedFeeDescription: Bool {
     switch type {
-    case .sendCrypto:
+    case .sendCrypto, .sendCollateral:
       return true
     default:
       return false
@@ -251,6 +255,8 @@ extension MoveCryptoInputViewModel {
       return L10N.Common.MoveCryptoInput.Sell.title(assetModel.type?.title ?? .empty)
     case .sendCrypto:
       return L10N.Common.MoveCryptoInput.Send.title(assetModel.type?.title ?? .empty)
+    case .sendCollateral:
+      return L10N.Common.MoveCryptoInput.SendCollateral.title.uppercased()
     }
   }
   
@@ -271,6 +277,11 @@ extension MoveCryptoInputViewModel {
       return L10N.Common.MoveCryptoInput.SendAvailableBalance.subtitle(
         "\(balance)".formattedAmount(minFractionDigits: 3, maxFractionDigits: 3), cryptoCurrency
       )
+    case .sendCollateral:
+      let balance = assetModel.availableBalance.roundTo3f()
+      return L10N.Common.MoveCryptoInput.SendCollateralAvailableBalance.subtitle(
+        "\(balance)".formattedAmount(minFractionDigits: 3, maxFractionDigits: 3), cryptoCurrency
+      )
     }
   }
   
@@ -288,6 +299,12 @@ extension MoveCryptoInputViewModel {
     case .sendCrypto:
       let balance = assetModel.availableBalance.roundTo3f()
       return L10N.Common.MoveCryptoInput.Send.annotation(
+        "\(balance)".formattedAmount(minFractionDigits: 3, maxFractionDigits: 3),
+        assetModel.type?.title ?? .empty
+      )
+    case .sendCollateral:
+      let balance = assetModel.availableBalance.roundTo3f()
+      return L10N.Common.MoveCryptoInput.SendCollateral.annotation(
         "\(balance)".formattedAmount(minFractionDigits: 3, maxFractionDigits: 3),
         assetModel.type?.title ?? .empty
       )
@@ -321,7 +338,7 @@ extension MoveCryptoInputViewModel {
   func validateAmountInput() {
     numberOfShakes = 0
     switch type {
-    case .sellCrypto, .sendCrypto:
+    case .sellCrypto, .sendCrypto, .sendCollateral:
       inlineError = validateAmount(with: assetModel.availableBalance)
     case .buyCrypto:
       inlineError = validateAmount(with: fiatAccount?.availableBalance)
@@ -350,6 +367,36 @@ extension MoveCryptoInputViewModel {
       return false
     }
   }
+  
+  func hidePopup() {
+    popup = nil
+  }
+  
+  func sendCollateral(completion: @escaping () -> Void) {
+    Task {
+      defer { isLoading = false }
+      isLoading = true
+      
+      do {
+        guard let collateralContract = accountDataManager.collateralContract else {
+          toastMessage = L10N.Common.MoveCryptoInput.NoCollateralContract.errorMessage
+          return
+        }
+        let isSupportUSDCToken = collateralContract.tokens.contains { $0.name == AssetType.usdc.title }
+        guard isSupportUSDCToken else {
+          toastMessage = L10N.Common.MoveCryptoInput.UsdcUnsupported.errorMessage
+          return
+        }
+        
+        try await sendEthUseCase.executeSend(to: collateralContract.address, contractAddress: assetModel.id, amount: amount)
+        hidePopup()
+        completion()
+      } catch {
+        log.debug(error.userFriendlyMessage)
+        toastMessage = error.userFriendlyMessage
+      }
+    }
+  }
 }
 
 // MARK: - Types
@@ -358,6 +405,7 @@ extension MoveCryptoInputViewModel {
     case buyCrypto
     case sellCrypto
     case sendCrypto(address: String, nickname: String?)
+    case sendCollateral
     
     var id: String {
       switch self {
@@ -367,6 +415,8 @@ extension MoveCryptoInputViewModel {
         return "sellCrypto"
       case .sendCrypto:
         return "sendCrypto"
+      case .sendCollateral:
+        return "sendCollateral"
       }
     }
   }
@@ -375,6 +425,10 @@ extension MoveCryptoInputViewModel {
     case confirmSell(GetSellQuoteEntity, accountId: String)
     case confirmBuy(GetBuyQuoteEntity, accountId: String)
     case confirmSend(lockedFeeResponse: APILockedNetworkFeeResponse)
+  }
+  
+  enum Popup {
+    case confirmSendCollateral
   }
 }
 

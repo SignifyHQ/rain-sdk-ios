@@ -375,9 +375,9 @@ private extension PortalService {
         return
       }
       
-      guard let gatewayUrl = portal?.gatewayConfig[chainId]
+      guard let rpcURL = portal?.rpcConfig["eip155:\(chainId)"]
       else {
-        log.error("Portal Swift: Error building ERC20 transaction. Gateway URL is unavailable")
+        log.error("Portal Swift: Error building ERC20 transaction. rpcURL is unavailable")
         continuation.resume(throwing: LFPortalError.unexpected)
         
         return
@@ -400,7 +400,7 @@ private extension PortalService {
         return
       }
       
-      let web3 = Web3(rpcURL: gatewayUrl)
+      let web3 = Web3(rpcURL: rpcURL)
       let contract = web3.eth.Contract(
         type: GenericERC20Contract.self,
         address: EthereumAddress(hexString: contractAddress)

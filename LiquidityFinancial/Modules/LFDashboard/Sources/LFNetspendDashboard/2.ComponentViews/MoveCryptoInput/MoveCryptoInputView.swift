@@ -7,6 +7,8 @@ import GeneralFeature
 
 struct MoveCryptoInputView: View {
   @StateObject private var viewModel: MoveCryptoInputViewModel
+  @Environment(\.dismiss) var dismiss
+
   @State private var isShowAnnotationView: Bool = false
   @State private var screenSize: CGSize = .zero
   private let completeAction: (() -> Void)?
@@ -41,6 +43,12 @@ struct MoveCryptoInputView: View {
       ToastView(toastMessage: $0)
     }
     .navigationBarTitleDisplayMode(.inline)
+    .popup(item: $viewModel.popup) { popup in
+      switch popup {
+      case .confirmSendCollateral:
+        confirmSendCollateralPopup
+      }
+    }
     .navigationLink(item: $viewModel.navigation) { navigation in
       switch navigation {
       case .confirmSell(let quoteEntity, let accountID):
@@ -59,6 +67,7 @@ struct MoveCryptoInputView: View {
       }
     }
     .track(name: String(describing: type(of: self)))
+    .disabled(viewModel.isLoading)
   }
 }
 
@@ -196,5 +205,23 @@ private extension MoveCryptoInputView {
         .foregroundColor(Colors.label.swiftUIColor.opacity(0.5))
         .fixedSize(horizontal: false, vertical: true)
     }
+  }
+  
+  var confirmSendCollateralPopup: some View {
+    LiquidityAlert(
+      title:  L10N.Common.MoveCryptoInput.SendCollateralPopup.title.uppercased(),
+      message: L10N.Common.MoveCryptoInput.SendCollateralPopup.message(
+        viewModel.amount, viewModel.assetModel.type?.title ?? .empty
+      ),
+      primary: .init(text: L10N.Common.Button.Yes.title) {
+        viewModel.sendCollateral {
+          dismiss()
+        }
+      },
+      secondary: .init(text: L10N.Common.Button.No.title) {
+        viewModel.hidePopup()
+      },
+      isLoading: $viewModel.isLoading
+    )
   }
 }
