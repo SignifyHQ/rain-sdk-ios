@@ -49,6 +49,16 @@ enum Configs {
     }
   }
   
+  enum PortalSwaps {
+    static var prodKey: String {
+      ""
+    }
+    
+    static var devKey: String {
+      "d40ff162-39f2-49b0-b7c7-5d27acee76c8"
+    }
+  }
+  
   enum PortalNetwork {
     case ethSepolia
     case ethGoerli
@@ -73,8 +83,8 @@ enum Configs {
     
     static func configRPC(alchemyAPIKey: String) -> [String: String] {
       [
-        "eip155:1": "https://eth-sepolia.g.alchemy.com/v2/\(alchemyAPIKey)",
-        "eip155:11155111": "https://eth-mainnet.g.alchemy.com/v2/\(alchemyAPIKey)"
+        "eip155:1": "https://eth-mainnet.g.alchemy.com/v2/\(alchemyAPIKey)",
+        "eip155:11155111": "https://eth-sepolia.g.alchemy.com/v2/\(alchemyAPIKey)"
       ]
     }
   }

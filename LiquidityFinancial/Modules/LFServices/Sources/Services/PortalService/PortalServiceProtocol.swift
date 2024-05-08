@@ -12,6 +12,8 @@ public protocol PortalServiceProtocol {
   func backup(backupMethod: BackupMethods, password: String?) async throws -> (String, () async throws -> Void)
   func recover(backupMethod: BackupMethods, password: String?, cipherText: String) async throws
   func refreshBalances() async throws -> (walletAddress: String?, balances: [String: Double])
+  func getSwapQuote(sellToken: String, buyToken: String, buyAmount: Double) async throws -> Quote
+  func executeSwap(quote: Quote) async throws -> String
   func getWalletAddress() async -> String?
   func isWalletOnDevice() async -> Bool
   var walletAddress: String? { get }

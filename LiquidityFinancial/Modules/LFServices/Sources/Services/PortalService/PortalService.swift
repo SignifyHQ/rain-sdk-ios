@@ -220,6 +220,7 @@ public extension PortalService {
         withMethod: .eth_getBalance,
         andParams: [walletAddress, "latest"]
       )
+    
     guard let ethBalanceRpcResponse = ethBalanceResponse.result as? PortalProviderRpcResponse
     else {
       log.error("Portal Swift: Error fetching ETH wallet balances for \(walletAddress). Unexpected RPC response")
@@ -231,6 +232,66 @@ public extension PortalService {
     
     log.debug("Portal Swift: Wallet balances for \(walletAddress) fetched successfully")
     return(walletAddress: walletAddress, balances: portalBalances)
+  }
+  
+  func getSwapQuote(
+    sellToken: String,
+    buyToken: String,
+    buyAmount: Double
+  ) async throws -> Quote {
+    // Throw an error if Portal clent instance is not ready
+    guard let portal = portal else {
+      log.error("Portal Swift: Error getting swap quote for \(walletAddress ?? "-/-"). Portal instance is unavailable")
+      throw(LFPortalError.portalInstanceUnavailable)
+    }
+    
+    // TODO(Volo): Make sure we handle conversion factor correctly. It's ok to hardcode for now
+    let conversionFactor: Double = 1e18
+    let buyAmountBaseUnits: BigUInt = BigUInt(buyAmount * conversionFactor)
+    
+    // Build the quote parameters
+    let quoteArguments = QuoteArgs(
+      buyToken: buyToken,
+      sellToken: sellToken,
+      buyAmount: "\(buyAmountBaseUnits)"
+    )
+    
+    // Get the swap quote
+    let swapsKey = environmentService.networkEnvironment == .productionLive ?
+    Configs.PortalSwaps.prodKey :
+    Configs.PortalSwaps.devKey
+    
+    let quote = try await portal.api.getQuote(
+      swapsKey,
+      withArgs: quoteArguments,
+      forChainId: "eip155:\(chainId)"
+    )
+    
+    log.debug("Portal Swift: Swap quote fetched successfully for address: \(walletAddress ?? "-/-"), sellToken: \(sellToken), buyToken: \(buyToken), buyAmount: \(buyAmount). Quote: \(quote)")
+    return quote
+  }
+  
+  func executeSwap(
+    quote: Quote
+  ) async throws -> String {
+    // Throw an error if Portal clent instance is not ready
+    guard let portal = portal else {
+      log.error("Portal Swift: Error executing swap for \(walletAddress ?? "-/-"). Portal instance is unavailable")
+      throw(LFPortalError.portalInstanceUnavailable)
+    }
+    
+    // Make a contract call for swapping
+    let ethSendResponse = try await portal.request(
+      "eip155:\(chainId)",
+      withMethod: .eth_sendTransaction,
+      andParams: [quote.transaction]
+    )
+    
+    // Get and return the transaction hash
+    let txHash = ethSendResponse.result as? String ?? "-/-"
+    log.debug("Portal Swift: Swap execution success for address: \(walletAddress ?? "-/-") with quote: \(quote). txHash: \(txHash)")
+    
+    return txHash
   }
 }
 
