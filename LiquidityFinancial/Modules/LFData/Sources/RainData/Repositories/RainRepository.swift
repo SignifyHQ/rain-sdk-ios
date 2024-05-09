@@ -26,4 +26,8 @@ public class RainRepository: RainRepositoryProtocol {
   public func getCollateralContract() async throws -> RainCollateralContractEntity {
     try await rainAPI.getCollateralContract()
   }
+  
+  public func getCreditBalance() async throws -> RainCreditBalanceEntity {
+    try await rainAPI.getCreditBalance()
+  }
 }

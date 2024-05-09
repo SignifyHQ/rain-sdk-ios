@@ -109,7 +109,7 @@ final class CashViewModel: ObservableObject {
   
   func onRefresh() {
     Task { @MainActor in
-      _ = try? await dashboardRepository.getFiatAccounts()
+      _ = try? await dashboardRepository.getRainAccount()
       dashboardRepository.fetchNetspendLinkedSources()
       
       guard let accountID = accountDataManager.fiatAccountID else { return }
@@ -125,12 +125,12 @@ final class CashViewModel: ObservableObject {
       do {
         activity = .loading
         try await loadTransactions(accountId: accountID)
-        try await getACHInfo()
         activity = transactions.isEmpty ? .addFunds : .transactions
       } catch {
         activity = .addFunds
         log.error(error)
-        toastMessage = error.userFriendlyMessage
+        // TODO: MinhNguyen - Will check and update in transactions epic
+        // toastMessage = error.userFriendlyMessage
       }
     }
   }
@@ -149,8 +149,9 @@ final class CashViewModel: ObservableObject {
         if withAnimation {
           activity = .addFunds
         }
-        log.error(error)
-        toastMessage = error.userFriendlyMessage
+        log.error(error.userFriendlyMessage)
+        // TODO: MinhNguyen - Will check and update in transactions epic
+        // toastMessage = error.userFriendlyMessage
       }
     }
   }
@@ -222,14 +223,6 @@ private extension CashViewModel {
       offset: transactionLimitOffset
     )
     self.transactions = transactions.data.compactMap({ TransactionModel(from: $0) })
-  }
-  
-  func getACHInfo() async throws {
-    do {
-      achInformation = try await dashboardRepository.getACHInformation()
-    } catch {
-      log.error(error.userFriendlyMessage)
-    }
   }
   
   func getCollateralAsset() {

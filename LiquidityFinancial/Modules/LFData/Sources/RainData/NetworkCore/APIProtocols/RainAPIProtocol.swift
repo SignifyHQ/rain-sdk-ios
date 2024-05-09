@@ -6,4 +6,5 @@ public protocol RainAPIProtocol {
   func createRainAccount(parameters: APIRainPersonParameters) async throws -> APIRainPerson
   func getExternalVerificationLink() async throws -> APIRainExternalVerificationLink
   func getCollateralContract() async throws -> APIRainCollateralContract
+  func getCreditBalance() async throws -> APIRainCreditBalance
 }

@@ -42,4 +42,13 @@ extension LFCoreNetwork: RainAPIProtocol where R == RainRoute {
     )
   }
   
+  public func getCreditBalance() async throws -> APIRainCreditBalance {
+    try await request(
+      RainRoute.getCreditBalance,
+      target: APIRainCreditBalance.self,
+      failure: LFErrorObject.self,
+      decoder: .apiDecoder
+    )
+  }
+
 }
