@@ -5,15 +5,12 @@ import LFUtilities
 import LFStyleGuide
 import Services
 
-public struct NSListCardsView: View {
-  @Environment(\.dismiss)
-  private var dismiss
-  @StateObject
-  private var viewModel: NSListCardsViewModel
-  @State
-  private var activeContent: ActiveContent = .verifyCvv
+public struct RainListCardsView: View {
+  @Environment(\.dismiss) private var dismiss
+  @StateObject private var viewModel: RainListCardsViewModel
+  @State private var activeContent: ActiveContent = .verifyCvv
 
-  public init(viewModel: NSListCardsViewModel) {
+  public init(viewModel: RainListCardsViewModel) {
     _viewModel = .init(wrappedValue: viewModel)
   }
   
@@ -80,7 +77,7 @@ public struct NSListCardsView: View {
 }
 
 // MARK: - ToolBar Components
-private extension NSListCardsView {
+private extension RainListCardsView {
   var toolbarContent: some ToolbarContent {
     Group {
       ToolbarItem(placement: .navigationBarLeading) {
@@ -130,7 +127,7 @@ private extension NSListCardsView {
 }
 
 // MARK: - Content Components
-private extension NSListCardsView {
+private extension RainListCardsView {
   @ViewBuilder var changePinContent: some View {
     switch activeContent {
     case .verifyCvv:
@@ -180,7 +177,7 @@ private extension NSListCardsView {
 }
 
 // MARK: - Top Components
-private extension NSListCardsView {
+private extension RainListCardsView {
   @ViewBuilder
   var cardsList: some View {
     if viewModel.isShowListCardDropdown {
@@ -211,7 +208,7 @@ private extension NSListCardsView {
   var card: some View {
     TabView(selection: $viewModel.currentCard) {
       ForEach(Array([viewModel.currentCard].enumerated()), id: \.element.id) { offset, item in
-        NSCardView(
+        RainCardView(
           cardModel: item,
           cardMetaData: viewModel.cardMetaDatas.count > offset ? $viewModel.cardMetaDatas[offset] : .constant(nil),
           isShowCardNumber: $viewModel.isShowCardNumber,
@@ -243,7 +240,7 @@ private extension NSListCardsView {
 }
 
 // MARK: - Middle Components
-private extension NSListCardsView {
+private extension RainListCardsView {
   @ViewBuilder
   var rows: some View {
     VStack(alignment: .leading, spacing: 18) {
@@ -336,7 +333,7 @@ private extension NSListCardsView {
 }
 
 // MARK: - Bottom Components
-private extension NSListCardsView {
+private extension RainListCardsView {
   @ViewBuilder var buttonGroup: some View {
     VStack(spacing: 14) {
       if viewModel.isActivePhysical {
@@ -387,7 +384,7 @@ private extension NSListCardsView {
 }
 
 // MARK: - Popup
-private extension NSListCardsView {
+private extension RainListCardsView {
   var confirmationCloseCardPopup: some View {
     LiquidityAlert(
       title: L10N.Common.ListCard.CloseCard.title.uppercased(),
@@ -424,7 +421,7 @@ private extension NSListCardsView {
 }
 
 // MARK: - View Types
-private extension NSListCardsView {
+private extension RainListCardsView {
   enum ActiveContent {
     case verifyCvv
     case changePin(String)

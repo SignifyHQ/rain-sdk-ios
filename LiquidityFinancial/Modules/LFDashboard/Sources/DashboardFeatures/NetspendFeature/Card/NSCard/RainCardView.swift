@@ -5,8 +5,8 @@ import LFUtilities
 import LFLocalizable
 import Services
 
-struct NSCardView: View {
-  @StateObject private var viewModel: NSCardViewModel
+struct RainCardView: View {
+  @StateObject private var viewModel: RainCardViewModel
   @Binding public var isShowCardNumber: Bool
   @Binding public var cardMetaData: CardMetaData?
   @Binding public var isLoading: Bool
@@ -17,7 +17,7 @@ struct NSCardView: View {
     isShowCardNumber: Binding<Bool>,
     isLoading: Binding<Bool>
   ) {
-    _viewModel = .init(wrappedValue: NSCardViewModel(cardModel: cardModel))
+    _viewModel = .init(wrappedValue: RainCardViewModel(cardModel: cardModel))
     _cardMetaData = cardMetaData
     _isShowCardNumber = isShowCardNumber
     _isLoading = isLoading
@@ -57,7 +57,7 @@ struct NSCardView: View {
 }
 
 // MARK: View Components
-private extension NSCardView {
+private extension RainCardView {
   var physicalTitleView: some View {
     HStack {
       Text(L10N.Common.Card.Physical.name(LFUtilities.cardName))

@@ -12,9 +12,9 @@ struct CashView: View {
   @StateObject private var viewModel: CashViewModel
   @State private var isNotLinkedCard = false
   
-  let listCardViewModel: NSListCardsViewModel
+  let listCardViewModel: RainListCardsViewModel
   
-  init(viewModel: CashViewModel, listCardViewModel: NSListCardsViewModel) {
+  init(viewModel: CashViewModel, listCardViewModel: RainListCardsViewModel) {
     _viewModel = .init(
       wrappedValue: viewModel
     )

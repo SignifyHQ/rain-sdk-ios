@@ -14,6 +14,8 @@ enum CardStatus: String {
       self = .closed
     case "canceled":
       self = .closed
+    case "locked":
+      self = .disabled
     case "disabled":
       self = .disabled
     case "inactive":
@@ -21,6 +23,8 @@ enum CardStatus: String {
     case "unactivated":
       self = .unactivated
     case "pendingActivation":
+      self = .unactivated
+    case "not_activated":
       self = .unactivated
     default:
       self = .unactivated

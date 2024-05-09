@@ -9,7 +9,7 @@ struct CashCardView: View {
   @StateObject private var viewModel: CashCardViewModel
   @Binding var isNotLinkedCard: Bool
   
-  let listCardViewModel: NSListCardsViewModel
+  let listCardViewModel: RainListCardsViewModel
   let isPOFlow: Bool
   let showLoadingIndicator: Bool
   let cashBalance: Double
@@ -29,7 +29,7 @@ struct CashCardView: View {
     showLoadingIndicator: Bool,
     cashBalance: Double,
     assetType: AssetType,
-    listCardViewModel: NSListCardsViewModel,
+    listCardViewModel: RainListCardsViewModel,
     orderCardAction: @escaping () -> Void
   ) {
     _isNotLinkedCard = isNoLinkedCard
@@ -66,7 +66,7 @@ struct CashCardView: View {
       }
     }
     .navigationLink(isActive: $viewModel.isShowCardDetail) {
-      NSListCardsView(viewModel: listCardViewModel)
+      RainListCardsView(viewModel: listCardViewModel)
     }
   }
   

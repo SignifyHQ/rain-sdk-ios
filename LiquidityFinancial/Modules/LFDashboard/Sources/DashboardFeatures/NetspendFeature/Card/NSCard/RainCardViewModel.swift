@@ -5,7 +5,7 @@ import LFUtilities
 import Services
 import UniformTypeIdentifiers
 
-final class NSCardViewModel: ObservableObject, Identifiable {
+final class RainCardViewModel: ObservableObject, Identifiable {
   @Published public var cardModel: CardModel
   @Published public var isCardAvailable = false
   @Published public var isShowCardCopyMessage = false
@@ -20,7 +20,7 @@ final class NSCardViewModel: ObservableObject, Identifiable {
 }
 
 // MARK: - View Helpers
-extension NSCardViewModel {
+extension RainCardViewModel {
   func copyAction(cardNumber: String?) {
     guard let cardNumber else { return }
     UIPasteboard.general.setValue(

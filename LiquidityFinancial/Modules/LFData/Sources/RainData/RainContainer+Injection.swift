@@ -11,10 +11,24 @@ extension Container {
     }
   }
   
+  public var rainCardAPI: Factory<RainCardAPIProtocol> {
+    self {
+      LFCoreNetwork<RainCardRoute>()
+    }
+  }
+  
   public var rainRepository: Factory<RainRepositoryProtocol> {
     self {
       RainRepository(
         rainAPI: self.rainAPI.callAsFunction()
+      )
+    }
+  }
+  
+  public var rainCardRepository: Factory<RainCardRepositoryProtocol> {
+    self {
+      RainCardRepository(
+        rainCardAPI: self.rainCardAPI.callAsFunction()
       )
     }
   }

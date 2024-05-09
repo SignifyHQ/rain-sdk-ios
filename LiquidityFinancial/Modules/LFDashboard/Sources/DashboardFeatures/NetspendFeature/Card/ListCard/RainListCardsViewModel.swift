@@ -4,6 +4,7 @@ import Combine
 import Factory
 import NetSpendData
 import NetspendDomain
+import RainDomain
 import LFUtilities
 import OnboardingData
 import AccountData
@@ -13,9 +14,9 @@ import LFLocalizable
 import SwiftUI
 
 @MainActor
-public final class NSListCardsViewModel: ObservableObject {
-  @LazyInjected(\.netspendDataManager) var netspendDataManager
+public final class RainListCardsViewModel: ObservableObject {
   @LazyInjected(\.accountDataManager) var accountDataManager
+  @LazyInjected(\.rainCardRepository) var rainCardRepository
   @LazyInjected(\.cardRepository) var cardRepository
   @LazyInjected(\.customerSupportService) var customerSupportService
   @LazyInjected(\.analyticsService) var analyticsService
@@ -32,8 +33,8 @@ public final class NSListCardsViewModel: ObservableObject {
     NSCloseCardUseCase(repository: cardRepository)
   }()
   
-  lazy var getListNSCardUseCase: NSGetListCardUseCaseProtocol = {
-    NSGetListCardUseCase(repository: cardRepository)
+  lazy var getCardsUseCase: RainGetCardsUseCaseProtocol = {
+    RainGetCardsUseCase(repository: rainCardRepository)
   }()
   
   lazy var getCardUseCase: NSGetCardUseCaseProtocol = {
@@ -61,13 +62,13 @@ public final class NSListCardsViewModel: ObservableObject {
   private var subscribers: Set<AnyCancellable> = []
   
   public init() {
-    apiFetchNetSpendCards()
+    fetchRainCards()
     observeRefreshListCards()
   }
 }
 
 // MARK: - API
-extension NSListCardsViewModel {
+extension RainListCardsViewModel {
   func callLockCardAPI() {
     isLoading = true
     Task {
@@ -117,13 +118,14 @@ extension NSListCardsViewModel {
 }
 
 // MARK: - View Helpers
-public extension NSListCardsViewModel {
-  
-  func apiFetchNetSpendCards() {
-    isInit = true
-    Task { @MainActor in
+public extension RainListCardsViewModel {
+  func fetchRainCards() {
+    Task {
+      defer { isInit = false }
+      isInit = true
+      
       do {
-        let cards = try await getListNSCardUseCase.execute()
+        let cards = try await getCardsUseCase.execute()
         cardsList = cards.map { card in
           mapToCardModel(card: card)
         }
@@ -138,31 +140,9 @@ public extension NSListCardsViewModel {
         
         if cardsList.isEmpty {
           NotificationCenter.default.post(name: .noLinkedCards, object: nil)
-        } else {
-          cardMetaDatas = Array(repeating: nil, count: cardsList.count)
-          cardsList.map { $0.id }.enumerated().forEach { index, id in
-            apiFetchNetSpendCardDetail(with: id, and: index)
-          }
         }
       } catch {
-        isInit = false
-        toastMessage = error.userFriendlyMessage
-      }
-    }
-  }
-  
-  func apiFetchNetSpendCardDetail(with cardID: String, and index: Int) {
-    Task { @MainActor in
-      defer { isInit = false }
-      do {
-        let entity = try await getCardUseCase.execute(cardID: cardID, sessionID: accountDataManager.sessionID)
-        if let usersession = netspendDataManager.sdkSession, let cardModel = entity as? NSAPICard {
-          let encryptedData: APICardEncrypted? = cardModel.decodeData(session: usersession)
-          if let encryptedData {
-            cardMetaDatas[index] = CardMetaData(pan: encryptedData.pan, cvv: encryptedData.cvv2)
-          }
-        }
-      } catch {
+        log.error(error.userFriendlyMessage)
         toastMessage = error.userFriendlyMessage
       }
     }
@@ -170,7 +150,7 @@ public extension NSListCardsViewModel {
 }
 
 // MARK: - View Helpers
-extension NSListCardsViewModel {
+extension RainListCardsViewModel {
   func title(for card: CardModel) -> String {
     switch card.cardType {
     case .virtual:
@@ -267,12 +247,12 @@ extension NSListCardsViewModel {
 }
 
 // MARK: - Private Functions
-private extension NSListCardsViewModel {
+private extension RainListCardsViewModel {
   func observeRefreshListCards() {
     NotificationCenter.default.publisher(for: .refreshListCards)
       .sink { [weak self] _ in
         guard let self else { return }
-        apiFetchNetSpendCards()
+        fetchRainCards()
       }
       .store(in: &subscribers)
   }
@@ -283,15 +263,15 @@ private extension NSListCardsViewModel {
     cardsList.append(card)
   }
   
-  func mapToCardModel(card: NSCardEntity) -> CardModel {
+  func mapToCardModel(card: RainCardEntity) -> CardModel {
     CardModel(
-      id: card.liquidityCardId,
-      cardType: CardType(rawValue: card.type) ?? .virtual,
+      id: card.cardId ?? card.rainCardId,
+      cardType: CardType(rawValue: card.cardType) ?? .virtual,
       cardholderName: nil,
-      expiryMonth: card.expirationMonth,
-      expiryYear: card.expirationYear,
-      last4: card.panLast4,
-      cardStatus: CardStatus(rawValue: card.status) ?? .unactivated
+      expiryMonth: Int(card.expMonth ?? .empty) ?? 0,
+      expiryYear: Int(card.expYear ?? .empty) ?? 0,
+      last4: card.last4 ?? .empty,
+      cardStatus: CardStatus(rawValue: card.cardStatus) ?? .unactivated
     )
   }
   
@@ -323,7 +303,7 @@ private extension NSListCardsViewModel {
 }
   
 // MARK: - Types
-extension NSListCardsViewModel {
+extension RainListCardsViewModel {
   enum Navigation {
     case orderPhysicalCard(AnyView)
   }
