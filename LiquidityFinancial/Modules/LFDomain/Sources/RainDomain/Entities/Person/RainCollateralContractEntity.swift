@@ -7,7 +7,7 @@ public protocol RainCollateralContractEntity {
   var chainId: Int { get }
   var address: String { get }
   var controllerAddress: String? { get }
-  var tokens: [RainTokenEntity] { get }
+  var tokensEntity: [RainTokenEntity] { get }
 }
 
 public protocol RainTokenEntity {

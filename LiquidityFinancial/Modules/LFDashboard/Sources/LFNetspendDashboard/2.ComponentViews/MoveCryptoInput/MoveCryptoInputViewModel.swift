@@ -11,12 +11,14 @@ import ZerohashData
 import GeneralFeature
 import PortalData
 import PortalDomain
+import Services
 
 @MainActor
 final class MoveCryptoInputViewModel: ObservableObject {
   @LazyInjected(\.accountRepository) var accountRepository
   @LazyInjected(\.accountDataManager) var accountDataManager
   @LazyInjected(\.portalRepository) var portalRepository
+  @LazyInjected(\.portalStorage) var portalStorage
   @LazyInjected(\.zerohashRepository) var zerohashRepository
   @LazyInjected(\.cryptoAccountService) var cryptoAccountService
   @LazyInjected(\.fiatAccountService) var fiatAccountService
@@ -382,8 +384,12 @@ extension MoveCryptoInputViewModel {
           toastMessage = L10N.Common.MoveCryptoInput.NoCollateralContract.errorMessage
           return
         }
-        let isSupportUSDCToken = collateralContract.tokens.contains { $0.name == AssetType.usdc.title }
-        guard isSupportUSDCToken else {
+        
+        let tokenAddress = collateralContract.tokensEntity.filter { $0.symbol == AssetType.usdc.title }
+        let usdcToken = tokenAddress.first {
+          portalStorage.checkTokenSupport(with: $0.address.lowercased())
+        }
+        guard usdcToken != nil else {
           toastMessage = L10N.Common.MoveCryptoInput.UsdcUnsupported.errorMessage
           return
         }

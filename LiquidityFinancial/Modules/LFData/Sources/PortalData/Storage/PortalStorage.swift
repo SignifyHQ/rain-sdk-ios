@@ -53,4 +53,11 @@ public class PortalStorage: PortalStorageProtocol {
     
     cryptoAssetsSubject.send(updatedAssets)
   }
+  
+  public func checkTokenSupport(with address: String) -> Bool {
+    defaultCryptoAssets.contains {
+      $0.token.contractAddress == address
+    }
+  }
+
 }

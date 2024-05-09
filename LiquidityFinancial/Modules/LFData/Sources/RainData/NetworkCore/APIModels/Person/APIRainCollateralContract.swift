@@ -7,7 +7,7 @@ public struct APIRainCollateralContract: Decodable {
   public let chainId: Int
   public let address: String
   public let controllerAddress: String?
-  public let tokensEntity: [APIRainToken]
+  public let tokens: [APIRainToken]
 }
 
 public struct APIRainToken: Decodable, RainTokenEntity {
@@ -25,7 +25,7 @@ public struct APIRainToken: Decodable, RainTokenEntity {
 }
 
 extension APIRainCollateralContract: RainCollateralContractEntity {
-  public var tokens: [RainTokenEntity] {
-    tokensEntity
+  public var tokensEntity: [RainTokenEntity] {
+    tokens
   }
 }
