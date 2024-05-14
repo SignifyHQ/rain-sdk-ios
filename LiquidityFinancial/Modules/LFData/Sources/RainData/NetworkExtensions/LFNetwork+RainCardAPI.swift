@@ -12,4 +12,13 @@ extension LFCoreNetwork: RainCardAPIProtocol where R == RainCardRoute {
       decoder: .apiDecoder
     )
   }
+  
+  public func orderPhysicalCard(parameters: APIRainOrderCardParameters) async throws -> APIRainCard {
+    try await request(
+      RainCardRoute.orderPhysicalCard(parameters: parameters),
+      target: APIRainCard.self,
+      failure: LFErrorObject.self,
+      decoder: .apiDecoder
+    )
+  }
 }

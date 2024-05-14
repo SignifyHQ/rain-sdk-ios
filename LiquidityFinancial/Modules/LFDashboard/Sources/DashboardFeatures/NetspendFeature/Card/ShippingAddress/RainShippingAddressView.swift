@@ -4,11 +4,11 @@ import LFStyleGuide
 import LFLocalizable
 import LFUtilities
 
-struct NSShippingAddressView: View {
+struct RainShippingAddressView: View {
   @Environment(\.dismiss)
   private var dismiss
   @StateObject
-  private var viewModel: NSShippingAddressViewModel
+  private var viewModel: RainShippingAddressViewModel
   @FocusState
   var keyboardFocus: Focus?
   
@@ -20,7 +20,7 @@ struct NSShippingAddressView: View {
     case zip
   }
   
-  init(viewModel: NSShippingAddressViewModel) {
+  init(viewModel: RainShippingAddressViewModel) {
     _viewModel = .init(wrappedValue: viewModel)
   }
   
@@ -33,6 +33,13 @@ struct NSShippingAddressView: View {
               .onChange(of: keyboardFocus) {
                 proxy.scrollTo($0)
               }
+            if viewModel.displaySuggestions {
+              if #available(iOS 16.0, *) {
+                listView().scrollContentBackground(.hidden)
+              } else {
+                listView()
+              }
+            }
           }
         }
       }
@@ -43,7 +50,7 @@ struct NSShippingAddressView: View {
 }
 
 // MARK: - View Components
-private extension NSShippingAddressView {
+private extension RainShippingAddressView {
   var content: some View {
     VStack(alignment: .leading, spacing: 32) {
       Text(
@@ -56,6 +63,43 @@ private extension NSShippingAddressView {
       enterAddressView
     }
     .padding(.horizontal, 30)
+  }
+  
+  func listView() -> some View {
+    List(viewModel.addressList, id: \.id) { item in
+      HStack(alignment: .top) {
+        GenImages.CommonImages.map.swiftUIImage
+          .foregroundColor(Colors.label.swiftUIColor)
+        Text("\(item.line1) \(item.state) \(item.city) \(item.postalCode)")
+          .foregroundColor(Colors.label.swiftUIColor)
+          .opacity(0.75)
+          .font(
+            Fonts.regular.swiftUIFont(
+              size: Constants.FontSize.small.value
+            )
+          )
+          .padding([.top], -2)
+          .padding([.leading], 5)
+      }
+      .padding([.leading], 2)
+      .padding([.top, .bottom, .trailing], 10)
+      .onTapGesture {
+        viewModel.select(suggestion: item)
+      }
+      .listRowBackground(Colors.secondaryBackground.swiftUIColor)
+      .listRowSeparatorTint(Colors.label.swiftUIColor.opacity(0.16))
+      .listRowInsets(.none)
+    }
+    .cornerRadius(8, style: .continuous)
+    .listStyle(.plain)
+    .frame(maxHeight: 240, alignment: .top)
+    .padding([.leading, .trailing], 20)
+    .padding(.top, 95)
+    .onAppear {
+      UITableView.appearance().contentInset.top = -35
+      UITableView.appearance().separatorInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 15)
+    }
+    .floatingShadow()
   }
   
   var enterAddressView: some View {
@@ -74,7 +118,7 @@ private extension NSShippingAddressView {
   var button: some View {
     FullSizeButton(
       title: L10N.Common.ShippingAddress.Confirm.buttonTitle,
-      isDisable: viewModel.isDisableButton
+      isDisable: !viewModel.shouldEnableContinueButton
     ) {
       keyboardFocus = nil
       viewModel.saveAddress()
@@ -86,7 +130,7 @@ private extension NSShippingAddressView {
 }
 
 // MARK: - TextField
-private extension NSShippingAddressView {
+private extension RainShippingAddressView {
   @ViewBuilder
   func textField(
     placeholder: String,

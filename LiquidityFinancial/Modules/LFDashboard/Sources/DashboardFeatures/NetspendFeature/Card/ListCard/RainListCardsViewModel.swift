@@ -37,10 +37,6 @@ public final class RainListCardsViewModel: ObservableObject {
     RainGetCardsUseCase(repository: rainCardRepository)
   }()
   
-  lazy var getCardUseCase: NSGetCardUseCaseProtocol = {
-    NSGetCardUseCase(repository: cardRepository)
-  }()
-  
   @Published var isInit: Bool = false
   @Published var isLoading: Bool = false
   @Published var isShowCardNumber: Bool = false
@@ -216,10 +212,10 @@ extension RainListCardsViewModel {
   }
   
   func onClickedOrderPhysicalCard() {
-    let viewModel = NSOrderPhysicalCardViewModel { card in
+    let viewModel = RainOrderPhysicalCardViewModel { card in
       self.orderPhysicalSuccess(card: card)
     }
-    let destinationView = NSOrderPhysicalCardView(viewModel: viewModel)
+    let destinationView = RainOrderPhysicalCardView(viewModel: viewModel)
     navigation = .orderPhysicalCard(AnyView(destinationView))
   }
   
@@ -260,7 +256,8 @@ private extension RainListCardsViewModel {
   func orderPhysicalSuccess(card: CardModel) {
     isHasPhysicalCard = true
     cardMetaDatas.append(nil)
-    cardsList.append(card)
+    cardsList.insert(card, at: 0)
+    currentCard = card
   }
   
   func mapToCardModel(card: RainCardEntity) -> CardModel {

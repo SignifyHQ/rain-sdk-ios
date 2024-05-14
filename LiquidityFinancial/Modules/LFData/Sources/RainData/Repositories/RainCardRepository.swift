@@ -11,4 +11,11 @@ public class RainCardRepository: RainCardRepositoryProtocol {
   public func getCards() async throws -> [RainCardEntity] {
     try await rainCardAPI.getCards()
   }
+  
+  public func orderPhysicalCard(parameters: RainOrderCardParametersEntity) async throws -> RainCardEntity {
+    guard let parameters = parameters as? APIRainOrderCardParameters else {
+      throw "Can't map paramater :\(parameters)"
+    }
+    return try await rainCardAPI.orderPhysicalCard(parameters: parameters)
+  }
 }

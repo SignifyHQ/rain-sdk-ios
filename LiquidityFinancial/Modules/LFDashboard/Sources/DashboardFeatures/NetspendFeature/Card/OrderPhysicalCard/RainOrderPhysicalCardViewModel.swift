@@ -1,5 +1,5 @@
-import NetSpendData
-import NetspendDomain
+import RainData
+import RainDomain
 import Foundation
 import LFStyleGuide
 import LFUtilities
@@ -11,13 +11,13 @@ import AccountData
 import AccountDomain
 
 @MainActor
-final class NSOrderPhysicalCardViewModel: ObservableObject {
+final class RainOrderPhysicalCardViewModel: ObservableObject {
   @LazyInjected(\.accountRepository) var accountRepository
   @LazyInjected(\.accountDataManager) var accountDataManager
-  @LazyInjected(\.cardRepository) var cardRepository
+  @LazyInjected(\.rainCardRepository) var rainCardRepository
   
-  lazy var orderPhysicalCardUseCase: NSOrderPhysicalCardUseCaseProtocol = {
-    NSOrderPhysicalCardUseCase(repository: cardRepository)
+  lazy var orderPhysicalCardUseCase: RainOrderPhysicalCardUseCaseProtocol = {
+    RainOrderPhysicalCardUseCase(repository: rainCardRepository)
   }()
   
   @Published var isOrderingCard: Bool = false
@@ -37,7 +37,7 @@ final class NSOrderPhysicalCardViewModel: ObservableObject {
 }
 
 // MARK: - API
-extension NSOrderPhysicalCardViewModel {
+extension RainOrderPhysicalCardViewModel {
   func getUser(from userEntity: UserInfomationDataProtocol) {
     shippingAddress = ShippingAddress(
       line1: userEntity.addressLine1 ?? .empty,
@@ -50,26 +50,19 @@ extension NSOrderPhysicalCardViewModel {
   }
   
   func orderPhysicalCard() {
-    guard let shippingAddress = shippingAddress else {
+    guard let shippingAddress, !shippingAddress.line1.isEmpty else {
       return
     }
+    
     isOrderingCard = true
+    
     Task {
       do {
-        let address = AddressCardParameters(
-          line1: shippingAddress.line1,
-          line2: shippingAddress.line2,
-          city: shippingAddress.city,
-          state: shippingAddress.state,
-          country: shippingAddress.country,
-          postalCode: shippingAddress.postalCode
-        )
-        let response = try await orderPhysicalCardUseCase.execute(
-          address: address,
-          sessionID: accountDataManager.sessionID
-        )
+        let parameters = generateOrderPhysicalCardParameter(with: shippingAddress)
+        let response = try await orderPhysicalCardUseCase.execute(parameters: parameters)
+        
         self.onOrderSuccess?(
-          mapToCardModel(entity: response)
+          mapToCardModel(card: response)
         )
         self.isOrderingCard = false
         self.isShowOrderSuccessPopup = true
@@ -83,10 +76,10 @@ extension NSOrderPhysicalCardViewModel {
 }
 
 // MARK: - View Helpers
-extension NSOrderPhysicalCardViewModel {
+extension RainOrderPhysicalCardViewModel {
   func onClickedEditAddressButton(shippingAddress: Binding<ShippingAddress?>) {
-    let destinationView = NSShippingAddressView(
-      viewModel: NSShippingAddressViewModel(shippingAddress: shippingAddress)
+    let destinationView = RainShippingAddressView(
+      viewModel: RainShippingAddressViewModel(shippingAddress: shippingAddress)
     )
     navigation = .shippingAddress(AnyView(destinationView))
   }
@@ -97,22 +90,36 @@ extension NSOrderPhysicalCardViewModel {
 }
 
 // MARK: - Private Functions
-private extension NSOrderPhysicalCardViewModel {
-  func mapToCardModel(entity: NSCardEntity) -> CardModel {
+private extension RainOrderPhysicalCardViewModel {
+  func mapToCardModel(card: RainCardEntity) -> CardModel {
     CardModel(
-      id: entity.liquidityCardId,
-      cardType: CardType(rawValue: entity.type) ?? .virtual,
+      id: card.cardId ?? card.rainCardId,
+      cardType: CardType(rawValue: card.cardType) ?? .virtual,
       cardholderName: nil,
-      expiryMonth: entity.expirationMonth,
-      expiryYear: entity.expirationYear,
-      last4: entity.panLast4,
-      cardStatus: CardStatus(rawValue: entity.status) ?? .unactivated
+      expiryMonth: Int(card.expMonth ?? .empty) ?? 0,
+      expiryYear: Int(card.expYear ?? .empty) ?? 0,
+      last4: card.last4 ?? .empty,
+      cardStatus: CardStatus(rawValue: card.cardStatus) ?? .unactivated
     )
+  }
+  
+  func generateOrderPhysicalCardParameter(with shippingAddress: ShippingAddress) -> APIRainOrderCardParameters {
+    let address = APIRainShippingAddressParameters(
+      line1: shippingAddress.line1,
+      line2: shippingAddress.line2,
+      city: shippingAddress.city,
+      region: shippingAddress.state,
+      postalCode: shippingAddress.postalCode,
+      countryCode: Constants.Default.regionCode.rawValue,
+      country: shippingAddress.country ?? .empty
+    )
+    
+    return APIRainOrderCardParameters(shippingAddress: address)
   }
 }
 
 // MARK: - Types
-extension NSOrderPhysicalCardViewModel {
+extension RainOrderPhysicalCardViewModel {
   enum Navigation {
     case shippingAddress(AnyView)
   }

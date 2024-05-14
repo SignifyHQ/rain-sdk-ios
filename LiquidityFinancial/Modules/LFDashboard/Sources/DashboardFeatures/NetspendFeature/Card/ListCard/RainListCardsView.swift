@@ -120,7 +120,7 @@ private extension RainListCardsView {
     }
     .padding(.horizontal, 16)
     .padding(.vertical, 8)
-    .frame(width: 172)
+    .frame(width: 180)
     .background(Colors.buttons.swiftUIColor.cornerRadius(16))
     .opacity(viewModel.cardsList.count > 1 ? 1 : 0)
   }
@@ -199,8 +199,9 @@ private extension RainListCardsView {
           }
         }
       }
-      .padding(16)
-      .frame(width: 172)
+      .padding(.horizontal, 8)
+      .padding(.vertical, 16)
+      .frame(width: 180)
       .background(Colors.buttons.swiftUIColor.cornerRadius(16))
     }
   }

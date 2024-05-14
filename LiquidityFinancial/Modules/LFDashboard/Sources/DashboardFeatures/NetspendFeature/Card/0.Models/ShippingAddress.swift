@@ -1,6 +1,7 @@
 import Foundation
 
-struct ShippingAddress {
+struct ShippingAddress: Identifiable {
+  var id = UUID()
   let line1: String
   let line2: String?
   let city: String

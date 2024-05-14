@@ -3,13 +3,13 @@ import LFLocalizable
 import LFUtilities
 import LFStyleGuide
 
-struct NSOrderPhysicalCardView: View {
+struct RainOrderPhysicalCardView: View {
   @Environment(\.dismiss)
   private var dismiss
   @StateObject
-  private var viewModel: NSOrderPhysicalCardViewModel
+  private var viewModel: RainOrderPhysicalCardViewModel
   
-  init(viewModel: NSOrderPhysicalCardViewModel) {
+  init(viewModel: RainOrderPhysicalCardViewModel) {
     _viewModel = .init(wrappedValue: viewModel)
   }
   
@@ -32,22 +32,24 @@ struct NSOrderPhysicalCardView: View {
 }
 
 // MARK: - View Components
-private extension NSOrderPhysicalCardView {
+private extension RainOrderPhysicalCardView {
   var content: some View {
-    ScrollView(showsIndicators: false) {
-      VStack(spacing: 16) {
-        physicalCardView
-        VStack(alignment: .leading, spacing: 24) {
-          feesCell
-          GenImages.CommonImages.dash.swiftUIImage
-            .foregroundColor(Colors.label.swiftUIColor)
-          cardReceivingAddress
+    VStack(alignment: .leading) {
+      ScrollView(showsIndicators: false) {
+        VStack(spacing: 16) {
+          physicalCardView
+          VStack(alignment: .leading, spacing: 24) {
+            feesCell
+            GenImages.CommonImages.dash.swiftUIImage
+              .foregroundColor(Colors.label.swiftUIColor)
+            cardReceivingAddress
+          }
         }
-        Spacer()
-        buttonGroup
       }
-      .padding(.horizontal, 30)
+      Spacer()
+      buttonGroup
     }
+    .padding(.horizontal, 30)
   }
   
   var physicalCardView: some View {

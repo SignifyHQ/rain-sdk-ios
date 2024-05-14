@@ -6,6 +6,7 @@ import LFUtilities
 
 public enum RainCardRoute {
   case getCards
+  case orderPhysicalCard(parameters: APIRainOrderCardParameters)
 }
 
 extension RainCardRoute: LFRoute {
@@ -13,6 +14,8 @@ extension RainCardRoute: LFRoute {
     switch self {
     case .getCards:
       return "/v1/rain/cards/list"
+    case .orderPhysicalCard:
+      return "/v1/rain/cards/physical-card"
     }
   }
   
@@ -20,6 +23,8 @@ extension RainCardRoute: LFRoute {
     switch self {
     case .getCards:
       return .GET
+    case .orderPhysicalCard:
+      return .POST
     }
   }
   
@@ -39,6 +44,8 @@ extension RainCardRoute: LFRoute {
       return [
         "limit": Constants.defaultLimit
       ]
+    case let .orderPhysicalCard(parameters):
+      return parameters.encoded()
     }
   }
   
@@ -46,6 +53,8 @@ extension RainCardRoute: LFRoute {
     switch self {
     case .getCards:
       return .url
+    case .orderPhysicalCard:
+      return .json
     }
   }
 }
