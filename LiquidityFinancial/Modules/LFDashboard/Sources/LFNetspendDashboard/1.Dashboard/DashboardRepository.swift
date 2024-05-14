@@ -121,7 +121,7 @@ extension DashboardRepository {
       id: response.userId,
       externalAccountId: nil,
       currency: response.currency,
-      availableBalance: response.creditLimit,
+      availableBalance: response.availableBalance,
       availableUsdBalance: 0
     ) else {
       return nil

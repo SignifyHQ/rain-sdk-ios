@@ -8,4 +8,5 @@ public protocol RainCreditBalanceEntity {
   var pendingCharges: Double? { get }
   var postedCharges: Double? { get }
   var balanceDue: Double? { get }
+  var availableBalance: Double { get }
 }

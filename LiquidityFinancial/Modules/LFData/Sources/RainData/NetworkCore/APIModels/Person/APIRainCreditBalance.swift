@@ -8,6 +8,7 @@ public struct APIRainCreditBalance: Decodable {
   public let pendingCharges: Double?
   public let postedCharges: Double?
   public let balanceDue: Double?
+  public let availableBalance: Double
 }
 
 extension APIRainCreditBalance: RainCreditBalanceEntity {}
