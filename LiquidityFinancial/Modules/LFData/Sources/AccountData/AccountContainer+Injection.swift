@@ -16,6 +16,6 @@ extension Container {
   }
   
   public var accountRepository: Factory<AccountRepositoryProtocol> {
-    self { AccountRepository(accountAPI: self.accountAPI.callAsFunction(), auth: self.authorizationManager.callAsFunction()) }
+    self { AccountRepository(accountDataManager: self.accountDataManager.callAsFunction(), accountAPI: self.accountAPI.callAsFunction(), auth: self.authorizationManager.callAsFunction()) }
   }
 }

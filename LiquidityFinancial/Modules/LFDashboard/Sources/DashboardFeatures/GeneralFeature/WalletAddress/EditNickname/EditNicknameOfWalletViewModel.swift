@@ -43,7 +43,6 @@ extension EditNicknameOfWalletViewModel {
       }
       do {
         let walletAddress = try await accountRepository.updateWalletAddresses(
-          accountId: accountId,
           walletId: wallet.id,
           walletAddress: wallet.address,
           nickname: walletNickname

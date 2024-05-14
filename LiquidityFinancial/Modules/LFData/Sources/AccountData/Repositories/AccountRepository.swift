@@ -5,10 +5,16 @@ import OnboardingDomain
 import LFUtilities
 
 public class AccountRepository: AccountRepositoryProtocol {
+  private let accountDataManager: AccountDataStorageProtocol
   private let accountAPI: AccountAPIProtocol
   private let auth: AuthorizationManagerProtocol
   
-  public init(accountAPI: AccountAPIProtocol, auth: AuthorizationManagerProtocol) {
+  public init(
+    accountDataManager: AccountDataStorageProtocol,
+    accountAPI: AccountAPIProtocol,
+    auth: AuthorizationManagerProtocol
+  ) {
+    self.accountDataManager = accountDataManager
     self.accountAPI = accountAPI
     self.auth = auth
   }
@@ -86,25 +92,31 @@ public class AccountRepository: AccountRepositoryProtocol {
     return try await accountAPI.logout()
   }
   
-  public func createWalletAddresses(accountId: String, address: String, nickname: String) async throws -> WalletAddressEntity {
-    try await accountAPI.createWalletAddresses(accountId: accountId, address: address, nickname: nickname)
+  public func createWalletAddresses(address: String, nickname: String) async throws -> WalletAddressEntity {
+    guard let userID = accountDataManager.userInfomationData.userID else { throw LiquidityError.invalidData }
+    
+    return try await accountAPI.createWalletAddresses(accountId: userID, address: address, nickname: nickname)
   }
   
-  public func updateWalletAddresses(accountId: String, walletId: String, walletAddress: String, nickname: String) async throws -> WalletAddressEntity {
-    try await accountAPI.updateWalletAddresses(
-      accountId: accountId,
+  public func updateWalletAddresses(walletId: String, walletAddress: String, nickname: String) async throws -> WalletAddressEntity {
+    guard let userID = accountDataManager.userInfomationData.userID else { throw LiquidityError.invalidData }
+    
+    return try await accountAPI.updateWalletAddresses(
+      accountId: userID,
       walletId: walletId,
       walletAddress: walletAddress,
       nickname: nickname
     )
   }
   
-  public func getWalletAddresses(accountId: String) async throws -> [WalletAddressEntity] {
-    try await accountAPI.getWalletAddresses(accountId: accountId)
+  public func getWalletAddresses() async throws -> [WalletAddressEntity] {
+    guard let userID = accountDataManager.userInfomationData.userID else { throw LiquidityError.invalidData }
+    return try await accountAPI.getWalletAddresses(accountId: userID)
   }
   
-  public func deleteWalletAddresses(accountId: String, walletAddress: String) async throws -> DeleteWalletEntity {
-    try await accountAPI.deleteWalletAddresses(accountId: accountId, walletAddress: walletAddress)
+  public func deleteWalletAddresses(walletAddress: String) async throws -> DeleteWalletEntity {
+    guard let userID = accountDataManager.userInfomationData.userID else { throw LiquidityError.invalidData }
+    return try await accountAPI.deleteWalletAddresses(accountId: userID, walletAddress: walletAddress)
   }
   
   public func getReferralCampaign() async throws -> ReferralCampaignEntity {

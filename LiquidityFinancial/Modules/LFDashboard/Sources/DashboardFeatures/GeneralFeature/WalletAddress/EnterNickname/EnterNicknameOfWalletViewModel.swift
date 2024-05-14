@@ -40,7 +40,6 @@ extension EnterNicknameOfWalletViewModel {
       }
       do {
         let walletAddress = try await accountRepository.createWalletAddresses(
-          accountId: accountId,
           address: walletAddress,
           nickname: walletNickname
         )

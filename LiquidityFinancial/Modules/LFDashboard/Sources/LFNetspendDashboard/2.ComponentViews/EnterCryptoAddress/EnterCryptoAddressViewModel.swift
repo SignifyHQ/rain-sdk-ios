@@ -41,8 +41,7 @@ final class EnterCryptoAddressViewModel: ObservableObject {
   init(asset: AssetModel) {
     self.asset = asset
     
-    // TODO(Volo): Need to fix or remove this
-    //getSavedWallets()
+    getSavedWallets()
     
     accountDataManager
       .subscribeWalletAddressesChanged({ [weak self] wallets in
@@ -91,7 +90,7 @@ extension EnterCryptoAddressViewModel {
       defer { isFetchingData = false }
       isFetchingData = true
       do {
-        let response = try await accountRepository.getWalletAddresses(accountId: asset.id)
+        let response = try await accountRepository.getWalletAddresses()
         let walletAddresses = response.map({ APIWalletAddress(entity: $0) })
         wallets = walletAddresses
         walletsFilter = walletAddresses
@@ -140,7 +139,6 @@ extension EnterCryptoAddressViewModel {
       showIndicator = true
       do {
         let response = try await accountRepository.deleteWalletAddresses(
-          accountId: asset.id,
           walletAddress: wallet.address
         )
         if response.success {
