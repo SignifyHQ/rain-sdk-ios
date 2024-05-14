@@ -112,25 +112,26 @@ private extension CryptoAssetView {
   }
   
   var cryptoButtons: some View {
+    // (Volo): Hiding Buy and Sell for now since it's not supported currently
     HStack(spacing: 10) {
       iconTextButton(
-        title: L10N.Common.AssetView.Buy.title,
-        image: GenImages.CommonImages.buy.swiftUIImage
-      ) {
-        viewModel.onClickedBuyButton()
-      }
-      iconTextButton(
-        title: L10N.Common.AssetView.Sell.title,
+        title: L10N.Common.AssetView.Send.title,
         image: GenImages.CommonImages.sell.swiftUIImage
       ) {
-        viewModel.onClickedSellButton()
+        viewModel.sendButtonTapped()
       }
       iconTextButton(
-        title: L10N.Common.AssetView.Transfer.title,
-        image: GenImages.CommonImages.transfer.swiftUIImage
+        title: L10N.Common.AssetView.Receive.title,
+        image: GenImages.CommonImages.buy.swiftUIImage
       ) {
-        viewModel.transferButtonTapped()
+        viewModel.receiveButtonTapped()
       }
+//      iconTextButton(
+//        title: L10N.Common.AssetView.Transfer.title,
+//        image: GenImages.CommonImages.transfer.swiftUIImage
+//      ) {
+//        viewModel.transferButtonTapped()
+//      }
     }
     .padding(.top, 6)
   }

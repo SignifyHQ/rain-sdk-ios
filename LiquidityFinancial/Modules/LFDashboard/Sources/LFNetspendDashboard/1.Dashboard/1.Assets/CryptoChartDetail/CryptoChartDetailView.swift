@@ -179,21 +179,6 @@ private extension CryptoChartDetailView {
     .padding(.horizontal, 30)
   }
   
-  var actionButtons: some View {
-    HStack(spacing: 10) {
-      iconTextButton(title: L10N.Common.CryptoChartDetail.Buy.title, image: GenImages.CommonImages.buy.swiftUIImage) {
-        viewModel.buyButtonTapped()
-      }
-      iconTextButton(title: L10N.Common.CryptoChartDetail.Sell.title, image: GenImages.CommonImages.sell.swiftUIImage) {
-        viewModel.sellButtonTapped()
-      }
-      iconTextButton(title: L10N.Common.CryptoChartDetail.Transfer.title.uppercased(), image: GenImages.CommonImages.transfer.swiftUIImage) {
-        viewModel.transferButtonTapped()
-      }
-    }
-    .padding(.horizontal, 30)
-  }
-  
   var activity: some View {
     Group {
       switch viewModel.activity {
