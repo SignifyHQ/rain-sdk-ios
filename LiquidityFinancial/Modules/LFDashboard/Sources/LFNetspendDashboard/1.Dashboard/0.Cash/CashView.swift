@@ -118,15 +118,16 @@ private extension CashView {
         ) {
           viewModel.guestCardTapped()
         }
-        .overlay(alignment: .bottom) {
-          depositButton
-        }
+        // (Volo): Hide deposit button since banking features are not supported currently
+//        .overlay(alignment: .bottom) {
+//          depositButton
+//        }
         /* TODO: Remove for MVP
         changeAssetButton
          */
-        BalanceAlertView(type: .cash, hasContacts: !viewModel.linkedAccount.isEmpty, cashBalance: viewModel.cashBalanceValue) {
-          viewModel.addMoneyTapped()
-        }
+//        BalanceAlertView(type: .cash, hasContacts: !viewModel.linkedAccount.isEmpty, cashBalance: viewModel.cashBalanceValue) {
+//          viewModel.addMoneyTapped()
+//        }
         addToBalanceButton
         activity
       }
@@ -161,9 +162,7 @@ private extension CashView {
         LottieView(loading: .mix)
           .frame(width: 30, height: 20)
           .padding(.top, 8)
-      case .addFunds:
-          addFundsView
-      case .transactions:
+      default:
         ShortTransactionsView(
           transactions: $viewModel.transactions,
           title: L10N.Common.CashTab.LastestTransaction.title,
