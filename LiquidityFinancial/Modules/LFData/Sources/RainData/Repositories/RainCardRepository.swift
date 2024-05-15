@@ -29,4 +29,12 @@ public class RainCardRepository: RainCardRepositoryProtocol {
   public func closeCard(cardID: String) async throws -> RainCardEntity {
     try await rainCardAPI.closeCard(cardID: cardID)
   }
+  
+  public func lockCard(cardID: String) async throws -> RainCardEntity {
+    try await rainCardAPI.lockCard(cardID: cardID)
+  }
+  
+  public func unlockCard(cardID: String) async throws -> RainCardEntity {
+    try await rainCardAPI.unlockCard(cardID: cardID)
+  }
 }

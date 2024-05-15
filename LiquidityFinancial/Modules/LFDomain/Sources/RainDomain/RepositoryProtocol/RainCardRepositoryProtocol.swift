@@ -6,4 +6,6 @@ public protocol RainCardRepositoryProtocol {
   func orderPhysicalCard(parameters: RainOrderCardParametersEntity) async throws -> RainCardEntity
   func activatePhysicalCard(cardID: String, parameters: RainActivateCardParametersEntity) async throws
   func closeCard(cardID: String) async throws -> RainCardEntity
+  func lockCard(cardID: String) async throws -> RainCardEntity
+  func unlockCard(cardID: String) async throws -> RainCardEntity
 }

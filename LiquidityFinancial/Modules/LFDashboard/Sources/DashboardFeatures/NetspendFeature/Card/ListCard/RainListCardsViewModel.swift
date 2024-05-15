@@ -2,8 +2,6 @@ import Foundation
 import LFStyleGuide
 import Combine
 import Factory
-import NetSpendData
-import NetspendDomain
 import RainData
 import RainDomain
 import LFUtilities
@@ -16,18 +14,16 @@ import SwiftUI
 
 @MainActor
 public final class RainListCardsViewModel: ObservableObject {
-  @LazyInjected(\.accountDataManager) var accountDataManager
   @LazyInjected(\.rainCardRepository) var rainCardRepository
-  @LazyInjected(\.cardRepository) var cardRepository
   @LazyInjected(\.customerSupportService) var customerSupportService
   @LazyInjected(\.analyticsService) var analyticsService
   
-  lazy var lockCardUseCase: NSLockCardUseCaseProtocol = {
-    NSLockCardUseCase(repository: cardRepository)
+  lazy var lockCardUseCase: RainLockCardUseCaseProtocol = {
+    RainLockCardUseCase(repository: rainCardRepository)
   }()
   
-  lazy var unLockCardUseCase: NSUnLockCardUseCaseProtocol = {
-    NSUnLockCardUseCase(repository: cardRepository)
+  lazy var unLockCardUseCase: RainUnlockCardUseCaseProtocol = {
+    RainUnlockCardUseCase(repository: rainCardRepository)
   }()
   
   lazy var closeCardUseCase: RainCloseCardUseCaseProtocol = {
@@ -70,8 +66,8 @@ extension RainListCardsViewModel {
     isLoading = true
     Task {
       do {
-        let card = try await lockCardUseCase.execute(cardID: currentCard.id, sessionID: accountDataManager.sessionID)
-        updateCardStatus(status: .disabled, id: card.liquidityCardId)
+        let card = try await lockCardUseCase.execute(cardID: currentCard.id)
+        updateCardStatus(status: .disabled, id: card.cardId ?? currentCard.id)
       } catch {
         isCardLocked = false
         isLoading = false
@@ -84,8 +80,8 @@ extension RainListCardsViewModel {
     isLoading = true
     Task {
       do {
-        let card = try await unLockCardUseCase.execute(cardID: currentCard.id, sessionID: accountDataManager.sessionID)
-        updateCardStatus(status: .active, id: card.liquidityCardId)
+        let card = try await unLockCardUseCase.execute(cardID: currentCard.id)
+        updateCardStatus(status: .active, id: card.cardId ?? currentCard.id)
       } catch {
         isCardLocked = true
         isLoading = false
