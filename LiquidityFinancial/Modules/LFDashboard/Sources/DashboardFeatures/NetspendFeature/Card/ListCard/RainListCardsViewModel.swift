@@ -30,8 +30,8 @@ public final class RainListCardsViewModel: ObservableObject {
     NSUnLockCardUseCase(repository: cardRepository)
   }()
   
-  lazy var closeCardUseCase: NSCloseCardUseCaseProtocol = {
-    NSCloseCardUseCase(repository: cardRepository)
+  lazy var closeCardUseCase: RainCloseCardUseCaseProtocol = {
+    RainCloseCardUseCase(repository: rainCardRepository)
   }()
   
   lazy var getCardsUseCase: RainGetCardsUseCaseProtocol = {
@@ -96,18 +96,15 @@ extension RainListCardsViewModel {
   
   func closeCard() {
     Task {
-      defer {
-        isLoading = false
-      }
+      defer { isLoading = false }
       hidePopup()
       isLoading = true
+      
       do {
-        let request = CloseCardReasonParameters()
-        _ = try await closeCardUseCase.execute(
-          reason: request, cardID: currentCard.id, sessionID: accountDataManager.sessionID
-        )
+        _ = try await closeCardUseCase.execute(cardID: currentCard.id)
         popup = .closeCardSuccessfully
       } catch {
+        log.error(error.userFriendlyMessage)
         toastMessage = error.userFriendlyMessage
       }
     }

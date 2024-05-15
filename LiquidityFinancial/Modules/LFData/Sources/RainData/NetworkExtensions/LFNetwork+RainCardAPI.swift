@@ -29,4 +29,13 @@ extension LFCoreNetwork: RainCardAPIProtocol where R == RainCardRoute {
       decoder: .apiDecoder
     )
   }
+  
+  public func closeCard(cardID: String) async throws -> APIRainCard {
+    try await request(
+      RainCardRoute.closeCard(cardID: cardID),
+      target: APIRainCard.self,
+      failure: LFErrorObject.self,
+      decoder: .apiDecoder
+    )
+  }
 }

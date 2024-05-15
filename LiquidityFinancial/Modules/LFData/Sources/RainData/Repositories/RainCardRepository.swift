@@ -25,4 +25,8 @@ public class RainCardRepository: RainCardRepositoryProtocol {
     }
     return try await rainCardAPI.activatePhysicalCard(cardID: cardID, parameters: parameters)
   }
+  
+  public func closeCard(cardID: String) async throws -> RainCardEntity {
+    try await rainCardAPI.closeCard(cardID: cardID)
+  }
 }
