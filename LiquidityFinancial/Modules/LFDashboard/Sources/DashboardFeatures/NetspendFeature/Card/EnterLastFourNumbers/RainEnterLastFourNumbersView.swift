@@ -4,19 +4,19 @@ import LFUtilities
 import LFStyleGuide
 import Services
 
-struct NSEnterCVVCodeView: View {
+struct RainEnterLastFourNumbersView: View {
   @Environment(\.dismiss)
   private var dismiss
   @StateObject 
-  private var viewModel: NSEnterCVVCodeViewModel
+  private var viewModel: RainEnterLastFourNumbersViewModel
   
   let screenTitle: String
-  let onDissmiss: ((String) -> Void)?
+  let onDissmiss: (() -> Void)?
   
   init(
-    viewModel: NSEnterCVVCodeViewModel,
+    viewModel: RainEnterLastFourNumbersViewModel,
     screenTitle: String,
-    onDissmiss: @escaping (String) -> Void
+    onDissmiss: @escaping () -> Void
   ) {
     _viewModel = .init(wrappedValue: viewModel)
     self.screenTitle = screenTitle
@@ -40,14 +40,14 @@ struct NSEnterCVVCodeView: View {
 }
 
 // MARK: - View Components
-private extension NSEnterCVVCodeView {
+private extension RainEnterLastFourNumbersView {
   var content: some View {
     VStack(alignment: .leading, spacing: 50) {
       VStack(alignment: .leading, spacing: 12) {
         Text(screenTitle)
           .foregroundColor(Colors.label.swiftUIColor)
           .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.main.value))
-        Text(L10N.Common.EnterCVVCode.Screen.description)
+        Text(L10N.Common.EnterLastFourNumbers.Screen.description)
           .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.medium.value))
           .foregroundColor(Colors.label.swiftUIColor.opacity(0.75))
       }
@@ -55,21 +55,21 @@ private extension NSEnterCVVCodeView {
       HStack {
         Spacer()
         PinCodeView(
-          code: $viewModel.generatedCVV,
+          code: $viewModel.panLast4,
           isDisabled: $viewModel.isShowIndicator,
-          codeLength: viewModel.cvvCodeDigits
+          codeLength: 4
         )
         Spacer()
       }
       Spacer()
       FullSizeButton(
         title: L10N.Common.Button.Continue.title,
-        isDisable: !viewModel.isCVVCodeEntered,
+        isDisable: !viewModel.isPanLast4Entered,
         isLoading: $viewModel.isShowIndicator
       ) {
         hideKeyboard()
-        viewModel.verifyCVVCode { verifyID in
-          onDissmiss?(verifyID)
+        viewModel.activatePhysicalCard {
+          onDissmiss?()
         }
       }
     }

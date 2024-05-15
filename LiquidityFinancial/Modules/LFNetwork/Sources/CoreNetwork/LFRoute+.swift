@@ -11,7 +11,7 @@ extension LFRoute {
     guard !path.isEmpty else {
       return baseURL
     }
-    return baseURL.appendingPathComponent(path)
+    return URL(string: baseURL.appendingPathComponent(path).absoluteString.removingPercentEncoding ?? .empty) ?? baseURL.appendingPathComponent(path)
   }
   
   public var needAuthorizationKey: String {

@@ -3,9 +3,9 @@ import LFLocalizable
 import LFUtilities
 import LFStyleGuide
 
-struct NSActivePhysicalCardView: View {
+struct RainActivePhysicalCardView: View {
   @Environment(\.dismiss) private var dismiss
-  @State private var activeContent: ActiveContent = .cvvCode
+  @State private var activeContent: ActiveContent = .enterPanLastFour
   let card: CardModel
   let onSuccess: ((String) -> Void)?
   
@@ -20,23 +20,16 @@ struct NSActivePhysicalCardView: View {
 }
 
 // MARK: - View Components
-private extension NSActivePhysicalCardView {
+private extension RainActivePhysicalCardView {
   @MainActor @ViewBuilder var content: some View {
     switch activeContent {
-    case .cvvCode:
-      NSEnterCVVCodeView(
-        viewModel: NSEnterCVVCodeViewModel(cardID: card.id),
-        screenTitle: L10N.Common.EnterCVVCode.ActiveCard.title
-      ) { verifyID in
-        activeContent = .setCardPin(verifyID)
+    case .enterPanLastFour:
+      RainEnterLastFourNumbersView(
+        viewModel: RainEnterLastFourNumbersViewModel(cardID: card.id),
+        screenTitle: L10N.Common.EnterLastFourNumbers.ActiveCard.title
+      ) {
+        activeContent = .activedCard
       }
-    case let .setCardPin(verifyID):
-      NSSetCardPinView(
-        viewModel: NSSetCardPinViewModel(cardModel: card, verifyID: verifyID) { cardID in
-          activeContent = .activedCard
-          onSuccess?(cardID)
-        }
-      )
     case .activedCard:
       activedCardView
     case .addAppleWallet:
@@ -95,7 +88,7 @@ private extension NSActivePhysicalCardView {
         .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.large.value))
         .foregroundColor(Colors.label.swiftUIColor)
         .multilineTextAlignment(.center)
-      Text(L10N.Common.CardActivated.CardActived.description)
+      Text(L10N.Common.CardActivated.CardActived.description(LFUtilities.cardName))
         .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.medium.value))
         .foregroundColor(Colors.label.swiftUIColor.opacity(0.75))
         .multilineTextAlignment(.center)
@@ -108,9 +101,8 @@ private extension NSActivePhysicalCardView {
     VStack(spacing: 10) {
       // applePay TODO: - Temporarily hide this button
       FullSizeButton(
-        title: L10N.Common.Button.Skip.title,
-        isDisable: false,
-        type: .secondary
+        title: L10N.Common.Button.Continue.title,
+        isDisable: false
       ) {
         dismiss()
       }
@@ -120,10 +112,9 @@ private extension NSActivePhysicalCardView {
 }
 
 // MARK: - Types
-extension NSActivePhysicalCardView {
+extension RainActivePhysicalCardView {
   enum ActiveContent {
-    case cvvCode
-    case setCardPin(String)
+    case enterPanLastFour
     case activedCard
     case addAppleWallet
   }

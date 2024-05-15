@@ -21,4 +21,12 @@ extension LFCoreNetwork: RainCardAPIProtocol where R == RainCardRoute {
       decoder: .apiDecoder
     )
   }
+  
+  public func activatePhysicalCard(cardID: String, parameters: APIRainActivateCardParameters) async throws {
+    try await requestNoResponse(
+      RainCardRoute.activatePhysicalCard(cardID: cardID, parameters: parameters),
+      failure: LFErrorObject.self,
+      decoder: .apiDecoder
+    )
+  }
 }

@@ -18,4 +18,11 @@ public class RainCardRepository: RainCardRepositoryProtocol {
     }
     return try await rainCardAPI.orderPhysicalCard(parameters: parameters)
   }
+  
+  public func activatePhysicalCard(cardID: String, parameters: RainActivateCardParametersEntity) async throws {
+    guard let parameters = parameters as? APIRainActivateCardParameters else {
+      throw "Can't map paramater :\(parameters)"
+    }
+    return try await rainCardAPI.activatePhysicalCard(cardID: cardID, parameters: parameters)
+  }
 }

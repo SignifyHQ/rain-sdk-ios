@@ -131,17 +131,18 @@ private extension RainListCardsView {
   @ViewBuilder var changePinContent: some View {
     switch activeContent {
     case .verifyCvv:
-      NSEnterCVVCodeView(
-        viewModel: NSEnterCVVCodeViewModel(cardID: viewModel.currentCard.id),
+      RainEnterLastFourNumbersView(
+        viewModel: RainEnterLastFourNumbersViewModel(cardID: viewModel.currentCard.id),
         screenTitle: L10N.Common.EnterCVVCode.SetCardPin.title
-      ) { verifyID in
-        activeContent = .changePin(verifyID)
+      ) {
+        activeContent = .changePin
       }
-    case let .changePin(verifyID):
+    case .changePin:
+      // TODO: MinhNguyen - Will update this flow later
       NSSetCardPinView(
         viewModel: NSSetCardPinViewModel(
           cardModel: viewModel.currentCard,
-          verifyID: verifyID,
+          verifyID: .empty,
           onFinish: nil
         )
       )
@@ -276,7 +277,7 @@ private extension RainListCardsView {
           row(title: L10N.Common.ListCard.ChangePin.title) {
             viewModel.onClickedChangePinButton(
               activeCardView: AnyView(
-                NSActivePhysicalCardView(card: viewModel.currentCard) { cardID in
+                RainActivePhysicalCardView(card: viewModel.currentCard) { cardID in
                   viewModel.activePhysicalSuccess(id: cardID)
                 }
               )
@@ -375,7 +376,7 @@ private extension RainListCardsView {
     ) {
       viewModel.presentActivateCardView(
         activeCardView: AnyView(
-          NSActivePhysicalCardView(card: viewModel.currentCard) { cardID in
+          RainActivePhysicalCardView(card: viewModel.currentCard) { cardID in
             viewModel.activePhysicalSuccess(id: cardID)
           }
         )
@@ -425,6 +426,6 @@ private extension RainListCardsView {
 private extension RainListCardsView {
   enum ActiveContent {
     case verifyCvv
-    case changePin(String)
+    case changePin
   }
 }

@@ -287,7 +287,7 @@
 
 // CARD ACTIVED
 "cardActivated.cardActived.title" = "CARD ACTIVATED!";
-"cardActivated.cardActived.description" = "Your card is activated!  Next, add it to your Apple Pay wallet for fast and easy payments.";
+"cardActivated.cardActived.description" = "Your %@Card is now active, can be used anywhere Visa is accepted.";
 
 // ADD TO WALLET
 "addToWallet.applePay.title" = "ADD TO APPLE PAY";
@@ -367,6 +367,10 @@
 "enterCVVCode.setCardPin.title" = "ENTER CVV TO SET CARD PIN";
 "enterCVVCode.activeCard.title" = "ACTIVATE PHYSICAL CARD";
 "enterCVVCode.screen.description" = "Enter the 3-digit CVV code of your card";
+
+// EnterLastFourNumbers
+"enterLastFourNumbers.activeCard.title" = "ACTIVATE PHYSICAL CARD";
+"enterLastFourNumbers.screen.description" = "Enter the last 4-digits of your card";
 
 // Order PhysicalCard
 "orderPhysicalCard.physicalCard.title" = "ORDER PHYSICAL CARD";
