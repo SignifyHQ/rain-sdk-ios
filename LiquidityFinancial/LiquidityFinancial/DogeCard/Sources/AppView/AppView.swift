@@ -3,7 +3,7 @@ import Factory
 import RainOnboarding
 import LFStyleGuide
 import LFUtilities
-import LFNetspendDashboard
+import LFRainDashboard
 
 struct AppView: View {
   

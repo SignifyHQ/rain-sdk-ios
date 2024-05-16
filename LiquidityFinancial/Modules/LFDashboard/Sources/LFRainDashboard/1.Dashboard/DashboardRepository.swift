@@ -9,6 +9,7 @@ import NetspendDomain
 import DevicesData
 import DevicesDomain
 import RainOnboarding
+import RainDomain
 import Services
 import AccountService
 import UIKit
@@ -21,11 +22,11 @@ final class DashboardRepository: ObservableObject {
   @LazyInjected(\.accountRepository) var accountRepository
   @LazyInjected(\.externalFundingRepository) var externalFundingRepository
   @LazyInjected(\.devicesRepository) var devicesRepository
+  @LazyInjected(\.rainRepository) var rainRepository
   
   @LazyInjected(\.pushNotificationService) var pushNotificationService
   @LazyInjected(\.analyticsService) var analyticsService
   @LazyInjected(\.fiatAccountService) var fiatAccountService
-  @LazyInjected(\.cryptoAccountService) var cryptoAccountService
   
   lazy var accountUseCase: AccountUseCase = {
     AccountUseCase(repository: accountRepository)
@@ -34,9 +35,13 @@ final class DashboardRepository: ObservableObject {
   lazy var deviceRegisterUseCase: DeviceRegisterUseCaseProtocol = {
     DeviceRegisterUseCase(repository: devicesRepository)
   }()
-
-  lazy var nsGetACHInfoUseCase: NSGetACHInfoUseCaseProtocol = {
-    NSGetACHInfoUseCase(repository: externalFundingRepository)
+  
+  lazy var nsGetLinkedAccountUseCase: NSGetLinkedAccountUseCaseProtocol = {
+    NSGetLinkedAccountUseCase(repository: externalFundingRepository)
+  }()
+  
+  lazy var getCreditBalanceUseCase: GetCreditBalanceUseCaseProtocol = {
+    GetCreditBalanceUseCase(repository: rainRepository)
   }()
   
   @Published var fiatData: (fiatAccount: [AccountModel], loading: Bool) = ([], false)
@@ -47,41 +52,32 @@ final class DashboardRepository: ObservableObject {
   var toastMessage: ((String) -> Void)?
   
   func onAppear() {
-    apiFetchAssetFromAccounts()
-    apiFetchACHInfo()
+    fetchRainAccount()
+    fetchNetspendLinkedSources()
   }
 }
 
 // MARK: API
 extension DashboardRepository {
-  
-  func apiFetchAssetFromAccounts() {
+  func fetchRainAccount() {
     Task { @MainActor in
-      defer {
-        fiatData.loading = false
-        cryptoData.loading = false
-      }
+      defer { fiatData.loading = false }
       isLoadingRewardTab = true
       fiatData.loading = true
-      cryptoData.loading = true
       
       do {
-        async let fiatAccountModels = self.getFiatAccounts()
-        async let cryptoAccountModels = self.getCryptoAccounts()
-        let fiatAccounts = try await fiatAccountModels
-        let cryptoAccounts = try await cryptoAccountModels
-        let accounts = fiatAccounts + cryptoAccounts
+        guard let rainAccount = try await getRainAccount() else {
+          return
+        }
         
-        let assets = fiatAccounts.map { AssetModel(account: $0) }
-        getRewardCurrency(assets: assets)
+        fiatData.fiatAccount = [rainAccount]
+        accountDataManager.accountsSubject.send([rainAccount])
+        analyticsService.set(params: [PropertiesName.cashBalance.rawValue: rainAccount.availableBalance])
         
-        analyticsService.set(params: [PropertiesName.cashBalance.rawValue: fiatAccounts.first?.availableBalance ?? "0"])
-        analyticsService.set(params: [PropertiesName.cryptoBalance.rawValue: cryptoAccounts.first?.availableBalance ?? "0"])
+        // TODO: MinhNguyen - Will check and update later
+        let asset = AssetModel(account: rainAccount)
+        getRewardCurrency(assets: [asset])
         
-        self.fiatData.fiatAccount = fiatAccounts
-        self.cryptoData.cryptoAccounts = cryptoAccounts
-        
-        self.accountDataManager.accountsSubject.send(accounts)
       } catch {
         isLoadingRewardTab = false
         toastMessage?(error.userFriendlyMessage)
@@ -119,39 +115,32 @@ extension DashboardRepository {
     }
   }
   
-  func apiFetchACHInfo() {
+  func getRainAccount() async throws -> AccountModel? {
+    let response = try await getCreditBalanceUseCase.execute()
+    guard let account = AccountModel(
+      id: response.userId,
+      externalAccountId: nil,
+      currency: response.currency,
+      availableBalance: response.availableBalance,
+      availableUsdBalance: 0
+    ) else {
+      return nil
+    }
+    
+    self.accountDataManager.addOrUpdateAccounts([account])
+    return account
+  }
+  
+  func fetchNetspendLinkedSources() {
     Task { @MainActor in
-      defer { achInformationData.loading = false }
-      achInformationData.loading = true
       do {
-        let achModel = try await getACHInformation()
-        achInformationData.model = achModel
+        let sessionID = self.accountDataManager.sessionID
+        let response = try await self.nsGetLinkedAccountUseCase.execute(sessionId: sessionID)
+        self.accountDataManager.storeLinkedSources(response.linkedSources)
       } catch {
         toastMessage?(error.userFriendlyMessage)
       }
     }
-  }
-  
-  func getFiatAccounts() async throws -> [AccountModel] {
-    let accounts = try await fiatAccountService.getAccounts()
-    self.accountDataManager.addOrUpdateAccounts(accounts)
-    return accounts
-  }
-  
-  func getCryptoAccounts() async throws -> [AccountModel] {
-    let accounts = try await cryptoAccountService.getAccounts()
-    self.accountDataManager.addOrUpdateAccounts(accounts)
-    return accounts
-  }
-  
-  func getACHInformation() async throws -> ACHModel {
-    let achResponse = try await nsGetACHInfoUseCase.execute(sessionID: accountDataManager.sessionID)
-    let achInformation = ACHModel(
-      accountNumber: achResponse.accountNumber ?? Constants.Default.undefined.rawValue,
-      routingNumber: achResponse.routingNumber ?? Constants.Default.undefined.rawValue,
-      accountName: achResponse.accountName ?? Constants.Default.undefined.rawValue
-    )
-    return achInformation
   }
 }
 

@@ -1,6 +1,7 @@
 import Foundation
 import LFUtilities
 import GeneralFeature
+import RainFeature
 
 struct Transfer {
   var id: String?

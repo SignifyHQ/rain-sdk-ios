@@ -4,30 +4,38 @@ import LFAccessibility
 import LFStyleGuide
 import LFUtilities
 import Combine
-import NoBankOnboarding
+import GeneralFeature
+import RainOnboarding
 import Factory
 import RainFeature
+import LFAuthentication
 
 public struct HomeView: View {
   
-  @Environment(\.scenePhase) var scenePhase
+  @Environment(\.scenePhase)
+  var scenePhase
   
-  @StateObject private var viewModel: HomeViewModel
+  @StateObject
+  private var viewModel: HomeViewModel
   
   // Ensure each TabOptionView is initialized only once
-  let blockingFiatView = BlockingFiatView()
-  let rewardTabView: RewardTabView
+  let cashView: CashView
+  let rewardsTabView: RewardTabView
   let assetsView: AssetsView
-  let accountView: AccountsView
+  let accountsView: AccountsView
   
-  var onChangeRoute: ((NoBankOnboardingFlowCoordinator.Route) -> Void)?
+  var onChangeRoute: ((RainOnboardingFlowCoordinator.Route) -> Void)?
   
-  public init(onChangeRoute: ((NoBankOnboardingFlowCoordinator.Route) -> Void)? = nil) {
+  public init(onChangeRoute: ((RainOnboardingFlowCoordinator.Route) -> Void)? = nil) {
     let dashboardRepository = DashboardRepository()
-
-    rewardTabView = RewardTabView(dashboardRepo: dashboardRepository)
-    assetsView = AssetsView(dashboardRepo: dashboardRepository)
-    accountView = AccountsView(dashboardRepo: dashboardRepository)
+    
+    cashView = CashView(
+      viewModel: CashViewModel(dashboardRepository: dashboardRepository),
+      listCardViewModel: RainListCardsViewModel()
+    )
+    rewardsTabView = RewardTabView(viewModel: RewardTabViewModel(dashboardRepo: dashboardRepository))
+    assetsView = AssetsView(viewModel: AssetsViewModel(dashboardRepository: dashboardRepository))
+    accountsView = AccountsView(viewModel: AccountViewModel(dashboardRepository: dashboardRepository))
     
     _viewModel = .init(
       wrappedValue: HomeViewModel(
@@ -35,7 +43,6 @@ public struct HomeView: View {
         tabOptions: TabOption.allCases
       )
     )
-    
     self.onChangeRoute = onChangeRoute
   }
   
@@ -57,6 +64,11 @@ public struct HomeView: View {
       switch item {
       case .profile:
         ProfileView()
+      case .transactionDetail(let id, let accountId):
+        TransactionDetailView(
+          accountID: accountId,
+          transactionId: id
+        )
       }
     }
     .popup(item: $viewModel.popup) { popup in
@@ -68,6 +80,12 @@ public struct HomeView: View {
     .onAppear {
       viewModel.onAppear()
     }
+    .onChange(of: scenePhase, perform: { newValue in
+      if newValue == .active {
+        viewModel.checkGoTransactionDetail()
+        viewModel.dashboardRepository.fetchNetspendLinkedSources()
+      }
+    })
   }
 }
 
@@ -77,13 +95,13 @@ private extension HomeView {
     Group {
       switch viewModel.tabSelected {
       case .cash:
-        blockingFiatView
+        cashView
       case .rewards:
-       rewardTabView
+        rewardsTabView
       case .assets:
-       assetsView
+        assetsView
       case .account:
-        accountView
+        accountsView
       }
     }
     .padding(.bottom, 50)
@@ -150,7 +168,7 @@ private extension HomeView {
     }
   }
   
-  var notificationsPopup: some View {
+  private var notificationsPopup: some View {
     LiquidityAlert(
       title: L10N.Common.NotificationPopup.title,
       message: L10N.Common.NotificationPopup.subtitle,

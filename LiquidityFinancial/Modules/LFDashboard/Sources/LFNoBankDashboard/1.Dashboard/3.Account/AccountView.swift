@@ -4,7 +4,7 @@ import LFStyleGuide
 import LFLocalizable
 import Factory
 import GeneralFeature
-import NetspendFeature
+import RainFeature
 
 struct AccountsView: View {
   @Injected(\.analyticsService) var analyticsService

@@ -1,11 +1,11 @@
 import Foundation
-import LFNetspendDashboard
+import LFRainDashboard
 import GeneralFeature
 import LFUtilities
 import Factory
 import SwiftUI
 import RainOnboarding
-import NetspendFeature
+import RainFeature
 
 final class NavigationContainer {
   

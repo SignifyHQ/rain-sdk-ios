@@ -89,7 +89,9 @@ extension EnterCryptoAddressViewModel {
       defer { isFetchingData = false }
       isFetchingData = true
       do {
-        let response = try await accountRepository.getWalletAddresses(accountId: asset.id)
+        // TODO: - Will check and update later
+        // let response = try await accountRepository.getWalletAddresses(accountId: asset.id)
+        let response = try await accountRepository.getWalletAddresses()
         let walletAddresses = response.map({ APIWalletAddress(entity: $0) })
         wallets = walletAddresses
         walletsFilter = walletAddresses
@@ -138,7 +140,7 @@ extension EnterCryptoAddressViewModel {
       showIndicator = true
       do {
         let response = try await accountRepository.deleteWalletAddresses(
-          accountId: asset.id,
+          // accountId: asset.id, TODO: - Will be update later
           walletAddress: wallet.address
         )
         if response.success {

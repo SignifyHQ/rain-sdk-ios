@@ -8,8 +8,8 @@ let package = Package(
   platforms: [.iOS(.v15)],
   products: [
     .library(
-      name: "LFNetspendDashboard",
-      targets: ["LFNetspendDashboard"]),
+      name: "LFRainDashboard",
+      targets: ["LFRainDashboard"]),
     .library(
       name: "LFRewardDashboard",
       targets: ["LFRewardDashboard"]),
@@ -23,8 +23,8 @@ let package = Package(
       name: "SolidFeature",
       targets: ["SolidFeature"]),
     .library(
-      name: "NetspendFeature",
-      targets: ["NetspendFeature"])
+      name: "RainFeature",
+      targets: ["RainFeature"])
   ],
   dependencies: [
     .package(name: "LFUtilities", path: "../LFUtilities"),
@@ -84,7 +84,7 @@ let package = Package(
       path: "Sources/DashboardFeatures/SolidFeature"
     ),
     .target(
-      name: "NetspendFeature",
+      name: "RainFeature",
       dependencies: [
         "LFUtilities", "LFStyleGuide", "LFLocalizable", "GeneralFeature",
         .product(name: "ZerohashData", package: "LFData"),
@@ -101,12 +101,12 @@ let package = Package(
         .product(name: "RainOnboarding", package: "LFOnboarding"),
         .product(name: "BiometricsManager", package: "LFAuthentication")
       ],
-      path: "Sources/DashboardFeatures/NetspendFeature"
+      path: "Sources/DashboardFeatures/RainFeature"
     ),
     .target(
-      name: "LFNetspendDashboard",
+      name: "LFRainDashboard",
       dependencies: [
-        "LFUtilities", "LFStyleGuide", "LFLocalizable", "LFAccessibility", "NetspendFeature", "CodeScanner",
+        "LFUtilities", "LFStyleGuide", "LFLocalizable", "LFAccessibility", "RainFeature", "CodeScanner",
         .product(name: "OnboardingData", package: "LFData"),
         .product(name: "NetSpendData", package: "LFData"),
         .product(name: "ZerohashData", package: "LFData"),
@@ -141,7 +141,7 @@ let package = Package(
     .target(
       name: "LFNoBankDashboard",
       dependencies: [
-        "LFUtilities", "LFStyleGuide", "LFLocalizable", "LFAccessibility", "NetspendFeature", "CodeScanner",
+        "LFUtilities", "LFStyleGuide", "LFLocalizable", "LFAccessibility", "RainFeature", "CodeScanner",
         .product(name: "OnboardingData", package: "LFData"),
         .product(name: "NetSpendData", package: "LFData"),
         .product(name: "ZerohashData", package: "LFData"),
@@ -155,6 +155,6 @@ let package = Package(
     ),
     .testTarget(
       name: "LFDashboardTests",
-      dependencies: ["LFNetspendDashboard"])
+      dependencies: ["LFRainDashboard"])
   ]
 )
