@@ -7,4 +7,5 @@ public protocol RainRepositoryProtocol {
   func getExternalVerificationLink() async throws -> RainExternalVerificationLinkEntity
   func getCollateralContract() async throws -> RainCollateralContractEntity
   func getCreditBalance() async throws -> RainCreditBalanceEntity
+  func getWithdrawalSignature(parameters: RainWithdrawalSignatureParametersEntity) async throws -> RainWithdrawalSignatureEntity
 }

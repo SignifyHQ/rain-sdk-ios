@@ -50,5 +50,13 @@ extension LFCoreNetwork: RainAPIProtocol where R == RainRoute {
       decoder: .apiDecoder
     )
   }
-
+  
+  public func getWithdrawalSignature(parameters: APIRainWithdrawalSignatureParameters) async throws -> APIRainWithdrawalSignature {
+    try await request(
+      RainRoute.getWithdrawalSignature(parameters: parameters),
+      target: APIRainWithdrawalSignature.self,
+      failure: LFErrorObject.self,
+      decoder: .apiDecoder
+    )
+  }
 }

@@ -10,6 +10,7 @@ public enum RainRoute {
   case createAccount(parameters: APIRainPersonParameters)
   case getCollateralContract
   case getCreditBalance
+  case getWithdrawalSignature(parameters: APIRainWithdrawalSignatureParameters)
 }
 
 extension RainRoute: LFRoute {
@@ -25,6 +26,8 @@ extension RainRoute: LFRoute {
       return "/v1/rain/person/collateral-contract"
     case .getCreditBalance:
       return "/v1/rain/person/credit-balances"
+    case .getWithdrawalSignature:
+      return "/v1/rain/person/withdrawal/signature"
     }
   }
   
@@ -35,7 +38,7 @@ extension RainRoute: LFRoute {
         .getCollateralContract,
         .getCreditBalance:
       return .GET
-    case .createAccount:
+    case .createAccount, .getWithdrawalSignature:
       return .POST
     }
   }
@@ -59,6 +62,8 @@ extension RainRoute: LFRoute {
       return nil
     case let .createAccount(parameters):
       return parameters.encoded()
+    case let .getWithdrawalSignature(parameters):
+      return parameters.encoded()
     }
   }
   
@@ -69,7 +74,7 @@ extension RainRoute: LFRoute {
         .getCollateralContract,
         .getCreditBalance:
       return nil
-    case .createAccount:
+    case .createAccount, .getWithdrawalSignature:
       return .json
     }
   }

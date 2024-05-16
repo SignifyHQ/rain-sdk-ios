@@ -30,4 +30,11 @@ public class RainRepository: RainRepositoryProtocol {
   public func getCreditBalance() async throws -> RainCreditBalanceEntity {
     try await rainAPI.getCreditBalance()
   }
+  
+  public func getWithdrawalSignature(parameters: RainWithdrawalSignatureParametersEntity) async throws -> RainWithdrawalSignatureEntity {
+    guard let parameters = parameters as? APIRainWithdrawalSignatureParameters else {
+      throw "Can't map paramater :\(parameters)"
+    }
+    return try await rainAPI.getWithdrawalSignature(parameters: parameters)
+  }
 }
