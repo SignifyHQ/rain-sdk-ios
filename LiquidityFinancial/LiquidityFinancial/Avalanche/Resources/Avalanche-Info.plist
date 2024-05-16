@@ -30,6 +30,10 @@
 	<string>$(ALCHEMY_PROD_KEY)</string>
 	<key>ALCHEMY_DEV_KEY</key>
 	<string>$(ALCHEMY_DEV_KEY)</string>
+	<key>RAIN_PROD_PUBLIC_KEY</key>
+	<string>$(RAIN_PROD_PUBLIC_KEY)</string>
+	<key>RAIN_DEV_PUBLIC_KEY</key>
+	<string>$(RAIN_DEV_PUBLIC_KEY)</string>
 	<key>CONSENT_URL</key>
 	<string>$(CONSENT_URL)</string>
 	<key>CRYPTO_ENABLED</key>

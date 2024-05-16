@@ -35,7 +35,8 @@ extension RainCardViewModel {
   
   func hideCardInformation() {
     if cardModel.cardType == .physical {
-      cardNumber = "\(Constants.Default.physicalCardNumberPlaceholder.rawValue)\(cardModel.last4)"
+      let secretText = cardModel.cardStatus == .active ? cardModel.last4 : Constants.Default.physicalCardNumberPlaceholder.rawValue
+      cardNumber = "\(Constants.Default.physicalCardNumberPlaceholder.rawValue)\(secretText)"
     } else {
       cardNumber = "\(Constants.Default.cardNumberPlaceholder.rawValue)\(cardModel.last4)"
     }

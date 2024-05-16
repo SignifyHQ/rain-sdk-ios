@@ -26,6 +26,13 @@ extension Container {
     .singleton
   }
   
+  public var rainService: Factory<RainServiceProtocol> {
+    self {
+      RainService()
+    }
+    .singleton
+  }
+  
   public var cloudKitService: Factory<CloudKitServiceProtocol> {
     self {
       CloudKitService()

@@ -11,6 +11,7 @@ public enum RainCardRoute {
   case closeCard(cardID: String)
   case lockCard(cardID: String)
   case unlockCard(cardID: String)
+  case getSecretCardInfomation(sessionID: String, cardID: String)
 }
 
 extension RainCardRoute: LFRoute {
@@ -28,12 +29,14 @@ extension RainCardRoute: LFRoute {
       return "/v1/rain/cards/lock"
     case .unlockCard:
       return "/v1/rain/cards/unlock"
+    case .getSecretCardInfomation:
+      return "/v1/rain/cards/card-secret-info-by-id"
     }
   }
   
   public var httpMethod: HttpMethod {
     switch self {
-    case .getCards:
+    case .getCards, .getSecretCardInfomation:
       return .GET
     case .orderPhysicalCard,
         .activatePhysicalCard,
@@ -51,6 +54,13 @@ extension RainCardRoute: LFRoute {
       "ld-device-id": LFUtilities.deviceId
     ]
     base["Authorization"] = self.needAuthorizationKey
+    
+    switch self {
+    case let .getSecretCardInfomation(sessionID, _):
+      base["sessionId"] = sessionID
+    default: break
+    }
+    
     return base
   }
   
@@ -60,7 +70,10 @@ extension RainCardRoute: LFRoute {
       return [
         "limit": Constants.defaultLimit
       ]
-    case let .closeCard(cardID), let .lockCard(cardID), let .unlockCard(cardID):
+    case let .closeCard(cardID),
+      let .lockCard(cardID),
+      let .unlockCard(cardID),
+      let .getSecretCardInfomation(_, cardID):
       return [
         "card_id": cardID
       ]
@@ -73,7 +86,11 @@ extension RainCardRoute: LFRoute {
   
   public var parameterEncoding: ParameterEncoding? {
     switch self {
-    case .getCards, .closeCard, .lockCard, .unlockCard:
+    case .getCards,
+        .closeCard,
+        .lockCard,
+        .unlockCard,
+        .getSecretCardInfomation:
       return .url
     case .orderPhysicalCard, .activatePhysicalCard:
       return .json

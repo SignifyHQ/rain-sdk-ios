@@ -37,4 +37,8 @@ public class RainCardRepository: RainCardRepositoryProtocol {
   public func unlockCard(cardID: String) async throws -> RainCardEntity {
     try await rainCardAPI.unlockCard(cardID: cardID)
   }
+  
+  public func getSecretCardInformation(sessionID: String, cardID: String) async throws -> RainSecretCardInformationEntity {
+    try await rainCardAPI.getSecretCardInformation(sessionID: sessionID, cardID: cardID)
+  }
 }

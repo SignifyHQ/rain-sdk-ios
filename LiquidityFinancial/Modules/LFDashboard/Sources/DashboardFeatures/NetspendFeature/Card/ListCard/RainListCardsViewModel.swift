@@ -17,7 +17,8 @@ public final class RainListCardsViewModel: ObservableObject {
   @LazyInjected(\.rainCardRepository) var rainCardRepository
   @LazyInjected(\.customerSupportService) var customerSupportService
   @LazyInjected(\.analyticsService) var analyticsService
-  
+  @LazyInjected(\.rainService) var rainService
+
   lazy var lockCardUseCase: RainLockCardUseCaseProtocol = {
     RainLockCardUseCase(repository: rainCardRepository)
   }()
@@ -32,6 +33,10 @@ public final class RainListCardsViewModel: ObservableObject {
   
   lazy var getCardsUseCase: RainGetCardsUseCaseProtocol = {
     RainGetCardsUseCase(repository: rainCardRepository)
+  }()
+  
+  lazy var getSecretCardInformationUseCase: RainSecretCardInformationUseCaseProtocol = {
+    RainSecretCardInformationUseCase(repository: rainCardRepository)
   }()
   
   @Published var isInit: Bool = false
@@ -111,7 +116,6 @@ extension RainListCardsViewModel {
 public extension RainListCardsViewModel {
   func fetchRainCards() {
     Task {
-      defer { isInit = false }
       isInit = true
       
       do {
@@ -130,8 +134,45 @@ public extension RainListCardsViewModel {
         
         if cardsList.isEmpty {
           NotificationCenter.default.post(name: .noLinkedCards, object: nil)
+        } else {
+          cardMetaDatas = Array(repeating: nil, count: cardsList.count)
+          cardsList.enumerated().forEach { index, card in
+            guard card.cardType == .virtual else {
+              cardMetaDatas[index] = nil
+              return
+            }
+            fetchSecretCardInformation(cardID: card.id, index: index)
+          }
         }
       } catch {
+        isInit = false
+        log.error(error.userFriendlyMessage)
+        toastMessage = error.userFriendlyMessage
+      }
+    }
+  }
+  
+  func fetchSecretCardInformation(cardID: String, index: Int) {
+    Task {
+      defer { isInit = false }
+      
+      do {
+        let sessionID = rainService.generateSessionId()
+        let secretInformation = try await getSecretCardInformationUseCase.execute(sessionID: sessionID, cardID: cardID)
+        
+        let pan = rainService.decryptData(
+          ivBase64: secretInformation.encryptedPanEntity.iv,
+          dataBase64: secretInformation.encryptedPanEntity.data
+        )
+        let cvv = rainService.decryptData(
+          ivBase64: secretInformation.encryptedCVCEntity.iv,
+          dataBase64: secretInformation.encryptedCVCEntity.data
+        )
+        
+        let cardMetaData = CardMetaData(pan: pan, cvv: cvv)
+        cardMetaDatas[index] = cardMetaData
+      } catch {
+        cardMetaDatas[index] = nil
         log.error(error.userFriendlyMessage)
         toastMessage = error.userFriendlyMessage
       }

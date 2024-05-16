@@ -209,7 +209,7 @@ private extension RainListCardsView {
   
   var card: some View {
     TabView(selection: $viewModel.currentCard) {
-      ForEach(Array([viewModel.currentCard].enumerated()), id: \.element.id) { offset, item in
+      ForEach(Array(viewModel.cardsList.enumerated()), id: \.element.id) { offset, item in
         RainCardView(
           cardModel: item,
           cardMetaData: viewModel.cardMetaDatas.count > offset ? $viewModel.cardMetaDatas[offset] : .constant(nil),

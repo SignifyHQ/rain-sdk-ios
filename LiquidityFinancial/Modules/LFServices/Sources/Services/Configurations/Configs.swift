@@ -29,6 +29,16 @@ enum Configs {
     }
   }
   
+  enum RainConfig {
+    static var prodPublicKey: String{
+      (try? LFConfiguration.value(for: "RAIN_PROD_PUBLIC_KEY")) ?? .empty
+    }
+    
+    static var devPublicKey: String{
+      (try? LFConfiguration.value(for: "RAIN_DEV_PUBLIC_KEY")) ?? .empty
+    }
+  }
+  
   enum DataDog {
     static var appID: String {
       "4af1360f-bb0f-456f-b267-b34a63c4b9b4"

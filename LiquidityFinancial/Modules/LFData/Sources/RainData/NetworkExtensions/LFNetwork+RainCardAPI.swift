@@ -56,4 +56,13 @@ extension LFCoreNetwork: RainCardAPIProtocol where R == RainCardRoute {
       decoder: .apiDecoder
     )
   }
+  
+  public func getSecretCardInformation(sessionID: String, cardID: String) async throws -> APIRainSecretCardInformation {
+    try await request(
+      RainCardRoute.getSecretCardInfomation(sessionID: sessionID, cardID: cardID),
+      target: APIRainSecretCardInformation.self,
+      failure: LFErrorObject.self,
+      decoder: .apiDecoder
+    )
+  }
 }
