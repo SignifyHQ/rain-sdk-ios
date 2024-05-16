@@ -9,7 +9,7 @@ import Combine
 import GeneralFeature
 
 @MainActor
-final class EnterCryptoAddressViewModel: ObservableObject {
+final class EnterWalletAddressViewModel: ObservableObject {
   @LazyInjected(\.accountRepository) var accountRepository
   @LazyInjected(\.accountDataManager) var accountDataManager
   
@@ -26,6 +26,7 @@ final class EnterCryptoAddressViewModel: ObservableObject {
   @Published var showIndicator = false
   @Published var popup: Popup?
   
+  let kind: Kind
   let asset: AssetModel
   
   private var subscribers: Set<AnyCancellable> = []
@@ -38,8 +39,9 @@ final class EnterCryptoAddressViewModel: ObservableObject {
     return walletSelected.nickname ?? .empty
   }
   
-  init(asset: AssetModel) {
+  init(asset: AssetModel, kind: Kind) {
     self.asset = asset
+    self.kind = kind
     
     getSavedWallets()
     
@@ -60,7 +62,12 @@ final class EnterCryptoAddressViewModel: ObservableObject {
   
   func continueButtonTapped() {
     Haptic.impact(.light).generate()
-    navigation = .enterAmount(address: inputValue, nickname: selectedNickname)
+    switch kind {
+    case .sendCrypto:
+      navigation = .enterAmount(type: .sendCrypto(address: inputValue, nickname: selectedNickname))
+    case .withdrawBalance:
+      navigation = .enterAmount(type: .withdrawCollateral(address: inputValue, nickname: selectedNickname))
+    }
   }
   
   func scanAddressTap() {
@@ -83,7 +90,7 @@ final class EnterCryptoAddressViewModel: ObservableObject {
   }
 }
 
-extension EnterCryptoAddressViewModel {
+extension EnterWalletAddressViewModel {
   
   func getSavedWallets() {
     Task { @MainActor in
@@ -158,13 +165,36 @@ extension EnterCryptoAddressViewModel {
   
 }
 
-extension EnterCryptoAddressViewModel {
+extension EnterWalletAddressViewModel {
   enum Navigation {
-    case enterAmount(address: String, nickname: String?)
+    case enterAmount(type: MoveCryptoInputViewModel.Kind)
     case editWalletAddress(wallet: APIWalletAddress)
   }
   
   enum Popup {
     case delete(APIWalletAddress)
+  }
+  
+  enum Kind {
+    case sendCrypto
+    case withdrawBalance
+    
+    func getTitle(asset: String) -> String {
+      switch self {
+      case .sendCrypto:
+        return L10N.Common.EnterCryptoAddressView.title(asset)
+      case .withdrawBalance:
+        return L10N.Common.EnterWalletAddressView.WithdrawBalance.title
+      }
+    }
+    
+    func getTextFieldTitle(asset: String) -> String {
+      switch self {
+      case .sendCrypto:
+        return L10N.Common.EnterCryptoAddressView.WalletAddress.title(asset)
+      case .withdrawBalance:
+        return L10N.Common.EnterWalletAddressView.WithdrawBalance.textFieldTitle
+      }
+    }
   }
 }

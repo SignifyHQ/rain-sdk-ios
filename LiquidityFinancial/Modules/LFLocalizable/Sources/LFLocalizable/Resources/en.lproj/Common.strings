@@ -277,6 +277,10 @@
 "cashTab.withdraw.title" = "Withdraw";
 "cashTab.waysToAdd.title" = "More ways to deposit";
 "cashTab.addToBalance.title" = "Add to Balance";
+"cashTab.withdrawBalance.title" = "Withdraw Balance";
+"cashTab.withdrawBalance.sheetTitle" = "Withdraw balance to";
+"cashTab.withdrawBalance.internalWallet" = "%@ Wallet";
+"cashTab.withdrawBalance.externalWallet" = "External Wallet";
 
 // CashCardView
 "cashCard.balance.title" = "Balance";
@@ -437,11 +441,14 @@
 "MoveCryptoInput.sellAvailableBalance.subtitle" = "%@ %@ available";
 "MoveCryptoInput.send.title" = "SEND %@";
 "MoveCryptoInput.sendAvailableBalance.subtitle" = "%@ %@ available";
+"MoveCryptoInput.withdrawCollateral.title" = "Withdraw Balance";
+"MoveCryptoInput.withdrawCollateralAvailableBalance.subtitle" = "%@ available";
 "MoveCryptoInput.sendCollateral.title" = "Add To Balance";
 "MoveCryptoInput.sendCollateralAvailableBalance.subtitle" = "%@ %@ available";
 "MoveCryptoInput.buy.annotation" = "You currently have %@ available to buy Dogecoin. If this amount is less than expected, please contact support.";
 "MoveCryptoInput.sell.annotation" = "You currently have %@ Dogecoin available to sell. Doge Rewards are not available to sell until 48 hours after they are earned.";
 "MoveCryptoInput.send.annotation" = "You currently have %@ %@ available to send. If this amount is less than expected, please contact support.";
+"MoveCryptoInput.withdrawCollateral.annotation" = "You currently have %@ available to withdraw. If this amount is less than expected, please contact support.";
 "MoveCryptoInput.sendCollateral.annotation" = "You currently have %@ %@ available to add. If this amount is less than expected, please contact support.";
 "MoveCryptoInput.minimumCash.description" = "Minimum amount should be $0.10";
 "MoveCryptoInput.minimumCrypto.description" = "Minimum amount should be 0.0001%@";
@@ -1017,6 +1024,8 @@ https://mn.gov/commerce/money/investments/cryptocurrency/. \n\n\n\n\n\n\n";
 "EnterCryptoAddressView.delete_popup.primary_button" = "Delete";
 "EnterCryptoAddressView.save_success.message" = "Wallet address saved";
 "EnterCryptoAddressView.delete_success.message" = "Wallet address deleted";
+"enterWalletAddressView.withdrawBalance.title" = "Withdraw balance";
+"enterWalletAddressView.withdrawBalance.textFieldTitle" = "Send to external wallet";
 
 // Round up
 "round_up.title" = "ROUND UPS";

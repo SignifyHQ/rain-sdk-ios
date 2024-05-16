@@ -97,6 +97,9 @@ final class MoveCryptoInputViewModel: ObservableObject {
       fetchSellCryptoQuote(amount: "\(amount)")
     case .sendCrypto:
       fetchSendCryptoQuote(amount: amount, address: address)
+    case .withdrawCollateral:
+      // TODO: MinhNguyen - Will implement it later
+      break
     case .sendCollateral:
       popup = .confirmSendCollateral
     }
@@ -105,7 +108,7 @@ final class MoveCryptoInputViewModel: ObservableObject {
   private func generateGridValues() {
     let cryptoCurrency = assetModel.type?.title ?? .empty
     switch type {
-    case .buyCrypto:
+    case .buyCrypto, .withdrawCollateral:
       gridValues = Constant.Buy.buildRecommend(available: fiatAccount?.availableBalance ?? 0)
     case .sellCrypto, .sendCrypto, .sendCollateral:
       gridValues = Constant.Sell.buildRecommend(available: assetModel.availableBalance, coin: cryptoCurrency)
@@ -211,7 +214,7 @@ private extension MoveCryptoInputViewModel {
 extension MoveCryptoInputViewModel {
   var isUSDCurrency: Bool {
     switch type {
-    case .buyCrypto:
+    case .buyCrypto, .withdrawCollateral:
       return true
     case .sellCrypto, .sendCrypto, .sendCollateral:
       return false
@@ -220,7 +223,7 @@ extension MoveCryptoInputViewModel {
   
   var isCryptoCurrency: Bool {
     switch type {
-    case .buyCrypto:
+    case .buyCrypto, .withdrawCollateral:
       return false
     case .sellCrypto, .sendCrypto, .sendCollateral:
       return true
@@ -229,7 +232,7 @@ extension MoveCryptoInputViewModel {
   
   var maxFractionDigits: Int {
     switch type {
-    case .buyCrypto:
+    case .buyCrypto, .withdrawCollateral:
       return 2
     case .sellCrypto, .sendCrypto, .sendCollateral:
       return LFUtilities.cryptoFractionDigits
@@ -257,6 +260,8 @@ extension MoveCryptoInputViewModel {
       return L10N.Common.MoveCryptoInput.Sell.title(assetModel.type?.title ?? .empty)
     case .sendCrypto:
       return L10N.Common.MoveCryptoInput.Send.title(assetModel.type?.title ?? .empty)
+    case .withdrawCollateral:
+      return L10N.Common.MoveCryptoInput.WithdrawCollateral.title
     case .sendCollateral:
       return L10N.Common.MoveCryptoInput.SendCollateral.title.uppercased()
     }
@@ -278,6 +283,10 @@ extension MoveCryptoInputViewModel {
       let balance = assetModel.availableBalance.roundTo3f()
       return L10N.Common.MoveCryptoInput.SendAvailableBalance.subtitle(
         "\(balance)".formattedAmount(minFractionDigits: 3, maxFractionDigits: 3), cryptoCurrency
+      )
+    case .withdrawCollateral:
+      return L10N.Common.MoveCryptoInput.WithdrawCollateralAvailableBalance.subtitle(
+        fiatAccount?.availableBalance.formattedUSDAmount() ?? "$0.00"
       )
     case .sendCollateral:
       let balance = assetModel.availableBalance.roundTo3f()
@@ -303,6 +312,10 @@ extension MoveCryptoInputViewModel {
       return L10N.Common.MoveCryptoInput.Send.annotation(
         "\(balance)".formattedAmount(minFractionDigits: 3, maxFractionDigits: 3),
         assetModel.type?.title ?? .empty
+      )
+    case .withdrawCollateral:
+      return L10N.Common.MoveCryptoInput.WithdrawCollateral.annotation(
+        fiatAccount?.availableBalance.formattedUSDAmount() ?? "$0.00"
       )
     case .sendCollateral:
       let balance = assetModel.availableBalance.roundTo3f()
@@ -342,7 +355,7 @@ extension MoveCryptoInputViewModel {
     switch type {
     case .sellCrypto, .sendCrypto, .sendCollateral:
       inlineError = validateAmount(with: assetModel.availableBalance)
-    case .buyCrypto:
+    case .buyCrypto, .withdrawCollateral:
       inlineError = validateAmount(with: fiatAccount?.availableBalance)
     }
     if inlineError.isNotNil {
@@ -411,6 +424,7 @@ extension MoveCryptoInputViewModel {
     case buyCrypto
     case sellCrypto
     case sendCrypto(address: String, nickname: String?)
+    case withdrawCollateral(address: String, nickname: String?)
     case sendCollateral
     
     var id: String {
@@ -421,6 +435,8 @@ extension MoveCryptoInputViewModel {
         return "sellCrypto"
       case .sendCrypto:
         return "sendCrypto"
+      case .withdrawCollateral:
+        return "withdrawBalance"
       case .sendCollateral:
         return "sendCollateral"
       }

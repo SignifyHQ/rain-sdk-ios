@@ -8,15 +8,16 @@ import CodeScanner
 import Services
 import GeneralFeature
 
-struct EnterCryptoAddressView: View {
-  @StateObject private var viewModel: EnterCryptoAddressViewModel
+struct EnterWalletAddressView: View {
+  @StateObject private var viewModel: EnterWalletAddressViewModel
   
   private let completeAction: (() -> Void)?
-  private let assetModel: AssetModel
   
-  init(assetModel: AssetModel, completeAction: @escaping (() -> Void)) {
-    _viewModel = .init(wrappedValue: EnterCryptoAddressViewModel(asset: assetModel))
-    self.assetModel = assetModel
+  init(
+    viewModel: EnterWalletAddressViewModel,
+    completeAction: @escaping (() -> Void)
+  ) {
+    _viewModel = .init(wrappedValue: viewModel)
     self.completeAction = completeAction
   }
   
@@ -64,9 +65,9 @@ struct EnterCryptoAddressView: View {
     }
     .navigationLink(item: $viewModel.navigation) { item in
       switch item {
-      case .enterAmount(let address, let nickname):
+      case .enterAmount(let type):
         MoveCryptoInputView(
-          type: .sendCrypto(address: address, nickname: nickname),
+          type: type,
           assetModel: viewModel.asset,
           completeAction: completeAction
         )
@@ -82,7 +83,7 @@ struct EnterCryptoAddressView: View {
 }
 
 // MARK: - View Components
-private extension EnterCryptoAddressView {
+private extension EnterWalletAddressView {
   var header: some View {
     ZStack(alignment: .topLeading) {
       VStack(spacing: 0) {
@@ -94,9 +95,7 @@ private extension EnterCryptoAddressView {
   @ViewBuilder var titleView: some View {
     VStack(spacing: 10) {
       Text(
-        L10N.Common.EnterCryptoAddressView.title(
-          assetModel.type?.title ?? .empty
-        )
+        viewModel.kind.getTitle(asset: viewModel.asset.type?.title ?? .empty).uppercased()
       )
       .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.main.value))
       .foregroundColor(Colors.label.swiftUIColor)
@@ -107,8 +106,7 @@ private extension EnterCryptoAddressView {
     WalletAddressTextField(
       placeHolderText: L10N.Common.EnterCryptoAddressView.WalletAddress.placeholder,
       value: $viewModel.inputValue,
-      textFieldTitle: L10N.Common.EnterCryptoAddressView.WalletAddress
-        .title(assetModel.type?.title ?? .empty),
+      textFieldTitle: viewModel.kind.getTextFieldTitle(asset: viewModel.asset.type?.title ?? .empty),
       clearValue: {
         viewModel.clearValue()
       },
@@ -119,7 +117,7 @@ private extension EnterCryptoAddressView {
   }
   
   var warningLabel: some View {
-    Text(L10N.Common.EnterCryptoAddressView.warning(assetModel.type?.title ?? .empty))
+    Text(L10N.Common.EnterCryptoAddressView.warning(viewModel.asset.type?.title ?? .empty))
       .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.textFieldHeader.value))
       .foregroundColor(Colors.label.swiftUIColor.opacity(0.5))
   }

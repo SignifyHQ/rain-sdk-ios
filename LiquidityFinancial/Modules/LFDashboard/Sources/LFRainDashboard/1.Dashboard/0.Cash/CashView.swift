@@ -61,6 +61,18 @@ struct CashView: View {
         )
       case let .addToBalance(asset):
         MoveCryptoInputView(type: .sendCollateral, assetModel: asset)
+      case let .enterWithdrawalAmount(assetCollateral):
+        MoveCryptoInputView(
+          type: .withdrawCollateral(address: assetCollateral.id, nickname: nil),
+          assetModel: assetCollateral,
+          completeAction: {}
+        )
+      case let .enterWalletAddress(assetCollateral):
+        EnterWalletAddressView(
+          viewModel: EnterWalletAddressViewModel(asset: assetCollateral, kind: .withdrawBalance)
+        ) {
+          viewModel.navigation = nil
+        }
       }
     }
     .fullScreenCover(item: $viewModel.fullScreen) { item in
@@ -119,21 +131,32 @@ private extension CashView {
           viewModel.guestCardTapped()
         }
         // (Volo): Hide deposit button since banking features are not supported currently
-//        .overlay(alignment: .bottom) {
-//          depositButton
-//        }
-        /* TODO: Remove for MVP
-        changeAssetButton
-         */
-//        BalanceAlertView(type: .cash, hasContacts: !viewModel.linkedAccount.isEmpty, cashBalance: viewModel.cashBalanceValue) {
-//          viewModel.addMoneyTapped()
-//        }
-        addToBalanceButton
+        //        .overlay(alignment: .bottom) {
+        //          depositButton
+        //        }
+        // changeAssetButton TODO: Remove for MVP
+        //        BalanceAlertView(
+        //          type: .cash,
+        //          hasContacts: !viewModel.linkedAccount.isEmpty,
+        //          cashBalance: viewModel.cashBalanceValue
+        //        ) {
+        //          viewModel.addMoneyTapped()
+        //        }
+        VStack(spacing: 8) {
+          addToBalanceButton
+          withdrawalBalanceButton
+        }
         activity
       }
       .padding(.horizontal, 30)
       .padding(.top, 20)
       .padding(.bottom, 12)
+    }
+    .blur(radius: viewModel.showWithdrawalBalanceSheet ? 16 : 0)
+    .sheet(isPresented: $viewModel.showWithdrawalBalanceSheet) {
+      withdrawalBalanceSheet
+        .customPresentationDetents(height: 228)
+        .ignoresSafeArea(edges: .bottom)
     }
     .refreshable {
       viewModel.onRefresh()
@@ -192,6 +215,61 @@ private extension CashView {
   var addToBalanceButton: some View {
     FullSizeButton(title: L10N.Common.CashTab.AddToBalance.title, isDisable: false, type: .secondary) {
       viewModel.addToBalanceButtonTapped()
+    }
+  }
+  
+  var withdrawalBalanceButton: some View {
+    FullSizeButton(title: L10N.Common.CashTab.WithdrawBalance.title, isDisable: false, type: .secondary) {
+      viewModel.withdrawBalanceButtonTapped()
+    }
+  }
+  
+  var withdrawalBalanceSheet: some View {
+    VStack(spacing: 10) {
+      RoundedRectangle(cornerRadius: 4)
+        .foregroundColor(Colors.label.swiftUIColor.opacity(0.35))
+        .frame(width: 32, height: 4)
+        .padding(.top, 6)
+      Text(L10N.Common.CashTab.WithdrawBalance.sheetTitle.uppercased())
+        .foregroundColor(Colors.label.swiftUIColor)
+        .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.main.value))
+        .padding(.vertical, 14)
+      walletTypeCell(with: .internalWallet)
+      walletTypeCell(with: .externalWallet)
+      Spacer()
+    }
+    .padding(.horizontal, 30)
+    .background(Colors.secondaryBackground.swiftUIColor)
+  }
+  
+  func walletTypeCell(with type: CashViewModel.WalletType) -> some View {
+    Button {
+      viewModel.walletTypeButtonTapped(type: type)
+    } label: {
+      HStack(spacing: 12) {
+        if type == .internalWallet {
+          Circle()
+            .stroke(Colors.primary.swiftUIColor, lineWidth: 1)
+            .frame(width: 32, height: 32)
+            .overlay(
+              Text("M")
+                .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.medium.value))
+                .foregroundColor(Colors.label.swiftUIColor)
+            )
+            .padding(.leading, -4)
+        } else {
+          GenImages.CommonImages.walletAddress.swiftUIImage
+        }
+        Text(type.getTitle(asset: viewModel.collateralAsset?.type?.title ?? .empty))
+          .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.regular.value))
+        Spacer()
+        GenImages.Images.forwardButton.swiftUIImage
+      }
+      .foregroundColor(Colors.label.swiftUIColor)
+      .frame(height: 56)
+      .padding(.horizontal, 16)
+      .background(Colors.buttons.swiftUIColor)
+      .cornerRadius(9)
     }
   }
 }

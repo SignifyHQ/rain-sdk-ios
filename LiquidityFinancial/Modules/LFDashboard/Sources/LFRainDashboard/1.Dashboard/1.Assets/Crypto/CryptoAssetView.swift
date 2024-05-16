@@ -31,7 +31,9 @@ struct CryptoAssetView: View {
         case .receiveCrypto:
           ReceiveCryptoView(assetModel: viewModel.asset)
         case .sendCrypto:
-          EnterCryptoAddressView(assetModel: viewModel.asset) {
+          EnterWalletAddressView(
+            viewModel: EnterWalletAddressViewModel(asset: viewModel.asset, kind: .sendCrypto)
+          ) {
             viewModel.navigation = nil
           }
         case .transactions:

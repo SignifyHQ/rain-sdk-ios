@@ -22,6 +22,7 @@ final class CashViewModel: ObservableObject {
   @Published var isLoading: Bool = false
   @Published var isOpeningPlaidView: Bool = false
   @Published var isDisableView: Bool = false
+  @Published var showWithdrawalBalanceSheet: Bool = false
   @Published var cashBalanceValue: Double = 0
   @Published var toastMessage: String?
   @Published var activity = Activity.loading
@@ -210,6 +211,25 @@ extension CashViewModel {
     }
     navigation = .addToBalance(assetCollateral: collateralAsset)
   }
+  
+  func withdrawBalanceButtonTapped() {
+    showWithdrawalBalanceSheet = true
+  }
+  
+  func walletTypeButtonTapped(type: WalletType) {
+    showWithdrawalBalanceSheet = false
+    guard let collateralAsset else {
+      toastMessage = L10N.Common.MoveCryptoInput.SendCollateral.errorMessage
+      return
+    }
+    
+    switch type {
+    case .internalWallet:
+      navigation = .enterWithdrawalAmount(assetCollateral: collateralAsset)
+    case .externalWallet:
+      navigation = .enterWalletAddress(assetCollateral: collateralAsset)
+    }
+  }
 }
 
 // MARK: - Private Functions
@@ -252,6 +272,8 @@ extension CashViewModel {
     case transactionDetail(TransactionModel)
     case moveMoney(kind: MoveMoneyAccountViewModel.Kind)
     case addToBalance(assetCollateral: AssetModel)
+    case enterWithdrawalAmount(assetCollateral: AssetModel)
+    case enterWalletAddress(assetCollateral: AssetModel)
   }
   
   enum FullScreen: Identifiable {
@@ -260,6 +282,20 @@ extension CashViewModel {
     var id: String {
       switch self {
       case .fundCard: return "fundCard"
+      }
+    }
+  }
+  
+  enum WalletType {
+    case internalWallet
+    case externalWallet
+    
+    func getTitle(asset: String = .empty) -> String {
+      switch self {
+      case .internalWallet:
+        return L10N.Common.CashTab.WithdrawBalance.internalWallet(asset)
+      case .externalWallet:
+        return L10N.Common.CashTab.WithdrawBalance.externalWallet
       }
     }
   }
