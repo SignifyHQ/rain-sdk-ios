@@ -4,4 +4,5 @@ import Foundation
 public protocol RainWithdrawalSignatureEntity {
   var data: String { get }
   var salt: String { get }
+  var expiryAt: String { get }
 }

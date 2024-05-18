@@ -1,5 +1,6 @@
 import Foundation
 import PortalSwift
+import Services
 
 // sourcery: AutoMockable
 public protocol PortalRepositoryProtocol {
@@ -8,6 +9,11 @@ public protocol PortalRepositoryProtocol {
   func registerPortal(portalToken: String) async throws
   func createPortalWallet() async throws -> String
   func send(to address: String, contractAddress: String?, amount: Double) async throws
+  func withdrawAsset(
+    addresses: PortalService.WithdrawAssetAddresses,
+    amount: Double,
+    signature: PortalService.WithdrawAssetSignature
+  ) async throws
   func estimateFee(to address: String, contractAddress: String?, amount: Double) async throws -> Double
   func backupWallet(backupMethod: BackupMethods, password: String?) async throws
   func recoverWallet(backupMethod: BackupMethods,password: String?) async throws

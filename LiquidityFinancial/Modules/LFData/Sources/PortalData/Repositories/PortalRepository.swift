@@ -86,7 +86,15 @@ public class PortalRepository: PortalRepositoryProtocol {
   ) async throws {
     try await portalService.send(to: address, contractAddress: contractAddress, amount: amount)
   }  
-    
+  
+  public func withdrawAsset(
+    addresses: PortalService.WithdrawAssetAddresses,
+    amount: Double,
+    signature: PortalService.WithdrawAssetSignature
+  ) async throws {
+    try await portalService.withdrawAsset(addresses: addresses, amount: amount, signature: signature)
+  }
+
   public func recoverWallet(backupMethod: BackupMethods, password: String?) async throws {
     do {
       let response = try await portalAPI.restoreWallet(method: backupMethod.rawValue)

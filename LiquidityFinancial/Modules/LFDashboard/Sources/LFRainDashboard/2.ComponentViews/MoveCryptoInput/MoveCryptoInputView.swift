@@ -64,6 +64,16 @@ struct MoveCryptoInputView: View {
           feeLockedResponse: lockedFeeResponse,
           completeAction: completeAction
         )
+      case .transactionDetail(let id):
+        TransactionDetailView(
+          accountID: viewModel.assetModel.id,
+          transactionId: id,
+          kind: TransactionDetailType.withdraw,
+          isNewAddress: viewModel.nickname.isEmpty,
+          walletAddress: viewModel.address,
+          transactionInfo: viewModel.transactionInformations,
+          popAction: completeAction
+        )
       }
     }
     .track(name: String(describing: type(of: self)))
@@ -214,7 +224,7 @@ private extension MoveCryptoInputView {
         viewModel.amount, viewModel.assetModel.type?.title ?? .empty
       ),
       primary: .init(text: L10N.Common.Button.Yes.title) {
-        viewModel.sendCollateral {
+        viewModel.confirmSendCollateralButtonTapped {
           dismiss()
         }
       },

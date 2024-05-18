@@ -1,3 +1,4 @@
+import Foundation
 import Combine
 import EnvironmentService
 import Factory
@@ -126,24 +127,37 @@ public extension PortalService {
     contractAddress: String?,
     amount: Double
   ) async throws {
-    // Build params from the inputs
-    let transaction = try await buildEthTransaction(to: address, contractAddress: contractAddress, amount: amount)
-    
-    // Throw an error if Portal clent instance is not ready
-    guard let portal = portal else {
-      log.error("Portal Swift: Error sending transaction for \(transaction.walletAddress). Portal instance is unavailable")
-      throw(LFPortalError.portalInstanceUnavailable)
-    }
-    
-    // Send the transaction to the blockchain
-    let ethSendResponse = try await portal.request(
-      "eip155:\(chainId)",
-      withMethod: .eth_sendTransaction,
-      andParams: [transaction.transactionParams]
+    let transaction = try await buildEthTransaction(
+      to: address,
+      contractAddress: contractAddress,
+      amount: amount
     )
     
-    let txHash = ethSendResponse.result as? String ?? "-/-"
-    log.debug("Portal Swift: Send transaction success for \(transaction.walletAddress). txHash: \(txHash)")
+    let debugDescription = "Portal Swift: Send transaction success for \(transaction.walletAddress)"
+    _ = try await sendTransactionToBlockchain(
+      walletAddress: transaction.walletAddress,
+      transactionParams: transaction.transactionParams,
+      debugDescription: debugDescription
+    )
+  }
+  
+  func withdrawAsset(
+    addresses: WithdrawAssetAddresses,
+    amount: Double,
+    signature: WithdrawAssetSignature
+  ) async throws {
+    let transaction = try await buildETHTransactionParamForWithdrawAsset(
+      addresses: addresses,
+      amount: amount,
+      signature: signature
+    )
+    
+    let debugDescription = "Portal Swift: Send transaction success for \(transaction.walletAddress)"
+    _ = try await sendTransactionToBlockchain(
+      walletAddress: transaction.walletAddress,
+      transactionParams: transaction.transactionParams,
+      debugDescription: debugDescription
+    )
   }
   
   func estimateFee(
@@ -155,7 +169,7 @@ public extension PortalService {
     let transaction = try await buildEthTransaction(to: address, contractAddress: contractAddress, amount: amount)
     
     // Throw an error if Portal clent instance is not ready
-    guard let portal = portal else {
+    guard let portal else {
       log.error("Portal Swift: Error estimating fee for \(transaction.walletAddress). Portal instance is unavailable")
       throw(LFPortalError.portalInstanceUnavailable)
     }
@@ -193,8 +207,7 @@ public extension PortalService {
     return(txFee)
   }
   
-  func refreshBalances(
-  ) async throws -> (walletAddress: String?, balances: [String: Double]) {
+  func refreshBalances() async throws -> (walletAddress: String?, balances: [String: Double]) {
     guard let walletAddress
     else {
       log.error("Portal Swift: Error fetching wallet balances. Wallet missing)")
@@ -202,7 +215,7 @@ public extension PortalService {
     }
     
     // Throw an error if Portal clent instance is not ready
-    guard let portal = portal else {
+    guard let portal else {
       log.error("Portal Swift: Error fetching wallet balances for \(walletAddress). Portal instance is unavailable")
       throw(LFPortalError.portalInstanceUnavailable)
     }
@@ -239,9 +252,10 @@ public extension PortalService {
     buyToken: String,
     buyAmount: Double
   ) async throws -> Quote {
+    let walletAddress = walletAddress ?? "-/-"
     // Throw an error if Portal clent instance is not ready
-    guard let portal = portal else {
-      log.error("Portal Swift: Error getting swap quote for \(walletAddress ?? "-/-"). Portal instance is unavailable")
+    guard let portal else {
+      log.error("Portal Swift: Error getting swap quote for \(walletAddress). Portal instance is unavailable")
       throw(LFPortalError.portalInstanceUnavailable)
     }
     
@@ -267,29 +281,19 @@ public extension PortalService {
       forChainId: "eip155:\(chainId)"
     )
     
-    log.debug("Portal Swift: Swap quote fetched successfully for address: \(walletAddress ?? "-/-"), sellToken: \(sellToken), buyToken: \(buyToken), buyAmount: \(buyAmount). Quote: \(quote)")
+    let debugDescription = "\(walletAddress), sellToken: \(sellToken), buyToken: \(buyToken), buyAmount: \(buyAmount). Quote: \(quote)"
+    log.debug("Portal Swift: Swap quote fetched successfully for address: \(debugDescription)")
     return quote
   }
   
-  func executeSwap(
-    quote: Quote
-  ) async throws -> String {
-    // Throw an error if Portal clent instance is not ready
-    guard let portal = portal else {
-      log.error("Portal Swift: Error executing swap for \(walletAddress ?? "-/-"). Portal instance is unavailable")
-      throw(LFPortalError.portalInstanceUnavailable)
-    }
-    
-    // Make a contract call for swapping
-    let ethSendResponse = try await portal.request(
-      "eip155:\(chainId)",
-      withMethod: .eth_sendTransaction,
-      andParams: [quote.transaction]
+  func executeSwap(quote: Quote) async throws -> String {
+    let walletAddress = walletAddress ?? "-/-"
+    let debugDescription = "Portal Swift: Swap execution success for address: \(walletAddress) with quote: \(quote)"
+    let txHash = try await sendTransactionToBlockchain(
+      walletAddress: walletAddress,
+      transactionParams: quote.transaction,
+      debugDescription: debugDescription
     )
-    
-    // Get and return the transaction hash
-    let txHash = ethSendResponse.result as? String ?? "-/-"
-    log.debug("Portal Swift: Swap execution success for address: \(walletAddress ?? "-/-") with quote: \(quote). txHash: \(txHash)")
     
     return txHash
   }
@@ -329,7 +333,7 @@ public extension PortalService {
 
 // MARK: - Private Functions
 private extension PortalService {
-  private func buildEthTransaction(
+  func buildEthTransaction(
     to address: String,
     contractAddress: String?,
     amount: Double
@@ -351,13 +355,92 @@ private extension PortalService {
       from: walletAddress,
       to: toAddress,
       value: value.ethToWei.toHexString,
-      data: tx ?? ""
+      data: tx ?? .empty
     )
     
     return (walletAddress: walletAddress, transactionParams: transactionParams)
   }
   
-  private func buildErc20Transaction(
+  func buildETHTransactionParamForWithdrawAsset(
+    addresses: WithdrawAssetAddresses,
+    amount: Double,
+    signature: WithdrawAssetSignature
+  ) async throws -> (walletAddress: String, transactionParams: ETHTransactionParam) {
+    guard let walletAddress else {
+      log.error("Portal Swift: Error estimating fee. Wallet missing)")
+      throw(LFPortalError.walletMissing)
+    }
+    
+    let ethereumContractAddress = try createEthereumAddress(hex: addresses.contractAddress, description: "Contract")
+    let ethereumProxyAddress = try createEthereumAddress(hex: addresses.proxyAddress, description: "Proxy")
+    let ethereumRecipientAddress = try createEthereumAddress(hex: addresses.recipientAddress, description: "Recipient")
+    let ethereumTokenAddress = try createEthereumAddress(hex: addresses.tokenAddress, description: "Token")
+    
+    guard let saltData = Data(base64Encoded: signature.salt),
+          let signatureData = Data(hexString: signature.signature, length: 65)
+    else {
+      throw LFPortalError.unexpected
+    }
+    
+    guard let unixTimestamp = signature.expiryAt.parseToUnixTimestamp() else {
+      throw LFPortalError.unexpected
+    }
+    
+    let withdrawAssetParameter = WithdrawAssetParameter(
+      proxyAddress: ethereumProxyAddress,
+      tokenAddress: ethereumTokenAddress,
+      amount: amount,
+      recipientAddress: ethereumRecipientAddress,
+      expiryAt: unixTimestamp,
+      salt: saltData,
+      signature: signatureData
+    )
+    let tx = try await buildErc20TransactionForWithdrawAsset(
+      ethereumContractAddress: ethereumContractAddress,
+      withdrawAssetParameter: withdrawAssetParameter
+    )
+    
+    let transactionParams = ETHTransactionParam(
+      from: walletAddress,
+      to: addresses.contractAddress,
+      value: 0.ethToWei.toHexString,
+      data: tx ?? .empty
+    )
+    
+    return (walletAddress: walletAddress, transactionParams: transactionParams)
+  }
+  
+  func buildErc20TransactionForWithdrawAsset(
+    ethereumContractAddress: EthereumAddress,
+    withdrawAssetParameter: WithdrawAssetParameter
+  ) async throws -> String? {
+    return try await withCheckedThrowingContinuation { [weak self] (continuation: CheckedContinuation<String?, Error>) in
+      guard let self else {
+        continuation.resume(throwing: LFPortalError.unexpected)
+        return
+      }
+      
+      do {
+        let rpcURL = try getRpcURL()
+        let contractJsonABI = try getContractJsonABI()
+        let web3 = Web3(rpcURL: rpcURL)
+        let contract = try web3.eth.Contract(json: contractJsonABI, abiKey: nil, address: ethereumContractAddress)
+        let transaction = try createWithdrawAssetTransaction(
+          with: contract,
+          ethereumContractAddress: ethereumContractAddress,
+          withdrawAssetParameter: withdrawAssetParameter
+        )
+        continuation.resume(returning: transaction.data.hex())
+        return
+      } catch {
+        log.error("Portal Swift: Error building ERC20 transaction. Web3 contract is unavailable")
+        continuation.resume(throwing: error)
+        return
+      }
+    }
+  }
+  
+  func buildErc20Transaction(
     contractAddress: String?,
     toAddress: String,
     amount: Double
@@ -375,65 +458,130 @@ private extension PortalService {
         return
       }
       
-      guard let rpcURL = portal?.rpcConfig["eip155:\(chainId)"]
-      else {
-        log.error("Portal Swift: Error building ERC20 transaction. rpcURL is unavailable")
-        continuation.resume(throwing: LFPortalError.unexpected)
+      do {
+        let rpcURL = try getRpcURL()
+        let ethereumFromAddress = try createEthereumAddress(hex: walletAddress, description: "Wallet")
+        let ethereumToAddress = try createEthereumAddress(hex: toAddress, description: "To")
         
-        return
-      }
-      
-      guard let walletAddressString = walletAddress,
-            let ethereumFromAddress = try? EthereumAddress(hex: walletAddressString, eip55: false)
-      else {
-        log.error("Portal Swift: Error building ERC20 transaction. Wallet address is unavailable")
-        continuation.resume(throwing: LFPortalError.unexpected)
-        
-        return
-      }
-      
-      guard let ethereumToAddress = try? EthereumAddress(hex: toAddress, eip55: false)
-      else {
-        log.error("Portal Swift: Error building ERC20 transaction. ToAddress is invalid")
-        continuation.resume(throwing: LFPortalError.unexpected)
-        
-        return
-      }
-      
-      let web3 = Web3(rpcURL: rpcURL)
-      let contract = web3.eth.Contract(
-        type: GenericERC20Contract.self,
-        address: EthereumAddress(hexString: contractAddress)
-      )
-      
-      let conversionFactor: Double = 1e6
-      let value = BigUInt(amount * conversionFactor)
-      guard let tx = contract
-        .transfer(
-          to: ethereumToAddress,
-          value: value
+        let web3 = Web3(rpcURL: rpcURL)
+        let contract = web3.eth.Contract(
+          type: GenericERC20Contract.self,
+          address: EthereumAddress(hexString: contractAddress)
         )
-          .createTransaction(
-            nonce: nil,
-            gasPrice: nil,
-            maxFeePerGas: nil,
-            maxPriorityFeePerGas: nil,
-            gasLimit: nil,
-            from: ethereumFromAddress,
-            value: 0,
-            accessList: [:],
-            transactionType: .legacy
-          )
-      else {
-        log.error("Portal Swift: Error building ERC20 transaction. Could not build transaction")
-        continuation.resume(throwing: LFPortalError.unexpected)
         
+        guard let tx = contract
+          .transfer(
+            to: ethereumToAddress,
+            value: BigUInt(amount * 1e6)
+          )
+            .createTransaction(
+              nonce: nil,
+              gasPrice: nil,
+              maxFeePerGas: nil,
+              maxPriorityFeePerGas: nil,
+              gasLimit: nil,
+              from: ethereumFromAddress,
+              value: 0,
+              accessList: [:],
+              transactionType: .legacy
+            )
+        else {
+          throw LFPortalError.unexpected
+        }
+        
+        continuation.resume(returning: tx.data.hex())
+        return
+      } catch {
+        log.error("Portal Swift: Error building ERC20 transaction. Could not build transaction")
+        continuation.resume(throwing: error)
         return
       }
-
-      continuation.resume(returning: tx.data.hex())
-      return
     }
+  }
+  
+  func getRpcURL() throws -> String {
+    guard let rpcURL = portal?.rpcConfig["eip155:\(chainId)"] else {
+      log.error("Portal Swift: Error building ERC20 transaction. rpcURL is unavailable")
+      throw LFPortalError.unexpected
+    }
+    
+    return rpcURL
+  }
+  
+  func getContractJsonABI() throws -> Data {
+    guard let contractABIJson = FileHelpers.readJSONFile(forName: "contractJsonABI", type: [String: String].self),
+          let contractABIJsonString = contractABIJson["result"],
+          let contractJsonABI = contractABIJsonString.data(using: .utf8)
+    else {
+      log.error("Portal Swift: Error building ERC20 transaction. ContractJsonABI is unavailable")
+      throw LFPortalError.unexpected
+    }
+    
+    return contractJsonABI
+  }
+  
+  func createEthereumAddress(hex: String?, description: String) throws -> EthereumAddress {
+    guard let hex, let address = try? EthereumAddress(hex: hex, eip55: false) else {
+      log.error("Portal Swift: Error building ERC20 transaction. \(description) address is unavailable")
+      throw LFPortalError.unexpected
+    }
+    return address
+  }
+  
+  func createWithdrawAssetTransaction(
+    with contract: DynamicContract,
+    ethereumContractAddress: EthereumAddress,
+    withdrawAssetParameter: WithdrawAssetParameter
+  ) throws -> EthereumTransaction {
+    let withdrawAssetMethod = contract["withdrawAsset"]?(
+      withdrawAssetParameter.proxyAddress,
+      withdrawAssetParameter.tokenAddress,
+      withdrawAssetParameter.amount,
+      withdrawAssetParameter.recipientAddress,
+      withdrawAssetParameter.expiryAt,
+      withdrawAssetParameter.salt,
+      withdrawAssetParameter.signature
+    )
+    
+    guard let transaction = withdrawAssetMethod?.createTransaction(
+      nonce: nil,
+      gasPrice: nil,
+      maxFeePerGas: nil,
+      maxPriorityFeePerGas: nil,
+      gasLimit: nil,
+      from: ethereumContractAddress,
+      value: 0,
+      accessList: [:],
+      transactionType: .legacy
+    ) else {
+      log.error("Portal Swift: Error building ERC20 transaction. Web3 transaction is unavailable")
+      throw LFPortalError.unexpected
+    }
+    
+    return transaction
+  }
+  
+  func sendTransactionToBlockchain(
+    walletAddress: String,
+    transactionParams: ETHTransactionParam,
+    debugDescription: String = .empty
+  ) async throws -> String {
+    // Throw an error if Portal clent instance is not ready
+    guard let portal else {
+      log.error("Portal Swift: Error sending transaction for \(walletAddress). Portal instance is unavailable")
+      throw(LFPortalError.portalInstanceUnavailable)
+    }
+    
+    // Send the transaction to the blockchain
+    let ethSendResponse = try await portal.request(
+      "eip155:\(chainId)",
+      withMethod: .eth_sendTransaction,
+      andParams: [transactionParams]
+    )
+    let txHash = ethSendResponse.result as? String ?? "-/-"
+    log.debug("\(debugDescription) - txHash: \(txHash)")
+    
+    return txHash
   }
   
   func handlePortalError(error: Error?) -> Error {
@@ -452,11 +600,69 @@ private extension PortalService {
       return portalMpcError
     }
   }
+  
 }
 
 // MARK: - PortalErrorMessage
 extension PortalService {
   enum PortalErrorMessage {
     static let walletAlreadyExists = "wallet already exists"
+  }
+}
+
+// MARK: - Types
+extension PortalService {
+  public struct WithdrawAssetAddresses {
+    let contractAddress: String
+    let proxyAddress: String
+    let recipientAddress: String
+    let tokenAddress: String
+    
+    public init(contractAddress: String, proxyAddress: String, recipientAddress: String, tokenAddress: String) {
+      self.contractAddress = contractAddress
+      self.proxyAddress = proxyAddress
+      self.recipientAddress = recipientAddress
+      self.tokenAddress = tokenAddress
+    }
+  }
+  
+  public struct WithdrawAssetSignature {
+    let expiryAt: String
+    let salt: String
+    let signature: String
+    
+    public init(expiryAt: String, salt: String, signature: String) {
+      self.expiryAt = expiryAt
+      self.salt = salt
+      self.signature = signature
+    }
+  }
+  
+  struct WithdrawAssetParameter {
+    let proxyAddress: EthereumAddress
+    let tokenAddress: EthereumAddress
+    let amount: BigUInt
+    let recipientAddress: EthereumAddress
+    let expiryAt: BigUInt
+    let salt: Data
+    let signature: Data
+    
+    init(
+      proxyAddress: EthereumAddress,
+      tokenAddress: EthereumAddress,
+      amount: Double,
+      recipientAddress: EthereumAddress,
+      expiryAt: TimeInterval,
+      salt: Data,
+      signature: Data
+    ) {
+      self.proxyAddress = proxyAddress
+      self.tokenAddress = tokenAddress
+      self.amount = BigUInt(amount * 1e6)
+      self.recipientAddress = recipientAddress
+      self.expiryAt = BigUInt(expiryAt)
+      self.salt = salt
+      self.signature = signature
+    }
   }
 }

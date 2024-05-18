@@ -458,6 +458,7 @@
 "MoveCryptoInput.sendCollateralPopup.title" = "confirm transaction";
 "MoveCryptoInput.sendCollateralPopup.message" = "You sure you want to add %@ %@ to your balance?";
 "MoveCryptoInput.usdcUnsupported.errorMessage" = "USDC token cannot be utilized as collateral in the current contract";
+"MoveCryptoInput.missingWallet.errorMessage" = "The wallet does not exist. Please recover wallet";
 "MoveCryptoInput.noCollateralContract.errorMessage" = "The account does not have a collateral contract.";
 
 // CryptoReceipt

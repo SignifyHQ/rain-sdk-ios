@@ -61,11 +61,13 @@ struct CashView: View {
         )
       case let .addToBalance(asset):
         MoveCryptoInputView(type: .sendCollateral, assetModel: asset)
-      case let .enterWithdrawalAmount(assetCollateral):
+      case let .enterWithdrawalAmount(address, assetCollateral):
         MoveCryptoInputView(
-          type: .withdrawCollateral(address: assetCollateral.id, nickname: nil),
+          type: .withdrawCollateral(address: address, nickname: nil),
           assetModel: assetCollateral,
-          completeAction: {}
+          completeAction: {
+            viewModel.navigation = nil
+          }
         )
       case let .enterWalletAddress(assetCollateral):
         EnterWalletAddressView(

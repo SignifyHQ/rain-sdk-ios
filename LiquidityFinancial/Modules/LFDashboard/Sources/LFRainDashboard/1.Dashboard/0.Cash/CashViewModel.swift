@@ -17,6 +17,7 @@ final class CashViewModel: ObservableObject {
   @LazyInjected(\.accountDataManager) var accountDataManager
   @LazyInjected(\.cardRepository) var cardRepository
   @LazyInjected(\.portalStorage) var portalStorage
+  @LazyInjected(\.portalService) var portalService
 
   @Published var isCardActive: Bool = true
   @Published var isLoading: Bool = false
@@ -217,17 +218,22 @@ extension CashViewModel {
   }
   
   func walletTypeButtonTapped(type: WalletType) {
-    showWithdrawalBalanceSheet = false
-    guard let collateralAsset else {
-      toastMessage = L10N.Common.MoveCryptoInput.SendCollateral.errorMessage
-      return
-    }
-    
-    switch type {
-    case .internalWallet:
-      navigation = .enterWithdrawalAmount(assetCollateral: collateralAsset)
-    case .externalWallet:
-      navigation = .enterWalletAddress(assetCollateral: collateralAsset)
+    Task {
+      showWithdrawalBalanceSheet = false
+      guard let collateralAsset else {
+        toastMessage = L10N.Common.MoveCryptoInput.SendCollateral.errorMessage
+        return
+      }
+      
+      switch type {
+      case .internalWallet:
+        guard let myUSDCWalletAddress = await portalService.getWalletAddress(), !myUSDCWalletAddress.isEmpty else {
+          return
+        }
+        navigation = .enterWithdrawalAmount(address: myUSDCWalletAddress, assetCollateral: collateralAsset)
+      case .externalWallet:
+        navigation = .enterWalletAddress(assetCollateral: collateralAsset)
+      }
     }
   }
 }
@@ -272,7 +278,7 @@ extension CashViewModel {
     case transactionDetail(TransactionModel)
     case moveMoney(kind: MoveMoneyAccountViewModel.Kind)
     case addToBalance(assetCollateral: AssetModel)
-    case enterWithdrawalAmount(assetCollateral: AssetModel)
+    case enterWithdrawalAmount(address: String, assetCollateral: AssetModel)
     case enterWalletAddress(assetCollateral: AssetModel)
   }
   

@@ -11,6 +11,8 @@ import ZerohashData
 import GeneralFeature
 import PortalData
 import PortalDomain
+import RainData
+import RainDomain
 import Services
 
 @MainActor
@@ -18,10 +20,12 @@ final class MoveCryptoInputViewModel: ObservableObject {
   @LazyInjected(\.accountRepository) var accountRepository
   @LazyInjected(\.accountDataManager) var accountDataManager
   @LazyInjected(\.portalRepository) var portalRepository
+  @LazyInjected(\.rainRepository) var rainRepository
   @LazyInjected(\.portalStorage) var portalStorage
   @LazyInjected(\.zerohashRepository) var zerohashRepository
   @LazyInjected(\.cryptoAccountService) var cryptoAccountService
   @LazyInjected(\.fiatAccountService) var fiatAccountService
+  @LazyInjected(\.portalService) var portalService
   
   @Published var assetModel: AssetModel
   @Published var fiatAccount: AccountModel?
@@ -48,10 +52,14 @@ final class MoveCryptoInputViewModel: ObservableObject {
   private lazy var getBuyCryptoQouteUseCase: GetBuyQuoteUseCaseProtocol = {
     GetBuyQuoteUseCase(repository: zerohashRepository)
   }()
-
+  
   private lazy var sendEthUseCase: SendEthUseCaseProtocol = {
-      SendEthUseCase(repository: portalRepository)
-    }()
+    SendEthUseCase(repository: portalRepository)
+  }()
+  
+  private lazy var getWithdrawalSignatureUseCase: GetWithdrawalSignatureUseCaseProtocol = {
+    GetWithdrawalSignatureUseCase(repository: rainRepository)
+  }()
   
   private var subscribers: Set<AnyCancellable> = []
   
@@ -65,78 +73,9 @@ final class MoveCryptoInputViewModel: ObservableObject {
     observeAccounts()
     generateGridValues()
   }
-  
-  var cryptoIconImage: Image? {
-    assetModel.type?.filledImage
-  }
-  
-  var address: String {
-    switch type {
-    case .sendCrypto(let address, _):
-      return address
-    default:
-      return .empty
-    }
-  }
-  
-  var nickname: String {
-    switch type {
-    case .sendCrypto(_, let nickname):
-      return nickname ?? .empty
-    default:
-      return .empty
-    }
-  }
-  
-  func continueButtonTapped() {
-    Haptic.impact(.light).generate()
-    switch type {
-    case .buyCrypto:
-      fetchBuyCryptoQuote(amount: "\(amount)")
-    case .sellCrypto:
-      fetchSellCryptoQuote(amount: "\(amount)")
-    case .sendCrypto:
-      fetchSendCryptoQuote(amount: amount, address: address)
-    case .withdrawCollateral:
-      // TODO: MinhNguyen - Will implement it later
-      break
-    case .sendCollateral:
-      popup = .confirmSendCollateral
-    }
-  }
-  
-  private func generateGridValues() {
-    let cryptoCurrency = assetModel.type?.title ?? .empty
-    switch type {
-    case .buyCrypto, .withdrawCollateral:
-      gridValues = Constant.Buy.buildRecommend(available: fiatAccount?.availableBalance ?? 0)
-    case .sellCrypto, .sendCrypto, .sendCollateral:
-      gridValues = Constant.Sell.buildRecommend(available: assetModel.availableBalance, coin: cryptoCurrency)
-    }
-  }
-  
-  private func observeAccounts() {
-    accountDataManager
-      .accountsSubject
-      .receive(on: DispatchQueue.main)
-      .sink(receiveValue: { [weak self] accounts in
-      guard let self = self else {
-        return
-      }
-      if let cryptoAccount = accounts.first(where: {
-        $0.id == self.assetModel.id
-      }) {
-        self.assetModel = AssetModel(account: cryptoAccount)
-      }
-      self.fiatAccount = accounts.first(where: { account in
-        account.currency.isFiat
-      })
-    })
-    .store(in: &subscribers)
-  }
 }
 
-// MARK: - API logic
+// MARK: - API Handle
 private extension MoveCryptoInputViewModel {
   func getAccount() {
     let cryptoId = self.assetModel.id
@@ -207,6 +146,147 @@ private extension MoveCryptoInputViewModel {
     let accounts = try await fiatAccountService.getAccounts()
     self.accountDataManager.addOrUpdateAccounts(accounts)
     return accounts
+  }
+  
+  func sendCollateral() async throws {
+    guard let collateralContract = accountDataManager.collateralContract else {
+      toastMessage = L10N.Common.MoveCryptoInput.NoCollateralContract.errorMessage
+      return
+    }
+    
+    let tokenAddress = collateralContract.tokensEntity.filter { $0.symbol == AssetType.usdc.title }
+    let usdcToken = tokenAddress.first {
+      portalStorage.checkTokenSupport(with: $0.address.lowercased())
+    }
+    guard usdcToken != nil else {
+      toastMessage = L10N.Common.MoveCryptoInput.UsdcUnsupported.errorMessage
+      return
+    }
+    
+    try await sendEthUseCase.executeSend(
+      to: collateralContract.address,
+      contractAddress: assetModel.id,
+      amount: amount
+    )
+  }
+  
+  func withdrawCollateral(recipientAddress: String) {
+    Task {
+      defer { isPerformingAction = false }
+      isPerformingAction = true
+      
+      do {
+        guard let adminAddress = await portalService.getWalletAddress() else {
+          toastMessage = L10N.Common.MoveCryptoInput.MissingWallet.errorMessage
+          return
+        }
+        
+        guard let collateralContract = accountDataManager.collateralContract,
+              let controllerAddress = collateralContract.controllerAddress
+        else {
+          toastMessage = L10N.Common.MoveCryptoInput.NoCollateralContract.errorMessage
+          return
+        }
+        
+        let signature = try await getWithdrawalSignature(
+          chainId: collateralContract.chainId,
+          recipientAddress: recipientAddress,
+          adminAddress: adminAddress
+        )
+        
+        guard let withdrawAddresses = generateWithdrawAssetAddresses(
+          collateralContract: collateralContract,
+          controllerAddress: controllerAddress,
+          recipientAddress: recipientAddress
+        ) else {
+          return
+        }
+        try await portalRepository.withdrawAsset(addresses: withdrawAddresses, amount: amount, signature: signature)
+        // TODO: MinhNguyen - Refactor transaction detail for Portal Send
+        self.navigation = .transactionDetail(id: "")
+      } catch {
+        log.debug(error.userFriendlyMessage)
+        toastMessage = error.userFriendlyMessage
+      }
+    }
+  }
+  
+  func getWithdrawalSignature(
+    chainId: Int,
+    recipientAddress: String,
+    adminAddress: String
+  ) async throws -> PortalService.WithdrawAssetSignature {
+    let amount = amount * 1e2 // Convert USD to cent
+    let parameters = APIRainWithdrawalSignatureParameters(
+      chainId: chainId,
+      token: assetModel.id,
+      amount: String(amount),
+      adminAddress: adminAddress,
+      recipientAddress: recipientAddress
+    )
+    let signature = try await getWithdrawalSignatureUseCase.execute(parameters: parameters)
+    
+    return PortalService.WithdrawAssetSignature(
+      expiryAt: signature.expiryAt,
+      salt: signature.salt,
+      signature: signature.data
+    )
+  }
+}
+
+// MARK: - Private Functions
+private extension MoveCryptoInputViewModel {
+  func generateGridValues() {
+    let cryptoCurrency = assetModel.type?.title ?? .empty
+    switch type {
+    case .buyCrypto, .withdrawCollateral:
+      gridValues = Constant.Buy.buildRecommend(available: fiatAccount?.availableBalance ?? 0)
+    case .sellCrypto, .sendCrypto, .sendCollateral:
+      gridValues = Constant.Sell.buildRecommend(available: assetModel.availableBalance, coin: cryptoCurrency)
+    }
+  }
+  
+  func observeAccounts() {
+    accountDataManager
+      .accountsSubject
+      .receive(on: DispatchQueue.main)
+      .sink(receiveValue: { [weak self] accounts in
+        guard let self = self else {
+          return
+        }
+        if let cryptoAccount = accounts.first(where: {
+          $0.id == self.assetModel.id
+        }) {
+          self.assetModel = AssetModel(account: cryptoAccount)
+        }
+        self.fiatAccount = accounts.first(where: { account in
+          account.currency.isFiat
+        })
+      })
+      .store(in: &subscribers)
+  }
+  
+  func generateWithdrawAssetAddresses(
+    collateralContract: RainCollateralContractEntity,
+    controllerAddress: String,
+    recipientAddress: String
+  ) -> PortalService.WithdrawAssetAddresses? {
+    // Check if collateral supports usdc token
+    let tokenAddress = collateralContract.tokensEntity.filter { $0.symbol == AssetType.usdc.title }
+    let usdcToken = tokenAddress.first {
+      portalStorage.checkTokenSupport(with: $0.address.lowercased())
+    }
+    guard let usdcToken else {
+      toastMessage = L10N.Common.MoveCryptoInput.UsdcUnsupported.errorMessage
+      return nil
+    }
+    
+    return PortalService.WithdrawAssetAddresses(
+      contractAddress: controllerAddress,
+      proxyAddress: collateralContract.address,
+      recipientAddress: recipientAddress,
+      tokenAddress: usdcToken.address
+    )
   }
 }
 
@@ -334,6 +414,73 @@ extension MoveCryptoInputViewModel {
     amountInput.removeGroupingSeparator().convertToDecimalFormat().asDouble ?? 0.0
   }
   
+  var cryptoIconImage: Image? {
+    assetModel.type?.filledImage
+  }
+  
+  var address: String {
+    switch type {
+    case .sendCrypto(let address, _):
+      return address
+    case .withdrawCollateral(let address, _):
+      return address
+    default:
+      return .empty
+    }
+  }
+  
+  var nickname: String {
+    switch type {
+    case .sendCrypto(_, let nickname):
+      return nickname ?? .empty
+    default:
+      return .empty
+    }
+  }
+  
+  var transactionInformations: [TransactionInformation] {
+    var transactionInfors = [
+      TransactionInformation(
+        title: L10N.Common.TransactionDetail.OrderType.title,
+        value: L10N.Common.ConfirmSendCryptoView.Send.title.uppercased()
+      )
+    ]
+    if !nickname.isEmpty {
+      transactionInfors.append(
+        TransactionInformation(
+          title: L10N.Common.TransactionDetail.Nickname.title,
+          value: nickname
+        )
+      )
+    }
+    if !address.isEmpty {
+      transactionInfors.append(
+        TransactionInformation(
+          title: L10N.Common.TransactionDetail.WalletAddress.title,
+          value: address
+        )
+      )
+    }
+    return transactionInfors
+  }
+
+  
+  func continueButtonTapped() {
+    Haptic.impact(.light).generate()
+    switch type {
+    case .buyCrypto:
+      fetchBuyCryptoQuote(amount: "\(amount)")
+    case .sellCrypto:
+      fetchSellCryptoQuote(amount: "\(amount)")
+    case .sendCrypto:
+      fetchSendCryptoQuote(amount: amount, address: address)
+    case let .withdrawCollateral(address, _):
+      withdrawCollateral(recipientAddress: address)
+    case .sendCollateral:
+      popup = .confirmSendCollateral
+    }
+  }
+  
   /// Reset amountInput and selectedValue when interacting with keyboard
   func resetSelectedValue() {
     selectedValue = nil
@@ -387,27 +534,13 @@ extension MoveCryptoInputViewModel {
     popup = nil
   }
   
-  func sendCollateral(completion: @escaping () -> Void) {
+  func confirmSendCollateralButtonTapped(completion: @escaping () -> Void) {
     Task {
       defer { isLoading = false }
       isLoading = true
       
       do {
-        guard let collateralContract = accountDataManager.collateralContract else {
-          toastMessage = L10N.Common.MoveCryptoInput.NoCollateralContract.errorMessage
-          return
-        }
-        
-        let tokenAddress = collateralContract.tokensEntity.filter { $0.symbol == AssetType.usdc.title }
-        let usdcToken = tokenAddress.first {
-          portalStorage.checkTokenSupport(with: $0.address.lowercased())
-        }
-        guard usdcToken != nil else {
-          toastMessage = L10N.Common.MoveCryptoInput.UsdcUnsupported.errorMessage
-          return
-        }
-        
-        try await sendEthUseCase.executeSend(to: collateralContract.address, contractAddress: assetModel.id, amount: amount)
+        try await sendCollateral()
         hidePopup()
         completion()
       } catch {
@@ -447,6 +580,7 @@ extension MoveCryptoInputViewModel {
     case confirmSell(GetSellQuoteEntity, accountId: String)
     case confirmBuy(GetBuyQuoteEntity, accountId: String)
     case confirmSend(lockedFeeResponse: APILockedNetworkFeeResponse)
+    case transactionDetail(id: String)
   }
   
   enum Popup {

@@ -267,6 +267,16 @@ public extension String {
     }
     return .zero
   }
+  
+  func parseToUnixTimestamp() -> TimeInterval? {
+    guard let format = LiquidityDateFormatter.getDateFormat(from: self),
+          let date = format.parseToDate(from: self)
+    else {
+      return nil
+    }
+    
+    return date.timeIntervalSince1970
+  }
 }
 
 extension Collection {
