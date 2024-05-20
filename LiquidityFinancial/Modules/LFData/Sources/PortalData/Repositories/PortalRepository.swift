@@ -19,10 +19,6 @@ public class PortalRepository: PortalRepositoryProtocol {
     self.portalService = portalService
   }
   
-  public func refreshPortalSessionToken() async throws -> PortalSessionTokenEntity {
-    try await portalAPI.refreshPortalSessionToken()
-  }
-  
   public func verifyAndUpdatePortalWalletAddress() async throws {
     try await portalAPI.verifyAndUpdatePortalWalletAddress()
   }
@@ -48,7 +44,8 @@ public class PortalRepository: PortalRepositoryProtocol {
         throw error
       }
       
-      _ = try await refreshPortalSessionToken()
+      let token = try await tryRefreshPortalSessionToken()
+      try await registerPortal(portalToken: token)
       return try await createPortalWallet()
     }
   }
@@ -66,7 +63,8 @@ public class PortalRepository: PortalRepositoryProtocol {
         throw error
       }
       
-      _ = try await refreshPortalSessionToken()
+      let token = try await tryRefreshPortalSessionToken()
+      try await registerPortal(portalToken: token)
       return try await backupWallet(backupMethod: backupMethod, password: password)
     }
   }
@@ -109,7 +107,8 @@ public class PortalRepository: PortalRepositoryProtocol {
         throw error
       }
       
-      _ = try await refreshPortalSessionToken()
+      let token = try await tryRefreshPortalSessionToken()
+      try await registerPortal(portalToken: token)
       try await recoverWallet(backupMethod: backupMethod, password: password)
     }
   }

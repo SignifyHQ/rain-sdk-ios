@@ -586,6 +586,16 @@ private extension PortalService {
   
   func handlePortalError(error: Error?) -> Error {
     guard let portalMpcError = error as? PortalMpcError else {
+      if let portalRequestsError = error as? PortalRequestsError {
+        switch portalRequestsError {
+        case .clientError(let message):
+          if message.contains(PortalErrorMessage.sessionExpired) {
+            return LFPortalError.expirationToken
+          }
+        default:
+          return portalRequestsError
+        }
+      }
       return error ?? LFPortalError.unexpected
     }
     
@@ -607,6 +617,7 @@ private extension PortalService {
 extension PortalService {
   enum PortalErrorMessage {
     static let walletAlreadyExists = "wallet already exists"
+    static let sessionExpired = "SESSION_EXPIRED"
   }
 }
 

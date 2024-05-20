@@ -4,7 +4,6 @@ import Services
 
 // sourcery: AutoMockable
 public protocol PortalRepositoryProtocol {
-  func refreshPortalSessionToken() async throws -> PortalSessionTokenEntity
   func verifyAndUpdatePortalWalletAddress() async throws
   func registerPortal(portalToken: String) async throws
   func createPortalWallet() async throws -> String
