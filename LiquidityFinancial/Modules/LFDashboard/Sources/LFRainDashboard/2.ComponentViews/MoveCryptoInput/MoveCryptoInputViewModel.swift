@@ -32,9 +32,11 @@ final class MoveCryptoInputViewModel: ObservableObject {
   
   @Published var navigation: Navigation?
   @Published var popup: Popup?
+  @Published var blockPopup: BlockPopup?
   @Published var isFetchingData = false
   @Published var isLoading = false
   @Published var isPerformingAction = false
+  @Published var shouldRetryWithdrawal = false
   @Published var amountInput = "0"
   @Published var numberOfShakes = 0
   @Published var inlineError: String?
@@ -176,11 +178,6 @@ private extension MoveCryptoInputViewModel {
       isPerformingAction = true
       
       do {
-        guard let adminAddress = await portalService.getWalletAddress() else {
-          toastMessage = L10N.Common.MoveCryptoInput.MissingWallet.errorMessage
-          return
-        }
-        
         guard let collateralContract = accountDataManager.collateralContract,
               let controllerAddress = collateralContract.controllerAddress
         else {
@@ -188,11 +185,12 @@ private extension MoveCryptoInputViewModel {
           return
         }
         
-        let signature = try await getWithdrawalSignature(
+        guard let signature = try await getWithdrawalSignature(
           chainId: collateralContract.chainId,
-          recipientAddress: recipientAddress,
-          adminAddress: adminAddress
-        )
+          recipientAddress: recipientAddress
+        ) else {
+          return
+        }
         
         guard let withdrawAddresses = generateWithdrawAssetAddresses(
           collateralContract: collateralContract,
@@ -211,25 +209,30 @@ private extension MoveCryptoInputViewModel {
     }
   }
   
-  func getWithdrawalSignature(
-    chainId: Int,
-    recipientAddress: String,
-    adminAddress: String
-  ) async throws -> PortalService.WithdrawAssetSignature {
+  func getWithdrawalSignature(chainId: Int, recipientAddress: String) async throws -> PortalService.WithdrawAssetSignature? {
     let amount = amount * 1e2 // Convert USD to cent
     let parameters = APIRainWithdrawalSignatureParameters(
       chainId: chainId,
       token: assetModel.id,
       amount: String(amount),
-      adminAddress: adminAddress,
       recipientAddress: recipientAddress
     )
     let signature = try await getWithdrawalSignatureUseCase.execute(parameters: parameters)
     
+    if let retryAfterSeconds = signature.retryAfterSeconds {
+      blockPopup = .retryWithdrawalAfter(retryAfterSeconds)
+      return nil
+    }
+    
+    guard let signatureEntity = signature.signatureEntity, let expiresAt = signature.expiresAt else {
+      blockPopup = .retryWithdrawalAfter(5) // Default the retryAfterSeconds is 5 seconds
+      return nil
+    }
+    
     return PortalService.WithdrawAssetSignature(
-      expiryAt: signature.expiryAt,
-      salt: signature.salt,
-      signature: signature.data
+      expiresAt: expiresAt,
+      salt: signatureEntity.salt,
+      signature: signatureEntity.data
     )
   }
 }
@@ -532,6 +535,12 @@ extension MoveCryptoInputViewModel {
   
   func hidePopup() {
     popup = nil
+    blockPopup = nil
+  }
+  
+  func handleAfterWaitingRetryTime() {
+    hidePopup()
+    shouldRetryWithdrawal = true
   }
   
   func confirmSendCollateralButtonTapped(completion: @escaping () -> Void) {
@@ -585,6 +594,10 @@ extension MoveCryptoInputViewModel {
   
   enum Popup {
     case confirmSendCollateral
+  }
+  
+  enum BlockPopup {
+    case retryWithdrawalAfter(Int)
   }
 }
 

@@ -460,6 +460,8 @@
 "MoveCryptoInput.usdcUnsupported.errorMessage" = "USDC token cannot be utilized as collateral in the current contract";
 "MoveCryptoInput.missingWallet.errorMessage" = "The wallet does not exist. Please recover wallet";
 "MoveCryptoInput.noCollateralContract.errorMessage" = "The account does not have a collateral contract.";
+"MoveCryptoInput.withdrawalSignatureProcessing.title" = "Withdrawal Balance";
+"MoveCryptoInput.withdrawalSignatureProcessing.message" = "The system is processing your request and may take %@ seconds. Please wait!";
 
 // CryptoReceipt
 "cryptoReceipt.navigation.title" = "Receipt";

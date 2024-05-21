@@ -49,6 +49,12 @@ struct MoveCryptoInputView: View {
         confirmSendCollateralPopup
       }
     }
+    .popup(item: $viewModel.blockPopup, dismissMethods: [.tapInside]) { popup in
+      switch popup {
+      case .retryWithdrawalAfter(let duration):
+        retryWithdrawalPopup(duration: duration)
+      }
+    }
     .navigationLink(item: $viewModel.navigation) { navigation in
       switch navigation {
       case .confirmSell(let quoteEntity, let accountID):
@@ -190,7 +196,7 @@ private extension MoveCryptoInputView {
   
   var continueButton: some View {
     FullSizeButton(
-      title: L10N.Common.Button.Continue.title,
+      title: viewModel.shouldRetryWithdrawal ? L10N.Common.Button.Retry.title : L10N.Common.Button.Continue.title,
       isDisable: !viewModel.isActionAllowed,
       isLoading: $viewModel.isPerformingAction
     ) {
@@ -233,5 +239,17 @@ private extension MoveCryptoInputView {
       },
       isLoading: $viewModel.isLoading
     )
+  }
+  
+  func retryWithdrawalPopup(duration: Int) -> some View {
+    LiquidityLoadingAlert(
+      title: L10N.Common.MoveCryptoInput.WithdrawalSignatureProcessing.title,
+      message: L10N.Common.MoveCryptoInput.WithdrawalSignatureProcessing.message(
+        duration
+      ),
+      duration: duration
+    ) {
+      viewModel.handleAfterWaitingRetryTime()
+    }
   }
 }

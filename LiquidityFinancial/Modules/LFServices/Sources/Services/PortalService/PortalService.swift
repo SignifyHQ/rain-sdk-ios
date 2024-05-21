@@ -382,7 +382,7 @@ private extension PortalService {
       throw LFPortalError.unexpected
     }
     
-    guard let unixTimestamp = signature.expiryAt.parseToUnixTimestamp() else {
+    guard let unixTimestamp = signature.expiresAt.parseToUnixTimestamp() else {
       throw LFPortalError.unexpected
     }
     
@@ -638,12 +638,12 @@ extension PortalService {
   }
   
   public struct WithdrawAssetSignature {
-    let expiryAt: String
+    let expiresAt: String
     let salt: String
     let signature: String
     
-    public init(expiryAt: String, salt: String, signature: String) {
-      self.expiryAt = expiryAt
+    public init(expiresAt: String, salt: String, signature: String) {
+      self.expiresAt = expiresAt
       self.salt = salt
       self.signature = signature
     }
