@@ -9,4 +9,5 @@ public protocol RainCardAPIProtocol {
   func lockCard(cardID: String) async throws -> APIRainCard
   func unlockCard(cardID: String) async throws -> APIRainCard
   func getSecretCardInformation(sessionID: String, cardID: String) async throws -> APIRainSecretCardInformation
+  func createVirtualCard() async throws -> APIRainCard
 }

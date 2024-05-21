@@ -9,4 +9,5 @@ public protocol RainCardRepositoryProtocol {
   func lockCard(cardID: String) async throws -> RainCardEntity
   func unlockCard(cardID: String) async throws -> RainCardEntity
   func getSecretCardInformation(sessionID: String, cardID: String) async throws -> RainSecretCardInformationEntity
+  func createVirtualCard() async throws -> RainCardEntity
 }

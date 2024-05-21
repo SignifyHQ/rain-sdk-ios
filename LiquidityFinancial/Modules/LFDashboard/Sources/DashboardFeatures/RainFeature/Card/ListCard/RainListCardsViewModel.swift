@@ -290,12 +290,12 @@ private extension RainListCardsViewModel {
   func mapToCardModel(card: RainCardEntity) -> CardModel {
     CardModel(
       id: card.cardId ?? card.rainCardId,
-      cardType: CardType(rawValue: card.cardType) ?? .virtual,
+      cardType: CardType(rawValue: card.cardType.lowercased()) ?? .virtual,
       cardholderName: nil,
       expiryMonth: Int(card.expMonth ?? .empty) ?? 0,
       expiryYear: Int(card.expYear ?? .empty) ?? 0,
       last4: card.last4 ?? .empty,
-      cardStatus: CardStatus(rawValue: card.cardStatus) ?? .unactivated
+      cardStatus: CardStatus(rawValue: card.cardStatus.lowercased()) ?? .unactivated
     )
   }
   

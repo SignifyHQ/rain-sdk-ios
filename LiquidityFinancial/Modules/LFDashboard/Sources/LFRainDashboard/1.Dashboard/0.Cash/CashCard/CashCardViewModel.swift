@@ -2,23 +2,23 @@ import LFUtilities
 import Foundation
 import AccountData
 import RainFeature
-import NetSpendData
-import NetspendDomain
+import RainData
+import RainDomain
 import Factory
 import Services
 
 @MainActor
 final class CashCardViewModel: ObservableObject {
   @LazyInjected(\.accountDataManager) var accountDataManager
-  @LazyInjected(\.cardRepository) var cardRepository
+  @LazyInjected(\.rainCardRepository) var rainCardRepository
   @LazyInjected(\.analyticsService) var analyticsService
 
   @Published var isShowCardDetail = false
   @Published var isCreatingCard = false
   @Published var toastMessage: String?
   
-  lazy var createCardUseCase: NSCreateCardUseCaseProtocol = {
-    NSCreateCardUseCase(repository: cardRepository)
+  lazy var createCardUseCase: RainCreateVirtualCardUseCaseProtocol = {
+    RainCreateVirtualCardUseCase(repository: rainCardRepository)
   }()
 }
 
@@ -28,8 +28,9 @@ extension CashCardViewModel {
     Task {
       defer { isCreatingCard = false }
       isCreatingCard = true
+      
       do {
-        _ = try await createCardUseCase.execute(sessionID: accountDataManager.sessionID)
+        _ = try await createCardUseCase.execute()
         NotificationCenter.default.post(name: .refreshListCards, object: nil)
         onSuccess()
         analyticsService.track(event: AnalyticsEvent(name: .createCardSuccess))

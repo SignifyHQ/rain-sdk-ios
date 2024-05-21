@@ -65,4 +65,13 @@ extension LFCoreNetwork: RainCardAPIProtocol where R == RainCardRoute {
       decoder: .apiDecoder
     )
   }
+  
+  public func createVirtualCard() async throws -> APIRainCard {
+    try await request(
+      RainCardRoute.createVirtualCard,
+      target: APIRainCard.self,
+      failure: LFErrorObject.self,
+      decoder: .apiDecoder
+    )
+  }
 }

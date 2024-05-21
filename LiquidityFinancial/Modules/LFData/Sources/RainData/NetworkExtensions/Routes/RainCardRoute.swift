@@ -12,6 +12,7 @@ public enum RainCardRoute {
   case lockCard(cardID: String)
   case unlockCard(cardID: String)
   case getSecretCardInfomation(sessionID: String, cardID: String)
+  case createVirtualCard
 }
 
 extension RainCardRoute: LFRoute {
@@ -31,6 +32,8 @@ extension RainCardRoute: LFRoute {
       return "/v1/rain/cards/unlock"
     case .getSecretCardInfomation:
       return "/v1/rain/cards/card-secret-info-by-id"
+    case .createVirtualCard:
+      return "/v1/rain/cards/virtual-card"
     }
   }
   
@@ -42,7 +45,8 @@ extension RainCardRoute: LFRoute {
         .activatePhysicalCard,
         .closeCard,
         .lockCard,
-        .unlockCard:
+        .unlockCard,
+        .createVirtualCard:
       return .POST
     }
   }
@@ -81,6 +85,8 @@ extension RainCardRoute: LFRoute {
       return parameters.encoded()
     case let .activatePhysicalCard(_, parameters):
       return parameters.encoded()
+    case .createVirtualCard:
+      return nil
     }
   }
   
@@ -94,6 +100,8 @@ extension RainCardRoute: LFRoute {
       return .url
     case .orderPhysicalCard, .activatePhysicalCard:
       return .json
+    case .createVirtualCard:
+      return nil
     }
   }
 }

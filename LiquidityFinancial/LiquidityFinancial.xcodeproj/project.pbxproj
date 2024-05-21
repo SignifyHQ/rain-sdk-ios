@@ -13,6 +13,7 @@
 		06154BA82B21C74100CABABB /* BiometricsManager in Frameworks */ = {isa = PBXBuildFile; productRef = 06154BA72B21C74100CABABB /* BiometricsManager */; };
 		06154BAA2B21C74900CABABB /* BiometricsManager in Frameworks */ = {isa = PBXBuildFile; productRef = 06154BA92B21C74900CABABB /* BiometricsManager */; };
 		06189EF92AD840A200F279B4 /* CommonLogicUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06189EF82AD840A200F279B4 /* CommonLogicUtils.swift */; };
+		061FFD622BFC3F9800B21165 /* contractJsonABI.json in Resources */ = {isa = PBXBuildFile; fileRef = 061FFD612BFC3F9800B21165 /* contractJsonABI.json */; };
 		0627513C2BF5E5A700546864 /* RainFeature in Frameworks */ = {isa = PBXBuildFile; productRef = 0627513B2BF5E5A700546864 /* RainFeature */; };
 		0627513E2BF5E5B400546864 /* RainFeature in Frameworks */ = {isa = PBXBuildFile; productRef = 0627513D2BF5E5B400546864 /* RainFeature */; };
 		062751402BF5E5C100546864 /* RainFeature in Frameworks */ = {isa = PBXBuildFile; productRef = 0627513F2BF5E5C100546864 /* RainFeature */; };
@@ -44,7 +45,6 @@
 		067C77272BF5E84B00AA8EE1 /* LFRainDashboard in Frameworks */ = {isa = PBXBuildFile; productRef = 067C77262BF5E84B00AA8EE1 /* LFRainDashboard */; };
 		067C77292BF5E85700AA8EE1 /* LFRainDashboard in Frameworks */ = {isa = PBXBuildFile; productRef = 067C77282BF5E85700AA8EE1 /* LFRainDashboard */; };
 		067C772B2BF5E86100AA8EE1 /* LFRainDashboard in Frameworks */ = {isa = PBXBuildFile; productRef = 067C772A2BF5E86100AA8EE1 /* LFRainDashboard */; };
-		067FC6C32BF6FE84002FF97E /* contractJsonABI.json in Resources */ = {isa = PBXBuildFile; fileRef = 067FC6C22BF6FE84002FF97E /* contractJsonABI.json */; };
 		069589022ADD0B150030DBAB /* LoginFlowTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 069589012ADD0B150030DBAB /* LoginFlowTest.swift */; };
 		069589042ADD0F1F0030DBAB /* IdentityVerificationCodeScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 069589032ADD0F1F0030DBAB /* IdentityVerificationCodeScreen.swift */; };
 		069589062ADD142F0030DBAB /* IdentityVerificationCodeTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 069589052ADD142F0030DBAB /* IdentityVerificationCodeTest.swift */; };
@@ -582,6 +582,7 @@
 
 /* Begin PBXFileReference section */
 		06189EF82AD840A200F279B4 /* CommonLogicUtils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommonLogicUtils.swift; sourceTree = "<group>"; };
+		061FFD612BFC3F9800B21165 /* contractJsonABI.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = contractJsonABI.json; sourceTree = "<group>"; };
 		063A6FC42ADD87790073146D /* ProfileScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileScreen.swift; sourceTree = "<group>"; };
 		06663AEF2ADE22A900A3FF12 /* Avalanche.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = Avalanche.xctestplan; sourceTree = "<group>"; };
 		06663AF02ADE243100A3FF12 /* Cardano.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = Cardano.xctestplan; sourceTree = "<group>"; };
@@ -595,7 +596,6 @@
 		066677312AD93A8F0072F7C9 /* VerificationCodeScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VerificationCodeScreen.swift; sourceTree = "<group>"; };
 		066677332AD9462F0072F7C9 /* VerificationCodeTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VerificationCodeTest.swift; sourceTree = "<group>"; };
 		066DD7512ADD515F00EDD2A6 /* AccountLockedScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountLockedScreen.swift; sourceTree = "<group>"; };
-		067FC6C22BF6FE84002FF97E /* contractJsonABI.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; name = contractJsonABI.json; path = ../../../../../Desktop/contractJsonABI.json; sourceTree = "<group>"; };
 		069589012ADD0B150030DBAB /* LoginFlowTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginFlowTest.swift; sourceTree = "<group>"; };
 		069589032ADD0F1F0030DBAB /* IdentityVerificationCodeScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IdentityVerificationCodeScreen.swift; sourceTree = "<group>"; };
 		069589052ADD142F0030DBAB /* IdentityVerificationCodeTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IdentityVerificationCodeTest.swift; sourceTree = "<group>"; };
@@ -1851,7 +1851,7 @@
 		A97BF8152A5D9D3F00B8F5CA /* Resources */ = {
 			isa = PBXGroup;
 			children = (
-				067FC6C22BF6FE84002FF97E /* contractJsonABI.json */,
+				061FFD612BFC3F9800B21165 /* contractJsonABI.json */,
 				A9BC80392A774D2F00E4A1A0 /* Fonts */,
 				A95D418F2A6E31C60095596B /* Avalanche.entitlements */,
 				A97BF8392A5DA4DA00B8F5CA /* Avalanche-Info.plist */,
@@ -2985,7 +2985,7 @@
 				06D40C032A63DEB300EADB75 /* LoadingPrimary.json in Resources */,
 				743DA8232B43E1FC000F5AD8 /* PawsCardConfig.xcconfig in Resources */,
 				A9BC80482A774D4F00E4A1A0 /* Inter-Bold.ttf in Resources */,
-				067FC6C32BF6FE84002FF97E /* contractJsonABI.json in Resources */,
+				061FFD622BFC3F9800B21165 /* contractJsonABI.json in Resources */,
 				7416A2102B7F2E0A00062824 /* AccessibilityIdentifier.strings in Resources */,
 				A9BC80472A774D4F00E4A1A0 /* Inter-Medium.ttf in Resources */,
 				A97BF8402A5DC13000B8F5CA /* Colors.xcassets in Resources */,
