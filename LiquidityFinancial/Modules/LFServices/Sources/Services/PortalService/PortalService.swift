@@ -39,7 +39,7 @@ public extension PortalService {
       log.debug("Portal Swift: Registered Portal successfully")
     } catch {
       log.error("Portal Swift: Error registering Portal \(error)")
-      throw handlePortalError(error: error)
+      throw LFPortalError.handlePortalError(error: error)
     }
   }
   
@@ -59,7 +59,7 @@ public extension PortalService {
       }
       return addresses.ethereum ?? "N/A"
     } catch {
-      throw handlePortalError(error: error)
+      throw LFPortalError.handlePortalError(error: error)
     }
   }
   
@@ -88,7 +88,7 @@ public extension PortalService {
       return (cipherText, storageCallback)
     } catch {
       log.error("Portal Swift: Error backing up wallet \(error)")
-      throw handlePortalError(error: error)
+      throw LFPortalError.handlePortalError(error: error)
     }
   }
   
@@ -118,7 +118,7 @@ public extension PortalService {
       
     } catch {
       log.error("Portal Swift: Error backing up wallet \(error)")
-      throw handlePortalError(error: error)
+      throw LFPortalError.handlePortalError(error: error)
     }
   }
   
@@ -582,42 +582,6 @@ private extension PortalService {
     log.debug("\(debugDescription) - txHash: \(txHash)")
     
     return txHash
-  }
-  
-  func handlePortalError(error: Error?) -> Error {
-    guard let portalMpcError = error as? PortalMpcError else {
-      if let portalRequestsError = error as? PortalRequestsError {
-        switch portalRequestsError {
-        case .clientError(let message):
-          if message.contains(PortalErrorMessage.sessionExpired) {
-            return LFPortalError.expirationToken
-          }
-        default:
-          return portalRequestsError
-        }
-      }
-      return error ?? LFPortalError.unexpected
-    }
-    
-    switch portalMpcError.code {
-    case 320:
-      return LFPortalError.expirationToken
-    case PortalErrorCodes.INVALID_API_KEY.rawValue:
-      return LFPortalError.expirationToken
-    case PortalErrorCodes.BAD_REQUEST.rawValue:
-      return portalMpcError.message.lowercased().contains(PortalErrorMessage.walletAlreadyExists) ? LFPortalError.walletAlreadyExists : portalMpcError
-    default:
-      return portalMpcError
-    }
-  }
-  
-}
-
-// MARK: - PortalErrorMessage
-extension PortalService {
-  enum PortalErrorMessage {
-    static let walletAlreadyExists = "wallet already exists"
-    static let sessionExpired = "SESSION_EXPIRED"
   }
 }
 

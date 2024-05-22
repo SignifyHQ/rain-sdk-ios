@@ -58,7 +58,6 @@ extension CreateWalletViewModel {
       await backupPortalWalletByIcloud()
     } catch {
       loadingText = .empty
-      log.error(error.localizedDescription)
       handlePortalError(error: error)
     }
   }
@@ -73,7 +72,7 @@ extension CreateWalletViewModel {
       isNavigateToPersonalInformation = true
     } catch {
       loadingText = .empty
-      log.error(error.localizedDescription)
+      log.error(error.userFriendlyMessage)
       showIndicator = false
       toastMessage = error.userFriendlyMessage
     }
@@ -192,10 +191,15 @@ private extension CreateWalletViewModel {
     case .iCloudAccountUnavailable:
       showIndicator = false
       popup = .settingICloud
+    case .customError(let message):
+      toastMessage = message
+      showIndicator = false
     default:
       toastMessage = portalError.localizedDescription
       showIndicator = false
     }
+    
+    log.error(toastMessage ?? error.localizedDescription)
   }
 }
 

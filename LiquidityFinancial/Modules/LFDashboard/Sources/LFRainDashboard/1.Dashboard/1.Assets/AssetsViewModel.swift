@@ -6,6 +6,7 @@ import LFUtilities
 import Factory
 import Combine
 import GeneralFeature
+import Services
 
 @MainActor
 final class AssetsViewModel: ObservableObject {
@@ -59,7 +60,20 @@ final class AssetsViewModel: ObservableObject {
     do {
       try await refreshPortalAssetsUseCase.execute()
     } catch {
-      toastMessage = error.userFriendlyMessage
+      guard let portalError = error as? LFPortalError else {
+        toastMessage = error.userFriendlyMessage
+        log.error(error.userFriendlyMessage)
+        return
+      }
+      
+      switch portalError {
+      case .customError(let message):
+        toastMessage = message
+      default:
+        toastMessage = portalError.localizedDescription
+      }
+      
+      log.error(toastMessage ?? portalError.localizedDescription)
     }
   }
 }

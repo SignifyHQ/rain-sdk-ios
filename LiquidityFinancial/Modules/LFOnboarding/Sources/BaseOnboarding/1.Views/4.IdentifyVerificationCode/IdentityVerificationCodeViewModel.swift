@@ -197,9 +197,25 @@ private extension IdentityVerificationCodeViewModel {
       do {
         try await registerPortalUseCase.execute(portalToken: portalToken)
       } catch {
-        log.error(error.userFriendlyMessage)
-        toastMessage = error.userFriendlyMessage
+        handlePortalError(error: error)
       }
     }
+  }
+  
+  func handlePortalError(error: Error) {
+    guard let portalError = error as? LFPortalError else {
+      toastMessage = error.userFriendlyMessage
+      log.error(error.userFriendlyMessage)
+      return
+    }
+    
+    switch portalError {
+    case .customError(let message):
+      toastMessage = message
+    default:
+      toastMessage = portalError.localizedDescription
+    }
+    
+    log.error(toastMessage ?? portalError.localizedDescription)
   }
 }

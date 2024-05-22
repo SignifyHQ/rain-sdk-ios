@@ -89,19 +89,22 @@ extension RecoverWalletViewModel {
 // MARK: - Private Functions
 private extension RecoverWalletViewModel {
   func handleError(error: Error) {
-    log.debug(error.userFriendlyMessage)
-
     guard let portalError = error as? LFPortalError else {
       toastMessage = error.userFriendlyMessage
+      log.error(error.userFriendlyMessage)
       return
     }
     
     switch portalError {
     case .iCloudAccountUnavailable:
       navigation = .iCloudNotFound
+    case .customError(let message):
+      toastMessage = message
     default:
       toastMessage = portalError.localizedDescription
     }
+    
+    log.error(toastMessage ?? portalError.localizedDescription)
   }
 }
 

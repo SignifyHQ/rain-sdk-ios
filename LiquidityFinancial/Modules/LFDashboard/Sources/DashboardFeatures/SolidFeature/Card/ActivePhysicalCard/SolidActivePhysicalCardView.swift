@@ -67,7 +67,7 @@ private extension SolidActivePhysicalCardView {
         .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.large.value))
         .foregroundColor(Colors.label.swiftUIColor)
         .multilineTextAlignment(.center)
-      Text(L10N.Common.CardActivated.CardActived.description)
+      Text(L10N.Common.CardActivated.CardActived.description(LFUtilities.cardName))
         .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.medium.value))
         .foregroundColor(Colors.label.swiftUIColor.opacity(0.75))
         .multilineTextAlignment(.center)

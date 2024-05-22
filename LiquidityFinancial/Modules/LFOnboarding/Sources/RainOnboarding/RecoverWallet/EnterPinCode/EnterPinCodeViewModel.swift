@@ -9,6 +9,7 @@ import LFStyleGuide
 import PortalSwift
 import PortalData
 import PortalDomain
+import Services
 
 @MainActor
 public final class EnterPinCodeViewModel: ObservableObject {
@@ -47,7 +48,20 @@ extension EnterPinCodeViewModel {
         
         popup = .recoverySuccessfully
       } catch {
-        inlineMessage = error.userFriendlyMessage
+        guard let portalError = error as? LFPortalError else {
+          inlineMessage = error.userFriendlyMessage
+          log.error(error.userFriendlyMessage)
+          return
+        }
+        
+        switch portalError {
+        case .customError(let message):
+          inlineMessage = message
+        default:
+          inlineMessage = portalError.localizedDescription
+        }
+        
+        log.error(inlineMessage ?? portalError.localizedDescription)
       }
     }
   }

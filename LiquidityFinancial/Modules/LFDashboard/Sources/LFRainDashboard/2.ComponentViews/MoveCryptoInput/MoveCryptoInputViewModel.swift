@@ -108,8 +108,7 @@ private extension MoveCryptoInputViewModel {
         let feeResponse = APILockedNetworkFeeResponse(quoteId: "", amount: amount, maxAmount: false, fee: txFee)
         navigation = .confirmSend(lockedFeeResponse: feeResponse)
       } catch {
-        log.error(error)
-        self.toastMessage = error.userFriendlyMessage
+        handlePortalError(error: error)
       }
     }
   }
@@ -203,8 +202,7 @@ private extension MoveCryptoInputViewModel {
         // TODO: MinhNguyen - Refactor transaction detail for Portal Send
         self.navigation = .transactionDetail(id: "")
       } catch {
-        log.debug(error.userFriendlyMessage)
-        toastMessage = error.userFriendlyMessage
+        handlePortalError(error: error)
       }
     }
   }
@@ -290,6 +288,23 @@ private extension MoveCryptoInputViewModel {
       recipientAddress: recipientAddress,
       tokenAddress: usdcToken.address
     )
+  }
+  
+  func handlePortalError(error: Error) {
+    guard let portalError = error as? LFPortalError else {
+      toastMessage = error.userFriendlyMessage
+      log.error(error.userFriendlyMessage)
+      return
+    }
+    
+    switch portalError {
+    case .customError(let message):
+      toastMessage = message
+    default:
+      toastMessage = portalError.localizedDescription
+    }
+    
+    log.error(toastMessage ?? portalError.localizedDescription)
   }
 }
 
@@ -553,8 +568,7 @@ extension MoveCryptoInputViewModel {
         hidePopup()
         completion()
       } catch {
-        log.debug(error.userFriendlyMessage)
-        toastMessage = error.userFriendlyMessage
+        handlePortalError(error: error)
       }
     }
   }
