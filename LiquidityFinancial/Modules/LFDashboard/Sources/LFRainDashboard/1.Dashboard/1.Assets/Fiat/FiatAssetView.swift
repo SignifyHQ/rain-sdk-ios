@@ -36,7 +36,7 @@ struct FiatAssetView: View {
           )
         case let .transactionDetail(transaction):
             TransactionDetailView(
-              transactionId: transaction.id,
+              method: .transactionID(transaction.id),
               kind: transaction.detailType,
               isPopToRoot: false
             )

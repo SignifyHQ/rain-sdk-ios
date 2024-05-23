@@ -63,6 +63,10 @@ final class MoveCryptoInputViewModel: ObservableObject {
     GetWithdrawalSignatureUseCase(repository: rainRepository)
   }()
   
+  private lazy var withdrawAsssetUseCase: WithdrawAssetUseCaseProtocol = {
+    WithdrawAssetUseCase(repository: portalRepository)
+  }()
+  
   private var subscribers: Set<AnyCancellable> = []
   
   let type: Kind
@@ -149,10 +153,10 @@ private extension MoveCryptoInputViewModel {
     return accounts
   }
   
-  func sendCollateral() async throws {
+  func sendCollateral() async throws -> String? {
     guard let collateralContract = accountDataManager.collateralContract else {
       toastMessage = L10N.Common.MoveCryptoInput.NoCollateralContract.errorMessage
-      return
+      return nil
     }
     
     let tokenAddress = collateralContract.tokensEntity.filter { $0.symbol == AssetType.usdc.title }
@@ -161,10 +165,10 @@ private extension MoveCryptoInputViewModel {
     }
     guard usdcToken != nil else {
       toastMessage = L10N.Common.MoveCryptoInput.UsdcUnsupported.errorMessage
-      return
+      return nil
     }
     
-    try await sendEthUseCase.executeSend(
+    return try await sendEthUseCase.executeSend(
       to: collateralContract.address,
       contractAddress: assetModel.id,
       amount: amount
@@ -198,9 +202,13 @@ private extension MoveCryptoInputViewModel {
         ) else {
           return
         }
-        try await portalRepository.withdrawAsset(addresses: withdrawAddresses, amount: amount, signature: signature)
-        // TODO: MinhNguyen - Refactor transaction detail for Portal Send
-        self.navigation = .transactionDetail(id: "")
+        
+        let txnHash = try await withdrawAsssetUseCase.execute(
+          addresses: withdrawAddresses,
+          amount: amount,
+          signature: signature
+        )
+        self.navigation = .transactionDetail(transactionHash: txnHash)
       } catch {
         handlePortalError(error: error)
       }
@@ -558,15 +566,18 @@ extension MoveCryptoInputViewModel {
     shouldRetryWithdrawal = true
   }
   
-  func confirmSendCollateralButtonTapped(completion: @escaping () -> Void) {
+  func confirmSendCollateralButtonTapped() {
     Task {
       defer { isLoading = false }
       isLoading = true
       
       do {
-        try await sendCollateral()
+        guard let txnHash = try await sendCollateral() else {
+          return
+        }
+        
         hidePopup()
-        completion()
+        navigation = .transactionDetail(transactionHash: txnHash)
       } catch {
         handlePortalError(error: error)
       }
@@ -603,7 +614,7 @@ extension MoveCryptoInputViewModel {
     case confirmSell(GetSellQuoteEntity, accountId: String)
     case confirmBuy(GetBuyQuoteEntity, accountId: String)
     case confirmSend(lockedFeeResponse: APILockedNetworkFeeResponse)
-    case transactionDetail(id: String)
+    case transactionDetail(transactionHash: String)
   }
   
   enum Popup {

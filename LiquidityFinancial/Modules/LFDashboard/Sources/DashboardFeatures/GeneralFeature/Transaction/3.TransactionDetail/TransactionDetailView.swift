@@ -15,7 +15,7 @@ public struct TransactionDetailView: View {
   let popAction: (() -> Void)?
   
   public init(
-    transactionId: String,
+    method: TransactionDetailViewModel.Method,
     fundraisersId: String = .empty,
     kind: TransactionDetailType? = nil,
     isNewAddress: Bool? = nil,
@@ -26,7 +26,7 @@ public struct TransactionDetailView: View {
   ) {
     _viewModel = .init(
       wrappedValue: TransactionDetailViewModel(
-        transactionId: transactionId,
+        method: method,
         fundraisersId: fundraisersId,
         kind: kind)
     )
@@ -48,6 +48,9 @@ public struct TransactionDetailView: View {
           transactionContent(kind: kind ?? viewModel.transaction.detailType)
         }
       }
+    }
+    .popup(item: $viewModel.toastMessage, style: .toast) {
+      ToastView(toastMessage: $0)
     }
     .frame(max: .infinity)
     .navigationBarBackButtonHidden(isPopToRoot)

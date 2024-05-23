@@ -126,7 +126,7 @@ public extension PortalService {
     to address: String,
     contractAddress: String?,
     amount: Double
-  ) async throws {
+  ) async throws -> String {
     let transaction = try await buildEthTransaction(
       to: address,
       contractAddress: contractAddress,
@@ -134,7 +134,7 @@ public extension PortalService {
     )
     
     let debugDescription = "Portal Swift: Send transaction success for \(transaction.walletAddress)"
-    _ = try await sendTransactionToBlockchain(
+    return try await sendTransactionToBlockchain(
       walletAddress: transaction.walletAddress,
       transactionParams: transaction.transactionParams,
       debugDescription: debugDescription
@@ -145,7 +145,7 @@ public extension PortalService {
     addresses: WithdrawAssetAddresses,
     amount: Double,
     signature: WithdrawAssetSignature
-  ) async throws {
+  ) async throws -> String {
     let transaction = try await buildETHTransactionParamForWithdrawAsset(
       addresses: addresses,
       amount: amount,
@@ -153,7 +153,7 @@ public extension PortalService {
     )
     
     let debugDescription = "Portal Swift: Send transaction success for \(transaction.walletAddress)"
-    _ = try await sendTransactionToBlockchain(
+    return try await sendTransactionToBlockchain(
       walletAddress: transaction.walletAddress,
       transactionParams: transaction.transactionParams,
       debugDescription: debugDescription

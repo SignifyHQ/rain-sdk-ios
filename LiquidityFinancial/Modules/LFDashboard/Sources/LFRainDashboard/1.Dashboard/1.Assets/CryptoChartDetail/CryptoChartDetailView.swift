@@ -244,7 +244,7 @@ private extension CryptoChartDetailView {
     switch item {
     case let .trxDetail(model):
       TransactionDetailView(
-        transactionId: model.id,
+        method: .transactionID(model.id),
         kind: model.detailType
       )
       .embedInNavigation()

@@ -70,9 +70,9 @@ struct MoveCryptoInputView: View {
           feeLockedResponse: lockedFeeResponse,
           completeAction: completeAction
         )
-      case .transactionDetail(let id):
+      case .transactionDetail(let transactionHash):
         TransactionDetailView(
-          transactionId: id,
+          method: .transactionHash(transactionHash),
           kind: TransactionDetailType.withdraw,
           isNewAddress: viewModel.nickname.isEmpty,
           walletAddress: viewModel.address,
@@ -229,9 +229,7 @@ private extension MoveCryptoInputView {
         viewModel.amount, viewModel.assetModel.type?.title ?? .empty
       ),
       primary: .init(text: L10N.Common.Button.Yes.title) {
-        viewModel.confirmSendCollateralButtonTapped {
-          dismiss()
-        }
+        viewModel.confirmSendCollateralButtonTapped()
       },
       secondary: .init(text: L10N.Common.Button.No.title) {
         viewModel.hidePopup()

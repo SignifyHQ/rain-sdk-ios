@@ -83,9 +83,8 @@ class ConfirmSendCryptoViewModel: ObservableObject {
       defer { showIndicator = false }
       showIndicator = true
       do {
-        try await sendEthUseCase.executeSend(to: address, contractAddress: assetModel.id.nilIfEmpty, amount: amount)
-        // TODO(Volo): Refactor transaction detail for Portal Send
-        self.navigation = .transactionDetail("id")
+        let txnHash = try await sendEthUseCase.executeSend(to: address, contractAddress: assetModel.id.nilIfEmpty, amount: amount)
+        self.navigation = .transactionDetail(transactionHash: txnHash)
       } catch {
         handlePortalError(error: error)
       }
@@ -151,6 +150,6 @@ extension ConfirmSendCryptoViewModel {
 // MARK: - Types
 extension ConfirmSendCryptoViewModel {
   enum Navigation {
-    case transactionDetail(String)
+    case transactionDetail(transactionHash: String)
   }
 }

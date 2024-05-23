@@ -87,7 +87,7 @@ extension PushNotificationsService: UNUserNotificationCenterDelegate {
     else {
       return
     }
-    event = .transaction(id: transactionId, accountId: accountId)
+    event = .transaction(id: transactionId)
   }
 }
 

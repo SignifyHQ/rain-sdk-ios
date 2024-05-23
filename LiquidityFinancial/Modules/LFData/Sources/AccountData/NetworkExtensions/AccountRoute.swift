@@ -21,6 +21,7 @@ public enum AccountRoute {
   case updateSelectedRewardCurrency(rewardCurrency: String)
   case getTransactions(parameters: APITransactionsParameters)
   case getTransactionDetail(transactionId: String)
+  case getTransactionByHashID(transactionHash: String)
   case logout
   case createWalletAddress(accountId: String, address: String, nickname: String)
   case updateWalletAddress(accountId: String, walletId: String, walletAddress: String, nickname: String)
@@ -72,6 +73,8 @@ extension AccountRoute: LFRoute {
       return "/v1/transactions/list"
     case let .getTransactionDetail(transactionId):
       return "/v1/transactions/detail/\(transactionId)"
+    case .getTransactionByHashID:
+      return "/v1/transactions/by-transaction-hash"
     case .createWalletAddress(let accountId, _, _), .getWalletAddresses(let accountId):
       return "v1/accounts/\(accountId)/wallet-addresses"
     case let .updateWalletAddress(accountId, _, walletAddress, _):
@@ -119,6 +122,7 @@ extension AccountRoute: LFRoute {
     case .getUser,
         .getTransactions,
         .getTransactionDetail,
+        .getTransactionByHashID,
         .getWalletAddresses,
         .getReferralCampaign,
         .getAvailableRewardCurrencies,
@@ -236,6 +240,10 @@ extension AccountRoute: LFRoute {
       return [
         "code": code
       ]
+    case let .getTransactionByHashID(transactionHash):
+      return [
+        "transactionHash": transactionHash
+      ]
     }
   }
   
@@ -270,6 +278,7 @@ extension AccountRoute: LFRoute {
       return nil
     case .getTransactions,
         .getTransactionDetail,
+        .getTransactionByHashID,
         .getReferralCampaign:
       return .url
     }

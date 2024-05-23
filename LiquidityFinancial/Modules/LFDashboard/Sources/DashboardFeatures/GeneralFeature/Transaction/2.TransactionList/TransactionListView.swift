@@ -43,7 +43,7 @@ public struct TransactionListView: View {
     }
     .navigationLink(item: $viewModel.transactionDetail) { item in
       TransactionDetailView(
-        transactionId: item.id,
+        method: .transactionID(item.id),
         kind: item.detailType,
         isPopToRoot: false
       )

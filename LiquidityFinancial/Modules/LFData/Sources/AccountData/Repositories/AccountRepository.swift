@@ -87,6 +87,10 @@ public class AccountRepository: AccountRepositoryProtocol {
     return try await accountAPI.getTransactionDetail(transactionId: transactionId)
   }
   
+  public func getTransactionDetailByHashID(transactionHash: String) async throws -> TransactionEntity {
+    return try await accountAPI.getTransactionDetailByHashID(transactionHash: transactionHash)
+  }
+  
   public func logout() async throws -> Bool {
     return try await accountAPI.logout()
   }

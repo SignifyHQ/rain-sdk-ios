@@ -11,4 +11,8 @@ public final class GetTransactionDetailUseCase: GetTransactionDetailUseCaseProto
   public func execute(transactionID: String) async throws -> TransactionEntity {
     try await repository.getTransactionDetail(transactionId: transactionID)
   }
+  
+  public func execute(transactionHash: String) async throws -> TransactionEntity {
+    try await repository.getTransactionDetailByHashID(transactionHash: transactionHash)
+  }
 }

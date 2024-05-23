@@ -36,9 +36,9 @@ struct ConfirmSendCryptoView: View {
       .navigationBarTitleDisplayMode(.inline)
       .navigationLink(item: $viewModel.navigation) { item in
         switch item {
-        case let .transactionDetail(id):
+        case let .transactionDetail(transactionHash):
           TransactionDetailView(
-            transactionId: id,
+            method: .transactionHash(transactionHash),
             kind: .crypto,
             isNewAddress: viewModel.nickname.isEmpty,
             walletAddress: viewModel.address,

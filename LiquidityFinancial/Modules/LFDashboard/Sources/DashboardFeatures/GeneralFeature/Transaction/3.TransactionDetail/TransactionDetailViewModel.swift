@@ -11,13 +11,14 @@ import RewardData
 import RewardDomain
 
 @MainActor
-final class TransactionDetailViewModel: ObservableObject {
+public final class TransactionDetailViewModel: ObservableObject {
   @LazyInjected(\.accountRepository) var accountRepository
   @LazyInjected(\.rewardRepository) var rewardRepository
 
   @Published var transaction: TransactionModel = .default
   @Published var donation: DonationModel = .default
   @Published var isFetchingData = false
+  @Published var toastMessage: String?
   
   lazy var rewardUseCase: RewardUseCase = {
     RewardUseCase(repository: rewardRepository)
@@ -27,27 +28,41 @@ final class TransactionDetailViewModel: ObservableObject {
     GetTransactionDetailUseCase(repository: accountRepository)
   }()
 
-  init(transactionId: String, fundraisersId: String, kind: TransactionDetailType?) {
+  public init(method: Method, fundraisersId: String, kind: TransactionDetailType?) {
     maybeShowRatingAlert()
+    
     switch kind {
     case .donation:
-      getFundraisersDetail(fundraisersID: fundraisersId, transactionId: transactionId)
+      switch method {
+      case .transactionID(let id):
+        getFundraisersDetail(fundraisersID: fundraisersId, transactionId: id)
+      default: break
+      }
     default:
-      getTransactionDetail(transactionId: transactionId)
+      getTransactionDetail(by: method)
     }
   }
 }
 
 // MARK: - API
 private extension TransactionDetailViewModel {
-  func getTransactionDetail(transactionId: String) {
+  func getTransactionDetail(by method: Method) {
     Task {
       defer { isFetchingData = false }
       isFetchingData = true
+      
       do {
-        let transactionEntity = try await getTransactionDetailUseCase.execute(transactionID: transactionId)
-        transaction = TransactionModel(from: transactionEntity)
+        switch method {
+        case .transactionID(let id):
+          let transactionEntity = try await getTransactionDetailUseCase.execute(transactionID: id)
+          transaction = TransactionModel(from: transactionEntity)
+        case .transactionHash(let txnHash):
+          let transactionEntity = try await getTransactionDetailUseCase.execute(transactionHash: txnHash)
+          transaction = TransactionModel(from: transactionEntity)
+        }
       } catch {
+        log.error(error.userFriendlyMessage)
+        toastMessage = error.userFriendlyMessage
       }
     }
   }
@@ -75,6 +90,8 @@ private extension TransactionDetailViewModel {
           createdAt: donationDetail?.createdAt ?? .empty
         )
       } catch {
+        log.error(error.userFriendlyMessage)
+        toastMessage = error.userFriendlyMessage
       }
     }
   }
@@ -151,5 +168,13 @@ extension TransactionDetailViewModel {
         markValue: transaction.balanceFormatted
       )
     ]
+  }
+}
+
+// MARK: - Types
+extension TransactionDetailViewModel {
+  public enum Method {
+    case transactionID(String)
+    case transactionHash(String)
   }
 }

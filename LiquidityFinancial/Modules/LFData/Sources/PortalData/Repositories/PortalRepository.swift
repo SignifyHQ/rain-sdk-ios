@@ -81,7 +81,7 @@ public class PortalRepository: PortalRepositoryProtocol {
     to address: String,
     contractAddress: String?,
     amount: Double
-  ) async throws {
+  ) async throws -> String {
     try await portalService.send(to: address, contractAddress: contractAddress, amount: amount)
   }  
   
@@ -89,7 +89,7 @@ public class PortalRepository: PortalRepositoryProtocol {
     addresses: PortalService.WithdrawAssetAddresses,
     amount: Double,
     signature: PortalService.WithdrawAssetSignature
-  ) async throws {
+  ) async throws -> String {
     try await portalService.withdrawAsset(addresses: addresses, amount: amount, signature: signature)
   }
 

@@ -67,7 +67,7 @@ public struct MoveMoneyAccountView: View {
         switch navigation {
         case let .transactionDetai(id):
           TransactionDetailView(
-            transactionId: id,
+            method: .transactionID(id),
             kind: viewModel.kind == .receive ? .deposit : .withdraw
           )
         case .addBankDebit:

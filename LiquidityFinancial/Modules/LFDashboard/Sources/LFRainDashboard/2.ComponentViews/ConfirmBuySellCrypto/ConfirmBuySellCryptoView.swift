@@ -25,7 +25,7 @@ struct ConfirmBuySellCryptoView: View {
         switch navigation {
         case .sellTransactionDetail(let entity):
           TransactionDetailView(
-            transactionId: entity.id ?? "",
+            method: .transactionID(entity.id ?? ""),
             kind: .crypto,
             transactionInfo: [
               TransactionInformation(title: L10N.Common.TransactionDetail.TransactionType.title, value: L10N.Common.TransactionDetail.Sell.title),
@@ -34,7 +34,7 @@ struct ConfirmBuySellCryptoView: View {
           )
         case .buyTransactionDetail(let entity):
           TransactionDetailView(
-            transactionId: entity.id ?? "",
+            method: .transactionID(entity.id ?? ""),
             kind: .crypto,
             transactionInfo: [
               TransactionInformation(title: L10N.Common.TransactionDetail.TransactionType.title, value: L10N.Common.TransactionDetail.Buy.title),

@@ -11,7 +11,7 @@ public final class SendEthUseCase: SendEthUseCaseProtocol {
     try await repository.estimateFee(to: address, contractAddress: contractAddress, amount: amount)
   }
   
-  public func executeSend(to address: String, contractAddress: String?, amount: Double) async throws {
+  public func executeSend(to address: String, contractAddress: String?, amount: Double) async throws -> String {
     try await repository.send(to: address, contractAddress: contractAddress, amount: amount)
   }
 }

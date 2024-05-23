@@ -131,8 +131,8 @@ extension HomeViewModel {
       return
     }
     switch event {
-    case let .transaction(id, accountId):
-      openTransactionId(id, accountId: accountId)
+    case let .transaction(id):
+      openTransactionId(id)
     }
   }
   
@@ -189,9 +189,9 @@ extension HomeViewModel {
     popup = nil
   }
   
-  func openTransactionId(_ id: String, accountId: String) {
+  func openTransactionId(_ id: String) {
     Task { @MainActor in
-      navigation = .transactionDetail(id: id, accountId: accountId)
+      navigation = .transactionDetail(id: id)
       pushNotificationService.clearSelection()
     }
   }
@@ -216,7 +216,7 @@ extension HomeViewModel {
 extension HomeViewModel {
   enum Navigation {
     case profile
-    case transactionDetail(id: String, accountId: String)
+    case transactionDetail(id: String)
   }
   
   enum Popup {
