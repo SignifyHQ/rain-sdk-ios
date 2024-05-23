@@ -31,7 +31,7 @@ struct FiatAssetView: View {
           TransactionListView(
             filterType: .account,
             currencyType: viewModel.currencyType,
-            accountID: viewModel.asset.id,
+            contractAddress: viewModel.asset.id,
             transactionTypes: Constants.TransactionTypesRequest.fiat.types
           )
         case let .transactionDetail(transaction):

@@ -2,6 +2,7 @@ import Combine
 import SwiftUI
 import Foundation
 import AccountDomain
+import AccountData
 import LFUtilities
 import Factory
 import CryptoChartData
@@ -36,6 +37,10 @@ class CryptoAssetViewModel: ObservableObject {
   
   var filterOptionSubject = CurrentValueSubject<CryptoFilterOption, Never>(.live)
   var chartOptionSubject = CurrentValueSubject<ChartOption, Never>(.line)
+  
+  private lazy var getTransactionsListUseCase: GetTransactionsListUseCaseProtocol = {
+    GetTransactionsListUseCase(repository: accountRepository)
+  }()
   
   var cryptoIconImage: Image? {
     asset.type?.lineImage
@@ -95,15 +100,16 @@ private extension CryptoAssetViewModel {
     }
   }
   
-  func loadTransactions(accountId: String) async {
+  func loadTransactions() async {
     do {
-      let transactions = try await accountRepository.getTransactions(
-        accountId: accountId,
+      let parameters = APITransactionsParameters(
         currencyType: currencyType,
         transactionTypes: Constants.TransactionTypesRequest.crypto.types,
-        limit: 20,
-        offset: 0
+        limit: Constants.shortTransactionLimit,
+        offset: Constants.transactionOffset,
+        contractAddress: asset.id.nilIfEmpty
       )
+      let transactions = try await getTransactionsListUseCase.execute(parameters: parameters)
       self.transactions = transactions.data.compactMap({ TransactionModel(from: $0) })
       activity = .transactions
     } catch {
@@ -178,7 +184,7 @@ extension CryptoAssetViewModel {
         await self.getCryptoAccount()
       }
       group.addTask {
-        await self.loadTransactions(accountId: self.asset.id)
+        await self.loadTransactions()
       }
     }
   }

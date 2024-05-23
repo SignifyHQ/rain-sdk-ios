@@ -32,6 +32,10 @@ class FiatAssetViewModel: ObservableObject {
   @Published var linkedAccount: [APILinkedSourceData] = []
   @Published var fullScreen: FullScreen?
   
+  private lazy var getTransactionsListUseCase: GetTransactionsListUseCaseProtocol = {
+    GetTransactionsListUseCase(repository: accountRepository)
+  }()
+  
   lazy var nsGetACHInfoUseCase: NSGetACHInfoUseCaseProtocol = {
     NSGetACHInfoUseCase(repository: externalFundingRepository)
   }()
@@ -68,15 +72,16 @@ private extension FiatAssetViewModel {
     }
   }
   
-  func loadTransactions(accountId: String) async {
+  func loadTransactions() async {
     do {
-      let transactions = try await accountRepository.getTransactions(
-        accountId: accountId,
+      let parameters = APITransactionsParameters(
         currencyType: currencyType,
         transactionTypes: Constants.TransactionTypesRequest.fiat.types,
-        limit: 20,
-        offset: 0
+        limit: Constants.shortTransactionLimit,
+        offset: Constants.transactionOffset,
+        contractAddress: asset.id
       )
+      let transactions = try await getTransactionsListUseCase.execute(parameters: parameters)
       let transactionsModel = transactions.data.compactMap({ TransactionModel(from: $0) })
       if transactionsModel.isEmpty {
         activity = .addFund
@@ -156,7 +161,7 @@ extension FiatAssetViewModel {
         await self.getAccountDetail(id: id)
       }
       group.addTask {
-        await self.loadTransactions(accountId: id)
+        await self.loadTransactions()
       }
     }
   }

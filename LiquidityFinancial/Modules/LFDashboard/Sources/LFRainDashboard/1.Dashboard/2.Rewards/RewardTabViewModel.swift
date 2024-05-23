@@ -1,5 +1,6 @@
 import Foundation
 import AccountDomain
+import AccountData
 import LFUtilities
 import Factory
 import Combine
@@ -20,7 +21,10 @@ class RewardTabViewModel: ObservableObject {
   @Published var transactions: [TransactionModel] = []
   @Published var availableRewardCurrencies: [AssetType] = []
   
-  var accountID: String = .empty
+  private lazy var getTransactionsListUseCase: GetTransactionsListUseCaseProtocol = {
+    GetTransactionsListUseCase(repository: accountRepository)
+  }()
+  
   var currencyType = Constants.CurrencyType.crypto.rawValue
   var transactionTypes = Constants.TransactionTypesRequest.rewardCryptoBack.types
   private var cancellable: Set<AnyCancellable> = []
@@ -66,11 +70,9 @@ class RewardTabViewModel: ObservableObject {
 
 // MARK: - View Helpers
 extension RewardTabViewModel {
-  
   func fetchAllTransactions() {
     Task { @MainActor in
       guard let selectedRewardCurrency else { return }
-      accountID = accounts.first(where: { $0.currency.rawValue == selectedRewardCurrency.rawValue })?.id ?? .empty
       if selectedRewardCurrency == .usd {
         currencyType = Constants.CurrencyType.fiat.rawValue
         transactionTypes = Constants.TransactionTypesRequest.rewardCashBack.types
@@ -78,23 +80,20 @@ extension RewardTabViewModel {
         currencyType = Constants.CurrencyType.crypto.rawValue
         transactionTypes = Constants.TransactionTypesRequest.rewardCryptoBack.types
       }
-      await apiLoadTransactions()
+      await apiLoadTransactions(with: nil) // TODO: MinhNguyen - Will update it in the ENG-4319 ticket
     }
   }
   
-  func apiLoadTransactions() async {
-    guard !accountID.isEmpty else {
-      activity = .failure
-      return
-    }
+  func apiLoadTransactions(with contractAddress: String?) async {
     do {
-      let transactions = try await accountRepository.getTransactions(
-        accountId: accountID,
+      let parameters = APITransactionsParameters(
         currencyType: currencyType,
         transactionTypes: transactionTypes,
-        limit: 20,
-        offset: 0
+        limit: Constants.shortTransactionLimit,
+        offset: Constants.transactionOffset,
+        contractAddress: contractAddress
       )
+      let transactions = try await getTransactionsListUseCase.execute(parameters: parameters)
       self.transactions = transactions.data.compactMap({ TransactionModel(from: $0) })
       activity = .transactions
     } catch {

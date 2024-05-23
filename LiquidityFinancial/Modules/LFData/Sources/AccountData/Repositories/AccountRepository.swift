@@ -76,12 +76,11 @@ public class AccountRepository: AccountRepositoryProtocol {
     try await accountAPI.updateSelectedRewardCurrency(rewardCurrency: rewardCurrency)
   }
   
-  public func getTransactions(
-    accountId: String, currencyType: String, transactionTypes: String, limit: Int, offset: Int
-  ) async throws -> TransactionListEntity {
-    try await accountAPI.getTransactions(
-      accountId: accountId, currencyType: currencyType, transactionTypes: transactionTypes, limit: limit, offset: offset
-    )
+  public func getTransactions(parameters: TransactionsParametersEntity) async throws -> TransactionListEntity {
+    guard let parameters = parameters as? APITransactionsParameters else {
+      throw "Can't map paramater :\(parameters)"
+    }
+    return try await accountAPI.getTransactions(parameters: parameters)
   }
   
   public func getTransactionDetail(accountId: String, transactionId: String) async throws -> TransactionEntity {

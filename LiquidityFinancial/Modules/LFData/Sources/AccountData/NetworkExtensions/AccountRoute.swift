@@ -19,7 +19,7 @@ public enum AccountRoute {
   case getAvailableRewardCurrencies
   case getSelectedRewardCurrency
   case updateSelectedRewardCurrency(rewardCurrency: String)
-  case getTransactions(accountId: String, currencyType: String, transactionTypes: String, limit: Int, offset: Int)
+  case getTransactions(parameters: APITransactionsParameters)
   case getTransactionDetail(accountId: String, transactionId: String)
   case logout
   case createWalletAddress(accountId: String, address: String, nickname: String)
@@ -68,8 +68,8 @@ extension AccountRoute: LFRoute {
       return "/v1/user/selected-reward-currency"
     case .updateSelectedRewardCurrency:
       return "/v1/user/selected-reward-currency"
-    case .getTransactions(let accountId, _, _, _, _):
-      return "/v1/transactions/\(accountId)"
+    case .getTransactions:
+      return "/v1/transactions/list"
     case let .getTransactionDetail(_, transactionId):
       return "/v1/transactions/detail/\(transactionId)"
     case .createWalletAddress(let accountId, _, _), .getWalletAddresses(let accountId):
@@ -202,13 +202,8 @@ extension AccountRoute: LFRoute {
       return [
         "code": code
       ]
-    case .getTransactions(_, let currencyType, let transactionTypes, let limit, let offset):
-      return [
-        "currencyType": currencyType,
-        "transactionTypes": transactionTypes,
-        "limit": String(limit),
-        "offset": String(offset)
-      ]
+    case .getTransactions(let parameters):
+      return parameters.encoded()
     case .createWalletAddress(_, let address, let nickname):
       return [
         "nickname": nickname,

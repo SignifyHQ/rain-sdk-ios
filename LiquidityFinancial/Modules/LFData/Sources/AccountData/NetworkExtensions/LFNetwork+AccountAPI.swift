@@ -111,9 +111,9 @@ extension LFCoreNetwork: AccountAPIProtocol where R == AccountRoute {
     return try await request(AccountRoute.createZeroHashAccount, target: APIZeroHashAccount.self, failure: LFErrorObject.self, decoder: .apiDecoder)
   }
   
-  public func getTransactions(accountId: String, currencyType: String, transactionTypes: String, limit: Int, offset: Int) async throws -> APITransactionList {
+  public func getTransactions(parameters: APITransactionsParameters) async throws -> APITransactionList {
     let listModel = try await request(
-      AccountRoute.getTransactions(accountId: accountId, currencyType: currencyType, transactionTypes: transactionTypes, limit: limit, offset: offset),
+      AccountRoute.getTransactions(parameters: parameters),
       target: APIListObject<APITransaction>.self,
       failure: LFErrorObject.self,
       decoder: .apiDecoder

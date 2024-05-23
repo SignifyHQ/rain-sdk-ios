@@ -10,15 +10,15 @@ public struct TransactionListView: View {
   public init(
     filterType: TransactionListViewModel.FilterType,
     currencyType: String,
-    accountID: String? = nil,
+    contractAddress: String? = nil,
     cardID: String? = nil,
-    transactionTypes: String = .empty
+    transactionTypes: [String] = []
   ) {
     _viewModel = .init(
       wrappedValue: .init(
         filterType: filterType,
         currencyType: currencyType,
-        accountID: accountID ?? .empty,
+        contractAddress: contractAddress,
         cardID: cardID ?? .empty,
         transactionTypes: transactionTypes
       )
@@ -43,7 +43,7 @@ public struct TransactionListView: View {
     }
     .navigationLink(item: $viewModel.transactionDetail) { item in
       TransactionDetailView(
-        accountID: viewModel.accountID,
+        accountID: "viewModel.accountID", // TODO: MinhNguyen - Will update in the ENG-4318 ticket
         transactionId: item.id,
         kind: item.detailType,
         isPopToRoot: false

@@ -47,7 +47,6 @@ struct CashView: View {
         TransactionListView(
           filterType: .account,
           currencyType: viewModel.currencyType,
-          accountID: viewModel.accountDataManager.fiatAccountID,
           transactionTypes: Constants.TransactionTypesRequest.fiat.types
         )
       case let .moveMoney(kind):

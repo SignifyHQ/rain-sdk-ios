@@ -15,7 +15,6 @@ import Services
 final class CashViewModel: ObservableObject {
   @LazyInjected(\.accountRepository) var accountRepository
   @LazyInjected(\.accountDataManager) var accountDataManager
-  @LazyInjected(\.cardRepository) var cardRepository
   @LazyInjected(\.portalStorage) var portalStorage
   @LazyInjected(\.portalService) var portalService
 
@@ -35,6 +34,10 @@ final class CashViewModel: ObservableObject {
   @Published var linkedAccount: [APILinkedSourceData] = []
   @Published var achInformation: ACHModel = .default
   @Published var fullScreen: FullScreen?
+  
+  private lazy var getTransactionsListUseCase: GetTransactionsListUseCaseProtocol = {
+    GetTransactionsListUseCase(repository: accountRepository)
+  }()
   
   let currencyType = Constants.CurrencyType.fiat.rawValue
   
@@ -76,7 +79,7 @@ final class CashViewModel: ObservableObject {
             self?.accountDataManager.externalAccountID = account.externalAccountId
             self?.cashBalanceValue = account.availableBalance
             self?.selectedAsset = AssetType(rawValue: account.currency.rawValue.uppercased()) ?? .usd
-            self?.firstLoadData(with: account.id)
+            self?.firstLoadData()
           }
         }
         
@@ -102,9 +105,8 @@ final class CashViewModel: ObservableObject {
     NotificationCenter.default.publisher(for: .moneyTransactionSuccess)
       .sink { [weak self] _ in
         guard let self else { return }
-        guard let accountID = self.accountDataManager.fiatAccountID else { return }
         let animation = self.transactions.isEmpty ? true : false
-        self.refreshTransaction(withAnimation: animation, accountID: accountID)
+        self.refreshTransaction(withAnimation: animation)
       }
       .store(in: &cancellable)
   }
@@ -114,36 +116,34 @@ final class CashViewModel: ObservableObject {
       _ = try? await dashboardRepository.getRainAccount()
       dashboardRepository.fetchNetspendLinkedSources()
       
-      guard let accountID = accountDataManager.fiatAccountID else { return }
       guard activity != .loading else { return }
-      refreshTransaction(withAnimation: true, accountID: accountID)
+      refreshTransaction(withAnimation: true)
       NotificationCenter.default.post(name: .refreshListCards, object: nil)
     }
   }
   
-  func firstLoadData(with accountID: String) {
-    guard transactions.isEmpty || achInformation.accountName == ACHModel.default.accountName else { return }
+  func firstLoadData() {
+    guard transactions.isEmpty else { return }
     Task { @MainActor in
       do {
         activity = .loading
-        try await loadTransactions(accountId: accountID)
+        try await loadTransactions()
         activity = transactions.isEmpty ? .addFunds : .transactions
       } catch {
         activity = .addFunds
-        log.error(error)
-        // TODO: MinhNguyen - Will check and update in transactions epic
-        // toastMessage = error.userFriendlyMessage
+        log.error(error.userFriendlyMessage)
+        toastMessage = error.userFriendlyMessage
       }
     }
   }
   
-  func refreshTransaction(withAnimation: Bool, accountID: String) {
+  func refreshTransaction(withAnimation: Bool) {
     Task { @MainActor in
       do {
         if withAnimation {
           activity = .loading
         }
-        try await loadTransactions(accountId: accountID)
+        try await loadTransactions()
         if withAnimation {
           activity = transactions.isEmpty ? .addFunds : .transactions
         }
@@ -152,8 +152,7 @@ final class CashViewModel: ObservableObject {
           activity = .addFunds
         }
         log.error(error.userFriendlyMessage)
-        // TODO: MinhNguyen - Will check and update in transactions epic
-        // toastMessage = error.userFriendlyMessage
+        toastMessage = error.userFriendlyMessage
       }
     }
   }
@@ -240,14 +239,14 @@ extension CashViewModel {
 
 // MARK: - Private Functions
 private extension CashViewModel {
-  func loadTransactions(accountId: String) async throws {
-    let transactions = try await accountRepository.getTransactions(
-      accountId: accountId,
+  func loadTransactions() async throws {
+    let parameters = APITransactionsParameters(
       currencyType: currencyType,
       transactionTypes: Constants.TransactionTypesRequest.fiat.types,
       limit: transactionLimitEntity,
       offset: transactionLimitOffset
     )
+    let transactions = try await getTransactionsListUseCase.execute(parameters: parameters)
     self.transactions = transactions.data.compactMap({ TransactionModel(from: $0) })
   }
   

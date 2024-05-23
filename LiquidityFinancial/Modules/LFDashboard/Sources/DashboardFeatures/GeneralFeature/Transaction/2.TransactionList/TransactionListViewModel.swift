@@ -16,6 +16,10 @@ public class TransactionListViewModel: ObservableObject {
     SolidGetCardTransactionsUseCase(repository: solidCardRepository)
   }()
   
+  private lazy var getTransactionsListUseCase: GetTransactionsListUseCaseProtocol = {
+    GetTransactionsListUseCase(repository: accountRepository)
+  }()
+  
   @Published var transactions: [TransactionModel] = []
   @Published var transactionDetail: TransactionModel?
   @Published var isLoading = false
@@ -26,8 +30,8 @@ public class TransactionListViewModel: ObservableObject {
   let filterType: FilterType
   let cardID: String
   let currencyType: String
-  let accountID: String
-  let transactionTypes: String
+  let contractAddress: String?
+  let transactionTypes: [String]
   
   private var offset = 0
   private var total = 0
@@ -36,13 +40,13 @@ public class TransactionListViewModel: ObservableObject {
   public init(
     filterType: FilterType,
     currencyType: String,
-    accountID: String,
+    contractAddress: String?,
     cardID: String,
-    transactionTypes: String
+    transactionTypes: [String]
   ) {
     self.filterType = filterType
     self.currencyType = currencyType
-    self.accountID = accountID
+    self.contractAddress = contractAddress
     self.cardID = cardID
     self.transactionTypes = transactionTypes
     self.initData()
@@ -58,7 +62,7 @@ public class TransactionListViewModel: ObservableObject {
     Task {
       defer { isLoading = false }
       isLoading = true
-      await loadTransactions(offset: 0)
+      await loadTransactions(offset: Constants.transactionOffset)
     }
   }
   
@@ -97,14 +101,15 @@ private extension TransactionListViewModel {
   
   func loadAccountTransactions(offset: Int) async {
     do {
-      if accountID.isEmpty { log.error("Missing account id") }
-      let transactions = try await accountRepository.getTransactions(
-        accountId: accountID,
+      let parameters = APITransactionsParameters(
         currencyType: currencyType,
         transactionTypes: transactionTypes,
         limit: limit,
-        offset: offset
+        offset: offset,
+        contractAddress: contractAddress?.nilIfEmpty
       )
+      
+      let transactions = try await getTransactionsListUseCase.execute(parameters: parameters)
       self.total = transactions.total
       self.transactions += transactions.data.compactMap({ TransactionModel(from: $0) })
     } catch {

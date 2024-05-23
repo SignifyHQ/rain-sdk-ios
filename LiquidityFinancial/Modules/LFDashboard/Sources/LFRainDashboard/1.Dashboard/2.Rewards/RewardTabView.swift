@@ -28,12 +28,12 @@ struct RewardTabView: View {
           TransactionListView(
             filterType: .account,
             currencyType: viewModel.currencyType,
-            accountID: viewModel.accountID,
+            contractAddress: nil, // TODO: MinhNguyen - Will update it in the ENG-4319 ticket
             transactionTypes: viewModel.transactionTypes
           )
         case let .transactionDetail(transaction):
           TransactionDetailView(
-            accountID: viewModel.accountID,
+            accountID: "", // TODO: MinhNguyen - Will update in the ENG-4320 ticket
             transactionId: transaction.id,
             kind: transaction.detailType,
             isPopToRoot: false
