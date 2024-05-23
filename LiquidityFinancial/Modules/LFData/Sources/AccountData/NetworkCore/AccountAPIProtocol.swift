@@ -17,7 +17,7 @@ public protocol AccountAPIProtocol {
   func getSelectedRewardCurrency() async throws -> APIRewardCurrency
   func updateSelectedRewardCurrency(rewardCurrency: String) async throws -> APIRewardCurrency
   func getTransactions(parameters: APITransactionsParameters) async throws -> APITransactionList
-  func getTransactionDetail(accountId: String, transactionId: String) async throws -> APITransaction
+  func getTransactionDetail(transactionId: String) async throws -> APITransaction
   func logout() async throws -> Bool
   func createWalletAddresses(accountId: String, address: String, nickname: String) async throws -> APIWalletAddress
   func updateWalletAddresses(accountId: String, walletId: String, walletAddress: String, nickname: String) async throws -> APIWalletAddress

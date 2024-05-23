@@ -33,7 +33,6 @@ struct RewardTabView: View {
           )
         case let .transactionDetail(transaction):
           TransactionDetailView(
-            accountID: "", // TODO: MinhNguyen - Will update in the ENG-4320 ticket
             transactionId: transaction.id,
             kind: transaction.detailType,
             isPopToRoot: false

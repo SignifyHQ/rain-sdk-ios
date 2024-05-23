@@ -15,7 +15,6 @@ public struct TransactionDetailView: View {
   let popAction: (() -> Void)?
   
   public init(
-    accountID: String?,
     transactionId: String,
     fundraisersId: String = .empty,
     kind: TransactionDetailType? = nil,
@@ -27,7 +26,6 @@ public struct TransactionDetailView: View {
   ) {
     _viewModel = .init(
       wrappedValue: TransactionDetailViewModel(
-        accountID: accountID ?? .empty,
         transactionId: transactionId,
         fundraisersId: fundraisersId,
         kind: kind)

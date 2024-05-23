@@ -17,7 +17,7 @@ public protocol AccountRepositoryProtocol {
   func getSelectedRewardCurrency() async throws -> RewardCurrencyEntity
   func updateSelectedRewardCurrency(rewardCurrency: String) async throws -> RewardCurrencyEntity
   func getTransactions(parameters: TransactionsParametersEntity) async throws -> TransactionListEntity
-  func getTransactionDetail(accountId: String, transactionId: String) async throws -> TransactionEntity
+  func getTransactionDetail(transactionId: String) async throws -> TransactionEntity
   func logout() async throws -> Bool
   func createWalletAddresses(address: String, nickname: String) async throws -> WalletAddressEntity
   func updateWalletAddresses(walletId: String, walletAddress: String, nickname: String) async throws -> WalletAddressEntity

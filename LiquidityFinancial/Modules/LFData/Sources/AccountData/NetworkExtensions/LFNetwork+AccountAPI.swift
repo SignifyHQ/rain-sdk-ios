@@ -121,9 +121,9 @@ extension LFCoreNetwork: AccountAPIProtocol where R == AccountRoute {
     return APITransactionList(total: listModel.total, data: listModel.data)
   }
   
-  public func getTransactionDetail(accountId: String, transactionId: String) async throws -> APITransaction {
+  public func getTransactionDetail(transactionId: String) async throws -> APITransaction {
     try await request(
-      AccountRoute.getTransactionDetail(accountId: accountId, transactionId: transactionId),
+      AccountRoute.getTransactionDetail(transactionId: transactionId),
       target: APITransaction.self,
       failure: LFErrorObject.self,
       decoder: .apiDecoder

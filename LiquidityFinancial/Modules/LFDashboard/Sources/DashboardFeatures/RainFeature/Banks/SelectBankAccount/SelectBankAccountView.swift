@@ -59,7 +59,6 @@ public struct SelectBankAccountView: View {
         switch item {
         case let .transactionDetai(id):
           TransactionDetailView(
-            accountID: viewModel.accountDataManager.fiatAccountID,
             transactionId: id,
             kind: viewModel.kind == .receive ? .deposit : .withdraw,
             popAction: completeAction

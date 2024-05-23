@@ -45,7 +45,6 @@ struct CryptoAssetView: View {
             )
         case let .transactionDetail(transaction):
           TransactionDetailView(
-            accountID: viewModel.asset.id,
             transactionId: transaction.id,
             kind: transaction.detailType,
             isPopToRoot: false

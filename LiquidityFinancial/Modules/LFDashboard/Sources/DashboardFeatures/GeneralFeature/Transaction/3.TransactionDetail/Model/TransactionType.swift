@@ -18,7 +18,7 @@ public enum TransactionType: String, Codable {
   case cryptoBuy = "CRYPTO_BUY"
   case cryptoBuyRefund = "CRYPTO_BUY_REFUND"
   case cryptoSell = "CRYPTO_SELL"
-  case cryptoWidthDraw = "CRYPTO_WITHDRAW"
+  case cryptoWithdraw = "CRYPTO_WITHDRAW"
   case cryptoDeposit = "CRYPTO_DEPOSIT"
   case cryptoGasDeduction = "CRYPTO_GAS_DEDUCTION"
   case unknown = "UNKNOWN"
@@ -33,7 +33,7 @@ public enum TransactionType: String, Codable {
       return L10N.Common.TransactionDetail.Buy.title
     case .cryptoSell:
       return L10N.Common.TransactionDetail.Sell.title
-    case .cryptoWidthDraw:
+    case .cryptoWithdraw:
       return L10N.Common.TransactionDetail.Send.title
     case .cryptoDeposit:
       return L10N.Common.TransactionDetail.Receive.title
@@ -56,7 +56,7 @@ public enum TransactionType: String, Codable {
       return GenImages.Images.Transactions.txFees.name
     case .donation:
       return GenImages.Images.Transactions.txDonation.name
-    case .cryptoWidthDraw:
+    case .cryptoWithdraw:
       return GenImages.Images.Transactions.txCryptoWithdrawal.name
     case .cryptoBuy:
       return GenImages.Images.Transactions.txCryptoBuy.name

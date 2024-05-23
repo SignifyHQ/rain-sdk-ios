@@ -57,7 +57,7 @@ struct CommonTransactionDetailView<Content: View>: View {
 private extension CommonTransactionDetailView {
   var headerTitle: some View {
     VStack(spacing: 8) {
-      Text(viewModel.descriptionDisplay)
+      Text(viewModel.descriptionDisplay.uppercased())
         .foregroundColor(Colors.label.swiftUIColor)
         .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.medium.value))
       Text(viewModel.transactionDate)

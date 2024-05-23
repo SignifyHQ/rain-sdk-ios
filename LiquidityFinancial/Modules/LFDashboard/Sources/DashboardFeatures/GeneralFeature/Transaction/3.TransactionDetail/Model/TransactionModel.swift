@@ -180,7 +180,7 @@ public extension TransactionModel {
     case .purchase,
         .unknown,
         .withdraw,
-        .cryptoWidthDraw,
+        .cryptoWithdraw,
         .cryptoSell,
         .rewardCashBackReverse,
         .rewardCryptoBackReverse,
@@ -201,7 +201,7 @@ public extension TransactionModel {
         .cryptoSell,
         .cryptoDeposit,
         .cryptoBuyRefund,
-        .cryptoWidthDraw,
+        .cryptoWithdraw,
         .cryptoGasDeduction,
         .rewardCryptoBack,
         .rewardCryptoDosh,
@@ -218,7 +218,7 @@ public extension TransactionModel {
       return .deposit
     case .withdraw:
       return .withdraw
-    case .cryptoBuy, .cryptoSell, .cryptoDeposit, .cryptoWidthDraw:
+    case .cryptoBuy, .cryptoSell, .cryptoDeposit, .cryptoWithdraw:
       return .crypto
     case .systemFee, .cryptoGasDeduction:
       return .fee

@@ -65,10 +65,7 @@ public struct HomeView: View {
       case .profile:
         ProfileView()
       case .transactionDetail(let id, let accountId):
-        TransactionDetailView(
-          accountID: accountId,
-          transactionId: id
-        )
+        TransactionDetailView(transactionId: id)
       }
     }
     .popup(item: $viewModel.popup) { popup in

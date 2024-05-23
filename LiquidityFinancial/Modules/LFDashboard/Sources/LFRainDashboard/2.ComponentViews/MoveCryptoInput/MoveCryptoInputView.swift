@@ -72,7 +72,6 @@ struct MoveCryptoInputView: View {
         )
       case .transactionDetail(let id):
         TransactionDetailView(
-          accountID: viewModel.assetModel.id,
           transactionId: id,
           kind: TransactionDetailType.withdraw,
           isNewAddress: viewModel.nickname.isEmpty,

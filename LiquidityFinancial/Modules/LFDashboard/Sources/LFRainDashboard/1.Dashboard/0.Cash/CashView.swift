@@ -53,7 +53,6 @@ struct CashView: View {
         MoveMoneyAccountView(kind: kind)
       case let .transactionDetail(transaction):
         TransactionDetailView(
-          accountID: viewModel.accountDataManager.fiatAccountID,
           transactionId: transaction.id,
           kind: transaction.detailType,
           isPopToRoot: false

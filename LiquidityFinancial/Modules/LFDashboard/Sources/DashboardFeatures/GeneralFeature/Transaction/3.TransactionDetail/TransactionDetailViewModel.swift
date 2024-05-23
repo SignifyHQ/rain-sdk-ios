@@ -22,28 +22,30 @@ final class TransactionDetailViewModel: ObservableObject {
   lazy var rewardUseCase: RewardUseCase = {
     RewardUseCase(repository: rewardRepository)
   }()
+  
+  private lazy var getTransactionDetailUseCase: GetTransactionDetailUseCaseProtocol = {
+    GetTransactionDetailUseCase(repository: accountRepository)
+  }()
 
-  init(accountID: String, transactionId: String, fundraisersId: String, kind: TransactionDetailType?) {
+  init(transactionId: String, fundraisersId: String, kind: TransactionDetailType?) {
     maybeShowRatingAlert()
     switch kind {
     case .donation:
       getFundraisersDetail(fundraisersID: fundraisersId, transactionId: transactionId)
     default:
-      getTransactionDetail(accountID: accountID, transactionId: transactionId)
+      getTransactionDetail(transactionId: transactionId)
     }
   }
 }
 
 // MARK: - API
 private extension TransactionDetailViewModel {
-  func getTransactionDetail(accountID: String, transactionId: String) {
+  func getTransactionDetail(transactionId: String) {
     Task {
       defer { isFetchingData = false }
       isFetchingData = true
       do {
-        let transactionEntity = try await accountRepository.getTransactionDetail(
-          accountId: accountID, transactionId: transactionId
-        )
+        let transactionEntity = try await getTransactionDetailUseCase.execute(transactionID: transactionId)
         transaction = TransactionModel(from: transactionEntity)
       } catch {
       }

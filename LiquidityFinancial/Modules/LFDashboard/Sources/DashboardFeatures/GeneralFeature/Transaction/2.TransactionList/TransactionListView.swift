@@ -43,7 +43,6 @@ public struct TransactionListView: View {
     }
     .navigationLink(item: $viewModel.transactionDetail) { item in
       TransactionDetailView(
-        accountID: "viewModel.accountID", // TODO: MinhNguyen - Will update in the ENG-4318 ticket
         transactionId: item.id,
         kind: item.detailType,
         isPopToRoot: false
