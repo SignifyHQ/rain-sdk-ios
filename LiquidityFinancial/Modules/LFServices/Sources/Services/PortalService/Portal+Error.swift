@@ -15,10 +15,18 @@ public enum LFPortalError: Error {
 extension LFPortalError: Equatable {
   public static func == (lhs: LFPortalError, rhs: LFPortalError) -> Bool {
     switch (lhs, rhs) {
+    case (.dataUnavailable, .dataUnavailable),
+      (.portalInstanceUnavailable, .portalInstanceUnavailable),
+      (.expirationToken, .expirationToken),
+      (.walletAlreadyExists, .walletAlreadyExists),
+      (.iCloudAccountUnavailable, .iCloudAccountUnavailable),
+      (.unexpected, .unexpected),
+      (.walletMissing, .walletMissing):
+      return true
     case (.customError(let lhsMessage), .customError(let rhsMessage)):
       return lhsMessage == rhsMessage
     default:
-      return true
+      return false
     }
   }
 }
