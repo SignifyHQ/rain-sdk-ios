@@ -16,18 +16,17 @@ class RewardTabViewModel: ObservableObject {
   @LazyInjected(\.portalStorage) var portalStorage
   @LazyInjected(\.portalService) var portalService
   
-  @Published var isLoading: Bool = true
   @Published var showWithdrawalBalanceSheet: Bool = false
   @Published var rewardBalance: Double = 0
   @Published var toastMessage: String?
   
-  @Published var selectedRewardCurrency: AssetType?
+  @Published var selectedRewardCurrency: AssetType = .usdc // For now, we will only support USDC rewards
   @Published var navigation: Navigation?
   @Published var collateralAsset: AssetModel?
   @Published var activity = Activity.loading
   @Published var accounts: [AccountModel] = []
   @Published var transactions: [TransactionModel] = []
-  @Published var availableRewardCurrencies: [AssetType] = []
+  @Published var availableRewardCurrencies: [AssetType] = [.usdc] // For now, we will only support USDC rewards
   
   private lazy var getTransactionsListUseCase: GetTransactionsListUseCaseProtocol = {
     GetTransactionsListUseCase(repository: accountRepository)
@@ -37,43 +36,8 @@ class RewardTabViewModel: ObservableObject {
   var transactionTypes = Constants.TransactionTypesRequest.rewardCryptoBack.types
   private var cancellable: Set<AnyCancellable> = []
   
-  let dashboardRepository: DashboardRepository
-  init(dashboardRepo: DashboardRepository) {
-    dashboardRepository = dashboardRepo
-    dashboardRepository
-      .$isLoadingRewardTab
-      .receive(on: DispatchQueue.main)
-      .assign(to: \.isLoading, on: self)
-      .store(in: &cancellable)
-    
-    accountDataManager
-      .availableRewardCurrenciesSubject
-      .receive(on: DispatchQueue.main)
-      .sink { [weak self] rewardCurrencies in
-        guard let self, let rewardCurrencies else { return }
-        self.availableRewardCurrencies = rewardCurrencies.availableRewardCurrencies
-          .compactMap { AssetType(rawValue: $0) }
-          .sorted { $0.index < $1.index }
-      }
-      .store(in: &cancellable)
-    
-    accountDataManager
-      .selectedRewardCurrencySubject
-      .receive(on: DispatchQueue.main)
-      .sink { [weak self] response in
-        guard let self, let response else { return }
-        self.selectedRewardCurrency = AssetType(rawValue: response.rewardCurrency)
-        self.fetchAllTransactions()
-      }
-      .store(in: &cancellable)
-    
-    accountDataManager.accountsSubject
-      .receive(on: DispatchQueue.main)
-      .sink { [weak self] accounts in
-        self?.accounts = accounts
-      }
-      .store(in: &cancellable)
-    
+  init() {
+    fetchAllTransactions()
     getCollateralAsset()
   }
 }
@@ -82,14 +46,9 @@ class RewardTabViewModel: ObservableObject {
 extension RewardTabViewModel {
   func fetchAllTransactions() {
     Task { @MainActor in
-      guard let selectedRewardCurrency else { return }
-      if selectedRewardCurrency == .usd {
-        currencyType = Constants.CurrencyType.fiat.rawValue
-        transactionTypes = Constants.TransactionTypesRequest.rewardCashBack.types
-      } else {
-        currencyType = Constants.CurrencyType.crypto.rawValue
-        transactionTypes = Constants.TransactionTypesRequest.rewardCryptoBack.types
-      }
+      currencyType = Constants.CurrencyType.crypto.rawValue
+      transactionTypes = Constants.TransactionTypesRequest.rewardCryptoBack.types
+      
       await apiLoadTransactions(with: nil) // TODO: MinhNguyen - Will update it in the ENG-4319 ticket
     }
   }
@@ -128,10 +87,6 @@ extension RewardTabViewModel {
 
 // MARK: - View Helpers
 extension RewardTabViewModel {
-  func onClickedChangeReward() {
-    navigation = .changeReward(selectedRewardCurrency: selectedRewardCurrency)
-  }
-  
   func onClickedSeeAllButton() {
     navigation = .transactions
   }
@@ -174,7 +129,6 @@ extension RewardTabViewModel {
   }
   
   enum Navigation {
-    case changeReward(selectedRewardCurrency: AssetType?)
     case transactions
     case transactionDetail(TransactionModel)
     case enterWithdrawalAmount(address: String, assetCollateral: AssetModel)

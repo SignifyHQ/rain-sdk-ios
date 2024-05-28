@@ -19,11 +19,6 @@ struct RewardTabView: View {
       .track(name: String(describing: type(of: self)))
       .navigationLink(item: $viewModel.navigation) { navigation in
         switch navigation {
-        case let .changeReward(selectedRewardCurrency):
-          ChangeRewardView(
-            availableCurrencies: viewModel.availableRewardCurrencies,
-            selectedRewardCurrency: selectedRewardCurrency
-          )
         case .transactions:
           TransactionListView(
             filterType: .account,
@@ -73,14 +68,8 @@ private extension RewardTabView {
   var content: some View {
     ScrollView(showsIndicators: false) {
       VStack(spacing: 10) {
-        if viewModel.isLoading {
-          loading
-        } else if viewModel.selectedRewardCurrency == nil {
-          selectTypeView
-        } else {
-          headerView
-          activity
-        }
+        headerView
+        activity
         Spacer()
       }
       .padding(.top, 20)
@@ -88,30 +77,19 @@ private extension RewardTabView {
     }
   }
   
-  private var loading: some View {
-    Group {
-      LottieView(loading: .primary)
-        .frame(width: 30, height: 25)
-        .padding(.top, 20)
+  var headerView: some View {
+    VStack(alignment: .leading, spacing: 16) {
+      rewardAssetView(assetType: viewModel.selectedRewardCurrency)
+      GenImages.CommonImages.dash.swiftUIImage
+        .foregroundColor(Colors.label.swiftUIColor.opacity(0.5))
+      currentRewardBalanceView(assetType: viewModel.selectedRewardCurrency)
+      GenImages.CommonImages.dash.swiftUIImage
+        .foregroundColor(Colors.label.swiftUIColor.opacity(0.5))
+      withdrawBalanceButton
     }
-    .frame(maxWidth: .infinity)
-  }
-  
-  @ViewBuilder var headerView: some View {
-    if let assetType = viewModel.selectedRewardCurrency {
-      VStack(alignment: .leading, spacing: 16) {
-        rewardAssetView(assetType: assetType)
-        GenImages.CommonImages.dash.swiftUIImage
-          .foregroundColor(Colors.label.swiftUIColor.opacity(0.5))
-        currentRewardBalanceView(assetType: assetType)
-        GenImages.CommonImages.dash.swiftUIImage
-          .foregroundColor(Colors.label.swiftUIColor.opacity(0.5))
-        withdrawBalanceButton
-      }
-      .padding(.all, 12)
-      .background(Colors.secondaryBackground.swiftUIColor)
-      .cornerRadius(10)
-    }
+    .padding(.all, 12)
+    .background(Colors.secondaryBackground.swiftUIColor)
+    .cornerRadius(10)
   }
   
   var withdrawBalanceButton: some View {
@@ -124,17 +102,14 @@ private extension RewardTabView {
   }
   
   func currentRewardBalanceView(assetType: AssetType) -> some View {
-    let balance = assetType.isCrypto
-    ? viewModel.rewardBalance.formattedCryptoAmount()
-    : viewModel.rewardBalance.formattedUSDAmount()
-    return HStack {
+    HStack {
       Text(L10N.Common.RewardTabView.CurrentRewardsBalance.title)
         .font(
           Fonts.regular.swiftUIFont(size: Constants.FontSize.small.value)
         )
         .foregroundColor(Colors.label.swiftUIColor)
       Spacer()
-      Text("\(balance) \(assetType.title)")
+      Text("\(viewModel.rewardBalance.formattedUSDAmount()) \(assetType.title)")
         .font(
           Fonts.bold.swiftUIFont(size: Constants.FontSize.small.value)
         )
@@ -163,14 +138,6 @@ private extension RewardTabView {
           .foregroundColor(Colors.label.swiftUIColor.opacity(0.75))
       }
       Spacer()
-    }
-    .overlay(alignment: .topTrailing) {
-      Button(action: {
-        viewModel.onClickedChangeReward()
-      }, label: {
-        GenImages.CommonImages.icGear.swiftUIImage
-          .foregroundColor(Colors.label.swiftUIColor)
-      })
     }
   }
   
@@ -212,50 +179,5 @@ private extension RewardTabView {
       }
       .fixedSize(horizontal: false, vertical: true)
     }
-  }
-  
-  var selectTypeView: some View {
-    ZStack(alignment: .top) {
-      selectTypeContentView
-      GenImages.Images.rewardHeader.swiftUIImage
-        .offset(y: -74)
-    }
-    .offset(y: 74)
-  }
-  
-  var selectTypeContentView: some View {
-    VStack(alignment: .leading) {
-      Text(L10N.Common.RewardTabView.FirstReward.title)
-        .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.main.value))
-        .foregroundColor(Colors.label.swiftUIColor)
-      Spacer().frame(height: 16)
-      VStack(spacing: 12) {
-        ForEach(viewModel.availableRewardCurrencies, id: \.self) { asset in
-          assetCell(assetType: asset)
-        }
-      }
-      Spacer().frame(height: 16)
-      FullSizeButton(
-        title: L10N.Common.RewardTabView.FirstReward.select,
-        isDisable: false
-      ) {
-        viewModel.onClickedChangeReward()
-      }
-    }
-    .padding([.horizontal, .bottom], 16)
-    .padding(.top, 120)
-    .background(Colors.secondaryBackground.swiftUIColor)
-    .cornerRadius(10)
-  }
-  
-  @ViewBuilder func assetCell(assetType: AssetType) -> some View {
-    HStack(spacing: 8) {
-      assetType.image
-      Text(assetType.title)
-        .foregroundColor(Colors.label.swiftUIColor)
-        .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.medium.value))
-      Spacer()
-    }
-    .frame(height: 24)
   }
 }

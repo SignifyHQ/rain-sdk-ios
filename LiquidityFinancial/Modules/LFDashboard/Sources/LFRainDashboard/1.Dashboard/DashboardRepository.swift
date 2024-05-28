@@ -47,7 +47,6 @@ final class DashboardRepository: ObservableObject {
   @Published var fiatData: (fiatAccount: [AccountModel], loading: Bool) = ([], false)
   @Published var cryptoData: (cryptoAccounts: [AccountModel], loading: Bool) = ([], false)
   @Published var achInformationData: (model: ACHModel, loading: Bool) = (.default, false)
-  @Published var isLoadingRewardTab: Bool = false
   
   var toastMessage: ((String) -> Void)?
   
@@ -62,7 +61,6 @@ extension DashboardRepository {
   func fetchRainAccount() {
     Task { @MainActor in
       defer { fiatData.loading = false }
-      isLoadingRewardTab = true
       fiatData.loading = true
       
       do {
@@ -74,43 +72,8 @@ extension DashboardRepository {
         accountDataManager.accountsSubject.send([rainAccount])
         analyticsService.set(params: [PropertiesName.cashBalance.rawValue: rainAccount.availableBalance])
         
-        // TODO: MinhNguyen - Will check and update later
-        let asset = AssetModel(account: rainAccount)
-        getRewardCurrency(assets: [asset])
-        
       } catch {
-        isLoadingRewardTab = false
         toastMessage?(error.userFriendlyMessage)
-      }
-    }
-  }
-  
-  func getRewardCurrency(assets: [AssetModel] = []) {
-    Task { @MainActor in
-      do {
-        let availableRewardCurrencies = try await accountRepository.getAvailableRewardCurrrencies()
-        accountDataManager.availableRewardCurrenciesSubject.send(availableRewardCurrencies)
-        let selectedRewardCurrency = try await accountRepository.getSelectedRewardCurrency()
-        accountDataManager.selectedRewardCurrencySubject.send(selectedRewardCurrency)
-        
-        isLoadingRewardTab = false
-      } catch {
-        guard let errorObject = error.asErrorObject else {
-          toastMessage?(error.userFriendlyMessage)
-          isLoadingRewardTab = false
-          return
-        }
-        switch errorObject.code {
-        case Constants.ErrorCode.accountCreationInProgress.rawValue:
-          let availableRewardCurrencies = APIAvailableRewardCurrencies(
-            availableRewardCurrencies: assets.compactMap { $0.type?.rawValue }
-          )
-          accountDataManager.selectedRewardCurrencySubject.send(nil)
-          accountDataManager.availableRewardCurrenciesSubject.send(availableRewardCurrencies)
-        default:
-          toastMessage?(errorObject.message)
-        }
-        isLoadingRewardTab = false
       }
     }
   }
