@@ -65,8 +65,10 @@ final class EnterWalletAddressViewModel: ObservableObject {
     switch kind {
     case .sendCrypto:
       navigation = .enterAmount(type: .sendCrypto(address: inputValue, nickname: selectedNickname))
-    case .withdrawBalance:
+    case .withdrawCollateral:
       navigation = .enterAmount(type: .withdrawCollateral(address: inputValue, nickname: selectedNickname))
+    case .withdrawReward:
+      navigation = .enterAmount(type: .withdrawReward(address: inputValue, nickname: selectedNickname))
     }
   }
   
@@ -177,13 +179,14 @@ extension EnterWalletAddressViewModel {
   
   enum Kind {
     case sendCrypto
-    case withdrawBalance
+    case withdrawCollateral
+    case withdrawReward
     
     func getTitle(asset: String) -> String {
       switch self {
       case .sendCrypto:
         return L10N.Common.EnterCryptoAddressView.title(asset)
-      case .withdrawBalance:
+      case .withdrawReward, .withdrawCollateral:
         return L10N.Common.EnterWalletAddressView.WithdrawBalance.title
       }
     }
@@ -192,7 +195,7 @@ extension EnterWalletAddressViewModel {
       switch self {
       case .sendCrypto:
         return L10N.Common.EnterCryptoAddressView.WalletAddress.title(asset)
-      case .withdrawBalance:
+      case .withdrawReward, .withdrawCollateral:
         return L10N.Common.EnterWalletAddressView.WithdrawBalance.textFieldTitle
       }
     }

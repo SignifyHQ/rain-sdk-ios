@@ -24,7 +24,7 @@ struct RewardTabView: View {
             availableCurrencies: viewModel.availableRewardCurrencies,
             selectedRewardCurrency: selectedRewardCurrency
           )
-        case let .transactions(isCrypto):
+        case .transactions:
           TransactionListView(
             filterType: .account,
             currencyType: viewModel.currencyType,
@@ -37,9 +37,31 @@ struct RewardTabView: View {
             kind: transaction.detailType,
             isPopToRoot: false
           )
+        case let .enterWithdrawalAmount(address, assetCollateral):
+          MoveCryptoInputView(
+            type: .withdrawReward(address: address, nickname: nil),
+            assetModel: assetCollateral,
+            completeAction: {
+              viewModel.navigation = nil
+            }
+          )
+        case let .enterWalletAddress(assetCollateral):
+          EnterWalletAddressView(
+            viewModel: EnterWalletAddressViewModel(asset: assetCollateral, kind: .withdrawReward)
+          ) {
+            viewModel.navigation = nil
+          }
         }
       }
       .background(Colors.background.swiftUIColor)
+      .blur(radius: viewModel.showWithdrawalBalanceSheet ? 16 : 0)
+      .sheet(isPresented: $viewModel.showWithdrawalBalanceSheet) {
+        WithdrawBalanceSheet(
+          assetTitle: viewModel.collateralAsset?.type?.title ?? .empty
+        ) { type in
+          viewModel.walletTypeButtonTapped(type: type)
+        }
+      }
       .refreshable {
         viewModel.fetchAllTransactions()
       }
@@ -77,35 +99,78 @@ private extension RewardTabView {
   
   @ViewBuilder var headerView: some View {
     if let assetType = viewModel.selectedRewardCurrency {
-      Button {
-        viewModel.onClickedChangeReward()
-      } label: {
-        HStack(alignment: .top, spacing: 12) {
-          HStack(alignment: .center, spacing: 12) {
-            ZStack(alignment: .center) {
-              Circle()
-                .fill(Colors.background.swiftUIColor)
-                .frame(width: 64, height: 64)
-              assetType.image
-            }
-            VStack(alignment: .leading, spacing: 4) {
-              Text(assetType.title.uppercased())
-                .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.medium.value))
-                .foregroundColor(Colors.label.swiftUIColor)
-              Text(L10N.Common.RewardTabView.EarningRewards.description(assetType.title.uppercased()))
-                .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.ultraSmall.value))
-                .foregroundColor(Colors.label.swiftUIColor.opacity(0.75))
-            }
-          }
-          Spacer()
-          GenImages.CommonImages.icGear.swiftUIImage
-            .foregroundColor(Colors.label.swiftUIColor)
-        }
-        .padding(.all, 12)
-        .background(Colors.secondaryBackground.swiftUIColor)
-        .cornerRadius(10)
+      VStack(alignment: .leading, spacing: 16) {
+        rewardAssetView(assetType: assetType)
+        GenImages.CommonImages.dash.swiftUIImage
+          .foregroundColor(Colors.label.swiftUIColor.opacity(0.5))
+        currentRewardBalanceView(assetType: assetType)
+        GenImages.CommonImages.dash.swiftUIImage
+          .foregroundColor(Colors.label.swiftUIColor.opacity(0.5))
+        withdrawBalanceButton
       }
-      .frame(height: 88)
+      .padding(.all, 12)
+      .background(Colors.secondaryBackground.swiftUIColor)
+      .cornerRadius(10)
+    }
+  }
+  
+  var withdrawBalanceButton: some View {
+    FullSizeButton(
+      title: L10N.Common.RewardTabView.WithdrawBalance.buttonTitle,
+      isDisable: viewModel.rewardBalance.isZero
+    ) {
+      viewModel.withdrawBalanceButtonTapped()
+    }
+  }
+  
+  func currentRewardBalanceView(assetType: AssetType) -> some View {
+    let balance = assetType.isCrypto
+    ? viewModel.rewardBalance.formattedCryptoAmount()
+    : viewModel.rewardBalance.formattedUSDAmount()
+    return HStack {
+      Text(L10N.Common.RewardTabView.CurrentRewardsBalance.title)
+        .font(
+          Fonts.regular.swiftUIFont(size: Constants.FontSize.small.value)
+        )
+        .foregroundColor(Colors.label.swiftUIColor)
+      Spacer()
+      Text("\(balance) \(assetType.title)")
+        .font(
+          Fonts.bold.swiftUIFont(size: Constants.FontSize.small.value)
+        )
+        .foregroundColor(Colors.label.swiftUIColor)
+    }
+  }
+    
+  func rewardAssetView(assetType: AssetType) -> some View {
+    HStack(alignment: .center, spacing: 12) {
+      Circle()
+        .fill(Colors.background.swiftUIColor)
+        .frame(64)
+        .overlay {
+          assetType.image?.frame(32)
+        }
+      VStack(alignment: .leading, spacing: 4) {
+        Text(assetType.title.uppercased())
+          .font(
+            Fonts.regular.swiftUIFont(size: Constants.FontSize.medium.value)
+          )
+          .foregroundColor(Colors.label.swiftUIColor)
+        Text(L10N.Common.RewardTabView.EarningRewards.description(assetType.title.uppercased()))
+          .font(
+            Fonts.regular.swiftUIFont(size: Constants.FontSize.ultraSmall.value)
+          )
+          .foregroundColor(Colors.label.swiftUIColor.opacity(0.75))
+      }
+      Spacer()
+    }
+    .overlay(alignment: .topTrailing) {
+      Button(action: {
+        viewModel.onClickedChangeReward()
+      }, label: {
+        GenImages.CommonImages.icGear.swiftUIImage
+          .foregroundColor(Colors.label.swiftUIColor)
+      })
     }
   }
   

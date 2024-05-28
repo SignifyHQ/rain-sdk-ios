@@ -1069,6 +1069,8 @@ https://mn.gov/commerce/money/investments/cryptocurrency/. \n\n\n\n\n\n\n";
 "RewardTabView.noRewards" = "No rewards yet";
 "RewardTabView.firstReward.title" = "CHOOSE BETWEEN";
 "RewardTabView.firstReward.select" = "Select Reward";
+"RewardTabView.currentRewardsBalance.title" = "Current Rewards Balance";
+"RewardTabView.withdrawBalance.buttonTitle" = "Withdraw Balance";
 
 // Donations
 "donations.select_fundraiser" = "Select a Cause";

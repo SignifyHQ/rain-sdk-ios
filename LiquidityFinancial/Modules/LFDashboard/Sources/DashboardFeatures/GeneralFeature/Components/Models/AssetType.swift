@@ -23,6 +23,15 @@ public enum AssetType: String {
     }
   }
   
+  public var isCrypto: Bool {
+    switch self {
+    case .usd, .usdc:
+      return false
+    default:
+      return true
+    }
+  }
+  
   public var image: Image? {
     switch self {
     case .usd:

@@ -260,7 +260,6 @@ private extension CashViewModel {
       }
       .assign(to: &$collateralAsset)
   }
-   
 }
 
 // MARK: - Types
@@ -287,20 +286,6 @@ extension CashViewModel {
     var id: String {
       switch self {
       case .fundCard: return "fundCard"
-      }
-    }
-  }
-  
-  enum WalletType {
-    case internalWallet
-    case externalWallet
-    
-    func getTitle(asset: String = .empty) -> String {
-      switch self {
-      case .internalWallet:
-        return L10N.Common.CashTab.WithdrawBalance.internalWallet(asset)
-      case .externalWallet:
-        return L10N.Common.CashTab.WithdrawBalance.externalWallet
       }
     }
   }

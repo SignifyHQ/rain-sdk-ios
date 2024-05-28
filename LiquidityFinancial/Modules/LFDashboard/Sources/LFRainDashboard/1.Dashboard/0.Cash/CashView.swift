@@ -69,7 +69,7 @@ struct CashView: View {
         )
       case let .enterWalletAddress(assetCollateral):
         EnterWalletAddressView(
-          viewModel: EnterWalletAddressViewModel(asset: assetCollateral, kind: .withdrawBalance)
+          viewModel: EnterWalletAddressViewModel(asset: assetCollateral, kind: .withdrawCollateral)
         ) {
           viewModel.navigation = nil
         }
@@ -154,9 +154,11 @@ private extension CashView {
     }
     .blur(radius: viewModel.showWithdrawalBalanceSheet ? 16 : 0)
     .sheet(isPresented: $viewModel.showWithdrawalBalanceSheet) {
-      withdrawalBalanceSheet
-        .customPresentationDetents(height: 228)
-        .ignoresSafeArea(edges: .bottom)
+      WithdrawBalanceSheet(
+        assetTitle: viewModel.collateralAsset?.type?.title ?? .empty
+      ) { type in
+        viewModel.walletTypeButtonTapped(type: type)
+      }
     }
     .refreshable {
       viewModel.onRefresh()
@@ -221,55 +223,6 @@ private extension CashView {
   var withdrawalBalanceButton: some View {
     FullSizeButton(title: L10N.Common.CashTab.WithdrawBalance.title, isDisable: false, type: .secondary) {
       viewModel.withdrawBalanceButtonTapped()
-    }
-  }
-  
-  var withdrawalBalanceSheet: some View {
-    VStack(spacing: 10) {
-      RoundedRectangle(cornerRadius: 4)
-        .foregroundColor(Colors.label.swiftUIColor.opacity(0.35))
-        .frame(width: 32, height: 4)
-        .padding(.top, 6)
-      Text(L10N.Common.CashTab.WithdrawBalance.sheetTitle.uppercased())
-        .foregroundColor(Colors.label.swiftUIColor)
-        .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.main.value))
-        .padding(.vertical, 14)
-      walletTypeCell(with: .internalWallet)
-      walletTypeCell(with: .externalWallet)
-      Spacer()
-    }
-    .padding(.horizontal, 30)
-    .background(Colors.secondaryBackground.swiftUIColor)
-  }
-  
-  func walletTypeCell(with type: CashViewModel.WalletType) -> some View {
-    Button {
-      viewModel.walletTypeButtonTapped(type: type)
-    } label: {
-      HStack(spacing: 12) {
-        if type == .internalWallet {
-          Circle()
-            .stroke(Colors.primary.swiftUIColor, lineWidth: 1)
-            .frame(width: 32, height: 32)
-            .overlay(
-              Text("M")
-                .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.medium.value))
-                .foregroundColor(Colors.label.swiftUIColor)
-            )
-            .padding(.leading, -4)
-        } else {
-          GenImages.CommonImages.walletAddress.swiftUIImage
-        }
-        Text(type.getTitle(asset: viewModel.collateralAsset?.type?.title ?? .empty))
-          .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.regular.value))
-        Spacer()
-        GenImages.Images.forwardButton.swiftUIImage
-      }
-      .foregroundColor(Colors.label.swiftUIColor)
-      .frame(height: 56)
-      .padding(.horizontal, 16)
-      .background(Colors.buttons.swiftUIColor)
-      .cornerRadius(9)
     }
   }
 }

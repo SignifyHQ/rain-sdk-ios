@@ -175,6 +175,9 @@ private extension MoveCryptoInputViewModel {
     )
   }
   
+  func requestWithdrawalRewardsBalance(recipientAddress: String) {
+  }
+  
   func withdrawCollateral(recipientAddress: String) {
     Task {
       defer { isPerformingAction = false }
@@ -248,7 +251,7 @@ private extension MoveCryptoInputViewModel {
   func generateGridValues() {
     let cryptoCurrency = assetModel.type?.title ?? .empty
     switch type {
-    case .buyCrypto, .withdrawCollateral:
+    case .buyCrypto, .withdrawCollateral, .withdrawReward:
       gridValues = Constant.Buy.buildRecommend(available: fiatAccount?.availableBalance ?? 0)
     case .sellCrypto, .sendCrypto, .sendCollateral:
       gridValues = Constant.Sell.buildRecommend(available: assetModel.availableBalance, coin: cryptoCurrency)
@@ -320,7 +323,7 @@ private extension MoveCryptoInputViewModel {
 extension MoveCryptoInputViewModel {
   var isUSDCurrency: Bool {
     switch type {
-    case .buyCrypto, .withdrawCollateral:
+    case .buyCrypto, .withdrawCollateral, .withdrawReward:
       return true
     case .sellCrypto, .sendCrypto, .sendCollateral:
       return false
@@ -329,7 +332,7 @@ extension MoveCryptoInputViewModel {
   
   var isCryptoCurrency: Bool {
     switch type {
-    case .buyCrypto, .withdrawCollateral:
+    case .buyCrypto, .withdrawCollateral, .withdrawReward:
       return false
     case .sellCrypto, .sendCrypto, .sendCollateral:
       return true
@@ -338,7 +341,7 @@ extension MoveCryptoInputViewModel {
   
   var maxFractionDigits: Int {
     switch type {
-    case .buyCrypto, .withdrawCollateral:
+    case .buyCrypto, .withdrawCollateral, .withdrawReward:
       return 2
     case .sellCrypto, .sendCrypto, .sendCollateral:
       return LFUtilities.cryptoFractionDigits
@@ -366,7 +369,7 @@ extension MoveCryptoInputViewModel {
       return L10N.Common.MoveCryptoInput.Sell.title(assetModel.type?.title ?? .empty)
     case .sendCrypto:
       return L10N.Common.MoveCryptoInput.Send.title(assetModel.type?.title ?? .empty)
-    case .withdrawCollateral:
+    case .withdrawCollateral, .withdrawReward:
       return L10N.Common.MoveCryptoInput.WithdrawCollateral.title
     case .sendCollateral:
       return L10N.Common.MoveCryptoInput.SendCollateral.title.uppercased()
@@ -393,6 +396,11 @@ extension MoveCryptoInputViewModel {
     case .withdrawCollateral:
       return L10N.Common.MoveCryptoInput.WithdrawCollateralAvailableBalance.subtitle(
         fiatAccount?.availableBalance.formattedUSDAmount() ?? "$0.00"
+      )
+    case .withdrawReward:
+      // TODO: MinhNguyen - Will implement in the ENG-4321 ticket
+      return L10N.Common.MoveCryptoInput.WithdrawCollateralAvailableBalance.subtitle(
+        "$0.00"
       )
     case .sendCollateral:
       let balance = assetModel.availableBalance.roundTo3f()
@@ -422,6 +430,11 @@ extension MoveCryptoInputViewModel {
     case .withdrawCollateral:
       return L10N.Common.MoveCryptoInput.WithdrawCollateral.annotation(
         fiatAccount?.availableBalance.formattedUSDAmount() ?? "$0.00"
+      )
+    case .withdrawReward:
+      // TODO: MinhNguyen - Will implement in the ENG-4321 ticket
+      return L10N.Common.MoveCryptoInput.WithdrawCollateral.annotation(
+        "$0.00"
       )
     case .sendCollateral:
       let balance = assetModel.availableBalance.roundTo3f()
@@ -502,6 +515,8 @@ extension MoveCryptoInputViewModel {
       fetchSendCryptoQuote(amount: amount, address: address)
     case let .withdrawCollateral(address, _):
       withdrawCollateral(recipientAddress: address)
+    case let .withdrawReward(address, _):
+      requestWithdrawalRewardsBalance(recipientAddress: address)
     case .sendCollateral:
       popup = .confirmSendCollateral
     }
@@ -528,7 +543,7 @@ extension MoveCryptoInputViewModel {
     switch type {
     case .sellCrypto, .sendCrypto, .sendCollateral:
       inlineError = validateAmount(with: assetModel.availableBalance)
-    case .buyCrypto, .withdrawCollateral:
+    case .buyCrypto, .withdrawCollateral, .withdrawReward:
       inlineError = validateAmount(with: fiatAccount?.availableBalance)
     }
     if inlineError.isNotNil {
@@ -592,6 +607,7 @@ extension MoveCryptoInputViewModel {
     case sellCrypto
     case sendCrypto(address: String, nickname: String?)
     case withdrawCollateral(address: String, nickname: String?)
+    case withdrawReward(address: String, nickname: String?)
     case sendCollateral
     
     var id: String {
@@ -604,6 +620,8 @@ extension MoveCryptoInputViewModel {
         return "sendCrypto"
       case .withdrawCollateral:
         return "withdrawBalance"
+      case .withdrawReward:
+        return "withdrawReward"
       case .sendCollateral:
         return "sendCollateral"
       }

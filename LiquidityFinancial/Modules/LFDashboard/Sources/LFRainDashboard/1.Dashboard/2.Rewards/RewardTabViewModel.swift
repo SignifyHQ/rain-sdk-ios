@@ -6,18 +6,26 @@ import Factory
 import Combine
 import AccountService
 import GeneralFeature
+import Services
+import LFLocalizable
 
 @MainActor
 class RewardTabViewModel: ObservableObject {
   @LazyInjected(\.accountDataManager) var accountDataManager
   @LazyInjected(\.accountRepository) var accountRepository
+  @LazyInjected(\.portalStorage) var portalStorage
+  @LazyInjected(\.portalService) var portalService
+  
+  @Published var isLoading: Bool = true
+  @Published var showWithdrawalBalanceSheet: Bool = false
+  @Published var rewardBalance: Double = 0
+  @Published var toastMessage: String?
   
   @Published var selectedRewardCurrency: AssetType?
-  @Published var toastMessage: String = ""
-  @Published var isLoading: Bool = true
-  @Published var accounts: [AccountModel] = []
   @Published var navigation: Navigation?
+  @Published var collateralAsset: AssetModel?
   @Published var activity = Activity.loading
+  @Published var accounts: [AccountModel] = []
   @Published var transactions: [TransactionModel] = []
   @Published var availableRewardCurrencies: [AssetType] = []
   
@@ -65,10 +73,12 @@ class RewardTabViewModel: ObservableObject {
         self?.accounts = accounts
       }
       .store(in: &cancellable)
+    
+    getCollateralAsset()
   }
 }
 
-// MARK: - View Helpers
+// MARK: - API Handle
 extension RewardTabViewModel {
   func fetchAllTransactions() {
     Task { @MainActor in
@@ -104,20 +114,55 @@ extension RewardTabViewModel {
     }
   }
   
+  func getCollateralAsset() {
+    portalStorage
+      .cryptoAsset(with: AssetType.usdc.title)
+      .receive(on: DispatchQueue.main)
+      .map { asset in
+        guard let asset else { return nil }
+        return AssetModel(portalAsset: asset)
+      }
+      .assign(to: &$collateralAsset)
+  }
+}
+
+// MARK: - View Helpers
+extension RewardTabViewModel {
   func onClickedChangeReward() {
     navigation = .changeReward(selectedRewardCurrency: selectedRewardCurrency)
   }
   
   func onClickedSeeAllButton() {
-    guard let selectedRewardCurrency else {
-      return
-    }
-    navigation = .transactions(isCrypto: selectedRewardCurrency != .usd)
+    navigation = .transactions
   }
   
   func transactionItemTapped(_ transaction: TransactionModel) {
     Haptic.impact(.light).generate()
     navigation = .transactionDetail(transaction)
+  }
+  
+  func withdrawBalanceButtonTapped() {
+    showWithdrawalBalanceSheet = true
+  }
+  
+  func walletTypeButtonTapped(type: WalletType) {
+    Task {
+      showWithdrawalBalanceSheet = false
+      guard let collateralAsset else {
+        toastMessage = L10N.Common.MoveCryptoInput.SendCollateral.errorMessage
+        return
+      }
+      
+      switch type {
+      case .internalWallet:
+        guard let myUSDCWalletAddress = await portalService.getWalletAddress(), !myUSDCWalletAddress.isEmpty else {
+          return
+        }
+        navigation = .enterWithdrawalAmount(address: myUSDCWalletAddress, assetCollateral: collateralAsset)
+      case .externalWallet:
+        navigation = .enterWalletAddress(assetCollateral: collateralAsset)
+      }
+    }
   }
 }
 
@@ -130,7 +175,9 @@ extension RewardTabViewModel {
   
   enum Navigation {
     case changeReward(selectedRewardCurrency: AssetType?)
-    case transactions(isCrypto: Bool)
+    case transactions
     case transactionDetail(TransactionModel)
+    case enterWithdrawalAmount(address: String, assetCollateral: AssetModel)
+    case enterWalletAddress(assetCollateral: AssetModel)
   }
 }
