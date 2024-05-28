@@ -57,8 +57,10 @@ private extension TransactionDetailViewModel {
           let transactionEntity = try await getTransactionDetailUseCase.execute(transactionID: id)
           transaction = TransactionModel(from: transactionEntity)
         case .transactionHash(let txnHash):
-          let transactionEntity = try await getTransactionDetailUseCase.execute(transactionHash: txnHash)
-          transaction = TransactionModel(from: transactionEntity)
+          // TODO: MinhNguyen - Temporarily disabled
+          // let transactionEntity = try await getTransactionDetailUseCase.execute(transactionHash: txnHash)
+          // transaction = TransactionModel(from: transactionEntity)
+          break
         }
       } catch {
         log.error(error.userFriendlyMessage)

@@ -1,5 +1,6 @@
 import Foundation
 import PortalSwift
+import LFLocalizable
 
 public enum LFPortalError: Error {
   case dataUnavailable
@@ -70,6 +71,11 @@ extension LFPortalError {
       return portalMpcError.message.lowercased().contains(PortalErrorMessage.walletAlreadyExists)
       ? LFPortalError.walletAlreadyExists
       : LFPortalError.customError(message: portalMpcError.message)
+    case PortalErrorCodes.FAILED_TO_DECRYPT_CIPHER.rawValue:
+      let message = portalMpcError.message.lowercased().contains(PortalErrorMessage.authenticationFailed)
+      ? L10N.Common.BackupByPinCode.WrongCode.error
+      : portalMpcError.message
+      return LFPortalError.customError(message: message)
     default:
       return LFPortalError.customError(message: portalMpcError.message)
     }
@@ -81,5 +87,6 @@ extension LFPortalError {
   enum PortalErrorMessage {
     static let walletAlreadyExists = "wallet already exists"
     static let sessionExpired = "SESSION_EXPIRED"
+    static let authenticationFailed = "authentication failed"
   }
 }
