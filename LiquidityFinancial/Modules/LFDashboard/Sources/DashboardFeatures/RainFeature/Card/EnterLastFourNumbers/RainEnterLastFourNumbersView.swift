@@ -11,12 +11,12 @@ struct RainEnterLastFourNumbersView: View {
   private var viewModel: RainEnterLastFourNumbersViewModel
   
   let screenTitle: String
-  let onDissmiss: (() -> Void)?
+  let onDissmiss: ((String) -> Void)?
   
   init(
     viewModel: RainEnterLastFourNumbersViewModel,
     screenTitle: String,
-    onDissmiss: @escaping () -> Void
+    onDissmiss: @escaping (String) -> Void
   ) {
     _viewModel = .init(wrappedValue: viewModel)
     self.screenTitle = screenTitle
@@ -68,8 +68,8 @@ private extension RainEnterLastFourNumbersView {
         isLoading: $viewModel.isShowIndicator
       ) {
         hideKeyboard()
-        viewModel.activatePhysicalCard {
-          onDissmiss?()
+        viewModel.activatePhysicalCard { cardID in
+          onDissmiss?(cardID)
         }
       }
     }

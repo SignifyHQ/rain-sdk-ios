@@ -187,7 +187,8 @@ extension RainListCardsViewModel {
     case .virtual:
       return L10N.Common.Card.Virtual.title + " **** " + card.last4
     case .physical:
-      return L10N.Common.Card.Physical.title + " **** " + card.last4
+      let panLast4 = card.cardStatus == .active ? card.last4 : "****"
+      return L10N.Common.Card.Physical.title + " **** " + panLast4
     }
   }
   
@@ -202,6 +203,7 @@ extension RainListCardsViewModel {
     currentCard.cardStatus = .active
     cardsList[index].cardStatus = .active
     isActivePhysical = true
+    isShowCardNumber = true
   }
   
   func openSupportScreen() {
@@ -232,7 +234,7 @@ extension RainListCardsViewModel {
     isActivePhysical = currentCard.cardStatus == .active
     isCardLocked = currentCard.cardStatus == .disabled
     if isSwitchCard {
-      isShowCardNumber = false
+      isShowCardNumber = currentCard.cardType == .physical
     } else {
       isSwitchCard = true
     }

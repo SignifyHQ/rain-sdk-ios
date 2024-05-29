@@ -41,9 +41,7 @@ struct RainCardView: View {
     }
     .onChange(of: isShowCardNumber) { _ in
       if isShowCardNumber {
-        viewModel.cardNumber = cardMetaData?.panFormatted ?? "\(Constants.Default.cardNumberPlaceholder.rawValue)\(viewModel.cardModel.last4)"
-        viewModel.expirationTime = viewModel.cardModel.expiryTime
-        viewModel.cvvNumber = cardMetaData?.cvv ?? Constants.Default.cvvPlaceholder.rawValue
+        viewModel.showCardInformation(cardMetaData: cardMetaData)
       } else {
         viewModel.hideCardInformation()
       }

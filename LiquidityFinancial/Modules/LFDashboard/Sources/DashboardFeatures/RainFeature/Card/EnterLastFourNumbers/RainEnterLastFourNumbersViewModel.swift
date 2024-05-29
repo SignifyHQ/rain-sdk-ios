@@ -33,7 +33,7 @@ final class RainEnterLastFourNumbersViewModel: ObservableObject {
 
 // MARK: - API Handler
 extension RainEnterLastFourNumbersViewModel {
-  func activatePhysicalCard(completion: @escaping () -> Void) {
+  func activatePhysicalCard(completion: @escaping (String) -> Void) {
     Task {
       defer { isShowIndicator = false }
       isShowIndicator = true
@@ -41,7 +41,7 @@ extension RainEnterLastFourNumbersViewModel {
       do {
         let parameters = APIRainActivateCardParameters(last4: panLast4)
         _ = try await activateCardUseCase.execute(cardID: cardID, parameters: parameters)
-        completion()
+        completion(cardID)
       } catch {
         log.error(error.userFriendlyMessage)
         toastMessage = error.userFriendlyMessage

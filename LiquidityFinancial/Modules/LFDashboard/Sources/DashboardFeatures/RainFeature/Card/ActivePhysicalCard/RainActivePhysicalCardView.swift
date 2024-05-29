@@ -27,7 +27,8 @@ private extension RainActivePhysicalCardView {
       RainEnterLastFourNumbersView(
         viewModel: RainEnterLastFourNumbersViewModel(cardID: card.id),
         screenTitle: L10N.Common.EnterLastFourNumbers.ActiveCard.title
-      ) {
+      ) { cardID in
+        onSuccess?(cardID)
         activeContent = .activedCard
       }
     case .activedCard:

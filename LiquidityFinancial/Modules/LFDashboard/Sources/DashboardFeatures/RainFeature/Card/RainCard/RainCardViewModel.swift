@@ -43,4 +43,14 @@ extension RainCardViewModel {
     expirationTime = Constants.Default.expirationDatePlaceholder.rawValue
     cvvNumber = Constants.Default.cvvPlaceholder.rawValue
   }
+  
+  func showCardInformation(cardMetaData: CardMetaData?) {
+    if cardModel.cardType == .physical {
+      cardNumber = "\(Constants.Default.physicalCardNumberPlaceholder.rawValue)\(cardModel.last4)"
+    } else {
+      cardNumber = cardMetaData?.panFormatted ?? "\(Constants.Default.cardNumberPlaceholder.rawValue)\(cardModel.last4)"
+      expirationTime = cardModel.expiryTime
+      cvvNumber = cardMetaData?.cvv ?? Constants.Default.cvvPlaceholder.rawValue
+    }
+  }
 }
