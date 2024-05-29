@@ -5,11 +5,13 @@ import LFUtilities
 import Services
 import GeneralFeature
 
-struct WithdrawBalanceSheet: View {
+struct WalletOptionBottomSheet: View {
+  let title: String
   let assetTitle: String
   let action: ((WalletType) -> Void)?
   
-  init(assetTitle: String, action: @escaping (WalletType) -> Void) {
+  init(title: String, assetTitle: String, action: @escaping (WalletType) -> Void) {
+    self.title = title
     self.assetTitle = assetTitle
     self.action = action
   }
@@ -20,7 +22,7 @@ struct WithdrawBalanceSheet: View {
         .foregroundColor(Colors.label.swiftUIColor.opacity(0.35))
         .frame(width: 32, height: 4)
         .padding(.top, 6)
-      Text(L10N.Common.CashTab.WithdrawBalance.sheetTitle.uppercased())
+      Text(title.uppercased())
         .foregroundColor(Colors.label.swiftUIColor)
         .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.main.value))
         .padding(.vertical, 14)
@@ -36,7 +38,7 @@ struct WithdrawBalanceSheet: View {
 }
 
 // MARK: - View Components
-private extension WithdrawBalanceSheet {
+private extension WalletOptionBottomSheet {
   func walletTypeCell(with type: WalletType) -> some View {
     Button {
       action?(type)

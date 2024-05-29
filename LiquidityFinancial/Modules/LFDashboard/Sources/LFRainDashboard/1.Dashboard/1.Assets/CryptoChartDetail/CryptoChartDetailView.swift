@@ -51,7 +51,10 @@ struct CryptoChartDetailView: View {
             viewModel.navigation = nil
           }
         case .receive:
-          ReceiveCryptoView(assetModel: viewModel.asset)
+          ReceiveCryptoView(
+            assetTitle: viewModel.asset.type?.title ?? .empty,
+            walletAddress: viewModel.asset.externalAccountId ?? .empty
+          )
         case .buy:
           MoveCryptoInputView(type: .buyCrypto, assetModel: viewModel.asset)
         case .sell:
@@ -249,7 +252,10 @@ private extension CryptoChartDetailView {
       )
       .embedInNavigation()
     case .wallet:
-      ReceiveCryptoView(assetModel: viewModel.asset)
+      ReceiveCryptoView(
+        assetTitle: viewModel.asset.type?.title ?? .empty,
+        walletAddress: viewModel.asset.externalAccountId ?? .empty
+      )
         .embedInNavigation()
     }
   }

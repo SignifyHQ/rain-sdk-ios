@@ -57,8 +57,10 @@ struct CashView: View {
           kind: transaction.detailType,
           isPopToRoot: false
         )
-      case let .addToBalance(asset):
+      case let .enterDepositAmount(asset):
         MoveCryptoInputView(type: .sendCollateral, assetModel: asset)
+      case let .depositWalletAddress(title, address):
+        ReceiveCryptoView(assetTitle: title, walletAddress: address)
       case let .enterWithdrawalAmount(address, assetCollateral):
         MoveCryptoInputView(
           type: .withdrawCollateral(address: address, nickname: nil),
@@ -152,9 +154,10 @@ private extension CashView {
       .padding(.top, 20)
       .padding(.bottom, 12)
     }
-    .blur(radius: viewModel.showWithdrawalBalanceSheet ? 16 : 0)
-    .sheet(isPresented: $viewModel.showWithdrawalBalanceSheet) {
-      WithdrawBalanceSheet(
+    .blur(radius: viewModel.bottomSheet != nil ? 16 : 0)
+    .sheet(item: $viewModel.bottomSheet) { sheet in
+      WalletOptionBottomSheet(
+        title: sheet.title,
         assetTitle: viewModel.collateralAsset?.type?.title ?? .empty
       ) { type in
         viewModel.walletTypeButtonTapped(type: type)

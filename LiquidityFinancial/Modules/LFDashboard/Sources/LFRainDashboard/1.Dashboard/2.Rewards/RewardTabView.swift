@@ -51,7 +51,8 @@ struct RewardTabView: View {
       .background(Colors.background.swiftUIColor)
       .blur(radius: viewModel.showWithdrawalBalanceSheet ? 16 : 0)
       .sheet(isPresented: $viewModel.showWithdrawalBalanceSheet) {
-        WithdrawBalanceSheet(
+        WalletOptionBottomSheet(
+          title: L10N.Common.CashTab.WithdrawBalance.sheetTitle,
           assetTitle: viewModel.collateralAsset?.type?.title ?? .empty
         ) { type in
           viewModel.walletTypeButtonTapped(type: type)

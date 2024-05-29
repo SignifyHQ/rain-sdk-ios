@@ -29,7 +29,10 @@ struct CryptoAssetView: View {
         case .sellCrypto:
           MoveCryptoInputView(type: .sellCrypto, assetModel: viewModel.asset)
         case .receiveCrypto:
-          ReceiveCryptoView(assetModel: viewModel.asset)
+          ReceiveCryptoView(
+            assetTitle: viewModel.asset.type?.title ?? .empty,
+            walletAddress: viewModel.asset.externalAccountId ?? .empty
+          )
         case .sendCrypto:
           EnterWalletAddressView(
             viewModel: EnterWalletAddressViewModel(asset: viewModel.asset, kind: .sendCrypto)
@@ -61,7 +64,10 @@ struct CryptoAssetView: View {
       .sheet(item: $viewModel.sheet) { item in
         switch item {
         case .wallet:
-          ReceiveCryptoView(assetModel: viewModel.asset)
+          ReceiveCryptoView(
+            assetTitle: viewModel.asset.type?.title ?? .empty,
+            walletAddress: viewModel.asset.externalAccountId ?? .empty
+          )
             .embedInNavigation()
         }
       }

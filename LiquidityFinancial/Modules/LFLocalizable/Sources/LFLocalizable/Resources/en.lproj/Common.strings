@@ -278,6 +278,7 @@
 "cashTab.waysToAdd.title" = "More ways to deposit";
 "cashTab.addToBalance.title" = "Add to Balance";
 "cashTab.withdrawBalance.title" = "Withdraw Balance";
+"cashTab.depositBalance.sheetTitle" = "Deposit balance from";
 "cashTab.withdrawBalance.sheetTitle" = "Withdraw balance to";
 "cashTab.withdrawBalance.internalWallet" = "%@ Wallet";
 "cashTab.withdrawBalance.externalWallet" = "External Wallet";

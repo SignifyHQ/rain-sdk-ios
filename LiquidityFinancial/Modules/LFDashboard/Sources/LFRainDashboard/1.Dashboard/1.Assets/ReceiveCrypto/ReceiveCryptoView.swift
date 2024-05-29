@@ -20,9 +20,9 @@ struct ReceiveCryptoView: View {
   
   @StateObject private var viewModel: ReceiveCryptoViewModel
   
-  init(assetModel: AssetModel) {
+  init(assetTitle: String, walletAddress: String) {
     _viewModel = .init(
-      wrappedValue: .init(assetModel: assetModel)
+      wrappedValue: .init(assetTitle: assetTitle, walletAddress: walletAddress)
     )
   }
   
@@ -106,7 +106,7 @@ private extension ReceiveCryptoView {
   
   var header: some View {
     HStack {
-      Text(L10N.Common.ReceiveCryptoView.title(viewModel.coinTitle).uppercased())
+      Text(L10N.Common.ReceiveCryptoView.title(viewModel.assetTitle).uppercased())
         .foregroundColor(Colors.label.swiftUIColor)
         .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.buttonTextSize.value))
         .padding(.vertical, 30)
@@ -127,7 +127,7 @@ private extension ReceiveCryptoView {
   
   var addressView: some View {
     HStack {
-      Text(viewModel.cryptoAddress)
+      Text(viewModel.walletAddress)
         .foregroundColor(Colors.label.swiftUIColor)
         .opacity(0.5)
         .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.medium.value))

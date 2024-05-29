@@ -22,9 +22,10 @@ final class CashViewModel: ObservableObject {
   @Published var isLoading: Bool = false
   @Published var isOpeningPlaidView: Bool = false
   @Published var isDisableView: Bool = false
-  @Published var showWithdrawalBalanceSheet: Bool = false
   @Published var cashBalanceValue: Double = 0
   @Published var toastMessage: String?
+  
+  @Published var bottomSheet: BottomSheet?
   @Published var activity = Activity.loading
   @Published var selectedAsset: AssetType = .usd
   @Published var navigation: Navigation?
@@ -205,34 +206,59 @@ extension CashViewModel {
   }
   
   func addToBalanceButtonTapped() {
-    guard let collateralAsset else {
-      toastMessage = L10N.Common.MoveCryptoInput.SendCollateral.errorMessage
-      return
-    }
-    navigation = .addToBalance(assetCollateral: collateralAsset)
+    bottomSheet = .depositCollateral
   }
   
   func withdrawBalanceButtonTapped() {
-    showWithdrawalBalanceSheet = true
+    bottomSheet = .withdrawCollateral
   }
   
   func walletTypeButtonTapped(type: WalletType) {
     Task {
-      showWithdrawalBalanceSheet = false
       guard let collateralAsset else {
         toastMessage = L10N.Common.MoveCryptoInput.SendCollateral.errorMessage
+        bottomSheet = nil
         return
       }
       
-      switch type {
-      case .internalWallet:
-        guard let myUSDCWalletAddress = await portalService.getWalletAddress(), !myUSDCWalletAddress.isEmpty else {
-          return
-        }
-        navigation = .enterWithdrawalAmount(address: myUSDCWalletAddress, assetCollateral: collateralAsset)
-      case .externalWallet:
-        navigation = .enterWalletAddress(assetCollateral: collateralAsset)
+      switch bottomSheet {
+      case .depositCollateral:
+        performDepositNavigation(type: type, collateralAsset: collateralAsset)
+      case .withdrawCollateral:
+        await performWithdrawalNavigation(type: type, collateralAsset: collateralAsset)
+      default:
+        break
       }
+    }
+  }
+  
+  func performDepositNavigation(type: WalletType, collateralAsset: AssetModel) {
+    bottomSheet = nil
+    switch type {
+    case .internalWallet:
+      navigation = .enterDepositAmount(assetCollateral: collateralAsset)
+    case .externalWallet:
+      guard let collateralContract = accountDataManager.collateralContract else {
+        toastMessage = L10N.Common.MoveCryptoInput.NoCollateralContract.errorMessage
+        return
+      }
+      navigation = .depositWalletAddress(
+        title: collateralAsset.type?.title ?? .empty,
+        address: collateralContract.address
+      )
+    }
+  }
+  
+  func performWithdrawalNavigation(type: WalletType, collateralAsset: AssetModel) async {
+    bottomSheet = nil
+    switch type {
+    case .internalWallet:
+      guard let myUSDCWalletAddress = await portalService.getWalletAddress(), !myUSDCWalletAddress.isEmpty else {
+        return
+      }
+      navigation = .enterWithdrawalAmount(address: myUSDCWalletAddress, assetCollateral: collateralAsset)
+    case .externalWallet:
+      navigation = .enterWalletAddress(assetCollateral: collateralAsset)
     }
   }
 }
@@ -270,14 +296,38 @@ extension CashViewModel {
     case transactions
   }
   
+  enum BottomSheet: Identifiable {
+    case depositCollateral
+    case withdrawCollateral
+    
+    var id: String {
+      switch self {
+      case .depositCollateral:
+        return "depositCollateral"
+      case .withdrawCollateral:
+        return "withdrawCollateral"
+      }
+    }
+    
+    var title: String {
+      switch self {
+      case .depositCollateral:
+        return L10N.Common.CashTab.DepositBalance.sheetTitle
+      case .withdrawCollateral:
+        return L10N.Common.CashTab.WithdrawBalance.sheetTitle
+      }
+    }
+  }
+  
   enum Navigation {
     case changeAsset
     case transactions
     case transactionDetail(TransactionModel)
     case moveMoney(kind: MoveMoneyAccountViewModel.Kind)
-    case addToBalance(assetCollateral: AssetModel)
+    case enterDepositAmount(assetCollateral: AssetModel)
     case enterWithdrawalAmount(address: String, assetCollateral: AssetModel)
     case enterWalletAddress(assetCollateral: AssetModel)
+    case depositWalletAddress(title: String, address: String)
   }
   
   enum FullScreen: Identifiable {

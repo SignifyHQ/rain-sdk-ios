@@ -13,30 +13,25 @@ class ReceiveCryptoViewModel: ObservableObject {
   @LazyInjected(\.accountDataManager) var accountDataManager
   @LazyInjected(\.accountRepository) var accountRepository
   
-  @Published var assetModel: AssetModel
   @Published var isDisplaySheet: Bool = false
   @Published var qrCode = UIImage()
   @Published var isShareSheetViewPresented = false
   @Published var showCloseButton = false
   @Published var toastMessage: String?
   
-  init(assetModel: AssetModel) {
-    self.assetModel = assetModel
-  }
+  let assetTitle: String
+  let walletAddress: String
   
-  var cryptoAddress: String {
-    assetModel.externalAccountId ?? .empty
-  }
-  
-  var coinTitle: String {
-    assetModel.type?.title ?? .empty
+  init(assetTitle: String, walletAddress: String) {
+    self.assetTitle = assetTitle
+    self.walletAddress = walletAddress
   }
 }
 
+// MARK: - View Handle
 extension ReceiveCryptoViewModel {
-  
   func copyAddress() {
-    UIPasteboard.general.string = cryptoAddress
+    UIPasteboard.general.string = walletAddress
     toastMessage = L10N.Common.ReceiveCryptoView.Copied.info
   }
   
@@ -46,7 +41,7 @@ extension ReceiveCryptoViewModel {
   
   func updateCode() {
     Task { @MainActor in
-      qrCode = generateQRCode(from: cryptoAddress)
+      qrCode = generateQRCode(from: walletAddress)
     }
   }
 

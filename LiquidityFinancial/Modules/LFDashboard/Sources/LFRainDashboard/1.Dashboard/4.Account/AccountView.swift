@@ -57,7 +57,10 @@ struct AccountsView: View {
         case .rewards:
           CurrentRewardView()
         case .wallet(asset: let asset):
-          ReceiveCryptoView(assetModel: asset)
+          ReceiveCryptoView(
+            assetTitle: asset.type?.title ?? .empty,
+            walletAddress: asset.externalAccountId ?? .empty
+          )
         case .backup:
           BackupWalletView()
         }
