@@ -92,12 +92,7 @@ class ConfirmSendCryptoViewModel: ObservableObject {
   }
   
   func handlePortalError(error: Error) {
-    guard let portalError = error as? LFPortalError else {
-      toastMessage = error.userFriendlyMessage
-      log.error(error.userFriendlyMessage)
-      return
-    }
-    
+    let portalError = LFPortalError.handlePortalError(error: error)
     switch portalError {
     case .customError(let message):
       toastMessage = message

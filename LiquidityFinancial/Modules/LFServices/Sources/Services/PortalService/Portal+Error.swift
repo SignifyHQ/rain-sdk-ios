@@ -76,6 +76,8 @@ extension LFPortalError {
       ? L10N.Common.BackupByPinCode.WrongCode.error
       : portalMpcError.message
       return LFPortalError.customError(message: message)
+    case PortalErrorCodes.NODE_RPC_ERROR.rawValue:
+      return LFPortalError.customError(message: L10N.Common.MoveCryptoInput.InsufficientFunds.description)
     default:
       return LFPortalError.customError(message: portalMpcError.message)
     }
