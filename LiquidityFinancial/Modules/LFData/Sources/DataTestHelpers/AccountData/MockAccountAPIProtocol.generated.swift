@@ -8,6 +8,18 @@ import ZerohashData
 import OnboardingData
 
 public class MockAccountAPIProtocol: AccountAPIProtocol {
+    public var underlyingAPITransactionList: APITransactionList!
+    public func getTransactions(parameters: AccountData.APITransactionsParameters) async throws -> AccountData.APITransactionList {
+      underlyingAPITransactionList
+    }
+    public var underlyingAPITransaction: APITransaction!
+    public func getTransactionDetail(transactionId: String) async throws -> AccountData.APITransaction {
+      underlyingAPITransaction
+    }
+    public func getTransactionDetailByHashID(transactionHash: String) async throws -> AccountData.APITransaction {
+      underlyingAPITransaction
+    }
+  
 
     public init() {}
 

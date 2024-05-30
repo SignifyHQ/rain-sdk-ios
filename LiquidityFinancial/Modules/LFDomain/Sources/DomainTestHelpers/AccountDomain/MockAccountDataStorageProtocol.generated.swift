@@ -7,8 +7,24 @@ import AccountDomain
 import Combine
 import NetspendDomain
 import AccountService
-
+import RainDomain
 public class MockAccountDataStorageProtocol: AccountDataStorageProtocol {
+    public var underlyingCollateralContractSubject: CurrentValueSubject<RainDomain.RainCollateralContractEntity?, Never>!
+    public var collateralContractSubject: CurrentValueSubject<RainDomain.RainCollateralContractEntity?, Never> {
+      get { return underlyingCollateralContractSubject }
+      set(value) { underlyingCollateralContractSubject = value }
+    }
+    public var underlyingCollateralContract: RainDomain.RainCollateralContractEntity?
+    public var collateralContract: RainDomain.RainCollateralContractEntity? {
+      get { return underlyingCollateralContract }
+      set(value) { underlyingCollateralContract = value }
+    }
+    public func subscribeCollateralContractChanged(_ completion: @escaping (RainDomain.RainCollateralContractEntity?) -> Void) -> Cancellable {
+      return AnyCancellable {}
+    }
+    public func storeCollateralContract(_ collateralContract: RainDomain.RainCollateralContractEntity?) {
+      
+    }
 
     public init() {}
 

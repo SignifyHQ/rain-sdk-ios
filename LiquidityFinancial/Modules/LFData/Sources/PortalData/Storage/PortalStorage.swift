@@ -15,7 +15,7 @@ public class PortalStorage: PortalStorageProtocol {
     // Setting assets which will be used by the app based on the environment
     defaultCryptoAssets = [
       PortalAsset(token: .AVAX),
-      PortalAsset(token: environmentService.networkEnvironment == .productionTest ? .SepoliaUSDC : .MainnetAvalancheUSDC)
+      PortalAsset(token: environmentService.networkEnvironment == .productionTest ? .sepoliaUSDC : .mainnetAvalancheUSDC)
     ]
     
     // Make sure the assets are always visible because when user have no balance in some crypto asset, blockchain will not return any balance for it

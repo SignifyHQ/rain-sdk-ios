@@ -6,9 +6,56 @@ import Foundation
 import AccountDomain
 import ZerohashDomain
 import OnboardingDomain
+import RainDomain
+import Combine
+
 
 public class MockAccountRepositoryProtocol: AccountRepositoryProtocol {
-
+  public var underlyingTransactionListEntity: TransactionListEntity!
+    public func getTransactions(parameters: AccountDomain.TransactionsParametersEntity) async throws -> AccountDomain.TransactionListEntity {
+      return underlyingTransactionListEntity
+    }
+    public var underlyingTransactionEntity: TransactionEntity!
+    public func getTransactionDetail(transactionId: String) async throws -> AccountDomain.TransactionEntity {
+      return underlyingTransactionEntity
+    }
+    public var underlyingTransactionEntityByHash: TransactionEntity!
+    public func getTransactionDetailByHashID(transactionHash: String) async throws -> AccountDomain.TransactionEntity {
+      return underlyingTransactionEntityByHash
+    }
+    public var underlyingWalletAddressEntity: WalletAddressEntity!
+    public func createWalletAddresses(address: String, nickname: String) async throws -> AccountDomain.WalletAddressEntity {
+      return underlyingWalletAddressEntity
+    }
+    public var underlyingWalletAddressEntityUpdate: WalletAddressEntity!
+    public func updateWalletAddresses(walletId: String, walletAddress: String, nickname: String) async throws -> AccountDomain.WalletAddressEntity {
+      return underlyingWalletAddressEntityUpdate
+    }
+    public func getWalletAddresses() async throws -> [AccountDomain.WalletAddressEntity] {
+      return []
+    }
+    public var underlyingDeleteWalletEntity: DeleteWalletEntity!
+    public func deleteWalletAddresses(walletAddress: String) async throws -> AccountDomain.DeleteWalletEntity {
+      return underlyingDeleteWalletEntity
+    }
+  
+    public var underlyingCollateralContractSubject: CurrentValueSubject<RainDomain.RainCollateralContractEntity?, Never>!
+    public var collateralContractSubject: CurrentValueSubject<RainDomain.RainCollateralContractEntity?, Never> {
+      get { return underlyingCollateralContractSubject }
+      set(value) { underlyingCollateralContractSubject = value }
+    }
+    public var underlyingCollateralContract: RainDomain.RainCollateralContractEntity?
+    public var collateralContract: RainDomain.RainCollateralContractEntity? {
+      get { return underlyingCollateralContract }
+      set(value) { underlyingCollateralContract = value }
+    }
+    public func subscribeCollateralContractChanged(_ completion: @escaping (RainDomain.RainCollateralContractEntity?) -> Void) -> Cancellable {
+      return AnyCancellable {}
+    }
+    public func storeCollateralContract(_ collateralContract: RainDomain.RainCollateralContractEntity?) {
+      
+    }
+  
     public init() {}
 
 
