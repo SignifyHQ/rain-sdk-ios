@@ -8,6 +8,8 @@ import AccountService
 import GeneralFeature
 import Services
 import LFLocalizable
+import RainData
+import RainDomain
 
 @MainActor
 class RewardTabViewModel: ObservableObject {
@@ -15,6 +17,7 @@ class RewardTabViewModel: ObservableObject {
   @LazyInjected(\.accountRepository) var accountRepository
   @LazyInjected(\.portalStorage) var portalStorage
   @LazyInjected(\.portalService) var portalService
+  @LazyInjected(\.rainRewardRepository) var rainRewardRepository
   
   @Published var showWithdrawalBalanceSheet: Bool = false
   @Published var rewardBalance: Double = 0
@@ -32,6 +35,10 @@ class RewardTabViewModel: ObservableObject {
     GetTransactionsListUseCase(repository: accountRepository)
   }()
   
+  private lazy var getRewardBalanceUseCase: RainGetRewardBalanceUseCaseProtocol = {
+    RainGetRewardBalanceUseCase(repository: rainRewardRepository)
+  }()
+  
   var currencyType = Constants.CurrencyType.crypto.rawValue
   var transactionTypes = Constants.TransactionTypesRequest.rewardCryptoBack.types
   private var cancellable: Set<AnyCancellable> = []
@@ -39,6 +46,7 @@ class RewardTabViewModel: ObservableObject {
   init() {
     fetchAllTransactions()
     getCollateralAsset()
+    getRewardBalance()
   }
 }
 
@@ -69,6 +77,18 @@ extension RewardTabViewModel {
       toastMessage = error.userFriendlyMessage
       if transactions.isEmpty {
         activity = .failure
+      }
+    }
+  }
+  
+  func getRewardBalance() {
+    Task {
+      do {
+        let response = try await getRewardBalanceUseCase.execute()
+        rewardBalance = response.rewardedAmount
+      } catch {
+        log.error(error.userFriendlyMessage)
+        toastMessage = error.userFriendlyMessage
       }
     }
   }

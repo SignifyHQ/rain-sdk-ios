@@ -17,6 +17,12 @@ extension Container {
     }
   }
   
+  public var rainRewardAPI: Factory<RainRewardAPIProtocol> {
+    self {
+      LFCoreNetwork<RainRewardRoute>()
+    }
+  }
+  
   public var rainRepository: Factory<RainRepositoryProtocol> {
     self {
       RainRepository(
@@ -29,6 +35,14 @@ extension Container {
     self {
       RainCardRepository(
         rainCardAPI: self.rainCardAPI.callAsFunction()
+      )
+    }
+  }
+  
+  public var rainRewardRepository: Factory<RainRewardRepositoryProtocol> {
+    self {
+      RainRewardRepository(
+        rainRewardAPI: self.rainRewardAPI.callAsFunction()
       )
     }
   }
