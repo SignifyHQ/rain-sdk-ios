@@ -21,6 +21,7 @@ final class MoveCryptoInputViewModel: ObservableObject {
   @LazyInjected(\.accountDataManager) var accountDataManager
   @LazyInjected(\.portalRepository) var portalRepository
   @LazyInjected(\.rainRepository) var rainRepository
+  @LazyInjected(\.rainRewardRepository) var rainRewardRepository
   @LazyInjected(\.portalStorage) var portalStorage
   @LazyInjected(\.zerohashRepository) var zerohashRepository
   @LazyInjected(\.cryptoAccountService) var cryptoAccountService
@@ -65,6 +66,10 @@ final class MoveCryptoInputViewModel: ObservableObject {
   
   private lazy var withdrawAsssetUseCase: WithdrawAssetUseCaseProtocol = {
     WithdrawAssetUseCase(repository: portalRepository)
+  }()
+  
+  private lazy var requestRewardWithdrawalUseCase: RainRequestRewardWithdrawalUseCaseProtocol = {
+    RainRequestRewardWithdrawalUseCase(repository: rainRewardRepository)
   }()
   
   private var subscribers: Set<AnyCancellable> = []
@@ -175,7 +180,21 @@ private extension MoveCryptoInputViewModel {
     )
   }
   
-  func requestWithdrawalRewardsBalance(recipientAddress: String) {
+  func requestRewardWithdrawal(recipientAddress: String) {
+    Task {
+      do {
+        let parameters = APIRainRewardWithdrawalParameters(
+          amount: amount,
+          recipientAddress: recipientAddress
+        )
+        _ = try await requestRewardWithdrawalUseCase.execute(parameters: parameters)
+        // TODO: MinhNguyen - Will update in the ENG-4390 ticket
+        navigation = .transactionDetail(transactionHash: "")
+      } catch {
+        log.error(error.userFriendlyMessage)
+        toastMessage = error.userFriendlyMessage
+      }
+    }
   }
   
   func withdrawCollateral(recipientAddress: String) {
@@ -397,10 +416,9 @@ extension MoveCryptoInputViewModel {
       return L10N.Common.MoveCryptoInput.WithdrawCollateralAvailableBalance.subtitle(
         fiatAccount?.availableBalance.formattedUSDAmount() ?? "$0.00"
       )
-    case .withdrawReward:
-      // TODO: MinhNguyen - Will implement in the ENG-4321 ticket
-      return L10N.Common.MoveCryptoInput.WithdrawCollateralAvailableBalance.subtitle(
-        "$0.00"
+    case let .withdrawReward(_, _, balance):
+      return L10N.Common.MoveCryptoInput.WithdrawReward.subtitle(
+        balance.formattedUSDAmount()
       )
     case .sendCollateral:
       let balance = assetModel.availableBalance.roundTo3f()
@@ -431,10 +449,9 @@ extension MoveCryptoInputViewModel {
       return L10N.Common.MoveCryptoInput.WithdrawCollateral.annotation(
         fiatAccount?.availableBalance.formattedUSDAmount() ?? "$0.00"
       )
-    case .withdrawReward:
-      // TODO: MinhNguyen - Will implement in the ENG-4321 ticket
-      return L10N.Common.MoveCryptoInput.WithdrawCollateral.annotation(
-        "$0.00"
+    case let .withdrawReward(_, _, balance):
+      return L10N.Common.MoveCryptoInput.WithdrawReward.annotation(
+        balance.formattedUSDAmount()
       )
     case .sendCollateral:
       let balance = assetModel.availableBalance.roundTo3f()
@@ -515,8 +532,8 @@ extension MoveCryptoInputViewModel {
       fetchSendCryptoQuote(amount: amount, address: address)
     case let .withdrawCollateral(address, _):
       withdrawCollateral(recipientAddress: address)
-    case let .withdrawReward(address, _):
-      requestWithdrawalRewardsBalance(recipientAddress: address)
+    case let .withdrawReward(address, _, _):
+      requestRewardWithdrawal(recipientAddress: address)
     case .sendCollateral:
       popup = .confirmSendCollateral
     }
@@ -607,7 +624,7 @@ extension MoveCryptoInputViewModel {
     case sellCrypto
     case sendCrypto(address: String, nickname: String?)
     case withdrawCollateral(address: String, nickname: String?)
-    case withdrawReward(address: String, nickname: String?)
+    case withdrawReward(address: String, nickname: String?, balance: Double)
     case sendCollateral
     
     var id: String {

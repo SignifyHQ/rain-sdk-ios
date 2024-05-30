@@ -12,4 +12,12 @@ extension LFCoreNetwork: RainRewardAPIProtocol where R == RainRewardRoute {
       decoder: .apiDecoder
     )
   }
+  
+  public func requestRewardWithdrawal(parameters: APIRainRewardWithdrawalParameters) async throws {
+    try await requestNoResponse(
+      RainRewardRoute.requestRewardWithdrawal(parameters: parameters),
+      failure: LFErrorObject.self,
+      decoder: .apiDecoder
+    )
+  }
 }

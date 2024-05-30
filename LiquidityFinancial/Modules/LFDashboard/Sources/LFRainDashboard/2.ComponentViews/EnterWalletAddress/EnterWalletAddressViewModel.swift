@@ -64,11 +64,27 @@ final class EnterWalletAddressViewModel: ObservableObject {
     Haptic.impact(.light).generate()
     switch kind {
     case .sendCrypto:
-      navigation = .enterAmount(type: .sendCrypto(address: inputValue, nickname: selectedNickname))
+      navigation = .enterAmount(
+        type: .sendCrypto(
+          address: inputValue,
+          nickname: selectedNickname
+        )
+      )
     case .withdrawCollateral:
-      navigation = .enterAmount(type: .withdrawCollateral(address: inputValue, nickname: selectedNickname))
-    case .withdrawReward:
-      navigation = .enterAmount(type: .withdrawReward(address: inputValue, nickname: selectedNickname))
+      navigation = .enterAmount(
+        type: .withdrawCollateral(
+          address: inputValue,
+          nickname: selectedNickname
+        )
+      )
+    case let .withdrawReward(balance):
+      navigation = .enterAmount(
+        type: .withdrawReward(
+          address: inputValue,
+          nickname: selectedNickname,
+          balance: balance
+        )
+      )
     }
   }
   
@@ -180,7 +196,7 @@ extension EnterWalletAddressViewModel {
   enum Kind {
     case sendCrypto
     case withdrawCollateral
-    case withdrawReward
+    case withdrawReward(balance: Double)
     
     func getTitle(asset: String) -> String {
       switch self {

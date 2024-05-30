@@ -20,7 +20,6 @@ final class DashboardRepository: ObservableObject {
   @LazyInjected(\.accountDataManager) var accountDataManager
   
   @LazyInjected(\.accountRepository) var accountRepository
-  @LazyInjected(\.externalFundingRepository) var externalFundingRepository
   @LazyInjected(\.devicesRepository) var devicesRepository
   @LazyInjected(\.rainRepository) var rainRepository
   
@@ -36,10 +35,6 @@ final class DashboardRepository: ObservableObject {
     DeviceRegisterUseCase(repository: devicesRepository)
   }()
   
-  lazy var nsGetLinkedAccountUseCase: NSGetLinkedAccountUseCaseProtocol = {
-    NSGetLinkedAccountUseCase(repository: externalFundingRepository)
-  }()
-  
   lazy var getCreditBalanceUseCase: GetCreditBalanceUseCaseProtocol = {
     GetCreditBalanceUseCase(repository: rainRepository)
   }()
@@ -52,7 +47,6 @@ final class DashboardRepository: ObservableObject {
   
   func onAppear() {
     fetchRainAccount()
-    fetchNetspendLinkedSources()
   }
 }
 
@@ -92,18 +86,6 @@ extension DashboardRepository {
     
     self.accountDataManager.addOrUpdateAccounts([account])
     return account
-  }
-  
-  func fetchNetspendLinkedSources() {
-    Task { @MainActor in
-      do {
-        let sessionID = self.accountDataManager.sessionID
-        let response = try await self.nsGetLinkedAccountUseCase.execute(sessionId: sessionID)
-        self.accountDataManager.storeLinkedSources(response.linkedSources)
-      } catch {
-        toastMessage?(error.userFriendlyMessage)
-      }
-    }
   }
 }
 
@@ -162,5 +144,4 @@ extension DashboardRepository {
       }
     }
   }
-
 }

@@ -115,7 +115,6 @@ final class CashViewModel: ObservableObject {
   func onRefresh() {
     Task { @MainActor in
       _ = try? await dashboardRepository.getRainAccount()
-      dashboardRepository.fetchNetspendLinkedSources()
       
       guard activity != .loading else { return }
       refreshTransaction(withAnimation: true)

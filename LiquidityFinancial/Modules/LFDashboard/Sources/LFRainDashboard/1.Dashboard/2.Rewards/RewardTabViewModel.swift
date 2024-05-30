@@ -120,6 +120,11 @@ extension RewardTabViewModel {
     showWithdrawalBalanceSheet = true
   }
   
+  func handleRewardWithdrawalSuccessfully() {
+    navigation = nil
+    getRewardBalance()
+  }
+  
   func walletTypeButtonTapped(type: WalletType) {
     Task {
       showWithdrawalBalanceSheet = false
@@ -133,9 +138,13 @@ extension RewardTabViewModel {
         guard let myUSDCWalletAddress = await portalService.getWalletAddress(), !myUSDCWalletAddress.isEmpty else {
           return
         }
-        navigation = .enterWithdrawalAmount(address: myUSDCWalletAddress, assetCollateral: collateralAsset)
+        navigation = .enterWithdrawalAmount(
+          address: myUSDCWalletAddress,
+          assetCollateral: collateralAsset,
+          balance: rewardBalance
+        )
       case .externalWallet:
-        navigation = .enterWalletAddress(assetCollateral: collateralAsset)
+        navigation = .enterWalletAddress(assetCollateral: collateralAsset, balance: rewardBalance)
       }
     }
   }
@@ -151,7 +160,7 @@ extension RewardTabViewModel {
   enum Navigation {
     case transactions
     case transactionDetail(TransactionModel)
-    case enterWithdrawalAmount(address: String, assetCollateral: AssetModel)
-    case enterWalletAddress(assetCollateral: AssetModel)
+    case enterWithdrawalAmount(address: String, assetCollateral: AssetModel, balance: Double)
+    case enterWalletAddress(assetCollateral: AssetModel, balance: Double)
   }
 }

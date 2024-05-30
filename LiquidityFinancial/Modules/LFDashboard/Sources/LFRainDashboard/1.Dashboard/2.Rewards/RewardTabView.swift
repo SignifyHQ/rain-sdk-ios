@@ -32,17 +32,19 @@ struct RewardTabView: View {
             kind: transaction.detailType,
             isPopToRoot: false
           )
-        case let .enterWithdrawalAmount(address, assetCollateral):
+        case let .enterWithdrawalAmount(address, assetCollateral, balance):
           MoveCryptoInputView(
-            type: .withdrawReward(address: address, nickname: nil),
+            type: .withdrawReward(address: address, nickname: nil, balance: balance),
             assetModel: assetCollateral,
             completeAction: {
-              viewModel.navigation = nil
+              viewModel.handleRewardWithdrawalSuccessfully()
             }
           )
-        case let .enterWalletAddress(assetCollateral):
+        case let .enterWalletAddress(assetCollateral, balance):
           EnterWalletAddressView(
-            viewModel: EnterWalletAddressViewModel(asset: assetCollateral, kind: .withdrawReward)
+            viewModel: EnterWalletAddressViewModel(
+              asset: assetCollateral, kind: .withdrawReward(balance: balance)
+            )
           ) {
             viewModel.navigation = nil
           }

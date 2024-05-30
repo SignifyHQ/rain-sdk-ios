@@ -6,6 +6,7 @@ import LFUtilities
 
 public enum RainRewardRoute {
   case getRewardBalance
+  case requestRewardWithdrawal(parameters: APIRainRewardWithdrawalParameters)
 }
 
 extension RainRewardRoute: LFRoute {
@@ -13,6 +14,8 @@ extension RainRewardRoute: LFRoute {
     switch self {
     case .getRewardBalance:
       return "/v1/rain/rewards/balances"
+    case .requestRewardWithdrawal:
+      return "/v1/rain/rewards/withdrawal"
     }
   }
   
@@ -20,6 +23,8 @@ extension RainRewardRoute: LFRoute {
     switch self {
     case .getRewardBalance:
       return .GET
+    case .requestRewardWithdrawal:
+      return .POST
     }
   }
   
@@ -38,6 +43,8 @@ extension RainRewardRoute: LFRoute {
     switch self {
     case .getRewardBalance:
       return nil
+    case .requestRewardWithdrawal(let parameters):
+      return parameters.encoded()
     }
   }
   
@@ -45,6 +52,8 @@ extension RainRewardRoute: LFRoute {
     switch self {
     case .getRewardBalance:
       return nil
+    case .requestRewardWithdrawal:
+      return .json
     }
   }
 }
