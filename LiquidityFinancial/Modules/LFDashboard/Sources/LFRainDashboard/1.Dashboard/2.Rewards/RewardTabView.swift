@@ -34,7 +34,12 @@ struct RewardTabView: View {
           )
         case let .enterWithdrawalAmount(address, assetCollateral, balance):
           MoveCryptoInputView(
-            type: .withdrawReward(address: address, nickname: nil, balance: balance),
+            type: .withdrawReward(
+              address: address,
+              nickname: nil,
+              balance: balance,
+              shouldSaveAddress: false
+            ),
             assetModel: assetCollateral,
             completeAction: {
               viewModel.handleRewardWithdrawalSuccessfully()

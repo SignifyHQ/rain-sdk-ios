@@ -58,12 +58,18 @@ struct CashView: View {
           isPopToRoot: false
         )
       case let .enterDepositAmount(asset):
-        MoveCryptoInputView(type: .sendCollateral, assetModel: asset)
+        MoveCryptoInputView(
+          type: .depositCollateral,
+          assetModel: asset,
+          completeAction: {
+            viewModel.navigation = nil
+          }
+        )
       case let .depositWalletAddress(title, address):
         ReceiveCryptoView(assetTitle: title, walletAddress: address)
       case let .enterWithdrawalAmount(address, assetCollateral):
         MoveCryptoInputView(
-          type: .withdrawCollateral(address: address, nickname: nil),
+          type: .withdrawCollateral(address: address, nickname: nil, shouldSaveAddress: false),
           assetModel: assetCollateral,
           completeAction: {
             viewModel.navigation = nil

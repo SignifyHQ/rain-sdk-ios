@@ -46,29 +46,28 @@ final class DashboardRepository: ObservableObject {
   var toastMessage: ((String) -> Void)?
   
   func onAppear() {
-    fetchRainAccount()
+    Task {
+      defer { fiatData.loading = false }
+      fiatData.loading = true
+      await fetchRainAccount()
+    }
   }
 }
 
 // MARK: API
 extension DashboardRepository {
-  func fetchRainAccount() {
-    Task { @MainActor in
-      defer { fiatData.loading = false }
-      fiatData.loading = true
-      
-      do {
-        guard let rainAccount = try await getRainAccount() else {
-          return
-        }
-        
-        fiatData.fiatAccount = [rainAccount]
-        accountDataManager.accountsSubject.send([rainAccount])
-        analyticsService.set(params: [PropertiesName.cashBalance.rawValue: rainAccount.availableBalance])
-        
-      } catch {
-        toastMessage?(error.userFriendlyMessage)
+  func fetchRainAccount() async {
+    do {
+      guard let rainAccount = try await getRainAccount() else {
+        return
       }
+      
+      fiatData.fiatAccount = [rainAccount]
+      accountDataManager.accountsSubject.send([rainAccount])
+      analyticsService.set(params: [PropertiesName.cashBalance.rawValue: rainAccount.availableBalance])
+      
+    } catch {
+      toastMessage?(error.userFriendlyMessage)
     }
   }
   

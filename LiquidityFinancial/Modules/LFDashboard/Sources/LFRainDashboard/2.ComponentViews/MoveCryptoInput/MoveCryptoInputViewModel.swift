@@ -21,7 +21,6 @@ final class MoveCryptoInputViewModel: ObservableObject {
   @LazyInjected(\.accountDataManager) var accountDataManager
   @LazyInjected(\.portalRepository) var portalRepository
   @LazyInjected(\.rainRepository) var rainRepository
-  @LazyInjected(\.rainRewardRepository) var rainRewardRepository
   @LazyInjected(\.portalStorage) var portalStorage
   @LazyInjected(\.zerohashRepository) var zerohashRepository
   @LazyInjected(\.cryptoAccountService) var cryptoAccountService
@@ -32,7 +31,6 @@ final class MoveCryptoInputViewModel: ObservableObject {
   @Published var fiatAccount: AccountModel?
   
   @Published var navigation: Navigation?
-  @Published var popup: Popup?
   @Published var blockPopup: BlockPopup?
   @Published var isFetchingData = false
   @Published var isLoading = false
@@ -62,14 +60,6 @@ final class MoveCryptoInputViewModel: ObservableObject {
   
   private lazy var getWithdrawalSignatureUseCase: GetWithdrawalSignatureUseCaseProtocol = {
     GetWithdrawalSignatureUseCase(repository: rainRepository)
-  }()
-  
-  private lazy var withdrawAsssetUseCase: WithdrawAssetUseCaseProtocol = {
-    WithdrawAssetUseCase(repository: portalRepository)
-  }()
-  
-  private lazy var requestRewardWithdrawalUseCase: RainRequestRewardWithdrawalUseCaseProtocol = {
-    RainRequestRewardWithdrawalUseCase(repository: rainRewardRepository)
   }()
   
   private var subscribers: Set<AnyCancellable> = []
@@ -107,15 +97,74 @@ private extension MoveCryptoInputViewModel {
     }
   }
   
-  func fetchSendCryptoQuote(amount: Double, address: String) {
+  func generateRewardWithdrawalQuote(shouldSaveAddress: Bool) {
+    let viewModel = ConfirmTransferMoneyViewModel(
+      kind: .withdrawalReward(shouldSaveAddress: shouldSaveAddress),
+      assetModel: assetModel,
+      amount: amount,
+      address: address,
+      nickname: nickname
+    )
+    navigation = .confirmTransfer(viewModel: viewModel)
+  }
+  
+  func generateWithdrawCollateralQuote(shouldSaveAddress: Bool) {
     Task {
       defer { isPerformingAction = false }
       isPerformingAction = true
+      
       do {
-        let txFee = try await sendEthUseCase.estimateFee(to: address, contractAddress: assetModel.id.nilIfEmpty, amount: amount)
+        guard let collateralContract = accountDataManager.collateralContract else {
+          toastMessage = L10N.Common.MoveCryptoInput.NoCollateralContract.errorMessage
+          return
+        }
+        guard let signature = try await getWithdrawalSignature(chainId: collateralContract.chainId) else {
+          return
+        }
+        
+        let viewModel = ConfirmTransferMoneyViewModel(
+          kind: .withdrawalCollateral(signature: signature, shouldSaveAddress: shouldSaveAddress),
+          assetModel: assetModel,
+          amount: amount,
+          address: address,
+          nickname: nickname
+        )
+        navigation = .confirmTransfer(viewModel: viewModel)
+      } catch {
+        log.debug(error.userFriendlyMessage)
+        toastMessage = error.userFriendlyMessage
+      }
+    }
+  }
+  
+  func fetchTransferMoneyQuote(kind: ConfirmTransferMoneyViewModel.Kind) {
+    Task {
+      defer { isPerformingAction = false }
+      isPerformingAction = true
+      
+      do {
+        let txFee = try await sendEthUseCase.estimateFee(
+          to: address,
+          contractAddress: assetModel.id.nilIfEmpty,
+          amount: amount
+        )
         // TODO(Volo): Refactor fee response for Portal
-        let feeResponse = APILockedNetworkFeeResponse(quoteId: "", amount: amount, maxAmount: false, fee: txFee)
-        navigation = .confirmSend(lockedFeeResponse: feeResponse)
+        let feeResponse = APILockedNetworkFeeResponse(
+          quoteId: .empty,
+          amount: amount,
+          maxAmount: false,
+          fee: txFee
+        )
+        let viewModel = ConfirmTransferMoneyViewModel(
+          kind: kind,
+          assetModel: assetModel,
+          amount: amount,
+          address: address,
+          nickname: nickname,
+          feeLockedResponse: feeResponse
+        )
+        
+        navigation = .confirmTransfer(viewModel: viewModel)
       } catch {
         handlePortalError(error: error)
       }
@@ -158,92 +207,13 @@ private extension MoveCryptoInputViewModel {
     return accounts
   }
   
-  func sendCollateral() async throws -> String? {
-    guard let collateralContract = accountDataManager.collateralContract else {
-      toastMessage = L10N.Common.MoveCryptoInput.NoCollateralContract.errorMessage
-      return nil
-    }
-    
-    let tokenAddress = collateralContract.tokensEntity.filter { $0.symbol == AssetType.usdc.title }
-    let usdcToken = tokenAddress.first {
-      portalStorage.checkTokenSupport(with: $0.address.lowercased())
-    }
-    guard usdcToken != nil else {
-      toastMessage = L10N.Common.MoveCryptoInput.UsdcUnsupported.errorMessage
-      return nil
-    }
-    
-    return try await sendEthUseCase.executeSend(
-      to: collateralContract.address,
-      contractAddress: assetModel.id,
-      amount: amount
-    )
-  }
-  
-  func requestRewardWithdrawal(recipientAddress: String) {
-    Task {
-      do {
-        let parameters = APIRainRewardWithdrawalParameters(
-          amount: amount,
-          recipientAddress: recipientAddress
-        )
-        _ = try await requestRewardWithdrawalUseCase.execute(parameters: parameters)
-        // TODO: MinhNguyen - Will update in the ENG-4390 ticket
-        navigation = .transactionDetail(transactionHash: "")
-      } catch {
-        log.error(error.userFriendlyMessage)
-        toastMessage = error.userFriendlyMessage
-      }
-    }
-  }
-  
-  func withdrawCollateral(recipientAddress: String) {
-    Task {
-      defer { isPerformingAction = false }
-      isPerformingAction = true
-      
-      do {
-        guard let collateralContract = accountDataManager.collateralContract,
-              let controllerAddress = collateralContract.controllerAddress
-        else {
-          toastMessage = L10N.Common.MoveCryptoInput.NoCollateralContract.errorMessage
-          return
-        }
-        
-        guard let signature = try await getWithdrawalSignature(
-          chainId: collateralContract.chainId,
-          recipientAddress: recipientAddress
-        ) else {
-          return
-        }
-        
-        guard let withdrawAddresses = generateWithdrawAssetAddresses(
-          collateralContract: collateralContract,
-          controllerAddress: controllerAddress,
-          recipientAddress: recipientAddress
-        ) else {
-          return
-        }
-        
-        let txnHash = try await withdrawAsssetUseCase.execute(
-          addresses: withdrawAddresses,
-          amount: amount,
-          signature: signature
-        )
-        self.navigation = .transactionDetail(transactionHash: txnHash)
-      } catch {
-        handlePortalError(error: error)
-      }
-    }
-  }
-  
-  func getWithdrawalSignature(chainId: Int, recipientAddress: String) async throws -> PortalService.WithdrawAssetSignature? {
+  func getWithdrawalSignature(chainId: Int) async throws -> PortalService.WithdrawAssetSignature? {
     let amount = amount * 1e2 // Convert USD to cent
     let parameters = APIRainWithdrawalSignatureParameters(
       chainId: chainId,
       token: assetModel.id,
       amount: String(amount),
-      recipientAddress: recipientAddress
+      recipientAddress: address
     )
     let signature = try await getWithdrawalSignatureUseCase.execute(parameters: parameters)
     
@@ -272,7 +242,7 @@ private extension MoveCryptoInputViewModel {
     switch type {
     case .buyCrypto, .withdrawCollateral, .withdrawReward:
       gridValues = Constant.Buy.buildRecommend(available: fiatAccount?.availableBalance ?? 0)
-    case .sellCrypto, .sendCrypto, .sendCollateral:
+    case .sellCrypto, .sendCrypto, .depositCollateral:
       gridValues = Constant.Sell.buildRecommend(available: assetModel.availableBalance, coin: cryptoCurrency)
     }
   }
@@ -295,29 +265,6 @@ private extension MoveCryptoInputViewModel {
         })
       })
       .store(in: &subscribers)
-  }
-  
-  func generateWithdrawAssetAddresses(
-    collateralContract: RainCollateralContractEntity,
-    controllerAddress: String,
-    recipientAddress: String
-  ) -> PortalService.WithdrawAssetAddresses? {
-    // Check if collateral supports usdc token
-    let tokenAddress = collateralContract.tokensEntity.filter { $0.symbol == AssetType.usdc.title }
-    let usdcToken = tokenAddress.first {
-      portalStorage.checkTokenSupport(with: $0.address.lowercased())
-    }
-    guard let usdcToken else {
-      toastMessage = L10N.Common.MoveCryptoInput.UsdcUnsupported.errorMessage
-      return nil
-    }
-    
-    return PortalService.WithdrawAssetAddresses(
-      contractAddress: controllerAddress,
-      proxyAddress: collateralContract.address,
-      recipientAddress: recipientAddress,
-      tokenAddress: usdcToken.address
-    )
   }
   
   func handlePortalError(error: Error) {
@@ -344,7 +291,7 @@ extension MoveCryptoInputViewModel {
     switch type {
     case .buyCrypto, .withdrawCollateral, .withdrawReward:
       return true
-    case .sellCrypto, .sendCrypto, .sendCollateral:
+    case .sellCrypto, .sendCrypto, .depositCollateral:
       return false
     }
   }
@@ -353,7 +300,7 @@ extension MoveCryptoInputViewModel {
     switch type {
     case .buyCrypto, .withdrawCollateral, .withdrawReward:
       return false
-    case .sellCrypto, .sendCrypto, .sendCollateral:
+    case .sellCrypto, .sendCrypto, .depositCollateral:
       return true
     }
   }
@@ -362,7 +309,7 @@ extension MoveCryptoInputViewModel {
     switch type {
     case .buyCrypto, .withdrawCollateral, .withdrawReward:
       return 2
-    case .sellCrypto, .sendCrypto, .sendCollateral:
+    case .sellCrypto, .sendCrypto, .depositCollateral:
       return LFUtilities.cryptoFractionDigits
     }
   }
@@ -373,7 +320,7 @@ extension MoveCryptoInputViewModel {
   
   var showEstimatedFeeDescription: Bool {
     switch type {
-    case .sendCrypto, .sendCollateral:
+    case .sendCrypto, .depositCollateral:
       return true
     default:
       return false
@@ -390,7 +337,7 @@ extension MoveCryptoInputViewModel {
       return L10N.Common.MoveCryptoInput.Send.title(assetModel.type?.title ?? .empty)
     case .withdrawCollateral, .withdrawReward:
       return L10N.Common.MoveCryptoInput.WithdrawCollateral.title
-    case .sendCollateral:
+    case .depositCollateral:
       return L10N.Common.MoveCryptoInput.SendCollateral.title.uppercased()
     }
   }
@@ -416,11 +363,11 @@ extension MoveCryptoInputViewModel {
       return L10N.Common.MoveCryptoInput.WithdrawCollateralAvailableBalance.subtitle(
         fiatAccount?.availableBalance.formattedUSDAmount() ?? "$0.00"
       )
-    case let .withdrawReward(_, _, balance):
+    case let .withdrawReward(_, _, balance, _):
       return L10N.Common.MoveCryptoInput.WithdrawReward.subtitle(
         balance.formattedUSDAmount()
       )
-    case .sendCollateral:
+    case .depositCollateral:
       let balance = assetModel.availableBalance.roundTo3f()
       return L10N.Common.MoveCryptoInput.SendCollateralAvailableBalance.subtitle(
         "\(balance)".formattedAmount(minFractionDigits: 3, maxFractionDigits: 3), cryptoCurrency
@@ -449,11 +396,11 @@ extension MoveCryptoInputViewModel {
       return L10N.Common.MoveCryptoInput.WithdrawCollateral.annotation(
         fiatAccount?.availableBalance.formattedUSDAmount() ?? "$0.00"
       )
-    case let .withdrawReward(_, _, balance):
+    case let .withdrawReward(_, _, balance, _):
       return L10N.Common.MoveCryptoInput.WithdrawReward.annotation(
         balance.formattedUSDAmount()
       )
-    case .sendCollateral:
+    case .depositCollateral:
       let balance = assetModel.availableBalance.roundTo3f()
       return L10N.Common.MoveCryptoInput.SendCollateral.annotation(
         "\(balance)".formattedAmount(minFractionDigits: 3, maxFractionDigits: 3),
@@ -478,8 +425,16 @@ extension MoveCryptoInputViewModel {
     switch type {
     case .sendCrypto(let address, _):
       return address
-    case .withdrawCollateral(let address, _):
+    case .withdrawCollateral(let address, _, _):
       return address
+    case .withdrawReward(let address, _, _, _):
+      return address
+    case .depositCollateral:
+      guard let collateralContract = accountDataManager.collateralContract else {
+        toastMessage = L10N.Common.MoveCryptoInput.NoCollateralContract.errorMessage
+        return .empty
+      }
+      return collateralContract.address
     default:
       return .empty
     }
@@ -487,7 +442,11 @@ extension MoveCryptoInputViewModel {
   
   var nickname: String {
     switch type {
-    case .sendCrypto(_, let nickname):
+    case let .sendCrypto(_, nickname):
+      return nickname ?? .empty
+    case let .withdrawCollateral(_, nickname, _):
+      return nickname ?? .empty
+    case let .withdrawReward(_, nickname, _, _):
       return nickname ?? .empty
     default:
       return .empty
@@ -529,13 +488,13 @@ extension MoveCryptoInputViewModel {
     case .sellCrypto:
       fetchSellCryptoQuote(amount: "\(amount)")
     case .sendCrypto:
-      fetchSendCryptoQuote(amount: amount, address: address)
-    case let .withdrawCollateral(address, _):
-      withdrawCollateral(recipientAddress: address)
-    case let .withdrawReward(address, _, _):
-      requestRewardWithdrawal(recipientAddress: address)
-    case .sendCollateral:
-      popup = .confirmSendCollateral
+      fetchTransferMoneyQuote(kind: .sendCrypto)
+    case let .withdrawCollateral(_, _, shouldSaveAddress):
+      generateWithdrawCollateralQuote(shouldSaveAddress: shouldSaveAddress)
+    case let .withdrawReward(_, _, _, shouldSaveAddress):
+      generateRewardWithdrawalQuote(shouldSaveAddress: shouldSaveAddress)
+    case .depositCollateral:
+      fetchTransferMoneyQuote(kind: .depositCollateral)
     }
   }
   
@@ -558,7 +517,7 @@ extension MoveCryptoInputViewModel {
   func validateAmountInput() {
     numberOfShakes = 0
     switch type {
-    case .sellCrypto, .sendCrypto, .sendCollateral:
+    case .sellCrypto, .sendCrypto, .depositCollateral:
       inlineError = validateAmount(with: assetModel.availableBalance)
     case .buyCrypto, .withdrawCollateral, .withdrawReward:
       inlineError = validateAmount(with: fiatAccount?.availableBalance)
@@ -589,31 +548,12 @@ extension MoveCryptoInputViewModel {
   }
   
   func hidePopup() {
-    popup = nil
     blockPopup = nil
   }
   
   func handleAfterWaitingRetryTime() {
     hidePopup()
     shouldRetryWithdrawal = true
-  }
-  
-  func confirmSendCollateralButtonTapped() {
-    Task {
-      defer { isLoading = false }
-      isLoading = true
-      
-      do {
-        guard let txnHash = try await sendCollateral() else {
-          return
-        }
-        
-        hidePopup()
-        navigation = .transactionDetail(transactionHash: txnHash)
-      } catch {
-        handlePortalError(error: error)
-      }
-    }
   }
 }
 
@@ -623,9 +563,9 @@ extension MoveCryptoInputViewModel {
     case buyCrypto
     case sellCrypto
     case sendCrypto(address: String, nickname: String?)
-    case withdrawCollateral(address: String, nickname: String?)
-    case withdrawReward(address: String, nickname: String?, balance: Double)
-    case sendCollateral
+    case withdrawCollateral(address: String, nickname: String?, shouldSaveAddress: Bool)
+    case withdrawReward(address: String, nickname: String?, balance: Double, shouldSaveAddress: Bool)
+    case depositCollateral
     
     var id: String {
       switch self {
@@ -639,7 +579,7 @@ extension MoveCryptoInputViewModel {
         return "withdrawBalance"
       case .withdrawReward:
         return "withdrawReward"
-      case .sendCollateral:
+      case .depositCollateral:
         return "sendCollateral"
       }
     }
@@ -648,12 +588,7 @@ extension MoveCryptoInputViewModel {
   enum Navigation {
     case confirmSell(GetSellQuoteEntity, accountId: String)
     case confirmBuy(GetBuyQuoteEntity, accountId: String)
-    case confirmSend(lockedFeeResponse: APILockedNetworkFeeResponse)
-    case transactionDetail(transactionHash: String)
-  }
-  
-  enum Popup {
-    case confirmSendCollateral
+    case confirmTransfer(viewModel: ConfirmTransferMoneyViewModel)
   }
   
   enum BlockPopup {

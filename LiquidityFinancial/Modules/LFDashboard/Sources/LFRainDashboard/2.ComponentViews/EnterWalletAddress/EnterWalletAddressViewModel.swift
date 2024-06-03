@@ -32,8 +32,7 @@ final class EnterWalletAddressViewModel: ObservableObject {
   private var subscribers: Set<AnyCancellable> = []
   
   var selectedNickname: String {
-    guard let walletSelected = walletSelected,
-          walletSelected.address == inputValue else {
+    guard let walletSelected, walletSelected.address == inputValue else {
       return .empty
     }
     return walletSelected.nickname ?? .empty
@@ -74,7 +73,8 @@ final class EnterWalletAddressViewModel: ObservableObject {
       navigation = .enterAmount(
         type: .withdrawCollateral(
           address: inputValue,
-          nickname: selectedNickname
+          nickname: selectedNickname,
+          shouldSaveAddress: true
         )
       )
     case let .withdrawReward(balance):
@@ -82,7 +82,8 @@ final class EnterWalletAddressViewModel: ObservableObject {
         type: .withdrawReward(
           address: inputValue,
           nickname: selectedNickname,
-          balance: balance
+          balance: balance,
+          shouldSaveAddress: true
         )
       )
     }

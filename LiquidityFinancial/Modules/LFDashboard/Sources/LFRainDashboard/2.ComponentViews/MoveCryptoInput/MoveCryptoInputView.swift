@@ -43,12 +43,6 @@ struct MoveCryptoInputView: View {
       ToastView(toastMessage: $0)
     }
     .navigationBarTitleDisplayMode(.inline)
-    .popup(item: $viewModel.popup) { popup in
-      switch popup {
-      case .confirmSendCollateral:
-        confirmSendCollateralPopup
-      }
-    }
     .popup(item: $viewModel.blockPopup, dismissMethods: [.tapInside]) { popup in
       switch popup {
       case .retryWithdrawalAfter(let duration):
@@ -58,26 +52,27 @@ struct MoveCryptoInputView: View {
     .navigationLink(item: $viewModel.navigation) { navigation in
       switch navigation {
       case .confirmSell(let quoteEntity, let accountID):
-        ConfirmBuySellCryptoView(viewModel: ConfirmBuySellCryptoViewModel(type: .sellCrypto(quote: quoteEntity, accountID: accountID)))
-      case .confirmBuy(let quoteEntity, let accountID):
-        ConfirmBuySellCryptoView(viewModel: ConfirmBuySellCryptoViewModel(type: .buyCrypto(quote: quoteEntity, accountID: accountID)))
-      case .confirmSend(let lockedFeeResponse):
-        ConfirmSendCryptoView(
-          assetModel: viewModel.assetModel,
-          amount: viewModel.amount,
-          address: viewModel.address,
-          nickname: viewModel.nickname,
-          feeLockedResponse: lockedFeeResponse,
-          completeAction: completeAction
+        ConfirmBuySellCryptoView(
+          viewModel: ConfirmBuySellCryptoViewModel(
+            type: .sellCrypto(
+              quote: quoteEntity,
+              accountID: accountID
+            )
+          )
         )
-      case .transactionDetail(let transactionHash):
-        TransactionDetailView(
-          method: .transactionHash(transactionHash),
-          kind: TransactionDetailType.withdraw,
-          isNewAddress: viewModel.nickname.isEmpty,
-          walletAddress: viewModel.address,
-          transactionInfo: viewModel.transactionInformations,
-          popAction: completeAction
+      case .confirmBuy(let quoteEntity, let accountID):
+        ConfirmBuySellCryptoView(
+          viewModel: ConfirmBuySellCryptoViewModel(
+            type: .buyCrypto(
+            quote: quoteEntity,
+              accountID: accountID
+            )
+          )
+        )
+      case .confirmTransfer(let viewModel):
+        ConfirmTransferMoneyView(
+          viewModel: viewModel,
+          completeAction: completeAction
         )
       }
     }
@@ -220,22 +215,6 @@ private extension MoveCryptoInputView {
         .foregroundColor(Colors.label.swiftUIColor.opacity(0.5))
         .fixedSize(horizontal: false, vertical: true)
     }
-  }
-  
-  var confirmSendCollateralPopup: some View {
-    LiquidityAlert(
-      title:  L10N.Common.MoveCryptoInput.SendCollateralPopup.title.uppercased(),
-      message: L10N.Common.MoveCryptoInput.SendCollateralPopup.message(
-        viewModel.amount, viewModel.assetModel.type?.title ?? .empty
-      ),
-      primary: .init(text: L10N.Common.Button.Yes.title) {
-        viewModel.confirmSendCollateralButtonTapped()
-      },
-      secondary: .init(text: L10N.Common.Button.No.title) {
-        viewModel.hidePopup()
-      },
-      isLoading: $viewModel.isLoading
-    )
   }
   
   func retryWithdrawalPopup(duration: Int) -> some View {

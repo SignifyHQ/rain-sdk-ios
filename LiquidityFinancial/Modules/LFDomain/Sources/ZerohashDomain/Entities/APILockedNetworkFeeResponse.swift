@@ -10,7 +10,16 @@ public struct APILockedNetworkFeeResponse: Codable {
   public var netAmount: Double?
   public var netUsdAmount: Double?
   
-  public init(quoteId: String, amount: Double, usdAmount: Double? = nil, maxAmount: Bool, fee: Double, usdFeeAmount: Double? = nil, netAmount: Double? = nil, netUsdAmount: Double? = nil) {
+  public init(
+    quoteId: String,
+    amount: Double,
+    usdAmount: Double? = nil,
+    maxAmount: Bool,
+    fee: Double,
+    usdFeeAmount: Double? = nil,
+    netAmount: Double? = nil,
+    netUsdAmount: Double? = nil
+  ) {
     self.quoteId = quoteId
     self.amount = amount
     self.usdAmount = usdAmount
