@@ -808,6 +808,7 @@ https://mn.gov/commerce/money/investments/cryptocurrency/. \n\n\n\n\n\n\n";
 "transactionDetail.saveWalletPopup.button" = "Save wallet address";
 "transactionDetail.receipt.button" = "Receipt";
 "transactionDetail.networkFee.title" = "Network Fee";
+"transactionDetail.cryptoTransfer.title" = "%@ SENT";
 "transactionDetail.price.title" = "Price";
 "transactionDetail.fee.title" = "Fee";
 "transactionDetail.rewards.title" = "Rewards";

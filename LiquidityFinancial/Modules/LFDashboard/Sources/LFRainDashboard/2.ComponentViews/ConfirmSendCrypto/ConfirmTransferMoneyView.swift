@@ -31,9 +31,9 @@ struct ConfirmTransferMoneyView: View {
       .navigationBarTitleDisplayMode(.inline)
       .navigationLink(item: $viewModel.navigation) { item in
         switch item {
-        case let .transactionDetail(transactionHash):
+        case let .transactionDetail(transaction):
           TransactionDetailView(
-            method: .transactionHash(transactionHash),
+            method: .localTransaction(transaction),
             kind: .crypto,
             isNewAddress: viewModel.isNewAddress,
             walletAddress: viewModel.address,

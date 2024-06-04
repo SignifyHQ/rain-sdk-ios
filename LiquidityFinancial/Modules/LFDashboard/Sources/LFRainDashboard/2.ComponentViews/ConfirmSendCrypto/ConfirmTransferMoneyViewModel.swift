@@ -125,6 +125,12 @@ extension ConfirmTransferMoneyViewModel {
         value: address
       )
     )
+    transactionInfors.append(
+      TransactionInformation(
+        title: L10N.Common.TransactionDetail.Fee.title,
+        value: fee.formattedCryptoAmount()
+      )
+    )
     return transactionInfors
   }
 }
@@ -150,12 +156,12 @@ private extension ConfirmTransferMoneyViewModel {
       showIndicator = true
       
       do {
-        let txnHash = try await sendEthUseCase.executeSend(
+        _ = try await sendEthUseCase.executeSend(
           to: address,
           contractAddress: assetModel.id.nilIfEmpty,
           amount: amount
         )
-        navigation = .transactionDetail(transactionHash: txnHash)
+        navigateToTransactionDetail(type: .cryptoWithdraw)
       } catch {
         handlePortalError(error: error)
       }
@@ -182,12 +188,12 @@ private extension ConfirmTransferMoneyViewModel {
           return
         }
         
-        let txnHash = try await sendEthUseCase.executeSend(
+        _ = try await sendEthUseCase.executeSend(
           to: collateralContract.address,
           contractAddress: assetModel.id,
           amount: amount
         )
-        navigation = .transactionDetail(transactionHash: txnHash)
+        navigateToTransactionDetail(type: .cryptoWithdraw)
       } catch {
         handlePortalError(error: error)
       }
@@ -202,8 +208,7 @@ private extension ConfirmTransferMoneyViewModel {
           recipientAddress: address
         )
         _ = try await requestRewardWithdrawalUseCase.execute(parameters: parameters)
-        // TODO: MinhNguyen - Will update in the ENG-4390 ticket
-        navigation = .transactionDetail(transactionHash: "")
+        navigateToTransactionDetail(type: .cryptoWithdraw)
       } catch {
         log.error(error.userFriendlyMessage)
         toastMessage = error.userFriendlyMessage
@@ -251,16 +256,32 @@ private extension ConfirmTransferMoneyViewModel {
           return
         }
         
-        let txnHash = try await withdrawAsssetUseCase.execute(
+        _ = try await withdrawAsssetUseCase.execute(
           addresses: withdrawAddresses,
           amount: amount,
           signature: signature
         )
-        self.navigation = .transactionDetail(transactionHash: txnHash)
+        navigateToTransactionDetail(type: .cryptoWithdraw)
       } catch {
         handlePortalError(error: error)
       }
     }
+  }
+  
+  func navigateToTransactionDetail(type: TransactionType) {
+    let transaction = TransactionModel(
+      id: Constants.Default.localTransactionID.rawValue,
+      accountId: .empty,
+      title: L10N.Common.TransactionDetail.CryptoTransfer.title(assetModel.type?.title ?? .empty),
+      currency: assetModel.type?.title,
+      amount: amount,
+      fee: fee,
+      type: type,
+      status: .pending, // All crypto transfer transactions have pending status at the time of execution
+      createdAt: .empty,
+      updateAt: .empty
+    )
+    navigation = .transactionDetail(transaction)
   }
   
   func generateWithdrawAssetAddresses(
@@ -302,7 +323,7 @@ private extension ConfirmTransferMoneyViewModel {
 // MARK: - Types
 extension ConfirmTransferMoneyViewModel {
   enum Navigation {
-    case transactionDetail(transactionHash: String)
+    case transactionDetail(TransactionModel)
   }
   
   enum Kind {

@@ -291,6 +291,7 @@ public extension Constants {
     case statementFromYear = "2023"
     case cvvContentPath = "cvv"
     case cardNumberContentPath = "cardNumber"
+    case localTransactionID = "localTransactionID"
   }
 }
 

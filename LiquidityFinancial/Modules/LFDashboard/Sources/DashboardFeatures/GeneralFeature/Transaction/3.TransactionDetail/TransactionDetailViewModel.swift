@@ -56,11 +56,8 @@ private extension TransactionDetailViewModel {
         case .transactionID(let id):
           let transactionEntity = try await getTransactionDetailUseCase.execute(transactionID: id)
           transaction = TransactionModel(from: transactionEntity)
-        case .transactionHash(let txnHash):
-          // TODO: MinhNguyen - Temporarily disabled
-          // let transactionEntity = try await getTransactionDetailUseCase.execute(transactionHash: txnHash)
-          // transaction = TransactionModel(from: transactionEntity)
-          break
+        case let .localTransaction(transaction):
+          self.transaction = transaction
         }
       } catch {
         log.error(error.userFriendlyMessage)
@@ -177,6 +174,6 @@ extension TransactionDetailViewModel {
 extension TransactionDetailViewModel {
   public enum Method {
     case transactionID(String)
-    case transactionHash(String)
+    case localTransaction(TransactionModel)
   }
 }

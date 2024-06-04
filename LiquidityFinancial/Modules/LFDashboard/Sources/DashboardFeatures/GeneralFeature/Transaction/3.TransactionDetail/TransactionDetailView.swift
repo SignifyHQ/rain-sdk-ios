@@ -40,7 +40,7 @@ public struct TransactionDetailView: View {
   
   public var body: some View {
     ZStack {
-      if viewModel.isFetchingData {
+      if viewModel.transaction == TransactionModel.default {
         LottieView(loading: .primary)
           .frame(width: 30, height: 20)
       } else {
@@ -75,7 +75,6 @@ public struct TransactionDetailView: View {
 }
 
 extension TransactionDetailView {
-  
   @ViewBuilder func transactionContent(kind: TransactionDetailType) -> some View {
     switch kind {
     case .common:
@@ -117,5 +116,4 @@ extension TransactionDetailView {
       GasFeeTransactionDetailView(transaction: viewModel.transaction)
     }
   }
-  
 }

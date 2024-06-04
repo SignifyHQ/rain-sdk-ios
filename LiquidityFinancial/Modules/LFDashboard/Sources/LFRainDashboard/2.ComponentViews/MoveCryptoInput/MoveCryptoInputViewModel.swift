@@ -114,6 +114,19 @@ private extension MoveCryptoInputViewModel {
       isPerformingAction = true
       
       do {
+        let txFee = try await sendEthUseCase.estimateFee(
+          to: address,
+          contractAddress: assetModel.id.nilIfEmpty,
+          amount: amount
+        )
+        // TODO(Volo): Refactor fee response for Portal
+        let feeResponse = APILockedNetworkFeeResponse(
+          quoteId: .empty,
+          amount: amount,
+          maxAmount: false,
+          fee: txFee
+        )
+        
         guard let collateralContract = accountDataManager.collateralContract else {
           toastMessage = L10N.Common.MoveCryptoInput.NoCollateralContract.errorMessage
           return
@@ -127,7 +140,8 @@ private extension MoveCryptoInputViewModel {
           assetModel: assetModel,
           amount: amount,
           address: address,
-          nickname: nickname
+          nickname: nickname,
+          feeLockedResponse: feeResponse
         )
         navigation = .confirmTransfer(viewModel: viewModel)
       } catch {
