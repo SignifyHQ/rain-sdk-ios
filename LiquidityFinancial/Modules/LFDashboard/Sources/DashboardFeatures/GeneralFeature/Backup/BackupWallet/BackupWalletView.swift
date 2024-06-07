@@ -31,11 +31,17 @@ private extension BackupWalletView {
         .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.main.value))
         .foregroundColor(Colors.label.swiftUIColor)
       backupMethodView(method: .iCloud)
-      backupMethodView(method: .password, isBackedUp: viewModel.isBackedUpByPassword)
+      backupMethodView(method: .password)
       Spacer()
       disclosureBottomView
     }
     .padding(30)
+    .popup(item: $viewModel.popup) { popup in
+      switch popup {
+      case .settingICloud:
+        settingICloudPopup
+      }
+    }
     .navigationLink(item: $viewModel.navigation) { navigation in
       switch navigation {
       case .setupPIN:
@@ -57,11 +63,9 @@ private extension BackupWalletView {
     .frame(maxWidth: .infinity)
   }
   
-  func backupMethodView(
-    method: BackupWalletViewModel.BackupMethod,
-    isBackedUp: Bool = true
-  ) -> some View {
-    VStack(alignment: .leading, spacing: 16) {
+  func backupMethodView(method: BackupWalletViewModel.BackupMethod) -> some View {
+    let isBackedUp = viewModel.backupMethods.contains(method)
+    return VStack(alignment: .leading, spacing: 16) {
       HStack(alignment: .top) {
         method.image.swiftUIImage
           .resizable()
@@ -71,9 +75,13 @@ private extension BackupWalletView {
           .opacity(isBackedUp ? 1 : 0)
       }
       backupMethodDescription(method: method)
-      if method == .password && !isBackedUp {
-        FullSizeButton(title: L10N.Common.BackupWallet.SetupPinCode.title, isDisable: false) {
-          viewModel.setupPinButtonTapped()
+      if !isBackedUp {
+        FullSizeButton(
+          title: method.buttonTitle,
+          isDisable: false,
+          isLoading: $viewModel.isBackingUp
+        ) {
+          viewModel.onBackupItemTapped(method: method)
         }
       }
     }
@@ -123,5 +131,19 @@ private extension BackupWalletView {
         .foregroundColor(Colors.label.swiftUIColor.opacity(0.75))
     }
     .padding(.bottom, 12)
+  }
+  
+  var settingICloudPopup: some View {
+    LiquidityAlert(
+      title: L10N.Common.CreateWallet.SignInToIcloud.title,
+      message: L10N.Common.CreateWallet.SignInToIcloud.message,
+      primary: .init(text: L10N.Common.Button.Ok.title) {
+        viewModel.hidePopup()
+        viewModel.openDeviceSettings()
+      },
+      secondary: .init(text: L10N.Common.Button.NotNow.title) {
+        viewModel.hidePopup()
+      }
+    )
   }
 }

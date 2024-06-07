@@ -67,6 +67,7 @@ private extension ICloudBackupNotFoundView {
       Text(L10N.Common.ICloudBackupNotFound.description)
         .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.medium.value))
         .foregroundColor(Colors.label.swiftUIColor.opacity(0.75))
+        .multilineTextAlignment(.center)
     }
   }
   

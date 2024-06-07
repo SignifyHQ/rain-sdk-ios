@@ -89,6 +89,14 @@ extension RecoverWalletViewModel {
 // MARK: - Private Functions
 private extension RecoverWalletViewModel {
   func handleError(error: Error) {
+    do {
+      try handleBackendError(error: error)
+    } catch {
+      handlePortalError(error: error)
+    }
+  }
+  
+  func handlePortalError(error: Error) {
     guard let portalError = error as? LFPortalError else {
       toastMessage = error.userFriendlyMessage
       log.error(error.userFriendlyMessage)
@@ -105,6 +113,19 @@ private extension RecoverWalletViewModel {
     }
     
     log.error(toastMessage ?? portalError.localizedDescription)
+  }
+  
+  func handleBackendError(error: Error) throws {
+    guard let errorCode = error.asErrorObject?.code else {
+      throw error
+    }
+    
+    switch errorCode {
+    case Constants.ErrorCode.portalBackupShareNotFound.rawValue:
+      navigation = .iCloudNotFound
+    default:
+      throw error
+    }
   }
 }
 

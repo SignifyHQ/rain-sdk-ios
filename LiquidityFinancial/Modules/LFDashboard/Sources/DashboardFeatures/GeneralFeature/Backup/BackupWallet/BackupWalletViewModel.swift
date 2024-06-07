@@ -8,19 +8,26 @@ import SwiftUI
 import LFStyleGuide
 import PortalSwift
 import PortalDomain
+import Services
 
 @MainActor
 final class BackupWalletViewModel: ObservableObject {
   @LazyInjected(\.portalRepository) var portalRepository
 
   @Published var isLoading: Bool = false
-  @Published var isBackedUpByPassword: Bool = false
+  @Published var isBackingUp: Bool = false
   @Published var toastMessage: String?
   
+  @Published var backupMethods: [BackupMethod] = []
+  @Published var popup: Popup?
   @Published var navigation: Navigation?
   
-  lazy var getBackupMethodsUseCase: GetBackupMethodsUseCaseProtocol = {
+  private lazy var getBackupMethodsUseCase: GetBackupMethodsUseCaseProtocol = {
     GetBackupMethodsUseCase(repository: portalRepository)
+  }()
+  
+  private lazy var backupWalletUseCase: BackupWalletUseCaseProtocol = {
+    BackupWalletUseCase(repository: portalRepository)
   }()
   
   private var cancellable: Set<AnyCancellable> = []
@@ -37,12 +44,15 @@ extension BackupWalletViewModel {
     Task {
       isLoading = true
       defer { isLoading = false }
+      
       do {
         let response = try await getBackupMethodsUseCase.execute()
-        let backupMethods = response.backupMethods.map {
+        let uniqueBackupMethods = Set(response.backupMethods.compactMap({
+          $0.components(separatedBy: "-").first
+        }))
+        backupMethods = uniqueBackupMethods.compactMap {
           BackupMethod(rawValue: $0)
         }
-        self.isBackedUpByPassword = backupMethods.contains(.password)
       } catch {
         log.error(error.userFriendlyMessage)
         toastMessage = error.userFriendlyMessage
@@ -53,15 +63,68 @@ extension BackupWalletViewModel {
 
 // MARK: - View Handle
 extension BackupWalletViewModel {
-  func setupPinButtonTapped() {
-    navigation = .setupPIN
+  func onBackupItemTapped(method: BackupMethod) {
+    switch method {
+    case .iCloud:
+      backupPortalWalletWithIcloud()
+    case .password:
+      navigation = .setupPIN
+    }
+  }
+  
+  func hidePopup() {
+    popup = nil
+  }
+  
+  func openDeviceSettings() {
+    let mainSettingURL = URL(string:"App-Prefs:root=General&path=ManagedConfigurationList")
+    guard let mainSettingURL, UIApplication.shared.canOpenURL(mainSettingURL) else {
+      return
+    }
+    
+    UIApplication.shared.open(mainSettingURL)
+  }
+}
+
+// MARK: - Private Functions
+private extension BackupWalletViewModel {
+  func handlePortalError(error: Error) {
+    guard let portalError = error as? LFPortalError else {
+      toastMessage = error.localizedDescription
+      return
+    }
+    
+    switch portalError {
+    case .iCloudAccountUnavailable:
+      popup = .settingICloud
+    case .customError(let message):
+      toastMessage = message
+    default:
+      toastMessage = portalError.localizedDescription
+    }
+    
+    log.error(toastMessage ?? error.localizedDescription)
+  }
+  
+  func backupPortalWalletWithIcloud() {
+    Task {
+      defer { isBackingUp = false }
+      isBackingUp = true
+      
+      do {
+        try await backupWalletUseCase.execute(backupMethod: .iCloud, password: nil)
+        backupMethods.append(.iCloud)
+      } catch {
+        handlePortalError(error: error)
+      }
+    }
   }
   
   func setUpDidBackupByPasswordSuccessObserver() {
     NotificationCenter.default.publisher(for: .didBackupByPasswordSuccess)
       .sink { [weak self] _ in
         guard let self else { return }
-        self.isBackedUpByPassword = true
+        backupMethods.append(.password)
         self.navigation = nil
       }
       .store(in: &cancellable)
@@ -92,6 +155,15 @@ extension BackupWalletViewModel {
       }
     }
     
+    var buttonTitle: String {
+      switch self {
+      case .iCloud:
+        return L10N.Common.BackupWallet.BackupWithICloud.title
+      case .password:
+        return L10N.Common.BackupWallet.SetupPinCode.title
+      }
+    }
+    
     var image: ImageAsset {
       switch self {
       case .iCloud:
@@ -104,5 +176,9 @@ extension BackupWalletViewModel {
   
   enum Navigation {
     case setupPIN
+  }
+  
+  enum Popup {
+    case settingICloud
   }
 }

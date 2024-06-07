@@ -216,6 +216,7 @@ public extension Constants {
     case duplicatedWalletNickname = "duplicated_wallet_nickname"
     case cardNameConflict = "card_name_conflict"
     case questionsNotAvailable = "identity_verification_questions_not_available"
+    case portalBackupShareNotFound = "portal_backup_share_not_found"
     
     public var value: String {
       rawValue
