@@ -87,7 +87,7 @@ private extension RewardViewModel {
     let transactions = try await accountRepository.getTransactions(
       accountId: accountId,
       currencyType: currencyType,
-      transactionTypes: Constants.TransactionTypesRequest.rewardCashBack.types,
+      transactionTypes: Constants.TransactionTypesRequest.reward.types,
       limit: 20,
       offset: 0
     )

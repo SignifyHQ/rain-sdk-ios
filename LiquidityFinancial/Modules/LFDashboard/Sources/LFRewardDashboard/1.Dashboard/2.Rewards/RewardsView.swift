@@ -41,7 +41,7 @@ public struct RewardsView: View {
             filterType: .account,
             currencyType: viewModel.currencyType,
             accountID: viewModel.fiatAccountID,
-            transactionTypes: Constants.TransactionTypesRequest.rewardCashBack.types
+            transactionTypes: Constants.TransactionTypesRequest.reward.types
           )
         case let .transactionDetail(transaction):
           TransactionDetailView(

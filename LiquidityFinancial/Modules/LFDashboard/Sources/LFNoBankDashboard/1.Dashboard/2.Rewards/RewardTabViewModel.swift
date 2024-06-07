@@ -22,7 +22,7 @@ class RewardTabViewModel: ObservableObject {
   
   var accountID: String = .empty
   var currencyType = Constants.CurrencyType.crypto.rawValue
-  var transactionTypes = Constants.TransactionTypesRequest.rewardCryptoBack.types
+  var transactionTypes = Constants.TransactionTypesRequest.reward.types
   private var cancellable: Set<AnyCancellable> = []
   
   let dashboardRepository: DashboardRepository
@@ -76,7 +76,7 @@ extension RewardTabViewModel {
         return
       }
       currencyType = Constants.CurrencyType.crypto.rawValue
-      transactionTypes = Constants.TransactionTypesRequest.rewardCryptoBack.types
+      transactionTypes = Constants.TransactionTypesRequest.reward.types
       await apiLoadTransactions()
     }
   }

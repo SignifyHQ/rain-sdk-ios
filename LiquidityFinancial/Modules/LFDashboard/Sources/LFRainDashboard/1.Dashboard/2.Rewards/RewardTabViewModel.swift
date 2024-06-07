@@ -40,7 +40,7 @@ class RewardTabViewModel: ObservableObject {
   }()
   
   var currencyType = Constants.CurrencyType.crypto.rawValue
-  var transactionTypes = Constants.TransactionTypesRequest.rewardCryptoBack.types
+  var transactionTypes = Constants.TransactionTypesRequest.reward.types
   private var cancellable: Set<AnyCancellable> = []
   
   init() {
@@ -55,7 +55,7 @@ extension RewardTabViewModel {
   func fetchAllTransactions() {
     Task { @MainActor in
       currencyType = Constants.CurrencyType.crypto.rawValue
-      transactionTypes = Constants.TransactionTypesRequest.rewardCryptoBack.types
+      transactionTypes = Constants.TransactionTypesRequest.reward.types
       
       await apiLoadTransactions(with: nil) // TODO: MinhNguyen - Will update it in the ENG-4319 ticket
     }

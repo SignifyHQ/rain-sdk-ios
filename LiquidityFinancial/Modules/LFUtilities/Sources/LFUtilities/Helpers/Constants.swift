@@ -240,19 +240,45 @@ public extension Constants {
   enum TransactionTypesRequest {
     case fiat
     case crypto
-    case rewardCashBack
-    case rewardCryptoBack
+    case reward
     
     public var types: [String] {
       switch self {
       case .fiat:
-        return ["PURCHASE","DEPOSIT","WITHDRAW","SYSTEM_FEE","REFUND","CRYPTO_BUY","CRYPTO_SELL","DONATION","OTHER","REWARD_CASHBACK","REWARD_CASHBACK_REVERSE"]
+        return [
+          "PURCHASE",
+          "DEPOSIT",
+          "WITHDRAW",
+          "SYSTEM_FEE",
+          "REFUND",
+          "CRYPTO_BUY",
+          "CRYPTO_SELL",
+          "DONATION",
+          "OTHER",
+          "REWARD_CASHBACK",
+          "REWARD_CASHBACK_REVERSE"
+        ]
       case .crypto:
-        return ["CRYPTO_BUY","CRYPTO_SELL","CRYPTO_WITHDRAW","CRYPTO_DEPOSIT","CRYPTO_GAS_DEDUCTION","CRYPTO_BUY_REFUND","REWARD_CRYPTOBACK","REWARD_CRYPTOBACK_DOSH","REWARD_CRYPTOBACK_REVERSE"]
-      case .rewardCashBack:
-        return ["REWARD_CASHBACK","REWARD_CASHBACK_REVERSE"]
-      case .rewardCryptoBack:
-        return ["REWARD_CRYPTOBACK","REWARD_CRYPTOBACK_DOSH","REWARD_CRYPTOBACK_REVERSE"]
+        return [
+          "CRYPTO_BUY",
+          "CRYPTO_SELL",
+          "CRYPTO_WITHDRAW",
+          "CRYPTO_DEPOSIT",
+          "CRYPTO_GAS_DEDUCTION",
+          "CRYPTO_BUY_REFUND",
+          "REWARD_CRYPTOBACK",
+          "REWARD_CRYPTOBACK_DOSH",
+          "REWARD_CRYPTOBACK_REVERSE"
+        ]
+      case .reward:
+        return [
+          "REWARD_CRYPTOBACK",
+          "REWARD_CRYPTOBACK_DOSH",
+          "REWARD_CRYPTOBACK_REVERSE",
+          "REWARD_CASHBACK",
+          "REWARD_CASHBACK_REVERSE",
+          "REWARD_REFERRAL"
+        ]
       }
     }
   }
