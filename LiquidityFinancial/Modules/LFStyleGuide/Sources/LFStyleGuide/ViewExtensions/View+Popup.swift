@@ -87,12 +87,14 @@ private struct PopupViewModifier<PopupContent: View>: ViewModifier {
       .window(isPresented: $isPresented, style: style.windowStyle) {
         popupContent(dismissAction: dismissAction)
       }
+      .onAppear {
+        // Make sure the popup is automatically disabled if it was enabled before the view was initialized
+        guard isPresented else { return }
+        handlePopupVisibleState()
+      }
       .onChange(of: isPresented) { isPresented in
-        if isPresented {
-          setupAutomaticDismissalIfNeeded()
-          UIAccessibility.post(notification: .screenChanged, argument: nil)
-          UIAccessibility.post(notification: .announcement, argument: "Alert")
-        }
+        guard isPresented else { return }
+        handlePopupVisibleState()
       }
   }
   
@@ -166,5 +168,11 @@ private struct PopupViewModifier<PopupContent: View>: ViewModifier {
     if isPresented, let work = workItem {
       DispatchQueue.main.asyncAfter(deadline: .now() + duration, execute: work)
     }
+  }
+  
+  private func handlePopupVisibleState() {
+    setupAutomaticDismissalIfNeeded()
+    UIAccessibility.post(notification: .screenChanged, argument: nil)
+    UIAccessibility.post(notification: .announcement, argument: "Alert")
   }
 }
