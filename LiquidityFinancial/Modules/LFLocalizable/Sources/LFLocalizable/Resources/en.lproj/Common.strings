@@ -457,7 +457,8 @@
 "MoveCryptoInput.sendCollateral.annotation" = "You currently have %@ %@ available to add. If this amount is less than expected, please contact support.";
 "MoveCryptoInput.minimumCash.description" = "Minimum amount should be $0.10";
 "MoveCryptoInput.minimumCrypto.description" = "Minimum amount should be 0.0001%@";
-"MoveCryptoInput.insufficientFunds.description" = "Please check if you have enough funds to pay for transaction fees";
+"MoveCryptoInput.insufficientFunds.description" = "Insufficient funds";
+"MoveCryptoInput.notEnoughCrypto.description" = "Please check if you have enough funds to pay for transaction fees";
 "MoveCryptoInput.send.estimated_fee" = "The estimated network fee is an approximation and the actual network fee applied on a withdrawal may differ.";
 "MoveCryptoInput.sendCollateral.errorMessage" = "Unable to Add Collateral at the Moment. Apologies for the inconvenience.";
 "MoveCryptoInput.sendCollateralPopup.title" = "confirm transaction";
