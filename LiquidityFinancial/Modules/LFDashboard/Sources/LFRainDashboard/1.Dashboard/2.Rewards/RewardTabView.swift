@@ -59,7 +59,7 @@ struct RewardTabView: View {
       .blur(radius: viewModel.showWithdrawalBalanceSheet ? 16 : 0)
       .sheet(isPresented: $viewModel.showWithdrawalBalanceSheet) {
         WalletOptionBottomSheet(
-          title: L10N.Common.CashTab.WithdrawBalance.sheetTitle,
+          title: L10N.Common.RewardTabView.WithdrawBalance.sheetTitle,
           assetTitle: viewModel.collateralAsset?.type?.title ?? .empty
         ) { type in
           viewModel.walletTypeButtonTapped(type: type)

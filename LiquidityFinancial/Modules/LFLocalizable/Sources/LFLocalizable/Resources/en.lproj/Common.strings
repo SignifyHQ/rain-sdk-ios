@@ -280,7 +280,7 @@
 "cashTab.addToBalance.title" = "Add to Balance";
 "cashTab.withdrawBalance.title" = "Withdraw Balance";
 "cashTab.depositBalance.sheetTitle" = "Deposit balance from";
-"cashTab.withdrawBalance.sheetTitle" = "Withdraw balance to";
+"cashTab.withdrawBalance.sheetTitle" = "Withdrawal to";
 "cashTab.withdrawBalance.internalWallet" = "%@ Wallet";
 "cashTab.withdrawBalance.externalWallet" = "External Wallet";
 
@@ -443,7 +443,7 @@
 "MoveCryptoInput.sellAvailableBalance.subtitle" = "%@ %@ available";
 "MoveCryptoInput.send.title" = "SEND %@";
 "MoveCryptoInput.sendAvailableBalance.subtitle" = "%@ %@ available";
-"MoveCryptoInput.withdrawCollateral.title" = "Withdraw Balance";
+"MoveCryptoInput.withdrawCollateral.title" = "Withdrawal From Balance";
 "MoveCryptoInput.withdrawCollateralAvailableBalance.subtitle" = "%@ available";
 "MoveCryptoInput.withdrawReward.title" = "Withdraw Balance";
 "MoveCryptoInput.withdrawReward.subtitle" = "%@ available";
@@ -1034,7 +1034,7 @@ https://mn.gov/commerce/money/investments/cryptocurrency/. \n\n\n\n\n\n\n";
 "EnterCryptoAddressView.delete_popup.primary_button" = "Delete";
 "EnterCryptoAddressView.save_success.message" = "Wallet address saved";
 "EnterCryptoAddressView.delete_success.message" = "Wallet address deleted";
-"enterWalletAddressView.withdrawBalance.title" = "Withdraw balance";
+"enterWalletAddressView.withdrawBalance.title" = "Withdrawal from balance";
 "enterWalletAddressView.withdrawBalance.textFieldTitle" = "Send to external wallet";
 
 // Round up
@@ -1078,6 +1078,7 @@ https://mn.gov/commerce/money/investments/cryptocurrency/. \n\n\n\n\n\n\n";
 "RewardTabView.firstReward.select" = "Select Reward";
 "RewardTabView.currentRewardsBalance.title" = "Current Rewards Balance";
 "RewardTabView.withdrawBalance.buttonTitle" = "Withdraw Balance";
+"RewardTabView.withdrawBalance.sheetTitle" = "Send Rewards To";
 
 // Donations
 "donations.select_fundraiser" = "Select a Cause";

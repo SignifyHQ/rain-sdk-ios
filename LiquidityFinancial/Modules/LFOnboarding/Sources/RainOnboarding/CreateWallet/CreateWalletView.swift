@@ -21,9 +21,9 @@ struct CreateWalletView: View {
           settingICloudPopup
         }
       }
-      .defaultToolBar(icon: .support) {
+      .defaultToolBar(icon: .support, openSupportScreen: {
         viewModel.openSupportScreen()
-      }
+      })
       .navigationLink(isActive: $viewModel.isNavigateToPersonalInformation) {
         let enterSSNView = EnterSSNView(
           viewModel: EnterSSNViewModel(isVerifySSN: true),

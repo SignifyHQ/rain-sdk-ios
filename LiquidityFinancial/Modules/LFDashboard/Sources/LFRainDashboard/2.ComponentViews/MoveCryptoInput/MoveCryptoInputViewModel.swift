@@ -349,8 +349,10 @@ extension MoveCryptoInputViewModel {
       return L10N.Common.MoveCryptoInput.Sell.title(assetModel.type?.title ?? .empty)
     case .sendCrypto:
       return L10N.Common.MoveCryptoInput.Send.title(assetModel.type?.title ?? .empty)
-    case .withdrawCollateral, .withdrawReward:
-      return L10N.Common.MoveCryptoInput.WithdrawCollateral.title
+    case .withdrawCollateral:
+      return L10N.Common.MoveCryptoInput.WithdrawCollateral.title.uppercased()
+    case .withdrawReward:
+      return L10N.Common.MoveCryptoInput.WithdrawReward.title.uppercased()
     case .depositCollateral:
       return L10N.Common.MoveCryptoInput.SendCollateral.title.uppercased()
     }
