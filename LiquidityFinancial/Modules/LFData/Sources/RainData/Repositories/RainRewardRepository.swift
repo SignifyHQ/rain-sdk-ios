@@ -8,7 +8,7 @@ public class RainRewardRepository: RainRewardRepositoryProtocol {
     self.rainRewardAPI = rainRewardAPI
   }
   
-  public func getRewardBalance() async throws -> RainRewardBalanceEntity {
+  public func getRewardBalance() async throws -> RainRewardBalancesEntity {
     try await rainRewardAPI.getRewardBalance()
   }
   

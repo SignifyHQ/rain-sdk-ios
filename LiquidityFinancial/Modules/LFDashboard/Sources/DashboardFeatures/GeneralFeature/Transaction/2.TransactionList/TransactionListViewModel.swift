@@ -106,7 +106,7 @@ private extension TransactionListViewModel {
         transactionTypes: transactionTypes,
         limit: limit,
         offset: offset,
-        contractAddress: contractAddress?.nilIfEmpty
+        contractAddress: contractAddress
       )
       
       let transactions = try await getTransactionsListUseCase.execute(parameters: parameters)

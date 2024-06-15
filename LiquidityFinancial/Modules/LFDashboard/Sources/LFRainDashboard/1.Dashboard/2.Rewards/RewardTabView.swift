@@ -67,6 +67,7 @@ struct RewardTabView: View {
       }
       .refreshable {
         viewModel.fetchAllTransactions()
+        viewModel.getRewardBalance()
       }
   }
 }
@@ -89,9 +90,14 @@ private extension RewardTabView {
     VStack(alignment: .leading, spacing: 16) {
       rewardAssetView(assetType: viewModel.selectedRewardCurrency)
       GenImages.CommonImages.dash.swiftUIImage
+        .resizable()
         .foregroundColor(Colors.label.swiftUIColor.opacity(0.5))
-      currentRewardBalanceView(assetType: viewModel.selectedRewardCurrency)
+      VStack(spacing: 8) {
+        rewardBalanceView(assetType: viewModel.selectedRewardCurrency)
+        pendingRewardsView(assetType: viewModel.selectedRewardCurrency)
+      }
       GenImages.CommonImages.dash.swiftUIImage
+        .resizable()
         .foregroundColor(Colors.label.swiftUIColor.opacity(0.5))
       withdrawBalanceButton
     }
@@ -109,7 +115,7 @@ private extension RewardTabView {
     }
   }
   
-  func currentRewardBalanceView(assetType: AssetType) -> some View {
+  func rewardBalanceView(assetType: AssetType) -> some View {
     HStack {
       Text(L10N.Common.RewardTabView.CurrentRewardsBalance.title)
         .font(
@@ -117,11 +123,31 @@ private extension RewardTabView {
         )
         .foregroundColor(Colors.label.swiftUIColor)
       Spacer()
-      Text("\(viewModel.rewardBalance.formattedUSDAmount()) \(assetType.title)")
+      Text("\(viewModel.rewardBalance.formattedCryptoAmount()) \(assetType.title)")
         .font(
           Fonts.bold.swiftUIFont(size: Constants.FontSize.small.value)
         )
         .foregroundColor(Colors.label.swiftUIColor)
+    }
+  }
+  
+  func pendingRewardsView(assetType: AssetType) -> some View {
+    Group {
+      if viewModel.pendingRewards != 0 {
+        HStack {
+          Text(L10N.Common.RewardTabView.PendingRewardsBalance.title)
+            .font(
+              Fonts.regular.swiftUIFont(size: Constants.FontSize.ultraSmall.value)
+            )
+            .foregroundColor(Colors.label.swiftUIColor.opacity(0.75))
+          Spacer()
+          Text("\(viewModel.pendingRewards.formattedCryptoAmount()) \(assetType.title)")
+            .font(
+              Fonts.bold.swiftUIFont(size: Constants.FontSize.ultraSmall.value)
+            )
+            .foregroundColor(Colors.label.swiftUIColor.opacity(0.75))
+        }
+      }
     }
   }
     

@@ -107,7 +107,7 @@ private extension CryptoAssetViewModel {
         transactionTypes: Constants.TransactionTypesRequest.crypto.types,
         limit: Constants.shortTransactionLimit,
         offset: Constants.transactionOffset,
-        contractAddress: asset.id.nilIfEmpty
+        contractAddress: asset.id
       )
       let transactions = try await getTransactionsListUseCase.execute(parameters: parameters)
       self.transactions = transactions.data.compactMap({ TransactionModel(from: $0) })

@@ -21,6 +21,7 @@ class RewardTabViewModel: ObservableObject {
   
   @Published var showWithdrawalBalanceSheet: Bool = false
   @Published var rewardBalance: Double = 0
+  @Published var pendingRewards: Double = 0
   @Published var toastMessage: String?
   
   @Published var selectedRewardCurrency: AssetType = .usdc // For now, we will only support USDC rewards
@@ -85,7 +86,8 @@ extension RewardTabViewModel {
     Task {
       do {
         let response = try await getRewardBalanceUseCase.execute()
-        rewardBalance = response.rewardedAmount
+        rewardBalance = response.data.first?.rewardedAmount ?? 0
+        pendingRewards = response.data.first?.unprocessedAmount ?? 0
       } catch {
         log.error(error.userFriendlyMessage)
         toastMessage = error.userFriendlyMessage

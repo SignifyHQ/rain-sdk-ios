@@ -1077,6 +1077,7 @@ https://mn.gov/commerce/money/investments/cryptocurrency/. \n\n\n\n\n\n\n";
 "RewardTabView.firstReward.title" = "CHOOSE BETWEEN";
 "RewardTabView.firstReward.select" = "Select Reward";
 "RewardTabView.currentRewardsBalance.title" = "Current Rewards Balance";
+"RewardTabView.pendingRewardsBalance.title" = "Pending Rewards";
 "RewardTabView.withdrawBalance.buttonTitle" = "Withdraw Balance";
 "RewardTabView.withdrawBalance.sheetTitle" = "Send Rewards To";
 

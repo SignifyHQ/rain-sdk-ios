@@ -1,5 +1,5 @@
 import Foundation
 
 public protocol RainGetRewardBalanceUseCaseProtocol {
-  func execute() async throws -> RainRewardBalanceEntity
+  func execute() async throws -> RainRewardBalancesEntity
 }

@@ -36,13 +36,13 @@ public final class CommonTransactionDetailViewModel: ObservableObject {
   }
   
   var navigationTitle: String? {
-    transaction.isCryptoTransaction ? transaction.titleDisplay.uppercased() : transaction.type.title.uppercased()
+    transaction.type.title.uppercased()
   }
   
   var descriptionDisplay: String {
-    if transaction.isCryptoTransaction {
-      return (transaction.type.title.uppercased() + " " + (transaction.currency ?? "")).trimWhitespacesAndNewlines()
-    }
+//    if transaction.isCryptoTransaction {
+//      return (transaction.type.title.uppercased() + " " + (transaction.currency ?? "")).trimWhitespacesAndNewlines()
+//    }
     
     return transaction.titleDisplay.uppercased()
   }

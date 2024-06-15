@@ -16,7 +16,7 @@ public struct APIListObject<Element: Codable>: LFListObject {
 extension APIListObject: Codable {
   public init(from decoder: Decoder) throws {
     let container: KeyedDecodingContainer<APIListObject<Element>.CodingKeys> = try decoder.container(keyedBy: APIListObject<Element>.CodingKeys.self)
-    total = try container.decode(Int.self, forKey: APIListObject<Element>.CodingKeys.total)
+    total = (try? container.decode(Int.self, forKey: APIListObject<Element>.CodingKeys.total)) ?? 1
       // Lenient strategy to parse the valid elements and ignore corrupted ones.
     let optionalData = try container.decode([OptionalElement<Element>].self, forKey: APIListObject<Element>.CodingKeys.data)
     data = optionalData.compactMap(\.value)

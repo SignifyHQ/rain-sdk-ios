@@ -8,7 +8,7 @@ public class RainGetRewardBalanceUseCase: RainGetRewardBalanceUseCaseProtocol {
     self.repository = repository
   }
   
-  public func execute() async throws -> RainRewardBalanceEntity {
+  public func execute() async throws -> RainRewardBalancesEntity {
     try await repository.getRewardBalance()
   }
 }

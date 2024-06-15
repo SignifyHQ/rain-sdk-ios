@@ -13,9 +13,9 @@ extension RainRewardRoute: LFRoute {
   public var path: String {
     switch self {
     case .getRewardBalance:
-      return "/v1/rain/rewards/balances"
+      return "/v1/rewards/balances"
     case .requestRewardWithdrawal:
-      return "/v1/rain/rewards/withdrawal"
+      return "/v1/rewards/withdrawal"
     }
   }
   

@@ -37,6 +37,8 @@ public enum TransactionType: String, Codable {
       return L10N.Common.TransactionDetail.Send.title
     case .cryptoDeposit:
       return L10N.Common.TransactionDetail.Receive.title
+    case .rewardCryptoBack:
+      return L10N.Common.TransactionDetail.Reward.title
     default:
       return rawValue
     }

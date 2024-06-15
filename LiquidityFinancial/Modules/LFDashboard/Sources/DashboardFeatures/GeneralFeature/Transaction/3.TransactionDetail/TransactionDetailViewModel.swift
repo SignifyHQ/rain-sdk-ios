@@ -160,10 +160,11 @@ extension TransactionDetailViewModel {
   }
   
   var rewardTransactions: [TransactionInformation] {
-    [
+    guard let balance = transaction.balanceFormatted else { return [] }
+    return [
       TransactionInformation(
         title: L10N.Common.TransactionDetail.Balance.title,
-        value: LFUtilities.cryptoCurrency,
+        value: transaction.currency ?? "",
         markValue: transaction.balanceFormatted
       )
     ]

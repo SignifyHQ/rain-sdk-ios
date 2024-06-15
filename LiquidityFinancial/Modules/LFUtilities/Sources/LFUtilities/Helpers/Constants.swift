@@ -260,15 +260,15 @@ public extension Constants {
         ]
       case .crypto:
         return [
-          "CRYPTO_BUY",
-          "CRYPTO_SELL",
+          //"CRYPTO_BUY",
+          //"CRYPTO_SELL",
           "CRYPTO_WITHDRAW",
           "CRYPTO_DEPOSIT",
-          "CRYPTO_GAS_DEDUCTION",
-          "CRYPTO_BUY_REFUND",
-          "REWARD_CRYPTOBACK",
-          "REWARD_CRYPTOBACK_DOSH",
-          "REWARD_CRYPTOBACK_REVERSE"
+          //"CRYPTO_GAS_DEDUCTION",
+          //"CRYPTO_BUY_REFUND"
+          //"REWARD_CRYPTOBACK",
+          //"REWARD_CRYPTOBACK_DOSH",
+          //"REWARD_CRYPTOBACK_REVERSE"
         ]
       case .reward:
         return [
