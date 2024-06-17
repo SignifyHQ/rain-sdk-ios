@@ -279,8 +279,8 @@
 "cashTab.waysToAdd.title" = "More ways to deposit";
 "cashTab.addToBalance.title" = "Add to Balance";
 "cashTab.withdrawBalance.title" = "Withdraw Balance";
-"cashTab.depositBalance.sheetTitle" = "Deposit balance from";
-"cashTab.withdrawBalance.sheetTitle" = "Withdrawal to";
+"cashTab.depositBalance.sheetTitle" = "Deposit from";
+"cashTab.withdrawBalance.sheetTitle" = "Withdraw to";
 "cashTab.withdrawBalance.internalWallet" = "%@ Wallet";
 "cashTab.withdrawBalance.externalWallet" = "External Wallet";
 
@@ -443,9 +443,9 @@
 "MoveCryptoInput.sellAvailableBalance.subtitle" = "%@ %@ available";
 "MoveCryptoInput.send.title" = "SEND %@";
 "MoveCryptoInput.sendAvailableBalance.subtitle" = "%@ %@ available";
-"MoveCryptoInput.withdrawCollateral.title" = "Withdrawal From Balance";
+"MoveCryptoInput.withdrawCollateral.title" = "Withdraw Balance";
 "MoveCryptoInput.withdrawCollateralAvailableBalance.subtitle" = "%@ available";
-"MoveCryptoInput.withdrawReward.title" = "Withdraw Balance";
+"MoveCryptoInput.withdrawReward.title" = "Withdraw Rewards";
 "MoveCryptoInput.withdrawReward.subtitle" = "%@ available";
 "MoveCryptoInput.sendCollateral.title" = "Add To Balance";
 "MoveCryptoInput.sendCollateralAvailableBalance.subtitle" = "%@ %@ available";
@@ -466,7 +466,7 @@
 "MoveCryptoInput.usdcUnsupported.errorMessage" = "USDC token cannot be utilized as collateral in the current contract";
 "MoveCryptoInput.missingWallet.errorMessage" = "The wallet does not exist. Please recover wallet";
 "MoveCryptoInput.noCollateralContract.errorMessage" = "The account does not have a collateral contract.";
-"MoveCryptoInput.withdrawalSignatureProcessing.title" = "Withdrawal Balance";
+"MoveCryptoInput.withdrawalSignatureProcessing.title" = "Withdraw Balance";
 "MoveCryptoInput.withdrawalSignatureProcessing.message" = "The system is processing your request and may take %@ seconds. Please wait!";
 
 // CryptoReceipt
@@ -1034,7 +1034,8 @@ https://mn.gov/commerce/money/investments/cryptocurrency/. \n\n\n\n\n\n\n";
 "EnterCryptoAddressView.delete_popup.primary_button" = "Delete";
 "EnterCryptoAddressView.save_success.message" = "Wallet address saved";
 "EnterCryptoAddressView.delete_success.message" = "Wallet address deleted";
-"enterWalletAddressView.withdrawBalance.title" = "Withdrawal from balance";
+"enterWalletAddressView.withdrawBalance.title" = "Withdraw balance";
+"enterWalletAddressView.withdrawRewards.title" = "Withdraw rewards";
 "enterWalletAddressView.withdrawBalance.textFieldTitle" = "Send to external wallet";
 
 // Round up

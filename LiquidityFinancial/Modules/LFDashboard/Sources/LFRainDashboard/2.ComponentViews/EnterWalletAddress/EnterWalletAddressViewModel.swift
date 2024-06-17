@@ -203,7 +203,9 @@ extension EnterWalletAddressViewModel {
       switch self {
       case .sendCrypto:
         return L10N.Common.EnterCryptoAddressView.title(asset)
-      case .withdrawReward, .withdrawCollateral:
+      case .withdrawReward:
+        return L10N.Common.EnterWalletAddressView.WithdrawRewards.title
+      case .withdrawCollateral:
         return L10N.Common.EnterWalletAddressView.WithdrawBalance.title
       }
     }

@@ -303,27 +303,27 @@ private extension MoveCryptoInputViewModel {
 extension MoveCryptoInputViewModel {
   var isUSDCurrency: Bool {
     switch type {
-    case .buyCrypto, .withdrawCollateral, .withdrawReward:
+    case .buyCrypto, .withdrawCollateral:
       return true
-    case .sellCrypto, .sendCrypto, .depositCollateral:
+    case .sellCrypto, .sendCrypto, .depositCollateral, .withdrawReward:
       return false
     }
   }
   
   var isCryptoCurrency: Bool {
     switch type {
-    case .buyCrypto, .withdrawCollateral, .withdrawReward:
+    case .buyCrypto, .withdrawCollateral:
       return false
-    case .sellCrypto, .sendCrypto, .depositCollateral:
+    case .sellCrypto, .sendCrypto, .depositCollateral, .withdrawReward:
       return true
     }
   }
   
   var maxFractionDigits: Int {
     switch type {
-    case .buyCrypto, .withdrawCollateral, .withdrawReward:
+    case .buyCrypto, .withdrawCollateral:
       return 2
-    case .sellCrypto, .sendCrypto, .depositCollateral:
+    case .sellCrypto, .sendCrypto, .depositCollateral, .withdrawReward:
       return LFUtilities.cryptoFractionDigits
     }
   }
@@ -381,12 +381,12 @@ extension MoveCryptoInputViewModel {
       )
     case let .withdrawReward(_, _, balance, _):
       return L10N.Common.MoveCryptoInput.WithdrawReward.subtitle(
-        balance.formattedUSDAmount()
+        balance.formattedAmount(minFractionDigits: 2, maxFractionDigits: 6)
       )
     case .depositCollateral:
-      let balance = assetModel.availableBalance.roundTo3f()
+      let balance = assetModel.availableBalance.roundTo6f()
       return L10N.Common.MoveCryptoInput.SendCollateralAvailableBalance.subtitle(
-        "\(balance)".formattedAmount(minFractionDigits: 3, maxFractionDigits: 3), cryptoCurrency
+        "\(balance)".formattedAmount(minFractionDigits: 2, maxFractionDigits: 6), cryptoCurrency
       )
     }
   }
@@ -414,12 +414,12 @@ extension MoveCryptoInputViewModel {
       )
     case let .withdrawReward(_, _, balance, _):
       return L10N.Common.MoveCryptoInput.WithdrawReward.annotation(
-        balance.formattedUSDAmount()
+        balance.formattedAmount(minFractionDigits: 2, maxFractionDigits: 6)
       )
     case .depositCollateral:
       let balance = assetModel.availableBalance.roundTo3f()
       return L10N.Common.MoveCryptoInput.SendCollateral.annotation(
-        "\(balance)".formattedAmount(minFractionDigits: 3, maxFractionDigits: 3),
+        "\(balance)".formattedAmount(minFractionDigits: 2, maxFractionDigits: 6),
         assetModel.type?.title ?? .empty
       )
     }
@@ -535,8 +535,10 @@ extension MoveCryptoInputViewModel {
     switch type {
     case .sellCrypto, .sendCrypto, .depositCollateral:
       inlineError = validateAmount(with: assetModel.availableBalance)
-    case .buyCrypto, .withdrawCollateral, .withdrawReward:
+    case .buyCrypto, .withdrawCollateral:
       inlineError = validateAmount(with: fiatAccount?.availableBalance)
+    case .withdrawReward(_, _, let balance, _):
+      inlineError = validateAmount(with: balance)
     }
     if inlineError.isNotNil {
       withAnimation(.linear(duration: 0.5)) {

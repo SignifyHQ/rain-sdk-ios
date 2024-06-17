@@ -205,6 +205,7 @@ private extension ConfirmTransferMoneyViewModel {
       do {
         let parameters = APIRainRewardWithdrawalParameters(
           amount: amount,
+          currency: assetModel.type?.title ?? "",
           recipientAddress: address
         )
         _ = try await requestRewardWithdrawalUseCase.execute(parameters: parameters)
