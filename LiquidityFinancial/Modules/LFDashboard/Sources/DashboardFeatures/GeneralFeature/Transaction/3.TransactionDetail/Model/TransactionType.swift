@@ -15,6 +15,7 @@ public enum TransactionType: String, Codable {
   case rewardReferral = "REWARD_REFERRAL"
   case rewardCashBack = "REWARD_CASHBACK"
   case rewardCashBackReverse = "REWARD_CASHBACK_REVERSE"
+  case rewardWithdrawal = "REWARD_WITHDRAWAL"
   case cryptoBuy = "CRYPTO_BUY"
   case cryptoBuyRefund = "CRYPTO_BUY_REFUND"
   case cryptoSell = "CRYPTO_SELL"
@@ -39,6 +40,8 @@ public enum TransactionType: String, Codable {
       return L10N.Common.TransactionDetail.Receive.title
     case .rewardCryptoBack:
       return L10N.Common.TransactionDetail.Reward.title
+    case .rewardWithdrawal:
+      return L10N.Common.TransactionDetail.RewardWithdrawal.title
     default:
       return rawValue
     }
@@ -58,7 +61,7 @@ public enum TransactionType: String, Codable {
       return GenImages.Images.Transactions.txFees.name
     case .donation:
       return GenImages.Images.Transactions.txDonation.name
-    case .cryptoWithdraw:
+    case .cryptoWithdraw, .rewardWithdrawal:
       return GenImages.Images.Transactions.txCryptoWithdrawal.name
     case .cryptoBuy:
       return GenImages.Images.Transactions.txCryptoBuy.name

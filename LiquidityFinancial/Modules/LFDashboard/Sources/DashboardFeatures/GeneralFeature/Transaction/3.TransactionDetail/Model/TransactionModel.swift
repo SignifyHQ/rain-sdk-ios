@@ -184,6 +184,7 @@ public extension TransactionModel {
         .cryptoSell,
         .rewardCashBackReverse,
         .rewardCryptoBackReverse,
+        .rewardWithdrawal,
         .cryptoGasDeduction,
         .systemFee:
       return Colors.error.swiftUIColor
@@ -205,7 +206,8 @@ public extension TransactionModel {
         .cryptoGasDeduction,
         .rewardCryptoBack,
         .rewardCryptoDosh,
-        .rewardCryptoBackReverse:
+        .rewardCryptoBackReverse,
+        .rewardWithdrawal:
       return true
     default:
       return false
@@ -233,7 +235,7 @@ public extension TransactionModel {
       return .refund
     case .purchase:
       return .purchase
-    case .rewardReferral, .rewardCryptoBack, .rewardCryptoDosh:
+    case .rewardReferral, .rewardCryptoBack, .rewardCryptoDosh, .rewardWithdrawal:
       return .reward
     case .rewardCryptoBackReverse:
       return .rewardReversal

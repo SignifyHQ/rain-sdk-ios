@@ -277,7 +277,8 @@ public extension Constants {
           "REWARD_CRYPTOBACK_REVERSE",
           "REWARD_CASHBACK",
           "REWARD_CASHBACK_REVERSE",
-          "REWARD_REFERRAL"
+          "REWARD_REFERRAL",
+          "REWARD_WITHDRAWAL"
         ]
       }
     }
