@@ -24,8 +24,8 @@ private extension WithdrawTransactionDetailView {
       if transaction.status != nil {
         StatusDiagramView(
           transaction: transaction,
-          startTitle: L10N.Common.TransferView.Status.Deposit.started,
-          completedTitle: L10N.Common.TransferView.Status.Deposit.completed
+          startTitle: L10N.Common.TransferView.Status.Withdraw.started,
+          completedTitle: L10N.Common.TransferView.Status.Withdraw.completed
         )
       }
       if let status = transaction.status {

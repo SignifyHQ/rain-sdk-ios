@@ -262,7 +262,7 @@ public extension TransactionModel {
       title: transactionEntity.title,
       currency: transactionEntity.currency,
       description: transactionEntity.description,
-      amount: transactionEntity.amount,
+      amount: abs(transactionEntity.amount),
       currentBalance: transactionEntity.currentBalance,
       fee: transactionEntity.fee,
       type: TransactionType(rawValue: transactionEntity.type) ?? .unknown,
