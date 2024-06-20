@@ -58,6 +58,10 @@ final class MoveCryptoInputViewModel: ObservableObject {
     SendEthUseCase(repository: portalRepository)
   }()
   
+  private lazy var estimateGasUseCase: EstimateGasUseCaseProtocol = {
+    EstimateGasUseCase(repository: portalRepository)
+  }()
+  
   private lazy var getWithdrawalSignatureUseCase: GetWithdrawalSignatureUseCaseProtocol = {
     GetWithdrawalSignatureUseCase(repository: rainRepository)
   }()
@@ -114,11 +118,31 @@ private extension MoveCryptoInputViewModel {
       isPerformingAction = true
       
       do {
-        let txFee = try await sendEthUseCase.estimateFee(
-          to: address,
-          contractAddress: assetModel.id.nilIfEmpty,
-          amount: amount
+        guard let collateralContract = accountDataManager.collateralContract,
+        let controllerAddress = collateralContract.controllerAddress
+        else {
+          toastMessage = L10N.Common.MoveCryptoInput.NoCollateralContract.errorMessage
+          return
+        }
+        
+        guard let signature = try await getWithdrawalSignature(chainId: collateralContract.chainId) else {
+          return
+        }
+        
+        guard let withdrawAddresses = generateWithdrawAssetAddresses(
+          collateralContract: collateralContract,
+          controllerAddress: controllerAddress,
+          recipientAddress: address
+        ) else {
+          return
+        }
+        
+        let txFee = try await estimateGasUseCase.estimateWithdrawalFee(
+          addresses: withdrawAddresses,
+          amount: amount,
+          signature: signature
         )
+        
         // TODO(Volo): Refactor fee response for Portal
         let feeResponse = APILockedNetworkFeeResponse(
           quoteId: .empty,
@@ -127,16 +151,8 @@ private extension MoveCryptoInputViewModel {
           fee: txFee
         )
         
-        guard let collateralContract = accountDataManager.collateralContract else {
-          toastMessage = L10N.Common.MoveCryptoInput.NoCollateralContract.errorMessage
-          return
-        }
-        guard let signature = try await getWithdrawalSignature(chainId: collateralContract.chainId) else {
-          return
-        }
-        
         let viewModel = ConfirmTransferMoneyViewModel(
-          kind: .withdrawalCollateral(signature: signature, shouldSaveAddress: shouldSaveAddress),
+          kind: .withdrawalCollateral(addresses: withdrawAddresses,signature: signature, shouldSaveAddress: shouldSaveAddress),
           assetModel: assetModel,
           amount: amount,
           address: address,
@@ -145,10 +161,32 @@ private extension MoveCryptoInputViewModel {
         )
         navigation = .confirmTransfer(viewModel: viewModel)
       } catch {
-        log.debug(error.userFriendlyMessage)
-        toastMessage = error.userFriendlyMessage
+        handlePortalError(error: error)
       }
     }
+  }
+  
+  func generateWithdrawAssetAddresses(
+    collateralContract: RainCollateralContractEntity,
+    controllerAddress: String,
+    recipientAddress: String
+  ) -> PortalService.WithdrawAssetAddresses? {
+    // Check if collateral supports usdc token
+    let tokenAddress = collateralContract.tokensEntity.filter { $0.symbol == AssetType.usdc.title }
+    let usdcToken = tokenAddress.first {
+      portalStorage.checkTokenSupport(with: $0.address.lowercased())
+    }
+    guard let usdcToken else {
+      toastMessage = L10N.Common.MoveCryptoInput.UsdcUnsupported.errorMessage
+      return nil
+    }
+    
+    return PortalService.WithdrawAssetAddresses(
+      contractAddress: controllerAddress,
+      proxyAddress: collateralContract.address,
+      recipientAddress: recipientAddress,
+      tokenAddress: usdcToken.address
+    )
   }
   
   func fetchTransferMoneyQuote(kind: ConfirmTransferMoneyViewModel.Kind) {
@@ -157,7 +195,7 @@ private extension MoveCryptoInputViewModel {
       isPerformingAction = true
       
       do {
-        let txFee = try await sendEthUseCase.estimateFee(
+        let txFee = try await estimateGasUseCase.estimateTransferFee(
           to: address,
           contractAddress: assetModel.id.nilIfEmpty,
           amount: amount

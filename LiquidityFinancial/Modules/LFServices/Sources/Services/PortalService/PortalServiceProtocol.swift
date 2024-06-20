@@ -13,7 +13,12 @@ public protocol PortalServiceProtocol {
     amount: Double,
     signature: PortalService.WithdrawAssetSignature
   ) async throws -> String
-  func estimateFee(to address: String, contractAddress: String?, amount: Double) async throws -> Double
+  func estimateTransferFee(to address: String, contractAddress: String?, amount: Double) async throws -> Double
+  func estimateWithdrawalFee(
+    addresses: PortalService.WithdrawAssetAddresses,
+    amount: Double,
+    signature: PortalService.WithdrawAssetSignature
+  ) async throws -> Double
   func backup(backupMethod: BackupMethods, password: String?) async throws -> (String, () async throws -> Void)
   func recover(backupMethod: BackupMethods, password: String?, cipherText: String) async throws
   func refreshBalances() async throws -> (walletAddress: String?, balances: [String: Double])

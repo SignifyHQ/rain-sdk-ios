@@ -10,7 +10,7 @@ import Web3ContractABI
 public class PortalService: PortalServiceProtocol {
   @LazyInjected(\.environmentService) var environmentService
   @Injected(\.cloudKitService) var cloudKitService
-
+  
   public var portal: Portal?
   private var chainId: Int = 0
   
@@ -160,51 +160,32 @@ public extension PortalService {
     )
   }
   
-  func estimateFee(
+  func estimateWithdrawalFee(
+    addresses: WithdrawAssetAddresses,
+    amount: Double,
+    signature: WithdrawAssetSignature
+  ) async throws -> Double {
+    let transaction = try await buildETHTransactionParamForWithdrawAsset(
+      addresses: addresses,
+      amount: amount,
+      signature: signature
+    )
+    
+    return try await estimateTransactionFee(address: transaction.walletAddress, params: transaction.transactionParams)
+  }
+  
+  func estimateTransferFee(
     to address: String,
     contractAddress: String?,
     amount: Double
   ) async throws -> Double {
-    // Build transaction from the inputs
-    let transaction = try await buildEthTransaction(to: address, contractAddress: contractAddress, amount: amount)
-    
-    // Throw an error if Portal clent instance is not ready
-    guard let portal else {
-      log.error("Portal Swift: Error estimating fee for \(transaction.walletAddress). Portal instance is unavailable")
-      throw(LFPortalError.portalInstanceUnavailable)
-    }
-    
-    // Fetch estimated gas for the transaction
-    let ethEstimateGasResonse = try await portal.request(
-      "eip155:\(chainId)",
-      withMethod: .eth_estimateGas,
-      andParams: [transaction.transactionParams]
+    let transaction = try await buildEthTransaction(
+      to: address,
+      contractAddress: contractAddress,
+      amount: amount
     )
-    guard let ethEstimateGasRpcResponse = ethEstimateGasResonse.result as? PortalProviderRpcResponse,
-          let gas = ethEstimateGasRpcResponse.result?.asDouble
-    else {
-      log.error("Portal Swift: Error estimating gas for \(transaction.walletAddress). Unexpected RPC response")
-      throw(LFPortalError.unexpected)
-    }
     
-    // Fetch current gas price
-    let ethEstimateGasPriceResonse = try await portal.request(
-      "eip155:\(chainId)",
-      withMethod: .eth_gasPrice,
-      andParams: []
-    )
-    guard let ethEstimateGasPriceRpcResponse = ethEstimateGasPriceResonse.result as? PortalProviderRpcResponse,
-          let gasPrice = ethEstimateGasPriceRpcResponse.result?.asDouble?.weiToEth
-    else {
-      log.error("Portal Swift: Error estimating gas price for \(transaction.walletAddress). Unexpected RPC response")
-      throw(LFPortalError.unexpected)
-    }
-    
-    // Calculate the total fees
-    let txFee: Double = gas * gasPrice
-    
-    log.debug("Portal Swift: Transaction fee estimation success for \(transaction.walletAddress). tx fee: \(txFee)")
-    return(txFee)
+    return try await estimateTransactionFee(address: transaction.walletAddress, params: transaction.transactionParams)
   }
   
   func refreshBalances() async throws -> (walletAddress: String?, balances: [String: Double]) {
@@ -582,6 +563,41 @@ private extension PortalService {
     log.debug("\(debugDescription) - txHash: \(txHash)")
     
     return txHash
+  }
+  
+  func estimateTransactionFee(address: String, params: ETHTransactionParam) async throws -> Double {
+    // Fetch estimated gas for the transaction
+    let estimateGas = try await fetchGasData(method: .eth_estimateGas, address: address, params: [params])
+    
+    // Fetch current gas price
+    let gasPrice = try await fetchGasData(method: .eth_gasPrice, address: address).weiToEth
+    
+    // Calculate the total fees
+    let txFee: Double = estimateGas * gasPrice
+    
+    log.debug("Portal Swift: Transaction fee estimation success for \(address). tx fee: \(txFee)")
+    return(txFee)
+  }
+  
+  func fetchGasData(method: PortalRequestMethod, address: String, params: [Any] = []) async throws -> Double {
+    // Throw an error if Portal clent instance is not ready
+    guard let portal else {
+      log.error("Portal Swift: Error estimating fee for \(address). Portal instance is unavailable")
+      throw(LFPortalError.portalInstanceUnavailable)
+    }
+    
+    let response = try await portal.request(
+      "eip155:\(chainId)",
+      withMethod: method,
+      andParams: params
+    )
+    guard let rpcResponse = response.result as? PortalProviderRpcResponse,
+          let result = rpcResponse.result?.asDouble else {
+      log.error("Portal Swift: Error fetching \(method) for \(address). Unexpected RPC response")
+      throw LFPortalError.unexpected
+    }
+    
+    return result
   }
 }
 

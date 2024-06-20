@@ -69,12 +69,20 @@ public class PortalRepository: PortalRepositoryProtocol {
     }
   }
   
-  public func estimateFee(
+  public func estimateTransferFee(
     to address: String,
     contractAddress: String?,
     amount: Double
   ) async throws -> Double {
-    try await portalService.estimateFee(to: address, contractAddress: contractAddress, amount: amount)
+    try await portalService.estimateTransferFee(to: address, contractAddress: contractAddress, amount: amount)
+  }
+  
+  public func estimateWithdrawalFee(
+    addresses: Services.PortalService.WithdrawAssetAddresses,
+    amount: Double,
+    signature: Services.PortalService.WithdrawAssetSignature
+  ) async throws -> Double {
+    try await portalService.estimateWithdrawalFee(addresses: addresses, amount: amount, signature: signature)
   }
   
   public func send(

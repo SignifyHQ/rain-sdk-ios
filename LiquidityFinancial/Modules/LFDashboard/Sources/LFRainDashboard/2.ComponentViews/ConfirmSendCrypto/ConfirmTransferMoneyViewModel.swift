@@ -60,7 +60,7 @@ final class ConfirmTransferMoneyViewModel: ObservableObject {
       nickname.isEmpty
     case .depositCollateral:
       false
-    case let .withdrawalCollateral( _, shouldSaveAddress):
+    case let .withdrawalCollateral(_, _, shouldSaveAddress):
       shouldSaveAddress && nickname.isEmpty
     case .withdrawalReward(let shouldSaveAddress):
       shouldSaveAddress && nickname.isEmpty
@@ -143,8 +143,8 @@ private extension ConfirmTransferMoneyViewModel {
       sendCrypto()
     case .depositCollateral:
       depositCollateral()
-    case let .withdrawalCollateral(signature, _):
-      withdrawCollateral(signature: signature)
+    case let .withdrawalCollateral(addresses, signature, _):
+      withdrawCollateral(addresses: addresses, signature: signature)
     case .withdrawalReward:
       requestRewardWithdrawal()
     }
@@ -156,7 +156,7 @@ private extension ConfirmTransferMoneyViewModel {
       showIndicator = true
       
       do {
-        _ = try await sendEthUseCase.executeSend(
+        _ = try await sendEthUseCase.execute(
           to: address,
           contractAddress: assetModel.id.nilIfEmpty,
           amount: amount
@@ -188,7 +188,7 @@ private extension ConfirmTransferMoneyViewModel {
           return
         }
         
-        _ = try await sendEthUseCase.executeSend(
+        _ = try await sendEthUseCase.execute(
           to: collateralContract.address,
           contractAddress: assetModel.id,
           amount: amount
@@ -236,29 +236,14 @@ private extension ConfirmTransferMoneyViewModel {
       .store(in: &cancellables)
   }
   
-  func withdrawCollateral(signature: PortalService.WithdrawAssetSignature) {
+  func withdrawCollateral(addresses: PortalService.WithdrawAssetAddresses, signature: PortalService.WithdrawAssetSignature) {
     Task {
       defer { showIndicator = false }
       showIndicator = true
       
       do {
-        guard let collateralContract = accountDataManager.collateralContract,
-              let controllerAddress = collateralContract.controllerAddress
-        else {
-          toastMessage = L10N.Common.MoveCryptoInput.NoCollateralContract.errorMessage
-          return
-        }
-        
-        guard let withdrawAddresses = generateWithdrawAssetAddresses(
-          collateralContract: collateralContract,
-          controllerAddress: controllerAddress,
-          recipientAddress: address
-        ) else {
-          return
-        }
-        
         _ = try await withdrawAsssetUseCase.execute(
-          addresses: withdrawAddresses,
+          addresses: addresses,
           amount: amount,
           signature: signature
         )
@@ -330,7 +315,7 @@ extension ConfirmTransferMoneyViewModel {
   enum Kind {
     case sendCrypto
     case depositCollateral
-    case withdrawalCollateral(signature: PortalService.WithdrawAssetSignature, shouldSaveAddress: Bool)
+    case withdrawalCollateral(addresses: PortalService.WithdrawAssetAddresses, signature: PortalService.WithdrawAssetSignature, shouldSaveAddress: Bool)
     case withdrawalReward(shouldSaveAddress: Bool)
   }
 }
