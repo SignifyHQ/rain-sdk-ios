@@ -130,6 +130,9 @@ public class PortalRepository: PortalRepositoryProtocol {
     try await portalAPI.getBackupMethods()
   }
 
+  public var chainId: String {
+    portalService.chainId.description
+  }
 }
 
 // MARK: - Private Functions

@@ -19,6 +19,7 @@ public protocol AccountAPIProtocol {
   func getTransactions(parameters: APITransactionsParameters) async throws -> APITransactionList
   func getTransactionDetail(transactionId: String) async throws -> APITransaction
   func getTransactionDetailByHashID(transactionHash: String) async throws -> APITransaction
+  func createPendingTransaction(body: APIPendingTransactionParameters) async throws -> APITransaction
   func logout() async throws -> Bool
   func createWalletAddresses(accountId: String, address: String, nickname: String) async throws -> APIWalletAddress
   func updateWalletAddresses(accountId: String, walletId: String, walletAddress: String, nickname: String) async throws -> APIWalletAddress

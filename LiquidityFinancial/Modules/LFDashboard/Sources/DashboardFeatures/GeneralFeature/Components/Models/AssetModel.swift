@@ -35,6 +35,17 @@ public struct AssetModel: Hashable {
     self.availableUsdBalance = nil
   }
   
+  public var conversionFactor: Int {
+    switch type {
+    case .usdc:
+      6
+    case .avax, .cardano, .doge:
+      18
+    default:
+      2
+    }
+  }
+  
   public var availableBalanceFormatted: String {
     availableBalance.formattedAmount(
       prefix: type == .usd ? Constants.CurrencyUnit.usd.rawValue : nil,

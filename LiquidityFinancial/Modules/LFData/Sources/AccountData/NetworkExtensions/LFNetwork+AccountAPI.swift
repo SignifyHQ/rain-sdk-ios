@@ -139,6 +139,15 @@ extension LFCoreNetwork: AccountAPIProtocol where R == AccountRoute {
     )
   }
   
+  public func createPendingTransaction(body: APIPendingTransactionParameters) async throws -> APITransaction {
+    try await request(
+      AccountRoute.createPendingTransaction(body: body),
+      target: APITransaction.self,
+      failure: LFErrorObject.self,
+      decoder: .apiDecoder
+    )
+  }
+  
   public func logout() async throws -> Bool {
     let result = try await request(AccountRoute.logout)
     return (result.httpResponse?.statusCode ?? 500).isSuccess

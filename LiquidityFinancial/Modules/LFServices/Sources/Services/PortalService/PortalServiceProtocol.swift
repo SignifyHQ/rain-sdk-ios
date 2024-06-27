@@ -27,4 +27,5 @@ public protocol PortalServiceProtocol {
   func getWalletAddress() async -> String?
   func isWalletOnDevice() async -> Bool
   var walletAddress: String? { get }
+  var chainId: Int { get }
 }

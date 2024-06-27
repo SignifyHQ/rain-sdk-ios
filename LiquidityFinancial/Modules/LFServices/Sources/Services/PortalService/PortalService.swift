@@ -12,7 +12,7 @@ public class PortalService: PortalServiceProtocol {
   @Injected(\.cloudKitService) var cloudKitService
   
   public var portal: Portal?
-  private var chainId: Int = 0
+  public var chainId: Int = 0
   
   init() {
     chainId = environmentService.networkEnvironment == .productionLive

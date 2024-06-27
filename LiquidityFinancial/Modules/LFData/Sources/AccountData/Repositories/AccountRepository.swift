@@ -91,6 +91,14 @@ public class AccountRepository: AccountRepositoryProtocol {
     return try await accountAPI.getTransactionDetailByHashID(transactionHash: transactionHash)
   }
   
+  public func createPendingTransaction(body: PendingTransactionParametersEntity) async throws -> TransactionEntity {
+    guard let body = body as? APIPendingTransactionParameters else {
+      throw "Can't map body:\(body)"
+    }
+    
+    return try await accountAPI.createPendingTransaction(body: body)
+  }
+  
   public func logout() async throws -> Bool {
     return try await accountAPI.logout()
   }

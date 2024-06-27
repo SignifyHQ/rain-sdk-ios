@@ -22,6 +22,7 @@ public enum AccountRoute {
   case getTransactions(parameters: APITransactionsParameters)
   case getTransactionDetail(transactionId: String)
   case getTransactionByHashID(transactionHash: String)
+  case createPendingTransaction(body: APIPendingTransactionParameters)
   case logout
   case createWalletAddress(accountId: String, address: String, nickname: String)
   case updateWalletAddress(accountId: String, walletId: String, walletAddress: String, nickname: String)
@@ -75,6 +76,8 @@ extension AccountRoute: LFRoute {
       return "/v1/transactions/detail/\(transactionId)"
     case .getTransactionByHashID:
       return "/v1/transactions/by-transaction-hash"
+    case .createPendingTransaction:
+      return "/v1/transactions/create-crypto-transaction"
     case .createWalletAddress(let accountId, _, _), .getWalletAddresses(let accountId):
       return "v1/accounts/\(accountId)/wallet-addresses"
     case let .updateWalletAddress(accountId, _, walletAddress, _):
@@ -110,6 +113,7 @@ extension AccountRoute: LFRoute {
         .loginWithPassword,
         .verifyEmailRequest,
         .verifyEmail,
+        .createPendingTransaction,
         .createZeroHashAccount,
         .logout,
         .createWalletAddress,
@@ -208,6 +212,8 @@ extension AccountRoute: LFRoute {
       ]
     case .getTransactions(let parameters):
       return parameters.encoded()
+    case .createPendingTransaction(let body):
+      return body.encoded()
     case .createWalletAddress(_, let address, let nickname):
       return [
         "nickname": nickname,
@@ -259,6 +265,7 @@ extension AccountRoute: LFRoute {
         .createWalletAddress,
         .updateWalletAddress,
         .addToWaitList,
+        .createPendingTransaction,
         .createSupportTicket,
         .updateSelectedRewardCurrency,
         .enableMFA,

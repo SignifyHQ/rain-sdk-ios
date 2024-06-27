@@ -9,12 +9,15 @@ import LFUtilities
 import AccountService
 import BiometricsManager
 import GeneralFeature
+import AccountData
+import AccountDomain
 import RainData
 import RainDomain
 
 @MainActor
 final class ConfirmTransferMoneyViewModel: ObservableObject {
   @LazyInjected(\.accountDataManager) var accountDataManager
+  @LazyInjected(\.accountRepository) var accountRepository
   @LazyInjected(\.portalRepository) var portalRepository
   @LazyInjected(\.rainRewardRepository) var rainRewardRepository
   @LazyInjected(\.biometricsManager) var biometricsManager
@@ -36,6 +39,14 @@ final class ConfirmTransferMoneyViewModel: ObservableObject {
   
   private lazy var sendEthUseCase: SendEthUseCaseProtocol = {
     SendEthUseCase(repository: portalRepository)
+  }()
+  
+  private lazy var createPendingTransactionUseCase: CreatePendingTransactionUseCaseProtocol = {
+    CreatePendingTransactionUseCase(repository: accountRepository)
+  }()
+  
+  private lazy var getCurrentChainIdUseCase: GetCurrentChainIdUseCaseProtocol = {
+    GetCurrentChainIdUseCase(repository: portalRepository)
   }()
   
   private lazy var withdrawAsssetUseCase: WithdrawAssetUseCaseProtocol = {
@@ -156,11 +167,27 @@ private extension ConfirmTransferMoneyViewModel {
       showIndicator = true
       
       do {
-        _ = try await sendEthUseCase.execute(
+        let chainID = getCurrentChainIdUseCase.execute()
+        
+        let txHash = try await sendEthUseCase.execute(
           to: address,
           contractAddress: assetModel.id.nilIfEmpty,
           amount: amount
         )
+        _ = try await createPendingTransactionUseCase.execute(
+          body: APIPendingTransactionParameters(
+            transactionHash: txHash,
+            chainId: chainID,
+            fromAddress: assetModel.externalAccountId ?? "",
+            toAddress: address,
+            amount: amount,
+            currency: assetModel.type?.title ?? "",
+            contractAddress: assetModel.id.nilIfEmpty,
+            decimal: assetModel.conversionFactor,
+            transactionFee: fee
+          )
+        )
+        
         navigateToTransactionDetail(type: .cryptoWithdraw)
       } catch {
         handlePortalError(error: error)
@@ -174,6 +201,8 @@ private extension ConfirmTransferMoneyViewModel {
       showIndicator = true
       
       do {
+        let chainID = getCurrentChainIdUseCase.execute()
+        
         guard let collateralContract = accountDataManager.collateralContract else {
           toastMessage = L10N.Common.MoveCryptoInput.NoCollateralContract.errorMessage
           return
@@ -188,11 +217,25 @@ private extension ConfirmTransferMoneyViewModel {
           return
         }
         
-        _ = try await sendEthUseCase.execute(
+        let txHash = try await sendEthUseCase.execute(
           to: collateralContract.address,
           contractAddress: assetModel.id,
           amount: amount
         )
+        _ = try await createPendingTransactionUseCase.execute(
+          body: APIPendingTransactionParameters(
+            transactionHash: txHash,
+            chainId: chainID,
+            fromAddress: assetModel.externalAccountId ?? "",
+            toAddress: collateralContract.address,
+            amount: amount,
+            currency: assetModel.type?.title ?? "",
+            contractAddress: assetModel.id.nilIfEmpty,
+            decimal: assetModel.conversionFactor,
+            transactionFee: fee
+          )
+        )
+        
         navigateToTransactionDetail(type: .cryptoWithdraw)
       } catch {
         handlePortalError(error: error)

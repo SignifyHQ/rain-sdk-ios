@@ -23,4 +23,5 @@ public protocol PortalRepositoryProtocol {
   func recoverWallet(backupMethod: BackupMethods,password: String?) async throws
   func refreshBalances() async throws
   func getPortalBackupMethods() async throws -> PortalBackupMethodsEntity
+  var chainId: String { get }
 }
