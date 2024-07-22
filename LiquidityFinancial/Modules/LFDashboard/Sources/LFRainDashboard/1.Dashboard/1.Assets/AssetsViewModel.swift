@@ -1,6 +1,7 @@
 import Foundation
 import SwiftUI
 import AccountDomain
+import AccountData
 import PortalDomain
 import LFUtilities
 import Factory
@@ -22,7 +23,7 @@ final class AssetsViewModel: ObservableObject {
   @Published var navigation: Navigation?
   
   lazy var refreshPortalAssetsUseCase: RefreshPortalAssetsUseCaseProtocol = {
-    RefreshPortalAssetsUseCase(repository: portalRepository)
+    RefreshPortalAssetsUseCase(repository: portalRepository, storage: portalStorage)
   }()
   
   init(
@@ -78,7 +79,7 @@ final class AssetsViewModel: ObservableObject {
   }
 }
 
-  // MARK: - Types
+// MARK: - Types
 extension AssetsViewModel {
   enum Navigation {
     case usd(AssetModel)

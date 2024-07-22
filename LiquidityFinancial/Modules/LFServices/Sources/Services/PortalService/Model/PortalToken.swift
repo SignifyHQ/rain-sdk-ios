@@ -2,15 +2,15 @@ import Foundation
 
 public enum PortalToken {
   case AVAX
-  case sepoliaUSDC
+  case fujiAvalancheUSDC
   case mainnetAvalancheUSDC
   
   public var contractAddress: String {
     switch self {
     case .AVAX:
       ""
-    case .sepoliaUSDC:
-      "0x844d6973e50dd73f1dfcf64ce76e57c0c2d4d250"
+    case .fujiAvalancheUSDC:
+      "0xd856a0585da55e83d03ccb49ef09d180494cfbad"
     case .mainnetAvalancheUSDC:
       "0xb97ef9ef8734c71904d8002f8b6bc66dd9c48a6e"
     }
@@ -20,7 +20,7 @@ public enum PortalToken {
     switch self {
     case .AVAX:
       "AVAX"
-    case .sepoliaUSDC, .mainnetAvalancheUSDC:
+    case .fujiAvalancheUSDC, .mainnetAvalancheUSDC:
       "USDC"
     }
   }
@@ -29,7 +29,7 @@ public enum PortalToken {
     switch self {
     case .AVAX:
       "Avalanche"
-    case .sepoliaUSDC, .mainnetAvalancheUSDC:
+    case .fujiAvalancheUSDC, .mainnetAvalancheUSDC:
       "USDC"
     }
   }

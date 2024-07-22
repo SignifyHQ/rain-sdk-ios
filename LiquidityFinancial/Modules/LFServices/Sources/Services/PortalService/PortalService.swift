@@ -16,8 +16,8 @@ public class PortalService: PortalServiceProtocol {
   
   init() {
     chainId = environmentService.networkEnvironment == .productionLive
-    ? Configs.PortalNetwork.ethMainnet.chainID
-    : Configs.PortalNetwork.ethSepolia.chainID
+    ? Configs.PortalNetwork.avalancheMainnet.chainID
+    : Configs.PortalNetwork.avalancheFuji.chainID
   }
 }
 
@@ -25,7 +25,7 @@ public class PortalService: PortalServiceProtocol {
 public extension PortalService {
   func registerPortal(sessionToken: String) async throws {
     do {
-      let withRpcConfig = Configs.PortalNetwork.configRPC(alchemyAPIKey: LFServices.alchemyAPIKey)
+      let withRpcConfig = Configs.PortalNetwork.configRPC()
       
       portal = try Portal(
         sessionToken,
@@ -117,7 +117,7 @@ public extension PortalService {
       log.debug("Portal Swift: Wallet recover success")
       
     } catch {
-      log.error("Portal Swift: Error backing up wallet \(error)")
+      log.error("Portal Swift: Error recovering wallet \(error)")
       throw LFPortalError.handlePortalError(error: error)
     }
   }
@@ -188,11 +188,17 @@ public extension PortalService {
     return try await estimateTransactionFee(address: transaction.walletAddress, params: transaction.transactionParams)
   }
   
-  func refreshBalances() async throws -> (walletAddress: String?, balances: [String: Double]) {
+  func refreshBalances(
+    with erc20Token: String?
+  ) async throws -> (walletAddress: String?, balances: [String: Double]) {
     guard let walletAddress
     else {
-      log.error("Portal Swift: Error fetching wallet balances. Wallet missing)")
+      log.error("Portal Swift: Error fetching wallet balances. Wallet missing")
       throw(LFPortalError.walletMissing)
+    }
+    
+    guard let erc20Token else {
+      throw(LFPortalError.customError(message: "Portal Swift: Error fetching ERC20 balances. Token contract address missing"))
     }
     
     // Throw an error if Portal clent instance is not ready
@@ -201,18 +207,42 @@ public extension PortalService {
       throw(LFPortalError.portalInstanceUnavailable)
     }
     
+    var portalBalances: [String: Double] = [:]
+    
     // Fetch ERC20 token balances for wallet
-    let erc20Balances = try await portal.api.getBalances("eip155:\(chainId)")
-    var portalBalances = erc20Balances.reduce(into: [String: Double]()) { partialResult, balance in
-      partialResult[balance.contractAddress] = balance.balance.asDouble
+    let getBalancesFunctionSelector = "0x70a08231"
+    let erc20BalanceResponse = try await portal
+      .request(
+        "eip155:\(chainId)",
+        withMethod: .eth_call,
+        andParams: [
+          [
+            "to": erc20Token,
+            // Data is constructed by combining function selector and wallet address converted to 32 byte hex-string
+            "data": getBalancesFunctionSelector + String(repeating: "0", count: 24) + walletAddress.dropFirst(2)
+          ],
+          "latest"
+        ]
+      )
+    
+    guard let erc20BalanceRpcResponse = erc20BalanceResponse.result as? PortalProviderRpcResponse
+    else {
+      log.error("Portal Swift: Error fetching ERC20 balances for \(walletAddress). Unexpected RPC response")
+      throw(LFPortalError.unexpected)
     }
+
+    let erc20Balance = erc20BalanceRpcResponse.result?.asDouble?.fromBaseUnits(using: 6)
+    portalBalances[erc20Token] = erc20Balance
     
     // Fetch ETH token balance for wallet
     let ethBalanceResponse = try await portal
       .request(
         "eip155:\(chainId)",
         withMethod: .eth_getBalance,
-        andParams: [walletAddress, "latest"]
+        andParams: [
+          walletAddress,
+          "latest"
+        ]
       )
     
     guard let ethBalanceRpcResponse = ethBalanceResponse.result as? PortalProviderRpcResponse

@@ -40,12 +40,4 @@ public class LFServices {
     case .productionTest: return Configs.Segment.devKey
     }
   }
-  
-  public static var alchemyAPIKey: String {
-    switch environmentService.networkEnvironment {
-    case .productionLive: return Configs.Alchemy.prodKey
-    case .productionTest: return Configs.Alchemy.devKey
-    }
-  }
-  
 }

@@ -155,7 +155,7 @@ private extension CreateWalletView {
       Text(viewModel.loadingText)
         .foregroundColor(Colors.label.swiftUIColor)
         .opacity(0.75)
-        .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.medium.value))
+        .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.small.value))
     }
     .ignoresSafeArea(.keyboard, edges: .bottom)
     .padding(.bottom, 12)

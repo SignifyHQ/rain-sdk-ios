@@ -121,8 +121,10 @@ public class PortalRepository: PortalRepositoryProtocol {
     }
   }
   
-  public func refreshBalances() async throws {
-    let balances = try await portalService.refreshBalances()
+  public func refreshBalances(
+    with erc20Token: String?
+  ) async throws {
+    let balances = try await portalService.refreshBalances(with: erc20Token)
     portalStorage.update(walletAddress: balances.walletAddress, balances: balances.balances)
   }
   

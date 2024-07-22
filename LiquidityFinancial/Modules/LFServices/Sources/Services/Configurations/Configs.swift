@@ -70,31 +70,22 @@ enum Configs {
   }
   
   enum PortalNetwork {
-    case ethSepolia
-    case ethGoerli
-    case ethMainnet
-    case polygonMumbai
-    case polygonMainnet
+    case avalancheMainnet
+    case avalancheFuji
     
     var chainID: Int {
       switch self {
-      case .ethSepolia:
-        return 11_155_111
-      case .ethGoerli:
-        return 5
-      case .ethMainnet:
-        return 1
-      case .polygonMumbai:
-        return 80_001
-      case .polygonMainnet:
-        return 137
+      case .avalancheMainnet:
+        43_114
+      case .avalancheFuji:
+        43_113
       }
     }
     
-    static func configRPC(alchemyAPIKey: String) -> [String: String] {
+    static func configRPC() -> [String: String] {
       [
-        "eip155:1": "https://eth-mainnet.g.alchemy.com/v2/\(alchemyAPIKey)",
-        "eip155:11155111": "https://eth-sepolia.g.alchemy.com/v2/\(alchemyAPIKey)"
+        "eip155:43114": "https://avalanche-c-chain-rpc.publicnode.com",
+        "eip155:43113": "https://avalanche-fuji-c-chain-rpc.publicnode.com"
       ]
     }
   }

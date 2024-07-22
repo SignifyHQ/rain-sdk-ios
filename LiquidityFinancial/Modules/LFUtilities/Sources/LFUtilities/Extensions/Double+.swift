@@ -37,6 +37,10 @@ public extension Double {
   var toHexString: String {
     "0x" + String(Int(self), radix: 16)
   }
+  
+  func fromBaseUnits(using conversionFactor: Int) -> Double {
+    self / pow(10, Double(conversionFactor))
+  }
 }
 
 public extension Double {
