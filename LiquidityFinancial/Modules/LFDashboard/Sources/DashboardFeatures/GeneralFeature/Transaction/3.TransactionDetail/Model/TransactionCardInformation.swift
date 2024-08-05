@@ -39,7 +39,7 @@ public extension TransactionCardInformation {
     case .donation:
       return L10N.Common.TransactionCard.Donation.title
     case .crypto:
-      return L10N.Common.TransactionCard.Crypto.title(LFUtilities.cardName)
+      return L10N.Common.TransactionCard.Crypto.title(LFUtilities.stablecoinSymbol)
     default:
       return .empty
     }

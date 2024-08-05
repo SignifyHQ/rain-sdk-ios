@@ -5,6 +5,7 @@
 
 APP_NAME = Avalanche
 APP_BUNDLE_ID = com.liquidityfinancial.avalanche
+STABLECOIN_SYMBOL = USDC
 
 TERMS_URL = https:/$()/avalanche.co/legal
 AGREEMENT_URL = https:/$()/avalanche.co/legal#consumer-account

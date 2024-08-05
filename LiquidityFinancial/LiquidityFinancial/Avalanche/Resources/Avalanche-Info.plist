@@ -2,6 +2,8 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>STABLECOIN_SYMBOL</key>
+	<string>$(STABLECOIN_SYMBOL)</string>
 	<key>AGREEMENT_URL</key>
 	<string>$(AGREEMENT_URL)</string>
 	<key>APP_BUNDLE_ID</key>

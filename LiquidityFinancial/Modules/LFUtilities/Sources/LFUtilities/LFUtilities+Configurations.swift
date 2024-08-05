@@ -16,6 +16,7 @@ extension LFUtilities {
   public static var shareAppUrl: String = try! LFConfiguration.value(for: "SHARE_APP_URL")
   public static var rewardsVideoUrl: String = try! LFConfiguration.value(for: "REWARDS_VIDEO_URL")
   public static var appName: String = try! LFConfiguration.value(for: "APP_NAME")
+  public static var stablecoinSymbol: String = try! LFConfiguration.value(for: "STABLECOIN_SYMBOL")
   public static var cryptoEnabled: Bool = try! LFConfiguration.value(for: "CRYPTO_ENABLED")
   public static var charityEnabled: Bool = try! LFConfiguration.value(for: "CHARITY_ENABLED")
   public static var cryptoFractionDigits: Int = try! LFConfiguration.value(for: "CRYPTO_FRACTION_DIGITS")

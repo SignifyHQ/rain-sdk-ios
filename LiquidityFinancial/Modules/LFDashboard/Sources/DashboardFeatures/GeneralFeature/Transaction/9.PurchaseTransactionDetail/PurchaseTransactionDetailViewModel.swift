@@ -81,7 +81,7 @@ extension PurchaseTransactionDetailViewModel {
   }
   
   var rewardAmount: String {
-    transaction.rewards?.amount?.formattedAmount(minFractionDigits: 2) ?? .empty
+    "\(transaction.rewards?.amount?.formattedCryptoAmount() ?? .empty) \(LFUtilities.stablecoinSymbol)"
   }
   
   var amountValue: String {
@@ -89,7 +89,7 @@ extension PurchaseTransactionDetailViewModel {
   }
 
   var rewardValue: String {
-    transaction.rewards?.amount?.formattedUSDAmount() ?? "N/A"
+    transaction.rewards?.amount?.formattedCryptoAmount() ?? "N/A"
   }
   
   func openContactSupport() {
