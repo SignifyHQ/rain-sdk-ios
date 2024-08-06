@@ -8,6 +8,7 @@ public enum LFPortalError: Error {
   case expirationToken
   case walletAlreadyExists
   case iCloudAccountUnavailable
+  case cipherBlockCreationFailed
   case unexpected
   case walletMissing
   case customError(message: String)
@@ -76,6 +77,8 @@ extension LFPortalError {
       ? L10N.Common.BackupByPinCode.WrongCode.error
       : portalMpcError.message
       return LFPortalError.customError(message: message)
+    case PortalErrorCodes.FAILED_TO_CREATE_CIPHER_BLOCK.rawValue:
+      return LFPortalError.cipherBlockCreationFailed
     case PortalErrorCodes.NODE_RPC_ERROR.rawValue:
       return LFPortalError.customError(message: L10N.Common.MoveCryptoInput.NotEnoughCrypto.description)
     default:

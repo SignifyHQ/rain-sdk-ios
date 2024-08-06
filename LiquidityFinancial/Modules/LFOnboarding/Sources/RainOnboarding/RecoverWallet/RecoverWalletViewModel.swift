@@ -104,7 +104,7 @@ private extension RecoverWalletViewModel {
     }
     
     switch portalError {
-    case .iCloudAccountUnavailable:
+    case .iCloudAccountUnavailable, .cipherBlockCreationFailed:
       navigation = .iCloudNotFound
     case .customError(let message):
       toastMessage = message
