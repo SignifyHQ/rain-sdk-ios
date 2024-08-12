@@ -215,7 +215,10 @@ private extension RainOnboardingFlowCoordinator {
   
   func handleOnboardingCompletion() {
     Task {
-      if await portalService.isWalletOnDevice() {
+      let isWalletOnDevice = await portalService.isWalletOnDevice()
+      log.info("Portal Swift: Is wallet on device: \(isWalletOnDevice)")
+      
+      if isWalletOnDevice {
         set(route: .dashboard)
       } else {
         set(route: .recoverWallet)

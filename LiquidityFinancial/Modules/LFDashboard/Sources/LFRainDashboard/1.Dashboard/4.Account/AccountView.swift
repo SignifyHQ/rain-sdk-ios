@@ -90,25 +90,25 @@ private extension AccountsView {
         
         connectedAccountsSection
         
-        section(title: L10N.Common.AccountView.connectNewAccounts) {
-          AddFundsView(
-            viewModel: viewModel.addFundsViewModel,
-            achInformation: $viewModel.achInformation,
-            isDisableView: $viewModel.isDisableView
-          )
-        }
+//        section(title: L10N.Common.AccountView.connectNewAccounts) {
+//          AddFundsView(
+//            viewModel: viewModel.addFundsViewModel,
+//            achInformation: $viewModel.achInformation,
+//            isDisableView: $viewModel.isDisableView
+//          )
+//        }
         
-        section(title: L10N.Common.AccountView.cardAccountDetails) {
-          accountDetailView
-        }
-        
-        if viewModel.assets.isNotEmpty {
-          section(title: L10N.Common.AccountView.wallets) {
-            ForEach(viewModel.assets, id: \.externalAccountId) { asset in
-              assetCell(asset: asset)
-            }
-          }
-        }
+//        section(title: L10N.Common.AccountView.cardAccountDetails) {
+//          accountDetailView
+//        }
+//        
+//        if viewModel.assets.isNotEmpty {
+//          section(title: L10N.Common.AccountView.wallets) {
+//            ForEach(viewModel.assets, id: \.externalAccountId) { asset in
+//              assetCell(asset: asset)
+//            }
+//          }
+//        }
         
         walletBackupSection
         
@@ -244,13 +244,13 @@ private extension AccountsView {
   
   var shortcutSection: some View {
     VStack {
-      ArrowButton(
-        image: GenImages.CommonImages.Accounts.limits.swiftUIImage,
-        title: L10N.Common.AccountView.depositLimits,
-        value: nil
-      ) {
-        viewModel.onClickedDepositLimitsButton()
-      }
+//      ArrowButton(
+//        image: GenImages.CommonImages.Accounts.limits.swiftUIImage,
+//        title: L10N.Common.AccountView.depositLimits,
+//        value: nil
+//      ) {
+//        viewModel.onClickedDepositLimitsButton()
+//      }
       ArrowButton(
         image: GenImages.CommonImages.icRewards.swiftUIImage,
         title: L10N.Common.AccountView.rewards,
@@ -258,23 +258,21 @@ private extension AccountsView {
       ) {
         viewModel.openReward()
       }
-      /* TODO: Remove for MVP
-       ArrowButton(
-       image: GenImages.CommonImages.Accounts.atm.swiftUIImage,
-       title: L10N.Common.AccountView.atm,
-       value: nil,
-       isLoading: $viewModel.isLoading
-       ) {
-       viewModel.getATMAuthorizationCode()
-       }
-       */
-      ArrowButton(
-        image: GenImages.CommonImages.Accounts.bankStatements.swiftUIImage,
-        title: L10N.Common.AccountView.bankStatements,
-        value: nil
-      ) {
-        viewModel.bankStatementTapped()
-      }
+//       ArrowButton(
+//       image: GenImages.CommonImages.Accounts.atm.swiftUIImage,
+//       title: L10N.Common.AccountView.atm,
+//       value: nil,
+//       isLoading: $viewModel.isLoading
+//       ) {
+//       viewModel.getATMAuthorizationCode()
+//       }
+//      ArrowButton(
+//        image: GenImages.CommonImages.Accounts.bankStatements.swiftUIImage,
+//        title: L10N.Common.AccountView.bankStatements,
+//        value: nil
+//      ) {
+//        viewModel.bankStatementTapped()
+//      }
       ArrowButton(
         image: GenImages.CommonImages.Accounts.tax.swiftUIImage,
         title: L10N.Common.AccountView.taxes,
@@ -291,15 +289,13 @@ private extension AccountsView {
           viewModel.notificationTapped()
         }
       }
-      /* TODO: Remove for MVP
-       ArrowButton(
-       image: GenImages.CommonImages.Accounts.legal.swiftUIImage,
-       title: L10N.Common.AccountView.legal,
-       value: nil
-       ) {
-       viewModel.openLegal()
-       }
-       */
+//       ArrowButton(
+//       image: GenImages.CommonImages.Accounts.legal.swiftUIImage,
+//       title: L10N.Common.AccountView.legal,
+//       value: nil
+//       ) {
+//       viewModel.openLegal()
+//       }
       if viewModel.showAdminMenu {
         ArrowButton(
           image: GenImages.CommonImages.personAndBackgroundDotted.swiftUIImage,
@@ -309,16 +305,16 @@ private extension AccountsView {
           viewModel.navigation = .debugMenu
         }
       }
-      if bankServiceConfig.supportDisputeTransaction {
-        ArrowButton(
-          image: GenImages.CommonImages.Accounts.icDispute.swiftUIImage,
-          title: L10N.Common.Button.DisputeTransaction.title,
-          value: nil,
-          isLoading: $viewModel.isLoadingDisputeTransaction
-        ) {
-          viewModel.getDisputeAuthorizationCode()
-        }
-      }
+//      if bankServiceConfig.supportDisputeTransaction {
+//        ArrowButton(
+//          image: GenImages.CommonImages.Accounts.icDispute.swiftUIImage,
+//          title: L10N.Common.Button.DisputeTransaction.title,
+//          value: nil,
+//          isLoading: $viewModel.isLoadingDisputeTransaction
+//        ) {
+//          viewModel.getDisputeAuthorizationCode()
+//        }
+//      }
     }
     .onChange(of: scenePhase, perform: { newValue in
       if newValue == .active {
