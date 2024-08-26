@@ -1,4 +1,5 @@
 import Foundation
+import SwiftUI
 import AccountDomain
 import AccountData
 import LFUtilities
@@ -8,6 +9,7 @@ import AccountService
 import GeneralFeature
 import Services
 import LFLocalizable
+import LFStyleGuide
 import RainData
 import RainDomain
 
@@ -20,8 +22,7 @@ class RewardTabViewModel: ObservableObject {
   @LazyInjected(\.rainRewardRepository) var rainRewardRepository
   
   @Published var showWithdrawalBalanceSheet: Bool = false
-  @Published var rewardBalance: Double = 0
-  @Published var pendingRewards: Double = 0
+  @Published var balances: [RewardBalance: Double] = [:]
   @Published var toastMessage: String?
   
   @Published var selectedRewardCurrency: AssetType = .usdc // For now, we will only support USDC rewards
@@ -86,8 +87,10 @@ extension RewardTabViewModel {
     Task {
       do {
         let response = try await getRewardBalanceUseCase.execute()
-        rewardBalance = response.data.first?.rewardedAmount ?? 0
-        pendingRewards = response.data.first?.unprocessedAmount ?? 0
+        
+        balances[.available] = response.data.first?.rewardedAmount ?? 0
+        balances[.unprocessed] = response.data.first?.unprocessedAmount ?? 0
+        balances[.locked] = response.data.first?.lockedAmount ?? 0
       } catch {
         log.error(error.userFriendlyMessage)
         toastMessage = error.userFriendlyMessage
@@ -128,6 +131,8 @@ extension RewardTabViewModel {
   }
   
   func walletTypeButtonTapped(type: WalletType) {
+    let availableBalance = balances[.available] ?? 0.0
+    
     Task {
       showWithdrawalBalanceSheet = false
       guard let collateralAsset else {
@@ -143,10 +148,10 @@ extension RewardTabViewModel {
         navigation = .enterWithdrawalAmount(
           address: myUSDCWalletAddress,
           assetCollateral: collateralAsset,
-          balance: rewardBalance
+          balance: availableBalance
         )
       case .externalWallet:
-        navigation = .enterWalletAddress(assetCollateral: collateralAsset, balance: rewardBalance)
+        navigation = .enterWalletAddress(assetCollateral: collateralAsset, balance: availableBalance)
       }
     }
   }
@@ -166,3 +171,41 @@ extension RewardTabViewModel {
     case enterWalletAddress(assetCollateral: AssetModel, balance: Double)
   }
 }
+
+extension RewardTabViewModel {
+  enum RewardBalance: CaseIterable {
+    case available
+    case unprocessed
+    case locked
+    
+    var title: String {
+      switch self {
+      case .available:
+        L10N.Common.RewardTabView.CurrentRewardsBalance.title
+      case .unprocessed:
+        L10N.Common.RewardTabView.PendingRewardsBalance.title
+      case .locked:
+        L10N.Common.RewardTabView.LockedRewardsBalance.title
+      }
+    }
+    
+    var fontSize: CGFloat {
+      switch self {
+      case .available:
+        Constants.FontSize.small.value
+      case .unprocessed, .locked:
+        Constants.FontSize.ultraSmall.value
+      }
+    }
+    
+    var foregroundColor: Color {
+      switch self {
+      case .available:
+        Colors.label.swiftUIColor
+      case .unprocessed, .locked:
+        Colors.label.swiftUIColor.opacity(0.75)
+      }
+    }
+  }
+}
+

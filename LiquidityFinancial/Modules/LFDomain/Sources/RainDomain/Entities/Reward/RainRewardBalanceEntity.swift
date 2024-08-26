@@ -8,4 +8,5 @@ public protocol RainRewardBalancesEntity {
 public protocol RainRewardBalanceEntity {
   var rewardedAmount: Double { get }
   var unprocessedAmount: Double { get }
+  var lockedAmount: Double { get }
 }

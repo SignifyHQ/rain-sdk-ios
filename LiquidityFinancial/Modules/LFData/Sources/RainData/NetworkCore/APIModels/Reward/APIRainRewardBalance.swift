@@ -8,4 +8,5 @@ public struct APIRainRewardBalances: RainRewardBalancesEntity {
 public struct APIRainRewardBalance: Codable, RainRewardBalanceEntity {
   public let rewardedAmount: Double
   public let unprocessedAmount: Double
+  public let lockedAmount: Double
 }
