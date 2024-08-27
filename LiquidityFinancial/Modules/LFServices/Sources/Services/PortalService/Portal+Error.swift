@@ -42,7 +42,7 @@ extension LFPortalError {
     
     switch portalRequestsError {
     case .clientError(let message):
-      if message.contains(PortalErrorMessage.sessionExpired) {
+      if message.contains(PortalErrorMessage.sessionExpired) || message.contains("401") {
         return LFPortalError.expirationToken
       }
       return LFPortalError.customError(message: message)
