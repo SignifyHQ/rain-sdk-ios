@@ -17,7 +17,6 @@
 		0627513C2BF5E5A700546864 /* RainFeature in Frameworks */ = {isa = PBXBuildFile; productRef = 0627513B2BF5E5A700546864 /* RainFeature */; };
 		0627513E2BF5E5B400546864 /* RainFeature in Frameworks */ = {isa = PBXBuildFile; productRef = 0627513D2BF5E5B400546864 /* RainFeature */; };
 		062751402BF5E5C100546864 /* RainFeature in Frameworks */ = {isa = PBXBuildFile; productRef = 0627513F2BF5E5C100546864 /* RainFeature */; };
-		062751422BF5E5CF00546864 /* RainFeature in Frameworks */ = {isa = PBXBuildFile; productRef = 062751412BF5E5CF00546864 /* RainFeature */; };
 		063A6FC52ADD87790073146D /* ProfileScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 063A6FC42ADD87790073146D /* ProfileScreen.swift */; };
 		063A6FC72ADD91C30073146D /* LFLocalizable in Frameworks */ = {isa = PBXBuildFile; productRef = 063A6FC62ADD91C30073146D /* LFLocalizable */; };
 		064C4C452BB3D13E00B8C544 /* RainOnboarding in Frameworks */ = {isa = PBXBuildFile; productRef = 064C4C442BB3D13E00B8C544 /* RainOnboarding */; };
@@ -29,7 +28,6 @@
 		066298DE2BB4DF0D000C1A0D /* BaseOnboarding in Frameworks */ = {isa = PBXBuildFile; productRef = 066298DD2BB4DF0D000C1A0D /* BaseOnboarding */; };
 		066298E02BB4DF16000C1A0D /* BaseOnboarding in Frameworks */ = {isa = PBXBuildFile; productRef = 066298DF2BB4DF16000C1A0D /* BaseOnboarding */; };
 		066298E22BB4DF25000C1A0D /* BaseOnboarding in Frameworks */ = {isa = PBXBuildFile; productRef = 066298E12BB4DF25000C1A0D /* BaseOnboarding */; };
-		066298E42BB4DF2D000C1A0D /* BaseOnboarding in Frameworks */ = {isa = PBXBuildFile; productRef = 066298E32BB4DF2D000C1A0D /* BaseOnboarding */; };
 		06663AF52ADE35BC00A3FF12 /* LFAccessibility in Frameworks */ = {isa = PBXBuildFile; productRef = 06663AF42ADE35BC00A3FF12 /* LFAccessibility */; };
 		06663AF72ADE395D00A3FF12 /* LFAccessibility in Frameworks */ = {isa = PBXBuildFile; productRef = 06663AF62ADE395D00A3FF12 /* LFAccessibility */; };
 		06663AF92ADE398E00A3FF12 /* LFAccessibility in Frameworks */ = {isa = PBXBuildFile; productRef = 06663AF82ADE398E00A3FF12 /* LFAccessibility */; };
@@ -65,74 +63,12 @@
 		7416A2122B7F2E0A00062824 /* AccessibilityIdentifier.strings in Resources */ = {isa = PBXBuildFile; fileRef = 7416A20F2B7F2E0A00062824 /* AccessibilityIdentifier.strings */; };
 		7416A2132B7F2E0A00062824 /* AccessibilityIdentifier.strings in Resources */ = {isa = PBXBuildFile; fileRef = 7416A20F2B7F2E0A00062824 /* AccessibilityIdentifier.strings */; };
 		7416A2142B7F2E0A00062824 /* AccessibilityIdentifier.strings in Resources */ = {isa = PBXBuildFile; fileRef = 7416A20F2B7F2E0A00062824 /* AccessibilityIdentifier.strings */; };
-		7416A2152B7F2E0A00062824 /* AccessibilityIdentifier.strings in Resources */ = {isa = PBXBuildFile; fileRef = 7416A20F2B7F2E0A00062824 /* AccessibilityIdentifier.strings */; };
 		7416A2162B7F2E0A00062824 /* AccessibilityIdentifier.strings in Resources */ = {isa = PBXBuildFile; fileRef = 7416A20F2B7F2E0A00062824 /* AccessibilityIdentifier.strings */; };
 		741AD81B2AD50BD500C1317A /* NavigationContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 741AD81A2AD50BD500C1317A /* NavigationContainer.swift */; };
 		741AD81F2AD50C4000C1317A /* NavigationContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 741AD8142AD50ADD00C1317A /* NavigationContainer.swift */; };
 		741AD8202AD50C4700C1317A /* NavigationContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 741AD8172AD50B5E00C1317A /* NavigationContainer.swift */; };
 		741AD8212AD50C5400C1317A /* NavigationContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 741AD81D2AD50C1B00C1317A /* NavigationContainer.swift */; };
 		741AD8242AD50C7500C1317A /* NavigationContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 741AD8232AD50C7500C1317A /* NavigationContainer.swift */; };
-		7431558E2B281CB700D141F4 /* AppDelegate+Configs.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9BC804C2A774F5D00E4A1A0 /* AppDelegate+Configs.swift */; };
-		7431558F2B281CB700D141F4 /* OnboardingContainer+Injection.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9B912F22A6B898C00ABD87B /* OnboardingContainer+Injection.swift */; };
-		743155912B281CB700D141F4 /* AppDelegate+Appearance.swift in Sources */ = {isa = PBXBuildFile; fileRef = A93837462A63DDFD009EB1DE /* AppDelegate+Appearance.swift */; };
-		743155922B281CB700D141F4 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = A97BF8192A5D9E6B00B8F5CA /* AppDelegate.swift */; };
-		743155952B281CB700D141F4 /* LFAccessibility in Frameworks */ = {isa = PBXBuildFile; productRef = 743155822B281CB700D141F4 /* LFAccessibility */; };
-		743155962B281CB700D141F4 /* AccountService in Frameworks */ = {isa = PBXBuildFile; productRef = 743155832B281CB700D141F4 /* AccountService */; };
-		743155982B281CB700D141F4 /* iPhoneNumberField in Frameworks */ = {isa = PBXBuildFile; productRef = 743155742B281CB700D141F4 /* iPhoneNumberField */; };
-		743155992B281CB700D141F4 /* NetworkUtilities in Frameworks */ = {isa = PBXBuildFile; productRef = 743155792B281CB700D141F4 /* NetworkUtilities */; };
-		7431559A2B281CB700D141F4 /* LFUtilities in Frameworks */ = {isa = PBXBuildFile; productRef = 7431556E2B281CB700D141F4 /* LFUtilities */; };
-		7431559B2B281CB700D141F4 /* OnboardingDomain in Frameworks */ = {isa = PBXBuildFile; productRef = 743155732B281CB700D141F4 /* OnboardingDomain */; };
-		7431559C2B281CB700D141F4 /* SmartyStreets in Frameworks */ = {isa = PBXBuildFile; productRef = 743155762B281CB700D141F4 /* SmartyStreets */; };
-		7431559D2B281CB700D141F4 /* LFFeatureFlags in Frameworks */ = {isa = PBXBuildFile; productRef = 743155852B281CB700D141F4 /* LFFeatureFlags */; };
-		7431559E2B281CB700D141F4 /* Factory in Frameworks */ = {isa = PBXBuildFile; productRef = 743155682B281CB700D141F4 /* Factory */; };
-		7431559F2B281CB700D141F4 /* FirebaseMessaging in Frameworks */ = {isa = PBXBuildFile; productRef = 7431557C2B281CB700D141F4 /* FirebaseMessaging */; };
-		743155A22B281CB700D141F4 /* CodeScanner in Frameworks */ = {isa = PBXBuildFile; productRef = 7431557A2B281CB700D141F4 /* CodeScanner */; };
-		743155A32B281CB700D141F4 /* Services in Frameworks */ = {isa = PBXBuildFile; productRef = 743155842B281CB700D141F4 /* Services */; };
-		743155A42B281CB700D141F4 /* LFLocalizable in Frameworks */ = {isa = PBXBuildFile; productRef = 7431556D2B281CB700D141F4 /* LFLocalizable */; };
-		743155A52B281CB700D141F4 /* LFStyleGuide in Frameworks */ = {isa = PBXBuildFile; productRef = 7431556C2B281CB700D141F4 /* LFStyleGuide */; };
-		743155A62B281CB700D141F4 /* LFAuthentication in Frameworks */ = {isa = PBXBuildFile; productRef = 743155862B281CB700D141F4 /* LFAuthentication */; };
-		743155A82B281CB700D141F4 /* OnboardingData in Frameworks */ = {isa = PBXBuildFile; productRef = 743155722B281CB700D141F4 /* OnboardingData */; };
-		743155A92B281CB700D141F4 /* NetSpendData in Frameworks */ = {isa = PBXBuildFile; productRef = 743155712B281CB700D141F4 /* NetSpendData */; };
-		743155AA2B281CB700D141F4 /* Lottie in Frameworks */ = {isa = PBXBuildFile; productRef = 7431556A2B281CB700D141F4 /* Lottie */; };
-		743155AB2B281CB700D141F4 /* AuthorizationManager in Frameworks */ = {isa = PBXBuildFile; productRef = 743155702B281CB700D141F4 /* AuthorizationManager */; };
-		743155AC2B281CB700D141F4 /* CoreNetwork in Frameworks */ = {isa = PBXBuildFile; productRef = 743155782B281CB700D141F4 /* CoreNetwork */; };
-		743155AD2B281CB700D141F4 /* BiometricsManager in Frameworks */ = {isa = PBXBuildFile; productRef = 743155872B281CB700D141F4 /* BiometricsManager */; };
-		743155B62B281CB700D141F4 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A9B4BA0A2A7C107D000ED67A /* Images.xcassets */; };
-		743156242B28364200D141F4 /* DogeCardConfig.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 743155D32B28309B00D141F4 /* DogeCardConfig.xcconfig */; };
-		743156252B28364700D141F4 /* Custom.strings in Resources */ = {isa = PBXBuildFile; fileRef = 743155E02B28309B00D141F4 /* Custom.strings */; };
-		743156272B28365600D141F4 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 743155E42B28309B00D141F4 /* GoogleService-Info.plist */; };
-		743156282B28365F00D141F4 /* LoadingContrast.json in Resources */ = {isa = PBXBuildFile; fileRef = 743155E72B28309B00D141F4 /* LoadingContrast.json */; };
-		743156292B28365F00D141F4 /* TwinkleContrast.json in Resources */ = {isa = PBXBuildFile; fileRef = 743155E82B28309B00D141F4 /* TwinkleContrast.json */; };
-		7431562A2B28365F00D141F4 /* LoadingPrimary.json in Resources */ = {isa = PBXBuildFile; fileRef = 743155E62B28309B00D141F4 /* LoadingPrimary.json */; };
-		7431562B2B28365F00D141F4 /* LoadingMix.json in Resources */ = {isa = PBXBuildFile; fileRef = 743155EA2B28309B00D141F4 /* LoadingMix.json */; };
-		7431562C2B28365F00D141F4 /* TwinkleSides.json in Resources */ = {isa = PBXBuildFile; fileRef = 743155E92B28309B00D141F4 /* TwinkleSides.json */; };
-		7431562D2B28366600D141F4 /* Orbitron-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 743155FB2B28309B00D141F4 /* Orbitron-Bold.ttf */; };
-		7431562E2B28366600D141F4 /* Lato-LightItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 743155ED2B28309B00D141F4 /* Lato-LightItalic.ttf */; };
-		7431562F2B28366600D141F4 /* Lato-Thin.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 743155EE2B28309B00D141F4 /* Lato-Thin.ttf */; };
-		743156302B28366600D141F4 /* Lato-Italic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 743155EC2B28309B00D141F4 /* Lato-Italic.ttf */; };
-		743156312B28366600D141F4 /* Lato-Light.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 743155F82B28309B00D141F4 /* Lato-Light.ttf */; };
-		743156322B28366600D141F4 /* Lato-Medium.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 743155F92B28309B00D141F4 /* Lato-Medium.ttf */; };
-		743156332B28366600D141F4 /* Montserrat-Black.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 743155F62B28309B00D141F4 /* Montserrat-Black.ttf */; };
-		743156342B28366600D141F4 /* Orbitron-Medium.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 743155F22B28309B00D141F4 /* Orbitron-Medium.ttf */; };
-		743156352B28366700D141F4 /* Lato-Black.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 743155F12B28309B00D141F4 /* Lato-Black.ttf */; };
-		743156362B28366700D141F4 /* Lato-ThinItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 743155FA2B28309B00D141F4 /* Lato-ThinItalic.ttf */; };
-		743156372B28366700D141F4 /* Lato-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 743155F02B28309B00D141F4 /* Lato-Bold.ttf */; };
-		743156382B28366700D141F4 /* Lato-BlackItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 743155F42B28309B00D141F4 /* Lato-BlackItalic.ttf */; };
-		743156392B28366700D141F4 /* Lato-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 743155F32B28309B00D141F4 /* Lato-Regular.ttf */; };
-		7431563A2B28366700D141F4 /* Lato-MediumItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 743155F52B28309B00D141F4 /* Lato-MediumItalic.ttf */; };
-		7431563B2B28366700D141F4 /* Montserrat-Medium.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 743155EF2B28309B00D141F4 /* Montserrat-Medium.ttf */; };
-		7431563C2B28366700D141F4 /* Lato-BoldItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 743155F72B28309B00D141F4 /* Lato-BoldItalic.ttf */; };
-		7431563D2B28366C00D141F4 /* DogeCard-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 743155FC2B28309B00D141F4 /* DogeCard-Info.plist */; };
-		7431563E2B28367400D141F4 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 743155FF2B28309B00D141F4 /* Images.xcassets */; };
-		7431563F2B28367400D141F4 /* Colors.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 743155FE2B28309B00D141F4 /* Colors.xcassets */; };
-		743156402B28368C00D141F4 /* AppCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 743155D82B28309B00D141F4 /* AppCoordinator.swift */; };
-		743156412B28368C00D141F4 /* DogeCardApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 743155D92B28309B00D141F4 /* DogeCardApp.swift */; };
-		743156422B28368C00D141F4 /* AppView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 743155DD2B28309B00D141F4 /* AppView.swift */; };
-		743156432B28368C00D141F4 /* DashboardContainer+Injection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 743155D62B28309B00D141F4 /* DashboardContainer+Injection.swift */; };
-		743156442B28368C00D141F4 /* AppViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 743155DE2B28309B00D141F4 /* AppViewModel.swift */; };
-		743156452B28368C00D141F4 /* NavigationContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 743155DB2B28309B00D141F4 /* NavigationContainer.swift */; };
-		743156462B2841F100D141F4 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 743155E22B28309B00D141F4 /* LaunchScreen.storyboard */; };
-		743156482B295A0800D141F4 /* LFNoBankDashboard in Frameworks */ = {isa = PBXBuildFile; productRef = 743156472B295A0800D141F4 /* LFNoBankDashboard */; };
 		743DA7D62B43E14C000F5AD8 /* AppDelegate+Configs.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9BC804C2A774F5D00E4A1A0 /* AppDelegate+Configs.swift */; };
 		743DA7D72B43E14C000F5AD8 /* OnboardingContainer+Injection.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9B912F22A6B898C00ABD87B /* OnboardingContainer+Injection.swift */; };
 		743DA7D82B43E14C000F5AD8 /* AppDelegate+Appearance.swift in Sources */ = {isa = PBXBuildFile; fileRef = A93837462A63DDFD009EB1DE /* AppDelegate+Appearance.swift */; };
@@ -209,7 +145,6 @@
 		749C3DF92B6A30E30082A834 /* Common.strings in Resources */ = {isa = PBXBuildFile; fileRef = 749C3DF52B6A30E30082A834 /* Common.strings */; };
 		749C3DFA2B6A30E30082A834 /* Common.strings in Resources */ = {isa = PBXBuildFile; fileRef = 749C3DF52B6A30E30082A834 /* Common.strings */; };
 		749C3DFB2B6A30E30082A834 /* Common.strings in Resources */ = {isa = PBXBuildFile; fileRef = 749C3DF52B6A30E30082A834 /* Common.strings */; };
-		749C3DFC2B6A30E30082A834 /* Common.strings in Resources */ = {isa = PBXBuildFile; fileRef = 749C3DF52B6A30E30082A834 /* Common.strings */; };
 		749C3DFD2B6A30E30082A834 /* Common.strings in Resources */ = {isa = PBXBuildFile; fileRef = 749C3DF52B6A30E30082A834 /* Common.strings */; };
 		749C3E002B6A31CA0082A834 /* Custom.strings in Resources */ = {isa = PBXBuildFile; fileRef = 749C3DFE2B6A31CA0082A834 /* Custom.strings */; };
 		74BC08632A8CC6F500EFD00C /* CodeScanner in Frameworks */ = {isa = PBXBuildFile; productRef = 74BC08622A8CC6F500EFD00C /* CodeScanner */; };
@@ -220,7 +155,6 @@
 		74CB167D2A9853F800C137F3 /* FirebaseAnalyticsSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 74CB167C2A9853F800C137F3 /* FirebaseAnalyticsSwift */; };
 		74CB167F2A9853F800C137F3 /* FirebaseCrashlytics in Frameworks */ = {isa = PBXBuildFile; productRef = 74CB167E2A9853F800C137F3 /* FirebaseCrashlytics */; };
 		74CB16812A9853F800C137F3 /* FirebaseMessaging in Frameworks */ = {isa = PBXBuildFile; productRef = 74CB16802A9853F800C137F3 /* FirebaseMessaging */; };
-		74FAC2B02B2F044500C74E55 /* NoBankOnboarding in Frameworks */ = {isa = PBXBuildFile; productRef = 74FAC2AF2B2F044500C74E55 /* NoBankOnboarding */; };
 		A90B5CAF2B16E3A90092E430 /* LFFeatureFlags in Frameworks */ = {isa = PBXBuildFile; productRef = A90B5CAE2B16E3A90092E430 /* LFFeatureFlags */; };
 		A90B5CB12B16E3B10092E430 /* LFFeatureFlags in Frameworks */ = {isa = PBXBuildFile; productRef = A90B5CB02B16E3B10092E430 /* LFFeatureFlags */; };
 		A90B5CB32B16E3BB0092E430 /* LFFeatureFlags in Frameworks */ = {isa = PBXBuildFile; productRef = A90B5CB22B16E3BB0092E430 /* LFFeatureFlags */; };
@@ -615,42 +549,6 @@
 		741AD81A2AD50BD500C1317A /* NavigationContainer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NavigationContainer.swift; sourceTree = "<group>"; };
 		741AD81D2AD50C1B00C1317A /* NavigationContainer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NavigationContainer.swift; sourceTree = "<group>"; };
 		741AD8232AD50C7500C1317A /* NavigationContainer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NavigationContainer.swift; sourceTree = "<group>"; };
-		743155CF2B281CB700D141F4 /* DogeCard.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = DogeCard.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		743155D32B28309B00D141F4 /* DogeCardConfig.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = DogeCardConfig.xcconfig; sourceTree = "<group>"; };
-		743155D62B28309B00D141F4 /* DashboardContainer+Injection.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "DashboardContainer+Injection.swift"; sourceTree = "<group>"; };
-		743155D82B28309B00D141F4 /* AppCoordinator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppCoordinator.swift; sourceTree = "<group>"; };
-		743155D92B28309B00D141F4 /* DogeCardApp.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DogeCardApp.swift; sourceTree = "<group>"; };
-		743155DB2B28309B00D141F4 /* NavigationContainer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NavigationContainer.swift; sourceTree = "<group>"; };
-		743155DD2B28309B00D141F4 /* AppView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppView.swift; sourceTree = "<group>"; };
-		743155DE2B28309B00D141F4 /* AppViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppViewModel.swift; sourceTree = "<group>"; };
-		743155E12B28309B00D141F4 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Custom.strings; sourceTree = "<group>"; };
-		743155E22B28309B00D141F4 /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = LaunchScreen.storyboard; sourceTree = "<group>"; };
-		743155E42B28309B00D141F4 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
-		743155E62B28309B00D141F4 /* LoadingPrimary.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = LoadingPrimary.json; sourceTree = "<group>"; };
-		743155E72B28309B00D141F4 /* LoadingContrast.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = LoadingContrast.json; sourceTree = "<group>"; };
-		743155E82B28309B00D141F4 /* TwinkleContrast.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = TwinkleContrast.json; sourceTree = "<group>"; };
-		743155E92B28309B00D141F4 /* TwinkleSides.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = TwinkleSides.json; sourceTree = "<group>"; };
-		743155EA2B28309B00D141F4 /* LoadingMix.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = LoadingMix.json; sourceTree = "<group>"; };
-		743155EC2B28309B00D141F4 /* Lato-Italic.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Lato-Italic.ttf"; sourceTree = "<group>"; };
-		743155ED2B28309B00D141F4 /* Lato-LightItalic.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Lato-LightItalic.ttf"; sourceTree = "<group>"; };
-		743155EE2B28309B00D141F4 /* Lato-Thin.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Lato-Thin.ttf"; sourceTree = "<group>"; };
-		743155EF2B28309B00D141F4 /* Montserrat-Medium.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Montserrat-Medium.ttf"; sourceTree = "<group>"; };
-		743155F02B28309B00D141F4 /* Lato-Bold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Lato-Bold.ttf"; sourceTree = "<group>"; };
-		743155F12B28309B00D141F4 /* Lato-Black.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Lato-Black.ttf"; sourceTree = "<group>"; };
-		743155F22B28309B00D141F4 /* Orbitron-Medium.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Orbitron-Medium.ttf"; sourceTree = "<group>"; };
-		743155F32B28309B00D141F4 /* Lato-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Lato-Regular.ttf"; sourceTree = "<group>"; };
-		743155F42B28309B00D141F4 /* Lato-BlackItalic.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Lato-BlackItalic.ttf"; sourceTree = "<group>"; };
-		743155F52B28309B00D141F4 /* Lato-MediumItalic.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Lato-MediumItalic.ttf"; sourceTree = "<group>"; };
-		743155F62B28309B00D141F4 /* Montserrat-Black.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Montserrat-Black.ttf"; sourceTree = "<group>"; };
-		743155F72B28309B00D141F4 /* Lato-BoldItalic.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Lato-BoldItalic.ttf"; sourceTree = "<group>"; };
-		743155F82B28309B00D141F4 /* Lato-Light.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Lato-Light.ttf"; sourceTree = "<group>"; };
-		743155F92B28309B00D141F4 /* Lato-Medium.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Lato-Medium.ttf"; sourceTree = "<group>"; };
-		743155FA2B28309B00D141F4 /* Lato-ThinItalic.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Lato-ThinItalic.ttf"; sourceTree = "<group>"; };
-		743155FB2B28309B00D141F4 /* Orbitron-Bold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Orbitron-Bold.ttf"; sourceTree = "<group>"; };
-		743155FC2B28309B00D141F4 /* DogeCard-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "DogeCard-Info.plist"; sourceTree = "<group>"; };
-		743155FE2B28309B00D141F4 /* Colors.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Colors.xcassets; sourceTree = "<group>"; };
-		743155FF2B28309B00D141F4 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
-		743156002B28309B00D141F4 /* DogeCard.entitlements */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.entitlements; path = DogeCard.entitlements; sourceTree = "<group>"; };
 		743DA81E2B43E14C000F5AD8 /* PawsCard.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = PawsCard.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		743DA8222B43E1FB000F5AD8 /* PawsCardConfig.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = PawsCardConfig.xcconfig; sourceTree = "<group>"; };
 		743DA86B2B43F213000F5AD8 /* PawsCard-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "PawsCard-Info.plist"; sourceTree = "<group>"; };
@@ -924,38 +822,6 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
-		743155932B281CB700D141F4 /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				743155952B281CB700D141F4 /* LFAccessibility in Frameworks */,
-				743155962B281CB700D141F4 /* AccountService in Frameworks */,
-				743155982B281CB700D141F4 /* iPhoneNumberField in Frameworks */,
-				743155992B281CB700D141F4 /* NetworkUtilities in Frameworks */,
-				7431559A2B281CB700D141F4 /* LFUtilities in Frameworks */,
-				7431559B2B281CB700D141F4 /* OnboardingDomain in Frameworks */,
-				062751422BF5E5CF00546864 /* RainFeature in Frameworks */,
-				7431559C2B281CB700D141F4 /* SmartyStreets in Frameworks */,
-				7431559D2B281CB700D141F4 /* LFFeatureFlags in Frameworks */,
-				7431559E2B281CB700D141F4 /* Factory in Frameworks */,
-				7431559F2B281CB700D141F4 /* FirebaseMessaging in Frameworks */,
-				743155A22B281CB700D141F4 /* CodeScanner in Frameworks */,
-				743155A32B281CB700D141F4 /* Services in Frameworks */,
-				74FAC2B02B2F044500C74E55 /* NoBankOnboarding in Frameworks */,
-				743155A42B281CB700D141F4 /* LFLocalizable in Frameworks */,
-				743155A52B281CB700D141F4 /* LFStyleGuide in Frameworks */,
-				743155A62B281CB700D141F4 /* LFAuthentication in Frameworks */,
-				743156482B295A0800D141F4 /* LFNoBankDashboard in Frameworks */,
-				743155A82B281CB700D141F4 /* OnboardingData in Frameworks */,
-				743155A92B281CB700D141F4 /* NetSpendData in Frameworks */,
-				743155AA2B281CB700D141F4 /* Lottie in Frameworks */,
-				066298E42BB4DF2D000C1A0D /* BaseOnboarding in Frameworks */,
-				743155AB2B281CB700D141F4 /* AuthorizationManager in Frameworks */,
-				743155AC2B281CB700D141F4 /* CoreNetwork in Frameworks */,
-				743155AD2B281CB700D141F4 /* BiometricsManager in Frameworks */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		743DA7DA2B43E14C000F5AD8 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -1345,128 +1211,6 @@
 			path = NavigationContainer;
 			sourceTree = "<group>";
 		};
-		743155D12B28306300D141F4 /* DogeCardNobank */ = {
-			isa = PBXGroup;
-			children = (
-				743155D22B28309B00D141F4 /* Configurations */,
-				743155DF2B28309B00D141F4 /* Resources */,
-				743155D42B28309B00D141F4 /* Sources */,
-			);
-			path = DogeCardNobank;
-			sourceTree = "<group>";
-		};
-		743155D22B28309B00D141F4 /* Configurations */ = {
-			isa = PBXGroup;
-			children = (
-				743155D32B28309B00D141F4 /* DogeCardConfig.xcconfig */,
-			);
-			path = Configurations;
-			sourceTree = "<group>";
-		};
-		743155D42B28309B00D141F4 /* Sources */ = {
-			isa = PBXGroup;
-			children = (
-				743155D52B28309B00D141F4 /* DependenciesInjection */,
-				743155D72B28309B00D141F4 /* AppCoordinator */,
-				743155D92B28309B00D141F4 /* DogeCardApp.swift */,
-				743155DA2B28309B00D141F4 /* NavigationContainer */,
-				743155DC2B28309B00D141F4 /* AppView */,
-			);
-			path = Sources;
-			sourceTree = "<group>";
-		};
-		743155D52B28309B00D141F4 /* DependenciesInjection */ = {
-			isa = PBXGroup;
-			children = (
-				743155D62B28309B00D141F4 /* DashboardContainer+Injection.swift */,
-			);
-			path = DependenciesInjection;
-			sourceTree = "<group>";
-		};
-		743155D72B28309B00D141F4 /* AppCoordinator */ = {
-			isa = PBXGroup;
-			children = (
-				743155D82B28309B00D141F4 /* AppCoordinator.swift */,
-			);
-			path = AppCoordinator;
-			sourceTree = "<group>";
-		};
-		743155DA2B28309B00D141F4 /* NavigationContainer */ = {
-			isa = PBXGroup;
-			children = (
-				743155DB2B28309B00D141F4 /* NavigationContainer.swift */,
-			);
-			path = NavigationContainer;
-			sourceTree = "<group>";
-		};
-		743155DC2B28309B00D141F4 /* AppView */ = {
-			isa = PBXGroup;
-			children = (
-				743155DD2B28309B00D141F4 /* AppView.swift */,
-				743155DE2B28309B00D141F4 /* AppViewModel.swift */,
-			);
-			path = AppView;
-			sourceTree = "<group>";
-		};
-		743155DF2B28309B00D141F4 /* Resources */ = {
-			isa = PBXGroup;
-			children = (
-				743155E02B28309B00D141F4 /* Custom.strings */,
-				743155E22B28309B00D141F4 /* LaunchScreen.storyboard */,
-				743155E42B28309B00D141F4 /* GoogleService-Info.plist */,
-				743155E52B28309B00D141F4 /* Lottie */,
-				743155EB2B28309B00D141F4 /* Fonts */,
-				743155FC2B28309B00D141F4 /* DogeCard-Info.plist */,
-				743155FD2B28309B00D141F4 /* Assets */,
-				743156002B28309B00D141F4 /* DogeCard.entitlements */,
-			);
-			path = Resources;
-			sourceTree = "<group>";
-		};
-		743155E52B28309B00D141F4 /* Lottie */ = {
-			isa = PBXGroup;
-			children = (
-				743155E62B28309B00D141F4 /* LoadingPrimary.json */,
-				743155E72B28309B00D141F4 /* LoadingContrast.json */,
-				743155E82B28309B00D141F4 /* TwinkleContrast.json */,
-				743155E92B28309B00D141F4 /* TwinkleSides.json */,
-				743155EA2B28309B00D141F4 /* LoadingMix.json */,
-			);
-			path = Lottie;
-			sourceTree = "<group>";
-		};
-		743155EB2B28309B00D141F4 /* Fonts */ = {
-			isa = PBXGroup;
-			children = (
-				743155EC2B28309B00D141F4 /* Lato-Italic.ttf */,
-				743155ED2B28309B00D141F4 /* Lato-LightItalic.ttf */,
-				743155EE2B28309B00D141F4 /* Lato-Thin.ttf */,
-				743155EF2B28309B00D141F4 /* Montserrat-Medium.ttf */,
-				743155F02B28309B00D141F4 /* Lato-Bold.ttf */,
-				743155F12B28309B00D141F4 /* Lato-Black.ttf */,
-				743155F22B28309B00D141F4 /* Orbitron-Medium.ttf */,
-				743155F32B28309B00D141F4 /* Lato-Regular.ttf */,
-				743155F42B28309B00D141F4 /* Lato-BlackItalic.ttf */,
-				743155F52B28309B00D141F4 /* Lato-MediumItalic.ttf */,
-				743155F62B28309B00D141F4 /* Montserrat-Black.ttf */,
-				743155F72B28309B00D141F4 /* Lato-BoldItalic.ttf */,
-				743155F82B28309B00D141F4 /* Lato-Light.ttf */,
-				743155F92B28309B00D141F4 /* Lato-Medium.ttf */,
-				743155FA2B28309B00D141F4 /* Lato-ThinItalic.ttf */,
-				743155FB2B28309B00D141F4 /* Orbitron-Bold.ttf */,
-			);
-			path = Fonts;
-			sourceTree = "<group>";
-		};
-		743155FD2B28309B00D141F4 /* Assets */ = {
-			isa = PBXGroup;
-			children = (
-				743155FE2B28309B00D141F4 /* Colors.xcassets */,
-				743155FF2B28309B00D141F4 /* Images.xcassets */,
-			);
-			path = Assets;
-			sourceTree = "<group>";
-		};
 		743DA8202B43E17D000F5AD8 /* PawsCard */ = {
 			isa = PBXGroup;
 			children = (
@@ -1729,7 +1473,6 @@
 				A9B4B9742A7C0C76000ED67A /* DogeCard.app */,
 				A9B448F02A8389B90029944C /* CauseCard.app */,
 				A99D2F692A9A56CF00947773 /* PrideCard.app */,
-				743155CF2B281CB700D141F4 /* DogeCard.app */,
 				743DA81E2B43E14C000F5AD8 /* PawsCard.app */,
 			);
 			name = Products;
@@ -1739,7 +1482,6 @@
 			isa = PBXGroup;
 			children = (
 				743DA8202B43E17D000F5AD8 /* PawsCard */,
-				743155D12B28306300D141F4 /* DogeCardNobank */,
 				A99D2F6B2A9A56F200947773 /* PrideCard */,
 				A9B448F22A838A000029944C /* CauseCard */,
 				A97BF8102A5D989100B8F5CA /* Avalanche */,
@@ -2413,51 +2155,6 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		743155672B281CB700D141F4 /* DogeCardNobank */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = 743155CC2B281CB700D141F4 /* Build configuration list for PBXNativeTarget "DogeCardNobank" */;
-			buildPhases = (
-				743155882B281CB700D141F4 /* Sources */,
-				743155932B281CB700D141F4 /* Frameworks */,
-				743155AE2B281CB700D141F4 /* Resources */,
-				743155CB2B281CB700D141F4 /* Swiftlint (Debug Only) */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-			);
-			name = DogeCardNobank;
-			packageProductDependencies = (
-				743155682B281CB700D141F4 /* Factory */,
-				7431556A2B281CB700D141F4 /* Lottie */,
-				7431556C2B281CB700D141F4 /* LFStyleGuide */,
-				7431556D2B281CB700D141F4 /* LFLocalizable */,
-				7431556E2B281CB700D141F4 /* LFUtilities */,
-				743155702B281CB700D141F4 /* AuthorizationManager */,
-				743155712B281CB700D141F4 /* NetSpendData */,
-				743155722B281CB700D141F4 /* OnboardingData */,
-				743155732B281CB700D141F4 /* OnboardingDomain */,
-				743155742B281CB700D141F4 /* iPhoneNumberField */,
-				743155762B281CB700D141F4 /* SmartyStreets */,
-				743155782B281CB700D141F4 /* CoreNetwork */,
-				743155792B281CB700D141F4 /* NetworkUtilities */,
-				7431557A2B281CB700D141F4 /* CodeScanner */,
-				7431557C2B281CB700D141F4 /* FirebaseMessaging */,
-				743155822B281CB700D141F4 /* LFAccessibility */,
-				743155832B281CB700D141F4 /* AccountService */,
-				743155842B281CB700D141F4 /* Services */,
-				743155852B281CB700D141F4 /* LFFeatureFlags */,
-				743155862B281CB700D141F4 /* LFAuthentication */,
-				743155872B281CB700D141F4 /* BiometricsManager */,
-				743156472B295A0800D141F4 /* LFNoBankDashboard */,
-				74FAC2AF2B2F044500C74E55 /* NoBankOnboarding */,
-				066298E32BB4DF2D000C1A0D /* BaseOnboarding */,
-				062751412BF5E5CF00546864 /* RainFeature */,
-			);
-			productName = LiquidityFinancial;
-			productReference = 743155CF2B281CB700D141F4 /* DogeCard.app */;
-			productType = "com.apple.product-type.application";
-		};
 		743DA7A92B43E14C000F5AD8 /* PawsCard */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 743DA81B2B43E14C000F5AD8 /* Build configuration list for PBXNativeTarget "PawsCard" */;
@@ -2837,7 +2534,6 @@
 				A9B4B91F2A7C0C76000ED67A /* DogeCard */,
 				A9B448A22A8389B90029944C /* CauseCard */,
 				A99D2F042A9A56CF00947773 /* PrideCard */,
-				743155672B281CB700D141F4 /* DogeCardNobank */,
 				743DA7A92B43E14C000F5AD8 /* PawsCard */,
 				A97BF7CB2A5C602F00B8F5CA /* LiquidityFinancialTests */,
 				A97BF7D52A5C602F00B8F5CA /* LiquidityFinancialUITests */,
@@ -2846,44 +2542,6 @@
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
-		743155AE2B281CB700D141F4 /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				743156302B28366600D141F4 /* Lato-Italic.ttf in Resources */,
-				7431563A2B28366700D141F4 /* Lato-MediumItalic.ttf in Resources */,
-				743156372B28366700D141F4 /* Lato-Bold.ttf in Resources */,
-				743156322B28366600D141F4 /* Lato-Medium.ttf in Resources */,
-				7431563B2B28366700D141F4 /* Montserrat-Medium.ttf in Resources */,
-				743156382B28366700D141F4 /* Lato-BlackItalic.ttf in Resources */,
-				7431563F2B28367400D141F4 /* Colors.xcassets in Resources */,
-				743155B62B281CB700D141F4 /* Images.xcassets in Resources */,
-				7431562C2B28365F00D141F4 /* TwinkleSides.json in Resources */,
-				743156392B28366700D141F4 /* Lato-Regular.ttf in Resources */,
-				7431563D2B28366C00D141F4 /* DogeCard-Info.plist in Resources */,
-				7431562F2B28366600D141F4 /* Lato-Thin.ttf in Resources */,
-				7431563E2B28367400D141F4 /* Images.xcassets in Resources */,
-				7431563C2B28366700D141F4 /* Lato-BoldItalic.ttf in Resources */,
-				743156362B28366700D141F4 /* Lato-ThinItalic.ttf in Resources */,
-				7431562D2B28366600D141F4 /* Orbitron-Bold.ttf in Resources */,
-				743156242B28364200D141F4 /* DogeCardConfig.xcconfig in Resources */,
-				743156462B2841F100D141F4 /* LaunchScreen.storyboard in Resources */,
-				743156312B28366600D141F4 /* Lato-Light.ttf in Resources */,
-				743156332B28366600D141F4 /* Montserrat-Black.ttf in Resources */,
-				7431562E2B28366600D141F4 /* Lato-LightItalic.ttf in Resources */,
-				7431562A2B28365F00D141F4 /* LoadingPrimary.json in Resources */,
-				743156292B28365F00D141F4 /* TwinkleContrast.json in Resources */,
-				7416A2152B7F2E0A00062824 /* AccessibilityIdentifier.strings in Resources */,
-				743156352B28366700D141F4 /* Lato-Black.ttf in Resources */,
-				749C3DFC2B6A30E30082A834 /* Common.strings in Resources */,
-				743156272B28365600D141F4 /* GoogleService-Info.plist in Resources */,
-				743156252B28364700D141F4 /* Custom.strings in Resources */,
-				743156342B28366600D141F4 /* Orbitron-Medium.ttf in Resources */,
-				7431562B2B28365F00D141F4 /* LoadingMix.json in Resources */,
-				743156282B28365F00D141F4 /* LoadingContrast.json in Resources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		743DA7F82B43E14C000F5AD8 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -3134,25 +2792,6 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		743155CB2B281CB700D141F4 /* Swiftlint (Debug Only) */ = {
-			isa = PBXShellScriptBuildPhase;
-			alwaysOutOfDate = 1;
-			buildActionMask = 8;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-			);
-			name = "Swiftlint (Debug Only)";
-			outputFileListPaths = (
-			);
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 1;
-			shellPath = /bin/sh;
-			shellScript = "if [[ \"$(uname -m)\" == arm64 ]]; then\n    export PATH=\"/opt/homebrew/bin:$PATH\"\nfi\n\nif which swiftlint > /dev/null; then\n  swiftlint\nelse\n  echo \"warning: SwiftLint not installed, download from https://github.com/realm/SwiftLint\"\nfi\n";
-		};
 		743DA81A2B43E14C000F5AD8 /* Swiftlint (Debug Only) */ = {
 			isa = PBXShellScriptBuildPhase;
 			alwaysOutOfDate = 1;
@@ -3270,23 +2909,6 @@
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
-		743155882B281CB700D141F4 /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				743156422B28368C00D141F4 /* AppView.swift in Sources */,
-				743156402B28368C00D141F4 /* AppCoordinator.swift in Sources */,
-				743156432B28368C00D141F4 /* DashboardContainer+Injection.swift in Sources */,
-				743156442B28368C00D141F4 /* AppViewModel.swift in Sources */,
-				743156452B28368C00D141F4 /* NavigationContainer.swift in Sources */,
-				7431558E2B281CB700D141F4 /* AppDelegate+Configs.swift in Sources */,
-				7431558F2B281CB700D141F4 /* OnboardingContainer+Injection.swift in Sources */,
-				743155912B281CB700D141F4 /* AppDelegate+Appearance.swift in Sources */,
-				743156412B28368C00D141F4 /* DogeCardApp.swift in Sources */,
-				743155922B281CB700D141F4 /* AppDelegate.swift in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		743DA7CF2B43E14C000F5AD8 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -3481,14 +3103,6 @@
 /* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
-		743155E02B28309B00D141F4 /* Custom.strings */ = {
-			isa = PBXVariantGroup;
-			children = (
-				743155E12B28309B00D141F4 /* en */,
-			);
-			name = Custom.strings;
-			sourceTree = "<group>";
-		};
 		743DA86C2B43F213000F5AD8 /* Custom.strings */ = {
 			isa = PBXVariantGroup;
 			children = (
@@ -3548,96 +3162,6 @@
 /* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
-		743155CD2B281CB700D141F4 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = A9B4B9782A7C0F41000ED67A /* DogeCardConfig.xcconfig */;
-			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
-				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = NO;
-				CODE_SIGN_ENTITLEMENTS = "${SRCROOT}/LiquidityFinancial/DogeCard/Resources/DogeCard.entitlements";
-				CODE_SIGN_IDENTITY = "Apple Development";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution";
-				CODE_SIGN_STYLE = Manual;
-				CURRENT_PROJECT_VERSION = $BITRISE_BUILD_NUMBER;
-				DEVELOPMENT_ASSET_PATHS = "";
-				DEVELOPMENT_TEAM = "";
-				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = TX9PJZUNWS;
-				ENABLE_PREVIEWS = YES;
-				GENERATE_INFOPLIST_FILE = NO;
-				INFOPLIST_FILE = "${SRCROOT}/LiquidityFinancial/DogeCardNobank/Resources/DogeCard-Info.plist";
-				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.finance";
-				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
-				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
-				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
-				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen.storyboard;
-				INFOPLIST_KEY_UIStatusBarHidden = NO;
-				INFOPLIST_KEY_UIStatusBarStyle = UIStatusBarStyleLightContent;
-				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
-				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-				);
-				MARKETING_VERSION = 3.1.2;
-				PRODUCT_BUNDLE_IDENTIFIER = com.liquidityfinancial.dogeking;
-				PRODUCT_NAME = DogeCard;
-				PROVISIONING_PROFILE_SPECIFIER = "";
-				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = "Apple Distribution DogeKing";
-				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
-				SUPPORTS_MACCATALYST = NO;
-				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
-				SWIFT_EMIT_LOC_STRINGS = YES;
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = 1;
-			};
-			name = Debug;
-		};
-		743155CE2B281CB700D141F4 /* Release */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = A9B4B9782A7C0F41000ED67A /* DogeCardConfig.xcconfig */;
-			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
-				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = NO;
-				CODE_SIGN_ENTITLEMENTS = "${SRCROOT}/LiquidityFinancial/DogeCard/Resources/DogeCard.entitlements";
-				CODE_SIGN_IDENTITY = "Apple Development";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution";
-				CODE_SIGN_STYLE = Manual;
-				CURRENT_PROJECT_VERSION = $BITRISE_BUILD_NUMBER;
-				DEVELOPMENT_ASSET_PATHS = "";
-				DEVELOPMENT_TEAM = "";
-				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = TX9PJZUNWS;
-				ENABLE_PREVIEWS = YES;
-				GENERATE_INFOPLIST_FILE = NO;
-				INFOPLIST_FILE = "${SRCROOT}/LiquidityFinancial/DogeCardNobank/Resources/DogeCard-Info.plist";
-				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.finance";
-				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
-				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
-				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
-				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen.storyboard;
-				INFOPLIST_KEY_UIStatusBarHidden = NO;
-				INFOPLIST_KEY_UIStatusBarStyle = UIStatusBarStyleLightContent;
-				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
-				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-				);
-				MARKETING_VERSION = 3.1.2;
-				PRODUCT_BUNDLE_IDENTIFIER = com.liquidityfinancial.dogeking;
-				PRODUCT_NAME = DogeCard;
-				PROVISIONING_PROFILE_SPECIFIER = "";
-				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = "Apple Distribution DogeKing";
-				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
-				SUPPORTS_MACCATALYST = NO;
-				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
-				SWIFT_EMIT_LOC_STRINGS = YES;
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = 1;
-			};
-			name = Release;
-		};
 		743DA81C2B43E14C000F5AD8 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = A99D2F6D2A9A56F200947773 /* PrideCardConfig.xcconfig */;
@@ -4361,15 +3885,6 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		743155CC2B281CB700D141F4 /* Build configuration list for PBXNativeTarget "DogeCardNobank" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				743155CD2B281CB700D141F4 /* Debug */,
-				743155CE2B281CB700D141F4 /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
 		743DA81B2B43E14C000F5AD8 /* Build configuration list for PBXNativeTarget "PawsCard" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
@@ -4476,54 +3991,6 @@
 			requirement = {
 				kind = upToNextMajorVersion;
 				minimumVersion = 2.0.0;
-			};
-		};
-		743155692B281CB700D141F4 /* XCRemoteSwiftPackageReference "Factory" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/hmlongco/Factory";
-			requirement = {
-				kind = upToNextMinorVersion;
-				minimumVersion = 2.2.0;
-			};
-		};
-		7431556B2B281CB700D141F4 /* XCRemoteSwiftPackageReference "lottie-ios" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/airbnb/lottie-ios.git";
-			requirement = {
-				kind = upToNextMinorVersion;
-				minimumVersion = 4.2.0;
-			};
-		};
-		743155752B281CB700D141F4 /* XCRemoteSwiftPackageReference "iPhoneNumberField" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/MojtabaHs/iPhoneNumberField.git";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 0.10.1;
-			};
-		};
-		743155772B281CB700D141F4 /* XCRemoteSwiftPackageReference "smartystreets-ios-sdk" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/smartystreets/smartystreets-ios-sdk";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 8.0.0;
-			};
-		};
-		7431557B2B281CB700D141F4 /* XCRemoteSwiftPackageReference "CodeScanner" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/twostraws/CodeScanner";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 2.0.0;
-			};
-		};
-		7431557D2B281CB700D141F4 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/firebase/firebase-ios-sdk";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 10.0.0;
 			};
 		};
 		743DA7AB2B43E14C000F5AD8 /* XCRemoteSwiftPackageReference "Factory" */ = {
@@ -4825,10 +4292,6 @@
 			isa = XCSwiftPackageProductDependency;
 			productName = RainFeature;
 		};
-		062751412BF5E5CF00546864 /* RainFeature */ = {
-			isa = XCSwiftPackageProductDependency;
-			productName = RainFeature;
-		};
 		063A6FC62ADD91C30073146D /* LFLocalizable */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = LFLocalizable;
@@ -4866,10 +4329,6 @@
 			productName = BaseOnboarding;
 		};
 		066298E12BB4DF25000C1A0D /* BaseOnboarding */ = {
-			isa = XCSwiftPackageProductDependency;
-			productName = BaseOnboarding;
-		};
-		066298E32BB4DF2D000C1A0D /* BaseOnboarding */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = BaseOnboarding;
 		};
@@ -4928,100 +4387,6 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 74CB167B2A9853F800C137F3 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
 			productName = FirebaseMessaging;
-		};
-		743155682B281CB700D141F4 /* Factory */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 743155692B281CB700D141F4 /* XCRemoteSwiftPackageReference "Factory" */;
-			productName = Factory;
-		};
-		7431556A2B281CB700D141F4 /* Lottie */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 7431556B2B281CB700D141F4 /* XCRemoteSwiftPackageReference "lottie-ios" */;
-			productName = Lottie;
-		};
-		7431556C2B281CB700D141F4 /* LFStyleGuide */ = {
-			isa = XCSwiftPackageProductDependency;
-			productName = LFStyleGuide;
-		};
-		7431556D2B281CB700D141F4 /* LFLocalizable */ = {
-			isa = XCSwiftPackageProductDependency;
-			productName = LFLocalizable;
-		};
-		7431556E2B281CB700D141F4 /* LFUtilities */ = {
-			isa = XCSwiftPackageProductDependency;
-			productName = LFUtilities;
-		};
-		743155702B281CB700D141F4 /* AuthorizationManager */ = {
-			isa = XCSwiftPackageProductDependency;
-			productName = AuthorizationManager;
-		};
-		743155712B281CB700D141F4 /* NetSpendData */ = {
-			isa = XCSwiftPackageProductDependency;
-			productName = NetSpendData;
-		};
-		743155722B281CB700D141F4 /* OnboardingData */ = {
-			isa = XCSwiftPackageProductDependency;
-			productName = OnboardingData;
-		};
-		743155732B281CB700D141F4 /* OnboardingDomain */ = {
-			isa = XCSwiftPackageProductDependency;
-			productName = OnboardingDomain;
-		};
-		743155742B281CB700D141F4 /* iPhoneNumberField */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 743155752B281CB700D141F4 /* XCRemoteSwiftPackageReference "iPhoneNumberField" */;
-			productName = iPhoneNumberField;
-		};
-		743155762B281CB700D141F4 /* SmartyStreets */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 743155772B281CB700D141F4 /* XCRemoteSwiftPackageReference "smartystreets-ios-sdk" */;
-			productName = SmartyStreets;
-		};
-		743155782B281CB700D141F4 /* CoreNetwork */ = {
-			isa = XCSwiftPackageProductDependency;
-			productName = CoreNetwork;
-		};
-		743155792B281CB700D141F4 /* NetworkUtilities */ = {
-			isa = XCSwiftPackageProductDependency;
-			productName = NetworkUtilities;
-		};
-		7431557A2B281CB700D141F4 /* CodeScanner */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 7431557B2B281CB700D141F4 /* XCRemoteSwiftPackageReference "CodeScanner" */;
-			productName = CodeScanner;
-		};
-		7431557C2B281CB700D141F4 /* FirebaseMessaging */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 7431557D2B281CB700D141F4 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
-			productName = FirebaseMessaging;
-		};
-		743155822B281CB700D141F4 /* LFAccessibility */ = {
-			isa = XCSwiftPackageProductDependency;
-			productName = LFAccessibility;
-		};
-		743155832B281CB700D141F4 /* AccountService */ = {
-			isa = XCSwiftPackageProductDependency;
-			productName = AccountService;
-		};
-		743155842B281CB700D141F4 /* Services */ = {
-			isa = XCSwiftPackageProductDependency;
-			productName = Services;
-		};
-		743155852B281CB700D141F4 /* LFFeatureFlags */ = {
-			isa = XCSwiftPackageProductDependency;
-			productName = LFFeatureFlags;
-		};
-		743155862B281CB700D141F4 /* LFAuthentication */ = {
-			isa = XCSwiftPackageProductDependency;
-			productName = LFAuthentication;
-		};
-		743155872B281CB700D141F4 /* BiometricsManager */ = {
-			isa = XCSwiftPackageProductDependency;
-			productName = BiometricsManager;
-		};
-		743156472B295A0800D141F4 /* LFNoBankDashboard */ = {
-			isa = XCSwiftPackageProductDependency;
-			productName = LFNoBankDashboard;
 		};
 		743DA7AA2B43E14C000F5AD8 /* Factory */ = {
 			isa = XCSwiftPackageProductDependency;
@@ -5178,10 +4543,6 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 74CB167B2A9853F800C137F3 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
 			productName = FirebaseMessaging;
-		};
-		74FAC2AF2B2F044500C74E55 /* NoBankOnboarding */ = {
-			isa = XCSwiftPackageProductDependency;
-			productName = NoBankOnboarding;
 		};
 		A90B5CAE2B16E3A90092E430 /* LFFeatureFlags */ = {
 			isa = XCSwiftPackageProductDependency;

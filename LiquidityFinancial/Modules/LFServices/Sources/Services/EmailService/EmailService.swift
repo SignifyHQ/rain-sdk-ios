@@ -22,8 +22,6 @@ public class EmailService: CustomerSupportServiceProtocol {
       return ""
     case .Cardano:
       return ""
-    case .DogeCardNobank:
-      return "help@dogecard.com"
     case .none:
       return ""
     }
@@ -51,8 +49,6 @@ public class EmailService: CustomerSupportServiceProtocol {
       return ""
     case .Cardano:
       return ""
-    case .DogeCardNobank:
-      return "DogeCard Support Request - \(currentDate)"
     case .none:
       return ""
     }

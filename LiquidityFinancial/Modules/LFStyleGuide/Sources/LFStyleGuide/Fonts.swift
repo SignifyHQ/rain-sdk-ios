@@ -26,18 +26,18 @@ public enum Fonts {
   }
   
   static var montserratFont: Bool {
-    LFStyleGuide.target == .DogeCard || LFStyleGuide.target == .DogeCardNobank || LFStyleGuide.target == .CauseCard
+    LFStyleGuide.target == .DogeCard || LFStyleGuide.target == .CauseCard
   }
   
   static var orbitroFont: Bool {
-    LFStyleGuide.target == .DogeCard || LFStyleGuide.target == .DogeCardNobank || LFStyleGuide.target == .CauseCard
+    LFStyleGuide.target == .DogeCard || LFStyleGuide.target == .CauseCard
   }
   
   public static var black: FontConvertible {
     switch LFStyleGuide.target {
     case .Avalanche: return Inter.black
     case .Cardano: return Chivo.black
-    case .DogeCard, .DogeCardNobank, .CauseCard, .PrideCard, .PawsCard: return Lato.black
+    case .DogeCard, .CauseCard, .PrideCard, .PawsCard: return Lato.black
     default : return Inter.black
     }
   }
@@ -45,7 +45,7 @@ public enum Fonts {
     switch LFStyleGuide.target {
     case .Avalanche: return Inter.bold
     case .Cardano: return Chivo.bold
-    case .DogeCard, .DogeCardNobank, .CauseCard, .PrideCard, .PawsCard: return Lato.bold
+    case .DogeCard, .CauseCard, .PrideCard, .PawsCard: return Lato.bold
     default : return Inter.bold
     }
   }
@@ -53,7 +53,7 @@ public enum Fonts {
     switch LFStyleGuide.target {
     case .Avalanche: return Inter.extraBold
     case .Cardano: return Chivo.extraBold
-    case .DogeCard, .DogeCardNobank, .CauseCard, .PrideCard, .PawsCard: return Lato.bold
+    case .DogeCard, .CauseCard, .PrideCard, .PawsCard: return Lato.bold
     default : return Inter.extraBold
     }
   }
@@ -61,7 +61,7 @@ public enum Fonts {
     switch LFStyleGuide.target {
     case .Avalanche: return Inter.extraLight
     case .Cardano: return Chivo.extraLight
-    case .DogeCard, .DogeCardNobank, .CauseCard, .PrideCard, .PawsCard: return Lato.light
+    case .DogeCard, .CauseCard, .PrideCard, .PawsCard: return Lato.light
     default : return Inter.extraLight
     }
   }
@@ -69,7 +69,7 @@ public enum Fonts {
     switch LFStyleGuide.target {
     case .Avalanche: return Inter.light
     case .Cardano: return Chivo.light
-    case .DogeCard, .DogeCardNobank, .CauseCard, .PrideCard, .PawsCard: return Lato.light
+    case .DogeCard, .CauseCard, .PrideCard, .PawsCard: return Lato.light
     default : return Inter.light
     }
   }
@@ -77,7 +77,7 @@ public enum Fonts {
     switch LFStyleGuide.target {
     case .Avalanche: return Inter.medium
     case .Cardano: return Chivo.medium
-    case .DogeCard, .DogeCardNobank, .CauseCard, .PrideCard, .PawsCard: return Lato.medium
+    case .DogeCard, .CauseCard, .PrideCard, .PawsCard: return Lato.medium
     default : return Inter.medium
     }
   }
@@ -85,7 +85,7 @@ public enum Fonts {
     switch LFStyleGuide.target {
     case .Avalanche: return Inter.regular
     case .Cardano: return Chivo.regular
-    case .DogeCard, .DogeCardNobank, .CauseCard, .PrideCard, .PawsCard: return Lato.regular
+    case .DogeCard, .CauseCard, .PrideCard, .PawsCard: return Lato.regular
     default : return Lato.regular
     }
   }
@@ -93,7 +93,7 @@ public enum Fonts {
     switch LFStyleGuide.target {
     case .Avalanche: return Inter.semiBold
     case .Cardano: return Chivo.semiBold
-    case .DogeCard, .DogeCardNobank, .CauseCard, .PrideCard, .PawsCard: return Lato.bold
+    case .DogeCard, .CauseCard, .PrideCard, .PawsCard: return Lato.bold
     default : return Inter.semiBold
     }
   }
@@ -101,7 +101,7 @@ public enum Fonts {
     switch LFStyleGuide.target {
     case .Avalanche: return Inter.thin
     case .Cardano: return Chivo.thin
-    case .DogeCard, .DogeCardNobank, .CauseCard, .PrideCard, .PawsCard: return Lato.light
+    case .DogeCard, .CauseCard, .PrideCard, .PawsCard: return Lato.light
     default : return Inter.thin
     }
   }
