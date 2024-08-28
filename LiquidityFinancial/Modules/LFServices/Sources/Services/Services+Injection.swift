@@ -10,15 +10,6 @@ extension Container {
     }.singleton
   }
   
-  public var vaultService: Factory<VaultServiceProtocol> {
-    self {
-      VaultService(
-        vgsID: LFServices.vgsConfig.id,
-        vgsENV: LFServices.vgsConfig.env
-      )
-    }
-  }
-  
   public var portalService: Factory<PortalServiceProtocol> {
     self {
       PortalService()

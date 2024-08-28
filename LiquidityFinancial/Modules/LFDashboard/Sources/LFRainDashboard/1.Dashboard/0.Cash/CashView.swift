@@ -45,7 +45,6 @@ struct CashView: View {
         )
       case .transactions:
         TransactionListView(
-          filterType: .account,
           currencyType: viewModel.currencyType,
           transactionTypes: Constants.TransactionTypesRequest.fiat.types
         )

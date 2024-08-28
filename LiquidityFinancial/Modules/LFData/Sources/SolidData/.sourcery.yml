@@ -1,6 +1,0 @@
-sources:
-  - NetworkCore
-templates:
-  - ../../../../sourcery/Templates
-output:
-  ../DataTestHelpers/SolidData

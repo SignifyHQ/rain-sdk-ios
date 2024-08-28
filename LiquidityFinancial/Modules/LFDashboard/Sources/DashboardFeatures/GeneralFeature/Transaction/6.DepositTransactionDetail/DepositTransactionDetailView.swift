@@ -62,16 +62,6 @@ private extension DepositTransactionDetailView {
       }
       StatusView(transactionStatus: status)
         .padding(.bottom, status == .pending ? 0 : 16)
-      if status == .pending {
-        FullSizeButton(
-          title: L10N.Common.TransactionDetail.CancelDeposit.button,
-          isDisable: false,
-          isLoading: $viewModel.isCancelingDeposit,
-          type: .secondary
-        ) {
-          viewModel.cancelDepositTransaction(id: transaction.id)
-        }
-      }
     }
   }
   

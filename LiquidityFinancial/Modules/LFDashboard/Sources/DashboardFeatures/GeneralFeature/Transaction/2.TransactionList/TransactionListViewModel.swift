@@ -3,18 +3,11 @@ import Factory
 import AccountData
 import AccountDomain
 import LFUtilities
-import SolidData
-import SolidDomain
 
 @MainActor
 public class TransactionListViewModel: ObservableObject {
-  @LazyInjected(\.solidCardRepository) var solidCardRepository
   @LazyInjected(\.accountRepository) var accountRepository
   @LazyInjected(\.accountDataManager) var accountDataManager
-    
-  lazy var getCardTransactionsUseCase: SolidGetCardTransactionsUseCaseProtocol = {
-    SolidGetCardTransactionsUseCase(repository: solidCardRepository)
-  }()
   
   private lazy var getTransactionsListUseCase: GetTransactionsListUseCaseProtocol = {
     GetTransactionsListUseCase(repository: accountRepository)
@@ -27,7 +20,6 @@ public class TransactionListViewModel: ObservableObject {
   @Published var searchText = ""
   @Published var toastMessage: String?
 
-  let filterType: FilterType
   let cardID: String
   let currencyType: String
   let contractAddress: String?
@@ -38,13 +30,11 @@ public class TransactionListViewModel: ObservableObject {
   private var limit = 20
   
   public init(
-    filterType: FilterType,
     currencyType: String,
     contractAddress: String?,
     cardID: String,
     transactionTypes: [String]
   ) {
-    self.filterType = filterType
     self.currencyType = currencyType
     self.contractAddress = contractAddress
     self.cardID = cardID
@@ -91,12 +81,7 @@ public class TransactionListViewModel: ObservableObject {
 
 private extension TransactionListViewModel {
   func loadTransactions(offset: Int) async {
-    switch filterType {
-    case .account:
-      await loadAccountTransactions(offset: offset)
-    case .card:
-      await loadCardTransactions(offset: offset)
-    }
+    await loadAccountTransactions(offset: offset)
   }
   
   func loadAccountTransactions(offset: Int) async {
@@ -115,31 +100,5 @@ private extension TransactionListViewModel {
     } catch {
       log.error(error.userFriendlyMessage)
     }
-  }
-  
-  func loadCardTransactions(offset: Int) async {
-    do {
-      let parameters = APISolidCardTransactionsParameters(
-        cardId: cardID,
-        currencyType: Constants.CurrencyType.fiat.rawValue,
-        transactionTypes: Constants.transactionsTypes,
-        limit: limit,
-        offset: offset
-      )
-      let transactions = try await getCardTransactionsUseCase.execute(parameters: parameters)
-      
-      self.total = transactions.total
-      self.transactions += transactions.data.compactMap({ TransactionModel(from: $0) })
-    } catch {
-      log.error(error.userFriendlyMessage)
-      toastMessage = error.userFriendlyMessage
-    }
-  }
-}
-
-extension TransactionListViewModel {
-  public enum FilterType {
-    case account
-    case card
   }
 }

@@ -14,9 +14,6 @@ let package = Package(
       name: "NetSpendData",
       targets: ["NetSpendData"]),
     .library(
-      name: "SolidData",
-      targets: ["SolidData"]),
-    .library(
       name: "AccountData",
       targets: ["AccountData"]),
     .library(
@@ -71,20 +68,6 @@ let package = Package(
       dependencies: [
         "LFUtilities", "Factory",
         .product(name: "NetspendDomain", package: "LFDomain"),
-        .product(name: "NetworkUtilities", package: "LFNetwork"),
-        .product(name: "CoreNetwork", package: "LFNetwork"),
-        .product(name: "AccountService", package: "LFServices"),
-        .product(name: "BankService", package: "LFServices"),
-        .product(name: "Services", package: "LFServices")
-      ]
-    ),
-    .target(
-      name: "SolidData",
-      dependencies: [
-        "LFUtilities", "Factory", "AccountData",
-        .product(name: "NetspendDomain", package: "LFDomain"),
-        .product(name: "AccountDomain", package: "LFDomain"),
-        .product(name: "SolidDomain", package: "LFDomain"),
         .product(name: "NetworkUtilities", package: "LFNetwork"),
         .product(name: "CoreNetwork", package: "LFNetwork"),
         .product(name: "AccountService", package: "LFServices"),
@@ -183,7 +166,7 @@ let package = Package(
     .target(
       name: "DataTestHelpers",
       dependencies: [
-        "OnboardingData", "NetSpendData", "AccountData", "RewardData", "ZerohashData", "DevicesData", "CryptoChartData", "SolidData", "RainData", "PortalData",
+        "OnboardingData", "NetSpendData", "AccountData", "RewardData", "ZerohashData", "DevicesData", "CryptoChartData", "RainData", "PortalData",
         .product(name: "NetspendDomain", package: "LFDomain")
       ]
     ),
@@ -205,13 +188,6 @@ let package = Package(
       name: "NetSpendDataTests",
       dependencies: [
         "NetSpendData", "DataTestHelpers", "TestHelpers",
-        .product(name: "NetworkTestHelpers", package: "LFNetwork")
-      ]
-    ),
-    .testTarget(
-      name: "SolidDataTests",
-      dependencies: [
-        "SolidData", "DataTestHelpers", "TestHelpers",
         .product(name: "NetworkTestHelpers", package: "LFNetwork")
       ]
     ),

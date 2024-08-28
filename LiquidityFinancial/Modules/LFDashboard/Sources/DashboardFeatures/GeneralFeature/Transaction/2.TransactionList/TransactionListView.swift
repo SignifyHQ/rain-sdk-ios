@@ -8,7 +8,6 @@ public struct TransactionListView: View {
   @StateObject private var viewModel: TransactionListViewModel
 
   public init(
-    filterType: TransactionListViewModel.FilterType,
     currencyType: String,
     contractAddress: String? = nil,
     cardID: String? = nil,
@@ -16,7 +15,6 @@ public struct TransactionListView: View {
   ) {
     _viewModel = .init(
       wrappedValue: .init(
-        filterType: filterType,
         currencyType: currencyType,
         contractAddress: contractAddress,
         cardID: cardID ?? .empty,

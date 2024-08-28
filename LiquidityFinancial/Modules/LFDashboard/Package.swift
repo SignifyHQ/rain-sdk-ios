@@ -17,9 +17,6 @@ let package = Package(
       name: "GeneralFeature",
       targets: ["GeneralFeature"]),
     .library(
-      name: "SolidFeature",
-      targets: ["SolidFeature"]),
-    .library(
       name: "RainFeature",
       targets: ["RainFeature"])
   ],
@@ -50,8 +47,6 @@ let package = Package(
         .product(name: "CryptoChartData", package: "LFData"),
         .product(name: "OnboardingData", package: "LFData"),
         .product(name: "ExternalFundingData", package: "LFData"),
-        .product(name: "SolidData", package: "LFData"),
-        .product(name: "SolidDomain", package: "LFDomain"),
         .product(name: "AccountData", package: "LFData"),
         .product(name: "OnboardingDomain", package: "LFDomain"),
         .product(name: "AccountDomain", package: "LFDomain"),
@@ -60,25 +55,6 @@ let package = Package(
         .product(name: "BiometricsManager", package: "LFAuthentication")
       ],
       path: "Sources/DashboardFeatures/GeneralFeature"
-    ),
-    .target(
-      name: "SolidFeature",
-      dependencies: [
-        "LFUtilities", "LFStyleGuide", "LFLocalizable", "GeneralFeature", "LFRewards",
-        .product(name: "RewardData", package: "LFData"),
-        .product(name: "OnboardingData", package: "LFData"),
-        .product(name: "ExternalFundingData", package: "LFData"),
-        .product(name: "SolidData", package: "LFData"),
-        .product(name: "RewardDomain", package: "LFDomain"),
-        .product(name: "SolidDomain", package: "LFDomain"),
-        .product(name: "AccountData", package: "LFData"),
-        .product(name: "OnboardingDomain", package: "LFDomain"),
-        .product(name: "AccountDomain", package: "LFDomain"),
-        .product(name: "Services", package: "LFServices"),
-        .product(name: "AuthorizationManager", package: "LFNetwork"),
-        .product(name: "BiometricsManager", package: "LFAuthentication")
-      ],
-      path: "Sources/DashboardFeatures/SolidFeature"
     ),
     .target(
       name: "RainFeature",
@@ -119,14 +95,13 @@ let package = Package(
     .target(
       name: "LFRewardDashboard",
       dependencies: [
-        "LFUtilities", "LFStyleGuide", "LFLocalizable", "LFAccessibility", "CodeScanner", "LFRewards", "SolidFeature",
+        "LFUtilities", "LFStyleGuide", "LFLocalizable", "LFAccessibility", "CodeScanner", "LFRewards",
         .product(name: "OnboardingData", package: "LFData"),
         .product(name: "DevicesData", package: "LFData"),
         .product(name: "AuthorizationManager", package: "LFNetwork"),
         .product(name: "Services", package: "LFServices"),
         .product(name: "BiometricsManager", package: "LFAuthentication"),
-        .product(name: "LFAuthentication", package: "LFAuthentication"),
-        .product(name: "SolidOnboarding", package: "LFOnboarding")
+        .product(name: "LFAuthentication", package: "LFAuthentication")
       ],
       resources: [
         .process("ZResources")

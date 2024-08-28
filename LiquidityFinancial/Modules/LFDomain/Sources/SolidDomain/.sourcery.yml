@@ -1,7 +1,0 @@
-sources:
-  - Entities
-  - RepositoryProtocol
-templates:
-  - ../../../../sourcery/Templates
-output:
-  ../DomainTestHelpers/SolidDomain

@@ -21,7 +21,6 @@ struct RewardTabView: View {
         switch navigation {
         case .transactions:
           TransactionListView(
-            filterType: .account,
             currencyType: viewModel.currencyType,
             contractAddress: nil, // TODO: MinhNguyen - Will update it in the ENG-4319 ticket
             transactionTypes: viewModel.transactionTypes

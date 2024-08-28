@@ -4,7 +4,6 @@ public enum OnboardingProcessTypeEnum: String {
   case NETSPEND = "NETSPEND"
   case ZEROHASH = "ZERO_HASH"
   case LIQUIDITY = "LIQUIDITY"
-  case SOLID = "SOLID"
 }
 
 // sourcery: AutoMockable

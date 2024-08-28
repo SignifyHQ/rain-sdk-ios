@@ -55,13 +55,6 @@
     {
       "target" : {
         "containerPath" : "container:Modules\/LFData",
-        "identifier" : "SolidDataTests",
-        "name" : "SolidDataTests"
-      }
-    },
-    {
-      "target" : {
-        "containerPath" : "container:Modules\/LFData",
         "identifier" : "ZerohashDataTests",
         "name" : "ZerohashDataTests"
       }
@@ -90,22 +83,8 @@
     {
       "target" : {
         "containerPath" : "container:Modules\/LFDomain",
-        "identifier" : "SolidDomainTests",
-        "name" : "SolidDomainTests"
-      }
-    },
-    {
-      "target" : {
-        "containerPath" : "container:Modules\/LFDomain",
         "identifier" : "ZerohashDomainTests",
         "name" : "ZerohashDomainTests"
-      }
-    },
-    {
-      "target" : {
-        "containerPath" : "container:Modules\/LFOnboarding",
-        "identifier" : "SolidOnboardingTests",
-        "name" : "SolidOnboardingTests"
       }
     }
   ],
