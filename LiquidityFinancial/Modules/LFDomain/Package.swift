@@ -20,9 +20,6 @@ let package = Package(
       name: "RewardDomain",
       targets: ["RewardDomain"]),
     .library(
-      name: "ZerohashDomain",
-      targets: ["ZerohashDomain"]),
-    .library(
       name: "DevicesDomain",
       targets: ["DevicesDomain"]),
     .library(
@@ -67,10 +64,6 @@ let package = Package(
       dependencies: []
     ),
     .target(
-      name: "ZerohashDomain",
-      dependencies: ["AccountDomain"]
-    ),
-    .target(
       name: "DevicesDomain",
       dependencies: []
     ),
@@ -96,15 +89,12 @@ let package = Package(
     .target(
       name: "DomainTestHelpers",
       dependencies: [
-        "AccountDomain", "CryptoChartDomain", "DevicesDomain", "ZerohashDomain", "OnboardingDomain", "NetspendDomain", "RainDomain", "PortalDomain"
+        "AccountDomain", "CryptoChartDomain", "DevicesDomain", "OnboardingDomain", "NetspendDomain", "RainDomain", "PortalDomain"
       ]
     ),
     .testTarget(
       name: "OnboardingDomainTests",
       dependencies: ["OnboardingDomain", "TestHelpers", "DomainTestHelpers"]),
-    .testTarget(
-      name: "ZerohashDomainTests",
-      dependencies: ["ZerohashDomain", "TestHelpers", "DomainTestHelpers"]),
     .testTarget(
       name: "CryptoChartDomainTests",
       dependencies: ["CryptoChartDomain", "TestHelpers", "DomainTestHelpers"]),

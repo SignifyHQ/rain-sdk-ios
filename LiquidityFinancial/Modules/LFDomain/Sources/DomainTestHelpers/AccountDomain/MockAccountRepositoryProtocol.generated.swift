@@ -4,7 +4,6 @@
 
 import Foundation
 import AccountDomain
-import ZerohashDomain
 import OnboardingDomain
 import RainDomain
 import Combine

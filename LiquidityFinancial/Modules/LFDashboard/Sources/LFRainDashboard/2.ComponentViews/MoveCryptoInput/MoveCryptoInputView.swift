@@ -51,24 +51,6 @@ struct MoveCryptoInputView: View {
     }
     .navigationLink(item: $viewModel.navigation) { navigation in
       switch navigation {
-      case .confirmSell(let quoteEntity, let accountID):
-        ConfirmBuySellCryptoView(
-          viewModel: ConfirmBuySellCryptoViewModel(
-            type: .sellCrypto(
-              quote: quoteEntity,
-              accountID: accountID
-            )
-          )
-        )
-      case .confirmBuy(let quoteEntity, let accountID):
-        ConfirmBuySellCryptoView(
-          viewModel: ConfirmBuySellCryptoViewModel(
-            type: .buyCrypto(
-            quote: quoteEntity,
-              accountID: accountID
-            )
-          )
-        )
       case .confirmTransfer(let viewModel):
         ConfirmTransferMoneyView(
           viewModel: viewModel,

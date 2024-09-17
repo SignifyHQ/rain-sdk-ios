@@ -19,13 +19,6 @@
   "testTargets" : [
     {
       "target" : {
-        "containerPath" : "container:Modules\/LFAuthentication",
-        "identifier" : "AuthenticationTests",
-        "name" : "AuthenticationTests"
-      }
-    },
-    {
-      "target" : {
         "containerPath" : "container:Modules\/LFData",
         "identifier" : "CryptoChartDataTests",
         "name" : "CryptoChartDataTests"
@@ -54,13 +47,6 @@
     },
     {
       "target" : {
-        "containerPath" : "container:Modules\/LFData",
-        "identifier" : "ZerohashDataTests",
-        "name" : "ZerohashDataTests"
-      }
-    },
-    {
-      "target" : {
         "containerPath" : "container:Modules\/LFDomain",
         "identifier" : "CryptoChartDomainTests",
         "name" : "CryptoChartDomainTests"
@@ -78,13 +64,6 @@
         "containerPath" : "container:Modules\/LFDomain",
         "identifier" : "OnboardingDomainTests",
         "name" : "OnboardingDomainTests"
-      }
-    },
-    {
-      "target" : {
-        "containerPath" : "container:Modules\/LFDomain",
-        "identifier" : "ZerohashDomainTests",
-        "name" : "ZerohashDomainTests"
       }
     }
   ],

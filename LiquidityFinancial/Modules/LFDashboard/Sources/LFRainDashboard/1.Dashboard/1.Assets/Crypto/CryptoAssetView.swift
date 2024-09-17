@@ -9,6 +9,7 @@ struct CryptoAssetView: View {
   @StateObject private var viewModel: CryptoAssetViewModel
 
   init(asset: AssetModel) {
+    print(asset)
     _viewModel = .init(
       wrappedValue: .init(asset: asset)
     )

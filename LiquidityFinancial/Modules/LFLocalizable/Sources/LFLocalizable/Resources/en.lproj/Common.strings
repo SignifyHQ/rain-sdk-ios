@@ -183,7 +183,7 @@
 "backupWallet.active.title" = "Active";
 "backupWallet.setupPinCode.title" = "Set up PIN";
 "backupWallet.backupWithICloud.title" = "Backup with iCloud";
-"backupWallet.disclosure.title" = "Backing up helps you recover your account in case you lose ore reset your device";
+"backupWallet.disclosure.title" = "Backing up helps you recover your account in case you lose or reset your device";
 
 // Baclup By PinCode
 "backupByPinCode.setup.title" = "set up your backup pin";

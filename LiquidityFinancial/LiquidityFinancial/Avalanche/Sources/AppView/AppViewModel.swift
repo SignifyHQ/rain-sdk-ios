@@ -7,7 +7,6 @@ import RainOnboarding
 import AccountService
 import BankService
 import NetSpendData
-import ZerohashData
 
 class AppViewModel: ObservableObject {
   
@@ -36,9 +35,6 @@ class AppViewModel: ObservableObject {
   @MainActor func registerInjection() {
     Container.shared.fiatAccountService.register {
       NetspendAccountService()
-    }
-    Container.shared.cryptoAccountService.register {
-      ZerohashAccountService()
     }
     Container.shared.bankServiceConfig.register {
       NetspendBankService()

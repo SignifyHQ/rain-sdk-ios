@@ -6,7 +6,6 @@ import LFUtilities
 import NetworkUtilities
 
 public enum AccountRoute {
-  case createZeroHashAccount
   case getUser
   case createPassword(password: String)
   case changePassword(oldPassword: String, newPassword: String)
@@ -44,8 +43,6 @@ extension AccountRoute: LFRoute {
     switch self {
     case .logout:
       return "v1/user/logout"
-    case .createZeroHashAccount:
-      return "/v1/zerohash/accounts"
     case .getUser:
       return "/v2/user"
     case .createPassword:
@@ -114,7 +111,6 @@ extension AccountRoute: LFRoute {
         .verifyEmailRequest,
         .verifyEmail,
         .createPendingTransaction,
-        .createZeroHashAccount,
         .logout,
         .createWalletAddress,
         .addToWaitList,
@@ -159,8 +155,7 @@ extension AccountRoute: LFRoute {
   
   public var parameters: Parameters? {
     switch self {
-    case .createZeroHashAccount,
-        .getUser,
+    case .getUser,
         .verifyEmailRequest,
         .getTransactionDetail,
         .logout,
@@ -271,8 +266,7 @@ extension AccountRoute: LFRoute {
         .enableMFA,
         .disableMFA:
       return .json
-    case .createZeroHashAccount,
-        .getAvailableRewardCurrencies,
+    case .getAvailableRewardCurrencies,
         .getSelectedRewardCurrency,
         .getUser,
         .verifyEmailRequest,

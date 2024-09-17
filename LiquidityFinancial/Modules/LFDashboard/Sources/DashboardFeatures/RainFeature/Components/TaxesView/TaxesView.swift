@@ -3,8 +3,6 @@ import LFStyleGuide
 import LFUtilities
 import LFLocalizable
 import SwiftUI
-import ZerohashData
-import ZerohashDomain
 
 public struct TaxesView: View {
   public init() {}
@@ -38,18 +36,18 @@ public struct TaxesView: View {
   
   private var content: some View {
     Group {
-      switch viewModel.status {
-      case .idle, .loading:
-        loading
-      case let .success(items):
-        if items.isEmpty {
-          emptyTaxView
-        } else {
-          rows(items: items)
-        }
-      case .failure:
-        failure
-      }
+//      switch viewModel.status {
+//      case .idle, .loading:
+//        loading
+//      case let .success(items):
+//        if items.isEmpty {
+//          emptyTaxView
+//        } else {
+//          rows(items: items)
+//        }
+//      case .failure:
+//        failure
+//      }
     }
   }
 }
@@ -78,22 +76,22 @@ extension TaxesView {
     .frame(maxWidth: .infinity)
   }
   
-  @ViewBuilder
-  private func rows(items: [APITaxFile]) -> some View {
-    ScrollView {
-      VStack(spacing: 10) {
-        ForEach(items) { item in
-          ArrowButton(image: nil, title: item.name ?? "", value: item.value, isLoading: .constant(item == viewModel.loadingTaxFile), action: {
-            viewModel.selected(taxFile: item)
-          })
-        }
-        
-        Spacer()
-      }
-      .padding(.horizontal, 30)
-      .padding(.vertical, 20)
-    }
-  }
+//  @ViewBuilder
+//  private func rows(items: [APITaxFile]) -> some View {
+//    ScrollView {
+//      VStack(spacing: 10) {
+//        ForEach(items) { item in
+//          ArrowButton(image: nil, title: item.name ?? "", value: item.value, isLoading: .constant(item == viewModel.loadingTaxFile), action: {
+//            viewModel.selected(taxFile: item)
+//          })
+//        }
+//        
+//        Spacer()
+//      }
+//      .padding(.horizontal, 30)
+//      .padding(.vertical, 20)
+//    }
+//  }
   
   private var emptyTaxView: some View {
     VStack(spacing: 12) {
@@ -113,15 +111,15 @@ extension TaxesView {
   }
 }
 
-private extension APITaxFile {
-  var createAtDate: Date {
-    LiquidityDateFormatter.iso8601WithMilliseconds.parseToDate(from: createdAt ?? "") ?? Date()
-  }
-  
-  var value: String {
-    L10N.Common.Taxes.value(createAtDate)
-  }
-}
+//private extension APITaxFile {
+//  var createAtDate: Date {
+//    LiquidityDateFormatter.iso8601WithMilliseconds.parseToDate(from: createdAt ?? "") ?? Date()
+//  }
+//  
+//  var value: String {
+//    L10N.Common.Taxes.value(createAtDate)
+//  }
+//}
 
 #if DEBUG
 

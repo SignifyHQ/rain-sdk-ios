@@ -2,7 +2,6 @@ import SwiftUI
 import LFLocalizable
 import LFStyleGuide
 import LFUtilities
-import ZerohashDomain
 import Services
 import GeneralFeature
 

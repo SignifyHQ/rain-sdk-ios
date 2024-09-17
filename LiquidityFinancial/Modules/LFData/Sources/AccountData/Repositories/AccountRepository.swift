@@ -19,10 +19,6 @@ public class AccountRepository: AccountRepositoryProtocol {
     self.auth = auth
   }
   
-  public func createZeroHashAccount() async throws -> ZeroHashAccount {
-    return try await accountAPI.createZeroHashAccount()
-  }
-  
   public func getUser() async throws -> LFUser {
     return try await accountAPI.getUser()
   }

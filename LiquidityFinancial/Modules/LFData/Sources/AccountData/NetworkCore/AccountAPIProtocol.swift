@@ -3,7 +3,6 @@ import OnboardingData
 
 // sourcery: AutoMockable
 public protocol AccountAPIProtocol {
-  func createZeroHashAccount() async throws -> APIZeroHashAccount
   func getUser() async throws -> APIUser
   func createPassword(password: String) async throws
   func changePassword(oldPassword: String, newPassword: String) async throws

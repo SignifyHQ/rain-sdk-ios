@@ -5,9 +5,7 @@ import LFStyleGuide
 import Factory
 import AccountDomain
 import Combine
-import ZerohashDomain
 import AccountService
-import ZerohashData
 import GeneralFeature
 import PortalData
 import PortalDomain
@@ -22,8 +20,6 @@ final class MoveCryptoInputViewModel: ObservableObject {
   @LazyInjected(\.portalRepository) var portalRepository
   @LazyInjected(\.rainRepository) var rainRepository
   @LazyInjected(\.portalStorage) var portalStorage
-  @LazyInjected(\.zerohashRepository) var zerohashRepository
-  @LazyInjected(\.cryptoAccountService) var cryptoAccountService
   @LazyInjected(\.fiatAccountService) var fiatAccountService
   @LazyInjected(\.portalService) var portalService
   
@@ -46,14 +42,6 @@ final class MoveCryptoInputViewModel: ObservableObject {
     }
   }
   
-  private lazy var getSellCryptoQouteUseCase: GetSellQuoteUseCaseProtocol = {
-    GetSellQuoteUseCase(repository: zerohashRepository)
-  }()
-  
-  private lazy var getBuyCryptoQouteUseCase: GetBuyQuoteUseCaseProtocol = {
-    GetBuyQuoteUseCase(repository: zerohashRepository)
-  }()
-  
   private lazy var sendEthUseCase: SendEthUseCaseProtocol = {
     SendEthUseCase(repository: portalRepository)
   }()
@@ -74,7 +62,7 @@ final class MoveCryptoInputViewModel: ObservableObject {
   init(type: Kind, assetModel: AssetModel) {
     self.type = type
     self.assetModel = assetModel
-    getAccount()
+
     observeAccounts()
     generateGridValues()
   }
@@ -82,25 +70,6 @@ final class MoveCryptoInputViewModel: ObservableObject {
 
 // MARK: - API Handle
 private extension MoveCryptoInputViewModel {
-  func getAccount() {
-    let cryptoId = self.assetModel.id
-    Task {
-      if type == .buyCrypto {
-        let fiatAccounts = try await getFiatAccounts()
-        self.accountDataManager.addOrUpdateAccounts(fiatAccounts)
-        
-        if let fiatAccount = fiatAccounts.first {
-          self.accountDataManager.fiatAccountID = fiatAccount.id
-        }
-      }
-      let cryptoAccount = try await self.cryptoAccountService.getAccountDetail(id: cryptoId)
-      self.accountDataManager.addOrUpdateAccount(cryptoAccount)
-      self.accountDataManager.cryptoAccountID = cryptoId
-      
-      generateGridValues()
-    }
-  }
-  
   func generateRewardWithdrawalQuote(shouldSaveAddress: Bool) {
     let viewModel = ConfirmTransferMoneyViewModel(
       kind: .withdrawalReward(shouldSaveAddress: shouldSaveAddress),
@@ -143,21 +112,13 @@ private extension MoveCryptoInputViewModel {
           signature: signature
         )
         
-        // TODO(Volo): Refactor fee response for Portal
-        let feeResponse = APILockedNetworkFeeResponse(
-          quoteId: .empty,
-          amount: amount,
-          maxAmount: false,
-          fee: txFee
-        )
-        
         let viewModel = ConfirmTransferMoneyViewModel(
           kind: .withdrawalCollateral(addresses: withdrawAddresses,signature: signature, shouldSaveAddress: shouldSaveAddress),
           assetModel: assetModel,
           amount: amount,
+          blockchainFee: txFee,
           address: address,
-          nickname: nickname,
-          feeLockedResponse: feeResponse
+          nickname: nickname
         )
         navigation = .confirmTransfer(viewModel: viewModel)
       } catch {
@@ -200,20 +161,14 @@ private extension MoveCryptoInputViewModel {
           contractAddress: assetModel.id.nilIfEmpty,
           amount: amount
         )
-        // TODO(Volo): Refactor fee response for Portal
-        let feeResponse = APILockedNetworkFeeResponse(
-          quoteId: .empty,
-          amount: amount,
-          maxAmount: false,
-          fee: txFee
-        )
+        
         let viewModel = ConfirmTransferMoneyViewModel(
           kind: kind,
           assetModel: assetModel,
           amount: amount,
+          blockchainFee: txFee, 
           address: address,
-          nickname: nickname,
-          feeLockedResponse: feeResponse
+          nickname: nickname
         )
         
         navigation = .confirmTransfer(viewModel: viewModel)
@@ -223,35 +178,35 @@ private extension MoveCryptoInputViewModel {
     }
   }
   
-  func fetchBuyCryptoQuote(amount: String) {
-    Task { @MainActor in
-      defer { isPerformingAction = false }
-      isPerformingAction = true
-      do {
-        let accountID = assetModel.id
-        let entity = try await getBuyCryptoQouteUseCase.execute(accountId: accountID, amount: nil, quantity: amount)
-        navigation = .confirmBuy(entity, accountId: accountID)
-      } catch {
-        log.error(error)
-        self.toastMessage = error.userFriendlyMessage
-      }
-    }
-  }
-  
-  func fetchSellCryptoQuote(amount: String) {
-    Task { @MainActor in
-      defer { isPerformingAction = false }
-      isPerformingAction = true
-      do {
-        let accountID = assetModel.id
-        let entity = try await getSellCryptoQouteUseCase.execute(accountId: accountID, amount: nil, quantity: amount)
-        navigation = .confirmSell(entity, accountId: accountID)
-      } catch {
-        log.error(error)
-        self.toastMessage = error.userFriendlyMessage
-      }
-    }
-  }
+//  func fetchBuyCryptoQuote(amount: String) {
+//    Task { @MainActor in
+//      defer { isPerformingAction = false }
+//      isPerformingAction = true
+//      do {
+//        let accountID = assetModel.id
+//        let entity = try await getBuyCryptoQouteUseCase.execute(accountId: accountID, amount: nil, quantity: amount)
+//        navigation = .confirmBuy(entity, accountId: accountID)
+//      } catch {
+//        log.error(error)
+//        self.toastMessage = error.userFriendlyMessage
+//      }
+//    }
+//  }
+//  
+//  func fetchSellCryptoQuote(amount: String) {
+//    Task { @MainActor in
+//      defer { isPerformingAction = false }
+//      isPerformingAction = true
+//      do {
+//        let accountID = assetModel.id
+//        let entity = try await getSellCryptoQouteUseCase.execute(accountId: accountID, amount: nil, quantity: amount)
+//        navigation = .confirmSell(entity, accountId: accountID)
+//      } catch {
+//        log.error(error)
+//        self.toastMessage = error.userFriendlyMessage
+//      }
+//    }
+//  }
   
   func getFiatAccounts() async throws -> [AccountModel] {
     let accounts = try await fiatAccountService.getAccounts()
@@ -538,9 +493,9 @@ extension MoveCryptoInputViewModel {
     Haptic.impact(.light).generate()
     switch type {
     case .buyCrypto:
-      fetchBuyCryptoQuote(amount: "\(amount)")
+      break //fetchBuyCryptoQuote(amount: "\(amount)")
     case .sellCrypto:
-      fetchSellCryptoQuote(amount: "\(amount)")
+      break //fetchSellCryptoQuote(amount: "\(amount)")
     case .sendCrypto:
       fetchTransferMoneyQuote(kind: .sendCrypto)
     case let .withdrawCollateral(_, _, shouldSaveAddress):
@@ -642,8 +597,6 @@ extension MoveCryptoInputViewModel {
   }
   
   enum Navigation {
-    case confirmSell(GetSellQuoteEntity, accountId: String)
-    case confirmBuy(GetBuyQuoteEntity, accountId: String)
     case confirmTransfer(viewModel: ConfirmTransferMoneyViewModel)
   }
   

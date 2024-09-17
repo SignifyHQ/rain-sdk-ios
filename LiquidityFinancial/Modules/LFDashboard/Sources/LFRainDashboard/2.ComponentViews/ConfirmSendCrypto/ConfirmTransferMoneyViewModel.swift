@@ -3,7 +3,6 @@ import Combine
 import Factory
 import Services
 import PortalDomain
-import ZerohashDomain
 import LFLocalizable
 import LFUtilities
 import AccountService
@@ -32,10 +31,10 @@ final class ConfirmTransferMoneyViewModel: ObservableObject {
   
   let kind: Kind
   let amount: Double
+  let blockchainFee: Double?
   let address: String
   let nickname: String
   let assetModel: AssetModel
-  let feeLockedResponse: APILockedNetworkFeeResponse?
   
   private lazy var sendEthUseCase: SendEthUseCaseProtocol = {
     SendEthUseCase(repository: portalRepository)
@@ -58,7 +57,7 @@ final class ConfirmTransferMoneyViewModel: ObservableObject {
   }()
   
   var fee: Double {
-    feeLockedResponse?.fee ?? 0
+    blockchainFee ?? 0
   }
   
   var amountInput: String {
@@ -84,16 +83,16 @@ final class ConfirmTransferMoneyViewModel: ObservableObject {
     kind: Kind,
     assetModel: AssetModel,
     amount: Double,
+    blockchainFee: Double? = nil,
     address: String,
-    nickname: String,
-    feeLockedResponse: APILockedNetworkFeeResponse? = nil
+    nickname: String
   ) {
     self.kind = kind
     self.assetModel = assetModel
     self.amount = amount
     self.address = address
     self.nickname = nickname
-    self.feeLockedResponse = feeLockedResponse
+    self.blockchainFee = blockchainFee
   }
 }
 

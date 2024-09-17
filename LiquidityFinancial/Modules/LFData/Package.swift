@@ -20,9 +20,6 @@ let package = Package(
       name: "RewardData",
       targets: ["RewardData"]),
     .library(
-      name: "ZerohashData",
-      targets: ["ZerohashData"]),
-    .library(
       name: "DevicesData",
       targets: ["DevicesData"]),
     .library(
@@ -100,15 +97,6 @@ let package = Package(
       ]
     ),
     .target(
-      name: "ZerohashData",
-      dependencies: [
-        "Factory", "LFUtilities", "AccountData",
-        .product(name: "ZerohashDomain", package: "LFDomain"),
-        .product(name: "NetworkUtilities", package: "LFNetwork"),
-        .product(name: "CoreNetwork", package: "LFNetwork")
-      ]
-    ),
-    .target(
       name: "DevicesData",
       dependencies: [
         "Factory",
@@ -166,7 +154,7 @@ let package = Package(
     .target(
       name: "DataTestHelpers",
       dependencies: [
-        "OnboardingData", "NetSpendData", "AccountData", "RewardData", "ZerohashData", "DevicesData", "CryptoChartData", "RainData", "PortalData",
+        "OnboardingData", "NetSpendData", "AccountData", "RewardData", "DevicesData", "CryptoChartData", "RainData", "PortalData",
         .product(name: "NetspendDomain", package: "LFDomain")
       ]
     ),
@@ -188,13 +176,6 @@ let package = Package(
       name: "NetSpendDataTests",
       dependencies: [
         "NetSpendData", "DataTestHelpers", "TestHelpers",
-        .product(name: "NetworkTestHelpers", package: "LFNetwork")
-      ]
-    ),
-    .testTarget(
-      name: "ZerohashDataTests",
-      dependencies: [
-        "ZerohashData", "DataTestHelpers", "TestHelpers",
         .product(name: "NetworkTestHelpers", package: "LFNetwork")
       ]
     )

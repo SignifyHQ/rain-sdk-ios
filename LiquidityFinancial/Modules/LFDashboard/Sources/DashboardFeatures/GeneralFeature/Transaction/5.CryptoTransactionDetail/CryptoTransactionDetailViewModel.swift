@@ -1,7 +1,6 @@
 import Foundation
 import Factory
 import Services
-import ZerohashData
 
 class CryptoTransactionDetailViewModel: ObservableObject {
   @Published var showIndicator: Bool = false

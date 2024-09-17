@@ -9,11 +9,4 @@ extension Container {
       DefaultAccountService()
     }
   }
-  
-  public var cryptoAccountService: Factory<AccountsServiceProtocol> {
-    Factory(self) {
-      DefaultAccountService()
-    }
-  }
-  
 }

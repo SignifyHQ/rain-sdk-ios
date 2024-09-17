@@ -16,7 +16,6 @@ class CryptoAssetViewModel: ObservableObject {
   @LazyInjected(\.accountRepository) var accountRepository
   @LazyInjected(\.marketManager) var marketManager
   @LazyInjected(\.analyticsService) var analyticsService
-  @LazyInjected(\.cryptoAccountService) var cryptoAccountService
 
   @Published var loading: Bool = false
   @Published var showTransferSheet: Bool = false
@@ -88,15 +87,6 @@ private extension CryptoAssetViewModel {
     marketManager.clearData()
     Task {
       try? await marketManager.fetchData(cryptoCurrency: type.rawValue)
-    }
-  }
-  
-  func getCryptoAccount() async {
-    do {
-      let account = try await cryptoAccountService.getAccountDetail(id: self.asset.id)
-      self.accountDataManager.addOrUpdateAccount(account)
-    } catch {
-      toastMessage = error.userFriendlyMessage
     }
   }
   
@@ -180,9 +170,6 @@ extension CryptoAssetViewModel {
   
   func refresh() async {
     await withTaskGroup(of: Void.self) { group in
-      group.addTask {
-        await self.getCryptoAccount()
-      }
       group.addTask {
         await self.loadTransactions()
       }
