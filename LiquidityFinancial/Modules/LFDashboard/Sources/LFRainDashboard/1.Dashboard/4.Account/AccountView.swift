@@ -273,13 +273,13 @@ private extension AccountsView {
 //      ) {
 //        viewModel.bankStatementTapped()
 //      }
-      ArrowButton(
-        image: GenImages.CommonImages.Accounts.tax.swiftUIImage,
-        title: L10N.Common.AccountView.taxes,
-        value: nil
-      ) {
-        viewModel.openTaxes()
-      }
+//      ArrowButton(
+//        image: GenImages.CommonImages.Accounts.tax.swiftUIImage,
+//        title: L10N.Common.AccountView.taxes,
+//        value: nil
+//      ) {
+//        viewModel.openTaxes()
+//      }
       if !viewModel.notificationsEnabled {
         ArrowButton(
           image: GenImages.CommonImages.Accounts.notifications.swiftUIImage,

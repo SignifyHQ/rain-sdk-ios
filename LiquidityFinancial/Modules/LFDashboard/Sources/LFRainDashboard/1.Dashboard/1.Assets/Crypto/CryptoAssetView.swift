@@ -84,19 +84,19 @@ private extension CryptoAssetView {
     ScrollView(showsIndicators: false) {
       VStack(spacing: 10) {
         balance
-        priceView
-        CryptoChartView(
-          filterOptionSubject: viewModel.filterOptionSubject,
-          chartOptionSubject: viewModel.chartOptionSubject
-        )
-        .setHighlightValueEnable(false)
-        .setGridXEnable(false)
-        .setGridYEnable(true)
-        .frame(height: 184)
-        .padding(.horizontal, -30)
-        .onTapGesture {
-          viewModel.cryptoChartTapped()
-        }
+//        priceView
+//        CryptoChartView(
+//          filterOptionSubject: viewModel.filterOptionSubject,
+//          chartOptionSubject: viewModel.chartOptionSubject
+//        )
+//        .setHighlightValueEnable(false)
+//        .setGridXEnable(false)
+//        .setGridYEnable(true)
+//        .frame(height: 184)
+//        .padding(.horizontal, -30)
+//        .onTapGesture {
+//          viewModel.cryptoChartTapped()
+//        }
         
         BalanceAlertView(type: .crypto, hasContacts: true, cryptoBalance: viewModel.asset.availableBalance) {
           viewModel.walletRowTapped()
@@ -217,20 +217,21 @@ private extension CryptoAssetView {
           icon.foregroundColor(Colors.primary.swiftUIColor)
         }
       }
-      HStack(spacing: 4) {
-        Text(viewModel.usdBalance)
-          .foregroundColor(Colors.label.swiftUIColor)
-        Text(viewModel.fluctuationAmmount)
-          .foregroundColor(Colors.label.swiftUIColor.opacity(0.5))
-      }
-      .font(Fonts.bold.swiftUIFont(size: Constants.FontSize.small.value))
-      .padding(.vertical, 8)
-      .padding(.horizontal, 12)
-      .background(
-        Rectangle()
-          .cornerRadius(32)
-          .foregroundColor(Colors.secondaryBackground.swiftUIColor)
-      )
+      Spacer()
+//      HStack(spacing: 4) {
+//        Text(viewModel.usdBalance)
+//          .foregroundColor(Colors.label.swiftUIColor)
+//        Text(viewModel.fluctuationAmmount)
+//          .foregroundColor(Colors.label.swiftUIColor.opacity(0.5))
+//      }
+//      .font(Fonts.bold.swiftUIFont(size: Constants.FontSize.small.value))
+//      .padding(.vertical, 8)
+//      .padding(.horizontal, 12)
+//      .background(
+//        Rectangle()
+//          .cornerRadius(32)
+//          .foregroundColor(Colors.secondaryBackground.swiftUIColor)
+//      )
     }
   }
   

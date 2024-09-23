@@ -425,7 +425,7 @@ public extension Constants {
 public extension Constants {
   
   static var smartyStreetsHostName = "www.smartystreets.com"
-  static var smartyStreetsId = "105107630856945597"
+  static var smartyStreetsId = "190944838438598167"
   static var smartyStreetsLicense = "us-autocomplete-pro-cloud"
   
 }
