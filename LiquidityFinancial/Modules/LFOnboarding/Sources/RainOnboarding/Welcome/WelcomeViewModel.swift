@@ -12,6 +12,7 @@ import Services
 
 final class WelcomeViewModel: ObservableObject {
   @LazyInjected(\.analyticsService) var analyticsService
+  @LazyInjected(\.authorizationManager) var authorizationManager
 
   @Published var isPushToNextStep: Bool = false
   
@@ -26,5 +27,9 @@ extension WelcomeViewModel {
   
   func onClickedContinueButton() {
     isPushToNextStep = true
+  }
+  
+  func forcedLogout() {
+    NotificationCenter.default.post(name: authorizationManager.logOutForcedName, object: nil)
   }
 }

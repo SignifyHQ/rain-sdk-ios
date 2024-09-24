@@ -92,13 +92,20 @@ extension ProfileViewModel {
     Task {
       do {
         if animated {
-          defer {
-            isLoading = false
-          }
           isLoading = true
         }
-        async let deregisterEntity = deviceDeregisterUseCase.execute(deviceId: LFUtilities.deviceId, token: UserDefaults.lastestFCMToken)
+        
+        defer {
+          isLoading = false
+        }
+        
         async let logoutEntity = accountRepository.logout()
+        async let deregisterEntity = deviceDeregisterUseCase
+          .execute(
+            deviceId: LFUtilities.deviceId,
+            token: UserDefaults.lastestFCMToken
+          )
+        
         let deregister = try await deregisterEntity
         let logout = try await logoutEntity
         

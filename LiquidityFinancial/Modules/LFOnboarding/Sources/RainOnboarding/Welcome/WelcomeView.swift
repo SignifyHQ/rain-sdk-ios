@@ -20,7 +20,10 @@ struct WelcomeView: View {
         .foregroundColor(Colors.label.swiftUIColor)
         .padding(.vertical, 12)
       mainContent
-      continueButton
+      VStack(spacing: 12) {
+        continueButton
+        logoutButton
+      }
     }
     .padding(.horizontal, 30)
     .padding(.bottom, 12)
@@ -109,6 +112,17 @@ private extension WelcomeView {
       isLoading: .constant(false)
     ) {
       viewModel.onClickedContinueButton()
+    }
+  }
+  
+  var logoutButton: some View {
+    FullSizeButton(
+      title: L10N.Common.Profile.Logout.title,
+      isDisable: false,
+      isLoading: .constant(false),
+      type: .destructive
+    ) {
+      viewModel.forcedLogout()
     }
   }
 }

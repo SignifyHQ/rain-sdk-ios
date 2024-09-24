@@ -158,6 +158,10 @@ extension AccountReviewStatusViewModel {
   func closePopup() {
     popup = nil
   }
+  
+  func forcedLogout() {
+    NotificationCenter.default.post(name: authorizationManager.logOutForcedName, object: nil)
+  }
 }
 
 // MARK: - Private Functions
@@ -191,10 +195,6 @@ private extension AccountReviewStatusViewModel {
         log.error(error.userFriendlyMessage)
       }
     }
-  }
-  
-  func forcedLogout() {
-    NotificationCenter.default.post(name: authorizationManager.logOutForcedName, object: nil)
   }
   
   func handleUnclearAccountReviewStatus(user: LFUser) {

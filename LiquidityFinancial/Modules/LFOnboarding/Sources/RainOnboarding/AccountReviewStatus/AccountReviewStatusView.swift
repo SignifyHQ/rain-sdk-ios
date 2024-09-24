@@ -112,12 +112,30 @@ private extension AccountReviewStatusView {
   func buttonGroup(info: AccountReviewInformation) -> some View {
     VStack(spacing: 12) {
       if let secondary = info.secondary {
-        FullSizeButton(title: secondary, isDisable: false, type: .secondary) {
+        FullSizeButton(
+          title: secondary,
+          isDisable: false,
+          type: .secondary
+        ) {
           viewModel.secondaryAction()
         }
       }
-      FullSizeButton(title: info.primary, isDisable: false, isLoading: $viewModel.isLoading) {
+      
+      FullSizeButton(
+        title: info.primary,
+        isDisable: false,
+        isLoading: $viewModel.isLoading
+      ) {
         viewModel.primaryAction()
+      }
+      
+      FullSizeButton(
+        title: L10N.Common.Profile.Logout.title,
+        isDisable: false,
+        isLoading: .constant(false),
+        type: .destructive
+      ) {
+        viewModel.forcedLogout()
       }
     }
     .padding(.bottom, 16)

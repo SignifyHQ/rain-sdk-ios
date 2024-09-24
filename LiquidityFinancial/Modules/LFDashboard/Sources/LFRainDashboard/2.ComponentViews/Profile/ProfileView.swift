@@ -193,7 +193,8 @@ private extension ProfileView {
     LiquidityAlert(
       title: L10N.Common.Profile.Logout.message.uppercased(),
       primary: .init(text: L10N.Common.Button.Yes.title, action: { viewModel.logout() }),
-      secondary: .init(text: L10N.Common.Button.No.title, action: { viewModel.dismissPopup() })
+      secondary: .init(text: L10N.Common.Button.No.title, action: { viewModel.dismissPopup() }),
+      isLoading: $viewModel.isLoading
     )
   }
   
