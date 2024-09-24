@@ -94,8 +94,8 @@ private extension HomeView {
       switch viewModel.tabSelected {
       case .cash:
         cashView
-      case .rewards:
-        rewardsTabView
+//      case .rewards:
+//        rewardsTabView
       case .assets:
         assetsView
       case .account:

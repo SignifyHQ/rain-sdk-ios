@@ -42,9 +42,9 @@ private extension GasFeeTransactionDetailView {
         }
       }
       
-      Text(L10N.Common.Zerohash.Disclosure.description)
-        .font(Fonts.regular.swiftUIFont(size: 10))
-        .foregroundColor(Colors.label.swiftUIColor.opacity(0.5))
+//      Text(L10N.Common.Zerohash.Disclosure.description)
+//        .font(Fonts.regular.swiftUIFont(size: 10))
+//        .foregroundColor(Colors.label.swiftUIColor.opacity(0.5))
     }
   }
 }

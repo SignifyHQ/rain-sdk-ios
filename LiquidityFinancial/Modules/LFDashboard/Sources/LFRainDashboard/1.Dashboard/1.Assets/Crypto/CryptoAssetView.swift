@@ -110,8 +110,8 @@ private extension CryptoAssetView {
         walletAddressButton
         activity
         Spacer()
-        disclosure
-          .padding(.bottom, 8)
+//        disclosure
+//          .padding(.bottom, 8)
       }
       .padding(.top, 20)
       .padding(.horizontal, 30)
@@ -265,13 +265,13 @@ private extension CryptoAssetView {
     }
   }
   
-  var disclosure: some View {
-    Text(L10N.Common.AssetView.disclosure)
-      .foregroundColor(Colors.label.swiftUIColor.opacity(0.5))
-      .font(Fonts.bold.swiftUIFont(size: 10))
-      .padding(.horizontal, 20)
-      .multilineTextAlignment(.center)
-  }
+//  var disclosure: some View {
+//    Text(L10N.Common.AssetView.disclosure)
+//      .foregroundColor(Colors.label.swiftUIColor.opacity(0.5))
+//      .font(Fonts.bold.swiftUIFont(size: 10))
+//      .padding(.horizontal, 20)
+//      .multilineTextAlignment(.center)
+//  }
   
   func iconTextButton(title: String, image: Image, action: @escaping () -> Void) -> some View {
     Button(action: action) {

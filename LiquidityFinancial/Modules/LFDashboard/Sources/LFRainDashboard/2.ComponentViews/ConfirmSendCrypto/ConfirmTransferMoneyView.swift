@@ -120,7 +120,7 @@ private extension ConfirmTransferMoneyView {
         viewModel.confirmButtonClicked()
       }
       .padding(.bottom, 4)
-      bottomDisclosureText(text: L10N.Common.Zerohash.Disclosure.description)
+      //bottomDisclosureText(text: L10N.Common.Zerohash.Disclosure.description)
       bottomDisclosureText(text: L10N.Common.MoveCryptoInput.Send.estimatedFee)
     }
   }

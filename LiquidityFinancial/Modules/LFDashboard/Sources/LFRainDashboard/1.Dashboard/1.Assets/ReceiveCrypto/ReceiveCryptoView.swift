@@ -154,10 +154,10 @@ private extension ReceiveCryptoView {
           analyticsService.track(event: AnalyticsEvent(name: .tapsShareWalletAddress))
           viewModel.shareTap()
         }
-        Text(L10N.Common.ReceiveCryptoView.servicesInfo)
-          .foregroundColor(Colors.label.swiftUIColor.opacity(0.50))
-          .font(Fonts.regular.swiftUIFont(size: 10))
-          .multilineTextAlignment(.center)
+//        Text(L10N.Common.ReceiveCryptoView.servicesInfo)
+//          .foregroundColor(Colors.label.swiftUIColor.opacity(0.50))
+//          .font(Fonts.regular.swiftUIFont(size: 10))
+//          .multilineTextAlignment(.center)
       }
       .padding(.horizontal, 30)
       .padding(.top, 8)

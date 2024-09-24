@@ -23,12 +23,8 @@
 "MoveCryptoInput.buy.annotation" = "You currently have %@ available to buy Adacoin. If this amount is less than expected, please contact support.";
 "MoveCryptoInput.sell.annotation" = "You currently have %@ Adacoin available to sell. Cardano Rewards are not available to sell until 48 hours after they are earned.";
 
-// CryptoReceipt
-"cryptoReceipt.cardType.link" = "cardano@zerohash.com";
-
 // Account view
 "accountView.bank_transfers.subtitle" = "Send from your bank to CardanoCard";
-"accountView.disclosure.message" = "The Cardano Card pre-paid debit card is established by Pathward, National Association Member FDIC, pursuant to license by Visa. Netspend is a service provider to Pathward. Cryptocurrency services provided by Zero Hash. Cryptocurrency is not insured by, or subject to the protections of the FDIC.";
 "account.reward.session.normal" = "Rewards by Asset Type";
 
 // Referral

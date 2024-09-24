@@ -24,12 +24,9 @@
 "MoveCryptoInput.sell.annotation" = "You currently have %@ Avaxcoin available to sell. AVALANCHE Rewards are not available to sell until 48 hours after they are earned.";
 "MoveCryptoInput.send.annotation" = "You currently have %@ %@ available to send. If this amount is less than expected, please contact support.";
 
-// CryptoReceipt
-"cryptoReceipt.cardType.link" = "avalanche@zerohash.com";
-
 // Account view
 "accountView.bank_transfers.subtitle" = "Send from your bank to AvalancheCard";
-"accountView.disclosure.message" = "The Avalanche Card pre-paid debit card is established by Pathward, National Association Member FDIC, pursuant to license by Visa. Netspend is a service provider to Pathward. Cryptocurrency services provided by Zero Hash. Cryptocurrency is not insured by, or subject to the protections of the FDIC.";
+"accountView.disclosure.message" = "The Avalanche Card pre-paid debit card is established by Pathward, National Association Member FDIC, pursuant to license by Visa.";
 "account.reward.session.normal" = "Rewards by Asset Type";
 
 // Referral

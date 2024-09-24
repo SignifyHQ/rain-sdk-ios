@@ -202,7 +202,7 @@ private extension EnterWalletAddressView {
     VStack(spacing: 16) {
       continueButton
       VStack(spacing: 12) {
-        cryptoDisclosure
+        //cryptoDisclosure
         estimatedFeeDescription
       }
     }
@@ -217,12 +217,12 @@ private extension EnterWalletAddressView {
     }
   }
   
-  @ViewBuilder var cryptoDisclosure: some View {
-    Text(L10N.Common.Zerohash.Disclosure.description)
-      .font(Fonts.regular.swiftUIFont(size: 10))
-      .foregroundColor(Colors.label.swiftUIColor.opacity(0.5))
-      .fixedSize(horizontal: false, vertical: true)
-  }
+//  @ViewBuilder var cryptoDisclosure: some View {
+//    Text(L10N.Common.Zerohash.Disclosure.description)
+//      .font(Fonts.regular.swiftUIFont(size: 10))
+//      .foregroundColor(Colors.label.swiftUIColor.opacity(0.5))
+//      .fixedSize(horizontal: false, vertical: true)
+//  }
   
   @ViewBuilder var estimatedFeeDescription: some View {
     Text(L10N.Common.MoveCryptoInput.Send.estimatedFee)

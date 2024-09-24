@@ -65,13 +65,13 @@ private extension CryptoTransactionReceiptView {
   var firstSectionView: some View {
     VStack(spacing: 30) {
       HStack(spacing: 4) {
-        TextTappable(
-          text: L10N.Custom.CryptoReceipt.CardType.link,
-          textAlignment: .center,
-          links: [L10N.Custom.CryptoReceipt.CardType.link],
-          openLink: openLink(value:)
-        )
-        .frame(maxWidth: 136)
+//        TextTappable(
+//          text: L10N.Custom.CryptoReceipt.CardType.link,
+//          textAlignment: .center,
+//          links: [L10N.Custom.CryptoReceipt.CardType.link],
+//          openLink: openLink(value:)
+//        )
+//        .frame(maxWidth: 136)
         Rectangle()
           .frame(width: 1, height: 20)
           .foregroundColor(Colors.label.swiftUIColor)
@@ -82,25 +82,25 @@ private extension CryptoTransactionReceiptView {
       }
       .padding(.horizontal, 16)
       .ignoresSafeArea(.keyboard, edges: .bottom)
-      TextTappable(
-        text: L10N.Common.CryptoReceipt.Zerohash.description,
-        textAlignment: .center,
-        links: [L10N.Common.CryptoReceipt.Zerohash.link],
-        openLink: openLink(value:)
-      )
+//      TextTappable(
+//        text: L10N.Common.CryptoReceipt.Zerohash.description,
+//        textAlignment: .center,
+//        links: [L10N.Common.CryptoReceipt.Zerohash.link],
+//        openLink: openLink(value:)
+//      )
     }
   }
   
   var secondSectionView: some View {
     VStack(spacing: 16) {
-      textLabelTappableCell(
-        title: L10N.Common.CryptoReceipt.Cancellation.title.uppercased(),
-        attributedText: L10N.Common.CryptoReceipt.Cancellation.description
-      )
-      textLabelTappableCell(
-        title: L10N.Common.CryptoReceipt.Liability.title.uppercased(),
-        attributedText: L10N.Common.CryptoReceipt.Liability.description.localizedString
-      )
+//      textLabelTappableCell(
+//        title: L10N.Common.CryptoReceipt.Cancellation.title.uppercased(),
+//        attributedText: L10N.Common.CryptoReceipt.Cancellation.description
+//      )
+//      textLabelTappableCell(
+//        title: L10N.Common.CryptoReceipt.Liability.title.uppercased(),
+//        attributedText: L10N.Common.CryptoReceipt.Liability.description.localizedString
+//      )
       textLabelTappableCell(
         title: L10N.Common.CryptoReceipt.Beware.title.uppercased(),
         attributedText: L10N.Common.CryptoReceipt.Beware.description,
@@ -128,11 +128,11 @@ private extension CryptoTransactionReceiptView {
           L10N.Common.CryptoReceipt.MinnesotaCustomerCryptocurrency.link
         ]
       )
-      textLabelTappableCell(
-        title: L10N.Common.CryptoReceipt.TexasCustomers.title,
-        attributedText: L10N.Common.CryptoReceipt.TexasCustomers.description,
-        links: [L10N.Common.CryptoReceipt.TexasCustomer.link]
-      )
+//      textLabelTappableCell(
+//        title: L10N.Common.CryptoReceipt.TexasCustomers.title,
+//        attributedText: L10N.Common.CryptoReceipt.TexasCustomers.description,
+//        links: [L10N.Common.CryptoReceipt.TexasCustomer.link]
+//      )
     }
   }
   

@@ -13,11 +13,7 @@
 // Home
 "home.cashTab.title" = "Card";
 
-// CryptoReceipt
-"cryptoReceipt.cardType.link" = "doge@zerohash.com";
-
 "accountView.bank_transfers.subtitle" = "Send from your bank to DogeCard";
-"accountView.disclosure.message" = "The DogeCard pre-paid debit card is established by Pathward, National Association Member FDIC, pursuant to license by Visa. Netspend is a service provider to Pathward. Cryptocurrency services provided by Zero Hash. Cryptocurrency is not insured by, or subject to the protections of the FDIC.";
 "account.reward.session.normal" = "Rewards by Asset Type";
 
 // Referral

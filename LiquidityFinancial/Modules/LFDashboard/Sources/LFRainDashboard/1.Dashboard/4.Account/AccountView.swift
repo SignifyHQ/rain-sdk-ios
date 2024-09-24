@@ -112,11 +112,11 @@ private extension AccountsView {
         
         walletBackupSection
         
-        section(title: L10N.Common.AccountView.shortcuts) {
-          shortcutSection
-        }
+//        section(title: L10N.Common.AccountView.shortcuts) {
+//          shortcutSection
+//        }
         
-        bottomDisclosure
+        //bottomDisclosure
         Spacer()
       }
       .padding(.top, 20)
@@ -125,11 +125,11 @@ private extension AccountsView {
     }
   }
   
-  var bottomDisclosure: some View {
-    Text(L10N.Custom.AccountView.Disclosure.message)
-      .font(Fonts.regular.swiftUIFont(size: 10))
-      .foregroundColor(Colors.label.swiftUIColor.opacity(0.75))
-  }
+//  var bottomDisclosure: some View {
+//    Text(L10N.Custom.AccountView.Disclosure.message)
+//      .font(Fonts.regular.swiftUIFont(size: 10))
+//      .foregroundColor(Colors.label.swiftUIColor.opacity(0.75))
+//  }
   
   var accountDetailView: some View {
     VStack(spacing: 10) {

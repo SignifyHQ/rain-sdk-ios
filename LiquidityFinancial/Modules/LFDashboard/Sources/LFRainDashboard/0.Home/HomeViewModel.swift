@@ -29,7 +29,7 @@ final class HomeViewModel: ObservableObject {
   @Published var isShowGearButton: Bool = false
   @Published var shouldShowBiometricsFallback: Bool = false
   @Published var tabSelected: TabOption = .cash
-  @Published var tabOptions: [TabOption] = [.cash, .rewards, .account]
+  @Published var tabOptions: [TabOption] = []
   @Published var navigation: Navigation?
   @Published var popup: Popup?
   

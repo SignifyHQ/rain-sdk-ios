@@ -225,13 +225,13 @@ private extension CryptoChartDetailView {
     }
   }
   
-  var disclosure: some View {
-    Text(L10N.Common.Zerohash.Disclosure.description)
-      .foregroundColor(Colors.label.swiftUIColor.opacity(0.5))
-      .font(Fonts.regular.swiftUIFont(size: 10))
-      .padding(.horizontal, 20)
-      .multilineTextAlignment(.center)
-  }
+//  var disclosure: some View {
+//    Text(L10N.Common.Zerohash.Disclosure.description)
+//      .foregroundColor(Colors.label.swiftUIColor.opacity(0.5))
+//      .font(Fonts.regular.swiftUIFont(size: 10))
+//      .padding(.horizontal, 20)
+//      .multilineTextAlignment(.center)
+//  }
   
   var transferBalancePopup: some View {
     LiquidityAlert(

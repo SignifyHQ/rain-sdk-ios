@@ -13,12 +13,8 @@
 // Home
 "home.cashTab.title" = "Cash";
 
-// CryptoReceipt
-"cryptoReceipt.cardType.link" = "cardano@zerohash.com";
-
 // Account view
 "accountView.bank_transfers.subtitle" = "Send from your bank to AvalancheCard";
-"accountView.disclosure.message" = "The DogeCard pre-paid debit card is established by Pathward, National Association Member FDIC, pursuant to license by Visa. Netspend is a service provider to Pathward. Cryptocurrency services provided by Zero Hash. Cryptocurrency is not insured by, or subject to the protections of the FDIC.";
 
 // Referral
 "referral.example.crypto" = "If the friend you invited earns 500 %@ in a week, you will also get 500 AVAX. Your bonus will be paid each Friday to your %@Card wallet.";

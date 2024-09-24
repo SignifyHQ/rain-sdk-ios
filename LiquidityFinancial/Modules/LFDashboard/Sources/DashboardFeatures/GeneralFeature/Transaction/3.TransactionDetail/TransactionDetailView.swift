@@ -92,7 +92,8 @@ extension TransactionDetailView {
     case .withdraw:
       WithdrawTransactionDetailView(transaction: viewModel.transaction)
     case .purchase:
-      PurchaseTransactionDetailView(transaction: viewModel.transaction)
+      CommonTransactionDetailView(transaction: viewModel.transaction)
+      //PurchaseTransactionDetailView(transaction: viewModel.transaction)
     case .refund:
       RefundTransactionDetailView(
         transaction: viewModel.transaction,

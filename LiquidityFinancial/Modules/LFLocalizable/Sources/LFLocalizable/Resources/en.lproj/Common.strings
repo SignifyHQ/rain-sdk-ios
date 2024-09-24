@@ -150,16 +150,6 @@
 "waitlist_joined_title" = "WAITLIST JOINED";
 "waitlist_joined_message" = "You are now on the waitlist. We will email you when we can operate in your state.";
 
-//...SET UP WALLET...
-"setUpWallet.title" = "CREATE YOUR WALLET";
-"setUpWallet.info" = "%@ has partnered with Zero Hash to offer cryptocurrency services.";
-"setUpWallet.termsAndCondition" = "I agree to the Zero Hash and Zero Hash Liquidity Services User Agreement, and I have read and understand the Zero Hash Privacy Policy and Regulatory Disclosures. I understand that the value of any cryptocurrency, including digital assets pegged to fiat currency, commodities, or any other asset, may go to zero.";
-"setUpWallet.risk_disclosure" = "The value of any cryptocurrency, including digital assets pegged to fiat currency, commodities, or any other asset, may go to zero.";
-"setUpWallet.userAgreement" = "Zero Hash and Zero Hash Liquidity Services User Agreement";
-"setUpWallet.solid_privacyPolicy" = "Privacy Policy";
-"setUpWallet.regulatory_disclosures" = "Regulatory Disclosures";
-"setUpWallet.wallet_useragreement" = "Zero Hash and Zero Hash Liquidity Services User Agreement";
-
 // Create Wallet
 "createWallet.title" = "CREATE YOUR WALLET";
 "createWallet.info" = "%@ has partnered with Portal to offer wallets.";
@@ -241,19 +231,15 @@
 "rewardTerms.fee_title" = "Fee";
 "rewardTerms.network_fee" = "Network Fee";
 "rewardTerms.exchange_rate_title" = "Exchange Rate";
-"rewardTerms.exchange_rate_description" = "Varies, the current prevailing price as determined by Zero Hash Liquidity Services LLC at point of transaction.";
 "rewardTerms.enroll_cta" = "Enroll now";
 "rewardTerms.disclosures_title" = "Exchange Rate";
 "rewardTerms.disclosures_first" = "By selecting to enroll in the crypto rewards program, you understand and agree that eligible rewards transactions will also trigger your authorization to invest in crypto once your action or card transaction is complete. Transactions may take time in certain cases.";
-"rewardTerms.disclosures_second" = "Cryptocurrency services powered by Zero Hash.";
 "rewardTerms.disclosures_third" = "Orders may not be canceled or reversed once submitted by you. Also, if a withdrawal request is being made, you are requesting an on-chain transaction that is not reversible or recallable. You are responsible for reviewing the recipient address and ensuring it is the correct address for the selected asset for withdrawal.";
-"rewardTerms.disclosures_fourth" = "Zero Hash does not offer the ability to set up pre-authorized, automatic, or recurring Orders (“Pre-Authorized Orders”) in your Account; (a) any such Pre-Authorized Order feature (if available) is under the exclusive control of [Business] ; (b) you must contact [Business] in order to stop a Pre-Authorized Order before execution or to turn off such a feature in your Account; and (c) Zero Hash and ZHLS are not liable for the placement and execution of any Pre-Authorized order.";
 "rewardTerms.disclosures_fifth" = "Maximum reward amounts may vary, and can depend on the user’s level of participation in crypto rewards. Specific terms and conditions may apply.";
 
 //...REWARDS...
 "rewards" = "Rewards";
 "total_rewards" = "Total rewards";
-"cryptocurrency_services_info" = "Cryptocurrency services powered by Zero Hash";
 "sell_rewards" = "Sell Rewards";
 "transfer_rewards" = "Transfer Rewards";
 "rewards.no_rewards" = "No rewards yet";
@@ -481,11 +467,8 @@
 "cryptoReceipt.fee.title" = "Fee";
 "cryptoReceipt.dateAndTime.title" = "Date and Time";
 "cryptoReceipt.accountID.title" = "Account ID";
-"cryptoReceipt.zerohash.description" = "Zero Hash LLC 327 N Aberdeen St Chicago, IL 60607 \n\n www.zerohash.com";
 "cryptoReceipt.cancellation.title" = "Return/Cancellation Policy:";
-"cryptoReceipt.cancellation.description" = "All transactions are final. You are responsible for reviewing this receipt for accuracy land for notifying Zero Hash LLC of any tuspected errors via email at support@zerohash.com within 24 hours of the trade.\n\n\n";
 "cryptoReceipt.liability.title" = "Liability for Non-Delivery or Delayed Delivery:";
-"cryptoReceipt.liability.description" = "Zero Hash LLC's or Zero Hash Liquidity Services LLC's aggregate liability, including for non-delivery or delayed delivery, is limited to losses resulting solely from the gross negligence, intentional misconduct or fraud of Zero Hash or Zero Hash Liquidity Services, their affiliates or any of their officers, directors, managers, partners, employees or independent agents or contractors, as determined by a court of competent jurisdiction or arbitration panel in accordance with the terms of the User Agreement \n\n\n\n\n\n\n\n\n\n";
 "cryptoReceipt.beware.title" = "Beware of Fraud:";
 "cryptoReceipt.beware.description" = "Cryptocurrencies and money transfer services are commonly targeted by hackers and criminals who commit fraud. For more information on how to protect against fraud, visit the Consumer Financial Protection Bureau’s website at \n https://www.consumerfinance.gov/consumer-tools/fraud/. \n\n\n\n\n";
 "cryptoReceipt.priceRisk.title" = "PRICE RISK";
@@ -498,14 +481,12 @@
 "cryptoReceipt.minnesotaCustomers.description" = "If you believe you are a victim of fraud, please contact the Minnesota Commerce Department Consumer Services Center at 1-800-657-3602 or consumer.protection@state.mn.us. For more information about how to protect against fraud and submit a complaint, visit https://mn.gov/commerce/money/fraud/. For more information on cryptocurrency, please visit
 https://mn.gov/commerce/money/investments/cryptocurrency/. \n\n\n\n\n\n\n";
 "cryptoReceipt.texasCustomers.title" = "Texas Customers";
-"cryptoReceipt.texasCustomers.description" = "If you have a complaint, first contact the consumer assistance division of Zero Hash LLC at 1 (855) 744-7333, if you still have an unresolved complaint regarding the company's money transmission activity, please direct your complaint to: Texas Department of Banking, 2601 North Lamar Boulevard, Austin, Texas 78705, 1-877-276- 5554 (toll free), www.dob.texas.gov. \n\n\n\n\n\n\n";
 "cryptoReceipt.consumerTools.link" = "https://www.consumerfinance.gov/consumer-tools/fraud";
 "cryptoReceipt.illinoisCustomer.link" = "https://idfpr.illinois.gov/admin/dfi/dficomplaint.html.";
 "cryptoReceipt.maineCustomer.link" = " www.credit.maine.gov";
 "cryptoReceipt.minnesotaCustomerFraud.link" = "https://mn.gov/commerce/money/fraud/";
 "cryptoReceipt.minnesotaCustomerCryptocurrency.link" = "https://mn.gov/commerce/money/investments/cryptocurrency";
 "cryptoReceipt.texasCustomer.link" = "www.dob.texas.gov.";
-"cryptoReceipt.zerohash.link" = "www.zerohash.com";
 "cryptoReceipt.phonenumber.link" = "855-744-7333";
 
 // DonationReceipt
@@ -757,7 +738,6 @@ https://mn.gov/commerce/money/investments/cryptocurrency/. \n\n\n\n\n\n\n";
 "assetView.transfer.title" = "Transfer";
 "assetView.wallet_address" = "Wallet address";
 "assetView.today" = "Today";
-"assetView.disclosure" = "Cryptocurrency services powered by Zero Hash";
 "assetView.see_all" = "See all";
 "assetView.transfer_popup.title" = "TRANSFER";
 "assetView.send.title" = "Send";
@@ -766,7 +746,6 @@ https://mn.gov/commerce/money/investments/cryptocurrency/. \n\n\n\n\n\n\n";
 // Receive Crypto View
 "receive_crypto_view.title" = "%@ Wallet Address";
 "receive_crypto_view.copied.info" = "Copied!";
-"receive_crypto_view.services_info" = "Cryptocurrency services powered by Zero Hash";
 "receive_crypto_view.wallet_detail" = "Wallet Details";
 
 //BANK STATEMENT
@@ -1389,9 +1368,6 @@ We will be in touch shortly to invite you to get your new card.";
 // Title
 "error.weAreSorry.title" = "WE’RE SORRY";
 
-// Zero hash
-"Zero_hash_transactiondetail" = "Cryptocurrency services powered by Zero Hash";
-
 // Application Review Status
 "applicationReviewStatus.missingInformation.message" = "The information you have entered is not complete, you need to contact us via email to add some necessary information.";
 "applicationReviewStatus.identityVerification.title" = "DRIVER’s LICENSE, ID OR PASSPORT";
@@ -1438,9 +1414,6 @@ We will be in touch shortly to invite you to get your new card.";
 // Toast
 "toast.copy.message" = "Copied to clipboard";
 "toast.dashboardApproved.message" = "You have been approved via the Dashboard. Please proceed by clicking the Check Status button to continue.";
-
-// Disclosure
-"zerohash.disclosure.description" = "Cryptocurrency services powered by Zero Hash";
 
 //...COMMON...
 "generic_ErrorMessage" = "Something went wrong, please try again.";
