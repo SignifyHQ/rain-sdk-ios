@@ -2,8 +2,8 @@ import Foundation
 
 // swiftlint:disable all
 public enum APIConstants {
-  public static let devHost = "https://api-crypto.dev.liquidity.cc"
-  public static let socketDevHost = "wss://api-crypto.dev.liquidity.cc"
+  public static let devHost = "https://service-platform.dev.app.liquidity.cc"
+  public static let socketDevHost = "wss://service-platform.dev.app.liquidity.cc"
   public static let prodHost = "https://api-crypto.liquidity.cc"
   public static let socketProdHost = "wss://api-crypto.liquidity.cc"
   
