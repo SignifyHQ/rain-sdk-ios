@@ -5,7 +5,7 @@ import LFLocalizable
 public enum LFPortalError: Error {
   case dataUnavailable
   case portalInstanceUnavailable
-  case expirationToken
+  case sessionExpired
   case walletAlreadyExists
   case iCloudAccountUnavailable
   case cipherBlockCreationFailed
@@ -19,7 +19,7 @@ extension LFPortalError: Equatable {
     switch (lhs, rhs) {
     case (.dataUnavailable, .dataUnavailable),
       (.portalInstanceUnavailable, .portalInstanceUnavailable),
-      (.expirationToken, .expirationToken),
+      (.sessionExpired, .sessionExpired),
       (.walletAlreadyExists, .walletAlreadyExists),
       (.iCloudAccountUnavailable, .iCloudAccountUnavailable),
       (.unexpected, .unexpected),
@@ -41,16 +41,18 @@ extension LFPortalError {
     }
     
     switch portalRequestsError {
-    case .clientError(let message):
+    case .unauthorized:
+      return .sessionExpired
+    case .clientError(let message, _):
       if message.contains(PortalErrorMessage.sessionExpired) || message.contains("401") {
-        return LFPortalError.expirationToken
+        return .sessionExpired
       }
       return LFPortalError.customError(message: message)
-    case .internalServerError(let message),
+    case .internalServerError(let message, _),
         .redirectError(let message):
-      return LFPortalError.customError(message: message)
+      return .customError(message: message)
     default:
-      return LFPortalError.customError(message: portalRequestsError.localizedDescription)
+      return .customError(message: portalRequestsError.localizedDescription)
     }
   }
   
@@ -65,24 +67,24 @@ extension LFPortalError {
     
     switch portalMpcError.code {
     case 320:
-      return LFPortalError.expirationToken
+      return .sessionExpired
     case PortalErrorCodes.INVALID_API_KEY.rawValue:
-      return LFPortalError.expirationToken
+      return .sessionExpired
     case PortalErrorCodes.BAD_REQUEST.rawValue:
       return portalMpcError.message.lowercased().contains(PortalErrorMessage.walletAlreadyExists)
-      ? LFPortalError.walletAlreadyExists
-      : LFPortalError.customError(message: portalMpcError.message)
+      ? .walletAlreadyExists
+      : .customError(message: portalMpcError.message)
     case PortalErrorCodes.FAILED_TO_DECRYPT_CIPHER.rawValue:
       let message = portalMpcError.message.lowercased().contains(PortalErrorMessage.authenticationFailed)
       ? L10N.Common.BackupByPinCode.WrongCode.error
       : portalMpcError.message
-      return LFPortalError.customError(message: message)
+      return .customError(message: message)
     case PortalErrorCodes.FAILED_TO_CREATE_CIPHER_BLOCK.rawValue:
-      return LFPortalError.cipherBlockCreationFailed
+      return .cipherBlockCreationFailed
     case PortalErrorCodes.NODE_RPC_ERROR.rawValue:
-      return LFPortalError.customError(message: L10N.Common.MoveCryptoInput.NotEnoughCrypto.description)
+      return .customError(message: L10N.Common.MoveCryptoInput.NotEnoughCrypto.description)
     default:
-      return LFPortalError.customError(message: portalMpcError.message)
+      return .customError(message: portalMpcError.message)
     }
   }
 }

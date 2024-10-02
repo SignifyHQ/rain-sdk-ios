@@ -27,7 +27,7 @@ public class PortalRepository: PortalRepositoryProtocol {
     do {
       try await portalService.registerPortal(sessionToken: portalToken)
     } catch {
-      guard let portalError = error as? LFPortalError, portalError == .expirationToken else {
+      guard let portalError = error as? LFPortalError, portalError == .sessionExpired else {
         throw error
       }
       
@@ -40,7 +40,7 @@ public class PortalRepository: PortalRepositoryProtocol {
     do {
       return try await portalService.createWallet()
     } catch {
-      guard let portalError = error as? LFPortalError, portalError == .expirationToken else {
+      guard let portalError = error as? LFPortalError, portalError == .sessionExpired else {
         throw error
       }
       
@@ -59,7 +59,7 @@ public class PortalRepository: PortalRepositoryProtocol {
       try await portalAPI.backupWallet(cipher: cipherText, method: backupMethod.rawValue)
       try await storageCallback()
     } catch {
-      guard let portalError = error as? LFPortalError, portalError == .expirationToken else {
+      guard let portalError = error as? LFPortalError, portalError == .sessionExpired else {
         throw error
       }
       
@@ -111,7 +111,7 @@ public class PortalRepository: PortalRepositoryProtocol {
         cipherText: response.cipherText
       )
     } catch {
-      guard let portalError = error as? LFPortalError, portalError == .expirationToken else {
+      guard let portalError = error as? LFPortalError, portalError == .sessionExpired else {
         throw error
       }
       
