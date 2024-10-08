@@ -22,12 +22,7 @@ public final class EnterSSNViewModel: ObservableObject {
   @Published var ssn: String = .empty
   @Published var errorMessage: String?
   
-  private let isVerifySSN: Bool
-  
-  private var cancellables: Set<AnyCancellable> = []
-  
-  public init(isVerifySSN: Bool) {
-    self.isVerifySSN = isVerifySSN
+  public init() {
     observePasswordInput()
   }
 }
@@ -54,16 +49,17 @@ private extension EnterSSNViewModel {
   func observePasswordInput() {
     $ssn
       .receive(on: DispatchQueue.main)
-      .sink { [weak self] ssn in
-        guard let self else { return }
-        let ssnMaxLength = self.isVerifySSN
-        ? Constants.MaxCharacterLimit.fullSSNLength.value
-        : Constants.MaxCharacterLimit.ssnLength.value
-        let isSSNValidString = !ssn.trimWhitespacesAndNewlines().isEmpty
-        let isSSNValidLength = ssn.trimWhitespacesAndNewlines().count == ssnMaxLength
+      .map { input in
+        let inputMinLength = 4
+        let trimmedInput = input.trimWhitespacesAndNewlines()
         
-        self.isActionAllowed = isSSNValidString && isSSNValidLength
+        let isValidLength = trimmedInput.count >= inputMinLength
+        let isAlphanumeric = trimmedInput.rangeOfCharacter(from: CharacterSet.alphanumerics.inverted) == nil
+        
+        return isValidLength && isAlphanumeric
       }
-      .store(in: &cancellables)
+      .assign(
+        to: &$isActionAllowed
+      )
   }
 }

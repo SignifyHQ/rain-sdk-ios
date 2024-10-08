@@ -430,14 +430,6 @@ public extension Constants {
   
 }
 
-// MARK: - TwilioConfig
-public extension Constants {
-  enum TwilioConfig {
-    public static let accountSID = "AC68f2ed096d5c2536322ec7096bbac0ff"
-    public static let authToken = "1d91cb73db18174e52b775ab9e25fbf2"
-  }
-}
-
 // MARK: - Debug Log
 public extension Constants {
   enum DebugLog {

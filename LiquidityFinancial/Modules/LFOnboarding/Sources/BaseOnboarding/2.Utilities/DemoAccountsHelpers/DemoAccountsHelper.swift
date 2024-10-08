@@ -18,9 +18,6 @@ public class DemoAccountsHelper {
   @LazyInjected(\.authorizationManager) var authorizationManager
   
   public static let shared = DemoAccountsHelper()
-  
-  private let accountSID = Constants.TwilioConfig.accountSID
-  private let authToken = Constants.TwilioConfig.authToken
 
   // Phone numbers for accounts that should be used on `.productionTest` environment.
   private let testAccounts = [
@@ -127,56 +124,6 @@ public extension DemoAccountsHelper {
             } catch {
               promise(.success(nil))
               log.error("Failure when fetching OTP internal API: \(error)")
-            }
-          }
-        }
-      }
-      .resume()
-    }
-  }
-
-  func getTwilioMessages(for phoneNumber: String) -> Future <String?, Never> {
-    return Future { promise in
-      let number = phoneNumber
-        .replace(string: " ", replacement: "")
-        .replace(string: "(", replacement: "")
-        .replace(string: ")", replacement: "")
-        .replace(string: "-", replacement: "")
-        .trimWhitespacesAndNewlines()
-      let urlStr = "https://api.twilio.com/2010-04-01/Accounts/\(self.accountSID)/Messages.json?To=\(number)&PageSize=1"
-      guard let urlTwilio = URL(string: urlStr) else {
-        log.debug("Unable to create twilio URL")
-        promise(.success(nil))
-        return
-      }
-      var request = URLRequest(url: urlTwilio)
-      request.httpMethod = "GET"
-      request.setValue("application/json", forHTTPHeaderField: "Content-Type")
-      let authData = (self.accountSID + ":" + self.authToken).data(using: .utf8)!.base64EncodedString()
-      request.addValue("Basic \(authData)", forHTTPHeaderField: "Authorization")
-      
-      URLSession.shared.dataTask(with: request) { data, response, error in
-        DispatchQueue.main.async {
-          if let error = error {
-            log.error("Failure when fetching Twilio API: \(error)")
-            promise(.success(nil))
-          } else if let data = data, let response = response as? HTTPURLResponse, response.statusCode == 200 {
-            do {
-              let decodedResponse = try JSONDecoder().decode(TwilioResponse.self, from: data)
-              guard let message = decodedResponse.messages.first else {
-                log.error("Twilio didn't return any message:\(LiquidityError.logic)")
-                promise(.success(nil))
-                return
-              }
-              let codes = self.matches(for: "[0-9]{6}", in: message.body)
-              if let code = codes.first {
-                promise(.success(code))
-              } else {
-                log.error("Twilio didn't return any message:\(["message": message.body])")
-                promise(.success(nil))
-              }
-            } catch {
-              log.error("Failure when fetching Twilio API: \(error)")
             }
           }
         }

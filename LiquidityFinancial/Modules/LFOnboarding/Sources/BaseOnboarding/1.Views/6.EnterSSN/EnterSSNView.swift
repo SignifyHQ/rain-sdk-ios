@@ -66,14 +66,15 @@ public struct EnterSSNView: View {
 private extension EnterSSNView {
   var secureField: some View {
     TextFieldWrapper(errorValue: $viewModel.errorMessage) {
-      SecureField("", text: $viewModel.ssn)
+      TextField("", text: $viewModel.ssn)
         .focused($keyboardFocus)
         .primaryFieldStyle()
-        .keyboardType(.numberPad)
-        .limitInputLength(
-          value: $viewModel.ssn,
-          length: Constants.MaxCharacterLimit.fullSSNLength.value
-        )
+        .keyboardType(.namePhonePad)
+        .onChange(
+          of: viewModel.ssn
+        ) { newValue in
+          viewModel.ssn = newValue.uppercased()
+        }
         .modifier(
           PlaceholderStyle(
             showPlaceHolder: viewModel.ssn.isEmpty,

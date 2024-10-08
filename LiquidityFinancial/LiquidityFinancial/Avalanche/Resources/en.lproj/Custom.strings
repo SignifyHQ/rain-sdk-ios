@@ -9,7 +9,7 @@
 "welcome.how_it_works.item3" = "Spend AVAX, USDC, USD and earn rewards.";
 
 // Enter Verification Code
-"enter_ssn.alert.message" = "A valid SSN is required by our partners to provide cryptocurrency and banking services.";
+"enter_ssn.alert.message" = "A valid SSN/ID is required by our partners to provide banking services.";
 
 // Home
 "home.cashTab.title" = "Card";

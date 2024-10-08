@@ -41,14 +41,14 @@
 "enterVerificationCode.lastXIdInvalid.message" = "SSN or Passport is invalid.";
 
 // Enter SSN
-"enter_ssn.title" = "PLEASE ENTER SSN";
-"enter_ssn.placeholder" = "Enter Full Social Security Number";
+"enter_ssn.title" = "PLEASE ENTER SSN OR ID";
+"enter_ssn.placeholder" = "Enter Full SSN or ID";
 "enter_ssn.bullet_one" = "Encrypted using 256-BIT SSL";
 "enter_ssn.bullet_two" = "No credit checks";
-"enter_ssn.why" = "Why do we need SSN?";
+"enter_ssn.why" = "Why do we need it?";
 "enter_ssn.no_ssn" = "No SSN? Tap here";
 "enter_ssn.continue" = "Continue";
-"enter_ssn.alert.title" = "WHY DO WE NEED SSN?";
+"enter_ssn.alert.title" = "WHY DO WE NEED IT?";
 "enter_ssn.alert.okay" = "Okay";
 
 //... PASSPORT...

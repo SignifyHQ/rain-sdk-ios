@@ -26,7 +26,7 @@ struct CreateWalletView: View {
       })
       .navigationLink(isActive: $viewModel.isNavigateToPersonalInformation) {
         let enterSSNView = EnterSSNView(
-          viewModel: EnterSSNViewModel(isVerifySSN: true),
+          viewModel: EnterSSNViewModel(),
           onEnterAddress: {
             contentViewFactory.baseOnboardingNavigation.enterSSNDestinationView = .address(
               AnyView(AddressView())

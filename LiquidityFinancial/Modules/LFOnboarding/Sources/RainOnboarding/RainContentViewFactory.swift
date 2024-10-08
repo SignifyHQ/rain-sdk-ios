@@ -137,7 +137,7 @@ private extension RainContentViewFactory {
   @MainActor
   var enterSSNView: some View {
     EnterSSNView(
-      viewModel: EnterSSNViewModel(isVerifySSN: true),
+      viewModel: EnterSSNViewModel(),
       onEnterAddress: { [weak self] in
         guard let self else { return }
         self.baseOnboardingNavigation.enterSSNDestinationView = .address(
