@@ -22,16 +22,35 @@ public struct PhoneNumberView: View {
   }
   
   public var body: some View {
-    VStack {
-      logoImageView
-      phoneNumberView
-      voipTermView
-      Spacer()
-      footerView
+    ZStack {
+      VStack {
+        logoImageView
+        phoneNumberView
+        voipTermView
+        Spacer()
+        footerView
+      }
+      
+      if viewModel.displayDropdown {
+        VStack {
+          HStack {
+            if #available(iOS 16.0, *) {
+              listView()
+                .scrollContentBackground(.hidden)
+            } else {
+              listView()
+            }
+            
+            Spacer()
+          }
+         Spacer()
+        }
+      }
     }
     .frame(max: .infinity)
     .onTapGesture {
       keyboardFocus = false
+      viewModel.displayDropdown = false
     }
     .overlay(alignment: .topTrailing) {
       supportButton
@@ -93,6 +112,7 @@ private extension PhoneNumberView {
     }
   }
 }
+
 // MARK: - Main Content View Components
 private extension PhoneNumberView {
   var phoneNumberView: some View {
@@ -109,12 +129,17 @@ private extension PhoneNumberView {
   var phoneNumberTextField: some View {
     TextFieldWrapper {
       HStack {
-        Text(Constants.Default.regionCode.rawValue)
+        Text(viewModel.selectedCountry.phoneCode)
           .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.main.value))
           .foregroundColor(Colors.label.swiftUIColor)
           .frame(height: 32)
           .padding(.horizontal, 8)
           .background(Colors.secondaryBackground.swiftUIColor.cornerRadius(4))
+          .onTapGesture {
+            keyboardFocus = false
+            viewModel.displayDropdown = true
+          }
+        
         iPhoneNumberField(L10N.Common.PhoneNumber.TextField.description, text: $viewModel.phoneNumber)
           .placeholderColor(Colors.label.swiftUIColor.opacity(0.75))
           .maximumDigits(ViewConstant.maxDigits)
@@ -131,6 +156,7 @@ private extension PhoneNumberView {
             ToolbarItemGroup(placement: .keyboard) {
               Button("Done") {
                 keyboardFocus = false
+                viewModel.displayDropdown = false
               }
             }
           }
@@ -144,6 +170,34 @@ private extension PhoneNumberView {
       }
     }
     .accessibilityIdentifier(LFAccessibility.PhoneNumber.textField)
+  }
+  
+  func listView() -> some View {
+    List(viewModel.countryCodeList, id: \.id) { item in
+      Text(item.flagEmoji() + " " + item.phoneCode)
+        .foregroundColor(Colors.label.swiftUIColor)
+        .opacity(0.75)
+        .font(
+          Fonts.regular.swiftUIFont(
+            size: Constants.FontSize.small.value
+          )
+        )
+        .onTapGesture {
+          viewModel.selectedCountry = item
+        }
+        .listRowBackground(Colors.secondaryBackground.swiftUIColor)
+        .listRowSeparatorTint(Colors.label.swiftUIColor.opacity(0.16))
+        .listRowInsets(.none)
+    }
+    .cornerRadius(8, style: .continuous)
+    .listStyle(.plain)
+    .frame(maxWidth: 100, maxHeight: 240)
+    .padding(.top, 300)
+    .onAppear {
+      UITableView.appearance().contentInset.top = -35
+      UITableView.appearance().separatorInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 15)
+    }
+    .floatingShadow()
   }
   
   var voipTermView: some View {
@@ -173,6 +227,7 @@ private extension PhoneNumberView {
       ) {
         viewModel.isLoading = true
         keyboardFocus = false
+        viewModel.displayDropdown = false
         viewModel.performGetOTP()
       }
       .accessibilityIdentifier(LFAccessibility.PhoneNumber.continueButton)
@@ -222,6 +277,7 @@ private extension PhoneNumberView {
   var supportButton: some View {
     Button {
       keyboardFocus = false
+      viewModel.displayDropdown = false
       DispatchQueue.main.asyncAfter(wallDeadline: .now() + 0.5) {
         viewModel.openSupportScreen()
       }
@@ -238,4 +294,13 @@ private extension PhoneNumberView {
 enum ViewConstant {
   static let maxDigits = 10
   static let magicTapCount = 5
+}
+
+struct ViewOffsetKey: PreferenceKey {
+  typealias Value = CGFloat
+  
+  static var defaultValue: CGFloat = 0
+  static func reduce(value: inout CGFloat, nextValue: () -> CGFloat) {
+    value = nextValue()
+  }
 }

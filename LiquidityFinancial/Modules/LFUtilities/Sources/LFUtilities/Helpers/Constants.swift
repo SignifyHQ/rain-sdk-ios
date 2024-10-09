@@ -94,7 +94,20 @@ public enum Constants {
       }
     }
   }
+  
+  public enum MinCharacterLimit: Int {
+    case phoneNumber
+    
+    public var value: Int {
+      switch self {
+      case .phoneNumber:
+        return 7
+      }
+    }
+  }
 }
+
+
 
   // MARK: - FontSize
 public extension Constants {

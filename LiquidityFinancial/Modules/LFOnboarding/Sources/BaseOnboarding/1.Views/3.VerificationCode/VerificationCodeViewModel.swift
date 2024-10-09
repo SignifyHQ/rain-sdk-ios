@@ -72,12 +72,13 @@ public final class VerificationCodeViewModel: ObservableObject {
     forceLogout: (() -> Void)?,
     setRouteToAccountLocked: (() -> Void)?
   ) {
+    phoneNumberWithRegionCode = phoneNumber
+    
     self.requireAuth = requireAuth
     self.handleOnboardingStep = handleOnboardingStep
     self.forceLogout = forceLogout
     self.setRouteToAccountLocked = setRouteToAccountLocked
     
-    phoneNumberWithRegionCode = Constants.Default.regionCode.rawValue + phoneNumber
     observePasswordInput()
     performAutoGetOTPFromTwilioIfNeccessary()
   }

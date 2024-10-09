@@ -64,13 +64,9 @@ private extension VerificationCodeView {
         .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.main.value))
         .accessibilityIdentifier(LFAccessibility.VerificationCode.headerTitle)
       HStack(spacing: 4) {
-        Text(L10N.Common.VerificationCode.SendTo.textFieldTitle("+1"))
+        Text(L10N.Common.VerificationCode.SendTo.textFieldTitle(viewModel.phoneNumberWithRegionCode))
           .foregroundColor(Colors.label.swiftUIColor.opacity(0.75))
           .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.medium.value))
-        iPhoneNumberField("", text: .constant(viewModel.phoneNumberWithRegionCode))
-          .flagHidden(true)
-          .foregroundColor(Colors.label.swiftUIColor.opacity(0.75))
-          .disabled(true)
         Spacer()
       }
       .accessibilityIdentifier(LFAccessibility.VerificationCode.headerDescription)

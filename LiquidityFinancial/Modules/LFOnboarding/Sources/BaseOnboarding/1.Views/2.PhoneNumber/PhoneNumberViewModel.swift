@@ -26,11 +26,18 @@ public final class PhoneNumberViewModel: ObservableObject {
   @LazyInjected(\.environmentService) var environmentService
   @LazyInjected(\.analyticsService) var analyticsService
 
+  @Published var displayDropdown: Bool = false
+  @Published var countryCodeList: [Country] = Country.allCases
+  @Published var dropdownYPosition: CGFloat = 0
+  
   @Published var isSecretMode: Bool = false
   @Published var isLoading: Bool = false
   @Published var isButtonDisabled: Bool = true
   @Published var isShowConditions: Bool = false
+  
+  @Published var selectedCountry: Country = .US
   @Published var phoneNumber: String = ""
+  
   @Published var toastMessage: String?
   
   let terms = L10N.Common.Term.Terms.attributeText
@@ -70,7 +77,7 @@ public final class PhoneNumberViewModel: ObservableObject {
     self.setRouteToAccountLocked = setRouteToAccountLocked
     
     UserDefaults.isStartedWithLoginFlow = true
-    observePasswordInput()
+    observePhoneInput()
   }
 }
 
@@ -82,7 +89,7 @@ extension PhoneNumberViewModel {
       isLoading = true
       
       do {
-        let phoneNumberWithRegionCode = Constants.Default.regionCode.rawValue + phoneNumber
+        let phoneNumberWithRegionCode = selectedCountry.phoneCode + phoneNumber
         let formattedPhoneNumber = phoneNumberWithRegionCode.reformatPhone
         
         // Adjusts the network environment based on the provided number if it belongs to a demo account."
@@ -147,13 +154,14 @@ private extension PhoneNumberViewModel {
     }
   }
   
-  func observePasswordInput() {
+  func observePhoneInput() {
     $phoneNumber
       .receive(on: DispatchQueue.main)
       .sink { [weak self] phoneNumber in
         guard let self else { return }
-        let phoneNumberMaxLength = Constants.MaxCharacterLimit.phoneNumber.value
-        let isPhoneNumberFormatted = phoneNumber.trimWhitespacesAndNewlines().count == phoneNumberMaxLength
+        
+        let phoneNumberMinLength = Constants.MinCharacterLimit.phoneNumber.value
+        let isPhoneNumberFormatted = phoneNumber.reformatPhone.count >= phoneNumberMinLength
         
         self.isButtonDisabled = !isPhoneNumberFormatted
         withAnimation {
@@ -167,13 +175,15 @@ private extension PhoneNumberViewModel {
     let requiredAuth = requiredAuthentication.map {
       RequiredAuth(rawValue: $0) ?? .unknow
     }
+    
     let viewModel = VerificationCodeViewModel(
-      phoneNumber: phoneNumber.reformatPhone,
+      phoneNumber: selectedCountry.phoneCode + phoneNumber.reformatPhone,
       requireAuth: requiredAuth,
       handleOnboardingStep: self.handleOnboardingStep,
       forceLogout: self.forceLogout,
       setRouteToAccountLocked: self.setRouteToAccountLocked
     )
+    
     let verificationCodeView = AnyView(VerificationCodeView(viewModel: viewModel))
     
     onboardingDestinationObservable.phoneNumberDestinationView = .verificationCode(
