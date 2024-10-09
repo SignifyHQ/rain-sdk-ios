@@ -4,8 +4,8 @@ import Foundation
 public enum APIConstants {
   public static let devHost = "https://service-platform.dev.liquidity-financial.com"
   public static let socketDevHost = "wss://service-platform.dev.liquidity-financial.com"
-  public static let prodHost = "https://api-crypto.liquidity.cc"
-  public static let socketProdHost = "wss://api-crypto.liquidity.cc"
+  public static let prodHost = "https://service-platform.liquidity-financial.com"
+  public static let socketProdHost = "wss://service-platform.liquidity-financial.com"
   
   public static let avalencheID = "fb352b08-c759-4a6c-8a63-d9d190265447"
   public static let cardanoID = "3d126fa0-29d2-11ee-be56-0242ac120002"
