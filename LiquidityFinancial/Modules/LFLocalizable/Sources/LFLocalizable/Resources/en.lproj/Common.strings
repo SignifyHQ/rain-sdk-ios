@@ -212,7 +212,7 @@
 "kycStatus.fail.title" = "WE’RE SORRY";
 "kycStatus.fail.message" = "Based on the information you entered, we were unable to create a Depository account at this time. We will be in touch via email.";
 "kycStatus.inReview.title" = "VERIFYING ACCOUNT DETAILS";
-"kycStatus.inReview.message" = "Hi %@, we are still verifying your account details.  This is common when VOIP or Google voice phone numbers are used, or addresses / emails change.  Please contact support and we will help verify the details.  Thank you for your patience.";
+"kycStatus.inReview.message" = "Hi %@, we are still verifying your account details. This is common when VOIP or Google voice phone numbers are used, or addresses/emails change. Please contact support and we will help verify the details.  Thank you for your patience.";
 "kycStatus.inReview.secondaryTitle" = "Contact Support";
 "kycStatus.inReview.primaryTitle" = "Check Status";
 "kycStatus.fail.unclear.message" = "%@, we were unable to create a Depository account at this time. We will be in touch via email.";

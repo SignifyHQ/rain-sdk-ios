@@ -33,6 +33,11 @@ public protocol LFUser {
 public extension LFUser {
   var accountReviewStatusEnum: AccountReviewStatus? {
     guard let value = accountReviewStatus else { return nil }
+    
+    if value == "null" {
+      return .reviewing
+    }
+    
     return AccountReviewStatus(rawValue: value)
   }
 }

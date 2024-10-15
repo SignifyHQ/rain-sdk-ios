@@ -40,10 +40,6 @@ final class AccountReviewStatusViewModel: ObservableObject {
     GetExternalVerificationLinkUseCase(repository: rainRepository)
   }()
   
-  var username: String {
-    accountDataManager.userNameDisplay
-  }
-  
   private var fetchCount = 0
   private var autoRefreshTimer: Timer?
   
@@ -61,6 +57,7 @@ extension AccountReviewStatusViewModel {
       
       do {
         let user = try await getUserUseCase.execute()
+        let username = user.firstName ?? ""
         
         guard let accountReviewStatus = user.accountReviewStatusEnum else {
           handleUnclearAccountReviewStatus(user: user)
@@ -73,9 +70,11 @@ extension AccountReviewStatusViewModel {
         case .rejected:
           state = AccountReviewStatus.reject
         case .inreview, .reviewing:
-          guard state != AccountReviewStatus.inReview(username) else {
+          guard state != AccountReviewStatus.inReview(username)
+          else {
             return
           }
+          
           state = AccountReviewStatus.inReview(username)
         }
       } catch {

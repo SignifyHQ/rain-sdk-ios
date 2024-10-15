@@ -228,6 +228,7 @@ private extension RainOnboardingFlowCoordinator {
   
   func handleDataUser(user: LFUser) {
     accountDataManager.storeUser(user: user)
+    accountDataManager.userNameDisplay = user.firstName ?? ""
     trackUserInformation(user: user)
   }
   
