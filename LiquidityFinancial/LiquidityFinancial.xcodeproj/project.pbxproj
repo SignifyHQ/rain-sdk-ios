@@ -3465,7 +3465,7 @@
 				CODE_SIGN_ENTITLEMENTS = "${SRCROOT}/LiquidityFinancial/Avalanche/Resources/Avalanche.entitlements";
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = $BITRISE_BUILD_NUMBER;
+				CURRENT_PROJECT_VERSION = 75;
 				DEVELOPMENT_ASSET_PATHS = "";
 				DEVELOPMENT_TEAM = TX9PJZUNWS;
 				ENABLE_PREVIEWS = YES;
@@ -3507,7 +3507,7 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution";
 				CODE_SIGN_STYLE = Manual;
-				CURRENT_PROJECT_VERSION = $BITRISE_BUILD_NUMBER;
+				CURRENT_PROJECT_VERSION = 75;
 				DEVELOPMENT_ASSET_PATHS = "";
 				DEVELOPMENT_TEAM = "";
 				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = TX9PJZUNWS;
