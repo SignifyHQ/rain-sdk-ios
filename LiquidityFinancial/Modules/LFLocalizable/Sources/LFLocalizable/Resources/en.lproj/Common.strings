@@ -560,6 +560,7 @@ https://mn.gov/commerce/money/investments/cryptocurrency/. \n\n\n\n\n\n\n";
 "transferView.rewards_status.pending" = "Pending";
 "transferView.rewards_status.completed" = "Completed";
 "transferView.rewards_status.failed" = "Failed";
+"transferView.rewards_status.declined" = "Declined";
 
 // User Reward Type
 "transferView.reward_type.cashback.title" = "Instant Cashback";

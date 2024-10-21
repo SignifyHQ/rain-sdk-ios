@@ -86,8 +86,9 @@ public extension TransactionModel {
   
   var subtitle: String {
     if let status = status {
-      return status == .pending ? status.localizedDescription() : transactionDateInLocalZone()
+      return (status == .pending || status == .declined) ? status.localizedDescription() : transactionDateInLocalZone()
     }
+    
     return TransactionStatus.unknown.localizedDescription()
   }
   
