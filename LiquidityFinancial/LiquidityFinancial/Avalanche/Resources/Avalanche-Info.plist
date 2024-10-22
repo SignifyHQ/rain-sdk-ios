@@ -2,6 +2,10 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>GOOGLE_DEV_INFO_FILE_NAME</key>
+	<string>GoogleService-Info-Dev</string>
+	<key>GOOGLE_PROD_INFO_FILE_NAME</key>
+	<string>GoogleService-Info-Prod</string>
 	<key>STABLECOIN_SYMBOL</key>
 	<string>$(STABLECOIN_SYMBOL)</string>
 	<key>AGREEMENT_URL</key>

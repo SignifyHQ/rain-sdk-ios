@@ -16,10 +16,36 @@ extension Container {
 
 public class PushNotificationsService: NSObject {
   public var event: NotificationEvent?
+  private var apnsToken: Data?
+  
+  private var subscriptions = Set<AnyCancellable>()
   
   public func setUp() {
     UNUserNotificationCenter.current().delegate = self
+    
+    NotificationCenter.default.publisher(for: .environmentChanage)
+      .compactMap {
+        $0.userInfo?[Notification.Name.environmentChanage.rawValue] as? NetworkEnvironment
+      }
+      .sink { [weak self] environment in
+        guard let self else { return }
+        
+        KickoffService.kickoffFirebase()
+        if let apnsToken {
+          setupCloudMessaging(token: apnsToken, environment: environment)
+        }
+      }
+      .store(in: &subscriptions)
+  }
+  
+  func setupCloudMessaging(
+    token: Data,
+    environment: NetworkEnvironment
+  ) {
+    apnsToken = token
+    
     Messaging.messaging().delegate = self
+    Messaging.messaging().setAPNSToken(token, type: environment == .productionLive ? .prod : .sandbox)
   }
   
   public func clearSelection() {

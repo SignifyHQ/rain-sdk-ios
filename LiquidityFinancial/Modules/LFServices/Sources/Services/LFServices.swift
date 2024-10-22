@@ -25,6 +25,19 @@ public class LFServices {
     Self.config = config
   }
   
+  public static var googleInfoFilePath: String? {
+    let fileName: String = {
+      switch environmentService.networkEnvironment {
+      case .productionLive:
+        LFUtilities.googleInfoFileNameProd
+      case .productionTest:
+        LFUtilities.googleInfoFileNameDev
+      }
+    }()
+    
+    return Bundle.main.path(forResource: fileName, ofType: "plist")
+  }
+  
   public static var vgsConfig: (id: String, env: String) {
     switch environmentService.networkEnvironment {
     case .productionLive:

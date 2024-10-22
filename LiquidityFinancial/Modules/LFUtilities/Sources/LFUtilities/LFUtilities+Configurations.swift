@@ -30,6 +30,8 @@ extension LFUtilities {
   public static let referrallinkProd: String = try! LFConfiguration.value(for: "REFERRALLINK_PRO")
   public static let universalLink: String = try! LFConfiguration.value(for: "UNIVERSAL_LINK")
   public static let appStoreLink: String? = try? LFConfiguration.value(for: "APPSTORE_URL")
+  public static let googleInfoFileNameProd: String = try! LFConfiguration.value(for: "GOOGLE_PROD_INFO_FILE_NAME")
+  public static let googleInfoFileNameDev: String = try! LFConfiguration.value(for: "GOOGLE_DEV_INFO_FILE_NAME")
 }
 
 public enum LFConfiguration {
