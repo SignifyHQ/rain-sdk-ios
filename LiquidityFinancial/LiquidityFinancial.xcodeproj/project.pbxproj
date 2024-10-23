@@ -54,7 +54,6 @@
 		06D40C032A63DEB300EADB75 /* LoadingPrimary.json in Resources */ = {isa = PBXBuildFile; fileRef = 06D40C022A63DEB300EADB75 /* LoadingPrimary.json */; };
 		06EBE2012A69390700157B32 /* DashboardContainer+Injection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06EBE2002A69390700157B32 /* DashboardContainer+Injection.swift */; };
 		06FB47082A7AAE430050304C /* PinwheelSDK in Frameworks */ = {isa = PBXBuildFile; productRef = 06FB47072A7AAE430050304C /* PinwheelSDK */; };
-		741493442A9912A800F0DC4D /* GoogleService-Info-Prod.plist in Resources */ = {isa = PBXBuildFile; fileRef = 741493432A9912A700F0DC4D /* GoogleService-Info-Prod.plist */; };
 		741493462A9912E800F0DC4D /* FirebaseMessaging in Frameworks */ = {isa = PBXBuildFile; productRef = 741493452A9912E800F0DC4D /* FirebaseMessaging */; };
 		741493482A99150E00F0DC4D /* FirebaseMessaging in Frameworks */ = {isa = PBXBuildFile; productRef = 741493472A99150E00F0DC4D /* FirebaseMessaging */; };
 		7414934A2A99155200F0DC4D /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 741493492A99155200F0DC4D /* GoogleService-Info.plist */; };
@@ -467,7 +466,8 @@
 		A9F99B5C2B67A58E0099DB85 /* DonationPreview.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9F99B5B2B67A58E0099DB85 /* DonationPreview.swift */; };
 		A9F99B5E2B67A5A50099DB85 /* CausesPreview.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9F99B5D2B67A5A50099DB85 /* CausesPreview.swift */; };
 		A9F99B602B67BF440099DB85 /* CardsTabPreview.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9F99B5F2B67BF440099DB85 /* CardsTabPreview.swift */; };
-		E2B1F2BB2CC6832400F88F88 /* GoogleService-Info-Dev.plist in Resources */ = {isa = PBXBuildFile; fileRef = E2B1F2BA2CC6832400F88F88 /* GoogleService-Info-Dev.plist */; };
+		E22B07E22CC7F11D0016E8B1 /* GoogleService-Info-Dev.plist in Resources */ = {isa = PBXBuildFile; fileRef = E22B07E12CC7F11D0016E8B1 /* GoogleService-Info-Dev.plist */; };
+		E22B07E42CC7F2710016E8B1 /* GoogleService-Info-Prod.plist in Resources */ = {isa = PBXBuildFile; fileRef = E22B07E32CC7F2710016E8B1 /* GoogleService-Info-Prod.plist */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -542,7 +542,6 @@
 		06EBE1FF2A6924E900157B32 /* LFDashboard */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = LFDashboard; path = Modules/LFDashboard; sourceTree = "<group>"; };
 		06EBE2002A69390700157B32 /* DashboardContainer+Injection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DashboardContainer+Injection.swift"; sourceTree = "<group>"; };
 		06F2F7D42ADCF6030065C177 /* DogeCard.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = DogeCard.xctestplan; sourceTree = "<group>"; };
-		741493432A9912A700F0DC4D /* GoogleService-Info-Prod.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info-Prod.plist"; sourceTree = "<group>"; };
 		741493492A99155200F0DC4D /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		7416A20F2B7F2E0A00062824 /* AccessibilityIdentifier.strings */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.strings; name = AccessibilityIdentifier.strings; path = Modules/LFAccessibility/Sources/LFAccessibility/Resources/AccessibilityIdentifier.strings; sourceTree = SOURCE_ROOT; };
 		741AD8142AD50ADD00C1317A /* NavigationContainer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NavigationContainer.swift; sourceTree = "<group>"; };
@@ -820,7 +819,8 @@
 		A9F99B5B2B67A58E0099DB85 /* DonationPreview.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DonationPreview.swift; sourceTree = "<group>"; };
 		A9F99B5D2B67A5A50099DB85 /* CausesPreview.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CausesPreview.swift; sourceTree = "<group>"; };
 		A9F99B5F2B67BF440099DB85 /* CardsTabPreview.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardsTabPreview.swift; sourceTree = "<group>"; };
-		E2B1F2BA2CC6832400F88F88 /* GoogleService-Info-Dev.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info-Dev.plist"; sourceTree = "<group>"; };
+		E22B07E12CC7F11D0016E8B1 /* GoogleService-Info-Dev.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info-Dev.plist"; sourceTree = "<group>"; };
+		E22B07E32CC7F2710016E8B1 /* GoogleService-Info-Prod.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info-Prod.plist"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -1600,8 +1600,8 @@
 				A95D418F2A6E31C60095596B /* Avalanche.entitlements */,
 				A97BF8392A5DA4DA00B8F5CA /* Avalanche-Info.plist */,
 				A9D6C4B12A5E91DF0038D0BB /* LaunchScreen.storyboard */,
-				741493432A9912A700F0DC4D /* GoogleService-Info-Prod.plist */,
-				E2B1F2BA2CC6832400F88F88 /* GoogleService-Info-Dev.plist */,
+				E22B07E32CC7F2710016E8B1 /* GoogleService-Info-Prod.plist */,
+				E22B07E12CC7F11D0016E8B1 /* GoogleService-Info-Dev.plist */,
 				A95354602A5DD91A008B0FAB /* Assets */,
 				A9D6C4A72A5E5FE00038D0BB /* Custom.strings */,
 				06D40BF42A625E9100EADB75 /* Lottie */,
@@ -2641,19 +2641,19 @@
 				A9BC80462A774D4F00E4A1A0 /* Inter-ExtraLight.ttf in Resources */,
 				A9BC80442A774D4F00E4A1A0 /* Inter-Regular.ttf in Resources */,
 				A9BC804B2A774D4F00E4A1A0 /* Inter-Thin.ttf in Resources */,
-				741493442A9912A800F0DC4D /* GoogleService-Info-Prod.plist in Resources */,
 				A9B4BA0B2A7C107D000ED67A /* Images.xcassets in Resources */,
 				06D40C032A63DEB300EADB75 /* LoadingPrimary.json in Resources */,
 				743DA8232B43E1FC000F5AD8 /* PawsCardConfig.xcconfig in Resources */,
 				A9BC80482A774D4F00E4A1A0 /* Inter-Bold.ttf in Resources */,
 				061FFD622BFC3F9800B21165 /* contractJsonABI.json in Resources */,
+				E22B07E42CC7F2710016E8B1 /* GoogleService-Info-Prod.plist in Resources */,
 				7416A2102B7F2E0A00062824 /* AccessibilityIdentifier.strings in Resources */,
 				A9BC80472A774D4F00E4A1A0 /* Inter-Medium.ttf in Resources */,
 				A97BF8402A5DC13000B8F5CA /* Colors.xcassets in Resources */,
 				A9F14DE82AEF7D3100D66389 /* README.md in Resources */,
 				06D40BF82A625F5400EADB75 /* LoadingMix.json in Resources */,
 				749C3DF72B6A30E30082A834 /* Common.strings in Resources */,
-				E2B1F2BB2CC6832400F88F88 /* GoogleService-Info-Dev.plist in Resources */,
+				E22B07E22CC7F11D0016E8B1 /* GoogleService-Info-Dev.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3471,7 +3471,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 76;
 				DEVELOPMENT_ASSET_PATHS = "";
-				DEVELOPMENT_TEAM = TX9PJZUNWS;
+				DEVELOPMENT_TEAM = 2J3Q98FQPS;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = "${SRCROOT}/LiquidityFinancial/Avalanche/Resources/Avalanche-Info.plist";
@@ -3489,7 +3489,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0.1;
-				PRODUCT_BUNDLE_IDENTIFIER = com.liquidityfinancial.avalanche;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.rain-liquidity.avalanche";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
@@ -3509,12 +3509,10 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = "${SRCROOT}/LiquidityFinancial/Avalanche/Resources/Avalanche.entitlements";
 				CODE_SIGN_IDENTITY = "Apple Development";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution";
-				CODE_SIGN_STYLE = Manual;
+				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 76;
 				DEVELOPMENT_ASSET_PATHS = "";
-				DEVELOPMENT_TEAM = "";
-				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = TX9PJZUNWS;
+				DEVELOPMENT_TEAM = 2J3Q98FQPS;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = "${SRCROOT}/LiquidityFinancial/Avalanche/Resources/Avalanche-Info.plist";
@@ -3532,10 +3530,9 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0.1;
-				PRODUCT_BUNDLE_IDENTIFIER = com.liquidityfinancial.avalanche;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.rain-liquidity.avalanche";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
-				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = "Apple Distribution AvalancheCard";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
 				SUPPORTS_MACCATALYST = NO;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;

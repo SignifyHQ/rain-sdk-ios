@@ -10,6 +10,10 @@
 	<string>$(STABLECOIN_SYMBOL)</string>
 	<key>AGREEMENT_URL</key>
 	<string>$(AGREEMENT_URL)</string>
+	<key>ALCHEMY_DEV_KEY</key>
+	<string>$(ALCHEMY_DEV_KEY)</string>
+	<key>ALCHEMY_PROD_KEY</key>
+	<string>$(ALCHEMY_PROD_KEY)</string>
 	<key>APP_BUNDLE_ID</key>
 	<string>$(APP_BUNDLE_ID)</string>
 	<key>APP_NAME</key>
@@ -32,14 +36,6 @@
 	<string>$(CURRENT_PROJECT_VERSION)</string>
 	<key>CHARITY_ENABLED</key>
 	<string>$(CHARITY_ENABLED)</string>
-	<key>ALCHEMY_PROD_KEY</key>
-	<string>$(ALCHEMY_PROD_KEY)</string>
-	<key>ALCHEMY_DEV_KEY</key>
-	<string>$(ALCHEMY_DEV_KEY)</string>
-	<key>RAIN_PROD_PUBLIC_KEY</key>
-	<string>$(RAIN_PROD_PUBLIC_KEY)</string>
-	<key>RAIN_DEV_PUBLIC_KEY</key>
-	<string>$(RAIN_DEV_PUBLIC_KEY)</string>
 	<key>CONSENT_URL</key>
 	<string>$(CONSENT_URL)</string>
 	<key>CRYPTO_ENABLED</key>
@@ -50,6 +46,10 @@
 	<string>$(DISCLOSURE_URL)</string>
 	<key>FirebaseAppDelegateProxyEnabled</key>
 	<false/>
+	<key>GOOGLE_DEV_INFO_FILE_NAME</key>
+	<string>GoogleService-Info-Dev</string>
+	<key>GOOGLE_PROD_INFO_FILE_NAME</key>
+	<string>GoogleService-Info-Prod</string>
 	<key>ITSAppUsesNonExemptEncryption</key>
 	<false/>
 	<key>LSApplicationCategoryType</key>
@@ -100,12 +100,18 @@
 	<string>$(PRIVACY_URL)</string>
 	<key>Privacy - Touch ID Usage Description</key>
 	<string>Avalanche will use Touch ID to unlock your account.</string>
+	<key>RAIN_DEV_PUBLIC_KEY</key>
+	<string>$(RAIN_DEV_PUBLIC_KEY)</string>
+	<key>RAIN_PROD_PUBLIC_KEY</key>
+	<string>$(RAIN_PROD_PUBLIC_KEY)</string>
 	<key>REFERRALLINK_DEV</key>
 	<string>$(REFERRALLINK_DEV)</string>
 	<key>REFERRALLINK_PRO</key>
 	<string>$(REFERRALLINK_PRO)</string>
 	<key>SHARE_APP_URL</key>
 	<string>$(SHARE_APP_URL)</string>
+	<key>STABLECOIN_SYMBOL</key>
+	<string>$(STABLECOIN_SYMBOL)</string>
 	<key>TERMS_URL</key>
 	<string>$(TERMS_URL)</string>
 	<key>UIApplicationSceneManifest</key>
