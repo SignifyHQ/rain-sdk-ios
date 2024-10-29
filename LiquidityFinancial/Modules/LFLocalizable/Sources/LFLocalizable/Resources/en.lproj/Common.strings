@@ -263,15 +263,15 @@
 "cashTab.deposit.title" = "Deposit";
 "cashTab.withdraw.title" = "Withdraw";
 "cashTab.waysToAdd.title" = "More ways to deposit";
-"cashTab.addToBalance.title" = "Add to Balance";
-"cashTab.withdrawBalance.title" = "Withdraw Balance";
+"cashTab.addToBalance.title" = "Add to Card";
+"cashTab.withdrawBalance.title" = "Withdraw from Card";
 "cashTab.depositBalance.sheetTitle" = "Deposit from";
 "cashTab.withdrawBalance.sheetTitle" = "Withdraw to";
 "cashTab.withdrawBalance.internalWallet" = "%@ Wallet";
 "cashTab.withdrawBalance.externalWallet" = "External Wallet";
 
 // CashCardView
-"cashCard.balance.title" = "Balance";
+"cashCard.balance.title" = "Credit limit";
 
 // ChangeAssetView
 "changeAsset.screen.title" = "Change asset";
