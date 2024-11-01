@@ -39,7 +39,7 @@ public struct AssetModel: Hashable {
     switch type {
     case .usdc:
       6
-    case .avax, .cardano, .doge:
+    case .avax, .cardano, .doge, .wavax:
       18
     default:
       2

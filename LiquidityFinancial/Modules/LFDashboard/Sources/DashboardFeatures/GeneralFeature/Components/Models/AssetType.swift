@@ -5,6 +5,7 @@ import LFUtilities
 public enum AssetType: String {
   case usd = "USD"
   case usdc = "USDC"
+  case wavax = "WAVAX"
   case avax = "AVAX"
   case cardano = "ADA"
   case doge = "DOGE"
@@ -20,6 +21,7 @@ public enum AssetType: String {
     case .avax: return 2
     case .cardano: return 3
     case .usdc: return 4
+    case .wavax: return 5
     }
   }
   
@@ -44,6 +46,8 @@ public enum AssetType: String {
       return GenImages.CommonImages.icCardano.swiftUIImage
     case .doge:
       return GenImages.CommonImages.icDoge.swiftUIImage
+    case .wavax:
+      return GenImages.CommonImages.icWavax.swiftUIImage
     }
   }
   
@@ -59,6 +63,8 @@ public enum AssetType: String {
       return GenImages.CommonImages.icCardanoFilled.swiftUIImage
     case .doge:
       return GenImages.CommonImages.icDogeFilled.swiftUIImage
+    case .wavax:
+      return GenImages.CommonImages.icWavaxFilled.swiftUIImage
     }
   }
   
@@ -74,6 +80,8 @@ public enum AssetType: String {
       return GenImages.CommonImages.icCardanoFilled.swiftUIImage
     case .doge:
       return GenImages.CommonImages.icDogeLine.swiftUIImage
+    case .wavax:
+      return GenImages.CommonImages.icWavaxFilled.swiftUIImage
     }
   }
 }

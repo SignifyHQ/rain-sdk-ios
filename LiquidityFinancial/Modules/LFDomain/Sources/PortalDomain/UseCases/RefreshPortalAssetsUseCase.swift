@@ -13,6 +13,6 @@ public final class RefreshPortalAssetsUseCase: RefreshPortalAssetsUseCaseProtoco
   }
   
   public func execute() async throws {
-    try await repository.refreshBalances(with: storage.erc20Token?.contractAddress)
+    try await repository.refreshBalances()
   }
 }

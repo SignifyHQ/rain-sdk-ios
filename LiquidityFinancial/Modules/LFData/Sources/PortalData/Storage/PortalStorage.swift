@@ -15,7 +15,8 @@ public class PortalStorage: PortalStorageProtocol {
     // Setting assets which will be used by the app based on the environment
     defaultCryptoAssets = [
       PortalAsset(token: .AVAX),
-      PortalAsset(token: environmentService.networkEnvironment == .productionTest ? .fujiAvalancheUSDC : .mainnetAvalancheUSDC)
+      PortalAsset(token: environmentService.networkEnvironment == .productionTest ? .fujiAvalancheUSDC : .mainnetAvalancheUSDC),
+      PortalAsset(token: environmentService.networkEnvironment == .productionTest ? .fujiAvalancheWAVAX : .mainnetAvalancheWAVAX)
     ]
     
     // Make sure the assets are always visible because when user have no balance in some crypto asset, blockchain will not return any balance for it
@@ -23,8 +24,8 @@ public class PortalStorage: PortalStorageProtocol {
   }
   
   // Convenience method for returning the ERC20 token used by the app
-  public var erc20Token: PortalToken? {
-    defaultCryptoAssets.first { $0.token != .AVAX }?.token
+  public func token(with contract: String?) -> PortalToken? {
+    defaultCryptoAssets.first { $0.token.contractAddress == (contract ?? "") }?.token
   }
   
   public func cryptoAssets() -> AnyPublisher<[PortalAsset], Never> {

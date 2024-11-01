@@ -3,7 +3,7 @@ import Foundation
 import Services
 
 public protocol PortalStorageProtocol {
-  var erc20Token: PortalToken? { get }
+  func token(with contract: String?) -> PortalToken?
   func cryptoAssets() -> AnyPublisher<[PortalAsset], Never>
   func cryptoAsset(with symbol: String) -> AnyPublisher<PortalAsset?, Never>
   func update(walletAddress: String?, balances: [String: Double])

@@ -7,13 +7,22 @@ import PortalSwift
 public protocol PortalServiceProtocol {
   func registerPortal(sessionToken: String) async throws
   func createWallet() async throws -> String
-  func send(to address: String, contractAddress: String?, amount: Double) async throws -> String
+  func send(
+    to address: String,
+    contractAddress: String?,
+    amount: Double,
+    conversionFactor: Int
+  ) async throws -> String
   func withdrawAsset(
     addresses: PortalService.WithdrawAssetAddresses,
     amount: Double,
     signature: PortalService.WithdrawAssetSignature
   ) async throws -> String
-  func estimateTransferFee(to address: String, contractAddress: String?, amount: Double) async throws -> Double
+  func estimateTransferFee(
+    to address: String,
+    contractAddress: String?,
+    amount: Double, conversionFactor: Int
+  ) async throws -> Double
   func estimateWithdrawalFee(
     addresses: PortalService.WithdrawAssetAddresses,
     amount: Double,
@@ -22,7 +31,6 @@ public protocol PortalServiceProtocol {
   func backup(backupMethod: BackupMethods, password: String?) async throws -> (String, () async throws -> Void)
   func recover(backupMethod: BackupMethods, password: String?, cipherText: String) async throws
   func refreshBalances(
-    with erc20Token: String?
   ) async throws -> (walletAddress: String?, balances: [String: Double])
   func getSwapQuote(sellToken: String, buyToken: String, buyAmount: Double) async throws -> Quote
   func executeSwap(quote: Quote) async throws -> String

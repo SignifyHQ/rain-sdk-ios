@@ -125,15 +125,17 @@ public extension PortalService {
   func send(
     to address: String,
     contractAddress: String?,
-    amount: Double
+    amount: Double,
+    conversionFactor: Int
   ) async throws -> String {
     let transaction = try await buildEthTransaction(
       to: address,
       contractAddress: contractAddress,
-      amount: amount
+      amount: amount,
+      conversionFactor: conversionFactor
     )
     
-    let debugDescription = "Portal Swift: Send transaction success for \(transaction.walletAddress)"
+    let debugDescription = "Portal Swift: Send transaction success for \(transaction.walletAddress). Amount: \(amount)"
     return try await sendTransactionToBlockchain(
       walletAddress: transaction.walletAddress,
       transactionParams: transaction.transactionParams,
@@ -177,28 +179,25 @@ public extension PortalService {
   func estimateTransferFee(
     to address: String,
     contractAddress: String?,
-    amount: Double
+    amount: Double,
+    conversionFactor: Int
   ) async throws -> Double {
     let transaction = try await buildEthTransaction(
       to: address,
       contractAddress: contractAddress,
-      amount: amount
+      amount: amount,
+      conversionFactor: conversionFactor
     )
     
     return try await estimateTransactionFee(address: transaction.walletAddress, params: transaction.transactionParams)
   }
   
   func refreshBalances(
-    with erc20Token: String?
   ) async throws -> (walletAddress: String?, balances: [String: Double]) {
     guard let walletAddress
     else {
       log.error("Portal Swift: Error fetching wallet balances. Wallet missing")
       throw(LFPortalError.walletMissing)
-    }
-    
-    guard let erc20Token else {
-      throw(LFPortalError.customError(message: "Portal Swift: Error fetching ERC20 balances. Token contract address missing"))
     }
     
     // Throw an error if Portal clent instance is not ready
@@ -207,32 +206,15 @@ public extension PortalService {
       throw(LFPortalError.portalInstanceUnavailable)
     }
     
-    var portalBalances: [String: Double] = [:]
-    
     // Fetch ERC20 token balances for wallet
-    let getBalancesFunctionSelector = "0x70a08231"
-    let erc20BalanceResponse = try await portal
-      .request(
-        "eip155:\(chainId)",
-        withMethod: .eth_call,
-        andParams: [
-          [
-            "to": erc20Token,
-            // Data is constructed by combining function selector and wallet address converted to 32 byte hex-string
-            "data": getBalancesFunctionSelector + String(repeating: "0", count: 24) + walletAddress.dropFirst(2)
-          ],
-          "latest"
-        ]
-      )
+    let erc20Balances = try await portal.api.getBalances("eip155:\(chainId)")
     
-    guard let erc20BalanceRpcResponse = erc20BalanceResponse.result as? PortalProviderRpcResponse
-    else {
-      log.error("Portal Swift: Error fetching ERC20 balances for \(walletAddress). Unexpected RPC response")
-      throw(LFPortalError.unexpected)
-    }
-
-    let erc20Balance = erc20BalanceRpcResponse.result?.asDouble?.fromBaseUnits(using: 6)
-    portalBalances[erc20Token] = erc20Balance
+    // Create portal balances dictionary with ERC20 token balances as initial data
+    var portalBalances: [String: Double] = erc20Balances.reduce(
+      into: [:], { partialResult, balance in
+        partialResult[balance.contractAddress] = balance.balance.asDouble
+      }
+    )
     
     // Fetch ETH token balance for wallet
     let ethBalanceResponse = try await portal
@@ -251,6 +233,7 @@ public extension PortalService {
       throw(LFPortalError.unexpected)
     }
     
+    // Add ETH token balance to the portal balances dictionary
     let ethBalance = ethBalanceRpcResponse.result?.asDouble?.weiToEth
     portalBalances[""] = ethBalance
     
@@ -347,7 +330,8 @@ private extension PortalService {
   func buildEthTransaction(
     to address: String,
     contractAddress: String?,
-    amount: Double
+    amount: Double,
+    conversionFactor: Int
   ) async throws -> (walletAddress: String, transactionParams: ETHTransactionParam) {
     guard let walletAddress
     else {
@@ -361,7 +345,13 @@ private extension PortalService {
     let toAddress = contractAddress ?? address
     
     // Build transaction params. In case of sendind native token, tx will be nil
-    let tx = try await buildErc20Transaction(contractAddress: contractAddress, toAddress: address, amount: amount)
+    let tx = try await buildErc20Transaction(
+      contractAddress: contractAddress,
+      toAddress: address,
+      amount: amount,
+      conversionFactor: conversionFactor
+    )
+    
     let transactionParams = ETHTransactionParam(
       from: walletAddress,
       to: toAddress,
@@ -454,7 +444,8 @@ private extension PortalService {
   func buildErc20Transaction(
     contractAddress: String?,
     toAddress: String,
-    amount: Double
+    amount: Double,
+    conversionFactor: Int
   ) async throws -> String? {
     try await withCheckedThrowingContinuation { [weak self] (continuation: CheckedContinuation<String?, Error>) in
       guard let self
@@ -483,7 +474,7 @@ private extension PortalService {
         guard let tx = contract
           .transfer(
             to: ethereumToAddress,
-            value: BigUInt(amount * 1e6)
+            value: BigUInt(amount * pow(10.0, Double(conversionFactor)))
           )
             .createTransaction(
               nonce: nil,

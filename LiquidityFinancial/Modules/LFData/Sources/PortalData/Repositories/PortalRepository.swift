@@ -74,7 +74,12 @@ public class PortalRepository: PortalRepositoryProtocol {
     contractAddress: String?,
     amount: Double
   ) async throws -> Double {
-    try await portalService.estimateTransferFee(to: address, contractAddress: contractAddress, amount: amount)
+    guard let token = portalStorage.token(with: contractAddress)
+    else {
+      throw LFPortalError.dataUnavailable
+    }
+    
+    return try await portalService.estimateTransferFee(to: address, contractAddress: contractAddress, amount: amount, conversionFactor: token.conversionFactor)
   }
   
   public func estimateWithdrawalFee(
@@ -90,8 +95,13 @@ public class PortalRepository: PortalRepositoryProtocol {
     contractAddress: String?,
     amount: Double
   ) async throws -> String {
-    try await portalService.send(to: address, contractAddress: contractAddress, amount: amount)
-  }  
+    guard let token = portalStorage.token(with: contractAddress)
+    else {
+      throw LFPortalError.dataUnavailable
+    }
+    
+    return try await portalService.send(to: address, contractAddress: contractAddress, amount: amount, conversionFactor: token.conversionFactor)
+  }
   
   public func withdrawAsset(
     addresses: PortalService.WithdrawAssetAddresses,
@@ -122,9 +132,8 @@ public class PortalRepository: PortalRepositoryProtocol {
   }
   
   public func refreshBalances(
-    with erc20Token: String?
-  ) async throws {
-    let balances = try await portalService.refreshBalances(with: erc20Token)
+) async throws {
+    let balances = try await portalService.refreshBalances()
     portalStorage.update(walletAddress: balances.walletAddress, balances: balances.balances)
   }
   
