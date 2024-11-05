@@ -220,7 +220,7 @@ extension RainListCardsViewModel {
     }
   }
   
-  func onClickedAddToApplePay() {
+  func onTapAddToApplePay() {
     guard currentCard.cardStatus == .active else {
       return
     }
@@ -240,7 +240,7 @@ extension RainListCardsViewModel {
     }
   }
   
-  func onClickedOrderPhysicalCard() {
+  func onTapOrderPhysicalCard() {
     let viewModel = RainOrderPhysicalCardViewModel { card in
       self.orderPhysicalSuccess(card: card)
     }
@@ -248,8 +248,12 @@ extension RainListCardsViewModel {
     navigation = .orderPhysicalCard(AnyView(destinationView))
   }
   
-  func onClickCloseCardButton() {
+  func onTapCloseCard() {
     popup = .confirmCloseCard
+  }
+  
+  func onTapViewCreditLimitBreakdown() {
+    navigation = .creditLimitBreakdown
   }
   
   func hidePopup() {
@@ -332,6 +336,7 @@ private extension RainListCardsViewModel {
 extension RainListCardsViewModel {
   enum Navigation {
     case orderPhysicalCard(AnyView)
+    case creditLimitBreakdown
   }
   
   enum Sheet: Identifiable {

@@ -53,6 +53,10 @@ public struct RainListCardsView: View {
       switch item {
       case let .orderPhysicalCard(destinationView):
         destinationView
+      case .creditLimitBreakdown:
+        CreditLimitBreakdownView(
+          viewModel: CreditLimitBreakdownViewModel()
+        )
       }
     }
     .popup(item: $viewModel.popup, dismissMethods: .tapInside) { item in
@@ -252,8 +256,14 @@ private extension RainListCardsView {
           GenImages.CommonImages.dash.swiftUIImage
             .foregroundColor(Colors.label.swiftUIColor)
           row(title: L10N.Common.ListCard.CloseCard.title) {
-            viewModel.onClickCloseCardButton()
+            viewModel.onTapCloseCard()
           }
+        }
+        
+        GenImages.CommonImages.dash.swiftUIImage
+          .foregroundColor(Colors.label.swiftUIColor)
+        row(title: L10N.Common.ListCard.CreditLimitBreakdown.title) {
+          viewModel.onTapViewCreditLimitBreakdown()
         }
       }
     }
@@ -308,20 +318,22 @@ private extension RainListCardsView {
       } else if viewModel.currentCard.cardStatus == .unactivated {
         activeCardButton
       }
-      if !viewModel.isHasPhysicalCard {
-        FullSizeButton(
-          title: L10N.Common.ListCard.OrderPhysicalCard.title,
-          isDisable: false
-        ) {
-          viewModel.onClickedOrderPhysicalCard()
-        }
-      }
+      
+      // Hiding the button to order physical card temporarily
+//      if !viewModel.isHasPhysicalCard {
+//        FullSizeButton(
+//          title: L10N.Common.ListCard.OrderPhysicalCard.title,
+//          isDisable: false
+//        ) {
+//          viewModel.onTapOrderPhysicalCard()
+//        }
+//      }
     }
   }
   
   var applePay: some View {
     Button {
-      viewModel.onClickedAddToApplePay()
+      viewModel.onTapAddToApplePay()
     } label: {
       ApplePayButton()
         .frame(height: 40)

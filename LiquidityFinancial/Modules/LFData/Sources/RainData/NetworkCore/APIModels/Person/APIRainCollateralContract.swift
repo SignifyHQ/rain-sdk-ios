@@ -8,6 +8,12 @@ public struct APIRainCollateralContract: Decodable {
   public let address: String
   public let controllerAddress: String?
   public let tokens: [APIRainToken]
+  
+  public var creditLimit: Double {
+    tokens.reduce(into: 0) { partialResult, token in
+      partialResult += token.availableUsdBalance
+    }
+  }
 }
 
 public struct APIRainToken: Decodable, RainTokenEntity {
@@ -15,12 +21,38 @@ public struct APIRainToken: Decodable, RainTokenEntity {
   public let name: String?
   public let symbol: String?
   public let decimals: Double?
+  public let logo: String?
+  public let balance: String
+  public let exchangeRate: Double
+  public let advanceRate: Double
   
-  public init(address: String, name: String?, symbol: String?, decimals: Double?) {
+  public init(
+    address: String,
+    name: String?,
+    symbol: String?,
+    decimals: Double?,
+    logo: String?,
+    balance: String,
+    exchangeRate: Double,
+    advanceRate: Double
+  ) {
     self.address = address
     self.name = name
     self.symbol = symbol
     self.decimals = decimals
+    self.logo = logo
+    self.balance = balance
+    self.exchangeRate = exchangeRate
+    self.advanceRate = advanceRate
+  }
+  
+  public var availableUsdBalance: Double {
+    guard let balance = Double(balance)
+    else {
+      return 0
+    }
+    
+    return balance * exchangeRate * advanceRate / 100
   }
 }
 

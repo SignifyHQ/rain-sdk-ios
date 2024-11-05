@@ -2,12 +2,17 @@ import Foundation
 import LFUtilities
 import AccountService
 import Services
+import RainDomain
 
 public struct AssetModel: Hashable {
   public let id: String
   public let type: AssetType?
+  
   public let availableBalance: Double
   public let availableUsdBalance: Double?
+  public let exchangeRate: Double?
+  public let advanceRate: Double?
+  
   public let externalAccountId: String?
   
   public init(id: String, type: AssetType?, availableBalance: Double, availableUsdBalance: Double?, externalAccountId: String?) {
@@ -16,6 +21,9 @@ public struct AssetModel: Hashable {
     self.availableBalance = availableBalance
     self.availableUsdBalance = availableUsdBalance
     self.externalAccountId = externalAccountId
+    
+    self.exchangeRate = nil
+    self.advanceRate = nil
   }
   
   public init(account: AccountModel) {
@@ -24,6 +32,9 @@ public struct AssetModel: Hashable {
     self.availableBalance = account.availableBalance
     self.availableUsdBalance = account.availableUsdBalance
     self.externalAccountId = account.externalAccountId
+    
+    self.exchangeRate = nil
+    self.advanceRate = nil
   }
   
   public init(portalAsset: PortalAsset) {
@@ -31,8 +42,21 @@ public struct AssetModel: Hashable {
     self.type = AssetType(rawValue: portalAsset.token.symbol.uppercased())
     self.availableBalance = portalAsset.balance ?? 0
     self.externalAccountId = portalAsset.walletAddress
-    // TODO(Volo): Need to figure out how to get the USD prices and balances
+    
     self.availableUsdBalance = nil
+    self.exchangeRate = nil
+    self.advanceRate = nil
+  }
+  
+  public init(rainCollateralAsset: RainTokenEntity) {
+    self.id = rainCollateralAsset.address
+    self.type = AssetType(rawValue: rainCollateralAsset.symbol?.uppercased() ?? "")
+    self.availableBalance = Double(rainCollateralAsset.balance) ?? 0.0
+    self.availableUsdBalance = rainCollateralAsset.availableUsdBalance
+    self.exchangeRate = rainCollateralAsset.exchangeRate
+    self.advanceRate = rainCollateralAsset.advanceRate
+    
+    self.externalAccountId = nil
   }
   
   public var conversionFactor: Int {
@@ -44,6 +68,10 @@ public struct AssetModel: Hashable {
     default:
       2
     }
+  }
+  
+  public var hasExchangeRate: Bool {
+    (exchangeRate ?? 1) != 1
   }
   
   public var availableBalanceFormatted: String {
@@ -67,5 +95,18 @@ public struct AssetModel: Hashable {
       minFractionDigits: Constants.FractionDigitsLimit.fiat.minFractionDigits,
       maxFractionDigits: Constants.FractionDigitsLimit.fiat.maxFractionDigits
     )
+  }
+  
+  public var exchangeRateFormatted: String {
+    "x\(exchangeRate?.formattedUSDAmount() ?? "-/-")"
+  }
+  
+  public var advanceRateFormatted: String {
+    guard let advanceRate
+    else {
+      return "x-/-"
+    }
+    
+    return "x\((advanceRate / 100).formattedUSDAmount())"
   }
 }

@@ -117,6 +117,7 @@ public extension Constants {
     case small
     case ultraSmall
     case large
+    case extraLarge
     case navigationBar
     case textFieldHeader
     case buttonTextSize
@@ -141,6 +142,8 @@ public extension Constants {
         return 20
       case .large:
         return 24
+      case .extraLarge:
+        return 36
       case .regular:
         return 13
       case let .custom(size):

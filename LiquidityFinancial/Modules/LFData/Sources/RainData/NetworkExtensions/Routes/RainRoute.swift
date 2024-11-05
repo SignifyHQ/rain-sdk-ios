@@ -23,7 +23,7 @@ extension RainRoute: LFRoute {
     case .createAccount:
       return "/v1/rain/person/create-account"
     case .getCollateralContract:
-      return "/v1/rain/person/collateral-contract"
+      return "/v1/rain/person/credit-contracts"
     case .getCreditBalance:
       return "/v1/rain/person/credit-balances"
     case .getWithdrawalSignature:

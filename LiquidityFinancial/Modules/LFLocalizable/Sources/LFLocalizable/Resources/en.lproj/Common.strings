@@ -297,6 +297,7 @@
 "listCard.showCardNumber.title" = "Show Card Number";
 "listCard.lockCard.title" = "Lock Card";
 "listCard.closeCard.title" = "Close Card";
+"listCard.creditLimitBreakdown.title" = "View Credit Limit Breakdown";
 "listCard.lockCard.description" = "Stop card from being used";
 "listCard.changePin.title" = "Change PIN";
 "listCard.orderPhysicalCard.title" = "Order Physical Card";
@@ -349,6 +350,15 @@
 "cards_detail.roundup.desc" = "Round up purchases";
 "cards_detail.roundup.title" = "ROUND UP";
 "cards_detail.deals.value" = "Donate up to 8%% of purchase";
+
+// Collateral Breakdown
+"collateralLimitBreakdown.creditLimit.title" = "Credit limit";
+"collateralLimitBreakdown.assetBalances.title" = "Asset balances";
+"collateralLimitBreakdown.creditLimitBreakdown.title" = "Credit limit breakdown";
+"collateralLimitBreakdown.tokenAdded.title" = "%@ added";
+"collateralLimitBreakdown.tokenExchangeRate.title" = "%@ exchange rate";
+"collateralLimitBreakdown.tokenAdvanceRate.title" = "%@ advance rate";
+
 
 // CARD LIMITS
 "cards_detail.monthly_limits" = "Monthly Spend Limit";
