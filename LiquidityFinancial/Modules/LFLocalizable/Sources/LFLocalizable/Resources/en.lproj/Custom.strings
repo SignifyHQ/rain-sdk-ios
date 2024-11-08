@@ -14,13 +14,13 @@
 "home.cashTab.title" = "Cash";
 
 // Account view
-"accountView.bank_transfers.subtitle" = "Send from your bank to AvalancheCard";
+"accountView.bank_transfers.subtitle" = "Send from your bank to Avalanche Card";
 
 // Referral
 "referral.example.crypto" = "If the friend you invited earns 500 %@ in a week, you will also get 500 AVAX. Your bonus will be paid each Friday to your %@Card wallet.";
 
 // Verify card
-"verify_card.detail" = "Check your card activity for 1 pending micro-transaction from AvalancheCard. Enter the one amount in the fields below. Once verified, this transaction will be canceled";
+"verify_card.detail" = "Check your card activity for 1 pending micro-transaction from Avalanche Card. Enter the one amount in the fields below. Once verified, this transaction will be canceled";
 
 // Grid Value
 "grid_value.crypto" = "%@ AVAX";

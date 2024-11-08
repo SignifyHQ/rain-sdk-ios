@@ -1,4 +1,4 @@
-"card.name" = "AvalancheCard";
+"card.name" = "Avalanche Card";
 
 // Initial Screen
 "initial.label.title" = "%@ Card";
@@ -6,7 +6,7 @@
 // Wellcome Screen
 "welcome.header.desc" = "The Avalanche Card is an easy way to spend cash or crypto, and earn rewards. Here is how:";
 "welcome.how_it_works.item2" = "Use your Avalanche Card anywhere Visa is accepted";
-"welcome.how_it_works.item3" = "Spend AVAX, USDC, USD and earn rewards.";
+"welcome.how_it_works.item3" = "Spend USDC and WAVAX.";
 
 // Enter Verification Code
 "enter_ssn.alert.message" = "A valid SSN/ID is required by our partners to provide banking services.";
@@ -25,7 +25,7 @@
 "MoveCryptoInput.send.annotation" = "You currently have %@ %@ available to send. If this amount is less than expected, please contact support.";
 
 // Account view
-"accountView.bank_transfers.subtitle" = "Send from your bank to AvalancheCard";
+"accountView.bank_transfers.subtitle" = "Send from your bank to Avalanche Card";
 "accountView.disclosure.message" = "The Avalanche Card pre-paid debit card is established by Pathward, National Association Member FDIC, pursuant to license by Visa.";
 "account.reward.session.normal" = "Rewards by Asset Type";
 

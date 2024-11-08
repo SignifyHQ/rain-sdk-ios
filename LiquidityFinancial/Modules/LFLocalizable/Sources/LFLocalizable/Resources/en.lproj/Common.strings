@@ -173,19 +173,19 @@
 "backupWallet.active.title" = "Active";
 "backupWallet.setupPinCode.title" = "Set up PIN";
 "backupWallet.backupWithICloud.title" = "Backup with iCloud";
-"backupWallet.disclosure.title" = "Backing up helps you recover your account in case you lose or reset your device";
+"backupWallet.disclosure.title" = "Backing up helps you recover your wallet in case you lose or reset your device";
 
 // Baclup By PinCode
 "backupByPinCode.setup.title" = "set up your backup pin";
 "backupByPinCode.confirm.title" = "confirm backup pin";
-"backupByPinCode.setup.description" = "We’ll use this pin to recover your account in case you reset or lose access to this device";
+"backupByPinCode.setup.description" = "We’ll use this pin to recover your wallet in case you reset or lose access to this device";
 "backupByPinCode.confirm.description" = "Just making sure that you remember your pin correctly";
 "backupByPinCode.setup.buttonTitle" = "Next";
 "backupByPinCode.confirm.buttonTitle" = "Confirm PIN";
 "backupByPinCode.wrongCode.error" = "Wrong Code";
 "backupByPinCode.pinCreatedPopup.title" = "PIN created successfully";
 "backupByPinCode.pinSecurePopup.title" = "keep your backup pin secure";
-"backupByPinCode.pinSecurePopup.message" = "Sharing your Backup PIN with anyone can put your Avalanche account and everything within it at risk.\nKeep your backup PIN as safely as you would keep your car or house keys.";
+"backupByPinCode.pinSecurePopup.message" = "Sharing your Backup PIN with anyone can put your Avalanche wallet and everything within it at risk.\nKeep your backup PIN as safely as you would keep your car or house keys.";
 "backupByPinCode.pinSecurePopup.primaryButton" = "Agree and Continue";
 
 // Set Up Account
@@ -205,7 +205,7 @@
 
 // KYC Status
 "kycStatus.missingInfo.message" = "The information you have entered is not complete, you need to contact us via email to add some necessary information.";
-"kycStatus.identityVerification.title" = "DRIVER’s LICENSE, ID OR PASSPORT";
+"kycStatus.identityVerification.title" = "DRIVER’S LICENSE, ID OR PASSPORT";
 "kycStatus.identityVerification.message" = "Please verify your identity with a valid Driver’s License, ID or Passport. ";
 "kycStatus.waitingVerification.title" = "THANK YOU FOR WAITING";
 "kycStatus.waitingVerification.message" = "We’re confiming your account details. This could take up to 30 seconds";
@@ -215,7 +215,7 @@
 "kycStatus.inReview.message" = "Hi %@, we are still verifying your account details. This is common when VOIP or Google voice phone numbers are used, or addresses/emails change. Please contact support and we will help verify the details.  Thank you for your patience.";
 "kycStatus.inReview.secondaryTitle" = "Contact Support";
 "kycStatus.inReview.primaryTitle" = "Check Status";
-"kycStatus.fail.unclear.message" = "%@, we were unable to create a Depository account at this time. We will be in touch via email.";
+"kycStatus.fail.unclear.message" = "%@, we were unable to create an account at this time. We will be in touch via email.";
 "kycStatus.inReview.popup.title" = "In Review";
 "kycStatus.inReview.popup.message" = "Thank you for your patience while your account is still reviewed.";
 
@@ -755,7 +755,7 @@ https://mn.gov/commerce/money/investments/cryptocurrency/. \n\n\n\n\n\n\n";
 "assetView.receive.title" = "Receive";
 
 // Receive Crypto View
-"receive_crypto_view.title" = "%@ Wallet Address";
+"receive_crypto_view.title" = "Internal Wallet Address";
 "receive_crypto_view.copied.info" = "Copied!";
 "receive_crypto_view.wallet_detail" = "Wallet Details";
 
@@ -1325,7 +1325,7 @@ contact support.";
 
 // RecoverWallet
 "recoverWallet.title" = "Recover %@ backup";
-"recoverWallet.description" = "You previously backed up your AvalancheCard Wallet via %@. Complete recovery to access your funds.";
+"recoverWallet.description" = "You previously backed up your Avalanche Card Wallet via %@. Complete recovery to access your funds.";
 "recoverWallet.startRecovery.buttonTitle" = "Start Recovery";
 
 // iCloudBackupNotFound
@@ -1335,11 +1335,11 @@ contact support.";
 
 // EnterPinCode
 "enterPinCode.title" = "enter your backup pin";
-"enterPinCode.description" = "We’ll use this pin to make sure it’s you who’s trying to recover your account";
+"enterPinCode.description" = "We’ll use this pin to make sure it’s you who’s trying to recover your wallet";
 
 // RecoveryComplete
 "recoveryComplete.title" = "Recovery complete";
-"recoveryComplete.message" = "Your account recovery is complete.\nJust like that.";
+"recoveryComplete.message" = "Your wallet recovery is complete.\nJust like that.";
 
 // MARK: - Common
 
@@ -1389,7 +1389,7 @@ We will be in touch shortly to invite you to get your new card.";
 "applicationReviewStatus.inReview.message" = "Hi %@, we are still verifying your account details. This is common when VOIP or Google voice phone numbers are used, or addresses / emails change. Please contact support and we will help verify the details. Thank you for your patience.";
 "applicationReviewStatus.inReview.secondaryTitle" = "Contact Support";
 "applicationReviewStatus.inReview.primaryTitle" = "Check Status";
-"applicationReviewStatus.fail.unclear.message" = "%@, we were unable to create a Depository account at this time. We will be in touch via email.";
+"applicationReviewStatus.fail.unclear.message" = "%@, we were unable to create an account at this time. We will be in touch via email.";
 "applicationReviewStatus.inReview.popup.title" = "In Review";
 "applicationReviewStatus.inReview.popup.message" = "Thank you for your patience while your account is still reviewed.";
 
