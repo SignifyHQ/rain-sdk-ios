@@ -146,11 +146,13 @@ public extension PortalService {
   func withdrawAsset(
     addresses: WithdrawAssetAddresses,
     amount: Double,
+    conversionFactor: Int,
     signature: WithdrawAssetSignature
   ) async throws -> String {
     let transaction = try await buildETHTransactionParamForWithdrawAsset(
       addresses: addresses,
       amount: amount,
+      conversionFactor: conversionFactor,
       signature: signature
     )
     
@@ -165,11 +167,13 @@ public extension PortalService {
   func estimateWithdrawalFee(
     addresses: WithdrawAssetAddresses,
     amount: Double,
+    conversionFactor: Int,
     signature: WithdrawAssetSignature
   ) async throws -> Double {
     let transaction = try await buildETHTransactionParamForWithdrawAsset(
       addresses: addresses,
       amount: amount,
+      conversionFactor: conversionFactor,
       signature: signature
     )
     
@@ -348,8 +352,7 @@ private extension PortalService {
     let tx = try await buildErc20Transaction(
       contractAddress: contractAddress,
       toAddress: address,
-      amount: amount,
-      conversionFactor: conversionFactor
+      amount: BigUInt(amount * pow(10.0, Double(conversionFactor)))
     )
     
     let transactionParams = ETHTransactionParam(
@@ -365,6 +368,7 @@ private extension PortalService {
   func buildETHTransactionParamForWithdrawAsset(
     addresses: WithdrawAssetAddresses,
     amount: Double,
+    conversionFactor: Int,
     signature: WithdrawAssetSignature
   ) async throws -> (walletAddress: String, transactionParams: ETHTransactionParam) {
     guard let walletAddress else {
@@ -390,12 +394,13 @@ private extension PortalService {
     let withdrawAssetParameter = WithdrawAssetParameter(
       proxyAddress: ethereumProxyAddress,
       tokenAddress: ethereumTokenAddress,
-      amount: amount,
+      amount: BigUInt(amount * pow(10.0, Double(conversionFactor))),
       recipientAddress: ethereumRecipientAddress,
       expiryAt: unixTimestamp,
       salt: saltData,
       signature: signatureData
     )
+      
     let tx = try await buildErc20TransactionForWithdrawAsset(
       ethereumContractAddress: ethereumContractAddress,
       withdrawAssetParameter: withdrawAssetParameter
@@ -444,8 +449,7 @@ private extension PortalService {
   func buildErc20Transaction(
     contractAddress: String?,
     toAddress: String,
-    amount: Double,
-    conversionFactor: Int
+    amount: BigUInt
   ) async throws -> String? {
     try await withCheckedThrowingContinuation { [weak self] (continuation: CheckedContinuation<String?, Error>) in
       guard let self
@@ -474,7 +478,7 @@ private extension PortalService {
         guard let tx = contract
           .transfer(
             to: ethereumToAddress,
-            value: BigUInt(amount * pow(10.0, Double(conversionFactor)))
+            value: amount
           )
             .createTransaction(
               nonce: nil,
@@ -612,6 +616,7 @@ private extension PortalService {
       withMethod: method,
       andParams: params
     )
+    
     guard let rpcResponse = response.result as? PortalProviderRpcResponse,
           let result = rpcResponse.result?.asDouble else {
       log.error("Portal Swift: Error fetching \(method) for \(address). Unexpected RPC response")
@@ -625,10 +630,10 @@ private extension PortalService {
 // MARK: - Types
 extension PortalService {
   public struct WithdrawAssetAddresses {
-    let contractAddress: String
-    let proxyAddress: String
-    let recipientAddress: String
-    let tokenAddress: String
+    public let contractAddress: String
+    public let proxyAddress: String
+    public let recipientAddress: String
+    public let tokenAddress: String
     
     public init(contractAddress: String, proxyAddress: String, recipientAddress: String, tokenAddress: String) {
       self.contractAddress = contractAddress
@@ -662,7 +667,7 @@ extension PortalService {
     init(
       proxyAddress: EthereumAddress,
       tokenAddress: EthereumAddress,
-      amount: Double,
+      amount: BigUInt,
       recipientAddress: EthereumAddress,
       expiryAt: TimeInterval,
       salt: Data,
@@ -670,7 +675,7 @@ extension PortalService {
     ) {
       self.proxyAddress = proxyAddress
       self.tokenAddress = tokenAddress
-      self.amount = BigUInt(amount * 1e6)
+      self.amount = amount
       self.recipientAddress = recipientAddress
       self.expiryAt = BigUInt(expiryAt)
       self.salt = salt

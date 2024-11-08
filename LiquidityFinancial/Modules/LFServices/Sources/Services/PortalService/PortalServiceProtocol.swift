@@ -16,6 +16,7 @@ public protocol PortalServiceProtocol {
   func withdrawAsset(
     addresses: PortalService.WithdrawAssetAddresses,
     amount: Double,
+    conversionFactor: Int,
     signature: PortalService.WithdrawAssetSignature
   ) async throws -> String
   func estimateTransferFee(
@@ -26,6 +27,7 @@ public protocol PortalServiceProtocol {
   func estimateWithdrawalFee(
     addresses: PortalService.WithdrawAssetAddresses,
     amount: Double,
+    conversionFactor: Int,
     signature: PortalService.WithdrawAssetSignature
   ) async throws -> Double
   func backup(backupMethod: BackupMethods, password: String?) async throws -> (String, () async throws -> Void)

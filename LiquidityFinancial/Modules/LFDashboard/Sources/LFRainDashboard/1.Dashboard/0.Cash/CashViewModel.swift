@@ -1,5 +1,6 @@
 import Foundation
 import RainFeature
+import RainDomain
 import Factory
 import NetSpendData
 import NetspendDomain
@@ -17,24 +18,35 @@ final class CashViewModel: ObservableObject {
   @LazyInjected(\.accountDataManager) var accountDataManager
   @LazyInjected(\.portalStorage) var portalStorage
   @LazyInjected(\.portalService) var portalService
+  @LazyInjected(\.rainRepository) var rainRepository
 
   @Published var isCardActive: Bool = true
   @Published var isLoading: Bool = false
   @Published var isOpeningPlaidView: Bool = false
   @Published var isDisableView: Bool = false
+  
   @Published var cashBalanceValue: Double = 0
   @Published var toastMessage: String?
   
   @Published var bottomSheet: BottomSheet?
+  
   @Published var activity = Activity.loading
+  
   @Published var selectedAsset: AssetType = .usd
+  
   @Published var navigation: Navigation?
+  
   @Published var transactions: [TransactionModel] = []
   @Published var assets: [AssetModel] = []
+  @Published var portalAsset: AssetModel?
   @Published var collateralAsset: AssetModel?
   @Published var linkedAccount: [APILinkedSourceData] = []
   @Published var achInformation: ACHModel = .default
   @Published var fullScreen: FullScreen?
+  
+  lazy var getCollateralContractUseCase: GetCollateralUseCaseProtocol = {
+    GetCollateralUseCase(repository: rainRepository)
+  }()
   
   private lazy var getTransactionsListUseCase: GetTransactionsListUseCaseProtocol = {
     GetTransactionsListUseCase(repository: accountRepository)
@@ -78,19 +90,19 @@ final class CashViewModel: ObservableObject {
           if let account = fiatData.fiatAccount.first {
             self?.accountDataManager.fiatAccountID = account.id
             self?.accountDataManager.externalAccountID = account.externalAccountId
-            self?.cashBalanceValue = account.availableBalance
             self?.selectedAsset = AssetType(rawValue: account.currency.rawValue.uppercased()) ?? .usd
             self?.firstLoadData()
           }
         }
-        
-        self?.isLoading = fiatData.loading
       }
       .store(in: &cancellable)
     
+    observeCollateralChanges()
     subscribeLinkedSources()
     handleEventReloadTransaction()
-    getCollateralAsset()
+    
+    getPortalAsset()
+    refreshCollateralData()
   }
   
   func subscribeLinkedSources() {
@@ -100,6 +112,26 @@ final class CashViewModel: ObservableObject {
       self.linkedAccount = linkedSources
     }
     .store(in: &cancellable)
+  }
+  
+  func observeCollateralChanges() {
+    accountDataManager
+      .collateralContractSubject
+      .map { [weak self] rainCollateral in
+        self?.cashBalanceValue = rainCollateral?.creditLimit ?? 0.0
+        
+        return rainCollateral?
+          .tokensEntity
+          .compactMap { rainToken in
+            AssetModel(rainCollateralAsset: rainToken)
+          }
+          .first(
+            where: { asset in
+              asset.type == .usdc
+            }
+          )
+      }
+      .assign(to: &$collateralAsset)
   }
   
   func handleEventReloadTransaction() {
@@ -113,6 +145,11 @@ final class CashViewModel: ObservableObject {
   }
   
   func onRefresh() {
+    refreshCards()
+    refreshCollateralData()
+  }
+  
+  private func refreshCards() {
     Task { @MainActor in
       await dashboardRepository.fetchRainAccount()
       
@@ -122,8 +159,21 @@ final class CashViewModel: ObservableObject {
     }
   }
   
+  private func refreshCollateralData() {
+    Task { @MainActor in
+      isLoading = true
+      defer {
+        isLoading = false
+      }
+      
+      let response = try await getCollateralContractUseCase.execute()
+      accountDataManager.storeCollateralContract(response)
+    }
+  }
+  
   func firstLoadData() {
     guard transactions.isEmpty else { return }
+    
     Task { @MainActor in
       do {
         activity = .loading
@@ -214,17 +264,20 @@ extension CashViewModel {
   
   func walletTypeButtonTapped(type: WalletType) {
     Task {
-      guard let collateralAsset else {
+      // The asset object is pulled from portal wallet for deposits and collateral response for the withdrawals
+      guard let portalAsset = (bottomSheet == .depositCollateral ? portalAsset : collateralAsset)
+      else {
         toastMessage = L10N.Common.MoveCryptoInput.SendCollateral.errorMessage
         bottomSheet = nil
+        
         return
       }
       
       switch bottomSheet {
       case .depositCollateral:
-        performDepositNavigation(type: type, collateralAsset: collateralAsset)
+        performDepositNavigation(type: type, collateralAsset: portalAsset)
       case .withdrawCollateral:
-        await performWithdrawalNavigation(type: type, collateralAsset: collateralAsset)
+        await performWithdrawalNavigation(type: type, collateralAsset: portalAsset)
       default:
         break
       }
@@ -275,15 +328,19 @@ private extension CashViewModel {
     self.transactions = transactions.data.compactMap({ TransactionModel(from: $0) })
   }
   
-  func getCollateralAsset() {
+  func getPortalAsset() {
     portalStorage
       .cryptoAsset(with: AssetType.usdc.title)
       .receive(on: DispatchQueue.main)
       .map { asset in
-        guard let asset else { return nil }
+        guard let asset
+        else {
+          return nil
+        }
+        
         return AssetModel(portalAsset: asset)
       }
-      .assign(to: &$collateralAsset)
+      .assign(to: &$portalAsset)
   }
 }
 

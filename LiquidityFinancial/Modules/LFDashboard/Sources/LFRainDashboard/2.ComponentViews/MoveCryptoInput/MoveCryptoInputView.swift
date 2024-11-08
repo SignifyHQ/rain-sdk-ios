@@ -11,20 +11,42 @@ struct MoveCryptoInputView: View {
 
   @State private var isShowAnnotationView: Bool = false
   @State private var screenSize: CGSize = .zero
+  @State private var dropdownFrame: CGRect = .zero
+  
   private let completeAction: (() -> Void)?
   
-  init(type: MoveCryptoInputViewModel.Kind, assetModel: AssetModel, completeAction: (() -> Void)? = nil) {
+  init(
+    type: MoveCryptoInputViewModel.Kind,
+    assetModel: AssetModel,
+    completeAction: (() -> Void)? = nil
+  ) {
     _viewModel = .init(
       wrappedValue: MoveCryptoInputViewModel(type: type, assetModel: assetModel)
     )
+    
     self.completeAction = completeAction
   }
   
   var body: some View {
-    VStack(spacing: 0) {
-      header
-      keyboard
-      footer
+    ZStack {
+      VStack(spacing: 0) {
+        header
+        keyboard
+        footer
+      }
+      
+      if viewModel.isShowingTokenSelection {
+        dropdownView()
+          .frame(
+            width: dropdownFrame.width,
+            height: dropdownFrame.height * 2
+          )
+          .background(Colors.secondaryBackground.swiftUIColor.cornerRadius(9))
+          .position(
+            x: dropdownFrame.midX - 30,
+            y: dropdownFrame.maxY - dropdownFrame.height + 12
+          )
+      }
     }
     .padding(.horizontal, 30)
     .padding(.bottom, 12)
@@ -66,7 +88,9 @@ struct MoveCryptoInputView: View {
 // MARK: - View Components
 private extension MoveCryptoInputView {
   var header: some View {
-    ZStack(alignment: viewModel.isFetchingData ? .center : .topLeading) {
+    ZStack(
+      alignment: viewModel.isFetchingData ? .center : .topLeading
+    ) {
       VStack(spacing: 0) {
         titleView
         Spacer()
@@ -74,13 +98,14 @@ private extension MoveCryptoInputView {
         Spacer()
         preFilledGrid
       }
+      
       AnnotationView(
         description: viewModel.annotationString,
         corners: [.topLeft, .bottomLeft, .bottomRight]
       )
-        .frame(width: screenSize.width * 0.64)
-        .offset(x: -10, y: 56)
-        .opacity(isShowAnnotationView ? 1 : 0)
+      .frame(width: screenSize.width * 0.64)
+      .offset(x: -10, y: 56)
+      .opacity(isShowAnnotationView ? 1 : 0)
     }
   }
   
@@ -91,16 +116,19 @@ private extension MoveCryptoInputView {
     } else {
       HStack {
         Spacer()
+        
         VStack(spacing: 10) {
           Text(viewModel.title)
             .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.main.value))
             .foregroundColor(Colors.label.swiftUIColor)
+          
           HStack(spacing: 4) {
             if let subTitle = viewModel.subtitle {
               Text(subTitle)
                 .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.ultraSmall.value))
                 .foregroundColor(Colors.label.swiftUIColor.opacity(0.5))
             }
+            
             GenImages.CommonImages.info.swiftUIImage
               .foregroundColor(Colors.label.swiftUIColor)
               .frame(16)
@@ -116,16 +144,41 @@ private extension MoveCryptoInputView {
   
   var amountInput: some View {
     VStack(spacing: 12) {
-      HStack(alignment: .lastTextBaseline, spacing: 4) {
-        if viewModel.isUSDCurrency {
-          GenImages.CommonImages.usdSymbol.swiftUIImage
-            .foregroundColor(Colors.label.swiftUIColor)
-        }
+      HStack(
+        alignment: .center,
+        spacing: 4
+      ) {
         Text(viewModel.amountInput)
           .font(Fonts.bold.swiftUIFont(size: 50))
           .foregroundColor(Colors.label.swiftUIColor)
-        if viewModel.isCryptoCurrency, let image = viewModel.cryptoIconImage {
-          image
+        
+        if viewModel.shouldShowTokenSelection && viewModel.assetModelList.isNotEmpty {
+          Button {
+            viewModel.isShowingTokenSelection.toggle()
+          } label: {
+            HStack {
+              viewModel.assetModel.type?.image
+              
+              Text(viewModel.assetModel.type?.title ?? "-/-")
+                .font(Fonts.bold.swiftUIFont(size: Constants.FontSize.small.value))
+                .foregroundColor(Colors.label.swiftUIColor)
+                .padding(.horizontal, 12)
+              
+              GenImages.CommonImages.icArrowDown.swiftUIImage
+                .tint(Colors.label.swiftUIColor)
+                .rotationEffect(
+                  .degrees(viewModel.isShowingTokenSelection ? 180 : 0)
+                )
+            }
+            .padding(.horizontal, 10)
+            .padding(.vertical, 12)
+            .background(Colors.secondaryBackground.swiftUIColor.cornerRadius(9))
+          }
+          .readGeometry { geometry in
+            dropdownFrame = geometry.frame(in: .global)
+          }
+        } else {
+          viewModel.assetModel.type?.image
         }
       }
       .shakeAnimation(with: viewModel.numberOfShakes)
@@ -199,7 +252,40 @@ private extension MoveCryptoInputView {
     }
   }
   
-  func retryWithdrawalPopup(duration: Int) -> some View {
+  func dropdownView(
+  ) -> some View {
+    List(
+      viewModel.assetModelList,
+      id: \.id
+    ) { item in
+      HStack {
+        item.type?.image
+          .padding(.leading, -5)
+        
+        Text(item.type?.title ?? "-/-")
+          .font(Fonts.bold.swiftUIFont(size: Constants.FontSize.small.value))
+          .foregroundColor(Colors.label.swiftUIColor)
+          .padding(.leading, 12)
+      }
+      .listRowBackground(Color.clear)
+      .listRowSeparatorTint(Colors.label.swiftUIColor.opacity(0.16))
+      .listRowInsets(.none)
+      .onTapGesture {
+        viewModel.assetModel = item
+        viewModel.isShowingTokenSelection = false
+      }
+    }
+    .scrollContentBackground(.hidden)
+    .listStyle(.plain)
+    .onAppear {
+      UITableView.appearance().separatorInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 15)
+    }
+    .floatingShadow()
+  }
+  
+  func retryWithdrawalPopup(
+    duration: Int
+  ) -> some View {
     LiquidityLoadingAlert(
       title: L10N.Common.MoveCryptoInput.WithdrawalSignatureProcessing.title,
       message: L10N.Common.MoveCryptoInput.WithdrawalSignatureProcessing.message(

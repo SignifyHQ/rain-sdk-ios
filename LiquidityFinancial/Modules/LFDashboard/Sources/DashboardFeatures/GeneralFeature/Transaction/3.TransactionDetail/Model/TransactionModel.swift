@@ -80,8 +80,18 @@ public extension TransactionModel {
   }
   
   var titleDisplay: String {
-    guard let title = title else { return descriptionDisplay }
-    return title.isEmpty ? descriptionDisplay : title
+    switch type {
+    case .withdraw, .deposit:
+      return descriptionDisplay
+    default:
+      guard let title = title,
+            !title.isEmpty
+      else {
+        return descriptionDisplay
+      }
+      
+      return title
+    }
   }
   
   var subtitle: String {
@@ -208,7 +218,9 @@ public extension TransactionModel {
         .rewardCryptoBack,
         .rewardCryptoDosh,
         .rewardCryptoBackReverse,
-        .rewardWithdrawal:
+        .rewardWithdrawal,
+        .deposit,
+        .withdraw:
       return true
     default:
       return false

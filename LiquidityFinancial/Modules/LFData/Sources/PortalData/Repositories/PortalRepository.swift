@@ -87,7 +87,12 @@ public class PortalRepository: PortalRepositoryProtocol {
     amount: Double,
     signature: Services.PortalService.WithdrawAssetSignature
   ) async throws -> Double {
-    try await portalService.estimateWithdrawalFee(addresses: addresses, amount: amount, signature: signature)
+    guard let token = portalStorage.token(with: addresses.tokenAddress)
+    else {
+      throw LFPortalError.dataUnavailable
+    }
+    
+    return try await portalService.estimateWithdrawalFee(addresses: addresses, amount: amount, conversionFactor: token.conversionFactor, signature: signature)
   }
   
   public func send(
@@ -108,7 +113,12 @@ public class PortalRepository: PortalRepositoryProtocol {
     amount: Double,
     signature: PortalService.WithdrawAssetSignature
   ) async throws -> String {
-    try await portalService.withdrawAsset(addresses: addresses, amount: amount, signature: signature)
+    guard let token = portalStorage.token(with: addresses.tokenAddress)
+    else {
+      throw LFPortalError.dataUnavailable
+    }
+    
+    return try await portalService.withdrawAsset(addresses: addresses, amount: amount, conversionFactor: token.conversionFactor, signature: signature)
   }
 
   public func recoverWallet(backupMethod: BackupMethods, password: String?) async throws {

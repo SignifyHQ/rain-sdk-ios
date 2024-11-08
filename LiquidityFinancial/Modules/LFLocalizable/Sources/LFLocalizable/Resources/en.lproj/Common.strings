@@ -267,7 +267,7 @@
 "cashTab.withdrawBalance.title" = "Withdraw from Card";
 "cashTab.depositBalance.sheetTitle" = "Deposit from";
 "cashTab.withdrawBalance.sheetTitle" = "Withdraw to";
-"cashTab.withdrawBalance.internalWallet" = "%@ Wallet";
+"cashTab.withdrawBalance.internalWallet" = "Internal Wallet";
 "cashTab.withdrawBalance.externalWallet" = "External Wallet";
 
 // CashCardView
@@ -440,7 +440,7 @@
 "MoveCryptoInput.send.title" = "SEND %@";
 "MoveCryptoInput.sendAvailableBalance.subtitle" = "%@ %@ available";
 "MoveCryptoInput.withdrawCollateral.title" = "Withdraw Balance";
-"MoveCryptoInput.withdrawCollateralAvailableBalance.subtitle" = "%@ available";
+"MoveCryptoInput.withdrawCollateralAvailableBalance.subtitle" = "%@ %@ available";
 "MoveCryptoInput.withdrawReward.title" = "Withdraw Rewards";
 "MoveCryptoInput.withdrawReward.subtitle" = "%@ available";
 "MoveCryptoInput.sendCollateral.title" = "Add To Balance";
@@ -448,7 +448,7 @@
 "MoveCryptoInput.buy.annotation" = "You currently have %@ available to buy Dogecoin. If this amount is less than expected, please contact support.";
 "MoveCryptoInput.sell.annotation" = "You currently have %@ Dogecoin available to sell. Doge Rewards are not available to sell until 48 hours after they are earned.";
 "MoveCryptoInput.send.annotation" = "You currently have %@ %@ available to send. If this amount is less than expected, please contact support.";
-"MoveCryptoInput.withdrawCollateral.annotation" = "You currently have %@ available to withdraw. If this amount is less than expected, please contact support.";
+"MoveCryptoInput.withdrawCollateral.annotation" = "You currently have %@ %@ available to withdraw. If this amount is less than expected, please contact support.";
 "MoveCryptoInput.withdrawReward.annotation" = "You currently have %@ available to withdraw. If this amount is less than expected, please contact support.";
 "MoveCryptoInput.sendCollateral.annotation" = "You currently have %@ %@ available to add. If this amount is less than expected, please contact support.";
 "MoveCryptoInput.minimumCash.description" = "Minimum amount should be $0.10";

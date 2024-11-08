@@ -40,11 +40,7 @@ public final class CommonTransactionDetailViewModel: ObservableObject {
   }
   
   var descriptionDisplay: String {
-//    if transaction.isCryptoTransaction {
-//      return (transaction.type.title.uppercased() + " " + (transaction.currency ?? "")).trimWhitespacesAndNewlines()
-//    }
-    
-    return transaction.titleDisplay.uppercased()
+    transaction.titleDisplay.uppercased()
   }
   
   var transactionDate: String {
@@ -52,9 +48,13 @@ public final class CommonTransactionDetailViewModel: ObservableObject {
   }
   
   var cryptoIconImage: Image? {
-    guard let currency = transaction.currency, let type = CurrencyType(rawValue: currency) else {
+    guard let currency = transaction.currency,
+          let type = AssetType(rawValue: currency),
+          type != .usd
+    else {
       return nil
     }
+    
     return type.filledImage
   }
   

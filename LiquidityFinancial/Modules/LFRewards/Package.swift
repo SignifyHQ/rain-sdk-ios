@@ -5,7 +5,7 @@ import PackageDescription
 
 let package = Package(
     name: "LFRewards",
-    platforms: [.iOS(.v15)],
+    platforms: [.iOS(.v16)],
     products: [
         .library(
             name: "LFRewards",

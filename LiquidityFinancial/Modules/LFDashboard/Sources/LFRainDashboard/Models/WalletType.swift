@@ -8,7 +8,7 @@ enum WalletType {
   func getTitle(asset: String = .empty) -> String {
     switch self {
     case .internalWallet:
-      return L10N.Common.CashTab.WithdrawBalance.internalWallet(asset)
+      return L10N.Common.CashTab.WithdrawBalance.internalWallet
     case .externalWallet:
       return L10N.Common.CashTab.WithdrawBalance.externalWallet
     }

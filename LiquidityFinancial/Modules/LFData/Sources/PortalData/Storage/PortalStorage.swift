@@ -25,7 +25,7 @@ public class PortalStorage: PortalStorageProtocol {
   
   // Convenience method for returning the ERC20 token used by the app
   public func token(with contract: String?) -> PortalToken? {
-    defaultCryptoAssets.first { $0.token.contractAddress == (contract ?? "") }?.token
+    defaultCryptoAssets.first { $0.token.contractAddress.lowercased() == (contract?.lowercased() ?? "") }?.token
   }
   
   public func cryptoAssets() -> AnyPublisher<[PortalAsset], Never> {

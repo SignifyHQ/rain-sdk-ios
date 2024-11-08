@@ -129,7 +129,7 @@ private extension CashView {
       VStack(spacing: 16) {
         CashCardView(
           isNoLinkedCard: $isNotLinkedCard,
-          isPOFlow: true, // !userManager.isGuest
+          isPOFlow: true,
           showLoadingIndicator: viewModel.isLoading,
           cashBalance: viewModel.cashBalanceValue,
           assetType: viewModel.selectedAsset,
@@ -137,18 +137,7 @@ private extension CashView {
         ) {
           viewModel.guestCardTapped()
         }
-        // (Volo): Hide deposit button since banking features are not supported currently
-        //        .overlay(alignment: .bottom) {
-        //          depositButton
-        //        }
-        // changeAssetButton TODO: Remove for MVP
-        //        BalanceAlertView(
-        //          type: .cash,
-        //          hasContacts: !viewModel.linkedAccount.isEmpty,
-        //          cashBalance: viewModel.cashBalanceValue
-        //        ) {
-        //          viewModel.addMoneyTapped()
-        //        }
+
         VStack(spacing: 8) {
           addToBalanceButton
           withdrawalBalanceButton
@@ -163,7 +152,7 @@ private extension CashView {
     .sheet(item: $viewModel.bottomSheet) { sheet in
       WalletOptionBottomSheet(
         title: sheet.title,
-        assetTitle: viewModel.collateralAsset?.type?.title ?? .empty
+        assetTitle: .empty
       ) { type in
         viewModel.walletTypeButtonTapped(type: type)
       }

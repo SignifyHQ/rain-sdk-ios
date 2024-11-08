@@ -23,19 +23,29 @@ final class MoveCryptoInputViewModel: ObservableObject {
   @LazyInjected(\.fiatAccountService) var fiatAccountService
   @LazyInjected(\.portalService) var portalService
   
-  @Published var assetModel: AssetModel
-  @Published var fiatAccount: AccountModel?
+  @Published var assetModel: AssetModel {
+    didSet {
+      generateGridValues()
+    }
+  }
+  
+  @Published var assetModelList: [AssetModel] = []
   
   @Published var navigation: Navigation?
   @Published var blockPopup: BlockPopup?
+  
   @Published var isFetchingData = false
   @Published var isLoading = false
   @Published var isPerformingAction = false
   @Published var shouldRetryWithdrawal = false
+  
   @Published var amountInput = "0"
   @Published var numberOfShakes = 0
+  
+  @Published var isShowingTokenSelection: Bool = false
   @Published var inlineError: String?
   @Published var toastMessage: String?
+  
   @Published var selectedValue: GridValue? {
     didSet {
       Haptic.selection.generate()
@@ -59,29 +69,39 @@ final class MoveCryptoInputViewModel: ObservableObject {
   let type: Kind
   var gridValues: [GridValue] = []
   
-  init(type: Kind, assetModel: AssetModel) {
+  init(
+    type: Kind,
+    assetModel: AssetModel
+  ) {
     self.type = type
     self.assetModel = assetModel
-
-    observeAccounts()
+    
+    observeAssets()
     generateGridValues()
   }
 }
 
 // MARK: - API Handle
 private extension MoveCryptoInputViewModel {
-  func generateRewardWithdrawalQuote(shouldSaveAddress: Bool) {
+  func generateRewardWithdrawalQuote(
+    shouldSaveAddress: Bool
+  ) {
     let viewModel = ConfirmTransferMoneyViewModel(
-      kind: .withdrawalReward(shouldSaveAddress: shouldSaveAddress),
+      kind: .withdrawalReward(
+        shouldSaveAddress: shouldSaveAddress
+      ),
       assetModel: assetModel,
       amount: amount,
       address: address,
       nickname: nickname
     )
+    
     navigation = .confirmTransfer(viewModel: viewModel)
   }
   
-  func generateWithdrawCollateralQuote(shouldSaveAddress: Bool) {
+  func generateWithdrawCollateralQuote(
+    shouldSaveAddress: Bool
+  ) {
     Task {
       defer { isPerformingAction = false }
       isPerformingAction = true
@@ -113,13 +133,18 @@ private extension MoveCryptoInputViewModel {
         )
         
         let viewModel = ConfirmTransferMoneyViewModel(
-          kind: .withdrawalCollateral(addresses: withdrawAddresses,signature: signature, shouldSaveAddress: shouldSaveAddress),
+          kind: .withdrawalCollateral(
+            addresses: withdrawAddresses,
+            signature:signature,
+            shouldSaveAddress: shouldSaveAddress
+          ),
           assetModel: assetModel,
           amount: amount,
           blockchainFee: txFee,
           address: address,
           nickname: nickname
         )
+        
         navigation = .confirmTransfer(viewModel: viewModel)
       } catch {
         handlePortalError(error: error)
@@ -132,13 +157,19 @@ private extension MoveCryptoInputViewModel {
     controllerAddress: String,
     recipientAddress: String
   ) -> PortalService.WithdrawAssetAddresses? {
-    // Check if collateral supports usdc token
-    let tokenAddress = collateralContract.tokensEntity.filter { $0.symbol == AssetType.usdc.title }
+    // Check if collateral supports token
+    let tokenAddress = collateralContract.tokensEntity
+      .filter {
+        $0.symbol == assetModel.type?.title
+      }
+    
     let usdcToken = tokenAddress.first {
       portalStorage.checkTokenSupport(with: $0.address.lowercased())
     }
+    
     guard let usdcToken else {
       toastMessage = L10N.Common.MoveCryptoInput.UsdcUnsupported.errorMessage
+      
       return nil
     }
     
@@ -150,7 +181,9 @@ private extension MoveCryptoInputViewModel {
     )
   }
   
-  func fetchTransferMoneyQuote(kind: ConfirmTransferMoneyViewModel.Kind) {
+  func fetchTransferMoneyQuote(
+    kind: ConfirmTransferMoneyViewModel.Kind
+  ) {
     Task {
       defer { isPerformingAction = false }
       isPerformingAction = true
@@ -178,43 +211,9 @@ private extension MoveCryptoInputViewModel {
     }
   }
   
-//  func fetchBuyCryptoQuote(amount: String) {
-//    Task { @MainActor in
-//      defer { isPerformingAction = false }
-//      isPerformingAction = true
-//      do {
-//        let accountID = assetModel.id
-//        let entity = try await getBuyCryptoQouteUseCase.execute(accountId: accountID, amount: nil, quantity: amount)
-//        navigation = .confirmBuy(entity, accountId: accountID)
-//      } catch {
-//        log.error(error)
-//        self.toastMessage = error.userFriendlyMessage
-//      }
-//    }
-//  }
-//  
-//  func fetchSellCryptoQuote(amount: String) {
-//    Task { @MainActor in
-//      defer { isPerformingAction = false }
-//      isPerformingAction = true
-//      do {
-//        let accountID = assetModel.id
-//        let entity = try await getSellCryptoQouteUseCase.execute(accountId: accountID, amount: nil, quantity: amount)
-//        navigation = .confirmSell(entity, accountId: accountID)
-//      } catch {
-//        log.error(error)
-//        self.toastMessage = error.userFriendlyMessage
-//      }
-//    }
-//  }
-  
-  func getFiatAccounts() async throws -> [AccountModel] {
-    let accounts = try await fiatAccountService.getAccounts()
-    self.accountDataManager.addOrUpdateAccounts(accounts)
-    return accounts
-  }
-  
-  func getWithdrawalSignature(chainId: Int) async throws -> PortalService.WithdrawAssetSignature? {
+  func getWithdrawalSignature(
+    chainId: Int
+  ) async throws -> PortalService.WithdrawAssetSignature? {
     let amount = amount * 1e2 // Convert USD to cent
     let parameters = APIRainWithdrawalSignatureParameters(
       chainId: chainId,
@@ -222,6 +221,7 @@ private extension MoveCryptoInputViewModel {
       amount: String(amount),
       recipientAddress: address
     )
+    
     let signature = try await getWithdrawalSignatureUseCase.execute(parameters: parameters)
     
     if let retryAfterSeconds = signature.retryAfterSeconds {
@@ -229,8 +229,11 @@ private extension MoveCryptoInputViewModel {
       return nil
     }
     
-    guard let signatureEntity = signature.signatureEntity, let expiresAt = signature.expiresAt else {
+    guard let signatureEntity = signature.signatureEntity,
+          let expiresAt = signature.expiresAt
+    else {
       blockPopup = .retryWithdrawalAfter(5) // Default the retryAfterSeconds is 5 seconds
+      
       return nil
     }
     
@@ -244,40 +247,70 @@ private extension MoveCryptoInputViewModel {
 
 // MARK: - Private Functions
 private extension MoveCryptoInputViewModel {
-  func generateGridValues() {
+  func generateGridValues(
+  ) {
     let cryptoCurrency = assetModel.type?.title ?? .empty
     switch type {
-    case .buyCrypto, .withdrawCollateral, .withdrawReward:
-      gridValues = Constant.Buy.buildRecommend(available: fiatAccount?.availableBalance ?? 0)
-    case .sellCrypto, .sendCrypto, .depositCollateral:
+    case .sellCrypto, .sendCrypto, .depositCollateral, .withdrawCollateral:
       gridValues = Constant.Sell.buildRecommend(available: assetModel.availableBalance, coin: cryptoCurrency)
+    default:
+      break
     }
   }
   
-  func observeAccounts() {
-    accountDataManager
-      .accountsSubject
-      .receive(on: DispatchQueue.main)
-      .sink(receiveValue: { [weak self] accounts in
-        guard let self = self else {
-          return
-        }
-        if let cryptoAccount = accounts.first(where: {
-          $0.id == self.assetModel.id
-        }) {
-          self.assetModel = AssetModel(account: cryptoAccount)
-        }
-        self.fiatAccount = accounts.first(where: { account in
-          account.currency.isFiat
-        })
-      })
-      .store(in: &subscribers)
+  private func observeAssets(
+  ) {
+    switch type {
+    case .depositCollateral:
+      observePortalAssets()
+    case .withdrawCollateral:
+      observeCollateralAssets()
+    default:
+      break
+    }
   }
   
-  func handlePortalError(error: Error) {
+  private func observePortalAssets(
+  ) {
+    portalStorage
+      .cryptoAssets()
+      .receive(on: DispatchQueue.main)
+      .map { assets in
+        assets
+          .filter {
+            !$0.token.contractAddress.isEmpty
+          }
+          .map {
+            AssetModel(portalAsset: $0)
+          }
+          .sorted {
+            ($0.type?.rawValue ?? "") < ($1.type?.rawValue ?? "")
+          }
+      }
+      .assign(to: &$assetModelList)
+  }
+  
+  private func observeCollateralAssets(
+  ) {
+    accountDataManager
+      .collateralContractSubject
+      .compactMap { rainCollateral in
+        rainCollateral?
+          .tokensEntity
+          .compactMap { rainToken in
+            AssetModel(rainCollateralAsset: rainToken)
+          }
+      }
+      .assign(to: &$assetModelList)
+  }
+  
+  func handlePortalError(
+    error: Error
+  ) {
     guard let portalError = error as? LFPortalError else {
       toastMessage = error.userFriendlyMessage
       log.error(error.userFriendlyMessage)
+      
       return
     }
     
@@ -296,33 +329,42 @@ private extension MoveCryptoInputViewModel {
 extension MoveCryptoInputViewModel {
   var isUSDCurrency: Bool {
     switch type {
-    case .buyCrypto, .withdrawCollateral:
+    case .buyCrypto:
       return true
-    case .sellCrypto, .sendCrypto, .depositCollateral, .withdrawReward:
+    case .sellCrypto, .sendCrypto, .depositCollateral, .withdrawCollateral, .withdrawReward:
       return false
     }
   }
   
   var isCryptoCurrency: Bool {
     switch type {
-    case .buyCrypto, .withdrawCollateral:
+    case .buyCrypto:
       return false
-    case .sellCrypto, .sendCrypto, .depositCollateral, .withdrawReward:
+    case .sellCrypto, .sendCrypto, .depositCollateral, .withdrawCollateral, .withdrawReward:
       return true
     }
   }
   
   var maxFractionDigits: Int {
     switch type {
-    case .buyCrypto, .withdrawCollateral:
+    case .buyCrypto:
       return 2
-    case .sellCrypto, .sendCrypto, .depositCollateral, .withdrawReward:
+    case .sellCrypto, .sendCrypto, .depositCollateral, .withdrawCollateral, .withdrawReward:
       return LFUtilities.cryptoFractionDigits
     }
   }
   
   var showCryptoDisclosure: Bool {
     true
+  }
+  
+  var shouldShowTokenSelection: Bool {
+    switch type {
+    case .depositCollateral:
+      true
+    default:
+      false
+    }
   }
   
   var showEstimatedFeeDescription: Bool {
@@ -354,23 +396,23 @@ extension MoveCryptoInputViewModel {
   var subtitle: String? {
     let cryptoCurrency = assetModel.type?.title ?? .empty
     switch type {
-    case .buyCrypto:
-      return L10N.Common.MoveCryptoInput.BuyAvailableBalance.subtitle(
-        fiatAccount?.availableBalance.formattedUSDAmount() ?? "$0.00"
-      )
     case .sellCrypto:
       let balance = assetModel.availableBalance.roundTo3f()
+      
       return L10N.Common.MoveCryptoInput.SellAvailableBalance.subtitle(
         "\(balance)".formattedAmount(minFractionDigits: 3, maxFractionDigits: 3), cryptoCurrency
       )
     case .sendCrypto:
       let balance = assetModel.availableBalance.roundTo3f()
+      
       return L10N.Common.MoveCryptoInput.SendAvailableBalance.subtitle(
         "\(balance)".formattedAmount(minFractionDigits: 3, maxFractionDigits: 3), cryptoCurrency
       )
     case .withdrawCollateral:
+      let balance = assetModel.availableBalance.roundTo6f()
+      
       return L10N.Common.MoveCryptoInput.WithdrawCollateralAvailableBalance.subtitle(
-        fiatAccount?.availableBalance.formattedUSDAmount() ?? "$0.00"
+        "\(balance)".formattedAmount(minFractionDigits: 2, maxFractionDigits: 6), cryptoCurrency
       )
     case let .withdrawReward(_, _, balance, _):
       return L10N.Common.MoveCryptoInput.WithdrawReward.subtitle(
@@ -378,32 +420,36 @@ extension MoveCryptoInputViewModel {
       )
     case .depositCollateral:
       let balance = assetModel.availableBalance.roundTo6f()
+      
       return L10N.Common.MoveCryptoInput.SendCollateralAvailableBalance.subtitle(
         "\(balance)".formattedAmount(minFractionDigits: 2, maxFractionDigits: 6), cryptoCurrency
       )
+    default:
+      return .empty
     }
   }
   
   var annotationString: String {
     switch type {
-    case .buyCrypto:
-      return L10N.Common.MoveCryptoInput.Buy.annotation(
-        fiatAccount?.availableBalance.formattedUSDAmount() ?? "$0.00"
-      )
     case .sellCrypto:
       let balance = assetModel.availableBalance.roundTo3f()
+      
       return L10N.Common.MoveCryptoInput.Sell.annotation(
         "\(balance)".formattedAmount(minFractionDigits: 3, maxFractionDigits: 3)
       )
     case .sendCrypto:
       let balance = assetModel.availableBalance.roundTo3f()
+      
       return L10N.Common.MoveCryptoInput.Send.annotation(
         "\(balance)".formattedAmount(minFractionDigits: 3, maxFractionDigits: 3),
         assetModel.type?.title ?? .empty
       )
     case .withdrawCollateral:
+      let balance = assetModel.availableBalance.roundTo3f()
+      
       return L10N.Common.MoveCryptoInput.WithdrawCollateral.annotation(
-        fiatAccount?.availableBalance.formattedUSDAmount() ?? "$0.00"
+        "\(balance)".formattedAmount(minFractionDigits: 2, maxFractionDigits: 6),
+        assetModel.type?.title ?? .empty
       )
     case let .withdrawReward(_, _, balance, _):
       return L10N.Common.MoveCryptoInput.WithdrawReward.annotation(
@@ -411,10 +457,13 @@ extension MoveCryptoInputViewModel {
       )
     case .depositCollateral:
       let balance = assetModel.availableBalance.roundTo3f()
+      
       return L10N.Common.MoveCryptoInput.SendCollateral.annotation(
         "\(balance)".formattedAmount(minFractionDigits: 2, maxFractionDigits: 6),
         assetModel.type?.title ?? .empty
       )
+    default:
+      return .empty
     }
   }
   
@@ -469,6 +518,7 @@ extension MoveCryptoInputViewModel {
         value: L10N.Common.ConfirmSendCryptoView.Send.title.uppercased()
       )
     ]
+    
     if !nickname.isEmpty {
       transactionInfors.append(
         TransactionInformation(
@@ -477,6 +527,7 @@ extension MoveCryptoInputViewModel {
         )
       )
     }
+    
     if !address.isEmpty {
       transactionInfors.append(
         TransactionInformation(
@@ -485,6 +536,7 @@ extension MoveCryptoInputViewModel {
         )
       )
     }
+    
     return transactionInfors
   }
 
@@ -493,9 +545,9 @@ extension MoveCryptoInputViewModel {
     Haptic.impact(.light).generate()
     switch type {
     case .buyCrypto:
-      break //fetchBuyCryptoQuote(amount: "\(amount)")
+      break
     case .sellCrypto:
-      break //fetchSellCryptoQuote(amount: "\(amount)")
+      break
     case .sendCrypto:
       fetchTransferMoneyQuote(kind: .sendCrypto)
     case let .withdrawCollateral(_, _, shouldSaveAddress):
@@ -507,9 +559,10 @@ extension MoveCryptoInputViewModel {
     }
   }
   
-  /// Reset amountInput and selectedValue when interacting with keyboard
+  // Reset amountInput and selectedValue when interacting with keyboard
   func resetSelectedValue() {
     selectedValue = nil
+    
     guard let amount = amountInput.removeGroupingSeparator().asDouble,
           let selectedAmount = selectedValue?.amount
     else {
@@ -525,14 +578,16 @@ extension MoveCryptoInputViewModel {
   
   func validateAmountInput() {
     numberOfShakes = 0
+    
     switch type {
-    case .sellCrypto, .sendCrypto, .depositCollateral:
+    case .sellCrypto, .sendCrypto, .depositCollateral, .withdrawCollateral:
       inlineError = validateAmount(with: assetModel.availableBalance)
-    case .buyCrypto, .withdrawCollateral:
-      inlineError = validateAmount(with: fiatAccount?.availableBalance)
     case .withdrawReward(_, _, let balance, _):
       inlineError = validateAmount(with: balance)
+    default:
+      break
     }
+    
     if inlineError.isNotNil {
       withAnimation(.linear(duration: 0.5)) {
         numberOfShakes = 4
@@ -540,8 +595,14 @@ extension MoveCryptoInputViewModel {
     }
   }
   
-  func validateAmount(with availableBalance: Double?) -> String? {
-    guard let balance = availableBalance else { return nil }
+  func validateAmount(
+    with availableBalance: Double?
+  ) -> String? {
+    guard let balance = availableBalance
+    else {
+      return nil
+    }
+    
     if type != .sellCrypto, amount > 0, amount < 0.0001 {
       return L10N.Common.MoveCryptoInput.MinimumCrypto.description(assetModel.type?.title ?? .empty)
     }
@@ -609,6 +670,7 @@ extension MoveCryptoInputViewModel {
 extension MoveCryptoInputViewModel {
   private enum Constant {
     static let initValue = "0"
+    
     enum Buy {
       static func buildRecommend(available: Double) -> [GridValue] {
         if available > 500 {
@@ -624,7 +686,10 @@ extension MoveCryptoInputViewModel {
     }
     
     enum Sell {
-      static func buildRecommend(available: Double, coin: String) -> [GridValue] {
+      static func buildRecommend(
+        available: Double,
+        coin: String
+      ) -> [GridValue] {
         if available > 1_000 {
           return [
             .fixed(amount: 100, currency: .crypto(coin: coin)),
