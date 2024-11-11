@@ -214,7 +214,7 @@ private extension MoveCryptoInputViewModel {
   func getWithdrawalSignature(
     chainId: Int
   ) async throws -> PortalService.WithdrawAssetSignature? {
-    let amount = amount * 1e2 // Convert USD to cent
+    let amount = amount * pow(10, Double(assetModel.conversionFactor))
     let parameters = APIRainWithdrawalSignatureParameters(
       chainId: chainId,
       token: assetModel.id,
@@ -360,7 +360,7 @@ extension MoveCryptoInputViewModel {
   
   var shouldShowTokenSelection: Bool {
     switch type {
-    case .depositCollateral:
+    case .depositCollateral, .withdrawCollateral:
       true
     default:
       false

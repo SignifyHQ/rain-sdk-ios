@@ -7,6 +7,7 @@ public struct APIRainWithdrawalSignatureParameters: Parameterable, RainWithdrawa
   public let token: String
   public let amount: String
   public let recipientAddress: String
+  public let isAmountNative: Bool = true
   
   public init(
     chainId: Int,
