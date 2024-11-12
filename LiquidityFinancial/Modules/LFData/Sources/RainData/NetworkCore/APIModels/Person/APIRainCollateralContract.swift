@@ -22,7 +22,7 @@ public struct APIRainToken: Decodable, RainTokenEntity {
   public let symbol: String?
   public let decimals: Double?
   public let logo: String?
-  public let balance: String
+  public let balance: Double
   public let exchangeRate: Double
   public let advanceRate: Double
   
@@ -32,7 +32,7 @@ public struct APIRainToken: Decodable, RainTokenEntity {
     symbol: String?,
     decimals: Double?,
     logo: String?,
-    balance: String,
+    balance: Double,
     exchangeRate: Double,
     advanceRate: Double
   ) {
@@ -47,12 +47,7 @@ public struct APIRainToken: Decodable, RainTokenEntity {
   }
   
   public var availableUsdBalance: Double {
-    guard let balance = Double(balance)
-    else {
-      return 0
-    }
-    
-    return balance * exchangeRate * advanceRate / 100
+    balance * exchangeRate * advanceRate / 100
   }
 }
 

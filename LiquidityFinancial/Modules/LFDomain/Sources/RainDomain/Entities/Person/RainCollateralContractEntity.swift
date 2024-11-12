@@ -17,7 +17,7 @@ public protocol RainTokenEntity {
   var symbol: String? { get }
   var decimals: Double? { get }
   var logo: String? { get }
-  var balance: String { get }
+  var balance: Double { get }
   var exchangeRate: Double { get }
   var advanceRate: Double { get }
   var availableUsdBalance: Double { get }
@@ -28,7 +28,7 @@ public protocol RainTokenEntity {
     symbol: String?,
     decimals: Double?,
     logo: String?,
-    balance: String,
+    balance: Double,
     exchangeRate: Double,
     advanceRate: Double
   )
