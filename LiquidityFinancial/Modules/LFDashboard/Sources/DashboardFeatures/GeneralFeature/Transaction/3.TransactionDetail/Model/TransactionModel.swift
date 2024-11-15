@@ -170,7 +170,8 @@ public extension TransactionModel {
   
   func transactionDateInLocalZone(includeYear: Bool = false) -> String {
     let dateFormat: LiquidityDateFormatter = includeYear ? .fullTransactionDate : .shortTransactionDate
-    return createdAt.parsingDateStringToNewFormat(toDateFormat: dateFormat) ?? .empty
+    let dateToFormat = completedAt ?? createdAt
+    return dateToFormat.parsingDateStringToNewFormat(toDateFormat: dateFormat) ?? .empty
   }
   
   var colorForType: Color {
