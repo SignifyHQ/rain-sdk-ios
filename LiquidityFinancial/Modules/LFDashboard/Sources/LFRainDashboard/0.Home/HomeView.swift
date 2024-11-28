@@ -21,7 +21,7 @@ public struct HomeView: View {
   // Ensure each TabOptionView is initialized only once
   let cashView: CashView
   let rewardsTabView: RewardTabView
-  let assetsView: AssetsView
+  let assetsView: CreditLimitBreakdownView
   let accountsView: AccountsView
   
   var onChangeRoute: ((RainOnboardingFlowCoordinator.Route) -> Void)?
@@ -34,7 +34,7 @@ public struct HomeView: View {
       listCardViewModel: RainListCardsViewModel()
     )
     rewardsTabView = RewardTabView(viewModel: RewardTabViewModel())
-    assetsView = AssetsView(viewModel: AssetsViewModel(dashboardRepository: dashboardRepository))
+    assetsView = CreditLimitBreakdownView(viewModel: CreditLimitBreakdownViewModel())
     accountsView = AccountsView(viewModel: AccountViewModel(dashboardRepository: dashboardRepository))
     
     _viewModel = .init(

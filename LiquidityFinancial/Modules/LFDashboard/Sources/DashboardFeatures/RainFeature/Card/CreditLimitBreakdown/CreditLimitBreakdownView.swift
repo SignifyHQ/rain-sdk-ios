@@ -4,19 +4,19 @@ import LFUtilities
 import LFStyleGuide
 import SwiftUI
 
-struct CreditLimitBreakdownView: View {
+public struct CreditLimitBreakdownView: View {
   @Environment(\.dismiss) private var dismiss
   @Environment(\.refresh) private var refresh
   
   @StateObject private var viewModel: CreditLimitBreakdownViewModel
   
-  init(
+  public init(
     viewModel: CreditLimitBreakdownViewModel
   ) {
     self._viewModel = .init(wrappedValue: viewModel)
   }
   
-  var body: some View {
+  public var body: some View {
     ScrollView {
       VStack(
         spacing: 12

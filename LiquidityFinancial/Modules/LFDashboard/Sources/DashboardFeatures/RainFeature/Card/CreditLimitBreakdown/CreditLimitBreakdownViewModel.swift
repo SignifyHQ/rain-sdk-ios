@@ -16,7 +16,7 @@ public final class CreditLimitBreakdownViewModel: ObservableObject {
     GetCollateralUseCase(repository: rainRepository)
   }()
   
-  init() {
+  public init() {
     fetchCollateralContract()
     subscribeToCollateralChanges()
   }

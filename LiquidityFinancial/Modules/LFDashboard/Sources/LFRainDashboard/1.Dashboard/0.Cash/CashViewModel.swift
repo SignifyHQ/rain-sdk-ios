@@ -255,11 +255,33 @@ extension CashViewModel {
   }
   
   func addToBalanceButtonTapped() {
-    bottomSheet = .depositCollateral
+    //bottomSheet = .depositCollateral - Commenting out when removing internal wallet flows, will keep in case we wanna put it back in the future
+    
+    guard let portalAsset = portalAsset
+    else {
+      toastMessage = L10N.Common.MoveCryptoInput.SendCollateral.errorMessage
+      bottomSheet = nil
+      
+      return
+    }
+    
+    performDepositNavigation(type: .externalWallet, collateralAsset: portalAsset)
   }
   
   func withdrawBalanceButtonTapped() {
-    bottomSheet = .withdrawCollateral
+    //bottomSheet = .withdrawCollateral - Commenting out when removing internal wallet flows, will keep in case we wanna put it back in the future
+    
+    Task {
+      guard let portalAsset = collateralAsset
+      else {
+        toastMessage = L10N.Common.MoveCryptoInput.SendCollateral.errorMessage
+        bottomSheet = nil
+        
+        return
+      }
+      
+      await performWithdrawalNavigation(type: .externalWallet, collateralAsset: portalAsset)
+    }
   }
   
   func walletTypeButtonTapped(type: WalletType) {

@@ -439,7 +439,7 @@
 "MoveCryptoInput.sellAvailableBalance.subtitle" = "%@ %@ available";
 "MoveCryptoInput.send.title" = "SEND %@";
 "MoveCryptoInput.sendAvailableBalance.subtitle" = "%@ %@ available";
-"MoveCryptoInput.withdrawCollateral.title" = "Withdraw Balance";
+"MoveCryptoInput.withdrawCollateral.title" = "Withdraw from Card";
 "MoveCryptoInput.withdrawCollateralAvailableBalance.subtitle" = "%@ %@ available";
 "MoveCryptoInput.withdrawReward.title" = "Withdraw Rewards";
 "MoveCryptoInput.withdrawReward.subtitle" = "%@ available";
@@ -462,7 +462,7 @@
 "MoveCryptoInput.usdcUnsupported.errorMessage" = "USDC token cannot be utilized as collateral in the current contract";
 "MoveCryptoInput.missingWallet.errorMessage" = "The wallet does not exist. Please recover wallet";
 "MoveCryptoInput.noCollateralContract.errorMessage" = "The account does not have a collateral contract.";
-"MoveCryptoInput.withdrawalSignatureProcessing.title" = "Withdraw Balance";
+"MoveCryptoInput.withdrawalSignatureProcessing.title" = "Withdraw from Card";
 "MoveCryptoInput.withdrawalSignatureProcessing.message" = "The system is processing your request and may take %@ seconds. Please wait!";
 
 // CryptoReceipt
@@ -1019,13 +1019,13 @@ https://mn.gov/commerce/money/investments/cryptocurrency/. \n\n\n\n\n\n\n";
 "EnterCryptoAddressView.title" = "SEND %@";
 "EnterCryptoAddressView.wallet_address.title" = "%@ Wallet Address";
 "EnterCryptoAddressView.wallet_address.placeholder" = "Name, or Wallet Address";
-"EnterCryptoAddressView.warning" = "Sending to a non - %@ wallet will result in lost funds";
+"EnterCryptoAddressView.warning" = "Sending to a non Avalanche C-Chain wallet will result in lost funds";
 "EnterCryptoAddressView.delete_popup.title" = "Delete Saved wallet address";
 "EnterCryptoAddressView.delete_popup.message" = "Would you like to delete saved wallet: %@?";
 "EnterCryptoAddressView.delete_popup.primary_button" = "Delete";
 "EnterCryptoAddressView.save_success.message" = "Wallet address saved";
 "EnterCryptoAddressView.delete_success.message" = "Wallet address deleted";
-"enterWalletAddressView.withdrawBalance.title" = "Withdraw balance";
+"enterWalletAddressView.withdrawBalance.title" = "Withdraw Tokens";
 "enterWalletAddressView.withdrawRewards.title" = "Withdraw rewards";
 "enterWalletAddressView.withdrawBalance.textFieldTitle" = "Send to external wallet";
 
@@ -1071,7 +1071,7 @@ https://mn.gov/commerce/money/investments/cryptocurrency/. \n\n\n\n\n\n\n";
 "RewardTabView.currentRewardsBalance.title" = "Current Rewards Balance";
 "RewardTabView.pendingRewardsBalance.title" = "Pending Settlement";
 "RewardTabView.lockedRewardsBalance.title" = "Pending Withdrawal";
-"RewardTabView.withdrawBalance.buttonTitle" = "Withdraw Balance";
+"RewardTabView.withdrawBalance.buttonTitle" = "Withdraw Tokens";
 "RewardTabView.withdrawBalance.sheetTitle" = "Send Rewards To";
 
 // Donations

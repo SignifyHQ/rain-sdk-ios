@@ -95,7 +95,7 @@ private extension EnterWalletAddressView {
   @ViewBuilder var titleView: some View {
     VStack(spacing: 10) {
       Text(
-        viewModel.kind.getTitle(asset: viewModel.asset.type?.title ?? .empty).uppercased()
+        viewModel.kind.getTitle(asset: viewModel.asset.type?.title ?? .empty)
       )
       .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.main.value))
       .foregroundColor(Colors.label.swiftUIColor)
@@ -117,7 +117,7 @@ private extension EnterWalletAddressView {
   }
   
   var warningLabel: some View {
-    Text(L10N.Common.EnterCryptoAddressView.warning(viewModel.asset.type?.title ?? .empty))
+    Text(L10N.Common.EnterCryptoAddressView.warning)
       .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.textFieldHeader.value))
       .foregroundColor(Colors.label.swiftUIColor.opacity(0.5))
   }
@@ -234,7 +234,7 @@ private extension EnterWalletAddressView {
   
   func deletePopup(wallet: APIWalletAddress) -> some View {
     LiquidityAlert(
-      title: L10N.Common.EnterCryptoAddressView.DeletePopup.title.uppercased(),
+      title: L10N.Common.EnterCryptoAddressView.DeletePopup.title,
       message: L10N.Common.EnterCryptoAddressView.DeletePopup.message(wallet.nickname ?? ""),
       primary: .init(text: L10N.Common.EnterCryptoAddressView.DeletePopup.primaryButton) {
         viewModel.handleDelete(wallet: wallet)
