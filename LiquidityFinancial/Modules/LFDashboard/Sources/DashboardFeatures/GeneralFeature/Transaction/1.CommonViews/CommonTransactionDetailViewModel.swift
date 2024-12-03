@@ -36,7 +36,7 @@ public final class CommonTransactionDetailViewModel: ObservableObject {
   }
   
   var navigationTitle: String? {
-    transaction.type.title.uppercased()
+    transaction.type.title.capitalized
   }
   
   var descriptionDisplay: String {

@@ -24,7 +24,7 @@ public struct CreditLimitBreakdownView: View {
         // --- Credit limit value ---
         HStack {
           VStack(alignment: .leading) {
-            Text(L10N.Common.CollateralLimitBreakdown.CreditLimit.title)
+            Text(L10N.Common.CollateralLimitBreakdown.SpendingPower.title)
               .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.medium.value))
               .foregroundColor(Colors.label.swiftUIColor.opacity(0.6))
             Text(viewModel.creditLimitFormatted)
@@ -86,11 +86,18 @@ public struct CreditLimitBreakdownView: View {
               Divider().background(Color.gray)
               
               BreakdownRow(
-                title: L10N.Common.CollateralLimitBreakdown.CreditLimit.title,
+                title: L10N.Common.CollateralLimitBreakdown.SpendingPower.title,
                 amount: viewModel.creditLimitFormatted,
                 isDetail: false,
                 isBold: true
               )
+              
+              Text(L10N.Common.CollateralLimitBreakdown.SpendingPower.disclaimer)
+                .foregroundColor(Colors.label.swiftUIColor)
+                .opacity(0.5)
+                .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.ultraSmall.value))
+                .padding(.top)
+                .multilineTextAlignment(.leading)
             }
             .padding(16)
             .background(Colors.secondaryBackground.swiftUIColor.cornerRadius(9))

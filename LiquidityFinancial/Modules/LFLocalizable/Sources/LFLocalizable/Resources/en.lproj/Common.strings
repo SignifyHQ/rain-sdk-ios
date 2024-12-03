@@ -144,7 +144,7 @@
 "address.disclosure.agreement" = "CauseCard Agreement";
 "address.disclosure.privacy" = "Privacy Policy";
 "account_update" = "ACCOUNT UPDATE";
-"waitlist_message" = "Hello, %@. We are very sorry, but due to regulations regarding Doge, we are currently unable to open accounts for residents of New York and Hawaii. We are currently working with regulators to resolve this. In the meantime, we will contact you as soon as we can open your account.";
+"waitlist_message" = "Hello, %@. We are very sorry, but due to regulations regarding Avalanche, we are not currently permitted to onboard people from your state. We are currently working with regulators to resolve this. In the meantime, we will contact you as soon as we can open your account.";
 "join_waitlist" = "Join waitlist";
 "cancel_account" = "Cancel account";
 "waitlist_joined_title" = "WAITLIST JOINED";
@@ -271,7 +271,7 @@
 "cashTab.withdrawBalance.externalWallet" = "External Wallet";
 
 // CashCardView
-"cashCard.balance.title" = "Credit limit";
+"cashCard.balance.title" = "Spending power";
 
 // ChangeAssetView
 "changeAsset.screen.title" = "Change asset";
@@ -352,7 +352,8 @@
 "cards_detail.deals.value" = "Donate up to 8%% of purchase";
 
 // Collateral Breakdown
-"collateralLimitBreakdown.creditLimit.title" = "Credit limit";
+"collateralLimitBreakdown.spendingPower.title" = "Spending power";
+"collateralLimitBreakdown.spendingPower.disclaimer" = "Exchange rates are the current market price of the token based on latest available data. Advance rates are the price at which we offer credit against this token.";
 "collateralLimitBreakdown.assetBalances.title" = "Asset balances";
 "collateralLimitBreakdown.creditLimitBreakdown.title" = "Credit limit breakdown";
 "collateralLimitBreakdown.tokenAdded.title" = "%@ added";
@@ -755,7 +756,8 @@ https://mn.gov/commerce/money/investments/cryptocurrency/. \n\n\n\n\n\n\n";
 "assetView.receive.title" = "Receive";
 
 // Receive Crypto View
-"receive_crypto_view.title" = "Internal Wallet Address";
+"receive_crypto_view.title" = "Avalanche Card address";
+"receive_crypto_view.subtitle" = "Funds can only be added from the Avalanche C-Chain.";
 "receive_crypto_view.copied.info" = "Copied!";
 "receive_crypto_view.wallet_detail" = "Wallet Details";
 

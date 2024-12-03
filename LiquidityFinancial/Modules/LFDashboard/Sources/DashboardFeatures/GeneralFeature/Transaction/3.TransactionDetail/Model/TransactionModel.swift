@@ -90,7 +90,7 @@ public extension TransactionModel {
         return descriptionDisplay
       }
       
-      return title
+      return title.trimWhitespacesAndNewlines()
     }
   }
   
@@ -127,7 +127,7 @@ public extension TransactionModel {
   }
   
   var descriptionDisplay: String {
-    description ?? ""
+    description?.trimWhitespacesAndNewlines() ?? ""
   }
   
   var cryptoReceipt: CryptoReceipt? {

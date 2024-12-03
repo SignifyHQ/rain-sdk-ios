@@ -103,16 +103,25 @@ struct ReceiveCryptoView: View {
 }
 
 private extension ReceiveCryptoView {
-  
   var header: some View {
-    HStack {
+    VStack(alignment: .leading) {
       Text(L10N.Common.ReceiveCryptoView.title.uppercased())
         .foregroundColor(Colors.label.swiftUIColor)
         .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.buttonTextSize.value))
-        .padding(.vertical, 30)
         .multilineTextAlignment(.leading)
-    }.frame(maxWidth: .infinity, alignment: .leading)
-      .padding(.horizontal, 30)
+      
+      Text(L10N.Common.ReceiveCryptoView.subtitle)
+        .foregroundColor(Colors.label.swiftUIColor)
+        .opacity(0.5)
+        .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.ultraSmall.value))
+        .padding(.bottom, 10)
+        .multilineTextAlignment(.leading)
+    }
+    .frame(
+      maxWidth: .infinity,
+      alignment: .leading
+    )
+    .padding(.horizontal, 30)
   }
   
   var qrImage: some View {
