@@ -98,13 +98,13 @@ public struct AssetModel: Hashable {
   }
   
   public var exchangeRateFormatted: String {
-    "x\(exchangeRate?.formattedUSDAmount() ?? "-/-")"
+    "x\(exchangeRate?.formattedUSDAmount() ?? "N/A")"
   }
   
   public var advanceRateFormatted: String {
     guard let advanceRate
     else {
-      return "x-/-"
+      return "N/A"
     }
     
     return "x\((advanceRate / 100).formattedUSDAmount())"

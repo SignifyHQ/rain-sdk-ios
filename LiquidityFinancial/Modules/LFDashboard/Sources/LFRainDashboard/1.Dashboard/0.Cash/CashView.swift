@@ -9,6 +9,7 @@ import GeneralFeature
 
 struct CashView: View {
   @Environment(\.scenePhase) var scenePhase
+  
   @StateObject private var viewModel: CashViewModel
   @State private var isNotLinkedCard = false
   
@@ -22,14 +23,7 @@ struct CashView: View {
   }
   
   var body: some View {
-    Group {
-      if viewModel.isCardActive {
-        activeView
-          .disabled(viewModel.isDisableView)
-      } else {
-        ErrorView(message: L10N.Common.CashTab.DeActiveError.message)
-      }
-    }
+    activeView
     .popup(item: $viewModel.toastMessage, style: .toast) {
       ToastView(toastMessage: $0)
     }
@@ -37,19 +31,11 @@ struct CashView: View {
     .background(Colors.background.swiftUIColor)
     .navigationLink(item: $viewModel.navigation) { navigation in
       switch navigation {
-      case .changeAsset:
-        ChangeAssetView(
-          selectedAsset: $viewModel.selectedAsset,
-          balance: viewModel.cashBalanceValue,
-          assets: viewModel.assets
-        )
       case .transactions:
         TransactionListView(
           currencyType: viewModel.currencyType,
           transactionTypes: Constants.TransactionTypesRequest.fiat.types
         )
-      case let .moveMoney(kind):
-        MoveMoneyAccountView(kind: kind)
       case let .transactionDetail(transaction):
         TransactionDetailView(
           method: .transactionID(transaction.id),
@@ -82,15 +68,6 @@ struct CashView: View {
         }
       }
     }
-    .fullScreenCover(item: $viewModel.fullScreen) { item in
-      switch item {
-      case .fundCard(let kind):
-        FundCardView(kind: kind) {
-          viewModel.fullScreen = nil
-        }
-        .embedInNavigation()
-      }
-    }
     .onChange(of: scenePhase, perform: { newValue in
       if newValue == .background {
         viewModel.shouldReloadListTransaction = true
@@ -104,26 +81,6 @@ struct CashView: View {
 }
 
 private extension CashView {
-  var changeAssetButton: some View {
-    HStack(spacing: 8) {
-      viewModel.selectedAsset.image
-      Text(viewModel.selectedAsset.title)
-        .foregroundColor(Colors.label.swiftUIColor)
-        .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.medium.value))
-      Spacer()
-      Button {
-        viewModel.onClickedChangeAssetButton()
-      } label: {
-        CircleButton(style: .right)
-          .frame(32)
-      }
-    }
-    .padding(.leading, 16)
-    .padding(.trailing, 12)
-    .frame(height: 56)
-    .background(Colors.secondaryBackground.swiftUIColor.cornerRadius(9))
-  }
-  
   var activeView: some View {
     ScrollView(showsIndicators: false) {
       VStack(spacing: 16) {
@@ -135,13 +92,13 @@ private extension CashView {
           assetType: viewModel.selectedAsset,
           listCardViewModel: listCardViewModel
         ) {
-          viewModel.guestCardTapped()
         }
 
         VStack(spacing: 8) {
           addToBalanceButton
           withdrawalBalanceButton
         }
+        
         activity
       }
       .padding(.horizontal, 30)
@@ -162,21 +119,6 @@ private extension CashView {
     }
   }
   
-  @ViewBuilder var depositButton: some View {
-    if viewModel.transactions.isEmpty && viewModel.activity != .loading && !isNotLinkedCard {
-      Button {
-        viewModel.addMoneyTapped()
-      } label: {
-        Text(L10N.Common.CashTab.Deposit.title)
-          .font(Fonts.bold.swiftUIFont(size: Constants.FontSize.ultraSmall.value))
-          .foregroundColor(Colors.whiteText.swiftUIColor)
-      }
-      .frame(width: 80, height: 28)
-      .background(Colors.darkBackground.swiftUIColor.cornerRadius(8))
-      .padding(.bottom, 8)
-    }
-  }
-  
   var activity: some View {
     Group {
       switch viewModel.activity {
@@ -194,20 +136,6 @@ private extension CashView {
           }
         )
       }
-    }
-  }
-  
-  var addFundsView: some View {
-    VStack(alignment: .leading, spacing: 10) {
-      Text(L10N.Common.CashTab.WaysToAdd.title)
-        .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.ultraSmall.value))
-        .foregroundColor(Colors.label.swiftUIColor.opacity(0.75))
-        .padding(.top, 16)
-      AddFundsView(
-        viewModel: viewModel.addFundsViewModel,
-        achInformation: $viewModel.achInformation,
-        isDisableView: $viewModel.isDisableView
-      )
     }
   }
   

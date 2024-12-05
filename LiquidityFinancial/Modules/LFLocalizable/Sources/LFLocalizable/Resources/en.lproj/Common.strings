@@ -359,6 +359,8 @@
 "collateralLimitBreakdown.tokenAdded.title" = "%@ added";
 "collateralLimitBreakdown.tokenExchangeRate.title" = "%@ exchange rate";
 "collateralLimitBreakdown.tokenAdvanceRate.title" = "%@ advance rate";
+"collateralLimitBreakdown.pendingCharges.title" = "Pending charges";
+"collateralLimitBreakdown.pendingLiquidation.title" = "Pending liquidation";
 
 
 // CARD LIMITS

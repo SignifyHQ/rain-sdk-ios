@@ -43,10 +43,6 @@ final class HomeViewModel: ObservableObject {
     DeviceRegisterUseCase(repository: devicesRepository)
    }()
   
-  lazy var getCollateralContractUseCase: GetCollateralUseCaseProtocol = {
-    GetCollateralUseCase(repository: rainRepository)
-  }()
-  
   let dashboardRepository: DashboardRepository
   init(dashboardRepository: DashboardRepository, tabOptions: [TabOption]) {
     self.dashboardRepository = dashboardRepository
@@ -90,7 +86,6 @@ extension HomeViewModel {
   
   func initData() {
     apiFetchUser()
-    fetchCollateralContract()
   }
   
   func onAppear() {
@@ -109,17 +104,6 @@ extension HomeViewModel {
       userAttributes = UserAttributes(phone: accountDataManager.phoneNumber, email: accountDataManager.userEmail)
     }
     customerSupportService.loginIdentifiedUser(userAttributes: userAttributes)
-  }
-  
-  func fetchCollateralContract() {
-    Task {
-      do {
-        let response = try await getCollateralContractUseCase.execute()
-        accountDataManager.storeCollateralContract(response)
-      } catch {
-        log.error(error.userFriendlyMessage)
-      }
-    }
   }
 }
 

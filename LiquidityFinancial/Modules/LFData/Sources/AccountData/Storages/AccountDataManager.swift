@@ -177,7 +177,10 @@ public class AccountDataManager: AccountDataStorageProtocol {
     userInfomationData = UserInfomationData()
     
     accountsSubject.send([])
+    
     collateralContractSubject.send(nil)
+    creditBalancesSubject.send(nil)
+    
     walletAddressesSubject.send([])
   }
   
@@ -190,6 +193,7 @@ public class AccountDataManager: AccountDataStorageProtocol {
   
   // MARK: Smart Contracts
   public let collateralContractSubject = CurrentValueSubject<RainCollateralContractEntity?, Never>(nil)
+  public let creditBalancesSubject = CurrentValueSubject<RainCreditBalanceEntity?, Never>(nil)
   
   public var collateralContract: RainCollateralContractEntity? {
     collateralContractSubject.value
@@ -203,6 +207,10 @@ public class AccountDataManager: AccountDataStorageProtocol {
   
   public func storeCollateralContract(_ collateralContract: RainCollateralContractEntity?) {
     collateralContractSubject.send(collateralContract)
+  }
+  
+  public func storeCreditBalances(_ creditBalances: RainCreditBalanceEntity?) {
+    creditBalancesSubject.send(creditBalances)
   }
   
   // MARK: Wallet addresses

@@ -20,32 +20,25 @@ final class CashViewModel: ObservableObject {
   @LazyInjected(\.portalService) var portalService
   @LazyInjected(\.rainRepository) var rainRepository
 
-  @Published var isCardActive: Bool = true
   @Published var isLoading: Bool = false
-  @Published var isOpeningPlaidView: Bool = false
-  @Published var isDisableView: Bool = false
-  
-  @Published var cashBalanceValue: Double = 0
+  @Published var activity = Activity.loading
+  @Published var bottomSheet: BottomSheet?
+  @Published var navigation: Navigation?
   @Published var toastMessage: String?
   
-  @Published var bottomSheet: BottomSheet?
-  
-  @Published var activity = Activity.loading
-  
+  @Published var cashBalanceValue: Double = 0
   @Published var selectedAsset: AssetType = .usd
-  
-  @Published var navigation: Navigation?
-  
-  @Published var transactions: [TransactionModel] = []
-  @Published var assets: [AssetModel] = []
   @Published var portalAsset: AssetModel?
   @Published var collateralAsset: AssetModel?
-  @Published var linkedAccount: [APILinkedSourceData] = []
-  @Published var achInformation: ACHModel = .default
-  @Published var fullScreen: FullScreen?
+  
+  @Published var transactions: [TransactionModel] = []
   
   lazy var getCollateralContractUseCase: GetCollateralUseCaseProtocol = {
     GetCollateralUseCase(repository: rainRepository)
+  }()
+  
+  lazy var getCreditBalanceUseCase: GetCreditBalanceUseCaseProtocol = {
+    GetCreditBalanceUseCase(repository: rainRepository)
   }()
   
   private lazy var getTransactionsListUseCase: GetTransactionsListUseCaseProtocol = {
@@ -57,70 +50,27 @@ final class CashViewModel: ObservableObject {
   //This is flag handle case when app have change scenePhase
   var shouldReloadListTransaction: Bool = false
   
-  var transactionLimitEntity: Int {
-    20
-  }
-  
-  var transactionLimitOffset: Int {
-    0
-  }
-
-  private(set) var addFundsViewModel = AddFundsViewModel()
+  private let transactionLimitEntity: Int = 20
+  private let transactionLimitOffset: Int = 0
   
   private var cancellable: Set<AnyCancellable> = []
   
-  let dashboardRepository: DashboardRepository
-  init(dashboardRepository: DashboardRepository) {
-    self.dashboardRepository = dashboardRepository
-    
-    dashboardRepository
-      .$fiatData
-      .receive(on: DispatchQueue.main)
-      .sink { [weak self] fiatData in
-        if fiatData.loading {
-          self?.assets = fiatData.fiatAccount.map {
-            AssetModel(
-              id: $0.id,
-              type: AssetType(rawValue: $0.currency.rawValue.uppercased()),
-              availableBalance: $0.availableBalance,
-              availableUsdBalance: $0.availableUsdBalance,
-              externalAccountId: $0.externalAccountId
-            )
-          }
-          if let account = fiatData.fiatAccount.first {
-            self?.accountDataManager.fiatAccountID = account.id
-            self?.accountDataManager.externalAccountID = account.externalAccountId
-            self?.selectedAsset = AssetType(rawValue: account.currency.rawValue.uppercased()) ?? .usd
-            self?.firstLoadData()
-          }
-        }
-      }
-      .store(in: &cancellable)
-    
+  init() {
     observeCollateralChanges()
-    subscribeLinkedSources()
+    observeCreditBalancesChanges()
+    
     handleEventReloadTransaction()
     
+    refreshTransaction(withAnimation: true)
     getPortalAsset()
-    refreshCollateralData()
-  }
-  
-  func subscribeLinkedSources() {
-    accountDataManager.subscribeLinkedSourcesChanged { [weak self] entities in
-      guard let self = self else { return }
-      let linkedSources = entities.compactMap({ APILinkedSourceData(entity: $0) })
-      self.linkedAccount = linkedSources
-    }
-    .store(in: &cancellable)
+    refreshBalancesCollateralData()
   }
   
   func observeCollateralChanges() {
     accountDataManager
       .collateralContractSubject
-      .map { [weak self] rainCollateral in
-        self?.cashBalanceValue = rainCollateral?.creditLimit ?? 0.0
-        
-        return rainCollateral?
+      .map { rainCollateral in
+        rainCollateral?
           .tokensEntity
           .compactMap { rainToken in
             AssetModel(rainCollateralAsset: rainToken)
@@ -134,6 +84,15 @@ final class CashViewModel: ObservableObject {
       .assign(to: &$collateralAsset)
   }
   
+  func observeCreditBalancesChanges() {
+    accountDataManager
+      .creditBalancesSubject
+      .map { creditBalances in
+        creditBalances?.availableBalance ?? 0.0
+      }
+      .assign(to: &$cashBalanceValue)
+  }
+  
   func handleEventReloadTransaction() {
     NotificationCenter.default.publisher(for: .moneyTransactionSuccess)
       .sink { [weak self] _ in
@@ -145,45 +104,22 @@ final class CashViewModel: ObservableObject {
   }
   
   func onRefresh() {
-    refreshCards()
-    refreshCollateralData()
+    refreshTransaction(withAnimation: true)
+    refreshBalancesCollateralData()
   }
   
-  private func refreshCards() {
-    Task { @MainActor in
-      await dashboardRepository.fetchRainAccount()
-      
-      guard activity != .loading else { return }
-      refreshTransaction(withAnimation: true)
-      NotificationCenter.default.post(name: .refreshListCards, object: nil)
-    }
-  }
-  
-  private func refreshCollateralData() {
+  private func refreshBalancesCollateralData() {
     Task { @MainActor in
       isLoading = true
       defer {
         isLoading = false
       }
       
-      let response = try await getCollateralContractUseCase.execute()
-      accountDataManager.storeCollateralContract(response)
-    }
-  }
-  
-  func firstLoadData() {
-    guard transactions.isEmpty else { return }
-    
-    Task { @MainActor in
-      do {
-        activity = .loading
-        try await loadTransactions()
-        activity = transactions.isEmpty ? .addFunds : .transactions
-      } catch {
-        activity = .addFunds
-        log.error(error.userFriendlyMessage)
-        toastMessage = error.userFriendlyMessage
-      }
+      let collateralResponse = try await getCollateralContractUseCase.execute()
+      let creditBalancesResponse = try await getCreditBalanceUseCase.execute()
+      
+      accountDataManager.storeCollateralContract(collateralResponse)
+      accountDataManager.storeCreditBalances(creditBalancesResponse)
     }
   }
   
@@ -211,47 +147,16 @@ final class CashViewModel: ObservableObject {
 
 // MARK: - View Helpers
 extension CashViewModel {
-  func handleFundingAcceptAgreement(isAccept: Bool) {
-    if isAccept {
-      addFundsViewModel.goNextNavigation()
-    } else {
-      addFundsViewModel.stopAction()
-    }
-  }
-  
-  func onClickedChangeAssetButton() {
-    navigation = .changeAsset
-  }
-  
-  func addMoneyTapped() {
+  func transactionItemTapped(
+    _ transaction: TransactionModel
+  ) {
     Haptic.impact(.light).generate()
-    if linkedAccount.isEmpty {
-      fullScreen = .fundCard(.receive)
-    } else {
-      navigation = .moveMoney(kind: .receive)
-    }
-  }
-  
-  func sendMoneyTapped() {
-    Haptic.impact(.light).generate()
-    if linkedAccount.isEmpty {
-      fullScreen = .fundCard(.send)
-    } else {
-      navigation = .moveMoney(kind: .send)
-    }
-  }
-  
-  func transactionItemTapped(_ transaction: TransactionModel) {
-    Haptic.impact(.light).generate()
+    
     navigation = .transactionDetail(transaction)
   }
   
   func onClickedSeeAllButton() {
     navigation = .transactions
-  }
-  
-  func guestCardTapped() {
-    
   }
   
   func addToBalanceButtonTapped() {
@@ -398,23 +303,11 @@ extension CashViewModel {
   }
   
   enum Navigation {
-    case changeAsset
     case transactions
     case transactionDetail(TransactionModel)
-    case moveMoney(kind: MoveMoneyAccountViewModel.Kind)
     case enterDepositAmount(assetCollateral: AssetModel)
     case enterWithdrawalAmount(address: String, assetCollateral: AssetModel)
     case enterWalletAddress(assetCollateral: AssetModel)
     case depositWalletAddress(title: String, address: String)
-  }
-  
-  enum FullScreen: Identifiable {
-    case fundCard(MoveMoneyAccountViewModel.Kind)
-
-    var id: String {
-      switch self {
-      case .fundCard: return "fundCard"
-      }
-    }
   }
 }

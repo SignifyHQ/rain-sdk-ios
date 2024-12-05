@@ -30,7 +30,7 @@ public struct HomeView: View {
     let dashboardRepository = DashboardRepository()
     
     cashView = CashView(
-      viewModel: CashViewModel(dashboardRepository: dashboardRepository),
+      viewModel: CashViewModel(),
       listCardViewModel: RainListCardsViewModel()
     )
     rewardsTabView = RewardTabView(viewModel: RewardTabViewModel())

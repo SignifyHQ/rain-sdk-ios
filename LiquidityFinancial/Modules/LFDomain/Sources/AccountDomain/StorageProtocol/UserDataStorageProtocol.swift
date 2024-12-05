@@ -26,7 +26,10 @@ public protocol AccountDataStorageProtocol {
   var collateralContractSubject: CurrentValueSubject<RainCollateralContractEntity?, Never> { get }
   var collateralContract: RainCollateralContractEntity? { get }
   func subscribeCollateralContractChanged(_ completion: @escaping (RainCollateralContractEntity?) -> Void) -> Cancellable
+  var creditBalancesSubject: CurrentValueSubject<RainCreditBalanceEntity?, Never> { get }
+  
   func storeCollateralContract(_ collateralContract: RainCollateralContractEntity?)
+  func storeCreditBalances(_ creditBalances: RainCreditBalanceEntity?)
   
   func subscribeLinkedSourcesChanged(_ completion: @escaping ([any LinkedSourceDataEntity]) -> Void) -> Cancellable
   func storeLinkedSources(_ sources: [any LinkedSourceDataEntity])
