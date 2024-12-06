@@ -159,7 +159,7 @@ private extension MoveCryptoInputView {
             HStack {
               viewModel.assetModel.type?.image
               
-              Text(viewModel.assetModel.type?.title ?? "-/-")
+              Text(viewModel.assetModel.type?.title ?? "N/A")
                 .font(Fonts.bold.swiftUIFont(size: Constants.FontSize.small.value))
                 .foregroundColor(Colors.label.swiftUIColor)
                 .padding(.horizontal, 12)
@@ -262,7 +262,7 @@ private extension MoveCryptoInputView {
         item.type?.image
           .padding(.leading, -5)
         
-        Text(item.type?.title ?? "-/-")
+        Text(item.type?.title ?? "N/A")
           .font(Fonts.bold.swiftUIFont(size: Constants.FontSize.small.value))
           .foregroundColor(Colors.label.swiftUIColor)
           .padding(.leading, 12)

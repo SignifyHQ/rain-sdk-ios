@@ -15,7 +15,13 @@ public struct AssetModel: Hashable {
   
   public let externalAccountId: String?
   
-  public init(id: String, type: AssetType?, availableBalance: Double, availableUsdBalance: Double?, externalAccountId: String?) {
+  public init(
+    id: String,
+    type: AssetType?,
+    availableBalance: Double,
+    availableUsdBalance: Double?,
+    externalAccountId: String?
+  ) {
     self.id = id
     self.type = type
     self.availableBalance = availableBalance
@@ -26,7 +32,9 @@ public struct AssetModel: Hashable {
     self.advanceRate = nil
   }
   
-  public init(account: AccountModel) {
+  public init(
+    account: AccountModel
+  ) {
     self.id = account.id
     self.type = AssetType(rawValue: account.currency.rawValue.uppercased())
     self.availableBalance = account.availableBalance
@@ -37,7 +45,9 @@ public struct AssetModel: Hashable {
     self.advanceRate = nil
   }
   
-  public init(portalAsset: PortalAsset) {
+  public init(
+    portalAsset: PortalAsset
+  ) {
     self.id = portalAsset.token.contractAddress
     self.type = AssetType(rawValue: portalAsset.token.symbol.uppercased())
     self.availableBalance = portalAsset.balance ?? 0
@@ -48,7 +58,9 @@ public struct AssetModel: Hashable {
     self.advanceRate = nil
   }
   
-  public init(rainCollateralAsset: RainTokenEntity) {
+  public init(
+    rainCollateralAsset: RainTokenEntity
+  ) {
     self.id = rainCollateralAsset.address
     self.type = AssetType(rawValue: rainCollateralAsset.symbol?.uppercased() ?? "")
     self.availableBalance = Double(rainCollateralAsset.balance) ?? 0.0

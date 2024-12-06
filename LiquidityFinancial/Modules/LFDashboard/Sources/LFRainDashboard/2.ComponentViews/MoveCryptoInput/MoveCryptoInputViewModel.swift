@@ -277,11 +277,16 @@ private extension MoveCryptoInputViewModel {
       .receive(on: DispatchQueue.main)
       .map { assets in
         assets
-          .filter {
-            !$0.token.contractAddress.isEmpty
-          }
-          .map {
-            AssetModel(portalAsset: $0)
+          .compactMap {
+            let assetModel = AssetModel(portalAsset: $0)
+            
+            // Filter out tokens of unsupported type and native tokens
+            guard assetModel.type != nil && !assetModel.id.isEmpty
+            else {
+              return nil
+            }
+            
+            return assetModel
           }
           .sorted {
             ($0.type?.rawValue ?? "") < ($1.type?.rawValue ?? "")
