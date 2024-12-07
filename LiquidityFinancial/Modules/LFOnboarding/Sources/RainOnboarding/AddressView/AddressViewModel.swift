@@ -15,6 +15,7 @@ import DevicesData
 import DevicesDomain
 import LFFeatureFlags
 import FraudForce
+import BaseOnboarding
 
 @MainActor
 final class AddressViewModel: ObservableObject {
@@ -34,6 +35,7 @@ final class AddressViewModel: ObservableObject {
   @LazyInjected(\.analyticsService) var analyticsService
   
   @Published var isLoading: Bool = false
+  @Published var isShowingCountrySelection: Bool = false
   @Published var displaySuggestions: Bool = false
   @Published var shouldEnableContinueButton: Bool = false
 
@@ -46,6 +48,10 @@ final class AddressViewModel: ObservableObject {
   
   @Published var popup: Popup?
   @Published var addressList: [AddressData] = []
+  
+  @Published var countryCodeList: [Country] = Country.allCases
+  @Published var selectedCountry: Country = .US
+  @Published var selectedCountryTitle: String = ""
 
   lazy var deviceDeregisterUseCase: DeviceDeregisterUseCaseProtocol = {
     return DeviceDeregisterUseCase(repository: devicesRepository)
@@ -66,6 +72,7 @@ final class AddressViewModel: ObservableObject {
   init() {
     observeUserInput()
     observeAddressSuggestion()
+    bindCountrySelection()
   }
 }
 
@@ -108,6 +115,16 @@ extension AddressViewModel {
 
 // MARK: - View Handle
 extension AddressViewModel {
+  func bindCountrySelection() {
+    $selectedCountry
+      .map { country in
+        country.title
+      }
+      .assign(
+        to: &$selectedCountryTitle
+      )
+  }
+  
   func onAppear() {
     analyticsService.track(event: AnalyticsEvent(name: .viewedAddress))
   }
@@ -236,7 +253,7 @@ private extension AddressViewModel {
     accountDataManager.update(city: city)
     accountDataManager.update(state: state)
     accountDataManager.update(postalCode: zipCode)
-    accountDataManager.update(country: Constants.Default.region.rawValue.uppercased())
+    accountDataManager.update(country: selectedCountry.rawValue.uppercased())
   }
   
   func createRainPersonParameters() -> APIRainPersonParameters {
@@ -246,7 +263,7 @@ private extension AddressViewModel {
       city: accountDataManager.userInfomationData.city ?? .empty,
       region: accountDataManager.userInfomationData.state ?? .empty,
       postalCode: accountDataManager.userInfomationData.postalCode ?? .empty,
-      countryCode: Constants.Default.region.rawValue.uppercased(),
+      countryCode: selectedCountry.rawValue.uppercased(),
       country: accountDataManager.userInfomationData.country ?? .empty
     )
     
@@ -255,10 +272,11 @@ private extension AddressViewModel {
       lastName: accountDataManager.userInfomationData.lastName ?? .empty,
       birthDate: accountDataManager.userInfomationData.dateOfBirth ?? .empty,
       nationalId: accountDataManager.userInfomationData.ssn ?? .empty,
-      countryOfIssue: Constants.Default.region.rawValue.uppercased(),
+      countryOfIssue: selectedCountry.rawValue.uppercased(),
       email: accountDataManager.userInfomationData.email ?? .empty,
       address: rainAddress,
-      phoneCountryCode: Constants.Default.regionCode.rawValue,
+      // TODO(Volo): Store phone code from step 1 and pull it for the request here
+      phoneCountryCode: selectedCountry.phoneCode,
       phoneNumber: accountDataManager.userInfomationData.phone ?? .empty,
       iovationBlackbox: FraudForce.blackbox()
     )

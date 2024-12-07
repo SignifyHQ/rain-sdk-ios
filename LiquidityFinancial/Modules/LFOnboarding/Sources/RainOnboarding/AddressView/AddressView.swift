@@ -8,8 +8,16 @@ import Factory
 
 struct AddressView: View {
   @Environment(\.dismiss) var dismiss
-  @FocusState var keyboardFocus: Focus?
+  @FocusState var keyboardFocus: Focus? {
+    didSet {
+      if keyboardFocus != nil {
+        viewModel.isShowingCountrySelection = false
+      }
+    }
+  }
   @StateObject private var viewModel = AddressViewModel()
+  
+  @State private var countryDropdownFrame: CGRect = .zero
   
   init() {
     UITableView.appearance().backgroundColor = UIColor(Colors.background.swiftUIColor)
@@ -19,41 +27,56 @@ struct AddressView: View {
   var body: some View {
     VStack {
       ScrollViewReader { proxy in
-        ScrollView {
-          ZStack {
+        ZStack {
+          ScrollView {
             VStack(alignment: .leading) {
               Text(L10N.Common.addressTitle)
                 .foregroundColor(Colors.label.swiftUIColor)
                 .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.main.value))
                 .padding(.vertical, 16)
+              
               textFieldView
             }
             .onChange(of: keyboardFocus) {
               proxy.scrollTo($0)
             }
             .padding(.horizontal, 32)
-            
-            if viewModel.displaySuggestions {
-              if #available(iOS 16.0, *) {
-                listView().scrollContentBackground(.hidden)
-              } else {
-                listView()
-              }
-            }
+          }
+          .scrollDisabled(viewModel.isShowingCountrySelection)
+          
+          if viewModel.isShowingCountrySelection {
+            dropdownView()
+              .frame(
+                width: countryDropdownFrame.width,
+                height: countryDropdownFrame.height * 3
+              )
+              .background(Colors.secondaryBackground.swiftUIColor.cornerRadius(9))
+              .position(
+                x: countryDropdownFrame.midX,
+                y: countryDropdownFrame.maxY
+              )
           }
         }
       }
+      
       continueButton
     }
     .navigationTitle("")
     .background(Colors.background.swiftUIColor)
     .onTapGesture {
       viewModel.stopSuggestions()
+      viewModel.isShowingCountrySelection = false
     }
-    .defaultToolBar(icon: .support, openSupportScreen: {
-      viewModel.openSupportScreen()
-    })
-    .popup(item: $viewModel.toastMessage, style: .toast) {
+    .defaultToolBar(
+      icon: .support,
+      openSupportScreen: {
+        viewModel.openSupportScreen()
+      }
+    )
+    .popup(
+      item: $viewModel.toastMessage,
+      style: .toast
+    ) {
       ToastView(toastMessage: $0)
     }
     .popup(item: $viewModel.popup) { item in
@@ -142,6 +165,12 @@ private extension AddressView {
           .submitLabel(nextFocus == nil ? .done : .next)
           .focused($keyboardFocus, equals: focus)
           .onSubmit {
+            if nextFocus == .country {
+              DispatchQueue.main.async {
+                viewModel.isShowingCountrySelection = true
+              }
+            }
+            
             keyboardFocus = nextFocus
           }
       }
@@ -171,8 +200,32 @@ private extension AddressView {
         placeholder: L10N.Common.enterCity,
         value: $viewModel.city,
         focus: .city,
-        nextFocus: .state
+        nextFocus: .country
       )
+      
+      ZStack {
+        textFieldInputView(
+          title: L10N.Common.country,
+          placeholder: L10N.Common.enterCountry,
+          value: $viewModel.selectedCountryTitle,
+          focus: .country,
+          nextFocus: .state
+        )
+        .disabled(true)
+        
+        Rectangle()
+          .foregroundStyle(
+            Color.clear
+          )
+          .contentShape(Rectangle())
+          .onTapGesture {
+            keyboardFocus = nil
+            viewModel.isShowingCountrySelection = true
+          }
+      }
+      .readGeometry { geometry in
+        countryDropdownFrame = geometry.frame(in: .global)
+      }
       
       HStack {
         textFieldInputView(
@@ -184,7 +237,9 @@ private extension AddressView {
           focus: .state,
           nextFocus: .zip
         )
+        
         Spacer(minLength: 25)
+        
         textFieldInputView(
           title: L10N.Common.zipcode,
           placeholder: L10N.Common.enterZipcode,
@@ -205,6 +260,7 @@ private extension AddressView {
       type: .primary
     ) {
       viewModel.onContinueButtonTapped()
+      viewModel.isShowingCountrySelection = false
       keyboardFocus = nil
     }
     .padding(.horizontal, 30)
@@ -233,6 +289,39 @@ private extension AddressView {
       }
     )
   }
+  
+  func dropdownView(
+  ) -> some View {
+    List(
+      viewModel.countryCodeList,
+      id: \.id
+    ) { item in
+      HStack {
+        Text(item.flagEmoji())
+          .padding(.leading, -5)
+        
+        Text(item.title)
+          .font(Fonts.bold.swiftUIFont(size: Constants.FontSize.small.value))
+          .foregroundColor(Colors.label.swiftUIColor)
+          .padding(.leading, 12)
+      }
+      .listRowBackground(Color.clear)
+      .listRowSeparatorTint(Colors.label.swiftUIColor.opacity(0.16))
+      .listRowInsets(.none)
+      .onTapGesture {
+        viewModel.selectedCountry = item
+        viewModel.isShowingCountrySelection = false
+        
+        keyboardFocus = .state
+      }
+    }
+    .scrollContentBackground(.hidden)
+    .listStyle(.plain)
+    .onAppear {
+      UITableView.appearance().separatorInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 15)
+    }
+    .floatingShadow()
+  }
 }
 
 // MARK: - Focus Keyboard
@@ -241,6 +330,7 @@ extension AddressView {
     case address1
     case address2
     case city
+    case country
     case state
     case zip
   }

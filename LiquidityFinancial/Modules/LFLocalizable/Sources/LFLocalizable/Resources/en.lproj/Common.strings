@@ -136,6 +136,8 @@
 "enter_address" = "Enter address";
 "city" = "City";
 "enter_city" = "Enter city";
+"country" = "Country";
+"enter_country" = "Enter country";
 "state" = "State";
 "enter_state" = "Enter state";
 "zipcode" = "Zip code";
@@ -391,11 +393,13 @@
 "shippingAddress.mainAddress.title" = "Address line 1 ";
 "shippingAddress.subAddress.title" = "Address line 2 (optional)";
 "shippingAddress.city.title" = "City";
+"shippingAddress.country.title" = "Country";
 "shippingAddress.state.title" = "State";
 "shippingAddress.zipCode.title" = "Zip Code";
 "shippingAddress.confirm.buttonTitle" = "Confirm Address";
 "shippingAddress.address.placeholder" = "Enter address";
 "shippingAddress.city.placeholder" = "Enter city";
+"shippingAddress.country.placeholder" = "Enter country";
 "shippingAddress.state.placeholder" = "Enter state";
 "shippingAddress.zipCode.placeholder" = "Enter zip code";
 
