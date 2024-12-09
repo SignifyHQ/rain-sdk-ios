@@ -36,6 +36,7 @@ final class AddressViewModel: ObservableObject {
   
   @Published var isLoading: Bool = false
   @Published var isShowingCountrySelection: Bool = false
+  @Published var isShowingStateSelection: Bool = false
   @Published var displaySuggestions: Bool = false
   @Published var shouldEnableContinueButton: Bool = false
 
@@ -51,7 +52,11 @@ final class AddressViewModel: ObservableObject {
   
   @Published var countryCodeList: [Country] = Country.allCases
   @Published var selectedCountry: Country = .US
-  @Published var selectedCountryTitle: String = ""
+  @Published var selectedCountryTitle: String = .empty
+  
+  @Published var stateList: [UsState] =  UsState.allCases
+  @Published var selectedState: UsState = .AK
+  @Published var shouldUseStateDropdown: Bool = true
 
   lazy var deviceDeregisterUseCase: DeviceDeregisterUseCaseProtocol = {
     return DeviceDeregisterUseCase(repository: devicesRepository)
@@ -72,7 +77,7 @@ final class AddressViewModel: ObservableObject {
   init() {
     observeUserInput()
     observeAddressSuggestion()
-    bindCountrySelection()
+    bindCountryStateSelection()
   }
 }
 
@@ -115,13 +120,27 @@ extension AddressViewModel {
 
 // MARK: - View Handle
 extension AddressViewModel {
-  func bindCountrySelection() {
+  private func bindCountryStateSelection() {
     $selectedCountry
-      .map { country in
-        country.title
+      .map { [weak self] country in
+        if country == .US {
+          self?.selectedState = .AK
+        }
+        
+        self?.shouldUseStateDropdown = country == .US
+        
+        return country.title
       }
       .assign(
         to: &$selectedCountryTitle
+      )
+    
+    $selectedState
+      .map { state in
+        state.rawValue
+      }
+      .assign(
+        to: &$state
       )
   }
   
