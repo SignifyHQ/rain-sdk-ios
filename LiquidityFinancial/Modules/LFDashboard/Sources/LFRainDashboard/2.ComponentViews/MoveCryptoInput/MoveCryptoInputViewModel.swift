@@ -303,7 +303,15 @@ private extension MoveCryptoInputViewModel {
         rainCollateral?
           .tokensEntity
           .compactMap { rainToken in
-            AssetModel(rainCollateralAsset: rainToken)
+            let assetModel = AssetModel(rainCollateralAsset: rainToken)
+            
+            // Filter out tokens of unsupported type and native tokens
+            guard assetModel.type != nil && !assetModel.id.isEmpty
+            else {
+              return nil
+            }
+            
+            return assetModel
           }
       }
       .assign(to: &$assetModelList)
