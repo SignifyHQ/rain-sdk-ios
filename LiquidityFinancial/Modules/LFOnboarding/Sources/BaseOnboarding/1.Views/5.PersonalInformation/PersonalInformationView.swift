@@ -66,7 +66,14 @@ private extension PersonalInformationView {
       Text(L10N.Common.AddPersonalInformation.title.uppercased())
         .font(Fonts.regular.swiftUIFont(size: 18))
         .foregroundColor(Colors.label.swiftUIColor)
-        .padding(.vertical, 16)
+        .padding(.top, 16)
+        .padding(.bottom, 1)
+      
+      Text(L10N.Common.AddPersonalInformation.subtitle)
+        .foregroundColor(Colors.label.swiftUIColor)
+        .opacity(0.5)
+        .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.ultraSmall.value))
+        .multilineTextAlignment(.leading)
       
       textFieldInputView(
         title: L10N.Common.firstName,
@@ -103,6 +110,7 @@ private extension PersonalInformationView {
         .foregroundColor(Colors.label.swiftUIColor)
         .opacity(0.75)
         .padding(.top, 24)
+      
       DatePickerTextField(
         placeHolderText: L10N.Common.dobFormat,
         value: $viewModel.dateCheck,
