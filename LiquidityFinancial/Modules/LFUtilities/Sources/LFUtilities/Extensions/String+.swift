@@ -73,7 +73,7 @@ public extension String {
       let firstSubString = str.substring(start: 0, end: 3)
       let secondSubString = str.substring(start: 3, end: 6)
       let thirdSubString = str.substring(start: 6, end: str.count)
-      let num = "(\(firstSubString)) -\(secondSubString)-\(thirdSubString)"
+      let num = "(\(firstSubString)) \(secondSubString)-\(thirdSubString)"
       return num
     }
     return str

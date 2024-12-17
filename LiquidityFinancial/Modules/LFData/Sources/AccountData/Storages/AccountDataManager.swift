@@ -62,7 +62,7 @@ public class AccountDataManager: AccountDataStorageProtocol {
   
   public var addressDetail: String {
     let userData = self.userInfomationData
-    let stateCode = "\(userData.state ?? "") - \(userData.postalCode ?? "")"
+    let stateCode = "\(userData.state ?? ""), \((userData.country == "US" ? userData.postalCode?.capitalized : userData.postalCode) ?? "")"
     let addressDetails = [userData.addressLine1, userData.addressLine2, userData.city, stateCode, userData.country]
     return addressDetails
       .compactMap { $0 }
