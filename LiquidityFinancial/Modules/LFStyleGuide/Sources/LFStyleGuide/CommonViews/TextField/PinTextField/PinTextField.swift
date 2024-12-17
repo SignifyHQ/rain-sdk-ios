@@ -4,24 +4,27 @@ import LFUtilities
 struct PinTextField: UIViewRepresentable {
   @ObservedObject var viewItem: PinTextFieldViewItem
   let isShown: Bool
+  let isSecureInput: Bool
   var onTextChange: (String) -> Void
   var onBackPressed: (PinTextFieldViewItem) -> Void
   
   init(
     viewItem: PinTextFieldViewItem,
     isShown: Bool,
+    isSecureInput: Bool = false,
     onTextChange: @escaping (String) -> Void,
     onBackPressed: @escaping (PinTextFieldViewItem) -> Void
   ) {
     self.viewItem = viewItem
     self.isShown = isShown
+    self.isSecureInput = isSecureInput
     self.onTextChange = onTextChange
     self.onBackPressed = onBackPressed
   }
   
   func makeUIView(context: UIViewRepresentableContext<PinTextField>) -> BackPressTextField {
     let textField = BackPressTextField(frame: .zero)
-    textField.isSecureTextEntry = false
+    textField.isSecureTextEntry = isSecureInput
     textField.keyboardType = .numberPad
     textField.font = Fonts.bold.font(size: 32)
     textField.delegate = context.coordinator

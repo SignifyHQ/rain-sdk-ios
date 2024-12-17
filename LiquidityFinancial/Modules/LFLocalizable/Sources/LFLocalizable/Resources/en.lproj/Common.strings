@@ -70,7 +70,7 @@
 
 // Upload KYC Document
 "uploadDocument.screen.title" = "SET UP YOUR ACCOUNT";
-"uploadDocument.screen.description" = "%@ has partnered with NetSpend and Pathward Bank, a trusted partner in banking.";
+"uploadDocument.screen.description" = "%@ Card has partnered with NetSpend and Pathward Bank, a trusted partner in banking.";
 "uploadDocument.upload.title" = "UPLOAD DOCUMENTS";
 "uploadDocument.upload.description" = "Please Upload documents to help us verify your account";
 "uploadDocument.upload.actionTitle" = "Upload Documents";
@@ -155,7 +155,7 @@
 
 // Create Wallet
 "createWallet.title" = "CREATE YOUR WALLET";
-"createWallet.info" = "%@ has partnered with Portal to offer wallets.";
+"createWallet.info" = "%@ Card has partnered with Portal to offer wallets.";
 "createWallet.termsAndCondition" = "I agree to the Portal Services User Agreement, and I have read and understand the Portal Privacy Policy and Regulatory Disclosures.";
 "createWallet.riskDisclosure" = "The value of any cryptocurrency, including digital assets pegged to fiat currency, commodities, or any other asset, may go to zero.";
 "createWallet.userAgreement" = "Portal Services User Agreement";
@@ -193,7 +193,7 @@
 
 // Set Up Account
 "question.accountTerms.title" = "ACCOUNT TERMS";
-"question.accountTerms.description" = "%@ has partnered with NetSpend and Pathward to provide banking and card services.";
+"question.accountTerms.description" = "%@ Card has partnered with NetSpend and Pathward to provide banking and card services.";
 "question.transferTerms.title" = "TRANSFER TERMS AND CONDITIONS";
 "question.transferTerms.description" = "Please review the Transfer terms and conditions.";
 "question.transferTerms.diclosure" = "Bank Transfer is a money transfer service provided by Netspend Corporation (NMLS #906983). See netspend.com/licenses.";
@@ -1194,7 +1194,7 @@ contact support.";
 // MARK: - Your Account
 
 "yourAccount.title" = "YOUR ACCOUNT";
-"yourAccount.subtitle" = "Liquidity Financial, doing business as %@, has partnered with Solid Financial and Lewis and Clark Bank to provide banking and card services.";
+"yourAccount.subtitle" = "Liquidity Financial, doing business as %@ Card, has partnered with Solid Financial and Lewis and Clark Bank to provide banking and card services.";
 "yourAccount.body" = "By agreeing to the E-Signature Agreement, you consent to receive electronic disclosures and/or statements for your %@ account and consent to be legally bound to this agreement.";
 "yourAccount.agreements.esignature" = "I accept the E-Signature Agreement and continue";
 "yourAccount.agreements.consumerTermsConditions" = "I read and agree to the: Consumer Account and Cardholder Agreement, Terms and Conditions, and Privacy Policy";

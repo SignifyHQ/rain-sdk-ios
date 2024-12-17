@@ -8,17 +8,20 @@ public struct PinCodeView: View {
   @Binding private var isDisabled: Bool
 
   private let codeLength: Int
+  private let isSecureInput: Bool
   private let pinCodeConfig: PinCodeConfig
 
   public init(
     code: Binding<String>,
     isDisabled: Binding<Bool> = .constant(false),
     codeLength: Int,
+    isSecureInput: Bool = false,
     pinCodeConfig: PinCodeView.PinCodeConfig = .default
   ) {
     _code = code
     _isDisabled = isDisabled
     self.codeLength = codeLength
+    self.isSecureInput = isSecureInput
     self.pinCodeConfig = pinCodeConfig
   }
   
@@ -28,6 +31,7 @@ public struct PinCodeView: View {
         PinTextField(
           viewItem: item,
           isShown: true,
+          isSecureInput: isSecureInput,
           onTextChange: { value in
             didTextFieldTextChange(replacementText: value, viewItem: item)
           },

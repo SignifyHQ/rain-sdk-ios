@@ -53,7 +53,8 @@ private extension BackupByPinCodeView {
       PinCodeView(
         code: $viewModel.pinCode,
         isDisabled: $viewModel.isLoading,
-        codeLength: viewModel.pinCodeLength
+        codeLength: viewModel.pinCodeLength,
+        isSecureInput: true
       )
       if let errorMessage = viewModel.inlineMessage {
         Text(errorMessage)
