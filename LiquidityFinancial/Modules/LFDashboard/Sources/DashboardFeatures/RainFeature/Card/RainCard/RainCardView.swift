@@ -76,11 +76,11 @@ private extension RainCardView {
     }
     .foregroundColor(Colors.contrast.swiftUIColor.opacity(0.75))
     .padding(.top, -50)
-    .padding(.horizontal, 16)
+    .padding(.leading, 16)
   }
   
   var trailingCardView: some View {
-    HStack(spacing: 24) {
+    HStack(spacing: 10) {
       VStack(alignment: .leading, spacing: 6) {
         Text(L10N.Common.Card.Exp.title)
           .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.ultraSmall.value))
@@ -88,7 +88,9 @@ private extension RainCardView {
           .foregroundColor(Colors.contrast.swiftUIColor)
           .font(Fonts.bold.swiftUIFont(size: Constants.FontSize.small.value))
           .hidden(isLoading)
+          .frame(width: 50, alignment: .leading)
       }
+      
       VStack(alignment: .leading, spacing: 6) {
         Text(L10N.Common.Card.Cvv.title)
           .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.ultraSmall.value))
@@ -96,6 +98,7 @@ private extension RainCardView {
           .foregroundColor(Colors.contrast.swiftUIColor)
           .font(Fonts.bold.swiftUIFont(size: Constants.FontSize.small.value))
           .hidden(isLoading)
+          .frame(width: 45, alignment: .leading)
       }
     }
   }
