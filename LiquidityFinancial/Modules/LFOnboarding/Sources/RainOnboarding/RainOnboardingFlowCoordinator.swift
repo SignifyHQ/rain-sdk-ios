@@ -30,6 +30,7 @@ public protocol OnboardingFlowCoordinatorProtocol {
   func set(route: RainOnboardingFlowCoordinator.Route)
   func fetchCurrentState() async
   func fetchOnboardingMissingSteps() async throws
+  func shouldProceedWithOnboarding() async throws -> Bool
   func fetchUserReviewStatus() async throws
   func forceLogout()
 }
@@ -106,6 +107,24 @@ public extension RainOnboardingFlowCoordinator {
     }
     
     handleOnboardingMissingSteps(from: steps)
+  }
+  
+  // Currently, this method is used to determine whether the user should be taken to the dashboard after creating a wallet (migration)
+  func shouldProceedWithOnboarding() async throws -> Bool {
+    let missingSteps = try await getOnboardingMissingSteps.execute()
+    let steps = missingSteps.processSteps.compactMap {
+      RainOnboardingMissingSteps(rawValue: $0)
+    }
+    
+    // If there are no remaining steps, we should take the user to the dashboard and skip the rest of the onboarding steps
+    if steps.isEmpty {
+      set(route: .dashboard)
+      
+      return false
+    }
+    
+    // If there are still steps remaining, we return true so view model knows that it needs to proceed with onboarding normally
+    return true
   }
   
   func fetchUserReviewStatus() async throws {

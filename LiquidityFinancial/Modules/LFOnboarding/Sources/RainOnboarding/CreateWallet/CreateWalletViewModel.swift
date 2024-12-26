@@ -10,6 +10,7 @@ import LFLocalizable
 // MARK: - CreateWalletViewModel
 @MainActor
 final class CreateWalletViewModel: ObservableObject {
+  @LazyInjected(\.rainOnboardingFlowCoordinator) var rainOnboardingFlowCoordinator
   @LazyInjected(\.portalRepository) var portalRepository
   @LazyInjected(\.customerSupportService) var customerSupportService
   @LazyInjected(\.analyticsService) var analyticsService
@@ -67,9 +68,10 @@ extension CreateWalletViewModel {
       loadingText = L10N.Common.CreateWallet.VerifyPortalWallet.title
       _ = try await verifyAndUpdatePortalWalletUseCase.execute()
       
+      isNavigateToPersonalInformation = try await rainOnboardingFlowCoordinator.shouldProceedWithOnboarding()
+      
       showIndicator = false
       analyticsService.track(event: AnalyticsEvent(name: .walletSetupSuccess))
-      isNavigateToPersonalInformation = true
     } catch {
       loadingText = .empty
       log.error(error.userFriendlyMessage)
