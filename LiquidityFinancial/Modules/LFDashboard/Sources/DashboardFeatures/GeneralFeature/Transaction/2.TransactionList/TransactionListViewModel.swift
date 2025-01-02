@@ -44,7 +44,16 @@ public class TransactionListViewModel: ObservableObject {
   
   var filteredTransactions: [TransactionModel] {
     transactions.filter {
-      searchText.isEmpty ? true : ($0.title ?? "").localizedCaseInsensitiveContains(searchText)
+      guard !searchText.isEmpty
+      else {
+        return true
+      }
+      
+      return ($0.title ?? "").localizedCaseInsensitiveContains(searchText)
+      || ($0.subtitle).localizedCaseInsensitiveContains(searchText)
+      || ($0.description ?? "").localizedCaseInsensitiveContains(searchText)
+      || ($0.currency ?? "").localizedCaseInsensitiveContains(searchText)
+      || ($0.type.rawValue).localizedCaseInsensitiveContains(searchText)
     }
   }
   
