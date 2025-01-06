@@ -4,6 +4,8 @@ public enum PortalToken {
   case AVAX
   case fujiAvalancheUSDC
   case mainnetAvalancheUSDC
+  case fujiAvalancheUSDT
+  case mainnetAvalancheUSDT
   case fujiAvalancheWAVAX
   case mainnetAvalancheWAVAX
   
@@ -15,6 +17,10 @@ public enum PortalToken {
       "0xd856a0585da55e83d03ccb49ef09d180494cfbad"
     case .mainnetAvalancheUSDC:
       "0xb97ef9ef8734c71904d8002f8b6bc66dd9c48a6e"
+    case .fujiAvalancheUSDT:
+      "usdt" // Using a placeholder value here since USDT is not supported in dev currently
+    case .mainnetAvalancheUSDT:
+      "0x9702230A8Ea53601f5cD2dc00fDBc13d4dF4A8c7"
     case .fujiAvalancheWAVAX:
       "0x688af2a8422611b770b4e2ef55a7f50f0339cc65"
     case .mainnetAvalancheWAVAX:
@@ -28,6 +34,8 @@ public enum PortalToken {
       "AVAX"
     case .fujiAvalancheUSDC, .mainnetAvalancheUSDC:
       "USDC"
+    case .fujiAvalancheUSDT, .mainnetAvalancheUSDT:
+      "USDT"
     case .fujiAvalancheWAVAX, .mainnetAvalancheWAVAX:
       "WAVAX"
     }
@@ -39,6 +47,8 @@ public enum PortalToken {
       "Avalanche"
     case .fujiAvalancheUSDC, .mainnetAvalancheUSDC:
       "USDC"
+    case .fujiAvalancheUSDT, .mainnetAvalancheUSDT:
+      "USDT"
     case .fujiAvalancheWAVAX, .mainnetAvalancheWAVAX:
       "Wrapped AVAX"
     }
@@ -46,7 +56,7 @@ public enum PortalToken {
   
   public var conversionFactor: Int {
     switch self {
-    case .fujiAvalancheUSDC, .mainnetAvalancheUSDC:
+    case .fujiAvalancheUSDC, .mainnetAvalancheUSDC, .fujiAvalancheUSDT, .mainnetAvalancheUSDT:
       6
     default:
       18

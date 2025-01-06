@@ -5,6 +5,7 @@ import LFUtilities
 public enum AssetType: String {
   case usd = "USD"
   case usdc = "USDC"
+  case usdt = "USDT"
   case wavax = "WAVAX"
   case avax = "AVAX"
   case cardano = "ADA"
@@ -22,12 +23,13 @@ public enum AssetType: String {
     case .cardano: return 3
     case .usdc: return 4
     case .wavax: return 5
+    case .usdt: return 6
     }
   }
   
   public var isCrypto: Bool {
     switch self {
-    case .usd, .usdc:
+    case .usd, .usdc, .usdt:
       return false
     default:
       return true
@@ -40,6 +42,8 @@ public enum AssetType: String {
       return GenImages.CommonImages.icUsd.swiftUIImage
     case .usdc:
       return GenImages.CommonImages.icUsdc.swiftUIImage
+    case .usdt:
+      return GenImages.CommonImages.icUsdt.swiftUIImage
     case .avax:
       return GenImages.CommonImages.icAvax.swiftUIImage
     case .cardano:
@@ -57,6 +61,8 @@ public enum AssetType: String {
       return GenImages.CommonImages.usdSymbol.swiftUIImage
     case .usdc:
       return GenImages.CommonImages.icUsdc.swiftUIImage
+    case .usdt:
+      return GenImages.CommonImages.icUsdt.swiftUIImage
     case .avax:
       return GenImages.CommonImages.icAvaxFilled.swiftUIImage
     case .cardano:
@@ -74,6 +80,8 @@ public enum AssetType: String {
       return GenImages.CommonImages.usdSymbol.swiftUIImage
     case .usdc:
       return GenImages.CommonImages.icUsdc.swiftUIImage
+    case .usdt:
+      return GenImages.CommonImages.icUsdt.swiftUIImage
     case .avax:
       return GenImages.CommonImages.icAvaxFilled.swiftUIImage
     case .cardano:

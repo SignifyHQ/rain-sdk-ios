@@ -63,7 +63,7 @@ public struct AssetModel: Hashable {
   ) {
     self.id = rainCollateralAsset.address
     self.type = AssetType(rawValue: rainCollateralAsset.symbol?.uppercased() ?? "")
-    self.availableBalance = Double(rainCollateralAsset.balance) ?? 0.0
+    self.availableBalance = Double(rainCollateralAsset.balance)
     self.availableUsdBalance = rainCollateralAsset.availableUsdBalance
     self.exchangeRate = rainCollateralAsset.exchangeRate
     self.advanceRate = rainCollateralAsset.advanceRate
@@ -73,7 +73,7 @@ public struct AssetModel: Hashable {
   
   public var conversionFactor: Int {
     switch type {
-    case .usdc:
+    case .usdc, .usdt:
       6
     case .avax, .cardano, .doge, .wavax:
       18

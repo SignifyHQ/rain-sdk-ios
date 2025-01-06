@@ -250,9 +250,10 @@ private extension MoveCryptoInputViewModel {
   func generateGridValues(
   ) {
     let cryptoCurrency = assetModel.type?.title ?? .empty
+    
     switch type {
     case .sellCrypto, .sendCrypto, .depositCollateral, .withdrawCollateral:
-      gridValues = Constant.Sell.buildRecommend(available: assetModel.availableBalance, coin: cryptoCurrency)
+      gridValues = Constant.buildRecommendedGrid(available: assetModel.availableBalance, coin: cryptoCurrency)
     default:
       break
     }
@@ -684,46 +685,28 @@ extension MoveCryptoInputViewModel {
   private enum Constant {
     static let initValue = "0"
     
-    enum Buy {
-      static func buildRecommend(available: Double) -> [GridValue] {
-        if available > 500 {
-          return [.fixed(amount: 100, currency: .usd), .fixed(amount: 200, currency: .usd), .fixed(amount: 500, currency: .usd)]
-        } else if available > 200 {
-          return [.fixed(amount: 50, currency: .usd), .fixed(amount: 100, currency: .usd), .fixed(amount: 200, currency: .usd)]
-        } else if available > 100 {
-          return [.fixed(amount: 10, currency: .usd), .fixed(amount: 50, currency: .usd), .fixed(amount: 100, currency: .usd)]
-        } else {
-          return []
-        }
-      }
-    }
-    
-    enum Sell {
-      static func buildRecommend(
-        available: Double,
-        coin: String
-      ) -> [GridValue] {
-        if available > 1_000 {
-          return [
-            .fixed(amount: 100, currency: .crypto(coin: coin)),
-            .fixed(amount: 1_000, currency: .crypto(coin: coin)),
-            .all(amount: available, currency: .crypto(coin: coin))
-          ]
-        } else if available > 100 {
-          return [
-            .fixed(amount: 10, currency: .crypto(coin: coin)),
-            .fixed(amount: 100, currency: .crypto(coin: coin)),
-            .all(amount: available, currency: .crypto(coin: coin))
-          ]
-        } else if available > 10 {
-          return [
-            .fixed(amount: 1, currency: .crypto(coin: coin)),
-            .fixed(amount: 10, currency: .crypto(coin: coin)),
-            .all(amount: available, currency: .crypto(coin: coin))
-          ]
-        } else {
-          return []
-        }
+    static func buildRecommendedGrid(
+      available: Double,
+      coin: String
+    ) -> [GridValue] {
+      if available > 1_000 {
+        return [
+          .fixed(amount: 100, currency: .crypto(coin: coin)),
+          .fixed(amount: 1_000, currency: .crypto(coin: coin)),
+          .all(amount: available, currency: .crypto(coin: coin))
+        ]
+      } else if available > 100 {
+        return [
+          .fixed(amount: 10, currency: .crypto(coin: coin)),
+          .fixed(amount: 100, currency: .crypto(coin: coin)),
+          .all(amount: available, currency: .crypto(coin: coin))
+        ]
+      } else {
+        return [
+          .fixed(amount: 1, currency: .crypto(coin: coin)),
+          .fixed(amount: 10, currency: .crypto(coin: coin)),
+          .all(amount: available, currency: .crypto(coin: coin))
+        ]
       }
     }
   }

@@ -11,6 +11,7 @@ struct MoveCryptoInputView: View {
 
   @State private var isShowAnnotationView: Bool = false
   @State private var screenSize: CGSize = .zero
+  @State private var headerFrame: CGRect = .zero
   @State private var dropdownFrame: CGRect = .zero
   
   private let completeAction: (() -> Void)?
@@ -31,6 +32,9 @@ struct MoveCryptoInputView: View {
     ZStack {
       VStack(spacing: 0) {
         header
+          .readGeometry { geometry in
+            headerFrame = geometry.frame(in: .global)
+          }
         keyboard
         footer
       }
@@ -39,12 +43,12 @@ struct MoveCryptoInputView: View {
         dropdownView()
           .frame(
             width: dropdownFrame.width,
-            height: dropdownFrame.height * 2
+            height: dropdownFrame.height * 2.3
           )
           .background(Colors.secondaryBackground.swiftUIColor.cornerRadius(9))
           .position(
             x: dropdownFrame.midX - 30,
-            y: dropdownFrame.maxY - dropdownFrame.height + 12
+            y: dropdownFrame.maxY + dropdownFrame.height * 2.3 / 2 - headerFrame.minY + 5
           )
       }
     }
