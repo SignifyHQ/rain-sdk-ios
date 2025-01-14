@@ -16,6 +16,7 @@ public class PortalStorage: PortalStorageProtocol {
     defaultCryptoAssets = [
       PortalAsset(token: .AVAX),
       PortalAsset(token: environmentService.networkEnvironment == .productionTest ? .fujiAvalancheUSDC : .mainnetAvalancheUSDC),
+      PortalAsset(token: environmentService.networkEnvironment == .productionTest ? .fujiAvalancheUSDT : .mainnetAvalancheUSDT),
       PortalAsset(token: environmentService.networkEnvironment == .productionTest ? .fujiAvalancheWAVAX : .mainnetAvalancheWAVAX)
     ]
     

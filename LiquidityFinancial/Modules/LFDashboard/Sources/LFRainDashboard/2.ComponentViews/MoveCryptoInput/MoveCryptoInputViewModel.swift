@@ -157,27 +157,11 @@ private extension MoveCryptoInputViewModel {
     controllerAddress: String,
     recipientAddress: String
   ) -> PortalService.WithdrawAssetAddresses? {
-    // Check if collateral supports token
-    let tokenAddress = collateralContract.tokensEntity
-      .filter {
-        $0.symbol == assetModel.type?.title
-      }
-    
-    let usdcToken = tokenAddress.first {
-      portalStorage.checkTokenSupport(with: $0.address.lowercased())
-    }
-    
-    guard let usdcToken else {
-      toastMessage = L10N.Common.MoveCryptoInput.UsdcUnsupported.errorMessage
-      
-      return nil
-    }
-    
-    return PortalService.WithdrawAssetAddresses(
+    PortalService.WithdrawAssetAddresses(
       contractAddress: controllerAddress,
       proxyAddress: collateralContract.address,
       recipientAddress: recipientAddress,
-      tokenAddress: usdcToken.address
+      tokenAddress: assetModel.id
     )
   }
   

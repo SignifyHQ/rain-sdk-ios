@@ -212,7 +212,7 @@ private extension ConfirmTransferMoneyViewModel {
           portalStorage.checkTokenSupport(with: $0.address.lowercased())
         }
         guard usdcToken != nil else {
-          toastMessage = L10N.Common.MoveCryptoInput.UsdcUnsupported.errorMessage
+          toastMessage = L10N.Common.MoveCryptoInput.UnsupportedToken.errorMessage
           return
         }
         
@@ -310,29 +310,6 @@ private extension ConfirmTransferMoneyViewModel {
       updateAt: .empty
     )
     navigation = .transactionDetail(transaction)
-  }
-  
-  func generateWithdrawAssetAddresses(
-    collateralContract: RainCollateralContractEntity,
-    controllerAddress: String,
-    recipientAddress: String
-  ) -> PortalService.WithdrawAssetAddresses? {
-    // Check if collateral supports usdc token
-    let tokenAddress = collateralContract.tokensEntity.filter { $0.symbol == AssetType.usdc.title }
-    let usdcToken = tokenAddress.first {
-      portalStorage.checkTokenSupport(with: $0.address.lowercased())
-    }
-    guard let usdcToken else {
-      toastMessage = L10N.Common.MoveCryptoInput.UsdcUnsupported.errorMessage
-      return nil
-    }
-    
-    return PortalService.WithdrawAssetAddresses(
-      contractAddress: controllerAddress,
-      proxyAddress: collateralContract.address,
-      recipientAddress: recipientAddress,
-      tokenAddress: usdcToken.address
-    )
   }
   
   func handlePortalError(error: Error) {

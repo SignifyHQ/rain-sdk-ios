@@ -467,7 +467,7 @@
 "MoveCryptoInput.sendCollateral.errorMessage" = "Unable to Add Collateral at the Moment. Apologies for the inconvenience.";
 "MoveCryptoInput.sendCollateralPopup.title" = "confirm transaction";
 "MoveCryptoInput.sendCollateralPopup.message" = "You sure you want to add %@ %@ to your balance?";
-"MoveCryptoInput.usdcUnsupported.errorMessage" = "USDC token cannot be utilized as collateral in the current contract";
+"MoveCryptoInput.unsupportedToken.errorMessage" = "Selected token is not available for withdrawal";
 "MoveCryptoInput.missingWallet.errorMessage" = "The wallet does not exist. Please recover wallet";
 "MoveCryptoInput.noCollateralContract.errorMessage" = "The account does not have a collateral contract.";
 "MoveCryptoInput.withdrawalSignatureProcessing.title" = "Withdraw from Card";
