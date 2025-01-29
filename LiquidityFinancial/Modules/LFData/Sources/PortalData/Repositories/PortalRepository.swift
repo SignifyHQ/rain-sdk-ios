@@ -168,30 +168,39 @@ public class PortalRepository: PortalRepositoryProtocol {
   }
   
   private func performWithSessionRefresh<T>(
-    retryCount: Int = 0,
+    retryAttempt: Int = 1,
     _ action: @escaping () async throws -> T
   ) async throws -> T {
-    log.info("Refreshing Portal session. Attempt \(retryCount) of \(maxRetryAttempts)")
-    
     do {
-      let result = try await action()
-      log.info("Portal session refresh success. Attempt \(retryCount) of \(maxRetryAttempts)")
-      
-      return result
-    } catch let error as LFPortalError where error == .sessionExpired {
-      guard retryCount < maxRetryAttempts
-      else {
-        log.error("Portal session refresh failed. Max number of retries (\(maxRetryAttempts)) reached")
+      return try await action()
+    } catch {
+      if LFPortalError.handlePortalError(error: error) == .sessionExpired {
+        guard retryAttempt <= maxRetryAttempts else {
+          log.error("Portal session refresh failed. Max number of attempts (\(maxRetryAttempts)) reached")
+          throw error
+        }
         
+        log.info("Refreshing Portal session. Attempt \(retryAttempt) of \(maxRetryAttempts)")
+        do {
+          try await tryRefreshPortalSessionToken()
+        } catch {
+          log.error("Failed to refresh portal session: \(error)")
+          
+          guard retryAttempt <= maxRetryAttempts else {
+            log.error("Portal session refresh failed. Max number of attempts (\(maxRetryAttempts)) reached")
+            throw error
+          }
+          
+          return try await performWithSessionRefresh(retryAttempt: retryAttempt + 1, action)
+        }
+        
+        log.info("Portal session refresh success. Attempt \(retryAttempt) of \(maxRetryAttempts). Retrying the action with fresh session")
+        return try await performWithSessionRefresh(retryAttempt: retryAttempt + 1, action)
+      } else {
+        log.error("Portal action with session refresh failed with error: \(error). Attempt \(retryAttempt) of max \(maxRetryAttempts)")
         throw error
       }
       
-      try await tryRefreshPortalSessionToken()
-      return try await performWithSessionRefresh(retryCount: retryCount + 1, action)
-    } catch {
-      log.error("Portal session refresh failed with error: \(error). Attempt \(retryCount) of \(maxRetryAttempts)")
-      
-      throw error
     }
   }
 }

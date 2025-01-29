@@ -198,7 +198,7 @@ public extension PortalService {
   
   func refreshBalances(
   ) async throws -> (walletAddress: String?, balances: [String: Double]) {
-    guard let walletAddress
+    guard let walletAddress = try await portal?.addresses[PortalNamespace.eip155] ?? "-/-"
     else {
       log.error("Portal Swift: Error fetching wallet balances. Wallet missing")
       throw(LFPortalError.walletMissing)

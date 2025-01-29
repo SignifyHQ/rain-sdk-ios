@@ -13,6 +13,7 @@ import LFLocalizable
 import Services
 import BaseOnboarding
 import LFFeatureFlags
+import PortalDomain
 
 // MARK: - DIContainer
 extension Container {
@@ -45,6 +46,9 @@ public class RainOnboardingFlowCoordinator: OnboardingFlowCoordinatorProtocol {
   @LazyInjected(\.onboardingRepository) var onboardingRepository
   @LazyInjected(\.rainRepository) var rainRepository
   
+  @LazyInjected(\.portalStorage) var portalStorage
+  @LazyInjected(\.portalRepository) var portalRepository
+  
   @LazyInjected(\.pushNotificationService) var pushNotificationService
   @LazyInjected(\.analyticsService) var analyticsService
   @LazyInjected(\.portalService) var portalService
@@ -59,6 +63,10 @@ public class RainOnboardingFlowCoordinator: OnboardingFlowCoordinatorProtocol {
   
   lazy var getUserUseCase: GetUserUseCaseProtocol = {
     GetUserUseCase(repository: accountRepository)
+  }()
+  
+  lazy var refreshPortalAssetsUseCase: RefreshPortalAssetsUseCaseProtocol = {
+    RefreshPortalAssetsUseCase(repository: portalRepository, storage: portalStorage)
   }()
   
   public let routeSubject: CurrentValueSubject<Route, Never>
@@ -233,19 +241,23 @@ private extension RainOnboardingFlowCoordinator {
   }
   
   func handleOnboardingCompletion() {
-// TODO (VOLO): Commenting this out for now to test the portal wallet session refresh updates. Will remove if everything works es expected
-//    Task {
-//      let isWalletOnDevice = await portalService.isWalletOnDevice()
-//      log.info("Portal Swift: Is wallet on device: \(isWalletOnDevice)")
-//      
-//      if isWalletOnDevice {
-//        set(route: .dashboard)
-//      } else {
-//        set(route: .recoverWallet)
-//      }
-//    }
-    
-    set(route: .dashboard)
+    Task {
+      // Calling portal balance refresh to check if the session needs to be refreshed
+      do {
+        try await refreshPortalAssetsUseCase.execute()
+      } catch {
+        log.error("Failed to refresh portal assets: \(error)")
+      }
+      
+      let isWalletOnDevice = await portalService.isWalletOnDevice()
+      log.info("Portal Swift: Is wallet on device: \(isWalletOnDevice)")
+      
+      if isWalletOnDevice {
+        set(route: .dashboard)
+      } else {
+        set(route: .recoverWallet)
+      }
+    }
   }
   
   func handleDataUser(user: LFUser) {
