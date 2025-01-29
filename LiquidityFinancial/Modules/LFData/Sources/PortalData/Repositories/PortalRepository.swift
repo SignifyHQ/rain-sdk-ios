@@ -8,6 +8,7 @@ public class PortalRepository: PortalRepositoryProtocol {
   private let portalStorage: PortalStorageProtocol
   private let portalAPI: PortalAPIProtocol
   private let portalService: PortalServiceProtocol
+  private let maxRetryAttempts = 3
 
   public init(
     portalStorage: PortalStorageProtocol,
@@ -23,49 +24,28 @@ public class PortalRepository: PortalRepositoryProtocol {
     try await portalAPI.verifyAndUpdatePortalWalletAddress()
   }
   
-  public func registerPortal(portalToken: String) async throws {
-    do {
-      try await portalService.registerPortal(sessionToken: portalToken)
-    } catch {
-      guard let portalError = error as? LFPortalError, portalError == .sessionExpired else {
-        throw error
-      }
-      
-      let token = try await tryRefreshPortalSessionToken()
-      try await registerPortal(portalToken: token)
-    }
+  public func registerPortal(
+    portalToken: String
+  ) async throws {
+    try await performWithSessionRefresh { [self] in try await portalService.registerPortal(sessionToken: portalToken) }
   }
   
   public func createPortalWallet() async throws -> String {
-    do {
-      return try await portalService.createWallet()
-    } catch {
-      guard let portalError = error as? LFPortalError, portalError == .sessionExpired else {
-        throw error
-      }
-      
-      let token = try await tryRefreshPortalSessionToken()
-      try await registerPortal(portalToken: token)
-      return try await createPortalWallet()
-    }
+    return try await performWithSessionRefresh { [self] in try await portalService.createWallet() }
   }
   
-  public func backupWallet(backupMethod: BackupMethods, password: String?) async throws {
-    do {
+  public func backupWallet(
+    backupMethod: BackupMethods,
+    password: String?
+  ) async throws {
+    try await performWithSessionRefresh { [self] in
       let (cipherText, storageCallback) = try await portalService.backup(
         backupMethod: backupMethod,
         password: password
       )
+      
       try await portalAPI.backupWallet(cipher: cipherText, method: backupMethod.rawValue)
       try await storageCallback()
-    } catch {
-      guard let portalError = error as? LFPortalError, portalError == .sessionExpired else {
-        throw error
-      }
-      
-      let token = try await tryRefreshPortalSessionToken()
-      try await registerPortal(portalToken: token)
-      return try await backupWallet(backupMethod: backupMethod, password: password)
     }
   }
   
@@ -74,12 +54,18 @@ public class PortalRepository: PortalRepositoryProtocol {
     contractAddress: String?,
     amount: Double
   ) async throws -> Double {
-    guard let token = portalStorage.token(with: contractAddress)
-    else {
+    guard let token = portalStorage.token(with: contractAddress) else {
       throw LFPortalError.dataUnavailable
     }
     
-    return try await portalService.estimateTransferFee(to: address, contractAddress: contractAddress, amount: amount, conversionFactor: token.conversionFactor)
+    return try await performWithSessionRefresh { [self] in
+      try await portalService.estimateTransferFee(
+        to: address,
+        contractAddress: contractAddress,
+        amount: amount,
+        conversionFactor: token.conversionFactor
+      )
+    }
   }
   
   public func estimateWithdrawalFee(
@@ -87,12 +73,18 @@ public class PortalRepository: PortalRepositoryProtocol {
     amount: Double,
     signature: Services.PortalService.WithdrawAssetSignature
   ) async throws -> Double {
-    guard let token = portalStorage.token(with: addresses.tokenAddress)
-    else {
+    guard let token = portalStorage.token(with: addresses.tokenAddress) else {
       throw LFPortalError.dataUnavailable
     }
     
-    return try await portalService.estimateWithdrawalFee(addresses: addresses, amount: amount, conversionFactor: token.conversionFactor, signature: signature)
+    return try await performWithSessionRefresh { [self] in
+      try await portalService.estimateWithdrawalFee(
+        addresses: addresses,
+        amount: amount,
+        conversionFactor: token.conversionFactor,
+        signature: signature
+      )
+    }
   }
   
   public func send(
@@ -100,12 +92,18 @@ public class PortalRepository: PortalRepositoryProtocol {
     contractAddress: String?,
     amount: Double
   ) async throws -> String {
-    guard let token = portalStorage.token(with: contractAddress)
-    else {
+    guard let token = portalStorage.token(with: contractAddress) else {
       throw LFPortalError.dataUnavailable
     }
     
-    return try await portalService.send(to: address, contractAddress: contractAddress, amount: amount, conversionFactor: token.conversionFactor)
+    return try await performWithSessionRefresh { [self] in
+      try await portalService.send(
+        to: address,
+        contractAddress: contractAddress,
+        amount: amount,
+        conversionFactor: token.conversionFactor
+      )
+    }
   }
   
   public func withdrawAsset(
@@ -113,57 +111,86 @@ public class PortalRepository: PortalRepositoryProtocol {
     amount: Double,
     signature: PortalService.WithdrawAssetSignature
   ) async throws -> String {
-    guard let token = portalStorage.token(with: addresses.tokenAddress)
-    else {
+    guard let token = portalStorage.token(with: addresses.tokenAddress) else {
       throw LFPortalError.dataUnavailable
     }
     
-    return try await portalService.withdrawAsset(addresses: addresses, amount: amount, conversionFactor: token.conversionFactor, signature: signature)
+    return try await performWithSessionRefresh { [self] in
+      try await portalService.withdrawAsset(
+        addresses: addresses,
+        amount: amount,
+        conversionFactor: token.conversionFactor,
+        signature: signature
+      )
+    }
   }
-
-  public func recoverWallet(backupMethod: BackupMethods, password: String?) async throws {
-    do {
+  
+  public func recoverWallet(
+    backupMethod: BackupMethods,
+    password: String?
+  ) async throws {
+    try await performWithSessionRefresh { [self] in
       let response = try await portalAPI.restoreWallet(method: backupMethod.rawValue)
-
+      
       try await portalService.recover(
         backupMethod: backupMethod,
         password: password,
         cipherText: response.cipherText
       )
-    } catch {
-      guard let portalError = error as? LFPortalError, portalError == .sessionExpired else {
-        throw error
-      }
-      
-      let token = try await tryRefreshPortalSessionToken()
-      try await registerPortal(portalToken: token)
-      try await recoverWallet(backupMethod: backupMethod, password: password)
     }
   }
   
-  public func refreshBalances(
-) async throws {
-    let balances = try await portalService.refreshBalances()
-    portalStorage.update(walletAddress: balances.walletAddress, balances: balances.balances)
+  public func refreshBalances() async throws {
+    try await performWithSessionRefresh { [self] in
+      let balances = try await portalService.refreshBalances()
+      
+      portalStorage.update(
+        walletAddress: balances.walletAddress,
+        balances: balances.balances
+      )
+    }
   }
   
   public func getPortalBackupMethods() async throws -> PortalBackupMethodsEntity {
-    try await portalAPI.getBackupMethods()
+    return try await portalAPI.getBackupMethods()
   }
-
+  
   public var chainId: String {
     portalService.chainId.description
   }
-}
-
-// MARK: - Private Functions
-private extension PortalRepository {
-  func tryRefreshPortalSessionToken() async throws -> String {
+  
+  // MARK: - Private Functions
+  private func tryRefreshPortalSessionToken() async throws {
+    let token = try await portalAPI.refreshPortalSessionToken().clientSessionToken
+    
+    try await registerPortal(portalToken: token)
+    UserDefaults.portalSessionToken = token
+  }
+  
+  private func performWithSessionRefresh<T>(
+    retryCount: Int = 0,
+    _ action: @escaping () async throws -> T
+  ) async throws -> T {
+    log.info("Refreshing Portal session. Attempt \(retryCount) of \(maxRetryAttempts)")
+    
     do {
-      let token = try await portalAPI.refreshPortalSessionToken()
-      UserDefaults.portalSessionToken = token.clientSessionToken
-      return token.clientSessionToken
+      let result = try await action()
+      log.info("Portal session refresh success. Attempt \(retryCount) of \(maxRetryAttempts)")
+      
+      return result
+    } catch let error as LFPortalError where error == .sessionExpired {
+      guard retryCount < maxRetryAttempts
+      else {
+        log.error("Portal session refresh failed. Max number of retries (\(maxRetryAttempts)) reached")
+        
+        throw error
+      }
+      
+      try await tryRefreshPortalSessionToken()
+      return try await performWithSessionRefresh(retryCount: retryCount + 1, action)
     } catch {
+      log.error("Portal session refresh failed with error: \(error). Attempt \(retryCount) of \(maxRetryAttempts)")
+      
       throw error
     }
   }

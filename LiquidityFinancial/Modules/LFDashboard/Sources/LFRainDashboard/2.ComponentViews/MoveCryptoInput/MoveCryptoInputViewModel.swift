@@ -135,7 +135,7 @@ private extension MoveCryptoInputViewModel {
         let viewModel = ConfirmTransferMoneyViewModel(
           kind: .withdrawalCollateral(
             addresses: withdrawAddresses,
-            signature:signature,
+            signature: signature,
             shouldSaveAddress: shouldSaveAddress
           ),
           assetModel: assetModel,
@@ -541,6 +541,7 @@ extension MoveCryptoInputViewModel {
   
   func continueButtonTapped() {
     Haptic.impact(.light).generate()
+    
     switch type {
     case .buyCrypto:
       break

@@ -233,16 +233,19 @@ private extension RainOnboardingFlowCoordinator {
   }
   
   func handleOnboardingCompletion() {
-    Task {
-      let isWalletOnDevice = await portalService.isWalletOnDevice()
-      log.info("Portal Swift: Is wallet on device: \(isWalletOnDevice)")
-      
-      if isWalletOnDevice {
-        set(route: .dashboard)
-      } else {
-        set(route: .recoverWallet)
-      }
-    }
+// TODO (VOLO): Commenting this out for now to test the portal wallet session refresh updates. Will remove if everything works es expected
+//    Task {
+//      let isWalletOnDevice = await portalService.isWalletOnDevice()
+//      log.info("Portal Swift: Is wallet on device: \(isWalletOnDevice)")
+//      
+//      if isWalletOnDevice {
+//        set(route: .dashboard)
+//      } else {
+//        set(route: .recoverWallet)
+//      }
+//    }
+    
+    set(route: .dashboard)
   }
   
   func handleDataUser(user: LFUser) {
