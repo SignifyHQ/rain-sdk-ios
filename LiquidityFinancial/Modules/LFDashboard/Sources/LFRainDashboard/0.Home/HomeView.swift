@@ -116,7 +116,7 @@ private extension HomeView {
     }
     .padding(.horizontal, 32)
     .padding(.bottom, 2)
-    .padding(.top, 4)
+    .padding(.top, 10)
     .background(Colors.secondaryBackground.swiftUIColor)
   }
   
@@ -128,16 +128,16 @@ private extension HomeView {
   }
   
   func tabItem(option: TabOption) -> some View {
-    VStack(spacing: 2) {
-      option.imageAsset
-        .foregroundColor(
-          option == viewModel.tabSelected ? Colors.primary.swiftUIColor : Colors.label.swiftUIColor
-        )
-        .tint(Colors.primary.swiftUIColor)
+    VStack(spacing: 4) {
+      ZStack {
+        RoundedRectangle(cornerRadius: 16)
+          .fill(option == viewModel.tabSelected ? Colors.primary.swiftUIColor : .clear)
+          .frame(width: 58, height: 32)
+        option.imageAsset
+      }
+      .tint(Colors.primary.swiftUIColor)
+      
       Text(option.title)
-        .foregroundColor(
-          option == viewModel.tabSelected ? Colors.label.swiftUIColor : Colors.label.swiftUIColor.opacity(0.75)
-        )
         .font(Fonts.orbitronMedium.swiftUIFont(size: 10))
     }
     .onTapGesture {
