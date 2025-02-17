@@ -1,7 +1,7 @@
 import Foundation
 
 public enum UsState: String, CaseIterable {
-  case AL, AK, AZ, AR, CA, CO, CT, DE, FL, GA, HI, ID, IL, IN, IA, KS, KY, LA, ME, MD, MA, MI, MN, MS, MO, MT, NE, NV, NH, NJ, NM, NY, NC, ND, OH, OK, OR, PA, RI, SC, SD, TN, TX, UT, VT, VA, WA, WV, WI, WY
+  case AL, AK, AZ, AR, CA, CO, CT, DE, FL, GA, HI, ID, IL, IN, IA, KS, KY, LA, ME, MD, MA, MI, MN, MS, MO, MT, NE, NV, NH, NJ, NM, NY, NC, ND, OH, OK, OR, PA, RI, SC, SD, TN, TX, UT, VT, VA, WA, DC, WV, WI, WY
  
   public var id: UUID {
     UUID()
@@ -56,6 +56,7 @@ public enum UsState: String, CaseIterable {
     case .VT: return "Vermont"
     case .VA: return "Virginia"
     case .WA: return "Washington"
+    case .DC: return "Washington, D.C."
     case .WV: return "West Virginia"
     case .WI: return "Wisconsin"
     case .WY: return "Wyoming"

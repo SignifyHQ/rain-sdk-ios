@@ -308,7 +308,7 @@ private extension PhoneNumberView {
 
 // MARK: View Constants
 enum ViewConstant {
-  static let maxDigits = 10
+  static let maxDigits = 11
   static let magicTapCount = 5
 }
 

@@ -50,7 +50,8 @@ struct AddressView: View {
                 height: countryDropdownFrame.height * 3,
                 alignment: .top
               )
-              .background(Colors.secondaryBackground.swiftUIColor.cornerRadius(9))
+              .background(Colors.secondaryBackground.swiftUIColor)
+              .clipShape(RoundedRectangle(cornerRadius: 9))
               .position(
                 x: countryDropdownFrame.midX,
                 y: countryDropdownFrame.maxY + countryDropdownFrame.height * 3 / 2 - scrollViewFrame.minY
@@ -60,11 +61,12 @@ struct AddressView: View {
           if viewModel.isShowingStateSelection {
             stateDropdownView()
               .frame(
-                width: stateDropdownFrame.width,
+                width: stateDropdownFrame.width + 10,
                 height: stateDropdownFrame.height * 2,
                 alignment: .top
               )
-              .background(Colors.secondaryBackground.swiftUIColor.cornerRadius(9))
+              .background(Colors.secondaryBackground.swiftUIColor)
+              .clipShape(RoundedRectangle(cornerRadius: 9))
               .position(
                 x: stateDropdownFrame.midX,
                 y: stateDropdownFrame.maxY + stateDropdownFrame.height * 2 / 2 - scrollViewFrame.minY

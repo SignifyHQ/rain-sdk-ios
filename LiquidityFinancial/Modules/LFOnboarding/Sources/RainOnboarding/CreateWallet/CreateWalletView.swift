@@ -21,6 +21,7 @@ struct CreateWalletView: View {
           settingICloudPopup
         }
       }
+      .navigationBarTitleDisplayMode(.inline)
       .defaultToolBar(icon: .support, openSupportScreen: {
         viewModel.openSupportScreen()
       })
