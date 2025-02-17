@@ -468,6 +468,7 @@
 		A9F99B602B67BF440099DB85 /* CardsTabPreview.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9F99B5F2B67BF440099DB85 /* CardsTabPreview.swift */; };
 		E22B07E22CC7F11D0016E8B1 /* GoogleService-Info-Dev.plist in Resources */ = {isa = PBXBuildFile; fileRef = E22B07E12CC7F11D0016E8B1 /* GoogleService-Info-Dev.plist */; };
 		E22B07E42CC7F2710016E8B1 /* GoogleService-Info-Prod.plist in Resources */ = {isa = PBXBuildFile; fileRef = E22B07E32CC7F2710016E8B1 /* GoogleService-Info-Prod.plist */; };
+		E2D7E8FB2D5DC7EB00C6540B /* collateralJsonABI.json in Resources */ = {isa = PBXBuildFile; fileRef = E2D7E8FA2D5DC7EB00C6540B /* collateralJsonABI.json */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -821,6 +822,7 @@
 		A9F99B5F2B67BF440099DB85 /* CardsTabPreview.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardsTabPreview.swift; sourceTree = "<group>"; };
 		E22B07E12CC7F11D0016E8B1 /* GoogleService-Info-Dev.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info-Dev.plist"; sourceTree = "<group>"; };
 		E22B07E32CC7F2710016E8B1 /* GoogleService-Info-Prod.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info-Prod.plist"; sourceTree = "<group>"; };
+		E2D7E8FA2D5DC7EB00C6540B /* collateralJsonABI.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = collateralJsonABI.json; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -1596,6 +1598,7 @@
 			isa = PBXGroup;
 			children = (
 				061FFD612BFC3F9800B21165 /* contractJsonABI.json */,
+				E2D7E8FA2D5DC7EB00C6540B /* collateralJsonABI.json */,
 				A9BC80392A774D2F00E4A1A0 /* Fonts */,
 				A95D418F2A6E31C60095596B /* Avalanche.entitlements */,
 				A97BF8392A5DA4DA00B8F5CA /* Avalanche-Info.plist */,
@@ -2654,6 +2657,7 @@
 				06D40BF82A625F5400EADB75 /* LoadingMix.json in Resources */,
 				749C3DF72B6A30E30082A834 /* Common.strings in Resources */,
 				E22B07E22CC7F11D0016E8B1 /* GoogleService-Info-Dev.plist in Resources */,
+				E2D7E8FB2D5DC7EB00C6540B /* collateralJsonABI.json in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

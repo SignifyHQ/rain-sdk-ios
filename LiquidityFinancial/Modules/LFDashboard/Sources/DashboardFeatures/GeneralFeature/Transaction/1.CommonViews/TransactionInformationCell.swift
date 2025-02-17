@@ -1,3 +1,4 @@
+import LFLocalizable
 import SwiftUI
 import LFStyleGuide
 import LFUtilities
@@ -19,6 +20,13 @@ struct TransactionInformationCell: View {
       Text(item.value)
         .foregroundColor(Colors.label.swiftUIColor)
         .font(Fonts.bold.swiftUIFont(size: Constants.FontSize.medium.value))
+        .strikethrough(item.title == L10N.Common.CryptoReceipt.Fee.title, color: Colors.label.swiftUIColor)
+      if item.title == L10N.Common.CryptoReceipt.Fee.title {
+        Text(L10N.Common.TransferView.Status.free)
+          .foregroundColor(Colors.green.swiftUIColor)
+          .font(Fonts.bold.swiftUIFont(size: Constants.FontSize.medium.value))
+          .padding(.leading, 2)
+      }
     }
   }
 }

@@ -12,7 +12,7 @@ public enum PortalToken {
   public var contractAddress: String {
     switch self {
     case .AVAX:
-      ""
+      "0x0000000000000000000000000000000000000000"
     case .fujiAvalancheUSDC:
       "0xd856a0585da55e83d03ccb49ef09d180494cfbad"
     case .mainnetAvalancheUSDC:

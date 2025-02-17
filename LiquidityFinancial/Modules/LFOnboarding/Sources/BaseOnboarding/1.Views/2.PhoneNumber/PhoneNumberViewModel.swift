@@ -43,6 +43,8 @@ public final class PhoneNumberViewModel: ObservableObject {
   let terms = L10N.Common.Term.Terms.attributeText
   let esignConsent = L10N.Common.Term.EsignConsent.attributeText
   let privacyPolicy = L10N.Common.Term.PrivacyPolicy.attributeText
+  let cardTerms = L10N.Common.Term.CardTerms.attributeText
+  let accountDisclosures = L10N.Common.Term.AccountDisclosures.attributeText
   
   lazy var requestOtpUseCase: RequestOTPUseCaseProtocol = {
     RequestOTPUseCase(repository: onboardingRepository)
@@ -132,7 +134,9 @@ extension PhoneNumberViewModel {
     let urlMapping: [String: String] = [
       terms: LFUtilities.termsURL,
       esignConsent: LFUtilities.consentURL,
-      privacyPolicy: LFUtilities.privacyURL
+      privacyPolicy: LFUtilities.privacyURL,
+      cardTerms: selectedCountry == .US ? LFUtilities.cardTermsURLUs : LFUtilities.cardTermsURLInt,
+      accountDisclosures: LFUtilities.accountDisclosureURL
     ]
     
     return urlMapping[tappedString].flatMap { URL(string: $0) }
@@ -202,5 +206,7 @@ extension PhoneNumberViewModel {
     case term
     case consent
     case privacy
+    case cardTerms
+    case accountDisclosure
   }
 }

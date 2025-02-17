@@ -4,9 +4,14 @@ import Foundation
 extension LFUtilities {
   public static var personaCallback = "https://personacallback"
   public static var termsURL: String = try! LFConfiguration.value(for: "TERMS_URL")
+  public static var cardTermsURLUs: String = try! LFConfiguration.value(for: "CARD_TERMS_URL_US")
+  public static var cardTermsURLInt: String = try! LFConfiguration.value(for: "CARD_TERMS_URL_INT")
+  public static var accountDisclosureURL: String = try! LFConfiguration.value(for: "ACCOUNT_DISCLOSURE_URL")
   public static var accountAgreementURL: String = try! LFConfiguration.value(for: "ACCOUNT_AGREEMENT_URL")
   public static var privacyURL: String = try! LFConfiguration.value(for: "PRIVACY_URL")
-  public static var walletPrivacyURL: String = try! LFConfiguration.value(for: "WALLET_PRIVACY_URL")
+  public static var portalTermsURL: String = try! LFConfiguration.value(for: "PORTAL_TERMS_URL")
+  public static var portalPrivacyURL: String = try! LFConfiguration.value(for: "PORTAL_PRIVACY_URL")
+  public static var portalSecurityURL: String = try! LFConfiguration.value(for: "PORTAL_SECURITY_URL")
   public static var consentURL: String = try! LFConfiguration.value(for: "CONSENT_URL")
   public static var zerohashURL: String = try! LFConfiguration.value(for: "ZEROHASH_URL")
   public static var disclosureURL: String = try! LFConfiguration.value(for: "DISCLOSURE_URL")

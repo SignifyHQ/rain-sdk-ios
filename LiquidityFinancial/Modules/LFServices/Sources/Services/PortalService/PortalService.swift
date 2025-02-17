@@ -6,6 +6,8 @@ import LFUtilities
 import PortalSwift
 import Web3
 import Web3ContractABI
+import web3swift
+import Web3Core
 
 public class PortalService: PortalServiceProtocol {
   @LazyInjected(\.environmentService) var environmentService
@@ -339,7 +341,7 @@ private extension PortalService {
   ) async throws -> (walletAddress: String, transactionParams: ETHTransactionParam) {
     guard let walletAddress
     else {
-      log.error("Portal Swift: Error estimating fee. Wallet missing)")
+      log.error("Portal Swift: Error estimating fee. Wallet missing")
       throw(LFPortalError.walletMissing)
     }
     
@@ -365,40 +367,56 @@ private extension PortalService {
     return (walletAddress: walletAddress, transactionParams: transactionParams)
   }
   
-  func buildETHTransactionParamForWithdrawAsset(
+  private func buildETHTransactionParamForWithdrawAsset(
     addresses: WithdrawAssetAddresses,
     amount: Double,
     conversionFactor: Int,
     signature: WithdrawAssetSignature
   ) async throws -> (walletAddress: String, transactionParams: ETHTransactionParam) {
     guard let walletAddress else {
-      log.error("Portal Swift: Error estimating fee. Wallet missing)")
+      log.error("Portal Swift: Error estimating fee. Wallet missing")
       throw(LFPortalError.walletMissing)
     }
     
-    let ethereumContractAddress = try createEthereumAddress(hex: addresses.contractAddress, description: "Contract")
-    let ethereumProxyAddress = try createEthereumAddress(hex: addresses.proxyAddress, description: "Proxy")
-    let ethereumRecipientAddress = try createEthereumAddress(hex: addresses.recipientAddress, description: "Recipient")
-    let ethereumTokenAddress = try createEthereumAddress(hex: addresses.tokenAddress, description: "Token")
+    guard let ethereumContractAddress = Web3Core.EthereumAddress(addresses.contractAddress),
+          let ethereumProxyAddress = Web3Core.EthereumAddress(addresses.proxyAddress),
+            let ethereumRecipientAddress = Web3Core.EthereumAddress(addresses.recipientAddress),
+          let ethereumTokenAddress = Web3Core.EthereumAddress(addresses.tokenAddress)
+    else {
+      log.error("Portal Swift: Error building transaction parameters for withdrawal. One of the addresses could not be build")
+      throw LFPortalError.unexpected
+    }
+      
+    let amountBaseUnits = BigUInt(amount * pow(10.0, Double(conversionFactor)))
     
     guard let saltData = Data(base64Encoded: signature.salt),
           let signatureData = Data(hexString: signature.signature, length: 65)
     else {
+      log.error("Portal Swift: Error building transaction parameters for withdrawal. Could not construct Data for salt or signature")
       throw LFPortalError.unexpected
     }
     
     guard let unixTimestamp = signature.expiresAt.parseToUnixTimestamp() else {
+      log.error("Portal Swift: Error building transaction parameters for withdrawal. Could not parse expiration to UNIX timestamp")
       throw LFPortalError.unexpected
     }
+
+    let adminSignature = try await getAdminSignature(
+      addresses: addresses,
+      walletAddress: walletAddress,
+      amount: amountBaseUnits
+    )
     
     let withdrawAssetParameter = WithdrawAssetParameter(
       proxyAddress: ethereumProxyAddress,
       tokenAddress: ethereumTokenAddress,
-      amount: BigUInt(amount * pow(10.0, Double(conversionFactor))),
+      amount: amountBaseUnits,
       recipientAddress: ethereumRecipientAddress,
-      expiryAt: unixTimestamp,
+      expiryAt: BigUInt(unixTimestamp),
       salt: saltData,
-      signature: signatureData
+      signature: signatureData,
+      adminSalt: adminSignature.salt,
+      adminSignature: adminSignature.signature
     )
       
     let tx = try await buildErc20TransactionForWithdrawAsset(
@@ -416,37 +434,53 @@ private extension PortalService {
     return (walletAddress: walletAddress, transactionParams: transactionParams)
   }
   
-  func buildErc20TransactionForWithdrawAsset(
-    ethereumContractAddress: EthereumAddress,
+  private func buildErc20TransactionForWithdrawAsset(
+    ethereumContractAddress: Web3Core.EthereumAddress,
     withdrawAssetParameter: WithdrawAssetParameter
   ) async throws -> String? {
-    return try await withCheckedThrowingContinuation { [weak self] (continuation: CheckedContinuation<String?, Error>) in
-      guard let self else {
-        continuation.resume(throwing: LFPortalError.unexpected)
-        return
-      }
-      
-      do {
-        let rpcURL = try getRpcURL()
-        let contractJsonABI = try getContractJsonABI()
-        let web3 = Web3(rpcURL: rpcURL)
-        let contract = try web3.eth.Contract(json: contractJsonABI, abiKey: nil, address: ethereumContractAddress)
-        let transaction = try createWithdrawAssetTransaction(
-          with: contract,
-          ethereumContractAddress: ethereumContractAddress,
-          withdrawAssetParameter: withdrawAssetParameter
-        )
-        continuation.resume(returning: transaction.data.hex())
-        return
-      } catch {
-        log.error("Portal Swift: Error building ERC20 transaction. Web3 contract is unavailable")
-        continuation.resume(throwing: error)
-        return
-      }
+    let rpcURL = try getRpcURL()
+    let contractJsonABI = try getContractJsonABI()
+    
+    guard let url = URL(string: rpcURL)
+    else {
+      log.error("Portal Swift: Error building transaction for withdrawal. PRC URL is missing")
+      throw LFPortalError.unexpected
     }
+    
+    let web3 = try await Web3.new(url)
+    let contract = web3.contract(
+      contractJsonABI,
+      at: ethereumContractAddress,
+      abiVersion: 2
+    )
+    
+    guard let tx = contract?
+      .createWriteOperation(
+        "withdrawAsset",
+        parameters: [
+          withdrawAssetParameter.proxyAddress,
+          withdrawAssetParameter.tokenAddress,
+          withdrawAssetParameter.amount,
+          withdrawAssetParameter.recipientAddress,
+          withdrawAssetParameter.expiryAt,
+          withdrawAssetParameter.salt,
+          withdrawAssetParameter.signature,
+          [withdrawAssetParameter.adminSalt],
+          [withdrawAssetParameter.adminSignature],
+          true
+        ]
+      )?
+      .data?
+      .toHexString()
+    else {
+      log.error("Portal Swift: Error building transaction for withdrawal. Could not encode withdrawAsset contract function")
+      throw LFPortalError.unexpected
+    }
+    
+    return "0x" + tx
   }
   
-  func buildErc20Transaction(
+  private func buildErc20Transaction(
     contractAddress: String?,
     toAddress: String,
     amount: BigUInt
@@ -458,6 +492,12 @@ private extension PortalService {
         return
       }
       
+      guard let walletAddress else {
+        log.error("Portal Swift: Error estimating fee. Wallet missing")
+        continuation.resume(throwing: LFPortalError.walletMissing)
+        return
+      }
+      
       guard let contractAddress
       else {
         continuation.resume(returning: nil)
@@ -466,8 +506,7 @@ private extension PortalService {
       
       do {
         let rpcURL = try getRpcURL()
-        let ethereumFromAddress = try createEthereumAddress(hex: walletAddress, description: "Wallet")
-        let ethereumToAddress = try createEthereumAddress(hex: toAddress, description: "To")
+        let ethereumFromAddress = EthereumAddress(hexString: walletAddress)
         
         let web3 = Web3(rpcURL: rpcURL)
         let contract = web3.eth.Contract(
@@ -475,7 +514,8 @@ private extension PortalService {
           address: EthereumAddress(hexString: contractAddress)
         )
         
-        guard let tx = contract
+        guard let ethereumToAddress = EthereumAddress(hexString: toAddress),
+              let tx = contract
           .transfer(
             to: ethereumToAddress,
             value: amount
@@ -505,69 +545,77 @@ private extension PortalService {
     }
   }
   
-  func getRpcURL() throws -> String {
-    guard let rpcURL = portal?.rpcConfig["eip155:\(chainId)"] else {
-      log.error("Portal Swift: Error building ERC20 transaction. rpcURL is unavailable")
-      throw LFPortalError.unexpected
-    }
+  private func getAdminSignature(
+    addresses: WithdrawAssetAddresses,
+    walletAddress: String,
+    amount: BigUInt
+  ) async throws -> (salt: Data, signature: Data) {
+    let nonce = try await getLatestNonce(proxyAddress: addresses.proxyAddress)
+    let salt = generateSalt()
     
-    return rpcURL
-  }
-  
-  func getContractJsonABI() throws -> Data {
-    guard let contractABIJson = FileHelpers.readJSONFile(forName: "contractJsonABI", type: [String: String].self),
-          let contractABIJsonString = contractABIJson["result"],
-          let contractJsonABI = contractABIJsonString.data(using: .utf8)
+    guard let portal
     else {
-      log.error("Portal Swift: Error building ERC20 transaction. ContractJsonABI is unavailable")
       throw LFPortalError.unexpected
     }
     
-    return contractJsonABI
-  }
-  
-  func createEthereumAddress(hex: String?, description: String) throws -> EthereumAddress {
-    guard let hex, let address = try? EthereumAddress(hex: hex, eip55: false) else {
-      log.error("Portal Swift: Error building ERC20 transaction. \(description) address is unavailable")
-      throw LFPortalError.unexpected
-    }
-    return address
-  }
-  
-  func createWithdrawAssetTransaction(
-    with contract: DynamicContract,
-    ethereumContractAddress: EthereumAddress,
-    withdrawAssetParameter: WithdrawAssetParameter
-  ) throws -> EthereumTransaction {
-    let withdrawAssetMethod = contract["withdrawAsset"]?(
-      withdrawAssetParameter.proxyAddress,
-      withdrawAssetParameter.tokenAddress,
-      withdrawAssetParameter.amount,
-      withdrawAssetParameter.recipientAddress,
-      withdrawAssetParameter.expiryAt,
-      withdrawAssetParameter.salt,
-      withdrawAssetParameter.signature
+    let messageToSign = try createEIP712Message(
+      collateralProxyAddress: addresses.proxyAddress,
+      walletAddress: walletAddress,
+      tokenAddress: addresses.tokenAddress,
+      amount: amount,
+      recipientAddress: addresses.recipientAddress,
+      salt: "0x" + salt.hexString,
+      nonce: nonce
     )
     
-    guard let transaction = withdrawAssetMethod?.createTransaction(
-      nonce: nil,
-      gasPrice: nil,
-      maxFeePerGas: nil,
-      maxPriorityFeePerGas: nil,
-      gasLimit: nil,
-      from: ethereumContractAddress,
-      value: 0,
-      accessList: [:],
-      transactionType: .legacy
-    ) else {
-      log.error("Portal Swift: Error building ERC20 transaction. Web3 transaction is unavailable")
+    let response = try await portal.request("eip155:\(chainId)", withMethod: .eth_signTypedData_v4, andParams: [walletAddress, messageToSign])
+    
+    guard let signatureString = (response.result as? String),
+          let signatureData = Data(hexString: signatureString, length: 65)
+    else {
+      log.error("Portal Swift: Error getting admin signature. Could not build Data for signature data or signature string is missing")
       throw LFPortalError.unexpected
     }
     
-    return transaction
+    return (salt, signatureData)
   }
   
-  func sendTransactionToBlockchain(
+  private func getLatestNonce(
+    proxyAddress: String
+  ) async throws -> BigUInt {
+    let rpcURL = try getRpcURL()
+    let collateralJsonABI = try getCollateralJsonABI()
+    
+    guard let url = URL(string: rpcURL),
+          let ethereumCollateralAddress = Web3Core.EthereumAddress(proxyAddress)
+    else {
+      log.error("Portal Swift: Error getting contract's nonce. Could not build proxy address or RPC URL is missing")
+      throw LFPortalError.unexpected
+    }
+    
+    let web3 = try await Web3.new(url)
+    let contract = web3.contract(
+      collateralJsonABI,
+      at: ethereumCollateralAddress,
+      abiVersion: 2
+    )
+    
+    let response = try await contract?
+      .createWriteOperation(
+        "adminNonce"
+      )?
+      .callContractMethod()
+    
+    guard let nonce = response?["0"] as? BigUInt
+    else {
+      log.error("Portal Swift: Error getting contract's nonce. Nonce is missing in the response")
+      throw LFPortalError.unexpected
+    }
+    
+    return nonce
+  }
+  
+  private func sendTransactionToBlockchain(
     walletAddress: String,
     transactionParams: ETHTransactionParam,
     debugDescription: String = .empty
@@ -590,7 +638,7 @@ private extension PortalService {
     return txHash
   }
   
-  func estimateTransactionFee(address: String, params: ETHTransactionParam) async throws -> Double {
+  private func estimateTransactionFee(address: String, params: ETHTransactionParam) async throws -> Double {
     // Fetch estimated gas for the transaction
     let estimateGas = try await fetchGasData(method: .eth_estimateGas, address: address, params: [params])
     
@@ -604,7 +652,7 @@ private extension PortalService {
     return(txFee)
   }
   
-  func fetchGasData(method: PortalRequestMethod, address: String, params: [Any] = []) async throws -> Double {
+  private func fetchGasData(method: PortalRequestMethod, address: String, params: [Any] = []) async throws -> Double {
     // Throw an error if Portal clent instance is not ready
     guard let portal else {
       log.error("Portal Swift: Error estimating fee for \(address). Portal instance is unavailable")
@@ -624,6 +672,103 @@ private extension PortalService {
     }
     
     return result
+  }
+  
+  private func getRpcURL() throws -> String {
+    guard let rpcURL = portal?.rpcConfig["eip155:\(chainId)"] else {
+      log.error("Portal Swift: Error building ERC20 transaction. rpcURL is unavailable")
+      throw LFPortalError.unexpected
+    }
+    
+    return rpcURL
+  }
+  
+  private func getContractJsonABI() throws -> String {
+    guard let contractABIJsonString = FileHelpers.readJSONFile(forName: "contractJsonABI", type: String.self)
+    else {
+      log.error("Portal Swift: Error building ERC20 transaction. ContractJsonABI is unavailable")
+      throw LFPortalError.unexpected
+    }
+    
+    return contractABIJsonString
+  }
+  
+  private func getCollateralJsonABI() throws -> String {
+    guard let contractABIJsonString = FileHelpers.readJSONFile(forName: "collateralJsonABI", type: String.self)
+    else {
+      log.error("Portal Swift: Error building ERC20 transaction. ContractJsonABI is unavailable")
+      throw LFPortalError.unexpected
+    }
+    
+    return contractABIJsonString
+  }
+  
+  func generateSalt() -> Data {
+    // Generate random 32-byte salt
+    var randomBytes = [UInt8](repeating: 0, count: 32)
+    _ = SecRandomCopyBytes(kSecRandomDefault, randomBytes.count, &randomBytes)
+    
+    return Data(randomBytes)
+  }
+  
+  private func createEIP712Message(
+    collateralProxyAddress: String,
+    walletAddress: String,
+    tokenAddress: String,
+    amount: BigUInt,
+    recipientAddress: String,
+    salt: String,
+    nonce: BigUInt
+  ) throws -> String {
+    // Build message to sign for obtaining adming signature
+    let domain: [String: Any] = [
+      "name": "Collateral",
+      "version": "2",
+      "chainId": chainId,
+      "verifyingContract": collateralProxyAddress,
+      "salt": salt
+    ]
+    
+    let types: [String: Any] = [
+      "EIP712Domain": [
+        ["name": "name", "type": "string"],
+        ["name": "version", "type": "string"],
+        ["name": "chainId", "type": "uint256"],
+        ["name": "verifyingContract", "type": "address"],
+        ["name": "salt", "type": "bytes32"]
+      ],
+      "Withdraw": [
+        ["name": "user", "type": "address"],
+        ["name": "asset", "type": "address"],
+        ["name": "amount", "type": "uint256"],
+        ["name": "recipient", "type": "address"],
+        ["name": "nonce", "type": "uint256"]
+      ]
+    ]
+    
+    let message: [String: Any] = [
+      "user": walletAddress,
+      "asset": tokenAddress,
+      "amount": amount.description,
+      "recipient": recipientAddress,
+      "nonce": nonce.description
+    ]
+    
+    let messageToSign: [String: Any] = [
+      "types": types,
+      "domain": domain,
+      "primaryType": "Withdraw",
+      "message": message
+    ]
+    
+    let jsonData = try JSONSerialization.data(withJSONObject: messageToSign, options: [.sortedKeys])
+    guard let messageString = String(data: jsonData, encoding: .utf8)
+    else {
+      log.error("Portal Swift: Error EIP712 message. Could not build message string")
+      throw LFPortalError.unexpected
+    }
+    
+    return messageString
   }
 }
 
@@ -656,30 +801,14 @@ extension PortalService {
   }
   
   struct WithdrawAssetParameter {
-    let proxyAddress: EthereumAddress
-    let tokenAddress: EthereumAddress
+    let proxyAddress: Web3Core.EthereumAddress
+    let tokenAddress: Web3Core.EthereumAddress
     let amount: BigUInt
-    let recipientAddress: EthereumAddress
+    let recipientAddress: Web3Core.EthereumAddress
     let expiryAt: BigUInt
     let salt: Data
     let signature: Data
-    
-    init(
-      proxyAddress: EthereumAddress,
-      tokenAddress: EthereumAddress,
-      amount: BigUInt,
-      recipientAddress: EthereumAddress,
-      expiryAt: TimeInterval,
-      salt: Data,
-      signature: Data
-    ) {
-      self.proxyAddress = proxyAddress
-      self.tokenAddress = tokenAddress
-      self.amount = amount
-      self.recipientAddress = recipientAddress
-      self.expiryAt = BigUInt(expiryAt)
-      self.salt = salt
-      self.signature = signature
-    }
+    let adminSalt: Data
+    let adminSignature: Data
   }
 }

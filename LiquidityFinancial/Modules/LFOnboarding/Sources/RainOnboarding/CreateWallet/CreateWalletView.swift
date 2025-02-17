@@ -131,9 +131,9 @@ private extension CreateWalletView {
         text: viewModel.strMessage,
         fontSize: Constants.FontSize.ultraSmall.value,
         links: [
-          viewModel.strUserAgreement,
+          viewModel.strTerms,
           viewModel.strPrivacy,
-          viewModel.strDiscloures
+          viewModel.strSecurityInfo
         ]
       ) { tappedString in
         viewModel.onClickedTermLink(link: tappedString)

@@ -156,11 +156,11 @@
 // Create Wallet
 "createWallet.title" = "CREATE YOUR WALLET";
 "createWallet.info" = "%@ Card has partnered with Portal to offer wallets.";
-"createWallet.termsAndCondition" = "I agree to the Portal Services User Agreement, and I have read and understand the Portal Privacy Policy and Regulatory Disclosures.";
+"createWallet.termsAndCondition" = "I agree to Portal Terms and Conditions, and I have read and understand Portal Privacy Policy and Security Information.";
 "createWallet.riskDisclosure" = "The value of any cryptocurrency, including digital assets pegged to fiat currency, commodities, or any other asset, may go to zero.";
-"createWallet.userAgreement" = "Portal Services User Agreement";
-"createWallet.regulatoryDisclosures" = "Regulatory Disclosures";
+"createWallet.terms" = "Terms and Conditions";
 "createWallet.privacyPolicy" = "Privacy Policy";
+"createWallet.securityInformation" = "Security Information";
 "createWallet.signInToIcloud.title" = "Sign in to iCloud";
 "createWallet.signInToIcloud.message" = "Please sign in to your iCloud account on this device.";
 "createWallet.createPortalWallet.title" = "Creating Portal Wallet";
@@ -300,7 +300,7 @@
 "listCard.showCardNumber.title" = "Show Card Number";
 "listCard.lockCard.title" = "Lock Card";
 "listCard.closeCard.title" = "Close Card";
-"listCard.creditLimitBreakdown.title" = "View Credit Limit Breakdown";
+"listCard.creditLimitBreakdown.title" = "View Spending Power Breakdown";
 "listCard.lockCard.description" = "Stop card from being used";
 "listCard.changePin.title" = "Change PIN";
 "listCard.orderPhysicalCard.title" = "Order Physical Card";
@@ -358,7 +358,7 @@
 "collateralLimitBreakdown.spendingPower.title" = "Spending power";
 "collateralLimitBreakdown.spendingPower.disclaimer" = "Exchange rates are the current market price of the token based on latest available data. Advance rates are the price at which we offer credit against this token.";
 "collateralLimitBreakdown.assetBalances.title" = "Asset balances";
-"collateralLimitBreakdown.creditLimitBreakdown.title" = "Credit limit breakdown";
+"collateralLimitBreakdown.creditLimitBreakdown.title" = "Spending power breakdown";
 "collateralLimitBreakdown.tokenAdded.title" = "%@ added";
 "collateralLimitBreakdown.tokenExchangeRate.title" = "%@ exchange rate";
 "collateralLimitBreakdown.tokenAdvanceRate.title" = "%@ advance rate";
@@ -1359,11 +1359,13 @@ contact support.";
 "notification_popup.dismiss" = "Not now";
 
 // Terms
-"term.privacyPolicy.description" = "By tapping ‘Continue’, you agree to our Terms, E-sign consent and Privacy Policy.";
+"term.privacyPolicy.description" = "By tapping 'Continue', you agree to our Terms, E-sign consent, Privacy Policy, Card Terms and Opening Account Disclosures.";
 "term.termsVoip.description" = "Using VOIP or Google Voice numbers can result in onboarding delays. We NEVER share your phone number with third parties for marketing, per our Privacy Policy.";
 "term.privacyPolicy.attributeText" = "Privacy Policy";
 "term.esignConsent.attributeText" = "E-sign consent";
 "term.terms.attributeText" = "Terms";
+"term.cardTerms.attributeText" = "Card Terms";
+"term.accountDisclosures.attributeText" = "Opening Account Disclosures";
 
 // BlockingFiat
 "BlockingFiatView.title" = "BANKING PARTNER UPDATE";

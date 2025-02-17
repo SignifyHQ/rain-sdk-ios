@@ -65,12 +65,14 @@ private extension ConfirmTransferMoneyView {
       )
       informationCell(
         title: L10N.Common.ConfirmSendCryptoView.walletAddress,
-        value: viewModel.address,
-        isLastItem: true
+        value: viewModel.address
       )
       informationCell(
         title: L10N.Common.ConfirmSendCryptoView.fee,
-        value: viewModel.fee.formattedAmount(minFractionDigits: 2, maxFractionDigits: 18)
+        value: viewModel.fee.formattedAmount(minFractionDigits: 2, maxFractionDigits: 18),
+        bonusValue: L10N.Common.TransferView.Status.free,
+        isFeeLine: true,
+        isLastItem: true
       )
       Spacer()
       footer
@@ -83,6 +85,7 @@ private extension ConfirmTransferMoneyView {
     title: String,
     value: String,
     bonusValue: String? = nil,
+    isFeeLine: Bool = false,
     isLastItem: Bool = false
   ) -> some View {
     if !value.isEmpty {
@@ -92,14 +95,16 @@ private extension ConfirmTransferMoneyView {
           .foregroundColor(Colors.label.swiftUIColor.opacity(0.75))
         HStack(spacing: 4) {
           Text(value)
+            .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.medium.value))
             .foregroundColor(Colors.label.swiftUIColor)
+            .strikethrough(isFeeLine, color: Colors.label.swiftUIColor.opacity(0.75))
           if let bonusValue {
             Text(bonusValue)
-              .foregroundColor(Colors.primary.swiftUIColor)
+              .font(isFeeLine ? Fonts.bold.swiftUIFont(size: Constants.FontSize.medium.value) : Fonts.regular.swiftUIFont(size: Constants.FontSize.medium.value))
+              .foregroundColor(isFeeLine ? Colors.green.swiftUIColor : Colors.primary.swiftUIColor)
           }
           Spacer()
         }
-        .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.medium.value))
         GenImages.CommonImages.dash.swiftUIImage
           .resizable()
           .scaledToFit()

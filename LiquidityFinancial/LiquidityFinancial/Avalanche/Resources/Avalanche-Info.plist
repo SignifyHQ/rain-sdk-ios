@@ -2,6 +2,18 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>PORTAL_SECURITY_URL</key>
+	<string>$(PORTAL_SECURITY_URL)</string>
+	<key>PORTAL_PRIVACY_URL</key>
+	<string>$(PORTAL_PRIVACY_URL)</string>
+	<key>PORTAL_TERMS_URL</key>
+	<string>$(PORTAL_TERMS_URL)</string>
+	<key>ACCOUNT_DISCLOSURE_URL</key>
+	<string>$(ACCOUNT_DISCLOSURE_URL)</string>
+	<key>CARD_TERMS_URL_INT</key>
+	<string>$(CARD_TERMS_URL_INT)</string>
+	<key>CARD_TERMS_URL_US</key>
+	<string>$(CARD_TERMS_URL_US)</string>
 	<key>GOOGLE_DEV_INFO_FILE_NAME</key>
 	<string>GoogleService-Info-Dev</string>
 	<key>GOOGLE_PROD_INFO_FILE_NAME</key>
@@ -46,10 +58,6 @@
 	<string>$(DISCLOSURE_URL)</string>
 	<key>FirebaseAppDelegateProxyEnabled</key>
 	<false/>
-	<key>GOOGLE_DEV_INFO_FILE_NAME</key>
-	<string>GoogleService-Info-Dev</string>
-	<key>GOOGLE_PROD_INFO_FILE_NAME</key>
-	<string>GoogleService-Info-Prod</string>
 	<key>ITSAppUsesNonExemptEncryption</key>
 	<false/>
 	<key>LSApplicationCategoryType</key>
@@ -110,8 +118,6 @@
 	<string>$(REFERRALLINK_PRO)</string>
 	<key>SHARE_APP_URL</key>
 	<string>$(SHARE_APP_URL)</string>
-	<key>STABLECOIN_SYMBOL</key>
-	<string>$(STABLECOIN_SYMBOL)</string>
 	<key>TERMS_URL</key>
 	<string>$(TERMS_URL)</string>
 	<key>UIApplicationSceneManifest</key>

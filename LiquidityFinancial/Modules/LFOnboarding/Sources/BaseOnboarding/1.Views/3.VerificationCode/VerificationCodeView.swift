@@ -30,6 +30,7 @@ public struct VerificationCodeView: View {
     .padding(.bottom, 16)
     .padding(.top, 8)
     .padding(.horizontal, 30)
+    .navigationBarTitleDisplayMode(.inline)
     .defaultToolBar(
       icon: .support,
       openSupportScreen: {

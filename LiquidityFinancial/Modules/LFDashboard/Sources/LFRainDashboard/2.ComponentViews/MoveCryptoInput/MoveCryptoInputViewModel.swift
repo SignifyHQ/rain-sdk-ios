@@ -265,7 +265,7 @@ private extension MoveCryptoInputViewModel {
           .compactMap {
             let assetModel = AssetModel(portalAsset: $0)
             
-            // Filter out tokens of unsupported type and native tokens
+            // Filter out tokens of unsupported type
             guard assetModel.type != nil && !assetModel.id.isEmpty
             else {
               return nil
@@ -290,13 +290,16 @@ private extension MoveCryptoInputViewModel {
           .compactMap { rainToken in
             let assetModel = AssetModel(rainCollateralAsset: rainToken)
             
-            // Filter out tokens of unsupported type and native tokens
+            // Filter out tokens of unsupported type
             guard assetModel.type != nil && !assetModel.id.isEmpty
             else {
               return nil
             }
             
             return assetModel
+          }
+          .sorted {
+            ($0.type?.rawValue ?? "") < ($1.type?.rawValue ?? "")
           }
       }
       .assign(to: &$assetModelList)
@@ -407,10 +410,12 @@ extension MoveCryptoInputViewModel {
         "\(balance)".formattedAmount(minFractionDigits: 3, maxFractionDigits: 3), cryptoCurrency
       )
     case .withdrawCollateral:
-      let balance = assetModel.availableBalance.roundTo6f()
+      let balance = assetModel.availableBalance
+      let advanceRate = assetModel.advanceRate
+      let available = (balance * (advanceRate ?? 100) / 100).roundTo3f()
       
       return L10N.Common.MoveCryptoInput.WithdrawCollateralAvailableBalance.subtitle(
-        "\(balance)".formattedAmount(minFractionDigits: 2, maxFractionDigits: 6), cryptoCurrency
+        "\(available)".formattedAmount(minFractionDigits: 2, maxFractionDigits: 6), cryptoCurrency
       )
     case let .withdrawReward(_, _, balance, _):
       return L10N.Common.MoveCryptoInput.WithdrawReward.subtitle(
@@ -443,10 +448,12 @@ extension MoveCryptoInputViewModel {
         assetModel.type?.title ?? .empty
       )
     case .withdrawCollateral:
-      let balance = assetModel.availableBalance.roundTo3f()
+      let balance = assetModel.availableBalance
+      let advanceRate = assetModel.advanceRate
+      let available = (balance * (advanceRate ?? 100) / 100).roundTo3f()
       
       return L10N.Common.MoveCryptoInput.WithdrawCollateral.annotation(
-        "\(balance)".formattedAmount(minFractionDigits: 2, maxFractionDigits: 6),
+        "\(available)".formattedAmount(minFractionDigits: 2, maxFractionDigits: 6),
         assetModel.type?.title ?? .empty
       )
     case let .withdrawReward(_, _, balance, _):

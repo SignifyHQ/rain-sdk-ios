@@ -7,10 +7,17 @@ APP_NAME = Avalanche
 APP_BUNDLE_ID = com.liquidityfinancial.avalanche
 STABLECOIN_SYMBOL = USDC
 
-TERMS_URL = https:/$()/avalanche.co/legal
+TERMS_URL = https:/$()/legal.avalanchecard.com/legal/avalanche-app-terms-conditions-4b62a44e
+CARD_TERMS_URL_US = https:/$()/legal.avalanchecard.com/legal/avalanche-card-us-card-agreement-bcc089aa
+CARD_TERMS_URL_INT = https:/$()/legal.avalanchecard.com/legal/avalanche-card-international-card-agreement-94211945
+ACCOUNT_DISCLOSURE_URL = https:/$()/legal.avalanchecard.com/legal/opening-account-disclosures-f5b8a3a9
 AGREEMENT_URL = https:/$()/avalanche.co/legal#consumer-account
-PRIVACY_URL = https:/$()/avalanche.co/legal#privacy-policy
-CONSENT_URL = https:/$()/avalanche.co/legal#e-sign-consent
+PRIVACY_URL = https:/$()/legal.avalanchecard.com/legal/avalanche-app-privacy-policy-945fafe7
+CONSENT_URL = https:/$()/legal.avalanchecard.com/legal/avalanche-card-e-signature-consent-848d80ca
+
+PORTAL_TERMS_URL = https:/$()/www.portalhq.io/customer-terms-conditions
+PORTAL_PRIVACY_URL = https:/$()/www.portalhq.io/privacy-policy
+PORTAL_SECURITY_URL = https:/$()/www.portalhq.io/security
 
 PATHWARD_USER_URL = https:/$()/avalanche.co/legal#privacy-policy
 PATHWARD_PRIVACY_URL = https:/$()/avalanche.co/legal#privacy-policy

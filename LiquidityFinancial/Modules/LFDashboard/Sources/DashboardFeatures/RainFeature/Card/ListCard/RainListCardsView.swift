@@ -27,8 +27,15 @@ public struct RainListCardsView: View {
     .padding(.horizontal, 30)
     .padding(.bottom, 16)
     .background(Colors.background.swiftUIColor)
-    .navigationBarBackButtonHidden(true)
-    .toolbar { toolbarContent }
+    .navigationBarTitleDisplayMode(.inline)
+    .defaultToolBar(
+      icon: .support,
+      navigationTitle: "",
+      openSupportScreen: {
+        viewModel.openSupportScreen()
+      },
+      edgeInsets: EdgeInsets(top: 0, leading: 0, bottom: 12, trailing: 0)
+    )
     .overlay(
       cardsList.padding(.top, 8),
       alignment: .top
@@ -78,32 +85,6 @@ public struct RainListCardsView: View {
 
 // MARK: - ToolBar Components
 private extension RainListCardsView {
-  var toolbarContent: some ToolbarContent {
-    Group {
-      ToolbarItem(placement: .navigationBarLeading) {
-        Button {
-          viewModel.onDisappear()
-          dismiss()
-        } label: {
-          GenImages.CommonImages.icBack.swiftUIImage
-        }
-      }
-      
-      ToolbarItem(placement: .principal) {
-        cardSwitchButton
-      }
-      
-      ToolbarItem(placement: .navigationBarTrailing) {
-        Button {
-          viewModel.openSupportScreen()
-        } label: {
-          GenImages.CommonImages.icChat.swiftUIImage
-            .foregroundColor(Colors.label.swiftUIColor)
-        }
-      }
-    }
-  }
-  
   var cardSwitchButton: some View {
     Button {
       viewModel.isShowListCardDropdown.toggle()

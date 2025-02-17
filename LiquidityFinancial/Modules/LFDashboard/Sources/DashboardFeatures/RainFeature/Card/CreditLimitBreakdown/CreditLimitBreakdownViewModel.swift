@@ -43,13 +43,16 @@ public final class CreditLimitBreakdownViewModel: ObservableObject {
           .compactMap { rainToken in
             let assetModel = AssetModel(rainCollateralAsset: rainToken)
             
-            // Filter out tokens of unsupported type and native tokens
+            // Filter out tokens of unsupported type
             guard assetModel.type != nil && !assetModel.id.isEmpty
             else {
               return nil
             }
             
             return assetModel
+          }
+          .sorted {
+            ($0.type?.rawValue ?? "") < ($1.type?.rawValue ?? "")
           }
       }
       .assign(to: &$collateralAssets)

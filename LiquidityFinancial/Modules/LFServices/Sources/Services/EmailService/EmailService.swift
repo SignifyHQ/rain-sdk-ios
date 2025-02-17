@@ -19,7 +19,7 @@ public class EmailService: CustomerSupportServiceProtocol {
     case .PawsCard:
       return ""
     case .Avalanche:
-      return ""
+      return "support@raincards.xyz"
     case .Cardano:
       return ""
     case .none:
@@ -46,7 +46,7 @@ public class EmailService: CustomerSupportServiceProtocol {
     case .PawsCard:
       return ""
     case .Avalanche:
-      return ""
+      return "Avalanche Card Support Request - \(currentDate)"
     case .Cardano:
       return ""
     case .none:

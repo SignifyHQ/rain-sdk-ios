@@ -41,9 +41,9 @@ final class CreateWalletViewModel: ObservableObject {
   }()
   
   let strMessage = L10N.Common.CreateWallet.termsAndCondition
-  let strUserAgreement = L10N.Common.CreateWallet.userAgreement
+  let strTerms = L10N.Common.CreateWallet.terms
   let strPrivacy = L10N.Common.CreateWallet.privacyPolicy
-  let strDiscloures = L10N.Common.CreateWallet.regulatoryDisclosures
+  let strSecurityInfo = L10N.Common.CreateWallet.securityInformation
   
   init() {}
 }
@@ -132,18 +132,16 @@ extension CreateWalletViewModel {
   
   func onClickedTermLink(link: String) {
     switch link {
-    case strUserAgreement:
-        break
-        // TODO: - Will be replace portal conditional policy
-        //      if let url = URL(string: LFUtilities.portalURL) {
-        //        openSafariType = .portalURL(url)
-        //      }
-    case strDiscloures:
-      if let url = URL(string: LFUtilities.disclosureURL) {
+    case strTerms:
+      if let url = URL(string: LFUtilities.portalTermsURL) {
         openSafariType = .disclosureURL(url)
       }
     case strPrivacy:
-      if let url = URL(string: LFUtilities.walletPrivacyURL) {
+      if let url = URL(string: LFUtilities.portalPrivacyURL) {
+        openSafariType = .disclosureURL(url)
+      }
+    case strSecurityInfo:
+      if let url = URL(string: LFUtilities.portalSecurityURL) {
         openSafariType = .walletPrivacyURL(url)
       }
     default:

@@ -85,6 +85,14 @@ public struct PhoneNumberView: View {
         if let url = viewModel.getURL(tappedString: viewModel.privacyPolicy) {
           SFSafariViewWrapper(url: url)
         }
+      case .cardTerms:
+        if let url = viewModel.getURL(tappedString: viewModel.cardTerms) {
+          SFSafariViewWrapper(url: url)
+        }
+      case .accountDisclosure:
+        if let url = viewModel.getURL(tappedString: viewModel.accountDisclosures) {
+          SFSafariViewWrapper(url: url)
+        }
       }
     }
     .navigationBarHidden(true)
@@ -257,18 +265,26 @@ private extension PhoneNumberView {
       text: L10N.Common.Term.PrivacyPolicy.description,
       textAlignment: .center,
       fontSize: Constants.FontSize.ultraSmall.value,
-      links: [viewModel.terms, viewModel.esignConsent, viewModel.privacyPolicy],
+      links: [
+        viewModel.terms,
+        viewModel.esignConsent,
+        viewModel.privacyPolicy,
+        viewModel.cardTerms,
+        viewModel.accountDisclosures
+      ],
       style: .fillColor(Colors.termAndPrivacy.color)
     ) { tappedString in
       switch tappedString {
       case viewModel.terms: openSafariType = .term
       case viewModel.privacyPolicy: openSafariType = .privacy
       case viewModel.esignConsent: openSafariType = .consent
+      case viewModel.cardTerms: openSafariType = .cardTerms
+      case viewModel.accountDisclosures: openSafariType = .accountDisclosure
       default: break
       }
     }
     .accessibilityIdentifier(LFAccessibility.PhoneNumber.conditionTextTappable)
-    .frame(height: 50)
+    .frame(height: 75)
   }
 }
 
