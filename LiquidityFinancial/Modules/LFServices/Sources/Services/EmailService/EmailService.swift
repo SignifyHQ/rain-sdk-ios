@@ -19,7 +19,7 @@ public class EmailService: CustomerSupportServiceProtocol {
     case .PawsCard:
       return ""
     case .Avalanche:
-      return "support@raincards.xyz"
+      return "support@avalanchecard.com"
     case .Cardano:
       return ""
     case .none:
