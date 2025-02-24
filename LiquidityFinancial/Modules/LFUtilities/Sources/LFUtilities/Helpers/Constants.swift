@@ -371,7 +371,7 @@ public extension Constants {
   
   static let hiddenPassword = "*********"
   
-  static var unSupportedStates: [String] = ["NY", "New York", "HI", "Hawaii"]
+  static var unSupportedStates: [String] = []//["NY", "New York", "HI", "Hawaii"]
   
   static let netSpendSDKLinkBankErrors = ["error", "failedToLinkBank", "externalLinkBankError"]
   
