@@ -91,9 +91,9 @@
 		</dict>
 	</dict>
 	<key>NSCameraUsageDescription</key>
-	<string>Used to capture user for KYC purposes</string>
+	<string>We need to access your camera to capture a selife for KYC purposes or to use QR code scanner when pre-filling the wallet address</string>
 	<key>NSFaceIDUsageDescription</key>
-	<string>Avalanche will use Face ID to unlock your account.</string>
+	<string>Avalanche will use Face ID to unlock your account and perform sensitive operations</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>Used to surface nearby ATMs for the user</string>
 	<key>NSPhotoLibraryUsageDescription</key>
