@@ -91,7 +91,7 @@
 		</dict>
 	</dict>
 	<key>NSCameraUsageDescription</key>
-	<string>We need to access your camera to capture a selife for KYC purposes or to use QR code scanner when pre-filling the wallet address</string>
+	<string>The app requires camera access to verify your identity by capturing your ID and a selfie during KYC. The camera is also used to scan QR codes for addresses</string>
 	<key>NSFaceIDUsageDescription</key>
 	<string>Avalanche will use Face ID to unlock your account and perform sensitive operations</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
