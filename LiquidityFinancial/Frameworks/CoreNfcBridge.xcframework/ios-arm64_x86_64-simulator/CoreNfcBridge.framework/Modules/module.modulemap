@@ -1,0 +1,11 @@
+framework module CoreNfcBridge {
+  umbrella header "CoreNfcBridge.h"
+  export *
+
+  module * { export * }
+}
+
+module CoreNfcBridge.Swift {
+  header "CoreNfcBridge-Swift.h"
+  requires objc
+}

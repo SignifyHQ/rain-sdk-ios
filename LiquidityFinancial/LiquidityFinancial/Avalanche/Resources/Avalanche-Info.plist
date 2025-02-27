@@ -98,6 +98,12 @@
 	<string>Used to surface nearby ATMs for the user</string>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>Used to process images for KYC purposes</string>
+	<key>NFCReaderUsageDescription</key>
+	<string>NFC is used to activate your limited edition card by writing tokenized card data to it</string>
+	<key>com.apple.developer.nfc.readersession.formats</key>
+	<array>
+		<string>TAG</string>
+	</array>
 	<key>PATHWARD_DISCLOSURE_URL</key>
 	<string>$(PATHWARD_DISCLOSURE_URL)</string>
 	<key>PATHWARD_PRIVACY_URL</key>

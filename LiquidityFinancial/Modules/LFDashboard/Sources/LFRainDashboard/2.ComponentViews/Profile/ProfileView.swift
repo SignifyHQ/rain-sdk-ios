@@ -5,6 +5,9 @@ import LFUtilities
 import LFAccessibility
 import LFAuthentication
 import RainFeature
+import RxSwift
+import FidesmoCore
+import CoreNfcBridge
 
 struct ProfileView: View {
   @StateObject private var viewModel = ProfileViewModel()
@@ -241,388 +244,226 @@ struct BottomSheetView: View {
   @Binding var isPresented: Bool
   @Binding var sheetHeight: CGFloat
   
-  @State var selectedPage: Int = 0 {
-    didSet {
-      sheetHeight = pages[selectedPage].height
-      title = pages[selectedPage].title
-    }
-  }
+  @State private var selectedPage: Int = 0
+  @State private var title: String = "Activate Card"
+  @State private var logText: String = ""
+  @State private var isLoading: Bool = false
+  @State private var showSuccess: Bool = false
   
-  @State private var title: String = "Let's get started"
-  @State private var keyboardHeight: CGFloat = 0
+  // App IDs and service IDs for Fidesmo cards
+  private let fidesmoPayAppId = "f374c57e"
+  private let fidesmoPayInstallServiceId = "install"
   
-  private var pages: [any SheetPage] {
-    [
-      FidesmoStepOne(onNext: { selectedPage = 1 }),
-      FidesmoStepTwo(onNext: { selectedPage = 2 }, onCancel: { isPresented = false }),
-      FidesmoStepThree(onNext: { selectedPage = 3 }, onCancel: { isPresented = false }),
-      FidesmoStepFour(onNext: { selectedPage = 4 }, onCancel: { isPresented = false }),
-      FidesmoStepFive(onNext: { selectedPage = 5 }, onCancel: { isPresented = false }),
-      FidesmoStepSix(onNext: { isPresented = false })
-    ]
-  }
-  
-  private var pageViews: [AnyView] {
-    pages.map { AnyView($0) }
-  }
+  private let disposeBag = DisposeBag()
+  private let apiDispatcher = FidesmoApiDispatcher(host: "https://api.fidesmo.com", localeStrings: "en")
+  @State private var nfcManager: NfcManager?
   
   var body: some View {
-    VStack {
-      header
-      pageViews[selectedPage]
+    VStack(spacing: 16) {
+      HStack {
+        Text(title)
+          .font(Fonts.regular.swiftUIFont(size: 20))
+          .foregroundColor(Colors.label.swiftUIColor)
+        Spacer()
+        Button {
+          isPresented = false
+        } label: {
+          Image(systemName: "xmark.circle.fill")
+            .resizable()
+            .frame(width: 24, height: 24)
+            .foregroundColor(Colors.label.swiftUIColor.opacity(0.5))
+        }
+      }
+      .padding(.horizontal, 24)
+      .padding(.top, 24)
+      
+      if showSuccess {
+        successView
+      } else if isLoading {
+        loadingView
+      } else {
+        activationView
+      }
     }
-    .padding(.top, 25)
-    .padding(.bottom, 5)
-    .padding(.horizontal, 25)
-    .frame(
-      maxWidth: .infinity,
-      maxHeight: .infinity
-    )
-    .background(Color(hex: "#09080A"))
     .onAppear {
-      observeKeyboardNotifications()
-    }
-    .onDisappear {
-      NotificationCenter.default.removeObserver(self)
+      nfcManager = NfcManager(listener: self)
     }
   }
   
-  private var header: some View {
-    HStack {
-      if pages[selectedPage].shouldShowBackButton {
-        Button(
-          action: {
-            guard selectedPage != 0
-            else {
-              isPresented = false
-              return
-            }
-            
-            selectedPage -= 1
-          }
-        ) {
-          Image(
-            systemName: "arrow.left"
-          )
-          .font(.title2)
-          .foregroundColor(.primary)
-        }
+  private var activationView: some View {
+    VStack(spacing: 24) {
+      VStack(alignment: .leading, spacing: 12) {
+        Text("Activate your Limited Edition Card")
+          .font(Fonts.regular.swiftUIFont(size: 18))
+          .foregroundColor(Colors.label.swiftUIColor)
+        
+        Text("To activate your card, simply hold your iPhone near the NFC Fidesmo card after tapping the button below.")
+          .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.medium.value))
+          .foregroundColor(Colors.label.swiftUIColor.opacity(0.8))
       }
+      .frame(maxWidth: .infinity, alignment: .leading)
+      .padding(.horizontal, 24)
       
       Spacer()
       
-      Text(title)
-        .font(Fonts.semiBold.swiftUIFont(size: 20))
+      FullSizeButton(title: "Start Activation", isDisable: false, type: .primary) {
+        startDelivery()
+      }
+      .padding(.horizontal, 24)
+      .padding(.bottom, 24)
+    }
+  }
+  
+  private var loadingView: some View {
+    VStack(spacing: 16) {
+      ProgressView()
+        .scaleEffect(1.5)
+        .padding()
+      
+      Text("Processing...")
+        .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.medium.value))
         .foregroundColor(Colors.label.swiftUIColor)
-        .frame(maxWidth: .infinity, alignment: .center)
       
-      Spacer()
+      ScrollView {
+        Text(logText)
+          .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.small.value))
+          .foregroundColor(Colors.label.swiftUIColor.opacity(0.6))
+          .frame(maxWidth: .infinity, alignment: .leading)
+          .padding()
+      }
+      .frame(height: 120)
+      .background(Colors.secondaryBackground.swiftUIColor)
+      .cornerRadius(8)
+      .padding(.horizontal, 24)
     }
+    .padding(.bottom, 24)
   }
   
-  private func observeKeyboardNotifications() {
-    NotificationCenter.default.addObserver(forName: UIResponder.keyboardWillShowNotification, object: nil, queue: .main) { notification in
-      if let keyboardFrame = notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? CGRect {
-        withAnimation(.easeInOut) {
-          keyboardHeight = keyboardFrame.height
-        }
+  private var successView: some View {
+    VStack(spacing: 24) {
+      Image(systemName: "checkmark.circle.fill")
+        .resizable()
+        .frame(width: 60, height: 60)
+        .foregroundColor(Colors.primary.swiftUIColor)
+      
+      Text("Card Successfully Activated!")
+        .font(Fonts.regular.swiftUIFont(size: 20))
+        .foregroundColor(Colors.label.swiftUIColor)
+      
+      Text("Your limited edition card is now ready to use.")
+        .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.medium.value))
+        .foregroundColor(Colors.label.swiftUIColor.opacity(0.8))
+        .multilineTextAlignment(.center)
+      
+      Spacer()
+      
+      FullSizeButton(title: "Done", isDisable: false, type: .primary) {
+        isPresented = false
       }
+      .padding(.horizontal, 24)
+      .padding(.bottom, 24)
     }
-    
-    NotificationCenter.default.addObserver(forName: UIResponder.keyboardWillHideNotification, object: nil, queue: .main) { _ in
-      withAnimation(.easeInOut) {
-        keyboardHeight = 0
-      }
-    }
+    .padding(.top, 24)
+  }
+  
+  private func startDelivery() {
+    isLoading = true
+    logText = "Starting NFC session..."
+    nfcManager?.startNfcDiscovery(message: "Hold your iPhone near your Fidesmo card")
+  }
+  
+  private func addToLog(_ message: String) {
+    print("log: ", message)
+    logText += "\n\(message)"
   }
 }
 
-struct FidesmoStepOne: SheetPage {
-  var shouldShowBackButton: Bool = true
-  var height: CGFloat = 380
-  var title: String = "Let's get started"
+// MARK: - NFC Connection Delegate
+extension BottomSheetView: NfcConnectionDelegate {
+  func onDeviceConnected(device: NfcDevice) {
+    nfcManager?.changeAlertMessage(message: "Card connected, processing...")
+    addToLog("Card connected")
+    
+    // Use the defined appId and serviceId
+    startCardActivation(connection: device, appId: fidesmoPayAppId, serviceId: fidesmoPayInstallServiceId)
+  }
   
-  let onNext: () -> Void
-  
-  var body: some View {
-    VStack(alignment: .center) {
-      GenImages.CommonImages.icAvalancheFidesmo.swiftUIImage
-        .padding(.vertical, 25)
-      
-      Text("Connect your Limited edition Avalanche Card to enjoy secure and seamless contactless payments.")
-        .frame(maxWidth: .infinity, alignment: .leading)
-        .multilineTextAlignment(.leading)
-        .lineSpacing(1.2)
-        .font(Fonts.regular.swiftUIFont(size: 18))
-        .foregroundColor(Colors.label.swiftUIColor)
-      
-      Spacer()
-      
-      TextTappable(
-        text: "By tapping Next you agree to the Fidesmo Terms and Conditions.",
-        textAlignment: .left,
-        textColor: Colors.label.color.withAlphaComponent(0.75),
-        fontSize: Constants.FontSize.ultraSmall.value,
-        links: [
-          "Fidesmo Terms and Conditions"
-        ],
-        style: .fillColor(Colors.termAndPrivacy.color)
-      ) { tappedString in
-        switch tappedString {
+  func startCardActivation(connection: DeviceConnection, appId: String, serviceId: String) {
+    addToLog("Starting card activation...")
+    
+    // Get device description and service details
+    connection.getDescription(dispatcher: apiDispatcher)
+      .flatMap { deviceDescription -> Observable<DeliveryProgress> in
+        addToLog("Card identified: \(deviceDescription.deviceId)")
+        
+        // Begin delivery process
+        return DeliveryManager(connection: Observable.just(connection), dispatcher: apiDispatcher)
+          .deliver(appId: appId, 
+                   serviceId: serviceId,
+                   cin: deviceDescription.cin,
+                   publicKey: nil, // The service certificate would normally be retrieved from the service description
+                   clientInfo: ClientInfo(clientType: .iphone, applicationName: "LiquidityFinancial"))
+      }
+      .observe(on: MainScheduler.instance)
+      .subscribe(onNext: { progress in
+        switch progress {
+        case .notStarted:
+          addToLog("Starting card setup...")
+        case let .operationInProgress(_, dataFlow):
+          switch dataFlow {
+          case .talkingToServer:
+            addToLog("Communicating with server...")
+          case .toDevice:
+            addToLog("Sending commands to card...")
+          case .toServer:
+            addToLog("Processing card response...")
+          }
+        case let .finished(status):
+          let successMessage = status.success ? "Card activation completed!" : "Card activation failed"
+          addToLog(successMessage)
+          nfcManager?.changeAlertMessage(message: successMessage)
+          
+          DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+            isLoading = false
+            showSuccess = status.success
+          }
         default:
           break
         }
-      }
-      .accessibilityIdentifier(LFAccessibility.PhoneNumber.conditionTextTappable)
-      .frame(height: 50)
-      .padding(.bottom, 0)
-      
-      FullSizeButton(
-        title: "Next",
-        isDisable: false
-      ) {
-        onNext()
-      }
-    }
-  }
-}
-
-
-struct FidesmoStepTwo: SheetPage {
-  var shouldShowBackButton: Bool = true
-  var height: CGFloat = 350
-  var title: String = "Let’s connect your card"
-  
-  let onNext: () -> Void
-  let onCancel: () -> Void
-  
-  var body: some View {
-    VStack(alignment: .center) {
-      Button {
-        onNext()
-      } label: {
-        GenImages.CommonImages.icConnectNfc.swiftUIImage
-      }
-      .padding(.vertical, 25)
-      
-      Text("Tap the connect button to begin the process.")
-        .frame(maxWidth: .infinity, alignment: .leading)
-        .multilineTextAlignment(.leading)
-        .lineSpacing(1.2)
-        .font(Fonts.regular.swiftUIFont(size: 18))
-        .foregroundColor(Colors.label.swiftUIColor)
-      
-      Spacer()
-      
-      FullSizeButton(
-        title: "Cancel",
-        isDisable: false,
-        type: .tertiary
-      ) {
-        onCancel()
-      }
-    }
-  }
-}
-
-struct FidesmoStepThree: SheetPage {
-  var shouldShowBackButton: Bool = true
-  var height: CGFloat = 350
-  var title: String = "Ready to Scan"
-  
-  let onNext: () -> Void
-  let onCancel: () -> Void
-  
-  var body: some View {
-    VStack(alignment: .center) {
-      Button {
-        onNext()
-      } label: {
-        GenImages.CommonImages.icNfc.swiftUIImage
-      }
-      .padding(.vertical, 25)
-      
-      Text("Hold your card against the top edge of the back of your phone.")
-        .frame(maxWidth: .infinity, alignment: .leading)
-        .multilineTextAlignment(.leading)
-        .lineSpacing(1.2)
-        .font(Fonts.regular.swiftUIFont(size: 18))
-        .foregroundColor(Colors.label.swiftUIColor)
-      
-      Spacer()
-      
-      FullSizeButton(
-        title: "Cancel",
-        isDisable: false,
-        type: .tertiary
-      ) {
-        onCancel()
-      }
-    }
-    .frame(maxWidth: .infinity)
-  }
-}
-
-struct FidesmoStepFour: SheetPage {
-  var shouldShowBackButton: Bool = true
-  var height: CGFloat = 550
-  var title: String = "Activation"
-  
-  let onNext: () -> Void
-  let onCancel: () -> Void
-  
-  var body: some View {
-    VStack(alignment: .center) {
-      Text("How would you like to activate your payment card?")
-        .frame(maxWidth: .infinity, alignment: .leading)
-        .multilineTextAlignment(.leading)
-        .lineSpacing(1.2)
-        .font(Fonts.regular.swiftUIFont(size: 18))
-        .foregroundColor(Colors.label.swiftUIColor)
-        .padding(.top, 20)
-      
-      GenImages.CommonImages.unavailableCard.swiftUIImage
-        .padding(.vertical, 25)
-      
-      Spacer()
-      
-      FullSizeButton(
-        title: "Receive SMS code on *******4304",
-        isDisable: false,
-        type: .tertiary
-      ) {
-        onNext()
-      }
-      
-      FullSizeButton(
-        title: "Receive code to ch***@raincards.xyz",
-        isDisable: false,
-        type: .tertiary
-      ) {
-        onNext()
-      }
-      
-      FullSizeButton(
-        title: "Activate later",
-        isDisable: false,
-        type: .alternative
-      ) {
-        //onCancel()
-      }
-    }
-    .frame(maxWidth: .infinity)
-  }
-}
-
-struct FidesmoStepFive: SheetPage {
-  var shouldShowBackButton: Bool = true
-  var height: CGFloat = 650
-  var title: String = "Activation code"
-  
-  @FocusState private var isTextFieldFocused: Bool
-  
-  let onNext: () -> Void
-  let onCancel: () -> Void
-  
-  @State var error: String? = nil
-  @State var otp: String = ""
-  
-  var body: some View {
-    GeometryReader { geometry in
-      ScrollView {
-        VStack(alignment: .center) {
-          Text("Enter the activation code received by SMS to *******4304 from your bank the code is valid for 30 minutes.")
-            .frame(maxWidth: .infinity, alignment: .leading)
-            .multilineTextAlignment(.leading)
-            .lineSpacing(1.2)
-            .font(Fonts.regular.swiftUIFont(size: 18))
-            .foregroundColor(Colors.label.swiftUIColor)
-            .padding(.top, 20)
-          
-          GenImages.CommonImages.unavailableCard.swiftUIImage
-            .padding(.vertical, 25)
-          
-          Spacer()
-          
-          TextFieldWrapper(errorValue: $error) {
-            TextField(
-              "Activation code",
-              text: $otp
-            )
-            .limitInputLength(value: $otp, length: 6)
-            .primaryFieldStyle()
-            .disableAutocorrection(true)
-            .keyboardType(.numberPad)
-            .focused($isTextFieldFocused)
-          }
-          
-          FullSizeButton(
-            title: "Next",
-            isDisable: false,
-            type: .tertiary
-          ) {
-            onNext()
-            isTextFieldFocused = false
-          }
-          
-          FullSizeButton(
-            title: "Resend code",
-            isDisable: false,
-            type: .tertiary
-          ) {
-            //onNext()
-          }
-          
-          FullSizeButton(
-            title: "Activate later",
-            isDisable: false,
-            type: .alternative
-          ) {
-            //onCancel()
-          }
+      }, onError: { error in
+        addToLog("Error: \(error.localizedDescription)")
+        nfcManager?.invalidateSession(error: error.localizedDescription)
+        
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+          isLoading = false
         }
-        .frame(minHeight: geometry.size.height)
-      }
-      .frame(maxHeight: .infinity)
-      .scrollIndicators(.hidden)
+      }, onCompleted: {
+        addToLog("Process completed")
+      })
+      .disposed(by: disposeBag)
+  }
+  
+  func onDeviceDisconnected(device: NfcDevice) {
+    addToLog("Card disconnected")
+  }
+  
+  func onWrongTagDetected() {
+    addToLog("Wrong card type detected")
+    nfcManager?.invalidateSession(error: "This is not a Fidesmo card")
+    
+    DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+      isLoading = false
     }
   }
-}
-
-struct FidesmoStepSix: SheetPage {
-  var shouldShowBackButton: Bool = false
-  var height: CGFloat = 350
-  var title: String = "Finished!"
   
-  let onNext: () -> Void
-  
-  var body: some View {
-    VStack(alignment: .center) {
-      GenImages.CommonImages.icLogo.swiftUIImage
-      .padding(.vertical, 25)
-      
-      Text("CARD ACTIVATED")
-        .frame(maxWidth: .infinity, alignment: .center)
-        .lineSpacing(1.2)
-        .font(Fonts.regular.swiftUIFont(size: 26))
-        .foregroundColor(Colors.label.swiftUIColor)
-      
-      Spacer()
-      
-      FullSizeButton(
-        title: "Done",
-        isDisable: false,
-        type: .alternative
-      ) {
-        onNext()
-      }
-    }
-    .frame(maxWidth: .infinity)
+  func onSessionStarted() {
+    addToLog("NFC session started")
   }
-}
-
-protocol SheetPage: View {
-  var shouldShowBackButton: Bool { get }
-  var height: CGFloat { get }
-  var title: String { get }
+  
+  func onSessionInvalidated(error: Error?) {
+    addToLog("NFC session ended")
+    if let error = error {
+      addToLog("Error: " + error.localizedDescription)
+    }
+  }
 }
