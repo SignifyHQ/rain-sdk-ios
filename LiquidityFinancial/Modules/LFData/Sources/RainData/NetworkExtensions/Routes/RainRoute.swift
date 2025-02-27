@@ -7,6 +7,7 @@ import LFUtilities
 public enum RainRoute {
   case getOnboardingMissingSteps
   case getExternalVerificationLink
+  case acceptTerms
   case createAccount(parameters: APIRainPersonParameters)
   case getCollateralContract
   case getCreditBalance
@@ -20,6 +21,8 @@ extension RainRoute: LFRoute {
       return "/v1/rain/onboarding/missing-steps"
     case .getExternalVerificationLink:
       return "/v1/rain/person/application-external-verification-link"
+    case .acceptTerms:
+      return "/v1/rain/onboarding/accept-terms"
     case .createAccount:
       return "/v1/rain/person/create-account"
     case .getCollateralContract:
@@ -38,7 +41,7 @@ extension RainRoute: LFRoute {
         .getCollateralContract,
         .getCreditBalance:
       return .GET
-    case .createAccount, .getWithdrawalSignature:
+    case .acceptTerms, .createAccount, .getWithdrawalSignature:
       return .POST
     }
   }
@@ -57,6 +60,7 @@ extension RainRoute: LFRoute {
     switch self {
     case .getOnboardingMissingSteps,
         .getExternalVerificationLink,
+        .acceptTerms,
         .getCollateralContract,
         .getCreditBalance:
       return nil
@@ -71,6 +75,7 @@ extension RainRoute: LFRoute {
     switch self {
     case .getOnboardingMissingSteps,
         .getExternalVerificationLink,
+        .acceptTerms,
         .getCollateralContract,
         .getCreditBalance:
       return nil

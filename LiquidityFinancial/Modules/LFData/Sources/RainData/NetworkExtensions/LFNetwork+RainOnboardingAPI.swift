@@ -15,6 +15,14 @@ extension LFCoreNetwork: RainAPIProtocol where R == RainRoute {
     return APIRainOnboardingMissingSteps(processSteps: result)
   }
   
+  public func acceptTerms() async throws {
+    try await requestNoResponse(
+      RainRoute.acceptTerms,
+      failure: LFErrorObject.self,
+      decoder: .apiDecoder
+    )
+  }
+  
   public func createRainAccount(parameters: APIRainPersonParameters) async throws -> APIRainPerson {
     try await request(
       RainRoute.createAccount(parameters: parameters),

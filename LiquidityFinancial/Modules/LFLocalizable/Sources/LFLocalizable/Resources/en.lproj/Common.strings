@@ -1359,13 +1359,25 @@ contact support.";
 "notification_popup.dismiss" = "Not now";
 
 // Terms
-"term.privacyPolicy.description" = "By tapping 'Continue', you agree to our Terms, E-sign consent, Privacy Policy, Card Terms and Opening Account Disclosures.";
+"term.cardTerms.title" = "AGREE TO CARD TERMS";
+
 "term.termsVoip.description" = "Using VOIP or Google Voice numbers can result in onboarding delays. We NEVER share your phone number with third parties for marketing, per our Privacy Policy.";
+
+"term.esignConsent.description" = "I accept the E-Sign Consent";
+"term.avalancheTerms.description" = "I accept the Avalanche App terms";
+"term.privacyPolicy.description" = "I accept the Privacy Policy";
+
+"term.esignConsent.attributeText" = "E-Sign Consent";
+"term.terms.attributeText" = "Avalanche App terms";
 "term.privacyPolicy.attributeText" = "Privacy Policy";
-"term.esignConsent.attributeText" = "E-sign consent";
-"term.terms.attributeText" = "Terms";
+
+"term.accountDisclosures.description" = "I accept the Opening Account Privacy Disclosures";
+"term.cardTerms.description" = "I accept the Card Terms";
+"term.accurateInformation.description" = "I certify that the information I have provided is accurate and I will abide by all the rules and requirements of my Avalanche Card";
+"term.acknowledgement.description" = "I acknowledge that I was not solicited for this product";
+
+"term.accountDisclosures.attributeText" = "Opening Account Privacy Disclosures";
 "term.cardTerms.attributeText" = "Card Terms";
-"term.accountDisclosures.attributeText" = "Opening Account Disclosures";
 
 // BlockingFiat
 "BlockingFiatView.title" = "BANKING PARTNER UPDATE";
@@ -1392,7 +1404,7 @@ We will be in touch shortly to invite you to get your new card.";
 
 // Application Review Status
 "applicationReviewStatus.missingInformation.message" = "The information you have entered is not complete, you need to contact us via email to add some necessary information.";
-"applicationReviewStatus.identityVerification.title" = "DRIVER’s LICENSE, ID OR PASSPORT";
+"applicationReviewStatus.identityVerification.title" = "DRIVER’S LICENSE, ID OR PASSPORT";
 "applicationReviewStatus.identityVerification.message" = "Please verify your identity with a valid Driver’s License, ID or Passport.";
 "applicationReviewStatus.fail.title" = "WE’RE SORRY";
 "applicationReviewStatus.fail.message" = "Based on the information you entered, we were unable to create a Depository account at this time. We will be in touch via email.";

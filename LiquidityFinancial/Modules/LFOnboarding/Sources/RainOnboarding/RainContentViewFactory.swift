@@ -57,6 +57,8 @@ extension RainContentViewFactory {
       return AnyView(unclearView(message: message))
     case .forceUpdate(let model):
       return AnyView(forceUpdateView(model: model))
+    case .acceptTerms:
+      return AnyView(acceptTermsView)
     }
   }
 }
@@ -161,6 +163,16 @@ private extension RainContentViewFactory {
   }
   
   @MainActor
+  var acceptTermsView: some View {
+    CardTermsView(
+      viewModel: CardTermsViewModel(
+        handleOnboardingStep: flowCoordinator.fetchOnboardingMissingSteps,
+        forceLogout: flowCoordinator.forceLogout
+      )
+    )
+  }
+  
+  @MainActor
   var missingInformationView: some View {
     AccountReviewStatusView(
       viewModel: AccountReviewStatusViewModel(
@@ -198,6 +210,7 @@ extension RainContentViewFactory {
     case unclear(String)
     case welcome(WelcomeType)
     case forceUpdate(FeatureConfigModel)
+    case acceptTerms
   }
   
   enum WelcomeType {

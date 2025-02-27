@@ -59,7 +59,11 @@ public struct TextTappable: UIViewRepresentable {
     textView.backgroundColor = UIColor.clear
     textView.delegate = context.coordinator
     textView.isScrollEnabled = false
+    
     textView.textAlignment = .center
+    textView.contentInset = .zero
+    textView.textContainerInset = .zero
+    
     textView.attributedText = attributedText
     textView.linkTextAttributes = linkTextAttributes
     return textView

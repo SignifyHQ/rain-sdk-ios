@@ -11,13 +11,17 @@ import EnvironmentService
 
 public struct PhoneNumberView: View {
   @InjectedObject(\.onboardingDestinationObservable) var onboardingDestinationObservable
-  
   @Environment(\.presentationMode) var presentation
-  @FocusState private var keyboardFocus: Bool
+  
   @StateObject var viewModel: PhoneNumberViewModel
+  
+  @FocusState private var keyboardFocus: Bool
+  
   @State var openSafariType: PhoneNumberViewModel.OpenSafariType?
   
-  public init(viewModel: PhoneNumberViewModel) {
+  public init(
+    viewModel: PhoneNumberViewModel
+  ) {
     _viewModel = .init(wrappedValue: viewModel)
   }
   
@@ -26,8 +30,9 @@ public struct PhoneNumberView: View {
       VStack {
         logoImageView
         phoneNumberView
-        voipTermView
+        
         Spacer()
+        
         footerView
       }
       
@@ -59,7 +64,9 @@ public struct PhoneNumberView: View {
     .background(Colors.background.swiftUIColor)
     .navigationBarTitleDisplayMode(.inline)
     .navigationBarBackButtonHidden()
-    .navigationLink(item: $onboardingDestinationObservable.phoneNumberDestinationView) { item in
+    .navigationLink(
+      item: $onboardingDestinationObservable.phoneNumberDestinationView
+    ) { item in
       switch item {
       case let .verificationCode(destinationView):
         destinationView
@@ -85,14 +92,6 @@ public struct PhoneNumberView: View {
         if let url = viewModel.getURL(tappedString: viewModel.privacyPolicy) {
           SFSafariViewWrapper(url: url)
         }
-      case .cardTerms:
-        if let url = viewModel.getURL(tappedString: viewModel.cardTerms) {
-          SFSafariViewWrapper(url: url)
-        }
-      case .accountDisclosure:
-        if let url = viewModel.getURL(tappedString: viewModel.accountDisclosures) {
-          SFSafariViewWrapper(url: url)
-        }
       }
     }
     .navigationBarHidden(true)
@@ -103,21 +102,17 @@ public struct PhoneNumberView: View {
 // MARK: - Header View Components
 private extension PhoneNumberView {
   var logoImageView: some View {
-    VStack {
-      Rectangle()
-        .fill(.clear)
-        .frame(maxWidth: .infinity)
-        .frame(height: 60)
-      
-      GenImages.Images.icLogo.swiftUIImage
-        .resizable()
-        .scaledToFit()
-        .frame(120)
-        .accessibilityIdentifier(LFAccessibility.PhoneNumber.logoImage)
-        .onTapGesture(count: ViewConstant.magicTapCount) {
-          viewModel.onActiveSecretMode()
-        }
-    }
+    GenImages.Images.icLogo.swiftUIImage
+      .resizable()
+      .scaledToFit()
+      .frame(120)
+      .accessibilityIdentifier(LFAccessibility.PhoneNumber.logoImage)
+      .onTapGesture(
+        count: ViewConstant.magicTapCount
+      ) {
+        viewModel.onActiveSecretMode()
+      }
+      .padding(.top, 70)
   }
 }
 
@@ -171,7 +166,7 @@ private extension PhoneNumberView {
           }
           .onAppear {
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-              if viewModel.isButtonDisabled {
+              if !viewModel.isButtonEnabled {
                 keyboardFocus = true
               }
             }
@@ -208,30 +203,18 @@ private extension PhoneNumberView {
     }
     .floatingShadow()
   }
-  
-  var voipTermView: some View {
-    TextTappable(
-      text: L10N.Common.Term.TermsVoip.description,
-      textAlignment: .center,
-      fontSize: Constants.FontSize.ultraSmall.value,
-      links: [L10N.Common.Term.PrivacyPolicy.attributeText],
-      style: .fillColor(Colors.termAndPrivacy.color)
-    ) { _ in
-      openSafariType = .privacy
-    }
-    .accessibilityIdentifier(LFAccessibility.PhoneNumber.voipTermTextTappable)
-    .frame(height: 90)
-  }
 }
 
 // MARK: Footer View Components
 private extension PhoneNumberView {
   var footerView: some View {
     VStack(spacing: 5) {
+      termsView
       secretModeView
+      
       FullSizeButton(
         title: L10N.Common.Button.Continue.title,
-        isDisable: viewModel.isButtonDisabled,
+        isDisable: !viewModel.isButtonEnabled,
         isLoading: $viewModel.isLoading
       ) {
         viewModel.isLoading = true
@@ -240,10 +223,6 @@ private extension PhoneNumberView {
         viewModel.performGetOTP()
       }
       .accessibilityIdentifier(LFAccessibility.PhoneNumber.continueButton)
-      
-      if viewModel.isShowConditions {
-        conditionView
-      }
     }
     .padding(.bottom, 12)
   }
@@ -261,31 +240,66 @@ private extension PhoneNumberView {
     }
   }
   
-  var conditionView: some View {
-    TextTappable(
-      text: L10N.Common.Term.PrivacyPolicy.description,
-      textAlignment: .center,
-      fontSize: Constants.FontSize.ultraSmall.value,
-      links: [
-        viewModel.terms,
-        viewModel.esignConsent,
-        viewModel.privacyPolicy,
-        viewModel.cardTerms,
-        viewModel.accountDisclosures
-      ],
-      style: .fillColor(Colors.termAndPrivacy.color)
-    ) { tappedString in
-      switch tappedString {
-      case viewModel.terms: openSafariType = .term
-      case viewModel.privacyPolicy: openSafariType = .privacy
-      case viewModel.esignConsent: openSafariType = .consent
-      case viewModel.cardTerms: openSafariType = .cardTerms
-      case viewModel.accountDisclosures: openSafariType = .accountDisclosure
-      default: break
-      }
+  @ViewBuilder
+  private func checkBoxImage(
+    isChecked: Binding<Bool>
+  ) -> some View {
+    if isChecked.wrappedValue {
+      GenImages.Images.termsCheckboxSelected.swiftUIImage
+    } else {
+      GenImages.CommonImages.termsCheckboxDeselected.swiftUIImage
+        .foregroundColor(Colors.Buttons.highlightButton.swiftUIColor)
     }
-    .accessibilityIdentifier(LFAccessibility.PhoneNumber.conditionTextTappable)
-    .frame(height: 75)
+  }
+  
+  private var termsView: some View {
+    VStack {
+      termsLine(text: L10N.Common.Term.EsignConsent.description, isChecked: $viewModel.isEsignAgreed)
+      termsLine(text: L10N.Common.Term.AvalancheTerms.description, isChecked: $viewModel.areTermsAgreed)
+      termsLine(text: L10N.Common.Term.PrivacyPolicy.description, isChecked: $viewModel.isPrivacyAgreed)
+    }
+    .padding(.bottom, 5)
+  }
+  
+  private func termsLine(
+    text: String,
+    isChecked: Binding<Bool>
+  ) -> some View {
+    HStack(
+      alignment: .center,
+      spacing: 0
+    ) {
+      checkBoxImage(
+        isChecked: isChecked
+      )
+      .onTapGesture {
+        isChecked.wrappedValue.toggle()
+      }
+      
+      TextTappable(
+        text: text,
+        textAlignment: .left,
+        fontSize: Constants.FontSize.ultraSmall.value,
+        links: [
+          viewModel.esignConsent,
+          viewModel.terms,
+          viewModel.privacyPolicy
+        ],
+        style: .fillColor(Colors.termAndPrivacy.color)
+      ) { tappedString in
+        switch tappedString {
+        case viewModel.esignConsent:
+          openSafariType = .consent
+        case viewModel.terms:
+          openSafariType = .term
+        case viewModel.privacyPolicy:
+          openSafariType = .privacy
+          
+        default: break
+        }
+      }
+      .frame(height: 10)
+    }
   }
 }
 

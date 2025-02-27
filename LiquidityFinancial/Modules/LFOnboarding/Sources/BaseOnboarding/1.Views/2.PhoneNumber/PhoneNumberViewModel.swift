@@ -32,8 +32,11 @@ public final class PhoneNumberViewModel: ObservableObject {
   
   @Published var isSecretMode: Bool = false
   @Published var isLoading: Bool = false
-  @Published var isButtonDisabled: Bool = true
-  @Published var isShowConditions: Bool = false
+  @Published var isButtonEnabled: Bool = true
+  
+  @Published var isEsignAgreed: Bool = false
+  @Published var areTermsAgreed: Bool = false
+  @Published var isPrivacyAgreed: Bool = false
   
   @Published var selectedCountry: Country = .US
   @Published var phoneNumber: String = ""
@@ -43,8 +46,6 @@ public final class PhoneNumberViewModel: ObservableObject {
   let terms = L10N.Common.Term.Terms.attributeText
   let esignConsent = L10N.Common.Term.EsignConsent.attributeText
   let privacyPolicy = L10N.Common.Term.PrivacyPolicy.attributeText
-  let cardTerms = L10N.Common.Term.CardTerms.attributeText
-  let accountDisclosures = L10N.Common.Term.AccountDisclosures.attributeText
   
   lazy var requestOtpUseCase: RequestOTPUseCaseProtocol = {
     RequestOTPUseCase(repository: onboardingRepository)
@@ -79,7 +80,7 @@ public final class PhoneNumberViewModel: ObservableObject {
     self.setRouteToAccountLocked = setRouteToAccountLocked
     
     UserDefaults.isStartedWithLoginFlow = true
-    observePhoneInput()
+    observeInput()
   }
 }
 
@@ -134,9 +135,7 @@ extension PhoneNumberViewModel {
     let urlMapping: [String: String] = [
       terms: LFUtilities.termsURL,
       esignConsent: LFUtilities.consentURL,
-      privacyPolicy: LFUtilities.privacyURL,
-      cardTerms: selectedCountry == .US ? LFUtilities.cardTermsURLUs : LFUtilities.cardTermsURLInt,
-      accountDisclosures: LFUtilities.accountDisclosureURL
+      privacyPolicy: LFUtilities.privacyURL
     ]
     
     return urlMapping[tappedString].flatMap { URL(string: $0) }
@@ -158,19 +157,16 @@ private extension PhoneNumberViewModel {
     }
   }
   
-  func observePhoneInput() {
-    $phoneNumber
+  private func observeInput() {
+    Publishers.CombineLatest4($phoneNumber, $isEsignAgreed, $areTermsAgreed, $isPrivacyAgreed)
       .receive(on: DispatchQueue.main)
-      .sink { [weak self] phoneNumber in
+      .sink { [weak self] phoneNumber, isEsignAgreed, areTermsAgreed, isPrivacyAgreed in
         guard let self else { return }
         
         let phoneNumberMinLength = Constants.MinCharacterLimit.phoneNumber.value
         let isPhoneNumberFormatted = phoneNumber.reformatPhone.count >= phoneNumberMinLength
         
-        self.isButtonDisabled = !isPhoneNumberFormatted
-        withAnimation {
-          self.isShowConditions = isPhoneNumberFormatted
-        }
+        self.isButtonEnabled = isPhoneNumberFormatted && isEsignAgreed && areTermsAgreed && isPrivacyAgreed
       }
       .store(in: &cancellables)
   }
@@ -206,7 +202,5 @@ extension PhoneNumberViewModel {
     case term
     case consent
     case privacy
-    case cardTerms
-    case accountDisclosure
   }
 }

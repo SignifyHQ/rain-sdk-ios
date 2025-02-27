@@ -301,6 +301,8 @@ private extension RainOnboardingFlowCoordinator {
       set(route: .missingInformation)
     } else if steps.contains(.needsVerification) {
       set(route: .identifyVerification)
+    } else if steps.contains(.acceptTerms) {
+      set(route: .acceptTerms)
     }
   }
   
@@ -337,6 +339,7 @@ public extension RainOnboardingFlowCoordinator {
     case recoverWallet
     case unclear(String)
     case forceUpdate(FeatureConfigModel)
+    case acceptTerms
     
     public var id: String {
       String(describing: self)

@@ -12,6 +12,7 @@ public protocol AccountDataStorageProtocol {
   var userNameDisplay: String { get set }
   var userEmail: String { get set }
   var addressDetail: String { get }
+  var country: String? { get }
   var fiatAccountID: String? { get set }
   var cryptoAccountID: String? { get set }
   var externalAccountID: String? { get set }

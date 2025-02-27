@@ -74,6 +74,9 @@ private extension RainOnboardingContentView {
       case .forceUpdate(let model):
         contentViewFactory
           .createView(type: .forceUpdate(model))
+      case .acceptTerms:
+        contentViewFactory
+          .createView(type: .acceptTerms)
       }
     }
     .onAppear {

@@ -12,6 +12,10 @@ public class RainRepository: RainRepositoryProtocol {
     try await rainAPI.getOnboardingMissingSteps()
   }
   
+  public func acceptTerms() async throws {
+    try await rainAPI.acceptTerms()
+  }
+  
   public func createRainAccount(parameters: RainPersonParametersEntity) async throws -> RainPersonEntity {
     guard let parameters = parameters as? APIRainPersonParameters else {
       throw "Can't map paramater :\(parameters)"

@@ -69,6 +69,10 @@ public class AccountDataManager: AccountDataStorageProtocol {
       .filter { !$0.isEmpty }
       .joined(separator: ", ")
   }
+  
+  public var country: String? {
+    userInfomationData.country
+  }
 
   public var fiatAccountID: String?
   public var cryptoAccountID: String?
