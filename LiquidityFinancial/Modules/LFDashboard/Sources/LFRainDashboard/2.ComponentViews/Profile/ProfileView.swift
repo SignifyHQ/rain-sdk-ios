@@ -394,7 +394,7 @@ extension BottomSheetView: NfcConnectionDelegate {
     // Get device description and service details
     connection.getDescription(dispatcher: apiDispatcher)
       .flatMap { deviceDescription -> Observable<DeliveryProgress> in
-        addToLog("Card identified: \(deviceDescription.deviceId)")
+          addToLog("Card identified: \(deviceDescription.name)")
         
         // Begin delivery process
         return DeliveryManager(connection: Observable.just(connection), dispatcher: apiDispatcher)

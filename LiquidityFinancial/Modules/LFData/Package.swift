@@ -47,7 +47,7 @@ let package = Package(
     .package(name: "LFUtilities", path: "../LFUtilities"),
     .package(name: "LFServices", path: "../LFServices"),
     .package(name: "TestHelpers", path: "../TestHelpers"),
-    .package(url: "https://github.com/hmlongco/Factory", from: "2.3.1"),
+    .package(url: "https://github.com/hmlongco/Factory", .exact("2.3.2")),
     .package(url: "https://github.com/krzysztofzablocki/Sourcery.git", from: "2.0.0")
   ],
   targets: [

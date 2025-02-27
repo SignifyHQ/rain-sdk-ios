@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 56;
+	objectVersion = 60;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -469,6 +469,19 @@
 		E22B07E22CC7F11D0016E8B1 /* GoogleService-Info-Dev.plist in Resources */ = {isa = PBXBuildFile; fileRef = E22B07E12CC7F11D0016E8B1 /* GoogleService-Info-Dev.plist */; };
 		E22B07E42CC7F2710016E8B1 /* GoogleService-Info-Prod.plist in Resources */ = {isa = PBXBuildFile; fileRef = E22B07E32CC7F2710016E8B1 /* GoogleService-Info-Prod.plist */; };
 		E2D7E8FB2D5DC7EB00C6540B /* collateralJsonABI.json in Resources */ = {isa = PBXBuildFile; fileRef = E2D7E8FA2D5DC7EB00C6540B /* collateralJsonABI.json */; };
+		F6705FF22D70D25B00FEDAC4 /* CoreNfcBridge.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = F6705FEC2D70D25700FEDAC4 /* CoreNfcBridge.xcframework */; };
+		F6705FF32D70D25B00FEDAC4 /* CoreNfcBridge.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = F6705FEC2D70D25700FEDAC4 /* CoreNfcBridge.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		F6705FF42D70D25D00FEDAC4 /* CryptoSwift.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = F6705FED2D70D25700FEDAC4 /* CryptoSwift.xcframework */; };
+		F6705FF52D70D25D00FEDAC4 /* CryptoSwift.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = F6705FED2D70D25700FEDAC4 /* CryptoSwift.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		F6705FF62D70D25E00FEDAC4 /* FidesmoCore.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = F6705FEA2D70D24900FEDAC4 /* FidesmoCore.xcframework */; };
+		F6705FF72D70D25E00FEDAC4 /* FidesmoCore.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = F6705FEA2D70D24900FEDAC4 /* FidesmoCore.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		F6705FFE2D70D2C600FEDAC4 /* RxCocoa.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = F6705FFA2D70D2C400FEDAC4 /* RxCocoa.xcframework */; };
+		F6705FFF2D70D2C600FEDAC4 /* RxCocoa.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = F6705FFA2D70D2C400FEDAC4 /* RxCocoa.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		F67060002D70D2C700FEDAC4 /* RxSwift.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = F6705FFB2D70D2C400FEDAC4 /* RxSwift.xcframework */; };
+		F67060012D70D2C700FEDAC4 /* RxSwift.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = F6705FFB2D70D2C400FEDAC4 /* RxSwift.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		F670600F2D70D8BC00FEDAC4 /* RxBlocking.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = F67060082D70D88A00FEDAC4 /* RxBlocking.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		F67060102D70D8BE00FEDAC4 /* RxRelay.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = F67060092D70D88A00FEDAC4 /* RxRelay.xcframework */; };
+		F67060112D70D8BE00FEDAC4 /* RxRelay.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = F67060092D70D88A00FEDAC4 /* RxRelay.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -515,6 +528,26 @@
 			remoteInfo = CauseCard;
 		};
 /* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		F6CF4D1C2D709946009A9F2E /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				F67060012D70D2C700FEDAC4 /* RxSwift.xcframework in Embed Frameworks */,
+				F6705FF52D70D25D00FEDAC4 /* CryptoSwift.xcframework in Embed Frameworks */,
+				F6705FFF2D70D2C600FEDAC4 /* RxCocoa.xcframework in Embed Frameworks */,
+				F6705FF72D70D25E00FEDAC4 /* FidesmoCore.xcframework in Embed Frameworks */,
+				F670600F2D70D8BC00FEDAC4 /* RxBlocking.xcframework in Embed Frameworks */,
+				F6705FF32D70D25B00FEDAC4 /* CoreNfcBridge.xcframework in Embed Frameworks */,
+				F67060112D70D8BE00FEDAC4 /* RxRelay.xcframework in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		06189EF82AD840A200F279B4 /* CommonLogicUtils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommonLogicUtils.swift; sourceTree = "<group>"; };
@@ -823,6 +856,14 @@
 		E22B07E12CC7F11D0016E8B1 /* GoogleService-Info-Dev.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info-Dev.plist"; sourceTree = "<group>"; };
 		E22B07E32CC7F2710016E8B1 /* GoogleService-Info-Prod.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info-Prod.plist"; sourceTree = "<group>"; };
 		E2D7E8FA2D5DC7EB00C6540B /* collateralJsonABI.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = collateralJsonABI.json; sourceTree = "<group>"; };
+		F6705FEA2D70D24900FEDAC4 /* FidesmoCore.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = FidesmoCore.xcframework; path = Frameworks/FidesmoCore.xcframework; sourceTree = "<group>"; };
+		F6705FEC2D70D25700FEDAC4 /* CoreNfcBridge.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = CoreNfcBridge.xcframework; path = Frameworks/CoreNfcBridge.xcframework; sourceTree = "<group>"; };
+		F6705FED2D70D25700FEDAC4 /* CryptoSwift.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = CryptoSwift.xcframework; path = Frameworks/CryptoSwift.xcframework; sourceTree = "<group>"; };
+		F6705FFA2D70D2C400FEDAC4 /* RxCocoa.xcframework */ = {isa = PBXFileReference; expectedSignature = "AppleDeveloperProgram:2J3Q98FQPS:Rain Liquidity LLC"; lastKnownFileType = wrapper.xcframework; name = RxCocoa.xcframework; path = Frameworks/RxCocoa.xcframework; sourceTree = "<group>"; };
+		F6705FFB2D70D2C400FEDAC4 /* RxSwift.xcframework */ = {isa = PBXFileReference; expectedSignature = "AppleDeveloperProgram:2J3Q98FQPS:Rain Liquidity LLC"; lastKnownFileType = wrapper.xcframework; name = RxSwift.xcframework; path = Frameworks/RxSwift.xcframework; sourceTree = "<group>"; };
+		F67060082D70D88A00FEDAC4 /* RxBlocking.xcframework */ = {isa = PBXFileReference; expectedSignature = "AppleDeveloperProgram:2J3Q98FQPS:Rain Liquidity LLC"; lastKnownFileType = wrapper.xcframework; name = RxBlocking.xcframework; path = Frameworks/RxBlocking.xcframework; sourceTree = "<group>"; };
+		F67060092D70D88A00FEDAC4 /* RxRelay.xcframework */ = {isa = PBXFileReference; expectedSignature = "AppleDeveloperProgram:2J3Q98FQPS:Rain Liquidity LLC"; lastKnownFileType = wrapper.xcframework; name = RxRelay.xcframework; path = Frameworks/RxRelay.xcframework; sourceTree = "<group>"; };
+		F670600A2D70D88A00FEDAC4 /* RxTest.xcframework */ = {isa = PBXFileReference; expectedSignature = "AppleDeveloperProgram:2J3Q98FQPS:Rain Liquidity LLC"; lastKnownFileType = wrapper.xcframework; name = RxTest.xcframework; path = Frameworks/RxTest.xcframework; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -911,19 +952,25 @@
 				A94F71FF2A6266D0002ADB34 /* AuthorizationManager in Frameworks */,
 				A963D3FB2A67081D006B9A54 /* NetSpendData in Frameworks */,
 				06154BA42B21C73500CABABB /* BiometricsManager in Frameworks */,
+				F6705FFE2D70D2C600FEDAC4 /* RxCocoa.xcframework in Frameworks */,
 				A980DF772A5FA26E000B3C09 /* LFUtilities in Frameworks */,
 				06D40C012A62AE3700EADB75 /* iPhoneNumberField in Frameworks */,
 				A90B5CBD2B1737960092E430 /* LFAuthentication in Frameworks */,
 				A90B5CB72B16E3C60092E430 /* LFFeatureFlags in Frameworks */,
 				06663AF92ADE398E00A3FF12 /* LFAccessibility in Frameworks */,
+				F67060102D70D8BE00FEDAC4 /* RxRelay.xcframework in Frameworks */,
 				A97BF7EE2A5D719000B8F5CA /* Lottie in Frameworks */,
+				F67060002D70D2C700FEDAC4 /* RxSwift.xcframework in Frameworks */,
 				A91D86652A8CC813006D40D4 /* NetworkUtilities in Frameworks */,
 				A91D86632A8C7858006D40D4 /* CoreNetwork in Frameworks */,
 				06FB47082A7AAE430050304C /* PinwheelSDK in Frameworks */,
 				067C77272BF5E84B00AA8EE1 /* LFRainDashboard in Frameworks */,
 				74CB167D2A9853F800C137F3 /* FirebaseAnalyticsSwift in Frameworks */,
 				A94F71F52A61CAC6002ADB34 /* LFLocalizable in Frameworks */,
+				F6705FF42D70D25D00FEDAC4 /* CryptoSwift.xcframework in Frameworks */,
+				F6705FF22D70D25B00FEDAC4 /* CoreNfcBridge.xcframework in Frameworks */,
 				A9D582542AF89873006DA0BF /* Services in Frameworks */,
+				F6705FF62D70D25E00FEDAC4 /* FidesmoCore.xcframework in Frameworks */,
 				749091172A6584C300071B41 /* SmartyStreets in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1361,8 +1408,16 @@
 		A953545B2A5DD7F4008B0FAB /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				A98779CC2B6A0BC100F342DD /* XCTest.framework */,
+				F67060082D70D88A00FEDAC4 /* RxBlocking.xcframework */,
+				F67060092D70D88A00FEDAC4 /* RxRelay.xcframework */,
+				F670600A2D70D88A00FEDAC4 /* RxTest.xcframework */,
+				F6705FFA2D70D2C400FEDAC4 /* RxCocoa.xcframework */,
+				F6705FFB2D70D2C400FEDAC4 /* RxSwift.xcframework */,
+				F6705FEC2D70D25700FEDAC4 /* CoreNfcBridge.xcframework */,
+				F6705FED2D70D25700FEDAC4 /* CryptoSwift.xcframework */,
+				F6705FEA2D70D24900FEDAC4 /* FidesmoCore.xcframework */,
 				A9D191702AD9E32200AA31DF /* CoreTelephony.framework */,
+				A98779CC2B6A0BC100F342DD /* XCTest.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -2262,6 +2317,7 @@
 				A97BF7B92A5C602D00B8F5CA /* Frameworks */,
 				A97BF7BA2A5C602D00B8F5CA /* Resources */,
 				A9B1DAE42A5FC60C003F3C3C /* Swiftlint (Debug Only) */,
+				F6CF4D1C2D709946009A9F2E /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
@@ -3477,6 +3533,7 @@
 				DEVELOPMENT_ASSET_PATHS = "";
 				DEVELOPMENT_TEAM = 2J3Q98FQPS;
 				ENABLE_PREVIEWS = YES;
+				ENABLE_TESTING_SEARCH_PATHS = YES;
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = "${SRCROOT}/LiquidityFinancial/Avalanche/Resources/Avalanche-Info.plist";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.finance";
@@ -3518,6 +3575,7 @@
 				DEVELOPMENT_ASSET_PATHS = "";
 				DEVELOPMENT_TEAM = 2J3Q98FQPS;
 				ENABLE_PREVIEWS = YES;
+				ENABLE_TESTING_SEARCH_PATHS = YES;
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = "${SRCROOT}/LiquidityFinancial/Avalanche/Resources/Avalanche-Info.plist";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.finance";

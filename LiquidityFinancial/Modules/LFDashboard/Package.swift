@@ -34,7 +34,6 @@ let package = Package(
     .package(name: "LFAuthentication", path: "../LFAuthentication"),
     .package(url: "https://github.com/twostraws/CodeScanner", from: "2.0.0"),
     .package(url: "https://github.com/SwiftGen/SwiftGenPlugin", from: "6.6.2"),
-    .package(url: "https://github.com/ReactiveX/RxSwift.git", from: "6.0.0")
   ],
   targets: [
     .target(
@@ -86,8 +85,6 @@ let package = Package(
         .product(name: "BiometricsManager", package: "LFAuthentication"),
         .product(name: "LFAuthentication", package: "LFAuthentication"),
         .product(name: "RainOnboarding", package: "LFOnboarding"),
-        .product(name: "RxSwift", package: "RxSwift"),
-        .product(name: "RxCocoa", package: "RxSwift")
       ]
     ),
     .target(
