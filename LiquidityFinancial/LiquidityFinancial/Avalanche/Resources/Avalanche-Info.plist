@@ -88,6 +88,15 @@
 				<key>NSIncludesSubdomains</key>
 				<true/>
 			</dict>
+			<key>api.fidesmo.com</key>
+			<dict>
+				<key>NSExceptionAllowsInsecureHTTPLoads</key>
+				<false/>
+				<key>NSIncludesSubdomains</key>
+				<true/>
+				<key>NSExceptionRequiresForwardSecrecy</key>
+				<false/>
+			</dict>
 		</dict>
 	</dict>
 	<key>NSCameraUsageDescription</key>
@@ -103,6 +112,30 @@
 	<key>com.apple.developer.nfc.readersession.formats</key>
 	<array>
 		<string>TAG</string>
+	</array>
+	<key>com.apple.developer.nfc.readersession.iso7816.select-identifiers</key>
+	<array>
+		<string>A000000151000000</string>
+		<string>A000000004000000</string>
+		<string>A000000003000000</string>
+		<string>A00000061702000900010101</string>
+		<string>A000000617020002000001</string>
+		<string>A000000617020002000002</string>
+		<string>A00000061702000A00010101</string>
+		<string>A00000061701</string>
+		<string>A00000061703</string>
+		<string>A00000015153504341534400</string>
+		<string>A00000061703A011</string>
+		<string>A00000061703A012</string>
+		<string>325041592E</string>
+		<string>A00000061701F374C57E</string>
+		<string>A00000061701AF1CC990</string>
+		<string>A00000061701D7D13E65</string>
+		<string>A00000061701F13611B2</string>
+		<string>A000000781</string>
+		<string>A00000061701F02A1083</string>
+		<string>D2760000850101</string>
+		<string>A00000061701D216E4F9</string>
 	</array>
 	<key>PATHWARD_DISCLOSURE_URL</key>
 	<string>$(PATHWARD_DISCLOSURE_URL)</string>
