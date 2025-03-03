@@ -34,6 +34,10 @@ public class AccountDataManager: AccountDataStorageProtocol {
     }
   }
   
+  public var phoneCode: String {
+    UserDefaults.phoneCode
+  }
+  
   public var phoneNumber: String {
     UserDefaults.phoneNumber
   }
@@ -91,6 +95,10 @@ public class AccountDataManager: AccountDataStorageProtocol {
   public func update(lastName: String?) {
     self.userInfomationData.lastName = lastName
   }
+  
+//  public func update(phoneCode: String?) {
+//    self.userInfomationData.phoneCode
+//  }
   
   public func update(phone: String?) {
     self.userInfomationData.phone = phone
@@ -162,6 +170,10 @@ public class AccountDataManager: AccountDataStorageProtocol {
   
   public func update(missingSteps: [String]?) {
     self.userInfomationData.missingSteps = missingSteps
+  }
+  
+  public func stored(phoneCode: String) {
+    UserDefaults.phoneCode = phoneCode
   }
   
   public func stored(phone: String) {

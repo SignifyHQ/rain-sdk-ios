@@ -97,7 +97,7 @@ private extension PersonalInformationViewModel {
     }
     
     if accountDataManager.userInfomationData.phone == nil {
-      accountDataManager.update(phone: UserDefaults.phoneNumber)
+      accountDataManager.update(phone: UserDefaults.phoneCode + UserDefaults.phoneNumber)
     }
   }
 }

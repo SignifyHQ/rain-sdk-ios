@@ -9,6 +9,7 @@ public extension Key {
   static let bearerRefreshToken: Key = "bearerRefreshToken"
   static let portalSessionToken: Key = "portalSessionToken"
   static let environmentSelection: Key = "EnvironmentSelection"
+  static let phoneCode: Key = "UserPhoneCode"
   static let phoneNumber: Key = "UserPhoneNumber"
   static let userEmail: Key = "UserEmail"
   static let userSessionID: Key = "UserSessionID"

@@ -96,20 +96,18 @@ struct AddressView: View {
     ) {
       ToastView(toastMessage: $0)
     }
-    .popup(item: $viewModel.popup) { item in
-      switch item {
-      case let .waitlist(message):
-        waitlistPopup(message: message)
-      case .waitlistJoined:
-        waitlistJoinedPopup
-      }
-    }
     .onAppear {
       viewModel.onAppear()
       DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
         keyboardFocus = .address1
       }
     }
+    .navigationLink(
+      isActive: $viewModel.shouldProceedToNextStep,
+      destination: {
+        CompleteYourProfileView()
+      }
+    )
     .navigationBarBackButtonHidden(viewModel.isLoading)
     .track(name: String(describing: type(of: self)))
   }
@@ -313,29 +311,6 @@ private extension AddressView {
     }
     .padding(.horizontal, 30)
     .padding(.bottom, 12)
-  }
-  
-  func waitlistPopup(message: String) -> some View {
-    LiquidityAlert(
-      title: L10N.Common.accountUpdate,
-      message: message,
-      primary: .init(text: L10N.Common.joinWaitlist) {
-        viewModel.joinWaitlist()
-      },
-      secondary: .init(text: L10N.Common.cancelAccount) {
-        viewModel.logout()
-      }
-    )
-  }
-  
-  var waitlistJoinedPopup: some View {
-    LiquidityAlert(
-      title: L10N.Common.waitlistJoinedTitle,
-      message: L10N.Common.waitlistJoinedMessage,
-      primary: .init(text: L10N.Common.Button.Ok.title.uppercased()) {
-        viewModel.logout()
-      }
-    )
   }
   
   func countryDropdownView(

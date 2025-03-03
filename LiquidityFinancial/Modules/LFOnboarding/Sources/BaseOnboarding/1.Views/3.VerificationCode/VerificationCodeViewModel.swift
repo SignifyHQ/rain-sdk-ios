@@ -44,7 +44,11 @@ public final class VerificationCodeViewModel: ObservableObject {
   @Published var toastMessage: String?
   @Published var errorMessage: String?
   
-  let phoneNumberWithRegionCode: String
+  let phoneCountryCode: String
+  let phoneNumber: String
+  var phoneNumberWithRegionCode: String {
+    phoneCountryCode + phoneNumber
+  }
   
   lazy var requestOtpUseCase: RequestOTPUseCaseProtocol = {
     RequestOTPUseCase(repository: onboardingRepository)
@@ -66,13 +70,15 @@ public final class VerificationCodeViewModel: ObservableObject {
   private let setRouteToAccountLocked: (() -> Void)?
 
   public init(
+    phoneCountryCode: String,
     phoneNumber: String,
     requireAuth: [RequiredAuth],
     handleOnboardingStep: (() async throws -> Void)?,
     forceLogout: (() -> Void)?,
     setRouteToAccountLocked: (() -> Void)?
   ) {
-    phoneNumberWithRegionCode = phoneNumber
+    self.phoneCountryCode = phoneCountryCode
+    self.phoneNumber = phoneNumber
     
     self.requireAuth = requireAuth
     self.handleOnboardingStep = handleOnboardingStep
@@ -140,7 +146,9 @@ extension VerificationCodeViewModel {
   
   func handleLoginSuccess(onCompletion: (() -> Void)? = nil) {
     accountDataManager.update(phone: phoneNumberWithRegionCode)
-    accountDataManager.stored(phone: phoneNumberWithRegionCode)
+    
+    accountDataManager.stored(phoneCode: phoneCountryCode)
+    accountDataManager.stored(phone: phoneNumber)
     
     Task {
       defer {

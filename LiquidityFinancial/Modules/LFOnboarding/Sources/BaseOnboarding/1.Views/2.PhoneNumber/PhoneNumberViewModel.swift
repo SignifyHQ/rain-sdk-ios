@@ -177,7 +177,8 @@ private extension PhoneNumberViewModel {
     }
     
     let viewModel = VerificationCodeViewModel(
-      phoneNumber: selectedCountry.phoneCode + phoneNumber.reformatPhone,
+      phoneCountryCode: selectedCountry.phoneCode,
+      phoneNumber: phoneNumber.reformatPhone,
       requireAuth: requiredAuth,
       handleOnboardingStep: self.handleOnboardingStep,
       forceLogout: self.forceLogout,

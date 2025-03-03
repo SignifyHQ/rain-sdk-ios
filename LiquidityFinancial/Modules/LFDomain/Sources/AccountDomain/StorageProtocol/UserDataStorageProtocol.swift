@@ -7,6 +7,7 @@ import RainDomain
 // sourcery: AutoMockable
 public protocol AccountDataStorageProtocol {
   var userInfomationData: UserInfomationDataProtocol { get }
+  var phoneCode: String { get }
   var phoneNumber: String { get }
   var sessionID: String { get }
   var userNameDisplay: String { get set }
@@ -47,6 +48,7 @@ public protocol AccountDataStorageProtocol {
   
   func update(firstName: String?)
   func update(lastName: String?)
+  //func update(phoneCode: String?)
   func update(phone: String?)
   func update(phoneVerified: Bool?)
   func update(email: String?)
@@ -67,6 +69,7 @@ public protocol AccountDataStorageProtocol {
   func update(userID: String?)
   func update(referralLink: String?)
   func update(missingSteps: [String]?)
+  func stored(phoneCode: String)
   func stored(phone: String)
   func stored(sessionID: String)
   func clearUserSession()
@@ -90,6 +93,7 @@ public protocol UserInfomationDataProtocol {
   var lastName: String? { get set }
   var middleName: String? { get set }
   var agreementIDS: [String] { get set }
+  var phoneCode: String? { get set }
   var phone: String? { get set }
   var phoneVerified: Bool? { get set }
   var email: String? { get set }

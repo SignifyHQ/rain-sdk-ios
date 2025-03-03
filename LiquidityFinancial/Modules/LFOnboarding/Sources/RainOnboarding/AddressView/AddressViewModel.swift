@@ -1,42 +1,32 @@
+import BaseOnboarding
 import Combine
-import SmartyStreets
-import PhoneNumberKit
-import SwiftUI
-import LFUtilities
-import Factory
-import OnboardingData
-import AccountData
-import AccountDomain
-import RainData
-import RainDomain
-import Services
-import LFLocalizable
 import DevicesData
 import DevicesDomain
-import LFFeatureFlags
+import Factory
 import FraudForce
-import BaseOnboarding
+import LFUtilities
+import Services
+import SmartyStreets
 
 @MainActor
 final class AddressViewModel: ObservableObject {
-  @LazyInjected(\.rainOnboardingFlowCoordinator) var onboardingFlowCoordinator
-  
   @LazyInjected(\.devicesRepository) var devicesRepository
   @LazyInjected(\.accountRepository) var accountRepository
-  @LazyInjected(\.rainRepository) var rainRepository
   
   @LazyInjected(\.accountDataManager) var accountDataManager
   @LazyInjected(\.featureFlagManager) var featureFlagManager
   @LazyInjected(\.authorizationManager) var authorizationManager
   
   @LazyInjected(\.customerSupportService) var customerSupportService
-  @LazyInjected(\.portalService) var portalService
   @LazyInjected(\.pushNotificationService) var pushNotificationService
   @LazyInjected(\.analyticsService) var analyticsService
   
   @Published var isLoading: Bool = false
+  @Published var shouldProceedToNextStep: Bool = false
+  
   @Published var isShowingCountrySelection: Bool = false
   @Published var isShowingStateSelection: Bool = false
+  
   @Published var displaySuggestions: Bool = false
   @Published var shouldEnableContinueButton: Bool = false
 
@@ -62,14 +52,6 @@ final class AddressViewModel: ObservableObject {
     return DeviceDeregisterUseCase(repository: devicesRepository)
   }()
   
-  lazy var createRainAccount: CreateRainAccountUseCaseProtocol = {
-    return CreateRainAccountUseCase(repository: rainRepository)
-  }()
-  
-  lazy var getUserUseCase: GetUserUseCaseProtocol = {
-    GetUserUseCase(repository: accountRepository)
-  }()
-  
   private var isStateValid = true
   private var pauseAutocomplete = false
   private var cancellables = Set<AnyCancellable>()
@@ -81,42 +63,6 @@ final class AddressViewModel: ObservableObject {
   }
 }
 
-// MARK: - API Handle
-extension AddressViewModel {
-  private func createRainUser() {
-    Task {
-      defer { isLoading = false }
-      isLoading = true
-      
-      do {
-         let parameters = createRainPersonParameters()
-         _ = try await createRainAccount.execute(parameters: parameters)
-         try await onboardingFlowCoordinator.fetchOnboardingMissingSteps()
-      } catch {
-        log.error(error)
-        toastMessage = error.userFriendlyMessage
-      }
-    }
-  }
-  
-  func joinWaitlist() {
-    Task {
-      defer { isLoading = false }
-      isLoading = true
-      
-      do {
-        let waitList = "CRYPTO_PRODUCT" //support crypto product only
-        _ = try await accountRepository.addToWaitList(waitList: waitList)
-        
-        popup = .waitlistJoined
-      } catch {
-        log.error(error.userFriendlyMessage)
-        popup = nil
-        toastMessage = error.userFriendlyMessage
-      }
-    }
-  }
-}
 
 // MARK: - View Handle
 extension AddressViewModel {
@@ -155,14 +101,8 @@ extension AddressViewModel {
   func onContinueButtonTapped() {
     updateUserInformation()
     analyticsService.track(event: AnalyticsEvent(name: .addressCompleted))
-
-    guard isStateValid else {
-      let message = L10N.Common.waitlistMessage(accountDataManager.userInfomationData.firstName ?? .empty)
-      popup = .waitlist(message)
-      return
-    }
     
-    createRainUser()
+    shouldProceedToNextStep = true
   }
   
   func logout() {
@@ -273,32 +213,6 @@ private extension AddressViewModel {
     accountDataManager.update(state: state)
     accountDataManager.update(postalCode: zipCode)
     accountDataManager.update(country: selectedCountry.rawValue.uppercased())
-  }
-  
-  func createRainPersonParameters() -> APIRainPersonParameters {
-    let rainAddress = RainAddressParameters(
-      line1: accountDataManager.userInfomationData.addressLine1 ?? .empty,
-      line2: accountDataManager.userInfomationData.addressLine2 ?? .empty,
-      city: accountDataManager.userInfomationData.city ?? .empty,
-      region: accountDataManager.userInfomationData.state ?? .empty,
-      postalCode: accountDataManager.userInfomationData.postalCode ?? .empty,
-      countryCode: selectedCountry.rawValue.uppercased(),
-      country: accountDataManager.userInfomationData.country ?? .empty
-    )
-    
-    return APIRainPersonParameters(
-      firstName: accountDataManager.userInfomationData.firstName ?? .empty,
-      lastName: accountDataManager.userInfomationData.lastName ?? .empty,
-      birthDate: accountDataManager.userInfomationData.dateOfBirth ?? .empty,
-      nationalId: accountDataManager.userInfomationData.ssn ?? .empty,
-      countryOfIssue: selectedCountry.rawValue.uppercased(),
-      email: accountDataManager.userInfomationData.email ?? .empty,
-      address: rainAddress,
-      // TODO(Volo): Store phone code from step 1 and pull it for the request here
-      phoneCountryCode: selectedCountry.phoneCode,
-      phoneNumber: accountDataManager.userInfomationData.phone ?? .empty,
-      iovationBlackbox: FraudForce.blackbox()
-    )
   }
   
   func fetchAddressSuggestion(query: String) {

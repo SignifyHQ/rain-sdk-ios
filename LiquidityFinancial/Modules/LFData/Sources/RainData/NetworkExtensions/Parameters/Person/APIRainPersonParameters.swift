@@ -13,6 +13,10 @@ public struct APIRainPersonParameters: Parameterable, RainPersonParametersEntity
   public let address: RainAddressParameters
   public let phoneCountryCode: String
   public let phoneNumber: String
+  public var occupation: String?
+  public var annualSalary: String?
+  public var accountPurpose: String?
+  public var expectedMonthlyVolume: String?
   public let iovationBlackbox: String
   
   public var addressEntity: RainDomain.RainAddressParametersEntity {
@@ -29,6 +33,10 @@ public struct APIRainPersonParameters: Parameterable, RainPersonParametersEntity
     address: RainAddressParameters,
     phoneCountryCode: String,
     phoneNumber: String,
+    occupation: String?,
+    annualSalary: String?,
+    accountPurpose: String?,
+    expectedMonthlyVolume: String?,
     iovationBlackbox: String
   ) {
     self.firstName = firstName
@@ -40,6 +48,10 @@ public struct APIRainPersonParameters: Parameterable, RainPersonParametersEntity
     self.address = address
     self.phoneCountryCode = phoneCountryCode
     self.phoneNumber = phoneNumber
+    self.occupation = occupation
+    self.annualSalary = annualSalary
+    self.accountPurpose = accountPurpose
+    self.expectedMonthlyVolume = expectedMonthlyVolume
     self.iovationBlackbox = iovationBlackbox
   }
 }

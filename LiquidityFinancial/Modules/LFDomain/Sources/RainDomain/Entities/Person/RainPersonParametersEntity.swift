@@ -12,5 +12,9 @@ public protocol RainPersonParametersEntity {
   var addressEntity: RainAddressParametersEntity { get }
   var phoneCountryCode: String { get }
   var phoneNumber: String { get }
+  var occupation: String? { get }
+  var annualSalary: String? { get }
+  var accountPurpose: String? { get }
+  var expectedMonthlyVolume: String? { get }
   var iovationBlackbox: String { get }
 }
