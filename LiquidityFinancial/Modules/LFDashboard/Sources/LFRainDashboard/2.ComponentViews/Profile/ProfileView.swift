@@ -573,95 +573,84 @@ struct BottomSheetView: View {
   }
   
   private func startDelivery() {
-    // Reset error message when starting a new delivery
-    errorMessage = nil
-    isLoading = true
-    logText = "Starting NFC session..."
-    addToLog("App ID: \(fidesmoAppId), Service ID: \(fidesmoServiceId)")
-    addToLog("API Host: https://api.fidesmo.com")
-    
-    // Fetch user's card information before starting NFC session
-    fetchCardInformation()
-    
-    // Test basic connectivity to Fidesmo API
-    let url = URL(string: "https://api.fidesmo.com")!
-    let task = URLSession.shared.dataTask(with: url) { [self] data, response, error in
-      if let error = error {
-        addToLog("ERROR: Cannot reach Fidesmo API: \(error.localizedDescription)")
-      } else if let httpResponse = response as? HTTPURLResponse {
-        addToLog("Fidesmo API reachable with status: \(httpResponse.statusCode)")
+    Task {
+      // Reset error message when starting a new delivery
+      errorMessage = nil
+      isLoading = true
+      logText = "Starting NFC session..."
+      addToLog("App ID: \(fidesmoAppId), Service ID: \(fidesmoServiceId)")
+      addToLog("API Host: https://api.fidesmo.com")
+      
+      // Fetch user's card information before starting NFC session
+      do {
+        try await fetchCardInformation()
+      } catch {
+        print("ERROR FETCHING CARD DATA", error)
       }
-    }
-    task.resume()
-    
-    // Check if NFC is available on this device
-    if NFCNDEFReaderSession.readingAvailable {
-      addToLog("NFC is available on this device")
-    } else {
-      addToLog("Warning: NFC is not available on this device")
-    }
-    
+      
+      // Check if NFC is available on this device
+      if NFCNDEFReaderSession.readingAvailable {
+        addToLog("NFC is available on this device")
+      } else {
+        addToLog("Warning: NFC is not available on this device")
+      }
+      
       stateManager.nfcManager?.startNfcDiscovery(message: "Hold your iPhone near an NFC Fidesmo tag")
+    }
   }
   
-  private func fetchCardInformation() {
-    Task { @MainActor [self] in
-      do {
-        // Safely unwrap use cases
-        guard let getCardsUseCase = stateManager.getCardsUseCase else {
-          addToLog("Error: Card use case not initialized")
-          return
-        }
-        
-        // Get the user's cards using our initialized use case
-        let cards = try await getCardsUseCase.execute()
-        addToLog("Fetched \(cards.count) cards from account")
-        
-        // Find the first active card
-        if let firstActiveCard = cards.first(where: { $0.cardStatus == "ACTIVE" }) {
-          // Fix the type casting issue for RainCardEntity
-          activeCard = RainCardEntity(
-            cardId: firstActiveCard.cardId,
-            last4: firstActiveCard.last4,
-            cardStatus: firstActiveCard.cardStatus,
-            expMonth: firstActiveCard.expMonth,
-            expYear: firstActiveCard.expYear
-          )
-          
-          addToLog("Found active card ending in \(firstActiveCard.last4 ?? "unknown")")
-          
-          // Generate a proper session ID using the RainService
-          let sessionId = stateManager.generateSessionId()
-          addToLog("Generated secure session ID for card details")
-            
-          guard let cardID = firstActiveCard.cardId else {
-            addToLog("Card ID not available for active card")
-            return
-          }
-          
-          guard let getSecretCardInformationUseCase = stateManager.getSecretCardInformationUseCase else {
-            addToLog("Error: Secret card info use case not initialized")
-            return
-          }
-          
-          addToLog("Retrieving secure card information...")
-          let secretInformation = try await getSecretCardInformationUseCase.execute(
-            sessionID: sessionId,
-            cardID: cardID
-          )
-          
-            let pan = stateManager.decrypt(ivBase64: secretInformation.encryptedPanEntity.iv, dataBase64: secretInformation.encryptedPanEntity.data)
-            let cvv = stateManager.decrypt(ivBase64: secretInformation.encryptedCVCEntity.iv, dataBase64: secretInformation.encryptedCVCEntity.data)
-          
-          // Store the card meta data
-          cardMetaData = CardMetaData(pan: pan, cvv: cvv)
-          addToLog("Successfully retrieved card information (last 4: \(pan.suffix(4)))")
-        } else {
-          addToLog("No active cards found")
-        }
-      } catch {
-        addToLog("Error fetching card information: \(error.localizedDescription)")
+  private func fetchCardInformation() async throws {
+    // Safely unwrap use cases
+    guard let getCardsUseCase = stateManager.getCardsUseCase else {
+      addToLog("Error: Card use case not initialized")
+      return
+    }
+    
+    // Get the user's cards using our initialized use case
+    let cards = try await getCardsUseCase.execute()
+    addToLog("Fetched \(cards.count) cards from account")
+    
+    // Find the first active card
+    if let firstActiveCard = cards.first(where: { $0.cardStatus == "ACTIVE" }) {
+      // Fix the type casting issue for RainCardEntity
+      activeCard = RainCardEntity(
+        cardId: firstActiveCard.cardId,
+        last4: firstActiveCard.last4,
+        cardStatus: firstActiveCard.cardStatus,
+        expMonth: firstActiveCard.expMonth,
+        expYear: firstActiveCard.expYear
+      )
+      
+      addToLog("Found active card ending in \(firstActiveCard.last4 ?? "unknown")")
+      
+      // Generate a proper session ID using the RainService
+      let sessionId = stateManager.generateSessionId()
+      addToLog("Generated secure session ID for card details")
+      
+      guard let cardID = firstActiveCard.cardId else {
+        addToLog("Card ID not available for active card")
+        return
       }
+      
+      guard let getSecretCardInformationUseCase = stateManager.getSecretCardInformationUseCase else {
+        addToLog("Error: Secret card info use case not initialized")
+        return
+      }
+      
+      addToLog("Retrieving secure card information...")
+      let secretInformation = try await getSecretCardInformationUseCase.execute(
+        sessionID: sessionId,
+        cardID: cardID
+      )
+      
+      let pan = stateManager.decrypt(ivBase64: secretInformation.encryptedPanEntity.iv, dataBase64: secretInformation.encryptedPanEntity.data)
+      let cvv = stateManager.decrypt(ivBase64: secretInformation.encryptedCVCEntity.iv, dataBase64: secretInformation.encryptedCVCEntity.data)
+      
+      // Store the card meta data
+      cardMetaData = CardMetaData(pan: pan, cvv: cvv)
+      addToLog("Successfully retrieved card information (last 4: \(pan.suffix(4)))")
+    } else {
+      addToLog("No active cards found")
     }
   }
   
@@ -813,14 +802,15 @@ struct BottomSheetView: View {
           // Note: we're not automatically starting NFC discovery here
           // The user will press the "Scan Card to Continue" button which will start it
         } else if case .talkingToServer(let responses) = dataFlow {
-          deliveryType = .none
-          addToLog("Server communication: \(responses)")
-          
-          // Add a small delay between server operations to avoid overwhelming the server
-          if stateManager.nfcManager?.isSessionActive() == true {
-            // Keep session alive but give the server a moment to process
-            stateManager.nfcManager?.changeAlertMessage(message: "Processing with server...")
-          }
+          print("TALKING TO THE SERVER...")
+//          deliveryType = .none
+//          addToLog("Server communication: \(responses)")
+//          
+//          // Add a small delay between server operations to avoid overwhelming the server
+//          if stateManager.nfcManager?.isSessionActive() == true {
+//            // Keep session alive but give the server a moment to process
+//            stateManager.nfcManager?.changeAlertMessage(message: "Processing with server...")
+//          }
         }
         
       case .finished(let result):
@@ -876,6 +866,7 @@ struct BottomSheetView: View {
           return false
         }) {
           // Auto-respond with email code (unchanged)
+          print("EMAIL REQUIRED")
           let userEmail = viewModel.email
           addToLog("Auto-responding with email: \(userEmail)")
           
@@ -896,6 +887,7 @@ struct BottomSheetView: View {
         }),
         let activeCard = activeCard,
         let cardData = cardMetaData {
+          print("CARD REQUIRED")
           addToLog("Payment card requirement detected")
 
           // Attempt to auto-fill payment card data from our secure API
@@ -955,14 +947,16 @@ struct BottomSheetView: View {
           }
           return false
         }) {
+          print("ACCEPT REQUIRED")
           // Respond to accept requirement immediately
           addToLog("Auto-responding with accept")
           callback([acceptRequirement.id: "0"])
           addToLog("Automatically responded with accept")
         } else {
-          addToLog("Unknown requirement type - skipping")
-          callback([:])
-          addToLog("Skipped unknown requirement")
+          print("UNKNOWN REQUIRED")
+//          addToLog("Unknown requirement type - skipping")
+//          callback([:])
+//          addToLog("Skipped unknown requirement")
         }
         
       default:
