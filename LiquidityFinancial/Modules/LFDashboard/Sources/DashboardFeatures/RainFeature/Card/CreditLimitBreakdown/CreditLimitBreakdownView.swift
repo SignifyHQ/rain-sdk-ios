@@ -23,6 +23,7 @@ public struct CreditLimitBreakdownView: View {
       } else {
         ScrollView {
           contents
+            .padding(.horizontal, 30)
         }
       }
     }
@@ -43,22 +44,27 @@ public struct CreditLimitBreakdownView: View {
     VStack(
       spacing: 12
     ) {
-      // --- Credit limit value ---
+      // --- Available to spend value ---
       HStack {
-        VStack(alignment: .leading) {
+        VStack(
+          alignment: .leading,
+          spacing: 3
+        ) {
           Text(L10N.Common.CollateralLimitBreakdown.SpendingPower.title)
-            .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.medium.value))
-            .foregroundColor(Colors.label.swiftUIColor.opacity(0.6))
+            .font(Fonts.semiBold.swiftUIFont(size: Constants.FontSize.medium.value))
+            .foregroundColor(Colors.label.swiftUIColor.opacity(0.75))
           Text(viewModel.creditBalances.spendingPowerFormatted)
             .font(Fonts.bold.swiftUIFont(size: Constants.FontSize.extraLarge.value))
             .foregroundColor(Colors.whiteText.swiftUIColor)
+          Text("\(viewModel.creditBalances.creditLimitFormatted) \(L10N.Common.CollateralLimitBreakdown.AssetValue.title)")
+            .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.medium.value))
+            .foregroundColor(Colors.label.swiftUIColor.opacity(0.6))
         }
         
         Spacer()
       }
-      .padding(.horizontal, 30)
       
-      // --- Asset Balances section ---
+      // --- Assets section ---
       if viewModel.collateralAssets.isNotEmpty {
         VStack(
           alignment: .leading,
@@ -66,12 +72,17 @@ public struct CreditLimitBreakdownView: View {
         ) {
           HStack {
             Text(L10N.Common.CollateralLimitBreakdown.AssetBalances.title)
-              .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.medium.value))
-              .foregroundColor(Colors.label.swiftUIColor.opacity(0.6))
+              .font(Fonts.semiBold.swiftUIFont(size: Constants.FontSize.medium.value))
+              .foregroundColor(Colors.label.swiftUIColor.opacity(0.75))
             
             Spacer()
           }
-          .padding(.bottom, 6)
+          
+          Text(L10N.Common.CollateralLimitBreakdown.AssetBalances.disclaimer)
+            .foregroundColor(Colors.label.swiftUIColor)
+            .opacity(0.5)
+            .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.ultraSmall.value))
+            .multilineTextAlignment(.leading)
           
           ForEach(
             viewModel.collateralAssets,
@@ -80,7 +91,7 @@ public struct CreditLimitBreakdownView: View {
             assetCell(asset: asset)
           }
         }
-        .padding(.horizontal, 30)
+        .padding(.top, 5)
         
         // --- Credit Limit Breakdown section ---
         VStack(
@@ -89,8 +100,8 @@ public struct CreditLimitBreakdownView: View {
         ) {
           HStack {
             Text(L10N.Common.CollateralLimitBreakdown.CreditLimitBreakdown.title)
-              .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.medium.value))
-              .foregroundColor(Colors.label.swiftUIColor.opacity(0.6))
+              .font(Fonts.semiBold.swiftUIFont(size: Constants.FontSize.medium.value))
+              .foregroundColor(Colors.label.swiftUIColor.opacity(0.75))
             
             Spacer()
           }
@@ -106,20 +117,38 @@ public struct CreditLimitBreakdownView: View {
             }
             
             Divider().background(Color.gray)
+              .padding(.vertical, 1)
+            
+            BreakdownRow(
+              title: L10N.Common.CollateralLimitBreakdown.AssetValue.title,
+              amount: viewModel.creditBalances.creditLimitFormatted,
+              isDetail: false
+            )
+            .padding(.bottom, 1)
+            
+            Text(L10N.Common.CollateralLimitBreakdown.SpendingPower.disclaimer)
+              .foregroundColor(Colors.label.swiftUIColor)
+              .opacity(0.5)
+              .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.ultraSmall.value))
+              .multilineTextAlignment(.leading)
+            
+            Divider().background(Color.gray)
+              .padding(.vertical, 1)
             
             BreakdownRow(
               title: L10N.Common.CollateralLimitBreakdown.PendingCharges.title,
               amount: viewModel.creditBalances.pendingChargesFormatted,
-              isDetail: false
+              isDetail: true
             )
             
             BreakdownRow(
               title: L10N.Common.CollateralLimitBreakdown.PendingLiquidation.title,
               amount: viewModel.creditBalances.pendingLiquidationFormatted,
-              isDetail: false
+              isDetail: true
             )
             
             Divider().background(Color.gray)
+              .padding(.vertical, 1)
             
             BreakdownRow(
               title: L10N.Common.CollateralLimitBreakdown.SpendingPower.title,
@@ -127,18 +156,10 @@ public struct CreditLimitBreakdownView: View {
               isDetail: false,
               isBold: true
             )
-            
-            Text(L10N.Common.CollateralLimitBreakdown.SpendingPower.disclaimer)
-              .foregroundColor(Colors.label.swiftUIColor)
-              .opacity(0.5)
-              .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.ultraSmall.value))
-              .padding(.top, 1)
-              .multilineTextAlignment(.leading)
           }
           .padding(16)
           .background(Colors.secondaryBackground.swiftUIColor.cornerRadius(9))
         }
-        .padding(.horizontal, 30)
         
         Spacer()
       }
@@ -203,14 +224,14 @@ private extension CreditLimitBreakdownView {
     // --- Breakdown Row Exchange Rate ---
     if asset.hasExchangeRate {
       BreakdownRow(
-        title: L10N.Common.CollateralLimitBreakdown.TokenExchangeRate.title(asset.type?.title ?? "N/A"),
+        title: L10N.Common.CollateralLimitBreakdown.TokenExchangeRate.title,
         amount: asset.exchangeRateFormatted
       )
     }
     
     // --- Breakdown Row Advance Rate ---
     BreakdownRow(
-      title: L10N.Common.CollateralLimitBreakdown.TokenAdvanceRate.title(asset.type?.title ?? "N/A"),
+      title: L10N.Common.CollateralLimitBreakdown.TokenAdvanceRate.title,
       amount: asset.advanceRateFormatted
     )
   }
@@ -243,13 +264,13 @@ struct BreakdownRow: View {
   var body: some View {
     HStack {
       Text(title)
-        .font(isBold ? Fonts.bold.swiftUIFont(size: Constants.FontSize.medium.value) : Fonts.regular.swiftUIFont(size: Constants.FontSize.medium.value))
+        .font(isBold ? Fonts.semiBold.swiftUIFont(size: Constants.FontSize.medium.value) : Fonts.regular.swiftUIFont(size: Constants.FontSize.medium.value))
         .foregroundColor(isDetail ? Colors.label.swiftUIColor.opacity(0.6) : Colors.label.swiftUIColor)
       
       Spacer()
       
       Text(amount)
-        .font(isBold ? Fonts.bold.swiftUIFont(size: Constants.FontSize.medium.value) : Fonts.regular.swiftUIFont(size: Constants.FontSize.medium.value))
+        .font(isBold ? Fonts.semiBold.swiftUIFont(size: Constants.FontSize.medium.value) : Fonts.regular.swiftUIFont(size: Constants.FontSize.medium.value))
         .foregroundColor(isDetail ? Colors.label.swiftUIColor.opacity(0.6) : Colors.label.swiftUIColor)
     }
   }

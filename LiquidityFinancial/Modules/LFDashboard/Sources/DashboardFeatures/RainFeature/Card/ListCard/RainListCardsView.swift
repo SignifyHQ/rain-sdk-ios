@@ -241,11 +241,11 @@ private extension RainListCardsView {
           }
         }
         
-        GenImages.CommonImages.dash.swiftUIImage
-          .foregroundColor(Colors.label.swiftUIColor)
-        row(title: L10N.Common.ListCard.CreditLimitBreakdown.title) {
-          viewModel.onTapViewCreditLimitBreakdown()
-        }
+//        GenImages.CommonImages.dash.swiftUIImage
+//          .foregroundColor(Colors.label.swiftUIColor)
+//        row(title: L10N.Common.ListCard.CreditLimitBreakdown.title) {
+//          viewModel.onTapViewCreditLimitBreakdown()
+//        }
       }
     }
     .padding(.top, 8)

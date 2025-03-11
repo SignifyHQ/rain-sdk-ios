@@ -119,6 +119,6 @@ public struct AssetModel: Hashable {
       return "N/A"
     }
     
-    return "x\((advanceRate / 100).formattedUSDAmount())"
+    return "x\(advanceRate.formattedAmount())%"
   }
 }

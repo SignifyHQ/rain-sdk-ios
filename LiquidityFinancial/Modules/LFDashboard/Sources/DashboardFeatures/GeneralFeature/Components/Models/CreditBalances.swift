@@ -3,6 +3,7 @@ import RainDomain
 
 public struct CreditBalances {
   let spendingPower: Double?
+  let creditLimit: Double?
   let pendingCharges: Double?
   let pendingLiquidation: Double?
   
@@ -10,22 +11,29 @@ public struct CreditBalances {
     rainCreditBalances: RainCreditBalanceEntity
   ) {
     spendingPower = rainCreditBalances.availableBalance
+    creditLimit = rainCreditBalances.creditLimit
     pendingCharges = rainCreditBalances.pendingCharges
     pendingLiquidation = rainCreditBalances.balanceDue
   }
   
   public init(
     spendingPower: Double? = nil,
+    creditLimit: Double? = nil,
     pendingCharges: Double? = nil,
     pendingLiquidation: Double? = nil
   ) {
     self.spendingPower = pendingCharges
+    self.creditLimit = creditLimit
     self.pendingCharges = pendingCharges
     self.pendingLiquidation = pendingLiquidation
   }
   
   public var spendingPowerFormatted: String {
     spendingPower?.formattedUSDAmount() ?? "N/A"
+  }
+  
+  public var creditLimitFormatted: String {
+    creditLimit?.formattedUSDAmount() ?? "N/A"
   }
   
   public var pendingChargesFormatted: String {

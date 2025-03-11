@@ -355,13 +355,19 @@
 "cards_detail.deals.value" = "Donate up to 8%% of purchase";
 
 // Collateral Breakdown
-"collateralLimitBreakdown.spendingPower.title" = "Spending power";
-"collateralLimitBreakdown.spendingPower.disclaimer" = "Exchange rates are the current market price of the token based on latest available data. Advance rates are the price at which we offer credit against this token.";
-"collateralLimitBreakdown.assetBalances.title" = "Asset balances";
-"collateralLimitBreakdown.creditLimitBreakdown.title" = "Spending power breakdown";
+"collateralLimitBreakdown.spendingPower.title" = "Available to spend";
+"collateralLimitBreakdown.spendingPower.disclaimer" = "Market Prices are the current value of the token based on latest available data. Market Prices change frequently. Available %% is the percentage we apply to your asset when determining your spending power. Fluctuating assets get less spending power.";
+
+"collateralLimitBreakdown.assetBalances.title" = "Assets";
+"collateralLimitBreakdown.assetBalances.disclaimer" = "Asset balances will only go down when settled charges are paid or liquidated.";
+"collateralLimitBreakdown.assetValue.title" = "Asset value";
+
+"collateralLimitBreakdown.creditLimitBreakdown.title" = "Breakdown";
+
 "collateralLimitBreakdown.tokenAdded.title" = "%@ added";
-"collateralLimitBreakdown.tokenExchangeRate.title" = "%@ exchange rate";
-"collateralLimitBreakdown.tokenAdvanceRate.title" = "%@ advance rate";
+"collateralLimitBreakdown.tokenExchangeRate.title" = "Price";
+"collateralLimitBreakdown.tokenAdvanceRate.title" = "Available %%";
+
 "collateralLimitBreakdown.pendingCharges.title" = "Pending charges";
 "collateralLimitBreakdown.pendingLiquidation.title" = "Pending liquidation";
 
