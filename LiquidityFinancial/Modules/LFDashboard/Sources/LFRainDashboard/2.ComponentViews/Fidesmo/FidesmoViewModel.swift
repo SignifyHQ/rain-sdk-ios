@@ -1,4 +1,5 @@
 import Foundation
+import LFRewardDashboard
 import Factory
 import LFUtilities
 import AuthorizationManager
@@ -13,16 +14,19 @@ import FidesmoCore
 import CoreNfcBridge
 import CoreNFC
 import Factory
+import RainDomain
 
 @MainActor
 final class FidesmoViewModel: ObservableObject {
   @LazyInjected(\.accountDataManager) var accountDataManager
+  @LazyInjected(\.rainCardRepository) var rainCardRepository
+  @LazyInjected(\.rainService) var rainService
   
   private let disposeBag = DisposeBag()
   
   private let apiDispatcher = FidesmoApiDispatcher(host: "https://api.fidesmo.com", localeStrings: "en")
   private let clientInfo = ClientInfo(clientType: .iphone, applicationName: "LiquidityFinancial")
-
+  
   @Published var appId: String = "f374c57e"
   @Published var serviceId: String = "install"
   
@@ -44,6 +48,14 @@ final class FidesmoViewModel: ObservableObject {
   @Published var showLogger: Bool = true
   @Published var showAppService: Bool = false
   @Published var logText: String = ""
+  
+  lazy var getCardsUseCase: RainGetCardsUseCaseProtocol = {
+    RainGetCardsUseCase(repository: rainCardRepository)
+  }()
+  
+  lazy var getSecretCardInformationUseCase: RainSecretCardInformationUseCaseProtocol = {
+    RainSecretCardInformationUseCase(repository: rainCardRepository)
+  }()
   
   var email: String {
     accountDataManager.userInfomationData.email ?? ""
@@ -107,7 +119,7 @@ extension FidesmoViewModel {
         else {
           return
         }
-    
+        
         let setupRequirements = deliveryRequestDescription.serviceDesc.setupRequirements()
         dataRequirements = setupRequirements
         
@@ -133,13 +145,13 @@ extension FidesmoViewModel {
     )
   }
   
-  func getDeviceDescription(
+  private func getDeviceDescription(
     device: DeviceConnection
   ) -> Observable<DeviceDescription> {
     device.getDescription(dispatcher: apiDispatcher)
   }
   
-  func getServiceDescription(
+  private func getServiceDescription(
     cin: CIN,
     appId: String,
     serviceId: String
@@ -150,8 +162,7 @@ extension FidesmoViewModel {
     return serviceDescTask.perform(request)
   }
   
-  // Combine Device- and Service Description fetching
-  func getDeviceAndServiceDescription(
+  private func getDeviceAndServiceDescription(
     device: DeviceConnection,
     appId: String,
     serviceId: String
@@ -182,7 +193,7 @@ extension FidesmoViewModel {
       }
   }
   
-  func deliverService(
+  private func deliverService(
     device: Observable<DeviceConnection?>,
     description: DeliveryRequestDescription
   ) -> Observable<DeliveryProgress> {
@@ -215,7 +226,7 @@ extension FidesmoViewModel {
       )
   }
   
-  func handleDeliveryProgress(
+  private func handleDeliveryProgress(
     _ progress: DeliveryProgress
   ) {
     switch progress {
@@ -280,32 +291,32 @@ extension FidesmoViewModel {
     // The only user action used by Fidesmo Pay is phonecall at this moment
     // Ignore this for now
     
-//    if let phoneCallAction = actions.first(
-//      where: {
-//        $0.name == "phonecall"
-//      }
-//    ) {
-//      addToLog("Phonecall Action Received: \(phoneCallAction)")
-//      
-//      if let number = phoneCallAction.parameters["number"],
-//         let numberUrl = URL(string: "tel://\(number)") {
-//        dataRequirements = [
-//          DataRequirement(
-//            label: phoneCallAction.description,
-//            labels: nil,
-//            id: "text",
-//            type: .text(.medium),
-//            appUrl: nil,
-//            appStoreId: nil,
-//            mandatory: false
-//          )
-//        ]
-//        
-//        DispatchQueue.main.async {
-//          UIApplication.shared.open(numberUrl)
-//        }
-//      }
-//    }
+    //    if let phoneCallAction = actions.first(
+    //      where: {
+    //        $0.name == "phonecall"
+    //      }
+    //    ) {
+    //      addToLog("Phonecall Action Received: \(phoneCallAction)")
+    //
+    //      if let number = phoneCallAction.parameters["number"],
+    //         let numberUrl = URL(string: "tel://\(number)") {
+    //        dataRequirements = [
+    //          DataRequirement(
+    //            label: phoneCallAction.description,
+    //            labels: nil,
+    //            id: "text",
+    //            type: .text(.medium),
+    //            appUrl: nil,
+    //            appStoreId: nil,
+    //            mandatory: false
+    //          )
+    //        ]
+    //
+    //        DispatchQueue.main.async {
+    //          UIApplication.shared.open(numberUrl)
+    //        }
+    //      }
+    //    }
   }
   
   private func handleDeliveryError(
@@ -320,6 +331,72 @@ extension FidesmoViewModel {
     }
     nfcManager?.invalidateSession(error: error.localizedDescription)
     addToLog("Error: \(error)")
+  }
+}
+
+extension FidesmoViewModel {
+  private func fetchCardInformation(
+  ) async throws -> (CardModel, CardMetaData)? {
+    let cards = try await getCardsUseCase.execute()
+    addToLog("Fetched \(cards.count) cards from account")
+    
+    // Find the first active card
+    guard let firstActiveCard = cards.first(where: { $0.cardStatus == "ACTIVE" })
+    else {
+      addToLog("No active cards found")
+      return nil
+    }
+    // Fix the type casting issue for RainCardEntity
+    let activeCard = mapToCardModel(card: firstActiveCard)
+    addToLog("Found active card ending in \(firstActiveCard.last4 ?? "unknown")")
+    
+    // Generate a proper session ID using the RainService
+    let sessionId = rainService.generateSessionId()
+    addToLog("Generated secure session ID for card details")
+    
+    guard let cardID = firstActiveCard.cardId else {
+      addToLog("Card ID not available for active card")
+      return nil
+    }
+    
+    addToLog("Retrieving secure card information...")
+    let secretInformation = try await getSecretCardInformationUseCase.execute(
+      sessionID: sessionId,
+      cardID: cardID
+    )
+    
+    let pan = rainService.decryptData(
+      ivBase64: secretInformation.encryptedPanEntity.iv,
+      dataBase64: secretInformation.encryptedPanEntity.data
+    )
+    
+    let cvv = rainService.decryptData(
+      ivBase64: secretInformation.encryptedCVCEntity.iv,
+      dataBase64: secretInformation.encryptedCVCEntity.data
+    )
+    
+    // Store the card meta data
+    let cardMetaData = CardMetaData(
+      pan: pan,
+      cvv: cvv
+    )
+    
+    addToLog("Successfully retrieved card information (last 4: \(pan.suffix(4)))")
+    return (activeCard, cardMetaData)
+  }
+  
+  private func mapToCardModel(
+    card: RainCardEntity
+  ) -> CardModel {
+    CardModel(
+      id: card.cardId ?? card.rainCardId,
+      cardType: CardType(rawValue: card.cardType.lowercased()) ?? .virtual,
+      cardholderName: nil,
+      expiryMonth: Int(card.expMonth ?? .empty) ?? 0,
+      expiryYear: Int(card.expYear ?? .empty) ?? 0,
+      last4: card.last4 ?? .empty,
+      cardStatus: CardStatus(rawValue: card.cardStatus.lowercased()) ?? .unactivated
+    )
   }
 }
 

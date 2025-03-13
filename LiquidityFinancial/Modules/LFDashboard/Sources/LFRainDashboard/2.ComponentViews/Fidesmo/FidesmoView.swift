@@ -12,9 +12,11 @@ struct FidesmoView: View {
           .frame(maxHeight: 200)
           .fixedSize(horizontal: false, vertical: true)
       }
+      
       Text("Data Requirement Views")
         .bold()
         .padding(.bottom, 15)
+      
       if case let .operationInProgress(description, dataFlow) = viewModel.deliveryProgress {
         if case .toDevice = dataFlow {
           Text("Delivery Progress")
@@ -38,7 +40,9 @@ struct FidesmoView: View {
           dataRequirementUUID: $viewModel.dataRequirementUUID
         )
       }
+      
       Spacer()
+      
       let deliveryDisabled = viewModel.deliveryType != .notStarted && viewModel.deliveryType != .transceive
       FullSizeButton(
         title: viewModel.deliveryType != .transceive ? "Scan your Device first" : "Deliver to Device",
@@ -97,28 +101,6 @@ struct FidesmoView: View {
       default: break
       }
     }
-    .toolbar {
-      Button {
-        viewModel.showLogger.toggle()
-      } label: {
-        Image(systemName: viewModel.showLogger ? "list.clipboard.fill" : "list.clipboard")
-      }
-      Button {
-        viewModel.showAppService.toggle()
-      } label: {
-        Image(systemName: viewModel.showAppService ? "key.icloud.fill" : "key.icloud")
-      }
-      .disabled(viewModel.deliveryType != .notStarted)
-    }
-    .alert("App and Service ID", isPresented: $viewModel.showAppService) {
-      TextField("App ID", text: $viewModel.appId)
-        .textInputAutocapitalization(.never)
-      TextField("Service ID", text: $viewModel.serviceId)
-        .textInputAutocapitalization(.never)
-      Button("OK", role: .cancel) { }
-    } message: {
-      Text("Set the App and Service ID for a Service Delivery")
-    }
   }
 }
 
@@ -167,7 +149,6 @@ struct LogView: View {
     .padding(.bottom)
   }
   
-  // Splits a String into chunks of a specified size.
   private func splitText(_ text: String, size: Int) -> [String] {
     var chunks: [String] = []
     var currentIndex = text.startIndex
