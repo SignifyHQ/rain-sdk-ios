@@ -1,5 +1,5 @@
 import Foundation
-import LFRewardDashboard
+//import LFRewardDashboard
 import Factory
 import LFUtilities
 import AuthorizationManager
@@ -13,7 +13,6 @@ import RxSwift
 import FidesmoCore
 import CoreNfcBridge
 import CoreNFC
-import Factory
 import RainDomain
 
 @MainActor
@@ -35,9 +34,9 @@ final class FidesmoViewModel: ObservableObject {
   @Published var userDataResponse = UserDataResponse()
   @Published var onCancelDelivery: (() -> ())?
   
-  @Published var nfcManager: NfcManager?
-  @Published var currentConnection: NfcDevice?
-  @Published var connectionSubject = BehaviorSubject<DeviceConnection?>(value: nil)
+  var nfcManager: NfcManager?
+  var currentConnection: NfcDevice?
+  var connectionSubject = BehaviorSubject<DeviceConnection?>(value: nil)
   
   @Published var deliveryType: DeliveryType = .notStarted
   @Published var dataRequirements: [DataRequirement] = []
@@ -45,9 +44,10 @@ final class FidesmoViewModel: ObservableObject {
   @Published var deliveryProgress: DeliveryProgress = .notStarted
   @Published var deliveryRequestDescription: DeliveryRequestDescription?
   @Published var currentStep: Int = 0
-  @Published var showLogger: Bool = true
-  @Published var showAppService: Bool = false
+  @Published var showLogger: Bool = false
   @Published var logText: String = ""
+  
+  private var cardData: (card: RainCardEntity, metadata: CardMetaData)?
   
   lazy var getCardsUseCase: RainGetCardsUseCaseProtocol = {
     RainGetCardsUseCase(repository: rainCardRepository)
@@ -63,6 +63,7 @@ final class FidesmoViewModel: ObservableObject {
   
   func onAppear() {
     nfcManager = NfcManager(listener: self)
+    fetchCardInformation()
   }
 }
 
@@ -75,24 +76,31 @@ extension FidesmoViewModel {
       device: connection,
       description: deliveryRequestDescription
     )
+    .observe(on: MainScheduler.instance)
     .subscribe(
       onNext: { [weak self] progress in
         guard let self else { return }
         
-        deliveryProgress = progress
-        handleDeliveryProgress(progress)
+        DispatchQueue.main.async {
+          self.deliveryProgress = progress
+          self.handleDeliveryProgress(progress)
+        }
       },
       onError: { [weak self] error in
         guard let self else { return }
         
-        restartDelivery()
-        handleDeliveryError(error)
+        DispatchQueue.main.async {
+          self.restartDelivery()
+          self.handleDeliveryError(error)
+        }
       },
       onCompleted: { [weak self] in
         guard let self else { return }
         
-        restartDelivery()
-        addToLog("Subscription ended!")
+        DispatchQueue.main.async {
+          self.restartDelivery()
+          self.addToLog("Subscription ended!")
+        }
       }
     )
     .disposed(
@@ -100,7 +108,98 @@ extension FidesmoViewModel {
     )
   }
   
-  func getInitialDeliveryData(
+  private func getResponseFor(
+    requirements: [DataRequirement]
+  ) -> [String: String]? {
+    var userResponse: [String: String] = [:]
+    
+    if let emailRequirement = requirements
+      .first(
+        where: { requirement in
+          if case .edit(let format) = requirement.type,
+             format == .email {
+            
+            return true
+          }
+          
+          return false
+        }
+      ) {
+      
+      let userEmail = "roteiro93@gmail.com"
+      addToLog("Auto-responding with email: \(userEmail)")
+      
+      userResponse[emailRequirement.id] = userEmail
+    }
+    
+    if let cardData,
+       let paymentCardRequirement = requirements
+      .first(
+        where: { requirement in
+          if case .paymentcard = requirement.type {
+            return true
+          }
+          
+          return false
+        }
+      ) {
+      addToLog("Payment card requirement detected")
+      // Format the expiry month and year as 2-digit strings with leading zeros
+      let expMonth =  cardData.card.expMonth ?? "00"
+      let expYear = cardData.card.expYear ?? "00"
+      let formattedExpMonth = expMonth.count == 1 ? "0\(expMonth)" : expMonth
+      let formattedExpYear = expYear.count > 2 ? String(expYear.suffix(2)) : expYear
+      
+      // Create payment card data in JSON format
+      let cardDetails: [String: String] = [
+        "cardNumber": cardData.metadata.pan,
+        "expiryMonth": formattedExpMonth,
+        "expiryYear": formattedExpYear,
+        "cvv": cardData.metadata.cvv
+      ]
+      
+      addToLog("Using Fidesmo's encryption for card data")
+      
+      var cardDetailsString: String? {
+        guard let data = try? JSONSerialization.data(
+          withJSONObject: cardDetails,
+          options: [.prettyPrinted])
+        else {
+          return nil
+        }
+        
+        return String(data: data, encoding: .ascii)
+      }
+      
+      if cardDetailsString != nil {
+        addToLog("Card details JSON created successfully")
+        userResponse[paymentCardRequirement.id] = cardDetailsString
+        addToLog("Auto-responding with card: \(String(describing: cardDetailsString))")
+      }
+    }
+    
+    if let acceptRequirement = requirements
+      .first(
+        where: { requirement in
+          if case .option(let format) = requirement.type,
+             format == .button,
+             requirement.id == "accept",
+             requirement.labels?.count == 1 {
+
+            return true
+          }
+          return false
+        }
+      ) {
+      
+      addToLog("Auto-responding with accept")
+      userResponse[acceptRequirement.id] = "0"
+    }
+    
+    return userResponse.isEmpty ? nil : userResponse
+  }
+  
+  private func getInitialDeliveryData(
     connection: DeviceConnection,
     appId: String,
     serviceId: String
@@ -112,6 +211,7 @@ extension FidesmoViewModel {
       appId: appId,
       serviceId: serviceId
     )
+    .observe(on: MainScheduler.instance)
     .subscribe(
       onNext: { [weak self] deliveryRequestDescription in
         guard let self,
@@ -121,17 +221,25 @@ extension FidesmoViewModel {
         }
         
         let setupRequirements = deliveryRequestDescription.serviceDesc.setupRequirements()
-        dataRequirements = setupRequirements
-        
-        userResponseHandler = { [weak self] userReponse in
-          guard let self else { return }
-          
-          userDataResponse = userReponse
+        // Handle the requirements automatically if possible. Otherwise, ask for user's input
+        if let userResponse = getResponseFor(requirements: setupRequirements) {
+          userDataResponse = userResponse
           startDelivery(connection: connectionSubject, deliveryRequestDescription: deliveryRequestDescription)
+        } else {
+          dataRequirements = setupRequirements
+          
+          userResponseHandler = { [weak self] userReponse in
+            guard let self else { return }
+            
+            userDataResponse = userReponse
+            startDelivery(connection: connectionSubject, deliveryRequestDescription: deliveryRequestDescription)
+          }
         }
         
-        deliveryType = .none // Disable button Interaction
-        nfcManager?.invalidateSession()
+        DispatchQueue.main.async {
+          self.deliveryType = .none // Disable button Interaction
+          self.nfcManager?.invalidateSession()
+        }
       },
       onError: { [weak self] error in
         guard let self else { return }
@@ -265,8 +373,17 @@ extension FidesmoViewModel {
         dataRequirementUUID = UUID()
       }
       
-      dataRequirements = requirements
-      userResponseHandler = resultHandler
+      // Handle the requirements automatically if possible. Otherwise, ask for user's input
+      if let userResponse = getResponseFor(requirements: requirements) {
+        DispatchQueue.main.async {
+          resultHandler(userResponse)
+        }
+      } else {
+        DispatchQueue.main.async {
+          self.dataRequirements = requirements
+          self.userResponseHandler = resultHandler
+        }
+      }
     case let .needsUserAction(actions, actionHandler):
       addToLog("Needs User Action: \(actions.description)")
       userActionHandler = actionHandler
@@ -336,68 +453,79 @@ extension FidesmoViewModel {
 
 extension FidesmoViewModel {
   private func fetchCardInformation(
-  ) async throws -> (CardModel, CardMetaData)? {
-    let cards = try await getCardsUseCase.execute()
-    addToLog("Fetched \(cards.count) cards from account")
-    
-    // Find the first active card
-    guard let firstActiveCard = cards.first(where: { $0.cardStatus == "ACTIVE" })
-    else {
-      addToLog("No active cards found")
-      return nil
+  ) {
+    Task {
+      let cards = try await getCardsUseCase.execute()
+      addToLog("Fetched \(cards.count) cards from account")
+      
+      // Find the first active card
+      guard let firstActiveCard = cards.first(where: { $0.cardStatus == "ACTIVE" })
+      else {
+        addToLog("No active cards found")
+        return
+      }
+      
+      // Fix the type casting issue for RainCardEntity
+      //let activeCard = mapToCardModel(card: firstActiveCard)
+      let activeCard = RainCardEntity(
+        cardId: firstActiveCard.cardId,
+        last4: firstActiveCard.last4,
+        cardStatus: firstActiveCard.cardStatus,
+        expMonth: firstActiveCard.expMonth,
+        expYear: firstActiveCard.expYear
+      )
+      
+      addToLog("Found active card ending in \(firstActiveCard.last4 ?? "unknown")")
+      
+      // Generate a proper session ID using the RainService
+      let sessionId = rainService.generateSessionId()
+      addToLog("Generated secure session ID for card details")
+      
+      guard let cardID = firstActiveCard.cardId else {
+        addToLog("Card ID not available for active card")
+        return
+      }
+      
+      addToLog("Retrieving secure card information...")
+      let secretInformation = try await getSecretCardInformationUseCase.execute(
+        sessionID: sessionId,
+        cardID: cardID
+      )
+      
+      let pan = rainService.decryptData(
+        ivBase64: secretInformation.encryptedPanEntity.iv,
+        dataBase64: secretInformation.encryptedPanEntity.data
+      )
+      
+      let cvv = rainService.decryptData(
+        ivBase64: secretInformation.encryptedCVCEntity.iv,
+        dataBase64: secretInformation.encryptedCVCEntity.data
+      )
+      
+      // Store the card meta data
+      let cardMetaData = CardMetaData(
+        pan: pan,
+        cvv: cvv
+      )
+      
+      addToLog("Successfully retrieved card information (last 4: \(pan.suffix(4)))")
+      cardData = (activeCard, cardMetaData)
     }
-    // Fix the type casting issue for RainCardEntity
-    let activeCard = mapToCardModel(card: firstActiveCard)
-    addToLog("Found active card ending in \(firstActiveCard.last4 ?? "unknown")")
-    
-    // Generate a proper session ID using the RainService
-    let sessionId = rainService.generateSessionId()
-    addToLog("Generated secure session ID for card details")
-    
-    guard let cardID = firstActiveCard.cardId else {
-      addToLog("Card ID not available for active card")
-      return nil
-    }
-    
-    addToLog("Retrieving secure card information...")
-    let secretInformation = try await getSecretCardInformationUseCase.execute(
-      sessionID: sessionId,
-      cardID: cardID
-    )
-    
-    let pan = rainService.decryptData(
-      ivBase64: secretInformation.encryptedPanEntity.iv,
-      dataBase64: secretInformation.encryptedPanEntity.data
-    )
-    
-    let cvv = rainService.decryptData(
-      ivBase64: secretInformation.encryptedCVCEntity.iv,
-      dataBase64: secretInformation.encryptedCVCEntity.data
-    )
-    
-    // Store the card meta data
-    let cardMetaData = CardMetaData(
-      pan: pan,
-      cvv: cvv
-    )
-    
-    addToLog("Successfully retrieved card information (last 4: \(pan.suffix(4)))")
-    return (activeCard, cardMetaData)
   }
   
-  private func mapToCardModel(
-    card: RainCardEntity
-  ) -> CardModel {
-    CardModel(
-      id: card.cardId ?? card.rainCardId,
-      cardType: CardType(rawValue: card.cardType.lowercased()) ?? .virtual,
-      cardholderName: nil,
-      expiryMonth: Int(card.expMonth ?? .empty) ?? 0,
-      expiryYear: Int(card.expYear ?? .empty) ?? 0,
-      last4: card.last4 ?? .empty,
-      cardStatus: CardStatus(rawValue: card.cardStatus.lowercased()) ?? .unactivated
-    )
-  }
+//  private func mapToCardModel(
+//    card: RainCardEntity
+//  ) -> CardModel {
+//    CardModel(
+//      id: card.cardId ?? card.rainCardId,
+//      cardType: CardType(rawValue: card.cardType.lowercased()) ?? .virtual,
+//      cardholderName: nil,
+//      expiryMonth: Int(card.expMonth ?? .empty) ?? 0,
+//      expiryYear: Int(card.expYear ?? .empty) ?? 0,
+//      last4: card.last4 ?? .empty,
+//      cardStatus: CardStatus(rawValue: card.cardStatus.lowercased()) ?? .unactivated
+//    )
+//  }
 }
 
 extension FidesmoViewModel: NfcConnectionDelegate {
@@ -530,7 +658,7 @@ extension FidesmoViewModel {
     _ message: String
   ) {
     print("log: ", message)
-    logText += "\n\(message)"
+    //logText += "\n\(message)"
   }
 }
 

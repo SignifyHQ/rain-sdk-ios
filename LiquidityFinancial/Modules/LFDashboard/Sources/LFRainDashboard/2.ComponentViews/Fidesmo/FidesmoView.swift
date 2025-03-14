@@ -85,7 +85,9 @@ struct FidesmoView: View {
       switch $0 {
       case .operationInProgress(_, let dataFlow):
         if case .toDevice = dataFlow {
-          viewModel.deliveryType = .transceive
+          DispatchQueue.main.async {
+            self.viewModel.deliveryType = .transceive
+          }
         }
       default: break
       }
