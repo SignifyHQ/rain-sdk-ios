@@ -43,13 +43,14 @@ struct MoveCryptoInputView: View {
         dropdownView()
           .frame(
             width: dropdownFrame.width,
-            height: dropdownFrame.height * 2.3
+            height: dropdownFrame.height * 4
           )
           .background(Colors.secondaryBackground.swiftUIColor.cornerRadius(9))
           .position(
             x: dropdownFrame.midX - 30,
-            y: dropdownFrame.maxY + dropdownFrame.height * 2.3 / 2 - headerFrame.minY + 5
+            y: dropdownFrame.maxY + dropdownFrame.height * 4 / 2 - headerFrame.minY + 5
           )
+          .floatingShadow()
       }
     }
     .padding(.horizontal, 30)
@@ -284,7 +285,6 @@ private extension MoveCryptoInputView {
     .onAppear {
       UITableView.appearance().separatorInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 15)
     }
-    .floatingShadow()
   }
   
   func retryWithdrawalPopup(

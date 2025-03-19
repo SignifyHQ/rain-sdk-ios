@@ -19,7 +19,7 @@ public extension View {
   }
   
   func floatingShadow() -> some View {
-    shadow(color: Color(white: 0, opacity: 0.08), radius: 8, x: 0, y: 4)
+    shadow(color: Color(white: 0, opacity: 0.25), radius: 8, x: 0, y: 4)
   }
   
   func hideKeyboard() {

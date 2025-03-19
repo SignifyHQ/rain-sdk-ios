@@ -22,20 +22,30 @@ struct EnterWalletAddressView: View {
   }
   
   var body: some View {
-    VStack(alignment: .leading, spacing: 24) {
+    VStack(
+      alignment: .leading,
+      spacing: 24
+    ) {
       header
         .padding(.bottom, 8)
-      VStack(alignment: .leading, spacing: 12) {
+      
+      VStack(
+        alignment: .leading,
+        spacing: 12
+      ) {
         textField
         warningLabel
       }
+      
       if viewModel.isFetchingData {
         LottieView(loading: .primary)
           .frame(width: 30, height: 20)
       } else {
         savedWalletsAddress
       }
+      
       Spacer()
+      
       footer
     }
     .padding(.horizontal, 30)
@@ -120,6 +130,7 @@ private extension EnterWalletAddressView {
     Text(L10N.Common.EnterCryptoAddressView.warning)
       .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.textFieldHeader.value))
       .foregroundColor(Colors.label.swiftUIColor.opacity(0.5))
+      .fixedSize(horizontal: false, vertical: true)
   }
   
   var savedWalletsAddress: some View {

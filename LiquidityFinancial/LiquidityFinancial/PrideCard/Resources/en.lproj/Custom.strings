@@ -3,7 +3,7 @@
 // Initial Screen
 "initial.label.title" = "%@";
 
-"welcome.header.desc" = "The PrideCard is an easy way to spend your crypto assets to earn rewards. You can also buy, sell and spend Avalanche assets with the PrideCard app.";
+"welcome.header.desc" = "The PrideCard is an easy way to use your crypto assets to earn rewards. You can also buy, sell and spend Avalanche assets with the PrideCard app.";
 "welcome.how_it_works.item2" = "Use your PrideCard for everyday purchases";
 "welcome.how_it_works.item3" = "Spend USDC and WAVAX.";
 
