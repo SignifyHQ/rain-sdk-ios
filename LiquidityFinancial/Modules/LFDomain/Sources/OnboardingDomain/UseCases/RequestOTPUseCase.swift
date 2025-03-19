@@ -14,5 +14,4 @@ public class RequestOTPUseCase: RequestOTPUseCaseProtocol {
     }
     return try await repository.newRequestOTP(parameters: parameters)
   }
-
 }

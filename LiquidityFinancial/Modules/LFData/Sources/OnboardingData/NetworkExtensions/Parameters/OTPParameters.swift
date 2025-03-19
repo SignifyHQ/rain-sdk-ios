@@ -8,6 +8,5 @@ public struct OTPParameters: Parameterable, OTPParametersEntity {
   
   public init(phoneNumber: String) {
     self.phoneNumber = phoneNumber
-  }
-  
+  } 
 }

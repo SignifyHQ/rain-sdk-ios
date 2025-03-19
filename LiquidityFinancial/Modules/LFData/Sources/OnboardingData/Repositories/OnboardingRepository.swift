@@ -49,6 +49,12 @@ public class OnboardingRepository: OnboardingRepositoryProtocol {
     return try await onboardingAPI.requestOTP(parameters: requestParameters)
   }
   
+  public func checkAccountExisting(parameters: CheckAccountExistingParametersEntity) async throws -> AccountExistingEntity {
+    let requestParameters = CheckAccountExistingParameters(phoneNumber: parameters.phone)
+    
+    return try await onboardingAPI.checkAccountExisting(parameters: requestParameters)
+  }
+  
   public func newRequestOTP(parameters: OTPParametersEntity) async throws -> OtpEntity {
     let requestParameters = OTPParameters(phoneNumber: parameters.phoneNumber)
     

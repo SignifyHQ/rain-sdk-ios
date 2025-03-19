@@ -6,6 +6,7 @@ import LFUtilities
 
 public enum OnboardingRoute {
   case requestOtp(parameters: OTPParameters)
+  case checkAccountExisting(parameters: CheckAccountExistingParameters)
   case login(parameters: LoginParameters)
   case newRequestOTP(parameters: OTPParameters)
   case newLogin(parameters: LoginParameters)
@@ -14,11 +15,13 @@ public enum OnboardingRoute {
 }
 
 extension OnboardingRoute: LFRoute {
-
+  
   public var path: String {
     switch self {
     case .requestOtp:
       return "/v1/password-less/otp/request"
+    case .checkAccountExisting:
+      return "/v1/auth/exists"
     case .login:
       return "/v1/password-less/login"
     case .newRequestOTP:
@@ -34,7 +37,7 @@ extension OnboardingRoute: LFRoute {
   
   public var httpMethod: HttpMethod {
     switch self {
-    case .login, .requestOtp, .newRequestOTP, .newLogin, .refreshToken: return .POST
+    case .login, .requestOtp, .checkAccountExisting, .newRequestOTP, .newLogin, .refreshToken: return .POST
     case .getOnboardingProcess: return .GET
     }
   }
@@ -44,10 +47,11 @@ extension OnboardingRoute: LFRoute {
       "Content-Type": "application/json",
       "productId": NetworkUtilities.productID
     ]
+    
     switch self {
     case .refreshToken:
       return base
-    case .requestOtp, .login, .newRequestOTP, .newLogin:
+    case .requestOtp, .checkAccountExisting, .login, .newRequestOTP, .newLogin:
       base["ld-device-id"] = LFUtilities.deviceId
       return base
     case .getOnboardingProcess:
@@ -61,6 +65,8 @@ extension OnboardingRoute: LFRoute {
     switch self {
     case let .requestOtp(otpParameters), let .newRequestOTP(otpParameters):
       return otpParameters.encoded()
+    case let .checkAccountExisting(parameters):
+      return parameters.encoded()
     case let .login(loginParameters), let .newLogin(loginParameters):
       return loginParameters.encoded()
     case .refreshToken(let refreshToken):
@@ -78,6 +84,7 @@ extension OnboardingRoute: LFRoute {
   public var parameterEncoding: ParameterEncoding? {
     switch self {
     case .login, .requestOtp, .newRequestOTP, .newLogin, .refreshToken: return .json
+    case .checkAccountExisting: return .url
     case .getOnboardingProcess: return nil
     }
   }

@@ -36,6 +36,15 @@ extension LFCoreNetwork: OnboardingAPIProtocol where R == OnboardingRoute {
     )
   }
   
+  public func checkAccountExisting(parameters: CheckAccountExistingParameters) async throws -> APIAccountExistingResponse {
+    return try await request(
+      OnboardingRoute.checkAccountExisting(parameters: parameters),
+      target: APIAccountExistingResponse.self,
+      failure: LFErrorObject.self,
+      decoder: .apiDecoder
+    )
+  }
+  
   public func newRequestOTP(parameters: OTPParameters) async throws -> APIOtp {
     return try await request(
       OnboardingRoute.newRequestOTP(parameters: parameters),

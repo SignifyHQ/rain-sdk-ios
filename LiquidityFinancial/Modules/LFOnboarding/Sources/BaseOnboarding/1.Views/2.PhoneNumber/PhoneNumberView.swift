@@ -209,7 +209,11 @@ private extension PhoneNumberView {
 private extension PhoneNumberView {
   var footerView: some View {
     VStack(spacing: 5) {
-      termsView
+      
+      if viewModel.shouldAgreeToTerms == true {
+        termsView
+      }
+      
       secretModeView
       
       FullSizeButton(

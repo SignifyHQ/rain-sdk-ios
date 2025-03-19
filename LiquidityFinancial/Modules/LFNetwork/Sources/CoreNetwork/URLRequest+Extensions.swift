@@ -13,34 +13,42 @@ extension URLRequest {
     if let parameters = route.parameters, let parameterEncoding = route.parameterEncoding {
       switch parameterEncoding {
       case .json:
-        if let data = try? JSONSerialization.data(withJSONObject: parameters) {
-          body = data
+        do {
+          body = try JSONSerialization.data(withJSONObject: parameters)
+        } catch {
+          print("Failed to serialize JSON: \(error)")
         }
+        
       case .url:
         var urlComponents = URLComponents(url: route.url, resolvingAgainstBaseURL: false)
-        let queryItems = urlComponents?.queryItems ?? [URLQueryItem]()
-          // TODO: Handling casting `parameters`' values properly (i.e. `Any` to `String`)
-          
+        let existingQueryItems = urlComponents?.queryItems ?? []
+        
         let encodedQueryItems: [URLQueryItem] = parameters.flatMap { key, value in
-          guard let arrayValue = value as? [Any] else {
-            return [URLQueryItem(name: key, value: "\(value)")]
+          if let arrayValue = value as? [Any] {
+            return arrayValue.map { element in
+              URLQueryItem(name: key, value: String(describing: element))
+            }
           }
-          
-          return arrayValue.map { element in
-            URLQueryItem(name: key, value: "\(element)")
-          }
+          return [URLQueryItem(name: key, value: String(describing: value))]
         }
-        urlComponents?.queryItems = queryItems + encodedQueryItems
-        url = urlComponents?.url ?? url
+        
+        urlComponents?.queryItems = existingQueryItems + encodedQueryItems
+        
+        if let finalURL = urlComponents?.url?.absoluteString {
+          let properlyEncodedURLString = finalURL.replacingOccurrences(of: "+", with: "%2B")
+          url = URL(string: properlyEncodedURLString) ?? url
+        }
       }
     }
     
     self.init(url: url)
     httpMethod = route.httpMethod.rawValue
     httpBody = body
-    if let value = headers["Authorization"], value == route.needAuthorizationKey {
+    
+    if headers["Authorization"] == route.needAuthorizationKey {
       headers["Authorization"] = auth.fetchAccessToken()
     }
+    
     headers.forEach { setValue($0.value, forHTTPHeaderField: $0.key) }
   }
 }
