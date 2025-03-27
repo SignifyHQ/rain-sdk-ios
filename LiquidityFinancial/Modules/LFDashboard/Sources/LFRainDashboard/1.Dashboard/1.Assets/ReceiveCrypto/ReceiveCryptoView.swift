@@ -114,6 +114,7 @@ private extension ReceiveCryptoView {
         .foregroundColor(Colors.label.swiftUIColor)
         .opacity(0.5)
         .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.ultraSmall.value))
+        .padding(.top, 1)
         .padding(.bottom, 10)
         .multilineTextAlignment(.leading)
     }

@@ -176,7 +176,7 @@
 "backupWallet.active.title" = "Active";
 "backupWallet.setupPinCode.title" = "Set up PIN";
 "backupWallet.backupWithICloud.title" = "Backup with iCloud";
-"backupWallet.disclosure.title" = "Backing up helps you recover your wallet in case you lose or reset your device";
+"backupWallet.disclosure.title" = "Backing up helps you recover your account in case you lose or reset your device. Avalanche Card will not be able to recover your account and you may lose access if you don't back it up";
 
 // Baclup By PinCode
 "backupByPinCode.setup.title" = "set up your backup pin";
@@ -770,7 +770,7 @@ https://mn.gov/commerce/money/investments/cryptocurrency/. \n\n\n\n\n\n\n";
 
 // Receive Crypto View
 "receive_crypto_view.title" = "Avalanche Card address";
-"receive_crypto_view.subtitle" = "Funds can only be added from the Avalanche C-Chain.";
+"receive_crypto_view.subtitle" = "Funds can only be added from the Avalanche C-Chain or they may be lost.";
 "receive_crypto_view.copied.info" = "Copied!";
 "receive_crypto_view.wallet_detail" = "Wallet Details";
 

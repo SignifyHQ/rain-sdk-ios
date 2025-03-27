@@ -5,7 +5,7 @@
 
 // Wellcome Screen
 "welcome.header.desc" = "The Avalanche Card is an easy way to use your crypto.";
-"welcome.how_it_works.item2" = "Transfer USDC or WAVAX to your card";
+"welcome.how_it_works.item2" = "Transfer USDC, AVAX, USDT, or WAVAX to your card";
 "welcome.how_it_works.item1" = "Use your Avalanche Card anywhere Visa is accepted";
 
 // Enter Verification Code
