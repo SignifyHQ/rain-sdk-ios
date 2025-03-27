@@ -53,25 +53,32 @@ struct BottomSheetView: View {
   }
   
   private var header: some View {
-    HStack {
-      if selectedPage > 0 {
-        Button(
-          action: {
-            selectedPage -= 1
-            cancelDelivery()
+    ZStack {
+      HStack {
+        Spacer()
+        Text(title)
+          .font(Fonts.semiBold.swiftUIFont(size: 20))
+          .foregroundColor(Colors.label.swiftUIColor)
+          .frame(maxWidth: .infinity, alignment: .center)
+        Spacer()
+      }
+      
+      if [1, 2].contains(selectedPage) {
+        HStack {
+          Button(
+            action: {
+              selectedPage -= 1
+              cancelDelivery()
+            }
+          ) {
+            Image(systemName: "arrow.left")
+              .font(.title2)
+              .foregroundColor(.primary)
           }
-        ) {
-          Image(systemName: "arrow.left")
-            .font(.title2)
-            .foregroundColor(.primary)
+          
+          Spacer()
         }
       }
-      Spacer()
-      Text(title)
-        .font(Fonts.semiBold.swiftUIFont(size: 20))
-        .foregroundColor(Colors.label.swiftUIColor)
-        .frame(maxWidth: .infinity, alignment: .center)
-      Spacer()
     }
   }
   
@@ -151,15 +158,7 @@ struct BottomSheetView: View {
   private func fidesmoStepThree() -> some View {
     VStack(alignment: .center) {
       if viewModel.deliveryType == .notStarted && viewModel.dataRequirements.isEmpty {
-        GenImages.CommonImages.icNfc.swiftUIImage
-          .padding(.vertical, 25)
-        
-        Text("Hold your card against the top edge of the back of your phone.")
-          .frame(maxWidth: .infinity, alignment: .leading)
-          .multilineTextAlignment(.leading)
-          .lineSpacing(1.2)
-          .font(Fonts.regular.swiftUIFont(size: 18))
-          .foregroundColor(Colors.label.swiftUIColor)
+        holdYourDeviceView
         
         Spacer()
       }
@@ -177,22 +176,14 @@ struct BottomSheetView: View {
             .foregroundColor(Colors.label.swiftUIColor)
             .frame(maxWidth: .infinity)
         } else {
-          Text("Talking to Server")
+          Text("Talking to Server...")
             .font(Fonts.regular.swiftUIFont(size: 16))
             .foregroundColor(Colors.label.swiftUIColor)
             .frame(maxWidth: .infinity)
             .padding(.top)
         }
         
-        GenImages.CommonImages.icNfc.swiftUIImage
-          .padding(.vertical, 25)
-        
-        Text("Hold your card against the top edge of the back of your phone.")
-          .frame(maxWidth: .infinity, alignment: .leading)
-          .multilineTextAlignment(.leading)
-          .lineSpacing(1.2)
-          .font(Fonts.regular.swiftUIFont(size: 18))
-          .foregroundColor(Colors.label.swiftUIColor)
+        holdYourDeviceView
         
         Spacer()
       } else {
@@ -233,20 +224,37 @@ struct BottomSheetView: View {
         responseHandler(viewModel.userDataResponse)
       }
     }
+    .onChange(of: viewModel.dataRequirements) {
+      if let _ = $0.first(
+        where: { requirement in
+          requirement.type == .image
+        }
+      ) {
+        sheetHeight = 550
+      } else {
+        sheetHeight = 350
+      }
+    }
     .onChange(of: viewModel.deliveryProgress) {
       switch $0 {
       case .operationInProgress(_, let dataFlow):
+        sheetHeight = 400
+        
         if case .toDevice = dataFlow {
           DispatchQueue.main.async {
             self.viewModel.deliveryType = .transceive
           }
         }
-      default: break
+      case .finished(let status):
+        if status.success {
+          selectedPage = 3
+        } else {
+          isPresented = false
+        }
+      default:
+        sheetHeight = 350
       }
     }
-//    .onChange(of: viewModel.dataRequirements) {
-//      sheetHeight = $0.isEmpty ? 400 : 550
-//    }
     .onChange(of: scenePhase) { newScenePhase in
       switch newScenePhase {
       case .active:
@@ -257,6 +265,21 @@ struct BottomSheetView: View {
         }
       default: break
       }
+    }
+  }
+  
+  private var holdYourDeviceView: some View {
+    Group {
+      GenImages.CommonImages.icNfc.swiftUIImage
+        .padding(.vertical, 25)
+      
+      Text("Hold your card against the top edge of the back of your phone.")
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .multilineTextAlignment(.leading)
+        .lineSpacing(1.2)
+        .fixedSize(horizontal: false, vertical: true)
+        .font(Fonts.regular.swiftUIFont(size: 18))
+        .foregroundColor(Colors.label.swiftUIColor)
     }
   }
   
