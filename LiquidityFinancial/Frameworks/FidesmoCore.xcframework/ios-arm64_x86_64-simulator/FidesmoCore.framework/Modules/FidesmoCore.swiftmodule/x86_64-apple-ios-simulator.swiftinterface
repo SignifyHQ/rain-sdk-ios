@@ -1,0 +1,875 @@
+// swift-interface-format-version: 1.0
+// swift-compiler-version: Apple Swift version 6.0 effective-5.10 (swiftlang-6.0.0.9.10 clang-1600.0.26.2)
+// swift-module-flags: -target x86_64-apple-ios12.0-simulator -enable-objc-interop -enable-library-evolution -swift-version 5 -enforce-exclusivity=checked -O -enable-bare-slash-regex -module-name FidesmoCore
+// swift-module-flags-ignorable: -no-verify-emitted-module-interface
+import CryptoSwift
+import Foundation
+import RxSwift
+import Security
+import Swift
+import UIKit
+import _Concurrency
+import _StringProcessing
+import _SwiftConcurrencyShims
+import os
+public typealias Byte = Swift.UInt8
+public typealias Bytes = [FidesmoCore.Byte]
+extension Foundation.Data {
+  public func toByteStream() -> FidesmoCore.Bytes
+  public func toHex() -> Swift.String
+  public init<T>(fromArray values: [T])
+}
+extension Swift.UInt16 {
+  public func toHex() -> Swift.String
+  public func toBytes(reverse: Swift.Bool = false) -> FidesmoCore.Bytes
+}
+extension Swift.UInt32 {
+  public func toBytes(reverse: Swift.Bool = false) -> FidesmoCore.Bytes
+}
+extension Swift.Array where Element == Swift.UInt8 {
+  public static func from(hexString: Swift.String) -> [FidesmoCore.Byte]
+  public func toUInt8(reverse: Swift.Bool = false) -> Swift.UInt8
+  public func toUInt16(reverse: Swift.Bool = false) -> Swift.UInt16
+  public func toUInt32(reverse: Swift.Bool = false) -> Swift.UInt32
+  public func toUInt64(reverse: Swift.Bool = false) -> Swift.UInt64
+  public mutating func remove(upTo: Swift.Int) -> FidesmoCore.Bytes
+}
+public enum PaymentCardScheme : Swift.String, Swift.Codable, Swift.CaseIterable {
+  case diners, discover, mastercard, maestro, visa, amex, jcb, unknown
+  public init?(rawValue: Swift.String)
+  public typealias AllCases = [FidesmoCore.PaymentCardScheme]
+  public typealias RawValue = Swift.String
+  nonisolated public static var allCases: [FidesmoCore.PaymentCardScheme] {
+    get
+  }
+  public var rawValue: Swift.String {
+    get
+  }
+}
+public struct PaymentCard : Swift.Encodable {
+  public let cardNumber: Swift.String
+  public let expiryMonth: Swift.Int
+  public let expiryYear: Swift.Int
+  public let cvv: Swift.String
+  public let scheme: FidesmoCore.PaymentCardScheme
+  public init(cardNumber: Swift.String, expiryMonth: Swift.Int, expiryYear: Swift.Int, cvv: Swift.String)
+  public func encode(to encoder: any Swift.Encoder) throws
+}
+public func computeCardScheme(cardnumber: Swift.String) -> FidesmoCore.PaymentCardScheme
+extension FidesmoCore.PaymentCard {
+  public func toJSONString() -> Swift.String?
+  public func isValid() -> Swift.Bool
+  public func isPanValid() -> Swift.Bool
+  public func isCvvValid() -> Swift.Bool
+  public func isDateValid() -> Swift.Bool
+  public func validateSchemeFromCcn() -> Swift.Bool
+}
+public struct PaymentCardType {
+}
+extension FidesmoCore.PaymentCardScheme {
+  public func maxPanLength() -> Swift.Int
+  public func numSpacesForPanPresentation() -> Swift.Int
+  public func paymentCardType() -> FidesmoCore.PaymentCardType?
+}
+public typealias SessionId = Swift.String
+public protocol NetworkDispatcher {
+  func execute(request: any FidesmoCore.Request) -> RxSwift.Observable<Foundation.Data>
+}
+public class FidesmoApiDispatcher : FidesmoCore.NetworkDispatcher {
+  public static let fidesmoApiBaseUrl: Swift.String
+  public static let fidesmoApiDefaultVersion: Swift.String
+  public init(host: Swift.String, localeStrings: Swift.String?)
+  public func execute(request: any FidesmoCore.Request) -> RxSwift.Observable<Foundation.Data>
+  @objc deinit
+}
+public struct EligibilityResponse : Swift.Codable {
+  public let status: Swift.String
+  public func encode(to encoder: any Swift.Encoder) throws
+  public init(from decoder: any Swift.Decoder) throws
+}
+public protocol NetworkTask {
+  associatedtype Output
+  init(dispatcher: any FidesmoCore.NetworkDispatcher)
+  func perform(_ element: any FidesmoCore.Request) -> RxSwift.Observable<Self.Output>
+}
+public class JsonRequestTask<Output> : FidesmoCore.NetworkTask where Output : Swift.Decodable, Output : Swift.Encodable {
+  required public init(dispatcher: any FidesmoCore.NetworkDispatcher)
+  public func perform(_ element: any FidesmoCore.Request) -> RxSwift.Observable<Output>
+  @objc deinit
+}
+public struct DeviceApp : Swift.Codable {
+  public let appId: Swift.String
+  public let status: FidesmoCore.DeviceAppStatus
+  public init(appId: Swift.String, status: FidesmoCore.DeviceAppStatus)
+  public func encode(to encoder: any Swift.Encoder) throws
+  public init(from decoder: any Swift.Decoder) throws
+}
+extension FidesmoCore.DeviceApp : Swift.Equatable {
+  public static func == (lhs: FidesmoCore.DeviceApp, rhs: FidesmoCore.DeviceApp) -> Swift.Bool
+  public func copy(appId: Swift.String? = .none, status: FidesmoCore.DeviceAppStatus? = .none) -> FidesmoCore.DeviceApp
+  public static func empty() -> FidesmoCore.DeviceApp
+}
+public enum DeviceAppStatus : Swift.String, Swift.Codable {
+  case Installing
+  case Installed
+  case Uninstalling
+  case Suspending
+  case Suspended
+  case Unsuspending
+  case Unknown
+  public init?(rawValue: Swift.String)
+  public typealias RawValue = Swift.String
+  public var rawValue: Swift.String {
+    get
+  }
+}
+public struct ServiceDescriptionResponse : Swift.Codable {
+  public let serviceId: FidesmoCore.ServiceId
+  public let app: FidesmoCore.AppDescription?
+  public let description: FidesmoCore.ServiceDescription
+  public init(serviceId: FidesmoCore.ServiceId, app: FidesmoCore.AppDescription?, description: FidesmoCore.ServiceDescription)
+  public func encode(to encoder: any Swift.Encoder) throws
+  public init(from decoder: any Swift.Decoder) throws
+}
+extension FidesmoCore.ServiceDescriptionResponse : Swift.Equatable {
+  public static func == (lhs: FidesmoCore.ServiceDescriptionResponse, rhs: FidesmoCore.ServiceDescriptionResponse) -> Swift.Bool
+}
+public let defaultTimeoutRequest: Swift.Double
+public protocol Request {
+  var path: Swift.String { get }
+  var method: FidesmoCore.HTTPMethod { get }
+  var parameters: FidesmoCore.RequestParams { get }
+  var headers: [Swift.String : Swift.String]? { get }
+  var dataType: FidesmoCore.DataType { get }
+  var timeOutInterval: Foundation.TimeInterval { get }
+}
+public enum HTTPMethod : Swift.String {
+  case post
+  case put
+  case get
+  case delete
+  case patch
+  public init?(rawValue: Swift.String)
+  public typealias RawValue = Swift.String
+  public var rawValue: Swift.String {
+    get
+  }
+}
+public enum RequestParams {
+  case body(Foundation.Data?)
+  case url([Swift.String : Any]?)
+}
+public enum DataType {
+  case json
+  case data
+  public static func == (a: FidesmoCore.DataType, b: FidesmoCore.DataType) -> Swift.Bool
+  public func hash(into hasher: inout Swift.Hasher)
+  public var hashValue: Swift.Int {
+    get
+  }
+}
+public protocol AppAuthenticationResponse : Swift.Decodable, Swift.Encodable {
+  init(queryItems: [Swift.String : Swift.String]?)
+  func toJSONString() -> Swift.String?
+  static var keys: [Swift.String : [Swift.String]] { get }
+}
+extension FidesmoCore.AppAuthenticationResponse {
+  public static func extractValue(from keys: [Swift.String], queryItems: [Swift.String : Swift.String]?) -> Swift.String?
+  public func toJSONString() -> Swift.String?
+}
+public enum AppAuthenticationCreator {
+  public static func createAuthenticationResponse(from queryItems: [Swift.String : Swift.String]?) -> (any FidesmoCore.AppAuthenticationResponse)?
+  public static func createAuthenticationResponse(from jsonString: Swift.String) -> (any FidesmoCore.AppAuthenticationResponse)?
+}
+public struct VisaAuthenticationActivation : FidesmoCore.AppAuthenticationResponse {
+  public let result: Swift.String?
+  public let authenticationCode: Swift.String?
+  public static let keys: [Swift.String : [Swift.String]]
+  public init(queryItems: [Swift.String : Swift.String]?)
+  public init(result: Swift.String?, authenticationCode: Swift.String?)
+  public func encode(to encoder: any Swift.Encoder) throws
+  public init(from decoder: any Swift.Decoder) throws
+}
+public struct MastercardAuthenticationActivation : FidesmoCore.AppAuthenticationResponse {
+  public let issuerMobileAppAuthResponse: Swift.String?
+  public let TAV: Swift.String?
+  public let tokenUniqueReference: Swift.String?
+  public let status: Swift.String?
+  public let proofOfAuthentication: Swift.String?
+  public let reason: Swift.String?
+  public static let keys: [Swift.String : [Swift.String]]
+  public init(queryItems: [Swift.String : Swift.String]?)
+  public init(issuerMobileAppAuthResponse: Swift.String?, TAV: Swift.String?, tokenUniqueReference: Swift.String?)
+  public init(status: Swift.String?, proofOfAuthentication: Swift.String?, reason: Swift.String?)
+  public func encode(to encoder: any Swift.Encoder) throws
+  public init(from decoder: any Swift.Decoder) throws
+}
+public enum DeliveryProgress : Swift.Equatable {
+  case notStarted
+  case operationInProgress(description: FidesmoCore.OperationDescription?, dataFlow: FidesmoCore.DeliveryProgress.DeliveryDataFlow)
+  case needsUserInteraction([FidesmoCore.DataRequirement], FidesmoCore.UserResponseHandler)
+  case needsUserAction([FidesmoCore.UiAction], FidesmoCore.UserActionHandler)
+  case finished(status: FidesmoCore.ServiceStatus)
+  public enum DeliveryDataFlow : Swift.Equatable {
+    case talkingToServer(session: FidesmoCore.SessionId)
+    case toDevice(commands: [FidesmoCore.ApduCommand])
+    case toServer(responses: [FidesmoCore.ApduResponse])
+    public static func == (lhs: FidesmoCore.DeliveryProgress.DeliveryDataFlow, rhs: FidesmoCore.DeliveryProgress.DeliveryDataFlow) -> Swift.Bool
+  }
+  public static func == (lhs: FidesmoCore.DeliveryProgress, rhs: FidesmoCore.DeliveryProgress) -> Swift.Bool
+}
+public enum ClientOsType : Swift.String, Swift.Codable {
+  case iphone
+  case ipad
+  case unknown
+  public init?(rawValue: Swift.String)
+  public typealias RawValue = Swift.String
+  public var rawValue: Swift.String {
+    get
+  }
+}
+public enum ClientCapabilities : Swift.String, Swift.Codable {
+  case seAccess
+  case payAidAccess
+  case app2app
+  case support3ds
+  public init?(rawValue: Swift.String)
+  public typealias RawValue = Swift.String
+  public var rawValue: Swift.String {
+    get
+  }
+}
+public class ClientInfo : Swift.Encodable {
+  public func encode(to encoder: any Swift.Encoder) throws
+  public init(clientType: FidesmoCore.ClientOsType, applicationName: Swift.String? = nil, applicationVersion: Swift.String? = nil, clientCapabilities: [FidesmoCore.ClientCapabilities] = [])
+  @objc deinit
+}
+@available(*, deprecated, message: "Deprecated on versions higher than 1.0.1. Use `AppAuthenticationResponse` instead.")
+public struct AppAuthentication : Swift.Codable {
+  public let result: Swift.String?
+  public let authenticationCode: Swift.String?
+  public let issuerMobileAppAuthResponse: Swift.String?
+  public let TAV: Swift.String?
+  public let tokenUniqueReference: Swift.String?
+  public init(result: Swift.String?, authenticationCode: Swift.String?, issuerMobileAppAuthResponse: Swift.String?, TAV: Swift.String?, tokenUniqueReference: Swift.String?)
+  public init?(jsonString: Swift.String)
+  public func encode(to encoder: any Swift.Encoder) throws
+  public init(from decoder: any Swift.Decoder) throws
+}
+extension FidesmoCore.AppAuthentication {
+  public func toJSONString() -> Swift.String?
+}
+public struct OperationDescription : Swift.Codable {
+  public let currentStep: Swift.Int
+  public let totalSteps: Swift.Int
+  public let estimatedDuration: Swift.Int?
+  public let message: FidesmoCore.ParametrisedTranslation?
+  public let image: Swift.String?
+  public func encode(to encoder: any Swift.Encoder) throws
+  public init(from decoder: any Swift.Decoder) throws
+}
+extension FidesmoCore.OperationDescription : Swift.Equatable {
+  public static func == (lhs: FidesmoCore.OperationDescription, rhs: FidesmoCore.OperationDescription) -> Swift.Bool
+}
+public typealias OperationId = Swift.String
+public struct DeviceDescription : Swift.Codable {
+  public let cin: Swift.String
+  public let iin: Swift.String
+  public let name: FidesmoCore.ParametrisedTranslation
+  public let description: FidesmoCore.ParametrisedTranslation?
+  public let capabilities: FidesmoCore.Capabilities
+  public let batch: FidesmoCore.DeviceBatch
+  public let imageUrl: Swift.String
+  public let siteUrl: Swift.String?
+  public init(cin: Swift.String, iin: Swift.String, name: FidesmoCore.ParametrisedTranslation, description: FidesmoCore.ParametrisedTranslation?, capabilities: FidesmoCore.Capabilities = Capabilities.empty(), batch: FidesmoCore.DeviceBatch, imageUrl: Swift.String, siteUrl: Swift.String?)
+}
+extension FidesmoCore.DeviceDescription {
+  public init(from decoder: any Swift.Decoder) throws
+  public func encode(to _: any Swift.Encoder) throws
+}
+extension FidesmoCore.DeviceDescription : Swift.Equatable {
+  public static func == (lhs: FidesmoCore.DeviceDescription, rhs: FidesmoCore.DeviceDescription) -> Swift.Bool
+}
+public enum NetworkError : Swift.Error {
+  case badResponse(_: Swift.Int?, _: (any Swift.Error)?, _: Swift.String?)
+  case badInput(reason: Swift.String)
+  case jsonError(_: (any Swift.Error)?)
+  case noData
+  case unknown
+}
+public enum RegexPattern : Swift.String {
+  case appIdFormat
+  case serviceIdFormat
+  case numberInputFormat
+  case textMaximumInput
+  case numberMaximumInput
+  case emailInputFormat
+  case buttonInputFormat
+  case checkboxInputFormat
+  case dateInputFormat
+  public init?(rawValue: Swift.String)
+  public typealias RawValue = Swift.String
+  public var rawValue: Swift.String {
+    get
+  }
+}
+public struct FieldRegexValidator {
+  public static func validateInput(_ input: Swift.String, regexPattern: FidesmoCore.RegexPattern) -> Swift.Bool
+}
+public struct UserInteractionValidator {
+  public static func validateResponseAgainstRequirements(_ responses: FidesmoCore.UserDataResponse, requirements: [FidesmoCore.DataRequirement]) -> Swift.Bool
+  public static func validateUserInteractionTypeInput(_ input: Swift.String, requirement: FidesmoCore.DataRequirement) -> Swift.Bool
+  public static func validateMandatoryField(_ input: Swift.String, requirement: FidesmoCore.DataRequirement) -> Swift.Bool
+  public static func validateLuhnCheck(_ cardNumber: Swift.String?) -> Swift.Bool
+}
+public typealias DeviceId = Swift.String
+public typealias ApduCommand = Swift.String
+public typealias ApduResponse = Swift.String
+public enum ConnectionType : Swift.CaseIterable, Swift.Equatable {
+  public static var allCases: [FidesmoCore.ConnectionType]
+  case nfc, ble(_: Swift.String? = nil)
+  public static func == (a: FidesmoCore.ConnectionType, b: FidesmoCore.ConnectionType) -> Swift.Bool
+  public typealias AllCases = [FidesmoCore.ConnectionType]
+}
+public protocol DeviceConnection {
+  var getUid: FidesmoCore.Bytes { get }
+  var deviceId: FidesmoCore.DeviceId { get }
+  var type: FidesmoCore.ConnectionType { get }
+  func transceive(command: FidesmoCore.ApduCommand) -> RxSwift.Observable<FidesmoCore.ApduResponse>
+  func transceive(commands: [FidesmoCore.ApduCommand]) -> RxSwift.Observable<[FidesmoCore.ApduResponse]>
+  func finishConversation() -> RxSwift.Completable
+}
+extension Swift.String {
+  public var statusWord: Swift.String {
+    get
+  }
+  public var successfulStatus: Swift.Bool {
+    get
+  }
+  public var hasContent: Swift.Bool {
+    get
+  }
+}
+public struct InstanceElement : Swift.Codable {
+  public let image: Swift.String?
+  public let description: FidesmoCore.ParametrisedTranslation?
+  public let extraInfo: FidesmoCore.AppExtraInfo?
+  public init(image: Swift.String?, description: FidesmoCore.ParametrisedTranslation?, extraInfo: FidesmoCore.AppExtraInfo?)
+  public func encode(to encoder: any Swift.Encoder) throws
+  public init(from decoder: any Swift.Decoder) throws
+}
+extension FidesmoCore.InstanceElement : Swift.Equatable {
+  public static func == (lhs: FidesmoCore.InstanceElement, rhs: FidesmoCore.InstanceElement) -> Swift.Bool
+}
+public enum StatusAlertRequest : FidesmoCore.Request {
+  case statusAlert(path: Swift.String)
+  public var path: Swift.String {
+    get
+  }
+  public var method: FidesmoCore.HTTPMethod {
+    get
+  }
+  public var parameters: FidesmoCore.RequestParams {
+    get
+  }
+  public var headers: [Swift.String : Swift.String]? {
+    get
+  }
+  public var dataType: FidesmoCore.DataType {
+    get
+  }
+  public var timeOutInterval: Foundation.TimeInterval {
+    get
+  }
+}
+public typealias AppId = Swift.String
+public struct AppDescription : Swift.Codable {
+  public let appId: Swift.String
+  public let name: FidesmoCore.ParametrisedTranslation
+  public let description: FidesmoCore.ParametrisedTranslation?
+  public let organization: FidesmoCore.Org
+  public let logo: Swift.String
+  public let currency: Swift.String?
+  public let installServices: [FidesmoCore.ServiceId]
+  public let uninstallService: FidesmoCore.ServiceId?
+  public let suspendService: FidesmoCore.ServiceId?
+  public let unsuspendService: FidesmoCore.ServiceId?
+  public init(appId: Swift.String, name: FidesmoCore.ParametrisedTranslation, description: FidesmoCore.ParametrisedTranslation?, organization: FidesmoCore.Org, logo: Swift.String, currency: Swift.String? = .none, installServices: [Swift.String] = [String](), uninstallService: FidesmoCore.ServiceId? = .none, suspendService: FidesmoCore.ServiceId? = .none, unsuspendService: FidesmoCore.ServiceId? = .none)
+  public func encode(to encoder: any Swift.Encoder) throws
+  public init(from decoder: any Swift.Decoder) throws
+}
+extension FidesmoCore.AppDescription {
+  public static func empty() -> FidesmoCore.AppDescription
+}
+extension FidesmoCore.AppDescription : Swift.Equatable {
+  public static func == (lhs: FidesmoCore.AppDescription, rhs: FidesmoCore.AppDescription) -> Swift.Bool
+}
+public enum DeviceError : Swift.Error {
+  case readingError(reason: Swift.String)
+  case noDeviceCin(reason: Swift.String)
+  case eligibilityError(reason: Swift.String)
+}
+public struct AppExtraInfo : Swift.Codable, Swift.Equatable {
+  public init(fidesmoPay: FidesmoCore.FidesmoPay?)
+  public let fidesmoPay: FidesmoCore.FidesmoPay?
+  public static func == (a: FidesmoCore.AppExtraInfo, b: FidesmoCore.AppExtraInfo) -> Swift.Bool
+  public func encode(to encoder: any Swift.Encoder) throws
+  public init(from decoder: any Swift.Decoder) throws
+}
+public struct FidesmoPay : Swift.Codable, Swift.Equatable {
+  public let bank: FidesmoCore.Bank?
+  public let card: FidesmoCore.Card?
+  public let token: FidesmoCore.Token?
+  public static func == (a: FidesmoCore.FidesmoPay, b: FidesmoCore.FidesmoPay) -> Swift.Bool
+  public func encode(to encoder: any Swift.Encoder) throws
+  public init(from decoder: any Swift.Decoder) throws
+}
+public struct Bank : Swift.Codable, Swift.Equatable {
+  public let appAddress: Swift.String?
+  public let appName: Swift.String?
+  public let contact: FidesmoCore.Contact?
+  public static func == (a: FidesmoCore.Bank, b: FidesmoCore.Bank) -> Swift.Bool
+  public func encode(to encoder: any Swift.Encoder) throws
+  public init(from decoder: any Swift.Decoder) throws
+}
+public struct Contact : Swift.Codable, Swift.Equatable {
+  public let email: Swift.String?
+  public let number: Swift.String?
+  public let website: Swift.String?
+  public static func == (a: FidesmoCore.Contact, b: FidesmoCore.Contact) -> Swift.Bool
+  public func encode(to encoder: any Swift.Encoder) throws
+  public init(from decoder: any Swift.Decoder) throws
+}
+public struct Card : Swift.Codable, Swift.Equatable {
+  public let pan: Swift.String?
+  public static func == (a: FidesmoCore.Card, b: FidesmoCore.Card) -> Swift.Bool
+  public func encode(to encoder: any Swift.Encoder) throws
+  public init(from decoder: any Swift.Decoder) throws
+}
+public struct Token : Swift.Codable, Swift.Equatable {
+  public let expiry: Swift.String?
+  public let pan: Swift.String?
+  public let status: Swift.String?
+  public static func == (a: FidesmoCore.Token, b: FidesmoCore.Token) -> Swift.Bool
+  public func encode(to encoder: any Swift.Encoder) throws
+  public init(from decoder: any Swift.Decoder) throws
+}
+public typealias DataRequirementId = Swift.String
+public typealias UserDataResponse = [FidesmoCore.DataRequirementId : Swift.String]
+public typealias UserResponseHandler = (FidesmoCore.UserDataResponse) -> Swift.Void
+public struct DataRequirement {
+  public let label: FidesmoCore.ParametrisedTranslation?
+  public let labels: [FidesmoCore.ParametrisedTranslation]?
+  public let id: FidesmoCore.DataRequirementId
+  public let type: FidesmoCore.DataRequirementType
+  public var appUrl: Swift.String?
+  public var appStoreId: Swift.String?
+  public var mandatory: Swift.Bool
+  public var url: Swift.String?
+  public init(label: FidesmoCore.ParametrisedTranslation?, labels: [FidesmoCore.ParametrisedTranslation]?, id: FidesmoCore.DataRequirementId, type: FidesmoCore.DataRequirementType, appUrl: Swift.String?, appStoreId: Swift.String?, mandatory: Swift.Bool)
+}
+extension FidesmoCore.DataRequirement : Swift.Codable {
+  public init(from decoder: any Swift.Decoder) throws
+  public func encode(to encoder: any Swift.Encoder) throws
+}
+public enum DataRequirementType {
+  case checkbox
+  case text(FidesmoCore.DataRequirementType.TextFormat)
+  case date
+  case paymentcard
+  case image
+  case option(FidesmoCore.DataRequirementType.OptionFormat)
+  case edit(FidesmoCore.DataRequirementType.EditFormat)
+  case appAuth
+  case openUrl
+  case webActivation
+  public enum OptionFormat : Swift.String, Swift.Codable {
+    case radio
+    case button
+    public init?(rawValue: Swift.String)
+    public typealias RawValue = Swift.String
+    public var rawValue: Swift.String {
+      get
+    }
+  }
+  public enum EditFormat : Swift.String, Swift.Codable {
+    case email
+    case text, password
+    case number, obfuscatedNumber
+    public init?(rawValue: Swift.String)
+    public typealias RawValue = Swift.String
+    public var rawValue: Swift.String {
+      get
+    }
+  }
+  public enum TextFormat : Swift.String, Swift.Codable {
+    case unformatted
+    case small
+    case medium
+    case large
+    public init?(rawValue: Swift.String)
+    public typealias RawValue = Swift.String
+    public var rawValue: Swift.String {
+      get
+    }
+  }
+}
+public enum SetupRequirementIds : Swift.String {
+  case confirmation
+  public init?(rawValue: Swift.String)
+  public typealias RawValue = Swift.String
+  public var rawValue: Swift.String {
+    get
+  }
+}
+extension FidesmoCore.DataRequirement : Swift.Equatable {
+  public static func == (lhs: FidesmoCore.DataRequirement, rhs: FidesmoCore.DataRequirement) -> Swift.Bool
+}
+extension FidesmoCore.DataRequirementType : Swift.Equatable {
+  public static func == (lhs: FidesmoCore.DataRequirementType, rhs: FidesmoCore.DataRequirementType) -> Swift.Bool
+}
+extension Swift.Dictionary where Key == Swift.String, Value == Swift.String {
+  public func getValue(_ key: Swift.String) -> Swift.String?
+}
+extension Swift.Dictionary where Key == Swift.String, Value == Swift.String {
+  public func getValue() -> [Swift.String : Swift.String]
+  public func filterExtraRequirements() -> [Swift.String : Swift.String]
+}
+public struct Translations : Swift.Codable {
+  public let content: [Swift.String : Swift.String]
+  public init(content: [Swift.String : Swift.String])
+  public init(defaultValue: Swift.String)
+  public func value(code: Swift.String) -> Swift.String
+}
+extension FidesmoCore.Translations {
+  public init(from decoder: any Swift.Decoder) throws
+  public func encode(to encoder: any Swift.Encoder) throws
+}
+extension FidesmoCore.Translations {
+  public var defaultValue: Swift.String {
+    get
+  }
+}
+extension FidesmoCore.Translations : Swift.Equatable {
+  public static func == (lhs: FidesmoCore.Translations, rhs: FidesmoCore.Translations) -> Swift.Bool
+}
+public typealias HexString = Swift.String
+public struct DeviceInternalIds : Swift.Codable {
+  public let iin: Swift.String
+  public let cin: Swift.String
+  public init(iin: Swift.String, cin: Swift.String, platformVersion: Swift.UInt32)
+  public func encode(to encoder: any Swift.Encoder) throws
+  public init(from decoder: any Swift.Decoder) throws
+}
+public class DeliveryManager {
+  public init(connection: RxSwift.Observable<(any FidesmoCore.DeviceConnection)?>, dispatcher: FidesmoCore.FidesmoApiDispatcher)
+  @objc deinit
+}
+extension FidesmoCore.DeliveryManager {
+  public func deliver(appId: FidesmoCore.AppId, serviceId: FidesmoCore.ServiceId, cin: Swift.String, initialUserData: FidesmoCore.UserDataResponse? = nil, publicKey: FidesmoCore.HexString? = nil, clientInfo: FidesmoCore.ClientInfo) -> RxSwift.Observable<FidesmoCore.DeliveryProgress>
+  public func cancelDelivery(message: Swift.String)
+}
+public struct Org : Swift.Codable {
+  public let name: Swift.String
+  public init(name: Swift.String)
+  public func encode(to encoder: any Swift.Encoder) throws
+  public init(from decoder: any Swift.Decoder) throws
+}
+public struct FidesmoUrlParser {
+  public static func handleServiceUrl(url: Foundation.URL, completion: @escaping (FidesmoCore.ServicePlaceholder?, FidesmoCore.CIN?, FidesmoCore.FidesmoUrlSchemaType) -> Swift.Void)
+  public static func appAuthentication(for url: Foundation.URL) -> Swift.String?
+}
+public struct ServicePlaceholder : Swift.Equatable {
+  public let appId: FidesmoCore.AppId
+  public let serviceId: FidesmoCore.ServiceId
+  public let queryParams: [Swift.String : Swift.String]?
+  public init(appId: FidesmoCore.AppId, serviceId: FidesmoCore.ServiceId, queryParams: [Swift.String : Swift.String]?)
+  public static func == (lhs: FidesmoCore.ServicePlaceholder, rhs: FidesmoCore.ServicePlaceholder) -> Swift.Bool
+}
+public enum FidesmoUrlSchemaType {
+  case unknown
+  case serviceDeliveryUrl(appId: FidesmoCore.AppId, serviceId: FidesmoCore.ServiceId, cin: Swift.String?, queryParams: [Swift.String : Swift.String])
+  case pushProvisioningUrl(appId: FidesmoCore.AppId, serviceId: FidesmoCore.ServiceId, cin: Swift.String?, queryParams: [Swift.String : Swift.String])
+}
+public enum PushProvisioningFailedReason : Swift.String {
+  case cancelled
+  case error
+  public init?(rawValue: Swift.String)
+  public typealias RawValue = Swift.String
+  public var rawValue: Swift.String {
+    get
+  }
+}
+extension FidesmoCore.FidesmoUrlSchemaType {
+  public static func from(url: Foundation.URL) -> FidesmoCore.FidesmoUrlSchemaType
+  public func getCallbackUrl(reason: FidesmoCore.PushProvisioningFailedReason) -> Swift.String?
+}
+public enum AppStoreRequests : FidesmoCore.Request {
+  case demoApps(clientInfo: FidesmoCore.ClientInfo)
+  case apps(showDevelopment: Swift.Bool, cin: Swift.String? = nil, devicePresent: Swift.Bool? = nil, clientInfo: FidesmoCore.ClientInfo)
+  case app(appId: FidesmoCore.AppId, cin: Swift.String? = nil, clientInfo: FidesmoCore.ClientInfo)
+  case appServiceIds(appId: FidesmoCore.AppId, cin: Swift.String? = nil, devicePresent: Swift.Bool? = nil, clientInfo: FidesmoCore.ClientInfo)
+  case appServices(appId: FidesmoCore.AppId, cin: Swift.String? = nil, devicePresent: Swift.Bool? = nil, clientInfo: FidesmoCore.ClientInfo)
+  case serviceDescription(appId: FidesmoCore.AppId, serviceId: FidesmoCore.ServiceId, cin: Swift.String, clientInfo: FidesmoCore.ClientInfo)
+  case appAditionalData(appId: FidesmoCore.AppId, cin: Swift.String, clientInfo: FidesmoCore.ClientInfo)
+  public var path: Swift.String {
+    get
+  }
+  public var method: FidesmoCore.HTTPMethod {
+    get
+  }
+  public var parameters: FidesmoCore.RequestParams {
+    get
+  }
+  public var headers: [Swift.String : Swift.String]? {
+    get
+  }
+  public var dataType: FidesmoCore.DataType {
+    get
+  }
+  public var timeOutInterval: Foundation.TimeInterval {
+    get
+  }
+}
+public typealias BatchId = Swift.Int
+public typealias CIN = Swift.String
+public typealias DeviceCinBatch = (cin: FidesmoCore.CIN, batchId: FidesmoCore.BatchId)
+extension FidesmoCore.DeviceConnection {
+  public func getOfflineCinAndBatch() -> RxSwift.Observable<FidesmoCore.DeviceCinBatch>
+  public func getCinAndBatch(dispatcher: FidesmoCore.FidesmoApiDispatcher) -> RxSwift.Observable<FidesmoCore.DeviceCinBatch>
+  public func getDescription(dispatcher: FidesmoCore.FidesmoApiDispatcher) -> RxSwift.Observable<FidesmoCore.DeviceDescription>
+  public func getPv3CinBatch() -> RxSwift.Observable<FidesmoCore.DeviceCinBatch>
+  public func getPv2CinBatch() -> RxSwift.Observable<FidesmoCore.DeviceCinBatch>
+  public func getInstalledApps(description: FidesmoCore.DeviceDescription, clientInfo: FidesmoCore.ClientInfo, dispatcher: FidesmoCore.FidesmoApiDispatcher) -> RxSwift.Observable<[FidesmoCore.DeviceApp]>
+  @available(*, deprecated, message: "Deprecated on versions higher than 0.30.3. Use `getInstalledApps(description, clientInfo, dispatcher) instead.")
+  public func getInstalledApps(description: FidesmoCore.DeviceDescription, dispatcher: FidesmoCore.FidesmoApiDispatcher) -> RxSwift.Observable<[FidesmoCore.DeviceApp]>
+}
+@_hasMissingDesignatedInitializers public class DeviceUtils {
+  public static func getImplicitBatchingData(device: any FidesmoCore.DeviceConnection, dispatcher: FidesmoCore.FidesmoApiDispatcher) -> RxSwift.Observable<FidesmoCore.ImplicitDeviceCinBatch>
+  public static func getDeviceDescription(dispatcher: FidesmoCore.FidesmoApiDispatcher, cin: FidesmoCore.CIN, batchId: FidesmoCore.BatchId? = nil) -> RxSwift.Observable<FidesmoCore.DeviceDescription>
+  public static func getInstalledAppsFromServer(cin: FidesmoCore.CIN, dispatcher: FidesmoCore.FidesmoApiDispatcher) -> RxSwift.Observable<[FidesmoCore.DeviceApp]>
+  public static func checkAppStatus(appListObservable: RxSwift.Observable<[FidesmoCore.DeviceApp]>, cin: FidesmoCore.CIN, clientInfo: FidesmoCore.ClientInfo, dispatcher: FidesmoCore.FidesmoApiDispatcher) -> RxSwift.Observable<[FidesmoCore.DeviceApp]>
+  public static func getInstalledAppsFromDevice(device: any FidesmoCore.DeviceConnection) -> RxSwift.Observable<[FidesmoCore.DeviceApp]>
+  public static func checkCardEligibility(batchId: FidesmoCore.BatchId, userData: FidesmoCore.UserDataResponse, dispatcher: FidesmoCore.FidesmoApiDispatcher) -> RxSwift.Observable<FidesmoCore.EligibilityResponse>
+  @available(*, deprecated, message: "Deprecated on versions higher than 0.30.2. Use `checkCardEligibility` instead, additionally providing the `NotSupported` eligibility response for non-supported cards.")
+  public static func checkEligibility(batchId: FidesmoCore.BatchId, userData: FidesmoCore.UserDataResponse, dispatcher: FidesmoCore.FidesmoApiDispatcher) -> RxSwift.Observable<FidesmoCore.EligibilityResponse>
+  @objc deinit
+}
+@_hasMissingDesignatedInitializers public class Batching {
+  public enum BatchingResult {
+    case noBatchingUrlProvided
+    case Succeeded
+    case Failed(error: FidesmoCore.Batching.BatchingError?)
+  }
+  public enum BatchingError : Swift.Error {
+    case urlNotParsed(Swift.String)
+    case wrongUrl(Swift.String)
+    case unableToRunWs(Swift.String)
+    case failedRunningWsService(Swift.String?)
+    case failedServiceDelivery(Swift.String?)
+  }
+  public static func runBatching(device: any FidesmoCore.DeviceConnection, batchingInfo: FidesmoCore.ImplicitDeviceCinBatch, clientInfo: FidesmoCore.ClientInfo, dispatcher: FidesmoCore.FidesmoApiDispatcher) -> RxSwift.Observable<FidesmoCore.Batching.BatchingResult>
+  @objc deinit
+}
+public struct Encryptor {
+  public typealias EncryptResult = (result: FidesmoCore.UserDataResponse, key: FidesmoCore.HexString?)
+  public static func encrypt(userData: FidesmoCore.UserDataResponse, cert: FidesmoCore.HexString) -> FidesmoCore.Encryptor.EncryptResult
+}
+public struct DeviceBatch : Swift.Codable {
+  public let batchId: Swift.Int
+  public let issuer: Swift.UInt64?
+  public let issuerName: Swift.String?
+  public init(batchId: Swift.Int, issuer: Swift.UInt64? = nil, issuerName: Swift.String? = nil)
+  public func encode(to encoder: any Swift.Encoder) throws
+  public init(from decoder: any Swift.Decoder) throws
+}
+extension FidesmoCore.DeviceBatch : Swift.Equatable {
+  public static func == (lhs: FidesmoCore.DeviceBatch, rhs: FidesmoCore.DeviceBatch) -> Swift.Bool
+}
+public struct ParametrisedTranslation : Swift.Codable, Swift.Equatable {
+  public let id: Swift.String
+  public init(id: Swift.String = "default-id", text: Swift.String = "", params: [Swift.String] = [])
+  public static func == (a: FidesmoCore.ParametrisedTranslation, b: FidesmoCore.ParametrisedTranslation) -> Swift.Bool
+  public func encode(to encoder: any Swift.Encoder) throws
+  public init(from decoder: any Swift.Decoder) throws
+}
+extension FidesmoCore.ParametrisedTranslation {
+  public func getFormattedText() -> Swift.String
+}
+public class ApduTransceiveError : Swift.Error {
+  public init(reason: (any Swift.Error)? = nil, fatal: Swift.Bool, message: Swift.String)
+  @objc deinit
+}
+public typealias ServiceId = Swift.String
+public struct ServiceDescription : Swift.Codable {
+  public let title: FidesmoCore.ParametrisedTranslation
+  public let description: FidesmoCore.ParametrisedTranslation?
+  public let certificate: Swift.String?
+  public func setupRequirements() -> [FidesmoCore.DataRequirement]
+  public init(title: FidesmoCore.ParametrisedTranslation, description: FidesmoCore.ParametrisedTranslation? = .none, termsAndConditions: Swift.String? = .none, fieldsRequired: [FidesmoCore.DataRequirement]? = .none, certificate: Swift.String? = .none)
+  public func encode(to encoder: any Swift.Encoder) throws
+  public init(from decoder: any Swift.Decoder) throws
+}
+extension FidesmoCore.ServiceDescription {
+  public static func empty() -> FidesmoCore.ServiceDescription
+}
+extension FidesmoCore.ServiceDescription : Swift.Equatable {
+  public static func == (lhs: FidesmoCore.ServiceDescription, rhs: FidesmoCore.ServiceDescription) -> Swift.Bool
+}
+public struct InstanceElementsResponse : Swift.Codable, Swift.Equatable {
+  public let instanceElements: [FidesmoCore.InstanceElement]
+  public init(instanceElements: [FidesmoCore.InstanceElement])
+  public static func == (a: FidesmoCore.InstanceElementsResponse, b: FidesmoCore.InstanceElementsResponse) -> Swift.Bool
+  public func encode(to encoder: any Swift.Encoder) throws
+  public init(from decoder: any Swift.Decoder) throws
+}
+public struct ServiceStatus : Swift.Codable, Swift.Equatable {
+  public let success: Swift.Bool
+  public let message: FidesmoCore.ParametrisedTranslation
+  public let scriptStatus: FidesmoCore.ParametrisedTranslation?
+  public let instanceElements: [FidesmoCore.InstanceElement]?
+  public let clientMetadata: [Swift.String : Swift.String]?
+  public init(success: Swift.Bool, message: FidesmoCore.ParametrisedTranslation, scriptStatus: FidesmoCore.ParametrisedTranslation?, instanceElements: [FidesmoCore.InstanceElement]?, clientMetadata: [Swift.String : Swift.String]?)
+  public init(from decoder: any Swift.Decoder) throws
+  public static func == (lhs: FidesmoCore.ServiceStatus, rhs: FidesmoCore.ServiceStatus) -> Swift.Bool
+  public func encode(to encoder: any Swift.Encoder) throws
+}
+public enum BankListRequest : FidesmoCore.Request {
+  case bankList
+  public var path: Swift.String {
+    get
+  }
+  public var method: FidesmoCore.HTTPMethod {
+    get
+  }
+  public var parameters: FidesmoCore.RequestParams {
+    get
+  }
+  public var headers: [Swift.String : Swift.String]? {
+    get
+  }
+  public var dataType: FidesmoCore.DataType {
+    get
+  }
+  public var timeOutInterval: Foundation.TimeInterval {
+    get
+  }
+  public static func == (a: FidesmoCore.BankListRequest, b: FidesmoCore.BankListRequest) -> Swift.Bool
+  public func hash(into hasher: inout Swift.Hasher)
+  public var hashValue: Swift.Int {
+    get
+  }
+}
+public struct BankResponse : Swift.Codable {
+  public func encode(to encoder: any Swift.Encoder) throws
+  public init(from decoder: any Swift.Decoder) throws
+}
+public typealias UserActionHandler = (Swift.Bool) -> Swift.Void
+public enum UiActionRequirement {
+  case phoneCall(description: FidesmoCore.ParametrisedTranslation, phoneNumber: Swift.String)
+}
+public struct UiAction : Swift.Equatable {
+  public let description: FidesmoCore.ParametrisedTranslation
+  public let name: Swift.String
+  public let parameters: [Swift.String : Swift.String]
+  public init(description: FidesmoCore.ParametrisedTranslation, name: Swift.String, parameters: [Swift.String : Swift.String])
+  public static func == (lhs: FidesmoCore.UiAction, rhs: FidesmoCore.UiAction) -> Swift.Bool
+}
+extension FidesmoCore.UiAction : Swift.Codable {
+  public init(from decoder: any Swift.Decoder) throws
+  public func encode(to encoder: any Swift.Encoder) throws
+}
+public struct EligibilityCheckRequest {
+  public let kid: Swift.String
+  public let batchId: Swift.Int
+  public let encryptedData: FidesmoCore.HexString
+  public let ephemeralKey: FidesmoCore.HexString
+  public func encode(to encoder: any Swift.Encoder) throws
+  public init(from decoder: any Swift.Decoder) throws
+}
+public struct Capabilities : Swift.Codable {
+  public let platformVersion: Swift.UInt32
+  public let mifareType: Swift.UInt32?
+  public let uidSize: Swift.UInt32?
+  public let jcVersion: Swift.UInt32?
+  public let osTypeVersion: Swift.UInt32?
+  public let globalPlatformVersion: Swift.UInt32?
+  public init(platformVersion: Swift.UInt32, mifareType: Swift.UInt32?, uidSize: Swift.UInt32?, jcVersion: Swift.UInt32?, osTypeVersion: Swift.UInt32?, globalPlatformVersion: Swift.UInt32?)
+  public func isEmpty() -> Swift.Bool
+  public func encode(to encoder: any Swift.Encoder) throws
+  public init(from decoder: any Swift.Decoder) throws
+}
+extension FidesmoCore.Capabilities {
+  public func copy(platformVersion: Swift.UInt32? = .none, mifareType: Swift.UInt32? = .none, uidSize: Swift.UInt32? = .none, jcVersion: Swift.UInt32? = .none, osTypeVersion: Swift.UInt32? = .none, globalPlatformVersion: Swift.UInt32? = .none) -> FidesmoCore.Capabilities
+  public static func empty() -> FidesmoCore.Capabilities
+}
+public enum DeviceRequest : FidesmoCore.Request {
+  case description(cin: Swift.String, batchId: Swift.Int?)
+  case installedApps(cin: Swift.String)
+  case identify(query: [Swift.String : Swift.String])
+  public var path: Swift.String {
+    get
+  }
+  public var method: FidesmoCore.HTTPMethod {
+    get
+  }
+  public var parameters: FidesmoCore.RequestParams {
+    get
+  }
+  public var headers: [Swift.String : Swift.String]? {
+    get
+  }
+  public var dataType: FidesmoCore.DataType {
+    get
+  }
+  public var timeOutInterval: Foundation.TimeInterval {
+    get
+  }
+}
+public struct ImplicitDeviceCinBatch : Swift.Codable {
+  public let cin: Swift.String?
+  public let batchId: Swift.Int
+  public let batchingUrl: Swift.String?
+  public init(cin: Swift.String?, batchId: Swift.Int = 0, batchingUrl: Swift.String? = nil)
+  public func encode(to encoder: any Swift.Encoder) throws
+  public init(from decoder: any Swift.Decoder) throws
+}
+extension FidesmoCore.PaymentCardScheme : Swift.Equatable {}
+extension FidesmoCore.PaymentCardScheme : Swift.Hashable {}
+extension FidesmoCore.PaymentCardScheme : Swift.RawRepresentable {}
+extension FidesmoCore.DeviceAppStatus : Swift.Equatable {}
+extension FidesmoCore.DeviceAppStatus : Swift.Hashable {}
+extension FidesmoCore.DeviceAppStatus : Swift.RawRepresentable {}
+extension FidesmoCore.HTTPMethod : Swift.Equatable {}
+extension FidesmoCore.HTTPMethod : Swift.Hashable {}
+extension FidesmoCore.HTTPMethod : Swift.RawRepresentable {}
+extension FidesmoCore.DataType : Swift.Equatable {}
+extension FidesmoCore.DataType : Swift.Hashable {}
+extension FidesmoCore.ClientOsType : Swift.Equatable {}
+extension FidesmoCore.ClientOsType : Swift.Hashable {}
+extension FidesmoCore.ClientOsType : Swift.RawRepresentable {}
+extension FidesmoCore.ClientCapabilities : Swift.Equatable {}
+extension FidesmoCore.ClientCapabilities : Swift.Hashable {}
+extension FidesmoCore.ClientCapabilities : Swift.RawRepresentable {}
+extension FidesmoCore.RegexPattern : Swift.Equatable {}
+extension FidesmoCore.RegexPattern : Swift.Hashable {}
+extension FidesmoCore.RegexPattern : Swift.RawRepresentable {}
+extension FidesmoCore.DataRequirementType.OptionFormat : Swift.Equatable {}
+extension FidesmoCore.DataRequirementType.OptionFormat : Swift.Hashable {}
+extension FidesmoCore.DataRequirementType.OptionFormat : Swift.RawRepresentable {}
+extension FidesmoCore.DataRequirementType.EditFormat : Swift.Equatable {}
+extension FidesmoCore.DataRequirementType.EditFormat : Swift.Hashable {}
+extension FidesmoCore.DataRequirementType.EditFormat : Swift.RawRepresentable {}
+extension FidesmoCore.DataRequirementType.TextFormat : Swift.Equatable {}
+extension FidesmoCore.DataRequirementType.TextFormat : Swift.Hashable {}
+extension FidesmoCore.DataRequirementType.TextFormat : Swift.RawRepresentable {}
+extension FidesmoCore.SetupRequirementIds : Swift.Equatable {}
+extension FidesmoCore.SetupRequirementIds : Swift.Hashable {}
+extension FidesmoCore.SetupRequirementIds : Swift.RawRepresentable {}
+extension FidesmoCore.PushProvisioningFailedReason : Swift.Equatable {}
+extension FidesmoCore.PushProvisioningFailedReason : Swift.Hashable {}
+extension FidesmoCore.PushProvisioningFailedReason : Swift.RawRepresentable {}
+extension FidesmoCore.BankListRequest : Swift.Equatable {}
+extension FidesmoCore.BankListRequest : Swift.Hashable {}
+extension FidesmoCore.EligibilityCheckRequest : Swift.Encodable {}
+extension FidesmoCore.EligibilityCheckRequest : Swift.Decodable {}

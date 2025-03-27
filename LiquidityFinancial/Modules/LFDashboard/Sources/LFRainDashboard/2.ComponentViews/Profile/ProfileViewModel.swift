@@ -8,6 +8,7 @@ import DevicesDomain
 import Combine
 import GeneralFeature
 import LFFeatureFlags
+import FidesmoCore
 
 @MainActor
 final class ProfileViewModel: ObservableObject {

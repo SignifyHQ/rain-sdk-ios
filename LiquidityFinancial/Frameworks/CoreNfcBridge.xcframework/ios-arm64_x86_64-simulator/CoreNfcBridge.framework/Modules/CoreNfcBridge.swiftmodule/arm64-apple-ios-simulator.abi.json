@@ -1,0 +1,1441 @@
+{
+  "ABIRoot": {
+    "kind": "Root",
+    "name": "CoreNfcBridge",
+    "printedName": "CoreNfcBridge",
+    "children": [
+      {
+        "kind": "Import",
+        "name": "Foundation",
+        "printedName": "Foundation",
+        "declKind": "Import",
+        "moduleName": "CoreNfcBridge",
+        "declAttributes": [
+          "RawDocComment"
+        ]
+      },
+      {
+        "kind": "Import",
+        "name": "CoreNFC",
+        "printedName": "CoreNFC",
+        "declKind": "Import",
+        "moduleName": "CoreNfcBridge"
+      },
+      {
+        "kind": "Import",
+        "name": "RxSwift",
+        "printedName": "RxSwift",
+        "declKind": "Import",
+        "moduleName": "CoreNfcBridge"
+      },
+      {
+        "kind": "Import",
+        "name": "os",
+        "printedName": "os",
+        "declKind": "Import",
+        "moduleName": "CoreNfcBridge"
+      },
+      {
+        "kind": "Import",
+        "name": "FidesmoCore",
+        "printedName": "FidesmoCore",
+        "declKind": "Import",
+        "moduleName": "CoreNfcBridge"
+      },
+      {
+        "kind": "TypeDecl",
+        "name": "NfcDevice",
+        "printedName": "NfcDevice",
+        "children": [
+          {
+            "kind": "Var",
+            "name": "type",
+            "printedName": "type",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "ConnectionType",
+                "printedName": "FidesmoCore.ConnectionType",
+                "usr": "s:11FidesmoCore14ConnectionTypeO"
+              }
+            ],
+            "declKind": "Var",
+            "usr": "s:13CoreNfcBridge0B6DeviceC4type07FidesmoA014ConnectionTypeOvp",
+            "mangledName": "$s13CoreNfcBridge0B6DeviceC4type07FidesmoA014ConnectionTypeOvp",
+            "moduleName": "CoreNfcBridge",
+            "declAttributes": [
+              "HasStorage",
+              "AccessControl",
+              "RawDocComment"
+            ],
+            "hasStorage": true,
+            "accessors": [
+              {
+                "kind": "Accessor",
+                "name": "Get",
+                "printedName": "Get()",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "ConnectionType",
+                    "printedName": "FidesmoCore.ConnectionType",
+                    "usr": "s:11FidesmoCore14ConnectionTypeO"
+                  }
+                ],
+                "declKind": "Accessor",
+                "usr": "s:13CoreNfcBridge0B6DeviceC4type07FidesmoA014ConnectionTypeOvg",
+                "mangledName": "$s13CoreNfcBridge0B6DeviceC4type07FidesmoA014ConnectionTypeOvg",
+                "moduleName": "CoreNfcBridge",
+                "implicit": true,
+                "accessorKind": "get"
+              },
+              {
+                "kind": "Accessor",
+                "name": "Set",
+                "printedName": "Set()",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Void",
+                    "printedName": "()"
+                  },
+                  {
+                    "kind": "TypeNominal",
+                    "name": "ConnectionType",
+                    "printedName": "FidesmoCore.ConnectionType",
+                    "usr": "s:11FidesmoCore14ConnectionTypeO"
+                  }
+                ],
+                "declKind": "Accessor",
+                "usr": "s:13CoreNfcBridge0B6DeviceC4type07FidesmoA014ConnectionTypeOvs",
+                "mangledName": "$s13CoreNfcBridge0B6DeviceC4type07FidesmoA014ConnectionTypeOvs",
+                "moduleName": "CoreNfcBridge",
+                "implicit": true,
+                "accessorKind": "set"
+              },
+              {
+                "kind": "Accessor",
+                "name": "Modify",
+                "printedName": "Modify()",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Void",
+                    "printedName": "()"
+                  }
+                ],
+                "declKind": "Accessor",
+                "usr": "s:13CoreNfcBridge0B6DeviceC4type07FidesmoA014ConnectionTypeOvM",
+                "mangledName": "$s13CoreNfcBridge0B6DeviceC4type07FidesmoA014ConnectionTypeOvM",
+                "moduleName": "CoreNfcBridge",
+                "implicit": true,
+                "intro_iOS": "13.0",
+                "declAttributes": [
+                  "Available"
+                ],
+                "accessorKind": "_modify"
+              }
+            ]
+          },
+          {
+            "kind": "Var",
+            "name": "getUid",
+            "printedName": "getUid",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Array",
+                "printedName": "[Swift.UInt8]",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "UInt8",
+                    "printedName": "Swift.UInt8",
+                    "usr": "s:s5UInt8V"
+                  }
+                ],
+                "usr": "s:Sa"
+              }
+            ],
+            "declKind": "Var",
+            "usr": "s:13CoreNfcBridge0B6DeviceC6getUidSays5UInt8VGvp",
+            "mangledName": "$s13CoreNfcBridge0B6DeviceC6getUidSays5UInt8VGvp",
+            "moduleName": "CoreNfcBridge",
+            "declAttributes": [
+              "AccessControl",
+              "RawDocComment"
+            ],
+            "accessors": [
+              {
+                "kind": "Accessor",
+                "name": "Get",
+                "printedName": "Get()",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Array",
+                    "printedName": "[Swift.UInt8]",
+                    "children": [
+                      {
+                        "kind": "TypeNominal",
+                        "name": "UInt8",
+                        "printedName": "Swift.UInt8",
+                        "usr": "s:s5UInt8V"
+                      }
+                    ],
+                    "usr": "s:Sa"
+                  }
+                ],
+                "declKind": "Accessor",
+                "usr": "s:13CoreNfcBridge0B6DeviceC6getUidSays5UInt8VGvg",
+                "mangledName": "$s13CoreNfcBridge0B6DeviceC6getUidSays5UInt8VGvg",
+                "moduleName": "CoreNfcBridge",
+                "accessorKind": "get"
+              }
+            ]
+          },
+          {
+            "kind": "Var",
+            "name": "deviceId",
+            "printedName": "deviceId",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "String",
+                "printedName": "Swift.String",
+                "usr": "s:SS"
+              }
+            ],
+            "declKind": "Var",
+            "usr": "s:13CoreNfcBridge0B6DeviceC8deviceIdSSvp",
+            "mangledName": "$s13CoreNfcBridge0B6DeviceC8deviceIdSSvp",
+            "moduleName": "CoreNfcBridge",
+            "declAttributes": [
+              "AccessControl",
+              "RawDocComment"
+            ],
+            "accessors": [
+              {
+                "kind": "Accessor",
+                "name": "Get",
+                "printedName": "Get()",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "String",
+                    "printedName": "Swift.String",
+                    "usr": "s:SS"
+                  }
+                ],
+                "declKind": "Accessor",
+                "usr": "s:13CoreNfcBridge0B6DeviceC8deviceIdSSvg",
+                "mangledName": "$s13CoreNfcBridge0B6DeviceC8deviceIdSSvg",
+                "moduleName": "CoreNfcBridge",
+                "accessorKind": "get"
+              }
+            ]
+          },
+          {
+            "kind": "Function",
+            "name": "transceive",
+            "printedName": "transceive(commands:)",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Observable",
+                "printedName": "RxSwift.Observable<[Swift.String]>",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Array",
+                    "printedName": "[Swift.String]",
+                    "children": [
+                      {
+                        "kind": "TypeNominal",
+                        "name": "String",
+                        "printedName": "Swift.String",
+                        "usr": "s:SS"
+                      }
+                    ],
+                    "usr": "s:Sa"
+                  }
+                ],
+                "usr": "s:7RxSwift10ObservableC"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "Array",
+                "printedName": "[Swift.String]",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "String",
+                    "printedName": "Swift.String",
+                    "usr": "s:SS"
+                  }
+                ],
+                "usr": "s:Sa"
+              }
+            ],
+            "declKind": "Func",
+            "usr": "s:13CoreNfcBridge0B6DeviceC10transceive8commands7RxSwift10ObservableCySaySSGGAI_tF",
+            "mangledName": "$s13CoreNfcBridge0B6DeviceC10transceive8commands7RxSwift10ObservableCySaySSGGAI_tF",
+            "moduleName": "CoreNfcBridge",
+            "declAttributes": [
+              "AccessControl",
+              "RawDocComment"
+            ],
+            "funcSelfKind": "NonMutating"
+          },
+          {
+            "kind": "Function",
+            "name": "transceive",
+            "printedName": "transceive(command:)",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Observable",
+                "printedName": "RxSwift.Observable<Swift.String>",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "String",
+                    "printedName": "Swift.String",
+                    "usr": "s:SS"
+                  }
+                ],
+                "usr": "s:7RxSwift10ObservableC"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "String",
+                "printedName": "Swift.String",
+                "usr": "s:SS"
+              }
+            ],
+            "declKind": "Func",
+            "usr": "s:13CoreNfcBridge0B6DeviceC10transceive7command7RxSwift10ObservableCySSGSS_tF",
+            "mangledName": "$s13CoreNfcBridge0B6DeviceC10transceive7command7RxSwift10ObservableCySSGSS_tF",
+            "moduleName": "CoreNfcBridge",
+            "declAttributes": [
+              "AccessControl",
+              "RawDocComment"
+            ],
+            "funcSelfKind": "NonMutating"
+          },
+          {
+            "kind": "Function",
+            "name": "unfilteredTransceive",
+            "printedName": "unfilteredTransceive(command:)",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Observable",
+                "printedName": "RxSwift.Observable<Swift.String>",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "String",
+                    "printedName": "Swift.String",
+                    "usr": "s:SS"
+                  }
+                ],
+                "usr": "s:7RxSwift10ObservableC"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "String",
+                "printedName": "Swift.String",
+                "usr": "s:SS"
+              }
+            ],
+            "declKind": "Func",
+            "usr": "s:13CoreNfcBridge0B6DeviceC20unfilteredTransceive7command7RxSwift10ObservableCySSGSS_tF",
+            "mangledName": "$s13CoreNfcBridge0B6DeviceC20unfilteredTransceive7command7RxSwift10ObservableCySSGSS_tF",
+            "moduleName": "CoreNfcBridge",
+            "declAttributes": [
+              "AccessControl",
+              "RawDocComment"
+            ],
+            "funcSelfKind": "NonMutating"
+          },
+          {
+            "kind": "Function",
+            "name": "finishConversation",
+            "printedName": "finishConversation()",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "PrimitiveSequence",
+                "printedName": "RxSwift.PrimitiveSequence<RxSwift.CompletableTrait, Swift.Never>",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "CompletableTrait",
+                    "printedName": "RxSwift.CompletableTrait",
+                    "usr": "s:7RxSwift16CompletableTraitO"
+                  },
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Never",
+                    "printedName": "Swift.Never",
+                    "usr": "s:s5NeverO"
+                  }
+                ],
+                "usr": "s:7RxSwift17PrimitiveSequenceV"
+              }
+            ],
+            "declKind": "Func",
+            "usr": "s:13CoreNfcBridge0B6DeviceC18finishConversation7RxSwift17PrimitiveSequenceVyAE16CompletableTraitOs5NeverOGyF",
+            "mangledName": "$s13CoreNfcBridge0B6DeviceC18finishConversation7RxSwift17PrimitiveSequenceVyAE16CompletableTraitOs5NeverOGyF",
+            "moduleName": "CoreNfcBridge",
+            "declAttributes": [
+              "AccessControl"
+            ],
+            "funcSelfKind": "NonMutating"
+          },
+          {
+            "kind": "Function",
+            "name": "invalidateSession",
+            "printedName": "invalidateSession(errorMessage:)",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Void",
+                "printedName": "()"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "Optional",
+                "printedName": "Swift.String?",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "String",
+                    "printedName": "Swift.String",
+                    "usr": "s:SS"
+                  }
+                ],
+                "hasDefaultArg": true,
+                "usr": "s:Sq"
+              }
+            ],
+            "declKind": "Func",
+            "usr": "s:13CoreNfcBridge0B6DeviceC17invalidateSession12errorMessageySSSg_tF",
+            "mangledName": "$s13CoreNfcBridge0B6DeviceC17invalidateSession12errorMessageySSSg_tF",
+            "moduleName": "CoreNfcBridge",
+            "declAttributes": [
+              "AccessControl",
+              "RawDocComment"
+            ],
+            "funcSelfKind": "NonMutating"
+          },
+          {
+            "kind": "Function",
+            "name": "connectionStability",
+            "printedName": "connectionStability(currentCount:maxCount:delay:updatedStep:isConnetionStable:)",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Void",
+                "printedName": "()"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "Int",
+                "printedName": "Swift.Int",
+                "hasDefaultArg": true,
+                "usr": "s:Si"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "Int",
+                "printedName": "Swift.Int",
+                "hasDefaultArg": true,
+                "usr": "s:Si"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "Int",
+                "printedName": "Swift.Int",
+                "hasDefaultArg": true,
+                "usr": "s:Si"
+              },
+              {
+                "kind": "TypeFunc",
+                "name": "Function",
+                "printedName": "(Swift.Int) -> ()",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Void",
+                    "printedName": "()"
+                  },
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Int",
+                    "printedName": "Swift.Int",
+                    "usr": "s:Si"
+                  }
+                ]
+              },
+              {
+                "kind": "TypeFunc",
+                "name": "Function",
+                "printedName": "(Swift.Bool) -> ()",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Void",
+                    "printedName": "()"
+                  },
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Bool",
+                    "printedName": "Swift.Bool",
+                    "usr": "s:Sb"
+                  }
+                ]
+              }
+            ],
+            "declKind": "Func",
+            "usr": "s:13CoreNfcBridge0B6DeviceC19connectionStability12currentCount03maxH05delay11updatedStep17isConnetionStableySi_S2iySicySbctF",
+            "mangledName": "$s13CoreNfcBridge0B6DeviceC19connectionStability12currentCount03maxH05delay11updatedStep17isConnetionStableySi_S2iySicySbctF",
+            "moduleName": "CoreNfcBridge",
+            "declAttributes": [
+              "AccessControl"
+            ],
+            "funcSelfKind": "NonMutating"
+          }
+        ],
+        "declKind": "Class",
+        "usr": "s:13CoreNfcBridge0B6DeviceC",
+        "mangledName": "$s13CoreNfcBridge0B6DeviceC",
+        "moduleName": "CoreNfcBridge",
+        "intro_iOS": "13.0",
+        "declAttributes": [
+          "AccessControl",
+          "Available",
+          "RawDocComment"
+        ],
+        "hasMissingDesignatedInitializers": true,
+        "conformances": [
+          {
+            "kind": "Conformance",
+            "name": "Copyable",
+            "printedName": "Copyable",
+            "usr": "s:s8CopyableP",
+            "mangledName": "$ss8CopyableP"
+          },
+          {
+            "kind": "Conformance",
+            "name": "Escapable",
+            "printedName": "Escapable",
+            "usr": "s:s9EscapableP",
+            "mangledName": "$ss9EscapableP"
+          },
+          {
+            "kind": "Conformance",
+            "name": "DeviceConnection",
+            "printedName": "DeviceConnection",
+            "usr": "s:11FidesmoCore16DeviceConnectionP",
+            "mangledName": "$s11FidesmoCore16DeviceConnectionP"
+          }
+        ]
+      },
+      {
+        "kind": "Import",
+        "name": "Foundation",
+        "printedName": "Foundation",
+        "declKind": "Import",
+        "moduleName": "CoreNfcBridge",
+        "declAttributes": [
+          "RawDocComment"
+        ]
+      },
+      {
+        "kind": "TypeDecl",
+        "name": "NfcErrorDelegate",
+        "printedName": "NfcErrorDelegate",
+        "children": [
+          {
+            "kind": "Function",
+            "name": "onTagNotAvailable",
+            "printedName": "onTagNotAvailable(device:)",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Void",
+                "printedName": "()"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "NfcDevice",
+                "printedName": "CoreNfcBridge.NfcDevice",
+                "usr": "s:13CoreNfcBridge0B6DeviceC"
+              }
+            ],
+            "declKind": "Func",
+            "usr": "s:13CoreNfcBridge0B13ErrorDelegateP17onTagNotAvailable6deviceyAA0B6DeviceC_tF",
+            "mangledName": "$s13CoreNfcBridge0B13ErrorDelegateP17onTagNotAvailable6deviceyAA0B6DeviceC_tF",
+            "moduleName": "CoreNfcBridge",
+            "genericSig": "<τ_0_0 where τ_0_0 : CoreNfcBridge.NfcErrorDelegate>",
+            "sugared_genericSig": "<Self where Self : CoreNfcBridge.NfcErrorDelegate>",
+            "protocolReq": true,
+            "declAttributes": [
+              "RawDocComment"
+            ],
+            "reqNewWitnessTableEntry": true,
+            "funcSelfKind": "NonMutating"
+          }
+        ],
+        "declKind": "Protocol",
+        "usr": "s:13CoreNfcBridge0B13ErrorDelegateP",
+        "mangledName": "$s13CoreNfcBridge0B13ErrorDelegateP",
+        "moduleName": "CoreNfcBridge",
+        "intro_iOS": "13.0",
+        "declAttributes": [
+          "AccessControl",
+          "Available",
+          "RawDocComment"
+        ],
+        "conformances": [
+          {
+            "kind": "Conformance",
+            "name": "Escapable",
+            "printedName": "Escapable",
+            "usr": "s:s9EscapableP",
+            "mangledName": "$ss9EscapableP"
+          },
+          {
+            "kind": "Conformance",
+            "name": "Copyable",
+            "printedName": "Copyable",
+            "usr": "s:s8CopyableP",
+            "mangledName": "$ss8CopyableP"
+          }
+        ]
+      },
+      {
+        "kind": "Import",
+        "name": "Foundation",
+        "printedName": "Foundation",
+        "declKind": "Import",
+        "moduleName": "CoreNfcBridge",
+        "declAttributes": [
+          "RawDocComment"
+        ]
+      },
+      {
+        "kind": "Import",
+        "name": "FidesmoCore",
+        "printedName": "FidesmoCore",
+        "declKind": "Import",
+        "moduleName": "CoreNfcBridge"
+      },
+      {
+        "kind": "Import",
+        "name": "Foundation",
+        "printedName": "Foundation",
+        "declKind": "Import",
+        "moduleName": "CoreNfcBridge",
+        "declAttributes": [
+          "RawDocComment"
+        ]
+      },
+      {
+        "kind": "Import",
+        "name": "CoreNFC",
+        "printedName": "CoreNFC",
+        "declKind": "Import",
+        "moduleName": "CoreNfcBridge"
+      },
+      {
+        "kind": "Import",
+        "name": "os",
+        "printedName": "os",
+        "declKind": "Import",
+        "moduleName": "CoreNfcBridge"
+      },
+      {
+        "kind": "TypeDecl",
+        "name": "NfcManager",
+        "printedName": "NfcManager",
+        "children": [
+          {
+            "kind": "Constructor",
+            "name": "init",
+            "printedName": "init(listener:)",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "NfcManager",
+                "printedName": "CoreNfcBridge.NfcManager",
+                "usr": "c:@M@CoreNfcBridge@objc(cs)NfcManager"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "NfcConnectionDelegate",
+                "printedName": "any CoreNfcBridge.NfcConnectionDelegate",
+                "usr": "s:13CoreNfcBridge0B18ConnectionDelegateP"
+              }
+            ],
+            "declKind": "Constructor",
+            "usr": "s:13CoreNfcBridge0B7ManagerC8listenerAcA0B18ConnectionDelegate_p_tcfc",
+            "mangledName": "$s13CoreNfcBridge0B7ManagerC8listenerAcA0B18ConnectionDelegate_p_tcfc",
+            "moduleName": "CoreNfcBridge",
+            "declAttributes": [
+              "AccessControl",
+              "RawDocComment"
+            ],
+            "init_kind": "Designated"
+          },
+          {
+            "kind": "Function",
+            "name": "startNfcDiscovery",
+            "printedName": "startNfcDiscovery(message:)",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Void",
+                "printedName": "()"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "String",
+                "printedName": "Swift.String",
+                "usr": "s:SS"
+              }
+            ],
+            "declKind": "Func",
+            "usr": "s:13CoreNfcBridge0B7ManagerC05startB9Discovery7messageySS_tF",
+            "mangledName": "$s13CoreNfcBridge0B7ManagerC05startB9Discovery7messageySS_tF",
+            "moduleName": "CoreNfcBridge",
+            "declAttributes": [
+              "AccessControl",
+              "RawDocComment"
+            ],
+            "funcSelfKind": "NonMutating"
+          },
+          {
+            "kind": "Function",
+            "name": "invalidateSession",
+            "printedName": "invalidateSession()",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Void",
+                "printedName": "()"
+              }
+            ],
+            "declKind": "Func",
+            "usr": "s:13CoreNfcBridge0B7ManagerC17invalidateSessionyyF",
+            "mangledName": "$s13CoreNfcBridge0B7ManagerC17invalidateSessionyyF",
+            "moduleName": "CoreNfcBridge",
+            "declAttributes": [
+              "AccessControl",
+              "RawDocComment"
+            ],
+            "funcSelfKind": "NonMutating"
+          },
+          {
+            "kind": "Function",
+            "name": "invalidateSession",
+            "printedName": "invalidateSession(error:)",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Void",
+                "printedName": "()"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "String",
+                "printedName": "Swift.String",
+                "usr": "s:SS"
+              }
+            ],
+            "declKind": "Func",
+            "usr": "s:13CoreNfcBridge0B7ManagerC17invalidateSession5errorySS_tF",
+            "mangledName": "$s13CoreNfcBridge0B7ManagerC17invalidateSession5errorySS_tF",
+            "moduleName": "CoreNfcBridge",
+            "declAttributes": [
+              "AccessControl",
+              "RawDocComment"
+            ],
+            "funcSelfKind": "NonMutating"
+          },
+          {
+            "kind": "Function",
+            "name": "restartPolling",
+            "printedName": "restartPolling()",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Void",
+                "printedName": "()"
+              }
+            ],
+            "declKind": "Func",
+            "usr": "s:13CoreNfcBridge0B7ManagerC14restartPollingyyF",
+            "mangledName": "$s13CoreNfcBridge0B7ManagerC14restartPollingyyF",
+            "moduleName": "CoreNfcBridge",
+            "declAttributes": [
+              "AccessControl",
+              "RawDocComment"
+            ],
+            "funcSelfKind": "NonMutating"
+          },
+          {
+            "kind": "Function",
+            "name": "changeAlertMessage",
+            "printedName": "changeAlertMessage(message:)",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Void",
+                "printedName": "()"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "String",
+                "printedName": "Swift.String",
+                "usr": "s:SS"
+              }
+            ],
+            "declKind": "Func",
+            "usr": "s:13CoreNfcBridge0B7ManagerC18changeAlertMessage7messageySS_tF",
+            "mangledName": "$s13CoreNfcBridge0B7ManagerC18changeAlertMessage7messageySS_tF",
+            "moduleName": "CoreNfcBridge",
+            "declAttributes": [
+              "AccessControl",
+              "RawDocComment"
+            ],
+            "funcSelfKind": "NonMutating"
+          },
+          {
+            "kind": "Function",
+            "name": "tagReaderSessionDidBecomeActive",
+            "printedName": "tagReaderSessionDidBecomeActive(_:)",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Void",
+                "printedName": "()"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "NFCTagReaderSession",
+                "printedName": "CoreNFC.NFCTagReaderSession",
+                "usr": "c:objc(cs)NFCTagReaderSession"
+              }
+            ],
+            "declKind": "Func",
+            "usr": "s:13CoreNfcBridge0B7ManagerC31tagReaderSessionDidBecomeActiveyySo06NFCTagfG0CF",
+            "mangledName": "$s13CoreNfcBridge0B7ManagerC31tagReaderSessionDidBecomeActiveyySo06NFCTagfG0CF",
+            "moduleName": "CoreNfcBridge",
+            "declAttributes": [
+              "AccessControl",
+              "RawDocComment"
+            ],
+            "funcSelfKind": "NonMutating"
+          },
+          {
+            "kind": "Function",
+            "name": "tagReaderSession",
+            "printedName": "tagReaderSession(_:didInvalidateWithError:)",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Void",
+                "printedName": "()"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "NFCTagReaderSession",
+                "printedName": "CoreNFC.NFCTagReaderSession",
+                "usr": "c:objc(cs)NFCTagReaderSession"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "Error",
+                "printedName": "any Swift.Error",
+                "usr": "s:s5ErrorP"
+              }
+            ],
+            "declKind": "Func",
+            "usr": "s:13CoreNfcBridge0B7ManagerC16tagReaderSession_22didInvalidateWithErrorySo06NFCTagfG0C_s0K0_ptF",
+            "mangledName": "$s13CoreNfcBridge0B7ManagerC16tagReaderSession_22didInvalidateWithErrorySo06NFCTagfG0C_s0K0_ptF",
+            "moduleName": "CoreNfcBridge",
+            "declAttributes": [
+              "AccessControl",
+              "RawDocComment"
+            ],
+            "funcSelfKind": "NonMutating"
+          },
+          {
+            "kind": "Function",
+            "name": "tagReaderSession",
+            "printedName": "tagReaderSession(_:didDetect:)",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Void",
+                "printedName": "()"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "NFCTagReaderSession",
+                "printedName": "CoreNFC.NFCTagReaderSession",
+                "usr": "c:objc(cs)NFCTagReaderSession"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "Array",
+                "printedName": "[CoreNFC.NFCTag]",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "NFCTag",
+                    "printedName": "CoreNFC.NFCTag",
+                    "usr": "s:7CoreNFC6NFCTagO"
+                  }
+                ],
+                "usr": "s:Sa"
+              }
+            ],
+            "declKind": "Func",
+            "usr": "s:13CoreNfcBridge0B7ManagerC16tagReaderSession_9didDetectySo06NFCTagfG0C_Say0A3NFC0J0OGtF",
+            "mangledName": "$s13CoreNfcBridge0B7ManagerC16tagReaderSession_9didDetectySo06NFCTagfG0C_Say0A3NFC0J0OGtF",
+            "moduleName": "CoreNfcBridge",
+            "declAttributes": [
+              "AccessControl",
+              "RawDocComment"
+            ],
+            "funcSelfKind": "NonMutating"
+          },
+          {
+            "kind": "Function",
+            "name": "addListener",
+            "printedName": "addListener(listener:)",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Void",
+                "printedName": "()"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "NfcConnectionDelegate",
+                "printedName": "any CoreNfcBridge.NfcConnectionDelegate",
+                "usr": "s:13CoreNfcBridge0B18ConnectionDelegateP"
+              }
+            ],
+            "declKind": "Func",
+            "usr": "s:13CoreNfcBridge0B7ManagerC11addListener8listeneryAA0B18ConnectionDelegate_p_tF",
+            "mangledName": "$s13CoreNfcBridge0B7ManagerC11addListener8listeneryAA0B18ConnectionDelegate_p_tF",
+            "moduleName": "CoreNfcBridge",
+            "declAttributes": [
+              "AccessControl",
+              "RawDocComment"
+            ],
+            "funcSelfKind": "NonMutating"
+          },
+          {
+            "kind": "Function",
+            "name": "wrongTag",
+            "printedName": "wrongTag()",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Void",
+                "printedName": "()"
+              }
+            ],
+            "declKind": "Func",
+            "usr": "s:13CoreNfcBridge0B7ManagerC8wrongTagyyF",
+            "mangledName": "$s13CoreNfcBridge0B7ManagerC8wrongTagyyF",
+            "moduleName": "CoreNfcBridge",
+            "declAttributes": [
+              "AccessControl",
+              "RawDocComment"
+            ],
+            "funcSelfKind": "NonMutating"
+          },
+          {
+            "kind": "Function",
+            "name": "tagConnected",
+            "printedName": "tagConnected(tag:)",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Void",
+                "printedName": "()"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "NFCISO7816Tag",
+                "printedName": "any CoreNFC.NFCISO7816Tag",
+                "usr": "c:objc(pl)NFCISO7816Tag"
+              }
+            ],
+            "declKind": "Func",
+            "usr": "s:13CoreNfcBridge0B7ManagerC12tagConnected0E0ySo13NFCISO7816Tag_p_tF",
+            "mangledName": "$s13CoreNfcBridge0B7ManagerC12tagConnected0E0ySo13NFCISO7816Tag_p_tF",
+            "moduleName": "CoreNfcBridge",
+            "declAttributes": [
+              "AccessControl",
+              "RawDocComment"
+            ],
+            "funcSelfKind": "NonMutating"
+          },
+          {
+            "kind": "Function",
+            "name": "onTagNotAvailable",
+            "printedName": "onTagNotAvailable(device:)",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Void",
+                "printedName": "()"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "NfcDevice",
+                "printedName": "CoreNfcBridge.NfcDevice",
+                "usr": "s:13CoreNfcBridge0B6DeviceC"
+              }
+            ],
+            "declKind": "Func",
+            "usr": "s:13CoreNfcBridge0B7ManagerC17onTagNotAvailable6deviceyAA0B6DeviceC_tF",
+            "mangledName": "$s13CoreNfcBridge0B7ManagerC17onTagNotAvailable6deviceyAA0B6DeviceC_tF",
+            "moduleName": "CoreNfcBridge",
+            "declAttributes": [
+              "AccessControl",
+              "RawDocComment"
+            ],
+            "funcSelfKind": "NonMutating"
+          },
+          {
+            "kind": "Constructor",
+            "name": "init",
+            "printedName": "init()",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "NfcManager",
+                "printedName": "CoreNfcBridge.NfcManager",
+                "usr": "c:@M@CoreNfcBridge@objc(cs)NfcManager"
+              }
+            ],
+            "declKind": "Constructor",
+            "usr": "c:@M@CoreNfcBridge@objc(cs)NfcManager(im)init",
+            "mangledName": "$s13CoreNfcBridge0B7ManagerCACycfc",
+            "moduleName": "CoreNfcBridge",
+            "overriding": true,
+            "implicit": true,
+            "objc_name": "init",
+            "declAttributes": [
+              "Dynamic",
+              "ObjC",
+              "Override"
+            ],
+            "init_kind": "Designated"
+          }
+        ],
+        "declKind": "Class",
+        "usr": "c:@M@CoreNfcBridge@objc(cs)NfcManager",
+        "mangledName": "$s13CoreNfcBridge0B7ManagerC",
+        "moduleName": "CoreNfcBridge",
+        "intro_iOS": "13.0",
+        "declAttributes": [
+          "AccessControl",
+          "Available",
+          "RawDocComment",
+          "ObjC"
+        ],
+        "superclassUsr": "c:objc(cs)NSObject",
+        "superclassNames": [
+          "ObjectiveC.NSObject"
+        ],
+        "conformances": [
+          {
+            "kind": "Conformance",
+            "name": "NFCTagReaderSessionDelegate",
+            "printedName": "NFCTagReaderSessionDelegate",
+            "usr": "s:7CoreNFC27NFCTagReaderSessionDelegateP",
+            "mangledName": "$s7CoreNFC27NFCTagReaderSessionDelegateP"
+          },
+          {
+            "kind": "Conformance",
+            "name": "NfcErrorDelegate",
+            "printedName": "NfcErrorDelegate",
+            "usr": "s:13CoreNfcBridge0B13ErrorDelegateP",
+            "mangledName": "$s13CoreNfcBridge0B13ErrorDelegateP"
+          },
+          {
+            "kind": "Conformance",
+            "name": "Copyable",
+            "printedName": "Copyable",
+            "usr": "s:s8CopyableP",
+            "mangledName": "$ss8CopyableP"
+          },
+          {
+            "kind": "Conformance",
+            "name": "Escapable",
+            "printedName": "Escapable",
+            "usr": "s:s9EscapableP",
+            "mangledName": "$ss9EscapableP"
+          },
+          {
+            "kind": "Conformance",
+            "name": "Equatable",
+            "printedName": "Equatable",
+            "usr": "s:SQ",
+            "mangledName": "$sSQ"
+          },
+          {
+            "kind": "Conformance",
+            "name": "Hashable",
+            "printedName": "Hashable",
+            "usr": "s:SH",
+            "mangledName": "$sSH"
+          },
+          {
+            "kind": "Conformance",
+            "name": "CVarArg",
+            "printedName": "CVarArg",
+            "usr": "s:s7CVarArgP",
+            "mangledName": "$ss7CVarArgP"
+          },
+          {
+            "kind": "Conformance",
+            "name": "_KeyValueCodingAndObservingPublishing",
+            "printedName": "_KeyValueCodingAndObservingPublishing",
+            "usr": "s:10Foundation37_KeyValueCodingAndObservingPublishingP",
+            "mangledName": "$s10Foundation37_KeyValueCodingAndObservingPublishingP"
+          },
+          {
+            "kind": "Conformance",
+            "name": "_KeyValueCodingAndObserving",
+            "printedName": "_KeyValueCodingAndObserving",
+            "usr": "s:10Foundation27_KeyValueCodingAndObservingP",
+            "mangledName": "$s10Foundation27_KeyValueCodingAndObservingP"
+          },
+          {
+            "kind": "Conformance",
+            "name": "CustomStringConvertible",
+            "printedName": "CustomStringConvertible",
+            "usr": "s:s23CustomStringConvertibleP",
+            "mangledName": "$ss23CustomStringConvertibleP"
+          },
+          {
+            "kind": "Conformance",
+            "name": "CustomDebugStringConvertible",
+            "printedName": "CustomDebugStringConvertible",
+            "usr": "s:s28CustomDebugStringConvertibleP",
+            "mangledName": "$ss28CustomDebugStringConvertibleP"
+          },
+          {
+            "kind": "Conformance",
+            "name": "ReactiveCompatible",
+            "printedName": "ReactiveCompatible",
+            "children": [
+              {
+                "kind": "TypeWitness",
+                "name": "ReactiveBase",
+                "printedName": "ReactiveBase",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "NSObject",
+                    "printedName": "ObjectiveC.NSObject",
+                    "usr": "c:objc(cs)NSObject"
+                  }
+                ]
+              }
+            ],
+            "usr": "s:7RxSwift18ReactiveCompatibleP",
+            "mangledName": "$s7RxSwift18ReactiveCompatibleP"
+          }
+        ]
+      },
+      {
+        "kind": "Import",
+        "name": "Foundation",
+        "printedName": "Foundation",
+        "declKind": "Import",
+        "moduleName": "CoreNfcBridge",
+        "declAttributes": [
+          "RawDocComment"
+        ]
+      },
+      {
+        "kind": "TypeDecl",
+        "name": "NfcConnectionDelegate",
+        "printedName": "NfcConnectionDelegate",
+        "children": [
+          {
+            "kind": "Function",
+            "name": "onWrongTagDetected",
+            "printedName": "onWrongTagDetected()",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Void",
+                "printedName": "()"
+              }
+            ],
+            "declKind": "Func",
+            "usr": "s:13CoreNfcBridge0B18ConnectionDelegateP18onWrongTagDetectedyyF",
+            "mangledName": "$s13CoreNfcBridge0B18ConnectionDelegateP18onWrongTagDetectedyyF",
+            "moduleName": "CoreNfcBridge",
+            "genericSig": "<τ_0_0 where τ_0_0 : CoreNfcBridge.NfcConnectionDelegate>",
+            "sugared_genericSig": "<Self where Self : CoreNfcBridge.NfcConnectionDelegate>",
+            "protocolReq": true,
+            "declAttributes": [
+              "RawDocComment"
+            ],
+            "reqNewWitnessTableEntry": true,
+            "funcSelfKind": "NonMutating"
+          },
+          {
+            "kind": "Function",
+            "name": "onDeviceConnected",
+            "printedName": "onDeviceConnected(device:)",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Void",
+                "printedName": "()"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "NfcDevice",
+                "printedName": "CoreNfcBridge.NfcDevice",
+                "usr": "s:13CoreNfcBridge0B6DeviceC"
+              }
+            ],
+            "declKind": "Func",
+            "usr": "s:13CoreNfcBridge0B18ConnectionDelegateP17onDeviceConnected6deviceyAA0bG0C_tF",
+            "mangledName": "$s13CoreNfcBridge0B18ConnectionDelegateP17onDeviceConnected6deviceyAA0bG0C_tF",
+            "moduleName": "CoreNfcBridge",
+            "genericSig": "<τ_0_0 where τ_0_0 : CoreNfcBridge.NfcConnectionDelegate>",
+            "sugared_genericSig": "<Self where Self : CoreNfcBridge.NfcConnectionDelegate>",
+            "protocolReq": true,
+            "declAttributes": [
+              "RawDocComment"
+            ],
+            "reqNewWitnessTableEntry": true,
+            "funcSelfKind": "NonMutating"
+          },
+          {
+            "kind": "Function",
+            "name": "onDeviceDisconnected",
+            "printedName": "onDeviceDisconnected(device:)",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Void",
+                "printedName": "()"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "NfcDevice",
+                "printedName": "CoreNfcBridge.NfcDevice",
+                "usr": "s:13CoreNfcBridge0B6DeviceC"
+              }
+            ],
+            "declKind": "Func",
+            "usr": "s:13CoreNfcBridge0B18ConnectionDelegateP20onDeviceDisconnected6deviceyAA0bG0C_tF",
+            "mangledName": "$s13CoreNfcBridge0B18ConnectionDelegateP20onDeviceDisconnected6deviceyAA0bG0C_tF",
+            "moduleName": "CoreNfcBridge",
+            "genericSig": "<τ_0_0 where τ_0_0 : CoreNfcBridge.NfcConnectionDelegate>",
+            "sugared_genericSig": "<Self where Self : CoreNfcBridge.NfcConnectionDelegate>",
+            "protocolReq": true,
+            "declAttributes": [
+              "RawDocComment"
+            ],
+            "reqNewWitnessTableEntry": true,
+            "funcSelfKind": "NonMutating"
+          },
+          {
+            "kind": "Function",
+            "name": "onSessionStarted",
+            "printedName": "onSessionStarted()",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Void",
+                "printedName": "()"
+              }
+            ],
+            "declKind": "Func",
+            "usr": "s:13CoreNfcBridge0B18ConnectionDelegateP16onSessionStartedyyF",
+            "mangledName": "$s13CoreNfcBridge0B18ConnectionDelegateP16onSessionStartedyyF",
+            "moduleName": "CoreNfcBridge",
+            "genericSig": "<τ_0_0 where τ_0_0 : CoreNfcBridge.NfcConnectionDelegate>",
+            "sugared_genericSig": "<Self where Self : CoreNfcBridge.NfcConnectionDelegate>",
+            "protocolReq": true,
+            "declAttributes": [
+              "RawDocComment"
+            ],
+            "reqNewWitnessTableEntry": true,
+            "funcSelfKind": "NonMutating"
+          },
+          {
+            "kind": "Function",
+            "name": "onSessionInvalidated",
+            "printedName": "onSessionInvalidated(error:)",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Void",
+                "printedName": "()"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "Optional",
+                "printedName": "(any Swift.Error)?",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Error",
+                    "printedName": "any Swift.Error",
+                    "usr": "s:s5ErrorP"
+                  }
+                ],
+                "usr": "s:Sq"
+              }
+            ],
+            "declKind": "Func",
+            "usr": "s:13CoreNfcBridge0B18ConnectionDelegateP20onSessionInvalidated5errorys5Error_pSg_tF",
+            "mangledName": "$s13CoreNfcBridge0B18ConnectionDelegateP20onSessionInvalidated5errorys5Error_pSg_tF",
+            "moduleName": "CoreNfcBridge",
+            "genericSig": "<τ_0_0 where τ_0_0 : CoreNfcBridge.NfcConnectionDelegate>",
+            "sugared_genericSig": "<Self where Self : CoreNfcBridge.NfcConnectionDelegate>",
+            "protocolReq": true,
+            "declAttributes": [
+              "RawDocComment"
+            ],
+            "reqNewWitnessTableEntry": true,
+            "funcSelfKind": "NonMutating"
+          }
+        ],
+        "declKind": "Protocol",
+        "usr": "s:13CoreNfcBridge0B18ConnectionDelegateP",
+        "mangledName": "$s13CoreNfcBridge0B18ConnectionDelegateP",
+        "moduleName": "CoreNfcBridge",
+        "intro_iOS": "13.0",
+        "declAttributes": [
+          "AccessControl",
+          "Available",
+          "RawDocComment"
+        ],
+        "conformances": [
+          {
+            "kind": "Conformance",
+            "name": "Escapable",
+            "printedName": "Escapable",
+            "usr": "s:s9EscapableP",
+            "mangledName": "$ss9EscapableP"
+          },
+          {
+            "kind": "Conformance",
+            "name": "Copyable",
+            "printedName": "Copyable",
+            "usr": "s:s8CopyableP",
+            "mangledName": "$ss8CopyableP"
+          }
+        ]
+      }
+    ],
+    "json_format_version": 8
+  },
+  "ConstValues": [
+    {
+      "filePath": "\/Users\/kimnordin\/Developer\/Work\/ios-sec-core\/Sources\/CoreNfcBridge\/NfcDevice.swift",
+      "kind": "BooleanLiteral",
+      "offset": 752,
+      "length": 5,
+      "value": "false"
+    },
+    {
+      "filePath": "\/Users\/kimnordin\/Developer\/Work\/ios-sec-core\/Sources\/CoreNfcBridge\/NfcDevice.swift",
+      "kind": "BooleanLiteral",
+      "offset": 9600,
+      "length": 5,
+      "value": "false"
+    },
+    {
+      "filePath": "\/Users\/kimnordin\/Developer\/Work\/ios-sec-core\/Sources\/CoreNfcBridge\/NfcDevice.swift",
+      "kind": "IntegerLiteral",
+      "offset": 11095,
+      "length": 1,
+      "value": "0"
+    },
+    {
+      "filePath": "\/Users\/kimnordin\/Developer\/Work\/ios-sec-core\/Sources\/CoreNfcBridge\/NfcDevice.swift",
+      "kind": "IntegerLiteral",
+      "offset": 11114,
+      "length": 2,
+      "value": "10"
+    },
+    {
+      "filePath": "\/Users\/kimnordin\/Developer\/Work\/ios-sec-core\/Sources\/CoreNfcBridge\/NfcDevice.swift",
+      "kind": "IntegerLiteral",
+      "offset": 11131,
+      "length": 3,
+      "value": "100"
+    },
+    {
+      "filePath": "\/Users\/kimnordin\/Developer\/Work\/ios-sec-core\/Sources\/CoreNfcBridge\/ApduUtils.swift",
+      "kind": "Array",
+      "offset": 472,
+      "length": 30,
+      "value": "[0xA0, 0x00, 0x00, 0x06, 0x17]"
+    },
+    {
+      "filePath": "\/Users\/kimnordin\/Developer\/Work\/ios-sec-core\/Sources\/CoreNfcBridge\/ApduUtils.swift",
+      "kind": "IntegerLiteral",
+      "offset": 581,
+      "length": 4,
+      "value": "0x01"
+    },
+    {
+      "filePath": "\/Users\/kimnordin\/Developer\/Work\/ios-sec-core\/Sources\/CoreNfcBridge\/ApduUtils.swift",
+      "kind": "IntegerLiteral",
+      "offset": 671,
+      "length": 4,
+      "value": "0x02"
+    },
+    {
+      "filePath": "\/Users\/kimnordin\/Developer\/Work\/ios-sec-core\/Sources\/CoreNfcBridge\/ApduUtils.swift",
+      "kind": "IntegerLiteral",
+      "offset": 752,
+      "length": 4,
+      "value": "0x03"
+    },
+    {
+      "filePath": "\/Users\/kimnordin\/Developer\/Work\/ios-sec-core\/Sources\/CoreNfcBridge\/ApduUtils.swift",
+      "kind": "Array",
+      "offset": 840,
+      "length": 12,
+      "value": "[0xA4, 0x04]"
+    },
+    {
+      "filePath": "\/Users\/kimnordin\/Developer\/Work\/ios-sec-core\/Sources\/CoreNfcBridge\/ApduUtils.swift",
+      "kind": "IntegerLiteral",
+      "offset": 882,
+      "length": 4,
+      "value": "0x00"
+    },
+    {
+      "filePath": "\/Users\/kimnordin\/Developer\/Work\/ios-sec-core\/Sources\/CoreNfcBridge\/ApduUtils.swift",
+      "kind": "IntegerLiteral",
+      "offset": 915,
+      "length": 4,
+      "value": "0x02"
+    }
+  ]
+}

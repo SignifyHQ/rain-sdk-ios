@@ -1,0 +1,60 @@
+// swift-interface-format-version: 1.0
+// swift-compiler-version: Apple Swift version 6.0 effective-5.10 (swiftlang-6.0.0.9.10 clang-1600.0.26.2)
+// swift-module-flags: -target arm64-apple-ios14.0 -enable-objc-interop -enable-library-evolution -swift-version 5 -enforce-exclusivity=checked -O -enable-bare-slash-regex -module-name CoreNfcBridge
+// swift-module-flags-ignorable: -no-verify-emitted-module-interface
+import CoreNFC
+@_exported import CoreNfcBridge
+import FidesmoCore
+import Foundation
+import RxSwift
+import Swift
+import _Concurrency
+import _StringProcessing
+import _SwiftConcurrencyShims
+import os
+@_hasMissingDesignatedInitializers @available(iOS 13.0, *)
+public class NfcDevice : FidesmoCore.DeviceConnection {
+  public var type: FidesmoCore.ConnectionType
+  public var getUid: FidesmoCore.Bytes {
+    get
+  }
+  public var deviceId: FidesmoCore.DeviceId {
+    get
+  }
+  public func transceive(commands: [FidesmoCore.ApduCommand]) -> RxSwift.Observable<[FidesmoCore.ApduResponse]>
+  public func transceive(command: FidesmoCore.ApduCommand) -> RxSwift.Observable<FidesmoCore.ApduResponse>
+  public func unfilteredTransceive(command: FidesmoCore.ApduCommand) -> RxSwift.Observable<FidesmoCore.ApduResponse>
+  public func finishConversation() -> RxSwift.Completable
+  public func invalidateSession(errorMessage: Swift.String? = nil)
+  public func connectionStability(currentCount: Swift.Int = 0, maxCount: Swift.Int = 10, delay: Swift.Int = 100, updatedStep: @escaping (Swift.Int) -> Swift.Void, isConnetionStable: @escaping (Swift.Bool) -> Swift.Void)
+  @objc deinit
+}
+@available(iOS 13.0, *)
+public protocol NfcErrorDelegate {
+  func onTagNotAvailable(device: CoreNfcBridge.NfcDevice)
+}
+@objc @available(iOS 13.0, *)
+public class NfcManager : ObjectiveC.NSObject, CoreNFC.NFCTagReaderSessionDelegate, CoreNfcBridge.NfcErrorDelegate {
+  public init(listener: any CoreNfcBridge.NfcConnectionDelegate)
+  public func startNfcDiscovery(message: Swift.String)
+  public func invalidateSession()
+  public func invalidateSession(error: Swift.String)
+  public func restartPolling()
+  public func changeAlertMessage(message: Swift.String)
+  public func tagReaderSessionDidBecomeActive(_ session: CoreNFC.NFCTagReaderSession)
+  public func tagReaderSession(_ session: CoreNFC.NFCTagReaderSession, didInvalidateWithError error: any Swift.Error)
+  public func tagReaderSession(_ session: CoreNFC.NFCTagReaderSession, didDetect tags: [CoreNFC.NFCTag])
+  public func addListener(listener: any CoreNfcBridge.NfcConnectionDelegate)
+  public func wrongTag()
+  public func tagConnected(tag: any CoreNFC.NFCISO7816Tag)
+  public func onTagNotAvailable(device: CoreNfcBridge.NfcDevice)
+  @objc deinit
+}
+@available(iOS 13.0, *)
+public protocol NfcConnectionDelegate {
+  func onWrongTagDetected()
+  func onDeviceConnected(device: CoreNfcBridge.NfcDevice)
+  func onDeviceDisconnected(device: CoreNfcBridge.NfcDevice)
+  func onSessionStarted()
+  func onSessionInvalidated(error: (any Swift.Error)?)
+}

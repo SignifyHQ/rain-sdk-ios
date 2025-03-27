@@ -1,0 +1,4 @@
+framework module FidesmoCore {
+  header "FidesmoCore-Swift.h"
+  requires objc
+}

@@ -5,10 +5,78 @@ import LFUtilities
 import LFAccessibility
 import LFAuthentication
 import RainFeature
+import RainDomain
+import Services
+
+// String extension for card formatting
+extension String {
+  func insertSpaces(afterEvery n: Int) -> String {
+    var result = ""
+    for (index, character) in self.enumerated() {
+      if index > 0 && index % n == 0 {
+        result += " "
+      }
+      result.append(character)
+    }
+    return result
+  }
+}
+
+// Define minimal protocols for what we need
+// Remove our protocol definition that's causing the issue
+// protocol RainCardRepositoryProtocol {}
+
+// RainCardEntity definition
+struct RainCardEntity {
+  let cardId: String?
+  let last4: String?
+  let cardStatus: String
+  let expMonth: String?
+  let expYear: String?
+}
+
+// Define CardMetaData struct since we can't import it directly
+struct CardMetaData: Equatable {
+  let pan: String
+  let cvv: String
+  
+  var panFormatted: String {
+    pan.insertSpaces(afterEvery: 4)
+  }
+  
+  init(pan: String, cvv: String) {
+    self.pan = pan
+    self.cvv = cvv
+  }
+}
+
+// Define RainCardSecretInformationEntity struct since we can't import it directly
+struct RainCardSecretInformationEntity {
+  struct EncryptedEntity {
+    let iv: String
+    let data: String
+    
+    init(iv: String, data: String) {
+      self.iv = iv
+      self.data = data
+    }
+  }
+  
+  let encryptedPanEntity: EncryptedEntity
+  let encryptedCVCEntity: EncryptedEntity
+  
+  init(encryptedPanEntity: EncryptedEntity, encryptedCVCEntity: EncryptedEntity) {
+    self.encryptedPanEntity = encryptedPanEntity
+    self.encryptedCVCEntity = encryptedCVCEntity
+  }
+}
 
 struct ProfileView: View {
   @StateObject private var viewModel = ProfileViewModel()
   @Environment(\.scenePhase) var scenePhase
+  
+  @State private var isFidesmoFlowPresented = false
+  @State private var sheetHeight: CGFloat = 500
   
   var body: some View {
     ScrollView(showsIndicators: false) {
@@ -56,6 +124,21 @@ struct ProfileView: View {
       case .logout:
         logoutPopup
       }
+    }
+    .sheet(
+      isPresented: $isFidesmoFlowPresented
+    ) {
+      BottomSheetView(
+        isPresented: $isFidesmoFlowPresented,
+        sheetHeight: $sheetHeight
+      )
+      .onAppear(
+        perform: {
+          sheetHeight = 380
+        }
+      )
+      .presentationDetents([.height(sheetHeight)])
+      .interactiveDismissDisabled(true)
     }
   }
 }
@@ -123,18 +206,6 @@ private extension ProfileView {
           title: L10N.Common.Profile.Address.title,
           value: viewModel.address
         )
-        /* TODO: Remove for MVP
-        ArrowButton(image: GenImages.CommonImages.icWarning.swiftUIImage, title: L10N.Common.Profile.DepositLimits.title, value: nil) {
-          viewModel.depositLimitsTapped()
-        }*/
-        /* TODO: - Will enable after implement feature flag
-        ArrowButton(
-          image: GenImages.CommonImages.icSecurity.swiftUIImage,
-          title: L10N.Common.Profile.Security.title,
-          value: nil
-        ) {
-          viewModel.didTapSecurityButton()
-        }*/
         ArrowButton(image: GenImages.CommonImages.icQuestion.swiftUIImage, title: L10N.Common.Profile.Help.title, value: nil) {
           viewModel.helpTapped()
         }
@@ -145,6 +216,15 @@ private extension ProfileView {
             value: nil
           ) {
             viewModel.notificationTapped()
+          }
+        }
+        ArrowButton(
+          image: GenImages.CommonImages.icHomeCards.swiftUIImage,
+          title: "Activate Limited edition card ✨",
+          value: nil
+        ) {
+          DispatchQueue.main.async {
+            isFidesmoFlowPresented = true
           }
         }
       }

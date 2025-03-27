@@ -86,6 +86,12 @@ private extension FullSizeButton {
     .applyIf(!showGradientBackground) {
       $0.background(backgroundColor ?? colorBackground)
     }
+    .applyIf(showBorder){
+      $0.overlay(
+        RoundedRectangle(cornerRadius: 10)
+          .stroke(Colors.label.swiftUIColor.opacity(0.75), lineWidth: 1)
+      )
+    }
     .opacity(isDisable ? 0.5 : 1.0)
     .cornerRadius(cornerRadius)
     .hidden(isLoading)
@@ -98,7 +104,7 @@ private extension FullSizeButton {
     switch type {
     case .primary:
       return Colors.buttonText.swiftUIColor
-    case .secondary, .tertiary:
+    case .secondary, .tertiary, .alternative:
       return Colors.label.swiftUIColor
     case .destructive:
       return Colors.error.swiftUIColor
@@ -113,7 +119,16 @@ private extension FullSizeButton {
     switch type {
     case .primary:
       return true
-    case .contrast, .destructive, .secondary, .tertiary, .white:
+    case .contrast, .destructive, .secondary, .tertiary, .white, .alternative:
+      return false
+    }
+  }
+  
+  var showBorder: Bool {
+    switch type {
+    case .alternative:
+      return true
+    case .primary, .contrast, .destructive, .secondary, .tertiary, .white:
       return false
     }
   }
@@ -126,7 +141,7 @@ private extension FullSizeButton {
       return Colors.secondaryBackground.swiftUIColor
     case .contrast:
       return Colors.buttons.swiftUIColor
-    case .primary:
+    case .primary, .alternative:
       return .clear
     case .white:
       return Colors.whiteText.swiftUIColor
@@ -162,5 +177,6 @@ public extension FullSizeButton {
     case destructive
     case contrast
     case white
+    case alternative
   }
 }
