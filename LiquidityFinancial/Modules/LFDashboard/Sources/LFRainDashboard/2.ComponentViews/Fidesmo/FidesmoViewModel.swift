@@ -1,5 +1,4 @@
 import Foundation
-//import LFRewardDashboard
 import Factory
 import LFUtilities
 import AuthorizationManager
@@ -126,7 +125,7 @@ extension FidesmoViewModel {
         }
       ) {
       
-      let userEmail = "roteiro93@gmail.com"
+      let userEmail = accountDataManager.userInfomationData.email ?? ""
       addToLog("Auto-responding with email: \(userEmail)")
       
       userResponse[emailRequirement.id] = userEmail

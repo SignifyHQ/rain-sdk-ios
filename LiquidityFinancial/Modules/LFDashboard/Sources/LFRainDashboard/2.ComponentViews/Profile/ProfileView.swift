@@ -128,13 +128,16 @@ struct ProfileView: View {
     .sheet(
       isPresented: $isFidesmoFlowPresented
     ) {
-      FidesmoView()
-//      .onAppear(
-//        perform: {
-//          sheetHeight = 380
-//        }
-//      )
-      .presentationDetents([.height(CGFloat(sheetHeight))])
+      BottomSheetView(
+        isPresented: $isFidesmoFlowPresented,
+        sheetHeight: $sheetHeight
+      )
+      .onAppear(
+        perform: {
+          sheetHeight = 380
+        }
+      )
+      .presentationDetents([.height(sheetHeight)])
       .interactiveDismissDisabled(true)
     }
   }
