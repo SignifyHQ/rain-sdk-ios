@@ -18,8 +18,8 @@ struct BottomSheetView: View {
     [
       ("Let's get started", 380, AnyView(fidesmoStepOne())),
       ("Let’s connect your card", 350, AnyView(fidesmoStepTwo())),
-      ("Ready to Scan", 380, AnyView(fidesmoStepThree())),
-      //      ("Finished!", 350, AnyView(fidesmoStepFour()))
+      ("Ready to Scan", 350, AnyView(fidesmoStepThree())),
+      ("Finished!", 350, AnyView(fidesmoStepFour()))
     ]
   }
   
@@ -150,7 +150,7 @@ struct BottomSheetView: View {
   @ViewBuilder
   private func fidesmoStepThree() -> some View {
     VStack(alignment: .center) {
-      if viewModel.deliveryType == .notStarted {
+      if viewModel.deliveryType == .notStarted && viewModel.dataRequirements.isEmpty {
         GenImages.CommonImages.icNfc.swiftUIImage
           .padding(.vertical, 25)
         
@@ -167,17 +167,34 @@ struct BottomSheetView: View {
       if case let .operationInProgress(description, dataFlow) = viewModel.deliveryProgress {
         if case .toDevice = dataFlow {
           Text("Delivery Progress")
-            .bold()
+            .font(Fonts.regular.swiftUIFont(size: 16))
+            .foregroundColor(Colors.label.swiftUIColor)
             .frame(maxWidth: .infinity)
+            .padding(.top)
+          
           Text("\(viewModel.currentStep) of \(description?.totalSteps ?? 5)")
+            .font(Fonts.regular.swiftUIFont(size: 14))
+            .foregroundColor(Colors.label.swiftUIColor)
             .frame(maxWidth: .infinity)
         } else {
-          ProgressView() {
-            Text("Talking to Server")
-              .bold()
-              .frame(maxWidth: .infinity)
-          }
+          Text("Talking to Server")
+            .font(Fonts.regular.swiftUIFont(size: 16))
+            .foregroundColor(Colors.label.swiftUIColor)
+            .frame(maxWidth: .infinity)
+            .padding(.top)
         }
+        
+        GenImages.CommonImages.icNfc.swiftUIImage
+          .padding(.vertical, 25)
+        
+        Text("Hold your card against the top edge of the back of your phone.")
+          .frame(maxWidth: .infinity, alignment: .leading)
+          .multilineTextAlignment(.leading)
+          .lineSpacing(1.2)
+          .font(Fonts.regular.swiftUIFont(size: 18))
+          .foregroundColor(Colors.label.swiftUIColor)
+        
+        Spacer()
       } else {
         ComponentViewBuilder(
           dataRequirements: $viewModel.dataRequirements,
@@ -186,9 +203,9 @@ struct BottomSheetView: View {
           deliveryProgress: $viewModel.deliveryProgress,
           dataRequirementUUID: $viewModel.dataRequirementUUID
         )
+        
+        Spacer()
       }
-      
-      Spacer()
       
       let deliveryDisabled = viewModel.deliveryType != .notStarted && viewModel.deliveryType != .transceive
       FullSizeButton(
@@ -205,30 +222,12 @@ struct BottomSheetView: View {
         default: break
         }
       }
-      
-      let cancelDisabled = viewModel.onCancelDelivery == nil
-      if !cancelDisabled {
-        FullSizeButton(
-          title: "Cancel",
-          isDisable: cancelDisabled,
-          type: .secondary
-        ) {
-          cancelDelivery()
-          isPresented = false
-        }
-      }
     }
     .frame(maxWidth: .infinity)
     .onAppear {
       viewModel.onAppear()
     }
     .onChange(of: viewModel.deliveryType) {
-      if $0 == .notStarted {
-        sheetHeight = 380
-      } else {
-        sheetHeight = 550
-      }
-      
       if $0 == .none && viewModel.dataRequirements.isEmpty,
          let responseHandler = viewModel.userResponseHandler {
         responseHandler(viewModel.userDataResponse)
@@ -245,6 +244,9 @@ struct BottomSheetView: View {
       default: break
       }
     }
+//    .onChange(of: viewModel.dataRequirements) {
+//      sheetHeight = $0.isEmpty ? 400 : 550
+//    }
     .onChange(of: scenePhase) { newScenePhase in
       switch newScenePhase {
       case .active:
