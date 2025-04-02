@@ -40,9 +40,7 @@ extension ReceiveCryptoViewModel {
   }
   
   func updateCode() {
-    Task { @MainActor in
-      qrCode = generateQRCode(from: walletAddress)
-    }
+    qrCode = generateQRCode(from: walletAddress)
   }
 
   func getActivityItems() -> [AnyObject] {
@@ -62,15 +60,22 @@ extension ReceiveCryptoViewModel {
   func generateQRCode(from string: String) -> UIImage {
     let context = CIContext()
     let filter = CIFilter.qrCodeGenerator()
-    
     filter.message = Data(string.utf8)
 
-    if let outputImage = filter.outputImage {
-      if let cgimg = context.createCGImage(outputImage, from: outputImage.extent) {
-        return UIImage(cgImage: cgimg)
-      }
+    guard let outputImage = filter.outputImage
+    else {
+      return UIImage()
     }
-
-    return UIImage(systemName: "xmark.circle") ?? UIImage()
+    
+    let invertedFilter = CIFilter.colorInvert()
+    invertedFilter.setValue(outputImage, forKey: kCIInputImageKey)
+    
+    guard let outputInvertedImage = invertedFilter.outputImage,
+          let cgimg = context.createCGImage(outputInvertedImage, from: outputInvertedImage.extent)
+    else {
+      return UIImage(systemName: "xmark.circle") ?? UIImage()
+    }
+    
+    return UIImage(cgImage: cgimg)
   }
 }

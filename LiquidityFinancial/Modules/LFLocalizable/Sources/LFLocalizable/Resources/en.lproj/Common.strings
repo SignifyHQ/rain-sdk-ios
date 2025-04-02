@@ -769,10 +769,11 @@ https://mn.gov/commerce/money/investments/cryptocurrency/. \n\n\n\n\n\n\n";
 "assetView.receive.title" = "Receive";
 
 // Receive Crypto View
-"receive_crypto_view.title" = "Avalanche Card address";
+"receive_crypto_view.title" = "Avalanche Card Address";
 "receive_crypto_view.subtitle" = "Funds can only be added from the Avalanche C-Chain or they may be lost.";
 "receive_crypto_view.copied.info" = "Copied!";
 "receive_crypto_view.wallet_detail" = "Wallet Details";
+"receive_crypto_view.your_address" = "Your Address";
 
 //BANK STATEMENT
 "bank_statement.title" = "Bank Statements";

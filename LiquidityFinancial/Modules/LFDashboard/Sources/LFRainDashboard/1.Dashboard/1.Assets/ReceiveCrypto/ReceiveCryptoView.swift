@@ -20,92 +20,117 @@ struct ReceiveCryptoView: View {
   
   @StateObject private var viewModel: ReceiveCryptoViewModel
   
-  init(assetTitle: String, walletAddress: String) {
+  @State private var didAnimate = false
+  
+  @State private var movementOffset: CGFloat = 0
+  @State private var qrCodeWidth: CGFloat = 0
+  
+  init(
+    assetTitle: String,
+    walletAddress: String
+  ) {
     _viewModel = .init(
       wrappedValue: .init(assetTitle: assetTitle, walletAddress: walletAddress)
     )
   }
   
   var body: some View {
-    GeometryReader { _ in
-      VStack(spacing: 0) {
-        VStack {
-          header
-          
-          VStack(alignment: .leading) {
-            qrImage
-            GenImages.CommonImages.dash.swiftUIImage
-            addressView
-          }
-          .frame(height: 373.0, alignment: .center)
-          .frame(maxWidth: .infinity)
-          .background(Colors.secondaryBackground.swiftUIColor)
-          .cornerRadius(10.0)
-          .padding(.horizontal, 30)
-          
-          Spacer()
-          
-          bottomView
+    VStack(spacing: 0) {
+      VStack {
+        header
+        
+        VStack(alignment: .leading) {
+          qrImage
+          addressView
         }
-        .padding(.top, 12)
-        .onAppear {
-          viewModel.updateCode()
-        }
-        .sheet(isPresented: $viewModel.isDisplaySheet) {
-          ShareSheet(photo: Image("QR_Code"))
-        }
-        .sheet(isPresented: $viewModel.isShareSheetViewPresented, content: {
-          ShareSheetView(
-            activityItems: viewModel.getActivityItems(),
-            applicationActivities: viewModel.getApplicationActivities()
-          ) { activityType, finished, activityItems, error in
-            if let error = error {
-              print(error.userFriendlyMessage)
-              return
-            }
-            if let activityType = activityType {
-              print(activityType)
-            }
-            print(finished)
-            
-            if let activityItems = activityItems {
-              print(activityItems)
-            }
-          }
-        })
-        .popup(item: $viewModel.toastMessage, style: .toast) {
-          ToastView(toastMessage: $0)
-        }
+        .frame(height: 373.0, alignment: .center)
+        .frame(maxWidth: .infinity)
+        .background(Colors.secondaryBackground.swiftUIColor)
+        .cornerRadius(32.0)
+        .padding(.horizontal, 30)
+        
+        Spacer()
+        
+        bottomView
       }
-      .toolbar {
-        ToolbarItem(placement: .navigationBarLeading) {
-          if viewModel.showCloseButton {
-            Button {
-              dismiss()
-            } label: {
-              CircleButton(style: .xmark)
-            }
+      .padding(.top, 12)
+      .onAppear {
+        viewModel.updateCode()
+      }
+      .sheet(isPresented: $viewModel.isDisplaySheet) {
+        ShareSheet(photo: Image("QR_Code"))
+      }
+      .sheet(isPresented: $viewModel.isShareSheetViewPresented, content: {
+        ShareSheetView(
+          activityItems: viewModel.getActivityItems(),
+          applicationActivities: viewModel.getApplicationActivities()
+        ) { activityType, finished, activityItems, error in
+          if let error = error {
+            print(error.userFriendlyMessage)
+            return
+          }
+          if let activityType = activityType {
+            print(activityType)
+          }
+          print(finished)
+          
+          if let activityItems = activityItems {
+            print(activityItems)
           }
         }
-        ToolbarItem(placement: .principal) {
-          Text(L10N.Common.ReceiveCryptoView.walletDetail)
-            .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.medium.value))
-            .foregroundColor(Colors.label.swiftUIColor)
-        }
-      }
-      .onAppear(perform: {
-        analyticsService.track(event: AnalyticsEvent(name: .viewsWalletAddress))
       })
-      .background(Colors.background.swiftUIColor)
-      .track(name: String(describing: type(of: self)))
+      .popup(item: $viewModel.toastMessage, style: .toast) {
+        ToastView(toastMessage: $0)
+      }
     }
+    .toolbar {
+      ToolbarItem(placement: .navigationBarLeading) {
+        if viewModel.showCloseButton {
+          Button {
+            dismiss()
+          } label: {
+            CircleButton(style: .xmark)
+          }
+        }
+      }
+      ToolbarItem(placement: .principal) {
+        Text(L10N.Common.ReceiveCryptoView.walletDetail)
+          .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.medium.value))
+          .foregroundColor(Colors.label.swiftUIColor)
+      }
+    }
+    .readGeometry(
+      perform: { proxy in
+        let screenWidth = proxy.size.width
+        let outerPadding: CGFloat = 30
+        let innerPadding: CGFloat = 24
+        
+        movementOffset = (screenWidth / 2) - outerPadding - qrCodeWidth / 2 - innerPadding
+      }
+    )
+    .onAppear(
+      perform: {
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+          withAnimation(.easeOut(duration: 0.3)) {
+            didAnimate = true
+          }
+        }
+        
+        analyticsService.track(event: AnalyticsEvent(name: .viewsWalletAddress))
+      }
+    )
+    .background(Colors.background.swiftUIColor)
+    .track(name: String(describing: type(of: self)))
   }
 }
 
 private extension ReceiveCryptoView {
   var header: some View {
-    VStack(alignment: .leading) {
-      Text(L10N.Common.ReceiveCryptoView.title.uppercased())
+    VStack(
+      alignment: .leading,
+      spacing: 2
+    ) {
+      Text(L10N.Common.ReceiveCryptoView.title)
         .foregroundColor(Colors.label.swiftUIColor)
         .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.buttonTextSize.value))
         .multilineTextAlignment(.leading)
@@ -114,47 +139,81 @@ private extension ReceiveCryptoView {
         .foregroundColor(Colors.label.swiftUIColor)
         .opacity(0.5)
         .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.ultraSmall.value))
-        .padding(.top, 1)
-        .padding(.bottom, 10)
         .multilineTextAlignment(.leading)
     }
     .frame(
       maxWidth: .infinity,
       alignment: .leading
     )
+    .padding(.bottom, 8)
     .padding(.horizontal, 30)
   }
   
   var qrImage: some View {
-    Image(uiImage: viewModel.qrCode)
-      .resizable()
-      .interpolation(.none)
-      .scaledToFit()
-      .frame(maxWidth: .infinity)
-      .padding([.horizontal, .top], 40)
-      .padding(.bottom, 24)
+    ZStack {
+      GenImages.CommonImages.icQrBackdrop.swiftUIImage
+        .resizable()
+        .interpolation(.none)
+        .scaledToFit()
+        .clipShape(RoundedRectangle(cornerRadius: 16))
+        .frame(maxWidth: .infinity)
+        .readGeometry { proxy in
+          qrCodeWidth = proxy.size.height
+        }
+        .padding(.horizontal, 40)
+        .offset(x: didAnimate ? -movementOffset : 0)
+      
+      Image(uiImage: viewModel.qrCode)
+        .resizable()
+        .interpolation(.none)
+        .scaledToFit()
+        .padding(5)
+        .background(Color.black)
+        .clipShape(RoundedRectangle(cornerRadius: 16))
+        .frame(maxWidth: .infinity)
+        .padding(.horizontal, 40)
+        .offset(x: didAnimate ? movementOffset : 0)
+    }
+    .frame(maxWidth: .infinity, minHeight: 180)
+    .padding(.top, 24)
+    .padding(.bottom, 20)
   }
   
   var addressView: some View {
-    HStack {
-      Text(viewModel.walletAddress)
-        .foregroundColor(Colors.label.swiftUIColor)
-        .opacity(0.5)
-        .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.medium.value))
-        .multilineTextAlignment(.leading)
-      GenImages.CommonImages.icCopy.swiftUIImage
-        .resizable()
-        .frame(CGSize(width: 24, height: 24))
-        .foregroundColor(Colors.primary.swiftUIColor)
-        .onTapGesture {
-          analyticsService.track(event: AnalyticsEvent(name: .tapsCopyWalletAddress))
-          viewModel.copyAddress()
-        }
+    VStack(spacing: 4) {
+      HStack {
+        Text(L10N.Common.ReceiveCryptoView.yourAddress)
+          .foregroundColor(Colors.label.swiftUIColor)
+          .opacity(0.75)
+          .font(Fonts.bold.swiftUIFont(size: Constants.FontSize.ultraSmall.value))
+          .multilineTextAlignment(.leading)
+        
+        Spacer()
+      }
+      
+      HStack {
+        Text(viewModel.walletAddress)
+          .foregroundColor(Colors.label.swiftUIColor)
+          .opacity(0.5)
+          .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.medium.value))
+          .multilineTextAlignment(.leading)
+        
+        Spacer()
+        
+        (didAnimate ? GenImages.CommonImages.icCopySelected.swiftUIImage : GenImages.CommonImages.icCopyUnselected.swiftUIImage)
+          .resizable()
+          .frame(CGSize(width: 48, height: 48))
+          .foregroundColor(Colors.primary.swiftUIColor)
+          .onTapGesture {
+            analyticsService.track(event: AnalyticsEvent(name: .tapsCopyWalletAddress))
+            viewModel.copyAddress()
+          }
+      }
     }
     .frame(maxWidth: .infinity)
-    .padding(.bottom, 16)
-    .padding(.top, 12)
-    .padding(.horizontal, 12)
+    .padding(.top, 8)
+    .padding(.bottom, 20)
+    .padding(.horizontal, 24)
   }
   
   var bottomView: some View {
