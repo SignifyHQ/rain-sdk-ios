@@ -47,6 +47,12 @@ final class AddressViewModel: ObservableObject {
   @Published var stateList: [UsState] =  UsState.allCases
   @Published var selectedState: UsState = .AK
   @Published var shouldUseStateDropdown: Bool = true
+  
+  @Published var shouldPresentGetNotifiedPopup: Bool = false
+  @Published var isShowingWaitlistStateSelection: Bool = false
+  @Published var selectedWaitlistState: UsState = .AK
+  @Published var waitlistState: String = .empty
+  @Published var waitlistEmail: String = .empty
 
   lazy var deviceDeregisterUseCase: DeviceDeregisterUseCaseProtocol = {
     return DeviceDeregisterUseCase(repository: devicesRepository)
@@ -87,6 +93,14 @@ extension AddressViewModel {
       }
       .assign(
         to: &$state
+      )
+    
+    $selectedWaitlistState
+      .map { state in
+        state.name
+      }
+      .assign(
+        to: &$waitlistState
       )
   }
   

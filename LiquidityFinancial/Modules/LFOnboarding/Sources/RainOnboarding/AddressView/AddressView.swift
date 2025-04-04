@@ -12,8 +12,14 @@ struct AddressView: View {
   @StateObject private var viewModel = AddressViewModel()
   
   @State private var scrollViewFrame: CGRect = .zero
+  @State private var vStackFrame: CGRect = .zero
   @State private var countryDropdownFrame: CGRect = .zero
   @State private var stateDropdownFrame: CGRect = .zero
+  
+  @State private var additionalScrollHeight: CGFloat = .zero
+  
+  @State private var popupFrame: CGRect = .zero
+  @State private var waitlistStateDropdownFrame: CGRect = .zero
   
   init() {
     UITableView.appearance().backgroundColor = UIColor(Colors.background.swiftUIColor)
@@ -21,9 +27,9 @@ struct AddressView: View {
   }
   
   var body: some View {
-    VStack {
-      ScrollViewReader { proxy in
-        ZStack {
+    ZStack {
+      VStack {
+        ScrollViewReader { proxy in
           ScrollView {
             VStack(alignment: .leading) {
               Text(L10N.Common.addressTitle)
@@ -31,51 +37,72 @@ struct AddressView: View {
                 .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.main.value))
                 .padding(.vertical, 16)
               
+              if viewModel.selectedCountry == .US {
+                blockedStateInfoView
+              }
+              
               textFieldView
+              
+              if viewModel.isShowingStateSelection {
+                Spacer()
+                  .frame(height: additionalScrollHeight)
+                  .id("id-spacer")
+              }
+            }
+            .readGeometry { geometry in
+              vStackFrame = geometry.frame(in: .global)
             }
             .onChange(of: keyboardFocus) {
               proxy.scrollTo($0)
+            }
+            .onChange(
+              of: viewModel.isShowingStateSelection
+            ) { isShowingStateSelection in
+              if isShowingStateSelection {
+                withAnimation(.easeInOut(duration: 0.3)) {
+                  proxy.scrollTo("id-spacer")
+                }
+              }
             }
             .padding(.horizontal, 32)
           }
           .readGeometry { geometry in
             scrollViewFrame = geometry.frame(in: .global)
           }
-          .scrollDisabled(viewModel.isShowingCountrySelection || viewModel.isShowingStateSelection)
-          
-          if viewModel.isShowingCountrySelection {
-            countryDropdownView()
-              .frame(
-                width: countryDropdownFrame.width,
-                height: countryDropdownFrame.height * 3,
-                alignment: .top
-              )
-              .background(Colors.secondaryBackground.swiftUIColor)
-              .clipShape(RoundedRectangle(cornerRadius: 9))
-              .position(
-                x: countryDropdownFrame.midX,
-                y: countryDropdownFrame.maxY + countryDropdownFrame.height * 3 / 2 - scrollViewFrame.minY
-              )
-          }
-          
-          if viewModel.isShowingStateSelection {
-            stateDropdownView()
-              .frame(
-                width: stateDropdownFrame.width + 10,
-                height: stateDropdownFrame.height * 2,
-                alignment: .top
-              )
-              .background(Colors.secondaryBackground.swiftUIColor)
-              .clipShape(RoundedRectangle(cornerRadius: 9))
-              .position(
-                x: stateDropdownFrame.midX,
-                y: stateDropdownFrame.maxY + stateDropdownFrame.height * 2 / 2 - scrollViewFrame.minY
-              )
-          }
         }
+        
+        continueButton
       }
       
-      continueButton
+      if viewModel.isShowingCountrySelection {
+        countryDropdownView()
+          .frame(
+            width: countryDropdownFrame.width,
+            height: countryDropdownFrame.height * 3,
+            alignment: .top
+          )
+          .background(Colors.secondaryBackground.swiftUIColor)
+          .clipShape(RoundedRectangle(cornerRadius: 9))
+          .position(
+            x: countryDropdownFrame.midX,
+            y: countryDropdownFrame.maxY + countryDropdownFrame.height * 3 / 2 - scrollViewFrame.minY
+          )
+      }
+      
+      if viewModel.isShowingStateSelection {
+        stateDropdownView()
+          .frame(
+            width: stateDropdownFrame.width + 10,
+            height: stateDropdownFrame.height * 3,
+            alignment: .top
+          )
+          .background(Colors.secondaryBackground.swiftUIColor)
+          .clipShape(RoundedRectangle(cornerRadius: 9))
+          .position(
+            x: stateDropdownFrame.midX,
+            y: stateDropdownFrame.maxY + stateDropdownFrame.height * 3 / 2 - scrollViewFrame.minY
+          )
+      }
     }
     .navigationTitle("")
     .background(Colors.background.swiftUIColor)
@@ -83,6 +110,7 @@ struct AddressView: View {
       viewModel.stopSuggestions()
       viewModel.isShowingCountrySelection = false
       viewModel.isShowingStateSelection = false
+      viewModel.shouldPresentGetNotifiedPopup = false
     }
     .defaultToolBar(
       icon: .support,
@@ -96,11 +124,27 @@ struct AddressView: View {
     ) {
       ToastView(toastMessage: $0)
     }
-    .onAppear {
-      viewModel.onAppear()
-      DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-        keyboardFocus = .address1
+    .popup(
+      isPresented: $viewModel.shouldPresentGetNotifiedPopup,
+      content: {
+        PopupAlert(padding: 16) {
+          getNotifiedView()
+        }
+        .readGeometry { popup in
+          popupFrame = popup.frame(in: .global)
+        }
       }
+    )
+    .onAppear {
+      DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+        let dropdownMaxY = countryDropdownFrame.maxY + countryDropdownFrame.height * 3
+        let scrollViewMaxY = scrollViewFrame.maxY - scrollViewFrame.minY
+        let overflowHeight = dropdownMaxY - scrollViewMaxY
+        
+        additionalScrollHeight = overflowHeight + (scrollViewFrame.height - vStackFrame.height)
+      }
+      
+      viewModel.onAppear()
     }
     .navigationLink(
       isActive: $viewModel.shouldProceedToNextStep,
@@ -173,6 +217,7 @@ private extension AddressView {
         TextField("", text: value)
           .keyboardType(keyboardType)
           .restrictInput(value: value, restriction: restriction)
+          .multilineTextAlignment(.leading)
           .modifier(PlaceholderStyle(showPlaceHolder: value.wrappedValue.isEmpty, placeholder: placeholder))
           .primaryFieldStyle()
           .autocorrectionDisabled()
@@ -184,6 +229,25 @@ private extension AddressView {
           }
       }
     }
+  }
+  
+  var blockedStateInfoView: some View {
+    HStack(
+      alignment: .top
+    ) {
+      GenImages.CommonImages.icInfo.swiftUIImage
+      
+      Text("We're currently available in select states. If your state isn't listed, you can sign up to be notified when we expand to your area.")
+        .foregroundColor(Colors.label.swiftUIColor)
+        .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.small.value))
+        .multilineTextAlignment(.leading)
+    }
+    .padding(12)
+    .background(
+      RoundedRectangle(cornerRadius: 8)
+        .fill(Colors.buttons.swiftUIColor)
+    )
+    .padding(.bottom, 16)
   }
   
   var textFieldView: some View {
@@ -324,9 +388,8 @@ private extension AddressView {
           .padding(.leading, -5)
         
         Text(item.title)
-          .font(Fonts.bold.swiftUIFont(size: Constants.FontSize.small.value))
+          .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.small.value))
           .foregroundColor(Colors.label.swiftUIColor)
-          .padding(.leading, 12)
           .layoutPriority(1)
         
         // Adding clear rectangle to make the whole row tappable, not just the text
@@ -337,13 +400,14 @@ private extension AddressView {
           .contentShape(Rectangle())
       }
       .listRowBackground(Color.clear)
-      .listRowSeparatorTint(Colors.label.swiftUIColor.opacity(0.16))
+      .listRowSeparatorTint(Color.clear)
       .listRowInsets(.none)
       .onTapGesture {
         viewModel.selectedCountry = item
         viewModel.isShowingCountrySelection = false
       }
     }
+    .environment(\.defaultMinListRowHeight, 35)
     .scrollContentBackground(.hidden)
     .listStyle(.plain)
     .floatingShadow()
@@ -351,35 +415,158 @@ private extension AddressView {
   
   func stateDropdownView(
   ) -> some View {
-    List(
-      viewModel.stateList,
-      id: \.id
-    ) { item in
-      HStack {
-        Text(item.name)
-          .font(Fonts.bold.swiftUIFont(size: Constants.FontSize.small.value))
-          .foregroundColor(Colors.label.swiftUIColor)
-          .lineLimit(1)
-          .layoutPriority(1)
-        
-        // Adding clear rectangle to make the whole row tappable, not just the text
-        Rectangle()
-          .foregroundStyle(
-            Color.clear
-          )
-          .contentShape(Rectangle())
+    VStack {
+      List(
+        viewModel.stateList,
+        id: \.id
+      ) { item in
+        HStack {
+          Text(item.name)
+            .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.small.value))
+            .foregroundColor(Colors.label.swiftUIColor)
+            .padding(.leading, 8)
+            .lineLimit(1)
+            .layoutPriority(1)
+          
+          // Adding clear rectangle to make the whole row tappable, not just the text
+          Rectangle()
+            .foregroundStyle(
+              Color.clear
+            )
+            .contentShape(Rectangle())
+        }
+        .listRowBackground(Color.clear)
+        .listRowSeparator(.hidden)
+        .listRowInsets(EdgeInsets())
+        .onTapGesture {
+          if viewModel.isShowingStateSelection {
+            viewModel.selectedState = item
+            viewModel.isShowingStateSelection = false
+          }
+          
+          if viewModel.isShowingWaitlistStateSelection {
+            viewModel.selectedWaitlistState = item
+            viewModel.isShowingWaitlistStateSelection = false
+          }
+        }
       }
-      .listRowBackground(Color.clear)
-      .listRowSeparatorTint(Colors.label.swiftUIColor.opacity(0.16))
-      .listRowInsets(.none)
-      .onTapGesture {
-        viewModel.selectedState = item
-        viewModel.isShowingStateSelection = false
+      .environment(\.defaultMinListRowHeight, 30)
+      .scrollContentBackground(.hidden)
+      .listStyle(.plain)
+      
+      if viewModel.isShowingStateSelection {
+        Rectangle()
+          .frame(height: 1)
+          .foregroundColor(.black)
+          .opacity(0.2)
+        
+        Text("Don’t see your state? Get notified when Available")
+          .foregroundColor(Colors.primary.swiftUIColor)
+          .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.small.value))
+          .multilineTextAlignment(.leading)
+          .padding(.bottom, 8)
+          .padding(.horizontal, 8)
+          .onTapGesture {
+            viewModel.isShowingStateSelection = false
+            viewModel.shouldPresentGetNotifiedPopup = true
+          }
       }
     }
-    .scrollContentBackground(.hidden)
-    .listStyle(.plain)
     .floatingShadow()
+  }
+  
+  @ViewBuilder
+  func getNotifiedView(
+  ) -> some View {
+    ZStack {
+      VStack {
+        VStack(
+          spacing: 24
+        ) {
+          GenImages.Images.icLogo.swiftUIImage
+            .resizable()
+            .frame(width: 100, height: 100)
+          
+          Text("Get notified when we're in your area".uppercased())
+            .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.main.value))
+            .foregroundColor(Colors.label.swiftUIColor)
+            .multilineTextAlignment(.center)
+          
+          ZStack {
+            textFieldInputView(
+              title: "Your State",
+              placeholder: "Select your state",
+              value: $viewModel.waitlistState,
+              restriction: .alphabets,
+              focus: .waitlistState
+            )
+            .disabled(true)
+            
+            HStack {
+              Rectangle()
+                .foregroundStyle(
+                  Color.clear
+                )
+                .contentShape(Rectangle())
+                .onTapGesture {
+                  viewModel.isShowingWaitlistStateSelection.toggle()
+                }
+              
+              GenImages.CommonImages.icArrowDown.swiftUIImage
+                .tint(Colors.label.swiftUIColor)
+                .rotationEffect(
+                  .degrees(viewModel.isShowingWaitlistStateSelection ? 180 : 0)
+                )
+            }
+          }
+          .readGeometry { geometry in
+            waitlistStateDropdownFrame = geometry.frame(in: .global)
+          }
+          
+          textFieldInputView(
+            title: L10N.Common.email,
+            placeholder: L10N.Common.enterEmailAddress,
+            value: $viewModel.waitlistEmail,
+            focus: .waitlistEmail
+          )
+        }
+        .padding(.top, 8)
+        .padding(.bottom, 24)
+        
+        FullSizeButton(
+          title: "Notify Me",
+          isDisable: false,
+          type: .primary
+        ) {
+        }
+        
+        FullSizeButton(
+          title: "Cancel",
+          isDisable: false,
+          type: .secondary
+        ) {
+          viewModel.shouldPresentGetNotifiedPopup = false
+        }
+      }
+      .onTapGesture {
+        viewModel.isShowingWaitlistStateSelection = false
+      }
+      
+      if viewModel.isShowingWaitlistStateSelection {
+        stateDropdownView()
+          .frame(
+            width: waitlistStateDropdownFrame.width + 10,
+            height: waitlistStateDropdownFrame.height * 3,
+            alignment: .top
+          )
+          .background(Colors.background.swiftUIColor)
+          .clipShape(RoundedRectangle(cornerRadius: 9))
+          .position(
+            x: waitlistStateDropdownFrame.midX - popupFrame.minX - 16,
+            y: waitlistStateDropdownFrame.maxY + waitlistStateDropdownFrame.height * 3 / 2 - popupFrame.minY - 16
+          )
+      }
+    }
   }
 }
 
@@ -392,6 +579,8 @@ extension AddressView {
     case country
     case state
     case zip
+    case waitlistState
+    case waitlistEmail
   }
 }
 

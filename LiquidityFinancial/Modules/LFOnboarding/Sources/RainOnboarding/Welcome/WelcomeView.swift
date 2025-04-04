@@ -32,7 +32,8 @@ struct WelcomeView: View {
       viewModel.onAppear()
     }
     .navigationLink(isActive: $viewModel.isPushToNextStep) {
-      destinationView
+      AddressView()
+      //destinationView
     }
     .navigationBarBackButtonHidden(true)
     .track(name: String(describing: type(of: self)))
