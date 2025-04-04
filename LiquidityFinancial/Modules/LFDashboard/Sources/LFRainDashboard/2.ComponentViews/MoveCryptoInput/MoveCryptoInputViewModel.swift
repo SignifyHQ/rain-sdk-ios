@@ -30,6 +30,7 @@ final class MoveCryptoInputViewModel: ObservableObject {
   }
   
   @Published var assetModelList: [AssetModel] = []
+  @Published var creditBalances: CreditBalances?
   
   @Published var navigation: Navigation?
   @Published var blockPopup: BlockPopup?
@@ -68,6 +69,23 @@ final class MoveCryptoInputViewModel: ObservableObject {
   
   let type: Kind
   var gridValues: [GridValue] = []
+  
+  var availableBalance: Double? {
+    guard let spendingPower = creditBalances?.spendingPower,
+          let advanceRate = assetModel.advanceRate,
+          let exchangeRate = assetModel.exchangeRate
+    else {
+      return nil
+    }
+    
+    let balance = assetModel.availableBalance
+    let withdrawLimitUSD = spendingPower * 100.00 / advanceRate
+    let withdrawLimitCrypto = withdrawLimitUSD / exchangeRate
+
+    let finalWithdrawLimitCrypto = min(withdrawLimitCrypto, balance)
+    
+    return finalWithdrawLimitCrypto
+  }
   
   init(
     type: Kind,
@@ -236,8 +254,10 @@ private extension MoveCryptoInputViewModel {
     let cryptoCurrency = assetModel.type?.title ?? .empty
     
     switch type {
-    case .sellCrypto, .sendCrypto, .depositCollateral, .withdrawCollateral:
+    case .sellCrypto, .sendCrypto, .depositCollateral:
       gridValues = Constant.buildRecommendedGrid(available: assetModel.availableBalance, coin: cryptoCurrency)
+    case .withdrawCollateral:
+      gridValues = Constant.buildRecommendedGrid(available: availableBalance ?? 0, coin: cryptoCurrency)
     default:
       break
     }
@@ -250,6 +270,7 @@ private extension MoveCryptoInputViewModel {
       observePortalAssets()
     case .withdrawCollateral:
       observeCollateralAssets()
+      subscribeToCreditBalancesChanges()
     default:
       break
     }
@@ -303,6 +324,20 @@ private extension MoveCryptoInputViewModel {
           }
       }
       .assign(to: &$assetModelList)
+  }
+  
+  private func subscribeToCreditBalancesChanges() {
+    accountDataManager
+      .creditBalancesSubject
+      .compactMap { creditBalances in
+        guard let creditBalances
+        else {
+          return CreditBalances()
+        }
+        
+        return CreditBalances(rainCreditBalances: creditBalances)
+      }
+      .assign(to: &$creditBalances)
   }
   
   func handlePortalError(
@@ -410,12 +445,16 @@ extension MoveCryptoInputViewModel {
         "\(balance)".formattedAmount(minFractionDigits: 3, maxFractionDigits: 3), cryptoCurrency
       )
     case .withdrawCollateral:
-      let balance = assetModel.availableBalance
-      let advanceRate = assetModel.advanceRate
-      let available = (balance * (advanceRate ?? 100) / 100).roundTo3f()
+      let availableBalanceString: String = {
+        if let availableBalance {
+          return availableBalance.formattedAmount(minFractionDigits: 2, maxFractionDigits: 6)
+        } else {
+          return "n/a"
+        }
+      }()
       
       return L10N.Common.MoveCryptoInput.WithdrawCollateralAvailableBalance.subtitle(
-        "\(available)".formattedAmount(minFractionDigits: 2, maxFractionDigits: 6), cryptoCurrency
+        availableBalanceString, cryptoCurrency
       )
     case let .withdrawReward(_, _, balance, _):
       return L10N.Common.MoveCryptoInput.WithdrawReward.subtitle(
@@ -448,12 +487,16 @@ extension MoveCryptoInputViewModel {
         assetModel.type?.title ?? .empty
       )
     case .withdrawCollateral:
-      let balance = assetModel.availableBalance
-      let advanceRate = assetModel.advanceRate
-      let available = (balance * (advanceRate ?? 100) / 100).roundTo3f()
+      let availableBalanceString: String = {
+        if let availableBalance {
+          return availableBalance.formattedAmount(minFractionDigits: 2, maxFractionDigits: 6)
+        } else {
+          return "n/a"
+        }
+      }()
       
       return L10N.Common.MoveCryptoInput.WithdrawCollateral.annotation(
-        "\(available)".formattedAmount(minFractionDigits: 2, maxFractionDigits: 6),
+        availableBalanceString,
         assetModel.type?.title ?? .empty
       )
     case let .withdrawReward(_, _, balance, _):
@@ -586,8 +629,10 @@ extension MoveCryptoInputViewModel {
     numberOfShakes = 0
     
     switch type {
-    case .sellCrypto, .sendCrypto, .depositCollateral, .withdrawCollateral:
+    case .sellCrypto, .sendCrypto, .depositCollateral:
       inlineError = validateAmount(with: assetModel.availableBalance)
+    case .withdrawCollateral:
+      inlineError = validateAmount(with: availableBalance)
     case .withdrawReward(_, _, let balance, _):
       inlineError = validateAmount(with: balance)
     default:

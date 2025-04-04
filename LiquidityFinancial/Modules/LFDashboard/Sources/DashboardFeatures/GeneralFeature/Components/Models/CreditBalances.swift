@@ -2,7 +2,7 @@ import Foundation
 import RainDomain
 
 public struct CreditBalances {
-  let spendingPower: Double?
+  public let spendingPower: Double?
   let creditLimit: Double?
   let pendingCharges: Double?
   let pendingLiquidation: Double?

@@ -46,6 +46,8 @@ final class FidesmoViewModel: ObservableObject {
   @Published var showLogger: Bool = false
   @Published var logText: String = ""
   
+  let terms: String = "Fidesmo Terms and Conditions"
+  
   private var cardData: (card: RainCardEntity, metadata: CardMetaData)?
   
   lazy var getCardsUseCase: RainGetCardsUseCaseProtocol = {
@@ -63,6 +65,14 @@ final class FidesmoViewModel: ObservableObject {
   func onAppear() {
     nfcManager = NfcManager(listener: self)
     fetchCardInformation()
+  }
+  
+  func getURL(tappedString: String) -> URL? {
+    let urlMapping: [String: String] = [
+      terms: "https://fidesmo.com/privacy-policy/"
+    ]
+    
+    return urlMapping[tappedString].flatMap { URL(string: $0) }
   }
 }
 
@@ -666,3 +676,14 @@ enum DeliveryType {
 }
 
 typealias DeliveryRequestDescription = (appId: AppId, serviceId: ServiceId, serviceDesc: ServiceDescription, deviceDesc: DeviceDescription)
+
+// MARK: - Types
+extension FidesmoViewModel {
+  enum OpenSafariType: String, Identifiable {
+    var id: String {
+      self.rawValue
+    }
+    
+    case terms
+  }
+}

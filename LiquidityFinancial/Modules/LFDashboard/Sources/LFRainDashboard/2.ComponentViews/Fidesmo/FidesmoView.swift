@@ -23,6 +23,8 @@ struct BottomSheetView: View {
     ]
   }
   
+  @State var openSafariType: FidesmoViewModel.OpenSafariType?
+  
   var body: some View {
     VStack {
       header
@@ -50,6 +52,14 @@ struct BottomSheetView: View {
       sheetHeight = pages[newValue].height
       title = pages[newValue].title
     }
+    .fullScreenCover(item: $openSafariType) { type in
+      switch type {
+      case .terms:
+        if let url = viewModel.getURL(tappedString: viewModel.terms) {
+          SFSafariViewWrapper(url: url)
+        }
+      }
+    }
   }
   
   private var header: some View {
@@ -63,12 +73,17 @@ struct BottomSheetView: View {
         Spacer()
       }
       
-      if [1, 2].contains(selectedPage) {
+      if [0, 1, 2].contains(selectedPage) {
         HStack {
           Button(
             action: {
-              selectedPage -= 1
               cancelDelivery()
+              
+              if selectedPage == 0 {
+                isPresented = false
+              } else {
+                selectedPage -= 1
+              }
             }
           ) {
             Image(systemName: "arrow.left")
@@ -103,11 +118,13 @@ struct BottomSheetView: View {
         textColor: Colors.label.color.withAlphaComponent(0.75),
         fontSize: Constants.FontSize.ultraSmall.value,
         links: [
-          "Fidesmo Terms and Conditions"
+          viewModel.terms
         ],
         style: .fillColor(Colors.termAndPrivacy.color)
       ) { tappedString in
         switch tappedString {
+        case viewModel.terms:
+          openSafariType = .terms
         default:
           break
         }
