@@ -153,6 +153,14 @@
 "waitlist_joined_title" = "WAITLIST JOINED";
 "waitlist_joined_message" = "You are now on the waitlist. We will email you when we can operate in your state.";
 
+"yourAddress.waitlist.disclosure.title" = "We're currently available in select states. If your state isn't listed, you can sign up to be notified when we expand to your area.";
+"yourAddress.waitlist.getNotifiedRow.title" = "Don’t see your state? Get notified when Available";
+"yourAddress.waitlist.getNotifiedPopup.title" = "Get notified when we're in your area";
+"yourAddress.waitlist.getNotifiedPopup.yourState.title" = "Your State";
+"yourAddress.waitlist.getNotifiedPopup.yourState.placeholder" = "Select your state";
+"yourAddress.waitlist.getNotifiedPopup.notifyButton.title" = "Notify Me";
+"yourAddress.waitlist.successToast.title" = "You will be notified!";
+
 // Create Wallet
 "createWallet.title" = "CREATE YOUR WALLET";
 "createWallet.info" = "%@ Card has partnered with Portal to offer wallets.";

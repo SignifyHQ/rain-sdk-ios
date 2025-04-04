@@ -8,4 +8,6 @@ public protocol OnboardingRepositoryProtocol {
   func checkAccountExisting(parameters: CheckAccountExistingParametersEntity) async throws -> AccountExistingEntity
   func newRequestOTP(parameters: OTPParametersEntity) async throws -> OtpEntity
   func getOnboardingProcess() async throws -> OnboardingProcess
+  func getUnsupportedStates(parameters: UnsupportedStateParametersEntity) async throws -> [UnsupportedStateEntity]
+  func joinWaitlist(parameters: JoinWaitlistParametersEntity) async throws
 }

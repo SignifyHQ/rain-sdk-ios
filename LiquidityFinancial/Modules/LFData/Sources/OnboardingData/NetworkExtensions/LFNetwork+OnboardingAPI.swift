@@ -58,4 +58,21 @@ extension LFCoreNetwork: OnboardingAPIProtocol where R == OnboardingRoute {
     let result = try await request(OnboardingRoute.refreshToken(token: token))
     return (result.httpResponse?.statusCode ?? 500).isSuccess
   }
+  
+  public func getUnsupportedStates(parameters: UnsupportedStateParameters) async throws -> [APIUnsupportedState] {
+    return try await request(
+      OnboardingRoute.getUnsupportedStates(parameters: parameters),
+      target: [APIUnsupportedState].self,
+      failure: LFErrorObject.self,
+      decoder: .apiDecoder
+    )
+  }
+  
+  public func joinWaitlist(parameters: JoinWaitlistParameters) async throws {
+    return try await requestNoResponse(
+      OnboardingRoute.joinWailist(parameters: parameters),
+      failure: LFErrorObject.self,
+      decoder: .apiDecoder
+    )
+  }
 }

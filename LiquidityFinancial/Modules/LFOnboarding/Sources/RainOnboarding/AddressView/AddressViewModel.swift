@@ -4,7 +4,10 @@ import DevicesData
 import DevicesDomain
 import Factory
 import FraudForce
+import LFLocalizable
 import LFUtilities
+import OnboardingData
+import OnboardingDomain
 import Services
 import SmartyStreets
 
@@ -12,6 +15,7 @@ import SmartyStreets
 final class AddressViewModel: ObservableObject {
   @LazyInjected(\.devicesRepository) var devicesRepository
   @LazyInjected(\.accountRepository) var accountRepository
+  @LazyInjected(\.onboardingRepository) var onboardingRepository
   
   @LazyInjected(\.accountDataManager) var accountDataManager
   @LazyInjected(\.featureFlagManager) var featureFlagManager
@@ -48,14 +52,27 @@ final class AddressViewModel: ObservableObject {
   @Published var selectedState: UsState = .AK
   @Published var shouldUseStateDropdown: Bool = true
   
-  @Published var shouldPresentGetNotifiedPopup: Bool = false
   @Published var isShowingWaitlistStateSelection: Bool = false
-  @Published var selectedWaitlistState: UsState = .AK
+  @Published var shouldPresentGetNotifiedPopup: Bool = false
+  
+  @Published var unsupportedStateList: [UsState] =  []
+  @Published var selectedWaitlistState: UsState?
+  
   @Published var waitlistState: String = .empty
   @Published var waitlistEmail: String = .empty
+  
+  @Published var isLoadingWaitlist: Bool = false
 
   lazy var deviceDeregisterUseCase: DeviceDeregisterUseCaseProtocol = {
     return DeviceDeregisterUseCase(repository: devicesRepository)
+  }()
+  
+  lazy var getUnsupportedStatesUseCase: GetUnsupportedStatesUseCaseProtocol = {
+    return GetUnsupportedStatesUseCase(repository: onboardingRepository)
+  }()
+  
+  lazy var joinWaitlistUseCase: JoinWaitlistUseCaseProtocol = {
+    return JoinWaitlistUseCase(repository: onboardingRepository)
   }()
   
   private var isStateValid = true
@@ -97,7 +114,7 @@ extension AddressViewModel {
     
     $selectedWaitlistState
       .map { state in
-        state.name
+        state?.name ?? ""
       }
       .assign(
         to: &$waitlistState
@@ -105,6 +122,7 @@ extension AddressViewModel {
   }
   
   func onAppear() {
+    getUnsupportedStates()
     analyticsService.track(event: AnalyticsEvent(name: .viewedAddress))
   }
   
@@ -117,6 +135,58 @@ extension AddressViewModel {
     analyticsService.track(event: AnalyticsEvent(name: .addressCompleted))
     
     shouldProceedToNextStep = true
+  }
+  
+  var isWaitlistButtonActive: Bool {
+    selectedWaitlistState != nil && waitlistEmail.trimWhitespacesAndNewlines().isValidEmail()
+  }
+  
+  func getUnsupportedStates() {
+    Task {
+      do {
+        let unsupportedStates = try await getUnsupportedStatesUseCase
+          .execute(
+            parameters: UnsupportedStateParameters(countryCode: "US")
+          )
+          .compactMap { state in
+            UsState(rawValue: state.stateCode)
+          }
+        
+        stateList = UsState.allCases.filter { state in
+          !unsupportedStates.contains(state)
+        }
+        unsupportedStateList = unsupportedStates
+      } catch {
+        toastMessage = error.userFriendlyMessage
+      }
+    }
+  }
+  
+  func joinWaitlist() {
+    Task {
+      defer {
+        isLoadingWaitlist = false
+      }
+      
+      isLoadingWaitlist = true
+      
+      do {
+        let parameters = JoinWaitlistParameters(
+          countryCode: "US",
+          stateCode: selectedWaitlistState?.rawValue ?? "n/a",
+          firstName: accountDataManager.userInfomationData.firstName ?? "n/a",
+          lastName: accountDataManager.userInfomationData.lastName ?? "n/a",
+          email: waitlistEmail.lowercased()
+        )
+        
+        try await joinWaitlistUseCase.execute(parameters: parameters)
+        
+        toastMessage = L10N.Common.YourAddress.Waitlist.SuccessToast.title
+        shouldPresentGetNotifiedPopup = false
+      } catch {
+        toastMessage = error.userFriendlyMessage
+      }
+    }
   }
   
   func logout() {

@@ -64,6 +64,24 @@ public class OnboardingRepository: OnboardingRepositoryProtocol {
   public func getOnboardingProcess() async throws -> OnboardingProcess {
     return try await onboardingAPI.getOnboardingProcess()
   }
+  
+  public func getUnsupportedStates(parameters: UnsupportedStateParametersEntity) async throws -> [UnsupportedStateEntity] {
+    let requestParameters = UnsupportedStateParameters(countryCode: parameters.countryCode)
+    
+    return try await onboardingAPI.getUnsupportedStates(parameters: requestParameters)
+  }
+  
+  public func joinWaitlist(parameters: JoinWaitlistParametersEntity) async throws {
+    let requestParameters = JoinWaitlistParameters(
+      countryCode: parameters.countryCode,
+      stateCode: parameters.stateCode,
+      firstName: parameters.firstName,
+      lastName: parameters.lastName,
+      email: parameters.email
+    )
+    
+    return try await onboardingAPI.joinWaitlist(parameters: requestParameters)
+  }
 }
 
 extension APIAccessTokens: AccessTokensEntity {}

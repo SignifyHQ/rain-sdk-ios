@@ -203,6 +203,7 @@ private extension AddressView {
     limit: Int = 200,
     restriction: TextRestriction = .none,
     keyboardType: UIKeyboardType = .alphabet,
+    lowercased: Bool = false,
     focus: Focus,
     nextFocus: Focus? = nil
   ) -> some View {
@@ -227,6 +228,13 @@ private extension AddressView {
           .onSubmit {
             keyboardFocus = nextFocus
           }
+          .onChange(
+            of: value.wrappedValue
+          ) { newValue in
+            if lowercased {
+              value.wrappedValue = newValue.lowercased()
+            }
+          }
       }
     }
   }
@@ -237,7 +245,7 @@ private extension AddressView {
     ) {
       GenImages.CommonImages.icInfo.swiftUIImage
       
-      Text("We're currently available in select states. If your state isn't listed, you can sign up to be notified when we expand to your area.")
+      Text(L10N.Common.YourAddress.Waitlist.Disclosure.title)
         .foregroundColor(Colors.label.swiftUIColor)
         .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.small.value))
         .multilineTextAlignment(.leading)
@@ -417,7 +425,7 @@ private extension AddressView {
   ) -> some View {
     VStack {
       List(
-        viewModel.stateList,
+        viewModel.isShowingWaitlistStateSelection ? viewModel.unsupportedStateList : viewModel.stateList,
         id: \.id
       ) { item in
         HStack {
@@ -460,7 +468,7 @@ private extension AddressView {
           .foregroundColor(.black)
           .opacity(0.2)
         
-        Text("Don’t see your state? Get notified when Available")
+        Text(L10N.Common.YourAddress.Waitlist.GetNotifiedRow.title)
           .foregroundColor(Colors.primary.swiftUIColor)
           .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.small.value))
           .multilineTextAlignment(.leading)
@@ -487,15 +495,15 @@ private extension AddressView {
             .resizable()
             .frame(width: 100, height: 100)
           
-          Text("Get notified when we're in your area".uppercased())
+          Text(L10N.Common.YourAddress.Waitlist.GetNotifiedPopup.title.uppercased())
             .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.main.value))
             .foregroundColor(Colors.label.swiftUIColor)
             .multilineTextAlignment(.center)
           
           ZStack {
             textFieldInputView(
-              title: "Your State",
-              placeholder: "Select your state",
+              title: L10N.Common.YourAddress.Waitlist.GetNotifiedPopup.YourState.title,
+              placeholder: L10N.Common.YourAddress.Waitlist.GetNotifiedPopup.YourState.placeholder,
               value: $viewModel.waitlistState,
               restriction: .alphabets,
               focus: .waitlistState
@@ -527,6 +535,7 @@ private extension AddressView {
             title: L10N.Common.email,
             placeholder: L10N.Common.enterEmailAddress,
             value: $viewModel.waitlistEmail,
+            lowercased: true,
             focus: .waitlistEmail
           )
         }
@@ -534,14 +543,16 @@ private extension AddressView {
         .padding(.bottom, 24)
         
         FullSizeButton(
-          title: "Notify Me",
-          isDisable: false,
+          title: L10N.Common.YourAddress.Waitlist.GetNotifiedPopup.NotifyButton.title,
+          isDisable: !viewModel.isWaitlistButtonActive,
+          isLoading: $viewModel.isLoadingWaitlist,
           type: .primary
         ) {
+          viewModel.joinWaitlist()
         }
         
         FullSizeButton(
-          title: "Cancel",
+          title: L10N.Common.Button.Cancel.title,
           isDisable: false,
           type: .secondary
         ) {

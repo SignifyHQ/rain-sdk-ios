@@ -12,6 +12,8 @@ public enum OnboardingRoute {
   case newLogin(parameters: LoginParameters)
   case refreshToken(token: String)
   case getOnboardingProcess
+  case getUnsupportedStates(parameters: UnsupportedStateParameters)
+  case joinWailist(parameters: JoinWaitlistParameters)
 }
 
 extension OnboardingRoute: LFRoute {
@@ -32,13 +34,17 @@ extension OnboardingRoute: LFRoute {
       return "/v1/password-less/refresh-token"
     case .getOnboardingProcess:
       return "/v1/app/onboarding-progress"
+    case .getUnsupportedStates:
+      return "/v1/blocked-states"
+    case .joinWailist:
+      return "/v1/blocked-states/subscribe"
     }
   }
   
   public var httpMethod: HttpMethod {
     switch self {
-    case .login, .requestOtp, .checkAccountExisting, .newRequestOTP, .newLogin, .refreshToken: return .POST
-    case .getOnboardingProcess: return .GET
+    case .login, .requestOtp, .checkAccountExisting, .newRequestOTP, .newLogin, .refreshToken, .joinWailist: return .POST
+    case .getOnboardingProcess, .getUnsupportedStates: return .GET
     }
   }
   
@@ -54,7 +60,7 @@ extension OnboardingRoute: LFRoute {
     case .requestOtp, .checkAccountExisting, .login, .newRequestOTP, .newLogin:
       base["ld-device-id"] = LFUtilities.deviceId
       return base
-    case .getOnboardingProcess:
+    case .getOnboardingProcess, .getUnsupportedStates, .joinWailist:
       base["Accept"] = "application/json"
       base["Authorization"] = self.needAuthorizationKey
       return base
@@ -78,13 +84,17 @@ extension OnboardingRoute: LFRoute {
       return body
     case .getOnboardingProcess:
       return nil
+    case let .getUnsupportedStates(unsupportedParameters):
+      return unsupportedParameters.encoded()
+    case let .joinWailist(joinWaitlistParameters):
+      return joinWaitlistParameters.encoded()
     }
   }
   
   public var parameterEncoding: ParameterEncoding? {
     switch self {
-    case .login, .requestOtp, .newRequestOTP, .newLogin, .refreshToken: return .json
-    case .checkAccountExisting: return .url
+    case .login, .requestOtp, .newRequestOTP, .newLogin, .refreshToken, .joinWailist: return .json
+    case .checkAccountExisting, .getUnsupportedStates: return .url
     case .getOnboardingProcess: return nil
     }
   }

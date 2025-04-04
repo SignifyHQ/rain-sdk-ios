@@ -9,4 +9,6 @@ public protocol OnboardingAPIProtocol {
   func newRequestOTP(parameters: OTPParameters) async throws -> APIOtp
   func refreshToken(token: String) async throws -> Bool
   func getOnboardingProcess() async throws -> APIOnboardingProcess
+  func getUnsupportedStates(parameters: UnsupportedStateParameters) async throws -> [APIUnsupportedState]
+  func joinWaitlist(parameters: JoinWaitlistParameters) async throws
 }
