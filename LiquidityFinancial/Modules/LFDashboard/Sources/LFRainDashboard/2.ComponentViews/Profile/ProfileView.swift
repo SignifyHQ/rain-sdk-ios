@@ -76,7 +76,7 @@ struct ProfileView: View {
   @Environment(\.scenePhase) var scenePhase
   
   @State private var isFidesmoFlowPresented = false
-  @State private var sheetHeight: CGFloat = 500
+  @State private var sheetHeight: CGFloat = 380
   
   var body: some View {
     ScrollView(showsIndicators: false) {
