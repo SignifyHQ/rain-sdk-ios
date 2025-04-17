@@ -46,7 +46,7 @@ struct TransactionFilterSheetView: View {
               Text(
                 viewModel.filterConfiguration.selectedTypes
                   .map { type in
-                    type.rawValue
+                    type.title
                   }
                   .joined(separator: ", ")
               )
