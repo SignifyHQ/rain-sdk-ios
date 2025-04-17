@@ -4,7 +4,7 @@ import AccountService
 import Services
 import RainDomain
 
-public struct AssetModel: Hashable {
+public struct AssetModel: Hashable, Identifiable {
   public let id: String
   public let type: AssetType?
   

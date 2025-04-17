@@ -288,6 +288,19 @@
 "changeAsset.screen.title" = "Change asset";
 "changeAsset.screen.message" = "Please select the asset to spend.";
 
+// Transaction Filters
+"transactionFilters.allFilters.title" = "All Filters";
+
+"transactionFilters.typeFilter.title" = "Type";
+
+"transactionFilters.typeFilter.addition.title" = "Addition";
+"transactionFilters.typeFilter.withdrawal.title" = "Withdrawal";
+"transactionFilters.typeFilter.purchase.title" = "Purchase";
+
+"transactionFilters.currencyFilter.title" = "Currency";
+"transactionFilters.buttons.reset.title" = "Reset all";
+"transactionFilters.buttons.apply.title" = "Apply";
+
 // CARD ACTIVED
 "cardActivated.cardActived.title" = "CARD ACTIVATED!";
 "cardActivated.cardActived.description" = "Your %@Card is now active, can be used anywhere Visa is accepted.";

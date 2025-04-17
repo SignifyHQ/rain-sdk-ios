@@ -26,6 +26,9 @@ final class CashViewModel: ObservableObject {
   @Published var navigation: Navigation?
   @Published var toastMessage: String?
   
+  @Published var filterConfiguration: TransactionFilterConfiguration = TransactionFilterConfiguration()
+  @Published var presentedFilterSheet: TransactionFilterButtonType?
+  
   @Published var cashBalanceValue: Double = 0
   @Published var selectedAsset: AssetType = .usd
   @Published var portalAsset: AssetModel?

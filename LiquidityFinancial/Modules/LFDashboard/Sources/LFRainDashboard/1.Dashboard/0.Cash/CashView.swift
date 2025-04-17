@@ -11,20 +11,28 @@ struct CashView: View {
   @Environment(\.scenePhase) var scenePhase
   
   @StateObject private var viewModel: CashViewModel
-  @State private var isNotLinkedCard = false
-  
+  @StateObject var transactionFilterViewModel = TransactionFilterViewModel()
   let listCardViewModel: RainListCardsViewModel
   
-  init(viewModel: CashViewModel, listCardViewModel: RainListCardsViewModel) {
+  @State private var isNotLinkedCard = false
+  
+  init(
+    viewModel: CashViewModel,
+    listCardViewModel: RainListCardsViewModel
+  ) {
     _viewModel = .init(
       wrappedValue: viewModel
     )
+    
     self.listCardViewModel = listCardViewModel
   }
   
   var body: some View {
     activeView
-    .popup(item: $viewModel.toastMessage, style: .toast) {
+    .popup(
+      item: $viewModel.toastMessage,
+      style: .toast
+    ) {
       ToastView(toastMessage: $0)
     }
     .track(name: String(describing: type(of: self)))
@@ -68,15 +76,23 @@ struct CashView: View {
         }
       }
     }
-    .onChange(of: scenePhase, perform: { newValue in
-      if newValue == .background {
-        viewModel.shouldReloadListTransaction = true
+    .onChange(
+      of: scenePhase,
+      perform: { newValue in
+        if newValue == .background {
+          viewModel.shouldReloadListTransaction = true
+        }
+        if newValue == .active && viewModel.shouldReloadListTransaction {
+          viewModel.shouldReloadListTransaction = false
+          viewModel.onRefresh()
+        }
       }
-      if newValue == .active && viewModel.shouldReloadListTransaction {
-        viewModel.shouldReloadListTransaction = false
-        viewModel.onRefresh()
-      }
-    })
+    )
+    .onChange(
+      of: transactionFilterViewModel.didApplyChanges
+    ) { _ in
+      viewModel.filterConfiguration = transactionFilterViewModel.filterConfiguration
+    }
   }
 }
 
@@ -93,7 +109,7 @@ private extension CashView {
           listCardViewModel: listCardViewModel
         ) {
         }
-
+        
         VStack(spacing: 8) {
           addToBalanceButton
           withdrawalBalanceButton
@@ -117,6 +133,21 @@ private extension CashView {
     .refreshable {
       viewModel.onRefresh()
     }
+    .sheet(
+      item: $viewModel.presentedFilterSheet
+    ) { _ in
+      TransactionFilterSheetView(
+        viewModel: transactionFilterViewModel,
+        presentedFilterSheet: $viewModel.presentedFilterSheet
+      )
+      .presentationDetents([.height(310), .height(350)])
+      .presentationDragIndicator(.hidden)
+      .onAppear(
+        perform: {
+          transactionFilterViewModel.filterConfiguration = viewModel.filterConfiguration
+        }
+      )
+    }
   }
   
   var activity: some View {
@@ -133,7 +164,14 @@ private extension CashView {
           onTapTransactionCell: viewModel.transactionItemTapped,
           seeAllAction: {
             viewModel.onClickedSeeAllButton()
-          }
+          },
+          filterTapped: { type in
+            viewModel.presentedFilterSheet = type
+          },
+          appliedFilters: [
+            .type: viewModel.filterConfiguration.selectedTypes.count,
+            .currency: viewModel.filterConfiguration.selectedCurrencies.count
+          ]
         )
       }
     }
