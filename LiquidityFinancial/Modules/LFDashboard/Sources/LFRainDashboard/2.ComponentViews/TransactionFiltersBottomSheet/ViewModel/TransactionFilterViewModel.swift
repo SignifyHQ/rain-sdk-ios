@@ -68,8 +68,3 @@ class TransactionFilterViewModel: ObservableObject {
       .assign(to: &$assetModelList)
   }
 }
-
-struct TransactionFilterConfiguration: Equatable {
-  var selectedTypes: Set<FilterTransactionType> = []
-  var selectedCurrencies: Set<AssetModel> = []
-}

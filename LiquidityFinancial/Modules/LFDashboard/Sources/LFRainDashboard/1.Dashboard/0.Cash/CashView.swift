@@ -92,6 +92,7 @@ struct CashView: View {
       of: transactionFilterViewModel.didApplyChanges
     ) { _ in
       viewModel.filterConfiguration = transactionFilterViewModel.filterConfiguration
+      viewModel.refreshTransaction(withAnimation: true)
     }
   }
 }

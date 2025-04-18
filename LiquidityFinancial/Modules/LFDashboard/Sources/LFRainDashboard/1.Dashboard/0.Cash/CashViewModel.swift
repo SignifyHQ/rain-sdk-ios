@@ -248,12 +248,17 @@ extension CashViewModel {
 // MARK: - Private Functions
 private extension CashViewModel {
   func loadTransactions() async throws {
+    let transactionTypesFilter = filterConfiguration.transactionTypesFilter ?? Constants.TransactionTypesRequest.fiat.types
+    let transactionCurrenciesFilter = filterConfiguration.transactionCurrenciesFilter
+    
     let parameters = APITransactionsParameters(
       currencyType: currencyType,
-      transactionTypes: Constants.TransactionTypesRequest.fiat.types,
+      transactionTypes: transactionTypesFilter,
       limit: transactionLimitEntity,
-      offset: transactionLimitOffset
+      offset: transactionLimitOffset,
+      contractAddress: transactionCurrenciesFilter
     )
+    
     let transactions = try await getTransactionsListUseCase.execute(parameters: parameters)
     self.transactions = transactions.data.compactMap({ TransactionModel(from: $0) })
   }

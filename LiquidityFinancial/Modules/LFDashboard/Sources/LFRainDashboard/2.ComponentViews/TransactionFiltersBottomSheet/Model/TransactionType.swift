@@ -6,14 +6,14 @@ enum FilterTransactionType: String, CaseIterable, Identifiable {
   var id: String { rawValue }
   
   case deposit
-  case withdrawal
+  case withdraw
   case purchase
   
   var title: String {
     switch self {
     case .deposit:
       L10N.Common.TransactionFilters.TypeFilter.Addition.title
-    case .withdrawal:
+    case .withdraw:
       L10N.Common.TransactionFilters.TypeFilter.Withdrawal.title
     case .purchase:
       L10N.Common.TransactionFilters.TypeFilter.Purchase.title
@@ -24,10 +24,14 @@ enum FilterTransactionType: String, CaseIterable, Identifiable {
     switch self {
     case .deposit:
       GenImages.CommonImages.icFiltersDeposit.swiftUIImage
-    case .withdrawal:
+    case .withdraw:
       GenImages.CommonImages.icFiltersWithdrawal.swiftUIImage
     case .purchase:
       GenImages.CommonImages.icFiltersPurchase.swiftUIImage
     }
+  }
+  
+  var transactionType: String {
+    rawValue.uppercased()
   }
 }

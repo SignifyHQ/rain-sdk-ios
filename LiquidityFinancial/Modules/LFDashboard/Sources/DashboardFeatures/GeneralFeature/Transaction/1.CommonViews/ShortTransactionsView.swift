@@ -30,23 +30,25 @@ public struct ShortTransactionsView: View {
   
   public var body: some View {
     VStack(alignment: .leading, spacing: 12) {
-      HStack(alignment: .bottom) {
-        Text(title)
-          .opacity(transactions.isEmpty ? 0 : 1)
-          .foregroundColor(Colors.label.swiftUIColor.opacity(0.75))
-        Spacer()
-        seeAllTransactions
-          .opacity(transactions.isEmpty ? 0 : 1)
-          .foregroundColor(Colors.label.swiftUIColor)
-      }
-      .font(Fonts.bold.swiftUIFont(size: Constants.FontSize.ultraSmall.value))
-      
-      HStack {
-        ForEach(TransactionFilterButtonType.allCases) { type in
-          filterButton(type: type)
+      if transactions.isNotEmpty || areFiltersApplied {
+        HStack(alignment: .bottom) {
+          Text(title)
+            .foregroundColor(Colors.label.swiftUIColor.opacity(0.75))
+          
+          Spacer()
+          
+          seeAllTransactions
+            .foregroundColor(Colors.label.swiftUIColor)
+        }
+        .font(Fonts.bold.swiftUIFont(size: Constants.FontSize.ultraSmall.value))
+        
+        HStack {
+          ForEach(TransactionFilterButtonType.allCases) { type in
+            filterButton(type: type)
+          }
         }
       }
-
+      
       if transactions.isEmpty {
         noTransactionsYetView
       } else {
@@ -127,5 +129,11 @@ private extension ShortTransactionsView {
       Spacer()
         .frame(minHeight: UIScreen.main.bounds.size.height * 0.12)
     }
+  }
+}
+
+private extension ShortTransactionsView {
+  var areFiltersApplied: Bool {
+    appliedFilters.values.reduce(0, +) > 0
   }
 }
