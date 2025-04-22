@@ -256,7 +256,7 @@ private extension CashViewModel {
       transactionTypes: transactionTypesFilter,
       limit: transactionLimitEntity,
       offset: transactionLimitOffset,
-      contractAddress: transactionCurrenciesFilter
+      currency: transactionCurrenciesFilter
     )
     
     let transactions = try await getTransactionsListUseCase.execute(parameters: parameters)

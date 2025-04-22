@@ -8,18 +8,21 @@ public struct APITransactionsParameters: Parameterable, TransactionsParametersEn
   public var limit: Int
   public var offset: Int
   public var contractAddress: String?
+  public var currency: String?
 
   public init(
     currencyType: String,
     transactionTypes: [String],
     limit: Int,
     offset: Int,
-    contractAddress: String? = nil
+    contractAddress: String? = nil,
+    currency: String? = nil
   ) {
     self.currencyType = currencyType
     self.transactionTypes = transactionTypes
     self.limit = limit
     self.offset = offset
     self.contractAddress = contractAddress
+    self.currency = currency
   }
 }

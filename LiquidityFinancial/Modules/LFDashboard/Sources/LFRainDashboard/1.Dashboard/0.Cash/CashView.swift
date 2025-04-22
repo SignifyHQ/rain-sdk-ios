@@ -91,8 +91,10 @@ struct CashView: View {
     .onChange(
       of: transactionFilterViewModel.didApplyChanges
     ) { _ in
-      viewModel.filterConfiguration = transactionFilterViewModel.filterConfiguration
-      viewModel.refreshTransaction(withAnimation: true)
+      DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+        viewModel.filterConfiguration = transactionFilterViewModel.filterConfiguration
+        viewModel.refreshTransaction(withAnimation: true)
+      }
     }
   }
 }

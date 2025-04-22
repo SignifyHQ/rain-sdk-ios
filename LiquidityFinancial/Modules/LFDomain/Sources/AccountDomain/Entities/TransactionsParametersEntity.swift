@@ -7,4 +7,5 @@ public protocol TransactionsParametersEntity {
   var limit: Int { get }
   var offset: Int { get }
   var contractAddress: String? { get }
+  var currency: String? { get }
 }

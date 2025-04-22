@@ -15,8 +15,8 @@ struct TransactionFilterConfiguration: Equatable {
   
   var transactionCurrenciesFilter: String? {
     selectedCurrencies
-      .map { asset in
-        asset.id
+      .compactMap { asset in
+        asset.type?.rawValue
       }
       .joined(separator: ",")
       .nilIfEmpty
