@@ -2,14 +2,14 @@ import LFLocalizable
 import LFStyleGuide
 import SwiftUI
 
-enum FilterTransactionType: String, CaseIterable, Identifiable {
-  var id: String { rawValue }
+public enum FilterTransactionType: String, CaseIterable, Identifiable {
+  public var id: String { rawValue }
   
   case deposit
   case withdraw
   case purchase
   
-  var title: String {
+  public var title: String {
     switch self {
     case .deposit:
       L10N.Common.TransactionFilters.TypeFilter.Addition.title
@@ -20,7 +20,7 @@ enum FilterTransactionType: String, CaseIterable, Identifiable {
     }
   }
   
-  var image: Image {
+  public var image: Image {
     switch self {
     case .deposit:
       GenImages.CommonImages.icFiltersDeposit.swiftUIImage

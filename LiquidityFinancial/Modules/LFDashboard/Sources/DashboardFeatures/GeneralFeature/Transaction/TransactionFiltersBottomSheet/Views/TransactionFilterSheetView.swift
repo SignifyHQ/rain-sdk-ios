@@ -1,15 +1,22 @@
 import Foundation
-import GeneralFeature
 import LFLocalizable
 import LFStyleGuide
 import SwiftUI
 
-struct TransactionFilterSheetView: View {
+public struct TransactionFilterSheetView: View {
   @ObservedObject var viewModel: TransactionFilterViewModel
   
   @Binding var presentedFilterSheet: TransactionFilterButtonType?
   
-  var body: some View {
+  public init(
+    viewModel: TransactionFilterViewModel,
+    presentedFilterSheet: Binding<TransactionFilterButtonType?>
+  ) {
+    self.viewModel = viewModel
+    _presentedFilterSheet = presentedFilterSheet
+  }
+  
+  public var body: some View {
     if presentedFilterSheet == .type {
       typeFilterView()
     } else if presentedFilterSheet == .currency {

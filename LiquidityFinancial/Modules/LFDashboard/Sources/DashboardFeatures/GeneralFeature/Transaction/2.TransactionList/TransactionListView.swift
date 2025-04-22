@@ -6,6 +6,7 @@ import Services
 
 public struct TransactionListView: View {
   @StateObject private var viewModel: TransactionListViewModel
+  @StateObject var transactionFilterViewModel: TransactionFilterViewModel = TransactionFilterViewModel()
 
   public init(
     currencyType: String,
@@ -39,12 +40,35 @@ public struct TransactionListView: View {
           .foregroundColor(Colors.label.swiftUIColor)
       }
     }
+    .sheet(
+      item: $viewModel.presentedFilterSheet
+    ) { _ in
+      TransactionFilterSheetView(
+        viewModel: transactionFilterViewModel,
+        presentedFilterSheet: $viewModel.presentedFilterSheet
+      )
+      .presentationDetents([.height(310), .height(350)])
+      .presentationDragIndicator(.hidden)
+      .onAppear(
+        perform: {
+          transactionFilterViewModel.filterConfiguration = viewModel.filterConfiguration
+        }
+      )
+    }
     .navigationLink(item: $viewModel.transactionDetail) { item in
       TransactionDetailView(
         method: .transactionID(item.id),
         kind: item.detailType,
         isPopToRoot: false
       )
+    }
+    .onChange(
+      of: transactionFilterViewModel.didApplyChanges
+    ) { _ in
+      DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+        viewModel.filterConfiguration = transactionFilterViewModel.filterConfiguration
+        viewModel.loadInitialData()
+      }
     }
     .track(name: String(describing: type(of: self)))
   }
@@ -56,6 +80,15 @@ private extension TransactionListView {
     VStack(spacing: 10) {
       SearchBar(searchText: $viewModel.searchText)
         .padding(.bottom, 5)
+      
+      HStack {
+        ForEach(TransactionFilterButtonType.allCases) { type in
+          filterButton(type: type)
+        }
+        
+        Spacer()
+      }
+      
       ScrollView(showsIndicators: false) {
         LazyVStack {
           ForEach(viewModel.filteredTransactions) { transaction in
@@ -80,6 +113,41 @@ private extension TransactionListView {
     }
     .background(Colors.background.swiftUIColor)
     .padding(.horizontal, 24)
+  }
+  
+  func filterButton(
+    type: TransactionFilterButtonType
+  ) -> some View {
+    Button(
+      action: {
+        viewModel.presentedFilterSheet = type
+      }, label: {
+        if let image = type.image {
+          image
+        }
+        
+        if let title = type.title {
+          HStack {
+            if let appliedFiltersCount = viewModel.appliedFilters[type],
+               appliedFiltersCount > 0 {
+              Text("\(title) (\(appliedFiltersCount))")
+            } else {
+              Text(title)
+            }
+            
+            GenImages.CommonImages.icArrowDown.swiftUIImage
+          }
+          .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.small.value))
+        }
+      }
+    )
+    .frame(height: 40, alignment: .center)
+    .padding(.horizontal, 8)
+    .background(
+      Colors.buttons.swiftUIColor
+    )
+    .foregroundColor(Colors.label.swiftUIColor)
+    .cornerRadius(10)
   }
   
   var loading: some View {

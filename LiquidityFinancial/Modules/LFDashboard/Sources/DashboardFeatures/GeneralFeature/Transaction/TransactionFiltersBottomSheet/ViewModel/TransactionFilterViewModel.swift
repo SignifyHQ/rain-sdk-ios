@@ -1,16 +1,15 @@
 import Factory
 import Foundation
-import GeneralFeature
 
-class TransactionFilterViewModel: ObservableObject {
+public class TransactionFilterViewModel: ObservableObject {
   @LazyInjected(\.portalStorage) var portalStorage
   
-  @Published var filterConfiguration: TransactionFilterConfiguration = TransactionFilterConfiguration()
+  @Published public var filterConfiguration: TransactionFilterConfiguration = TransactionFilterConfiguration()
   @Published var assetModelList: [AssetModel] = []
   
-  @Published var didApplyChanges: Bool = false
+  @Published public var didApplyChanges: Bool = false
   
-  init() {
+  public init() {
     observePortalAssets()
   }
   

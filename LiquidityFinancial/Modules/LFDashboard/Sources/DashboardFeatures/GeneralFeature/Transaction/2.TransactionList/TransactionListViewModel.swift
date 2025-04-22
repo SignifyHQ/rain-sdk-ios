@@ -20,6 +20,9 @@ public class TransactionListViewModel: ObservableObject {
   @Published var searchText = ""
   @Published var toastMessage: String?
 
+  @Published var filterConfiguration: TransactionFilterConfiguration = TransactionFilterConfiguration()
+  @Published var presentedFilterSheet: TransactionFilterButtonType?
+  
   let cardID: String
   let currencyType: String
   let contractAddress: String?
@@ -39,7 +42,14 @@ public class TransactionListViewModel: ObservableObject {
     self.contractAddress = contractAddress
     self.cardID = cardID
     self.transactionTypes = transactionTypes
-    self.initData()
+    self.loadInitialData()
+  }
+  
+  var appliedFilters: [TransactionFilterButtonType: Int] {
+    [
+      .type: filterConfiguration.selectedTypes.count,
+      .currency: filterConfiguration.selectedCurrencies.count
+    ]
   }
   
   var filteredTransactions: [TransactionModel] {
@@ -57,11 +67,17 @@ public class TransactionListViewModel: ObservableObject {
     }
   }
   
-  func initData() {
+  func loadInitialData() {
     Task {
-      defer { isLoading = false }
+      defer {
+        isLoading = false
+      }
       isLoading = true
-      await loadTransactions(offset: Constants.transactionOffset)
+      
+      offset = Constants.transactionOffset
+      transactions.removeAll()
+      
+      await loadTransactions(offset: offset)
     }
   }
   
@@ -95,12 +111,15 @@ private extension TransactionListViewModel {
   
   func loadAccountTransactions(offset: Int) async {
     do {
+      let transactionTypesFilter = filterConfiguration.transactionTypesFilter ?? Constants.TransactionTypesRequest.fiat.types
+      let transactionCurrenciesFilter = filterConfiguration.transactionCurrenciesFilter
+      
       let parameters = APITransactionsParameters(
         currencyType: currencyType,
-        transactionTypes: transactionTypes,
+        transactionTypes: transactionTypesFilter,
         limit: limit,
         offset: offset,
-        contractAddress: contractAddress
+        currency: transactionCurrenciesFilter
       )
       
       let transactions = try await getTransactionsListUseCase.execute(parameters: parameters)

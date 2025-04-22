@@ -1,9 +1,8 @@
-import GeneralFeature
 import LFLocalizable
 import LFStyleGuide
 import SwiftUI
 
-struct TransactionFilterTypeView: View {
+struct TransactionFilterCurrencyView: View {
   @ObservedObject var viewModel: TransactionFilterViewModel
   @Environment(\.dismiss) var dismiss
   
@@ -33,7 +32,7 @@ struct TransactionFilterTypeView: View {
       HStack {
         Spacer()
         
-        Text(L10N.Common.TransactionFilters.TypeFilter.title)
+        Text(L10N.Common.TransactionFilters.CurrencyFilter.title)
           .font(Fonts.regular.swiftUIFont(size: 18))
           .foregroundColor(Colors.label.swiftUIColor)
           .frame(maxWidth: .infinity, alignment: .center)
@@ -60,27 +59,27 @@ struct TransactionFilterTypeView: View {
   }
   
   private var content: some View {
-    VStack(
-      spacing: 25
-    ) {
-      ForEach(FilterTransactionType.allCases) { type in
-        Button {
-          viewModel.toggle(filter: type)
-        } label: {
-          HStack {
-            type.image
-            
-            Text(type.title)
-              .font(Fonts.regular.swiftUIFont(size: 16))
-              .foregroundColor(Colors.label.swiftUIColor)
-            
-            Spacer()
-            
-            if viewModel.filterConfiguration.selectedTypes.contains(type) {
-              GenImages.CommonImages.icCheckmarkBig.swiftUIImage
-                .resizable()
-                .aspectRatio(contentMode: .fit)
-                .frame(width: 15)
+    ScrollView {
+      VStack(spacing: 25) {
+        ForEach(viewModel.assetModelList) { asset in
+          Button {
+            viewModel.toggle(filter: asset)
+          } label: {
+            HStack {
+              asset.type?.image
+              
+              Text(asset.type?.title ?? "N/A")
+                .font(Fonts.regular.swiftUIFont(size: 16))
+                .foregroundColor(Colors.label.swiftUIColor)
+              
+              Spacer()
+              
+              if viewModel.filterConfiguration.selectedCurrencies.contains(asset) {
+                GenImages.CommonImages.icCheckmarkBig.swiftUIImage
+                  .resizable()
+                  .aspectRatio(contentMode: .fit)
+                  .frame(width: 15)
+              }
             }
           }
         }
@@ -89,15 +88,13 @@ struct TransactionFilterTypeView: View {
   }
   
   private var buttons: some View {
-    HStack(
-      spacing: 4
-    ) {
+    HStack(spacing: 4) {
       FullSizeButton(
         title: L10N.Common.TransactionFilters.Buttons.Reset.title,
         isDisable: false,
         type: .alternative
       ) {
-        viewModel.filterConfiguration.selectedTypes.removeAll()
+        viewModel.filterConfiguration.selectedCurrencies.removeAll()
       }
       
       Spacer()

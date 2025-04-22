@@ -11,7 +11,7 @@ public enum TransactionFilterButtonType: String, CaseIterable, Identifiable {
   case type
   case currency
   
-  var image: Image? {
+  public var image: Image? {
     switch self {
     case .all:
       GenImages.CommonImages.icFilters.swiftUIImage
@@ -20,7 +20,7 @@ public enum TransactionFilterButtonType: String, CaseIterable, Identifiable {
     }
   }
   
-  var title: String? {
+  public var title: String? {
     switch self {
     case .type:
       L10N.Common.TransactionFilters.TypeFilter.title
