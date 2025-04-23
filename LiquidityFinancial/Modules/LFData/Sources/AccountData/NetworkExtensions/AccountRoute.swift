@@ -68,7 +68,7 @@ extension AccountRoute: LFRoute {
     case .updateSelectedRewardCurrency:
       return "/v1/user/selected-reward-currency"
     case .getTransactions:
-      return "/v1/transactions/list"
+      return "/v2/transactions/list"
     case let .getTransactionDetail(transactionId):
       return "/v1/transactions/detail/\(transactionId)"
     case .getTransactionByHashID:

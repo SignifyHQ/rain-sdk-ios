@@ -155,6 +155,8 @@ private extension MoveCryptoInputView {
       ) {
         Text(viewModel.amountInput)
           .font(Fonts.bold.swiftUIFont(size: 50))
+          .lineLimit(1)
+          .minimumScaleFactor(0.5)
           .foregroundColor(Colors.label.swiftUIColor)
         
         if viewModel.shouldShowTokenSelection && viewModel.assetModelList.isNotEmpty {
