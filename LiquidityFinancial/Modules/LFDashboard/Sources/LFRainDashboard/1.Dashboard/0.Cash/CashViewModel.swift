@@ -252,11 +252,10 @@ private extension CashViewModel {
     let transactionCurrenciesFilter = filterConfiguration.transactionCurrenciesFilter
     
     let parameters = APITransactionsParameters(
-      currencyType: currencyType,
       transactionTypes: transactionTypesFilter,
       limit: transactionLimitEntity,
       offset: transactionLimitOffset,
-      currency: transactionCurrenciesFilter
+      currencies: transactionCurrenciesFilter
     )
     
     let transactions = try await getTransactionsListUseCase.execute(parameters: parameters)

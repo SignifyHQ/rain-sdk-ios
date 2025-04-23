@@ -97,7 +97,7 @@ extension TransactionDetailView {
     case .refund:
       RefundTransactionDetailView(
         transaction: viewModel.transaction,
-        transactionInfos: LFUtilities.cryptoEnabled ? viewModel.refundCryptoTransactions : viewModel.refundTransactions
+        transactionInfos: []
       )
     case .donation:
       DonationTransactionDetailView(donation: viewModel.donation)

@@ -14,12 +14,11 @@ public struct TransactionFilterConfiguration: Equatable {
       .nilIfEmpty
   }
   
-  public var transactionCurrenciesFilter: String? {
+  public var transactionCurrenciesFilter: [String]? {
     selectedCurrencies
       .compactMap { asset in
         asset.type?.rawValue
       }
-      .joined(separator: ",")
       .nilIfEmpty
   }
 }

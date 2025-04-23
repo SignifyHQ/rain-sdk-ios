@@ -115,11 +115,10 @@ private extension TransactionListViewModel {
       let transactionCurrenciesFilter = filterConfiguration.transactionCurrenciesFilter
       
       let parameters = APITransactionsParameters(
-        currencyType: currencyType,
         transactionTypes: transactionTypesFilter,
         limit: limit,
         offset: offset,
-        currency: transactionCurrenciesFilter
+        currencies: transactionCurrenciesFilter
       )
       
       let transactions = try await getTransactionsListUseCase.execute(parameters: parameters)
