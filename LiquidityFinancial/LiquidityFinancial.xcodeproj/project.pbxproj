@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 60;
+	objectVersion = 90;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -151,7 +151,6 @@
 		74BC08672A8CC75B00EFD00C /* CodeScanner in Frameworks */ = {isa = PBXBuildFile; productRef = 74BC08662A8CC75B00EFD00C /* CodeScanner */; };
 		74BC08692A8CC76700EFD00C /* CodeScanner in Frameworks */ = {isa = PBXBuildFile; productRef = 74BC08682A8CC76700EFD00C /* CodeScanner */; };
 		74CB167A2A9851EB00C137F3 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 74CB16792A9851EB00C137F3 /* GoogleService-Info.plist */; };
-		74CB167D2A9853F800C137F3 /* FirebaseAnalyticsSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 74CB167C2A9853F800C137F3 /* FirebaseAnalyticsSwift */; };
 		74CB167F2A9853F800C137F3 /* FirebaseCrashlytics in Frameworks */ = {isa = PBXBuildFile; productRef = 74CB167E2A9853F800C137F3 /* FirebaseCrashlytics */; };
 		74CB16812A9853F800C137F3 /* FirebaseMessaging in Frameworks */ = {isa = PBXBuildFile; productRef = 74CB16802A9853F800C137F3 /* FirebaseMessaging */; };
 		A90B5CAF2B16E3A90092E430 /* LFFeatureFlags in Frameworks */ = {isa = PBXBuildFile; productRef = A90B5CAE2B16E3A90092E430 /* LFFeatureFlags */; };
@@ -532,9 +531,8 @@
 /* Begin PBXCopyFilesBuildPhase section */
 		F6CF4D1C2D709946009A9F2E /* Embed Frameworks */ = {
 			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
 			dstPath = "";
-			dstSubfolderSpec = 10;
+			dstSubfolder = Frameworks;
 			files = (
 				F67060012D70D2C700FEDAC4 /* RxSwift.xcframework in Embed Frameworks */,
 				F6705FF52D70D25D00FEDAC4 /* CryptoSwift.xcframework in Embed Frameworks */,
@@ -545,7 +543,6 @@
 				F67060112D70D8BE00FEDAC4 /* RxRelay.xcframework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
-			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXCopyFilesBuildPhase section */
 
@@ -869,7 +866,6 @@
 /* Begin PBXFrameworksBuildPhase section */
 		743DA7DA2B43E14C000F5AD8 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
 			files = (
 				743DA7DB2B43E14C000F5AD8 /* LFFeatureFlags in Frameworks */,
 				743DA7DC2B43E14C000F5AD8 /* LFRewards in Frameworks */,
@@ -901,11 +897,9 @@
 				743DA7F62B43E14C000F5AD8 /* Services in Frameworks */,
 				743DA7F72B43E14C000F5AD8 /* SmartyStreets in Frameworks */,
 			);
-			runOnlyForDeploymentPostprocessing = 0;
 		};
 		A953548B2A5E55B2008B0FAB /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
 			files = (
 				A9B912EC2A6B881100ABD87B /* iPhoneNumberField in Frameworks */,
 				0627513E2BF5E5B400546864 /* RainFeature in Frameworks */,
@@ -932,11 +926,9 @@
 				A953548E2A5E55B2008B0FAB /* Lottie in Frameworks */,
 				A9B912DE2A6B876300ABD87B /* AuthorizationManager in Frameworks */,
 			);
-			runOnlyForDeploymentPostprocessing = 0;
 		};
 		A97BF7B92A5C602D00B8F5CA /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
 			files = (
 				066298DC2BB4DF05000C1A0D /* BaseOnboarding in Frameworks */,
 				A980DF6D2A5FA249000B3C09 /* OnboardingDomain in Frameworks */,
@@ -965,7 +957,6 @@
 				A91D86632A8C7858006D40D4 /* CoreNetwork in Frameworks */,
 				06FB47082A7AAE430050304C /* PinwheelSDK in Frameworks */,
 				067C77272BF5E84B00AA8EE1 /* LFRainDashboard in Frameworks */,
-				74CB167D2A9853F800C137F3 /* FirebaseAnalyticsSwift in Frameworks */,
 				A94F71F52A61CAC6002ADB34 /* LFLocalizable in Frameworks */,
 				F6705FF42D70D25D00FEDAC4 /* CryptoSwift.xcframework in Frameworks */,
 				F6705FF22D70D25B00FEDAC4 /* CoreNfcBridge.xcframework in Frameworks */,
@@ -973,27 +964,21 @@
 				F6705FF62D70D25E00FEDAC4 /* FidesmoCore.xcframework in Frameworks */,
 				749091172A6584C300071B41 /* SmartyStreets in Frameworks */,
 			);
-			runOnlyForDeploymentPostprocessing = 0;
 		};
 		A97BF7C92A5C602F00B8F5CA /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
 			files = (
 			);
-			runOnlyForDeploymentPostprocessing = 0;
 		};
 		A97BF7D32A5C602F00B8F5CA /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
 			files = (
 				063A6FC72ADD91C30073146D /* LFLocalizable in Frameworks */,
 				06663AF52ADE35BC00A3FF12 /* LFAccessibility in Frameworks */,
 			);
-			runOnlyForDeploymentPostprocessing = 0;
 		};
 		A99D2F2D2A9A56CF00947773 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
 			files = (
 				A90B5CAF2B16E3A90092E430 /* LFFeatureFlags in Frameworks */,
 				A941BEA52AD001CF00FCB01C /* LFRewards in Frameworks */,
@@ -1025,11 +1010,9 @@
 				A9D582662AF898BC006DA0BF /* Services in Frameworks */,
 				A99D2F432A9A56CF00947773 /* SmartyStreets in Frameworks */,
 			);
-			runOnlyForDeploymentPostprocessing = 0;
 		};
 		A9B448C62A8389B90029944C /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
 			files = (
 				A9D582622AF898B2006DA0BF /* Services in Frameworks */,
 				A989D5402AD7B00E00197EFF /* SolidOnboarding in Frameworks */,
@@ -1062,11 +1045,9 @@
 				A941BEA32AD001C700FCB01C /* LFRewards in Frameworks */,
 				A9B448D92A8389B90029944C /* SmartyStreets in Frameworks */,
 			);
-			runOnlyForDeploymentPostprocessing = 0;
 		};
 		A9B4B9412A7C0C76000ED67A /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
 			files = (
 				06663AF72ADE395D00A3FF12 /* LFAccessibility in Frameworks */,
 				A9D5825C2AF898A4006DA0BF /* AccountService in Frameworks */,
@@ -1094,7 +1075,6 @@
 				06154BA82B21C74100CABABB /* BiometricsManager in Frameworks */,
 				067C772B2BF5E86100AA8EE1 /* LFRainDashboard in Frameworks */,
 			);
-			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
@@ -2227,8 +2207,6 @@
 			);
 			buildRules = (
 			);
-			dependencies = (
-			);
 			name = PawsCard;
 			packageProductDependencies = (
 				743DA7AA2B43E14C000F5AD8 /* Factory */,
@@ -2276,8 +2254,6 @@
 			);
 			buildRules = (
 			);
-			dependencies = (
-			);
 			name = Cardano;
 			packageProductDependencies = (
 				A953547D2A5E55B2008B0FAB /* Factory */,
@@ -2321,8 +2297,6 @@
 			);
 			buildRules = (
 			);
-			dependencies = (
-			);
 			name = Avalanche;
 			packageProductDependencies = (
 				A97BF7ED2A5D719000B8F5CA /* Lottie */,
@@ -2340,7 +2314,6 @@
 				A91D86622A8C7858006D40D4 /* CoreNetwork */,
 				A91D86642A8CC813006D40D4 /* NetworkUtilities */,
 				74BC08642A8CC75100EFD00C /* CodeScanner */,
-				74CB167C2A9853F800C137F3 /* FirebaseAnalyticsSwift */,
 				74CB167E2A9853F800C137F3 /* FirebaseCrashlytics */,
 				741493452A9912E800F0DC4D /* FirebaseMessaging */,
 				06663AF82ADE398E00A3FF12 /* LFAccessibility */,
@@ -2413,8 +2386,6 @@
 			);
 			buildRules = (
 			);
-			dependencies = (
-			);
 			name = PrideCard;
 			packageProductDependencies = (
 				A99D2F052A9A56CF00947773 /* Factory */,
@@ -2461,8 +2432,6 @@
 				A9B448EC2A8389B90029944C /* Swiftlint (Debug Only) */,
 			);
 			buildRules = (
-			);
-			dependencies = (
 			);
 			name = CauseCard;
 			packageProductDependencies = (
@@ -2511,8 +2480,6 @@
 				A9B4B9702A7C0C76000ED67A /* Swiftlint (Debug Only) */,
 			);
 			buildRules = (
-			);
-			dependencies = (
 			);
 			name = DogeCard;
 			packageProductDependencies = (
@@ -2569,7 +2536,6 @@
 				};
 			};
 			buildConfigurationList = A97BF7B72A5C602D00B8F5CA /* Build configuration list for PBXProject "LiquidityFinancial" */;
-			compatibilityVersion = "Xcode 14.0";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
@@ -2585,8 +2551,9 @@
 				06FB47062A7AAE430050304C /* XCRemoteSwiftPackageReference "pinwheel-ios-sdk" */,
 				74BC08612A8CC6F500EFD00C /* XCRemoteSwiftPackageReference "CodeScanner" */,
 				74CB167B2A9853F800C137F3 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
-				0679F1E12BBA4AC8002A8F9C /* XCRemoteSwiftPackageReference "PortalSwift" */,
+				E251ADD42DBFAB1F006C9C51 /* XCRemoteSwiftPackageReference "PortalSwift" */,
 			);
+			preferredProjectObjectVersion = 90;
 			productRefGroup = A97BF7BD2A5C602D00B8F5CA /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -2606,7 +2573,6 @@
 /* Begin PBXResourcesBuildPhase section */
 		743DA7F82B43E14C000F5AD8 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
 			files = (
 				743DA8B22B43F213000F5AD8 /* Lato-MediumItalic.ttf in Resources */,
 				743DA8AF2B43F213000F5AD8 /* Orbitron-Medium.ttf in Resources */,
@@ -2643,11 +2609,9 @@
 				743DA8AE2B43F213000F5AD8 /* Lato-Black.ttf in Resources */,
 				743DA8A72B43F213000F5AD8 /* TwinkleSides.json in Resources */,
 			);
-			runOnlyForDeploymentPostprocessing = 0;
 		};
 		A95354902A5E55B2008B0FAB /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
 			files = (
 				A9BC802F2A774D0500E4A1A0 /* Chivo-SemiBoldItalic.ttf in Resources */,
 				A9BC80292A774D0500E4A1A0 /* Chivo-Thin.ttf in Resources */,
@@ -2681,11 +2645,9 @@
 				A95354AC2A5E571D008B0FAB /* Images.xcassets in Resources */,
 				A9BC80372A774D0500E4A1A0 /* Chivo-ThinItalic.ttf in Resources */,
 			);
-			runOnlyForDeploymentPostprocessing = 0;
 		};
 		A97BF7BA2A5C602D00B8F5CA /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
 			files = (
 				A97BF83E2A5DBCF200B8F5CA /* Images.xcassets in Resources */,
 				A9CFBB762A9DA7B300269DB8 /* Orbitron-Bold.ttf in Resources */,
@@ -2715,25 +2677,19 @@
 				E22B07E22CC7F11D0016E8B1 /* GoogleService-Info-Dev.plist in Resources */,
 				E2D7E8FB2D5DC7EB00C6540B /* collateralJsonABI.json in Resources */,
 			);
-			runOnlyForDeploymentPostprocessing = 0;
 		};
 		A97BF7CA2A5C602F00B8F5CA /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
 			files = (
 			);
-			runOnlyForDeploymentPostprocessing = 0;
 		};
 		A97BF7D42A5C602F00B8F5CA /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
 			files = (
 			);
-			runOnlyForDeploymentPostprocessing = 0;
 		};
 		A99D2F442A9A56CF00947773 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
 			files = (
 				A9C479162AA1DB280055F812 /* TwinkleContrast.json in Resources */,
 				A99D2FB32A9A56F200947773 /* Lato-BoldItalic.ttf in Resources */,
@@ -2770,11 +2726,9 @@
 				A99D2FB72A9A56F200947773 /* Orbitron-Bold.ttf in Resources */,
 				A99D2FAD2A9A56F200947773 /* Lato-Black.ttf in Resources */,
 			);
-			runOnlyForDeploymentPostprocessing = 0;
 		};
 		A9B448DA2A8389B90029944C /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
 			files = (
 				A9B4494B2A8392AB0029944C /* Lato-Light.ttf in Resources */,
 				A9B449522A8392AB0029944C /* Lato-Italic.ttf in Resources */,
@@ -2815,11 +2769,9 @@
 				A95BD6642B6222AD00431D4F /* FundraiserData.json in Resources */,
 				A9B4494E2A8392AB0029944C /* Lato-Regular.ttf in Resources */,
 			);
-			runOnlyForDeploymentPostprocessing = 0;
 		};
 		A9B4B9552A7C0C76000ED67A /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
 			files = (
 				A9B4BA242A7C1EF8000ED67A /* Lato-Black.ttf in Resources */,
 				A9B4B9A72A7C0F41000ED67A /* Custom.strings in Resources */,
@@ -2851,7 +2803,6 @@
 				A9B4B9AA2A7C0F41000ED67A /* LaunchScreen.storyboard in Resources */,
 				A9B4BA2A2A7C1EF8000ED67A /* Lato-BoldItalic.ttf in Resources */,
 			);
-			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
 
@@ -2859,123 +2810,136 @@
 		743DA81A2B43E14C000F5AD8 /* Swiftlint (Debug Only) */ = {
 			isa = PBXShellScriptBuildPhase;
 			alwaysOutOfDate = 1;
-			buildActionMask = 12;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-			);
 			name = "Swiftlint (Debug Only)";
-			outputFileListPaths = (
-			);
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "if [[ \"$(uname -m)\" == arm64 ]]; then\n    export PATH=\"/opt/homebrew/bin:$PATH\"\nfi\n\nif which swiftlint > /dev/null; then\n  swiftlint\nelse\n  echo \"warning: SwiftLint not installed, download from https://github.com/realm/SwiftLint\"\nfi\n";
+			shellScript = (
+				"if [[ \"$(uname -m)\" == arm64 ]]; then",
+				"    export PATH=\"/opt/homebrew/bin:$PATH\"",
+				"fi",
+				"",
+				"if which swiftlint > /dev/null; then",
+				"  swiftlint",
+				"else",
+				"  echo \"warning: SwiftLint not installed, download from https://github.com/realm/SwiftLint\"",
+				"fi",
+				"",
+				"",
+				"",
+				"",
+			);
 		};
 		A99D2F652A9A56CF00947773 /* Swiftlint (Debug Only) */ = {
 			isa = PBXShellScriptBuildPhase;
 			alwaysOutOfDate = 1;
-			buildActionMask = 12;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-			);
 			name = "Swiftlint (Debug Only)";
-			outputFileListPaths = (
-			);
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "if [[ \"$(uname -m)\" == arm64 ]]; then\n    export PATH=\"/opt/homebrew/bin:$PATH\"\nfi\n\nif which swiftlint > /dev/null; then\n  swiftlint\nelse\n  echo \"warning: SwiftLint not installed, download from https://github.com/realm/SwiftLint\"\nfi\n";
+			shellScript = (
+				"if [[ \"$(uname -m)\" == arm64 ]]; then",
+				"    export PATH=\"/opt/homebrew/bin:$PATH\"",
+				"fi",
+				"",
+				"if which swiftlint > /dev/null; then",
+				"  swiftlint",
+				"else",
+				"  echo \"warning: SwiftLint not installed, download from https://github.com/realm/SwiftLint\"",
+				"fi",
+				"",
+				"",
+				"",
+				"",
+			);
 		};
 		A9B1DAE42A5FC60C003F3C3C /* Swiftlint (Debug Only) */ = {
 			isa = PBXShellScriptBuildPhase;
 			alwaysOutOfDate = 1;
-			buildActionMask = 12;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-			);
 			name = "Swiftlint (Debug Only)";
-			outputFileListPaths = (
-			);
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "if [[ \"$(uname -m)\" == arm64 ]]; then\n    export PATH=\"/opt/homebrew/bin:$PATH\"\nfi\n\nif which swiftlint > /dev/null; then\n  swiftlint\nelse\n  echo \"warning: SwiftLint not installed, download from https://github.com/realm/SwiftLint\"\nfi\n";
+			shellScript = (
+				"if [[ \"$(uname -m)\" == arm64 ]]; then",
+				"    export PATH=\"/opt/homebrew/bin:$PATH\"",
+				"fi",
+				"",
+				"if which swiftlint > /dev/null; then",
+				"  swiftlint",
+				"else",
+				"  echo \"warning: SwiftLint not installed, download from https://github.com/realm/SwiftLint\"",
+				"fi",
+				"",
+				"",
+				"",
+				"",
+			);
 		};
 		A9B1DAE52A5FC94C003F3C3C /* Swiftlint (Debug Only) */ = {
 			isa = PBXShellScriptBuildPhase;
 			alwaysOutOfDate = 1;
-			buildActionMask = 8;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-			);
 			name = "Swiftlint (Debug Only)";
-			outputFileListPaths = (
-			);
-			outputPaths = (
-			);
 			runOnlyForDeploymentPostprocessing = 1;
 			shellPath = /bin/sh;
-			shellScript = "if [[ \"$(uname -m)\" == arm64 ]]; then\n    export PATH=\"/opt/homebrew/bin:$PATH\"\nfi\n\nif which swiftlint > /dev/null; then\n  swiftlint\nelse\n  echo \"warning: SwiftLint not installed, download from https://github.com/realm/SwiftLint\"\nfi\n";
+			shellScript = (
+				"if [[ \"$(uname -m)\" == arm64 ]]; then",
+				"    export PATH=\"/opt/homebrew/bin:$PATH\"",
+				"fi",
+				"",
+				"if which swiftlint > /dev/null; then",
+				"  swiftlint",
+				"else",
+				"  echo \"warning: SwiftLint not installed, download from https://github.com/realm/SwiftLint\"",
+				"fi",
+				"",
+				"",
+				"",
+				"",
+			);
 		};
 		A9B448EC2A8389B90029944C /* Swiftlint (Debug Only) */ = {
 			isa = PBXShellScriptBuildPhase;
 			alwaysOutOfDate = 1;
-			buildActionMask = 12;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-			);
 			name = "Swiftlint (Debug Only)";
-			outputFileListPaths = (
-			);
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "if [[ \"$(uname -m)\" == arm64 ]]; then\n    export PATH=\"/opt/homebrew/bin:$PATH\"\nfi\n\nif which swiftlint > /dev/null; then\n  swiftlint\nelse\n  echo \"warning: SwiftLint not installed, download from https://github.com/realm/SwiftLint\"\nfi\n";
+			shellScript = (
+				"if [[ \"$(uname -m)\" == arm64 ]]; then",
+				"    export PATH=\"/opt/homebrew/bin:$PATH\"",
+				"fi",
+				"",
+				"if which swiftlint > /dev/null; then",
+				"  swiftlint",
+				"else",
+				"  echo \"warning: SwiftLint not installed, download from https://github.com/realm/SwiftLint\"",
+				"fi",
+				"",
+				"",
+				"",
+				"",
+			);
 		};
 		A9B4B9702A7C0C76000ED67A /* Swiftlint (Debug Only) */ = {
 			isa = PBXShellScriptBuildPhase;
 			alwaysOutOfDate = 1;
-			buildActionMask = 8;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-			);
 			name = "Swiftlint (Debug Only)";
-			outputFileListPaths = (
-			);
-			outputPaths = (
-			);
 			runOnlyForDeploymentPostprocessing = 1;
 			shellPath = /bin/sh;
-			shellScript = "if [[ \"$(uname -m)\" == arm64 ]]; then\n    export PATH=\"/opt/homebrew/bin:$PATH\"\nfi\n\nif which swiftlint > /dev/null; then\n  swiftlint\nelse\n  echo \"warning: SwiftLint not installed, download from https://github.com/realm/SwiftLint\"\nfi\n";
+			shellScript = (
+				"if [[ \"$(uname -m)\" == arm64 ]]; then",
+				"    export PATH=\"/opt/homebrew/bin:$PATH\"",
+				"fi",
+				"",
+				"if which swiftlint > /dev/null; then",
+				"  swiftlint",
+				"else",
+				"  echo \"warning: SwiftLint not installed, download from https://github.com/realm/SwiftLint\"",
+				"fi",
+				"",
+				"",
+				"",
+				"",
+			);
 		};
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		743DA7CF2B43E14C000F5AD8 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
 			files = (
 				743DA8BC2B43F213000F5AD8 /* AppCoordinator.swift in Sources */,
 				743DA8BB2B43F213000F5AD8 /* DashboardContainer+Injection.swift in Sources */,
@@ -2988,11 +2952,9 @@
 				743DA7D82B43E14C000F5AD8 /* AppDelegate+Appearance.swift in Sources */,
 				743DA7D92B43E14C000F5AD8 /* AppDelegate.swift in Sources */,
 			);
-			runOnlyForDeploymentPostprocessing = 0;
 		};
 		A95354842A5E55B2008B0FAB /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
 			files = (
 				741AD8212AD50C5400C1317A /* NavigationContainer.swift in Sources */,
 				A9B4BA052A7C105C000ED67A /* AppCoordinator.swift in Sources */,
@@ -3005,11 +2967,9 @@
 				A93837482A63DDFF009EB1DE /* AppDelegate+Appearance.swift in Sources */,
 				A95354852A5E55B2008B0FAB /* AppDelegate.swift in Sources */,
 			);
-			runOnlyForDeploymentPostprocessing = 0;
 		};
 		A97BF7B82A5C602D00B8F5CA /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
 			files = (
 				A9BC804D2A774F5D00E4A1A0 /* AppDelegate+Configs.swift in Sources */,
 				A9B912F32A6B898C00ABD87B /* OnboardingContainer+Injection.swift in Sources */,
@@ -3022,19 +2982,15 @@
 				A97BF7C22A5C602D00B8F5CA /* AppView.swift in Sources */,
 				A97BF8182A5D9DE200B8F5CA /* AvalancheApp.swift in Sources */,
 			);
-			runOnlyForDeploymentPostprocessing = 0;
 		};
 		A97BF7C82A5C602F00B8F5CA /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
 			files = (
 				A97BF7D12A5C602F00B8F5CA /* LiquidityFinancialTests.swift in Sources */,
 			);
-			runOnlyForDeploymentPostprocessing = 0;
 		};
 		A97BF7D22A5C602F00B8F5CA /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
 			files = (
 				A97BF7DB2A5C602F00B8F5CA /* BaseAppUITest.swift in Sources */,
 				069589062ADD142F0030DBAB /* IdentityVerificationCodeTest.swift in Sources */,
@@ -3051,11 +3007,9 @@
 				0695890F2ADD36AE0030DBAB /* TestConfiguration.swift in Sources */,
 				069589022ADD0B150030DBAB /* LoginFlowTest.swift in Sources */,
 			);
-			runOnlyForDeploymentPostprocessing = 0;
 		};
 		A99D2F232A9A56CF00947773 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
 			files = (
 				741AD81F2AD50C4000C1317A /* NavigationContainer.swift in Sources */,
 				A99D2FBD2A9A56F200947773 /* AppView.swift in Sources */,
@@ -3068,11 +3022,9 @@
 				A99D2F2B2A9A56CF00947773 /* AppDelegate+Appearance.swift in Sources */,
 				A99D2F2C2A9A56CF00947773 /* AppDelegate.swift in Sources */,
 			);
-			runOnlyForDeploymentPostprocessing = 0;
 		};
 		A9B448BC2A8389B90029944C /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
 			files = (
 				A95BD6592B6219C400431D4F /* 2.SelectCauseCategoriesView.swift in Sources */,
 				A9F99B5A2B679FC40099DB85 /* ReferralsPreview.swift in Sources */,
@@ -3112,11 +3064,9 @@
 				A978F64B2B60F3100060D102 /* 4.IdentityVerificationView.swift in Sources */,
 				A978F6552B6107BB0060D102 /* 9.EnterSSNView.swift in Sources */,
 			);
-			runOnlyForDeploymentPostprocessing = 0;
 		};
 		A9B4B9372A7C0C76000ED67A /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
 			files = (
 				741AD8242AD50C7500C1317A /* NavigationContainer.swift in Sources */,
 				A9B4B9FE2A7C0F41000ED67A /* AppView.swift in Sources */,
@@ -3129,7 +3079,6 @@
 				A9B4B93F2A7C0C76000ED67A /* AppDelegate+Appearance.swift in Sources */,
 				A9B4B9402A7C0C76000ED67A /* AppDelegate.swift in Sources */,
 			);
-			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
 
@@ -3226,7 +3175,7 @@
 /* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
-		743DA81C2B43E14C000F5AD8 /* Debug */ = {
+		743DA81C2B43E14C000F5AD8 /* Debug configuration for PBXNativeTarget "PawsCard" */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = A99D2F6D2A9A56F200947773 /* PrideCardConfig.xcconfig */;
 			buildSettings = {
@@ -3270,7 +3219,7 @@
 			};
 			name = Debug;
 		};
-		743DA81D2B43E14C000F5AD8 /* Release */ = {
+		743DA81D2B43E14C000F5AD8 /* Release configuration for PBXNativeTarget "PawsCard" */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = A99D2F6D2A9A56F200947773 /* PrideCardConfig.xcconfig */;
 			buildSettings = {
@@ -3314,7 +3263,7 @@
 			};
 			name = Release;
 		};
-		A95354952A5E55B2008B0FAB /* Debug */ = {
+		A95354952A5E55B2008B0FAB /* Debug configuration for PBXNativeTarget "Cardano" */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = A953549B2A5E571D008B0FAB /* CardanoConfig.xcconfig */;
 			buildSettings = {
@@ -3359,7 +3308,7 @@
 			};
 			name = Debug;
 		};
-		A95354962A5E55B2008B0FAB /* Release */ = {
+		A95354962A5E55B2008B0FAB /* Release configuration for PBXNativeTarget "Cardano" */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = A953549B2A5E571D008B0FAB /* CardanoConfig.xcconfig */;
 			buildSettings = {
@@ -3404,7 +3353,7 @@
 			};
 			name = Release;
 		};
-		A97BF7DE2A5C602F00B8F5CA /* Debug */ = {
+		A97BF7DE2A5C602F00B8F5CA /* Debug configuration for PBXProject "LiquidityFinancial" */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = A97BF83C2A5DA8A900B8F5CA /* LiquidityFinancialConfig.xcconfig */;
 			buildSettings = {
@@ -3465,7 +3414,7 @@
 			};
 			name = Debug;
 		};
-		A97BF7DF2A5C602F00B8F5CA /* Release */ = {
+		A97BF7DF2A5C602F00B8F5CA /* Release configuration for PBXProject "LiquidityFinancial" */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = A97BF83C2A5DA8A900B8F5CA /* LiquidityFinancialConfig.xcconfig */;
 			buildSettings = {
@@ -3520,7 +3469,7 @@
 			};
 			name = Release;
 		};
-		A97BF7E12A5C602F00B8F5CA /* Debug */ = {
+		A97BF7E12A5C602F00B8F5CA /* Debug configuration for PBXNativeTarget "Avalanche" */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = A97BF83A2A5DA86000B8F5CA /* AvalancheConfig.xcconfig */;
 			buildSettings = {
@@ -3529,7 +3478,7 @@
 				CODE_SIGN_ENTITLEMENTS = "${SRCROOT}/LiquidityFinancial/Avalanche/Resources/Avalanche.entitlements";
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 2;
+				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "";
 				DEVELOPMENT_TEAM = 2J3Q98FQPS;
 				ENABLE_PREVIEWS = YES;
@@ -3549,7 +3498,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.3.0;
+				MARKETING_VERSION = 1.4.0;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.rain-liquidity.avalanche";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -3562,7 +3511,7 @@
 			};
 			name = Debug;
 		};
-		A97BF7E22A5C602F00B8F5CA /* Release */ = {
+		A97BF7E22A5C602F00B8F5CA /* Release configuration for PBXNativeTarget "Avalanche" */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = A97BF83A2A5DA86000B8F5CA /* AvalancheConfig.xcconfig */;
 			buildSettings = {
@@ -3571,7 +3520,7 @@
 				CODE_SIGN_ENTITLEMENTS = "${SRCROOT}/LiquidityFinancial/Avalanche/Resources/Avalanche.entitlements";
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 2;
+				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "";
 				DEVELOPMENT_TEAM = 2J3Q98FQPS;
 				ENABLE_PREVIEWS = YES;
@@ -3591,7 +3540,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.3.0;
+				MARKETING_VERSION = 1.4.0;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.rain-liquidity.avalanche";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -3604,7 +3553,7 @@
 			};
 			name = Release;
 		};
-		A97BF7E42A5C602F00B8F5CA /* Debug */ = {
+		A97BF7E42A5C602F00B8F5CA /* Debug configuration for PBXNativeTarget "LiquidityFinancialTests" */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
@@ -3621,7 +3570,7 @@
 			};
 			name = Debug;
 		};
-		A97BF7E52A5C602F00B8F5CA /* Release */ = {
+		A97BF7E52A5C602F00B8F5CA /* Release configuration for PBXNativeTarget "LiquidityFinancialTests" */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
@@ -3638,7 +3587,7 @@
 			};
 			name = Release;
 		};
-		A97BF7E72A5C602F00B8F5CA /* Debug */ = {
+		A97BF7E72A5C602F00B8F5CA /* Debug configuration for PBXNativeTarget "LiquidityFinancialUITests" */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
@@ -3657,7 +3606,7 @@
 			};
 			name = Debug;
 		};
-		A97BF7E82A5C602F00B8F5CA /* Release */ = {
+		A97BF7E82A5C602F00B8F5CA /* Release configuration for PBXNativeTarget "LiquidityFinancialUITests" */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
@@ -3676,7 +3625,7 @@
 			};
 			name = Release;
 		};
-		A99D2F672A9A56CF00947773 /* Debug */ = {
+		A99D2F672A9A56CF00947773 /* Debug configuration for PBXNativeTarget "PrideCard" */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = A99D2F6D2A9A56F200947773 /* PrideCardConfig.xcconfig */;
 			buildSettings = {
@@ -3720,7 +3669,7 @@
 			};
 			name = Debug;
 		};
-		A99D2F682A9A56CF00947773 /* Release */ = {
+		A99D2F682A9A56CF00947773 /* Release configuration for PBXNativeTarget "PrideCard" */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = A99D2F6D2A9A56F200947773 /* PrideCardConfig.xcconfig */;
 			buildSettings = {
@@ -3764,7 +3713,7 @@
 			};
 			name = Release;
 		};
-		A9B448EE2A8389B90029944C /* Debug */ = {
+		A9B448EE2A8389B90029944C /* Debug configuration for PBXNativeTarget "CauseCard" */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = A9B448F42A838A000029944C /* CauseCardConfig.xcconfig */;
 			buildSettings = {
@@ -3808,7 +3757,7 @@
 			};
 			name = Debug;
 		};
-		A9B448EF2A8389B90029944C /* Release */ = {
+		A9B448EF2A8389B90029944C /* Release configuration for PBXNativeTarget "CauseCard" */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = A9B448F42A838A000029944C /* CauseCardConfig.xcconfig */;
 			buildSettings = {
@@ -3852,7 +3801,7 @@
 			};
 			name = Release;
 		};
-		A9B4B9722A7C0C76000ED67A /* Debug */ = {
+		A9B4B9722A7C0C76000ED67A /* Debug configuration for PBXNativeTarget "DogeCard" */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = A9B4B9782A7C0F41000ED67A /* DogeCardConfig.xcconfig */;
 			buildSettings = {
@@ -3897,7 +3846,7 @@
 			};
 			name = Debug;
 		};
-		A9B4B9732A7C0C76000ED67A /* Release */ = {
+		A9B4B9732A7C0C76000ED67A /* Release configuration for PBXNativeTarget "DogeCard" */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = A9B4B9782A7C0F41000ED67A /* DogeCardConfig.xcconfig */;
 			buildSettings = {
@@ -3948,95 +3897,78 @@
 		743DA81B2B43E14C000F5AD8 /* Build configuration list for PBXNativeTarget "PawsCard" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				743DA81C2B43E14C000F5AD8 /* Debug */,
-				743DA81D2B43E14C000F5AD8 /* Release */,
+				743DA81C2B43E14C000F5AD8 /* Debug configuration for PBXNativeTarget "PawsCard" */,
+				743DA81D2B43E14C000F5AD8 /* Release configuration for PBXNativeTarget "PawsCard" */,
 			);
-			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
 		A95354942A5E55B2008B0FAB /* Build configuration list for PBXNativeTarget "Cardano" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				A95354952A5E55B2008B0FAB /* Debug */,
-				A95354962A5E55B2008B0FAB /* Release */,
+				A95354952A5E55B2008B0FAB /* Debug configuration for PBXNativeTarget "Cardano" */,
+				A95354962A5E55B2008B0FAB /* Release configuration for PBXNativeTarget "Cardano" */,
 			);
-			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
 		A97BF7B72A5C602D00B8F5CA /* Build configuration list for PBXProject "LiquidityFinancial" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				A97BF7DE2A5C602F00B8F5CA /* Debug */,
-				A97BF7DF2A5C602F00B8F5CA /* Release */,
+				A97BF7DE2A5C602F00B8F5CA /* Debug configuration for PBXProject "LiquidityFinancial" */,
+				A97BF7DF2A5C602F00B8F5CA /* Release configuration for PBXProject "LiquidityFinancial" */,
 			);
-			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
 		A97BF7E02A5C602F00B8F5CA /* Build configuration list for PBXNativeTarget "Avalanche" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				A97BF7E12A5C602F00B8F5CA /* Debug */,
-				A97BF7E22A5C602F00B8F5CA /* Release */,
+				A97BF7E12A5C602F00B8F5CA /* Debug configuration for PBXNativeTarget "Avalanche" */,
+				A97BF7E22A5C602F00B8F5CA /* Release configuration for PBXNativeTarget "Avalanche" */,
 			);
-			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
 		A97BF7E32A5C602F00B8F5CA /* Build configuration list for PBXNativeTarget "LiquidityFinancialTests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				A97BF7E42A5C602F00B8F5CA /* Debug */,
-				A97BF7E52A5C602F00B8F5CA /* Release */,
+				A97BF7E42A5C602F00B8F5CA /* Debug configuration for PBXNativeTarget "LiquidityFinancialTests" */,
+				A97BF7E52A5C602F00B8F5CA /* Release configuration for PBXNativeTarget "LiquidityFinancialTests" */,
 			);
-			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
 		A97BF7E62A5C602F00B8F5CA /* Build configuration list for PBXNativeTarget "LiquidityFinancialUITests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				A97BF7E72A5C602F00B8F5CA /* Debug */,
-				A97BF7E82A5C602F00B8F5CA /* Release */,
+				A97BF7E72A5C602F00B8F5CA /* Debug configuration for PBXNativeTarget "LiquidityFinancialUITests" */,
+				A97BF7E82A5C602F00B8F5CA /* Release configuration for PBXNativeTarget "LiquidityFinancialUITests" */,
 			);
-			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
 		A99D2F662A9A56CF00947773 /* Build configuration list for PBXNativeTarget "PrideCard" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				A99D2F672A9A56CF00947773 /* Debug */,
-				A99D2F682A9A56CF00947773 /* Release */,
+				A99D2F672A9A56CF00947773 /* Debug configuration for PBXNativeTarget "PrideCard" */,
+				A99D2F682A9A56CF00947773 /* Release configuration for PBXNativeTarget "PrideCard" */,
 			);
-			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
 		A9B448ED2A8389B90029944C /* Build configuration list for PBXNativeTarget "CauseCard" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				A9B448EE2A8389B90029944C /* Debug */,
-				A9B448EF2A8389B90029944C /* Release */,
+				A9B448EE2A8389B90029944C /* Debug configuration for PBXNativeTarget "CauseCard" */,
+				A9B448EF2A8389B90029944C /* Release configuration for PBXNativeTarget "CauseCard" */,
 			);
-			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
 		A9B4B9712A7C0C76000ED67A /* Build configuration list for PBXNativeTarget "DogeCard" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				A9B4B9722A7C0C76000ED67A /* Debug */,
-				A9B4B9732A7C0C76000ED67A /* Release */,
+				A9B4B9722A7C0C76000ED67A /* Debug configuration for PBXNativeTarget "DogeCard" */,
+				A9B4B9732A7C0C76000ED67A /* Release configuration for PBXNativeTarget "DogeCard" */,
 			);
-			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
-		0679F1E12BBA4AC8002A8F9C /* XCRemoteSwiftPackageReference "PortalSwift" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/portal-hq/PortalSwift.git";
-			requirement = {
-				kind = exactVersion;
-				version = 4.0.1;
-			};
-		};
 		06D40BFF2A62AE3700EADB75 /* XCRemoteSwiftPackageReference "iPhoneNumberField" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/MojtabaHs/iPhoneNumberField.git";
@@ -4138,7 +4070,7 @@
 			repositoryURL = "https://github.com/firebase/firebase-ios-sdk";
 			requirement = {
 				kind = upToNextMajorVersion;
-				minimumVersion = 10.0.0;
+				minimumVersion = 11.0.0;
 			};
 		};
 		A953547E2A5E55B2008B0FAB /* XCRemoteSwiftPackageReference "Factory" */ = {
@@ -4315,6 +4247,14 @@
 			requirement = {
 				kind = upToNextMinorVersion;
 				minimumVersion = 6.6.0;
+			};
+		};
+		E251ADD42DBFAB1F006C9C51 /* XCRemoteSwiftPackageReference "PortalSwift" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/portal-hq/PortalSwift";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 6.0.0;
 			};
 		};
 /* End XCRemoteSwiftPackageReference section */
@@ -4588,11 +4528,6 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 74BC08612A8CC6F500EFD00C /* XCRemoteSwiftPackageReference "CodeScanner" */;
 			productName = CodeScanner;
-		};
-		74CB167C2A9853F800C137F3 /* FirebaseAnalyticsSwift */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 74CB167B2A9853F800C137F3 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
-			productName = FirebaseAnalyticsSwift;
 		};
 		74CB167E2A9853F800C137F3 /* FirebaseCrashlytics */ = {
 			isa = XCSwiftPackageProductDependency;

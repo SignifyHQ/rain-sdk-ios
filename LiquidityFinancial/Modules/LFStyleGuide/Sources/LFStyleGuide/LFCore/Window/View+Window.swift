@@ -145,6 +145,8 @@ extension Window {
         $0.windowLabel = style.label
         $0.preferredKey = style.isKey
       }
+      
+      hostingWindow.shouldConsumeTouches = ["Sheet Window", "Popup Window"].contains(style.label)
 
       super.init(nibName: nil, bundle: nil)
     }

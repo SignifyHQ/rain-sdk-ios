@@ -29,18 +29,22 @@ open class UIHostingWindow<Content: View>: UIWindow {
   }
   
   open override func hitTest(_ point: CGPoint, with event: UIEvent?) -> UIView? {
-    let hitView = super.hitTest(point, with: event)
-    
-    if passthroughNonContentTouches {
-      return rootViewController?.viewIfLoaded == hitView ? nil : hitView
-    } else {
-      return hitView
+    guard shouldConsumeTouches else {
+      return nil
     }
+
+    guard let rootView = rootViewController?.viewIfLoaded,
+          let hitView = super.hitTest(point, with: event),
+          hitView.isDescendant(of: rootView) else {
+      return nil
+    }
+
+    return hitView
   }
   
     /// A boolean value indicating whether to passthrough touches that are not
     /// inside the root view.
-  public var passthroughNonContentTouches = true
+  public var shouldConsumeTouches = true
   
     // MARK: - Presentation
   

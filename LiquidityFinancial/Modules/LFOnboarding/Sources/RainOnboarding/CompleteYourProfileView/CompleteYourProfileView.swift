@@ -39,7 +39,7 @@ struct CompleteYourProfileView: View {
           .readGeometry { geometry in
             scrollViewFrame = geometry.frame(in: .global)
           }
-
+          
           if let selectedCategory = viewModel.selectedCategory,
              let selectedCategoryFrame = dropdownFrames[selectedCategory] {
             dropdownView(for: selectedCategory)
@@ -73,9 +73,12 @@ struct CompleteYourProfileView: View {
       viewModel.onAppear()
     }
     .background(Colors.background.swiftUIColor)
-    .onTapGesture {
-      viewModel.selectedCategory = nil
-    }
+    .simultaneousGesture(
+      TapGesture()
+        .onEnded {
+          viewModel.selectedCategory = nil
+        }
+    )
     .popup(
       item: $viewModel.toastMessage,
       style: .toast

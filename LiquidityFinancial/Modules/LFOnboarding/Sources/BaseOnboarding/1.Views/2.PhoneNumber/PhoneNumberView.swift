@@ -53,10 +53,13 @@ public struct PhoneNumberView: View {
       }
     }
     .frame(max: .infinity)
-    .onTapGesture {
-      keyboardFocus = false
-      viewModel.displayDropdown = false
-    }
+    .simultaneousGesture(
+      TapGesture()
+        .onEnded {
+          keyboardFocus = false
+          viewModel.displayDropdown = false
+        }
+    )
     .overlay(alignment: .topTrailing) {
       supportButton
     }

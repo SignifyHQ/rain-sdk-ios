@@ -63,9 +63,13 @@ struct MoveCryptoInputView: View {
     .onChange(of: viewModel.amountInput) { _ in
       viewModel.validateAmountInput()
     }
-    .onTapGesture {
-      isShowAnnotationView = false
-    }
+    .simultaneousGesture(
+      TapGesture()
+        .onEnded {
+          isShowAnnotationView = false
+          viewModel.isShowingTokenSelection = false
+        }
+    )
     .popup(item: $viewModel.toastMessage, style: .toast) {
       ToastView(toastMessage: $0)
     }

@@ -71,20 +71,20 @@ extension LFPortalError {
     case PortalErrorCodes.INVALID_API_KEY.rawValue:
       return .sessionExpired
     case PortalErrorCodes.BAD_REQUEST.rawValue:
-      return portalMpcError.message.lowercased().contains(PortalErrorMessage.walletAlreadyExists)
+      return portalMpcError.message?.lowercased().contains(PortalErrorMessage.walletAlreadyExists) == true
       ? .walletAlreadyExists
-      : .customError(message: portalMpcError.message)
+      : .customError(message: portalMpcError.message ?? PortalErrorMessage.unexpectedError)
     case PortalErrorCodes.FAILED_TO_DECRYPT_CIPHER.rawValue:
-      let message = portalMpcError.message.lowercased().contains(PortalErrorMessage.authenticationFailed)
+      let message = portalMpcError.message?.lowercased().contains(PortalErrorMessage.authenticationFailed) == true
       ? L10N.Common.BackupByPinCode.WrongCode.error
       : portalMpcError.message
-      return .customError(message: message)
+      return .customError(message: message ?? PortalErrorMessage.unexpectedError)
     case PortalErrorCodes.FAILED_TO_CREATE_CIPHER_BLOCK.rawValue:
       return .cipherBlockCreationFailed
     case PortalErrorCodes.NODE_RPC_ERROR.rawValue:
       return .customError(message: L10N.Common.MoveCryptoInput.NotEnoughCrypto.description)
     default:
-      return .customError(message: portalMpcError.message)
+      return .customError(message: portalMpcError.message ?? PortalErrorMessage.unexpectedError)
     }
   }
 }
@@ -95,5 +95,6 @@ extension LFPortalError {
     static let walletAlreadyExists = "wallet already exists"
     static let sessionExpired = "SESSION_EXPIRED"
     static let authenticationFailed = "authentication failed"
+    static let unexpectedError = "unexpected error"
   }
 }

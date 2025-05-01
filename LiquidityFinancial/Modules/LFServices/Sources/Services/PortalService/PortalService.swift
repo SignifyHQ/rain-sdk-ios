@@ -564,7 +564,7 @@ private extension PortalService {
       tokenAddress: addresses.tokenAddress,
       amount: amount,
       recipientAddress: addresses.recipientAddress,
-      salt: "0x" + salt.hexString,
+      salt: "0x" + salt.toHexString(),
       nonce: nonce
     )
     
