@@ -38,6 +38,13 @@ struct MoveCryptoInputView: View {
         keyboard
         footer
       }
+      .simultaneousGesture(
+        TapGesture()
+          .onEnded {
+            isShowAnnotationView = false
+            viewModel.isShowingTokenSelection = false
+          }
+      )
       
       if viewModel.isShowingTokenSelection {
         dropdownView()
@@ -63,13 +70,6 @@ struct MoveCryptoInputView: View {
     .onChange(of: viewModel.amountInput) { _ in
       viewModel.validateAmountInput()
     }
-    .simultaneousGesture(
-      TapGesture()
-        .onEnded {
-          isShowAnnotationView = false
-          viewModel.isShowingTokenSelection = false
-        }
-    )
     .popup(item: $viewModel.toastMessage, style: .toast) {
       ToastView(toastMessage: $0)
     }

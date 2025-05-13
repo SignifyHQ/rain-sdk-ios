@@ -36,6 +36,12 @@ struct CompleteYourProfileView: View {
             }
             .padding(.horizontal, 32)
           }
+          .simultaneousGesture(
+            TapGesture()
+              .onEnded {
+                viewModel.selectedCategory = nil
+              }
+          )
           .readGeometry { geometry in
             scrollViewFrame = geometry.frame(in: .global)
           }
@@ -73,12 +79,6 @@ struct CompleteYourProfileView: View {
       viewModel.onAppear()
     }
     .background(Colors.background.swiftUIColor)
-    .simultaneousGesture(
-      TapGesture()
-        .onEnded {
-          viewModel.selectedCategory = nil
-        }
-    )
     .popup(
       item: $viewModel.toastMessage,
       style: .toast

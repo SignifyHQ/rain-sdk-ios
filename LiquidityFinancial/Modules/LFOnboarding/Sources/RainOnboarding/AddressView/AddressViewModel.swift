@@ -49,7 +49,7 @@ final class AddressViewModel: ObservableObject {
   @Published var selectedCountryTitle: String = .empty
   
   @Published var stateList: [UsState] =  UsState.allCases
-  @Published var selectedState: UsState = .AK
+  @Published var selectedState: UsState = .AL
   @Published var shouldUseStateDropdown: Bool = true
   
   @Published var isShowingWaitlistStateSelection: Bool = false
@@ -93,7 +93,7 @@ extension AddressViewModel {
     $selectedCountry
       .map { [weak self] country in
         if country == .US {
-          self?.selectedState = .AK
+          self?.selectedState = .AL
         }
         
         self?.shouldUseStateDropdown = country == .US

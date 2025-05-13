@@ -35,6 +35,13 @@ public struct PhoneNumberView: View {
         
         footerView
       }
+      .simultaneousGesture(
+        TapGesture()
+          .onEnded {
+            keyboardFocus = false
+            viewModel.displayDropdown = false
+          }
+      )
       
       if viewModel.displayDropdown {
         VStack {
@@ -53,13 +60,6 @@ public struct PhoneNumberView: View {
       }
     }
     .frame(max: .infinity)
-    .simultaneousGesture(
-      TapGesture()
-        .onEnded {
-          keyboardFocus = false
-          viewModel.displayDropdown = false
-        }
-    )
     .overlay(alignment: .topTrailing) {
       supportButton
     }
@@ -191,6 +191,7 @@ private extension PhoneNumberView {
         )
         .onTapGesture {
           viewModel.selectedCountry = item
+          viewModel.displayDropdown = false
         }
         .listRowBackground(Colors.secondaryBackground.swiftUIColor)
         .listRowSeparatorTint(Colors.label.swiftUIColor.opacity(0.16))

@@ -73,6 +73,15 @@ struct AddressView: View {
         
         continueButton
       }
+      .simultaneousGesture(
+        TapGesture()
+          .onEnded {
+            viewModel.stopSuggestions()
+            viewModel.isShowingCountrySelection = false
+            viewModel.isShowingStateSelection = false
+            viewModel.shouldPresentGetNotifiedPopup = false
+          }
+      )
       
       if viewModel.isShowingCountrySelection {
         countryDropdownView()
@@ -106,15 +115,6 @@ struct AddressView: View {
     }
     .navigationTitle("")
     .background(Colors.background.swiftUIColor)
-    .simultaneousGesture(
-      TapGesture()
-        .onEnded {
-          viewModel.stopSuggestions()
-          viewModel.isShowingCountrySelection = false
-          viewModel.isShowingStateSelection = false
-          viewModel.shouldPresentGetNotifiedPopup = false
-        }
-    )
     .defaultToolBar(
       icon: .support,
       openSupportScreen: {
