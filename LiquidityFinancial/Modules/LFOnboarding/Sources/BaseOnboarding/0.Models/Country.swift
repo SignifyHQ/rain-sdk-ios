@@ -10,7 +10,7 @@ public enum Country: String, Identifiable, CaseIterable {
   public var title: String {
     switch self {
     case .US:
-      return "United States of America"
+      return "United States"
     case .AE:
       return "United Arab Emirates"
     case .AG:

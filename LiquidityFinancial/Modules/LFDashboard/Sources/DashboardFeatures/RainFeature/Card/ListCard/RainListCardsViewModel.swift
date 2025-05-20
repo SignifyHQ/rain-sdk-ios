@@ -59,6 +59,10 @@ public final class RainListCardsViewModel: ObservableObject {
   private var isSwitchCard = true
   private var subscribers: Set<AnyCancellable> = []
   
+  var activeCardCount: Int {
+    cardsList.filter{ $0.cardStatus != .closed }.count
+  }
+  
   public init() {
     fetchRainCards()
     observeRefreshListCards()
@@ -182,13 +186,13 @@ public extension RainListCardsViewModel {
 
 // MARK: - View Helpers
 extension RainListCardsViewModel {
-  func title(for card: CardModel) -> String {
+  func title(for card: CardModel) -> (title: String, lastFour: String) {
     switch card.cardType {
     case .virtual:
-      return L10N.Common.Card.Virtual.title + " **** " + card.last4
+      return (title: L10N.Common.Card.Virtual.title + " " + L10N.Common.Card.Generic.title  + " ", lastFour: card.last4)
     case .physical:
       let panLast4 = card.cardStatus == .active ? card.last4 : "****"
-      return L10N.Common.Card.Physical.title + " **** " + panLast4
+      return (title: L10N.Common.Card.Physical.title + " " + L10N.Common.Card.Generic.title + " ", lastFour: panLast4)
     }
   }
   

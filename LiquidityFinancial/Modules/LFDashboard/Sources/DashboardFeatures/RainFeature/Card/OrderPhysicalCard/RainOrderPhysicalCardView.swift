@@ -16,6 +16,7 @@ struct RainOrderPhysicalCardView: View {
   var body: some View {
     content
       .background(Colors.background.swiftUIColor)
+      .navigationTitle(L10N.Common.OrderPhysicalCard.PhysicalCard.title)
       .navigationLink(item: $viewModel.navigation) { navigation in
         switch navigation {
         case let .shippingAddress(destinationView):
@@ -36,60 +37,96 @@ private extension RainOrderPhysicalCardView {
   var content: some View {
     VStack(alignment: .leading) {
       ScrollView(showsIndicators: false) {
-        VStack(spacing: 16) {
-          physicalCardView
-          VStack(alignment: .leading, spacing: 24) {
-            feesCell
+        VStack {
+          GenImages.Images.physicalCard.swiftUIImage
+            .padding(.vertical, 32)
+          
+          VStack(
+            alignment: .leading,
+            spacing: 18
+          ) {
             GenImages.CommonImages.dash.swiftUIImage
               .foregroundColor(Colors.label.swiftUIColor)
+            
+            feesCell
+            
+            GenImages.CommonImages.dash.swiftUIImage
+              .foregroundColor(Colors.label.swiftUIColor)
+            
             cardReceivingAddress
           }
         }
       }
+      
       Spacer()
+      
       buttonGroup
     }
     .padding(.horizontal, 30)
   }
   
-  var physicalCardView: some View {
-    VStack(spacing: 36) {
-      GenImages.Images.physicalCard.swiftUIImage
-      Text(L10N.Common.OrderPhysicalCard.PhysicalCard.title)
-        .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.large.value))
-        .foregroundColor(Colors.label.swiftUIColor)
-    }
-  }
-  
   var cardReceivingAddress: some View {
-    VStack(alignment: .leading, spacing: 20) {
+    VStack(
+      alignment: .leading,
+      spacing: 16
+    ) {
       Text(L10N.Common.OrderPhysicalCard.Address.title)
-        .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.main.value))
+        .font(Fonts.medium.swiftUIFont(size: Constants.FontSize.medium.value))
         .foregroundColor(Colors.label.swiftUIColor)
-      HStack(alignment: .top, spacing: 12) {
+      
+      HStack(
+        alignment: .center,
+        spacing: 12
+      ) {
         GenImages.CommonImages.icMap.swiftUIImage
           .frame(20)
           .foregroundColor(Colors.label.swiftUIColor)
-        Text(viewModel.shippingAddress?.description ?? "")
-          .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.medium.value))
-          .foregroundColor(Colors.label.swiftUIColor.opacity(0.75))
-          .multilineTextAlignment(.leading)
-          .lineLimit(3)
-          .fixedSize(horizontal: false, vertical: true)
+        
+        VStack(
+          alignment: .leading,
+          spacing: 4
+        ) {
+          Text(L10N.Common.OrderPhysicalCard.Address.subtitle)
+            .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.ultraSmall.value))
+            .foregroundColor(Colors.label.swiftUIColor.opacity(0.75))
+          
+          Text(viewModel.shippingAddress?.description ?? "")
+            .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.medium.value))
+            .foregroundColor(Colors.label.swiftUIColor)
+            .multilineTextAlignment(.leading)
+            .lineLimit(3)
+            .fixedSize(horizontal: false, vertical: true)
+        }
+        
+        Spacer()
       }
-      .padding(.trailing, 50)
+      .padding(16)
+      .background(Colors.secondaryBackground.swiftUIColor.cornerRadius(12))
     }
   }
   
   var feesCell: some View {
     HStack {
       Text(L10N.Common.OrderPhysicalCard.Fees.title)
-        .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.medium.value))
-        .foregroundColor(Colors.label.swiftUIColor.opacity(0.75))
-      Spacer()
-      Text(viewModel.fees.formattedUSDAmount())
-        .font(Fonts.bold.swiftUIFont(size: Constants.FontSize.medium.value))
+        .font(Fonts.medium.swiftUIFont(size: Constants.FontSize.medium.value))
         .foregroundColor(Colors.label.swiftUIColor)
+      
+      Spacer()
+      
+      (
+        Text(viewModel.fees.formattedUSDAmount())
+          .foregroundColor(Colors.label.swiftUIColor)
+        
+        +
+        
+        Text(" ")
+        
+        +
+        
+        Text(L10N.Common.OrderPhysicalCard.Fees.Free.title)
+          .foregroundColor(Colors.green.swiftUIColor)
+      )
+        .font(Fonts.semiBold.swiftUIFont(size: Constants.FontSize.medium.value))
     }
   }
   

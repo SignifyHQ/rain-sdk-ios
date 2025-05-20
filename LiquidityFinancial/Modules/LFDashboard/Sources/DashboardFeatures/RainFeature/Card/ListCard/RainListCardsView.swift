@@ -28,16 +28,11 @@ public struct RainListCardsView: View {
     .padding(.bottom, 16)
     .background(Colors.background.swiftUIColor)
     .navigationBarTitleDisplayMode(.inline)
-    .defaultToolBar(
-      icon: .support,
-      navigationTitle: "",
-      openSupportScreen: {
-        viewModel.openSupportScreen()
-      },
-      edgeInsets: EdgeInsets(top: 0, leading: 0, bottom: 12, trailing: 0)
-    )
+    .toolbar {
+      toolbarContent
+    }
     .overlay(
-      cardsList.padding(.top, 8),
+      cardsList.padding(.top, 0),
       alignment: .top
     )
     .onTapGesture {
@@ -89,21 +84,33 @@ private extension RainListCardsView {
     Button {
       viewModel.isShowListCardDropdown.toggle()
     } label: {
-      HStack {
-        Text(viewModel.title(for: viewModel.currentCard))
+      VStack(
+        alignment: .leading
+      ) {
+        HStack {
+          (
+            Text(viewModel.title(for: viewModel.currentCard).title)
+              .foregroundColor(Colors.label.swiftUIColor)
+            
+            +
+            
+            Text(viewModel.title(for: viewModel.currentCard).lastFour)
+              .foregroundColor(Colors.primary.swiftUIColor)
+          )
           .font(Fonts.medium.swiftUIFont(size: Constants.FontSize.small.value))
-          .foregroundColor(Colors.label.swiftUIColor)
-        Spacer()
-        Image(systemName: viewModel.isShowListCardDropdown ? "chevron.up" : "chevron.down")
-          .foregroundColor(Colors.label.swiftUIColor)
-          .font(Fonts.medium.swiftUIFont(size: Constants.FontSize.small.value))
+          
+          Spacer()
+          
+          Image(systemName: viewModel.isShowListCardDropdown ? "chevron.up" : "chevron.down")
+            .foregroundColor(Colors.label.swiftUIColor)
+            .font(Fonts.medium.swiftUIFont(size: Constants.FontSize.custom(size: 8).value))
+        }
       }
+      .padding(.horizontal, 8)
+      .padding(.vertical, 8)
+      .frame(width: 170)
+      .background(Colors.secondaryBackground.swiftUIColor.cornerRadius(4))
     }
-    .padding(.horizontal, 16)
-    .padding(.vertical, 8)
-    .frame(width: 180)
-    .background(Colors.buttons.swiftUIColor.cornerRadius(16))
-    .opacity(viewModel.cardsList.count > 1 ? 1 : 0)
   }
 }
 
@@ -120,7 +127,7 @@ private extension RainListCardsView {
   }
   
   var cardDetails: some View {
-    VStack(spacing: 16) {
+    VStack {
       card
       rows
       Spacer()
@@ -139,18 +146,37 @@ private extension RainListCardsView {
 
 // MARK: - Top Components
 private extension RainListCardsView {
+  var toolbarContent: some ToolbarContent {
+    Group {
+      if viewModel.activeCardCount > 1 {
+        ToolbarItem(placement: .principal) {
+          cardSwitchButton
+        }
+      }
+    }
+  }
+  
   @ViewBuilder
   var cardsList: some View {
     if viewModel.isShowListCardDropdown {
-      VStack(alignment: .leading, spacing: 12) {
+      VStack(alignment: .leading, spacing: 16) {
         ForEach(viewModel.cardsList, id: \.id) { item in
           HStack {
-            Text(viewModel.title(for: item))
-              .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.small.value))
-              .foregroundColor(Colors.label.swiftUIColor)
+            (
+              Text(viewModel.title(for: item).title)
+                .foregroundColor(Colors.label.swiftUIColor)
+              
+              +
+              
+              Text(viewModel.title(for: item).lastFour)
+                .foregroundColor(Colors.primary.swiftUIColor)
+            )
+            .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.small.value))
+            
             Spacer()
+            
             Image(systemName: "checkmark")
-              .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.medium.value))
+              .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.custom(size: 10).value))
               .foregroundColor(viewModel.currentCard.id == item.id ? Colors.primary.swiftUIColor : .clear)
           }
           .frame(height: 14)
@@ -161,9 +187,9 @@ private extension RainListCardsView {
         }
       }
       .padding(.horizontal, 8)
-      .padding(.vertical, 16)
-      .frame(width: 180)
-      .background(Colors.buttons.swiftUIColor.cornerRadius(16))
+      .padding(.vertical, 12)
+      .frame(width: 170)
+      .background(Colors.secondaryBackground.swiftUIColor.cornerRadius(4))
     }
   }
   
@@ -180,7 +206,6 @@ private extension RainListCardsView {
       }
     }
     .tabViewStyle(.page(indexDisplayMode: .never))
-    .padding(.top, 24)
     .frame(maxHeight: 260)
   }
   
@@ -208,7 +233,7 @@ private extension RainListCardsView {
     VStack(alignment: .leading, spacing: 18) {
       if viewModel.currentCard.cardType != .physical || viewModel.currentCard.cardStatus != .unactivated {
         Text(L10N.Common.ListCard.Security.title)
-          .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.ultraSmall.value))
+          .font(Fonts.semiBold.swiftUIFont(size: Constants.FontSize.ultraSmall.value))
           .foregroundColor(Colors.label.swiftUIColor.opacity(0.75))
       }
       VStack(spacing: 16) {
@@ -248,7 +273,6 @@ private extension RainListCardsView {
 //        }
       }
     }
-    .padding(.top, 8)
   }
   
   func row(title: String, subtitle: String?, isSwitchOn: Binding<Bool>, onChange: ((Bool) -> Void)?) -> some View {
@@ -300,15 +324,14 @@ private extension RainListCardsView {
         activeCardButton
       }
       
-      // Hiding the button to order physical card temporarily
-//      if !viewModel.isHasPhysicalCard {
-//        FullSizeButton(
-//          title: L10N.Common.ListCard.OrderPhysicalCard.title,
-//          isDisable: false
-//        ) {
-//          viewModel.onTapOrderPhysicalCard()
-//        }
-//      }
+      if !viewModel.isHasPhysicalCard {
+        FullSizeButton(
+          title: L10N.Common.ListCard.OrderPhysicalCard.title,
+          isDisable: false
+        ) {
+          viewModel.onTapOrderPhysicalCard()
+        }
+      }
     }
   }
   

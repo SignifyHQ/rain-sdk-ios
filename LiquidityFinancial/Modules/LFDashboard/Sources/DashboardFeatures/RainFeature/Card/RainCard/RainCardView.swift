@@ -116,6 +116,7 @@ private extension RainCardView {
           }
           .hidden(isLoading || viewModel.cardModel.cardType == .physical)
       }
+      
       if isLoading {
         LottieView(loading: .contrast)
           .frame(width: 30, height: 20)

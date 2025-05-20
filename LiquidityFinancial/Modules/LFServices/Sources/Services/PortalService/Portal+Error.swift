@@ -62,9 +62,15 @@ extension LFPortalError {
     }
     
     guard let portalMpcError = error as? PortalMpcError else {
+      if let iCloudError = error as? ICloudStorage.ICloudStorageError,
+         case .unableToReadFile = iCloudError {
+        // Different iCloud is used, no access to the backup share
+        return LFPortalError.cipherBlockCreationFailed
+      }
+      
       return LFPortalError.handlePortalRequestError(error: error)
     }
-    
+
     switch portalMpcError.code {
     case 320:
       return .sessionExpired

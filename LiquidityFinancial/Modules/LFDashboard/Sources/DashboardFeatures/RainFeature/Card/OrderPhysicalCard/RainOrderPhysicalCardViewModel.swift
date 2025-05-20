@@ -1,3 +1,4 @@
+import BaseOnboarding
 import RainData
 import RainDomain
 import Foundation
@@ -23,7 +24,7 @@ final class RainOrderPhysicalCardViewModel: ObservableObject {
   @Published var isOrderingCard: Bool = false
   @Published var isShowOrderSuccessPopup: Bool = false
   @Published var toastMessage: String?
-  @Published var fees: Double = 5
+  @Published var fees: Double = 0
   
   @Published var shippingAddress: ShippingAddress?
   @Published var navigation: Navigation?
@@ -41,11 +42,11 @@ extension RainOrderPhysicalCardViewModel {
   func getUser(from userEntity: UserInfomationDataProtocol) {
     shippingAddress = ShippingAddress(
       line1: userEntity.addressLine1 ?? .empty,
-      line2: userEntity.addressLine2,
+      line2: userEntity.addressLine2 ?? .empty,
       city: userEntity.city ?? .empty,
       state: userEntity.state ?? .empty,
       postalCode: userEntity.postalCode ?? .empty,
-      country: userEntity.country
+      country: Country(rawValue: userEntity.country ?? "") ?? Country(title: userEntity.country ?? "") ?? .US
     )
   }
   
@@ -110,8 +111,8 @@ private extension RainOrderPhysicalCardViewModel {
       city: shippingAddress.city,
       region: shippingAddress.state,
       postalCode: shippingAddress.postalCode,
-      countryCode: Constants.Default.regionCode.rawValue,
-      country: shippingAddress.country ?? .empty
+      countryCode: shippingAddress.country.rawValue,
+      country: shippingAddress.country.title
     )
     
     return APIRainOrderCardParameters(shippingAddress: address)

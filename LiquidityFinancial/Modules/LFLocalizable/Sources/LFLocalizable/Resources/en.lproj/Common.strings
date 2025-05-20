@@ -303,7 +303,7 @@
 
 // CARD ACTIVED
 "cardActivated.cardActived.title" = "CARD ACTIVATED!";
-"cardActivated.cardActived.description" = "Your %@Card is now active, can be used anywhere Visa is accepted.";
+"cardActivated.cardActived.description" = "Your %@ Card is now active, and can be used anywhere Visa is accepted.";
 
 // ADD TO WALLET
 "addToWallet.applePay.title" = "ADD TO APPLE PAY";
@@ -317,7 +317,7 @@
 "setCardPin.popup.successMessage" = "Your card's PIN is now set. Use it for purchases and at ATMs.";
 
 // LIST CARD
-"listCard.security.title" = "Security";
+"listCard.security.title" = "Security settings";
 "listCard.showCardNumber.title" = "Show Card Number";
 "listCard.lockCard.title" = "Lock Card";
 "listCard.closeCard.title" = "Close Card";
@@ -340,6 +340,7 @@
 "card.closeCards.title" = "Closed Cards";
 "card.closed.title" = "CLOSED";
 "card.virtual.title" = "Virtual";
+"card.generic.title" = "Card";
 "card.physical.title" = "Physical";
 "card.cardType.title" = "Card Type";
 "card.cardName.title" = "Card Name";
@@ -400,24 +401,26 @@
 
 // EnterCVVCode
 "enterCVVCode.setCardPin.title" = "ENTER CVV TO SET CARD PIN";
-"enterCVVCode.activeCard.title" = "ACTIVATE PHYSICAL CARD";
+"enterCVVCode.activeCard.title" = "ACTIVATE YOUR PHYSICAL CARD";
 "enterCVVCode.screen.description" = "Enter the 3-digit CVV code of your card";
 
 // EnterLastFourNumbers
-"enterLastFourNumbers.activeCard.title" = "ACTIVATE PHYSICAL CARD";
-"enterLastFourNumbers.screen.description" = "Enter the last 4-digits of your card";
+"enterLastFourNumbers.activeCard.title" = "ACTIVATE YOUR PHYSICAL CARD";
+"enterLastFourNumbers.screen.description" = "Enter the last 4 digits of your card";
 
 // Order PhysicalCard
-"orderPhysicalCard.physicalCard.title" = "ORDER PHYSICAL CARD";
+"orderPhysicalCard.physicalCard.title" = "Order Physical Card";
 "orderPhysicalCard.fees.title" = "Fees";
-"orderPhysicalCard.address.title" = "THE CARD WILL BE SHIPPED TO:";
+"orderPhysicalCard.fees.free.title" = "Free";
+"orderPhysicalCard.address.title" = "Shipping address:";
+"orderPhysicalCard.address.subtitle" = "Address";
 "orderPhysicalCard.editAddress.buttonTitle" = "Edit address";
 "orderPhysicalCard.order.buttonTitle" = "Order Physical Card";
 "orderPhysicalCard.orderedSuccess.title" = "PHYSICAL CARD ORDERED";
 "orderPhysicalCard.orderedSuccess.message" = "Thank you, your physical card was ordered. It will arrive in 7-14 business days. After it arrives, please come back to activate your card.";
 
 // ShippingAddress
-"shippingAddress.screen.title" = "WHERE TO SEND YOUR %@?";
+"shippingAddress.screen.title" = "WHERE SHOULD WE SEND YOUR %@ CARD?";
 "shippingAddress.mainAddress.title" = "Address line 1 ";
 "shippingAddress.subAddress.title" = "Address line 2 (optional)";
 "shippingAddress.city.title" = "City";

@@ -40,13 +40,15 @@ extension RainCardViewModel {
     } else {
       cardNumber = "\(Constants.Default.cardNumberPlaceholder.rawValue)\(cardModel.last4)"
     }
+    
     expirationTime = Constants.Default.expirationDatePlaceholder.rawValue
     cvvNumber = Constants.Default.cvvPlaceholder.rawValue
   }
   
   func showCardInformation(cardMetaData: CardMetaData?) {
     if cardModel.cardType == .physical {
-      cardNumber = "\(Constants.Default.physicalCardNumberPlaceholder.rawValue)\(cardModel.last4)"
+      let secretText = cardModel.cardStatus == .active ? cardModel.last4 : Constants.Default.physicalCardNumberPlaceholder.rawValue
+      cardNumber = "\(Constants.Default.physicalCardNumberPlaceholder.rawValue)\(secretText)"
     } else {
       cardNumber = cardMetaData?.panFormatted ?? "\(Constants.Default.cardNumberPlaceholder.rawValue)\(cardModel.last4)"
       expirationTime = cardModel.expiryTime

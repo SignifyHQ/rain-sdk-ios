@@ -34,7 +34,7 @@ private extension RainActivePhysicalCardView {
     case .activedCard:
       activedCardView
     case .addAppleWallet:
-        RainAddAppleWalletView(
+      RainAddAppleWalletView(
         viewModel: RainAddAppleWalletViewModel(cardModel: card) {
           dismiss()
         }
@@ -43,22 +43,25 @@ private extension RainActivePhysicalCardView {
   }
   
   var activedCardView: some View {
-    VStack(spacing: 16) {
-      Spacer()
-        .frame(maxHeight: 60)
-      VStack(spacing: 54) {
-        VStack(spacing: 28) {
-          GenImages.Images.connectedAppleWallet.swiftUIImage
-          GenImages.Images.connectedAppleWalletShadow.swiftUIImage
-        }
+    VStack(
+      spacing: 16
+    ) {
+      VStack(spacing: 40) {
+        GenImages.Images.physicalCard.swiftUIImage
+        
         activedCardTextView
       }
+      
       Spacer()
+      
       buttonGroupView
     }
+    .padding(.top, 64)
     .padding(.horizontal, 30)
     .background(Colors.background.swiftUIColor)
-    .overlay(alignment: .topLeading) {
+    .overlay(
+      alignment: .topLeading
+    ) {
       Button {
         dismiss()
       } label: {
@@ -86,9 +89,10 @@ private extension RainActivePhysicalCardView {
   var activedCardTextView: some View {
     VStack(spacing: 16) {
       Text(L10N.Common.CardActivated.CardActived.title)
-        .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.large.value))
+        .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.main.value))
         .foregroundColor(Colors.label.swiftUIColor)
         .multilineTextAlignment(.center)
+      
       Text(L10N.Common.CardActivated.CardActived.description(LFUtilities.cardName))
         .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.medium.value))
         .foregroundColor(Colors.label.swiftUIColor.opacity(0.75))
