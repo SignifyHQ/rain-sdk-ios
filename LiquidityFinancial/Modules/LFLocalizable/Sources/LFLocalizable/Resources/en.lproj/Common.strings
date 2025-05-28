@@ -22,7 +22,7 @@
 // Personal information
 "addPersonalInformation.title" = "ADD PERSONAL INFORMATION";
 "addPersonalInformation.subtitle" = "Your name should match your ID exactly";
-"name_exceed_message" = "First name and Last name should not be more than 23 characters";
+"name_exceed_message" = "First name and Last name should not be more than 50 characters";
 "first_name" = "Legal First name";
 "enter_firstName" = "Enter first name";
 "last_name" = "Legal Last name";

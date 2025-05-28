@@ -43,7 +43,7 @@ extension PersonalInformationViewModel {
   func onClickedContinueButton(completion: @escaping () -> Void) {
     fullName = firstName + " " + lastName
     
-    if fullName.count > 23 {
+    if fullName.count > 50 {
       toastMessage = L10N.Common.nameExceedMessage
     } else {
       analyticsService.track(event: AnalyticsEvent(name: .personalInfoCompleted))
