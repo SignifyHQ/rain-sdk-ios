@@ -118,20 +118,27 @@ extension RainListCardsViewModel {
 
 // MARK: - View Helpers
 public extension RainListCardsViewModel {
-  func fetchRainCards() {
+  func fetchRainCards(
+    withLoader: Bool = true
+  ) {
     Task {
-      isInit = true
+      if withLoader {
+        isInit = true
+      }
       
       do {
         let cards = try await getCardsUseCase.execute()
+        
         cardsList = cards.map { card in
           mapToCardModel(card: card)
         }
+        
         isHasPhysicalCard = cardsList.contains { card in
           card.cardType == .physical
         }
         
         cardsList = cardsList.filter({ $0.cardStatus != .closed })
+        
         currentCard = cardsList.first ?? .virtualDefault
         isActivePhysical = currentCard.cardStatus == .active
         isCardLocked = currentCard.cardStatus == .disabled
@@ -141,10 +148,6 @@ public extension RainListCardsViewModel {
         } else {
           cardMetaDatas = Array(repeating: nil, count: cardsList.count)
           cardsList.enumerated().forEach { index, card in
-            guard card.cardType == .virtual else {
-              cardMetaDatas[index] = nil
-              return
-            }
             fetchSecretCardInformation(cardID: card.id, index: index)
           }
         }
@@ -207,7 +210,6 @@ extension RainListCardsViewModel {
     currentCard.cardStatus = .active
     cardsList[index].cardStatus = .active
     isActivePhysical = true
-    isShowCardNumber = true
   }
   
   func openSupportScreen() {
@@ -238,7 +240,7 @@ extension RainListCardsViewModel {
     isActivePhysical = currentCard.cardStatus == .active
     isCardLocked = currentCard.cardStatus == .disabled
     if isSwitchCard {
-      isShowCardNumber = currentCard.cardType == .physical
+      isShowCardNumber = false
     } else {
       isSwitchCard = true
     }

@@ -14,7 +14,9 @@ public struct RainListCardsView: View {
   }
   
   public var body: some View {
-    ZStack(alignment: .top) {
+    ZStack(
+      alignment: .top
+    ) {
       if viewModel.isInit {
         loadingView
       } else {
@@ -24,34 +26,15 @@ public struct RainListCardsView: View {
     .onChange(of: viewModel.currentCard) { _ in
       viewModel.onChangeCurrentCard()
     }
-    .padding(.horizontal, 30)
     .padding(.bottom, 16)
     .background(Colors.background.swiftUIColor)
     .navigationBarTitleDisplayMode(.inline)
     .toolbar {
       toolbarContent
     }
-    .overlay(
-      cardsList.padding(.top, 0),
-      alignment: .top
-    )
-    .onTapGesture {
-      viewModel.isShowListCardDropdown = false
-    }
-    .sheet(item: $viewModel.sheet) { item in
-      switch item {
-      case let .applePay(destinationView):
-        destinationView
-      }
-    }
-    .fullScreenCover(item: $viewModel.fullScreen) { item in
-      switch item {
-      case let .activatePhysicalCard(destinationView):
-        destinationView
-          .embedInNavigation()
-      }
-    }
-    .navigationLink(item: $viewModel.navigation) { item in
+    .navigationLink(
+      item: $viewModel.navigation
+    ) { item in
       switch item {
       case let .orderPhysicalCard(destinationView):
         destinationView
@@ -61,7 +44,31 @@ public struct RainListCardsView: View {
         )
       }
     }
-    .popup(item: $viewModel.popup, dismissMethods: .tapInside) { item in
+    .overlay(
+      cardsList.padding(.top, 0),
+      alignment: .top
+    )
+    .sheet(
+      item: $viewModel.sheet
+    ) { item in
+      switch item {
+      case let .applePay(destinationView):
+        destinationView
+      }
+    }
+    .fullScreenCover(
+      item: $viewModel.fullScreen
+    ) { item in
+      switch item {
+      case let .activatePhysicalCard(destinationView):
+        destinationView
+          .embedInNavigation()
+      }
+    }
+    .popup(
+      item: $viewModel.popup,
+      dismissMethods: .tapInside
+    ) { item in
       switch item {
       case .confirmCloseCard:
         confirmationCloseCardPopup
@@ -70,8 +77,17 @@ public struct RainListCardsView: View {
       default: EmptyView()
       }
     }
-    .popup(item: $viewModel.toastMessage, style: .toast) {
+    .popup(
+      item: $viewModel.toastMessage,
+      style: .toast
+    ) {
       ToastView(toastMessage: $0)
+    }
+    .onTapGesture {
+      viewModel.isShowListCardDropdown = false
+    }
+    .onAppear {
+      viewModel.fetchRainCards()
     }
     .ignoresSafeArea(.keyboard, edges: .bottom)
     .track(name: String(describing: type(of: self)))
@@ -129,9 +145,14 @@ private extension RainListCardsView {
   var cardDetails: some View {
     VStack {
       card
+      
       rows
+        .padding(.horizontal, 30)
+      
       Spacer()
+      
       buttonGroup
+        .padding(.horizontal, 30)
     }
     .overlay {
       if viewModel.isLoading {
@@ -194,19 +215,25 @@ private extension RainListCardsView {
   }
   
   var card: some View {
-    TabView(selection: $viewModel.currentCard) {
-      ForEach(Array(viewModel.cardsList.enumerated()), id: \.element.id) { offset, item in
+    TabView(
+      selection: $viewModel.currentCard
+    ) {
+      ForEach(
+        Array(viewModel.cardsList.enumerated()),
+        id: \.element.id
+      ) { offset, item in
         RainCardView(
           cardModel: item,
           cardMetaData: viewModel.cardMetaDatas.count > offset ? $viewModel.cardMetaDatas[offset] : .constant(nil),
           isShowCardNumber: $viewModel.isShowCardNumber,
           isLoading: $viewModel.isInit
         )
+        .padding(.horizontal, 30)
         .tag(item)
       }
     }
     .tabViewStyle(.page(indexDisplayMode: .never))
-    .frame(maxHeight: 260)
+    .frame(maxHeight: 240)
   }
   
   @ViewBuilder
