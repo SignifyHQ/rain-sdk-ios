@@ -25,7 +25,9 @@ let package = Package(
     .package(name: "LFDomain", path: "../LFDomain"),
     .package(url: "https://github.com/hmlongco/Factory", from: "2.3.1"),
     .package(url: "https://github.com/Alamofire/Alamofire.git", .upToNextMajor(from: "5.8.1")),
-    .package(url: "https://github.com/krzysztofzablocki/Sourcery.git", from: "2.0.0")
+    .package(url: "https://github.com/krzysztofzablocki/Sourcery.git", from: "2.0.0"),
+    .package(url: "https://github.com/GoogleCloudPlatform/recaptcha-enterprise-mobile-sdk", from: "18.7.0"),
+    .package(url: "https://github.com/firebase/firebase-ios-sdk", from: "11.0.0"),
   ],
   targets: [
     .target(
@@ -35,7 +37,9 @@ let package = Package(
       name: "AuthorizationManager",
       dependencies: [
         "LFUtilities", "Factory", "NetworkUtilities", "Alamofire",
-        .product(name: "OnboardingDomain", package: "LFDomain")
+        .product(name: "OnboardingDomain", package: "LFDomain"),
+        .product(name: "RecaptchaEnterprise", package: "recaptcha-enterprise-mobile-sdk"),
+        .product(name: "FirebaseAppCheck", package: "firebase-ios-sdk")
       ]
     ),
     .target(

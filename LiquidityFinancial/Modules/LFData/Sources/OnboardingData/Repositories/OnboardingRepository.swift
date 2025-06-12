@@ -1,6 +1,6 @@
+import AuthorizationManager
 import Foundation
 import OnboardingDomain
-import AuthorizationManager
 
 public class OnboardingRepository: OnboardingRepositoryProtocol {
   private let onboardingAPI: OnboardingAPIProtocol
@@ -12,6 +12,9 @@ public class OnboardingRepository: OnboardingRepositoryProtocol {
   }
   
   public func login(parameters: LoginParametersEntity) async throws -> AccessTokensEntity {
+    let appCheckToken = try await auth.getAppCheckToken()
+    let reCaptchaToken = try await auth.getReCaptchaToken(for: .login)
+    
     let requestParameters = LoginParameters(
       phoneNumber: parameters.phoneNumber,
       otpCode: parameters.code,
@@ -19,7 +22,11 @@ public class OnboardingRepository: OnboardingRepositoryProtocol {
       verification: parameters.verificationEntity as? Verification
     )
     
-    let accessTokens = try await onboardingAPI.login(parameters: requestParameters)
+    let accessTokens = try await onboardingAPI.login(
+      parameters: requestParameters,
+      appCheckToken: appCheckToken,
+      recaptchaToken: reCaptchaToken
+    )
     
     auth.refreshWith(apiToken: accessTokens)
     auth.savePortalSessionToken(token: accessTokens.portalSessionToken)
@@ -44,9 +51,16 @@ public class OnboardingRepository: OnboardingRepositoryProtocol {
   }
   
   public func requestOTP(parameters: OTPParametersEntity) async throws -> OtpEntity {
+    let appCheckToken = try await auth.getAppCheckToken()
+    let reCaptchaToken = try await auth.getReCaptchaToken(for: .custom("otp_request"))
+    
     let requestParameters = OTPParameters(phoneNumber: parameters.phoneNumber)
     
-    return try await onboardingAPI.requestOTP(parameters: requestParameters)
+    return try await onboardingAPI.requestOTP(
+      parameters: requestParameters,
+      appCheckToken: appCheckToken,
+      recaptchaToken: reCaptchaToken
+    )
   }
   
   public func checkAccountExisting(parameters: CheckAccountExistingParametersEntity) async throws -> AccountExistingEntity {

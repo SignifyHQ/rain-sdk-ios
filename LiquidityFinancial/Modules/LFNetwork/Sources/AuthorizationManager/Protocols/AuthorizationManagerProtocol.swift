@@ -1,7 +1,8 @@
 import Foundation
-import OnboardingDomain
 import LFUtilities
 import NetworkUtilities
+import OnboardingDomain
+import RecaptchaEnterprise
 
 // sourcery: AutoMockable
 public protocol AuthorizationManagerProtocol {
@@ -17,4 +18,6 @@ public protocol AuthorizationManagerProtocol {
   func forcedLogout()
   func refresh(with accessTokens: OAuthCredential, completion: @escaping (Result<OAuthCredential, Error>) -> Void)
   func fetchTokens() -> OAuthCredential?
+  func getAppCheckToken() async throws -> String
+  func getReCaptchaToken(for action: RecaptchaAction) async throws -> String
 }

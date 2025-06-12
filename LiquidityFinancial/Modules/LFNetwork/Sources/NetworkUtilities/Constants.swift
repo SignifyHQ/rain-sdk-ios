@@ -14,6 +14,9 @@ public enum APIConstants {
   public static let prideCardID = "5ab62fe1-4d21-40c0-b50f-f8ab975ef87c"
   public static let pawsCardID = "323993bf-b8e0-4872-9968-90774663fbf9"
   
+  public static let recaptchaDevSiteKey = "6LeDW1grAAAAABTsMPG_pFqbGSakGDp9yVKJT_o5"
+  public static let recaptchaProdSiteKey = "6Le5elgrAAAAAOjioXJg-0nIBR_fd1byhxeftNGG"
+  
   public static var baseDevURL: URL {
     .init(string: APIConstants.devHost)!
   }

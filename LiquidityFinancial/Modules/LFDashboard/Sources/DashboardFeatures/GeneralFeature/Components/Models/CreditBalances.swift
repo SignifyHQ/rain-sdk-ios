@@ -13,7 +13,7 @@ public struct CreditBalances {
     spendingPower = rainCreditBalances.availableBalance
     creditLimit = rainCreditBalances.creditLimit
     pendingCharges = rainCreditBalances.pendingCharges
-    pendingLiquidation = rainCreditBalances.balanceDue
+    pendingLiquidation = (rainCreditBalances.balanceDue ?? 0) + (rainCreditBalances.postedCharges ?? 0)
   }
   
   public init(

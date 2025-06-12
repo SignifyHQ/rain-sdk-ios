@@ -9,9 +9,9 @@ extension LFCoreNetwork: OnboardingAPIProtocol where R == OnboardingRoute {
     return APIOnboardingProcess(processSteps: result)
   }
   
-  public func login(parameters: LoginParameters) async throws -> APIAccessTokens {
+  public func login(parameters: LoginParameters, appCheckToken: String, recaptchaToken: String) async throws -> APIAccessTokens {
     try await request(
-      OnboardingRoute.login(parameters: parameters),
+      OnboardingRoute.login(parameters: parameters, appCheckToken: appCheckToken, recaptchaToken: recaptchaToken),
       target: APIAccessTokens.self,
       failure: LFErrorObject.self,
       decoder: .apiDecoder
@@ -27,9 +27,9 @@ extension LFCoreNetwork: OnboardingAPIProtocol where R == OnboardingRoute {
     )
   }
   
-  public func requestOTP(parameters: OTPParameters) async throws -> APIOtp {
+  public func requestOTP(parameters: OTPParameters, appCheckToken: String, recaptchaToken: String) async throws -> APIOtp {
     return try await request(
-      OnboardingRoute.requestOtp(parameters: parameters),
+      OnboardingRoute.requestOtp(parameters: parameters, appCheckToken: appCheckToken, recaptchaToken: recaptchaToken),
       target: APIOtp.self,
       failure: LFErrorObject.self,
       decoder: .apiDecoder

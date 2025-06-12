@@ -5,9 +5,9 @@ import AuthorizationManager
 import LFUtilities
 
 public enum OnboardingRoute {
-  case requestOtp(parameters: OTPParameters)
+  case requestOtp(parameters: OTPParameters, appCheckToken: String, recaptchaToken: String)
   case checkAccountExisting(parameters: CheckAccountExistingParameters)
-  case login(parameters: LoginParameters)
+  case login(parameters: LoginParameters, appCheckToken: String, recaptchaToken: String)
   case newRequestOTP(parameters: OTPParameters)
   case newLogin(parameters: LoginParameters)
   case refreshToken(token: String)
@@ -21,11 +21,11 @@ extension OnboardingRoute: LFRoute {
   public var path: String {
     switch self {
     case .requestOtp:
-      return "/v1/password-less/otp/request"
+      return "/v2/password-less/otp/request"
     case .checkAccountExisting:
       return "/v1/auth/exists"
     case .login:
-      return "/v1/password-less/login"
+      return "/v2/password-less/login"
     case .newRequestOTP:
       return "/v2/auth/otp/request"
     case .newLogin:
@@ -56,24 +56,29 @@ extension OnboardingRoute: LFRoute {
     
     switch self {
     case .refreshToken:
-      return base
-    case .requestOtp, .checkAccountExisting, .login, .newRequestOTP, .newLogin:
+      break
+    case .checkAccountExisting, .newRequestOTP, .newLogin:
       base["ld-device-id"] = LFUtilities.deviceId
-      return base
+    case .login(_, let appCheckToken, let recaptchaToken), .requestOtp(_, let appCheckToken, let recaptchaToken):
+      base["ld-device-id"] = LFUtilities.deviceId
+      base["x-app-check-token"] = appCheckToken
+      base["x-recaptcha-token"] = recaptchaToken
+      base["x-platform"] = "IOS"
     case .getOnboardingProcess, .getUnsupportedStates, .joinWailist:
       base["Accept"] = "application/json"
       base["Authorization"] = self.needAuthorizationKey
-      return base
     }
+    
+    return base
   }
   
   public var parameters: Parameters? {
     switch self {
-    case let .requestOtp(otpParameters), let .newRequestOTP(otpParameters):
+    case let .requestOtp(otpParameters, _, _), let .newRequestOTP(otpParameters):
       return otpParameters.encoded()
     case let .checkAccountExisting(parameters):
       return parameters.encoded()
-    case let .login(loginParameters), let .newLogin(loginParameters):
+    case let .login(loginParameters, _, _), let .newLogin(loginParameters):
       return loginParameters.encoded()
     case .refreshToken(let refreshToken):
       var body: [String: Any] {

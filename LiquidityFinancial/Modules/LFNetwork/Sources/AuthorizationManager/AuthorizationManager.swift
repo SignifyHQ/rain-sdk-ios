@@ -1,7 +1,10 @@
+import Combine
+import FirebaseAppCheck
 import Foundation
-import OnboardingDomain
 import LFUtilities
 import NetworkUtilities
+import OnboardingDomain
+import RecaptchaEnterprise
 
 // swiftlint:disable force_unwrapping
 struct AuthorizationAccessToken: Decodable, AccessTokensEntity {
@@ -11,7 +14,13 @@ struct AuthorizationAccessToken: Decodable, AccessTokensEntity {
   var portalSessionToken: String?
   var expiresIn: Int
   
-  init(accessToken: String, tokenType: String, refreshToken: String, portalSessionToken: String?, expiresIn: Int) {
+  init(
+    accessToken: String,
+    tokenType: String,
+    refreshToken: String,
+    portalSessionToken: String?,
+    expiresIn: Int
+  ) {
     self.accessToken = accessToken
     self.tokenType = tokenType
     self.refreshToken = refreshToken
@@ -54,6 +63,7 @@ public class AuthorizationManager {
     Date()
   }
   private var session = URLSession.shared
+  private var subscriptions = Set<AnyCancellable>()
   
   private var enviroment: NetworkEnvironment {
     NetworkEnvironment(rawValue: UserDefaults.environmentSelection) ?? .productionLive
@@ -61,19 +71,46 @@ public class AuthorizationManager {
   
   public var baseURL: URL {
     switch enviroment {
-    case .productionLive: return APIConstants.baseProdURL
-    case .productionTest: return APIConstants.baseDevURL
+    case .productionLive:
+      APIConstants.baseProdURL
+    case .productionTest:
+      APIConstants.baseDevURL
     }
   }
   
-  public init() {}
+  private var recaptchaSiteKey: String {
+    switch enviroment {
+    case .productionTest:
+      APIConstants.recaptchaDevSiteKey
+    case .productionLive:
+      APIConstants.recaptchaProdSiteKey
+    }
+  }
+  
+  var recaptchaClient: RecaptchaClient?
+  
+  public init() {
+    NotificationCenter.default
+      .publisher(
+        for: .environmentChanage
+      )
+      .compactMap { ($0.userInfo?[Notification.Name.environmentChanage.rawValue] as? NetworkEnvironment)
+      }
+      .sink { [weak self] value in
+        log.debug("Fetch reCaptcha client for environment: \(value)")
+        self?.fetchReCaptchaClient()
+      }
+      .store(
+        in: &subscriptions
+      )
+  }
   
   public func forcedLogout() {
     NotificationCenter.default.post(name: logOutForcedName, object: nil)
   }
 }
 
-  // MARK: - RefreshTokenManager
+// MARK: - RefreshTokenManager
 public extension AuthorizationManager {
   func refreshToken() async throws {
     guard let refreshToken = refreshToken else {
@@ -200,7 +237,7 @@ extension AuthorizationManager: AuthorizationManagerProtocol {
 
 }
 
-  // MARK: - Token Expiration
+// MARK: - Token Expiration
 private extension AuthorizationManager {
   func save(token: AccessTokensEntity) {
     UserDefaults.accessTokenExpiresAt = token.expiresAt.timeIntervalSince1970
@@ -224,5 +261,39 @@ private extension AuthorizationManager {
     UserDefaults.accessTokenExpiresAt = 0
     UserDefaults.bearerAccessToken = .empty
     UserDefaults.portalSessionToken = .empty
+  }
+}
+
+// MARK: - reCaptcha Enterprise
+extension AuthorizationManager {
+  private func fetchReCaptchaClient() {
+    guard recaptchaClient == nil
+    else {
+      return
+    }
+    
+    Task {
+      do {
+        self.recaptchaClient = try await Recaptcha.fetchClient(withSiteKey: recaptchaSiteKey)
+      } catch let error as RecaptchaError {
+        log.error("RecaptchaClient creation error: \(String(describing: error.errorMessage)).")
+      }
+    }
+  }
+  
+  public func getReCaptchaToken(for action: RecaptchaAction) async throws -> String {
+    guard let recaptchaClient
+    else {
+      throw AuthError.missingToken
+    }
+    
+    return try await recaptchaClient.execute(withAction: action)
+  }
+}
+
+// MARK: - AppCheck
+extension AuthorizationManager {
+  public func getAppCheckToken() async throws -> String {
+    try await AppCheck.appCheck().token(forcingRefresh: false).token
   }
 }

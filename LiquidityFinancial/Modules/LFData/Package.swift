@@ -57,7 +57,8 @@ let package = Package(
         "Factory",
         .product(name: "OnboardingDomain", package: "LFDomain"),
         .product(name: "NetworkUtilities", package: "LFNetwork"),
-        .product(name: "CoreNetwork", package: "LFNetwork")
+        .product(name: "CoreNetwork", package: "LFNetwork"),
+        .product(name: "Services", package: "LFServices")
       ]
     ),
     .target(

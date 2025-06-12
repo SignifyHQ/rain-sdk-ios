@@ -1,10 +1,11 @@
-import NetspendSdk
-import UIKit
+import EnvironmentService
+import Factory
+import Firebase
+import FirebaseAppCheck
 import FraudForce
 import LFUtilities
-import Firebase
-import Factory
-import EnvironmentService
+import NetspendSdk
+import UIKit
 
 public enum KickoffService {
   
@@ -16,6 +17,7 @@ public enum KickoffService {
     application: UIApplication,
     launchingOptions: [UIApplication.LaunchOptionsKey: Any]?
   ) {
+    kickoffAppCheck()
     kickoffFirebase()
     kickoffNetspend()
     kickoffAnalytics()
@@ -44,6 +46,11 @@ extension KickoffService {
 
 // MARK: Firebase {
 extension KickoffService {
+  public static func kickoffAppCheck() {
+    let appCheck = LFAppCheckProviderFactory()
+    AppCheck.setAppCheckProviderFactory(appCheck)
+  }
+  
   public static func kickoffFirebase() {
     if let filePath = LFServices.googleInfoFilePath,
        let options = FirebaseOptions(contentsOfFile: filePath) {
