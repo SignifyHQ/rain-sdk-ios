@@ -17,6 +17,30 @@ struct CompleteYourProfileView: View {
   }
   
   var body: some View {
+    Group {
+      if viewModel.isLoadingOccupationList {
+        loadingView
+      } else {
+        content
+      }
+    }
+    .onAppear {
+      viewModel.onAppear()
+    }
+    .background(Colors.background.swiftUIColor)
+    .popup(
+      item: $viewModel.toastMessage,
+      style: .toast
+    ) {
+      ToastView(toastMessage: $0)
+    }
+    .track(name: String(describing: type(of: self)))
+  }
+}
+
+// MARK: - View Components
+private extension CompleteYourProfileView {
+  var content: some View {
     VStack {
       ScrollViewReader { proxy in
         ZStack {
@@ -75,22 +99,8 @@ struct CompleteYourProfileView: View {
         viewModel.openSupportScreen()
       }
     )
-    .onAppear {
-      viewModel.onAppear()
-    }
-    .background(Colors.background.swiftUIColor)
-    .popup(
-      item: $viewModel.toastMessage,
-      style: .toast
-    ) {
-      ToastView(toastMessage: $0)
-    }
-    .track(name: String(describing: type(of: self)))
   }
-}
-
-// MARK: - View Components
-private extension CompleteYourProfileView {
+  
   func categoryView(
     category: CompleteProfileCategory
   ) -> some View {
@@ -101,7 +111,7 @@ private extension CompleteYourProfileView {
         .opacity(0.75)
       
       HStack {
-        Text(viewModel.selectedOptions[category]?.map { $0 } ?? category.placeholder)
+        Text(viewModel.selectedOptions[category]?.map { $0.value } ?? category.placeholder)
           .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.small.value))
           .foregroundColor(Colors.label.swiftUIColor)
           .frame(height: 42)
@@ -156,7 +166,7 @@ private extension CompleteYourProfileView {
     for category: CompleteProfileCategory
   ) -> some View {
     List(
-      category.options,
+      viewModel.options(for: category),
       id: \.id
     ) { item in
       HStack {
@@ -178,11 +188,28 @@ private extension CompleteYourProfileView {
       .listRowInsets(.none)
       .onTapGesture {
         viewModel.selectedCategory = nil
-        viewModel.selectedOptions[category] = item.value
+        viewModel.selectedOptions[category] = item
       }
     }
     .scrollContentBackground(.hidden)
     .listStyle(.plain)
     .floatingShadow()
+  }
+  
+  var loadingView: some View {
+    VStack {
+      Spacer()
+      
+      LottieView(
+        loading: .primary
+      )
+      .frame(
+        width: 30,
+        height: 20
+      )
+      
+      Spacer()
+    }
+    .frame(max: .infinity)
   }
 }

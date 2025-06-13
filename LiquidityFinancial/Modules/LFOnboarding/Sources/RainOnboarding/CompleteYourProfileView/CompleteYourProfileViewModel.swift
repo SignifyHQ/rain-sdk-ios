@@ -15,54 +15,76 @@ final class CompleteYourProfileViewModel: ObservableObject {
   @LazyInjected(\.accountDataManager) var accountDataManager
   @LazyInjected(\.customerSupportService) var customerSupportService
   
+  @Published var isLoadingOccupationList: Bool = false
   @Published var isLoading: Bool = false
   @Published var isContinueButtonEnabled: Bool = false
   @Published var toastMessage: String?
   
+  var occupationList: [APIOccupation] = []
+  
   @Published var selectedCategory: CompleteProfileCategory?
+  @Published var selectedOptions: [CompleteProfileCategory: CompleteProfileCategoryOption?] = [
+    .occupation: nil,
+    .salary: nil,
+    .accountPurpose: nil,
+    .spend: nil
+  ]
   
-  @Published var occupationString: String?
-  @Published var salaryString: String?
-  @Published var purposeString: String?
-  @Published var spendString: String?
+  lazy var getOccupationListUseCase: GetOccupationListUseCaseProtocol = {
+    return GetOccupationListUseCase(repository: rainRepository)
+  }()
   
-  var selectedOptions: [CompleteProfileCategory: String?] {
-    get {
-      [
-        .occupation: occupationString,
-        .salary: salaryString,
-        .accountPurpose: purposeString,
-        .spend: spendString
-      ]
-    }
-    set {
-      occupationString = newValue[.occupation] ?? occupationString
-      salaryString = newValue[.salary] ?? salaryString
-      purposeString = newValue[.accountPurpose] ?? purposeString
-      spendString = newValue[.spend] ?? spendString
-    }
-  }
   
-  lazy var createRainAccount: CreateRainAccountUseCaseProtocol = {
+  lazy var createRainAccountUseCase: CreateRainAccountUseCaseProtocol = {
     return CreateRainAccountUseCase(repository: rainRepository)
   }()
   
   init() {
+    getOccupationList()
     observeUserInput()
+  }
+  
+  func options(
+    for category: CompleteProfileCategory
+  ) -> [CompleteProfileCategoryOption] {
+    switch category {
+    case .occupation:
+      occupationList
+        .map { occupation in
+          CompleteProfileCategoryOption(id: occupation.code, value: occupation.occupation)
+        }
+    default:
+      category.options
+    }
   }
 }
 
 // MARK: - API Handle
 extension CompleteYourProfileViewModel {
+  private func getOccupationList() {
+    Task {
+      defer { isLoadingOccupationList = false }
+      isLoadingOccupationList = true
+      
+      do {
+        let occupationList = try await getOccupationListUseCase.execute()
+        self.occupationList = occupationList.sorted { $0.occupation < $1.occupation } as? [APIOccupation] ?? []
+      } catch {
+        log.error(error)
+        toastMessage = error.userFriendlyMessage
+      }
+    }
+  }
+  
   private func createRainUser() {
     Task {
       defer { isLoading = false }
       isLoading = true
       
       do {
-         let parameters = createRainPersonParameters()
-         _ = try await createRainAccount.execute(parameters: parameters)
-         try await onboardingFlowCoordinator.fetchOnboardingMissingSteps()
+        let parameters = createRainPersonParameters()
+        _ = try await createRainAccountUseCase.execute(parameters: parameters)
+        try await onboardingFlowCoordinator.fetchOnboardingMissingSteps()
       } catch {
         log.error(error)
         toastMessage = error.userFriendlyMessage
@@ -89,9 +111,12 @@ extension CompleteYourProfileViewModel {
 // MARK: - Private Functions
 private extension CompleteYourProfileViewModel {
   func observeUserInput() {
-    Publishers.CombineLatest4($occupationString, $salaryString, $purposeString, $spendString)
-      .map { occupation, salary, purpose, spend in
-        occupation.isNotNil && salary.isNotNil && purpose.isNotNil && spend.isNotNil
+    $selectedOptions
+      .map { selectedOptions in
+        selectedOptions[.occupation]??.value != nil &&
+        selectedOptions[.salary]??.value != nil &&
+        selectedOptions[.accountPurpose]??.value != nil &&
+        selectedOptions[.spend]??.value != nil
       }
       .assign(
         to: &$isContinueButtonEnabled
@@ -119,10 +144,10 @@ private extension CompleteYourProfileViewModel {
       address: rainAddress,
       phoneCountryCode: accountDataManager.phoneCode,
       phoneNumber: accountDataManager.phoneNumber,
-      occupation: occupationString,
-      annualSalary: salaryString,
-      accountPurpose: purposeString,
-      expectedMonthlyVolume: spendString,
+      occupation: selectedOptions[.occupation]??.id,
+      annualSalary: selectedOptions[.salary]??.value,
+      accountPurpose: selectedOptions[.accountPurpose]??.value,
+      expectedMonthlyVolume: selectedOptions[.spend]??.value,
       iovationBlackbox: FraudForce.blackbox()
     )
   }
@@ -163,14 +188,7 @@ enum CompleteProfileCategory: CaseIterable {
   var options: [CompleteProfileCategoryOption] {
     switch self {
     case .occupation:
-      [
-        CompleteProfileCategoryOption(value: "Employed"),
-        CompleteProfileCategoryOption(value: "Self-Employed"),
-        CompleteProfileCategoryOption(value: "Business owner"),
-        CompleteProfileCategoryOption(value: "Student"),
-        CompleteProfileCategoryOption(value: "Retired"),
-        CompleteProfileCategoryOption(value: "Other"),
-      ]
+      []
     case .salary:
       [
         CompleteProfileCategoryOption(value: "$0 – $25,000"),
@@ -200,6 +218,6 @@ enum CompleteProfileCategory: CaseIterable {
 }
 
 struct CompleteProfileCategoryOption {
-  let id: String = UUID().uuidString
+  var id: String = UUID().uuidString
   let value: String
 }

@@ -16,6 +16,10 @@ public class RainRepository: RainRepositoryProtocol {
     try await rainAPI.acceptTerms()
   }
   
+  public func getOccupationList() async throws -> [any OccupationEntity] {
+    try await rainAPI.getOccupationList()
+  }
+  
   public func createRainAccount(parameters: RainPersonParametersEntity) async throws -> RainPersonEntity {
     guard let parameters = parameters as? APIRainPersonParameters else {
       throw "Can't map paramater :\(parameters)"

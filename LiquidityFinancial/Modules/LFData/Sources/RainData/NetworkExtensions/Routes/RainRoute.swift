@@ -8,6 +8,7 @@ public enum RainRoute {
   case getOnboardingMissingSteps
   case getExternalVerificationLink
   case acceptTerms
+  case getOccupationList
   case createAccount(parameters: APIRainPersonParameters)
   case getCollateralContract
   case getCreditBalance
@@ -23,6 +24,8 @@ extension RainRoute: LFRoute {
       return "/v1/rain/person/application-external-verification-link"
     case .acceptTerms:
       return "/v1/rain/onboarding/accept-terms"
+    case .getOccupationList:
+      return "/v1/rain/onboarding/occupations"
     case .createAccount:
       return "/v1/rain/person/create-account"
     case .getCollateralContract:
@@ -39,7 +42,8 @@ extension RainRoute: LFRoute {
     case .getOnboardingMissingSteps,
         .getExternalVerificationLink,
         .getCollateralContract,
-        .getCreditBalance:
+        .getCreditBalance,
+        .getOccupationList:
       return .GET
     case .acceptTerms, .createAccount, .getWithdrawalSignature:
       return .POST
@@ -53,6 +57,7 @@ extension RainRoute: LFRoute {
       "ld-device-id": LFUtilities.deviceId
     ]
     base["Authorization"] = self.needAuthorizationKey
+    
     return base
   }
   
@@ -62,7 +67,8 @@ extension RainRoute: LFRoute {
         .getExternalVerificationLink,
         .acceptTerms,
         .getCollateralContract,
-        .getCreditBalance:
+        .getCreditBalance,
+        .getOccupationList:
       return nil
     case let .createAccount(parameters):
       return parameters.encoded()
@@ -77,7 +83,8 @@ extension RainRoute: LFRoute {
         .getExternalVerificationLink,
         .acceptTerms,
         .getCollateralContract,
-        .getCreditBalance:
+        .getCreditBalance,
+        .getOccupationList:
       return nil
     case .createAccount, .getWithdrawalSignature:
       return .json
