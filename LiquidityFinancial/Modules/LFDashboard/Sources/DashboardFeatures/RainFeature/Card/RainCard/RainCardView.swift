@@ -111,9 +111,12 @@ private extension RainCardView {
           .hidden(viewModel.cardModel.cardType == .physical)
         GenImages.CommonImages.icCopy.swiftUIImage
           .foregroundColor(Colors.contrast.swiftUIColor)
-          .onTapGesture {
-            viewModel.copyAction(cardNumber: cardMetaData?.pan)
-          }
+          .simultaneousGesture(
+            TapGesture()
+              .onEnded {
+                viewModel.copyAction(cardNumber: cardMetaData?.pan)
+              }
+          )
           .hidden(isLoading || viewModel.cardModel.cardType == .physical)
       }
       

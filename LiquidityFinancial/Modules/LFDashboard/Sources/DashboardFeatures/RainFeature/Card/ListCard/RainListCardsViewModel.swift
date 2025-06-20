@@ -148,6 +148,11 @@ public extension RainListCardsViewModel {
         } else {
           cardMetaDatas = Array(repeating: nil, count: cardsList.count)
           cardsList.enumerated().forEach { index, card in
+            guard card.cardStatus == .active
+            else {
+              return
+            }
+            
             fetchSecretCardInformation(cardID: card.id, index: index)
           }
         }
