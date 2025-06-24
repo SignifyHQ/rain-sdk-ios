@@ -17,6 +17,7 @@ public class PortalStorage: PortalStorageProtocol {
       PortalAsset(token: .AVAX),
       PortalAsset(token: environmentService.networkEnvironment == .productionTest ? .fujiAvalancheUSDC : .mainnetAvalancheUSDC),
       PortalAsset(token: environmentService.networkEnvironment == .productionTest ? .fujiAvalancheUSDT : .mainnetAvalancheUSDT),
+      PortalAsset(token: environmentService.networkEnvironment == .productionTest ? .fujiAvalancheUSDTE : .mainnetAvalancheUSDTE),
       PortalAsset(token: environmentService.networkEnvironment == .productionTest ? .fujiAvalancheWAVAX : .mainnetAvalancheWAVAX)
     ]
     
@@ -66,5 +67,4 @@ public class PortalStorage: PortalStorageProtocol {
       $0.token.contractAddress == address
     }
   }
-
 }

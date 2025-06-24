@@ -306,9 +306,9 @@ private extension MoveCryptoInputViewModel {
     accountDataManager
       .collateralContractSubject
       .compactMap { rainCollateral in
-        rainCollateral?
+        var assets = rainCollateral?
           .tokensEntity
-          .compactMap { rainToken in
+          .compactMap { rainToken -> AssetModel? in
             let assetModel = AssetModel(rainCollateralAsset: rainToken)
             
             // Filter out tokens of unsupported type
@@ -319,9 +319,21 @@ private extension MoveCryptoInputViewModel {
             
             return assetModel
           }
-          .sorted {
-            ($0.type?.rawValue ?? "") < ($1.type?.rawValue ?? "")
-          }
+        
+        // Hardcode USDT.t to enable withdrawal
+        let usdte = AssetModel(
+          id: "0xc7198437980c041c805a1edcba50c1ce5db95118",
+          type: .usdte,
+          availableBalance: 0,
+          availableUsdBalance: 0,
+          externalAccountId: nil
+        )
+        
+        assets?.append(usdte)
+        assets?.sort {
+          ($0.type?.rawValue ?? "") < ($1.type?.rawValue ?? "")
+        }
+        return assets
       }
       .assign(to: &$assetModelList)
   }
@@ -632,7 +644,7 @@ extension MoveCryptoInputViewModel {
     case .sellCrypto, .sendCrypto, .depositCollateral:
       inlineError = validateAmount(with: assetModel.availableBalance)
     case .withdrawCollateral:
-      inlineError = validateAmount(with: availableBalance)
+      inlineError = assetModel.type == .usdte ? nil : validateAmount(with: availableBalance)
     case .withdrawReward(_, _, let balance, _):
       inlineError = validateAmount(with: balance)
     default:

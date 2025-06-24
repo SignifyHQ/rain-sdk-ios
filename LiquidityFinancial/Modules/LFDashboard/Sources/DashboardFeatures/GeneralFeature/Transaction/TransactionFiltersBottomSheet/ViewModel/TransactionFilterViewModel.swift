@@ -51,9 +51,8 @@ public class TransactionFilterViewModel: ObservableObject {
         assets
           .compactMap {
             let assetModel = AssetModel(portalAsset: $0)
-            
             // Filter out tokens of unsupported type
-            guard assetModel.type != nil && !assetModel.id.isEmpty
+            guard assetModel.type != nil && !assetModel.id.isEmpty && assetModel.type != .usdte
             else {
               return nil
             }
