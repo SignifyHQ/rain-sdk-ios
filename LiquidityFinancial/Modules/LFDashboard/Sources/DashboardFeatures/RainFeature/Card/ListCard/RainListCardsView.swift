@@ -285,7 +285,7 @@ private extension RainListCardsView {
           }
         }
         
-        if viewModel.currentCard.cardStatus != .closed && viewModel.currentCard.cardStatus != .disabled {
+        if ![.closed, .disabled, .unactivated].contains(viewModel.currentCard.cardStatus) {
           GenImages.CommonImages.dash.swiftUIImage
             .foregroundColor(Colors.label.swiftUIColor)
           row(title: L10N.Common.ListCard.CloseCard.title) {
@@ -399,13 +399,13 @@ private extension RainListCardsView {
       title: L10N.Common.ListCard.CloseCard.title.uppercased(),
       message: L10N.Common.ListCard.CloseCard.message,
       primary: .init(
-        text: L10N.Common.Button.Ok.title,
+        text: L10N.Common.ListCard.CloseCard.YesButton.title,
         action: {
           viewModel.closeCard()
         }
       ),
       secondary: .init(
-        text: L10N.Common.Button.NotNow.title,
+        text: L10N.Common.ListCard.CloseCard.CancelButton.title,
         action: {
           viewModel.hidePopup()
         }

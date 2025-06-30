@@ -326,7 +326,9 @@
 "listCard.changePin.title" = "Change PIN";
 "listCard.orderPhysicalCard.title" = "Order Physical Card";
 "listCard.activateCard.buttonTitle" = "Activate %@ Card";
-"listCard.closeCard.message" = "Are you sure you want to remove this card?";
+"listCard.closeCard.message" = "Are you sure you want to close this card? It will be permanently disabled, and a replacement may not be may not be available immediately.";
+"listCard.closeCard.yesButton.title" = "Yes, Close Card";
+"listCard.closeCard.cancelButton.title" = "Cancel";
 "listCard.cardClosed.title" = "CARD CLOSED";
 "listCard.cardClosed.message" = "You have successfully \n closed your card.";
 "listCard.deals.title" = "Deals";
