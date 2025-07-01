@@ -38,7 +38,8 @@ let package = Package(
     .package(url: "https://github.com/portal-hq/PortalSwift", from: "6.0.0"),
     .package(url: "https://github.com/Boilertalk/Web3.swift.git", from: "0.6.0"),
     .package(url: "https://github.com/web3swift-team/web3swift.git", from: "3.3.0"),
-    .package(url: "https://github.com/firebase/firebase-ios-sdk", from: "11.0.0")
+    .package(url: "https://github.com/firebase/firebase-ios-sdk", from: "11.0.0"),
+    .package(url: "https://github.com/googlemaps/ios-places-sdk", from: "10.0.0")
   ],
   targets: [
     .target(
@@ -61,7 +62,8 @@ let package = Package(
         .product(name: "Web3", package: "Web3.swift"),
         .product(name: "Web3PromiseKit", package: "Web3.swift"),
         .product(name: "Web3ContractABI", package: "Web3.swift"),
-        .product(name: "web3swift", package: "web3swift")
+        .product(name: "web3swift", package: "web3swift"),
+        .product(name: "GooglePlacesSwift", package: "ios-places-sdk")
       ],
       resources: [
         .process("Resources")

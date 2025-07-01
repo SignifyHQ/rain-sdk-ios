@@ -25,6 +25,7 @@ struct RainShippingAddressView: View {
   
   @State private var scrollViewFrame: CGRect = .zero
   @State private var vStackFrame: CGRect = .zero
+  @State private var addressDropdownFrame: CGRect = .zero
   @State private var countryDropdownFrame: CGRect = .zero
   @State private var stateDropdownFrame: CGRect = .zero
   
@@ -87,11 +88,27 @@ struct RainShippingAddressView: View {
       .simultaneousGesture(
         TapGesture()
           .onEnded {
+            viewModel.isShowingAddressSuggestions = false
             viewModel.isShowingCountrySelection = false
             viewModel.isShowingStateSelection = false
             viewModel.shouldPresentGetNotifiedPopup = false
           }
       )
+      
+      if viewModel.isShowingAddressSuggestions {
+        addressDropdownView()
+          .frame(
+            width: addressDropdownFrame.width,
+            height: addressDropdownFrame.height * 3,
+            alignment: .top
+          )
+          .background(Colors.secondaryBackground.swiftUIColor)
+          .clipShape(RoundedRectangle(cornerRadius: 9))
+          .position(
+            x: addressDropdownFrame.midX,
+            y: addressDropdownFrame.maxY + addressDropdownFrame.height * 3 / 2 - scrollViewFrame.minY + 5
+          )
+      }
       
       if viewModel.isShowingCountrySelection {
         countryDropdownView()
@@ -104,7 +121,7 @@ struct RainShippingAddressView: View {
           .clipShape(RoundedRectangle(cornerRadius: 9))
           .position(
             x: countryDropdownFrame.midX,
-            y: countryDropdownFrame.maxY + countryDropdownFrame.height * 3 / 2 - scrollViewFrame.minY
+            y: countryDropdownFrame.maxY + countryDropdownFrame.height * 3 / 2 - scrollViewFrame.minY + 5
           )
       }
       
@@ -119,7 +136,7 @@ struct RainShippingAddressView: View {
           .clipShape(RoundedRectangle(cornerRadius: 9))
           .position(
             x: stateDropdownFrame.midX,
-            y: stateDropdownFrame.maxY + stateDropdownFrame.height * 3 / 2 - scrollViewFrame.minY
+            y: stateDropdownFrame.maxY + stateDropdownFrame.height * 3 / 2 - scrollViewFrame.minY + 5
           )
       }
     }
@@ -187,6 +204,7 @@ private extension RainShippingAddressView {
     restriction: TextRestriction = .none,
     keyboardType: UIKeyboardType = .alphabet,
     lowercased: Bool = false,
+    isLoading: Binding<Bool> = .constant(false),
     focus: Focus,
     nextFocus: Focus? = nil
   ) -> some View {
@@ -197,7 +215,7 @@ private extension RainShippingAddressView {
         .opacity(0.75)
         .padding(.leading, 4)
       
-      TextFieldWrapper {
+      TextFieldWrapper(isLoading: isLoading) {
         TextField("", text: value)
           .keyboardType(keyboardType)
           .restrictInput(value: value, restriction: restriction)
@@ -209,6 +227,7 @@ private extension RainShippingAddressView {
           .submitLabel(nextFocus == nil ? .done : .next)
           .focused($keyboardFocus, equals: focus)
           .onSubmit {
+            viewModel.isShowingAddressSuggestions = false
             keyboardFocus = nextFocus
           }
           .onChange(
@@ -243,13 +262,23 @@ private extension RainShippingAddressView {
   
   var textFieldView: some View {
     VStack(alignment: .leading, spacing: 20) {
-      textFieldInputView(
-        title: L10N.Common.addressLine1Title,
-        placeholder: L10N.Common.enterAddress,
-        value: $viewModel.addressLine1,
-        focus: .address1,
-        nextFocus: .address2
-      )
+      HStack {
+        textFieldInputView(
+          title: L10N.Common.addressLine1Title,
+          placeholder: L10N.Common.enterAddress,
+          value: $viewModel.addressLine1,
+          isLoading: $viewModel.isAddressComponentsLoading,
+          focus: .address1,
+          nextFocus: .address2
+        )
+      }
+      .onTapGesture {
+        viewModel.isShowingStateSelection = false
+        viewModel.isShowingCountrySelection = false
+      }
+      .readGeometry { geometry in
+        addressDropdownFrame = geometry.frame(in: .global)
+      }
       
       textFieldInputView(
         title: L10N.Common.addressLine2Title,
@@ -344,11 +373,47 @@ private extension RainShippingAddressView {
           placeholder: L10N.Common.enterZipcode,
           value: $viewModel.zipCode,
           limit: 11,
-          keyboardType: .numberPad,
+          keyboardType: .default,
           focus: .zip
         )
       }
     }
+  }
+  
+  func addressDropdownView(
+  ) -> some View {
+    List(
+      viewModel.addressSuggestionList,
+      id: \.id
+    ) { item in
+      HStack {
+        GenImages.CommonImages.map.swiftUIImage
+          .foregroundColor(Colors.label.swiftUIColor)
+          .padding(.leading, -5)
+        
+        Text(item.title)
+          .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.small.value))
+          .foregroundColor(Colors.label.swiftUIColor)
+          .layoutPriority(1)
+        
+        // Adding clear rectangle to make the whole row tappable, not just the text
+        Rectangle()
+          .foregroundStyle(
+            Color.clear
+          )
+          .contentShape(Rectangle())
+      }
+      .listRowBackground(Color.clear)
+      .listRowSeparatorTint(Color.clear)
+      .listRowInsets(.none)
+      .onTapGesture {
+        viewModel.select(suggestion: item)
+      }
+    }
+    .environment(\.defaultMinListRowHeight, 35)
+    .scrollContentBackground(.hidden)
+    .listStyle(.plain)
+    .floatingShadow()
   }
   
   func countryDropdownView(

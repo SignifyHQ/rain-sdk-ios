@@ -4,18 +4,21 @@ import DevicesData
 import DevicesDomain
 import Factory
 import FraudForce
+import GooglePlacesSwift
 import LFLocalizable
 import LFUtilities
 import OnboardingData
 import OnboardingDomain
+import PlacesData
+import PlacesDomain
 import Services
-import SmartyStreets
 
 @MainActor
 final class AddressViewModel: ObservableObject {
   @LazyInjected(\.devicesRepository) var devicesRepository
   @LazyInjected(\.accountRepository) var accountRepository
   @LazyInjected(\.onboardingRepository) var onboardingRepository
+  @LazyInjected(\.placesRepository) var placesRepository
   
   @LazyInjected(\.accountDataManager) var accountDataManager
   @LazyInjected(\.featureFlagManager) var featureFlagManager
@@ -26,12 +29,13 @@ final class AddressViewModel: ObservableObject {
   @LazyInjected(\.analyticsService) var analyticsService
   
   @Published var isLoading: Bool = false
+  @Published var isAddressComponentsLoading: Bool = false
   @Published var shouldProceedToNextStep: Bool = false
   
   @Published var isShowingCountrySelection: Bool = false
   @Published var isShowingStateSelection: Bool = false
+  @Published var isShowingAddressSuggestions: Bool = false
   
-  @Published var displaySuggestions: Bool = false
   @Published var shouldEnableContinueButton: Bool = false
 
   @Published var addressLine1: String = .empty
@@ -42,7 +46,7 @@ final class AddressViewModel: ObservableObject {
   @Published var toastMessage: String?
   
   @Published var popup: Popup?
-  @Published var addressList: [AddressData] = []
+  @Published var addressSuggestionList: [PlaceSuggestionModel] = []
   
   @Published var countryCodeList: [Country] = Country.allCases
   @Published var selectedCountry: Country = .US
@@ -65,6 +69,14 @@ final class AddressViewModel: ObservableObject {
 
   lazy var deviceDeregisterUseCase: DeviceDeregisterUseCaseProtocol = {
     return DeviceDeregisterUseCase(repository: devicesRepository)
+  }()
+  
+  lazy var getAddressSuggestionsUseCase: GetAddressSuggestionsUseCaseProtocol = {
+    return GetAddressSuggestionsUseCase(repository: placesRepository)
+  }()
+  
+  lazy var getAutofillAddressUseCase: GetAutofillAddressUseCaseProtocol = {
+    return GetAutofillAddressUseCase(repository: placesRepository)
   }()
   
   lazy var getUnsupportedStatesUseCase: GetUnsupportedStatesUseCaseProtocol = {
@@ -218,17 +230,13 @@ extension AddressViewModel {
     }
   }
   
-  func stopSuggestions() {
-    displaySuggestions = false
-  }
-  
-  func select(suggestion: AddressData) {
+  func select(
+    suggestion: PlaceSuggestionModel
+  ) {
     pauseAutocomplete = true
-    addressLine1 = suggestion.addressline1
-    city = suggestion.city
-    state = suggestion.state
-    zipCode = suggestion.zipcode
-    displaySuggestions = false
+    isShowingAddressSuggestions = false
+    
+    fetchAddressComponens(placeId: suggestion.placeId)
   }
 }
 
@@ -259,9 +267,15 @@ private extension AddressViewModel {
       .dropFirst(2)
       .removeDuplicates()
       .sink { [weak self] value in
-        guard let self = self else { return }
-        guard !self.pauseAutocomplete else {
+        guard let self = self
+        else {
+          return
+        }
+        
+        guard !self.pauseAutocomplete
+        else {
           self.pauseAutocomplete = false
+          
           return
         }
         
@@ -299,35 +313,55 @@ private extension AddressViewModel {
     accountDataManager.update(country: selectedCountry.rawValue.uppercased())
   }
   
-  func fetchAddressSuggestion(query: String) {
-    guard query.count > 2 else {
-      displaySuggestions = false
-      return
+  private func fetchAddressSuggestion(
+    query: String
+  ) {
+    Task {
+      guard query.count > 2
+      else {
+        isShowingAddressSuggestions = false
+        
+        return
+      }
+      
+      do {
+        let suggestions = try await getAddressSuggestionsUseCase.execute(query: query).map { entity in
+          PlaceSuggestionModel(entity: entity)
+        }
+        
+        addressSuggestionList = suggestions
+        isShowingAddressSuggestions = true
+      } catch {
+        toastMessage = error.userFriendlyMessage
+      }
     }
-    
-    let id = Constants.smartyStreetsId
-    let hostname = Constants.smartyStreetsHostName
-    let client = ClientBuilder(id: id, hostname: hostname)
-      .withLicenses(licenses: [Constants.smartyStreetsLicense])
-      .buildUSAutocompleteProApiClient()
-    
-    DispatchQueue.global(qos: .userInitiated).async { [weak self] in
-      var lookup = USAutocompleteProLookup().withSearch(search: query)
-      var error: NSError?
-      _ = client.sendLookup(lookup: &lookup, error: &error)
+  }
+  
+  private func fetchAddressComponens(
+    placeId: String
+  ) {
+    Task {
+      defer {
+        isAddressComponentsLoading = false
+      }
       
-      let suggestions: [AddressData] = lookup.result?.suggestions?.map {
-        AddressData(
-          addressline1: $0.streetLine ?? .empty,
-          city: $0.city ?? .empty,
-          state: $0.state ?? .empty,
-          zipcode: $0.zipcode ?? .empty
-        )
-      } ?? []
+      isAddressComponentsLoading = true
       
-      DispatchQueue.main.async {
-        self?.addressList = suggestions
-        self?.displaySuggestions = !suggestions.isEmpty
+      do {
+        let addressComponents = try await getAutofillAddressUseCase.execute(placeId: placeId)
+        
+        addressLine1 = addressComponents.street ?? .empty
+        city = addressComponents.city ?? .empty
+        selectedCountry = Country(title: addressComponents.country ?? .empty) ?? .US
+        zipCode = addressComponents.postalCode ?? .empty
+        
+        if selectedCountry == .US {
+          selectedState = UsState(name: addressComponents.state ?? .empty) ?? .AL
+        } else {
+          state = addressComponents.state ?? .empty
+        }
+      } catch {
+        toastMessage = error.userFriendlyMessage
       }
     }
   }
@@ -338,5 +372,23 @@ extension AddressViewModel {
   enum Popup {
     case waitlist(String)
     case waitlistJoined
+  }
+}
+
+extension AddressViewModel {
+  struct PlaceSuggestionModel: PlaceSuggestionEntity, Identifiable {
+    var id: String {
+      placeId
+    }
+    
+    var placeId: String
+    var title: String
+    
+    init(
+      entity: PlaceSuggestionEntity
+    ) {
+      self.placeId = entity.placeId
+      self.title = entity.title
+    }
   }
 }

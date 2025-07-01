@@ -38,6 +38,9 @@ let package = Package(
       name: "PortalData",
       targets: ["PortalData"]),
     .library(
+      name: "PlacesData",
+      targets: ["PlacesData"]),
+    .library(
       name: "DataTestHelpers",
       targets: ["DataTestHelpers"])
   ],
@@ -149,6 +152,13 @@ let package = Package(
         .product(name: "PortalDomain", package: "LFDomain"),
         .product(name: "NetworkUtilities", package: "LFNetwork"),
         .product(name: "CoreNetwork", package: "LFNetwork"),
+        .product(name: "Services", package: "LFServices")
+      ]
+    ),
+    .target(
+      name: "PlacesData",
+      dependencies: [
+        .product(name: "PlacesDomain", package: "LFDomain"),
         .product(name: "Services", package: "LFServices")
       ]
     ),

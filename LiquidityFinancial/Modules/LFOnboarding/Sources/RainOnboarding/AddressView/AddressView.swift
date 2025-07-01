@@ -13,6 +13,7 @@ struct AddressView: View {
   
   @State private var scrollViewFrame: CGRect = .zero
   @State private var vStackFrame: CGRect = .zero
+  @State private var addressDropdownFrame: CGRect = .zero
   @State private var countryDropdownFrame: CGRect = .zero
   @State private var stateDropdownFrame: CGRect = .zero
   
@@ -76,12 +77,27 @@ struct AddressView: View {
       .simultaneousGesture(
         TapGesture()
           .onEnded {
-            viewModel.stopSuggestions()
+            viewModel.isShowingAddressSuggestions = false
             viewModel.isShowingCountrySelection = false
             viewModel.isShowingStateSelection = false
             viewModel.shouldPresentGetNotifiedPopup = false
           }
       )
+      
+      if viewModel.isShowingAddressSuggestions {
+        addressDropdownView()
+          .frame(
+            width: addressDropdownFrame.width,
+            height: addressDropdownFrame.height * 3,
+            alignment: .top
+          )
+          .background(Colors.secondaryBackground.swiftUIColor)
+          .clipShape(RoundedRectangle(cornerRadius: 9))
+          .position(
+            x: addressDropdownFrame.midX,
+            y: addressDropdownFrame.maxY + addressDropdownFrame.height * 3 / 2 - scrollViewFrame.minY + 5
+          )
+      }
       
       if viewModel.isShowingCountrySelection {
         countryDropdownView()
@@ -94,7 +110,7 @@ struct AddressView: View {
           .clipShape(RoundedRectangle(cornerRadius: 9))
           .position(
             x: countryDropdownFrame.midX,
-            y: countryDropdownFrame.maxY + countryDropdownFrame.height * 3 / 2 - scrollViewFrame.minY
+            y: countryDropdownFrame.maxY + countryDropdownFrame.height * 3 / 2 - scrollViewFrame.minY + 5
           )
       }
       
@@ -109,7 +125,7 @@ struct AddressView: View {
           .clipShape(RoundedRectangle(cornerRadius: 9))
           .position(
             x: stateDropdownFrame.midX,
-            y: stateDropdownFrame.maxY + stateDropdownFrame.height * 3 / 2 - scrollViewFrame.minY
+            y: stateDropdownFrame.maxY + stateDropdownFrame.height * 3 / 2 - scrollViewFrame.minY + 5
           )
       }
     }
@@ -162,42 +178,42 @@ struct AddressView: View {
 
 // MARK: - View Components
 private extension AddressView {
-  func listView() -> some View {
-    List(viewModel.addressList, id: \.id) { item in
-      HStack(alignment: .top) {
-        GenImages.CommonImages.map.swiftUIImage
-          .foregroundColor(Colors.label.swiftUIColor)
-        Text("\(item.addressline1) \(item.state) \(item.city) \(item.zipcode)")
-          .foregroundColor(Colors.label.swiftUIColor)
-          .opacity(0.75)
-          .font(
-            Fonts.regular.swiftUIFont(
-              size: Constants.FontSize.small.value
-            )
-          )
-          .padding([.top], -2)
-          .padding([.leading], 5)
-      }
-      .padding([.leading], 2)
-      .padding([.top, .bottom, .trailing], 10)
-      .onTapGesture {
-        viewModel.select(suggestion: item)
-      }
-      .listRowBackground(Colors.secondaryBackground.swiftUIColor)
-      .listRowSeparatorTint(Colors.label.swiftUIColor.opacity(0.16))
-      .listRowInsets(.none)
-    }
-    .cornerRadius(8, style: .continuous)
-    .listStyle(.plain)
-    .frame(maxHeight: 240, alignment: .top)
-    .padding([.leading, .trailing], 20)
-    .padding(.top, 95)
-    .onAppear {
-      UITableView.appearance().contentInset.top = -35
-      UITableView.appearance().separatorInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 15)
-    }
-    .floatingShadow()
-  }
+//  func listView() -> some View {
+//    List(viewModel.addressList, id: \.id) { item in
+//      HStack(alignment: .top) {
+//        GenImages.CommonImages.map.swiftUIImage
+//          .foregroundColor(Colors.label.swiftUIColor)
+//        Text("\(item.addressline1) \(item.state) \(item.city) \(item.zipcode)")
+//          .foregroundColor(Colors.label.swiftUIColor)
+//          .opacity(0.75)
+//          .font(
+//            Fonts.regular.swiftUIFont(
+//              size: Constants.FontSize.small.value
+//            )
+//          )
+//          .padding([.top], -2)
+//          .padding([.leading], 5)
+//      }
+//      .padding([.leading], 2)
+//      .padding([.top, .bottom, .trailing], 10)
+//      .onTapGesture {
+//        viewModel.select(suggestion: item)
+//      }
+//      .listRowBackground(Colors.secondaryBackground.swiftUIColor)
+//      .listRowSeparatorTint(Colors.label.swiftUIColor.opacity(0.16))
+//      .listRowInsets(.none)
+//    }
+//    .cornerRadius(8, style: .continuous)
+//    .listStyle(.plain)
+//    .frame(maxHeight: 240, alignment: .top)
+//    .padding([.leading, .trailing], 20)
+//    .padding(.top, 95)
+//    .onAppear {
+//      UITableView.appearance().contentInset.top = -35
+//      UITableView.appearance().separatorInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 15)
+//    }
+//    .floatingShadow()
+//  }
   
   func textFieldInputView(
     title: String,
@@ -207,6 +223,7 @@ private extension AddressView {
     restriction: TextRestriction = .none,
     keyboardType: UIKeyboardType = .alphabet,
     lowercased: Bool = false,
+    isLoading: Binding<Bool> = .constant(false),
     focus: Focus,
     nextFocus: Focus? = nil
   ) -> some View {
@@ -217,7 +234,9 @@ private extension AddressView {
         .opacity(0.75)
         .padding(.leading, 4)
       
-      TextFieldWrapper {
+      TextFieldWrapper(
+        isLoading: isLoading
+      ) {
         TextField("", text: value)
           .keyboardType(keyboardType)
           .restrictInput(value: value, restriction: restriction)
@@ -229,6 +248,7 @@ private extension AddressView {
           .submitLabel(nextFocus == nil ? .done : .next)
           .focused($keyboardFocus, equals: focus)
           .onSubmit {
+            viewModel.isShowingAddressSuggestions = false
             keyboardFocus = nextFocus
           }
           .onChange(
@@ -263,13 +283,23 @@ private extension AddressView {
   
   var textFieldView: some View {
     VStack(alignment: .leading, spacing: 20) {
-      textFieldInputView(
-        title: L10N.Common.addressLine1Title,
-        placeholder: L10N.Common.enterAddress,
-        value: $viewModel.addressLine1,
-        focus: .address1,
-        nextFocus: .address2
-      )
+      HStack {
+        textFieldInputView(
+          title: L10N.Common.addressLine1Title,
+          placeholder: L10N.Common.enterAddress,
+          value: $viewModel.addressLine1,
+          isLoading: $viewModel.isAddressComponentsLoading,
+          focus: .address1,
+          nextFocus: .address2
+        )
+      }
+      .onTapGesture {
+        viewModel.isShowingStateSelection = false
+        viewModel.isShowingCountrySelection = false
+      }
+      .readGeometry { geometry in
+        addressDropdownFrame = geometry.frame(in: .global)
+      }
       
       textFieldInputView(
         title: L10N.Common.addressLine2Title,
@@ -364,7 +394,7 @@ private extension AddressView {
           placeholder: L10N.Common.enterZipcode,
           value: $viewModel.zipCode,
           limit: 11,
-          keyboardType: .numberPad,
+          keyboardType: .default,
           focus: .zip
         )
       }
@@ -386,6 +416,42 @@ private extension AddressView {
     }
     .padding(.horizontal, 30)
     .padding(.bottom, 12)
+  }
+  
+  func addressDropdownView(
+  ) -> some View {
+    List(
+      viewModel.addressSuggestionList,
+      id: \.id
+    ) { item in
+      HStack {
+        GenImages.CommonImages.map.swiftUIImage
+          .foregroundColor(Colors.label.swiftUIColor)
+          .padding(.leading, -5)
+        
+        Text(item.title)
+          .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.small.value))
+          .foregroundColor(Colors.label.swiftUIColor)
+          .layoutPriority(1)
+        
+        // Adding clear rectangle to make the whole row tappable, not just the text
+        Rectangle()
+          .foregroundStyle(
+            Color.clear
+          )
+          .contentShape(Rectangle())
+      }
+      .listRowBackground(Color.clear)
+      .listRowSeparatorTint(Color.clear)
+      .listRowInsets(.none)
+      .onTapGesture {
+        viewModel.select(suggestion: item)
+      }
+    }
+    .environment(\.defaultMinListRowHeight, 35)
+    .scrollContentBackground(.hidden)
+    .listStyle(.plain)
+    .floatingShadow()
   }
   
   func countryDropdownView(

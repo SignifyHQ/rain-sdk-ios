@@ -3,6 +3,7 @@ import Factory
 import Firebase
 import FirebaseAppCheck
 import FraudForce
+import GooglePlacesSwift
 import LFUtilities
 import NetspendSdk
 import UIKit
@@ -13,6 +14,7 @@ public enum KickoffService {
     LFServices.environmentService.networkEnvironment
   }
   
+  @MainActor
   public static func kickoff(
     application: UIApplication,
     launchingOptions: [UIApplication.LaunchOptionsKey: Any]?
@@ -22,6 +24,7 @@ public enum KickoffService {
     kickoffNetspend()
     kickoffAnalytics()
     kickoffPushNotifications(application: application)
+    kickoffGooglePlaces()
   }
   
   public static func application(
@@ -78,5 +81,20 @@ extension KickoffService {
   private static func kickoffPushNotifications(application: UIApplication) {
     Container.shared.pushNotificationService.resolve().setUp()
     application.registerForRemoteNotifications()
+  }
+}
+
+// MARK: Google Places
+extension KickoffService {
+  @MainActor
+  private static func kickoffGooglePlaces() {
+    let apiKey = Configs.GooglePlaces.apiKey(for: networkEnvironment)
+    let kickedOffGooglePlaces = PlacesClient.provideAPIKey(apiKey)
+    
+    if kickedOffGooglePlaces {
+      log.info("Successfully configured Google Places for \(networkEnvironment)")
+    } else {
+      log.error("Error configuring Google Places for \(networkEnvironment)")
+    }
   }
 }

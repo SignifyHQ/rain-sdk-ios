@@ -35,6 +35,9 @@ let package = Package(
       name: "PortalDomain",
       targets: ["PortalDomain"]),
     .library(
+      name: "PlacesDomain",
+      targets: ["PlacesDomain"]),
+    .library(
       name: "DomainTestHelpers",
       targets: ["DomainTestHelpers"])
   ],
@@ -82,6 +85,12 @@ let package = Package(
     ),
     .target(
       name: "PortalDomain",
+      dependencies: [
+        .product(name: "Services", package: "LFServices")
+      ]
+    ),
+    .target(
+      name: "PlacesDomain",
       dependencies: [
         .product(name: "Services", package: "LFServices")
       ]

@@ -8,10 +8,13 @@ import LFUtilities
 import LFLocalizable
 import OnboardingData
 import OnboardingDomain
+import PlacesData
+import PlacesDomain
 
 @MainActor
 final class RainShippingAddressViewModel: ObservableObject {
   @LazyInjected(\.onboardingRepository) var onboardingRepository
+  @LazyInjected(\.placesRepository) var placesRepository
   @LazyInjected(\.accountDataManager) var accountDataManager
   
   @LazyInjected(\.customerSupportService) var customerSupportService
@@ -20,10 +23,12 @@ final class RainShippingAddressViewModel: ObservableObject {
   @Binding var shippingAddress: ShippingAddress?
   
   @Published var isLoading: Bool = false
+  @Published var isAddressComponentsLoading: Bool = false
   @Published var shouldEnableContinueButton: Bool = false
   
   @Published var isShowingCountrySelection: Bool = false
   @Published var isShowingStateSelection: Bool = false
+  @Published var isShowingAddressSuggestions: Bool = false
   
   @Published var addressLine1: String = .empty
   @Published var addressLine2: String = .empty
@@ -31,6 +36,8 @@ final class RainShippingAddressViewModel: ObservableObject {
   @Published var state: String = .empty
   @Published var zipCode: String = .empty
   @Published var toastMessage: String?
+  
+  @Published var addressSuggestionList: [PlaceSuggestionModel] = []
   
   @Published var countryCodeList: [Country] = Country.allCases
   @Published var selectedCountry: Country = .US
@@ -50,7 +57,17 @@ final class RainShippingAddressViewModel: ObservableObject {
   @Published var waitlistEmail: String = .empty
   
   @Published var isLoadingWaitlist: Bool = false
+  
+  private var pauseAutocomplete = false
   private var cancellables = Set<AnyCancellable>()
+  
+  lazy var getAddressSuggestionsUseCase: GetAddressSuggestionsUseCaseProtocol = {
+    return GetAddressSuggestionsUseCase(repository: placesRepository)
+  }()
+  
+  lazy var getAutofillAddressUseCase: GetAutofillAddressUseCaseProtocol = {
+    return GetAutofillAddressUseCase(repository: placesRepository)
+  }()
   
   lazy var getUnsupportedStatesUseCase: GetUnsupportedStatesUseCaseProtocol = {
     return GetUnsupportedStatesUseCase(repository: onboardingRepository)
@@ -70,6 +87,7 @@ final class RainShippingAddressViewModel: ObservableObject {
     _shippingAddress = shippingAddress
     
     observeUserInput()
+    observeAddressSuggestion()
     bindCountryStateSelection()
     
     addressLine1 = shippingAddress.wrappedValue?.line1 ?? String.empty
@@ -139,6 +157,15 @@ extension RainShippingAddressViewModel {
     )
   }
   
+  func select(
+    suggestion: PlaceSuggestionModel
+  ) {
+    pauseAutocomplete = true
+    isShowingAddressSuggestions = false
+    
+    fetchAddressComponens(placeId: suggestion.placeId)
+  }
+  
   func getUnsupportedStates() {
     Task {
       do {
@@ -159,7 +186,6 @@ extension RainShippingAddressViewModel {
       }
     }
   }
-
   
   func joinWaitlist() {
     Task {
@@ -191,7 +217,7 @@ extension RainShippingAddressViewModel {
 
 // MARK: - Private Functions
 private extension RainShippingAddressViewModel {
-  func observeUserInput() {
+  private func observeUserInput() {
     Publishers.CombineLatest4($addressLine1, $addressLine2, $city, $zipCode)
       .receive(on: DispatchQueue.main)
       .sink { [weak self] _, _, _, _ in
@@ -209,7 +235,83 @@ private extension RainShippingAddressViewModel {
       .store(in: &cancellables)
   }
 
-  func isAllDataFilled() {
+  private func observeAddressSuggestion() {
+    $addressLine1
+      .debounce(for: .seconds(0.5), scheduler: RunLoop.main)
+      .dropFirst(2)
+      .removeDuplicates()
+      .sink { [weak self] value in
+        guard let self = self
+        else {
+          return
+        }
+        
+        guard !self.pauseAutocomplete
+        else {
+          self.pauseAutocomplete = false
+          
+          return
+        }
+        
+        self.fetchAddressSuggestion(query: value.capitalized)
+      }
+      .store(in: &cancellables)
+  }
+  
+  private func fetchAddressSuggestion(
+    query: String
+  ) {
+    Task {
+      guard query.count > 2
+      else {
+        isShowingAddressSuggestions = false
+        
+        return
+      }
+      
+      do {
+        let suggestions = try await getAddressSuggestionsUseCase.execute(query: query).map { entity in
+          PlaceSuggestionModel(entity: entity)
+        }
+        
+        addressSuggestionList = suggestions
+        isShowingAddressSuggestions = true
+      } catch {
+        toastMessage = error.userFriendlyMessage
+      }
+    }
+  }
+  
+  private func fetchAddressComponens(
+    placeId: String
+  ) {
+    Task {
+      defer {
+        isAddressComponentsLoading = false
+      }
+      
+      isAddressComponentsLoading = true
+      
+      do {
+        let addressComponents = try await getAutofillAddressUseCase.execute(placeId: placeId)
+        
+        addressLine1 = addressComponents.street ?? .empty
+        city = addressComponents.city ?? .empty
+        selectedCountry = Country(title: addressComponents.country ?? .empty) ?? .US
+        zipCode = addressComponents.postalCode ?? .empty
+        
+        if selectedCountry == .US {
+          selectedState = UsState(name: addressComponents.state ?? .empty) ?? .AL
+        } else {
+          state = addressComponents.state ?? .empty
+        }
+      } catch {
+        toastMessage = error.userFriendlyMessage
+      }
+    }
+  }
+  
+  private func isAllDataFilled() {
     let requiredFields: [String] = [
       addressLine1.trimWhitespacesAndNewlines(),
       city.trimWhitespacesAndNewlines(),
@@ -218,5 +320,25 @@ private extension RainShippingAddressViewModel {
     ]
     
     shouldEnableContinueButton = requiredFields.allSatisfy { !$0.isEmpty }
+  }
+}
+
+// MARK: - Types
+
+extension RainShippingAddressViewModel {
+  struct PlaceSuggestionModel: PlaceSuggestionEntity, Identifiable {
+    var id: String {
+      placeId
+    }
+    
+    var placeId: String
+    var title: String
+    
+    init(
+      entity: PlaceSuggestionEntity
+    ) {
+      self.placeId = entity.placeId
+      self.title = entity.title
+    }
   }
 }

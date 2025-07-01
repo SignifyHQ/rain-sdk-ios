@@ -62,4 +62,13 @@ public enum UsState: String, CaseIterable {
     case .WY: return "Wyoming"
     }
   }
+  
+  public init?(name: String) {
+    guard let state = UsState.allCases.first(where: { $0.name == name })
+    else {
+      return nil
+    }
+    
+    self = state
+  }
 }

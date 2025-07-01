@@ -57,6 +57,8 @@ let package = Package(
         .product(name: "AccountData", package: "LFData"),
         .product(name: "PortalDomain", package: "LFDomain"),
         .product(name: "PortalData", package: "LFData"),
+        .product(name: "PlacesDomain", package: "LFDomain"),
+        .product(name: "PlacesData", package: "LFData"),
         .product(name: "DevicesData", package: "LFData"),
         .product(name: "DevicesDomain", package: "LFDomain"),
         .product(name: "SmartyStreets", package: "smartystreets-ios-sdk"),

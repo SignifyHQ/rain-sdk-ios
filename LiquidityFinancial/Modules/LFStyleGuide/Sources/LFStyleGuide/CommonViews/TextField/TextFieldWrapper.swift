@@ -4,14 +4,17 @@ import LFUtilities
 public struct TextFieldWrapper<Content: View>: View {
   public init(
     errorValue: Binding<String?> = .constant(nil),
+    isLoading: Binding<Bool> = .constant(false),
     @ViewBuilder content: () -> Content
   ) {
     self.content = content()
     _errorValue = errorValue
+    _isLoading = isLoading
   }
   
   let content: Content
   @Binding var errorValue: String?
+  @Binding var isLoading: Bool
   
   public var body: some View {
     VStack(spacing: 16) {
@@ -21,6 +24,12 @@ public struct TextFieldWrapper<Content: View>: View {
         if errorValue != nil {
           GenImages.CommonImages.icError.swiftUIImage
             .foregroundColor(Colors.error.swiftUIColor)
+        }
+        
+        if isLoading {
+          Spacer()
+          
+          CircleIndicatorView()
         }
       }
       Divider()

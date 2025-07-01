@@ -89,4 +89,14 @@ enum Configs {
       ]
     }
   }
+  
+  enum GooglePlaces {
+    static func apiKey(for environment: NetworkEnvironment) -> String {
+      if environment == .productionLive {
+        return (try? LFConfiguration.value(for: "GOOGLE_PLACES_PROD_KEY")) ?? .empty
+      }
+      
+      return (try? LFConfiguration.value(for: "GOOGLE_PLACES_DEV_KEY")) ?? .empty
+    }
+  }
 }
