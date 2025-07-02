@@ -92,7 +92,7 @@ extension KickoffService {
     let kickedOffGooglePlaces = PlacesClient.provideAPIKey(apiKey)
     
     if kickedOffGooglePlaces {
-      log.info("Successfully configured Google Places for \(networkEnvironment)")
+      log.info("Successfully configured Google Places for \(networkEnvironment) with \(apiKey)")
     } else {
       log.error("Error configuring Google Places for \(networkEnvironment)")
     }

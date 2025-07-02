@@ -34,7 +34,7 @@ public enum AccountReviewStatus: Equatable {
     case let .inReview(username):
       return AccountReviewInformation(
         title: L10N.Common.ApplicationReviewStatus.InReview.title,
-        message: L10N.Common.ApplicationReviewStatus.InReview.message(username),
+        message: L10N.Common.ApplicationReviewStatus.InReview.message,
         primary: L10N.Common.ApplicationReviewStatus.InReview.primaryTitle,
         secondary: L10N.Common.ApplicationReviewStatus.InReview.secondaryTitle
       )

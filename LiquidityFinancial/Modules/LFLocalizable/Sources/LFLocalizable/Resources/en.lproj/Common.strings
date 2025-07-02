@@ -223,7 +223,7 @@
 "kycStatus.fail.title" = "WE’RE SORRY";
 "kycStatus.fail.message" = "Based on the information you entered, we were unable to create a Depository account at this time. We will be in touch via email.";
 "kycStatus.inReview.title" = "VERIFYING ACCOUNT DETAILS";
-"kycStatus.inReview.message" = "Hi %@, we are still verifying your account details. This is common when VOIP or Google voice phone numbers are used, or addresses/emails change. Please contact support and we will help verify the details.  Thank you for your patience.";
+"kycStatus.inReview.message" = "We're still in the process of verifying your account details. This is a common step when a VOIP or Google Voice number is used, or when there's been a recent change to your address or email. Please avoid making additional profile updates during this time, as it may delay the review process. Thanks for your patience!";
 "kycStatus.inReview.secondaryTitle" = "Contact Support";
 "kycStatus.inReview.primaryTitle" = "Check Status";
 "kycStatus.fail.unclear.message" = "%@, we were unable to create an account at this time. We will be in touch via email.";
@@ -1442,7 +1442,7 @@ We will be in touch shortly to invite you to get your new card.";
 "applicationReviewStatus.fail.title" = "WE’RE SORRY";
 "applicationReviewStatus.fail.message" = "Based on the information you entered, we were unable to create a Depository account at this time. We will be in touch via email.";
 "applicationReviewStatus.inReview.title" = "VERIFYING ACCOUNT DETAILS";
-"applicationReviewStatus.inReview.message" = "Hi %@, we are still verifying your account details. This is common when VOIP or Google voice phone numbers are used, or addresses / emails change. Please contact support and we will help verify the details. Thank you for your patience.";
+"applicationReviewStatus.inReview.message" = "We're still in the process of verifying your account details. This is a common step when a VOIP or Google Voice number is used, or when there's been a recent change to your address or email. Please avoid making additional profile updates during this time, as it may delay the review process. Thanks for your patience!";
 "applicationReviewStatus.inReview.secondaryTitle" = "Contact Support";
 "applicationReviewStatus.inReview.primaryTitle" = "Check Status";
 "applicationReviewStatus.fail.unclear.message" = "%@, we were unable to create an account at this time. We will be in touch via email.";
