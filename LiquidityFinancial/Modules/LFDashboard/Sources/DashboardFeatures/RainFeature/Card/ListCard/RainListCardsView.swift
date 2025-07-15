@@ -264,13 +264,14 @@ private extension RainListCardsView {
           .foregroundColor(Colors.label.swiftUIColor.opacity(0.75))
       }
       VStack(spacing: 16) {
-        if viewModel.currentCard.cardType != .physical {
+        if viewModel.currentCard.cardType != .physical && viewModel.currentCard.cardStatus == .active {
           row(
             title: L10N.Common.ListCard.ShowCardNumber.title.localizedString,
             subtitle: nil,
             isSwitchOn: $viewModel.isShowCardNumber,
             onChange: nil
           )
+          
           GenImages.CommonImages.dash.swiftUIImage
             .foregroundColor(Colors.label.swiftUIColor)
         }
