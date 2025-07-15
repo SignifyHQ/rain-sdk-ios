@@ -4,6 +4,7 @@ import LFLocalizable
 import LFUtilities
 import LFStyleGuide
 import Services
+import PassKit
 
 public struct RainListCardsView: View {
   @Environment(\.dismiss) private var dismiss
@@ -145,6 +146,31 @@ private extension RainListCardsView {
   var cardDetails: some View {
     VStack {
       card
+
+      if let configuration = viewModel.requestConfiguration,
+         viewModel.shouldShowAddToWalletButton {
+        AddPassToWalletButton(configuration) { response in
+          let request = try! await viewModel.completeTokenization(
+            certificates: response.certificates,
+            nonce: response.nonce,
+            nonceSignature: response.nonceSignature
+          )!
+          
+          return request
+        } onCompletion: { result in
+          switch result {
+          case .success(let response):
+            print("SUCCESS", response)
+          case .failure(let error):
+            print("ERROR", error)
+          }
+        }
+        .frame(
+          width: Screen.main.bounds.width - 60,
+          height: 44
+        )
+        .padding(.bottom)
+      }
       
       rows
         .padding(.horizontal, 30)
@@ -426,5 +452,17 @@ private extension RainListCardsView {
         }
       )
     )
+  }
+}
+
+struct AddPassButton: UIViewRepresentable {
+  func makeUIView(context: Context) -> PKAddPassButton {
+    let button = PKAddPassButton(addPassButtonStyle: .blackOutline)
+    
+    return button
+  }
+  
+  func updateUIView(_ uiView: PKAddPassButton, context: Context) {
+    // No dynamic updates needed
   }
 }

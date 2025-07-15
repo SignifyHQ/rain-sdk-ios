@@ -467,6 +467,9 @@
 		A9F99B602B67BF440099DB85 /* CardsTabPreview.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9F99B5F2B67BF440099DB85 /* CardsTabPreview.swift */; };
 		E22B07E22CC7F11D0016E8B1 /* GoogleService-Info-Dev.plist in Resources */ = {isa = PBXBuildFile; fileRef = E22B07E12CC7F11D0016E8B1 /* GoogleService-Info-Dev.plist */; };
 		E22B07E42CC7F2710016E8B1 /* GoogleService-Info-Prod.plist in Resources */ = {isa = PBXBuildFile; fileRef = E22B07E32CC7F2710016E8B1 /* GoogleService-Info-Prod.plist */; };
+		E2B0B3022E21235F00F1B4D7 /* mea_config in Resources */ = {isa = PBXBuildFile; fileRef = E2B0B3012E21235F00F1B4D7 /* mea_config */; };
+		E2D0951D2E1F8A9D00197A8D /* MeaPushProvisioning.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = E2D0951B2E1F8A8900197A8D /* MeaPushProvisioning.xcframework */; };
+		E2D0951E2E1F8A9D00197A8D /* MeaPushProvisioning.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = E2D0951B2E1F8A8900197A8D /* MeaPushProvisioning.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		E2D7E8FB2D5DC7EB00C6540B /* collateralJsonABI.json in Resources */ = {isa = PBXBuildFile; fileRef = E2D7E8FA2D5DC7EB00C6540B /* collateralJsonABI.json */; };
 		F6705FF22D70D25B00FEDAC4 /* CoreNfcBridge.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = F6705FEC2D70D25700FEDAC4 /* CoreNfcBridge.xcframework */; };
 		F6705FF32D70D25B00FEDAC4 /* CoreNfcBridge.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = F6705FEC2D70D25700FEDAC4 /* CoreNfcBridge.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
@@ -534,6 +537,7 @@
 			dstPath = "";
 			dstSubfolder = Frameworks;
 			files = (
+				E2D0951E2E1F8A9D00197A8D /* MeaPushProvisioning.xcframework in Embed Frameworks */,
 				F67060012D70D2C700FEDAC4 /* RxSwift.xcframework in Embed Frameworks */,
 				F6705FF52D70D25D00FEDAC4 /* CryptoSwift.xcframework in Embed Frameworks */,
 				F6705FFF2D70D2C600FEDAC4 /* RxCocoa.xcframework in Embed Frameworks */,
@@ -852,6 +856,8 @@
 		A9F99B5F2B67BF440099DB85 /* CardsTabPreview.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardsTabPreview.swift; sourceTree = "<group>"; };
 		E22B07E12CC7F11D0016E8B1 /* GoogleService-Info-Dev.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info-Dev.plist"; sourceTree = "<group>"; };
 		E22B07E32CC7F2710016E8B1 /* GoogleService-Info-Prod.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info-Prod.plist"; sourceTree = "<group>"; };
+		E2B0B3012E21235F00F1B4D7 /* mea_config */ = {isa = PBXFileReference; lastKnownFileType = file; path = mea_config; sourceTree = "<group>"; };
+		E2D0951B2E1F8A8900197A8D /* MeaPushProvisioning.xcframework */ = {isa = PBXFileReference; expectedSignature = "AppleDeveloperProgram:ZT5DJ5429L:MeaWallet AS"; lastKnownFileType = wrapper.xcframework; path = MeaPushProvisioning.xcframework; sourceTree = "<group>"; };
 		E2D7E8FA2D5DC7EB00C6540B /* collateralJsonABI.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = collateralJsonABI.json; sourceTree = "<group>"; };
 		F6705FEA2D70D24900FEDAC4 /* FidesmoCore.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = FidesmoCore.xcframework; path = Frameworks/FidesmoCore.xcframework; sourceTree = "<group>"; };
 		F6705FEC2D70D25700FEDAC4 /* CoreNfcBridge.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = CoreNfcBridge.xcframework; path = Frameworks/CoreNfcBridge.xcframework; sourceTree = "<group>"; };
@@ -944,6 +950,7 @@
 				A94F71FF2A6266D0002ADB34 /* AuthorizationManager in Frameworks */,
 				A963D3FB2A67081D006B9A54 /* NetSpendData in Frameworks */,
 				06154BA42B21C73500CABABB /* BiometricsManager in Frameworks */,
+				E2D0951D2E1F8A9D00197A8D /* MeaPushProvisioning.xcframework in Frameworks */,
 				F6705FFE2D70D2C600FEDAC4 /* RxCocoa.xcframework in Frameworks */,
 				A980DF772A5FA26E000B3C09 /* LFUtilities in Frameworks */,
 				06D40C012A62AE3700EADB75 /* iPhoneNumberField in Frameworks */,
@@ -1388,6 +1395,7 @@
 		A953545B2A5DD7F4008B0FAB /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				E2D0951B2E1F8A8900197A8D /* MeaPushProvisioning.xcframework */,
 				F67060082D70D88A00FEDAC4 /* RxBlocking.xcframework */,
 				F67060092D70D88A00FEDAC4 /* RxRelay.xcframework */,
 				F670600A2D70D88A00FEDAC4 /* RxTest.xcframework */,
@@ -1633,6 +1641,7 @@
 			isa = PBXGroup;
 			children = (
 				061FFD612BFC3F9800B21165 /* contractJsonABI.json */,
+				E2B0B3012E21235F00F1B4D7 /* mea_config */,
 				E2D7E8FA2D5DC7EB00C6540B /* collateralJsonABI.json */,
 				A9BC80392A774D2F00E4A1A0 /* Fonts */,
 				A95D418F2A6E31C60095596B /* Avalanche.entitlements */,
@@ -2667,6 +2676,7 @@
 				743DA8232B43E1FC000F5AD8 /* PawsCardConfig.xcconfig in Resources */,
 				A9BC80482A774D4F00E4A1A0 /* Inter-Bold.ttf in Resources */,
 				061FFD622BFC3F9800B21165 /* contractJsonABI.json in Resources */,
+				E2B0B3022E21235F00F1B4D7 /* mea_config in Resources */,
 				E22B07E42CC7F2710016E8B1 /* GoogleService-Info-Prod.plist in Resources */,
 				7416A2102B7F2E0A00062824 /* AccessibilityIdentifier.strings in Resources */,
 				A9BC80472A774D4F00E4A1A0 /* Inter-Medium.ttf in Resources */,
@@ -2833,6 +2843,9 @@
 				"",
 				"",
 				"",
+				"",
+				"",
+				"",
 			);
 		};
 		A99D2F652A9A56CF00947773 /* Swiftlint (Debug Only) */ = {
@@ -2861,6 +2874,9 @@
 				"",
 				"",
 				"",
+				"",
+				"",
+				"",
 			);
 		};
 		A9B1DAE42A5FC60C003F3C3C /* Swiftlint (Debug Only) */ = {
@@ -2878,6 +2894,9 @@
 				"else",
 				"  echo \"warning: SwiftLint not installed, download from https://github.com/realm/SwiftLint\"",
 				"fi",
+				"",
+				"",
+				"",
 				"",
 				"",
 				"",
@@ -2918,6 +2937,9 @@
 				"",
 				"",
 				"",
+				"",
+				"",
+				"",
 			);
 		};
 		A9B448EC2A8389B90029944C /* Swiftlint (Debug Only) */ = {
@@ -2935,6 +2957,9 @@
 				"else",
 				"  echo \"warning: SwiftLint not installed, download from https://github.com/realm/SwiftLint\"",
 				"fi",
+				"",
+				"",
+				"",
 				"",
 				"",
 				"",
@@ -2964,6 +2989,9 @@
 				"else",
 				"  echo \"warning: SwiftLint not installed, download from https://github.com/realm/SwiftLint\"",
 				"fi",
+				"",
+				"",
+				"",
 				"",
 				"",
 				"",
@@ -3520,7 +3548,7 @@
 				CODE_SIGN_ENTITLEMENTS = "${SRCROOT}/LiquidityFinancial/Avalanche/Resources/Avalanche.entitlements";
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 2;
+				CURRENT_PROJECT_VERSION = 4;
 				DEVELOPMENT_ASSET_PATHS = "";
 				DEVELOPMENT_TEAM = 2J3Q98FQPS;
 				ENABLE_PREVIEWS = YES;
@@ -3540,7 +3568,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.4.5;
+				MARKETING_VERSION = 1.5.0;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.rain-liquidity.avalanche";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -3562,7 +3590,7 @@
 				CODE_SIGN_ENTITLEMENTS = "${SRCROOT}/LiquidityFinancial/Avalanche/Resources/Avalanche.entitlements";
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 2;
+				CURRENT_PROJECT_VERSION = 4;
 				DEVELOPMENT_ASSET_PATHS = "";
 				DEVELOPMENT_TEAM = 2J3Q98FQPS;
 				ENABLE_PREVIEWS = YES;
@@ -3582,7 +3610,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.4.5;
+				MARKETING_VERSION = 1.5.0;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.rain-liquidity.avalanche";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";

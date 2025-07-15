@@ -77,7 +77,7 @@ public final class Screen: ObservableObject {
   }
 
   /// Returns the screen object representing the device’s screen.
-  static let main = Screen()
+  static public let main = Screen()
 
   private var cancellable: AnyCancellable?
 }
