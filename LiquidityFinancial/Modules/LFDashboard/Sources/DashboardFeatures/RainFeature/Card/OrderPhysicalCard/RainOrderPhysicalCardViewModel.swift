@@ -31,9 +31,13 @@ final class RainOrderPhysicalCardViewModel: ObservableObject {
   
   let onOrderSuccess: ((CardModel) -> Void)?
   
+  var walletAddress: String {
+    accountDataManager.collateralContract?.address ?? .empty
+  }
+  
   init(onOrderSuccess: ((CardModel) -> Void)?) {
     self.onOrderSuccess = onOrderSuccess
-    getUser(from: accountDataManager.userInfomationData)
+    //getUser(from: accountDataManager.userInfomationData)
   }
 }
 

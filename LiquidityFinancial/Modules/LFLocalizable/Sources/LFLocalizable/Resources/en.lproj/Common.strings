@@ -412,12 +412,17 @@
 
 // Order PhysicalCard
 "orderPhysicalCard.physicalCard.title" = "Order Physical Card";
+"orderPhysicalCard.physicalCard.subtitle" = "One card per account • Free shipping\nArrives in 7-10 business days";
 "orderPhysicalCard.fees.title" = "Fees";
 "orderPhysicalCard.fees.free.title" = "Free";
+"orderPhysicalCard.walletAddress.title" = "Wallet Address";
 "orderPhysicalCard.address.title" = "Shipping address:";
 "orderPhysicalCard.address.subtitle" = "Address";
+"orderPhysicalCard.addAddress.buttonTitle"  = "Add Shipping Address";
 "orderPhysicalCard.editAddress.buttonTitle" = "Edit address";
 "orderPhysicalCard.order.buttonTitle" = "Order Physical Card";
+"orderPhysicalCard.delivery.title" = "Delivery";
+"orderPhysicalCard.delivery.subtitle" = "7-10 business days";
 "orderPhysicalCard.orderedSuccess.title" = "PHYSICAL CARD ORDERED";
 "orderPhysicalCard.orderedSuccess.message" = "Thank you, your physical card was ordered. It will arrive in 7-14 business days. After it arrives, please come back to activate your card.";
 

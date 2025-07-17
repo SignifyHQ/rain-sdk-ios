@@ -47,11 +47,9 @@ struct RainShippingAddressView: View {
               Text(L10N.Common.ShippingAddress.Screen.title(LFUtilities.appName.uppercased()))
                 .foregroundColor(Colors.label.swiftUIColor)
                 .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.main.value))
-                .padding(.vertical, 16)
+                .padding(.top, 16)
               
-              if viewModel.selectedCountry == .US {
-                blockedStateInfoView
-              }
+              shippingInfoView
               
               textFieldView
               
@@ -186,7 +184,7 @@ private extension RainShippingAddressView {
   var confirmButton: some View {
     FullSizeButton(
       title: L10N.Common.ShippingAddress.Confirm.buttonTitle,
-      isDisable: !viewModel.shouldEnableContinueButton
+      isDisable: !viewModel.isValidAddressEntered
     ) {
       keyboardFocus = nil
       viewModel.saveAddress()
@@ -241,13 +239,20 @@ private extension RainShippingAddressView {
     }
   }
   
-  var blockedStateInfoView: some View {
+  var shippingInfoView: some View {
     HStack(
       alignment: .top
     ) {
-      GenImages.CommonImages.icInfo.swiftUIImage
+      GenImages.CommonImages.icShipping.swiftUIImage
       
-      Text(L10N.Common.YourAddress.Waitlist.Disclosure.title)
+      Text(L10N.Common.OrderPhysicalCard.Delivery.title)
+        .foregroundColor(Colors.label.swiftUIColor)
+        .font(Fonts.semiBold.swiftUIFont(size: Constants.FontSize.small.value))
+        .multilineTextAlignment(.leading)
+      
+      Spacer()
+      
+      Text(L10N.Common.OrderPhysicalCard.Delivery.subtitle)
         .foregroundColor(Colors.label.swiftUIColor)
         .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.small.value))
         .multilineTextAlignment(.leading)
@@ -255,7 +260,7 @@ private extension RainShippingAddressView {
     .padding(12)
     .background(
       RoundedRectangle(cornerRadius: 8)
-        .fill(Colors.buttons.swiftUIColor)
+        .fill(Colors.secondaryBackground.swiftUIColor)
     )
     .padding(.bottom, 16)
   }
@@ -264,7 +269,7 @@ private extension RainShippingAddressView {
     VStack(alignment: .leading, spacing: 20) {
       HStack {
         textFieldInputView(
-          title: L10N.Common.addressLine1Title,
+          title: L10N.Common.OrderPhysicalCard.Address.subtitle,//L10N.Common.addressLine1Title,
           placeholder: L10N.Common.enterAddress,
           value: $viewModel.addressLine1,
           isLoading: $viewModel.isAddressComponentsLoading,
@@ -280,104 +285,113 @@ private extension RainShippingAddressView {
         addressDropdownFrame = geometry.frame(in: .global)
       }
       
-      textFieldInputView(
-        title: L10N.Common.addressLine2Title,
-        placeholder: L10N.Common.enterAddress,
-        value: $viewModel.addressLine2,
-        focus: .address2,
-        nextFocus: .city
-      )
+//      textFieldInputView(
+//        title: L10N.Common.addressLine2Title,
+//        placeholder: L10N.Common.enterAddress,
+//        value: $viewModel.addressLine2,
+//        focus: .address2,
+//        nextFocus: .city
+//      )
       
-      textFieldInputView(
-        title: L10N.Common.city,
-        placeholder: L10N.Common.enterCity,
-        value: $viewModel.city,
-        focus: .city,
-        nextFocus: .country
-      )
-      
-      ZStack {
+      if viewModel.isValidAddressEntered {
         textFieldInputView(
-          title: L10N.Common.country,
-          placeholder: L10N.Common.enterCountry,
-          value: $viewModel.selectedCountryTitle,
-          focus: .country,
-          nextFocus: .state
+          title: L10N.Common.city,
+          placeholder: L10N.Common.enterCity,
+          value: $viewModel.city,
+          focus: .city,
+          nextFocus: .country
         )
+        .opacity(0.3)
         .disabled(true)
         
-        HStack {
-          Rectangle()
-            .foregroundStyle(
-              Color.clear
-            )
-            .contentShape(Rectangle())
-            .onTapGesture {
-              keyboardFocus = nil
-              viewModel.isShowingStateSelection = false
-              viewModel.isShowingCountrySelection.toggle()
-            }
-          
-          GenImages.CommonImages.icArrowDown.swiftUIImage
-            .tint(Colors.label.swiftUIColor)
-            .rotationEffect(
-              .degrees(viewModel.isShowingCountrySelection ? 180 : 0)
-            )
-        }
-      }
-      .readGeometry { geometry in
-        countryDropdownFrame = geometry.frame(in: .global)
-      }
-      
-      HStack {
         ZStack {
           textFieldInputView(
-            title: L10N.Common.state,
-            placeholder: L10N.Common.enterState,
-            value: $viewModel.state,
-            restriction: .alphabets,
-            focus: .state,
-            nextFocus: .zip
+            title: L10N.Common.country,
+            placeholder: L10N.Common.enterCountry,
+            value: $viewModel.selectedCountryTitle,
+            focus: .country,
+            nextFocus: .state
           )
-          .disabled(viewModel.shouldUseStateDropdown)
+          .opacity(0.3)
+          .disabled(true)
           
-          if viewModel.shouldUseStateDropdown {
-            HStack {
-              Rectangle()
-                .foregroundStyle(
-                  Color.clear
-                )
-                .contentShape(Rectangle())
-                .onTapGesture {
-                  keyboardFocus = nil
-                  viewModel.isShowingCountrySelection = false
-                  viewModel.isShowingStateSelection.toggle()
-                }
-              
-              GenImages.CommonImages.icArrowDown.swiftUIImage
-                .tint(Colors.label.swiftUIColor)
-                .rotationEffect(
-                  .degrees(viewModel.isShowingStateSelection ? 180 : 0)
-                )
-            }
-          }
+          //        HStack {
+          //          Rectangle()
+          //            .foregroundStyle(
+          //              Color.clear
+          //            )
+          //            .contentShape(Rectangle())
+          //            .onTapGesture {
+          //              keyboardFocus = nil
+          //              viewModel.isShowingStateSelection = false
+          //              viewModel.isShowingCountrySelection.toggle()
+          //            }
+          //
+          //          GenImages.CommonImages.icArrowDown.swiftUIImage
+          //            .tint(Colors.label.swiftUIColor)
+          //            .rotationEffect(
+          //              .degrees(viewModel.isShowingCountrySelection ? 180 : 0)
+          //            )
+          //        }
         }
         .readGeometry { geometry in
-          stateDropdownFrame = geometry.frame(in: .global)
+          countryDropdownFrame = geometry.frame(in: .global)
         }
         
-        Spacer(minLength: 25)
-        
-        textFieldInputView(
-          title: L10N.Common.zipcode,
-          placeholder: L10N.Common.enterZipcode,
-          value: $viewModel.zipCode,
-          limit: 11,
-          keyboardType: .default,
-          focus: .zip
-        )
+        HStack {
+          ZStack {
+            textFieldInputView(
+              title: L10N.Common.state,
+              placeholder: L10N.Common.enterState,
+              value: $viewModel.state,
+              restriction: .alphabets,
+              focus: .state,
+              nextFocus: .zip
+            )
+            .opacity(0.3)
+            .disabled(true)
+            //.disabled(viewModel.shouldUseStateDropdown)
+            
+            //          if viewModel.shouldUseStateDropdown {
+            //            HStack {
+            //              Rectangle()
+            //                .foregroundStyle(
+            //                  Color.clear
+            //                )
+            //                .contentShape(Rectangle())
+            //                .onTapGesture {
+            //                  keyboardFocus = nil
+            //                  viewModel.isShowingCountrySelection = false
+            //                  viewModel.isShowingStateSelection.toggle()
+            //                }
+            //
+            //              GenImages.CommonImages.icArrowDown.swiftUIImage
+            //                .tint(Colors.label.swiftUIColor)
+            //                .rotationEffect(
+            //                  .degrees(viewModel.isShowingStateSelection ? 180 : 0)
+            //                )
+            //            }
+            //          }
+          }
+          .readGeometry { geometry in
+            stateDropdownFrame = geometry.frame(in: .global)
+          }
+          
+          Spacer(minLength: 25)
+          
+          textFieldInputView(
+            title: L10N.Common.zipcode,
+            placeholder: L10N.Common.enterZipcode,
+            value: $viewModel.zipCode,
+            limit: 11,
+            keyboardType: .default,
+            focus: .zip
+          )
+          .opacity(0.3)
+          .disabled(true)
+        }
       }
-    }
+      }
   }
   
   func addressDropdownView(
