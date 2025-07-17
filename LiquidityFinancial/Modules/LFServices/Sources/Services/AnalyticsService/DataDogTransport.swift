@@ -43,6 +43,7 @@ class DataDogTransport: AnalyticsTransportProtocol {
         telemetrySampleRate: 50
       )
     )
+    
     RUMMonitor.shared().debug = false
     let success = log.addDestination(DataDogLogDestination())
     log.info(success)

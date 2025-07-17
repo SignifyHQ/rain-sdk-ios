@@ -24,6 +24,7 @@ final class HomeViewModel: ObservableObject {
 
   @LazyInjected(\.pushNotificationService) var pushNotificationService
   
+  @LazyInjected(\.analyticsService) var analyticsService
   @LazyInjected(\.customerSupportService) var customerSupportService
   
   @Published var isShowGearButton: Bool = false
@@ -66,6 +67,7 @@ extension HomeViewModel {
     if let userID = accountDataManager.userInfomationData.userID, userID.isEmpty == false {
       return
     }
+    
     Task {
       do {
         let user = try await accountRepository.getUser()
@@ -73,12 +75,31 @@ extension HomeViewModel {
         if let firstName = user.firstName, let lastName = user.lastName {
           accountDataManager.update(fullName: firstName + " " + lastName)
         }
+        
+        trackUserInformation(user: user)
       } catch {
         log.error(error.userFriendlyMessage)
       }
     }
   }
-
+  
+  func trackUserInformation(user: LFUser) {
+    guard let userModel = user as? APIUser,
+          let data = try? JSONEncoder().encode(userModel) else {
+      return
+    }
+    
+    let dictionary = (
+      try? JSONSerialization.jsonObject(with: data, options: .fragmentsAllowed)
+    ).flatMap { $0 as? [String: Any] }
+    
+    var values = dictionary ?? [:]
+    values["birthday"] = LiquidityDateFormatter.simpleDate.parseToDate(from: userModel.dateOfBirth ?? "")
+    values["avatar"] = userModel.profileImage ?? ""
+    values["idNumber"] = "REDACTED"
+    
+    analyticsService.set(params: values)
+  }
 }
 
 // MARK: API init data tab content

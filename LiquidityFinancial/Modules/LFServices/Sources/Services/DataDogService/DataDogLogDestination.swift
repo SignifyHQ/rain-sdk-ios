@@ -28,17 +28,17 @@ class DataDogLogDestination: BaseDestination {
   override func send(_ level: SwiftyBeaver.Level, msg: String, thread: String, file: String, function: String, line: Int, context: Any? = nil) -> String? {
     switch level {
     case .verbose:
-      logger.notice("[FILE:\(file)]-[MESSAGE:\(msg)] ", attributes: ["[FILE]": file, "[FUNCTION]": function, "[LINE]": line])
+      logger.notice(msg, attributes: ["[FILE]": file, "[FUNCTION]": function, "[LINE]": line])
     case .debug:
-      logger.debug("[FILE:\(file)]-[MESSAGE:\(msg)] ", attributes: ["[FILE]": file, "[FUNCTION]": function, "[LINE]": line])
+      logger.debug(msg, attributes: ["[FILE]": file, "[FUNCTION]": function, "[LINE]": line])
     case .info:
-      logger.info("[FILE:\(file)]-[MESSAGE:\(msg)] ", attributes: ["[FILE]": file, "[FUNCTION]": function, "[LINE]": line])
+      logger.info(msg, attributes: ["[FILE]": file, "[FUNCTION]": function, "[LINE]": line])
     case .warning:
-      logger.warn("[FILE:\(file)]-[MESSAGE:\(msg)] ", attributes: ["[FILE]": file, "[FUNCTION]": function, "[LINE]": line])
+      logger.warn(msg, attributes: ["[FILE]": file, "[FUNCTION]": function, "[LINE]": line])
     case .error:
-      logger.error("[FILE:\(file)]-[MESSAGE:\(msg)] ", attributes: ["[FILE]": file, "[FUNCTION]": function, "[LINE]": line])
+      logger.error(msg, attributes: ["[FILE]": file, "[FUNCTION]": function, "[LINE]": line])
     default:
-      logger.critical("[FILE:\(file)]-[MESSAGE:\(msg)] ", attributes: ["[FILE]": file, "[FUNCTION]": function, "[LINE]": line])
+      logger.critical(msg, attributes: ["[FILE]": file, "[FUNCTION]": function, "[LINE]": line])
     }
     return super.send(level, msg: msg, thread: thread, file: file, function: function, line: line)
   }

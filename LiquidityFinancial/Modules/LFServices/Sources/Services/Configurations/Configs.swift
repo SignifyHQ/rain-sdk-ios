@@ -41,11 +41,11 @@ enum Configs {
   
   enum DataDog {
     static var appID: String {
-      "4af1360f-bb0f-456f-b267-b34a63c4b9b4"
+      "8e99898c-eda0-48b1-bf3e-71c5ce99e5df"
     }
     
     static var clientToken: String {
-      "pub691559048fc10b3b4d3096efed1e69be"
+      "pub8fede038246db4623f73caba9e9e3873"
     }
   }
   
