@@ -48,20 +48,16 @@ public final class RainListCardsViewModel: ObservableObject {
   @Published var isActivePhysical: Bool = false
   @Published var isHasPhysicalCard: Bool = false
   @Published var isShowListCardDropdown: Bool = false
-  @Published var shouldShowAddToWalletButton: Bool = false
+  @Published var shouldShowAddToWalletButton: [String: Bool] = [:]
   @Published var toastMessage: String?
   
   @Published var cardsList: [CardModel] = []
-  @Published var cardMetaDatas: [CardMetaData?] = [] {
-    didSet {
-      loadTokenizationResponseData()
-    }
-  }
-  @Published var currentCard: CardModel = .virtualDefault {
-    didSet {
-      loadTokenizationResponseData()
-    }
-  }
+  @Published var currentCard: CardModel = .virtualDefault
+//  {
+//    didSet {
+//      loadTokenizationResponseData(card: currentCard)
+//    }
+//  }
   @Published var navigation: Navigation?
   @Published var sheet: Sheet?
   @Published var fullScreen: FullScreen?
@@ -70,8 +66,8 @@ public final class RainListCardsViewModel: ObservableObject {
   private var isSwitchCard = true
   private var subscribers: Set<AnyCancellable> = []
   
-  var tokenizationResponseData: MppInitializeOemTokenizationResponseData?
-  var requestConfiguration: PKAddPaymentPassRequestConfiguration?
+  var tokenizationResponseData: [String: MppInitializeOemTokenizationResponseData?] = [:]
+  var requestConfiguration: [String: PKAddPaymentPassRequestConfiguration?] = [:]
   
   var activeCardCount: Int {
     cardsList.filter{ $0.cardStatus != .closed }.count
@@ -153,15 +149,20 @@ public extension RainListCardsViewModel {
       do {
         let cards = try await getCardsUseCase.execute()
         
-        cardsList = cards.map { card in
-          mapToCardModel(card: card)
-        }
+        cardsList = cards
+          .map { card in
+            mapToCardModel(card: card)
+          }
         
-        isHasPhysicalCard = cardsList.contains { card in
-          card.cardType == .physical
-        }
+        isHasPhysicalCard = cardsList
+          .contains { card in
+            card.cardType == .physical
+          }
         
-        cardsList = cardsList.filter({ $0.cardStatus != .closed })
+        cardsList = cardsList
+          .filter {
+            $0.cardStatus != .closed
+          }
         
         currentCard = cardsList.first ?? .virtualDefault
         isActivePhysical = currentCard.cardStatus == .active
@@ -170,15 +171,16 @@ public extension RainListCardsViewModel {
         if cardsList.isEmpty {
           NotificationCenter.default.post(name: .noLinkedCards, object: nil)
         } else {
-          cardMetaDatas = Array(repeating: nil, count: cardsList.count)
-          cardsList.enumerated().forEach { index, card in
-            guard card.cardStatus != .closed
-            else {
-              return
+          cardsList
+            .enumerated()
+            .forEach { index, card in
+              guard card.cardStatus != .closed
+              else {
+                return
+              }
+              
+              fetchSecretCardInformation(cardId: card.id)
             }
-            
-            fetchSecretCardInformation(card: card, index: index)
-          }
         }
       } catch {
         isInit = false
@@ -188,14 +190,15 @@ public extension RainListCardsViewModel {
     }
   }
   
-  private func fetchSecretCardInformation(card: CardModel, index: Int) {
+  private func fetchSecretCardInformation(
+    cardId: String
+  ) {
     Task {
       defer { isInit = false }
       
-      guard card.cardStatus == .active
+      guard let card = cardsList.first(where: { $0.id == cardId }),
+            card.cardStatus == .active
       else {
-        cardMetaDatas[index] = nil
-        
         return
       }
       
@@ -219,20 +222,22 @@ public extension RainListCardsViewModel {
           timeBasedSecret: secretInformation.timeBasedSecret
         )
         
-        cardMetaDatas[index] = cardMetaData
+        if let index = cardsList.firstIndex(of: card) {
+          cardsList[index].metadata = cardMetaData
+          loadTokenizationResponseData(cardId: cardId)
+        }
       } catch {
-        cardMetaDatas[index] = nil
         log.error(error.userFriendlyMessage)
         toastMessage = error.userFriendlyMessage
       }
     }
   }
   
-  func loadTokenizationResponseData(
+  private func loadTokenizationResponseData(
+    cardId: String
   ) {
-    guard let index = cardsList.firstIndex(of: currentCard),
-          index < cardMetaDatas.count,
-          let cardMetadata = cardMetaDatas[index]
+    guard let card = cardsList.first(where: { $0.id == cardId }),
+          let cardMetadata = card.metadata
     else {
       return
     }
@@ -247,6 +252,9 @@ public extension RainListCardsViewModel {
     let isPassLibraryAvailable = PKPassLibrary.isPassLibraryAvailable()
     let canAddPaymentPass = PKAddPaymentPassViewController.canAddPaymentPass()
     
+    print("START TOKENIZATION: IS PASS LIBRARY AVAILABLE", isPassLibraryAvailable)
+    print("START TOKENIZATION: CAN ADD PAYMENT PASS", canAddPaymentPass)
+    
     if (isPassLibraryAvailable && canAddPaymentPass) {
       MeaPushProvisioning.initializeOemTokenization(mppCardParameters) { (responseData, error) in
         
@@ -256,8 +264,10 @@ public extension RainListCardsViewModel {
         if let responseData,
            responseData.isValid() {
           print("START TOKENIZATION: GOT RESPONSE DATA")
-          var canAddPaymentPassWithPAI = true
-          if let primaryAccountIdentifier = responseData.primaryAccountIdentifier, !primaryAccountIdentifier.isEmpty {
+          var canAddPaymentPassWithPAI = false
+          
+          if let primaryAccountIdentifier = responseData.primaryAccountIdentifier,
+             !primaryAccountIdentifier.isEmpty {
             
             if #available(iOS 13.4, *) {
               canAddPaymentPassWithPAI = MeaPushProvisioning.canAddSecureElementPass(withPrimaryAccountIdentifier: primaryAccountIdentifier)
@@ -269,21 +279,22 @@ public extension RainListCardsViewModel {
           if (canAddPaymentPassWithPAI) {
             print("Got Tokenization Response for card:", cardMetadata.pan)
             
-            self.tokenizationResponseData = responseData
+            self.tokenizationResponseData[card.id] = responseData
             
-            self.requestConfiguration = self.tokenizationResponseData?.addPaymentPassRequestConfiguration
-            self.requestConfiguration?.cardholderName = self.cardholderName
+            self.requestConfiguration[card.id] = self.tokenizationResponseData[card.id]??.addPaymentPassRequestConfiguration
+            self.requestConfiguration[card.id]??.cardholderName = self.cardholderName
             
-            print("Payment pass request configuration description:", self.requestConfiguration?.localizedDescription ?? "nil")
-            print("Payment pass request configuration cardholder name:", self.requestConfiguration?.cardholderName ?? "nil")
-            print("Payment pass request configuration payment network:", self.requestConfiguration?.paymentNetwork ?? "nil")
-            print("Payment pass request configuration primary account identifier:", self.requestConfiguration?.primaryAccountIdentifier ?? "nil")
-            print("Payment pass request configuration primary account suffix:", self.requestConfiguration?.primaryAccountSuffix ?? "nil")
-            print("Payment pass request configuration card details:", self.requestConfiguration?.cardDetails ?? "nil")
+            print("Payment pass request configuration description:", self.requestConfiguration[card.id]??.localizedDescription ?? "nil")
+            print("Payment pass request configuration cardholder name:", self.requestConfiguration[card.id]??.cardholderName ?? "nil")
+            print("Payment pass request configuration payment network:", self.requestConfiguration[card.id]??.paymentNetwork ?? "nil")
+            print("Payment pass request configuration primary account identifier:", self.requestConfiguration[card.id]??.primaryAccountIdentifier ?? "nil")
+            print("Payment pass request configuration primary account suffix:", self.requestConfiguration[card.id]??.primaryAccountSuffix ?? "nil")
+            print("Payment pass request configuration card details:", self.requestConfiguration[card.id]??.cardDetails ?? "nil")
             
-            self.shouldShowAddToWalletButton = true
+            self.shouldShowAddToWalletButton[cardId] = true
           } else {
-            self.shouldShowAddToWalletButton = false
+            print("CANNOT ADD CARD")
+            self.shouldShowAddToWalletButton[cardId] = false
           }
         }
       }
@@ -295,13 +306,14 @@ public extension RainListCardsViewModel {
     nonce: Data,
     nonceSignature: Data
   ) async throws -> PKAddPaymentPassRequest? {
-    guard let tokenizationResponseData = tokenizationResponseData
+    guard let tokenizationResponseData = tokenizationResponseData[currentCard.id],
+            let tokenizationReceipt = tokenizationResponseData?.tokenizationReceipt
     else {
       return nil
     }
     
     let tokenizationData = MppCompleteOemTokenizationData(
-      tokenizationReceipt: tokenizationResponseData.tokenizationReceipt,
+      tokenizationReceipt: tokenizationReceipt,
       certificates: certificates,
       nonce: nonce,
       nonceSignature: nonceSignature
@@ -424,7 +436,6 @@ private extension RainListCardsViewModel {
   
   func orderPhysicalSuccess(card: CardModel) {
     isHasPhysicalCard = true
-    cardMetaDatas.append(nil)
     cardsList.insert(card, at: 0)
     currentCard = card
   }
@@ -443,6 +454,7 @@ private extension RainListCardsViewModel {
   
   func updateCardStatus(status: CardStatus, id: String) {
     isLoading = false
+    
     guard id == currentCard.id, let index = cardsList.firstIndex(where: { $0.id == id }) else {
       return
     }
@@ -457,8 +469,9 @@ private extension RainListCardsViewModel {
     guard let index = cardsList.firstIndex(where: { $0.id == id }) else {
       return
     }
+    
     cardsList.remove(at: index)
-    cardMetaDatas.remove(at: index)
+    
     if let firstCard = cardsList.first {
       currentCard = firstCard
     } else {

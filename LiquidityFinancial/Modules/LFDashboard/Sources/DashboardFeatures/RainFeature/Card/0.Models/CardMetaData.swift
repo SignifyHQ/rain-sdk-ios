@@ -2,7 +2,7 @@ import Foundation
 import LFLocalizable
 import LFUtilities
 
-struct CardMetaData: Equatable {
+struct CardMetaData: Equatable, Hashable {
   let pan: String
   let cvv: String
   let processorCardId: String

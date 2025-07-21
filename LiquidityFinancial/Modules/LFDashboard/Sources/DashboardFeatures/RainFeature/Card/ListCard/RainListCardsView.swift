@@ -147,22 +147,30 @@ private extension RainListCardsView {
     VStack {
       card
 
-      if let configuration = viewModel.requestConfiguration,
-         viewModel.shouldShowAddToWalletButton {
+      if let configurationValue = viewModel.requestConfiguration[viewModel.currentCard.id],
+         let configuration = configurationValue,
+         viewModel.shouldShowAddToWalletButton[viewModel.currentCard.id] == true {
+
         AddPassToWalletButton(configuration) { response in
-          let request = try! await viewModel.completeTokenization(
-            certificates: response.certificates,
-            nonce: response.nonce,
-            nonceSignature: response.nonceSignature
-          )!
+          guard let request = try? await viewModel
+            .completeTokenization(
+              certificates: response.certificates,
+              nonce: response.nonce,
+              nonceSignature: response.nonceSignature
+            )
+          else {
+            log.error("Tokenization returned nil request.")
+            return PKAddPaymentPassRequest()
+          }
           
           return request
         } onCompletion: { result in
           switch result {
-          case .success(let response):
-            print("SUCCESS", response)
+          case .success(let _):
+            viewModel.fetchRainCards()
+            log.error("Card tokenized successfully!")
           case .failure(let error):
-            print("ERROR", error)
+            log.error(error.userFriendlyMessage)
           }
         }
         .frame(
@@ -250,7 +258,7 @@ private extension RainListCardsView {
       ) { offset, item in
         RainCardView(
           cardModel: item,
-          cardMetaData: viewModel.cardMetaDatas.count > offset ? $viewModel.cardMetaDatas[offset] : .constant(nil),
+          cardMetaData: $viewModel.cardsList[offset].metadata,
           isShowCardNumber: $viewModel.isShowCardNumber,
           isLoading: $viewModel.isInit
         )
