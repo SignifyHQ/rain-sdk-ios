@@ -40,7 +40,7 @@ final class RainShippingAddressViewModel: ObservableObject {
   @Published var addressSuggestionList: [PlaceSuggestionModel] = []
   
   @Published var countryCodeList: [Country] = Country.allCases
-  @Published var selectedCountry: Country = .US
+  @Published var selectedCountry: Country?// = .US
   @Published var selectedCountryTitle: String = .empty
   
   @Published var stateList: [UsState] =  UsState.allCases
@@ -81,6 +81,10 @@ final class RainShippingAddressViewModel: ObservableObject {
     selectedWaitlistState != nil && waitlistEmail.trimWhitespacesAndNewlines().isValidEmail()
   }
   
+  var isValidAddressEntered: Bool {
+    !addressLine1.isEmpty && !city.isEmpty && selectedCountry != nil && !state.isEmpty && !zipCode.isEmpty
+  }
+  
   init(
     shippingAddress: Binding<ShippingAddress?>
   ) {
@@ -94,7 +98,7 @@ final class RainShippingAddressViewModel: ObservableObject {
     addressLine2 = shippingAddress.wrappedValue?.line2 ?? String.empty
     city = shippingAddress.wrappedValue?.city ?? String.empty
     zipCode = shippingAddress.wrappedValue?.postalCode ?? String.empty
-    selectedCountry = shippingAddress.wrappedValue?.country ?? .US
+    selectedCountry = shippingAddress.wrappedValue?.country
     
     if selectedCountry == .US {
       selectedState = UsState(rawValue: shippingAddress.wrappedValue?.state ?? String.empty) ?? .AL
@@ -115,7 +119,7 @@ extension RainShippingAddressViewModel {
         
         self?.shouldUseStateDropdown = country == .US
         
-        return country.title
+        return country?.title ?? ""
       }
       .assign(
         to: &$selectedCountryTitle
@@ -147,6 +151,11 @@ extension RainShippingAddressViewModel {
   }
   
   func saveAddress() {
+    guard let selectedCountry
+    else {
+      return
+    }
+    
     shippingAddress = ShippingAddress(
       line1: addressLine1,
       line2: addressLine2,
@@ -246,14 +255,15 @@ private extension RainShippingAddressViewModel {
           return
         }
         
-        guard !self.pauseAutocomplete
+        guard !pauseAutocomplete
         else {
-          self.pauseAutocomplete = false
+          pauseAutocomplete = false
           
           return
         }
         
-        self.fetchAddressSuggestion(query: value.capitalized)
+        clearAutocompleteData()
+        fetchAddressSuggestion(query: value.capitalized)
       }
       .store(in: &cancellables)
   }
@@ -297,7 +307,7 @@ private extension RainShippingAddressViewModel {
         
         addressLine1 = addressComponents.street ?? .empty
         city = addressComponents.city ?? .empty
-        selectedCountry = Country(title: addressComponents.country ?? .empty) ?? .US
+        selectedCountry = Country(title: addressComponents.country ?? .empty)
         zipCode = addressComponents.postalCode ?? .empty
         
         if selectedCountry == .US {
@@ -320,6 +330,13 @@ private extension RainShippingAddressViewModel {
     ]
     
     shouldEnableContinueButton = requiredFields.allSatisfy { !$0.isEmpty }
+  }
+  
+  private func clearAutocompleteData() {
+    city = .empty
+    selectedCountry = nil
+    state = .empty
+    zipCode = .empty
   }
 }
 

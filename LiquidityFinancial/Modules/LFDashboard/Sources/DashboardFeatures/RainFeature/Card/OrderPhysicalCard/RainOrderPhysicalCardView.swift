@@ -39,21 +39,39 @@ private extension RainOrderPhysicalCardView {
       ScrollView(showsIndicators: false) {
         VStack {
           GenImages.Images.physicalCard.swiftUIImage
-            .padding(.vertical, 32)
+            .padding(.top, 8)
+            .padding(.bottom, 16)
           
           VStack(
             alignment: .leading,
             spacing: 18
           ) {
+            HStack {
+              Spacer()
+              
+              Text(L10N.Common.OrderPhysicalCard.PhysicalCard.subtitle)
+                .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.medium.value))
+                .multilineTextAlignment(.center)
+                .foregroundColor(Colors.label.swiftUIColor.opacity(0.7))
+              
+              Spacer()
+            }
+            
             GenImages.CommonImages.dash.swiftUIImage
               .foregroundColor(Colors.label.swiftUIColor)
             
             feesCell
             
-            GenImages.CommonImages.dash.swiftUIImage
-              .foregroundColor(Colors.label.swiftUIColor)
+            if !viewModel.walletAddress.isEmpty {
+              GenImages.CommonImages.dash.swiftUIImage
+                .foregroundColor(Colors.label.swiftUIColor)
+              
+              walletAddressCell
+            }
             
-            cardReceivingAddress
+            if viewModel.shippingAddress != nil {
+              cardReceivingAddress
+            }
           }
         }
       }
@@ -70,10 +88,6 @@ private extension RainOrderPhysicalCardView {
       alignment: .leading,
       spacing: 16
     ) {
-      Text(L10N.Common.OrderPhysicalCard.Address.title)
-        .font(Fonts.medium.swiftUIFont(size: Constants.FontSize.medium.value))
-        .foregroundColor(Colors.label.swiftUIColor)
-      
       HStack(
         alignment: .center,
         spacing: 12
@@ -108,13 +122,14 @@ private extension RainOrderPhysicalCardView {
   var feesCell: some View {
     HStack {
       Text(L10N.Common.OrderPhysicalCard.Fees.title)
-        .font(Fonts.medium.swiftUIFont(size: Constants.FontSize.medium.value))
-        .foregroundColor(Colors.label.swiftUIColor)
+        .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.medium.value))
+        .foregroundColor(Colors.label.swiftUIColor.opacity(0.75))
       
       Spacer()
       
       (
         Text(viewModel.fees.formattedUSDAmount())
+          .font(Fonts.semiBold.swiftUIFont(size: Constants.FontSize.medium.value))
           .foregroundColor(Colors.label.swiftUIColor)
         
         +
@@ -123,30 +138,51 @@ private extension RainOrderPhysicalCardView {
         
         +
         
-        Text(L10N.Common.OrderPhysicalCard.Fees.Free.title)
-          .foregroundColor(Colors.green.swiftUIColor)
+        Text("AVAX")
+          .font(Fonts.medium.swiftUIFont(size: Constants.FontSize.medium.value))
+          .foregroundColor(Colors.primary.swiftUIColor)
       )
-        .font(Fonts.semiBold.swiftUIFont(size: Constants.FontSize.medium.value))
+    }
+  }
+  
+  var walletAddressCell: some View {
+    HStack(
+      alignment: .top
+    ) {
+      Text(L10N.Common.OrderPhysicalCard.WalletAddress.title)
+        .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.medium.value))
+        .foregroundColor(Colors.label.swiftUIColor.opacity(0.75))
+      
+      Spacer(minLength: 32)
+      
+      Text(viewModel.walletAddress)
+        .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.medium.value))
+        .multilineTextAlignment(.trailing)
+        .foregroundColor(Colors.label.swiftUIColor)
     }
   }
   
   var buttonGroup: some View {
     VStack(spacing: 10) {
       FullSizeButton(
-        title: L10N.Common.OrderPhysicalCard.EditAddress.buttonTitle,
+        title: viewModel.shippingAddress != nil ? L10N.Common.OrderPhysicalCard.EditAddress.buttonTitle : L10N.Common.OrderPhysicalCard.AddAddress.buttonTitle,
         isDisable: false,
-        type: .secondary
+        type: viewModel.shippingAddress != nil ? .secondary : .primary
       ) {
         viewModel.onClickedEditAddressButton(shippingAddress: $viewModel.shippingAddress)
       }
-      FullSizeButton(
-        title: L10N.Common.Button.Continue.title,
-        isDisable: false,
-        isLoading: $viewModel.isOrderingCard
-      ) {
-        viewModel.orderPhysicalCard()
+      
+      if viewModel.shippingAddress != nil {
+        FullSizeButton(
+          title: L10N.Common.Button.Continue.title,
+          isDisable: false,
+          isLoading: $viewModel.isOrderingCard
+        ) {
+          viewModel.orderPhysicalCard()
+        }
       }
     }
+    .padding(.top, 8)
     .padding(.bottom, 16)
   }
   

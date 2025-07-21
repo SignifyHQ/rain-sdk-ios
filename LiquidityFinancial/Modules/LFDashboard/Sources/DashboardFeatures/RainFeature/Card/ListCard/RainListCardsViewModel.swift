@@ -172,12 +172,12 @@ public extension RainListCardsViewModel {
         } else {
           cardMetaDatas = Array(repeating: nil, count: cardsList.count)
           cardsList.enumerated().forEach { index, card in
-            guard card.cardStatus == .active
+            guard card.cardStatus != .closed
             else {
               return
             }
             
-            fetchSecretCardInformation(cardID: card.id, index: index)
+            fetchSecretCardInformation(card: card, index: index)
           }
         }
       } catch {
@@ -188,16 +188,20 @@ public extension RainListCardsViewModel {
     }
   }
   
-  func fetchSecretCardInformation(
-    cardID: String,
-    index: Int
-  ) {
+  private func fetchSecretCardInformation(card: CardModel, index: Int) {
     Task {
       defer { isInit = false }
       
+      guard card.cardStatus == .active
+      else {
+        cardMetaDatas[index] = nil
+        
+        return
+      }
+      
       do {
         let sessionID = rainService.generateSessionId()
-        let secretInformation = try await getSecretCardInformationUseCase.execute(sessionID: sessionID, cardID: cardID)
+        let secretInformation = try await getSecretCardInformationUseCase.execute(sessionID: sessionID, cardID: card.id)
         
         let pan = rainService.decryptData(
           ivBase64: secretInformation.encryptedPanEntity.iv,
@@ -364,6 +368,7 @@ extension RainListCardsViewModel {
   func onChangeCurrentCard() {
     isActivePhysical = currentCard.cardStatus == .active
     isCardLocked = currentCard.cardStatus == .disabled
+    
     if isSwitchCard {
       isShowCardNumber = false
     } else {
