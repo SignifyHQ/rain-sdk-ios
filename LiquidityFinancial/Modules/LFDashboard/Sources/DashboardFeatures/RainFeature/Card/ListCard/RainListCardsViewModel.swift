@@ -258,13 +258,14 @@ public extension RainListCardsViewModel {
     if (isPassLibraryAvailable && canAddPaymentPass) {
       MeaPushProvisioning.initializeOemTokenization(mppCardParameters) { (responseData, error) in
         
-        print("START TOKENIZATION: RESPONSE DATA", responseData)
+        print("START TOKENIZATION: RESPONSE DATA", responseData?.primaryAccountSuffix)
         print("START TOKENIZATION: RESPONSE DATA VALID:", responseData?.isValid() ?? false)
         
         if let responseData,
            responseData.isValid() {
           print("START TOKENIZATION: GOT RESPONSE DATA")
-          var canAddPaymentPassWithPAI = false
+          var canAddPaymentPassWithPAI = true
+          self.shouldShowAddToWalletButton[cardId] = false
           
           if let primaryAccountIdentifier = responseData.primaryAccountIdentifier,
              !primaryAccountIdentifier.isEmpty {

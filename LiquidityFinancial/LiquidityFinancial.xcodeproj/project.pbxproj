@@ -468,6 +468,15 @@
 		E22B07E22CC7F11D0016E8B1 /* GoogleService-Info-Dev.plist in Resources */ = {isa = PBXBuildFile; fileRef = E22B07E12CC7F11D0016E8B1 /* GoogleService-Info-Dev.plist */; };
 		E22B07E42CC7F2710016E8B1 /* GoogleService-Info-Prod.plist in Resources */ = {isa = PBXBuildFile; fileRef = E22B07E32CC7F2710016E8B1 /* GoogleService-Info-Prod.plist */; };
 		E2B0B3022E21235F00F1B4D7 /* mea_config in Resources */ = {isa = PBXBuildFile; fileRef = E2B0B3012E21235F00F1B4D7 /* mea_config */; };
+		E2CA9FF42E2FAFE900F23D4E /* IssuerNonUIExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = E2CA9FEB2E2FAFE900F23D4E /* IssuerNonUIExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		E2CAA0062E2FB00900F23D4E /* IssuerUIExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = E2CA9FFE2E2FB00900F23D4E /* IssuerUIExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		E2CAA00C2E2FB03100F23D4E /* PassKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E2CAA00B2E2FB03100F23D4E /* PassKit.framework */; };
+		E2CAA00D2E2FB03C00F23D4E /* MeaPushProvisioning.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = E2D0951B2E1F8A8900197A8D /* MeaPushProvisioning.xcframework */; };
+		E2CAA00E2E2FB03C00F23D4E /* MeaPushProvisioning.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = E2D0951B2E1F8A8900197A8D /* MeaPushProvisioning.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		E2CAA0102E2FB07100F23D4E /* PassKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E2CAA00B2E2FB03100F23D4E /* PassKit.framework */; };
+		E2CAA0112E2FB07F00F23D4E /* MeaPushProvisioning.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = E2D0951B2E1F8A8900197A8D /* MeaPushProvisioning.xcframework */; };
+		E2CAA0122E2FB07F00F23D4E /* MeaPushProvisioning.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = E2D0951B2E1F8A8900197A8D /* MeaPushProvisioning.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		E2CAA0152E2FB1BD00F23D4E /* mea_config in Resources */ = {isa = PBXBuildFile; fileRef = E2B0B3012E21235F00F1B4D7 /* mea_config */; };
 		E2D0951D2E1F8A9D00197A8D /* MeaPushProvisioning.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = E2D0951B2E1F8A8900197A8D /* MeaPushProvisioning.xcframework */; };
 		E2D0951E2E1F8A9D00197A8D /* MeaPushProvisioning.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = E2D0951B2E1F8A8900197A8D /* MeaPushProvisioning.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		E2D7E8FB2D5DC7EB00C6540B /* collateralJsonABI.json in Resources */ = {isa = PBXBuildFile; fileRef = E2D7E8FA2D5DC7EB00C6540B /* collateralJsonABI.json */; };
@@ -529,9 +538,51 @@
 			remoteGlobalIDString = A9B448A22A8389B90029944C;
 			remoteInfo = CauseCard;
 		};
+		E2CA9FF22E2FAFE900F23D4E /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = A97BF7B42A5C602D00B8F5CA /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = E2CA9FEA2E2FAFE900F23D4E;
+			remoteInfo = IssuerNonUIExtension;
+		};
+		E2CAA0042E2FB00900F23D4E /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = A97BF7B42A5C602D00B8F5CA /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = E2CA9FFD2E2FB00900F23D4E;
+			remoteInfo = IssuerUIExtension;
+		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
+		E2CA9FF52E2FAFE900F23D4E /* Embed Foundation Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			dstPath = "";
+			dstSubfolder = PlugIns;
+			files = (
+				E2CA9FF42E2FAFE900F23D4E /* IssuerNonUIExtension.appex in Embed Foundation Extensions */,
+				E2CAA0062E2FB00900F23D4E /* IssuerUIExtension.appex in Embed Foundation Extensions */,
+			);
+			name = "Embed Foundation Extensions";
+		};
+		E2CAA00F2E2FB03C00F23D4E /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			dstPath = "";
+			dstSubfolder = Frameworks;
+			files = (
+				E2CAA00E2E2FB03C00F23D4E /* MeaPushProvisioning.xcframework in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+		};
+		E2CAA0132E2FB07F00F23D4E /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			dstPath = "";
+			dstSubfolder = Frameworks;
+			files = (
+				E2CAA0122E2FB07F00F23D4E /* MeaPushProvisioning.xcframework in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+		};
 		F6CF4D1C2D709946009A9F2E /* Embed Frameworks */ = {
 			isa = PBXCopyFilesBuildPhase;
 			dstPath = "";
@@ -856,7 +907,12 @@
 		A9F99B5F2B67BF440099DB85 /* CardsTabPreview.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardsTabPreview.swift; sourceTree = "<group>"; };
 		E22B07E12CC7F11D0016E8B1 /* GoogleService-Info-Dev.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info-Dev.plist"; sourceTree = "<group>"; };
 		E22B07E32CC7F2710016E8B1 /* GoogleService-Info-Prod.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info-Prod.plist"; sourceTree = "<group>"; };
+		E22B1D0E2E2FB5F6003454B8 /* AvalancheExtension.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = AvalancheExtension.entitlements; sourceTree = "<group>"; };
 		E2B0B3012E21235F00F1B4D7 /* mea_config */ = {isa = PBXFileReference; lastKnownFileType = file; path = mea_config; sourceTree = "<group>"; };
+		E2CA9FEB2E2FAFE900F23D4E /* IssuerNonUIExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = IssuerNonUIExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		E2CA9FEC2E2FAFE900F23D4E /* Intents.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Intents.framework; path = System/Library/Frameworks/Intents.framework; sourceTree = SDKROOT; };
+		E2CA9FFE2E2FB00900F23D4E /* IssuerUIExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = IssuerUIExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		E2CAA00B2E2FB03100F23D4E /* PassKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = PassKit.framework; path = System/Library/Frameworks/PassKit.framework; sourceTree = SDKROOT; };
 		E2D0951B2E1F8A8900197A8D /* MeaPushProvisioning.xcframework */ = {isa = PBXFileReference; expectedSignature = "AppleDeveloperProgram:ZT5DJ5429L:MeaWallet AS"; lastKnownFileType = wrapper.xcframework; path = MeaPushProvisioning.xcframework; sourceTree = "<group>"; };
 		E2D7E8FA2D5DC7EB00C6540B /* collateralJsonABI.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = collateralJsonABI.json; sourceTree = "<group>"; };
 		F6705FEA2D70D24900FEDAC4 /* FidesmoCore.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = FidesmoCore.xcframework; path = Frameworks/FidesmoCore.xcframework; sourceTree = "<group>"; };
@@ -868,6 +924,42 @@
 		F67060092D70D88A00FEDAC4 /* RxRelay.xcframework */ = {isa = PBXFileReference; expectedSignature = "AppleDeveloperProgram:2J3Q98FQPS:Rain Liquidity LLC"; lastKnownFileType = wrapper.xcframework; name = RxRelay.xcframework; path = Frameworks/RxRelay.xcframework; sourceTree = "<group>"; };
 		F670600A2D70D88A00FEDAC4 /* RxTest.xcframework */ = {isa = PBXFileReference; expectedSignature = "AppleDeveloperProgram:2J3Q98FQPS:Rain Liquidity LLC"; lastKnownFileType = wrapper.xcframework; name = RxTest.xcframework; path = Frameworks/RxTest.xcframework; sourceTree = "<group>"; };
 /* End PBXFileReference section */
+
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		E2CA9FF82E2FAFE900F23D4E /* Exceptions for "IssuerNonUIExtension" folder in "IssuerNonUIExtension" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = E2CA9FEA2E2FAFE900F23D4E /* IssuerNonUIExtension */;
+		};
+		E2CAA0072E2FB00900F23D4E /* Exceptions for "IssuerUIExtension" folder in "IssuerUIExtension" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = E2CA9FFD2E2FB00900F23D4E /* IssuerUIExtension */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
+/* Begin PBXFileSystemSynchronizedRootGroup section */
+		E2CA9FEE2E2FAFE900F23D4E /* IssuerNonUIExtension */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				E2CA9FF82E2FAFE900F23D4E /* Exceptions for "IssuerNonUIExtension" folder in "IssuerNonUIExtension" target */,
+			);
+			path = IssuerNonUIExtension;
+			sourceTree = "<group>";
+		};
+		E2CAA0002E2FB00900F23D4E /* IssuerUIExtension */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				E2CAA0072E2FB00900F23D4E /* Exceptions for "IssuerUIExtension" folder in "IssuerUIExtension" target */,
+			);
+			path = IssuerUIExtension;
+			sourceTree = "<group>";
+		};
+/* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
 		743DA7DA2B43E14C000F5AD8 /* Frameworks */ = {
@@ -1081,6 +1173,20 @@
 				A91D865F2A8C7844006D40D4 /* CoreNetwork in Frameworks */,
 				06154BA82B21C74100CABABB /* BiometricsManager in Frameworks */,
 				067C772B2BF5E86100AA8EE1 /* LFRainDashboard in Frameworks */,
+			);
+		};
+		E2CA9FE82E2FAFE900F23D4E /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			files = (
+				E2CAA00D2E2FB03C00F23D4E /* MeaPushProvisioning.xcframework in Frameworks */,
+				E2CAA00C2E2FB03100F23D4E /* PassKit.framework in Frameworks */,
+			);
+		};
+		E2CA9FFB2E2FB00900F23D4E /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			files = (
+				E2CAA0112E2FB07F00F23D4E /* MeaPushProvisioning.xcframework in Frameworks */,
+				E2CAA0102E2FB07100F23D4E /* PassKit.framework in Frameworks */,
 			);
 		};
 /* End PBXFrameworksBuildPhase section */
@@ -1395,6 +1501,7 @@
 		A953545B2A5DD7F4008B0FAB /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				E2CAA00B2E2FB03100F23D4E /* PassKit.framework */,
 				E2D0951B2E1F8A8900197A8D /* MeaPushProvisioning.xcframework */,
 				F67060082D70D88A00FEDAC4 /* RxBlocking.xcframework */,
 				F67060092D70D88A00FEDAC4 /* RxRelay.xcframework */,
@@ -1406,6 +1513,7 @@
 				F6705FEA2D70D24900FEDAC4 /* FidesmoCore.xcframework */,
 				A9D191702AD9E32200AA31DF /* CoreTelephony.framework */,
 				A98779CC2B6A0BC100F342DD /* XCTest.framework */,
+				E2CA9FEC2E2FAFE900F23D4E /* Intents.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -1503,6 +1611,8 @@
 				A97BF7BE2A5C602D00B8F5CA /* LiquidityFinancial */,
 				A97BF7CF2A5C602F00B8F5CA /* LiquidityFinancialTests */,
 				A97BF7D92A5C602F00B8F5CA /* LiquidityFinancialUITests */,
+				E2CA9FEE2E2FAFE900F23D4E /* IssuerNonUIExtension */,
+				E2CAA0002E2FB00900F23D4E /* IssuerUIExtension */,
 				A97BF7BD2A5C602D00B8F5CA /* Products */,
 				A953545B2A5DD7F4008B0FAB /* Frameworks */,
 			);
@@ -1521,6 +1631,8 @@
 				A9B448F02A8389B90029944C /* CauseCard.app */,
 				A99D2F692A9A56CF00947773 /* PrideCard.app */,
 				743DA81E2B43E14C000F5AD8 /* PawsCard.app */,
+				E2CA9FEB2E2FAFE900F23D4E /* IssuerNonUIExtension.appex */,
+				E2CA9FFE2E2FB00900F23D4E /* IssuerUIExtension.appex */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -1645,6 +1757,7 @@
 				E2D7E8FA2D5DC7EB00C6540B /* collateralJsonABI.json */,
 				A9BC80392A774D2F00E4A1A0 /* Fonts */,
 				A95D418F2A6E31C60095596B /* Avalanche.entitlements */,
+				E22B1D0E2E2FB5F6003454B8 /* AvalancheExtension.entitlements */,
 				A97BF8392A5DA4DA00B8F5CA /* Avalanche-Info.plist */,
 				A9D6C4B12A5E91DF0038D0BB /* LaunchScreen.storyboard */,
 				E22B07E32CC7F2710016E8B1 /* GoogleService-Info-Prod.plist */,
@@ -2303,8 +2416,13 @@
 				A97BF7BA2A5C602D00B8F5CA /* Resources */,
 				A9B1DAE42A5FC60C003F3C3C /* Swiftlint (Debug Only) */,
 				F6CF4D1C2D709946009A9F2E /* Embed Frameworks */,
+				E2CA9FF52E2FAFE900F23D4E /* Embed Foundation Extensions */,
 			);
 			buildRules = (
+			);
+			dependencies = (
+				E2CA9FF32E2FAFE900F23D4E /* PBXTargetDependency */,
+				E2CAA0052E2FB00900F23D4E /* PBXTargetDependency */,
 			);
 			name = Avalanche;
 			packageProductDependencies = (
@@ -2522,6 +2640,44 @@
 			productReference = A9B4B9742A7C0C76000ED67A /* DogeCard.app */;
 			productType = "com.apple.product-type.application";
 		};
+		E2CA9FEA2E2FAFE900F23D4E /* IssuerNonUIExtension */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = E2CA9FF92E2FAFE900F23D4E /* Build configuration list for PBXNativeTarget "IssuerNonUIExtension" */;
+			buildPhases = (
+				E2CA9FE72E2FAFE900F23D4E /* Sources */,
+				E2CA9FE82E2FAFE900F23D4E /* Frameworks */,
+				E2CA9FE92E2FAFE900F23D4E /* Resources */,
+				E2CAA00F2E2FB03C00F23D4E /* Embed Frameworks */,
+			);
+			buildRules = (
+			);
+			fileSystemSynchronizedGroups = (
+				E2CA9FEE2E2FAFE900F23D4E /* IssuerNonUIExtension */,
+			);
+			name = IssuerNonUIExtension;
+			productName = IssuerNonUIExtension;
+			productReference = E2CA9FEB2E2FAFE900F23D4E /* IssuerNonUIExtension.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
+		E2CA9FFD2E2FB00900F23D4E /* IssuerUIExtension */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = E2CAA0082E2FB00900F23D4E /* Build configuration list for PBXNativeTarget "IssuerUIExtension" */;
+			buildPhases = (
+				E2CA9FFA2E2FB00900F23D4E /* Sources */,
+				E2CA9FFB2E2FB00900F23D4E /* Frameworks */,
+				E2CA9FFC2E2FB00900F23D4E /* Resources */,
+				E2CAA0132E2FB07F00F23D4E /* Embed Frameworks */,
+			);
+			buildRules = (
+			);
+			fileSystemSynchronizedGroups = (
+				E2CAA0002E2FB00900F23D4E /* IssuerUIExtension */,
+			);
+			name = IssuerUIExtension;
+			productName = IssuerUIExtension;
+			productReference = E2CA9FFE2E2FB00900F23D4E /* IssuerUIExtension.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -2529,7 +2685,7 @@
 			isa = PBXProject;
 			attributes = {
 				BuildIndependentTargetsInParallel = 1;
-				LastSwiftUpdateCheck = 1430;
+				LastSwiftUpdateCheck = 1630;
 				LastUpgradeCheck = 1430;
 				TargetAttributes = {
 					A97BF7BB2A5C602D00B8F5CA = {
@@ -2541,6 +2697,12 @@
 					A97BF7D52A5C602F00B8F5CA = {
 						CreatedOnToolsVersion = 14.3;
 						TestTargetID = A9B4B91F2A7C0C76000ED67A;
+					};
+					E2CA9FEA2E2FAFE900F23D4E = {
+						CreatedOnToolsVersion = 16.3;
+					};
+					E2CA9FFD2E2FB00900F23D4E = {
+						CreatedOnToolsVersion = 16.3;
 					};
 				};
 			};
@@ -2575,6 +2737,8 @@
 				743DA7A92B43E14C000F5AD8 /* PawsCard */,
 				A97BF7CB2A5C602F00B8F5CA /* LiquidityFinancialTests */,
 				A97BF7D52A5C602F00B8F5CA /* LiquidityFinancialUITests */,
+				E2CA9FEA2E2FAFE900F23D4E /* IssuerNonUIExtension */,
+				E2CA9FFD2E2FB00900F23D4E /* IssuerUIExtension */,
 			);
 		};
 /* End PBXProject section */
@@ -2814,6 +2978,17 @@
 				A9B4BA2A2A7C1EF8000ED67A /* Lato-BoldItalic.ttf in Resources */,
 			);
 		};
+		E2CA9FE92E2FAFE900F23D4E /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			files = (
+				E2CAA0152E2FB1BD00F23D4E /* mea_config in Resources */,
+			);
+		};
+		E2CA9FFC2E2FB00900F23D4E /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			files = (
+			);
+		};
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
@@ -2832,6 +3007,8 @@
 				"else",
 				"  echo \"warning: SwiftLint not installed, download from https://github.com/realm/SwiftLint\"",
 				"fi",
+				"",
+				"",
 				"",
 				"",
 				"",
@@ -2877,6 +3054,8 @@
 				"",
 				"",
 				"",
+				"",
+				"",
 			);
 		};
 		A9B1DAE42A5FC60C003F3C3C /* Swiftlint (Debug Only) */ = {
@@ -2894,6 +3073,8 @@
 				"else",
 				"  echo \"warning: SwiftLint not installed, download from https://github.com/realm/SwiftLint\"",
 				"fi",
+				"",
+				"",
 				"",
 				"",
 				"",
@@ -2940,6 +3121,8 @@
 				"",
 				"",
 				"",
+				"",
+				"",
 			);
 		};
 		A9B448EC2A8389B90029944C /* Swiftlint (Debug Only) */ = {
@@ -2957,6 +3140,8 @@
 				"else",
 				"  echo \"warning: SwiftLint not installed, download from https://github.com/realm/SwiftLint\"",
 				"fi",
+				"",
+				"",
 				"",
 				"",
 				"",
@@ -2989,6 +3174,8 @@
 				"else",
 				"  echo \"warning: SwiftLint not installed, download from https://github.com/realm/SwiftLint\"",
 				"fi",
+				"",
+				"",
 				"",
 				"",
 				"",
@@ -3150,6 +3337,16 @@
 				A9B4B9402A7C0C76000ED67A /* AppDelegate.swift in Sources */,
 			);
 		};
+		E2CA9FE72E2FAFE900F23D4E /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			files = (
+			);
+		};
+		E2CA9FFA2E2FB00900F23D4E /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			files = (
+			);
+		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
@@ -3182,6 +3379,16 @@
 			isa = PBXTargetDependency;
 			target = A9B448A22A8389B90029944C /* CauseCard */;
 			targetProxy = A98779CA2B69F78100F342DD /* PBXContainerItemProxy */;
+		};
+		E2CA9FF32E2FAFE900F23D4E /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = E2CA9FEA2E2FAFE900F23D4E /* IssuerNonUIExtension */;
+			targetProxy = E2CA9FF22E2FAFE900F23D4E /* PBXContainerItemProxy */;
+		};
+		E2CAA0052E2FB00900F23D4E /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = E2CA9FFD2E2FB00900F23D4E /* IssuerUIExtension */;
+			targetProxy = E2CAA0042E2FB00900F23D4E /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -3961,6 +4168,136 @@
 			};
 			name = Release;
 		};
+		E2CA9FF62E2FAFE900F23D4E /* Debug configuration for PBXNativeTarget "IssuerNonUIExtension" */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CODE_SIGN_ENTITLEMENTS = "${SRCROOT}/LiquidityFinancial/Avalanche/Resources/AvalancheExtension.entitlements";
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 2J3Q98FQPS;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = IssuerNonUIExtension/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = IssuerNonUIExtension;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 18.4;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.rain-liquidity.avalanche.IssuerNonUIExtension";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		E2CA9FF72E2FAFE900F23D4E /* Release configuration for PBXNativeTarget "IssuerNonUIExtension" */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CODE_SIGN_ENTITLEMENTS = "${SRCROOT}/LiquidityFinancial/Avalanche/Resources/AvalancheExtension.entitlements";
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 2J3Q98FQPS;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = IssuerNonUIExtension/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = IssuerNonUIExtension;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 18.4;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.rain-liquidity.avalanche.IssuerNonUIExtension";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		E2CAA0092E2FB00900F23D4E /* Debug configuration for PBXNativeTarget "IssuerUIExtension" */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CODE_SIGN_ENTITLEMENTS = "${SRCROOT}/LiquidityFinancial/Avalanche/Resources/AvalancheExtension.entitlements";
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 2J3Q98FQPS;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = IssuerUIExtension/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = IssuerUIExtension;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 18.4;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.rain-liquidity.avalanche.IssuerUIExtension";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		E2CAA00A2E2FB00900F23D4E /* Release configuration for PBXNativeTarget "IssuerUIExtension" */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CODE_SIGN_ENTITLEMENTS = "${SRCROOT}/LiquidityFinancial/Avalanche/Resources/AvalancheExtension.entitlements";
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 2J3Q98FQPS;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = IssuerUIExtension/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = IssuerUIExtension;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 18.4;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.rain-liquidity.avalanche.IssuerUIExtension";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -4033,6 +4370,22 @@
 			buildConfigurations = (
 				A9B4B9722A7C0C76000ED67A /* Debug configuration for PBXNativeTarget "DogeCard" */,
 				A9B4B9732A7C0C76000ED67A /* Release configuration for PBXNativeTarget "DogeCard" */,
+			);
+			defaultConfigurationName = Release;
+		};
+		E2CA9FF92E2FAFE900F23D4E /* Build configuration list for PBXNativeTarget "IssuerNonUIExtension" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				E2CA9FF62E2FAFE900F23D4E /* Debug configuration for PBXNativeTarget "IssuerNonUIExtension" */,
+				E2CA9FF72E2FAFE900F23D4E /* Release configuration for PBXNativeTarget "IssuerNonUIExtension" */,
+			);
+			defaultConfigurationName = Release;
+		};
+		E2CAA0082E2FB00900F23D4E /* Build configuration list for PBXNativeTarget "IssuerUIExtension" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				E2CAA0092E2FB00900F23D4E /* Debug configuration for PBXNativeTarget "IssuerUIExtension" */,
+				E2CAA00A2E2FB00900F23D4E /* Release configuration for PBXNativeTarget "IssuerUIExtension" */,
 			);
 			defaultConfigurationName = Release;
 		};
