@@ -267,11 +267,13 @@ public extension RainListCardsViewModel {
           var canAddPaymentPassWithPAI = true
           self.shouldShowAddToWalletButton[cardId] = false
           
+          print("IDENTIFIER", responseData.primaryAccountIdentifier)
+          
           if let primaryAccountIdentifier = responseData.primaryAccountIdentifier,
              !primaryAccountIdentifier.isEmpty {
-            
             if #available(iOS 13.4, *) {
               canAddPaymentPassWithPAI = MeaPushProvisioning.canAddSecureElementPass(withPrimaryAccountIdentifier: primaryAccountIdentifier)
+              print("IDENTIFIER", responseData.primaryAccountIdentifier, canAddPaymentPassWithPAI)
             } else {
               canAddPaymentPassWithPAI = MeaPushProvisioning.canAddPaymentPass(withPrimaryAccountIdentifier: primaryAccountIdentifier)
             }
