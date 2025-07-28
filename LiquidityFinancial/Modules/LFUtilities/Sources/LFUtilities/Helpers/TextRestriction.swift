@@ -8,6 +8,7 @@ public enum TextRestriction {
   case alphabetsAndComma
   case decimal
   case password
+  case asciiPrintable
 
   public var allowedInput: String {
     switch self {
@@ -25,6 +26,8 @@ public enum TextRestriction {
       return "^[0-9]*((\\.|,)[0-9]{0,2})?$"
     case .password:
       return "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()-_=+[]{}|;:'\",.<>/?`~"
+    case .asciiPrintable:
+      return (32...126).compactMap { UnicodeScalar($0) }.map(String.init).joined()
     }
   }
 }

@@ -285,13 +285,15 @@ private extension RainShippingAddressView {
         addressDropdownFrame = geometry.frame(in: .global)
       }
       
-//      textFieldInputView(
-//        title: L10N.Common.addressLine2Title,
-//        placeholder: L10N.Common.enterAddress,
-//        value: $viewModel.addressLine2,
-//        focus: .address2,
-//        nextFocus: .city
-//      )
+      textFieldInputView(
+        title: L10N.Common.addressLine2Title,
+        placeholder: L10N.Common.enterAddress,
+        value: $viewModel.addressLine2,
+        restriction: .asciiPrintable,
+        keyboardType: .asciiCapable,
+        focus: .address2,
+        nextFocus: .city
+      )
       
       if viewModel.isValidAddressEntered {
         textFieldInputView(
