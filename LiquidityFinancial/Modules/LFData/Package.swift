@@ -26,6 +26,9 @@ let package = Package(
       name: "FeatureFlagData",
       targets: ["FeatureFlagData"]),
     .library(
+      name: "MeshData",
+      targets: ["MeshData"]),
+    .library(
       name: "CryptoChartData",
       targets: ["CryptoChartData"]),
     .library(
@@ -116,6 +119,16 @@ let package = Package(
         .product(name: "FeatureFlagDomain", package: "LFDomain"),
         .product(name: "NetworkUtilities", package: "LFNetwork"),
         .product(name: "CoreNetwork", package: "LFNetwork")
+      ]
+    ),
+    .target(
+      name: "MeshData",
+      dependencies: [
+        "LFUtilities",
+        .product(name: "MeshDomain", package: "LFDomain"),
+        .product(name: "NetworkUtilities", package: "LFNetwork"),
+        .product(name: "CoreNetwork", package: "LFNetwork"),
+        .product(name: "Services", package: "LFServices")
       ]
     ),
     .target(

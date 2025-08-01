@@ -5,14 +5,26 @@ import AccountData
 struct SwipeWalletCellButton {
   let image: Image
   let backgroundColor: Color
-  let action: (APIWalletAddress) -> Void
-
-  init(image: Image,
-       backgroundColor: Color,
-       action: @escaping (APIWalletAddress) -> Void) {
+  let action: (APIWalletAddress?) -> Void
+  
+  init(
+    image: Image,
+    backgroundColor: Color,
+    action: @escaping (APIWalletAddress?) -> Void
+  ) {
     self.image = image
     self.backgroundColor = backgroundColor
     self.action = action
+  }
+  
+  init(
+    image: Image,
+    backgroundColor: Color,
+    action: @escaping () -> Void
+  ) {
+    self.image = image
+    self.backgroundColor = backgroundColor
+    self.action = { _ in action() }
   }
 }
 

@@ -806,6 +806,13 @@ https://mn.gov/commerce/money/investments/cryptocurrency/. \n\n\n\n\n\n\n";
 "receive_crypto_view.wallet_detail" = "Wallet Details";
 "receive_crypto_view.your_address" = "Your Address";
 
+"receive_crypto_view.connected_wallets.title" = "Connected Wallets & Exchanges";
+"receive_crypto_view.connected_wallets.subtitle" = "Make deposits directly from your connected wallets and exchanges to fund your card.";
+"receive_crypto_view.connected_wallets.no_wallets.title" = "No connected wallets or exchanges";
+"receive_crypto_view.connected_wallets.no_wallets.subtitle" = "Connect wallets or exchanges to\neasily add funds to your card";
+"receive_crypto_view.connected_wallets.connect_button.title" = "Connect Wallet/Exchange";
+
+
 //BANK STATEMENT
 "bank_statement.title" = "Bank Statements";
 "bank_statement.emptyTitle" = "NO STATEMENTS";

@@ -4,18 +4,22 @@ import AccountData
 import LFStyleGuide
 
 extension View {
-  func swipeWalletCell(buttons: [SwipeWalletCellButton],
-                       item: APIWalletAddress,
-                       buttonWidth: CGFloat = 56,
-                       buttonSpacing: CGFloat = 10,
-                       appearWidth: CGFloat = 10,
-                       dismissWidth: CGFloat = 10,
-                       action: @escaping () -> Void) -> some View {
+  func swipeWalletCell(
+    buttons: [SwipeWalletCellButton],
+    item: APIWalletAddress? = nil,
+    buttonWidth: CGFloat = 56,
+    cornerRadius: CGFloat = 9,
+    buttonSpacing: CGFloat = 10,
+    appearWidth: CGFloat = 10,
+    dismissWidth: CGFloat = 10,
+    action: (() -> Void)? = nil
+  ) -> some View {
     modifier(
       SwipeWalletCellModifier(
         buttons: buttons,
         item: item,
         buttonWidth: buttonWidth,
+        cornerRadius: cornerRadius,
         spacing: buttonSpacing,
         appearWidth: appearWidth,
         dismissWidth: dismissWidth,
@@ -35,8 +39,9 @@ struct SwipeWalletCellModifier: ViewModifier {
   
   private let cellID = UUID()
   private let buttons: [SwipeWalletCellButton]
-  private let item: APIWalletAddress
+  private let item: APIWalletAddress?
   private let buttonWidth: CGFloat
+  private let cornerRadius: CGFloat
   private let spacing: CGFloat
   private let appearWidth: CGFloat
   private let dismissWidth: CGFloat
@@ -49,16 +54,18 @@ struct SwipeWalletCellModifier: ViewModifier {
   
   init(
     buttons: [SwipeWalletCellButton],
-    item: APIWalletAddress,
+    item: APIWalletAddress?,
     buttonWidth: CGFloat,
+    cornerRadius: CGFloat,
     spacing: CGFloat,
     appearWidth: CGFloat,
     dismissWidth: CGFloat,
-    action: @escaping () -> Void
+    action: (() -> Void)?
   ) {
     self.buttons = buttons
     self.item = item
     self.buttonWidth = buttonWidth
+    self.cornerRadius = cornerRadius
     self.spacing = spacing
     self.appearWidth = appearWidth
     self.dismissWidth = dismissWidth
@@ -118,6 +125,8 @@ extension SwipeWalletCellModifier {
   private func slotView(with button: SwipeWalletCellButton) -> some View {
     SquareButton(
       image: button.image,
+      edgeSize: buttonWidth,
+      cornerSize: cornerRadius,
       backgroundColor: button.backgroundColor,
       action: {
         button.action(item)

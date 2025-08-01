@@ -77,6 +77,7 @@ let package = Package(
       dependencies: [
         "LFUtilities", "LFStyleGuide", "LFLocalizable", "LFAccessibility", "RainFeature", "CodeScanner",
         .product(name: "OnboardingData", package: "LFData"),
+        .product(name: "MeshData", package: "LFData"),
         .product(name: "NetSpendData", package: "LFData"),
         .product(name: "DevicesData", package: "LFData"),
         .product(name: "ExternalFundingData", package: "LFData"),

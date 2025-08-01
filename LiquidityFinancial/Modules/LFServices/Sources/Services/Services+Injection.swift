@@ -17,6 +17,13 @@ extension Container {
     .singleton
   }
   
+  public var meshService: Factory<MeshServiceProtocol> {
+    self {
+      MeshService()
+    }
+    .singleton
+  }
+  
   public var rainService: Factory<RainServiceProtocol> {
     self {
       RainService()

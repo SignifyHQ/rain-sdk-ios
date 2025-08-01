@@ -26,6 +26,9 @@ let package = Package(
       name: "FeatureFlagDomain",
       targets: ["FeatureFlagDomain"]),
     .library(
+      name: "MeshDomain",
+      targets: ["MeshDomain"]),
+    .library(
       name: "CryptoChartDomain",
       targets: ["CryptoChartDomain"]),
     .library(
@@ -72,6 +75,10 @@ let package = Package(
     ),
     .target(
       name: "FeatureFlagDomain",
+      dependencies: []
+    ),
+    .target(
+      name: "MeshDomain",
       dependencies: []
     ),
     .target(

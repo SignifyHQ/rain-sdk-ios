@@ -139,12 +139,14 @@ private extension EnterWalletAddressView {
         image: GenImages.CommonImages.icEdit.swiftUIImage,
         backgroundColor: Colors.secondaryBackground.swiftUIColor
       ) { wallet in
+        guard let wallet else { return }
         viewModel.editWalletTapped(wallet: wallet)
       },
       SwipeWalletCellButton(
         image: GenImages.CommonImages.icTrash.swiftUIImage,
         backgroundColor: Colors.error.swiftUIColor
       ) { wallet in
+        guard let wallet else { return }
         viewModel.deleteWalletTapped(wallet: wallet)
       }
     ]
