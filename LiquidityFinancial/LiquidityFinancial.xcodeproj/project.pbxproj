@@ -465,6 +465,12 @@
 		A9F99B5C2B67A58E0099DB85 /* DonationPreview.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9F99B5B2B67A58E0099DB85 /* DonationPreview.swift */; };
 		A9F99B5E2B67A5A50099DB85 /* CausesPreview.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9F99B5D2B67A5A50099DB85 /* CausesPreview.swift */; };
 		A9F99B602B67BF440099DB85 /* CardsTabPreview.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9F99B5F2B67BF440099DB85 /* CardsTabPreview.swift */; };
+		E2014EF72E4242C100CBDDF7 /* CryptoService.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2014EEC2E4242C100CBDDF7 /* CryptoService.swift */; };
+		E2014EF82E4242C100CBDDF7 /* UserDefaultsKeys.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2014EED2E4242C100CBDDF7 /* UserDefaultsKeys.swift */; };
+		E2014EF92E4242C100CBDDF7 /* ActiveCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2014EEF2E4242C100CBDDF7 /* ActiveCard.swift */; };
+		E2014EFA2E4242C100CBDDF7 /* IntentHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2014EF32E4242C100CBDDF7 /* IntentHandler.swift */; };
+		E2014EFB2E4242C100CBDDF7 /* IssuerExtensionHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2014EF42E4242C100CBDDF7 /* IssuerExtensionHandler.swift */; };
+		E2014EFC2E4242C100CBDDF7 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = E2014EF12E4242C100CBDDF7 /* Assets.xcassets */; };
 		E22B07E22CC7F11D0016E8B1 /* GoogleService-Info-Dev.plist in Resources */ = {isa = PBXBuildFile; fileRef = E22B07E12CC7F11D0016E8B1 /* GoogleService-Info-Dev.plist */; };
 		E22B07E42CC7F2710016E8B1 /* GoogleService-Info-Prod.plist in Resources */ = {isa = PBXBuildFile; fileRef = E22B07E32CC7F2710016E8B1 /* GoogleService-Info-Prod.plist */; };
 		E2B0B3022E21235F00F1B4D7 /* mea_config in Resources */ = {isa = PBXBuildFile; fileRef = E2B0B3012E21235F00F1B4D7 /* mea_config */; };
@@ -905,6 +911,14 @@
 		A9F99B5B2B67A58E0099DB85 /* DonationPreview.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DonationPreview.swift; sourceTree = "<group>"; };
 		A9F99B5D2B67A5A50099DB85 /* CausesPreview.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CausesPreview.swift; sourceTree = "<group>"; };
 		A9F99B5F2B67BF440099DB85 /* CardsTabPreview.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardsTabPreview.swift; sourceTree = "<group>"; };
+		E2014EEC2E4242C100CBDDF7 /* CryptoService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CryptoService.swift; sourceTree = "<group>"; };
+		E2014EED2E4242C100CBDDF7 /* UserDefaultsKeys.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserDefaultsKeys.swift; sourceTree = "<group>"; };
+		E2014EEF2E4242C100CBDDF7 /* ActiveCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActiveCard.swift; sourceTree = "<group>"; };
+		E2014EF12E4242C100CBDDF7 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		E2014EF22E4242C100CBDDF7 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		E2014EF32E4242C100CBDDF7 /* IntentHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IntentHandler.swift; sourceTree = "<group>"; };
+		E2014EF42E4242C100CBDDF7 /* IssuerExtensionHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IssuerExtensionHandler.swift; sourceTree = "<group>"; };
+		E2014EF52E4242C100CBDDF7 /* IssuerNonUIExtension.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = IssuerNonUIExtension.entitlements; sourceTree = "<group>"; };
 		E22B07E12CC7F11D0016E8B1 /* GoogleService-Info-Dev.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info-Dev.plist"; sourceTree = "<group>"; };
 		E22B07E32CC7F2710016E8B1 /* GoogleService-Info-Prod.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info-Prod.plist"; sourceTree = "<group>"; };
 		E22B1D0E2E2FB5F6003454B8 /* AvalancheExtension.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = AvalancheExtension.entitlements; sourceTree = "<group>"; };
@@ -926,13 +940,6 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
-		E2CA9FF82E2FAFE900F23D4E /* Exceptions for "IssuerNonUIExtension" folder in "IssuerNonUIExtension" target */ = {
-			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
-			membershipExceptions = (
-				Info.plist,
-			);
-			target = E2CA9FEA2E2FAFE900F23D4E /* IssuerNonUIExtension */;
-		};
 		E2CAA0072E2FB00900F23D4E /* Exceptions for "IssuerUIExtension" folder in "IssuerUIExtension" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
@@ -943,14 +950,6 @@
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
-		E2CA9FEE2E2FAFE900F23D4E /* IssuerNonUIExtension */ = {
-			isa = PBXFileSystemSynchronizedRootGroup;
-			exceptions = (
-				E2CA9FF82E2FAFE900F23D4E /* Exceptions for "IssuerNonUIExtension" folder in "IssuerNonUIExtension" target */,
-			);
-			path = IssuerNonUIExtension;
-			sourceTree = "<group>";
-		};
 		E2CAA0002E2FB00900F23D4E /* IssuerUIExtension */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			exceptions = (
@@ -1611,7 +1610,7 @@
 				A97BF7BE2A5C602D00B8F5CA /* LiquidityFinancial */,
 				A97BF7CF2A5C602F00B8F5CA /* LiquidityFinancialTests */,
 				A97BF7D92A5C602F00B8F5CA /* LiquidityFinancialUITests */,
-				E2CA9FEE2E2FAFE900F23D4E /* IssuerNonUIExtension */,
+				E2014EF62E4242C100CBDDF7 /* IssuerNonUIExtension */,
 				E2CAA0002E2FB00900F23D4E /* IssuerUIExtension */,
 				A97BF7BD2A5C602D00B8F5CA /* Products */,
 				A953545B2A5DD7F4008B0FAB /* Frameworks */,
@@ -2315,6 +2314,45 @@
 			path = DependenciesInjection;
 			sourceTree = "<group>";
 		};
+		E2014EEE2E4242C100CBDDF7 /* Helper */ = {
+			isa = PBXGroup;
+			children = (
+				E2014EEC2E4242C100CBDDF7 /* CryptoService.swift */,
+				E2014EED2E4242C100CBDDF7 /* UserDefaultsKeys.swift */,
+			);
+			path = Helper;
+			sourceTree = "<group>";
+		};
+		E2014EF02E4242C100CBDDF7 /* Model */ = {
+			isa = PBXGroup;
+			children = (
+				E2014EEF2E4242C100CBDDF7 /* ActiveCard.swift */,
+			);
+			path = Model;
+			sourceTree = "<group>";
+		};
+		E2014EF62E4242C100CBDDF7 /* IssuerNonUIExtension */ = {
+			isa = PBXGroup;
+			children = (
+				E2014EF32E4242C100CBDDF7 /* IntentHandler.swift */,
+				E2014EF42E4242C100CBDDF7 /* IssuerExtensionHandler.swift */,
+				E2014EEE2E4242C100CBDDF7 /* Helper */,
+				E2014EF02E4242C100CBDDF7 /* Model */,
+				E2014EF22E4242C100CBDDF7 /* Info.plist */,
+				E2014EF52E4242C100CBDDF7 /* IssuerNonUIExtension.entitlements */,
+				E2014EFE2E4242DD00CBDDF7 /* Resourses */,
+			);
+			path = IssuerNonUIExtension;
+			sourceTree = "<group>";
+		};
+		E2014EFE2E4242DD00CBDDF7 /* Resourses */ = {
+			isa = PBXGroup;
+			children = (
+				E2014EF12E4242C100CBDDF7 /* Assets.xcassets */,
+			);
+			path = Resourses;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -2651,9 +2689,6 @@
 			);
 			buildRules = (
 			);
-			fileSystemSynchronizedGroups = (
-				E2CA9FEE2E2FAFE900F23D4E /* IssuerNonUIExtension */,
-			);
 			name = IssuerNonUIExtension;
 			productName = IssuerNonUIExtension;
 			productReference = E2CA9FEB2E2FAFE900F23D4E /* IssuerNonUIExtension.appex */;
@@ -2981,6 +3016,7 @@
 		E2CA9FE92E2FAFE900F23D4E /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			files = (
+				E2014EFC2E4242C100CBDDF7 /* Assets.xcassets in Resources */,
 				E2CAA0152E2FB1BD00F23D4E /* mea_config in Resources */,
 			);
 		};
@@ -3007,6 +3043,8 @@
 				"else",
 				"  echo \"warning: SwiftLint not installed, download from https://github.com/realm/SwiftLint\"",
 				"fi",
+				"",
+				"",
 				"",
 				"",
 				"",
@@ -3056,6 +3094,8 @@
 				"",
 				"",
 				"",
+				"",
+				"",
 			);
 		};
 		A9B1DAE42A5FC60C003F3C3C /* Swiftlint (Debug Only) */ = {
@@ -3073,6 +3113,8 @@
 				"else",
 				"  echo \"warning: SwiftLint not installed, download from https://github.com/realm/SwiftLint\"",
 				"fi",
+				"",
+				"",
 				"",
 				"",
 				"",
@@ -3123,6 +3165,8 @@
 				"",
 				"",
 				"",
+				"",
+				"",
 			);
 		};
 		A9B448EC2A8389B90029944C /* Swiftlint (Debug Only) */ = {
@@ -3140,6 +3184,8 @@
 				"else",
 				"  echo \"warning: SwiftLint not installed, download from https://github.com/realm/SwiftLint\"",
 				"fi",
+				"",
+				"",
 				"",
 				"",
 				"",
@@ -3174,6 +3220,8 @@
 				"else",
 				"  echo \"warning: SwiftLint not installed, download from https://github.com/realm/SwiftLint\"",
 				"fi",
+				"",
+				"",
 				"",
 				"",
 				"",
@@ -3340,6 +3388,11 @@
 		E2CA9FE72E2FAFE900F23D4E /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			files = (
+				E2014EF72E4242C100CBDDF7 /* CryptoService.swift in Sources */,
+				E2014EF82E4242C100CBDDF7 /* UserDefaultsKeys.swift in Sources */,
+				E2014EF92E4242C100CBDDF7 /* ActiveCard.swift in Sources */,
+				E2014EFA2E4242C100CBDDF7 /* IntentHandler.swift in Sources */,
+				E2014EFB2E4242C100CBDDF7 /* IssuerExtensionHandler.swift in Sources */,
 			);
 		};
 		E2CA9FFA2E2FB00900F23D4E /* Sources */ = {
@@ -3867,7 +3920,6 @@
 		A97BF7E72A5C602F00B8F5CA /* Debug configuration for PBXNativeTarget "LiquidityFinancialUITests" */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = TX9PJZUNWS;
@@ -3886,7 +3938,6 @@
 		A97BF7E82A5C602F00B8F5CA /* Release configuration for PBXNativeTarget "LiquidityFinancialUITests" */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = TX9PJZUNWS;

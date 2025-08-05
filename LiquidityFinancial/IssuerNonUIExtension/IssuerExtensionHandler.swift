@@ -43,34 +43,63 @@ class IssuerExtensionHandler: PKIssuerProvisioningExtensionHandler {
     // Do not return payment passes that are already present in the user’s pass library.
     // The handler should be invoked within 20 seconds or will be treated as a failure and the attempt halted.
     
-    let cardParameters = MppCardDataParameters(cardId: "545504292", cardSecret: "001#76058563")
-    MeaPushProvisioning.initializeOemTokenization(cardParameters) { responseData, error in
-      self.logger.info("initializeOemTokenization: start the initialization")
+    Task {
+      var passEntries: [PKIssuerProvisioningExtensionPassEntry] = []
       
-      self.logger.info("initializeOemTokenization: responseData -> \(error, privacy: .public)")
+      self.logger.info("WalletExtension: Starting card retrieval")
       
-      guard let configuration = responseData?.addPaymentPassRequestConfiguration,
-            let art = UIImage(named: "availableCard")?.cgImage
+      guard let cards = await getActiveCards(),
+            !cards.isEmpty
       else {
+        self.logger.error("WalletExtension: No active cards available")
+        completion([])
+        
         return
       }
-      
-      self.logger.info("initializeOemTokenization: configuration received")
-      
-      let passEntries = [
-        PKIssuerProvisioningExtensionPaymentPassEntry(
-          identifier: "545504292",
-          title: "Card",
+    
+      for card in cards {
+        self.logger.info("WalletExtension: Processing card with ID \(card.id, privacy: .public)")
+        
+        let parameters = MppCardDataParameters(cardId: card.processorCardId, cardSecret: card.timeBasedSecret)
+        guard let responseData = try? await MeaPushProvisioning.initializeOemTokenization(parameters)
+        else {
+          self.logger.error("initializeOemTokenization: Failed for card \(card.id, privacy: .public)")
+          continue
+        }
+        
+        guard let art = UIImage(named: "availableCard")?.cgImage
+        else {
+          self.logger.error("initializeOemTokenization: Missing image for card \(card.id, privacy: .public)")
+          continue
+        }
+        
+        guard let configuration = responseData.addPaymentPassRequestConfiguration
+        else {
+          self.logger.error("initializeOemTokenization: Missing configuration for card \(card.id, privacy: .public)")
+          continue
+        }
+        
+        guard let passEntry = PKIssuerProvisioningExtensionPaymentPassEntry(
+          identifier: card.id,
+          title: "Avalanche Card",
           art: art,
           addRequestConfiguration: configuration
-        )!
-      ]
+        ) else {
+          self.logger.error("initializeOemTokenization: Could not create pass entry for card \(card.id, privacy: .public)")
+          continue
+        }
+        
+        passEntries.append(passEntry)
+      }
       
+      self.logger.info("WalletExtension: Completed pass entry generation with \(passEntries.count) entries")
       completion(passEntries)
     }
   }
   
-  override func remotePassEntries(completion: @escaping ([PKIssuerProvisioningExtensionPassEntry]) -> Void) {
+  override func remotePassEntries(
+    completion: @escaping ([PKIssuerProvisioningExtensionPassEntry]
+    ) -> Void) {
     // Finds the list of passes available to add to an Apple Watch.
     // The completion handler takes a parameter entries of type Array<PKIssuerProvisioningExtensionPassEntry> representing
     // the passes that are available to add to Apple Watch.
@@ -111,4 +140,54 @@ class IssuerExtensionHandler: PKIssuerProvisioningExtensionHandler {
       // The continuation handler must be called within 20 seconds or an error is displayed.
       // Subsequent to timeout, the continuation handler is invalid and invocations is ignored.
     }
+  
+  func getActiveCards(
+  ) async -> [ActiveCard]? {
+    guard let accessToken = SharedUserDefaults.current.accessToken
+    else {
+      logger.error("❌ Error: Access token not found")
+      
+      return nil
+    }
+    
+    guard let url = URL(string: "https://service-platform.liquidity-financial.com/v1/external/wallet-extension/active-cards")
+    else {
+      logger.error("❌ Invalid URL")
+      
+      return nil
+    }
+    
+    var request = URLRequest(url: url)
+    request.httpMethod = "GET"
+    request.setValue("Bearer \(accessToken)", forHTTPHeaderField: "Authorization")
+    request.setValue("application/json", forHTTPHeaderField: "Accept")
+    
+    let sessionId = CryptoService.shared.generateSessionId()
+    request.setValue(sessionId, forHTTPHeaderField: "sessionId")
+    
+    do {
+      let (data, response) = try await URLSession.shared.data(for: request)
+      
+      guard let httpResponse = response as? HTTPURLResponse else {
+        logger.error("❌ Invalid response")
+        
+        return nil
+      }
+      
+      guard (200...299).contains(httpResponse.statusCode) else {
+        logger.error("❌ Server error: \(httpResponse.statusCode)")
+        
+        return nil
+      }
+      
+      let cards = try JSONDecoder().decode([ActiveCard].self, from: data)
+      logger.info("✅ Received cards: \(cards)")
+      
+      return cards
+    } catch {
+      logger.error("❌ Network or decoding error: \(error)")
+      
+      return nil
+    }
+  }
 }

@@ -211,10 +211,18 @@ extension AuthorizationManager: AuthorizationManagerProtocol {
     let expiresAt = apiToken.expiresAt
     let token = apiToken.bearerAccessToken
     let refreshToken = apiToken.refreshToken
+    
     save(token: apiToken)
+    
     self.expiresAt = expiresAt
     self.accessToken = token
     self.refreshToken = refreshToken
+  }
+  
+  public func saveWalletExtenstionTokens(apiToken: AccessTokensEntity) {
+    UserDefaults.walletExtensionAccessTokenExpiresAt = apiToken.expiresAt.timeIntervalSince1970
+    UserDefaults.walletExtensionAccessToken = apiToken.accessToken
+    UserDefaults.walletExtensionRefreshToken = apiToken.refreshToken
   }
   
   public func clearToken() {
@@ -261,6 +269,10 @@ private extension AuthorizationManager {
     UserDefaults.accessTokenExpiresAt = 0
     UserDefaults.bearerAccessToken = .empty
     UserDefaults.portalSessionToken = .empty
+    
+    UserDefaults.walletExtensionAccessTokenExpiresAt = 0
+    UserDefaults.walletExtensionAccessToken = .empty
+    UserDefaults.walletExtensionRefreshToken = .empty
   }
 }
 

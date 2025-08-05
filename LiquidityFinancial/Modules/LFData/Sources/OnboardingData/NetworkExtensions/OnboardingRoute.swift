@@ -8,6 +8,7 @@ public enum OnboardingRoute {
   case requestOtp(parameters: OTPParameters, appCheckToken: String, recaptchaToken: String)
   case checkAccountExisting(parameters: CheckAccountExistingParameters)
   case login(parameters: LoginParameters, appCheckToken: String, recaptchaToken: String)
+  case walletExtensionToken(appCheckToken: String, recaptchaToken: String)
   case newRequestOTP(parameters: OTPParameters)
   case newLogin(parameters: LoginParameters)
   case refreshToken(token: String)
@@ -26,6 +27,8 @@ extension OnboardingRoute: LFRoute {
       return "/v1/auth/exists"
     case .login:
       return "/v2/password-less/login"
+    case .walletExtensionToken:
+      return "/v1/auth/external-session/wallet-extension/token"
     case .newRequestOTP:
       return "/v2/auth/otp/request"
     case .newLogin:
@@ -43,7 +46,7 @@ extension OnboardingRoute: LFRoute {
   
   public var httpMethod: HttpMethod {
     switch self {
-    case .login, .requestOtp, .checkAccountExisting, .newRequestOTP, .newLogin, .refreshToken, .joinWailist: return .POST
+    case .login, .walletExtensionToken, .requestOtp, .checkAccountExisting, .newRequestOTP, .newLogin, .refreshToken, .joinWailist: return .POST
     case .getOnboardingProcess, .getUnsupportedStates: return .GET
     }
   }
@@ -59,12 +62,17 @@ extension OnboardingRoute: LFRoute {
       break
     case .checkAccountExisting, .newRequestOTP, .newLogin:
       base["ld-device-id"] = LFUtilities.deviceId
-    case .login(_, let appCheckToken, let recaptchaToken), .requestOtp(_, let appCheckToken, let recaptchaToken):
+    case .login(_, let appCheckToken, let recaptchaToken), .walletExtensionToken(let appCheckToken, let recaptchaToken), .requestOtp(_, let appCheckToken, let recaptchaToken):
       base["ld-device-id"] = LFUtilities.deviceId
       base["x-app-check-token"] = appCheckToken
       base["x-recaptcha-token"] = recaptchaToken
       base["x-platform"] = "IOS"
     case .getOnboardingProcess, .getUnsupportedStates, .joinWailist:
+      base["Accept"] = "application/json"
+      base["Authorization"] = self.needAuthorizationKey
+    }
+    
+    if case .walletExtensionToken = self {
       base["Accept"] = "application/json"
       base["Authorization"] = self.needAuthorizationKey
     }
@@ -87,7 +95,7 @@ extension OnboardingRoute: LFRoute {
         ]
       }
       return body
-    case .getOnboardingProcess:
+    case .walletExtensionToken, .getOnboardingProcess:
       return nil
     case let .getUnsupportedStates(unsupportedParameters):
       return unsupportedParameters.encoded()
@@ -100,8 +108,7 @@ extension OnboardingRoute: LFRoute {
     switch self {
     case .login, .requestOtp, .newRequestOTP, .newLogin, .refreshToken, .joinWailist: return .json
     case .checkAccountExisting, .getUnsupportedStates: return .url
-    case .getOnboardingProcess: return nil
+    case .walletExtensionToken, .getOnboardingProcess: return nil
     }
   }
-  
 }
