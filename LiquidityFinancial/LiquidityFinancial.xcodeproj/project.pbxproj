@@ -465,12 +465,6 @@
 		A9F99B5C2B67A58E0099DB85 /* DonationPreview.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9F99B5B2B67A58E0099DB85 /* DonationPreview.swift */; };
 		A9F99B5E2B67A5A50099DB85 /* CausesPreview.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9F99B5D2B67A5A50099DB85 /* CausesPreview.swift */; };
 		A9F99B602B67BF440099DB85 /* CardsTabPreview.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9F99B5F2B67BF440099DB85 /* CardsTabPreview.swift */; };
-		E2014EF72E4242C100CBDDF7 /* CryptoService.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2014EEC2E4242C100CBDDF7 /* CryptoService.swift */; };
-		E2014EF82E4242C100CBDDF7 /* UserDefaultsKeys.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2014EED2E4242C100CBDDF7 /* UserDefaultsKeys.swift */; };
-		E2014EF92E4242C100CBDDF7 /* ActiveCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2014EEF2E4242C100CBDDF7 /* ActiveCard.swift */; };
-		E2014EFA2E4242C100CBDDF7 /* IntentHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2014EF32E4242C100CBDDF7 /* IntentHandler.swift */; };
-		E2014EFB2E4242C100CBDDF7 /* IssuerExtensionHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2014EF42E4242C100CBDDF7 /* IssuerExtensionHandler.swift */; };
-		E2014EFC2E4242C100CBDDF7 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = E2014EF12E4242C100CBDDF7 /* Assets.xcassets */; };
 		E22B07E22CC7F11D0016E8B1 /* GoogleService-Info-Dev.plist in Resources */ = {isa = PBXBuildFile; fileRef = E22B07E12CC7F11D0016E8B1 /* GoogleService-Info-Dev.plist */; };
 		E22B07E42CC7F2710016E8B1 /* GoogleService-Info-Prod.plist in Resources */ = {isa = PBXBuildFile; fileRef = E22B07E32CC7F2710016E8B1 /* GoogleService-Info-Prod.plist */; };
 		E2B0B3022E21235F00F1B4D7 /* mea_config in Resources */ = {isa = PBXBuildFile; fileRef = E2B0B3012E21235F00F1B4D7 /* mea_config */; };
@@ -478,10 +472,8 @@
 		E2CAA0062E2FB00900F23D4E /* IssuerUIExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = E2CA9FFE2E2FB00900F23D4E /* IssuerUIExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		E2CAA00C2E2FB03100F23D4E /* PassKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E2CAA00B2E2FB03100F23D4E /* PassKit.framework */; };
 		E2CAA00D2E2FB03C00F23D4E /* MeaPushProvisioning.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = E2D0951B2E1F8A8900197A8D /* MeaPushProvisioning.xcframework */; };
-		E2CAA00E2E2FB03C00F23D4E /* MeaPushProvisioning.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = E2D0951B2E1F8A8900197A8D /* MeaPushProvisioning.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		E2CAA0102E2FB07100F23D4E /* PassKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E2CAA00B2E2FB03100F23D4E /* PassKit.framework */; };
 		E2CAA0112E2FB07F00F23D4E /* MeaPushProvisioning.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = E2D0951B2E1F8A8900197A8D /* MeaPushProvisioning.xcframework */; };
-		E2CAA0122E2FB07F00F23D4E /* MeaPushProvisioning.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = E2D0951B2E1F8A8900197A8D /* MeaPushProvisioning.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		E2CAA0152E2FB1BD00F23D4E /* mea_config in Resources */ = {isa = PBXBuildFile; fileRef = E2B0B3012E21235F00F1B4D7 /* mea_config */; };
 		E2D0951D2E1F8A9D00197A8D /* MeaPushProvisioning.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = E2D0951B2E1F8A8900197A8D /* MeaPushProvisioning.xcframework */; };
 		E2D0951E2E1F8A9D00197A8D /* MeaPushProvisioning.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = E2D0951B2E1F8A8900197A8D /* MeaPushProvisioning.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
@@ -570,24 +562,6 @@
 				E2CAA0062E2FB00900F23D4E /* IssuerUIExtension.appex in Embed Foundation Extensions */,
 			);
 			name = "Embed Foundation Extensions";
-		};
-		E2CAA00F2E2FB03C00F23D4E /* Embed Frameworks */ = {
-			isa = PBXCopyFilesBuildPhase;
-			dstPath = "";
-			dstSubfolder = Frameworks;
-			files = (
-				E2CAA00E2E2FB03C00F23D4E /* MeaPushProvisioning.xcframework in Embed Frameworks */,
-			);
-			name = "Embed Frameworks";
-		};
-		E2CAA0132E2FB07F00F23D4E /* Embed Frameworks */ = {
-			isa = PBXCopyFilesBuildPhase;
-			dstPath = "";
-			dstSubfolder = Frameworks;
-			files = (
-				E2CAA0122E2FB07F00F23D4E /* MeaPushProvisioning.xcframework in Embed Frameworks */,
-			);
-			name = "Embed Frameworks";
 		};
 		F6CF4D1C2D709946009A9F2E /* Embed Frameworks */ = {
 			isa = PBXCopyFilesBuildPhase;
@@ -911,14 +885,6 @@
 		A9F99B5B2B67A58E0099DB85 /* DonationPreview.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DonationPreview.swift; sourceTree = "<group>"; };
 		A9F99B5D2B67A5A50099DB85 /* CausesPreview.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CausesPreview.swift; sourceTree = "<group>"; };
 		A9F99B5F2B67BF440099DB85 /* CardsTabPreview.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardsTabPreview.swift; sourceTree = "<group>"; };
-		E2014EEC2E4242C100CBDDF7 /* CryptoService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CryptoService.swift; sourceTree = "<group>"; };
-		E2014EED2E4242C100CBDDF7 /* UserDefaultsKeys.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserDefaultsKeys.swift; sourceTree = "<group>"; };
-		E2014EEF2E4242C100CBDDF7 /* ActiveCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActiveCard.swift; sourceTree = "<group>"; };
-		E2014EF12E4242C100CBDDF7 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
-		E2014EF22E4242C100CBDDF7 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		E2014EF32E4242C100CBDDF7 /* IntentHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IntentHandler.swift; sourceTree = "<group>"; };
-		E2014EF42E4242C100CBDDF7 /* IssuerExtensionHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IssuerExtensionHandler.swift; sourceTree = "<group>"; };
-		E2014EF52E4242C100CBDDF7 /* IssuerNonUIExtension.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = IssuerNonUIExtension.entitlements; sourceTree = "<group>"; };
 		E22B07E12CC7F11D0016E8B1 /* GoogleService-Info-Dev.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info-Dev.plist"; sourceTree = "<group>"; };
 		E22B07E32CC7F2710016E8B1 /* GoogleService-Info-Prod.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info-Prod.plist"; sourceTree = "<group>"; };
 		E22B1D0E2E2FB5F6003454B8 /* AvalancheExtension.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = AvalancheExtension.entitlements; sourceTree = "<group>"; };
@@ -940,6 +906,13 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		E2B4D2582E43772E00D3041E /* Exceptions for "IssuerNonUIExtension" folder in "IssuerNonUIExtension" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = E2CA9FEA2E2FAFE900F23D4E /* IssuerNonUIExtension */;
+		};
 		E2CAA0072E2FB00900F23D4E /* Exceptions for "IssuerUIExtension" folder in "IssuerUIExtension" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
@@ -950,6 +923,14 @@
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
+		E2B4D24F2E43772D00D3041E /* IssuerNonUIExtension */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				E2B4D2582E43772E00D3041E /* Exceptions for "IssuerNonUIExtension" folder in "IssuerNonUIExtension" target */,
+			);
+			path = IssuerNonUIExtension;
+			sourceTree = "<group>";
+		};
 		E2CAA0002E2FB00900F23D4E /* IssuerUIExtension */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			exceptions = (
@@ -1610,7 +1591,7 @@
 				A97BF7BE2A5C602D00B8F5CA /* LiquidityFinancial */,
 				A97BF7CF2A5C602F00B8F5CA /* LiquidityFinancialTests */,
 				A97BF7D92A5C602F00B8F5CA /* LiquidityFinancialUITests */,
-				E2014EF62E4242C100CBDDF7 /* IssuerNonUIExtension */,
+				E2B4D24F2E43772D00D3041E /* IssuerNonUIExtension */,
 				E2CAA0002E2FB00900F23D4E /* IssuerUIExtension */,
 				A97BF7BD2A5C602D00B8F5CA /* Products */,
 				A953545B2A5DD7F4008B0FAB /* Frameworks */,
@@ -2314,45 +2295,6 @@
 			path = DependenciesInjection;
 			sourceTree = "<group>";
 		};
-		E2014EEE2E4242C100CBDDF7 /* Helper */ = {
-			isa = PBXGroup;
-			children = (
-				E2014EEC2E4242C100CBDDF7 /* CryptoService.swift */,
-				E2014EED2E4242C100CBDDF7 /* UserDefaultsKeys.swift */,
-			);
-			path = Helper;
-			sourceTree = "<group>";
-		};
-		E2014EF02E4242C100CBDDF7 /* Model */ = {
-			isa = PBXGroup;
-			children = (
-				E2014EEF2E4242C100CBDDF7 /* ActiveCard.swift */,
-			);
-			path = Model;
-			sourceTree = "<group>";
-		};
-		E2014EF62E4242C100CBDDF7 /* IssuerNonUIExtension */ = {
-			isa = PBXGroup;
-			children = (
-				E2014EF32E4242C100CBDDF7 /* IntentHandler.swift */,
-				E2014EF42E4242C100CBDDF7 /* IssuerExtensionHandler.swift */,
-				E2014EEE2E4242C100CBDDF7 /* Helper */,
-				E2014EF02E4242C100CBDDF7 /* Model */,
-				E2014EF22E4242C100CBDDF7 /* Info.plist */,
-				E2014EF52E4242C100CBDDF7 /* IssuerNonUIExtension.entitlements */,
-				E2014EFE2E4242DD00CBDDF7 /* Resourses */,
-			);
-			path = IssuerNonUIExtension;
-			sourceTree = "<group>";
-		};
-		E2014EFE2E4242DD00CBDDF7 /* Resourses */ = {
-			isa = PBXGroup;
-			children = (
-				E2014EF12E4242C100CBDDF7 /* Assets.xcassets */,
-			);
-			path = Resourses;
-			sourceTree = "<group>";
-		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -2685,9 +2627,11 @@
 				E2CA9FE72E2FAFE900F23D4E /* Sources */,
 				E2CA9FE82E2FAFE900F23D4E /* Frameworks */,
 				E2CA9FE92E2FAFE900F23D4E /* Resources */,
-				E2CAA00F2E2FB03C00F23D4E /* Embed Frameworks */,
 			);
 			buildRules = (
+			);
+			fileSystemSynchronizedGroups = (
+				E2B4D24F2E43772D00D3041E /* IssuerNonUIExtension */,
 			);
 			name = IssuerNonUIExtension;
 			productName = IssuerNonUIExtension;
@@ -2701,7 +2645,6 @@
 				E2CA9FFA2E2FB00900F23D4E /* Sources */,
 				E2CA9FFB2E2FB00900F23D4E /* Frameworks */,
 				E2CA9FFC2E2FB00900F23D4E /* Resources */,
-				E2CAA0132E2FB07F00F23D4E /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
@@ -3016,7 +2959,6 @@
 		E2CA9FE92E2FAFE900F23D4E /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			files = (
-				E2014EFC2E4242C100CBDDF7 /* Assets.xcassets in Resources */,
 				E2CAA0152E2FB1BD00F23D4E /* mea_config in Resources */,
 			);
 		};
@@ -3043,6 +2985,7 @@
 				"else",
 				"  echo \"warning: SwiftLint not installed, download from https://github.com/realm/SwiftLint\"",
 				"fi",
+				"",
 				"",
 				"",
 				"",
@@ -3096,6 +3039,7 @@
 				"",
 				"",
 				"",
+				"",
 			);
 		};
 		A9B1DAE42A5FC60C003F3C3C /* Swiftlint (Debug Only) */ = {
@@ -3113,6 +3057,7 @@
 				"else",
 				"  echo \"warning: SwiftLint not installed, download from https://github.com/realm/SwiftLint\"",
 				"fi",
+				"",
 				"",
 				"",
 				"",
@@ -3167,6 +3112,7 @@
 				"",
 				"",
 				"",
+				"",
 			);
 		};
 		A9B448EC2A8389B90029944C /* Swiftlint (Debug Only) */ = {
@@ -3184,6 +3130,7 @@
 				"else",
 				"  echo \"warning: SwiftLint not installed, download from https://github.com/realm/SwiftLint\"",
 				"fi",
+				"",
 				"",
 				"",
 				"",
@@ -3220,6 +3167,7 @@
 				"else",
 				"  echo \"warning: SwiftLint not installed, download from https://github.com/realm/SwiftLint\"",
 				"fi",
+				"",
 				"",
 				"",
 				"",
@@ -3388,11 +3336,6 @@
 		E2CA9FE72E2FAFE900F23D4E /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			files = (
-				E2014EF72E4242C100CBDDF7 /* CryptoService.swift in Sources */,
-				E2014EF82E4242C100CBDDF7 /* UserDefaultsKeys.swift in Sources */,
-				E2014EF92E4242C100CBDDF7 /* ActiveCard.swift in Sources */,
-				E2014EFA2E4242C100CBDDF7 /* IntentHandler.swift in Sources */,
-				E2014EFB2E4242C100CBDDF7 /* IssuerExtensionHandler.swift in Sources */,
 			);
 		};
 		E2CA9FFA2E2FB00900F23D4E /* Sources */ = {
@@ -3803,12 +3746,13 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = A97BF83A2A5DA86000B8F5CA /* AvalancheConfig.xcconfig */;
 			buildSettings = {
+				APPLICATION_EXTENSION_API_ONLY = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = "${SRCROOT}/LiquidityFinancial/Avalanche/Resources/Avalanche.entitlements";
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 4;
+				CURRENT_PROJECT_VERSION = 5;
 				DEVELOPMENT_ASSET_PATHS = "";
 				DEVELOPMENT_TEAM = 2J3Q98FQPS;
 				ENABLE_PREVIEWS = YES;
@@ -3845,12 +3789,13 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = A97BF83A2A5DA86000B8F5CA /* AvalancheConfig.xcconfig */;
 			buildSettings = {
+				APPLICATION_EXTENSION_API_ONLY = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = "${SRCROOT}/LiquidityFinancial/Avalanche/Resources/Avalanche.entitlements";
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 4;
+				CURRENT_PROJECT_VERSION = 5;
 				DEVELOPMENT_ASSET_PATHS = "";
 				DEVELOPMENT_TEAM = 2J3Q98FQPS;
 				ENABLE_PREVIEWS = YES;
