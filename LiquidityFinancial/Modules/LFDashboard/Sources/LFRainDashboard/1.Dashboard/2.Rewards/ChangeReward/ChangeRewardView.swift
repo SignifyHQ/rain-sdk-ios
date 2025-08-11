@@ -80,8 +80,8 @@ private extension ChangeRewardView {
       viewModel.onSelectedRewardCurrency(assetType: assetType)
     } label: {
       HStack(spacing: 8) {
-        assetType.image
-        Text(assetType.title)
+        assetType.icon
+        Text(assetType.symbol ?? "N/A")
           .foregroundColor(Colors.label.swiftUIColor)
           .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.medium.value))
         Spacer()

@@ -66,9 +66,9 @@ struct TransactionFilterCurrencyView: View {
             viewModel.toggle(filter: asset)
           } label: {
             HStack {
-              asset.type?.image
+              asset.type?.icon
               
-              Text(asset.type?.title ?? "N/A")
+              Text(asset.type?.symbol ?? "N/A")
                 .font(Fonts.regular.swiftUIFont(size: 16))
                 .foregroundColor(Colors.label.swiftUIColor)
               

@@ -18,7 +18,8 @@ public class PortalStorage: PortalStorageProtocol {
       PortalAsset(token: environmentService.networkEnvironment == .productionTest ? .fujiAvalancheUSDC : .mainnetAvalancheUSDC),
       PortalAsset(token: environmentService.networkEnvironment == .productionTest ? .fujiAvalancheUSDT : .mainnetAvalancheUSDT),
       PortalAsset(token: environmentService.networkEnvironment == .productionTest ? .fujiAvalancheUSDTE : .mainnetAvalancheUSDTE),
-      PortalAsset(token: environmentService.networkEnvironment == .productionTest ? .fujiAvalancheWAVAX : .mainnetAvalancheWAVAX)
+      PortalAsset(token: environmentService.networkEnvironment == .productionTest ? .fujiAvalancheWAVAX : .mainnetAvalancheWAVAX),
+      PortalAsset(token: environmentService.networkEnvironment == .productionTest ? .fujiAvalancheWYST : .mainnetAvalancheWYST)
     ]
     
     // Make sure the assets are always visible because when user have no balance in some crypto asset, blockchain will not return any balance for it

@@ -43,6 +43,7 @@ public final class PhoneNumberViewModel: ObservableObject {
   
   @Published var selectedCountry: Country = .US
   @Published var phoneNumber: String = ""
+  @Published var promocode: String = ""
   
   @Published var toastMessage: String?
   

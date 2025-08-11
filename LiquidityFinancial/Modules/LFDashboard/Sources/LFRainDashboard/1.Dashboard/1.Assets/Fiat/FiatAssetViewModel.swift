@@ -49,7 +49,7 @@ class FiatAssetViewModel: ObservableObject {
   }
   
   var title: String {
-    asset.type?.title ?? .empty
+    asset.type?.symbol ?? .empty
   }
   
   init(asset: AssetModel) {

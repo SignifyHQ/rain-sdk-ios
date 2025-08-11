@@ -74,6 +74,8 @@ public struct HomeView: View {
       switch popup {
       case .notifications:
         notificationsPopup
+      case .specialExperience:
+        specialExperiencePopup
       }
     }
     .onAppear {
@@ -176,6 +178,24 @@ private extension HomeView {
       ),
       secondary: .init(
         text: L10N.Common.NotificationPopup.dismiss,
+        action: {
+          viewModel.clearPopup()
+          viewModel.presentNextPopupInQueue(removing: .notifications)
+        }
+      )
+    )
+  }
+  
+  private var specialExperiencePopup: some View {
+    LiquidityAlert(
+      title: "You've been sent\nWyoming Stablecoins".uppercased(),
+      message: "As part of the Wyoming event experience, 5 Wyoming Stablecoins have just been added to your account.",
+      primary: .init(
+        text: "Go to My Account",
+        action: viewModel.goToAssets
+      ),
+      secondary: .init(
+        text: "Got it",
         action: viewModel.clearPopup
       )
     )

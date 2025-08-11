@@ -100,7 +100,7 @@ extension RewardTabViewModel {
   
   func getCollateralAsset() {
     portalStorage
-      .cryptoAsset(with: AssetType.usdc.title)
+      .cryptoAsset(with: AssetType.usdc.symbol ?? "N/A")
       .receive(on: DispatchQueue.main)
       .map { asset in
         guard let asset else { return nil }

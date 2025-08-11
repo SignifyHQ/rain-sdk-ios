@@ -10,6 +10,8 @@ public enum PortalToken {
   case mainnetAvalancheUSDTE
   case fujiAvalancheWAVAX
   case mainnetAvalancheWAVAX
+  case fujiAvalancheWYST
+  case mainnetAvalancheWYST
   
   public var contractAddress: String {
     switch self {
@@ -31,6 +33,10 @@ public enum PortalToken {
       "0x688af2a8422611b770b4e2ef55a7f50f0339cc65"
     case .mainnetAvalancheWAVAX:
       "0xb31f66aa3c1e785363f0875a1b74e27b85fd66c7"
+    case .fujiAvalancheWYST:
+      "0x3894374b3ffd1DB45b760dD094963Dd1167e5568"
+    case .mainnetAvalancheWYST:
+      "update"
     }
   }
   
@@ -46,6 +52,8 @@ public enum PortalToken {
       "USDTE"
     case .fujiAvalancheWAVAX, .mainnetAvalancheWAVAX:
       "WAVAX"
+    case .fujiAvalancheWYST, .mainnetAvalancheWYST:
+      "WYST"
     }
   }
   
@@ -61,6 +69,8 @@ public enum PortalToken {
       "USDTE"
     case .fujiAvalancheWAVAX, .mainnetAvalancheWAVAX:
       "Wrapped AVAX"
+    case .fujiAvalancheWYST, .mainnetAvalancheWYST:
+      "WYST"
     }
   }
   

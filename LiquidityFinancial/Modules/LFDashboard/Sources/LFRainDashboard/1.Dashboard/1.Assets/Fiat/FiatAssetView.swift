@@ -80,7 +80,7 @@ private extension FiatAssetView {
         .foregroundColor(Colors.label.swiftUIColor)
         .font(Fonts.bold.swiftUIFont(size: 30))
       if let assetType = viewModel.asset.type {
-        assetType.image
+        assetType.icon
       } else {
         GenImages.CommonImages.icUsd.swiftUIImage
       }

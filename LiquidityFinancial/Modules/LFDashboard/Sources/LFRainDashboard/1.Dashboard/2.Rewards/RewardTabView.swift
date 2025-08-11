@@ -59,7 +59,7 @@ struct RewardTabView: View {
       .sheet(isPresented: $viewModel.showWithdrawalBalanceSheet) {
         WalletOptionBottomSheet(
           title: L10N.Common.RewardTabView.WithdrawBalance.sheetTitle,
-          assetTitle: viewModel.collateralAsset?.type?.title ?? .empty
+          assetTitle: viewModel.collateralAsset?.type?.symbol ?? .empty
         ) { type in
           viewModel.walletTypeButtonTapped(type: type)
         }
@@ -132,7 +132,7 @@ private extension RewardTabView {
             )
             .foregroundColor(type.foregroundColor)
           Spacer()
-          Text("\(amount.formattedCryptoAmount()) \(assetType.title)")
+          Text("\(amount.formattedCryptoAmount()) \(assetType.symbol ?? "N/A")")
             .font(
               Fonts.bold.swiftUIFont(size: type.fontSize)
             )
@@ -148,15 +148,15 @@ private extension RewardTabView {
         .fill(Colors.background.swiftUIColor)
         .frame(64)
         .overlay {
-          assetType.image?.frame(32)
+          assetType.icon?.frame(32)
         }
       VStack(alignment: .leading, spacing: 4) {
-        Text(assetType.title.uppercased())
+        Text(assetType.symbol?.uppercased() ?? "N/A")
           .font(
             Fonts.regular.swiftUIFont(size: Constants.FontSize.medium.value)
           )
           .foregroundColor(Colors.label.swiftUIColor)
-        Text(L10N.Common.RewardTabView.EarningRewards.description(assetType.title.uppercased()))
+        Text(L10N.Common.RewardTabView.EarningRewards.description(assetType.symbol?.uppercased() ?? "N/A"))
           .font(
             Fonts.regular.swiftUIFont(size: Constants.FontSize.ultraSmall.value)
           )

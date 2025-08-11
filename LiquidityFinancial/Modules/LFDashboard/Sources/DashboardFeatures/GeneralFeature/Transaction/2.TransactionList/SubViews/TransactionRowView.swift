@@ -38,7 +38,7 @@ public struct TransactionRowView: View {
 // MARK: - View Components
 private extension TransactionRowView {
   var transactionImage: some View {
-    Image(item.type.assetName, bundle: .main)
+    item.transactionRowImage
       .frame(46)
       .padding(.vertical, 12)
   }

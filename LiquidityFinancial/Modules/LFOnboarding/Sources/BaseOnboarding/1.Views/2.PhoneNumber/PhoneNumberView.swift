@@ -15,7 +15,7 @@ public struct PhoneNumberView: View {
   
   @StateObject var viewModel: PhoneNumberViewModel
   
-  @FocusState private var keyboardFocus: Bool
+  @FocusState private var keyboardFocus: Focus?
   
   @State var openSafariType: PhoneNumberViewModel.OpenSafariType?
   
@@ -31,6 +31,10 @@ public struct PhoneNumberView: View {
         logoImageView
         phoneNumberView
         
+        if viewModel.shouldAgreeToTerms == true {
+          promocodeView
+        }
+        
         Spacer()
         
         footerView
@@ -38,7 +42,7 @@ public struct PhoneNumberView: View {
       .simultaneousGesture(
         TapGesture()
           .onEnded {
-            keyboardFocus = false
+            keyboardFocus = nil
             viewModel.displayDropdown = false
           }
       )
@@ -60,13 +64,17 @@ public struct PhoneNumberView: View {
       }
     }
     .frame(max: .infinity)
-    .overlay(alignment: .topTrailing) {
-      supportButton
-    }
     .padding(.horizontal, 26)
     .background(Colors.background.swiftUIColor)
     .navigationBarTitleDisplayMode(.inline)
     .navigationBarBackButtonHidden()
+    .defaultToolBar(
+      icon: .support,
+      openSupportScreen: {
+        viewModel.openSupportScreen()
+      },
+      edgeInsets: EdgeInsets(top: 0, leading: 0, bottom: 12, trailing: 0)
+    )
     .navigationLink(
       item: $onboardingDestinationObservable.phoneNumberDestinationView
     ) { item in
@@ -97,7 +105,6 @@ public struct PhoneNumberView: View {
         }
       }
     }
-    .navigationBarHidden(true)
     .track(name: String(describing: type(of: self)))
   }
 }
@@ -115,21 +122,33 @@ private extension PhoneNumberView {
       ) {
         viewModel.onActiveSecretMode()
       }
-      .padding(.top, 70)
+      .padding(.bottom, 45)
   }
 }
 
 // MARK: - Main Content View Components
 private extension PhoneNumberView {
   var phoneNumberView: some View {
-    VStack(alignment: .leading, spacing: 12) {
+    VStack(alignment: .leading, spacing: 8) {
       Text(L10N.Common.PhoneNumber.TextField.title.uppercased())
         .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.main.value))
         .foregroundColor(Colors.label.swiftUIColor)
         .accessibilityIdentifier(LFAccessibility.PhoneNumber.headerTitle)
+      
       phoneNumberTextField
     }
-    .padding(.top, 24)
+    .padding(.bottom, 16)
+  }
+  
+  var promocodeView: some View {
+    VStack(alignment: .leading, spacing: 10) {
+      Text("Have a promo code? Enter your code here")
+        .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.ultraSmall.value))
+        .foregroundColor(Colors.label.swiftUIColor)
+        .opacity(0.75)
+      
+      promocodeTextField
+    }
   }
   
   var phoneNumberTextField: some View {
@@ -142,7 +161,7 @@ private extension PhoneNumberView {
           .padding(.horizontal, 8)
           .background(Colors.secondaryBackground.swiftUIColor.cornerRadius(4))
           .onTapGesture {
-            keyboardFocus = false
+            keyboardFocus = nil
             viewModel.displayDropdown = true
           }
         
@@ -153,30 +172,35 @@ private extension PhoneNumberView {
           .prefixHidden(false)
           .flagHidden(true)
           .foregroundColor(Colors.label.swiftUIColor)
-          .focused($keyboardFocus)
+          .focused($keyboardFocus, equals: .phoneNumber)
           .frame(
             maxWidth: .infinity,
             minHeight: 44,
             alignment: .center
           )
-          .toolbar {
-            ToolbarItemGroup(placement: .keyboard) {
-              Button("Done") {
-                keyboardFocus = false
-                viewModel.displayDropdown = false
-              }
-            }
-          }
           .onAppear {
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
               if !viewModel.isButtonEnabled {
-                keyboardFocus = true
+                keyboardFocus = .phoneNumber
               }
             }
           }
       }
     }
     .accessibilityIdentifier(LFAccessibility.PhoneNumber.textField)
+  }
+  
+  var promocodeTextField: some View {
+    TextFieldWrapper {
+      TextField(
+        "Enter your promo code",
+        text: $viewModel.promocode
+      )
+      .primaryFieldStyle()
+      .disableAutocorrection(true)
+      .keyboardType(.alphabet)
+      .focused($keyboardFocus, equals: .promocode)
+    }
   }
   
   func listView() -> some View {
@@ -200,7 +224,7 @@ private extension PhoneNumberView {
     .cornerRadius(8, style: .continuous)
     .listStyle(.plain)
     .frame(maxWidth: 100, maxHeight: 240)
-    .padding(.top, 300)
+    .padding(.top, 245)
     .onAppear {
       UITableView.appearance().contentInset.top = -35
       UITableView.appearance().separatorInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 15)
@@ -226,7 +250,7 @@ private extension PhoneNumberView {
         isLoading: $viewModel.isLoading
       ) {
         viewModel.isLoading = true
-        keyboardFocus = false
+        keyboardFocus = nil
         viewModel.displayDropdown = false
         viewModel.performGetOTP()
       }
@@ -311,24 +335,6 @@ private extension PhoneNumberView {
   }
 }
 
-// MARK: - Overlay Contents
-private extension PhoneNumberView {
-  var supportButton: some View {
-    Button {
-      keyboardFocus = false
-      viewModel.displayDropdown = false
-      DispatchQueue.main.asyncAfter(wallDeadline: .now() + 0.5) {
-        viewModel.openSupportScreen()
-      }
-    } label: {
-      GenImages.CommonImages.icChat.swiftUIImage
-        .foregroundColor(Colors.label.swiftUIColor)
-    }
-    .padding(.top, 28)
-    .padding(.leading, 16)
-  }
-}
-
 // MARK: View Constants
 enum ViewConstant {
   static let maxDigits = 11
@@ -341,5 +347,13 @@ struct ViewOffsetKey: PreferenceKey {
   static var defaultValue: CGFloat = 0
   static func reduce(value: inout CGFloat, nextValue: () -> CGFloat) {
     value = nextValue()
+  }
+}
+
+// MARK: - Focus Keyboard
+extension PhoneNumberView {
+  enum Focus: Int, Hashable {
+    case phoneNumber
+    case promocode
   }
 }

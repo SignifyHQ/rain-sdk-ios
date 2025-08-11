@@ -32,7 +32,9 @@ final class HomeViewModel: ObservableObject {
   @Published var tabSelected: TabOption = .cash
   @Published var tabOptions: [TabOption] = []
   @Published var navigation: Navigation?
+  
   @Published var popup: Popup?
+  private var popupQueue: [Popup] = [.notifications]
   
   @Published var isLoading: Bool = false
   @Published var toastMessage: String?
@@ -107,6 +109,9 @@ extension HomeViewModel {
   
   func initData() {
     apiFetchUser()
+    
+    // Check if we need to show the popup for special experience
+    //popupQueue.append(.specialExperience)
   }
   
   func onAppear() {
@@ -130,7 +135,6 @@ extension HomeViewModel {
 
 // MARK: Notifications
 extension HomeViewModel {
-  
   func checkGoTransactionDetail() {
     guard let event = pushNotificationService.event else {
       return
@@ -145,13 +149,12 @@ extension HomeViewModel {
     Task { @MainActor in
       do {
         let status = try await pushNotificationService.notificationSettingStatus()
-        if status == .notDetermined {
-          if UserDefaults.didShowPushTokenPopup {
-            return
-          }
-          popup = .notifications
-          UserDefaults.didShowPushTokenPopup = true
-        } else if status == .authorized {
+        let shouldPresentNotificationPopup = !UserDefaults.didShowPushTokenPopup && status == .notDetermined
+        
+        presentNextPopupInQueue(removing: shouldPresentNotificationPopup ? nil : .notifications)
+        UserDefaults.didShowPushTokenPopup = true
+        
+        if status == .authorized {
           self.pushFCMTokenIfNeed()
         }
       } catch {
@@ -178,20 +181,46 @@ extension HomeViewModel {
   
   func notificationsPopupAction() {
     clearPopup()
+    
     Task { @MainActor in
       do {
         let success = try await pushNotificationService.requestPermission()
         if success {
           self.pushFCMTokenIfNeed()
         }
+        
+        presentNextPopupInQueue(removing: .notifications)
       } catch {
         log.error(error)
       }
     }
   }
+  
+  // Since this takes to the Assets tab, make sure this popup is the last in the queue
+  func goToAssets() {
+    clearPopup()
+    tabSelected = .assets
+  }
 
   func clearPopup() {
     popup = nil
+  }
+  
+  func presentNextPopupInQueue(
+    removing: Popup?
+  ) {
+    guard popup == nil
+    else {
+      return
+    }
+    
+    if let popupToRemove = removing {
+      popupQueue.removeAll() { $0 == popupToRemove }
+    }
+    
+    if let nextPopup = popupQueue.first {
+      popup = nextPopup
+    }
   }
   
   func openTransactionId(_ id: String) {
@@ -226,5 +255,6 @@ extension HomeViewModel {
   
   enum Popup {
     case notifications
+    case specialExperience
   }
 }

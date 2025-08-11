@@ -168,9 +168,9 @@ private extension MoveCryptoInputView {
             viewModel.isShowingTokenSelection.toggle()
           } label: {
             HStack {
-              viewModel.assetModel.type?.image
+              viewModel.assetModel.type?.icon
               
-              Text(viewModel.assetModel.type?.title ?? "N/A")
+              Text(viewModel.assetModel.type?.symbol ?? "N/A")
                 .font(Fonts.bold.swiftUIFont(size: Constants.FontSize.small.value))
                 .foregroundColor(Colors.label.swiftUIColor)
                 .padding(.horizontal, 12)
@@ -189,7 +189,7 @@ private extension MoveCryptoInputView {
             dropdownFrame = geometry.frame(in: .global)
           }
         } else {
-          viewModel.assetModel.type?.image
+          viewModel.assetModel.type?.icon
         }
       }
       .shakeAnimation(with: viewModel.numberOfShakes)
@@ -270,10 +270,10 @@ private extension MoveCryptoInputView {
       id: \.id
     ) { item in
       HStack {
-        item.type?.image
+        item.type?.icon
           .padding(.leading, -5)
         
-        Text(item.type?.title ?? "N/A")
+        Text(item.type?.symbol ?? "N/A")
           .font(Fonts.bold.swiftUIFont(size: Constants.FontSize.small.value))
           .foregroundColor(Colors.label.swiftUIColor)
           .padding(.leading, 12)

@@ -72,6 +72,16 @@ public struct TransactionModel: Identifiable, Hashable, Equatable {
 
 // MARK: - View Helpers
 public extension TransactionModel {
+  var transactionRowImage: Image? {
+    if let currencySymbol = currency,
+       let asset = AssetType(rawValue: currencySymbol),
+       asset == .wyst {
+      return asset.transactionIcon
+    }
+    
+    return Image(type.assetName)
+  }
+  
   var isACHTransaction: Bool {
     guard let transactionType = externalTransaction?.transactionType else {
       return false

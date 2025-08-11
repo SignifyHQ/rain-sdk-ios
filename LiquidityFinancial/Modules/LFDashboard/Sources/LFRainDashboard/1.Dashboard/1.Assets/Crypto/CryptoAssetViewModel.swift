@@ -42,7 +42,7 @@ class CryptoAssetViewModel: ObservableObject {
   }()
   
   var cryptoIconImage: Image? {
-    asset.type?.lineImage
+    asset.type?.icon
   }
   
   var cryptoBalance: String {
