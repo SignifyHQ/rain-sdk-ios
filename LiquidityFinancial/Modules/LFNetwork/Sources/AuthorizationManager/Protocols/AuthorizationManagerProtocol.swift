@@ -11,6 +11,7 @@ public protocol AuthorizationManagerProtocol {
   func fetchAccessToken() -> String
   func fetchRefreshToken() -> String
   func refreshWith(apiToken: AccessTokensEntity)
+  func saveWalletExtenstionTokens(apiToken: AccessTokensEntity) 
   func savePortalSessionToken(token: String?)
   func refreshToken() async throws
   func clearToken()

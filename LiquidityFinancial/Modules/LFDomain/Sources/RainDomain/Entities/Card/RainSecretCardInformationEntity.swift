@@ -6,6 +6,8 @@ public protocol RainSecretCardInformationEntity {
   var cardId: String { get }
   var rainPersonId: String { get }
   var rainCardId: String { get }
+  var processorCardId: String { get }
+  var timeBasedSecret: String { get }
   var encryptedPanEntity: EncryptedDataEntity { get }
   var encryptedCVCEntity: EncryptedDataEntity { get }
 }

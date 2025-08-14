@@ -11,6 +11,8 @@ public struct LFUserDefault<T: PropertyListValue> {
   
   public let parameter: String
   
+  public let suiteName: String?
+  
   public var wrappedValue: T {
     get { container.value(forKey: dynamicKey) as? T ?? defaultValue }
     set { container.set(newValue, forKey: dynamicKey) }
@@ -22,12 +24,25 @@ public struct LFUserDefault<T: PropertyListValue> {
   
   public var projectedValue: LFUserDefault<T> { self }
   
-  var container: UserDefaults = .standard
+  var container: UserDefaults {
+    guard let suiteName
+    else {
+      return .standard
+    }
+    
+    return .init(suiteName: suiteName) ?? .standard
+  }
 
-  public init(key: Key, defaultValue: T, parameter: String = .empty) {
+  public init(
+    key: Key,
+    defaultValue: T,
+    parameter: String = .empty,
+    suiteName: String? = nil
+  ) {
     self.key = key
     self.defaultValue = defaultValue
     self.parameter = parameter
+    self.suiteName = suiteName
   }
 
   public func observe(change: @escaping (T?, T?) -> Void) -> NSObject {

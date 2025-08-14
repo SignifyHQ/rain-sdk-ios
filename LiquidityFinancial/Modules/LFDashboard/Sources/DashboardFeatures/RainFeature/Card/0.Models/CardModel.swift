@@ -8,6 +8,7 @@ struct CardModel: Identifiable, Hashable {
   let expiryYear: Int
   let last4: String
   var cardStatus: CardStatus
+  var metadata: CardMetaData?
   var tokenExperiences: [String]?
   
   var expiryTime: String {

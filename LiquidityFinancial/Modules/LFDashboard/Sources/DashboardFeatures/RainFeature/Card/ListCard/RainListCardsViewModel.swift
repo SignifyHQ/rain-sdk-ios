@@ -1,15 +1,16 @@
-import Foundation
-import LFStyleGuide
+import AccountData
 import Combine
 import Factory
+import Foundation
+import LFLocalizable
+import LFStyleGuide
+import LFUtilities
+import MeaPushProvisioning
+import OnboardingData
+import PassKit
 import RainData
 import RainDomain
-import LFUtilities
-import OnboardingData
-import AccountData
-import PassKit
 import Services
-import LFLocalizable
 import SwiftUI
 
 @MainActor
@@ -47,11 +48,16 @@ public final class RainListCardsViewModel: ObservableObject {
   @Published var isActivePhysical: Bool = false
   @Published var isHasPhysicalCard: Bool = false
   @Published var isShowListCardDropdown: Bool = false
+  @Published var shouldShowAddToWalletButton: [String: Bool] = [:]
   @Published var toastMessage: String?
   
   @Published var cardsList: [CardModel] = []
-  @Published var cardMetaDatas: [CardMetaData?] = []
   @Published var currentCard: CardModel = .virtualDefault
+//  {
+//    didSet {
+//      loadTokenizationResponseData(card: currentCard)
+//    }
+//  }
   @Published var navigation: Navigation?
   @Published var sheet: Sheet?
   @Published var fullScreen: FullScreen?
@@ -59,6 +65,9 @@ public final class RainListCardsViewModel: ObservableObject {
   
   private var isSwitchCard = true
   private var subscribers: Set<AnyCancellable> = []
+  
+  var tokenizationResponseData: [String: MppInitializeOemTokenizationResponseData?] = [:]
+  var requestConfiguration: [String: PKAddPaymentPassRequestConfiguration?] = [:]
   
   var activeCardCount: Int {
     cardsList.filter{ $0.cardStatus != .closed }.count
@@ -69,12 +78,18 @@ public final class RainListCardsViewModel: ObservableObject {
     // Check cached value while the cards are loading to avoid unneeded flicker
     if cardsList.isEmpty {
       return accountDataManager.hasFrntCard
+  var cardholderName: String {
+    if let firstName = accountDataManager.userInfomationData.firstName,
+       let lastName = accountDataManager.userInfomationData.lastName {
+      
+      return firstName + " " + lastName
     }
     
     return cardsList
       .contains { card in
         card.tokenExperiences?.contains("FRNT") == true
       }
+    return accountDataManager.userInfomationData.fullName ?? ""
   }
   
   public init() {
@@ -165,15 +180,16 @@ public extension RainListCardsViewModel {
         if cardsList.isEmpty {
           NotificationCenter.default.post(name: .noLinkedCards, object: nil)
         } else {
-          cardMetaDatas = Array(repeating: nil, count: cardsList.count)
-          cardsList.enumerated().forEach { index, card in
-            guard card.cardStatus != .closed
-            else {
-              return
+          cardsList
+            .enumerated()
+            .forEach { index, card in
+              guard card.cardStatus != .closed
+              else {
+                return
+              }
+              
+              fetchSecretCardInformation(cardId: card.id)
             }
-            
-            fetchSecretCardInformation(card: card, index: index)
-          }
         }
       } catch {
         isInit = false
@@ -183,14 +199,15 @@ public extension RainListCardsViewModel {
     }
   }
   
-  private func fetchSecretCardInformation(card: CardModel, index: Int) {
+  private func fetchSecretCardInformation(
+    cardId: String
+  ) {
     Task {
       defer { isInit = false }
       
-      guard card.cardStatus == .active
+      guard let card = cardsList.first(where: { $0.id == cardId }),
+            card.cardStatus == .active
       else {
-        cardMetaDatas[index] = nil
-        
         return
       }
       
@@ -207,14 +224,119 @@ public extension RainListCardsViewModel {
           dataBase64: secretInformation.encryptedCVCEntity.data
         )
         
-        let cardMetaData = CardMetaData(pan: pan, cvv: cvv)
-        cardMetaDatas[index] = cardMetaData
+        let cardMetaData = CardMetaData(
+          pan: pan,
+          cvv: cvv,
+          processorCardId: secretInformation.processorCardId,
+          timeBasedSecret: secretInformation.timeBasedSecret
+        )
+        
+        if let index = cardsList.firstIndex(of: card) {
+          cardsList[index].metadata = cardMetaData
+          loadTokenizationResponseData(cardId: cardId)
+        }
       } catch {
-        cardMetaDatas[index] = nil
         log.error(error.userFriendlyMessage)
         toastMessage = error.userFriendlyMessage
       }
     }
+  }
+  
+  private func loadTokenizationResponseData(
+    cardId: String
+  ) {
+    guard let card = cardsList.first(where: { $0.id == cardId }),
+          let cardMetadata = card.metadata
+    else {
+      return
+    }
+    
+    print("START TOKENIZATION")
+    
+    let mppCardParameters = MppCardDataParameters(
+      cardId: cardMetadata.processorCardId,
+      cardSecret: cardMetadata.timeBasedSecret
+    )
+    
+    let isPassLibraryAvailable = PKPassLibrary.isPassLibraryAvailable()
+    let canAddPaymentPass = PKAddPaymentPassViewController.canAddPaymentPass()
+    
+    print("START TOKENIZATION: IS PASS LIBRARY AVAILABLE", isPassLibraryAvailable)
+    print("START TOKENIZATION: CAN ADD PAYMENT PASS", canAddPaymentPass)
+    
+    if (isPassLibraryAvailable && canAddPaymentPass) {
+      MeaPushProvisioning.initializeOemTokenization(mppCardParameters) { (responseData, error) in
+        
+        print("START TOKENIZATION: RESPONSE DATA", responseData?.primaryAccountSuffix)
+        print("START TOKENIZATION: RESPONSE DATA VALID:", responseData?.isValid() ?? false)
+        
+        if let responseData,
+           responseData.isValid() {
+          print("START TOKENIZATION: GOT RESPONSE DATA")
+          var canAddPaymentPassWithPAI = true
+          self.shouldShowAddToWalletButton[cardId] = false
+          
+          print("IDENTIFIER", responseData.primaryAccountIdentifier)
+          
+          if let primaryAccountIdentifier = responseData.primaryAccountIdentifier,
+             !primaryAccountIdentifier.isEmpty {
+            if #available(iOS 13.4, *) {
+              canAddPaymentPassWithPAI = MeaPushProvisioning.canAddSecureElementPass(withPrimaryAccountIdentifier: primaryAccountIdentifier)
+              print("IDENTIFIER", responseData.primaryAccountIdentifier, canAddPaymentPassWithPAI)
+            } else {
+              canAddPaymentPassWithPAI = MeaPushProvisioning.canAddPaymentPass(withPrimaryAccountIdentifier: primaryAccountIdentifier)
+            }
+          }
+          
+          if (canAddPaymentPassWithPAI) {
+            print("Got Tokenization Response for card:", cardMetadata.pan)
+            
+            self.tokenizationResponseData[card.id] = responseData
+            
+            self.requestConfiguration[card.id] = self.tokenizationResponseData[card.id]??.addPaymentPassRequestConfiguration
+            self.requestConfiguration[card.id]??.cardholderName = self.cardholderName
+            
+            print("Payment pass request configuration description:", self.requestConfiguration[card.id]??.localizedDescription ?? "nil")
+            print("Payment pass request configuration cardholder name:", self.requestConfiguration[card.id]??.cardholderName ?? "nil")
+            print("Payment pass request configuration payment network:", self.requestConfiguration[card.id]??.paymentNetwork ?? "nil")
+            print("Payment pass request configuration primary account identifier:", self.requestConfiguration[card.id]??.primaryAccountIdentifier ?? "nil")
+            print("Payment pass request configuration primary account suffix:", self.requestConfiguration[card.id]??.primaryAccountSuffix ?? "nil")
+            print("Payment pass request configuration card details:", self.requestConfiguration[card.id]??.cardDetails ?? "nil")
+            
+            self.shouldShowAddToWalletButton[cardId] = true
+          } else {
+            print("CANNOT ADD CARD")
+            self.shouldShowAddToWalletButton[cardId] = false
+          }
+        }
+      }
+    }
+  }
+  
+  func completeTokenization(
+    certificates: [Data],
+    nonce: Data,
+    nonceSignature: Data
+  ) async throws -> PKAddPaymentPassRequest? {
+    guard let tokenizationResponseData = tokenizationResponseData[currentCard.id],
+            let tokenizationReceipt = tokenizationResponseData?.tokenizationReceipt
+    else {
+      return nil
+    }
+    
+    let tokenizationData = MppCompleteOemTokenizationData(
+      tokenizationReceipt: tokenizationReceipt,
+      certificates: certificates,
+      nonce: nonce,
+      nonceSignature: nonceSignature
+    )
+    
+    let responseData = try await MeaPushProvisioning.completeOemTokenization(tokenizationData)
+    if responseData.isValid() {
+      return responseData.addPaymentPassRequest
+    }
+    
+    return nil
   }
 }
 
@@ -326,7 +448,6 @@ private extension RainListCardsViewModel {
   
   func orderPhysicalSuccess(card: CardModel) {
     isHasPhysicalCard = true
-    cardMetaDatas.append(nil)
     cardsList.insert(card, at: 0)
     currentCard = card
   }
@@ -346,6 +467,7 @@ private extension RainListCardsViewModel {
   
   func updateCardStatus(status: CardStatus, id: String) {
     isLoading = false
+    
     guard id == currentCard.id, let index = cardsList.firstIndex(where: { $0.id == id }) else {
       return
     }
@@ -360,8 +482,9 @@ private extension RainListCardsViewModel {
     guard let index = cardsList.firstIndex(where: { $0.id == id }) else {
       return
     }
+    
     cardsList.remove(at: index)
-    cardMetaDatas.remove(at: index)
+    
     if let firstCard = cardsList.first {
       currentCard = firstCard
     } else {

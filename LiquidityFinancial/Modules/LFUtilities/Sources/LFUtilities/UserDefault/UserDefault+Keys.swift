@@ -20,4 +20,9 @@ public extension Key {
   static let isBiometricUsageEnabled: Key = "isBiometricUsageEnabled"
   static let isStartedWithLoginFlow: Key = "isStartedWithLoginFlow"
   static let hasFrntCard: Key = "hasFrntCard"
+  
+  // Walelt extension keys
+  static let walletExtensionAccessTokenExpiresAt: Key = "walletExtensionAccessTokenExpiresAt"
+  static let walletExtensionAccessToken: Key = "walletExtensionAccessToken"
+  static let walletExtensionRefreshToken: Key = "walletExtensionRefreshToken"
 }
