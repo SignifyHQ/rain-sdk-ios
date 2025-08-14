@@ -15,6 +15,7 @@ import Services
 
 @MainActor
 final class MoveCryptoInputViewModel: ObservableObject {
+  @LazyInjected(\.environmentService) var environmentService
   @LazyInjected(\.accountRepository) var accountRepository
   @LazyInjected(\.accountDataManager) var accountDataManager
   @LazyInjected(\.portalRepository) var portalRepository
@@ -216,7 +217,14 @@ private extension MoveCryptoInputViewModel {
   func getWithdrawalSignature(
     chainId: Int
   ) async throws -> PortalService.WithdrawAssetSignature? {
-    let amount = amount * pow(10, Double(assetModel.conversionFactor))
+    var conversionFactor = assetModel.conversionFactor
+    
+    // FRNT in DEV conversion factor is 18 and not 6
+    if assetModel.type == .frnt && environmentService.networkEnvironment == .productionTest {
+      conversionFactor = 18
+    }
+    
+    let amount = amount * pow(10, Double(conversionFactor))
     let parameters = APIRainWithdrawalSignatureParameters(
       chainId: chainId,
       token: assetModel.id,
@@ -317,8 +325,8 @@ private extension MoveCryptoInputViewModel {
               return nil
             }
             
-            // WYST exclusive experience, only show WYST token if user has balance
-            guard assetModel.type != .wyst || assetModel.availableBalance > 0
+            // FRNT exclusive experience, only show FRNT token if user has balance
+            guard assetModel.type != .frnt || assetModel.availableBalance > 0
             else {
               return nil
             }
@@ -337,8 +345,8 @@ private extension MoveCryptoInputViewModel {
         
         assets?.append(usdte)
         assets?.sort {
-          let oneIsPrio = $0.type == .wyst
-          let twoIsPrio = $1.type == .wyst
+          let oneIsPrio = $0.type == .frnt
+          let twoIsPrio = $1.type == .frnt
           
           if oneIsPrio != twoIsPrio {
             return oneIsPrio

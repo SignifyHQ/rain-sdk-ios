@@ -32,4 +32,7 @@ public protocol AccountRepositoryProtocol {
   func getSecretKey() async throws -> SecretKeyEntity
   func enableMFA(code: String) async throws -> EnableMFAEntity
   func disableMFA(code: String) async throws -> DisableMFAEntity
+  func applyPromocode(phoneNumber: String, promocode: String) async throws
+  func shouldShowPopup(campaign: String) async throws -> ShouldShowPopupEntity
+  func savePopupShown(campaign: String) async throws
 }

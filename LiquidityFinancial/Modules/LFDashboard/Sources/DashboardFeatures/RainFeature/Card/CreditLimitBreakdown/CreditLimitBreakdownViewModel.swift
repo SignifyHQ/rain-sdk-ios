@@ -49,8 +49,8 @@ public final class CreditLimitBreakdownViewModel: ObservableObject {
               return nil
             }
             
-            // WYST exclusive experience, only show WYST token if user has balance
-            guard assetModel.type != .wyst || assetModel.availableBalance > 0
+            // FRNT exclusive experience, only show FRNT token if user has balance
+            guard assetModel.type != .frnt || assetModel.availableBalance > 0
             else {
               return nil
             }
@@ -58,8 +58,8 @@ public final class CreditLimitBreakdownViewModel: ObservableObject {
             return assetModel
           }
           .sorted {
-            let oneIsPrio = $0.type == .wyst
-            let twoIsPrio = $1.type == .wyst
+            let oneIsPrio = $0.type == .frnt
+            let twoIsPrio = $1.type == .frnt
             
             if oneIsPrio != twoIsPrio {
               return oneIsPrio

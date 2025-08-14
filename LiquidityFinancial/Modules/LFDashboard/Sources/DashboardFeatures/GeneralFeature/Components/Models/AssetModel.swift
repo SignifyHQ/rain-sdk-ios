@@ -73,9 +73,9 @@ public struct AssetModel: Hashable, Identifiable {
   
   public var conversionFactor: Int {
     switch type {
-    case .usdc, .usdt, .usdte:
+    case .usdc, .usdt, .usdte, .frnt:
       6
-    case .avax, .cardano, .doge, .wavax, .wyst:
+    case .avax, .cardano, .doge, .wavax:
       18
     default:
       2

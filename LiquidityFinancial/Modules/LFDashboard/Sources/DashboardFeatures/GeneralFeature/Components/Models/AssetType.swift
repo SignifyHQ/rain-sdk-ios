@@ -9,7 +9,7 @@ public enum AssetType: String {
   case usdte = "USDTE"
   case wavax = "WAVAX"
   case avax = "AVAX"
-  case wyst = "WYST"
+  case frnt = "FRNT"
   case cardano = "ADA"
   case doge = "DOGE"
   
@@ -25,8 +25,8 @@ public enum AssetType: String {
       "Wrapped AVAX"
     case .avax:
       "Avalanche"
-    case .wyst:
-      "Wyoming Stablecoin"
+    case .frnt:
+      "Frontier Stable Token"
     default:
       nil
     }
@@ -42,7 +42,7 @@ public enum AssetType: String {
     case .wavax: return 5
     case .usdt: return 6
     case .usdte: return 7
-    case .wyst: return 8
+    case .frnt: return 8
     }
   }
   
@@ -71,8 +71,8 @@ public enum AssetType: String {
       return GenImages.CommonImages.icDoge.swiftUIImage
     case .wavax:
       return GenImages.CommonImages.icWavax.swiftUIImage
-    case .wyst:
-      return GenImages.CommonImages.icWyst.swiftUIImage
+    case .frnt:
+      return GenImages.CommonImages.icFrnt.swiftUIImage
     }
   }
   
@@ -92,8 +92,8 @@ public enum AssetType: String {
       return GenImages.CommonImages.icDoge.swiftUIImage
     case .wavax:
       return GenImages.CommonImages.icWavax.swiftUIImage
-    case .wyst:
-      return GenImages.CommonImages.icWystBig.swiftUIImage
+    case .frnt:
+      return GenImages.CommonImages.icFrntBig.swiftUIImage
     }
   }
 }

@@ -191,7 +191,9 @@ private extension PhoneNumberView {
   }
   
   var promocodeTextField: some View {
-    TextFieldWrapper {
+    TextFieldWrapper(
+      errorValue: $viewModel.inlineError
+    ) {
       TextField(
         "Enter your promo code",
         text: $viewModel.promocode

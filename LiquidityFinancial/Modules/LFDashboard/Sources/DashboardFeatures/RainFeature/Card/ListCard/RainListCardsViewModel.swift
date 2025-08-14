@@ -14,6 +14,7 @@ import SwiftUI
 
 @MainActor
 public final class RainListCardsViewModel: ObservableObject {
+  @LazyInjected(\.accountDataManager) var accountDataManager
   @LazyInjected(\.rainCardRepository) var rainCardRepository
   @LazyInjected(\.customerSupportService) var customerSupportService
   @LazyInjected(\.analyticsService) var analyticsService
@@ -61,6 +62,19 @@ public final class RainListCardsViewModel: ObservableObject {
   
   var activeCardCount: Int {
     cardsList.filter{ $0.cardStatus != .closed }.count
+  }
+  
+  // Check if a card with FRNT experience was created for the user
+  public var hasFrntCard: Bool {
+    // Check cached value while the cards are loading to avoid unneeded flicker
+    if cardsList.isEmpty {
+      return accountDataManager.hasFrntCard
+    }
+    
+    return cardsList
+      .contains { card in
+        card.tokenExperiences?.contains("FRNT") == true
+      }
   }
   
   public init() {
@@ -138,6 +152,11 @@ public extension RainListCardsViewModel {
         }
         
         cardsList = cardsList.filter({ $0.cardStatus != .closed })
+        // Cache the value for frnt card available
+        accountDataManager.hasFrntCard = cardsList
+          .contains { card in
+            card.tokenExperiences?.contains("FRNT") == true
+          }
         
         currentCard = cardsList.first ?? .virtualDefault
         isActivePhysical = currentCard.cardStatus == .active
@@ -320,7 +339,8 @@ private extension RainListCardsViewModel {
       expiryMonth: Int(card.expMonth ?? .empty) ?? 0,
       expiryYear: Int(card.expYear ?? .empty) ?? 0,
       last4: card.last4 ?? .empty,
-      cardStatus: CardStatus(rawValue: card.cardStatus.lowercased()) ?? .unactivated
+      cardStatus: CardStatus(rawValue: card.cardStatus.lowercased()) ?? .unactivated,
+      tokenExperiences: card.tokenExperiences
     )
   }
   

@@ -250,13 +250,13 @@ private extension ProfileView {
           }
         }
         
-        ArrowButton(
-          image: GenImages.CommonImages.icPromocode.swiftUIImage,
-          title: "Have a promo code?",
-          value: nil
-        ) {
-          viewModel.shouldPresentPromocodeSheet = true
-        }
+//        ArrowButton(
+//          image: GenImages.CommonImages.icPromocode.swiftUIImage,
+//          title: "Have a promo code?",
+//          value: nil
+//        ) {
+//          viewModel.shouldPresentPromocodeSheet = true
+//        }
       }
     }
   }

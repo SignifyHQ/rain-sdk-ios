@@ -70,7 +70,10 @@ public struct HomeView: View {
         )
       }
     }
-    .popup(item: $viewModel.popup) { popup in
+    .popup(
+      item: $viewModel.popup,
+      dismissMethods: []
+    ) { popup in
       switch popup {
       case .notifications:
         notificationsPopup
@@ -188,15 +191,20 @@ private extension HomeView {
   
   private var specialExperiencePopup: some View {
     LiquidityAlert(
-      title: "You've been sent\nWyoming Stablecoins".uppercased(),
-      message: "As part of the Wyoming event experience, 5 Wyoming Stablecoins have just been added to your account.",
+      title: "10 FRNT Tokens Added\nto Your Account".uppercased(),
+      message: "You’ve just received 10 Frontier Stable Tokens (FRNT) as part of the Wyoming event experience.",
       primary: .init(
         text: "Go to My Account",
-        action: viewModel.goToAssets
+        action: {
+          viewModel.onSpecialExperiencePopupDismiss()
+          viewModel.goToAssets()
+        }
       ),
       secondary: .init(
         text: "Got it",
-        action: viewModel.clearPopup
+        action: {
+          viewModel.onSpecialExperiencePopupDismiss()
+        }
       )
     )
   }

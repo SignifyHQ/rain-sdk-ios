@@ -19,4 +19,5 @@ public extension Key {
   static let isFirstRun: Key = "isFirstRun"
   static let isBiometricUsageEnabled: Key = "isBiometricUsageEnabled"
   static let isStartedWithLoginFlow: Key = "isStartedWithLoginFlow"
+  static let hasFrntCard: Key = "hasFrntCard"
 }

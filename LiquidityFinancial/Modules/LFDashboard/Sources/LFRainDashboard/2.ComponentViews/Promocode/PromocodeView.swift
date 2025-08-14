@@ -61,12 +61,12 @@ struct PromocodeView: View {
     ZStack {
       if viewModel.isSuccessState {
         VStack {
-          GenImages.CommonImages.icWystBig.swiftUIImage
+          GenImages.CommonImages.icFrntBig.swiftUIImage
             .resizable()
             .frame(width: 75, height: 75)
             .padding(.bottom, 20)
           
-          Text("As part of the Wyoming event\nexperience, 5 Wyoming Stablecoins\nhave just been added to your account.")
+          Text("You’ve just received\n10 Frontier Stable Tokens (FRNT) as part of\nthe Wyoming event experience.")
             .font(Fonts.regular.swiftUIFont(size: 16))
             .multilineTextAlignment(.center)
             .fixedSize(horizontal: true, vertical: true)

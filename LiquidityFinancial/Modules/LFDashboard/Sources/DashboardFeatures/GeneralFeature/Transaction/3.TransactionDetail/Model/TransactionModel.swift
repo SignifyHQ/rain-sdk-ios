@@ -75,7 +75,7 @@ public extension TransactionModel {
   var transactionRowImage: Image? {
     if let currencySymbol = currency,
        let asset = AssetType(rawValue: currencySymbol),
-       asset == .wyst {
+       asset == .frnt {
       return asset.transactionIcon
     }
     

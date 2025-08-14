@@ -46,6 +46,14 @@ final class HomeViewModel: ObservableObject {
     DeviceRegisterUseCase(repository: devicesRepository)
    }()
   
+  lazy var shouldShowPopupUseCase: ShouldShowPopupUseCaseProtocol = {
+    ShouldShowPopupUseCase(repository: accountRepository)
+  }()
+  
+  lazy var savePopupShownUseCaseProtocol: SavePopupShownUseCaseProtocol = {
+    SavePopupShownUseCase(repository: accountRepository)
+  }()
+  
   let dashboardRepository: DashboardRepository
   init(dashboardRepository: DashboardRepository, tabOptions: [TabOption]) {
     self.dashboardRepository = dashboardRepository
@@ -111,7 +119,7 @@ extension HomeViewModel {
     apiFetchUser()
     
     // Check if we need to show the popup for special experience
-    //popupQueue.append(.specialExperience)
+    checkShouldShowPopup()
   }
   
   func onAppear() {
@@ -130,6 +138,42 @@ extension HomeViewModel {
       userAttributes = UserAttributes(phone: accountDataManager.phoneNumber, email: accountDataManager.userEmail)
     }
     customerSupportService.loginIdentifiedUser(userAttributes: userAttributes)
+  }
+  
+  private func checkShouldShowPopup() {
+    Task {
+      do {
+        let response = try await shouldShowPopupUseCase.execute(campaign: "FRNT")
+        
+        if response.shouldShow {
+          if popup == nil && popupQueue.isEmpty {
+            popup = .specialExperience
+            
+            return
+          }
+          
+          popupQueue.append(.specialExperience)
+        }
+      } catch {
+        log.error(error)
+      }
+    }
+  }
+  
+  func onSpecialExperiencePopupDismiss() {
+    clearPopup()
+    saveFrntShown()
+    popupQueue.removeAll() { $0 == .specialExperience }
+  }
+  
+  private func saveFrntShown() {
+    Task {
+      do {
+        try await savePopupShownUseCaseProtocol.execute(campaign: "FRNT")
+      } catch {
+        log.error(error)
+      }
+    }
   }
 }
 

@@ -233,6 +233,7 @@ public extension Constants {
     case cardNameConflict = "card_name_conflict"
     case questionsNotAvailable = "identity_verification_questions_not_available"
     case portalBackupShareNotFound = "portal_backup_share_not_found"
+    case invalidPromoCode = "promo_code_invalid"
     
     public var value: String {
       rawValue

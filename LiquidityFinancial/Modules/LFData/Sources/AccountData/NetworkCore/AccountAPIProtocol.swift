@@ -32,4 +32,7 @@ public protocol AccountAPIProtocol {
   func getSecretKey() async throws -> APISecretKey
   func enableMFA(code: String) async throws -> APIEnableMFA
   func disableMFA(code: String) async throws -> APIDisableMFA
+  func applyPromocode(phoneNumber: String, promocode: String) async throws
+  func shouldShowPopup(campaign: String) async throws -> APIShouldShowPopup
+  func savePopupShown(campaign: String) async throws
 }

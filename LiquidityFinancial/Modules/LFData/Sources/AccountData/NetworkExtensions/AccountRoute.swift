@@ -35,6 +35,9 @@ public enum AccountRoute {
   case getSecretKey
   case enableMFA(code: String)
   case disableMFA(code: String)
+  case promocode(phoneNumber: String, promocode: String)
+  case shouldShowPopup(campaign: String)
+  case savePopupShown(campaign: String)
 }
 
 extension AccountRoute: LFRoute {
@@ -97,6 +100,12 @@ extension AccountRoute: LFRoute {
       return "/v1/mfa/enable"
     case .disableMFA:
       return "/v1/mfa/disable"
+    case .promocode:
+      return "/v1/user/promo-code"
+    case .shouldShowPopup:
+      return "/v1/user/popup-onboarding"
+    case .savePopupShown:
+      return "/v1/user/popup-onboarding/view"
     }
   }
   
@@ -117,7 +126,9 @@ extension AccountRoute: LFRoute {
         .createSupportTicket,
         .updateSelectedRewardCurrency,
         .enableMFA,
-        .disableMFA:
+        .disableMFA,
+        .promocode,
+        .savePopupShown:
       return .POST
     case .getUser,
         .getTransactions,
@@ -129,7 +140,8 @@ extension AccountRoute: LFRoute {
         .getSelectedRewardCurrency,
         .getSecretKey,
         .getUserRewards,
-        .getFeatureConfig:
+        .getFeatureConfig,
+        .shouldShowPopup:
       return .GET
     case .updateWalletAddress:
       return .PATCH
@@ -245,6 +257,20 @@ extension AccountRoute: LFRoute {
       return [
         "transactionHash": transactionHash
       ]
+    case let .promocode(phoneNumber, promocode):
+      return [
+        "productId": NetworkUtilities.productID,
+        "phone": phoneNumber,
+        "promoCode": promocode
+      ]
+    case let .shouldShowPopup(campaign):
+      return [
+        "token": campaign
+      ]
+    case let .savePopupShown(campaign):
+      return [
+        "token": campaign
+      ]
     }
   }
   
@@ -264,7 +290,8 @@ extension AccountRoute: LFRoute {
         .createSupportTicket,
         .updateSelectedRewardCurrency,
         .enableMFA,
-        .disableMFA:
+        .disableMFA,
+        .promocode:
       return .json
     case .getAvailableRewardCurrencies,
         .getSelectedRewardCurrency,
@@ -280,7 +307,9 @@ extension AccountRoute: LFRoute {
     case .getTransactions,
         .getTransactionDetail,
         .getTransactionByHashID,
-        .getReferralCampaign:
+        .getReferralCampaign,
+        .shouldShowPopup,
+        .savePopupShown:
       return .url
     }
   }

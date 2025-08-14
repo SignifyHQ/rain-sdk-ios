@@ -55,4 +55,7 @@ public extension UserDefaults {
   
   @LFUserDefault(key: Key.isStartedWithLoginFlow, defaultValue: true)
   static var isStartedWithLoginFlow: Bool
+  
+  @LFUserDefault(key: Key.hasFrntCard, defaultValue: false)
+  static var hasFrntCard: Bool
 }

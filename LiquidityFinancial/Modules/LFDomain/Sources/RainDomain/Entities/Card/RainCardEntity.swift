@@ -14,4 +14,5 @@ public protocol RainCardEntity {
   var limitAmount: Double? { get }
   var limitFrequency: String? { get }
   var createdAt: String { get }
+  var tokenExperiences: [String]? { get }
 }

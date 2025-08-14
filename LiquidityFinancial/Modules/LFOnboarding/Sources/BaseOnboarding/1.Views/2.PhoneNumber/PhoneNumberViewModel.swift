@@ -1,3 +1,4 @@
+import AccountDomain
 import Foundation
 import Combine
 import LFUtilities
@@ -20,6 +21,7 @@ public final class PhoneNumberViewModel: ObservableObject {
   @InjectedObject(\.onboardingDestinationObservable) var onboardingDestinationObservable
   
   @LazyInjected(\.onboardingRepository) var onboardingRepository
+  @LazyInjected(\.accountRepository) var accountRepository
   @LazyInjected(\.featureFlagManager) var featureFlagManager
 
   @LazyInjected(\.customerSupportService) var customerSupportService
@@ -43,9 +45,14 @@ public final class PhoneNumberViewModel: ObservableObject {
   
   @Published var selectedCountry: Country = .US
   @Published var phoneNumber: String = ""
-  @Published var promocode: String = ""
+  @Published var promocode: String = "" {
+    didSet {
+      inlineError = nil
+    }
+  }
   
   @Published var toastMessage: String?
+  @Published var inlineError: String?
   
   var networkEnvironment: NetworkEnvironment {
     get {
@@ -72,6 +79,10 @@ public final class PhoneNumberViewModel: ObservableObject {
     LoginUseCase(repository: onboardingRepository)
   }()
   
+  lazy var applyPromocodeUseCase: ApplyPromoCodeUseCaseProtocol = {
+    ApplyPromoCodeUseCase(repository: accountRepository)
+  }()
+  
   private let handleOnboardingStep: (() async throws -> Void)?
   private let forceLogout: (() -> Void)?
   private let setRouteToAccountLocked: (() -> Void)?
@@ -94,24 +105,43 @@ public final class PhoneNumberViewModel: ObservableObject {
 extension PhoneNumberViewModel {
   func performGetOTP() {
     Task {
-      defer { isLoading = false }
+      defer {
+        isLoading = false
+      }
+      
+      inlineError = nil
       isLoading = true
       
       let phoneNumberWithRegionCode = selectedCountry.phoneCode + phoneNumber
       let formattedPhoneNumber = phoneNumberWithRegionCode.reformatPhone
+      let promocodeTrimmed = promocode.trimWhitespacesAndNewlines()
       
       do {
         if shouldAgreeToTerms == nil {
+          
+          // Check if the user is new or existing
           let parameters = CheckAccountExistingParameters(phoneNumber: formattedPhoneNumber)
           let checkResponse = try await checkAccountExistingUseCase.execute(parameters: parameters)
           let doesAccountExist = checkResponse.exists
           
+          // Proceed with login for existing user
           if doesAccountExist {
             try await requestOTPAndProceed(with: formattedPhoneNumber)
+            
+            // Show the promocode field and terms to new users
           } else {
             shouldAgreeToTerms = true
           }
+          
+          // Proceed to login for new users after they agree to terms
         } else {
+          
+          // Apply promocode first if it is entered
+          if !promocodeTrimmed.isEmpty {
+            try await applyPromocodeUseCase.execute(phoneNumber: formattedPhoneNumber, promocode: promocodeTrimmed)
+          }
+          
+          // Request OTP if promocode was applied successfully or not used
           try await requestOTPAndProceed(with: formattedPhoneNumber)
         }
       } catch {
@@ -166,13 +196,18 @@ extension PhoneNumberViewModel {
 // MARK: - Private Functions
 private extension PhoneNumberViewModel {
   func handleError(error: Error) {
-    guard let code = error.asErrorObject?.code else {
+    guard let code = error.asErrorObject?.code
+    else {
       toastMessage = error.userFriendlyMessage
+      
       return
     }
+    
     switch code {
     case Constants.ErrorCode.userInactive.value:
       setRouteToAccountLocked?()
+    case Constants.ErrorCode.invalidPromoCode.value:
+      inlineError = error.userFriendlyMessage
     default:
       toastMessage = error.userFriendlyMessage
     }

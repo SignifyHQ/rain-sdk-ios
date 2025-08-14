@@ -64,6 +64,15 @@ public class AccountDataManager: AccountDataStorageProtocol {
     }
   }
   
+  public var hasFrntCard: Bool {
+    get {
+      UserDefaults.hasFrntCard
+    }
+    set {
+      UserDefaults.hasFrntCard = newValue
+    }
+  }
+  
   public var addressDetail: String {
     let userData = self.userInfomationData
     let stateCode = "\(userData.state ?? ""), \((userData.country == "US" ? userData.postalCode?.capitalized : userData.postalCode) ?? "")"
@@ -189,6 +198,7 @@ public class AccountDataManager: AccountDataStorageProtocol {
     UserDefaults.userEmail = ""
     UserDefaults.userNameDisplay = ""
     UserDefaults.userCompleteOnboarding = false
+    UserDefaults.hasFrntCard = false
     
     userInfomationData = UserInfomationData()
     
