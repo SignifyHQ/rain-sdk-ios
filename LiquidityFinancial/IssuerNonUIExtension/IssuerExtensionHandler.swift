@@ -22,7 +22,7 @@ class IssuerExtensionHandler: PKIssuerProvisioningExtensionHandler {
     // The handler should be invoked within 100ms. The extension is not displayed to the user in Wallet if this criteria is not met.
     let status = PKIssuerProvisioningExtensionStatus()
     status.requiresAuthentication = false
-    status.passEntriesAvailable = true
+    status.passEntriesAvailable = false
     status.remotePassEntriesAvailable = false
     
     completion(status)
