@@ -73,11 +73,6 @@ public final class RainListCardsViewModel: ObservableObject {
     cardsList.filter{ $0.cardStatus != .closed }.count
   }
   
-  // Check if a card with FRNT experience was created for the user
-  public var hasFrntCard: Bool {
-    // Check cached value while the cards are loading to avoid unneeded flicker
-    if cardsList.isEmpty {
-      return accountDataManager.hasFrntCard
   var cardholderName: String {
     if let firstName = accountDataManager.userInfomationData.firstName,
        let lastName = accountDataManager.userInfomationData.lastName {
@@ -85,11 +80,20 @@ public final class RainListCardsViewModel: ObservableObject {
       return firstName + " " + lastName
     }
     
+    return accountDataManager.userInfomationData.fullName ?? ""
+  }
+  
+  // Check if a card with FRNT experience was created for the user
+  public var hasFrntCard: Bool {
+    // Check cached value while the cards are loading to avoid unneeded flicker
+    if cardsList.isEmpty {
+      return accountDataManager.hasFrntCard
+    }
+    
     return cardsList
       .contains { card in
         card.tokenExperiences?.contains("FRNT") == true
       }
-    return accountDataManager.userInfomationData.fullName ?? ""
   }
   
   public init() {
