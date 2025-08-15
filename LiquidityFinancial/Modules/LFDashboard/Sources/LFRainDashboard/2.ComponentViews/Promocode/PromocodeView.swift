@@ -105,6 +105,12 @@ struct PromocodeView: View {
         "Enter your promo code",
         text: $viewModel.promocode
       )
+      .onChange(
+        of: viewModel.promocode,
+        perform: { newValue in
+          viewModel.promocode = newValue.uppercased()
+        }
+      )
       .primaryFieldStyle()
       .disableAutocorrection(true)
       .keyboardType(.alphabet)
@@ -123,6 +129,7 @@ struct PromocodeView: View {
           type: .primary
         ) {
           if viewModel.isSuccessState {
+            viewModel.saveFrntShown()
             isSheetPresented = false
             successAction?()
             
@@ -141,6 +148,7 @@ struct PromocodeView: View {
             isDisable: false,
             type: .alternative
           ) {
+            viewModel.saveFrntShown()
             isSheetPresented = false
           }
           .transition(.opacity)

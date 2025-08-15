@@ -260,12 +260,12 @@ extension LFCoreNetwork: AccountAPIProtocol where R == AccountRoute {
   }
   
   public func applyPromocode(
-    phoneNumber: String,
+    phoneNumber: String?,
     promocode: String
   ) async throws {
     try await requestNoResponse(
       AccountRoute
-        .promocode(
+        .applyPromocode(
           phoneNumber: phoneNumber,
           promocode: promocode
         ),

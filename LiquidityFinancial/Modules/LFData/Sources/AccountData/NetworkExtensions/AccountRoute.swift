@@ -35,7 +35,8 @@ public enum AccountRoute {
   case getSecretKey
   case enableMFA(code: String)
   case disableMFA(code: String)
-  case promocode(phoneNumber: String, promocode: String)
+  // If phoneNumber == nil, call the endpoint for existing users; phoneNumber is required for onboarding flow promo code
+  case applyPromocode(phoneNumber: String?, promocode: String)
   case shouldShowPopup(campaign: String)
   case savePopupShown(campaign: String)
 }
@@ -100,7 +101,11 @@ extension AccountRoute: LFRoute {
       return "/v1/mfa/enable"
     case .disableMFA:
       return "/v1/mfa/disable"
-    case .promocode:
+    case let .applyPromocode(phoneNumber, _):
+      if phoneNumber == nil {
+        return "/v1/user/profile/apply-promo-code"
+      }
+      
       return "/v1/user/promo-code"
     case .shouldShowPopup:
       return "/v1/user/popup-onboarding"
@@ -127,7 +132,7 @@ extension AccountRoute: LFRoute {
         .updateSelectedRewardCurrency,
         .enableMFA,
         .disableMFA,
-        .promocode,
+        .applyPromocode,
         .savePopupShown:
       return .POST
     case .getUser,
@@ -257,10 +262,16 @@ extension AccountRoute: LFRoute {
       return [
         "transactionHash": transactionHash
       ]
-    case let .promocode(phoneNumber, promocode):
+    case let .applyPromocode(phoneNumber, promocode):
+      if let phoneNumber {
+        return [
+          "productId": NetworkUtilities.productID,
+          "phone": phoneNumber,
+          "promoCode": promocode
+        ]
+      }
+      
       return [
-        "productId": NetworkUtilities.productID,
-        "phone": phoneNumber,
         "promoCode": promocode
       ]
     case let .shouldShowPopup(campaign):
@@ -290,8 +301,7 @@ extension AccountRoute: LFRoute {
         .createSupportTicket,
         .updateSelectedRewardCurrency,
         .enableMFA,
-        .disableMFA,
-        .promocode:
+        .disableMFA:
       return .json
     case .getAvailableRewardCurrencies,
         .getSelectedRewardCurrency,
@@ -311,6 +321,12 @@ extension AccountRoute: LFRoute {
         .shouldShowPopup,
         .savePopupShown:
       return .url
+    case let .applyPromocode(phoneNumber, _):
+      if phoneNumber == nil {
+        return .url
+      }
+      
+      return .json
     }
   }
   

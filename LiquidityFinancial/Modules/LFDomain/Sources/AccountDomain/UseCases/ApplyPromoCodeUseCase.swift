@@ -8,7 +8,7 @@ public final class ApplyPromoCodeUseCase: ApplyPromoCodeUseCaseProtocol {
     self.repository = repository
   }
   
-  public func execute(phoneNumber: String, promocode: String) async throws {
+  public func execute(phoneNumber: String?, promocode: String) async throws {
     try await repository.applyPromocode(phoneNumber: phoneNumber, promocode: promocode)
   }
 }

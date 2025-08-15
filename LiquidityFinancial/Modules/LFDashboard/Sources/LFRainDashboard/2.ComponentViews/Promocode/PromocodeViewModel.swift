@@ -1,8 +1,11 @@
+import AccountDomain
 import Factory
+import LFUtilities
 import SwiftUI
-import Foundation
 
+@MainActor
 public class PromocodeViewModel: ObservableObject {
+  @LazyInjected(\.accountRepository) var accountRepository
   
   @Published var presentationDetent: PresentationDetent = .height(370)
   @Published var isLoading: Bool = false
@@ -14,6 +17,14 @@ public class PromocodeViewModel: ObservableObject {
   }
   @Published var isSuccessState: Bool = false
   @Published var errorMessage: String?
+  
+  lazy var applyPromocodeUseCase: ApplyPromoCodeUseCaseProtocol = {
+    ApplyPromoCodeUseCase(repository: accountRepository)
+  }()
+  
+  lazy var savePopupShownUseCaseProtocol: SavePopupShownUseCaseProtocol = {
+    SavePopupShownUseCase(repository: accountRepository)
+  }()
   
   var isContinueButtonEnabled: Bool {
     if isSuccessState || promocode.trimWhitespacesAndNewlines().count > 3 {
@@ -28,18 +39,33 @@ public class PromocodeViewModel: ObservableObject {
   }
   
   func applyPromocode() {
-    isLoading = true
-//    defer {
-//      isLoading = false
-//    }
-    
-    DispatchQueue.main.asyncAfter(
-      deadline: .now() + 2
-    ) {
-      self.isLoading = false
+    Task {
+      isLoading = true
+      defer {
+        isLoading = false
+      }
       
-      withAnimation {
-        self.isSuccessState = true
+      let promocodeTrimmed = promocode.trimWhitespacesAndNewlines()
+      
+      do {
+        // Don't pass phone number for existing user, it is only required in the onboarding
+        try await applyPromocodeUseCase.execute(phoneNumber: nil, promocode: promocodeTrimmed)
+        
+        withAnimation {
+          self.isSuccessState = true
+        }
+      } catch {
+        errorMessage = error.asErrorObject?.userFriendlyMessage ?? error.userFriendlyMessage
+      }
+    }
+  }
+  
+  func saveFrntShown() {
+    Task {
+      do {
+        try await savePopupShownUseCaseProtocol.execute(campaign: "FRNT")
+      } catch {
+        log.error(error)
       }
     }
   }

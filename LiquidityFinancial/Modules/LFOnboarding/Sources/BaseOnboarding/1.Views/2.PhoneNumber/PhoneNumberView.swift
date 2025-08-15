@@ -198,6 +198,12 @@ private extension PhoneNumberView {
         "Enter your promo code",
         text: $viewModel.promocode
       )
+      .onChange(
+        of: viewModel.promocode,
+        perform: { newValue in
+          viewModel.promocode = newValue.uppercased()
+        }
+      )
       .primaryFieldStyle()
       .disableAutocorrection(true)
       .keyboardType(.alphabet)

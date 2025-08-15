@@ -160,7 +160,7 @@ public class AccountRepository: AccountRepositoryProtocol {
   }
 
   public func applyPromocode(
-    phoneNumber: String,
+    phoneNumber: String?,
     promocode: String
   ) async throws {
     try await accountAPI.applyPromocode(phoneNumber: phoneNumber, promocode: promocode)
