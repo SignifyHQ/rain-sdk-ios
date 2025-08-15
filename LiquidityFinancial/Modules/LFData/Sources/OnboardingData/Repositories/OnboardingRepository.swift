@@ -31,12 +31,12 @@ public class OnboardingRepository: OnboardingRepositoryProtocol {
     auth.refreshWith(apiToken: accessTokens)
     auth.savePortalSessionToken(token: accessTokens.portalSessionToken)
     
-    let walletExtensionTokens = try await onboardingAPI.walletExtensionToken(
-      appCheckToken: appCheckToken,
-      recaptchaToken: reCaptchaToken
-    )
-    
-    auth.saveWalletExtenstionTokens(apiToken: walletExtensionTokens)
+//    let walletExtensionTokens = try await onboardingAPI.walletExtensionToken(
+//      appCheckToken: appCheckToken,
+//      recaptchaToken: reCaptchaToken
+//    )
+//    
+//    auth.saveWalletExtenstionTokens(apiToken: walletExtensionTokens)
     
     return accessTokens
   }

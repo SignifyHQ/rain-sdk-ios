@@ -75,10 +75,13 @@ struct ProfileView: View {
   @StateObject private var viewModel = ProfileViewModel()
   @StateObject private var promocodeViewModel = PromocodeViewModel()
   
+  @Environment(\.dismiss) var dismiss
   @Environment(\.scenePhase) var scenePhase
   
   @State private var isFidesmoFlowPresented = false
   @State private var sheetHeight: CGFloat = 380
+  
+  @Binding var selectedTab: TabOption
   
   var body: some View {
     ScrollView(showsIndicators: false) {
@@ -147,7 +150,11 @@ struct ProfileView: View {
     ) {
       PromocodeView(
         viewModel: promocodeViewModel,
-        isSheetPresented: $viewModel.shouldPresentPromocodeSheet
+        isSheetPresented: $viewModel.shouldPresentPromocodeSheet,
+        successAction: {
+          selectedTab = .assets
+          dismiss()
+        }
       )
       .onAppear(
         perform: {
@@ -250,13 +257,13 @@ private extension ProfileView {
           }
         }
         
-//        ArrowButton(
-//          image: GenImages.CommonImages.icPromocode.swiftUIImage,
-//          title: "Have a promo code?",
-//          value: nil
-//        ) {
-//          viewModel.shouldPresentPromocodeSheet = true
-//        }
+        ArrowButton(
+          image: GenImages.CommonImages.icPromocode.swiftUIImage,
+          title: "Have a promo code?",
+          value: nil
+        ) {
+          viewModel.shouldPresentPromocodeSheet = true
+        }
       }
     }
   }

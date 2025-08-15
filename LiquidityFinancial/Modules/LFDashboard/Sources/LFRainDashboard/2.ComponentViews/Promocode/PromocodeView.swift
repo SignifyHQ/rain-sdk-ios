@@ -10,6 +10,8 @@ struct PromocodeView: View {
   @Binding var isSheetPresented: Bool
   @FocusState var isKeyboardFocuses: Bool
   
+  var successAction: (() -> Void)?
+  
   var body: some View {
     VStack {
       header
@@ -96,7 +98,9 @@ struct PromocodeView: View {
   }
   
   private var promocodeTextField: some View {
-    TextFieldWrapper {
+    TextFieldWrapper(
+      errorValue: $viewModel.errorMessage
+    ) {
       TextField(
         "Enter your promo code",
         text: $viewModel.promocode
@@ -119,7 +123,8 @@ struct PromocodeView: View {
           type: .primary
         ) {
           if viewModel.isSuccessState {
-            print("Go to account")
+            isSheetPresented = false
+            successAction?()
             
             return
           }

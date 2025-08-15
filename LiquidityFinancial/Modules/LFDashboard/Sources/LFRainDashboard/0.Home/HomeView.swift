@@ -63,7 +63,9 @@ public struct HomeView: View {
     .navigationLink(item: $viewModel.navigation) { item in
       switch item {
       case .profile:
-        ProfileView()
+        ProfileView(
+          selectedTab: $viewModel.tabSelected
+        )
       case .transactionDetail(let id):
         TransactionDetailView(
           method: .transactionID(id)
