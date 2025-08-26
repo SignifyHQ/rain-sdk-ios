@@ -125,7 +125,7 @@ extension AccountReviewStatusViewModel {
     case .inReview, .unclear:
       fetchAccountReviewStatus()
     case .reject:
-      forcedLogout()
+      fetchAccountReviewStatus()
     case .missingInformation:
       // TODO: - Will be implemented in ENG-4232
       break

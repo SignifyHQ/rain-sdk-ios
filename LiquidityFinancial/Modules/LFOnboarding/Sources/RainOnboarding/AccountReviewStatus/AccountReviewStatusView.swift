@@ -121,12 +121,14 @@ private extension AccountReviewStatusView {
         }
       }
       
-      FullSizeButton(
-        title: info.primary,
-        isDisable: false,
-        isLoading: $viewModel.isLoading
-      ) {
-        viewModel.primaryAction()
+      if let primary = info.primary {
+        FullSizeButton(
+          title: primary,
+          isDisable: false,
+          isLoading: $viewModel.isLoading
+        ) {
+          viewModel.primaryAction()
+        }
       }
       
       FullSizeButton(

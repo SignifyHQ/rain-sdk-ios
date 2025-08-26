@@ -29,7 +29,7 @@ public enum AccountReviewStatus: Equatable {
       return AccountReviewInformation(
         title: L10N.Common.ApplicationReviewStatus.Fail.title,
         message: L10N.Common.ApplicationReviewStatus.Fail.message,
-        primary: L10N.Common.Button.Done.title
+        secondary: L10N.Common.ApplicationReviewStatus.Fail.secondaryTitle
       )
     case let .inReview(username):
       return AccountReviewInformation(

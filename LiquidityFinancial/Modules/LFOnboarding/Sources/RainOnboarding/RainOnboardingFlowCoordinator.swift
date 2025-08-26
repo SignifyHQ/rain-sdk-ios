@@ -301,6 +301,8 @@ private extension RainOnboardingFlowCoordinator {
       set(route: .missingInformation)
     } else if steps.contains(.needsVerification) {
       set(route: .identifyVerification)
+    } else if steps.contains(.blocked) {
+      set(route: .accountReject)
     } else if steps.contains(.acceptTerms) {
       set(route: .acceptTerms)
     }

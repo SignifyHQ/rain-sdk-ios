@@ -6,4 +6,5 @@ enum RainOnboardingMissingSteps: String {
   case needsInformation = "rain_user_needs_information"
   case needsVerification = "rain_user_needs_verification"
   case acceptTerms = "accept_terms"
+  case blocked = "rain_blocked"
 }
