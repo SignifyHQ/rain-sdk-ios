@@ -125,7 +125,7 @@ extension AccountReviewStatusViewModel {
     case .inReview, .unclear:
       fetchAccountReviewStatus()
     case .reject:
-      fetchAccountReviewStatus()
+      getExternalVerificationLink()
     case .missingInformation:
       // TODO: - Will be implemented in ENG-4232
       break

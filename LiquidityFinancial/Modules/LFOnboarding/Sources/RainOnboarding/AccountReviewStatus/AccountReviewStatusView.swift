@@ -109,8 +109,18 @@ private extension AccountReviewStatusView {
     .lineSpacing(1.17)
   }
   
-  func buttonGroup(info: AccountReviewInformation) -> some View {
+  func buttonGroup(
+    info: AccountReviewInformation
+  ) -> some View {
     VStack(spacing: 12) {
+      FullSizeButton(
+        title: info.primary,
+        isDisable: false,
+        isLoading: $viewModel.isLoading
+      ) {
+        viewModel.primaryAction()
+      }
+      
       if let secondary = info.secondary {
         FullSizeButton(
           title: secondary,
@@ -118,16 +128,6 @@ private extension AccountReviewStatusView {
           type: .secondary
         ) {
           viewModel.secondaryAction()
-        }
-      }
-      
-      if let primary = info.primary {
-        FullSizeButton(
-          title: primary,
-          isDisable: false,
-          isLoading: $viewModel.isLoading
-        ) {
-          viewModel.primaryAction()
         }
       }
       
