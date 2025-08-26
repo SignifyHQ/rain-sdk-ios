@@ -119,7 +119,7 @@ extension HomeViewModel {
     apiFetchUser()
     
     // Check if we need to show the popup for special experience
-    checkShouldShowPopup()
+    //checkShouldShowPopup()
   }
   
   func onAppear() {
