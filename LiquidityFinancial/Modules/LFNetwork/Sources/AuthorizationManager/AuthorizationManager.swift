@@ -279,7 +279,9 @@ private extension AuthorizationManager {
 // MARK: - reCaptcha Enterprise
 extension AuthorizationManager {
   private func fetchReCaptchaClient() {
-    guard recaptchaClient == nil
+    // Only initialize reCaptcha client in production environment
+    guard recaptchaClient == nil,
+          enviroment == .productionLive
     else {
       return
     }
@@ -294,6 +296,12 @@ extension AuthorizationManager {
   }
   
   public func getReCaptchaToken(for action: RecaptchaAction) async throws -> String {
+    // Only get token in production environment
+    guard enviroment == .productionLive
+    else {
+      return ""
+    }
+    
     guard let recaptchaClient
     else {
       throw AuthError.missingToken
@@ -306,6 +314,12 @@ extension AuthorizationManager {
 // MARK: - AppCheck
 extension AuthorizationManager {
   public func getAppCheckToken() async throws -> String {
-    try await AppCheck.appCheck().token(forcingRefresh: false).token
+    // Only get token in production environment
+    guard enviroment == .productionLive
+    else {
+      return ""
+    }
+    
+    return try await AppCheck.appCheck().token(forcingRefresh: false).token
   }
 }
