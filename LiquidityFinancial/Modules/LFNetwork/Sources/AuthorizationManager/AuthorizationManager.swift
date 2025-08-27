@@ -280,8 +280,8 @@ private extension AuthorizationManager {
 extension AuthorizationManager {
   private func fetchReCaptchaClient() {
     // Only initialize reCaptcha client in production environment
-    guard recaptchaClient == nil,
-          enviroment == .productionLive
+    guard recaptchaClient == nil
+          //enviroment == .productionLive
     else {
       return
     }
@@ -297,10 +297,10 @@ extension AuthorizationManager {
   
   public func getReCaptchaToken(for action: RecaptchaAction) async throws -> String {
     // Only get token in production environment
-    guard enviroment == .productionLive
-    else {
-      return ""
-    }
+//    guard enviroment == .productionLive
+//    else {
+//      return ""
+//    }
     
     guard let recaptchaClient
     else {
@@ -315,10 +315,10 @@ extension AuthorizationManager {
 extension AuthorizationManager {
   public func getAppCheckToken() async throws -> String {
     // Only get token in production environment
-    guard enviroment == .productionLive
-    else {
-      return ""
-    }
+//    guard enviroment == .productionLive
+//    else {
+//      return ""
+//    }
     
     return try await AppCheck.appCheck().token(forcingRefresh: false).token
   }
