@@ -568,9 +568,7 @@ private extension PortalService {
       nonce: nonce
     )
     
-    print("ETH SIGN TYPED STARTING...")
     let response = try await portal.request("eip155:\(chainId)", withMethod: .eth_signTypedData_v4, andParams: [walletAddress, messageToSign])
-    print("ETH SIGN COMPLETE")
     
     guard let signatureString = (response.result as? String),
           let signatureData = Data(hexString: signatureString, length: 65)

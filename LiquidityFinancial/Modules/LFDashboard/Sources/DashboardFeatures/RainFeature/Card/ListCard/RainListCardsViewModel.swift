@@ -255,8 +255,6 @@ public extension RainListCardsViewModel {
       return
     }
     
-    print("START TOKENIZATION")
-    
     let mppCardParameters = MppCardDataParameters(
       cardId: cardMetadata.processorCardId,
       cardSecret: cardMetadata.timeBasedSecret
@@ -265,51 +263,32 @@ public extension RainListCardsViewModel {
     let isPassLibraryAvailable = PKPassLibrary.isPassLibraryAvailable()
     let canAddPaymentPass = PKAddPaymentPassViewController.canAddPaymentPass()
     
-    print("START TOKENIZATION: IS PASS LIBRARY AVAILABLE", isPassLibraryAvailable)
-    print("START TOKENIZATION: CAN ADD PAYMENT PASS", canAddPaymentPass)
-    
     if (isPassLibraryAvailable && canAddPaymentPass) {
       MeaPushProvisioning.initializeOemTokenization(mppCardParameters) { (responseData, error) in
         
-        print("START TOKENIZATION: RESPONSE DATA", responseData?.primaryAccountSuffix)
-        print("START TOKENIZATION: RESPONSE DATA VALID:", responseData?.isValid() ?? false)
-        
         if let responseData,
            responseData.isValid() {
-          print("START TOKENIZATION: GOT RESPONSE DATA")
           var canAddPaymentPassWithPAI = true
           self.shouldShowAddToWalletButton[cardId] = false
-          
-          print("IDENTIFIER", responseData.primaryAccountIdentifier)
           
           if let primaryAccountIdentifier = responseData.primaryAccountIdentifier,
              !primaryAccountIdentifier.isEmpty {
             if #available(iOS 13.4, *) {
               canAddPaymentPassWithPAI = MeaPushProvisioning.canAddSecureElementPass(withPrimaryAccountIdentifier: primaryAccountIdentifier)
-              print("IDENTIFIER", responseData.primaryAccountIdentifier, canAddPaymentPassWithPAI)
             } else {
               canAddPaymentPassWithPAI = MeaPushProvisioning.canAddPaymentPass(withPrimaryAccountIdentifier: primaryAccountIdentifier)
             }
           }
           
           if (canAddPaymentPassWithPAI) {
-            print("Got Tokenization Response for card:", cardMetadata.pan)
             
             self.tokenizationResponseData[card.id] = responseData
             
             self.requestConfiguration[card.id] = self.tokenizationResponseData[card.id]??.addPaymentPassRequestConfiguration
             self.requestConfiguration[card.id]??.cardholderName = self.cardholderName
             
-            print("Payment pass request configuration description:", self.requestConfiguration[card.id]??.localizedDescription ?? "nil")
-            print("Payment pass request configuration cardholder name:", self.requestConfiguration[card.id]??.cardholderName ?? "nil")
-            print("Payment pass request configuration payment network:", self.requestConfiguration[card.id]??.paymentNetwork ?? "nil")
-            print("Payment pass request configuration primary account identifier:", self.requestConfiguration[card.id]??.primaryAccountIdentifier ?? "nil")
-            print("Payment pass request configuration primary account suffix:", self.requestConfiguration[card.id]??.primaryAccountSuffix ?? "nil")
-            print("Payment pass request configuration card details:", self.requestConfiguration[card.id]??.cardDetails ?? "nil")
-            
             self.shouldShowAddToWalletButton[cardId] = true
           } else {
-            print("CANNOT ADD CARD")
             self.shouldShowAddToWalletButton[cardId] = false
           }
         }
