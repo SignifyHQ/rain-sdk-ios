@@ -211,10 +211,18 @@ extension AuthorizationManager: AuthorizationManagerProtocol {
     let expiresAt = apiToken.expiresAt
     let token = apiToken.bearerAccessToken
     let refreshToken = apiToken.refreshToken
+    
     save(token: apiToken)
+    
     self.expiresAt = expiresAt
     self.accessToken = token
     self.refreshToken = refreshToken
+  }
+  
+  public func saveWalletExtenstionTokens(apiToken: AccessTokensEntity) {
+    UserDefaults.walletExtensionAccessTokenExpiresAt = apiToken.expiresAt.timeIntervalSince1970
+    UserDefaults.walletExtensionAccessToken = apiToken.accessToken
+    UserDefaults.walletExtensionRefreshToken = apiToken.refreshToken
   }
   
   public func clearToken() {
@@ -261,13 +269,19 @@ private extension AuthorizationManager {
     UserDefaults.accessTokenExpiresAt = 0
     UserDefaults.bearerAccessToken = .empty
     UserDefaults.portalSessionToken = .empty
+    
+    UserDefaults.walletExtensionAccessTokenExpiresAt = 0
+    UserDefaults.walletExtensionAccessToken = .empty
+    UserDefaults.walletExtensionRefreshToken = .empty
   }
 }
 
 // MARK: - reCaptcha Enterprise
 extension AuthorizationManager {
   private func fetchReCaptchaClient() {
+    // Only initialize reCaptcha client in production environment
     guard recaptchaClient == nil
+          //enviroment == .productionLive
     else {
       return
     }
@@ -282,6 +296,12 @@ extension AuthorizationManager {
   }
   
   public func getReCaptchaToken(for action: RecaptchaAction) async throws -> String {
+    // Only get token in production environment
+//    guard enviroment == .productionLive
+//    else {
+//      return ""
+//    }
+    
     guard let recaptchaClient
     else {
       throw AuthError.missingToken
@@ -294,6 +314,12 @@ extension AuthorizationManager {
 // MARK: - AppCheck
 extension AuthorizationManager {
   public func getAppCheckToken() async throws -> String {
-    try await AppCheck.appCheck().token(forcingRefresh: false).token
+    // Only get token in production environment
+//    guard enviroment == .productionLive
+//    else {
+//      return ""
+//    }
+    
+    return try await AppCheck.appCheck().token(forcingRefresh: false).token
   }
 }

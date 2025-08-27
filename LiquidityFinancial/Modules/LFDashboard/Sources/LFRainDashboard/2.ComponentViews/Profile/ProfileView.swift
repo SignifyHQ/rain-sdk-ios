@@ -73,10 +73,15 @@ struct RainCardSecretInformationEntity {
 
 struct ProfileView: View {
   @StateObject private var viewModel = ProfileViewModel()
+  @StateObject private var promocodeViewModel = PromocodeViewModel()
+  
+  @Environment(\.dismiss) var dismiss
   @Environment(\.scenePhase) var scenePhase
   
   @State private var isFidesmoFlowPresented = false
   @State private var sheetHeight: CGFloat = 380
+  
+  @Binding var selectedTab: TabOption
   
   var body: some View {
     ScrollView(showsIndicators: false) {
@@ -139,6 +144,25 @@ struct ProfileView: View {
       )
       .presentationDetents([.height(sheetHeight)])
       .interactiveDismissDisabled(true)
+    }
+    .sheet(
+      isPresented: $viewModel.shouldPresentPromocodeSheet
+    ) {
+      PromocodeView(
+        viewModel: promocodeViewModel,
+        isSheetPresented: $viewModel.shouldPresentPromocodeSheet,
+        successAction: {
+          selectedTab = .assets
+          dismiss()
+        }
+      )
+      .onAppear(
+        perform: {
+          promocodeViewModel.resetState()
+        }
+      )
+      .presentationDetents([.height(370)])
+      .presentationDragIndicator(.hidden)
     }
   }
 }
@@ -206,9 +230,13 @@ private extension ProfileView {
           title: L10N.Common.Profile.Address.title,
           value: viewModel.address
         )
-        ArrowButton(image: GenImages.CommonImages.icQuestion.swiftUIImage, title: L10N.Common.Profile.Help.title, value: nil) {
+        ArrowButton(
+          image: GenImages.CommonImages.icQuestion.swiftUIImage,
+          title: L10N.Common.Profile.Help.title, value: nil
+        ) {
           viewModel.helpTapped()
         }
+        
         if !viewModel.notificationsEnabled {
           ArrowButton(
             image: GenImages.CommonImages.icNotification.swiftUIImage,
@@ -218,6 +246,7 @@ private extension ProfileView {
             viewModel.notificationTapped()
           }
         }
+        
         ArrowButton(
           image: GenImages.CommonImages.icHomeCards.swiftUIImage,
           title: "Activate Limited edition card ✨",
@@ -226,6 +255,14 @@ private extension ProfileView {
           DispatchQueue.main.async {
             isFidesmoFlowPresented = true
           }
+        }
+        
+        ArrowButton(
+          image: GenImages.CommonImages.icPromocode.swiftUIImage,
+          title: "Have a promo code?",
+          value: nil
+        ) {
+          viewModel.shouldPresentPromocodeSheet = true
         }
       }
     }

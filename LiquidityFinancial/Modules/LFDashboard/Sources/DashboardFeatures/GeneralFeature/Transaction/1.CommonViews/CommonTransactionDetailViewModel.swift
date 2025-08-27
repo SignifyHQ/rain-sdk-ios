@@ -55,7 +55,7 @@ public final class CommonTransactionDetailViewModel: ObservableObject {
       return nil
     }
     
-    return type.filledImage
+    return type.icon
   }
   
   var colorForType: Color {

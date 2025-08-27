@@ -63,17 +63,24 @@ public struct HomeView: View {
     .navigationLink(item: $viewModel.navigation) { item in
       switch item {
       case .profile:
-        ProfileView()
+        ProfileView(
+          selectedTab: $viewModel.tabSelected
+        )
       case .transactionDetail(let id):
         TransactionDetailView(
           method: .transactionID(id)
         )
       }
     }
-    .popup(item: $viewModel.popup) { popup in
+    .popup(
+      item: $viewModel.popup,
+      dismissMethods: []
+    ) { popup in
       switch popup {
       case .notifications:
         notificationsPopup
+      case .specialExperience:
+        specialExperiencePopup
       }
     }
     .onAppear {
@@ -176,7 +183,30 @@ private extension HomeView {
       ),
       secondary: .init(
         text: L10N.Common.NotificationPopup.dismiss,
-        action: viewModel.clearPopup
+        action: {
+          viewModel.clearPopup()
+          viewModel.presentNextPopupInQueue(removing: .notifications)
+        }
+      )
+    )
+  }
+  
+  private var specialExperiencePopup: some View {
+    LiquidityAlert(
+      title: "10 FRNT Tokens Added\nto Your Account".uppercased(),
+      message: "You’ve just received 10 Frontier Stable Tokens (FRNT) as part of the Wyoming event experience.",
+      primary: .init(
+        text: "Go to My Account",
+        action: {
+          viewModel.onSpecialExperiencePopupDismiss()
+          viewModel.goToAssets()
+        }
+      ),
+      secondary: .init(
+        text: "Got it",
+        action: {
+          viewModel.onSpecialExperiencePopupDismiss()
+        }
       )
     )
   }

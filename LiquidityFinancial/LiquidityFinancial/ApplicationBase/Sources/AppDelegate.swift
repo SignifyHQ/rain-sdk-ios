@@ -7,6 +7,7 @@ import LFUtilities
 import EnvironmentService
 import PortalData
 import PortalDomain
+import MeaPushProvisioning
 
 class AppDelegate: UIResponder, UIApplicationDelegate {
   
@@ -31,6 +32,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     UserDefaults.isFirstRun = false
     setupServices()
     fetchFeatureFlags()
+    
     return true
   }
   

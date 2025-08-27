@@ -258,4 +258,40 @@ extension LFCoreNetwork: AccountAPIProtocol where R == AccountRoute {
       decoder: .apiDecoder
     )
   }
+  
+  public func applyPromocode(
+    phoneNumber: String?,
+    promocode: String
+  ) async throws {
+    try await requestNoResponse(
+      AccountRoute
+        .applyPromocode(
+          phoneNumber: phoneNumber,
+          promocode: promocode
+        ),
+      failure: LFErrorObject.self,
+      decoder: .apiDecoder
+    )
+  }
+  
+  public func shouldShowPopup(
+    campaign: String
+  ) async throws -> APIShouldShowPopup {
+    try await request(
+      AccountRoute.shouldShowPopup(campaign: campaign),
+      target: APIShouldShowPopup.self,
+      failure: LFErrorObject.self,
+      decoder: .apiDecoder
+    )
+  }
+  
+  public func savePopupShown(
+    campaign: String
+  ) async throws {
+    try await requestNoResponse(
+      AccountRoute.savePopupShown(campaign: campaign),
+      failure: LFErrorObject.self,
+      decoder: .apiDecoder
+    )
+  }
 }

@@ -57,7 +57,7 @@ private extension ConfirmTransferMoneyView {
       informationCell(
         title: L10N.Common.ConfirmSendCryptoView.amount,
         value: viewModel.amountInput,
-        bonusValue: viewModel.assetModel.type?.title ?? .empty
+        bonusValue: viewModel.assetModel.type?.symbol ?? .empty
       )
       informationCell(
         title: L10N.Common.ConfirmSendCryptoView.to,

@@ -58,7 +58,7 @@ struct AccountsView: View {
           CurrentRewardView()
         case .wallet(asset: let asset):
           ReceiveCryptoView(
-            assetTitle: asset.type?.title ?? .empty,
+            assetTitle: asset.type?.symbol ?? .empty,
             walletAddress: asset.externalAccountId ?? .empty
           )
         case .backup:
@@ -332,8 +332,8 @@ private extension AccountsView {
         viewModel.openWalletAddress(asset: asset)
       } label: {
         HStack(spacing: 8) {
-          assetType.image
-          Text(L10N.Common.AccountView.Wallet.title(assetType.title))
+          assetType.icon
+          Text(L10N.Common.AccountView.Wallet.title(assetType.symbol ?? "N/A"))
             .foregroundColor(Colors.label.swiftUIColor)
             .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.medium.value))
           Spacer()

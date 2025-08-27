@@ -85,7 +85,7 @@ public struct TransactionFilterSheetView: View {
               Text(
                 viewModel.filterConfiguration.selectedCurrencies
                   .map { asset in
-                    asset.type?.title ?? "N/A"
+                    asset.type?.symbol ?? "N/A"
                   }
                   .joined(separator: ", ")
               )

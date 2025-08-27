@@ -6,6 +6,8 @@ public struct APIRainSecretCardInformation: Decodable, RainSecretCardInformation
   public let cardId: String
   public let rainPersonId: String
   public let rainCardId: String
+  public let processorCardId: String
+  public let timeBasedSecret: String
   public let encryptedPan: APIEncryptedData
   public let encryptedCvc: APIEncryptedData
   

@@ -9,7 +9,7 @@ struct CashCardView: View {
   @StateObject private var viewModel: CashCardViewModel
   @Binding var isNotLinkedCard: Bool
   
-  let listCardViewModel: RainListCardsViewModel
+  @ObservedObject var listCardViewModel: RainListCardsViewModel
   let isPOFlow: Bool
   let showLoadingIndicator: Bool
   let cashBalance: Double
@@ -19,9 +19,16 @@ struct CashCardView: View {
   private var isCardAvailable: Bool {
     isPOFlow
   }
+  
   private var cardImageAsset: Image {
-    isCardAvailable && !isNotLinkedCard ? GenImages.Images.availableCard.swiftUIImage : GenImages.Images.unavailableCard.swiftUIImage
+    if listCardViewModel.hasFrntCard {
+      return GenImages.Images.frntCard.swiftUIImage
+    }
+    
+    return isCardAvailable && !isNotLinkedCard ? GenImages.Images.availableCard.swiftUIImage : GenImages.Images.unavailableCard.swiftUIImage
   }
+  
+  @State private var cardImageAssetID: String = ""
 
   init(
     isNoLinkedCard: Binding<Bool>,
@@ -50,8 +57,13 @@ struct CashCardView: View {
           .background(Color.clear)
           .clipped()
           .aspectRatio(contentMode: .fit)
+          .transition(.opacity)
+          .id(cardImageAssetID)
+          .animation(.easeInOut(duration: 0.4), value: cardImageAssetID)
+        
         createCardButton
       }
+      
       if isPOFlow && !isNotLinkedCard {
         balance
       }
@@ -65,6 +77,22 @@ struct CashCardView: View {
         viewModel.isShowCardDetail.toggle()
       }
     }
+    .onChange(
+      of: cardImageAsset,
+      perform: { _ in
+        let newId: String = {
+          if listCardViewModel.hasFrntCard {
+            return "wyoming"
+          }
+          
+          return isCardAvailable && !isNotLinkedCard ? "available" : "unavailable"
+        }()
+        
+        withAnimation {
+          cardImageAssetID = newId
+        }
+      }
+    )
     .navigationLink(isActive: $viewModel.isShowCardDetail) {
       RainListCardsView(viewModel: listCardViewModel)
     }
@@ -103,20 +131,26 @@ struct CashCardView: View {
     HStack {
       VStack(alignment: .leading, spacing: 2) {
         Text(L10N.Common.CashCard.Balance.title)
-          .foregroundColor(Colors.contrast.swiftUIColor)
+          .foregroundColor(listCardViewModel.hasFrntCard ? .black : Colors.contrast.swiftUIColor)
           .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.ultraSmall.value))
         
         ZStack(alignment: .bottomLeading) {
-          LottieView(loading: .contrast)
-            .frame(width: 30, height: 20, alignment: .leading)
-            .hidden(!showLoadingIndicator)
-            .foregroundColor(Colors.contrast.swiftUIColor)
+          if listCardViewModel.hasFrntCard {
+            LottieView(loading: .contrast, tint: .black)
+              .frame(width: 30, height: 20, alignment: .leading)
+              .hidden(!showLoadingIndicator)
+          } else {
+            LottieView(loading: .contrast, tint: Colors.contrast.swiftUIColor.uiColor)
+              .frame(width: 30, height: 20, alignment: .leading)
+              .hidden(!showLoadingIndicator)
+          }
+          
           Text(
             cashBalance.formattedUSDAmount()
           )
-            .foregroundColor(Colors.contrast.swiftUIColor)
-            .font(Fonts.bold.swiftUIFont(size: 22))
-            .hidden(showLoadingIndicator)
+          .foregroundColor(listCardViewModel.hasFrntCard ? .black : Colors.contrast.swiftUIColor)
+          .font(Fonts.bold.swiftUIFont(size: 22))
+          .hidden(showLoadingIndicator)
         }
       }
       .padding([.leading, .bottom], 16)

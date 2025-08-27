@@ -18,6 +18,20 @@ extension LFCoreNetwork: OnboardingAPIProtocol where R == OnboardingRoute {
     )
   }
   
+  public func walletExtensionToken(
+    appCheckToken: String,
+    recaptchaToken: String
+  ) async throws -> APIAccessTokens {
+    try await request(
+      OnboardingRoute.walletExtensionToken(
+        appCheckToken: appCheckToken,
+        recaptchaToken: recaptchaToken),
+      target: APIAccessTokens.self,
+      failure: LFErrorObject.self,
+      decoder: .apiDecoder
+    )
+  }
+  
   public func newLogin(parameters: LoginParameters) async throws -> APIAccessTokens {
     try await request(
       OnboardingRoute.newLogin(parameters: parameters),

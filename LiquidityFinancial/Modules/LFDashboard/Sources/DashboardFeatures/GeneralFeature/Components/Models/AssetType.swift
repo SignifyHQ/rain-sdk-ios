@@ -9,11 +9,27 @@ public enum AssetType: String {
   case usdte = "USDTE"
   case wavax = "WAVAX"
   case avax = "AVAX"
+  case frnt = "FRNT"
   case cardano = "ADA"
   case doge = "DOGE"
   
-  public var title: String {
+  public var symbol: String? {
     rawValue
+  }
+  
+  public var name: String? {
+    switch self {
+    case .usdt:
+      "Tether"
+    case .wavax:
+      "Wrapped AVAX"
+    case .avax:
+      "Avalanche"
+    case .frnt:
+      "Frontier Stable Token"
+    default:
+      nil
+    }
   }
   
   public var index: Int {
@@ -26,6 +42,7 @@ public enum AssetType: String {
     case .wavax: return 5
     case .usdt: return 6
     case .usdte: return 7
+    case .frnt: return 8
     }
   }
   
@@ -38,7 +55,7 @@ public enum AssetType: String {
     }
   }
   
-  public var image: Image? {
+  public var icon: Image? {
     switch self {
     case .usd:
       return GenImages.CommonImages.icUsd.swiftUIImage
@@ -54,44 +71,29 @@ public enum AssetType: String {
       return GenImages.CommonImages.icDoge.swiftUIImage
     case .wavax:
       return GenImages.CommonImages.icWavax.swiftUIImage
+    case .frnt:
+      return GenImages.CommonImages.icFrnt.swiftUIImage
     }
   }
   
-  public var filledImage: Image? {
+  public var transactionIcon: Image? {
     switch self {
     case .usd:
-      return GenImages.CommonImages.usdSymbol.swiftUIImage
+      return GenImages.CommonImages.icUsd.swiftUIImage
     case .usdc:
       return GenImages.CommonImages.icUsdc.swiftUIImage
     case .usdt, .usdte:
       return GenImages.CommonImages.icUsdt.swiftUIImage
     case .avax:
-      return GenImages.CommonImages.icAvaxFilled.swiftUIImage
+      return GenImages.CommonImages.icAvax.swiftUIImage
     case .cardano:
-      return GenImages.CommonImages.icCardanoFilled.swiftUIImage
+      return GenImages.CommonImages.icCardano.swiftUIImage
     case .doge:
-      return GenImages.CommonImages.icDogeFilled.swiftUIImage
+      return GenImages.CommonImages.icDoge.swiftUIImage
     case .wavax:
-      return GenImages.CommonImages.icWavaxFilled.swiftUIImage
-    }
-  }
-  
-  public var lineImage: Image? {
-    switch self {
-    case .usd:
-      return GenImages.CommonImages.usdSymbol.swiftUIImage
-    case .usdc:
-      return GenImages.CommonImages.icUsdc.swiftUIImage
-    case .usdt, .usdte:
-      return GenImages.CommonImages.icUsdt.swiftUIImage
-    case .avax:
-      return GenImages.CommonImages.icAvaxFilled.swiftUIImage
-    case .cardano:
-      return GenImages.CommonImages.icCardanoFilled.swiftUIImage
-    case .doge:
-      return GenImages.CommonImages.icDogeLine.swiftUIImage
-    case .wavax:
-      return GenImages.CommonImages.icWavaxFilled.swiftUIImage
+      return GenImages.CommonImages.icWavax.swiftUIImage
+    case .frnt:
+      return GenImages.CommonImages.icFrntBig.swiftUIImage
     }
   }
 }

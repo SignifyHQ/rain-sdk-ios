@@ -180,7 +180,7 @@ private extension ConfirmTransferMoneyViewModel {
             fromAddress: assetModel.externalAccountId ?? "",
             toAddress: address,
             amount: amount,
-            currency: assetModel.type?.title ?? "",
+            currency: assetModel.type?.symbol ?? "",
             contractAddress: assetModel.id.nilIfEmpty,
             decimal: assetModel.conversionFactor,
             transactionFee: fee
@@ -207,7 +207,7 @@ private extension ConfirmTransferMoneyViewModel {
           return
         }
         
-        let tokenAddress = collateralContract.tokensEntity.filter { $0.symbol == AssetType.usdc.title }
+        let tokenAddress = collateralContract.tokensEntity.filter { $0.symbol == AssetType.usdc.symbol }
         let usdcToken = tokenAddress.first {
           portalStorage.checkTokenSupport(with: $0.address.lowercased())
         }
@@ -228,7 +228,7 @@ private extension ConfirmTransferMoneyViewModel {
             fromAddress: assetModel.externalAccountId ?? "",
             toAddress: collateralContract.address,
             amount: amount,
-            currency: assetModel.type?.title ?? "",
+            currency: assetModel.type?.symbol ?? "",
             contractAddress: assetModel.id.nilIfEmpty,
             decimal: assetModel.conversionFactor,
             transactionFee: fee
@@ -247,7 +247,7 @@ private extension ConfirmTransferMoneyViewModel {
       do {
         let parameters = APIRainRewardWithdrawalParameters(
           amount: amount,
-          currency: assetModel.type?.title ?? "",
+          currency: assetModel.type?.symbol ?? "",
           recipientAddress: address
         )
         _ = try await requestRewardWithdrawalUseCase.execute(parameters: parameters)
@@ -300,8 +300,8 @@ private extension ConfirmTransferMoneyViewModel {
     let transaction = TransactionModel(
       id: Constants.Default.localTransactionID.rawValue,
       accountId: .empty,
-      title: L10N.Common.TransactionDetail.CryptoTransfer.title(assetModel.type?.title ?? .empty),
-      currency: assetModel.type?.title,
+      title: L10N.Common.TransactionDetail.CryptoTransfer.title(assetModel.type?.symbol ?? .empty),
+      currency: assetModel.type?.symbol,
       amount: amount,
       fee: fee,
       type: type,

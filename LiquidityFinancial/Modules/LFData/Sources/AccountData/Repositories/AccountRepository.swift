@@ -159,4 +159,22 @@ public class AccountRepository: AccountRepositoryProtocol {
     try await accountAPI.disableMFA(code: code)
   }
 
+  public func applyPromocode(
+    phoneNumber: String?,
+    promocode: String
+  ) async throws {
+    try await accountAPI.applyPromocode(phoneNumber: phoneNumber, promocode: promocode)
+  }
+  
+  public func shouldShowPopup(
+    campaign: String
+  ) async throws -> any ShouldShowPopupEntity {
+    try await accountAPI.shouldShowPopup(campaign: campaign)
+  }
+  
+  public func savePopupShown(
+    campaign: String
+  ) async throws {
+    try await accountAPI.savePopupShown(campaign: campaign)
+  }
 }

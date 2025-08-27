@@ -4,6 +4,7 @@ import LFLocalizable
 import LFUtilities
 import LFStyleGuide
 import Services
+import PassKit
 
 public struct RainListCardsView: View {
   @Environment(\.dismiss) private var dismiss
@@ -145,6 +146,39 @@ private extension RainListCardsView {
   var cardDetails: some View {
     VStack {
       card
+
+      if let configurationValue = viewModel.requestConfiguration[viewModel.currentCard.id],
+         let configuration = configurationValue,
+         viewModel.shouldShowAddToWalletButton[viewModel.currentCard.id] == true {
+
+        AddPassToWalletButton(configuration) { response in
+          guard let request = try? await viewModel
+            .completeTokenization(
+              certificates: response.certificates,
+              nonce: response.nonce,
+              nonceSignature: response.nonceSignature
+            )
+          else {
+            log.error("Tokenization returned nil request.")
+            return PKAddPaymentPassRequest()
+          }
+          
+          return request
+        } onCompletion: { result in
+          switch result {
+          case .success(let _):
+            viewModel.fetchRainCards()
+            log.error("Card tokenized successfully!")
+          case .failure(let error):
+            log.error(error.userFriendlyMessage)
+          }
+        }
+        .frame(
+          width: Screen.main.bounds.width - 60,
+          height: 44
+        )
+        .padding(.bottom)
+      }
       
       rows
         .padding(.horizontal, 30)
@@ -224,7 +258,7 @@ private extension RainListCardsView {
       ) { offset, item in
         RainCardView(
           cardModel: item,
-          cardMetaData: viewModel.cardMetaDatas.count > offset ? $viewModel.cardMetaDatas[offset] : .constant(nil),
+          cardMetaData: $viewModel.cardsList[offset].metadata,
           isShowCardNumber: $viewModel.isShowCardNumber,
           isLoading: $viewModel.isInit
         )
@@ -427,5 +461,17 @@ private extension RainListCardsView {
         }
       )
     )
+  }
+}
+
+struct AddPassButton: UIViewRepresentable {
+  func makeUIView(context: Context) -> PKAddPassButton {
+    let button = PKAddPassButton(addPassButtonStyle: .blackOutline)
+    
+    return button
+  }
+  
+  func updateUIView(_ uiView: PKAddPassButton, context: Context) {
+    // No dynamic updates needed
   }
 }

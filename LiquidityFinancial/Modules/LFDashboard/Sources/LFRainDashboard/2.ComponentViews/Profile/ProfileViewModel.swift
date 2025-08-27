@@ -16,6 +16,7 @@ final class ProfileViewModel: ObservableObject {
   @Published var navigation: Navigation?
   @Published var popup: Popup?
   @Published var notificationsEnabled = false
+  @Published var shouldPresentPromocodeSheet: Bool = false
   
   @LazyInjected(\.customerSupportService) var customerSupportService
   @LazyInjected(\.accountDataManager) var accountDataManager

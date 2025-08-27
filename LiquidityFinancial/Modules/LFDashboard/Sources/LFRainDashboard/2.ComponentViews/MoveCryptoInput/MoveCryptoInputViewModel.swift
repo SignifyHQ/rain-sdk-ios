@@ -15,6 +15,7 @@ import Services
 
 @MainActor
 final class MoveCryptoInputViewModel: ObservableObject {
+  @LazyInjected(\.environmentService) var environmentService
   @LazyInjected(\.accountRepository) var accountRepository
   @LazyInjected(\.accountDataManager) var accountDataManager
   @LazyInjected(\.portalRepository) var portalRepository
@@ -216,7 +217,14 @@ private extension MoveCryptoInputViewModel {
   func getWithdrawalSignature(
     chainId: Int
   ) async throws -> PortalService.WithdrawAssetSignature? {
-    let amount = amount * pow(10, Double(assetModel.conversionFactor))
+    var conversionFactor = assetModel.conversionFactor
+    
+    // FRNT in DEV conversion factor is 18 and not 6
+    if assetModel.type == .frnt && environmentService.networkEnvironment == .productionTest {
+      conversionFactor = 18
+    }
+    
+    let amount = amount * pow(10, Double(conversionFactor))
     let parameters = APIRainWithdrawalSignatureParameters(
       chainId: chainId,
       token: assetModel.id,
@@ -251,7 +259,7 @@ private extension MoveCryptoInputViewModel {
 private extension MoveCryptoInputViewModel {
   func generateGridValues(
   ) {
-    let cryptoCurrency = assetModel.type?.title ?? .empty
+    let cryptoCurrency = assetModel.type?.symbol ?? .empty
     
     switch type {
     case .sellCrypto, .sendCrypto, .depositCollateral:
@@ -317,6 +325,12 @@ private extension MoveCryptoInputViewModel {
               return nil
             }
             
+            // FRNT exclusive experience, only show FRNT token if user has balance
+            guard assetModel.type != .frnt || assetModel.availableBalance > 0
+            else {
+              return nil
+            }
+            
             return assetModel
           }
         
@@ -331,8 +345,16 @@ private extension MoveCryptoInputViewModel {
         
         assets?.append(usdte)
         assets?.sort {
-          ($0.type?.rawValue ?? "") < ($1.type?.rawValue ?? "")
+          let oneIsPrio = $0.type == .frnt
+          let twoIsPrio = $1.type == .frnt
+          
+          if oneIsPrio != twoIsPrio {
+            return oneIsPrio
+          }
+          
+          return ($0.type?.rawValue ?? "") < ($1.type?.rawValue ?? "")
         }
+        
         return assets
       }
       .assign(to: &$assetModelList)
@@ -427,11 +449,11 @@ extension MoveCryptoInputViewModel {
   var title: String {
     switch type {
     case .buyCrypto:
-      return L10N.Common.MoveCryptoInput.Buy.title(assetModel.type?.title ?? .empty)
+      return L10N.Common.MoveCryptoInput.Buy.title(assetModel.type?.symbol ?? .empty)
     case .sellCrypto:
-      return L10N.Common.MoveCryptoInput.Sell.title(assetModel.type?.title ?? .empty)
+      return L10N.Common.MoveCryptoInput.Sell.title(assetModel.type?.symbol ?? .empty)
     case .sendCrypto:
-      return L10N.Common.MoveCryptoInput.Send.title(assetModel.type?.title ?? .empty)
+      return L10N.Common.MoveCryptoInput.Send.title(assetModel.type?.symbol ?? .empty)
     case .withdrawCollateral:
       return L10N.Common.MoveCryptoInput.WithdrawCollateral.title
     case .withdrawReward:
@@ -442,7 +464,7 @@ extension MoveCryptoInputViewModel {
   }
   
   var subtitle: String? {
-    let cryptoCurrency = assetModel.type?.title ?? .empty
+    let cryptoCurrency = assetModel.type?.symbol ?? .empty
     switch type {
     case .sellCrypto:
       let balance = assetModel.availableBalance.roundTo3f()
@@ -496,7 +518,7 @@ extension MoveCryptoInputViewModel {
       
       return L10N.Common.MoveCryptoInput.Send.annotation(
         "\(balance)".formattedAmount(minFractionDigits: 3, maxFractionDigits: 3),
-        assetModel.type?.title ?? .empty
+        assetModel.type?.symbol ?? .empty
       )
     case .withdrawCollateral:
       let availableBalanceString: String = {
@@ -509,7 +531,7 @@ extension MoveCryptoInputViewModel {
       
       return L10N.Common.MoveCryptoInput.WithdrawCollateral.annotation(
         availableBalanceString,
-        assetModel.type?.title ?? .empty
+        assetModel.type?.symbol ?? .empty
       )
     case let .withdrawReward(_, _, balance, _):
       return L10N.Common.MoveCryptoInput.WithdrawReward.annotation(
@@ -520,7 +542,7 @@ extension MoveCryptoInputViewModel {
       
       return L10N.Common.MoveCryptoInput.SendCollateral.annotation(
         "\(balance)".formattedAmount(minFractionDigits: 2, maxFractionDigits: 6),
-        assetModel.type?.title ?? .empty
+        assetModel.type?.symbol ?? .empty
       )
     default:
       return .empty
@@ -536,7 +558,7 @@ extension MoveCryptoInputViewModel {
   }
   
   var cryptoIconImage: Image? {
-    assetModel.type?.filledImage
+    assetModel.type?.icon
   }
   
   var address: String {
@@ -667,7 +689,7 @@ extension MoveCryptoInputViewModel {
     }
     
     if type != .sellCrypto, amount > 0, amount < 0.0001 {
-      return L10N.Common.MoveCryptoInput.MinimumCrypto.description(assetModel.type?.title ?? .empty)
+      return L10N.Common.MoveCryptoInput.MinimumCrypto.description(assetModel.type?.symbol ?? .empty)
     }
     
     return balance < amount ? L10N.Common.MoveCryptoInput.InsufficientFunds.description : nil

@@ -8,6 +8,8 @@ struct CardModel: Identifiable, Hashable {
   let expiryYear: Int
   let last4: String
   var cardStatus: CardStatus
+  var metadata: CardMetaData?
+  var tokenExperiences: [String]?
   
   var expiryTime: String {
     let expiryMonthFormated = expiryMonth < 10 ? "0\(expiryMonth)" : "\(expiryMonth)"
@@ -22,7 +24,8 @@ struct CardModel: Identifiable, Hashable {
     expiryMonth: Int,
     expiryYear: Int,
     last4: String,
-    cardStatus: CardStatus
+    cardStatus: CardStatus,
+    tokenExperiences: [String]? = nil
   ) {
     self.id = id
     self.cardType = cardType
@@ -31,6 +34,7 @@ struct CardModel: Identifiable, Hashable {
     self.expiryYear = expiryYear
     self.last4 = last4
     self.cardStatus = cardStatus
+    self.tokenExperiences = tokenExperiences
   }
   
   static let virtualDefault = CardModel(

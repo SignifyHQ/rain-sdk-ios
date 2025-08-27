@@ -37,7 +37,7 @@ public final class CreditLimitBreakdownViewModel: ObservableObject {
       .collateralContractSubject
       .compactMap { [weak self] rainCollateral in
         self?.isLoadingData = rainCollateral == nil
-
+        
         return rainCollateral?
           .tokensEntity
           .compactMap { rainToken in
@@ -49,10 +49,23 @@ public final class CreditLimitBreakdownViewModel: ObservableObject {
               return nil
             }
             
+            // FRNT exclusive experience, only show FRNT token if user has balance
+            guard assetModel.type != .frnt || assetModel.availableBalance > 0
+            else {
+              return nil
+            }
+            
             return assetModel
           }
           .sorted {
-            ($0.type?.rawValue ?? "") < ($1.type?.rawValue ?? "")
+            let oneIsPrio = $0.type == .frnt
+            let twoIsPrio = $1.type == .frnt
+            
+            if oneIsPrio != twoIsPrio {
+              return oneIsPrio
+            }
+            
+            return ($0.type?.rawValue ?? "") < ($1.type?.rawValue ?? "")
           }
       }
       .assign(to: &$collateralAssets)

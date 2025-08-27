@@ -17,7 +17,7 @@ public struct TextFieldWrapper<Content: View>: View {
   @Binding var isLoading: Bool
   
   public var body: some View {
-    VStack(spacing: 16) {
+    VStack(spacing: 8) {
       HStack {
         content
         

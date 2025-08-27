@@ -31,7 +31,7 @@ struct CryptoAssetView: View {
           MoveCryptoInputView(type: .sellCrypto, assetModel: viewModel.asset)
         case .receiveCrypto:
           ReceiveCryptoView(
-            assetTitle: viewModel.asset.type?.title ?? .empty,
+            assetTitle: viewModel.asset.type?.symbol ?? .empty,
             walletAddress: viewModel.asset.externalAccountId ?? .empty
           )
         case .sendCrypto:
@@ -60,12 +60,12 @@ struct CryptoAssetView: View {
           )
         }
       }
-      .defaultToolBar(navigationTitle: viewModel.asset.type?.title ?? .empty)
+      .defaultToolBar(navigationTitle: viewModel.asset.type?.symbol ?? .empty)
       .sheet(item: $viewModel.sheet) { item in
         switch item {
         case .wallet:
           ReceiveCryptoView(
-            assetTitle: viewModel.asset.type?.title ?? .empty,
+            assetTitle: viewModel.asset.type?.symbol ?? .empty,
             walletAddress: viewModel.asset.externalAccountId ?? .empty
           )
             .embedInNavigation()

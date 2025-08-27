@@ -179,17 +179,28 @@ private extension CreditLimitBreakdownView {
         // No action here needed for now
       } label: {
         HStack(spacing: 8) {
-          assetType.image
+          assetType.icon
           
-          Text(assetType.title)
-            .foregroundColor(Colors.label.swiftUIColor)
-            .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.medium.value))
+          VStack(
+            alignment: .leading,
+            spacing: 0
+          ) {
+            Text(assetType.symbol ?? "N/A")
+              .foregroundColor(Colors.label.swiftUIColor)
+              .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.medium.value))
+            
+            if let name = assetType.name {
+              Text(name)
+                .foregroundColor(Colors.label.swiftUIColor.opacity(0.6))
+                .font(Fonts.Inter.regular.swiftUIFont(size: Constants.FontSize.ultraSmall.value))
+            }
+          }
           
           Spacer()
           
           VStack(
             alignment: .trailing,
-            spacing: 2
+            spacing: 0
           ) {
             Text(asset.availableBalanceFormatted)
               .foregroundColor(Colors.label.swiftUIColor)
@@ -215,7 +226,7 @@ private extension CreditLimitBreakdownView {
   ) -> some View {
     // --- Breakdown Row Title ---
     BreakdownRow(
-      title: L10N.Common.CollateralLimitBreakdown.TokenAdded.title(asset.type?.title ?? "N/A"),
+      title: L10N.Common.CollateralLimitBreakdown.TokenAdded.title(asset.type?.symbol ?? "N/A"),
       amount: asset.availableBalanceFormatted,
       isDetail: false
     )

@@ -105,7 +105,7 @@ private extension EnterWalletAddressView {
   @ViewBuilder var titleView: some View {
     VStack(spacing: 10) {
       Text(
-        viewModel.kind.getTitle(asset: viewModel.asset.type?.title ?? .empty)
+        viewModel.kind.getTitle(asset: viewModel.asset.type?.symbol ?? .empty)
       )
       .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.main.value))
       .foregroundColor(Colors.label.swiftUIColor)
@@ -116,7 +116,7 @@ private extension EnterWalletAddressView {
     WalletAddressTextField(
       placeHolderText: L10N.Common.EnterCryptoAddressView.WalletAddress.placeholder,
       value: $viewModel.inputValue,
-      textFieldTitle: viewModel.kind.getTextFieldTitle(asset: viewModel.asset.type?.title ?? .empty),
+      textFieldTitle: viewModel.kind.getTextFieldTitle(asset: viewModel.asset.type?.symbol ?? .empty),
       clearValue: {
         viewModel.clearValue()
       },

@@ -52,7 +52,7 @@ struct CryptoChartDetailView: View {
           }
         case .receive:
           ReceiveCryptoView(
-            assetTitle: viewModel.asset.type?.title ?? .empty,
+            assetTitle: viewModel.asset.type?.symbol ?? .empty,
             walletAddress: viewModel.asset.externalAccountId ?? .empty
           )
         case .buy:
@@ -253,7 +253,7 @@ private extension CryptoChartDetailView {
       .embedInNavigation()
     case .wallet:
       ReceiveCryptoView(
-        assetTitle: viewModel.asset.type?.title ?? .empty,
+        assetTitle: viewModel.asset.type?.symbol ?? .empty,
         walletAddress: viewModel.asset.externalAccountId ?? .empty
       )
         .embedInNavigation()

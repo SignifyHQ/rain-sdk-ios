@@ -225,7 +225,7 @@ extension CashViewModel {
         return
       }
       navigation = .depositWalletAddress(
-        title: collateralAsset.type?.title ?? .empty,
+        title: collateralAsset.type?.symbol ?? .empty,
         address: collateralContract.address
       )
     }
@@ -264,7 +264,7 @@ private extension CashViewModel {
   
   func getPortalAsset() {
     portalStorage
-      .cryptoAsset(with: AssetType.usdc.title)
+      .cryptoAsset(with: AssetType.usdc.symbol ?? "N/A")
       .receive(on: DispatchQueue.main)
       .map { asset in
         guard let asset

@@ -19,6 +19,7 @@ public protocol AccountDataStorageProtocol {
   var externalAccountID: String? { get set }
   var userCompleteOnboarding: Bool { get set }
   var isBiometricUsageEnabled: Bool { get set }
+  var hasFrntCard: Bool { get set }
   
   func subscribeWalletAddressesChanged(_ completion: @escaping ([WalletAddressEntity]) -> Void) -> Cancellable
   func storeWalletAddresses(_ addresses: [WalletAddressEntity])

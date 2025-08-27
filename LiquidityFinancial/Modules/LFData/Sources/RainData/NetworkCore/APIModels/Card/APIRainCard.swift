@@ -14,6 +14,7 @@ public struct APIRainCard: Decodable {
   public let limitAmount: Double?
   public let limitFrequency: String?
   public let createdAt: String
+  public let tokenExperiences: [String]?
 }
 
 extension APIRainCard: RainCardEntity {}
