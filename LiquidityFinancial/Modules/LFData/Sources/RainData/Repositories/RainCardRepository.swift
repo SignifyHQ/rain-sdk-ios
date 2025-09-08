@@ -12,24 +12,30 @@ public class RainCardRepository: RainCardRepositoryProtocol {
     try await rainCardAPI.getCards()
   }
   
-  public func getCardOrders() async throws -> [RainCardEntity] {
+  public func getCardOrders() async throws -> [RainCardOrderEntity] {
     try await rainCardAPI.getCardOrders()
   }
   
   public func orderPhysicalCard(
-    parameters: RainOrderCardParametersEntity,
-    shouldBeApproved: Bool
+    parameters: RainOrderCardParametersEntity
   ) async throws -> RainCardEntity {
     guard let parameters = parameters as? APIRainOrderCardParameters
     else {
       throw "Can't map paramater :\(parameters)"
     }
     
-    if shouldBeApproved {
-      return try await rainCardAPI.orderPhysicalCardWithApproval(parameters: parameters)
-    } else {
-      return try await rainCardAPI.orderPhysicalCard(parameters: parameters)
+    return try await rainCardAPI.orderPhysicalCard(parameters: parameters)
+  }
+  
+  public func orderPhysicalCardWithApproval(
+    parameters: RainOrderCardParametersEntity
+  ) async throws -> RainCardOrderEntity {
+    guard let parameters = parameters as? APIRainOrderCardParameters
+    else {
+      throw "Can't map paramater :\(parameters)"
     }
+    
+    return try await rainCardAPI.orderPhysicalCardWithApproval(parameters: parameters)
   }
   
   public func activatePhysicalCard(cardID: String, parameters: RainActivateCardParametersEntity) async throws {
@@ -51,7 +57,7 @@ public class RainCardRepository: RainCardRepositoryProtocol {
     try await rainCardAPI.unlockCard(cardID: cardID)
   }
   
-  public func cancelOrder(cardID: String) async throws -> RainCardEntity {
+  public func cancelOrder(cardID: String) async throws -> RainCardOrderEntity {
     try await rainCardAPI.cancelOrder(cardID: cardID)
   }
   

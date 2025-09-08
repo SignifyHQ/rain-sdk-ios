@@ -1,5 +1,5 @@
 import Foundation
 
 public protocol RainGetCardOrdersUseCaseProtocol {
-  func execute() async throws -> [RainCardEntity]
+  func execute() async throws -> [RainCardOrderEntity]
 }

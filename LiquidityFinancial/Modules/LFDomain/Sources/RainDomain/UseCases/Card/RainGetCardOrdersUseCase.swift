@@ -8,7 +8,7 @@ public class RainGetCardOrdersUseCase: RainGetCardOrdersUseCaseProtocol {
     self.repository = repository
   }
   
-  public func execute() async throws -> [RainCardEntity] {
+  public func execute() async throws -> [RainCardOrderEntity] {
     try await repository.getCardOrders()
   }
 }

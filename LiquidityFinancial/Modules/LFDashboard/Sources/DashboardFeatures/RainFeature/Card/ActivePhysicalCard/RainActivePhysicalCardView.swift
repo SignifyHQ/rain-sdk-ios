@@ -33,12 +33,6 @@ private extension RainActivePhysicalCardView {
       }
     case .activedCard:
       activedCardView
-    case .addAppleWallet:
-      RainAddAppleWalletView(
-        viewModel: RainAddAppleWalletViewModel(cardModel: card) {
-          dismiss()
-        }
-      )
     }
   }
   
@@ -69,20 +63,6 @@ private extension RainActivePhysicalCardView {
       }
       .padding(.top, 16)
       .padding(.leading, 16)
-    }
-  }
-  
-  var applePay: some View {
-    Button {
-      activeContent = .addAppleWallet
-    } label: {
-      ApplePayButton()
-        .frame(height: 40)
-        .cornerRadius(10)
-        .overlay(
-          RoundedRectangle(cornerRadius: 10)
-            .stroke(Colors.label.swiftUIColor, lineWidth: 1)
-        )
     }
   }
   
@@ -121,6 +101,5 @@ extension RainActivePhysicalCardView {
   enum ActiveContent {
     case enterPanLastFour
     case activedCard
-    case addAppleWallet
   }
 }

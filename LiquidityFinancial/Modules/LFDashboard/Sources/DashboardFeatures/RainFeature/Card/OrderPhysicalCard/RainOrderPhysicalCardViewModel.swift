@@ -21,6 +21,10 @@ final class RainOrderPhysicalCardViewModel: ObservableObject {
     RainOrderPhysicalCardUseCase(repository: rainCardRepository)
   }()
   
+  lazy var orderPhysicalCardWithApprovalUseCase: RainOrderPhysicalCardWithApprovalUseCaseProtocol = {
+    RainOrderPhysicalCardWithApprovalUseCase(repository: rainCardRepository)
+  }()
+  
   @Published var isOrderingCard: Bool = false
   @Published var isShowOrderSuccessPopup: Bool = false
   @Published var toastMessage: String?
@@ -64,7 +68,7 @@ extension RainOrderPhysicalCardViewModel {
     Task {
       do {
         let parameters = generateOrderPhysicalCardParameter(with: shippingAddress)
-        let response = try await orderPhysicalCardUseCase.execute(parameters: parameters, shouldBeApproved: false)
+        let response = try await orderPhysicalCardUseCase.execute(parameters: parameters)
         
         self.onOrderSuccess?(
           mapToCardModel(card: response)

@@ -151,28 +151,9 @@ private extension RainListCardsView {
          let configuration = configurationValue,
          viewModel.shouldShowAddToWalletButton[viewModel.currentCard.id] == true {
 
-        AddPassToWalletButton(configuration) { response in
-          guard let request = try? await viewModel
-            .completeTokenization(
-              certificates: response.certificates,
-              nonce: response.nonce,
-              nonceSignature: response.nonceSignature
-            )
-          else {
-            log.error("Tokenization returned nil request.")
-            return PKAddPaymentPassRequest()
-          }
-          
-          return request
-        } onCompletion: { result in
-          switch result {
-          case .success(let _):
-            viewModel.fetchRainCards()
-            log.error("Card tokenized successfully!")
-          case .failure(let error):
-            log.error(error.userFriendlyMessage)
-          }
-        }
+        addToWalletButton(
+          configuration: configuration
+        )
         .frame(
           width: Screen.main.bounds.width - 60,
           height: 44
@@ -268,6 +249,31 @@ private extension RainListCardsView {
     }
     .tabViewStyle(.page(indexDisplayMode: .never))
     .frame(maxHeight: 240)
+  }
+  
+  func addToWalletButton(configuration: PKAddPaymentPassRequestConfiguration) -> some View {
+    AddPassToWalletButton(configuration) { response in
+      guard let request = try? await viewModel
+        .completeTokenization(
+          certificates: response.certificates,
+          nonce: response.nonce,
+          nonceSignature: response.nonceSignature
+        )
+      else {
+        log.error("Tokenization returned nil request.")
+        return PKAddPaymentPassRequest()
+      }
+      
+      return request
+    } onCompletion: { result in
+      switch result {
+      case .success(let _):
+        viewModel.fetchRainCards()
+        log.error("Card tokenized successfully!")
+      case .failure(let error):
+        log.error(error.userFriendlyMessage)
+      }
+    }
   }
   
   @ViewBuilder
@@ -379,10 +385,7 @@ private extension RainListCardsView {
 private extension RainListCardsView {
   @ViewBuilder var buttonGroup: some View {
     VStack(spacing: 14) {
-      if viewModel.isActivePhysical {
-        // applePay TODO: - Temporarily hide this button because NetSpend doesn't support
-        EmptyView()
-      } else if viewModel.currentCard.cardStatus == .unactivated {
+      if viewModel.currentCard.cardStatus == .unactivated {
         activeCardButton
       }
       
@@ -394,20 +397,6 @@ private extension RainListCardsView {
           viewModel.onTapOrderPhysicalCard()
         }
       }
-    }
-  }
-  
-  var applePay: some View {
-    Button {
-      viewModel.onTapAddToApplePay()
-    } label: {
-      ApplePayButton()
-        .frame(height: 40)
-        .cornerRadius(10)
-        .overlay(
-          RoundedRectangle(cornerRadius: 10)
-            .stroke(Colors.label.swiftUIColor, lineWidth: 1)
-        )
     }
   }
   

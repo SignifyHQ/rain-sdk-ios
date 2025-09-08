@@ -33,8 +33,16 @@ public final class RainListCardsViewModel: ObservableObject {
     RainCloseCardUseCase(repository: rainCardRepository)
   }()
   
+  lazy var cancelCardOrderUseCase: RainCancelCardOrderUseCaseProtocol = {
+    RainCancelCardOrderUseCase(repository: rainCardRepository)
+  }()
+  
   lazy var getCardsUseCase: RainGetCardsUseCaseProtocol = {
     RainGetCardsUseCase(repository: rainCardRepository)
+  }()
+  
+  lazy var getCardOrdersUseCase: RainGetCardOrdersUseCaseProtocol = {
+    RainGetCardOrdersUseCase(repository: rainCardRepository)
   }()
   
   lazy var getSecretCardInformationUseCase: RainSecretCardInformationUseCaseProtocol = {
@@ -161,6 +169,7 @@ public extension RainListCardsViewModel {
       
       do {
         let cards = try await getCardsUseCase.execute()
+        let cardOrders = try await getCardOrdersUseCase.execute()
         
         cardsList = cards.map { card in
           mapToCardModel(card: card)
@@ -360,16 +369,6 @@ extension RainListCardsViewModel {
       analyticsService.track(event: AnalyticsEvent(name: .tapsUnlockCard))
       callUnLockCardAPI()
     }
-  }
-  
-  func onTapAddToApplePay() {
-    guard currentCard.cardStatus == .active else {
-      return
-    }
-    let destinationView = RainApplePayViewController(
-      viewModel: RainApplePayViewModel(cardModel: currentCard)
-    )
-    sheet = .applePay(AnyView(destinationView))
   }
   
   func onChangeCurrentCard() {
