@@ -6,11 +6,14 @@ import LFUtilities
 
 public enum RainCardRoute {
   case getCards
+  case getCardOrders
   case orderPhysicalCard(parameters: APIRainOrderCardParameters)
+  case orderPhysicalCardWithApproval(parameters: APIRainOrderCardParameters)
   case activatePhysicalCard(cardID: String, parameters: APIRainActivateCardParameters)
   case closeCard(cardID: String)
   case lockCard(cardID: String)
   case unlockCard(cardID: String)
+  case cancelOrder(cardID: String)
   case getSecretCardInfomation(sessionID: String, cardID: String)
   case createVirtualCard
 }
@@ -20,8 +23,12 @@ extension RainCardRoute: LFRoute {
     switch self {
     case .getCards:
       return "/v1/rain/cards/list"
+    case .getCardOrders:
+      return "/v1/rain/cards/physical-card/orders"
     case .orderPhysicalCard:
       return "/v1/rain/cards/physical-card"
+    case .orderPhysicalCardWithApproval:
+      return "/v1/rain/cards/physical-card/order"
     case let .activatePhysicalCard(cardID, _):
       return "/v1/rain/cards/physical-card/activate?card_id=\(cardID)"
     case .closeCard:
@@ -30,6 +37,8 @@ extension RainCardRoute: LFRoute {
       return "/v1/rain/cards/lock"
     case .unlockCard:
       return "/v1/rain/cards/unlock"
+    case let .cancelOrder(cardID):
+      return "/v1/rain/cards/physical-card/orders/\(cardID)/cancel"
     case .getSecretCardInfomation:
       return "/v1/rain/cards/card-secret-info-by-id"
     case .createVirtualCard:
@@ -39,13 +48,15 @@ extension RainCardRoute: LFRoute {
   
   public var httpMethod: HttpMethod {
     switch self {
-    case .getCards, .getSecretCardInfomation:
+    case .getCards, .getCardOrders, .getSecretCardInfomation:
       return .GET
     case .orderPhysicalCard,
+        .orderPhysicalCardWithApproval,
         .activatePhysicalCard,
         .closeCard,
         .lockCard,
         .unlockCard,
+        .cancelOrder,
         .createVirtualCard:
       return .POST
     }
@@ -81,11 +92,11 @@ extension RainCardRoute: LFRoute {
       return [
         "card_id": cardID
       ]
-    case let .orderPhysicalCard(parameters):
+    case let .orderPhysicalCard(parameters), let .orderPhysicalCardWithApproval(parameters):
       return parameters.encoded()
     case let .activatePhysicalCard(_, parameters):
       return parameters.encoded()
-    case .createVirtualCard:
+    case .getCardOrders, .cancelOrder, .createVirtualCard:
       return nil
     }
   }
@@ -98,9 +109,9 @@ extension RainCardRoute: LFRoute {
         .unlockCard,
         .getSecretCardInfomation:
       return .url
-    case .orderPhysicalCard, .activatePhysicalCard:
+    case .orderPhysicalCard, .orderPhysicalCardWithApproval, .activatePhysicalCard:
       return .json
-    case .createVirtualCard:
+    case .getCardOrders, .cancelOrder, .createVirtualCard:
       return nil
     }
   }

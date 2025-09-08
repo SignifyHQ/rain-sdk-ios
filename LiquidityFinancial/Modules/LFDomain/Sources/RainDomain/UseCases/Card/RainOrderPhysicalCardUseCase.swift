@@ -8,7 +8,7 @@ public class RainOrderPhysicalCardUseCase: RainOrderPhysicalCardUseCaseProtocol 
     self.repository = repository
   }
   
-  public func execute(parameters: RainOrderCardParametersEntity) async throws -> RainCardEntity {
-    try await repository.orderPhysicalCard(parameters: parameters)
+  public func execute(parameters: RainOrderCardParametersEntity, shouldBeApproved: Bool) async throws -> RainCardEntity {
+    try await repository.orderPhysicalCard(parameters: parameters, shouldBeApproved: shouldBeApproved)
   }
 }

@@ -64,7 +64,7 @@ extension RainOrderPhysicalCardViewModel {
     Task {
       do {
         let parameters = generateOrderPhysicalCardParameter(with: shippingAddress)
-        let response = try await orderPhysicalCardUseCase.execute(parameters: parameters)
+        let response = try await orderPhysicalCardUseCase.execute(parameters: parameters, shouldBeApproved: false)
         
         self.onOrderSuccess?(
           mapToCardModel(card: response)

@@ -13,9 +13,27 @@ extension LFCoreNetwork: RainCardAPIProtocol where R == RainCardRoute {
     )
   }
   
+  public func getCardOrders() async throws -> [APIRainCard] {
+    try await request(
+      RainCardRoute.getCardOrders,
+      target: [APIRainCard].self,
+      failure: LFErrorObject.self,
+      decoder: .apiDecoder
+    )
+  }
+  
   public func orderPhysicalCard(parameters: APIRainOrderCardParameters) async throws -> APIRainCard {
     try await request(
       RainCardRoute.orderPhysicalCard(parameters: parameters),
+      target: APIRainCard.self,
+      failure: LFErrorObject.self,
+      decoder: .apiDecoder
+    )
+  }
+  
+  public func orderPhysicalCardWithApproval(parameters: APIRainOrderCardParameters) async throws -> APIRainCard {
+    try await request(
+      RainCardRoute.orderPhysicalCardWithApproval(parameters: parameters),
       target: APIRainCard.self,
       failure: LFErrorObject.self,
       decoder: .apiDecoder
@@ -51,6 +69,15 @@ extension LFCoreNetwork: RainCardAPIProtocol where R == RainCardRoute {
   public func unlockCard(cardID: String) async throws -> APIRainCard {
     try await request(
       RainCardRoute.unlockCard(cardID: cardID),
+      target: APIRainCard.self,
+      failure: LFErrorObject.self,
+      decoder: .apiDecoder
+    )
+  }
+  
+  public func cancelOrder(cardID: String) async throws -> APIRainCard {
+    try await request(
+      RainCardRoute.cancelOrder(cardID: cardID),
       target: APIRainCard.self,
       failure: LFErrorObject.self,
       decoder: .apiDecoder
