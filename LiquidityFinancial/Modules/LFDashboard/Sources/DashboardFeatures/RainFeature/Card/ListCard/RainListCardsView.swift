@@ -72,9 +72,13 @@ public struct RainListCardsView: View {
     ) { item in
       switch item {
       case .confirmCloseCard:
-        confirmationCloseCardPopup
+        closeCardConfirmationPopup
       case .closeCardSuccessfully:
-        closeCardSuccessfullyPopup
+        cardClosedSuccessfullyPopup
+      case .confirmCardOrderCancel:
+        cancelCardOrderConfirmationPopup
+      case .cardOrderCanceledSuccessfully:
+        cardOrderCanceledSuccessfullyPopup
       default: EmptyView()
       }
     }
@@ -297,12 +301,26 @@ private extension RainListCardsView {
 private extension RainListCardsView {
   @ViewBuilder
   var rows: some View {
-    VStack(alignment: .leading, spacing: 18) {
-      if viewModel.currentCard.cardType != .physical || viewModel.currentCard.cardStatus != .unactivated {
+    VStack(
+      alignment: .leading,
+      spacing: 18
+    ) {
+      VStack {
+        if viewModel.currentCard.cardType == .physical && (viewModel.currentCard.cardStatus == .unactivated || viewModel.currentCard.cardStatus == .pending) {
+          shippingInfoView
+        }
+        
+        if viewModel.currentCard.cardStatus == .pending {
+          cardReceivingAddressView
+        }
+      }
+      
+      if viewModel.currentCard.cardType != .physical || (viewModel.currentCard.cardStatus != .unactivated && viewModel.currentCard.cardStatus != .pending) {
         Text(L10N.Common.ListCard.Security.title)
           .font(Fonts.semiBold.swiftUIFont(size: Constants.FontSize.ultraSmall.value))
           .foregroundColor(Colors.label.swiftUIColor.opacity(0.75))
       }
+      
       VStack(spacing: 16) {
         if viewModel.currentCard.cardType != .physical && viewModel.currentCard.cardStatus == .active {
           row(
@@ -316,7 +334,7 @@ private extension RainListCardsView {
             .foregroundColor(Colors.label.swiftUIColor)
         }
         
-        if viewModel.currentCard.cardStatus != .unactivated {
+        if viewModel.currentCard.cardStatus != .unactivated && viewModel.currentCard.cardStatus != .pending {
           row(
             title: L10N.Common.ListCard.LockCard.title,
             subtitle: L10N.Common.ListCard.LockCard.description,
@@ -326,24 +344,23 @@ private extension RainListCardsView {
           }
         }
         
-        if ![.closed, .disabled, .unactivated].contains(viewModel.currentCard.cardStatus) {
+        if ![.closed, .disabled, .unactivated, .pending].contains(viewModel.currentCard.cardStatus) {
           GenImages.CommonImages.dash.swiftUIImage
             .foregroundColor(Colors.label.swiftUIColor)
           row(title: L10N.Common.ListCard.CloseCard.title) {
             viewModel.onTapCloseCard()
           }
         }
-        
-//        GenImages.CommonImages.dash.swiftUIImage
-//          .foregroundColor(Colors.label.swiftUIColor)
-//        row(title: L10N.Common.ListCard.CreditLimitBreakdown.title) {
-//          viewModel.onTapViewCreditLimitBreakdown()
-//        }
       }
     }
   }
   
-  func row(title: String, subtitle: String?, isSwitchOn: Binding<Bool>, onChange: ((Bool) -> Void)?) -> some View {
+  func row(
+    title: String,
+    subtitle: String?,
+    isSwitchOn: Binding<Bool>,
+    onChange: ((Bool) -> Void)?
+  ) -> some View {
     HStack {
       VStack(alignment: .leading, spacing: 2) {
         Text(title)
@@ -366,7 +383,10 @@ private extension RainListCardsView {
     }
   }
   
-  func row(title: String, onTap: @escaping () -> Void) -> some View {
+  func row(
+    title: String,
+    onTap: @escaping () -> Void
+  ) -> some View {
     Button(action: onTap) {
       HStack {
         Text(title)
@@ -379,28 +399,96 @@ private extension RainListCardsView {
       }
     }
   }
+  
+  var shippingInfoView: some View {
+    HStack(
+      alignment: .center,
+      spacing: 12
+    ) {
+      GenImages.CommonImages.icShipping.swiftUIImage
+      
+      Text(L10N.Common.OrderPhysicalCard.Delivery.Full.title)
+        .foregroundColor(Colors.label.swiftUIColor)
+        .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.small.value))
+        .multilineTextAlignment(.leading)
+      
+      Spacer()
+    }
+    .padding(12)
+    .background(
+      RoundedRectangle(cornerRadius: 8)
+        .fill(Colors.secondaryBackground.swiftUIColor)
+    )
+  }
+  
+  var cardReceivingAddressView: some View {
+    VStack(
+      alignment: .leading,
+      spacing: 16
+    ) {
+      HStack(
+        alignment: .center,
+        spacing: 12
+      ) {
+        GenImages.CommonImages.icMap.swiftUIImage
+          .frame(20)
+          .foregroundColor(Colors.label.swiftUIColor)
+        
+        VStack(
+          alignment: .leading,
+          spacing: 4
+        ) {
+          Text(L10N.Common.OrderPhysicalCard.Address.Delivery.title)
+            .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.ultraSmall.value))
+            .foregroundColor(Colors.label.swiftUIColor.opacity(0.75))
+          
+          Text(viewModel.currentCard.shippingAddress?.description ?? "")
+            .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.medium.value))
+            .foregroundColor(Colors.label.swiftUIColor)
+            .multilineTextAlignment(.leading)
+            .lineLimit(3)
+            .fixedSize(horizontal: false, vertical: true)
+        }
+        
+        Spacer()
+      }
+      .padding(16)
+      .background(Colors.secondaryBackground.swiftUIColor.cornerRadius(12))
+    }
+  }
 }
 
 // MARK: - Bottom Components
 private extension RainListCardsView {
   @ViewBuilder var buttonGroup: some View {
     VStack(spacing: 14) {
+      // Show activate card button for shipped physical card
       if viewModel.currentCard.cardStatus == .unactivated {
-        activeCardButton
+        activateCardButton
       }
       
-      if !viewModel.isHasPhysicalCard {
-        FullSizeButton(
-          title: L10N.Common.ListCard.OrderPhysicalCard.title,
-          isDisable: false
-        ) {
-          viewModel.onTapOrderPhysicalCard()
-        }
+      // Show cancel order button for pending card orderd
+      if viewModel.currentCard.cardStatus == .pending {
+        cancelCardOrderButton
+      }
+      
+      // Show button for ordering a new physical card if it hasn't been shipped yet
+      if !viewModel.doesHavePhysicalCard {
+        orderPhysicalCardButton
       }
     }
   }
   
-  var activeCardButton: some View {
+  var orderPhysicalCardButton: some View {
+    FullSizeButton(
+      title: L10N.Common.ListCard.OrderPhysicalCard.title,
+      isDisable: false
+    ) {
+      viewModel.onTapOrderPhysicalCard()
+    }
+  }
+  
+  var activateCardButton: some View {
     FullSizeButton(
       title: L10N.Common.ListCard.ActivateCard.buttonTitle(viewModel.currentCard.cardType.title),
       isDisable: false
@@ -414,11 +502,21 @@ private extension RainListCardsView {
       )
     }
   }
+  
+  var cancelCardOrderButton: some View {
+    FullSizeButton(
+      title: L10N.Common.ListCard.CancelCardOrder.buttonTitle,
+      isDisable: false,
+      type: .tertiary
+    ) {
+      viewModel.onTapCancelCardOrder()
+    }
+  }
 }
 
 // MARK: - Popup
 private extension RainListCardsView {
-  var confirmationCloseCardPopup: some View {
+  var closeCardConfirmationPopup: some View {
     LiquidityAlert(
       title: L10N.Common.ListCard.CloseCard.title.uppercased(),
       message: L10N.Common.ListCard.CloseCard.message,
@@ -437,14 +535,48 @@ private extension RainListCardsView {
     )
   }
   
-  var closeCardSuccessfullyPopup: some View {
+  var cancelCardOrderConfirmationPopup: some View {
+    LiquidityAlert(
+      title: L10N.Common.ListCard.CancelCardOrder.title.uppercased(),
+      message: L10N.Common.ListCard.CancelCardOrder.message,
+      primary: .init(
+        text: L10N.Common.ListCard.CancelCardOrder.YesButton.title,
+        action: {
+          viewModel.cancelCardOrder()
+        }
+      ),
+      secondary: .init(
+        text: L10N.Common.ListCard.CancelCardOrder.CancelButton.title,
+        action: {
+          viewModel.hidePopup()
+        }
+      )
+    )
+  }
+  
+  var cardClosedSuccessfullyPopup: some View {
     LiquidityAlert(
       title: L10N.Common.ListCard.CardClosed.title,
       message: L10N.Common.ListCard.CardClosed.message,
       primary: .init(
         text: L10N.Common.Button.Ok.title,
         action: {
-          viewModel.primaryActionCloseCardSuccessfully {
+          viewModel.cardClosedSuccessAction {
+            dismiss()
+          }
+        }
+      )
+    )
+  }
+  
+  var cardOrderCanceledSuccessfullyPopup: some View {
+    LiquidityAlert(
+      title: L10N.Common.ListCard.CardOrderCanceled.title.uppercased(),
+      message: L10N.Common.ListCard.CardOrderCanceled.message,
+      primary: .init(
+        text: L10N.Common.Button.Ok.title,
+        action: {
+          viewModel.cardClosedSuccessAction {
             dismiss()
           }
         }

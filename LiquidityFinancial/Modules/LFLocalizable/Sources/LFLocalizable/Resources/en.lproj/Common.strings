@@ -326,6 +326,7 @@
 "listCard.changePin.title" = "Change PIN";
 "listCard.orderPhysicalCard.title" = "Order Physical Card";
 "listCard.activateCard.buttonTitle" = "Activate %@ Card";
+"listCard.cancelCardOrder.buttonTitle" = "Cancel Card Order";
 "listCard.closeCard.message" = "Are you sure you want to close this card? It will be permanently disabled, and a replacement may not be may not be available immediately.";
 "listCard.closeCard.yesButton.title" = "Yes, Close Card";
 "listCard.closeCard.cancelButton.title" = "Cancel";
@@ -336,6 +337,14 @@
 "listCard.activateCard.title" = "Activate Card";
 "listCard.activateCard.message" = "To start using your card, please activate it now";
 "listCard.activateCard.primary" = "Activate Card";
+
+"listCard.cancelCardOrder.title" = "Cancel Card Order";
+"listCard.cancelCardOrder.message" = "Are you sure you want to cancel this card order?";
+"listCard.cancelCardOrder.yesButton.title" = "Yes, Cancel Order";
+"listCard.cancelCardOrder.cancelButton.title" = "Cancel";
+
+"listCard.cardOrderCanceled.title" = "Card Order Canceled";
+"listCard.cardOrderCanceled.message" = "You have successfully\n canceled your card order.";
 
 // CARD
 "card.openCards.title" = "Open Cards";
@@ -422,9 +431,11 @@
 "orderPhysicalCard.editAddress.buttonTitle" = "Edit address";
 "orderPhysicalCard.order.buttonTitle" = "Order Physical Card";
 "orderPhysicalCard.delivery.title" = "Delivery";
-"orderPhysicalCard.delivery.subtitle" = "7-10 business days";
+"orderPhysicalCard.delivery.subtitle" = "14-20 business days";
+"orderPhysicalCard.delivery.full.title" = "Your physical card will arrive in 14–20 business days.";
+"orderPhysicalCard.address.delivery.title" = "Delivery Address";
 "orderPhysicalCard.orderedSuccess.title" = "PHYSICAL CARD ORDERED";
-"orderPhysicalCard.orderedSuccess.message" = "Thank you, your physical card was ordered. It will arrive in 7-14 business days. After it arrives, please come back to activate your card.";
+"orderPhysicalCard.orderedSuccess.message" = "Thank you, your physical card was ordered. It will arrive in 14-20 business days. After it arrives, please come back to activate your card.";
 
 // ShippingAddress
 "shippingAddress.screen.title" = "WHERE SHOULD WE SEND YOUR %@ CARD?";

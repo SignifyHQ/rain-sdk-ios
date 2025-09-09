@@ -1,5 +1,5 @@
 public protocol RainCardOrderEntity {
-  var id: String? { get }
+  var id: String { get }
   var userId: String { get }
   var status: String { get }
   var phoneNumber: String { get }

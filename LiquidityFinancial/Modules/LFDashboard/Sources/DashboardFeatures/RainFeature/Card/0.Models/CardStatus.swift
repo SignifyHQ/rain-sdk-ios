@@ -5,6 +5,8 @@ enum CardStatus: String {
   case closed
   case disabled
   case unactivated
+  case pending
+  case canceled
   
   init?(rawValue: String) {
     switch rawValue {
@@ -26,6 +28,10 @@ enum CardStatus: String {
       self = .unactivated
     case "not_activated":
       self = .unactivated
+    case "pending":
+      self = .pending
+    case "cancelled":
+      self = .canceled
     default:
       self = .unactivated
     }

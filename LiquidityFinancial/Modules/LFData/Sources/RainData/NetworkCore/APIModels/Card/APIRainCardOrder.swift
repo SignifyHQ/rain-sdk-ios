@@ -2,7 +2,7 @@ import Foundation
 import RainDomain
 
 public struct APIRainCardOrder: Decodable {
-  public var id: String?
+  public var id: String
   public var userId: String
   public var status: String
   public var phoneNumber: String

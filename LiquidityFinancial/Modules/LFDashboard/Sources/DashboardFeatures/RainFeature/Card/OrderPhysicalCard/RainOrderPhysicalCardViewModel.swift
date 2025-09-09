@@ -59,7 +59,9 @@ extension RainOrderPhysicalCardViewModel {
   }
   
   func orderPhysicalCard() {
-    guard let shippingAddress, !shippingAddress.line1.isEmpty else {
+    guard let shippingAddress,
+          !shippingAddress.line1.isEmpty
+    else {
       return
     }
     
@@ -68,11 +70,23 @@ extension RainOrderPhysicalCardViewModel {
     Task {
       do {
         let parameters = generateOrderPhysicalCardParameter(with: shippingAddress)
-        let response = try await orderPhysicalCardUseCase.execute(parameters: parameters)
+        var card: CardModel = .physicalDefault
+        
+        // If the user uses freeform address input, we are creating an order which will be verified by the support team
+        if shippingAddress.requiresVerification {
+          let response = try await orderPhysicalCardWithApprovalUseCase.execute(parameters: parameters)
+          card = CardModel(order: response)
+          
+          // If the user fills the address using Google autocomplete, we order the card right away
+        } else {
+          let response = try await orderPhysicalCardUseCase.execute(parameters: parameters)
+          card = CardModel(card: response)
+        }
         
         self.onOrderSuccess?(
-          mapToCardModel(card: response)
+          card
         )
+        
         self.isOrderingCard = false
         self.isShowOrderSuccessPopup = true
       } catch {
@@ -100,18 +114,6 @@ extension RainOrderPhysicalCardViewModel {
 
 // MARK: - Private Functions
 private extension RainOrderPhysicalCardViewModel {
-  func mapToCardModel(card: RainCardEntity) -> CardModel {
-    CardModel(
-      id: card.cardId ?? card.rainCardId,
-      cardType: CardType(rawValue: card.cardType.lowercased()) ?? .virtual,
-      cardholderName: nil,
-      expiryMonth: Int(card.expMonth ?? .empty) ?? 0,
-      expiryYear: Int(card.expYear ?? .empty) ?? 0,
-      last4: card.last4 ?? .empty,
-      cardStatus: CardStatus(rawValue: card.cardStatus.lowercased()) ?? .unactivated
-    )
-  }
-  
   func generateOrderPhysicalCardParameter(with shippingAddress: ShippingAddress) -> APIRainOrderCardParameters {
     let address = APIRainShippingAddressParameters(
       line1: shippingAddress.line1,

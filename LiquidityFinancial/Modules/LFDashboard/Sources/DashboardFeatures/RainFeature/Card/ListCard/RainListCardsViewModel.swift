@@ -1,4 +1,5 @@
 import AccountData
+import BaseOnboarding
 import Combine
 import Factory
 import Foundation
@@ -54,7 +55,7 @@ public final class RainListCardsViewModel: ObservableObject {
   @Published var isShowCardNumber: Bool = false
   @Published var isCardLocked: Bool = false
   @Published var isActivePhysical: Bool = false
-  @Published var isHasPhysicalCard: Bool = false
+  @Published var doesHavePhysicalCard: Bool = false
   @Published var isShowListCardDropdown: Bool = false
   @Published var shouldShowAddToWalletButton: [String: Bool] = [:]
   @Published var toastMessage: String?
@@ -142,13 +143,35 @@ extension RainListCardsViewModel {
   
   func closeCard() {
     Task {
-      defer { isLoading = false }
+      defer {
+        isLoading = false
+      }
+      
       hidePopup()
       isLoading = true
       
       do {
         _ = try await closeCardUseCase.execute(cardID: currentCard.id)
         popup = .closeCardSuccessfully
+      } catch {
+        log.error(error.userFriendlyMessage)
+        toastMessage = error.userFriendlyMessage
+      }
+    }
+  }
+  
+  func cancelCardOrder() {
+    Task {
+      defer {
+        isLoading = false
+      }
+      
+      hidePopup()
+      isLoading = true
+      
+      do {
+        _ = try await cancelCardOrderUseCase.execute(cardID: currentCard.id)
+        popup = .cardOrderCanceledSuccessfully
       } catch {
         log.error(error.userFriendlyMessage)
         toastMessage = error.userFriendlyMessage
@@ -171,22 +194,36 @@ public extension RainListCardsViewModel {
         let cards = try await getCardsUseCase.execute()
         let cardOrders = try await getCardOrdersUseCase.execute()
         
-        cardsList = cards.map { card in
-          mapToCardModel(card: card)
+        // Map card orders to card model
+        cardsList = cardOrders.map { order in
+          CardModel(order: order)
+        }
+        .filter { card in
+          card.cardStatus != .canceled
         }
         
-        isHasPhysicalCard = cardsList.contains { card in
+        // Add created cards to the list
+        cardsList += cards.map { card in
+          CardModel(card: card)
+        }
+        
+        doesHavePhysicalCard = cardsList.contains { card in
           card.cardType == .physical
         }
         
         cardsList = cardsList.filter({ $0.cardStatus != .closed })
+        
         // Cache the value for frnt card available
         accountDataManager.hasFrntCard = cardsList
           .contains { card in
             card.tokenExperiences?.contains("FRNT") == true
           }
         
-        currentCard = cardsList.first ?? .virtualDefault
+        // Check if the previously selected card is still in the list and keep it selected, otherwise, select the first one in the list
+        currentCard = cardsList.first { card in
+          card.id == currentCard.id
+        } ?? cardsList.first ?? .virtualDefault
+        
         isActivePhysical = currentCard.cardStatus == .active
         isCardLocked = currentCard.cardStatus == .disabled
         
@@ -196,7 +233,7 @@ public extension RainListCardsViewModel {
           cardsList
             .enumerated()
             .forEach { index, card in
-              guard card.cardStatus != .closed
+              guard card.cardStatus != .closed && card.cardStatus != .pending
               else {
                 return
               }
@@ -394,6 +431,10 @@ extension RainListCardsViewModel {
     popup = .confirmCloseCard
   }
   
+  func onTapCancelCardOrder() {
+    popup = .confirmCardOrderCancel
+  }
+  
   func onTapViewCreditLimitBreakdown() {
     navigation = .creditLimitBreakdown
   }
@@ -402,7 +443,7 @@ extension RainListCardsViewModel {
     popup = nil
   }
   
-  func primaryActionCloseCardSuccessfully(completion: @escaping () -> Void) {
+  func cardClosedSuccessAction(completion: @escaping () -> Void) {
     updateListCard(id: currentCard.id, completion: completion)
     popup = nil
   }
@@ -429,22 +470,9 @@ private extension RainListCardsViewModel {
   }
   
   func orderPhysicalSuccess(card: CardModel) {
-    isHasPhysicalCard = true
+    doesHavePhysicalCard = true
     cardsList.insert(card, at: 0)
     currentCard = card
-  }
-  
-  func mapToCardModel(card: RainCardEntity) -> CardModel {
-    CardModel(
-      id: card.cardId ?? card.rainCardId,
-      cardType: CardType(rawValue: card.cardType.lowercased()) ?? .virtual,
-      cardholderName: nil,
-      expiryMonth: Int(card.expMonth ?? .empty) ?? 0,
-      expiryYear: Int(card.expYear ?? .empty) ?? 0,
-      last4: card.last4 ?? .empty,
-      cardStatus: CardStatus(rawValue: card.cardStatus.lowercased()) ?? .unactivated,
-      tokenExperiences: card.tokenExperiences
-    )
   }
   
   func updateCardStatus(status: CardStatus, id: String) {
@@ -508,6 +536,8 @@ extension RainListCardsViewModel {
   enum ListCardPopup {
     case confirmCloseCard
     case closeCardSuccessfully
+    case confirmCardOrderCancel
+    case cardOrderCanceledSuccessfully
     case roundUpPurchases
   }
 }
