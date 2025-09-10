@@ -29,6 +29,7 @@ final class RainShippingAddressViewModel: ObservableObject {
   @Published var isShowingCountrySelection: Bool = false
   @Published var isShowingStateSelection: Bool = false
   @Published var isShowingAddressSuggestions: Bool = false
+  @Published var isFreeInputEnabled: Bool = false
   
   @Published var addressLine1: String = .empty
   @Published var addressLine2: String = .empty
@@ -144,6 +145,11 @@ extension RainShippingAddressViewModel {
   
   func onAppear() {
     getUnsupportedStates()
+    isFreeInputEnabled = (shippingAddress?.requiresVerification == true)
+  }
+  
+  func onCouldNotFindAddressTap() {
+    isFreeInputEnabled = true
   }
   
   func openSupportScreen() {
@@ -162,7 +168,8 @@ extension RainShippingAddressViewModel {
       city: city,
       state: state,
       postalCode: zipCode,
-      country: selectedCountry
+      country: selectedCountry,
+      requiresVerification: isFreeInputEnabled
     )
   }
   
@@ -255,7 +262,8 @@ private extension RainShippingAddressViewModel {
           return
         }
         
-        guard !pauseAutocomplete
+        guard !pauseAutocomplete,
+              !isFreeInputEnabled
         else {
           pauseAutocomplete = false
           
@@ -272,7 +280,8 @@ private extension RainShippingAddressViewModel {
     query: String
   ) {
     Task {
-      guard query.count > 2
+      guard query.count > 2,
+            !isFreeInputEnabled
       else {
         isShowingAddressSuggestions = false
         

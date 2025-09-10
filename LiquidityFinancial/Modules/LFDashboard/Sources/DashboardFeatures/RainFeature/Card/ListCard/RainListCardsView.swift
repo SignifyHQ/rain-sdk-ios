@@ -235,20 +235,17 @@ private extension RainListCardsView {
   
   var card: some View {
     TabView(
-      selection: $viewModel.currentCard
+      selection: $viewModel.currentCardId
     ) {
-      ForEach(
-        Array(viewModel.cardsList.enumerated()),
-        id: \.element.id
-      ) { offset, item in
+      ForEach($viewModel.cardsList) { $card in
         RainCardView(
-          cardModel: item,
-          cardMetaData: $viewModel.cardsList[offset].metadata,
+          cardModel: card,
+          cardMetaData: $card.metadata,
           isShowCardNumber: $viewModel.isShowCardNumber,
           isLoading: $viewModel.isInit
         )
         .padding(.horizontal, 30)
-        .tag(item)
+        .tag(card.id)
       }
     }
     .tabViewStyle(.page(indexDisplayMode: .never))

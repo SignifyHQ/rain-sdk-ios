@@ -61,7 +61,21 @@ public final class RainListCardsViewModel: ObservableObject {
   @Published var toastMessage: String?
   
   @Published var cardsList: [CardModel] = []
-  @Published var currentCard: CardModel = .virtualDefault
+  @Published var currentCard: CardModel = .virtualDefault {
+    didSet {
+      if currentCardId != currentCard.id {
+        currentCardId = currentCard.id
+      }
+    }
+  }
+  
+  @Published var currentCardId: String = .empty {
+    didSet {
+      if let newCard = cardsList.first(where: { $0.id == currentCardId }), currentCard != newCard {
+        currentCard = newCard
+      }
+    }
+  }
 //  {
 //    didSet {
 //      loadTokenizationResponseData(card: currentCard)
@@ -199,7 +213,7 @@ public extension RainListCardsViewModel {
           CardModel(order: order)
         }
         .filter { card in
-          card.cardStatus != .canceled
+          card.cardStatus == .pending
         }
         
         // Add created cards to the list

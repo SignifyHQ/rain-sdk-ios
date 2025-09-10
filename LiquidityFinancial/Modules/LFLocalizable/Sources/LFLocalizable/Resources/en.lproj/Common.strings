@@ -446,6 +446,7 @@
 "shippingAddress.state.title" = "State";
 "shippingAddress.zipCode.title" = "Zip Code";
 "shippingAddress.confirm.buttonTitle" = "Confirm Address";
+"shippingAddress.couldntFindAddress.buttonTitle" = "Couldn’t find your address?";
 "shippingAddress.address.placeholder" = "Enter address";
 "shippingAddress.city.placeholder" = "Enter city";
 "shippingAddress.country.placeholder" = "Enter country";

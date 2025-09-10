@@ -81,7 +81,7 @@ struct RainShippingAddressView: View {
           }
         }
         
-        confirmButton
+        buttonGroup
       }
       .simultaneousGesture(
         TapGesture()
@@ -181,19 +181,6 @@ struct RainShippingAddressView: View {
 
 // MARK: - View Components
 private extension RainShippingAddressView {
-  var confirmButton: some View {
-    FullSizeButton(
-      title: L10N.Common.ShippingAddress.Confirm.buttonTitle,
-      isDisable: !viewModel.isValidAddressEntered
-    ) {
-      keyboardFocus = nil
-      viewModel.saveAddress()
-      dismiss()
-    }
-    .padding(.bottom, 16)
-    .padding(.horizontal, 30)
-  }
-  
   func textFieldInputView(
     title: String,
     placeholder: String,
@@ -266,10 +253,13 @@ private extension RainShippingAddressView {
   }
   
   var textFieldView: some View {
-    VStack(alignment: .leading, spacing: 20) {
+    VStack(
+      alignment: .leading,
+      spacing: 20
+    ) {
       HStack {
         textFieldInputView(
-          title: L10N.Common.OrderPhysicalCard.Address.subtitle,//L10N.Common.addressLine1Title,
+          title: viewModel.isFreeInputEnabled ? L10N.Common.addressLine1Title : L10N.Common.OrderPhysicalCard.Address.subtitle,
           placeholder: L10N.Common.enterAddress,
           value: $viewModel.addressLine1,
           isLoading: $viewModel.isAddressComponentsLoading,
@@ -295,7 +285,7 @@ private extension RainShippingAddressView {
         nextFocus: .city
       )
       
-      if viewModel.isValidAddressEntered {
+      if viewModel.isValidAddressEntered || viewModel.isFreeInputEnabled {
         textFieldInputView(
           title: L10N.Common.city,
           placeholder: L10N.Common.enterCity,
@@ -303,8 +293,8 @@ private extension RainShippingAddressView {
           focus: .city,
           nextFocus: .country
         )
-        .opacity(0.3)
-        .disabled(true)
+        .opacity(viewModel.isFreeInputEnabled ? 1 : 0.3)
+        .disabled(!viewModel.isFreeInputEnabled)
         
         ZStack {
           textFieldInputView(
@@ -314,27 +304,29 @@ private extension RainShippingAddressView {
             focus: .country,
             nextFocus: .state
           )
-          .opacity(0.3)
+          .opacity(viewModel.isFreeInputEnabled ? 1 : 0.3)
           .disabled(true)
           
-          //        HStack {
-          //          Rectangle()
-          //            .foregroundStyle(
-          //              Color.clear
-          //            )
-          //            .contentShape(Rectangle())
-          //            .onTapGesture {
-          //              keyboardFocus = nil
-          //              viewModel.isShowingStateSelection = false
-          //              viewModel.isShowingCountrySelection.toggle()
-          //            }
-          //
-          //          GenImages.CommonImages.icArrowDown.swiftUIImage
-          //            .tint(Colors.label.swiftUIColor)
-          //            .rotationEffect(
-          //              .degrees(viewModel.isShowingCountrySelection ? 180 : 0)
-          //            )
-          //        }
+          if viewModel.isFreeInputEnabled {
+            HStack {
+              Rectangle()
+                .foregroundStyle(
+                  Color.clear
+                )
+                .contentShape(Rectangle())
+                .onTapGesture {
+                  keyboardFocus = nil
+                  viewModel.isShowingStateSelection = false
+                  viewModel.isShowingCountrySelection.toggle()
+                }
+              
+              GenImages.CommonImages.icArrowDown.swiftUIImage
+                .tint(Colors.label.swiftUIColor)
+                .rotationEffect(
+                  .degrees(viewModel.isShowingCountrySelection ? 180 : 0)
+                )
+            }
+          }
         }
         .readGeometry { geometry in
           countryDropdownFrame = geometry.frame(in: .global)
@@ -350,30 +342,29 @@ private extension RainShippingAddressView {
               focus: .state,
               nextFocus: .zip
             )
-            .opacity(0.3)
-            .disabled(true)
-            //.disabled(viewModel.shouldUseStateDropdown)
+            .opacity(viewModel.isFreeInputEnabled ? 1 : 0.3)
+            .disabled(viewModel.isFreeInputEnabled ? viewModel.shouldUseStateDropdown : true)
             
-            //          if viewModel.shouldUseStateDropdown {
-            //            HStack {
-            //              Rectangle()
-            //                .foregroundStyle(
-            //                  Color.clear
-            //                )
-            //                .contentShape(Rectangle())
-            //                .onTapGesture {
-            //                  keyboardFocus = nil
-            //                  viewModel.isShowingCountrySelection = false
-            //                  viewModel.isShowingStateSelection.toggle()
-            //                }
-            //
-            //              GenImages.CommonImages.icArrowDown.swiftUIImage
-            //                .tint(Colors.label.swiftUIColor)
-            //                .rotationEffect(
-            //                  .degrees(viewModel.isShowingStateSelection ? 180 : 0)
-            //                )
-            //            }
-            //          }
+            if viewModel.shouldUseStateDropdown && viewModel.isFreeInputEnabled {
+              HStack {
+                Rectangle()
+                  .foregroundStyle(
+                    Color.clear
+                  )
+                  .contentShape(Rectangle())
+                  .onTapGesture {
+                    keyboardFocus = nil
+                    viewModel.isShowingCountrySelection = false
+                    viewModel.isShowingStateSelection.toggle()
+                  }
+                
+                GenImages.CommonImages.icArrowDown.swiftUIImage
+                  .tint(Colors.label.swiftUIColor)
+                  .rotationEffect(
+                    .degrees(viewModel.isShowingStateSelection ? 180 : 0)
+                  )
+              }
+            }
           }
           .readGeometry { geometry in
             stateDropdownFrame = geometry.frame(in: .global)
@@ -389,11 +380,11 @@ private extension RainShippingAddressView {
             keyboardType: .default,
             focus: .zip
           )
-          .opacity(0.3)
-          .disabled(true)
+          .opacity(viewModel.isFreeInputEnabled ? 1 : 0.3)
+          .disabled(!viewModel.isFreeInputEnabled)
         }
       }
-      }
+    }
   }
   
   func addressDropdownView(
@@ -528,6 +519,40 @@ private extension RainShippingAddressView {
       }
     }
     .floatingShadow()
+  }
+  
+  var buttonGroup: some View {
+    VStack {
+      confirmButton
+      
+      if !viewModel.isFreeInputEnabled {
+        couldNotFindAddressButton
+      }
+    }
+    .padding(.bottom, 16)
+    .padding(.horizontal, 30)
+  }
+  
+  var confirmButton: some View {
+    FullSizeButton(
+      title: L10N.Common.ShippingAddress.Confirm.buttonTitle,
+      isDisable: !viewModel.isValidAddressEntered
+    ) {
+      keyboardFocus = nil
+      viewModel.saveAddress()
+      dismiss()
+    }
+  }
+  
+  var couldNotFindAddressButton: some View {
+    FullSizeButton(
+      title: L10N.Common.ShippingAddress.CouldntFindAddress.buttonTitle,
+      isDisable: false,
+      type: .tertiary
+    ) {
+      keyboardFocus = nil
+      viewModel.onCouldNotFindAddressTap()
+    }
   }
   
   @ViewBuilder
