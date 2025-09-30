@@ -36,10 +36,18 @@ public struct LiquidityAlert: View {
   public var body: some View {
     PopupAlert {
       VStack(spacing: 0) {
-        image.asset
-          .resizable()
-          .frame(image.size)
-          .padding(.bottom, 24)
+        if let size = image.size {
+          image.asset
+            .resizable()
+            .frame(size)
+            .padding(.top, 16)
+            .padding(.bottom, 24)
+        } else {
+          image.asset
+            .padding(.top, 16)
+            .padding(.bottom, 24)
+        }
+        
         contextView
         buttonGroup
       }
@@ -125,9 +133,12 @@ extension LiquidityAlert {
   
   public struct ImageConfiguration {
     let asset: Image
-    let size: CGSize
+    let size: CGSize?
     
-    public init(asset: Image, size: CGSize) {
+    public init(
+      asset: Image,
+      size: CGSize? = nil
+    ) {
       self.asset = asset
       self.size = size
     }

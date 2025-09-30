@@ -24,6 +24,8 @@ public struct HomeView: View {
   let assetsView: CreditLimitBreakdownView
   let accountsView: AccountsView
   
+  let listCardViewModel: RainListCardsViewModel = RainListCardsViewModel()
+  
   var onChangeRoute: ((RainOnboardingFlowCoordinator.Route) -> Void)?
   
   public init(onChangeRoute: ((RainOnboardingFlowCoordinator.Route) -> Void)? = nil) {
@@ -31,7 +33,7 @@ public struct HomeView: View {
     
     cashView = CashView(
       viewModel: CashViewModel(),
-      listCardViewModel: RainListCardsViewModel()
+      listCardViewModel: listCardViewModel
     )
     rewardsTabView = RewardTabView(viewModel: RewardTabViewModel())
     assetsView = CreditLimitBreakdownView(viewModel: CreditLimitBreakdownViewModel())
@@ -70,6 +72,8 @@ public struct HomeView: View {
         TransactionDetailView(
           method: .transactionID(id)
         )
+      case .cardList:
+        RainListCardsView(viewModel: listCardViewModel)
       }
     }
     .popup(
@@ -81,6 +85,8 @@ public struct HomeView: View {
         notificationsPopup
       case .specialExperience:
         specialExperiencePopup
+      case .applePay:
+        applePayPopup
       }
     }
     .onAppear {
@@ -186,6 +192,28 @@ private extension HomeView {
         action: {
           viewModel.clearPopup()
           viewModel.presentNextPopupInQueue(removing: .notifications)
+        }
+      )
+    )
+  }
+  
+  
+  private var applePayPopup: some View {
+    LiquidityAlert(
+      image: .init(asset: GenImages.CommonImages.icApplePay.swiftUIImage),
+      title: L10N.Common.ApplePayPopup.title,
+      message: L10N.Common.ApplePayPopup.subtitle,
+      primary: .init(
+        text: L10N.Common.ApplePayPopup.action,
+        action: {
+          viewModel.onApplePayButtonTap()
+        }
+      ),
+      secondary: .init(
+        text: L10N.Common.ApplePayPopup.dismiss,
+        action: {
+          viewModel.clearPopup()
+          viewModel.presentNextPopupInQueue(removing: .applePay)
         }
       )
     )

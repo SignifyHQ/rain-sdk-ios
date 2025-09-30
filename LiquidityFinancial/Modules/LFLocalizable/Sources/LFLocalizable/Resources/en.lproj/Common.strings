@@ -1415,6 +1415,12 @@ contact support.";
 "notification_popup.action" = "Yes";
 "notification_popup.dismiss" = "Not now";
 
+// Apple Pay Pop up
+"applePayPopup.title" = "Apple Pay is here";
+"applePayPopup.subtitle" = "You can now add your Avalanche Card to Apple Wallet for a faster, safer way to pay.";
+"applePayPopup.action" = "View Cards";
+"applePayPopup.dismiss" = "Maybe later";
+
 // Terms
 "term.cardTerms.title" = "AGREE TO CARD TERMS";
 

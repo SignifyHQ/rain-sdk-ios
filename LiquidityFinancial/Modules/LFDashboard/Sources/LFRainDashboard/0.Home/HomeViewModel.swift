@@ -118,8 +118,11 @@ extension HomeViewModel {
   func initData() {
     apiFetchUser()
     
+    // Check if we need to show the Apple Pay popup
+    checkShouldShowApplePayPopup()
+    
     // Check if we need to show the popup for special experience
-    //checkShouldShowPopup()
+    //checkShouldShowSpecialExperiencePopup()
   }
   
   func onAppear() {
@@ -140,7 +143,14 @@ extension HomeViewModel {
     customerSupportService.loginIdentifiedUser(userAttributes: userAttributes)
   }
   
-  private func checkShouldShowPopup() {
+  private func checkShouldShowApplePayPopup() {
+    if !accountDataManager.hasShownApplePayPopup {
+      popupQueue.append(.applePay)
+      accountDataManager.hasShownApplePayPopup = true
+    }
+  }
+  
+  private func checkShouldShowSpecialExperiencePopup() {
     Task {
       do {
         let response = try await shouldShowPopupUseCase.execute(campaign: "FRNT")
@@ -240,6 +250,12 @@ extension HomeViewModel {
     }
   }
   
+  func onApplePayButtonTap() {
+    clearPopup()
+    popupQueue.removeAll() { $0 == .applePay }
+    navigation = .cardList
+  }
+  
   // Since this takes to the Assets tab, make sure this popup is the last in the queue
   func goToAssets() {
     clearPopup()
@@ -295,10 +311,12 @@ extension HomeViewModel {
   enum Navigation {
     case profile
     case transactionDetail(id: String)
+    case cardList
   }
   
   enum Popup {
     case notifications
     case specialExperience
+    case applePay
   }
 }

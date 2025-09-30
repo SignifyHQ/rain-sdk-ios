@@ -20,6 +20,7 @@ public protocol AccountDataStorageProtocol {
   var userCompleteOnboarding: Bool { get set }
   var isBiometricUsageEnabled: Bool { get set }
   var hasFrntCard: Bool { get set }
+  var hasShownApplePayPopup: Bool { get set }
   
   func subscribeWalletAddressesChanged(_ completion: @escaping ([WalletAddressEntity]) -> Void) -> Cancellable
   func storeWalletAddresses(_ addresses: [WalletAddressEntity])

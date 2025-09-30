@@ -56,6 +56,9 @@ public extension UserDefaults {
   @LFUserDefault(key: Key.isStartedWithLoginFlow, defaultValue: true)
   static var isStartedWithLoginFlow: Bool
   
+  @LFUserDefault(key: Key.hasShownApplePayPopup, defaultValue: false)
+  static var hasShownApplePayPopup: Bool
+  
   // Wallet extension tokens
   // TODO(Volo): Make this scalable and reusable if we want to support multiple apps in the future
   @LFUserDefault(key: Key.walletExtensionAccessTokenExpiresAt, defaultValue: 0, suiteName: "group.com.rain-liquidity.avalanche")

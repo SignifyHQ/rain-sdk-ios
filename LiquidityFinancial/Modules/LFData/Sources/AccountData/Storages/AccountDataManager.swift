@@ -73,6 +73,15 @@ public class AccountDataManager: AccountDataStorageProtocol {
     }
   }
   
+  public var hasShownApplePayPopup: Bool {
+    get {
+      UserDefaults.hasShownApplePayPopup
+    }
+    set {
+      UserDefaults.hasShownApplePayPopup = newValue
+    }
+  }
+  
   public var addressDetail: String {
     let userData = self.userInfomationData
     let stateCode = "\(userData.state ?? ""), \((userData.country == "US" ? userData.postalCode?.capitalized : userData.postalCode) ?? "")"
