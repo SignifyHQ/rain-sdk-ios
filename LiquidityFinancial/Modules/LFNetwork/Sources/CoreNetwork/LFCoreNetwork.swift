@@ -22,7 +22,6 @@ public protocol CoreNetworkType {
 }
 
 public final class LFCoreNetwork<R: LFRoute>: CoreNetworkType {
-  
   @LazyInjected(\.authorizationManager) var authorizationManager
   
   var configuration: URLSessionConfiguration {
@@ -32,9 +31,14 @@ public final class LFCoreNetwork<R: LFRoute>: CoreNetworkType {
   private let session: Session
   private let authInterceptor: AuthenticationInterceptor<OAuthAuthenticator>
   
-  public init(configuration: URLSessionConfiguration, interceptor: RequestInterceptor? = nil, eventMonitor: [EventMonitor] = []) {
+  public init(
+    configuration: URLSessionConfiguration,
+    interceptor: RequestInterceptor? = nil,
+    eventMonitor: [EventMonitor] = []
+  ) {
     var monitors = eventMonitor
     monitors.append(LogMonitor())
+    
     let authenticator = OAuthAuthenticator()
     authInterceptor = AuthenticationInterceptor(authenticator: authenticator, credential: nil)
     session = Session(configuration: configuration, interceptor: interceptor, eventMonitors: monitors)
@@ -42,33 +46,44 @@ public final class LFCoreNetwork<R: LFRoute>: CoreNetworkType {
     authenticator.delegate = self
   }
   
-  public convenience init(interceptor: RequestInterceptor? = nil, eventMonitor: [EventMonitor] = []) {
+  public convenience init(
+    interceptor: RequestInterceptor? = nil,
+    eventMonitor: [EventMonitor] = []
+  ) {
     let configuration = URLSessionConfiguration.default
     configuration.timeoutIntervalForRequest = 60
     configuration.timeoutIntervalForResource = 60
+    
     let diskCapacity = 30 * 1_024 * 1_024
     configuration.urlCache = .init(memoryCapacity: configuration.urlCache?.memoryCapacity ?? 0, diskCapacity: diskCapacity)
     
     URLSessionConfiguration.mockingswizzleDefaultSessionConfiguration()
     
-    self.init(configuration: configuration, interceptor: interceptor, eventMonitor: eventMonitor)
+    self.init(
+      configuration: configuration,
+      interceptor: interceptor,
+      eventMonitor: eventMonitor
+    )
   }
   
   public func requestCombine(_ route: R) -> AnyPublisher<Data?, AFError> {
     let request = LFURLRequest(route: route, auth: authorizationManager)
     let dataRequest = session.request(request, interceptor: buildInterceptor(from: route))
+    
     return dataRequest.validate().publishUnserialized().value().eraseToAnyPublisher()
   }
   
   public func requestCombine<T>(_ route: R, target: T.Type, decoder: JSONDecoder) -> AnyPublisher<T, AFError> where T: Decodable {
     let request = LFURLRequest(route: route, auth: authorizationManager)
     let dataRequest = session.request(request, interceptor: buildInterceptor(from: route))
+    
     return dataRequest.validate().publishDecodable(type: target).value().eraseToAnyPublisher()
   }
   
   public func requestNonAuth(_ route: R) async throws -> Response {
     let request = LFURLRequest(route: route, auth: authorizationManager)
     let dataResponse = await AF.request(request).validate().serializingData().response
+    
     return Response(httpResponse: dataResponse.response, data: dataResponse.data)
   }
   
@@ -89,13 +104,17 @@ public final class LFCoreNetwork<R: LFRoute>: CoreNetworkType {
     let request = LFURLRequest(route: route, auth: authorizationManager)
     let dataRequest = session.request(request, interceptor: buildInterceptor(from: route))
     let response = await dataRequest.validate().serializingDecodable(target).response
+    
     if let value = response.value {
       return value
     }
+    
     if let data = response.data {
       throw try decodeError(failure: LFErrorObject.self, from: data, decoder: decoder)
     }
-    guard let error = response.error else {
+    
+    guard let error = response.error
+    else {
       throw LFNetworkError.custom(message: "Unknown error")
     }
     
@@ -107,13 +126,17 @@ public final class LFCoreNetwork<R: LFRoute>: CoreNetworkType {
     let request = LFURLRequest(route: route, auth: authorizationManager)
     let dataRequest = session.request(request, interceptor: buildInterceptor(from: route))
     let response = await dataRequest.validate().serializingDecodable(target).response
+    
     if let value = response.value {
       return value
     }
+    
     if let data = response.data {
       throw try decodeError(failure: failure, from: data, decoder: decoder)
     }
-    guard let error = response.error else {
+    
+    guard let error = response.error
+    else {
       throw LFNetworkError.custom(message: "Unknown error")
     }
     
@@ -125,13 +148,17 @@ public final class LFCoreNetwork<R: LFRoute>: CoreNetworkType {
     let request = LFURLRequest(route: route, auth: authorizationManager)
     let dataRequest = session.request(request, interceptor: buildInterceptor(from: route))
     let response = await dataRequest.validate().serializingData().response
+    
     if (response.response?.statusCode ?? 500).isSuccess {
       return
     }
+    
     if let data = response.data {
       throw try decodeError(failure: failure, from: data, decoder: decoder)
     }
-    guard let error = response.error else {
+    
+    guard let error = response.error
+    else {
       throw LFNetworkError.custom(message: "Unknown error")
     }
     
@@ -158,7 +185,8 @@ public final class LFCoreNetwork<R: LFRoute>: CoreNetworkType {
       return value
     }
     
-    guard let error = response.error else {
+    guard let error = response.error
+    else {
       throw LFNetworkError.custom(message: "Unknown error")
     }
     
@@ -168,27 +196,41 @@ public final class LFCoreNetwork<R: LFRoute>: CoreNetworkType {
 }
 
 extension LFCoreNetwork: AuthenticatorDelegate {
-  public func requestTokens(with tokens: OAuthCredential, completion: @escaping (Result<OAuthCredential, Error>) -> Void) {
+  public func requestTokens(
+    with tokens: OAuthCredential,
+    completion: @escaping (Result<OAuthCredential, Error>) -> Void
+  ) {
     authorizationManager.refresh(with: tokens, completion: completion)
   }
 }
 
 extension LFCoreNetwork {
-  private func buildInterceptor(from route: R) -> Interceptor? {
-    let mustAuthorization = route.httpHeaders.contains(where: { key, _ in
-      key == "Authorization" ? true : false
-    })
-    if mustAuthorization {
-      let adapters: [RequestAdapter] = []
-      var interceptors: [RequestInterceptor] = [RetryPolicy()]
-      
-      if let tokens = authorizationManager.fetchTokens() {
-        authInterceptor.credential = tokens
-        interceptors.append(authInterceptor)
-      }
-      return Interceptor(adapters: adapters, retriers: [], interceptors: interceptors)
+  private func buildInterceptor(
+    from route: R
+  ) -> Interceptor? {
+    let requiresAuth = route.httpHeaders.contains { key, _ in
+      key.lowercased() == "authorization" ? true : false
     }
-    return nil
+    
+    guard requiresAuth
+    else {
+      return nil
+    }
+    
+    let adapters: [RequestAdapter] = []
+    var interceptors: [RequestInterceptor] = []
+    let retriers: [RequestRetrier] = [RetryPolicy()]
+    
+    if let tokens = authorizationManager.fetchTokens() {
+      authInterceptor.credential = tokens
+      interceptors.append(authInterceptor)
+    }
+    
+    return Interceptor(
+      adapters: adapters,
+      retriers: retriers,
+      interceptors: interceptors
+    )
   }
   
   private func decodeError<E>(failure: E.Type, from data: Data, decoder: JSONDecoder) throws -> E where E: DesignatedError {
@@ -200,11 +242,13 @@ extension LFCoreNetwork {
         if let message = errorString.components(separatedBy: ",").first {
           throw LFNetworkError.custom(message: message.replace(string: "{", replacement: ""))
         }
+        
         throw LFNetworkError.custom(message: errorString)
       } else {
         throw LFNetworkError.custom(message: "Decoder error object is failed")
       }
     }
+    
     throw designatedError
   }
   
@@ -213,6 +257,7 @@ extension LFCoreNetwork {
       if let message = errorString.components(separatedBy: ",").first {
         throw LFNetworkError.custom(message: message.replace(string: "{", replacement: ""))
       }
+      
       throw LFNetworkError.custom(message: errorString)
     } else {
       throw LFNetworkError.custom(message: "Decoder error object is failed")
