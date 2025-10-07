@@ -116,6 +116,7 @@ public extension AuthorizationManager {
     guard let refreshToken = refreshToken else {
       throw AuthError.missingToken
     }
+    
     var components = URLComponents(string: baseURL.absoluteString)!
     components.path = "/v1/password-less/refresh-token"
     
@@ -158,12 +159,12 @@ public extension AuthorizationManager {
 
 // MARK: - AccessTokenProvider
 extension AuthorizationManager {
-  public func refresh(with accessTokens: OAuthCredential, completion: @escaping (Result<OAuthCredential, Error>) -> Void) {
+  public func refresh(with accessTokens: AuthCredential, completion: @escaping (Result<AuthCredential, Error>) -> Void) {
     Task {
       do {
         try await refreshToken()
         update() // Update new token before refresh
-        let credential = OAuthCredential(accessToken: fetchAccessToken(), refreshToken: fetchRefreshToken(), expiresIn: expiresAt)
+        let credential = AuthCredential(accessToken: fetchAccessToken(), refreshToken: fetchRefreshToken(), expiresIn: expiresAt)
         completion(.success(credential))
       } catch {
         log.error(error.userFriendlyMessage)
@@ -175,14 +176,14 @@ extension AuthorizationManager {
     }
   }
   
-  public func fetchTokens() -> OAuthCredential? {
+  public func fetchTokens() -> AuthCredential? {
     update()
     let accessToken = fetchAccessToken()
     let refreshToken = fetchRefreshToken()
     if accessToken.isEmpty {
       return nil
     }
-    return OAuthCredential(accessToken: accessToken, refreshToken: refreshToken, expiresIn: expiresAt)
+    return AuthCredential(accessToken: accessToken, refreshToken: refreshToken, expiresIn: expiresAt)
   }
 }
 

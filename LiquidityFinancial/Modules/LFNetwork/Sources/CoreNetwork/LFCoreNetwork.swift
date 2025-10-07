@@ -23,13 +23,19 @@ public protocol CoreNetworkType {
 
 public final class LFCoreNetwork<R: LFRoute>: CoreNetworkType {
   @LazyInjected(\.authorizationManager) var authorizationManager
+  @LazyInjected(\.authenticator) var authenticator
   
   var configuration: URLSessionConfiguration {
     session.sessionConfiguration
   }
   
   private let session: Session
-  private let authInterceptor: AuthenticationInterceptor<OAuthAuthenticator>
+  private lazy var authInterceptor: AuthenticationInterceptor<DefaultAuthenticator> = {
+    AuthenticationInterceptor(
+      authenticator: authenticator,
+      credential: authorizationManager.fetchTokens()
+    )
+  }()
   
   public init(
     configuration: URLSessionConfiguration,
@@ -39,11 +45,7 @@ public final class LFCoreNetwork<R: LFRoute>: CoreNetworkType {
     var monitors = eventMonitor
     monitors.append(LogMonitor())
     
-    let authenticator = OAuthAuthenticator()
-    authInterceptor = AuthenticationInterceptor(authenticator: authenticator, credential: nil)
     session = Session(configuration: configuration, interceptor: interceptor, eventMonitors: monitors)
-    
-    authenticator.delegate = self
   }
   
   public convenience init(
@@ -192,15 +194,6 @@ public final class LFCoreNetwork<R: LFRoute>: CoreNetworkType {
     
     let errorMessage = error.isSessionTaskError ? L10N.Common.internetConnectionErrorMessage : error.localizedDescription
     throw LFNetworkError.custom(message: errorMessage)
-  }
-}
-
-extension LFCoreNetwork: AuthenticatorDelegate {
-  public func requestTokens(
-    with tokens: OAuthCredential,
-    completion: @escaping (Result<OAuthCredential, Error>) -> Void
-  ) {
-    authorizationManager.refresh(with: tokens, completion: completion)
   }
 }
 

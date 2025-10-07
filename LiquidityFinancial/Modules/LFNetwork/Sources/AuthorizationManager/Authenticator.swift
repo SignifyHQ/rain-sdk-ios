@@ -1,54 +1,61 @@
 import Alamofire
+import Factory
 import Foundation
 import LFUtilities
 
 // swiftlint:disable all
 
-public protocol AuthenticatorDelegate: AnyObject {
-  func requestTokens(
-    with tokens: OAuthCredential,
-    completion: @escaping (Result<OAuthCredential, Error>) -> Void
-  )
-}
-
-public final class OAuthAuthenticator: Authenticator, @unchecked Sendable {
+public final class DefaultAuthenticator: Authenticator, @unchecked Sendable {
+  @LazyInjected(\.authorizationManager) var authorizationManager
+  
   public init() {}
   
-  public weak var delegate: AuthenticatorDelegate?
+  private let refreshQueue = DispatchQueue(label: "com.myapp.oauth-refresh")
+  private var isRefreshing = false
+  private var pendingCompletions: [(Result<AuthCredential, Error>) -> Void] = []
   
   public func apply(
-    _ credential: OAuthCredential,
+    _ credential: AuthCredential,
     to urlRequest: inout URLRequest
   ) {
     urlRequest.headers.add(authHeader(credential: credential))
   }
   
   public func refresh(
-    _ credential: OAuthCredential,
+    _ credential: AuthCredential,
     for _: Session,
-    completion: @escaping (Result<OAuthCredential, Error>) -> Void
+    completion: @escaping (Result<AuthCredential, Error>) -> Void
   ) {
-    guard let delegate = delegate
-    else {
-      log.error("Authenticator. Token refresh failed: no AuthenticatorDelegate assigned.")
-      completion(.failure(AuthError.noTokenProvider))
-      
-      return
-    }
-    
-    log.info("Authenticator. Refreshing tokens using delegate...")
-    delegate.requestTokens(
-      with: credential
-    ) { result in
-      switch result {
-      case .success(let newCredential):
-        log.info("Authenticator. Token refresh successful. New access token obtained.")
-        completion(.success(newCredential))
-      case .failure(let error):
-        log.error("Authenticator. Token refresh failed with error: \(error.localizedDescription)")
-        completion(.failure(error))
+    refreshQueue
+      .async { [weak self] in
+        guard let self = self
+        else {
+          return
+        }
+        
+        self.pendingCompletions.append(completion)
+        
+        if self.isRefreshing {
+          log.info("Authenticator. Token refresh already in progress.")
+          
+          return
+        }
+        
+        self.isRefreshing = true
+        
+        log.info("Authenticator. Starting token refresh...")
+        authorizationManager.refresh(
+          with: credential
+        ) { result in
+          self.refreshQueue.async {
+            log.info("Authenticator. Token refresh completed. Calling \(self.pendingCompletions.count) pending completion(s).")
+            
+            self.pendingCompletions.forEach { $0(result) }
+            self.pendingCompletions.removeAll()
+            self.isRefreshing = false
+          }
+        }
       }
-    }
   }
   
   public func didRequest(
@@ -69,7 +76,7 @@ public final class OAuthAuthenticator: Authenticator, @unchecked Sendable {
   
   public func isRequest(
     _ urlRequest: URLRequest,
-    authenticatedWith credential: OAuthCredential
+    authenticatedWith credential: AuthCredential
   ) -> Bool {
     // If authentication server CAN invalidate credentials, then compare the "Authorization" header value in the
     // `URLRequest` against the Bearer token generated with the access token of the `Credential`.
@@ -82,9 +89,9 @@ public final class OAuthAuthenticator: Authenticator, @unchecked Sendable {
 }
 
 // Private helpers
-extension OAuthAuthenticator {
+extension DefaultAuthenticator {
   private func authHeader(
-    credential: OAuthCredential
+    credential: AuthCredential
   ) -> HTTPHeader {
     .authorization(bearerToken: credential.accessToken)
   }
