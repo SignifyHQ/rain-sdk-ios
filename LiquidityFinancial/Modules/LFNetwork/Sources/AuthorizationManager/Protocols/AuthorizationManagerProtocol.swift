@@ -17,8 +17,8 @@ public protocol AuthorizationManagerProtocol {
   func clearToken()
   func update()
   func forcedLogout()
-  func refresh(with accessTokens: OAuthCredential, completion: @escaping (Result<OAuthCredential, Error>) -> Void)
-  func fetchTokens() -> OAuthCredential?
+  func refresh(with accessTokens: AuthCredential, completion: @escaping (Result<AuthCredential, Error>) -> Void)
+  func fetchTokens() -> AuthCredential?
   func getAppCheckToken() async throws -> String
   func getReCaptchaToken(for action: RecaptchaAction) async throws -> String
 }
