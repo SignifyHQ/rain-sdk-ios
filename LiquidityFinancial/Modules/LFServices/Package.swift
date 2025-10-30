@@ -40,7 +40,8 @@ let package = Package(
     .package(url: "https://github.com/Boilertalk/Web3.swift.git", from: "0.6.0"),
     .package(url: "https://github.com/web3swift-team/web3swift.git", from: "3.3.0"),
     .package(url: "https://github.com/firebase/firebase-ios-sdk", from: "11.0.0"),
-    .package(url: "https://github.com/googlemaps/ios-places-sdk", from: "10.0.0")
+    .package(url: "https://github.com/googlemaps/ios-places-sdk", from: "10.0.0"),
+    .package(url: "https://github.com/zendesk/sdk_messaging_ios", from: "2.35.0")
   ],
   targets: [
     .target(
@@ -61,6 +62,7 @@ let package = Package(
         .product(name: "VGSCollectSDK", package: "vgs-collect-ios"),
         .product(name: "PortalSwift", package: "PortalSwift"),
         .product(name: "LinkSDK", package: "mesh-ios-sdk"),
+        .product(name: "ZendeskSDKMessaging", package: "sdk_messaging_ios"),
         .product(name: "Web3", package: "Web3.swift"),
         .product(name: "Web3PromiseKit", package: "Web3.swift"),
         .product(name: "Web3ContractABI", package: "Web3.swift"),

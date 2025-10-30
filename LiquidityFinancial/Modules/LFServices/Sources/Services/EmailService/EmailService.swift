@@ -1,5 +1,6 @@
 import Foundation
 import LFUtilities
+import ZendeskSDK
 
 public class EmailService: CustomerSupportServiceProtocol {
   public init() {}
@@ -55,7 +56,26 @@ public class EmailService: CustomerSupportServiceProtocol {
   }
   
   public func openSupportScreen() {
-    EmailHelper.shared.send(subject: subject, body: "", toRecipents: [toEmail])
+    DispatchQueue.main.async { [weak self] in
+      guard let self
+      else {
+        return
+      }
+      
+      if let viewController = Zendesk.instance?.messaging?.messagingViewController(),
+         let topViewController = LFUtilities.visibleViewController {
+        topViewController.present(viewController, animated: true)
+      } else {
+        log.info("Failed to present Zendesk messaging view controller, falling back to email...")
+        
+        EmailHelper
+          .shared
+          .send(
+            subject: subject,
+            body: "",
+            toRecipents: [toEmail]
+          )
+      }
+    }
   }
-  
 }

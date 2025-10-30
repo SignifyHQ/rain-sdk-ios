@@ -4,6 +4,8 @@
 <dict>
 	<key>GOOGLE_PLACES_PROD_KEY</key>
 	<string>$(GOOGLE_PLACES_PROD_KEY)</string>
+	<key>ZENDESK_PROD_KEY</key>
+	<string>$(ZENDESK_PROD_KEY)</string>
 	<key>GOOGLE_PLACES_DEV_KEY</key>
 	<string>$(GOOGLE_PLACES_DEV_KEY)</string>
 	<key>PORTAL_SECURITY_URL</key>

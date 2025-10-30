@@ -99,4 +99,10 @@ enum Configs {
       return (try? LFConfiguration.value(for: "GOOGLE_PLACES_DEV_KEY")) ?? .empty
     }
   }
+  
+  enum Zendesk {
+    static var apiKey: String {
+      (try? LFConfiguration.value(for: "ZENDESK_PROD_KEY")) ?? .empty
+    }
+  }
 }

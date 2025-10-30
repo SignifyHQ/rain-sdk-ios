@@ -7,6 +7,8 @@ import GooglePlacesSwift
 import LFUtilities
 import NetspendSdk
 import UIKit
+import ZendeskSDK
+import ZendeskSDKMessaging
 
 public enum KickoffService {
   
@@ -25,6 +27,7 @@ public enum KickoffService {
     kickoffAnalytics()
     kickoffPushNotifications(application: application)
     kickoffGooglePlaces()
+    kickoffZendesk()
   }
   
   public static func application(
@@ -96,5 +99,20 @@ extension KickoffService {
     } else {
       log.error("Error configuring Google Places for \(networkEnvironment)")
     }
+  }
+}
+
+// MARK: Zendesk
+extension KickoffService {
+  private static func kickoffZendesk() {
+    Zendesk
+      .initialize(
+        withChannelKey: Configs.Zendesk.apiKey,
+        messagingFactory: DefaultMessagingFactory()
+      ) { result in
+        if case let .failure(error) = result {
+          print("Messaging did not initialize. Error: \(error.localizedDescription)")
+        }
+      }
   }
 }
