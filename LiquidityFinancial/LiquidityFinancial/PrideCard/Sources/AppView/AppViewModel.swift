@@ -46,7 +46,7 @@ class AppViewModel: ObservableObject {
       SolidBankService()
     }
     Container.shared.customerSupportService.register {
-      EmailService()
+      CustomerSupportService()
     }
   }
   
