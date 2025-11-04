@@ -1,7 +1,7 @@
 import UIKit
 
 public enum Country: String, Identifiable, CaseIterable {
-  case US, AF, AX, AL, DZ, AS, AD, AO, AI, AQ, AG, AR, AM, AW, AU, AT, AZ, BS, BH, BD, BB, BE, BZ, BJ, BM, BT, BO, BQ, BA, BW, BV, BR, IO, BN, BG, BF, BI, CV, KH, CM, CA, KY, CF, TD, CL, CX, CC, CO, KM, CG, CD, CK, CR, CI, HR, CW, CY, CZ, DK, DJ, DM, DO, EC, EG, SV, GQ, ER, EE, ET, FK, FO, FJ, FI, FR, GF, PF, TF, GA, GM, GE, DE, GH, GI, GR, GL, GD, GP, GU, GT, GG, GN, GW, GY, HT, HM, VA, HN, HK, HU, IS, ID, IE, IM, IT, JM, JP, JE, JO, KZ, KE, KI, KW, KG, LA, LV, LB, LS, LR, LY, LI, LT, LU, MO, MK, MG, MW, MY, MV, ML, MT, MH, MQ, MR, MU, YT, MX, FM, MD, MC, MN, ME, MS, MA, MZ, MM, NA, NR, NL, NC, NZ, NE, NU, NF, MP, NO, OM, PK, PW, PS, PA, PG, PY, PE, PH, PN, PL, PT, PR, QA, RE, RO, RW, BL, SH, KN, LC, MF, PM, VC, WS, SM, ST, SA, SN, RS, SC, SL, SG, SX, SK, SI, SB, SO, ZA, GS, KR, SS, ES, SD, SR, SJ, SZ, SE, CH, TW, TJ, TZ, TH, TL, TG, TK, TO, TT, TN, TM, TC, TV, UG, AE, GB, UM, UY, UZ, VU, VG, VI, WF, EH, YE, ZM, ZW
+  case US, AF, AX, AL, DZ, AS, AD, AO, AI, AQ, AG, AR, AM, AW, AU, AT, AZ, BS, BH, BD, BB, BY, BE, BZ, BJ, BM, BT, BO, BQ, BA, BW, BV, BR, IO, BN, BG, BF, BI, CV, KH, CM, CA, KY, CF, TD, CL, CN, CX, CC, CO, KM, CG, CD, CK, CR, CI, HR, CU, CW, CY, CZ, DK, DJ, DM, DO, EC, EG, SV, GQ, ER, EE, ET, FK, FO, FJ, FI, FR, GF, PF, TF, GA, GM, GE, DE, GH, GI, GR, GL, GD, GP, GU, GT, GG, GN, GW, GY, HT, HM, VA, HN, HK, HU, IS, IN, ID, IR, IQ, IE, IM, IL, IT, JM, JP, JE, JO, KZ, KE, KI, KP, KW, KG, LA, LV, LB, LS, LR, LY, LI, LT, LU, MO, MK, MG, MW, MY, MV, ML, MT, MH, MQ, MR, MU, YT, MX, FM, MD, MC, MN, ME, MS, MA, MZ, MM, NA, NR, NP, NL, NC, NZ, NI, NE, NG, NU, NF, MP, NO, OM, PK, PW, PS, PA, PG, PY, PE, PH, PN, PL, PT, PR, QA, RE, RO, RU, RW, BL, SH, KN, LC, MF, PM, VC, WS, SM, ST, SA, SN, RS, SC, SL, SG, SX, SK, SI, SB, SO, ZA, GS, KR, SS, ES, LK, SD, SR, SJ, SZ, SE, CH, SY, TW, TJ, TZ, TH, TL, TG, TK, TO, TT, TN, TR, TM, TC, TV, UG, UA, AE, GB, UM, UY, UZ, VU, VE, VN, VG, VI, WF, EH, YE, ZM, ZW
   
   public var id: UUID {
     UUID()
@@ -77,6 +77,8 @@ public enum Country: String, Identifiable, CaseIterable {
       return "Martinique"
     case .MX:
       return "Mexico"
+    case .NI:
+      return "Nicaragua"
     case .PA:
       return "Panama"
     case .PY:
@@ -131,6 +133,8 @@ public enum Country: String, Identifiable, CaseIterable {
       return "Bulgaria"
     case .KY:
       return "Cayman Islands"
+    case .CN:
+      return "China"
     case .CZ:
       return "Czech Republic"
     case .CI:
@@ -151,10 +155,14 @@ public enum Country: String, Identifiable, CaseIterable {
       return "Hungary"
     case .IS:
       return "Iceland"
+    case .IN:
+      return "India"
     case .ID:
       return "Indonesia"
     case .IE:
       return "Ireland"
+    case .IL:
+      return "Israel"
     case .IT:
       return "Italy"
     case .JP:
@@ -197,6 +205,8 @@ public enum Country: String, Identifiable, CaseIterable {
       return "Portugal"
     case .QA:
       return "Qatar"
+    case .RU:
+      return "Russian Federation"
     case .SM:
       return "San Marino"
     case .SG:
@@ -209,12 +219,20 @@ public enum Country: String, Identifiable, CaseIterable {
       return "South Africa"
     case .ES:
       return "Spain"
+    case .LK:
+      return "Sri Lanka"
     case .SE:
       return "Sweden"
     case .CH:
       return "Switzerland"
+    case .TR:
+      return "Turkey"
     case .GB:
       return "United Kingdom"
+    case .VE:
+      return "Venezuela"
+    case .VN:
+      return "Vietnam"
     case .ZM:
       return "Zambia"
     case .ZW:
@@ -241,6 +259,8 @@ public enum Country: String, Identifiable, CaseIterable {
       return "Azerbaijan"
     case .BD:
       return "Bangladesh"
+    case .BY:
+      return "Belarus"
     case .BJ:
       return "Benin"
     case .BM:
@@ -283,6 +303,8 @@ public enum Country: String, Identifiable, CaseIterable {
       return "Congo (the Democratic Republic of the)"
     case .CK:
       return "Cook Islands"
+    case .CU:
+      return "Cuba"
     case .DJ:
       return "Djibouti"
     case .EG:
@@ -325,6 +347,10 @@ public enum Country: String, Identifiable, CaseIterable {
       return "Heard Island and McDonald Islands"
     case .VA:
       return "Holy See"
+    case .IR:
+      return "Iran (Islamic Republic of)"
+    case .IQ:
+      return "Iraq"
     case .IM:
       return "Isle of Man"
     case .JE:
@@ -333,6 +359,8 @@ public enum Country: String, Identifiable, CaseIterable {
       return "Kazakhstan"
     case .KI:
       return "Kiribati"
+    case .KP:
+      return "Korea (the Democratic People's Republic of)"
     case .KG:
       return "Kyrgyzstan"
     case .LA:
@@ -377,10 +405,14 @@ public enum Country: String, Identifiable, CaseIterable {
       return "Namibia"
     case .NR:
       return "Nauru"
+    case .NP:
+      return "Nepal"
     case .NC:
       return "New Caledonia"
     case .NE:
       return "Niger"
+    case .NG:
+      return "Nigeria"
     case .NU:
       return "Niue"
     case .NF:
@@ -437,6 +469,8 @@ public enum Country: String, Identifiable, CaseIterable {
       return "Svalbard and Jan Mayen"
     case .SZ:
       return "Swaziland"
+    case .SY:
+      return "Syrian Arab Republic"
     case .TJ:
       return "Tajikistan"
     case .TZ:
@@ -457,6 +491,8 @@ public enum Country: String, Identifiable, CaseIterable {
       return "Tuvalu"
     case .UG:
       return "Uganda"
+    case .UA:
+      return "Ukraine"
     case .UM:
       return "United States Minor Outlying Islands"
     case .UZ:
@@ -542,6 +578,8 @@ public enum Country: String, Identifiable, CaseIterable {
       return "+356"
     case .MX:
       return "+52"
+    case .NI:
+      return "+505"
     case .PA:
       return "+507"
     case .PE:
@@ -572,6 +610,8 @@ public enum Country: String, Identifiable, CaseIterable {
       return "+598"
     case .US:
       return "+1"
+    case .VE:
+      return "+58"
     case .AE:
       return "+971"
     case .MU:
@@ -598,6 +638,8 @@ public enum Country: String, Identifiable, CaseIterable {
       return "+359"
     case .KY:
       return "+1345"
+    case .CN:
+      return "+86"
     case .CZ:
       return "+420"
     case .CI:
@@ -618,10 +660,14 @@ public enum Country: String, Identifiable, CaseIterable {
       return "+36"
     case .IS:
       return "+354"
+    case .IN:
+      return "+91"
     case .ID:
       return "+62"
     case .IE:
       return "+353"
+    case .IL:
+      return "+972"
     case .IT:
       return "+39"
     case .JP:
@@ -664,6 +710,8 @@ public enum Country: String, Identifiable, CaseIterable {
       return "+351"
     case .QA:
       return "+974"
+    case .RU:
+      return "+7"
     case .SM:
       return "+378"
     case .SG:
@@ -676,12 +724,18 @@ public enum Country: String, Identifiable, CaseIterable {
       return "+27"
     case .ES:
       return "+34"
+    case .LK:
+      return "+94"
     case .SE:
       return "+46"
     case .CH:
       return "+41"
+    case .TR:
+      return "+90"
     case .GB:
       return "+44"
+    case .VN:
+      return "+84"
     case .ZM:
       return "+260"
     case .ZW:
@@ -708,6 +762,8 @@ public enum Country: String, Identifiable, CaseIterable {
         return "+994"
     case .BD:
         return "+880"
+    case .BY:
+        return "+375"
     case .BJ:
         return "+229"
     case .BM:
@@ -750,6 +806,8 @@ public enum Country: String, Identifiable, CaseIterable {
         return "+243"
     case .CK:
         return "+682"
+    case .CU:
+        return "+53"
     case .DJ:
         return "+253"
     case .EG:
@@ -792,6 +850,10 @@ public enum Country: String, Identifiable, CaseIterable {
         return "+61"
     case .VA:
         return "+379"
+    case .IR:
+        return "+98"
+    case .IQ:
+        return "+964"
     case .IM:
         return "+441624"
     case .JE:
@@ -800,6 +862,8 @@ public enum Country: String, Identifiable, CaseIterable {
         return "+7"
     case .KI:
         return "+686"
+    case .KP:
+        return "+850"
     case .KG:
         return "+996"
     case .LA:
@@ -844,10 +908,14 @@ public enum Country: String, Identifiable, CaseIterable {
         return "+264"
     case .NR:
         return "+674"
+    case .NP:
+        return "+977"
     case .NC:
         return "+687"
     case .NE:
         return "+227"
+    case .NG:
+        return "+234"
     case .NU:
         return "+683"
     case .NF:
@@ -904,6 +972,8 @@ public enum Country: String, Identifiable, CaseIterable {
         return "+47"
     case .SZ:
         return "+268"
+    case .SY:
+        return "+963"
     case .TJ:
         return "+992"
     case .TZ:
@@ -924,6 +994,8 @@ public enum Country: String, Identifiable, CaseIterable {
         return "+688"
     case .UG:
         return "+256"
+    case .UA:
+        return "+380"
     case .UM:
         return "+246"
     case .UZ:
