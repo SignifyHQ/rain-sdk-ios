@@ -9,9 +9,11 @@ public class RequestOTPUseCase: RequestOTPUseCaseProtocol {
   }
   
   public func execute(isNewAuth: Bool, parameters: OTPParametersEntity) async throws -> OtpEntity {
-    guard isNewAuth else {
+    guard isNewAuth
+    else {
       return try await repository.requestOTP(parameters: parameters)
     }
+    
     return try await repository.newRequestOTP(parameters: parameters)
   }
 }

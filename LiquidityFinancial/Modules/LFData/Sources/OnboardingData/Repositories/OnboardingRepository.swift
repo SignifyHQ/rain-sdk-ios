@@ -17,6 +17,7 @@ public class OnboardingRepository: OnboardingRepositoryProtocol {
     
     let requestParameters = LoginParameters(
       phoneNumber: parameters.phoneNumber,
+      email: parameters.email,
       otpCode: parameters.code,
       lastID: parameters.lastXId,
       verification: parameters.verificationEntity as? Verification
@@ -61,7 +62,10 @@ public class OnboardingRepository: OnboardingRepositoryProtocol {
     let appCheckToken = try await auth.getAppCheckToken()
     let reCaptchaToken = try await auth.getReCaptchaToken(for: .custom("otp_request"))
     
-    let requestParameters = OTPParameters(phoneNumber: parameters.phoneNumber)
+    let requestParameters = OTPParameters(
+      phoneNumber: parameters.phoneNumber,
+      email: parameters.email
+    )
     
     return try await onboardingAPI.requestOTP(
       parameters: requestParameters,
@@ -71,7 +75,10 @@ public class OnboardingRepository: OnboardingRepositoryProtocol {
   }
   
   public func checkAccountExisting(parameters: CheckAccountExistingParametersEntity) async throws -> AccountExistingEntity {
-    let requestParameters = CheckAccountExistingParameters(phoneNumber: parameters.phone)
+    let requestParameters = CheckAccountExistingParameters(
+      phoneNumber: parameters.phone,
+      email: parameters.email
+    )
     
     return try await onboardingAPI.checkAccountExisting(parameters: requestParameters)
   }

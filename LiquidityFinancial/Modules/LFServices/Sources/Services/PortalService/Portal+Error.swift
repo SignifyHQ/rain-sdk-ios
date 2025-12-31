@@ -2,16 +2,45 @@ import Foundation
 import PortalSwift
 import LFLocalizable
 
-public enum LFPortalError: Error {
+public enum LFPortalError: LocalizedError {
   case dataUnavailable
   case portalInstanceUnavailable
+  case sessionTokenUnavailable
   case sessionExpired
   case walletAlreadyExists
   case iCloudAccountUnavailable
   case cipherBlockCreationFailed
   case unexpected
   case walletMissing
+  case decryptFailed
   case customError(message: String)
+  
+  public var errorDescription: String? {
+    switch self {
+    case .dataUnavailable:
+      "Data unavailable"
+    case .portalInstanceUnavailable:
+      "Portal instance unavailable"
+    case .sessionTokenUnavailable:
+      "Portal session token unavailable"
+    case .sessionExpired:
+      "Portal session expired"
+    case .walletAlreadyExists:
+      "Walllet already exists"
+    case .iCloudAccountUnavailable:
+      "iCloud account unavailable. Please make sure you are signed in to iCloud on your device"
+    case .cipherBlockCreationFailed:
+      "Cipper block creation failed"
+    case .unexpected:
+      "Unexpected error"
+    case .walletMissing:
+      "Wallet missing"
+    case .decryptFailed:
+      "Decrypt failed"
+    case .customError(let message):
+      message
+    }
+  }
 }
 
 extension LFPortalError: Equatable {
@@ -57,6 +86,8 @@ extension LFPortalError {
   }
   
   public static func handlePortalError(error: Error?) -> LFPortalError {
+    // TODO: - Will need to revise and update the error handling, it's a mess :(
+    
     guard let error else {
       return LFPortalError.unexpected
     }
@@ -71,6 +102,10 @@ extension LFPortalError {
       return LFPortalError.handlePortalRequestError(error: error)
     }
 
+    if portalMpcError.id == "DECRYPT_FAILED" {
+      return .decryptFailed
+    }
+    
     switch portalMpcError.code {
     case 320:
       return .sessionExpired

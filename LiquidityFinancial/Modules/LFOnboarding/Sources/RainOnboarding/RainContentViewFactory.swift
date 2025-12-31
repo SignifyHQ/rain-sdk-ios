@@ -1,12 +1,8 @@
-import Foundation
-import LFUtilities
-import LFStyleGuide
-import LFLocalizable
-import SwiftUI
-import Factory
 import AccountDomain
 import BaseOnboarding
-import EnvironmentService
+import Factory
+import LFUtilities
+import SwiftUI
 
 // MARK: - DIContainer
 extension Container {
@@ -33,32 +29,45 @@ final class RainContentViewFactory {
 // MARK: - Internal View Components
 extension RainContentViewFactory {
   @MainActor
-  func createView(type: ViewType) -> some View {
+  func createView(
+    type: ViewType
+  ) -> some View {
     switch type {
     case .initial:
-      return AnyView(initialView)
+      AnyView(initialView)
+    case .landing:
+      AnyView(landingView)
     case .phone:
-      return AnyView(phoneNumberView)
+      AnyView(phoneNumberView)
+    case .createWallet:
+      AnyView(createPortalWalletView)
+    case .setPortalWalletPin:
+      AnyView(setPortalWalletPinView)
     case .accountLocked:
-      return AnyView(accountLockedView)
+      // Unused, will need to remove
+      AnyView(accountLockedView)
     case let .welcome(type):
-      return AnyView(welcomeView(type: type))
+      AnyView(welcomeView(type: type))
     case .accountInReview:
-      return AnyView(accountInReviewView)
+      AnyView(accountInReviewView)
     case .accountReject:
-      return AnyView(accountRejectView)
+      AnyView(accountRejectView)
     case .recoverWallet:
-      return AnyView(recoverWalletView)
+      AnyView(recoverWalletView)
     case .missingInformation:
-      return AnyView(missingInformationView)
+      // Handled as rejected for now, will update
+      AnyView(missingInformationView)
     case .identifyVerification:
-      return AnyView(identifyVerificationView)
+      AnyView(identifyVerificationView)
     case .unclear(let message):
-      return AnyView(unclearView(message: message))
+      AnyView(unclearView(message: message))
     case .forceUpdate(let model):
-      return AnyView(forceUpdateView(model: model))
+      // Not used now, but will be in the future
+      AnyView(forceUpdateView(model: model))
     case .acceptTerms:
-      return AnyView(acceptTermsView)
+      AnyView(acceptTermsView)
+    case .residentialAddress:
+      AnyView(residentialAddressView)
     }
   }
 }
@@ -71,24 +80,35 @@ private extension RainContentViewFactory {
   }
   
   @MainActor
+  var landingView: some View {
+    LandingView(
+      viewModel: LandingViewModel()
+    )
+  }
+  
+  @MainActor
   func unclearView(message: String) -> some View {
-    AccountReviewStatusView(
-      viewModel: AccountReviewStatusViewModel(state: .unclear(message))
+    ReviewStatusView(
+      viewModel: ReviewStatusViewModel(
+        reviewStatus: .unclear(status: message)
+      )
     )
   }
   
   @MainActor
   var accountRejectView: some View {
-    AccountReviewStatusView(
-      viewModel: AccountReviewStatusViewModel(state: .reject)
+    ReviewStatusView(
+      viewModel: ReviewStatusViewModel(
+        reviewStatus: .rejected
+      )
     )
   }
   
   @MainActor
   var accountInReviewView: some View {
-    AccountReviewStatusView(
-      viewModel: AccountReviewStatusViewModel(
-        state: .inReview(accountDataManager.userNameDisplay)
+    ReviewStatusView(
+      viewModel: ReviewStatusViewModel(
+        reviewStatus: .inReview
       )
     )
   }
@@ -101,6 +121,13 @@ private extension RainContentViewFactory {
           self?.flowCoordinator.set(route: .phone)
         }
       )
+    )
+  }
+  
+  @MainActor
+  var residentialAddressView: some View {
+    ResidentialAddressView(
+      viewModel: ResidentialAddressViewModel()
     )
   }
   
@@ -151,7 +178,6 @@ private extension RainContentViewFactory {
   
   @MainActor
   var phoneNumberView: some View {
-    //CompleteYourProfileView()
     PhoneNumberView(
       viewModel: PhoneNumberViewModel(
         handleOnboardingStep: flowCoordinator.fetchOnboardingMissingSteps,
@@ -164,36 +190,45 @@ private extension RainContentViewFactory {
   }
   
   @MainActor
+  var createPortalWalletView: some View {
+    CreatePortalWalletView(
+      viewModel: CreatePortalWalletViewModel()
+    )
+  }
+  
+  @MainActor
+  var setPortalWalletPinView: some View {
+    SetRecoveryPinView(
+      viewModel: SetRecoveryPinViewModel()
+    )
+  }
+  
+  @MainActor
   var acceptTermsView: some View {
-    CardTermsView(
-      viewModel: CardTermsViewModel(
-        handleOnboardingStep: flowCoordinator.fetchOnboardingMissingSteps,
-        forceLogout: flowCoordinator.forceLogout
-      )
+    AgreeToCardTermsView(
+      viewModel: AgreeToCardTermsViewModel()
     )
   }
   
   @MainActor
   var missingInformationView: some View {
-    AccountReviewStatusView(
-      viewModel: AccountReviewStatusViewModel(
-        state: .missingInformation
+    ReviewStatusView(
+      viewModel: ReviewStatusViewModel(
+        reviewStatus: .rejected
       )
     )
   }
   
   @MainActor
   var identifyVerificationView: some View {
-    AccountReviewStatusView(
-      viewModel: AccountReviewStatusViewModel(
-        state: .identityVerification
-      )
+    KycView(
+      viewModel: KycViewModel()
     )
   }
   
   @MainActor
   var recoverWalletView: some View {
-    RecoverWalletView(recoverMethod: .iCloud)
+    WalletRecoveryView(viewModel: WalletRecoveryViewModel())
   }
   
   @MainActor
@@ -205,10 +240,13 @@ private extension RainContentViewFactory {
 // MARK: - Types
 extension RainContentViewFactory {
   enum ViewType {
-    case initial, phone, accountInReview, recoverWallet
+    case initial, landing, phone, accountInReview, recoverWallet
+    case createWallet
+    case setPortalWalletPin
     case accountLocked, accountReject
     case missingInformation, identifyVerification
     case unclear(String)
+    case residentialAddress
     case welcome(WelcomeType)
     case forceUpdate(FeatureConfigModel)
     case acceptTerms

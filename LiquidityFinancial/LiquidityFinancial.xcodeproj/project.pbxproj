@@ -54,6 +54,7 @@
 		06D40C032A63DEB300EADB75 /* LoadingPrimary.json in Resources */ = {isa = PBXBuildFile; fileRef = 06D40C022A63DEB300EADB75 /* LoadingPrimary.json */; };
 		06EBE2012A69390700157B32 /* DashboardContainer+Injection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06EBE2002A69390700157B32 /* DashboardContainer+Injection.swift */; };
 		06FB47082A7AAE430050304C /* PinwheelSDK in Frameworks */ = {isa = PBXBuildFile; productRef = 06FB47072A7AAE430050304C /* PinwheelSDK */; };
+		194582362EF4063600DD624D /* intro_video.mp4 in Resources */ = {isa = PBXBuildFile; fileRef = 194582352EF4063600DD624D /* intro_video.mp4 */; };
 		741493462A9912E800F0DC4D /* FirebaseMessaging in Frameworks */ = {isa = PBXBuildFile; productRef = 741493452A9912E800F0DC4D /* FirebaseMessaging */; };
 		741493482A99150E00F0DC4D /* FirebaseMessaging in Frameworks */ = {isa = PBXBuildFile; productRef = 741493472A99150E00F0DC4D /* FirebaseMessaging */; };
 		7414934A2A99155200F0DC4D /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 741493492A99155200F0DC4D /* GoogleService-Info.plist */; };
@@ -478,6 +479,9 @@
 		E2D0951D2E1F8A9D00197A8D /* MeaPushProvisioning.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = E2D0951B2E1F8A8900197A8D /* MeaPushProvisioning.xcframework */; };
 		E2D0951E2E1F8A9D00197A8D /* MeaPushProvisioning.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = E2D0951B2E1F8A8900197A8D /* MeaPushProvisioning.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		E2D7E8FB2D5DC7EB00C6540B /* collateralJsonABI.json in Resources */ = {isa = PBXBuildFile; fileRef = E2D7E8FA2D5DC7EB00C6540B /* collateralJsonABI.json */; };
+		E2FAD05F2EA2724D00DE4F4E /* loaderBranded.json in Resources */ = {isa = PBXBuildFile; fileRef = E2FAD05C2EA2724D00DE4F4E /* loaderBranded.json */; };
+		E2FAD0602EA2724D00DE4F4E /* loaderCtaRegular.json in Resources */ = {isa = PBXBuildFile; fileRef = E2FAD05E2EA2724D00DE4F4E /* loaderCtaRegular.json */; };
+		E2FAD0612EA2724D00DE4F4E /* loaderCtaFast.json in Resources */ = {isa = PBXBuildFile; fileRef = E2FAD05D2EA2724D00DE4F4E /* loaderCtaFast.json */; };
 		F6705FF22D70D25B00FEDAC4 /* CoreNfcBridge.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = F6705FEC2D70D25700FEDAC4 /* CoreNfcBridge.xcframework */; };
 		F6705FF32D70D25B00FEDAC4 /* CoreNfcBridge.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = F6705FEC2D70D25700FEDAC4 /* CoreNfcBridge.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		F6705FF42D70D25D00FEDAC4 /* CryptoSwift.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = F6705FED2D70D25700FEDAC4 /* CryptoSwift.xcframework */; };
@@ -608,6 +612,7 @@
 		06EBE1FF2A6924E900157B32 /* LFDashboard */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = LFDashboard; path = Modules/LFDashboard; sourceTree = "<group>"; };
 		06EBE2002A69390700157B32 /* DashboardContainer+Injection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DashboardContainer+Injection.swift"; sourceTree = "<group>"; };
 		06F2F7D42ADCF6030065C177 /* DogeCard.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = DogeCard.xctestplan; sourceTree = "<group>"; };
+		194582352EF4063600DD624D /* intro_video.mp4 */ = {isa = PBXFileReference; lastKnownFileType = file; path = intro_video.mp4; sourceTree = "<group>"; };
 		741493492A99155200F0DC4D /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		7416A20F2B7F2E0A00062824 /* AccessibilityIdentifier.strings */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.strings; name = AccessibilityIdentifier.strings; path = Modules/LFAccessibility/Sources/LFAccessibility/Resources/AccessibilityIdentifier.strings; sourceTree = SOURCE_ROOT; };
 		741AD8142AD50ADD00C1317A /* NavigationContainer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NavigationContainer.swift; sourceTree = "<group>"; };
@@ -895,6 +900,9 @@
 		E2CAA00B2E2FB03100F23D4E /* PassKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = PassKit.framework; path = System/Library/Frameworks/PassKit.framework; sourceTree = SDKROOT; };
 		E2D0951B2E1F8A8900197A8D /* MeaPushProvisioning.xcframework */ = {isa = PBXFileReference; expectedSignature = "AppleDeveloperProgram:ZT5DJ5429L:MeaWallet AS"; lastKnownFileType = wrapper.xcframework; path = MeaPushProvisioning.xcframework; sourceTree = "<group>"; };
 		E2D7E8FA2D5DC7EB00C6540B /* collateralJsonABI.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = collateralJsonABI.json; sourceTree = "<group>"; };
+		E2FAD05C2EA2724D00DE4F4E /* loaderBranded.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = loaderBranded.json; sourceTree = "<group>"; };
+		E2FAD05D2EA2724D00DE4F4E /* loaderCtaFast.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = loaderCtaFast.json; sourceTree = "<group>"; };
+		E2FAD05E2EA2724D00DE4F4E /* loaderCtaRegular.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = loaderCtaRegular.json; sourceTree = "<group>"; };
 		F6705FEA2D70D24900FEDAC4 /* FidesmoCore.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = FidesmoCore.xcframework; path = Frameworks/FidesmoCore.xcframework; sourceTree = "<group>"; };
 		F6705FEC2D70D25700FEDAC4 /* CoreNfcBridge.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = CoreNfcBridge.xcframework; path = Frameworks/CoreNfcBridge.xcframework; sourceTree = "<group>"; };
 		F6705FED2D70D25700FEDAC4 /* CryptoSwift.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = CryptoSwift.xcframework; path = Frameworks/CryptoSwift.xcframework; sourceTree = "<group>"; };
@@ -1288,6 +1296,9 @@
 		06D40BF42A625E9100EADB75 /* Lottie */ = {
 			isa = PBXGroup;
 			children = (
+				E2FAD05C2EA2724D00DE4F4E /* loaderBranded.json */,
+				E2FAD05D2EA2724D00DE4F4E /* loaderCtaFast.json */,
+				E2FAD05E2EA2724D00DE4F4E /* loaderCtaRegular.json */,
 				06D40C022A63DEB300EADB75 /* LoadingPrimary.json */,
 				06D40BFB2A6260B300EADB75 /* LoadingContrast.json */,
 				06D40BF72A625F5400EADB75 /* LoadingMix.json */,
@@ -1745,6 +1756,7 @@
 				A95354602A5DD91A008B0FAB /* Assets */,
 				A9D6C4A72A5E5FE00038D0BB /* Custom.strings */,
 				06D40BF42A625E9100EADB75 /* Lottie */,
+				194582352EF4063600DD624D /* intro_video.mp4 */,
 			);
 			path = Resources;
 			sourceTree = "<group>";
@@ -2816,7 +2828,11 @@
 				A9B4BA0B2A7C107D000ED67A /* Images.xcassets in Resources */,
 				06D40C032A63DEB300EADB75 /* LoadingPrimary.json in Resources */,
 				743DA8232B43E1FC000F5AD8 /* PawsCardConfig.xcconfig in Resources */,
+				194582362EF4063600DD624D /* intro_video.mp4 in Resources */,
 				A9BC80482A774D4F00E4A1A0 /* Inter-Bold.ttf in Resources */,
+				E2FAD05F2EA2724D00DE4F4E /* loaderBranded.json in Resources */,
+				E2FAD0602EA2724D00DE4F4E /* loaderCtaRegular.json in Resources */,
+				E2FAD0612EA2724D00DE4F4E /* loaderCtaFast.json in Resources */,
 				061FFD622BFC3F9800B21165 /* contractJsonABI.json in Resources */,
 				E2B0B3022E21235F00F1B4D7 /* mea_config in Resources */,
 				E22B07E42CC7F2710016E8B1 /* GoogleService-Info-Prod.plist in Resources */,
@@ -3521,7 +3537,7 @@
 				INFOPLIST_KEY_UIStatusBarHidden = NO;
 				INFOPLIST_KEY_UIStatusBarStyle = UIStatusBarStyleDarkContent;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
-				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.6;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -3565,7 +3581,7 @@
 				INFOPLIST_KEY_UIStatusBarHidden = NO;
 				INFOPLIST_KEY_UIStatusBarStyle = UIStatusBarStyleDarkContent;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
-				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.6;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -3610,7 +3626,7 @@
 				INFOPLIST_KEY_UIStatusBarHidden = NO;
 				INFOPLIST_KEY_UIStatusBarStyle = UIStatusBarStyleLightContent;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
-				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.6;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -3655,7 +3671,7 @@
 				INFOPLIST_KEY_UIStatusBarHidden = NO;
 				INFOPLIST_KEY_UIStatusBarStyle = UIStatusBarStyleLightContent;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
-				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.6;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -3815,12 +3831,12 @@
 				INFOPLIST_KEY_UIStatusBarHidden = NO;
 				INFOPLIST_KEY_UIStatusBarStyle = UIStatusBarStyleLightContent;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
-				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.6;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.5.3;
+				MARKETING_VERSION = 2.0.0;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.rain-liquidity.avalanche";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -3858,12 +3874,12 @@
 				INFOPLIST_KEY_UIStatusBarHidden = NO;
 				INFOPLIST_KEY_UIStatusBarStyle = UIStatusBarStyleLightContent;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
-				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.6;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.5.3;
+				MARKETING_VERSION = 2.0.0;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.rain-liquidity.avalanche";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -3971,7 +3987,7 @@
 				INFOPLIST_KEY_UIStatusBarHidden = NO;
 				INFOPLIST_KEY_UIStatusBarStyle = UIStatusBarStyleDarkContent;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
-				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.6;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -4015,7 +4031,7 @@
 				INFOPLIST_KEY_UIStatusBarHidden = NO;
 				INFOPLIST_KEY_UIStatusBarStyle = UIStatusBarStyleDarkContent;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
-				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.6;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -4059,7 +4075,7 @@
 				INFOPLIST_KEY_UIStatusBarHidden = NO;
 				INFOPLIST_KEY_UIStatusBarStyle = UIStatusBarStyleDarkContent;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
-				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.6;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -4103,7 +4119,7 @@
 				INFOPLIST_KEY_UIStatusBarHidden = NO;
 				INFOPLIST_KEY_UIStatusBarStyle = UIStatusBarStyleDarkContent;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
-				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.6;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -4148,7 +4164,7 @@
 				INFOPLIST_KEY_UIStatusBarHidden = NO;
 				INFOPLIST_KEY_UIStatusBarStyle = UIStatusBarStyleLightContent;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
-				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.6;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -4193,7 +4209,7 @@
 				INFOPLIST_KEY_UIStatusBarHidden = NO;
 				INFOPLIST_KEY_UIStatusBarStyle = UIStatusBarStyleLightContent;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
-				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.6;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",

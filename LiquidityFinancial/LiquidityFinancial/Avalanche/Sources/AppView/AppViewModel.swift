@@ -19,11 +19,15 @@ class AppViewModel: ObservableObject {
   init() {
     coordinator
       .routeSubject
-      .receive(on: DispatchQueue.main)
+      .receive(
+        on: DispatchQueue.main
+      )
       .sink { [weak self] route in
         self?.setRoute(route)
       }
-      .store(in: &subscribers)
+      .store(
+        in: &subscribers
+      )
     
     coordinator.routeUser()
     
@@ -36,6 +40,7 @@ class AppViewModel: ObservableObject {
     Container.shared.fiatAccountService.register {
       NetspendAccountService()
     }
+    
     Container.shared.bankServiceConfig.register {
       NetspendBankService()
     }
@@ -53,8 +58,12 @@ class AppViewModel: ObservableObject {
     // To do so, we need to disable animation on the `UINavigationBar`, set the new route and then enable the animations again
     // (with a small delay for the flag to be changed after the `NavigationView` actually chages its base view).
     UINavigationBar.setAnimationsEnabled(false)
+    
     self.route = route
-    DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+    
+    DispatchQueue.main.asyncAfter(
+      deadline: .now() + 0.2
+    ) {
       UINavigationBar.setAnimationsEnabled(true)
     }
   }

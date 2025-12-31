@@ -132,7 +132,7 @@ extension EnterPasswordViewModel {
       )
     case let .login(parameters, _):
       navigation = .recoverPassword(
-        purpose: .login(phoneNumber: parameters.phoneNumber)
+        purpose: .login(phoneNumber: parameters.phoneNumber ?? .empty)
       )
     }
   }

@@ -39,6 +39,7 @@ public enum AnalyticsEventName: String {
   case signedUp = "signed up"
   case phoneVerified = "phone verified"
   case phoneVerificationError = "phone verification error"
+  case otpVerificationError = "otp verification error"
   case viewedPersonalInfo = "viewed personal info"
   case personalInfoCompleted = "personal info completed"
   case viewedAddress = "viewed address"

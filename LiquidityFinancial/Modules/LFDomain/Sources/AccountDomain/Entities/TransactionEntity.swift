@@ -21,6 +21,8 @@ public protocol TransactionEntity {
   var completedAt: String? { get }
   var createdAt: String { get }
   var updatedAt: String { get }
+  var contractAddress: String? { get }
+  var transactionHash: String? { get }
   var noteEnity: TransactionNoteEntity? { get }
   var rewardEntity: RewardEntity? { get }
   var receiptEntity: TransactionReceiptEntity? { get }

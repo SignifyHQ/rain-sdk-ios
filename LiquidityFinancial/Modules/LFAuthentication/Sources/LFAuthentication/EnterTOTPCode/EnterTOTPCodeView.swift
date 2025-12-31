@@ -123,8 +123,8 @@ private extension EnterTOTPCodeView {
     switch LFStyleGuide.target {
     case .CauseCard:
       return [
-        Colors.Gradients.Button.gradientButton0.swiftUIColor,
-        Colors.Gradients.Button.gradientButton1.swiftUIColor
+        Colors.gradientButton0.swiftUIColor,
+        Colors.gradientButton1.swiftUIColor
       ]
     default:
       return [Colors.tertiary.swiftUIColor]

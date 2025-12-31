@@ -182,7 +182,9 @@ extension PhoneNumberViewModel {
     isSecretMode = true
   }
   
-  func getURL(tappedString: String) -> URL? {
+  func getURL(
+    tappedString: String
+  ) -> URL? {
     let urlMapping: [String: String] = [
       terms: LFUtilities.termsURL,
       esignConsent: LFUtilities.consentURL,

@@ -1,0 +1,89 @@
+import SwiftUI
+import LFStyleGuide
+import LFLocalizable
+import LFUtilities
+import Services
+import GeneralFeature
+
+struct AssetsView: View {
+  @StateObject private var viewModel: AssetsViewModel
+  
+  init(viewModel: AssetsViewModel) {
+    self._viewModel = .init(wrappedValue: viewModel)
+  }
+  
+  var body: some View {
+    ZStack {
+      if viewModel.isLoading {
+        LottieView(loading: .primary)
+          .frame(width: 30, height: 20)
+      } else {
+        VStack(spacing: 10) {
+          ScrollView(showsIndicators: false) {
+            ForEach(viewModel.assets, id: \.self) { asset in
+              assetCell(asset: asset)
+            }
+          }
+          .padding(.top, 24)
+          Spacer()
+//          Text(L10N.Common.Zerohash.Disclosure.description)
+//            .font(Fonts.regular.swiftUIFont(size: 10))
+//            .foregroundColor(Colors.label.swiftUIColor.opacity(0.5))
+//            .padding(.bottom, 8)
+        }
+      }
+    }
+    .refreshable {
+      await viewModel.refresh()
+    }
+    .frame(max: .infinity)
+    .background(Colors.background.swiftUIColor)
+    .popup(item: $viewModel.toastMessage, style: .toast) {
+      ToastView(toastMessage: $0)
+    }
+    .navigationLink(item: $viewModel.navigation) { item in
+      switch item {
+      case let .usd(asset):
+        FiatAssetView(asset: asset)
+      case let .crypto(asset):
+        CryptoAssetView(asset: asset)
+      }
+    }
+    .track(name: String(describing: type(of: self)))
+  }
+}
+
+// MARK: - View Components
+private extension AssetsView {
+  @ViewBuilder func assetCell(asset: AssetModel) -> some View {
+    if let assetType = asset.type {
+      Button {
+        viewModel.onClickedAsset(asset: asset)
+      } label: {
+        HStack(spacing: 8) {
+          assetType.icon
+          Text(assetType.symbol ?? "N/A")
+            .foregroundColor(Colors.label.swiftUIColor)
+            .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.medium.value))
+          Spacer()
+          VStack(alignment: .trailing, spacing: 2) {
+            if let bottomBalance = asset.totalUsdBalanceFormatted {
+              Text(bottomBalance)
+                .foregroundColor(Colors.label.swiftUIColor)
+                .font(Fonts.Inter.bold.swiftUIFont(size: Constants.FontSize.medium.value))
+            }
+            
+            Text(asset.availableBalanceFormatted)
+              .foregroundColor(Colors.label.swiftUIColor)
+              .font(Fonts.Inter.bold.swiftUIFont(size: Constants.FontSize.medium.value))
+          }
+          .padding(.trailing, 8)
+        }
+        .padding(.horizontal, 16)
+        .frame(height: 56)
+        .background(Colors.secondaryBackground.swiftUIColor.cornerRadius(9))
+      }
+      .padding(.horizontal, 30)
+    }
+  }
+}

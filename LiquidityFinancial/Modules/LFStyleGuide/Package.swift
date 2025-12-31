@@ -17,7 +17,8 @@ let package = Package(
       .package(name: "LFUtilities", path: "../LFUtilities"),
       .package(name: "LFAccessibility", path: "../LFAccessibility"),
       .package(name: "LFServices", path: "../LFServices"),
-      .package(url: "https://github.com/marinofelipe/CurrencyText.git", from: "3.0.0")
+      .package(url: "https://github.com/marinofelipe/CurrencyText.git", from: "3.0.0"),
+      .package(url: "https://github.com/dinhquan/SwiftTooltip", from: "0.1.0")
     ],
     targets: [
         .target(
@@ -28,7 +29,8 @@ let package = Package(
               .product(name: "Services", package: "LFServices"),
               .product(name: "AccountService", package: "LFServices"),
               .product(name: "Lottie", package: "lottie-ios"),
-              .product(name: "CurrencyTextSwiftUI", package: "CurrencyText")
+              .product(name: "CurrencyTextSwiftUI", package: "CurrencyText"),
+              .product(name: "SwiftTooltip", package: "SwiftTooltip")
             ],
             resources: [
               .process("XResources")

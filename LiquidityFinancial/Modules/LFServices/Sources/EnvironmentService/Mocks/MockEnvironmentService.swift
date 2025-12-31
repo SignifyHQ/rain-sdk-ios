@@ -12,4 +12,8 @@ public class MockEnvironmentService: EnvironmentServiceProtocol {
       setNetworkEnvironmentCalled = true
     }
   }
+  
+  public func toggleEnvironment() {
+    networkEnvironment = networkEnvironment == .productionTest ? .productionLive : .productionTest
+  }
 }

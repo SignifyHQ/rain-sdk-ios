@@ -112,11 +112,13 @@ public enum Constants {
   // MARK: - FontSize
 public extension Constants {
   enum FontSize {
+    case headline
     case main
     case medium
     case small
     case ultraSmall
     case large
+    case otp
     case extraLarge
     case navigationBar
     case textFieldHeader
@@ -126,6 +128,8 @@ public extension Constants {
     
     public var value: CGFloat {
       switch self {
+      case .headline:
+        return 20
       case .main:
         return 18
       case .medium:
@@ -142,6 +146,8 @@ public extension Constants {
         return 20
       case .large:
         return 24
+      case .otp:
+        return 32
       case .extraLarge:
         return 36
       case .regular:

@@ -12,12 +12,41 @@ public extension String {
     trimmingCharacters(in: .whitespacesAndNewlines)
   }
   
-  var plainPhoneString: String {
+  func isTrimmedStringEmpty() -> Bool {
+    trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+  }
+  
+  var stripToDigits: String {
     let numbersOnly = CharacterSet(charactersIn: Constants.Default.numberCharacters.rawValue)
+    
     let filteredPhone = filter { char -> Bool in
       char.unicodeScalars.contains(where: { numbersOnly.contains($0) })
     }
+    
     return filteredPhone
+  }
+  
+  var trimmedPhoneNumberOrSsn: String {
+    self
+      .replace(string: " ", replacement: "")
+      .replace(string: "(", replacement: "")
+      .replace(string: ")", replacement: "")
+      .replace(string: "-", replacement: "")
+      .trimWhitespacesAndNewlines()
+  }
+  
+  func parseWalletAddress() -> String {
+    var address = self
+    
+    if let colonIndex = address.firstIndex(of: ":") {
+      address = String(address[address.index(after: colonIndex)...])
+    }
+    
+    if let questionMarkIndex = address.firstIndex(of: "?") {
+      address = String(address[..<questionMarkIndex])
+    }
+    
+    return address.trimmingCharacters(in: .whitespacesAndNewlines)
   }
   
   func insertSpaces(afterEvery count: Int) -> String {
@@ -28,6 +57,41 @@ public extension String {
         return String(self[startIndex..<endIndex])
       }
       .joined(separator: " ")
+  }
+  
+  func formatInput(
+    of type: InputType
+  ) -> String {
+    let cleaned = self.components(separatedBy: CharacterSet.decimalDigits.inverted).joined()
+    
+    let mask = type.mask
+    var result = ""
+    var index = cleaned.startIndex
+    
+    for character in mask where index < cleaned.endIndex {
+      if character == "X" {
+        result.append(cleaned[index])
+        index = cleaned.index(after: index)
+      } else {
+        result.append(character)
+      }
+    }
+    
+    return result
+  }
+  
+  enum InputType {
+    case phoneNumber
+    case ssn
+    
+    var mask: String {
+      switch self {
+      case .phoneNumber:
+        return "(XXX) XXX-XXXX-XXXXX"
+      case .ssn:
+        return "XXX-XX-XXXX"
+      }
+    }
   }
 }
 

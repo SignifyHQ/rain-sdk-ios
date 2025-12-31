@@ -6,24 +6,34 @@ import LFStyleGuide
 public struct IdentityVerificationView: View {
   public let url: URL
   public let succcessCallback: () -> Void
+  public let closeCallback: (() -> Void)?
   
   @Environment(\.dismiss) private var dismiss
   
-  public init(url: URL, succcessCallback: @escaping () -> Void) {
+  public init(
+    url: URL,
+    succcessCallback: @escaping () -> Void,
+    closeCallback: (() -> Void)? = nil
+  ) {
     self.url = url
     self.succcessCallback = succcessCallback
+    self.closeCallback = closeCallback
   }
   
   public var body: some View {
-    PersonaView(hostedURL: url, successCallback: succcessCallback)
-      .overlay(alignment: .topTrailing) {
-        Button {
-          dismiss()
-        } label: {
-          CircleButton(style: .xmark)
-            .padding(12)
-        }
+    PersonaView(
+      hostedURL: url,
+      successCallback: succcessCallback
+    )
+    .overlay(alignment: .topTrailing) {
+      Button {
+        closeCallback?()
+        dismiss()
+      } label: {
+        CircleButton(style: .xmark)
+          .padding(12)
       }
+    }
   }
 }
 

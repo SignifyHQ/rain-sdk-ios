@@ -9,7 +9,7 @@ xcassets:
       - templateName: swift5
         params:
           enumName: Colors
-          forceProvidesNamespaces: true
+          forceProvidesNamespaces: false
           publicAccess: true
           bundle: Bundle.main
         output: Colors.swift
@@ -21,7 +21,7 @@ xcassets:
       - templateName: swift5
         params:
           enumName: GenImages
-          forceProvidesNamespaces: true
+          forceProvidesNamespaces: false
           publicAccess: true
           bundle: Bundle.main
         output: Images.swift

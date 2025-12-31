@@ -6,6 +6,7 @@ import LFUtilities
 
 public enum RainCardRoute {
   case getCards
+  case getCardDetail(cardID: String)
   case getCardOrders
   case orderPhysicalCard(parameters: APIRainOrderCardParameters)
   case orderPhysicalCardWithApproval(parameters: APIRainOrderCardParameters)
@@ -23,6 +24,8 @@ extension RainCardRoute: LFRoute {
     switch self {
     case .getCards:
       return "/v1/rain/cards/list"
+    case .getCardDetail:
+      return "/v1/rain/cards/by-id"
     case .getCardOrders:
       return "/v1/rain/cards/physical-card/orders"
     case .orderPhysicalCard:
@@ -48,7 +51,7 @@ extension RainCardRoute: LFRoute {
   
   public var httpMethod: HttpMethod {
     switch self {
-    case .getCards, .getCardOrders, .getSecretCardInfomation:
+    case .getCards, .getCardOrders, .getSecretCardInfomation, .getCardDetail:
       return .GET
     case .orderPhysicalCard,
         .orderPhysicalCardWithApproval,
@@ -88,7 +91,8 @@ extension RainCardRoute: LFRoute {
     case let .closeCard(cardID),
       let .lockCard(cardID),
       let .unlockCard(cardID),
-      let .getSecretCardInfomation(_, cardID):
+      let .getSecretCardInfomation(_, cardID),
+      let .getCardDetail(cardID):
       return [
         "card_id": cardID
       ]
@@ -104,6 +108,7 @@ extension RainCardRoute: LFRoute {
   public var parameterEncoding: ParameterEncoding? {
     switch self {
     case .getCards,
+        .getCardDetail,
         .closeCard,
         .lockCard,
         .unlockCard,

@@ -7,12 +7,15 @@ import LFUtilities
 import AccountService
 
 public class AccountDataManager: AccountDataStorageProtocol {
-  public func update(addressEntity: AddressEntity?) {
+  public func update(
+    addressEntity: AddressEntity?
+  ) {
     update(addressLine1: addressEntity?.line1)
     update(addressLine2: addressEntity?.line2)
     update(city: addressEntity?.city)
     update(state: addressEntity?.state)
     update(country: addressEntity?.country)
+    update(countryCode: addressEntity?.countryCode)
     update(postalCode: addressEntity?.postalCode)
   }
   
@@ -35,15 +38,39 @@ public class AccountDataManager: AccountDataStorageProtocol {
   }
   
   public var phoneCode: String {
-    UserDefaults.phoneCode
+    get {
+      UserDefaults.phoneCode
+    }
+    set {
+      UserDefaults.phoneCode = newValue
+    }
   }
   
   public var phoneNumber: String {
-    UserDefaults.phoneNumber
+    get {
+      UserDefaults.phoneNumber
+    }
+    set {
+      UserDefaults.phoneNumber = newValue
+    }
+  }
+  
+  public var countryCode: String {
+    get {
+      UserDefaults.countryCode
+    }
+    set {
+      UserDefaults.countryCode = newValue
+    }
   }
   
   public var sessionID: String {
-    UserDefaults.userSessionID[phoneNumber] ?? ""
+    get {
+      UserDefaults.userSessionID[phoneNumber] ?? ""
+    }
+    set {
+      UserDefaults.userSessionID[phoneNumber] = newValue
+    }
   }
   
   public var userCompleteOnboarding: Bool {
@@ -114,10 +141,6 @@ public class AccountDataManager: AccountDataStorageProtocol {
     self.userInfomationData.lastName = lastName
   }
   
-//  public func update(phoneCode: String?) {
-//    self.userInfomationData.phoneCode
-//  }
-  
   public func update(phone: String?) {
     self.userInfomationData.phone = phone
   }
@@ -170,6 +193,10 @@ public class AccountDataManager: AccountDataStorageProtocol {
     self.userInfomationData.country = country
   }
   
+  public func update(countryCode: String?) {
+    self.userInfomationData.countryCode = countryCode
+  }
+  
   public func update(encryptedData: String?) {
     self.userInfomationData.encryptedData = encryptedData
   }
@@ -190,24 +217,16 @@ public class AccountDataManager: AccountDataStorageProtocol {
     self.userInfomationData.missingSteps = missingSteps
   }
   
-  public func stored(phoneCode: String) {
-    UserDefaults.phoneCode = phoneCode
-  }
-  
-  public func stored(phone: String) {
-    UserDefaults.phoneNumber = phone
-  }
-  
-  public func stored(sessionID: String) {
-    UserDefaults.userSessionID = [phoneNumber: sessionID]
-  }
-  
   public func clearUserSession() {
+    UserDefaults.userSessionID[phoneNumber] = ""
     UserDefaults.phoneNumber = ""
+    UserDefaults.phoneCode = ""
+    UserDefaults.countryCode = ""
     UserDefaults.userEmail = ""
     UserDefaults.userNameDisplay = ""
     UserDefaults.userCompleteOnboarding = false
     UserDefaults.hasFrntCard = false
+    UserDefaults.hasShownApplePayPopup = false
     
     userInfomationData = UserInfomationData()
     

@@ -9,7 +9,7 @@ public struct UserInfomationData: Codable, UserInfomationDataProtocol {
   public var phoneCode, phone, email, fullName, dateOfBirth: String?
   public var phoneVerified, emailVerified, mfaEnabled: Bool?
   public var addressLine1, addressLine2, city, state: String?
-  public var country, postalCode, encryptedData: String?
+  public var country, countryCode, postalCode, encryptedData: String?
   public var ssn, passport: String?
   public var referralLink: String?
   public var userRewardType: String?
@@ -37,6 +37,7 @@ public struct UserInfomationData: Codable, UserInfomationDataProtocol {
     self.city = entity.addressEntity?.city
     self.state = entity.addressEntity?.state
     self.country = entity.addressEntity?.country
+    self.countryCode = entity.addressEntity?.countryCode
     self.postalCode = entity.addressEntity?.postalCode
     self.accountReviewStatus = entity.accountReviewStatus
     self.referralLink = entity.referralLink

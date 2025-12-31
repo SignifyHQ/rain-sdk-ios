@@ -3,6 +3,7 @@ import Foundation
 // sourcery: AutoMockable
 public protocol RainCardRepositoryProtocol {
   func getCards() async throws -> [RainCardEntity]
+  func getCardDetail(cardID: String) async throws -> RainCardDetailEntity
   func getCardOrders() async throws -> [RainCardOrderEntity]
   func orderPhysicalCard(parameters: RainOrderCardParametersEntity) async throws -> RainCardEntity
   func orderPhysicalCardWithApproval(parameters: RainOrderCardParametersEntity) async throws -> RainCardOrderEntity

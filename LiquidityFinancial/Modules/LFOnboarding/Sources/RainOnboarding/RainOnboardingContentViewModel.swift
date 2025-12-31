@@ -49,13 +49,20 @@ private extension RainOnboardingContentViewModel {
       .store(in: &cancellables)
   }
   
-  func setRoute(_ route: RainOnboardingFlowCoordinator.Route) {
+  func setRoute(
+    _ route: RainOnboardingFlowCoordinator.Route
+  ) {
     if route == .dashboard { // ignore logic handle dashboard here
       return
     }
+    
     UINavigationBar.setAnimationsEnabled(false)
+    
     self.route = route
-    DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+    
+    DispatchQueue.main.asyncAfter(
+      deadline: .now() + 0.2
+    ) {
       UINavigationBar.setAnimationsEnabled(true)
     }
   }

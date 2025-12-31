@@ -7,6 +7,7 @@ extension LFUtilities {
   public static var cardTermsURLUs: String = try! LFConfiguration.value(for: "CARD_TERMS_URL_US")
   public static var cardTermsURLInt: String = try! LFConfiguration.value(for: "CARD_TERMS_URL_INT")
   public static var accountDisclosureURL: String = try! LFConfiguration.value(for: "ACCOUNT_DISCLOSURE_URL")
+  public static var issuerPrivacyPolicyURL: String = try! LFConfiguration.value(for: "ISSUER_PRIVACY_POLICY_URL")
   public static var accountAgreementURL: String = try! LFConfiguration.value(for: "ACCOUNT_AGREEMENT_URL")
   public static var privacyURL: String = try! LFConfiguration.value(for: "PRIVACY_URL")
   public static var portalTermsURL: String = try! LFConfiguration.value(for: "PORTAL_TERMS_URL")

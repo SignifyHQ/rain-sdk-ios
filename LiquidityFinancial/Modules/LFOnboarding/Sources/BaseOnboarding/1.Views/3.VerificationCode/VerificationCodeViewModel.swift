@@ -147,8 +147,8 @@ extension VerificationCodeViewModel {
   func handleLoginSuccess(onCompletion: (() -> Void)? = nil) {
     accountDataManager.update(phone: phoneNumberWithRegionCode)
     
-    accountDataManager.stored(phoneCode: phoneCountryCode)
-    accountDataManager.stored(phone: phoneNumber)
+    accountDataManager.phoneCode = phoneCountryCode
+    accountDataManager.phoneNumber = phoneNumber
     
     Task {
       defer {

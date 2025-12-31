@@ -2,12 +2,16 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>ISSUER_PRIVACY_POLICY_URL</key>
+	<string>$(ISSUER_PRIVACY_POLICY_URL)</string>
 	<key>GOOGLE_PLACES_PROD_KEY</key>
 	<string>$(GOOGLE_PLACES_PROD_KEY)</string>
 	<key>ZENDESK_PROD_KEY</key>
 	<string>$(ZENDESK_PROD_KEY)</string>
 	<key>GOOGLE_PLACES_DEV_KEY</key>
 	<string>$(GOOGLE_PLACES_DEV_KEY)</string>
+  <key>ZENDESK_PROD_KEY</key>
+  <string>$(ZENDESK_PROD_KEY)</string>
 	<key>PORTAL_SECURITY_URL</key>
 	<string>$(PORTAL_SECURITY_URL)</string>
 	<key>PORTAL_PRIVACY_URL</key>

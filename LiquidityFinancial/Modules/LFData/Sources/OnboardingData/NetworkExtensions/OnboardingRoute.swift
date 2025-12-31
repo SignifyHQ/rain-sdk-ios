@@ -21,12 +21,12 @@ extension OnboardingRoute: LFRoute {
   
   public var path: String {
     switch self {
-    case .requestOtp:
-      return "/v2/password-less/otp/request"
-    case .checkAccountExisting:
-      return "/v1/auth/exists"
-    case .login:
-      return "/v2/password-less/login"
+    case .requestOtp(let parameters, _, _):
+      return parameters.authMethod == .email ? "/v2/password-less/email/otp/request" : "/v2/password-less/otp/request"
+    case .checkAccountExisting(let parameters):
+      return parameters.authMethod == .email ? "/v2/password-less/email/exists" : "/v1/auth/exists"
+    case .login(let parameters, _, _):
+      return parameters.authMethod == .email ? "/v2/password-less/email/login" : "/v2/password-less/login"
     case .walletExtensionToken:
       return "/v1/auth/external-session/wallet-extension/token"
     case .newRequestOTP:
@@ -38,9 +38,9 @@ extension OnboardingRoute: LFRoute {
     case .getOnboardingProcess:
       return "/v1/app/onboarding-progress"
     case .getUnsupportedStates:
-      return "/v1/blocked-states"
+      return "/v2/blocked-states"
     case .joinWailist:
-      return "/v1/blocked-states/subscribe"
+      return "/v2/blocked-states/subscribe"
     }
   }
   
@@ -58,7 +58,7 @@ extension OnboardingRoute: LFRoute {
     ]
     
     switch self {
-    case .refreshToken:
+    case .refreshToken, .getUnsupportedStates, .joinWailist:
       break
     case .checkAccountExisting, .newRequestOTP, .newLogin:
       base["ld-device-id"] = LFUtilities.deviceId
@@ -67,7 +67,7 @@ extension OnboardingRoute: LFRoute {
       base["x-app-check-token"] = appCheckToken
       base["x-recaptcha-token"] = recaptchaToken
       base["x-platform"] = "IOS"
-    case .getOnboardingProcess, .getUnsupportedStates, .joinWailist:
+    case .getOnboardingProcess:
       base["Accept"] = "application/json"
       base["Authorization"] = self.needAuthorizationKey
     }

@@ -95,7 +95,7 @@ private extension CardTermsView {
       GenImages.Images.termsCheckboxSelected.swiftUIImage
     } else {
       GenImages.CommonImages.termsCheckboxDeselected.swiftUIImage
-        .foregroundColor(Colors.Buttons.highlightButton.swiftUIColor)
+        .foregroundColor(Colors.highlightButton.swiftUIColor)
     }
   }
   

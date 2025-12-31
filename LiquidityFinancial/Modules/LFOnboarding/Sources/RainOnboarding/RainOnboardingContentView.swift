@@ -29,24 +29,34 @@ public struct RainOnboardingContentView: View {
 
 // MARK: - Private View Components
 private extension RainOnboardingContentView {
-  func buildContent(for route: RainOnboardingFlowCoordinator.Route) -> some View {
+  func buildContent(
+    for route: RainOnboardingFlowCoordinator.Route
+  ) -> some View {
     Group {
       switch route {
       case .initial:
         contentViewFactory
           .createView(type: .initial)
+      case .landing:
+        contentViewFactory
+          .createView(type: .landing)
       case .phone:
         contentViewFactory
           .createView(type: .phone)
       case .createWallet:
         contentViewFactory
           .createView(
-            type: .welcome(RainContentViewFactory.WelcomeType.createWallet)
+            type: .createWallet
+          )
+      case .setWalletPin:
+        contentViewFactory
+          .createView(
+            type: .setPortalWalletPin
           )
       case .personalInformation:
         contentViewFactory
           .createView(
-            type: .welcome(RainContentViewFactory.WelcomeType.personalInformation)
+            type: .residentialAddress
           )
       case .accountInReview:
         contentViewFactory

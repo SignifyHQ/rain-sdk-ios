@@ -15,10 +15,10 @@ extension AppDelegate {
     // TODO: iOS 16 support and up; use .toolbarBackground(Color.background, for: .navigationBar)
     let appearance = UINavigationBarAppearance()
     appearance.configureWithDefaultBackground()
-    appearance.backgroundColor = Colors.background.color
+    appearance.backgroundColor = Colors.backgroundPrimary.color
     appearance.shadowColor = .clear
     
-    let image = GenImages.CommonImages.icBack.image.withRenderingMode(.alwaysOriginal)
+    let image = GenImages.Images.icoArrowNavBack.image.withRenderingMode(.alwaysOriginal)
     appearance.setBackIndicatorImage(image, transitionMaskImage: image)
     
     UINavigationBar.appearance().standardAppearance = appearance
@@ -27,7 +27,7 @@ extension AppDelegate {
   
   private func setRefreshControlAppearance() {
     UIRefreshControl.appearance().tintColor = .clear
-    UIRefreshControl.appearance().addSubview(RefreshAnimationView.shared)
+    UIRefreshControl.appearance().addSubview(DefaultRefreshAnimationView.shared)
   }
 }
 

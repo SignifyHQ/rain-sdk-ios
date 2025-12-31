@@ -10,4 +10,5 @@ public protocol RainCardOrderEntity {
   var postalCode: String { get }
   var countryCode: String { get }
   var country: String { get }
+  var updatedAt: String? { get }
 }

@@ -65,7 +65,7 @@ public struct AssetModel: Hashable, Identifiable {
     self.type = AssetType(rawValue: rainCollateralAsset.symbol?.uppercased() ?? "")
     self.availableBalance = Double(rainCollateralAsset.balance)
     self.availableUsdBalance = rainCollateralAsset.availableUsdBalance
-    self.exchangeRate = rainCollateralAsset.exchangeRate
+    self.exchangeRate = rainCollateralAsset.exchangeRate.rounded(to: 2)
     self.advanceRate = rainCollateralAsset.advanceRate
     
     self.externalAccountId = nil
@@ -86,6 +86,10 @@ public struct AssetModel: Hashable, Identifiable {
     (exchangeRate ?? 1) != 1
   }
   
+  public var hasAdvanceRate: Bool {
+    (advanceRate ?? 100) != 100
+  }
+  
   public var availableBalanceFormatted: String {
     availableBalance.formattedAmount(
       prefix: type == .usd ? Constants.CurrencyUnit.usd.rawValue : nil,
@@ -98,19 +102,40 @@ public struct AssetModel: Hashable, Identifiable {
     )
   }
   
-  public var availableUsdBalanceFormatted: String? {
-    guard type != .usd else {
-      return nil
+  public var totalUsdBalanceFormatted: String? {
+    if type == .usd {
+      return availableUsdBalance?.formattedAmount(
+        prefix: Constants.CurrencyUnit.usd.rawValue,
+        minFractionDigits: Constants.FractionDigitsLimit.fiat.minFractionDigits,
+        maxFractionDigits: Constants.FractionDigitsLimit.fiat.maxFractionDigits
+      )
+    } else {
+      let cryptoUsdValue: Double = availableBalance * (exchangeRate ?? 1)
+      
+      return cryptoUsdValue.formattedAmount(
+        prefix: Constants.CurrencyUnit.usd.rawValue,
+        minFractionDigits: Constants.FractionDigitsLimit.fiat.minFractionDigits,
+        maxFractionDigits: Constants.FractionDigitsLimit.fiat.maxFractionDigits
+      )
     }
-    return availableUsdBalance?.formattedAmount(
-      prefix: Constants.CurrencyUnit.usd.rawValue,
-      minFractionDigits: Constants.FractionDigitsLimit.fiat.minFractionDigits,
-      maxFractionDigits: Constants.FractionDigitsLimit.fiat.maxFractionDigits
-    )
+  }
+  
+  public var availableToSpendUsdBalanceFormatted: String? {
+    if type == .usd {
+      return totalUsdBalanceFormatted
+    } else {
+      let cryptoUsdValue: Double = availableBalance * (exchangeRate ?? 1) * (advanceRate ?? 100) / 100
+      
+      return cryptoUsdValue.formattedAmount(
+        prefix: Constants.CurrencyUnit.usd.rawValue,
+        minFractionDigits: Constants.FractionDigitsLimit.fiat.minFractionDigits,
+        maxFractionDigits: Constants.FractionDigitsLimit.fiat.maxFractionDigits
+      )
+    }
   }
   
   public var exchangeRateFormatted: String {
-    "x\(exchangeRate?.formattedUSDAmount() ?? "N/A")"
+    "\(exchangeRate?.formattedUSDAmount() ?? "N/A")"
   }
   
   public var advanceRateFormatted: String {
@@ -119,6 +144,6 @@ public struct AssetModel: Hashable, Identifiable {
       return "N/A"
     }
     
-    return "x\(advanceRate.formattedAmount())%"
+    return "\(advanceRate.formattedAmount())%"
   }
 }

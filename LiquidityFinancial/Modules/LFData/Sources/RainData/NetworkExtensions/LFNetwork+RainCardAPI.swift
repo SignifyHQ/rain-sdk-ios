@@ -13,6 +13,15 @@ extension LFCoreNetwork: RainCardAPIProtocol where R == RainCardRoute {
     )
   }
   
+  public func getCardDetail(cardID: String) async throws -> APIRainCardDetail {
+    try await request(
+      RainCardRoute.getCardDetail(cardID: cardID),
+      target: APIRainCardDetail.self,
+      failure: LFErrorObject.self,
+      decoder: .apiDecoder
+    )
+  }
+  
   public func getCardOrders() async throws -> [APIRainCardOrder] {
     try await request(
       RainCardRoute.getCardOrders,

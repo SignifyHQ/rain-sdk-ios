@@ -36,3 +36,7 @@
 "fundCard.message" = "DogeCard is a Pre-paid Debit Card, which means there are no credit checks, interest payments or overdrafts. However, you have to deposit money to your account before you can use. Start by connecting your bank:";
 
 "cause.share.card.fundraiser" = "I'm using CauseCard to support %@ by making passive donations through my everyday purchases.";
+
+// MARK: - Landing Screen
+
+"landing.signup.description.title" = "New to Avalanche?";

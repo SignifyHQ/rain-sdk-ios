@@ -7,6 +7,35 @@ public enum Country: String, Identifiable, CaseIterable {
     UUID()
   }
   
+  public static var supportedCountries: [Country] {
+    allCases.filter { country in
+      !unsupportedCountries.contains(country)
+    }
+  }
+  
+  public static var unsupportedCountries: [Country] {
+    [
+      .BY,
+      .CU,
+      .IN,
+      .IR,
+      .IQ,
+      .IL,
+      .CN,
+      .NP,
+      .NI,
+      .NG,
+      .KP,
+      .RU,
+      .LK,
+      .SY,
+      .TR,
+      .UA,
+      .VE,
+      .VN
+    ]
+  }
+  
   public var title: String {
     switch self {
     case .US:

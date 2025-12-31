@@ -3,6 +3,7 @@ import Foundation
 // sourcery: AutoMockable
 public protocol RainCardAPIProtocol {
   func getCards() async throws -> [APIRainCard]
+  func getCardDetail(cardID: String) async throws -> APIRainCardDetail
   func getCardOrders() async throws -> [APIRainCardOrder]
   func orderPhysicalCard(parameters: APIRainOrderCardParameters) async throws -> APIRainCard
   func orderPhysicalCardWithApproval(parameters: APIRainOrderCardParameters) async throws -> APIRainCardOrder

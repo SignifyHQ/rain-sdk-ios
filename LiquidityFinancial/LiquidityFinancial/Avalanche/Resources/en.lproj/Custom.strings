@@ -46,3 +46,7 @@
 
 // Crypto
 "crypto.value" = "Avax";
+
+// MARK: - Landing Screen
+
+"landing.signup.description.title" = "New to Avalanche?";

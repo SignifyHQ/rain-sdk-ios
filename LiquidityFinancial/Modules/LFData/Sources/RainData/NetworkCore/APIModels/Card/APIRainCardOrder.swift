@@ -13,6 +13,7 @@ public struct APIRainCardOrder: Decodable {
   public var postalCode: String
   public var countryCode: String
   public var country: String
+  public var updatedAt: String?
 }
 
 extension APIRainCardOrder: RainCardOrderEntity {}

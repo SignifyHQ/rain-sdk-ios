@@ -54,7 +54,7 @@ class AppCoordinator: AppCoordinatorProtocol {
       .sink { [weak self] _ in
         log.warning("The server has forcibly logged out the user")
         self?.logout()
-        self?.set(route: .onboardingPhone)
+        self?.set(route: .dumpOut(.landing))
       }
       .store(in: &subscribers)
   }

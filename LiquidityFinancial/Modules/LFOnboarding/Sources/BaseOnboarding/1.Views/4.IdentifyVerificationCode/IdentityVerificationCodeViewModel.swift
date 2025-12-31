@@ -96,7 +96,7 @@ extension IdentityVerificationCodeViewModel {
         setupPortal(portalToken: response.portalSessionToken)
         
         accountDataManager.update(phone: phoneNumber)
-        accountDataManager.stored(phone: phoneNumber)
+        accountDataManager.phoneNumber = phoneNumber
         
         await checkOnboardingState()
       } catch {

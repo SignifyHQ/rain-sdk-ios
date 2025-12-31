@@ -8,6 +8,8 @@ public extension Notification.Name {
   
   static let noLinkedCards = Notification.Name("com.liquidityfinancial.cards.noLinkedCards")
   
+  static let createdCard = Notification.Name("com.liquidityfinancial.cards.createdCard")
+  
   static let refreshListCards = Notification.Name("com.liquidityfinancial.cards.refreshListCards")
   
   static let environmentChanage = Notification.Name("com.liquidityfinancial.environment.change")

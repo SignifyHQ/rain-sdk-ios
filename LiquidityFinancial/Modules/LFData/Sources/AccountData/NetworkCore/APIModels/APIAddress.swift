@@ -7,15 +7,25 @@ public struct APIAddress: Codable {
   public let state: String?
   public let postalCode: String?
   public let country: String?
+  public let countryCode: String?
 }
 
 public extension APIAddress {
-  init(line1: String?, line2: String?, city: String?, state: String?, country: String?, postalCode: String?) {
+  init(
+    line1: String?,
+    line2: String?,
+    city: String?,
+    state: String?,
+    country: String?,
+    postalCode: String?,
+    countryCode: String?
+  ) {
     self.line1 = line1
     self.line2 = line2
     self.city = city
     self.state = state
     self.postalCode = postalCode
     self.country = country
+    self.countryCode = countryCode
   }
 }

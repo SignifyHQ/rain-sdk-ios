@@ -1521,3 +1521,353 @@ We will be in touch shortly to invite you to get your new card.";
 
 // Crypto
 "crypto.value" = "Doge";
+
+
+// MARK: - 2025 Redesign
+// New strings for 2025 redesign will go below
+
+// MARK: - Common
+"common.next.button.title" = "Next";
+"common.copy.button.title" = "Copy";
+"common.share.button.title" = "Share";
+"common.continue.button.title" = "Continue";
+"common.retry.button.title" = "Retry";
+"common.confirm.button.title" = "Confirm";
+"common.cancel.button.title" = "Cancel";
+"common.reauthorize.button.title" = "Reauthorize";
+"common.remove.button.title" = "Remove";
+"common.seeAll.button.title" = "See all";
+"common.close.button.title" = "Close";
+"common.save.button.title" = "Save";
+"common.notNow.button.title" = "Not now";
+"common.ok.button.title" = "OK";
+"common.yes.button.title" = "Yes";
+"common.open.button.title" = "Open";
+"common.maybeLater.button.title" = "Maybe later";
+"common.learnMore.button.title" = "Learn more";
+
+"common.search.placeholder" = "Search...";
+
+// MARK: Toast
+"toast.copied.message" = "Card address copied!";
+"toast.removedConnection.message" = "%@ connection removed.";
+
+// MARK: Transaction status
+"transactionStatus.pending" = "Pending";
+"transactionStatus.completed" = "Completed";
+
+// MARK: - Landing Screen
+"landing.login.phone.button.title" = "Log in with phone number";
+"landing.login.email.button.title" = "Log in with email";
+"landing.signup.button.title" = "Sign up";
+
+// MARK: - Walkthrough Screen
+"walkthrough.header.title" = "Here’s how it works";
+"walkthrough.signup.phone.button.title" = "Sign up with phone number";
+"walkthrough.signup.email.button.title" = "Sign up with email";
+
+// MARK: Main Tab Bar
+"tabBar.tab.card.title" = "Card";
+"tabBar.tab.assets.title" = "Assets";
+"tabBar.tab.account.title" = "Account";
+
+// MARK: - Add To Card Screen
+"addToCardView.screen.title" = "Add to card";
+"addToCardView.header.title" = "Avalanche Card Address";
+"addToCardView.header.subtitle" = "Funds can only be added from the Avalanche C-Chain or they may be lost. Learn more.";
+"addToCardView.header.learnMoreLink" = "Learn more.";
+"addToCardView.cardAddress.title" = "Your card address";
+"addToCardView.connectedWallets.title" = "Connected Wallets & Exchanges";
+"addToCardView.connectedWallets.subtitle" = "Connect wallets or exchanges to easily add funds to your card";
+"addToCardView.connectedWallets.noWallets.title" = "No connected wallets or exchanges";
+"addToCardView.connectedWallets.connectButton.title" = "Connect Wallet/Exchange";
+"addToCardView.pendingWallets.title" = "Your Avalanche Card Address is\n being set up. Check back soon.";
+
+// MARK: - Learn More popup
+"learnMore.title" = "What is the Avalanche C-Chain?";
+"learnMore.description" = "The Avalanche C-Chain (Contract Chain) is the part of the Avalanche network that supports smart contracts and most wallets and exchanges.";
+"learnMore.howToMakeSure" = "How to make sure you're using the C-Chain?";
+"learnMore.bullet1" = "Check that your wallet or exchange supports Avalanche C-Chain transfers.";
+"learnMore.bullet2" = "If you're using MetaMask or another wallet, choose the Avalanche C-Chain network before sending.";
+"learnMore.bullet3" = "When in doubt, look for \"C-Chain\" in the network dropdown or transfer options.";
+"learnMore.closeButton" = "Close";
+
+// MARK: Wallet Address Input Screen
+"walletAddressInput.withdrawToken.title" = "Withdraw tokens from card";
+"walletAddressInput.withdrawReward.title" = "Withdraw tokens from card";
+"walletAddressInput.sendAsset.title" = "Send %@ from card";
+"walletAddressInput.header.title" = "Enter wallet address";
+"walletAddressInput.header.subtitle" = "Sending to a non Avalanche C-Chain wallet will result in lost funds. Learn more.";
+"walletAddressInput.header.learnMoreLink" = "Learn more.";
+"walletAddressInput.input.title" = "Wallet Address";
+"walletAddressInput.input.assetTitle" = "%@ Wallet Address";
+"walletAddressInput.input.placeholder" = "Wallet Address";
+"walletAddressInput.note" = "The estimated network fee is an approximation and the actual network fee applied on a withdrawal may differ.";
+
+// MARK: Withdrawal Amount Screen
+"withdrawalAmount.screen.title" = "Withdraw tokens from card";
+"withdrawalAmount.header.title" = "Enter withdrawal amount";
+"withdrawalAmount.input.title" = "Withdrawal amount";
+"withdrawalAmount.available.title" = "%@ available";
+"withdrawalAmount.exceedAvailable.title" = "Exceeds available funds.";
+
+// MARK: Withdrawal Confirmation Screen
+"withdrawalConfirmation.screen.title" = "Withdraw tokens from card";
+"withdrawalConfirmation.header.title" = "Confirm withdrawal";
+"withdrawalConfirmation.info.amount" = "Amount";
+"withdrawalConfirmation.info.nickname" = "Nickname";
+"withdrawalConfirmation.info.address" = "Wallet Address";
+"withdrawalConfirmation.info.fee" = "Fee";
+"withdrawalConfirmation.info.free" = "Free";
+
+// MARK: Transaction Details Screen
+"transactionDetails.screen.title" = "Transaction details";
+"transactionDetails.header.withdrawal.title" = "%@ Withdrawal";
+"transactionDetails.header.deposit.title" = "%@ Deposit";
+"transactionDetails.info.transactionDate" = "Transaction date";
+"transactionDetails.info.transactionTime" = "Transaction time";
+"transactionDetails.info.orderType" = "Transaction type";
+"transactionDetails.info.orderType.withdrawal" = "Withdrawal";
+"transactionDetails.info.orderType.deposit" = "Deposit";
+"transactionDetails.info.orderType.purchase" = "Purchase";
+"transactionDetails.info.orderType.refund" = "Refund";
+"transactionDetails.info.nickname" = "Nickname";
+"transactionDetails.info.address" = "Wallet Address";
+"transactionDetails.info.fee" = "Fee";
+"transactionDetails.info.free" = "Free";
+"transactionDetails.info.hash" = "Transaction hash";
+"transactionDetails.reportProblem.title" = "Having a problem with this transaction?";
+"transactionDetails.reportProblem.button" = "Report a problem";
+
+// MARK: Save Wallet Address
+"saveWalletAddress.popup.title" = "Save wallet address";
+"saveWalletAddress.popup.subtitle" = "Would you like to save this wallet address to use again?";
+
+"saveWalletAddress.screen.title" = "Save wallet address";
+"saveWalletAddress.header.title" = "Create a name for the following address:";
+"saveWalletAddress.input.title" = "Wallet address nickname";
+"saveWalletAddress.input.placeholder" = "Enter a nickname";
+"saveWalletAddress.input.note" = "You can change this at any time";
+"editWalletAddress.screen.title" = "Edit wallet address";
+"editWalletAddress.delete.button.title" = "Delete this address";
+"removeWalletAddress.popup.title" = "Delete from saved address";
+"removeWalletAddress.popup.subtitle" = "Are you sure you want to delete \“%@\” from your list of saved wallet addresses?\n\nYou can always add this back later on.";
+"removeWalletAddress.popup.confirm.title" = "Confirm deletion";
+"removeWalletAddress.success.message" = "\“%@\” removed from your list of saved wallet address.";
+
+// MARK: Saved Wallet Address List
+"savedWalletAddressList.screen.title" = "Saved wallet addresses";
+"savedWalletAddressList.saveANew.button.title" = "Save a new wallet address";
+"savedWalletAddressList.noData.title" = "All your saved wallet addresses will appear here. You can save an address with a nickname to make transferring funds easier.";
+
+// MARK: Save A New Wallet Address
+"saveNewWalletAddress.screen.title" = "Save a new wallet address";
+"saveNewWalletAddress.success.message" = "\“%@\” added to your list of saved wallet address.";
+
+// MARK: Reauthorize Connection Popup
+"reauthorizeConnection.popup.title" = "Reauthorize %@ connection";
+"reauthorizeConnection.popup.description" = "Your connection to %@ has expired. Please reauthorize to continue transfers.";
+
+// MARK: Remove Connection Popup
+"removeConnection.popup.title" = "Remove %@ connection?";
+"removeConnection.popup.description" = "Are you sure you want to remove your %@ connection?\n\nIf you proceed, you’ll need to reconnect this wallet or exchange later to fund your card.";
+
+// MARK: Dashboard Tab
+"dashboard.card.viewCard.title" = "View Card";
+"dashboard.card.balance.title" = "Spending power";
+"dashboard.card.addFunds.title" = "Add funds";
+"dashboard.card.withdrawFunds.title" = "Withdraw funds";
+"dashboard.noState.title" = "Get started with Avalanche";
+"dashboard.noState.subtitle" = "Add funds, make withdrawals, and track every transaction, right here with your Avalanche Card.";
+"dashboard.noState.howItWorks.button.title" = "Learn how it works";
+"dashboard.resources.title" = "Resources";
+"dashboard.transactions.title" = "Transactions";
+
+// MARK: Transactions screen
+"transactions.screen.title" = "Transactions";
+"transactions.showPurchasedCurrency.title" = "Show in purchased currency";
+
+"transactions.filters.all.title" = "All Filters";
+"transactions.filters.typeFilter.title" = "Type";
+"transactions.filters.typeFilter.addition.title" = "Addition";
+"transactions.filters.typeFilter.withdrawal.title" = "Withdrawal";
+"transactions.filters.typeFilter.purchase.title" = "Purchase";
+"transactions.filters.currencyFilter.title" = "Currency";
+"transactions.filters.buttons.resetAll.title" = "Reset all";
+"transactions.filters.buttons.resetAllFilters.title" = "Reset all filters";
+"transactions.filters.buttons.apply.title" = "Apply";
+
+// MARK: Assets
+"assets.spendingPower.title" = "Spending power of card";
+"assets.spendingPower.totlaAssetValue.title" = "%@ Total asset value";
+"assets.addFunds.button.title" = "Add funds to card";
+"assets.availableAssets.header.title" = "Assets available to spend";
+"assets.availableAssets.header.subtitle" = "Asset balances will only do down when settled charges are paid or liquidated.";
+"assets.assetBreakdown.header.title" = "Breakdown of active assets";
+"assets.assetBreakdown.rows.inTheCard.title" = "%@ in the card";
+"assets.assetBreakdown.rows.marketPrice.title" = "Market price";
+"assets.assetBreakdown.rows.totalTokenValue.title" = "Total %@ value";
+"assets.assetBreakdown.rows.availableToSpend.title" = "Available to spend: %@";
+"assets.assetBreakdown.rows.availableToSpend.tooltip.body" = "%@ is a volatile asset and therefore offers less consistent spending power. In this case, it’s set to 50%%.";
+"assets.assetBreakdown.rows.totalAssetValue.title" = "Total asset value:";
+"assets.assetBreakdown.rows.pendingCharges.title" = "Pending charges";
+"assets.assetBreakdown.rows.pendingLiquidations.title" = "Pending liquidations";
+"assets.assetBreakdown.rows.spendingPower.title" = "Spending power";
+"assets.assetBreakdown.disclosure" = "Market Prices are the current value of the token based on latest available data. Market prices change frequently. Available %% is the percentage we apply to your asset when determining your spending power. Fluctuating assets get less spending power.";
+"assets.assetBreakdown.totalAvailableToSpend.title" = "Total available to spend";
+"assets.assetBreakdown.totalAvailableToSpend.tooltip" = "Your total available to spend may be less than your total asset value when holding AVAX or WAVAX, since these assets are capped at 50%% spending power.";
+
+// MARK: My Account
+"myAccount.screen.title" = "Account";
+"myAccount.item.personalProfile.title" = "Personal profile";
+"myAccount.item.walletBackup.title" = "Wallet backup";
+"myAccount.item.savedWalletAddresses.title" = "Saved wallet addresses";
+"myAccount.item.activateLimitedEditionCard.title" = "Activate limited edition card";
+"myAccount.item.enableNotifications.title" = "Notifications";
+"myAccount.logout.button.title" = "Logout";
+"myAccount.deleteAccount.button.title" = "Delete account";
+"myAccount.version.title" = "Version %@";
+
+"logoutPopup.confirmation.title" = "Logout";
+"logoutPopup.confirmation.subtitle" = "Are you sure you want to log out?";
+"logoutPopup.confirmation.button.title" = "Yes, log me out";
+
+"deleteAccountPopup.confirmation.title" = "Delete account";
+"deleteAccountPopup.confirmation.subtitle" = "Are you sure you want to delete your account?\n\nAny funds remaining on your card will be permanently lost, and we won’t be able to recover them after your account is deleted.";
+"deleteAccountPopup.confirmation.button.title" = "Yes, delete this account";
+
+// MARK: My Profile
+"myProfile.screen.title" = "Personal Profile";
+"myProfile.info.phoneNumber.title" = "Phone number";
+"myProfile.info.email.title" = "Email";
+"myProfile.info.address.title" = "Address";
+
+// MARK: Wallet Backup
+"walletBackup.screen.title" = "Wallet backup";
+"walletBackup.icloud.title" = "iCloud backup";
+"walletBackup.icloud.subtitle" = "Store your backup key securely on iCloud";
+"walletBackup.icloud.lastUpdated" = "Last updated: %@";
+"walletBackup.icloud.update.button.title" = "Update backup";
+"walletBackup.pin.title" = "Backup using PIN";
+"walletBackup.pin.subtitle" = "Save your PIN in a secure location, manually";
+"walletBackup.pin.update.button.title" = "Update PIN";
+"walletBackup.status.active" = "Active";
+"walletBackup.status.inactive" = "Inactive";
+"walletBackup.note" = "Back up your account to avoid losing access if you reset or lose your device. Without a backup, Avalanche Card can’t help recover it.";
+
+"walletBackup.updatePin.popup.title" = "Update backup PIN";
+"walletBackup.updatePin.inputNewPin.title" = "Enter a new backup PIN";
+"walletBackup.updatePin.inputNewPin.note" = "Keep your backup PIN secure";
+"walletBackup.updatePin.inputConfirmPin.title" = "Enter a confirmation backup PIN";
+"walletBackup.updatePin.inputConfirmPin.errorMessage" = "Incorrect PIN, try again";
+"walletBackup.updatePin.inputConfirmPin.successMessage" = "PIN created successfully!";
+
+"walletBackup.updateBackup.popup.title" = "Update iCloud backup";
+"walletBackup.updateBackup.startContent.title" = "This will refresh your wallet backup with the latest data.";
+"walletBackup.updateBackup.inProgressContent.title" = "Please wait while we update your backup key with the latest data and sync to iCloud.";
+"walletBackup.updateBackup.successContent.title" = "Your wallet has been successfully backed up to iCloud.";
+"walletBackup.signInToIcloud.message" = "Please sign in to your iCloud account on this device.";
+
+// MARK: Notification Popup
+"notificationRequest.popup.title" = "Would you like to be notified?";
+"notificationRequest.popup.subtitle" = "Would you like to be notified about the status of your account or if your card has been charged?";
+
+// MARK: Apple Pay Pop up
+"applePay.popup.title" = "Apple Pay is here!";
+"applePay.popup.subtitle" = "You can now add your Avalanche Card to Apple Pay for a faster, safer way to pay.";
+"applePay.popup.action" = "Add card to Apple Pay";
+"applePay.popup.dismiss" = "Maybe later";
+
+// MARK: Open Notification Setting Popup
+"notificationSetting.popup.title" = "Enable Notifications";
+"notificationSetting.popup.subtitle" = "Notifications are currently turned off. Please enable them in Settings to stay updated.";
+
+// MARK: Open Camera Setting Popup
+"cameraSetting.popup.title" = "Enable Camera Access";
+"cameraSetting.popup.subtitle" = "Camera access is currently turned off. Please enable it in Settings to scan QR codes.";
+
+// MARK: Card Details List
+"cardDetailsList.virtualCard.screen.title" = "Virtual card details";
+"cardDetailsList.physicalCard.screen.title" = "Physical card details";
+"cardDetailsList.showCardNumber.title" = "Show Card Number";
+"cardDetailsList.lockVirtualCard.title" = "Lock virtual card";
+"cardDetailsList.lockCard.subtitle" = "Stop card from being used";
+"cardDetailsList.lockPhysicalCard.title" = "Lock physical card";
+"cardDetailsList.orderPhysical.title" = "Order a physical card";
+"cardDetailsList.closeVirtualCard.title" = "Close virtual card";
+"cardDetailsList.closePhysicalCard.title" = "Close physical card";
+"cardDetailsList.disabledCards.title" = "See disabled virtual cards";
+"cardDetailsList.createNewVirtualCard.title" = "Request a new virtual card";
+"cardDetailsList.shippingDetails.title" = "Card shipping details";
+"cardDetailsList.activatePhysicalCard.title" = "Activate physical card";
+"cardDetailsList.detail.cardNumber.title" = "Card number";
+"cardDetailsList.detail.exp.title" = "Exp";
+"cardDetailsList.detail.cvv.title" = "CVV";
+"cardDetailsList.detail.locked.title" = "Locked";
+"cardDetailsList.closed.time" = "This card was closed and disabled on %@";
+"cardDetailsList.shippingInProgress.title" = "Card order request in progress.";
+"cardDetailsList.shippingInProgress.subtitle" = "Order request is being processed. Tracking details are unavailable. Please activate it once it arrives.";
+"cardDetailsList.shippingPost30Days.title" = "Your card is on the way!";
+"cardDetailsList.shippingPost30Days.subtitle" = "If you haven't received your card yet, delivery might be taking longer than expected. Tracking details are unavailable. If you’ve received your card please activate it today.";
+"cardDetailsList.activateCard.title" = "Activate card";
+"cardDetailsList.canceledCardOrder.title" = "Physical card order canceled";
+"cardDetailsList.canceledCardOrder.subtitle" = "We could not verify your shipping details. Please try submitting it again or contact support for more details.";
+"cardDetailsList.canceledCardOrder.orderAgain.button.title" = "Order again";
+
+"lockCard.popup.title" = "Lock %@";
+"lockCard.popup.subtitle" = "Are you sure you want to lock your %@? Once locked, the card can’t be used for any transactions.\n\nYou can unlock it anytime when you need to use it again.";
+"lockCard.popup.confirm.button.title" = "Lock %@";
+
+"closeVirtualCard.popup.title" = "Close virtual card";
+"closeVirtualCard.popup.subtitle" = "Are you sure you want to close your virtual card?\n\nThis action will permanently disable your card and you’ll have to request a new card to be activated.";
+"closeVirtualCard.popup.confirm.button.title" = "Close virtual card";
+
+"closedVirtualCardSuccess.popup.title" = "Virtual card closed";
+"closedVirtualCardSuccess.popup.subtitle" = "Your virtual card has been closed. \n\nYou can request a new virtual card at any time, and it will be instantly available in your account.";
+"closedVirtualCardSuccess.popup.requestNew.button.title" = "Request a new virtual card";
+
+"closePhysicalCard.popup.title" = "Close physical card";
+"closePhysicalCard.popup.subtitle" = "Are you sure you want to close your physical card?\n\nThis action will permanently disable the card, and you won’t be able to order a replacement right now.\n\nYou may be eligible to request a new physical card in the future.";
+"closePhysicalCard.popup.confirm.button.title" = "Close physical card";
+
+"closedPhysicalCardSuccess.popup.title" = "Physical card closed";
+"closedPhysicalCardSuccess.popup.subtitle" = "Your physical card has been closed.\n\nYou can’t order a new physical card right now, but we’ll notify you if you become eligible to request one in the future.";
+
+"createNewVirtualCard.popup.subtitle" = "You can request a new virtual card at any time, and it will be instantly available in your account.";
+
+"disabledVirtualCards.screen.title" = "Disabled virtual cards";
+
+// MARK: Order Physical Card
+"orderPhysicalCard.screen.title" = "Order a physical card";
+
+"shippingAddressConfirmation.physicalCard.subtitle" = "One card per account • Free shipping\nArrives in 14-30+ business days";
+"shippingAddressConfirmation.shippingTo.title" = "Shipping to";
+"shippingAddressConfirmation.phoneNumber.title" = "Phone number";
+"shippingAddressConfirmation.address.title" = "Shipping Address";
+"shippingAddressConfirmation.placeOder.title"  = "Place order";
+"shippingAddressConfirmation.editAddress.title" = "Edit shipping address";
+
+"shippingAddressEntry.title" = "Where should we send your physical %@ Card?";
+"shippingAddressEntry.mainAddress.title" = "Address line 1";
+"shippingAddressEntry.city.title" = "City";
+"shippingAddressEntry.country.title" = "Country";
+"shippingAddressEntry.state.title" = "State";
+"shippingAddressEntry.zipCode.title" = "Zip Code";
+"shippingAddressEntry.additionalAddress.title" = "Apartment, suite, etc. (optional)";
+"shippingAddressEntry.confirm.buttonTitle" = "Confirm address";
+"shippingAddressEntry.couldntFindAddress.buttonTitle" = "Couldn’t find your address?";
+"shippingAddressEntry.address.placeholder" = "Enter address";
+"shippingAddressEntry.city.placeholder" = "Enter city";
+"shippingAddressEntry.country.placeholder" = "Select country";
+"shippingAddressEntry.state.placeholder" = "Enter state";
+"shippingAddressEntry.zipCode.placeholder" = "Enter zip code";
+"shippingAddressEntry.additionalAddress.placeholder" = "Apt, suite, floor, etc.";
+
+"orderPhysicalCardSuccess.popup.title" = "Physical card order request has been placed!";
+"orderPhysicalCardSuccess.popup.subtitle" = "Thank you for placing an order for your physical card. It will arrive in 14-30+ business days once it is processed. Please activate it once it arrives.";
+
+// MARK: Activate Physical Card
+"activatePhysicalCard.screen.title" = "Activate your physical card";
+"activatePhysicalCard.screen.subtitle" = "Enter the last four digits of your physical card to activate it";
+"activatePhysicalCard.activatedCard.title" = "Card activated!";
+"activatePhysicalCard.activatedCard.description" = "Your %@ Card is now active and ready to use for purchases anywhere Visa is accepted as well as ATM withdrawals.";

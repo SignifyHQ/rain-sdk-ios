@@ -11,6 +11,9 @@ public extension UserDefaults {
   @LFUserDefault(key: Key.lastestFCMToken, defaultValue: "")
   static var lastestFCMToken: String
   
+  @LFUserDefault(key: Key.enabledNotificationSetting, defaultValue: false)
+  static var enabledNotificationSetting: Bool
+  
   @LFUserDefault(key: Key.accessTokenExpiresAt, defaultValue: 0)
   static var accessTokenExpiresAt: TimeInterval
   
@@ -31,6 +34,9 @@ public extension UserDefaults {
   
   @LFUserDefault(key: Key.phoneNumber, defaultValue: "")
   static var phoneNumber: String
+  
+  @LFUserDefault(key: Key.countryCode, defaultValue: "")
+  static var countryCode: String
   
   @LFUserDefault(key: Key.userSessionID, defaultValue: [:])
   static var userSessionID: [String: String]

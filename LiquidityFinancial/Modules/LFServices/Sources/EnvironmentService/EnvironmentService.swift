@@ -4,6 +4,7 @@ import LFUtilities
 // MARK: - EnvironmentService
 public protocol EnvironmentServiceProtocol {
   var networkEnvironment: NetworkEnvironment { get set }
+  func toggleEnvironment()
 }
 
 public class EnvironmentService: EnvironmentServiceProtocol, ObservableObject {
@@ -27,6 +28,10 @@ public class EnvironmentService: EnvironmentServiceProtocol, ObservableObject {
         userInfo: [NSNotification.Name.environmentChanage.rawValue: newValue]
       )
     }
+  }
+  
+  public func toggleEnvironment() {
+    networkEnvironment = networkEnvironment == .productionLive ? .productionTest : .productionLive
   }
   
   private static func loadEnvironment(value: String) -> NetworkEnvironment {

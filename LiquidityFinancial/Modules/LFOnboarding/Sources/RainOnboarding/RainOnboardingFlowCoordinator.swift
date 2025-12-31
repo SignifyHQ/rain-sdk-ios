@@ -84,10 +84,20 @@ public extension RainOnboardingFlowCoordinator {
     do {
       guard authorizationManager.isTokenValid() else {
         try await authorizationManager.refreshToken()
+        // Make sure we have the most resent user object in case user
+        // drops off in the middle of the onboarding process
+        let user = try await getUserUseCase.execute()
+        handleDataUser(user: user)
+        // Continue loading user data
         try await fetchAndUpdateForStart()
+        
         return
       }
-      
+      // Make sure we have the most resent user object in case user
+      // drops off in the middle of the onboarding process
+      let user = try await getUserUseCase.execute()
+      handleDataUser(user: user)
+      // Continue loading user data
       try await fetchAndUpdateForStart()
     } catch {
       log.error(error.userFriendlyMessage)
@@ -193,7 +203,7 @@ public extension RainOnboardingFlowCoordinator {
   
   func forceLogout() {
     clearUserData()
-    set(route: .phone)
+    set(route: .landing)
   }
 }
 
@@ -295,6 +305,8 @@ private extension RainOnboardingFlowCoordinator {
   func handleOnboardingMissingSteps(from steps: [RainOnboardingMissingSteps]) {
     if steps.contains(.createPortalWallet) {
       set(route: .createWallet)
+    } else if steps.contains(.setPortalWalletPin) {
+      set(route: .setWalletPin)
     } else if steps.contains(.createRainUser) {
       set(route: .personalInformation)
     } else if steps.contains(.needsInformation) {
@@ -321,7 +333,8 @@ private extension RainOnboardingFlowCoordinator {
   }
   
   func checkUserIsValid() -> Bool {
-    !accountDataManager.phoneNumber.isEmpty
+    // TODO (Volo): Remove these and refactor to something that makes more sense
+    !accountDataManager.phoneNumber.isEmpty || !accountDataManager.userEmail.isEmpty
   }
 }
 
@@ -329,8 +342,10 @@ private extension RainOnboardingFlowCoordinator {
 public extension RainOnboardingFlowCoordinator {
   enum Route: Hashable, Identifiable {
     case initial
+    case landing
     case phone
     case createWallet
+    case setWalletPin
     case personalInformation
     case accountInReview
     case dashboard

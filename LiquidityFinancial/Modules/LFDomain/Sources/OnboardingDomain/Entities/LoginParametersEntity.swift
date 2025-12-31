@@ -2,8 +2,11 @@ import Foundation
 
 // sourcery: AutoMockable
 public protocol LoginParametersEntity {
-  var phoneNumber: String { get }
+  var phoneNumber: String? { get }
+  var email: String? { get }
+  
   var code: String { get }
+  
   var lastXId: String? { get }
   var verificationEntity: VerificationEntity? { get }
 }

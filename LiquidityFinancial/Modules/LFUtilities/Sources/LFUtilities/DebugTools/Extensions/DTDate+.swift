@@ -9,6 +9,18 @@ extension Date {
     }
     return dateFormatter.string(from: self)
   }
+  
+  public func isAtLeast18() -> Bool {
+    let calendar = Calendar.current
+    let today = Date()
+    
+    guard let dateTurns18 = calendar.date(byAdding: .year, value: 18, to: self)
+    else {
+      return false
+    }
+    
+    return today >= dateTurns18
+  }
 }
 
 extension Double {

@@ -11,6 +11,7 @@ TERMS_URL = https:/$()/legal.avalanchecard.com/legal/avalanche-app-terms-conditi
 CARD_TERMS_URL_US = https:/$()/legal.avalanchecard.com/legal/avalanche-card-us-card-agreement-bcc089aa
 CARD_TERMS_URL_INT = https:/$()/legal.avalanchecard.com/legal/avalanche-card-international-card-agreement-94211945
 ACCOUNT_DISCLOSURE_URL = https:/$()/legal.avalanchecard.com/legal/opening-account-disclosures-f5b8a3a9
+ISSUER_PRIVACY_POLICY_URL = https:/$()/www.third-national.com/privacypolicy
 AGREEMENT_URL = https:/$()/avalanche.co/legal#consumer-account
 PRIVACY_URL = https:/$()/legal.avalanchecard.com/legal/avalanche-app-privacy-policy-945fafe7
 CONSENT_URL = https:/$()/legal.avalanchecard.com/legal/avalanche-card-e-signature-consent-848d80ca

@@ -1,0 +1,12 @@
+{
+  "images" : [
+    {
+      "filename" : "ico_get_started.pdf",
+      "idiom" : "universal"
+    }
+  ],
+  "info" : {
+    "author" : "xcode",
+    "version" : 1
+  }
+}

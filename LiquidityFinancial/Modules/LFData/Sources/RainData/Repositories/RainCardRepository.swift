@@ -12,6 +12,10 @@ public class RainCardRepository: RainCardRepositoryProtocol {
     try await rainCardAPI.getCards()
   }
   
+  public func getCardDetail(cardID: String) async throws -> RainCardDetailEntity {
+    try await rainCardAPI.getCardDetail(cardID: cardID)
+  }
+  
   public func getCardOrders() async throws -> [RainCardOrderEntity] {
     try await rainCardAPI.getCardOrders()
   }

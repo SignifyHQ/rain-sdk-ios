@@ -15,7 +15,9 @@ struct AppView: View {
   }
   
   @ViewBuilder
-  private func buildContent(for route: AppCoordinator.Route) -> some View {
+  private func buildContent(
+    for route: AppCoordinator.Route
+  ) -> some View {
     Group {
       switch route {
       case.onboardingPhone:
@@ -23,7 +25,7 @@ struct AppView: View {
       case .onboarding:
         RainOnboardingContentView()
       case .dashboard:
-        HomeView { route in
+        MainTabBar { route in
           viewModel.setDumpOutRoute(route)
         }
       case .dumpOut(let route):
@@ -31,11 +33,5 @@ struct AppView: View {
       }
     }
     .embedInNavigation()
-  }
-}
-
-struct ContentView_Previews: PreviewProvider {
-  static var previews: some View {
-    AppView()
   }
 }

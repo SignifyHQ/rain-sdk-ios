@@ -25,12 +25,14 @@ public struct APITransaction: Codable, TransactionEntity {
   public let completedAt: String?
   public let createdAt: String
   public let updatedAt: String
+  public let contractAddress: String?
+  public let transactionHash: String?
   public var reward: APIReward?
   public var receipt: APITransactionReceipt?
   public var externalTransaction: APIExternalTransaction?
   public var note: APITransactionNote?
   
-  public init(id: String, accountId: String, title: String?, description: String?, amount: Double, currentBalance: Double?, fee: Double?, type: String, status: String?, completedAt: String?, createdAt: String, updatedAt: String, reward: APIReward? = nil, receipt: APITransactionReceipt? = nil, externalTransaction: APIExternalTransaction? = nil, note: APITransactionNote? = nil) {
+  public init(id: String, accountId: String, title: String?, description: String?, amount: Double, currentBalance: Double?, fee: Double?, type: String, status: String?, completedAt: String?, createdAt: String, updatedAt: String, contractAddress: String?, transactionHash: String?, reward: APIReward? = nil, receipt: APITransactionReceipt? = nil, externalTransaction: APIExternalTransaction? = nil, note: APITransactionNote? = nil) {
     self.id = id
     self.accountId = accountId
     self.title = title
@@ -43,6 +45,8 @@ public struct APITransaction: Codable, TransactionEntity {
     self.completedAt = completedAt
     self.createdAt = createdAt
     self.updatedAt = updatedAt
+    self.contractAddress = contractAddress
+    self.transactionHash = transactionHash
     self.reward = reward
     self.receipt = receipt
     self.externalTransaction = externalTransaction

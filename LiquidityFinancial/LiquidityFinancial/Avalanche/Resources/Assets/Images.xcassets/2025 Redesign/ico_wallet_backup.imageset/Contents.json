@@ -1,0 +1,12 @@
+{
+  "images" : [
+    {
+      "filename" : "ico_wallet_backup.pdf",
+      "idiom" : "universal"
+    }
+  ],
+  "info" : {
+    "author" : "xcode",
+    "version" : 1
+  }
+}
