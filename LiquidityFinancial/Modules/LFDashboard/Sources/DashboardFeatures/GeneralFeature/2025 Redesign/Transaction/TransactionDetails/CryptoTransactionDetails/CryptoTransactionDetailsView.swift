@@ -4,7 +4,7 @@ import LFLocalizable
 import LFUtilities
 
 struct CryptoTransactionDetailsView: View {
-  @StateObject private var viewModel: CryptoTransactionDetailViewModel
+  @StateObject private var viewModel: CryptoTransactionDetailsViewModel
   let popAction: (() -> Void)?
   
   init(
@@ -15,7 +15,7 @@ struct CryptoTransactionDetailsView: View {
     popAction: (() -> Void)? = nil
   ) {
     _viewModel = .init(
-      wrappedValue: CryptoTransactionDetailViewModel(
+      wrappedValue: CryptoTransactionDetailsViewModel(
         transaction: transaction,
         transactionInfos: transactionInfos,
         isNewAddress: isNewAddress,
@@ -38,13 +38,16 @@ private extension CryptoTransactionDetailsView {
       ForEach(viewModel.transactionInfos, id: \.self) { item in
         let isFeeLine = item.title == L10N.Common.TransactionDetails.Info.fee
         let shouldUnderline = item.title == L10N.Common.TransactionDetails.Info.hash
+        let url = shouldUnderline ? viewModel.hashNetworkUrl(hash: item.value) : nil
+        
         if !item.value.isEmpty || isFeeLine {
           informationCell(
             title: item.title,
             value: item.value,
             additionalValue: isFeeLine ? L10N.Common.TransactionDetails.Info.free : nil,
             isFeeLine: isFeeLine,
-            shouldUnderlineValue: shouldUnderline
+            shouldUnderlineValue: shouldUnderline,
+            underlineUrl: url
           )
           lineView
         }
@@ -80,7 +83,8 @@ private extension CryptoTransactionDetailsView {
     value: String,
     additionalValue: String? = nil,
     isFeeLine: Bool = false,
-    shouldUnderlineValue: Bool = false
+    shouldUnderlineValue: Bool = false,
+    underlineUrl: String? = nil
   ) -> some View {
     VStack(alignment: .leading, spacing: 20) {
       HStack(alignment: .top, spacing: 8) {
@@ -95,7 +99,12 @@ private extension CryptoTransactionDetailsView {
           .foregroundColor(Colors.textPrimary.swiftUIColor)
           .strikethrough(isFeeLine, color: Colors.textPrimary.swiftUIColor)
           .multilineTextAlignment(.trailing)
-          .applyIf(shouldUnderlineValue) { $0.underline() }
+          .applyIf(shouldUnderlineValue) {
+            $0.underline()
+              .onTapGesture {
+                viewModel.openURL(urlString: underlineUrl)
+              }
+          }
         
         if let additionalValue {
           Text(additionalValue)

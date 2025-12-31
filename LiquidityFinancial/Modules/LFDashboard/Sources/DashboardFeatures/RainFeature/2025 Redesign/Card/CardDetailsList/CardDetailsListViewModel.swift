@@ -138,7 +138,7 @@ public final class CardDetailsListViewModel: ObservableObject {
   
   var isShowingCanceledCardOrder: Bool {
     currentCard.cardType == .physical
-    && currentCard.cardStatus == .canceled
+    && currentCard.cardStatus == .rejected
   }
   
   var cardholderName: String {
@@ -528,15 +528,15 @@ extension CardDetailsListViewModel {
     }
     
     // Latest canceled order if any
-    let canceledOrder = orders
+    let rejectedOrder = orders
       .filter { card in
-        card.cardStatus == .canceled
+        card.cardStatus == .rejected
       }
       .sorted { $0.updatedAtDate ?? .distantPast > $1.updatedAtDate ?? .distantPast }
       .first
     
     // Dont have canceled order
-    guard let canceledOrder else {
+    guard let rejectedOrder else {
       return nil
     }
     
@@ -548,11 +548,11 @@ extension CardDetailsListViewModel {
     
     // Dont have physical card before
     guard let latestCanceledPhysicalCard else {
-      return canceledOrder
+      return rejectedOrder
     }
     
-    let isNewerCanceledOrder = latestCanceledPhysicalCard.updatedAtDate ?? .distantPast < canceledOrder.updatedAtDate ?? .distantPast
-    return isNewerCanceledOrder ? canceledOrder : nil
+    let isNewerCanceledOrder = latestCanceledPhysicalCard.updatedAtDate ?? .distantPast < rejectedOrder.updatedAtDate ?? .distantPast
+    return isNewerCanceledOrder ? rejectedOrder : nil
   }
   
   private func fetchCardShippingDetail(

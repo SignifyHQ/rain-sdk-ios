@@ -45,7 +45,7 @@ public struct TransactionDetailsView: View {
         DefaultLottieView(loading: .branded)
           .frame(width: 52, height: 52)
       } else {
-        ScrollView {
+        ScrollView(showsIndicators: false) {
           VStack(
             spacing: 24
           ) {

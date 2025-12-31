@@ -10,8 +10,8 @@
 	<string>$(ZENDESK_PROD_KEY)</string>
 	<key>GOOGLE_PLACES_DEV_KEY</key>
 	<string>$(GOOGLE_PLACES_DEV_KEY)</string>
-  <key>ZENDESK_PROD_KEY</key>
-  <string>$(ZENDESK_PROD_KEY)</string>
+	<key>ZENDESK_PROD_KEY</key>
+	<string>$(ZENDESK_PROD_KEY)</string>
 	<key>PORTAL_SECURITY_URL</key>
 	<string>$(PORTAL_SECURITY_URL)</string>
 	<key>PORTAL_PRIVACY_URL</key>
@@ -208,5 +208,9 @@
 	<string>$(WALLET_PRIVACY_URL)</string>
 	<key>ZEROHASH_URL</key>
 	<string>$(ZEROHASH_URL)</string>
+	<key>HASH_NETWORK_DEV_URL</key>
+	<string>$(HASH_NETWORK_DEV_URL)</string>
+	<key>HASH_NETWORK_PROD_URL</key>
+	<string>$(HASH_NETWORK_PROD_URL)</string>
 </dict>
 </plist>

@@ -106,3 +106,15 @@ enum Configs {
     }
   }
 }
+
+public enum PublicConfigs {
+  public enum HashNetwork {
+    public static var devUrl: String {
+      (try? LFConfiguration.value(for: "HASH_NETWORK_DEV_URL")) ?? .empty
+    }
+    
+    public static var prodUrl: String {
+      (try? LFConfiguration.value(for: "HASH_NETWORK_PROD_URL")) ?? .empty
+    }
+  }
+}
