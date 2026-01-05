@@ -51,7 +51,7 @@ public struct MainTabBar: View {
     .navigationLink(item: $viewModel.navigation) { item in
       switch item {
       case .transactionDetail(let id):
-        TransactionDetailView(method: .transactionID(id))
+        TransactionDetailsView(method: .transactionID(id))
       case .cardList:
         CardDetailsListView(viewModel: cardDetailsListViewModel)
       }
