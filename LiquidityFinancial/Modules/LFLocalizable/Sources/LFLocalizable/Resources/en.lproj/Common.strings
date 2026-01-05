@@ -1582,6 +1582,7 @@ We will be in touch shortly to invite you to get your new card.";
 "addToCardView.connectedWallets.noWallets.title" = "No connected wallets or exchanges";
 "addToCardView.connectedWallets.connectButton.title" = "Connect Wallet/Exchange";
 "addToCardView.pendingWallets.title" = "Your Avalanche Card Address is\n being set up. Check back soon.";
+"addToCardView.addToWallet.button.title" = "Add to Apple Wallet";
 
 // MARK: - Learn More popup
 "learnMore.title" = "What is the Avalanche C-Chain?";

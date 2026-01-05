@@ -132,7 +132,6 @@ private extension CardDetailsListView {
         addToWalletButton(
           configuration: configuration
         )
-        .frame(height: 48)
       }
       
       shippingInProgressView
@@ -185,27 +184,17 @@ private extension CardDetailsListView {
   }
   
   func addToWalletButton(configuration: PKAddPaymentPassRequestConfiguration) -> some View {
-    AddPassToWalletButton(configuration) { response in
-      guard let request = try? await viewModel
-        .completeTokenization(
-          certificates: response.certificates,
-          nonce: response.nonce,
-          nonceSignature: response.nonceSignature
-        )
-      else {
-        log.error("Tokenization returned nil request.")
-        return PKAddPaymentPassRequest()
-      }
-      
-      return request
-    } onCompletion: { result in
-      switch result {
-      case .success:
-        viewModel.fetchRainCards()
-        log.error("Card tokenized successfully!")
-      case .failure(let error):
-        log.error(error.userFriendlyMessage)
-      }
+    CustomAddToWalletButtonView(configuration: configuration) { certificates, nonce, nonceSignature in
+      try await viewModel.completeTokenization(
+        certificates: certificates,
+        nonce: nonce,
+        nonceSignature: nonceSignature
+      )
+    } onSuccess: {
+      viewModel.fetchRainCards()
+      log.error("Card tokenized successfully!")
+    } onError: { error in
+      log.error(error.userFriendlyMessage)
     }
   }
   
