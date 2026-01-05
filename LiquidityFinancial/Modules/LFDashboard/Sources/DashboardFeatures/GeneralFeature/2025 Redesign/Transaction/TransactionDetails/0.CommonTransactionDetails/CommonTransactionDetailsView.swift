@@ -102,7 +102,7 @@ private extension CommonTransactionDetailsView {
   ) -> some View {
     HStack(alignment: .top, spacing: 8) {
       Text(title)
-        .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.small.value))
+        .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.ultraSmall.value))
         .foregroundColor(Colors.grey200.swiftUIColor)
       
       Spacer()

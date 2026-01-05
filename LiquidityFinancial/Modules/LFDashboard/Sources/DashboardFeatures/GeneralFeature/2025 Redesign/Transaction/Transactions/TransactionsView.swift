@@ -95,12 +95,19 @@ extension TransactionsView {
   
   var listView: some View {
     ScrollView(showsIndicators: false) {
-      LazyVStack {
+      LazyVStack(
+        spacing: 0
+      ) {
         ForEach($viewModel.filteredTransactions, id: \.id) { $monthSection in
           Section(
             header: headerSectionView(section: monthSection)
               .onTapGesture {
-                withAnimation {
+                withAnimation(
+                  .spring(
+                    response: 0.5,
+                    dampingFraction: viewModel.expandedSections[monthSection.month] == true ? 0.85 : 0.7
+                  )
+                ) {
                   monthSection.isExpanded.toggle()
                   viewModel.expandedSections[monthSection.month] = monthSection.isExpanded
                 }
@@ -118,6 +125,14 @@ extension TransactionsView {
                   viewModel.loadMoreIfNeccessary(transaction: transaction)
                 }
               }
+              .transition(
+                .move(
+                  edge: .top
+                )
+                .combined(
+                  with: .opacity
+                )
+              )
             }
           }
         }
@@ -138,10 +153,20 @@ extension TransactionsView {
           .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.ultraSmall.value))
           .frame(maxWidth: .infinity, alignment: .leading)
         
-        (section.isExpanded ? GenImages.Images.icoExpandDown.swiftUIImage : GenImages.Images.icoExpandUp.swiftUIImage)
+        GenImages.Images.icoExpandDown.swiftUIImage
           .resizable()
-          .frame(width: 24, height: 24)
+          .frame(24)
+          .rotationEffect(
+            .degrees(section.isExpanded ? 0 : -180)
+          )
+          .animation(
+            .easeOut(
+              duration: 0.2
+            ),
+            value: section.isExpanded
+          )
       }
+      .padding(.top, 12)
       .padding(.horizontal, 8)
       
       Divider()
@@ -149,6 +174,7 @@ extension TransactionsView {
         .background(Colors.greyDefault.swiftUIColor)
         .frame(maxWidth: .infinity)
     }
+    .background(Colors.baseAppBackground2.swiftUIColor)
   }
   
   func filterButton(
