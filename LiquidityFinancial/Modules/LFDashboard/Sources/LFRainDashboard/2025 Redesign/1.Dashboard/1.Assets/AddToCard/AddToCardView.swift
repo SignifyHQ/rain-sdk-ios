@@ -234,7 +234,7 @@ private extension AddToCardView {
     ZStack {
       GenImages.Images.icoQrBackdrop.swiftUIImage
         .resizable()
-        .interpolation(.none)
+        .interpolation(.high)
         .scaledToFit()
         .clipShape(RoundedRectangle(cornerRadius: 16))
         .frame(maxWidth: .infinity)
@@ -246,8 +246,9 @@ private extension AddToCardView {
       
       Image(uiImage: viewModel.qrCode)
         .resizable()
-        .interpolation(.none)
+        .interpolation(.high)
         .scaledToFit()
+        .padding(4)
         .background(Colors.grey900.swiftUIColor)
         .clipShape(RoundedRectangle(cornerRadius: 16))
         .frame(maxWidth: .infinity)

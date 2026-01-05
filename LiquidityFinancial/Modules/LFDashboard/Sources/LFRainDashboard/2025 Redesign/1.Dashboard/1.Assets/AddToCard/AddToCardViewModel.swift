@@ -1,4 +1,5 @@
 import Foundation
+import QRCode
 import Combine
 import GeneralFeature
 import AccountDomain
@@ -200,11 +201,14 @@ extension AddToCardViewModel {
   }
   
   func updateQRCode() {
-    guard let walletAddress else {
+    guard let walletAddress,
+          let imageData = generateQRCode(from: walletAddress),
+          let image = UIImage(data: imageData)
+    else {
       return
     }
     
-    qrCode = generateQRCode(from: walletAddress)
+    qrCode = image
   }
 
   func getActivityItems() -> [AnyObject] {
@@ -246,25 +250,19 @@ extension AddToCardViewModel {
 
 // MARK: - Helper Functions
 extension AddToCardViewModel {
-  private func generateQRCode(from string: String) -> UIImage {
-    let context = CIContext()
-    let filter = CIFilter.qrCodeGenerator()
-    filter.message = Data(string.utf8)
-
-    guard let outputImage = filter.outputImage
-    else {
-      return UIImage()
-    }
+  private func generateQRCode(
+    from string: String
+  ) -> Data? {
+    let image = try? QRCode.build
+       .text(string)
+       .foregroundColor(UIColor.white.cgColor)
+       .backgroundColor(Colors.grey900.swiftUIColor.uiColor.cgColor)
+       .background.cornerRadius(0)
+       .onPixels.shape(QRCode.PixelShape.RoundedPath(cornerRadiusFraction: 0))
+       .eye.shape(QRCode.EyeShape.RoundedRect())
+       .pupil.shape(QRCode.PupilShape.Square())
+       .generate.image(dimension: 600, representation: .png())
     
-    let invertedFilter = CIFilter.colorInvert()
-    invertedFilter.setValue(outputImage, forKey: kCIInputImageKey)
-    
-    guard let outputInvertedImage = invertedFilter.outputImage,
-          let cgimg = context.createCGImage(outputInvertedImage, from: outputInvertedImage.extent)
-    else {
-      return UIImage(systemName: "xmark.circle") ?? UIImage()
-    }
-    
-    return UIImage(cgImage: cgimg)
+    return image
   }
 }
