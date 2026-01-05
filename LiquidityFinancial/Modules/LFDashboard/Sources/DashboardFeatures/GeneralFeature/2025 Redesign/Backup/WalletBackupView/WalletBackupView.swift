@@ -47,6 +47,7 @@ public struct WalletBackupView: View {
       }
     })
     .navigationBarTitleDisplayMode(.inline)
+    .ignoresSafeArea(.keyboard)
     .track(name: String(describing: type(of: self)))
   }
 }
