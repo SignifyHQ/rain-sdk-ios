@@ -54,7 +54,6 @@ public struct CountryOfResidenceView: View {
         
         buttonGroup
       }
-      .padding(.top, 4)
       .padding(.bottom, 16)
       .padding(.horizontal, 24)
       // Adding content shape to make sure the whole screen is tappable
@@ -76,9 +75,8 @@ public struct CountryOfResidenceView: View {
           .position(
             x: countryDropdownFrame.midX,
             // Calculate the dropdown Y position
-            // Adding 4 to account for VStack vertical padding
             // Adding 8 as top padding of the dropdown
-            y: countryDropdownFrame.maxY - scrollViewFrame.minY + countryDropdownHeight / 2 + 4 + 8
+            y: countryDropdownFrame.maxY - scrollViewFrame.minY + countryDropdownHeight / 2 + 8
           )
       }
       
@@ -94,9 +92,8 @@ public struct CountryOfResidenceView: View {
           .position(
             x: stateDropdownFrame.midX,
             // Calculate the dropdown Y position
-            // Adding 4 to account for VStack vertical padding
             // Adding 8 as top padding of the dropdown
-            y: stateDropdownFrame.maxY - scrollViewFrame.minY + stateDropdownHeight / 2 + 4 + 8
+            y: stateDropdownFrame.maxY - scrollViewFrame.minY + stateDropdownHeight / 2 + 8
           )
       }
     }
@@ -170,6 +167,7 @@ private extension CountryOfResidenceView {
           
           Spacer()
         }
+        .padding(.top, 8)
         .onChange(
           of: focusedSearchBar
         ) { focus in

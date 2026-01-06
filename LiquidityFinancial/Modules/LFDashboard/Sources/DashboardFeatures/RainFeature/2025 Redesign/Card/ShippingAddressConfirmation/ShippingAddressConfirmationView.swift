@@ -13,7 +13,6 @@ struct ShippingAddressConfirmationView: View {
   
   var body: some View {
     content
-      .padding(.top, 4)
       .padding(.bottom, 16)
       .padding(.horizontal, 24)
       .background(Colors.baseAppBackground2.swiftUIColor)
@@ -54,6 +53,7 @@ private extension ShippingAddressConfirmationView {
             )
           }
         }
+        .padding(.top, 8)
       }
       
       Spacer()

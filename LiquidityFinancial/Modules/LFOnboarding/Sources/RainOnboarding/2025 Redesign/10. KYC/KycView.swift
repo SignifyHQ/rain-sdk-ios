@@ -28,7 +28,7 @@ public struct KycView: View {
       
       buttonGroup
     }
-    .padding(.top, 4)
+    .padding(.top, 8)
     .padding(.bottom, 16)
     .padding(.horizontal, 24)
     .background(Colors.backgroundPrimary.swiftUIColor)

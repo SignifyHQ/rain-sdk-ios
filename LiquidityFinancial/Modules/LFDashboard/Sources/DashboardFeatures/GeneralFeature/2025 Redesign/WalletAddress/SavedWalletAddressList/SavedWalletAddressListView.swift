@@ -29,7 +29,6 @@ public struct SavedWalletAddressListView: View {
     }
     .appNavBar(navigationTitle: L10N.Common.SavedWalletAddressList.Screen.title)
     .padding(.horizontal, 24)
-    .padding(.top, 4)
     .background(Colors.baseAppBackground2.swiftUIColor)
     .toast(data: $viewModel.toastData)
     .navigationBarTitleDisplayMode(.inline)
@@ -71,6 +70,7 @@ extension SavedWalletAddressListView {
           walletNicknameCell(with: wallet)
         }
       }
+      .padding(.top, 8)
     }
   }
   

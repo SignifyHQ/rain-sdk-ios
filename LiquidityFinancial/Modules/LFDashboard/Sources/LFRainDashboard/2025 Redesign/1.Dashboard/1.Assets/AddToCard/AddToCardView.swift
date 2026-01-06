@@ -44,7 +44,7 @@ public struct AddToCardView: View {
         }
       }
       .padding(.horizontal, horizontalPadding)
-      .padding(.top, 4)
+      .padding(.top, 8)
     }
     .appNavBar(
       navigationTitle: L10N.Common.AddToCardView.Screen.title

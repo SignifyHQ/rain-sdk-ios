@@ -30,7 +30,7 @@ public struct AgreeToCardTermsView: View {
         
         buttonGroup
       }
-      .padding(.top, 4)
+      .padding(.top, 8)
       .padding(.bottom, 16)
       .padding(.horizontal, 24)
     }

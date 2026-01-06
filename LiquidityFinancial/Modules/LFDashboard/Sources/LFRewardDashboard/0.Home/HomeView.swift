@@ -179,7 +179,7 @@ private extension HomeView {
     }
     .padding(.horizontal, 32)
     .padding(.bottom, 2)
-    .padding(.top, 4)
+    .padding(.top, 8)
     .background(Colors.secondaryBackground.swiftUIColor)
   }
   

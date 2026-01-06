@@ -43,7 +43,7 @@ struct WithdrawalAmountEntryView: View {
       navigationTitle: L10N.Common.WithdrawalAmount.Screen.title
     )
     .padding(.horizontal, 24)
-    .padding(.top, 4)
+    .padding(.top, 8)
     .frame(maxWidth: .infinity)
     .background(Colors.baseAppBackground2.swiftUIColor)
     .navigationBarTitleDisplayMode(.inline)

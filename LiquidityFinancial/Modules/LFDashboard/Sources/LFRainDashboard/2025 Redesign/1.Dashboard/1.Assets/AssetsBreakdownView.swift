@@ -19,7 +19,6 @@ public struct AssetsBreakdownView: View {
       VStack() {
         contentView
       }
-      .padding(.top, 4)
       .padding(.bottom, 16)
       .padding(.horizontal, 24)
     }
@@ -70,6 +69,7 @@ private extension AssetsBreakdownView {
       .frame(
         maxWidth: .infinity
       )
+      .padding(.top, 8)
       .background(Colors.backgroundPrimary.swiftUIColor)
       .scrollIndicators(.hidden)
     }

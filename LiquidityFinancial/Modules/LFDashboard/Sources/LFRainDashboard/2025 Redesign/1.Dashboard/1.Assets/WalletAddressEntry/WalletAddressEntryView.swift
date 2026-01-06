@@ -49,6 +49,7 @@ struct WalletAddressEntryView: View {
             savedWalletsAddress
           }
         }
+        .padding(.top, 8)
       }
       Spacer()
       footerView
@@ -57,7 +58,6 @@ struct WalletAddressEntryView: View {
       navigationTitle: viewModel.kind.getTitle(asset: viewModel.asset.type?.symbol ?? .empty)
     )
     .padding(.horizontal, 24)
-    .padding(.top, 4)
     .frame(maxWidth: .infinity)
     .background(Colors.baseAppBackground2.swiftUIColor)
     .toast(data: $viewModel.toastData)

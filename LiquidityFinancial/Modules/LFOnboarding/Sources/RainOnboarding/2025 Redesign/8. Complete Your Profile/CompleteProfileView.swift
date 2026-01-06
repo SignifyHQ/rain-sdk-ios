@@ -45,7 +45,7 @@ public struct CompleteProfileView: View {
         
         buttonGroup
       }
-      .padding(.top, 4)
+      .padding(.top, 8)
       .padding(.bottom, 16)
       .padding(.horizontal, 24)
       // Adding content shape to make sure the whole screen is tappable
@@ -69,9 +69,9 @@ public struct CompleteProfileView: View {
         .position(
           x: selectedCategoryFrame.midX,
           // Calculate the dropdown Y position
-          // Adding 4 to account for VStack vertical padding
+          // Adding 8 to account for VStack vertical padding
           // Adding 8 as top padding of the dropdown
-          y: selectedCategoryFrame.maxY - progressBarFrame.minY + (selectedCategory == .occupation ? occupationDropdownHeight : (CGFloat(selectedCategory.options.count) * DROPDOWN_ROW_HEIGHT)) / 2 + 4 + 8
+          y: selectedCategoryFrame.maxY - progressBarFrame.minY + (selectedCategory == .occupation ? occupationDropdownHeight : (CGFloat(selectedCategory.options.count) * DROPDOWN_ROW_HEIGHT)) / 2 + 8 + 8
         )
       }
     }
@@ -79,8 +79,7 @@ public struct CompleteProfileView: View {
     .defaultNavBar(
       onRightButtonTap: {
         viewModel.onSupportButtonTap()
-      },
-      isBackButtonHidden: true
+      }
     )
     .toast(
       data: $viewModel.currentToast

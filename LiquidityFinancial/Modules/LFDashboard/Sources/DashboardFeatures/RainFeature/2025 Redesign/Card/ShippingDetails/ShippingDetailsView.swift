@@ -32,7 +32,7 @@ struct ShippingDetailsView: View {
       Spacer()
     }
     .appNavBar(navigationTitle: L10N.Common.CardDetailsList.ShippingDetails.title)
-    .padding(.top, 4)
+    .padding(.top, 8)
     .padding(.horizontal, 24)
     .background(Colors.baseAppBackground2.swiftUIColor)
     .navigationLink(

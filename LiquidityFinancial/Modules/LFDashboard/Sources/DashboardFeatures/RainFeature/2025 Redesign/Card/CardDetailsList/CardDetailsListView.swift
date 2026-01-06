@@ -26,7 +26,7 @@ public struct CardDetailsListView: View {
     .onChange(of: viewModel.currentCard) { _, _ in
       viewModel.onCurrentCardChange()
     }
-    .padding(.top, 4)
+    .padding(.top, 8)
     .padding(.bottom, 16)
     .padding(.horizontal, 24)
     .background(Colors.baseAppBackground2.swiftUIColor)

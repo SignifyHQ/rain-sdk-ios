@@ -67,7 +67,6 @@ public struct ShippingAddressEntryView: View {
         contentView
         buttonGroup
       }
-      .padding(.top, 4)
       .padding(.bottom, 16)
       .padding(.horizontal, 24)
       // Adding content shape to make sure the whole screen is tappable
@@ -92,7 +91,6 @@ public struct ShippingAddressEntryView: View {
           .position(
             x: addressSuggestionsDropdownFrame.midX,
             // Calculate the dropdown Y position
-            // Adding 4 to account for VStack vertical padding
             // Adding 8 as top padding of the dropdown
             y: addressSuggestionsDropdownFrame.maxY - scrollViewFrame.minY + addressDropdownHeight / 2 + 8
           )
@@ -110,7 +108,6 @@ public struct ShippingAddressEntryView: View {
           .position(
             x: stateDropdownFrame.midX,
             // Calculate the dropdown Y position
-            // Adding 4 to account for VStack vertical padding
             // Adding 8 as top padding of the dropdown
             y: stateDropdownFrame.maxY - scrollViewFrame.minY + stateDropdownHeight / 2 + 8
           )
@@ -128,7 +125,6 @@ public struct ShippingAddressEntryView: View {
           .position(
             x: countryDropdownFrame.midX,
             // Calculate the dropdown Y position
-            // Adding 4 to account for VStack vertical padding
             // Adding 8 as top padding of the dropdown
             y: countryDropdownFrame.maxY - scrollViewFrame.minY + countryDropdownHeight / 2 + 8
           )
@@ -214,6 +210,7 @@ private extension ShippingAddressEntryView {
           
           Spacer()
         }
+        .padding(.top, 8)
         .onChange(
           of: focusedSearchBar
         ) { focus in

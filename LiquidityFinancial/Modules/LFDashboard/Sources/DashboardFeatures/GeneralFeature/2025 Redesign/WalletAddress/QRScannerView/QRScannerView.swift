@@ -37,7 +37,7 @@ public struct QRScannerView: View {
               dismiss()
             }
             .padding(.leading, 20)
-            .padding(.top, 4)
+            .padding(.top, 8)
           Spacer()
         }
         Spacer()

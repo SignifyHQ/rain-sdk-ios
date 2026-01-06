@@ -23,7 +23,7 @@ public struct CreateNewWalletAddressView: View {
   public var body: some View {
     content
       .padding(.horizontal, 24)
-      .padding(.top, 4)
+      .padding(.top, 8)
       .background(Colors.baseAppBackground2.swiftUIColor)
       .appNavBar(navigationTitle: L10N.Common.SaveNewWalletAddress.Screen.title)
       .toast(data: $viewModel.toastData)

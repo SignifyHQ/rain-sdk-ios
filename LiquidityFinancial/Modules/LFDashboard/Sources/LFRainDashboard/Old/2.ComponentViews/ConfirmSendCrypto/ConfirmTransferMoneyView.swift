@@ -109,7 +109,7 @@ private extension ConfirmTransferMoneyView {
           .resizable()
           .scaledToFit()
           .foregroundColor(Colors.label.swiftUIColor)
-          .padding(.top, 4)
+          .padding(.top, 8)
           .opacity(isLastItem ? 0 : 1)
       }
     }

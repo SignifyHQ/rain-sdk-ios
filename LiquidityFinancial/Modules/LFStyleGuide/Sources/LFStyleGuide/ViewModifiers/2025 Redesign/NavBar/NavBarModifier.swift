@@ -9,7 +9,7 @@ extension View {
     navigationImage: Image? = GenImages.Images.imgLogoNavBar.swiftUIImage,
     dismissAction: (() -> Void)? = nil,
     onRightButtonTap: (() -> Void)? = nil,
-    edgeInsets: EdgeInsets = .bottom(12),
+    edgeInsets: EdgeInsets = .init(top: 0, leading: 8, bottom: 8, trailing: 8),
     isBackButtonHidden: Bool = false
   ) -> some View {
     modifier(
@@ -31,7 +31,7 @@ extension View {
     navigationImage: Image? = GenImages.Images.imgLogoNavBar.swiftUIImage,
     dismissAction: (() -> Void)? = nil,
     onRightButtonTap: (() -> Void)? = nil,
-    edgeInsets: EdgeInsets = .bottom(12),
+    edgeInsets: EdgeInsets = .init(top: 0, leading: 8, bottom: 8, trailing: 8),
     isBackButtonHidden: Bool = false
   ) -> some View {
     modifier(
@@ -53,7 +53,7 @@ extension View {
     navigationTitle: String? = nil,
     navigationImage: Image? = nil,
     onRightButtonTap: (() -> Void)? = nil,
-    edgeInsets: EdgeInsets = .init(top: 12, leading: 8, bottom: 12, trailing: 8)
+    edgeInsets: EdgeInsets = .init(top: 0, leading: 8, bottom: 8, trailing: 8)
   ) -> some View {
     modifier(
       NavBarModifier(
@@ -133,8 +133,7 @@ private struct NavBarModifier: ViewModifier {
             ) {
               GenImages.Images.icoArrowNavBack.swiftUIImage
                 .foregroundColor(Colors.label.swiftUIColor)
-                .padding(.leading, 8)
-                .padding(.bottom, 12)
+                .padding(edgeInsets)
             }
           }
         }

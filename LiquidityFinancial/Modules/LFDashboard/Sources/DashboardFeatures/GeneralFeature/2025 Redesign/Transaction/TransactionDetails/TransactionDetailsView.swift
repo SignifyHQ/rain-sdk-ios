@@ -57,6 +57,7 @@ public struct TransactionDetailsView: View {
               isPopToRoot ? dismissAction() : dismiss()
             }
           }
+          .padding(.top, 8)
         }
       }
     }
@@ -68,7 +69,6 @@ public struct TransactionDetailsView: View {
       isBackButtonHidden: isPopToRoot
     )
     .padding(.horizontal, 24)
-    .padding(.top, 4)
     .toast(data: $viewModel.toastData)
     .frame(max: .infinity)
     .background(Colors.baseAppBackground2.swiftUIColor)

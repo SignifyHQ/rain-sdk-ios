@@ -69,7 +69,7 @@ extension EditWalletAddressView {
         .padding(.bottom, 16)
     }
     .padding(.horizontal, 24)
-    .padding(.top, 4)
+    .padding(.top, 8)
     .background(Colors.baseAppBackground2.swiftUIColor)
   }
   

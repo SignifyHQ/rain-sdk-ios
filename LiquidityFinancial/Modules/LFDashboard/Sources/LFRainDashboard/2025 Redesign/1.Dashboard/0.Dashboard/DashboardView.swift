@@ -33,10 +33,10 @@ struct DashboardView: View {
         stateView
         Spacer()
       }
+      .padding(.top, 8)
       .padding(.bottom, 16)
     }
     .padding(.horizontal, 24)
-    .padding(.top, 4)
     .background(Colors.baseAppBackground2.swiftUIColor)
     .toast(data: $viewModel.toastData)
     .track(name: String(describing: type(of: self)))

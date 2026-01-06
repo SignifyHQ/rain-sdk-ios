@@ -24,6 +24,7 @@ public struct CreditLimitBreakdownView: View {
         ScrollView {
           contents
             .padding(.horizontal, 30)
+            .padding(.top, 8)
         }
       }
     }
@@ -105,7 +106,6 @@ public struct CreditLimitBreakdownView: View {
             
             Spacer()
           }
-          .padding(.top, 4)
           .padding(.bottom, 6)
           
           VStack {

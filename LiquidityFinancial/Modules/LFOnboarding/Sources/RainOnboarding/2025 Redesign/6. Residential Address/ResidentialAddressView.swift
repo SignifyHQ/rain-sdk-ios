@@ -71,7 +71,7 @@ public struct ResidentialAddressView: View {
         
         buttonGroup
       }
-      .padding(.top, 4)
+      .padding(.top, 8)
       .padding(.bottom, 16)
       .padding(.horizontal, 24)
       // Adding content shape to make sure the whole screen is tappable
@@ -93,9 +93,9 @@ public struct ResidentialAddressView: View {
           .position(
             x: addressSuggestionsDropdownFrame.midX,
             // Calculate the dropdown Y position
-            // Adding 4 to account for VStack vertical padding
+            // Adding 8 to account for VStack vertical padding
             // Adding 8 as top padding of the dropdown
-            y: addressSuggestionsDropdownFrame.maxY - progressBarFrame.minY + addressDropdownHeight / 2 + 4 + 8
+            y: addressSuggestionsDropdownFrame.maxY - progressBarFrame.minY + addressDropdownHeight / 2 + 8 + 8
           )
       }
       
@@ -111,9 +111,9 @@ public struct ResidentialAddressView: View {
           .position(
             x: stateDropdownFrame.midX,
             // Calculate the dropdown Y position
-            // Adding 4 to account for VStack vertical padding
+            // Adding 8 to account for VStack vertical padding
             // Adding 8 as top padding of the dropdown
-            y: stateDropdownFrame.maxY - progressBarFrame.minY + stateDropdownHeight / 2 + 4 + 8
+            y: stateDropdownFrame.maxY - progressBarFrame.minY + stateDropdownHeight / 2 + 8 + 8
           )
       }
       
@@ -129,9 +129,9 @@ public struct ResidentialAddressView: View {
           .position(
             x: countryDropdownFrame.midX,
             // Calculate the dropdown Y position
-            // Adding 4 to account for VStack vertical padding
+            // Adding 8 to account for VStack vertical padding
             // Adding 8 as top padding of the dropdown
-            y: countryDropdownFrame.maxY - progressBarFrame.minY + countryDropdownHeight / 2 + 4 + 8
+            y: countryDropdownFrame.maxY - progressBarFrame.minY + countryDropdownHeight / 2 + 8 + 8
           )
       }
     }

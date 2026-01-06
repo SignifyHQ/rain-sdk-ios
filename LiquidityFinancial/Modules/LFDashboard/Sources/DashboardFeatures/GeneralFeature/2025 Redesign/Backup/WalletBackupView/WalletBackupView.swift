@@ -20,7 +20,7 @@ public struct WalletBackupView: View {
       }
     }
     .padding(.horizontal, 24)
-    .padding(.top, 4)
+    .padding(.top, 8)
     .padding(.bottom, 16)
     .background(Colors.baseAppBackground2.swiftUIColor)
     .appNavBar(navigationTitle: L10N.Common.WalletBackup.Screen.title)

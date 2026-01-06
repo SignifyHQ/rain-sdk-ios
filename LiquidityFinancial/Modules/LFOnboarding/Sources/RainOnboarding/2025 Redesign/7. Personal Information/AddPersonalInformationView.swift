@@ -47,7 +47,7 @@ public struct AddPersonalInformationView: View {
         
         buttonGroup
       }
-      .padding(.top, 4)
+      .padding(.top, 8)
       .padding(.bottom, 16)
       .padding(.horizontal, 24)
       // Adding content shape to make sure the whole screen is tappable
@@ -69,9 +69,9 @@ public struct AddPersonalInformationView: View {
           .position(
             x: phoneCodeDropdownFrame.midX,
             // Calculate the dropdown Y position
-            // Adding 4 to account for VStack vertical padding
+            // Adding 8 to account for VStack vertical padding
             // Adding 8 as top padding of the dropdown
-            y: phoneCodeDropdownFrame.maxY - progressBarFrame.minY + countryDropdownHeight / 2 + 4 + 8
+            y: phoneCodeDropdownFrame.maxY - progressBarFrame.minY + countryDropdownHeight / 2 + 8 + 8
           )
       }
     }
