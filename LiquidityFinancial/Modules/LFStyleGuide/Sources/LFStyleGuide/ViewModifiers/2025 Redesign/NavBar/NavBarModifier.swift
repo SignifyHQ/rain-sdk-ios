@@ -53,7 +53,7 @@ extension View {
     navigationTitle: String? = nil,
     navigationImage: Image? = nil,
     onRightButtonTap: (() -> Void)? = nil,
-    edgeInsets: EdgeInsets = .init(top: 12, leading: 16, bottom: 12, trailing: 16)
+    edgeInsets: EdgeInsets = .init(top: 12, leading: 8, bottom: 12, trailing: 8)
   ) -> some View {
     modifier(
       NavBarModifier(
@@ -133,7 +133,8 @@ private struct NavBarModifier: ViewModifier {
             ) {
               GenImages.Images.icoArrowNavBack.swiftUIImage
                 .foregroundColor(Colors.label.swiftUIColor)
-                .padding(edgeInsets)
+                .padding(.leading, 8)
+                .padding(.bottom, 12)
             }
           }
         }

@@ -62,9 +62,10 @@ public struct TransactionDetailsView: View {
     }
     .appNavBar(
       navigationTitle: L10N.Common.TransactionDetails.Screen.title,
-      // Only set dismiss action if pop to root is needed
-      // otherwise, keep native back functionality
-      dismissAction: isPopToRoot ? { dismissAction() } : nil
+      // Hide back button in case we need to pop to root
+      // since in this case native swipe-to-dismiss is disabled.
+      // User can dismiss the screen by tapping the Close button in the bottom
+      isBackButtonHidden: isPopToRoot
     )
     .padding(.horizontal, 24)
     .padding(.top, 4)

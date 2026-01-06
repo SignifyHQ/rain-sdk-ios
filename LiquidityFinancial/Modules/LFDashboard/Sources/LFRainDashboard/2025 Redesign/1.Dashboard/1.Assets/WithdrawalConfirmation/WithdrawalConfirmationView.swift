@@ -99,20 +99,20 @@ private extension WithdrawalConfirmationView {
       VStack(alignment: .leading, spacing: 16) {
         HStack(alignment: icon != nil ? .center : .top, spacing: 8) {
           Text(title)
-            .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.medium.value))
+            .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.small.value))
             .foregroundColor(Colors.textSecondary.swiftUIColor)
           
           Spacer()
           
           Text(value)
-            .font(Fonts.semiBold.swiftUIFont(size: Constants.FontSize.medium.value))
+            .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.small.value))
             .foregroundColor(Colors.textPrimary.swiftUIColor)
             .strikethrough(isFeeLine, color: Colors.textPrimary.swiftUIColor)
             .multilineTextAlignment(.trailing)
           
           if let additionalValue {
             Text(additionalValue)
-              .font(Fonts.medium.swiftUIFont(size: Constants.FontSize.medium.value))
+              .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.small.value))
               .foregroundColor(isFeeLine ? Colors.successDefault.swiftUIColor : Colors.textPrimary.swiftUIColor)
           }
           
