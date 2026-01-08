@@ -164,6 +164,12 @@ extension AssetsBreakdownViewModel {
       maxFractionDigits: Constants.FractionDigitsLimit.fiat.maxFractionDigits
     )
   }
+  // Filter colleteral assets to only return non-zero ones
+  public var nonZeroCollateralAssets: [AssetModel] {
+    collateralAssets.filter { asset in
+      !asset.isAvailableBalanceRoundedZero
+    }
+  }
 }
 
 // MARK: - Private Enums

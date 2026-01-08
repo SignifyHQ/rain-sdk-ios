@@ -213,18 +213,16 @@ private extension AssetsBreakdownView {
         if viewModel.isBreakdownExpanded {
           Group {
             // Breakdown list of the active assets
-            VStack(
-              spacing: 12
-            ) {
-              ForEach(
-                viewModel.collateralAssets
-                // Only show the non-zero balance assets in the breakdown
-                  .filter { asset in
-                    !asset.isAvailableBalanceRoundedZero
-                  },
-                id: \.self
-              ) { asset in
-                breakdownCell(asset: asset)
+            if viewModel.nonZeroCollateralAssets.isNotEmpty {
+              VStack(
+                spacing: 12
+              ) {
+                ForEach(
+                  viewModel.nonZeroCollateralAssets,
+                  id: \.self
+                ) { asset in
+                  breakdownCell(asset: asset)
+                }
               }
             }
             // Breakdown summary section
