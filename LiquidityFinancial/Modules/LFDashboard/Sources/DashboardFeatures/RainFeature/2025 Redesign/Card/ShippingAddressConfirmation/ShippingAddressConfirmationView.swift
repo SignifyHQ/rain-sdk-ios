@@ -20,7 +20,10 @@ struct ShippingAddressConfirmationView: View {
       .popup(item: $viewModel.toastMessage, style: .toast) {
         ToastView(toastMessage: $0)
       }
-      .isLoading($viewModel.isOrderingCard)
+      .withLoadingIndicator(
+        isShowing: $viewModel.isOrderingCard,
+        isOpaque: false
+      )
   }
 }
 

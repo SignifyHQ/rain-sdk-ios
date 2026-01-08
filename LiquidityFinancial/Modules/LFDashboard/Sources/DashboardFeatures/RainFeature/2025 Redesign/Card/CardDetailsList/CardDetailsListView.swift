@@ -31,7 +31,10 @@ public struct CardDetailsListView: View {
     .padding(.horizontal, 24)
     .background(Colors.baseAppBackground2.swiftUIColor)
     .appNavBar(navigationTitle: viewModel.currentCard.cardType == .virtual ? L10N.Common.CardDetailsList.VirtualCard.Screen.title : L10N.Common.CardDetailsList.PhysicalCard.Screen.title)
-    .isLoading($viewModel.isLoading)
+    .withLoadingIndicator(
+      isShowing: $viewModel.isLoading,
+      isOpaque: false
+    )
     .navigationLink(
       item: $viewModel.navigation
     ) { item in

@@ -34,7 +34,10 @@ struct MyAccountView: View {
           SavedWalletAddressListView()
         }
       }
-      .isLoading($viewModel.isLoading)
+      .withLoadingIndicator(
+        isShowing: $viewModel.isLoading,
+        isOpaque: false
+      )
       .sheet(
         isPresented: $viewModel.isFidesmoFlowPresented
       ) {

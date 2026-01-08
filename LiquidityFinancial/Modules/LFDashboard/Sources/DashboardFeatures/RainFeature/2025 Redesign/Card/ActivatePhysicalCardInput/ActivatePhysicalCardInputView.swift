@@ -22,7 +22,10 @@ struct ActivatePhysicalCardInputView: View {
   var body: some View {
     content
       .track(name: String(describing: type(of: self)))
-      .isLoading($viewModel.isLoading)
+      .withLoadingIndicator(
+        isShowing: $viewModel.isLoading,
+        isOpaque: false
+      )
   }
 }
 
