@@ -134,6 +134,14 @@ public struct AssetModel: Hashable, Identifiable {
     }
   }
   
+  public var isAvailableBalanceRoundedZero: Bool {
+    if type == .usd {
+      return availableBalance.rounded(to: Constants.FractionDigitsLimit.fiat.maxFractionDigits).isZero
+    } else {
+      return availableBalance.rounded(to: Constants.FractionDigitsLimit.crypto.maxFractionDigits).isZero
+    }
+  }
+  
   public var exchangeRateFormatted: String {
     "\(exchangeRate?.formattedUSDAmount() ?? "N/A")"
   }

@@ -217,7 +217,11 @@ private extension AssetsBreakdownView {
               spacing: 12
             ) {
               ForEach(
-                viewModel.collateralAssets,
+                viewModel.collateralAssets
+                // Only show the non-zero balance assets in the breakdown
+                  .filter { asset in
+                    !asset.isAvailableBalanceRoundedZero
+                  },
                 id: \.self
               ) { asset in
                 breakdownCell(asset: asset)
