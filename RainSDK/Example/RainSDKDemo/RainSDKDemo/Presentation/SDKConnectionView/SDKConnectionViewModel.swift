@@ -16,10 +16,10 @@ class SDKConnectionViewModel: ObservableObject {
   @Published var portalToken: String = ""
   
   /// RPC URL input
-  @Published var rpcUrl: String = "https://avalanche-c-chain-rpc.publicnode.com"
+  @Published var rpcUrl: String = "https://avalanche-fuji-c-chain-rpc.publicnode.com"
   
   /// Chain ID input
-  @Published var chainId: String = "43114"
+  @Published var chainId: String = "43113"
   
   /// Initialization loading state
   @Published var isInitializing: Bool = false
