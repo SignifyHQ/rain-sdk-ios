@@ -1,10 +1,3 @@
-//
-//  RainSDKDemoApp.swift
-//  RainSDKDemo
-//
-//  Created by Tinh Nguyen on 16/1/26.
-//
-
 import SwiftUI
 
 @main

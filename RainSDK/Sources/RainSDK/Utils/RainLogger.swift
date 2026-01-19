@@ -2,7 +2,7 @@ import Foundation
 import os.log
 
 /// Logger for Rain SDK
-enum RainLogger {
+public enum RainLogger {
   // MARK: - Configuration
   
   /// Thread-safe queue for configuration access
@@ -13,7 +13,7 @@ enum RainLogger {
   nonisolated(unsafe) private static var _isEnabled = false
   
   /// Public logging enabled flag (can be set by SDK users)
-  static var isEnabled: Bool {
+  public static var isEnabled: Bool {
     get { configQueue.sync { _isEnabled } }
     set { configQueue.async(flags: .barrier) { _isEnabled = newValue } }
   }
