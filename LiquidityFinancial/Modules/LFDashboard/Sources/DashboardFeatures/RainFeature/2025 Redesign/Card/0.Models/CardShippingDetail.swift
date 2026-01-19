@@ -31,6 +31,25 @@ struct CardShippingDetail {
     self.createdAt = entity.createdAt
     self.updatedAt = entity.updatedAt
   }
+  // Below init is only used to map the shipping address of a card order
+  // and show the shipping details in the shipping details screen
+  init(
+    shippingAddress: ShippingAddress
+  ) {
+    self.line1 = shippingAddress.line1
+    self.line2 = shippingAddress.line2
+    self.city = shippingAddress.city
+    self.region = shippingAddress.state
+    self.postalCode = shippingAddress.postalCode
+    self.countryCode = shippingAddress.country.rawValue
+    self.country = shippingAddress.country.title
+    
+    self.externalCardID = nil
+    self.phoneNumber = nil
+    self.method = nil
+    self.createdAt = nil
+    self.updatedAt = nil
+  }
 }
 
 // MARK: Helpers

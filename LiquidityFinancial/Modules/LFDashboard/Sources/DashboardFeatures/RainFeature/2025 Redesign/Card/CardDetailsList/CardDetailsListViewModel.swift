@@ -62,7 +62,6 @@ public final class CardDetailsListViewModel: ObservableObject {
   @Published var isLoading: Bool = false
   @Published var isShowCardNumber: Bool = false
   @Published var isCardLocked: Bool = false
-  @Published var doesHavePhysicalCard: Bool = false
   @Published var isShowListCardDropdown: Bool = false
   @Published var shouldShowAddToWalletButton: [String: Bool] = [:]
   @Published var toastData: ToastData?
@@ -100,8 +99,14 @@ public final class CardDetailsListViewModel: ObservableObject {
     cardsList.filter{ $0.cardStatus != .closed }.count
   }
   
+  var doesHavePhysicalCard: Bool {
+    cardsList.contains { card in
+      card.cardType == .physical
+    }
+  }
+  
   var isShowingCloseCard: Bool {
-    ![.closed, .unactivated, .pending, .canceled].contains(currentCard.cardStatus)
+    (currentCard.cardStatus == .active || currentCard.cardStatus == .disabled)
     && cardsList.isNotEmpty
   }
   
@@ -122,8 +127,17 @@ public final class CardDetailsListViewModel: ObservableObject {
   
   var isShowingShippingDetails: Bool {
     currentCard.cardType == .physical
+    && ((currentCard.cardStatus == .unactivated && cardDetail?.shippingAddress != nil) || currentCard.cardStatus == .pending)
+  }
+  
+  var isShowingActivatePhysicalCard: Bool {
+    currentCard.cardType == .physical
     && currentCard.cardStatus == .unactivated
-    && cardDetail?.shippingAddress != nil
+  }
+  
+  var isShowingCancelOrder: Bool {
+    currentCard.cardType == .physical
+    && currentCard.cardStatus == .pending
   }
   
   var isShowingShippingDetailPost30Days: Bool {
@@ -205,6 +219,22 @@ extension CardDetailsListViewModel {
     cardsList[index] = updatedCard
   }
   
+  func onShippingDetailsTap() {
+    var currentCardDetail: CardDetail? = cardDetail
+    
+    if currentCard.cardStatus == .pending,
+       let shippingAddress = currentCard.shippingAddress {
+      currentCardDetail = CardDetail(cardId: currentCard.id, shippingAddress: shippingAddress)
+    }
+    
+    guard let currentCardDetail
+    else {
+      return
+    }
+    
+    navigation = .shippingDetails(cardDetail: currentCardDetail)
+  }
+  
   func onLockCardToggle() {
     if currentCard.cardStatus == .active && isCardLocked {
       analyticsService.track(event: AnalyticsEvent(name: .tapsLockCard))
@@ -239,6 +269,7 @@ extension CardDetailsListViewModel {
     }
   }
   
+  @MainActor
   func onOrderPhysicalCardTap() {
     let viewModel = ShippingAddressEntryViewModel { card in
       self.orderPhysicalSuccess(card: card)
@@ -267,9 +298,9 @@ extension CardDetailsListViewModel {
     toastData = .init(type: .success, title: "Your virtual card has been successfully disabled and closed. Order a new card today to start spending!")
   }
   
-  func cardClosedSuccessAction(completion: @escaping () -> Void) {
-    updateListCard(id: currentCard.id, completion: completion)
-    popup = nil
+  func cardClosedSuccessAction() {
+    hidePopup()
+    updateListCard(id: currentCard.id, completion: {})
   }
   
   func navigateActivateCardView() {
@@ -283,7 +314,6 @@ extension CardDetailsListViewModel {
   
   func orderPhysicalSuccess(card: CardModel) {
     cardsList.removeAll(where: { $0.cardStatus == .canceled })
-    doesHavePhysicalCard = true
     cardsList.append(card)
     currentCard = card
     isShowCardNumber = false
@@ -381,7 +411,9 @@ extension CardDetailsListViewModel {
     }
   }
   
-  func cancelCardOrder() {
+  func cancelCardOrder(
+    shouldTakeToNewCardOrder: Bool = false
+  ) {
     Task {
       defer {
         isLoading = false
@@ -392,7 +424,12 @@ extension CardDetailsListViewModel {
       
       do {
         _ = try await cancelCardOrderUseCase.execute(cardID: currentCard.id)
-        popup = .cardOrderCanceledSuccessfully
+        
+        if shouldTakeToNewCardOrder {
+          onOrderPhysicalCardTap()
+        } else {
+          popup = .cardOrderCanceledSuccessfully
+        }
       } catch {
         log.error(error.userFriendlyMessage)
         toastData = .init(type: .error, title: error.userFriendlyMessage)
@@ -408,6 +445,7 @@ extension CardDetailsListViewModel {
       isLoading = true
       
       do {
+        
         _ = try await createCardUseCase.execute()
         NotificationCenter.default.post(name: .createdCard, object: nil)
         fetchRainCards(withLoader: false)
@@ -451,10 +489,6 @@ extension CardDetailsListViewModel {
         // Add created cards to the list
         newCards += cards.map { card in
           CardModel(card: card)
-        }
-        
-        doesHavePhysicalCard = newCards.contains { card in
-          card.cardType == .physical
         }
         
         closedCards = newCards.filter({ $0.cardStatus == .closed })
@@ -715,7 +749,7 @@ extension CardDetailsListViewModel {
     case creditLimitBreakdown
     case disabledCardList
     case activatePhysicalCard
-    case shippingDetails
+    case shippingDetails(cardDetail: CardDetail)
   }
   
   enum Sheet: Identifiable {

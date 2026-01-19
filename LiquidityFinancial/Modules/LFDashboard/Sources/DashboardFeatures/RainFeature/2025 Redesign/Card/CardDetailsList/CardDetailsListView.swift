@@ -51,18 +51,23 @@ public struct CardDetailsListView: View {
         ActivatePhysicalCardView(card: viewModel.currentCard) { cardID in
           viewModel.activePhysicalSuccess(id: cardID)
         }
-      case .shippingDetails:
-        if let cardDetail = viewModel.cardDetail {
-          ShippingDetailsView(
-            cardDetail: cardDetail,
-            onActivateSuccess: { cardId in
-              viewModel.activePhysicalSuccess(id: cardId)
-            },
-            onDismiss: {
+      case .shippingDetails(let cardDetail):
+        ShippingDetailsView(
+          cardDetail: cardDetail,
+          onActivateSuccess: { cardId in
+            viewModel.activePhysicalSuccess(id: cardId)
+          },
+          onCardOrderCancelSuccess: { shouldTakeToNewCardOrder in
+            if shouldTakeToNewCardOrder {
+              viewModel.onOrderPhysicalCardTap()
+            } else {
               viewModel.navigation = nil
             }
-          )
-        }
+          },
+          onDismiss: {
+            viewModel.navigation = nil
+          }
+        )
       }
     }
     .sheet(
@@ -75,7 +80,7 @@ public struct CardDetailsListView: View {
     }
     .sheetWithContentHeight(
       item: $viewModel.popup,
-      interactiveDismissDisabled: viewModel.popup == .confirmLockCard,
+      interactiveDismissDisabled: viewModel.popup == .confirmLockCard || viewModel.popup == .cardOrderCanceledSuccessfully,
       content: { popup in
         switch popup {
         case .confirmCloseCard:
@@ -141,8 +146,8 @@ private extension CardDetailsListView {
       shippingPost30Days
       canceledCardOrderView
       actionCells
+      cancelCardOrderButton
       Spacer()
-      buttonGroupView
     }
   }
 
@@ -255,14 +260,14 @@ private extension CardDetailsListView {
   var shippingDetailsCell: some View {
     if viewModel.isShowingShippingDetails {
       CardActionCell(title: L10N.Common.CardDetailsList.ShippingDetails.title) {
-        viewModel.navigation = .shippingDetails
+        viewModel.onShippingDetailsTap()
       }
     }
   }
   
   @ViewBuilder
   var activatePhysicalCardCell: some View {
-    if viewModel.isShowingShippingDetails {
+    if viewModel.isShowingActivatePhysicalCard {
       CardActionCell(title: L10N.Common.CardDetailsList.ActivatePhysicalCard.title) {
         viewModel.navigateActivateCardView()
       }
@@ -306,22 +311,16 @@ private extension CardDetailsListView {
       }
     }
   }
-
-  @ViewBuilder var buttonGroupView: some View {
-    VStack(spacing: 12) {
-      // Show cancel order button for pending card orderd
-      if viewModel.currentCard.cardStatus == .pending {
-        cancelCardOrderButton
-      }
-    }
-  }
   
+  @ViewBuilder
   var cancelCardOrderButton: some View {
-    FullWidthButton(
-      backgroundColor: Colors.secondaryBackground.swiftUIColor,
-      title: L10N.Common.ListCard.CancelCardOrder.buttonTitle
-    ) {
-      viewModel.onCancelCardOrderTap()
+    if viewModel.isShowingCancelOrder {
+      FullWidthButton(
+        type: .primary,
+        title: L10N.Common.ListCard.CancelCardOrder.buttonTitle
+      ) {
+        viewModel.onCancelCardOrderTap()
+      }
     }
   }
   
@@ -451,12 +450,17 @@ private extension CardDetailsListView {
       title: L10N.Common.ListCard.CancelCardOrder.title,
       subtitle: L10N.Common.ListCard.CancelCardOrder.message,
       primaryButtonTitle: L10N.Common.ListCard.CancelCardOrder.YesButton.title,
-      secondaryButtonTitle: L10N.Common.Common.Cancel.Button.title,
+      secondaryButtonTitle: L10N.Common.ListCard.CancelCardOrder.CancelButton.title,
+      imageView: {
+        GenImages.Images.physicalCardBackdrop.swiftUIImage
+          .resizable()
+          .frame(width: 88, height: 140)
+      },
       primaryAction: {
-        viewModel.cancelCardOrder()
+        viewModel.cancelCardOrder(shouldTakeToNewCardOrder: true)
       },
       secondaryAction: {
-        viewModel.hidePopup()
+        viewModel.cancelCardOrder()
       }
     )
   }
@@ -493,7 +497,7 @@ private extension CardDetailsListView {
       title: L10N.Common.ListCard.CardOrderCanceled.title,
       subtitle: L10N.Common.ListCard.CardOrderCanceled.message,
       action: {
-        viewModel.cardClosedSuccessAction {}
+        viewModel.cardClosedSuccessAction()
       }
     )
   }

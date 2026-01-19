@@ -38,6 +38,29 @@ class CardDetail {
       CardShippingDetail(entity: $0)
     }
   }
+  // Below init is only used to map the shipping address of a card order
+  // and show the shipping details in the shipping details screen
+  init(
+    cardId: String,
+    shippingAddress: ShippingAddress
+  ) {
+    self.cardId = cardId
+    self.shippingAddress = CardShippingDetail(shippingAddress: shippingAddress)
+    self.cardStatus = "pending"
+    
+    self.userId = nil
+    self.rainPersonId = nil
+    self.rainCardId = nil
+    self.cardType = nil
+    self.last4 = nil
+    self.expMonth = nil
+    self.expYear = nil
+    self.limitAmount = nil
+    self.limitFrequency = nil
+    self.createdAt = nil
+    self.tokenExperiences = nil
+    self.updatedAt = nil
+  }
 }
 
 extension CardDetail {

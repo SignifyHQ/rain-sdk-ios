@@ -338,10 +338,10 @@
 "listCard.activateCard.message" = "To start using your card, please activate it now";
 "listCard.activateCard.primary" = "Activate Card";
 
-"listCard.cancelCardOrder.title" = "Cancel Card Order";
-"listCard.cancelCardOrder.message" = "Are you sure you want to cancel this card order?";
-"listCard.cancelCardOrder.yesButton.title" = "Yes, Cancel Order";
-"listCard.cancelCardOrder.cancelButton.title" = "Cancel";
+"listCard.cancelCardOrder.title" = "Cancel card order?";
+"listCard.cancelCardOrder.message" = "You can cancel this order now and place a\nnew order now, or reorder a new card later.";
+"listCard.cancelCardOrder.yesButton.title" = "Cancel & reorder now";
+"listCard.cancelCardOrder.cancelButton.title" = "Cancel & reorder later";
 
 "listCard.cardOrderCanceled.title" = "Card Order Canceled";
 "listCard.cardOrderCanceled.message" = "You have successfully\n canceled your card order.";
@@ -1864,7 +1864,7 @@ We will be in touch shortly to invite you to get your new card.";
 "shippingAddressEntry.zipCode.placeholder" = "Enter zip code";
 "shippingAddressEntry.additionalAddress.placeholder" = "Apt, suite, floor, etc.";
 
-"orderPhysicalCardSuccess.popup.title" = "Physical card order request has been placed!";
+"orderPhysicalCardSuccess.popup.title" = "Physical card order\nrequest has been placed!";
 "orderPhysicalCardSuccess.popup.subtitle" = "Thank you for placing an order for your physical card. It will arrive in 14-30+ business days once it is processed. Please activate it once it arrives.";
 
 // MARK: Activate Physical Card

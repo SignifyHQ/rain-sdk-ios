@@ -40,19 +40,22 @@ private extension ShippingAddressConfirmationView {
             ShippingInfoCell(
               title: L10N.Common.ShippingAddressConfirmation.ShippingTo
                 .title,
-              value: viewModel.fullName
+              value: viewModel.fullName,
+              shouldShowDivider: true
             )
             
             ShippingInfoCell(
               title: L10N.Common.ShippingAddressConfirmation.PhoneNumber
                 .title,
-              value: viewModel.phoneNumber
+              value: viewModel.phoneNumber,
+              shouldShowDivider: true
             )
             
             ShippingInfoCell(
               title: L10N.Common.ShippingAddressConfirmation.Address
                 .title,
-              value: viewModel.shippingAddress.description
+              value: viewModel.shippingAddress.description,
+              shouldShowDivider: false
             )
           }
         }
@@ -111,6 +114,7 @@ private extension ShippingAddressConfirmationView {
 struct ShippingInfoCell: View {
   let title: String
   let value: String
+  let shouldShowDivider: Bool
   
   var body: some View {
     VStack(
@@ -129,7 +133,9 @@ struct ShippingInfoCell: View {
           .multilineTextAlignment(.trailing)
       }
       
-      lineView
+      if shouldShowDivider {
+        lineView
+      }
     }
   }
   
