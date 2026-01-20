@@ -19,6 +19,9 @@ public final class RainSDKManager: RainSDK {
     }
   }
   
+  // MARK: - Initialization
+  public init() {}
+  
   public func initializePortal(
     portalSessionToken: String,
     networkConfigs: [NetworkConfig]
@@ -42,7 +45,8 @@ public final class RainSDKManager: RainSDK {
       
       // Store portal instance
       _portal = portal
-      
+      let addresses = try await portal.addresses
+      RainLogger.info("Rain SDK: Portal initialized with \(addresses.count) wallet address(es)")
       RainLogger.info("Rain SDK: Registered Portal instance successfully with \(networkConfigs.count) network(s)")
     } catch let error as RainSDKError {
       RainLogger.error("Rain SDK: Initialization error - \(error.localizedDescription)")
