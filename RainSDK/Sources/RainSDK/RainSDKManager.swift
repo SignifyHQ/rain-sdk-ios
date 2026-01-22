@@ -1,6 +1,8 @@
 import Foundation
 import PortalSwift
 import Web3
+import Web3Core
+import web3swift
 
 public final class RainSDKManager: RainSDK {
   // MARK: - Properties
@@ -94,7 +96,7 @@ public final class RainSDKManager: RainSDK {
     decimals: Int,
     recipientAddress: String,
     nonce: BigUInt? // TODO: Check if the nonce is provided, if not -> retrieve from the network
-  ) async throws -> String {
+  ) async throws -> (String, String) {
     // Ensure SDK is initialized with network configs
     guard let transactionBuilder = _transactionBuilder else {
       throw RainSDKError.sdkNotInitialized
@@ -122,7 +124,7 @@ public final class RainSDKManager: RainSDK {
     let amountBaseUnits = BigUInt(amount * pow(10.0, Double(decimals)))
     
     // Build EIP-712 message using service
-    return try transactionBuilder.buildEIP712Message(
+    let jsonMessage = try transactionBuilder.buildEIP712Message(
       chainId: chainId,
       collateralProxyAddress: collateralProxyAddress,
       walletAddress: walletAddress,
@@ -131,6 +133,90 @@ public final class RainSDKManager: RainSDK {
       recipientAddress: recipientAddress,
       nonce: finalNonce,
       salt: salt
+    )
+    
+    return (jsonMessage, salt.toHexString())
+  }
+  
+  public func buildWithdrawTransactionData(
+    chainId: Int,
+    contractAddress: String,
+    proxyAddress: String,
+    tokenAddress: String,
+    amount: Double,
+    decimals: Int,
+    recipientAddress: String,
+    expiresAt: String,
+    signatureData: Data,
+    adminSalt: Data,
+    adminSignature: Data
+  ) async throws -> String {
+    // Ensure SDK is initialized with network configs
+    guard let transactionBuilder = _transactionBuilder else {
+      throw RainSDKError.sdkNotInitialized
+    }
+    
+    // Convert string addresses to Web3Core.EthereumAddress objects
+    guard let ethereumContractAddress = Web3Core.EthereumAddress(contractAddress),
+          let ethereumProxyAddress = Web3Core.EthereumAddress(proxyAddress),
+          let ethereumTokenAddress = Web3Core.EthereumAddress(tokenAddress),
+          let ethereumRecipientAddress = Web3Core.EthereumAddress(recipientAddress)
+    else {
+      RainLogger.error("Rain SDK: Error building transaction parameters for withdrawal. One of the addresses could not be built")
+      throw RainSDKError.internalLogicError(
+        details: "Error building transaction parameters for withdrawal. One of the addresses could not be built"
+      )
+    }
+    
+    // Convert the amount to base units using decimals of the token
+    let amountBaseUnits = BigUInt(amount * pow(10.0, Double(decimals)))
+    
+    // Convert the expiration timestamp string from Rain API to Unix Timestamp
+    // Expects ISO8601 format or Unix timestamp string
+    let unixTimestamp: Int
+    if let timestamp = Int(expiresAt) {
+      unixTimestamp = timestamp
+    } else if let date = ISO8601DateFormatter().date(from: expiresAt) {
+      unixTimestamp = Int(date.timeIntervalSince1970)
+    } else {
+      RainLogger.error("Rain SDK: Error building transaction parameters for withdrawal. Could not parse expiration to UNIX timestamp")
+      throw RainSDKError.internalLogicError(
+        details: "Invalid expiration timestamp format. Expected ISO8601 or Unix timestamp string"
+      )
+    }
+    
+    // Build WithdrawAssetParameter struct
+    let withdrawAssetParameter = WithdrawAssetParameter(
+      proxyAddress: ethereumProxyAddress,
+      tokenAddress: ethereumTokenAddress,
+      amount: amountBaseUnits,
+      recipientAddress: ethereumRecipientAddress,
+      expiryAt: BigUInt(unixTimestamp),
+      salt: adminSalt,
+      signature: signatureData,
+      adminSalt: adminSalt,
+      adminSignature: adminSignature
+    )
+    
+    // Build transaction data using service
+    return try await transactionBuilder.buildErc20TransactionForWithdrawAsset(
+      chainId: chainId,
+      ethereumContractAddress: ethereumContractAddress,
+      withdrawAssetParameter: withdrawAssetParameter
+    )
+  }
+  
+  public func composeTransactionParameters(
+    walletAddress: String,
+    contractAddress: String,
+    amount: Double,
+    transactionData: String
+  ) -> ETHTransactionParam {
+    return ETHTransactionParam(
+      from: walletAddress,
+      to: contractAddress,
+      value: amount.ethToWei.toHexString,
+      data: transactionData
     )
   }
 }

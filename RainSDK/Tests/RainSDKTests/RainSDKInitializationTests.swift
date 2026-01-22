@@ -2,7 +2,7 @@ import Testing
 import Foundation
 @testable import RainSDK
 
-@Suite("Portal SDK Initialization Tests")
+@Suite("SDK Initialization Tests")
 struct PortalInitializationTests {
   
   // MARK: - Success Cases

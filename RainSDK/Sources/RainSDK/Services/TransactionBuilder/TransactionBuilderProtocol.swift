@@ -1,5 +1,6 @@
 import Foundation
 import Web3
+import Web3Core
 
 /// Protocol for building transaction components
 /// Handles EIP-712 message generation, contract interactions, and ABI management
@@ -40,4 +41,31 @@ protocol TransactionBuilderProtocol {
     nonce: BigUInt,
     salt: Data
   ) throws -> String
+  
+  /// Builds the encoded transaction calldata required to execute a withdrawal
+  /// on the collateral proxy contract.
+  ///
+  /// This method ABI-encodes the contract function call with the provided
+  /// withdrawal parameters and returns the hex-encoded calldata.
+  ///
+  /// - Parameters:
+  ///   - chainId: The chain identifier for the target network
+  ///   - ethereumContractAddress: The main contract address that will execute the withdrawal
+  ///   - withdrawAssetParameter: A `WithdrawAssetParameter` struct containing:
+  ///     - proxyAddress: Address of the collateral proxy contract
+  ///     - tokenAddress: ERC-20 token contract address
+  ///     - amount: Withdrawal amount in base units (BigUInt)
+  ///     - recipientAddress: Address receiving the withdrawal
+  ///     - expiryAt: Expiration timestamp (Unix timestamp as BigUInt)
+  ///     - salt: Salt data for the user signature
+  ///     - signature: User signature data from Rain API
+  ///     - adminSalt: Admin salt generated when creating admin signature
+  ///     - adminSignature: Admin signature authorizing the withdrawal
+  /// - Returns: Hex-encoded transaction calldata (prefixed with "0x")
+  /// - Throws: RainSDKError if ABI encoding, contract interaction, or validation fails
+  func buildErc20TransactionForWithdrawAsset(
+    chainId: Int,
+    ethereumContractAddress: Web3Core.EthereumAddress,
+    withdrawAssetParameter: WithdrawAssetParameter
+  ) async throws -> String
 }

@@ -31,11 +31,6 @@ final class TransactionBuilderService: TransactionBuilderProtocol {
   // MARK: - Nonce Retrieval
   
   /// Get latest nonce from contract
-  /// - Parameters:
-  ///   - proxyAddress: The proxy contract address
-  ///   - chainId: The chain identifier
-  /// - Returns: The latest nonce as BigUInt
-  /// - Throws: RainSDKError if nonce retrieval fails
   func getLatestNonce(
     proxyAddress: String,
     chainId: Int
@@ -84,17 +79,6 @@ final class TransactionBuilderService: TransactionBuilderProtocol {
   // MARK: - EIP-712 Message Building
   
   /// Build EIP-712 message structure
-  /// - Parameters:
-  ///   - chainId: The chain identifier
-  ///   - collateralProxyAddress: The collateral proxy contract address
-  ///   - walletAddress: The user's wallet address
-  ///   - tokenAddress: The token contract address
-  ///   - amount: The withdrawal amount (already in base units as BigUInt)
-  ///   - recipientAddress: The recipient address
-  ///   - nonce: The nonce value
-  ///   - salt: The salt data (32 bytes)
-  /// - Returns: Serialized EIP-712 message string
-  /// - Throws: RainSDKError if message building fails
   func buildEIP712Message(
     chainId: Int,
     collateralProxyAddress: String,
@@ -168,7 +152,60 @@ final class TransactionBuilderService: TransactionBuilderProtocol {
     RainLogger.debug("Rain SDK: Built EIP-712 message for chain \(chainId)")
     return messageString
   }
+  
+  /// Build withdraw transaction data
+  func buildErc20TransactionForWithdrawAsset(
+    chainId: Int,
+    ethereumContractAddress: Web3Core.EthereumAddress,
+    withdrawAssetParameter: WithdrawAssetParameter
+  ) async throws -> String {
+    let rpcURL = try getRpcURL(chainId: chainId)
+    let contractJsonABI = try getContractJsonABI()
+    
+    guard let url = URL(string: rpcURL) else {
+      RainLogger.error("Rain SDK: Error building transaction for withdrawal. RPC URL is missing")
+      throw RainSDKError.internalLogicError(
+        details: "RPC URL is missing for chain ID \(chainId)"
+      )
+    }
+    
+    let web3 = try await Web3.new(url)
+    let contract = web3.contract(
+      contractJsonABI,
+      at: ethereumContractAddress,
+      abiVersion: 2
+    )
+    
+    guard let tx = contract?
+      .createWriteOperation(
+        "withdrawAsset",
+        parameters: [
+          withdrawAssetParameter.proxyAddress,
+          withdrawAssetParameter.tokenAddress,
+          withdrawAssetParameter.amount,
+          withdrawAssetParameter.recipientAddress,
+          withdrawAssetParameter.expiryAt,
+          withdrawAssetParameter.salt,
+          withdrawAssetParameter.signature,
+          [withdrawAssetParameter.adminSalt],
+          [withdrawAssetParameter.adminSignature],
+          true
+        ]
+      )?
+      .data?
+      .toHexString()
+    else {
+      RainLogger.error("Rain SDK: Error building transaction for withdrawal. Could not encode withdrawAsset contract function")
+      throw RainSDKError.internalLogicError(
+        details: "Failed to encode withdrawAsset contract function"
+      )
+    }
+    
+    return "0x" + tx
+  }
 }
+
+// MARK: - Helpers
 
 private extension TransactionBuilderService {
   /// Get RPC URL for a specific chain ID

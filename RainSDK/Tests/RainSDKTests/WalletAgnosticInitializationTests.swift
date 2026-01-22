@@ -33,7 +33,7 @@ struct WalletAgnosticInitializationTests {
       decimals: decimals,
       recipientAddress: recipientAddress,
       nonce: nonce
-    )
+    ).0
     
     // Verify message is valid JSON
     let jsonData = message.data(using: .utf8)
@@ -83,7 +83,7 @@ struct WalletAgnosticInitializationTests {
       nonce: BigUInt(0)
     )
     
-    let jsonData = message.data(using: .utf8)!
+    let jsonData = message.0.data(using: .utf8)!
     let jsonObject = try JSONSerialization.jsonObject(with: jsonData) as! [String: Any]
     let messageData = jsonObject["message"] as! [String: Any]
     
@@ -110,7 +110,7 @@ struct WalletAgnosticInitializationTests {
       nonce: BigUInt(1)
     )
     
-    let jsonData = message.data(using: .utf8)!
+    let jsonData = message.0.data(using: .utf8)!
     let jsonObject = try JSONSerialization.jsonObject(with: jsonData) as! [String: Any]
     let messageData = jsonObject["message"] as! [String: Any]
     
@@ -158,11 +158,11 @@ struct WalletAgnosticInitializationTests {
     #expect(message1 != message2)
     
     // But domain should have salt field
-    let jsonData1 = message1.data(using: .utf8)!
+    let jsonData1 = message1.0.data(using: .utf8)!
     let jsonObject1 = try JSONSerialization.jsonObject(with: jsonData1) as! [String: Any]
     let domain1 = jsonObject1["domain"] as! [String: Any]
     
-    let jsonData2 = message2.data(using: .utf8)!
+    let jsonData2 = message2.0.data(using: .utf8)!
     let jsonObject2 = try JSONSerialization.jsonObject(with: jsonData2) as! [String: Any]
     let domain2 = jsonObject2["domain"] as! [String: Any]
     
@@ -232,7 +232,7 @@ struct WalletAgnosticInitializationTests {
     )
     
     // Should succeed and return valid JSON
-    let jsonData = message.data(using: .utf8)
+    let jsonData = message.0.data(using: .utf8)
     #expect(jsonData != nil)
     
     let jsonObject = try JSONSerialization.jsonObject(with: jsonData!) as? [String: Any]
@@ -261,7 +261,7 @@ struct WalletAgnosticInitializationTests {
       nonce: BigUInt(1)
     )
     
-    let jsonData = message.data(using: .utf8)!
+    let jsonData = message.0.data(using: .utf8)!
     let jsonObject = try JSONSerialization.jsonObject(with: jsonData) as! [String: Any]
     let messageData = jsonObject["message"] as! [String: Any]
     
@@ -307,15 +307,281 @@ struct WalletAgnosticInitializationTests {
     )
     
     // Both should succeed
-    let jsonData1 = message1.data(using: .utf8)!
+    let jsonData1 = message1.0.data(using: .utf8)!
     let jsonObject1 = try JSONSerialization.jsonObject(with: jsonData1) as! [String: Any]
     let domain1 = jsonObject1["domain"] as! [String: Any]
     #expect(domain1["chainId"] as? Int == 1)
     
-    let jsonData2 = message2.data(using: .utf8)!
+    let jsonData2 = message2.0.data(using: .utf8)!
     let jsonObject2 = try JSONSerialization.jsonObject(with: jsonData2) as! [String: Any]
     let domain2 = jsonObject2["domain"] as! [String: Any]
     #expect(domain2["chainId"] as? Int == 137)
+  }
+  
+  // MARK: - Build Withdraw Transaction Data Tests
+  
+  @Test("buildWithdrawTransactionData should succeed with valid inputs")
+  func testBuildWithdrawTransactionDataSuccess() async throws {
+    let manager = try await createInitializedManager()
+    
+    let chainId = 1
+    let contractAddress = "0x1234567890123456789012345678901234567890"
+    let proxyAddress = "0xabcdefabcdefabcdefabcdefabcdefabcdefabcd"
+    let tokenAddress = "0x9876543210987654321098765432109876543210"
+    let amount: Double = 100.0
+    let decimals = 18
+    let recipientAddress = "0xfedcbafedcbafedcbafedcbafedcbafedcbafedc"
+    let expiresAt = "1735689600" // Unix timestamp
+    let signatureData = Data([UInt8](repeating: 0x42, count: 65)) // 65 bytes for signature
+    let adminSalt = Data([UInt8](repeating: 0xAA, count: 32)) // 32 bytes for salt
+    let adminSignature = Data([UInt8](repeating: 0xBB, count: 65)) // 65 bytes for signature
+    
+    // Note: This will fail if RPC URL is not accessible or contract ABI is missing
+    // But we can test the validation logic
+    do {
+      let txData = try await manager.buildWithdrawTransactionData(
+        chainId: chainId,
+        contractAddress: contractAddress,
+        proxyAddress: proxyAddress,
+        tokenAddress: tokenAddress,
+        amount: amount,
+        decimals: decimals,
+        recipientAddress: recipientAddress,
+        expiresAt: expiresAt,
+        signatureData: signatureData,
+        adminSalt: adminSalt,
+        adminSignature: adminSignature
+      )
+      
+      // Verify transaction data is hex-encoded and prefixed with 0x
+      #expect(txData.hasPrefix("0x"))
+      #expect(txData.count > 2) // Should have hex data after 0x
+    } catch RainSDKError.providerError {
+      // Expected if RPC is not accessible in test environment
+    } catch RainSDKError.internalLogicError(let details) where details.contains("ABI") {
+      // Expected if ABI files are not available
+    }
+  }
+  
+  @Test("buildWithdrawTransactionData should throw sdkNotInitialized when called before initialization")
+  func testBuildWithdrawTransactionDataBeforeInitialization() async throws {
+    let manager = RainSDKManager()
+    
+    let signatureData = Data([UInt8](repeating: 0x42, count: 65))
+    let adminSalt = Data([UInt8](repeating: 0xAA, count: 32))
+    let adminSignature = Data([UInt8](repeating: 0xBB, count: 65))
+    
+    await #expect(throws: RainSDKError.sdkNotInitialized) {
+      try await manager.buildWithdrawTransactionData(
+        chainId: 1,
+        contractAddress: "0x1234567890123456789012345678901234567890",
+        proxyAddress: "0xabcdefabcdefabcdefabcdefabcdefabcdefabcd",
+        tokenAddress: "0x9876543210987654321098765432109876543210",
+        amount: 100.0,
+        decimals: 18,
+        recipientAddress: "0xfedcbafedcbafedcbafedcbafedcbafedcbafedc",
+        expiresAt: "1735689600",
+        signatureData: signatureData,
+        adminSalt: adminSalt,
+        adminSignature: adminSignature
+      )
+    }
+  }
+  
+  @Test("buildWithdrawTransactionData should throw error for invalid contract address")
+  func testBuildWithdrawTransactionDataInvalidContractAddress() async throws {
+    let manager = try await createInitializedManager()
+    
+    let signatureData = Data([UInt8](repeating: 0x42, count: 65))
+    let adminSalt = Data([UInt8](repeating: 0xAA, count: 32))
+    let adminSignature = Data([UInt8](repeating: 0xBB, count: 65))
+    
+    await #expect(throws: RainSDKError.internalLogicError(details: "Error building transaction parameters for withdrawal. One of the addresses could not be built")) {
+      try await manager.buildWithdrawTransactionData(
+        chainId: 1,
+        contractAddress: "invalid-address",
+        proxyAddress: "0xabcdefabcdefabcdefabcdefabcdefabcdefabcd",
+        tokenAddress: "0x9876543210987654321098765432109876543210",
+        amount: 100.0,
+        decimals: 18,
+        recipientAddress: "0xfedcbafedcbafedcbafedcbafedcbafedcbafedc",
+        expiresAt: "1735689600",
+        signatureData: signatureData,
+        adminSalt: adminSalt,
+        adminSignature: adminSignature
+      )
+    }
+  }
+  
+  @Test("buildWithdrawTransactionData should throw error for invalid proxy address")
+  func testBuildWithdrawTransactionDataInvalidProxyAddress() async throws {
+    let manager = try await createInitializedManager()
+    
+    let signatureData = Data([UInt8](repeating: 0x42, count: 65))
+    let adminSalt = Data([UInt8](repeating: 0xAA, count: 32))
+    let adminSignature = Data([UInt8](repeating: 0xBB, count: 65))
+    
+    await #expect(throws: RainSDKError.internalLogicError(details: "Error building transaction parameters for withdrawal. One of the addresses could not be built")) {
+      try await manager.buildWithdrawTransactionData(
+        chainId: 1,
+        contractAddress: "0x1234567890123456789012345678901234567890",
+        proxyAddress: "invalid-address",
+        tokenAddress: "0x9876543210987654321098765432109876543210",
+        amount: 100.0,
+        decimals: 18,
+        recipientAddress: "0xfedcbafedcbafedcbafedcbafedcbafedcbafedc",
+        expiresAt: "1735689600",
+        signatureData: signatureData,
+        adminSalt: adminSalt,
+        adminSignature: adminSignature
+      )
+    }
+  }
+  
+  @Test("buildWithdrawTransactionData should throw error for invalid recipient address")
+  func testBuildWithdrawTransactionDataInvalidRecipientAddress() async throws {
+    let manager = try await createInitializedManager()
+    
+    let signatureData = Data([UInt8](repeating: 0x42, count: 65))
+    let adminSalt = Data([UInt8](repeating: 0xAA, count: 32))
+    let adminSignature = Data([UInt8](repeating: 0xBB, count: 65))
+    
+    await #expect(throws: RainSDKError.internalLogicError(details: "Error building transaction parameters for withdrawal. One of the addresses could not be built")) {
+      try await manager.buildWithdrawTransactionData(
+        chainId: 1,
+        contractAddress: "0x1234567890123456789012345678901234567890",
+        proxyAddress: "0xabcdefabcdefabcdefabcdefabcdefabcdefabcd",
+        tokenAddress: "0x9876543210987654321098765432109876543210",
+        amount: 100.0,
+        decimals: 18,
+        recipientAddress: "invalid-address",
+        expiresAt: "1735689600",
+        signatureData: signatureData,
+        adminSalt: adminSalt,
+        adminSignature: adminSignature
+      )
+    }
+  }
+  
+  @Test("buildWithdrawTransactionData should throw error for invalid expiration timestamp")
+  func testBuildWithdrawTransactionDataInvalidExpiration() async throws {
+    let manager = try await createInitializedManager()
+    
+    let signatureData = Data([UInt8](repeating: 0x42, count: 65))
+    let adminSalt = Data([UInt8](repeating: 0xAA, count: 32))
+    let adminSignature = Data([UInt8](repeating: 0xBB, count: 65))
+    
+    await #expect(throws: RainSDKError.internalLogicError(details: "Error building transaction parameters for withdrawal. One of the addresses could not be built")) {
+      try await manager.buildWithdrawTransactionData(
+        chainId: 1,
+        contractAddress: "0x1234567890123456789012345678901234567890",
+        proxyAddress: "0xabcdefabcdefabcdefabcdefabcdefabcdefabcd",
+        tokenAddress: "0x9876543210987654321098765432109876543210",
+        amount: 100.0,
+        decimals: 18,
+        recipientAddress: "0xfedcbafedcbafedcbafedcbafedcbafedcbafedc",
+        expiresAt: "invalid-timestamp",
+        signatureData: signatureData,
+        adminSalt: adminSalt,
+        adminSignature: adminSignature
+      )
+    }
+  }
+  
+  @Test("buildWithdrawTransactionData should handle ISO8601 timestamp format")
+  func testBuildWithdrawTransactionDataISO8601Timestamp() async throws {
+    let manager = try await createInitializedManager()
+    
+    let signatureData = Data([UInt8](repeating: 0x42, count: 65))
+    let adminSalt = Data([UInt8](repeating: 0xAA, count: 32))
+    let adminSignature = Data([UInt8](repeating: 0xBB, count: 65))
+    
+    // ISO8601 format timestamp
+    let iso8601Timestamp = "2025-01-01T00:00:00Z"
+    
+    // Note: This will fail if RPC URL is not accessible or contract ABI is missing
+    do {
+      let txData = try await manager.buildWithdrawTransactionData(
+        chainId: 1,
+        contractAddress: "0x1234567890123456789012345678901234567890",
+        proxyAddress: "0xabcdefabcdefabcdefabcdefabcdefabcdefabcd",
+        tokenAddress: "0x9876543210987654321098765432109876543210",
+        amount: 100.0,
+        decimals: 18,
+        recipientAddress: "0xfedcbafedcbafedcbafedcbafedcbafedcbafedc",
+        expiresAt: iso8601Timestamp,
+        signatureData: signatureData,
+        adminSalt: adminSalt,
+        adminSignature: adminSignature
+      )
+      
+      // Verify transaction data is hex-encoded
+      #expect(txData.hasPrefix("0x"))
+    } catch RainSDKError.providerError {
+      // Expected if RPC is not accessible
+    } catch RainSDKError.internalLogicError(let details) where details.contains("ABI") {
+      // Expected if ABI files are not available
+    }
+  }
+  
+  @Test("buildWithdrawTransactionData should handle different decimal places")
+  func testBuildWithdrawTransactionDataDifferentDecimals() async throws {
+    let manager = try await createInitializedManager()
+    
+    let signatureData = Data([UInt8](repeating: 0x42, count: 65))
+    let adminSalt = Data([UInt8](repeating: 0xAA, count: 32))
+    let adminSignature = Data([UInt8](repeating: 0xBB, count: 65))
+    
+    // Test with 6 decimals (USDC-like)
+    let amount: Double = 100.5
+    let decimals = 6
+    
+    do {
+      let txData = try await manager.buildWithdrawTransactionData(
+        chainId: 1,
+        contractAddress: "0x1234567890123456789012345678901234567890",
+        proxyAddress: "0xabcdefabcdefabcdefabcdefabcdefabcdefabcd",
+        tokenAddress: "0x9876543210987654321098765432109876543210",
+        amount: amount,
+        decimals: decimals,
+        recipientAddress: "0xfedcbafedcbafedcbafedcbafedcbafedcbafedc",
+        expiresAt: "1735689600",
+        signatureData: signatureData,
+        adminSalt: adminSalt,
+        adminSignature: adminSignature
+      )
+      
+      #expect(txData.hasPrefix("0x"))
+    } catch RainSDKError.providerError {
+      // Expected if RPC is not accessible
+    } catch RainSDKError.internalLogicError(let details) where details.contains("ABI") {
+      // Expected if ABI files are not available
+    }
+  }
+  
+  @Test("buildWithdrawTransactionData should throw invalidConfig for chainId not in network configs")
+  func testBuildWithdrawTransactionDataInvalidChainId() async throws {
+    let manager = try await createInitializedManager()
+    
+    let signatureData = Data([UInt8](repeating: 0x42, count: 65))
+    let adminSalt = Data([UInt8](repeating: 0xAA, count: 32))
+    let adminSignature = Data([UInt8](repeating: 0xBB, count: 65))
+    
+    await #expect(throws: RainSDKError.invalidConfig(chainId: 999, rpcUrl: "")) {
+      try await manager.buildWithdrawTransactionData(
+        chainId: 999, // Not in network configs
+        contractAddress: "0x1234567890123456789012345678901234567890",
+        proxyAddress: "0xabcdefabcdefabcdefabcdefabcdefabcdefabcd",
+        tokenAddress: "0x9876543210987654321098765432109876543210",
+        amount: 100.0,
+        decimals: 18,
+        recipientAddress: "0xfedcbafedcbafedcbafedcbafedcbafedcbafedc",
+        expiresAt: "1735689600",
+        signatureData: signatureData,
+        adminSalt: adminSalt,
+        adminSignature: adminSignature
+      )
+    }
   }
 }
 
