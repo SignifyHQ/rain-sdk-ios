@@ -16,7 +16,9 @@ let package = Package(
     ),
   ],
   dependencies: [
-    .package(url: "https://github.com/portal-hq/PortalSwift.git", exact: "6.6.0")
+    .package(url: "https://github.com/portal-hq/PortalSwift.git", exact: "6.6.0"),
+    .package(url: "https://github.com/Boilertalk/Web3.swift.git", exact: "0.8.8"),
+    .package(url: "https://github.com/web3swift-team/web3swift.git", from: "3.3.2")
   ],
   targets: [
     // Targets are the basic building blocks of a package, defining a module or a test suite.
@@ -24,7 +26,11 @@ let package = Package(
     .target(
       name: "RainSDK",
       dependencies: [
-        .product(name: "PortalSwift", package: "PortalSwift")
+        .product(name: "PortalSwift", package: "PortalSwift"),
+        .product(name: "Web3", package: "Web3.swift"),
+        .product(name: "Web3PromiseKit", package: "Web3.swift"),
+        .product(name: "Web3ContractABI", package: "Web3.swift"),
+        .product(name: "web3swift", package: "web3swift")
       ]
     ),
     .testTarget(

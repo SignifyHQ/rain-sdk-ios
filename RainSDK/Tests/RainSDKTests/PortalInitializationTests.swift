@@ -2,19 +2,10 @@ import Testing
 import Foundation
 @testable import RainSDK
 
-// MARK: - Test Helpers
-
-extension NetworkConfig {
-  /// Helper to create test network configs
-  static func testConfig(chainId: Int, rpcUrl: String = "https://test-rpc.com") -> NetworkConfig {
-    NetworkConfig(chainId: chainId, rpcUrl: rpcUrl)
-  }
-}
-
-@Suite("RainSDKManager Tests")
-struct RainSDKManagerTests {
+@Suite("Portal SDK Initialization Tests")
+struct PortalInitializationTests {
   
-  // MARK: - Initialization Tests
+  // MARK: - Success Cases
   
   @Test("initializePortal should succeed with valid inputs")
   func testInitializePortalSuccess() async throws {
@@ -244,6 +235,126 @@ struct RainSDKManagerTests {
     
     #expect(throws: RainSDKError.invalidConfig(chainId: 1, rpcUrl: "invalid-url")) {
       try manager.buildRpcConfig(from: configs)
+    }
+  }
+  
+  // MARK: - Initialization without Portal token
+  
+  // MARK: - Success Cases
+  
+  @Test("initialize should succeed with valid network configs")
+  func testInitializeSuccess() async throws {
+    let manager = RainSDKManager()
+    let configs = [
+      NetworkConfig.testConfig(chainId: 1, rpcUrl: "https://mainnet.infura.io/v3/test"),
+      NetworkConfig.testConfig(chainId: 137, rpcUrl: "https://polygon-rpc.com")
+    ]
+    
+    // Should not throw
+    try await manager.initialize(networkConfigs: configs)
+    
+    // After initialization, transaction builder should be available
+    // We can test this by checking if buildEIP712Message can be called
+    // (it will fail with sdkNotInitialized if not initialized, but that's a different error)
+  }
+  
+  @Test("initialize should handle single network config")
+  func testInitializeSingleNetwork() async throws {
+    let manager = RainSDKManager()
+    let configs = [
+      NetworkConfig.testConfig(chainId: 1, rpcUrl: "https://mainnet.infura.io/v3/test")
+    ]
+    
+    try await manager.initialize(networkConfigs: configs)
+  }
+  
+  @Test("initialize should handle multiple network configs")
+  func testInitializeMultipleNetworks() async throws {
+    let manager = RainSDKManager()
+    let configs = [
+      NetworkConfig.testConfig(chainId: 1, rpcUrl: "https://eth-mainnet.com"),
+      NetworkConfig.testConfig(chainId: 137, rpcUrl: "https://polygon-mainnet.com"),
+      NetworkConfig.testConfig(chainId: 42161, rpcUrl: "https://arbitrum-mainnet.com")
+    ]
+    
+    try await manager.initialize(networkConfigs: configs)
+  }
+  
+  // MARK: - Validation Tests (Failure Cases)
+  
+  @Test("Should throw invalidConfig error for empty network configs")
+  func testInitializeEmptyConfigs() async throws {
+    let manager = RainSDKManager()
+    let configs: [NetworkConfig] = []
+    
+    await #expect(throws: RainSDKError.invalidConfig(chainId: 0, rpcUrl: "")) {
+      try await manager.initialize(networkConfigs: configs)
+    }
+  }
+  
+  @Test("Should throw invalidConfig error for invalid chain ID (zero)")
+  func testInitializeInvalidChainIdZero() async throws {
+    let manager = RainSDKManager()
+    let configs = [NetworkConfig.testConfig(chainId: 0)]
+    
+    await #expect(throws: RainSDKError.invalidConfig(chainId: 0, rpcUrl: "https://test-rpc.com")) {
+      try await manager.initialize(networkConfigs: configs)
+    }
+  }
+  
+  @Test("Should throw invalidConfig error for invalid chain ID (negative)")
+  func testInitializeInvalidChainIdNegative() async throws {
+    let manager = RainSDKManager()
+    let configs = [NetworkConfig.testConfig(chainId: -1)]
+    
+    await #expect(throws: RainSDKError.invalidConfig(chainId: -1, rpcUrl: "https://test-rpc.com")) {
+      try await manager.initialize(networkConfigs: configs)
+    }
+  }
+  
+  @Test("Should throw invalidConfig error for empty RPC URL")
+  func testInitializeEmptyRpcUrl() async throws {
+    let manager = RainSDKManager()
+    let configs = [NetworkConfig.testConfig(chainId: 1, rpcUrl: "")]
+    
+    await #expect(throws: RainSDKError.invalidConfig(chainId: 1, rpcUrl: "")) {
+      try await manager.initialize(networkConfigs: configs)
+    }
+  }
+  
+  @Test("Should throw invalidConfig error for invalid RPC URL format")
+  func testInitializeInvalidRpcUrlFormat() async throws {
+    let manager = RainSDKManager()
+    let configs = [NetworkConfig.testConfig(chainId: 1, rpcUrl: "not-a-valid-url")]
+    
+    await #expect(throws: RainSDKError.invalidConfig(chainId: 1, rpcUrl: "not-a-valid-url")) {
+      try await manager.initialize(networkConfigs: configs)
+    }
+  }
+  
+  @Test("Should throw invalidConfig error for URL without HTTP/HTTPS scheme")
+  func testInitializeInvalidRpcUrlScheme() async throws {
+    let manager = RainSDKManager()
+    let configs = [NetworkConfig.testConfig(chainId: 1, rpcUrl: "ftp://example.com")]
+    
+    await #expect(throws: RainSDKError.invalidConfig(chainId: 1, rpcUrl: "ftp://example.com")) {
+      try await manager.initialize(networkConfigs: configs)
+    }
+  }
+  
+  // MARK: - Portal Access Tests
+  
+  @Test("Should throw sdkNotInitialized when accessing portal after wallet-agnostic initialization")
+  func testPortalAccessAfterWalletAgnosticInit() async throws {
+    let manager = RainSDKManager()
+    let configs = [NetworkConfig.testConfig(chainId: 1)]
+    
+    // Initialize in wallet-agnostic mode
+    try await manager.initialize(networkConfigs: configs)
+    
+    // Portal should not be accessible
+    #expect(throws: RainSDKError.sdkNotInitialized) {
+      try manager.portal
     }
   }
 }

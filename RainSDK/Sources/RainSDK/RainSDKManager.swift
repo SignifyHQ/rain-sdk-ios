@@ -1,11 +1,17 @@
 import Foundation
 import PortalSwift
+import Web3
 
 public final class RainSDKManager: RainSDK {
   // MARK: - Properties
 
   // Internal storage for Portal instance
   private var _portal: Portal?
+  
+  // Transaction builder service
+  private var _transactionBuilder: TransactionBuilderProtocol?
+  
+  private var _networkConfigs: [NetworkConfig] = []
   
   /// Computed property to safely access the Portal instance
   public var portal: Portal {
@@ -29,6 +35,9 @@ public final class RainSDKManager: RainSDK {
     // Validate inputs
     try validateInputs(portalSessionToken: portalSessionToken, networkConfigs: networkConfigs)
     
+    // Store network configs
+    _networkConfigs = networkConfigs
+    
     // Convert network configs to Portal format
     let eip155RpcEndpointsConfig = try buildRpcConfig(from: networkConfigs)
     
@@ -45,6 +54,10 @@ public final class RainSDKManager: RainSDK {
       
       // Store portal instance
       _portal = portal
+      
+      // Initialize transaction builder service with network configs
+      _transactionBuilder = TransactionBuilderService(networkConfigs: networkConfigs)
+      
       let addresses = try await portal.addresses
       RainLogger.info("Rain SDK: Portal initialized with \(addresses.count) wallet address(es)")
       RainLogger.info("Rain SDK: Registered Portal instance successfully with \(networkConfigs.count) network(s)")
@@ -56,11 +69,75 @@ public final class RainSDKManager: RainSDK {
       throw RainSDKError.providerError(underlying: error)
     }
   }
+  
+  public func initialize(
+    networkConfigs: [NetworkConfig]
+  ) async throws {
+    // Validate network configs
+    try validateNetworkConfigs(networkConfigs)
+    
+    // Store network configs
+    _networkConfigs = networkConfigs
+    
+    // Initialize transaction builder service with network configs
+    _transactionBuilder = TransactionBuilderService(networkConfigs: networkConfigs)
+    
+    RainLogger.info("Rain SDK: Initialized in wallet-agnostic mode with \(networkConfigs.count) network(s)")
+  }
+  
+  public func buildEIP712Message(
+    chainId: Int,
+    collateralProxyAddress: String,
+    walletAddress: String,
+    tokenAddress: String,
+    amount: Double,
+    decimals: Int,
+    recipientAddress: String,
+    nonce: BigUInt? // TODO: Check if the nonce is provided, if not -> retrieve from the network
+  ) async throws -> String {
+    // Ensure SDK is initialized with network configs
+    guard let transactionBuilder = _transactionBuilder else {
+      throw RainSDKError.sdkNotInitialized
+    }
+    
+    // Generate or reuse salt (store internally for later use in transaction building)
+    let salt = transactionBuilder.generateSalt()
+    
+    // Get nonce - retrieve from network if not provided
+    let finalNonce: BigUInt
+    if let providedNonce = nonce {
+      finalNonce = providedNonce
+    } else {
+      // Retrieve nonce from contract
+      finalNonce = try await transactionBuilder.getLatestNonce(
+        proxyAddress: collateralProxyAddress,
+        chainId: chainId
+      )
+      
+      RainLogger.debug("Rain SDK: Retrieved nonce \(finalNonce) from contract")
+    }
+    
+    // Amount is already in smallest units (as per protocol documentation)
+    // Convert Double to BigUInt
+    let amountBaseUnits = BigUInt(amount * pow(10.0, Double(decimals)))
+    
+    // Build EIP-712 message using service
+    return try transactionBuilder.buildEIP712Message(
+      chainId: chainId,
+      collateralProxyAddress: collateralProxyAddress,
+      walletAddress: walletAddress,
+      tokenAddress: tokenAddress,
+      amount: amountBaseUnits,
+      recipientAddress: recipientAddress,
+      nonce: finalNonce,
+      salt: salt
+    )
+  }
 }
 
 // MARK: Internal Helpers
 extension RainSDKManager {
-  /// Validate input parameters before initialization
+  /// Validate input parameters before Portal initialization
   func validateInputs(
     portalSessionToken: String,
     networkConfigs: [NetworkConfig]
@@ -69,6 +146,28 @@ extension RainSDKManager {
     guard !portalSessionToken.isEmpty else {
       RainLogger.warning("Rain SDK: Empty portal session token provided")
       throw RainSDKError.unauthorized
+    }
+    
+    // Validate network configs
+    try validateNetworkConfigs(networkConfigs)
+  }
+  
+  /// Validate network configurations
+  func validateNetworkConfigs(_ networkConfigs: [NetworkConfig]) throws {
+    guard !networkConfigs.isEmpty else {
+      RainLogger.warning("Rain SDK: Empty network configs provided")
+      throw RainSDKError.invalidConfig(chainId: 0, rpcUrl: "")
+    }
+    
+    // Validate each network config
+    for networkConfig in networkConfigs {
+      guard networkConfig.chainId > 0 else {
+        throw RainSDKError.invalidConfig(chainId: networkConfig.chainId, rpcUrl: networkConfig.rpcUrl)
+      }
+      
+      guard networkConfig.rpcUrl.isValidHTTPURL() else {
+        throw RainSDKError.invalidConfig(chainId: networkConfig.chainId, rpcUrl: networkConfig.rpcUrl)
+      }
     }
   }
   
