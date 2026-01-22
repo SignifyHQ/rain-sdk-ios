@@ -95,7 +95,7 @@ public final class RainSDKManager: RainSDK {
     amount: Double,
     decimals: Int,
     recipientAddress: String,
-    nonce: BigUInt? // TODO: Check if the nonce is provided, if not -> retrieve from the network
+    nonce: BigUInt?
   ) async throws -> (String, String) {
     // Ensure SDK is initialized with network configs
     guard let transactionBuilder = _transactionBuilder else {
