@@ -121,7 +121,7 @@ public final class RainSDKManager: RainSDK {
     
     // Amount is already in smallest units (as per protocol documentation)
     // Convert Double to BigUInt
-    let amountBaseUnits = BigUInt(amount * pow(10.0, Double(decimals)))
+    let amountBaseUnits = try AmountHelpers.toBaseUnits(amount: amount, decimals: decimals)
     
     // Build EIP-712 message using service
     let jsonMessage = try transactionBuilder.buildEIP712Message(
