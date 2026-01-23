@@ -47,4 +47,14 @@ enum Constants {
       return parse(string) != nil
     }
   }
+  
+  /// Contract ABI JSON names
+  /// Used to identify contract ABIs for encoding/decoding operations
+  enum ContractABI {
+    /// Main contract ABI JSON name
+    static let contractJsonABI = "contractJsonABI"
+    
+    /// Collateral contract ABI JSON name
+    static let collateralJsonABI = "collateralJsonABI"
+  }
 }
