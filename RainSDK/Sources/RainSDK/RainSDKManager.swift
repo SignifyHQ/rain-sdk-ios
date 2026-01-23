@@ -169,7 +169,7 @@ public final class RainSDKManager: RainSDK {
     }
     
     // Convert the amount to base units using decimals of the token
-    let amountBaseUnits = BigUInt(amount * pow(10.0, Double(decimals)))
+    let amountBaseUnits = try AmountHelpers.toBaseUnits(amount: amount, decimals: decimals)
     
     // Convert the expiration timestamp string from Rain API to Unix Timestamp
     // Expects ISO8601 format or Unix timestamp string
