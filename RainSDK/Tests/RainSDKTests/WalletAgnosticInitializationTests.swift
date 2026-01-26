@@ -1,6 +1,7 @@
 import Testing
 import Foundation
 import Web3
+import Web3Core
 @testable import RainSDK
 
 // MARK: - Wallet-Agnostic SDK Initialization Tests
@@ -65,6 +66,71 @@ struct WalletAgnosticInitializationTests {
     
     // Verify amount (should be in base units: 100 * 10^18)
     let expectedAmount = BigUInt(100 * pow(10.0, 18))
+    #expect(messageData?["amount"] as? String == expectedAmount.description)
+  }
+  
+  @Test("buildEIP712Message should succeed with nil nonce and auto-fetch from contract")
+  func testBuildEIP712MessageWithNilNonce() async throws {
+    // Create manager with mock transaction builder that returns a nonce
+    let configs = [
+      NetworkConfig.testConfig(chainId: 1, rpcUrl: "https://mainnet.infura.io/v3/test")
+    ]
+    let mockBuilder = MockTransactionBuilderService(networkConfigs: configs)
+    mockBuilder.mockNonce = BigUInt(42) // Set expected nonce value
+    let manager = RainSDKManager(transactionBuilder: mockBuilder)
+    
+    let chainId = 1
+    let collateralProxyAddress = "0x1234567890123456789012345678901234567890"
+    let walletAddress = "0xabcdefabcdefabcdefabcdefabcdefabcdefabcd"
+    let tokenAddress = "0x04A76ffB5D37B7f440B4CA06040C10Cf33221EEC"
+    let amount: Double = 100.0
+    let decimals = 18
+    let recipientAddress = "0xfedcbafedcbafedcbafedcbafedcbafedcbafedc"
+    let expectedNonce = BigUInt(42)
+    
+    // This should succeed because the mock builder will return a nonce
+    let message = try await manager.buildEIP712Message(
+      chainId: chainId,
+      collateralProxyAddress: collateralProxyAddress,
+      walletAddress: walletAddress,
+      tokenAddress: tokenAddress,
+      amount: amount,
+      decimals: decimals,
+      recipientAddress: recipientAddress,
+      nonce: nil // Will retrieve from mock builder
+    )
+    
+    // Verify message is valid JSON
+    let jsonData = message.0.data(using: .utf8)
+    #expect(jsonData != nil)
+    
+    let jsonObject = try JSONSerialization.jsonObject(with: jsonData!) as? [String: Any]
+    #expect(jsonObject != nil)
+    
+    // Verify structure
+    #expect(jsonObject?["types"] != nil)
+    #expect(jsonObject?["domain"] != nil)
+    #expect(jsonObject?["primaryType"] as? String == "Withdraw")
+    #expect(jsonObject?["message"] != nil)
+    
+    // Verify domain
+    let domain = jsonObject?["domain"] as? [String: Any]
+    #expect(domain?["name"] as? String == "Collateral")
+    #expect(domain?["version"] as? String == "2")
+    #expect(domain?["chainId"] as? Int == chainId)
+    #expect(domain?["verifyingContract"] as? String == collateralProxyAddress)
+    #expect(domain?["salt"] != nil)
+    
+    // Verify message has nonce (should be retrieved from mock builder)
+    let messageData = jsonObject?["message"] as? [String: Any]
+    #expect(messageData?["user"] as? String == walletAddress)
+    #expect(messageData?["asset"] as? String == tokenAddress)
+    #expect(messageData?["recipient"] as? String == recipientAddress)
+    #expect(messageData?["nonce"] != nil) // Nonce should be present
+    #expect(messageData?["nonce"] as? String == expectedNonce.description) // Should match mock nonce
+    
+    // Verify amount
+    let expectedAmount = BigUInt(amount * pow(10.0, Double(decimals)))
     #expect(messageData?["amount"] as? String == expectedAmount.description)
   }
   
@@ -583,6 +649,33 @@ struct WalletAgnosticInitializationTests {
       )
     }
   }
+  
+  // MARK: - Get Latest Nonce Tests
+  
+  @Test("getLatestNonce should retrieve nonce from real contract on Avalanche Fuji")
+  func testGetLatestNonceFromRealContract() async throws {
+    // Initialize transaction builder with Avalanche Fuji network config
+    let chainId = 43113
+    let configs = [
+      NetworkConfig(chainId: chainId, rpcUrl: "https://avalanche-fuji-c-chain-rpc.publicnode.com")
+    ]
+    let transactionBuilder = TransactionBuilderService(networkConfigs: configs)
+    
+    // Contract address on Avalanche Fuji
+    let contractAddress = "0x5a022623280AA5E922A4D9BB3024fA7D70D7e789"
+    
+    // Get nonce directly from contract
+    let nonce = try await transactionBuilder.getLatestNonce(
+      proxyAddress: contractAddress,
+      chainId: chainId
+    )
+    
+    // Verify nonce is a valid BigUInt (should be >= 0)
+    #expect(nonce >= 0)
+    
+    // Log the retrieved nonce for debugging
+    print("Retrieved nonce from contract \(contractAddress) on chain \(chainId): \(nonce)")
+  }
 }
 
 // MARK: - Setup Helper
@@ -595,5 +688,5 @@ extension WalletAgnosticInitializationTests {
     ]
     try await manager.initialize(networkConfigs: configs)
     return manager
-  }
+  }  
 }
