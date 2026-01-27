@@ -46,7 +46,7 @@ public struct CardDetailsListView: View {
           viewModel: CreditLimitBreakdownViewModel()
         )
       case .disabledCardList:
-        DisabledCardListView(cards: viewModel.closedCards)
+        DisabledCardListView(cards: viewModel.allVirtualCards)
       case .activatePhysicalCard:
         ActivatePhysicalCardView(card: viewModel.currentCard) { cardID in
           viewModel.activePhysicalSuccess(id: cardID)
@@ -130,8 +130,12 @@ private extension CardDetailsListView {
   }
   
   var contentView: some View {
-    VStack(spacing: 24) {
-      cardsView
+    VStack(
+      spacing: 24
+    ) {
+      if viewModel.cardsList.isNotEmpty {
+        cardsView
+      }
 
       if let configurationValue = viewModel.requestConfiguration[viewModel.currentCard.id],
          let configuration = configurationValue,
@@ -185,7 +189,11 @@ private extension CardDetailsListView {
   }
   
   private var calculatedCardsHeight: CGFloat {
-    guard !viewModel.cardsList.isEmpty else { return cardHeight }
+    guard !viewModel.cardsList.isEmpty
+    else {
+      return .zero
+    }
+    
     let offsetSpacing: CGFloat = 42
     // Calculate total height: measured card height + offset for all cards except the first
     return cardHeight + (offsetSpacing * CGFloat(viewModel.cardsList.count - 1))
@@ -212,16 +220,23 @@ private extension CardDetailsListView {
       alignment: .leading,
       spacing: 18
     ) {
-      VStack(spacing: 0) {
+      VStack(
+        spacing: 0
+      ) {
         showCardNumberCell
         lockCardCell
-        createNewVirtualCardCell
+        requestANewVirtualCardCell
         shippingDetailsCell
         activatePhysicalCardCell
         orderPhysicalCardCell
-        closeCardCell
+        // Show the close card cell based on the card type
+        if viewModel.currentCard.cardType == .virtual {
+          closeVirtualCardCell
+        } else {
+          closePhysicalCardCell
+        }
         // Hiding it for now because it is not working, will update for v2
-        //disabledCardsCell
+        disabledCardsCell
       }
     }
   }
@@ -259,7 +274,9 @@ private extension CardDetailsListView {
   @ViewBuilder
   var shippingDetailsCell: some View {
     if viewModel.isShowingShippingDetails {
-      CardActionCell(title: L10N.Common.CardDetailsList.ShippingDetails.title) {
+      CardActionCell(
+        title: L10N.Common.CardDetailsList.ShippingDetails.title
+      ) {
         viewModel.onShippingDetailsTap()
       }
     }
@@ -268,7 +285,9 @@ private extension CardDetailsListView {
   @ViewBuilder
   var activatePhysicalCardCell: some View {
     if viewModel.isShowingActivatePhysicalCard {
-      CardActionCell(title: L10N.Common.CardDetailsList.ActivatePhysicalCard.title) {
+      CardActionCell(
+        title: L10N.Common.CardDetailsList.ActivatePhysicalCard.title
+      ) {
         viewModel.navigateActivateCardView()
       }
     }
@@ -276,18 +295,32 @@ private extension CardDetailsListView {
   
   @ViewBuilder
   var orderPhysicalCardCell: some View {
-    if !viewModel.doesHavePhysicalCard || viewModel.isShowingCanceledCardOrder {
-      CardActionCell(title: L10N.Common.CardDetailsList.OrderPhysical.title) {
+    if viewModel.isPhysicalCardOrderAvailable || viewModel.isShowingCanceledCardOrder {
+      CardActionCell(
+        title: L10N.Common.CardDetailsList.OrderPhysical.title
+      ) {
         viewModel.onOrderPhysicalCardTap()
       }
     }
   }
   
   @ViewBuilder
-  var closeCardCell: some View {
+  var closePhysicalCardCell: some View {
     if viewModel.isShowingCloseCard {
       CardActionCell(
-        title: viewModel.currentCard.cardType == .virtual ? L10N.Common.CardDetailsList.CloseVirtualCard.title : L10N.Common.CardDetailsList.ClosePhysicalCard.title
+        title: L10N.Common.CardDetailsList.ClosePhysicalCard.title
+      ) {
+        viewModel.onCloseCardTap()
+      }
+    }
+  }
+  
+  @ViewBuilder
+  var closeVirtualCardCell: some View {
+    if viewModel.isShowingCloseCard {
+      CardActionCell(
+        title: L10N.Common.CardDetailsList.CloseVirtualCard.title,
+        subtitle: L10N.Common.CardDetailsList.VirtualCard.CardLimit.subtitle(Constants.virtualCardCountLimit)
       ) {
         viewModel.onCloseCardTap()
       }
@@ -296,18 +329,24 @@ private extension CardDetailsListView {
   
   @ViewBuilder
   var disabledCardsCell: some View {
-    if viewModel.isShowingDisabledCards {
-      CardActionCell(title: L10N.Common.CardDetailsList.DisabledCards.title) {
+    if viewModel.shouldShowDisabledCardsButton {
+      CardActionCell(
+        title: L10N.Common.CardDetailsList.DisabledCards.title
+      ) {
         viewModel.navigation = .disabledCardList
       }
     }
   }
   
   @ViewBuilder
-  var createNewVirtualCardCell: some View {
-    if !viewModel.cardsList.contains(where: { $0.cardType == .virtual }) {
-      CardActionCell(title: L10N.Common.CardDetailsList.CreateNewVirtualCard.title) {
-        viewModel.popup = .confirmCreateNewCard
+  var requestANewVirtualCardCell: some View {
+    if !viewModel.cardsList.contains(where: { $0.cardType == .virtual }),
+       !viewModel.isFinalVirtualCard {
+      CardActionCell(
+        title: L10N.Common.CardDetailsList.CreateNewVirtualCard.title,
+        subtitle: L10N.Common.CardDetailsList.VirtualCard.CardLimit.subtitle(Constants.virtualCardCountLimit)
+      ) {
+        viewModel.onRequestANewVirtualCardTap()
       }
     }
   }
@@ -427,13 +466,52 @@ private extension CardDetailsListView {
   
   var closeCardConfirmationPopup: some View {
     let isVirtualCard: Bool = viewModel.currentCard.cardType == .virtual
-    let title = isVirtualCard ? L10N.Common.CloseVirtualCard.Popup.title : L10N.Common.ClosePhysicalCard.Popup.title
-    let subtitle = isVirtualCard ? L10N.Common.CloseVirtualCard.Popup.subtitle : L10N.Common.ClosePhysicalCard.Popup.subtitle
-    let primaryButtonTitle = isVirtualCard ? L10N.Common.CloseVirtualCard.Popup.Confirm.Button.title : L10N.Common.ClosePhysicalCard.Popup.Confirm.Button.title
+    let isFinalVirtualCard: Bool = viewModel.isFinalVirtualCard
+    
+    var title: String {
+      if isVirtualCard {
+        return L10N.Common.CloseVirtualCard.Popup.title
+      }
+      
+      return L10N.Common.ClosePhysicalCard.Popup.title
+    }
+    
+    var subtitle: String {
+      if isVirtualCard {
+        return viewModel.isFinalVirtualCard ?
+        L10N.Common.CloseVirtualCard.Popup.Final.subtitle(Constants.virtualCardCountLimit, Constants.virtualCardCountLimit) :
+        L10N.Common.CloseVirtualCard.Popup.subtitle(Constants.virtualCardCountLimit, viewModel.remainingVirtualCardCount, Constants.virtualCardCountLimit)
+      }
+      
+      return L10N.Common.ClosePhysicalCard.Popup.subtitle
+    }
+    
+    var imageView: (() -> AnyView)? {
+      if isVirtualCard && isFinalVirtualCard {
+        return {
+          AnyView(
+            GenImages.Images.icoWarning.swiftUIImage
+              .resizable()
+              .frame(32)
+          )
+        }
+      } else {
+        return nil
+      }
+    }
+    
+    var primaryButtonTitle: String {
+      if isVirtualCard {
+        return L10N.Common.CloseVirtualCard.Popup.Confirm.Button.title
+      }
+      
+      return L10N.Common.ClosePhysicalCard.Popup.Confirm.Button.title
+    }
     
     return CommonBottomSheet(
       title: title,
       subtitle: subtitle,
+      imageView: imageView,
       primaryButtonTitle: primaryButtonTitle,
       secondaryButtonTitle: L10N.Common.Common.Cancel.Button.title,
       primaryAction: {
@@ -468,14 +546,25 @@ private extension CardDetailsListView {
   var virtualCardClosedSuccessfullyPopup: some View {
     CommonBottomSheet(
       title: L10N.Common.ClosedVirtualCardSuccess.Popup.title,
-      subtitle: L10N.Common.ClosedVirtualCardSuccess.Popup.subtitle,
-      primaryButtonTitle: L10N.Common.ClosedVirtualCardSuccess.Popup.RequestNew.Button.title,
-      secondaryButtonTitle: L10N.Common.Common.MaybeLater.Button.title,
+      subtitle: viewModel.isFinalVirtualCard
+      ? L10N.Common.ClosedVirtualCardSuccess.Popup.Final.subtitle
+      : L10N.Common.ClosedVirtualCardSuccess.Popup.subtitle(viewModel.remainingVirtualCardCount, Constants.virtualCardCountLimit),
+      primaryButtonTitle: viewModel.isFinalVirtualCard
+      ? L10N.Common.Common.Cancel.Button.title
+      : L10N.Common.ClosedVirtualCardSuccess.Popup.RequestNew.Button.title,
+      secondaryButtonTitle: viewModel.isFinalVirtualCard
+      ? nil
+      : L10N.Common.Common.MaybeLater.Button.title,
       primaryAction: {
         viewModel.hidePopup()
-        viewModel.createNewCard()
+        
+        if !viewModel.isFinalVirtualCard {
+          viewModel.createNewCard()
+        }
       },
-      secondaryAction: {
+      secondaryAction: viewModel.isFinalVirtualCard
+      ? nil
+      : {
         viewModel.hidePopup()
         viewModel.showCardClosedSuccessfullyMessage()
       }
@@ -505,7 +594,7 @@ private extension CardDetailsListView {
   var createNewVirtualCardConfirmationPopup: some View {
     CommonBottomSheet(
       title: L10N.Common.CardDetailsList.CreateNewVirtualCard.title,
-      subtitle: L10N.Common.CreateNewVirtualCard.Popup.subtitle,
+      subtitle: L10N.Common.CreateNewVirtualCard.Popup.subtitle(viewModel.remainingVirtualCardCount, Constants.virtualCardCountLimit),
       primaryButtonTitle: L10N.Common.CardDetailsList.CreateNewVirtualCard.title,
       secondaryButtonTitle: L10N.Common.Common.Cancel.Button.title,
       primaryAction: {

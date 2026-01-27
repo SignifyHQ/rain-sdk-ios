@@ -7,18 +7,18 @@ public struct CommonBottomSheet: View {
 
   var title: String
   var subtitle: String?
-  var primaryButtonTitle: String
-  var secondaryButtonTitle: String
   var imageView: (() -> AnyView)?
+  var primaryButtonTitle: String
+  var secondaryButtonTitle: String?
   var primaryAction: (() -> Void)
   var secondaryAction: (() -> Void)?
   
   public init(
     title: String,
     subtitle: String? = nil,
-    primaryButtonTitle: String = L10N.Common.Common.Confirm.Button.title,
-    secondaryButtonTitle: String = L10N.Common.Common.Close.Button.title,
     imageView: (() -> AnyView)? = nil,
+    primaryButtonTitle: String = L10N.Common.Common.Confirm.Button.title,
+    secondaryButtonTitle: String? = L10N.Common.Common.Close.Button.title,
     primaryAction: @escaping () -> Void,
     secondaryAction: (() -> Void)? = nil
   ) {
@@ -87,7 +87,10 @@ private extension CommonBottomSheet {
   var buttonsGroup: some View {
     VStack(spacing: 12) {
       confirmButton
-      closeButton
+      
+      if secondaryButtonTitle != nil {
+        closeButton
+      }
     }
     .frame(maxWidth: .infinity)
   }
@@ -106,7 +109,7 @@ private extension CommonBottomSheet {
       type: .secondary,
       backgroundColor: .clear,
       borderColor: Colors.greyDefault.swiftUIColor,
-      title: secondaryButtonTitle,
+      title: secondaryButtonTitle ?? L10N.Common.Common.Close.Button.title,
       action: {
         secondaryAction?() ?? dismiss()
       }

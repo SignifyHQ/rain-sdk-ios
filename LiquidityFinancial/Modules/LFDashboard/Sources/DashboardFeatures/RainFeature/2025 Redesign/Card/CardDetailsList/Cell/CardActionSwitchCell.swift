@@ -19,7 +19,7 @@ struct CardActionSwitchCell: View {
               .frame(width: 24, height: 24)
           }
           
-          VStack(spacing: 0) {
+          VStack(spacing: 3) {
             Text(title)
               .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.small.value))
               .foregroundStyle(Colors.textPrimary.swiftUIColor)

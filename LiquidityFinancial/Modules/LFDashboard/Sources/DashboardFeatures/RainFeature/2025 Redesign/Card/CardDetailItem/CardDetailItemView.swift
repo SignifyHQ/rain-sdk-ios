@@ -37,9 +37,18 @@ struct CardDetailItemView: View {
   }
   
   var body: some View {
+    var backdropImage: Image {
+      if isFrntCard {
+        return GenImages.Images.frntCardEmpty.swiftUIImage
+      }
+      
+      return cardModel.cardStatus == .closed ? GenImages.Images.imgDisabledCardBackdrop.swiftUIImage : GenImages.Images.emptyCardBackdrop.swiftUIImage
+    }
+    
+    
     ZStack(alignment: .bottom) {
       ZStack(alignment: .topLeading) {
-        (isFrntCard ? GenImages.Images.frntCardEmpty.swiftUIImage : GenImages.Images.emptyCardBackdrop.swiftUIImage)
+        backdropImage
           .resizable()
           .aspectRatio(contentMode: .fit)
           .applyIf(hasBlurView) {

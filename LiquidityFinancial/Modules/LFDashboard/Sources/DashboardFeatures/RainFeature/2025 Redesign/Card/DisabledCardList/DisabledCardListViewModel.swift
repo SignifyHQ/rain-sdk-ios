@@ -1,62 +1,61 @@
 import Combine
-import SwiftUI
 import LFUtilities
-import Services
-import RainDomain
-import Factory
-import LFStyleGuide
-import MeaPushProvisioning
 
 @MainActor
 final class DisabledCardListViewModel: ObservableObject {
-  @LazyInjected(\.rainService) var rainService
-  @LazyInjected(\.rainCardRepository) var rainCardRepository
-  
-  @Published var cardsList: [CardModel] = []
+  @Published var allVirtualCardsList: [CardModel] = []
+  @Published var closedVirtualCardsList: [CardModel] = []
   @Published var currentCard: CardModel
-  @Published var isShowCardNumber: Bool = false
   
-  lazy var getSecretCardInformationUseCase: RainSecretCardInformationUseCaseProtocol = {
-    RainSecretCardInformationUseCase(repository: rainCardRepository)
-  }()
+  var usedCardCount: Int {
+    allVirtualCardsList.count
+  }
   
-  var isShowingShowCardNumberCell: Bool {
-    currentCard.cardType != .physical
-    && cardsList.isNotEmpty
+  var remainingCardCount: Int {
+    Constants.virtualCardCountLimit - allVirtualCardsList.count
+  }
+  
+  var hasReachedCardLimit: Bool {
+    remainingCardCount <= 0
   }
   
   var closedTime: String? {
     if let updatedAt = currentCard.updatedAtDate {
       return LiquidityDateFormatter.dayMonthYearTimeWithAt.parseToString(from: updatedAt)
     }
-    return nil
+    
+    return "n/a"
   }
   
-  init(cards: [CardModel]) {
-    self.cardsList = cards
-      .filter({ $0.cardType != .physical })
-      .sorted { ($0.updatedAtDate ?? .distantPast) >
-        ($1.updatedAtDate ?? .distantPast) }
-      .suffix(5)
-      .reversed()
-    self.currentCard = cards.last ?? .virtualDefault
-    self.cardsList.removeLast()
+  init(
+    cards: [CardModel]
+  ) {
+    self.allVirtualCardsList = cards
+    self.closedVirtualCardsList = cards
+      .filter {
+        $0.cardStatus == .closed
+      }
+      .sorted {
+        ($0.updatedAtDate ?? .distantPast) < ($1.updatedAtDate ?? .distantPast)
+      }
+    
+    self.currentCard = cards.first ?? .virtualDefault
   }
 }
 
 // MARK: Handle Interactions
 extension DisabledCardListViewModel {
-  func onCardItemTap(card: CardModel) {
-    guard let tappedIndex = cardsList.firstIndex(where: { $0.id == card.id }) else {
+  func onCardItemTap(
+    card: CardModel
+  ) {
+    guard let tappedIndex = closedVirtualCardsList.firstIndex(where: { $0.id == card.id })
+    else {
       return
     }
     
-    // Use a smoother animation
-    withAnimation(.spring(response: 0.4, dampingFraction: 0.75)) {
-      cardsList.remove(at: tappedIndex)
-      cardsList.append(card)
-      currentCard = card
-      isShowCardNumber = false
-    }
+    closedVirtualCardsList.remove(at: tappedIndex)
+    closedVirtualCardsList.append(card)
+    
+    currentCard = card
   }
 }

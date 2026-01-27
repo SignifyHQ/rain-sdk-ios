@@ -68,7 +68,7 @@ public final class CardDetailsListViewModel: ObservableObject {
   @Published var isShowingShippingInProgress: Bool = false
   @Published var isShowingShippingPost30Days: Bool = false
   @Published var cardsList: [CardModel] = []
-  @Published var closedCards: [CardModel] = []
+  @Published var allVirtualCards: [CardModel] = []
   @Published var currentCard: CardModel = .virtualDefault {
     didSet {
       if currentCardId != currentCard.id {
@@ -95,15 +95,17 @@ public final class CardDetailsListViewModel: ObservableObject {
   var tokenizationResponseData: [String: MppInitializeOemTokenizationResponseData?] = [:]
   var requestConfiguration: [String: PKAddPaymentPassRequestConfiguration?] = [:]
   
-  var activeCardCount: Int {
-    cardsList.filter{ $0.cardStatus != .closed }.count
+  private var virtualCardCount: Int = 0
+  
+  var remainingVirtualCardCount: Int {
+    Constants.virtualCardCountLimit - virtualCardCount
   }
   
-  var doesHavePhysicalCard: Bool {
-    cardsList.contains { card in
-      card.cardType == .physical
-    }
+  var isFinalVirtualCard: Bool {
+    remainingVirtualCardCount <= 0
   }
+  
+  var isPhysicalCardOrderAvailable: Bool = false
   
   var isShowingCloseCard: Bool {
     (currentCard.cardStatus == .active || currentCard.cardStatus == .disabled)
@@ -121,8 +123,8 @@ public final class CardDetailsListViewModel: ObservableObject {
     && cardsList.isNotEmpty
   }
   
-  var isShowingDisabledCards: Bool {
-    closedCards.isNotEmpty && currentCard.cardType != .physical
+  var shouldShowDisabledCardsButton: Bool {
+    allVirtualCards.filter { $0.cardStatus == .closed }.isNotEmpty && currentCard.cardType != .physical
   }
   
   var isShowingShippingDetails: Bool {
@@ -278,6 +280,10 @@ extension CardDetailsListViewModel {
     navigation = .orderPhysicalCard(AnyView(destinationView))
   }
   
+  func onRequestANewVirtualCardTap() {
+    popup = .confirmCreateNewCard
+  }
+  
   func onCloseCardTap() {
     popup = .confirmCloseCard
   }
@@ -346,9 +352,7 @@ extension CardDetailsListViewModel {
       return
     }
     
-    let closedCard = cardsList.remove(at: index)
-    closedCards.append(closedCard)
-    
+    let _ = cardsList.remove(at: index)
     if let card = cardsList.last {
       currentCard = card
     } else {
@@ -490,8 +494,13 @@ extension CardDetailsListViewModel {
         newCards += cards.map { card in
           CardModel(card: card)
         }
+        // Saving the number of all virtual cards (active and closed)
+        virtualCardCount = newCards.filter { $0.cardType == .virtual }.count
+        // Storing all virtual cards to show in the disabled virtual cards scren
+        allVirtualCards = newCards.filter({ $0.cardType == .virtual })
+        // Checking if the user has ordered a physical card before
+        isPhysicalCardOrderAvailable = newCards.filter { $0.cardType == .physical }.isEmpty
         
-        closedCards = newCards.filter({ $0.cardStatus == .closed })
         if withLoader {
           cardsList = newCards
             .filter { $0.cardStatus != .closed }
@@ -532,7 +541,9 @@ extension CardDetailsListViewModel {
         
         isCardLocked = currentCard.cardStatus == .disabled
         
-        if cardsList.isEmpty {
+        if cardsList.filter({ card in card.cardStatus != .pending }).isEmpty {
+          isInit = false
+          
           NotificationCenter.default.post(name: .noLinkedCards, object: nil)
         } else {
           cardsList

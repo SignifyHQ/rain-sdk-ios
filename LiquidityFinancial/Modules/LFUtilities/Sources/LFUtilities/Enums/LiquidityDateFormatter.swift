@@ -21,7 +21,7 @@ public enum LiquidityDateFormatter: String, CaseIterable {
   case periodSeparated = "yyyy.MM.dd"
   case timeStandard = "h:mma"
   case transactionDateTime = "MMM dd, yyyy | h:mm a"
-  case dayMonthYearTimeWithAt = "d MMMM, yyyy at h:mm a"
+  case dayMonthYearTimeWithAt = "d MMMM, yyyy 'at' h:mm a"
   case dayMonthYear = "d MMMM, yyyy"
   
   public var dateFormatter: DateFormatter {

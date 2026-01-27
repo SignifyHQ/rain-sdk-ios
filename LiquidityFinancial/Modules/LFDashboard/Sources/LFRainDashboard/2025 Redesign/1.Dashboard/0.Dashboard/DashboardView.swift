@@ -139,7 +139,10 @@ extension DashboardView {
   var cardView: some View {
     VStack(spacing: 24) {
       DashboardCardView(
-        isNoLinkedCard: $isNotLinkedCard,
+        // Setting this to `false` to always show the balance
+        // and let the user go to the card list view even if they
+        // have no active cards
+        isNoLinkedCard: .constant(false),
         isPOFlow: true,
         showLoadingIndicator: viewModel.isLoading,
         cashBalance: viewModel.cashBalanceValue,

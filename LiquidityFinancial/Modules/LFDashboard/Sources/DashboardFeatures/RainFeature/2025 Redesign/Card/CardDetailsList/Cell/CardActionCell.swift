@@ -4,17 +4,45 @@ import LFUtilities
 
 struct CardActionCell: View {
   let title: String
-  var action: (() -> Void)? = nil
+  let subtitle: String?
+  let action: (() -> Void)?
+  
+  init(
+    title: String,
+    subtitle: String? = nil,
+    action: (() -> Void)? = nil,
+  ) {
+    self.title = title
+    self.subtitle = subtitle
+    self.action = action
+  }
   
   var body: some View {
     Button {
       action?()
     } label: {
-      VStack(alignment: .leading, spacing: 16) {
-        HStack(spacing: 12) {
-          Text(title)
-            .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.small.value))
-            .foregroundStyle(Colors.textPrimary.swiftUIColor)
+      VStack(
+        alignment: .leading,
+        spacing: 16
+      ) {
+        HStack(
+          spacing: 12
+        ) {
+          VStack(
+            alignment: .leading,
+            spacing: 3
+          ) {
+            Text(title)
+              .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.small.value))
+              .foregroundStyle(Colors.textPrimary.swiftUIColor)
+            
+            if let subtitle {
+              Text(subtitle)
+                .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.ultraSmall.value))
+                .foregroundStyle(Colors.textSecondary.swiftUIColor)
+                .frame(maxWidth: .infinity, alignment: .leading)
+            }
+          }
           
           Spacer()
           

@@ -1789,6 +1789,7 @@ We will be in touch shortly to invite you to get your new card.";
 
 // MARK: Card Details List
 "cardDetailsList.virtualCard.screen.title" = "Virtual card details";
+"cardDetailsList.virtualCard.cardLimit.subtitle" = "Max %@ cards per user. Only 1 active at a time";
 "cardDetailsList.physicalCard.screen.title" = "Physical card details";
 "cardDetailsList.showCardNumber.title" = "Show Card Number";
 "cardDetailsList.lockVirtualCard.title" = "Lock virtual card";
@@ -1814,17 +1815,21 @@ We will be in touch shortly to invite you to get your new card.";
 "cardDetailsList.canceledCardOrder.title" = "Physical card order canceled";
 "cardDetailsList.canceledCardOrder.subtitle" = "We could not verify your shipping details. Please try submitting it again or contact support for more details.";
 "cardDetailsList.canceledCardOrder.orderAgain.button.title" = "Order again";
+"cardDetailsList.usedCards.available.title" = "%@ of %@ virtual card requests used. You can request up to %@ more cards, with only one card active at a time.";
+"cardDetailsList.usedCards.notAvailable.title" = "You have used all %@ of %@ virtual card requests available to you. You cannot request for any more virtual cards.";
 
 "lockCard.popup.title" = "Lock %@";
 "lockCard.popup.subtitle" = "Are you sure you want to lock your %@? Once locked, the card can’t be used for any transactions.\n\nYou can unlock it anytime when you need to use it again.";
 "lockCard.popup.confirm.button.title" = "Lock %@";
 
 "closeVirtualCard.popup.title" = "Close virtual card";
-"closeVirtualCard.popup.subtitle" = "Are you sure you want to close your virtual card?\n\nThis action will permanently disable your card and you’ll have to request a new card to be activated.";
+"closeVirtualCard.popup.subtitle" = "Are you sure you want to close your virtual card? Closing this card will permanently disable it.\n\nYou can have only one active virtual card at a time and up to %@ virtual card requests per account. You have %@/%@ requests remaining.";
+"closeVirtualCard.popup.final.subtitle" = "Are you sure you want to close your virtual card? This is your final virtual card and you won’t be able to request another virtual card.\n\nBy closing this card you will use all %@/%@ virtual card requests available to you.";
 "closeVirtualCard.popup.confirm.button.title" = "Close virtual card";
 
 "closedVirtualCardSuccess.popup.title" = "Virtual card closed";
-"closedVirtualCardSuccess.popup.subtitle" = "Your virtual card has been closed. \n\nYou can request a new virtual card at any time, and it will be instantly available in your account.";
+"closedVirtualCardSuccess.popup.subtitle" = "Your virtual card has been closed.\n\nYou can request a new virtual card at any time, and it will be instantly available in your account. You have %@/%@ requests remaining.";
+"closedVirtualCardSuccess.popup.final.subtitle" = "Your virtual card has been closed.\n\nYou’ve used all available virtual card requests. If you need help, contact support for next steps.";
 "closedVirtualCardSuccess.popup.requestNew.button.title" = "Request a new virtual card";
 
 "closePhysicalCard.popup.title" = "Close physical card";
@@ -1834,7 +1839,7 @@ We will be in touch shortly to invite you to get your new card.";
 "closedPhysicalCardSuccess.popup.title" = "Physical card closed";
 "closedPhysicalCardSuccess.popup.subtitle" = "Your physical card has been closed.\n\nYou can’t order a new physical card right now, but we’ll notify you if you become eligible to request one in the future.";
 
-"createNewVirtualCard.popup.subtitle" = "You can request a new virtual card at any time, and it will be instantly available in your account.";
+"createNewVirtualCard.popup.subtitle" = "You can request a new virtual card at any time, and it will be instantly available in your account. You have %@/%@ requests remaining.";
 
 "disabledVirtualCards.screen.title" = "Disabled virtual cards";
 

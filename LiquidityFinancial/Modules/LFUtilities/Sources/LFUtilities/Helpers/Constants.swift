@@ -374,7 +374,7 @@ public extension Constants {
   
   static let withdrawalMFAThreshold = 1_000.0
   
-  static let maxVirtualCard = 2
+  static let virtualCardCountLimit = 10
   
   static let hiddenPassword = "*********"
   

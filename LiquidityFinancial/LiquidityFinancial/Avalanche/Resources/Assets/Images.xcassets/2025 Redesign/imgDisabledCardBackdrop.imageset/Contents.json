@@ -1,0 +1,12 @@
+{
+  "images" : [
+    {
+      "filename" : "CardType=Virtual Disabled (for export), Card=Avalanche, TextSize=Default.pdf",
+      "idiom" : "universal"
+    }
+  ],
+  "info" : {
+    "author" : "xcode",
+    "version" : 1
+  }
+}
