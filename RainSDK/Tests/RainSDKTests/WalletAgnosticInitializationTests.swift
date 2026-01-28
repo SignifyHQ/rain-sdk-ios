@@ -17,22 +17,22 @@ struct WalletAgnosticInitializationTests {
     let manager = try await createInitializedManager()
     
     let chainId = 1
-    let collateralProxyAddress = "0x1234567890123456789012345678901234567890"
     let walletAddress = "0xabcdefabcdefabcdefabcdefabcdefabcdefabcd"
-    let tokenAddress = "0x9876543210987654321098765432109876543210"
+    let assetAddresses = EIP712AssetAddresses(
+      proxyAddress: "0x1234567890123456789012345678901234567890",
+      recipientAddress: "0xfedcbafedcbafedcbafedcbafedcbafedcbafedc",
+      tokenAddress: "0x9876543210987654321098765432109876543210"
+    )
     let amount: Double = 100.0
     let decimals = 18
-    let recipientAddress = "0xfedcbafedcbafedcbafedcbafedcbafedcbafedc"
     let nonce = BigUInt(42)
     
     let message = try await manager.buildEIP712Message(
       chainId: chainId,
-      collateralProxyAddress: collateralProxyAddress,
       walletAddress: walletAddress,
-      tokenAddress: tokenAddress,
+      assetAddresses: assetAddresses,
       amount: amount,
       decimals: decimals,
-      recipientAddress: recipientAddress,
       nonce: nonce
     ).0
     
@@ -54,14 +54,14 @@ struct WalletAgnosticInitializationTests {
     #expect(domain?["name"] as? String == "Collateral")
     #expect(domain?["version"] as? String == "2")
     #expect(domain?["chainId"] as? Int == chainId)
-    #expect(domain?["verifyingContract"] as? String == collateralProxyAddress)
+    #expect(domain?["verifyingContract"] as? String == assetAddresses.proxyAddress)
     #expect(domain?["salt"] != nil)
     
     // Verify message
     let messageData = jsonObject?["message"] as? [String: Any]
     #expect(messageData?["user"] as? String == walletAddress)
-    #expect(messageData?["asset"] as? String == tokenAddress)
-    #expect(messageData?["recipient"] as? String == recipientAddress)
+    #expect(messageData?["asset"] as? String == assetAddresses.tokenAddress)
+    #expect(messageData?["recipient"] as? String == assetAddresses.recipientAddress)
     #expect(messageData?["nonce"] as? String == nonce.description)
     
     // Verify amount (should be in base units: 100 * 10^18)
@@ -80,23 +80,23 @@ struct WalletAgnosticInitializationTests {
     let manager = RainSDKManager(transactionBuilder: mockBuilder)
     
     let chainId = 1
-    let collateralProxyAddress = "0x1234567890123456789012345678901234567890"
     let walletAddress = "0xabcdefabcdefabcdefabcdefabcdefabcdefabcd"
-    let tokenAddress = "0x04A76ffB5D37B7f440B4CA06040C10Cf33221EEC"
+    let assetAddresses = EIP712AssetAddresses(
+      proxyAddress: "0x1234567890123456789012345678901234567890",
+      recipientAddress: "0xfedcbafedcbafedcbafedcbafedcbafedcbafedc",
+      tokenAddress: "0x04A76ffB5D37B7f440B4CA06040C10Cf33221EEC"
+    )
     let amount: Double = 100.0
     let decimals = 18
-    let recipientAddress = "0xfedcbafedcbafedcbafedcbafedcbafedcbafedc"
     let expectedNonce = BigUInt(42)
     
     // This should succeed because the mock builder will return a nonce
     let message = try await manager.buildEIP712Message(
       chainId: chainId,
-      collateralProxyAddress: collateralProxyAddress,
       walletAddress: walletAddress,
-      tokenAddress: tokenAddress,
+      assetAddresses: assetAddresses,
       amount: amount,
       decimals: decimals,
-      recipientAddress: recipientAddress,
       nonce: nil // Will retrieve from mock builder
     )
     
@@ -118,14 +118,14 @@ struct WalletAgnosticInitializationTests {
     #expect(domain?["name"] as? String == "Collateral")
     #expect(domain?["version"] as? String == "2")
     #expect(domain?["chainId"] as? Int == chainId)
-    #expect(domain?["verifyingContract"] as? String == collateralProxyAddress)
+    #expect(domain?["verifyingContract"] as? String == assetAddresses.proxyAddress)
     #expect(domain?["salt"] != nil)
     
     // Verify message has nonce (should be retrieved from mock builder)
     let messageData = jsonObject?["message"] as? [String: Any]
     #expect(messageData?["user"] as? String == walletAddress)
-    #expect(messageData?["asset"] as? String == tokenAddress)
-    #expect(messageData?["recipient"] as? String == recipientAddress)
+    #expect(messageData?["asset"] as? String == assetAddresses.tokenAddress)
+    #expect(messageData?["recipient"] as? String == assetAddresses.recipientAddress)
     #expect(messageData?["nonce"] != nil) // Nonce should be present
     #expect(messageData?["nonce"] as? String == expectedNonce.description) // Should match mock nonce
     
@@ -138,14 +138,19 @@ struct WalletAgnosticInitializationTests {
   func testBuildEIP712MessageZeroAmount() async throws {
     let manager = try await createInitializedManager()
     
+    let walletAddress = "0xabcdefabcdefabcdefabcdefabcdefabcdefabcd"
+    let assetAddresses = EIP712AssetAddresses(
+      proxyAddress: "0x1234567890123456789012345678901234567890",
+      recipientAddress: "0xfedcbafedcbafedcbafedcbafedcbafedcbafedc",
+      tokenAddress: "0x9876543210987654321098765432109876543210"
+    )
+    
     let message = try await manager.buildEIP712Message(
       chainId: 1,
-      collateralProxyAddress: "0x1234567890123456789012345678901234567890",
-      walletAddress: "0xabcdefabcdefabcdefabcdefabcdefabcdefabcd",
-      tokenAddress: "0x9876543210987654321098765432109876543210",
+      walletAddress: walletAddress,
+      assetAddresses: assetAddresses,
       amount: 0.0,
       decimals: 18,
-      recipientAddress: "0xfedcbafedcbafedcbafedcbafedcbafedcbafedc",
       nonce: BigUInt(0)
     )
     
@@ -165,14 +170,19 @@ struct WalletAgnosticInitializationTests {
     let decimals = 6
     let expectedAmount = BigUInt(100500000) // 100.5 * 10^6
     
+    let walletAddress = "0xabcdefabcdefabcdefabcdefabcdefabcdefabcd"
+    let assetAddresses = EIP712AssetAddresses(
+      proxyAddress: "0x1234567890123456789012345678901234567890",
+      recipientAddress: "0xfedcbafedcbafedcbafedcbafedcbafedcbafedc",
+      tokenAddress: "0x9876543210987654321098765432109876543210"
+    )
+    
     let message = try await manager.buildEIP712Message(
       chainId: 1,
-      collateralProxyAddress: "0x1234567890123456789012345678901234567890",
-      walletAddress: "0xabcdefabcdefabcdefabcdefabcdefabcdefabcd",
-      tokenAddress: "0x9876543210987654321098765432109876543210",
+      walletAddress: walletAddress,
+      assetAddresses: assetAddresses,
       amount: amount,
       decimals: decimals,
-      recipientAddress: "0xfedcbafedcbafedcbafedcbafedcbafedcbafedc",
       nonce: BigUInt(1)
     )
     
@@ -187,37 +197,29 @@ struct WalletAgnosticInitializationTests {
   func testBuildEIP712MessageDifferentSalt() async throws {
     let manager = try await createInitializedManager()
     
-    let params = (
-      chainId: 1,
-      collateralProxyAddress: "0x1234567890123456789012345678901234567890",
-      walletAddress: "0xabcdefabcdefabcdefabcdefabcdefabcdefabcd",
-      tokenAddress: "0x9876543210987654321098765432109876543210",
-      amount: 100.0,
-      decimals: 18,
+    let walletAddress = "0xabcdefabcdefabcdefabcdefabcdefabcdefabcd"
+    let assetAddresses = EIP712AssetAddresses(
+      proxyAddress: "0x1234567890123456789012345678901234567890",
       recipientAddress: "0xfedcbafedcbafedcbafedcbafedcbafedcbafedc",
-      nonce: BigUInt(1)
+      tokenAddress: "0x9876543210987654321098765432109876543210"
     )
     
     let message1 = try await manager.buildEIP712Message(
-      chainId: params.chainId,
-      collateralProxyAddress: params.collateralProxyAddress,
-      walletAddress: params.walletAddress,
-      tokenAddress: params.tokenAddress,
-      amount: params.amount,
-      decimals: params.decimals,
-      recipientAddress: params.recipientAddress,
-      nonce: params.nonce
+      chainId: 1,
+      walletAddress: walletAddress,
+      assetAddresses: assetAddresses,
+      amount: 100.0,
+      decimals: 18,
+      nonce: BigUInt(1)
     )
     
     let message2 = try await manager.buildEIP712Message(
-      chainId: params.chainId,
-      collateralProxyAddress: params.collateralProxyAddress,
-      walletAddress: params.walletAddress,
-      tokenAddress: params.tokenAddress,
-      amount: params.amount,
-      decimals: params.decimals,
-      recipientAddress: params.recipientAddress,
-      nonce: params.nonce
+      chainId: 1,
+      walletAddress: walletAddress,
+      assetAddresses: assetAddresses,
+      amount: 100.0,
+      decimals: 18,
+      nonce: BigUInt(1)
     )
     
     // Messages should be different due to different salt
@@ -246,15 +248,20 @@ struct WalletAgnosticInitializationTests {
   func testBuildEIP712MessageBeforeInitialization() async throws {
     let manager = RainSDKManager()
     
+    let walletAddress = "0xabcdefabcdefabcdefabcdefabcdefabcdefabcd"
+    let assetAddresses = EIP712AssetAddresses(
+      proxyAddress: "0x1234567890123456789012345678901234567890",
+      recipientAddress: "0xfedcbafedcbafedcbafedcbafedcbafedcbafedc",
+      tokenAddress: "0x9876543210987654321098765432109876543210"
+    )
+    
     await #expect(throws: RainSDKError.sdkNotInitialized) {
       try await manager.buildEIP712Message(
         chainId: 1,
-        collateralProxyAddress: "0x1234567890123456789012345678901234567890",
-        walletAddress: "0xabcdefabcdefabcdefabcdefabcdefabcdefabcd",
-        tokenAddress: "0x9876543210987654321098765432109876543210",
+        walletAddress: walletAddress,
+        assetAddresses: assetAddresses,
         amount: 100.0,
         decimals: 18,
-        recipientAddress: "0xfedcbafedcbafedcbafedcbafedcbafedcbafedc",
         nonce: BigUInt(1)
       )
     }
@@ -264,17 +271,22 @@ struct WalletAgnosticInitializationTests {
   func testBuildEIP712MessageInvalidChainId() async throws {
     let manager = try await createInitializedManager()
     
+    let walletAddress = "0xabcdefabcdefabcdefabcdefabcdefabcdefabcd"
+    let assetAddresses = EIP712AssetAddresses(
+      proxyAddress: "0x1234567890123456789012345678901234567890",
+      recipientAddress: "0xfedcbafedcbafedcbafedcbafedcbafedcbafedc",
+      tokenAddress: "0x9876543210987654321098765432109876543210"
+    )
+    
     // Try to use chainId that's not in the initialized configs
     // This will fail when trying to retrieve nonce
     await #expect(throws: RainSDKError.invalidConfig(chainId: 999, rpcUrl: "")) {
       try await manager.buildEIP712Message(
         chainId: 999, // Not in network configs
-        collateralProxyAddress: "0x1234567890123456789012345678901234567890",
-        walletAddress: "0xabcdefabcdefabcdefabcdefabcdefabcdefabcd",
-        tokenAddress: "0x9876543210987654321098765432109876543210",
+        walletAddress: walletAddress,
+        assetAddresses: assetAddresses,
         amount: 100.0,
         decimals: 18,
-        recipientAddress: "0xfedcbafedcbafedcbafedcbafedcbafedcbafedc",
         nonce: nil // Will try to retrieve from network
       )
     }
@@ -284,16 +296,21 @@ struct WalletAgnosticInitializationTests {
   func testBuildEIP712MessageInvalidChainIdWithNonce() async throws {
     let manager = try await createInitializedManager()
     
+    let walletAddress = "0xabcdefabcdefabcdefabcdefabcdefabcdefabcd"
+    let assetAddresses = EIP712AssetAddresses(
+      proxyAddress: "0x1234567890123456789012345678901234567890",
+      recipientAddress: "0xfedcbafedcbafedcbafedcbafedcbafedcbafedc",
+      tokenAddress: "0x9876543210987654321098765432109876543210"
+    )
+    
     // Even with invalid chainId, if nonce is provided, it should work
     // (nonce retrieval is skipped)
     let message = try await manager.buildEIP712Message(
       chainId: 999, // Not in network configs
-      collateralProxyAddress: "0x1234567890123456789012345678901234567890",
-      walletAddress: "0xabcdefabcdefabcdefabcdefabcdefabcdefabcd",
-      tokenAddress: "0x9876543210987654321098765432109876543210",
+      walletAddress: walletAddress,
+      assetAddresses: assetAddresses,
       amount: 100.0,
       decimals: 18,
-      recipientAddress: "0xfedcbafedcbafedcbafedcbafedcbafedcbafedc",
       nonce: BigUInt(1) // Nonce provided, so no network call
     )
     
@@ -316,14 +333,19 @@ struct WalletAgnosticInitializationTests {
     let amount: Double = 1_000_000_000.0
     let decimals = 18
     
+    let walletAddress = "0xabcdefabcdefabcdefabcdefabcdefabcdefabcd"
+    let assetAddresses = EIP712AssetAddresses(
+      proxyAddress: "0x1234567890123456789012345678901234567890",
+      recipientAddress: "0xfedcbafedcbafedcbafedcbafedcbafedcbafedc",
+      tokenAddress: "0x9876543210987654321098765432109876543210"
+    )
+    
     let message = try await manager.buildEIP712Message(
       chainId: 1,
-      collateralProxyAddress: "0x1234567890123456789012345678901234567890",
-      walletAddress: "0xabcdefabcdefabcdefabcdefabcdefabcdefabcd",
-      tokenAddress: "0x9876543210987654321098765432109876543210",
+      walletAddress: walletAddress,
+      assetAddresses: assetAddresses,
       amount: amount,
       decimals: decimals,
-      recipientAddress: "0xfedcbafedcbafedcbafedcbafedcbafedcbafedc",
       nonce: BigUInt(1)
     )
     
@@ -348,27 +370,30 @@ struct WalletAgnosticInitializationTests {
     ]
     try await manager.initialize(networkConfigs: configs)
     
+    let walletAddress = "0xabcdefabcdefabcdefabcdefabcdefabcdefabcd"
+    let assetAddresses = EIP712AssetAddresses(
+      proxyAddress: "0x1234567890123456789012345678901234567890",
+      recipientAddress: "0xfedcbafedcbafedcbafedcbafedcbafedcbafedc",
+      tokenAddress: "0x9876543210987654321098765432109876543210"
+    )
+    
     // Test with chainId 1
     let message1 = try await manager.buildEIP712Message(
       chainId: 1,
-      collateralProxyAddress: "0x1234567890123456789012345678901234567890",
-      walletAddress: "0xabcdefabcdefabcdefabcdefabcdefabcdefabcd",
-      tokenAddress: "0x9876543210987654321098765432109876543210",
+      walletAddress: walletAddress,
+      assetAddresses: assetAddresses,
       amount: 100.0,
       decimals: 18,
-      recipientAddress: "0xfedcbafedcbafedcbafedcbafedcbafedcbafedc",
       nonce: BigUInt(1)
     )
     
     // Test with chainId 137
     let message2 = try await manager.buildEIP712Message(
       chainId: 137,
-      collateralProxyAddress: "0x1234567890123456789012345678901234567890",
-      walletAddress: "0xabcdefabcdefabcdefabcdefabcdefabcdefabcd",
-      tokenAddress: "0x9876543210987654321098765432109876543210",
+      walletAddress: walletAddress,
+      assetAddresses: assetAddresses,
       amount: 100.0,
       decimals: 18,
-      recipientAddress: "0xfedcbafedcbafedcbafedcbafedcbafedc",
       nonce: BigUInt(1)
     )
     
@@ -391,12 +416,14 @@ struct WalletAgnosticInitializationTests {
     let manager = try await createInitializedManager()
     
     let chainId = 1
-    let contractAddress = "0x1234567890123456789012345678901234567890"
-    let proxyAddress = "0xabcdefabcdefabcdefabcdefabcdefabcdefabcd"
-    let tokenAddress = "0x9876543210987654321098765432109876543210"
+    let assetAddresses = WithdrawAssetAddresses(
+      contractAddress: "0x1234567890123456789012345678901234567890",
+      proxyAddress: "0xabcdefabcdefabcdefabcdefabcdefabcdefabcd",
+      recipientAddress: "0xfedcbafedcbafedcbafedcbafedcbafedcbafedc",
+      tokenAddress: "0x9876543210987654321098765432109876543210"
+    )
     let amount: Double = 100.0
     let decimals = 18
-    let recipientAddress = "0xfedcbafedcbafedcbafedcbafedcbafedcbafedc"
     let expiresAt = "1735689600" // Unix timestamp
     let signatureData = Data([UInt8](repeating: 0x42, count: 65)) // 65 bytes for signature
     let adminSalt = Data([UInt8](repeating: 0xAA, count: 32)) // 32 bytes for salt
@@ -407,12 +434,9 @@ struct WalletAgnosticInitializationTests {
     do {
       let txData = try await manager.buildWithdrawTransactionData(
         chainId: chainId,
-        contractAddress: contractAddress,
-        proxyAddress: proxyAddress,
-        tokenAddress: tokenAddress,
+        assetAddresses: assetAddresses,
         amount: amount,
         decimals: decimals,
-        recipientAddress: recipientAddress,
         expiresAt: expiresAt,
         signatureData: signatureData,
         adminSalt: adminSalt,
@@ -433,6 +457,12 @@ struct WalletAgnosticInitializationTests {
   func testBuildWithdrawTransactionDataBeforeInitialization() async throws {
     let manager = RainSDKManager()
     
+    let assetAddresses = WithdrawAssetAddresses(
+      contractAddress: "0x1234567890123456789012345678901234567890",
+      proxyAddress: "0xabcdefabcdefabcdefabcdefabcdefabcdefabcd",
+      recipientAddress: "0xfedcbafedcbafedcbafedcbafedcbafedcbafedc",
+      tokenAddress: "0x9876543210987654321098765432109876543210"
+    )
     let signatureData = Data([UInt8](repeating: 0x42, count: 65))
     let adminSalt = Data([UInt8](repeating: 0xAA, count: 32))
     let adminSignature = Data([UInt8](repeating: 0xBB, count: 65))
@@ -440,12 +470,9 @@ struct WalletAgnosticInitializationTests {
     await #expect(throws: RainSDKError.sdkNotInitialized) {
       try await manager.buildWithdrawTransactionData(
         chainId: 1,
-        contractAddress: "0x1234567890123456789012345678901234567890",
-        proxyAddress: "0xabcdefabcdefabcdefabcdefabcdefabcdefabcd",
-        tokenAddress: "0x9876543210987654321098765432109876543210",
+        assetAddresses: assetAddresses,
         amount: 100.0,
         decimals: 18,
-        recipientAddress: "0xfedcbafedcbafedcbafedcbafedcbafedcbafedc",
         expiresAt: "1735689600",
         signatureData: signatureData,
         adminSalt: adminSalt,
@@ -458,6 +485,12 @@ struct WalletAgnosticInitializationTests {
   func testBuildWithdrawTransactionDataInvalidContractAddress() async throws {
     let manager = try await createInitializedManager()
     
+    let assetAddresses = WithdrawAssetAddresses(
+      contractAddress: "invalid-address",
+      proxyAddress: "0xabcdefabcdefabcdefabcdefabcdefabcdefabcd",
+      recipientAddress: "0xfedcbafedcbafedcbafedcbafedcbafedcbafedc",
+      tokenAddress: "0x9876543210987654321098765432109876543210"
+    )
     let signatureData = Data([UInt8](repeating: 0x42, count: 65))
     let adminSalt = Data([UInt8](repeating: 0xAA, count: 32))
     let adminSignature = Data([UInt8](repeating: 0xBB, count: 65))
@@ -465,12 +498,9 @@ struct WalletAgnosticInitializationTests {
     await #expect(throws: RainSDKError.internalLogicError(details: "Error building transaction parameters for withdrawal. One of the addresses could not be built")) {
       try await manager.buildWithdrawTransactionData(
         chainId: 1,
-        contractAddress: "invalid-address",
-        proxyAddress: "0xabcdefabcdefabcdefabcdefabcdefabcdefabcd",
-        tokenAddress: "0x9876543210987654321098765432109876543210",
+        assetAddresses: assetAddresses,
         amount: 100.0,
         decimals: 18,
-        recipientAddress: "0xfedcbafedcbafedcbafedcbafedcbafedcbafedc",
         expiresAt: "1735689600",
         signatureData: signatureData,
         adminSalt: adminSalt,
@@ -483,6 +513,12 @@ struct WalletAgnosticInitializationTests {
   func testBuildWithdrawTransactionDataInvalidProxyAddress() async throws {
     let manager = try await createInitializedManager()
     
+    let assetAddresses = WithdrawAssetAddresses(
+      contractAddress: "0x1234567890123456789012345678901234567890",
+      proxyAddress: "invalid-address",
+      recipientAddress: "0xfedcbafedcbafedcbafedcbafedcbafedcbafedc",
+      tokenAddress: "0x9876543210987654321098765432109876543210"
+    )
     let signatureData = Data([UInt8](repeating: 0x42, count: 65))
     let adminSalt = Data([UInt8](repeating: 0xAA, count: 32))
     let adminSignature = Data([UInt8](repeating: 0xBB, count: 65))
@@ -490,12 +526,9 @@ struct WalletAgnosticInitializationTests {
     await #expect(throws: RainSDKError.internalLogicError(details: "Error building transaction parameters for withdrawal. One of the addresses could not be built")) {
       try await manager.buildWithdrawTransactionData(
         chainId: 1,
-        contractAddress: "0x1234567890123456789012345678901234567890",
-        proxyAddress: "invalid-address",
-        tokenAddress: "0x9876543210987654321098765432109876543210",
+        assetAddresses: assetAddresses,
         amount: 100.0,
         decimals: 18,
-        recipientAddress: "0xfedcbafedcbafedcbafedcbafedcbafedcbafedc",
         expiresAt: "1735689600",
         signatureData: signatureData,
         adminSalt: adminSalt,
@@ -508,6 +541,12 @@ struct WalletAgnosticInitializationTests {
   func testBuildWithdrawTransactionDataInvalidRecipientAddress() async throws {
     let manager = try await createInitializedManager()
     
+    let assetAddresses = WithdrawAssetAddresses(
+      contractAddress: "0x1234567890123456789012345678901234567890",
+      proxyAddress: "0xabcdefabcdefabcdefabcdefabcdefabcdefabcd",
+      recipientAddress: "invalid-address",
+      tokenAddress: "0x9876543210987654321098765432109876543210"
+    )
     let signatureData = Data([UInt8](repeating: 0x42, count: 65))
     let adminSalt = Data([UInt8](repeating: 0xAA, count: 32))
     let adminSignature = Data([UInt8](repeating: 0xBB, count: 65))
@@ -515,12 +554,9 @@ struct WalletAgnosticInitializationTests {
     await #expect(throws: RainSDKError.internalLogicError(details: "Error building transaction parameters for withdrawal. One of the addresses could not be built")) {
       try await manager.buildWithdrawTransactionData(
         chainId: 1,
-        contractAddress: "0x1234567890123456789012345678901234567890",
-        proxyAddress: "0xabcdefabcdefabcdefabcdefabcdefabcdefabcd",
-        tokenAddress: "0x9876543210987654321098765432109876543210",
+        assetAddresses: assetAddresses,
         amount: 100.0,
         decimals: 18,
-        recipientAddress: "invalid-address",
         expiresAt: "1735689600",
         signatureData: signatureData,
         adminSalt: adminSalt,
@@ -533,19 +569,22 @@ struct WalletAgnosticInitializationTests {
   func testBuildWithdrawTransactionDataInvalidExpiration() async throws {
     let manager = try await createInitializedManager()
     
+    let assetAddresses = WithdrawAssetAddresses(
+      contractAddress: "0x1234567890123456789012345678901234567890",
+      proxyAddress: "0xabcdefabcdefabcdefabcdefabcdefabcdefabcd",
+      recipientAddress: "0xfedcbafedcbafedcbafedcbafedcbafedcbafedc",
+      tokenAddress: "0x9876543210987654321098765432109876543210"
+    )
     let signatureData = Data([UInt8](repeating: 0x42, count: 65))
     let adminSalt = Data([UInt8](repeating: 0xAA, count: 32))
     let adminSignature = Data([UInt8](repeating: 0xBB, count: 65))
     
-    await #expect(throws: RainSDKError.internalLogicError(details: "Error building transaction parameters for withdrawal. One of the addresses could not be built")) {
+    await #expect(throws: RainSDKError.internalLogicError(details: "Invalid expiration timestamp format. Expected ISO8601 or Unix timestamp string")) {
       try await manager.buildWithdrawTransactionData(
         chainId: 1,
-        contractAddress: "0x1234567890123456789012345678901234567890",
-        proxyAddress: "0xabcdefabcdefabcdefabcdefabcdefabcdefabcd",
-        tokenAddress: "0x9876543210987654321098765432109876543210",
+        assetAddresses: assetAddresses,
         amount: 100.0,
         decimals: 18,
-        recipientAddress: "0xfedcbafedcbafedcbafedcbafedcbafedcbafedc",
         expiresAt: "invalid-timestamp",
         signatureData: signatureData,
         adminSalt: adminSalt,
@@ -558,6 +597,12 @@ struct WalletAgnosticInitializationTests {
   func testBuildWithdrawTransactionDataISO8601Timestamp() async throws {
     let manager = try await createInitializedManager()
     
+    let assetAddresses = WithdrawAssetAddresses(
+      contractAddress: "0x1234567890123456789012345678901234567890",
+      proxyAddress: "0xabcdefabcdefabcdefabcdefabcdefabcdefabcd",
+      recipientAddress: "0xfedcbafedcbafedcbafedcbafedcbafedcbafedc",
+      tokenAddress: "0x9876543210987654321098765432109876543210"
+    )
     let signatureData = Data([UInt8](repeating: 0x42, count: 65))
     let adminSalt = Data([UInt8](repeating: 0xAA, count: 32))
     let adminSignature = Data([UInt8](repeating: 0xBB, count: 65))
@@ -569,12 +614,9 @@ struct WalletAgnosticInitializationTests {
     do {
       let txData = try await manager.buildWithdrawTransactionData(
         chainId: 1,
-        contractAddress: "0x1234567890123456789012345678901234567890",
-        proxyAddress: "0xabcdefabcdefabcdefabcdefabcdefabcdefabcd",
-        tokenAddress: "0x9876543210987654321098765432109876543210",
+        assetAddresses: assetAddresses,
         amount: 100.0,
         decimals: 18,
-        recipientAddress: "0xfedcbafedcbafedcbafedcbafedcbafedcbafedc",
         expiresAt: iso8601Timestamp,
         signatureData: signatureData,
         adminSalt: adminSalt,
@@ -594,6 +636,12 @@ struct WalletAgnosticInitializationTests {
   func testBuildWithdrawTransactionDataDifferentDecimals() async throws {
     let manager = try await createInitializedManager()
     
+    let assetAddresses = WithdrawAssetAddresses(
+      contractAddress: "0x1234567890123456789012345678901234567890",
+      proxyAddress: "0xabcdefabcdefabcdefabcdefabcdefabcdefabcd",
+      recipientAddress: "0xfedcbafedcbafedcbafedcbafedcbafedcbafedc",
+      tokenAddress: "0x9876543210987654321098765432109876543210"
+    )
     let signatureData = Data([UInt8](repeating: 0x42, count: 65))
     let adminSalt = Data([UInt8](repeating: 0xAA, count: 32))
     let adminSignature = Data([UInt8](repeating: 0xBB, count: 65))
@@ -605,12 +653,9 @@ struct WalletAgnosticInitializationTests {
     do {
       let txData = try await manager.buildWithdrawTransactionData(
         chainId: 1,
-        contractAddress: "0x1234567890123456789012345678901234567890",
-        proxyAddress: "0xabcdefabcdefabcdefabcdefabcdefabcdefabcd",
-        tokenAddress: "0x9876543210987654321098765432109876543210",
+        assetAddresses: assetAddresses,
         amount: amount,
         decimals: decimals,
-        recipientAddress: "0xfedcbafedcbafedcbafedcbafedcbafedcbafedc",
         expiresAt: "1735689600",
         signatureData: signatureData,
         adminSalt: adminSalt,
@@ -629,6 +674,12 @@ struct WalletAgnosticInitializationTests {
   func testBuildWithdrawTransactionDataInvalidChainId() async throws {
     let manager = try await createInitializedManager()
     
+    let assetAddresses = WithdrawAssetAddresses(
+      contractAddress: "0x1234567890123456789012345678901234567890",
+      proxyAddress: "0xabcdefabcdefabcdefabcdefabcdefabcdefabcd",
+      recipientAddress: "0xfedcbafedcbafedcbafedcbafedcbafedcbafedc",
+      tokenAddress: "0x9876543210987654321098765432109876543210"
+    )
     let signatureData = Data([UInt8](repeating: 0x42, count: 65))
     let adminSalt = Data([UInt8](repeating: 0xAA, count: 32))
     let adminSignature = Data([UInt8](repeating: 0xBB, count: 65))
@@ -636,12 +687,9 @@ struct WalletAgnosticInitializationTests {
     await #expect(throws: RainSDKError.invalidConfig(chainId: 999, rpcUrl: "")) {
       try await manager.buildWithdrawTransactionData(
         chainId: 999, // Not in network configs
-        contractAddress: "0x1234567890123456789012345678901234567890",
-        proxyAddress: "0xabcdefabcdefabcdefabcdefabcdefabcdefabcd",
-        tokenAddress: "0x9876543210987654321098765432109876543210",
+        assetAddresses: assetAddresses,
         amount: 100.0,
         decimals: 18,
-        recipientAddress: "0xfedcbafedcbafedcbafedcbafedcbafedcbafedc",
         expiresAt: "1735689600",
         signatureData: signatureData,
         adminSalt: adminSalt,
