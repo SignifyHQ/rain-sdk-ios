@@ -30,6 +30,11 @@ public final class RainSDKManager: RainSDK {
   // MARK: - Initialization
   public init() {}
   
+  /// Internal initializer for testing - allows injecting a custom transaction builder
+  internal init(transactionBuilder: TransactionBuilderProtocol?) {
+    self._transactionBuilder = transactionBuilder
+  }
+  
   public func initializePortal(
     portalSessionToken: String,
     networkConfigs: [NetworkConfig]

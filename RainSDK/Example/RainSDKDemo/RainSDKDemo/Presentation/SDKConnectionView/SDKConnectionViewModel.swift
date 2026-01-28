@@ -21,6 +21,9 @@ class SDKConnectionViewModel: ObservableObject {
   /// Chain ID input
   @Published var chainId: String = "43113"
   
+  /// Initialization mode: true for wallet-agnostic, false for Portal
+  @Published var useWalletAgnostic: Bool = false
+  
   /// Initialization loading state
   @Published var isInitializing: Bool = false
   
@@ -38,16 +41,16 @@ class SDKConnectionViewModel: ObservableObject {
   /// Check if initialize button should be enabled
   var canInitialize: Bool {
     !isInitializing
-      && !portalToken.isEmpty
       && !rpcUrl.isEmpty
       && !chainId.isEmpty
       && Int(chainId) != nil
+      && (useWalletAgnostic || !portalToken.isEmpty)
   }
   
   // MARK: - Initialization
   
   init() {
-    self.sdkService = RainSDKService()
+    self.sdkService = RainSDKService.shared
     
     // Observe service state changes
     observeServiceState()
@@ -87,10 +90,14 @@ class SDKConnectionViewModel: ObservableObject {
       )
     ]
     
-    await sdkService.initialize(
-      portalToken: portalToken,
-      networkConfigs: networkConfigs
-    )
+    if useWalletAgnostic {
+      await sdkService.initializeWalletAgnostic(networkConfigs: networkConfigs)
+    } else {
+      await sdkService.initialize(
+        portalToken: portalToken,
+        networkConfigs: networkConfigs
+      )
+    }
     
     isInitializing = false
   }

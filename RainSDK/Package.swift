@@ -31,6 +31,9 @@ let package = Package(
         .product(name: "Web3PromiseKit", package: "Web3.swift"),
         .product(name: "Web3ContractABI", package: "Web3.swift"),
         .product(name: "web3swift", package: "web3swift")
+      ],
+      resources: [
+        .process("Resources")
       ]
     ),
     .testTarget(

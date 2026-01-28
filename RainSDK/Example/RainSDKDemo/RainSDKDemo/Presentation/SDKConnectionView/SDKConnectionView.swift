@@ -95,16 +95,22 @@ struct SDKConnectionView: View {
       Text("Configuration")
         .font(.headline)
       
-      // Portal Token Input
-      VStack(alignment: .leading, spacing: 8) {
-        Text("Portal Session Token")
-          .font(.subheadline)
-          .foregroundColor(.secondary)
-        
-        TextField("Enter Portal token", text: $viewModel.portalToken)
-          .textFieldStyle(.roundedBorder)
-          .autocapitalization(.none)
-          .disableAutocorrection(true)
+      // Initialization Mode Toggle
+      Toggle("Wallet-Agnostic Mode", isOn: $viewModel.useWalletAgnostic)
+        .padding(.vertical, 4)
+      
+      if !viewModel.useWalletAgnostic {
+        // Portal Token Input
+        VStack(alignment: .leading, spacing: 8) {
+          Text("Portal Session Token")
+            .font(.subheadline)
+            .foregroundColor(.secondary)
+          
+          TextField("Enter Portal token", text: $viewModel.portalToken)
+            .textFieldStyle(.roundedBorder)
+            .autocapitalization(.none)
+            .disableAutocorrection(true)
+        }
       }
       
       // Chain ID Input
@@ -192,32 +198,34 @@ struct SDKConnectionView: View {
       
       if viewModel.isInitialized {
         VStack(spacing: 8) {
-          featureButton(
-            icon: "wallet.pass.fill",
-            title: "Portal Wallet Features",
-            subtitle: "Access Portal wallet functionality",
-            action: {
-              viewModel.handlePortalWalletFeatures()
-            }
-          )
+          NavigationLink(destination: BuildEIP712MessageDemoView()) {
+            featureButtonContent(
+              icon: "doc.text.fill",
+              title: "Build EIP-712 Message",
+              subtitle: "Generate EIP-712 messages for admin signatures"
+            )
+          }
+          .buttonStyle(.plain)
           
-          featureButton(
-            icon: "arrow.down.circle.fill",
-            title: "Collateral Withdrawal",
-            subtitle: "Withdraw tokens from collateral",
-            action: {
-              viewModel.handleCollateralWithdrawal()
-            }
-          )
+          NavigationLink(destination: BuildWithdrawTransactionDemoView()) {
+            featureButtonContent(
+              icon: "arrow.down.circle.fill",
+              title: "Build Withdraw Transaction",
+              subtitle: "Generate withdrawal transaction calldata"
+            )
+          }
+          .buttonStyle(.plain)
           
-          featureButton(
-            icon: "dollarsign.circle.fill",
-            title: "Fee Estimation",
-            subtitle: "Get estimated transaction fees",
-            action: {
-              viewModel.handleFeeEstimation()
-            }
-          )
+          if !viewModel.useWalletAgnostic {
+            featureButton(
+              icon: "wallet.pass.fill",
+              title: "Portal Wallet Features",
+              subtitle: "Access Portal wallet functionality",
+              action: {
+                viewModel.handlePortalWalletFeatures()
+              }
+            )
+          }
         }
       } else {
         Text("Initialize SDK to access features")
@@ -234,6 +242,37 @@ struct SDKConnectionView: View {
   
   // MARK: - Helper Views
   
+  private func featureButtonContent(
+    icon: String,
+    title: String,
+    subtitle: String
+  ) -> some View {
+    HStack(spacing: 12) {
+      Image(systemName: icon)
+        .font(.title2)
+        .foregroundColor(.blue)
+        .frame(width: 40)
+      
+      VStack(alignment: .leading, spacing: 4) {
+        Text(title)
+          .font(.body)
+          .fontWeight(.medium)
+        
+        Text(subtitle)
+          .font(.caption)
+          .foregroundColor(.secondary)
+      }
+      
+      Spacer()
+      
+      Image(systemName: "chevron.right")
+        .foregroundColor(.secondary)
+    }
+    .padding()
+    .background(Color(.systemBackground))
+    .cornerRadius(8)
+  }
+  
   private func featureButton(
     icon: String,
     title: String,
@@ -241,30 +280,7 @@ struct SDKConnectionView: View {
     action: @escaping () -> Void
   ) -> some View {
     Button(action: action) {
-      HStack(spacing: 12) {
-        Image(systemName: icon)
-          .font(.title2)
-          .foregroundColor(.blue)
-          .frame(width: 40)
-        
-        VStack(alignment: .leading, spacing: 4) {
-          Text(title)
-            .font(.body)
-            .fontWeight(.medium)
-          
-          Text(subtitle)
-            .font(.caption)
-            .foregroundColor(.secondary)
-        }
-        
-        Spacer()
-        
-        Image(systemName: "chevron.right")
-          .foregroundColor(.secondary)
-      }
-      .padding()
-      .background(Color(.systemBackground))
-      .cornerRadius(8)
+      featureButtonContent(icon: icon, title: title, subtitle: subtitle)
     }
     .buttonStyle(.plain)
   }
