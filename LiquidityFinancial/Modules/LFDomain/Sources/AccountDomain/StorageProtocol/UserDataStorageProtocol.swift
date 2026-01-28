@@ -22,6 +22,7 @@ public protocol AccountDataStorageProtocol {
   var isBiometricUsageEnabled: Bool { get set }
   var hasFrntCard: Bool { get set }
   var hasShownApplePayPopup: Bool { get set }
+  var isMerchantCurrencyEnabled: Bool { get set }
   
   func subscribeWalletAddressesChanged(_ completion: @escaping ([WalletAddressEntity]) -> Void) -> Cancellable
   func storeWalletAddresses(_ addresses: [WalletAddressEntity])

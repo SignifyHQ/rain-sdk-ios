@@ -9,10 +9,16 @@ public struct TransactionItemView: View {
   @Injected(\.analyticsService) var analyticsService
   
   let transaction: TransactionModel
+  let isShowingMerchantCurrency: Bool
   let action: () -> Void
   
-  public init(transaction: TransactionModel, action: @escaping () -> Void) {
+  public init(
+    transaction: TransactionModel,
+    isShowingMerchantCurrency: Bool = false,
+    action: @escaping () -> Void
+  ) {
     self.transaction = transaction
+    self.isShowingMerchantCurrency = isShowingMerchantCurrency
     self.action = action
   }
   
@@ -48,9 +54,21 @@ extension TransactionItemView {
         
         Spacer()
         
-        Text(formattedAmount(transaction: transaction))
-          .foregroundColor(transaction.typeColor)
-          .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.small.value))
+        VStack(
+          alignment: .trailing,
+          spacing: 2
+        ) {
+          Text(transaction.amountFormatted)
+            .foregroundColor(transaction.typeColor)
+            .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.small.value))
+          
+          if isShowingMerchantCurrency,
+             let formattedLocalAmount = transaction.localAmountFormatted {
+            Text(formattedLocalAmount)
+              .foregroundColor(Colors.textSecondary.swiftUIColor)
+              .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.ultraSmall.value))
+          }
+        }
       }
       .padding(.top, 12)
       
@@ -63,16 +81,5 @@ extension TransactionItemView {
       .frame(height: 1)
       .background(Colors.greyDefault.swiftUIColor)
       .frame(maxWidth: .infinity)
-  }
-}
-
-// MARK: Helpers
-extension TransactionItemView {
-  func formattedAmount(transaction: TransactionModel) -> String {
-    transaction.amount.formattedAmount(
-      prefix: transaction.isCryptoTransaction ? nil : Constants.CurrencyUnit.usd.rawValue,
-      minFractionDigits: transaction.isCryptoTransaction ? Constants.FractionDigitsLimit.crypto.minFractionDigits : Constants.FractionDigitsLimit.fiat.minFractionDigits,
-      maxFractionDigits: transaction.isCryptoTransaction ? Constants.FractionDigitsLimit.crypto.maxFractionDigits : Constants.FractionDigitsLimit.fiat.maxFractionDigits
-    )
   }
 }

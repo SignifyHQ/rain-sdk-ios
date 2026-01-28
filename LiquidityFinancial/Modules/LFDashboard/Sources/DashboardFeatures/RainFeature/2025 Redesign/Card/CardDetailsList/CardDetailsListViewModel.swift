@@ -356,6 +356,7 @@ extension CardDetailsListViewModel {
     if let card = cardsList.last {
       currentCard = card
     } else {
+      currentCard = .virtualDefault
       NotificationCenter.default.post(name: .noLinkedCards, object: nil)
       completion()
     }

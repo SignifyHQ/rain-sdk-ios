@@ -61,7 +61,7 @@ private extension TransactionRowView {
 
   var trailing: some View {
     VStack(alignment: .trailing, spacing: 4) {
-      Text(item.ammountFormatted)
+      Text(item.amountFormatted)
         .font(Fonts.bold.swiftUIFont(size: Constants.FontSize.medium.value))
         .foregroundColor(item.colorForType)
         .minimumScaleFactor(0.7)

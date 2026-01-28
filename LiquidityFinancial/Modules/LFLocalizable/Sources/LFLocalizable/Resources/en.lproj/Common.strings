@@ -1686,7 +1686,8 @@ We will be in touch shortly to invite you to get your new card.";
 
 // MARK: Transactions screen
 "transactions.screen.title" = "Transactions";
-"transactions.showPurchasedCurrency.title" = "Show in purchased currency";
+"transactions.showMerchantCurrency.title" = "Show merchant currency";
+"transactions.showMerchantCurrency.tooltip.body" = "Displays the transaction amount in the local currency where the transaction took place, making reconciliation easier.";
 
 "transactions.filters.all.title" = "All Filters";
 "transactions.filters.typeFilter.title" = "Type";
@@ -1824,7 +1825,7 @@ We will be in touch shortly to invite you to get your new card.";
 
 "closeVirtualCard.popup.title" = "Close virtual card";
 "closeVirtualCard.popup.subtitle" = "Are you sure you want to close your virtual card? Closing this card will permanently disable it.\n\nYou can have only one active virtual card at a time and up to %@ virtual card requests per account. You have %@/%@ requests remaining.";
-"closeVirtualCard.popup.final.subtitle" = "Are you sure you want to close your virtual card? This is your final virtual card and you won’t be able to request another virtual card.\n\nBy closing this card you will use all %@/%@ virtual card requests available to you.";
+"closeVirtualCard.popup.final.subtitle" = "Are you sure you want to close your virtual card? This is your final virtual card and you won’t be able to request another virtual card.\n\nClosing this card will use all remaining virtual card requests available to you.";
 "closeVirtualCard.popup.confirm.button.title" = "Close virtual card";
 
 "closedVirtualCardSuccess.popup.title" = "Virtual card closed";

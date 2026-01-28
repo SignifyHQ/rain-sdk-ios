@@ -10,8 +10,10 @@ public struct TransactionModel: Identifiable, Hashable, Equatable {
   public var accountId: String
   public var title: String?
   public var currency: String?
+  public var localCurrency: String?
   public var description: String?
   public var amount: Double
+  public var localAmount: Double?
   public var currentBalance: Double?
   public var fee: Double?
   public var type: TransactionType
@@ -32,8 +34,10 @@ public struct TransactionModel: Identifiable, Hashable, Equatable {
     accountId: String,
     title: String? = nil,
     currency: String? = nil,
+    localCurrency: String? = nil,
     description: String? = nil,
     amount: Double,
+    localAmount: Double? = nil,
     currentBalance: Double? = nil,
     fee: Double? = nil,
     type: TransactionType,
@@ -52,8 +56,10 @@ public struct TransactionModel: Identifiable, Hashable, Equatable {
     self.accountId = accountId
     self.title = title
     self.currency = currency
+    self.localCurrency = localCurrency
     self.description = description
     self.amount = amount
+    self.localAmount = localAmount
     self.currentBalance = currentBalance
     self.fee = fee
     self.type = type
@@ -151,7 +157,7 @@ public extension TransactionModel {
     return TransactionStatus.unknown.localizedDescription()
   }
   
-  var ammountFormatted: String {
+  var amountFormatted: String {
     amount.formattedAmount(
       prefix: isCryptoTransaction ? nil : Constants.CurrencyUnit.usd.symbol,
       minFractionDigits: isCryptoTransaction
@@ -160,6 +166,19 @@ public extension TransactionModel {
       maxFractionDigits: isCryptoTransaction
       ? Constants.FractionDigitsLimit.crypto.maxFractionDigits
       : Constants.FractionDigitsLimit.fiat.maxFractionDigits
+    )
+  }
+  
+  var localAmountFormatted: String? {
+    guard currency != localCurrency
+    else {
+      return nil
+    }
+    
+    return localAmount?.formattedAmount(
+      prefix: localCurrency,
+      minFractionDigits: Constants.FractionDigitsLimit.fiat.minFractionDigits,
+      maxFractionDigits: Constants.FractionDigitsLimit.fiat.maxFractionDigits
     )
   }
   
@@ -377,8 +396,10 @@ public extension TransactionModel {
       accountId: transactionEntity.accountId,
       title: transactionEntity.title,
       currency: transactionEntity.currency,
+      localCurrency: transactionEntity.localCurrency,
       description: transactionEntity.description,
       amount: abs(transactionEntity.amount),
+      localAmount: transactionEntity.localAmount,
       currentBalance: transactionEntity.currentBalance,
       fee: transactionEntity.fee,
       type: TransactionType(rawValue: transactionEntity.type) ?? .unknown,

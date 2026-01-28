@@ -16,8 +16,10 @@ public struct APITransaction: Codable, TransactionEntity {
   public let accountId: String
   public let title: String?
   public var currency: String?
+  public var localCurrency: String?
   public let description: String?
   public let amount: Double
+  public let localAmount: Double?
   public let currentBalance: Double?
   public let fee: Double?
   public let type: String
@@ -32,12 +34,33 @@ public struct APITransaction: Codable, TransactionEntity {
   public var externalTransaction: APIExternalTransaction?
   public var note: APITransactionNote?
   
-  public init(id: String, accountId: String, title: String?, description: String?, amount: Double, currentBalance: Double?, fee: Double?, type: String, status: String?, completedAt: String?, createdAt: String, updatedAt: String, contractAddress: String?, transactionHash: String?, reward: APIReward? = nil, receipt: APITransactionReceipt? = nil, externalTransaction: APIExternalTransaction? = nil, note: APITransactionNote? = nil) {
+  public init(
+    id: String,
+    accountId: String,
+    title: String?,
+    description: String?,
+    amount: Double,
+    localAmount: Double?,
+    currentBalance: Double?,
+    fee: Double?,
+    type: String,
+    status: String?,
+    completedAt: String?,
+    createdAt: String,
+    updatedAt: String,
+    contractAddress: String?,
+    transactionHash: String?,
+    reward: APIReward? = nil,
+    receipt: APITransactionReceipt? = nil,
+    externalTransaction: APIExternalTransaction? = nil,
+    note: APITransactionNote? = nil
+  ) {
     self.id = id
     self.accountId = accountId
     self.title = title
     self.description = description
     self.amount = amount
+    self.localAmount = localAmount
     self.currentBalance = currentBalance
     self.fee = fee
     self.type = type

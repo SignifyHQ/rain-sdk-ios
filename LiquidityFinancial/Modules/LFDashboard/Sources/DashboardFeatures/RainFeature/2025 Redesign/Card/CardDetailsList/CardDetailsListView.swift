@@ -479,7 +479,7 @@ private extension CardDetailsListView {
     var subtitle: String {
       if isVirtualCard {
         return viewModel.isFinalVirtualCard ?
-        L10N.Common.CloseVirtualCard.Popup.Final.subtitle(Constants.virtualCardCountLimit, Constants.virtualCardCountLimit) :
+        L10N.Common.CloseVirtualCard.Popup.Final.subtitle :
         L10N.Common.CloseVirtualCard.Popup.subtitle(Constants.virtualCardCountLimit, viewModel.remainingVirtualCardCount, Constants.virtualCardCountLimit)
       }
       

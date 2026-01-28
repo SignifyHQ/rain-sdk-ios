@@ -109,6 +109,15 @@ public class AccountDataManager: AccountDataStorageProtocol {
     }
   }
   
+  public var isMerchantCurrencyEnabled: Bool {
+    get {
+      UserDefaults.isMerchantCurrencyEnabled
+    }
+    set {
+      UserDefaults.isMerchantCurrencyEnabled = newValue
+    }
+  }
+  
   public var addressDetail: String {
     let userData = self.userInfomationData
     let stateCode = "\(userData.state ?? ""), \((userData.country == "US" ? userData.postalCode?.capitalized : userData.postalCode) ?? "")"

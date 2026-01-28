@@ -19,19 +19,30 @@ public class TransactionsViewModel: ObservableObject {
     }
   }
   @Published var transactionDetail: TransactionModel?
-  @Published var isLoading = false
-  @Published var isLoadingMore = false
+  
   @Published var searchText = "" {
     didSet {
       updateFilteredSection()
     }
   }
-  @Published var toastMessage: String?
-  @Published var isShowingPurchasedCurrency: Bool = false
   @Published var filterConfiguration: TransactionsFilterConfiguration = TransactionsFilterConfiguration()
   @Published var presentedFilterSheet: TransactionsFilterButtonType?
   @Published var filteredTransactions: [TransactionSection] = []
   @Published var expandedSections: [String: Bool] = [:]
+  
+  @Published var isMerchantCurrencyTooltipShown: Bool = false
+  @Published var isShowingMerchantCurrency: Bool = false {
+    didSet {
+      // Update the saved setting when toggling merchant currency switch
+      if isShowingMerchantCurrency != accountDataManager.isMerchantCurrencyEnabled  {
+        accountDataManager.isMerchantCurrencyEnabled = isShowingMerchantCurrency
+      }
+    }
+  }
+  
+  @Published var isLoading = false
+  @Published var isLoadingMore = false
+  @Published var toastMessage: String?
   
   var appliedFilters: [TransactionsFilterButtonType: Int] {
     [
@@ -62,6 +73,8 @@ public class TransactionsViewModel: ObservableObject {
     self.cardID = cardID
     self.transactionTypes = transactionTypes
     self.loadInitialData()
+    // Set the merchant currency switch's initial state based on the saved value
+    self.isShowingMerchantCurrency = accountDataManager.isMerchantCurrencyEnabled
   }
 }
 

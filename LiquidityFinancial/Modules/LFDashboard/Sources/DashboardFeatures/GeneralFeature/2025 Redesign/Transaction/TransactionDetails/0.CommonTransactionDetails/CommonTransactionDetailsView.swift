@@ -74,10 +74,18 @@ private extension CommonTransactionDetailsView {
   }
   
   var amountView: some View {
-    VStack(spacing: 2) {
+    VStack(
+      spacing: 4
+    ) {
       Text(viewModel.amountValue)
         .foregroundColor(viewModel.colorForType)
         .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.main.value))
+      
+      if let localAmountFormatted = viewModel.transaction.localAmountFormatted {
+        Text(localAmountFormatted)
+          .foregroundColor(viewModel.colorForType)
+          .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.ultraSmall.value))
+      }
       
       if let status = viewModel.transaction.status {
         Text(status.localizedDescription())
@@ -132,16 +140,21 @@ private extension CommonTransactionDetailsView {
   }
   
   var reportProblemView: some View {
-    VStack(alignment: .center, spacing: 12) {
+    VStack(
+      alignment: .center,
+      spacing: 3
+    ) {
       Text(L10N.Common.TransactionDetails.ReportProblem.title)
-        .foregroundColor(Colors.textPrimary.swiftUIColor)
+        .foregroundColor(Colors.textSecondary.swiftUIColor)
         .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.small.value))
-      FullWidthButton(
-        type: .primary,
-        backgroundColor: Colors.grey400.swiftUIColor,
-        title: L10N.Common.TransactionDetails.ReportProblem.button
-      ) {
+      
+      Button {
         viewModel.onReportProblemButtonTap()
+      } label: {
+        Text(L10N.Common.TransactionDetails.ReportProblem.button)
+          .foregroundColor(Colors.textSecondary.swiftUIColor)
+          .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.small.value))
+          .underline(true, color: Colors.textSecondary.swiftUIColor)
       }
     }
     .padding(.bottom, 20)

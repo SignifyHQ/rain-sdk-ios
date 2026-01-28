@@ -1,10 +1,13 @@
-import SwiftUI
 import LFLocalizable
 import LFStyleGuide
 import LFUtilities
 import Services
+import SwiftTooltip
+import SwiftUI
 
 public struct TransactionsView: View {
+  @Environment(\.scenePhase) private var scenePhase
+  
   @StateObject private var viewModel: TransactionsViewModel
   @StateObject var transactionFilterViewModel: TransactionsFilterViewModel = TransactionsFilterViewModel()
 
@@ -76,7 +79,9 @@ public struct TransactionsView: View {
 
 extension TransactionsView {
   var contentView: some View {
-    VStack(spacing: 24) {
+    VStack(
+      spacing: 24
+    ) {
       DefaultSearchBar(searchText: $viewModel.searchText)
       
       HStack {
@@ -87,14 +92,19 @@ extension TransactionsView {
         Spacer()
       }
       
-      //showPurchasedCurrencyView
-      
-      listView
+      VStack(
+        spacing: 10
+      ) {
+        showMerchantCurrencyView
+        listView
+      }
     }
   }
   
   var listView: some View {
-    ScrollView(showsIndicators: false) {
+    ScrollView(
+      showsIndicators: false
+    ) {
       LazyVStack(
         spacing: 0
       ) {
@@ -115,7 +125,10 @@ extension TransactionsView {
           ) {
             if monthSection.isExpanded {
               ForEach(monthSection.items) { transaction in
-                TransactionItemView(transaction: transaction) {
+                TransactionItemView(
+                  transaction: transaction,
+                  isShowingMerchantCurrency: viewModel.isShowingMerchantCurrency
+                ) {
                   viewModel.selectedTransaction(transaction)
                 }
                 .listRowSeparator(.hidden)
@@ -143,6 +156,14 @@ extension TransactionsView {
           .frame(width: 24, height: 24)
       }
     }
+    .simultaneousGesture(
+      DragGesture()
+        .onChanged { _ in
+          if viewModel.isMerchantCurrencyTooltipShown {
+            viewModel.isMerchantCurrencyTooltipShown = false
+          }
+        }
+    )
   }
   
   func headerSectionView(section: TransactionSection) -> some View {
@@ -216,14 +237,36 @@ extension TransactionsView {
     }
   }
   
-  var showPurchasedCurrencyView: some View {
-    Toggle(isOn: $viewModel.isShowingPurchasedCurrency) {
-      Text(L10N.Common.Transactions.ShowPurchasedCurrency.title)
-        .foregroundColor(Colors.textPrimary.swiftUIColor)
-        .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.small.value))
-        .frame(maxWidth: .infinity, alignment: .leading)
+  var showMerchantCurrencyView: some View {
+    Toggle(
+      isOn: $viewModel.isShowingMerchantCurrency
+    ) {
+      HStack(
+        spacing: 8
+      ) {
+        Text(L10N.Common.Transactions.ShowMerchantCurrency.title)
+          .foregroundColor(Colors.textPrimary.swiftUIColor)
+          .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.small.value))
+          //.frame(maxWidth: .infinity, alignment: .leading)
+        
+        Button {
+          viewModel.isMerchantCurrencyTooltipShown.toggle()
+        } label: {
+          GenImages.Images.icoSupport.swiftUIImage
+            .resizable()
+            .frame(24)
+        }
+        .tooltip(
+          text: L10N.Common.Transactions.ShowMerchantCurrency.Tooltip.body,
+          isPresented: $viewModel.isMerchantCurrencyTooltipShown,
+          pointerPosition: .bottomCenter,
+          config: toolTipConfiguration()
+        )
+        
+        Spacer()
+      }
     }
-    .padding(.horizontal, 16)
+    .padding(.horizontal, 8)
   }
   
   var loadingView: some View {
@@ -234,5 +277,23 @@ extension TransactionsView {
       Spacer()
     }
     .frame(maxWidth: .infinity)
+  }
+}
+
+// MARK: - Helper Methods
+extension TransactionsView {
+  private func toolTipConfiguration(
+  ) -> SwiftTooltip.Configuration {
+    SwiftTooltip.Configuration(
+      textColor: .black,
+      textFont: Fonts.regular.uiFont(size: Constants.FontSize.ultraSmall.value),
+      color: Colors.grey25.swiftUIColor.uiColor,
+      backgroundColor: .clear,
+      shadowColor: .clear,
+      shadowOffset: .zero,
+      shadowOpacity: .zero,
+      shadowRadius: 0,
+      dismissBehavior: .dismissOnTapEverywhere
+    )
   }
 }

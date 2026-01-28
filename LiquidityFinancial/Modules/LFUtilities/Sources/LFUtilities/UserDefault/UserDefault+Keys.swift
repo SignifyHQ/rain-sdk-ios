@@ -23,6 +23,7 @@ public extension Key {
   static let isStartedWithLoginFlow: Key = "isStartedWithLoginFlow"
   static let hasFrntCard: Key = "hasFrntCard"
   static let hasShownApplePayPopup: Key = "hasShownApplePayPopup"
+  static let isMerchantCurrencyEnabled: Key = "isMerchantCurrencyEnabled"
   
   // Walelt extension keys
   static let walletExtensionAccessTokenExpiresAt: Key = "walletExtensionAccessTokenExpiresAt"
