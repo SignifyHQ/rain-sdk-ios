@@ -40,12 +40,13 @@ public protocol RainSDK {
   ///
   /// - Parameters:
   ///   - chainId: ChainId of the current network.
-  ///   - collateralProxyAddress: Address of the collateral proxy contract.
-  ///   - walletAddress: Address of the user wallet initiating the action.
-  ///   - tokenAddress: ERC-20 token contract address.
+  ///   - walletAddress: Address of the user wallet initiating the action (used as user in EIP-712 message).
+  ///   - assetAddresses: A structure containing all required addresses:
+  ///     - proxyAddress: Address of the collateral proxy contract (used as verifyingContract in EIP-712 domain).
+  ///     - tokenAddress: ERC-20 token contract address (used as asset in EIP-712 message).
+  ///     - recipientAddress: Final recipient of the funds (used as recipient in EIP-712 message).
   ///   - amount: Amount to be authorized, expressed in token's natural units (e.g., 100.0 for 100 tokens).
   ///   - decimals: Number of decimal places for the token (e.g., 18 for ETH, 6 for USDC).
-  ///   - recipientAddress: Final recipient of the funds.
   ///   - nonce: Optional. The nonce value. If not provided, it will be retrieved from the contract.
   ///
   /// - Returns: A tuple containing:
@@ -55,12 +56,10 @@ public protocol RainSDK {
   /// - Throws: An error if message construction fails or inputs are invalid.
   func buildEIP712Message(
     chainId: Int,
-    collateralProxyAddress: String,
     walletAddress: String,
-    tokenAddress: String,
+    assetAddresses: EIP712AssetAddresses,
     amount: Double,
     decimals: Int,
-    recipientAddress: String,
     nonce: BigUInt?
   ) async throws -> (String, String)
   
@@ -74,12 +73,13 @@ public protocol RainSDK {
   ///
   /// - Parameters:
   ///   - chainId: ChainId of the current network.
-  ///   - contractAddress: Address of the main contract that will execute the withdrawal.
-  ///   - proxyAddress: Address of the collateral proxy contract.
-  ///   - tokenAddress: ERC-20 token contract address.
+  ///   - assetAddresses: A structure containing all required addresses:
+  ///     - contractAddress: Address of the main contract that will execute the withdrawal.
+  ///     - proxyAddress: Address of the collateral proxy contract (used for the withdrawal function call).
+  ///     - tokenAddress: ERC-20 token contract address.
+  ///     - recipientAddress: Address receiving the withdrawal.
   ///   - amount: Amount to be withdrawn, expressed in token's natural units (e.g., 100.0 for 100 tokens).
   ///   - decimals: Number of decimal places for the token (e.g., 18 for ETH, 6 for USDC).
-  ///   - recipientAddress: Address receiving the withdrawal.
   ///   - expiresAt: Expiration timestamp after which the transaction is invalid (Unix timestamp string).
   ///   - signatureData: User or wallet signature data from Rain API.
   ///   - adminSalt: Admin salt generated when creating admin signature (same salt used in buildEIP712Message).
@@ -90,12 +90,9 @@ public protocol RainSDK {
   /// - Throws: An error if ABI encoding or validation fails.
   func buildWithdrawTransactionData(
     chainId: Int,
-    contractAddress: String,
-    proxyAddress: String,
-    tokenAddress: String,
+    assetAddresses: WithdrawAssetAddresses,
     amount: Double,
     decimals: Int,
-    recipientAddress: String,
     expiresAt: String,
     signatureData: Data,
     adminSalt: Data,
@@ -112,14 +109,47 @@ public protocol RainSDK {
   /// - Parameters:
   ///   - walletAddress: Address of the sender wallet.
   ///   - contractAddress: Target smart contract address.
-  ///   - amount: Transaction value amount in ETH (will be converted to Wei).
   ///   - transactionData: Hex-encoded calldata.
   ///
   /// - Returns: A fully formed `ETHTransactionParam` object.
   func composeTransactionParameters(
     walletAddress: String,
     contractAddress: String,
-    amount: Double,
     transactionData: String
   ) -> ETHTransactionParam
+  
+  /// Executes a collateral withdrawal transaction on-chain.
+  ///
+  /// This method orchestrates the full withdrawal flow, including:
+  /// - Preparing transaction calldata
+  /// - Managing or fetching the correct nonce (if not provided)
+  /// - Signing the transaction using the Portal wallet
+  /// - Submitting the transaction to the specified blockchain network
+  ///
+  /// - Parameters:
+  ///   - chainId: The target blockchain network identifier.
+  ///   - assetAddresses: A structure containing all required addresses:
+  ///     - contractAddress: Address of the main contract that will execute the withdrawal (used as transaction target).
+  ///     - proxyAddress: Address of the collateral proxy contract (used for EIP-712 message and transaction data).
+  ///     - tokenAddress: ERC-20 token contract address.
+  ///     - recipientAddress: Address that will receive the withdrawn funds.
+  ///   - amount: Human-readable token amount to withdraw.
+  ///   - decimals: Number of decimal places for the token (e.g., 18 for ETH, 6 for USDC).
+  ///   - signature: User or wallet signature data from Rain API (hex string format).
+  ///   - expiresAt: Expiration timestamp after which the transaction is invalid (Unix timestamp string or ISO8601 format).
+  ///   - nonce: Optional transaction nonce.
+  ///            If `nil`, the SDK is responsible for resolving the correct nonce.
+  ///
+  /// - Returns: The transaction hash of the submitted on-chain transaction.
+  ///
+  /// - Throws: An error if transaction construction, signing, or submission fails.
+  func withdrawCollateral(
+    chainId: Int,
+    assetAddresses: WithdrawAssetAddresses,
+    amount: Double,
+    decimals: Int,
+    signature: String,
+    expiresAt: String,
+    nonce: BigUInt?,
+  ) async throws -> String
 }

@@ -3,12 +3,13 @@ import PortalSwift
 import Web3
 import Web3Core
 import web3swift
+import Web3ContractABI
 
 public final class RainSDKManager: RainSDK {
   // MARK: - Properties
 
-  // Internal storage for Portal instance
-  private var _portal: Portal?
+  // Internal storage for Portal instance (using protocol for testability)
+  private var _portal: PortalRequestProtocol?
   
   // Transaction builder service
   private var _transactionBuilder: TransactionBuilderProtocol?
@@ -16,9 +17,16 @@ public final class RainSDKManager: RainSDK {
   private var _networkConfigs: [NetworkConfig] = []
   
   /// Computed property to safely access the Portal instance
+  /// Returns Portal (concrete type) for public API compatibility
   public var portal: Portal {
     get throws {
-      guard let portal = _portal
+      guard let portalProtocol = _portal
+      else {
+        throw RainSDKError.sdkNotInitialized
+      }
+      
+      // Cast to Portal for public API
+      guard let portal = portalProtocol as? Portal
       else {
         throw RainSDKError.sdkNotInitialized
       }
@@ -32,6 +40,18 @@ public final class RainSDKManager: RainSDK {
   
   /// Internal initializer for testing - allows injecting a custom transaction builder
   internal init(transactionBuilder: TransactionBuilderProtocol?) {
+    self._transactionBuilder = transactionBuilder
+  }
+  
+  /// Internal initializer for testing - allows injecting both Portal and transaction builder
+  internal init(portal: PortalRequestProtocol?, transactionBuilder: TransactionBuilderProtocol?) {
+    self._portal = portal // Portal conforms to PortalRequestProtocol via extension
+    self._transactionBuilder = transactionBuilder
+  }
+  
+  /// Internal initializer for testing - allows injecting a PortalRequestProtocol mock
+  internal init(portalProtocol: PortalRequestProtocol?, transactionBuilder: TransactionBuilderProtocol?) {
+    self._portal = portalProtocol
     self._transactionBuilder = transactionBuilder
   }
   
@@ -59,7 +79,7 @@ public final class RainSDKManager: RainSDK {
         passwords: PasswordStorage()
       )
       
-      // Store portal instance
+      // Store portal instance (Portal conforms to PortalProtocol via extension)
       _portal = portal
       
       // Initialize transaction builder service with network configs
@@ -94,12 +114,10 @@ public final class RainSDKManager: RainSDK {
   
   public func buildEIP712Message(
     chainId: Int,
-    collateralProxyAddress: String,
     walletAddress: String,
-    tokenAddress: String,
+    assetAddresses: EIP712AssetAddresses,
     amount: Double,
     decimals: Int,
-    recipientAddress: String,
     nonce: BigUInt?
   ) async throws -> (String, String) {
     // Ensure SDK is initialized with network configs
@@ -117,10 +135,9 @@ public final class RainSDKManager: RainSDK {
     } else {
       // Retrieve nonce from contract
       finalNonce = try await transactionBuilder.getLatestNonce(
-        proxyAddress: collateralProxyAddress,
+        proxyAddress: assetAddresses.proxyAddress,
         chainId: chainId
       )
-      
       RainLogger.debug("Rain SDK: Retrieved nonce \(finalNonce) from contract")
     }
     
@@ -131,26 +148,22 @@ public final class RainSDKManager: RainSDK {
     // Build EIP-712 message using service
     let jsonMessage = try transactionBuilder.buildEIP712Message(
       chainId: chainId,
-      collateralProxyAddress: collateralProxyAddress,
+      collateralProxyAddress: assetAddresses.proxyAddress,
       walletAddress: walletAddress,
-      tokenAddress: tokenAddress,
+      tokenAddress: assetAddresses.tokenAddress,
       amount: amountBaseUnits,
-      recipientAddress: recipientAddress,
+      recipientAddress: assetAddresses.recipientAddress,
       nonce: finalNonce,
       salt: salt
     )
-    
     return (jsonMessage, salt.toHexString())
   }
   
   public func buildWithdrawTransactionData(
     chainId: Int,
-    contractAddress: String,
-    proxyAddress: String,
-    tokenAddress: String,
+    assetAddresses: WithdrawAssetAddresses,
     amount: Double,
     decimals: Int,
-    recipientAddress: String,
     expiresAt: String,
     signatureData: Data,
     adminSalt: Data,
@@ -162,10 +175,10 @@ public final class RainSDKManager: RainSDK {
     }
     
     // Convert string addresses to Web3Core.EthereumAddress objects
-    guard let ethereumContractAddress = Web3Core.EthereumAddress(contractAddress),
-          let ethereumProxyAddress = Web3Core.EthereumAddress(proxyAddress),
-          let ethereumTokenAddress = Web3Core.EthereumAddress(tokenAddress),
-          let ethereumRecipientAddress = Web3Core.EthereumAddress(recipientAddress)
+    guard let ethereumContractAddress = Web3Core.EthereumAddress(assetAddresses.contractAddress),
+          let ethereumProxyAddress = Web3Core.EthereumAddress(assetAddresses.proxyAddress),
+          let ethereumTokenAddress = Web3Core.EthereumAddress(assetAddresses.tokenAddress),
+          let ethereumRecipientAddress = Web3Core.EthereumAddress(assetAddresses.recipientAddress)
     else {
       RainLogger.error("Rain SDK: Error building transaction parameters for withdrawal. One of the addresses could not be built")
       throw RainSDKError.internalLogicError(
@@ -214,15 +227,108 @@ public final class RainSDKManager: RainSDK {
   public func composeTransactionParameters(
     walletAddress: String,
     contractAddress: String,
-    amount: Double,
     transactionData: String
   ) -> ETHTransactionParam {
     return ETHTransactionParam(
       from: walletAddress,
       to: contractAddress,
-      value: amount.ethToWei.toHexString,
+      value: 0.ethToWei.toHexString,
       data: transactionData
     )
+  }
+  
+  public func withdrawCollateral(
+    chainId: Int,
+    assetAddresses: WithdrawAssetAddresses,
+    amount: Double,
+    decimals: Int,
+    signature: String,
+    expiresAt: String,
+    nonce: BigUInt?
+  ) async throws -> String {
+    // Get wallet address from Portal (using protocol internally)
+    guard let portal = _portal
+    else {
+      throw RainSDKError.sdkNotInitialized
+    }
+    
+    guard let walletAddress = try await portal.addresses[PortalNamespace.eip155] ?? nil
+    else {
+      throw RainSDKError.internalLogicError(details: "No wallet address found in Portal")
+    }
+    
+    let chainIdString = "eip155:\(chainId)"
+    
+    // Convert to EIP712AssetAddresses for building the message
+    let eip712Addresses = EIP712AssetAddresses(
+      proxyAddress: assetAddresses.proxyAddress,
+      recipientAddress: assetAddresses.recipientAddress,
+      tokenAddress: assetAddresses.tokenAddress
+    )
+    
+    // Build EIP-712 message to get admin signature
+    let (eip712Message, saltHex) = try await buildEIP712Message(
+      chainId: chainId,
+      walletAddress: walletAddress,
+      assetAddresses: eip712Addresses,
+      amount: amount,
+      decimals: decimals,
+      nonce: nonce
+    )
+    // Sign EIP-712 message using Portal to get admin signature
+    // Convert salt hex string back to Data
+    guard let saltData = Data(base64Encoded: saltHex) else {
+      throw RainSDKError.internalLogicError(details: "Failed to convert salt hex string to Data")
+    }
+    
+    // Sign the EIP-712 message using Portal
+    let response = try await portal.request(
+      chainId: chainIdString,
+      method: .eth_signTypedData_v4,
+      params: [walletAddress, eip712Message],
+      options: nil
+    )
+    
+    guard let adminSignatureString = (response.result as? String),
+          let adminSignatureData = Data(hexString: adminSignatureString, length: 65)
+    else {
+      throw RainSDKError.internalLogicError(details: "Failed to convert admin signature hex string to Data or invalid length")
+    }
+    
+    guard let signatureData = Data(base64Encoded: signature)
+    else {
+      throw RainSDKError.internalLogicError(details: "Failed to convert user signature hex string to Data")
+    }
+    
+    let transactionData = try await buildWithdrawTransactionData(
+      chainId: chainId,
+      assetAddresses: assetAddresses,
+      amount: amount,
+      decimals: decimals,
+      expiresAt: expiresAt,
+      signatureData: signatureData,
+      adminSalt: saltData,
+      adminSignature: adminSignatureData
+    )
+    
+    // Prepare transaction parameters for Portal
+    let transactionParams = composeTransactionParameters(
+      walletAddress: walletAddress,
+      contractAddress: assetAddresses.contractAddress,
+      transactionData: transactionData
+    )
+    
+    // Sign and send transaction using Portal
+    let ethSendResponse = try await portal.request(
+      chainId: chainIdString,
+      method: .eth_sendTransaction,
+      params: [transactionParams],
+      options: nil
+    )
+    let txHash = ethSendResponse.result as? String ?? "-/-"
+    
+    RainLogger.info("Rain SDK: Withdrawal transaction submitted. Hash: \(txHash)")
+    return txHash
   }
 }
 
