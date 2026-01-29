@@ -550,7 +550,7 @@ private extension CardDetailsListView {
       ? L10N.Common.ClosedVirtualCardSuccess.Popup.Final.subtitle
       : L10N.Common.ClosedVirtualCardSuccess.Popup.subtitle(viewModel.remainingVirtualCardCount, Constants.virtualCardCountLimit),
       primaryButtonTitle: viewModel.isFinalVirtualCard
-      ? L10N.Common.Common.Cancel.Button.title
+      ? L10N.Common.Common.Close.Button.title
       : L10N.Common.ClosedVirtualCardSuccess.Popup.RequestNew.Button.title,
       secondaryButtonTitle: viewModel.isFinalVirtualCard
       ? nil
