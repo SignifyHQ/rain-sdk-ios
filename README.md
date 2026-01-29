@@ -12,8 +12,8 @@ iOS SDK that integrates [Portal](https://portalhq.io) wallet with Rain collatera
 - **Wallet-agnostic mode** — Initialize with network configs only (no Portal) to use transaction-building APIs (EIP-712 message, withdraw calldata, composed params) with your own wallet or backend.
 - **EIP-712 message building** — Build typed data for admin signature required by the collateral contract.
 - **Withdrawal transaction building** — Build ABI-encoded withdraw calldata and compose `ETHTransactionParam` for submission.
-- **Full withdrawal flow** — `withdrawCollateral` builds the transaction, signs via Portal, and submits; returns the transaction hash.
-- **Fee estimation** — `estimateWithdrawalFee` returns the estimated gas cost in the chain’s native token (e.g. ETH).
+- **Full withdrawal flow** — builds the transaction, signs via Portal, and submits; returns the transaction hash.
+- **Fee estimation** — returns the estimated gas cost in the chain’s native token (e.g. ETH).
 
 ## Installation
 
@@ -22,14 +22,14 @@ iOS SDK that integrates [Portal](https://portalhq.io) wallet with Rain collatera
 Add the package to your project (Xcode: **File → Add Package Dependencies**):
 
 ```
-https://github.com/<your-org>/rain-sdk-ios
+https://github.com/SignifyHQ/rain-sdk-ios
 ```
 
 Or in `Package.swift`:
 
 ```swift
 dependencies: [
-    .package(url: "https://github.com/<your-org>/rain-sdk-ios", from: "1.0.0")
+    .package(url: "https://github.com/SignifyHQ/rain-sdk-ios", from: "1.0.0")
 ]
 ```
 
