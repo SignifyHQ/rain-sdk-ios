@@ -76,8 +76,10 @@ let manager = RainSDKManager()
 try await manager.initialize(networkConfigs: networkConfigs)
 
 // buildEIP712Message, buildWithdrawTransactionData, composeTransactionParameters
-// are available; withdrawCollateral and estimateWithdrawalFee require Portal.
+// are available; withdrawCollateral requires Portal.
 ```
+
+For a short overview of all public methods, see [Method overview](docs/METHODS.md).
 
 ## License
 
