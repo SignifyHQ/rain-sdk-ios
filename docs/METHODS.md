@@ -4,70 +4,105 @@ Reference for Rain SDK public methods. Use `RainSDKManager()` and call these on 
 
 ---
 
-## Property
+## portal
 
-| Method | Description |
-|--------|-------------|
-| `portal: Portal` (throws) | The initialized Portal instance. Use after `initializePortal`. Throws if SDK not initialized or using a mock. |
+The initialized Portal instance. Use after `initializePortal`. Throws if SDK not initialized or using a mock.
 
----
-
-## Initialization
-
-| Method | Description |
-|--------|-------------|
-| `initializePortal(portalSessionToken:networkConfigs:)` | Initializes with a Portal session token and network configs. Use for full wallet flow (sign + send via Portal). |
-| `initialize(networkConfigs:)` | Initializes with network configs only (no Portal). Use for wallet-agnostic mode (transaction building only). |
-
-**Parameters**
-
-| Method | Parameter | Description |
-|--------|------------|-------------|
-| `initializePortal` | `portalSessionToken` | Valid Portal session token. |
-| `initializePortal` | `networkConfigs` | Array of `NetworkConfig` (chain ID + RPC URL per network). |
-| `initialize` | `networkConfigs` | Array of `NetworkConfig`. |
+- **Returns:** `Portal`
+- **Throws:** `RainSDKError.sdkNotInitialized` when not initialized or when using a mock (e.g. in tests).
 
 ---
 
-## Transaction building (no Portal required)
+## initializePortal(portalSessionToken:networkConfigs:)
 
-| Method | Description |
-|--------|-------------|
-| `buildEIP712Message(chainId:walletAddress:assetAddresses:amount:decimals:nonce:)` | Builds EIP-712 typed data for the admin signature. Returns `(message: String, saltHex: String)`. |
-| `buildWithdrawTransactionData(chainId:assetAddresses:amount:decimals:expiresAt:signatureData:adminSalt:adminSignature:)` | Builds ABI-encoded withdraw calldata. Returns hex string (e.g. `"0x..."`). |
-| `composeTransactionParameters(walletAddress:contractAddress:transactionData:)` | Composes `ETHTransactionParam` for submission (e.g. to `eth_sendTransaction`). |
+Initializes the SDK with a Portal session token and network configs. Use for full wallet flow (sign + send via Portal).
 
-**Parameters**
+- **Returns:** (none, async)
+- **Throws:** `RainSDKError` if initialization fails (e.g. invalid token, invalid RPC URLs).
 
-| Method | Parameter | Description |
-|--------|------------|-------------|
-| `buildEIP712Message` | `chainId` | Network chain ID (e.g. 1 for mainnet). |
-| `buildEIP712Message` | `walletAddress` | User wallet address (used as `user` in EIP-712). |
-| `buildEIP712Message` | `assetAddresses` | `EIP712AssetAddresses`: proxy, recipient, token addresses. |
-| `buildEIP712Message` | `amount` | Amount in token units (e.g. 100.0 for 100 tokens). |
-| `buildEIP712Message` | `decimals` | Token decimals (e.g. 18 for ETH, 6 for USDC). |
-| `buildEIP712Message` | `nonce` | Optional; if `nil`, SDK fetches from contract. |
-| `buildWithdrawTransactionData` | `chainId` | Network chain ID. |
-| `buildWithdrawTransactionData` | `assetAddresses` | `WithdrawAssetAddresses`: contract, proxy, recipient, token. |
-| `buildWithdrawTransactionData` | `amount` | Amount in token units. |
-| `buildWithdrawTransactionData` | `decimals` | Token decimals. |
-| `buildWithdrawTransactionData` | `expiresAt` | Expiration Unix timestamp string. |
-| `buildWithdrawTransactionData` | `signatureData` | User/wallet signature from Rain API (`Data`). |
-| `buildWithdrawTransactionData` | `adminSalt` | Salt used when building the admin signature (same as from `buildEIP712Message`). |
-| `buildWithdrawTransactionData` | `adminSignature` | Admin signature authorizing the withdrawal (`Data`). |
-| `composeTransactionParameters` | `walletAddress` | Sender wallet address. |
-| `composeTransactionParameters` | `contractAddress` | Target contract address. |
-| `composeTransactionParameters` | `transactionData` | Hex-encoded calldata (e.g. from `buildWithdrawTransactionData`). |
+| Parameter | Description |
+|-----------|-------------|
+| `portalSessionToken` | Valid Portal session token. |
+| `networkConfigs` | Array of `NetworkConfig` (chain ID + RPC URL per network). |
 
 ---
 
-## Withdrawal (Portal required)
+## initialize(networkConfigs:)
 
-| Method | Description |
-|--------|-------------|
-| `withdrawCollateral(chainId:assetAddresses:amount:decimals:signature:expiresAt:nonce:)` | Full flow: build tx, sign via Portal, submit. Returns transaction hash. Requires `initializePortal` first. |
+Initializes the SDK with network configs only (no Portal). Use for wallet-agnostic mode (transaction building only).
 
-**Parameters**
+- **Returns:** (none, async)
+- **Throws:** `RainSDKError` if initialization fails (e.g. invalid RPC URLs).
+
+| Parameter | Description |
+|-----------|-------------|
+| `networkConfigs` | Array of `NetworkConfig`. |
+
+---
+
+## buildEIP712Message(chainId:walletAddress:assetAddresses:amount:decimals:nonce:)
+
+Builds EIP-712 typed data for the admin signature required for withdrawals.
+
+- **Returns:** `(message: String, saltHex: String)` — serialized EIP-712 message and salt (hex string).
+- **Throws:** `RainSDKError` if message construction fails or inputs are invalid.
+- **Requires:** `initialize` or `initializePortal` first (no Portal required).
+
+| Parameter | Description |
+|-----------|-------------|
+| `chainId` | Network chain ID (e.g. 1 for mainnet). |
+| `walletAddress` | User wallet address (used as `user` in EIP-712). |
+| `assetAddresses` | `EIP712AssetAddresses`: proxy, recipient, token addresses. |
+| `amount` | Amount in token units (e.g. 100.0 for 100 tokens). |
+| `decimals` | Token decimals (e.g. 18 for ETH, 6 for USDC). |
+| `nonce` | Optional; if `nil`, SDK fetches from contract. |
+
+---
+
+## buildWithdrawTransactionData(chainId:assetAddresses:amount:decimals:expiresAt:signatureData:adminSalt:adminSignature:)
+
+Builds ABI-encoded withdraw calldata for the collateral proxy contract.
+
+- **Returns:** Hex-encoded calldata string (e.g. `"0x..."`).
+- **Throws:** `RainSDKError` if ABI encoding or validation fails.
+- **Requires:** `initialize` or `initializePortal` first (no Portal required).
+
+| Parameter | Description |
+|-----------|-------------|
+| `chainId` | Network chain ID. |
+| `assetAddresses` | `WithdrawAssetAddresses`: contract, proxy, recipient, token. |
+| `amount` | Amount in token units. |
+| `decimals` | Token decimals. |
+| `expiresAt` | Expiration Unix timestamp string. |
+| `signatureData` | User/wallet signature from Rain API (`Data`). |
+| `adminSalt` | Salt used when building the admin signature (same as from `buildEIP712Message`). |
+| `adminSignature` | Admin signature authorizing the withdrawal (`Data`). |
+
+---
+
+## composeTransactionParameters(walletAddress:contractAddress:transactionData:)
+
+Composes Ethereum transaction parameters for submission (e.g. to `eth_sendTransaction`).
+
+- **Returns:** `ETHTransactionParam`.
+- **Throws:** (none)
+- **Requires:** `initialize` or `initializePortal` first (no Portal required).
+
+| Parameter | Description |
+|-----------|-------------|
+| `walletAddress` | Sender wallet address. |
+| `contractAddress` | Target contract address. |
+| `transactionData` | Hex-encoded calldata (e.g. from `buildWithdrawTransactionData`). |
+
+---
+
+## withdrawCollateral(chainId:assetAddresses:amount:decimals:signature:expiresAt:nonce:)
+
+Full withdrawal flow: build tx, sign via Portal, submit. Returns the transaction hash.
+
+- **Returns:** Transaction hash string.
+- **Throws:** `RainSDKError` if construction, signing, or submission fails.
+- **Requires:** `initializePortal` first (Portal required).
 
 | Parameter | Description |
 |-----------|-------------|
