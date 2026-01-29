@@ -73,7 +73,7 @@ struct WithdrawCollateralTests {
     ]
     let mockBuilder = MockTransactionBuilderService(networkConfigs: configs)
     
-    let manager = RainSDKManager(portalProtocol: mockPortal, transactionBuilder: mockBuilder)
+    let manager = RainSDKManager(portal: mockPortal, transactionBuilder: mockBuilder)
     
     let assetAddresses = WithdrawAssetAddresses(
       contractAddress: "0x1234567890123456789012345678901234567890",
@@ -103,7 +103,7 @@ struct WithdrawCollateralTests {
     ]
     let mockBuilder = MockTransactionBuilderService(networkConfigs: configs)
     
-    let manager = RainSDKManager(portalProtocol: mockPortal, transactionBuilder: mockBuilder)
+    let manager = RainSDKManager(portal: mockPortal, transactionBuilder: mockBuilder)
     
     let assetAddresses = WithdrawAssetAddresses(
       contractAddress: "0x1234567890123456789012345678901234567890",
@@ -134,7 +134,7 @@ struct WithdrawCollateralTests {
     ]
     let mockBuilder = TransactionBuilderService(networkConfigs: configs)
     
-    let manager = RainSDKManager(portalProtocol: mockPortal, transactionBuilder: mockBuilder)
+    let manager = RainSDKManager(portal: mockPortal, transactionBuilder: mockBuilder)
     
     let assetAddresses = WithdrawAssetAddresses(
       contractAddress: "0x1234567890123456789012345678901234567890",
@@ -165,7 +165,7 @@ struct WithdrawCollateralTests {
     ]
     let mockBuilder = MockTransactionBuilderService(networkConfigs: configs)
     
-    let manager = RainSDKManager(portalProtocol: mockPortal, transactionBuilder: mockBuilder)
+    let manager = RainSDKManager(portal: mockPortal, transactionBuilder: mockBuilder)
     
     let assetAddresses = WithdrawAssetAddresses(
       contractAddress: "0x1234567890123456789012345678901234567890",
@@ -211,7 +211,7 @@ struct WithdrawCollateralTests {
       error: NSError(domain: "PortalError", code: 1, userInfo: [NSLocalizedDescriptionKey: "Signing failed"])
     )
     
-    let manager = RainSDKManager(portalProtocol: mockPortal, transactionBuilder: mockBuilder)
+    let manager = RainSDKManager(portal: mockPortal, transactionBuilder: mockBuilder)
     
     let assetAddresses = WithdrawAssetAddresses(
       contractAddress: "0x1234567890123456789012345678901234567890",
@@ -266,7 +266,7 @@ struct WithdrawCollateralTests {
     let mockBuilder = MockTransactionBuilderService(networkConfigs: configs)
     mockBuilder.mockNonce = BigUInt(42)
     
-    let manager = RainSDKManager(portalProtocol: mockPortal, transactionBuilder: mockBuilder)
+    let manager = RainSDKManager(portal: mockPortal, transactionBuilder: mockBuilder)
     
     let assetAddresses = WithdrawAssetAddresses(
       contractAddress: "0x1234567890123456789012345678901234567890",
@@ -310,5 +310,187 @@ struct WithdrawCollateralTests {
     #expect(sendRequest.chainId == chainIdString)
     #expect(sendRequest.method == .eth_sendTransaction)
     #expect(sendRequest.params.count == 1) // transactionParams array
+  }
+  
+  // MARK: - Estimate Withdrawal Fee Tests
+  
+  private var defaultAddresses: WithdrawAssetAddresses {
+    WithdrawAssetAddresses(
+      contractAddress: "0x1234567890123456789012345678901234567890",
+      proxyAddress: "0xabcdefabcdefabcdefabcdefabcdefabcdefabcd",
+      recipientAddress: "0xfedcbafedcbafedcbafedcbafedcbafedcbafedc",
+      tokenAddress: "0x9876543210987654321098765432109876543210"
+    )
+  }
+
+  private var validBase64Signature: String {
+    Data(repeating: 1, count: 65).base64EncodedString()
+  }
+
+  @Test("estimateWithdrawalFee should throw sdkNotInitialized when called before initialization")
+  func testEstimateWithdrawalFeeBeforeInitialization() async throws {
+    let manager = RainSDKManager()
+
+    await #expect(throws: RainSDKError.sdkNotInitialized) {
+      _ = try await manager.estimateWithdrawalFee(
+        chainId: 1,
+        addresses: defaultAddresses,
+        amount: 100.0,
+        decimals: 18,
+        salt: Data(repeating: 0xAA, count: 32).base64EncodedString(),
+        signature: validBase64Signature,
+        expiresAt: "1735689600"
+      )
+    }
+  }
+
+  @Test("estimateWithdrawalFee should throw sdkNotInitialized after wallet-agnostic initialize")
+  func testEstimateWithdrawalFeeAfterWalletAgnosticInit() async throws {
+    let manager = RainSDKManager()
+    let configs = [
+      NetworkConfig.testConfig(chainId: 1, rpcUrl: "https://mainnet.infura.io/v3/test")
+    ]
+    try await manager.initialize(networkConfigs: configs)
+
+    await #expect(throws: RainSDKError.sdkNotInitialized) {
+      _ = try await manager.estimateWithdrawalFee(
+        chainId: 1,
+        addresses: defaultAddresses,
+        amount: 100.0,
+        decimals: 18,
+        salt: Data(repeating: 0xAA, count: 32).base64EncodedString(),
+        signature: validBase64Signature,
+        expiresAt: "1735689600"
+      )
+    }
+  }
+
+  @Test("estimateWithdrawalFee should throw error when no wallet address found in Portal")
+  func testEstimateWithdrawalFeeNoWalletAddress() async throws {
+    let mockPortal = MockPortal()
+    mockPortal.mockAddresses.removeAll()
+
+    let configs = [
+      NetworkConfig.testConfig(chainId: 1, rpcUrl: "https://mainnet.infura.io/v3/test")
+    ]
+    let mockBuilder = MockTransactionBuilderService(networkConfigs: configs)
+    mockBuilder.mockNonce = BigUInt(1)
+
+    let manager = RainSDKManager(portal: mockPortal, transactionBuilder: mockBuilder)
+
+    await #expect(throws: RainSDKError.internalLogicError(details: "No wallet address found in Portal")) {
+      _ = try await manager.estimateWithdrawalFee(
+        chainId: 1,
+        addresses: defaultAddresses,
+        amount: 100.0,
+        decimals: 18,
+        salt: Data(repeating: 0xAA, count: 32).base64EncodedString(),
+        signature: validBase64Signature,
+        expiresAt: "1735689600"
+      )
+    }
+  }
+
+  @Test("estimateWithdrawalFee should throw error for invalid signature")
+  func testEstimateWithdrawalFeeInvalidSignature() async throws {
+    let mockPortal = MockPortal()
+    let configs = [
+      NetworkConfig.testConfig(chainId: 1, rpcUrl: "https://mainnet.infura.io/v3/test")
+    ]
+    let mockBuilder = MockTransactionBuilderService(networkConfigs: configs)
+    mockBuilder.mockNonce = BigUInt(1)
+
+    let manager = RainSDKManager(portal: mockPortal, transactionBuilder: mockBuilder)
+
+    await #expect(throws: RainSDKError.internalLogicError(details: "Failed to convert user signature hex string to Data")) {
+      _ = try await manager.estimateWithdrawalFee(
+        chainId: 1,
+        addresses: defaultAddresses,
+        amount: 100.0,
+        decimals: 18,
+        salt: Data(repeating: 0xAA, count: 32).base64EncodedString(),
+        signature: "invalid-base64!!!",
+        expiresAt: "1735689600"
+      )
+    }
+  }
+
+  @Test("estimateWithdrawalFee should throw when Portal sign request fails")
+  func testEstimateWithdrawalFeePortalRequestFailure() async throws {
+    let mockPortal = MockPortal()
+    mockPortal.setMockAddress("0x1234567890123456789012345678901234567890", forNamespace: PortalNamespace.eip155)
+
+    let chainIdString = "eip155:1"
+    mockPortal.setMockResponse(
+      chainId: chainIdString,
+      method: .eth_signTypedData_v4,
+      error: NSError(domain: "PortalError", code: 1, userInfo: [NSLocalizedDescriptionKey: "Signing failed"])
+    )
+
+    let configs = [
+      NetworkConfig.testConfig(chainId: 1, rpcUrl: "https://mainnet.infura.io/v3/test")
+    ]
+    let mockBuilder = MockTransactionBuilderService(networkConfigs: configs)
+    mockBuilder.mockNonce = BigUInt(1)
+
+    let manager = RainSDKManager(portal: mockPortal, transactionBuilder: mockBuilder)
+
+    await #expect(throws: NSError.self) {
+      _ = try await manager.estimateWithdrawalFee(
+        chainId: 1,
+        addresses: defaultAddresses,
+        amount: 100.0,
+        decimals: 18,
+        salt: Data(repeating: 0xAA, count: 32).base64EncodedString(),
+        signature: validBase64Signature,
+        expiresAt: "1735689600"
+      )
+    }
+  }
+
+  @Test("estimateWithdrawalFee success returns fee value when mocks are configured")
+  func testEstimateWithdrawalFeeSuccess() async throws {
+    let mockPortal = MockPortal()
+    mockPortal.setMockAddress("0x1234567890123456789012345678901234567890", forNamespace: PortalNamespace.eip155)
+
+    let chainIdString = "eip155:1"
+    let mockAdminSignature = "0x" + String(repeating: "1", count: 130)
+    mockPortal.setMockResponse(
+      chainId: chainIdString,
+      method: .eth_signTypedData_v4,
+      result: mockAdminSignature
+    )
+    mockPortal.setMockResponse(
+      chainId: chainIdString,
+      method: .eth_estimateGas,
+      result: "21000"
+    )
+    mockPortal.setMockResponse(
+      chainId: chainIdString,
+      method: .eth_gasPrice,
+      result: "20000000000"
+    )
+
+    let configs = [
+      NetworkConfig.testConfig(chainId: 1, rpcUrl: "https://mainnet.infura.io/v3/test")
+    ]
+    let mockBuilder = MockTransactionBuilderService(networkConfigs: configs)
+    mockBuilder.mockNonce = BigUInt(42)
+
+    let manager = RainSDKManager(portal: mockPortal, transactionBuilder: mockBuilder)
+
+    let fee = try await manager.estimateWithdrawalFee(
+      chainId: 1,
+      addresses: defaultAddresses,
+      amount: 100.0,
+      decimals: 18,
+      salt: Data(repeating: 0xAA, count: 32).base64EncodedString(),
+      signature: validBase64Signature,
+      expiresAt: "1735689600"
+    )
+
+    // Current implementation returns 0 as placeholder; assert non-throwing and type
+    let expectedFee: Double = 20000000000 / pow(10, 18) * 21000
+    #expect(fee == expectedFee)
   }
 }

@@ -48,7 +48,7 @@ public struct NetworkConfig {
     // Parse eip155: prefix format
     let components = eip155ChainId.components(separatedBy: ":")
     guard components.count == 2,
-          components[0] == "eip155",
+          components[0] == Constants.ChainIDFormat.EIP155.prefix,
           let chainIdInt = Int(components[1]) else {
       throw NetworkConfigError.invalidEIP155Format(eip155ChainId)
     }

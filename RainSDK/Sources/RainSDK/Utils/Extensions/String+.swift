@@ -18,4 +18,8 @@ extension String {
       && components.host != nil
     return isValid
   }
+  
+  var asDouble: Double? {
+    Double(self)
+  }
 }

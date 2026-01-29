@@ -152,4 +152,31 @@ public protocol RainSDK {
     expiresAt: String,
     nonce: BigUInt?,
   ) async throws -> String
+  
+  /// Estimates the total fee (gas cost) required to execute a collateral withdrawal transaction.
+  ///
+  /// This method builds the withdrawal transaction parameters and uses the network to estimate
+  /// gas usage and current gas price, returning the total fee in the chain's native token (e.g., ETH).
+  ///
+  /// - Parameters:
+  ///   - chainId: The target blockchain network identifier.
+  ///   - addresses: A structure containing all required addresses (contract, proxy, recipient, token).
+  ///   - amount: Human-readable token amount to withdraw.
+  ///   - decimals: Number of decimal places for the token (e.g., 18 for ETH, 6 for USDC).
+  ///   - salt: Salt used when building the EIP-712 message or transaction data.
+  ///   - signature: User or wallet signature data from Rain API (base64 string format).
+  ///   - expiresAt: Expiration timestamp after which the transaction is invalid (Unix timestamp string or ISO8601 format).
+  ///
+  /// - Returns: The estimated withdrawal fee in the chain's native token (e.g., ETH).
+  ///
+  /// - Throws: An error if fee estimation fails (e.g., SDK not initialized, invalid response, or network error).
+  func estimateWithdrawalFee(
+    chainId: Int,
+    addresses: WithdrawAssetAddresses,
+    amount: Double,
+    decimals: Int,
+    salt: String,
+    signature: String,
+    expiresAt: String
+  ) async throws -> Double
 }

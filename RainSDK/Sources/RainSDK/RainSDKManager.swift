@@ -18,6 +18,10 @@ public final class RainSDKManager: RainSDK {
   
   /// Computed property to safely access the Portal instance
   /// Returns Portal (concrete type) for public API compatibility
+  /// 
+  /// - Note: This property can only be accessed when a real Portal instance is initialized.
+  ///         When using mocks (e.g., MockPortal) for testing, this property will throw an error.
+  ///         Use `portalProtocol` property for testing with mocks.
   public var portal: Portal {
     get throws {
       guard let portalProtocol = _portal
@@ -35,6 +39,21 @@ public final class RainSDKManager: RainSDK {
     }
   }
   
+  /// Internal property for testing - returns PortalRequestProtocol which works with both Portal and MockPortal
+  /// Use this property in tests when working with mocks
+  internal var portalProtocol: PortalRequestProtocol? {
+    return _portal
+  }
+  
+  /// Internal: use for all Portal requests so that both Portal and MockPortal work in production and tests.
+  /// Throws if SDK is not initialized.
+  internal var portalForRequest: PortalRequestProtocol {
+    get throws {
+      guard let portal = _portal else { throw RainSDKError.sdkNotInitialized }
+      return portal
+    }
+  }
+  
   // MARK: - Initialization
   public init() {}
   
@@ -44,14 +63,11 @@ public final class RainSDKManager: RainSDK {
   }
   
   /// Internal initializer for testing - allows injecting both Portal and transaction builder
-  internal init(portal: PortalRequestProtocol?, transactionBuilder: TransactionBuilderProtocol?) {
+  internal init(
+    portal: PortalRequestProtocol?,
+    transactionBuilder: TransactionBuilderProtocol?
+  ) {
     self._portal = portal // Portal conforms to PortalRequestProtocol via extension
-    self._transactionBuilder = transactionBuilder
-  }
-  
-  /// Internal initializer for testing - allows injecting a PortalRequestProtocol mock
-  internal init(portalProtocol: PortalRequestProtocol?, transactionBuilder: TransactionBuilderProtocol?) {
-    self._portal = portalProtocol
     self._transactionBuilder = transactionBuilder
   }
   
@@ -246,80 +262,20 @@ public final class RainSDKManager: RainSDK {
     expiresAt: String,
     nonce: BigUInt?
   ) async throws -> String {
-    // Get wallet address from Portal (using protocol internally)
-    guard let portal = _portal
-    else {
-      throw RainSDKError.sdkNotInitialized
-    }
-    
-    guard let walletAddress = try await portal.addresses[PortalNamespace.eip155] ?? nil
-    else {
-      throw RainSDKError.internalLogicError(details: "No wallet address found in Portal")
-    }
-    
-    let chainIdString = "eip155:\(chainId)"
-    
-    // Convert to EIP712AssetAddresses for building the message
-    let eip712Addresses = EIP712AssetAddresses(
-      proxyAddress: assetAddresses.proxyAddress,
-      recipientAddress: assetAddresses.recipientAddress,
-      tokenAddress: assetAddresses.tokenAddress
-    )
-    
-    // Build EIP-712 message to get admin signature
-    let (eip712Message, saltHex) = try await buildEIP712Message(
-      chainId: chainId,
-      walletAddress: walletAddress,
-      assetAddresses: eip712Addresses,
-      amount: amount,
-      decimals: decimals,
-      nonce: nonce
-    )
-    // Sign EIP-712 message using Portal to get admin signature
-    // Convert salt hex string back to Data
-    guard let saltData = Data(base64Encoded: saltHex) else {
-      throw RainSDKError.internalLogicError(details: "Failed to convert salt hex string to Data")
-    }
-    
-    // Sign the EIP-712 message using Portal
-    let response = try await portal.request(
-      chainId: chainIdString,
-      method: .eth_signTypedData_v4,
-      params: [walletAddress, eip712Message],
-      options: nil
-    )
-    
-    guard let adminSignatureString = (response.result as? String),
-          let adminSignatureData = Data(hexString: adminSignatureString, length: 65)
-    else {
-      throw RainSDKError.internalLogicError(details: "Failed to convert admin signature hex string to Data or invalid length")
-    }
-    
-    guard let signatureData = Data(base64Encoded: signature)
-    else {
-      throw RainSDKError.internalLogicError(details: "Failed to convert user signature hex string to Data")
-    }
-    
-    let transactionData = try await buildWithdrawTransactionData(
+    let (_, transactionParams) = try await buildTransactionParamForWithdrawAsset(
       chainId: chainId,
       assetAddresses: assetAddresses,
       amount: amount,
       decimals: decimals,
+      signature: signature,
       expiresAt: expiresAt,
-      signatureData: signatureData,
-      adminSalt: saltData,
-      adminSignature: adminSignatureData
+      nonce: nil
     )
     
-    // Prepare transaction parameters for Portal
-    let transactionParams = composeTransactionParameters(
-      walletAddress: walletAddress,
-      contractAddress: assetAddresses.contractAddress,
-      transactionData: transactionData
-    )
+    let chainIdString = Constants.ChainIDFormat.EIP155.format(chainId: chainId)
     
     // Sign and send transaction using Portal
-    let ethSendResponse = try await portal.request(
+    let ethSendResponse = try await portalForRequest.request(
       chainId: chainIdString,
       method: .eth_sendTransaction,
       params: [transactionParams],
@@ -330,65 +286,30 @@ public final class RainSDKManager: RainSDK {
     RainLogger.info("Rain SDK: Withdrawal transaction submitted. Hash: \(txHash)")
     return txHash
   }
-}
-
-// MARK: Internal Helpers
-extension RainSDKManager {
-  /// Validate input parameters before Portal initialization
-  func validateInputs(
-    portalSessionToken: String,
-    networkConfigs: [NetworkConfig]
-  ) throws {
-    // Validate token
-    guard !portalSessionToken.isEmpty else {
-      RainLogger.warning("Rain SDK: Empty portal session token provided")
-      throw RainSDKError.unauthorized
-    }
-    
-    // Validate network configs
-    try validateNetworkConfigs(networkConfigs)
-  }
   
-  /// Validate network configurations
-  func validateNetworkConfigs(_ networkConfigs: [NetworkConfig]) throws {
-    guard !networkConfigs.isEmpty else {
-      RainLogger.warning("Rain SDK: Empty network configs provided")
-      throw RainSDKError.invalidConfig(chainId: 0, rpcUrl: "")
-    }
+  public func estimateWithdrawalFee(
+    chainId: Int,
+    addresses: WithdrawAssetAddresses,
+    amount: Double,
+    decimals: Int,
+    salt: String,
+    signature: String,
+    expiresAt: String
+  ) async throws -> Double {
+    let (walletAddress, transactionParams) = try await buildTransactionParamForWithdrawAsset(
+      chainId: chainId,
+      assetAddresses: addresses,
+      amount: amount,
+      decimals: decimals,
+      signature: signature,
+      expiresAt: expiresAt,
+      nonce: nil
+    )
     
-    // Validate each network config
-    for networkConfig in networkConfigs {
-      guard networkConfig.chainId > 0 else {
-        throw RainSDKError.invalidConfig(chainId: networkConfig.chainId, rpcUrl: networkConfig.rpcUrl)
-      }
-      
-      guard networkConfig.rpcUrl.isValidHTTPURL() else {
-        throw RainSDKError.invalidConfig(chainId: networkConfig.chainId, rpcUrl: networkConfig.rpcUrl)
-      }
-    }
-  }
-  
-  /// Build RPC configuration dictionary from NetworkConfig array
-  func buildRpcConfig(from networkConfigs: [NetworkConfig]) throws -> [String: String] {
-    var config: [String: String] = [:]
-    
-    for networkConfig in networkConfigs {
-      // Validate chain ID
-      guard networkConfig.chainId > 0 else {
-        throw RainSDKError.invalidConfig(chainId: networkConfig.chainId, rpcUrl: networkConfig.rpcUrl)
-      }
-      
-      // Validate RPC URL format
-      guard networkConfig.rpcUrl.isValidHTTPURL() else {
-        throw RainSDKError.invalidConfig(chainId: networkConfig.chainId, rpcUrl: networkConfig.rpcUrl)
-      }
-      
-      // Use the eip155ChainId property from NetworkConfig
-      config[networkConfig.eip155ChainId] = networkConfig.rpcUrl
-      
-      RainLogger.debug("Rain SDK: Added network config - Chain ID: \(networkConfig.chainId), RPC: \(networkConfig.rpcUrl)")
-    }
-    
-    return config
+    return try await estimateTransactionFee(
+      chainId: chainId,
+      address: walletAddress,
+      params: transactionParams
+    )
   }
 }
