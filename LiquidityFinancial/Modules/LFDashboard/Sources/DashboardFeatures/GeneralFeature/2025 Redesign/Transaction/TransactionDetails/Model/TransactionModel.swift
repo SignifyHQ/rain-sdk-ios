@@ -9,6 +9,9 @@ public struct TransactionModel: Identifiable, Hashable, Equatable {
   public var id: String
   public var accountId: String
   public var title: String?
+  public let enrichedMerchantName: String?
+  public let enrichedMerchantIcon: String?
+  public let enrichedMerchantCategory: String?
   public var currency: String?
   public var localCurrency: String?
   public var description: String?
@@ -33,6 +36,9 @@ public struct TransactionModel: Identifiable, Hashable, Equatable {
     id: String,
     accountId: String,
     title: String? = nil,
+    enrichedMerchantName: String? = nil,
+    enrichedMerchantIcon: String? = nil,
+    enrichedMerchantCategory: String? = nil,
     currency: String? = nil,
     localCurrency: String? = nil,
     description: String? = nil,
@@ -55,6 +61,9 @@ public struct TransactionModel: Identifiable, Hashable, Equatable {
     self.id = id
     self.accountId = accountId
     self.title = title
+    self.enrichedMerchantName = enrichedMerchantName
+    self.enrichedMerchantIcon = enrichedMerchantIcon
+    self.enrichedMerchantCategory = enrichedMerchantCategory
     self.currency = currency
     self.localCurrency = localCurrency
     self.description = description
@@ -395,6 +404,9 @@ public extension TransactionModel {
       id: transactionEntity.id,
       accountId: transactionEntity.accountId,
       title: transactionEntity.title,
+      enrichedMerchantName: transactionEntity.enrichedMerchantName,
+      enrichedMerchantIcon: transactionEntity.enrichedMerchantIcon,
+      enrichedMerchantCategory: transactionEntity.enrichedMerchantCategory,
       currency: transactionEntity.currency,
       localCurrency: transactionEntity.localCurrency,
       description: transactionEntity.description,

@@ -36,9 +36,7 @@ extension TransactionItemView {
   var contentView: some View {
     VStack(spacing: 12) {
       HStack(alignment: .center, spacing: 12) {
-        (transaction.cryptoIconImage ?? transaction.transactionRowImage)?
-          .resizable()
-          .frame(width: 32, height: 32)
+        transactionIconView
         
         VStack(alignment: .leading, spacing: 4) {
           Text(transaction.typeDisplay)
@@ -73,6 +71,25 @@ extension TransactionItemView {
       .padding(.top, 12)
       
       lineView
+    }
+  }
+  
+  var transactionIconView: some View {
+    let transactionImageUrlString = transaction.enrichedMerchantIcon
+    let transactionImageUrl = URL(string: transactionImageUrlString ?? .empty)
+    
+    return CachedAsyncImage(
+      url: transactionImageUrl
+    ) { image in
+      image
+        .resizable()
+        .interpolation(.high)
+        .frame(32)
+        .clipShape(Circle())
+    } placeholder: {
+      (transaction.cryptoIconImage ?? transaction.transactionRowImage)?
+        .resizable()
+        .frame(32)
     }
   }
   

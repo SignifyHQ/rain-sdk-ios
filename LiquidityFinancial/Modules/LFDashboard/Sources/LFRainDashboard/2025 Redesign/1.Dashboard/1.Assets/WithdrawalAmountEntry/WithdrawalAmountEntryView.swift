@@ -74,7 +74,7 @@ struct WithdrawalAmountEntryView: View {
 // MARK: - View Components
 extension WithdrawalAmountEntryView {
   var headerView: some View {
-    Text(L10N.Common.WalletAddressInput.Header.title)
+    Text(L10N.Common.WithdrawalAmount.Header.title)
       .foregroundColor(Colors.textPrimary.swiftUIColor)
       .font(Fonts.medium.swiftUIFont(size: Constants.FontSize.medium.value))
       .multilineTextAlignment(.leading)

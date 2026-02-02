@@ -63,9 +63,7 @@ struct CommonTransactionDetailsView<Content: View>: View {
 private extension CommonTransactionDetailsView {
   var headerView: some View {
     VStack(spacing: 4) {
-      viewModel.transaction.transactionIcon?
-        .resizable()
-        .frame(width: 32, height: 32)
+      transactionIconView
       
       Text(viewModel.typeDisplay)
         .foregroundColor(Colors.textPrimary.swiftUIColor)
@@ -92,6 +90,25 @@ private extension CommonTransactionDetailsView {
           .foregroundColor(status.color)
           .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.ultraSmall.value))
       }
+    }
+  }
+  
+  var transactionIconView: some View {
+    let transactionImageUrlString = viewModel.transaction.enrichedMerchantIcon
+    let transactionImageUrl = URL(string: transactionImageUrlString ?? .empty)
+    
+    return CachedAsyncImage(
+      url: transactionImageUrl
+    ) { image in
+      image
+        .resizable()
+        .interpolation(.high)
+        .frame(32)
+        .clipShape(Circle())
+    } placeholder: {
+      viewModel.transaction.transactionIcon?
+        .resizable()
+        .frame(32)
     }
   }
   

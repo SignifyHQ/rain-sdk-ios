@@ -11,6 +11,9 @@ public protocol TransactionEntity {
   var id: String { get }
   var accountId: String { get }
   var title: String? { get }
+  var enrichedMerchantName: String? { get }
+  var enrichedMerchantIcon: String? { get }
+  var enrichedMerchantCategory: String? { get }
   var currency: String? { get }
   var localCurrency: String? { get }
   var description: String? { get }

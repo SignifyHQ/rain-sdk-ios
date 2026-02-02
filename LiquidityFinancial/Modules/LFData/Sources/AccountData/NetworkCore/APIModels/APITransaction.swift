@@ -15,6 +15,9 @@ public struct APITransaction: Codable, TransactionEntity {
   public let id: String
   public let accountId: String
   public let title: String?
+  public let enrichedMerchantName: String?
+  public let enrichedMerchantIcon: String?
+  public let enrichedMerchantCategory: String?
   public var currency: String?
   public var localCurrency: String?
   public let description: String?
@@ -38,6 +41,9 @@ public struct APITransaction: Codable, TransactionEntity {
     id: String,
     accountId: String,
     title: String?,
+    enrichedMerchantName: String?,
+    enrichedMerchantIcon: String?,
+    enrichedMerchantCategory: String?,
     description: String?,
     amount: Double,
     localAmount: Double?,
@@ -58,6 +64,9 @@ public struct APITransaction: Codable, TransactionEntity {
     self.id = id
     self.accountId = accountId
     self.title = title
+    self.enrichedMerchantName = enrichedMerchantName
+    self.enrichedMerchantIcon = enrichedMerchantIcon
+    self.enrichedMerchantCategory = enrichedMerchantCategory
     self.description = description
     self.amount = amount
     self.localAmount = localAmount
