@@ -1,23 +1,28 @@
-import SwiftUI
-import LFUtilities
-import LFStyleGuide
-import LFLocalizable
-import RainFeature
 import GeneralFeature
+import LFLocalizable
+import LFStyleGuide
+import LFUtilities
+import RainFeature
+import SwiftTooltip
+import SwiftUI
 
 struct DashboardCardView: View {
-  @StateObject private var viewModel: DashboardCardViewModel
-  @Binding var isNotLinkedCard: Bool
-  
   @ObservedObject var cardDetailsListViewModel: CardDetailsListViewModel
-  let isPOFlow: Bool
-  let showLoadingIndicator: Bool
-  let cashBalance: Double
-  let assetType: AssetType
-  let orderCardAction: () -> Void
   
-  private var isCardAvailable: Bool {
-    isPOFlow
+  @StateObject private var viewModel: DashboardCardViewModel
+  
+  @State private var cardImageAssetID: String = ""
+  
+  let isLoading: Bool
+  let cashBalance: Double
+  let orderCardAction: (() -> Void)?
+  
+  private var shouldShowEmptyState: Bool {
+    cardDetailsListViewModel.shouldShowEmptyStateOnHome
+  }
+  
+  private var hasExhausedCardLimit: Bool {
+    cardDetailsListViewModel.isFinalVirtualCard && !cardDetailsListViewModel.isPhysicalCardOrderAvailable
   }
   
   private var cardImageAsset: Image {
@@ -25,97 +30,83 @@ struct DashboardCardView: View {
       return GenImages.Images.frntCard.swiftUIImage
     }
     
-    return isCardAvailable && !isNotLinkedCard ? GenImages.Images.visaCardBackdrop.swiftUIImage : GenImages.Images.unavailableVisaCardBackdrop.swiftUIImage
+    return shouldShowEmptyState ? GenImages.Images.imgNoActiveCardBackdrop.swiftUIImage : GenImages.Images.visaCardBackdrop.swiftUIImage
   }
   
-  @State private var cardImageAssetID: String = ""
-
   init(
-    isNoLinkedCard: Binding<Bool>,
-    isPOFlow: Bool,
-    showLoadingIndicator: Bool,
-    cashBalance: Double,
-    assetType: AssetType,
+    viewModel: DashboardCardViewModel,
     cardDetailsListViewModel: CardDetailsListViewModel,
-    orderCardAction: @escaping () -> Void
+    cashBalance: Double,
+    isLoading: Bool,
+    orderCardAction: (() -> Void)? = nil
   ) {
-    _isNotLinkedCard = isNoLinkedCard
-    self.isPOFlow = isPOFlow
-    self.cashBalance = cashBalance
-    self.assetType = assetType
-    self.showLoadingIndicator = showLoadingIndicator
-    self.orderCardAction = orderCardAction
+    _viewModel = .init(wrappedValue: viewModel)
+    
     self.cardDetailsListViewModel = cardDetailsListViewModel
-    _viewModel = .init(wrappedValue: DashboardCardViewModel())
+    self.cashBalance = cashBalance
+    self.isLoading = isLoading
+    self.orderCardAction = orderCardAction
   }
   
   var body: some View {
-    ZStack(alignment: .bottom) {
-      ZStack(alignment: .bottomLeading) {
+    ZStack(
+      alignment: .bottom
+    ) {
+      ZStack(
+        alignment: .bottomLeading
+      ) {
         cardImageAsset
           .resizable()
           .background(Color.clear)
           .clipped()
-          .aspectRatio(contentMode: .fit)
+          .aspectRatio(
+            contentMode: .fit
+          )
           .transition(.opacity)
           .id(cardImageAssetID)
-          .animation(.easeInOut(duration: 0.4), value: cardImageAssetID)
-        
-        createCardButton
+          .animation(
+            .easeInOut(
+              duration: 0.4
+            ),
+            value: cardImageAssetID
+          )
       }
       
-      if isPOFlow && !isNotLinkedCard {
-        viewCardButton
-        balance
-      }
+      viewCardButton
+      
+      balanceView
     }
-    .fixedSize(horizontal: false, vertical: true)
-    .onReceive(NotificationCenter.default.publisher(for: .noLinkedCards)) { _ in
-      isNotLinkedCard = true
-    }
-    .onReceive(NotificationCenter.default.publisher(for: .createdCard)) { _ in
-      isNotLinkedCard = false
-    }
-    .onChange(
-      of: cardImageAsset,
-      perform: { _ in
-        let newId: String = {
-          if cardDetailsListViewModel.hasFrntCard {
-            return "wyoming"
-          }
-          
-          return isCardAvailable && !isNotLinkedCard ? "available" : "unavailable"
-        }()
-        
-        withAnimation {
-          cardImageAssetID = newId
-        }
-      }
+    .fixedSize(
+      horizontal: false,
+      vertical: true
     )
-    .navigationLink(isActive: $viewModel.isShowCardDetail) {
-      CardDetailsListView(viewModel: cardDetailsListViewModel)
+    .onChange(
+      of: cardImageAsset
+    ) { _, _ in
+      let newId: String = {
+        if cardDetailsListViewModel.hasFrntCard {
+          return "wyoming"
+        }
+        
+        return shouldShowEmptyState ? "unavailable" : "available"
+      }()
+      
+      withAnimation {
+        cardImageAssetID = newId
+      }
+    }
+    .navigationLink(
+      isActive: $viewModel.isShowCardDetail
+    ) {
+      CardDetailsListView(
+        viewModel: cardDetailsListViewModel
+      )
     }
   }
 }
 
+// MARK: - View Components
 extension DashboardCardView {
-  @ViewBuilder private var createCardButton: some View {
-    if isNotLinkedCard {
-      FullWidthButton(
-        type: .secondary,
-        height: 40,
-        title: L10N.Common.CashTab.CreateCard.buttonTitle,
-        isDisabled: viewModel.isCreatingCard,
-        isLoading: $viewModel.isCreatingCard
-      ) {
-        viewModel.createCard(onSuccess: {
-          isNotLinkedCard = false
-        })
-      }
-      .padding([.horizontal, .bottom], 8)
-    }
-  }
-  
   var viewCardButton: some View {
     VStack {
       HStack {
@@ -126,7 +117,7 @@ extension DashboardCardView {
           height: 24,
           tintColor: cardDetailsListViewModel.hasFrntCard ? Colors.grey900.swiftUIColor : Colors.textPrimary.swiftUIColor,
           borderColor: cardDetailsListViewModel.hasFrntCard ? Colors.grey900.swiftUIColor : Colors.textPrimary.swiftUIColor,
-          title: L10N.Common.Dashboard.Card.ViewCard.title,
+          title: shouldShowEmptyState ? L10N.Common.Dashboard.Card.ViewCard.NoCard.title : L10N.Common.Dashboard.Card.ViewCard.title,
           font: Fonts.medium.swiftUIFont(size: Constants.FontSize.ultraSmall.value),
           isDisabled: viewModel.isCreatingCard,
           isLoading: $viewModel.isCreatingCard,
@@ -134,7 +125,9 @@ extension DashboardCardView {
         ) {
           viewModel.isShowCardDetail.toggle()
         }
-        .frame(width: 80)
+        .frame(
+          width: 90
+        )
         .padding([.top, .trailing], 12)
       }
       
@@ -142,29 +135,77 @@ extension DashboardCardView {
     }
   }
   
-  var balance: some View {
+  var balanceView: some View {
     HStack {
-      VStack(alignment: .leading, spacing: 2) {
-        Text(L10N.Common.Dashboard.Card.Balance.title)
-          .foregroundColor(cardDetailsListViewModel.hasFrntCard ? Colors.grey900.swiftUIColor : Colors.textPrimary.swiftUIColor)
-          .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.ultraSmall.value))
+      VStack(
+        alignment: .leading,
+        spacing: 2
+      ) {
+        HStack(
+          spacing: 0
+        ) {
+          Text(shouldShowEmptyState ? L10N.Common.Dashboard.Card.Balance.NoCard.title : L10N.Common.Dashboard.Card.Balance.title)
+            .foregroundColor(cardDetailsListViewModel.hasFrntCard ? Colors.grey900.swiftUIColor : Colors.textPrimary.swiftUIColor)
+            .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.ultraSmall.value))
+          
+          if shouldShowEmptyState {
+            Button {
+              viewModel.isNoCardTooltipShown.toggle()
+            } label: {
+              GenImages.Images.icoSupport.swiftUIImage
+                .resizable()
+                .frame(24)
+            }
+            .tooltip(
+              text: hasExhausedCardLimit ? L10N.Common.Dashboard.Card.Balance.NoCard.Exhausted.Disclousure.body : L10N.Common.Dashboard.Card.Balance.NoCard.Disclousure.body,
+              isPresented: $viewModel.isNoCardTooltipShown,
+              pointerPosition: .bottomCenter,
+              config: toolTipConfiguration()
+            )
+          }
+        }
         
-        ZStack(alignment: .bottomLeading) {
+        ZStack(
+          alignment: .bottomLeading
+        ) {
           DefaultLottieView(
             loading: .branded,
             tint: UIColor(cardDetailsListViewModel.hasFrntCard ? Colors.grey900.swiftUIColor : Colors.textPrimary.swiftUIColor)
           )
-          .frame(width: 24, height: 24, alignment: .leading)
-          .hidden(!showLoadingIndicator)
+          .frame(
+            width: 24,
+            height: 24,
+            alignment: .leading
+          )
+          .hidden(!isLoading)
           
           Text(cashBalance.formattedUSDAmount())
             .foregroundColor(cardDetailsListViewModel.hasFrntCard ? Colors.grey900.swiftUIColor : Colors.textPrimary.swiftUIColor)
             .font(Fonts.bold.swiftUIFont(size: Constants.FontSize.custom(size: 22).value))
-            .hidden(showLoadingIndicator)
+            .hidden(isLoading)
         }
       }
       .padding([.leading, .bottom], 12)
+      
       Spacer()
     }
+  }
+}
+
+// MARK: - Helper Methods
+extension DashboardCardView {
+  private func toolTipConfiguration(
+  ) -> SwiftTooltip.Configuration {
+    SwiftTooltip.Configuration(
+      textColor: .black,
+      textFont: Fonts.regular.uiFont(size: Constants.FontSize.ultraSmall.value),
+      color: Colors.grey25.swiftUIColor.uiColor,
+      backgroundColor: .clear,
+      shadowColor: .clear,
+      shadowOffset: .zero,
+      shadowOpacity: .zero,
+      shadowRadius: 0,
+      dismissBehavior: .dismissOnTapEverywhere
+    )
   }
 }

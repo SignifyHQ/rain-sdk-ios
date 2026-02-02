@@ -10,10 +10,10 @@ struct DashboardView: View {
   @Environment(\.scenePhase) var scenePhase
   
   @StateObject private var viewModel: DashboardViewModel
-  @StateObject var transactionFilterViewModel = TransactionFilterViewModel()
-  let cardDetailsListViewModel: CardDetailsListViewModel
   
-  @State private var isNotLinkedCard = false
+  @StateObject var transactionFilterViewModel = TransactionFilterViewModel()
+  @StateObject var dashboardCardViewModel = DashboardCardViewModel()
+  @StateObject var cardDetailsListViewModel: CardDetailsListViewModel
   
   init(
     viewModel: DashboardViewModel,
@@ -23,7 +23,9 @@ struct DashboardView: View {
       wrappedValue: viewModel
     )
     
-    self.cardDetailsListViewModel = cardDetailsListViewModel
+    _cardDetailsListViewModel = .init(
+      wrappedValue: cardDetailsListViewModel
+    )
   }
   
   var body: some View {
@@ -117,6 +119,14 @@ struct DashboardView: View {
     .refreshable {
       await viewModel.onRefreshAllData(isAnimated: false)
     }
+    .simultaneousGesture(
+      DragGesture()
+        .onChanged { _ in
+          if dashboardCardViewModel.isNoCardTooltipShown {
+            dashboardCardViewModel.isNoCardTooltipShown = false
+          }
+        }
+    )
     .sheet(
       item: $viewModel.presentedFilterSheet
     ) { _ in
@@ -137,21 +147,19 @@ struct DashboardView: View {
 
 extension DashboardView {
   var cardView: some View {
-    VStack(spacing: 24) {
+    VStack(
+      spacing: 24
+    ) {
       DashboardCardView(
-        // Setting this to `false` to always show the balance
-        // and let the user go to the card list view even if they
-        // have no active cards
-        isNoLinkedCard: .constant(false),
-        isPOFlow: true,
-        showLoadingIndicator: viewModel.isLoading,
+        viewModel: dashboardCardViewModel,
+        cardDetailsListViewModel: cardDetailsListViewModel,
         cashBalance: viewModel.cashBalanceValue,
-        assetType: viewModel.selectedAsset,
-        cardDetailsListViewModel: cardDetailsListViewModel
-      ) {
-      }
+        isLoading: viewModel.isLoading
+      )
       
-      HStack(spacing: 16) {
+      HStack(
+        spacing: 16
+      ) {
         addFundsButton
         withdrawFundsButton
       }

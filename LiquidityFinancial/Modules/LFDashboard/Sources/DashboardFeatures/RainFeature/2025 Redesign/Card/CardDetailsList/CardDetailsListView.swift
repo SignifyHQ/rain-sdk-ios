@@ -17,7 +17,7 @@ public struct CardDetailsListView: View {
   
   public var body: some View {
     Group {
-      if viewModel.isInit {
+      if viewModel.isLoadingFullScreen {
         loadingView
       } else {
         contentView
@@ -109,7 +109,7 @@ public struct CardDetailsListView: View {
       viewModel.isShowListCardDropdown = false
     }
     .task {
-      if viewModel.isInit {
+      if viewModel.isLoadingFullScreen {
         return
       }
       
@@ -162,7 +162,7 @@ private extension CardDetailsListView {
           cardModel: $card,
           cardMetaData: $card.metadata,
           isShowCardNumber: $viewModel.isShowCardNumber,
-          isLoading: $viewModel.isInit,
+          isLoading: $viewModel.isLoadingFullScreen,
           hasBlurView: index != (viewModel.cardsList.count - 1)
         )
         .tag(card.id)

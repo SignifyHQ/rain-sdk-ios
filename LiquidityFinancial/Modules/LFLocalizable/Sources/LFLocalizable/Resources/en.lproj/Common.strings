@@ -1674,8 +1674,12 @@ We will be in touch shortly to invite you to get your new card.";
 "removeConnection.popup.description" = "Are you sure you want to remove your %@ connection?\n\nIf you proceed, you’ll need to reconnect this wallet or exchange later to fund your card.";
 
 // MARK: Dashboard Tab
-"dashboard.card.viewCard.title" = "View Card";
+"dashboard.card.viewCard.title" = "View card";
+"dashboard.card.viewCard.noCard.title" = "View details";
 "dashboard.card.balance.title" = "Spending power";
+"dashboard.card.balance.noCard.title" = "Spending power (no active card)";
+"dashboard.card.balance.noCard.disclousure.body" = "You don’t currently have an active card.\nGo to “View details” and add a card.";
+"dashboard.card.balance.noCard.exhausted.disclousure.body" = "You have exhausted all your card requests and no cards can be created at this time. Contact support for more.";
 "dashboard.card.addFunds.title" = "Add funds";
 "dashboard.card.withdrawFunds.title" = "Withdraw funds";
 "dashboard.noState.title" = "Get started with Avalanche";

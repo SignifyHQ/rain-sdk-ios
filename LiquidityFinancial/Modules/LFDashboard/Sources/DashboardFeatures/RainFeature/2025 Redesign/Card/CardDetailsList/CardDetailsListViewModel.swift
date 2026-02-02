@@ -58,8 +58,10 @@ public final class CardDetailsListViewModel: ObservableObject {
     RainCreateVirtualCardUseCase(repository: rainCardRepository)
   }()
   
-  @Published var isInit: Bool = false
+  @Published var isLoadingFullScreen: Bool = false
   @Published var isLoading: Bool = false
+  @Published public var shouldShowEmptyStateOnHome: Bool = false
+  
   @Published var isShowCardNumber: Bool = false
   @Published var isCardLocked: Bool = false
   @Published var isShowListCardDropdown: Bool = false
@@ -101,11 +103,11 @@ public final class CardDetailsListViewModel: ObservableObject {
     Constants.virtualCardCountLimit - virtualCardCount
   }
   
-  var isFinalVirtualCard: Bool {
+  public var isFinalVirtualCard: Bool {
     remainingVirtualCardCount <= 0
   }
   
-  var isPhysicalCardOrderAvailable: Bool = false
+  public var isPhysicalCardOrderAvailable: Bool = false
   
   var isShowingCloseCard: Bool {
     (currentCard.cardStatus == .active || currentCard.cardStatus == .disabled)
@@ -183,10 +185,11 @@ public final class CardDetailsListViewModel: ObservableObject {
   public init() {
     fetchRainCards()
     observeRefreshListCards()
+    observeActiveCardCount()
   }
 }
 
-// MARK: Observable
+// MARK: Binding Observables
 extension CardDetailsListViewModel {
   func observeRefreshListCards() {
     NotificationCenter.default.publisher(for: .refreshListCards)
@@ -195,6 +198,20 @@ extension CardDetailsListViewModel {
         fetchRainCards()
       }
       .store(in: &subscribers)
+  }
+  
+  func observeActiveCardCount() {
+    Publishers
+      .CombineLatest(
+        $cardsList,
+        $isLoadingFullScreen
+      )
+      .map { cardsList, isLoadingWithAnimation in
+        cardsList.isEmpty && !isLoadingWithAnimation
+      }
+      .assign(
+        to: &$shouldShowEmptyStateOnHome
+      )
   }
 }
 
@@ -472,7 +489,7 @@ extension CardDetailsListViewModel {
       }
       
       if withLoader {
-        isInit = true
+        isLoadingFullScreen = true
       } else {
         isLoading = true
       }
@@ -543,7 +560,7 @@ extension CardDetailsListViewModel {
         isCardLocked = currentCard.cardStatus == .disabled
         
         if cardsList.filter({ card in card.cardStatus != .pending }).isEmpty {
-          isInit = false
+          isLoadingFullScreen = false
           
           NotificationCenter.default.post(name: .noLinkedCards, object: nil)
         } else {
@@ -560,7 +577,7 @@ extension CardDetailsListViewModel {
             }
         }
       } catch {
-        isInit = false
+        isLoadingFullScreen = false
         log.error(error.userFriendlyMessage)
         toastData = .init(type: .error, title: error.userFriendlyMessage)
       }
@@ -626,7 +643,7 @@ extension CardDetailsListViewModel {
     cardId: String
   ) {
     Task {
-      defer { isInit = false }
+      defer { isLoadingFullScreen = false }
       
       guard let card = cardsList.first(where: { $0.id == cardId }),
             card.cardStatus == .active

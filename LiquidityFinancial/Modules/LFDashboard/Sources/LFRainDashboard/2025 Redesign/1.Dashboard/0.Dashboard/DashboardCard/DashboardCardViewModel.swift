@@ -15,6 +15,8 @@ final class DashboardCardViewModel: ObservableObject {
 
   @Published var isShowCardDetail = false
   @Published var isCreatingCard = false
+  
+  @Published var isNoCardTooltipShown = false
   @Published var toastMessage: String?
   
   lazy var createCardUseCase: RainCreateVirtualCardUseCaseProtocol = {
