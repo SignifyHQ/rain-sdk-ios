@@ -147,6 +147,7 @@ struct SDKConnectionView: View {
     VStack(spacing: 12) {
       // Initialize Button
       Button(action: {
+        hideKeyboard()
         Task {
           await viewModel.initializeSDK()
         }
@@ -173,6 +174,7 @@ struct SDKConnectionView: View {
       // Reset Button
       if viewModel.isInitialized {
         Button(action: {
+          hideKeyboard()
           viewModel.resetSDK()
         }) {
           HStack {
@@ -225,17 +227,6 @@ struct SDKConnectionView: View {
               )
             }
             .buttonStyle(.plain)
-          }
-          
-          if !viewModel.useWalletAgnostic {
-            featureButton(
-              icon: "wallet.pass.fill",
-              title: "Portal Wallet Features",
-              subtitle: "Access Portal wallet functionality",
-              action: {
-                viewModel.handlePortalWalletFeatures()
-              }
-            )
           }
         }
       } else {

@@ -163,6 +163,7 @@ struct BuildWithdrawTransactionDemoView: View {
   
   private var actionsSection: some View {
     Button(action: {
+      hideKeyboard()
       Task {
         await viewModel.buildTransaction()
       }

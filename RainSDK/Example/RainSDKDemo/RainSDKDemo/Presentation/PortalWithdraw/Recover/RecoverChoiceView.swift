@@ -56,11 +56,16 @@ struct RecoverChoiceView: View {
 
       HStack(spacing: 12) {
         Button("Skip") {
+          hideKeyboard()
           viewModel.dismissRecoverSheet()
         }
         .buttonStyle(.bordered)
+        .disabled(
+          viewModel.isRecovering
+        )
 
         Button {
+          hideKeyboard()
           Task { await viewModel.performRecover() }
         } label: {
           HStack {

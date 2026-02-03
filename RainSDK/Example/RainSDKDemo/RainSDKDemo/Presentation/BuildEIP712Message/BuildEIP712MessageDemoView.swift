@@ -129,6 +129,7 @@ struct BuildEIP712MessageDemoView: View {
   
   private var actionsSection: some View {
     Button(action: {
+      hideKeyboard()
       Task {
         await viewModel.buildMessage()
       }

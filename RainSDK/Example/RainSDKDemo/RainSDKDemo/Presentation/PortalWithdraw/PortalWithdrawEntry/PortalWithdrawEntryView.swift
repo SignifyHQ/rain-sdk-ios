@@ -79,7 +79,10 @@ struct PortalWithdrawEntryView: View {
         .font(.caption)
         .foregroundColor(.red)
       Spacer()
-      Button("Dismiss") { viewModel.clearError() }
+      Button("Dismiss") {
+        hideKeyboard()
+        viewModel.clearError()
+      }
         .font(.caption)
     }
     .padding()
@@ -91,6 +94,7 @@ struct PortalWithdrawEntryView: View {
 
   private var continueSection: some View {
     Button(action: {
+      hideKeyboard()
       Task {
         await viewModel.verifyAndLoadContracts()
       }

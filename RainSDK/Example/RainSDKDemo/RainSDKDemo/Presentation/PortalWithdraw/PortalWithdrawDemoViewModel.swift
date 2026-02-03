@@ -8,7 +8,9 @@ class PortalWithdrawDemoViewModel: ObservableObject {
   @Published var contractAddress: String = ""
   @Published var proxyAddress: String = ""
   @Published var tokenAddress: String = ""
-  @Published var recipientAddress: String = "0x0C9049B5cCB1C893fc8a5c1CDa8B5cc64c3aA909"
+  @Published var recipientAddress: String = "" {
+    didSet { saveRecipientAddress() }
+  }
   @Published var amount: String = "1"
   @Published var decimals: Int = 18
   @Published var salt: String = ""
@@ -40,8 +42,14 @@ class PortalWithdrawDemoViewModel: ObservableObject {
 
   init(initialContract: RainCollateralContractResponse? = nil) {
     self.initialContract = initialContract
+    if let saved = AppStorage.getPortalWithdrawRecipientAddress() {
+      self.recipientAddress = saved
+    } else {
+      self.recipientAddress = "0x0C9049B5cCB1C893fc8a5c1CDa8B5cc64c3aA909"
+    }
     if let contract = initialContract {
       assets = contract.toAssetModels()
+        .filter({ $0.availableBalance > 0 })
       
       if let contractAddress = contract.controllerAddress  {
         self.contractAddress = contractAddress
@@ -70,6 +78,10 @@ class PortalWithdrawDemoViewModel: ObservableObject {
   }
 
   private var cancellables = Set<AnyCancellable>()
+
+  private func saveRecipientAddress() {
+    AppStorage.setPortalWithdrawRecipientAddress(recipientAddress)
+  }
   
   var hasPortal: Bool {
     sdkService.hasPortal
@@ -88,18 +100,17 @@ class PortalWithdrawDemoViewModel: ObservableObject {
   /// Fetches credit contracts from the API and converts them to asset models.
   func loadCreditContracts() async {
     isLoadingAssets = true
-    assetsError = nil
-
+    defer {
+      isLoadingAssets = false
+    }
+    
     do {
       let contracts = try await creditContractsRepository.getCreditContracts()
       assets = contracts.toAssetModels()
-      assetsError = nil
+        .filter({ $0.availableBalance > 0 })
     } catch {
-      assets = []
-      assetsError = error
+      print("Load credit contracts failed: \(error.localizedDescription)")
     }
-
-    isLoadingAssets = false
   }
 
   // MARK: - Withdrawal signature API
@@ -142,7 +153,8 @@ class PortalWithdrawDemoViewModel: ObservableObject {
   
   func withdraw() async {
     guard let amountDouble = Double(amount) else { return }
-
+    let newAmount = BigUInt(amountDouble * pow(10.0, Double(decimals)))
+    
     isProcessing = true
     error = nil
     txHash = nil
@@ -152,7 +164,7 @@ class PortalWithdrawDemoViewModel: ObservableObject {
     await loadWithdrawalSignature(
       chainId: chainId,
       token: tokenAddress,
-      amount: amount,
+      amount: newAmount.description,
       recipientAddress: recipientAddress,
       isAmountNative: true
     )
@@ -190,6 +202,12 @@ class PortalWithdrawDemoViewModel: ObservableObject {
       statusMessage = "Withdrawal failed"
     }
 
+    Task {
+      // This is a sample app, so I want to delay to wait new balance
+      try await Task.sleep(for: .seconds(5))
+      await loadCreditContracts()
+    }
+    
     isProcessing = false
     loadingMessage = nil
   }

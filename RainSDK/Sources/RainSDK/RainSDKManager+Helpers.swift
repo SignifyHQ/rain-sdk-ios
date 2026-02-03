@@ -126,7 +126,6 @@ extension RainSDKManager {
       throw RainSDKError.internalLogicError(details: "Failed to convert admin signature hex string to Data or invalid length")
     }
     
-    print("zzzzz \(withdrawalSignatureData.count) \(adminSignatureData.count) \(withdrawalSaltData.count)")
     let transactionData = try await buildWithdrawTransactionData(
       chainId: chainId,
       assetAddresses: assetAddresses,

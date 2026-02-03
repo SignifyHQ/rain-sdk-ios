@@ -172,7 +172,7 @@ final class TransactionBuilderService: TransactionBuilderProtocol {
       at: ethereumContractAddress,
       abiVersion: 2
     )
-    print("zzzzz \(withdrawAssetParameter.adminSignature.count)")
+    
     guard let tx = contract?
       .createWriteOperation(
         "withdrawAsset",

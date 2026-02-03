@@ -278,7 +278,7 @@ public final class RainSDKManager: RainSDK {
     )
     
     let chainIdString = Constants.ChainIDFormat.EIP155.format(chainId: chainId)
-    print("zzzz built \(chainIdString)")
+    
     // Sign and send transaction using Portal
     let ethSendResponse = try await portalForRequest.request(
       chainId: chainIdString,
@@ -286,7 +286,7 @@ public final class RainSDKManager: RainSDK {
       params: [transactionParams],
       options: nil
     )
-    print("zzzz response \(ethSendResponse.result)")
+
     let txHash = ethSendResponse.result as? String ?? "-/-"
     
     RainLogger.info("Rain SDK: Withdrawal transaction submitted. Hash: \(txHash)")

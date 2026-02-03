@@ -155,9 +155,21 @@ struct PortalWithdrawDemoView: View {
 
   private var assetDropdown: some View {
     VStack(alignment: .leading, spacing: 8) {
-      Text("Asset")
-        .font(.subheadline)
-        .foregroundColor(.secondary)
+      HStack {
+        Text("Asset")
+          .font(.subheadline)
+          .foregroundColor(.secondary)
+        Spacer()
+        Button {
+          hideKeyboard()
+          Task { await viewModel.loadCreditContracts() }
+        } label: {
+          Image(systemName: "arrow.clockwise")
+            .font(.subheadline)
+            .foregroundColor(viewModel.isLoadingAssets ? .secondary : .blue)
+        }
+        .disabled(viewModel.isLoadingAssets)
+      }
 
       if viewModel.assets.isEmpty && !viewModel.isLoadingAssets {
         Text("No assets available")
@@ -238,6 +250,7 @@ struct PortalWithdrawDemoView: View {
 
   private var actionsSection: some View {
     Button(action: {
+      hideKeyboard()
       Task {
         await viewModel.withdraw()
       }
