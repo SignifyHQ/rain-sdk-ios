@@ -94,6 +94,7 @@ public protocol RainSDK {
     amount: Double,
     decimals: Int,
     expiresAt: String,
+    salt: Data,
     signatureData: Data,
     adminSalt: Data,
     adminSignature: Data
@@ -148,6 +149,7 @@ public protocol RainSDK {
     assetAddresses: WithdrawAssetAddresses,
     amount: Double,
     decimals: Int,
+    salt: String,
     signature: String,
     expiresAt: String,
     nonce: BigUInt?,

@@ -49,9 +49,10 @@ class SDKConnectionViewModel: ObservableObject {
   
   // MARK: - Initialization
   
-  init() {
-    self.sdkService = RainSDKService.shared
-    
+  init(sdkService: RainSDKService = .shared) {
+    self.sdkService = sdkService
+    self.portalToken = PortalTokenStorage.getToken() ?? ""
+
     // Observe service state changes
     observeServiceState()
   }
@@ -93,12 +94,13 @@ class SDKConnectionViewModel: ObservableObject {
     if useWalletAgnostic {
       await sdkService.initializeWalletAgnostic(networkConfigs: networkConfigs)
     } else {
+      PortalTokenStorage.saveToken(portalToken)
       await sdkService.initialize(
         portalToken: portalToken,
         networkConfigs: networkConfigs
       )
     }
-    
+
     isInitializing = false
   }
   

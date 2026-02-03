@@ -181,6 +181,7 @@ public final class RainSDKManager: RainSDK {
     amount: Double,
     decimals: Int,
     expiresAt: String,
+    salt: Data,
     signatureData: Data,
     adminSalt: Data,
     adminSignature: Data
@@ -226,7 +227,7 @@ public final class RainSDKManager: RainSDK {
       amount: amountBaseUnits,
       recipientAddress: ethereumRecipientAddress,
       expiryAt: BigUInt(unixTimestamp),
-      salt: adminSalt,
+      salt: salt,
       signature: signatureData,
       adminSalt: adminSalt,
       adminSignature: adminSignature
@@ -258,6 +259,7 @@ public final class RainSDKManager: RainSDK {
     assetAddresses: WithdrawAssetAddresses,
     amount: Double,
     decimals: Int,
+    salt: String,
     signature: String,
     expiresAt: String,
     nonce: BigUInt?
@@ -267,13 +269,14 @@ public final class RainSDKManager: RainSDK {
       assetAddresses: assetAddresses,
       amount: amount,
       decimals: decimals,
+      salt: salt,
       signature: signature,
       expiresAt: expiresAt,
       nonce: nil
     )
     
     let chainIdString = Constants.ChainIDFormat.EIP155.format(chainId: chainId)
-    
+    print("zzzz built \(chainIdString)")
     // Sign and send transaction using Portal
     let ethSendResponse = try await portalForRequest.request(
       chainId: chainIdString,
@@ -281,6 +284,7 @@ public final class RainSDKManager: RainSDK {
       params: [transactionParams],
       options: nil
     )
+    print("zzzz response \(ethSendResponse.result)")
     let txHash = ethSendResponse.result as? String ?? "-/-"
     
     RainLogger.info("Rain SDK: Withdrawal transaction submitted. Hash: \(txHash)")
@@ -301,6 +305,7 @@ public final class RainSDKManager: RainSDK {
       assetAddresses: addresses,
       amount: amount,
       decimals: decimals,
+      salt: salt,
       signature: signature,
       expiresAt: expiresAt,
       nonce: nil

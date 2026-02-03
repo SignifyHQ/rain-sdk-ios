@@ -7,7 +7,7 @@ struct SDKConnectionView: View {
   @StateObject private var viewModel = SDKConnectionViewModel()
   
   var body: some View {
-    NavigationView {
+    NavigationStack {
       ScrollView {
         VStack(spacing: 24) {
           // Header
@@ -215,6 +215,17 @@ struct SDKConnectionView: View {
             )
           }
           .buttonStyle(.plain)
+          
+          if !viewModel.useWalletAgnostic {
+            NavigationLink(destination: PortalWithdrawEntryView()) {
+              featureButtonContent(
+                icon: "wallet.pass.fill",
+                title: "Portal Withdraw",
+                subtitle: "Execute withdrawal via Portal (sign & submit)"
+              )
+            }
+            .buttonStyle(.plain)
+          }
           
           if !viewModel.useWalletAgnostic {
             featureButton(
