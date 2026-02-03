@@ -178,23 +178,30 @@ The app starts on **Rain SDK Demo**, where you initialize the SDK. After initial
 
 ```
 RainSDKDemo/
-├── RainSDKDemoApp.swift          # App entry
-├── Presentation/
-│   ├── ContentView.swift         # Root → SDKConnectionView
-│   ├── SDKConnectionView/        # Main screen (init, feature list)
-│   ├── BuildEIP712Message/       # EIP-712 message builder
-│   ├── BuildWithdrawTransaction/  # Withdraw calldata builder
-│   └── PortalWithdraw/           # Entry → Recover → Withdraw
-│       ├── PortalWithdrawEntry/
-│       ├── Recover/
-│       └── PortalWithdrawDemoView
-├── Core/
-│   ├── Network/                  # APIClient, APIConfig, AuthTokenStorage
-│   ├── Repositories/             # CreditContracts, PortalBackup, WithdrawalSignature
-│   ├── Services/                 # RainSDKService (wraps RainSDKManager)
-│   └── Storage/                  # AppStorage (e.g. saved recipient address)
-└── Utils/
-    └── Extensions/               # e.g. hideKeyboard
+├── RainSDKDemo.xcodeproj/
+└── RainSDKDemo/                    # App source
+    ├── RainSDKDemoApp.swift        # App entry
+    ├── RainSDKDemo.entitlements
+    ├── Assets.xcassets/
+    ├── Core/
+    │   ├── Network/                # APIClient, APIConfig, APIError, AuthTokenStorage
+    │   └── Services/               # RainSDKService (wraps RainSDKManager)
+    ├── Data/
+    │   ├── Models/                 # AssetModel, CreditContractResponse, PortalBackupModels, etc.
+    │   ├── Repositories/           # CreditContractsRepository, PortalBackupRepository, WithdrawalSignatureRepository
+    │   └── Storage/                # AppStorage (e.g. saved recipient address)
+    ├── Presentation/
+    │   ├── ContentView.swift       # Root → SDKConnectionView
+    │   ├── SDKConnectionView/      # Main screen (init, feature list)
+    │   ├── BuildEIP712Message/     # EIP-712 message builder
+    │   ├── BuildWithdrawTransaction/  # Withdraw calldata builder
+    │   └── PortalWithdraw/         # Entry → Recover → Withdraw
+    │       ├── PortalWithdrawEntry/
+    │       ├── Recover/
+    │       ├── PortalWithdrawDemoView.swift
+    │       └── PortalWithdrawDemoViewModel.swift
+    └── Utils/
+        └── Extensions/             # e.g. hideKeyboard
 ```
 
 ---
