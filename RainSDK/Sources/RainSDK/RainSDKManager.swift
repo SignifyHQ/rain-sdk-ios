@@ -143,6 +143,8 @@ public final class RainSDKManager: RainSDK {
     
     // Generate or reuse salt (store internally for later use in transaction building)
     let salt = transactionBuilder.generateSalt()
+    // Convert salt to hex string (bytes32 format)
+    let saltHex = "0x" + salt.toHexString()
     
     // Get nonce - retrieve from network if not provided
     let finalNonce: BigUInt
@@ -170,9 +172,9 @@ public final class RainSDKManager: RainSDK {
       amount: amountBaseUnits,
       recipientAddress: assetAddresses.recipientAddress,
       nonce: finalNonce,
-      salt: salt
+      salt: saltHex
     )
-    return (jsonMessage, salt.toHexString())
+    return (jsonMessage, saltHex)
   }
   
   public func buildWithdrawTransactionData(

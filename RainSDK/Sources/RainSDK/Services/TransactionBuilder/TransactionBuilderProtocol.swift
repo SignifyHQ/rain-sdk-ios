@@ -39,7 +39,7 @@ protocol TransactionBuilderProtocol {
     amount: BigUInt,
     recipientAddress: String,
     nonce: BigUInt,
-    salt: Data
+    salt: String
   ) throws -> String
   
   /// Builds the encoded transaction calldata required to execute a withdrawal
