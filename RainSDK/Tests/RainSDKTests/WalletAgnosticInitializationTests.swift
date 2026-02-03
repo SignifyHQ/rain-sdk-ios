@@ -425,8 +425,9 @@ struct WalletAgnosticInitializationTests {
     let amount: Double = 100.0
     let decimals = 18
     let expiresAt = "1735689600" // Unix timestamp
+    let salt = Data([UInt8](repeating: 0x11, count: 32)) // 32 bytes user salt
     let signatureData = Data([UInt8](repeating: 0x42, count: 65)) // 65 bytes for signature
-    let adminSalt = Data([UInt8](repeating: 0xAA, count: 32)) // 32 bytes for salt
+    let adminSalt = Data([UInt8](repeating: 0xAA, count: 32)) // 32 bytes for admin salt
     let adminSignature = Data([UInt8](repeating: 0xBB, count: 65)) // 65 bytes for signature
     
     // Note: This will fail if RPC URL is not accessible or contract ABI is missing
@@ -438,6 +439,7 @@ struct WalletAgnosticInitializationTests {
         amount: amount,
         decimals: decimals,
         expiresAt: expiresAt,
+        salt: salt,
         signatureData: signatureData,
         adminSalt: adminSalt,
         adminSignature: adminSignature
@@ -463,6 +465,7 @@ struct WalletAgnosticInitializationTests {
       recipientAddress: "0xfedcbafedcbafedcbafedcbafedcbafedcbafedc",
       tokenAddress: "0x9876543210987654321098765432109876543210"
     )
+    let salt = Data([UInt8](repeating: 0x11, count: 32))
     let signatureData = Data([UInt8](repeating: 0x42, count: 65))
     let adminSalt = Data([UInt8](repeating: 0xAA, count: 32))
     let adminSignature = Data([UInt8](repeating: 0xBB, count: 65))
@@ -474,6 +477,7 @@ struct WalletAgnosticInitializationTests {
         amount: 100.0,
         decimals: 18,
         expiresAt: "1735689600",
+        salt: salt,
         signatureData: signatureData,
         adminSalt: adminSalt,
         adminSignature: adminSignature
@@ -491,6 +495,7 @@ struct WalletAgnosticInitializationTests {
       recipientAddress: "0xfedcbafedcbafedcbafedcbafedcbafedcbafedc",
       tokenAddress: "0x9876543210987654321098765432109876543210"
     )
+    let salt = Data([UInt8](repeating: 0x11, count: 32))
     let signatureData = Data([UInt8](repeating: 0x42, count: 65))
     let adminSalt = Data([UInt8](repeating: 0xAA, count: 32))
     let adminSignature = Data([UInt8](repeating: 0xBB, count: 65))
@@ -502,6 +507,7 @@ struct WalletAgnosticInitializationTests {
         amount: 100.0,
         decimals: 18,
         expiresAt: "1735689600",
+        salt: salt,
         signatureData: signatureData,
         adminSalt: adminSalt,
         adminSignature: adminSignature
@@ -519,6 +525,7 @@ struct WalletAgnosticInitializationTests {
       recipientAddress: "0xfedcbafedcbafedcbafedcbafedcbafedcbafedc",
       tokenAddress: "0x9876543210987654321098765432109876543210"
     )
+    let salt = Data([UInt8](repeating: 0x11, count: 32))
     let signatureData = Data([UInt8](repeating: 0x42, count: 65))
     let adminSalt = Data([UInt8](repeating: 0xAA, count: 32))
     let adminSignature = Data([UInt8](repeating: 0xBB, count: 65))
@@ -530,6 +537,7 @@ struct WalletAgnosticInitializationTests {
         amount: 100.0,
         decimals: 18,
         expiresAt: "1735689600",
+        salt: salt,
         signatureData: signatureData,
         adminSalt: adminSalt,
         adminSignature: adminSignature
@@ -547,6 +555,7 @@ struct WalletAgnosticInitializationTests {
       recipientAddress: "invalid-address",
       tokenAddress: "0x9876543210987654321098765432109876543210"
     )
+    let salt = Data([UInt8](repeating: 0x11, count: 32))
     let signatureData = Data([UInt8](repeating: 0x42, count: 65))
     let adminSalt = Data([UInt8](repeating: 0xAA, count: 32))
     let adminSignature = Data([UInt8](repeating: 0xBB, count: 65))
@@ -558,6 +567,7 @@ struct WalletAgnosticInitializationTests {
         amount: 100.0,
         decimals: 18,
         expiresAt: "1735689600",
+        salt: salt,
         signatureData: signatureData,
         adminSalt: adminSalt,
         adminSignature: adminSignature
@@ -575,6 +585,7 @@ struct WalletAgnosticInitializationTests {
       recipientAddress: "0xfedcbafedcbafedcbafedcbafedcbafedcbafedc",
       tokenAddress: "0x9876543210987654321098765432109876543210"
     )
+    let salt = Data([UInt8](repeating: 0x11, count: 32))
     let signatureData = Data([UInt8](repeating: 0x42, count: 65))
     let adminSalt = Data([UInt8](repeating: 0xAA, count: 32))
     let adminSignature = Data([UInt8](repeating: 0xBB, count: 65))
@@ -586,6 +597,7 @@ struct WalletAgnosticInitializationTests {
         amount: 100.0,
         decimals: 18,
         expiresAt: "invalid-timestamp",
+        salt: salt,
         signatureData: signatureData,
         adminSalt: adminSalt,
         adminSignature: adminSignature
@@ -603,6 +615,7 @@ struct WalletAgnosticInitializationTests {
       recipientAddress: "0xfedcbafedcbafedcbafedcbafedcbafedcbafedc",
       tokenAddress: "0x9876543210987654321098765432109876543210"
     )
+    let salt = Data([UInt8](repeating: 0x11, count: 32))
     let signatureData = Data([UInt8](repeating: 0x42, count: 65))
     let adminSalt = Data([UInt8](repeating: 0xAA, count: 32))
     let adminSignature = Data([UInt8](repeating: 0xBB, count: 65))
@@ -618,6 +631,7 @@ struct WalletAgnosticInitializationTests {
         amount: 100.0,
         decimals: 18,
         expiresAt: iso8601Timestamp,
+        salt: salt,
         signatureData: signatureData,
         adminSalt: adminSalt,
         adminSignature: adminSignature
@@ -642,6 +656,7 @@ struct WalletAgnosticInitializationTests {
       recipientAddress: "0xfedcbafedcbafedcbafedcbafedcbafedcbafedc",
       tokenAddress: "0x9876543210987654321098765432109876543210"
     )
+    let salt = Data([UInt8](repeating: 0x11, count: 32))
     let signatureData = Data([UInt8](repeating: 0x42, count: 65))
     let adminSalt = Data([UInt8](repeating: 0xAA, count: 32))
     let adminSignature = Data([UInt8](repeating: 0xBB, count: 65))
@@ -657,6 +672,7 @@ struct WalletAgnosticInitializationTests {
         amount: amount,
         decimals: decimals,
         expiresAt: "1735689600",
+        salt: salt,
         signatureData: signatureData,
         adminSalt: adminSalt,
         adminSignature: adminSignature
@@ -680,6 +696,7 @@ struct WalletAgnosticInitializationTests {
       recipientAddress: "0xfedcbafedcbafedcbafedcbafedcbafedcbafedc",
       tokenAddress: "0x9876543210987654321098765432109876543210"
     )
+    let salt = Data([UInt8](repeating: 0x11, count: 32))
     let signatureData = Data([UInt8](repeating: 0x42, count: 65))
     let adminSalt = Data([UInt8](repeating: 0xAA, count: 32))
     let adminSignature = Data([UInt8](repeating: 0xBB, count: 65))
@@ -691,6 +708,7 @@ struct WalletAgnosticInitializationTests {
         amount: 100.0,
         decimals: 18,
         expiresAt: "1735689600",
+        salt: salt,
         signatureData: signatureData,
         adminSalt: adminSalt,
         adminSignature: adminSignature

@@ -81,6 +81,7 @@ public protocol RainSDK {
   ///   - amount: Amount to be withdrawn, expressed in token's natural units (e.g., 100.0 for 100 tokens).
   ///   - decimals: Number of decimal places for the token (e.g., 18 for ETH, 6 for USDC).
   ///   - expiresAt: Expiration timestamp after which the transaction is invalid (Unix timestamp string).
+  ///   - salt: User salt data (32 bytes) for the withdrawal authorization.
   ///   - signatureData: User or wallet signature data from Rain API.
   ///   - adminSalt: Admin salt generated when creating admin signature (same salt used in buildEIP712Message).
   ///   - adminSignature: Admin signature authorizing the withdrawal.
@@ -136,7 +137,8 @@ public protocol RainSDK {
   ///     - recipientAddress: Address that will receive the withdrawn funds.
   ///   - amount: Human-readable token amount to withdraw.
   ///   - decimals: Number of decimal places for the token (e.g., 18 for ETH, 6 for USDC).
-  ///   - signature: User or wallet signature data from Rain API (hex string format).
+  ///   - salt: Salt for the user's withdrawal authorization (base64-encoded string, 32 bytes decoded).
+  ///   - signature: User or wallet signature data from Rain API (hex string format, 65 bytes).
   ///   - expiresAt: Expiration timestamp after which the transaction is invalid (Unix timestamp string or ISO8601 format).
   ///   - nonce: Optional transaction nonce.
   ///            If `nil`, the SDK is responsible for resolving the correct nonce.
@@ -165,8 +167,8 @@ public protocol RainSDK {
   ///   - addresses: A structure containing all required addresses (contract, proxy, recipient, token).
   ///   - amount: Human-readable token amount to withdraw.
   ///   - decimals: Number of decimal places for the token (e.g., 18 for ETH, 6 for USDC).
-  ///   - salt: Salt used when building the EIP-712 message or transaction data.
-  ///   - signature: User or wallet signature data from Rain API (base64 string format).
+  ///   - salt: Salt for the user's withdrawal authorization (base64-encoded string, 32 bytes decoded).
+  ///   - signature: User or wallet signature data from Rain API (hex string format, 65 bytes).
   ///   - expiresAt: Expiration timestamp after which the transaction is invalid (Unix timestamp string or ISO8601 format).
   ///
   /// - Returns: The estimated withdrawal fee in the chain's native token (e.g., ETH).

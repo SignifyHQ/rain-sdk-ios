@@ -28,7 +28,7 @@ protocol TransactionBuilderProtocol {
   ///   - amount: The withdrawal amount (already in base units as BigUInt)
   ///   - recipientAddress: The recipient address
   ///   - nonce: The nonce value
-  ///   - salt: The salt data (32 bytes)
+  ///   - salt: The salt as a hex string (e.g. 0x... for the EIP-712 domain)
   /// - Returns: Serialized EIP-712 message string
   /// - Throws: RainSDKError if message building fails
   func buildEIP712Message(
@@ -57,10 +57,10 @@ protocol TransactionBuilderProtocol {
   ///     - amount: Withdrawal amount in base units (BigUInt)
   ///     - recipientAddress: Address receiving the withdrawal
   ///     - expiryAt: Expiration timestamp (Unix timestamp as BigUInt)
-  ///     - salt: Salt data for the user signature
-  ///     - signature: User signature data from Rain API
-  ///     - adminSalt: Admin salt generated when creating admin signature
-  ///     - adminSignature: Admin signature authorizing the withdrawal
+  ///     - salt: User salt data (32 bytes) for the withdrawal authorization
+  ///     - signature: User signature data from Rain API (65 bytes)
+  ///     - adminSalt: Admin salt data (32 bytes) from buildEIP712Message
+  ///     - adminSignature: Admin signature authorizing the withdrawal (65 bytes)
   /// - Returns: Hex-encoded transaction calldata (prefixed with "0x")
   /// - Throws: RainSDKError if ABI encoding, contract interaction, or validation fails
   func buildErc20TransactionForWithdrawAsset(
