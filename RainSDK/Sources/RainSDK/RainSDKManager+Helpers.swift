@@ -102,7 +102,8 @@ extension RainSDKManager {
     )
     // Sign EIP-712 message using Portal to get admin signature
     // Convert salt hex string back to Data
-    guard let adminSaltData = Data(base64Encoded: saltHex) else {
+    print("zzzzz \(saltHex)")
+    guard let adminSaltData = Data.fromHex(saltHex) else {
       throw RainSDKError.internalLogicError(details: "Failed to convert salt hex string to Data")
     }
     
