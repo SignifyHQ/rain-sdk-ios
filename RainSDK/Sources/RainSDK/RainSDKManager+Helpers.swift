@@ -111,6 +111,11 @@ extension RainSDKManager {
       throw RainSDKError.internalLogicError(details: "Failed to convert salt hex string to Data")
     }
     
+    guard let adminSignatureData = Data(hexString: signature, length: 65)
+    else {
+      throw RainSDKError.internalLogicError(details: "Failed to convert user signature hex string to Data")
+    }
+    
     // Sign the EIP-712 message using Portal
     let response = try await portalForRequest.request(
       chainId: chainIdString,
@@ -119,16 +124,12 @@ extension RainSDKManager {
       options: nil
     )
     
-    guard let adminSignatureString = (response.result as? String),
-          let adminSignatureData = Data(hexString: adminSignatureString, length: 65)
+    guard let signatureString = (response.result as? String),
+          let signatureData = Data(hexString: signatureString, length: 65)
     else {
       throw RainSDKError.internalLogicError(details: "Failed to convert admin signature hex string to Data or invalid length")
     }
     
-    guard let signatureData = Data(hexString: adminSignatureString, length: 65)
-    else {
-      throw RainSDKError.internalLogicError(details: "Failed to convert user signature hex string to Data")
-    }
     print("zzzzz \(signatureData.count) \(adminSignatureData.count) \(saltData.count)")
     let transactionData = try await buildWithdrawTransactionData(
       chainId: chainId,
