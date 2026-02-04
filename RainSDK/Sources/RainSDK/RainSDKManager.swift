@@ -143,6 +143,8 @@ public final class RainSDKManager: RainSDK {
     
     // Generate or reuse salt (store internally for later use in transaction building)
     let salt = transactionBuilder.generateSalt()
+    // Convert salt to hex string (bytes32 format)
+    let saltHex = "0x" + salt.toHexString()
     
     // Get nonce - retrieve from network if not provided
     let finalNonce: BigUInt
@@ -170,9 +172,9 @@ public final class RainSDKManager: RainSDK {
       amount: amountBaseUnits,
       recipientAddress: assetAddresses.recipientAddress,
       nonce: finalNonce,
-      salt: salt
+      salt: saltHex
     )
-    return (jsonMessage, salt.toHexString())
+    return (jsonMessage, saltHex)
   }
   
   public func buildWithdrawTransactionData(
@@ -181,6 +183,7 @@ public final class RainSDKManager: RainSDK {
     amount: Double,
     decimals: Int,
     expiresAt: String,
+    salt: Data,
     signatureData: Data,
     adminSalt: Data,
     adminSignature: Data
@@ -226,7 +229,7 @@ public final class RainSDKManager: RainSDK {
       amount: amountBaseUnits,
       recipientAddress: ethereumRecipientAddress,
       expiryAt: BigUInt(unixTimestamp),
-      salt: adminSalt,
+      salt: salt,
       signature: signatureData,
       adminSalt: adminSalt,
       adminSignature: adminSignature
@@ -258,6 +261,7 @@ public final class RainSDKManager: RainSDK {
     assetAddresses: WithdrawAssetAddresses,
     amount: Double,
     decimals: Int,
+    salt: String,
     signature: String,
     expiresAt: String,
     nonce: BigUInt?
@@ -267,6 +271,7 @@ public final class RainSDKManager: RainSDK {
       assetAddresses: assetAddresses,
       amount: amount,
       decimals: decimals,
+      salt: salt,
       signature: signature,
       expiresAt: expiresAt,
       nonce: nil
@@ -281,6 +286,7 @@ public final class RainSDKManager: RainSDK {
       params: [transactionParams],
       options: nil
     )
+
     let txHash = ethSendResponse.result as? String ?? "-/-"
     
     RainLogger.info("Rain SDK: Withdrawal transaction submitted. Hash: \(txHash)")
@@ -301,6 +307,7 @@ public final class RainSDKManager: RainSDK {
       assetAddresses: addresses,
       amount: amount,
       decimals: decimals,
+      salt: salt,
       signature: signature,
       expiresAt: expiresAt,
       nonce: nil

@@ -24,7 +24,8 @@ struct WithdrawCollateralTests {
         assetAddresses: assetAddresses,
         amount: 100.0,
         decimals: 18,
-        signature: Data(repeating: 1, count: 65).base64EncodedString(), // Base64 signature (65 bytes)
+        salt: validSaltBase64,
+        signature: validSignatureHex,
         expiresAt: "1735689600",
         nonce: nil
       )
@@ -55,7 +56,8 @@ struct WithdrawCollateralTests {
         assetAddresses: assetAddresses,
         amount: 100.0,
         decimals: 18,
-        signature: Data(repeating: 1, count: 65).base64EncodedString(), // Base64 signature
+        salt: validSaltBase64,
+        signature: validSignatureHex,
         expiresAt: "1735689600",
         nonce: nil
       )
@@ -88,38 +90,8 @@ struct WithdrawCollateralTests {
         assetAddresses: assetAddresses,
         amount: 100.0,
         decimals: 18,
-        signature: Data(repeating: 1, count: 65).base64EncodedString(), // Base64 signature
-        expiresAt: "1735689600",
-        nonce: nil
-      )
-    }
-  }
-  
-  @Test("withdrawCollateral should throw error for invalid signature base64 string")
-  func testWithdrawCollateralInvalidSignature() async throws {
-    let mockPortal = MockPortal()
-    let configs = [
-      NetworkConfig.testConfig(chainId: 1, rpcUrl: "https://mainnet.infura.io/v3/test")
-    ]
-    let mockBuilder = MockTransactionBuilderService(networkConfigs: configs)
-    
-    let manager = RainSDKManager(portal: mockPortal, transactionBuilder: mockBuilder)
-    
-    let assetAddresses = WithdrawAssetAddresses(
-      contractAddress: "0x1234567890123456789012345678901234567890",
-      proxyAddress: "0xabcdefabcdefabcdefabcdefabcdefabcdefabcd",
-      recipientAddress: "0xfedcbafedcbafedcbafedcbafedcbafedcbafedc",
-      tokenAddress: "0x9876543210987654321098765432109876543210"
-    )
-    
-    // Invalid signature (not valid base64)
-    await #expect(throws: RainSDKError.internalLogicError(details: "Failed to convert user signature hex string to Data")) {
-      _ = try await manager.withdrawCollateral(
-        chainId: 1,
-        assetAddresses: assetAddresses,
-        amount: 100.0,
-        decimals: 18,
-        signature: "invalid-base64-string!!!", // Invalid base64
+        salt: validSaltBase64,
+        signature: validSignatureHex,
         expiresAt: "1735689600",
         nonce: nil
       )
@@ -150,7 +122,8 @@ struct WithdrawCollateralTests {
         assetAddresses: assetAddresses,
         amount: 100.0,
         decimals: 18,
-        signature: Data(repeating: 1, count: 65).base64EncodedString(), // Base64 signature
+        salt: validSaltBase64,
+        signature: validSignatureHex,
         expiresAt: "1735689600",
         nonce: nil // Will try to fetch nonce and fail
       )
@@ -183,7 +156,8 @@ struct WithdrawCollateralTests {
         assetAddresses: assetAddresses,
         amount: 100.0,
         decimals: 18,
-        signature: Data(repeating: 1, count: 65).base64EncodedString(), // Base64 signature
+        salt: validSaltBase64,
+        signature: validSignatureHex,
         expiresAt: "1735689600",
         nonce: BigUInt(1) // Provide nonce to avoid nonce fetch
       )
@@ -227,7 +201,8 @@ struct WithdrawCollateralTests {
         assetAddresses: assetAddresses,
         amount: 100.0,
         decimals: 18,
-        signature: Data(repeating: 1, count: 65).base64EncodedString(), // Base64 signature
+        salt: validSaltBase64,
+        signature: validSignatureHex,
         expiresAt: "1735689600",
         nonce: BigUInt(1)
       )
@@ -275,16 +250,14 @@ struct WithdrawCollateralTests {
       tokenAddress: "0x9876543210987654321098765432109876543210"
     )
     
-    // Valid signature (65 bytes encoded as base64)
-    let validSignature = Data(repeating: 1, count: 65).base64EncodedString()
-    
-    // Execute withdrawCollateral using the mock
+    // Execute withdrawCollateral using the mock (salt: base64, signature: hex 65 bytes)
     let txHash = try await manager.withdrawCollateral(
       chainId: 1,
       assetAddresses: assetAddresses,
       amount: 100.0,
       decimals: 18,
-      signature: validSignature,
+      salt: validSaltBase64,
+      signature: validSignatureHex,
       expiresAt: "1735689600",
       nonce: nil
     )
@@ -312,6 +285,18 @@ struct WithdrawCollateralTests {
     #expect(sendRequest.params.count == 1) // transactionParams array
   }
   
+  // MARK: - Helpers (withdrawCollateral / estimateWithdrawalFee use salt + signature)
+
+  /// Salt as base64 (32 bytes); required by withdrawCollateral and estimateWithdrawalFee.
+  private var validSaltBase64: String {
+    Data(repeating: 0xAA, count: 32).base64EncodedString()
+  }
+
+  /// User signature as hex string (65 bytes = 130 hex chars); required by withdrawCollateral and estimateWithdrawalFee.
+  private var validSignatureHex: String {
+    "0x" + String(repeating: "01", count: 65)
+  }
+
   // MARK: - Estimate Withdrawal Fee Tests
   
   private var defaultAddresses: WithdrawAssetAddresses {
@@ -323,9 +308,6 @@ struct WithdrawCollateralTests {
     )
   }
 
-  private var validBase64Signature: String {
-    Data(repeating: 1, count: 65).base64EncodedString()
-  }
 
   @Test("estimateWithdrawalFee should throw sdkNotInitialized when called before initialization")
   func testEstimateWithdrawalFeeBeforeInitialization() async throws {
@@ -338,7 +320,7 @@ struct WithdrawCollateralTests {
         amount: 100.0,
         decimals: 18,
         salt: Data(repeating: 0xAA, count: 32).base64EncodedString(),
-        signature: validBase64Signature,
+        signature: validSignatureHex,
         expiresAt: "1735689600"
       )
     }
@@ -359,7 +341,7 @@ struct WithdrawCollateralTests {
         amount: 100.0,
         decimals: 18,
         salt: Data(repeating: 0xAA, count: 32).base64EncodedString(),
-        signature: validBase64Signature,
+        signature: validSignatureHex,
         expiresAt: "1735689600"
       )
     }
@@ -385,7 +367,7 @@ struct WithdrawCollateralTests {
         amount: 100.0,
         decimals: 18,
         salt: Data(repeating: 0xAA, count: 32).base64EncodedString(),
-        signature: validBase64Signature,
+        signature: validSignatureHex,
         expiresAt: "1735689600"
       )
     }
@@ -402,7 +384,7 @@ struct WithdrawCollateralTests {
 
     let manager = RainSDKManager(portal: mockPortal, transactionBuilder: mockBuilder)
 
-    await #expect(throws: RainSDKError.internalLogicError(details: "Failed to convert user signature hex string to Data")) {
+    await #expect(throws: RainSDKError.internalLogicError(details: "Failed to convert withdrawal signature hex string to Data")) {
       _ = try await manager.estimateWithdrawalFee(
         chainId: 1,
         addresses: defaultAddresses,
@@ -442,7 +424,7 @@ struct WithdrawCollateralTests {
         amount: 100.0,
         decimals: 18,
         salt: Data(repeating: 0xAA, count: 32).base64EncodedString(),
-        signature: validBase64Signature,
+        signature: validSignatureHex,
         expiresAt: "1735689600"
       )
     }
@@ -485,7 +467,7 @@ struct WithdrawCollateralTests {
       amount: 100.0,
       decimals: 18,
       salt: Data(repeating: 0xAA, count: 32).base64EncodedString(),
-      signature: validBase64Signature,
+      signature: validSignatureHex,
       expiresAt: "1735689600"
     )
 

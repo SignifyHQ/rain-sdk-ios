@@ -87,18 +87,15 @@ final class TransactionBuilderService: TransactionBuilderProtocol {
     amount: BigUInt,
     recipientAddress: String,
     nonce: BigUInt,
-    salt: Data
+    salt: String
   ) throws -> String {
-    // Convert salt to hex string (bytes32 format)
-    let saltHex = "0x" + salt.map { String(format: "%02x", $0) }.joined()
-    
     // Build EIP-712 domain
     let domain: [String: Any] = [
       "name": "Collateral",
       "version": "2",
       "chainId": chainId,
       "verifyingContract": collateralProxyAddress,
-      "salt": saltHex
+      "salt": salt
     ]
     
     // Build EIP-712 types

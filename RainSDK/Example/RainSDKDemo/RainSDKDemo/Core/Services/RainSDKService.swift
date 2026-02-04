@@ -104,14 +104,17 @@ class RainSDKService: ObservableObject {
     recipientAddress: String,
     nonce: BigUInt?
   ) async throws -> (String, String) {
+    let assetAddresses = EIP712AssetAddresses(
+      proxyAddress: collateralProxyAddress,
+      recipientAddress: recipientAddress,
+      tokenAddress: tokenAddress
+    )
     return try await sdkManager.buildEIP712Message(
       chainId: chainId,
-      collateralProxyAddress: collateralProxyAddress,
       walletAddress: walletAddress,
-      tokenAddress: tokenAddress,
+      assetAddresses: assetAddresses,
       amount: amount,
       decimals: decimals,
-      recipientAddress: recipientAddress,
       nonce: nonce
     )
   }
@@ -130,23 +133,68 @@ class RainSDKService: ObservableObject {
     adminSalt: Data,
     adminSignature: Data
   ) async throws -> String {
-    return try await sdkManager.buildWithdrawTransactionData(
-      chainId: chainId,
+    let assetAddresses = WithdrawAssetAddresses(
       contractAddress: contractAddress,
       proxyAddress: proxyAddress,
-      tokenAddress: tokenAddress,
+      recipientAddress: recipientAddress,
+      tokenAddress: tokenAddress
+    )
+    return try await sdkManager.buildWithdrawTransactionData(
+      chainId: chainId,
+      assetAddresses: assetAddresses,
       amount: amount,
       decimals: decimals,
-      recipientAddress: recipientAddress,
       expiresAt: expiresAt,
+      salt: adminSalt,
       signatureData: signatureData,
       adminSalt: adminSalt,
       adminSignature: adminSignature
     )
   }
   
+  // MARK: - Portal Withdraw
+
+  /// Execute collateral withdrawal via Portal (build, sign, submit). Requires Portal to be initialized.
+  func withdrawCollateral(
+    chainId: Int,
+    contractAddress: String,
+    proxyAddress: String,
+    tokenAddress: String,
+    recipientAddress: String,
+    amount: Double,
+    decimals: Int,
+    salt: String,
+    signature: String,
+    expiresAt: String,
+    nonce: BigUInt?
+  ) async throws -> String {
+    let assetAddresses = WithdrawAssetAddresses(
+      contractAddress: contractAddress,
+      proxyAddress: proxyAddress,
+      recipientAddress: recipientAddress,
+      tokenAddress: tokenAddress
+    )
+    return try await sdkManager.withdrawCollateral(
+      chainId: chainId,
+      assetAddresses: assetAddresses,
+      amount: amount,
+      decimals: decimals,
+      salt: salt,
+      signature: signature,
+      expiresAt: expiresAt,
+      nonce: nonce
+    )
+  }
+
+  // MARK: - Portal Withdraw View Model
+
+  /// Returns a new Portal Withdraw demo view model for use in navigation or other screens.
+  func makePortalWithdrawDemoViewModel() -> PortalWithdrawDemoViewModel {
+    PortalWithdrawDemoViewModel()
+  }
+
   // MARK: - Portal Access
-  
+
   /// Check if SDK is initialized
   var hasPortal: Bool {
     do {
@@ -154,6 +202,41 @@ class RainSDKService: ObservableObject {
       return true
     } catch {
       return false
+    }
+  }
+
+  /// Recovers the Portal wallet from backup.
+  /// - Parameters:
+  ///   - backupMethod: `.iCloud` or `.PIN` (password).
+  ///   - password: Required when backupMethod is `.PIN` (password); passed to `portal.setPassword` before recover.
+  ///   - cipherText: Encrypted backup data (e.g. from iCloud or password storage).
+  func recover(
+    backupMethod: BackupMethods,
+    password: String? = nil,
+    cipherText: String
+  ) async throws {
+    let portal = try getPortal()
+
+    if let password, backupMethod == .Password {
+      try portal.setPassword(password)
+    }
+
+    do {
+      _ = try await portal.recoverWallet(backupMethod, withCipherText: cipherText) { status in
+        print("Rain SDK: Recover status: \(status)")
+      }
+      print("Rain SDK: Wallet recover success")
+    } catch {
+      print("Rain SDK: Recover failed - \(error.localizedDescription)")
+      throw RainSDKError.providerError(underlying: error)
+    }
+  }
+
+  private func getPortal() throws -> Portal {
+    do {
+      return try sdkManager.portal
+    } catch {
+      throw RainSDKError.sdkNotInitialized
     }
   }
   

@@ -72,6 +72,7 @@ extension RainSDKManager {
     assetAddresses: WithdrawAssetAddresses,
     amount: Double,
     decimals: Int,
+    salt: String,
     signature: String,
     expiresAt: String,
     nonce: BigUInt?
@@ -82,6 +83,15 @@ extension RainSDKManager {
     }
     
     let chainIdString = Constants.ChainIDFormat.EIP155.format(chainId: chainId)
+
+    guard let withdrawalSaltData = Data(base64Encoded: salt) else {
+      throw RainSDKError.internalLogicError(details: "Failed to convert withdrawal salt base 64 string to Data")
+    }
+    
+    guard let withdrawalSignatureData = Data(hexString: signature, length: 65)
+    else {
+      throw RainSDKError.internalLogicError(details: "Failed to convert withdrawal signature hex string to Data")
+    }
     
     // Convert to EIP712AssetAddresses for building the message
     let eip712Addresses = EIP712AssetAddresses(
@@ -89,9 +99,8 @@ extension RainSDKManager {
       recipientAddress: assetAddresses.recipientAddress,
       tokenAddress: assetAddresses.tokenAddress
     )
-    
     // Build EIP-712 message to get admin signature
-    let (eip712Message, saltHex) = try await buildEIP712Message(
+    let (eip712Message, adminSaltHex) = try await buildEIP712Message(
       chainId: chainId,
       walletAddress: walletAddress,
       assetAddresses: eip712Addresses,
@@ -100,28 +109,21 @@ extension RainSDKManager {
       nonce: nonce
     )
     // Sign EIP-712 message using Portal to get admin signature
-    // Convert salt hex string back to Data
-    guard let saltData = Data(base64Encoded: saltHex) else {
-      throw RainSDKError.internalLogicError(details: "Failed to convert salt hex string to Data")
-    }
-    
-    // Sign the EIP-712 message using Portal
     let response = try await portalForRequest.request(
       chainId: chainIdString,
       method: .eth_signTypedData_v4,
       params: [walletAddress, eip712Message],
       options: nil
     )
+    // Convert salt hex string back to Data
+    guard let adminSaltData = Data.fromHex(adminSaltHex) else {
+      throw RainSDKError.internalLogicError(details: "Failed to convert admin salt hex string to Data")
+    }
     
     guard let adminSignatureString = (response.result as? String),
           let adminSignatureData = Data(hexString: adminSignatureString, length: 65)
     else {
       throw RainSDKError.internalLogicError(details: "Failed to convert admin signature hex string to Data or invalid length")
-    }
-    
-    guard let signatureData = Data(base64Encoded: signature)
-    else {
-      throw RainSDKError.internalLogicError(details: "Failed to convert user signature hex string to Data")
     }
     
     let transactionData = try await buildWithdrawTransactionData(
@@ -130,8 +132,9 @@ extension RainSDKManager {
       amount: amount,
       decimals: decimals,
       expiresAt: expiresAt,
-      signatureData: signatureData,
-      adminSalt: saltData,
+      salt: withdrawalSaltData,
+      signatureData: withdrawalSignatureData,
+      adminSalt: adminSaltData,
       adminSignature: adminSignatureData
     )
     

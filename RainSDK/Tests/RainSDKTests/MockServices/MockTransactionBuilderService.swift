@@ -33,17 +33,15 @@ final class MockTransactionBuilderService: TransactionBuilderProtocol {
     amount: BigUInt,
     recipientAddress: String,
     nonce: BigUInt,
-    salt: Data
+    salt: String
   ) throws -> String {
-    // Use the real implementation logic for building EIP-712 message
-    let saltHex = "0x" + salt.map { String(format: "%02x", $0) }.joined()
-    
+    // Match protocol: salt is already a hex string (e.g. "0x...")
     let domain: [String: Any] = [
       "name": "Collateral",
       "version": "2",
       "chainId": chainId,
       "verifyingContract": collateralProxyAddress,
-      "salt": saltHex
+      "salt": salt
     ]
     
     let types: [String: Any] = [

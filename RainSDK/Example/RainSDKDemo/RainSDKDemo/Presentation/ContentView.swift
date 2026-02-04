@@ -1,11 +1,11 @@
 import SwiftUI
 
 struct ContentView: View {
-    var body: some View {
-        SDKConnectionView()
-    }
+  var body: some View {
+    SDKConnectionView()
+  }
 }
 
 #Preview {
-    ContentView()
+  ContentView()
 }

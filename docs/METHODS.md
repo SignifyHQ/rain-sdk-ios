@@ -59,7 +59,7 @@ Builds EIP-712 typed data for the admin signature required for withdrawals.
 
 ---
 
-## buildWithdrawTransactionData(chainId:assetAddresses:amount:decimals:expiresAt:signatureData:adminSalt:adminSignature:)
+## buildWithdrawTransactionData(chainId:assetAddresses:amount:decimals:expiresAt:salt:signatureData:adminSalt:adminSignature:)
 
 Builds ABI-encoded withdraw calldata for the collateral proxy contract.
 
@@ -74,9 +74,10 @@ Builds ABI-encoded withdraw calldata for the collateral proxy contract.
 | `amount` | Amount in token units. |
 | `decimals` | Token decimals. |
 | `expiresAt` | Expiration Unix timestamp string. |
-| `signatureData` | User/wallet signature from Rain API (`Data`). |
-| `adminSalt` | Salt used when building the admin signature (same as from `buildEIP712Message`). |
-| `adminSignature` | Admin signature authorizing the withdrawal (`Data`). |
+| `salt` | User salt data (32 bytes) for the withdrawal authorization. |
+| `signatureData` | User/wallet signature from Rain API (`Data`, 65 bytes). |
+| `adminSalt` | Admin salt from buildEIP712Message (`Data`, 32 bytes). |
+| `adminSignature` | Admin signature authorizing the withdrawal (`Data`, 65 bytes). |
 
 ---
 
@@ -96,7 +97,7 @@ Composes Ethereum transaction parameters for submission (e.g. to `eth_sendTransa
 
 ---
 
-## withdrawCollateral(chainId:assetAddresses:amount:decimals:signature:expiresAt:nonce:)
+## withdrawCollateral(chainId:assetAddresses:amount:decimals:salt:signature:expiresAt:nonce:)
 
 Full withdrawal flow: build tx, sign via Portal, submit. Returns the transaction hash.
 
@@ -110,9 +111,30 @@ Full withdrawal flow: build tx, sign via Portal, submit. Returns the transaction
 | `assetAddresses` | `WithdrawAssetAddresses`: contract, proxy, recipient, token. |
 | `amount` | Amount in token units. |
 | `decimals` | Token decimals. |
-| `signature` | User/wallet signature from Rain API (base64 string). |
+| `salt` | Salt for the user's withdrawal authorization (base64-encoded string, 32 bytes decoded). |
+| `signature` | User/wallet signature from Rain API (hex string, 65 bytes). |
 | `expiresAt` | Expiration Unix timestamp string (or ISO8601). |
 | `nonce` | Optional; if `nil`, SDK resolves nonce. |
+
+---
+
+## estimateWithdrawalFee(chainId:addresses:amount:decimals:salt:signature:expiresAt:)
+
+Estimates the total fee (gas cost) to execute a collateral withdrawal.
+
+- **Returns:** Estimated fee in the chain's native token (e.g. ETH) as `Double`.
+- **Throws:** `RainSDKError` if estimation fails (e.g. SDK not initialized, invalid response, network error).
+- **Requires:** `initializePortal` first (Portal required).
+
+| Parameter | Description |
+|-----------|-------------|
+| `chainId` | Target network chain ID. |
+| `addresses` | `WithdrawAssetAddresses`: contract, proxy, recipient, token. |
+| `amount` | Amount in token units. |
+| `decimals` | Token decimals. |
+| `salt` | Salt for the user's withdrawal authorization (base64-encoded string, 32 bytes decoded). |
+| `signature` | User/wallet signature from Rain API (hex string, 65 bytes). |
+| `expiresAt` | Expiration Unix timestamp string (or ISO8601). |
 
 ---
 
