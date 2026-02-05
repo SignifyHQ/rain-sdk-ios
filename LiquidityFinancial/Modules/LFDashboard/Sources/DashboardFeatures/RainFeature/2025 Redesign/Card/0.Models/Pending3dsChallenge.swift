@@ -27,6 +27,11 @@ public struct Pending3DSChallenge {
   public let decisionSource: String?
   public let createdAt: String?
   public let updatedAt: String?
+  
+  private var cardNumberLast4: String?
+  public var rainCardLast4: String? {
+    rainCard?.last4 ?? cardNumberLast4
+  }
 }
 
 public extension Pending3DSChallenge {
@@ -35,7 +40,8 @@ public extension Pending3DSChallenge {
     currency: String,
     amount: String,
     merchantCountry: String,
-    merchantName: String
+    merchantName: String,
+    cardNumberLast4: String
   ) {
     self.id = id
     self.type = nil
@@ -58,6 +64,7 @@ public extension Pending3DSChallenge {
     self.decisionSource = nil
     self.createdAt = nil
     self.updatedAt = nil
+    self.cardNumberLast4 = cardNumberLast4
   }
 
   init(entity: Pending3dsChallengeEntity) {

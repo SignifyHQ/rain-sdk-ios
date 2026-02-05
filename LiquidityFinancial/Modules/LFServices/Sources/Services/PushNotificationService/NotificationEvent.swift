@@ -5,5 +5,5 @@ public enum NotificationEvent {
   public static let pending3DSChallengePayloadType = "3DS_APPROVAL"
 
   case transaction(id: String)
-  case pending3DSChallenge(id: String, currency: String, amount: String, merchantCountry: String, merchantName: String)
+  case pending3DSChallenge(id: String, currency: String, amount: String, merchantCountry: String, merchantName: String, cardNumberLast4: String)
 }

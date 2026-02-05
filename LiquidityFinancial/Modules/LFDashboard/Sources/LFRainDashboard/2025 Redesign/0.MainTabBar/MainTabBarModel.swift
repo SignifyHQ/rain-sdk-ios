@@ -304,14 +304,15 @@ extension MainTabBarModel {
         else { return }
         
         switch event {
-        case let .pending3DSChallenge(id, currency, amount, merchantCountry, merchantName):
+        case let .pending3DSChallenge(id, currency, amount, merchantCountry, merchantName, cardNumberLast4):
           if self.featureFlagManager.isFeatureFlagEnabled(.pending3DSChallenge) {
             let pendingChallenge = Pending3DSChallenge(
               id: id,
               currency: currency,
               amount: amount,
               merchantCountry: merchantCountry,
-              merchantName: merchantName
+              merchantName: merchantName,
+              cardNumberLast4: cardNumberLast4
             )
             self.presentPopupOrEnqueue(.verifyTransaction(pendingChallenge))
           }

@@ -112,13 +112,15 @@ extension PushNotificationsService: UNUserNotificationCenterDelegate {
        let currency = userInfo["currency"] as? String,
        let amount = userInfo["amount"] as? String,
        let merchantCountry = userInfo["merchantCountry"] as? String,
-       let merchantName = userInfo["merchantName"] as? String {
+       let merchantName = userInfo["merchantName"] as? String,
+       let cardNumberLast4 = userInfo["cardNumberLast4"] as? String {
       event = .pending3DSChallenge(
         id: id,
         currency: currency,
         amount: amount,
         merchantCountry: merchantCountry,
-        merchantName: merchantName
+        merchantName: merchantName,
+        cardNumberLast4: cardNumberLast4
       )
     }
       // Method called when the notification arrives with the app in foreground.
@@ -136,13 +138,15 @@ extension PushNotificationsService: UNUserNotificationCenterDelegate {
        let currency = userInfo["currency"] as? String,
        let amount = userInfo["amount"] as? String,
        let merchantCountry = userInfo["merchantCountry"] as? String,
-       let merchantName = userInfo["merchantName"] as? String {
+       let merchantName = userInfo["merchantName"] as? String,
+       let cardNumberLast4 = userInfo["cardNumberLast4"] as? String {
       event = .pending3DSChallenge(
         id: id,
         currency: currency,
         amount: amount,
         merchantCountry: merchantCountry,
-        merchantName: merchantName
+        merchantName: merchantName,
+        cardNumberLast4: cardNumberLast4
       )
       return
     }

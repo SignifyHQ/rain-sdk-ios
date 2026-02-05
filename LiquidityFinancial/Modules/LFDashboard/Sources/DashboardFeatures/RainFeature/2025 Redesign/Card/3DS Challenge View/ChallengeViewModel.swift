@@ -26,7 +26,7 @@ public final class ChallengeViewModel: ObservableObject {
   }
   
   var displayLast4: String {
-    challenge.rainCard?.last4 ?? "n/a"
+    challenge.rainCardLast4 ?? "n/a"
   }
   
   var displayPurchaseAmount: String {
