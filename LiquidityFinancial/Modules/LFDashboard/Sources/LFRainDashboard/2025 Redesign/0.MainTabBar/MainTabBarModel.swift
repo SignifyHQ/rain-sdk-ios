@@ -1,4 +1,5 @@
 import UIKit
+import RainFeature
 import Foundation
 import Factory
 import AccountData
@@ -17,10 +18,12 @@ import BiometricsManager
 final class MainTabBarModel: ObservableObject {
   @LazyInjected(\.accountDataManager) var accountDataManager
   @LazyInjected(\.biometricsManager) var biometricsManager
-
+  @LazyInjected(\.featureFlagManager) var featureFlagManager
+  
   @LazyInjected(\.accountRepository) var accountRepository
   @LazyInjected(\.devicesRepository) var devicesRepository
   @LazyInjected(\.rainRepository) var rainRepository
+  @LazyInjected(\.rainCardRepository) var rainCardRepository
 
   @LazyInjected(\.pushNotificationService) var pushNotificationService
   @LazyInjected(\.analyticsService) var analyticsService
@@ -51,6 +54,14 @@ final class MainTabBarModel: ObservableObject {
     SavePopupShownUseCase(repository: accountRepository)
   }()
   
+  lazy var rainGetPending3dsChallengesUseCase: RainGetPending3dsChallengesUseCaseProtocol = {
+    RainGetPending3dsChallengesUseCase(repository: rainCardRepository)
+  }()
+  
+  lazy var rainMake3dsChallengeDecisionUseCase: RainMake3dsChallengeDecisionUseCaseProtocol = {
+    RainMake3dsChallengeDecisionUseCase(repository: rainCardRepository)
+  }()
+  
   let accountViewModel: MyAccountViewModel
   let dashboardRepository: DashboardRepository
   
@@ -68,6 +79,7 @@ final class MainTabBarModel: ObservableObject {
     accountDataManager.userCompleteOnboarding = true
     checkGoTransactionDetail()
     UserDefaults.isStartedWithLoginFlow = false
+    notificationObserver()
   }
 }
 
@@ -88,6 +100,7 @@ extension MainTabBarModel {
     checkGoTransactionDetail()
     loginCustomerSupportService()
     dashboardRepository.onAppear()
+    fetchPending3DSChallenged()
   }
   
   func loginCustomerSupportService() {
@@ -158,6 +171,15 @@ extension MainTabBarModel {
     
     if let nextPopup = popupQueue.first {
       popup = nextPopup
+    }
+  }
+  
+  /// Presents the popup immediately if queue is empty or no popup is shown; otherwise adds it to the queue.
+  func presentPopupOrEnqueue(_ popup: Popup) {
+    if popupQueue.isEmpty && self.popup == nil {
+      self.popup = popup
+    } else {
+      popupQueue.append(popup)
     }
   }
   
@@ -235,6 +257,26 @@ extension MainTabBarModel {
     
     analyticsService.set(params: values)
   }
+  
+  func fetchPending3DSChallenged() {
+    guard featureFlagManager.isFeatureFlagEnabled(.pending3DSChallenge) else {
+      return
+    }
+    
+    Task {
+      do {
+        let pendingChallenges = try await rainGetPending3dsChallengesUseCase.execute()
+          .map({ Pending3DSChallenge(entity: $0) })
+        
+        if let firstPendingChallenge = pendingChallenges.first,
+           !popupQueue.contains(where: { $0 == .verifyTransaction(firstPendingChallenge)}) {
+          presentPopupOrEnqueue(.verifyTransaction(firstPendingChallenge))
+        }
+      } catch {
+        log.error("Get Pendding 3DS Challenge Error: \(error.localizedDescription)")
+      }
+    }
+  }
 }
 
 // MARK: Notifications
@@ -246,7 +288,39 @@ extension MainTabBarModel {
     switch event {
     case let .transaction(id):
       openTransactionId(id)
+    default:
+      break
     }
+  }
+
+  // Observe the notification event from the push notification service
+  // including tapping the notification or the notification is received in the foreground
+  func notificationObserver() {
+    pushNotificationService.eventPublisher
+      .receive(on: DispatchQueue.main)
+      .sink { [weak self] event in
+        guard let self,
+              let event
+        else { return }
+        
+        switch event {
+        case let .pending3DSChallenge(id, currency, amount, merchantCountry, merchantName):
+          if self.featureFlagManager.isFeatureFlagEnabled(.pending3DSChallenge) {
+            let pendingChallenge = Pending3DSChallenge(
+              id: id,
+              currency: currency,
+              amount: amount,
+              merchantCountry: merchantCountry,
+              merchantName: merchantName
+            )
+            self.presentPopupOrEnqueue(.verifyTransaction(pendingChallenge))
+          }
+          
+        default:
+          break
+        }
+      }
+      .store(in: &subscribers)
   }
   
   func checkShouldShowNotification() {
@@ -310,11 +384,23 @@ extension MainTabBarModel {
     case cardList
   }
   
-  enum Popup: Identifiable {
-    var id: Self { self }
-    
+  enum Popup: Identifiable, Equatable {
     case notifications
     case specialExperience
     case applePay
+    case verifyTransaction(Pending3DSChallenge)
+    
+    var id: String {
+      switch self {
+      case .verifyTransaction(let transaction):
+        return "verifyTransaction-\(transaction.id)"
+      default:
+        return String(describing: self)
+      }
+    }
+    
+    static func == (lhs: MainTabBarModel.Popup, rhs: MainTabBarModel.Popup) -> Bool {
+      lhs.id == rhs.id
+    }
   }
 }

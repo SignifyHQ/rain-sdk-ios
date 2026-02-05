@@ -17,6 +17,8 @@ public enum RainCardRoute {
   case cancelOrder(cardID: String)
   case getSecretCardInfomation(sessionID: String, cardID: String)
   case createVirtualCard
+  case getPending3dsChallenges
+  case make3dsChallengeDesicion(approvalId: String, parameters: APIChallengeDecisionParameters)
 }
 
 extension RainCardRoute: LFRoute {
@@ -46,12 +48,16 @@ extension RainCardRoute: LFRoute {
       return "/v1/rain/cards/card-secret-info-by-id"
     case .createVirtualCard:
       return "/v1/rain/cards/virtual-card"
+    case .getPending3dsChallenges:
+      return "/v1/rain/transactions/approvals/pending-3ds"
+    case .make3dsChallengeDesicion(let approvalId, _):
+      return "/v1/rain/transactions/approvals/\(approvalId)/decision"
     }
   }
   
   public var httpMethod: HttpMethod {
     switch self {
-    case .getCards, .getCardOrders, .getSecretCardInfomation, .getCardDetail:
+    case .getCards, .getCardOrders, .getSecretCardInfomation, .getCardDetail, .getPending3dsChallenges:
       return .GET
     case .orderPhysicalCard,
         .orderPhysicalCardWithApproval,
@@ -60,7 +66,8 @@ extension RainCardRoute: LFRoute {
         .lockCard,
         .unlockCard,
         .cancelOrder,
-        .createVirtualCard:
+        .createVirtualCard,
+        .make3dsChallengeDesicion:
       return .POST
     }
   }
@@ -100,7 +107,9 @@ extension RainCardRoute: LFRoute {
       return parameters.encoded()
     case let .activatePhysicalCard(_, parameters):
       return parameters.encoded()
-    case .getCardOrders, .cancelOrder, .createVirtualCard:
+    case let .make3dsChallengeDesicion(_, parameters):
+      return parameters.encoded()
+    case .getCardOrders, .cancelOrder, .createVirtualCard, .getPending3dsChallenges:
       return nil
     }
   }
@@ -114,9 +123,9 @@ extension RainCardRoute: LFRoute {
         .unlockCard,
         .getSecretCardInfomation:
       return .url
-    case .orderPhysicalCard, .orderPhysicalCardWithApproval, .activatePhysicalCard:
+    case .orderPhysicalCard, .orderPhysicalCardWithApproval, .activatePhysicalCard, .make3dsChallengeDesicion:
       return .json
-    case .getCardOrders, .cancelOrder, .createVirtualCard:
+    case .getCardOrders, .cancelOrder, .createVirtualCard, .getPending3dsChallenges:
       return nil
     }
   }

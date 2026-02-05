@@ -6,5 +6,6 @@ public enum FeatureFlagKey: String {
   case mfa = "FF_MFA"
   case virtualCardPhrase1 = "FF_VIRTUAL_CARD_PHRASE_1"
   case donationAssets = "FF_DONATION_ASSETS"
+  case pending3DSChallenge = "FF_3DS_PUSH_NOTIFICATION"
   
 }

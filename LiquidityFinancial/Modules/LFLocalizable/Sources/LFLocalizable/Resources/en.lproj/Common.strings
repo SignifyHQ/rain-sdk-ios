@@ -1545,6 +1545,8 @@ We will be in touch shortly to invite you to get your new card.";
 "common.open.button.title" = "Open";
 "common.maybeLater.button.title" = "Maybe later";
 "common.learnMore.button.title" = "Learn more";
+"common.verify.button.title" = "Verify";
+"common.decline.button.title" = "Decline";
 
 "common.search.placeholder" = "Search...";
 
@@ -1882,3 +1884,11 @@ We will be in touch shortly to invite you to get your new card.";
 "activatePhysicalCard.screen.subtitle" = "Enter the last four digits of your physical card to activate it";
 "activatePhysicalCard.activatedCard.title" = "Card activated!";
 "activatePhysicalCard.activatedCard.description" = "Your %@ Card is now active and ready to use for purchases anywhere Visa is accepted as well as ATM withdrawals.";
+
+// MARK: Pending 3DS Challenge
+"pending3DSChallenge.popup.title" = "Help us verify your transaction";
+"pending3DSChallenge.popup.subtitle" = "We detected a recent purchase attempt on your Avalanche card ending in %@. Please verify this transaction to process it.";
+"pending3DSChallenge.popup.title" = "Help us verify your transaction";
+"pending3DSChallenge.details.amount.title" = "Purchase amount";
+"pending3DSChallenge.details.merchant .title" = "Merchant ";
+"pending3DSChallenge.details.location.title" = "Location";

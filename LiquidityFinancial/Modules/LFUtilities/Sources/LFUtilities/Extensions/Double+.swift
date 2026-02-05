@@ -76,6 +76,42 @@ public extension Double {
     return "\(prefix)\(result)"
   }
   
+  /// Returns a String display of the current value with the given currency symbol and fraction digits.
+  /// - Parameters:
+  ///   - currency: The currency unit (e.g. `.usd`). Uses its symbol and max fraction digits.
+  ///   - absoluteValue: If true, display absolute value; otherwise preserve sign.
+  /// - Returns: Formatted string (e.g. "$1,234.56" or "-$1,234.56").
+  func formattedAmount(currency: Constants.CurrencyUnit, absoluteValue: Bool = false) -> String {
+    let formatter = NumberFormatter.usdFormatter
+    formatter.minimumFractionDigits = Constants.FractionDigitsLimit.fiat.minFractionDigits
+    formatter.maximumFractionDigits = currency.maxFractionDigits
+    let value = absoluteValue ? abs(self) : self
+    let isNegative = value < 0.0
+    guard let result = formatter.string(from: abs(value)) else {
+      return String.empty
+    }
+    return "\(isNegative ? "-" : "")\(currency.symbol)\(result)"
+  }
+
+  /// Returns a String display of the current value using the system currency symbol for the given ISO 4217 code (e.g. "USD", "EUR").
+  /// No app-defined currency list needed; the symbol comes from the system.
+  /// - Parameters:
+  ///   - currencyCode: ISO 4217 currency code (e.g. "USD", "EUR", "GBP").
+  ///   - absoluteValue: If true, display absolute value; otherwise preserve sign.
+  /// - Returns: Formatted string (e.g. "$1,234.56" or "€1.234,56" depending on locale), or falls back to code if symbol unavailable.
+  func formattedAmount(currencyCode: String, absoluteValue: Bool = false) -> String {
+    let formatter = NumberFormatter.usdFormatter
+    formatter.minimumFractionDigits = Constants.FractionDigitsLimit.fiat.minFractionDigits
+    formatter.maximumFractionDigits = Constants.FractionDigitsLimit.fiat.maxFractionDigits
+    let value = absoluteValue ? abs(self) : self
+    let isNegative = value < 0.0
+    guard let result = formatter.string(from: abs(value)) else {
+      return String.empty
+    }
+    let symbol = Locale.currencySymbol(for: currencyCode) ?? currencyCode
+    return "\(isNegative ? "-" : "")\(symbol)\(result)"
+  }
+
   /// Returns a String USD display of the current value
   /// - Parameter absoluteValue: Check if it is an absolute value
   /// - Returns: String
@@ -103,6 +139,18 @@ public extension Double {
       return String.empty
     }
     return result
+  }
+}
+
+// MARK: - Locale + Currency symbol from code (no app-defined list)
+public extension Locale {
+  /// Returns the system currency symbol for an ISO 4217 currency code (e.g. "USD" → "$", "EUR" → "€").
+  static func currencySymbol(for currencyCode: String, locale: Locale = .current) -> String? {
+    let formatter = NumberFormatter()
+    formatter.numberStyle = .currency
+    formatter.currencyCode = currencyCode
+    formatter.locale = locale
+    return formatter.currencySymbol
   }
 }
 

@@ -14,4 +14,6 @@ public protocol RainCardRepositoryProtocol {
   func cancelOrder(cardID: String) async throws -> RainCardOrderEntity
   func getSecretCardInformation(sessionID: String, cardID: String) async throws -> RainSecretCardInformationEntity
   func createVirtualCard() async throws -> RainCardEntity
+  func getPending3dsChallenges() async throws -> [Pending3dsChallengeEntity]
+  func make3dsChallengeDecision(approvalId: String, decision: String) async throws
 }

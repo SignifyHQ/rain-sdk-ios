@@ -110,4 +110,29 @@ extension LFCoreNetwork: RainCardAPIProtocol where R == RainCardRoute {
       decoder: .apiDecoder
     )
   }
+  
+  public func getPending3dsChallenges(
+  ) async throws -> [APIPending3dsChallenge] {
+    try await request(
+      RainCardRoute.getPending3dsChallenges,
+      target: [APIPending3dsChallenge].self,
+      failure: LFErrorObject.self,
+      decoder: .apiDecoder
+    )
+  }
+  
+  
+  public func make3dsChallengeDecision(
+    approvalId: String,
+    parameters: APIChallengeDecisionParameters
+  ) async throws {
+    try await requestNoResponse(
+      RainCardRoute.make3dsChallengeDesicion(
+        approvalId: approvalId,
+        parameters: parameters
+      ),
+      failure: LFErrorObject.self,
+      decoder: .apiDecoder
+    )
+  }
 }

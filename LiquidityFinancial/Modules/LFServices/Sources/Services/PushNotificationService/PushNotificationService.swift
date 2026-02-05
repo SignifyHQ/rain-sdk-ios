@@ -15,7 +15,11 @@ extension Container {
 }
 
 public class PushNotificationsService: NSObject {
-  public var event: NotificationEvent?
+  @Published public var event: NotificationEvent?
+  public var eventPublisher: AnyPublisher<NotificationEvent?, Never> {
+    $event.eraseToAnyPublisher()
+  }
+  
   private var apnsToken: Data?
   
   private var subscriptions = Set<AnyCancellable>()
@@ -100,6 +104,23 @@ extension PushNotificationsService: UNUserNotificationCenterDelegate {
   }
   
   public func userNotificationCenter(_ center: UNUserNotificationCenter, willPresent notification: UNNotification, withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
+    let userInfo = notification.request.content.userInfo
+    let payloadType = userInfo["type"] as? String
+    
+    if payloadType == NotificationEvent.pending3DSChallengePayloadType,
+       let id = userInfo["id"] as? String,
+       let currency = userInfo["currency"] as? String,
+       let amount = userInfo["amount"] as? String,
+       let merchantCountry = userInfo["merchantCountry"] as? String,
+       let merchantName = userInfo["merchantName"] as? String {
+      event = .pending3DSChallenge(
+        id: id,
+        currency: currency,
+        amount: amount,
+        merchantCountry: merchantCountry,
+        merchantName: merchantName
+      )
+    }
       // Method called when the notification arrives with the app in foreground.
     completionHandler([.banner, .sound])
   }
@@ -107,9 +128,27 @@ extension PushNotificationsService: UNUserNotificationCenterDelegate {
   private func handleNotification(userInfo: [AnyHashable: Any]) {
     log.info("Handle notification \(userInfo)")
     NotificationsReceived.shared.addNotification(userInfo)
+
+    let payloadType = userInfo["type"] as? String
+
+    if payloadType == NotificationEvent.pending3DSChallengePayloadType,
+       let id = userInfo["id"] as? String,
+       let currency = userInfo["currency"] as? String,
+       let amount = userInfo["amount"] as? String,
+       let merchantCountry = userInfo["merchantCountry"] as? String,
+       let merchantName = userInfo["merchantName"] as? String {
+      event = .pending3DSChallenge(
+        id: id,
+        currency: currency,
+        amount: amount,
+        merchantCountry: merchantCountry,
+        merchantName: merchantName
+      )
+      return
+    }
+
     guard
-      let transactionId = userInfo["transactionId"] as? String,
-      let accountId = userInfo["accountId"] as? String
+      let transactionId = userInfo["transactionId"] as? String
     else {
       return
     }

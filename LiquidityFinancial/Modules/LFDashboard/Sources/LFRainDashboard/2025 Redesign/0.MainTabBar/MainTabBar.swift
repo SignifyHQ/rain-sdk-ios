@@ -9,6 +9,7 @@ import RainOnboarding
 import Factory
 import RainFeature
 import LFAuthentication
+import RainData
 
 public struct MainTabBar: View {
   @Environment(\.scenePhase) var scenePhase
@@ -67,6 +68,8 @@ public struct MainTabBar: View {
         specialExperiencePopup
       case .applePay:
         applePayPopup
+      case .verifyTransaction(let challenge):
+        challengeView(challenge: challenge)
       }
     }
     .onAppear {
@@ -77,6 +80,7 @@ public struct MainTabBar: View {
       perform: { newValue in
         if newValue == .active {
           viewModel.checkGoTransactionDetail()
+          viewModel.fetchPending3DSChallenged()
         }
       }
     )
@@ -175,6 +179,16 @@ extension MainTabBar {
       secondaryAction: {
         viewModel.clearPopup()
         viewModel.presentNextPopupInQueue(removing: .applePay)
+      }
+    )
+  }
+  
+  func challengeView(challenge: Pending3DSChallenge) -> some View {
+    ChallengeView(
+      viewModel: ChallengeViewModel(challenge: challenge),
+      onDimissed: {
+        viewModel.clearPopup()
+        viewModel.fetchPending3DSChallenged()
       }
     )
   }

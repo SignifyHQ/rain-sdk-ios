@@ -196,6 +196,8 @@ extension HomeViewModel {
     switch event {
     case let .transaction(id):
       openTransactionId(id)
+    default:
+      break
     }
   }
   

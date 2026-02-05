@@ -72,4 +72,21 @@ public class RainCardRepository: RainCardRepositoryProtocol {
   public func createVirtualCard() async throws -> RainCardEntity {
     try await rainCardAPI.createVirtualCard()
   }
+  
+  public func getPending3dsChallenges(
+  ) async throws -> [Pending3dsChallengeEntity] {
+    try await rainCardAPI.getPending3dsChallenges()
+  }
+  
+  public func make3dsChallengeDecision(
+    approvalId: String,
+    decision: String
+  ) async throws {
+    let parameters = APIChallengeDecisionParameters(decision: decision)
+    
+    return try await rainCardAPI.make3dsChallengeDecision(
+      approvalId: approvalId,
+      parameters: parameters
+    )
+  }
 }
