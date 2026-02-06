@@ -1,4 +1,5 @@
 import SwiftUI
+import SVGKit
 // swiftlint:disable all
 
 // MARK: - CachedAsyncImage
@@ -304,6 +305,11 @@ private extension CachedAsyncImage {
   }
 
   private func image(from data: Data) throws -> Image {
+    // Detect SVG by header or XML content
+    if isSVG(data: data) {
+      return try svgImage(from: data)
+    }
+
     #if os(macOS)
     if let nsImage = NSImage(data: data) {
       return Image(nsImage: nsImage)
@@ -317,6 +323,21 @@ private extension CachedAsyncImage {
       throw AsyncImage<Content>.LoadingError()
     }
     #endif
+  }
+}
+
+// MARK: - SVG Support
+private extension CachedAsyncImage {
+  private func isSVG(data: Data) -> Bool {
+    guard let string = String(data: data, encoding: .utf8) else { return false }
+    return string.contains("<svg")
+  }
+  
+  private func svgImage(from data: Data) throws -> Image {
+    guard let svgImage = SVGKImage(data: data) else {
+      throw AsyncImage<Content>.LoadingError()
+    }
+    return Image(uiImage: svgImage.uiImage)
   }
 }
 
