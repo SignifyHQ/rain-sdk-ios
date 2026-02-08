@@ -76,12 +76,12 @@ private extension CommonTransactionDetailsView {
       spacing: 4
     ) {
       Text(viewModel.amountValue)
-        .foregroundColor(viewModel.colorForType)
+        .foregroundColor(Colors.textPrimary.swiftUIColor)
         .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.main.value))
       
       if let localAmountFormatted = viewModel.transaction.localAmountFormatted {
         Text(localAmountFormatted)
-          .foregroundColor(viewModel.colorForType)
+          .foregroundColor(Colors.textPrimary.swiftUIColor)
           .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.ultraSmall.value))
       }
       

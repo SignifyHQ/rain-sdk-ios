@@ -51,10 +51,6 @@ public final class CommonTransactionDetailsViewModel: ObservableObject {
     transaction.status == .completed
   }
   
-  var colorForType: Color {
-    transaction.typeColor
-  }
-  
   var amountValue: String {
     transaction.amount.formattedAmount(
       prefix: transaction.isCryptoTransaction ? nil : Constants.CurrencyUnit.usd.rawValue,

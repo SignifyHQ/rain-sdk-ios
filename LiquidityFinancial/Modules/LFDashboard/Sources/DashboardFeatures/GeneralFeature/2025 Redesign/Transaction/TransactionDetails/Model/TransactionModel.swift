@@ -284,12 +284,12 @@ public extension TransactionModel {
     return nil
   }
   
-  var typeColor: Color {
-    if status == .pending {
-      return Colors.blue300.swiftUIColor
+  var statusColor: Color {
+    if status == .declined {
+      return Colors.red400.swiftUIColor
     }
     
-    return Colors.textPrimary.swiftUIColor
+    return Colors.textSecondary.swiftUIColor
   }
   
   var cryptoIconImage: Image? {

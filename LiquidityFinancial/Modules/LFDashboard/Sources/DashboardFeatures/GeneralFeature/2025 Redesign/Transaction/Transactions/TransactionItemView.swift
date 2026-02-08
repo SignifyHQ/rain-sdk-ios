@@ -45,7 +45,7 @@ extension TransactionItemView {
           
           if let status = transaction.status {
             Text(status == .completed ? transaction.completedDateTime : status.localizedDescription())
-              .foregroundColor(Colors.textTertiary.swiftUIColor)
+              .foregroundColor(transaction.statusColor)
               .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.ultraSmall.value))
           }
         }
@@ -57,7 +57,7 @@ extension TransactionItemView {
           spacing: 2
         ) {
           Text(transaction.amountFormatted)
-            .foregroundColor(transaction.typeColor)
+            .foregroundColor(Colors.textPrimary.swiftUIColor)
             .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.small.value))
           
           if isShowingMerchantCurrency,
