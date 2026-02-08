@@ -46,9 +46,13 @@ public struct CardDetailsListView: View {
           viewModel: CreditLimitBreakdownViewModel()
         )
       case .disabledCardList:
-        DisabledCardListView(cards: viewModel.allVirtualCards)
+        DisabledCardListView(
+          allCards: viewModel.allCards
+        )
       case .activatePhysicalCard:
-        ActivatePhysicalCardView(card: viewModel.currentCard) { cardID in
+        ActivatePhysicalCardView(
+          card: viewModel.currentCard
+        ) { cardID in
           viewModel.activePhysicalSuccess(id: cardID)
         }
       case .shippingDetails(let cardDetail):
@@ -150,8 +154,10 @@ private extension CardDetailsListView {
       shippingPost30Days
       canceledCardOrderView
       actionCells
-      cancelCardOrderButton
+      
       Spacer()
+      
+      bottomButtonGroup
     }
   }
 
@@ -235,7 +241,6 @@ private extension CardDetailsListView {
         } else {
           closePhysicalCardCell
         }
-        // Hiding it for now because it is not working, will update for v2
         disabledCardsCell
       }
     }
@@ -351,6 +356,15 @@ private extension CardDetailsListView {
     }
   }
   
+  var bottomButtonGroup: some View {
+    VStack(
+      spacing: 12
+    ) {
+      cancelCardOrderButton
+      customerSupportButton
+    }
+  }
+  
   @ViewBuilder
   var cancelCardOrderButton: some View {
     if viewModel.isShowingCancelOrder {
@@ -360,6 +374,15 @@ private extension CardDetailsListView {
       ) {
         viewModel.onCancelCardOrderTap()
       }
+    }
+  }
+  
+  var customerSupportButton: some View {
+    FullWidthButton(
+      type: .alternativeBordered,
+      title: L10N.Common.ListCard.CustomerSupport.buttonTitle
+    ) {
+      viewModel.onCustomerSupportTap()
     }
   }
   

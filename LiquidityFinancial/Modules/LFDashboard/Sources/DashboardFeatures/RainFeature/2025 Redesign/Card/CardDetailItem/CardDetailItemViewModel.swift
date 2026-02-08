@@ -55,8 +55,12 @@ extension CardDetailItemViewModel {
   
   func showCardInformation(cardMetaData: CardMetaData?) {
     if cardModel.cardType == .physical {
-      let secretText = cardModel.cardStatus == .active ? cardModel.last4 : Constants.Default.physicalCardNumberPlaceholder.rawValue
+      let secretText = (cardModel.cardStatus == .active || cardModel.cardStatus == .closed) ? cardModel.last4 : Constants.Default.physicalCardNumberPlaceholder.rawValue
       cardNumber = "\(Constants.Default.physicalCardNumberPlaceholder.rawValue)\(secretText)"
+      
+      if cardModel.cardStatus == .closed {
+        expirationTime = cardModel.expiryTime
+      }
     } else {
       cardNumber = cardMetaData?.panFormatted ?? "\(Constants.Default.cardNumberPlaceholder.rawValue)\(cardModel.last4)"
       expirationTime = cardModel.expiryTime

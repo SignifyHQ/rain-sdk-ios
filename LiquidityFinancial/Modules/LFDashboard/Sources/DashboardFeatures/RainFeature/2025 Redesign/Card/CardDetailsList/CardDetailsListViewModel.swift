@@ -70,7 +70,7 @@ public final class CardDetailsListViewModel: ObservableObject {
   @Published var isShowingShippingInProgress: Bool = false
   @Published var isShowingShippingPost30Days: Bool = false
   @Published var cardsList: [CardModel] = []
-  @Published var allVirtualCards: [CardModel] = []
+  @Published var allCards: [CardModel] = []
   @Published var currentCard: CardModel = .virtualDefault {
     didSet {
       if currentCardId != currentCard.id {
@@ -126,7 +126,7 @@ public final class CardDetailsListViewModel: ObservableObject {
   }
   
   var shouldShowDisabledCardsButton: Bool {
-    allVirtualCards.filter { $0.cardStatus == .closed }.isNotEmpty && currentCard.cardType != .physical
+    allCards.filter { $0.cardStatus == .closed }.isNotEmpty
   }
   
   var isShowingShippingDetails: Bool {
@@ -311,6 +311,10 @@ extension CardDetailsListViewModel {
   
   func onViewCreditLimitBreakdownTap() {
     navigation = .creditLimitBreakdown
+  }
+  
+  func onCustomerSupportTap() {
+    customerSupportService.openSupportScreen()
   }
   
   func hidePopup() {
@@ -514,8 +518,8 @@ extension CardDetailsListViewModel {
         }
         // Saving the number of all virtual cards (active and closed)
         virtualCardCount = newCards.filter { $0.cardType == .virtual }.count
-        // Storing all virtual cards to show in the disabled virtual cards scren
-        allVirtualCards = newCards.filter({ $0.cardType == .virtual })
+        // Storing all cards to show in the disabled cards scren
+        allCards = newCards
         // Checking if the user has ordered a physical card before
         isPhysicalCardOrderAvailable = newCards.filter { $0.cardType == .physical }.isEmpty
         

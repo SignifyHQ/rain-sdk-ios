@@ -1,22 +1,25 @@
 import Combine
+import Factory
 import LFUtilities
 
 @MainActor
 final class DisabledCardListViewModel: ObservableObject {
-  @Published var allVirtualCardsList: [CardModel] = []
-  @Published var closedVirtualCardsList: [CardModel] = []
+  @LazyInjected(\.customerSupportService) var customerSupportService
+  
+  @Published var allVirtualCards: [CardModel] = []
+  @Published var closedCards: [CardModel] = []
   @Published var currentCard: CardModel
   
-  var usedCardCount: Int {
-    allVirtualCardsList.count
+  var usedVirtualCardCount: Int {
+    allVirtualCards.count
   }
   
-  var remainingCardCount: Int {
-    Constants.virtualCardCountLimit - allVirtualCardsList.count
+  var remainingVirtualCardCount: Int {
+    Constants.virtualCardCountLimit - allVirtualCards.count
   }
   
-  var hasReachedCardLimit: Bool {
-    remainingCardCount <= 0
+  var hasReachedVirtualCardLimit: Bool {
+    remainingVirtualCardCount <= 0
   }
   
   var closedTime: String? {
@@ -28,10 +31,9 @@ final class DisabledCardListViewModel: ObservableObject {
   }
   
   init(
-    cards: [CardModel]
+    allCards: [CardModel]
   ) {
-    self.allVirtualCardsList = cards
-    self.closedVirtualCardsList = cards
+    let closedCardsSorted = allCards
       .filter {
         $0.cardStatus == .closed
       }
@@ -39,7 +41,12 @@ final class DisabledCardListViewModel: ObservableObject {
         ($0.updatedAtDate ?? .distantPast) < ($1.updatedAtDate ?? .distantPast)
       }
     
-    self.currentCard = cards.first ?? .virtualDefault
+    self.allVirtualCards = allCards.filter {
+      $0.cardType == .virtual
+    }
+    
+    self.closedCards = closedCardsSorted
+    self.currentCard = closedCardsSorted.first ?? .virtualDefault
   }
 }
 
@@ -48,14 +55,18 @@ extension DisabledCardListViewModel {
   func onCardItemTap(
     card: CardModel
   ) {
-    guard let tappedIndex = closedVirtualCardsList.firstIndex(where: { $0.id == card.id })
+    guard let tappedIndex = closedCards.firstIndex(where: { $0.id == card.id })
     else {
       return
     }
     
-    closedVirtualCardsList.remove(at: tappedIndex)
-    closedVirtualCardsList.append(card)
+    closedCards.remove(at: tappedIndex)
+    closedCards.append(card)
     
     currentCard = card
+  }
+  
+  func onCustomerSupportTap() {
+    customerSupportService.openSupportScreen()
   }
 }

@@ -71,6 +71,13 @@ struct CardDetailItemView: View {
       
       headerTitleView
     }
+    .onAppear(
+      perform: {
+        if isShowCardNumber {
+          viewModel.showCardInformation(cardMetaData: cardMetaData)
+        }
+      }
+    )
     .onChange(of: cardModel.cardStatus) { _, _ in
       viewModel.cardModel = cardModel
     }
@@ -130,7 +137,7 @@ private extension CardDetailItemView {
       Spacer()
       
       trailingCardView
-        .hidden(viewModel.cardModel.cardType == .physical)
+        .hidden(viewModel.cardModel.cardType == .physical && viewModel.cardModel.cardStatus != .closed)
     }
     .padding(.bottom, 12)
     .padding(.horizontal, 12)

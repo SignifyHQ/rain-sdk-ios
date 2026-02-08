@@ -327,6 +327,7 @@
 "listCard.orderPhysicalCard.title" = "Order Physical Card";
 "listCard.activateCard.buttonTitle" = "Activate %@ Card";
 "listCard.cancelCardOrder.buttonTitle" = "Cancel Card Order";
+"listCard.customerSupport.buttonTitle" = "Customer support";
 "listCard.closeCard.message" = "Are you sure you want to close this card? It will be permanently disabled, and a replacement may not be may not be available immediately.";
 "listCard.closeCard.yesButton.title" = "Yes, Close Card";
 "listCard.closeCard.cancelButton.title" = "Cancel";
@@ -1805,7 +1806,7 @@ We will be in touch shortly to invite you to get your new card.";
 "cardDetailsList.orderPhysical.title" = "Order a physical card";
 "cardDetailsList.closeVirtualCard.title" = "Close virtual card";
 "cardDetailsList.closePhysicalCard.title" = "Close physical card";
-"cardDetailsList.disabledCards.title" = "See disabled virtual cards";
+"cardDetailsList.disabledCards.title" = "See disabled cards";
 "cardDetailsList.createNewVirtualCard.title" = "Request a new virtual card";
 "cardDetailsList.shippingDetails.title" = "Card shipping details";
 "cardDetailsList.activatePhysicalCard.title" = "Activate physical card";

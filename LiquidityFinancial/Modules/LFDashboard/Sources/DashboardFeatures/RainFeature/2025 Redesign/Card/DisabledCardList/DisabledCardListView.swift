@@ -9,26 +9,32 @@ struct DisabledCardListView: View {
   @State private var cardHeight: CGFloat = 200
   
   init(
-    cards: [CardModel]
+    allCards: [CardModel]
   ) {
-    _viewModel = .init(wrappedValue: DisabledCardListViewModel(cards: cards))
+    _viewModel = .init(wrappedValue: DisabledCardListViewModel(allCards: allCards))
   }
   
   var body: some View {
-    ScrollView {
-      VStack(
-        spacing: 24
-      ) {
-        cardsView
-        closedTimeView
-        usedCardsView
-        
-        Spacer()
+    VStack {
+      ScrollView {
+        VStack(
+          spacing: 24
+        ) {
+          cardsView
+          closedTimeView
+          usedCardsView
+          
+          Spacer()
+        }
       }
-      .padding(.top, 8)
-      .padding(.bottom, 16)
-      .padding(.horizontal, 24)
+      
+      Spacer()
+      
+      customerSupportButton
     }
+    .padding(.top, 8)
+    .padding(.bottom, 16)
+    .padding(.horizontal, 24)
     .background(Colors.baseAppBackground2.swiftUIColor)
     .scrollIndicators(.hidden)
     .appNavBar(navigationTitle: L10N.Common.DisabledVirtualCards.Screen.title)
@@ -42,13 +48,13 @@ extension DisabledCardListView {
       alignment: .top
     ) {
       ForEach(
-        Array($viewModel.closedVirtualCardsList.enumerated()),
+        Array($viewModel.closedCards.enumerated()),
         id: \.element.id
       ) { index, $card in
         item(
           card: $card,
           index: index,
-          showingItem: index == viewModel.closedVirtualCardsList.count - 1
+          showingItem: index == viewModel.closedCards.count - 1
         )
       }
     }
@@ -70,7 +76,7 @@ extension DisabledCardListView {
     CardDetailItemView(
       cardModel: card,
       cardMetaData: card.metadata,
-      isShowCardNumber: .constant(false),
+      isShowCardNumber: .constant(true),
       isLoading: .constant(false),
       hasBlurView: !showingItem
     )
@@ -115,7 +121,7 @@ extension DisabledCardListView {
       spacing: 12
     ) {
       (
-        viewModel.hasReachedCardLimit
+        viewModel.hasReachedVirtualCardLimit
         ? GenImages.Images.icoWarningRed
         : GenImages.Images.icoWarningBlue
       )
@@ -124,13 +130,22 @@ extension DisabledCardListView {
       .frame(32)
       
       Text(
-        viewModel.hasReachedCardLimit
+        viewModel.hasReachedVirtualCardLimit
         ? L10N.Common.CardDetailsList.UsedCards.NotAvailable.title(Constants.virtualCardCountLimit, Constants.virtualCardCountLimit)
-        : L10N.Common.CardDetailsList.UsedCards.Available.title(viewModel.usedCardCount, Constants.virtualCardCountLimit, viewModel.remainingCardCount)
+        : L10N.Common.CardDetailsList.UsedCards.Available.title(viewModel.usedVirtualCardCount, Constants.virtualCardCountLimit, viewModel.remainingVirtualCardCount)
       )
       .font(Fonts.regular.swiftUIFont(size: Constants.FontSize.ultraSmall.value))
       .foregroundStyle(Colors.textTertiary.swiftUIColor)
       .multilineTextAlignment(.leading)
+    }
+  }
+  
+  var customerSupportButton: some View {
+    FullWidthButton(
+      type: .alternativeBordered,
+      title: L10N.Common.ListCard.CustomerSupport.buttonTitle
+    ) {
+      viewModel.onCustomerSupportTap()
     }
   }
 }
@@ -138,13 +153,13 @@ extension DisabledCardListView {
 // MARK: Helper Functions
 extension DisabledCardListView {
   private var calculatedCardsHeight: CGFloat {
-    guard !viewModel.closedVirtualCardsList.isEmpty
+    guard !viewModel.closedCards.isEmpty
     else {
       return cardHeight
     }
     
     let offsetSpacing: CGFloat = 42
     // Calculate total height: measured card height + offset for all cards except the first
-    return cardHeight + (offsetSpacing * CGFloat(viewModel.closedVirtualCardsList.count - 1))
+    return cardHeight + (offsetSpacing * CGFloat(viewModel.closedCards.count - 1))
   }
 }
