@@ -7,7 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		191A0A5B2F1DD70B0026656C /* RainSDK in Frameworks */ = {isa = PBXBuildFile; productRef = 191A0A5A2F1DD70B0026656C /* RainSDK */; };
+		1940E11B2F37B1A4003B6718 /* RainSDK in Frameworks */ = {isa = PBXBuildFile; productRef = 1940E11A2F37B1A4003B6718 /* RainSDK */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -27,7 +27,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				191A0A5B2F1DD70B0026656C /* RainSDK in Frameworks */,
+				1940E11B2F37B1A4003B6718 /* RainSDK in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -70,7 +70,7 @@
 			);
 			name = RainSDKDemo;
 			packageProductDependencies = (
-				191A0A5A2F1DD70B0026656C /* RainSDK */,
+				1940E11A2F37B1A4003B6718 /* RainSDK */,
 			);
 			productName = RainSDKDemo;
 			productReference = 191A07FE2F1A1EF90026656C /* RainSDKDemo.app */;
@@ -101,7 +101,7 @@
 			mainGroup = 191A07F52F1A1EF80026656C;
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
-				191A0A592F1DD70B0026656C /* XCLocalSwiftPackageReference "../../../RainSDK" */,
+				1940E1192F37B1A4003B6718 /* XCLocalSwiftPackageReference "../../../rain-sdk-ios" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 191A07FF2F1A1EF90026656C /* Products */;
@@ -352,16 +352,15 @@
 /* End XCConfigurationList section */
 
 /* Begin XCLocalSwiftPackageReference section */
-		191A0A592F1DD70B0026656C /* XCLocalSwiftPackageReference "../../../RainSDK" */ = {
+		1940E1192F37B1A4003B6718 /* XCLocalSwiftPackageReference "../../../rain-sdk-ios" */ = {
 			isa = XCLocalSwiftPackageReference;
-			relativePath = ../../../RainSDK;
+			relativePath = "../../../rain-sdk-ios";
 		};
 /* End XCLocalSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		191A0A5A2F1DD70B0026656C /* RainSDK */ = {
+		1940E11A2F37B1A4003B6718 /* RainSDK */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = 191A0A592F1DD70B0026656C /* XCLocalSwiftPackageReference "../../../RainSDK" */;
 			productName = RainSDK;
 		};
 /* End XCSwiftPackageProductDependency section */
