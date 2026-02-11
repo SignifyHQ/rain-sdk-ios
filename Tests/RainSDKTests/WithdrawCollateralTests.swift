@@ -84,7 +84,7 @@ struct WithdrawCollateralTests {
       tokenAddress: "0x9876543210987654321098765432109876543210"
     )
     
-    await #expect(throws: RainSDKError.internalLogicError(details: "No wallet address found in Portal")) {
+    await #expect(throws: RainSDKError.walletUnavailable) {
       _ = try await manager.withdrawCollateral(
         chainId: 1,
         assetAddresses: assetAddresses,
@@ -360,7 +360,7 @@ struct WithdrawCollateralTests {
 
     let manager = RainSDKManager(portal: mockPortal, transactionBuilder: mockBuilder)
 
-    await #expect(throws: RainSDKError.internalLogicError(details: "No wallet address found in Portal")) {
+    await #expect(throws: RainSDKError.walletUnavailable) {
       _ = try await manager.estimateWithdrawalFee(
         chainId: 1,
         addresses: defaultAddresses,

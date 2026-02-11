@@ -32,6 +32,9 @@ public enum RainSDKError: Error, LocalizedError, Equatable {
   /// RAIN_402: The wallet balance is too low for the withdrawal amount or the required gas fees
   case insufficientFunds(required: String, available: String)
   
+  /// RAIN_403: No wallet address available from Portal (e.g. user has not connected or created a wallet)
+  case walletUnavailable
+  
   // MARK: - 5xx: Internal / Provider Errors
   
   /// RAIN_501: An unhandled error occurred within the Portal SDK or the external wallet provider
@@ -59,6 +62,8 @@ public enum RainSDKError: Error, LocalizedError, Equatable {
       return "RAIN_401"
     case .insufficientFunds:
       return "RAIN_402"
+    case .walletUnavailable:
+      return "RAIN_403"
     case .providerError:
       return "RAIN_501"
     case .internalLogicError:
@@ -84,6 +89,8 @@ public enum RainSDKError: Error, LocalizedError, Equatable {
       return "[\(errorCode)] The user manually cancelled the signature request within the wallet UI."
     case .insufficientFunds(let required, let available):
       return "[\(errorCode)] The wallet balance is too low for the withdrawal amount or the required gas fees. Required: \(required). Available: \(available)."
+    case .walletUnavailable:
+      return "[\(errorCode)] No wallet address available from Portal."
     case .providerError(let underlying):
       return "[\(errorCode)] An unhandled error occurred within the Portal SDK or the external wallet provider. \(underlying.localizedDescription)"
     case .internalLogicError(let details):
