@@ -12,7 +12,7 @@ extension Container {
   
   public var portalService: Factory<PortalServiceProtocol> {
     self {
-      PortalService()
+      RainSDKService(base: PortalService())
     }
     .singleton
   }

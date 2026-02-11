@@ -34,14 +34,16 @@ let package = Package(
     .package(url: "https://github.com/hmlongco/Factory", from: "2.3.1"),
     .package(url: "https://github.com/segmentio/analytics-ios", from: "4.1.8"),
     .package(url: "https://github.com/Datadog/dd-sdk-ios.git", from: "2.4.0"),
-    .package(url: "https://github.com/verygoodsecurity/vgs-collect-ios.git", .exact("1.15.3")),
+    .package(url: "https://github.com/verygoodsecurity/vgs-collect-ios.git", exact: "1.15.3"),
     .package(url: "https://github.com/portal-hq/PortalSwift", from: "6.0.0"),
     .package(url: "https://github.com/FrontFin/mesh-ios-sdk", from: "3.0.0"),
     .package(url: "https://github.com/Boilertalk/Web3.swift.git", from: "0.6.0"),
     .package(url: "https://github.com/web3swift-team/web3swift.git", from: "3.3.0"),
     .package(url: "https://github.com/firebase/firebase-ios-sdk", from: "11.0.0"),
-    .package(url: "https://github.com/googlemaps/ios-places-sdk", from: "10.0.0"),
-    .package(url: "https://github.com/zendesk/sdk_messaging_ios", from: "2.35.0")
+        // Pinned below 10.8: 10.8+ requires Swift 6.2 / Xcode 26; use 10.7.x for Swift 6.1
+    .package(url: "https://github.com/googlemaps/ios-places-sdk", "10.0.0"..<"10.8.0"),
+    .package(url: "https://github.com/zendesk/sdk_messaging_ios", from: "2.35.0"),
+    .package(url: "https://github.com/SignifyHQ/rain-sdk-ios", branch: "tinhnguyen/error-mapping")
   ],
   targets: [
     .target(
@@ -67,7 +69,8 @@ let package = Package(
         .product(name: "Web3PromiseKit", package: "Web3.swift"),
         .product(name: "Web3ContractABI", package: "Web3.swift"),
         .product(name: "web3swift", package: "web3swift"),
-        .product(name: "GooglePlacesSwift", package: "ios-places-sdk")
+        .product(name: "GooglePlacesSwift", package: "ios-places-sdk"),
+        .product(name: "RainSDK", package: "rain-sdk-ios"),
       ],
       resources: [
         .process("Resources")

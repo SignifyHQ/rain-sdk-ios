@@ -82,6 +82,15 @@ enum Configs {
       }
     }
     
+    var rcpPath: String {
+      switch self {
+      case .avalancheMainnet:
+        "https://avalanche-c-chain-rpc.publicnode.com"
+      case .avalancheFuji:
+        "https://avalanche-fuji-c-chain-rpc.publicnode.com"
+      }
+    }
+    
     static func configRPC() -> [String: String] {
       [
         "eip155:43114": "https://avalanche-c-chain-rpc.publicnode.com",

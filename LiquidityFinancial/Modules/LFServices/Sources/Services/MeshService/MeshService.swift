@@ -66,7 +66,7 @@ public extension MeshService {
         log.debug("Mesh Connect. Transfer finished")
       } onEvent: { event in
         log.debug("Mesh Connect. New event: \(event ?? [:])")
-      } onExit: {
+      } onExit: { _ in 
         log.debug("Mesh Connect. Did Exit")
         safelyResume(with: .success(nil))
       }

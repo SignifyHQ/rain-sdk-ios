@@ -174,7 +174,9 @@ public class PortalRepository: PortalRepositoryProtocol {
     do {
       return try await action()
     } catch {
-      if LFPortalError.handlePortalError(error: error) == .sessionExpired {
+      let isSessionExpired = LFPortalError.handlePortalError(error: error) == .sessionExpired
+      || (error as? LFRainSDKError) == .tokenExpired
+      if isSessionExpired {
         guard retryAttempt <= maxRetryAttempts else {
           log.error("Portal session refresh failed. Max number of attempts (\(maxRetryAttempts)) reached")
           throw error

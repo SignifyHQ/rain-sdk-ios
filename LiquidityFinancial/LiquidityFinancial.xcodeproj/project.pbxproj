@@ -54,6 +54,7 @@
 		06D40C032A63DEB300EADB75 /* LoadingPrimary.json in Resources */ = {isa = PBXBuildFile; fileRef = 06D40C022A63DEB300EADB75 /* LoadingPrimary.json */; };
 		06EBE2012A69390700157B32 /* DashboardContainer+Injection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06EBE2002A69390700157B32 /* DashboardContainer+Injection.swift */; };
 		06FB47082A7AAE430050304C /* PinwheelSDK in Frameworks */ = {isa = PBXBuildFile; productRef = 06FB47072A7AAE430050304C /* PinwheelSDK */; };
+		1927B47B2F3B77F900E4E276 /* RainSDK in Frameworks */ = {isa = PBXBuildFile; productRef = 1927B47A2F3B77F900E4E276 /* RainSDK */; };
 		194582362EF4063600DD624D /* intro_video.mp4 in Resources */ = {isa = PBXBuildFile; fileRef = 194582352EF4063600DD624D /* intro_video.mp4 */; };
 		741493462A9912E800F0DC4D /* FirebaseMessaging in Frameworks */ = {isa = PBXBuildFile; productRef = 741493452A9912E800F0DC4D /* FirebaseMessaging */; };
 		741493482A99150E00F0DC4D /* FirebaseMessaging in Frameworks */ = {isa = PBXBuildFile; productRef = 741493472A99150E00F0DC4D /* FirebaseMessaging */; };
@@ -1036,6 +1037,7 @@
 				06D40C012A62AE3700EADB75 /* iPhoneNumberField in Frameworks */,
 				A90B5CBD2B1737960092E430 /* LFAuthentication in Frameworks */,
 				A90B5CB72B16E3C60092E430 /* LFFeatureFlags in Frameworks */,
+				1927B47B2F3B77F900E4E276 /* RainSDK in Frameworks */,
 				06663AF92ADE398E00A3FF12 /* LFAccessibility in Frameworks */,
 				F67060102D70D8BE00FEDAC4 /* RxRelay.xcframework in Frameworks */,
 				A97BF7EE2A5D719000B8F5CA /* Lottie in Frameworks */,
@@ -2445,6 +2447,7 @@
 				066298DB2BB4DF05000C1A0D /* BaseOnboarding */,
 				0627513B2BF5E5A700546864 /* RainFeature */,
 				067C77262BF5E84B00AA8EE1 /* LFRainDashboard */,
+				1927B47A2F3B77F900E4E276 /* RainSDK */,
 			);
 			productName = LiquidityFinancial;
 			productReference = A97BF7BC2A5C602D00B8F5CA /* Avalanche.app */;
@@ -2713,6 +2716,7 @@
 				74BC08612A8CC6F500EFD00C /* XCRemoteSwiftPackageReference "CodeScanner" */,
 				74CB167B2A9853F800C137F3 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
 				E251ADD42DBFAB1F006C9C51 /* XCRemoteSwiftPackageReference "PortalSwift" */,
+				1927B4792F3B77F900E4E276 /* XCRemoteSwiftPackageReference "rain-sdk-ios" */,
 			);
 			preferredProjectObjectVersion = 90;
 			productRefGroup = A97BF7BD2A5C602D00B8F5CA /* Products */;
@@ -3037,6 +3041,10 @@
 				"",
 				"",
 				"",
+				"",
+				"",
+				"",
+				"",
 			);
 		};
 		A99D2F652A9A56CF00947773 /* Swiftlint (Debug Only) */ = {
@@ -3090,6 +3098,10 @@
 				"",
 				"",
 				"",
+				"",
+				"",
+				"",
+				"",
 			);
 		};
 		A9B1DAE42A5FC60C003F3C3C /* Swiftlint (Debug Only) */ = {
@@ -3107,6 +3119,10 @@
 				"else",
 				"  echo \"warning: SwiftLint not installed, download from https://github.com/realm/SwiftLint\"",
 				"fi",
+				"",
+				"",
+				"",
+				"",
 				"",
 				"",
 				"",
@@ -3197,6 +3213,10 @@
 				"",
 				"",
 				"",
+				"",
+				"",
+				"",
+				"",
 			);
 		};
 		A9B448EC2A8389B90029944C /* Swiftlint (Debug Only) */ = {
@@ -3214,6 +3234,10 @@
 				"else",
 				"  echo \"warning: SwiftLint not installed, download from https://github.com/realm/SwiftLint\"",
 				"fi",
+				"",
+				"",
+				"",
+				"",
 				"",
 				"",
 				"",
@@ -3268,6 +3292,10 @@
 				"else",
 				"  echo \"warning: SwiftLint not installed, download from https://github.com/realm/SwiftLint\"",
 				"fi",
+				"",
+				"",
+				"",
+				"",
 				"",
 				"",
 				"",
@@ -4522,6 +4550,14 @@
 				minimumVersion = 2.0.0;
 			};
 		};
+		1927B4792F3B77F900E4E276 /* XCRemoteSwiftPackageReference "rain-sdk-ios" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/SignifyHQ/rain-sdk-ios";
+			requirement = {
+				branch = "tinhnguyen/error-mapping";
+				kind = branch;
+			};
+		};
 		743DA7AB2B43E14C000F5AD8 /* XCRemoteSwiftPackageReference "Factory" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/hmlongco/Factory";
@@ -4914,6 +4950,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 06FB47062A7AAE430050304C /* XCRemoteSwiftPackageReference "pinwheel-ios-sdk" */;
 			productName = PinwheelSDK;
+		};
+		1927B47A2F3B77F900E4E276 /* RainSDK */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 1927B4792F3B77F900E4E276 /* XCRemoteSwiftPackageReference "rain-sdk-ios" */;
+			productName = RainSDK;
 		};
 		741493452A9912E800F0DC4D /* FirebaseMessaging */ = {
 			isa = XCSwiftPackageProductDependency;
