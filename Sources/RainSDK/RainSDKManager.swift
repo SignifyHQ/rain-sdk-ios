@@ -109,7 +109,7 @@ public final class RainSDKManager: RainSDK {
       throw error
     } catch {
       RainLogger.error("Rain SDK: Portal SDK error - \(error.localizedDescription)")
-      throw RainSDKError.providerError(underlying: error)
+      throw RainSDKError.from(underlying: error)
     }
   }
   
@@ -266,31 +266,33 @@ public final class RainSDKManager: RainSDK {
     expiresAt: String,
     nonce: BigUInt?
   ) async throws -> String {
-    let (_, transactionParams) = try await buildTransactionParamForWithdrawAsset(
-      chainId: chainId,
-      assetAddresses: assetAddresses,
-      amount: amount,
-      decimals: decimals,
-      salt: salt,
-      signature: signature,
-      expiresAt: expiresAt,
-      nonce: nil
-    )
-    
-    let chainIdString = Constants.ChainIDFormat.EIP155.format(chainId: chainId)
-    
-    // Sign and send transaction using Portal
-    let ethSendResponse = try await portalForRequest.request(
-      chainId: chainIdString,
-      method: .eth_sendTransaction,
-      params: [transactionParams],
-      options: nil
-    )
+    do {
+      let (_, transactionParams) = try await buildTransactionParamForWithdrawAsset(
+        chainId: chainId,
+        assetAddresses: assetAddresses,
+        amount: amount,
+        decimals: decimals,
+        salt: salt,
+        signature: signature,
+        expiresAt: expiresAt,
+        nonce: nil
+      )
+      
+      let chainIdString = Constants.ChainIDFormat.EIP155.format(chainId: chainId)
+      
+      let ethSendResponse = try await portalForRequest.request(
+        chainId: chainIdString,
+        method: .eth_sendTransaction,
+        params: [transactionParams],
+        options: nil
+      )
 
-    let txHash = ethSendResponse.result as? String ?? "-/-"
-    
-    RainLogger.info("Rain SDK: Withdrawal transaction submitted. Hash: \(txHash)")
-    return txHash
+      let txHash = ethSendResponse.result as? String ?? "-/-"
+      RainLogger.info("Rain SDK: Withdrawal transaction submitted. Hash: \(txHash)")
+      return txHash
+    } catch {
+      throw RainSDKError.from(underlying: error)
+    }
   }
   
   public func estimateWithdrawalFee(
@@ -302,21 +304,24 @@ public final class RainSDKManager: RainSDK {
     signature: String,
     expiresAt: String
   ) async throws -> Double {
-    let (walletAddress, transactionParams) = try await buildTransactionParamForWithdrawAsset(
-      chainId: chainId,
-      assetAddresses: addresses,
-      amount: amount,
-      decimals: decimals,
-      salt: salt,
-      signature: signature,
-      expiresAt: expiresAt,
-      nonce: nil
-    )
-    
-    return try await estimateTransactionFee(
-      chainId: chainId,
-      address: walletAddress,
-      params: transactionParams
-    )
+    do {
+      let (walletAddress, transactionParams) = try await buildTransactionParamForWithdrawAsset(
+        chainId: chainId,
+        assetAddresses: addresses,
+        amount: amount,
+        decimals: decimals,
+        salt: salt,
+        signature: signature,
+        expiresAt: expiresAt,
+        nonce: nil
+      )
+      return try await estimateTransactionFee(
+        chainId: chainId,
+        address: walletAddress,
+        params: transactionParams
+      )
+    } catch {
+      throw RainSDKError.from(underlying: error)
+    }
   }
 }

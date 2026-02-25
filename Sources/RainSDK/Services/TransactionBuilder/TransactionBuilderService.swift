@@ -72,7 +72,7 @@ final class TransactionBuilderService: TransactionBuilderProtocol {
       throw error
     } catch {
       RainLogger.error("Rain SDK: Error calling contract for nonce - \(error.localizedDescription)")
-      throw RainSDKError.providerError(underlying: error)
+      throw RainSDKError.from(underlying: error)
     }
   }
   

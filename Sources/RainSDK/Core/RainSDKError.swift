@@ -13,7 +13,7 @@ public enum RainSDKError: Error, LocalizedError, Equatable {
   
   // MARK: - 2xx: Authentication Errors
   
-  /// RAIN_201: The Portal Session Token has expired or is no longer valid
+  /// RAIN_201: The wallet provider session token has expired or is no longer valid
   case tokenExpired(token: String)
   
   /// RAIN_202: Invalid Rain API Key or insufficient permissions for the requested operation
@@ -32,9 +32,15 @@ public enum RainSDKError: Error, LocalizedError, Equatable {
   /// RAIN_402: The wallet balance is too low for the withdrawal amount or the required gas fees
   case insufficientFunds(required: String, available: String)
   
+  /// RAIN_403: No wallet address available from the wallet provider (e.g. user has not connected or created a wallet)
+  case walletUnavailable
+  
+  /// RAIN_404: Withdrawal reverted because the same amount was withdrawn in a short period; backend returned an already-used withdrawal signature
+  case withdrawalRevertedByNetwork
+  
   // MARK: - 5xx: Internal / Provider Errors
   
-  /// RAIN_501: An unhandled error occurred within the Portal SDK or the external wallet provider
+  /// RAIN_501: An unhandled error occurred within the wallet provider
   case providerError(underlying: Error)
   
   /// RAIN_502: Error processing EIP-712 data or internal state management failure
@@ -59,6 +65,10 @@ public enum RainSDKError: Error, LocalizedError, Equatable {
       return "RAIN_401"
     case .insufficientFunds:
       return "RAIN_402"
+    case .walletUnavailable:
+      return "RAIN_403"
+    case .withdrawalRevertedByNetwork:
+      return "RAIN_404"
     case .providerError:
       return "RAIN_501"
     case .internalLogicError:
@@ -75,7 +85,7 @@ public enum RainSDKError: Error, LocalizedError, Equatable {
     case .invalidConfig(let chainId, let rpcUrl):
       return "[\(errorCode)] The provided RPC URL format or Chain ID is invalid or unsupported. Chain ID: \(chainId). RPC URL: \(rpcUrl)."
     case .tokenExpired(let token):
-      return "[\(errorCode)] The Portal Session Token has expired or is no longer valid. Token: \(token.prefix(10))..."
+      return "[\(errorCode)] The wallet provider session token has expired or is no longer valid. Token: \(token.prefix(10))..."
     case .unauthorized:
       return "[\(errorCode)] Invalid Rain API Key or insufficient permissions for the requested operation."
     case .networkError(let underlying):
@@ -84,8 +94,12 @@ public enum RainSDKError: Error, LocalizedError, Equatable {
       return "[\(errorCode)] The user manually cancelled the signature request within the wallet UI."
     case .insufficientFunds(let required, let available):
       return "[\(errorCode)] The wallet balance is too low for the withdrawal amount or the required gas fees. Required: \(required). Available: \(available)."
+    case .walletUnavailable:
+      return "[\(errorCode)] No wallet address available from the wallet provider."
+    case .withdrawalRevertedByNetwork:
+      return "[\(errorCode)] Execution reverted by the network. Please try again in a few minutes."
     case .providerError(let underlying):
-      return "[\(errorCode)] An unhandled error occurred within the Portal SDK or the external wallet provider. \(underlying.localizedDescription)"
+      return "[\(errorCode)] An unhandled error occurred within the wallet provider. \(underlying.localizedDescription)"
     case .internalLogicError(let details):
       return "[\(errorCode)] Error processing EIP-712 data or internal state management failure. Details: \(details)"
     }
