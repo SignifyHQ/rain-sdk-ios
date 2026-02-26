@@ -79,7 +79,7 @@ extension RainSDKManager {
   ) async throws -> (walletAddress: String, transactionParams: ETHTransactionParam) {
     guard let walletAddress = try await portalForRequest.addresses[PortalNamespace.eip155] ?? nil
     else {
-      throw RainSDKError.internalLogicError(details: "No wallet address found in Portal")
+      throw RainSDKError.walletUnavailable
     }
     
     let chainIdString = Constants.ChainIDFormat.EIP155.format(chainId: chainId)

@@ -162,5 +162,6 @@ All async methods can throw `RainSDKError`. Use `errorCode` for programmatic han
 | RAIN_301 | `networkError(underlying:)` | Network/connectivity failure. |
 | RAIN_401 | `userRejected` | User cancelled the signing request in the wallet. |
 | RAIN_402 | `insufficientFunds(required:available:)` | Balance too low for amount or gas. |
+| RAIN_403 | `walletUnavailable` | No wallet address from Portal (e.g. user has not connected or created a wallet). |
 | RAIN_501 | `providerError(underlying:)` | Portal or provider error. |
 | RAIN_502 | `internalLogicError(details:)` | EIP-712 or internal processing error. |
