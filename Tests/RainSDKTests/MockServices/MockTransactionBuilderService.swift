@@ -98,4 +98,15 @@ final class MockTransactionBuilderService: TransactionBuilderProtocol {
     // Mock implementation - return dummy transaction data
     return "0x" + String(repeating: "a1b2c3d4", count: 16)
   }
+
+  func buildERC20TransferData(
+    chainId: Int,
+    contractAddress: String,
+    walletAddress: String,
+    toAddress: String,
+    amount: BigUInt
+  ) async throws -> String {
+    // Mock implementation - return dummy ERC-20 transfer calldata
+    return "0xa9059cbb" + String(repeating: "0", count: 128)
+  }
 }

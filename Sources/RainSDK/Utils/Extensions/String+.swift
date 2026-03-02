@@ -1,6 +1,8 @@
 import Foundation
 
 extension String {
+  static let empty: String = ""
+  
   func isValidHTTPURL() -> Bool {
     guard
       !self.isEmpty

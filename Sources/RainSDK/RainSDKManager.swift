@@ -10,6 +10,9 @@ public final class RainSDKManager: RainSDK {
 
   // Internal storage for Portal instance (using protocol for testability)
   private var _portal: PortalRequestProtocol?
+
+  /// Wallet provider for address, balance, and signing. Set when `initializePortal` is used; nil in wallet-agnostic mode.
+  private var _walletProvider: (any RainWalletProvider)?
   
   // Transaction builder service
   private var _transactionBuilder: TransactionBuilderProtocol?
@@ -67,7 +70,8 @@ public final class RainSDKManager: RainSDK {
     portal: PortalRequestProtocol?,
     transactionBuilder: TransactionBuilderProtocol?
   ) {
-    self._portal = portal // Portal conforms to PortalRequestProtocol via extension
+    self._portal = portal
+    self._walletProvider = portal.map { PortalWalletProviderAdapter(portal: $0) }
     self._transactionBuilder = transactionBuilder
   }
   
@@ -97,6 +101,7 @@ public final class RainSDKManager: RainSDK {
       
       // Store portal instance (Portal conforms to PortalProtocol via extension)
       _portal = portal
+      _walletProvider = PortalWalletProviderAdapter(portal: portal)
       
       // Initialize transaction builder service with network configs
       _transactionBuilder = TransactionBuilderService(networkConfigs: networkConfigs)
@@ -117,15 +122,20 @@ public final class RainSDKManager: RainSDK {
     // Validate network configs
     try validateNetworkConfigs(networkConfigs)
     
-    // Store network configs
+    // Store network configs; no wallet provider in wallet-agnostic mode
     _networkConfigs = networkConfigs
+    _walletProvider = nil
     
     // Initialize transaction builder service with network configs
     _transactionBuilder = TransactionBuilderService(networkConfigs: networkConfigs)
     
     RainLogger.info("Rain SDK: Initialized in wallet-agnostic mode with \(networkConfigs.count) network(s)")
   }
-  
+
+  public func setWalletProvider(_ provider: (any RainWalletProvider)?) {
+    _walletProvider = provider
+  }
+
   public func buildEIP712Message(
     chainId: Int,
     walletAddress: String,
@@ -317,6 +327,79 @@ public final class RainSDKManager: RainSDK {
         chainId: chainId,
         address: walletAddress,
         params: transactionParams
+      )
+    } catch {
+      throw RainSDKError.from(underlying: error)
+    }
+  }
+
+  // MARK: - Send tokens
+
+  /// Sends native tokens (e.g. ETH, AVAX). Requires a wallet provider (e.g. `initializePortal` or `setWalletProvider`).
+  public func sendNativeToken(
+    chainId: Int,
+    to: String,
+    amount: Double
+  ) async throws -> String {
+    do {
+      guard let provider = _walletProvider else {
+        throw RainSDKError.walletUnavailable
+      }
+      
+      let from = try await provider.address()
+      let params = WalletTransactionParams(
+        from: from,
+        to: to,
+        value: amount.ethToWei.toHexString,
+        data: .empty
+      )
+      
+      return try await provider.sendTransaction(
+        chainId: chainId,
+        params: params
+      )
+    } catch {
+      throw RainSDKError.from(underlying: error)
+    }
+  }
+
+  /// Sends ERC-20 tokens. Requires SDK initialized with network configs and a wallet provider.
+  public func sendERC20Token(
+    chainId: Int,
+    contractAddress: String,
+    to: String,
+    amount: Double,
+    decimals: Int
+  ) async throws -> String {
+    do {
+      guard let transactionBuilder = _transactionBuilder else {
+        throw RainSDKError.sdkNotInitialized
+      }
+      
+      guard let provider = _walletProvider else {
+        throw RainSDKError.walletUnavailable
+      }
+      
+      let from = try await provider.address()
+      let amountBaseUnits = try AmountHelpers.toBaseUnits(amount: amount, decimals: decimals)
+      let data = try await transactionBuilder.buildERC20TransferData(
+        chainId: chainId,
+        contractAddress: contractAddress,
+        walletAddress: from,
+        toAddress: to,
+        amount: amountBaseUnits
+      )
+      
+      let params = WalletTransactionParams(
+        from: from,
+        to: contractAddress,
+        value: 0.ethToWei.toHexString,
+        data: data
+      )
+      
+      return try await provider.sendTransaction(
+        chainId: chainId,
+        params: params
       )
     } catch {
       throw RainSDKError.from(underlying: error)

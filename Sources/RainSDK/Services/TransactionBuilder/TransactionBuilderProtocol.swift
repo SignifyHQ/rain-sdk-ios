@@ -68,4 +68,22 @@ protocol TransactionBuilderProtocol {
     ethereumContractAddress: Web3Core.EthereumAddress,
     withdrawAssetParameter: WithdrawAssetParameter
   ) async throws -> String
+
+  /// Builds ERC-20 transfer(to, amount) transaction data for sending tokens.
+  ///
+  /// - Parameters:
+  ///   - chainId: The chain identifier (used to resolve RPC URL).
+  ///   - contractAddress: The ERC-20 token contract address.
+  ///   - walletAddress: The sender (from) address, used when building the transaction.
+  ///   - toAddress: Recipient address.
+  ///   - amount: Amount in the token's smallest unit (base units).
+  /// - Returns: Hex-encoded calldata (prefixed with "0x") for the transfer call.
+  /// - Throws: RainSDKError if RPC URL or addresses are invalid, or if encoding fails.
+  func buildERC20TransferData(
+    chainId: Int,
+    contractAddress: String,
+    walletAddress: String,
+    toAddress: String,
+    amount: BigUInt
+  ) async throws -> String
 }
