@@ -2,6 +2,7 @@ import Foundation
 import Web3
 import Web3Core
 import web3swift
+import Web3ContractABI
 
 /// Service for building transaction components
 /// Handles EIP-712 message generation, contract interactions, and ABI management
@@ -199,6 +200,56 @@ final class TransactionBuilderService: TransactionBuilderProtocol {
     }
     
     return "0x" + tx
+  }
+
+  /// Builds ERC-20 transfer(to, amount) transaction data.
+  /// Uses the ERC-20 contract interface to encode the transfer call and returns the transaction data (calldata) only.
+  func buildERC20TransferData(
+    chainId: Int,
+    contractAddress: String,
+    walletAddress: String,
+    toAddress: String,
+    amount: BigUInt
+  ) async throws -> String {
+    let rpcURL = try getRpcURL(chainId: chainId)
+    let ethereumFromAddress = EthereumAddress(hexString: walletAddress)
+    
+    let web3 = Web3(rpcURL: rpcURL)
+    let contract = web3.eth.Contract(
+      type: GenericERC20Contract.self,
+      address: EthereumAddress(hexString: contractAddress)
+    )
+    
+    guard let ethereumToAddress = EthereumAddress(hexString: toAddress)
+    else {
+      RainLogger.error("Rain SDK: Error building ERC-20 transfer parameters")
+      throw RainSDKError.internalLogicError(details: "Failed to encode ERC-20")
+    }
+    
+    let tx = contract
+      .transfer(
+        to: ethereumToAddress,
+        value: amount
+      )
+      .createTransaction(
+        nonce: nil,
+        gasPrice: nil,
+        maxFeePerGas: nil,
+        maxPriorityFeePerGas: nil,
+        gasLimit: nil,
+        from: ethereumFromAddress,
+        value: 0,
+        accessList: [:],
+        transactionType: .legacy
+      )
+    
+    guard let tx
+    else {
+      RainLogger.error("Rain SDK: Error building ERC-20 transfer. Could not encode transfer call")
+      throw RainSDKError.internalLogicError(details: "Failed to encode ERC-20")
+    }
+    
+    return tx.data.hex()
   }
 }
 

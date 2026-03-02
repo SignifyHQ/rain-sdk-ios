@@ -29,7 +29,12 @@ public protocol RainSDK {
   func initialize(
     networkConfigs: [NetworkConfig]
   ) async throws
-  
+
+  /// Sets the wallet provider used for send and other wallet operations (e.g. sendNative, sendERC20).
+  /// Call after `initialize(networkConfigs:)` when using a third-party provider (e.g. Web3Auth).
+  /// Pass `nil` to clear. When using Portal, prefer `initializePortal` which sets the provider automatically.
+  func setWalletProvider(_ provider: (any RainWalletProvider)?)
+
   /// Builds an EIP-712 compliant message used for obtaining the admin signature
   /// required for withdrawals.
   ///
@@ -183,4 +188,38 @@ public protocol RainSDK {
     signature: String,
     expiresAt: String
   ) async throws -> Double
+
+  // MARK: - Send tokens
+
+  /// Sends native tokens (e.g. ETH, AVAX) on the specified network.
+  ///
+  /// - Parameters:
+  ///   - chainId: The target blockchain network identifier (e.g. 1 for Ethereum, 43114 for Avalanche).
+  ///   - to: Recipient address.
+  ///   - amount: Human-readable amount (e.g. 1.5 for 1.5 ETH).
+  /// - Returns: The transaction hash of the submitted transaction.
+  /// - Throws: RainSDKError if no wallet provider is set, or if transaction building or submission fails.
+  func sendNativeToken(
+    chainId: Int,
+    to: String,
+    amount: Double
+  ) async throws -> String
+
+  /// Sends ERC-20 tokens on the specified network.
+  ///
+  /// - Parameters:
+  ///   - chainId: The target blockchain network identifier.
+  ///   - contractAddress: The ERC-20 token contract address.
+  ///   - to: Recipient address.
+  ///   - amount: Human-readable amount (e.g. 100.0 for 100 tokens).
+  ///   - decimals: Number of decimal places for the token (e.g. 18 for WETH, 6 for USDC).
+  /// - Returns: The transaction hash of the submitted transaction.
+  /// - Throws: RainSDKError if SDK or wallet provider is not initialized, or if transaction building or submission fails.
+  func sendERC20Token(
+    chainId: Int,
+    contractAddress: String,
+    to: String,
+    amount: Double,
+    decimals: Int
+  ) async throws -> String
 }

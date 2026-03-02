@@ -1,8 +1,7 @@
 import Foundation
 
 enum Constants {
-  /// Chain ID format types
-  /// Currently supports EIP-155, can be extended for other formats in the future
+  /// Chain ID format types (e.g. EIP-155: "eip155:1").
   enum ChainIDFormat {
     case EIP155
     
