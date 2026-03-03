@@ -80,14 +80,15 @@ internal final class PortalWalletProviderAdapter: RainWalletProvider, @unchecked
     chainId: Int
   ) async throws -> [String: Double] {
     let chainIdString = Constants.ChainIDFormat.EIP155.format(chainId: chainId)
-    let erc20Balances = try await portal.getBalances(chainIdString)
+    let tokenBalances = try await portal.getAssets(chainIdString).tokenBalances
     
     // Create portal balances dictionary with ERC20 token balances as initial data
-    var portalBalances: [String: Double] = erc20Balances.reduce(
-      into: [:], { partialResult, balance in
-        partialResult[balance.contractAddress] = balance.balance.asDouble
+    let portalBalances: [String: Double] = tokenBalances?.reduce(into: [:]) { partialResult, balance in
+      if let address = balance.metadata?.tokenAddress,
+         let amount = balance.balance?.asDouble {
+        partialResult[address] = amount
       }
-    )
+    } ?? [:]
     
     return portalBalances
   }

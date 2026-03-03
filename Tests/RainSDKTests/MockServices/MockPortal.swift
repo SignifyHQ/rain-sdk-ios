@@ -17,8 +17,9 @@ final class MockPortal: PortalRequestProtocol {
   // Track request calls for verification
   var requestCalls: [(chainId: String, method: PortalRequestMethod, params: [Any])] = []
 
-  /// Mock result for getBalances (ERC-20 token balances). Set in tests to simulate token list.
-  var mockGetBalancesResult: [FetchedBalance] = []
+  /// Mock result for getAssets. Set in tests to simulate assets response (e.g. tokenBalances).
+  /// When nil, getAssets returns an empty response (tokenBalances: nil).
+  var mockAssetsResponse: AssetsResponse?
 
   init() {
     // Set default mock address
@@ -87,8 +88,8 @@ final class MockPortal: PortalRequestProtocol {
     return portalResult
   }
 
-  func getBalances(_ chainId: String) async throws -> [FetchedBalance] {
-    return mockGetBalancesResult
+  func getAssets(_ chainId: String) async throws -> AssetsResponse {
+    return mockAssetsResponse ?? AssetsResponse(nativeBalance: nil, tokenBalances: nil, nfts: nil)
   }
 
   /// Helper to set mock response for a specific chainId and method
@@ -118,7 +119,7 @@ final class MockPortal: PortalRequestProtocol {
     mockAddresses = [PortalNamespace.eip155: "0x1234567890123456789012345678901234567890"]
     mockResponses = [:]
     mockErrors = [:]
-    mockGetBalancesResult = []
+    mockAssetsResponse = nil
     requestCalls = []
   }
 }

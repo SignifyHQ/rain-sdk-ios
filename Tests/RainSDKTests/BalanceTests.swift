@@ -1,10 +1,15 @@
 import Testing
 import Foundation
-import PortalSwift
+@testable import PortalSwift
 @testable import RainSDK
 
 @Suite("Balance Tests")
 struct BalanceTests {
+
+  /// Empty assets response (no ERC-20 tokens). Use when testing balance APIs with no token list.
+  private static func emptyAssetsResponse() -> AssetsResponse {
+    AssetsResponse(nativeBalance: nil, tokenBalances: nil, nfts: nil)
+  }
 
   // MARK: - getNativeBalance
 
@@ -42,7 +47,6 @@ struct BalanceTests {
   func testGetNativeBalanceSuccess() async throws {
     let mockPortal = MockPortal()
     mockPortal.setMockAddress("0x1234567890123456789012345678901234567890", forNamespace: PortalNamespace.eip155)
-    // Default mock returns PortalProviderRpcResponse(result: "1000000000000000000") => 1.0 ETH
     let configs = [NetworkConfig.testConfig(chainId: 1, rpcUrl: "https://mainnet.infura.io/v3/test")]
     let mockBuilder = MockTransactionBuilderService(networkConfigs: configs)
     let manager = RainSDKManager(portal: mockPortal, transactionBuilder: mockBuilder)
@@ -70,7 +74,7 @@ struct BalanceTests {
   @Test("getERC20Balance returns nil when token is not in balance list")
   func testGetERC20BalanceReturnsNilWhenTokenNotInList() async throws {
     let mockPortal = MockPortal()
-    mockPortal.mockGetBalancesResult = [] // No tokens
+    mockPortal.mockAssetsResponse = Self.emptyAssetsResponse()
     let configs = [NetworkConfig.testConfig(chainId: 1, rpcUrl: "https://mainnet.infura.io/v3/test")]
     let mockBuilder = MockTransactionBuilderService(networkConfigs: configs)
     let manager = RainSDKManager(portal: mockPortal, transactionBuilder: mockBuilder)
@@ -95,7 +99,7 @@ struct BalanceTests {
   @Test("getERC20Balances success returns empty dictionary when no tokens")
   func testGetERC20BalancesSuccessEmpty() async throws {
     let mockPortal = MockPortal()
-    mockPortal.mockGetBalancesResult = []
+    mockPortal.mockAssetsResponse = Self.emptyAssetsResponse()
     let configs = [NetworkConfig.testConfig(chainId: 1, rpcUrl: "https://mainnet.infura.io/v3/test")]
     let mockBuilder = MockTransactionBuilderService(networkConfigs: configs)
     let manager = RainSDKManager(portal: mockPortal, transactionBuilder: mockBuilder)
@@ -118,7 +122,7 @@ struct BalanceTests {
   func testGetBalancesSuccess() async throws {
     let mockPortal = MockPortal()
     mockPortal.setMockAddress("0x1234567890123456789012345678901234567890", forNamespace: PortalNamespace.eip155)
-    // Default eth_getBalance => 1.0 ETH; mockGetBalancesResult empty => no ERC-20
+    mockPortal.mockAssetsResponse = Self.emptyAssetsResponse()
     let configs = [NetworkConfig.testConfig(chainId: 1, rpcUrl: "https://mainnet.infura.io/v3/test")]
     let mockBuilder = MockTransactionBuilderService(networkConfigs: configs)
     let manager = RainSDKManager(portal: mockPortal, transactionBuilder: mockBuilder)
