@@ -333,6 +333,66 @@ public final class RainSDKManager: RainSDK {
     }
   }
 
+  // MARK: - Fetch balances
+
+  /// Fetches the native token balance (e.g. ETH) for the current wallet on the given network via the wallet provider.
+  public func getNativeBalance(chainId: Int) async throws -> Double {
+    do {
+      guard let provider = _walletProvider else {
+        throw RainSDKError.walletUnavailable
+      }
+      
+      return try await provider.getNativeBalance(chainId: chainId)
+    } catch {
+      throw RainSDKError.from(underlying: error)
+    }
+  }
+
+  /// Fetches the ERC-20 balance for a single token by calling getERC20Balances and looking up the given contract address.
+  public func getERC20Balance(chainId: Int, tokenAddress: String) async throws -> Double? {
+    do {
+      guard let provider = _walletProvider else {
+        throw RainSDKError.walletUnavailable
+      }
+      
+      let balances = try await provider.getERC20Balances(chainId: chainId)
+      return balances[tokenAddress]
+    } catch {
+      throw RainSDKError.from(underlying: error)
+    }
+  }
+  
+  /// Fetches ERC-20 token balances for the current wallet on the given network via the wallet provider.
+  public func getERC20Balances(chainId: Int) async throws -> [String: Double] {
+    do {
+      guard let provider = _walletProvider else {
+        throw RainSDKError.walletUnavailable
+      }
+      
+      return try await provider.getERC20Balances(chainId: chainId)
+    } catch {
+      throw RainSDKError.from(underlying: error)
+    }
+  }
+
+  /// Fetches all balances (native + ERC-20) for the current wallet via the wallet provider. Native balance is stored under key `""`.
+  public func getBalances(
+    chainId: Int
+  ) async throws -> [String: Double] {
+    do {
+      guard let provider = _walletProvider else {
+        throw RainSDKError.walletUnavailable
+      }
+      
+      var result = try await provider.getERC20Balances(chainId: chainId)
+      result[""] = try await provider.getNativeBalance(chainId: chainId)
+      
+      return result
+    } catch {
+      throw RainSDKError.from(underlying: error)
+    }
+  }
+
   // MARK: - Send tokens
 
   /// Sends native tokens (e.g. ETH, AVAX). Requires a wallet provider (e.g. `initializePortal` or `setWalletProvider`).

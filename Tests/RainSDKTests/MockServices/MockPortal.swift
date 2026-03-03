@@ -16,7 +16,10 @@ final class MockPortal: PortalRequestProtocol {
   
   // Track request calls for verification
   var requestCalls: [(chainId: String, method: PortalRequestMethod, params: [Any])] = []
-  
+
+  /// Mock result for getBalances (ERC-20 token balances). Set in tests to simulate token list.
+  var mockGetBalancesResult: [FetchedBalance] = []
+
   init() {
     // Set default mock address
     mockAddresses[PortalNamespace.eip155] = "0x1234567890123456789012345678901234567890"
@@ -66,6 +69,9 @@ final class MockPortal: PortalRequestProtocol {
       case .eth_sendTransaction:
         // Return a mock transaction hash
         resultValue = "0x" + String(repeating: "a", count: 64)
+      case .eth_getBalance:
+        // Return wei as decimal string (1e18 = 1 ETH) so adapter's result?.asDouble?.weiToEth yields 1.0
+        resultValue = PortalProviderRpcResponse(jsonrpc: "json", result: "1000000000000000000")
       default:
         resultValue = nil
       }
@@ -80,7 +86,11 @@ final class MockPortal: PortalRequestProtocol {
     
     return portalResult
   }
-  
+
+  func getBalances(_ chainId: String) async throws -> [FetchedBalance] {
+    return mockGetBalancesResult
+  }
+
   /// Helper to set mock response for a specific chainId and method
   func setMockResponse(
     chainId: String,
@@ -108,6 +118,7 @@ final class MockPortal: PortalRequestProtocol {
     mockAddresses = [PortalNamespace.eip155: "0x1234567890123456789012345678901234567890"]
     mockResponses = [:]
     mockErrors = [:]
+    mockGetBalancesResult = []
     requestCalls = []
   }
 }

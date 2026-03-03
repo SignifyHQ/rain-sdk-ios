@@ -12,4 +12,16 @@ public protocol RainWalletProvider: Sendable {
     chainId: Int,
     params: WalletTransactionParams
   ) async throws -> String
+
+  /// Fetches the native token balance (e.g. ETH) for the current wallet on the given network.
+  /// - Parameter chainId: The target blockchain network identifier.
+  /// - Returns: Balance in human-readable form (e.g. 1.5 for 1.5 ETH). Returns 0 if the wallet has no native balance.
+  /// - Throws: RainSDKError if wallet is unavailable or the RPC request fails.
+  func getNativeBalance(chainId: Int) async throws -> Double
+
+  /// Fetches ERC-20 token balances for the current wallet on the given network.
+  /// - Parameter chainId: The target blockchain network identifier.
+  /// - Returns: Dictionary mapping token contract address to balance (human-readable).
+  /// - Throws: RainSDKError if wallet is unavailable or the request fails.
+  func getERC20Balances(chainId: Int) async throws -> [String: Double]
 }

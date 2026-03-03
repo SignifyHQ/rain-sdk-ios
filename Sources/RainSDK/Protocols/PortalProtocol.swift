@@ -7,6 +7,8 @@ import PortalSwift
 internal protocol PortalRequestProtocol {
   var addresses: [PortalNamespace: String?] { get async throws }
   func request(chainId: String, method: PortalRequestMethod, params: [Any], options: RequestOptions?) async throws -> PortalProviderResult
+  /// Fetches ERC-20 (and optionally other) token balances for the current wallet on the given chain (e.g. "eip155:1").
+  func getBalances(_ chainId: String) async throws -> [FetchedBalance]
 }
 
 /// Extension to make Portal conform to PortalRequestProtocol
