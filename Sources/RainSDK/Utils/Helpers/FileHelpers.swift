@@ -1,7 +1,10 @@
 import Foundation
 
 final class FileHelpers {
-  public static func readJSONFile<O: Decodable>(forName name: String, type: O.Type) -> O? {
+  public static func readJSONFile<O: Decodable>(
+    forName name: String,
+    type: O.Type
+  ) -> O? {
     do {
       if let bundlePath = Bundle.module.path(forResource: name, ofType: "json"),
          let jsonData = try String(contentsOfFile: bundlePath).data(using: .utf8) {
