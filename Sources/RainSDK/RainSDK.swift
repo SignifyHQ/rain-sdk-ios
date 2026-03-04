@@ -189,6 +189,47 @@ public protocol RainSDK {
     expiresAt: String
   ) async throws -> Double
 
+  // MARK: - Fetch balances
+
+  /// Fetches the native token balance (e.g. ETH) for the current wallet on the given network.
+  ///
+  /// - Parameter chainId: The target blockchain network identifier (e.g. 1 for Ethereum, 43114 for Avalanche).
+  /// - Returns: Balance in human-readable form (e.g. 1.5 for 1.5 ETH).
+  /// - Throws: RainSDKError if SDK or wallet provider is not initialized, or if the RPC request fails.
+  func getNativeBalance(
+    chainId: Int
+  ) async throws -> Double
+
+  /// Fetches the ERC-20 token balance for a single token for the current wallet on the given network.
+  ///
+  /// - Parameters:
+  ///   - chainId: The target blockchain network identifier (e.g. 1 for Ethereum).
+  ///   - tokenAddress: The ERC-20 token contract address.
+  /// - Returns: Balance in human-readable form (e.g. 100.0 for 100 tokens), or nil if the wallet has no balance for this token or the token is not in the balance list.
+  /// - Throws: RainSDKError if wallet provider is not set, or if the request fails.
+  func getERC20Balance(
+    chainId: Int,
+    tokenAddress: String
+  ) async throws -> Double?
+
+  /// Fetches ERC-20 token balances for the current wallet on the given network.
+  ///
+  /// - Parameter chainId: The target blockchain network identifier (e.g. 1 for Ethereum).
+  /// - Returns: Dictionary mapping token contract address to balance (human-readable). Empty if none or on error.
+  /// - Throws: RainSDKError if SDK or Portal is not initialized, or if the request fails.
+  func getERC20Balances(
+    chainId: Int
+  ) async throws -> [String: Double]
+
+  /// Fetches all balances (native + ERC-20) for the current wallet on the given network.
+  ///
+  /// - Parameter chainId: The target blockchain network identifier (e.g. 1 for Ethereum).
+  /// - Returns: Dictionary mapping token contract address to balance (human-readable). Use key `""` for native token (e.g. ETH).
+  /// - Throws: RainSDKError if wallet provider is not set, or if the request fails.
+  func getBalances(
+    chainId: Int
+  ) async throws -> [String: Double]
+
   // MARK: - Send tokens
 
   /// Sends native tokens (e.g. ETH, AVAX) on the specified network.
