@@ -1,4 +1,5 @@
 import Foundation
+import CoreGraphics
 import PortalSwift
 import Web3
 
@@ -188,6 +189,29 @@ public protocol RainSDK {
     signature: String,
     expiresAt: String
   ) async throws -> Double
+
+  // MARK: - Wallet information
+
+  /// Returns the current wallet address from the wallet provider (e.g. EOA address in 0x... format).
+  ///
+  /// - Returns: The wallet address string.
+  /// - Throws: RainSDKError if wallet provider is not set, or if the address is unavailable.
+  func getWalletAddress(
+  ) async throws -> String
+
+  /// Generates a square QR code image encoding the current wallet address.
+  ///
+  /// - Parameters:
+  ///   - dimension: Output image width and height in pixels (QR is square). Defaults to 256.
+  ///   - backgroundColor: Background color; nil uses black.
+  ///   - foregroundColor: QR module (line) color; nil uses white.
+  /// - Returns: PNG image data of the QR code.
+  /// - Throws: RainSDKError if wallet provider is not set, address is unavailable, or QR code generation fails.
+  func generateWalletAddressQRCode(
+    dimension: Int,
+    backgroundColor: CGColor?,
+    foregroundColor: CGColor?
+  ) async throws -> Data
 
   // MARK: - Fetch balances
 

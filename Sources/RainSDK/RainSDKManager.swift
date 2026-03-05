@@ -1,5 +1,7 @@
 import Foundation
+import CoreGraphics
 import PortalSwift
+import QRCode
 import Web3
 import Web3Core
 import web3swift
@@ -58,10 +60,13 @@ public final class RainSDKManager: RainSDK {
   }
   
   // MARK: - Initialization
-  public init() {}
+  public init(
+  ) {}
   
   /// Internal initializer for testing - allows injecting a custom transaction builder
-  internal init(transactionBuilder: TransactionBuilderProtocol?) {
+  internal init(
+    transactionBuilder: TransactionBuilderProtocol?
+  ) {
     self._transactionBuilder = transactionBuilder
   }
   
@@ -333,10 +338,54 @@ public final class RainSDKManager: RainSDK {
     }
   }
 
+  // MARK: - Wallet information
+
+  /// Returns the current wallet address from the wallet provider.
+  public func getWalletAddress(
+  ) async throws -> String {
+    do {
+      guard let provider = _walletProvider else {
+        throw RainSDKError.walletUnavailable
+      }
+      
+      return try await provider.address()
+    } catch {
+      throw RainSDKError.from(underlying: error)
+    }
+  }
+
+  /// Generates a square QR code image (PNG) encoding the current wallet address.
+  public func generateWalletAddressQRCode(
+    dimension: Int = 256,
+    backgroundColor: CGColor? = nil,
+    foregroundColor: CGColor? = nil
+  ) async throws -> Data {
+    let address = try await getWalletAddress()
+    let bg = backgroundColor ?? CGColor(red: 0, green: 0, blue: 0, alpha: 1)
+    let fg = foregroundColor ?? CGColor(red: 1, green: 1, blue: 1, alpha: 1)
+    
+    guard let image = try? QRCode.build
+      .text(address)
+      .foregroundColor(fg)
+      .backgroundColor(bg)
+      .background.cornerRadius(0)
+      .onPixels.shape(QRCode.PixelShape.RoundedPath(cornerRadiusFraction: 0))
+      .eye.shape(QRCode.EyeShape.RoundedRect())
+      .pupil.shape(QRCode.PupilShape.Square())
+      .generate.image(dimension: dimension, representation: .png())
+    else {
+      throw RainSDKError.internalLogicError(details: "QR code image generation failed")
+    }
+    
+    return image
+  }
+
   // MARK: - Fetch balances
 
   /// Fetches the native token balance (e.g. ETH) for the current wallet on the given network via the wallet provider.
-  public func getNativeBalance(chainId: Int) async throws -> Double {
+  public func getNativeBalance(
+    chainId: Int
+  ) async throws -> Double {
     do {
       guard let provider = _walletProvider else {
         throw RainSDKError.walletUnavailable
@@ -349,7 +398,10 @@ public final class RainSDKManager: RainSDK {
   }
 
   /// Fetches the ERC-20 balance for a single token by calling getERC20Balances and looking up the given contract address.
-  public func getERC20Balance(chainId: Int, tokenAddress: String) async throws -> Double? {
+  public func getERC20Balance(
+    chainId: Int,
+    tokenAddress: String
+  ) async throws -> Double? {
     do {
       guard let provider = _walletProvider else {
         throw RainSDKError.walletUnavailable
@@ -363,7 +415,9 @@ public final class RainSDKManager: RainSDK {
   }
   
   /// Fetches ERC-20 token balances for the current wallet on the given network via the wallet provider.
-  public func getERC20Balances(chainId: Int) async throws -> [String: Double] {
+  public func getERC20Balances(
+    chainId: Int
+  ) async throws -> [String: Double] {
     do {
       guard let provider = _walletProvider else {
         throw RainSDKError.walletUnavailable
