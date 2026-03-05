@@ -447,6 +447,29 @@ public final class RainSDKManager: RainSDK {
     }
   }
 
+  /// Fetches transaction history for the current wallet on the given network using Portal's `getTransactions` API via the wallet provider.
+  public func getTransactions(
+    chainId: Int,
+    limit: Int? = nil,
+    offset: Int? = nil,
+    order: WalletTransactionOrder? = nil
+  ) async throws -> [WalletTransaction] {
+    do {
+      guard let provider = _walletProvider else {
+        throw RainSDKError.walletUnavailable
+      }
+      
+      return try await provider.getTransactions(
+        chainId: chainId,
+        limit: limit,
+        offset: offset,
+        order: order
+      )
+    } catch {
+      throw RainSDKError.from(underlying: error)
+    }
+  }
+
   // MARK: - Send tokens
 
   /// Sends native tokens (e.g. ETH, AVAX). Requires a wallet provider (e.g. `initializePortal` or `setWalletProvider`).
