@@ -254,6 +254,24 @@ public protocol RainSDK {
     chainId: Int
   ) async throws -> [String: Double]
 
+  // MARK: - Transactions
+
+  /// Fetches transaction history for the current wallet on the given network using Portal's `getTransactions` API via the wallet provider.
+  ///
+  /// - Parameters:
+  ///   - chainId: The target blockchain network identifier (e.g. 1 for Ethereum).
+  ///   - limit: Optional maximum number of transactions to return.
+  ///   - offset: Optional offset for pagination.
+  ///   - order: Optional sort order (e.g. newest first).
+  /// - Returns: List of high-level `WalletTransaction` records.
+  /// - Throws: RainSDKError if SDK or wallet provider is not initialized, or if the request fails.
+  func getTransactions(
+    chainId: Int,
+    limit: Int?,
+    offset: Int?,
+    order: WalletTransactionOrder?
+  ) async throws -> [WalletTransaction]
+
   // MARK: - Send tokens
 
   /// Sends native tokens (e.g. ETH, AVAX) on the specified network.
