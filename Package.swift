@@ -16,7 +16,7 @@ let package = Package(
     ),
   ],
   dependencies: [
-    .package(url: "https://github.com/portal-hq/PortalSwift.git", exact: "6.6.0"),
+    .package(url: "https://github.com/portal-hq/PortalSwift.git", exact: "6.11.0"),
     .package(url: "https://github.com/Boilertalk/Web3.swift.git", exact: "0.8.8"),
     .package(url: "https://github.com/web3swift-team/web3swift.git", from: "3.3.2"),
     .package(url: "https://github.com/dagronf/QRCode", exact: "28.0.2")

@@ -31,10 +31,10 @@ extension RainSDKError {
   private static func mapPortalRequestsError(_ error: PortalRequestsError) -> RainSDKError {
     switch error {
     case .unauthorized:
-      return .tokenExpired(token: "")
+      return .tokenExpired
     case .clientError(let message, _):
       if message.contains("SESSION_EXPIRED") || message.contains("401") {
-        return .tokenExpired(token: "")
+        return .tokenExpired
       }
       return .providerError(underlying: error)
     case .internalServerError, .redirectError:
@@ -48,7 +48,7 @@ extension RainSDKError {
     // Common: session expired / invalid API key
     let code = error.code
     if code == 320 || code == PortalErrorCodes.INVALID_API_KEY.rawValue {
-      return .tokenExpired(token: "")
+      return .tokenExpired
     }
     
     // BAD_REQUEST and all other codes: not mapped to userRejected (message wording varies by Portal; app can inspect underlying error)

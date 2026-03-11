@@ -1,4 +1,5 @@
 import Foundation
+import UIKit
 import RainSDK
 import Web3
 import Web3Core
@@ -49,6 +50,9 @@ class RainSDKService: ObservableObject {
         portalSessionToken: portalToken,
         networkConfigs: networkConfigs
       )
+      
+      // Fetch the wallet address to ensure the session token is valid
+      print("Rain SDK: wallet address \(try await sdkManager.getWalletAddress())")
       
       isInitialized = true
       statusMessage = "Initialized successfully with \(networkConfigs.count) network(s)"
@@ -152,6 +156,68 @@ class RainSDKService: ObservableObject {
     )
   }
   
+  // MARK: - Wallet Address & QR
+
+  /// Returns the current wallet address from the wallet provider.
+  func getWalletAddress() async throws -> String {
+    try await sdkManager.getWalletAddress()
+  }
+
+  /// Generates a QR code image (PNG) encoding the current wallet address.
+  func generateWalletAddressQRCode(
+    dimension: Int = 256,
+    backgroundColor: CGColor? = nil,
+    foregroundColor: CGColor? = nil
+  ) async throws -> Data {
+    try await sdkManager.generateWalletAddressQRCode(
+      dimension: dimension,
+      backgroundColor: backgroundColor,
+      foregroundColor: foregroundColor
+    )
+  }
+
+  /// Fetches all balances (native + ERC-20) for the current wallet on the given network. Native balance uses key "".
+  func getBalances(chainId: Int) async throws -> [String: Double] {
+    try await sdkManager.getBalances(chainId: chainId)
+  }
+
+  /// Fetches transaction history for the current wallet on the given network.
+  func getTransactions(
+    chainId: Int,
+    limit: Int? = nil,
+    offset: Int? = nil,
+    order: WalletTransactionOrder? = nil
+  ) async throws -> [WalletTransaction] {
+    try await sdkManager.getTransactions(
+      chainId: chainId,
+      limit: limit,
+      offset: offset,
+      order: order
+    )
+  }
+
+  /// Sends native tokens (e.g. ETH, AVAX) from the current wallet.
+  func sendNativeToken(chainId: Int, to: String, amount: Double) async throws -> String {
+    try await sdkManager.sendNativeToken(chainId: chainId, to: to, amount: amount)
+  }
+
+  /// Sends ERC-20 tokens from the current wallet.
+  func sendERC20Token(
+    chainId: Int,
+    contractAddress: String,
+    to: String,
+    amount: Double,
+    decimals: Int
+  ) async throws -> String {
+    try await sdkManager.sendERC20Token(
+      chainId: chainId,
+      contractAddress: contractAddress,
+      to: to,
+      amount: amount,
+      decimals: decimals
+    )
+  }
+
   // MARK: - Portal Withdraw
 
   /// Execute collateral withdrawal via Portal (build, sign, submit). Requires Portal to be initialized.
