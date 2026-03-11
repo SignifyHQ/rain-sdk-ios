@@ -21,6 +21,9 @@ final class MockPortal: PortalRequestProtocol {
   /// When nil, getAssets returns an empty response (tokenBalances: nil).
   var mockAssetsResponse: AssetsResponse?
 
+  /// Mock result for getTransactions. Returned as-is when getTransactions is called.
+  var mockFetchedTransactions: [FetchedTransaction] = []
+
   init() {
     // Set default mock address
     mockAddresses[PortalNamespace.eip155] = "0x1234567890123456789012345678901234567890"
@@ -92,6 +95,15 @@ final class MockPortal: PortalRequestProtocol {
     return mockAssetsResponse ?? AssetsResponse(nativeBalance: nil, tokenBalances: nil, nfts: nil)
   }
 
+  func getTransactions(
+    _ chainId: String,
+    limit: Int?,
+    offset: Int?,
+    order: TransactionOrder?
+  ) async throws -> [FetchedTransaction] {
+    return mockFetchedTransactions
+  }
+
   /// Helper to set mock response for a specific chainId and method
   func setMockResponse(
     chainId: String,
@@ -120,6 +132,7 @@ final class MockPortal: PortalRequestProtocol {
     mockResponses = [:]
     mockErrors = [:]
     mockAssetsResponse = nil
+    mockFetchedTransactions = []
     requestCalls = []
   }
 }

@@ -49,7 +49,9 @@ internal final class PortalWalletProviderAdapter: RainWalletProvider, @unchecked
   }
 
   /// Fetches native token balance (e.g. ETH) via eth_getBalance and parses the RPC response (PortalProviderRpcResponse → result?.asDouble?.weiToEth).
-  public func getNativeBalance(chainId: Int) async throws -> Double {
+  public func getNativeBalance(
+    chainId: Int
+  ) async throws -> Double {
     let walletAddress = try await address()
     let chainIdString = Constants.ChainIDFormat.EIP155.format(chainId: chainId)
     let response = try await portal.request(
@@ -91,5 +93,24 @@ internal final class PortalWalletProviderAdapter: RainWalletProvider, @unchecked
     } ?? [:]
     
     return portalBalances
+  }
+
+  /// Fetches transaction history via Portal's getTransactions and maps to wallet-agnostic records.
+  public func getTransactions(
+    chainId: Int,
+    limit: Int?,
+    offset: Int?,
+    order: WalletTransactionOrder?
+  ) async throws -> [WalletTransaction] {
+    let chainIdString = Constants.ChainIDFormat.EIP155.format(chainId: chainId)
+    let portalOrder = order?.toPortalOrder
+    let fetchedTransactions = try await portal.getTransactions(
+      chainIdString,
+      limit: limit,
+      offset: offset,
+      order: portalOrder
+    )
+    
+    return fetchedTransactions.map(WalletTransaction.init)
   }
 }
