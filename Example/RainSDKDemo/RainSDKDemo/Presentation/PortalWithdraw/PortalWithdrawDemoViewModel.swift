@@ -42,11 +42,13 @@ class PortalWithdrawDemoViewModel: ObservableObject {
 
   init(initialContract: RainCollateralContractResponse? = nil) {
     self.initialContract = initialContract
+    
     if let saved = AppStorage.getPortalWithdrawRecipientAddress() {
       self.recipientAddress = saved
     } else {
       self.recipientAddress = "0x0C9049B5cCB1C893fc8a5c1CDa8B5cc64c3aA909"
     }
+    
     if let contract = initialContract {
       assets = contract.toAssetModels()
         .filter({ $0.availableBalance > 0 })
@@ -63,6 +65,7 @@ class PortalWithdrawDemoViewModel: ObservableObject {
         self.chainId = chainId
       }
     }
+    
     sdkService.$isInitialized
       .sink { [weak self] _ in
         self?.objectWillChange.send()

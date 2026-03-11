@@ -12,7 +12,7 @@ class PortalWithdrawEntryViewModel: ObservableObject {
   }
 
   /// Verifies the access token by loading credit contracts. Saves token to UserDefaults first; APIClient reads it for headers. On success sets navigationRoute to trigger navigation.
-  func verifyAndLoadContracts() async {
+  func verifyAndLoadContracts(destination: PortalWithdrawRoute.Destination) async {
     let token = userAccessToken.trimmingCharacters(in: .whitespacesAndNewlines)
     guard !token.isEmpty else {
       return
@@ -21,7 +21,7 @@ class PortalWithdrawEntryViewModel: ObservableObject {
     isLoading = true
     error = nil
     navigationRoute = nil
-    
+
     defer {
       isLoading = false
     }
@@ -32,7 +32,12 @@ class PortalWithdrawEntryViewModel: ObservableObject {
 
     do {
       let contract = try await repository.getCreditContracts()
-      navigationRoute = .portalWithdraw(contract: contract)
+      switch destination {
+      case .portalWithdraw:
+        navigationRoute = .portalWithdraw(contract: contract)
+      case .transfer:
+        navigationRoute = .transfer(contract: contract)
+      }
     } catch {
       self.error = error
     }
@@ -47,5 +52,11 @@ extension PortalWithdrawEntryViewModel {
   // MARK: - Navigation
   enum PortalWithdrawRoute: Hashable {
     case portalWithdraw(contract: RainCollateralContractResponse)
+    case transfer(contract: RainCollateralContractResponse)
+
+    enum Destination {
+      case portalWithdraw
+      case transfer
+    }
   }
 }

@@ -2,6 +2,13 @@ import Foundation
 import RainSDK
 import Combine
 
+/// Wallet provider option when not in wallet-agnostic mode (Portal only for now).
+enum WalletProviderOption: String, CaseIterable {
+  case portal = "Portal"
+
+  var displayName: String { rawValue }
+}
+
 /// ViewModel for SDK Connection View
 /// Handles business logic and state management for SDK initialization
 @MainActor
@@ -13,7 +20,7 @@ class SDKConnectionViewModel: ObservableObject {
   // MARK: - Published Properties
   
   /// Portal session token input
-  @Published var portalToken: String = ""
+  @Published var sessionToken: String = ""
   
   /// RPC URL input
   @Published var rpcUrl: String = "https://avalanche-fuji-c-chain-rpc.publicnode.com"
@@ -21,8 +28,11 @@ class SDKConnectionViewModel: ObservableObject {
   /// Chain ID input
   @Published var chainId: String = "43113"
   
-  /// Initialization mode: true for wallet-agnostic, false for Portal
+  /// Initialization mode: true for wallet-agnostic, false for Portal (or other provider)
   @Published var useWalletAgnostic: Bool = false
+
+  /// Selected wallet provider when not wallet-agnostic (Portal only for now)
+  @Published var selectedProvider: WalletProviderOption = .portal
   
   /// Initialization loading state
   @Published var isInitializing: Bool = false
@@ -44,14 +54,14 @@ class SDKConnectionViewModel: ObservableObject {
       && !rpcUrl.isEmpty
       && !chainId.isEmpty
       && Int(chainId) != nil
-      && (useWalletAgnostic || !portalToken.isEmpty)
+      && (useWalletAgnostic || !sessionToken.isEmpty)
   }
   
   // MARK: - Initialization
   
   init(sdkService: RainSDKService = .shared) {
     self.sdkService = sdkService
-    self.portalToken = PortalTokenStorage.getToken() ?? ""
+    self.sessionToken = PortalTokenStorage.getToken() ?? ""
 
     // Observe service state changes
     observeServiceState()
@@ -94,11 +104,14 @@ class SDKConnectionViewModel: ObservableObject {
     if useWalletAgnostic {
       await sdkService.initializeWalletAgnostic(networkConfigs: networkConfigs)
     } else {
-      PortalTokenStorage.saveToken(portalToken)
-      await sdkService.initialize(
-        portalToken: portalToken,
-        networkConfigs: networkConfigs
-      )
+      switch selectedProvider {
+      case .portal:
+        PortalTokenStorage.saveToken(sessionToken)
+        await sdkService.initialize(
+          portalToken: sessionToken,
+          networkConfigs: networkConfigs
+        )
+      }
     }
 
     isInitializing = false
