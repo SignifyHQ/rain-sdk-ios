@@ -14,7 +14,7 @@ public enum RainSDKError: Error, LocalizedError, Equatable {
   // MARK: - 2xx: Authentication Errors
   
   /// RAIN_201: The wallet provider session token has expired or is no longer valid
-  case tokenExpired(token: String)
+  case tokenExpired
   
   /// RAIN_202: Invalid Rain API Key or insufficient permissions for the requested operation
   case unauthorized
@@ -84,8 +84,8 @@ public enum RainSDKError: Error, LocalizedError, Equatable {
       return "[\(errorCode)] Business methods were called before initialize() was successfully completed."
     case .invalidConfig(let chainId, let rpcUrl):
       return "[\(errorCode)] The provided RPC URL format or Chain ID is invalid or unsupported. Chain ID: \(chainId). RPC URL: \(rpcUrl)."
-    case .tokenExpired(let token):
-      return "[\(errorCode)] The wallet provider session token has expired or is no longer valid. Token: \(token.prefix(10))..."
+    case .tokenExpired:
+      return "[\(errorCode)] The wallet provider session token has expired or is no longer valid."
     case .unauthorized:
       return "[\(errorCode)] Invalid Rain API Key or insufficient permissions for the requested operation."
     case .networkError(let underlying):
