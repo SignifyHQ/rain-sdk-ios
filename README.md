@@ -14,6 +14,10 @@ iOS SDK that integrates [Portal](https://portalhq.io) wallet with Rain collatera
 - **Withdrawal transaction building** — Build ABI-encoded withdraw calldata and compose `ETHTransactionParam` for submission.
 - **Full withdrawal flow** — builds the transaction, signs via Portal, and submits; returns the transaction hash.
 - **Fee estimation** — returns the estimated gas cost in the chain’s native token (e.g. ETH).
+- **Wallet information** — get current wallet address and generate a QR code image (PNG) for it.
+- **Balances** — get native and ERC-20 token balances for the current wallet.
+- **Transaction history** — get transactions for the current wallet with optional pagination and sort order (`WalletTransaction`, `WalletTransactionOrder`).
+- **Send tokens** — send native or ERC-20 tokens from the current wallet.
 
 ## Installation
 

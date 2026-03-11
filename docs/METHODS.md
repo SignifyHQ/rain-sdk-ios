@@ -118,6 +118,123 @@ Full withdrawal flow: build tx, sign via Portal, submit. Returns the transaction
 
 ---
 
+## getWalletAddress()
+
+Returns the current wallet address from the wallet provider (e.g. EOA in `0x...` format).
+
+- **Returns:** `String` — wallet address.
+- **Throws:** `RainSDKError.walletUnavailable` when no wallet provider is set.
+- **Requires:** `initializePortal` or `setWalletProvider` first.
+
+---
+
+## generateWalletAddressQRCode(dimension:backgroundColor:foregroundColor:)
+
+Generates a square QR code image (PNG) encoding the current wallet address.
+
+- **Returns:** `Data` — PNG image bytes.
+- **Throws:** `RainSDKError` if wallet is unavailable or QR generation fails.
+- **Requires:** Wallet provider set.
+
+| Parameter | Description |
+|-----------|-------------|
+| `dimension` | Output width/height in pixels (default 256). |
+| `backgroundColor` | Optional `CGColor`; default black. |
+| `foregroundColor` | Optional `CGColor`; default white. |
+
+---
+
+## getTransactions(chainId:limit:offset:order:)
+
+Fetches transaction history for the current wallet on the given network.
+
+- **Returns:** `[WalletTransaction]` — list of transaction records (hash, from, to, value, blockNum, category, metadata, chainId, etc.).
+- **Throws:** `RainSDKError.walletUnavailable` when no wallet provider is set.
+- **Requires:** Wallet provider set (e.g. `initializePortal`).
+
+| Parameter | Description |
+|-----------|-------------|
+| `chainId` | Network chain ID (e.g. 1 for Ethereum). |
+| `limit` | Optional max number of transactions. |
+| `offset` | Optional pagination offset. |
+| `order` | Optional `WalletTransactionOrder` (`.ASC` or `.DESC`). |
+
+---
+
+## getNativeBalance(chainId:)
+
+Fetches the native token balance (e.g. ETH) for the current wallet on the given network.
+
+- **Returns:** `Double` — balance in human-readable form (e.g. 1.5 for 1.5 ETH).
+- **Throws:** `RainSDKError.walletUnavailable` or RPC failure.
+- **Requires:** Wallet provider set.
+
+---
+
+## getERC20Balance(chainId:tokenAddress:)
+
+Fetches the ERC-20 token balance for a single token for the current wallet.
+
+- **Returns:** `Double?` — balance in human-readable form, or `nil` if none.
+- **Throws:** `RainSDKError` if wallet provider not set or request fails.
+- **Requires:** Wallet provider set.
+
+---
+
+## getERC20Balances(chainId:)
+
+Fetches all ERC-20 token balances for the current wallet on the given network.
+
+- **Returns:** `[String: Double]` — token contract address → balance.
+- **Throws:** `RainSDKError` if wallet provider not set or request fails.
+- **Requires:** Wallet provider set.
+
+---
+
+## getBalances(chainId:)
+
+Fetches all balances (native + ERC-20) for the current wallet. Native balance is under key `""`.
+
+- **Returns:** `[String: Double]` — token address → balance; use `""` for native.
+- **Throws:** `RainSDKError` if wallet provider not set or request fails.
+- **Requires:** Wallet provider set.
+
+---
+
+## sendNativeToken(chainId:to:amount:)
+
+Sends native tokens (e.g. ETH, AVAX) from the current wallet.
+
+- **Returns:** Transaction hash string.
+- **Throws:** `RainSDKError` if no wallet provider or send fails.
+- **Requires:** Wallet provider set.
+
+| Parameter | Description |
+|-----------|-------------|
+| `chainId` | Target network chain ID. |
+| `to` | Recipient address. |
+| `amount` | Amount in human-readable form (e.g. 1.5 for 1.5 ETH). |
+
+---
+
+## sendERC20Token(chainId:contractAddress:to:amount:decimals:)
+
+Sends ERC-20 tokens from the current wallet.
+
+- **Returns:** Transaction hash string.
+- **Throws:** `RainSDKError` if SDK or wallet not initialized or send fails.
+- **Requires:** Wallet provider and network configs (e.g. `initializePortal`).
+
+| Parameter | Description |
+|-----------|-------------|
+| `chainId` | Target network chain ID. |
+| `contractAddress` | ERC-20 token contract address. |
+| `to` | Recipient address. |
+| `amount` | Amount in human-readable form. |
+| `decimals` | Token decimals (e.g. 18 for WETH, 6 for USDC). |
+
+---
+
 ## estimateWithdrawalFee(chainId:addresses:amount:decimals:salt:signature:expiresAt:)
 
 Estimates the total fee (gas cost) to execute a collateral withdrawal.
@@ -146,6 +263,8 @@ Estimates the total fee (gas cost) to execute a collateral withdrawal.
 | **EIP712AssetAddresses** | `proxyAddress`, `recipientAddress`, `tokenAddress`. |
 | **WithdrawAssetAddresses** | `contractAddress`, `proxyAddress`, `recipientAddress`, `tokenAddress`. |
 | **ETHTransactionParam** | Composed transaction payload for submission. |
+| **WalletTransaction** | Transaction record: `hash`, `from`, `to`, `value`, `blockNum`, `category`, `metadata`, `chainId`, etc. Returned by `getTransactions`. |
+| **WalletTransactionOrder** | Sort order for transaction history: `.ASC`, `.DESC`. Used in `getTransactions(..., order:)`. |
 
 ---
 
