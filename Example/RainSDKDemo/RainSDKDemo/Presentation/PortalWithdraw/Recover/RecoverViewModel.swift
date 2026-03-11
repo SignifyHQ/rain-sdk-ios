@@ -43,10 +43,12 @@ class RecoverViewModel: ObservableObject {
 
   func performRecover() async {
     guard let method = selectedRecoverMethod else { return }
+    
     if method == .Password && recoverPassword.isEmpty {
       recoverError = NSError(domain: "Recover", code: -1, userInfo: [NSLocalizedDescriptionKey: "Password is required."])
       return
     }
+    
     guard let token = AuthTokenStorage.getToken(), !token.isEmpty else {
       recoverError = NSError(
         domain: "Recover",
@@ -55,8 +57,10 @@ class RecoverViewModel: ObservableObject {
       )
       return
     }
+    
     isRecovering = true
     recoverError = nil
+    
     do {
       let backup = try await backupRepository.fetchBackup(backupMethod: method.rawValue)
       try await sdkService.recover(
@@ -64,6 +68,7 @@ class RecoverViewModel: ObservableObject {
         password: method == .Password ? recoverPassword : nil,
         cipherText: backup.cipherText
       )
+      
       dismissRecoverSheet()
     } catch {
       recoverError = error

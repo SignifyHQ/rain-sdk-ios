@@ -100,16 +100,32 @@ struct SDKConnectionView: View {
         .padding(.vertical, 4)
       
       if !viewModel.useWalletAgnostic {
-        // Portal Token Input
-        VStack(alignment: .leading, spacing: 8) {
-          Text("Portal Session Token")
+        // Wallet provider dropdown (Portal only for now)
+        HStack {
+          Text("Wallet Provider")
             .font(.subheadline)
             .foregroundColor(.secondary)
-          
-          TextField("Enter Portal token", text: $viewModel.portalToken)
-            .textFieldStyle(.roundedBorder)
-            .autocapitalization(.none)
-            .disableAutocorrection(true)
+          Spacer()
+          Picker("Wallet Provider", selection: $viewModel.selectedProvider) {
+            ForEach(WalletProviderOption.allCases, id: \.self) { option in
+              Text(option.displayName).tag(option)
+            }
+          }
+          .pickerStyle(.menu)
+        }
+
+        // Portal Token Input (when Portal is selected)
+        if viewModel.selectedProvider == .portal {
+          VStack(alignment: .leading, spacing: 8) {
+            Text("Session Token")
+              .font(.subheadline)
+              .foregroundColor(.secondary)
+
+            TextField("Enter session token", text: $viewModel.sessionToken)
+              .textFieldStyle(.roundedBorder)
+              .autocapitalization(.none)
+              .disableAutocorrection(true)
+          }
         }
       }
       
@@ -219,7 +235,43 @@ struct SDKConnectionView: View {
           .buttonStyle(.plain)
           
           if !viewModel.useWalletAgnostic {
-            NavigationLink(destination: PortalWithdrawEntryView()) {
+            NavigationLink(destination: WalletAddressDemoView()) {
+              featureButtonContent(
+                icon: "person.crop.circle.fill",
+                title: "Wallet Address & QR",
+                subtitle: "Get wallet address and generate QR code"
+              )
+            }
+            .buttonStyle(.plain)
+
+            NavigationLink(destination: GetBalancesDemoView()) {
+              featureButtonContent(
+                icon: "dollarsign.circle.fill",
+                title: "Get Balances",
+                subtitle: "Fetch native and ERC-20 balances"
+              )
+            }
+            .buttonStyle(.plain)
+
+            NavigationLink(destination: GetTransactionsDemoView()) {
+              featureButtonContent(
+                icon: "list.bullet.rectangle.fill",
+                title: "Get Transactions",
+                subtitle: "Fetch transaction history"
+              )
+            }
+            .buttonStyle(.plain)
+
+            NavigationLink(destination: PortalWithdrawEntryView(destination: .transfer)) {
+              featureButtonContent(
+                icon: "arrow.right.arrow.left.circle.fill",
+                title: "Transfer",
+                subtitle: "Send native or ERC-20 tokens"
+              )
+            }
+            .buttonStyle(.plain)
+
+            NavigationLink(destination: PortalWithdrawEntryView(destination: .portalWithdraw)) {
               featureButtonContent(
                 icon: "wallet.pass.fill",
                 title: "Portal Withdraw",

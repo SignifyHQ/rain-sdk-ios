@@ -1,8 +1,15 @@
 import SwiftUI
 
-/// View shown before Portal Withdraw: user enters access token, verifies by loading credit contracts, then continues to Portal Withdraw.
+/// View shown before Portal Withdraw or Transfer: user enters access token, verifies by loading credit contracts,
+/// then continues to the selected destination.
 struct PortalWithdrawEntryView: View {
-  @StateObject private var viewModel = PortalWithdrawEntryViewModel()
+  @StateObject private var viewModel: PortalWithdrawEntryViewModel
+  private let destination: PortalWithdrawEntryViewModel.PortalWithdrawRoute.Destination
+
+  init(destination: PortalWithdrawEntryViewModel.PortalWithdrawRoute.Destination = .portalWithdraw) {
+    _viewModel = StateObject(wrappedValue: PortalWithdrawEntryViewModel())
+    self.destination = destination
+  }
 
   var body: some View {
     ScrollView {
@@ -16,7 +23,7 @@ struct PortalWithdrawEntryView: View {
       }
       .padding()
     }
-    .navigationTitle("Portal Withdraw")
+    .navigationTitle(destination == .portalWithdraw ? "Portal Withdraw" : "Transfer")
     .navigationBarTitleDisplayMode(.inline)
     .navigationDestination(item: $viewModel.navigationRoute) { route in
       destinationView(for: route)
@@ -28,6 +35,11 @@ struct PortalWithdrawEntryView: View {
     switch route {
     case .portalWithdraw(let contract):
       PortalWithdrawDemoView(initialContract: contract)
+        .onDisappear {
+          viewModel.navigationRoute = nil
+        }
+    case .transfer(let contract):
+      TransferDemoView(initialContract: contract)
         .onDisappear {
           viewModel.navigationRoute = nil
         }
@@ -46,7 +58,7 @@ struct PortalWithdrawEntryView: View {
         .font(.title2)
         .fontWeight(.bold)
 
-      Text("Enter your access token to continue to Portal Withdraw")
+      Text("Enter your access token to continue to \(destination == .portalWithdraw ? "Portal Withdraw" : "Transfer")")
         .font(.subheadline)
         .foregroundColor(.secondary)
         .multilineTextAlignment(.center)
@@ -96,7 +108,7 @@ struct PortalWithdrawEntryView: View {
     Button(action: {
       hideKeyboard()
       Task {
-        await viewModel.verifyAndLoadContracts()
+        await viewModel.verifyAndLoadContracts(destination: destination)
       }
     }) {
       HStack {
@@ -104,9 +116,9 @@ struct PortalWithdrawEntryView: View {
           ProgressView()
             .progressViewStyle(CircularProgressViewStyle(tint: .white))
         } else {
-          Image(systemName: "arrow.right.circle.fill")
+          Image(systemName: destination == .portalWithdraw ? "arrow.down.circle.fill" : "arrow.right.arrow.left.circle.fill")
         }
-        Text("Continue to Portal Withdraw")
+        Text(destination == .portalWithdraw ? "Continue to Portal Withdraw" : "Continue to Transfer")
       }
       .frame(maxWidth: .infinity)
       .padding()
