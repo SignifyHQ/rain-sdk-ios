@@ -10,6 +10,7 @@ class GetTransactionsDemoViewModel: ObservableObject {
   @Published var isLoading: Bool = false
   @Published var statusMessage: String = "Ready"
   @Published var error: Error?
+  @Published var hasFetched: Bool = false
 
   private let sdkService = RainSDKService.shared
 
@@ -43,5 +44,6 @@ class GetTransactionsDemoViewModel: ObservableObject {
       statusMessage = "Failed to get transactions"
     }
     isLoading = false
+    hasFetched = true
   }
 }
