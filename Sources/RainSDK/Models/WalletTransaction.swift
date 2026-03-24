@@ -48,9 +48,9 @@ public struct WalletTransaction: Codable, Equatable, Sendable {
   /// Address that initiated the transaction.
   public var from: String
   /// Address that the transaction was sent to.
-  public var to: String
+  public var to: String?
   /// Value transferred in the transaction.
-  public var value: Float?
+  public var value: Double?
   /// Token Id of an ERC721 token, if applicable.
   public var erc721TokenId: String?
   /// Metadata of an ERC1155 token, if applicable.
@@ -64,7 +64,7 @@ public struct WalletTransaction: Codable, Equatable, Sendable {
   /// Contract details related to the transaction.
   public var rawContract: RawContract?
   /// Metadata associated with the transaction.
-  public var metadata: Metadata
+  public var metadata: Metadata?
   /// ID of the chain associated with the transaction.
   public var chainId: Int
 
@@ -73,15 +73,15 @@ public struct WalletTransaction: Codable, Equatable, Sendable {
     uniqueId: String,
     hash: String,
     from: String,
-    to: String,
-    value: Float?,
+    to: String?,
+    value: Double?,
     erc721TokenId: String?,
     erc1155Metadata: [Erc1155Metadata?]?,
     tokenId: String?,
     asset: String?,
     category: String,
     rawContract: RawContract?,
-    metadata: Metadata,
+    metadata: Metadata?,
     chainId: Int
   ) {
     self.blockNum = blockNum
@@ -104,6 +104,13 @@ public struct WalletTransaction: Codable, Equatable, Sendable {
 // Internal convenience initializer to map directly from Portal's FetchedTransaction.
 extension WalletTransaction {
   init(_ tx: FetchedTransaction) {
+    var metadata: WalletTransaction.Metadata?
+    if let txMetadata = tx.metadata {
+      metadata = WalletTransaction.Metadata(
+        blockTimestamp: txMetadata.blockTimestamp
+      )
+    }
+    
     self.init(
       blockNum: tx.blockNum,
       uniqueId: tx.uniqueId,
@@ -129,9 +136,7 @@ extension WalletTransaction {
           decimal: $0.decimal
         )
       },
-      metadata: WalletTransaction.Metadata(
-        blockTimestamp: tx.metadata.blockTimestamp
-      ),
+      metadata: metadata,
       chainId: tx.chainId
     )
   }
