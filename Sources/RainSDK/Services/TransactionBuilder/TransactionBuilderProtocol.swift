@@ -69,6 +69,16 @@ protocol TransactionBuilderProtocol {
     withdrawAssetParameter: WithdrawAssetParameter
   ) async throws -> String
 
+  /// ABI-encodes a `balanceOf(address)` call for the given wallet address on the given chain.
+  /// - Parameters:
+  ///   - walletAddress: The wallet address to encode as the `_owner` argument.
+  ///   - chainId: The chain identifier used to resolve the RPC URL.
+  /// - Returns: Hex-encoded calldata string (e.g. `"0x70a08231000…"`), or `""` on failure.
+  func encodeBalanceOfCall(
+    walletAddress: String,
+    chainId: Int
+  ) async throws -> String
+
   /// Builds ERC-20 transfer(to, amount) transaction data for sending tokens.
   ///
   /// - Parameters:

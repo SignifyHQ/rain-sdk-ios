@@ -1,6 +1,6 @@
 import Foundation
 
-enum Constants {
+public enum Constants {
   /// Chain ID format types (e.g. EIP-155: "eip155:1").
   enum ChainIDFormat {
     case EIP155
@@ -47,6 +47,12 @@ enum Constants {
     }
   }
   
+  /// ERC-20 token defaults
+  public enum ERC20 {
+    /// Default number of decimal places for ERC-20 tokens (e.g. USDC uses 6, most tokens use 18)
+    public static let defaultDecimals = 18
+  }
+
   /// Contract ABI JSON names
   /// Used to identify contract ABIs for encoding/decoding operations
   enum ContractABI {

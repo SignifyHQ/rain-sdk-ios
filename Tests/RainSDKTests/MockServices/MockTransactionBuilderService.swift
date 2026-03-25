@@ -109,4 +109,12 @@ final class MockTransactionBuilderService: TransactionBuilderProtocol {
     // Mock implementation - return dummy ERC-20 transfer calldata
     return "0xa9059cbb" + String(repeating: "0", count: 128)
   }
+
+  func encodeBalanceOfCall(walletAddress: String, chainId: Int) async throws -> String {
+    // Mock balanceOf(address) calldata: selector + zero-padded address
+    let selector = "70a08231"
+    let cleanAddress = walletAddress.hasPrefix("0x") ? String(walletAddress.dropFirst(2)) : walletAddress
+    let paddedAddress = String(repeating: "0", count: max(0, 64 - cleanAddress.count)) + cleanAddress
+    return "0x" + selector + paddedAddress
+  }
 }

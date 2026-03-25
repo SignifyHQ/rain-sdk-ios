@@ -2,52 +2,82 @@ import Foundation
 
 @MainActor
 class GetBalancesDemoViewModel: ObservableObject {
+
+  // MARK: - Shared Input
+
   @Published var chainId: String = "43113"
-  @Published var balances: [String: Double] = [:]
-  @Published var isLoading: Bool = false
-  @Published var statusMessage: String = "Ready"
-  @Published var error: Error?
+
+  // MARK: - Native Balance
+
+  @Published var nativeBalance: Double?
+  @Published var nativeWalletAddress: String?
+  @Published var isLoadingNative = false
+  @Published var nativeError: Error?
+
+  // MARK: - ERC-20 Balance
+
+  @Published var tokenAddress: String = ""
+  @Published var tokenDecimals: String = "18"
+  @Published var erc20Balance: Double?
+  @Published var erc20WalletAddress: String?
+  @Published var isLoadingERC20 = false
+  @Published var erc20Error: Error?
+
+  // MARK: - Dependencies
 
   private let sdkService = RainSDKService.shared
 
+  // MARK: - Validation
+
   var canFetch: Bool {
-    sdkService.isInitialized
-      && !chainId.isEmpty
-      && Int(chainId) != nil
+    sdkService.isInitialized && chainIdInt != nil
   }
 
-  /// Display label for balance key: "" -> "Native", otherwise shortened address.
-  static func label(for key: String) -> String {
-    if key.isEmpty { return "Native" }
-    if key.count <= 12 { return key }
-    return "\(key.prefix(6))...\(key.suffix(6))"
+  var canFetchERC20: Bool {
+    canFetch && !tokenAddress.trimmingCharacters(in: .whitespaces).isEmpty
   }
 
-  /// Sorted entries for display: native first, then by address.
-  var sortedEntries: [(key: String, value: Double)] {
-    balances.sorted { lhs, rhs in
-      if lhs.key.isEmpty { return true }
-      if rhs.key.isEmpty { return false }
-      return lhs.key < rhs.key
-    }
-  }
+  private var chainIdInt: Int? { Int(chainId) }
 
-  func fetchBalances() async {
-    guard let chainIdInt = Int(chainId), canFetch else { return }
-    isLoading = true
-    statusMessage = "Fetching balances..."
-    error = nil
-    balances = [:]
+  // MARK: - Fetch Native Balance
+
+  func fetchNativeBalance() async {
+    guard let chainId = chainIdInt, canFetch else { return }
+    isLoadingNative = true
+    nativeError = nil
+    nativeBalance = nil
+    nativeWalletAddress = nil
 
     do {
-      let result = try await sdkService.getBalances(chainId: chainIdInt)
-      balances = result
-      statusMessage = "Loaded \(result.count) balance(s)"
-      error = nil
+      nativeWalletAddress = try await sdkService.getWalletAddress()
+      nativeBalance = try await sdkService.getNativeBalance(chainId: chainId)
     } catch {
-      self.error = error
-      statusMessage = "Failed to get balances"
+      nativeError = error
     }
-    isLoading = false
+
+    isLoadingNative = false
+  }
+
+  // MARK: - Fetch ERC-20 Balance
+
+  func fetchERC20Balance() async {
+    guard let chainId = chainIdInt, canFetchERC20 else { return }
+    isLoadingERC20 = true
+    erc20Error = nil
+    erc20Balance = nil
+    erc20WalletAddress = nil
+
+    do {
+      erc20WalletAddress = try await sdkService.getWalletAddress()
+      erc20Balance = try await sdkService.getERC20Balance(
+        chainId: chainId,
+        tokenAddress: tokenAddress.trimmingCharacters(in: .whitespaces),
+        decimals: Int(tokenDecimals)
+      )
+    } catch {
+      erc20Error = error
+    }
+
+    isLoadingERC20 = false
   }
 }

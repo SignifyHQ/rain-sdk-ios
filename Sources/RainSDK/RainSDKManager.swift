@@ -76,8 +76,13 @@ public final class RainSDKManager: RainSDK {
     transactionBuilder: TransactionBuilderProtocol?
   ) {
     self._portal = portal
-    self._walletProvider = portal.map { PortalWalletProviderAdapter(portal: $0) }
     self._transactionBuilder = transactionBuilder
+    self._walletProvider = portal.map {
+      PortalWalletProviderAdapter(
+        portal: $0,
+        transactionBuilder: transactionBuilder
+      )
+    }
   }
   
   public func initializePortal(
@@ -106,10 +111,13 @@ public final class RainSDKManager: RainSDK {
       
       // Store portal instance (Portal conforms to PortalProtocol via extension)
       _portal = portal
-      _walletProvider = PortalWalletProviderAdapter(portal: portal)
-      
       // Initialize transaction builder service with network configs
-      _transactionBuilder = TransactionBuilderService(networkConfigs: networkConfigs)
+      let transactionBuilder = TransactionBuilderService(networkConfigs: networkConfigs)
+      _transactionBuilder = transactionBuilder
+      _walletProvider = PortalWalletProviderAdapter(
+        portal: portal,
+        transactionBuilder: transactionBuilder
+      )
       
       RainLogger.info("Rain SDK: Registered Portal instance successfully with \(networkConfigs.count) network(s)")
     } catch let error as RainSDKError {
@@ -397,18 +405,22 @@ public final class RainSDKManager: RainSDK {
     }
   }
 
-  /// Fetches the ERC-20 balance for a single token by calling getERC20Balances and looking up the given contract address.
+  /// Fetches the ERC-20 balance for a single token via direct RPC `eth_call` (balanceOf).
   public func getERC20Balance(
     chainId: Int,
-    tokenAddress: String
-  ) async throws -> Double? {
+    tokenAddress: String,
+    decimals: Int? = Constants.ERC20.defaultDecimals
+  ) async throws -> Double {
     do {
       guard let provider = _walletProvider else {
         throw RainSDKError.walletUnavailable
       }
-      
-      let balances = try await provider.getERC20Balances(chainId: chainId)
-      return balances[tokenAddress]
+
+      return try await provider.getERC20Balance(
+        chainId: chainId,
+        tokenAddress: tokenAddress,
+        decimals: decimals
+      )
     } catch {
       throw RainSDKError.from(underlying: error)
     }
