@@ -1,6 +1,6 @@
 import Foundation
 
-final class FileHelpers {
+enum FileHelpers {
   public static func readJSONFile<O: Decodable>(
     forName name: String,
     type: O.Type

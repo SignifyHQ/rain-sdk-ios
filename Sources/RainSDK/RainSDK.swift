@@ -224,17 +224,19 @@ public protocol RainSDK {
     chainId: Int
   ) async throws -> Double
 
-  /// Fetches the ERC-20 token balance for a single token for the current wallet on the given network.
+  /// Fetches the ERC-20 token balance for a single token via direct RPC `eth_call` (balanceOf).
   ///
   /// - Parameters:
   ///   - chainId: The target blockchain network identifier (e.g. 1 for Ethereum).
   ///   - tokenAddress: The ERC-20 token contract address.
-  /// - Returns: Balance in human-readable form (e.g. 100.0 for 100 tokens), or nil if the wallet has no balance for this token or the token is not in the balance list.
+  ///   - decimals: Token decimal places (e.g. 6 for USDC, 18 for most tokens). Defaults to 18 when nil.
+  /// - Returns: Balance in human-readable form (e.g. 100.0 for 100 tokens).
   /// - Throws: RainSDKError if wallet provider is not set, or if the request fails.
   func getERC20Balance(
     chainId: Int,
-    tokenAddress: String
-  ) async throws -> Double?
+    tokenAddress: String,
+    decimals: Int?
+  ) async throws -> Double
 
   /// Fetches ERC-20 token balances for the current wallet on the given network.
   ///

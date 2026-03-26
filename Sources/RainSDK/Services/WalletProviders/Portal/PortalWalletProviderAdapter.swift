@@ -1,13 +1,22 @@
 import Foundation
+import Web3
+import Web3Core
+import web3swift
 import PortalSwift
+import Web3ContractABI
 
 /// Portal-based implementation of `RainWalletProvider`.
 /// Used when the SDK is initialized with `initializePortal(...)`.
 internal final class PortalWalletProviderAdapter: RainWalletProvider, @unchecked Sendable {
   private let portal: PortalRequestProtocol
+  private let transactionBuilder: TransactionBuilderProtocol?
 
-  internal init(portal: PortalRequestProtocol) {
+  internal init(
+    portal: PortalRequestProtocol,
+    transactionBuilder: TransactionBuilderProtocol? = nil
+  ) {
     self.portal = portal
+    self.transactionBuilder = transactionBuilder
   }
 
   public func address(
@@ -75,6 +84,42 @@ internal final class PortalWalletProviderAdapter: RainWalletProvider, @unchecked
     }
     
     return ethBalance
+  }
+
+  /// Fetches ERC-20 balance for a single token via direct RPC `eth_call` (balanceOf).
+  /// Mirrors the Android implementation: ABI-encodes `balanceOf(address)`, calls `eth_call`, then parses the hex uint256 result.
+  public func getERC20Balance(
+    chainId: Int,
+    tokenAddress: String,
+    decimals: Int?
+  ) async throws -> Double {
+    guard let transactionBuilder else {
+      throw RainSDKError.sdkNotInitialized
+    }
+    let walletAddress = try await address()
+    let chainIdString = Constants.ChainIDFormat.EIP155.format(chainId: chainId)
+    let callData = try await transactionBuilder.encodeBalanceOfCall(walletAddress: walletAddress, chainId: chainId)
+    let callParams: [String: Any] = [
+      "to": tokenAddress,
+      "data": callData
+    ]
+
+    do {
+      let response = try await portal.request(
+        chainId: chainIdString,
+        method: .eth_call,
+        params: [callParams, "latest"],
+        options: nil
+      )
+
+      let hex = EthereumConverter.extractHexString(from: response)
+      return EthereumConverter.parseHexToDouble(hex, decimals: decimals ?? Constants.ERC20.defaultDecimals)
+    } catch {
+      if error is RainSDKError { throw error }
+      
+      RainLogger.error("Rain SDK: Failed to get ERC20 balance via RPC for token=\(tokenAddress) chainId=\(chainId): \(error)")
+      throw RainSDKError.providerError(underlying: error)
+    }
   }
 
   /// Fetches ERC-20 token balances via Portal's getBalances and returns a contract-address-to-balance dictionary.

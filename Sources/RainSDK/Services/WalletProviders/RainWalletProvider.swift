@@ -21,6 +21,19 @@ public protocol RainWalletProvider: Sendable {
     chainId: Int
   ) async throws -> Double
 
+  /// Fetches the ERC-20 balance for a single token via direct RPC `eth_call` (balanceOf).
+  /// - Parameters:
+  ///   - chainId: The target blockchain network identifier.
+  ///   - tokenAddress: The ERC-20 token contract address.
+  ///   - decimals: Token decimal places (e.g. 6 for USDC, 18 for most tokens). Defaults to 18.
+  /// - Returns: Balance in human-readable form (e.g. 100.0 for 100 tokens).
+  /// - Throws: RainSDKError if wallet is unavailable or the RPC request fails.
+  func getERC20Balance(
+    chainId: Int,
+    tokenAddress: String,
+    decimals: Int?
+  ) async throws -> Double
+
   /// Fetches ERC-20 token balances for the current wallet on the given network.
   /// - Parameter chainId: The target blockchain network identifier.
   /// - Returns: Dictionary mapping token contract address to balance (human-readable).
@@ -44,3 +57,4 @@ public protocol RainWalletProvider: Sendable {
     order: WalletTransactionOrder?
   ) async throws -> [WalletTransaction]
 }
+

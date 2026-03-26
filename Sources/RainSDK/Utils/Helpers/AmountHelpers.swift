@@ -2,7 +2,7 @@ import Foundation
 import Web3
 
 /// Utility functions for amount conversion and validation
-final class AmountHelpers {
+enum AmountHelpers {
   /// Converts a decimal amount (Double) to BigUInt (Wei/Base Units) with precision safety.
   /// Throws an error if the amount has more decimal places than the token allows.
   static func toBaseUnits(

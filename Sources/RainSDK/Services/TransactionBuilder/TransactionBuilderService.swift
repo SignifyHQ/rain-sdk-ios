@@ -202,6 +202,55 @@ final class TransactionBuilderService: TransactionBuilderProtocol {
     return "0x" + tx
   }
 
+  /// ABI-encodes a `balanceOf(address)` call using the RPC URL resolved from `chainId`.
+  func encodeBalanceOfCall(walletAddress: String, chainId: Int) async throws -> String {
+    let rpcURL = try getRpcURL(chainId: chainId)
+
+    guard let url = URL(string: rpcURL),
+          Web3Core.EthereumAddress(walletAddress) != nil
+    else {
+      RainLogger.error("Rain SDK: encodeBalanceOfCall — invalid wallet address or RPC URL for chain \(chainId)")
+      throw RainSDKError.internalLogicError(details: "Invalid wallet address or RPC URL for chain ID \(chainId)")
+    }
+
+    do {
+      let web3 = try await Web3.new(url)
+      
+      guard let address = EthereumAddress(walletAddress) else {
+        throw RainSDKError.internalLogicError(details: "Could not build EthereumAddress from \(walletAddress)")
+      }
+      
+      guard let contract = web3.contract(
+        """
+        [
+          {
+            "constant":true,
+            "inputs":[{"name":"_owner","type":"address"}],
+            "name":"balanceOf",
+            "outputs":[{"name":"balance","type":"uint256"}],
+            "type":"function"
+          }
+        ]
+        """
+      ) else {
+        throw RainSDKError.internalLogicError(details: "Could not build balanceOf contract")
+      }
+      
+      guard let tx = contract.createReadOperation(
+        "balanceOf",
+        parameters: [address as AnyObject],
+        extraData: Data()
+      ) else {
+        throw RainSDKError.internalLogicError(details: "Could not encode balanceOf call")
+      }
+      
+      return "0x" + tx.transaction.data.toHexString()
+    } catch {
+      RainLogger.error("Rain SDK: encodeBalanceOfCall — ABI encoding failed: \(error)")
+      throw RainSDKError.from(underlying: error)
+    }
+  }
+
   /// Builds ERC-20 transfer(to, amount) transaction data.
   /// Uses the ERC-20 contract interface to encode the transfer call and returns the transaction data (calldata) only.
   func buildERC20TransferData(

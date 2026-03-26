@@ -176,6 +176,16 @@ class RainSDKService: ObservableObject {
     )
   }
 
+  /// Fetches the native token balance (e.g. ETH, AVAX) for the current wallet on the given network.
+  func getNativeBalance(chainId: Int) async throws -> Double {
+    try await sdkManager.getNativeBalance(chainId: chainId)
+  }
+
+  /// Fetches the ERC-20 balance for a single token via direct RPC `eth_call` (balanceOf).
+  func getERC20Balance(chainId: Int, tokenAddress: String, decimals: Int? = nil) async throws -> Double {
+    try await sdkManager.getERC20Balance(chainId: chainId, tokenAddress: tokenAddress, decimals: decimals)
+  }
+
   /// Fetches all balances (native + ERC-20) for the current wallet on the given network. Native balance uses key "".
   func getBalances(chainId: Int) async throws -> [String: Double] {
     try await sdkManager.getBalances(chainId: chainId)
