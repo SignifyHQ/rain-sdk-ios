@@ -42,14 +42,23 @@ internal final class PortalWalletProviderAdapter: RainWalletProvider, @unchecked
       data: params.data
     )
     let chainIdString = Constants.ChainIDFormat.EIP155.format(chainId: chainId)
-    
+
+    // Simulate the transaction first via eth_call to catch failures (e.g. insufficient funds)
+    // before broadcasting — no balance fetch needed, the node validates it for free.
+    try await portal.request(
+      chainId: chainIdString,
+      method: .eth_call,
+      params: [ethParam, "latest"],
+      options: nil
+    )
+
     let response = try await portal.request(
       chainId: chainIdString,
       method: .eth_sendTransaction,
       params: [ethParam],
       options: nil
     )
-    
+
     guard let txHash = response.result as? String else {
       throw RainSDKError.internalLogicError(details: "eth_sendTransaction returned no transaction hash")
     }
@@ -122,6 +131,61 @@ internal final class PortalWalletProviderAdapter: RainWalletProvider, @unchecked
     }
   }
 
+  /// Fetches the symbol for an ERC-20 token via direct RPC `eth_call` (symbol()).
+  private func getTokenSymbol(
+    chainId: Int,
+    tokenAddress: String
+  ) async throws -> String? {
+    let chainIdString = Constants.ChainIDFormat.EIP155.format(chainId: chainId)
+    let callParams: [String: Any] = [
+      "to": tokenAddress,
+      "data": "0x95d89b41" // symbol() selector = keccak256("symbol()")[:4]
+    ]
+
+    do {
+      let response = try await portal.request(
+        chainId: chainIdString,
+        method: .eth_call,
+        params: [callParams, "latest"],
+        options: nil
+      )
+      let hex = EthereumConverter.extractHexString(from: response)
+      return EthereumConverter.parseHexToString(hex)
+    } catch {
+      if error is RainSDKError { throw error }
+      RainLogger.error("Rain SDK: Failed to get token symbol via RPC for token=\(tokenAddress) chainId=\(chainId): \(error)")
+      throw RainSDKError.providerError(underlying: error)
+    }
+  }
+
+  /// Fetches the decimal places for an ERC-20 token via direct RPC `eth_call` (decimals()).
+  /// Calls the `decimals()` selector (0x313ce567) on the token contract and parses the uint8 result.
+  private func getTokenDecimals(
+    chainId: Int,
+    tokenAddress: String
+  ) async throws -> Int {
+    let chainIdString = Constants.ChainIDFormat.EIP155.format(chainId: chainId)
+    let callParams: [String: Any] = [
+      "to": tokenAddress,
+      "data": "0x313ce567" // decimals() selector = keccak256("decimals()")[:4]
+    ]
+
+    do {
+      let response = try await portal.request(
+        chainId: chainIdString,
+        method: .eth_call,
+        params: [callParams, "latest"],
+        options: nil
+      )
+      let hex = EthereumConverter.extractHexString(from: response)
+      return EthereumConverter.parseHexToInt(hex)
+    } catch {
+      if error is RainSDKError { throw error }
+      RainLogger.error("Rain SDK: Failed to get token decimals via RPC for token=\(tokenAddress) chainId=\(chainId): \(error)")
+      throw RainSDKError.providerError(underlying: error)
+    }
+  }
+
   /// Fetches ERC-20 token balances via Portal's getBalances and returns a contract-address-to-balance dictionary.
   public func getERC20Balances(
     chainId: Int
@@ -140,7 +204,8 @@ internal final class PortalWalletProviderAdapter: RainWalletProvider, @unchecked
     return portalBalances
   }
 
-  /// Fetches transaction history via Portal's getTransactions and maps to wallet-agnostic records.
+  /// Fetches transaction history via Portal's getTransactions, maps to wallet-agnostic records,
+  /// and auto-enriches missing `value` and `asset` fields via on-chain `decimals()` / `symbol()` calls.
   public func getTransactions(
     chainId: Int,
     limit: Int?,
@@ -155,7 +220,60 @@ internal final class PortalWalletProviderAdapter: RainWalletProvider, @unchecked
       offset: offset,
       order: portalOrder
     )
-    
-    return fetchedTransactions.map(WalletTransaction.init)
+
+    var transactions = fetchedTransactions.map(WalletTransaction.init)
+    await enrichTransactions(&transactions, chainId: chainId)
+    return transactions
+  }
+
+  // MARK: - Transaction Enrichment
+
+  /// Fills in missing `value` and `asset` on each transaction by calling `decimals()` and `symbol()`
+  /// on the token contracts. Fetches each unique contract address once, in parallel.
+  private func enrichTransactions(_ transactions: inout [WalletTransaction], chainId: Int) async {
+    let addresses = Set(
+      transactions.compactMap { tx -> String? in
+        guard let address = tx.rawContract?.address, !address.isEmpty else { return nil }
+        let needsDecimals = tx.value == nil && tx.rawContract?.value != nil && tx.rawContract?.decimal == nil
+        let needsSymbol   = tx.asset?.isEmpty ?? true
+        return (needsDecimals || needsSymbol) ? address : nil
+      }
+    )
+    guard !addresses.isEmpty else { return }
+
+    // Fetch decimals + symbol for each address in parallel
+    var decimalsMap: [String: Int] = [:]
+    var symbolsMap:  [String: String] = [:]
+
+    await withTaskGroup(of: (String, Int?, String?)?.self) { group in
+      for address in addresses {
+        group.addTask { [self] in
+          async let decimals = try? self.getTokenDecimals(chainId: chainId, tokenAddress: address)
+          async let symbol   = try? self.getTokenSymbol(chainId: chainId, tokenAddress: address)
+          return (address, await decimals, await symbol)
+        }
+      }
+      for await result in group {
+        guard let (address, decimals, symbol) = result else { continue }
+        if let decimals { decimalsMap[address] = decimals }
+        if let symbol   { symbolsMap[address]  = symbol }
+      }
+    }
+
+    // Apply enriched data back to transactions
+    for i in transactions.indices {
+      guard let address = transactions[i].rawContract?.address else { continue }
+
+      if transactions[i].value == nil, let hex = transactions[i].rawContract?.value {
+        let decimals = transactions[i].rawContract?.decimal.flatMap { Int($0) }
+          ?? decimalsMap[address]
+          ?? Constants.ERC20.defaultDecimals
+        transactions[i].value = EthereumConverter.parseHexToDouble(hex, decimals: decimals)
+      }
+
+      if transactions[i].asset?.isEmpty ?? true, let symbol = symbolsMap[address] {
+        transactions[i].asset = symbol
+      }
+    }
   }
 }

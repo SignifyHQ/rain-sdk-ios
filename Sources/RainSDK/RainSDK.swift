@@ -232,6 +232,13 @@ public protocol RainSDK {
   ///   - decimals: Token decimal places (e.g. 6 for USDC, 18 for most tokens). Defaults to 18 when nil.
   /// - Returns: Balance in human-readable form (e.g. 100.0 for 100 tokens).
   /// - Throws: RainSDKError if wallet provider is not set, or if the request fails.
+  /// Fetches the decimal places for an ERC-20 token via direct RPC `eth_call` (decimals()).
+  ///
+  /// - Parameters:
+  ///   - chainId: The target blockchain network identifier.
+  ///   - tokenAddress: The ERC-20 token contract address.
+  /// - Returns: Token decimal places (e.g. 18 for WETH, 6 for USDC).
+  /// - Throws: RainSDKError if wallet provider is not set, or if the request fails.
   func getERC20Balance(
     chainId: Int,
     tokenAddress: String,
