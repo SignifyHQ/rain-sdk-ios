@@ -9,12 +9,15 @@ struct PortalWithdrawDemoView: View {
   @StateObject private var recoverViewModel: RecoverViewModel
   @State private var hasShownRecoverOnAppear = false
 
+  @Environment(\.dismiss) private var dismiss
+  private let popToRoot: (() -> Void)?
+
   /// When `initialContract` is provided (e.g. from entry after token verification), assets are derived from it. Otherwise the view model may load contracts itself.
-  init(initialContract: RainCollateralContractResponse? = nil) {
+  init(initialContract: RainCollateralContractResponse? = nil, popToRoot: (() -> Void)? = nil) {
     _viewModel = StateObject(wrappedValue: PortalWithdrawDemoViewModel(initialContract: initialContract))
     _recoverViewModel = StateObject(wrappedValue: RecoverViewModel())
+    self.popToRoot = popToRoot
   }
-  @Environment(\.dismiss) private var dismiss
 
   var body: some View {
     ZStack {
@@ -40,7 +43,11 @@ struct PortalWithdrawDemoView: View {
     .toolbar {
       ToolbarItem(placement: .navigationBarTrailing) {
         Button("Done") {
-          dismiss()
+          if let popToRoot {
+            popToRoot()
+          } else {
+            dismiss()
+          }
         }
       }
     }
@@ -230,7 +237,15 @@ struct PortalWithdrawDemoView: View {
   private func assetDropdownLabel(for asset: AssetModel) -> String {
     let symbol = asset.type?.rawValue.uppercased() ?? "Asset"
     let balance = asset.availableBalanceFormatted
-    return "\(symbol) (\(balance) available)"
+    
+    guard asset.type != .avax, !asset.id.isEmpty else {
+      return "\(symbol) (\(balance) available)"
+    }
+    
+    let shortId = asset.id.count > 12
+      ? "\(asset.id.prefix(6))...\(asset.id.suffix(6))"
+      : asset.id
+    return "\(symbol) (\(balance) available)\n\(shortId)"
   }
 
   private func inputField(title: String, text: Binding<String>, placeholder: String) -> some View {
@@ -274,6 +289,18 @@ struct PortalWithdrawDemoView: View {
     .disabled(!viewModel.canWithdraw || viewModel.isProcessing)
   }
 
+  // MARK: - Helpers
+
+  private func snowtraceURL(hash: String, chainId: Int) -> URL? {
+    let base: String
+    switch chainId {
+    case 43114: base = "https://snowtrace.io/tx/"
+    case 43113: base = "https://testnet.snowtrace.io/tx/"
+    default:    return nil
+    }
+    return URL(string: base + hash)
+  }
+
   // MARK: - Result Section
 
   private func resultSection(txHash: String) -> some View {
@@ -304,12 +331,24 @@ struct PortalWithdrawDemoView: View {
         }
       }
 
-      Text(txHash)
-        .font(.system(.caption, design: .monospaced))
-        .padding()
-        .background(Color(.systemBackground))
-        .cornerRadius(8)
-        .textSelection(.enabled)
+      Group {
+        if let url = snowtraceURL(hash: txHash, chainId: viewModel.chainId) {
+          Link(destination: url) {
+            Text(txHash)
+              .font(.system(.caption, design: .monospaced))
+              .underline()
+              .foregroundColor(.blue)
+              .frame(maxWidth: .infinity, alignment: .leading)
+          }
+        } else {
+          Text(txHash)
+            .font(.system(.caption, design: .monospaced))
+            .frame(maxWidth: .infinity, alignment: .leading)
+        }
+      }
+      .padding()
+      .background(Color(.systemBackground))
+      .cornerRadius(8)
     }
     .padding()
     .background(Color(.systemGray6))
