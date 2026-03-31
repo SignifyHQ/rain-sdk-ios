@@ -7,9 +7,11 @@ struct TransferDemoView: View {
   @StateObject private var recoverViewModel = RecoverViewModel()
   @State private var hasShownRecoverOnAppear = false
   @Environment(\.dismiss) private var dismiss
+  private let popToRoot: (() -> Void)?
 
-  init(initialContract: RainCollateralContractResponse? = nil) {
+  init(initialContract: RainCollateralContractResponse? = nil, popToRoot: (() -> Void)? = nil) {
     _viewModel = StateObject(wrappedValue: TransferDemoViewModel(initialContract: initialContract))
+    self.popToRoot = popToRoot
   }
 
   var body: some View {
@@ -36,7 +38,11 @@ struct TransferDemoView: View {
     .toolbar {
       ToolbarItem(placement: .navigationBarTrailing) {
         Button("Done") {
-          dismiss()
+          if let popToRoot {
+            popToRoot()
+          } else {
+            dismiss()
+          }
         }
       }
     }
@@ -137,15 +143,68 @@ struct TransferDemoView: View {
         .pickerStyle(.menu)
       }
 
+      if viewModel.transferType == .native {
+        balanceRow(
+          balance: viewModel.nativeBalance,
+          isLoading: viewModel.isLoadingNativeBalance
+        ) {
+          Task { await viewModel.fetchNativeBalance() }
+        }
+      }
+
       if viewModel.transferType == .erc20 {
         inputField(title: "Token Contract Address", text: $viewModel.contractAddress, placeholder: "0x...")
         inputField(title: "Decimals", text: $viewModel.decimals, placeholder: "e.g. 18, 6")
           .keyboardType(.numberPad)
+        balanceRow(
+          balance: viewModel.erc20Balance,
+          isLoading: viewModel.isLoadingERC20Balance
+        ) {
+          Task { await viewModel.fetchERC20Balance() }
+        }
       }
     }
     .padding()
     .background(Color(.systemGray6))
     .cornerRadius(12)
+  }
+
+  private func balanceRow(balance: Double?, isLoading: Bool, onReload: @escaping () -> Void) -> some View {
+    HStack {
+      VStack(alignment: .leading, spacing: 2) {
+        Text("Available Balance")
+          .font(.caption)
+          .foregroundColor(.secondary)
+        if isLoading {
+          ProgressView()
+            .scaleEffect(0.8)
+            .frame(height: 20)
+        } else {
+          Text(balance.map { String(format: "%.6f", $0) } ?? "Tap reload to fetch")
+            .font(.headline)
+            .fontWeight(.semibold)
+            .foregroundColor(balance != nil ? .primary : .secondary)
+        }
+      }
+      Spacer()
+      Button(action: onReload) {
+        HStack(spacing: 4) {
+          Image(systemName: "arrow.clockwise")
+          Text("Reload")
+        }
+        .font(.caption)
+        .fontWeight(.medium)
+        .padding(.horizontal, 10)
+        .padding(.vertical, 6)
+        .background(Color.blue.opacity(isLoading ? 0.3 : 1))
+        .foregroundColor(.white)
+        .cornerRadius(8)
+      }
+      .disabled(isLoading)
+    }
+    .padding(12)
+    .background(Color(.systemBackground))
+    .cornerRadius(10)
   }
 
   private func inputField(title: String, text: Binding<String>, placeholder: String) -> some View {
@@ -187,6 +246,18 @@ struct TransferDemoView: View {
     .opacity(viewModel.canSend ? 1 : 0.6)
   }
 
+  // MARK: - Helpers
+
+  private func snowtraceURL(hash: String, chainId: Int) -> URL? {
+    let base: String
+    switch chainId {
+    case 43114: base = "https://snowtrace.io/tx/"
+    case 43113: base = "https://testnet.snowtrace.io/tx/"
+    default:    return nil
+    }
+    return URL(string: base + hash)
+  }
+
   // MARK: - Result
 
   private func resultSection(txHash: String) -> some View {
@@ -209,14 +280,24 @@ struct TransferDemoView: View {
         .foregroundColor(.blue)
       }
 
-      Text(txHash)
-        .font(.system(.caption, design: .monospaced))
-        .lineLimit(2)
-        .truncationMode(.middle)
-        .padding(12)
-        .frame(maxWidth: .infinity, alignment: .leading)
-        .background(Color(.systemBackground))
-        .cornerRadius(8)
+      Group {
+        if let url = snowtraceURL(hash: txHash, chainId: Int(viewModel.chainId) ?? 0) {
+          Link(destination: url) {
+            Text(txHash)
+              .font(.system(.caption, design: .monospaced))
+              .underline()
+              .foregroundColor(.blue)
+              .frame(maxWidth: .infinity, alignment: .leading)
+          }
+        } else {
+          Text(txHash)
+            .font(.system(.caption, design: .monospaced))
+            .frame(maxWidth: .infinity, alignment: .leading)
+        }
+      }
+      .padding(12)
+      .background(Color(.systemBackground))
+      .cornerRadius(8)
     }
     .padding()
     .background(Color(.systemGray6))

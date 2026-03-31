@@ -51,7 +51,7 @@ class PortalWithdrawDemoViewModel: ObservableObject {
     
     if let contract = initialContract {
       assets = contract.toAssetModels()
-        .filter({ $0.availableBalance > 0 })
+        .filter { Self.isValidAsset($0) }
       
       if let contractAddress = contract.controllerAddress  {
         self.contractAddress = contractAddress
@@ -82,6 +82,16 @@ class PortalWithdrawDemoViewModel: ObservableObject {
 
   private var cancellables = Set<AnyCancellable>()
 
+  private static func isValidAsset(_ asset: AssetModel) -> Bool {
+    // Filter out tokens with unsupported type or empty id
+    guard asset.type != nil, !asset.id.isEmpty else { return false }
+    // Hide any token with zero balance
+    guard asset.availableBalance > 0 else { return false }
+    // FRNT exclusive experience: only show if user has balance
+    guard asset.type != .frnt || asset.availableBalance > 0 else { return false }
+    return true
+  }
+
   private func saveRecipientAddress() {
     AppStorage.setPortalWithdrawRecipientAddress(recipientAddress)
   }
@@ -110,7 +120,10 @@ class PortalWithdrawDemoViewModel: ObservableObject {
     do {
       let contracts = try await creditContractsRepository.getCreditContracts()
       assets = contracts.toAssetModels()
-        .filter({ $0.availableBalance > 0 })
+        .filter { Self.isValidAsset($0) }
+      if let current = selectedAsset {
+        selectedAsset = assets.first { $0.id == current.id }
+      }
     } catch {
       print("Load credit contracts failed: \(error.localizedDescription)")
     }

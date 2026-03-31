@@ -9,6 +9,7 @@ enum AssetType: String, CaseIterable {
   case wavax
   case eth
   case weth
+  case frnt
   case other
 
   init?(rawValue: String) {

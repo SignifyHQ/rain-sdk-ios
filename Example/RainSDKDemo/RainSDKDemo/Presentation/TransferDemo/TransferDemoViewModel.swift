@@ -20,6 +20,11 @@ class TransferDemoViewModel: ObservableObject {
   @Published var error: Error?
   @Published var txHash: String?
 
+  @Published var nativeBalance: Double?
+  @Published var isLoadingNativeBalance: Bool = false
+  @Published var erc20Balance: Double?
+  @Published var isLoadingERC20Balance: Bool = false
+
   private let sdkService = RainSDKService.shared
 
   init(initialContract: RainCollateralContractResponse? = nil) {
@@ -95,6 +100,26 @@ class TransferDemoViewModel: ObservableObject {
       self.error = error
       statusMessage = "Transfer failed"
     }
+  }
+
+  func fetchNativeBalance() async {
+    guard let chainIdInt = Int(chainId), sdkService.isInitialized else { return }
+    isLoadingNativeBalance = true
+    defer { isLoadingNativeBalance = false }
+    nativeBalance = try? await sdkService.getNativeBalance(chainId: chainIdInt)
+  }
+
+  func fetchERC20Balance() async {
+    guard let chainIdInt = Int(chainId),
+          !contractAddress.trimmingCharacters(in: .whitespaces).isEmpty,
+          sdkService.isInitialized else { return }
+    isLoadingERC20Balance = true
+    defer { isLoadingERC20Balance = false }
+    erc20Balance = try? await sdkService.getERC20Balance(
+      chainId: chainIdInt,
+      tokenAddress: contractAddress.trimmingCharacters(in: .whitespaces),
+      decimals: Int(decimals)
+    )
   }
 
   func clearResult() {

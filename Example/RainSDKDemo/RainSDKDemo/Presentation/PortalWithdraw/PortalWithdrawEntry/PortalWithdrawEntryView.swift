@@ -4,6 +4,7 @@ import SwiftUI
 /// then continues to the selected destination.
 struct PortalWithdrawEntryView: View {
   @StateObject private var viewModel: PortalWithdrawEntryViewModel
+  @Environment(\.dismiss) private var dismiss
   private let destination: PortalWithdrawEntryViewModel.PortalWithdrawRoute.Destination
 
   init(destination: PortalWithdrawEntryViewModel.PortalWithdrawRoute.Destination = .portalWithdraw) {
@@ -34,15 +35,17 @@ struct PortalWithdrawEntryView: View {
   private func destinationView(for route: PortalWithdrawEntryViewModel.PortalWithdrawRoute) -> some View {
     switch route {
     case .portalWithdraw(let contract):
-      PortalWithdrawDemoView(initialContract: contract)
-        .onDisappear {
-          viewModel.navigationRoute = nil
-        }
+      PortalWithdrawDemoView(initialContract: contract, popToRoot: {
+        viewModel.navigationRoute = nil
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) { dismiss() }
+      })
+      .onDisappear { viewModel.navigationRoute = nil }
     case .transfer(let contract):
-      TransferDemoView(initialContract: contract)
-        .onDisappear {
-          viewModel.navigationRoute = nil
-        }
+      TransferDemoView(initialContract: contract, popToRoot: {
+        viewModel.navigationRoute = nil
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) { dismiss() }
+      })
+      .onDisappear { viewModel.navigationRoute = nil }
     }
   }
 

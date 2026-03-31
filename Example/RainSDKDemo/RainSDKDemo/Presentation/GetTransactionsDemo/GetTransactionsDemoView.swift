@@ -1,5 +1,6 @@
 import SwiftUI
 import RainSDK
+import Web3
 
 struct GetTransactionsDemoView: View {
   @StateObject private var viewModel = GetTransactionsDemoViewModel()
@@ -200,10 +201,28 @@ private struct TransactionCardView: View {
       // Top row: icon + hash + value
       HStack(alignment: .center, spacing: 10) {
         categoryIcon
-        VStack(alignment: .leading, spacing: 2) {
-          Text(shortHash(tx.hash))
-            .font(.system(.subheadline, design: .monospaced))
-            .fontWeight(.medium)
+        HStack(alignment: .center, spacing: 6) {
+          if let url = snowtraceURL {
+            Link(destination: url) {
+              Text(shortHash(tx.hash))
+                .font(.system(.subheadline, design: .monospaced))
+                .fontWeight(.medium)
+                .underline()
+                .foregroundColor(.blue)
+            }
+          } else {
+            Text(shortHash(tx.hash))
+              .font(.system(.subheadline, design: .monospaced))
+              .fontWeight(.medium)
+          }
+          Button {
+            UIPasteboard.general.string = tx.hash
+          } label: {
+            Image(systemName: "doc.on.doc")
+              .font(.caption)
+              .foregroundColor(.secondary)
+          }
+          .buttonStyle(.plain)
         }
         Spacer()
         if let value = tx.value {
@@ -230,9 +249,12 @@ private struct TransactionCardView: View {
         .padding(.vertical, 8)
 
       // Details grid
-      VStack(spacing: 6) {
-        detailRow(label: "From", value: shortAddress(tx.from))
-        detailRow(label: "To", value: shortAddress(tx.to ?? "N/A"))
+      VStack(alignment: .leading, spacing: 6) {
+        if let contractAddress = tx.rawContract?.address, !contractAddress.isEmpty {
+          addressRow(label: "Contract", value: checksumAddress(contractAddress))
+        }
+        addressRow(label: "From", value: checksumAddress(tx.from))
+        addressRow(label: "To", value: tx.to.map { checksumAddress($0) } ?? "N/A")
         detailRow(label: "Block", value: "#\(tx.blockNum)")
         detailRow(label: "Time", value: tx.metadata.flatMap { formattedTimestamp($0.blockTimestamp) } ?? "—")
       }
@@ -278,6 +300,31 @@ private struct TransactionCardView: View {
       .clipShape(Capsule())
   }
 
+  private func addressRow(label: String, value: String) -> some View {
+    VStack(alignment: .leading, spacing: 2) {
+      Text(label)
+        .font(.caption)
+        .foregroundColor(.secondary)
+      HStack(alignment: .top, spacing: 4) {
+        Text(value)
+          .font(.system(.caption, design: .monospaced))
+          .foregroundColor(.primary)
+          .lineLimit(nil)
+          .fixedSize(horizontal: false, vertical: true)
+          .padding(.leading, 4)
+        Button {
+          UIPasteboard.general.string = value
+        } label: {
+          Image(systemName: "doc.on.doc")
+            .font(.caption)
+            .foregroundColor(.secondary)
+        }
+        .buttonStyle(.plain)
+      }
+    }
+    .frame(maxWidth: .infinity, alignment: .leading)
+  }
+
   private func detailRow(label: String, value: String) -> some View {
     HStack(alignment: .top) {
       Text(label)
@@ -290,6 +337,26 @@ private struct TransactionCardView: View {
         .lineLimit(1)
         .truncationMode(.middle)
     }
+  }
+
+  private var snowtraceURL: URL? {
+    let base: String
+    switch tx.chainId {
+    case 43114: base = "https://snowtrace.io/tx/"
+    case 43113: base = "https://testnet.snowtrace.io/tx/"
+    default:    return nil
+    }
+    return URL(string: base + tx.hash)
+  }
+
+  private func checksumAddress(_ raw: String) -> String {
+    guard let address = try? EthereumAddress(hex: raw, eip55: false) else { return raw }
+    return address.hex(eip55: true)
+  }
+
+  private func shortHash(_ hash: String) -> String {
+    guard hash.count > 12 else { return hash }
+    return "\(hash.prefix(8))...\(hash.suffix(6))"
   }
 
   // MARK: - Helpers
@@ -311,16 +378,6 @@ private struct TransactionCardView: View {
     default:
       return ("circle.fill", .gray)
     }
-  }
-
-  private func shortHash(_ hash: String) -> String {
-    guard hash.count > 12 else { return hash }
-    return "\(hash.prefix(8))...\(hash.suffix(6))"
-  }
-
-  private func shortAddress(_ address: String) -> String {
-    guard address.count > 12 else { return address }
-    return "\(address.prefix(6))...\(address.suffix(4))"
   }
 
   private func formattedValue(_ value: Double) -> String {

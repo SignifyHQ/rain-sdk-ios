@@ -5,7 +5,7 @@ import RainSDK
 /// Can be extended with more SDK functions in the future
 struct SDKConnectionView: View {
   @StateObject private var viewModel = SDKConnectionViewModel()
-  
+
   var body: some View {
     NavigationStack {
       ScrollView {
