@@ -1,12 +1,16 @@
 import Foundation
 import CoreGraphics
 import PortalSwift
+import TurnkeySwift
 import Web3
 
-// Declaration of Portal wallet instance and the init method
+// Declaration of wallet provider instances and initialization methods
 public protocol RainSDK {
   /// The initialized Portal instance
   var portal: Portal { get throws }
+
+  /// The initialized Turnkey context
+  var turnkey: TurnkeyContext { get throws }
   
   /// Initializes the SDK with a Portal token and network configurations
   /// - Parameters:
@@ -19,9 +23,25 @@ public protocol RainSDK {
     portalSessionToken: String,
     networkConfigs: [NetworkConfig]
   ) async throws
+
+  /// Initializes the SDK with an authenticated Turnkey context and network configurations.
+  /// Use the official Turnkey Swift SDK for auth flows such as passkeys / auth proxy, then pass
+  /// the live context into Rain for wallet operations.
+  ///
+  /// - Parameters:
+  ///   - turnkey: An authenticated `TurnkeyContext`.
+  ///   - networkConfigs: Array of network configurations, each containing chain ID and RPC URL.
+  ///   - walletAddress: Optional explicit EVM wallet address to use. When omitted, Rain uses the
+  ///                    first available Ethereum account from the Turnkey context.
+  /// - Throws: `RainSDKError` if initialization fails or no usable EVM wallet is available.
+  func initializeTurnkey(
+    turnkey: TurnkeyContext,
+    networkConfigs: [NetworkConfig],
+    walletAddress: String?
+  ) async throws
   
   /// Initializes the SDK with network configurations only (wallet-agnostic mode)
-  /// This allows using transaction building methods without Portal wallet integration
+  /// This allows using transaction building methods without a wallet provider integration.
   /// - Parameters:
   ///   - networkConfigs: Array of network configurations, each containing chain ID and RPC URL
   ///     Example: [NetworkConfig(chainId: 1, rpcUrl: "https://mainnet.infura.io/v3/..."),
@@ -33,7 +53,8 @@ public protocol RainSDK {
 
   /// Sets the wallet provider used for send and other wallet operations (e.g. sendNative, sendERC20).
   /// Call after `initialize(networkConfigs:)` when using a third-party provider (e.g. Web3Auth).
-  /// Pass `nil` to clear. When using Portal, prefer `initializePortal` which sets the provider automatically.
+  /// Pass `nil` to clear. When using Portal or Turnkey, prefer `initializePortal` / `initializeTurnkey`
+  /// which set the provider automatically.
   func setWalletProvider(_ provider: (any RainWalletProvider)?)
 
   /// Builds an EIP-712 compliant message used for obtaining the admin signature
@@ -131,7 +152,7 @@ public protocol RainSDK {
   /// This method orchestrates the full withdrawal flow, including:
   /// - Preparing transaction calldata
   /// - Managing or fetching the correct nonce (if not provided)
-  /// - Signing the transaction using the Portal wallet
+  /// - Signing the EIP-712 payload using the active wallet provider
   /// - Submitting the transaction to the specified blockchain network
   ///
   /// - Parameters:
@@ -165,8 +186,9 @@ public protocol RainSDK {
   
   /// Estimates the total fee (gas cost) required to execute a collateral withdrawal transaction.
   ///
-  /// This method builds the withdrawal transaction parameters and uses the network to estimate
-  /// gas usage and current gas price, returning the total fee in the chain's native token (e.g., ETH).
+  /// This method builds the withdrawal transaction parameters and uses the active wallet provider
+  /// to estimate gas usage and current gas price, returning the total fee in the chain's native token
+  /// (e.g., ETH).
   ///
   /// - Parameters:
   ///   - chainId: The target blockchain network identifier.

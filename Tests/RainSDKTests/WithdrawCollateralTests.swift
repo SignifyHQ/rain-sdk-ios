@@ -1,6 +1,7 @@
 import Testing
 import Foundation
 import PortalSwift
+import TurnkeyTypes
 import Web3
 @testable import RainSDK
 
@@ -268,9 +269,10 @@ struct WithdrawCollateralTests {
     #expect(txHash == mockTxHash) // Should match the mocked transaction hash
     
     // Verify Portal was called correctly
-    #expect(mockPortal.requestCalls.count == 2) // signTypedData and sendTransaction
+    #expect(mockPortal.requestCalls.count == 3) // signTypedData, preflight eth_call, and sendTransaction
     #expect(mockPortal.requestCalls[0].method == .eth_signTypedData_v4)
-    #expect(mockPortal.requestCalls[1].method == .eth_sendTransaction)
+    #expect(mockPortal.requestCalls[1].method == .eth_call)
+    #expect(mockPortal.requestCalls[2].method == .eth_sendTransaction)
     
     // Verify the first request was for signing
     let signRequest = mockPortal.requestCalls[0]
@@ -278,8 +280,14 @@ struct WithdrawCollateralTests {
     #expect(signRequest.method == .eth_signTypedData_v4)
     #expect(signRequest.params.count == 2) // walletAddress and eip712Message
     
-    // Verify the second request was for sending transaction
-    let sendRequest = mockPortal.requestCalls[1]
+    // Verify the second request was the preflight call simulation
+    let simulateRequest = mockPortal.requestCalls[1]
+    #expect(simulateRequest.chainId == chainIdString)
+    #expect(simulateRequest.method == .eth_call)
+    #expect(simulateRequest.params.count == 2)
+
+    // Verify the third request was for sending transaction
+    let sendRequest = mockPortal.requestCalls[2]
     #expect(sendRequest.chainId == chainIdString)
     #expect(sendRequest.method == .eth_sendTransaction)
     #expect(sendRequest.params.count == 1) // transactionParams array
@@ -295,6 +303,45 @@ struct WithdrawCollateralTests {
   /// User signature as hex string (65 bytes = 130 hex chars); required by withdrawCollateral and estimateWithdrawalFee.
   private var validSignatureHex: String {
     "0x" + String(repeating: "01", count: 65)
+  }
+
+  @Test("buildTransactionParamForWithdrawAsset uses Turnkey EIP-712 signing")
+  func testBuildTransactionParamForWithdrawAssetTurnkey() async throws {
+    let configs = [
+      NetworkConfig.testConfig(chainId: 1, rpcUrl: "https://mainnet.infura.io/v3/test")
+    ]
+    let mockTurnkey = MockTurnkey()
+    let mockBuilder = MockTransactionBuilderService(networkConfigs: configs)
+    mockBuilder.mockNonce = BigUInt(42)
+
+    let manager = RainSDKManager(
+      turnkey: mockTurnkey,
+      transactionBuilder: mockBuilder,
+      networkConfigs: configs
+    )
+
+    let result = try await manager.buildTransactionParamForWithdrawAsset(
+      chainId: 1,
+      assetAddresses: defaultAddresses,
+      amount: 100.0,
+      decimals: 18,
+      salt: validSaltBase64,
+      signature: validSignatureHex,
+      expiresAt: "1735689600",
+      nonce: nil
+    )
+
+    #expect(result.walletAddress == MockTurnkey.defaultWalletAddress)
+    #expect(result.transactionParams.from == MockTurnkey.defaultWalletAddress)
+    #expect(result.transactionParams.to == defaultAddresses.contractAddress)
+    #expect(result.transactionParams.data.hasPrefix("0x"))
+    #expect(mockTurnkey.signRawPayloadCalls.count == 1)
+
+    let signCall = try #require(mockTurnkey.signRawPayloadCalls.first)
+    #expect(signCall.signWith == MockTurnkey.defaultWalletAddress)
+    #expect(signCall.encoding == .payload_encoding_eip712)
+    #expect(signCall.hashFunction == .hash_function_no_op)
+    #expect(!signCall.payload.isEmpty)
   }
 
   // MARK: - Estimate Withdrawal Fee Tests

@@ -13,6 +13,15 @@ The initialized Portal instance. Use after `initializePortal`. Throws if SDK not
 
 ---
 
+## turnkey
+
+The initialized Turnkey context. Use after `initializeTurnkey`. Throws if SDK not initialized or using a mock.
+
+- **Returns:** `TurnkeyContext`
+- **Throws:** `RainSDKError.sdkNotInitialized` when not initialized or when using a mock (e.g. in tests).
+
+---
+
 ## initializePortal(portalSessionToken:networkConfigs:)
 
 Initializes the SDK with a Portal session token and network configs. Use for full wallet flow (sign + send via Portal).
@@ -27,9 +36,29 @@ Initializes the SDK with a Portal session token and network configs. Use for ful
 
 ---
 
+## initializeTurnkey(turnkey:networkConfigs:walletAddress:)
+
+Initializes the SDK with an authenticated Turnkey context and network configs. Use for full wallet flow (sign + send via Turnkey).
+
+- **Returns:** (none, async)
+- **Throws:** `RainSDKError` if initialization fails (e.g. invalid RPC URLs, no usable EVM wallet).
+
+| Parameter | Description |
+|-----------|-------------|
+| `turnkey` | Authenticated `TurnkeyContext` from the official Turnkey Swift SDK. |
+| `networkConfigs` | Array of `NetworkConfig` (chain ID + RPC URL per network). |
+| `walletAddress` | Optional explicit EVM address override. If omitted, Rain uses the first available Ethereum account in the Turnkey context. |
+
+Turnkey authentication happens outside Rain. Typical setup uses Turnkey's Swift SDK with auth proxy middleware and passkeys:
+
+- Proxy middleware: `https://docs.turnkey.com/sdks/swift/proxy-middleware`
+- Passkeys: `https://docs.turnkey.com/sdks/swift/register-passkey`
+
+---
+
 ## initialize(networkConfigs:)
 
-Initializes the SDK with network configs only (no Portal). Use for wallet-agnostic mode (transaction building only).
+Initializes the SDK with network configs only (no wallet provider). Use for wallet-agnostic mode (transaction building only).
 
 - **Returns:** (none, async)
 - **Throws:** `RainSDKError` if initialization fails (e.g. invalid RPC URLs).
@@ -46,7 +75,7 @@ Builds EIP-712 typed data for the admin signature required for withdrawals.
 
 - **Returns:** `(message: String, saltHex: String)` — serialized EIP-712 message and salt (hex string).
 - **Throws:** `RainSDKError` if message construction fails or inputs are invalid.
-- **Requires:** `initialize` or `initializePortal` first (no Portal required).
+- **Requires:** `initialize`, `initializePortal`, or `initializeTurnkey` first.
 
 | Parameter | Description |
 |-----------|-------------|
@@ -65,7 +94,7 @@ Builds ABI-encoded withdraw calldata for the collateral proxy contract.
 
 - **Returns:** Hex-encoded calldata string (e.g. `"0x..."`).
 - **Throws:** `RainSDKError` if ABI encoding or validation fails.
-- **Requires:** `initialize` or `initializePortal` first (no Portal required).
+- **Requires:** `initialize`, `initializePortal`, or `initializeTurnkey` first.
 
 | Parameter | Description |
 |-----------|-------------|
@@ -87,7 +116,7 @@ Composes Ethereum transaction parameters for submission (e.g. to `eth_sendTransa
 
 - **Returns:** `ETHTransactionParam`.
 - **Throws:** (none)
-- **Requires:** `initialize` or `initializePortal` first (no Portal required).
+- **Requires:** `initialize`, `initializePortal`, or `initializeTurnkey` first.
 
 | Parameter | Description |
 |-----------|-------------|
@@ -99,11 +128,11 @@ Composes Ethereum transaction parameters for submission (e.g. to `eth_sendTransa
 
 ## withdrawCollateral(chainId:assetAddresses:amount:decimals:salt:signature:expiresAt:nonce:)
 
-Full withdrawal flow: build tx, sign via Portal, submit. Returns the transaction hash.
+Full withdrawal flow: build tx, sign via the active wallet provider, submit. Returns the transaction hash.
 
 - **Returns:** Transaction hash string.
 - **Throws:** `RainSDKError` if construction, signing, or submission fails.
-- **Requires:** `initializePortal` first (Portal required).
+- **Requires:** A wallet provider with EIP-712 signing and transaction submission support (for example `initializePortal` or `initializeTurnkey`).
 
 | Parameter | Description |
 |-----------|-------------|
@@ -124,7 +153,7 @@ Returns the current wallet address from the wallet provider (e.g. EOA in `0x...`
 
 - **Returns:** `String` — wallet address.
 - **Throws:** `RainSDKError.walletUnavailable` when no wallet provider is set.
-- **Requires:** `initializePortal` or `setWalletProvider` first.
+- **Requires:** `initializePortal`, `initializeTurnkey`, or `setWalletProvider` first.
 
 ---
 
@@ -150,7 +179,7 @@ Fetches transaction history for the current wallet on the given network.
 
 - **Returns:** `[WalletTransaction]` — list of transaction records (hash, from, to, value, blockNum, category, metadata, chainId, etc.).
 - **Throws:** `RainSDKError.walletUnavailable` when no wallet provider is set.
-- **Requires:** Wallet provider set (e.g. `initializePortal`).
+- **Requires:** Wallet provider set (e.g. `initializePortal` or `initializeTurnkey`).
 
 | Parameter | Description |
 |-----------|-------------|
@@ -241,7 +270,7 @@ Estimates the total fee (gas cost) to execute a collateral withdrawal.
 
 - **Returns:** Estimated fee in the chain's native token (e.g. ETH) as `Double`.
 - **Throws:** `RainSDKError` if estimation fails (e.g. SDK not initialized, invalid response, network error).
-- **Requires:** `initializePortal` first (Portal required).
+- **Requires:** A wallet provider with EIP-712 signing and fee estimation support (for example `initializePortal` or `initializeTurnkey`).
 
 | Parameter | Description |
 |-----------|-------------|
@@ -274,13 +303,14 @@ All async methods can throw `RainSDKError`. Use `errorCode` for programmatic han
 
 | Code | Case | Meaning |
 |------|------|--------|
-| RAIN_101 | `sdkNotInitialized` | Method called before `initialize` or `initializePortal`. |
+| RAIN_101 | `sdkNotInitialized` | Method called before `initialize`, `initializePortal`, or `initializeTurnkey`. |
 | RAIN_102 | `invalidConfig(chainId:rpcUrl:)` | Invalid RPC URL or chain ID. |
-| RAIN_201 | `tokenExpired(token:)` | Portal session token expired or invalid. |
+| RAIN_201 | `tokenExpired` | Wallet provider session token expired or invalid. |
 | RAIN_202 | `unauthorized` | Invalid or missing token / permissions. |
 | RAIN_301 | `networkError(underlying:)` | Network/connectivity failure. |
 | RAIN_401 | `userRejected` | User cancelled the signing request in the wallet. |
 | RAIN_402 | `insufficientFunds(required:available:)` | Balance too low for amount or gas. |
-| RAIN_403 | `walletUnavailable` | No wallet address from Portal (e.g. user has not connected or created a wallet). |
-| RAIN_501 | `providerError(underlying:)` | Portal or provider error. |
-| RAIN_502 | `internalLogicError(details:)` | EIP-712 or internal processing error. |
+| RAIN_403 | `walletUnavailable` | No wallet address from the wallet provider (e.g. user has not connected or created a wallet). |
+| RAIN_404 | `withdrawalRevertedByNetwork` | Withdrawal reverted on-chain (e.g. duplicate withdrawal in short window / already-used signature). |
+| RAIN_501 | `providerError(underlying:)` | Wallet provider error (Portal or Turnkey). |
+| RAIN_502 | `internalLogicError(details:)` | EIP-712, configuration, or internal processing error. |

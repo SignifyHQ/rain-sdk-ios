@@ -148,6 +148,41 @@ struct WalletInformationTests {
     #expect(list[0].hash == "0xdef")
     #expect(list[0].chainId == 137)
   }
+
+  @Test("getTransactions returns mapped WalletTransaction for Turnkey activities")
+  func testGetTransactionsTurnkeySuccess() async throws {
+    let client = MockTurnkeyClient()
+    client.mockTransactionHash = "0x" + String(repeating: "b", count: 64)
+    client.mockActivities = [
+      MockTurnkey.makeActivity(
+        id: "activity-1",
+        from: "0xfrom",
+        to: "0xto",
+        caip2: "eip155:1",
+        value: "1000000000000000000",
+        data: "0x",
+        sendTransactionStatusId: client.mockSendTransactionStatusId
+      )
+    ]
+
+    let configs = [NetworkConfig.testConfig(chainId: 1, rpcUrl: "https://mainnet.infura.io/v3/test")]
+    let manager = RainSDKManager(
+      turnkey: MockTurnkey(client: client),
+      transactionBuilder: MockTransactionBuilderService(networkConfigs: configs),
+      networkConfigs: configs
+    )
+
+    let list = try await manager.getTransactions(chainId: 1, limit: 10, offset: 0, order: .DESC)
+
+    #expect(list.count == 1)
+    #expect(list[0].hash == client.mockTransactionHash)
+    #expect(list[0].from == "0xfrom")
+    #expect(list[0].to == "0xto")
+    #expect(list[0].value == 1.0)
+    #expect(list[0].chainId == 1)
+    #expect(client.getActivitiesCalls.count == 1)
+    #expect(client.sendTransactionStatusCalls.count == 1)
+  }
 }
 
 private extension WalletInformationTests {
