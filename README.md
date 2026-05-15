@@ -4,15 +4,16 @@
 [![CocoaPods](https://img.shields.io/badge/CocoaPods-not--supported-lightgrey)](#installation)
 [![Carthage](https://img.shields.io/badge/Carthage-not--supported-lightgrey)](#installation)
 
-iOS SDK that integrates [Portal](https://portalhq.io) wallet with Rain collateral withdrawal: build EIP-712 messages, compose withdrawal transactions, sign and submit via Portal, and estimate fees.
+iOS SDK with first-class [Portal](https://portalhq.io) and [Turnkey](https://www.turnkey.com) wallet support: build EIP-712 messages, compose withdrawal transactions, sign and submit through the active wallet provider, and estimate fees.
 
 ## Features
 
 - **Portal wallet integration** — Initialize with a Portal session token and network configs; use the connected wallet for signing and sending transactions.
-- **Wallet-agnostic mode** — Initialize with network configs only (no Portal) to use transaction-building APIs (EIP-712 message, withdraw calldata, composed params) with your own wallet or backend.
+- **Turnkey wallet integration** — Initialize with an authenticated Turnkey context and network configs; use the selected Turnkey wallet for signing and sending transactions.
+- **Wallet-agnostic mode** — Initialize with network configs only (no wallet provider) to use transaction-building APIs (EIP-712 message, withdraw calldata, composed params) with your own wallet or backend.
 - **EIP-712 message building** — Build typed data for admin signature required by the collateral contract.
 - **Withdrawal transaction building** — Build ABI-encoded withdraw calldata and compose `ETHTransactionParam` for submission.
-- **Full withdrawal flow** — builds the transaction, signs via Portal, and submits; returns the transaction hash.
+- **Full withdrawal flow** — builds the transaction, signs via the active wallet provider, and submits; returns the transaction hash.
 - **Fee estimation** — returns the estimated gas cost in the chain’s native token (e.g. ETH).
 - **Wallet information** — get current wallet address and generate a QR code image (PNG) for it.
 - **Balances** — get native and ERC-20 token balances for the current wallet.
@@ -70,9 +71,36 @@ try await manager.initializePortal(
 let portal = try manager.portal
 ```
 
-### 2. Initialize without Portal (wallet-agnostic)
+### 2. Initialize with Turnkey (full wallet flow)
 
-Use this when you only need transaction building (EIP-712 message, calldata, composed params) and will sign/submit elsewhere.
+Use this when you want the SDK to use Turnkey for signing and sending transactions.
+
+Authenticate with the official Turnkey Swift SDK first, for example using auth proxy middleware and
+passkeys:
+
+- Proxy middleware: `https://docs.turnkey.com/sdks/swift/proxy-middleware`
+- Passkeys: `https://docs.turnkey.com/sdks/swift/register-passkey`
+
+Then pass the authenticated `TurnkeyContext` into Rain:
+
+```swift
+import RainSDK
+import TurnkeySwift
+
+let manager = RainSDKManager()
+
+try await manager.initializeTurnkey(
+    turnkey: turnkeyContext,
+    networkConfigs: networkConfigs,
+    walletAddress: nil // optional explicit EVM address override
+)
+
+let turnkey = try manager.turnkey
+```
+
+### 3. Initialize without a wallet provider (wallet-agnostic)
+
+Use this when you only need transaction building (EIP-712 message, calldata, composed params) and will sign or submit elsewhere.
 
 ```swift
 let manager = RainSDKManager()
@@ -80,7 +108,8 @@ let manager = RainSDKManager()
 try await manager.initialize(networkConfigs: networkConfigs)
 
 // buildEIP712Message, buildWithdrawTransactionData, composeTransactionParameters
-// are available; withdrawCollateral requires Portal.
+// are available; withdrawCollateral requires a wallet provider that supports
+// EIP-712 signing, transaction submission, and fee estimation.
 ```
 
 For a short overview of all public methods, see [Method overview](docs/METHODS.md).

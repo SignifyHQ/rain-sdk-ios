@@ -1,7 +1,7 @@
 import Foundation
 
-/// Network configuration for Portal wallet SDK
-public struct NetworkConfig {
+/// Network configuration for Rain wallet providers.
+public struct NetworkConfig: Sendable {
   /// The network/chain identifier as an integer (EIP-155 chain ID)
   /// Examples: 1 (Ethereum Mainnet), 137 (Polygon), 42161 (Arbitrum)
   public let chainId: Int

@@ -6,7 +6,7 @@ import PackageDescription
 let package = Package(
   name: "RainSDK",
   platforms: [
-    .iOS(.v16)
+    .iOS(.v17)
   ],
   products: [
     // Products define the executables and libraries a package produces, making them visible to other packages.
@@ -17,6 +17,7 @@ let package = Package(
   ],
   dependencies: [
     .package(url: "https://github.com/portal-hq/PortalSwift.git", exact: "7.1.0"),
+    .package(url: "https://github.com/tkhq/swift-sdk.git", exact: "4.0.0"),
     .package(url: "https://github.com/Boilertalk/Web3.swift.git", exact: "0.8.8"),
     .package(url: "https://github.com/web3swift-team/web3swift.git", from: "3.3.2"),
     .package(url: "https://github.com/dagronf/QRCode", exact: "28.0.2")
@@ -28,6 +29,9 @@ let package = Package(
       name: "RainSDK",
       dependencies: [
         .product(name: "PortalSwift", package: "PortalSwift"),
+        .product(name: "TurnkeySwift", package: "swift-sdk"),
+        .product(name: "TurnkeyHttp", package: "swift-sdk"),
+        .product(name: "TurnkeyTypes", package: "swift-sdk"),
         .product(name: "QRCode", package: "QRCode"),
         .product(name: "Web3", package: "Web3.swift"),
         .product(name: "Web3PromiseKit", package: "Web3.swift"),

@@ -7,7 +7,7 @@ import Web3ContractABI
 
 /// Portal-based implementation of `RainWalletProvider`.
 /// Used when the SDK is initialized with `initializePortal(...)`.
-internal final class PortalWalletProviderAdapter: RainWalletProvider, @unchecked Sendable {
+internal final class PortalWalletProviderAdapter: RainWalletProvider, RainTypedDataSignerProvider, RainTransactionFeeEstimatingProvider, @unchecked Sendable {
   private let portal: PortalRequestProtocol
   private let transactionBuilder: TransactionBuilderProtocol?
 
@@ -45,7 +45,7 @@ internal final class PortalWalletProviderAdapter: RainWalletProvider, @unchecked
 
     // Simulate the transaction first via eth_call to catch failures (e.g. insufficient funds)
     // before broadcasting — no balance fetch needed, the node validates it for free.
-    try await portal.request(
+    _ = try await portal.request(
       chainId: chainIdString,
       method: .eth_call,
       params: [ethParam, "latest"],
@@ -64,6 +64,54 @@ internal final class PortalWalletProviderAdapter: RainWalletProvider, @unchecked
     }
     
     return txHash
+  }
+
+  func signTypedData(
+    chainId: Int,
+    walletAddress: String,
+    typedData: String
+  ) async throws -> String {
+    let chainIdString = Constants.ChainIDFormat.EIP155.format(chainId: chainId)
+
+    let response = try await portal.request(
+      chainId: chainIdString,
+      method: .eth_signTypedData_v4,
+      params: [walletAddress, typedData],
+      options: nil
+    )
+
+    guard let signature = response.result as? String else {
+      throw RainSDKError.internalLogicError(details: "eth_signTypedData_v4 returned no signature")
+    }
+
+    return signature
+  }
+
+  func estimateTransactionFee(
+    chainId: Int,
+    walletAddress: String,
+    params: WalletTransactionParams
+  ) async throws -> Double {
+    let ethParam = ETHTransactionParam(
+      from: params.from,
+      to: params.to,
+      value: params.value,
+      data: params.data
+    )
+
+    let estimateGas = try await fetchGasData(
+      chainId: chainId,
+      method: .eth_estimateGas,
+      address: walletAddress,
+      params: [ethParam]
+    )
+    let gasPrice = try await fetchGasData(
+      chainId: chainId,
+      method: .eth_gasPrice,
+      address: walletAddress
+    ).weiToEth
+
+    return estimateGas * gasPrice
   }
 
   /// Fetches native token balance (e.g. ETH) via eth_getBalance and parses the RPC response (PortalProviderRpcResponse → result?.asDouble?.weiToEth).
@@ -275,5 +323,51 @@ internal final class PortalWalletProviderAdapter: RainWalletProvider, @unchecked
         transactions[i].asset = symbol
       }
     }
+  }
+
+  /// Fetches gas-related RPC result (e.g. eth_estimateGas, eth_gasPrice) via Portal; returns numeric value as Double.
+  ///
+  /// The underlying `PortalProviderResult.result` can come back in different shapes depending on
+  /// the Portal SDK / transport. This helper supports:
+  /// - `PortalProviderRpcResponse` whose `result` is a `String` that can be parsed as `Double`
+  /// - a raw `String` that can be parsed as `Double`
+  /// - a raw numeric type (`NSNumber` / `Double`)
+  private func fetchGasData(
+    chainId: Int,
+    method: PortalRequestMethod,
+    address: String,
+    params: [Any] = []
+  ) async throws -> Double {
+    let chainIdString = Constants.ChainIDFormat.EIP155.format(chainId: chainId)
+
+    let response = try await portal.request(
+      chainId: chainIdString,
+      method: method,
+      params: params,
+      options: nil
+    )
+
+    // 1) Preferred: PortalProviderRpcResponse wrapping a string result
+    if let rpcResponse = response.result as? PortalProviderRpcResponse,
+       let stringResult = rpcResponse.result,
+       let doubleValue = stringResult.asDouble {
+      return doubleValue
+    }
+
+    // 2) Fallback: raw string result
+    if let stringResult = response.result as? String,
+       let doubleValue = stringResult.asDouble {
+      return doubleValue
+    }
+
+    // 3) Fallback: raw numeric result
+    if let numberResult = response.result as? NSNumber {
+      return numberResult.doubleValue
+    }
+
+    RainLogger.error("Rain SDK: Error fetching \(method) for \(address). Unexpected RPC response")
+    throw RainSDKError.internalLogicError(
+      details: "Unexpected RPC response when fetching \(method) for \(address)"
+    )
   }
 }

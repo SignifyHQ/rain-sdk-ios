@@ -2,6 +2,7 @@ import Testing
 import Foundation
 @testable import PortalSwift
 @testable import RainSDK
+import TurnkeyTypes
 
 @Suite("Balance Tests")
 struct BalanceTests {
@@ -22,6 +23,16 @@ struct BalanceTests {
     let p = portal ?? makePortal()
     let builder = MockTransactionBuilderService(networkConfigs: configs)
     return RainSDKManager(portal: p, transactionBuilder: builder)
+  }
+
+  /// Returns a manager wired with a mock Turnkey context + mock builder.
+  private static func makeTurnkeyManager(client: MockTurnkeyClient) -> RainSDKManager {
+    let builder = MockTransactionBuilderService(networkConfigs: configs)
+    return RainSDKManager(
+      turnkey: MockTurnkey(client: client),
+      transactionBuilder: builder,
+      networkConfigs: configs
+    )
   }
 
   /// Empty assets response (no ERC-20 tokens). Use when testing balance APIs with no token list.
@@ -74,6 +85,27 @@ struct BalanceTests {
     #expect(portal.requestCalls.count == 1)
     #expect(portal.requestCalls[0].method == .eth_getBalance)
     #expect(portal.requestCalls[0].chainId == "eip155:1")
+  }
+
+  @Test("getNativeBalance supports Turnkey wallet balances")
+  func testGetNativeBalanceTurnkeySuccess() async throws {
+    let client = MockTurnkeyClient()
+    client.mockBalances = [
+      v1AssetBalance(
+        balance: "1000000000000000000",
+        caip19: "eip155:1/slip44:60",
+        decimals: 18,
+        name: "Ether",
+        symbol: "ETH"
+      )
+    ]
+
+    let balance = try await Self.makeTurnkeyManager(client: client).getNativeBalance(chainId: 1)
+
+    #expect(balance == 1.0)
+    #expect(client.walletAddressBalanceCalls.count == 1)
+    #expect(client.walletAddressBalanceCalls[0].caip2 == "eip155:1")
+    #expect(client.walletAddressBalanceCalls[0].address == Self.walletAddress)
   }
 
   // MARK: - getERC20Balance (via RPC eth_call)
@@ -159,11 +191,11 @@ struct BalanceTests {
   @Test("getERC20Balance with nil decimals defaults to 18")
   func testGetERC20BalanceNilDecimalsDefaultsTo18() async throws {
     let mockPortal = Self.makePortal()
-    // 2.5 tokens with 18 decimals = 2_500_000_000_000_000_000 = 0x22B1C8C1227A00000
+    // 2.5 tokens with 18 decimals = 2_500_000_000_000_000_000 = 0x22B1C8C1227A0000
     mockPortal.setMockResponse(
       chainId: "eip155:1",
       method: .eth_call,
-      result: PortalProviderRpcResponse(jsonrpc: "2.0", result: "0x22B1C8C1227A00000")
+      result: PortalProviderRpcResponse(jsonrpc: "2.0", result: "0x22B1C8C1227A0000")
     )
     let builder = MockTransactionBuilderService(networkConfigs: Self.configs)
     let manager = RainSDKManager(portal: mockPortal, transactionBuilder: builder)
@@ -212,6 +244,26 @@ struct BalanceTests {
 
     let balances = try await manager.getERC20Balances(chainId: 1)
     #expect(balances.isEmpty)
+  }
+
+  @Test("getERC20Balances supports Turnkey token balances")
+  func testGetERC20BalancesTurnkeySuccess() async throws {
+    let client = MockTurnkeyClient()
+    client.mockBalances = [
+      v1AssetBalance(
+        balance: "1000000",
+        caip19: "eip155:1/erc20:\(Self.tokenAddress)",
+        decimals: 6,
+        name: "USD Coin",
+        symbol: "USDC"
+      )
+    ]
+
+    let balances = try await Self.makeTurnkeyManager(client: client).getERC20Balances(chainId: 1)
+
+    #expect(balances.count == 1)
+    #expect(balances[Self.tokenAddress] == 1.0)
+    #expect(client.walletAddressBalanceCalls.count == 1)
   }
 
   // MARK: - getBalances

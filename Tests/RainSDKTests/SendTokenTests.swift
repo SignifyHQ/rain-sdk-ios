@@ -87,9 +87,11 @@ struct SendTokenTests {
     #expect(!txHash.isEmpty)
     #expect(txHash.hasPrefix("0x"))
     #expect(txHash == mockTxHash)
-    #expect(mockPortal.requestCalls.count == 1)
-    #expect(mockPortal.requestCalls[0].method == .eth_sendTransaction)
+    #expect(mockPortal.requestCalls.count == 2)
+    #expect(mockPortal.requestCalls[0].method == .eth_call)
     #expect(mockPortal.requestCalls[0].chainId == chainIdString)
+    #expect(mockPortal.requestCalls[1].method == .eth_sendTransaction)
+    #expect(mockPortal.requestCalls[1].chainId == chainIdString)
   }
 
   // MARK: - sendERC20Token
@@ -182,8 +184,10 @@ struct SendTokenTests {
     #expect(!txHash.isEmpty)
     #expect(txHash.hasPrefix("0x"))
     #expect(txHash == mockTxHash)
-    #expect(mockPortal.requestCalls.count == 1)
-    #expect(mockPortal.requestCalls[0].method == .eth_sendTransaction)
+    #expect(mockPortal.requestCalls.count == 2)
+    #expect(mockPortal.requestCalls[0].method == .eth_call)
     #expect(mockPortal.requestCalls[0].chainId == chainIdString)
+    #expect(mockPortal.requestCalls[1].method == .eth_sendTransaction)
+    #expect(mockPortal.requestCalls[1].chainId == chainIdString)
   }
 }

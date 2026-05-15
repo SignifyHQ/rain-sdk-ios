@@ -24,8 +24,7 @@ struct PortalInitializationTests {
       )
       
       // If initialization succeeds, portal should be accessible
-      let portal = try manager.portal
-      #expect(portal != nil)
+      _ = try manager.portal
     } catch RainSDKError.providerError {
       // Portal SDK error is expected in test environment without real credentials
       // This is acceptable - the validation passed
@@ -49,8 +48,7 @@ struct PortalInitializationTests {
       )
       
       // If succeeds, portal should be accessible
-      let portal = try manager.portal
-      #expect(portal != nil)
+      _ = try manager.portal
     } catch RainSDKError.providerError {
       // Expected in test environment
     } catch {
@@ -73,8 +71,7 @@ struct PortalInitializationTests {
         networkConfigs: configs
       )
       
-      let portal = try manager.portal
-      #expect(portal != nil)
+      _ = try manager.portal
     } catch RainSDKError.providerError {
       // Expected in test environment
     } catch {
@@ -170,6 +167,15 @@ struct PortalInitializationTests {
     
     #expect(throws: RainSDKError.sdkNotInitialized) {
       try manager.portal
+    }
+  }
+
+  @Test("Should throw sdkNotInitialized when accessing turnkey before initialization")
+  func testTurnkeyAccessBeforeInitialization() throws {
+    let manager = RainSDKManager()
+
+    #expect(throws: RainSDKError.sdkNotInitialized) {
+      try manager.turnkey
     }
   }
   
@@ -356,5 +362,18 @@ struct PortalInitializationTests {
     #expect(throws: RainSDKError.sdkNotInitialized) {
       try manager.portal
     }
+  }
+
+  @Test("testing Turnkey initializer should wire a Turnkey-backed wallet provider")
+  func testTestingTurnkeyInitializerSuccess() async throws {
+    let configs = [NetworkConfig.testConfig(chainId: 1)]
+    let manager = RainSDKManager(
+      turnkey: MockTurnkey(),
+      transactionBuilder: MockTransactionBuilderService(networkConfigs: configs),
+      networkConfigs: configs
+    )
+
+    let walletAddress = try await manager.getWalletAddress()
+    #expect(walletAddress == MockTurnkey.defaultWalletAddress)
   }
 }

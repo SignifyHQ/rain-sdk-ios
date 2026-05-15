@@ -2,6 +2,7 @@ import Foundation
 import CoreGraphics
 import PortalSwift
 import QRCode
+import TurnkeySwift
 import Web3
 import Web3Core
 import web3swift
@@ -12,9 +13,11 @@ public final class RainSDKManager: RainSDK {
 
   // Internal storage for Portal instance (using protocol for testability)
   private var _portal: PortalRequestProtocol?
+  private var _turnkey: TurnkeyContextProtocol?
 
-  /// Wallet provider for address, balance, and signing. Set when `initializePortal` is used; nil in wallet-agnostic mode.
-  private var _walletProvider: (any RainWalletProvider)?
+  /// Wallet provider for address, balance, signing, and submission.
+  /// Set when `initializePortal` or `initializeTurnkey` is used; nil in wallet-agnostic mode.
+  var _walletProvider: (any RainWalletProvider)?
   
   // Transaction builder service
   private var _transactionBuilder: TransactionBuilderProtocol?
@@ -43,11 +46,33 @@ public final class RainSDKManager: RainSDK {
       return portal
     }
   }
+
+  /// Computed property to safely access the Turnkey context
+  ///
+  /// - Note: This property can only be accessed when a real `TurnkeyContext` is initialized.
+  ///         When using mocks for testing, this property will throw an error.
+  public var turnkey: TurnkeyContext {
+    get throws {
+      guard let turnkeyProtocol = _turnkey else {
+        throw RainSDKError.sdkNotInitialized
+      }
+
+      guard let turnkey = turnkeyProtocol as? TurnkeyContext else {
+        throw RainSDKError.sdkNotInitialized
+      }
+
+      return turnkey
+    }
+  }
   
   /// Internal property for testing - returns PortalRequestProtocol which works with both Portal and MockPortal
   /// Use this property in tests when working with mocks
   internal var portalProtocol: PortalRequestProtocol? {
     return _portal
+  }
+
+  internal var turnkeyProtocol: TurnkeyContextProtocol? {
+    return _turnkey
   }
   
   /// Internal: use for all Portal requests so that both Portal and MockPortal work in production and tests.
@@ -76,11 +101,33 @@ public final class RainSDKManager: RainSDK {
     transactionBuilder: TransactionBuilderProtocol?
   ) {
     self._portal = portal
+    self._turnkey = nil
     self._transactionBuilder = transactionBuilder
     self._walletProvider = portal.map {
       PortalWalletProviderAdapter(
         portal: $0,
         transactionBuilder: transactionBuilder
+      )
+    }
+  }
+
+  /// Internal initializer for testing - allows injecting Turnkey and transaction builder
+  internal init(
+    turnkey: TurnkeyContextProtocol?,
+    transactionBuilder: TransactionBuilderProtocol?,
+    networkConfigs: [NetworkConfig] = [],
+    walletAddress: String? = nil
+  ) {
+    self._portal = nil
+    self._turnkey = turnkey
+    self._transactionBuilder = transactionBuilder
+    self._networkConfigs = networkConfigs
+    self._walletProvider = turnkey.map {
+      TurnkeyWalletProviderAdapter(
+        turnkey: $0,
+        transactionBuilder: transactionBuilder,
+        networkConfigs: networkConfigs,
+        walletAddress: walletAddress
       )
     }
   }
@@ -111,6 +158,7 @@ public final class RainSDKManager: RainSDK {
       
       // Store portal instance (Portal conforms to PortalProtocol via extension)
       _portal = portal
+      _turnkey = nil
       // Initialize transaction builder service with network configs
       let transactionBuilder = TransactionBuilderService(networkConfigs: networkConfigs)
       _transactionBuilder = transactionBuilder
@@ -128,6 +176,37 @@ public final class RainSDKManager: RainSDK {
       throw RainSDKError.from(underlying: error)
     }
   }
+
+  public func initializeTurnkey(
+    turnkey: TurnkeyContext,
+    networkConfigs: [NetworkConfig],
+    walletAddress: String? = nil
+  ) async throws {
+    try validateNetworkConfigs(networkConfigs)
+
+    let transactionBuilder = TransactionBuilderService(networkConfigs: networkConfigs)
+    let provider = TurnkeyWalletProviderAdapter(
+      turnkey: turnkey,
+      transactionBuilder: transactionBuilder,
+      networkConfigs: networkConfigs,
+      walletAddress: walletAddress
+    )
+
+    do {
+      _ = try await provider.address()
+
+      _networkConfigs = networkConfigs
+      _portal = nil
+      _turnkey = turnkey
+      _transactionBuilder = transactionBuilder
+      _walletProvider = provider
+
+      RainLogger.info("Rain SDK: Registered Turnkey context successfully with \(networkConfigs.count) network(s)")
+    } catch {
+      RainLogger.error("Rain SDK: Turnkey initialization error - \(error.localizedDescription)")
+      throw RainSDKError.from(underlying: error)
+    }
+  }
   
   public func initialize(
     networkConfigs: [NetworkConfig]
@@ -137,6 +216,8 @@ public final class RainSDKManager: RainSDK {
     
     // Store network configs; no wallet provider in wallet-agnostic mode
     _networkConfigs = networkConfigs
+    _portal = nil
+    _turnkey = nil
     _walletProvider = nil
     
     // Initialize transaction builder service with network configs
@@ -299,16 +380,15 @@ public final class RainSDKManager: RainSDK {
         nonce: nil
       )
       
-      let chainIdString = Constants.ChainIDFormat.EIP155.format(chainId: chainId)
-      
-      let ethSendResponse = try await portalForRequest.request(
-        chainId: chainIdString,
-        method: .eth_sendTransaction,
-        params: [transactionParams],
-        options: nil
+      guard let provider = _walletProvider else {
+        throw RainSDKError.sdkNotInitialized
+      }
+
+      let txHash = try await provider.sendTransaction(
+        chainId: chainId,
+        params: transactionParams
       )
 
-      let txHash = ethSendResponse.result as? String ?? "-/-"
       RainLogger.info("Rain SDK: Withdrawal transaction submitted. Hash: \(txHash)")
       return txHash
     } catch {
