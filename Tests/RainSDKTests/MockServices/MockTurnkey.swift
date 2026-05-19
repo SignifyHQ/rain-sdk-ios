@@ -4,10 +4,43 @@ import TurnkeySwift
 import TurnkeyTypes
 
 final class MockTurnkeyClient: TurnkeyClientProtocol {
+  struct StatusFixture {
+    var txHash: String?
+    var txStatus: String = "TX_STATUS_BROADCASTED"
+    var txError: String?
+    var errorMessage: String?
+
+    static func broadcasted(hash: String) -> StatusFixture {
+      StatusFixture(txHash: hash, txStatus: "TX_STATUS_BROADCASTED")
+    }
+
+    static func pending() -> StatusFixture {
+      StatusFixture(txHash: nil, txStatus: "TX_STATUS_PENDING")
+    }
+
+    static func failed(message: String = "broadcast failed") -> StatusFixture {
+      StatusFixture(txHash: nil, txStatus: "TX_STATUS_FAILED", txError: message)
+    }
+  }
+
   var mockBalances: [v1AssetBalance] = []
   var mockSendTransactionStatusId = "send-status-id"
   var mockTransactionHash = "0x" + String(repeating: "d", count: 64)
   var mockActivities: [v1Activity] = []
+
+  /// Error to throw from `ethSendTransaction`. When set, the mock fails before producing a response.
+  var ethSendTransactionError: Error?
+  /// Error to throw from `getWalletAddressBalances`. When set, the mock fails before producing a response.
+  var walletAddressBalancesError: Error?
+  /// Error to throw from `getActivities`. When set, the mock fails before producing a response.
+  var getActivitiesError: Error?
+  /// Error to throw from `getSendTransactionStatus`. When set, the mock fails before producing a response.
+  var sendTransactionStatusError: Error?
+
+  /// Optional queue of status responses returned sequentially by `getSendTransactionStatus`.
+  /// When non-empty, each call consumes the next entry; the final entry is reused for subsequent calls.
+  /// When empty (default), a single BROADCASTED status containing `mockTransactionHash` is returned.
+  var sendTransactionStatusQueue: [StatusFixture] = []
 
   var walletAddressBalanceCalls: [TGetWalletAddressBalancesBody] = []
   var ethSendTransactionCalls: [TEthSendTransactionBody] = []
@@ -19,6 +52,10 @@ final class MockTurnkeyClient: TurnkeyClientProtocol {
   ) async throws -> TGetWalletAddressBalancesResponse {
     walletAddressBalanceCalls.append(input)
 
+    if let walletAddressBalancesError {
+      throw walletAddressBalancesError
+    }
+
     return MockTurnkey.decode(
       WalletAddressBalancesResponseFixture(balances: mockBalances),
       as: TGetWalletAddressBalancesResponse.self
@@ -29,6 +66,10 @@ final class MockTurnkeyClient: TurnkeyClientProtocol {
     _ input: TEthSendTransactionBody
   ) async throws -> TEthSendTransactionResponse {
     ethSendTransactionCalls.append(input)
+
+    if let ethSendTransactionError {
+      throw ethSendTransactionError
+    }
 
     return MockTurnkey.decode(
       EthSendTransactionResponseFixture(
@@ -52,13 +93,26 @@ final class MockTurnkeyClient: TurnkeyClientProtocol {
   ) async throws -> TGetSendTransactionStatusResponse {
     sendTransactionStatusCalls.append(input)
 
+    if let sendTransactionStatusError {
+      throw sendTransactionStatusError
+    }
+
+    let fixture: StatusFixture
+    if sendTransactionStatusQueue.isEmpty {
+      fixture = StatusFixture.broadcasted(hash: mockTransactionHash)
+    } else if sendTransactionStatusQueue.count == 1 {
+      fixture = sendTransactionStatusQueue[0]
+    } else {
+      fixture = sendTransactionStatusQueue.removeFirst()
+    }
+
     return MockTurnkey.decode(
       SendTransactionStatusResponseFixture(
-        error: nil,
-        eth: v1EthSendTransactionStatus(txHash: mockTransactionHash),
+        error: fixture.errorMessage.map { v1TxError(message: $0) },
+        eth: fixture.txHash.map { v1EthSendTransactionStatus(txHash: $0) },
         solana: nil,
-        txError: nil,
-        txStatus: "TX_STATUS_BROADCASTED"
+        txError: fixture.txError,
+        txStatus: fixture.txStatus
       ),
       as: TGetSendTransactionStatusResponse.self
     )
@@ -68,6 +122,10 @@ final class MockTurnkeyClient: TurnkeyClientProtocol {
     _ input: TGetActivitiesBody
   ) async throws -> TGetActivitiesResponse {
     getActivitiesCalls.append(input)
+
+    if let getActivitiesError {
+      throw getActivitiesError
+    }
 
     return MockTurnkey.decode(
       ActivitiesResponseFixture(activities: mockActivities),
@@ -98,6 +156,9 @@ final class MockTurnkey: TurnkeyContextProtocol {
     v: "28"
   )
 
+  /// Error to throw from `signRawPayload`. When set, the mock fails before producing a signature.
+  var signRawPayloadError: Error?
+
   init(
     wallets: [Wallet] = [MockTurnkey.defaultWallet()],
     session: Session? = MockTurnkey.defaultSession(),
@@ -126,6 +187,10 @@ final class MockTurnkey: TurnkeyContextProtocol {
         hashFunction: hashFunction
       )
     )
+
+    if let signRawPayloadError {
+      throw signRawPayloadError
+    }
 
     return mockSignature
   }
