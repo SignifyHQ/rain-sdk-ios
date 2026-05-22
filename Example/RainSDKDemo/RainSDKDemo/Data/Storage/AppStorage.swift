@@ -5,20 +5,20 @@ struct AppStorage {
   private static let store = UserDefaults.standard
 
   enum Keys {
-    static let portalWithdrawRecipientAddress = "RainSDKDemo.PortalWithdraw.recipientAddress"
+    static let collateralWithdrawRecipientAddress = "RainSDKDemo.CollateralWithdraw.recipientAddress"
     // Add more keys here, e.g.:
     // static let lastSelectedChainId = "RainSDKDemo.lastSelectedChainId"
   }
 
-  // MARK: - Portal Withdraw
+  // MARK: - Collateral Withdraw
 
-  static func getPortalWithdrawRecipientAddress() -> String? {
-    store.string(forKey: Keys.portalWithdrawRecipientAddress)
+  static func getCollateralWithdrawRecipientAddress() -> String? {
+    store.string(forKey: Keys.collateralWithdrawRecipientAddress)
   }
 
-  static func setPortalWithdrawRecipientAddress(_ value: String?) {
+  static func setCollateralWithdrawRecipientAddress(_ value: String?) {
     if let value = value, !value.isEmpty {
-      store.set(value, forKey: Keys.portalWithdrawRecipientAddress)
+      store.set(value, forKey: Keys.collateralWithdrawRecipientAddress)
     }
   }
 }

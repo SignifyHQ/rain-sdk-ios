@@ -1,5 +1,7 @@
 import SwiftUI
 import RainSDK
+import AuthenticationServices
+import UIKit
 
 /// Demo view for connecting to Rain SDK
 /// Can be extended with more SDK functions in the future
@@ -44,7 +46,7 @@ struct SDKConnectionView: View {
         .font(.title2)
         .fontWeight(.bold)
       
-      Text("Connect to Portal Wallet SDK")
+      Text("Initialize with Portal, Turnkey, or wallet-agnostic mode")
         .font(.subheadline)
         .foregroundColor(.secondary)
     }
@@ -127,6 +129,11 @@ struct SDKConnectionView: View {
               .disableAutocorrection(true)
           }
         }
+
+        // Turnkey Inputs (when Turnkey is selected)
+        if viewModel.selectedProvider == .turnkey {
+          turnkeyInputs
+        }
       }
       
       // Chain ID Input
@@ -135,7 +142,7 @@ struct SDKConnectionView: View {
           .font(.subheadline)
           .foregroundColor(.secondary)
         
-        TextField("e.g., 1 (Ethereum), 137 (Polygon)", text: $viewModel.chainId)
+        TextField("e.g., \(DemoLocalConfig.chainId)", text: $viewModel.chainId)
           .textFieldStyle(.roundedBorder)
           .keyboardType(.numberPad)
       }
@@ -146,7 +153,7 @@ struct SDKConnectionView: View {
           .font(.subheadline)
           .foregroundColor(.secondary)
         
-        TextField("Enter RPC endpoint URL", text: $viewModel.rpcUrl)
+        TextField(DemoLocalConfig.rpcUrl, text: $viewModel.rpcUrl)
           .textFieldStyle(.roundedBorder)
           .autocapitalization(.none)
           .disableAutocorrection(true)
@@ -157,35 +164,151 @@ struct SDKConnectionView: View {
     .cornerRadius(12)
   }
   
+  // MARK: - Turnkey Inputs
+
+  private var turnkeyInputs: some View {
+    VStack(alignment: .leading, spacing: 12) {
+      labeledField(
+        title: "Organization ID",
+        placeholder: "your-turnkey-suborg-id",
+        text: $viewModel.turnkeyOrgId
+      )
+
+      labeledField(
+        title: "API URL",
+        placeholder: "https://api.turnkey.com",
+        text: $viewModel.turnkeyApiUrl
+      )
+
+      labeledField(
+        title: "Auth Proxy URL",
+        placeholder: "https://authproxy.turnkey.com",
+        text: $viewModel.turnkeyAuthProxyUrl
+      )
+
+      labeledField(
+        title: "Auth Proxy Config ID",
+        placeholder: "required for Sign Up",
+        text: $viewModel.turnkeyAuthProxyConfigId
+      )
+
+      labeledField(
+        title: "Relying Party ID (rpId)",
+        placeholder: "your.app.domain",
+        text: $viewModel.turnkeyRpId
+      )
+
+      Button {
+        hideKeyboard()
+        guard let anchor = currentPresentationAnchor() else { return }
+        Task { await viewModel.signUpWithTurnkeyPasskey(anchor: anchor) }
+      } label: {
+        HStack {
+          if viewModel.isAuthenticatingTurnkey {
+            ProgressView()
+              .progressViewStyle(CircularProgressViewStyle(tint: .white))
+          } else {
+            Image(systemName: "person.crop.circle.badge.plus")
+          }
+          Text("Sign Up with Passkey")
+        }
+        .frame(maxWidth: .infinity)
+        .padding(.vertical, 10)
+        .background(viewModel.canSignUpWithPasskey ? Color.blue : Color.gray)
+        .foregroundColor(.white)
+        .cornerRadius(10)
+      }
+      .disabled(!viewModel.canSignUpWithPasskey)
+      .opacity(viewModel.canSignUpWithPasskey ? 1 : 0.6)
+
+      Button {
+        hideKeyboard()
+        guard let anchor = currentPresentationAnchor() else { return }
+        Task { await viewModel.loginWithTurnkeyPasskey(anchor: anchor) }
+      } label: {
+        HStack {
+          if viewModel.isAuthenticatingTurnkey {
+            ProgressView()
+              .progressViewStyle(CircularProgressViewStyle(tint: .blue))
+          } else {
+            Image(systemName: "person.badge.key.fill")
+          }
+          Text("Login with Passkey")
+        }
+        .frame(maxWidth: .infinity)
+        .padding(.vertical, 10)
+        .background(Color.clear)
+        .foregroundColor(viewModel.canAuthenticateWithPasskey ? .blue : .gray)
+        .overlay(
+          RoundedRectangle(cornerRadius: 10)
+            .stroke(viewModel.canAuthenticateWithPasskey ? Color.blue : Color.gray, lineWidth: 1)
+        )
+      }
+      .disabled(!viewModel.canAuthenticateWithPasskey)
+      .opacity(viewModel.canAuthenticateWithPasskey ? 1 : 0.6)
+
+      Text("First time? Tap Sign Up — it creates a sub-org with a wallet and registers a passkey for this device. Already signed up on this device? Tap Login.")
+        .font(.caption)
+        .foregroundColor(.secondary)
+    }
+  }
+
+  /// Get the key UIWindow to use as the ASPresentationAnchor for passkey UI.
+  private func currentPresentationAnchor() -> ASPresentationAnchor? {
+    UIApplication.shared.connectedScenes
+      .compactMap { $0 as? UIWindowScene }
+      .flatMap { $0.windows }
+      .first { $0.isKeyWindow }
+  }
+
+  private func labeledField(
+    title: String,
+    placeholder: String,
+    text: Binding<String>
+  ) -> some View {
+    VStack(alignment: .leading, spacing: 8) {
+      Text(title)
+        .font(.subheadline)
+        .foregroundColor(.secondary)
+
+      TextField(placeholder, text: text)
+        .textFieldStyle(.roundedBorder)
+        .autocapitalization(.none)
+        .disableAutocorrection(true)
+    }
+  }
+
   // MARK: - Actions Section
   
   private var actionsSection: some View {
     VStack(spacing: 12) {
-      // Initialize Button
-      Button(action: {
-        hideKeyboard()
-        Task {
-          await viewModel.initializeSDK()
-        }
-      }) {
-        HStack {
-          if viewModel.isInitializing {
-            ProgressView()
-              .progressViewStyle(CircularProgressViewStyle(tint: .white))
-          } else {
-            Image(systemName: viewModel.isInitialized ? "checkmark.circle.fill" : "play.circle.fill")
+      // Initialize Button — hidden when Turnkey is selected (its own passkey buttons handle init)
+      if viewModel.useWalletAgnostic || viewModel.selectedProvider != .turnkey {
+        Button(action: {
+          hideKeyboard()
+          Task {
+            await viewModel.initializeSDK()
           }
-          
-          Text(viewModel.isInitialized ? "Reinitialize" : "Initialize SDK")
+        }) {
+          HStack {
+            if viewModel.isInitializing {
+              ProgressView()
+                .progressViewStyle(CircularProgressViewStyle(tint: .white))
+            } else {
+              Image(systemName: viewModel.isInitialized ? "checkmark.circle.fill" : "play.circle.fill")
+            }
+
+            Text(initializeButtonTitle)
+          }
+          .frame(maxWidth: .infinity)
+          .padding()
+          .background(viewModel.isInitialized ? Color.orange : Color.blue)
+          .foregroundColor(.white)
+          .cornerRadius(12)
         }
-        .frame(maxWidth: .infinity)
-        .padding()
-        .background(viewModel.isInitialized ? Color.orange : Color.blue)
-        .foregroundColor(.white)
-        .cornerRadius(12)
+        .disabled(!viewModel.canInitialize)
+        .opacity(viewModel.canInitialize ? 1 : 0.6)
       }
-      .disabled(!viewModel.canInitialize)
-      .opacity(viewModel.canInitialize ? 1 : 0.6)
       
       // Reset Button
       if viewModel.isInitialized {
@@ -262,20 +385,20 @@ struct SDKConnectionView: View {
             }
             .buttonStyle(.plain)
 
-            NavigationLink(destination: PortalWithdrawEntryView(destination: .transfer)) {
+            NavigationLink(destination: TransferDemoView()) {
               featureButtonContent(
                 icon: "arrow.right.arrow.left.circle.fill",
                 title: "Transfer",
-                subtitle: "Send native or ERC-20 tokens"
+                subtitle: "Send native or ERC-20 (Portal or Turnkey)"
               )
             }
             .buttonStyle(.plain)
 
-            NavigationLink(destination: PortalWithdrawEntryView(destination: .portalWithdraw)) {
+            NavigationLink(destination: CollateralWithdrawEntryView()) {
               featureButtonContent(
                 icon: "wallet.pass.fill",
-                title: "Portal Withdraw",
-                subtitle: "Execute withdrawal via Portal (sign & submit)"
+                title: "Collateral Withdraw",
+                subtitle: "Execute withdrawal via the active wallet provider (sign & submit)"
               )
             }
             .buttonStyle(.plain)
@@ -294,6 +417,10 @@ struct SDKConnectionView: View {
     .cornerRadius(12)
   }
   
+  private var initializeButtonTitle: String {
+    viewModel.isInitialized ? "Reinitialize" : "Initialize SDK"
+  }
+
   // MARK: - Helper Views
   
   private func featureButtonContent(

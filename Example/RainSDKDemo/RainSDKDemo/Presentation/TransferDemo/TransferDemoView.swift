@@ -3,14 +3,13 @@ import UIKit
 import RainSDK
 
 struct TransferDemoView: View {
-  @StateObject private var viewModel: TransferDemoViewModel
+  @StateObject private var viewModel = TransferDemoViewModel()
   @StateObject private var recoverViewModel = RecoverViewModel()
   @State private var hasShownRecoverOnAppear = false
   @Environment(\.dismiss) private var dismiss
   private let popToRoot: (() -> Void)?
 
-  init(initialContract: RainCollateralContractResponse? = nil, popToRoot: (() -> Void)? = nil) {
-    _viewModel = StateObject(wrappedValue: TransferDemoViewModel(initialContract: initialContract))
+  init(popToRoot: (() -> Void)? = nil) {
     self.popToRoot = popToRoot
   }
 
@@ -47,10 +46,10 @@ struct TransferDemoView: View {
       }
     }
     .onAppear {
-      if RainSDKService.shared.hasPortal, !hasShownRecoverOnAppear {
-        hasShownRecoverOnAppear = true
-        recoverViewModel.showRecoverSheet()
-      }
+      guard RainSDKService.shared.hasPortal, !hasShownRecoverOnAppear else { return }
+      guard let token = AuthTokenStorage.getToken(), !token.isEmpty else { return }
+      hasShownRecoverOnAppear = true
+      recoverViewModel.showRecoverSheet()
     }
     .overlay {
       if recoverViewModel.showRecoverChoiceSheet {
@@ -75,7 +74,7 @@ struct TransferDemoView: View {
         .font(.title2)
         .fontWeight(.bold)
 
-      Text("Send native or ERC-20 tokens from the current wallet")
+      Text("Send native or ERC-20 tokens via Portal or Turnkey (no Rain API access token)")
         .font(.subheadline)
         .foregroundColor(.secondary)
         .multilineTextAlignment(.center)
@@ -123,7 +122,7 @@ struct TransferDemoView: View {
       Text("Transfer")
         .font(.headline)
 
-      inputField(title: "Chain ID", text: $viewModel.chainId, placeholder: "e.g. 43113, 1")
+      inputField(title: "Chain ID", text: $viewModel.chainId, placeholder: "e.g. \(DemoLocalConfig.chainId)")
         .keyboardType(.numberPad)
 
       inputField(title: "To Address", text: $viewModel.toAddress, placeholder: "0x...")
@@ -249,13 +248,7 @@ struct TransferDemoView: View {
   // MARK: - Helpers
 
   private func snowtraceURL(hash: String, chainId: Int) -> URL? {
-    let base: String
-    switch chainId {
-    case 43114: base = "https://snowtrace.io/tx/"
-    case 43113: base = "https://testnet.snowtrace.io/tx/"
-    default:    return nil
-    }
-    return URL(string: base + hash)
+    DemoLocalConfig.transactionExplorerURL(hash: hash, chainId: chainId)
   }
 
   // MARK: - Result

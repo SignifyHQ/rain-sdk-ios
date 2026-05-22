@@ -2,7 +2,7 @@ import Foundation
 import RainSDK
 import PortalSwift
 
-/// ViewModel for the recover wallet popup. Shown after opening Portal Withdraw (access token is entered on entry view).
+/// ViewModel for the recover wallet popup. Portal-only; requires Rain API access token from Collateral Withdraw entry.
 @MainActor
 class RecoverViewModel: ObservableObject {
   private let sdkService: RainSDKService
@@ -53,7 +53,7 @@ class RecoverViewModel: ObservableObject {
       recoverError = NSError(
         domain: "Recover",
         code: -1,
-        userInfo: [NSLocalizedDescriptionKey: "Access token is required for recovery. Enter your access token on the Portal Withdraw entry screen first, then try Recover again."]
+        userInfo: [NSLocalizedDescriptionKey: "Access token is required for recovery. Enter your access token on the Collateral Withdraw entry screen first, then try Recover again."]
       )
       return
     }

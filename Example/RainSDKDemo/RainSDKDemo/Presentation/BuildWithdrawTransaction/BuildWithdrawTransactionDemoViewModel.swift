@@ -4,7 +4,7 @@ import Web3
 
 @MainActor
 class BuildWithdrawTransactionDemoViewModel: ObservableObject {
-  @Published var chainId: String = "43113"
+  @Published var chainId: String = DemoLocalConfig.chainId
   @Published var contractAddress: String = "0x1234567890123456789012345678901234567890"
   @Published var proxyAddress: String = "0xabcdefabcdefabcdefabcdefabcdefabcdefabcd"
   @Published var tokenAddress: String = "0x9876543210987654321098765432109876543210"

@@ -3,8 +3,8 @@ import Combine
 import Web3
 
 @MainActor
-class PortalWithdrawDemoViewModel: ObservableObject {
-  @Published var chainId: Int = 43113
+class CollateralWithdrawDemoViewModel: ObservableObject {
+  @Published var chainId: Int = DemoLocalConfig.chainIdInt
   @Published var contractAddress: String = ""
   @Published var proxyAddress: String = ""
   @Published var tokenAddress: String = ""
@@ -43,7 +43,7 @@ class PortalWithdrawDemoViewModel: ObservableObject {
   init(initialContract: RainCollateralContractResponse? = nil) {
     self.initialContract = initialContract
     
-    if let saved = AppStorage.getPortalWithdrawRecipientAddress() {
+    if let saved = AppStorage.getCollateralWithdrawRecipientAddress() {
       self.recipientAddress = saved
     } else {
       self.recipientAddress = "0x0C9049B5cCB1C893fc8a5c1CDa8B5cc64c3aA909"
@@ -93,15 +93,20 @@ class PortalWithdrawDemoViewModel: ObservableObject {
   }
 
   private func saveRecipientAddress() {
-    AppStorage.setPortalWithdrawRecipientAddress(recipientAddress)
+    AppStorage.setCollateralWithdrawRecipientAddress(recipientAddress)
   }
   
   var hasPortal: Bool {
     sdkService.hasPortal
   }
-  
+
+  /// True when any wallet provider (Portal or Turnkey) is active.
+  var hasWalletProvider: Bool {
+    sdkService.hasWalletProvider
+  }
+
   var canWithdraw: Bool {
-    hasPortal
+    hasWalletProvider
     && !recipientAddress.isEmpty
     && !amount.isEmpty
     && selectedAsset != nil

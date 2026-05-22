@@ -5,7 +5,7 @@ class GetBalancesDemoViewModel: ObservableObject {
 
   // MARK: - Shared Input
 
-  @Published var chainId: String = "43113"
+  @Published var chainId: String = DemoLocalConfig.chainId
 
   // MARK: - Native Balance
 

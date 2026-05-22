@@ -1,7 +1,7 @@
 import SwiftUI
 import PortalSwift
 
-/// Alert-style popup: choose iCloud or password to recover wallet. Shown after opening Portal Withdraw (access token from entry view).
+/// Alert-style popup: choose iCloud or password to recover wallet. Shown for Portal on Transfer and Collateral Withdraw entry.
 struct RecoverChoiceView: View {
   @ObservedObject var viewModel: RecoverViewModel
 

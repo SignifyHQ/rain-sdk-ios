@@ -3,7 +3,7 @@ import RainSDK
 
 @MainActor
 class GetTransactionsDemoViewModel: ObservableObject {
-  @Published var chainId: String = "43113"
+  @Published var chainId: String = DemoLocalConfig.chainId
   @Published var limit: String = "20"
   @Published var orderOption: WalletTransactionOrder = .DESC
   @Published var transactions: [WalletTransaction] = []

@@ -5,6 +5,7 @@ import Web3
 import Web3Core
 import web3swift
 import PortalSwift
+import TurnkeySwift
 
 /// Service class for managing Rain SDK operations
 @MainActor
@@ -18,9 +19,19 @@ class RainSDKService: ObservableObject {
   
   /// The Rain SDK manager instance
   private let sdkManager = RainSDKManager()
-  
+
+  /// Active wallet provider (or `.none` for wallet-agnostic mode).
+  enum ActiveProvider {
+    case none
+    case portal
+    case turnkey
+  }
+
   /// Current initialization state
   @Published var isInitialized = false
+
+  /// Active provider after the last successful initialize. Used by demo views to gate provider-specific UI (e.g. Portal recover sheet).
+  @Published var activeProvider: ActiveProvider = .none
   
   // MARK: - Initialization
   
@@ -50,24 +61,68 @@ class RainSDKService: ObservableObject {
         portalSessionToken: portalToken,
         networkConfigs: networkConfigs
       )
-      
+
       // Fetch the wallet address to ensure the session token is valid
       print("Rain SDK: wallet address \(try await sdkManager.getWalletAddress())")
-      
+
       isInitialized = true
+      activeProvider = .portal
       statusMessage = "Initialized successfully with \(networkConfigs.count) network(s)"
       error = nil
     } catch let sdkError as RainSDKError {
       isInitialized = false
+      activeProvider = .none
       error = sdkError
       statusMessage = "Initialization failed: \(sdkError.errorCode)"
     } catch {
       isInitialized = false
+      activeProvider = .none
       self.error = RainSDKError.providerError(underlying: error)
       statusMessage = "Initialization failed: Unknown error"
     }
   }
-  
+
+  /// Initialize the SDK with an authenticated `TurnkeyContext` and network configurations.
+  /// - Parameters:
+  ///   - turnkey: A `TurnkeyContext` whose `authState == .authenticated`. Auth (passkey, OTP, etc.) is the host app's responsibility.
+  ///   - networkConfigs: Array of network configurations.
+  ///   - walletAddress: Optional override; otherwise the first Ethereum-format account from the Turnkey context is used.
+  func initializeTurnkey(
+    turnkey: TurnkeyContext,
+    networkConfigs: [NetworkConfig],
+    walletAddress: String? = nil
+  ) async {
+    statusMessage = "Initializing (Turnkey)..."
+    error = nil
+
+    do {
+      RainLogger.isEnabled = true
+
+      try await sdkManager.initializeTurnkey(
+        turnkey: turnkey,
+        networkConfigs: networkConfigs,
+        walletAddress: walletAddress
+      )
+
+      print("Rain SDK: wallet address \(try await sdkManager.getWalletAddress())")
+
+      isInitialized = true
+      activeProvider = .turnkey
+      statusMessage = "Initialized successfully (Turnkey) with \(networkConfigs.count) network(s)"
+      error = nil
+    } catch let sdkError as RainSDKError {
+      isInitialized = false
+      activeProvider = .none
+      error = sdkError
+      statusMessage = "Initialization failed: \(sdkError.errorCode)"
+    } catch {
+      isInitialized = false
+      activeProvider = .none
+      self.error = RainSDKError.providerError(underlying: error)
+      statusMessage = "Initialization failed: Unknown error"
+    }
+  }
+
   /// Initialize the SDK in wallet-agnostic mode (without Portal token)
   /// - Parameters:
   ///   - networkConfigs: Array of network configurations
@@ -228,9 +283,9 @@ class RainSDKService: ObservableObject {
     )
   }
 
-  // MARK: - Portal Withdraw
+  // MARK: - Collateral Withdraw
 
-  /// Execute collateral withdrawal via Portal (build, sign, submit). Requires Portal to be initialized.
+  /// Execute collateral withdrawal (build, sign, submit). Requires a wallet provider (Portal or Turnkey).
   func withdrawCollateral(
     chainId: Int,
     contractAddress: String,
@@ -262,11 +317,11 @@ class RainSDKService: ObservableObject {
     )
   }
 
-  // MARK: - Portal Withdraw View Model
+  // MARK: - Collateral Withdraw View Model
 
-  /// Returns a new Portal Withdraw demo view model for use in navigation or other screens.
-  func makePortalWithdrawDemoViewModel() -> PortalWithdrawDemoViewModel {
-    PortalWithdrawDemoViewModel()
+  /// Returns a new Collateral Withdraw demo view model for use in navigation or other screens.
+  func makeCollateralWithdrawDemoViewModel() -> CollateralWithdrawDemoViewModel {
+    CollateralWithdrawDemoViewModel()
   }
 
   // MARK: - Portal Access
@@ -279,6 +334,11 @@ class RainSDKService: ObservableObject {
     } catch {
       return false
     }
+  }
+
+  /// True when any wallet provider (Portal or Turnkey) is active.
+  var hasWalletProvider: Bool {
+    activeProvider != .none
   }
 
   /// Recovers the Portal wallet from backup.
@@ -321,6 +381,7 @@ class RainSDKService: ObservableObject {
   /// Reset the SDK state
   func reset() {
     isInitialized = false
+    activeProvider = .none
     error = nil
     statusMessage = "Reset"
   }
