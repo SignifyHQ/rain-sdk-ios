@@ -97,7 +97,7 @@ struct BuildEIP712MessageDemoView: View {
         .font(.headline)
       
       Group {
-        inputField(title: "Chain ID", text: $viewModel.chainId, placeholder: "e.g., 43113")
+        inputField(title: "Chain ID", text: $viewModel.chainId, placeholder: "e.g., \(DemoLocalConfig.chainId)")
         inputField(title: "Collateral Proxy Address", text: $viewModel.collateralProxyAddress, placeholder: "0x...")
         inputField(title: "Wallet Address", text: $viewModel.walletAddress, placeholder: "0x...")
         inputField(title: "Token Address", text: $viewModel.tokenAddress, placeholder: "0x...")

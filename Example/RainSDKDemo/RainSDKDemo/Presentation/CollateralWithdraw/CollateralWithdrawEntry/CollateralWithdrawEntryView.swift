@@ -1,16 +1,9 @@
 import SwiftUI
 
-/// View shown before Portal Withdraw or Transfer: user enters access token, verifies by loading credit contracts,
-/// then continues to the selected destination.
-struct PortalWithdrawEntryView: View {
-  @StateObject private var viewModel: PortalWithdrawEntryViewModel
+/// Entry for Collateral Withdraw: Rain API access token is required to load credit contracts and withdrawal signatures.
+struct CollateralWithdrawEntryView: View {
+  @StateObject private var viewModel = CollateralWithdrawEntryViewModel()
   @Environment(\.dismiss) private var dismiss
-  private let destination: PortalWithdrawEntryViewModel.PortalWithdrawRoute.Destination
-
-  init(destination: PortalWithdrawEntryViewModel.PortalWithdrawRoute.Destination = .portalWithdraw) {
-    _viewModel = StateObject(wrappedValue: PortalWithdrawEntryViewModel())
-    self.destination = destination
-  }
 
   var body: some View {
     ScrollView {
@@ -24,28 +17,14 @@ struct PortalWithdrawEntryView: View {
       }
       .padding()
     }
-    .navigationTitle(destination == .portalWithdraw ? "Portal Withdraw" : "Transfer")
+    .navigationTitle("Collateral Withdraw")
     .navigationBarTitleDisplayMode(.inline)
-    .navigationDestination(item: $viewModel.navigationRoute) { route in
-      destinationView(for: route)
-    }
-  }
-
-  @ViewBuilder
-  private func destinationView(for route: PortalWithdrawEntryViewModel.PortalWithdrawRoute) -> some View {
-    switch route {
-    case .portalWithdraw(let contract):
-      PortalWithdrawDemoView(initialContract: contract, popToRoot: {
-        viewModel.navigationRoute = nil
+    .navigationDestination(item: $viewModel.pendingContract) { contract in
+      CollateralWithdrawDemoView(initialContract: contract, popToRoot: {
+        viewModel.pendingContract = nil
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) { dismiss() }
       })
-      .onDisappear { viewModel.navigationRoute = nil }
-    case .transfer(let contract):
-      TransferDemoView(initialContract: contract, popToRoot: {
-        viewModel.navigationRoute = nil
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) { dismiss() }
-      })
-      .onDisappear { viewModel.navigationRoute = nil }
+      .onDisappear { viewModel.pendingContract = nil }
     }
   }
 
@@ -61,7 +40,7 @@ struct PortalWithdrawEntryView: View {
         .font(.title2)
         .fontWeight(.bold)
 
-      Text("Enter your access token to continue to \(destination == .portalWithdraw ? "Portal Withdraw" : "Transfer")")
+      Text("Rain API access token required for credit contracts and withdrawal signatures. Wallet signing uses your initialized Portal or Turnkey provider.")
         .font(.subheadline)
         .foregroundColor(.secondary)
         .multilineTextAlignment(.center)
@@ -111,7 +90,7 @@ struct PortalWithdrawEntryView: View {
     Button(action: {
       hideKeyboard()
       Task {
-        await viewModel.verifyAndLoadContracts(destination: destination)
+        await viewModel.verifyAndContinue()
       }
     }) {
       HStack {
@@ -119,9 +98,9 @@ struct PortalWithdrawEntryView: View {
           ProgressView()
             .progressViewStyle(CircularProgressViewStyle(tint: .white))
         } else {
-          Image(systemName: destination == .portalWithdraw ? "arrow.down.circle.fill" : "arrow.right.arrow.left.circle.fill")
+          Image(systemName: "arrow.down.circle.fill")
         }
-        Text(destination == .portalWithdraw ? "Continue to Portal Withdraw" : "Continue to Transfer")
+        Text("Continue to Collateral Withdraw")
       }
       .frame(maxWidth: .infinity)
       .padding()
@@ -136,6 +115,6 @@ struct PortalWithdrawEntryView: View {
 
 #Preview {
   NavigationView {
-    PortalWithdrawEntryView()
+    CollateralWithdrawEntryView()
   }
 }

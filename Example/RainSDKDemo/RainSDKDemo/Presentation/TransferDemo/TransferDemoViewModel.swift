@@ -9,7 +9,7 @@ enum TransferType: String, CaseIterable {
 @MainActor
 class TransferDemoViewModel: ObservableObject {
   @Published var transferType: TransferType = .native
-  @Published var chainId: String = "43113"
+  @Published var chainId: String = DemoLocalConfig.chainId
   @Published var toAddress: String = "0x0C9049B5cCB1C893fc8a5c1CDa8B5cc64c3aA909"
   @Published var amount: String = ""
   @Published var contractAddress: String = ""
@@ -27,16 +27,8 @@ class TransferDemoViewModel: ObservableObject {
 
   private let sdkService = RainSDKService.shared
 
-  init(initialContract: RainCollateralContractResponse? = nil) {
-    if let contract = initialContract {
-      if let chain = contract.chainId {
-        chainId = "\(chain)"
-      }
-    }
-  }
-
   var canSend: Bool {
-    guard sdkService.isInitialized,
+    guard sdkService.hasWalletProvider,
           !chainId.isEmpty,
           Int(chainId) != nil,
           !toAddress.trimmingCharacters(in: .whitespaces).isEmpty,
@@ -103,7 +95,7 @@ class TransferDemoViewModel: ObservableObject {
   }
 
   func fetchNativeBalance() async {
-    guard let chainIdInt = Int(chainId), sdkService.isInitialized else { return }
+    guard let chainIdInt = Int(chainId), sdkService.hasWalletProvider else { return }
     isLoadingNativeBalance = true
     defer { isLoadingNativeBalance = false }
     nativeBalance = try? await sdkService.getNativeBalance(chainId: chainIdInt)
@@ -112,7 +104,7 @@ class TransferDemoViewModel: ObservableObject {
   func fetchERC20Balance() async {
     guard let chainIdInt = Int(chainId),
           !contractAddress.trimmingCharacters(in: .whitespaces).isEmpty,
-          sdkService.isInitialized else { return }
+          sdkService.hasWalletProvider else { return }
     isLoadingERC20Balance = true
     defer { isLoadingERC20Balance = false }
     erc20Balance = try? await sdkService.getERC20Balance(

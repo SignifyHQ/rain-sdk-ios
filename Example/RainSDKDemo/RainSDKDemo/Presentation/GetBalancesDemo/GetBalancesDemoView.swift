@@ -52,7 +52,7 @@ struct GetBalancesDemoView: View {
         .font(.subheadline)
         .foregroundColor(.secondary)
 
-      TextField("e.g. 43113 (Avalanche Fuji), 1 (Ethereum)", text: $viewModel.chainId)
+      TextField("e.g. \(DemoLocalConfig.chainId)", text: $viewModel.chainId)
         .textFieldStyle(.roundedBorder)
         .keyboardType(.numberPad)
     }

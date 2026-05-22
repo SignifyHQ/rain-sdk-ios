@@ -128,7 +128,7 @@ struct BuildWithdrawTransactionDemoView: View {
         .font(.headline)
       
       Group {
-        inputField(title: "Chain ID", text: $viewModel.chainId, placeholder: "e.g., 43113")
+        inputField(title: "Chain ID", text: $viewModel.chainId, placeholder: "e.g., \(DemoLocalConfig.chainId)")
         inputField(title: "Contract Address", text: $viewModel.contractAddress, placeholder: "0x...")
         inputField(title: "Proxy Address", text: $viewModel.proxyAddress, placeholder: "0x...")
         inputField(title: "Token Address", text: $viewModel.tokenAddress, placeholder: "0x...")

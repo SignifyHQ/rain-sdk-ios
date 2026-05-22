@@ -93,7 +93,7 @@ struct GetTransactionsDemoView: View {
         Text("Chain ID")
           .font(.subheadline)
           .foregroundColor(.secondary)
-        TextField("e.g. 43113, 1", text: $viewModel.chainId)
+        TextField("e.g. \(DemoLocalConfig.chainId)", text: $viewModel.chainId)
           .textFieldStyle(.roundedBorder)
           .keyboardType(.numberPad)
       }
@@ -340,13 +340,7 @@ private struct TransactionCardView: View {
   }
 
   private var snowtraceURL: URL? {
-    let base: String
-    switch tx.chainId {
-    case 43114: base = "https://snowtrace.io/tx/"
-    case 43113: base = "https://testnet.snowtrace.io/tx/"
-    default:    return nil
-    }
-    return URL(string: base + tx.hash)
+    DemoLocalConfig.transactionExplorerURL(hash: tx.hash, chainId: tx.chainId)
   }
 
   private func checksumAddress(_ raw: String) -> String {
