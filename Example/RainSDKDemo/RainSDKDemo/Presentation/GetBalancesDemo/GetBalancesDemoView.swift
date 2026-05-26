@@ -12,6 +12,7 @@ struct GetBalancesDemoView: View {
         chainIdSection
         nativeBalanceSection
         erc20BalanceSection
+        allBalancesSection
       }
       .padding()
     }
@@ -148,7 +149,70 @@ struct GetBalancesDemoView: View {
     .cornerRadius(12)
   }
 
+  // MARK: - All Balances (cross-chain)
+
+  private var allBalancesSection: some View {
+    VStack(alignment: .leading, spacing: 12) {
+      Label("All Chains", systemImage: "globe")
+        .font(.headline)
+
+      Text("Fetches balances across every configured chain in parallel. Chains outside Turnkey's allowlist read via Multicall3.")
+        .font(.caption)
+        .foregroundColor(.secondary)
+
+      FetchButton(
+        title: "Get All Balances",
+        isLoading: viewModel.isLoadingAll,
+        isDisabled: !RainSDKService.shared.isInitialized
+      ) {
+        Task { await viewModel.fetchAllBalances() }
+      }
+
+      if let all = viewModel.allBalances {
+        VStack(alignment: .leading, spacing: 8) {
+          ForEach(all.keys.sorted(), id: \.self) { chainId in
+            let entries = all[chainId] ?? [:]
+            VStack(alignment: .leading, spacing: 4) {
+              Text("Chain \(chainId)")
+                .font(.subheadline)
+                .fontWeight(.semibold)
+              if entries.isEmpty {
+                Text("No balances (chain failed or unsupported)")
+                  .font(.caption)
+                  .foregroundColor(.secondary)
+              } else {
+                ForEach(entries.keys.sorted(), id: \.self) { token in
+                  BalanceRow(
+                    label: token.isEmpty ? "Native" : shortAddress(token),
+                    value: formatBalance(entries[token] ?? 0)
+                  )
+                }
+              }
+            }
+            .padding(8)
+            .background(Color(.systemBackground))
+            .cornerRadius(8)
+          }
+        }
+      }
+
+      if let error = viewModel.allError {
+        ErrorBanner(error: error)
+      }
+    }
+    .padding()
+    .background(Color(.systemGray6))
+    .cornerRadius(12)
+  }
+
   // MARK: - Helpers
+
+  private func shortAddress(_ address: String) -> String {
+    guard address.count > 10 else { return address }
+    let prefix = address.prefix(6)
+    let suffix = address.suffix(4)
+    return "\(prefix)…\(suffix)"
+  }
 
   private func formatBalance(_ value: Double) -> String {
     if value >= 1_000_000 { return String(format: "%.2f", value) }

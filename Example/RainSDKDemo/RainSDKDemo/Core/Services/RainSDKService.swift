@@ -246,6 +246,12 @@ class RainSDKService: ObservableObject {
     try await sdkManager.getBalances(chainId: chainId)
   }
 
+  /// Fetches balances across every configured chain in parallel.
+  /// Per-chain failures collapse to `[:]` so one bad RPC doesn't hide the rest.
+  func getAllBalances() async throws -> [Int: [String: Double]] {
+    try await sdkManager.getAllBalances()
+  }
+
   /// Fetches transaction history for the current wallet on the given network.
   func getTransactions(
     chainId: Int,

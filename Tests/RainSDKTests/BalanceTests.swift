@@ -130,4 +130,94 @@ struct BalanceTests {
     #expect(balances[""] == 1.5)
     #expect(balances[TestFixtures.usdcAddress] == 100.0)
   }
+
+  // MARK: - getAllBalances
+
+  @Test("getAllBalances throws walletUnavailable before any provider is set")
+  func testGetAllBalancesBeforeInit() async throws {
+    let manager = RainSDKManager()
+    await #expect(throws: RainSDKError.walletUnavailable) {
+      _ = try await manager.getAllBalances()
+    }
+  }
+
+  @Test("getAllBalances returns per-chain native + ERC-20 maps for every configured chain")
+  func testGetAllBalancesHappyPath() async throws {
+    let configs = [
+      NetworkConfig.testConfig(chainId: 1, rpcUrl: "https://eth"),
+      NetworkConfig.testConfig(chainId: 43114, rpcUrl: "https://avax"),
+      NetworkConfig.testConfig(chainId: 137, rpcUrl: "https://polygon")
+    ]
+    let (manager, stub) = try await TestManagers.stubProviderManager(configs: configs)
+    stub.nativeBalanceByChainId = [1: 1.0, 43114: 2.5, 137: 0.1]
+    stub.erc20BalancesByChainId = [
+      1: [TestFixtures.usdcAddress: 100.0],
+      43114: [TestFixtures.usdcAddress: 50.0],
+      137: [:]
+    ]
+
+    let all = try await manager.getAllBalances()
+
+    #expect(all.count == 3)
+    #expect(all[1]?[""] == 1.0)
+    #expect(all[1]?[TestFixtures.usdcAddress] == 100.0)
+    #expect(all[43114]?[""] == 2.5)
+    #expect(all[43114]?[TestFixtures.usdcAddress] == 50.0)
+    #expect(all[137]?[""] == 0.1)
+    #expect(all[137]?.count == 1) // only native; no ERC-20s
+  }
+
+  @Test("getAllBalances collapses a chain to [:] when both native and ERC-20 fetches fail")
+  func testGetAllBalancesPartialFailure() async throws {
+    let configs = [
+      NetworkConfig.testConfig(chainId: 1, rpcUrl: "https://eth"),
+      NetworkConfig.testConfig(chainId: 43114, rpcUrl: "https://broken-avax")
+    ]
+    let (manager, stub) = try await TestManagers.stubProviderManager(configs: configs)
+    stub.nativeBalanceByChainId = [1: 1.0]
+    stub.erc20BalancesByChainId = [1: [TestFixtures.usdcAddress: 100.0]]
+    stub.errorsByChainId = [
+      43114: RainSDKError.networkError(underlying: NSError(domain: "x", code: 0))
+    ]
+
+    let all = try await manager.getAllBalances()
+
+    #expect(all.count == 2)
+    #expect(all[1]?[""] == 1.0)
+    #expect(all[1]?[TestFixtures.usdcAddress] == 100.0)
+    // Both sides failed — chain appears as an empty entry the caller can detect.
+    #expect(all[43114] == [:])
+  }
+
+  @Test("getAllBalances preserves native balance when ERC-20 fetch fails on the same chain")
+  func testGetAllBalancesPreservesNativeOnErc20Failure() async throws {
+    let configs = [NetworkConfig.testConfig(chainId: 1, rpcUrl: "https://eth")]
+    let (manager, stub) = try await TestManagers.stubProviderManager(configs: configs)
+    stub.nativeBalanceByChainId = [1: 1.5]
+    stub.erc20ErrorsByChainId = [
+      1: RainSDKError.networkError(underlying: NSError(domain: "x", code: 0))
+    ]
+
+    let all = try await manager.getAllBalances()
+
+    // ERC-20 fetch threw, native succeeded — native is still returned.
+    #expect(all[1]?[""] == 1.5)
+    #expect(all[1]?.count == 1)
+  }
+
+  @Test("getAllBalances preserves ERC-20 balances when native fetch fails on the same chain")
+  func testGetAllBalancesPreservesErc20OnNativeFailure() async throws {
+    let configs = [NetworkConfig.testConfig(chainId: 1, rpcUrl: "https://eth")]
+    let (manager, stub) = try await TestManagers.stubProviderManager(configs: configs)
+    stub.erc20BalancesByChainId = [1: [TestFixtures.usdcAddress: 42.0]]
+    stub.nativeErrorsByChainId = [
+      1: RainSDKError.networkError(underlying: NSError(domain: "x", code: 0))
+    ]
+
+    let all = try await manager.getAllBalances()
+
+    // Native threw, ERC-20 succeeded — ERC-20s are still returned, no `""` key.
+    #expect(all[1]?[TestFixtures.usdcAddress] == 42.0)
+    #expect(all[1]?[""] == nil)
+  }
 }

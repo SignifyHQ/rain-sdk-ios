@@ -20,8 +20,15 @@ final class MockURLProtocol: URLProtocol {
   nonisolated(unsafe) private static var errors: [String: Error] = [:]
   /// Recorded JSON-RPC method names in call order.
   nonisolated(unsafe) private(set) static var recordedMethods: [String] = []
+  /// Process-wide semaphore so suites that share the global `URLProtocol` registration
+  /// don't trample each other's stubs when Swift Testing runs suites in parallel.
+  /// Unlike `NSLock`, `DispatchSemaphore` isn't thread-affine — `wait()` and `signal()`
+  /// can run on different threads, which matters because Swift Testing test bodies hop
+  /// across the cooperative pool around every `await`.
+  nonisolated(unsafe) private static let serialSemaphore = DispatchSemaphore(value: 1)
 
   static func install() {
+    serialSemaphore.wait()
     URLProtocol.registerClass(MockURLProtocol.self)
   }
 
@@ -30,6 +37,16 @@ final class MockURLProtocol: URLProtocol {
     stubs.removeAll()
     errors.removeAll()
     recordedMethods.removeAll()
+    serialSemaphore.signal()
+  }
+
+  /// Idiomatic scope helper — guarantees `reset()` runs even if the body throws, so
+  /// a test failure inside the block doesn't strand the semaphore and deadlock the
+  /// next installer. Prefer this over manual `install() / defer { reset() }`.
+  static func withInstalled<T>(_ body: () async throws -> T) async rethrows -> T {
+    install()
+    defer { reset() }
+    return try await body()
   }
 
   static func stub(method: String, result: Any) {

@@ -58,8 +58,21 @@ public enum Constants {
   enum ContractABI {
     /// Main contract ABI JSON name
     static let contractJsonABI = "contractJsonABI"
-    
+
     /// Collateral contract ABI JSON name
     static let collateralJsonABI = "collateralJsonABI"
   }
+
+  /// Chains for which the Turnkey `get-balances` API returns data.
+  /// On any other chain, balance reads fall through to `ChainReader`.
+  /// Source: https://docs.turnkey.com/api-reference/queries/get-balances
+  public static let TurnkeySupportedChains: Set<Int> = [
+    1,        // Ethereum Mainnet
+    11155111, // Sepolia
+    8453,     // Base Mainnet
+    84532,    // Base Sepolia
+    137,      // Polygon Mainnet
+    80002     // Polygon Amoy
+  ]
+
 }

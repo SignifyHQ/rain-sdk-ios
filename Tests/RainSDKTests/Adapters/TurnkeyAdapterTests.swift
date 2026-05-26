@@ -122,6 +122,109 @@ struct TurnkeyAdapterTests {
     }
   }
 
+  // MARK: - ChainReader routing (Turnkey-unsupported chains)
+
+  /// Returns an adapter wired with a MockChainReader so we can observe routing decisions
+  /// without going through `TestManagers.turnkeyManager` (which constructs its own reader).
+  private func makeAdapterWithMockChainReader(
+    chainIds: [Int],
+    walletAddress: String = MockTurnkey.defaultWalletAddress
+  ) -> (TurnkeyWalletProviderAdapter, MockTurnkey, MockChainReader) {
+    let configs = chainIds.map { NetworkConfig.testConfig(chainId: $0) }
+    let mockTurnkey = MockTurnkey()
+    let mockReader = MockChainReader()
+    let adapter = TurnkeyWalletProviderAdapter(
+      turnkey: mockTurnkey,
+      transactionBuilder: MockTransactionBuilderService(networkConfigs: configs),
+      networkConfigs: configs,
+      walletAddress: walletAddress,
+      chainReader: mockReader
+    )
+    return (adapter, mockTurnkey, mockReader)
+  }
+
+  @Test("getNativeBalance on an unsupported chain routes to the ChainReader")
+  func testGetNativeBalanceUnsupportedChainRoutes() async throws {
+    let (adapter, mockTurnkey, mockReader) = makeAdapterWithMockChainReader(chainIds: [43114])
+    mockReader.stubbedNative = 7.5
+    let client = mockTurnkey.turnkeyClient as! MockTurnkeyClient
+
+    let balance = try await adapter.getNativeBalance(chainId: 43114)
+
+    #expect(balance == 7.5)
+    #expect(mockReader.nativeCalls == [
+      MockChainReader.NativeCall(chainId: 43114, walletAddress: MockTurnkey.defaultWalletAddress)
+    ])
+    // Turnkey's balance API must NOT be hit on an unsupported chain.
+    #expect(client.walletAddressBalanceCalls.isEmpty)
+  }
+
+  @Test("getNativeBalance on a supported chain still uses Turnkey's balances API")
+  func testGetNativeBalanceSupportedChainUsesTurnkey() async throws {
+    let (adapter, mockTurnkey, mockReader) = makeAdapterWithMockChainReader(chainIds: [1])
+    let client = mockTurnkey.turnkeyClient as! MockTurnkeyClient
+    client.mockBalances = [
+      v1AssetBalance(
+        balance: "1000000000000000000",
+        caip19: "eip155:1/slip44:60",
+        decimals: 18,
+        name: "Ether",
+        symbol: "ETH"
+      )
+    ]
+
+    let balance = try await adapter.getNativeBalance(chainId: 1)
+
+    #expect(balance == 1.0)
+    #expect(client.walletAddressBalanceCalls.count == 1)
+    #expect(mockReader.nativeCalls.isEmpty)
+  }
+
+  @Test("getERC20Balances on an unsupported chain delegates to ChainReader with registry tokens")
+  func testGetERC20BalancesUnsupportedChainRoutes() async throws {
+    let (adapter, mockTurnkey, mockReader) = makeAdapterWithMockChainReader(chainIds: [43114])
+    let client = mockTurnkey.turnkeyClient as! MockTurnkeyClient
+    // Reader returns native + two ERC-20s; the adapter strips the native entry.
+    mockReader.stubbedBalances = [
+      "": 2.0,
+      "0xB97EF9Ef8734C71904D8002F8b6Bc66Dd9c48a6E": 42.0, // USDC on Avax
+      "0xd586E7F844cEa2F87f50152665BCbc2C279D8d70": 17.0  // DAI on Avax
+    ]
+
+    let balances = try await adapter.getERC20Balances(chainId: 43114)
+
+    #expect(balances.count == 2)
+    #expect(balances[""] == nil)
+    #expect(balances["0xB97EF9Ef8734C71904D8002F8b6Bc66Dd9c48a6E"] == 42.0)
+    #expect(balances["0xd586E7F844cEa2F87f50152665BCbc2C279D8d70"] == 17.0)
+    #expect(mockReader.balancesCalls.count == 1)
+    // Tokens passed to the reader come from TokenRegistry[43114].
+    let expectedAddresses = TokenRegistry.tokens(for: 43114).map(\.address)
+    #expect(mockReader.balancesCalls[0].tokenAddresses == expectedAddresses)
+    #expect(client.walletAddressBalanceCalls.isEmpty)
+  }
+
+  @Test("getERC20Balance always routes through ChainReader for unified eth_call handling")
+  func testGetERC20BalanceAlwaysUsesChainReader() async throws {
+    let (adapter, _, mockReader) = makeAdapterWithMockChainReader(chainIds: [1, 43114])
+    mockReader.stubbedErc20 = 9.99
+
+    let mainnet = try await adapter.getERC20Balance(
+      chainId: 1,
+      tokenAddress: TestFixtures.usdcAddress,
+      decimals: 6
+    )
+    let avax = try await adapter.getERC20Balance(
+      chainId: 43114,
+      tokenAddress: TestFixtures.usdcAddress,
+      decimals: 6
+    )
+
+    #expect(mainnet == 9.99)
+    #expect(avax == 9.99)
+    #expect(mockReader.erc20Calls.count == 2)
+  }
+
   // MARK: - getTransactions
 
   @Test("getTransactions with Turnkey returns mapped activities")

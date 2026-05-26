@@ -285,6 +285,18 @@ public protocol RainSDK {
     chainId: Int
   ) async throws -> [String: Double]
 
+  /// Fetches balances across every chain the SDK was initialized with, in parallel.
+  ///
+  /// Per-chain failures are tolerated — a chain that errors out is returned as an empty
+  /// `[:]` rather than failing the whole call, so a single bad RPC endpoint doesn't
+  /// hide balances on the other chains. Callers can detect missing chains by checking
+  /// for empty inner maps.
+  ///
+  /// - Returns: Dictionary keyed by chain ID, mapping to per-chain balances in the same
+  ///   shape as `getBalances(chainId:)`.
+  /// - Throws: RainSDKError if no wallet provider is set.
+  func getAllBalances() async throws -> [Int: [String: Double]]
+
   // MARK: - Transactions
 
   /// Fetches transaction history for the current wallet on the given network using Portal's `getTransactions` API via the wallet provider.

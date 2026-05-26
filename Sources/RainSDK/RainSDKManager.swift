@@ -529,13 +529,41 @@ public final class RainSDKManager: RainSDK {
       guard let provider = _walletProvider else {
         throw RainSDKError.walletUnavailable
       }
-      
+
       var result = try await provider.getERC20Balances(chainId: chainId)
       result[""] = try await provider.getNativeBalance(chainId: chainId)
-      
+
       return result
     } catch {
       throw RainSDKError.from(underlying: error)
+    }
+  }
+
+  public func getAllBalances() async throws -> [Int: [String: Double]] {
+    guard let provider = _walletProvider else {
+      throw RainSDKError.walletUnavailable
+    }
+    let chainIds = _networkConfigs.map(\.chainId)
+    // Fan out across chains. Within each chain, native and ERC-20 are fetched in
+    // parallel and their failures are independent — if one side throws, the other
+    // side's result is still returned. Chains with both sides failing show up as `[:]`.
+    return await withTaskGroup(of: (Int, [String: Double]).self) { group in
+      for chainId in chainIds {
+        group.addTask {
+          async let erc20Task = provider.getERC20Balances(chainId: chainId)
+          async let nativeTask = provider.getNativeBalance(chainId: chainId)
+          var combined = (try? await erc20Task) ?? [:]
+          if let nativeValue = try? await nativeTask {
+            combined[""] = nativeValue
+          }
+          return (chainId, combined)
+        }
+      }
+      var output: [Int: [String: Double]] = [:]
+      for await (chainId, balances) in group {
+        output[chainId] = balances
+      }
+      return output
     }
   }
 
