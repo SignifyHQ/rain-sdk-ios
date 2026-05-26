@@ -24,12 +24,8 @@ public final class RainSDKManager: RainSDK {
   
   private var _networkConfigs: [NetworkConfig] = []
   
-  /// Computed property to safely access the Portal instance
-  /// Returns Portal (concrete type) for public API compatibility
-  /// 
-  /// - Note: This property can only be accessed when a real Portal instance is initialized.
-  ///         When using mocks (e.g., MockPortal) for testing, this property will throw an error.
-  ///         Use `portalProtocol` property for testing with mocks.
+  /// Throws `sdkNotInitialized` if Portal has not been initialized, or if the stored
+  /// `PortalRequestProtocol` is a mock (use `portalProtocol` for test contexts).
   public var portal: Portal {
     get throws {
       guard let portalProtocol = _portal
@@ -47,10 +43,8 @@ public final class RainSDKManager: RainSDK {
     }
   }
 
-  /// Computed property to safely access the Turnkey context
-  ///
-  /// - Note: This property can only be accessed when a real `TurnkeyContext` is initialized.
-  ///         When using mocks for testing, this property will throw an error.
+  /// Throws `sdkNotInitialized` if Turnkey has not been initialized, or if the stored
+  /// context is a mock.
   public var turnkey: TurnkeyContext {
     get throws {
       guard let turnkeyProtocol = _turnkey else {
@@ -489,7 +483,7 @@ public final class RainSDKManager: RainSDK {
   public func getERC20Balance(
     chainId: Int,
     tokenAddress: String,
-    decimals: Int? = Constants.ERC20.defaultDecimals
+    decimals: Int? = nil
   ) async throws -> Double {
     do {
       guard let provider = _walletProvider else {

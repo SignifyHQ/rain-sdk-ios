@@ -2,7 +2,6 @@ import Foundation
 import PortalSwift
 
 /// Utility functions for Ethereum data conversion.
-/// Mirrors Android's `EthereumConverter` utility class.
 enum EthereumConverter {
 
   // MARK: - Portal Result Extraction
@@ -44,7 +43,7 @@ enum EthereumConverter {
   /// - Returns: Human-readable balance as `Double` (e.g. `1.0` for 1 ETH).
   /// Converts a hex-encoded uint256 string to an `Int` (e.g. for ERC-20 `decimals()` responses).
   static func parseHexToInt(_ hex: String) -> Int {
-    let cleanHex = hex.hasPrefix("0x") ? String(hex.dropFirst(2)) : hex
+    let cleanHex = hex.strippingHexPrefix
     guard !cleanHex.isEmpty else { return 0 }
     return Int(cleanHex, radix: 16) ?? 0
   }
@@ -56,7 +55,7 @@ enum EthereumConverter {
   ///   slot 1 — byte length of string
   ///   slot 2+ — UTF-8 string bytes, right-padded to 32-byte boundary
   static func parseHexToString(_ hex: String) -> String? {
-    let cleanHex = hex.hasPrefix("0x") ? String(hex.dropFirst(2)) : hex
+    let cleanHex = hex.strippingHexPrefix
     guard cleanHex.count >= 128 else { return nil }
 
     let lengthHex = String(cleanHex.dropFirst(64).prefix(64))
@@ -77,7 +76,7 @@ enum EthereumConverter {
   }
 
   static func parseHexToDouble(_ hex: String, decimals: Int) -> Double {
-    let cleanHex = hex.hasPrefix("0x") ? String(hex.dropFirst(2)) : hex
+    let cleanHex = hex.strippingHexPrefix
     guard !cleanHex.isEmpty else { return 0 }
 
     var value = NSDecimalNumber.zero

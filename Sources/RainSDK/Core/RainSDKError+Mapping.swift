@@ -63,23 +63,18 @@ extension RainSDKError {
   }
 
   private static func mapPortalMpcError(_ error: PortalMpcError) -> RainSDKError {
-    // Common: session expired / invalid API key
     let code = error.id.flatMap { Int($0) }
     if code == 320 || code == PortalErrorCodes.INVALID_API_KEY.rawValue {
       return .tokenExpired
     }
-    
-    // BAD_REQUEST and all other codes: not mapped to userRejected (message wording varies by Portal; app can inspect underlying error)
     return .providerError(underlying: error)
   }
 
   private static func mapPortalRpcError(_ error: PortalRpcError) -> RainSDKError {
-    // Code `3` is returned for "execution reverted" — not declared by PortalSwift
+    // Code `3` is returned for "execution reverted" — not declared by PortalSwift.
     if error.code == 3 {
       return .withdrawalRevertedByNetwork
     }
-    
-    // BAD_REQUEST and all other codes: not mapped to userRejected (message wording varies by Portal; app can inspect underlying error)
     return .providerError(underlying: error)
   }
 

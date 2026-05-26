@@ -138,8 +138,8 @@ struct EVMChainReaderTests {
     }
   }
 
-  @Test("getBalances throws when a Multicall3 entry reports success=false")
-  func testGetBalancesPerEntryFailureThrows() async throws {
+  @Test("getBalances omits tokens whose Multicall3 entry reports success=false")
+  func testGetBalancesPerEntryFailureOmitsToken() async throws {
     try await MockURLProtocol.withInstalled {
       let tokens = [
         TokenSpec(chainId: 1, address: usdcAddress, symbol: "USDC", decimals: 6),
@@ -153,9 +153,11 @@ struct EVMChainReaderTests {
       MockURLProtocol.stub(method: "eth_call", result: response)
 
       let reader = makeReader(chainId: canonicalChainId)
-      await #expect(throws: RainSDKError.self) {
-        _ = try await reader.getBalances(chainId: canonicalChainId, walletAddress: walletAddress, tokens: tokens)
-      }
+      let balances = try await reader.getBalances(chainId: canonicalChainId, walletAddress: walletAddress, tokens: tokens)
+      // Native + DAI present, USDC (the failed entry) omitted.
+      #expect(balances[""] != nil)
+      #expect(balances[daiAddress] != nil)
+      #expect(balances[usdcAddress] == nil)
     }
   }
 

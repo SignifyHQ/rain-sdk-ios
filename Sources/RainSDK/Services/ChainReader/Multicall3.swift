@@ -35,9 +35,7 @@ internal enum Multicall3 {
   /// Lightweight syntactic check: `0x`-optional, exactly 40 hex chars. Doesn't validate
   /// checksum — that's a separate concern, and Ethereum nodes accept either form.
   static func isValidAddress(_ address: String) -> Bool {
-    let cleaned = (address.hasPrefix("0x") || address.hasPrefix("0X"))
-      ? String(address.dropFirst(2))
-      : address
+    let cleaned = address.strippingHexPrefix
     guard cleaned.count == 40 else { return false }
     return cleaned.allSatisfy(\.isHexDigit)
   }
@@ -98,7 +96,7 @@ internal enum Multicall3 {
       body += hex32(call.allowFailure ? 1 : 0)
       body += hex32(96)
       body += hex32(callDataLenBytes)
-      body += rightPad32(stripHexPrefix(call.callData))
+      body += rightPad32(call.callData.strippingHexPrefix)
       bodies.append(body)
     }
 
@@ -163,12 +161,8 @@ internal enum Multicall3 {
 
   // MARK: - Hex helpers
 
-  private static func stripHexPrefix(_ s: String) -> String {
-    (s.hasPrefix("0x") || s.hasPrefix("0X")) ? String(s.dropFirst(2)) : s
-  }
-
   private static func hexByteCount(_ s: String) -> Int {
-    stripHexPrefix(s).count / 2
+    s.strippingHexPrefix.count / 2
   }
 
   private static func hex32(_ value: Int) -> String {
@@ -178,7 +172,7 @@ internal enum Multicall3 {
 
   /// Left-pads a 20-byte address to 32 bytes (64 hex chars).
   private static func hex32Address(_ address: String) -> String {
-    let clean = stripHexPrefix(address).lowercased()
+    let clean = address.strippingHexPrefix.lowercased()
     return String(repeating: "0", count: max(0, 64 - clean.count)) + clean
   }
 
@@ -193,7 +187,7 @@ internal enum Multicall3 {
   }
 
   private static func decodeHex(_ hex: String) -> [UInt8] {
-    let clean = stripHexPrefix(hex)
+    let clean = hex.strippingHexPrefix
     var bytes = [UInt8]()
     bytes.reserveCapacity(clean.count / 2)
     var idx = clean.startIndex

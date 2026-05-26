@@ -21,9 +21,9 @@ import Foundation
 /// Any chain not in that set uses the parallel `eth_call` fallback. The two lists
 /// (this registry and the canonical-deployment set) must stay in sync; `Multicall3Tests`
 /// enforces that.
-public enum TokenRegistry {
+internal enum TokenRegistry {
   /// Tokens grouped by EIP-155 chain ID.
-  public static let tokensByChainId: [Int: [TokenSpec]] = [
+  static let tokensByChainId: [Int: [TokenSpec]] = [
     // Ethereum
     1: [
       TokenSpec(chainId: 1, address: "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48", symbol: "USDC", decimals: 6, name: "USDC"),
@@ -110,7 +110,7 @@ public enum TokenRegistry {
   ]
 
   /// Returns the configured tokens for a chain, or an empty array if none are known.
-  public static func tokens(for chainId: Int) -> [TokenSpec] {
+  static func tokens(for chainId: Int) -> [TokenSpec] {
     tokensByChainId[chainId] ?? []
   }
 }

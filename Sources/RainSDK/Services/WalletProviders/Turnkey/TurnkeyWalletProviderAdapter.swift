@@ -53,7 +53,7 @@ internal final class TurnkeyWalletProviderAdapter: RainWalletProvider, RainTyped
   /// True when Turnkey's `get-balances` API covers this chain. On any other chain,
   /// balance reads fall through to the injected `ChainReader`.
   private func usesTurnkeyForBalances(chainId: Int) -> Bool {
-    Constants.TurnkeySupportedChains.contains(chainId)
+    Constants.turnkeySupportedChains.contains(chainId)
   }
 
   public func address() async throws -> String {
@@ -107,7 +107,7 @@ internal final class TurnkeyWalletProviderAdapter: RainWalletProvider, RainTyped
       walletAddress: walletAddress
     )
 
-    let caip2 = Constants.ChainIDFormat.EIP155.format(chainId: chainId)
+    let caip2 = ChainIDFormat.EIP155.format(chainId: chainId)
     let nativeBalance = balances.first(where: { isNativeAsset($0, caip2: caip2) })
 
     return decimalStringToDouble(
@@ -157,7 +157,7 @@ internal final class TurnkeyWalletProviderAdapter: RainWalletProvider, RainTyped
       walletAddress: walletAddress
     )
 
-    let caip2 = Constants.ChainIDFormat.EIP155.format(chainId: chainId)
+    let caip2 = ChainIDFormat.EIP155.format(chainId: chainId)
 
     return balances.reduce(into: [:]) { partialResult, balance in
       guard let caip19 = balance.caip19,
@@ -273,25 +273,19 @@ internal final class TurnkeyWalletProviderAdapter: RainWalletProvider, RainTyped
     walletAddress: String,
     params: WalletTransactionParams
   ) async throws -> Double {
-    let estimateResponse = try await rpcRequest(
+    let estimateHex = try await rpcCallForHex(
       chainId: chainId,
       method: "eth_estimateGas",
       params: [rpcTransactionObject(from: params)]
     )
-    let gasPriceResponse = try await rpcRequest(
+    let gasPriceHex = try await rpcCallForHex(
       chainId: chainId,
       method: "eth_gasPrice",
       params: []
     )
 
-    let gasLimit = EthereumConverter.parseHexToDouble(
-      try extractHexResult(from: estimateResponse, method: "eth_estimateGas"),
-      decimals: 0
-    )
-    let gasPriceWei = EthereumConverter.parseHexToDouble(
-      try extractHexResult(from: gasPriceResponse, method: "eth_gasPrice"),
-      decimals: 0
-    )
+    let gasLimit = EthereumConverter.parseHexToDouble(estimateHex, decimals: 0)
+    let gasPriceWei = EthereumConverter.parseHexToDouble(gasPriceHex, decimals: 0)
 
     return gasLimit * gasPriceWei.weiToEth
   }
@@ -317,7 +311,7 @@ internal final class TurnkeyWalletProviderAdapter: RainWalletProvider, RainTyped
       TGetWalletAddressBalancesBody(
         organizationId: session.organizationId,
         address: walletAddress,
-        caip2: Constants.ChainIDFormat.EIP155.format(chainId: chainId)
+        caip2: ChainIDFormat.EIP155.format(chainId: chainId)
       )
     )
 
@@ -329,35 +323,31 @@ internal final class TurnkeyWalletProviderAdapter: RainWalletProvider, RainTyped
     chainId: Int,
     params: WalletTransactionParams
   ) async throws -> TEthSendTransactionBody {
-    let nonceResponse = try await rpcRequest(
+    let nonceHex = try await rpcCallForHex(
       chainId: chainId,
       method: "eth_getTransactionCount",
       params: [params.from, "pending"]
     )
-    let estimateGasResponse = try await rpcRequest(
+    let estimateGasHex = try await rpcCallForHex(
       chainId: chainId,
       method: "eth_estimateGas",
       params: [rpcTransactionObject(from: params)]
     )
-    let gasPriceResponse = try await rpcRequest(
+    let gasPriceHex = try await rpcCallForHex(
       chainId: chainId,
       method: "eth_gasPrice",
       params: []
     )
 
-    let nonce = decimalString(fromHex: try extractHexResult(from: nonceResponse, method: "eth_getTransactionCount"))
-    let estimatedGas = BigUInt(
-      decimalString(
-        fromHex: try extractHexResult(from: estimateGasResponse, method: "eth_estimateGas")
-      )
-    ) ?? BigUInt(21_000)
+    let nonce = decimalString(fromHex: nonceHex)
+    let estimatedGas = BigUInt(decimalString(fromHex: estimateGasHex)) ?? BigUInt(21_000)
     let bufferedGasLimit = estimatedGas + (estimatedGas / 5)
     let gasLimit = (bufferedGasLimit == 0 ? estimatedGas : bufferedGasLimit).description
-    let gasPrice = decimalString(fromHex: try extractHexResult(from: gasPriceResponse, method: "eth_gasPrice"))
+    let gasPrice = decimalString(fromHex: gasPriceHex)
 
     return TEthSendTransactionBody(
       organizationId: session.organizationId,
-      caip2: Constants.ChainIDFormat.EIP155.format(chainId: chainId),
+      caip2: ChainIDFormat.EIP155.format(chainId: chainId),
       data: normalizedData(params.data),
       from: params.from,
       gasLimit: gasLimit,
@@ -486,35 +476,18 @@ internal final class TurnkeyWalletProviderAdapter: RainWalletProvider, RainTyped
     Int(caip2.split(separator: ":").last ?? "") ?? 0
   }
 
-  private func rpcRequest(
+  private func rpcCallForHex(
     chainId: Int,
     method: String,
     params: [Any]
-  ) async throws -> [String: Any] {
+  ) async throws -> String {
     let rpcURL = try getRpcURL(chainId: chainId)
     do {
-      return try await jsonRpcClient.call(rpcUrl: rpcURL, method: method, params: params)
-    } catch let error as RainSDKError {
-      // Re-wrap invalidConfig from the client with the correct chainId — the client
-      // doesn't know the chain ID when given just an RPC URL.
-      if case .invalidConfig = error {
-        throw RainSDKError.invalidConfig(chainId: chainId, rpcUrl: rpcURL)
-      }
-      throw error
+      return try await jsonRpcClient.callForHexResult(rpcUrl: rpcURL, method: method, params: params)
+    } catch RainSDKError.invalidRpcUrl(let url) {
+      // Upgrade to invalidConfig with the chainId we have on hand.
+      throw RainSDKError.invalidConfig(chainId: chainId, rpcUrl: url)
     }
-  }
-
-  private func extractHexResult(
-    from response: [String: Any],
-    method: String
-  ) throws -> String {
-    guard let result = response["result"] as? String else {
-      throw RainSDKError.internalLogicError(
-        details: "Unexpected RPC result for method \(method)"
-      )
-    }
-
-    return result
   }
 
   private func rpcTransactionObject(from params: WalletTransactionParams) -> [String: Any] {
@@ -558,8 +531,7 @@ internal final class TurnkeyWalletProviderAdapter: RainWalletProvider, RainTyped
   }
 
   private func decimalString(fromHex hex: String) -> String {
-    let cleanHex = hex.hasPrefix("0x") ? String(hex.dropFirst(2)) : hex
-    guard let value = BigUInt(cleanHex, radix: 16) else {
+    guard let value = BigUInt(hex.strippingHexPrefix, radix: 16) else {
       return "0"
     }
 
