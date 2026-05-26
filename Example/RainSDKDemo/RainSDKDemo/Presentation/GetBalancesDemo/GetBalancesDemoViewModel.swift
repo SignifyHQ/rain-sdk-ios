@@ -23,6 +23,12 @@ class GetBalancesDemoViewModel: ObservableObject {
   @Published var isLoadingERC20 = false
   @Published var erc20Error: Error?
 
+  // MARK: - All Balances (cross-chain)
+
+  @Published var allBalances: [Int: [String: Double]]?
+  @Published var isLoadingAll = false
+  @Published var allError: Error?
+
   // MARK: - Dependencies
 
   private let sdkService = RainSDKService.shared
@@ -79,5 +85,22 @@ class GetBalancesDemoViewModel: ObservableObject {
     }
 
     isLoadingERC20 = false
+  }
+
+  // MARK: - Fetch All Balances (cross-chain)
+
+  func fetchAllBalances() async {
+    guard sdkService.isInitialized else { return }
+    isLoadingAll = true
+    allError = nil
+    allBalances = nil
+
+    do {
+      allBalances = try await sdkService.getAllBalances()
+    } catch {
+      allError = error
+    }
+
+    isLoadingAll = false
   }
 }

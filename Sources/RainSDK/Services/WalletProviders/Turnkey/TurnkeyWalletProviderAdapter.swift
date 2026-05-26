@@ -28,17 +28,32 @@ internal final class TurnkeyWalletProviderAdapter: RainWalletProvider, RainTyped
   private let transactionBuilder: TransactionBuilderProtocol?
   private let networkConfigsByChainId: [Int: NetworkConfig]
   private let walletAddressOverride: String?
+  private let jsonRpcClient: JsonRpcClient
+  private let chainReader: ChainReader
 
   internal init(
     turnkey: TurnkeyContextProtocol,
     transactionBuilder: TransactionBuilderProtocol? = nil,
     networkConfigs: [NetworkConfig],
-    walletAddress: String? = nil
+    walletAddress: String? = nil,
+    jsonRpcClient: JsonRpcClient = JsonRpcClient(),
+    chainReader: ChainReader? = nil
   ) {
     self.turnkey = turnkey
     self.transactionBuilder = transactionBuilder
     self.networkConfigsByChainId = Dictionary(uniqueKeysWithValues: networkConfigs.map { ($0.chainId, $0) })
     self.walletAddressOverride = walletAddress
+    self.jsonRpcClient = jsonRpcClient
+    self.chainReader = chainReader ?? EVMChainReader(
+      jsonRpcClient: jsonRpcClient,
+      networkConfigs: networkConfigs
+    )
+  }
+
+  /// True when Turnkey's `get-balances` API covers this chain. On any other chain,
+  /// balance reads fall through to the injected `ChainReader`.
+  private func usesTurnkeyForBalances(chainId: Int) -> Bool {
+    Constants.TurnkeySupportedChains.contains(chainId)
   }
 
   public func address() async throws -> String {
@@ -82,6 +97,11 @@ internal final class TurnkeyWalletProviderAdapter: RainWalletProvider, RainTyped
     chainId: Int
   ) async throws -> Double {
     let walletAddress = try await address()
+
+    if !usesTurnkeyForBalances(chainId: chainId) {
+      return try await chainReader.getNativeBalance(chainId: chainId, walletAddress: walletAddress)
+    }
+
     let balances = try await fetchBalances(
       chainId: chainId,
       walletAddress: walletAddress
@@ -101,30 +121,14 @@ internal final class TurnkeyWalletProviderAdapter: RainWalletProvider, RainTyped
     tokenAddress: String,
     decimals: Int?
   ) async throws -> Double {
-    guard let transactionBuilder else {
-      throw RainSDKError.sdkNotInitialized
-    }
-
+    // `eth_call balanceOf` is the same operation everywhere — delegate unconditionally
+    // so the SDK has one implementation rather than per-adapter copies.
     let walletAddress = try await address()
-    let callData = try await transactionBuilder.encodeBalanceOfCall(
-      walletAddress: walletAddress,
-      chainId: chainId
-    )
-    let callParams: [String: Any] = [
-      "to": tokenAddress,
-      "data": callData
-    ]
-
-    let response = try await rpcRequest(
+    return try await chainReader.getERC20Balance(
       chainId: chainId,
-      method: "eth_call",
-      params: [callParams, "latest"]
-    )
-    let hex = try extractHexResult(from: response, method: "eth_call")
-
-    return EthereumConverter.parseHexToDouble(
-      hex,
-      decimals: decimals ?? Constants.ERC20.defaultDecimals
+      tokenAddress: tokenAddress,
+      walletAddress: walletAddress,
+      decimals: decimals
     )
   }
 
@@ -132,6 +136,22 @@ internal final class TurnkeyWalletProviderAdapter: RainWalletProvider, RainTyped
     chainId: Int
   ) async throws -> [String: Double] {
     let walletAddress = try await address()
+
+    if !usesTurnkeyForBalances(chainId: chainId) {
+      let tokens = TokenRegistry.tokens(for: chainId)
+      let all = try await chainReader.getBalances(
+        chainId: chainId,
+        walletAddress: walletAddress,
+        tokens: tokens
+      )
+      // The manager combines native + ERC-20s elsewhere; this method's contract is
+      // ERC-20s only, so strip the native key.
+      // TODO generalise to getBalances and remove this
+      var erc20Only = all
+      erc20Only.removeValue(forKey: "")
+      return erc20Only
+    }
+
     let balances = try await fetchBalances(
       chainId: chainId,
       walletAddress: walletAddress
@@ -472,46 +492,15 @@ internal final class TurnkeyWalletProviderAdapter: RainWalletProvider, RainTyped
     params: [Any]
   ) async throws -> [String: Any] {
     let rpcURL = try getRpcURL(chainId: chainId)
-
-    guard let url = URL(string: rpcURL) else {
-      throw RainSDKError.invalidConfig(chainId: chainId, rpcUrl: rpcURL)
-    }
-
-    var request = URLRequest(url: url)
-    request.httpMethod = "POST"
-    request.setValue("application/json", forHTTPHeaderField: "Content-Type")
-    request.httpBody = try JSONSerialization.data(
-      withJSONObject: [
-        "jsonrpc": "2.0",
-        "id": 1,
-        "method": method,
-        "params": params
-      ]
-    )
-
     do {
-      let (data, _) = try await URLSession.shared.data(for: request)
-      guard let response = try JSONSerialization.jsonObject(with: data) as? [String: Any] else {
-        throw RainSDKError.internalLogicError(
-          details: "Unexpected RPC response payload for method \(method)"
-        )
-      }
-
-      if let error = response["error"] as? [String: Any] {
-        let code = error["code"] as? Int ?? -1
-        let message = error["message"] as? String ?? "Unknown RPC error"
-        throw NSError(
-          domain: "eth.rpc",
-          code: code,
-          userInfo: [NSLocalizedDescriptionKey: message]
-        )
-      }
-
-      return response
+      return try await jsonRpcClient.call(rpcUrl: rpcURL, method: method, params: params)
     } catch let error as RainSDKError {
+      // Re-wrap invalidConfig from the client with the correct chainId — the client
+      // doesn't know the chain ID when given just an RPC URL.
+      if case .invalidConfig = error {
+        throw RainSDKError.invalidConfig(chainId: chainId, rpcUrl: rpcURL)
+      }
       throw error
-    } catch {
-      throw RainSDKError.from(underlying: error)
     }
   }
 
