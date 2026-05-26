@@ -1,9 +1,5 @@
 import Foundation
-import Web3
-import Web3Core
-import web3swift
 import PortalSwift
-import Web3ContractABI
 
 /// Portal-based implementation of `RainWalletProvider`.
 /// Used when the SDK is initialized with `initializePortal(...)`.
@@ -41,7 +37,7 @@ internal final class PortalWalletProviderAdapter: RainWalletProvider, RainTypedD
       value: params.value,
       data: params.data
     )
-    let chainIdString = Constants.ChainIDFormat.EIP155.format(chainId: chainId)
+    let chainIdString = ChainIDFormat.EIP155.format(chainId: chainId)
 
     // Simulate the transaction first via eth_call to catch failures (e.g. insufficient funds)
     // before broadcasting — no balance fetch needed, the node validates it for free.
@@ -71,7 +67,7 @@ internal final class PortalWalletProviderAdapter: RainWalletProvider, RainTypedD
     walletAddress: String,
     typedData: String
   ) async throws -> String {
-    let chainIdString = Constants.ChainIDFormat.EIP155.format(chainId: chainId)
+    let chainIdString = ChainIDFormat.EIP155.format(chainId: chainId)
 
     let response = try await portal.request(
       chainId: chainIdString,
@@ -119,7 +115,7 @@ internal final class PortalWalletProviderAdapter: RainWalletProvider, RainTypedD
     chainId: Int
   ) async throws -> Double {
     let walletAddress = try await address()
-    let chainIdString = Constants.ChainIDFormat.EIP155.format(chainId: chainId)
+    let chainIdString = ChainIDFormat.EIP155.format(chainId: chainId)
     let response = try await portal.request(
       chainId: chainIdString,
       method: .eth_getBalance,
@@ -154,7 +150,7 @@ internal final class PortalWalletProviderAdapter: RainWalletProvider, RainTypedD
       throw RainSDKError.sdkNotInitialized
     }
     let walletAddress = try await address()
-    let chainIdString = Constants.ChainIDFormat.EIP155.format(chainId: chainId)
+    let chainIdString = ChainIDFormat.EIP155.format(chainId: chainId)
     let callData = try await transactionBuilder.encodeBalanceOfCall(walletAddress: walletAddress, chainId: chainId)
     let callParams: [String: Any] = [
       "to": tokenAddress,
@@ -184,7 +180,7 @@ internal final class PortalWalletProviderAdapter: RainWalletProvider, RainTypedD
     chainId: Int,
     tokenAddress: String
   ) async throws -> String? {
-    let chainIdString = Constants.ChainIDFormat.EIP155.format(chainId: chainId)
+    let chainIdString = ChainIDFormat.EIP155.format(chainId: chainId)
     let callParams: [String: Any] = [
       "to": tokenAddress,
       "data": "0x95d89b41" // symbol() selector = keccak256("symbol()")[:4]
@@ -212,7 +208,7 @@ internal final class PortalWalletProviderAdapter: RainWalletProvider, RainTypedD
     chainId: Int,
     tokenAddress: String
   ) async throws -> Int {
-    let chainIdString = Constants.ChainIDFormat.EIP155.format(chainId: chainId)
+    let chainIdString = ChainIDFormat.EIP155.format(chainId: chainId)
     let callParams: [String: Any] = [
       "to": tokenAddress,
       "data": "0x313ce567" // decimals() selector = keccak256("decimals()")[:4]
@@ -238,7 +234,7 @@ internal final class PortalWalletProviderAdapter: RainWalletProvider, RainTypedD
   public func getERC20Balances(
     chainId: Int
   ) async throws -> [String: Double] {
-    let chainIdString = Constants.ChainIDFormat.EIP155.format(chainId: chainId)
+    let chainIdString = ChainIDFormat.EIP155.format(chainId: chainId)
     let tokenBalances = try await portal.getAssets(chainIdString).tokenBalances
     
     // Create portal balances dictionary with ERC20 token balances as initial data
@@ -252,15 +248,16 @@ internal final class PortalWalletProviderAdapter: RainWalletProvider, RainTypedD
     return portalBalances
   }
 
-  /// Fetches transaction history via Portal's getTransactions, maps to wallet-agnostic records,
-  /// and auto-enriches missing `value` and `asset` fields via on-chain `decimals()` / `symbol()` calls.
+  /// Auto-enriches missing `value` and `asset` fields on returned transactions via on-chain
+  /// `decimals()` / `symbol()` calls — Portal's transaction API returns raw contract data
+  /// but not the human-readable values, so we backfill them here.
   public func getTransactions(
     chainId: Int,
     limit: Int?,
     offset: Int?,
     order: WalletTransactionOrder?
   ) async throws -> [WalletTransaction] {
-    let chainIdString = Constants.ChainIDFormat.EIP155.format(chainId: chainId)
+    let chainIdString = ChainIDFormat.EIP155.format(chainId: chainId)
     let portalOrder = order?.toPortalOrder
     let fetchedTransactions = try await portal.getTransactions(
       chainIdString,
@@ -338,7 +335,7 @@ internal final class PortalWalletProviderAdapter: RainWalletProvider, RainTypedD
     address: String,
     params: [Any] = []
   ) async throws -> Double {
-    let chainIdString = Constants.ChainIDFormat.EIP155.format(chainId: chainId)
+    let chainIdString = ChainIDFormat.EIP155.format(chainId: chainId)
 
     let response = try await portal.request(
       chainId: chainIdString,

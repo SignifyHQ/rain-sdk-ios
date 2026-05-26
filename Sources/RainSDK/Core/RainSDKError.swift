@@ -10,7 +10,10 @@ public enum RainSDKError: Error, LocalizedError, Equatable {
   
   /// RAIN_102: The provided RPC URL format or Chain ID is invalid or unsupported
   case invalidConfig(chainId: Int, rpcUrl: String)
-  
+
+  /// RAIN_103: An RPC URL could not be parsed as a valid URL (no chain ID context)
+  case invalidRpcUrl(String)
+
   // MARK: - 2xx: Authentication Errors
   
   /// RAIN_201: The wallet provider session token has expired or is no longer valid
@@ -55,6 +58,8 @@ public enum RainSDKError: Error, LocalizedError, Equatable {
       return "RAIN_101"
     case .invalidConfig:
       return "RAIN_102"
+    case .invalidRpcUrl:
+      return "RAIN_103"
     case .tokenExpired:
       return "RAIN_201"
     case .unauthorized:
@@ -84,6 +89,8 @@ public enum RainSDKError: Error, LocalizedError, Equatable {
       return "[\(errorCode)] Business methods were called before initialize() was successfully completed."
     case .invalidConfig(let chainId, let rpcUrl):
       return "[\(errorCode)] The provided RPC URL format or Chain ID is invalid or unsupported. Chain ID: \(chainId). RPC URL: \(rpcUrl)."
+    case .invalidRpcUrl(let rpcUrl):
+      return "[\(errorCode)] The provided RPC URL could not be parsed. RPC URL: \(rpcUrl)."
     case .tokenExpired:
       return "[\(errorCode)] The wallet provider session token has expired or is no longer valid."
     case .unauthorized:

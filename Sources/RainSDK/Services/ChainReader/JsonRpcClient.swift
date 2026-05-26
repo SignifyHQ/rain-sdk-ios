@@ -21,7 +21,7 @@ internal final class JsonRpcClient: Sendable {
   }
 
   /// Sends a single JSON-RPC 2.0 request and returns the parsed response dictionary.
-  /// Throws `RainSDKError.invalidConfig` on bad URLs, `.internalLogicError` on malformed
+  /// Throws `RainSDKError.invalidRpcUrl` on bad URLs, `.internalLogicError` on malformed
   /// payloads, and wraps RPC `error` objects as `NSError(domain: "eth.rpc", ...)` mapped
   /// through `RainSDKError.from(underlying:)`.
   internal func call(
@@ -30,7 +30,7 @@ internal final class JsonRpcClient: Sendable {
     params: [Any]
   ) async throws -> [String: Any] {
     guard let url = URL(string: rpcUrl) else {
-      throw RainSDKError.invalidConfig(chainId: 0, rpcUrl: rpcUrl)
+      throw RainSDKError.invalidRpcUrl(rpcUrl)
     }
 
     do {

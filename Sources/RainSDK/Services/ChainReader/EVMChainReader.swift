@@ -10,8 +10,10 @@ import Foundation
 /// **Fallback** — parallel `eth_call` (`balanceOf`) and `eth_getBalance`, used on
 /// chains outside the static deployment list.
 ///
-/// Per-token failures (multicall entry reverts, or fallback eth_call errors) propagate
-/// as `RainSDKError` — callers see real errors rather than silent zeros.
+/// Native balance failures are fatal — they indicate a chain-wide problem (bad RPC, wrong
+/// chain ID). Per-token failures (a single `balanceOf` reverts) are logged via `RainLogger`
+/// and the token is omitted from the result, so one bad `TokenRegistry` entry doesn't
+/// break balance reads for the whole chain.
 internal final class EVMChainReader: ChainReader, @unchecked Sendable {
   private enum ReaderConstants {
     /// Decimals used for native balances. Every chain the SDK targets today uses 18.
@@ -106,9 +108,8 @@ internal final class EVMChainReader: ChainReader, @unchecked Sendable {
     walletAddress: String,
     tokens: [TokenSpec]
   ) async throws -> [String: Double] {
-    // `allowFailure: true` so we get back per-call status. A revert on any entry is
-    // surfaced as a `RainSDKError.internalLogicError` (see decode loop below) — we
-    // don't silently zero failed entries; callers should see real errors.
+    // `allowFailure: true` so we get back per-call status. Native failure is fatal;
+    // per-token failures are logged and omitted from the result (see decode loop below).
     var calls: [Multicall3.Call3] = [
       Multicall3.Call3(
         target: Multicall3.canonicalAddress,
@@ -161,9 +162,10 @@ internal final class EVMChainReader: ChainReader, @unchecked Sendable {
     for (i, token) in tokens.enumerated() {
       let result = results[i + 1]
       guard result.success else {
-        throw RainSDKError.internalLogicError(
-          details: "Multicall3 balanceOf reverted for token \(token.address) on chain \(chainId)"
+        RainLogger.warning(
+          "Rain SDK: balanceOf reverted for token \(token.symbol) (\(token.address)) on chain \(chainId) — omitting from result"
         )
+        continue
       }
       output[token.address] = EthereumConverter.parseHexToDouble(
         result.returnData,
@@ -176,35 +178,42 @@ internal final class EVMChainReader: ChainReader, @unchecked Sendable {
   // MARK: - Parallel fallback path
 
   /// Fans out `eth_getBalance` (native) and per-token `eth_call balanceOf` requests
-  /// concurrently via `withThrowingTaskGroup`. Any per-token failure throws — callers
-  /// see real errors instead of silent zeros.
+  /// concurrently via `withThrowingTaskGroup`. Native failure is fatal; per-token failures
+  /// are logged and the token is omitted from the result.
   private func fetchViaParallelCalls(
     rpcUrl: String,
     walletAddress: String,
     tokens: [TokenSpec]
   ) async throws -> [String: Double] {
-    try await withThrowingTaskGroup(of: (String, Double).self) { group in
-      group.addTask { [self] in
-        let value = try await self.fetchNativeBalance(
-          rpcUrl: rpcUrl,
-          walletAddress: walletAddress
-        )
-        return ("", value)
-      }
+    // Native first, on its own — its failure is fatal and shouldn't be swallowed by a
+    // group that's also tolerating per-token errors.
+    let nativeBalance = try await fetchNativeBalance(
+      rpcUrl: rpcUrl,
+      walletAddress: walletAddress
+    )
+
+    return await withTaskGroup(of: (String, Double?).self) { group in
       for token in tokens {
         group.addTask { [self] in
-          let value = try await self.fetchERC20Balance(
-            rpcUrl: rpcUrl,
-            tokenAddress: token.address,
-            walletAddress: walletAddress,
-            decimals: token.decimals
-          )
-          return (token.address, value)
+          do {
+            let value = try await self.fetchERC20Balance(
+              rpcUrl: rpcUrl,
+              tokenAddress: token.address,
+              walletAddress: walletAddress,
+              decimals: token.decimals
+            )
+            return (token.address, value)
+          } catch {
+            RainLogger.warning(
+              "Rain SDK: balanceOf failed for token \(token.symbol) (\(token.address)): \(error) — omitting from result"
+            )
+            return (token.address, nil)
+          }
         }
       }
-      var output: [String: Double] = [:]
-      for try await (key, value) in group {
-        output[key] = value
+      var output: [String: Double] = ["": nativeBalance]
+      for await (key, value) in group {
+        if let value { output[key] = value }
       }
       return output
     }

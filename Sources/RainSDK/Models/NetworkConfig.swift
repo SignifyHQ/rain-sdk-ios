@@ -14,7 +14,7 @@ public struct NetworkConfig: Sendable {
   
   /// EIP-155 formatted chain ID (e.g., "eip155:1", "eip155:137")
   public var eip155ChainId: String {
-    return Constants.ChainIDFormat.EIP155.format(chainId: chainId)
+    return ChainIDFormat.EIP155.format(chainId: chainId)
   }
   
   /// Initialize network configuration with integer chain ID
@@ -45,14 +45,10 @@ public struct NetworkConfig: Sendable {
     rpcUrl: String,
     networkName: String? = nil
   ) throws {
-    // Parse eip155: prefix format
-    let components = eip155ChainId.components(separatedBy: ":")
-    guard components.count == 2,
-          components[0] == Constants.ChainIDFormat.EIP155.prefix,
-          let chainIdInt = Int(components[1]) else {
+    guard let chainIdInt = ChainIDFormat.EIP155.parse(eip155ChainId) else {
       throw NetworkConfigError.invalidEIP155Format(eip155ChainId)
     }
-    
+
     self.chainId = chainIdInt
     self.rpcUrl = rpcUrl
     self.networkName = networkName
