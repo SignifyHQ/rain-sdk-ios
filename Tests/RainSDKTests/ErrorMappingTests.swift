@@ -45,16 +45,11 @@ struct ErrorMappingTests {
     #expect(mapped == RainSDKError.tokenExpired)
   }
 
-  @Test("from(_:) maps PortalRequestsError.clientError with SESSION_EXPIRED message to tokenExpired")
-  func testPortalClientErrorSessionExpiredMapsToTokenExpired() {
-    let error = PortalRequestsError.clientError("SESSION_EXPIRED: token expired", url: "https://example.com")
-    let mapped = RainSDKError.from(underlying: error)
-    #expect(mapped == RainSDKError.tokenExpired)
-  }
-
-  @Test("from(_:) maps generic PortalRequestsError.clientError to providerError")
-  func testPortalClientErrorGenericMapsToProviderError() {
-    let error = PortalRequestsError.clientError("something else", url: "https://example.com")
+  @Test("from(_:) maps PortalRequestsError.clientError to providerError")
+  func testPortalClientErrorMapsToProviderError() {
+    // Portal routes 401 to .unauthorized upstream, so .clientError only carries
+    // other 4xx responses — all of which surface as providerError.
+    let error = PortalRequestsError.clientError("403 - Forbidden", url: "https://example.com")
     let mapped = RainSDKError.from(underlying: error)
 
     if case .providerError = mapped {
