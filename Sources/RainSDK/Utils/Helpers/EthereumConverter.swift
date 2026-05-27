@@ -1,33 +1,17 @@
 import Foundation
-import PortalSwift
 
 /// Utility functions for Ethereum data conversion.
 enum EthereumConverter {
 
-  // MARK: - Portal Result Extraction
+  // MARK: - Hex Normalization
 
-  /// Extracts a hex string from a `PortalProviderResult`, mirroring Android's `convertPortalResultToHexString`.
-  ///
-  /// Handles two shapes Portal can return:
-  ///   - `result` is a raw `String` (e.g. some RPC methods return the hex directly)
-  ///   - `result` is a `PortalProviderRpcResponse` whose nested `.result` holds the hex string
-  ///
-  /// - Returns: The hex string (e.g. `"0x1a2b…"`) or `"0x0"` when missing/invalid.
-  static func extractHexString(from portalResult: PortalProviderResult) -> String {
-    let hex: String?
-    switch portalResult.result {
-    case let str as String:
-      hex = str
-    case let rpcResponse as PortalProviderRpcResponse:
-      hex = rpcResponse.result
-    default:
-      hex = nil
-    }
-
+  /// Returns the input if it looks like a non-empty `0x`-prefixed hex string;
+  /// otherwise returns `"0x0"`. Used by RPC response handlers that want to keep
+  /// downstream parsers from worrying about nil / malformed payloads.
+  static func normalizedHexString(_ hex: String?) -> String {
     guard let hex, hex.hasPrefix("0x"), hex.count > 2 else {
       return "0x0"
     }
-
     return hex
   }
 
