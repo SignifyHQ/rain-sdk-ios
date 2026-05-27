@@ -165,7 +165,7 @@ internal final class PortalWalletProviderAdapter: RainWalletProvider, RainTypedD
         options: nil
       )
 
-      let hex = EthereumConverter.extractHexString(from: response)
+      let hex = response.hexString
       return EthereumConverter.parseHexToDouble(hex, decimals: decimals ?? Constants.ERC20.defaultDecimals)
     } catch {
       if error is RainSDKError { throw error }
@@ -193,7 +193,7 @@ internal final class PortalWalletProviderAdapter: RainWalletProvider, RainTypedD
         params: [callParams, "latest"],
         options: nil
       )
-      let hex = EthereumConverter.extractHexString(from: response)
+      let hex = response.hexString
       return EthereumConverter.parseHexToString(hex)
     } catch {
       if error is RainSDKError { throw error }
@@ -219,7 +219,7 @@ internal final class PortalWalletProviderAdapter: RainWalletProvider, RainTypedD
         params: [callParams, "latest"],
         options: nil
       )
-      let hex = EthereumConverter.extractHexString(from: response)
+      let hex = response.hexString
       return EthereumConverter.parseHexToInt(hex)
     } catch {
       if error is RainSDKError { throw error }
