@@ -29,4 +29,12 @@ extension String {
   var strippingHexPrefix: String {
     (hasPrefix("0x") || hasPrefix("0X")) ? String(dropFirst(2)) : self
   }
+
+  /// Lightweight syntactic check for a 20-byte Ethereum address: `0x`-optional,
+  /// exactly 40 hex characters. Does not validate the checksum.
+  var isValidEthereumAddress: Bool {
+    let cleaned = strippingHexPrefix
+    guard cleaned.count == 40 else { return false }
+    return cleaned.allSatisfy(\.isHexDigit)
+  }
 }

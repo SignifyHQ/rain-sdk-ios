@@ -7,43 +7,14 @@ import Foundation
 /// Pure functions — no I/O — so unit tests can lock in calldata against fixtures.
 internal enum Multicall3 {
   /// Canonical Multicall3 deployment address (https://www.multicall3.com), deployed
-  /// at the same address on most major EVM chains.
+  /// at the same address on most major EVM chains. The list of chains where this
+  /// address is known-deployed lives in `Multicall3+Deployments.swift`.
   static let canonicalAddress = "0xcA11bde05977b3631167028862bE2a173976CA11"
 
-  /// Mainnet Rain chain IDs where Multicall3 is at `canonicalAddress`
-  /// Used to batch read native + ERC-20 balances.
-  static let canonicallyDeployedChainIds: Set<Int> = [
-    1,       // Ethereum
-    10,      // Optimism
-    56,      // BNB Chain
-    137,     // Polygon
-    143,     // Monad
-    324,     // zkSync Era
-    8453,    // Base
-    9745,    // Plasma
-    42161,   // Arbitrum
-    42220,   // Celo
-    43114,   // Avalanche
-    57073,   // Ink
-  ]
-
-  /// True when Multicall3 is known-deployed at `canonicalAddress` on the given chain.
-  static func isCanonicallyDeployed(on chainId: Int) -> Bool {
-    canonicallyDeployedChainIds.contains(chainId)
-  }
-
-  /// Lightweight syntactic check: `0x`-optional, exactly 40 hex chars. Doesn't validate
-  /// checksum — that's a separate concern, and Ethereum nodes accept either form.
-  static func isValidAddress(_ address: String) -> Bool {
-    let cleaned = address.strippingHexPrefix
-    guard cleaned.count == 40 else { return false }
-    return cleaned.allSatisfy(\.isHexDigit)
-  }
-
-  // Function selectors (first 4 bytes of keccak256(signature)).
+  // Multicall3-specific function selectors (first 4 bytes of keccak256(signature)).
+  // ERC-20 selectors live in `ERC20Selectors`.
   private static let aggregate3Selector = "82ad56cb"   // aggregate3((address,bool,bytes)[])
   private static let getEthBalanceSelector = "4d2301cc" // getEthBalance(address)
-  private static let balanceOfSelector = "70a08231"    // balanceOf(address)
 
   /// One entry in an `aggregate3` batch.
   struct Call3 {
@@ -112,7 +83,7 @@ internal enum Multicall3 {
   /// Decodes the return value of `aggregate3` — an array of `(bool, bytes)`.
   /// Throws `RainSDKError.internalLogicError` on a malformed payload.
   static func decodeAggregate3Result(hex: String) throws -> [Result] {
-    let bytes = decodeHex(hex)
+    let bytes = try decodeHex(hex)
     // Layout: [0x20 offset to array][array body...]
     // Array body: [length][offset_1]...[offset_N][tuple_1]...[tuple_N]
     guard bytes.count >= 64 else {
@@ -156,7 +127,7 @@ internal enum Multicall3 {
 
   /// Encodes calldata for ERC-20 `balanceOf(address)`.
   static func encodeBalanceOf(address: String) -> String {
-    "0x" + balanceOfSelector + hex32Address(address)
+    "0x" + ERC20Selectors.balanceOf + hex32Address(address)
   }
 
   // MARK: - Hex helpers
@@ -186,16 +157,20 @@ internal enum Multicall3 {
     return hex + String(repeating: "0", count: padChars)
   }
 
-  private static func decodeHex(_ hex: String) -> [UInt8] {
+  private static func decodeHex(_ hex: String) throws -> [UInt8] {
     let clean = hex.strippingHexPrefix
+    guard clean.count.isMultiple(of: 2) else {
+      throw RainSDKError.internalLogicError(details: "Multicall3 result has odd hex length")
+    }
     var bytes = [UInt8]()
     bytes.reserveCapacity(clean.count / 2)
     var idx = clean.startIndex
     while idx < clean.endIndex {
-      let next = clean.index(idx, offsetBy: 2, limitedBy: clean.endIndex) ?? clean.endIndex
-      if next > idx, let byte = UInt8(clean[idx..<next], radix: 16) {
-        bytes.append(byte)
+      let next = clean.index(idx, offsetBy: 2)
+      guard let byte = UInt8(clean[idx..<next], radix: 16) else {
+        throw RainSDKError.internalLogicError(details: "Multicall3 result contains invalid hex byte")
       }
+      bytes.append(byte)
       idx = next
     }
     return bytes

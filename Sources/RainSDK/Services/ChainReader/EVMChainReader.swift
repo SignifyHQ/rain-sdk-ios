@@ -260,7 +260,7 @@ internal final class EVMChainReader: ChainReader, @unchecked Sendable {
   }
 
   private func validate(ethereumAddress: String, label: String) throws {
-    guard Multicall3.isValidAddress(ethereumAddress) else {
+    guard ethereumAddress.isValidEthereumAddress else {
       throw RainSDKError.internalLogicError(
         details: "Invalid Ethereum \(label): \(ethereumAddress)"
       )

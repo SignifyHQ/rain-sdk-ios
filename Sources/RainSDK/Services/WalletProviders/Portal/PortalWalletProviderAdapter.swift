@@ -183,7 +183,7 @@ internal final class PortalWalletProviderAdapter: RainWalletProvider, RainTypedD
     let chainIdString = ChainIDFormat.EIP155.format(chainId: chainId)
     let callParams: [String: Any] = [
       "to": tokenAddress,
-      "data": "0x95d89b41" // symbol() selector = keccak256("symbol()")[:4]
+      "data": "0x" + ERC20Selectors.symbol
     ]
 
     do {
@@ -202,8 +202,6 @@ internal final class PortalWalletProviderAdapter: RainWalletProvider, RainTypedD
     }
   }
 
-  /// Fetches the decimal places for an ERC-20 token via direct RPC `eth_call` (decimals()).
-  /// Calls the `decimals()` selector (0x313ce567) on the token contract and parses the uint8 result.
   private func getTokenDecimals(
     chainId: Int,
     tokenAddress: String
@@ -211,7 +209,7 @@ internal final class PortalWalletProviderAdapter: RainWalletProvider, RainTypedD
     let chainIdString = ChainIDFormat.EIP155.format(chainId: chainId)
     let callParams: [String: Any] = [
       "to": tokenAddress,
-      "data": "0x313ce567" // decimals() selector = keccak256("decimals()")[:4]
+      "data": "0x" + ERC20Selectors.decimals
     ]
 
     do {
