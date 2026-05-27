@@ -57,6 +57,10 @@ public protocol RainSDK {
   /// which set the provider automatically.
   func setWalletProvider(_ provider: (any RainWalletProvider)?)
 
+  /// Clears all SDK state. After this returns, the SDK is back to the same state as
+  /// immediately after `init()` and must be re-initialized before further use.
+  func reset()
+
   /// Builds an EIP-712 compliant message used for obtaining the admin signature
   /// required for withdrawals.
   ///

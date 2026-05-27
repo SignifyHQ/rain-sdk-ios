@@ -55,4 +55,29 @@ struct ManagerAPITests {
     let addr = try await manager.getWalletAddress()
     #expect(addr == "0xreplaced000000000000000000000000000000000")
   }
+
+  // MARK: - reset
+
+  @Test("reset() clears wallet provider so subsequent calls throw walletUnavailable")
+  func testResetClearsWalletProvider() async throws {
+    let mockPortal = MockPortal()
+    mockPortal.setMockAddress(TestFixtures.walletAddress, forNamespace: PortalNamespace.eip155)
+    let (manager, _, _) = TestManagers.portalManager(portal: mockPortal)
+
+    // Sanity: provider works.
+    _ = try await manager.getWalletAddress()
+
+    manager.reset()
+
+    await #expect(throws: RainSDKError.walletUnavailable) {
+      _ = try await manager.getWalletAddress()
+    }
+  }
+
+  @Test("reset() is idempotent")
+  func testResetIdempotent() {
+    let manager = RainSDKManager()
+    manager.reset()
+    manager.reset()
+  }
 }
