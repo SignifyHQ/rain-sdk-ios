@@ -192,14 +192,17 @@ internal final class EVMChainReader: ChainReader, @unchecked Sendable {
       walletAddress: walletAddress
     )
 
+    // `balanceOf(walletAddress)` calldata is identical across every token — encode once.
+    let balanceOfCallData = Multicall3.encodeBalanceOf(address: walletAddress)
+
     return await withTaskGroup(of: (String, Double?).self) { group in
       for token in tokens {
         group.addTask { [self] in
           do {
-            let value = try await self.fetchERC20Balance(
+            let value = try await self.fetchCall(
               rpcUrl: rpcUrl,
-              tokenAddress: token.address,
-              walletAddress: walletAddress,
+              targetAddress: token.address,
+              callData: balanceOfCallData,
               decimals: token.decimals
             )
             return (token.address, value)
@@ -228,14 +231,16 @@ internal final class EVMChainReader: ChainReader, @unchecked Sendable {
     return EthereumConverter.parseHexToDouble(hex, decimals: ReaderConstants.defaultNativeDecimals)
   }
 
-  private func fetchERC20Balance(
+  /// Issues a single `eth_call` against `targetAddress` with the given pre-encoded
+  /// `callData` and parses the hex uint256 result as a `Double` scaled by `decimals`.
+  /// Not specific to ERC-20 — any read function whose return decodes as a uint256 fits.
+  private func fetchCall(
     rpcUrl: String,
-    tokenAddress: String,
-    walletAddress: String,
+    targetAddress: String,
+    callData: String,
     decimals: Int
   ) async throws -> Double {
-    let callData = Multicall3.encodeBalanceOf(address: walletAddress)
-    let callParams: [String: Any] = ["to": tokenAddress, "data": callData]
+    let callParams: [String: Any] = ["to": targetAddress, "data": callData]
     let hex = try await jsonRpcClient.callForHexResult(
       rpcUrl: rpcUrl,
       method: "eth_call",
