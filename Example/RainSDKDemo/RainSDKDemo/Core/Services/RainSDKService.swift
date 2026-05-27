@@ -383,9 +383,10 @@ class RainSDKService: ObservableObject {
   }
   
   // MARK: - Reset
-  
+
   /// Reset the SDK state
   func reset() {
+    sdkManager.reset()
     isInitialized = false
     activeProvider = .none
     error = nil

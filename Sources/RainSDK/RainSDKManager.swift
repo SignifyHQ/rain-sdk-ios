@@ -79,46 +79,31 @@ public final class RainSDKManager: RainSDK {
   }
   
   // MARK: - Initialization
-  public init(
-  ) {}
-  
-  /// Internal initializer for testing - allows injecting a custom transaction builder
-  internal init(
-    transactionBuilder: TransactionBuilderProtocol?
-  ) {
-    self._transactionBuilder = transactionBuilder
-  }
-  
-  /// Internal initializer for testing - allows injecting both Portal and transaction builder
-  internal init(
-    portal: PortalRequestProtocol?,
-    transactionBuilder: TransactionBuilderProtocol?
-  ) {
-    self._portal = portal
-    self._turnkey = nil
-    self._transactionBuilder = transactionBuilder
-    self._walletProvider = portal.map {
-      PortalWalletProviderAdapter(
-        portal: $0,
-        transactionBuilder: transactionBuilder
-      )
-    }
-  }
+  public init() {}
 
-  /// Internal initializer for testing - allows injecting Turnkey and transaction builder
+  /// Designated internal initializer used by tests to inject any combination of Portal,
+  /// Turnkey, and transaction-builder mocks. Pass `portal` *or* `turnkey` (not both);
+  /// the wallet provider is built from whichever is supplied.
   internal init(
-    turnkey: TurnkeyContextProtocol?,
-    transactionBuilder: TransactionBuilderProtocol?,
+    portal: PortalRequestProtocol? = nil,
+    turnkey: TurnkeyContextProtocol? = nil,
+    transactionBuilder: TransactionBuilderProtocol? = nil,
     networkConfigs: [NetworkConfig] = [],
     walletAddress: String? = nil
   ) {
-    self._portal = nil
+    self._portal = portal
     self._turnkey = turnkey
     self._transactionBuilder = transactionBuilder
     self._networkConfigs = networkConfigs
-    self._walletProvider = turnkey.map {
-      TurnkeyWalletProviderAdapter(
-        turnkey: $0,
+
+    if let portal {
+      self._walletProvider = PortalWalletProviderAdapter(
+        portal: portal,
+        transactionBuilder: transactionBuilder
+      )
+    } else if let turnkey {
+      self._walletProvider = TurnkeyWalletProviderAdapter(
+        turnkey: turnkey,
         transactionBuilder: transactionBuilder,
         networkConfigs: networkConfigs,
         walletAddress: walletAddress
@@ -222,6 +207,18 @@ public final class RainSDKManager: RainSDK {
 
   public func setWalletProvider(_ provider: (any RainWalletProvider)?) {
     _walletProvider = provider
+  }
+
+  /// Clears all SDK state — wallet provider, Portal/Turnkey instances, transaction
+  /// builder, and network configs. After this returns, the SDK is back to the same
+  /// state as immediately after `init()`. Idempotent.
+  public func reset() {
+    _portal = nil
+    _turnkey = nil
+    _walletProvider = nil
+    _transactionBuilder = nil
+    _networkConfigs = []
+    RainLogger.info("Rain SDK: Reset SDK state")
   }
 
   public func buildEIP712Message(
