@@ -31,6 +31,10 @@ internal final class TurnkeyWalletProviderAdapter: RainWalletProvider, RainTyped
   private let jsonRpcClient: JsonRpcClient
   private let chainReader: ChainReader
 
+  // Once resolved, the wallet address is stable for the adapter's lifetime, so cache it.
+  private var cachedAddress: String?
+  private let cachedAddressLock = NSLock()
+
   internal init(
     turnkey: TurnkeyContextProtocol,
     transactionBuilder: TransactionBuilderProtocol? = nil,
@@ -61,17 +65,27 @@ internal final class TurnkeyWalletProviderAdapter: RainWalletProvider, RainTyped
       return walletAddressOverride
     }
 
+    if let cached = cachedAddressLock.withLock({ cachedAddress }) {
+      return cached
+    }
+
     if let walletAddress = resolveEthereumWalletAddress(from: turnkey.wallets) {
+      storeCachedAddress(walletAddress)
       return walletAddress
     }
 
     try await turnkey.refreshWallets()
 
     if let walletAddress = resolveEthereumWalletAddress(from: turnkey.wallets) {
+      storeCachedAddress(walletAddress)
       return walletAddress
     }
 
     throw RainSDKError.walletUnavailable
+  }
+
+  private func storeCachedAddress(_ address: String) {
+    cachedAddressLock.withLock { cachedAddress = address }
   }
 
   public func sendTransaction(
