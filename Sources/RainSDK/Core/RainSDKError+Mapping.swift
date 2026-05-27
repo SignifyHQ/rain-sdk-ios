@@ -48,14 +48,10 @@ extension RainSDKError {
   private static func mapPortalRequestsError(_ error: PortalRequestsError) -> RainSDKError {
     switch error {
     case .unauthorized:
+      // Portal routes HTTP 401 to .unauthorized upstream (see PortalRequests.buildError),
+      // so this is the only path token-expired errors reach the SDK through.
       return .tokenExpired
-    case .clientError(let message, _):
-      // Portal wording varies; match defensively on the message body.
-      if message.contains("SESSION_EXPIRED") || message.contains("401") {
-        return .tokenExpired
-      }
-      return .providerError(underlying: error)
-    case .internalServerError, .redirectError:
+    case .clientError, .internalServerError, .redirectError:
       return .providerError(underlying: error)
     default:
       return .providerError(underlying: error)
