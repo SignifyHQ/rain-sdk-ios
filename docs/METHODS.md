@@ -190,43 +190,43 @@ Fetches transaction history for the current wallet on the given network.
 
 ---
 
-## getNativeBalance(chainId:)
+## getBalance(chainId:token:)
 
-Fetches the native token balance (e.g. ETH) for the current wallet on the given network.
+Fetches a single balance — native or a specific contract token — for the current wallet.
 
-- **Returns:** `Double` — balance in human-readable form (e.g. 1.5 for 1.5 ETH).
+- **Parameters:** `token` is `.native` or `.contract(address:)`.
+- **Returns:** `Balance` — exact `rawAmount` (`BigUInt`) plus `decimals`, `symbol`, `name`, and `decimalAmount` / `formatted` accessors.
 - **Throws:** `RainSDKError.walletUnavailable` or RPC failure.
-- **Requires:** Wallet provider set.
-
----
-
-## getERC20Balance(chainId:tokenAddress:)
-
-Fetches the ERC-20 token balance for a single token for the current wallet.
-
-- **Returns:** `Double?` — balance in human-readable form, or `nil` if none.
-- **Throws:** `RainSDKError` if wallet provider not set or request fails.
-- **Requires:** Wallet provider set.
-
----
-
-## getERC20Balances(chainId:)
-
-Fetches all ERC-20 token balances for the current wallet on the given network.
-
-- **Returns:** `[String: Double]` — token contract address → balance.
-- **Throws:** `RainSDKError` if wallet provider not set or request fails.
 - **Requires:** Wallet provider set.
 
 ---
 
 ## getBalances(chainId:)
 
-Fetches all balances (native + ERC-20) for the current wallet. Native balance is under key `""`.
+Fetches all non-zero balances for the current wallet on the given network. The native balance is always included.
 
-- **Returns:** `[String: Double]` — token address → balance; use `""` for native.
+- **Returns:** `[Balance]` — one entry per held token plus native.
 - **Throws:** `RainSDKError` if wallet provider not set or request fails.
 - **Requires:** Wallet provider set.
+
+---
+
+## getAllBalances()
+
+Fetches balances across every configured chain in parallel, flattened into one list. Each `Balance` carries its own `chainId`. A chain that fails contributes no entries rather than failing the whole call.
+
+- **Returns:** `[Balance]` — merged across all configured chains.
+- **Throws:** `RainSDKError.walletUnavailable`.
+- **Requires:** Wallet provider set.
+
+---
+
+## registerTokens(_:)
+
+Registers additional `TokenInfo` so their metadata resolves from the store without an on-chain `decimals()` / `symbol()` lookup. Retained across re-initialization; cleared by `reset()`.
+
+- **Parameters:** `tokens` — `[TokenInfo]` to add (replaces any existing entry with the same chain + address).
+- **Returns:** `Void`.
 
 ---
 

@@ -1,18 +1,22 @@
 import Foundation
 import PortalSwift
+import Web3
 
 /// Portal-based implementation of `RainWalletProvider`.
 /// Used when the SDK is initialized with `initializePortal(...)`.
 internal final class PortalWalletProviderAdapter: RainWalletProvider, RainTypedDataSignerProvider, RainTransactionFeeEstimatingProvider, @unchecked Sendable {
   private let portal: PortalRequestProtocol
   private let transactionBuilder: TransactionBuilderProtocol?
+  private let tokenStore: TokenMetadataStore
 
   internal init(
     portal: PortalRequestProtocol,
-    transactionBuilder: TransactionBuilderProtocol? = nil
+    transactionBuilder: TransactionBuilderProtocol? = nil,
+    tokenStore: TokenMetadataStore
   ) {
     self.portal = portal
     self.transactionBuilder = transactionBuilder
+    self.tokenStore = tokenStore
   }
 
   public func address(
@@ -110,50 +114,75 @@ internal final class PortalWalletProviderAdapter: RainWalletProvider, RainTypedD
     return estimateGas * gasPrice
   }
 
-  /// Fetches native token balance (e.g. ETH) via eth_getBalance and parses the RPC response (PortalProviderRpcResponse → result?.asDouble?.weiToEth).
-  public func getNativeBalance(
+  public func getBalance(
+    chainId: Int,
+    token: Token
+  ) async throws -> Balance {
+    switch token {
+    case .native:
+      return try await fetchNativeBalance(chainId: chainId)
+    case .contract(let address):
+      return try await fetchContractBalance(chainId: chainId, address: address)
+    }
+  }
+
+  public func getBalances(
     chainId: Int
-  ) async throws -> Double {
+  ) async throws -> [Balance] {
+    let native = try await fetchNativeBalance(chainId: chainId)
+    let chainIdString = ChainIDFormat.EIP155.format(chainId: chainId)
+    let tokenBalances = try await portal.getAssets(chainIdString).tokenBalances ?? []
+
+    var output: [Balance] = [native]
+    for entry in tokenBalances {
+      guard let address = entry.metadata?.tokenAddress, !address.isEmpty else { continue }
+      let info = await tokenStore.tokenInfo(chainId: chainId, address: address)
+      let raw = reconstructRawAmount(entry: entry, decimals: info.decimals)
+      guard raw > 0 else { continue }
+      output.append(
+        Balance(
+          token: .contract(address: address),
+          chainId: chainId,
+          rawAmount: raw,
+          decimals: info.decimals,
+          symbol: info.symbol ?? entry.symbol,
+          name: info.name ?? entry.name
+        )
+      )
+    }
+    return output
+  }
+
+  /// Fetches the native balance via `eth_getBalance`, preserving exact wei precision.
+  private func fetchNativeBalance(chainId: Int) async throws -> Balance {
     let walletAddress = try await address()
     let chainIdString = ChainIDFormat.EIP155.format(chainId: chainId)
     let response = try await portal.request(
       chainId: chainIdString,
       method: .eth_getBalance,
-      params: [
-        walletAddress,
-        "latest"
-      ],
+      params: [walletAddress, "latest"],
       options: nil
     )
-    
-    guard let ethBalanceRpcResponse = response.result as? PortalProviderRpcResponse else {
-      RainLogger.error("Rain SDK: Error fetching native balance for \(walletAddress). Unexpected RPC response")
-      throw RainSDKError.internalLogicError(details: "Unexpected RPC response when fetching native balance")
-    }
-    
-    guard let ethBalance = ethBalanceRpcResponse.result?.asDouble?.weiToEth else {
-      RainLogger.error("Rain SDK: Error fetching native balance for \(walletAddress). Missing or invalid balance in response")
-      throw RainSDKError.internalLogicError(details: "Unexpected eth_getBalance response")
-    }
-    
-    return ethBalance
+    let raw = parseBalanceString(portalResultString(response))
+    let native = await tokenStore.nativeCurrency(for: chainId)
+    return Balance(
+      token: .native,
+      chainId: chainId,
+      rawAmount: raw,
+      decimals: native.decimals,
+      symbol: native.symbol,
+      name: native.name
+    )
   }
 
-  /// Fetches ERC-20 balance for a single token via direct RPC `eth_call` (balanceOf).
-  /// Mirrors the Android implementation: ABI-encodes `balanceOf(address)`, calls `eth_call`, then parses the hex uint256 result.
-  public func getERC20Balance(
-    chainId: Int,
-    tokenAddress: String,
-    decimals: Int?
-  ) async throws -> Double {
-    guard let transactionBuilder else {
-      throw RainSDKError.sdkNotInitialized
-    }
-    let walletAddress = try await address()
+  /// Fetches a single ERC-20 balance via direct RPC `eth_call` (balanceOf), preserving exact precision.
+  private func fetchContractBalance(chainId: Int, address: String) async throws -> Balance {
+    let walletAddress = try await self.address()
+    let info = await tokenStore.tokenInfo(chainId: chainId, address: address)
     let chainIdString = ChainIDFormat.EIP155.format(chainId: chainId)
-    let callData = try await transactionBuilder.encodeBalanceOfCall(walletAddress: walletAddress, chainId: chainId)
+    let callData = Multicall3.encodeBalanceOf(address: walletAddress)
     let callParams: [String: Any] = [
-      "to": tokenAddress,
+      "to": address,
       "data": callData
     ]
 
@@ -164,86 +193,51 @@ internal final class PortalWalletProviderAdapter: RainWalletProvider, RainTypedD
         params: [callParams, "latest"],
         options: nil
       )
-
-      let hex = response.hexString
-      return EthereumConverter.parseHexToDouble(hex, decimals: decimals ?? Constants.ERC20.defaultDecimals)
-    } catch {
-      if error is RainSDKError { throw error }
-      
-      RainLogger.error("Rain SDK: Failed to get ERC20 balance via RPC for token=\(tokenAddress) chainId=\(chainId): \(error)")
-      throw RainSDKError.providerError(underlying: error)
-    }
-  }
-
-  /// Fetches the symbol for an ERC-20 token via direct RPC `eth_call` (symbol()).
-  private func getTokenSymbol(
-    chainId: Int,
-    tokenAddress: String
-  ) async throws -> String? {
-    let chainIdString = ChainIDFormat.EIP155.format(chainId: chainId)
-    let callParams: [String: Any] = [
-      "to": tokenAddress,
-      "data": "0x" + ERC20Selectors.symbol
-    ]
-
-    do {
-      let response = try await portal.request(
-        chainId: chainIdString,
-        method: .eth_call,
-        params: [callParams, "latest"],
-        options: nil
+      let raw = EthereumConverter.parseHexToBigUInt(response.hexString)
+      return Balance(
+        token: .contract(address: address),
+        chainId: chainId,
+        rawAmount: raw,
+        decimals: info.decimals,
+        symbol: info.symbol,
+        name: info.name
       )
-      let hex = response.hexString
-      return EthereumConverter.parseHexToString(hex)
     } catch {
       if error is RainSDKError { throw error }
-      RainLogger.error("Rain SDK: Failed to get token symbol via RPC for token=\(tokenAddress) chainId=\(chainId): \(error)")
+      RainLogger.error("Rain SDK: Failed to get ERC20 balance via RPC for token=\(address) chainId=\(chainId): \(error)")
       throw RainSDKError.providerError(underlying: error)
     }
   }
 
-  private func getTokenDecimals(
-    chainId: Int,
-    tokenAddress: String
-  ) async throws -> Int {
-    let chainIdString = ChainIDFormat.EIP155.format(chainId: chainId)
-    let callParams: [String: Any] = [
-      "to": tokenAddress,
-      "data": "0x" + ERC20Selectors.decimals
-    ]
-
-    do {
-      let response = try await portal.request(
-        chainId: chainIdString,
-        method: .eth_call,
-        params: [callParams, "latest"],
-        options: nil
-      )
-      let hex = response.hexString
-      return EthereumConverter.parseHexToInt(hex)
-    } catch {
-      if error is RainSDKError { throw error }
-      RainLogger.error("Rain SDK: Failed to get token decimals via RPC for token=\(tokenAddress) chainId=\(chainId): \(error)")
-      throw RainSDKError.providerError(underlying: error)
+  /// Extracts the string payload from a Portal RPC result, whether wrapped in a
+  /// `PortalProviderRpcResponse` or returned as a raw `String`.
+  private func portalResultString(_ response: PortalProviderResult) -> String? {
+    if let rpcResponse = response.result as? PortalProviderRpcResponse {
+      return rpcResponse.result
     }
+    if let stringResult = response.result as? String {
+      return stringResult
+    }
+    return nil
   }
 
-  /// Fetches ERC-20 token balances via Portal's getBalances and returns a contract-address-to-balance dictionary.
-  public func getERC20Balances(
-    chainId: Int
-  ) async throws -> [String: Double] {
-    let chainIdString = ChainIDFormat.EIP155.format(chainId: chainId)
-    let tokenBalances = try await portal.getAssets(chainIdString).tokenBalances
-    
-    // Create portal balances dictionary with ERC20 token balances as initial data
-    let portalBalances: [String: Double] = tokenBalances?.reduce(into: [:]) { partialResult, balance in
-      if let address = balance.metadata?.tokenAddress,
-         let amount = balance.balance?.asDouble {
-        partialResult[address] = amount
-      }
-    } ?? [:]
-    
-    return portalBalances
+  /// Parses a balance string that may be hex (`0x…`, production) or decimal (mocks / some
+  /// transports) into an exact `BigUInt`.
+  private func parseBalanceString(_ value: String?) -> BigUInt {
+    guard let value, !value.isEmpty else { return 0 }
+    if value.hasPrefix("0x") || value.hasPrefix("0X") {
+      return EthereumConverter.parseHexToBigUInt(value)
+    }
+    return BigUInt(value) ?? 0
+  }
+
+  /// Reconstructs the exact base-unit amount for a Portal asset entry: prefer the raw
+  /// integer string when present, else reconstruct from the formatted decimal balance.
+  private func reconstructRawAmount(entry: TokenBalanceResponse, decimals: Int) -> BigUInt {
+    if let rawBalance = entry.rawBalance, let raw = BigUInt(rawBalance) {
+      return raw
+    }
+    return EthereumConverter.decimalStringToBigUInt(entry.balance, decimals: decimals)
   }
 
   /// Auto-enriches missing `value` and `asset` fields on returned transactions via on-chain
@@ -288,18 +282,16 @@ internal final class PortalWalletProviderAdapter: RainWalletProvider, RainTypedD
     var decimalsMap: [String: Int] = [:]
     var symbolsMap:  [String: String] = [:]
 
-    await withTaskGroup(of: (String, Int?, String?)?.self) { group in
+    await withTaskGroup(of: (String, TokenInfo).self) { group in
       for address in addresses {
-        group.addTask { [self] in
-          async let decimals = try? self.getTokenDecimals(chainId: chainId, tokenAddress: address)
-          async let symbol   = try? self.getTokenSymbol(chainId: chainId, tokenAddress: address)
-          return (address, await decimals, await symbol)
+        group.addTask { [tokenStore] in
+          let info = await tokenStore.tokenInfo(chainId: chainId, address: address)
+          return (address, info)
         }
       }
-      for await result in group {
-        guard let (address, decimals, symbol) = result else { continue }
-        if let decimals { decimalsMap[address] = decimals }
-        if let symbol   { symbolsMap[address]  = symbol }
+      for await (address, info) in group {
+        decimalsMap[address] = info.decimals
+        if let symbol = info.symbol { symbolsMap[address] = symbol }
       }
     }
 

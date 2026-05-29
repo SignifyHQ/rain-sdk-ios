@@ -1,26 +1,29 @@
 import Foundation
 
 /// Describes an on-chain ERC-20 token the SDK can read balances for.
-internal struct TokenSpec: Sendable, Equatable {
+///
+/// Seeded from the built-in registry and extendable at runtime by host apps via
+/// `registerTokens(_:)`.
+public struct TokenInfo: Sendable, Equatable, Hashable {
   /// EIP-155 chain ID
-  let chainId: Int
+  public let chainId: Int
 
   /// Token contract address
-  let address: String
+  public let address: String
 
-  /// Token symbol (e.g. "USDC", "DAI")
-  let symbol: String
+  /// Token symbol (e.g. "USDC", "DAI"). `nil` when an enriched token's `symbol()` read failed.
+  public let symbol: String?
 
   /// Number of decimal places (e.g. 6 for USDC, 18 for DAI)
-  let decimals: Int
+  public let decimals: Int
 
   /// Optional human-readable token name
-  let name: String?
+  public let name: String?
 
-  init(
+  public init(
     chainId: Int,
     address: String,
-    symbol: String,
+    symbol: String?,
     decimals: Int,
     name: String? = nil
   ) {

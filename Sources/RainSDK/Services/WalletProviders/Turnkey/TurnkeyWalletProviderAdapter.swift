@@ -30,6 +30,7 @@ internal final class TurnkeyWalletProviderAdapter: RainWalletProvider, RainTyped
   private let walletAddressOverride: String?
   private let jsonRpcClient: JsonRpcClient
   private let chainReader: ChainReader
+  private let tokenStore: TokenMetadataStore
 
   // Once resolved, the wallet address is stable for the adapter's lifetime, so cache it.
   private var cachedAddress: String?
@@ -41,17 +42,20 @@ internal final class TurnkeyWalletProviderAdapter: RainWalletProvider, RainTyped
     networkConfigs: [NetworkConfig],
     walletAddress: String? = nil,
     jsonRpcClient: JsonRpcClient = JsonRpcClient(),
-    chainReader: ChainReader? = nil
+    chainReader: ChainReader? = nil,
+    tokenStore: TokenMetadataStore? = nil
   ) {
     self.turnkey = turnkey
     self.transactionBuilder = transactionBuilder
     self.networkConfigsByChainId = Dictionary(uniqueKeysWithValues: networkConfigs.map { ($0.chainId, $0) })
     self.walletAddressOverride = walletAddress
     self.jsonRpcClient = jsonRpcClient
-    self.chainReader = chainReader ?? EVMChainReader(
+    let resolvedReader = chainReader ?? EVMChainReader(
       jsonRpcClient: jsonRpcClient,
       networkConfigs: networkConfigs
     )
+    self.chainReader = resolvedReader
+    self.tokenStore = tokenStore ?? TokenMetadataStore(chainReader: resolvedReader)
   }
 
   /// True when Turnkey's `get-balances` API covers this chain. On any other chain,
@@ -107,84 +111,104 @@ internal final class TurnkeyWalletProviderAdapter: RainWalletProvider, RainTyped
     )
   }
 
-  public func getNativeBalance(
-    chainId: Int
-  ) async throws -> Double {
-    let walletAddress = try await address()
-
-    if !usesTurnkeyForBalances(chainId: chainId) {
-      return try await chainReader.getNativeBalance(chainId: chainId, walletAddress: walletAddress)
-    }
-
-    let balances = try await fetchBalances(
-      chainId: chainId,
-      walletAddress: walletAddress
-    )
-
-    let caip2 = ChainIDFormat.EIP155.format(chainId: chainId)
-    let nativeBalance = balances.first(where: { isNativeAsset($0, caip2: caip2) })
-
-    return decimalStringToDouble(
-      balance: nativeBalance?.balance,
-      decimals: nativeBalance?.decimals ?? Self.AdapterConstants.defaultNativeDecimals
-    )
-  }
-
-  public func getERC20Balance(
+  public func getBalance(
     chainId: Int,
-    tokenAddress: String,
-    decimals: Int?
-  ) async throws -> Double {
-    // `eth_call balanceOf` is the same operation everywhere — delegate unconditionally
-    // so the SDK has one implementation rather than per-adapter copies.
+    token: Token
+  ) async throws -> Balance {
     let walletAddress = try await address()
-    return try await chainReader.getERC20Balance(
-      chainId: chainId,
-      tokenAddress: tokenAddress,
-      walletAddress: walletAddress,
-      decimals: decimals
-    )
+
+    switch token {
+    case .contract(let address):
+      // `eth_call balanceOf` is the same operation everywhere — delegate to the chain
+      // reader so the SDK has one implementation rather than per-adapter copies.
+      let info = await tokenStore.tokenInfo(chainId: chainId, address: address)
+      return try await chainReader.getBalance(
+        chainId: chainId,
+        walletAddress: walletAddress,
+        token: token,
+        tokenInfo: info
+      )
+    case .native:
+      if !usesTurnkeyForBalances(chainId: chainId) {
+        return try await chainReader.getBalance(
+          chainId: chainId,
+          walletAddress: walletAddress,
+          token: .native,
+          tokenInfo: nil
+        )
+      }
+      let balances = try await fetchBalances(chainId: chainId, walletAddress: walletAddress)
+      return await nativeBalance(
+        chainId: chainId,
+        from: balances,
+        caip2: ChainIDFormat.EIP155.format(chainId: chainId)
+      )
+    }
   }
 
-  public func getERC20Balances(
+  public func getBalances(
     chainId: Int
-  ) async throws -> [String: Double] {
+  ) async throws -> [Balance] {
     let walletAddress = try await address()
 
     if !usesTurnkeyForBalances(chainId: chainId) {
-      let tokens = TokenRegistry.tokens(for: chainId)
+      let tokens = await tokenStore.registeredTokens(for: chainId)
       let all = try await chainReader.getBalances(
         chainId: chainId,
         walletAddress: walletAddress,
         tokens: tokens
       )
-      // The manager combines native + ERC-20s elsewhere; this method's contract is
-      // ERC-20s only, so strip the native key.
-      // TODO generalise to getBalances and remove this
-      var erc20Only = all
-      erc20Only.removeValue(forKey: "")
-      return erc20Only
+      return all.filter { balance in
+        if case .native = balance.token { return true }
+        return balance.rawAmount > 0
+      }
     }
 
-    let balances = try await fetchBalances(
-      chainId: chainId,
-      walletAddress: walletAddress
-    )
-
+    let balances = try await fetchBalances(chainId: chainId, walletAddress: walletAddress)
     let caip2 = ChainIDFormat.EIP155.format(chainId: chainId)
 
-    return balances.reduce(into: [:]) { partialResult, balance in
+    var output: [Balance] = [await nativeBalance(chainId: chainId, from: balances, caip2: caip2)]
+    for balance in balances {
       guard let caip19 = balance.caip19,
             let tokenAddress = tokenAddress(from: caip19, caip2: caip2)
       else {
-        return
+        continue
       }
-
-      partialResult[tokenAddress] = decimalStringToDouble(
-        balance: balance.balance,
-        decimals: balance.decimals ?? Constants.ERC20.defaultDecimals
+      let raw = BigUInt(balance.balance ?? "0") ?? 0
+      guard raw > 0 else { continue }
+      let info = await tokenStore.tokenInfo(chainId: chainId, address: tokenAddress)
+      output.append(
+        Balance(
+          token: .contract(address: tokenAddress),
+          chainId: chainId,
+          rawAmount: raw,
+          decimals: balance.decimals ?? info.decimals,
+          symbol: balance.symbol ?? info.symbol,
+          name: balance.name ?? info.name
+        )
       )
     }
+    return output
+  }
+
+  /// Builds the native `Balance` from a Turnkey asset list. Turnkey reports balances in raw
+  /// base units, so the string is parsed directly as `BigUInt` (no decimal reconstruction).
+  private func nativeBalance(
+    chainId: Int,
+    from balances: [v1AssetBalance],
+    caip2: String
+  ) async -> Balance {
+    let nativeAsset = balances.first(where: { isNativeAsset($0, caip2: caip2) })
+    let raw = BigUInt(nativeAsset?.balance ?? "0") ?? 0
+    let native = await tokenStore.nativeCurrency(for: chainId)
+    return Balance(
+      token: .native,
+      chainId: chainId,
+      rawAmount: raw,
+      decimals: nativeAsset?.decimals ?? native.decimals,
+      symbol: native.symbol,
+      name: native.name
+    )
   }
 
   public func getTransactions(

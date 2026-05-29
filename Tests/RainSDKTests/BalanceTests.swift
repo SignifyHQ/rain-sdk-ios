@@ -1,5 +1,6 @@
 import Testing
 import Foundation
+import Web3
 @testable import PortalSwift
 @testable import RainSDK
 
@@ -8,75 +9,75 @@ import Foundation
 @Suite("Balance Tests")
 struct BalanceTests {
 
-  // MARK: - getNativeBalance
+  // MARK: - getBalance validation
 
-  @Test("getNativeBalance throws walletUnavailable before initialization")
-  func testGetNativeBalanceBeforeInitialization() async throws {
+  @Test("getBalance(.native) throws walletUnavailable before initialization")
+  func testGetBalanceNativeBeforeInitialization() async throws {
     let manager = RainSDKManager()
     await #expect(throws: RainSDKError.walletUnavailable) {
-      _ = try await manager.getNativeBalance(chainId: 1)
+      _ = try await manager.getBalance(chainId: 1, token: .native)
     }
   }
 
-  @Test("getNativeBalance throws walletUnavailable after wallet-agnostic initialize")
-  func testGetNativeBalanceAfterWalletAgnosticInit() async throws {
+  @Test("getBalance(.contract) throws walletUnavailable before initialization")
+  func testGetBalanceContractBeforeInitialization() async throws {
+    let manager = RainSDKManager()
+    await #expect(throws: RainSDKError.walletUnavailable) {
+      _ = try await manager.getBalance(chainId: 1, token: .contract(address: TestFixtures.usdcAddress))
+    }
+  }
+
+  @Test("getBalance throws walletUnavailable after wallet-agnostic initialize")
+  func testGetBalanceAfterWalletAgnosticInit() async throws {
     let manager = try await TestManagers.walletAgnosticManager()
     await #expect(throws: RainSDKError.walletUnavailable) {
-      _ = try await manager.getNativeBalance(chainId: 1)
+      _ = try await manager.getBalance(chainId: 1, token: .native)
     }
   }
 
-  @Test("getNativeBalance throws walletUnavailable when provider has no address")
-  func testGetNativeBalanceNoWalletAddress() async throws {
+  @Test("getBalance(.native) throws walletUnavailable when provider has no address")
+  func testGetBalanceNativeNoWalletAddress() async throws {
     let mockPortal = MockPortal()
     mockPortal.mockAddresses.removeAll()
     let (manager, _, _) = TestManagers.portalManager(portal: mockPortal)
     await #expect(throws: RainSDKError.walletUnavailable) {
-      _ = try await manager.getNativeBalance(chainId: 1)
+      _ = try await manager.getBalance(chainId: 1, token: .native)
     }
   }
 
-  // MARK: - getERC20Balance
-
-  @Test("getERC20Balance throws walletUnavailable before initialization")
-  func testGetERC20BalanceBeforeInitialization() async throws {
-    let manager = RainSDKManager()
-    await #expect(throws: RainSDKError.walletUnavailable) {
-      _ = try await manager.getERC20Balance(chainId: 1, tokenAddress: TestFixtures.usdcAddress)
-    }
-  }
-
-  @Test("getERC20Balance throws walletUnavailable after wallet-agnostic initialize")
-  func testGetERC20BalanceAfterWalletAgnosticInit() async throws {
-    let manager = try await TestManagers.walletAgnosticManager()
-    await #expect(throws: RainSDKError.walletUnavailable) {
-      _ = try await manager.getERC20Balance(chainId: 1, tokenAddress: TestFixtures.usdcAddress)
-    }
-  }
-
-  @Test("getERC20Balance throws walletUnavailable when provider has no address")
-  func testGetERC20BalanceNoWalletAddress() async throws {
+  @Test("getBalance(.contract) throws walletUnavailable when provider has no address")
+  func testGetBalanceContractNoWalletAddress() async throws {
     let mockPortal = MockPortal()
     mockPortal.mockAddresses.removeAll()
     let (manager, _, _) = TestManagers.portalManager(portal: mockPortal)
     await #expect(throws: RainSDKError.walletUnavailable) {
-      _ = try await manager.getERC20Balance(chainId: 1, tokenAddress: TestFixtures.usdcAddress)
+      _ = try await manager.getBalance(chainId: 1, token: .contract(address: TestFixtures.usdcAddress))
     }
   }
 
-  // MARK: - getERC20Balances / getBalances
+  // MARK: - getBalances validation
 
-  @Test("getERC20Balances throws walletUnavailable when no provider")
-  func testGetERC20BalancesNoProvider() async throws {
+  @Test("getBalances throws walletUnavailable before initialization")
+  func testGetBalancesBeforeInitialization() async throws {
     let manager = RainSDKManager()
     await #expect(throws: RainSDKError.walletUnavailable) {
-      _ = try await manager.getERC20Balances(chainId: 1)
+      _ = try await manager.getBalances(chainId: 1)
     }
   }
 
-  @Test("getBalances throws walletUnavailable when no provider")
-  func testGetBalancesNoProvider() async throws {
-    let manager = RainSDKManager()
+  @Test("getBalances throws walletUnavailable after wallet-agnostic initialize")
+  func testGetBalancesAfterWalletAgnosticInit() async throws {
+    let manager = try await TestManagers.walletAgnosticManager()
+    await #expect(throws: RainSDKError.walletUnavailable) {
+      _ = try await manager.getBalances(chainId: 1)
+    }
+  }
+
+  @Test("getBalances throws walletUnavailable when provider has no address")
+  func testGetBalancesNoWalletAddress() async throws {
+    let mockPortal = MockPortal()
+    mockPortal.mockAddresses.removeAll()
+    let (manager, _, _) = TestManagers.portalManager(portal: mockPortal)
     await #expect(throws: RainSDKError.walletUnavailable) {
       _ = try await manager.getBalances(chainId: 1)
     }
@@ -84,51 +85,53 @@ struct BalanceTests {
 
   // MARK: - Happy paths via provider-agnostic stub
 
-  @Test("getNativeBalance returns whatever the provider returned")
-  func testGetNativeBalanceRoutesToProvider() async throws {
+  @Test("getBalance forwards chain/token to the provider and returns its rich Balance")
+  func testGetBalanceRoutesToProvider() async throws {
     let (manager, stub) = try await TestManagers.stubProviderManager()
-    stub.nativeBalanceToReturn = 42.5
-
-    let balance = try await manager.getNativeBalance(chainId: 1)
-    #expect(balance == 42.5)
-  }
-
-  @Test("getERC20Balance forwards token/chain/decimals to the provider and returns its result")
-  func testGetERC20BalanceRoutesToProvider() async throws {
-    let (manager, stub) = try await TestManagers.stubProviderManager()
-    stub.erc20BalanceToReturn = 7.0
-
-    let balance = try await manager.getERC20Balance(
+    let expected = Balance(
+      token: .contract(address: TestFixtures.usdcAddress),
       chainId: 1,
-      tokenAddress: TestFixtures.usdcAddress,
-      decimals: 6
+      rawAmount: BigUInt(7_000_000),
+      decimals: 6,
+      symbol: "USDC"
+    )
+    stub.balanceToReturn = expected
+
+    let balance = try await manager.getBalance(
+      chainId: 1,
+      token: .contract(address: TestFixtures.usdcAddress)
     )
 
-    #expect(balance == 7.0)
-    #expect(stub.getERC20BalanceCalls.count == 1)
-    #expect(stub.getERC20BalanceCalls[0].chainId == 1)
-    #expect(stub.getERC20BalanceCalls[0].tokenAddress == TestFixtures.usdcAddress)
-    #expect(stub.getERC20BalanceCalls[0].decimals == 6)
+    #expect(balance == expected)
+    #expect(balance.decimalAmount == 7)
+    #expect(stub.getBalanceCalls.count == 1)
+    #expect(stub.getBalanceCalls[0].chainId == 1)
+    #expect(stub.getBalanceCalls[0].token == .contract(address: TestFixtures.usdcAddress))
   }
 
-  @Test("getERC20Balances returns whatever the provider returned")
-  func testGetERC20BalancesRoutesToProvider() async throws {
+  @Test("getBalances returns whatever the provider returned for the chain")
+  func testGetBalancesRoutesToProvider() async throws {
     let (manager, stub) = try await TestManagers.stubProviderManager()
-    stub.erc20BalancesToReturn = [TestFixtures.usdcAddress: 100.0]
-
-    let balances = try await manager.getERC20Balances(chainId: 1)
-    #expect(balances == [TestFixtures.usdcAddress: 100.0])
-  }
-
-  @Test("getBalances merges native balance under empty key with ERC-20 balances")
-  func testGetBalancesMergesNativeAndERC20() async throws {
-    let (manager, stub) = try await TestManagers.stubProviderManager()
-    stub.nativeBalanceToReturn = 1.5
-    stub.erc20BalancesToReturn = [TestFixtures.usdcAddress: 100.0]
+    let native = Balance(
+      token: .native,
+      chainId: 1,
+      rawAmount: BigUInt(1_500_000_000_000_000_000),
+      decimals: 18,
+      symbol: "ETH"
+    )
+    let usdc = Balance(
+      token: .contract(address: TestFixtures.usdcAddress),
+      chainId: 1,
+      rawAmount: BigUInt(100_000_000),
+      decimals: 6,
+      symbol: "USDC"
+    )
+    stub.balancesByChainId = [1: [native, usdc]]
 
     let balances = try await manager.getBalances(chainId: 1)
-    #expect(balances[""] == 1.5)
-    #expect(balances[TestFixtures.usdcAddress] == 100.0)
+
+    #expect(balances == [native, usdc])
+    #expect(stub.getBalancesCalls == [1])
   }
 
   // MARK: - getAllBalances
@@ -141,7 +144,7 @@ struct BalanceTests {
     }
   }
 
-  @Test("getAllBalances returns per-chain native + ERC-20 maps for every configured chain")
+  @Test("getAllBalances returns a flat list spanning every configured chain")
   func testGetAllBalancesHappyPath() async throws {
     let configs = [
       NetworkConfig.testConfig(chainId: 1, rpcUrl: "https://eth"),
@@ -149,75 +152,42 @@ struct BalanceTests {
       NetworkConfig.testConfig(chainId: 137, rpcUrl: "https://polygon")
     ]
     let (manager, stub) = try await TestManagers.stubProviderManager(configs: configs)
-    stub.nativeBalanceByChainId = [1: 1.0, 43114: 2.5, 137: 0.1]
-    stub.erc20BalancesByChainId = [
-      1: [TestFixtures.usdcAddress: 100.0],
-      43114: [TestFixtures.usdcAddress: 50.0],
-      137: [:]
+    let eth = Balance(token: .native, chainId: 1, rawAmount: BigUInt(1_000_000_000_000_000_000), decimals: 18, symbol: "ETH")
+    let ethUsdc = Balance(token: .contract(address: TestFixtures.usdcAddress), chainId: 1, rawAmount: BigUInt(100_000_000), decimals: 6, symbol: "USDC")
+    let avax = Balance(token: .native, chainId: 43114, rawAmount: BigUInt(2_000_000_000_000_000_000), decimals: 18, symbol: "AVAX")
+    let pol = Balance(token: .native, chainId: 137, rawAmount: BigUInt(100_000_000_000_000_000), decimals: 18, symbol: "POL")
+    stub.balancesByChainId = [
+      1: [eth, ethUsdc],
+      43114: [avax],
+      137: [pol]
     ]
 
     let all = try await manager.getAllBalances()
 
-    #expect(all.count == 3)
-    #expect(all[1]?[""] == 1.0)
-    #expect(all[1]?[TestFixtures.usdcAddress] == 100.0)
-    #expect(all[43114]?[""] == 2.5)
-    #expect(all[43114]?[TestFixtures.usdcAddress] == 50.0)
-    #expect(all[137]?[""] == 0.1)
-    #expect(all[137]?.count == 1) // only native; no ERC-20s
+    #expect(all.count == 4)
+    #expect(all.contains(eth))
+    #expect(all.contains(ethUsdc))
+    #expect(all.contains(avax))
+    #expect(all.contains(pol))
   }
 
-  @Test("getAllBalances collapses a chain to [:] when both native and ERC-20 fetches fail")
+  @Test("getAllBalances tolerates a failing chain — it contributes no entries")
   func testGetAllBalancesPartialFailure() async throws {
     let configs = [
       NetworkConfig.testConfig(chainId: 1, rpcUrl: "https://eth"),
       NetworkConfig.testConfig(chainId: 43114, rpcUrl: "https://broken-avax")
     ]
     let (manager, stub) = try await TestManagers.stubProviderManager(configs: configs)
-    stub.nativeBalanceByChainId = [1: 1.0]
-    stub.erc20BalancesByChainId = [1: [TestFixtures.usdcAddress: 100.0]]
+    let eth = Balance(token: .native, chainId: 1, rawAmount: BigUInt(1_000_000_000_000_000_000), decimals: 18, symbol: "ETH")
+    stub.balancesByChainId = [1: [eth]]
     stub.errorsByChainId = [
       43114: RainSDKError.networkError(underlying: NSError(domain: "x", code: 0))
     ]
 
     let all = try await manager.getAllBalances()
 
-    #expect(all.count == 2)
-    #expect(all[1]?[""] == 1.0)
-    #expect(all[1]?[TestFixtures.usdcAddress] == 100.0)
-    // Both sides failed — chain appears as an empty entry the caller can detect.
-    #expect(all[43114] == [:])
-  }
-
-  @Test("getAllBalances preserves native balance when ERC-20 fetch fails on the same chain")
-  func testGetAllBalancesPreservesNativeOnErc20Failure() async throws {
-    let configs = [NetworkConfig.testConfig(chainId: 1, rpcUrl: "https://eth")]
-    let (manager, stub) = try await TestManagers.stubProviderManager(configs: configs)
-    stub.nativeBalanceByChainId = [1: 1.5]
-    stub.erc20ErrorsByChainId = [
-      1: RainSDKError.networkError(underlying: NSError(domain: "x", code: 0))
-    ]
-
-    let all = try await manager.getAllBalances()
-
-    // ERC-20 fetch threw, native succeeded — native is still returned.
-    #expect(all[1]?[""] == 1.5)
-    #expect(all[1]?.count == 1)
-  }
-
-  @Test("getAllBalances preserves ERC-20 balances when native fetch fails on the same chain")
-  func testGetAllBalancesPreservesErc20OnNativeFailure() async throws {
-    let configs = [NetworkConfig.testConfig(chainId: 1, rpcUrl: "https://eth")]
-    let (manager, stub) = try await TestManagers.stubProviderManager(configs: configs)
-    stub.erc20BalancesByChainId = [1: [TestFixtures.usdcAddress: 42.0]]
-    stub.nativeErrorsByChainId = [
-      1: RainSDKError.networkError(underlying: NSError(domain: "x", code: 0))
-    ]
-
-    let all = try await manager.getAllBalances()
-
-    // Native threw, ERC-20 succeeded — ERC-20s are still returned, no `""` key.
-    #expect(all[1]?[TestFixtures.usdcAddress] == 42.0)
-    #expect(all[1]?[""] == nil)
+    #expect(all.count == 1)
+    #expect(all.contains(eth))
+    #expect(!all.contains { $0.chainId == 43114 })
   }
 }

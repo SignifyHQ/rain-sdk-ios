@@ -241,58 +241,44 @@ public protocol RainSDK {
 
   // MARK: - Fetch balances
 
-  /// Fetches the native token balance (e.g. ETH) for the current wallet on the given network.
-  ///
-  /// - Parameter chainId: The target blockchain network identifier (e.g. 1 for Ethereum, 43114 for Avalanche).
-  /// - Returns: Balance in human-readable form (e.g. 1.5 for 1.5 ETH).
-  /// - Throws: RainSDKError if SDK or wallet provider is not initialized, or if the RPC request fails.
-  func getNativeBalance(
-    chainId: Int
-  ) async throws -> Double
-
-  /// Fetches the ERC-20 token balance for a single token via direct RPC `eth_call` (balanceOf).
+  /// Fetches a single balance (native or a contract token) for the current wallet.
   ///
   /// - Parameters:
-  ///   - chainId: The target blockchain network identifier (e.g. 1 for Ethereum).
-  ///   - tokenAddress: The ERC-20 token contract address.
-  ///   - decimals: Token decimal places (e.g. 6 for USDC, 18 for most tokens). Defaults to 18 when nil.
-  /// - Returns: Balance in human-readable form (e.g. 100.0 for 100 tokens).
-  /// - Throws: RainSDKError if wallet provider is not set, or if the request fails.
-  func getERC20Balance(
+  ///   - chainId: The target blockchain network identifier (e.g. 1 for Ethereum, 43114 for Avalanche).
+  ///   - token: `.native` for the chain's gas currency, or `.contract(address:)` for an ERC-20.
+  /// - Returns: A `Balance` carrying the exact `rawAmount` plus resolved decimals / symbol / name.
+  /// - Throws: RainSDKError if no wallet provider is set, or if the request fails.
+  func getBalance(
     chainId: Int,
-    tokenAddress: String,
-    decimals: Int?
-  ) async throws -> Double
+    token: Token
+  ) async throws -> Balance
 
-  /// Fetches ERC-20 token balances for the current wallet on the given network.
+  /// Fetches all non-zero balances for the current wallet on the given network. The native
+  /// balance is always included; zero-balance contract tokens are omitted.
   ///
   /// - Parameter chainId: The target blockchain network identifier (e.g. 1 for Ethereum).
-  /// - Returns: Dictionary mapping token contract address to balance (human-readable). Empty if none or on error.
-  /// - Throws: RainSDKError if SDK or Portal is not initialized, or if the request fails.
-  func getERC20Balances(
-    chainId: Int
-  ) async throws -> [String: Double]
-
-  /// Fetches all balances (native + ERC-20) for the current wallet on the given network.
-  ///
-  /// - Parameter chainId: The target blockchain network identifier (e.g. 1 for Ethereum).
-  /// - Returns: Dictionary mapping token contract address to balance (human-readable). Use key `""` for native token (e.g. ETH).
-  /// - Throws: RainSDKError if wallet provider is not set, or if the request fails.
+  /// - Returns: One `Balance` per non-zero token plus the native balance.
+  /// - Throws: RainSDKError if no wallet provider is set, or if the request fails.
   func getBalances(
     chainId: Int
-  ) async throws -> [String: Double]
+  ) async throws -> [Balance]
 
-  /// Fetches balances across every chain the SDK was initialized with, in parallel.
+  /// Fetches balances across every chain the SDK was initialized with, in parallel,
+  /// flattened into a single list. Each `Balance` carries its own `chainId`.
   ///
-  /// Per-chain failures are tolerated — a chain that errors out is returned as an empty
-  /// `[:]` rather than failing the whole call, so a single bad RPC endpoint doesn't
-  /// hide balances on the other chains. Callers can detect missing chains by checking
-  /// for empty inner maps.
+  /// Per-chain failures are tolerated — a chain that errors out contributes no entries
+  /// rather than failing the whole call, so a single bad RPC endpoint doesn't hide
+  /// balances on the other chains.
   ///
-  /// - Returns: Dictionary keyed by chain ID, mapping to per-chain balances in the same
-  ///   shape as `getBalances(chainId:)`.
+  /// - Returns: A flat list of balances spanning all healthy configured chains.
   /// - Throws: RainSDKError if no wallet provider is set.
-  func getAllBalances() async throws -> [Int: [String: Double]]
+  func getAllBalances() async throws -> [Balance]
+
+  /// Registers additional tokens with the SDK so their metadata (decimals / symbol) resolves
+  /// without an on-chain enrichment call. Retained across re-initialization; cleared by `reset()`.
+  ///
+  /// - Parameter tokens: Tokens to add to the SDK's token store.
+  func registerTokens(_ tokens: [TokenInfo])
 
   // MARK: - Transactions
 

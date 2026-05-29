@@ -28,12 +28,30 @@ internal protocol ChainReader: Sendable {
   ) async throws -> Double
 
   /// Batched balances for many tokens on one chain, in a single round-trip when possible.
-  /// - Parameter tokens: ERC-20 tokens to query. Native is always included in the result.
-  /// - Returns: Dictionary keyed by token contract address; the empty-string key holds
-  ///   the native balance (matching the existing `RainSDKManager.getBalances` convention).
+  /// - Parameter tokens: ERC-20 tokens to query. The native balance is always included.
+  /// - Returns: One `Balance` per successfully-read token plus the native balance
+  ///   (`Token.native`). Tokens whose `balanceOf` reverts are omitted; zero balances are
+  ///   retained (zero-filtering is the caller's responsibility).
   func getBalances(
     chainId: Int,
     walletAddress: String,
-    tokens: [TokenSpec]
-  ) async throws -> [String: Double]
+    tokens: [TokenInfo]
+  ) async throws -> [Balance]
+
+  /// Reads a single balance (native or a contract token) as a rich `Balance`.
+  /// - Parameter tokenInfo: Pre-resolved metadata for a `.contract` token (decimals / symbol /
+  ///   name); ignored for `.native`. When `nil` for a contract token, defaults are used.
+  func getBalance(
+    chainId: Int,
+    walletAddress: String,
+    token: Token,
+    tokenInfo: TokenInfo?
+  ) async throws -> Balance
+
+  /// Reads an ERC-20 token's `decimals()`. Used to enrich tokens not in the registry.
+  func getDecimals(chainId: Int, tokenAddress: String) async throws -> Int
+
+  /// Reads an ERC-20 token's `symbol()`. Returns `nil` if the call reverts or returns
+  /// an undecodable payload. Used to enrich tokens not in the registry.
+  func getSymbol(chainId: Int, tokenAddress: String) async throws -> String?
 }

@@ -13,34 +13,24 @@ public protocol RainWalletProvider: Sendable {
     params: WalletTransactionParams
   ) async throws -> String
 
-  /// Fetches the native token balance (e.g. ETH) for the current wallet on the given network.
-  /// - Parameter chainId: The target blockchain network identifier.
-  /// - Returns: Balance in human-readable form (e.g. 1.5 for 1.5 ETH). Returns 0 if the wallet has no native balance.
-  /// - Throws: RainSDKError if wallet is unavailable or the RPC request fails.
-  func getNativeBalance(
-    chainId: Int
-  ) async throws -> Double
-
-  /// Fetches the ERC-20 balance for a single token via direct RPC `eth_call` (balanceOf).
+  /// Fetches a single balance (native or a contract token) as a rich `Balance`.
   /// - Parameters:
   ///   - chainId: The target blockchain network identifier.
-  ///   - tokenAddress: The ERC-20 token contract address.
-  ///   - decimals: Token decimal places (e.g. 6 for USDC, 18 for most tokens). Defaults to 18.
-  /// - Returns: Balance in human-readable form (e.g. 100.0 for 100 tokens).
-  /// - Throws: RainSDKError if wallet is unavailable or the RPC request fails.
-  func getERC20Balance(
-    chainId: Int,
-    tokenAddress: String,
-    decimals: Int?
-  ) async throws -> Double
-
-  /// Fetches ERC-20 token balances for the current wallet on the given network.
-  /// - Parameter chainId: The target blockchain network identifier.
-  /// - Returns: Dictionary mapping token contract address to balance (human-readable).
+  ///   - token: `.native` or a `.contract(address:)`.
+  /// - Returns: A `Balance` with exact `rawAmount` plus resolved decimals / symbol / name.
   /// - Throws: RainSDKError if wallet is unavailable or the request fails.
-  func getERC20Balances(
+  func getBalance(
+    chainId: Int,
+    token: Token
+  ) async throws -> Balance
+
+  /// Fetches all non-zero balances for the current wallet on the given network.
+  /// - Parameter chainId: The target blockchain network identifier.
+  /// - Returns: One `Balance` per non-zero token plus the native balance (always included).
+  /// - Throws: RainSDKError if wallet is unavailable or the request fails.
+  func getBalances(
     chainId: Int
-  ) async throws -> [String: Double]
+  ) async throws -> [Balance]
 
   /// Fetches transaction history for the current wallet on the given network.
   /// - Parameters:
