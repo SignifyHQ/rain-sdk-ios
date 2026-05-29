@@ -81,8 +81,8 @@ internal final class EVMChainReader: ChainReader, @unchecked Sendable {
   func getBalances(
     chainId: Int,
     walletAddress: String,
-    tokens: [TokenSpec]
-  ) async throws -> [String: Double] {
+    tokens: [TokenInfo]
+  ) async throws -> [Balance] {
     let rpcUrl = try resolveRpcUrl(chainId: chainId)
     try validate(ethereumAddress: walletAddress, label: "wallet address")
     if Multicall3.isCanonicallyDeployed(on: chainId) {
@@ -95,8 +95,73 @@ internal final class EVMChainReader: ChainReader, @unchecked Sendable {
     }
     return try await fetchViaParallelCalls(
       rpcUrl: rpcUrl,
+      chainId: chainId,
       walletAddress: walletAddress,
       tokens: tokens
+    )
+  }
+
+  func getBalance(
+    chainId: Int,
+    walletAddress: String,
+    token: Token,
+    tokenInfo: TokenInfo?
+  ) async throws -> Balance {
+    let rpcUrl = try resolveRpcUrl(chainId: chainId)
+    try validate(ethereumAddress: walletAddress, label: "wallet address")
+
+    switch token {
+    case .native:
+      let hex = try await jsonRpcClient.callForHexResult(
+        rpcUrl: rpcUrl,
+        method: "eth_getBalance",
+        params: [walletAddress, "latest"]
+      )
+      return nativeBalance(chainId: chainId, hex: hex)
+    case .contract(let address):
+      try validate(ethereumAddress: address, label: "token address")
+      let callData = Multicall3.encodeBalanceOf(address: walletAddress)
+      let hex = try await ethCall(rpcUrl: rpcUrl, to: address, data: callData)
+      let info = tokenInfo ?? TokenInfo(
+        chainId: chainId,
+        address: address,
+        symbol: nil,
+        decimals: Constants.ERC20.defaultDecimals
+      )
+      return tokenBalance(chainId: chainId, token: info, hex: hex)
+    }
+  }
+
+  func getDecimals(chainId: Int, tokenAddress: String) async throws -> Int {
+    let rpcUrl = try resolveRpcUrl(chainId: chainId)
+    try validate(ethereumAddress: tokenAddress, label: "token address")
+    let hex = try await ethCall(
+      rpcUrl: rpcUrl,
+      to: tokenAddress,
+      data: "0x" + ERC20Selectors.decimals
+    )
+    return EthereumConverter.parseHexToInt(hex)
+  }
+
+  func getSymbol(chainId: Int, tokenAddress: String) async throws -> String? {
+    let rpcUrl = try resolveRpcUrl(chainId: chainId)
+    try validate(ethereumAddress: tokenAddress, label: "token address")
+    let hex = try await ethCall(
+      rpcUrl: rpcUrl,
+      to: tokenAddress,
+      data: "0x" + ERC20Selectors.symbol
+    )
+    return EthereumConverter.parseHexToString(hex)
+  }
+
+  /// Issues a raw `eth_call` and returns the hex result. For read functions with
+  /// pre-encoded `data` (no-arg selectors like `decimals()` / `symbol()`).
+  private func ethCall(rpcUrl: String, to: String, data: String) async throws -> String {
+    let callParams: [String: Any] = ["to": to, "data": data]
+    return try await jsonRpcClient.callForHexResult(
+      rpcUrl: rpcUrl,
+      method: "eth_call",
+      params: [callParams, "latest"]
     )
   }
 
@@ -106,8 +171,8 @@ internal final class EVMChainReader: ChainReader, @unchecked Sendable {
     rpcUrl: String,
     chainId: Int,
     walletAddress: String,
-    tokens: [TokenSpec]
-  ) async throws -> [String: Double] {
+    tokens: [TokenInfo]
+  ) async throws -> [Balance] {
     // `allowFailure: true` so we get back per-call status. Native failure is fatal;
     // per-token failures are logged and omitted from the result (see decode loop below).
     var calls: [Multicall3.Call3] = [
@@ -147,7 +212,6 @@ internal final class EVMChainReader: ChainReader, @unchecked Sendable {
       )
     }
 
-    var output: [String: Double] = [:]
     // Index 0 is the native balance.
     let nativeResult = results[0]
     guard nativeResult.success else {
@@ -155,22 +219,16 @@ internal final class EVMChainReader: ChainReader, @unchecked Sendable {
         details: "Multicall3 native balance call reverted on chain \(chainId)"
       )
     }
-    output[""] = EthereumConverter.parseHexToDouble(
-      nativeResult.returnData,
-      decimals: ReaderConstants.defaultNativeDecimals
-    )
+    var output: [Balance] = [nativeBalance(chainId: chainId, hex: nativeResult.returnData)]
     for (i, token) in tokens.enumerated() {
       let result = results[i + 1]
       guard result.success else {
         RainLogger.warning(
-          "Rain SDK: balanceOf reverted for token \(token.symbol) (\(token.address)) on chain \(chainId) — omitting from result"
+          "Rain SDK: balanceOf reverted for token \(token.symbol ?? token.address) (\(token.address)) on chain \(chainId) — omitting from result"
         )
         continue
       }
-      output[token.address] = EthereumConverter.parseHexToDouble(
-        result.returnData,
-        decimals: token.decimals
-      )
+      output.append(tokenBalance(chainId: chainId, token: token, hex: result.returnData))
     }
     return output
   }
@@ -178,75 +236,85 @@ internal final class EVMChainReader: ChainReader, @unchecked Sendable {
   // MARK: - Parallel fallback path
 
   /// Fans out `eth_getBalance` (native) and per-token `eth_call balanceOf` requests
-  /// concurrently via `withThrowingTaskGroup`. Native failure is fatal; per-token failures
+  /// concurrently via `withTaskGroup`. Native failure is fatal; per-token failures
   /// are logged and the token is omitted from the result.
   private func fetchViaParallelCalls(
     rpcUrl: String,
+    chainId: Int,
     walletAddress: String,
-    tokens: [TokenSpec]
-  ) async throws -> [String: Double] {
+    tokens: [TokenInfo]
+  ) async throws -> [Balance] {
     // Native first, on its own — its failure is fatal and shouldn't be swallowed by a
     // group that's also tolerating per-token errors.
-    let nativeBalance = try await fetchNativeBalance(
+    let nativeHex = try await fetchNativeBalanceHex(
       rpcUrl: rpcUrl,
       walletAddress: walletAddress
     )
+    let native = nativeBalance(chainId: chainId, hex: nativeHex)
 
     // `balanceOf(walletAddress)` calldata is identical across every token — encode once.
     let balanceOfCallData = Multicall3.encodeBalanceOf(address: walletAddress)
 
-    return await withTaskGroup(of: (String, Double?).self) { group in
+    return await withTaskGroup(of: Balance?.self) { group in
       for token in tokens {
         group.addTask { [self] in
           do {
-            let value = try await self.fetchCall(
+            let hex = try await self.ethCall(
               rpcUrl: rpcUrl,
-              targetAddress: token.address,
-              callData: balanceOfCallData,
-              decimals: token.decimals
+              to: token.address,
+              data: balanceOfCallData
             )
-            return (token.address, value)
+            return self.tokenBalance(chainId: chainId, token: token, hex: hex)
           } catch {
             RainLogger.warning(
-              "Rain SDK: balanceOf failed for token \(token.symbol) (\(token.address)): \(error) — omitting from result"
+              "Rain SDK: balanceOf failed for token \(token.symbol ?? token.address) (\(token.address)): \(error) — omitting from result"
             )
-            return (token.address, nil)
+            return nil
           }
         }
       }
-      var output: [String: Double] = ["": nativeBalance]
-      for await (key, value) in group {
-        if let value { output[key] = value }
+      var output: [Balance] = [native]
+      for await balance in group {
+        if let balance { output.append(balance) }
       }
       return output
     }
   }
 
-  private func fetchNativeBalance(rpcUrl: String, walletAddress: String) async throws -> Double {
-    let hex = try await jsonRpcClient.callForHexResult(
+  private func fetchNativeBalanceHex(rpcUrl: String, walletAddress: String) async throws -> String {
+    try await jsonRpcClient.callForHexResult(
       rpcUrl: rpcUrl,
       method: "eth_getBalance",
       params: [walletAddress, "latest"]
     )
-    return EthereumConverter.parseHexToDouble(hex, decimals: ReaderConstants.defaultNativeDecimals)
   }
 
-  /// Issues a single `eth_call` against `targetAddress` with the given pre-encoded
-  /// `callData` and parses the hex uint256 result as a `Double` scaled by `decimals`.
-  /// Not specific to ERC-20 — any read function whose return decodes as a uint256 fits.
-  private func fetchCall(
-    rpcUrl: String,
-    targetAddress: String,
-    callData: String,
-    decimals: Int
-  ) async throws -> Double {
-    let callParams: [String: Any] = ["to": targetAddress, "data": callData]
-    let hex = try await jsonRpcClient.callForHexResult(
-      rpcUrl: rpcUrl,
-      method: "eth_call",
-      params: [callParams, "latest"]
+  // MARK: - Balance builders
+
+  /// Builds a native-currency `Balance` from a raw hex wei value, pulling symbol / name /
+  /// decimals from the static native-currency table.
+  private func nativeBalance(chainId: Int, hex: String) -> Balance {
+    let native = TokenRegistry.nativeCurrency(for: chainId)
+    return Balance(
+      token: .native,
+      chainId: chainId,
+      rawAmount: EthereumConverter.parseHexToBigUInt(hex),
+      decimals: native.decimals,
+      symbol: native.symbol,
+      name: native.name
     )
-    return EthereumConverter.parseHexToDouble(hex, decimals: decimals)
+  }
+
+  /// Builds a contract-token `Balance` from a raw hex base-unit value and the token's metadata.
+  private func tokenBalance(chainId: Int, token: TokenInfo, hex: String) -> Balance {
+    Balance(
+      token: .contract(address: token.address),
+      chainId: chainId,
+      rawAmount: EthereumConverter.parseHexToBigUInt(hex),
+      decimals: token.decimals,
+      symbol: token.symbol,
+      name: token.name
+    )
   }
 
   // MARK: - Helpers

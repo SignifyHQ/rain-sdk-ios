@@ -1,4 +1,5 @@
 import Foundation
+import Web3
 
 /// Utility functions for Ethereum data conversion.
 enum EthereumConverter {
@@ -72,5 +73,39 @@ enum EthereumConverter {
 
     let divisor = NSDecimalNumber(mantissa: 1, exponent: Int16(decimals), isNegative: false)
     return value.dividing(by: divisor).doubleValue
+  }
+
+  /// Converts a hex-encoded uint256 string to an exact `BigUInt` (no precision loss).
+  ///
+  /// Used for balances read directly from chain (`eth_getBalance`, `eth_call balanceOf`),
+  /// where the raw base-unit value must be preserved.
+  static func parseHexToBigUInt(_ hex: String) -> BigUInt {
+    BigUInt(hex.strippingHexPrefix, radix: 16) ?? 0
+  }
+
+  /// Reconstructs an exact base-unit `BigUInt` from a human-readable decimal string.
+  ///
+  /// The inverse of `parseHexToDouble`: multiplies by `10^decimals` and truncates any
+  /// remaining fractional part. Used where a provider only exposes a formatted decimal
+  /// balance (e.g. Portal's `getAssets`, Turnkey's supported-chain API) rather than raw hex.
+  static func decimalStringToBigUInt(_ decimalString: String?, decimals: Int) -> BigUInt {
+    guard let decimalString, !decimalString.isEmpty else { return 0 }
+
+    let value = NSDecimalNumber(string: decimalString)
+    guard !value.doubleValue.isNaN else { return 0 }
+
+    let multiplier = NSDecimalNumber(mantissa: 1, exponent: Int16(decimals), isNegative: false)
+    let roundDown = NSDecimalNumberHandler(
+      roundingMode: .down,
+      scale: 0,
+      raiseOnExactness: false,
+      raiseOnOverflow: false,
+      raiseOnUnderflow: false,
+      raiseOnDivideByZero: false
+    )
+    let baseUnits = value.multiplying(by: multiplier, withBehavior: roundDown)
+    guard baseUnits.compare(NSDecimalNumber.zero) == .orderedDescending else { return 0 }
+
+    return BigUInt(baseUnits.stringValue) ?? 0
   }
 }

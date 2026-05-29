@@ -23,13 +23,30 @@ final class MockChainReader: ChainReader, @unchecked Sendable {
     let walletAddress: String
   }
 
-  var stubbedBalances: [String: Double] = [:]
+  struct SingleBalanceCall: Equatable {
+    let chainId: Int
+    let walletAddress: String
+    let token: Token
+  }
+
+  struct MetadataCall: Equatable {
+    let chainId: Int
+    let tokenAddress: String
+  }
+
+  var stubbedBalances: [Balance] = []
+  var stubbedSingleBalance: Balance? = nil
   var stubbedNative: Double = 0
   var stubbedErc20: Double = 0
+  var stubbedDecimals: Int = 18
+  var stubbedSymbol: String? = nil
 
   private(set) var balancesCalls: [BalancesCall] = []
+  private(set) var getBalanceCalls: [SingleBalanceCall] = []
   private(set) var nativeCalls: [NativeCall] = []
   private(set) var erc20Calls: [ERC20Call] = []
+  private(set) var decimalsCalls: [MetadataCall] = []
+  private(set) var symbolCalls: [MetadataCall] = []
 
   func getNativeBalance(chainId: Int, walletAddress: String) async throws -> Double {
     nativeCalls.append(NativeCall(chainId: chainId, walletAddress: walletAddress))
@@ -56,8 +73,8 @@ final class MockChainReader: ChainReader, @unchecked Sendable {
   func getBalances(
     chainId: Int,
     walletAddress: String,
-    tokens: [TokenSpec]
-  ) async throws -> [String: Double] {
+    tokens: [TokenInfo]
+  ) async throws -> [Balance] {
     balancesCalls.append(
       BalancesCall(
         chainId: chainId,
@@ -66,5 +83,37 @@ final class MockChainReader: ChainReader, @unchecked Sendable {
       )
     )
     return stubbedBalances
+  }
+
+  func getBalance(
+    chainId: Int,
+    walletAddress: String,
+    token: Token,
+    tokenInfo: TokenInfo?
+  ) async throws -> Balance {
+    getBalanceCalls.append(
+      SingleBalanceCall(chainId: chainId, walletAddress: walletAddress, token: token)
+    )
+    if let stubbedSingleBalance {
+      return stubbedSingleBalance
+    }
+    return Balance(
+      token: token,
+      chainId: chainId,
+      rawAmount: 0,
+      decimals: tokenInfo?.decimals ?? stubbedDecimals,
+      symbol: tokenInfo?.symbol ?? stubbedSymbol,
+      name: tokenInfo?.name
+    )
+  }
+
+  func getDecimals(chainId: Int, tokenAddress: String) async throws -> Int {
+    decimalsCalls.append(MetadataCall(chainId: chainId, tokenAddress: tokenAddress))
+    return stubbedDecimals
+  }
+
+  func getSymbol(chainId: Int, tokenAddress: String) async throws -> String? {
+    symbolCalls.append(MetadataCall(chainId: chainId, tokenAddress: tokenAddress))
+    return stubbedSymbol
   }
 }

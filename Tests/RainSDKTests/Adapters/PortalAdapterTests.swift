@@ -19,23 +19,26 @@ struct PortalAdapterTests {
     #expect(address == TestFixtures.walletAddress)
   }
 
-  // MARK: - getNativeBalance
+  // MARK: - getBalance(.native)
 
-  @Test("getNativeBalance returns 1.0 ETH and calls eth_getBalance on the correct chain")
+  @Test("getBalance(.native) returns 1.0 ETH and calls eth_getBalance on the correct chain")
   func testGetNativeBalanceSuccess() async throws {
     let mockPortal = MockPortal()
     mockPortal.setMockAddress(TestFixtures.walletAddress, forNamespace: PortalNamespace.eip155)
     let (manager, portal, _) = TestManagers.portalManager(portal: mockPortal)
 
-    let balance = try await manager.getNativeBalance(chainId: 1)
+    let balance = try await manager.getBalance(chainId: 1, token: .native)
 
-    #expect(balance == 1.0)
+    #expect(balance.token == .native)
+    #expect(balance.decimals == 18)
+    #expect(balance.symbol == "ETH")
+    #expect(balance.decimalAmount == 1)
     #expect(portal.requestCalls.count == 1)
     #expect(portal.requestCalls[0].method == .eth_getBalance)
     #expect(portal.requestCalls[0].chainId == "eip155:1")
   }
 
-  @Test("getNativeBalance maps Portal request failures to providerError")
+  @Test("getBalance(.native) maps Portal request failures to providerError")
   func testGetNativeBalancePortalError() async throws {
     let mockPortal = MockPortal()
     mockPortal.setMockAddress(TestFixtures.walletAddress, forNamespace: PortalNamespace.eip155)
@@ -47,44 +50,25 @@ struct PortalAdapterTests {
     let (manager, _, _) = TestManagers.portalManager(portal: mockPortal)
 
     await #expect(throws: RainSDKError.providerError(underlying: NSError(domain: "x", code: 0))) {
-      _ = try await manager.getNativeBalance(chainId: 1)
+      _ = try await manager.getBalance(chainId: 1, token: .native)
     }
   }
 
-  // MARK: - getERC20Balance (via RPC eth_call)
+  // MARK: - getBalance(.contract) (via RPC eth_call)
 
-  @Test("getERC20Balance returns 0 when eth_call returns empty result")
-  func testGetERC20BalanceReturnsZeroWhenCallReturnsEmpty() async throws {
+  @Test("getBalance(.contract) returns 0 when eth_call returns empty result")
+  func testGetContractBalanceReturnsZeroWhenCallReturnsEmpty() async throws {
     let (manager, _, _) = TestManagers.portalManager()
-    let balance = try await manager.getERC20Balance(
+    let balance = try await manager.getBalance(
       chainId: 1,
-      tokenAddress: TestFixtures.usdcAddress
+      token: .contract(address: TestFixtures.usdcAddress)
     )
-    #expect(balance == 0.0)
+    #expect(balance.rawAmount == 0)
+    #expect(balance.decimalAmount == 0)
   }
 
-  @Test("getERC20Balance returns 1.0 with default 18 decimals")
-  func testGetERC20BalanceSuccessDefaultDecimals() async throws {
-    let mockPortal = MockPortal()
-    mockPortal.setMockAddress(TestFixtures.walletAddress, forNamespace: PortalNamespace.eip155)
-    // 1 token with 18 decimals = 0x0de0b6b3a7640000 (1_000_000_000_000_000_000)
-    mockPortal.setMockResponse(
-      chainId: "eip155:1",
-      method: .eth_call,
-      result: PortalProviderRpcResponse(jsonrpc: "2.0", result: "0x0de0b6b3a7640000")
-    )
-    let (manager, _, _) = TestManagers.portalManager(portal: mockPortal)
-
-    let balance = try await manager.getERC20Balance(chainId: 1, tokenAddress: TestFixtures.usdcAddress)
-
-    #expect(balance == 1.0)
-    #expect(mockPortal.requestCalls.count == 1)
-    #expect(mockPortal.requestCalls[0].method == .eth_call)
-    #expect(mockPortal.requestCalls[0].chainId == "eip155:1")
-  }
-
-  @Test("getERC20Balance returns 1.0 USDC with 6 decimals")
-  func testGetERC20BalanceSuccessCustomDecimals() async throws {
+  @Test("getBalance(.contract) resolves decimals/symbol from the registry and returns 1.0 USDC")
+  func testGetContractBalanceSuccessRegistryDecimals() async throws {
     let mockPortal = MockPortal()
     mockPortal.setMockAddress(TestFixtures.walletAddress, forNamespace: PortalNamespace.eip155)
     // 1 USDC with 6 decimals = 0x0F4240 (1_000_000)
@@ -95,38 +79,22 @@ struct PortalAdapterTests {
     )
     let (manager, _, _) = TestManagers.portalManager(portal: mockPortal)
 
-    let balance = try await manager.getERC20Balance(
+    let balance = try await manager.getBalance(
       chainId: 1,
-      tokenAddress: TestFixtures.usdcAddress,
-      decimals: 6
+      token: .contract(address: TestFixtures.usdcAddress)
     )
 
-    #expect(balance == 1.0)
+    #expect(balance.rawAmount == BigUInt(1_000_000))
+    #expect(balance.decimals == 6)
+    #expect(balance.symbol == "USDC")
+    #expect(balance.decimalAmount == 1)
+    #expect(mockPortal.requestCalls.count == 1)
+    #expect(mockPortal.requestCalls[0].method == .eth_call)
+    #expect(mockPortal.requestCalls[0].chainId == "eip155:1")
   }
 
-  @Test("getERC20Balance with nil decimals defaults to 18")
-  func testGetERC20BalanceNilDecimalsDefaultsTo18() async throws {
-    let mockPortal = MockPortal()
-    mockPortal.setMockAddress(TestFixtures.walletAddress, forNamespace: PortalNamespace.eip155)
-    // 2.5 tokens with 18 decimals = 0x22B1C8C1227A0000
-    mockPortal.setMockResponse(
-      chainId: "eip155:1",
-      method: .eth_call,
-      result: PortalProviderRpcResponse(jsonrpc: "2.0", result: "0x22B1C8C1227A0000")
-    )
-    let (manager, _, _) = TestManagers.portalManager(portal: mockPortal)
-
-    let balance = try await manager.getERC20Balance(
-      chainId: 1,
-      tokenAddress: TestFixtures.usdcAddress,
-      decimals: nil
-    )
-
-    #expect(balance == 2.5)
-  }
-
-  @Test("getERC20Balance throws providerError when portal request fails")
-  func testGetERC20BalancePortalError() async throws {
+  @Test("getBalance(.contract) throws providerError when portal request fails")
+  func testGetContractBalancePortalError() async throws {
     let mockPortal = MockPortal()
     mockPortal.setMockAddress(TestFixtures.walletAddress, forNamespace: PortalNamespace.eip155)
     mockPortal.setMockResponse(
@@ -137,32 +105,48 @@ struct PortalAdapterTests {
     let (manager, _, _) = TestManagers.portalManager(portal: mockPortal)
 
     await #expect(throws: RainSDKError.providerError(underlying: NSError(domain: "x", code: 0))) {
-      _ = try await manager.getERC20Balance(chainId: 1, tokenAddress: TestFixtures.usdcAddress)
+      _ = try await manager.getBalance(chainId: 1, token: .contract(address: TestFixtures.usdcAddress))
     }
   }
 
-  // MARK: - getERC20Balances / getBalances
+  // MARK: - getBalances
 
-  @Test("getERC20Balances returns empty dictionary when Portal returns no tokens")
-  func testGetERC20BalancesSuccessEmpty() async throws {
-    let mockPortal = MockPortal()
-    mockPortal.setMockAddress(TestFixtures.walletAddress, forNamespace: PortalNamespace.eip155)
-    mockPortal.mockAssetsResponse = AssetsResponse(nativeBalance: nil, tokenBalances: nil, nfts: nil)
-    let (manager, _, _) = TestManagers.portalManager(portal: mockPortal)
-
-    let balances = try await manager.getERC20Balances(chainId: 1)
-    #expect(balances.isEmpty)
-  }
-
-  @Test("getBalances returns native under empty key")
-  func testGetBalancesSuccess() async throws {
+  @Test("getBalances returns only native when Portal reports no tokens")
+  func testGetBalancesOnlyNative() async throws {
     let mockPortal = MockPortal()
     mockPortal.setMockAddress(TestFixtures.walletAddress, forNamespace: PortalNamespace.eip155)
     mockPortal.mockAssetsResponse = AssetsResponse(nativeBalance: nil, tokenBalances: nil, nfts: nil)
     let (manager, _, _) = TestManagers.portalManager(portal: mockPortal)
 
     let balances = try await manager.getBalances(chainId: 1)
-    #expect(balances[""] == 1.0)
+    #expect(balances.count == 1)
+    #expect(balances[0].token == .native)
+    #expect(balances[0].decimalAmount == 1)
+  }
+
+  @Test("getBalances reconstructs a non-18-decimal token's rawAmount from Portal's formatted balance")
+  func testGetBalancesReconstructsErc20RawAmount() async throws {
+    let mockPortal = MockPortal()
+    mockPortal.setMockAddress(TestFixtures.walletAddress, forNamespace: PortalNamespace.eip155)
+    // Portal reports a formatted decimal string with no rawBalance; the adapter must
+    // reconstruct exact base units using the store's decimals (USDC = 6) → 1.5 * 1e6.
+    mockPortal.mockAssetsResponse = Self.makeAssetsResponse(
+      tokenAddress: TestFixtures.usdcAddress,
+      balance: "1.5",
+      symbol: "USDC"
+    )
+    let (manager, _, _) = TestManagers.portalManager(portal: mockPortal)
+
+    let balances = try await manager.getBalances(chainId: 1)
+
+    #expect(balances.count == 2)
+    #expect(balances[0].token == .native)
+
+    let usdc = try #require(balances.first { $0.token == .contract(address: TestFixtures.usdcAddress) })
+    #expect(usdc.rawAmount == BigUInt(1_500_000))
+    #expect(usdc.decimals == 6)
+    #expect(usdc.symbol == "USDC")
+    #expect(usdc.decimalAmount == 1.5)
   }
 
   // MARK: - sendNativeToken / sendERC20Token
@@ -436,5 +420,31 @@ struct PortalAdapterTests {
     }
     """
     return try! JSONDecoder().decode(FetchedTransaction.self, from: Data(json.utf8))
+  }
+
+  /// Builds an `AssetsResponse` with a single ERC-20 token balance. `TokenBalanceResponse`
+  /// is `Decodable`-only (no memberwise init), so we decode it from JSON.
+  private static func makeAssetsResponse(
+    tokenAddress: String,
+    balance: String,
+    symbol: String
+  ) -> AssetsResponse {
+    let json = """
+    {
+      "nativeBalance": null,
+      "tokenBalances": [
+        {
+          "balance": "\(balance)",
+          "decimals": 6,
+          "name": "USD Coin",
+          "rawBalance": null,
+          "symbol": "\(symbol)",
+          "metadata": { "tokenAddress": "\(tokenAddress)", "verifiedContract": true }
+        }
+      ],
+      "nfts": null
+    }
+    """
+    return try! JSONDecoder().decode(AssetsResponse.self, from: Data(json.utf8))
   }
 }

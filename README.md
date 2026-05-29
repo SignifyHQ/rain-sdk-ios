@@ -112,6 +112,41 @@ try await manager.initialize(networkConfigs: networkConfigs)
 // EIP-712 signing, transaction submission, and fee estimation.
 ```
 
+### 4. Read balances
+
+Balances are returned as rich `Balance` values that carry the exact base-unit `rawAmount`
+(a `BigUInt`, never lossy) alongside resolved `decimals`/`symbol`/`name` and convenience
+`decimalAmount` / `formatted` accessors. A `Token` is either `.native` or `.contract(address:)`.
+
+```swift
+// A single balance (native or a specific token):
+let eth = try await manager.getBalance(chainId: 1, token: .native)
+let usdc = try await manager.getBalance(
+    chainId: 1,
+    token: .contract(address: "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48")
+)
+print(usdc.formatted)       // e.g. "1.5"
+print(usdc.rawAmount)       // exact base units, e.g. 1500000
+
+// Every non-zero balance on a chain (native is always included):
+let balances = try await manager.getBalances(chainId: 1)
+
+// Every balance across all configured chains, flattened (each Balance carries its chainId):
+let all = try await manager.getAllBalances()
+```
+
+Token metadata for well-known tokens is built in. To resolve a token the SDK doesn't know
+about without an on-chain `decimals()` / `symbol()` lookup, register it up front:
+
+```swift
+manager.registerTokens([
+    TokenInfo(chainId: 1, address: "0x…", symbol: "FOO", decimals: 18, name: "Foo Token")
+])
+```
+
+Unregistered contract tokens are still resolved automatically by reading `decimals()` /
+`symbol()` on-chain once, then cached.
+
 For a short overview of all public methods, see [Method overview](docs/METHODS.md).
 
 ## License

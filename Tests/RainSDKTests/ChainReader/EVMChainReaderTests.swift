@@ -108,8 +108,8 @@ struct EVMChainReaderTests {
 
       let reader = makeReader(chainId: canonicalChainId)
       let balances = try await reader.getBalances(chainId: canonicalChainId, walletAddress: walletAddress, tokens: [])
-      #expect(balances[""] == 1.0)
       #expect(balances.count == 1)
+      #expect(balances.first { $0.token == .native }?.decimalAmount == 1.0)
       // Static deployment list — no eth_getCode probe.
       #expect(MockURLProtocol.recordedMethods == ["eth_call"])
     }
@@ -119,8 +119,8 @@ struct EVMChainReaderTests {
   func testGetBalancesBatchHappyPath() async throws {
     try await MockURLProtocol.withInstalled {
       let tokens = [
-        TokenSpec(chainId: 1, address: usdcAddress, symbol: "USDC", decimals: 6),
-        TokenSpec(chainId: 1, address: daiAddress, symbol: "DAI", decimals: 18)
+        TokenInfo(chainId: 1, address: usdcAddress, symbol: "USDC", decimals: 6),
+        TokenInfo(chainId: 1, address: daiAddress, symbol: "DAI", decimals: 18)
       ]
       let response = encodedAggregate3Response(tuples: [
         (success: true, returnData: paddedUint256(value: "06f05b59d3b20000")),  // 0.5 * 10^18
@@ -131,9 +131,10 @@ struct EVMChainReaderTests {
 
       let reader = makeReader(chainId: canonicalChainId)
       let balances = try await reader.getBalances(chainId: canonicalChainId, walletAddress: walletAddress, tokens: tokens)
-      #expect(balances[""] == 0.5)
-      #expect(balances[usdcAddress] == 250.0)
-      #expect(balances[daiAddress] == 1.0)
+      #expect(balances.count == 3)
+      #expect(balances.first { $0.token == .native }?.decimalAmount == 0.5)
+      #expect(balances.first { $0.token == .contract(address: usdcAddress) }?.decimalAmount == 250.0)
+      #expect(balances.first { $0.token == .contract(address: daiAddress) }?.decimalAmount == 1.0)
       #expect(MockURLProtocol.recordedMethods == ["eth_call"])
     }
   }
@@ -142,8 +143,8 @@ struct EVMChainReaderTests {
   func testGetBalancesPerEntryFailureOmitsToken() async throws {
     try await MockURLProtocol.withInstalled {
       let tokens = [
-        TokenSpec(chainId: 1, address: usdcAddress, symbol: "USDC", decimals: 6),
-        TokenSpec(chainId: 1, address: daiAddress, symbol: "DAI", decimals: 18)
+        TokenInfo(chainId: 1, address: usdcAddress, symbol: "USDC", decimals: 6),
+        TokenInfo(chainId: 1, address: daiAddress, symbol: "DAI", decimals: 18)
       ]
       let response = encodedAggregate3Response(tuples: [
         (success: true, returnData: paddedUint256(value: "0de0b6b3a7640000")),
@@ -155,9 +156,9 @@ struct EVMChainReaderTests {
       let reader = makeReader(chainId: canonicalChainId)
       let balances = try await reader.getBalances(chainId: canonicalChainId, walletAddress: walletAddress, tokens: tokens)
       // Native + DAI present, USDC (the failed entry) omitted.
-      #expect(balances[""] != nil)
-      #expect(balances[daiAddress] != nil)
-      #expect(balances[usdcAddress] == nil)
+      #expect(balances.contains { $0.token == .native })
+      #expect(balances.contains { $0.token == .contract(address: daiAddress) })
+      #expect(!balances.contains { $0.token == .contract(address: usdcAddress) })
     }
   }
 
@@ -194,15 +195,15 @@ struct EVMChainReaderTests {
       MockURLProtocol.stub(method: "eth_call", result: "0x0000000000000000000000000000000000000000000000000000000005f5e100") // 100 (6dp)
 
       let tokens = [
-        TokenSpec(chainId: nonCanonicalChainId, address: usdcAddress, symbol: "USDC", decimals: 6),
-        TokenSpec(chainId: nonCanonicalChainId, address: daiAddress, symbol: "DAI", decimals: 6)
+        TokenInfo(chainId: nonCanonicalChainId, address: usdcAddress, symbol: "USDC", decimals: 6),
+        TokenInfo(chainId: nonCanonicalChainId, address: daiAddress, symbol: "DAI", decimals: 6)
       ]
       let reader = makeReader(chainId: nonCanonicalChainId)
       let balances = try await reader.getBalances(chainId: nonCanonicalChainId, walletAddress: walletAddress, tokens: tokens)
 
-      #expect(balances[""] == 1.0)
-      #expect(balances[usdcAddress] == 100.0)
-      #expect(balances[daiAddress] == 100.0)
+      #expect(balances.first { $0.token == .native }?.decimalAmount == 1.0)
+      #expect(balances.first { $0.token == .contract(address: usdcAddress) }?.decimalAmount == 100.0)
+      #expect(balances.first { $0.token == .contract(address: daiAddress) }?.decimalAmount == 100.0)
       // No probe; 1 eth_getBalance + 2 eth_call (one per token).
       #expect(MockURLProtocol.recordedMethods.filter { $0 == "eth_getCode" }.count == 0)
       #expect(MockURLProtocol.recordedMethods.filter { $0 == "eth_getBalance" }.count == 1)
