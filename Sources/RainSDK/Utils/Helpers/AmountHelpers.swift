@@ -9,9 +9,8 @@ enum AmountHelpers {
     amount: Double,
     decimals: Int
   ) throws -> BigUInt {
-    let amountDecimal = Decimal(amount)
-    let scale = max(0, -amountDecimal.exponent)
-    
+    let scale = max(0, -amount.asDecimal.exponent)
+
     if scale > decimals {
       throw RainSDKError.internalLogicError(
         details: "Amount scale (\(scale)) exceeds token decimals (\(decimals))"
