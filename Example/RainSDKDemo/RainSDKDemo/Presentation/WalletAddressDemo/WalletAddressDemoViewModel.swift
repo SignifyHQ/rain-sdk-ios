@@ -4,6 +4,7 @@ import Combine
 
 @MainActor
 class WalletAddressDemoViewModel: ObservableObject {
+  @Published var chainId: String = DemoLocalConfig.chainId
   @Published var walletAddress: String?
   @Published var qrImageData: Data?
   @Published var isLoadingAddress: Bool = false
@@ -26,7 +27,12 @@ class WalletAddressDemoViewModel: ObservableObject {
     walletAddress = nil
 
     do {
-      let address = try await sdkService.getWalletAddress()
+      // Chain-aware so Solana chains (sentinel ids 101–103) show the Solana account.
+      let address = if let chainIdInt = Int(chainId) {
+        try await sdkService.getWalletAddress(chainId: chainIdInt)
+      } else {
+        try await sdkService.getWalletAddress()
+      }
       walletAddress = address
       statusMessage = "Address loaded"
       error = nil

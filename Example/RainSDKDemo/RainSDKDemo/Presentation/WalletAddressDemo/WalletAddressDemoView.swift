@@ -93,6 +93,14 @@ struct WalletAddressDemoView: View {
       Text("Wallet Address")
         .font(.headline)
 
+      // Chain id drives which account is resolved (Solana sentinels 101–103 → SOL account).
+      Text("Chain ID")
+        .font(.subheadline)
+        .foregroundColor(.secondary)
+      TextField("e.g. \(DemoLocalConfig.chainId) (EVM) or 103 (Solana devnet)", text: $viewModel.chainId)
+        .textFieldStyle(.roundedBorder)
+        .keyboardType(.numberPad)
+
       Button(action: {
         Task { await viewModel.fetchWalletAddress() }
       }) {

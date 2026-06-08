@@ -218,6 +218,12 @@ class RainSDKService: ObservableObject {
     try await sdkManager.getWalletAddress()
   }
 
+  /// Returns the wallet address for a specific chain (Solana account for Solana sentinel
+  /// chains, EVM address otherwise).
+  func getWalletAddress(chainId: Int) async throws -> String {
+    try await sdkManager.getWalletAddress(chainId: chainId)
+  }
+
   /// Generates a QR code image (PNG) encoding the current wallet address.
   func generateWalletAddressQRCode(
     dimension: Int = 256,
@@ -231,25 +237,62 @@ class RainSDKService: ObservableObject {
     )
   }
 
-  /// Fetches the native token balance (e.g. ETH, AVAX) for the current wallet on the given network.
+  // NOTE: the SDK now returns precise `Balance` values; these wrappers adapt to the legacy
+  // `Double` / `[String: Double]` shapes the demo UI expects. The `Balance` type is not named
+  // directly because web3swift/PortalSwift also export a `Balance` (and the module name
+  // `RainSDK` collides with the `RainSDK` protocol, so it can't be qualified) — the element
+  // type is left to inference instead.
+
+  /// Fetches the native token balance (e.g. ETH, AVAX, SOL) for the current wallet on the given network.
   func getNativeBalance(chainId: Int) async throws -> Double {
-    try await sdkManager.getNativeBalance(chainId: chainId)
+    let balance = try await sdkManager.getBalance(chainId: chainId, token: .native)
+    return NSDecimalNumber(decimal: balance.decimalAmount).doubleValue
   }
 
-  /// Fetches the ERC-20 balance for a single token via direct RPC `eth_call` (balanceOf).
+  /// Fetches the balance for a single contract token (ERC-20 or SPL mint).
+  /// `decimals` is accepted for source compatibility; the SDK now resolves decimals itself.
   func getERC20Balance(chainId: Int, tokenAddress: String, decimals: Int? = nil) async throws -> Double {
-    try await sdkManager.getERC20Balance(chainId: chainId, tokenAddress: tokenAddress, decimals: decimals)
+    let balance = try await sdkManager.getBalance(
+      chainId: chainId,
+      token: .contract(address: tokenAddress)
+    )
+    return NSDecimalNumber(decimal: balance.decimalAmount).doubleValue
   }
 
-  /// Fetches all balances (native + ERC-20) for the current wallet on the given network. Native balance uses key "".
+  /// Fetches all balances for the current wallet on the given network, keyed for display:
+  /// the native balance uses key "", contract tokens use their symbol (falling back to address).
   func getBalances(chainId: Int) async throws -> [String: Double] {
-    try await sdkManager.getBalances(chainId: chainId)
+    let balances = try await sdkManager.getBalances(chainId: chainId)
+    var output: [String: Double] = [:]
+    for balance in balances {
+      let key: String
+      switch balance.token {
+      case .native:
+        key = ""
+      case .contract(let address):
+        key = balance.symbol ?? address.lowercased()
+      }
+      output[key] = NSDecimalNumber(decimal: balance.decimalAmount).doubleValue
+    }
+    return output
   }
 
-  /// Fetches balances across every configured chain in parallel.
-  /// Per-chain failures collapse to `[:]` so one bad RPC doesn't hide the rest.
+  /// Fetches balances across every configured chain, grouped by chain id then keyed as above.
+  /// Per-chain failures are tolerated by the SDK, so one bad RPC doesn't hide the rest.
   func getAllBalances() async throws -> [Int: [String: Double]] {
-    try await sdkManager.getAllBalances()
+    let balances = try await sdkManager.getAllBalances()
+    var output: [Int: [String: Double]] = [:]
+    for balance in balances {
+      let key: String
+      switch balance.token {
+      case .native:
+        key = ""
+      case .contract(let address):
+        key = balance.symbol ?? address.lowercased()
+      }
+      output[balance.chainId, default: [:]][key] = NSDecimalNumber(decimal: balance.decimalAmount).doubleValue
+    }
+    return output
   }
 
   /// Fetches transaction history for the current wallet on the given network.
