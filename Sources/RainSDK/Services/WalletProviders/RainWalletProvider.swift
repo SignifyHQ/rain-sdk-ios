@@ -7,6 +7,10 @@ public protocol RainWalletProvider: Sendable {
   func address(
   ) async throws -> String
 
+  /// Chain-aware wallet address. Defaults to `address()`; providers that manage more than one
+  /// address family (e.g. Turnkey resolving a Solana account for Solana chains) override it.
+  func getAddress(chainId: Int) async throws -> String
+
   /// Sends a transaction; returns the transaction hash.
   func sendTransaction(
     chainId: Int,
@@ -46,5 +50,12 @@ public protocol RainWalletProvider: Sendable {
     offset: Int?,
     order: WalletTransactionOrder?
   ) async throws -> [WalletTransaction]
+}
+
+public extension RainWalletProvider {
+  /// EVM-only providers inherit the single-address behaviour.
+  func getAddress(chainId: Int) async throws -> String {
+    try await address()
+  }
 }
 
