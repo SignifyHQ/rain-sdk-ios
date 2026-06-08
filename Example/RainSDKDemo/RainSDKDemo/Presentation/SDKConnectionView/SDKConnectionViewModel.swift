@@ -12,6 +12,30 @@ enum WalletProviderOption: String, CaseIterable {
   var displayName: String { rawValue }
 }
 
+/// Chain family selector, orthogonal to the wallet provider. Solana uses the SDK's sentinel
+/// chain IDs (101 mainnet / 102 testnet / 103 devnet) and a Solana JSON-RPC URL.
+enum ChainFamily: String, CaseIterable {
+  case evm = "EVM"
+  case solana = "Solana"
+
+  var displayName: String { rawValue }
+
+  /// Sentinel chain id + RPC prefilled when the family is selected.
+  var defaultChainId: String {
+    switch self {
+    case .evm: return DemoLocalConfig.chainId
+    case .solana: return "103" // Solana devnet sentinel
+    }
+  }
+
+  var defaultRpcUrl: String {
+    switch self {
+    case .evm: return DemoLocalConfig.rpcUrl
+    case .solana: return "https://api.devnet.solana.com"
+    }
+  }
+}
+
 /// ViewModel for SDK Connection View
 /// Handles business logic and state management for SDK initialization
 @MainActor
@@ -37,6 +61,15 @@ class SDKConnectionViewModel: ObservableObject {
   /// Selected wallet provider when not wallet-agnostic
   @Published var selectedProvider: WalletProviderOption = .portal
 
+  /// Selected chain family (EVM vs Solana). Changing it prefills chain id + RPC URL.
+  @Published var chainFamily: ChainFamily = .evm {
+    didSet {
+      guard oldValue != chainFamily else { return }
+      chainId = chainFamily.defaultChainId
+      rpcUrl = chainFamily.defaultRpcUrl
+    }
+  }
+
   /// Initialization loading state
   @Published var isInitializing: Bool = false
 
@@ -59,6 +92,20 @@ class SDKConnectionViewModel: ObservableObject {
 
   /// True while a passkey authentication request is in flight.
   @Published var isAuthenticatingTurnkey: Bool = false
+
+  // MARK: - Turnkey Email OTP Inputs
+
+  /// Email the OTP is sent to.
+  @Published var turnkeyEmail: String = ""
+  /// The code the user types in after receiving the OTP email.
+  @Published var turnkeyOtpCode: String = ""
+  /// Set once an OTP has been sent; drives the UI from "send" to "verify".
+  @Published var turnkeyOtpId: String?
+  /// True while an OTP init/verify request is in flight.
+  @Published var isProcessingTurnkeyOtp: Bool = false
+
+  /// Encryption target bundle returned by `initOtp`, needed by `completeOtp`.
+  private var turnkeyOtpEncryptionTargetBundle: String?
 
   /// One-time Turnkey configuration. `TurnkeyContext.configure(...)` must be called before
   /// the first `.shared` access; we defer it until the user taps a passkey button so the
@@ -105,6 +152,28 @@ class SDKConnectionViewModel: ObservableObject {
   /// Signup creates a fresh sub-org under the parent org and additionally requires the auth proxy config id.
   var canSignUpWithPasskey: Bool {
     canAuthenticateWithPasskey && !isTrimmedEmpty(turnkeyAuthProxyConfigId)
+  }
+
+  /// Whether the Send OTP button should be enabled. Email OTP runs through the Auth Proxy and
+  /// handles login-or-signup, so it needs the same config the passkey signup needs plus an email.
+  var canSendEmailOtp: Bool {
+    !isProcessingTurnkeyOtp
+      && !isAuthenticatingTurnkey
+      && turnkeyOtpId == nil
+      && !isTrimmedEmpty(turnkeyEmail)
+      && !isTrimmedEmpty(turnkeyOrgId)
+      && !isTrimmedEmpty(turnkeyApiUrl)
+      && !isTrimmedEmpty(turnkeyAuthProxyUrl)
+      && !isTrimmedEmpty(turnkeyAuthProxyConfigId)
+      && !isTrimmedEmpty(turnkeyRpId)
+      && !isTrimmedEmpty(chainId)
+      && Int(chainId) != nil
+      && !rpcUrl.isEmpty
+  }
+
+  /// Whether the Verify OTP button should be enabled.
+  var canVerifyEmailOtp: Bool {
+    !isProcessingTurnkeyOtp && turnkeyOtpId != nil && !isTrimmedEmpty(turnkeyOtpCode)
   }
 
   // MARK: - Initialization
@@ -222,7 +291,7 @@ class SDKConnectionViewModel: ObservableObject {
       context.clearSession(for: TurnkeySwift.Constants.Session.defaultSessionKey)
       _ = try await context.signUpWithPasskey(
         anchor: anchor,
-        createSubOrgParams: try makeEthereumWalletSubOrgParams()
+        createSubOrgParams: try makeWalletSubOrgParams()
       )
 
       await sdkService.initializeTurnkey(
@@ -235,6 +304,87 @@ class SDKConnectionViewModel: ObservableObject {
     }
 
     isAuthenticatingTurnkey = false
+  }
+
+  // MARK: - Turnkey Email OTP
+
+  /// Start the email-OTP flow: configure Turnkey, then `initOtp`. On success the UI switches
+  /// to the verify step (an OTP code field appears).
+  func sendTurnkeyEmailOtp() async {
+    guard canSendEmailOtp else { return }
+
+    persistTurnkeyConfig()
+    isProcessingTurnkeyOtp = true
+    sdkService.statusMessage = "Sending OTP..."
+    sdkService.error = nil
+
+    do {
+      try configureTurnkeyIfNeeded()
+      let context = TurnkeyContext.shared
+      let result = try await context.initOtp(
+        contact: turnkeyEmail.trimmingCharacters(in: .whitespacesAndNewlines),
+        otpType: .email
+      )
+      turnkeyOtpEncryptionTargetBundle = result.otpEncryptionTargetBundle
+      turnkeyOtpId = result.otpId
+      sdkService.statusMessage = "OTP sent — check your email"
+    } catch {
+      sdkService.error = .providerError(underlying: error)
+      sdkService.statusMessage = "Failed to send OTP"
+    }
+
+    isProcessingTurnkeyOtp = false
+  }
+
+  /// Verify the OTP code and create a Turnkey session (login or signup, handled by
+  /// `completeOtp`), then initialize Rain. Signup provisions a dual-curve (ETH + Solana) wallet.
+  func verifyTurnkeyEmailOtp() async {
+    guard let chainIdInt = Int(chainId),
+          let otpId = turnkeyOtpId,
+          let bundle = turnkeyOtpEncryptionTargetBundle,
+          canVerifyEmailOtp else { return }
+
+    isProcessingTurnkeyOtp = true
+    sdkService.statusMessage = "Verifying OTP..."
+    sdkService.error = nil
+
+    do {
+      let context = TurnkeyContext.shared
+      // Clear any leftover session so re-verifying (e.g. across demo runs) doesn't fail with
+      // `keyAlreadyExists` on the default session key.
+      context.clearSession(for: TurnkeySwift.Constants.Session.defaultSessionKey)
+      _ = try await context.completeOtp(
+        otpId: otpId,
+        otpCode: turnkeyOtpCode.trimmingCharacters(in: .whitespacesAndNewlines),
+        otpEncryptionTargetBundle: bundle,
+        contact: turnkeyEmail.trimmingCharacters(in: .whitespacesAndNewlines),
+        otpType: .email,
+        createSubOrgParams: try makeWalletSubOrgParams(),
+        invalidateExisting: true
+      )
+
+      await sdkService.initializeTurnkey(
+        turnkey: context,
+        networkConfigs: makeNetworkConfigs(chainIdInt: chainIdInt)
+      )
+
+      // Reset the OTP step on success.
+      turnkeyOtpId = nil
+      turnkeyOtpCode = ""
+      turnkeyOtpEncryptionTargetBundle = nil
+    } catch {
+      sdkService.error = .providerError(underlying: error)
+      sdkService.statusMessage = "OTP verification failed"
+    }
+
+    isProcessingTurnkeyOtp = false
+  }
+
+  /// Discard an in-progress OTP so the user can restart (e.g. wrong email).
+  func cancelTurnkeyEmailOtp() {
+    turnkeyOtpId = nil
+    turnkeyOtpCode = ""
+    turnkeyOtpEncryptionTargetBundle = nil
   }
 
   // MARK: - Turnkey Configuration
@@ -294,13 +444,14 @@ class SDKConnectionViewModel: ObservableObject {
     TurnkeyConfigStorage.rpId = turnkeyRpId
   }
 
-  /// Build `CreateSubOrgParams` carrying a default Ethereum wallet so the new sub-org
-  /// always has a wallet whose first account uses `ADDRESS_FORMAT_ETHEREUM` (which is
-  /// what Rain's Turnkey adapter resolves to). `CreateSubOrgParams` has no public init,
-  /// so we go through `JSONDecoder`. Brittle: if TurnkeySwift changes the field names
-  /// or shape of `CreateSubOrgParams`, this fails at runtime during sign-up rather
-  /// than at compile time. Revisit if/when TurnkeySwift exposes a public initializer.
-  private func makeEthereumWalletSubOrgParams() throws -> CreateSubOrgParams {
+  /// Build `CreateSubOrgParams` carrying a wallet with both an Ethereum and a Solana account,
+  /// so the new sub-org can serve EVM (`ADDRESS_FORMAT_ETHEREUM`) and Solana
+  /// (`ADDRESS_FORMAT_SOLANA`) chains — matching how Rain's Turnkey adapter resolves the
+  /// per-chain address. `CreateSubOrgParams` has no public init, so we go through
+  /// `JSONDecoder`. Brittle: if TurnkeySwift changes the field names or shape of
+  /// `CreateSubOrgParams`, this fails at runtime during sign-up rather than at compile time.
+  /// Revisit if/when TurnkeySwift exposes a public initializer.
+  private func makeWalletSubOrgParams() throws -> CreateSubOrgParams {
     let json = """
     {
       "customWallet": {
@@ -310,6 +461,12 @@ class SDKConnectionViewModel: ObservableObject {
             "addressFormat": "ADDRESS_FORMAT_ETHEREUM",
             "curve": "CURVE_SECP256K1",
             "path": "m/44'/60'/0'/0/0",
+            "pathFormat": "PATH_FORMAT_BIP32"
+          },
+          {
+            "addressFormat": "ADDRESS_FORMAT_SOLANA",
+            "curve": "CURVE_ED25519",
+            "path": "m/44'/501'/0'/0'",
             "pathFormat": "PATH_FORMAT_BIP32"
           }
         ]

@@ -136,12 +136,27 @@ struct SDKConnectionView: View {
         }
       }
       
+      // Chain family selector (EVM vs Solana). Prefills chain id + RPC URL on change.
+      HStack {
+        Text("Chain")
+          .font(.subheadline)
+          .foregroundColor(.secondary)
+        Spacer()
+        Picker("Chain", selection: $viewModel.chainFamily) {
+          ForEach(ChainFamily.allCases, id: \.self) { family in
+            Text(family.displayName).tag(family)
+          }
+        }
+        .pickerStyle(.segmented)
+        .frame(maxWidth: 200)
+      }
+
       // Chain ID Input
       VStack(alignment: .leading, spacing: 8) {
         Text("Chain ID")
           .font(.subheadline)
           .foregroundColor(.secondary)
-        
+
         TextField("e.g., \(DemoLocalConfig.chainId)", text: $viewModel.chainId)
           .textFieldStyle(.roundedBorder)
           .keyboardType(.numberPad)
@@ -248,6 +263,80 @@ struct SDKConnectionView: View {
       .opacity(viewModel.canAuthenticateWithPasskey ? 1 : 0.6)
 
       Text("First time? Tap Sign Up — it creates a sub-org with a wallet and registers a passkey for this device. Already signed up on this device? Tap Login.")
+        .font(.caption)
+        .foregroundColor(.secondary)
+
+      Divider()
+        .padding(.vertical, 4)
+
+      Text("Or sign in with Email OTP")
+        .font(.subheadline).bold()
+
+      labeledField(
+        title: "Email",
+        placeholder: "you@example.com",
+        text: $viewModel.turnkeyEmail
+      )
+
+      if viewModel.turnkeyOtpId == nil {
+        Button {
+          hideKeyboard()
+          Task { await viewModel.sendTurnkeyEmailOtp() }
+        } label: {
+          HStack {
+            if viewModel.isProcessingTurnkeyOtp {
+              ProgressView()
+                .progressViewStyle(CircularProgressViewStyle(tint: .white))
+            } else {
+              Image(systemName: "envelope.fill")
+            }
+            Text("Send OTP")
+          }
+          .frame(maxWidth: .infinity)
+          .padding(.vertical, 10)
+          .background(viewModel.canSendEmailOtp ? Color.blue : Color.gray)
+          .foregroundColor(.white)
+          .cornerRadius(10)
+        }
+        .disabled(!viewModel.canSendEmailOtp)
+        .opacity(viewModel.canSendEmailOtp ? 1 : 0.6)
+      } else {
+        labeledField(
+          title: "OTP Code",
+          placeholder: "123456",
+          text: $viewModel.turnkeyOtpCode
+        )
+
+        Button {
+          hideKeyboard()
+          Task { await viewModel.verifyTurnkeyEmailOtp() }
+        } label: {
+          HStack {
+            if viewModel.isProcessingTurnkeyOtp {
+              ProgressView()
+                .progressViewStyle(CircularProgressViewStyle(tint: .white))
+            } else {
+              Image(systemName: "checkmark.shield.fill")
+            }
+            Text("Verify OTP & Connect")
+          }
+          .frame(maxWidth: .infinity)
+          .padding(.vertical, 10)
+          .background(viewModel.canVerifyEmailOtp ? Color.green : Color.gray)
+          .foregroundColor(.white)
+          .cornerRadius(10)
+        }
+        .disabled(!viewModel.canVerifyEmailOtp)
+        .opacity(viewModel.canVerifyEmailOtp ? 1 : 0.6)
+
+        Button("Use a different email") {
+          viewModel.cancelTurnkeyEmailOtp()
+        }
+        .font(.caption)
+        .foregroundColor(.secondary)
+      }
+
+      Text("Email OTP handles login vs. sign up automatically; sign up provisions an EVM + Solana wallet.")
         .font(.caption)
         .foregroundColor(.secondary)
     }
