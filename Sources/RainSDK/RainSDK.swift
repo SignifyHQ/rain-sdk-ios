@@ -225,6 +225,17 @@ public protocol RainSDK {
   func getWalletAddress(
   ) async throws -> String
 
+  /// Returns the wallet address for a specific chain. For Solana chains (sentinel IDs
+  /// 101–103) this resolves the wallet's Solana account (base58); for every other chain it
+  /// returns the EVM address, identical to `getWalletAddress()`.
+  ///
+  /// - Parameter chainId: The target blockchain network identifier.
+  /// - Returns: The wallet address string for that chain's family.
+  /// - Throws: RainSDKError if wallet provider is not set, or if the address is unavailable.
+  func getWalletAddress(
+    chainId: Int
+  ) async throws -> String
+
   /// Generates a square QR code image encoding the current wallet address.
   ///
   /// - Parameters:

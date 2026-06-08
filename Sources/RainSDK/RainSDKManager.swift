@@ -459,6 +459,22 @@ public final class RainSDKManager: RainSDK {
     }
   }
 
+  /// Returns the wallet address for `chainId`'s chain family (Solana account for Solana
+  /// sentinel chains, EVM address otherwise).
+  public func getWalletAddress(
+    chainId: Int
+  ) async throws -> String {
+    do {
+      guard let provider = _walletProvider else {
+        throw RainSDKError.walletUnavailable
+      }
+
+      return try await provider.getAddress(chainId: chainId)
+    } catch {
+      throw RainSDKError.from(underlying: error)
+    }
+  }
+
   /// Generates a square QR code image (PNG) encoding the current wallet address.
   public func generateWalletAddressQRCode(
     dimension: Int = 256,
@@ -584,7 +600,17 @@ public final class RainSDKManager: RainSDK {
       guard let provider = _walletProvider else {
         throw RainSDKError.walletUnavailable
       }
-      
+
+      // Solana sends use lamport scaling and a dedicated capability, not the EVM 1e18 path.
+      if SolanaChains.isSolana(chainId) {
+        guard let solanaProvider = provider as? any RainSolanaTransfersProvider else {
+          throw RainSDKError.internalLogicError(
+            details: "The active wallet provider does not support Solana transfers"
+          )
+        }
+        return try await solanaProvider.sendSolanaNative(chainId: chainId, to: to, amount: amount)
+      }
+
       let from = try await provider.address()
       let params = WalletTransactionParams(
         from: from,
@@ -592,7 +618,7 @@ public final class RainSDKManager: RainSDK {
         value: amount.ethToWei.toHexString,
         data: .empty
       )
-      
+
       return try await provider.sendTransaction(
         chainId: chainId,
         params: params
@@ -611,14 +637,20 @@ public final class RainSDKManager: RainSDK {
     decimals: Int
   ) async throws -> String {
     do {
+      if SolanaChains.isSolana(chainId) {
+        throw RainSDKError.internalLogicError(
+          details: "SPL token transfers are not supported on Solana chainId=\(chainId)"
+        )
+      }
+
       guard let transactionBuilder = _transactionBuilder else {
         throw RainSDKError.sdkNotInitialized
       }
-      
+
       guard let provider = _walletProvider else {
         throw RainSDKError.walletUnavailable
       }
-      
+
       let from = try await provider.address()
       let amountBaseUnits = try AmountHelpers.toBaseUnits(amount: amount, decimals: decimals)
       let data = try await transactionBuilder.buildERC20TransferData(

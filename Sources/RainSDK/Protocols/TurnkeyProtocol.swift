@@ -12,6 +12,10 @@ internal protocol TurnkeyClientProtocol {
     _ input: TEthSendTransactionBody
   ) async throws -> TEthSendTransactionResponse
 
+  func solSendTransaction(
+    _ input: TSolSendTransactionBody
+  ) async throws -> TSolSendTransactionResponse
+
   func getSendTransactionStatus(
     _ input: TGetSendTransactionStatusBody
   ) async throws -> TGetSendTransactionStatusResponse

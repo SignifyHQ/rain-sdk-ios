@@ -9,6 +9,7 @@ final class MockTurnkeyClient: TurnkeyClientProtocol {
     var txStatus: String = "TX_STATUS_BROADCASTED"
     var txError: String?
     var errorMessage: String?
+    var solanaSignature: String?
 
     static func broadcasted(hash: String) -> StatusFixture {
       StatusFixture(txHash: hash, txStatus: "TX_STATUS_BROADCASTED")
@@ -21,15 +22,23 @@ final class MockTurnkeyClient: TurnkeyClientProtocol {
     static func failed(message: String = "broadcast failed") -> StatusFixture {
       StatusFixture(txHash: nil, txStatus: "TX_STATUS_FAILED", txError: message)
     }
+
+    /// Solana submission Included on-chain, carrying the signature in the status response.
+    static func solanaIncluded(signature: String) -> StatusFixture {
+      StatusFixture(txStatus: "TX_STATUS_INCLUDED", solanaSignature: signature)
+    }
   }
 
   var mockBalances: [v1AssetBalance] = []
   var mockSendTransactionStatusId = "send-status-id"
+  var mockSolSendTransactionStatusId = "sol-send-status-id"
   var mockTransactionHash = "0x" + String(repeating: "d", count: 64)
   var mockActivities: [v1Activity] = []
 
   /// Error to throw from `ethSendTransaction`. When set, the mock fails before producing a response.
   var ethSendTransactionError: Error?
+  /// Error to throw from `solSendTransaction`. When set, the mock fails before producing a response.
+  var solSendTransactionError: Error?
   /// Error to throw from `getWalletAddressBalances`. When set, the mock fails before producing a response.
   var walletAddressBalancesError: Error?
   /// Error to throw from `getActivities`. When set, the mock fails before producing a response.
@@ -44,6 +53,7 @@ final class MockTurnkeyClient: TurnkeyClientProtocol {
 
   var walletAddressBalanceCalls: [TGetWalletAddressBalancesBody] = []
   var ethSendTransactionCalls: [TEthSendTransactionBody] = []
+  var solSendTransactionCalls: [TSolSendTransactionBody] = []
   var sendTransactionStatusCalls: [TGetSendTransactionStatusBody] = []
   var getActivitiesCalls: [TGetActivitiesBody] = []
 
@@ -88,6 +98,30 @@ final class MockTurnkeyClient: TurnkeyClientProtocol {
     )
   }
 
+  func solSendTransaction(
+    _ input: TSolSendTransactionBody
+  ) async throws -> TSolSendTransactionResponse {
+    solSendTransactionCalls.append(input)
+
+    if let solSendTransactionError {
+      throw solSendTransactionError
+    }
+
+    return MockTurnkey.decode(
+      SolSendTransactionResponseFixture(
+        activity: MockTurnkey.makeSolanaActivity(
+          id: UUID().uuidString,
+          signWith: input.signWith,
+          caip2: input.caip2,
+          unsignedTransaction: input.unsignedTransaction,
+          sendTransactionStatusId: mockSolSendTransactionStatusId
+        ),
+        sendTransactionStatusId: mockSolSendTransactionStatusId
+      ),
+      as: TSolSendTransactionResponse.self
+    )
+  }
+
   func getSendTransactionStatus(
     _ input: TGetSendTransactionStatusBody
   ) async throws -> TGetSendTransactionStatusResponse {
@@ -110,7 +144,7 @@ final class MockTurnkeyClient: TurnkeyClientProtocol {
       SendTransactionStatusResponseFixture(
         error: fixture.errorMessage.map { v1TxError(message: $0) },
         eth: fixture.txHash.map { v1EthSendTransactionStatus(txHash: $0) },
-        solana: nil,
+        solana: fixture.solanaSignature.map { v1SolanaSendTransactionStatus(signature: $0) },
         txError: fixture.txError,
         txStatus: fixture.txStatus
       ),
@@ -284,6 +318,91 @@ extension MockTurnkey {
     )
   }
 
+  /// A valid base58 Solana account address (exactly 32 bytes) for fixtures.
+  static let defaultSolanaAddress = Base58.encode((0..<32).map { UInt8($0 + 1) })
+
+  /// A wallet carrying both an Ethereum and a Solana account, matching how the Turnkey demo
+  /// provisions dual-curve wallets.
+  static func dualCurveWallet() -> Wallet {
+    decode(
+      WalletFixture(
+        walletId: "wallet-id",
+        walletName: "wallet",
+        createdAt: "0",
+        updatedAt: "0",
+        exported: false,
+        imported: false,
+        accounts: [
+          WalletAccount(
+            address: defaultWalletAddress,
+            addressFormat: .address_format_ethereum,
+            createdAt: externaldatav1Timestamp(nanos: "0", seconds: "0"),
+            curve: .curve_secp256k1,
+            organizationId: "org-id",
+            path: "m/44'/60'/0'/0/0",
+            pathFormat: .path_format_bip32,
+            publicKey: nil,
+            updatedAt: externaldatav1Timestamp(nanos: "0", seconds: "0"),
+            walletAccountId: "wallet-account-id",
+            walletDetails: nil,
+            walletId: "wallet-id"
+          ),
+          WalletAccount(
+            address: defaultSolanaAddress,
+            addressFormat: .address_format_solana,
+            createdAt: externaldatav1Timestamp(nanos: "0", seconds: "0"),
+            curve: .curve_ed25519,
+            organizationId: "org-id",
+            path: "m/44'/501'/0'/0'",
+            pathFormat: .path_format_bip32,
+            publicKey: nil,
+            updatedAt: externaldatav1Timestamp(nanos: "0", seconds: "0"),
+            walletAccountId: "wallet-account-id-sol",
+            walletDetails: nil,
+            walletId: "wallet-id"
+          )
+        ]
+      ),
+      as: Wallet.self
+    )
+  }
+
+  static func makeSolanaActivity(
+    id: String,
+    signWith: String,
+    caip2: String,
+    unsignedTransaction: String,
+    sendTransactionStatusId: String,
+    createdAtSeconds: String = "1714521600"
+  ) -> v1Activity {
+    v1Activity(
+      canApprove: false,
+      canReject: false,
+      createdAt: externaldatav1Timestamp(nanos: "0", seconds: createdAtSeconds),
+      fingerprint: "fingerprint",
+      id: id,
+      intent: v1Intent(
+        solSendTransactionIntent: v1SolSendTransactionIntent(
+          caip2: caip2,
+          recentBlockhash: nil,
+          signWith: signWith,
+          sponsor: false,
+          unsignedTransaction: unsignedTransaction
+        )
+      ),
+      organizationId: "org-id",
+      result: v1Result(
+        solSendTransactionResult: v1SolSendTransactionResult(
+          sendTransactionStatusId: sendTransactionStatusId
+        )
+      ),
+      status: .activity_status_completed,
+      type: .activity_type_sol_send_transaction,
+      updatedAt: externaldatav1Timestamp(nanos: "0", seconds: createdAtSeconds),
+      votes: []
+    )
+  }
+
   static func decode<T: Decodable, Source: Encodable>(
     _ source: Source,
     as type: T.Type = T.self
@@ -298,6 +417,11 @@ private struct WalletAddressBalancesResponseFixture: Encodable {
 }
 
 private struct EthSendTransactionResponseFixture: Encodable {
+  let activity: v1Activity
+  let sendTransactionStatusId: String
+}
+
+private struct SolSendTransactionResponseFixture: Encodable {
   let activity: v1Activity
   let sendTransactionStatusId: String
 }
