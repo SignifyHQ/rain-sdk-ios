@@ -12,8 +12,12 @@ import Foundation
 ///   defer { MockURLProtocol.reset() }
 ///   MockURLProtocol.stub(method: "eth_gasPrice", result: "0x4a817c800")
 final class MockURLProtocol: URLProtocol {
+  /// Default hosts intercepted by EVM tests. `reset()` restores this so a test that points
+  /// `interceptedHosts` at a different host (e.g. a Solana RPC) can't leak that into the next
+  /// suite and send its requests to the real network.
+  nonisolated(unsafe) static let defaultInterceptedHosts: Set<String> = ["mainnet.infura.io"]
   /// Hosts this protocol will intercept. Other hosts pass through to the real network.
-  nonisolated(unsafe) static var interceptedHosts: Set<String> = ["mainnet.infura.io"]
+  nonisolated(unsafe) static var interceptedHosts: Set<String> = MockURLProtocol.defaultInterceptedHosts
   /// Maps JSON-RPC method name → stubbed `result` payload (any JSON-serializable value).
   nonisolated(unsafe) private static var stubs: [String: Any] = [:]
   /// Maps JSON-RPC method name → error to throw instead of returning a response.
@@ -37,6 +41,7 @@ final class MockURLProtocol: URLProtocol {
     stubs.removeAll()
     errors.removeAll()
     recordedMethods.removeAll()
+    interceptedHosts = defaultInterceptedHosts
     serialSemaphore.signal()
   }
 
