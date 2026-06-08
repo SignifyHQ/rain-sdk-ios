@@ -1,29 +1,41 @@
 import Foundation
 
-/// Chain ID format types (e.g. EIP-155: "eip155:1").
-internal enum ChainIDFormat {
+/// Chain ID format types (e.g. EIP-155: "eip155:1", Solana CAIP-2: "solana:<genesis>").
+internal enum ChainIDFormat: Equatable {
   case EIP155
+  case solana
 
   /// Get the namespace prefix for the format
   var prefix: String {
     switch self {
     case .EIP155:
       return "eip155"
+    case .solana:
+      return "solana"
     }
   }
 
+  /// The format that addresses `chainId`: `.solana` for Solana sentinel IDs (101–103),
+  /// `.EIP155` for everything else. Call sites use this instead of hardcoding `.EIP155`.
+  static func namespace(for chainId: Int) -> ChainIDFormat {
+    SolanaChains.isSolana(chainId) ? .solana : .EIP155
+  }
+
   /// Format a chain ID as a string in this format
-  /// - Parameter chainId: The chain ID as an integer
-  /// - Returns: Formatted string (e.g., "eip155:1")
+  /// - Parameter chainId: The chain ID as an integer (an EVM chain ID, or a Solana sentinel)
+  /// - Returns: Formatted string (e.g., "eip155:1" or "solana:<genesis>")
   func format(chainId: Int) -> String {
     switch self {
     case .EIP155:
       return "\(prefix):\(chainId)"
+    case .solana:
+      // The Solana sentinel int is not part of the CAIP-2 string; resolve via the cluster map.
+      return SolanaChains.caip2(for: chainId) ?? "\(prefix):\(chainId)"
     }
   }
 
   /// Parse a formatted string to extract the chain ID
-  /// - Parameter string: Formatted string (e.g., "eip155:1")
+  /// - Parameter string: Formatted string (e.g., "eip155:1" or "solana:<genesis>")
   /// - Returns: The chain ID as an integer, or nil if format is invalid
   func parse(_ string: String) -> Int? {
     switch self {
@@ -35,6 +47,8 @@ internal enum ChainIDFormat {
         return nil
       }
       return chainId
+    case .solana:
+      return SolanaChains.chainId(forCaip2: string)
     }
   }
 

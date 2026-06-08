@@ -131,6 +131,10 @@ internal enum TokenRegistry {
     42220: NativeCurrency(symbol: "CELO", name: "Celo"),
     43114: NativeCurrency(symbol: "AVAX", name: "Avalanche"),
     57073: NativeCurrency(symbol: "ETH", name: "Ether"),
+    // Solana clusters (sentinel chain IDs). SOL has 9 decimals, not 18.
+    101: NativeCurrency(symbol: "SOL", name: "Solana", decimals: 9),
+    102: NativeCurrency(symbol: "SOL", name: "Solana", decimals: 9),
+    103: NativeCurrency(symbol: "SOL", name: "Solana", decimals: 9),
   ]
 
   /// Native currency for a chain. Falls back to an 18-decimal ETH-like default for chains
