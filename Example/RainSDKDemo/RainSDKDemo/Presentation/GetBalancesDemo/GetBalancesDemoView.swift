@@ -9,9 +9,11 @@ struct GetBalancesDemoView: View {
     ScrollView {
       VStack(spacing: 24) {
         headerSection
-        chainIdSection
+        networkSection
         nativeBalanceSection
-        erc20BalanceSection
+        if !viewModel.chain.isSolana {
+          erc20BalanceSection
+        }
         allBalancesSection
       }
       .padding()
@@ -45,17 +47,17 @@ struct GetBalancesDemoView: View {
     .padding(.vertical)
   }
 
-  // MARK: - Shared Chain ID
+  // MARK: - Network
 
-  private var chainIdSection: some View {
-    VStack(alignment: .leading, spacing: 8) {
-      Text("Chain ID")
+  private var networkSection: some View {
+    HStack {
+      Text("Network")
         .font(.subheadline)
         .foregroundColor(.secondary)
-
-      TextField("e.g. \(DemoLocalConfig.chainId)", text: $viewModel.chainId)
-        .textFieldStyle(.roundedBorder)
-        .keyboardType(.numberPad)
+      Spacer()
+      Text(viewModel.chain.displayName)
+        .font(.subheadline)
+        .fontWeight(.medium)
     }
     .padding()
     .background(Color(.systemGray6))
@@ -66,7 +68,7 @@ struct GetBalancesDemoView: View {
 
   private var nativeBalanceSection: some View {
     VStack(alignment: .leading, spacing: 12) {
-      Label("Native Token", systemImage: "bitcoinsign.circle")
+      Label("Native Token (\(viewModel.chain.nativeSymbol))", systemImage: "bitcoinsign.circle")
         .font(.headline)
 
       FetchButton(
@@ -173,7 +175,7 @@ struct GetBalancesDemoView: View {
           ForEach(all.keys.sorted(), id: \.self) { chainId in
             let entries = all[chainId] ?? [:]
             VStack(alignment: .leading, spacing: 4) {
-              Text("Chain \(chainId)")
+              Text(WalletChain.from(chainId: chainId)?.displayName ?? "Chain \(chainId)")
                 .font(.subheadline)
                 .fontWeight(.semibold)
               if entries.isEmpty {

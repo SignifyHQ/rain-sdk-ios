@@ -4,7 +4,6 @@ import Combine
 
 @MainActor
 class WalletAddressDemoViewModel: ObservableObject {
-  @Published var chainId: String = DemoLocalConfig.chainId
   @Published var walletAddress: String?
   @Published var qrImageData: Data?
   @Published var isLoadingAddress: Bool = false
@@ -14,6 +13,9 @@ class WalletAddressDemoViewModel: ObservableObject {
   @Published var showCopyFeedback: Bool = false
 
   private let sdkService = RainSDKService.shared
+
+  /// Network selected on the connection screen; drives which account is resolved.
+  var chain: WalletChain { sdkService.selectedChain }
 
   var canFetch: Bool {
     sdkService.isInitialized
@@ -28,12 +30,7 @@ class WalletAddressDemoViewModel: ObservableObject {
 
     do {
       // Chain-aware so Solana chains (sentinel ids 101–103) show the Solana account.
-      let address = if let chainIdInt = Int(chainId) {
-        try await sdkService.getWalletAddress(chainId: chainIdInt)
-      } else {
-        try await sdkService.getWalletAddress()
-      }
-      walletAddress = address
+      walletAddress = try await sdkService.getWalletAddress(chainId: chain.chainId)
       statusMessage = "Address loaded"
       error = nil
     } catch {

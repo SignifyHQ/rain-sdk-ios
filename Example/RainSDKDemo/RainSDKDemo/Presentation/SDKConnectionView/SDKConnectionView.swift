@@ -7,6 +7,7 @@ import UIKit
 /// Can be extended with more SDK functions in the future
 struct SDKConnectionView: View {
   @StateObject private var viewModel = SDKConnectionViewModel()
+  @ObservedObject private var sdkService = RainSDKService.shared
 
   var body: some View {
     NavigationStack {
@@ -136,43 +137,9 @@ struct SDKConnectionView: View {
         }
       }
       
-      // Chain family selector (EVM vs Solana). Prefills chain id + RPC URL on change.
-      HStack {
-        Text("Chain")
-          .font(.subheadline)
-          .foregroundColor(.secondary)
-        Spacer()
-        Picker("Chain", selection: $viewModel.chainFamily) {
-          ForEach(ChainFamily.allCases, id: \.self) { family in
-            Text(family.displayName).tag(family)
-          }
-        }
-        .pickerStyle(.segmented)
-        .frame(maxWidth: 200)
-      }
-
-      // Chain ID Input
-      VStack(alignment: .leading, spacing: 8) {
-        Text("Chain ID")
-          .font(.subheadline)
-          .foregroundColor(.secondary)
-
-        TextField("e.g., \(DemoLocalConfig.chainId)", text: $viewModel.chainId)
-          .textFieldStyle(.roundedBorder)
-          .keyboardType(.numberPad)
-      }
-      
-      // RPC URL Input
-      VStack(alignment: .leading, spacing: 8) {
-        Text("RPC URL")
-          .font(.subheadline)
-          .foregroundColor(.secondary)
-        
-        TextField(DemoLocalConfig.rpcUrl, text: $viewModel.rpcUrl)
-          .textFieldStyle(.roundedBorder)
-          .autocapitalization(.none)
-          .disableAutocorrection(true)
-      }
+      Text("The SDK is initialized with all demo networks (\(WalletChain.allCases.map(\.displayName).joined(separator: ", "))); pick the active one from the Network dropdown after initializing.")
+        .font(.caption)
+        .foregroundColor(.secondary)
     }
     .padding()
     .background(Color(.systemGray6))
@@ -425,8 +392,23 @@ struct SDKConnectionView: View {
     VStack(alignment: .leading, spacing: 12) {
       Text("SDK Features")
         .font(.headline)
-      
+
       if viewModel.isInitialized {
+        // Network selector — switches which chain the feature screens use (no re-init needed).
+        HStack {
+          Text("Network")
+            .font(.subheadline)
+            .foregroundColor(.secondary)
+          Spacer()
+          Picker("Network", selection: $sdkService.selectedChain) {
+            ForEach(WalletChain.allCases) { chain in
+              Text(chain.displayName).tag(chain)
+            }
+          }
+          .pickerStyle(.menu)
+        }
+        .padding(.horizontal, 4)
+
         VStack(spacing: 8) {
           NavigationLink(destination: BuildEIP712MessageDemoView()) {
             featureButtonContent(
