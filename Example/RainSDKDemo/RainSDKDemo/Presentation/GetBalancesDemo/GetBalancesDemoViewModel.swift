@@ -3,10 +3,6 @@ import Foundation
 @MainActor
 class GetBalancesDemoViewModel: ObservableObject {
 
-  // MARK: - Shared Input
-
-  @Published var chainId: String = DemoLocalConfig.chainId
-
   // MARK: - Native Balance
 
   @Published var nativeBalance: Double?
@@ -33,30 +29,31 @@ class GetBalancesDemoViewModel: ObservableObject {
 
   private let sdkService = RainSDKService.shared
 
+  /// Network selected on the connection screen.
+  var chain: WalletChain { sdkService.selectedChain }
+
   // MARK: - Validation
 
   var canFetch: Bool {
-    sdkService.isInitialized && chainIdInt != nil
+    sdkService.isInitialized
   }
 
   var canFetchERC20: Bool {
-    canFetch && !tokenAddress.trimmingCharacters(in: .whitespaces).isEmpty
+    canFetch && !chain.isSolana && !tokenAddress.trimmingCharacters(in: .whitespaces).isEmpty
   }
-
-  private var chainIdInt: Int? { Int(chainId) }
 
   // MARK: - Fetch Native Balance
 
   func fetchNativeBalance() async {
-    guard let chainId = chainIdInt, canFetch else { return }
+    guard canFetch else { return }
     isLoadingNative = true
     nativeError = nil
     nativeBalance = nil
     nativeWalletAddress = nil
 
     do {
-      nativeWalletAddress = try await sdkService.getWalletAddress()
-      nativeBalance = try await sdkService.getNativeBalance(chainId: chainId)
+      nativeWalletAddress = try await sdkService.getWalletAddress(chainId: chain.chainId)
+      nativeBalance = try await sdkService.getNativeBalance(chainId: chain.chainId)
     } catch {
       nativeError = error
     }
@@ -67,16 +64,16 @@ class GetBalancesDemoViewModel: ObservableObject {
   // MARK: - Fetch ERC-20 Balance
 
   func fetchERC20Balance() async {
-    guard let chainId = chainIdInt, canFetchERC20 else { return }
+    guard canFetchERC20 else { return }
     isLoadingERC20 = true
     erc20Error = nil
     erc20Balance = nil
     erc20WalletAddress = nil
 
     do {
-      erc20WalletAddress = try await sdkService.getWalletAddress()
+      erc20WalletAddress = try await sdkService.getWalletAddress(chainId: chain.chainId)
       erc20Balance = try await sdkService.getERC20Balance(
-        chainId: chainId,
+        chainId: chain.chainId,
         tokenAddress: tokenAddress.trimmingCharacters(in: .whitespaces),
         decimals: Int(tokenDecimals)
       )

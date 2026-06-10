@@ -12,30 +12,6 @@ enum WalletProviderOption: String, CaseIterable {
   var displayName: String { rawValue }
 }
 
-/// Chain family selector, orthogonal to the wallet provider. Solana uses the SDK's sentinel
-/// chain IDs (101 mainnet / 102 testnet / 103 devnet) and a Solana JSON-RPC URL.
-enum ChainFamily: String, CaseIterable {
-  case evm = "EVM"
-  case solana = "Solana"
-
-  var displayName: String { rawValue }
-
-  /// Sentinel chain id + RPC prefilled when the family is selected.
-  var defaultChainId: String {
-    switch self {
-    case .evm: return DemoLocalConfig.chainId
-    case .solana: return "103" // Solana devnet sentinel
-    }
-  }
-
-  var defaultRpcUrl: String {
-    switch self {
-    case .evm: return DemoLocalConfig.rpcUrl
-    case .solana: return "https://api.devnet.solana.com"
-    }
-  }
-}
-
 /// ViewModel for SDK Connection View
 /// Handles business logic and state management for SDK initialization
 @MainActor
@@ -49,26 +25,11 @@ class SDKConnectionViewModel: ObservableObject {
   /// Portal session token input
   @Published var sessionToken: String = ""
 
-  /// RPC URL input
-  @Published var rpcUrl: String = DemoLocalConfig.rpcUrl
-
-  /// Chain ID input
-  @Published var chainId: String = DemoLocalConfig.chainId
-
   /// Initialization mode: true for wallet-agnostic, false for Portal (or other provider)
   @Published var useWalletAgnostic: Bool = false
 
   /// Selected wallet provider when not wallet-agnostic
   @Published var selectedProvider: WalletProviderOption = .portal
-
-  /// Selected chain family (EVM vs Solana). Changing it prefills chain id + RPC URL.
-  @Published var chainFamily: ChainFamily = .evm {
-    didSet {
-      guard oldValue != chainFamily else { return }
-      chainId = chainFamily.defaultChainId
-      rpcUrl = chainFamily.defaultRpcUrl
-    }
-  }
 
   /// Initialization loading state
   @Published var isInitializing: Bool = false
@@ -122,7 +83,6 @@ class SDKConnectionViewModel: ObservableObject {
   /// Check if initialize button should be enabled
   var canInitialize: Bool {
     guard !isInitializing else { return false }
-    guard !rpcUrl.isEmpty, !chainId.isEmpty, Int(chainId) != nil else { return false }
 
     if useWalletAgnostic { return true }
 
@@ -143,9 +103,6 @@ class SDKConnectionViewModel: ObservableObject {
       && !isTrimmedEmpty(turnkeyApiUrl)
       && !isTrimmedEmpty(turnkeyAuthProxyUrl)
       && !isTrimmedEmpty(turnkeyRpId)
-      && !isTrimmedEmpty(chainId)
-      && Int(chainId) != nil
-      && !rpcUrl.isEmpty
   }
 
   /// Whether the Sign Up with Passkey button should be enabled.
@@ -166,9 +123,6 @@ class SDKConnectionViewModel: ObservableObject {
       && !isTrimmedEmpty(turnkeyAuthProxyUrl)
       && !isTrimmedEmpty(turnkeyAuthProxyConfigId)
       && !isTrimmedEmpty(turnkeyRpId)
-      && !isTrimmedEmpty(chainId)
-      && Int(chainId) != nil
-      && !rpcUrl.isEmpty
   }
 
   /// Whether the Verify OTP button should be enabled.
@@ -212,13 +166,9 @@ class SDKConnectionViewModel: ObservableObject {
   /// Initialize the SDK with current input values (wallet-agnostic or Portal).
   /// Turnkey runs through `loginWithPasskey` / `signUpWithPasskey` instead.
   func initializeSDK() async {
-    guard let chainIdInt = Int(chainId) else {
-      return
-    }
-
     isInitializing = true
 
-    let networkConfigs = makeNetworkConfigs(chainIdInt: chainIdInt)
+    let networkConfigs = WalletChain.networkConfigs
 
     if useWalletAgnostic {
       await sdkService.initializeWalletAgnostic(networkConfigs: networkConfigs)
@@ -244,7 +194,7 @@ class SDKConnectionViewModel: ObservableObject {
 
   /// Sign in to Turnkey with an existing passkey, then initialize Rain.
   func loginWithTurnkeyPasskey(anchor: ASPresentationAnchor) async {
-    guard let chainIdInt = Int(chainId), canAuthenticateWithPasskey else { return }
+    guard canAuthenticateWithPasskey else { return }
 
     persistTurnkeyConfig()
     isAuthenticatingTurnkey = true
@@ -263,7 +213,7 @@ class SDKConnectionViewModel: ObservableObject {
 
       await sdkService.initializeTurnkey(
         turnkey: context,
-        networkConfigs: makeNetworkConfigs(chainIdInt: chainIdInt)
+        networkConfigs: WalletChain.networkConfigs
       )
     } catch {
       sdkService.error = .providerError(underlying: error)
@@ -276,7 +226,7 @@ class SDKConnectionViewModel: ObservableObject {
   /// Create a fresh Turnkey sub-org (with a wallet, per the auth proxy's defaults) and
   /// register a passkey for it on the device. Then initialize Rain.
   func signUpWithTurnkeyPasskey(anchor: ASPresentationAnchor) async {
-    guard let chainIdInt = Int(chainId), canSignUpWithPasskey else { return }
+    guard canSignUpWithPasskey else { return }
 
     persistTurnkeyConfig()
     isAuthenticatingTurnkey = true
@@ -296,7 +246,7 @@ class SDKConnectionViewModel: ObservableObject {
 
       await sdkService.initializeTurnkey(
         turnkey: context,
-        networkConfigs: makeNetworkConfigs(chainIdInt: chainIdInt)
+        networkConfigs: WalletChain.networkConfigs
       )
     } catch {
       sdkService.error = .providerError(underlying: error)
@@ -339,8 +289,7 @@ class SDKConnectionViewModel: ObservableObject {
   /// Verify the OTP code and create a Turnkey session (login or signup, handled by
   /// `completeOtp`), then initialize Rain. Signup provisions a dual-curve (ETH + Solana) wallet.
   func verifyTurnkeyEmailOtp() async {
-    guard let chainIdInt = Int(chainId),
-          let otpId = turnkeyOtpId,
+    guard let otpId = turnkeyOtpId,
           let bundle = turnkeyOtpEncryptionTargetBundle,
           canVerifyEmailOtp else { return }
 
@@ -365,7 +314,7 @@ class SDKConnectionViewModel: ObservableObject {
 
       await sdkService.initializeTurnkey(
         turnkey: context,
-        networkConfigs: makeNetworkConfigs(chainIdInt: chainIdInt)
+        networkConfigs: WalletChain.networkConfigs
       )
 
       // Reset the OTP step on success.
@@ -479,16 +428,6 @@ class SDKConnectionViewModel: ObservableObject {
         userInfo: [NSLocalizedDescriptionKey: "Failed to encode wallet params."])
     }
     return try JSONDecoder().decode(CreateSubOrgParams.self, from: data)
-  }
-
-  private func makeNetworkConfigs(chainIdInt: Int) -> [NetworkConfig] {
-    [
-      NetworkConfig(
-        chainId: chainIdInt,
-        rpcUrl: rpcUrl,
-        networkName: "Demo Network"
-      )
-    ]
   }
 
   private func isTrimmedEmpty(_ value: String) -> Bool {

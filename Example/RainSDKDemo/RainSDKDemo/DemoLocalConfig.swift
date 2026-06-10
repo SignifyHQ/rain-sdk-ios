@@ -9,16 +9,15 @@ import Foundation
 ///   git update-index --no-skip-worktree Example/RainSDKDemo/RainSDKDemo/DemoLocalConfig.swift
 enum DemoLocalConfig {
   /// Turnkey parent organization id (UUID from the Turnkey dashboard).
-  static let turnkeyOrganizationId = "0d63a57d-4d1b-4eb4-be60-7c16fb06cbce"
+  static let turnkeyOrganizationId = "e10138e1-b564-441d-bc67-f0a4ad2b4658"
 
   /// Auth Proxy config id (UUID from Turnkey dashboard → Settings → Auth Proxy).
-  static let turnkeyAuthProxyConfigId = "565037bd-3f44-4fab-be18-6961c1cda6a4"
+  static let turnkeyAuthProxyConfigId = "fb2e10c2-98de-4a9f-842b-f666e91d84d5"
 
   /// Relying Party id — the hostname (no scheme, no path) of the AASA you're serving.
   /// Must match the `webcredentials:<host>` entry in RainSDKDemo.entitlements.
   static let turnkeyRpId = "bea6-86-187-162-5.ngrok-free.app"
 
-  static let rpcUrl = "https://sepolia.base.org"
   static let chainId = "84532"
 
   static var chainIdInt: Int { Int(chainId)! }

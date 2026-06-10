@@ -32,6 +32,9 @@ class RainSDKService: ObservableObject {
 
   /// Active provider after the last successful initialize. Used by demo views to gate provider-specific UI (e.g. Portal recover sheet).
   @Published var activeProvider: ActiveProvider = .none
+
+  /// Network the feature screens operate on, selected via the connection-screen dropdown.
+  @Published var selectedChain: WalletChain = .baseSepolia
   
   // MARK: - Initialization
   

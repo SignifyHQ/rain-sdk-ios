@@ -3,7 +3,6 @@ import RainSDK
 
 @MainActor
 class GetTransactionsDemoViewModel: ObservableObject {
-  @Published var chainId: String = DemoLocalConfig.chainId
   @Published var limit: String = "20"
   @Published var orderOption: WalletTransactionOrder = .DESC
   @Published var transactions: [WalletTransaction] = []
@@ -14,14 +13,15 @@ class GetTransactionsDemoViewModel: ObservableObject {
 
   private let sdkService = RainSDKService.shared
 
+  /// Network selected on the connection screen.
+  var chain: WalletChain { sdkService.selectedChain }
+
   var canFetch: Bool {
     sdkService.isInitialized
-      && !chainId.isEmpty
-      && Int(chainId) != nil
   }
 
   func fetchTransactions() async {
-    guard let chainIdInt = Int(chainId), canFetch else { return }
+    guard canFetch else { return }
     let limitInt = Int(limit).flatMap { $0 > 0 ? $0 : nil }
 
     isLoading = true
@@ -31,7 +31,7 @@ class GetTransactionsDemoViewModel: ObservableObject {
 
     do {
       let result = try await sdkService.getTransactions(
-        chainId: chainIdInt,
+        chainId: chain.chainId,
         limit: limitInt,
         offset: nil,
         order: orderOption
