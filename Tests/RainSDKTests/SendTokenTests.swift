@@ -50,14 +50,14 @@ struct SendTokenTests {
     }
   }
 
-  // MARK: - sendERC20Token
+  // MARK: - sendToken
 
-  @Test("sendERC20Token throws sdkNotInitialized before initialization")
+  @Test("sendToken throws sdkNotInitialized before initialization")
   func testSendERC20TokenBeforeInitialization() async throws {
     let manager = RainSDKManager()
 
     await #expect(throws: RainSDKError.sdkNotInitialized) {
-      _ = try await manager.sendERC20Token(
+      _ = try await manager.sendToken(
         chainId: 1,
         contractAddress: TestFixtures.tokenAddress,
         to: TestFixtures.recipientAddress,
@@ -67,12 +67,12 @@ struct SendTokenTests {
     }
   }
 
-  @Test("sendERC20Token throws walletUnavailable after wallet-agnostic initialize")
+  @Test("sendToken throws walletUnavailable after wallet-agnostic initialize")
   func testSendERC20TokenAfterWalletAgnosticInit() async throws {
     let manager = try await TestManagers.walletAgnosticManager()
 
     await #expect(throws: RainSDKError.walletUnavailable) {
-      _ = try await manager.sendERC20Token(
+      _ = try await manager.sendToken(
         chainId: 1,
         contractAddress: TestFixtures.tokenAddress,
         to: TestFixtures.recipientAddress,
@@ -82,14 +82,14 @@ struct SendTokenTests {
     }
   }
 
-  @Test("sendERC20Token throws walletUnavailable when provider has no address")
+  @Test("sendToken throws walletUnavailable when provider has no address")
   func testSendERC20TokenNoWalletAddress() async throws {
     let mockPortal = MockPortal()
     mockPortal.mockAddresses.removeAll()
     let (manager, _, _) = TestManagers.portalManager(portal: mockPortal)
 
     await #expect(throws: RainSDKError.walletUnavailable) {
-      _ = try await manager.sendERC20Token(
+      _ = try await manager.sendToken(
         chainId: 1,
         contractAddress: TestFixtures.tokenAddress,
         to: TestFixtures.recipientAddress,
@@ -107,13 +107,13 @@ struct SendTokenTests {
     let expectedHash = "0x" + String(repeating: "a", count: 64)
     stub.sendTransactionHashToReturn = expectedHash
 
-    let txHash = try await manager.sendNativeToken(
+    let result = try await manager.sendNativeToken(
       chainId: 1,
       to: TestFixtures.recipientAddress,
       amount: 1.5
     )
 
-    #expect(txHash == expectedHash)
+    #expect(result.transactionHash == expectedHash)
     #expect(stub.sendTransactionCalls.count == 1)
     #expect(stub.sendTransactionCalls[0].chainId == 1)
     #expect(stub.sendTransactionCalls[0].params.from == TestFixtures.walletAddress)
@@ -122,13 +122,13 @@ struct SendTokenTests {
     #expect(stub.sendTransactionCalls[0].params.data == .empty)
   }
 
-  @Test("sendERC20Token returns provider tx hash and routes calldata to the token contract")
+  @Test("sendToken returns provider tx hash and routes calldata to the token contract")
   func testSendERC20TokenRoutesToProvider() async throws {
     let (manager, stub) = try await TestManagers.stubProviderManager()
     let expectedHash = "0x" + String(repeating: "b", count: 64)
     stub.sendTransactionHashToReturn = expectedHash
 
-    let txHash = try await manager.sendERC20Token(
+    let result = try await manager.sendToken(
       chainId: 1,
       contractAddress: TestFixtures.tokenAddress,
       to: TestFixtures.recipientAddress,
@@ -136,10 +136,31 @@ struct SendTokenTests {
       decimals: 6
     )
 
-    #expect(txHash == expectedHash)
+    #expect(result.transactionHash == expectedHash)
     #expect(stub.sendTransactionCalls.count == 1)
     // ERC-20 transactions target the token contract; recipient is encoded in calldata.
     #expect(stub.sendTransactionCalls[0].params.to == TestFixtures.tokenAddress)
     #expect(stub.sendTransactionCalls[0].params.data.hasPrefix("0x"))
+  }
+
+  // MARK: - Deprecated alias (1.0.0 source compat)
+
+  @available(*, deprecated)
+  @Test("deprecated sendERC20Token forwards to sendToken and returns the tx hash string")
+  func testDeprecatedSendERC20TokenForwards() async throws {
+    let (manager, stub) = try await TestManagers.stubProviderManager()
+    let expectedHash = "0x" + String(repeating: "c", count: 64)
+    stub.sendTransactionHashToReturn = expectedHash
+
+    let hash: String = try await manager.sendERC20Token(
+      chainId: 1,
+      contractAddress: TestFixtures.tokenAddress,
+      to: TestFixtures.recipientAddress,
+      amount: 100.0,
+      decimals: 6
+    )
+
+    #expect(hash == expectedHash)
+    #expect(stub.sendTransactionCalls[0].params.to == TestFixtures.tokenAddress)
   }
 }

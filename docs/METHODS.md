@@ -232,31 +232,33 @@ Registers additional `TokenInfo` so their metadata resolves from the store witho
 
 ## sendNativeToken(chainId:to:amount:)
 
-Sends native tokens (e.g. ETH, AVAX) from the current wallet.
+Sends native tokens (e.g. ETH, AVAX, SOL) from the current wallet.
 
-- **Returns:** Transaction hash string.
+- **Returns:** `RainTokenTransferResult` carrying the transaction hash (EVM) or signature (Solana).
 - **Throws:** `RainSDKError` if no wallet provider or send fails.
 - **Requires:** Wallet provider set.
 
 | Parameter | Description |
 |-----------|-------------|
-| `chainId` | Target network chain ID. |
-| `to` | Recipient address. |
-| `amount` | Amount in human-readable form (e.g. 1.5 for 1.5 ETH). |
+| `chainId` | Target network chain ID. EVM chain ID or Solana sentinel (101/102/103). |
+| `to` | Recipient address (hex on EVM, base58 on Solana). |
+| `amount` | Amount in human-readable form (e.g. 1.5 for 1.5 ETH / 0.5 for 0.5 SOL). |
 
 ---
 
-## sendERC20Token(chainId:contractAddress:to:amount:decimals:)
+## sendToken(chainId:contractAddress:to:amount:decimals:)
 
-Sends ERC-20 tokens from the current wallet.
+Sends ERC-20 tokens (EVM chains) from the current wallet. Routed by `chainId`.
 
-- **Returns:** Transaction hash string.
+- **Returns:** `RainTokenTransferResult` carrying the transaction hash (EVM) or signature (Solana).
 - **Throws:** `RainSDKError` if SDK or wallet not initialized or send fails.
-- **Requires:** Wallet provider and network configs (e.g. `initializePortal`).
+- **Throws on Solana chains:** SPL token transfers are not yet implemented; calling this
+  method with a Solana `chainId` (sentinel 101–103) throws `RainSDKError.internalLogicError`.
+- **Requires:** Wallet provider and network configs (e.g. `initializePortal` or `initializeTurnkey`).
 
 | Parameter | Description |
 |-----------|-------------|
-| `chainId` | Target network chain ID. |
+| `chainId` | Target network chain ID. EVM chain ID. (Solana SPL transfers not yet implemented — see note above.) |
 | `contractAddress` | ERC-20 token contract address. |
 | `to` | Recipient address. |
 | `amount` | Amount in human-readable form. |
@@ -294,6 +296,7 @@ Estimates the total fee (gas cost) to execute a collateral withdrawal.
 | **ETHTransactionParam** | Composed transaction payload for submission. |
 | **WalletTransaction** | Transaction record: `hash`, `from`, `to`, `value`, `blockNum`, `category`, `metadata`, `chainId`, etc. Returned by `getTransactions`. |
 | **WalletTransactionOrder** | Sort order for transaction history: `.ASC`, `.DESC`. Used in `getTransactions(..., order:)`. |
+| **RainTokenTransferResult** | `transactionHash` (String) — on-chain hash (EVM) or signature (Solana). Returned by `sendNativeToken` and `sendToken`. |
 
 ---
 

@@ -583,6 +583,36 @@ internal final class TurnkeyWalletProviderAdapter: RainWalletProvider, RainTyped
     return statusId
   }
 
+  // MARK: - SPL token send
+
+  /// SPL token transfer placeholder.
+  ///
+  /// The protocol surface is wired (so `RainSDKManager.sendToken` can route Solana chains here
+  /// instead of throwing at the public layer), but the on-chain message construction is not
+  /// yet implemented. A full implementation needs:
+  ///   - Associated Token Account derivation (Program-Derived Address with an ed25519
+  ///     off-curve check — see `solana-swift`'s `NaclLowLevel.isOnCurve` for the canonical
+  ///     algorithm).
+  ///   - SPL Token Program `TransferChecked` instruction (and optional `CreateIdempotent`
+  ///     preamble for new recipient ATAs).
+  ///   - A multi-instruction Solana message serializer (the existing `SolanaTransactionBuilder`
+  ///     only handles single-instruction System Program transfers).
+  ///
+  /// Until that lands, the adapter throws `internalLogicError` so the failure mode is identical
+  /// to the pre-change behavior. The public `sendToken` API on `RainSDKManager` therefore still
+  /// surfaces a clear error for Solana SPL attempts.
+  func sendSolanaSPLToken(
+    chainId: Int,
+    mintAddress: String,
+    to toAddress: String,
+    amount: Double,
+    decimals: Int
+  ) async throws -> String {
+    throw RainSDKError.internalLogicError(
+      details: "SPL token transfers are not yet implemented on iOS Turnkey (chainId=\(chainId))"
+    )
+  }
+
   /// Polls Turnkey for the terminal status of a Solana submission. Returns `solana.signature`
   /// (populated once the tx is Included), `nil` at a terminal status without it or on timeout
   /// (caller then recovers the signature from chain), and throws on explicit failure.

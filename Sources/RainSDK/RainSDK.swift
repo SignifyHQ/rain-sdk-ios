@@ -144,12 +144,13 @@ public protocol RainSDK {
   ///   - contractAddress: Target smart contract address.
   ///   - transactionData: Hex-encoded calldata.
   ///
-  /// - Returns: A fully formed `ETHTransactionParam` object.
+  /// - Returns: A fully formed `RainTransactionParameters` object. Rain-owned so the public
+  ///            surface does not leak Portal/Turnkey types (parity with Android).
   func composeTransactionParameters(
     walletAddress: String,
     contractAddress: String,
     transactionData: String
-  ) -> ETHTransactionParam
+  ) -> RainTransactionParameters
   
   /// Executes a collateral withdrawal transaction on-chain.
   ///
@@ -317,29 +318,35 @@ public protocol RainSDK {
   ///   - chainId: The target blockchain network identifier (e.g. 1 for Ethereum, 43114 for Avalanche).
   ///   - to: Recipient address.
   ///   - amount: Human-readable amount (e.g. 1.5 for 1.5 ETH).
-  /// - Returns: The transaction hash of the submitted transaction.
+  /// - Returns: A `RainTokenTransferResult` carrying the on-chain transaction hash (EVM) or
+  ///            transaction signature (Solana).
   /// - Throws: RainSDKError if no wallet provider is set, or if transaction building or submission fails.
   func sendNativeToken(
     chainId: Int,
     to: String,
     amount: Double
-  ) async throws -> String
+  ) async throws -> RainTokenTransferResult
 
-  /// Sends ERC-20 tokens on the specified network.
+  /// Sends tokens on the specified network. Chain-aware:
+  /// - EVM chains: builds an ERC-20 `transfer(address,uint256)` calldata and sends via the active provider.
+  /// - Solana chains (sentinel IDs 101–103): builds an SPL `TransferChecked` instruction
+  ///   (auto-creating the recipient associated token account when needed) and signs / broadcasts
+  ///   via the Solana transfers capability on the active provider.
   ///
   /// - Parameters:
   ///   - chainId: The target blockchain network identifier.
-  ///   - contractAddress: The ERC-20 token contract address.
-  ///   - to: Recipient address.
+  ///   - contractAddress: The ERC-20 token contract address (EVM) or SPL mint address (Solana, base58).
+  ///   - to: Recipient address (EVM hex or Solana base58).
   ///   - amount: Human-readable amount (e.g. 100.0 for 100 tokens).
   ///   - decimals: Number of decimal places for the token (e.g. 18 for WETH, 6 for USDC).
-  /// - Returns: The transaction hash of the submitted transaction.
+  /// - Returns: A `RainTokenTransferResult` carrying the on-chain transaction hash (EVM) or
+  ///            transaction signature (Solana).
   /// - Throws: RainSDKError if SDK or wallet provider is not initialized, or if transaction building or submission fails.
-  func sendERC20Token(
+  func sendToken(
     chainId: Int,
     contractAddress: String,
     to: String,
     amount: Double,
     decimals: Int
-  ) async throws -> String
+  ) async throws -> RainTokenTransferResult
 }

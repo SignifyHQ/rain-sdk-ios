@@ -366,8 +366,8 @@ public final class RainSDKManager: RainSDK {
     walletAddress: String,
     contractAddress: String,
     transactionData: String
-  ) -> ETHTransactionParam {
-    return ETHTransactionParam(
+  ) -> RainTransactionParameters {
+    return RainTransactionParameters(
       from: walletAddress,
       to: contractAddress,
       value: 0.ethToWei.toHexString,
@@ -595,7 +595,7 @@ public final class RainSDKManager: RainSDK {
     chainId: Int,
     to: String,
     amount: Double
-  ) async throws -> String {
+  ) async throws -> RainTokenTransferResult {
     do {
       guard let provider = _walletProvider else {
         throw RainSDKError.walletUnavailable
@@ -608,7 +608,8 @@ public final class RainSDKManager: RainSDK {
             details: "The active wallet provider does not support Solana transfers"
           )
         }
-        return try await solanaProvider.sendSolanaNative(chainId: chainId, to: to, amount: amount)
+        let signature = try await solanaProvider.sendSolanaNative(chainId: chainId, to: to, amount: amount)
+        return RainTokenTransferResult(transactionHash: signature)
       }
 
       let from = try await provider.address()
@@ -619,34 +620,54 @@ public final class RainSDKManager: RainSDK {
         data: .empty
       )
 
-      return try await provider.sendTransaction(
+      let hash = try await provider.sendTransaction(
         chainId: chainId,
         params: params
       )
+      return RainTokenTransferResult(transactionHash: hash)
     } catch {
       throw RainSDKError.from(underlying: error)
     }
   }
 
-  /// Sends ERC-20 tokens. Requires SDK initialized with network configs and a wallet provider.
-  public func sendERC20Token(
+  /// Sends ERC-20 (EVM) or SPL (Solana) tokens depending on `chainId`. Requires SDK initialized
+  /// with network configs and a wallet provider; Solana routing additionally requires the active
+  /// provider to conform to `RainSolanaTransfersProvider`.
+  public func sendToken(
     chainId: Int,
     contractAddress: String,
     to: String,
     amount: Double,
     decimals: Int
-  ) async throws -> String {
+  ) async throws -> RainTokenTransferResult {
     do {
+      // Solana chains: SPL token transfer via the Solana transfers capability.
+      // Wallet-builder isn't required on this path; Solana scaling lives in the adapter.
       if SolanaChains.isSolana(chainId) {
-        throw RainSDKError.internalLogicError(
-          details: "SPL token transfers are not supported on Solana chainId=\(chainId)"
+        guard let provider = _walletProvider else {
+          throw RainSDKError.walletUnavailable
+        }
+        guard let solanaProvider = provider as? any RainSolanaTransfersProvider else {
+          throw RainSDKError.internalLogicError(
+            details: "The active wallet provider does not support Solana transfers"
+          )
+        }
+        let signature = try await solanaProvider.sendSolanaSPLToken(
+          chainId: chainId,
+          mintAddress: contractAddress,
+          to: to,
+          amount: amount,
+          decimals: decimals
         )
+        return RainTokenTransferResult(transactionHash: signature)
       }
 
+      // EVM path requires both the wallet-agnostic transaction builder and a wallet provider.
+      // Preserve the historical precondition order: builder first (→ `sdkNotInitialized`),
+      // provider second (→ `walletUnavailable`).
       guard let transactionBuilder = _transactionBuilder else {
         throw RainSDKError.sdkNotInitialized
       }
-
       guard let provider = _walletProvider else {
         throw RainSDKError.walletUnavailable
       }
@@ -660,18 +681,19 @@ public final class RainSDKManager: RainSDK {
         toAddress: to,
         amount: amountBaseUnits
       )
-      
+
       let params = WalletTransactionParams(
         from: from,
         to: contractAddress,
         value: 0.ethToWei.toHexString,
         data: data
       )
-      
-      return try await provider.sendTransaction(
+
+      let hash = try await provider.sendTransaction(
         chainId: chainId,
         params: params
       )
+      return RainTokenTransferResult(transactionHash: hash)
     } catch {
       throw RainSDKError.from(underlying: error)
     }

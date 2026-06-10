@@ -328,7 +328,7 @@ struct TurnkeyAdapterTests {
     }
   }
 
-  // MARK: - sendNativeToken / sendERC20Token via Turnkey (URLSession-stubbed)
+  // MARK: - sendNativeToken / sendToken via Turnkey (URLSession-stubbed)
 
   @Test("sendNativeToken with Turnkey returns mock tx hash")
   func testSendNativeTokenTurnkey() async throws {
@@ -343,19 +343,19 @@ struct TurnkeyAdapterTests {
 
     let (manager, _, _) = TestManagers.turnkeyManager(turnkey: mockTurnkey)
 
-    let txHash = try await manager.sendNativeToken(
+    let result = try await manager.sendNativeToken(
       chainId: 1,
       to: TestFixtures.recipientAddress,
       amount: 1.5
     )
 
-    #expect(txHash == expectedHash)
+    #expect(result.transactionHash == expectedHash)
     #expect(client.ethSendTransactionCalls.count == 1)
     #expect(client.ethSendTransactionCalls[0].to == TestFixtures.recipientAddress)
     #expect(client.sendTransactionStatusCalls.count == 1)
   }
 
-  @Test("sendERC20Token with Turnkey returns mock tx hash and routes to contract address")
+  @Test("sendToken with Turnkey returns mock tx hash and routes to contract address")
   func testSendERC20TokenTurnkey() async throws {
     MockURLProtocol.install()
     defer { MockURLProtocol.reset() }
@@ -368,7 +368,7 @@ struct TurnkeyAdapterTests {
 
     let (manager, _, _) = TestManagers.turnkeyManager(turnkey: mockTurnkey)
 
-    let txHash = try await manager.sendERC20Token(
+    let result = try await manager.sendToken(
       chainId: 1,
       contractAddress: TestFixtures.tokenAddress,
       to: TestFixtures.recipientAddress,
@@ -376,7 +376,7 @@ struct TurnkeyAdapterTests {
       decimals: 6
     )
 
-    #expect(txHash == expectedHash)
+    #expect(result.transactionHash == expectedHash)
     #expect(client.ethSendTransactionCalls.count == 1)
     // ERC-20 transfers target the token contract; recipient is encoded in calldata.
     #expect(client.ethSendTransactionCalls[0].to == TestFixtures.tokenAddress)
@@ -446,13 +446,13 @@ struct TurnkeyAdapterTests {
 
     let (manager, _, _) = TestManagers.turnkeyManager(turnkey: mockTurnkey)
 
-    let txHash = try await manager.sendNativeToken(
+    let result = try await manager.sendNativeToken(
       chainId: 1,
       to: TestFixtures.recipientAddress,
       amount: 1.0
     )
 
-    #expect(txHash == expectedHash)
+    #expect(result.transactionHash == expectedHash)
     #expect(client.sendTransactionStatusCalls.count == 2)
   }
 
