@@ -65,26 +65,26 @@ class TransferDemoViewModel: ObservableObject {
     do {
       switch transferType {
       case .native:
-        let hash = try await sdkService.sendNativeToken(
+        let result = try await sdkService.sendNativeToken(
           chainId: chainIdInt,
           to: to,
           amount: amountDouble
         )
-        txHash = hash
+        txHash = result.transactionHash
       case .erc20:
         guard let decimalsInt = Int(decimals) else {
           statusMessage = "Invalid decimals"
           return
         }
         let contract = contractAddress.trimmingCharacters(in: .whitespaces)
-        let hash = try await sdkService.sendERC20Token(
+        let result = try await sdkService.sendToken(
           chainId: chainIdInt,
           contractAddress: contract,
           to: to,
           amount: amountDouble,
           decimals: decimalsInt
         )
-        txHash = hash
+        txHash = result.transactionHash
       }
       statusMessage = "Sent successfully"
       error = nil

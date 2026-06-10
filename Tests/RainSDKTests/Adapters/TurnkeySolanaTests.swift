@@ -54,8 +54,8 @@ struct TurnkeySolanaTests {
       MockURLProtocol.stub(method: "getLatestBlockhash", result: ["value": ["blockhash": blockhash]])
       let (manager, _, _) = TestManagers.turnkeyManager(turnkey: turnkey, configs: configs())
 
-      let signature = try await manager.sendNativeToken(chainId: Self.chainId, to: recipient, amount: 0.5)
-      #expect(signature == "sol-sig-123")
+      let result = try await manager.sendNativeToken(chainId: Self.chainId, to: recipient, amount: 0.5)
+      #expect(result.transactionHash == "sol-sig-123")
 
       // The unsigned transaction was built and submitted via sol_send_transaction.
       #expect(client.solSendTransactionCalls.count == 1)
@@ -142,12 +142,16 @@ struct TurnkeySolanaTests {
   }
 
   // MARK: - SPL guard
+  //
+  // SPL token transfers are wired through `RainSolanaTransfersProvider.sendSolanaSPLToken`
+  // but the on-chain message construction is not yet implemented. Until that work lands the
+  // adapter throws, and the public `sendToken` API surfaces a clear error.
 
-  @Test("sendERC20Token on Solana throws (SPL unsupported)")
+  @Test("sendToken on Solana throws (SPL not yet implemented)")
   func splSendThrows() async {
     let (manager, _, _) = TestManagers.turnkeyManager(turnkey: dualCurveTurnkey(), configs: configs())
     await #expect(throws: RainSDKError.self) {
-      _ = try await manager.sendERC20Token(
+      _ = try await manager.sendToken(
         chainId: Self.chainId, contractAddress: "mint", to: recipient, amount: 1, decimals: 6)
     }
   }

@@ -8,11 +8,12 @@ struct ManagerAPITests {
 
   // MARK: - composeTransactionParameters
 
-  @Test("composeTransactionParameters wires from, to, and data; value is zero")
+  @Test("composeTransactionParameters returns a Rain-owned RainTransactionParameters; wires from, to, data; value is zero")
   func testComposeTransactionParameters() throws {
     let manager = RainSDKManager()
 
-    let params = manager.composeTransactionParameters(
+    // Rain-owned return type, not Portal's `ETHTransactionParam` (parity with Android).
+    let params: RainTransactionParameters = manager.composeTransactionParameters(
       walletAddress: TestFixtures.walletAddress,
       contractAddress: TestFixtures.contractAddress,
       transactionData: "0xdeadbeef"

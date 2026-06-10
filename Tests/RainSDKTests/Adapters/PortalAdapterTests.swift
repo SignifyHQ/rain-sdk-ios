@@ -149,7 +149,7 @@ struct PortalAdapterTests {
     #expect(usdc.decimalAmount == 1.5)
   }
 
-  // MARK: - sendNativeToken / sendERC20Token
+  // MARK: - sendNativeToken / sendToken
 
   @Test("sendNativeToken with Portal returns mock tx hash and calls eth_call then eth_sendTransaction")
   func testSendNativeTokenSuccess() async throws {
@@ -160,19 +160,19 @@ struct PortalAdapterTests {
     mockPortal.setMockResponse(chainId: "eip155:1", method: .eth_sendTransaction, result: mockTxHash)
     let (manager, _, _) = TestManagers.portalManager(portal: mockPortal)
 
-    let txHash = try await manager.sendNativeToken(
+    let result = try await manager.sendNativeToken(
       chainId: 1,
       to: TestFixtures.recipientAddress,
       amount: 1.5
     )
 
-    #expect(txHash == mockTxHash)
+    #expect(result.transactionHash == mockTxHash)
     #expect(mockPortal.requestCalls.count == 2)
     #expect(mockPortal.requestCalls[0].method == .eth_call) // preflight simulation
     #expect(mockPortal.requestCalls[1].method == .eth_sendTransaction)
   }
 
-  @Test("sendERC20Token with Portal returns mock tx hash and routes calldata via eth_sendTransaction")
+  @Test("sendToken with Portal returns mock tx hash and routes calldata via eth_sendTransaction")
   func testSendERC20TokenSuccess() async throws {
     let mockPortal = MockPortal()
     mockPortal.setMockAddress(TestFixtures.walletAddress, forNamespace: PortalNamespace.eip155)
@@ -181,7 +181,7 @@ struct PortalAdapterTests {
     mockPortal.setMockResponse(chainId: "eip155:1", method: .eth_sendTransaction, result: mockTxHash)
     let (manager, _, _) = TestManagers.portalManager(portal: mockPortal)
 
-    let txHash = try await manager.sendERC20Token(
+    let result = try await manager.sendToken(
       chainId: 1,
       contractAddress: TestFixtures.tokenAddress,
       to: TestFixtures.recipientAddress,
@@ -189,7 +189,7 @@ struct PortalAdapterTests {
       decimals: 6
     )
 
-    #expect(txHash == mockTxHash)
+    #expect(result.transactionHash == mockTxHash)
     #expect(mockPortal.requestCalls.count == 2)
     #expect(mockPortal.requestCalls[0].method == .eth_call)
     #expect(mockPortal.requestCalls[1].method == .eth_sendTransaction)
@@ -215,7 +215,7 @@ struct PortalAdapterTests {
     }
   }
 
-  @Test("sendERC20Token with Portal maps send failures to providerError")
+  @Test("sendToken with Portal maps send failures to providerError")
   func testSendERC20TokenPortalSendFailure() async throws {
     let mockPortal = MockPortal()
     mockPortal.setMockAddress(TestFixtures.walletAddress, forNamespace: PortalNamespace.eip155)
@@ -227,7 +227,7 @@ struct PortalAdapterTests {
     let (manager, _, _) = TestManagers.portalManager(portal: mockPortal)
 
     await #expect(throws: RainSDKError.providerError(underlying: NSError(domain: "x", code: 0))) {
-      _ = try await manager.sendERC20Token(
+      _ = try await manager.sendToken(
         chainId: 1,
         contractAddress: TestFixtures.tokenAddress,
         to: TestFixtures.recipientAddress,

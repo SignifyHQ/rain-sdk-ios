@@ -310,20 +310,20 @@ class RainSDKService: ObservableObject {
     )
   }
 
-  /// Sends native tokens (e.g. ETH, AVAX) from the current wallet.
-  func sendNativeToken(chainId: Int, to: String, amount: Double) async throws -> String {
+  /// Sends native tokens (e.g. ETH, AVAX, SOL) from the current wallet.
+  func sendNativeToken(chainId: Int, to: String, amount: Double) async throws -> RainTokenTransferResult {
     try await sdkManager.sendNativeToken(chainId: chainId, to: to, amount: amount)
   }
 
-  /// Sends ERC-20 tokens from the current wallet.
-  func sendERC20Token(
+  /// Sends ERC-20 (EVM) or SPL (Solana) tokens from the current wallet.
+  func sendToken(
     chainId: Int,
     contractAddress: String,
     to: String,
     amount: Double,
     decimals: Int
-  ) async throws -> String {
-    try await sdkManager.sendERC20Token(
+  ) async throws -> RainTokenTransferResult {
+    try await sdkManager.sendToken(
       chainId: chainId,
       contractAddress: contractAddress,
       to: to,
