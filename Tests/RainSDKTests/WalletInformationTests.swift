@@ -11,10 +11,10 @@ struct WalletInformationTests {
 
   // MARK: - getWalletAddress
 
-  @Test("getWalletAddress throws walletUnavailable before initialization")
+  @Test("getWalletAddress throws sdkNotInitialized before initialization")
   func testGetWalletAddressBeforeInitialization() async throws {
     let manager = RainSDKManager()
-    await #expect(throws: RainSDKError.walletUnavailable) {
+    await #expect(throws: RainSDKError.sdkNotInitialized) {
       _ = try await manager.getWalletAddress()
     }
   }
@@ -30,10 +30,10 @@ struct WalletInformationTests {
 
   // MARK: - generateWalletAddressQRCode
 
-  @Test("generateWalletAddressQRCode throws walletUnavailable when no provider")
+  @Test("generateWalletAddressQRCode throws sdkNotInitialized when no provider")
   func testGenerateQRCodeNoProvider() async throws {
     let manager = RainSDKManager()
-    await #expect(throws: RainSDKError.walletUnavailable) {
+    await #expect(throws: RainSDKError.sdkNotInitialized) {
       _ = try await manager.generateWalletAddressQRCode(dimension: 256)
     }
   }
@@ -76,10 +76,10 @@ struct WalletInformationTests {
 
   // MARK: - getTransactions
 
-  @Test("getTransactions throws walletUnavailable when no provider")
+  @Test("getTransactions throws sdkNotInitialized when no provider")
   func testGetTransactionsNoProvider() async throws {
     let manager = RainSDKManager()
-    await #expect(throws: RainSDKError.walletUnavailable) {
+    await #expect(throws: RainSDKError.sdkNotInitialized) {
       _ = try await manager.getTransactions(chainId: 1)
     }
   }

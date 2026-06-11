@@ -35,10 +35,13 @@ public enum RainSDKError: Error, LocalizedError, Equatable {
   /// RAIN_402: The wallet balance is too low for the withdrawal amount or the required gas fees
   case insufficientFunds(required: String, available: String)
   
-  /// RAIN_403: No wallet address available from the wallet provider (e.g. user has not connected or created a wallet)
+  /// RAIN_403: Transaction simulation (preflight) failed before submission, e.g. a contract revert surfaced by `eth_call`
+  case transactionSimulationFailed(underlying: Error)
+
+  /// RAIN_404: No wallet address available from the wallet provider (e.g. user has not connected or created a wallet)
   case walletUnavailable
-  
-  /// RAIN_404: Withdrawal reverted because the same amount was withdrawn in a short period; backend returned an already-used withdrawal signature
+
+  /// RAIN_405: Withdrawal reverted because the same amount was withdrawn in a short period; backend returned an already-used withdrawal signature
   case withdrawalRevertedByNetwork
   
   // MARK: - 5xx: Internal / Provider Errors
@@ -70,10 +73,12 @@ public enum RainSDKError: Error, LocalizedError, Equatable {
       return "RAIN_401"
     case .insufficientFunds:
       return "RAIN_402"
-    case .walletUnavailable:
+    case .transactionSimulationFailed:
       return "RAIN_403"
-    case .withdrawalRevertedByNetwork:
+    case .walletUnavailable:
       return "RAIN_404"
+    case .withdrawalRevertedByNetwork:
+      return "RAIN_405"
     case .providerError:
       return "RAIN_501"
     case .internalLogicError:
@@ -101,6 +106,8 @@ public enum RainSDKError: Error, LocalizedError, Equatable {
       return "[\(errorCode)] The user manually cancelled the signature request within the wallet UI."
     case .insufficientFunds(let required, let available):
       return "[\(errorCode)] The wallet balance is too low for the withdrawal amount or the required gas fees. Required: \(required). Available: \(available)."
+    case .transactionSimulationFailed(let underlying):
+      return "[\(errorCode)] Transaction simulation failed before submission. \(underlying.localizedDescription)"
     case .walletUnavailable:
       return "[\(errorCode)] No wallet address available from the wallet provider."
     case .withdrawalRevertedByNetwork:

@@ -40,7 +40,7 @@ struct ManagerAPITests {
 
     manager.setWalletProvider(nil)
 
-    await #expect(throws: RainSDKError.walletUnavailable) {
+    await #expect(throws: RainSDKError.sdkNotInitialized) {
       _ = try await manager.getWalletAddress()
     }
   }
@@ -59,7 +59,7 @@ struct ManagerAPITests {
 
   // MARK: - reset
 
-  @Test("reset() clears wallet provider so subsequent calls throw walletUnavailable")
+  @Test("reset() clears wallet provider so subsequent calls throw sdkNotInitialized")
   func testResetClearsWalletProvider() async throws {
     let mockPortal = MockPortal()
     mockPortal.setMockAddress(TestFixtures.walletAddress, forNamespace: PortalNamespace.eip155)
@@ -70,7 +70,7 @@ struct ManagerAPITests {
 
     manager.reset()
 
-    await #expect(throws: RainSDKError.walletUnavailable) {
+    await #expect(throws: RainSDKError.sdkNotInitialized) {
       _ = try await manager.getWalletAddress()
     }
   }

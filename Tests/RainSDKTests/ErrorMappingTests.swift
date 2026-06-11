@@ -111,4 +111,29 @@ struct ErrorMappingTests {
       Issue.record("Expected .internalLogicError, got \(mapped)")
     }
   }
+
+  // Pins the error-code map shared with the Android SDK (see its RainErrorCodeParityTest).
+  // A failure here means the platforms have drifted — fix the code, not the test.
+  @Test("error codes match the cross-platform map")
+  func testErrorCodeParityMap() {
+    let underlying = NSError(domain: "Test", code: 1, userInfo: nil)
+    let expected: [(RainSDKError, String)] = [
+      (.sdkNotInitialized, "RAIN_101"),
+      (.invalidConfig(chainId: 1, rpcUrl: "x"), "RAIN_102"),
+      (.invalidRpcUrl("x"), "RAIN_103"),
+      (.tokenExpired, "RAIN_201"),
+      (.unauthorized, "RAIN_202"),
+      (.networkError(underlying: underlying), "RAIN_301"),
+      (.userRejected, "RAIN_401"),
+      (.insufficientFunds(required: "1", available: "0"), "RAIN_402"),
+      (.transactionSimulationFailed(underlying: underlying), "RAIN_403"),
+      (.walletUnavailable, "RAIN_404"),
+      (.withdrawalRevertedByNetwork, "RAIN_405"),
+      (.providerError(underlying: underlying), "RAIN_501"),
+      (.internalLogicError(details: "x"), "RAIN_502"),
+    ]
+    for (error, code) in expected {
+      #expect(error.errorCode == code)
+    }
+  }
 }

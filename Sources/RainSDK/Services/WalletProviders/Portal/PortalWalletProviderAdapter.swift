@@ -45,12 +45,17 @@ internal final class PortalWalletProviderAdapter: RainWalletProvider, RainTypedD
 
     // Simulate the transaction first via eth_call to catch failures (e.g. insufficient funds)
     // before broadcasting — no balance fetch needed, the node validates it for free.
-    _ = try await portal.request(
-      chainId: chainIdString,
-      method: .eth_call,
-      params: [ethParam, "latest"],
-      options: nil
-    )
+    do {
+      _ = try await portal.request(
+        chainId: chainIdString,
+        method: .eth_call,
+        params: [ethParam, "latest"],
+        options: nil
+      )
+    } catch {
+      if error is CancellationError { throw error }
+      throw RainSDKError.transactionSimulationFailed(underlying: error)
+    }
 
     let response = try await portal.request(
       chainId: chainIdString,

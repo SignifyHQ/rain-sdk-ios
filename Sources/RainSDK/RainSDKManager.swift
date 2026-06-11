@@ -450,7 +450,7 @@ public final class RainSDKManager: RainSDK {
   ) async throws -> String {
     do {
       guard let provider = _walletProvider else {
-        throw RainSDKError.walletUnavailable
+        throw RainSDKError.sdkNotInitialized
       }
       
       return try await provider.address()
@@ -466,7 +466,7 @@ public final class RainSDKManager: RainSDK {
   ) async throws -> String {
     do {
       guard let provider = _walletProvider else {
-        throw RainSDKError.walletUnavailable
+        throw RainSDKError.sdkNotInitialized
       }
 
       return try await provider.getAddress(chainId: chainId)
@@ -510,7 +510,7 @@ public final class RainSDKManager: RainSDK {
   ) async throws -> Balance {
     do {
       guard let provider = _walletProvider else {
-        throw RainSDKError.walletUnavailable
+        throw RainSDKError.sdkNotInitialized
       }
 
       return try await provider.getBalance(chainId: chainId, token: token)
@@ -525,7 +525,7 @@ public final class RainSDKManager: RainSDK {
   ) async throws -> [Balance] {
     do {
       guard let provider = _walletProvider else {
-        throw RainSDKError.walletUnavailable
+        throw RainSDKError.sdkNotInitialized
       }
 
       return try await provider.getBalances(chainId: chainId)
@@ -539,7 +539,7 @@ public final class RainSDKManager: RainSDK {
   /// rather than failing the whole call, so one bad RPC endpoint doesn't hide the others.
   public func getAllBalances() async throws -> [Balance] {
     guard let provider = _walletProvider else {
-      throw RainSDKError.walletUnavailable
+      throw RainSDKError.sdkNotInitialized
     }
     let chainIds = _networkConfigs.map(\.chainId)
     return await withTaskGroup(of: [Balance].self) { group in
@@ -574,7 +574,7 @@ public final class RainSDKManager: RainSDK {
   ) async throws -> [WalletTransaction] {
     do {
       guard let provider = _walletProvider else {
-        throw RainSDKError.walletUnavailable
+        throw RainSDKError.sdkNotInitialized
       }
       
       return try await provider.getTransactions(
@@ -598,7 +598,7 @@ public final class RainSDKManager: RainSDK {
   ) async throws -> RainTokenTransferResult {
     do {
       guard let provider = _walletProvider else {
-        throw RainSDKError.walletUnavailable
+        throw RainSDKError.sdkNotInitialized
       }
 
       // Solana sends use lamport scaling and a dedicated capability, not the EVM 1e18 path.
@@ -645,7 +645,7 @@ public final class RainSDKManager: RainSDK {
       // Wallet-builder isn't required on this path; Solana scaling lives in the adapter.
       if SolanaChains.isSolana(chainId) {
         guard let provider = _walletProvider else {
-          throw RainSDKError.walletUnavailable
+          throw RainSDKError.sdkNotInitialized
         }
         guard let solanaProvider = provider as? any RainSolanaTransfersProvider else {
           throw RainSDKError.internalLogicError(
@@ -663,13 +663,13 @@ public final class RainSDKManager: RainSDK {
       }
 
       // EVM path requires both the wallet-agnostic transaction builder and a wallet provider.
-      // Preserve the historical precondition order: builder first (→ `sdkNotInitialized`),
-      // provider second (→ `walletUnavailable`).
+      // Missing either means the SDK was not set up → `sdkNotInitialized` (matches Android);
+      // `walletUnavailable` is reserved for a provider that returns no address.
       guard let transactionBuilder = _transactionBuilder else {
         throw RainSDKError.sdkNotInitialized
       }
       guard let provider = _walletProvider else {
-        throw RainSDKError.walletUnavailable
+        throw RainSDKError.sdkNotInitialized
       }
 
       let from = try await provider.address()
