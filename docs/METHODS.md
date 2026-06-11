@@ -110,11 +110,11 @@ Builds ABI-encoded withdraw calldata for the collateral proxy contract.
 
 ---
 
-## composeTransactionParameters(walletAddress:contractAddress:transactionData:)
+## buildTransactionParameters(walletAddress:contractAddress:transactionData:)
 
-Composes Ethereum transaction parameters for submission (e.g. to `eth_sendTransaction`).
+Builds Rain-owned transaction parameters for submission (e.g. to `eth_sendTransaction`).
 
-- **Returns:** `ETHTransactionParam`.
+- **Returns:** `RainTransactionParameters` (Rain-owned; keeps Portal types off the public surface).
 - **Throws:** (none)
 - **Requires:** `initialize`, `initializePortal`, or `initializeTurnkey` first.
 
@@ -201,7 +201,7 @@ Fetches a single balance — native or a specific contract token — for the cur
 
 ---
 
-## getBalances(chainId:)
+## getTokenBalances(chainId:)
 
 Fetches all non-zero balances for the current wallet on the given network. The native balance is always included.
 
@@ -230,7 +230,7 @@ Registers additional `TokenInfo` so their metadata resolves from the store witho
 
 ---
 
-## sendNativeToken(chainId:to:amount:)
+## sendNative(chainId:to:amount:)
 
 Sends native tokens (e.g. ETH, AVAX, SOL) from the current wallet.
 
@@ -293,10 +293,11 @@ Estimates the total fee (gas cost) to execute a collateral withdrawal.
 | **NetworkConfig** | `chainId`, `rpcUrl`, optional `networkName`. |
 | **EIP712AssetAddresses** | `proxyAddress`, `recipientAddress`, `tokenAddress`. |
 | **WithdrawAssetAddresses** | `contractAddress`, `proxyAddress`, `recipientAddress`, `tokenAddress`. |
-| **ETHTransactionParam** | Composed transaction payload for submission. |
+| **RainTransactionParameters** | Rain-owned transaction payload (`from`, `to`, `value`, `data`). Returned by `buildTransactionParameters`. |
+| **ETHTransactionParam** | Portal transaction payload. Only surfaced by the deprecated `composeTransactionParameters` shim. |
 | **WalletTransaction** | Transaction record: `hash`, `from`, `to`, `value`, `blockNum`, `category`, `metadata`, `chainId`, etc. Returned by `getTransactions`. |
 | **WalletTransactionOrder** | Sort order for transaction history: `.ASC`, `.DESC`. Used in `getTransactions(..., order:)`. |
-| **RainTokenTransferResult** | `transactionHash` (String) — on-chain hash (EVM) or signature (Solana). Returned by `sendNativeToken` and `sendToken`. |
+| **RainTokenTransferResult** | `transactionHash` (String) — on-chain hash (EVM) or signature (Solana). Returned by `sendNative` and `sendToken`. |
 
 ---
 
@@ -319,3 +320,21 @@ All async methods can throw `RainSDKError`. Use `errorCode` for programmatic han
 | RAIN_405 | `withdrawalRevertedByNetwork` | Withdrawal reverted on-chain (e.g. duplicate withdrawal in short window / already-used signature). |
 | RAIN_501 | `providerError(underlying:)` | Wallet provider error (Portal or Turnkey). |
 | RAIN_502 | `internalLogicError(details:)` | EIP-712, configuration, or internal processing error. |
+
+---
+
+## Deprecated (1.0.0 source-compat)
+
+These shims preserve the 1.0.0 public API so existing integrations compile with only deprecation
+warnings. Each delegates to the current API; they are lossy (collapse exact `Balance` to `Double`)
+and slated for removal in the next major version.
+
+| Deprecated | Replacement | Notes |
+|------------|-------------|-------|
+| `getNativeBalance(chainId:) -> Double` | `getBalance(chainId:, token: .native)` | Reads `.decimalAmount` as `Double`. |
+| `getERC20Balance(chainId:tokenAddress:decimals:) -> Double` | `getBalance(chainId:, token: .contract(address:))` | `decimals` is ignored; the SDK resolves it. |
+| `getERC20Balances(chainId:) -> [String: Double]` | `getTokenBalances(chainId:)` | Drops native; contracts keyed by verbatim contract address. |
+| `getBalances(chainId:) -> [String: Double]` | `getTokenBalances(chainId:)` | Native under the `""` key; contracts keyed by verbatim address. |
+| `sendNativeToken(chainId:to:amount:) -> String` | `sendNative(chainId:to:amount:)` | Returns the `.transactionHash` String. |
+| `sendERC20Token(chainId:contractAddress:to:amount:decimals:) -> String` | `sendToken(...)` | Returns the `.transactionHash` String. |
+| `composeTransactionParameters(...) -> ETHTransactionParam` | `buildTransactionParameters(...)` | Maps the Rain-owned result to Portal's `ETHTransactionParam`. |

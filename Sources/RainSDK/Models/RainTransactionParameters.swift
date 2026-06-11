@@ -6,7 +6,7 @@
 import Foundation
 
 /// Rain-owned EVM transaction params (string-typed wire format) returned by
-/// `composeTransactionParameters`. Mirrors the Android `RainTransactionParameters` data class.
+/// `buildTransactionParameters`. Mirrors the Android `RainTransactionParameters` data class.
 public struct RainTransactionParameters: Sendable, Equatable {
   public let from: String
   public let to: String

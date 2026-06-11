@@ -146,7 +146,7 @@ public protocol RainSDK {
   ///
   /// - Returns: A fully formed `RainTransactionParameters` object. Rain-owned so the public
   ///            surface does not leak Portal/Turnkey types (parity with Android).
-  func composeTransactionParameters(
+  func buildTransactionParameters(
     walletAddress: String,
     contractAddress: String,
     transactionData: String
@@ -271,7 +271,7 @@ public protocol RainSDK {
   /// - Parameter chainId: The target blockchain network identifier (e.g. 1 for Ethereum).
   /// - Returns: One `Balance` per non-zero token plus the native balance.
   /// - Throws: RainSDKError if no wallet provider is set, or if the request fails.
-  func getBalances(
+  func getTokenBalances(
     chainId: Int
   ) async throws -> [Balance]
 
@@ -321,7 +321,7 @@ public protocol RainSDK {
   /// - Returns: A `RainTokenTransferResult` carrying the on-chain transaction hash (EVM) or
   ///            transaction signature (Solana).
   /// - Throws: RainSDKError if no wallet provider is set, or if transaction building or submission fails.
-  func sendNativeToken(
+  func sendNative(
     chainId: Int,
     to: String,
     amount: Double

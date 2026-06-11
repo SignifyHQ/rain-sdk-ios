@@ -7,14 +7,14 @@ import Foundation
 @Suite("Send Token Tests")
 struct SendTokenTests {
 
-  // MARK: - sendNativeToken
+  // MARK: - sendNative
 
-  @Test("sendNativeToken throws sdkNotInitialized before initialization")
+  @Test("sendNative throws sdkNotInitialized before initialization")
   func testSendNativeTokenBeforeInitialization() async throws {
     let manager = RainSDKManager()
 
     await #expect(throws: RainSDKError.sdkNotInitialized) {
-      _ = try await manager.sendNativeToken(
+      _ = try await manager.sendNative(
         chainId: 1,
         to: TestFixtures.recipientAddress,
         amount: 1.0
@@ -22,12 +22,12 @@ struct SendTokenTests {
     }
   }
 
-  @Test("sendNativeToken throws sdkNotInitialized after wallet-agnostic initialize")
+  @Test("sendNative throws sdkNotInitialized after wallet-agnostic initialize")
   func testSendNativeTokenAfterWalletAgnosticInit() async throws {
     let manager = try await TestManagers.walletAgnosticManager()
 
     await #expect(throws: RainSDKError.sdkNotInitialized) {
-      _ = try await manager.sendNativeToken(
+      _ = try await manager.sendNative(
         chainId: 1,
         to: TestFixtures.recipientAddress,
         amount: 1.0
@@ -35,14 +35,14 @@ struct SendTokenTests {
     }
   }
 
-  @Test("sendNativeToken throws walletUnavailable when provider has no address")
+  @Test("sendNative throws walletUnavailable when provider has no address")
   func testSendNativeTokenNoWalletAddress() async throws {
     let mockPortal = MockPortal()
     mockPortal.mockAddresses.removeAll()
     let (manager, _, _) = TestManagers.portalManager(portal: mockPortal)
 
     await #expect(throws: RainSDKError.walletUnavailable) {
-      _ = try await manager.sendNativeToken(
+      _ = try await manager.sendNative(
         chainId: 1,
         to: TestFixtures.recipientAddress,
         amount: 1.0
@@ -101,13 +101,13 @@ struct SendTokenTests {
 
   // MARK: - Happy paths via provider-agnostic stub
 
-  @Test("sendNativeToken returns provider tx hash and forwards from/to/value to the provider")
+  @Test("sendNative returns provider tx hash and forwards from/to/value to the provider")
   func testSendNativeTokenRoutesToProvider() async throws {
     let (manager, stub) = try await TestManagers.stubProviderManager()
     let expectedHash = "0x" + String(repeating: "a", count: 64)
     stub.sendTransactionHashToReturn = expectedHash
 
-    let result = try await manager.sendNativeToken(
+    let result = try await manager.sendNative(
       chainId: 1,
       to: TestFixtures.recipientAddress,
       amount: 1.5

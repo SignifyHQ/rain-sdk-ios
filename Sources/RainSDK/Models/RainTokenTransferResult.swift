@@ -7,7 +7,7 @@ import Foundation
 
 /// Result returned after performing a token transfer.
 ///
-/// Returned by `sendNativeToken(...)` and `sendToken(...)`. The wrapper exists so the
+/// Returned by `sendNative(...)` and `sendToken(...)`. The wrapper exists so the
 /// public surface stays forward-compatible — future versions can attach richer metadata
 /// (status, included block, fee paid) without breaking the call shape.
 ///

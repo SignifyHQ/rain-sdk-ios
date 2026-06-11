@@ -265,7 +265,7 @@ class RainSDKService: ObservableObject {
   /// Fetches all balances for the current wallet on the given network, keyed for display:
   /// the native balance uses key "", contract tokens use their symbol (falling back to address).
   func getBalances(chainId: Int) async throws -> [String: Double] {
-    let balances = try await sdkManager.getBalances(chainId: chainId)
+    let balances = try await sdkManager.getTokenBalances(chainId: chainId)
     var output: [String: Double] = [:]
     for balance in balances {
       let key: String
@@ -315,7 +315,7 @@ class RainSDKService: ObservableObject {
 
   /// Sends native tokens (e.g. ETH, AVAX, SOL) from the current wallet.
   func sendNativeToken(chainId: Int, to: String, amount: Double) async throws -> RainTokenTransferResult {
-    try await sdkManager.sendNativeToken(chainId: chainId, to: to, amount: amount)
+    try await sdkManager.sendNative(chainId: chainId, to: to, amount: amount)
   }
 
   /// Sends ERC-20 (EVM) or SPL (Solana) tokens from the current wallet.

@@ -55,31 +55,31 @@ struct BalanceTests {
     }
   }
 
-  // MARK: - getBalances validation
+  // MARK: - getTokenBalances validation
 
-  @Test("getBalances throws sdkNotInitialized before initialization")
+  @Test("getTokenBalances throws sdkNotInitialized before initialization")
   func testGetBalancesBeforeInitialization() async throws {
     let manager = RainSDKManager()
     await #expect(throws: RainSDKError.sdkNotInitialized) {
-      _ = try await manager.getBalances(chainId: 1)
+      _ = try await manager.getTokenBalances(chainId: 1)
     }
   }
 
-  @Test("getBalances throws sdkNotInitialized after wallet-agnostic initialize")
+  @Test("getTokenBalances throws sdkNotInitialized after wallet-agnostic initialize")
   func testGetBalancesAfterWalletAgnosticInit() async throws {
     let manager = try await TestManagers.walletAgnosticManager()
     await #expect(throws: RainSDKError.sdkNotInitialized) {
-      _ = try await manager.getBalances(chainId: 1)
+      _ = try await manager.getTokenBalances(chainId: 1)
     }
   }
 
-  @Test("getBalances throws walletUnavailable when provider has no address")
+  @Test("getTokenBalances throws walletUnavailable when provider has no address")
   func testGetBalancesNoWalletAddress() async throws {
     let mockPortal = MockPortal()
     mockPortal.mockAddresses.removeAll()
     let (manager, _, _) = TestManagers.portalManager(portal: mockPortal)
     await #expect(throws: RainSDKError.walletUnavailable) {
-      _ = try await manager.getBalances(chainId: 1)
+      _ = try await manager.getTokenBalances(chainId: 1)
     }
   }
 
@@ -109,7 +109,7 @@ struct BalanceTests {
     #expect(stub.getBalanceCalls[0].token == .contract(address: TestFixtures.usdcAddress))
   }
 
-  @Test("getBalances returns whatever the provider returned for the chain")
+  @Test("getTokenBalances returns whatever the provider returned for the chain")
   func testGetBalancesRoutesToProvider() async throws {
     let (manager, stub) = try await TestManagers.stubProviderManager()
     let native = Balance(
@@ -128,7 +128,7 @@ struct BalanceTests {
     )
     stub.balancesByChainId = [1: [native, usdc]]
 
-    let balances = try await manager.getBalances(chainId: 1)
+    let balances = try await manager.getTokenBalances(chainId: 1)
 
     #expect(balances == [native, usdc])
     #expect(stub.getBalancesCalls == [1])
