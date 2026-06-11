@@ -9,11 +9,11 @@ struct SendTokenTests {
 
   // MARK: - sendNativeToken
 
-  @Test("sendNativeToken throws walletUnavailable before initialization")
+  @Test("sendNativeToken throws sdkNotInitialized before initialization")
   func testSendNativeTokenBeforeInitialization() async throws {
     let manager = RainSDKManager()
 
-    await #expect(throws: RainSDKError.walletUnavailable) {
+    await #expect(throws: RainSDKError.sdkNotInitialized) {
       _ = try await manager.sendNativeToken(
         chainId: 1,
         to: TestFixtures.recipientAddress,
@@ -22,11 +22,11 @@ struct SendTokenTests {
     }
   }
 
-  @Test("sendNativeToken throws walletUnavailable after wallet-agnostic initialize")
+  @Test("sendNativeToken throws sdkNotInitialized after wallet-agnostic initialize")
   func testSendNativeTokenAfterWalletAgnosticInit() async throws {
     let manager = try await TestManagers.walletAgnosticManager()
 
-    await #expect(throws: RainSDKError.walletUnavailable) {
+    await #expect(throws: RainSDKError.sdkNotInitialized) {
       _ = try await manager.sendNativeToken(
         chainId: 1,
         to: TestFixtures.recipientAddress,
@@ -67,11 +67,11 @@ struct SendTokenTests {
     }
   }
 
-  @Test("sendToken throws walletUnavailable after wallet-agnostic initialize")
+  @Test("sendToken throws sdkNotInitialized after wallet-agnostic initialize")
   func testSendERC20TokenAfterWalletAgnosticInit() async throws {
     let manager = try await TestManagers.walletAgnosticManager()
 
-    await #expect(throws: RainSDKError.walletUnavailable) {
+    await #expect(throws: RainSDKError.sdkNotInitialized) {
       _ = try await manager.sendToken(
         chainId: 1,
         contractAddress: TestFixtures.tokenAddress,

@@ -237,6 +237,27 @@ struct PortalAdapterTests {
     }
   }
 
+  // Mirrors Android's `sendTransaction propagates TransactionSimulationFailed` (RAIN_403 parity).
+  @Test("sendNativeToken throws transactionSimulationFailed when eth_call preflight fails")
+  func testSendNativeTokenPreflightFailure() async throws {
+    let mockPortal = MockPortal()
+    mockPortal.setMockAddress(TestFixtures.walletAddress, forNamespace: PortalNamespace.eip155)
+    mockPortal.setMockResponse(
+      chainId: "eip155:1",
+      method: .eth_call,
+      error: NSError(domain: "PortalError", code: 3, userInfo: [NSLocalizedDescriptionKey: "execution reverted"])
+    )
+    let (manager, _, _) = TestManagers.portalManager(portal: mockPortal)
+
+    await #expect(throws: RainSDKError.transactionSimulationFailed(underlying: NSError(domain: "x", code: 0))) {
+      _ = try await manager.sendNativeToken(
+        chainId: 1,
+        to: TestFixtures.recipientAddress,
+        amount: 1.0
+      )
+    }
+  }
+
   // MARK: - withdrawCollateral / estimateWithdrawalFee
 
   @Test("withdrawCollateral with Portal signs typed data, simulates, then sends")

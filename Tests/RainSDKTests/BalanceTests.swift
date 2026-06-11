@@ -11,26 +11,26 @@ struct BalanceTests {
 
   // MARK: - getBalance validation
 
-  @Test("getBalance(.native) throws walletUnavailable before initialization")
+  @Test("getBalance(.native) throws sdkNotInitialized before initialization")
   func testGetBalanceNativeBeforeInitialization() async throws {
     let manager = RainSDKManager()
-    await #expect(throws: RainSDKError.walletUnavailable) {
+    await #expect(throws: RainSDKError.sdkNotInitialized) {
       _ = try await manager.getBalance(chainId: 1, token: .native)
     }
   }
 
-  @Test("getBalance(.contract) throws walletUnavailable before initialization")
+  @Test("getBalance(.contract) throws sdkNotInitialized before initialization")
   func testGetBalanceContractBeforeInitialization() async throws {
     let manager = RainSDKManager()
-    await #expect(throws: RainSDKError.walletUnavailable) {
+    await #expect(throws: RainSDKError.sdkNotInitialized) {
       _ = try await manager.getBalance(chainId: 1, token: .contract(address: TestFixtures.usdcAddress))
     }
   }
 
-  @Test("getBalance throws walletUnavailable after wallet-agnostic initialize")
+  @Test("getBalance throws sdkNotInitialized after wallet-agnostic initialize")
   func testGetBalanceAfterWalletAgnosticInit() async throws {
     let manager = try await TestManagers.walletAgnosticManager()
-    await #expect(throws: RainSDKError.walletUnavailable) {
+    await #expect(throws: RainSDKError.sdkNotInitialized) {
       _ = try await manager.getBalance(chainId: 1, token: .native)
     }
   }
@@ -57,18 +57,18 @@ struct BalanceTests {
 
   // MARK: - getBalances validation
 
-  @Test("getBalances throws walletUnavailable before initialization")
+  @Test("getBalances throws sdkNotInitialized before initialization")
   func testGetBalancesBeforeInitialization() async throws {
     let manager = RainSDKManager()
-    await #expect(throws: RainSDKError.walletUnavailable) {
+    await #expect(throws: RainSDKError.sdkNotInitialized) {
       _ = try await manager.getBalances(chainId: 1)
     }
   }
 
-  @Test("getBalances throws walletUnavailable after wallet-agnostic initialize")
+  @Test("getBalances throws sdkNotInitialized after wallet-agnostic initialize")
   func testGetBalancesAfterWalletAgnosticInit() async throws {
     let manager = try await TestManagers.walletAgnosticManager()
-    await #expect(throws: RainSDKError.walletUnavailable) {
+    await #expect(throws: RainSDKError.sdkNotInitialized) {
       _ = try await manager.getBalances(chainId: 1)
     }
   }
@@ -136,10 +136,10 @@ struct BalanceTests {
 
   // MARK: - getAllBalances
 
-  @Test("getAllBalances throws walletUnavailable before any provider is set")
+  @Test("getAllBalances throws sdkNotInitialized before any provider is set")
   func testGetAllBalancesBeforeInit() async throws {
     let manager = RainSDKManager()
-    await #expect(throws: RainSDKError.walletUnavailable) {
+    await #expect(throws: RainSDKError.sdkNotInitialized) {
       _ = try await manager.getAllBalances()
     }
   }

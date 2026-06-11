@@ -306,14 +306,16 @@ All async methods can throw `RainSDKError`. Use `errorCode` for programmatic han
 
 | Code | Case | Meaning |
 |------|------|--------|
-| RAIN_101 | `sdkNotInitialized` | Method called before `initialize`, `initializePortal`, or `initializeTurnkey`. |
+| RAIN_101 | `sdkNotInitialized` | Method called before `initialize`, `initializePortal`, or `initializeTurnkey`, or no wallet provider is installed. |
 | RAIN_102 | `invalidConfig(chainId:rpcUrl:)` | Invalid RPC URL or chain ID. |
+| RAIN_103 | `invalidRpcUrl(_:)` | RPC URL could not be parsed as a valid URL. |
 | RAIN_201 | `tokenExpired` | Wallet provider session token expired or invalid. |
 | RAIN_202 | `unauthorized` | Invalid or missing token / permissions. |
 | RAIN_301 | `networkError(underlying:)` | Network/connectivity failure. |
 | RAIN_401 | `userRejected` | User cancelled the signing request in the wallet. |
 | RAIN_402 | `insufficientFunds(required:available:)` | Balance too low for amount or gas. |
-| RAIN_403 | `walletUnavailable` | No wallet address from the wallet provider (e.g. user has not connected or created a wallet). |
-| RAIN_404 | `withdrawalRevertedByNetwork` | Withdrawal reverted on-chain (e.g. duplicate withdrawal in short window / already-used signature). |
+| RAIN_403 | `transactionSimulationFailed(underlying:)` | Transaction simulation (preflight) failed before submission, e.g. a contract revert. |
+| RAIN_404 | `walletUnavailable` | No wallet address from the wallet provider (e.g. user has not connected or created a wallet). |
+| RAIN_405 | `withdrawalRevertedByNetwork` | Withdrawal reverted on-chain (e.g. duplicate withdrawal in short window / already-used signature). |
 | RAIN_501 | `providerError(underlying:)` | Wallet provider error (Portal or Turnkey). |
 | RAIN_502 | `internalLogicError(details:)` | EIP-712, configuration, or internal processing error. |
