@@ -6,14 +6,14 @@ import PortalSwift
 @Suite("Manager Public API Tests")
 struct ManagerAPITests {
 
-  // MARK: - composeTransactionParameters
+  // MARK: - buildTransactionParameters
 
-  @Test("composeTransactionParameters returns a Rain-owned RainTransactionParameters; wires from, to, data; value is zero")
+  @Test("buildTransactionParameters returns a Rain-owned RainTransactionParameters; wires from, to, data; value is zero")
   func testComposeTransactionParameters() throws {
     let manager = RainSDKManager()
 
     // Rain-owned return type, not Portal's `ETHTransactionParam` (parity with Android).
-    let params: RainTransactionParameters = manager.composeTransactionParameters(
+    let params: RainTransactionParameters = manager.buildTransactionParameters(
       walletAddress: TestFixtures.walletAddress,
       contractAddress: TestFixtures.contractAddress,
       transactionData: "0xdeadbeef"

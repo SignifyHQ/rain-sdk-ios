@@ -118,7 +118,7 @@ struct PortalAdapterTests {
     mockPortal.mockAssetsResponse = AssetsResponse(nativeBalance: nil, tokenBalances: nil, nfts: nil)
     let (manager, _, _) = TestManagers.portalManager(portal: mockPortal)
 
-    let balances = try await manager.getBalances(chainId: 1)
+    let balances = try await manager.getTokenBalances(chainId: 1)
     #expect(balances.count == 1)
     #expect(balances[0].token == .native)
     #expect(balances[0].decimalAmount == 1)
@@ -137,7 +137,7 @@ struct PortalAdapterTests {
     )
     let (manager, _, _) = TestManagers.portalManager(portal: mockPortal)
 
-    let balances = try await manager.getBalances(chainId: 1)
+    let balances = try await manager.getTokenBalances(chainId: 1)
 
     #expect(balances.count == 2)
     #expect(balances[0].token == .native)
@@ -149,9 +149,9 @@ struct PortalAdapterTests {
     #expect(usdc.decimalAmount == 1.5)
   }
 
-  // MARK: - sendNativeToken / sendToken
+  // MARK: - sendNative / sendToken
 
-  @Test("sendNativeToken with Portal returns mock tx hash and calls eth_call then eth_sendTransaction")
+  @Test("sendNative with Portal returns mock tx hash and calls eth_call then eth_sendTransaction")
   func testSendNativeTokenSuccess() async throws {
     let mockPortal = MockPortal()
     mockPortal.setMockAddress(TestFixtures.walletAddress, forNamespace: PortalNamespace.eip155)
@@ -160,7 +160,7 @@ struct PortalAdapterTests {
     mockPortal.setMockResponse(chainId: "eip155:1", method: .eth_sendTransaction, result: mockTxHash)
     let (manager, _, _) = TestManagers.portalManager(portal: mockPortal)
 
-    let result = try await manager.sendNativeToken(
+    let result = try await manager.sendNative(
       chainId: 1,
       to: TestFixtures.recipientAddress,
       amount: 1.5
@@ -195,7 +195,7 @@ struct PortalAdapterTests {
     #expect(mockPortal.requestCalls[1].method == .eth_sendTransaction)
   }
 
-  @Test("sendNativeToken with Portal maps send failures to providerError")
+  @Test("sendNative with Portal maps send failures to providerError")
   func testSendNativeTokenPortalSendFailure() async throws {
     let mockPortal = MockPortal()
     mockPortal.setMockAddress(TestFixtures.walletAddress, forNamespace: PortalNamespace.eip155)
@@ -207,7 +207,7 @@ struct PortalAdapterTests {
     let (manager, _, _) = TestManagers.portalManager(portal: mockPortal)
 
     await #expect(throws: RainSDKError.providerError(underlying: NSError(domain: "x", code: 0))) {
-      _ = try await manager.sendNativeToken(
+      _ = try await manager.sendNative(
         chainId: 1,
         to: TestFixtures.recipientAddress,
         amount: 1.0
@@ -238,7 +238,7 @@ struct PortalAdapterTests {
   }
 
   // Mirrors Android's `sendTransaction propagates TransactionSimulationFailed` (RAIN_403 parity).
-  @Test("sendNativeToken throws transactionSimulationFailed when eth_call preflight fails")
+  @Test("sendNative throws transactionSimulationFailed when eth_call preflight fails")
   func testSendNativeTokenPreflightFailure() async throws {
     let mockPortal = MockPortal()
     mockPortal.setMockAddress(TestFixtures.walletAddress, forNamespace: PortalNamespace.eip155)
@@ -250,7 +250,7 @@ struct PortalAdapterTests {
     let (manager, _, _) = TestManagers.portalManager(portal: mockPortal)
 
     await #expect(throws: RainSDKError.transactionSimulationFailed(underlying: NSError(domain: "x", code: 0))) {
-      _ = try await manager.sendNativeToken(
+      _ = try await manager.sendNative(
         chainId: 1,
         to: TestFixtures.recipientAddress,
         amount: 1.0

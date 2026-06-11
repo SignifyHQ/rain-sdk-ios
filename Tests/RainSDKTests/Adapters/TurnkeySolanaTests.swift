@@ -43,7 +43,7 @@ struct TurnkeySolanaTests {
 
   // MARK: - Send
 
-  @Test("sendNativeToken on Solana returns the signature from the status response")
+  @Test("sendNative on Solana returns the signature from the status response")
   func sendSolanaReturnsSignature() async throws {
     let turnkey = dualCurveTurnkey()
     let client = turnkey.turnkeyClient as! MockTurnkeyClient
@@ -54,7 +54,7 @@ struct TurnkeySolanaTests {
       MockURLProtocol.stub(method: "getLatestBlockhash", result: ["value": ["blockhash": blockhash]])
       let (manager, _, _) = TestManagers.turnkeyManager(turnkey: turnkey, configs: configs())
 
-      let result = try await manager.sendNativeToken(chainId: Self.chainId, to: recipient, amount: 0.5)
+      let result = try await manager.sendNative(chainId: Self.chainId, to: recipient, amount: 0.5)
       #expect(result.transactionHash == "sol-sig-123")
 
       // The unsigned transaction was built and submitted via sol_send_transaction.
@@ -133,7 +133,7 @@ struct TurnkeySolanaTests {
       MockURLProtocol.stub(method: "getBalance", result: ["value": 1_000_000_000])
       let (manager, _, _) = TestManagers.turnkeyManager(turnkey: turnkey, configs: configs())
 
-      let balances = try await manager.getBalances(chainId: Self.chainId)
+      let balances = try await manager.getTokenBalances(chainId: Self.chainId)
       #expect(balances.count == 1)
       #expect(balances[0].token == .native)
       #expect(balances[0].symbol == "SOL")

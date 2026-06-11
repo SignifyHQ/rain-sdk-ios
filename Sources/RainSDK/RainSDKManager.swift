@@ -362,7 +362,7 @@ public final class RainSDKManager: RainSDK {
     )
   }
   
-  public func composeTransactionParameters(
+  public func buildTransactionParameters(
     walletAddress: String,
     contractAddress: String,
     transactionData: String
@@ -520,7 +520,7 @@ public final class RainSDKManager: RainSDK {
   }
 
   /// Fetches all non-zero balances (native always included) for the current wallet on the given network.
-  public func getBalances(
+  public func getTokenBalances(
     chainId: Int
   ) async throws -> [Balance] {
     do {
@@ -591,7 +591,7 @@ public final class RainSDKManager: RainSDK {
   // MARK: - Send tokens
 
   /// Sends native tokens (e.g. ETH, AVAX). Requires a wallet provider (e.g. `initializePortal` or `setWalletProvider`).
-  public func sendNativeToken(
+  public func sendNative(
     chainId: Int,
     to: String,
     amount: Double

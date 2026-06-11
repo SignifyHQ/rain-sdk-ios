@@ -80,7 +80,7 @@ struct TurnkeyAdapterTests {
     ]
     let (manager, _, _) = TestManagers.turnkeyManager(turnkey: mockTurnkey)
 
-    let balances = try await manager.getBalances(chainId: 1)
+    let balances = try await manager.getTokenBalances(chainId: 1)
 
     // Native is always included (at zero here — the mock reports no native asset).
     #expect(balances.count == 2)
@@ -328,9 +328,9 @@ struct TurnkeyAdapterTests {
     }
   }
 
-  // MARK: - sendNativeToken / sendToken via Turnkey (URLSession-stubbed)
+  // MARK: - sendNative / sendToken via Turnkey (URLSession-stubbed)
 
-  @Test("sendNativeToken with Turnkey returns mock tx hash")
+  @Test("sendNative with Turnkey returns mock tx hash")
   func testSendNativeTokenTurnkey() async throws {
     MockURLProtocol.install()
     defer { MockURLProtocol.reset() }
@@ -343,7 +343,7 @@ struct TurnkeyAdapterTests {
 
     let (manager, _, _) = TestManagers.turnkeyManager(turnkey: mockTurnkey)
 
-    let result = try await manager.sendNativeToken(
+    let result = try await manager.sendNative(
       chainId: 1,
       to: TestFixtures.recipientAddress,
       amount: 1.5
@@ -382,7 +382,7 @@ struct TurnkeyAdapterTests {
     #expect(client.ethSendTransactionCalls[0].to == TestFixtures.tokenAddress)
   }
 
-  @Test("sendNativeToken with Turnkey throws when ethSendTransaction fails")
+  @Test("sendNative with Turnkey throws when ethSendTransaction fails")
   func testSendNativeTokenTurnkeyEthSendError() async throws {
     MockURLProtocol.install()
     defer { MockURLProtocol.reset() }
@@ -399,7 +399,7 @@ struct TurnkeyAdapterTests {
     let (manager, _, _) = TestManagers.turnkeyManager(turnkey: mockTurnkey)
 
     await #expect(throws: RainSDKError.providerError(underlying: NSError(domain: "x", code: 0))) {
-      _ = try await manager.sendNativeToken(
+      _ = try await manager.sendNative(
         chainId: 1,
         to: TestFixtures.recipientAddress,
         amount: 1.0
@@ -422,7 +422,7 @@ struct TurnkeyAdapterTests {
     let (manager, _, _) = TestManagers.turnkeyManager(turnkey: mockTurnkey)
 
     await #expect(throws: RainSDKError.providerError(underlying: NSError(domain: "x", code: 0))) {
-      _ = try await manager.sendNativeToken(
+      _ = try await manager.sendNative(
         chainId: 1,
         to: TestFixtures.recipientAddress,
         amount: 1.0
@@ -446,7 +446,7 @@ struct TurnkeyAdapterTests {
 
     let (manager, _, _) = TestManagers.turnkeyManager(turnkey: mockTurnkey)
 
-    let result = try await manager.sendNativeToken(
+    let result = try await manager.sendNative(
       chainId: 1,
       to: TestFixtures.recipientAddress,
       amount: 1.0
@@ -561,13 +561,13 @@ struct TurnkeyAdapterTests {
 
   // MARK: - Session resolution
 
-  @Test("sendNativeToken with Turnkey throws when session is missing")
+  @Test("sendNative with Turnkey throws when session is missing")
   func testTurnkeyNoSession() async throws {
     let mockTurnkey = MockTurnkey(session: nil)
     let (manager, _, _) = TestManagers.turnkeyManager(turnkey: mockTurnkey)
 
     await #expect(throws: RainSDKError.tokenExpired) {
-      _ = try await manager.sendNativeToken(
+      _ = try await manager.sendNative(
         chainId: 1,
         to: TestFixtures.recipientAddress,
         amount: 1.0
@@ -575,13 +575,13 @@ struct TurnkeyAdapterTests {
     }
   }
 
-  @Test("sendNativeToken with Turnkey throws when client is missing")
+  @Test("sendNative with Turnkey throws when client is missing")
   func testTurnkeyNoClient() async throws {
     let mockTurnkey = MockTurnkey(client: nil)
     let (manager, _, _) = TestManagers.turnkeyManager(turnkey: mockTurnkey)
 
     await #expect(throws: RainSDKError.tokenExpired) {
-      _ = try await manager.sendNativeToken(
+      _ = try await manager.sendNative(
         chainId: 1,
         to: TestFixtures.recipientAddress,
         amount: 1.0
