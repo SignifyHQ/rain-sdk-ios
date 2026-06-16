@@ -35,7 +35,38 @@ class BuildWithdrawTransactionDemoViewModel: ObservableObject {
   }
   
   private var cancellables = Set<AnyCancellable>()
-  
+  private var hasPrefilled = false
+
+  /// Prefills the addressing fields from the Rain API contract authenticated on the home screen
+  /// (once per screen open). The signature/salt fields are left as manual placeholders — those
+  /// are the admin-signature output (use the Collateral Withdraw screen for the live signature).
+  func prefillFromRainAPIIfNeeded() async {
+    guard !hasPrefilled, let contract = RainAPIContext.shared.contract else { return }
+    hasPrefilled = true
+
+    if let chainId = contract.chainId {
+      self.chainId = String(chainId)
+    }
+    if let controller = contract.controllerAddress, !controller.isEmpty {
+      self.contractAddress = controller
+    }
+    if let proxy = contract.address, !proxy.isEmpty {
+      self.proxyAddress = proxy
+    }
+
+    let resolvedChainId = contract.chainId ?? DemoLocalConfig.chainIdInt
+    if let tokenAddr = RainAPIContext.shared.contractTokenAddresses.first {
+      self.tokenAddress = tokenAddr
+      if let meta = await sdkService.resolveTokenMetadata(chainId: resolvedChainId, tokenAddress: tokenAddr) {
+        self.decimals = String(meta.decimals)
+      }
+    }
+
+    if let savedRecipient = AppStorage.getCollateralWithdrawRecipientAddress(), !savedRecipient.isEmpty {
+      self.recipientAddress = savedRecipient
+    }
+  }
+
   var canBuild: Bool {
     !chainId.isEmpty
     && !contractAddress.isEmpty

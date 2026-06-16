@@ -36,6 +36,10 @@ struct AssetModel: Hashable, Identifiable {
 
   let externalAccountId: String?
 
+  /// Token decimals resolved on-chain (the Rain contracts endpoint omits them). When present,
+  /// it takes precedence over the symbol-based `conversionFactor` heuristic for withdraw math.
+  let resolvedDecimals: Int?
+
   init(
     id: String,
     type: AssetType?,
@@ -43,7 +47,8 @@ struct AssetModel: Hashable, Identifiable {
     availableUsdBalance: Double?,
     exchangeRate: Double? = nil,
     advanceRate: Double? = nil,
-    externalAccountId: String? = nil
+    externalAccountId: String? = nil,
+    resolvedDecimals: Int? = nil
   ) {
     self.id = id
     self.type = type
@@ -52,9 +57,11 @@ struct AssetModel: Hashable, Identifiable {
     self.exchangeRate = exchangeRate
     self.advanceRate = advanceRate
     self.externalAccountId = externalAccountId
+    self.resolvedDecimals = resolvedDecimals
   }
 
-  /// Build from RainTokenEntity (credit-contracts response).
+  /// Build from RainTokenEntity (contracts response). When the entity carries resolved
+  /// `decimals` (enriched on-chain), they are kept for precise withdraw math.
   init(rainCollateralAsset: RainTokenEntity) {
     self.id = rainCollateralAsset.address ?? ""
     self.type = AssetType(rawValue: rainCollateralAsset.symbol?.uppercased() ?? "")
@@ -63,6 +70,7 @@ struct AssetModel: Hashable, Identifiable {
     self.exchangeRate = (rainCollateralAsset.exchangeRate ?? 0) != 0 ? ((rainCollateralAsset.exchangeRate ?? 0) * 100).rounded() / 100 : nil
     self.advanceRate = rainCollateralAsset.advanceRate
     self.externalAccountId = nil
+    self.resolvedDecimals = rainCollateralAsset.decimals.map { Int($0) }
   }
 }
 
@@ -70,6 +78,8 @@ struct AssetModel: Hashable, Identifiable {
 
 extension AssetModel {
   var conversionFactor: Int {
+    // Prefer on-chain–resolved decimals; fall back to the symbol-based heuristic.
+    if let resolvedDecimals { return resolvedDecimals }
     switch type {
     case .usdc, .usdt:
       return 6

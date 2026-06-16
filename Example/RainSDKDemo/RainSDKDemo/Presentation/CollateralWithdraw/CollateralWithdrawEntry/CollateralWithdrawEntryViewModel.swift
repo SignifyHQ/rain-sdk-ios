@@ -2,19 +2,29 @@ import Foundation
 
 @MainActor
 class CollateralWithdrawEntryViewModel: ObservableObject {
-  @Published var userAccessToken: String = ""
+  @Published var rainApiKey: String = ""
+  @Published var userId: String = ""
   @Published var isLoading: Bool = false
   @Published var error: Error?
   @Published var pendingContract: RainCollateralContractResponse?
 
   init() {
-    userAccessToken = AuthTokenStorage.getToken() ?? ""
+    rainApiKey = RainAPICredentialsStorage.apiKey ?? ""
+    userId = RainAPICredentialsStorage.userId ?? ""
   }
 
-  /// Verifies the Rain API access token by loading credit contracts, then navigates to collateral withdraw.
+  /// True once both credentials are entered.
+  var canContinue: Bool {
+    !rainApiKey.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+      && !userId.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+  }
+
+  /// Saves the Rain Api-Key + User ID, then verifies them by minting a CST and loading the
+  /// collateral contracts. On success, navigates to collateral withdraw.
   func verifyAndContinue() async {
-    let token = userAccessToken.trimmingCharacters(in: .whitespacesAndNewlines)
-    guard !token.isEmpty else {
+    let apiKey = rainApiKey.trimmingCharacters(in: .whitespacesAndNewlines)
+    let user = userId.trimmingCharacters(in: .whitespacesAndNewlines)
+    guard !apiKey.isEmpty, !user.isEmpty else {
       return
     }
 
@@ -26,7 +36,7 @@ class CollateralWithdrawEntryViewModel: ObservableObject {
       isLoading = false
     }
 
-    AuthTokenStorage.saveToken(token)
+    RainAPICredentialsStorage.save(apiKey: apiKey, userId: user)
 
     let repository = CreditContractsRepository()
 

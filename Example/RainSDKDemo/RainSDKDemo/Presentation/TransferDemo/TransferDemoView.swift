@@ -47,7 +47,7 @@ struct TransferDemoView: View {
     }
     .onAppear {
       guard RainSDKService.shared.hasPortal, !hasShownRecoverOnAppear else { return }
-      guard let token = AuthTokenStorage.getToken(), !token.isEmpty else { return }
+      guard RainAPICredentialsStorage.isConfigured else { return }
       hasShownRecoverOnAppear = true
       recoverViewModel.showRecoverSheet()
     }

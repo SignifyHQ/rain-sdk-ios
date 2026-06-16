@@ -2,19 +2,30 @@ import Foundation
 
 // MARK: - Request
 
-/// Request params for POST /v1/rain/person/withdrawal/signature.
-/// API expects camelCase keys: chainId, token, amount, recipientAddress, isAmountNative.
+/// Request params for `GET /v1/issuing/users/{userId}/signatures/withdrawals`.
+///
+/// Differs from the old LF withdrawal/signature POST: it is a GET with query params and now
+/// requires `adminAddress` (an admin of the collateral contract — see
+/// `RainCollateralContractEntity.adminAddresses`). The Rain API expects camelCase query keys.
 struct WithdrawalSignatureRequest: Encodable {
   let chainId: Int
   let token: String
   let amount: String
+  let adminAddress: String
   let recipientAddress: String
   let isAmountNative: Bool
-}
 
-/// Wrapper for the API body: server expects { "request": RainUserWithdrawalSignatureRequest }.
-struct WithdrawalSignatureRequestBody: Encodable {
-  let request: WithdrawalSignatureRequest
+  /// Query items for the GET request (all values stringified).
+  var queryItems: [String: String] {
+    [
+      "chainId": String(chainId),
+      "token": token,
+      "amount": amount,
+      "adminAddress": adminAddress,
+      "recipientAddress": recipientAddress,
+      "isAmountNative": String(isAmountNative)
+    ]
+  }
 }
 
 // MARK: - Entity protocols
@@ -28,7 +39,7 @@ public protocol RainSignatureEntity {
 /// Entity for the withdrawal signature API response.
 public protocol RainWithdrawalSignatureEntity {
   var status: String? { get }
-  var retryAfterSeconds: Int? { get }
+  var retryAfter: Int? { get }
   var signatureEntity: RainSignatureEntity? { get }
   var expiresAt: String? { get }
 }
@@ -42,10 +53,13 @@ struct RainSignatureResponse: Decodable, RainSignatureEntity {
   let salt: String?
 }
 
-/// Decodable response for POST /v1/rain/person/withdrawal/signature; conforms to RainWithdrawalSignatureEntity.
+/// Decodable response for `GET .../signatures/withdrawals`; conforms to RainWithdrawalSignatureEntity.
+///
+/// Rain returns a status envelope: a non-"ready" status (or a missing signature) means the
+/// signature is not yet available, optionally with a `retryAfter` hint.
 struct RainWithdrawalSignatureResponse: Decodable, RainWithdrawalSignatureEntity {
   let status: String?
-  let retryAfterSeconds: Int?
+  let retryAfter: Int?
   let signature: RainSignatureResponse?
   let expiresAt: String?
 

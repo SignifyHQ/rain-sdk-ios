@@ -8,6 +8,7 @@ import UIKit
 struct SDKConnectionView: View {
   @StateObject private var viewModel = SDKConnectionViewModel()
   @ObservedObject private var sdkService = RainSDKService.shared
+  @ObservedObject private var rainAPI = RainAPIContext.shared
 
   var body: some View {
     NavigationStack {
@@ -21,7 +22,10 @@ struct SDKConnectionView: View {
           
           // Input Section
           inputSection
-          
+
+          // Rain API Section (Api-Key + User ID → CST + collateral contract)
+          rainAPISection
+
           // Actions Section
           actionsSection
           
@@ -146,6 +150,88 @@ struct SDKConnectionView: View {
     .cornerRadius(12)
   }
   
+  // MARK: - Rain API Section
+
+  /// Rain dev API credentials, independent of the wallet provider. Authenticating mints a CST
+  /// and loads the first collateral contract; the result prefills the builder/withdraw screens.
+  private var rainAPISection: some View {
+    VStack(alignment: .leading, spacing: 16) {
+      Text("Rain API Credentials")
+        .font(.headline)
+
+      Text("Mints a Client Session Token and loads your collateral contract. The fetched contract prefills the Build EIP-712 / Build Withdraw and Collateral Withdraw screens.")
+        .font(.caption)
+        .foregroundColor(.secondary)
+
+      labeledField(
+        title: "Rain Api-Key",
+        placeholder: "Enter Rain Api-Key",
+        text: $rainAPI.apiKey
+      )
+
+      labeledField(
+        title: "Rain User ID",
+        placeholder: "Enter Rain User ID",
+        text: $rainAPI.userId
+      )
+
+      Button {
+        hideKeyboard()
+        Task { await rainAPI.authenticate() }
+      } label: {
+        HStack {
+          if rainAPI.isAuthenticating {
+            ProgressView()
+              .progressViewStyle(CircularProgressViewStyle(tint: .white))
+          } else {
+            Image(systemName: rainAPI.isAuthenticated ? "checkmark.seal.fill" : "key.fill")
+          }
+          Text(rainAPI.isAuthenticated ? "Re-authenticate" : "Authenticate")
+        }
+        .frame(maxWidth: .infinity)
+        .padding(.vertical, 10)
+        .background(rainAPI.canAuthenticate ? Color.blue : Color.gray)
+        .foregroundColor(.white)
+        .cornerRadius(10)
+      }
+      .disabled(!rainAPI.canAuthenticate)
+      .opacity(rainAPI.canAuthenticate ? 1 : 0.6)
+
+      if let contract = rainAPI.contract {
+        VStack(alignment: .leading, spacing: 4) {
+          Label("Authenticated", systemImage: "checkmark.circle.fill")
+            .font(.caption)
+            .foregroundColor(.green)
+          Text("Contract: \(contract.address ?? "—")")
+            .font(.caption2)
+            .foregroundColor(.secondary)
+            .lineLimit(1)
+            .truncationMode(.middle)
+          Text("Tokens: \(contract.tokens?.count ?? 0) · Chain: \(contract.chainId.map(String.init) ?? "—")")
+            .font(.caption2)
+            .foregroundColor(.secondary)
+        }
+        .padding(8)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(Color.green.opacity(0.1))
+        .cornerRadius(8)
+      }
+
+      if let error = rainAPI.error {
+        Text(error.localizedDescription)
+          .font(.caption)
+          .foregroundColor(.red)
+          .padding(8)
+          .frame(maxWidth: .infinity, alignment: .leading)
+          .background(Color.red.opacity(0.1))
+          .cornerRadius(8)
+      }
+    }
+    .padding()
+    .background(Color(.systemGray6))
+    .cornerRadius(12)
+  }
+
   // MARK: - Turnkey Inputs
 
   private var turnkeyInputs: some View {
@@ -465,11 +551,13 @@ struct SDKConnectionView: View {
             }
             .buttonStyle(.plain)
 
-            NavigationLink(destination: CollateralWithdrawEntryView()) {
+            NavigationLink(destination: collateralWithdrawDestination) {
               featureButtonContent(
                 icon: "wallet.pass.fill",
                 title: "Collateral Withdraw",
-                subtitle: "Execute withdrawal via the active wallet provider (sign & submit)"
+                subtitle: rainAPI.isAuthenticated
+                  ? "Withdraw from the authenticated contract (sign & submit)"
+                  : "Authenticate the Rain API above, or enter credentials on the next screen"
               )
             }
             .buttonStyle(.plain)
@@ -490,6 +578,17 @@ struct SDKConnectionView: View {
   
   private var initializeButtonTitle: String {
     viewModel.isInitialized ? "Reinitialize" : "Initialize SDK"
+  }
+
+  /// When the Rain API is already authenticated on this screen, go straight into the withdraw
+  /// screen with the fetched contract; otherwise fall back to the manual credential entry.
+  @ViewBuilder
+  private var collateralWithdrawDestination: some View {
+    if let contract = rainAPI.contract {
+      CollateralWithdrawDemoView(initialContract: contract)
+    } else {
+      CollateralWithdrawEntryView()
+    }
   }
 
   // MARK: - Helper Views

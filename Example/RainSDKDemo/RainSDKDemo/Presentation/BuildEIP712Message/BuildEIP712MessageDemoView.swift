@@ -39,6 +39,9 @@ struct BuildEIP712MessageDemoView: View {
           }
         }
       }
+      .task {
+        await viewModel.prefillFromRainAPIIfNeeded()
+      }
   }
   
   // MARK: - Header Section
