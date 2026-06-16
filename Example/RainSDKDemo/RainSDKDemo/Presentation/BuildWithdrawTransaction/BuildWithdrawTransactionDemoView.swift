@@ -70,6 +70,9 @@ struct BuildWithdrawTransactionDemoView: View {
           }
         }
       }
+      .task {
+        await viewModel.prefillFromRainAPIIfNeeded()
+      }
   }
   
   // MARK: - Header Section

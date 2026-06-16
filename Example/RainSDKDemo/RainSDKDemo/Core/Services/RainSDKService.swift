@@ -262,6 +262,24 @@ class RainSDKService: ObservableObject {
     return NSDecimalNumber(decimal: balance.decimalAmount).doubleValue
   }
 
+  /// Resolves a contract token's display metadata (symbol/name/decimals) on-chain.
+  ///
+  /// The Rain `/contracts` endpoint omits token symbol/decimals, so callers resolve them via
+  /// the SDK (the `Balance` carries them). Best-effort: returns `nil` if the read fails — e.g.
+  /// the SDK wasn't initialized with this contract's chain RPC.
+  func resolveTokenMetadata(
+    chainId: Int,
+    tokenAddress: String
+  ) async -> (symbol: String?, name: String?, decimals: Int)? {
+    guard let balance = try? await sdkManager.getBalance(
+      chainId: chainId,
+      token: .contract(address: tokenAddress)
+    ) else {
+      return nil
+    }
+    return (balance.symbol, balance.name, balance.decimals)
+  }
+
   /// Fetches all balances for the current wallet on the given network, keyed for display:
   /// the native balance uses key "", contract tokens use their symbol (falling back to address).
   func getBalances(chainId: Int) async throws -> [String: Double] {

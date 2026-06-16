@@ -7,6 +7,8 @@ class CollateralWithdrawDemoViewModel: ObservableObject {
   @Published var chainId: Int = DemoLocalConfig.chainIdInt
   @Published var contractAddress: String = ""
   @Published var proxyAddress: String = ""
+  /// An admin of the collateral contract; required by the Rain withdrawal-signature endpoint.
+  @Published var adminAddress: String = ""
   @Published var tokenAddress: String = ""
   @Published var recipientAddress: String = "" {
     didSet { saveRecipientAddress() }
@@ -50,22 +52,13 @@ class CollateralWithdrawDemoViewModel: ObservableObject {
     }
     
     if let contract = initialContract {
-      assets = contract.toAssetModels()
-        .filter { Self.isValidAsset($0) }
-      
-      if let contractAddress = contract.controllerAddress  {
-        self.contractAddress = contractAddress
-      }
-      
-      if let proxyAddress = contract.address  {
-        self.proxyAddress = proxyAddress
-      }
-      
-      if let chainId = contract.chainId {
-        self.chainId = chainId
-      }
+      applyContractMetadata(contract)
+      // Rain's /contracts response omits token symbol/decimals, so the assets need on-chain
+      // enrichment before they pass `isValidAsset` (which requires a resolved type). Kick that
+      // off asynchronously; until it lands the list is empty rather than wrongly populated.
+      Task { [weak self] in await self?.refreshAssets(from: contract) }
     }
-    
+
     sdkService.$isInitialized
       .sink { [weak self] _ in
         self?.objectWillChange.send()
@@ -83,13 +76,10 @@ class CollateralWithdrawDemoViewModel: ObservableObject {
   private var cancellables = Set<AnyCancellable>()
 
   private static func isValidAsset(_ asset: AssetModel) -> Bool {
-    // Filter out tokens with unsupported type or empty id
-    guard asset.type != nil, !asset.id.isEmpty else { return false }
-    // Hide any token with zero balance
-    guard asset.availableBalance > 0 else { return false }
-    // FRNT exclusive experience: only show if user has balance
-    guard asset.type != .frnt || asset.availableBalance > 0 else { return false }
-    return true
+    // Match Android (loadContractInfo): list every contract token regardless of balance —
+    // zero-balance tokens stay selectable, and an empty withdrawal simply fails on-chain. A
+    // resolved type is still required so the token's decimals are known for the withdraw math.
+    asset.type != nil && !asset.id.isEmpty
   }
 
   private func saveRecipientAddress() {
@@ -115,20 +105,66 @@ class CollateralWithdrawDemoViewModel: ObservableObject {
 
   // MARK: - Credit contracts API → AssetModel
 
-  /// Fetches credit contracts from the API and converts them to asset models.
+  /// Applies a contract's addressing metadata (controller/proxy/admin/chain) to the VM.
+  private func applyContractMetadata(_ contract: RainCollateralContractResponse) {
+    if let controllerAddress = contract.controllerAddress {
+      self.contractAddress = controllerAddress
+    }
+    if let proxyAddress = contract.address {
+      self.proxyAddress = proxyAddress
+    }
+    if let chainId = contract.chainId {
+      self.chainId = chainId
+    }
+    // The Rain signature endpoint requires an admin of the collateral contract.
+    self.adminAddress = contract.adminAddresses?.first ?? ""
+  }
+
+  /// Builds asset models from a contract, enriching each token's symbol/decimals on-chain via
+  /// the SDK (the Rain `/contracts` endpoint omits them). Falls back to whatever the contract
+  /// provided when the on-chain read fails.
+  private func buildAssets(from contract: RainCollateralContractResponse) async -> [AssetModel] {
+    let resolvedChainId = contract.chainId ?? chainId
+    var result: [AssetModel] = []
+    for token in contract.tokens ?? [] {
+      guard let address = token.address, !address.isEmpty else { continue }
+      let meta = await sdkService.resolveTokenMetadata(chainId: resolvedChainId, tokenAddress: address)
+      let enriched = RainTokenResponse(
+        address: token.address,
+        name: meta?.name ?? token.name,
+        symbol: meta?.symbol ?? token.symbol,
+        decimals: meta.map { Double($0.decimals) } ?? token.decimals,
+        logo: token.logo,
+        balance: token.balance,
+        exchangeRate: token.exchangeRate,
+        advanceRate: token.advanceRate,
+        availableUsdBalance: token.availableUsdBalance
+      )
+      result.append(AssetModel(rainCollateralAsset: enriched))
+    }
+    return result.filter { Self.isValidAsset($0) }
+  }
+
+  /// Rebuilds `assets` (enriched) from a contract and preserves the current selection.
+  private func refreshAssets(from contract: RainCollateralContractResponse) async {
+    let built = await buildAssets(from: contract)
+    assets = built
+    if let current = selectedAsset {
+      selectedAsset = assets.first { $0.id == current.id }
+    }
+  }
+
+  /// Fetches collateral contracts from the Rain API and converts them to asset models.
   func loadCreditContracts() async {
     isLoadingAssets = true
     defer {
       isLoadingAssets = false
     }
-    
+
     do {
-      let contracts = try await creditContractsRepository.getCreditContracts()
-      assets = contracts.toAssetModels()
-        .filter { Self.isValidAsset($0) }
-      if let current = selectedAsset {
-        selectedAsset = assets.first { $0.id == current.id }
-      }
+      let contract = try await creditContractsRepository.getCreditContracts()
+      applyContractMetadata(contract)
+      await refreshAssets(from: contract)
     } catch {
       print("Load credit contracts failed: \(error.localizedDescription)")
     }
@@ -136,12 +172,13 @@ class CollateralWithdrawDemoViewModel: ObservableObject {
 
   // MARK: - Withdrawal signature API
 
-  /// Fetches withdrawal signature from POST /v1/rain/person/withdrawal/signature.
-  /// Use the returned signature (data + salt) and expiresAt for Portal withdraw.
+  /// Fetches the admin withdrawal signature from the Rain dev API (CST auth).
+  /// Use the returned signature (data + salt) and expiresAt for the wallet-provider withdraw.
   func loadWithdrawalSignature(
     chainId: Int,
     token: String,
     amount: String,
+    adminAddress: String,
     recipientAddress: String,
     isAmountNative: Bool = true
   ) async {
@@ -154,6 +191,7 @@ class CollateralWithdrawDemoViewModel: ObservableObject {
         chainId: chainId,
         token: token,
         amount: amount,
+        adminAddress: adminAddress,
         recipientAddress: recipientAddress,
         isAmountNative: isAmountNative
       )
@@ -174,8 +212,17 @@ class CollateralWithdrawDemoViewModel: ObservableObject {
   
   func withdraw() async {
     guard let amountDouble = Double(amount) else { return }
+    guard !adminAddress.isEmpty else {
+      self.error = NSError(
+        domain: "CollateralWithdraw",
+        code: -1,
+        userInfo: [NSLocalizedDescriptionKey: "Contract has no admin address."]
+      )
+      statusMessage = "Contract has no admin address"
+      return
+    }
     let newAmount = BigUInt(amountDouble * pow(10.0, Double(decimals)))
-    
+
     isProcessing = true
     error = nil
     txHash = nil
@@ -184,8 +231,9 @@ class CollateralWithdrawDemoViewModel: ObservableObject {
     loadingMessage = "Getting withdrawal signature..."
     await loadWithdrawalSignature(
       chainId: chainId,
-      token: tokenAddress,
+      token: tokenAddress.lowercased(),
       amount: newAmount.description,
+      adminAddress: adminAddress,
       recipientAddress: recipientAddress,
       isAmountNative: true
     )

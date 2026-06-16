@@ -1,10 +1,9 @@
 import Foundation
 
-/// Repository for person credit-contracts API. Uses `APIClient` and `Endpoint`.
+/// Repository for the Rain collateral-contracts API. Uses `APIClient` + the CST session flow.
 final class CreditContractsRepository {
   private let client: APIClient
 
-  /// Uses a client that decodes snake_case JSON keys (e.g. `contract_id`) to camelCase.
   init(client: APIClient? = nil) {
     if let client = client {
       self.client = client
@@ -15,8 +14,24 @@ final class CreditContractsRepository {
     }
   }
 
-  /// Fetches credit contracts from GET person/credit-contracts. API returns an array; returns first contract.
+  /// Fetches collateral contracts from `GET /v1/issuing/users/{userId}/contracts` (CST auth).
+  /// Rain returns an array of contracts; the demo uses the first.
+  ///
+  /// Token symbol/decimals are omitted by this endpoint — callers resolve them on-chain (see
+  /// `RainSDKService.resolveTokenMetadata`).
   func getCreditContracts() async throws -> RainCollateralContractResponse {
-    try await client.request(.creditContracts, as: RainCollateralContractResponse.self)
+    guard let userId = RainAPICredentialsStorage.userId, !userId.isEmpty else {
+      throw APIError.notConfigured
+    }
+    let cst = try await RainSessionManager.shared.validToken()
+    let contracts = try await client.request(
+      .contracts(userId: userId),
+      as: [RainContractDto].self,
+      extraHeaders: ["Authorization": "Bearer \(cst)"]
+    )
+    guard let first = contracts.first else {
+      throw APIError.noCreditContracts
+    }
+    return first.toCollateralContractResponse()
   }
 }

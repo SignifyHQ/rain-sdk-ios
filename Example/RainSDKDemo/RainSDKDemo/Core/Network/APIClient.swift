@@ -1,20 +1,19 @@
 import Foundation
 
 /// Generic API client for the demo. Use with `Endpoint` (Moya-style) or raw path/method.
-/// Token is read from UserDefaults (AuthTokenStorage); set at token input view.
+///
+/// The client is auth-agnostic: it sends only `Accept` by default. Authorization is supplied
+/// per request via `extraHeaders` — the Rain CST (`Authorization: Bearer cst_…`) by the
+/// repositories, or the `Api-Key` by `RainSessionManager` when minting a session.
 final class APIClient {
   private let baseURL: URL
   private let session: URLSession
   private let decoder: JSONDecoder
   private let encoder: JSONEncoder
 
-  /// Default headers for every request: Accept, and Authorization (Bearer) when token is in UserDefaults.
+  /// Default headers for every request. Auth is intentionally not added here (see type doc).
   private var defaultHeaders: [String: String] {
-    var headers: [String: String] = ["Accept": "application/json"]
-    if let token = AuthTokenStorage.getToken() {
-      headers["Authorization"] = "Bearer \(token)"
-    }
-    return headers
+    ["Accept": "application/json"]
   }
 
   /// - Parameters:
@@ -151,22 +150,29 @@ final class APIClient {
   // MARK: - Endpoint (Moya-style)
 
   /// Performs a request for the given endpoint and returns raw `Data`.
-  /// For endpoints with an encodable body (e.g. withdrawalSignature), body is encoded via endpoint.bodyData(encoder:).
-  func request(_ endpoint: Endpoint) async throws -> Data {
+  /// - Parameter extraHeaders: Auth (or other) headers merged over the endpoint's own headers,
+  ///   e.g. the Rain CST `Authorization: Bearer …` or the `Api-Key` for session minting.
+  func request(_ endpoint: Endpoint, extraHeaders: [String: String]? = nil) async throws -> Data {
     let (queryItems, bodyFromTask) = queryItemsAndBody(for: endpoint.task)
     let body = try endpoint.bodyData(encoder: encoder) ?? bodyFromTask
+    var headers = endpoint.headers ?? [:]
+    extraHeaders?.forEach { headers[$0] = $1 }
     return try await request(
       path: endpoint.path,
       method: endpoint.method,
       queryItems: queryItems,
       body: body,
-      extraHeaders: endpoint.headers
+      extraHeaders: headers
     )
   }
 
   /// Performs a request for the given endpoint and decodes the response as `T`.
-  func request<T: Decodable>(_ endpoint: Endpoint, as type: T.Type) async throws -> T {
-    let data = try await request(endpoint)
+  func request<T: Decodable>(
+    _ endpoint: Endpoint,
+    as type: T.Type,
+    extraHeaders: [String: String]? = nil
+  ) async throws -> T {
+    let data = try await request(endpoint, extraHeaders: extraHeaders)
     if data.isEmpty {
       print("[API] Decoding skipped: response body is empty")
       throw APIError.emptyResponse
