@@ -353,10 +353,9 @@ struct WalletAgnosticInitializationTests {
     let jsonObject = try JSONSerialization.jsonObject(with: jsonData) as! [String: Any]
     let messageData = jsonObject["message"] as! [String: Any]
     
-    // Verify amount is correct
-    // Match the implementation's calculation: BigUInt(amount * pow(10.0, Double(decimals)))
-    // 1_000_000_000 * 10^18 = 1_000_000_000_000_000_000_000_000_000
-    let expectedAmount = BigUInt(amount * pow(10.0, Double(decimals)))
+    // The amount is the exact base-unit value, with no Double rounding tail:
+    // 1_000_000_000 (10^9) * 10^18 decimals = 10^27 (a "1" followed by 27 zeros).
+    let expectedAmount = BigUInt("1" + String(repeating: "0", count: 27), radix: 10)!
     #expect(messageData["amount"] as? String == expectedAmount.description)
   }
   

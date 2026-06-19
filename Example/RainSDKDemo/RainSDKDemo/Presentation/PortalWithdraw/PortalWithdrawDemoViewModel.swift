@@ -169,8 +169,12 @@ class PortalWithdrawDemoViewModel: ObservableObject {
   
   func withdraw() async {
     guard let amountDouble = Double(amount) else { return }
-    let newAmount = BigUInt(amountDouble * pow(10.0, Double(decimals)))
-    
+    // Exact base-unit conversion; mirrors RainSDK's internal AmountHelpers.toBaseUnits so the
+    // signature request and the on-chain amount agree. Avoids the lossy Double multiply.
+    let scaled = NSDecimalNumber(decimal: Decimal(string: String(amountDouble)) ?? 0)
+      .multiplying(byPowerOf10: Int16(decimals))
+    let newAmount = BigUInt(scaled.stringValue, radix: 10) ?? BigUInt(0)
+
     isProcessing = true
     error = nil
     txHash = nil
