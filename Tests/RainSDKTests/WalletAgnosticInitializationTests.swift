@@ -353,7 +353,7 @@ struct WalletAgnosticInitializationTests {
     let jsonObject = try JSONSerialization.jsonObject(with: jsonData) as! [String: Any]
     let messageData = jsonObject["message"] as! [String: Any]
     
-    // The amount is the exact base-unit value, with no Double rounding tail:
+    // The amount is the exact base-unit value:
     // 1_000_000_000 (10^9) * 10^18 decimals = 10^27 (a "1" followed by 27 zeros).
     let expectedAmount = BigUInt("1" + String(repeating: "0", count: 27), radix: 10)!
     #expect(messageData["amount"] as? String == expectedAmount.description)

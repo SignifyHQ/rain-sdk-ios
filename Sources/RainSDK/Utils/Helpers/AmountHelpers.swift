@@ -30,7 +30,7 @@ enum AmountHelpers {
       )
     }
 
-    // Scale by 10^decimals on Decimal (exact base-10), never a Double multiply.
+    // Scale by 10^decimals on Decimal (exact base-10)
     let scaled = NSDecimalNumber(decimal: decimalAmount)
       .multiplying(byPowerOf10: Int16(decimals), withBehavior: roundDownBehavior)
 
