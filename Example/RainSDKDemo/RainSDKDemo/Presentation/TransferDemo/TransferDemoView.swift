@@ -167,8 +167,10 @@ struct TransferDemoView: View {
 
       if viewModel.isERC20 {
         inputField(title: "Token Contract Address", text: $viewModel.contractAddress, placeholder: "0x...")
-        inputField(title: "Decimals", text: $viewModel.decimals, placeholder: "e.g. 18, 6")
-          .keyboardType(.numberPad)
+        Text("Decimals are resolved automatically by the SDK.")
+          .font(.caption)
+          .foregroundColor(.secondary)
+          .frame(maxWidth: .infinity, alignment: .leading)
         balanceRow(
           balance: viewModel.erc20Balance,
           isLoading: viewModel.isLoadingERC20Balance

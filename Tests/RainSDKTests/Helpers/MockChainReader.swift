@@ -40,6 +40,7 @@ final class MockChainReader: ChainReader, @unchecked Sendable {
   var stubbedErc20: Double = 0
   var stubbedDecimals: Int = 18
   var stubbedSymbol: String? = nil
+  var stubbedName: String? = nil
 
   private(set) var balancesCalls: [BalancesCall] = []
   private(set) var getBalanceCalls: [SingleBalanceCall] = []
@@ -47,6 +48,7 @@ final class MockChainReader: ChainReader, @unchecked Sendable {
   private(set) var erc20Calls: [ERC20Call] = []
   private(set) var decimalsCalls: [MetadataCall] = []
   private(set) var symbolCalls: [MetadataCall] = []
+  private(set) var nameCalls: [MetadataCall] = []
 
   func getNativeBalance(chainId: Int, walletAddress: String) async throws -> Double {
     nativeCalls.append(NativeCall(chainId: chainId, walletAddress: walletAddress))
@@ -115,5 +117,10 @@ final class MockChainReader: ChainReader, @unchecked Sendable {
   func getSymbol(chainId: Int, tokenAddress: String) async throws -> String? {
     symbolCalls.append(MetadataCall(chainId: chainId, tokenAddress: tokenAddress))
     return stubbedSymbol
+  }
+
+  func getName(chainId: Int, tokenAddress: String) async throws -> String? {
+    nameCalls.append(MetadataCall(chainId: chainId, tokenAddress: tokenAddress))
+    return stubbedName
   }
 }

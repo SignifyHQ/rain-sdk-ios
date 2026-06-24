@@ -150,7 +150,21 @@ struct CollateralWithdrawDemoView: View {
 
       inputField(title: "Recipient Address", text: $viewModel.recipientAddress, placeholder: "0x...")
 
-      inputField(title: "Amount", text: $viewModel.amount, placeholder: "e.g., 100.0")
+      VStack(alignment: .leading, spacing: 4) {
+        inputField(title: "Amount", text: $viewModel.amount, placeholder: "e.g., 100.0")
+
+        if viewModel.selectedAsset != nil {
+          if viewModel.isAmountOverBalance {
+            Text("Amount exceeds available balance (\(String(format: "%.6f", viewModel.availableBalance)) \(viewModel.selectedSymbol))")
+              .font(.caption)
+              .foregroundColor(.red)
+          } else {
+            Text("Available: \(String(format: "%.6f", viewModel.availableBalance)) \(viewModel.selectedSymbol)")
+              .font(.caption)
+              .foregroundColor(.secondary)
+          }
+        }
+      }
 
       assetDropdown
     }
@@ -264,29 +278,45 @@ struct CollateralWithdrawDemoView: View {
   // MARK: - Actions Section
 
   private var actionsSection: some View {
-    Button(action: {
-      hideKeyboard()
-      Task {
-        await viewModel.withdraw()
+    // Gas estimation happens in the background as part of the withdraw, so there's no separate
+    // "Estimate Gas" step. "Withdraw Maximum" withdraws the full available balance.
+    HStack(spacing: 8) {
+      Button(action: {
+        hideKeyboard()
+        Task { await viewModel.withdrawMaximum() }
+      }) {
+        Text("Withdraw Maximum")
+          .frame(maxWidth: .infinity)
+          .padding()
+          .background(viewModel.canWithdrawMaximum && !viewModel.isProcessing
+            ? Color(.systemBackground) : Color(.systemGray5))
+          .foregroundColor(.blue)
+          .overlay(RoundedRectangle(cornerRadius: 12).stroke(Color.blue, lineWidth: 1))
+          .cornerRadius(12)
       }
-    }) {
-      HStack {
-        if viewModel.isProcessing {
-          ProgressView()
-            .progressViewStyle(CircularProgressViewStyle(tint: .white))
-        } else {
-          Image(systemName: "arrow.down.circle.fill")
-        }
+      .disabled(!viewModel.canWithdrawMaximum || viewModel.isProcessing)
 
-        Text("Withdraw")
+      Button(action: {
+        hideKeyboard()
+        Task { await viewModel.withdraw() }
+      }) {
+        HStack {
+          if viewModel.isProcessing {
+            ProgressView()
+              .progressViewStyle(CircularProgressViewStyle(tint: .white))
+          } else {
+            Image(systemName: "arrow.down.circle.fill")
+          }
+          Text("Withdraw")
+        }
+        .frame(maxWidth: .infinity)
+        .padding()
+        .background(viewModel.canWithdraw ? Color.blue : Color.gray)
+        .foregroundColor(.white)
+        .cornerRadius(12)
       }
-      .frame(maxWidth: .infinity)
-      .padding()
-      .background(viewModel.canWithdraw ? Color.blue : Color.gray)
-      .foregroundColor(.white)
-      .cornerRadius(12)
+      .disabled(!viewModel.canWithdraw || viewModel.isProcessing)
     }
-    .disabled(!viewModel.canWithdraw || viewModel.isProcessing)
   }
 
   // MARK: - Helpers

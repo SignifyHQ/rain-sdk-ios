@@ -62,8 +62,12 @@ final class APIClient {
     urlRequest.httpMethod = method.rawValue
     defaultHeaders.forEach { urlRequest.setValue($1, forHTTPHeaderField: $0) }
     extraHeaders?.forEach { urlRequest.setValue($1, forHTTPHeaderField: $0) }
-    urlRequest.httpBody = body
-    if body != nil {
+    // Only attach a body + JSON Content-Type when there's actual content. An empty body with
+    // `Content-Type: application/json` makes Rain's /sessions endpoint 400 ("Body cannot be
+    // empty when content-type is set to 'application/json'"); the empty POST must send no
+    // Content-Type, matching Android's `ByteArray(0).toRequestBody()`.
+    if let body, !body.isEmpty {
+      urlRequest.httpBody = body
       urlRequest.setValue("application/json", forHTTPHeaderField: "Content-Type")
     }
 

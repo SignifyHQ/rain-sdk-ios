@@ -338,7 +338,10 @@ public protocol RainSDK {
   ///   - contractAddress: The ERC-20 token contract address (EVM) or SPL mint address (Solana, base58).
   ///   - to: Recipient address (EVM hex or Solana base58).
   ///   - amount: Human-readable amount (e.g. 100.0 for 100 tokens).
-  ///   - decimals: Number of decimal places for the token (e.g. 18 for WETH, 6 for USDC).
+  ///   - decimals: Optional number of decimal places for the token (e.g. 18 for WETH, 6 for
+  ///               USDC). When `nil`, the SDK resolves the token's `decimals()` itself — from
+  ///               its token registry or, for unknown tokens, an on-chain `decimals()` read —
+  ///               so callers don't have to track it.
   /// - Returns: A `RainTokenTransferResult` carrying the on-chain transaction hash (EVM) or
   ///            transaction signature (Solana).
   /// - Throws: RainSDKError if SDK or wallet provider is not initialized, or if transaction building or submission fails.
@@ -347,6 +350,25 @@ public protocol RainSDK {
     contractAddress: String,
     to: String,
     amount: Double,
-    decimals: Int
+    decimals: Int?
   ) async throws -> RainTokenTransferResult
+}
+
+public extension RainSDK {
+  /// Sends tokens letting the SDK resolve the token's `decimals()` itself (from its registry
+  /// or an on-chain read). Prefer this over passing `decimals` explicitly.
+  func sendToken(
+    chainId: Int,
+    contractAddress: String,
+    to: String,
+    amount: Double
+  ) async throws -> RainTokenTransferResult {
+    try await sendToken(
+      chainId: chainId,
+      contractAddress: contractAddress,
+      to: to,
+      amount: amount,
+      decimals: nil
+    )
+  }
 }

@@ -151,43 +151,57 @@ final class TransactionBuilderService: TransactionBuilderProtocol {
     return messageString
   }
   
-  /// Build withdraw transaction data
+  /// Build withdraw transaction data.
+  ///
+  /// Encodes against a minimal single-function ABI (only `withdrawAsset`) instead of the full
+  /// contract ABI. web3swift parses the entire ABI string up front when building a contract;
+  /// the proven encode path in this file (`encodeBalanceOfCall`) uses a minimal ABI for the
+  /// same reason, and Android encodes the function directly (web3j `FunctionEncoder`). Params
+  /// are passed `as AnyObject` to match that working path.
   func buildErc20TransactionForWithdrawAsset(
     chainId: Int,
     ethereumContractAddress: Web3Core.EthereumAddress,
     withdrawAssetParameter: WithdrawAssetParameter
   ) async throws -> String {
     let rpcURL = try getRpcURL(chainId: chainId)
-    let contractJsonABI = try getContractJsonABI()
-    
+
     guard let url = URL(string: rpcURL) else {
       RainLogger.error("Rain SDK: Error building transaction for withdrawal. RPC URL is missing")
       throw RainSDKError.internalLogicError(
         details: "RPC URL is missing for chain ID \(chainId)"
       )
     }
-    
+
+    // bytes32 fields must be exactly 32 bytes or web3swift fails the encode (returns nil).
+    // Surface a precise error instead of the opaque "Could not encode" when they aren't.
+    guard withdrawAssetParameter.salt.count == 32, withdrawAssetParameter.adminSalt.count == 32 else {
+      RainLogger.error("Rain SDK: Error building withdrawal. bytes32 salt is not 32 bytes (executor=\(withdrawAssetParameter.salt.count), admin=\(withdrawAssetParameter.adminSalt.count))")
+      throw RainSDKError.internalLogicError(
+        details: "Withdrawal salt must be 32 bytes (executor=\(withdrawAssetParameter.salt.count), admin=\(withdrawAssetParameter.adminSalt.count))"
+      )
+    }
+
     let web3 = try await Web3.new(url)
     let contract = web3.contract(
-      contractJsonABI,
+      Self.withdrawAssetABI,
       at: ethereumContractAddress,
       abiVersion: 2
     )
-    
+
     guard let tx = contract?
       .createWriteOperation(
         "withdrawAsset",
         parameters: [
-          withdrawAssetParameter.proxyAddress,
-          withdrawAssetParameter.tokenAddress,
-          withdrawAssetParameter.amount,
-          withdrawAssetParameter.recipientAddress,
-          withdrawAssetParameter.expiryAt,
-          withdrawAssetParameter.salt,
-          withdrawAssetParameter.signature,
-          [withdrawAssetParameter.adminSalt],
-          [withdrawAssetParameter.adminSignature],
-          true
+          withdrawAssetParameter.proxyAddress as AnyObject,
+          withdrawAssetParameter.tokenAddress as AnyObject,
+          withdrawAssetParameter.amount as AnyObject,
+          withdrawAssetParameter.recipientAddress as AnyObject,
+          withdrawAssetParameter.expiryAt as AnyObject,
+          withdrawAssetParameter.salt as AnyObject,
+          withdrawAssetParameter.signature as AnyObject,
+          [withdrawAssetParameter.adminSalt] as AnyObject,
+          [withdrawAssetParameter.adminSignature] as AnyObject,
+          true as AnyObject
         ]
       )?
       .data?
@@ -198,9 +212,33 @@ final class TransactionBuilderService: TransactionBuilderProtocol {
         details: "Failed to encode withdrawAsset contract function"
       )
     }
-    
+
     return "0x" + tx
   }
+
+  /// Minimal ABI carrying only `withdrawAsset` — see `buildErc20TransactionForWithdrawAsset`.
+  private static let withdrawAssetABI = """
+    [
+      {
+        "inputs": [
+          {"internalType":"address","name":"_collateralProxy","type":"address"},
+          {"internalType":"address","name":"_asset","type":"address"},
+          {"internalType":"uint256","name":"_amountNative","type":"uint256"},
+          {"internalType":"address","name":"_recipient","type":"address"},
+          {"internalType":"uint256","name":"_expiresAt","type":"uint256"},
+          {"internalType":"bytes32","name":"_executorPublisherSalt","type":"bytes32"},
+          {"internalType":"bytes","name":"_executorPublisherSignature","type":"bytes"},
+          {"internalType":"bytes32[]","name":"_adminSalts","type":"bytes32[]"},
+          {"internalType":"bytes[]","name":"_adminSignatures","type":"bytes[]"},
+          {"internalType":"bool","name":"_directTransfer","type":"bool"}
+        ],
+        "name":"withdrawAsset",
+        "outputs":[],
+        "stateMutability":"nonpayable",
+        "type":"function"
+      }
+    ]
+    """
 
   /// ABI-encodes a `balanceOf(address)` call using the RPC URL resolved from `chainId`.
   func encodeBalanceOfCall(walletAddress: String, chainId: Int) async throws -> String {

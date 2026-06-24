@@ -54,4 +54,8 @@ internal protocol ChainReader: Sendable {
   /// Reads an ERC-20 token's `symbol()`. Returns `nil` if the call reverts or returns
   /// an undecodable payload. Used to enrich tokens not in the registry.
   func getSymbol(chainId: Int, tokenAddress: String) async throws -> String?
+
+  /// Reads an ERC-20 token's `name()`. Returns `nil` if the call reverts or returns
+  /// an undecodable payload. Used to enrich tokens not in the registry.
+  func getName(chainId: Int, tokenAddress: String) async throws -> String?
 }

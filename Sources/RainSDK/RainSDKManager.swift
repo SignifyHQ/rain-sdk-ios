@@ -30,6 +30,13 @@ public final class RainSDKManager: RainSDK {
   /// Host-registered tokens, retained so they re-seed the store on each (re)initialization.
   private var _registeredTokens: [TokenInfo] = []
 
+  /// Test seam for installing a `TokenMetadataStore` without driving a full provider init.
+  /// Used to verify that `sendToken` resolves token decimals through the store when the caller
+  /// omits them.
+  internal func setTokenStoreForTest(_ store: TokenMetadataStore?) {
+    _tokenStore = store
+  }
+
   /// Throws `sdkNotInitialized` if Portal has not been initialized, or if the stored
   /// `PortalRequestProtocol` is a mock (use `portalProtocol` for test contexts).
   public var portal: Portal {
@@ -221,7 +228,12 @@ public final class RainSDKManager: RainSDK {
     _portal = nil
     _turnkey = nil
     _walletProvider = nil
-    _tokenStore = nil
+
+    // Still stand up a token store so metadata resolution (decimals / symbol / name,
+    // including on-chain reads for unknown tokens) works for the host-installed provider —
+    // e.g. so sendToken(decimals: nil) resolves real decimals instead of defaulting.
+    let reader = EVMChainReader(networkConfigs: networkConfigs)
+    _tokenStore = TokenMetadataStore(chainReader: reader, seedTokens: _registeredTokens)
 
     // Initialize transaction builder service with network configs
     _transactionBuilder = TransactionBuilderService(networkConfigs: networkConfigs)
@@ -327,12 +339,14 @@ public final class RainSDKManager: RainSDK {
     // Convert the amount to base units using decimals of the token
     let amountBaseUnits = try AmountHelpers.toBaseUnits(amount: amount, decimals: decimals)
     
-    // Convert the expiration timestamp string from Rain API to Unix Timestamp
-    // Expects ISO8601 format or Unix timestamp string
+    // Convert the expiration timestamp string from Rain API to Unix Timestamp.
+    // Accepts a Unix-seconds string or ISO8601 — with or without fractional seconds
+    // (Rain returns e.g. "2026-06-24T21:29:43.000Z", which the default ISO8601 formatter,
+    // lacking `.withFractionalSeconds`, rejects).
     let unixTimestamp: Int
     if let timestamp = Int(expiresAt) {
       unixTimestamp = timestamp
-    } else if let date = ISO8601DateFormatter().date(from: expiresAt) {
+    } else if let date = Self.parseISO8601(expiresAt) {
       unixTimestamp = Int(date.timeIntervalSince1970)
     } else {
       RainLogger.error("Rain SDK: Error building transaction parameters for withdrawal. Could not parse expiration to UNIX timestamp")
@@ -638,7 +652,7 @@ public final class RainSDKManager: RainSDK {
     contractAddress: String,
     to: String,
     amount: Double,
-    decimals: Int
+    decimals: Int?
   ) async throws -> RainTokenTransferResult {
     do {
       // Solana chains: SPL token transfer via the Solana transfers capability.
@@ -652,12 +666,15 @@ public final class RainSDKManager: RainSDK {
             details: "The active wallet provider does not support Solana transfers"
           )
         }
+        let resolvedDecimals = await resolveDecimals(
+          chainId: chainId, contractAddress: contractAddress, decimals: decimals
+        )
         let signature = try await solanaProvider.sendSolanaSPLToken(
           chainId: chainId,
           mintAddress: contractAddress,
           to: to,
           amount: amount,
-          decimals: decimals
+          decimals: resolvedDecimals
         )
         return RainTokenTransferResult(transactionHash: signature)
       }
@@ -673,7 +690,10 @@ public final class RainSDKManager: RainSDK {
       }
 
       let from = try await provider.address()
-      let amountBaseUnits = try AmountHelpers.toBaseUnits(amount: amount, decimals: decimals)
+      let resolvedDecimals = await resolveDecimals(
+        chainId: chainId, contractAddress: contractAddress, decimals: decimals
+      )
+      let amountBaseUnits = try AmountHelpers.toBaseUnits(amount: amount, decimals: resolvedDecimals)
       let data = try await transactionBuilder.buildERC20TransferData(
         chainId: chainId,
         contractAddress: contractAddress,
@@ -697,5 +717,24 @@ public final class RainSDKManager: RainSDK {
     } catch {
       throw RainSDKError.from(underlying: error)
     }
+  }
+
+  /// Parses an ISO8601 timestamp, accepting both fractional-second ("…:43.000Z") and
+  /// plain ("…:43Z") forms. The default `ISO8601DateFormatter` rejects fractional seconds.
+  private static func parseISO8601(_ string: String) -> Date? {
+    let withFraction = ISO8601DateFormatter()
+    withFraction.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
+    if let date = withFraction.date(from: string) { return date }
+    return ISO8601DateFormatter().date(from: string)
+  }
+
+  /// Resolves a token's decimals: the caller's value when supplied, otherwise the token store
+  /// (registry first, then a one-time on-chain `decimals()` read), falling back to the default.
+  private func resolveDecimals(chainId: Int, contractAddress: String, decimals: Int?) async -> Int {
+    if let decimals { return decimals }
+    if let store = _tokenStore {
+      return await store.tokenInfo(chainId: chainId, address: contractAddress).decimals
+    }
+    return Constants.ERC20.defaultDecimals
   }
 }

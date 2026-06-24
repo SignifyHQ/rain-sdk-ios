@@ -25,19 +25,23 @@ struct TokenMetadataStoreTests {
     let reader = MockChainReader()
     reader.stubbedDecimals = 8
     reader.stubbedSymbol = "WBTC"
+    reader.stubbedName = "Wrapped BTC"
     let store = TokenMetadataStore(chainReader: reader)
 
     let first = await store.tokenInfo(chainId: 1, address: Self.unknownToken)
     #expect(first.decimals == 8)
     #expect(first.symbol == "WBTC")
+    #expect(first.name == "Wrapped BTC")
     #expect(reader.decimalsCalls.count == 1)
     #expect(reader.symbolCalls.count == 1)
+    #expect(reader.nameCalls.count == 1)
 
     // Second lookup must hit the cache — no extra RPC.
     let second = await store.tokenInfo(chainId: 1, address: Self.unknownToken)
     #expect(second == first)
     #expect(reader.decimalsCalls.count == 1)
     #expect(reader.symbolCalls.count == 1)
+    #expect(reader.nameCalls.count == 1)
   }
 
   @Test("register makes a previously-unknown token resolve without enrichment")

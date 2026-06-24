@@ -9,6 +9,9 @@ internal enum ERC20Selectors {
   /// `symbol()`
   static let symbol = "95d89b41"
 
+  /// `name()`
+  static let name = "06fdde03"
+
   /// `decimals()`
   static let decimals = "313ce567"
 }
