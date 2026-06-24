@@ -280,6 +280,24 @@ class RainSDKService: ObservableObject {
     return (balance.symbol, balance.name, balance.decimals)
   }
 
+  /// Discovers every contract token the wallet holds with a balance > 0. Each entry already
+  /// carries the resolved symbol / name / decimals (from the SDK's registry or an on-chain
+  /// read), so the UI can list tokens to pick instead of asking for a contract address.
+  func getTokenBalances(chainId: Int) async throws -> [DiscoveredTokenBalance] {
+    let balances = try await sdkManager.getTokenBalances(chainId: chainId)
+    return balances.compactMap { balance -> DiscoveredTokenBalance? in
+      guard case .contract(let address) = balance.token else { return nil }
+      return DiscoveredTokenBalance(
+        address: address,
+        symbol: balance.symbol,
+        name: balance.name,
+        decimals: balance.decimals,
+        balance: NSDecimalNumber(decimal: balance.decimalAmount).doubleValue
+      )
+    }
+    .filter { $0.balance > 0 }
+  }
+
   /// Fetches all balances for the current wallet on the given network, keyed for display:
   /// the native balance uses key "", contract tokens use their symbol (falling back to address).
   func getBalances(chainId: Int) async throws -> [String: Double] {
@@ -337,12 +355,13 @@ class RainSDKService: ObservableObject {
   }
 
   /// Sends ERC-20 (EVM) or SPL (Solana) tokens from the current wallet.
+  /// `decimals` is optional; when omitted the SDK resolves it (registry or on-chain read).
   func sendToken(
     chainId: Int,
     contractAddress: String,
     to: String,
     amount: Double,
-    decimals: Int
+    decimals: Int? = nil
   ) async throws -> RainTokenTransferResult {
     try await sdkManager.sendToken(
       chainId: chainId,
@@ -455,5 +474,30 @@ class RainSDKService: ObservableObject {
     activeProvider = .none
     error = nil
     statusMessage = "Reset"
+  }
+}
+
+/// A discovered contract-token balance with resolved display metadata, for the Balances UI.
+struct DiscoveredTokenBalance: Identifiable {
+  let address: String
+  let symbol: String?
+  let name: String?
+  let decimals: Int
+  let balance: Double
+
+  var id: String { address }
+
+  var displayAddress: String {
+    address.count > 12 ? "\(address.prefix(6))…\(address.suffix(4))" : address
+  }
+
+  /// "USD Coin (USDC)", or just the symbol / name / address when some fields are missing.
+  var displayName: String {
+    let hasName = !(name ?? "").isEmpty
+    let hasSymbol = !(symbol ?? "").isEmpty
+    if hasName && hasSymbol { return "\(name!) (\(symbol!))" }
+    if hasSymbol { return symbol! }
+    if hasName { return name! }
+    return displayAddress
   }
 }

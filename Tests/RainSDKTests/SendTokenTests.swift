@@ -143,6 +143,41 @@ struct SendTokenTests {
     #expect(stub.sendTransactionCalls[0].params.data.hasPrefix("0x"))
   }
 
+  @Test("sendToken resolves decimals via the token store when the caller omits them")
+  func testSendTokenResolvesDecimalsFromStore() async throws {
+    let (manager, stub) = try await TestManagers.stubProviderManager()
+    stub.sendTransactionHashToReturn = "0x" + String(repeating: "d", count: 64)
+
+    // Unknown token (not in the registry) so the store enriches via the chain reader, which
+    // resolves decimals to 6.
+    let unknownToken = "0x000000000000000000000000000000000000dEaD"
+    let reader = MockChainReader()
+    reader.stubbedDecimals = 6
+    manager.setTokenStoreForTest(TokenMetadataStore(chainReader: reader))
+
+    // No decimals supplied → SDK resolves 6 from the store.
+    _ = try await manager.sendToken(
+      chainId: 1,
+      contractAddress: unknownToken,
+      to: TestFixtures.recipientAddress,
+      amount: 2.0
+    )
+    let resolvedData = stub.sendTransactionCalls.last?.params.data
+    #expect(reader.decimalsCalls.count == 1)
+
+    // The same call with explicit decimals: 6 must produce identical calldata.
+    _ = try await manager.sendToken(
+      chainId: 1,
+      contractAddress: unknownToken,
+      to: TestFixtures.recipientAddress,
+      amount: 2.0,
+      decimals: Int?(6)
+    )
+    let explicitData = stub.sendTransactionCalls.last?.params.data
+
+    #expect(resolvedData == explicitData)
+  }
+
   // MARK: - Deprecated alias (1.0.0 source compat)
 
   @available(*, deprecated)

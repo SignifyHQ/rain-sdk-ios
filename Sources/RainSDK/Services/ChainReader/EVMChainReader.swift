@@ -154,6 +154,17 @@ internal final class EVMChainReader: ChainReader, @unchecked Sendable {
     return EthereumConverter.parseHexToString(hex)
   }
 
+  func getName(chainId: Int, tokenAddress: String) async throws -> String? {
+    let rpcUrl = try resolveRpcUrl(chainId: chainId)
+    try validate(ethereumAddress: tokenAddress, label: "token address")
+    let hex = try await ethCall(
+      rpcUrl: rpcUrl,
+      to: tokenAddress,
+      data: "0x" + ERC20Selectors.name
+    )
+    return EthereumConverter.parseHexToString(hex)
+  }
+
   /// Issues a raw `eth_call` and returns the hex result. For read functions with
   /// pre-encoded `data` (no-arg selectors like `decimals()` / `symbol()`).
   private func ethCall(rpcUrl: String, to: String, data: String) async throws -> String {

@@ -75,6 +75,10 @@ internal final class SolanaChainReader: ChainReader, @unchecked Sendable {
     throw RainSDKError.internalLogicError(details: "getSymbol is not supported on Solana")
   }
 
+  func getName(chainId: Int, tokenAddress: String) async throws -> String? {
+    throw RainSDKError.internalLogicError(details: "getName is not supported on Solana")
+  }
+
   private func validate(solanaAddress address: String) throws {
     let valid = ((try? Base58.decode(address))?.count == 32)
     guard valid else {

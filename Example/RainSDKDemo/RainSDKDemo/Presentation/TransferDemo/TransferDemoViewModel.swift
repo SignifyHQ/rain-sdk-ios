@@ -12,7 +12,6 @@ class TransferDemoViewModel: ObservableObject {
   @Published var toAddress: String = ""
   @Published var amount: String = ""
   @Published var contractAddress: String = ""
-  @Published var decimals: String = "18"
 
   @Published var isProcessing: Bool = false
   @Published var statusMessage: String = "Ready"
@@ -44,8 +43,6 @@ class TransferDemoViewModel: ObservableObject {
 
     if isERC20 {
       return !contractAddress.trimmingCharacters(in: .whitespaces).isEmpty
-        && !decimals.isEmpty
-        && Int(decimals) != nil
     }
 
     return true
@@ -68,17 +65,14 @@ class TransferDemoViewModel: ObservableObject {
 
     do {
       if isERC20 {
-        guard let decimalsInt = Int(decimals) else {
-          statusMessage = "Invalid decimals"
-          return
-        }
+        // Decimals are resolved by the SDK (registry or on-chain decimals()), so the caller
+        // no longer supplies them.
         let contract = contractAddress.trimmingCharacters(in: .whitespaces)
         let result = try await sdkService.sendToken(
           chainId: chain.chainId,
           contractAddress: contract,
           to: to,
-          amount: amountDouble,
-          decimals: decimalsInt
+          amount: amountDouble
         )
         txHash = result.transactionHash
       } else {
@@ -111,8 +105,7 @@ class TransferDemoViewModel: ObservableObject {
     defer { isLoadingERC20Balance = false }
     erc20Balance = try? await sdkService.getERC20Balance(
       chainId: chain.chainId,
-      tokenAddress: contractAddress.trimmingCharacters(in: .whitespaces),
-      decimals: Int(decimals)
+      tokenAddress: contractAddress.trimmingCharacters(in: .whitespaces)
     )
   }
 

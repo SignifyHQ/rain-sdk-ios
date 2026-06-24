@@ -62,21 +62,23 @@ actor TokenMetadataStore {
 
   // MARK: - Enrichment
 
-  /// Reads `decimals()` and `symbol()` in parallel. A failed `decimals()` falls back to
-  /// the default; a failed `symbol()` leaves the symbol `nil`.
+  /// Reads `decimals()`, `symbol()` and `name()` in parallel. A failed `decimals()` falls
+  /// back to the default; a failed `symbol()` / `name()` leaves that field `nil`.
   private func enrich(chainId: Int, address: String) async -> TokenInfo {
     async let decimalsTask = chainReader.getDecimals(chainId: chainId, tokenAddress: address)
     async let symbolTask = chainReader.getSymbol(chainId: chainId, tokenAddress: address)
+    async let nameTask = chainReader.getName(chainId: chainId, tokenAddress: address)
 
     let decimals = (try? await decimalsTask) ?? Constants.ERC20.defaultDecimals
     let symbol = (try? await symbolTask) ?? nil
+    let name = (try? await nameTask) ?? nil
 
     return TokenInfo(
       chainId: chainId,
       address: address,
       symbol: symbol,
       decimals: decimals,
-      name: nil
+      name: name
     )
   }
 

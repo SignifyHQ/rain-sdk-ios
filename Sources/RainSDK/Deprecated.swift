@@ -23,8 +23,29 @@ public extension RainSDK {
       contractAddress: contractAddress,
       to: to,
       amount: amount,
-      decimals: decimals
+      decimals: Int?(decimals)
     ).transactionHash
+  }
+
+  /// Deprecated. `decimals` is now optional; the SDK resolves it from its registry or an
+  /// on-chain `decimals()` read. Call `sendToken(chainId:contractAddress:to:amount:)` and
+  /// omit `decimals`. Retained as a source-compat shim for callers compiled against the
+  /// pre-resolution signature (`decimals: Int`).
+  @available(*, deprecated, message: "decimals is now optional; the SDK resolves it. Call sendToken(chainId:contractAddress:to:amount:) and omit decimals.")
+  func sendToken(
+    chainId: Int,
+    contractAddress: String,
+    to: String,
+    amount: Double,
+    decimals: Int
+  ) async throws -> RainTokenTransferResult {
+    try await sendToken(
+      chainId: chainId,
+      contractAddress: contractAddress,
+      to: to,
+      amount: amount,
+      decimals: Int?(decimals)
+    )
   }
 
   /// Deprecated alias for ``sendNative(chainId:to:amount:)``.

@@ -97,52 +97,45 @@ struct GetBalancesDemoView: View {
     .cornerRadius(12)
   }
 
-  // MARK: - ERC-20 Balance
+  // MARK: - ERC-20 Balances (auto-discovered)
 
   private var erc20BalanceSection: some View {
     VStack(alignment: .leading, spacing: 12) {
-      Label("ERC-20 Token", systemImage: "puzzlepiece.extension")
+      Label("ERC-20 Tokens", systemImage: "puzzlepiece.extension")
         .font(.headline)
 
-      VStack(alignment: .leading, spacing: 8) {
-        Text("Token Contract Address")
-          .font(.subheadline)
-          .foregroundColor(.secondary)
-
-        TextField("0x…", text: $viewModel.tokenAddress)
-          .textFieldStyle(.roundedBorder)
-          .autocorrectionDisabled()
-          .textInputAutocapitalization(.never)
-      }
-
-      VStack(alignment: .leading, spacing: 8) {
-        Text("Decimals")
-          .font(.subheadline)
-          .foregroundColor(.secondary)
-
-        TextField("e.g. 18 (ETH), 6 (USDC)", text: $viewModel.tokenDecimals)
-          .textFieldStyle(.roundedBorder)
-          .keyboardType(.numberPad)
-      }
+      Text("Lists every ERC-20 with a balance > 0 — auto-discovered. No contract address or decimals needed; the SDK resolves each token's name, symbol, and decimals.")
+        .font(.caption)
+        .foregroundColor(.secondary)
 
       FetchButton(
-        title: "Get ERC-20 Balance",
-        isLoading: viewModel.isLoadingERC20,
-        isDisabled: !viewModel.canFetchERC20
+        title: "Get ERC-20 Balances",
+        isLoading: viewModel.isLoadingTokens,
+        isDisabled: !viewModel.canFetchTokens
       ) {
-        Task { await viewModel.fetchERC20Balance() }
+        Task { await viewModel.fetchTokenBalances() }
       }
 
-      if let balance = viewModel.erc20Balance {
-        VStack(spacing: 4) {
-          if let address = viewModel.erc20WalletAddress {
-            WalletAddressRow(address: address)
+      if let address = viewModel.tokensWalletAddress {
+        WalletAddressRow(address: address)
+      }
+
+      if !viewModel.walletTokens.isEmpty {
+        VStack(alignment: .leading, spacing: 8) {
+          ForEach(viewModel.walletTokens) { token in
+            BalanceRow(
+              label: token.displayName,
+              value: formatBalance(token.balance)
+            )
           }
-          BalanceHighlight(value: formatBalance(balance))
         }
+      } else if viewModel.didFetchTokens && viewModel.tokensError == nil {
+        Text("No ERC-20 tokens with a balance > 0.")
+          .font(.caption)
+          .foregroundColor(.secondary)
       }
 
-      if let error = viewModel.erc20Error {
+      if let error = viewModel.tokensError {
         ErrorBanner(error: error)
       }
     }
