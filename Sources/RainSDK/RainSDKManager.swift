@@ -627,10 +627,12 @@ public final class RainSDKManager: RainSDK {
       }
 
       let from = try await provider.address()
+      // Exact base-unit scaling (matches sendToken/withdraw); amount.ethToWei is Double math and drifts.
+      let amountWei = try AmountHelpers.toBaseUnits(amount: amount, decimals: 18)
       let params = WalletTransactionParams(
         from: from,
         to: to,
-        value: amount.ethToWei.toHexString,
+        value: "0x" + String(amountWei, radix: 16),
         data: .empty
       )
 

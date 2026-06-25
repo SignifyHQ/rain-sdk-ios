@@ -399,10 +399,13 @@ class CollateralWithdrawDemoViewModel: ObservableObject {
       raiseOnUnderflow: false,
       raiseOnDivideByZero: false
     )
-    let normalized = NSDecimalNumber(value: raw).rounding(accordingToBehavior: handler).doubleValue
+    let roundedDecimal = NSDecimalNumber(value: raw).rounding(accordingToBehavior: handler)
+    let normalized = roundedDecimal.doubleValue
     guard normalized > 0 else { return nil }
-    // Same Double math as AmountHelpers.toBaseUnits, so the signed base units match the on-chain tx.
-    let baseUnits = BigUInt(normalized * pow(10.0, Double(decimals)))
+    // Exact base-10 scaling (matches AmountHelpers.toBaseUnits); a Double multiply truncates
+    // (e.g. 16.38 * 1e6 == 16_379_999.99…), under-paying the on-chain tx.
+    let scaled = roundedDecimal.multiplying(byPowerOf10: Int16(decimals))
+    let baseUnits = BigUInt(scaled.stringValue, radix: 10) ?? BigUInt(0)
     return (normalized, baseUnits)
   }
 

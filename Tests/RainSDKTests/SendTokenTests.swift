@@ -1,5 +1,6 @@
 import Testing
 import Foundation
+import Web3
 @testable import RainSDK
 
 /// Manager-contract tests for send APIs: validation, mode guards, error wrapping.
@@ -120,6 +121,22 @@ struct SendTokenTests {
     #expect(stub.sendTransactionCalls[0].params.to == TestFixtures.recipientAddress)
     // Empty data for native transfers.
     #expect(stub.sendTransactionCalls[0].params.data == .empty)
+  }
+
+  @Test("sendNative encodes value as exact wei (no Double drift)")
+  func testSendNativeEncodesExactWei() async throws {
+    let (manager, stub) = try await TestManagers.stubProviderManager()
+    stub.sendTransactionHashToReturn = "0x" + String(repeating: "a", count: 64)
+
+    // 16.38 ETH. A Double multiply (16.38 * 1e18) drifts; the exact base unit is 16_380_000_000_000_000_000.
+    _ = try await manager.sendNative(
+      chainId: 1,
+      to: TestFixtures.recipientAddress,
+      amount: 16.38
+    )
+
+    let expectedWei = BigUInt("16380000000000000000", radix: 10)!
+    #expect(stub.sendTransactionCalls[0].params.value == "0x" + String(expectedWei, radix: 16))
   }
 
   @Test("sendToken returns provider tx hash and routes calldata to the token contract")
