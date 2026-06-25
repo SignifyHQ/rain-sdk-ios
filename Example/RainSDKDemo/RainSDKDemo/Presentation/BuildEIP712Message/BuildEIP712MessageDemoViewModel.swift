@@ -41,14 +41,14 @@ class BuildEIP712MessageDemoViewModel: ObservableObject {
     && !decimals.isEmpty
     && !recipientAddress.isEmpty
     && Int(chainId) != nil
-    && Double(amount) != nil
+    && Decimal(string: amount) != nil
     && Int(decimals) != nil
     && sdkService.isInitialized
   }
   
   func buildMessage() async {
     guard let chainIdInt = Int(chainId),
-          let amountDouble = Double(amount),
+          let amountDecimal = Decimal(string: amount),
           let decimalsInt = Int(decimals) else {
       return
     }
@@ -66,7 +66,7 @@ class BuildEIP712MessageDemoViewModel: ObservableObject {
         collateralProxyAddress: collateralProxyAddress,
         walletAddress: walletAddress,
         tokenAddress: tokenAddress,
-        amount: amountDouble,
+        amount: amountDecimal,
         decimals: decimalsInt,
         recipientAddress: recipientAddress,
         nonce: nonceValue

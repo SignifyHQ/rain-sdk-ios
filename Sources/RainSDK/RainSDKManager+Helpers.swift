@@ -70,7 +70,7 @@ extension RainSDKManager {
   func buildTransactionParamForWithdrawAsset(
     chainId: Int,
     assetAddresses: WithdrawAssetAddresses,
-    amount: Double,
+    amount: Decimal,
     decimals: Int,
     salt: String,
     signature: String,
@@ -149,17 +149,18 @@ extension RainSDKManager {
   }
   
   /// Estimates total transaction fee (estimated gas × gas price) in native token via Portal RPC.
-  func estimateTransactionFee(chainId: Int, address: String, params: ETHTransactionParam) async throws -> Double {
+  func estimateTransactionFee(chainId: Int, address: String, params: ETHTransactionParam) async throws -> Decimal {
     // Fetch estimated gas for the transaction
     let estimateGas = try await fetchGasData(chainId: chainId, method: .eth_estimateGas, address: address, params: [params])
     
     // Fetch current gas price
     let gasPrice = try await fetchGasData(chainId: chainId, method: .eth_gasPrice, address: address).weiToEth
     
-    // Calculate the total fees
+    // Calculate the total fees. The fee is a display-only estimate (the node fills the real gas
+    // at submit), so we keep the Double math and wrap the result as Decimal at the boundary.
     let txFee: Double = estimateGas * gasPrice
-    
-    return(txFee)
+
+    return txFee.asDecimal
   }
   
   /// Fetches gas-related RPC result (e.g. eth_estimateGas, eth_gasPrice) via Portal; returns numeric value as Double.

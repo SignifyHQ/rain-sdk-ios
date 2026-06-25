@@ -8,28 +8,28 @@ struct AmountHelpersTests {
 
   @Test("in-range amounts do not throw on the scale guard")
   func inRangeAmountsDoNotThrow() throws {
-    #expect(throws: Never.self) { try AmountHelpers.toBaseUnits(amount: 16.38, decimals: 6) }
-    #expect(throws: Never.self) { try AmountHelpers.toBaseUnits(amount: 26.83, decimals: 6) }
-    #expect(throws: Never.self) { try AmountHelpers.toBaseUnits(amount: 0.00019472, decimals: 18) }
+    #expect(throws: Never.self) { try AmountHelpers.toBaseUnits(amount: Decimal(string: "16.38")!, decimals: 6) }
+    #expect(throws: Never.self) { try AmountHelpers.toBaseUnits(amount: Decimal(string: "26.83")!, decimals: 6) }
+    #expect(throws: Never.self) { try AmountHelpers.toBaseUnits(amount: Decimal(string: "0.00019472")!, decimals: 18) }
   }
 
   @Test("amount with more decimal places than the token throws")
   func overPrecisionThrows() {
-    #expect(throws: RainSDKError.self) {
-      try AmountHelpers.toBaseUnits(amount: 0.1234567, decimals: 6)
+    #expect(throws: RainSDKError.invalidAmount(amount: "", reason: "")) {
+      try AmountHelpers.toBaseUnits(amount: Decimal(string: "0.1234567")!, decimals: 6)
     }
   }
 
   @Test("converts a representable amount to exact base units")
   func exactBaseUnits() throws {
-    let baseUnits = try AmountHelpers.toBaseUnits(amount: 0.00019472, decimals: 18)
+    let baseUnits = try AmountHelpers.toBaseUnits(amount: Decimal(string: "0.00019472")!, decimals: 18)
     #expect(baseUnits == BigUInt(194_720_000_000_000))
   }
 
   @Test("is exact where a Double multiply would truncate")
   func exactWhereDoubleDrifts() throws {
     // 16.38 * 1e6 in Double == 16_379_999.999… -> the old BigUInt(Double) truncated to 16_379_999.
-    let baseUnits = try AmountHelpers.toBaseUnits(amount: 16.38, decimals: 6)
+    let baseUnits = try AmountHelpers.toBaseUnits(amount: Decimal(string: "16.38")!, decimals: 6)
     #expect(baseUnits == BigUInt(16_380_000))
   }
 
@@ -41,8 +41,8 @@ struct AmountHelpersTests {
 
   @Test("negative amount throws instead of trapping")
   func negativeAmountThrows() {
-    #expect(throws: RainSDKError.self) {
-      try AmountHelpers.toBaseUnits(amount: -1.0, decimals: 18)
+    #expect(throws: RainSDKError.invalidAmount(amount: "", reason: "")) {
+      try AmountHelpers.toBaseUnits(amount: -1, decimals: 18)
     }
   }
 

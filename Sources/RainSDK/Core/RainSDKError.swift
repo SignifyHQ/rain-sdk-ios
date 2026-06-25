@@ -37,7 +37,10 @@ public enum RainSDKError: Error, LocalizedError, Equatable {
   
   /// RAIN_404: Withdrawal reverted because the same amount was withdrawn in a short period; backend returned an already-used withdrawal signature
   case withdrawalRevertedByNetwork
-  
+
+  /// RAIN_405: The amount is invalid for the token — more decimal places than the token supports, or negative/unrepresentable
+  case invalidAmount(amount: String, reason: String)
+
   // MARK: - 5xx: Internal / Provider Errors
   
   /// RAIN_501: An unhandled error occurred within the wallet provider
@@ -69,6 +72,8 @@ public enum RainSDKError: Error, LocalizedError, Equatable {
       return "RAIN_403"
     case .withdrawalRevertedByNetwork:
       return "RAIN_404"
+    case .invalidAmount:
+      return "RAIN_405"
     case .providerError:
       return "RAIN_501"
     case .internalLogicError:
@@ -98,6 +103,8 @@ public enum RainSDKError: Error, LocalizedError, Equatable {
       return "[\(errorCode)] No wallet address available from the wallet provider."
     case .withdrawalRevertedByNetwork:
       return "[\(errorCode)] Execution reverted by the network. Please try again in a few minutes."
+    case .invalidAmount(let amount, let reason):
+      return "[\(errorCode)] Invalid amount (\(amount)): \(reason)."
     case .providerError(let underlying):
       return "[\(errorCode)] An unhandled error occurred within the wallet provider. \(underlying.localizedDescription)"
     case .internalLogicError(let details):

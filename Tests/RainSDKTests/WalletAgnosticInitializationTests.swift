@@ -23,7 +23,7 @@ struct WalletAgnosticInitializationTests {
       recipientAddress: "0xfedcbafedcbafedcbafedcbafedcbafedcbafedc",
       tokenAddress: "0x9876543210987654321098765432109876543210"
     )
-    let amount: Double = 100.0
+    let amount: Decimal = 100
     let decimals = 18
     let nonce = BigUInt(42)
     
@@ -64,8 +64,8 @@ struct WalletAgnosticInitializationTests {
     #expect(messageData?["recipient"] as? String == assetAddresses.recipientAddress)
     #expect(messageData?["nonce"] as? String == nonce.description)
     
-    // Verify amount (should be in base units: 100 * 10^18)
-    let expectedAmount = BigUInt(100 * pow(10.0, 18))
+    // Verify amount (should be in base units: 100 * 10^18 = 10^20)
+    let expectedAmount = BigUInt("1" + String(repeating: "0", count: 20), radix: 10)!
     #expect(messageData?["amount"] as? String == expectedAmount.description)
   }
   
@@ -86,7 +86,7 @@ struct WalletAgnosticInitializationTests {
       recipientAddress: "0xfedcbafedcbafedcbafedcbafedcbafedcbafedc",
       tokenAddress: "0x04A76ffB5D37B7f440B4CA06040C10Cf33221EEC"
     )
-    let amount: Double = 100.0
+    let amount: Decimal = 100
     let decimals = 18
     let expectedNonce = BigUInt(42)
     
@@ -129,8 +129,8 @@ struct WalletAgnosticInitializationTests {
     #expect(messageData?["nonce"] != nil) // Nonce should be present
     #expect(messageData?["nonce"] as? String == expectedNonce.description) // Should match mock nonce
     
-    // Verify amount
-    let expectedAmount = BigUInt(amount * pow(10.0, Double(decimals)))
+    // Verify amount (100 * 10^18 = 10^20)
+    let expectedAmount = BigUInt("1" + String(repeating: "0", count: 20), radix: 10)!
     #expect(messageData?["amount"] as? String == expectedAmount.description)
   }
   
@@ -149,7 +149,7 @@ struct WalletAgnosticInitializationTests {
       chainId: 1,
       walletAddress: walletAddress,
       assetAddresses: assetAddresses,
-      amount: 0.0,
+      amount: 0,
       decimals: 18,
       nonce: BigUInt(0)
     )
@@ -166,7 +166,7 @@ struct WalletAgnosticInitializationTests {
     let manager = try await createInitializedManager()
     
     // Test with 6 decimals (USDC-like)
-    let amount: Double = 100.5
+    let amount: Decimal = Decimal(string: "100.5")!
     let decimals = 6
     let expectedAmount = BigUInt(100500000) // 100.5 * 10^6
     
@@ -208,7 +208,7 @@ struct WalletAgnosticInitializationTests {
       chainId: 1,
       walletAddress: walletAddress,
       assetAddresses: assetAddresses,
-      amount: 100.0,
+      amount: 100,
       decimals: 18,
       nonce: BigUInt(1)
     )
@@ -217,7 +217,7 @@ struct WalletAgnosticInitializationTests {
       chainId: 1,
       walletAddress: walletAddress,
       assetAddresses: assetAddresses,
-      amount: 100.0,
+      amount: 100,
       decimals: 18,
       nonce: BigUInt(1)
     )
@@ -260,7 +260,7 @@ struct WalletAgnosticInitializationTests {
         chainId: 1,
         walletAddress: walletAddress,
         assetAddresses: assetAddresses,
-        amount: 100.0,
+        amount: 100,
         decimals: 18,
         nonce: BigUInt(1)
       )
@@ -285,7 +285,7 @@ struct WalletAgnosticInitializationTests {
         chainId: 999, // Not in network configs
         walletAddress: walletAddress,
         assetAddresses: assetAddresses,
-        amount: 100.0,
+        amount: 100,
         decimals: 18,
         nonce: nil // Will try to retrieve from network
       )
@@ -309,7 +309,7 @@ struct WalletAgnosticInitializationTests {
       chainId: 999, // Not in network configs
       walletAddress: walletAddress,
       assetAddresses: assetAddresses,
-      amount: 100.0,
+      amount: 100,
       decimals: 18,
       nonce: BigUInt(1) // Nonce provided, so no network call
     )
@@ -330,7 +330,7 @@ struct WalletAgnosticInitializationTests {
     let manager = try await createInitializedManager()
     
     // Test with a very large amount
-    let amount: Double = 1_000_000_000.0
+    let amount: Decimal = 1_000_000_000
     let decimals = 18
     
     let walletAddress = "0xabcdefabcdefabcdefabcdefabcdefabcdefabcd"
@@ -381,7 +381,7 @@ struct WalletAgnosticInitializationTests {
       chainId: 1,
       walletAddress: walletAddress,
       assetAddresses: assetAddresses,
-      amount: 100.0,
+      amount: 100,
       decimals: 18,
       nonce: BigUInt(1)
     )
@@ -391,7 +391,7 @@ struct WalletAgnosticInitializationTests {
       chainId: 137,
       walletAddress: walletAddress,
       assetAddresses: assetAddresses,
-      amount: 100.0,
+      amount: 100,
       decimals: 18,
       nonce: BigUInt(1)
     )
@@ -421,7 +421,7 @@ struct WalletAgnosticInitializationTests {
       recipientAddress: "0xfedcbafedcbafedcbafedcbafedcbafedcbafedc",
       tokenAddress: "0x9876543210987654321098765432109876543210"
     )
-    let amount: Double = 100.0
+    let amount: Decimal = 100
     let decimals = 18
     let expiresAt = "1735689600" // Unix timestamp
     let salt = Data([UInt8](repeating: 0x11, count: 32)) // 32 bytes user salt
@@ -473,7 +473,7 @@ struct WalletAgnosticInitializationTests {
       try await manager.buildWithdrawTransactionData(
         chainId: 1,
         assetAddresses: assetAddresses,
-        amount: 100.0,
+        amount: 100,
         decimals: 18,
         expiresAt: "1735689600",
         salt: salt,
@@ -503,7 +503,7 @@ struct WalletAgnosticInitializationTests {
       try await manager.buildWithdrawTransactionData(
         chainId: 1,
         assetAddresses: assetAddresses,
-        amount: 100.0,
+        amount: 100,
         decimals: 18,
         expiresAt: "1735689600",
         salt: salt,
@@ -533,7 +533,7 @@ struct WalletAgnosticInitializationTests {
       try await manager.buildWithdrawTransactionData(
         chainId: 1,
         assetAddresses: assetAddresses,
-        amount: 100.0,
+        amount: 100,
         decimals: 18,
         expiresAt: "1735689600",
         salt: salt,
@@ -563,7 +563,7 @@ struct WalletAgnosticInitializationTests {
       try await manager.buildWithdrawTransactionData(
         chainId: 1,
         assetAddresses: assetAddresses,
-        amount: 100.0,
+        amount: 100,
         decimals: 18,
         expiresAt: "1735689600",
         salt: salt,
@@ -593,7 +593,7 @@ struct WalletAgnosticInitializationTests {
       try await manager.buildWithdrawTransactionData(
         chainId: 1,
         assetAddresses: assetAddresses,
-        amount: 100.0,
+        amount: 100,
         decimals: 18,
         expiresAt: "invalid-timestamp",
         salt: salt,
@@ -627,7 +627,7 @@ struct WalletAgnosticInitializationTests {
       let txData = try await manager.buildWithdrawTransactionData(
         chainId: 1,
         assetAddresses: assetAddresses,
-        amount: 100.0,
+        amount: 100,
         decimals: 18,
         expiresAt: iso8601Timestamp,
         salt: salt,
@@ -661,7 +661,7 @@ struct WalletAgnosticInitializationTests {
     let adminSignature = Data([UInt8](repeating: 0xBB, count: 65))
     
     // Test with 6 decimals (USDC-like)
-    let amount: Double = 100.5
+    let amount: Decimal = Decimal(string: "100.5")!
     let decimals = 6
     
     do {
@@ -704,7 +704,7 @@ struct WalletAgnosticInitializationTests {
       try await manager.buildWithdrawTransactionData(
         chainId: 999, // Not in network configs
         assetAddresses: assetAddresses,
-        amount: 100.0,
+        amount: 100,
         decimals: 18,
         expiresAt: "1735689600",
         salt: salt,
